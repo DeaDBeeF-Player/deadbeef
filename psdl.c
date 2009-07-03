@@ -3,7 +3,7 @@
 #include "codec.h"
 #include "playlist.h"
 
-static int sdl_player_numsamples;
+static int sdl_player_numsamples = 2<<16;
 static int sdl_player_freq;
 static float *sdl_buffer[2];
 static SDL_AudioSpec spec;
@@ -27,7 +27,7 @@ psdl_init (void) {
             spec.freq = freqs[frq];
             spec.format = formats[fmt];
             spec.channels = 2;
-            spec.samples = freqs[fmt];
+            spec.samples = sdl_player_numsamples;
             spec.callback = psdl_callback;
             if (SDL_OpenAudio(&spec, &obt) < 0) {
                 fprintf(stderr, "SDL: couldn't open audio: %s\n", SDL_GetError());

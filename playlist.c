@@ -34,6 +34,9 @@ ps_add_file (const char *fname) {
     else if (!strcasecmp (eol, "mod")) {
         it->codec = &cmod;
     }
+    else {
+        return -1;
+    }
     // copy string
     it->fname = strdup (fname);
     it->displayname = strdup (fname);
