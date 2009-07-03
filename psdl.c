@@ -104,6 +104,9 @@ psdl_callback (void* userdata, Uint8 *stream, int len) {
     if (!codec) {
         memset (stream, 0, len);
     }
+    else if (codec->info.samplesPerSecond == sdl_player_freq) {
+        codec->read (sdl_buffer, len);
+    }
     else {
         int nsamples = len/4;
         // convert to codec samplerate
