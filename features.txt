@@ -1,0 +1,6 @@
+play song even if not in playlist
+volume changer must be software, and work with all codecs (at mix level)
+volume changer must work even no song is playing
+playlist must be superfast
+eat minimum memory (dont hold all metainfo in memory, etc)
+seamless playback (no pauses between tracks)

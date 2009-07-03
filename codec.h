@@ -1,0 +1,22 @@
+#ifndef __CODEC_H
+#define __CODEC_H
+
+#include <stdint.h>
+
+typedef struct {
+    int bitsPerSample;
+    int channels;
+    int dataSize;
+    int samplesPerSecond;
+} fileinfo_t;
+
+typedef struct codec_s {
+    fileinfo_t info;
+    int (*init) (const char *fname);
+    void (*free) (void);
+    int (*read) (char *bytes, int size);
+} codec_t;
+
+codec_t *get_codec_for_file (const char *fname);
+
+#endif	// __CODEC_H
