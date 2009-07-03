@@ -50,9 +50,9 @@ psdl_init (void) {
     }
 	sdl_player_numsamples = obt.samples; //numsamples;
     // source samplerate may be up to 96KHz, so need bigger buffers
-	sdl_buffer = malloc (sdl_player_numsamples * sizeof (uint16_t) * 2 * 10);
-	sdl_fbuffer = malloc (sdl_player_numsamples * sizeof (float) * 2 * 10); 
-	sdl_srcbuffer = malloc (sdl_player_numsamples * sizeof (float) * 10);
+	sdl_buffer = malloc (sdl_player_numsamples * sizeof (uint16_t) * 2 * 2);
+	sdl_fbuffer = malloc (sdl_player_numsamples * sizeof (float) * 2 * 2); 
+	sdl_srcbuffer = malloc (sdl_player_numsamples * sizeof (float) * 2);
 	sdl_player_freq = obt.freq;
 	fprintf (stderr, "SDL: got %d frame size (requested %d), %dHz\n", obt.samples, sdl_player_numsamples, sdl_player_freq);
 
@@ -105,11 +105,10 @@ psdl_callback (void* userdata, Uint8 *stream, int len) {
         memset (stream, 0, len);
     }
     else {
-        int nsamples = len/4+3000;
+        int nsamples = len/4;
         // convert to codec samplerate
-//        nsamples = nsamples * codec->info.samplesPerSecond / sdl_player_freq + 100;
-        // add how many additional samples we need for src
-        printf ("reading nsamples=%d (codecleft=%d)\n", nsamples-codecleft, codecleft);
+        // add 5 extra samples for SRC
+        nsamples = nsamples * codec->info.samplesPerSecond / sdl_player_freq + 5;
         // read data at source samplerate (with some room for SRC)
         codec->read (sdl_buffer, (nsamples - codecleft) * 4);
         // convert to float, and apply soft volume
@@ -117,28 +116,24 @@ psdl_callback (void* userdata, Uint8 *stream, int len) {
         float *fbuffer = sdl_fbuffer + codecleft*2;
         for (i = 0; i < (nsamples - codecleft) * 2; i++) {
             fbuffer[i] = ((int16_t *)sdl_buffer)[i]/32767.f;
-//            sdl_fbuffer[i+codecleft*2] *= sdl_volume;
+            sdl_fbuffer[i+codecleft*2] *= sdl_volume;
         }
         // convert samplerate
-//        srcdata.data_in = sdl_fbuffer;
-//        srcdata.data_out = sdl_srcbuffer;
-//        srcdata.input_frames = nsamples;
-//        srcdata.output_frames = len/4;
-//        srcdata.src_ratio = (double)sdl_player_freq/codec->info.samplesPerSecond;
-//        srcdata.end_of_input = 0;
-        //src_process (src, &srcdata);
+        srcdata.data_in = sdl_fbuffer;
+        srcdata.data_out = sdl_srcbuffer;
+        srcdata.input_frames = nsamples;
+        srcdata.output_frames = len/4;
+        srcdata.src_ratio = (double)sdl_player_freq/codec->info.samplesPerSecond;
+        srcdata.end_of_input = 0;
+        src_process (src, &srcdata);
         // convert back to s16 format
         for (i = 0; i < len/2; i++) {
-            //((int16_t*)stream)[i] = (int16_t)(sdl_srcbuffer[i]*32767.f);
-            ((int16_t*)stream)[i] = (int16_t)(sdl_fbuffer[i]*32767.f);
+            ((int16_t*)stream)[i] = (int16_t)(sdl_srcbuffer[i]*32767.f);
         }
         // calculate how many unused input samples left
-//        codecleft = nsamples - srcdata.input_frames_used;
-        codecleft = nsamples - len/4;
-//        printf ("codecleft: %d (used %d), in: %d, out: %d, outreq: %d, ratio: %f\n", codecleft, srcdata.input_frames_used, nsamples, srcdata.output_frames_gen,srcdata.output_frames, srcdata.src_ratio);
+        codecleft = nsamples - srcdata.input_frames_used;
         // copy spare samples for next update
-//        memmove (sdl_fbuffer, &sdl_fbuffer[srcdata.input_frames_used*2], codecleft * 4);
-        memmove (sdl_fbuffer, sdl_fbuffer+len/2, codecleft * 4);
+        memmove (sdl_fbuffer, &sdl_fbuffer[srcdata.input_frames_used*2], codecleft * 8);
     }
 }
 

@@ -42,7 +42,6 @@ cvorbis_read (char *bytes, int size)
 {
     if (!file)
         return -1;
-    printf ("vorbis read %d bytes!\n", size);
     for (;;)
     {
         // read ogg
@@ -60,10 +59,6 @@ cvorbis_read (char *bytes, int size)
             }
             size -= ret;
             bytes += ret;
-        }
-        else if (ret > size) {
-            printf ("read more than requested!\n");
-            break;
         }
         else {
             break;
