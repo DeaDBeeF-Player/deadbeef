@@ -1,14 +1,23 @@
 #include <SDL/SDL.h>
+#include <samplerate.h>
 #include "psdl.h"
 #include "codec.h"
 #include "playlist.h"
 
-static int sdl_player_numsamples = 2<<16;
+static int sdl_player_numsamples = 2<<25;
 static int sdl_player_freq;
-static float *sdl_buffer[2];
+static char *sdl_buffer;
+static float *sdl_fbuffer;
+static float *sdl_srcbuffer;
 static SDL_AudioSpec spec;
 static void psdl_callback (void *userdata, Uint8 *stream, int len);
 static codec_t *codec;
+
+static SRC_STATE *src;
+static SRC_DATA srcdata;
+static int codecleft;
+
+static float sdl_volume = 1;
 
 int
 psdl_init (void) {
@@ -18,8 +27,6 @@ psdl_init (void) {
 	const char *fmtnames[] = { "16 bit signed integer" };
 	int fmt, frq;
 	int success = 0;
-    sdl_buffer[0] = NULL;
-    sdl_buffer[1] = NULL;
 	fprintf (stderr, "sdl_player_init\n");
 	for (fmt = 0; formats[fmt] != -1; fmt++) {
         for (frq = 0; freqs[frq] != -1; frq++) {
@@ -42,26 +49,34 @@ psdl_init (void) {
         return -1;
     }
 	sdl_player_numsamples = obt.samples; //numsamples;
+    // source samplerate may be up to 96KHz, so need bigger buffers
+	sdl_buffer = malloc (sdl_player_numsamples * sizeof (uint16_t) * 2 * 10);
+	sdl_fbuffer = malloc (sdl_player_numsamples * sizeof (float) * 2 * 10); 
+	sdl_srcbuffer = malloc (sdl_player_numsamples * sizeof (float) * 10);
 	sdl_player_freq = obt.freq;
 	fprintf (stderr, "SDL: got %d frame size (requested %d), %dHz\n", obt.samples, sdl_player_numsamples, sdl_player_freq);
+
+//    src = src_new (SRC_SINC_BEST_QUALITY, 2, NULL);
+    src = src_new (SRC_LINEAR, 2, NULL);
+    codecleft = 0;
+
 	return 0;
 }
 
 void
 psdl_free (void) {
 	SDL_CloseAudio ();
-	if (sdl_buffer[0]) {
-        free (sdl_buffer[0]);
-        sdl_buffer[0] = NULL;
+	if (sdl_buffer) {
+        free (sdl_buffer);
+        sdl_buffer = NULL;
     }
-    if (sdl_buffer[1]) {
-        free (sdl_buffer[1]);
-        sdl_buffer[1] = NULL;
-    }
+    src_delete (src);
+    src = NULL;
 }
 
 int
 psdl_play (struct playItem_s *it) {
+    printf ("psdl_play\n");
     if (!it) {
         return -1;
     }
@@ -90,7 +105,40 @@ psdl_callback (void* userdata, Uint8 *stream, int len) {
         memset (stream, 0, len);
     }
     else {
-        codec->read (stream, len);
+        int nsamples = len/4+3000;
+        // convert to codec samplerate
+//        nsamples = nsamples * codec->info.samplesPerSecond / sdl_player_freq + 100;
+        // add how many additional samples we need for src
+        printf ("reading nsamples=%d (codecleft=%d)\n", nsamples-codecleft, codecleft);
+        // read data at source samplerate (with some room for SRC)
+        codec->read (sdl_buffer, (nsamples - codecleft) * 4);
+        // convert to float, and apply soft volume
+        int i;
+        float *fbuffer = sdl_fbuffer + codecleft*2;
+        for (i = 0; i < (nsamples - codecleft) * 2; i++) {
+            fbuffer[i] = ((int16_t *)sdl_buffer)[i]/32767.f;
+//            sdl_fbuffer[i+codecleft*2] *= sdl_volume;
+        }
+        // convert samplerate
+//        srcdata.data_in = sdl_fbuffer;
+//        srcdata.data_out = sdl_srcbuffer;
+//        srcdata.input_frames = nsamples;
+//        srcdata.output_frames = len/4;
+//        srcdata.src_ratio = (double)sdl_player_freq/codec->info.samplesPerSecond;
+//        srcdata.end_of_input = 0;
+        //src_process (src, &srcdata);
+        // convert back to s16 format
+        for (i = 0; i < len/2; i++) {
+            //((int16_t*)stream)[i] = (int16_t)(sdl_srcbuffer[i]*32767.f);
+            ((int16_t*)stream)[i] = (int16_t)(sdl_fbuffer[i]*32767.f);
+        }
+        // calculate how many unused input samples left
+//        codecleft = nsamples - srcdata.input_frames_used;
+        codecleft = nsamples - len/4;
+//        printf ("codecleft: %d (used %d), in: %d, out: %d, outreq: %d, ratio: %f\n", codecleft, srcdata.input_frames_used, nsamples, srcdata.output_frames_gen,srcdata.output_frames, srcdata.src_ratio);
+        // copy spare samples for next update
+//        memmove (sdl_fbuffer, &sdl_fbuffer[srcdata.input_frames_used*2], codecleft * 4);
+        memmove (sdl_fbuffer, sdl_fbuffer+len/2, codecleft * 4);
     }
 }
 

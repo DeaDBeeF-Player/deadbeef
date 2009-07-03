@@ -5,5 +5,5 @@ CCFLAGS += -std=c99 ;
 Main deadbeef : 
     cmod.c codec.c cvorbis.c cwav.c playlist.c psdl.c main.c ;
 
-LINKLIBS on deadbeef = -lmikmod -lm -lvorbis -logg -lvorbisfile -lmikmod -lSDL ;
+LINKLIBS on deadbeef = -lmikmod -lm -lvorbis -logg -lvorbisfile -lmikmod -lSDL -lsamplerate ;
 

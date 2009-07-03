@@ -31,7 +31,7 @@ int cwav_init (const char *fname) {
     wavHeader_t header;
 
     // read WAV header
-    if (fread (&header, sizeof (header), 1, file) != sizeof (header))
+    if (fread (&header, sizeof (header), 1, file) != 1)
     {
         printf ("WARNING: WAV header not found in %s\n", fname);
         fclose (file);
@@ -61,7 +61,7 @@ cwav_read (char *bytes, int size) {
     int bytesread = 0;
     int first = 1;
     for (;;) {
-        int bytesread = fread (bytes, size, 1, file);
+        int bytesread = fread (bytes, 1, size, file);
         if (bytesread == size) {
             break;
         }
