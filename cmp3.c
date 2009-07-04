@@ -136,9 +136,9 @@ cmp3_decode (void) {
 				if(stream.error!=MAD_ERROR_LOSTSYNC ||
 				   stream.this_frame!=GuardPtr)
 				{
-//					fprintf(stderr,"recoverable frame level error (%s)\n",
-//							MadErrorString(&stream));
-//					fflush(stderr);
+					fprintf(stderr,"recoverable frame level error (%s)\n",
+							MadErrorString(&stream));
+					fflush(stderr);
 				}
 				continue;
 			}
@@ -147,8 +147,8 @@ cmp3_decode (void) {
 					continue;
 				else
 				{
-//					fprintf(stderr,"unrecoverable frame level error (%s).\n",
-//							MadErrorString(&stream));
+					fprintf(stderr,"unrecoverable frame level error (%s).\n",
+							MadErrorString(&stream));
 					break;
 				}
             }

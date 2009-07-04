@@ -113,7 +113,7 @@ psdl_callback (void* userdata, Uint8 *stream, int len) {
         memset (stream, 0, len);
     }
     else if (codec->info.samplesPerSecond == sdl_player_freq) {
-        codec->read (sdl_buffer, len);
+        codec->read (stream, len);
     }
     else {
         int nsamples = len/4;
