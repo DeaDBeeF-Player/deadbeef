@@ -35,3 +35,7 @@ gboolean
 on_playlist_button_press_event         (GtkWidget       *widget,
                                         GdkEventButton  *event,
                                         gpointer         user_data);
+
+void
+on_playscroll_value_changed            (GtkRange        *range,
+                                        gpointer         user_data);

@@ -18,7 +18,7 @@
 extern GtkWidget *mainwin;
 static GdkPixmap *backbuf;
 static int rowheight = 12;
-#define trackerscroll 0
+int trackerscroll = 0;
 static int playlist_row = -1;
 static double playlist_clicktime = 0;
 static double ps_lastpos[2];
@@ -29,7 +29,23 @@ addfile_func (gpointer data, gpointer userdata) {
     g_free (data);
 }
 
-    void
+static void
+setup_ps_scrollbar (void) {
+    GtkWidget *playlist = lookup_widget (mainwin, "playlist");
+    int h = playlist->allocation.height / rowheight;
+    int size = ps_getcount ();
+    if (h >= size) {
+        size = 0;
+    }
+    GtkWidget *scroll = lookup_widget (mainwin, "playscroll");
+    printf ("%d\n", size);
+//    gtk_range_set_range (GTK_RANGE (scroll), 0, size);
+//    gtk_range_set_increments (GTK_RANGE (scroll), 1, h);
+    GtkAdjustment *adj = (GtkAdjustment*)gtk_adjustment_new (gtk_range_get_value (GTK_RANGE (scroll)), 0, size, 1, h, h);
+    gtk_range_set_adjustment (GTK_RANGE (scroll), adj);
+}
+
+void
 on_addbtn_clicked                      (GtkButton       *button,
         gpointer         user_data)
 {
@@ -56,6 +72,7 @@ on_addbtn_clicked                      (GtkButton       *button,
         g_slist_free (lst);
     }
     gtk_widget_destroy (dlg);
+    setup_ps_scrollbar ();
 }
 
 
@@ -89,6 +106,7 @@ on_playlist_configure_event            (GtkWidget       *widget,
         GdkEventConfigure *event,
         gpointer         user_data)
 {
+    setup_ps_scrollbar ();
     if (backbuf) {
         g_object_unref (backbuf);
     }
@@ -113,15 +131,12 @@ draw_ps_row_back (GdkDrawable *drawable, cairo_t *cr, int row) {
     }
     else {
         if (row % 2) {
-//            cairo_set_source_rgb (cr, 0.22, 0.22, 0.22);
-//            cairo_rectangle (cr, w, row * rowheight - trackerscroll * rowheight, width - w, rowheight);
-//            cairo_fill (cr);
-            cairo_set_source_rgb (cr, 0.33, 0.33, 0.33);
+            cairo_set_source_rgb (cr, 0.88, 0.88, 0.88);
             cairo_rectangle (cr, 0, row * rowheight - trackerscroll * rowheight, w, rowheight);
             cairo_fill (cr);
         }
         else {
-            cairo_set_source_rgb (cr, 0.22, 0.22, 0.22);
+            cairo_set_source_rgb (cr, 0.77, 0.77, 0.77);
             cairo_rectangle (cr, 0, row * rowheight - trackerscroll * rowheight, width, rowheight);
             cairo_fill (cr);
         }
@@ -139,13 +154,18 @@ draw_ps_row_back (GdkDrawable *drawable, cairo_t *cr, int row) {
 
 static void
 text_draw (cairo_t *cr, int x, int y, const char *text) {
-    cairo_set_source_rgb (cr, 1, 1, 1);
     cairo_move_to (cr, x, y+rowheight-3);
     cairo_show_text (cr, text);
 }
 
 void
 draw_ps_row (GdkDrawable *drawable, cairo_t *cr, int row, playItem_t *it) {
+	if (row == playlist_row) {
+        cairo_set_source_rgb (cr, 1, 1, 1);
+    }
+    else {
+        cairo_set_source_rgb (cr, 0, 0, 0);
+    }
     text_draw (cr, 0, row * rowheight - trackerscroll * rowheight, it->displayname);
 }
 
@@ -238,7 +258,7 @@ on_playlist_button_press_event         (GtkWidget       *widget,
     ps_lastpos[1] = event->y;
     // select item
     int y = event->y/rowheight - trackerscroll;
-    if (y < 0 && y >= ps_getcount ()) {
+    if (y < 0 || y >= ps_getcount ()) {
         y = -1;
     }
 
@@ -273,5 +293,15 @@ on_playlist_button_press_event         (GtkWidget       *widget,
         playlist_clicktime = event->time;
     }
     return FALSE;
+}
+
+
+void
+on_playscroll_value_changed            (GtkRange        *range,
+                                        gpointer         user_data)
+{
+    trackerscroll = gtk_range_get_value (GTK_RANGE (range));
+    GtkWidget *playlist = lookup_widget (mainwin, "playlist");
+    draw_playlist (playlist, 0, 0, playlist->allocation.width, playlist->allocation.height);
 }
 

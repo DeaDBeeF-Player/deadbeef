@@ -46,7 +46,9 @@ create_mainwin (void)
   GtkWidget *vbox3;
   GtkWidget *label2;
   GtkWidget *playpos;
+  GtkWidget *_;
   GtkWidget *playlist;
+  GtkWidget *playscroll;
 
   mainwin = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_window_set_title (GTK_WINDOW (mainwin), "DeaDBeeF");
@@ -118,10 +120,18 @@ create_mainwin (void)
   gtk_widget_set_size_request (playpos, 200, -1);
   gtk_scale_set_draw_value (GTK_SCALE (playpos), FALSE);
 
+  _ = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show (_);
+  gtk_box_pack_start (GTK_BOX (vbox1), _, TRUE, TRUE, 0);
+
   playlist = gtk_drawing_area_new ();
   gtk_widget_show (playlist);
-  gtk_box_pack_start (GTK_BOX (vbox1), playlist, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (_), playlist, TRUE, TRUE, 0);
   gtk_widget_set_events (playlist, GDK_EXPOSURE_MASK | GDK_POINTER_MOTION_MASK | GDK_BUTTON_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK);
+
+  playscroll = gtk_vscrollbar_new (GTK_ADJUSTMENT (gtk_adjustment_new (0, 0, 1, 1, 0, 0)));
+  gtk_widget_show (playscroll);
+  gtk_box_pack_start (GTK_BOX (_), playscroll, FALSE, FALSE, 0);
 
   g_signal_connect ((gpointer) mainwin, "destroy",
                     G_CALLBACK (gtk_main_quit),
@@ -150,6 +160,9 @@ create_mainwin (void)
   g_signal_connect ((gpointer) playlist, "button_press_event",
                     G_CALLBACK (on_playlist_button_press_event),
                     NULL);
+  g_signal_connect ((gpointer) playscroll, "value_changed",
+                    G_CALLBACK (on_playscroll_value_changed),
+                    NULL);
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (mainwin, mainwin, "mainwin");
@@ -168,7 +181,9 @@ create_mainwin (void)
   GLADE_HOOKUP_OBJECT (mainwin, vbox3, "vbox3");
   GLADE_HOOKUP_OBJECT (mainwin, label2, "label2");
   GLADE_HOOKUP_OBJECT (mainwin, playpos, "playpos");
+  GLADE_HOOKUP_OBJECT (mainwin, _, "_");
   GLADE_HOOKUP_OBJECT (mainwin, playlist, "playlist");
+  GLADE_HOOKUP_OBJECT (mainwin, playscroll, "playscroll");
 
   return mainwin;
 }
