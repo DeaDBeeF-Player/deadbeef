@@ -90,13 +90,21 @@ psdl_play (struct playItem_s *it) {
 
 int
 psdl_stop (void) {
-    codec = NULL;
 	SDL_PauseAudio (1);
+    if (codec) {
+        codec->free ();
+        codec = NULL;
+    }
 }
 
 int
 psdl_pause (void) {
 	SDL_PauseAudio (1);
+}
+
+void
+psdl_set_volume (float vol) {
+    sdl_volume = vol;
 }
 
 static void

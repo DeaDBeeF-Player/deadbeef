@@ -18,4 +18,7 @@ psdl_stop (void);
 int
 psdl_pause (void);
 
+void
+psdl_set_volume (float vol);
+
 #endif // __PSDL_H

@@ -32,9 +32,12 @@ int cvorbis_init (const char *fname) {
 
 void
 cvorbis_free (void) {
-    fclose (file);
-    ov_clear (&vorbis_file);
-    vi = NULL;
+    if (file) {
+        ov_clear (&vorbis_file);
+        //fclose (file); -- ov_clear closes it
+        file = NULL;
+        vi = NULL;
+    }
 }
 
 int

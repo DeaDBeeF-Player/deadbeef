@@ -2,6 +2,7 @@
 #include <string.h>
 #include <dirent.h>
 #include <fnmatch.h>
+#include <stdio.h>
 #include "playlist.h"
 #include "codec.h"
 #include "cwav.h"
@@ -11,6 +12,14 @@
 playItem_t *playlist_head;
 playItem_t *playlist_tail;
 playItem_t *playlist_current;
+static int ps_count = 0;
+
+void
+ps_free (void) {
+    while (playlist_head) {
+        ps_remove (playlist_head);
+    }
+}
 
 int
 ps_add_file (const char *fname) {
@@ -37,9 +46,19 @@ ps_add_file (const char *fname) {
     else {
         return -1;
     }
+    printf ("added %s to playlist\n", fname);
+    ps_count++;
     // copy string
     it->fname = strdup (fname);
-    it->displayname = strdup (fname);
+    // find 1st slash from end
+    while (eol > fname && *eol != '/') {
+        eol--;
+    }
+    if (*eol=='/') {
+        eol++;
+    }
+
+    it->displayname = strdup (eol);
     it->timestart = -1;
     it->timeend = -1;
 
@@ -85,6 +104,7 @@ int
 ps_remove (playItem_t *it) {
     if (!it)
         return -1;
+    ps_count--;
     if (it->fname) {
         free (it->fname);
     }
@@ -105,5 +125,21 @@ ps_remove (playItem_t *it) {
     }
     free (it);
     return 0;
+}
+
+int
+ps_getcount (void) {
+    return ps_count;
+}
+
+playItem_t *
+ps_get_for_idx (int idx) {
+    playItem_t *it = playlist_head;
+    while (idx--) {
+        if (!it)
+            return NULL;
+        it = it->next;
+    }
+    return it;
 }
 

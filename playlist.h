@@ -25,4 +25,13 @@ ps_add_dir (const char *dirname);
 int
 ps_remove (playItem_t *i);
 
+void
+ps_free (void);
+
+int
+ps_getcount (void);
+
+playItem_t *
+ps_get_for_idx (int idx);
+
 #endif // __PLAYLIST_H
