@@ -257,7 +257,7 @@ on_playlist_button_press_event         (GtkWidget       *widget,
     ps_lastpos[0] = event->x;
     ps_lastpos[1] = event->y;
     // select item
-    int y = event->y/rowheight - trackerscroll;
+    int y = event->y/rowheight + trackerscroll;
     if (y < 0 || y >= ps_getcount ()) {
         y = -1;
     }

@@ -121,13 +121,20 @@ psdl_callback (void* userdata, Uint8 *stream, int len) {
         // add 5 extra samples for SRC
         nsamples = nsamples * codec->info.samplesPerSecond / sdl_player_freq + 5;
         // read data at source samplerate (with some room for SRC)
-        codec->read (sdl_buffer, (nsamples - codecleft) * 4);
+        codec->read (sdl_buffer, (nsamples - codecleft) * 2 * codec->info.channels);
         // convert to float, and apply soft volume
         int i;
         float *fbuffer = sdl_fbuffer + codecleft*2;
-        for (i = 0; i < (nsamples - codecleft) * 2; i++) {
-            fbuffer[i] = ((int16_t *)sdl_buffer)[i]/32767.f;
-            sdl_fbuffer[i+codecleft*2] *= sdl_volume;
+        if (codec->info.channels == 2) {
+            for (i = 0; i < (nsamples - codecleft) * 2; i++) {
+                fbuffer[i] = ((int16_t *)sdl_buffer)[i]/32767.f * sdl_volume;
+            }
+        }
+        else if (codec->info.channels == 1) {
+            for (i = 0; i < (nsamples - codecleft); i++) {
+                fbuffer[i*2+0] = ((int16_t *)sdl_buffer)[i]/32767.f * sdl_volume;
+                fbuffer[i*2+1] = fbuffer[i*2+0] * sdl_volume;
+            }
         }
         // convert samplerate
         srcdata.data_in = sdl_fbuffer;
