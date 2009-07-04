@@ -1,13 +1,27 @@
 #include <gtk/gtk.h>
+#include <stdio.h>
+#include <stdint.h>
 #include "interface.h"
 #include "support.h"
-#include <stdio.h>
 #include "playlist.h"
 #include "psdl.h"
 #include "unistd.h"
-
+#include "threading.h"
 
 GtkWidget *mainwin;
+
+int psdl_terminate = 0;
+
+void
+psdl_thread (uintptr_t ctx) {
+    psdl_init ();
+    while (!psdl_terminate) {
+        sleep(1);
+        // handle message pump here
+    }
+    psdl_free ();
+    ps_free ();
+}
 
 int
 main (int argc, char *argv[]) {
@@ -15,14 +29,9 @@ main (int argc, char *argv[]) {
         printf ("syntax: deadbeef <filename>\n");
         return -1;
     }
-    psdl_init ();
-    if (!ps_add_file (argv[1])) {
-        printf ("playing %s\n", argv[1]);
-        psdl_play (playlist_head);
-    }
-    else {
-        printf ("failed to play %s\n", argv[1]);
-    }
+
+    thread_start (psdl_thread, 0);
+
     gtk_set_locale ();
     gtk_init (&argc, &argv);
 
@@ -34,7 +43,6 @@ main (int argc, char *argv[]) {
     mainwin = create_mainwin ();
     gtk_widget_show (mainwin);
     gtk_main ();
-    psdl_free ();
-    ps_free ();
+    psdl_terminate = 1;
     return 0;
 }
