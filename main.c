@@ -25,11 +25,6 @@ psdl_thread (uintptr_t ctx) {
 
 int
 main (int argc, char *argv[]) {
-    if (argc <= 1) {
-        printf ("syntax: deadbeef <filename>\n");
-        return -1;
-    }
-
     thread_start (psdl_thread, 0);
 
     gtk_set_locale ();

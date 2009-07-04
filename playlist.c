@@ -8,6 +8,7 @@
 #include "cwav.h"
 #include "cvorbis.h"
 #include "cmod.h"
+#include "cmp3.h"
 
 playItem_t *playlist_head;
 playItem_t *playlist_tail;
@@ -42,6 +43,9 @@ ps_add_file (const char *fname) {
     }
     else if (!strcasecmp (eol, "mod")) {
         it->codec = &cmod;
+    }
+    else if (!strcasecmp (eol, "mp3")) {
+        it->codec = &cmp3;
     }
     else {
         return -1;
@@ -91,7 +95,13 @@ ps_add_dir (const char *dirname) {
             // no hidden files
             if (namelist[n]->d_name[0] != '.')
             {
-                ps_add_file (namelist[n]->d_name);
+                char fullname[1024];
+                strcpy (fullname, dirname);
+                strncat (fullname, "/", 1024);
+                strncat (fullname, namelist[n]->d_name, 1024);
+                if (ps_add_dir (fullname)) {
+                    ps_add_file (fullname);
+                }
             }
             free (namelist[n]);
         }

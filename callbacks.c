@@ -17,7 +17,7 @@
 
 extern GtkWidget *mainwin;
 static GdkPixmap *backbuf;
-static int rowheight = 12;
+static int rowheight = 17;
 int trackerscroll = 0;
 static int playlist_row = -1;
 static double playlist_clicktime = 0;
@@ -43,36 +43,6 @@ setup_ps_scrollbar (void) {
 //    gtk_range_set_increments (GTK_RANGE (scroll), 1, h);
     GtkAdjustment *adj = (GtkAdjustment*)gtk_adjustment_new (gtk_range_get_value (GTK_RANGE (scroll)), 0, size, 1, h, h);
     gtk_range_set_adjustment (GTK_RANGE (scroll), adj);
-}
-
-void
-on_addbtn_clicked                      (GtkButton       *button,
-        gpointer         user_data)
-{
-    GtkWidget *dlg = gtk_file_chooser_dialog_new ("Add file(s) to playlist...", GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
-
-    GtkFileFilter* flt;
-    flt = gtk_file_filter_new ();
-    gtk_file_filter_set_name (flt, "Supported music files");
-    gtk_file_filter_add_pattern (flt, "*.ogg");
-    gtk_file_filter_add_pattern (flt, "*.mod");
-    gtk_file_filter_add_pattern (flt, "*.wav");
-    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
-    gtk_file_chooser_set_filter (GTK_FILE_CHOOSER (dlg), flt);
-    flt = gtk_file_filter_new ();
-    gtk_file_filter_set_name (flt, "Other files (*)");
-    gtk_file_filter_add_pattern (flt, "*");
-    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
-    gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dlg), TRUE);
-
-    if (gtk_dialog_run (GTK_DIALOG (dlg)) == GTK_RESPONSE_OK)
-    {
-        GSList *lst = gtk_file_chooser_get_filenames (GTK_FILE_CHOOSER (dlg));
-        g_slist_foreach(lst, addfile_func, NULL);
-        g_slist_free (lst);
-    }
-    gtk_widget_destroy (dlg);
-    setup_ps_scrollbar ();
 }
 
 
@@ -125,18 +95,21 @@ draw_ps_row_back (GdkDrawable *drawable, cairo_t *cr, int row) {
 	gdk_drawable_get_size (drawable, &width, &height);
 	w = width;
 	if (row == playlist_row) {
-        cairo_set_source_rgb (cr, 0.22, 0.1, 0.1);
-        cairo_rectangle (cr, 0, row * rowheight - trackerscroll * rowheight, width, rowheight);
+        cairo_set_source_rgb (cr, 0xae/255.f, 0xa6/255.f, 0x9d/255.f);
+        cairo_rectangle (cr, 1, row * rowheight - trackerscroll * rowheight+1, width-2, rowheight-2);
         cairo_fill (cr);
+        cairo_set_source_rgb (cr, 0x7f/255.f, 0x7f/255.f, 0x7f/255.f);
+        cairo_rectangle (cr, 0, row * rowheight - trackerscroll * rowheight, width, rowheight);
+        cairo_stroke (cr);
     }
     else {
         if (row % 2) {
-            cairo_set_source_rgb (cr, 0.88, 0.88, 0.88);
+            cairo_set_source_rgb (cr, 0x1d/255.f, 0x1f/255.f, 0x1b/255.f);
             cairo_rectangle (cr, 0, row * rowheight - trackerscroll * rowheight, w, rowheight);
             cairo_fill (cr);
         }
         else {
-            cairo_set_source_rgb (cr, 0.77, 0.77, 0.77);
+            cairo_set_source_rgb (cr, 0x21/255.f, 0x23/255.f, 0x1f/255.f);
             cairo_rectangle (cr, 0, row * rowheight - trackerscroll * rowheight, width, rowheight);
             cairo_fill (cr);
         }
@@ -161,10 +134,10 @@ text_draw (cairo_t *cr, int x, int y, const char *text) {
 void
 draw_ps_row (GdkDrawable *drawable, cairo_t *cr, int row, playItem_t *it) {
 	if (row == playlist_row) {
-        cairo_set_source_rgb (cr, 1, 1, 1);
+        cairo_set_source_rgb (cr, 0, 0, 0);
     }
     else {
-        cairo_set_source_rgb (cr, 0, 0, 0);
+        cairo_set_source_rgb (cr, 0xf4/255.f, 0x7e/255.f, 0x46/255.f);
     }
     text_draw (cr, 0, row * rowheight - trackerscroll * rowheight, it->displayname);
 }
@@ -184,8 +157,8 @@ redraw_ps_row (GtkWidget *widget, int row) {
 		return;
 	}
 
-    cairo_select_font_face (cr, "fixed", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
-    cairo_set_font_size (cr, rowheight);
+//    cairo_select_font_face (cr, "fixed", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+//    cairo_set_font_size (cr, rowheight);
 
 	playItem_t *it = ps_get_for_idx (row);
 	if (it) {
@@ -203,8 +176,8 @@ void draw_playlist (GtkWidget *widget, int x, int y, int w, int h) {
 		return;
 	}
 
-    cairo_select_font_face (cr, "fixed", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
-    cairo_set_font_size (cr, rowheight);
+//    cairo_select_font_face (cr, "fixed", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+//    cairo_set_font_size (cr, rowheight);
 	int row;
 	int row1;
 	int row2;
@@ -303,5 +276,124 @@ on_playscroll_value_changed            (GtkRange        *range,
     trackerscroll = gtk_range_get_value (GTK_RANGE (range));
     GtkWidget *playlist = lookup_widget (mainwin, "playlist");
     draw_playlist (playlist, 0, 0, playlist->allocation.width, playlist->allocation.height);
+}
+
+
+void
+on_open_activate                       (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+}
+
+
+void
+on_add_files_activate                  (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    GtkWidget *dlg = gtk_file_chooser_dialog_new ("Add file(s) to playlist...", GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
+
+    GtkFileFilter* flt;
+    flt = gtk_file_filter_new ();
+    gtk_file_filter_set_name (flt, "Supported music files");
+    gtk_file_filter_add_pattern (flt, "*.ogg");
+    gtk_file_filter_add_pattern (flt, "*.mod");
+    gtk_file_filter_add_pattern (flt, "*.wav");
+    gtk_file_filter_add_pattern (flt, "*.mp3");
+    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
+    gtk_file_chooser_set_filter (GTK_FILE_CHOOSER (dlg), flt);
+    flt = gtk_file_filter_new ();
+    gtk_file_filter_set_name (flt, "Other files (*)");
+    gtk_file_filter_add_pattern (flt, "*");
+    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
+    gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dlg), TRUE);
+
+    if (gtk_dialog_run (GTK_DIALOG (dlg)) == GTK_RESPONSE_OK)
+    {
+        GSList *lst = gtk_file_chooser_get_filenames (GTK_FILE_CHOOSER (dlg));
+        g_slist_foreach(lst, addfile_func, NULL);
+        g_slist_free (lst);
+    }
+    gtk_widget_destroy (dlg);
+    setup_ps_scrollbar ();
+    GtkWidget *playlist = lookup_widget (mainwin, "playlist");
+    draw_playlist (playlist, 0, 0, playlist->allocation.width, playlist->allocation.height);
+}
+
+
+void
+on_add_folder1_activate                (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+
+    GtkWidget *dlg = gtk_file_chooser_dialog_new ("Add folder to playlist...", GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
+
+    if (gtk_dialog_run (GTK_DIALOG (dlg)) == GTK_RESPONSE_OK)
+    {
+        gchar *folder = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dlg));
+        if (folder) {
+            ps_add_dir (folder);
+            g_free (folder);
+        }
+    }
+    gtk_widget_destroy (dlg);
+    setup_ps_scrollbar ();
+    GtkWidget *playlist = lookup_widget (mainwin, "playlist");
+    draw_playlist (playlist, 0, 0, playlist->allocation.width, playlist->allocation.height);
+}
+
+
+void
+on_preferences1_activate               (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+
+}
+
+
+void
+on_quit1_activate                      (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+
+}
+
+
+void
+on_clear1_activate                     (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+
+}
+
+
+void
+on_select_all1_activate                (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+
+}
+
+
+void
+on_remove1_activate                    (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+
+}
+
+
+void
+on_crop1_activate                      (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+
+}
+
+
+void
+on_about1_activate                     (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+
 }
 

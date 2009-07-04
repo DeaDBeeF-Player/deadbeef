@@ -39,3 +39,43 @@ on_playlist_button_press_event         (GtkWidget       *widget,
 void
 on_playscroll_value_changed            (GtkRange        *range,
                                         gpointer         user_data);
+
+void
+on_open_activate                       (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_add_files_activate                  (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_add_folder1_activate                (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_preferences1_activate               (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_quit1_activate                      (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_clear1_activate                     (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_select_all1_activate                (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_remove1_activate                    (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_crop1_activate                      (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_about1_activate                     (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
