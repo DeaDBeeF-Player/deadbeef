@@ -525,6 +525,7 @@
 	      <signal name="expose_event" handler="on_playlist_expose_event" last_modification_time="Sat, 04 Jul 2009 00:03:29 GMT"/>
 	      <signal name="realize" handler="on_playlist_realize" last_modification_time="Sat, 04 Jul 2009 00:03:36 GMT"/>
 	      <signal name="button_press_event" handler="on_playlist_button_press_event" last_modification_time="Sat, 04 Jul 2009 00:41:38 GMT"/>
+	      <signal name="scroll_event" handler="on_playlist_scroll_event" last_modification_time="Sat, 04 Jul 2009 17:16:21 GMT"/>
 	    </widget>
 	    <packing>
 	      <property name="padding">0</property>

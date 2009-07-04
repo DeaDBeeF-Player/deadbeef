@@ -353,6 +353,9 @@ create_mainwin (void)
   g_signal_connect ((gpointer) playlist, "button_press_event",
                     G_CALLBACK (on_playlist_button_press_event),
                     NULL);
+  g_signal_connect ((gpointer) playlist, "scroll_event",
+                    G_CALLBACK (on_playlist_scroll_event),
+                    NULL);
   g_signal_connect ((gpointer) playscroll, "value_changed",
                     G_CALLBACK (on_playscroll_value_changed),
                     NULL);

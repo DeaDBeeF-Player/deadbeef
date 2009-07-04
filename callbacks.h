@@ -79,3 +79,8 @@ on_crop1_activate                      (GtkMenuItem     *menuitem,
 void
 on_about1_activate                     (GtkMenuItem     *menuitem,
                                         gpointer         user_data);
+
+gboolean
+on_playlist_scroll_event               (GtkWidget       *widget,
+                                        GdkEvent        *event,
+                                        gpointer         user_data);

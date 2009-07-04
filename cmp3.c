@@ -5,8 +5,6 @@
 #include "codec.h"
 #include "cmp3.h"
 
-FILE *outf;
-
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
@@ -36,6 +34,8 @@ static mad_timer_t timer;
 static int frame_count;
 unsigned char *GuardPtr = NULL;
 
+static void cmp3_decode (void);
+
 int
 cmp3_init (const char *fname) {
     buffer.file = fopen (fname, "rb");
@@ -58,7 +58,7 @@ cmp3_init (const char *fname) {
 	mad_synth_init(&synth);
 	mad_timer_reset(&timer);
 
-    outf = fopen ("out.raw", "w+b");
+	cmp3_decode ();
 
     return 0;
 }
@@ -102,7 +102,7 @@ static signed short MadFixedToSshort(mad_fixed_t Fixed)
 
 #define MadErrorString(x) mad_stream_errorstr(x)
 
-void
+static void
 cmp3_decode (void) {
     for (;;) {
         // read more MPEG data if needed
@@ -136,9 +136,9 @@ cmp3_decode (void) {
 				if(stream.error!=MAD_ERROR_LOSTSYNC ||
 				   stream.this_frame!=GuardPtr)
 				{
-					fprintf(stderr,"recoverable frame level error (%s)\n",
-							MadErrorString(&stream));
-					fflush(stderr);
+//					fprintf(stderr,"recoverable frame level error (%s)\n",
+//							MadErrorString(&stream));
+//					fflush(stderr);
 				}
 				continue;
 			}
@@ -147,8 +147,8 @@ cmp3_decode (void) {
 					continue;
 				else
 				{
-					fprintf(stderr,"unrecoverable frame level error (%s).\n",
-							MadErrorString(&stream));
+//					fprintf(stderr,"unrecoverable frame level error (%s).\n",
+//							MadErrorString(&stream));
 					break;
 				}
             }
@@ -160,7 +160,8 @@ cmp3_decode (void) {
             cmp3.info.dataSize = -1;
             cmp3.info.channels = MAD_NCHANNELS(&frame.header);
             cmp3.info.samplesPerSecond = frame.header.samplerate;
-//            break;
+            frame_count++;
+            break;
         }
 
         frame_count++;
@@ -214,10 +215,6 @@ cmp3_free (void) {
         mad_synth_finish (&synth);
         mad_frame_finish (&frame);
         mad_stream_finish (&stream);
-    }
-    if (outf) {
-        fclose (outf);
-        outf = NULL;
     }
 }
 

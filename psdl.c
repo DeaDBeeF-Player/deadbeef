@@ -76,7 +76,7 @@ psdl_free (void) {
 
 int
 psdl_play (struct playItem_s *it) {
-    printf ("psdl_play\n");
+//    printf ("psdl_play\n");
     if (!it) {
         return -1;
     }
