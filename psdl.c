@@ -3,6 +3,8 @@
 #include "psdl.h"
 #include "codec.h"
 #include "playlist.h"
+#include "messagepump.h"
+#include "messages.h"
 
 static int sdl_player_numsamples = 2<<25;
 static int sdl_player_freq;
@@ -18,6 +20,7 @@ static SRC_DATA srcdata;
 static int codecleft;
 
 static float sdl_volume = 1;
+static float sdl_eof;
 
 int
 psdl_init (void) {
@@ -81,6 +84,7 @@ psdl_play (struct playItem_s *it) {
         return -1;
     }
     codec = it->codec;
+    sdl_eof = 0;
     if (codec->init (it->fname)) {
         return -1;
     }
@@ -99,6 +103,9 @@ psdl_stop (void) {
 
 int
 psdl_ispaused (void) {
+    if (!codec) {
+        return 0;
+    }
     return (SDL_GetAudioStatus () == SDL_AUDIO_PAUSED);
 }
 
@@ -121,11 +128,18 @@ psdl_set_volume (float vol) {
 
 static void
 psdl_callback (void* userdata, Uint8 *stream, int len) {
+    if (sdl_eof) {
+        messagepump_push (M_SONGFINISHED, 0, 0, 0);
+        memset (stream, 0, len);
+        return;
+    }
+
+    int codecret = 0;
     if (!codec) {
         memset (stream, 0, len);
     }
     else if (codec->info.samplesPerSecond == sdl_player_freq) {
-        codec->read (stream, len);
+        codecret = codec->read (stream, len);
     }
     else {
         int nsamples = len/4;
@@ -133,7 +147,7 @@ psdl_callback (void* userdata, Uint8 *stream, int len) {
         // add 5 extra samples for SRC
         nsamples = nsamples * codec->info.samplesPerSecond / sdl_player_freq + 5;
         // read data at source samplerate (with some room for SRC)
-        codec->read (sdl_buffer, (nsamples - codecleft) * 2 * codec->info.channels);
+        codecret = codec->read (sdl_buffer, (nsamples - codecleft) * 2 * codec->info.channels);
         // convert to float, and apply soft volume
         int i;
         float *fbuffer = sdl_fbuffer + codecleft*2;
@@ -165,5 +179,6 @@ psdl_callback (void* userdata, Uint8 *stream, int len) {
         // copy spare samples for next update
         memmove (sdl_fbuffer, &sdl_fbuffer[srcdata.input_frames_used*2], codecleft * 8);
     }
+    sdl_eof = codecret == -1 ? 1 : 0;
 }
 

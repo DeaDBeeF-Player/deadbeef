@@ -8,12 +8,14 @@ typedef struct {
     int channels;
     int dataSize;
     int samplesPerSecond;
+    float duration;
 } fileinfo_t;
 
 typedef struct codec_s {
     fileinfo_t info;
     int (*init) (const char *fname);
     void (*free) (void);
+    // player is responsible for starting next song if -1 is returned
     int (*read) (char *bytes, int size);
 } codec_t;
 

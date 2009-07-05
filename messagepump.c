@@ -1,0 +1,99 @@
+#include <stdio.h>
+#include <string.h>
+#include "messagepump.h"
+#include "threading.h"
+
+typedef struct message_s {
+    uint32_t id;
+    uintptr_t ctx;
+    uint32_t p1;
+    uint32_t p2;
+    struct message_s *next;
+} message_t;
+
+enum { MAX_MESSAGES = 100 };
+static message_t pool[MAX_MESSAGES];
+static message_t *mfree;
+static message_t *mqueue;
+static message_t *mqtail;
+static uintptr_t mutex;
+
+static void
+messagepump_reset (void);
+
+int
+messagepump_init (void) {
+    messagepump_reset ();
+    mutex = mutex_create ();
+}
+
+void
+messagepump_free () {
+    mutex_lock (mutex);
+    messagepump_reset ();
+    mutex_free (mutex);
+}
+
+static void
+messagepump_reset (void) {
+    mqueue = NULL;
+    mfree = NULL;
+    mqtail = NULL;
+    memset (pool, 0, sizeof (pool));
+    for (int i = 0; i < MAX_MESSAGES; i++) {
+        pool[i].next = mfree;
+        mfree = &pool[i];
+    }
+}
+
+int
+messagepump_push (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
+    if (!mfree) {
+        printf ("WARNING: message queue is full! message ignored (%d %p %d %d)\n", id, ctx, p1, p2);
+        return -1;
+    }
+    mutex_lock (mutex);
+    message_t *msg = mfree;
+    mfree = mfree->next;
+    if (mqtail) {
+        mqtail->next = msg;
+    }
+    mqtail = msg;
+    if (!mqueue) {
+        mqueue = msg;
+    }
+
+    msg->next = NULL;
+    msg->id = id;
+    msg->ctx = ctx;
+    msg->p1 = p1;
+    msg->p2 = p2;
+    mutex_unlock (mutex);
+    return 0;
+}
+
+int
+messagepump_pop (uint32_t *id, uintptr_t *ctx, uint32_t *p1, uint32_t *p2) {
+    if (!mqueue) {
+        return -1;
+    }
+    mutex_lock (mutex);
+    *id = mqueue->id;
+    *ctx = mqueue->ctx;
+    *p1 = mqueue->p1;
+    *p2 = mqueue->p2;
+    message_t *next = mqueue->next;
+    mqueue->next = mfree;
+    mfree = mqueue;
+    mqueue = next;
+    if (!mqueue) {
+        mqtail = NULL;
+    }
+    mutex_unlock (mutex);
+    return 0;
+}
+
+int
+messagepump_hasmessages (void) {
+    return mqueue ? 1 : 0;
+}

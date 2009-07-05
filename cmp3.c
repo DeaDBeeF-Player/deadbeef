@@ -32,9 +32,9 @@ static struct mad_frame frame;
 static struct mad_synth synth;
 static mad_timer_t timer;
 static int frame_count;
-unsigned char *GuardPtr = NULL;
+static int endoffile;
 
-static void cmp3_decode (void);
+static int cmp3_decode (void);
 
 int
 cmp3_init (const char *fname) {
@@ -43,22 +43,18 @@ cmp3_init (const char *fname) {
         printf ("failed to read %s\n", fname);
         return -1;
     }
-    cmp3.info.bitsPerSample = 16;
-    cmp3.info.dataSize = -1;
-    cmp3.info.channels = 2;
-    cmp3.info.samplesPerSecond = 44100;
     buffer.remaining = 0;
     buffer.output = NULL;
     buffer.readsize = 0;
     buffer.cachefill = 0;
     frame_count = 0;
-    GuardPtr = NULL;
+    endoffile = 0;
 	mad_stream_init(&stream);
 	mad_frame_init(&frame);
 	mad_synth_init(&synth);
 	mad_timer_reset(&timer);
 
-	cmp3_decode ();
+	cmp3_decode (); // this 1st run will read 1st frame, but will not decode anything except header
 
     return 0;
 }
@@ -102,7 +98,7 @@ static signed short MadFixedToSshort(mad_fixed_t Fixed)
 
 #define MadErrorString(x) mad_stream_errorstr(x)
 
-static void
+static int
 cmp3_decode (void) {
     for (;;) {
         // read more MPEG data if needed
@@ -113,19 +109,32 @@ cmp3_decode (void) {
                 memmove (buffer.input, stream.next_frame, buffer.remaining);
             }
             int size = READBUFFER - buffer.remaining;
+            int bytesread = 0;
             char *bytes = buffer.input + buffer.remaining;
-            for (;;) {
-                int bytesread = fread (bytes, 1, size, buffer.file);
-                if (bytesread < size) {
-                    fseek (buffer.file, 0, SEEK_SET);
-                    size -= bytesread;
-                    bytes += bytesread;
-                }
-                else {
-                    break;
+            if (!endoffile) {
+                for (;;) {
+                    bytesread = fread (bytes, 1, size, buffer.file);
+                    if (bytesread < size) {
+                        // end of file
+                        endoffile = 1;
+                        break;
+                        /*
+                        fseek (buffer.file, 0, SEEK_SET);
+                        size -= bytesread;
+                        bytes += bytesread;
+                        */
+                    }
+                    else {
+                        break;
+                    }
                 }
             }
-            mad_stream_buffer(&stream,buffer.input,READBUFFER);
+            if (bytesread) {
+                mad_stream_buffer(&stream,buffer.input,bytesread);
+            }
+            else {
+                return -1;
+            }
             stream.error=0;
         }
         // decode next frame
@@ -133,6 +142,7 @@ cmp3_decode (void) {
 		{
 			if(MAD_RECOVERABLE(stream.error))
 			{
+			/*
 				if(stream.error!=MAD_ERROR_LOSTSYNC ||
 				   stream.this_frame!=GuardPtr)
 				{
@@ -140,6 +150,7 @@ cmp3_decode (void) {
 							MadErrorString(&stream));
 					fflush(stderr);
 				}
+				*/
 				continue;
 			}
 			else {
@@ -160,6 +171,8 @@ cmp3_decode (void) {
             cmp3.info.dataSize = -1;
             cmp3.info.channels = MAD_NCHANNELS(&frame.header);
             cmp3.info.samplesPerSecond = frame.header.samplerate;
+            cmp3.info.duration = frame.header.duration.seconds;
+            cmp3.info.duration += (float)frame.header.duration.fraction/MAD_TIMER_RESOLUTION;
             frame_count++;
             break;
         }
@@ -204,7 +217,13 @@ cmp3_decode (void) {
         if (buffer.readsize == 0) {
             break;
         }
+        if (buffer.readsize > 0 && endoffile) {
+            // fill rest with zeroes, and return -1
+            memset (buffer.output, 0, buffer.readsize);
+            return -1;
+        }
     }
+    return 0;
 }
 
 void
@@ -222,6 +241,7 @@ int
 cmp3_read (char *bytes, int size) {
     int result;
     int totalread = 0;
+    int ret = 0;
     if (buffer.cachefill > 0) {
         int sz = min (size, buffer.cachefill);
         memcpy (bytes, buffer.cache, sz);
@@ -239,10 +259,10 @@ cmp3_read (char *bytes, int size) {
     if (size > 0) {
         buffer.output = bytes;
         buffer.readsize = size;
-        cmp3_decode ();//mad_decoder_run(&decoder, MAD_DECODER_MODE_SYNC);
+        ret = cmp3_decode ();
         totalread += size;
     }
-    return 0;
+    return ret;
 }
 
 codec_t cmp3 = {

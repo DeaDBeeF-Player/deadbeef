@@ -7,6 +7,9 @@
 #include "psdl.h"
 #include "unistd.h"
 #include "threading.h"
+#include "messagepump.h"
+#include "messages.h"
+#include "gtkplaylist.h"
 
 GtkWidget *mainwin;
 
@@ -16,7 +19,27 @@ void
 psdl_thread (uintptr_t ctx) {
     psdl_init ();
     while (!psdl_terminate) {
-        sleep(1);
+        uint32_t msg;
+        uintptr_t ctx;
+        uint32_t p1;
+        uint32_t p2;
+        while (messagepump_pop(&msg, &ctx, &p1, &p2) != -1) {
+            switch (msg) {
+            case M_SONGFINISHED:
+                // play next song in playlists
+                GDK_THREADS_ENTER();
+                gtkps_nextsong ();
+                GDK_THREADS_LEAVE();
+                break;
+            case M_PLAYSONG:
+                printf ("playsong!\n");
+                GDK_THREADS_ENTER();
+                gtkps_playsong ();
+                GDK_THREADS_LEAVE();
+                break;
+            }
+        }
+        usleep(10);
         // handle message pump here
     }
     psdl_free ();
@@ -25,9 +48,13 @@ psdl_thread (uintptr_t ctx) {
 
 int
 main (int argc, char *argv[]) {
-    thread_start (psdl_thread, 0);
+    messagepump_init ();
+//    thread_start (psdl_thread, 0);
 
-    gtk_set_locale ();
+    g_thread_init (NULL);
+    gdk_threads_init ();
+    gdk_threads_enter ();
+//    gtk_set_locale ();
     gtk_init (&argc, &argv);
 
     /*
@@ -38,6 +65,8 @@ main (int argc, char *argv[]) {
     mainwin = create_mainwin ();
     gtk_widget_show (mainwin);
     gtk_main ();
+    gdk_threads_leave ();
+    messagepump_free ();
     psdl_terminate = 1;
     return 0;
 }

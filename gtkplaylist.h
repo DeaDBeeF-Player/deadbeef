@@ -1,0 +1,40 @@
+#ifndef __GTKPLAYLIST_H
+#define __GTKPLAYLIST_H
+
+#include <gtk/gtk.h>
+#include "playlist.h"
+
+void
+gtkps_nextsong (void);
+
+void
+redraw_ps_row (GtkWidget *widget, int row);
+
+void
+gtkps_setup_scrollbar (void);
+
+void
+draw_ps_row_back (GdkDrawable *drawable, cairo_t *cr, int row);
+
+void
+draw_ps_row (GdkDrawable *drawable, cairo_t *cr, int row, playItem_t *it);
+
+void
+draw_playlist (GtkWidget *widget, int x, int y, int w, int h);
+
+void
+gtkps_reconf (GtkWidget *widget);
+
+void
+gtkps_expose (GtkWidget       *widget, int x, int y, int w, int h);
+
+void
+gtkps_mouse1_clicked (GtkWidget *widget, int ex, int ey, double time);
+
+void
+gtkps_scroll (int newscroll);
+
+void
+gtkps_playsong (void);
+
+#endif
