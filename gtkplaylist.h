@@ -35,6 +35,21 @@ void
 gtkps_scroll (int newscroll);
 
 void
+gtkps_stopsong (void);
+
+void
 gtkps_playsong (void);
+
+void
+gtkps_prevsong (void);
+
+void
+gtkps_nextsong (void);
+
+void
+gtkps_randomsong (void);
+
+void
+gtkps_pausesong (void);
 
 #endif

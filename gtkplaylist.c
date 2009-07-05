@@ -12,6 +12,8 @@
 #include "playlist.h"
 #include "psdl.h"
 #include "common.h"
+#include "messagepump.h"
+#include "messages.h"
 
 extern GtkWidget *mainwin;
 static GdkPixmap *backbuf;
@@ -68,30 +70,6 @@ redraw_ps_row (GtkWidget *widget, int row) {
     }
     cairo_destroy (cr);
 	gdk_draw_drawable (widget->window, widget->style->black_gc, backbuf, x, y, x, y, w, h);
-}
-
-void
-gtkps_nextsong (void) {
-    GtkWidget *widget = lookup_widget (mainwin, "playlist");
-    playItem_t *prev = playlist_current;
-    if (playlist_current) {
-        playlist_current = playlist_current->next;
-    }
-    if (!playlist_current) {
-        playlist_current = playlist_head;
-    }
-    if (playlist_current) {
-        psdl_stop ();
-        psdl_play (playlist_current);
-    }
-    if (playlist_current != prev) {
-        if (prev) {
-            redraw_ps_row (widget, ps_get_idx_of (prev));
-        }
-        if (playlist_current) {
-            redraw_ps_row (widget, ps_get_idx_of (playlist_current));
-        }
-    }
 }
 
 void
@@ -234,12 +212,13 @@ gtkps_mouse1_clicked (GtkWidget *widget, int ex, int ey, double time) {
                     if (prev) {
                         redraw_ps_row (widget, ps_get_idx_of (prev));
                     }
-                    if (playlist_current) {
-                        redraw_ps_row (widget, ps_get_idx_of (playlist_current));
-                    }
+//                    if (playlist_current) {
+//                        redraw_ps_row (widget, ps_get_idx_of (playlist_current));
+//                    }
                 }
-                psdl_stop ();
-                psdl_play (it);
+                messagepump_push (M_PLAYSONG, 0, 0, 0);
+//                psdl_stop ();
+//                psdl_play (it);
             }
         }
 
@@ -295,5 +274,98 @@ gtkps_playsong (void) {
             GtkWidget *widget = lookup_widget (mainwin, "playlist");
             redraw_ps_row (widget, ps_get_idx_of (playlist_current));
         }
+    }
+}
+
+void
+gtkps_prevsong (void) {
+    GtkWidget *widget = lookup_widget (mainwin, "playlist");
+    playItem_t *prev = playlist_current;
+
+    if (playlist_current) {
+        playlist_current = playlist_current->prev;
+    }
+    if (!playlist_current) {
+        playlist_current = playlist_tail;
+    }
+    if (playlist_current) {
+        psdl_stop ();
+        psdl_play (playlist_current);
+    }
+    if (playlist_current != prev) {
+        if (prev) {
+            redraw_ps_row (widget, ps_get_idx_of (prev));
+        }
+        if (playlist_current) {
+            redraw_ps_row (widget, ps_get_idx_of (playlist_current));
+        }
+    }
+}
+
+void
+gtkps_nextsong (void) {
+    GtkWidget *widget = lookup_widget (mainwin, "playlist");
+    playItem_t *prev = playlist_current;
+    if (playlist_current) {
+        playlist_current = playlist_current->next;
+    }
+    if (!playlist_current) {
+        playlist_current = playlist_head;
+    }
+    if (playlist_current) {
+        psdl_stop ();
+        psdl_play (playlist_current);
+    }
+    if (playlist_current != prev) {
+        if (prev) {
+            redraw_ps_row (widget, ps_get_idx_of (prev));
+        }
+        if (playlist_current) {
+            redraw_ps_row (widget, ps_get_idx_of (playlist_current));
+        }
+    }
+}
+
+void
+gtkps_randomsong (void) {
+    if (!ps_getcount ()) {
+        return;
+    }
+    GtkWidget *widget = lookup_widget (mainwin, "playlist");
+    playItem_t *prev = playlist_current;
+    int r = rand () % ps_getcount ();
+    playItem_t *it = ps_get_for_idx (r);
+    if (it) {
+        playlist_current = it;
+    }
+    else {
+        playlist_current = NULL;
+    }
+    if (playlist_current) {
+        psdl_stop ();
+        psdl_play (playlist_current);
+    }
+    if (playlist_current != prev) {
+        if (prev) {
+            redraw_ps_row (widget, ps_get_idx_of (prev));
+        }
+        if (playlist_current) {
+            redraw_ps_row (widget, ps_get_idx_of (playlist_current));
+        }
+    }
+}
+
+void
+gtkps_stopsong (void) {
+    psdl_stop ();
+}
+
+void
+gtkps_pausesong (void) {
+    if (psdl_ispaused ()) {
+        psdl_unpause ();
+    }
+    else {
+        psdl_pause ();
     }
 }

@@ -32,9 +32,33 @@ psdl_thread (uintptr_t ctx) {
                 GDK_THREADS_LEAVE();
                 break;
             case M_PLAYSONG:
-                printf ("playsong!\n");
                 GDK_THREADS_ENTER();
                 gtkps_playsong ();
+                GDK_THREADS_LEAVE();
+                break;
+            case M_STOPSONG:
+                GDK_THREADS_ENTER();
+                gtkps_stopsong ();
+                GDK_THREADS_LEAVE();
+                break;
+            case M_NEXTSONG:
+                GDK_THREADS_ENTER();
+                gtkps_nextsong ();
+                GDK_THREADS_LEAVE();
+                break;
+            case M_PREVSONG:
+                GDK_THREADS_ENTER();
+                gtkps_prevsong ();
+                GDK_THREADS_LEAVE();
+                break;
+            case M_PAUSESONG:
+                GDK_THREADS_ENTER();
+                gtkps_pausesong ();
+                GDK_THREADS_LEAVE();
+                break;
+            case M_PLAYRANDOM:
+                GDK_THREADS_ENTER();
+                gtkps_randomsong ();
                 GDK_THREADS_LEAVE();
                 break;
             }
@@ -49,12 +73,12 @@ psdl_thread (uintptr_t ctx) {
 int
 main (int argc, char *argv[]) {
     messagepump_init ();
-//    thread_start (psdl_thread, 0);
+    thread_start (psdl_thread, 0);
 
     g_thread_init (NULL);
     gdk_threads_init ();
     gdk_threads_enter ();
-//    gtk_set_locale ();
+    gtk_set_locale ();
     gtk_init (&argc, &argv);
 
     /*
