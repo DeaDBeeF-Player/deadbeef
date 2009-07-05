@@ -34,4 +34,7 @@ ps_getcount (void);
 playItem_t *
 ps_get_for_idx (int idx);
 
+int
+ps_get_idx_of (playItem_t *it);
+
 #endif // __PLAYLIST_H

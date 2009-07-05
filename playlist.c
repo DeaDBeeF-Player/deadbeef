@@ -154,3 +154,16 @@ ps_get_for_idx (int idx) {
     return it;
 }
 
+int
+ps_get_idx_of (playItem_t *it) {
+    playItem_t *c = playlist_head;
+    int idx = 0;
+    while (c && c != it) {
+        c = c->next;
+        idx++;
+    }
+    if (!c) {
+        return -1;
+    }
+    return idx;
+}

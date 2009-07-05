@@ -95,13 +95,18 @@ void
 draw_ps_row (GdkDrawable *drawable, cairo_t *cr, int row, playItem_t *it) {
 	int width, height;
 	gdk_drawable_get_size (drawable, &width, &height);
+    if (it == playlist_current) {
+        cairo_set_source_rgb (cr, 1, 1, 1);
+        cairo_rectangle (cr, 3, row * rowheight - trackerscroll * rowheight + 3, rowheight-6, rowheight-6);
+        cairo_fill (cr);
+    }
 	if (row == playlist_row) {
         cairo_set_source_rgb (cr, 0, 0, 0);
     }
     else {
         cairo_set_source_rgb (cr, 0xf4/255.f, 0x7e/255.f, 0x46/255.f);
     }
-    text_draw (cr, 0, row * rowheight - trackerscroll * rowheight, it->displayname);
+    text_draw (cr, rowheight, row * rowheight - trackerscroll * rowheight, it->displayname);
 }
 
 void
@@ -250,9 +255,18 @@ on_playlist_button_press_event         (GtkWidget       *widget,
             if (playlist_row != -1) {
                 playItem_t *it = ps_get_for_idx (playlist_row);
                 if (it) {
+                    playItem_t *prev = playlist_current;
+                    playlist_current = it;
+                    if (playlist_current != prev) {
+                        if (prev) {
+                            redraw_ps_row (widget, ps_get_idx_of (prev));
+                        }
+                        if (playlist_current) {
+                            redraw_ps_row (widget, ps_get_idx_of (playlist_current));
+                        }
+                    }
                     psdl_stop ();
                     psdl_play (it);
-                    playlist_current = it;
                 }
             }
 
@@ -438,6 +452,12 @@ on_playbtn_clicked                     (GtkButton       *button,
 {
     if (psdl_ispaused ())
         psdl_unpause ();
+    else if (playlist_current) {
+        psdl_stop ();
+        psdl_play (playlist_current);
+        GtkWidget *widget = lookup_widget (mainwin, "playlist");
+        redraw_ps_row (widget, ps_get_idx_of (playlist_current));
+    }
     else if (playlist_row != -1) {
         playItem_t *it = ps_get_for_idx (playlist_row);
         if (it) {
@@ -445,6 +465,8 @@ on_playbtn_clicked                     (GtkButton       *button,
             psdl_play (it);
             playlist_current = it;
         }
+        GtkWidget *widget = lookup_widget (mainwin, "playlist");
+        redraw_ps_row (widget, playlist_row);
     }
 }
 
@@ -466,6 +488,9 @@ void
 on_prevbtn_clicked                     (GtkButton       *button,
                                         gpointer         user_data)
 {
+    GtkWidget *widget = lookup_widget (mainwin, "playlist");
+    playItem_t *prev = playlist_current;
+
     if (playlist_current) {
         playlist_current = playlist_current->prev;
     }
@@ -476,6 +501,14 @@ on_prevbtn_clicked                     (GtkButton       *button,
         psdl_stop ();
         psdl_play (playlist_current);
     }
+    if (playlist_current != prev) {
+        if (prev) {
+            redraw_ps_row (widget, ps_get_idx_of (prev));
+        }
+        if (playlist_current) {
+            redraw_ps_row (widget, ps_get_idx_of (playlist_current));
+        }
+    }
 }
 
 
@@ -483,6 +516,8 @@ void
 on_nextbtn_clicked                     (GtkButton       *button,
                                         gpointer         user_data)
 {
+    GtkWidget *widget = lookup_widget (mainwin, "playlist");
+    playItem_t *prev = playlist_current;
     if (playlist_current) {
         playlist_current = playlist_current->next;
     }
@@ -493,6 +528,14 @@ on_nextbtn_clicked                     (GtkButton       *button,
         psdl_stop ();
         psdl_play (playlist_current);
     }
+    if (playlist_current != prev) {
+        if (prev) {
+            redraw_ps_row (widget, ps_get_idx_of (prev));
+        }
+        if (playlist_current) {
+            redraw_ps_row (widget, ps_get_idx_of (playlist_current));
+        }
+    }
 }
 
 
@@ -500,6 +543,8 @@ void
 on_playrand_clicked                    (GtkButton       *button,
                                         gpointer         user_data)
 {
+    GtkWidget *widget = lookup_widget (mainwin, "playlist");
+    playItem_t *prev = playlist_current;
     int r = rand () % ps_getcount ();
     playItem_t *it = ps_get_for_idx (r);
     if (it) {
@@ -511,6 +556,14 @@ on_playrand_clicked                    (GtkButton       *button,
     if (playlist_current) {
         psdl_stop ();
         psdl_play (playlist_current);
+    }
+    if (playlist_current != prev) {
+        if (prev) {
+            redraw_ps_row (widget, ps_get_idx_of (prev));
+        }
+        if (playlist_current) {
+            redraw_ps_row (widget, ps_get_idx_of (playlist_current));
+        }
     }
 }
 
