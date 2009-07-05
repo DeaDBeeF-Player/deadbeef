@@ -123,6 +123,7 @@ cmp3_decode (void) {
                     */
                 }
             }
+            bytesread += buffer.remaining;
             if (bytesread) {
                 mad_stream_buffer(&stream,buffer.input,bytesread);
             }
