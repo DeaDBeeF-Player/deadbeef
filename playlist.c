@@ -81,7 +81,7 @@ ps_add_dir (const char *dirname) {
     struct dirent **namelist = NULL;
     int n;
 
-    n = scandir (dirname, &namelist, NULL, NULL);
+    n = scandir (dirname, &namelist, NULL, alphasort);
     if (n < 0)
     {
         if (namelist)
@@ -90,20 +90,21 @@ ps_add_dir (const char *dirname) {
     }
     else
     {
-        while (n--)
+        int i;
+        for (i = 0; i < n; i++)
         {
             // no hidden files
-            if (namelist[n]->d_name[0] != '.')
+            if (namelist[i]->d_name[0] != '.')
             {
                 char fullname[1024];
                 strcpy (fullname, dirname);
                 strncat (fullname, "/", 1024);
-                strncat (fullname, namelist[n]->d_name, 1024);
+                strncat (fullname, namelist[i]->d_name, 1024);
                 if (ps_add_dir (fullname)) {
                     ps_add_file (fullname);
                 }
             }
-            free (namelist[n]);
+            free (namelist[i]);
         }
         free (namelist);
     }

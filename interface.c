@@ -57,17 +57,17 @@ create_mainwin (void)
   GtkWidget *about1;
   GtkWidget *handlebox2;
   GtkWidget *hbox3;
-  GtkWidget *button4;
+  GtkWidget *stopbtn;
   GtkWidget *image1;
-  GtkWidget *button5;
+  GtkWidget *playbtn;
   GtkWidget *image2;
-  GtkWidget *button6;
+  GtkWidget *pausebtn;
   GtkWidget *image3;
-  GtkWidget *button7;
+  GtkWidget *prevbtn;
   GtkWidget *image4;
-  GtkWidget *button8;
+  GtkWidget *nextbtn;
   GtkWidget *image5;
-  GtkWidget *button9;
+  GtkWidget *playrand;
   GtkWidget *alignment1;
   GtkWidget *hbox4;
   GtkWidget *image6;
@@ -195,59 +195,59 @@ create_mainwin (void)
   gtk_widget_show (hbox3);
   gtk_container_add (GTK_CONTAINER (handlebox2), hbox3);
 
-  button4 = gtk_button_new ();
-  gtk_widget_show (button4);
-  gtk_box_pack_start (GTK_BOX (hbox3), button4, FALSE, FALSE, 0);
-  gtk_button_set_relief (GTK_BUTTON (button4), GTK_RELIEF_NONE);
+  stopbtn = gtk_button_new ();
+  gtk_widget_show (stopbtn);
+  gtk_box_pack_start (GTK_BOX (hbox3), stopbtn, FALSE, FALSE, 0);
+  gtk_button_set_relief (GTK_BUTTON (stopbtn), GTK_RELIEF_NONE);
 
   image1 = gtk_image_new_from_stock ("gtk-media-stop", GTK_ICON_SIZE_BUTTON);
   gtk_widget_show (image1);
-  gtk_container_add (GTK_CONTAINER (button4), image1);
+  gtk_container_add (GTK_CONTAINER (stopbtn), image1);
 
-  button5 = gtk_button_new ();
-  gtk_widget_show (button5);
-  gtk_box_pack_start (GTK_BOX (hbox3), button5, FALSE, FALSE, 0);
-  gtk_button_set_relief (GTK_BUTTON (button5), GTK_RELIEF_NONE);
+  playbtn = gtk_button_new ();
+  gtk_widget_show (playbtn);
+  gtk_box_pack_start (GTK_BOX (hbox3), playbtn, FALSE, FALSE, 0);
+  gtk_button_set_relief (GTK_BUTTON (playbtn), GTK_RELIEF_NONE);
 
   image2 = gtk_image_new_from_stock ("gtk-media-play", GTK_ICON_SIZE_BUTTON);
   gtk_widget_show (image2);
-  gtk_container_add (GTK_CONTAINER (button5), image2);
+  gtk_container_add (GTK_CONTAINER (playbtn), image2);
 
-  button6 = gtk_button_new ();
-  gtk_widget_show (button6);
-  gtk_box_pack_start (GTK_BOX (hbox3), button6, FALSE, FALSE, 0);
-  gtk_button_set_relief (GTK_BUTTON (button6), GTK_RELIEF_NONE);
+  pausebtn = gtk_button_new ();
+  gtk_widget_show (pausebtn);
+  gtk_box_pack_start (GTK_BOX (hbox3), pausebtn, FALSE, FALSE, 0);
+  gtk_button_set_relief (GTK_BUTTON (pausebtn), GTK_RELIEF_NONE);
 
   image3 = gtk_image_new_from_stock ("gtk-media-pause", GTK_ICON_SIZE_BUTTON);
   gtk_widget_show (image3);
-  gtk_container_add (GTK_CONTAINER (button6), image3);
+  gtk_container_add (GTK_CONTAINER (pausebtn), image3);
 
-  button7 = gtk_button_new ();
-  gtk_widget_show (button7);
-  gtk_box_pack_start (GTK_BOX (hbox3), button7, FALSE, FALSE, 0);
-  gtk_button_set_relief (GTK_BUTTON (button7), GTK_RELIEF_NONE);
+  prevbtn = gtk_button_new ();
+  gtk_widget_show (prevbtn);
+  gtk_box_pack_start (GTK_BOX (hbox3), prevbtn, FALSE, FALSE, 0);
+  gtk_button_set_relief (GTK_BUTTON (prevbtn), GTK_RELIEF_NONE);
 
   image4 = gtk_image_new_from_stock ("gtk-media-previous", GTK_ICON_SIZE_BUTTON);
   gtk_widget_show (image4);
-  gtk_container_add (GTK_CONTAINER (button7), image4);
+  gtk_container_add (GTK_CONTAINER (prevbtn), image4);
 
-  button8 = gtk_button_new ();
-  gtk_widget_show (button8);
-  gtk_box_pack_start (GTK_BOX (hbox3), button8, FALSE, FALSE, 0);
-  gtk_button_set_relief (GTK_BUTTON (button8), GTK_RELIEF_NONE);
+  nextbtn = gtk_button_new ();
+  gtk_widget_show (nextbtn);
+  gtk_box_pack_start (GTK_BOX (hbox3), nextbtn, FALSE, FALSE, 0);
+  gtk_button_set_relief (GTK_BUTTON (nextbtn), GTK_RELIEF_NONE);
 
   image5 = gtk_image_new_from_stock ("gtk-media-next", GTK_ICON_SIZE_BUTTON);
   gtk_widget_show (image5);
-  gtk_container_add (GTK_CONTAINER (button8), image5);
+  gtk_container_add (GTK_CONTAINER (nextbtn), image5);
 
-  button9 = gtk_button_new ();
-  gtk_widget_show (button9);
-  gtk_box_pack_start (GTK_BOX (hbox3), button9, FALSE, FALSE, 0);
-  gtk_button_set_relief (GTK_BUTTON (button9), GTK_RELIEF_NONE);
+  playrand = gtk_button_new ();
+  gtk_widget_show (playrand);
+  gtk_box_pack_start (GTK_BOX (hbox3), playrand, FALSE, FALSE, 0);
+  gtk_button_set_relief (GTK_BUTTON (playrand), GTK_RELIEF_NONE);
 
   alignment1 = gtk_alignment_new (0.5, 0.5, 0, 0);
   gtk_widget_show (alignment1);
-  gtk_container_add (GTK_CONTAINER (button9), alignment1);
+  gtk_container_add (GTK_CONTAINER (playrand), alignment1);
 
   hbox4 = gtk_hbox_new (FALSE, 2);
   gtk_widget_show (hbox4);
@@ -335,6 +335,24 @@ create_mainwin (void)
   g_signal_connect ((gpointer) about1, "activate",
                     G_CALLBACK (on_about1_activate),
                     NULL);
+  g_signal_connect ((gpointer) stopbtn, "clicked",
+                    G_CALLBACK (on_stopbtn_clicked),
+                    NULL);
+  g_signal_connect ((gpointer) playbtn, "clicked",
+                    G_CALLBACK (on_playbtn_clicked),
+                    NULL);
+  g_signal_connect ((gpointer) pausebtn, "clicked",
+                    G_CALLBACK (on_pausebtn_clicked),
+                    NULL);
+  g_signal_connect ((gpointer) prevbtn, "clicked",
+                    G_CALLBACK (on_prevbtn_clicked),
+                    NULL);
+  g_signal_connect ((gpointer) nextbtn, "clicked",
+                    G_CALLBACK (on_nextbtn_clicked),
+                    NULL);
+  g_signal_connect ((gpointer) playrand, "clicked",
+                    G_CALLBACK (on_playrand_clicked),
+                    NULL);
   g_signal_connect ((gpointer) volume, "value_changed",
                     G_CALLBACK (on_volume_value_changed),
                     NULL);
@@ -389,17 +407,17 @@ create_mainwin (void)
   GLADE_HOOKUP_OBJECT (mainwin, about1, "about1");
   GLADE_HOOKUP_OBJECT (mainwin, handlebox2, "handlebox2");
   GLADE_HOOKUP_OBJECT (mainwin, hbox3, "hbox3");
-  GLADE_HOOKUP_OBJECT (mainwin, button4, "button4");
+  GLADE_HOOKUP_OBJECT (mainwin, stopbtn, "stopbtn");
   GLADE_HOOKUP_OBJECT (mainwin, image1, "image1");
-  GLADE_HOOKUP_OBJECT (mainwin, button5, "button5");
+  GLADE_HOOKUP_OBJECT (mainwin, playbtn, "playbtn");
   GLADE_HOOKUP_OBJECT (mainwin, image2, "image2");
-  GLADE_HOOKUP_OBJECT (mainwin, button6, "button6");
+  GLADE_HOOKUP_OBJECT (mainwin, pausebtn, "pausebtn");
   GLADE_HOOKUP_OBJECT (mainwin, image3, "image3");
-  GLADE_HOOKUP_OBJECT (mainwin, button7, "button7");
+  GLADE_HOOKUP_OBJECT (mainwin, prevbtn, "prevbtn");
   GLADE_HOOKUP_OBJECT (mainwin, image4, "image4");
-  GLADE_HOOKUP_OBJECT (mainwin, button8, "button8");
+  GLADE_HOOKUP_OBJECT (mainwin, nextbtn, "nextbtn");
   GLADE_HOOKUP_OBJECT (mainwin, image5, "image5");
-  GLADE_HOOKUP_OBJECT (mainwin, button9, "button9");
+  GLADE_HOOKUP_OBJECT (mainwin, playrand, "playrand");
   GLADE_HOOKUP_OBJECT (mainwin, alignment1, "alignment1");
   GLADE_HOOKUP_OBJECT (mainwin, hbox4, "hbox4");
   GLADE_HOOKUP_OBJECT (mainwin, image6, "image6");

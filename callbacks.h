@@ -84,3 +84,27 @@ gboolean
 on_playlist_scroll_event               (GtkWidget       *widget,
                                         GdkEvent        *event,
                                         gpointer         user_data);
+
+void
+on_stopbtn_clicked                     (GtkButton       *button,
+                                        gpointer         user_data);
+
+void
+on_playbtn_clicked                     (GtkButton       *button,
+                                        gpointer         user_data);
+
+void
+on_pausebtn_clicked                    (GtkButton       *button,
+                                        gpointer         user_data);
+
+void
+on_prevbtn_clicked                     (GtkButton       *button,
+                                        gpointer         user_data);
+
+void
+on_nextbtn_clicked                     (GtkButton       *button,
+                                        gpointer         user_data);
+
+void
+on_playrand_clicked                    (GtkButton       *button,
+                                        gpointer         user_data);

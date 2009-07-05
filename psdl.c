@@ -98,8 +98,20 @@ psdl_stop (void) {
 }
 
 int
+psdl_ispaused (void) {
+    return (SDL_GetAudioStatus () == SDL_AUDIO_PAUSED);
+}
+
+int
 psdl_pause (void) {
 	SDL_PauseAudio (1);
+	return 0;
+}
+
+int
+psdl_unpause (void) {
+	SDL_PauseAudio (0);
+	return 0;
 }
 
 void

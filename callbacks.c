@@ -4,6 +4,7 @@
 
 #include <gtk/gtk.h>
 #include <math.h>
+#include <stdlib.h>
 
 #include "callbacks.h"
 #include "interface.h"
@@ -164,14 +165,6 @@ void draw_playlist (GtkWidget *widget, int x, int y, int w, int h) {
 
 
 void
-on_playbtn_clicked                     (GtkButton       *button,
-        gpointer         user_data)
-{
-
-}
-
-
-void
 on_volume_value_changed                (GtkRange        *range,
         gpointer         user_data)
 {
@@ -259,6 +252,7 @@ on_playlist_button_press_event         (GtkWidget       *widget,
                 if (it) {
                     psdl_stop ();
                     psdl_play (it);
+                    playlist_current = it;
                 }
             }
 
@@ -427,5 +421,96 @@ on_playlist_scroll_event               (GtkWidget       *widget,
     }
     gtk_range_set_value (GTK_RANGE (range), newscroll);
     return FALSE;
+}
+
+
+void
+on_stopbtn_clicked                     (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    psdl_stop ();
+}
+
+
+void
+on_playbtn_clicked                     (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    if (psdl_ispaused ())
+        psdl_unpause ();
+    else if (playlist_row != -1) {
+        playItem_t *it = ps_get_for_idx (playlist_row);
+        if (it) {
+            psdl_stop ();
+            psdl_play (it);
+            playlist_current = it;
+        }
+    }
+}
+
+
+void
+on_pausebtn_clicked                    (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    if (psdl_ispaused ()) {
+        psdl_unpause ();
+    }
+    else {
+        psdl_pause ();
+    }
+}
+
+
+void
+on_prevbtn_clicked                     (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    if (playlist_current) {
+        playlist_current = playlist_current->prev;
+    }
+    if (!playlist_current) {
+        playlist_current = playlist_tail;
+    }
+    if (playlist_current) {
+        psdl_stop ();
+        psdl_play (playlist_current);
+    }
+}
+
+
+void
+on_nextbtn_clicked                     (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    if (playlist_current) {
+        playlist_current = playlist_current->next;
+    }
+    if (!playlist_current) {
+        playlist_current = playlist_head;
+    }
+    if (playlist_current) {
+        psdl_stop ();
+        psdl_play (playlist_current);
+    }
+}
+
+
+void
+on_playrand_clicked                    (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    int r = rand () % ps_getcount ();
+    playItem_t *it = ps_get_for_idx (r);
+    if (it) {
+        playlist_current = it;
+    }
+    else {
+        playlist_current = NULL;
+    }
+    if (playlist_current) {
+        psdl_stop ();
+        psdl_play (playlist_current);
+    }
 }
 

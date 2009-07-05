@@ -16,7 +16,13 @@ int
 psdl_stop (void);
 
 int
+psdl_ispaused (void);
+
+int
 psdl_pause (void);
+
+int
+psdl_unpause (void);
 
 void
 psdl_set_volume (float vol);
