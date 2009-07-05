@@ -112,21 +112,15 @@ cmp3_decode (void) {
             int bytesread = 0;
             char *bytes = buffer.input + buffer.remaining;
             if (!endoffile) {
-                for (;;) {
-                    bytesread = fread (bytes, 1, size, buffer.file);
-                    if (bytesread < size) {
-                        // end of file
-                        endoffile = 1;
-                        break;
-                        /*
-                        fseek (buffer.file, 0, SEEK_SET);
-                        size -= bytesread;
-                        bytes += bytesread;
-                        */
-                    }
-                    else {
-                        break;
-                    }
+                bytesread = fread (bytes, 1, size, buffer.file);
+                if (bytesread < size) {
+                    // end of file
+                    endoffile = 1;
+                    size -= bytesread;
+                    bytes += bytesread;
+                    /*
+                    fseek (buffer.file, 0, SEEK_SET);
+                    */
                 }
             }
             if (bytesread) {
@@ -142,15 +136,12 @@ cmp3_decode (void) {
 		{
 			if(MAD_RECOVERABLE(stream.error))
 			{
-			/*
-				if(stream.error!=MAD_ERROR_LOSTSYNC ||
-				   stream.this_frame!=GuardPtr)
+				if(stream.error!=MAD_ERROR_LOSTSYNC)
 				{
 					fprintf(stderr,"recoverable frame level error (%s)\n",
 							MadErrorString(&stream));
 					fflush(stderr);
 				}
-				*/
 				continue;
 			}
 			else {
