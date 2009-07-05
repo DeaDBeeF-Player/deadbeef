@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <mad.h>
 #include <assert.h>
+#include <stdlib.h>
 #include "codec.h"
 #include "cmp3.h"
 
@@ -31,10 +32,13 @@ static struct mad_stream stream;
 static struct mad_frame frame;
 static struct mad_synth synth;
 static mad_timer_t timer;
-static int frame_count;
 static int endoffile;
 
-static int cmp3_decode (void);
+static int
+cmp3_decode (void);
+
+static int
+cmp3_get_stream_info (void);
 
 int
 cmp3_init (const char *fname) {
@@ -47,14 +51,17 @@ cmp3_init (const char *fname) {
     buffer.output = NULL;
     buffer.readsize = 0;
     buffer.cachefill = 0;
-    frame_count = 0;
     endoffile = 0;
 	mad_stream_init(&stream);
 	mad_frame_init(&frame);
 	mad_synth_init(&synth);
 	mad_timer_reset(&timer);
 
-	cmp3_decode (); // this 1st run will read 1st frame, but will not decode anything except header
+    if (cmp3_get_stream_info () == -1) {
+        return -1;
+    }
+    fseek (buffer.file, 0, SEEK_SET);
+//	cmp3_decode (); // this 1st run will read 1st frame, but will not decode anything except header
 
     return 0;
 }
@@ -99,8 +106,12 @@ static signed short MadFixedToSshort(mad_fixed_t Fixed)
 #define MadErrorString(x) mad_stream_errorstr(x)
 
 static int
-cmp3_decode (void) {
-    for (;;) {
+cmp3_get_stream_info (void) {
+    int frame_count = 0;
+    mad_timer_t timer;
+	mad_timer_reset(&timer);
+    int endoffile = 0;
+    while (!endoffile) {
         // read more MPEG data if needed
         if(stream.buffer==NULL || stream.error==MAD_ERROR_BUFLEN) {
             // copy part of last frame to beginning
@@ -163,13 +174,150 @@ cmp3_decode (void) {
             cmp3.info.dataSize = -1;
             cmp3.info.channels = MAD_NCHANNELS(&frame.header);
             cmp3.info.samplesPerSecond = frame.header.samplerate;
-            cmp3.info.duration = frame.header.duration.seconds;
-            cmp3.info.duration += (float)frame.header.duration.fraction/MAD_TIMER_RESOLUTION;
-            frame_count++;
-            break;
         }
 
         frame_count++;
+		mad_timer_add(&timer,frame.header.duration);
+		
+//		mad_synth_frame(&synth,&frame);
+
+    }
+    cmp3.info.duration = timer.seconds;
+    cmp3.info.duration += (float)timer.fraction/MAD_TIMER_RESOLUTION;
+    printf ("song duration: %dsec %dfrac (%f)\n", timer.seconds, timer.fraction, cmp3.info.duration);
+    return 0;
+}
+
+static int
+cmp3_skip (float seconds) {
+    mad_timer_t timer;
+	mad_timer_reset(&timer);
+    int endoffile = 0;
+    float duration = 0;
+    while (!endoffile) {
+        // read more MPEG data if needed
+        if(stream.buffer==NULL || stream.error==MAD_ERROR_BUFLEN) {
+            // copy part of last frame to beginning
+            if (stream.next_frame != NULL) {
+                buffer.remaining = stream.bufend - stream.next_frame;
+                memmove (buffer.input, stream.next_frame, buffer.remaining);
+            }
+            int size = READBUFFER - buffer.remaining;
+            int bytesread = 0;
+            char *bytes = buffer.input + buffer.remaining;
+            if (!endoffile) {
+                bytesread = fread (bytes, 1, size, buffer.file);
+                if (bytesread < size) {
+                    // end of file
+                    endoffile = 1;
+                    size -= bytesread;
+                    bytes += bytesread;
+                    /*
+                    fseek (buffer.file, 0, SEEK_SET);
+                    */
+                }
+            }
+            bytesread += buffer.remaining;
+            if (bytesread) {
+                mad_stream_buffer(&stream,buffer.input,bytesread);
+            }
+            else {
+                return -1;
+            }
+            stream.error=0;
+        }
+        // decode next frame
+		if(mad_frame_decode(&frame,&stream))
+		{
+			if(MAD_RECOVERABLE(stream.error))
+			{
+				if(stream.error!=MAD_ERROR_LOSTSYNC)
+				{
+					fprintf(stderr,"recoverable frame level error (%s)\n",
+							MadErrorString(&stream));
+					fflush(stderr);
+				}
+				continue;
+			}
+			else {
+				if(stream.error==MAD_ERROR_BUFLEN)
+					continue;
+				else
+				{
+					fprintf(stderr,"unrecoverable frame level error (%s).\n",
+							MadErrorString(&stream));
+					break;
+				}
+            }
+		}
+
+		mad_timer_add(&timer,frame.header.duration);
+		
+        duration = timer.seconds;
+        duration += (float)timer.fraction/MAD_TIMER_RESOLUTION;
+        if (duration > seconds) {
+            break;
+        }
+    }
+    return 0;
+}
+
+static int
+cmp3_decode (void) {
+    for (;;) {
+        // read more MPEG data if needed
+        if(stream.buffer==NULL || stream.error==MAD_ERROR_BUFLEN) {
+            // copy part of last frame to beginning
+            if (stream.next_frame != NULL) {
+                buffer.remaining = stream.bufend - stream.next_frame;
+                memmove (buffer.input, stream.next_frame, buffer.remaining);
+            }
+            int size = READBUFFER - buffer.remaining;
+            int bytesread = 0;
+            char *bytes = buffer.input + buffer.remaining;
+            if (!endoffile) {
+                bytesread = fread (bytes, 1, size, buffer.file);
+                if (bytesread < size) {
+                    // end of file
+                    endoffile = 1;
+                    size -= bytesread;
+                    bytes += bytesread;
+                }
+            }
+            bytesread += buffer.remaining;
+            if (bytesread) {
+                mad_stream_buffer(&stream,buffer.input,bytesread);
+            }
+            else {
+                return -1;
+            }
+            stream.error=0;
+        }
+        // decode next frame
+		if(mad_frame_decode(&frame,&stream))
+		{
+			if(MAD_RECOVERABLE(stream.error))
+			{
+				if(stream.error!=MAD_ERROR_LOSTSYNC)
+				{
+					fprintf(stderr,"recoverable frame level error (%s)\n",
+							MadErrorString(&stream));
+					fflush(stderr);
+				}
+				continue;
+			}
+			else {
+				if(stream.error==MAD_ERROR_BUFLEN)
+					continue;
+				else
+				{
+					fprintf(stderr,"unrecoverable frame level error (%s).\n",
+							MadErrorString(&stream));
+					break;
+				}
+            }
+		}
+
 		mad_timer_add(&timer,frame.header.duration);
 		
 		mad_synth_frame(&synth,&frame);
@@ -257,10 +405,43 @@ cmp3_read (char *bytes, int size) {
     return ret;
 }
 
+int
+cmp3_seek (float time) {
+    if (!buffer.file) {
+        return -1;
+    }
+    // restart file, and load until we hit required pos
+    mad_synth_finish (&synth);
+    mad_frame_finish (&frame);
+    mad_stream_finish (&stream);
+    endoffile = 0;
+    fseek(buffer.file, 0, SEEK_SET);
+	mad_stream_init(&stream);
+	mad_frame_init(&frame);
+	mad_synth_init(&synth);
+	mad_timer_reset(&timer);
+
+    cmp3_skip (time);
+#if 0
+    int bytes_to_read = time * cmp3.info.samplesPerSecond * cmp3.info.channels * cmp3.info.bitsPerSample / 8;
+    printf ("reading %d bytes from stream...\n", bytes_to_read);
+	char buffer[8192];
+	while (bytes_to_read) {
+        int sz = min (8192, bytes_to_read);
+        if (cmp3_read (buffer, sz) == -1) {
+            return -1;
+        }
+        bytes_to_read -= sz;
+    }
+#endif
+    return 0;
+}
+
 codec_t cmp3 = {
     .init = cmp3_init,
     .free = cmp3_free,
-    .read = cmp3_read
+    .read = cmp3_read,
+    .seek = cmp3_seek
 };
 
 

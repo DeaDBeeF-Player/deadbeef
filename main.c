@@ -10,6 +10,7 @@
 #include "messagepump.h"
 #include "messages.h"
 #include "gtkplaylist.h"
+#include "codec.h"
 
 GtkWidget *mainwin;
 
@@ -60,6 +61,13 @@ psdl_thread (uintptr_t ctx) {
                 GDK_THREADS_ENTER();
                 gtkps_randomsong ();
                 GDK_THREADS_LEAVE();
+                break;
+            case M_SONGSEEK:
+                if (playlist_current && playlist_current->codec) {
+                    psdl_pause ();
+                    playlist_current->codec->seek (p1 / 1000.f);
+                    psdl_unpause ();
+                }
                 break;
             }
         }

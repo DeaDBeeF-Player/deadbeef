@@ -17,6 +17,7 @@ typedef struct codec_s {
     void (*free) (void);
     // player is responsible for starting next song if -1 is returned
     int (*read) (char *bytes, int size);
+    int (*seek) (float time);
 } codec_t;
 
 codec_t *get_codec_for_file (const char *fname);

@@ -9,6 +9,7 @@ enum {
     M_STOPSONG,
     M_PAUSESONG,
     M_PLAYRANDOM,
+    M_SONGSEEK,
 };
 
 #endif // __MESSAGES_H
