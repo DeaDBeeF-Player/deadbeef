@@ -139,7 +139,9 @@ psdl_callback (void* userdata, Uint8 *stream, int len) {
         memset (stream, 0, len);
     }
     else if (codec->info.samplesPerSecond == sdl_player_freq) {
+        codec_lock ();
         codecret = codec->read (stream, len);
+        codec_unlock ();
     }
     else {
         int nsamples = len/4;
@@ -147,6 +149,7 @@ psdl_callback (void* userdata, Uint8 *stream, int len) {
         // add 5 extra samples for SRC
         nsamples = nsamples * codec->info.samplesPerSecond / sdl_player_freq + 5;
         // read data at source samplerate (with some room for SRC)
+        codec_lock ();
         codecret = codec->read (sdl_buffer, (nsamples - codecleft) * 2 * codec->info.channels);
         // convert to float, and apply soft volume
         int i;
@@ -178,6 +181,7 @@ psdl_callback (void* userdata, Uint8 *stream, int len) {
         codecleft = nsamples - srcdata.input_frames_used;
         // copy spare samples for next update
         memmove (sdl_fbuffer, &sdl_fbuffer[srcdata.input_frames_used*2], codecleft * 8);
+        codec_unlock ();
     }
     sdl_eof = codecret == -1 ? 1 : 0;
 }

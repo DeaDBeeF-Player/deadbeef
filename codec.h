@@ -22,4 +22,16 @@ typedef struct codec_s {
 
 codec_t *get_codec_for_file (const char *fname);
 
+void
+codec_init_locking (void);
+
+void
+codec_free_locking (void);
+
+void
+codec_lock (void);
+
+void
+codec_unlock (void);
+
 #endif	// __CODEC_H

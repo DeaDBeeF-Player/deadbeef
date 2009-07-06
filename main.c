@@ -18,6 +18,7 @@ int psdl_terminate = 0;
 
 void
 psdl_thread (uintptr_t ctx) {
+    codec_init_locking ();
     psdl_init ();
     while (!psdl_terminate) {
         uint32_t msg;
@@ -65,7 +66,9 @@ psdl_thread (uintptr_t ctx) {
             case M_SONGSEEK:
                 if (playlist_current && playlist_current->codec) {
                     psdl_pause ();
+                    codec_lock ();
                     playlist_current->codec->seek (p1 / 1000.f);
+                    codec_unlock ();
                     psdl_unpause ();
                 }
                 break;
@@ -75,6 +78,7 @@ psdl_thread (uintptr_t ctx) {
         // handle message pump here
     }
     psdl_free ();
+    codec_free_locking ();
     ps_free ();
 }
 
