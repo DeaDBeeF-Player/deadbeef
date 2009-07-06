@@ -44,7 +44,6 @@ on_playpos_value_changed               (GtkRange        *range,
         int val = gtk_range_get_value (range);
         int upper = gtk_adjustment_get_upper (gtk_range_get_adjustment (range));
         float time = playlist_current->codec->info.duration / (float)upper * (float)val;
-        printf ("seeking to %f seconds (duration=%f)\n", time, playlist_current->codec->info.duration);
         messagepump_push (M_SONGSEEK, 0, (int)time * 1000, 0);
     }
 }

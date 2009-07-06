@@ -37,8 +37,11 @@ static int endoffile;
 static int
 cmp3_decode (void);
 
+//static int
+//cmp3_get_stream_info (void);
+
 static int
-cmp3_get_stream_info (void);
+cmp3_get_stream_info2 (void);
 
 int
 cmp3_init (const char *fname) {
@@ -57,7 +60,7 @@ cmp3_init (const char *fname) {
 	mad_synth_init(&synth);
 	mad_timer_reset(&timer);
 
-    if (cmp3_get_stream_info () == -1) {
+    if (cmp3_get_stream_info2 () == -1) {
         return -1;
     }
     fseek (buffer.file, 0, SEEK_SET);
@@ -105,6 +108,8 @@ static signed short MadFixedToSshort(mad_fixed_t Fixed)
 
 #define MadErrorString(x) mad_stream_errorstr(x)
 
+// {{{ slow mp3 init
+#if 0
 static int
 cmp3_get_stream_info (void) {
     int frame_count = 0;
@@ -187,7 +192,114 @@ cmp3_get_stream_info (void) {
     printf ("song duration: %dsec %dfrac (%f)\n", timer.seconds, timer.fraction, cmp3.info.duration);
     return 0;
 }
+#endif
+// }}}
 
+static int
+cmp3_get_stream_info2 (void) {
+    int nframe = 0;
+    int nskipped = 0;
+    float duration = 0;
+    for (;;) {
+        uint32_t hdr;
+        uint8_t sync;
+        if (fread (&sync, 1, 1, buffer.file) != 1) {
+            break; // eof
+        }
+        if (sync != 0xff) {
+            nskipped++;
+            continue; // not an mpeg frame
+        }
+        else {
+            // 2nd sync byte
+            if (fread (&sync, 1, 1, buffer.file) != 1) {
+                break; // eof
+            }
+            if ((sync >> 5) != 7) {
+                nskipped++;
+                continue;
+            }
+        }
+        // found frame
+        hdr = (0xff<<24) | (sync << 16);
+        // read 2 bytes more
+        if (fread (&sync, 1, 1, buffer.file) != 1) {
+            break; // eof
+        }
+        hdr |= sync << 8;
+        if (fread (&sync, 1, 1, buffer.file) != 1) {
+            break; // eof
+        }
+        hdr |= sync;
+//        printf ("header=%x, skipped %d\n", hdr, nskipped);
+        nskipped = 0;
+
+        // parse header
+        
+        // sync bits
+        int usync = hdr & 0xffe00000;
+//        printf ("sync = %xh\n", usync);
+        if (usync != 0xffe00000) {
+            printf ("fatal error: mp3 header parser is broken\n");
+        //    exit (0);
+        }
+
+        // layer info
+        int layer = (hdr & (3<<17)) >> 17;
+//        printf ("layer = %xh\n", layer);
+
+        // bitrate
+        int brtable[16] = { 0, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320, -1 };
+        int bitrate = (hdr & (0x0f<<12)) >> 12;
+        bitrate = brtable[bitrate];
+//        printf ("bitrate = %d\n", bitrate);
+
+        // samplerate
+        int srtable[4] = {44100, 48000, 32000, -1};
+        int samplerate = (hdr & (0x03<<10))>>10;
+        samplerate = srtable[samplerate];
+//        printf ("samplerate = %d\n", samplerate);
+
+        // padding
+        int padding = (hdr & (0x1 << 9)) >> 9;
+//        printf ("padding = %d\n", padding);
+
+        int chantbl[4] = { 2, 2, 2, 1 };
+        int nchannels = (hdr & (0x3 << 6)) >> 6;
+        nchannels = chantbl[nchannels];
+
+
+        if (nframe == 0) {
+            cmp3.info.bitsPerSample = 16;
+            cmp3.info.dataSize = -1;
+            cmp3.info.channels = nchannels;
+            cmp3.info.samplesPerSecond = samplerate;
+        }
+
+        // packetlength
+        int packetlength = 0;
+        bitrate *= 1000;
+        if (layer == 3) { // layer1
+            packetlength = (12 * bitrate / samplerate + padding) * 4;
+        }
+        else if (layer == 2) { // layer2
+            packetlength = 144 * bitrate / samplerate + padding;
+        }
+        else if (layer == 1) { // layer3
+            duration += (float)1152 / samplerate;
+            packetlength = 144 * bitrate / samplerate + padding;
+        }
+        //printf ("packetlength = %d\n", packetlength);
+        nframe++;
+        fseek (buffer.file, packetlength-4, SEEK_CUR);
+    }
+    cmp3.info.duration = duration;
+    printf ("song duration: %f\n", duration);
+    return 0;
+}
+
+// {{{ slow mp3 seek
+#if 0
 static int
 cmp3_skip (float seconds) {
     mad_timer_t timer;
@@ -260,6 +372,105 @@ cmp3_skip (float seconds) {
         }
     }
     return 0;
+}
+#endif
+// }}}
+
+static int
+cmp3_skip2 (float seconds) {
+    int nframe = 0;
+    int nskipped = 0;
+    float duration = 0;
+    for (;;) {
+        uint32_t hdr;
+        uint8_t sync;
+        if (fread (&sync, 1, 1, buffer.file) != 1) {
+            break; // eof
+        }
+        if (sync != 0xff) {
+            nskipped++;
+            continue; // not an mpeg frame
+        }
+        else {
+            // 2nd sync byte
+            if (fread (&sync, 1, 1, buffer.file) != 1) {
+                break; // eof
+            }
+            if ((sync >> 5) != 7) {
+                nskipped++;
+                continue;
+            }
+        }
+        // found frame
+        hdr = (0xff<<24) | (sync << 16);
+        // read 2 bytes more
+        if (fread (&sync, 1, 1, buffer.file) != 1) {
+            break; // eof
+        }
+        hdr |= sync << 8;
+        if (fread (&sync, 1, 1, buffer.file) != 1) {
+            break; // eof
+        }
+        hdr |= sync;
+//        printf ("header=%x, skipped %d\n", hdr, nskipped);
+        nskipped = 0;
+
+        // parse header
+        
+        // sync bits
+        int usync = hdr & 0xffe00000;
+//        printf ("sync = %xh\n", usync);
+        if (usync != 0xffe00000) {
+            printf ("fatal error: mp3 header parser is broken\n");
+        //    exit (0);
+        }
+
+        // layer info
+        int layer = (hdr & (3<<17)) >> 17;
+//        printf ("layer = %xh\n", layer);
+
+        // bitrate
+        int brtable[16] = { 0, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320, -1 };
+        int bitrate = (hdr & (0x0f<<12)) >> 12;
+        bitrate = brtable[bitrate];
+//        printf ("bitrate = %d\n", bitrate);
+
+        // samplerate
+        int srtable[4] = {44100, 48000, 32000, -1};
+        int samplerate = (hdr & (0x03<<10))>>10;
+        samplerate = srtable[samplerate];
+//        printf ("samplerate = %d\n", samplerate);
+
+        // padding
+        int padding = (hdr & (0x1 << 9)) >> 9;
+//        printf ("padding = %d\n", padding);
+
+        int chantbl[4] = { 2, 2, 2, 1 };
+        int nchannels = (hdr & (0x3 << 6)) >> 6;
+        nchannels = chantbl[nchannels];
+
+
+        // packetlength
+        int packetlength = 0;
+        bitrate *= 1000;
+        if (layer == 3) { // layer1
+            packetlength = (12 * bitrate / samplerate + padding) * 4;
+        }
+        else if (layer == 2) { // layer2
+            packetlength = 144 * bitrate / samplerate + padding;
+        }
+        else if (layer == 1) { // layer3
+            duration += (float)1152 / samplerate;
+            packetlength = 144 * bitrate / samplerate + padding;
+        }
+        if (duration > seconds) {
+            fseek (buffer.file, -4, SEEK_SET);
+            return 0;
+        }
+        nframe++;
+        fseek (buffer.file, packetlength-4, SEEK_CUR);
+    }
+    return -1;
 }
 
 static int
@@ -421,7 +632,7 @@ cmp3_seek (float time) {
 	mad_synth_init(&synth);
 	mad_timer_reset(&timer);
 
-    cmp3_skip (time);
+    cmp3_skip2 (time);
 #if 0
     int bytes_to_read = time * cmp3.info.samplesPerSecond * cmp3.info.channels * cmp3.info.bitsPerSample / 8;
     printf ("reading %d bytes from stream...\n", bytes_to_read);
