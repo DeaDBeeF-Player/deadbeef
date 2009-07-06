@@ -84,7 +84,7 @@ psdl_play (struct playItem_s *it) {
     }
     codec = it->codec;
     sdl_eof = 0;
-    if (codec->init (it->fname)) {
+    if (codec->init (it->fname, it->tracknum, it->timestart, it->timeend)) {
         return -1;
     }
 	SDL_PauseAudio (0);

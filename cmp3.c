@@ -44,7 +44,7 @@ static int
 cmp3_get_stream_info2 (void);
 
 int
-cmp3_init (const char *fname) {
+cmp3_init (const char *fname, int track, float start, float end) {
     buffer.file = fopen (fname, "rb");
     if (!buffer.file) {
         printf ("failed to read %s\n", fname);
@@ -474,6 +474,11 @@ cmp3_seek (float time) {
     if (cmp3_skip2 (time) == -1) {
         return -1;
     }
+    return 0;
+}
+
+int
+cmp3_add (const char *fname) {
     return 0;
 }
 

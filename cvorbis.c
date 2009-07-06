@@ -11,7 +11,8 @@ static OggVorbis_File vorbis_file;
 static vorbis_info *vi;
 static int cur_bit_stream;
 
-int cvorbis_init (const char *fname) {
+int
+cvorbis_init (const char *fname, int track, float start, float end) {
     file = NULL;
     vi = NULL;
     cur_bit_stream = -1;
@@ -94,10 +95,16 @@ cvorbis_seek (float time) {
     return 0;
 }
 
+int
+cvorbis_add (const char *fname) {
+    return 0;
+}
+
 codec_t cvorbis = {
     .init = cvorbis_init,
     .free = cvorbis_free,
     .read = cvorbis_read,
-    .seek = cvorbis_seek
+    .seek = cvorbis_seek,
+    .add = cvorbis_add
 };
 

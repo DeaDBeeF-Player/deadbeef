@@ -1,0 +1,13 @@
+SubDir ROOT gme ;
+
+Library libgme : Ay_Apu.cpp          Gb_Apu.cpp    Hes_Emu.cpp       Nes_Fme7_Apu.cpp   Sms_Apu.cpp
+Ay_Cpu.cpp          Gb_Cpu.cpp    Kss_Cpu.cpp       Nes_Namco_Apu.cpp  Snes_Spc.cpp
+Ay_Emu.cpp          Gb_Oscs.cpp   Kss_Emu.cpp       Nes_Oscs.cpp       Spc_Cpu.cpp
+Blip_Buffer.cpp     Gbs_Emu.cpp   Kss_Scc_Apu.cpp   Nes_Vrc6_Apu.cpp   Spc_Dsp.cpp
+Classic_Emu.cpp     gme.cpp       M3u_Playlist.cpp  Nsfe_Emu.cpp       Spc_Emu.cpp
+Data_Reader.cpp     Gme_File.cpp  Multi_Buffer.cpp  Nsf_Emu.cpp        Vgm_Emu.cpp
+Dual_Resampler.cpp  Gym_Emu.cpp   Music_Emu.cpp     Sap_Apu.cpp        Vgm_Emu_Impl.cpp
+Effects_Buffer.cpp  Hes_Apu.cpp   Nes_Apu.cpp       Sap_Cpu.cpp        Ym2413_Emu.cpp
+Fir_Resampler.cpp   Hes_Cpu.cpp   Nes_Cpu.cpp       Sap_Emu.cpp        Ym2612_Emu.cpp ;
+
+

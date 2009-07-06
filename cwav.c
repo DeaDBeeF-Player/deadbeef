@@ -21,7 +21,7 @@ typedef struct {
 
 static FILE *file;
 
-int cwav_init (const char *fname) {
+int cwav_init (const char *fname, int track, float start, float end) {
 
     file = fopen (fname, "rb");
     if (!file) {

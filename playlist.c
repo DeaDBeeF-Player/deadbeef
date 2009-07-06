@@ -9,6 +9,7 @@
 #include "cvorbis.h"
 #include "cmod.h"
 #include "cmp3.h"
+#include "cgme.h"
 
 playItem_t *playlist_head;
 playItem_t *playlist_tail;
@@ -27,32 +28,36 @@ ps_add_file (const char *fname) {
     if (!fname) {
         return -1;
     }
-    playItem_t *it = malloc (sizeof (playItem_t));
-    memset (it, 0, sizeof (playItem_t));
     // detect codec
+    codec_t *codec = NULL;
     const char *eol = fname + strlen (fname) - 1;
     while (*eol != '.') {
         eol--;
         }
     eol++;
     if (!strcasecmp (eol, "ogg")) {
-        it->codec = &cvorbis;
+        codec = &cvorbis;
     }
     else if (!strcasecmp (eol, "wav")) {
-        it->codec = &cwav;
+        codec = &cwav;
     }
     else if (!strcasecmp (eol, "mod")) {
-        it->codec = &cmod;
+        codec = &cmod;
     }
     else if (!strcasecmp (eol, "mp3")) {
-        it->codec = &cmp3;
+        codec = &cmp3;
+    }
+    else if (!strcasecmp (eol, "nsf")) {
+        codec = &cgme;
+        return codec->add (fname);
     }
     else {
         return -1;
     }
-    printf ("added %s to playlist\n", fname);
-    ps_count++;
     // copy string
+    playItem_t *it = malloc (sizeof (playItem_t));
+    memset (it, 0, sizeof (playItem_t));
+    it->codec = codec;
     it->fname = strdup (fname);
     // find 1st slash from end
     while (eol > fname && *eol != '/') {
@@ -66,14 +71,7 @@ ps_add_file (const char *fname) {
     it->timestart = -1;
     it->timeend = -1;
 
-    if (!playlist_tail) {
-        playlist_tail = playlist_head = it;
-    }
-    else {
-        playlist_tail->next = it;
-        it->prev = playlist_tail;
-        playlist_tail = it;
-    }
+    ps_append_item (it);
 }
 
 int
@@ -166,4 +164,17 @@ ps_get_idx_of (playItem_t *it) {
         return -1;
     }
     return idx;
+}
+
+int
+ps_append_item (playItem_t *it) {
+    if (!playlist_tail) {
+        playlist_tail = playlist_head = it;
+    }
+    else {
+        playlist_tail->next = it;
+        it->prev = playlist_tail;
+        playlist_tail = it;
+    }
+    ps_count++;
 }

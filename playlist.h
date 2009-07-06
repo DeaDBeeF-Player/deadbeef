@@ -20,6 +20,9 @@ int
 ps_add_file (const char *fname);
 
 int
+ps_append_item (playItem_t *it);
+
+int
 ps_add_dir (const char *dirname);
 
 int

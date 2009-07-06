@@ -88,7 +88,7 @@ static MDRIVER cmoddrv={
 };
 
 int
-cmod_init (const char *fname) {
+cmod_init (const char *fname, int track, float start, float end) {
 //    MikMod_RegisterAllDrivers();
     memset (&cmod.info, 0, sizeof (fileinfo_t));
     MikMod_RegisterAllLoaders();
