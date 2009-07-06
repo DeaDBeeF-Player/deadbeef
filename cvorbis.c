@@ -2,6 +2,7 @@
 #include <vorbis/vorbisfile.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "codec.h"
 #include "cvorbis.h"
 
@@ -27,6 +28,8 @@ int cvorbis_init (const char *fname) {
     cvorbis.info.dataSize = ov_pcm_total (&vorbis_file, -1) * vi->channels * 2;
     cvorbis.info.channels = vi->channels;
     cvorbis.info.samplesPerSecond = vi->rate;
+    cvorbis.info.duration = ov_seekable (&vorbis_file) ? ov_time_total (&vorbis_file, -1) : -1;
+//    printf ("vorbis info: bps: %d, size: %d, chan: %d, rate: %d, dur: %f\n", cvorbis.info.bitsPerSample, cvorbis.info.dataSize, cvorbis.info.channels, cvorbis.info.samplesPerSecond, cvorbis.info.duration);
     return 0;
 }
 
@@ -55,13 +58,19 @@ cvorbis_read (char *bytes, int size)
             memset (bytes, 0, size);
             return -1;
         }
+        else if (ret == 0) {
+            if (size > 0) {
+                memset (bytes, 0, size);
+            }
+            return -1;
+        }
         else if (ret < size)
         {
-            if (ret == 0) {
-                ov_raw_seek (&vorbis_file, 0);
-            }
             size -= ret;
             bytes += ret;
+//            if (ret == 0) {
+//                ov_raw_seek (&vorbis_file, 0);
+//            }
         }
         else {
             break;
@@ -70,9 +79,23 @@ cvorbis_read (char *bytes, int size)
     return 0;
 }
 
+int
+cvorbis_seek (float time) {
+    if (!file) {
+        return -1;
+    }
+//    printf ("seeking for %f\n");
+    int res = ov_time_seek (&vorbis_file, time);
+    if (res != 0 && res != OV_ENOSEEK)
+        return -1;
+//    printf ("seek result: %d\n", res);
+    return 0;
+}
+
 codec_t cvorbis = {
     .init = cvorbis_init,
     .free = cvorbis_free,
-    .read = cvorbis_read
+    .read = cvorbis_read,
+    .seek = cvorbis_seek
 };
 

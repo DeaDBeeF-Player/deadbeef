@@ -139,9 +139,27 @@ psdl_callback (void* userdata, Uint8 *stream, int len) {
         memset (stream, 0, len);
     }
     else if (codec->info.samplesPerSecond == sdl_player_freq) {
-        codec_lock ();
-        codecret = codec->read (stream, len);
-        codec_unlock ();
+        int ivolume = sdl_volume * 1000;
+        int i;
+        if (codec->info.channels == 2) {
+            codec_lock ();
+            codecret = codec->read (stream, len);
+            for (i = 0; i < len/2; i++) {
+                int16_t sample = (int16_t)(((int32_t)(((int16_t*)stream)[i])) * ivolume / 1000);
+                ((int16_t*)stream)[i] = sample;
+            }
+            codec_unlock ();
+        }
+        else {
+            codec_lock ();
+            codecret = codec->read (sdl_buffer, len/2);
+            for (i = 0; i < len/4; i++) {
+                int16_t sample = (int16_t)(((int32_t)(((int16_t*)sdl_buffer)[i])) * ivolume / 1000);
+                ((int16_t*)stream)[i*2+0] = sample;
+                ((int16_t*)stream)[i*2+1] = sample;
+            }
+            codec_unlock ();
+        }
     }
     else {
         int nsamples = len/4;

@@ -41,10 +41,12 @@ on_playpos_value_changed               (GtkRange        *range,
         gpointer         user_data)
 {
     if (playlist_current && playlist_current->codec) {
-        int val = gtk_range_get_value (range);
-        int upper = gtk_adjustment_get_upper (gtk_range_get_adjustment (range));
-        float time = playlist_current->codec->info.duration / (float)upper * (float)val;
-        messagepump_push (M_SONGSEEK, 0, (int)time * 1000, 0);
+        if (playlist_current->codec->info.duration > 0) {
+            int val = gtk_range_get_value (range);
+            int upper = gtk_adjustment_get_upper (gtk_range_get_adjustment (range));
+            float time = playlist_current->codec->info.duration / (float)upper * (float)val;
+            messagepump_push (M_SONGSEEK, 0, (int)time * 1000, 0);
+        }
     }
 }
 

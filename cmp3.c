@@ -632,19 +632,9 @@ cmp3_seek (float time) {
 	mad_synth_init(&synth);
 	mad_timer_reset(&timer);
 
-    cmp3_skip2 (time);
-#if 0
-    int bytes_to_read = time * cmp3.info.samplesPerSecond * cmp3.info.channels * cmp3.info.bitsPerSample / 8;
-    printf ("reading %d bytes from stream...\n", bytes_to_read);
-	char buffer[8192];
-	while (bytes_to_read) {
-        int sz = min (8192, bytes_to_read);
-        if (cmp3_read (buffer, sz) == -1) {
-            return -1;
-        }
-        bytes_to_read -= sz;
+    if (cmp3_skip2 (time) == -1) {
+        return -1;
     }
-#endif
     return 0;
 }
 
