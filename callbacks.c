@@ -268,6 +268,7 @@ void
 on_pausebtn_clicked                    (GtkButton       *button,
                                         gpointer         user_data)
 {
+    messagepump_push (M_PAUSESONG, 0, 0, 0);
 }
 
 

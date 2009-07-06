@@ -411,6 +411,7 @@ gtkps_update_songinfo (void) {
     if (!mainwin) {
         return;
     }
+    GDK_THREADS_ENTER();
     songupd_timelapse -= 1;
     // FIXME: don't update if window is not visible
     if (songupd_timelapse < 0) {
@@ -430,23 +431,21 @@ gtkps_update_songinfo (void) {
             int mindur = c->info.duration / 60;
             int secdur = c->info.duration - mindur * 60;
 
-            GDK_THREADS_ENTER();
             char str[1024];
             snprintf (str, 1024, "Samplerate: %d | Bits per sample: %d | %s | Position %d:%02d | Duration %d:%02d", c->info.samplesPerSecond, c->info.bitsPerSample, c->info.channels == 1 ? "Mono" : "Stereo", minpos, secpos, mindur, secdur);
             gtk_statusbar_pop (sb, sb_context_id);
             gtk_statusbar_push (sb, sb_context_id, str);
-//            printf ("songinfo: %d %d %s %d:%02d (%d:%02d)\n", c->info.samplesPerSecond, c->info.bitsPerSample, c->info.channels == 1 ? "Mono" : "Stereo", minpos, secpos, mindur, secdur);
             extern int g_disable_seekbar_handler;
             g_disable_seekbar_handler = 1;
             GtkRange *seekbar = GTK_RANGE (lookup_widget (mainwin, "playpos"));
             gtk_range_set_value (seekbar, c->info.position * 1000 / c->info.duration);
             g_disable_seekbar_handler = 0;
-            GDK_THREADS_LEAVE();
         }
         else {
             gtk_statusbar_pop (sb, sb_context_id);
             gtk_statusbar_push (sb, sb_context_id, "Stopped");
         }
     }
+    GDK_THREADS_LEAVE();
 }
 
