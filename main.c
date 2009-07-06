@@ -74,7 +74,7 @@ psdl_thread (uintptr_t ctx) {
                 break;
             }
         }
-        usleep(10);
+        usleep(1000);
         // handle message pump here
     }
     psdl_free ();

@@ -2,8 +2,8 @@ SubDir ROOT ;
 CCFLAGS += -D_GNU_SOURCE ;
 CCFLAGS += -std=c99 ;
 # CCFLAGS += -D_REENTRANT ;
-OPTIM += -O0 ;
-OPTIM += -g ;
+OPTIM += -O2 ;
+#OPTIM += -g ;
 
 HDRS += /usr/include/gtk-2.0 ;
 HDRS += /usr/lib/gtk-2.0/include ;

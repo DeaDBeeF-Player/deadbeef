@@ -26,7 +26,7 @@ int
 psdl_init (void) {
 	SDL_AudioSpec obt;
 	int formats[] = { AUDIO_S16, -1 };
-	int freqs[] = { 48000, 44100, -1 };
+	int freqs[] = { 44100, 48000, -1 };
 	const char *fmtnames[] = { "16 bit signed integer" };
 	int fmt, frq;
 	int success = 0;
