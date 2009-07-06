@@ -98,7 +98,7 @@ create_mainwin (void)
 
   handlebox1 = gtk_handle_box_new ();
   gtk_widget_show (handlebox1);
-  gtk_box_pack_start (GTK_BOX (hbox2), handlebox1, FALSE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (hbox2), handlebox1, TRUE, TRUE, 0);
 
   menubar1 = gtk_menu_bar_new ();
   gtk_widget_show (menubar1);
@@ -284,6 +284,7 @@ create_mainwin (void)
   gtk_widget_set_size_request (playpos, 200, -1);
   GTK_WIDGET_UNSET_FLAGS (playpos, GTK_CAN_FOCUS);
   gtk_scale_set_draw_value (GTK_SCALE (playpos), FALSE);
+  gtk_range_set_update_policy (GTK_RANGE (playpos), GTK_UPDATE_DISCONTINUOUS);
 
   _ = gtk_hbox_new (FALSE, 0);
   gtk_widget_show (_);
