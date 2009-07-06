@@ -8,7 +8,7 @@
 
 typedef blargg_long hes_time_t; // clock cycle count
 typedef unsigned hes_addr_t; // 16-bit address
-enum { future_hes_time = LONG_MAX / 2 + 1 };
+#define future_hes_time (LONG_MAX / 2 + 1)
 
 class Hes_Cpu {
 public:

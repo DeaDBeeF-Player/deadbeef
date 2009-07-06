@@ -15,6 +15,9 @@
 #ifndef BLARGG_COMMON_H
 #define BLARGG_COMMON_H
 
+#undef LONG_MAX
+#define LONG_MAX 0x7fffffff
+
 // STATIC_CAST(T,expr): Used in place of static_cast<T> (expr)
 #ifndef STATIC_CAST
 	#define STATIC_CAST(T,expr) ((T) (expr))
