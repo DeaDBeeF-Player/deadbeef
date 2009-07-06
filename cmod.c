@@ -106,7 +106,6 @@ cmod_init (const char *fname) {
     printf ("driver info: device %d\nmixfreq: %d\n16bit %d\nhqmixer %d\nstereo %d\n", md_device, md_mixfreq, (md_mode&DMODE_16BITS)?1:0, (md_mode&DMODE_HQMIXER)?1:0, (md_mode&DMODE_STEREO)?1:0);
     cmod.info.bitsPerSample = (md_mode&DMODE_16BITS)? 16 : 8;
     cmod.info.channels = (md_mode&DMODE_STEREO)?2:1;
-    cmod.info.dataSize = -1; // means unknown or infinite
     cmod.info.samplesPerSecond = md_mixfreq;
     return 0;
 }

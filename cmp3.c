@@ -55,6 +55,7 @@ cmp3_init (const char *fname) {
     buffer.readsize = 0;
     buffer.cachefill = 0;
     endoffile = 0;
+    cmp3.info.position = 0;
 	mad_stream_init(&stream);
 	mad_frame_init(&frame);
 	mad_synth_init(&synth);
@@ -107,93 +108,6 @@ static signed short MadFixedToSshort(mad_fixed_t Fixed)
 }
 
 #define MadErrorString(x) mad_stream_errorstr(x)
-
-// {{{ slow mp3 init
-#if 0
-static int
-cmp3_get_stream_info (void) {
-    int frame_count = 0;
-    mad_timer_t timer;
-	mad_timer_reset(&timer);
-    int endoffile = 0;
-    while (!endoffile) {
-        // read more MPEG data if needed
-        if(stream.buffer==NULL || stream.error==MAD_ERROR_BUFLEN) {
-            // copy part of last frame to beginning
-            if (stream.next_frame != NULL) {
-                buffer.remaining = stream.bufend - stream.next_frame;
-                memmove (buffer.input, stream.next_frame, buffer.remaining);
-            }
-            int size = READBUFFER - buffer.remaining;
-            int bytesread = 0;
-            char *bytes = buffer.input + buffer.remaining;
-            if (!endoffile) {
-                bytesread = fread (bytes, 1, size, buffer.file);
-                if (bytesread < size) {
-                    // end of file
-                    endoffile = 1;
-                    size -= bytesread;
-                    bytes += bytesread;
-                    /*
-                    fseek (buffer.file, 0, SEEK_SET);
-                    */
-                }
-            }
-            bytesread += buffer.remaining;
-            if (bytesread) {
-                mad_stream_buffer(&stream,buffer.input,bytesread);
-            }
-            else {
-                return -1;
-            }
-            stream.error=0;
-        }
-        // decode next frame
-		if(mad_frame_decode(&frame,&stream))
-		{
-			if(MAD_RECOVERABLE(stream.error))
-			{
-				if(stream.error!=MAD_ERROR_LOSTSYNC)
-				{
-					fprintf(stderr,"recoverable frame level error (%s)\n",
-							MadErrorString(&stream));
-					fflush(stderr);
-				}
-				continue;
-			}
-			else {
-				if(stream.error==MAD_ERROR_BUFLEN)
-					continue;
-				else
-				{
-					fprintf(stderr,"unrecoverable frame level error (%s).\n",
-							MadErrorString(&stream));
-					break;
-				}
-            }
-		}
-
-		if(frame_count==0) {
-            // all info about stream is here, set params
-            cmp3.info.bitsPerSample = 16;
-            cmp3.info.dataSize = -1;
-            cmp3.info.channels = MAD_NCHANNELS(&frame.header);
-            cmp3.info.samplesPerSecond = frame.header.samplerate;
-        }
-
-        frame_count++;
-		mad_timer_add(&timer,frame.header.duration);
-		
-//		mad_synth_frame(&synth,&frame);
-
-    }
-    cmp3.info.duration = timer.seconds;
-    cmp3.info.duration += (float)timer.fraction/MAD_TIMER_RESOLUTION;
-    printf ("song duration: %dsec %dfrac (%f)\n", timer.seconds, timer.fraction, cmp3.info.duration);
-    return 0;
-}
-#endif
-// }}}
 
 static int
 cmp3_get_stream_info2 (void) {
@@ -271,7 +185,6 @@ cmp3_get_stream_info2 (void) {
 
         if (nframe == 0) {
             cmp3.info.bitsPerSample = 16;
-            cmp3.info.dataSize = -1;
             cmp3.info.channels = nchannels;
             cmp3.info.samplesPerSecond = samplerate;
         }
@@ -297,84 +210,6 @@ cmp3_get_stream_info2 (void) {
     printf ("song duration: %f\n", duration);
     return 0;
 }
-
-// {{{ slow mp3 seek
-#if 0
-static int
-cmp3_skip (float seconds) {
-    mad_timer_t timer;
-	mad_timer_reset(&timer);
-    int endoffile = 0;
-    float duration = 0;
-    while (!endoffile) {
-        // read more MPEG data if needed
-        if(stream.buffer==NULL || stream.error==MAD_ERROR_BUFLEN) {
-            // copy part of last frame to beginning
-            if (stream.next_frame != NULL) {
-                buffer.remaining = stream.bufend - stream.next_frame;
-                memmove (buffer.input, stream.next_frame, buffer.remaining);
-            }
-            int size = READBUFFER - buffer.remaining;
-            int bytesread = 0;
-            char *bytes = buffer.input + buffer.remaining;
-            if (!endoffile) {
-                bytesread = fread (bytes, 1, size, buffer.file);
-                if (bytesread < size) {
-                    // end of file
-                    endoffile = 1;
-                    size -= bytesread;
-                    bytes += bytesread;
-                    /*
-                    fseek (buffer.file, 0, SEEK_SET);
-                    */
-                }
-            }
-            bytesread += buffer.remaining;
-            if (bytesread) {
-                mad_stream_buffer(&stream,buffer.input,bytesread);
-            }
-            else {
-                return -1;
-            }
-            stream.error=0;
-        }
-        // decode next frame
-		if(mad_frame_decode(&frame,&stream))
-		{
-			if(MAD_RECOVERABLE(stream.error))
-			{
-				if(stream.error!=MAD_ERROR_LOSTSYNC)
-				{
-					fprintf(stderr,"recoverable frame level error (%s)\n",
-							MadErrorString(&stream));
-					fflush(stderr);
-				}
-				continue;
-			}
-			else {
-				if(stream.error==MAD_ERROR_BUFLEN)
-					continue;
-				else
-				{
-					fprintf(stderr,"unrecoverable frame level error (%s).\n",
-							MadErrorString(&stream));
-					break;
-				}
-            }
-		}
-
-		mad_timer_add(&timer,frame.header.duration);
-		
-        duration = timer.seconds;
-        duration += (float)timer.fraction/MAD_TIMER_RESOLUTION;
-        if (duration > seconds) {
-            break;
-        }
-    }
-    return 0;
-}
-#endif
-// }}}
 
 static int
 cmp3_skip2 (float seconds) {
@@ -465,6 +300,9 @@ cmp3_skip2 (float seconds) {
         }
         if (duration > seconds) {
             fseek (buffer.file, -4, SEEK_SET);
+            // set decoder timer
+            timer.seconds = (int)duration;
+            timer.fraction = (int)((duration - (float)timer.seconds)*MAD_TIMER_RESOLUTION);
             return 0;
         }
         nframe++;
@@ -574,6 +412,7 @@ cmp3_decode (void) {
             return -1;
         }
     }
+    cmp3.info.position = (float)timer.seconds + (float)timer.fraction / MAD_TIMER_RESOLUTION;
     return 0;
 }
 

@@ -6,9 +6,9 @@
 typedef struct {
     int bitsPerSample;
     int channels;
-    int dataSize;
     int samplesPerSecond;
     float duration;
+    float position;
 } fileinfo_t;
 
 typedef struct codec_s {

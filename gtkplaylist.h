@@ -55,4 +55,7 @@ gtkps_pausesong (void);
 void
 gtkps_playsongnum (int idx);
 
+void
+gtkps_update_songinfo (void);
+
 #endif

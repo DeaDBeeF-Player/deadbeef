@@ -5,6 +5,7 @@
 #include <gtk/gtk.h>
 #include <math.h>
 #include <stdlib.h>
+#include <time.h>
 #include "gtkplaylist.h"
 #include "callbacks.h"
 #include "interface.h"
@@ -399,6 +400,53 @@ gtkps_playsongnum (int idx) {
         psdl_stop ();
         psdl_play (playlist_current);
         codec_unlock ();
+    }
+}
+
+static int songupd_timelapse = 0;
+static int sb_context_id = -1;
+
+void
+gtkps_update_songinfo (void) {
+    if (!mainwin) {
+        return;
+    }
+    songupd_timelapse -= 1;
+    // FIXME: don't update if window is not visible
+    if (songupd_timelapse < 0) {
+        GtkStatusbar *sb = GTK_STATUSBAR (lookup_widget (mainwin, "statusbar"));
+        if (sb_context_id == -1) {
+            sb_context_id = gtk_statusbar_get_context_id (sb, "msg");
+        }
+        songupd_timelapse = 1000;
+        if (psdl_ispaused ()) {
+            gtk_statusbar_pop (sb, sb_context_id);
+            gtk_statusbar_push (sb, sb_context_id, "Paused");
+        }
+        else if (psdl_getcodec ()) {
+            codec_t *c = psdl_getcodec ();
+            int minpos = c->info.position / 60;
+            int secpos = c->info.position - minpos * 60;
+            int mindur = c->info.duration / 60;
+            int secdur = c->info.duration - mindur * 60;
+
+            GDK_THREADS_ENTER();
+            char str[1024];
+            snprintf (str, 1024, "Samplerate: %d | Bits per sample: %d | %s | Position %d:%02d | Duration %d:%02d", c->info.samplesPerSecond, c->info.bitsPerSample, c->info.channels == 1 ? "Mono" : "Stereo", minpos, secpos, mindur, secdur);
+            gtk_statusbar_pop (sb, sb_context_id);
+            gtk_statusbar_push (sb, sb_context_id, str);
+//            printf ("songinfo: %d %d %s %d:%02d (%d:%02d)\n", c->info.samplesPerSecond, c->info.bitsPerSample, c->info.channels == 1 ? "Mono" : "Stereo", minpos, secpos, mindur, secdur);
+            extern int g_disable_seekbar_handler;
+            g_disable_seekbar_handler = 1;
+            GtkRange *seekbar = GTK_RANGE (lookup_widget (mainwin, "playpos"));
+            gtk_range_set_value (seekbar, c->info.position * 1000 / c->info.duration);
+            g_disable_seekbar_handler = 0;
+            GDK_THREADS_LEAVE();
+        }
+        else {
+            gtk_statusbar_pop (sb, sb_context_id);
+            gtk_statusbar_push (sb, sb_context_id, "Stopped");
+        }
     }
 }
 

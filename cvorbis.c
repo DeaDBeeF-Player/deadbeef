@@ -25,10 +25,11 @@ int cvorbis_init (const char *fname) {
     ov_open (file, &vorbis_file, NULL, 0);
     vi = ov_info (&vorbis_file, -1);
     cvorbis.info.bitsPerSample = 16;
-    cvorbis.info.dataSize = ov_pcm_total (&vorbis_file, -1) * vi->channels * 2;
+    //cvorbis.info.dataSize = ov_pcm_total (&vorbis_file, -1) * vi->channels * 2;
     cvorbis.info.channels = vi->channels;
     cvorbis.info.samplesPerSecond = vi->rate;
     cvorbis.info.duration = ov_seekable (&vorbis_file) ? ov_time_total (&vorbis_file, -1) : -1;
+    cvorbis.info.position = 0;
 //    printf ("vorbis info: bps: %d, size: %d, chan: %d, rate: %d, dur: %f\n", cvorbis.info.bitsPerSample, cvorbis.info.dataSize, cvorbis.info.channels, cvorbis.info.samplesPerSecond, cvorbis.info.duration);
     return 0;
 }
@@ -76,6 +77,7 @@ cvorbis_read (char *bytes, int size)
             break;
         }
     }
+    cvorbis.info.position = ov_time_tell(&vorbis_file);
     return 0;
 }
 

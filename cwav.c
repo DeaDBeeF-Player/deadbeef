@@ -40,7 +40,7 @@ int cwav_init (const char *fname) {
     }
     cwav.info.bitsPerSample = header.bitsPerSample;
     cwav.info.channels = header.channels;
-    cwav.info.dataSize = header.dataSize;
+    //cwav.info.dataSize = header.dataSize;
     cwav.info.samplesPerSecond = header.samplesPerSecond;
 
     return 0;

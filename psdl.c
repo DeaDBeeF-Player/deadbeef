@@ -79,7 +79,6 @@ psdl_free (void) {
 
 int
 psdl_play (struct playItem_s *it) {
-//    printf ("psdl_play\n");
     if (!it) {
         return -1;
     }
@@ -204,3 +203,7 @@ psdl_callback (void* userdata, Uint8 *stream, int len) {
     sdl_eof = codecret == -1 ? 1 : 0;
 }
 
+struct codec_s*
+psdl_getcodec (void) {
+    return codec;
+}

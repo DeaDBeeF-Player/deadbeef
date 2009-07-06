@@ -79,7 +79,7 @@ create_mainwin (void)
   GtkWidget *_;
   GtkWidget *playlist;
   GtkWidget *playscroll;
-  GtkWidget *statusbar1;
+  GtkWidget *statusbar;
   GtkAccelGroup *accel_group;
 
   accel_group = gtk_accel_group_new ();
@@ -305,9 +305,9 @@ create_mainwin (void)
   gtk_widget_show (playscroll);
   gtk_box_pack_start (GTK_BOX (_), playscroll, FALSE, FALSE, 0);
 
-  statusbar1 = gtk_statusbar_new ();
-  gtk_widget_show (statusbar1);
-  gtk_box_pack_start (GTK_BOX (vbox1), statusbar1, FALSE, FALSE, 0);
+  statusbar = gtk_statusbar_new ();
+  gtk_widget_show (statusbar);
+  gtk_box_pack_start (GTK_BOX (vbox1), statusbar, FALSE, FALSE, 0);
 
   g_signal_connect ((gpointer) mainwin, "destroy",
                     G_CALLBACK (gtk_main_quit),
@@ -436,7 +436,7 @@ create_mainwin (void)
   GLADE_HOOKUP_OBJECT (mainwin, _, "_");
   GLADE_HOOKUP_OBJECT (mainwin, playlist, "playlist");
   GLADE_HOOKUP_OBJECT (mainwin, playscroll, "playscroll");
-  GLADE_HOOKUP_OBJECT (mainwin, statusbar1, "statusbar1");
+  GLADE_HOOKUP_OBJECT (mainwin, statusbar, "statusbar");
 
   gtk_window_add_accel_group (GTK_WINDOW (mainwin), accel_group);
 

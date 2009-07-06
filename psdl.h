@@ -27,4 +27,7 @@ psdl_unpause (void);
 void
 psdl_set_volume (float vol);
 
+struct codec_s*
+psdl_getcodec (void);
+
 #endif // __PSDL_H

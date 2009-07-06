@@ -80,6 +80,7 @@ psdl_thread (uintptr_t ctx) {
             }
         }
         usleep(1000);
+        gtkps_update_songinfo ();
         // handle message pump here
     }
     psdl_free ();
