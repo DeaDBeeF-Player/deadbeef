@@ -232,7 +232,6 @@
 		  <child>
 		    <widget class="GtkButton" id="stopbtn">
 		      <property name="visible">True</property>
-		      <property name="can_focus">True</property>
 		      <property name="relief">GTK_RELIEF_NONE</property>
 		      <property name="focus_on_click">True</property>
 		      <signal name="clicked" handler="on_stopbtn_clicked" last_modification_time="Sun, 05 Jul 2009 10:48:41 GMT"/>
@@ -259,7 +258,6 @@
 		  <child>
 		    <widget class="GtkButton" id="playbtn">
 		      <property name="visible">True</property>
-		      <property name="can_focus">True</property>
 		      <property name="relief">GTK_RELIEF_NONE</property>
 		      <property name="focus_on_click">True</property>
 		      <signal name="clicked" handler="on_playbtn_clicked" last_modification_time="Sun, 05 Jul 2009 10:48:53 GMT"/>
@@ -286,7 +284,6 @@
 		  <child>
 		    <widget class="GtkButton" id="pausebtn">
 		      <property name="visible">True</property>
-		      <property name="can_focus">True</property>
 		      <property name="relief">GTK_RELIEF_NONE</property>
 		      <property name="focus_on_click">True</property>
 		      <signal name="clicked" handler="on_pausebtn_clicked" last_modification_time="Sun, 05 Jul 2009 10:49:01 GMT"/>
@@ -313,7 +310,6 @@
 		  <child>
 		    <widget class="GtkButton" id="prevbtn">
 		      <property name="visible">True</property>
-		      <property name="can_focus">True</property>
 		      <property name="relief">GTK_RELIEF_NONE</property>
 		      <property name="focus_on_click">True</property>
 		      <signal name="clicked" handler="on_prevbtn_clicked" last_modification_time="Sun, 05 Jul 2009 10:49:08 GMT"/>
@@ -340,7 +336,6 @@
 		  <child>
 		    <widget class="GtkButton" id="nextbtn">
 		      <property name="visible">True</property>
-		      <property name="can_focus">True</property>
 		      <property name="relief">GTK_RELIEF_NONE</property>
 		      <property name="focus_on_click">True</property>
 		      <signal name="clicked" handler="on_nextbtn_clicked" last_modification_time="Sun, 05 Jul 2009 10:49:12 GMT"/>
@@ -367,7 +362,6 @@
 		  <child>
 		    <widget class="GtkButton" id="playrand">
 		      <property name="visible">True</property>
-		      <property name="can_focus">True</property>
 		      <property name="relief">GTK_RELIEF_NONE</property>
 		      <property name="focus_on_click">True</property>
 		      <signal name="clicked" handler="on_playrand_clicked" last_modification_time="Sun, 05 Jul 2009 10:49:16 GMT"/>

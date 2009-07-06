@@ -38,6 +38,11 @@ psdl_thread (uintptr_t ctx) {
                 gtkps_playsong ();
                 GDK_THREADS_LEAVE();
                 break;
+            case M_PLAYSONGNUM:
+                GDK_THREADS_ENTER();
+                gtkps_playsongnum (p1);
+                GDK_THREADS_LEAVE();
+                break;
             case M_STOPSONG:
                 GDK_THREADS_ENTER();
                 gtkps_stopsong ();

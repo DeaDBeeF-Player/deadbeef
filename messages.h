@@ -6,6 +6,7 @@ enum {
     M_NEXTSONG,
     M_PREVSONG,
     M_PLAYSONG,
+    M_PLAYSONGNUM,
     M_STOPSONG,
     M_PAUSESONG,
     M_PLAYRANDOM,

@@ -11,6 +11,7 @@
 #include "support.h"
 #include "playlist.h"
 #include "psdl.h"
+#include "codec.h"
 #include "common.h"
 #include "messagepump.h"
 #include "messages.h"
@@ -204,6 +205,7 @@ gtkps_mouse1_clicked (GtkWidget *widget, int ex, int ey, double time) {
             && fabs(ps_lastpos[1] - ey) < 3) {
         // doubleclick - play this item
         if (playlist_row != -1) {
+#if 0
             playItem_t *it = ps_get_for_idx (playlist_row);
             if (it) {
                 playItem_t *prev = playlist_current;
@@ -212,14 +214,11 @@ gtkps_mouse1_clicked (GtkWidget *widget, int ex, int ey, double time) {
                     if (prev) {
                         redraw_ps_row (widget, ps_get_idx_of (prev));
                     }
-//                    if (playlist_current) {
-//                        redraw_ps_row (widget, ps_get_idx_of (playlist_current));
-//                    }
                 }
                 messagepump_push (M_PLAYSONG, 0, 0, 0);
-//                psdl_stop ();
-//                psdl_play (it);
             }
+#endif
+            messagepump_push (M_PLAYSONGNUM, 0, playlist_row, 0);
         }
 
 
@@ -249,8 +248,10 @@ gtkps_playsong (void) {
     }
     else if (playlist_current) {
         printf ("restart\n");
+        codec_lock ();
         psdl_stop ();
         psdl_play (playlist_current);
+        codec_unlock ();
         GtkWidget *widget = lookup_widget (mainwin, "playlist");
         redraw_ps_row (widget, ps_get_idx_of (playlist_current));
     }
@@ -258,8 +259,10 @@ gtkps_playsong (void) {
         printf ("start under cursor\n");
         playItem_t *it = ps_get_for_idx (playlist_row);
         if (it) {
+            codec_lock ();
             psdl_stop ();
             psdl_play (it);
+            codec_unlock ();
             playlist_current = it;
         }
         GtkWidget *widget = lookup_widget (mainwin, "playlist");
@@ -269,8 +272,10 @@ gtkps_playsong (void) {
         printf ("play 1st in list\n");
         playlist_current = playlist_head;
         if (playlist_current) {
+            codec_lock ();
             psdl_stop ();
             psdl_play (playlist_current);
+            codec_unlock ();
             GtkWidget *widget = lookup_widget (mainwin, "playlist");
             redraw_ps_row (widget, ps_get_idx_of (playlist_current));
         }
@@ -313,8 +318,10 @@ gtkps_nextsong (void) {
         playlist_current = playlist_head;
     }
     if (playlist_current) {
+        codec_lock ();
         psdl_stop ();
         psdl_play (playlist_current);
+        codec_unlock ();
     }
     if (playlist_current != prev) {
         if (prev) {
@@ -342,8 +349,10 @@ gtkps_randomsong (void) {
         playlist_current = NULL;
     }
     if (playlist_current) {
+        codec_lock ();
         psdl_stop ();
         psdl_play (playlist_current);
+        codec_unlock ();
     }
     if (playlist_current != prev) {
         if (prev) {
@@ -369,3 +378,27 @@ gtkps_pausesong (void) {
         psdl_pause ();
     }
 }
+
+void
+gtkps_playsongnum (int idx) {
+    playItem_t *it = ps_get_for_idx (playlist_row);
+    if (it) {
+        if (it != playlist_current) {
+            GtkWidget *widget = lookup_widget (mainwin, "playlist");
+            int prev = -1;
+            if (playlist_current) {
+                prev = ps_get_idx_of (playlist_current);
+            }
+            playlist_current = it;
+            if (prev != -1) {
+                redraw_ps_row (widget, prev);
+            }
+            redraw_ps_row (widget, idx);
+        }
+        codec_lock ();
+        psdl_stop ();
+        psdl_play (playlist_current);
+        codec_unlock ();
+    }
+}
+

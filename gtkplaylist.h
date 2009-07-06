@@ -52,4 +52,7 @@ gtkps_randomsong (void);
 void
 gtkps_pausesong (void);
 
+void
+gtkps_playsongnum (int idx);
+
 #endif

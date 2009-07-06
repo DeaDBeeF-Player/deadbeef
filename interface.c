@@ -198,6 +198,7 @@ create_mainwin (void)
   stopbtn = gtk_button_new ();
   gtk_widget_show (stopbtn);
   gtk_box_pack_start (GTK_BOX (hbox3), stopbtn, FALSE, FALSE, 0);
+  GTK_WIDGET_UNSET_FLAGS (stopbtn, GTK_CAN_FOCUS);
   gtk_button_set_relief (GTK_BUTTON (stopbtn), GTK_RELIEF_NONE);
 
   image1 = gtk_image_new_from_stock ("gtk-media-stop", GTK_ICON_SIZE_BUTTON);
@@ -207,6 +208,7 @@ create_mainwin (void)
   playbtn = gtk_button_new ();
   gtk_widget_show (playbtn);
   gtk_box_pack_start (GTK_BOX (hbox3), playbtn, FALSE, FALSE, 0);
+  GTK_WIDGET_UNSET_FLAGS (playbtn, GTK_CAN_FOCUS);
   gtk_button_set_relief (GTK_BUTTON (playbtn), GTK_RELIEF_NONE);
 
   image2 = gtk_image_new_from_stock ("gtk-media-play", GTK_ICON_SIZE_BUTTON);
@@ -216,6 +218,7 @@ create_mainwin (void)
   pausebtn = gtk_button_new ();
   gtk_widget_show (pausebtn);
   gtk_box_pack_start (GTK_BOX (hbox3), pausebtn, FALSE, FALSE, 0);
+  GTK_WIDGET_UNSET_FLAGS (pausebtn, GTK_CAN_FOCUS);
   gtk_button_set_relief (GTK_BUTTON (pausebtn), GTK_RELIEF_NONE);
 
   image3 = gtk_image_new_from_stock ("gtk-media-pause", GTK_ICON_SIZE_BUTTON);
@@ -225,6 +228,7 @@ create_mainwin (void)
   prevbtn = gtk_button_new ();
   gtk_widget_show (prevbtn);
   gtk_box_pack_start (GTK_BOX (hbox3), prevbtn, FALSE, FALSE, 0);
+  GTK_WIDGET_UNSET_FLAGS (prevbtn, GTK_CAN_FOCUS);
   gtk_button_set_relief (GTK_BUTTON (prevbtn), GTK_RELIEF_NONE);
 
   image4 = gtk_image_new_from_stock ("gtk-media-previous", GTK_ICON_SIZE_BUTTON);
@@ -234,6 +238,7 @@ create_mainwin (void)
   nextbtn = gtk_button_new ();
   gtk_widget_show (nextbtn);
   gtk_box_pack_start (GTK_BOX (hbox3), nextbtn, FALSE, FALSE, 0);
+  GTK_WIDGET_UNSET_FLAGS (nextbtn, GTK_CAN_FOCUS);
   gtk_button_set_relief (GTK_BUTTON (nextbtn), GTK_RELIEF_NONE);
 
   image5 = gtk_image_new_from_stock ("gtk-media-next", GTK_ICON_SIZE_BUTTON);
@@ -243,6 +248,7 @@ create_mainwin (void)
   playrand = gtk_button_new ();
   gtk_widget_show (playrand);
   gtk_box_pack_start (GTK_BOX (hbox3), playrand, FALSE, FALSE, 0);
+  GTK_WIDGET_UNSET_FLAGS (playrand, GTK_CAN_FOCUS);
   gtk_button_set_relief (GTK_BUTTON (playrand), GTK_RELIEF_NONE);
 
   alignment1 = gtk_alignment_new (0.5, 0.5, 0, 0);
