@@ -40,10 +40,14 @@ gtkps_setup_scrollbar (void) {
         size = 0;
     }
     GtkWidget *scroll = lookup_widget (mainwin, "playscroll");
-//    gtk_range_set_range (GTK_RANGE (scroll), 0, size);
-//    gtk_range_set_increments (GTK_RANGE (scroll), 1, h);
-    GtkAdjustment *adj = (GtkAdjustment*)gtk_adjustment_new (gtk_range_get_value (GTK_RANGE (scroll)), 0, size, 1, h, h);
-    gtk_range_set_adjustment (GTK_RANGE (scroll), adj);
+    if (size == 0) {
+        gtk_widget_hide (scroll);
+    }
+    else {
+        GtkAdjustment *adj = (GtkAdjustment*)gtk_adjustment_new (gtk_range_get_value (GTK_RANGE (scroll)), 0, size, 1, h, h);
+        gtk_range_set_adjustment (GTK_RANGE (scroll), adj);
+        gtk_widget_show (scroll);
+    }
 }
 
 void
