@@ -40,4 +40,7 @@ ps_get_for_idx (int idx);
 int
 ps_get_idx_of (playItem_t *it);
 
+int
+ps_add_cue (const char *cuename);
+
 #endif // __PLAYLIST_H

@@ -3,6 +3,7 @@
 #include <dirent.h>
 #include <fnmatch.h>
 #include <stdio.h>
+#include <ctype.h>
 #include "playlist.h"
 #include "codec.h"
 #include "cwav.h"
@@ -47,6 +48,7 @@ ps_get_qvalue_from_cue (char *p, char *out) {
         return;
     }
     p++;
+    p = ps_cue_skipspaces (p);
     while (*p && *p != '"') {
         *out++ = *p++;
     }
@@ -60,19 +62,60 @@ ps_get_value_from_cue (char *p, char *out) {
     }
     *out = 0;
 }
-static int
-ps_add_cue (const char *cuename) {
-    FILE *fp = fopen (cuename, "rt");
-    if (!fp) {
+
+static float
+ps_cue_parse_time (const char *p) {
+    char tmp[3] = {0};
+    const char *next = p;
+    int s;
+    while (*next && *next != ':') {
+        next++;
+    }
+    if ((next - p) != 2) {
         return -1;
     }
+    strncpy (tmp, p, 2);
+    tmp[next-p] = 0;
+    float mins = atoi (tmp);
+    next++;
+    p = next;
+    while (*next && *next != ':') {
+        next++;
+    }
+    if ((next - p) != 2) {
+        return -1;
+    }
+    strncpy (tmp, p, 2);
+    float sec = atoi (tmp);
+    next++;
+    p = next;
+    while (*next && *next != ':') {
+        next++;
+    }
+    if ((next - p) != 2) {
+        return -1;
+    }
+    strncpy (tmp, p, 2);
+    float frm = atoi (tmp);
+    return mins * 60 + sec;
+}
+
+int
+ps_add_cue (const char *cuename) {
+    printf ("trying to load %s\n", cuename);
+    FILE *fp = fopen (cuename, "rt");
+    if (!fp) {
+        printf ("failed\n");
+        return -1;
+    }
+    printf ("found!\n");
     char performer[1024];
     char albumtitle[1024];
     char file[1024];
     char track[1024];
     char title[1024];
     char start[1024];
-    char end[1024];
+    playItem_t *prev = NULL;
     for (;;) {
         char str[1024];
         if (!fgets (str, 1024, fp)) {
@@ -129,12 +172,36 @@ ps_add_cue (const char *cuename) {
         else if (!strncmp (p, "INDEX 00 ", 9)) {
             ps_get_value_from_cue (p + 9, start);
             printf ("got index0: %s\n", start);
-        }
-        else if (!strncmp (p, "INDEX 01 ", 9)) {
-            ps_get_value_from_cue (p + 9, end);
-            printf ("got index1: %s\n", start);
+            char *p = track;
+            while (*p && isdigit (*p)) {
+                p++;
+            }
+            *p = 0;
+            // check that indexes have valid timestamps
+            float tstart = ps_cue_parse_time (start);
+            if (tstart < 0) {
+                printf ("cue file %s has bad timestamp(s)\n", cuename);
+                continue;
+            }
+            if (prev) {
+                prev->timeend = tstart;
+                printf ("end time for prev track (%x): %f\n", prev, tstart);
+            }
             // add this track
-            printf ("adding %s - %s %s - %s\n", performer, title, start, end);
+            char str[1024];
+            snprintf (str, 1024, "%d. %s - %s", atoi (track), performer, title[0] ? title : "?", start, tstart);
+            printf ("adding %s\n", str);
+            playItem_t *it = malloc (sizeof (playItem_t));
+            memset (it, 0, sizeof (playItem_t));
+            it->codec = &cflac;
+            it->fname = strdup (file);
+            it->tracknum = atoi (track);
+            it->timestart = tstart;
+            it->timeend = -1; // will be filled by next read, or by codec
+            it->displayname = strdup (str);
+            ps_append_item (it);
+            printf ("added item %x\n", it);
+            prev = it;
         }
         else {
             printf ("got unknown line:\n%s\n", p);
@@ -151,9 +218,9 @@ ps_add_file (const char *fname) {
     // detect codec
     codec_t *codec = NULL;
     const char *eol = fname + strlen (fname) - 1;
-    while (*eol != '.') {
+    while (eol > fname && *eol != '.') {
         eol--;
-        }
+    }
     eol++;
     if (!strcasecmp (eol, "ogg")) {
         codec = &cvorbis;
@@ -169,15 +236,16 @@ ps_add_file (const char *fname) {
     }
     else if (!strcasecmp (eol, "flac")) {
         codec = &cflac;
+        return codec->add (fname);
     }
     else if (!strcasecmp (eol, "nsf")) {
         codec = &cgme;
         return codec->add (fname);
     }
-    else if (!strcasecmp (eol, "cue")) {
-        ps_add_cue (fname);
-        return -1;
-    }
+//    else if (!strcasecmp (eol, "cue")) {
+//        ps_add_cue (fname);
+//        return -1;
+//    }
     else {
         return -1;
     }

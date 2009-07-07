@@ -5,11 +5,14 @@
 #include "codec.h"
 #include "cflac.h"
 #include "common.h"
+#include "playlist.h"
 
 static FLAC__StreamDecoder *decoder = 0;
 #define BUFFERSIZE 40000
 static char buffer[BUFFERSIZE];
 static int remaining; // bytes remaining in buffer from last read
+static float timestart;
+static float timeend;
 
 FLAC__StreamDecoderWriteStatus
 cflac_write_callback (const FLAC__StreamDecoder *decoder, const FLAC__Frame *frame, const FLAC__int32 * const inputbuffer[], void *client_data) {
@@ -50,7 +53,6 @@ cflac_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMe
     cflac.info.channels = channels;
     cflac.info.bitsPerSample = bps;
     cflac.info.duration = total_samples / (float)sample_rate;
-    cflac.info.position = 0;
 }
 
 void
@@ -69,9 +71,19 @@ cflac_init (const char *fname, int track, float start, float end) {
     }
     FLAC__stream_decoder_set_md5_checking(decoder, 0);
     status = FLAC__stream_decoder_init_file(decoder, fname, cflac_write_callback, cflac_metadata_callback, cflac_error_callback, NULL);
-    cflac.info.duration = -1;
-    cflac.info.position = 0;
     FLAC__stream_decoder_process_until_end_of_metadata (decoder);
+    timestart = start;
+    timeend = end;
+    if (timeend > timestart || timeend < 0) {
+        // take from cue and seek
+        if (timeend < 0) {
+            printf ("starting last track in cue!\n");
+            // must be last (or broken) track
+            timeend = cflac.info.duration; // set from metainfo
+        }
+        cflac.info.duration = end - start;
+        cflac.seek (0);
+    }
     if (cflac.info.duration == -1) {
         printf ("FLAC duration calculation failed\n");
         return -1;
@@ -114,21 +126,44 @@ cflac_read (char *bytes, int size) {
         }
     } while (size > 0);
     cflac.info.position += (float)nsamples / cflac.info.samplesPerSecond;
+    if (timeend > timestart) {
+//        printf ("pos: %f, end: %f\n", cflac.info.position, timeend);
+        if (cflac.info.position + timestart > timeend) {
+            return -1;
+        }
+    }
     return 0;
 }
 
 int
 cflac_seek (float time) {
+    time += timestart;
     if (!FLAC__stream_decoder_seek_absolute (decoder, (FLAC__uint64)(time * cflac.info.samplesPerSecond))) {
         return -1;
     }
     remaining = 0;
-    cflac.info.position = time;
+    cflac.info.position = time - timestart;
     return 0;
 }
 
 int
 cflac_add (const char *fname) {
+    // try cue
+    char cuename[1024];
+    snprintf (cuename, 1024, "%s.cue", fname);
+    if (!ps_add_cue (cuename)) {
+        return 0;
+    }
+
+    playItem_t *it = malloc (sizeof (playItem_t));
+    memset (it, 0, sizeof (playItem_t));
+    it->codec = &cflac;
+    it->fname = strdup (fname);
+    it->tracknum = 0;
+    it->timestart = -1;
+    it->timeend = -1;
+    it->displayname = strdup (fname);
+    ps_append_item (it);
     return 0;
 }
 
