@@ -182,7 +182,6 @@ cmp3_get_stream_info2 (void) {
         int nchannels = (hdr & (0x3 << 6)) >> 6;
         nchannels = chantbl[nchannels];
 
-
         if (nframe == 0) {
             cmp3.info.bitsPerSample = 16;
             cmp3.info.channels = nchannels;
@@ -366,6 +365,9 @@ cmp3_decode (void) {
 				}
             }
 		}
+
+		cmp3.info.samplesPerSecond = frame.header.samplerate;
+		cmp3.info.channels = MAD_NCHANNELS(&frame.header);
 
 		mad_timer_add(&timer,frame.header.duration);
 		
