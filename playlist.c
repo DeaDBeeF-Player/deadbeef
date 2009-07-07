@@ -24,6 +24,125 @@ ps_free (void) {
     }
 }
 
+static char *
+ps_cue_skipspaces (char *p) {
+    while (*p && *p <= ' ') {
+        p++;
+    }
+    return p;
+}
+
+static void
+ps_get_qvalue_from_cue (char *p, char *out) {
+    if (*p == 0) {
+        *out = 0;
+        return;
+    }
+    // seek "
+    while (*p && *p != '"') {
+        p++;
+    }
+    if (*p == 0) {
+        *out = 0;
+        return;
+    }
+    p++;
+    while (*p && *p != '"') {
+        *out++ = *p++;
+    }
+    *out = 0;
+}
+
+static void
+ps_get_value_from_cue (char *p, char *out) {
+    while (*p >= ' ') {
+        *out++ = *p++;
+    }
+    *out = 0;
+}
+static int
+ps_add_cue (const char *cuename) {
+    FILE *fp = fopen (cuename, "rt");
+    if (!fp) {
+        return -1;
+    }
+    char performer[1024];
+    char albumtitle[1024];
+    char file[1024];
+    char track[1024];
+    char title[1024];
+    char start[1024];
+    char end[1024];
+    for (;;) {
+        char str[1024];
+        if (!fgets (str, 1024, fp)) {
+            break; // eof
+        }
+        char *p = ps_cue_skipspaces (str);
+        if (!strncmp (p, "PERFORMER ", 10)) {
+            ps_get_qvalue_from_cue (p + 10, performer);
+            printf ("got performer: %s\n", performer);
+        }
+        else if (!strncmp (p, "TITLE ", 6)) {
+            if (str[0] > ' ') {
+                ps_get_qvalue_from_cue (p + 6, albumtitle);
+                printf ("got albumtitle: %s\n", albumtitle);
+            }
+            else {
+                ps_get_qvalue_from_cue (p + 6, title);
+                printf ("got title: %s\n", title);
+            }
+        }
+        else if (!strncmp (p, "FILE ", 5)) {
+            ps_get_qvalue_from_cue (p + 5, file);
+            printf ("got filename: %s\n", file);
+            // copy directory name
+            char fname[1024];
+            int len = strlen (cuename);
+            memcpy (fname, cuename, len+1);
+            char *p = fname + len;
+            while (*p != '/') {
+                p--;
+                len--;
+            }
+            p++;
+            len++;
+            // add file name
+            int flen = strlen (file);
+            // ensure fullname fills in buffer
+            if (flen + len >= 1024) {
+                printf ("cue file name is too long");
+                return -1;
+            }
+            strcpy (p, file);
+            // copy full name in place of relative name
+            strcpy (file, fname);
+            printf ("ended up as: %s\n", file);
+        }
+        else if (!strncmp (p, "TRACK ", 6)) {
+            ps_get_value_from_cue (p + 6, track);
+            printf ("got track: %s\n", track);
+        }
+//        else if (!strncmp (p, "PERFORMER ", 10)) {
+//            ps_get_qvalue_from_cue (p + 10, performer);
+//        }
+        else if (!strncmp (p, "INDEX 00 ", 9)) {
+            ps_get_value_from_cue (p + 9, start);
+            printf ("got index0: %s\n", start);
+        }
+        else if (!strncmp (p, "INDEX 01 ", 9)) {
+            ps_get_value_from_cue (p + 9, end);
+            printf ("got index1: %s\n", start);
+            // add this track
+            printf ("adding %s - %s %s - %s\n", performer, title, start, end);
+        }
+        else {
+            printf ("got unknown line:\n%s\n", p);
+        }
+    }
+    fclose (fp);
+}
+
 int
 ps_add_file (const char *fname) {
     if (!fname) {
@@ -54,6 +173,10 @@ ps_add_file (const char *fname) {
     else if (!strcasecmp (eol, "nsf")) {
         codec = &cgme;
         return codec->add (fname);
+    }
+    else if (!strcasecmp (eol, "cue")) {
+        ps_add_cue (fname);
+        return -1;
     }
     else {
         return -1;
