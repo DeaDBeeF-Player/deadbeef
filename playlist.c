@@ -10,6 +10,7 @@
 #include "cmod.h"
 #include "cmp3.h"
 #include "cgme.h"
+#include "cflac.h"
 
 playItem_t *playlist_head;
 playItem_t *playlist_tail;
@@ -46,6 +47,9 @@ ps_add_file (const char *fname) {
     }
     else if (!strcasecmp (eol, "mp3")) {
         codec = &cmp3;
+    }
+    else if (!strcasecmp (eol, "flac")) {
+        codec = &cflac;
     }
     else if (!strcasecmp (eol, "nsf")) {
         codec = &cgme;
