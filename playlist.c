@@ -12,6 +12,7 @@
 #include "cmp3.h"
 #include "cgme.h"
 #include "cflac.h"
+#include "streamer.h"
 
 playItem_t *playlist_head;
 playItem_t *playlist_tail;
@@ -428,6 +429,7 @@ ps_set_current (playItem_t *it) {
     }
     if (playlist_current_ptr) {
         streamer_reset ();
+        printf ("streamer_reset\n");
     }
     codec_unlock ();
 }

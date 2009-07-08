@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <assert.h>
 #include <samplerate.h>
 #include "codec.h"
 #include "playlist.h"
@@ -74,7 +75,8 @@ streamer_read (char *bytes, int size) {
         else {
             int nsamples = size/4;
             // convert to codec samplerate
-            nsamples = nsamples * samplerate / sdl_player_freq * 2 ;
+            nsamples = nsamples * samplerate / sdl_player_freq * 2;
+            assert (src_is_valid_ratio ((double)sdl_player_freq/samplerate));
             // read data at source samplerate (with some room for SRC)
             int nbytes = (nsamples - codecleft) * 2 * nchannels;
             bytesread = codec->read (g_readbuffer, nbytes);
@@ -95,6 +97,7 @@ streamer_read (char *bytes, int size) {
                     fbuffer[i*2+1] = fbuffer[i*2+0];
                 }
             }
+            codec_lock ();
             // convert samplerate
             srcdata.data_in = g_fbuffer;
             srcdata.data_out = g_srcbuffer;
@@ -104,7 +107,7 @@ streamer_read (char *bytes, int size) {
             srcdata.end_of_input = 0;
 //            src_set_ratio (src, srcdata.src_ratio);
             src_process (src, &srcdata);
-            //printf ("processed %d/%d samples (input=%d)\n", srcdata.output_frames_gen, srcdata.output_frames, srcdata.input_frames);
+            codec_unlock ();
             // convert back to s16 format
             nbytes = size;
             int genbytes = srcdata.output_frames_gen * 4;
@@ -130,7 +133,6 @@ streamer_read (char *bytes, int size) {
             return initsize;
         }
         else {
-            //printf ("eof (size=%d)\n", size);
             // that means EOF
             if (ps_nextsong () < 0) {
                 break;
