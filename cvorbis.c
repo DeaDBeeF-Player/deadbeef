@@ -39,7 +39,7 @@ void
 cvorbis_free (void) {
     if (file) {
         ov_clear (&vorbis_file);
-        //fclose (file); -- ov_clear closes it
+        //fclose (file); //-- ov_clear closes it
         file = NULL;
         vi = NULL;
     }
@@ -49,37 +49,32 @@ int
 cvorbis_read (char *bytes, int size)
 {
     if (!file)
-        return -1;
+        return 0;
+    int initsize = size;
     for (;;)
     {
         // read ogg
         long ret=ov_read (&vorbis_file, bytes, size, 0, 2, 1, &cur_bit_stream);
         if (ret < 0)
         {
-            printf ("WARNING: ogg vorbis decoder tells error %x\n", ret);
-            memset (bytes, 0, size);
-            return -1;
+            break;
         }
         else if (ret == 0) {
-            if (size > 0) {
-                memset (bytes, 0, size);
-            }
-            return -1;
+            break;
         }
         else if (ret < size)
         {
             size -= ret;
             bytes += ret;
-//            if (ret == 0) {
-//                ov_raw_seek (&vorbis_file, 0);
-//            }
         }
         else {
+            size = 0;
             break;
         }
     }
     cvorbis.info.position = ov_time_tell(&vorbis_file);
-    return 0;
+
+    return initsize - size;
 }
 
 int

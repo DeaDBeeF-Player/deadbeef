@@ -10,4 +10,7 @@ streamer_free (void);
 int
 streamer_read (char *bytes, int size);
 
+void
+streamer_reset (void);
+
 #endif // __STREAMER_H

@@ -32,7 +32,6 @@ static struct mad_stream stream;
 static struct mad_frame frame;
 static struct mad_synth synth;
 static mad_timer_t timer;
-static int endoffile;
 
 static int
 cmp3_decode (void);
@@ -54,7 +53,6 @@ cmp3_init (const char *fname, int track, float start, float end) {
     buffer.output = NULL;
     buffer.readsize = 0;
     buffer.cachefill = 0;
-    endoffile = 0;
     cmp3.info.position = 0;
 	mad_stream_init(&stream);
 	mad_frame_init(&frame);
@@ -313,7 +311,11 @@ cmp3_skip2 (float seconds) {
 static int
 cmp3_decode (void) {
     int nread = 0;
+    int eof = 0;
     for (;;) {
+        if (eof) {
+            break;
+        }
         // read more MPEG data if needed
         if(stream.buffer==NULL || stream.error==MAD_ERROR_BUFLEN) {
             // copy part of last frame to beginning
@@ -324,22 +326,20 @@ cmp3_decode (void) {
             int size = READBUFFER - buffer.remaining;
             int bytesread = 0;
             char *bytes = buffer.input + buffer.remaining;
-            if (!endoffile) {
-                bytesread = fread (bytes, 1, size, buffer.file);
-                if (bytesread < size) {
-                    // end of file
-                    endoffile = 1;
-                    size -= bytesread;
-                    bytes += bytesread;
-                }
+            bytesread = fread (bytes, 1, size, buffer.file);
+            if (!bytesread) {
+                // add guard
+                eof = 1;
+                memset (bytes, 0, 8);
+                bytesread = 8;
+            }
+            if (bytesread < size) {
+                // end of file
+                size -= bytesread;
+                bytes += bytesread;
             }
             bytesread += buffer.remaining;
-            if (bytesread) {
-                mad_stream_buffer(&stream,buffer.input,bytesread);
-            }
-            else {
-                return -1;
-            }
+            mad_stream_buffer(&stream,buffer.input,bytesread);
             stream.error=0;
         }
         // decode next frame
@@ -408,7 +408,7 @@ cmp3_decode (void) {
                 break;
             }
         }
-        if (buffer.readsize == 0) {
+        if (buffer.readsize == 0 || eof) {
             break;
         }
 //        if (buffer.readsize > 0 && endoffile) {
@@ -467,7 +467,6 @@ cmp3_seek (float time) {
     mad_synth_finish (&synth);
     mad_frame_finish (&frame);
     mad_stream_finish (&stream);
-    endoffile = 0;
     fseek(buffer.file, 0, SEEK_SET);
 	mad_stream_init(&stream);
 	mad_frame_init(&frame);

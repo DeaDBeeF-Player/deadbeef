@@ -20,6 +20,7 @@ void
 psdl_thread (uintptr_t ctx) {
     codec_init_locking ();
     psdl_init ();
+    psdl_play ();
     while (!psdl_terminate) {
         uint32_t msg;
         uintptr_t ctx;

@@ -402,10 +402,67 @@ ps_item_free (playItem_t *it) {
 
 void
 ps_set_current (playItem_t *it) {
+    if (it) {
+        printf ("ps_set_current (%s)\n", it->displayname);
+    }
+    if (it == playlist_current_ptr) {
+        if (it && it->codec) {
+            codec_lock ();
+            playlist_current_ptr->codec->seek (0);
+            codec_unlock ();
+        }
+        return;
+    }
+    codec_lock ();
+    if (playlist_current_ptr) {
+        playlist_current_ptr->codec->free ();
+    }
     ps_item_free (&playlist_current);
     if (it) {
         ps_item_copy (&playlist_current, it);
     }
     playlist_current_ptr = it;
+    if (it && it->codec) {
+        // don't do anything on fail, streamer will take care
+        it->codec->init (it->fname, it->tracknum, it->timestart, it->timeend);
+    }
+    if (playlist_current_ptr) {
+        streamer_reset ();
+    }
+    codec_unlock ();
 }
 
+int
+ps_nextsong (void) {
+    if (playlist_current_ptr && playlist_current_ptr->next) {
+        ps_set_current (playlist_current_ptr->next);
+        return 0;
+    }
+    if (playlist_head) {
+        ps_set_current (playlist_head);
+        return 0;
+    }
+    ps_set_current (NULL);
+    return -1;
+}
+
+playItem_t *
+ps_getnext (void) {
+    if (playlist_current_ptr && playlist_current_ptr->next) {
+        return playlist_current_ptr->next;
+    }
+    if (playlist_head) {
+        return playlist_head;
+    }
+    return NULL;
+}
+
+void
+ps_start_current (void) {
+    playItem_t *it = playlist_current_ptr;
+    if (it && it->codec) {
+        // don't do anything on fail, streamer will take care
+        it->codec->free ();
+        it->codec->init (it->fname, it->tracknum, it->timestart, it->timeend);
+    }
+}

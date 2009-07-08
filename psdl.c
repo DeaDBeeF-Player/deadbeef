@@ -1,24 +1,18 @@
 #include <SDL/SDL.h>
-#include <samplerate.h>
 #include "psdl.h"
-#include "codec.h"
-#include "playlist.h"
-#include "messagepump.h"
-#include "messages.h"
 #include "streamer.h"
 
 static int sdl_player_numsamples = 4096;
 int sdl_player_freq;
 static SDL_AudioSpec spec;
 static void psdl_callback (void *userdata, Uint8 *stream, int len);
-static codec_t *codec;
 static float sdl_volume = 1;
 
 int
 psdl_init (void) {
 	SDL_AudioSpec obt;
 	int formats[] = { AUDIO_S16, -1 };
-	int freqs[] = { 48000, 44100, -1 };
+	int freqs[] = { 22050, 48000, 44100, -1 };
 	const char *fmtnames[] = { "16 bit signed integer" };
 	int fmt, frq;
 	int success = 0;
@@ -60,14 +54,7 @@ psdl_free (void) {
 }
 
 int
-psdl_play (struct playItem_s *it) {
-    if (!it) {
-        return -1;
-    }
-    codec = it->codec;
-    if (codec->init (it->fname, it->tracknum, it->timestart, it->timeend)) {
-        return -1;
-    }
+psdl_play (void) {
 	SDL_PauseAudio (0);
 	return 0;
 }
@@ -75,17 +62,10 @@ psdl_play (struct playItem_s *it) {
 int
 psdl_stop (void) {
 	SDL_PauseAudio (1);
-    if (codec) {
-        codec->free ();
-        codec = NULL;
-    }
 }
 
 int
 psdl_ispaused (void) {
-    if (!codec) {
-        return 0;
-    }
     return (SDL_GetAudioStatus () == SDL_AUDIO_PAUSED);
 }
 
@@ -110,16 +90,12 @@ static void
 psdl_callback (void* userdata, Uint8 *stream, int len) {
     int bytesread = streamer_read (stream, len);
     int ivolume = sdl_volume * 1000;
-    if (bytesread < len) {
-        memset (stream + bytesread, 0, len-bytesread);
-    }
     for (int i = 0; i < bytesread/2; i++) {
         int16_t sample = (int16_t)(((int32_t)(((int16_t*)stream)[i])) * ivolume / 1000);
         ((int16_t*)stream)[i] = sample;
     }
+    if (bytesread < len) {
+        memset (stream + bytesread, 0, len-bytesread);
+    }
 }
 
-struct codec_s*
-psdl_getcodec (void) {
-    return codec;
-}

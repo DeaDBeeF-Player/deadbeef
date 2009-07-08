@@ -253,10 +253,7 @@ gtkps_playsong (void) {
     }
     else if (playlist_current_ptr) {
         printf ("restart\n");
-        codec_lock ();
-        psdl_stop ();
-        psdl_play (playlist_current_ptr);
-        codec_unlock ();
+        ps_start_current ();
         GtkWidget *widget = lookup_widget (mainwin, "playlist");
         redraw_ps_row (widget, ps_get_idx_of (playlist_current_ptr));
     }
@@ -264,11 +261,7 @@ gtkps_playsong (void) {
         printf ("start under cursor\n");
         playItem_t *it = ps_get_for_idx (playlist_row);
         if (it) {
-            codec_lock ();
             ps_set_current (it);
-            psdl_stop ();
-            psdl_play (it);
-            codec_unlock ();
         }
         GtkWidget *widget = lookup_widget (mainwin, "playlist");
         redraw_ps_row (widget, playlist_row);
@@ -277,10 +270,6 @@ gtkps_playsong (void) {
         printf ("play 1st in list\n");
         ps_set_current (playlist_head);
         if (playlist_current_ptr) {
-            codec_lock ();
-            psdl_stop ();
-            psdl_play (playlist_current_ptr);
-            codec_unlock ();
             GtkWidget *widget = lookup_widget (mainwin, "playlist");
             redraw_ps_row (widget, ps_get_idx_of (playlist_current_ptr));
         }
@@ -293,14 +282,12 @@ gtkps_prevsong (void) {
     playItem_t *prev = playlist_current_ptr;
 
     if (playlist_current_ptr) {
+        printf ("gtkps_prevsong\n");
         ps_set_current (playlist_current_ptr->prev);
     }
     if (!playlist_current_ptr) {
+        printf ("gtkps_prevsong2\n");
         ps_set_current (playlist_tail);
-    }
-    if (playlist_current_ptr) {
-        psdl_stop ();
-        psdl_play (playlist_current_ptr);
     }
     if (playlist_current_ptr != prev) {
         if (prev) {
@@ -317,16 +304,12 @@ gtkps_nextsong (void) {
     GtkWidget *widget = lookup_widget (mainwin, "playlist");
     playItem_t *prev = playlist_current_ptr;
     if (playlist_current_ptr) {
+        printf ("gtkps_nextsong\n");
         ps_set_current (playlist_current_ptr->next);
     }
     if (!playlist_current_ptr) {
+        printf ("gtkps_nextsong2\n");
         ps_set_current (playlist_head);
-    }
-    if (playlist_current_ptr) {
-        codec_lock ();
-        psdl_stop ();
-        psdl_play (playlist_current_ptr);
-        codec_unlock ();
     }
     if (playlist_current_ptr != prev) {
         if (prev) {
@@ -348,16 +331,12 @@ gtkps_randomsong (void) {
     int r = rand () % ps_getcount ();
     playItem_t *it = ps_get_for_idx (r);
     if (it) {
+        printf ("gtkps_randomsong\n");
         ps_set_current (it);
     }
     else {
+        printf ("gtkps_randomsong2\n");
         ps_set_current (NULL);
-    }
-    if (playlist_current_ptr) {
-        codec_lock ();
-        psdl_stop ();
-        psdl_play (playlist_current_ptr);
-        codec_unlock ();
     }
     if (playlist_current_ptr != prev) {
         if (prev) {
@@ -394,16 +373,13 @@ gtkps_playsongnum (int idx) {
             if (playlist_current_ptr) {
                 prev = ps_get_idx_of (playlist_current_ptr);
             }
+            printf ("gtkps_playsongnum\n");
             ps_set_current (it);
             if (prev != -1) {
                 redraw_ps_row (widget, prev);
             }
             redraw_ps_row (widget, idx);
         }
-        codec_lock ();
-        psdl_stop ();
-        psdl_play (playlist_current_ptr);
-        codec_unlock ();
     }
 }
 
@@ -428,21 +404,28 @@ gtkps_update_songinfo (void) {
             gtk_statusbar_pop (sb, sb_context_id);
             gtk_statusbar_push (sb, sb_context_id, "Paused");
         }
-        else if (psdl_getcodec ()) {
-            codec_t *c = psdl_getcodec ();
+        else if (playlist_current.codec) {
+            codec_lock ();
+            codec_t *c = playlist_current.codec;
             int minpos = c->info.position / 60;
             int secpos = c->info.position - minpos * 60;
             int mindur = c->info.duration / 60;
             int secdur = c->info.duration - mindur * 60;
+            const char *mode = c->info.channels == 1 ? "Mono" : "Stereo";
+            int samplerate = c->info.samplesPerSecond;
+            int bitspersample = c->info.bitsPerSample;
+            float pos = c->info.position;
+            int dur = c->info.duration;
+            codec_unlock ();
 
             char str[1024];
-            snprintf (str, 1024, "%dHz | %d bit | %s | Position %d:%02d | Duration %d:%02d", c->info.samplesPerSecond, c->info.bitsPerSample, c->info.channels == 1 ? "Mono" : "Stereo", minpos, secpos, mindur, secdur);
+            snprintf (str, 1024, "%dHz | %d bit | %s | Position %d:%02d | Duration %d:%02d", samplerate, bitspersample, mode, minpos, secpos, mindur, secdur);
             gtk_statusbar_pop (sb, sb_context_id);
             gtk_statusbar_push (sb, sb_context_id, str);
             extern int g_disable_seekbar_handler;
             g_disable_seekbar_handler = 1;
             GtkRange *seekbar = GTK_RANGE (lookup_widget (mainwin, "playpos"));
-            gtk_range_set_value (seekbar, c->info.position * 1000 / c->info.duration);
+            gtk_range_set_value (seekbar, pos * 1000 / dur);
             g_disable_seekbar_handler = 0;
         }
         else {

@@ -47,4 +47,13 @@ ps_add_cue (const char *cuename);
 void
 ps_set_current (playItem_t *it);
 
+// returns -1 if theres no next song, or playlist finished
+int
+ps_nextsong (void);
+
+// starts current playlist item from position 0
+// only if the item is still in playlist
+void
+ps_start_current (void);
+
 #endif // __PLAYLIST_H
