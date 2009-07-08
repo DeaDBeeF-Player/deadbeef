@@ -11,6 +11,7 @@
 #include "messages.h"
 #include "gtkplaylist.h"
 #include "codec.h"
+#include "streamer.h"
 
 GtkWidget *mainwin;
 
@@ -18,8 +19,6 @@ int psdl_terminate = 0;
 
 void
 psdl_thread (uintptr_t ctx) {
-    codec_init_locking ();
-    psdl_init ();
     psdl_play ();
     while (!psdl_terminate) {
         uint32_t msg;
@@ -84,14 +83,14 @@ psdl_thread (uintptr_t ctx) {
         gtkps_update_songinfo ();
         // handle message pump here
     }
-    psdl_free ();
-    codec_free_locking ();
-    ps_free ();
 }
 
 int
 main (int argc, char *argv[]) {
     messagepump_init ();
+    codec_init_locking ();
+    streamer_init ();
+    psdl_init ();
     thread_start (psdl_thread, 0);
 
     g_thread_init (NULL);
@@ -111,5 +110,9 @@ main (int argc, char *argv[]) {
     gdk_threads_leave ();
     messagepump_free ();
     psdl_terminate = 1;
+    psdl_free ();
+    streamer_free ();
+    codec_free_locking ();
+    ps_free ();
     return 0;
 }

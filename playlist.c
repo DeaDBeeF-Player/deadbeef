@@ -404,7 +404,7 @@ ps_item_free (playItem_t *it) {
 void
 ps_set_current (playItem_t *it) {
     if (it) {
-        printf ("ps_set_current (%s)\n", it->displayname);
+//        printf ("ps_set_current (%s)\n", it->displayname);
     }
     if (it == playlist_current_ptr) {
         if (it && it->codec) {
@@ -429,7 +429,6 @@ ps_set_current (playItem_t *it) {
     }
     if (playlist_current_ptr) {
         streamer_reset ();
-        printf ("streamer_reset\n");
     }
     codec_unlock ();
 }

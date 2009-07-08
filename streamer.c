@@ -2,10 +2,13 @@
 #include <string.h>
 #include <stdio.h>
 #include <assert.h>
+#include <unistd.h>
 #include <samplerate.h>
+#include "threading.h"
 #include "codec.h"
 #include "playlist.h"
 #include "common.h"
+#include "streamer.h"
 
 extern int sdl_player_freq; // hack!
 static SRC_STATE *src;
@@ -14,24 +17,60 @@ static int codecleft;
 static char g_readbuffer[200000]; // hack!
 static float g_fbuffer[200000]; // hack!
 static float g_srcbuffer[200000]; // hack!
+static int streaming_terminate;
+
+#define STREAM_BUFFER_SIZE 200000
+static int streambuffer_fill;
+static char streambuffer[STREAM_BUFFER_SIZE+1000];
+static uintptr_t mutex;
+
+static int
+streamer_read_async (char *bytes, int size);
+
+void
+streamer_thread (uintptr_t ctx) {
+    codecleft = 0;
+
+    while (!streaming_terminate) {
+        streamer_lock ();
+        if (streambuffer_fill < STREAM_BUFFER_SIZE) {
+            int sz = STREAM_BUFFER_SIZE - streambuffer_fill;
+            int minsize = 500;
+            if (streambuffer_fill < 16384) {
+                minsize = 16384;
+            }
+            sz = min (minsize, sz);
+//            printf ("reading %d\n", sz);
+            int bytesread = streamer_read_async (&streambuffer[streambuffer_fill], sz);
+            streambuffer_fill += bytesread;
+        }
+        streamer_unlock ();
+        usleep (3000);
+        //printf ("fill: %d        \r", streambuffer_fill);
+    }
+
+    if (src) {
+        src_delete (src);
+        src = NULL;
+    }
+}
 
 int
 streamer_init (void) {
-////    src = src_new (SRC_LINEAR, 2, NULL);
-    src = src_new (SRC_SINC_BEST_QUALITY, 2, NULL);
+    mutex = mutex_create ();
+//    src = src_new (SRC_SINC_BEST_QUALITY, 2, NULL);
+    src = src_new (SRC_LINEAR, 2, NULL);
     if (!src) {
         return -1;
     }
-    codecleft = 0;
+    thread_start (streamer_thread, 0);
     return 0;
 }
 
 void
 streamer_free (void) {
-    if (src) {
-        src_delete (src);
-        src = NULL;
-    }
+    streaming_terminate = 1;
+    mutex_free (mutex);
 }
 
 void
@@ -41,8 +80,8 @@ streamer_reset (void) { // must be called when current song changes by external 
 }
 
 // returns number of bytes been read
-int
-streamer_read (char *bytes, int size) {
+static int
+streamer_read_async (char *bytes, int size) {
     int initsize = size;
     for (;;) {
         int bytesread = 0;
@@ -76,10 +115,19 @@ streamer_read (char *bytes, int size) {
             int nsamples = size/4;
             // convert to codec samplerate
             nsamples = nsamples * samplerate / sdl_player_freq * 2;
+            if (!src_is_valid_ratio ((double)sdl_player_freq/samplerate)) {
+                printf ("invalid ratio! %d / %d = %f", sdl_player_freq, samplerate, (float)sdl_player_freq/samplerate);
+            }
             assert (src_is_valid_ratio ((double)sdl_player_freq/samplerate));
             // read data at source samplerate (with some room for SRC)
             int nbytes = (nsamples - codecleft) * 2 * nchannels;
-            bytesread = codec->read (g_readbuffer, nbytes);
+            if (nbytes < 0) {
+                nbytes = 0;
+            }
+            else {
+                //printf ("reading %d bytes from mp3\n", nbytes);
+                bytesread = codec->read (g_readbuffer, nbytes);
+            }
             codec_unlock ();
             // recalculate nsamples according to how many bytes we've got
             nsamples = bytesread / (2 * nchannels) + codecleft;
@@ -140,4 +188,30 @@ streamer_read (char *bytes, int size) {
         }
     }
     return initsize - size;
+}
+
+void
+streamer_lock (void) {
+    mutex_lock (mutex);
+}
+
+void
+streamer_unlock (void) {
+    mutex_unlock (mutex);
+}
+
+int
+streamer_read (char *bytes, int size) {
+    streamer_lock ();
+    int sz = min (size, streambuffer_fill);
+    if (sz) {
+        memcpy (bytes, streambuffer, sz);
+        if (sz < streambuffer_fill) {
+            // shift buffer
+            memmove (streambuffer, &streambuffer[sz], streambuffer_fill-sz);
+        }
+        streambuffer_fill -= sz;
+    }
+    streamer_unlock ();
+    return sz;
 }

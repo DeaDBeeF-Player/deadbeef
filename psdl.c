@@ -12,13 +12,10 @@ int
 psdl_init (void) {
 	SDL_AudioSpec obt;
 	int formats[] = { AUDIO_S16, -1 };
-	int freqs[] = { 22050, 48000, 44100, -1 };
+	int freqs[] = { 44100, 48000, -1 };
 	const char *fmtnames[] = { "16 bit signed integer" };
 	int fmt, frq;
 	int success = 0;
-    if (streamer_init () < 0) {
-        return -1;
-    }
 	fprintf (stderr, "sdl_player_init\n");
 	for (fmt = 0; formats[fmt] != -1; fmt++) {
         for (frq = 0; freqs[frq] != -1; frq++) {
@@ -50,7 +47,6 @@ psdl_init (void) {
 void
 psdl_free (void) {
 	SDL_CloseAudio ();
-    streamer_free ();
 }
 
 int

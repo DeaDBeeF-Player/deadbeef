@@ -62,6 +62,7 @@ cmp3_init (const char *fname, int track, float start, float end) {
     if (cmp3_get_stream_info2 () == -1) {
         return -1;
     }
+//    printf ("song %s samplerate %d\n", fname, cmp3.info.samplesPerSecond);
     fseek (buffer.file, 0, SEEK_SET);
 //	cmp3_decode (); // this 1st run will read 1st frame, but will not decode anything except header
 
@@ -158,7 +159,6 @@ cmp3_get_stream_info2 (void) {
 
         // layer info
         int layer = (hdr & (3<<17)) >> 17;
-//        printf ("layer = %xh\n", layer);
 
         // bitrate
         int brtable[16] = { 0, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320, -1 };
@@ -180,7 +180,8 @@ cmp3_get_stream_info2 (void) {
         int nchannels = (hdr & (0x3 << 6)) >> 6;
         nchannels = chantbl[nchannels];
 
-        if (nframe == 0) {
+        if (nframe == 0 || cmp3.info.samplesPerSecond == -1)
+        {
             cmp3.info.bitsPerSample = 16;
             cmp3.info.channels = nchannels;
             cmp3.info.samplesPerSecond = samplerate;
