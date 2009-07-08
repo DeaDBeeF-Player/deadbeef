@@ -16,7 +16,7 @@ static float g_srcbuffer[200000]; // hack!
 
 int
 streamer_init (void) {
-//    src = src_new (SRC_LINEAR, 2, NULL);
+////    src = src_new (SRC_LINEAR, 2, NULL);
     src = src_new (SRC_SINC_BEST_QUALITY, 2, NULL);
     if (!src) {
         return -1;
@@ -110,7 +110,14 @@ streamer_read (char *bytes, int size) {
             int genbytes = srcdata.output_frames_gen * 4;
             bytesread = min(size, genbytes);
             for (i = 0; i < bytesread/2; i++) {
-                ((int16_t*)bytes)[i] = (int16_t)(g_srcbuffer[i]*32767.f);
+                float sample = g_srcbuffer[i];
+                if (sample > 1) {
+                    sample = 1;
+                }
+                if (sample < -1) {
+                    sample = -1;
+                }
+                ((int16_t*)bytes)[i] = (int16_t)(sample*32767.f);
             }
             // calculate how many unused input samples left
             codecleft = nsamples - srcdata.input_frames_used;
