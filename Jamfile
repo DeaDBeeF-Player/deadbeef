@@ -16,7 +16,7 @@ HDRS += /usr/include/pango-1.0 ;
 HDRS += /usr/include/cairo ;
 
 Main deadbeef : 
-    codec.c cvorbis.c cmp3.c cgme.c cmod.c cwav.c cflac.c playlist.c psdl.c main.c support.c interface.c callbacks.c threading.c messagepump.c gtkplaylist.c ;
+    codec.c cvorbis.c cmp3.c cgme.c cmod.c cwav.c cflac.c playlist.c psdl.c streamer.c main.c support.c interface.c callbacks.c threading.c messagepump.c gtkplaylist.c ;
 
 LINKLIBS on deadbeef =  -lmikmod -lm -lvorbis -logg -lvorbisfile -lmad -lFLAC -lSDL -lsamplerate -lgtk-x11-2.0 -lgdk-x11-2.0 -latk-1.0 -lgdk_pixbuf-2.0 -lm -lpangocairo-1.0 -lpango-1.0 -lcairo -lgobject-2.0 -lgmodule-2.0 -lglib-2.0 -lgthread-2.0 -lstdc++ ;
 

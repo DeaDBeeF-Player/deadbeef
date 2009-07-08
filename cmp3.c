@@ -312,6 +312,7 @@ cmp3_skip2 (float seconds) {
 
 static int
 cmp3_decode (void) {
+    int nread = 0;
     for (;;) {
         // read more MPEG data if needed
         if(stream.buffer==NULL || stream.error==MAD_ERROR_BUFLEN) {
@@ -381,11 +382,13 @@ cmp3_decode (void) {
                 *((int16_t*)buffer.output) = MadFixedToSshort(synth.pcm.samples[0][i]);
                 buffer.output+=2;
                 buffer.readsize-=2;
+                nread += 2;
 
                 if(MAD_NCHANNELS(&frame.header)==2) {
                     *((int16_t*)buffer.output) = MadFixedToSshort(synth.pcm.samples[1][i]);
                     buffer.output+=2;
                     buffer.readsize-=2;
+                    nread += 2;
                 }
             }
             else if (buffer.cachefill < CACHESIZE) {
@@ -408,14 +411,14 @@ cmp3_decode (void) {
         if (buffer.readsize == 0) {
             break;
         }
-        if (buffer.readsize > 0 && endoffile) {
-            // fill rest with zeroes, and return -1
-            memset (buffer.output, 0, buffer.readsize);
-            return -1;
-        }
+//        if (buffer.readsize > 0 && endoffile) {
+//            // fill rest with zeroes, and return -1
+//            memset (buffer.output, 0, buffer.readsize);
+//            return -1;
+//        }
     }
     cmp3.info.position = (float)timer.seconds + (float)timer.fraction / MAD_TIMER_RESOLUTION;
-    return 0;
+    return nread;
 }
 
 void
@@ -432,14 +435,13 @@ cmp3_free (void) {
 int
 cmp3_read (char *bytes, int size) {
     int result;
-    int totalread = 0;
     int ret = 0;
     if (buffer.cachefill > 0) {
         int sz = min (size, buffer.cachefill);
         memcpy (bytes, buffer.cache, sz);
         bytes += sz;
         size -= sz;
-        totalread += sz;
+        ret += sz;
         if (buffer.cachefill > sz) {
             memmove (buffer.cache, &buffer.cache[sz], buffer.cachefill-sz);
             buffer.cachefill -= sz;
@@ -451,8 +453,7 @@ cmp3_read (char *bytes, int size) {
     if (size > 0) {
         buffer.output = bytes;
         buffer.readsize = size;
-        ret = cmp3_decode ();
-        totalread += size;
+        ret += cmp3_decode ();
     }
     return ret;
 }
