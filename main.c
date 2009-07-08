@@ -69,10 +69,10 @@ psdl_thread (uintptr_t ctx) {
                 GDK_THREADS_LEAVE();
                 break;
             case M_SONGSEEK:
-                if (playlist_current && playlist_current->codec) {
+                if (playlist_current.codec) {
                     psdl_pause ();
                     codec_lock ();
-                    playlist_current->codec->seek (p1 / 1000.f);
+                    playlist_current.codec->seek (p1 / 1000.f);
                     codec_unlock ();
                     psdl_unpause ();
                 }

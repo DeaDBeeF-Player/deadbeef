@@ -14,7 +14,8 @@ typedef struct playItem_s {
 
 extern playItem_t *playlist_head; // head of linked list
 extern playItem_t *playlist_tail; // tail of linked list
-extern playItem_t *playlist_current;
+extern playItem_t *playlist_current_ptr; // pointer to a real current playlist item
+extern playItem_t playlist_current; // copy of playlist item being played (stays in memory even if removed from playlist)
 
 int
 ps_add_file (const char *fname);
@@ -42,5 +43,8 @@ ps_get_idx_of (playItem_t *it);
 
 int
 ps_add_cue (const char *cuename);
+
+void
+ps_set_current (playItem_t *it);
 
 #endif // __PLAYLIST_H

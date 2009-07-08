@@ -15,7 +15,8 @@
 
 playItem_t *playlist_head;
 playItem_t *playlist_tail;
-playItem_t *playlist_current;
+playItem_t playlist_current;
+playItem_t *playlist_current_ptr;
 static int ps_count = 0;
 
 void
@@ -373,3 +374,38 @@ ps_append_item (playItem_t *it) {
     }
     ps_count++;
 }
+
+void
+ps_item_copy (playItem_t *out, playItem_t *it) {
+    out->fname = strdup (it->fname);
+    out->displayname = strdup (it->displayname);
+    out->codec = it->codec;
+    out->tracknum = it->tracknum;
+    out->timestart = it->timestart;
+    out->timeend = it->timeend;
+    out->next = it->next;
+    out->prev = it->prev;
+}
+
+void
+ps_item_free (playItem_t *it) {
+    if (it) {
+        if (it->fname) {
+            free (it->fname);
+        }
+        if (it->displayname) {
+            free (it->displayname);
+        }
+        memset (it, 0, sizeof (playItem_t));
+    }
+}
+
+void
+ps_set_current (playItem_t *it) {
+    ps_item_free (&playlist_current);
+    if (it) {
+        ps_item_copy (&playlist_current, it);
+    }
+    playlist_current_ptr = it;
+}
+
