@@ -236,10 +236,10 @@ ps_add_file (const char *fname) {
     else if (!strcasecmp (eol, "mp3")) {
         codec = &cmp3;
     }
-//    else if (!strcasecmp (eol, "flac")) {
-//        codec = &cflac;
-//        return codec->add (fname);
-//    }
+    else if (!strcasecmp (eol, "flac")) {
+        codec = &cflac;
+        return codec->add (fname);
+    }
 //    else if (!strcasecmp (eol, "nsf")) {
 //        codec = &cgme;
 //        return codec->add (fname);

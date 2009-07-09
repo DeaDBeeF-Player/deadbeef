@@ -77,17 +77,17 @@ cflac_init (const char *fname, int track, float start, float end) {
     if (timeend > timestart || timeend < 0) {
         // take from cue and seek
         if (timeend < 0) {
-            printf ("starting last track in cue!\n");
             // must be last (or broken) track
             timeend = cflac.info.duration; // set from metainfo
         }
-        cflac.info.duration = end - start;
+        cflac.info.duration = timeend - timestart;
         cflac.seek (0);
     }
     if (cflac.info.duration == -1) {
         printf ("FLAC duration calculation failed\n");
         return -1;
     }
+
     remaining = 0;
     return 0;
 }
@@ -102,6 +102,7 @@ cflac_free (void) {
 
 int
 cflac_read (char *bytes, int size) {
+    int initsize = size;
     int nsamples = size / (cflac.info.channels * cflac.info.bitsPerSample / 8);
     do {
         if (remaining) {
@@ -113,26 +114,28 @@ cflac_read (char *bytes, int size) {
             remaining -= sz;
             bytes += sz;
             size -= sz;
+            cflac.info.position += (float)sz / (cflac.info.channels * cflac.info.samplesPerSecond * cflac.info.bitsPerSample / 8);
+            if (timeend > timestart) {
+                if (cflac.info.position + timestart > timeend) {
+                    break;
+                }
+            }
         }
         if (!size) {
             break;
         }
         if (!FLAC__stream_decoder_process_single (decoder)) {
-            memset (bytes, 0, size);
-            return -1;
+            break;
+//            memset (bytes, 0, size);
+//            return -1;
         }
         if (FLAC__stream_decoder_get_state (decoder) == FLAC__STREAM_DECODER_END_OF_STREAM) {
-            return -1;
+            break;
+//            return -1;
         }
     } while (size > 0);
-    cflac.info.position += (float)nsamples / cflac.info.samplesPerSecond;
-    if (timeend > timestart) {
-//        printf ("pos: %f, end: %f\n", cflac.info.position, timeend);
-        if (cflac.info.position + timestart > timeend) {
-            return -1;
-        }
-    }
-    return 0;
+
+    return initsize - size;
 }
 
 int
