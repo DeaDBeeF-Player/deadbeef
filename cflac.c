@@ -62,7 +62,6 @@ cflac_error_callback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErro
 
 int
 cflac_init (const char *fname, int track, float start, float end) {
-    printf ("cflac_init called for %s\n", fname);
     FLAC__StreamDecoderInitStatus status;
     decoder = FLAC__stream_decoder_new();
     if (!decoder) {
@@ -154,8 +153,18 @@ cflac_add (const char *fname) {
     // try cue
     char cuename[1024];
     snprintf (cuename, 1024, "%s.cue", fname);
+//    printf ("loading %s\n", cuename);
     if (!ps_add_cue (cuename)) {
         return 0;
+    }
+    int n = strlen (fname) - 4;
+    if (n > 0) {
+        strncpy (cuename, fname, n);
+        strcpy (cuename + n, "cue");
+    //    printf ("loading %s\n", cuename);
+        if (!ps_add_cue (cuename)) {
+            return 0;
+        }
     }
 
     playItem_t *it = malloc (sizeof (playItem_t));

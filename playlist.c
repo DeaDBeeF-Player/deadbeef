@@ -14,6 +14,8 @@
 #include "cflac.h"
 #include "streamer.h"
 
+#define SKIP_BLANK_CUE_TRACKS 1
+
 playItem_t *playlist_head;
 playItem_t *playlist_tail;
 playItem_t playlist_current;
@@ -104,13 +106,10 @@ ps_cue_parse_time (const char *p) {
 
 int
 ps_add_cue (const char *cuename) {
-    printf ("trying to load %s\n", cuename);
     FILE *fp = fopen (cuename, "rt");
     if (!fp) {
-        printf ("failed\n");
         return -1;
     }
-    printf ("found!\n");
     char performer[1024];
     char albumtitle[1024];
     char file[1024];
@@ -126,21 +125,21 @@ ps_add_cue (const char *cuename) {
         char *p = ps_cue_skipspaces (str);
         if (!strncmp (p, "PERFORMER ", 10)) {
             ps_get_qvalue_from_cue (p + 10, performer);
-            printf ("got performer: %s\n", performer);
+//            printf ("got performer: %s\n", performer);
         }
         else if (!strncmp (p, "TITLE ", 6)) {
             if (str[0] > ' ') {
                 ps_get_qvalue_from_cue (p + 6, albumtitle);
-                printf ("got albumtitle: %s\n", albumtitle);
+//                printf ("got albumtitle: %s\n", albumtitle);
             }
             else {
                 ps_get_qvalue_from_cue (p + 6, title);
-                printf ("got title: %s\n", title);
+//                printf ("got title: %s\n", title);
             }
         }
         else if (!strncmp (p, "FILE ", 5)) {
             ps_get_qvalue_from_cue (p + 5, file);
-            printf ("got filename: %s\n", file);
+//            printf ("got filename: %s\n", file);
             // copy directory name
             char fname[1024];
             int len = strlen (cuename);
@@ -156,24 +155,31 @@ ps_add_cue (const char *cuename) {
             int flen = strlen (file);
             // ensure fullname fills in buffer
             if (flen + len >= 1024) {
-                printf ("cue file name is too long");
+//                printf ("cue file name is too long");
                 return -1;
             }
             strcpy (p, file);
             // copy full name in place of relative name
             strcpy (file, fname);
-            printf ("ended up as: %s\n", file);
+//            printf ("ended up as: %s\n", file);
         }
         else if (!strncmp (p, "TRACK ", 6)) {
             ps_get_value_from_cue (p + 6, track);
-            printf ("got track: %s\n", track);
+//            printf ("got track: %s\n", track);
         }
 //        else if (!strncmp (p, "PERFORMER ", 10)) {
 //            ps_get_qvalue_from_cue (p + 10, performer);
 //        }
-        else if (!strncmp (p, "INDEX 00 ", 9)) {
+        else if (!strncmp (p, "INDEX 00 ", 9) || !strncmp (p, "INDEX 01 ", 9)) {
+            if (!track[0]) {
+                continue;
+            }
+#if SKIP_BLANK_CUE_TRACKS
+            if (!title[0])
+                continue;
+#endif
             ps_get_value_from_cue (p + 9, start);
-            printf ("got index0: %s\n", start);
+//            printf ("got index0: %s\n", start);
             char *p = track;
             while (*p && isdigit (*p)) {
                 p++;
@@ -182,17 +188,17 @@ ps_add_cue (const char *cuename) {
             // check that indexes have valid timestamps
             float tstart = ps_cue_parse_time (start);
             if (tstart < 0) {
-                printf ("cue file %s has bad timestamp(s)\n", cuename);
+//                printf ("cue file %s has bad timestamp(s)\n", cuename);
                 continue;
             }
             if (prev) {
                 prev->timeend = tstart;
-                printf ("end time for prev track (%x): %f\n", prev, tstart);
+//                printf ("end time for prev track (%x): %f\n", prev, tstart);
             }
             // add this track
             char str[1024];
             snprintf (str, 1024, "%d. %s - %s", atoi (track), performer, title[0] ? title : "?", start, tstart);
-            printf ("adding %s\n", str);
+//            printf ("adding %s\n", str);
             playItem_t *it = malloc (sizeof (playItem_t));
             memset (it, 0, sizeof (playItem_t));
             it->codec = &cflac;
@@ -202,14 +208,16 @@ ps_add_cue (const char *cuename) {
             it->timeend = -1; // will be filled by next read, or by codec
             it->displayname = strdup (str);
             ps_append_item (it);
-            printf ("added item %x\n", it);
+//            printf ("added item %x\n", it);
             prev = it;
+            track[0] = 0;
         }
         else {
-            printf ("got unknown line:\n%s\n", p);
+//            printf ("got unknown line:\n%s\n", p);
         }
     }
     fclose (fp);
+    return 0;
 }
 
 int
