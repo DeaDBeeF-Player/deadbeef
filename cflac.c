@@ -86,6 +86,9 @@ cflac_init (const char *fname, int track, float start, float end) {
         printf ("FLAC duration calculation failed\n");
         return -1;
     }
+    else {
+        printf ("%s duration %f, start %f (%f), end %f (%f)\n", fname, cflac.info.duration, timestart, start, timeend, end);
+    }
 
     remaining = 0;
     return 0;
@@ -172,8 +175,8 @@ cflac_add (const char *fname) {
     it->codec = &cflac;
     it->fname = strdup (fname);
     it->tracknum = 0;
-    it->timestart = -1;
-    it->timeend = -1;
+    it->timestart = 0;
+    it->timeend = 0;
     it->displayname = strdup (fname);
     ps_append_item (it);
     return 0;
