@@ -1,0 +1,44 @@
+SubDir ROOT dumb ;
+
+SubDirHdrs $(ROOT)/dumb/dumb-0.9.3/include ;
+
+Library libdumb : ./dumb-0.9.3/src/it/loads3m.c
+./dumb-0.9.3/src/it/loadxm.c
+./dumb-0.9.3/src/it/readxm.c
+./dumb-0.9.3/src/it/itorder.c
+./dumb-0.9.3/src/it/itload.c
+./dumb-0.9.3/src/it/reads3m.c
+./dumb-0.9.3/src/it/readmod2.c
+./dumb-0.9.3/src/it/xmeffect.c
+./dumb-0.9.3/src/it/loadmod2.c
+./dumb-0.9.3/src/it/itread.c
+./dumb-0.9.3/src/it/itunload.c
+./dumb-0.9.3/src/it/itload2.c
+./dumb-0.9.3/src/it/itrender.c
+./dumb-0.9.3/src/it/reads3m2.c
+./dumb-0.9.3/src/it/itread2.c
+./dumb-0.9.3/src/it/loads3m2.c
+./dumb-0.9.3/src/it/loadxm2.c
+./dumb-0.9.3/src/it/readxm2.c
+./dumb-0.9.3/src/it/itmisc.c
+./dumb-0.9.3/src/it/readmod.c
+./dumb-0.9.3/src/it/loadmod.c
+./dumb-0.9.3/src/core/rendduh.c
+./dumb-0.9.3/src/core/readduh.c
+./dumb-0.9.3/src/core/duhlen.c
+./dumb-0.9.3/src/core/loadduh.c
+./dumb-0.9.3/src/core/unload.c
+./dumb-0.9.3/src/core/duhtag.c
+./dumb-0.9.3/src/core/register.c
+./dumb-0.9.3/src/core/rawsig.c
+./dumb-0.9.3/src/core/dumbfile.c
+./dumb-0.9.3/src/core/rendsig.c
+./dumb-0.9.3/src/core/makeduh.c
+./dumb-0.9.3/src/core/atexit.c
+./dumb-0.9.3/src/helpers/clickrem.c
+./dumb-0.9.3/src/helpers/silence.c
+./dumb-0.9.3/src/helpers/stdfile.c
+./dumb-0.9.3/src/helpers/resample.c
+./dumb-0.9.3/src/helpers/memfile.c
+./dumb-0.9.3/src/helpers/sampbuf.c
+;

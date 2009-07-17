@@ -8,7 +8,7 @@
 #include "codec.h"
 #include "cwav.h"
 #include "cvorbis.h"
-#include "cmod.h"
+#include "cdumb.h"
 #include "cmp3.h"
 #include "cgme.h"
 #include "cflac.h"
@@ -238,9 +238,9 @@ ps_add_file (const char *fname) {
 //    else if (!strcasecmp (eol, "wav")) {
 //        codec = &cwav;
 //    }
-//    else if (!strcasecmp (eol, "mod")) {
-//        codec = &cmod;
-//    }
+    else if (!strcasecmp (eol, "mod")) {
+        codec = &cdumb;
+    }
     else if (!strcasecmp (eol, "mp3")) {
         codec = &cmp3;
     }
