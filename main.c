@@ -99,11 +99,6 @@ main (int argc, char *argv[]) {
     gtk_set_locale ();
     gtk_init (&argc, &argv);
 
-    /*
-     * The following code was added by Glade to create one of each component
-     * (except popup menus), just so that you see something after building
-     * the project. Delete any components that you don't want shown initially.
-     */
     mainwin = create_mainwin ();
     gtk_widget_show (mainwin);
     gtk_main ();

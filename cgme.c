@@ -9,16 +9,17 @@
 static Music_Emu *emu;
 static int reallength;
 static int nzerosamples;
+extern int sdl_player_freq; // hack!
 
 int
 cgme_init (const char *fname, int track, float start, float end) {
-    gme_open_file (fname, &emu, 44100);
+    gme_open_file (fname, &emu, sdl_player_freq);
     gme_start_track (emu, track);
     track_info_t inf;
     gme_track_info (emu, &inf, track);
     cgme.info.bitsPerSample = 16;
     cgme.info.channels = 2;
-    cgme.info.samplesPerSecond = 44100;
+    cgme.info.samplesPerSecond = sdl_player_freq;
     reallength = inf.length; 
     nzerosamples = 0;
     if (inf.length == -1) {
@@ -41,10 +42,19 @@ cgme_free (void) {
 
 int
 cgme_read (char *bytes, int size) {
-    if (gme_play (emu, size/2, (short*)bytes)) {
-        return 1;
+    float t = (size/4) / (float)cgme.info.samplesPerSecond;
+    if (cgme.info.position + t >= cgme.info.duration) {
+        t = cgme.info.duration - cgme.info.position;
+        if (t <= 0) {
+            return 0;
+        }
+        // DON'T ajust size, buffer must always be po2
+        //size = t * (float)cgme.info.samplesPerSecond * 4;
     }
-    cgme.info.position += (size/4) / 44100.f;
+    if (gme_play (emu, size/2, (short*)bytes)) {
+        return 0;
+    }
+    cgme.info.position += t;
     if (reallength == -1) {
         // check if whole buffer is zeroes
         int i;
@@ -55,18 +65,15 @@ cgme_read (char *bytes, int size) {
         }
         if (i == size) {
             nzerosamples += size / 4;
-            if (nzerosamples > 44100 * 4) {
-                return -1;
+            if (nzerosamples > cgme.info.samplesPerSecond * 4) {
+                return 0;
             }
         }
         else {
             nzerosamples = 0;
         }
     }
-    if (reallength == -1 && cgme.info.position >= cgme.info.duration) {
-        return -1;
-    }
-    return 0;
+    return size;
 }
 
 int

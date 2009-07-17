@@ -248,10 +248,10 @@ ps_add_file (const char *fname) {
         codec = &cflac;
         return codec->add (fname);
     }
-//    else if (!strcasecmp (eol, "nsf")) {
-//        codec = &cgme;
-//        return codec->add (fname);
-//    }
+    else if (!strcasecmp (eol, "nsf")) {
+        codec = &cgme;
+        return codec->add (fname);
+    }
 //    else if (!strcasecmp (eol, "cue")) {
 //        ps_add_cue (fname);
 //        return -1;

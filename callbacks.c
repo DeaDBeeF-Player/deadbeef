@@ -126,6 +126,8 @@ on_add_files_activate                  (GtkMenuItem     *menuitem,
     gtk_file_filter_add_pattern (flt, "*.mod");
     gtk_file_filter_add_pattern (flt, "*.wav");
     gtk_file_filter_add_pattern (flt, "*.mp3");
+    gtk_file_filter_add_pattern (flt, "*.nsf");
+    gtk_file_filter_add_pattern (flt, "*.flac");
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
     gtk_file_chooser_set_filter (GTK_FILE_CHOOSER (dlg), flt);
     flt = gtk_file_filter_new ();
