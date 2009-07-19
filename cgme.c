@@ -13,7 +13,9 @@ extern int sdl_player_freq; // hack!
 
 int
 cgme_init (const char *fname, int track, float start, float end) {
-    gme_open_file (fname, &emu, sdl_player_freq);
+    if (gme_open_file (fname, &emu, sdl_player_freq)) {
+        return -1;
+    }
     gme_start_track (emu, track);
     track_info_t inf;
     gme_track_info (emu, &inf, track);
@@ -107,9 +109,27 @@ cgme_add (const char *fname) {
                     snprintf (str, 1024, "%d %s - ?", i, inf.game);
                 }
                 it->tracknum = i;
-                it->displayname = strdup (str);
+
+                // add metadata
+                ps_add_meta (it, "system", inf.system);
+                printf ("system: %s\n", inf.system);
+                ps_add_meta (it, "album", inf.game);
+                printf ("album: %s\n", inf.game);
+                ps_add_meta (it, "title", inf.song);
+                printf ("title: %s\n", inf.song);
+                ps_add_meta (it, "artist", inf.author);
+                printf ("artist: %s\n", inf.author);
+                ps_add_meta (it, "copyright", inf.copyright);
+                printf ("copyright: %s\n", inf.copyright);
+                ps_add_meta (it, "comment", inf.comment);
+                printf ("comment: %s\n", inf.comment);
+                ps_add_meta (it, "dumper", inf.dumper);
+                printf ("dumper: %s\n", inf.dumper);
+                char trk[10];
+                snprintf (trk, 10, "%d", i+1);
+                ps_add_meta (it, "track", trk);
+
                 ps_append_item (it);
-//                printf ("added %s subtune\n", str);
             }
             else {
                 printf ("gme error: %s\n", ret);

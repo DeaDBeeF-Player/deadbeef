@@ -206,7 +206,6 @@ ps_add_cue (const char *cuename) {
             it->tracknum = atoi (track);
             it->timestart = tstart;
             it->timeend = -1; // will be filled by next read, or by codec
-            it->displayname = strdup (str);
             ps_append_item (it);
 //            printf ("added item %x\n", it);
             prev = it;
@@ -325,12 +324,6 @@ ps_remove (playItem_t *it) {
     if (!it)
         return -1;
     ps_count--;
-    if (it->fname) {
-        free (it->fname);
-    }
-    if (it->displayname) {
-        free (it->displayname);
-    }
     if (it->prev) {
         it->prev->next = it->next;
     }
@@ -343,6 +336,7 @@ ps_remove (playItem_t *it) {
     else {
         playlist_tail = it->prev;
     }
+    ps_item_free (it);
     free (it);
     return 0;
 }
@@ -379,6 +373,7 @@ ps_get_idx_of (playItem_t *it) {
 
 int
 ps_append_item (playItem_t *it) {
+    ps_format_item_display_name (it);
     if (!playlist_tail) {
         playlist_tail = playlist_head = it;
     }
@@ -393,13 +388,29 @@ ps_append_item (playItem_t *it) {
 void
 ps_item_copy (playItem_t *out, playItem_t *it) {
     out->fname = strdup (it->fname);
-    out->displayname = strdup (it->displayname);
+    strcpy (out->displayname, it->displayname);
     out->codec = it->codec;
     out->tracknum = it->tracknum;
     out->timestart = it->timestart;
     out->timeend = it->timeend;
     out->next = it->next;
     out->prev = it->prev;
+    // copy metainfo
+    metaInfo_t *prev = NULL;
+    metaInfo_t *meta = it->meta;
+    while (meta) {
+        metaInfo_t *m = malloc (sizeof (metaInfo_t));
+        memcpy (m, meta, sizeof (metaInfo_t));
+        m->next = NULL;
+        if (prev) {
+            prev->next = m;
+        }
+        else {
+            out->meta = m;
+        }
+        prev = m;
+        meta = meta->next;
+    }
 }
 
 void
@@ -408,8 +419,10 @@ ps_item_free (playItem_t *it) {
         if (it->fname) {
             free (it->fname);
         }
-        if (it->displayname) {
-            free (it->displayname);
+        while (it->meta) {
+            metaInfo_t *m = it->meta;
+            it->meta = m->next;
+            free (m);
         }
         memset (it, 0, sizeof (playItem_t));
     }
@@ -483,4 +496,39 @@ ps_start_current (void) {
         it->codec->free ();
         it->codec->init (it->fname, it->tracknum, it->timestart, it->timeend);
     }
+}
+
+void
+ps_add_meta (playItem_t *it, const char *key, const char *value) {
+    if (!value || !*value) {
+        value = "?";
+    }
+    metaInfo_t *m = malloc (sizeof (metaInfo_t));
+    m->key = key;
+    strncpy (m->value, value, META_FIELD_SIZE-1);
+    m->value[META_FIELD_SIZE-1] = 0;
+    m->next = it->meta;
+    it->meta = m;
+}
+
+void
+ps_format_item_display_name (playItem_t *it) {
+    // artist - title
+    const char *track = ps_find_meta (it, "track");
+    const char *artist = ps_find_meta (it, "artist");
+    const char *album = ps_find_meta (it, "album");
+    const char *title = ps_find_meta (it, "title");
+    snprintf (it->displayname, MAX_DISPLAY_NAME, "%s. %s - %s - %s", track, artist, album, title);
+}
+
+const char *
+ps_find_meta (playItem_t *it, const char *key) {
+    metaInfo_t *m = it->meta;
+    while (m) {
+        if (!strcmp (key, m->key)) {
+            return m->value;
+        }
+        m = m->next;
+    }
+    return "?";
 }

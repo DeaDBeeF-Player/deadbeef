@@ -1,15 +1,25 @@
 #ifndef __PLAYLIST_H
 #define __PLAYLIST_H
 
+#define META_FIELD_SIZE 256
+#define MAX_DISPLAY_NAME 512
+
+typedef struct metaInfo_s {
+    const char *key;
+    char value[META_FIELD_SIZE];
+    struct metaInfo_s *next;
+} metaInfo_t;
+
 typedef struct playItem_s {
     char *fname; // full pathname
-    char *displayname; // all required metainfo columns packed in single string, separated with zeroes
+    char displayname[MAX_DISPLAY_NAME];
     struct codec_s *codec; // codec to use with this file
     int tracknum; // used for stuff like sid, nsf, cue (will be ignored by most codecs)
     float timestart; // start time of cue track, or -1
     float timeend; // end time of cue track, or -1
     struct playItem_s *next; // next item in linked list
     struct playItem_s *prev; // prev item in linked list
+    struct metaInfo_s *meta; // linked list storing metainfo
 } playItem_t;
 
 extern playItem_t *playlist_head; // head of linked list
@@ -28,6 +38,9 @@ ps_add_dir (const char *dirname);
 
 int
 ps_remove (playItem_t *i);
+
+void
+ps_item_free (playItem_t *it);
 
 void
 ps_free (void);
@@ -55,5 +68,14 @@ ps_nextsong (void);
 // only if the item is still in playlist
 void
 ps_start_current (void);
+
+void
+ps_add_meta (playItem_t *it, const char *key, const char *value);
+
+void
+ps_format_item_display_name (playItem_t *it);
+
+const char *
+ps_find_meta (playItem_t *it, const char *key);
 
 #endif // __PLAYLIST_H

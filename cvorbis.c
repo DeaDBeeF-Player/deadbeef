@@ -120,7 +120,6 @@ cvorbis_add (const char *fname) {
     it->tracknum = 0;
     it->timestart = 0;
     it->timeend = 0;
-    it->displayname = strdup (fname);
     ps_append_item (it);
     return 0;
 }
