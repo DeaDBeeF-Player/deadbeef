@@ -53,6 +53,7 @@ cflac_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMe
     cflac.info.channels = channels;
     cflac.info.bitsPerSample = bps;
     cflac.info.duration = total_samples / (float)sample_rate;
+    cflac.info.position = 0;
 }
 
 void
