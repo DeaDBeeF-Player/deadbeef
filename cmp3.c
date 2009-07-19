@@ -143,17 +143,14 @@ cmp3_get_stream_info2 (void) {
             break; // eof
         }
         hdr |= sync;
-//        printf ("header=%x, skipped %d\n", hdr, nskipped);
         nskipped = 0;
 
         // parse header
         
         // sync bits
         int usync = hdr & 0xffe00000;
-//        printf ("sync = %xh\n", usync);
         if (usync != 0xffe00000) {
             printf ("fatal error: mp3 header parser is broken\n");
-        //    exit (0);
         }
 
         // layer info
@@ -189,19 +186,25 @@ cmp3_get_stream_info2 (void) {
         // packetlength
         int packetlength = 0;
         bitrate *= 1000;
-        if (layer == 3) { // layer1
-            packetlength = (12 * bitrate / samplerate + padding) * 4;
+        if (samplerate > 0) {
+            if (layer == 3) { // layer
+                packetlength = (12 * bitrate / samplerate + padding) * 4;
+            }
+            else if (layer == 2) { // layer2
+                packetlength = 144 * bitrate / samplerate + padding;
+            }
+            else if (layer == 1) { // layer3
+                duration += (float)1152 / samplerate;
+                packetlength = 144 * bitrate / samplerate + padding;
+            }
         }
-        else if (layer == 2) { // layer2
-            packetlength = 144 * bitrate / samplerate + padding;
+        else {
+            packetlength = 0;
         }
-        else if (layer == 1) { // layer3
-            duration += (float)1152 / samplerate;
-            packetlength = 144 * bitrate / samplerate + padding;
-        }
-        //printf ("packetlength = %d\n", packetlength);
         nframe++;
-        fseek (buffer.file, packetlength-4, SEEK_CUR);
+        if (packetlength > 0) {
+            fseek (buffer.file, packetlength-4, SEEK_CUR);
+        }
     }
     cmp3.info.duration = duration;
     printf ("song duration: %f\n", duration);
@@ -285,25 +288,32 @@ cmp3_skip2 (float seconds) {
         // packetlength
         int packetlength = 0;
         bitrate *= 1000;
-        if (layer == 3) { // layer1
-            packetlength = (12 * bitrate / samplerate + padding) * 4;
+        if (samplerate > 0) {
+            if (layer == 3) { // layer1
+                packetlength = (12 * bitrate / samplerate + padding) * 4;
+            }
+            else if (layer == 2) { // layer2
+                packetlength = 144 * bitrate / samplerate + padding;
+            }
+            else if (layer == 1) { // layer3
+                duration += (float)1152 / samplerate;
+                packetlength = 144 * bitrate / samplerate + padding;
+            }
+            if (duration > seconds) {
+                fseek (buffer.file, -4, SEEK_SET);
+                // set decoder timer
+                timer.seconds = (int)duration;
+                timer.fraction = (int)((duration - (float)timer.seconds)*MAD_TIMER_RESOLUTION);
+                return 0;
+            }
         }
-        else if (layer == 2) { // layer2
-            packetlength = 144 * bitrate / samplerate + padding;
-        }
-        else if (layer == 1) { // layer3
-            duration += (float)1152 / samplerate;
-            packetlength = 144 * bitrate / samplerate + padding;
-        }
-        if (duration > seconds) {
-            fseek (buffer.file, -4, SEEK_SET);
-            // set decoder timer
-            timer.seconds = (int)duration;
-            timer.fraction = (int)((duration - (float)timer.seconds)*MAD_TIMER_RESOLUTION);
-            return 0;
+        else {
+            packetlength = 0;
         }
         nframe++;
-        fseek (buffer.file, packetlength-4, SEEK_CUR);
+        if (packetlength != 0) {
+            fseek (buffer.file, packetlength-4, SEEK_CUR);
+        }
     }
     return -1;
 }
