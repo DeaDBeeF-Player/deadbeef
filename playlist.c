@@ -518,7 +518,19 @@ ps_format_item_display_name (playItem_t *it) {
     const char *artist = ps_find_meta (it, "artist");
     const char *album = ps_find_meta (it, "album");
     const char *title = ps_find_meta (it, "title");
-    snprintf (it->displayname, MAX_DISPLAY_NAME, "%s. %s - %s - %s", track, artist, album, title);
+    if (*track == '?' && *album == '?' && *artist != '?' && *title != '?') {
+        snprintf (it->displayname, MAX_DISPLAY_NAME, "%s - %s", artist, title);
+    }
+    else if (*artist == '?' && *track != '?' && *album != '?') {
+        snprintf (it->displayname, MAX_DISPLAY_NAME, "%s. %s", track, album);
+    }
+    else if (*artist != '?' && *track != '?' && *album != '?') {
+        snprintf (it->displayname, MAX_DISPLAY_NAME, "%s. %s - %s", track, artist, album);
+    }
+    else {
+        //snprintf (it->displayname, MAX_DISPLAY_NAME, "%s", title);
+        strncpy (it->displayname, it->fname, MAX_DISPLAY_NAME);
+    }
 }
 
 const char *

@@ -109,7 +109,6 @@ cvorbis_add (const char *fname) {
     vorbis_info *vi;
     ov_open (fp, &vorbis_file, NULL, 0);
     vi = ov_info (&vorbis_file, -1);
-    ov_clear (&vorbis_file);
     if (!vi) { // not a vorbis stream
         return -1;
     }
@@ -120,6 +119,24 @@ cvorbis_add (const char *fname) {
     it->tracknum = 0;
     it->timestart = 0;
     it->timeend = 0;
+
+    // metainfo
+    vorbis_comment *vc = ov_comment (&vorbis_file, -1);
+    if (vc) {
+        ps_add_meta (it, "vendor", vc->vendor);
+        for (int i = 0; i < vc->comments; i++) {
+            if (!strncmp (vc->user_comments[i], "artist=", 7)) {
+                ps_add_meta (it, "artist", vc->user_comments[i] + 7);
+            }
+            else if (!strncmp (vc->user_comments[i], "title=", 6)) {
+                ps_add_meta (it, "title", vc->user_comments[i] + 6);
+            }
+            else if (!strncmp (vc->user_comments[i], "date=", 5)) {
+                ps_add_meta (it, "date", vc->user_comments[i] + 5);
+            }
+        }
+    }
+    ov_clear (&vorbis_file);
     ps_append_item (it);
     return 0;
 }

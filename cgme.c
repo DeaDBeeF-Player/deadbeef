@@ -112,23 +112,15 @@ cgme_add (const char *fname) {
 
                 // add metadata
                 ps_add_meta (it, "system", inf.system);
-                printf ("system: %s\n", inf.system);
                 ps_add_meta (it, "album", inf.game);
-                printf ("album: %s\n", inf.game);
                 ps_add_meta (it, "title", inf.song);
-                printf ("title: %s\n", inf.song);
                 ps_add_meta (it, "artist", inf.author);
-                printf ("artist: %s\n", inf.author);
                 ps_add_meta (it, "copyright", inf.copyright);
-                printf ("copyright: %s\n", inf.copyright);
                 ps_add_meta (it, "comment", inf.comment);
-                printf ("comment: %s\n", inf.comment);
                 ps_add_meta (it, "dumper", inf.dumper);
-                printf ("dumper: %s\n", inf.dumper);
                 char trk[10];
                 snprintf (trk, 10, "%d", i+1);
                 ps_add_meta (it, "track", trk);
-
                 ps_append_item (it);
             }
             else {
