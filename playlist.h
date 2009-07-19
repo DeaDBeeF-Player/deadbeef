@@ -44,7 +44,7 @@ ps_get_idx_of (playItem_t *it);
 int
 ps_add_cue (const char *cuename);
 
-void
+int
 ps_set_current (playItem_t *it);
 
 // returns -1 if theres no next song, or playlist finished

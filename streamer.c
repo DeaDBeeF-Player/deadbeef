@@ -91,89 +91,94 @@ streamer_read_async (char *bytes, int size) {
             codec_unlock ();
             break;
         }
-        int nchannels = codec->info.channels;
-        int samplerate = codec->info.samplesPerSecond;
-        // read and do SRC
-        if (codec->info.samplesPerSecond == sdl_player_freq) {
-            int i;
-            if (codec->info.channels == 2) {
-                bytesread = codec->read (bytes, size);
-                codec_unlock ();
+        if (codec->info.samplesPerSecond != -1) {
+            int nchannels = codec->info.channels;
+            int samplerate = codec->info.samplesPerSecond;
+            // read and do SRC
+            if (codec->info.samplesPerSecond == sdl_player_freq) {
+                int i;
+                if (codec->info.channels == 2) {
+                    bytesread = codec->read (bytes, size);
+                    codec_unlock ();
+                }
+                else {
+                    bytesread = codec->read (g_readbuffer, size/2);
+                    codec_unlock ();
+                    for (i = 0; i < size/4; i++) {
+                        int16_t sample = (int16_t)(((int32_t)(((int16_t*)g_readbuffer)[i])));
+                        ((int16_t*)bytes)[i*2+0] = sample;
+                        ((int16_t*)bytes)[i*2+1] = sample;
+                    }
+                    bytesread *= 2;
+                }
             }
             else {
-                bytesread = codec->read (g_readbuffer, size/2);
-                codec_unlock ();
-                for (i = 0; i < size/4; i++) {
-                    int16_t sample = (int16_t)(((int32_t)(((int16_t*)g_readbuffer)[i])));
-                    ((int16_t*)bytes)[i*2+0] = sample;
-                    ((int16_t*)bytes)[i*2+1] = sample;
+                int nsamples = size/4;
+                // convert to codec samplerate
+                nsamples = nsamples * samplerate / sdl_player_freq * 2;
+                if (!src_is_valid_ratio ((double)sdl_player_freq/samplerate)) {
+                    printf ("invalid ratio! %d / %d = %f", sdl_player_freq, samplerate, (float)sdl_player_freq/samplerate);
                 }
-                bytesread *= 2;
+                assert (src_is_valid_ratio ((double)sdl_player_freq/samplerate));
+                // read data at source samplerate (with some room for SRC)
+                int nbytes = (nsamples - codecleft) * 2 * nchannels;
+                if (nbytes < 0) {
+                    nbytes = 0;
+                }
+                else {
+                    //printf ("reading %d bytes from mp3\n", nbytes);
+                    bytesread = codec->read (g_readbuffer, nbytes);
+                }
+                codec_unlock ();
+                // recalculate nsamples according to how many bytes we've got
+                nsamples = bytesread / (2 * nchannels) + codecleft;
+                // convert to float
+                int i;
+                float *fbuffer = g_fbuffer + codecleft*2;
+                if (nchannels == 2) {
+                    for (i = 0; i < (nsamples - codecleft) * 2; i++) {
+                        fbuffer[i] = ((int16_t *)g_readbuffer)[i]/32767.f;
+                    }
+                }
+                else if (nchannels == 1) { // convert mono to stereo
+                    for (i = 0; i < (nsamples - codecleft); i++) {
+                        fbuffer[i*2+0] = ((int16_t *)g_readbuffer)[i]/32767.f;
+                        fbuffer[i*2+1] = fbuffer[i*2+0];
+                    }
+                }
+                codec_lock ();
+                // convert samplerate
+                srcdata.data_in = g_fbuffer;
+                srcdata.data_out = g_srcbuffer;
+                srcdata.input_frames = nsamples;
+                srcdata.output_frames = size/4;
+                srcdata.src_ratio = (double)sdl_player_freq/samplerate;
+                srcdata.end_of_input = 0;
+    //            src_set_ratio (src, srcdata.src_ratio);
+                src_process (src, &srcdata);
+                codec_unlock ();
+                // convert back to s16 format
+                nbytes = size;
+                int genbytes = srcdata.output_frames_gen * 4;
+                bytesread = min(size, genbytes);
+                for (i = 0; i < bytesread/2; i++) {
+                    float sample = g_srcbuffer[i];
+                    if (sample > 1) {
+                        sample = 1;
+                    }
+                    if (sample < -1) {
+                        sample = -1;
+                    }
+                    ((int16_t*)bytes)[i] = (int16_t)(sample*32767.f);
+                }
+                // calculate how many unused input samples left
+                codecleft = nsamples - srcdata.input_frames_used;
+                // copy spare samples for next update
+                memmove (g_fbuffer, &g_fbuffer[srcdata.input_frames_used*2], codecleft * 8);
             }
         }
         else {
-            int nsamples = size/4;
-            // convert to codec samplerate
-            nsamples = nsamples * samplerate / sdl_player_freq * 2;
-            if (!src_is_valid_ratio ((double)sdl_player_freq/samplerate)) {
-                printf ("invalid ratio! %d / %d = %f", sdl_player_freq, samplerate, (float)sdl_player_freq/samplerate);
-            }
-            assert (src_is_valid_ratio ((double)sdl_player_freq/samplerate));
-            // read data at source samplerate (with some room for SRC)
-            int nbytes = (nsamples - codecleft) * 2 * nchannels;
-            if (nbytes < 0) {
-                nbytes = 0;
-            }
-            else {
-                //printf ("reading %d bytes from mp3\n", nbytes);
-                bytesread = codec->read (g_readbuffer, nbytes);
-            }
             codec_unlock ();
-            // recalculate nsamples according to how many bytes we've got
-            nsamples = bytesread / (2 * nchannels) + codecleft;
-            // convert to float
-            int i;
-            float *fbuffer = g_fbuffer + codecleft*2;
-            if (nchannels == 2) {
-                for (i = 0; i < (nsamples - codecleft) * 2; i++) {
-                    fbuffer[i] = ((int16_t *)g_readbuffer)[i]/32767.f;
-                }
-            }
-            else if (nchannels == 1) { // convert mono to stereo
-                for (i = 0; i < (nsamples - codecleft); i++) {
-                    fbuffer[i*2+0] = ((int16_t *)g_readbuffer)[i]/32767.f;
-                    fbuffer[i*2+1] = fbuffer[i*2+0];
-                }
-            }
-            codec_lock ();
-            // convert samplerate
-            srcdata.data_in = g_fbuffer;
-            srcdata.data_out = g_srcbuffer;
-            srcdata.input_frames = nsamples;
-            srcdata.output_frames = size/4;
-            srcdata.src_ratio = (double)sdl_player_freq/samplerate;
-            srcdata.end_of_input = 0;
-//            src_set_ratio (src, srcdata.src_ratio);
-            src_process (src, &srcdata);
-            codec_unlock ();
-            // convert back to s16 format
-            nbytes = size;
-            int genbytes = srcdata.output_frames_gen * 4;
-            bytesread = min(size, genbytes);
-            for (i = 0; i < bytesread/2; i++) {
-                float sample = g_srcbuffer[i];
-                if (sample > 1) {
-                    sample = 1;
-                }
-                if (sample < -1) {
-                    sample = -1;
-                }
-                ((int16_t*)bytes)[i] = (int16_t)(sample*32767.f);
-            }
-            // calculate how many unused input samples left
-            codecleft = nsamples - srcdata.input_frames_used;
-            // copy spare samples for next update
-            memmove (g_fbuffer, &g_fbuffer[srcdata.input_frames_used*2], codecleft * 8);
         }
         bytes += bytesread;
         size -= bytesread;
@@ -182,8 +187,9 @@ streamer_read_async (char *bytes, int size) {
         }
         else {
             // that means EOF
-            if (ps_nextsong () < 0) {
-                break;
+            while (ps_nextsong () < 0) {
+                fprintf (stderr, "bad song encountered in playlist, skipping\n");
+                usleep (3000);
             }
         }
     }

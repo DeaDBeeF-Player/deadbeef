@@ -231,9 +231,9 @@ static DUMB_IT_SIGDATA *it_stm_load_sigdata(DUMBFILE *f /*, int * version*/)
 		free( sigdata );
 		return NULL;
 	}
-	if ( strnicmp( tracker_name, "!Scream!", 8 ) &&
-		strnicmp( tracker_name, "BMOD2STM", 8 ) &&
-		strnicmp( tracker_name, "WUZAMOD!", 8 ) )
+	if ( strncasecmp( tracker_name, "!Scream!", 8 ) &&
+		strncasecmp( tracker_name, "BMOD2STM", 8 ) &&
+		strncasecmp( tracker_name, "WUZAMOD!", 8 ) )
 	{
 		free( sigdata );
 		return NULL;

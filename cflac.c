@@ -61,6 +61,9 @@ cflac_error_callback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErro
     fprintf(stderr, "cflac: got error callback: %s\n", FLAC__StreamDecoderErrorStatusString[status]);
 }
 
+void
+cflac_free (void);
+
 int
 cflac_init (const char *fname, int track, float start, float end) {
     FLAC__StreamDecoderInitStatus status;
@@ -71,7 +74,19 @@ cflac_init (const char *fname, int track, float start, float end) {
     }
     FLAC__stream_decoder_set_md5_checking(decoder, 0);
     status = FLAC__stream_decoder_init_file(decoder, fname, cflac_write_callback, cflac_metadata_callback, cflac_error_callback, NULL);
-    FLAC__stream_decoder_process_until_end_of_metadata (decoder);
+    if (status != FLAC__STREAM_DECODER_INIT_STATUS_OK) {
+        cflac_free ();
+        return -1;
+    }
+    cflac.info.samplesPerSecond = -1;
+    if (!FLAC__stream_decoder_process_until_end_of_metadata (decoder)) {
+        cflac_free ();
+        return -1;
+    }
+    if (cflac.info.samplesPerSecond == -1) { // not a FLAC stream
+        cflac_free ();
+        return -1;
+    }
     timestart = start;
     timeend = end;
     if (timeend > timestart || timeend < 0) {
@@ -171,6 +186,28 @@ cflac_add (const char *fname) {
         }
     }
 
+    FLAC__StreamDecoderInitStatus status;
+    decoder = FLAC__stream_decoder_new();
+    if (!decoder) {
+        printf ("FLAC__stream_decoder_new failed\n");
+        return -1;
+    }
+    FLAC__stream_decoder_set_md5_checking(decoder, 0);
+    status = FLAC__stream_decoder_init_file(decoder, fname, cflac_write_callback, cflac_metadata_callback, cflac_error_callback, NULL);
+    if (status != FLAC__STREAM_DECODER_INIT_STATUS_OK) {
+        cflac_free ();
+        return -1;
+    }
+    cflac.info.samplesPerSecond = -1;
+    if (!FLAC__stream_decoder_process_until_end_of_metadata (decoder)) {
+        cflac_free ();
+        return -1;
+    }
+    if (cflac.info.samplesPerSecond == -1) { // not a FLAC stream
+        cflac_free ();
+        return -1;
+    }
+    cflac_free ();
     playItem_t *it = malloc (sizeof (playItem_t));
     memset (it, 0, sizeof (playItem_t));
     it->codec = &cflac;
@@ -183,10 +220,20 @@ cflac_add (const char *fname) {
     return 0;
 }
 
+static const char * exts[]=
+{
+	"flac","ogg",NULL
+};
+
+const char **cflac_getexts (void) {
+    return exts;
+}
+
 codec_t cflac = {
     .init = cflac_init,
     .free = cflac_free,
     .read = cflac_read,
     .seek = cflac_seek,
-    .add = cflac_add
+    .add = cflac_add,
+    .getexts = cflac_getexts
 };

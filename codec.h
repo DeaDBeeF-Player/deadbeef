@@ -19,6 +19,7 @@ typedef struct codec_s {
     int (*read) (char *bytes, int size);
     int (*seek) (float time);
     int (*add) (const char *fname);
+    const char ** (*getexts) (void);
 } codec_t;
 
 codec_t *get_codec_for_file (const char *fname);

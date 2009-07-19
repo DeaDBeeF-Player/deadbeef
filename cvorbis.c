@@ -5,11 +5,15 @@
 #include <stdlib.h>
 #include "codec.h"
 #include "cvorbis.h"
+#include "playlist.h"
 
 static FILE *file;
 static OggVorbis_File vorbis_file;
 static vorbis_info *vi;
 static int cur_bit_stream;
+
+void
+cvorbis_free (void);
 
 int
 cvorbis_init (const char *fname, int track, float start, float end) {
@@ -25,6 +29,10 @@ cvorbis_init (const char *fname, int track, float start, float end) {
     memset (&cvorbis.info, 0, sizeof (fileinfo_t));
     ov_open (file, &vorbis_file, NULL, 0);
     vi = ov_info (&vorbis_file, -1);
+    if (!vi) { // not a vorbis stream
+        cvorbis_free ();
+        return -1;
+    }
     cvorbis.info.bitsPerSample = 16;
     //cvorbis.info.dataSize = ov_pcm_total (&vorbis_file, -1) * vi->channels * 2;
     cvorbis.info.channels = vi->channels;
@@ -92,7 +100,38 @@ cvorbis_seek (float time) {
 
 int
 cvorbis_add (const char *fname) {
+    // check for validity
+    FILE *fp = fopen (fname, "rb");
+    if (!fp) {
+        return -1;
+    }
+    OggVorbis_File vorbis_file;
+    vorbis_info *vi;
+    ov_open (fp, &vorbis_file, NULL, 0);
+    vi = ov_info (&vorbis_file, -1);
+    ov_clear (&vorbis_file);
+    if (!vi) { // not a vorbis stream
+        return -1;
+    }
+    playItem_t *it = malloc (sizeof (playItem_t));
+    memset (it, 0, sizeof (playItem_t));
+    it->codec = &cvorbis;
+    it->fname = strdup (fname);
+    it->tracknum = 0;
+    it->timestart = 0;
+    it->timeend = 0;
+    it->displayname = strdup (fname);
+    ps_append_item (it);
     return 0;
+}
+
+static const char * exts[]=
+{
+	"ogg",NULL
+};
+
+const char **cvorbis_getexts (void) {
+    return exts;
 }
 
 codec_t cvorbis = {
@@ -100,6 +139,7 @@ codec_t cvorbis = {
     .free = cvorbis_free,
     .read = cvorbis_read,
     .seek = cvorbis_seek,
-    .add = cvorbis_add
+    .add = cvorbis_add,
+    .getexts = cvorbis_getexts
 };
 

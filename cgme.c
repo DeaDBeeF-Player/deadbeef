@@ -125,11 +125,22 @@ cgme_add (const char *fname) {
     return 0;
 }
 
+static const char * exts[]=
+{
+	"ay","gbs","gym","hes","kss","nsf","nsfe","sap","spc","vgm","vgz",NULL
+};
+
+const char **cgme_getexts (void) {
+    return exts;
+}
+
+
 codec_t cgme = {
     .init = cgme_init,
     .free = cgme_free,
     .read = cgme_read,
     .seek = cgme_seek,
-    .add = cgme_add
+    .add = cgme_add,
+    .getexts = cgme_getexts
 };
 

@@ -5,9 +5,8 @@
 #include <stdlib.h>
 #include "codec.h"
 #include "cmp3.h"
-
-#define min(x,y) ((x)<(y)?(x):(y))
-#define max(x,y) ((x)>(y)?(x):(y))
+#include "playlist.h"
+#include "common.h"
 
 #define READBUFFER 5*8192
 #define CACHESIZE 81920
@@ -482,14 +481,34 @@ cmp3_seek (float time) {
 
 int
 cmp3_add (const char *fname) {
+    playItem_t *it = malloc (sizeof (playItem_t));
+    memset (it, 0, sizeof (playItem_t));
+    it->codec = &cmp3;
+    it->fname = strdup (fname);
+    it->tracknum = 0;
+    it->timestart = 0;
+    it->timeend = 0;
+    it->displayname = strdup (fname);
+    ps_append_item (it);
     return 0;
+}
+
+static const char * exts[]=
+{
+	"mp2","mp3",NULL
+};
+
+const char **cmp3_getexts (void) {
+    return exts;
 }
 
 codec_t cmp3 = {
     .init = cmp3_init,
     .free = cmp3_free,
     .read = cmp3_read,
-    .seek = cmp3_seek
+    .seek = cmp3_seek,
+    .add = cmp3_add,
+    .getexts = cmp3_getexts
 };
 
 

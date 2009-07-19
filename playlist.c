@@ -232,30 +232,35 @@ ps_add_file (const char *fname) {
         eol--;
     }
     eol++;
-    if (!strcasecmp (eol, "ogg")) {
-        codec = &cvorbis;
+
+    // match by codec
+    codec_t *codecs[] = {
+        &cdumb, &cvorbis, &cflac, &cgme, &cmp3, NULL
+    };
+    for (int i = 0; codecs[i]; i++) {
+        if (codecs[i]->getexts && codecs[i]->add) {
+            const char **exts = codecs[i]->getexts ();
+            if (exts) {
+                for (int e = 0; exts[e]; e++) {
+                    if (!strcasecmp (exts[e], eol)) {
+                        if (!codecs[i]->add (fname)) {
+                            return 0;
+                        }
+                    }
+                }
+            }
+        }
     }
+
+    return -1;
+#if 0
+    // add by extension (temporary hack)
 //    else if (!strcasecmp (eol, "wav")) {
 //        codec = &cwav;
 //    }
-    else if (!strcasecmp (eol, "mod")) {
-        codec = &cdumb;
-    }
-    else if (!strcasecmp (eol, "mp3")) {
+    if (!strcasecmp (eol, "mp3")) {
         codec = &cmp3;
     }
-    else if (!strcasecmp (eol, "flac")) {
-        codec = &cflac;
-        return codec->add (fname);
-    }
-    else if (!strcasecmp (eol, "nsf")) {
-        codec = &cgme;
-        return codec->add (fname);
-    }
-//    else if (!strcasecmp (eol, "cue")) {
-//        ps_add_cue (fname);
-//        return -1;
-//    }
     else {
         return -1;
     }
@@ -277,6 +282,7 @@ ps_add_file (const char *fname) {
     it->timeend = -1;
 
     ps_append_item (it);
+#endif
 }
 
 int
@@ -409,21 +415,22 @@ ps_item_free (playItem_t *it) {
     }
 }
 
-void
+int
 ps_set_current (playItem_t *it) {
+    int ret = 0;
     if (it) {
 //        printf ("ps_set_current (%s)\n", it->displayname);
     }
     if (it == playlist_current_ptr) {
         if (it && it->codec) {
             codec_lock ();
-            playlist_current_ptr->codec->seek (0);
+            ret = playlist_current_ptr->codec->seek (0);
             codec_unlock ();
         }
-        return;
+        return ret;
     }
     codec_lock ();
-    if (playlist_current_ptr) {
+    if (playlist_current_ptr && playlist_current_ptr->codec) {
         playlist_current_ptr->codec->free ();
     }
     ps_item_free (&playlist_current);
@@ -433,23 +440,25 @@ ps_set_current (playItem_t *it) {
     playlist_current_ptr = it;
     if (it && it->codec) {
         // don't do anything on fail, streamer will take care
-        it->codec->init (it->fname, it->tracknum, it->timestart, it->timeend);
+        ret = it->codec->init (it->fname, it->tracknum, it->timestart, it->timeend);
+        if (ret < 0) {
+            it->codec->info.samplesPerSecond = -1;
+        }
     }
     if (playlist_current_ptr) {
         streamer_reset ();
     }
     codec_unlock ();
+    return ret;
 }
 
 int
 ps_nextsong (void) {
     if (playlist_current_ptr && playlist_current_ptr->next) {
-        ps_set_current (playlist_current_ptr->next);
-        return 0;
+        return ps_set_current (playlist_current_ptr->next);
     }
     if (playlist_head) {
-        ps_set_current (playlist_head);
-        return 0;
+        return ps_set_current (playlist_head);
     }
     ps_set_current (NULL);
     return -1;
