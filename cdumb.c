@@ -21,6 +21,9 @@ void
 cdumb_free (void);
 
 int
+cdumb_startrenderer (void);
+
+int
 cdumb_init (const char *fname, int track, float start, float end) {
     if (!dumb_initialized) {
         atexit (&dumb_exit);
@@ -46,17 +49,6 @@ cdumb_init (const char *fname, int track, float start, float end) {
     else {
         return -1;
     }
-    renderer = duh_start_sigrenderer (myduh, 0, 2, 0);
-    if (!renderer) {
-        cdumb_free ();
-        return -1;
-    }
-    DUMB_IT_SIGRENDERER *itsr = duh_get_it_sigrenderer (renderer);
-    dumb_it_set_loop_callback (itsr, &dumb_it_callback_terminate, NULL);
-    dumb_it_set_resampling_quality (itsr, 2);
-    dumb_it_set_xm_speed_zero_callback (itsr, &dumb_it_callback_terminate, NULL);
-    dumb_it_set_global_volume_zero_callback (itsr, &dumb_it_callback_terminate, NULL);
-
     dumb_it_do_initial_runthrough (myduh);
 
     cdumb.info.bitsPerSample = 16;
@@ -65,7 +57,30 @@ cdumb_init (const char *fname, int track, float start, float end) {
     cdumb.info.position = 0;
     cdumb.info.duration = duh_get_length (myduh)/65536.0f;
     printf ("duration: %f\n", cdumb.info.duration);
+
+    cdumb_startrenderer ();
+
     return 0;
+}
+
+int
+cdumb_startrenderer (void) {
+    // reopen
+    if (renderer) {
+        duh_end_sigrenderer (renderer);
+        renderer = NULL;
+    }
+    renderer = duh_start_sigrenderer (myduh, 0, 2, 0);
+    if (!renderer) {
+        cdumb_free ();
+        return -1;
+    }
+
+    DUMB_IT_SIGRENDERER *itsr = duh_get_it_sigrenderer (renderer);
+    dumb_it_set_loop_callback (itsr, &dumb_it_callback_terminate, NULL);
+    dumb_it_set_resampling_quality (itsr, 2);
+    dumb_it_set_xm_speed_zero_callback (itsr, &dumb_it_callback_terminate, NULL);
+    dumb_it_set_global_volume_zero_callback (itsr, &dumb_it_callback_terminate, NULL);
 }
 
 void
@@ -91,9 +106,15 @@ cdumb_read (char *bytes, int size) {
 
 int
 cdumb_seek (float time) {
+    if (time < cdumb.info.position) {
+        cdumb_startrenderer ();
+    }
+    else {
+        time -= cdumb.info.position;
+    }
     int pos = time * cdumb.info.samplesPerSecond;
     duh_sigrenderer_generate_samples (renderer, 0, 65536.0f / cdumb.info.samplesPerSecond, pos, NULL);
-    cdumb.info.position = time;
+    cdumb.info.position = duh_sigrenderer_get_position (renderer) / 65536.f;
     return 0;
 }
 
