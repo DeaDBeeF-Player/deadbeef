@@ -1,0 +1,13 @@
+# Makefile for building the datafile
+# NOT FOR RELEASE
+# Usage: make -f makedat
+
+include/datafile.h: studio.dat
+	dat -h $@ $<
+
+studio.dat: font0.bmp font1.bmp font2.bmp
+	rm -f $@
+	dat -t FONT -a $@ font0.bmp; dat $@ FONT0_BMP NAME=FONT0
+	dat -t FONT -a $@ font1.bmp; dat $@ FONT1_BMP NAME=FONT1
+	dat -t FONT -a $@ font2.bmp; dat $@ FONT2_BMP NAME=FONT2
+	dat -c2 $@

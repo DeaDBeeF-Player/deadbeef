@@ -1,0 +1,13 @@
+Bugs in cit.c
+-------------
+
+Please add to this list if you find cit.c is unfaithful to your IT file in any way (other than stuff that isn't implemented yet).
+
+channel->sample is only initialised when the instrument is changed. This means multisample instruments don't work properly.
+
+New SET_VOLUME commands are only written to the DUH file in the specific case that the channel volume changes. If any other volume changes, no command is written.
+
+cit.c is likely not to exhibit the same behaviour as IT when dealing with conflicting volume and effect column commands.
+
+Music length not properly converted. Winamp reports 4:05 on the .it and .xm, but 2:20 on the .duh
+

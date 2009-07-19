@@ -1,0 +1,144 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_CONFIG DIALOGEX 0, 0, 297, 170
+STYLE DS_MODALFRAME | DS_3DLOOK | WS_CAPTION | WS_SYSMENU
+CAPTION "Duh! Plug-in"
+FONT 8, "MS Sans Serif"
+BEGIN
+    GROUPBOX        "Output Bit Rate",IDC_STATIC,5,10,70,40,WS_TABSTOP
+    CONTROL         "8 bits",IDC_8BPS,"Button",BS_AUTORADIOBUTTON | WS_GROUP |
+                    WS_TABSTOP,15,25,47,8
+    CONTROL         "16 bits",IDC_16BPS,"Button",BS_AUTORADIOBUTTON,15,35,45,
+                    10
+    CONTROL         "Stereo",IDC_STEREO,"Button",BS_AUTOCHECKBOX | BS_CENTER |
+                    WS_TABSTOP,5,55,70,12,WS_EX_DLGMODALFRAME
+    GROUPBOX        "Frequency",IDC_STATIC,5,85,70,60
+    CONTROL         "11025 Hz",IDC_11KHZ,"Button",BS_AUTORADIOBUTTON |
+                    WS_GROUP | WS_TABSTOP,15,95,47,10
+    CONTROL         "22050 Hz",IDC_22KHZ,"Button",BS_AUTORADIOBUTTON,15,105,
+                    47,10
+    CONTROL         "44100 Hz",IDC_44KHZ,"Button",BS_AUTORADIOBUTTON,15,115,
+                    47,10
+    CONTROL         "48000 Hz",IDC_48KHZ,"Button",BS_AUTORADIOBUTTON,15,125,
+                    47,10
+    GROUPBOX        "Resampling",IDC_STATIC,85,10,100,70
+    CONTROL         "Aliasing",IDC_ALIASING,"Button",BS_AUTORADIOBUTTON |
+                    WS_GROUP | WS_TABSTOP,95,20,53,11
+    CONTROL         "Linear",IDC_LINEAR,"Button",BS_AUTORADIOBUTTON,95,31,53,
+                    11
+    CONTROL         "Linear + Low-pass",IDC_LINEAR_LOW_PASS,"Button",
+                    BS_AUTORADIOBUTTON,95,42,70,11
+    CONTROL         "Quadratic",IDC_QUADRATIC,"Button",BS_AUTORADIOBUTTON,95,
+                    52,53,11
+    CONTROL         "Cubic",IDC_CUBIC,"Button",BS_AUTORADIOBUTTON,95,63,53,
+                    11
+    LTEXT           "Fastest",IDC_STATIC,150,22,24,8
+    LTEXT           "Nicest",IDC_STATIC,150,65,21,8
+    GROUPBOX        "Thread Priority",IDC_STATIC,85,85,100,60
+    CONTROL         "Slider1",IDC_THREAD_PRI,"msctls_trackbar32",
+                    TBS_AUTOTICKS | WS_TABSTOP,100,95,70,15
+    LTEXT           "Normal",IDC_STATIC,90,110,23,8
+    LTEXT           "Higher",IDC_STATIC,125,110,22,8
+    LTEXT           "Highest",IDC_STATIC,155,110,25,8
+    LTEXT           "You shouldn't normally change this",IDC_STATIC,95,120,
+                    75,20
+    GROUPBOX        "Buffer Size",IDC_STATIC,195,10,95,70
+    CONTROL         "Slider1",IDC_BUFFERSIZE,"msctls_trackbar32",
+                    TBS_AUTOTICKS | WS_TABSTOP,200,20,85,15
+    RTEXT           "0 KS",IDC_BUFFERSIZE2,250,35,35,10
+    LTEXT           "Increase this value to give better skip protection on slower computers",
+                    IDC_STATIC,200,45,85,30
+    DEFPUSHBUTTON   "OK",IDC_OK,155,150,65,15,0,WS_EX_DLGMODALFRAME
+    PUSHBUTTON      "Cancel",IDC_CANCEL,225,150,65,15,0,WS_EX_DLGMODALFRAME
+    PUSHBUTTON      "Default",IDC_DEFAULT,5,150,70,15
+    PUSHBUTTON      "Nicest",IDC_NICEST,210,100,65,15
+    PUSHBUTTON      "Fastest",IDC_FASTEST,210,120,65,15
+    GROUPBOX        "Quick Settings",IDC_STATIC,195,85,95,60
+END
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_CONFIG, DIALOG
+    BEGIN
+        LEFTMARGIN, 6
+        RIGHTMARGIN, 289
+        TOPMARGIN, 13
+        BOTTOMMARGIN, 163
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

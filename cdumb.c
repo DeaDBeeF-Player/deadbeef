@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "dumb/dumb-0.9.3/include/dumb.h"
+#include "dumb/dumb-kode54/include/dumb.h"
 #include "codec.h"
 #include "cdumb.h"
 #include "playlist.h"
@@ -32,7 +32,7 @@ cdumb_init (const char *fname, int track, float start, float end) {
     }
     ext++;
     if (!strcasecmp (ext, "mod")) {
-        myduh = dumb_load_mod_quick (fname);
+        myduh = dumb_load_mod_quick (fname, 0);
     }
     else if (!strcasecmp (ext, "s3m")) {
         myduh = dumb_load_s3m_quick (fname);
@@ -51,6 +51,11 @@ cdumb_init (const char *fname, int track, float start, float end) {
         cdumb_free ();
         return -1;
     }
+    DUMB_IT_SIGRENDERER *itsr = duh_get_it_sigrenderer (renderer);
+    dumb_it_set_loop_callback (itsr, &dumb_it_callback_terminate, NULL);
+    dumb_it_set_resampling_quality (itsr, 2);
+    dumb_it_set_xm_speed_zero_callback (itsr, &dumb_it_callback_terminate, NULL);
+    dumb_it_set_global_volume_zero_callback (itsr, &dumb_it_callback_terminate, NULL);
 
     dumb_it_do_initial_runthrough (myduh);
 
