@@ -3,6 +3,7 @@
 #include <mad.h>
 #include <assert.h>
 #include <stdlib.h>
+#include <iconv.h>
 #include "codec.h"
 #include "cmp3.h"
 #include "playlist.h"
@@ -431,10 +432,450 @@ cmp3_seek (float time) {
     return 0;
 }
 
+static const char *cmp3_genretbl[] = {
+    "Blues",
+    "Classic Rock",
+    "Country",
+    "Dance",
+    "Disco",
+    "Funk",
+    "Grunge",
+    "Hip-Hop",
+    "Jazz",
+    "Metal",
+    "New Age",
+    "Oldies",
+    "Other",
+    "Pop",
+    "R&B",
+    "Rap",
+    "Reggae",
+    "Rock",
+    "Techno",
+    "Industrial",
+    "Alternative",
+    "Ska",
+    "Death Metal",
+    "Pranks",
+    "Soundtrack",
+    "Euro-Techno",
+    "Ambient",
+    "Trip-Hop",
+    "Vocal",
+    "Jazz+Funk",
+    "Fusion",
+    "Trance",
+    "Classical",
+    "Instrumental",
+    "Acid",
+    "House",
+    "Game",
+    "Sound Clip",
+    "Gospel",
+    "Noise",
+    "AlternRock",
+    "Bass",
+    "Soul",
+    "Punk",
+    "Space",
+    "Meditative",
+    "Instrumental Pop",
+    "Instrumental Rock",
+    "Ethnic",
+    "Gothic",
+    "Darkwave",
+    "Techno-Industrial",
+    "Electronic",
+    "Pop-Folk",
+    "Eurodance",
+    "Dream",
+    "Southern Rock",
+    "Comedy",
+    "Cult",
+    "Gangsta",
+    "Top 40",
+    "Christian Rap",
+    "Pop/Funk",
+    "Jungle",
+    "Native American",
+    "Cabaret",
+    "New Wave",
+    "Psychadelic",
+    "Rave",
+    "Showtunes",
+    "Trailer",
+    "Lo-Fi",
+    "Tribal",
+    "Acid Punk",
+    "Acid Jazz",
+    "Polka",
+    "Retro",
+    "Musical",
+    "Rock & Roll",
+    "Hard Rock",
+    "Folk",
+    "Folk-Rock",
+    "National Folk",
+    "Swing",
+    "Fast Fusion",
+    "Bebob",
+    "Latin",
+    "Revival",
+    "Celtic",
+    "Bluegrass",
+    "Avantgarde",
+    "Gothic Rock",
+    "Progressive Rock",
+    "Psychedelic Rock",
+    "Symphonic Rock",
+    "Slow Rock",
+    "Big Band",
+    "Chorus",
+    "Easy Listening",
+    "Acoustic",
+    "Humour",
+    "Speech",
+    "Chanson",
+    "Opera",
+    "Chamber Music",
+    "Sonata",
+    "Symphony",
+    "Booty Bass",
+    "Primus",
+    "Porn Groove",
+    "Satire",
+    "Slow Jam",
+    "Club",
+    "Tango",
+    "Samba",
+    "Folklore",
+    "Ballad",
+    "Power Ballad",
+    "Rhythmic Soul",
+    "Freestyle",
+    "Duet",
+    "Punk Rock",
+    "Drum Solo",
+    "Acapella",
+    "Euro-House",
+    "Dance Hall",
+    "Goa",
+    "Drum & Bass",
+    "Club-House",
+    "Hardcore",
+    "Terror",
+    "Indie",
+    "BritPop",
+    "Negerpunk",
+    "Polsk Punk",
+    "Beat",
+    "Christian Gangsta",
+    "Heavy Metal",
+    "Black Metal",
+    "Crossover",
+    "Contemporary C",
+    "Christian Rock",
+    "Merengue",
+    "Salsa",
+    "Thrash Metal",
+    "Anime",
+    "JPop",
+    "SynthPop",
+};
+
+// should read both id3v1 and id3v1.1
+int
+cmp3_read_id3v1 (playItem_t *it, FILE *fp) {
+    if (!it || !fp) {
+        printf ("bad call to cmp3_read_id3v1!\n");
+        return -1;
+    }
+    uint8_t buffer[128];
+#if 0
+    rewind (fp);
+    if (fread (buffer, 1, 128, fp) != 128) {
+        return -1;
+    }
+
+    if (strncmp (buffer, "ID3", 3))
+#endif
+    {
+        // try reading from end
+        fseek (fp, -128, SEEK_END);
+        if (fread (buffer, 1, 128, fp) != 128) {
+            return -1;
+        }
+        if (strncmp (buffer, "ID3", 3)) {
+            return -1; // no tag
+        }
+    }
+    char title[31];
+    char artist[31];
+    char album[31];
+    char year[5];
+    char comment[31];
+    uint8_t genreid;
+    uint8_t tracknum;
+    const char *genre;
+    memset (title, 0, 31);
+    memset (artist, 0, 31);
+    memset (album, 0, 31);
+    memset (year, 0, 5);
+    memset (comment, 0, 31);
+    memcpy (title, &buffer[3], 30);
+    memcpy (artist, &buffer[3+30], 30);
+    memcpy (album, &buffer[3+60], 30);
+    memcpy (year, &buffer[3+90], 4);
+    memcpy (comment, &buffer[3+94], 30);
+    genreid = buffer[3+124];
+    tracknum = 0xff;
+    if (comment[28] == 0) {
+        tracknum = comment[29];
+    }
+//    255 = "None",
+//    "CR" = "Cover" (id3v2)
+//    "RX" = "Remix" (id3v2)
+
+    if (genreid == 0xff) {
+        genre = "None";
+    }
+    else if (genreid <= 147) {
+        genre = cmp3_genretbl[genreid];
+    }
+
+    // add meta
+    printf ("%s - %s - %s - %s - %s - %s\n", title, artist, album, year, comment, genre);
+    ps_add_meta (it, "title", title);
+    ps_add_meta (it, "artist", artist);
+    ps_add_meta (it, "album", album);
+    ps_add_meta (it, "year", year);
+    ps_add_meta (it, "comment", comment);
+    ps_add_meta (it, "genre", genre);
+    if (tracknum != 0xff) {
+        char s[4];
+        snprintf (s, 4, "%d", tracknum);
+        ps_add_meta (it, "track", s);
+    }
+
+    return 0;
+}
+
+const char *
+convstr (const char* str, int sz) {
+    static char out[2048];
+    const char *enc = "iso8859-1";
+    if (*str == 1) {
+        enc = "UCS-2";
+    }
+    str++;
+    sz--;
+    iconv_t cd = iconv_open ("utf8", enc);
+    if (!cd) {
+        printf ("unknown encoding: %s\n", enc);
+        return NULL;
+#if 0
+        // replace unknown chars with ?
+        strcpy (out, str);
+        char *p = out;
+        while (*p) {
+            if (*p < 0) {
+                *p = '?';
+            }
+            p++;
+        }
+#endif
+    }
+    else {
+        size_t inbytesleft = sz;
+        size_t outbytesleft = 2047;
+        char *pin = (char*)str;
+        char *pout = out;
+        memset (out, 0, sizeof (out));
+        size_t res = iconv (cd, &pin, &inbytesleft, &pout, &outbytesleft);
+//        printf ("iconv returned %d (converted: %s)\n", res, out);
+        iconv_close (cd);
+    }
+    return out;
+}
+
+int
+cmp3_read_id3v2 (playItem_t *it, FILE *fp) {
+    if (!it || !fp) {
+        printf ("bad call to cmp3_read_id3v2!\n");
+        return -1;
+    }
+    rewind (fp);
+    uint8_t header[10];
+    if (fread (header, 1, 10, fp) != 10) {
+        return -1; // too short
+    }
+    if (strncmp (header, "ID3", 3)) {
+        return -1; // no tag
+    }
+    uint8_t version_major = header[3];
+    uint8_t version_minor = header[4];
+    if (version_major > 3 || version_major < 2) {
+        return -1; // unsupported
+    }
+    uint8_t flags = header[5];
+    if (flags & 15) {
+        return -1; // unsupported
+    }
+    int unsync = (flags & (1<<7)) ? 1 : 0;
+    int extheader = (flags & (1<<6)) ? 1 : 0;
+    int expindicator = (flags & (1<<5)) ? 1 : 0;
+    // check for bad size
+    if ((header[9] & 0x80) || (header[8] & 0x80) || (header[7] & 0x80) || (header[6] & 0x80)) {
+        return -1; // bad header
+    }
+    uint32_t size = (header[9] << 0) | (header[8] << 7) | (header[7] << 14) | (header[6] << 21);
+//    printf ("tag size: %d\n", size);
+
+    // try to read full tag if size is small enough
+    if (size > 1000000) {
+        return -1;
+    }
+    uint8_t tag[size];
+    if (fread (tag, 1, size, fp) != size) {
+        return -1; // bad size
+    }
+    uint8_t *readptr = tag;
+    int crcpresent = 0;
+//    printf ("version: 2.%d.%d, unsync: %d, extheader: %d, experimental: %d\n", version_major, version_minor, unsync, extheader, expindicator);
+    
+    if (extheader) {
+        if (size < 6) {
+            return -1; // bad size
+        }
+        uint32_t sz = (readptr[3] << 0) | (header[2] << 8) | (header[1] << 16) | (header[0] << 24);
+        readptr += 4;
+        if (size < sz) {
+            return -1; // bad size
+        }
+        uint16_t extflags = (readptr[1] << 0) | (readptr[0] << 8);
+        readptr += 2;
+        uint32_t pad = (readptr[3] << 0) | (header[2] << 8) | (header[1] << 16) | (header[0] << 24);
+        readptr += 4;
+        if (extflags & 0x80000000) {
+            crcpresent = 1;
+        }
+        if (crcpresent && sz != 10) {
+            return -1; // bad header
+        }
+        readptr += 4; // skip crc
+    }
+    while (readptr - tag < size - 4) {
+        if (version_major == 3) {
+            char frameid[5];
+            memcpy (frameid, readptr, 4);
+            frameid[4] = 0;
+            readptr += 4;
+            if (readptr - tag >= size - 4) {
+                break;
+            }
+            uint32_t sz = (readptr[3] << 0) | (readptr[2] << 8) | (readptr[1] << 16) | (readptr[0] << 24);
+            readptr += 4;
+            if (readptr - tag >= size - sz) {
+                break; // size of frame is less than size of tag
+            }
+            if (sz < 1) {
+                break; // frame must be at least 1 byte long
+            }
+            uint16_t flags = (readptr[1] << 0) | (readptr[0] << 8);
+            readptr += 2;
+//            printf ("found id3v2.3 frame: %s, size=%d\n", frameid, sz);
+            if (!strcmp (frameid, "TPE1")) {
+                if (sz > 1000) {
+                    break; // too large
+                }
+                char str[sz+1];
+                memcpy (str, readptr, sz);
+                str[sz] = 0;
+                ps_add_meta (it, "artist", convstr (str, sz));
+            }
+            else if (!strcmp (frameid, "TPE2")) {
+                if (sz > 1000) {
+                    break; // too large
+                }
+                char str[sz+1];
+                memcpy (str, readptr, sz);
+                str[sz] = 0;
+                ps_add_meta (it, "band", convstr (str, sz));
+            }
+            else if (!strcmp (frameid, "TRCK")) {
+                if (sz > 1000) {
+                    break; // too large
+                }
+                char str[sz+1];
+                memcpy (str, readptr, sz);
+                str[sz] = 0;
+                ps_add_meta (it, "track", convstr (str, sz));
+            }
+            else if (!strcmp (frameid, "TIT2")) {
+                if (sz > 1000) {
+                    break; // too large
+                }
+                char str[sz+1];
+                memcpy (str, readptr, sz);
+                str[sz] = 0;
+                ps_add_meta (it, "title", convstr (str, sz));
+            }
+            readptr += sz;
+        }
+        else if (version_major == 2) {
+            char frameid[4];
+            memcpy (frameid, readptr, 3);
+            frameid[3] = 0;
+            readptr += 3;
+            if (readptr - tag >= size - 3) {
+                break;
+            }
+            uint32_t sz = (readptr[2] << 0) | (readptr[1] << 8) | (readptr[0] << 16);
+            readptr += 3;
+            if (readptr - tag >= size - sz) {
+                break; // size of frame is less than size of tag
+            }
+            //sz -= 6;
+            if (sz < 1) {
+                break; // frame must be at least 1 byte long
+            }
+//            printf ("found id3v2.2 frame: %s, size=%d\n", frameid, sz);
+            if (!strcmp (frameid, "TEN")) {
+                if (sz > 1000) {
+                    break; // too large
+                }
+                char str[sz+1];
+                memcpy (str, readptr, sz);
+                str[sz] = 0;
+                ps_add_meta (it, "vendor", convstr (str, sz));
+            }
+            else if (!strcmp (frameid, "TT2")) {
+                if (sz > 1000) {
+                    break; // too large
+                }
+                char str[sz+1];
+                memcpy (str, readptr, sz);
+                str[sz] = 0;
+                ps_add_meta (it, "title", convstr (str, sz));
+            }
+            readptr += sz;
+        }
+    }
+
+    return 0;
+}
+
 int
 cmp3_add (const char *fname) {
+    FILE *fp = fopen (fname, "rb");
+    if (!fp) {
+        return -1;
+    }
     playItem_t *it = malloc (sizeof (playItem_t));
     memset (it, 0, sizeof (playItem_t));
+    cmp3_read_id3v1 (it, fp);
+    cmp3_read_id3v2 (it, fp);
+    fclose (fp);
     it->codec = &cmp3;
     it->fname = strdup (fname);
     it->tracknum = 0;
