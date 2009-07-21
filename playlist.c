@@ -537,8 +537,19 @@ ps_format_item_display_name (playItem_t *it) {
         snprintf (it->displayname, MAX_DISPLAY_NAME, "%s", title);
     }
     else {
-        //snprintf (it->displayname, MAX_DISPLAY_NAME, "%s", title);
-        strncpy (it->displayname, it->fname, MAX_DISPLAY_NAME);
+        // cut filename without path and extension
+        char *pext = it->fname + strlen (it->fname) - 1;
+        while (pext >= it->fname && *pext != '.') {
+            pext--;
+        }
+        char *pname = pext;
+        while (pname >= it->fname && *pname != '/') {
+            pname--;
+        }
+        if (*pname == '/') {
+            pname++;
+        }
+        strncpy (it->displayname, pname, pext-pname);
     }
 }
 
