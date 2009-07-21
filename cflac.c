@@ -167,6 +167,20 @@ cflac_seek (float time) {
     return 0;
 }
 
+static FLAC__StreamDecoderWriteStatus
+cflac_init_write_callback (const FLAC__StreamDecoder *decoder, const FLAC__Frame *frame, const FLAC__int32 * const inputbuffer[], void *client_data) {
+    if (frame->header.blocksize == 0) {
+        return FLAC__STREAM_DECODER_WRITE_STATUS_ABORT;
+    }
+    return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;
+}
+
+void
+cflac_init_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMetadata *metadata, void *client_data) {
+    int *psr = (int *)client_data;
+    *psr = metadata->data.stream_info.sample_rate;
+}
+
 int
 cflac_add (const char *fname) {
     // try cue
@@ -186,6 +200,7 @@ cflac_add (const char *fname) {
         }
     }
 
+    FLAC__StreamDecoder *decoder = 0;
     FLAC__StreamDecoderInitStatus status;
     decoder = FLAC__stream_decoder_new();
     if (!decoder) {
@@ -193,21 +208,21 @@ cflac_add (const char *fname) {
         return -1;
     }
     FLAC__stream_decoder_set_md5_checking(decoder, 0);
-    status = FLAC__stream_decoder_init_file(decoder, fname, cflac_write_callback, cflac_metadata_callback, cflac_error_callback, NULL);
+    int samplerate = -1;
+    status = FLAC__stream_decoder_init_file(decoder, fname, cflac_init_write_callback, cflac_init_metadata_callback, cflac_error_callback, &samplerate);
     if (status != FLAC__STREAM_DECODER_INIT_STATUS_OK) {
-        cflac_free ();
+        FLAC__stream_decoder_delete(decoder);
         return -1;
     }
-    cflac.info.samplesPerSecond = -1;
     if (!FLAC__stream_decoder_process_until_end_of_metadata (decoder)) {
-        cflac_free ();
+        FLAC__stream_decoder_delete(decoder);
         return -1;
     }
-    if (cflac.info.samplesPerSecond == -1) { // not a FLAC stream
-        cflac_free ();
+    if (samplerate == -1) { // not a FLAC stream
+        FLAC__stream_decoder_delete(decoder);
         return -1;
     }
-    cflac_free ();
+    FLAC__stream_decoder_delete(decoder);
     playItem_t *it = malloc (sizeof (playItem_t));
     memset (it, 0, sizeof (playItem_t));
     it->codec = &cflac;
