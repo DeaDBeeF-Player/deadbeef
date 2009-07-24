@@ -1,0 +1,210 @@
+/***************************************************************************
+                          psiddrv.a65  -  C64 Sid Player
+                             -------------------
+    begin                : 
+    copyright            : (C) 2000 by Dag Lem
+    email                : resid@nimrod.no
+ ***************************************************************************/
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ ***************************************************************************/
+/***************************************************************************
+ * Modified by Simon White <sidplay2@email.com> for use in the sidplayer
+ * SIDPlay2.
+ *
+ * Build with:
+ * xa -R -G psiddrv.a65 -o psiddrv.o65
+ * od -v -An -w8 -tx1 psiddrv.o65 | sed 's/\w\w/0x&,/g' > psiddrv.bin
+ ***************************************************************************/
+/***************************************************************************
+ *  $Log: psiddrv.a65,v $
+ *  Revision 1.16  2002/12/13 22:04:54  s_a_white
+ *  Nolonger CLI after returning from INIT for RSID tunes.  Since the tunes are
+ *  more complicated rely on the init to do the right thing.
+ *
+ *  Revision 1.15  2002/11/20 21:43:08  s_a_white
+ *  Enable the VIC screen and therefore DMA.
+ *
+ *  Revision 1.14  2002/11/19 22:53:23  s_a_white
+ *  Sidplay1 modes modified to make them nolonger require the psid driver.
+ *
+ *  Revision 1.13  2002/11/01 17:36:01  s_a_white
+ *  Frame based support for old sidplay1 modes.
+ *
+ *  Revision 1.12  2002/10/20 08:59:14  s_a_white
+ *  Prevent some PSID tunes being handled like RSID ones.
+ *
+ *  Revision 1.11  2002/10/02 19:42:59  s_a_white
+ *  RSID support.
+ *
+ *  Revision 1.10  2002/09/21 22:32:18  s_a_white
+ *  Prevent some of the real c64 only tunes abusing play != 0.  Some busy
+ *  looping ones may still get away with it...
+ *
+ *  Revision 1.9  2002/09/12 20:39:47  s_a_white
+ *  Added support for simulating the random delay before the user loads a
+ *  program on a real C64.
+ *
+ *  Revision 1.8  2002/03/12 18:45:37  s_a_white
+ *  Added PHP to push stack as sidplay1 compatibility IRQ now behaves like
+ *  JSR.
+ *
+ *  Revision 1.7  2002/02/17 12:35:35  s_a_white
+ *  BRK handler clean up and better sidplay2 optimisation usage.
+ *
+ *  Revision 1.6  2002/02/05 08:48:58  s_a_white
+ *  Small fix for psid specific rips and real irq handlers (A reg now zeroed).
+ *
+ *  Revision 1.5  2002/02/04 23:50:48  s_a_white
+ *  Improved compatibilty with older sidplay1 modes.
+ *
+ *  Revision 1.4  2001/12/17 23:43:29  s_a_white
+ *  Fix for real C64 tunes where BRK handler is run.
+ *
+ *  Revision 1.3  2001/10/02 18:05:27  s_a_white
+ *  Fix for real C64 tunes which correctly handle BRK.
+ *
+ *  Revision 1.2  2001/09/01 11:12:22  s_a_white
+ *  Fixes sidplay1 environment modes.
+ *
+ *  Revision 1.1  2001/07/27 12:12:23  s_a_white
+ *  Initial release.
+ *
+ ***************************************************************************/
+
+            ; entry address
+coldvec     .word cold
+            ; redirect basic restart vector
+            ; to finish the init sequence
+finitvec    .word setiomap
+
+            ; initial user interrupt vectors
+retusr      .word irqret
+            .byte 0
+irqusr      .word irqret
+brkusr      .word brkjob
+nmiusr      .word nmijob
+
+playnum     .byte 0
+speed       .byte 0
+initvec     .word 0
+playvec     .word 0
+rndwait     .word 0
+initiomap   .byte 0
+playiomap   .byte 0
+
+            ; init/play PSID
+play        jmp (playvec)
+init        jmp (initvec)
+
+            ; cold start
+cold        sei
+
+            ; set CIA Timer A to 60Hz
+            lda $02a6
+            beq ntsc
+pal         lda #$25
+            ldx #$40
+            bne timer
+ntsc        lda #$95
+            ldx #$42
+timer       sta $dc04
+            stx $dc05
+
+            ; enable the VICs screen
+            lda $d011
+            ora #$10
+            sta $d011
+
+            ; 0 indicates VIC timing, else it's from CIA
+            ldx #$81
+            lda speed
+            bne ciainit
+
+            ; enable VICII raster interrupt
+            stx $d01a
+            beq doinit
+
+            ; enable CIA 1 timer A interrupt
+ciainit     stx $dc0d
+
+            ; always enable timer A for random numbers
+doinit      lda #$01
+            sta $dc0e
+
+            ; If play address, override default irq vector so
+            ; we reach are routine to handle play routine
+            lda playiomap
+            beq noplay
+            lda #<irqjob
+            sta $0314
+
+            ; set I/O map and call song init routine
+noplay      lda initiomap
+            bne setbank
+            ; Only release interrupt mask for real
+            ; C64 tunes (initiomap = 0) thus
+            ; providing a more realistic environment
+            lda #$37
+            ; cli dosen't come into effect until
+            ; after the sta!
+            cli
+setbank     sta $01
+
+            ; simulate time before user loads tune
+random      tya
+            ldx rndwait
+            ldy rndwait+1
+            inx
+            iny
+wait        dex
+            bne wait
+            dey
+            bne wait
+            tay
+
+            ; get song number
+getsong     ldx playnum
+            dex
+            txa
+            ldx #0
+            ldy #0
+            jsr init
+setiomap    lda initiomap
+            beq idle
+            lda playiomap
+            beq run
+            lda #$37
+            sta $01
+            bne run
+            
+brkjob      ldx #$ff
+            txs
+run         cli
+idle        jmp idle
+
+irqjob      lda $01
+            pha
+            lda playiomap
+            sta $01
+            lda #0
+            jsr play
+            pla
+            sta $01
+            inc $d019
+
+            ; IRQ Exit (code from Kernel ROM)
+irqret      lda $dc0d
+            pla
+            tay
+            pla
+            tax
+            pla
+nmijob      rti
+
+.end

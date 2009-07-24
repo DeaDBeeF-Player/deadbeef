@@ -1,0 +1,10 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: @PACKAGE@
+Description: Utils for supporting the libsidplay2 library.
+Version: @VERSION@
+Libs: ${libdir}/libsidutils.la
+Cflags: -DHAVE_UNIX -I${includedir}

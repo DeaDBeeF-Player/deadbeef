@@ -1,0 +1,87 @@
+%define major    1
+%define oname    libsidutils
+#define name     %{oname}%{major}
+%define version  1.0.2
+%define frelease 1
+%define release  %{frelease}
+%define libsidplay2 2.1.0
+
+Summary:        General utility library for use in sidplayers.
+Name:           %{oname}
+Version:        %{version}
+Release:        %{release}
+Source:         %{oname}-%{version}-%{frelease}.tar.bz2
+Copyright:      GPL
+Group:          System/Libraries
+URL:            http://sidplay2.sourceforge.net/
+BuildRoot:      %{_tmppath}/%{name}-buildroot
+Prefix:         %{_prefix}
+Requires:       libsidplay2 >= %{libsidplay2}
+BuildRequires:  libsidplay2-devel >= %{libsidplay2}
+
+%description
+This library provides general utilities that are not considered core
+to the C64 emulation.  Utilities include decoding and obtaining tune
+lengths from the songlength database, INI file format parser and SID
+filter files (types 1 and 2).
+
+%package devel
+Summary:        Development headers and libraries for %{name}
+Group:          Development/C++
+Requires:       %{oname} = %{version}
+Provides:       %{oname}-devel = %{version}
+
+%description devel
+This package includes the header and library files necessary
+for developing applications to use %{name}.
+
+
+%prep
+rm -rf $RPM_BUILD_ROOT 
+%setup -q
+
+%build
+%configure
+%make
+
+%install
+%makeinstall
+
+%clean
+rm -rf $RPM_BUILD_ROOT
+
+%postun -p /sbin/ldconfig
+
+%post -p /sbin/ldconfig
+
+%files
+%defattr(-,root,root)
+%doc AUTHORS COPYING ChangeLog README TODO
+%{_libdir}/*.so.*
+
+%files devel
+%defattr(-,root,root)
+%doc COPYING
+%{_includedir}/sidplay/utils/*
+%{_libdir}/*.la
+%{_libdir}/*.a
+%{_libdir}/*.so
+%{_libdir}/pkgconfig/*
+
+%changelog
+* Fri Nov 30 2001 Simon White <s_a_white@email.com> 1.0.2-1
+- Moved filter struct to libsidplay for sidbuilder classes.
+  Synced against libini-1.1.8 for bug fixes.
+
+* Wed Apr 10 2001 Simon White <s_a_white@email.com> 1.0.1-1
+- Use non Mandrake specific release number.  Bug fixes in INI
+  file parser.
+
+* Wed Apr 4 2001 Simon White <s_a_white@email.com> 1.0.0-2mdk
+- Updated --prefix and make install so la file does not end up with
+  a bad install path.
+
+* Sun Apr 1 2001 Simon White <s_a_white@email.com> 1.0.0-1mdk
+- First spec file.
+
+# end of file
