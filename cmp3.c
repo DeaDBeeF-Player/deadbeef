@@ -631,8 +631,40 @@ convstr (const char* str, int sz) {
 
 const char *convstr_id3v1 (const char* str, int sz) {
     static char out[2048];
-    const char *enc = "cp1251";
-    iconv_t cd = iconv_open ("utf8", enc);
+
+    // check for utf8 (hack)
+    iconv_t cd;
+    cd = iconv_open ("utf8", "utf8");
+    size_t inbytesleft = sz;
+    size_t outbytesleft = 2047;
+    char *pin = (char*)str;
+    char *pout = out;
+    memset (out, 0, sizeof (out));
+    size_t res = iconv (cd, &pin, &inbytesleft, &pout, &outbytesleft);
+    iconv_close (cd);
+    if (res == 0) {
+        strncpy (out, str, 2047);
+        out[min (sz, 2047)] = 0;
+        return out;
+    }
+
+    const char *enc = "iso8859-1";
+    int latin = 0;
+    int rus = 0;
+    for (int i = 0; i < sz; i++) {
+        if ((str[i] >= 'A' && str[i] <= 'Z')
+                || str[i] >= 'a' && str[i] <= 'z') {
+            latin++;
+        }
+        else if (str[i] < 0) {
+            rus++;
+        }
+    }
+    if (rus > latin/2) {
+        // might be russian
+        enc = "cp1251";
+    }
+    cd = iconv_open ("utf8", enc);
     if (!cd) {
         printf ("unknown encoding: %s\n", enc);
         return NULL;
@@ -662,7 +694,7 @@ cmp3_read_id3v1 (playItem_t *it, FILE *fp) {
     if (fread (buffer, 1, 128, fp) != 128) {
         return -1;
     }
-    if (strncmp (buffer, "ID3", 3)) {
+    if (strncmp (buffer, "TAG", 3)) {
         return -1; // no tag
     }
     char title[31];
@@ -700,7 +732,7 @@ cmp3_read_id3v1 (playItem_t *it, FILE *fp) {
     }
 
     // add meta
-    printf ("%s - %s - %s - %s - %s - %s\n", title, artist, album, year, comment, genre);
+//    printf ("%s - %s - %s - %s - %s - %s\n", title, artist, album, year, comment, genre);
     ps_add_meta (it, "title", convstr_id3v1 (title, strlen (title)));
     ps_add_meta (it, "artist", convstr_id3v1 (artist, strlen (artist)));
     ps_add_meta (it, "album", convstr_id3v1 (album, strlen (album)));
@@ -892,8 +924,9 @@ cmp3_add (const char *fname) {
     }
     playItem_t *it = malloc (sizeof (playItem_t));
     memset (it, 0, sizeof (playItem_t));
-    cmp3_read_id3v1 (it, fp);
-    cmp3_read_id3v2 (it, fp);
+    if (cmp3_read_id3v2 (it, fp) < 0) {
+        cmp3_read_id3v1 (it, fp);
+    }
     fclose (fp);
     it->codec = &cmp3;
     it->fname = strdup (fname);
