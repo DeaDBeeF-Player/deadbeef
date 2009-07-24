@@ -583,6 +583,72 @@ static const char *cmp3_genretbl[] = {
     "SynthPop",
 };
 
+const char *
+convstr (const char* str, int sz) {
+    static char out[2048];
+    const char *enc = "iso8859-1";
+
+    // hack to add limited cp1251 recoding support
+
+    if (*str == 1) {
+        enc = "UCS-2";
+    }
+    else {
+        int latin = 0;
+        int rus = 0;
+        for (int i = 1; i < sz; i++) {
+            if ((str[i] >= 'A' && str[i] <= 'Z')
+                    || str[i] >= 'a' && str[i] <= 'z') {
+                latin++;
+            }
+            else if (str[i] < 0) {
+                rus++;
+            }
+        }
+        if (rus > latin/2) {
+            // might be russian
+            enc = "cp1251";
+        }
+    }
+    str++;
+    sz--;
+    iconv_t cd = iconv_open ("utf8", enc);
+    if (!cd) {
+        printf ("unknown encoding: %s\n", enc);
+        return NULL;
+    }
+    else {
+        size_t inbytesleft = sz;
+        size_t outbytesleft = 2047;
+        char *pin = (char*)str;
+        char *pout = out;
+        memset (out, 0, sizeof (out));
+        size_t res = iconv (cd, &pin, &inbytesleft, &pout, &outbytesleft);
+        iconv_close (cd);
+    }
+    return out;
+}
+
+const char *convstr_id3v1 (const char* str, int sz) {
+    static char out[2048];
+    const char *enc = "cp1251";
+    iconv_t cd = iconv_open ("utf8", enc);
+    if (!cd) {
+        printf ("unknown encoding: %s\n", enc);
+        return NULL;
+    }
+    else {
+        size_t inbytesleft = sz;
+        size_t outbytesleft = 2047;
+        char *pin = (char*)str;
+        char *pout = out;
+        memset (out, 0, sizeof (out));
+        size_t res = iconv (cd, &pin, &inbytesleft, &pout, &outbytesleft);
+        iconv_close (cd);
+    }
+    return out;
+}
+
 // should read both id3v1 and id3v1.1
 int
 cmp3_read_id3v1 (playItem_t *it, FILE *fp) {
@@ -591,23 +657,13 @@ cmp3_read_id3v1 (playItem_t *it, FILE *fp) {
         return -1;
     }
     uint8_t buffer[128];
-#if 0
-    rewind (fp);
+    // try reading from end
+    fseek (fp, -128, SEEK_END);
     if (fread (buffer, 1, 128, fp) != 128) {
         return -1;
     }
-
-    if (strncmp (buffer, "ID3", 3))
-#endif
-    {
-        // try reading from end
-        fseek (fp, -128, SEEK_END);
-        if (fread (buffer, 1, 128, fp) != 128) {
-            return -1;
-        }
-        if (strncmp (buffer, "ID3", 3)) {
-            return -1; // no tag
-        }
+    if (strncmp (buffer, "ID3", 3)) {
+        return -1; // no tag
     }
     char title[31];
     char artist[31];
@@ -645,12 +701,12 @@ cmp3_read_id3v1 (playItem_t *it, FILE *fp) {
 
     // add meta
     printf ("%s - %s - %s - %s - %s - %s\n", title, artist, album, year, comment, genre);
-    ps_add_meta (it, "title", title);
-    ps_add_meta (it, "artist", artist);
-    ps_add_meta (it, "album", album);
+    ps_add_meta (it, "title", convstr_id3v1 (title, strlen (title)));
+    ps_add_meta (it, "artist", convstr_id3v1 (artist, strlen (artist)));
+    ps_add_meta (it, "album", convstr_id3v1 (album, strlen (album)));
     ps_add_meta (it, "year", year);
-    ps_add_meta (it, "comment", comment);
-    ps_add_meta (it, "genre", genre);
+    ps_add_meta (it, "comment", convstr_id3v1 (comment, strlen (comment)));
+    ps_add_meta (it, "genre", convstr_id3v1 (genre, strlen (genre)));
     if (tracknum != 0xff) {
         char s[4];
         snprintf (s, 4, "%d", tracknum);
@@ -660,43 +716,6 @@ cmp3_read_id3v1 (playItem_t *it, FILE *fp) {
     return 0;
 }
 
-const char *
-convstr (const char* str, int sz) {
-    static char out[2048];
-    const char *enc = "iso8859-1";
-    if (*str == 1) {
-        enc = "UCS-2";
-    }
-    str++;
-    sz--;
-    iconv_t cd = iconv_open ("utf8", enc);
-    if (!cd) {
-        printf ("unknown encoding: %s\n", enc);
-        return NULL;
-#if 0
-        // replace unknown chars with ?
-        strcpy (out, str);
-        char *p = out;
-        while (*p) {
-            if (*p < 0) {
-                *p = '?';
-            }
-            p++;
-        }
-#endif
-    }
-    else {
-        size_t inbytesleft = sz;
-        size_t outbytesleft = 2047;
-        char *pin = (char*)str;
-        char *pout = out;
-        memset (out, 0, sizeof (out));
-        size_t res = iconv (cd, &pin, &inbytesleft, &pout, &outbytesleft);
-//        printf ("iconv returned %d (converted: %s)\n", res, out);
-        iconv_close (cd);
-    }
-    return out;
-}
 
 int
 cmp3_read_id3v2 (playItem_t *it, FILE *fp) {
