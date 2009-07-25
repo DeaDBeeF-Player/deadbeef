@@ -1,11 +1,13 @@
 SubDir ROOT sidplay-libs-2.1.0 ;
 C++FLAGS += -DHAVE_UNIX ;
+C++FLAGS += -DVERSION=\\\"2.1.0\\\" ;
 SubDirHdrs $(ROOT)/sidplay-libs-2.1.0 ;
 SubDirHdrs $(ROOT)/sidplay-libs-2.1.0/libsidplay ;
 SubDirHdrs $(ROOT)/sidplay-libs-2.1.0/libsidplay/include ;
 SubDirHdrs $(ROOT)/sidplay-libs-2.1.0/libsidplay/include/sidplay ;
 SubDirHdrs $(ROOT)/sidplay-libs-2.1.0/libsidutils/include/sidplay/utils ;
 SubDirHdrs $(ROOT)/sidplay-libs-2.1.0/builders/resid-builder/include/sidplay/builders ;
+SubDirHdrs $(ROOT)/sidplay-libs-2.1.0/builders/resid-builder/include/ ;
 
 Library libsidplay :
 libsidutils/src/SidDatabase.cpp
@@ -34,6 +36,22 @@ libsidplay/src/xsid/xsid.cpp
 libsidplay/src/mos6526/mos6526.cpp
 builders/resid-builder/src/resid.cpp
 builders/resid-builder/src/resid-builder.cpp
+resid/wave8580_PS_.cc
+resid/filter.cc
+resid/pot.cc
+resid/wave.cc
+resid/version.cc
+resid/wave6581__ST.cc
+resid/extfilt.cc
+resid/wave8580_PST.cc
+resid/wave6581_PST.cc
+resid/wave6581_P_T.cc
+resid/wave6581_PS_.cc
+resid/envelope.cc
+resid/voice.cc
+resid/sid.cc
+resid/wave8580__ST.cc
+resid/wave8580_P_T.cc
 libsidplay/src/reloc65.c
 ;
 

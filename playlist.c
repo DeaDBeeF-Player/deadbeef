@@ -12,6 +12,7 @@
 #include "cmp3.h"
 #include "cgme.h"
 #include "cflac.h"
+#include "csid.h"
 #include "streamer.h"
 
 #define SKIP_BLANK_CUE_TRACKS 1
@@ -234,7 +235,7 @@ ps_add_file (const char *fname) {
 
     // match by codec
     codec_t *codecs[] = {
-        &cdumb, &cvorbis, &cflac, &cgme, &cmp3, NULL
+        &cdumb, &cvorbis, &cflac, &cgme, &cmp3, &csid, NULL
     };
     for (int i = 0; codecs[i]; i++) {
         if (codecs[i]->getexts && codecs[i]->add) {

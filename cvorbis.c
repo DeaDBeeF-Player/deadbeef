@@ -54,8 +54,7 @@ cvorbis_free (void) {
 }
 
 int
-cvorbis_read (char *bytes, int size)
-{
+cvorbis_read (char *bytes, int size) {
     if (!file)
         return 0;
     int initsize = size;
