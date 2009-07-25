@@ -583,7 +583,7 @@ static const char *cmp3_genretbl[] = {
     "SynthPop",
 };
 
-const char *
+static const char *
 convstr (const char* str, int sz) {
     static char out[2048];
     const char *enc = "iso8859-1";

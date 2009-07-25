@@ -522,6 +522,9 @@ ps_format_item_display_name (playItem_t *it) {
     if (*track == '?' && *album == '?' && *artist != '?' && *title != '?') {
         snprintf (it->displayname, MAX_DISPLAY_NAME, "%s - %s", artist, title);
     }
+    else if (*artist != '?' && *track != '?' && *title != '?') {
+        snprintf (it->displayname, MAX_DISPLAY_NAME, "%s. %s - %s", track, artist, title);
+    }
     else if (*artist == '?' && *track != '?' && *album != '?') {
         snprintf (it->displayname, MAX_DISPLAY_NAME, "%s. %s", track, album);
     }
