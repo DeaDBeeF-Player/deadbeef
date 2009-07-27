@@ -19,8 +19,9 @@ static sidplay2 *sidplay;
 static ReSIDBuilder *resid;
 static SidTune *tune;
 extern int sdl_player_freq; // hack!
+// that costs 3.6 Megabytes!!!
 static uint8_t sldb_digests[MAX_SID_SONGS][16];
-static float sldb_lengths[MAX_SID_SONGS][MAX_SID_SUBSONGS];
+static int16_t sldb_lengths[MAX_SID_SONGS][MAX_SID_SUBSONGS];
 static int sldb_size;
 static int sldb_loaded;
 static const char *sldb_fname = "/home/waker/hvsc/C64Music/DOCUMENTS/Songlengths.txt";
@@ -128,7 +129,7 @@ static void sldb_load(const char *fname)
             }
             timestamp[sz] = 0;
             // check for unknown time
-            float time = -1;
+            int16_t time = -1;
             if (!strcmp (timestamp, "-:--")) {
                 time = -1;
             }
@@ -147,9 +148,9 @@ static void sldb_load(const char *fname)
                 strncpy (second, colon+1, 3);
                 //printf ("subsong %d, time %s:%s\n", subsong, minute, second);
                 time = atoi (minute) * 60 + atoi (second);
-                sldb_lengths[sldb_size-1][subsong] = time;
-                subsong++;
             }
+            sldb_lengths[sldb_size-1][subsong] = time;
+            subsong++;
 
             // prepare for next timestamp
             if (*p == '(') {
