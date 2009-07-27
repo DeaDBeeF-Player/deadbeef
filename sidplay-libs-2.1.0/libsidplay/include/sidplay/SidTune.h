@@ -254,13 +254,18 @@ class SID_EXTERN SidTune
     // See instructions at top.
     bool isSlashedFileName;
 
+ public:
     // For files with header: offset to real data
     uint_least32_t fileOffset;
+ protected:
 
     // Needed for MUS/STR player installation.
     uint_least16_t musDataLen;
 
+ public:
     Buffer_sidtt<const uint_least8_t> cache;
+
+ protected:
 
     // Filename extensions to append for various file types.
     static const char** fileNameExtensions;
