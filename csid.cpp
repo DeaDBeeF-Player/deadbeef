@@ -9,6 +9,7 @@ extern "C" {
 #include "playlist.h"
 #include "csid.h"
 #include "md5.h"
+#include "common.h"
 }
 
 #define MAX_SID_SONGS 65536
@@ -270,6 +271,31 @@ csid_read (char *bytes, int size) {
 
 extern "C" int
 csid_seek (float time) {
+    float t = time;
+    if (t < csid.info.position) {
+        // reinit
+        sidplay->load (tune);
+    }
+    else {
+        t -= csid.info.position;
+    }
+    int samples = t * csid.info.samplesPerSecond;
+    samples *= 2 * csid.info.channels;
+    uint16_t buffer[4096 * csid.info.channels];
+    while (samples > 0) {
+        int n = min (samples, 4096) * csid.info.channels;
+        int done = sidplay->play (buffer, n);
+//        printf ("seek-read %d samples, done %d\n", n, done);
+        if (done < n) {
+//            if (sidplay->state () != sid2_stopped) {
+                printf ("sid seek failure\n");
+                return -1;
+//            }
+        }
+        samples -= done;
+    }
+    csid.info.position = time;
+
     return 0;
 }
 
@@ -313,14 +339,12 @@ csid_add (const char *fname) {
             it->timeend = 0;
             SidTuneInfo sidinfo;
             tune->getInfo (sidinfo);
-            int i = sidinfo.numberOfCommentStrings;
+            int i = sidinfo.numberOfInfoStrings;
             if (i >= 1 && sidinfo.infoString[0] && sidinfo.infoString[0][0]) {
                 ps_add_meta (it, sidinfo.songs > 1 ? "album" : "title", convstr (sidinfo.infoString[0]));
-                //printf ("album/title: %s\n", convstr (sidinfo.infoString[0]));
             }
             if (i >= 2 && sidinfo.infoString[1] && sidinfo.infoString[1][0]) {
                 ps_add_meta (it, "artist", convstr (sidinfo.infoString[1]));
-                //printf ("artist: %s\n", convstr (sidinfo.infoString[1]));
             }
             if (i >= 3 && sidinfo.infoString[2] && sidinfo.infoString[2][0]) {
                 ps_add_meta (it, "copyright", convstr (sidinfo.infoString[2]));
