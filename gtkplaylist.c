@@ -419,7 +419,7 @@ gtkps_update_songinfo (void) {
             codec_unlock ();
 
             char str[1024];
-            snprintf (str, 1024, "%dHz | %d bit | %s | Position %d:%02d | Duration %d:%02d", samplerate, bitspersample, mode, minpos, secpos, mindur, secdur);
+            snprintf (str, 1024, "%dHz | %d bit | %s | Position %d:%02d | Duration %d:%02d | %d songs total", samplerate, bitspersample, mode, minpos, secpos, mindur, secdur, ps_getcount ());
             gtk_statusbar_pop (sb, sb_context_id);
             gtk_statusbar_push (sb, sb_context_id, str);
             extern int g_disable_seekbar_handler;
