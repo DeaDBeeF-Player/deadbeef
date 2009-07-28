@@ -12,13 +12,14 @@ extern "C" {
 #include "common.h"
 }
 
-#define MAX_SID_SONGS 65536
+// current hvsc sldb size is ~35k songs
+#define MAX_SID_SONGS 40000
 
 static sidplay2 *sidplay;
 static ReSIDBuilder *resid;
 static SidTune *tune;
 extern int sdl_player_freq; // hack!
-// that costs 2 Megabytes!!!
+// that costs 1.2 Megabytes!!!
 static uint8_t sldb_digests[MAX_SID_SONGS][16];
 static int16_t sldb_pool[MAX_SID_SONGS*5]; // let's say 5 subsongs on average
 static int sldb_poolmark;
