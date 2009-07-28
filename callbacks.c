@@ -91,7 +91,7 @@ on_playlist_button_press_event         (GtkWidget       *widget,
                                         gpointer         user_data)
 {
     if (event->button == 1) {
-        gtkps_mouse1_clicked (widget, event->x, event->y, event->time);
+        gtkps_mouse1_clicked (widget, event->state, event->x, event->y, event->time);
     }
     return FALSE;
 }

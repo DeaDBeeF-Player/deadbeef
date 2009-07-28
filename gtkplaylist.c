@@ -71,8 +71,9 @@ redraw_ps_row (GtkWidget *widget, int row) {
 //    cairo_set_font_size (cr, rowheight);
 
 	playItem_t *it = ps_get_for_idx (row);
+//    printf ("redraw row %d (selected = %d, cursor = %d)\n", row, it->selected, playlist_row == row ? 1 : 0);
 	if (it) {
-        draw_ps_row_back (backbuf, cr, row);
+        draw_ps_row_back (backbuf, cr, row, it);
         draw_ps_row (backbuf, cr, row, it);
     }
     cairo_destroy (cr);
@@ -80,7 +81,7 @@ redraw_ps_row (GtkWidget *widget, int row) {
 }
 
 void
-draw_ps_row_back (GdkDrawable *drawable, cairo_t *cr, int row) {
+draw_ps_row_back (GdkDrawable *drawable, cairo_t *cr, int row, playItem_t *it) {
 	// draw background
 	float w;
 	int start, end;
@@ -88,35 +89,31 @@ draw_ps_row_back (GdkDrawable *drawable, cairo_t *cr, int row) {
 	int width, height;
 	gdk_drawable_get_size (drawable, &width, &height);
 	w = width;
-	if (row == playlist_row) {
-        cairo_set_source_rgb (cr, 0x7f/255.f, 0x7f/255.f, 0x7f/255.f);
+	if (it && it->selected) {
+        if (row % 2) {
+            cairo_set_source_rgb (cr, 0xa7/255.f, 0x9f/255.f, 0x96/255.f);
+        }
+        else {
+            cairo_set_source_rgb (cr, 0xaf/255.f, 0xa7/255.f, 0x9e/255.f);
+        }
         cairo_rectangle (cr, 0, row * rowheight - scrollpos * rowheight, width, rowheight);
-        cairo_fill (cr);
-        cairo_set_source_rgb (cr, 0xae/255.f, 0xa6/255.f, 0x9d/255.f);
-        cairo_rectangle (cr, 1, row * rowheight - scrollpos * rowheight+1, width-2, rowheight-2);
         cairo_fill (cr);
     }
     else {
         if (row % 2) {
             cairo_set_source_rgb (cr, 0x1d/255.f, 0x1f/255.f, 0x1b/255.f);
-            cairo_rectangle (cr, 0, row * rowheight - scrollpos * rowheight, w, rowheight);
-            cairo_fill (cr);
         }
         else {
             cairo_set_source_rgb (cr, 0x21/255.f, 0x23/255.f, 0x1f/255.f);
-            cairo_rectangle (cr, 0, row * rowheight - scrollpos * rowheight, width, rowheight);
-            cairo_fill (cr);
         }
+        cairo_rectangle (cr, 0, row * rowheight - scrollpos * rowheight, width, rowheight);
+        cairo_fill (cr);
     }
-//	start = min (vbstart[1], vbend[1]);
-//	end = max (vbstart[1], vbend[1]);
-//	startx = min (vbstart[0], vbend[0]);
-//	endx = max (vbstart[0], vbend[0]);
-//	if (tracker_vbmode && row >= start && row <= end) { // hilight selected notes
-//		cairo_set_source_rgb (cr, 0.0, 0.44, 0.0);
-//		cairo_rectangle (cr, startx * colwidth * COL_NUM_CHARS + colwidth * 3, row * rowheight - scrollpos * rowheight, (endx - startx + 1) * colwidth * COL_NUM_CHARS, rowheight);
-//		cairo_fill (cr);
-//	}
+	if (row == playlist_row) {
+        cairo_set_source_rgb (cr, 0x7f/255.f, 0x7f/255.f, 0x7f/255.f);
+        cairo_rectangle (cr, 0, row * rowheight - scrollpos * rowheight, width, rowheight);
+        cairo_stroke (cr);
+    }
 }
 
 void
@@ -128,7 +125,7 @@ draw_ps_row (GdkDrawable *drawable, cairo_t *cr, int row, playItem_t *it) {
         cairo_rectangle (cr, 3, row * rowheight - scrollpos * rowheight + 3, rowheight-6, rowheight-6);
         cairo_fill (cr);
     }
-	if (row == playlist_row) {
+	if (it && it->selected) {
         cairo_set_source_rgb (cr, 0, 0, 0);
     }
     else {
@@ -159,10 +156,15 @@ draw_playlist (GtkWidget *widget, int x, int y, int w, int h) {
 	row2 = min (ps_getcount (), (y+h) / rowheight + scrollpos + 1);
 	row2_full = (y+h) / rowheight + scrollpos + 1;
 	// draw background
-	for (row = row1; row < row2_full; row++) {
-		draw_ps_row_back (backbuf, cr, row);
-	}
 	playItem_t *it = ps_get_for_idx (scrollpos);
+	playItem_t *it_copy = it;
+	for (row = row1; row < row2_full; row++) {
+		draw_ps_row_back (backbuf, cr, row, it);
+		if (it) {
+            it = it->next;
+        }
+	}
+	it = it_copy;
 	for (row = row1; row < row2; row++) {
 		draw_ps_row (backbuf, cr, row, it);
 		it = it->next;
@@ -187,7 +189,10 @@ gtkps_expose (GtkWidget       *widget, int x, int y, int w, int h) {
 }
 
 void
-gtkps_mouse1_clicked (GtkWidget *widget, int ex, int ey, double time) {
+gtkps_mouse1_clicked (GtkWidget *widget, int state, int ex, int ey, double time) {
+    if (ps_getcount () == 0) {
+        return;
+    }
     // remember mouse coords for doubleclick detection
     ps_lastpos[0] = ex;
     ps_lastpos[1] = ey;
@@ -197,35 +202,11 @@ gtkps_mouse1_clicked (GtkWidget *widget, int ex, int ey, double time) {
         y = -1;
     }
 
-    if (playlist_row != y) {
-        int old = playlist_row;
-        playlist_row = y;
-        if (old != -1) {
-            redraw_ps_row (widget, old);
-        }
-        if (playlist_row != -1) {
-            redraw_ps_row (widget, playlist_row);
-        }
-    }
-
     if (time - playlist_clicktime < 0.5
             && fabs(ps_lastpos[0] - ex) < 3
             && fabs(ps_lastpos[1] - ey) < 3) {
         // doubleclick - play this item
         if (playlist_row != -1) {
-#if 0
-            playItem_t *it = ps_get_for_idx (playlist_row);
-            if (it) {
-                playItem_t *prev = playlist_current;
-                playlist_current = it;
-                if (playlist_current != prev) {
-                    if (prev) {
-                        redraw_ps_row (widget, ps_get_idx_of (prev));
-                    }
-                }
-                messagepump_push (M_PLAYSONG, 0, 0, 0);
-            }
-#endif
             messagepump_push (M_PLAYSONGNUM, 0, playlist_row, 0);
         }
 
@@ -235,6 +216,72 @@ gtkps_mouse1_clicked (GtkWidget *widget, int ex, int ey, double time) {
     }
     else {
         playlist_clicktime = time;
+    }
+
+    int sel = y;
+    if (y == -1) {
+        y = ps_getcount () - 1;
+    }
+    int prev = playlist_row;
+    playlist_row = y;
+    // handle selection
+    if (!(state & (GDK_CONTROL_MASK|GDK_SHIFT_MASK)))
+    {
+        // reset selection, and set it to single item
+        int idx=0;
+        for (playItem_t *it = playlist_head; it; it = it->next, idx++) {
+            if (idx == sel) {
+                if (!it->selected) {
+                    it->selected = 1;
+//                    if (idx != y && idx != playlist_row) {
+                        redraw_ps_row (widget, idx);
+//                    }
+                }
+            }
+            else if (it->selected) {
+                it->selected = 0;
+//                if (idx != y && idx != playlist_row) {
+                    redraw_ps_row (widget, idx);
+//                }
+            }
+        }
+    }
+    else if (state & GDK_CONTROL_MASK) {
+        // toggle selection
+        if (y != -1) {
+            playItem_t *it = ps_get_for_idx (y);
+            if (it) {
+                it->selected = 1 - it->selected;
+                redraw_ps_row (widget, y);
+            }
+        }
+    }
+    else if (state & GDK_SHIFT_MASK) {
+        // select range
+        int start = min (prev, playlist_row);
+        int end = max (prev, playlist_row);
+        int idx = 0;
+        for (playItem_t *it = playlist_head; it; it = it->next, idx++) {
+            if (idx >= start && idx <= end) {
+                if (!it->selected) {
+                    it->selected = 1;
+                    redraw_ps_row (widget, idx);
+                }
+            }
+            else {
+                if (it->selected) {
+                    it->selected = 0;
+                    redraw_ps_row (widget, idx);
+                }
+            }
+        }
+    }
+
+    if (prev != -1 && prev != playlist_row) {
+        redraw_ps_row (widget, prev);
+    }
+    if (playlist_row != -1 && sel == -1) {
+        redraw_ps_row (widget, playlist_row);
     }
 }
 

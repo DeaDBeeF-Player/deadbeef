@@ -14,7 +14,7 @@ void
 gtkps_setup_scrollbar (void);
 
 void
-draw_ps_row_back (GdkDrawable *drawable, cairo_t *cr, int row);
+draw_ps_row_back (GdkDrawable *drawable, cairo_t *cr, int row, playItem_t *it);
 
 void
 draw_ps_row (GdkDrawable *drawable, cairo_t *cr, int row, playItem_t *it);
@@ -29,7 +29,7 @@ void
 gtkps_expose (GtkWidget       *widget, int x, int y, int w, int h);
 
 void
-gtkps_mouse1_clicked (GtkWidget *widget, int ex, int ey, double time);
+gtkps_mouse1_clicked (GtkWidget *widget, int state, int ex, int ey, double time);
 
 void
 gtkps_scroll (int newscroll);

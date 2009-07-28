@@ -16,6 +16,7 @@ typedef struct playItem_s {
     struct playItem_s *next; // next item in linked list
     struct playItem_s *prev; // prev item in linked list
     struct metaInfo_s *meta; // linked list storing metainfo
+    unsigned selected : 1;
 } playItem_t;
 
 extern playItem_t *playlist_head; // head of linked list

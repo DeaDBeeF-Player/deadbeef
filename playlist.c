@@ -556,6 +556,7 @@ ps_format_item_display_name (playItem_t *it, char *str, int len) {
             pname++;
         }
         strncpy (str, pname, pext-pname);
+        str[pext-pname] = 0;
     }
 }
 
