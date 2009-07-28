@@ -13,15 +13,16 @@ extern "C" {
 }
 
 #define MAX_SID_SONGS 65536
-#define MAX_SID_SUBSONGS 20
 
 static sidplay2 *sidplay;
 static ReSIDBuilder *resid;
 static SidTune *tune;
 extern int sdl_player_freq; // hack!
-// that costs 3.6 Megabytes!!!
+// that costs 2 Megabytes!!!
 static uint8_t sldb_digests[MAX_SID_SONGS][16];
-static int16_t sldb_lengths[MAX_SID_SONGS][MAX_SID_SUBSONGS];
+static int16_t sldb_pool[MAX_SID_SONGS*5]; // let's say 5 subsongs on average
+static int sldb_poolmark;
+static int16_t *sldb_lengths[MAX_SID_SONGS];
 static int sldb_size;
 static int sldb_loaded;
 static const char *sldb_fname = "/home/waker/hvsc/C64Music/DOCUMENTS/Songlengths.txt";
@@ -103,9 +104,10 @@ static void sldb_load(const char *fname)
 //            exit (0);
 //        }
         memcpy (sldb_digests[sldb_size], digest, 16);
-        for (int k = 0; k < MAX_SID_SUBSONGS; k++) {
-            sldb_lengths[sldb_size][k] = -1;
-        }
+        sldb_lengths[sldb_size] = &sldb_pool[sldb_poolmark];
+//        for (int k = 0; k < MAX_SID_SUBSONGS; k++) {
+//            sldb_lengths[sldb_size][k] = -1;
+//        }
         sldb_size++;
         // check '=' sign
         if (*p != '=') {
@@ -150,6 +152,7 @@ static void sldb_load(const char *fname)
                 time = atoi (minute) * 60 + atoi (second);
             }
             sldb_lengths[sldb_size-1][subsong] = time;
+            sldb_poolmark++;
             subsong++;
 
             // prepare for next timestamp
@@ -280,6 +283,7 @@ csid_seek (float time) {
     else {
         t -= csid.info.position;
     }
+    resid->filter (false);
     int samples = t * csid.info.samplesPerSecond;
     samples *= 2 * csid.info.channels;
     uint16_t buffer[4096 * csid.info.channels];
@@ -295,6 +299,7 @@ csid_seek (float time) {
         }
         samples -= done;
     }
+    resid->filter (true);
     csid.info.position = time;
 
     return 0;
