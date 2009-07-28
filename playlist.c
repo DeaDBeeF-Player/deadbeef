@@ -277,7 +277,6 @@ ps_add_file (const char *fname) {
         eol++;
     }
 
-    it->displayname = strdup (eol);
     it->timestart = -1;
     it->timeend = -1;
 
@@ -374,7 +373,6 @@ ps_get_idx_of (playItem_t *it) {
 
 int
 ps_append_item (playItem_t *it) {
-    ps_format_item_display_name (it);
     if (!playlist_tail) {
         playlist_tail = playlist_head = it;
     }
@@ -389,7 +387,6 @@ ps_append_item (playItem_t *it) {
 void
 ps_item_copy (playItem_t *out, playItem_t *it) {
     out->fname = strdup (it->fname);
-    strcpy (out->displayname, it->displayname);
     out->codec = it->codec;
     out->tracknum = it->tracknum;
     out->timestart = it->timestart;
@@ -401,7 +398,8 @@ ps_item_copy (playItem_t *out, playItem_t *it) {
     metaInfo_t *meta = it->meta;
     while (meta) {
         metaInfo_t *m = malloc (sizeof (metaInfo_t));
-        memcpy (m, meta, sizeof (metaInfo_t));
+        m->key = meta->key;
+        m->value = strdup (meta->value);
         m->next = NULL;
         if (prev) {
             prev->next = m;
@@ -423,6 +421,7 @@ ps_item_free (playItem_t *it) {
         while (it->meta) {
             metaInfo_t *m = it->meta;
             it->meta = m->next;
+            free (m->value);
             free (m);
         }
         memset (it, 0, sizeof (playItem_t));
@@ -432,9 +431,6 @@ ps_item_free (playItem_t *it) {
 int
 ps_set_current (playItem_t *it) {
     int ret = 0;
-    if (it) {
-//        printf ("ps_set_current (%s)\n", it->displayname);
-    }
     if (it == playlist_current_ptr) {
         if (it && it->codec) {
             codec_lock ();
@@ -506,39 +502,40 @@ ps_add_meta (playItem_t *it, const char *key, const char *value) {
     }
     metaInfo_t *m = malloc (sizeof (metaInfo_t));
     m->key = key;
-    strncpy (m->value, value, META_FIELD_SIZE-1);
-    m->value[META_FIELD_SIZE-1] = 0;
+    m->value = strdup (value);
+//    strncpy (m->value, value, META_FIELD_SIZE-1);
+//    m->value[META_FIELD_SIZE-1] = 0;
     m->next = it->meta;
     it->meta = m;
 }
 
 void
-ps_format_item_display_name (playItem_t *it) {
+ps_format_item_display_name (playItem_t *it, char *str, int len) {
     // artist - title
     const char *track = ps_find_meta (it, "track");
     const char *artist = ps_find_meta (it, "artist");
     const char *album = ps_find_meta (it, "album");
     const char *title = ps_find_meta (it, "title");
     if (*track == '?' && *album == '?' && *artist != '?' && *title != '?') {
-        snprintf (it->displayname, MAX_DISPLAY_NAME, "%s - %s", artist, title);
+        snprintf (str, len, "%s - %s", artist, title);
     }
     else if (*artist != '?' && *track != '?' && *title != '?') {
-        snprintf (it->displayname, MAX_DISPLAY_NAME, "%s. %s - %s", track, artist, title);
+        snprintf (str, len, "%s. %s - %s", track, artist, title);
     }
     else if (*artist == '?' && *track != '?' && *album != '?') {
-        snprintf (it->displayname, MAX_DISPLAY_NAME, "%s. %s", track, album);
+        snprintf (str, len, "%s. %s", track, album);
     }
     else if (*artist != '?' && *track != '?' && *album != '?') {
-        snprintf (it->displayname, MAX_DISPLAY_NAME, "%s. %s - %s", track, artist, album);
+        snprintf (str, len, "%s. %s - %s", track, artist, album);
     }
     else if (*artist != '?' && *title != '?') {
-        snprintf (it->displayname, MAX_DISPLAY_NAME, "%s - %s", artist, title);
+        snprintf (str, len, "%s - %s", artist, title);
     }
     else if (*artist != '?') {
-        snprintf (it->displayname, MAX_DISPLAY_NAME, "%s", artist);
+        snprintf (str, len, "%s", artist);
     }
     else if (*title != '?') {
-        snprintf (it->displayname, MAX_DISPLAY_NAME, "%s", title);
+        snprintf (str, len, "%s", title);
     }
     else {
         // cut filename without path and extension
@@ -553,7 +550,7 @@ ps_format_item_display_name (playItem_t *it) {
         if (*pname == '/') {
             pname++;
         }
-        strncpy (it->displayname, pname, pext-pname);
+        strncpy (str, pname, pext-pname);
     }
 }
 

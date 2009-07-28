@@ -133,7 +133,9 @@ draw_ps_row (GdkDrawable *drawable, cairo_t *cr, int row, playItem_t *it) {
     else {
         cairo_set_source_rgb (cr, 0xf4/255.f, 0x7e/255.f, 0x46/255.f);
     }
-    text_draw (cr, rowheight, row * rowheight - scrollpos * rowheight, it->displayname);
+    char dname[512];
+    ps_format_item_display_name (it, dname, 512);
+    text_draw (cr, rowheight, row * rowheight - scrollpos * rowheight, dname);
 }
 
 
