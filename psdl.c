@@ -1,6 +1,7 @@
 #include <SDL/SDL.h>
 #include "psdl.h"
 #include "streamer.h"
+#include "common.h"
 
 static int sdl_player_numsamples = 4096;
 int sdl_player_freq;
@@ -88,7 +89,7 @@ psdl_callback (void* userdata, Uint8 *stream, int len) {
     int ivolume = sdl_volume * 1000;
     for (int i = 0; i < bytesread/2; i++) {
         int16_t sample = (int16_t)(((int32_t)(((int16_t*)stream)[i])) * ivolume / 1000);
-        ((int16_t*)stream)[i] = sample;
+        le_int16 (sample, (char*)&(((int16_t*)stream)[i]));
     }
     if (bytesread < len) {
         memset (stream + bytesread, 0, len-bytesread);

@@ -211,17 +211,18 @@ csid_init (const char *fname, int track, float start, float end) {
     md5_t md5;
     md5_init (&md5);
     md5_process (&md5, (const char *)tune->cache.get () + tune->fileOffset, tune->getInfo ().c64dataLen);
-    uint16_t tmp;
-    tmp = tune->getInfo ().initAddr;
-    md5_process (&md5, &tmp, 2);
-    tmp = tune->getInfo ().playAddr;
-    md5_process (&md5, &tmp, 2);
-    tmp = tune->getInfo ().songs;
-    md5_process (&md5, &tmp, 2);
+    char tmp[2];
+    le_int16 (tune->getInfo ().initAddr, tmp);
+    md5_process (&md5, tmp, 2);
+    le_int16 (tune->getInfo ().playAddr, tmp);
+    md5_process (&md5, tmp, 2);
+    le_int16 (tune->getInfo ().songs, tmp);
+    md5_process (&md5, tmp, 2);
     for (int s = 1; s <= tune->getInfo ().songs; s++)
     {
         tune->selectSong (s);
-        md5_process (&md5, &tune->getInfo ().songSpeed, sizeof (tune->getInfo ().songSpeed));
+        // songspeed is uint8_t, so no need for byteswap
+        md5_process (&md5, &tune->getInfo ().songSpeed, 1);
     }
     if (tune->getInfo ().clockSpeed == SIDTUNE_CLOCK_NTSC) {
         md5_process (&md5, &tune->getInfo ().clockSpeed, sizeof (tune->getInfo ().clockSpeed));
