@@ -79,7 +79,7 @@ psdl_thread (uintptr_t ctx) {
                 break;
             }
         }
-        usleep(1000);
+        usleep(10000);
         gtkps_update_songinfo ();
         // handle message pump here
     }
