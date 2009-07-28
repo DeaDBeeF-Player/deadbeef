@@ -1,6 +1,7 @@
-play song even if not in playlist
+[+] play song even if not in playlist
 [+] volume changer must be software, and work with all codecs (at mix level)
 [+] volume changer must work even no song is playing
+[-] eat minimum memory (dont hold all metainfo in memory, etc)
+[+] seamless playback (no pauses between tracks)
+    * still needs some more work in some codecs
 playlist must be superfast
-eat minimum memory (dont hold all metainfo in memory, etc)
-seamless playback (no pauses between tracks)

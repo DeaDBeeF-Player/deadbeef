@@ -14,6 +14,8 @@
 #include "cflac.h"
 #include "csid.h"
 #include "streamer.h"
+#include "messagepump.h"
+#include "messages.h"
 
 #define SKIP_BLANK_CUE_TRACKS 1
 
@@ -431,6 +433,8 @@ ps_item_free (playItem_t *it) {
 int
 ps_set_current (playItem_t *it) {
     int ret = 0;
+    int from = ps_get_idx_of (playlist_current_ptr);
+    int to = ps_get_idx_of (it);
     if (it == playlist_current_ptr) {
         if (it && it->codec) {
             codec_lock ();
@@ -459,6 +463,7 @@ ps_set_current (playItem_t *it) {
         streamer_reset ();
     }
     codec_unlock ();
+    messagepump_push (M_SONGCHANGED, 0, from, to);
     return ret;
 }
 

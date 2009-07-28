@@ -27,6 +27,9 @@ psdl_thread (uintptr_t ctx) {
         uint32_t p2;
         while (messagepump_pop(&msg, &ctx, &p1, &p2) != -1) {
             switch (msg) {
+            case M_SONGCHANGED:
+                gtkps_songchanged (p1, p2);
+                break;
             case M_SONGFINISHED:
                 // play next song in playlists
                 GDK_THREADS_ENTER();

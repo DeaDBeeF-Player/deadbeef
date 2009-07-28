@@ -58,4 +58,7 @@ gtkps_playsongnum (int idx);
 void
 gtkps_update_songinfo (void);
 
+void
+gtkps_songchanged (int from, int to);
+
 #endif

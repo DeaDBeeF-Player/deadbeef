@@ -449,3 +449,20 @@ gtkps_update_songinfo (void) {
     }
 }
 
+void
+gtkps_songchanged (int from, int to) {
+    if (from >= 0 || to >= 0) {
+        GDK_THREADS_ENTER();
+        GtkWidget *widget = lookup_widget (mainwin, "playlist");
+        if (!widget) {
+            return;
+        }
+        if (from >= 0) {
+            redraw_ps_row (widget, from);
+        }
+        if (to >= 0) {
+            redraw_ps_row (widget, to);
+        }
+        GDK_THREADS_LEAVE();
+    }
+}

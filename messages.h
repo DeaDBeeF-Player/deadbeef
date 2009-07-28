@@ -11,6 +11,7 @@ enum {
     M_PAUSESONG,
     M_PLAYRANDOM,
     M_SONGSEEK,
+    M_SONGCHANGED, // p1=from, p2=to
 };
 
 #endif // __MESSAGES_H
