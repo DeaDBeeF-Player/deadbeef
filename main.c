@@ -19,7 +19,6 @@ int psdl_terminate = 0;
 
 void
 psdl_thread (uintptr_t ctx) {
-    printf ("psdl_thread started!\n");
     psdl_play ();
     while (!psdl_terminate) {
         uint32_t msg;

@@ -31,6 +31,7 @@ void
 messagepump_free () {
     mutex_lock (mutex);
     messagepump_reset ();
+    mutex_unlock (mutex);
     mutex_free (mutex);
 }
 
