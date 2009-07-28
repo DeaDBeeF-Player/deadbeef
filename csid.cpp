@@ -12,18 +12,19 @@ extern "C" {
 #include "common.h"
 }
 
-// current hvsc sldb size is ~35k songs
-#define MAX_SID_SONGS 40000
-
 static sidplay2 *sidplay;
 static ReSIDBuilder *resid;
 static SidTune *tune;
 extern int sdl_player_freq; // hack!
-// that costs 1.2 Megabytes!!!
-static uint8_t sldb_digests[MAX_SID_SONGS][16];
-static int16_t sldb_pool[MAX_SID_SONGS*5]; // let's say 5 subsongs on average
+// SLDB support costs ~1M!!!
+// current hvsc sldb size is ~35k songs
+#define SLDB_MAX_SONGS 40000
+// ~50k subsongs in current sldb
+#define SLDB_POOL_SIZE 55000
+static uint8_t sldb_digests[SLDB_MAX_SONGS][16];
+static int16_t sldb_pool[SLDB_POOL_SIZE];
 static int sldb_poolmark;
-static int16_t *sldb_lengths[MAX_SID_SONGS];
+static int16_t *sldb_lengths[SLDB_MAX_SONGS];
 static int sldb_size;
 static int sldb_loaded;
 static const char *sldb_fname = "/home/waker/hvsc/C64Music/DOCUMENTS/Songlengths.txt";
@@ -49,6 +50,10 @@ static void sldb_load(const char *fname)
     }
 
     while (fgets (str, 1024, fp) == str) {
+        if (sldb_size >= SLDB_MAX_SONGS) {
+            printf ("sldb loader ran out of memory.\n");
+            break;
+        }
         line++;
         if (str[0] == ';') {
 //            printf ("reading songlength for %s", str);
@@ -106,9 +111,6 @@ static void sldb_load(const char *fname)
 //        }
         memcpy (sldb_digests[sldb_size], digest, 16);
         sldb_lengths[sldb_size] = &sldb_pool[sldb_poolmark];
-//        for (int k = 0; k < MAX_SID_SUBSONGS; k++) {
-//            sldb_lengths[sldb_size][k] = -1;
-//        }
         sldb_size++;
         // check '=' sign
         if (*p != '=') {
@@ -152,6 +154,11 @@ static void sldb_load(const char *fname)
                 //printf ("subsong %d, time %s:%s\n", subsong, minute, second);
                 time = atoi (minute) * 60 + atoi (second);
             }
+            if (sldb_poolmark >= SLDB_POOL_SIZE) {
+                printf ("sldb ran out of memory\n");
+                goto fail;
+            }
+            
             sldb_lengths[sldb_size-1][subsong] = time;
             sldb_poolmark++;
             subsong++;
@@ -178,6 +185,7 @@ static void sldb_load(const char *fname)
 
 fail:
     fclose (fp);
+    printf ("HVSC sldb loaded %d songs, %d subsongs total\n", sldb_size, sldb_poolmark);
 }
 
 static int
