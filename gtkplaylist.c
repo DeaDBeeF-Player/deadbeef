@@ -6,6 +6,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
 #include "gtkplaylist.h"
 #include "callbacks.h"
 #include "interface.h"
@@ -385,56 +386,66 @@ gtkps_playsongnum (int idx) {
     }
 }
 
-static int songupd_timelapse = 0;
 static int sb_context_id = -1;
+static char sb_text[512];
+static int last_songpos = -1;
 
 void
 gtkps_update_songinfo (void) {
     if (!mainwin) {
         return;
     }
-    GDK_THREADS_ENTER();
-    songupd_timelapse -= 1;
-    // FIXME: don't update if window is not visible
-    if (songupd_timelapse < 0) {
+    char sbtext_new[512] = "-";
+    int songpos = 0;
+    if (psdl_ispaused ()) {
+        strcpy (sbtext_new, "Paused");
+        songpos = 0;
+    }
+    else if (playlist_current.codec) {
+        codec_lock ();
+        codec_t *c = playlist_current.codec;
+        int minpos = c->info.position / 60;
+        int secpos = c->info.position - minpos * 60;
+        int mindur = c->info.duration / 60;
+        int secdur = c->info.duration - mindur * 60;
+        const char *mode = c->info.channels == 1 ? "Mono" : "Stereo";
+        int samplerate = c->info.samplesPerSecond;
+        int bitspersample = c->info.bitsPerSample;
+        float pos = c->info.position;
+        int dur = c->info.duration;
+        songpos = pos * 1000 / dur;
+        codec_unlock ();
+
+        snprintf (sbtext_new, 512, "%dHz | %d bit | %s | Position %d:%02d | Duration %d:%02d | %d songs total", samplerate, bitspersample, mode, minpos, secpos, mindur, secdur, ps_getcount ());
+    }
+    else {
+        strcpy (sbtext_new, "Stopped");
+    }
+
+    if (strcmp (sbtext_new, sb_text)) {
+        strcpy (sb_text, sbtext_new);
+
+        // form statusline
+        GDK_THREADS_ENTER();
+        // FIXME: don't update if window is not visible
         GtkStatusbar *sb = GTK_STATUSBAR (lookup_widget (mainwin, "statusbar"));
         if (sb_context_id == -1) {
             sb_context_id = gtk_statusbar_get_context_id (sb, "msg");
         }
-        songupd_timelapse = 1000;
-        if (psdl_ispaused ()) {
-            gtk_statusbar_pop (sb, sb_context_id);
-            gtk_statusbar_push (sb, sb_context_id, "Paused");
-        }
-        else if (playlist_current.codec) {
-            codec_lock ();
-            codec_t *c = playlist_current.codec;
-            int minpos = c->info.position / 60;
-            int secpos = c->info.position - minpos * 60;
-            int mindur = c->info.duration / 60;
-            int secdur = c->info.duration - mindur * 60;
-            const char *mode = c->info.channels == 1 ? "Mono" : "Stereo";
-            int samplerate = c->info.samplesPerSecond;
-            int bitspersample = c->info.bitsPerSample;
-            float pos = c->info.position;
-            int dur = c->info.duration;
-            codec_unlock ();
 
-            char str[1024];
-            snprintf (str, 1024, "%dHz | %d bit | %s | Position %d:%02d | Duration %d:%02d | %d songs total", samplerate, bitspersample, mode, minpos, secpos, mindur, secdur, ps_getcount ());
-            gtk_statusbar_pop (sb, sb_context_id);
-            gtk_statusbar_push (sb, sb_context_id, str);
-            extern int g_disable_seekbar_handler;
-            g_disable_seekbar_handler = 1;
-            GtkRange *seekbar = GTK_RANGE (lookup_widget (mainwin, "playpos"));
-            gtk_range_set_value (seekbar, pos * 1000 / dur);
-            g_disable_seekbar_handler = 0;
-        }
-        else {
-            gtk_statusbar_pop (sb, sb_context_id);
-            gtk_statusbar_push (sb, sb_context_id, "Stopped");
-        }
+        gtk_statusbar_pop (sb, sb_context_id);
+        gtk_statusbar_push (sb, sb_context_id, sb_text);
+
+        GDK_THREADS_LEAVE();
     }
-    GDK_THREADS_LEAVE();
+
+    if (songpos != last_songpos) {
+        last_songpos = songpos;
+        extern int g_disable_seekbar_handler;
+        g_disable_seekbar_handler = 1;
+        GtkRange *seekbar = GTK_RANGE (lookup_widget (mainwin, "playpos"));
+        gtk_range_set_value (seekbar, songpos);
+        g_disable_seekbar_handler = 0;
+    }
 }
 
