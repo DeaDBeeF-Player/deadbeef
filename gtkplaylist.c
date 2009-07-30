@@ -111,7 +111,9 @@ draw_ps_row_back (GdkDrawable *drawable, cairo_t *cr, int row, playItem_t *it) {
     }
 	if (row == playlist_row) {
         cairo_set_source_rgb (cr, 0x7f/255.f, 0x7f/255.f, 0x7f/255.f);
-        cairo_rectangle (cr, 0, row * rowheight - scrollpos * rowheight, width, rowheight);
+        cairo_set_antialias (cr, CAIRO_ANTIALIAS_NONE);
+        cairo_rectangle (cr, 0, row * rowheight - scrollpos * rowheight, width, rowheight-1);
+        cairo_set_line_width (cr, 1);
         cairo_stroke (cr);
     }
 }

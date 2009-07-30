@@ -32,7 +32,9 @@ void
 on_volume_value_changed                (GtkRange        *range,
         gpointer         user_data)
 {
-    psdl_set_volume (gtk_range_get_value (range) / 100);
+//    float db = -(60 - (gtk_range_get_value (range) * 0.6f))
+    float a = gtk_range_get_value (range) / 100;
+    psdl_set_volume (a*a);
 }
 
 int g_disable_seekbar_handler = 0;
