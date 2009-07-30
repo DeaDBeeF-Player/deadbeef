@@ -526,6 +526,17 @@ void
 gtkps_songchanged (int from, int to) {
     if (from >= 0 || to >= 0) {
         GDK_THREADS_ENTER();
+        if (to >= 0) {
+            playItem_t *it = ps_get_for_idx (to);
+            char str[600];
+            char dname[512];
+            ps_format_item_display_name (it, dname, 512);
+            snprintf (str, 600, "DeaDBeeF - %s", dname);
+            gtk_window_set_title (GTK_WINDOW (mainwin), str);
+        }
+        else {
+            gtk_window_set_title (GTK_WINDOW (mainwin), "DeaDBeeF");
+        }
         GtkWidget *widget = lookup_widget (mainwin, "playlist");
         if (!widget) {
             return;

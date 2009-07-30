@@ -492,12 +492,14 @@ ps_getnext (void) {
 
 void
 ps_start_current (void) {
+    codec_lock ();
     playItem_t *it = playlist_current_ptr;
     if (it && it->codec) {
         // don't do anything on fail, streamer will take care
         it->codec->free ();
         it->codec->init (it->fname, it->tracknum, it->timestart, it->timeend);
     }
+    codec_unlock ();
 }
 
 void
