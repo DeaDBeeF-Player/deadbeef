@@ -25,7 +25,7 @@ cgme_init (const char *fname, int track, float start, float end) {
     reallength = inf.length; 
     nzerosamples = 0;
     if (inf.length == -1) {
-        cgme.info.duration = 120;
+        cgme.info.duration = 300;
     }
     else {
         cgme.info.duration = (float)inf.length/1000.f;
