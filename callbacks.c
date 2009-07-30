@@ -289,3 +289,13 @@ on_playrand_clicked                    (GtkButton       *button,
     messagepump_push (M_PLAYRANDOM, 0, 0, 0);
 }
 
+
+gboolean
+on_mainwin_key_press_event             (GtkWidget       *widget,
+                                        GdkEventKey     *event,
+                                        gpointer         user_data)
+{
+    gtkps_keypress (event->keyval);
+    return FALSE;
+}
+

@@ -3,6 +3,7 @@
 #endif
 
 #include <gtk/gtk.h>
+#include <gdk/gdkkeysyms.h>
 #include <math.h>
 #include <stdlib.h>
 #include <time.h>
@@ -52,14 +53,7 @@ gtkps_setup_scrollbar (void) {
 }
 
 void
-redraw_ps_row (GtkWidget *widget, int row) {
-    int x, y, w, h;
-
-    x = 0;
-    y = (row  - scrollpos) * rowheight;
-    w = widget->allocation.width;
-    h = rowheight;
-
+redraw_ps_row_novis (GtkWidget *widget, int row) {
 	cairo_t *cr;
 	cr = gdk_cairo_create (backbuf);
 	if (!cr) {
@@ -77,6 +71,18 @@ redraw_ps_row (GtkWidget *widget, int row) {
         draw_ps_row (backbuf, cr, row, it);
     }
     cairo_destroy (cr);
+}
+
+void
+redraw_ps_row (GtkWidget *widget, int row) {
+    int x, y, w, h;
+
+    x = 0;
+    y = (row  - scrollpos) * rowheight;
+    w = widget->allocation.width;
+    h = rowheight;
+
+    redraw_ps_row_novis (widget, row);
 	gdk_draw_drawable (widget->window, widget->style->black_gc, backbuf, x, y, x, y, w, h);
 }
 
@@ -549,4 +555,53 @@ gtkps_songchanged (int from, int to) {
         }
         GDK_THREADS_LEAVE();
     }
+}
+
+void
+gtkps_keypress (int keyval) {
+    GtkWidget *widget = lookup_widget (mainwin, "playlist");
+    GtkWidget *range = lookup_widget (mainwin, "playscroll");
+    int prev = playlist_row;
+    int newscroll = scrollpos;
+    if (keyval == GDK_Down && playlist_row < ps_getcount () - 1) {
+        playlist_row++;
+        if (playlist_row > scrollpos + widget->allocation.height / rowheight - 1) {
+            newscroll = playlist_row - widget->allocation.height / rowheight + 1;
+        }
+    }
+    else if (keyval == GDK_Up && playlist_row > 0) {
+        playlist_row--;
+        if (playlist_row < scrollpos) {
+            newscroll = playlist_row;
+        }
+    }
+    if (prev != playlist_row) {
+        int idx=0;
+        for (playItem_t *it = playlist_head; it; it = it->next, idx++) {
+            if (idx == playlist_row) {
+                if (!it->selected) {
+                    it->selected = 1;
+                    if (newscroll == scrollpos) {
+                        redraw_ps_row (widget, idx);
+                    }
+                    else {
+                        redraw_ps_row_novis (widget, idx);
+                    }
+                }
+            }
+            else if (it->selected) {
+                it->selected = 0;
+                if (newscroll == scrollpos) {
+                    redraw_ps_row (widget, idx);
+                }
+                else {
+                    redraw_ps_row_novis (widget, idx);
+                }
+            }
+        }
+    }
+    if (newscroll != scrollpos) {
+        gtk_range_set_value (GTK_RANGE (range), newscroll);
+    }
+//    printf ("keysym: %x\n", event->keyval);
 }

@@ -64,4 +64,7 @@ gtkps_songchanged (int from, int to);
 void
 gtkps_handle_scroll_event (int direction);
 
+void
+gtkps_keypress (int keyval);
+
 #endif

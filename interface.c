@@ -85,6 +85,7 @@ create_mainwin (void)
   accel_group = gtk_accel_group_new ();
 
   mainwin = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+  gtk_widget_set_events (mainwin, GDK_KEY_PRESS_MASK);
   gtk_window_set_title (GTK_WINDOW (mainwin), "DeaDBeeF");
   gtk_window_set_default_size (GTK_WINDOW (mainwin), 750, 650);
 
@@ -311,6 +312,9 @@ create_mainwin (void)
 
   g_signal_connect ((gpointer) mainwin, "destroy",
                     G_CALLBACK (gtk_main_quit),
+                    NULL);
+  g_signal_connect ((gpointer) mainwin, "key_press_event",
+                    G_CALLBACK (on_mainwin_key_press_event),
                     NULL);
   g_signal_connect ((gpointer) open, "activate",
                     G_CALLBACK (on_open_activate),
