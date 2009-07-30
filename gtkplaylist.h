@@ -61,4 +61,7 @@ gtkps_update_songinfo (void);
 void
 gtkps_songchanged (int from, int to);
 
+void
+gtkps_handle_scroll_event (int direction);
+
 #endif

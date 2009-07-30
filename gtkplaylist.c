@@ -288,6 +288,30 @@ gtkps_mouse1_clicked (GtkWidget *widget, int state, int ex, int ey, double time)
 }
 
 void
+gtkps_handle_scroll_event (int direction) {
+    GtkWidget *range = lookup_widget (mainwin, "playscroll");
+    GtkWidget *playlist = lookup_widget (mainwin, "playlist");
+    int h = playlist->allocation.height / rowheight;
+    int size = ps_getcount ();
+    if (h >= size) {
+        size = 0;
+    }
+    if (size == 0) {
+        return;
+    }
+    // pass event to scrollbar
+    GtkAdjustment* adj = gtk_range_get_adjustment (GTK_RANGE (range));
+    int newscroll = gtk_range_get_value (GTK_RANGE (range));
+    if (direction == GDK_SCROLL_UP) {
+        newscroll -= 10;//gtk_adjustment_get_page_increment (adj);
+    }
+    else if (direction == GDK_SCROLL_DOWN) {
+        newscroll += 10;//gtk_adjustment_get_page_increment (adj);
+    }
+    gtk_range_set_value (GTK_RANGE (range), newscroll);
+}
+
+void
 gtkps_scroll (int newscroll) {
     if (newscroll != scrollpos) {
         scrollpos = newscroll;

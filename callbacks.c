@@ -236,18 +236,8 @@ on_playlist_scroll_event               (GtkWidget       *widget,
                                         GdkEvent        *event,
                                         gpointer         user_data)
 {
-    // pass event to scrollbar
-    GtkWidget *range = lookup_widget (mainwin, "playscroll");
 	GdkEventScroll *ev = (GdkEventScroll*)event;
-    GtkAdjustment* adj = gtk_range_get_adjustment (GTK_RANGE (range));
-    int newscroll = gtk_range_get_value (GTK_RANGE (range));
-    if (ev->direction == GDK_SCROLL_UP) {
-        newscroll -= 10;//gtk_adjustment_get_page_increment (adj);
-    }
-    else if (ev->direction == GDK_SCROLL_DOWN) {
-        newscroll += 10;//gtk_adjustment_get_page_increment (adj);
-    }
-    gtk_range_set_value (GTK_RANGE (range), newscroll);
+    gtkps_handle_scroll_event (ev->direction);
     return FALSE;
 }
 
