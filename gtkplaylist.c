@@ -693,7 +693,15 @@ gtkps_keypress (int keyval, int state) {
     GtkWidget *range = lookup_widget (mainwin, "playscroll");
     int prev = playlist_row;
     int newscroll = scrollpos;
-    if (keyval == GDK_Down && playlist_row < ps_getcount () - 1) {
+    if ((keyval == GDK_A || keyval == GDK_a) && (state & GDK_CONTROL_MASK)) {
+        // select all
+        for (playItem_t *it = playlist_head; it; it = it->next) {
+            it->selected = 1;
+        }
+        draw_playlist (widget, 0, 0, widget->allocation.width, widget->allocation.height);
+        gdk_draw_drawable (widget->window, widget->style->black_gc, backbuf, 0, 0, 0, 0, widget->allocation.width, widget->allocation.height);
+    }
+    else if (keyval == GDK_Down && playlist_row < ps_getcount () - 1) {
         playlist_row++;
         if (playlist_row > scrollpos + widget->allocation.height / rowheight - 1) {
             newscroll = playlist_row - widget->allocation.height / rowheight + 1;

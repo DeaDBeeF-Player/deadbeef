@@ -4,4 +4,4 @@
 [-] eat minimum memory (dont hold all metainfo in memory, etc)
 [+] seamless playback (no pauses between tracks)
     * still needs some more work in some codecs
-playlist must be superfast
+[+] playlist must be superfast
