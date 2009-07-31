@@ -391,7 +391,7 @@ gtkps_mousemove (GdkEventMotion *event) {
         dragwait = 0;
         GtkWidget *widget = lookup_widget (mainwin, "playlist");
         GtkTargetEntry entry = {
-            .target = "",
+            .target = "filelist",
             .flags = GTK_TARGET_SAME_WIDGET,
             .info = 0
         };
@@ -700,6 +700,11 @@ gtkps_keypress (int keyval, int state) {
         }
         draw_playlist (widget, 0, 0, widget->allocation.width, widget->allocation.height);
         gdk_draw_drawable (widget->window, widget->style->black_gc, backbuf, 0, 0, 0, 0, widget->allocation.width, widget->allocation.height);
+        return;
+    }
+    else if (keyval == GDK_Return && playlist_row != -1) {
+        messagepump_push (M_PLAYSONGNUM, 0, playlist_row, 0);
+        return;
     }
     else if (keyval == GDK_Down && playlist_row < ps_getcount () - 1) {
         playlist_row++;
@@ -730,9 +735,6 @@ gtkps_keypress (int keyval, int state) {
         if (playlist_row < scrollpos) {
             newscroll = playlist_row;
         }
-    }
-    else if (keyval == GDK_Return && playlist_row != -1) {
-        messagepump_push (M_PLAYSONGNUM, 0, playlist_row, 0);
     }
     else if (keyval == GDK_End && playlist_row != ps_getcount () - 1) {
         playlist_row = ps_getcount () - 1;

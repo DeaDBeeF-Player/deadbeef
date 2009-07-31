@@ -84,8 +84,8 @@ on_playlist_realize                    (GtkWidget       *widget,
         gpointer         user_data)
 {
     GtkTargetEntry entry = {
-        .target = "",
-        .flags = GTK_TARGET_SAME_WIDGET | GTK_TARGET_OTHER_APP,
+        .target = "filelist",
+        .flags = GTK_TARGET_SAME_WIDGET/* | GTK_TARGET_OTHER_APP*/,
         0
     };
     // setup drag-drop source
@@ -359,6 +359,7 @@ on_playlist_drag_drop                  (GtkWidget       *widget,
                                         guint            time,
                                         gpointer         user_data)
 {
+    printf ("drag_drop\n");
     return FALSE;
 }
 
@@ -379,6 +380,8 @@ on_playlist_drag_end                   (GtkWidget       *widget,
                                         GdkDragContext  *drag_context,
                                         gpointer         user_data)
 {
+    printf ("drag_end\n");
+
 }
 
 
@@ -388,6 +391,7 @@ on_playlist_drag_failed                (GtkWidget       *widget,
                                         GtkDragResult    arg2,
                                         gpointer         user_data)
 {
+    printf ("drag_failed\n");
     return FALSE;
 }
 
@@ -400,9 +404,6 @@ on_playlist_drag_leave                 (GtkWidget       *widget,
 {
     gtkps_track_dragdrop (-1);
 }
-
-
-
 
 void
 on_voice1_clicked                      (GtkButton       *button,
