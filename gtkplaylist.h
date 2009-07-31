@@ -65,6 +65,6 @@ void
 gtkps_handle_scroll_event (int direction);
 
 void
-gtkps_keypress (int keyval);
+gtkps_keypress (int keyval, int state);
 
 #endif

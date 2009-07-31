@@ -295,7 +295,7 @@ on_mainwin_key_press_event             (GtkWidget       *widget,
                                         GdkEventKey     *event,
                                         gpointer         user_data)
 {
-    gtkps_keypress (event->keyval);
+    gtkps_keypress (event->keyval, event->state);
     return FALSE;
 }
 

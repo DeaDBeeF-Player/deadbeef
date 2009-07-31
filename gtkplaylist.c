@@ -26,6 +26,7 @@ static int scrollpos = 0;
 static int playlist_row = -1;
 static double playlist_clicktime = 0;
 static double ps_lastpos[2];
+static int shift_sel_anchor = -1;
 
 static void
 text_draw (cairo_t *cr, int x, int y, const char *text) {
@@ -62,7 +63,6 @@ redraw_ps_row_novis (GtkWidget *widget, int row) {
 	//cairo_set_antialias (cr, CAIRO_ANTIALIAS_NONE);
 
 //    cairo_select_font_face (cr, "fixed", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
-//    cairo_set_font_size (cr, rowheight);
 
 	playItem_t *it = ps_get_for_idx (row);
 //    printf ("redraw row %d (selected = %d, cursor = %d)\n", row, it->selected, playlist_row == row ? 1 : 0);
@@ -84,6 +84,7 @@ redraw_ps_row (GtkWidget *widget, int row) {
 
     redraw_ps_row_novis (widget, row);
 	gdk_draw_drawable (widget->window, widget->style->black_gc, backbuf, x, y, x, y, w, h);
+	//gdk_draw_drawable (widget->window, widget->style->black_gc, backbuf, 0, 0, 0, 0, widget->allocation.width, widget->allocation.height);
 }
 
 void
@@ -141,6 +142,7 @@ draw_ps_row (GdkDrawable *drawable, cairo_t *cr, int row, playItem_t *it) {
     }
     char dname[512];
     ps_format_item_display_name (it, dname, 512);
+    cairo_set_font_size (cr, rowheight-4);
     text_draw (cr, rowheight, row * rowheight - scrollpos * rowheight, dname);
 }
 
@@ -232,6 +234,7 @@ gtkps_mouse1_clicked (GtkWidget *widget, int state, int ex, int ey, double time)
     }
     int prev = playlist_row;
     playlist_row = y;
+    shift_sel_anchor = playlist_row;
     // handle selection
     if (!(state & (GDK_CONTROL_MASK|GDK_SHIFT_MASK)))
     {
@@ -449,13 +452,13 @@ void
 gtkps_playsongnum (int idx) {
     playItem_t *it = ps_get_for_idx (playlist_row);
     if (it) {
-        if (it != playlist_current_ptr) {
+        //if (it != playlist_current_ptr)
+        {
             GtkWidget *widget = lookup_widget (mainwin, "playlist");
             int prev = -1;
             if (playlist_current_ptr) {
                 prev = ps_get_idx_of (playlist_current_ptr);
             }
-            printf ("gtkps_playsongnum\n");
             ps_set_current (it);
             if (prev != -1) {
                 redraw_ps_row (widget, prev);
@@ -495,7 +498,7 @@ gtkps_update_songinfo (void) {
         songpos = pos * 1000 / dur;
         codec_unlock ();
 
-        snprintf (sbtext_new, 512, "%dHz | %d bit | %s | Position %d:%02d | Duration %d:%02d | %d songs total", samplerate, bitspersample, mode, minpos, secpos, mindur, secdur, ps_getcount ());
+        snprintf (sbtext_new, 512, "%dHz | %d bit | %s | %d:%02d / %d:%02d | %d songs total", samplerate, bitspersample, mode, minpos, secpos, mindur, secdur, ps_getcount ());
     }
     else {
         strcpy (sbtext_new, "Stopped");
@@ -557,8 +560,9 @@ gtkps_songchanged (int from, int to) {
     }
 }
 
+
 void
-gtkps_keypress (int keyval) {
+gtkps_keypress (int keyval, int state) {
     GtkWidget *widget = lookup_widget (mainwin, "playlist");
     GtkWidget *range = lookup_widget (mainwin, "playscroll");
     int prev = playlist_row;
@@ -575,12 +579,60 @@ gtkps_keypress (int keyval) {
             newscroll = playlist_row;
         }
     }
-    if (prev != playlist_row) {
-        int idx=0;
-        for (playItem_t *it = playlist_head; it; it = it->next, idx++) {
-            if (idx == playlist_row) {
-                if (!it->selected) {
-                    it->selected = 1;
+    else if (keyval == GDK_Page_Down && playlist_row < ps_getcount () - 1) {
+        playlist_row += 10;
+        if (playlist_row >= ps_getcount ()) {
+            playlist_row = ps_getcount () - 1;
+        }
+        if (playlist_row > scrollpos + widget->allocation.height / rowheight - 1) {
+            newscroll = playlist_row - widget->allocation.height / rowheight + 1;
+        }
+    }
+    else if (keyval == GDK_Page_Up && playlist_row > 0) {
+        playlist_row -= 10;
+        if (playlist_row < 0) {
+            playlist_row = 0;
+        }
+        if (playlist_row < scrollpos) {
+            newscroll = playlist_row;
+        }
+    }
+    else if (keyval == GDK_Return && playlist_row != -1) {
+        messagepump_push (M_PLAYSONGNUM, 0, playlist_row, 0);
+    }
+    else if (keyval == GDK_End && playlist_row != ps_getcount () - 1) {
+        playlist_row = ps_getcount () - 1;
+        if (playlist_row > scrollpos + widget->allocation.height / rowheight - 1) {
+            newscroll = playlist_row - widget->allocation.height / rowheight + 1;
+        }
+    }
+    else if (keyval == GDK_Home && playlist_row != 0) {
+        playlist_row = 0;
+        if (playlist_row < scrollpos) {
+            newscroll = playlist_row;
+        }
+    }
+    if (state & GDK_SHIFT_MASK) {
+        // select all between shift_sel_anchor and playlist_row
+        if (prev != playlist_row) {
+            int start = min (playlist_row, shift_sel_anchor);
+            int end = max (playlist_row, shift_sel_anchor);
+            int idx=0;
+            for (playItem_t *it = playlist_head; it; it = it->next, idx++) {
+                if (idx >= start && idx <= end) {
+//                    if (!it->selected) {
+                        it->selected = 1;
+                        if (newscroll == scrollpos) {
+                            redraw_ps_row (widget, idx);
+                        }
+                        else {
+                            redraw_ps_row_novis (widget, idx);
+                        }
+//                    }
+                }
+                else if (it->selected)
+                {
+                    it->selected = 0;
                     if (newscroll == scrollpos) {
                         redraw_ps_row (widget, idx);
                     }
@@ -589,13 +641,33 @@ gtkps_keypress (int keyval) {
                     }
                 }
             }
-            else if (it->selected) {
-                it->selected = 0;
-                if (newscroll == scrollpos) {
-                    redraw_ps_row (widget, idx);
+        }
+    }
+    else {
+        // reset selection, set new single cursor/selection
+        if (prev != playlist_row) {
+            shift_sel_anchor = playlist_row;
+            int idx=0;
+            for (playItem_t *it = playlist_head; it; it = it->next, idx++) {
+                if (idx == playlist_row) {
+                    if (!it->selected) {
+                        it->selected = 1;
+                        if (newscroll == scrollpos) {
+                            redraw_ps_row (widget, idx);
+                        }
+                        else {
+                            redraw_ps_row_novis (widget, idx);
+                        }
+                    }
                 }
-                else {
-                    redraw_ps_row_novis (widget, idx);
+                else if (it->selected) {
+                    it->selected = 0;
+                    if (newscroll == scrollpos) {
+                        redraw_ps_row (widget, idx);
+                    }
+                    else {
+                        redraw_ps_row_novis (widget, idx);
+                    }
                 }
             }
         }
