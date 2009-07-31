@@ -40,6 +40,9 @@ private:
     std::vector<sidemu *> sidobjs;
 
 public:
+    sidemu *getsidemu (void) {
+        return sidobjs.front ();
+    }
     ReSIDBuilder  (const char * const name);
     ~ReSIDBuilder (void);
     // true will give you the number of used devices.

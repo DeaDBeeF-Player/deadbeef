@@ -15,6 +15,7 @@ extern "C" {
 static sidplay2 *sidplay;
 static ReSIDBuilder *resid;
 static SidTune *tune;
+static uint32_t csid_voicemask = 0;
 extern int sdl_player_freq; // hack!
 // SLDB support costs ~1M!!!
 // current hvsc sldb size is ~35k songs
@@ -202,7 +203,8 @@ extern "C" int
 csid_init (const char *fname, int track, float start, float end) {
     sidplay = new sidplay2;
     resid = new ReSIDBuilder ("wtf");
-    resid->create (sidplay->info ().maxsids);
+//    resid->create (sidplay->info ().maxsids);
+    resid->create (1);
     resid->filter (true);
     resid->sampling (sdl_player_freq);
     tune = new SidTune (fname);
@@ -260,6 +262,13 @@ csid_init (const char *fname, int track, float start, float end) {
     }
     csid.info.duration = length;
 
+    sidemu *emu = resid->getsidemu ();
+    if (emu) {
+        for (int i = 0; i < 3; i++) {
+            bool mute = csid_voicemask & (1 << i) ? true : false;
+            emu->voice (i, mute ? 0x00 : 0xff, mute);
+        }
+    }
     return 0;
 }
 
@@ -391,12 +400,34 @@ extern "C" const char **csid_getexts (void) {
     return exts;
 }
 
+int
+csid_numvoices (void) {
+    return 3;
+}
+
+void
+csid_mutevoice (int voice, int mute) {
+    csid_voicemask &= ~ (1<<voice);
+    csid_voicemask |= ((mute ? 1 : 0) << voice);
+    if (resid) {
+        sidemu *emu = resid->getsidemu ();
+        if (emu) {
+            for (int i = 0; i < 3; i++) {
+                bool mute = csid_voicemask & (1 << i) ? true : false;
+                emu->voice (i, mute ? 0x00 : 0xff, mute);
+            }
+        }
+    }
+}
+
 codec_t csid = {
     csid_init,
     csid_free,
     csid_read,
     csid_seek,
     csid_add,
-    csid_getexts
+    csid_getexts,
+    csid_numvoices,
+    csid_mutevoice
 };
 
