@@ -83,7 +83,17 @@ void
 on_playlist_realize                    (GtkWidget       *widget,
         gpointer         user_data)
 {
-
+    GtkTargetEntry entry = {
+        .target = "",
+        .flags = GTK_TARGET_SAME_WIDGET | GTK_TARGET_OTHER_APP,
+        1
+    };
+    // setup drag-drop source
+//    gtk_drag_source_set (widget, GDK_BUTTON1_MASK, &entry, 1, GDK_ACTION_MOVE);
+    // setup drag-drop target
+    gtk_drag_dest_set (widget, GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_DROP, &entry, 1, GDK_ACTION_COPY | GDK_ACTION_MOVE);
+    gtk_drag_dest_add_uri_targets (widget);
+    gtk_drag_dest_set_track_motion (widget, TRUE);
 }
 
 
@@ -93,8 +103,28 @@ on_playlist_button_press_event         (GtkWidget       *widget,
                                         gpointer         user_data)
 {
     if (event->button == 1) {
-        gtkps_mouse1_clicked (widget, event->state, event->x, event->y, event->time);
+        gtkps_mouse1_pressed (event->state, event->x, event->y, event->time);
     }
+    return FALSE;
+}
+
+gboolean
+on_playlist_button_release_event       (GtkWidget       *widget,
+                                        GdkEventButton  *event,
+                                        gpointer         user_data)
+{
+    if (event->button == 1) {
+        gtkps_mouse1_released (event->state, event->x, event->y, event->time);
+    }
+    return FALSE;
+}
+
+gboolean
+on_playlist_motion_notify_event        (GtkWidget       *widget,
+                                        GdkEventMotion  *event,
+                                        gpointer         user_data)
+{
+    gtkps_mousemove (event->state, event->x, event->y);
     return FALSE;
 }
 
@@ -298,4 +328,78 @@ on_mainwin_key_press_event             (GtkWidget       *widget,
     gtkps_keypress (event->keyval, event->state);
     return FALSE;
 }
+
+
+void
+on_playlist_drag_begin                 (GtkWidget       *widget,
+                                        GdkDragContext  *drag_context,
+                                        gpointer         user_data)
+{
+    printf ("drag_begin\n");
+}
+
+gboolean
+on_playlist_drag_motion                (GtkWidget       *widget,
+                                        GdkDragContext  *drag_context,
+                                        gint             x,
+                                        gint             y,
+                                        guint            time,
+                                        gpointer         user_data)
+{
+    gtkps_track_dragdrop (y);
+    return FALSE;
+}
+
+
+gboolean
+on_playlist_drag_drop                  (GtkWidget       *widget,
+                                        GdkDragContext  *drag_context,
+                                        gint             x,
+                                        gint             y,
+                                        guint            time,
+                                        gpointer         user_data)
+{
+    return FALSE;
+}
+
+
+void
+on_playlist_drag_data_get              (GtkWidget       *widget,
+                                        GdkDragContext  *drag_context,
+                                        GtkSelectionData *data,
+                                        guint            info,
+                                        guint            time,
+                                        gpointer         user_data)
+{
+}
+
+
+void
+on_playlist_drag_end                   (GtkWidget       *widget,
+                                        GdkDragContext  *drag_context,
+                                        gpointer         user_data)
+{
+}
+
+
+gboolean
+on_playlist_drag_failed                (GtkWidget       *widget,
+                                        GdkDragContext  *arg1,
+                                        GtkDragResult    arg2,
+                                        gpointer         user_data)
+{
+    return FALSE;
+}
+
+
+void
+on_playlist_drag_leave                 (GtkWidget       *widget,
+                                        GdkDragContext  *drag_context,
+                                        guint            time,
+                                        gpointer         user_data)
+{
+    gtkps_track_dragdrop (-1);
+}
+
+
 

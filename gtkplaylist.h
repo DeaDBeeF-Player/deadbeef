@@ -29,7 +29,13 @@ void
 gtkps_expose (GtkWidget       *widget, int x, int y, int w, int h);
 
 void
-gtkps_mouse1_clicked (GtkWidget *widget, int state, int ex, int ey, double time);
+gtkps_mouse1_pressed (int state, int ex, int ey, double time);
+
+void
+gtkps_mouse1_released (int state, int ex, int ey, double time);
+
+void
+gtkps_mousemove (int state, int x, int y);
 
 void
 gtkps_scroll (int newscroll);
@@ -66,5 +72,8 @@ gtkps_handle_scroll_event (int direction);
 
 void
 gtkps_keypress (int keyval, int state);
+
+void
+gtkps_track_dragdrop (int y);
 
 #endif

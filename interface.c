@@ -385,6 +385,33 @@ create_mainwin (void)
   g_signal_connect ((gpointer) playlist, "scroll_event",
                     G_CALLBACK (on_playlist_scroll_event),
                     NULL);
+  g_signal_connect ((gpointer) playlist, "drag_begin",
+                    G_CALLBACK (on_playlist_drag_begin),
+                    NULL);
+  g_signal_connect ((gpointer) playlist, "drag_motion",
+                    G_CALLBACK (on_playlist_drag_motion),
+                    NULL);
+  g_signal_connect ((gpointer) playlist, "drag_drop",
+                    G_CALLBACK (on_playlist_drag_drop),
+                    NULL);
+  g_signal_connect ((gpointer) playlist, "drag_data_get",
+                    G_CALLBACK (on_playlist_drag_data_get),
+                    NULL);
+  g_signal_connect ((gpointer) playlist, "drag_end",
+                    G_CALLBACK (on_playlist_drag_end),
+                    NULL);
+  g_signal_connect ((gpointer) playlist, "drag_failed",
+                    G_CALLBACK (on_playlist_drag_failed),
+                    NULL);
+  g_signal_connect ((gpointer) playlist, "drag_leave",
+                    G_CALLBACK (on_playlist_drag_leave),
+                    NULL);
+  g_signal_connect ((gpointer) playlist, "button_release_event",
+                    G_CALLBACK (on_playlist_button_release_event),
+                    NULL);
+  g_signal_connect ((gpointer) playlist, "motion_notify_event",
+                    G_CALLBACK (on_playlist_motion_notify_event),
+                    NULL);
   g_signal_connect ((gpointer) playscroll, "value_changed",
                     G_CALLBACK (on_playscroll_value_changed),
                     NULL);

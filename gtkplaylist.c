@@ -199,10 +199,12 @@ gtkps_expose (GtkWidget       *widget, int x, int y, int w, int h) {
 }
 
 void
-gtkps_mouse1_clicked (GtkWidget *widget, int state, int ex, int ey, double time) {
+gtkps_mouse1_pressed (int state, int ex, int ey, double time) {
+    // cursor must be set here, but selection must be handled in keyrelease
     if (ps_getcount () == 0) {
         return;
     }
+    GtkWidget *widget = lookup_widget (mainwin, "playlist");
     // remember mouse coords for doubleclick detection
     ps_lastpos[0] = ex;
     ps_lastpos[1] = ey;
@@ -294,6 +296,14 @@ gtkps_mouse1_clicked (GtkWidget *widget, int state, int ex, int ey, double time)
     if (playlist_row != -1 && sel == -1) {
         redraw_ps_row (widget, playlist_row);
     }
+}
+
+void
+gtkps_mouse1_released (int state, int ex, int ey, double time) {
+}
+
+void
+gtkps_mousemove (int state, int x, int y) {
 }
 
 void
@@ -675,5 +685,33 @@ gtkps_keypress (int keyval, int state) {
     if (newscroll != scrollpos) {
         gtk_range_set_value (GTK_RANGE (range), newscroll);
     }
-//    printf ("keysym: %x\n", event->keyval);
+}
+
+static int drag_motion_y = -1;
+
+void
+gtkps_track_dragdrop (int y) {
+    GtkWidget *widget = lookup_widget (mainwin, "playlist");
+    if (drag_motion_y != -1) {
+        // erase previous track
+        gdk_draw_drawable (widget->window, widget->style->black_gc, backbuf, 0, drag_motion_y * rowheight-3, 0, drag_motion_y * rowheight-3, widget->allocation.width, 7);
+
+    }
+    if (y == -1) {
+        drag_motion_y = -1;
+        return;
+    }
+	cairo_t *cr;
+	cr = gdk_cairo_create (widget->window);
+	if (!cr) {
+		return;
+	}
+    drag_motion_y = y / rowheight;
+
+    cairo_set_source_rgb (cr, 0xf4/255.f, 0x7e/255.f, 0x46/255.f);
+    cairo_rectangle (cr, 0, drag_motion_y * rowheight-1, widget->allocation.width, 3);
+    cairo_rectangle (cr, 0, drag_motion_y * rowheight-3, 3, 7);
+    cairo_rectangle (cr, widget->allocation.width-3, drag_motion_y * rowheight-3, 3, 7);
+    cairo_fill (cr);
+    cairo_destroy (cr);
 }
