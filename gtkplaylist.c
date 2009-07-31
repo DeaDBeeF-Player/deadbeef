@@ -199,6 +199,48 @@ gtkps_expose (GtkWidget       *widget, int x, int y, int w, int h) {
 }
 
 void
+gtkps_select_single (int sel) {
+    int idx=0;
+    GtkWidget *widget = lookup_widget (mainwin, "playlist");
+    for (playItem_t *it = playlist_head; it; it = it->next, idx++) {
+        if (idx == sel) {
+            if (!it->selected) {
+                it->selected = 1;
+                redraw_ps_row (widget, idx);
+            }
+        }
+        else if (it->selected) {
+            it->selected = 0;
+            redraw_ps_row (widget, idx);
+        }
+    }
+}
+
+// {{{ expected behaviour for mouse1 without modifiers:
+//   {{{ [+] if clicked unselected item:
+//       unselect all
+//       select clicked item
+//       playlist_row = clicked
+//       redraw
+//       start 'area selection' mode
+//   }}}
+//   {{{ [+] if clicked selected item:
+//       playlist_row = clicked
+//       redraw
+//       wait until next release or motion event, whichever is 1st
+//       if release is 1st:
+//           unselect all except clicked, redraw
+//       else if motion is 1st:
+//           enter drag-drop mode
+//   }}}
+// }}}
+int areaselect = 0;
+int areaselect_x = -1;
+int areaselect_y = -1;
+int areaselect_dx = -1;
+int areaselect_dy = -1;
+int dragwait = 0;
+void
 gtkps_mouse1_pressed (int state, int ex, int ey, double time) {
     // cursor must be set here, but selection must be handled in keyrelease
     if (ps_getcount () == 0) {
@@ -240,23 +282,21 @@ gtkps_mouse1_pressed (int state, int ex, int ey, double time) {
     // handle selection
     if (!(state & (GDK_CONTROL_MASK|GDK_SHIFT_MASK)))
     {
-        // reset selection, and set it to single item
-        int idx=0;
-        for (playItem_t *it = playlist_head; it; it = it->next, idx++) {
-            if (idx == sel) {
-                if (!it->selected) {
-                    it->selected = 1;
-//                    if (idx != y && idx != playlist_row) {
-                        redraw_ps_row (widget, idx);
-//                    }
-                }
-            }
-            else if (it->selected) {
-                it->selected = 0;
-//                if (idx != y && idx != playlist_row) {
-                    redraw_ps_row (widget, idx);
-//                }
-            }
+        playItem_t *it = ps_get_for_idx (sel);
+        if (!it || !it->selected) {
+            // reset selection, and set it to single item
+            gtkps_select_single (sel);
+            areaselect = 1;
+            areaselect_x = ex;
+            areaselect_y = ey;
+            areaselect_dx = -1;
+            areaselect_dy = -1;
+            shift_sel_anchor = playlist_row;
+        }
+        else {
+            dragwait = 1;
+            redraw_ps_row (widget, prev);
+            redraw_ps_row (widget, playlist_row);
         }
     }
     else if (state & GDK_CONTROL_MASK) {
@@ -300,10 +340,86 @@ gtkps_mouse1_pressed (int state, int ex, int ey, double time) {
 
 void
 gtkps_mouse1_released (int state, int ex, int ey, double time) {
+    if (dragwait) {
+        dragwait = 0;
+        int y = ey/rowheight + scrollpos;
+        gtkps_select_single (y);
+    }
+    else if (areaselect) {
+        areaselect = 0;
+    }
 }
 
 void
-gtkps_mousemove (int state, int x, int y) {
+gtkps_draw_areasel (GtkWidget *widget, int x, int y) {
+    // erase previous rect using 4 blits from backbuffer
+    if (areaselect_dx != -1) {
+        int sx = min (areaselect_x, areaselect_dx);
+        int sy = min (areaselect_y, areaselect_dy);
+        int dx = max (areaselect_x, areaselect_dx);
+        int dy = max (areaselect_y, areaselect_dy);
+        int w = dx - sx + 1;
+        int h = dy - sy + 1;
+        //gdk_draw_drawable (widget->window, widget->style->black_gc, backbuf, sx, sy, sx, sy, dx - sx + 1, dy - sy + 1);
+        gdk_draw_drawable (widget->window, widget->style->black_gc, backbuf, sx, sy, sx, sy, w, 1);
+        gdk_draw_drawable (widget->window, widget->style->black_gc, backbuf, sx, sy, sx, sy, 1, h);
+        gdk_draw_drawable (widget->window, widget->style->black_gc, backbuf, sx, sy + h - 1, sx, sy + h - 1, w, 1);
+        gdk_draw_drawable (widget->window, widget->style->black_gc, backbuf, sx + w - 1, sy, sx + w - 1, sy, 1, h);
+    }
+    areaselect_dx = x;
+    areaselect_dy = y;
+	cairo_t *cr;
+	cr = gdk_cairo_create (widget->window);
+	if (!cr) {
+		return;
+	}
+    cairo_set_source_rgb (cr, 1.f, 1.f, 1.f);
+    cairo_set_antialias (cr, CAIRO_ANTIALIAS_NONE);
+    cairo_set_line_width (cr, 1);
+    int sx = min (areaselect_x, x);
+    int sy = min (areaselect_y, y);
+    int dx = max (areaselect_x, x);
+    int dy = max (areaselect_y, y);
+    cairo_rectangle (cr, sx, sy, dx-sx, dy-sy);
+    cairo_stroke (cr);
+    cairo_destroy (cr);
+}
+
+void
+gtkps_mousemove (GdkEventMotion *event) {
+    if (dragwait) {
+        dragwait = 0;
+        GtkWidget *widget = lookup_widget (mainwin, "playlist");
+        GtkTargetEntry entry = {
+            .target = "",
+            .flags = GTK_TARGET_SAME_WIDGET,
+            .info = 0
+        };
+        GtkTargetList *lst = gtk_target_list_new (&entry, 1);
+        gtk_drag_begin (widget, lst, GDK_ACTION_MOVE, 1, (GdkEvent *)event);
+    }
+    else if (areaselect) {
+        GtkWidget *widget = lookup_widget (mainwin, "playlist");
+        int y = event->y/rowheight + scrollpos;
+        if (y != shift_sel_anchor) {
+            int start = min (y, shift_sel_anchor);
+            int end = max (y, shift_sel_anchor);
+            int idx=0;
+            for (playItem_t *it = playlist_head; it; it = it->next, idx++) {
+                if (idx >= start && idx <= end) {
+                    it->selected = 1;
+                    redraw_ps_row (widget, idx);
+                }
+                else if (it->selected)
+                {
+                    it->selected = 0;
+                    redraw_ps_row (widget, idx);
+                }
+            }
+        }
+        // debug only
+        // gtkps_draw_areasel (widget, event->x, event->y);
+    }
 }
 
 void

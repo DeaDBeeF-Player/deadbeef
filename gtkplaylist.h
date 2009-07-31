@@ -35,7 +35,7 @@ void
 gtkps_mouse1_released (int state, int ex, int ey, double time);
 
 void
-gtkps_mousemove (int state, int x, int y);
+gtkps_mousemove (GdkEventMotion *event);
 
 void
 gtkps_scroll (int newscroll);

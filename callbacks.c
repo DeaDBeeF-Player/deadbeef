@@ -86,7 +86,7 @@ on_playlist_realize                    (GtkWidget       *widget,
     GtkTargetEntry entry = {
         .target = "",
         .flags = GTK_TARGET_SAME_WIDGET | GTK_TARGET_OTHER_APP,
-        1
+        0
     };
     // setup drag-drop source
 //    gtk_drag_source_set (widget, GDK_BUTTON1_MASK, &entry, 1, GDK_ACTION_MOVE);
@@ -124,7 +124,7 @@ on_playlist_motion_notify_event        (GtkWidget       *widget,
                                         GdkEventMotion  *event,
                                         gpointer         user_data)
 {
-    gtkps_mousemove (event->state, event->x, event->y);
+    gtkps_mousemove (event);
     return FALSE;
 }
 
