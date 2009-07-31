@@ -75,4 +75,7 @@ ps_format_item_display_name (playItem_t *it, char *str, int len);
 const char *
 ps_find_meta (playItem_t *it, const char *key);
 
+void
+ps_delete_selected (void);
+
 #endif // __PLAYLIST_H

@@ -573,3 +573,32 @@ ps_find_meta (playItem_t *it, const char *key) {
     }
     return "?";
 }
+
+void
+ps_delete_selected (void) {
+    playItem_t *next = NULL;
+    for (playItem_t *it = playlist_head; it; it = next) {
+        next = it->next;
+        if (it->selected) {
+            if (it->prev) {
+                it->prev->next = it->next;
+            }
+            if (it->next) {
+                it->next->prev = it->prev;
+            }
+            if (playlist_head == it) {
+                playlist_head = it->next;
+            }
+            if (playlist_tail == it) {
+                playlist_tail = it->prev;
+            }
+            if (playlist_current_ptr == it) {
+                playlist_current_ptr = NULL;
+            }
+            ps_item_free (it);
+            free (it);
+            ps_count--;
+        }
+    }
+}
+

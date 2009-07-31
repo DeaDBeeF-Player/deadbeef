@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+#include <assert.h>
 #include "gtkplaylist.h"
 #include "callbacks.h"
 #include "interface.h"
@@ -175,9 +176,10 @@ draw_playlist (GtkWidget *widget, int x, int y, int w, int h) {
         }
 	}
 	it = it_copy;
-	for (row = row1; row < row2; row++) {
-		draw_ps_row (backbuf, cr, row, it);
-		it = it->next;
+	int idx = 0;
+	for (row = row1; row < row2; row++, idx++) {
+        draw_ps_row (backbuf, cr, row, it);
+        it = it->next;
 	}
 
     cairo_destroy (cr);
@@ -704,6 +706,15 @@ gtkps_keypress (int keyval, int state) {
     }
     else if (keyval == GDK_Return && playlist_row != -1) {
         messagepump_push (M_PLAYSONGNUM, 0, playlist_row, 0);
+        return;
+    }
+    else if (keyval == GDK_Delete) {
+        ps_delete_selected ();
+        if (playlist_row >= ps_getcount ()) {
+            playlist_row = ps_getcount () - 1;
+        }
+        draw_playlist (widget, 0, 0, widget->allocation.width, widget->allocation.height);
+        gdk_draw_drawable (widget->window, widget->style->black_gc, backbuf, 0, 0, 0, 0, widget->allocation.width, widget->allocation.height);
         return;
     }
     else if (keyval == GDK_Down && playlist_row < ps_getcount () - 1) {
