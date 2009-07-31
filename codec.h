@@ -19,6 +19,8 @@ typedef struct codec_s {
     int (*seek) (float time);
     int (*add) (const char *fname);
     const char ** (*getexts) (void);
+    int (*numvoices) (void);
+    void (*mutevoice) (int voice, int mute);
     fileinfo_t info;
 } codec_t;
 

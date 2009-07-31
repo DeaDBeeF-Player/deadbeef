@@ -10,12 +10,14 @@ static Music_Emu *emu;
 static int reallength;
 static int nzerosamples;
 extern int sdl_player_freq; // hack!
+static uint32_t cgme_voicemask = 0;
 
 int
 cgme_init (const char *fname, int track, float start, float end) {
     if (gme_open_file (fname, &emu, sdl_player_freq)) {
         return -1;
     }
+    gme_mute_voices (emu, cgme_voicemask);
     gme_start_track (emu, track);
     track_info_t inf;
     gme_track_info (emu, &inf, track);
@@ -91,7 +93,7 @@ int
 cgme_add (const char *fname) {
 //    printf ("adding %s chiptune\n", fname);
     Music_Emu *emu;
-    if (!gme_open_file (fname, &emu, 44100)) {
+    if (!gme_open_file (fname, &emu, gme_info_only)) {
         int cnt = gme_track_count (emu);
         for (int i = 0; i < cnt; i++) {
             track_info_t inf;
@@ -146,6 +148,22 @@ const char **cgme_getexts (void) {
     return exts;
 }
 
+int
+cgme_numvoices (void) {
+    if (!emu) {
+        return 0;
+    }
+    return gme_voice_count (emu);
+}
+
+void
+cgme_mutevoice (int voice, int mute) {
+    cgme_voicemask &= ~ (1<<voice);
+    cgme_voicemask |= ((mute ? 1 : 0) << voice);
+    if (emu) {
+        gme_mute_voices (emu, cgme_voicemask);
+    }
+}
 
 codec_t cgme = {
     .init = cgme_init,
@@ -153,6 +171,8 @@ codec_t cgme = {
     .read = cgme_read,
     .seek = cgme_seek,
     .add = cgme_add,
-    .getexts = cgme_getexts
+    .getexts = cgme_getexts,
+    .numvoices = cgme_numvoices,
+    .mutevoice = cgme_mutevoice
 };
 

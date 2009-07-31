@@ -169,3 +169,23 @@ gboolean
 on_playlist_motion_notify_event        (GtkWidget       *widget,
                                         GdkEventMotion  *event,
                                         gpointer         user_data);
+
+void
+on_voice1_clicked                      (GtkButton       *button,
+                                        gpointer         user_data);
+
+void
+on_voice2_clicked                      (GtkButton       *button,
+                                        gpointer         user_data);
+
+void
+on_voice3_clicked                      (GtkButton       *button,
+                                        gpointer         user_data);
+
+void
+on_voice4_clicked                      (GtkButton       *button,
+                                        gpointer         user_data);
+
+void
+on_voice5_clicked                      (GtkButton       *button,
+                                        gpointer         user_data);

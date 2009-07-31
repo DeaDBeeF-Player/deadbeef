@@ -403,3 +403,63 @@ on_playlist_drag_leave                 (GtkWidget       *widget,
 
 
 
+
+void
+on_voice1_clicked                      (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    codec_lock ();
+    if (playlist_current.codec && playlist_current.codec->mutevoice) {
+        playlist_current.codec->mutevoice (0, gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button)) ? 0 : 1);
+    }
+    codec_unlock ();
+}
+
+
+void
+on_voice2_clicked                      (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    codec_lock ();
+    if (playlist_current.codec && playlist_current.codec->mutevoice) {
+        playlist_current.codec->mutevoice (1, gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button)) ? 0 : 1);
+    }
+    codec_unlock ();
+}
+
+
+void
+on_voice3_clicked                      (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    codec_lock ();
+    if (playlist_current.codec && playlist_current.codec->mutevoice) {
+        playlist_current.codec->mutevoice (2, gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button)) ? 0 : 1);
+    }
+    codec_unlock ();
+}
+
+
+void
+on_voice4_clicked                      (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    codec_lock ();
+    if (playlist_current.codec && playlist_current.codec->mutevoice) {
+        playlist_current.codec->mutevoice (3, gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button)) ? 0 : 1);
+    }
+    codec_unlock ();
+}
+
+
+void
+on_voice5_clicked                      (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    codec_lock ();
+    if (playlist_current.codec && playlist_current.codec->mutevoice) {
+        playlist_current.codec->mutevoice (4, gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button)) ? 0 : 1);
+    }
+    codec_unlock ();
+}
+
