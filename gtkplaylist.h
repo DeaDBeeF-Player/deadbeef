@@ -2,7 +2,13 @@
 #define __GTKPLAYLIST_H
 
 #include <gtk/gtk.h>
+#include <stdint.h>
 #include "playlist.h"
+
+enum {
+    TARGET_URILIST,
+    TARGET_SAMEWIDGET,
+};
 
 void
 gtkps_nextsong (void);
@@ -75,5 +81,8 @@ gtkps_keypress (int keyval, int state);
 
 void
 gtkps_track_dragdrop (int y);
+
+void
+gtkps_handle_drag_drop (int drop_y, uint32_t *d, int length);
 
 #endif

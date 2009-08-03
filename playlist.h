@@ -45,6 +45,9 @@ ps_free (void);
 int
 ps_getcount (void);
 
+int
+ps_getselcount (void);
+
 playItem_t *
 ps_get_for_idx (int idx);
 

@@ -23,7 +23,7 @@ playItem_t *playlist_head;
 playItem_t *playlist_tail;
 playItem_t playlist_current;
 playItem_t *playlist_current_ptr;
-static int ps_count = 0;
+int ps_count = 0;
 
 void
 ps_free (void) {
@@ -346,6 +346,18 @@ ps_remove (playItem_t *it) {
 int
 ps_getcount (void) {
     return ps_count;
+}
+
+int
+ps_getselcount (void) {
+    // FIXME: slow!
+    int cnt = 0;
+    for (playItem_t *it = playlist_head; it; it = it->next) {
+        if (it->selected) {
+            cnt++;
+        }
+    }
+    return cnt;
 }
 
 playItem_t *

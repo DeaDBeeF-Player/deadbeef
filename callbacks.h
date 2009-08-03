@@ -189,3 +189,18 @@ on_voice4_clicked                      (GtkButton       *button,
 void
 on_voice5_clicked                      (GtkButton       *button,
                                         gpointer         user_data);
+
+void
+on_playlist_drag_data_received         (GtkWidget       *widget,
+                                        GdkDragContext  *drag_context,
+                                        gint             x,
+                                        gint             y,
+                                        GtkSelectionData *data,
+                                        guint            info,
+                                        guint            time,
+                                        gpointer         user_data);
+
+void
+on_playlist_drag_data_delete           (GtkWidget       *widget,
+                                        GdkDragContext  *drag_context,
+                                        gpointer         user_data);

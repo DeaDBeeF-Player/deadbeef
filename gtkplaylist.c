@@ -393,12 +393,12 @@ gtkps_mousemove (GdkEventMotion *event) {
         dragwait = 0;
         GtkWidget *widget = lookup_widget (mainwin, "playlist");
         GtkTargetEntry entry = {
-            .target = "filelist",
+            .target = "STRING",
             .flags = GTK_TARGET_SAME_WIDGET,
-            .info = 0
+            .info = TARGET_SAMEWIDGET
         };
         GtkTargetList *lst = gtk_target_list_new (&entry, 1);
-        gtk_drag_begin (widget, lst, GDK_ACTION_MOVE, 1, (GdkEvent *)event);
+        gtk_drag_begin (widget, lst, GDK_ACTION_MOVE, TARGET_SAMEWIDGET, (GdkEvent *)event);
     }
     else if (areaselect) {
         GtkWidget *widget = lookup_widget (mainwin, "playlist");
@@ -851,4 +851,72 @@ gtkps_track_dragdrop (int y) {
     cairo_rectangle (cr, widget->allocation.width-3, drag_motion_y * rowheight-3, 3, 7);
     cairo_fill (cr);
     cairo_destroy (cr);
+}
+
+void
+gtkps_handle_drag_drop (int drop_y, uint32_t *d, int length) {
+    int drop_row = drop_y / rowheight + scrollpos;
+    playItem_t *drop_before = ps_get_for_idx (drop_row);
+    while (drop_before && drop_before->selected) {
+        drop_before = drop_before->next;
+    }
+    // unlink items from playlist, and link together
+    playItem_t *head = NULL;
+    playItem_t *tail = NULL;
+    int processed = 0;
+    int idx = 0;
+    playItem_t *next = NULL;
+    for (playItem_t *it = playlist_head; it && processed < length; it = next, idx++) {
+        //            printf ("idx: %d\n", d[i]);
+        next = it->next;
+        if (idx == d[processed]) {
+            if (it->prev) {
+                it->prev->next = it->next;
+            }
+            else {
+                playlist_head = it->next;
+            }
+            if (it->next) {
+                it->next->prev = it->prev;
+            }
+            else {
+                playlist_tail = it->prev;
+            }
+            if (tail) {
+                tail->next = it;
+                it->prev = tail;
+                tail = it;
+            }
+            else {
+                head = tail = it;
+                it->prev = it->next = NULL;
+            }
+            processed++;
+            //                extern int ps_count;
+            //                ps_count--;
+        }
+    }
+    // find insertion point
+    playItem_t *drop_after = NULL;
+    if (drop_before) {
+        drop_after = drop_before->prev;
+    }
+    else {
+        drop_after = playlist_tail;
+    }
+    // insert in between
+    head->prev = drop_after;
+    if (drop_after) {
+        drop_after->next = head;
+    }
+    else {
+        playlist_head = head;
+    }
+    tail->next = drop_before;
+    if (drop_before) {
+        drop_before->prev = tail;
+    }
+    else {
+        playlist_tail = tail;
+    }
 }

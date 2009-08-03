@@ -5,6 +5,7 @@
 #include <gtk/gtk.h>
 #include <math.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "callbacks.h"
 #include "interface.h"
@@ -78,15 +79,14 @@ on_playlist_expose_event               (GtkWidget       *widget,
     return FALSE;
 }
 
-
 void
 on_playlist_realize                    (GtkWidget       *widget,
         gpointer         user_data)
 {
     GtkTargetEntry entry = {
-        .target = "filelist",
+        .target = "STRING",
         .flags = GTK_TARGET_SAME_WIDGET/* | GTK_TARGET_OTHER_APP*/,
-        0
+        TARGET_SAMEWIDGET
     };
     // setup drag-drop source
 //    gtk_drag_source_set (widget, GDK_BUTTON1_MASK, &entry, 1, GDK_ACTION_MOVE);
@@ -335,7 +335,6 @@ on_playlist_drag_begin                 (GtkWidget       *widget,
                                         GdkDragContext  *drag_context,
                                         gpointer         user_data)
 {
-    printf ("drag_begin\n");
 }
 
 gboolean
@@ -359,7 +358,11 @@ on_playlist_drag_drop                  (GtkWidget       *widget,
                                         guint            time,
                                         gpointer         user_data)
 {
-    printf ("drag_drop\n");
+    if (drag_context->targets) {
+        GdkAtom target_type = GDK_POINTER_TO_ATOM (g_list_nth_data (drag_context->targets, TARGET_SAMEWIDGET));
+        gtk_drag_get_data (widget, drag_context, target_type, time);
+        return TRUE;
+    }
     return FALSE;
 }
 
@@ -367,21 +370,78 @@ on_playlist_drag_drop                  (GtkWidget       *widget,
 void
 on_playlist_drag_data_get              (GtkWidget       *widget,
                                         GdkDragContext  *drag_context,
-                                        GtkSelectionData *data,
-                                        guint            info,
+                                        GtkSelectionData *selection_data,
+                                        guint            target_type,
                                         guint            time,
                                         gpointer         user_data)
 {
+    switch (target_type) {
+    case TARGET_SAMEWIDGET:
+        {
+            // format as "STRING" consisting of array of pointers
+            int nsel = ps_getselcount ();
+            if (!nsel) {
+                break; // something wrong happened
+            }
+            uint32_t *ptr = malloc (nsel * sizeof (uint32_t));
+            int idx = 0;
+            int i = 0;
+            for (playItem_t *it = playlist_head; it; it = it->next, idx++) {
+                if (it->selected) {
+                    ptr[i] = idx;
+                    i++;
+                }
+            }
+            gtk_selection_data_set (selection_data, selection_data->target, sizeof (uint32_t) * 8, (gchar *)ptr, nsel * sizeof (uint32_t));
+            free (ptr);
+        }
+        break;
+    default:
+        g_assert_not_reached ();
+    }
 }
 
+
+void
+on_playlist_drag_data_received         (GtkWidget       *widget,
+                                        GdkDragContext  *drag_context,
+                                        gint             x,
+                                        gint             y,
+                                        GtkSelectionData *data,
+                                        guint            target_type,
+                                        guint            time,
+                                        gpointer         user_data)
+{
+    gchar *ptr=(char*)data->data;
+//    printf ("target type: %d\n", target_type);
+    if (target_type == 0) { // uris
+        if (!strncmp(ptr,"file:///",8) && (strlen(ptr)<=4096)) {
+            // this happens when dropped from file manager
+//            printf ("%s\n", ptr);
+        }
+    }
+    else if (target_type == 1) {
+        uint32_t *d= (uint32_t *)ptr;
+        gtkps_handle_drag_drop (y, d, data->length/4);
+    }
+    gtk_drag_finish (drag_context, FALSE, FALSE, time);
+}
+
+
+void
+on_playlist_drag_data_delete           (GtkWidget       *widget,
+                                        GdkDragContext  *drag_context,
+                                        gpointer         user_data)
+{
+}
 
 void
 on_playlist_drag_end                   (GtkWidget       *widget,
                                         GdkDragContext  *drag_context,
                                         gpointer         user_data)
 {
-    printf ("drag_end\n");
-
+    draw_playlist (widget, 0, 0, widget->allocation.width, widget->allocation.height);
+    gtkps_expose (widget, 0, 0, widget->allocation.width, widget->allocation.height);
 }
 
 
@@ -391,7 +451,6 @@ on_playlist_drag_failed                (GtkWidget       *widget,
                                         GtkDragResult    arg2,
                                         gpointer         user_data)
 {
-    printf ("drag_failed\n");
     return FALSE;
 }
 

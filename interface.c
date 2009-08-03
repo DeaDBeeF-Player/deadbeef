@@ -473,6 +473,12 @@ create_mainwin (void)
   g_signal_connect ((gpointer) playlist, "motion_notify_event",
                     G_CALLBACK (on_playlist_motion_notify_event),
                     NULL);
+  g_signal_connect ((gpointer) playlist, "drag_data_received",
+                    G_CALLBACK (on_playlist_drag_data_received),
+                    NULL);
+  g_signal_connect ((gpointer) playlist, "drag_data_delete",
+                    G_CALLBACK (on_playlist_drag_data_delete),
+                    NULL);
   g_signal_connect ((gpointer) playscroll, "value_changed",
                     G_CALLBACK (on_playscroll_value_changed),
                     NULL);
