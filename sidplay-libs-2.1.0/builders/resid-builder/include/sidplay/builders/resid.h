@@ -40,8 +40,11 @@ private:
     std::vector<sidemu *> sidobjs;
 
 public:
-    sidemu *getsidemu (void) {
-        return sidobjs.front ();
+    sidemu *getsidemu (int i) {
+        if (i >= sidobjs.size ()) {
+            return NULL;
+        }
+        return sidobjs[i];
     }
     ReSIDBuilder  (const char * const name);
     ~ReSIDBuilder (void);

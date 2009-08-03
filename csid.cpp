@@ -203,8 +203,8 @@ extern "C" int
 csid_init (const char *fname, int track, float start, float end) {
     sidplay = new sidplay2;
     resid = new ReSIDBuilder ("wtf");
-//    resid->create (sidplay->info ().maxsids);
-    resid->create (1);
+    resid->create (sidplay->info ().maxsids);
+//    resid->create (1);
     resid->filter (true);
     resid->sampling (sdl_player_freq);
     tune = new SidTune (fname);
@@ -262,11 +262,14 @@ csid_init (const char *fname, int track, float start, float end) {
     }
     csid.info.duration = length;
 
-    sidemu *emu = resid->getsidemu ();
-    if (emu) {
-        for (int i = 0; i < 3; i++) {
-            bool mute = csid_voicemask & (1 << i) ? true : false;
-            emu->voice (i, mute ? 0x00 : 0xff, mute);
+    int maxsids = sidplay->info ().maxsids;
+    for (int k = 0; k < maxsids; k++) {
+        sidemu *emu = resid->getsidemu (k);
+        if (emu) {
+            for (int i = 0; i < 3; i++) {
+                bool mute = csid_voicemask & (1 << i) ? true : false;
+                emu->voice (i, mute ? 0x00 : 0xff, mute);
+            }
         }
     }
     return 0;
@@ -309,12 +312,9 @@ csid_seek (float time) {
     while (samples > 0) {
         int n = min (samples, 4096) * csid.info.channels;
         int done = sidplay->play (buffer, n);
-//        printf ("seek-read %d samples, done %d\n", n, done);
         if (done < n) {
-//            if (sidplay->state () != sid2_stopped) {
-                printf ("sid seek failure\n");
-                return -1;
-//            }
+            printf ("sid seek failure\n");
+            return -1;
         }
         samples -= done;
     }
@@ -410,11 +410,14 @@ csid_mutevoice (int voice, int mute) {
     csid_voicemask &= ~ (1<<voice);
     csid_voicemask |= ((mute ? 1 : 0) << voice);
     if (resid) {
-        sidemu *emu = resid->getsidemu ();
-        if (emu) {
-            for (int i = 0; i < 3; i++) {
-                bool mute = csid_voicemask & (1 << i) ? true : false;
-                emu->voice (i, mute ? 0x00 : 0xff, mute);
+        int maxsids = sidplay->info ().maxsids;
+        for (int k = 0; k < maxsids; k++) {
+            sidemu *emu = resid->getsidemu (k);
+            if (emu) {
+                for (int i = 0; i < 3; i++) {
+                    bool mute = csid_voicemask & (1 << i) ? true : false;
+                    emu->voice (i, mute ? 0x00 : 0xff, mute);
+                }
             }
         }
     }
