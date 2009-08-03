@@ -713,8 +713,9 @@ gtkps_keypress (int keyval, int state) {
         if (playlist_row >= ps_getcount ()) {
             playlist_row = ps_getcount () - 1;
         }
+        gtkps_setup_scrollbar ();
         draw_playlist (widget, 0, 0, widget->allocation.width, widget->allocation.height);
-        gdk_draw_drawable (widget->window, widget->style->black_gc, backbuf, 0, 0, 0, 0, widget->allocation.width, widget->allocation.height);
+        gtkps_expose (widget, 0, 0, widget->allocation.width, widget->allocation.height);
         return;
     }
     else if (keyval == GDK_Down && playlist_row < ps_getcount () - 1) {

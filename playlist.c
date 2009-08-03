@@ -4,6 +4,9 @@
 #include <fnmatch.h>
 #include <stdio.h>
 #include <ctype.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 #include "playlist.h"
 #include "codec.h"
 #include "cwav.h"
@@ -288,6 +291,11 @@ ps_add_file (const char *fname) {
 
 int
 ps_add_dir (const char *dirname) {
+    struct stat buf;
+    lstat (dirname, &buf);
+    if (S_ISLNK(buf.st_mode)) {
+        return -1;
+    }
     struct dirent **namelist = NULL;
     int n;
 
