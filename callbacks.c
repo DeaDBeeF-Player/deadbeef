@@ -360,6 +360,9 @@ on_playlist_drag_drop                  (GtkWidget       *widget,
 {
     if (drag_context->targets) {
         GdkAtom target_type = GDK_POINTER_TO_ATOM (g_list_nth_data (drag_context->targets, TARGET_SAMEWIDGET));
+        if (!target_type) {
+            return FALSE;
+        }
         gtk_drag_get_data (widget, drag_context, target_type, time);
         return TRUE;
     }
@@ -413,35 +416,9 @@ on_playlist_drag_data_received         (GtkWidget       *widget,
                                         gpointer         user_data)
 {
     gchar *ptr=(char*)data->data;
-//    printf ("target type: %d\n", target_type);
     if (target_type == 0) { // uris
         if (!strncmp(ptr,"file:///",8)) {
-            //printf ("data: %s\n", ptr);
-            // this happens when dropped from file manager
-            // parse, and try to add to playlist
-            const gchar *p = ptr;
-            while (*p) {
-                const gchar *pe = p+1;
-                while (*pe && *pe > ' ') {
-                    pe++;
-                }
-                if (pe - p < 4096 && pe - p > 7) {
-                    char fname[(int)(pe - p)];
-                    strncpy (fname, p, pe - p);
-                    fname[pe - p] = 0;
-                    if (ps_add_dir (fname+7)) {
-                        ps_add_file (fname+7);
-                    }
-                }
-                p = pe;
-                // skip whitespace
-                while (*p && *p <= ' ') {
-                    p++;
-                }
-            }
-            gtkps_setup_scrollbar ();
-            draw_playlist (widget, 0, 0, widget->allocation.width, widget->allocation.height);
-            gtkps_expose (widget, 0, 0, widget->allocation.width, widget->allocation.height);
+            gtkps_handle_fm_drag_drop (y, ptr, data->length);
         }
     }
     else if (target_type == 1) {

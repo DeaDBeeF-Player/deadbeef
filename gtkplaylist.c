@@ -921,3 +921,62 @@ gtkps_handle_drag_drop (int drop_y, uint32_t *d, int length) {
         playlist_tail = tail;
     }
 }
+
+void
+strcopy_special (char *dest, const char *src, int len) {
+    while (len > 0) {
+        if (len >= 3 && !strncmp (src, "\%20", 3)) {
+            *dest = ' ';
+            dest++;
+            src += 3;
+            len -= 3;
+        }
+        else {
+            *dest++ = *src++;
+            len--;
+        }
+    }
+    *dest = 0;
+}
+
+void
+gtkps_handle_fm_drag_drop (int drop_y, void *ptr, int length) {
+    int drop_row = drop_y / rowheight + scrollpos;
+    playItem_t *drop_before = ps_get_for_idx (drop_row);
+    playItem_t *after = NULL;
+    if (drop_before) {
+        after = drop_before->prev;
+    }
+    //printf ("data: %s\n", ptr);
+    // this happens when dropped from file manager
+    // parse, and try to add to playlist
+    const gchar *p = ptr;
+    while (*p) {
+        const gchar *pe = p+1;
+        while (*pe && *pe > ' ') {
+            pe++;
+        }
+        if (pe - p < 4096 && pe - p > 7) {
+            char fname[(int)(pe - p)];
+            strcopy_special (fname, p, pe-p);
+            //strncpy (fname, p, pe - p);
+            //fname[pe - p] = 0;
+            playItem_t *inserted = ps_insert_dir (after, fname + 7);
+            if (!inserted) {
+                inserted = ps_insert_file (after, fname + 7);
+            }
+            if (inserted) {
+                after = inserted;
+            }
+        }
+        p = pe;
+        // skip whitespace
+        while (*p && *p <= ' ') {
+            p++;
+        }
+    }
+    gtkps_setup_scrollbar ();
+    GtkWidget *widget = lookup_widget (mainwin, "playlist");
+    draw_playlist (widget, 0, 0, widget->allocation.width, widget->allocation.height);
+    gtkps_expose (widget, 0, 0, widget->allocation.width, widget->allocation.height);
+}

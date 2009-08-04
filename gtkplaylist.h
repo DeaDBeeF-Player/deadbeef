@@ -85,4 +85,7 @@ gtkps_track_dragdrop (int y);
 void
 gtkps_handle_drag_drop (int drop_y, uint32_t *d, int length);
 
+void
+gtkps_handle_fm_drag_drop (int drop_y, void *ptr, int length);
+
 #endif
