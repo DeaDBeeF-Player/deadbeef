@@ -526,16 +526,17 @@ ps_insert_item (playItem_t *after, playItem_t *it) {
         playlist_head = it;
     }
     else {
-        it->next = after;
-        it->prev = after->prev;
-        if (after->prev) {
-            after->prev->next = it;
+        it->prev= after;
+        it->next = after->next;
+        if (after->next) {
+            after->next->prev = it;
         }
-        after->prev = it;
+        after->next = it;
         if (after == playlist_tail) {
             playlist_tail = it;
         }
     }
+    ps_count++;
     return it;
 }
 
