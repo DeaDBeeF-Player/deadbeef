@@ -2,6 +2,7 @@
 #define __CODEC_H
 
 #include <stdint.h>
+//#include "playlist.h"
 
 typedef struct {
     int bitsPerSample;
@@ -11,13 +12,15 @@ typedef struct {
     float position;
 } fileinfo_t;
 
+struct playItem_s;
+
 typedef struct codec_s {
     int (*init) (const char *fname, int track, float start, float end);
     void (*free) (void);
     // player is responsible for starting next song if -1 is returned
     int (*read) (char *bytes, int size);
     int (*seek) (float time);
-    int (*add) (const char *fname);
+    struct playItem_s * (*insert) (struct playItem_s *after, const char *fname); // after==NULL means "prepend to beginning"
     const char ** (*getexts) (void);
     int (*numvoices) (void);
     void (*mutevoice) (int voice, int mute);

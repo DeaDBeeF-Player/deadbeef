@@ -656,8 +656,8 @@ static DUH * open_module(const char *fname, const char *ext, int *start_order, i
 	return duh;
 }
 
-int
-cdumb_add (const char *fname) {
+playItem_t *
+cdumb_insert (playItem_t *after, const char *fname) {
     const char *ext = fname + strlen (fname) - 1;
     while (*ext != '.' && ext > fname) {
         ext--;
@@ -669,7 +669,7 @@ cdumb_add (const char *fname) {
     dumb_register_stdfiles ();
     DUH* duh = open_module(fname, ext, &start_order, &is_it, &is_dos);
     if (!duh) {
-        return -1;
+        return NULL;
     }
     unload_duh (duh);
     playItem_t *it = malloc (sizeof (playItem_t));
@@ -679,9 +679,9 @@ cdumb_add (const char *fname) {
     it->tracknum = 0;
     it->timestart = 0;
     it->timeend = 0;
-    ps_append_item (it);
+    after = ps_insert_item (after, it);
 
-    return 0;
+    return after;
 }
 
 const char **cdumb_getexts (void) {
@@ -693,7 +693,7 @@ codec_t cdumb = {
     .free = cdumb_free,
     .read = cdumb_read,
     .seek = cdumb_seek,
-    .add = cdumb_add,
+    .insert = cdumb_insert,
     .getexts = cdumb_getexts
 };
 

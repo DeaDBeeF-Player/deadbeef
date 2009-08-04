@@ -9,6 +9,17 @@ static SDL_AudioSpec spec;
 static void psdl_callback (void *userdata, Uint8 *stream, int len);
 static float sdl_volume = 1;
 
+static inline void
+le_int16 (int16_t in, char *out) {
+    char *pin = (char *)&in;
+#if !BIGENDIAN
+    out[0] = pin[0];
+    out[1] = pin[1];
+#else
+    out[1] = pin[0];
+    out[0] = pin[1];
+#endif
+}
 int
 psdl_init (void) {
 	SDL_AudioSpec obt;

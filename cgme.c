@@ -89,8 +89,8 @@ cgme_seek (float time) {
     return 0;
 }
 
-int
-cgme_add (const char *fname) {
+playItem_t *
+cgme_insert (playItem_t *after, const char *fname) {
 //    printf ("adding %s chiptune\n", fname);
     Music_Emu *emu;
     if (!gme_open_file (fname, &emu, gme_info_only)) {
@@ -123,7 +123,7 @@ cgme_add (const char *fname) {
                 char trk[10];
                 snprintf (trk, 10, "%d", i+1);
                 ps_add_meta (it, "track", trk);
-                ps_append_item (it);
+                after = ps_insert_item (after, it);
             }
             else {
                 printf ("gme error: %s\n", ret);
@@ -136,7 +136,7 @@ cgme_add (const char *fname) {
     else {
         printf ("error adding %s\n", fname);
     }
-    return 0;
+    return after;
 }
 
 static const char * exts[]=
@@ -170,7 +170,7 @@ codec_t cgme = {
     .free = cgme_free,
     .read = cgme_read,
     .seek = cgme_seek,
-    .add = cgme_add,
+    .insert = cgme_insert,
     .getexts = cgme_getexts,
     .numvoices = cgme_numvoices,
     .mutevoice = cgme_mutevoice

@@ -181,22 +181,23 @@ cflac_init_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__Str
     *psr = metadata->data.stream_info.sample_rate;
 }
 
-int
-cflac_add (const char *fname) {
+playItem_t *
+cflac_insert (playItem_t *after, const char *fname) {
     // try cue
     char cuename[1024];
     snprintf (cuename, 1024, "%s.cue", fname);
 //    printf ("loading %s\n", cuename);
-    if (!ps_add_cue (cuename)) {
-        return 0;
+    playItem_t *cue_after;
+    if ((cue_after = ps_insert_cue (after, cuename)) != NULL) {
+        return cue_after;
     }
     int n = strlen (fname) - 4;
     if (n > 0) {
         strncpy (cuename, fname, n);
         strcpy (cuename + n, "cue");
     //    printf ("loading %s\n", cuename);
-        if (!ps_add_cue (cuename)) {
-            return 0;
+        if ((cue_after = ps_insert_cue (after, cuename)) != NULL) {
+            return cue_after;
         }
     }
 
@@ -205,22 +206,22 @@ cflac_add (const char *fname) {
     decoder = FLAC__stream_decoder_new();
     if (!decoder) {
         printf ("FLAC__stream_decoder_new failed\n");
-        return -1;
+        return NULL;
     }
     FLAC__stream_decoder_set_md5_checking(decoder, 0);
     int samplerate = -1;
     status = FLAC__stream_decoder_init_file(decoder, fname, cflac_init_write_callback, cflac_init_metadata_callback, cflac_error_callback, &samplerate);
     if (status != FLAC__STREAM_DECODER_INIT_STATUS_OK) {
         FLAC__stream_decoder_delete(decoder);
-        return -1;
+        return NULL;
     }
     if (!FLAC__stream_decoder_process_until_end_of_metadata (decoder)) {
         FLAC__stream_decoder_delete(decoder);
-        return -1;
+        return NULL;
     }
     if (samplerate == -1) { // not a FLAC stream
         FLAC__stream_decoder_delete(decoder);
-        return -1;
+        return NULL;
     }
     FLAC__stream_decoder_delete(decoder);
     playItem_t *it = malloc (sizeof (playItem_t));
@@ -230,8 +231,8 @@ cflac_add (const char *fname) {
     it->tracknum = 0;
     it->timestart = 0;
     it->timeend = 0;
-    ps_append_item (it);
-    return 0;
+    after = ps_insert_item (after, it);
+    return after;
 }
 
 static const char * exts[]=
@@ -248,6 +249,6 @@ codec_t cflac = {
     .free = cflac_free,
     .read = cflac_read,
     .seek = cflac_seek,
-    .add = cflac_add,
+    .insert = cflac_insert,
     .getexts = cflac_getexts
 };

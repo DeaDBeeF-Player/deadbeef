@@ -916,11 +916,11 @@ cmp3_read_id3v2 (playItem_t *it, FILE *fp) {
     return 0;
 }
 
-int
-cmp3_add (const char *fname) {
+playItem_t *
+cmp3_insert (playItem_t *after, const char *fname) {
     FILE *fp = fopen (fname, "rb");
     if (!fp) {
-        return -1;
+        return NULL;
     }
     playItem_t *it = malloc (sizeof (playItem_t));
     memset (it, 0, sizeof (playItem_t));
@@ -933,8 +933,8 @@ cmp3_add (const char *fname) {
     it->tracknum = 0;
     it->timestart = 0;
     it->timeend = 0;
-    ps_append_item (it);
-    return 0;
+    after = ps_insert_item (after, it);
+    return after;
 }
 
 static const char * exts[]=
@@ -951,7 +951,7 @@ codec_t cmp3 = {
     .free = cmp3_free,
     .read = cmp3_read,
     .seek = cmp3_seek,
-    .add = cmp3_add,
+    .insert = cmp3_insert,
     .getexts = cmp3_getexts
 };
 

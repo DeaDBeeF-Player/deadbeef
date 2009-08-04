@@ -97,19 +97,19 @@ cvorbis_seek (float time) {
     return 0;
 }
 
-int
-cvorbis_add (const char *fname) {
+playItem_t *
+cvorbis_insert (playItem_t *after, const char *fname) {
     // check for validity
     FILE *fp = fopen (fname, "rb");
     if (!fp) {
-        return -1;
+        return NULL;
     }
     OggVorbis_File vorbis_file;
     vorbis_info *vi;
     ov_open (fp, &vorbis_file, NULL, 0);
     vi = ov_info (&vorbis_file, -1);
     if (!vi) { // not a vorbis stream
-        return -1;
+        return NULL;
     }
     playItem_t *it = malloc (sizeof (playItem_t));
     memset (it, 0, sizeof (playItem_t));
@@ -136,8 +136,8 @@ cvorbis_add (const char *fname) {
         }
     }
     ov_clear (&vorbis_file);
-    ps_append_item (it);
-    return 0;
+    after = ps_insert_item (after, it);
+    return after;
 }
 
 static const char * exts[]=
@@ -154,7 +154,7 @@ codec_t cvorbis = {
     .free = cvorbis_free,
     .read = cvorbis_read,
     .seek = cvorbis_seek,
-    .add = cvorbis_add,
+    .insert = cvorbis_insert,
     .getexts = cvorbis_getexts
 };
 

@@ -12,6 +12,18 @@ extern "C" {
 #include "common.h"
 }
 
+static inline void
+le_int16 (int16_t in, char *out) {
+    char *pin = (char *)&in;
+#if !BIGENDIAN
+    out[0] = pin[0];
+    out[1] = pin[1];
+#else
+    out[1] = pin[0];
+    out[0] = pin[1];
+#endif
+}
+
 static sidplay2 *sidplay;
 static ReSIDBuilder *resid;
 static SidTune *tune;
@@ -346,8 +358,8 @@ convstr (const char* str) {
     return out;
 }
 
-extern "C" int
-csid_add (const char *fname) {
+extern "C" playItem_t *
+csid_insert (playItem_t *after, const char *fname) {
     sldb_load(sldb_fname);
     SidTune *tune;
     tune = new SidTune (fname);
@@ -384,11 +396,11 @@ csid_add (const char *fname) {
             char trk[10];
             snprintf (trk, 10, "%d", s+1);
             ps_add_meta (it, "track", trk);
-            ps_append_item (it);
+            after = ps_insert_item (after, it);
         }
     }
     delete tune;
-    return 0;
+    return after;
 }
 
 static const char *exts[]=
@@ -428,7 +440,7 @@ codec_t csid = {
     csid_free,
     csid_read,
     csid_seek,
-    csid_add,
+    csid_insert,
     csid_getexts,
     csid_numvoices,
     csid_mutevoice
