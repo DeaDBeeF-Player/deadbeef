@@ -23,6 +23,12 @@ static int streaming_terminate;
 static int streambuffer_fill;
 static char streambuffer[STREAM_BUFFER_SIZE+1000];
 static uintptr_t mutex;
+static int nextsong = -1;
+
+void
+streamer_set_nextsong (int song) {
+    nextsong = song;
+}
 
 static int
 streamer_read_async (char *bytes, int size);
@@ -32,6 +38,19 @@ streamer_thread (uintptr_t ctx) {
     codecleft = 0;
 
     while (!streaming_terminate) {
+        if (nextsong >= 0) {
+            int sng = nextsong;
+            nextsong = -1;
+            codec_lock ();
+            //streambuffer_fill = 0;
+            codecleft = 0;
+            codec_unlock ();
+            if (ps_set_current (ps_get_for_idx (sng)) < 0) {
+                while (ps_nextsong () < 0) {
+                    usleep (3000);
+                }
+            }
+        }
         streamer_lock ();
         if (streambuffer_fill < STREAM_BUFFER_SIZE) {
             int sz = STREAM_BUFFER_SIZE - streambuffer_fill;
@@ -40,8 +59,8 @@ streamer_thread (uintptr_t ctx) {
                 minsize = 16384;
             }
             sz = min (minsize, sz);
-//            printf ("reading %d\n", sz);
             int bytesread = streamer_read_async (&streambuffer[streambuffer_fill], sz);
+            //printf ("req=%d, got=%d\n", sz, bytesread);
             streambuffer_fill += bytesread;
         }
         streamer_unlock ();
@@ -146,7 +165,7 @@ streamer_read_async (char *bytes, int size) {
                         fbuffer[i*2+1] = fbuffer[i*2+0];
                     }
                 }
-                codec_lock ();
+                //codec_lock ();
                 // convert samplerate
                 srcdata.data_in = g_fbuffer;
                 srcdata.data_out = g_srcbuffer;
@@ -156,7 +175,7 @@ streamer_read_async (char *bytes, int size) {
                 srcdata.end_of_input = 0;
     //            src_set_ratio (src, srcdata.src_ratio);
                 src_process (src, &srcdata);
-                codec_unlock ();
+                //codec_unlock ();
                 // convert back to s16 format
                 nbytes = size;
                 int genbytes = srcdata.output_frames_gen * 4;
@@ -188,7 +207,6 @@ streamer_read_async (char *bytes, int size) {
         else {
             // that means EOF
             while (ps_nextsong () < 0) {
-                fprintf (stderr, "bad song encountered in playlist, skipping\n");
                 usleep (3000);
             }
         }

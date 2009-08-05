@@ -19,6 +19,7 @@
 #include "common.h"
 #include "messagepump.h"
 #include "messages.h"
+#include "streamer.h"
 
 extern GtkWidget *mainwin;
 static GdkPixmap *backbuf;
@@ -466,26 +467,35 @@ gtkps_playsong (void) {
     }
     else if (playlist_current_ptr) {
         printf ("restart\n");
+        streamer_set_nextsong (ps_get_idx_of (playlist_current_ptr));
+#if 0
         ps_start_current ();
         GtkWidget *widget = lookup_widget (mainwin, "playlist");
         redraw_ps_row (widget, ps_get_idx_of (playlist_current_ptr));
+#endif
     }
     else if (playlist_row != -1) {
         printf ("start under cursor\n");
+        streamer_set_nextsong (playlist_row);
+#if 0
         playItem_t *it = ps_get_for_idx (playlist_row);
         if (it) {
             ps_set_current (it);
         }
         GtkWidget *widget = lookup_widget (mainwin, "playlist");
         redraw_ps_row (widget, playlist_row);
+#endif
     }
     else {
         printf ("play 1st in list\n");
+        streamer_set_nextsong (0);
+#if 0
         ps_set_current (playlist_head);
         if (playlist_current_ptr) {
             GtkWidget *widget = lookup_widget (mainwin, "playlist");
             redraw_ps_row (widget, ps_get_idx_of (playlist_current_ptr));
         }
+#endif
     }
 }
 
@@ -578,6 +588,8 @@ gtkps_pausesong (void) {
 
 void
 gtkps_playsongnum (int idx) {
+    streamer_set_nextsong (idx);
+#if 0
     playItem_t *it = ps_get_for_idx (playlist_row);
     if (it) {
         //if (it != playlist_current_ptr)
@@ -594,6 +606,7 @@ gtkps_playsongnum (int idx) {
             redraw_ps_row (widget, idx);
         }
     }
+#endif
 }
 
 static int sb_context_id = -1;

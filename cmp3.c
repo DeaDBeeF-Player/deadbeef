@@ -43,7 +43,6 @@ int
 cmp3_init (const char *fname, int track, float start, float end) {
     buffer.file = fopen (fname, "rb");
     if (!buffer.file) {
-        printf ("failed to read %s\n", fname);
         return -1;
     }
     buffer.remaining = 0;
@@ -254,10 +253,10 @@ cmp3_scan_stream (float position) {
         timer.fraction = (int)((duration - (float)timer.seconds)*MAD_TIMER_RESOLUTION);
     }
     if (nframe == 0) {
-        printf ("file doesn't looks like mpeg stream\n");
+        //printf ("file doesn't looks like mpeg stream\n");
         return -1;
     }
-    printf ("song duration: %f\n", duration);
+    //printf ("song duration: %f\n", duration);
     return 0;
 }
 
@@ -302,9 +301,9 @@ cmp3_decode (void) {
 			{
 				if(stream.error!=MAD_ERROR_LOSTSYNC)
 				{
-					fprintf(stderr,"recoverable frame level error (%s)\n",
-							MadErrorString(&stream));
-					fflush(stderr);
+					//fprintf(stderr,"recoverable frame level error (%s)\n",
+					//		MadErrorString(&stream));
+					//fflush(stderr);
 				}
 				continue;
 			}
@@ -313,8 +312,8 @@ cmp3_decode (void) {
 					continue;
 				else
 				{
-					fprintf(stderr,"unrecoverable frame level error (%s).\n",
-							MadErrorString(&stream));
+					//fprintf(stderr,"unrecoverable frame level error (%s).\n",
+					//		MadErrorString(&stream));
 					break;
 				}
             }
@@ -614,7 +613,7 @@ convstr (const char* str, int sz) {
     sz--;
     iconv_t cd = iconv_open ("utf8", enc);
     if (!cd) {
-        printf ("unknown encoding: %s\n", enc);
+        // printf ("unknown encoding: %s\n", enc);
         return NULL;
     }
     else {
@@ -666,7 +665,7 @@ const char *convstr_id3v1 (const char* str, int sz) {
     }
     cd = iconv_open ("utf8", enc);
     if (!cd) {
-        printf ("unknown encoding: %s\n", enc);
+        // printf ("unknown encoding: %s\n", enc);
         return NULL;
     }
     else {

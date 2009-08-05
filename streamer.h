@@ -19,4 +19,7 @@ streamer_lock (void);
 void
 streamer_unlock (void);
 
+void
+streamer_set_nextsong (int song);
+
 #endif // __STREAMER_H
