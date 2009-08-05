@@ -1,4 +1,5 @@
 SubDir ROOT gme ;
+C++FLAGS += -DHAVE_STDINT_H ;
 
 Library libgme : Ay_Apu.cpp          Gb_Apu.cpp    Hes_Emu.cpp       Nes_Fme7_Apu.cpp   Sms_Apu.cpp
 Ay_Cpu.cpp          Gb_Cpu.cpp    Kss_Cpu.cpp       Nes_Namco_Apu.cpp  Snes_Spc.cpp

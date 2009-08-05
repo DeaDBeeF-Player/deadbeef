@@ -15,9 +15,6 @@
 #ifndef BLARGG_COMMON_H
 #define BLARGG_COMMON_H
 
-#undef LONG_MAX
-#define LONG_MAX 0x7fffffff
-
 // STATIC_CAST(T,expr): Used in place of static_cast<T> (expr)
 #ifndef STATIC_CAST
 	#define STATIC_CAST(T,expr) ((T) (expr))
@@ -115,11 +112,14 @@ public:
 // blargg_long/blargg_ulong = at least 32 bits, int if it's big enough
 #include <limits.h>
 
+#if 0
 #if INT_MAX >= 0x7FFFFFFF
 	typedef int blargg_long;
 #else
 	typedef long blargg_long;
 #endif
+#endif
+typedef int64_t blargg_long;
 
 #if UINT_MAX >= 0xFFFFFFFF
 	typedef unsigned blargg_ulong;
