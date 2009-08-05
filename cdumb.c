@@ -5,8 +5,8 @@
 #include "codec.h"
 #include "cdumb.h"
 #include "playlist.h"
+#include "playback.h"
 
-extern int sdl_player_freq; // hack!
 static int dumb_initialized;
 static DUH *duh;
 static DUH_SIGRENDERER *renderer;
@@ -75,7 +75,7 @@ cdumb_init (const char *fname, int track, float start, float end) {
 
     cdumb.info.bitsPerSample = 16;
     cdumb.info.channels = 2;
-    cdumb.info.samplesPerSecond = sdl_player_freq;
+    cdumb.info.samplesPerSecond = p_get_rate ();
     cdumb.info.position = 0;
     cdumb.info.duration = duh_get_length (duh)/65536.0f;
     printf ("duration: %f\n", cdumb.info.duration);

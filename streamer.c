@@ -9,8 +9,8 @@
 #include "playlist.h"
 #include "common.h"
 #include "streamer.h"
+#include "playback.h"
 
-extern int sdl_player_freq; // hack!
 static SRC_STATE *src;
 static SRC_DATA srcdata;
 static int codecleft;
@@ -114,7 +114,7 @@ streamer_read_async (char *bytes, int size) {
             int nchannels = codec->info.channels;
             int samplerate = codec->info.samplesPerSecond;
             // read and do SRC
-            if (codec->info.samplesPerSecond == sdl_player_freq) {
+            if (codec->info.samplesPerSecond == p_get_rate ()) {
                 int i;
                 if (codec->info.channels == 2) {
                     bytesread = codec->read (bytes, size);
@@ -134,11 +134,11 @@ streamer_read_async (char *bytes, int size) {
             else {
                 int nsamples = size/4;
                 // convert to codec samplerate
-                nsamples = nsamples * samplerate / sdl_player_freq * 2;
-                if (!src_is_valid_ratio ((double)sdl_player_freq/samplerate)) {
-                    printf ("invalid ratio! %d / %d = %f", sdl_player_freq, samplerate, (float)sdl_player_freq/samplerate);
+                nsamples = nsamples * samplerate / p_get_rate () * 2;
+                if (!src_is_valid_ratio ((double)p_get_rate ()/samplerate)) {
+                    printf ("invalid ratio! %d / %d = %f", p_get_rate (), samplerate, (float)p_get_rate ()/samplerate);
                 }
-                assert (src_is_valid_ratio ((double)sdl_player_freq/samplerate));
+                assert (src_is_valid_ratio ((double)p_get_rate ()/samplerate));
                 // read data at source samplerate (with some room for SRC)
                 int nbytes = (nsamples - codecleft) * 2 * nchannels;
                 if (nbytes < 0) {
@@ -171,7 +171,7 @@ streamer_read_async (char *bytes, int size) {
                 srcdata.data_out = g_srcbuffer;
                 srcdata.input_frames = nsamples;
                 srcdata.output_frames = size/4;
-                srcdata.src_ratio = (double)sdl_player_freq/samplerate;
+                srcdata.src_ratio = (double)p_get_rate ()/samplerate;
                 srcdata.end_of_input = 0;
     //            src_set_ratio (src, srcdata.src_ratio);
                 src_process (src, &srcdata);

@@ -25,4 +25,7 @@ psdl_unpause (void);
 void
 psdl_set_volume (float vol);
 
+int
+psdl_get_rate (void);
+
 #endif // __PSDL_H

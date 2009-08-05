@@ -14,7 +14,7 @@
 #include "interface.h"
 #include "support.h"
 #include "playlist.h"
-#include "psdl.h"
+#include "playback.h"
 #include "codec.h"
 #include "common.h"
 #include "messagepump.h"
@@ -461,9 +461,9 @@ gtkps_scroll (int newscroll) {
 
 void
 gtkps_playsong (void) {
-    if (psdl_ispaused ()) {
+    if (p_ispaused ()) {
         printf ("unpause\n");
-        psdl_unpause ();
+        p_unpause ();
     }
     else if (playlist_current_ptr) {
         printf ("restart\n");
@@ -573,16 +573,16 @@ gtkps_randomsong (void) {
 
 void
 gtkps_stopsong (void) {
-    psdl_stop ();
+    p_stop ();
 }
 
 void
 gtkps_pausesong (void) {
-    if (psdl_ispaused ()) {
-        psdl_unpause ();
+    if (p_ispaused ()) {
+        p_unpause ();
     }
     else {
-        psdl_pause ();
+        p_pause ();
     }
 }
 
@@ -620,7 +620,7 @@ gtkps_update_songinfo (void) {
     }
     char sbtext_new[512] = "-";
     int songpos = 0;
-    if (psdl_ispaused ()) {
+    if (p_ispaused ()) {
         strcpy (sbtext_new, "Paused");
         songpos = 0;
     }

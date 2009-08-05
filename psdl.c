@@ -4,7 +4,7 @@
 #include "common.h"
 
 static int sdl_player_numsamples = 4096;
-int sdl_player_freq;
+static int sdl_player_freq;
 static SDL_AudioSpec spec;
 static void psdl_callback (void *userdata, Uint8 *stream, int len);
 static float sdl_volume = 1;
@@ -20,6 +20,7 @@ le_int16 (int16_t in, char *out) {
     out[0] = pin[1];
 #endif
 }
+
 int
 psdl_init (void) {
 	SDL_AudioSpec obt;
@@ -92,6 +93,11 @@ psdl_unpause (void) {
 void
 psdl_set_volume (float vol) {
     sdl_volume = vol;
+}
+
+int
+psdl_get_rate (void) {
+    return sdl_player_freq;
 }
 
 static void

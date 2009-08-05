@@ -5,16 +5,16 @@
 #include "codec.h"
 #include "cgme.h"
 #include "playlist.h"
+#include "playback.h"
 
 static Music_Emu *emu;
 static int reallength;
 static int nzerosamples;
-extern int sdl_player_freq; // hack!
 static uint32_t cgme_voicemask = 0;
 
 int
 cgme_init (const char *fname, int track, float start, float end) {
-    if (gme_open_file (fname, &emu, sdl_player_freq)) {
+    if (gme_open_file (fname, &emu, p_get_rate ())) {
         return -1;
     }
     gme_mute_voices (emu, cgme_voicemask);
@@ -23,7 +23,7 @@ cgme_init (const char *fname, int track, float start, float end) {
     gme_track_info (emu, &inf, track);
     cgme.info.bitsPerSample = 16;
     cgme.info.channels = 2;
-    cgme.info.samplesPerSecond = sdl_player_freq;
+    cgme.info.samplesPerSecond = p_get_rate ();
     reallength = inf.length; 
     nzerosamples = 0;
     if (inf.length == -1) {

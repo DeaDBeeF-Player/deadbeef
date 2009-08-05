@@ -10,6 +10,7 @@ extern "C" {
 #include "csid.h"
 #include "md5.h"
 #include "common.h"
+#include "playback.h"
 }
 
 static inline void
@@ -28,7 +29,6 @@ static sidplay2 *sidplay;
 static ReSIDBuilder *resid;
 static SidTune *tune;
 static uint32_t csid_voicemask = 0;
-extern int sdl_player_freq; // hack!
 // SLDB support costs ~1M!!!
 // current hvsc sldb size is ~35k songs
 #define SLDB_MAX_SONGS 40000
@@ -218,7 +218,7 @@ csid_init (const char *fname, int track, float start, float end) {
     resid->create (sidplay->info ().maxsids);
 //    resid->create (1);
     resid->filter (true);
-    resid->sampling (sdl_player_freq);
+    resid->sampling (p_get_rate ());
     tune = new SidTune (fname);
     // calc md5
     uint8_t sig[16];
@@ -247,7 +247,7 @@ csid_init (const char *fname, int track, float start, float end) {
     csid.info.channels = tune->isStereo () ? 2 : 1;
     sid2_config_t conf;
     conf = sidplay->config ();
-    conf.frequency = sdl_player_freq;
+    conf.frequency = p_get_rate ();
     conf.precision = 16;
     conf.playback = csid.info.channels == 2 ? sid2_stereo : sid2_mono;
     conf.sidEmulation = resid;
@@ -255,7 +255,7 @@ csid_init (const char *fname, int track, float start, float end) {
     sidplay->config (conf);
     sidplay->load (tune);
     csid.info.bitsPerSample = 16;
-    csid.info.samplesPerSecond = sdl_player_freq;
+    csid.info.samplesPerSecond = p_get_rate ();
     csid.info.position = 0;
     float length = 120;
     sldb_load(sldb_fname);

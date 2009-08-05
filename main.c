@@ -4,7 +4,7 @@
 #include "interface.h"
 #include "support.h"
 #include "playlist.h"
-#include "psdl.h"
+#include "playback.h"
 #include "unistd.h"
 #include "threading.h"
 #include "messagepump.h"
@@ -19,7 +19,7 @@ int psdl_terminate = 0;
 
 void
 psdl_thread (uintptr_t ctx) {
-    psdl_play ();
+    p_play ();
     while (!psdl_terminate) {
         uint32_t msg;
         uintptr_t ctx;
@@ -73,11 +73,11 @@ psdl_thread (uintptr_t ctx) {
                 break;
             case M_SONGSEEK:
                 if (playlist_current.codec) {
-                    psdl_pause ();
+                    p_pause ();
                     codec_lock ();
                     playlist_current.codec->seek (p1 / 1000.f);
                     codec_unlock ();
-                    psdl_unpause ();
+                    p_unpause ();
                 }
                 break;
             }
@@ -93,7 +93,7 @@ main (int argc, char *argv[]) {
     messagepump_init ();
     codec_init_locking ();
     streamer_init ();
-    psdl_init ();
+    p_init ();
     thread_start (psdl_thread, 0);
 
     g_thread_init (NULL);
@@ -108,7 +108,7 @@ main (int argc, char *argv[]) {
     gdk_threads_leave ();
     messagepump_free ();
     psdl_terminate = 1;
-    psdl_free ();
+    p_free ();
     streamer_free ();
     codec_free_locking ();
     ps_free ();
