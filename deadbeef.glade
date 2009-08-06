@@ -613,9 +613,11 @@
 		<widget class="GtkDrawingArea" id="header">
 		  <property name="height_request">24</property>
 		  <property name="visible">True</property>
+		  <property name="events">GDK_POINTER_MOTION_MASK</property>
 		  <signal name="expose_event" handler="on_header_expose_event" last_modification_time="Thu, 06 Aug 2009 14:54:29 GMT"/>
 		  <signal name="configure_event" handler="on_header_configure_event" last_modification_time="Thu, 06 Aug 2009 14:54:33 GMT"/>
 		  <signal name="realize" handler="on_header_realize" last_modification_time="Thu, 06 Aug 2009 14:54:41 GMT"/>
+		  <signal name="motion_notify_event" handler="on_header_motion_notify_event" last_modification_time="Thu, 06 Aug 2009 16:33:54 GMT"/>
 		</widget>
 		<packing>
 		  <property name="padding">0</property>

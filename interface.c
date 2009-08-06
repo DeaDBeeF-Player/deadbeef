@@ -331,6 +331,7 @@ create_mainwin (void)
   gtk_widget_show (header);
   gtk_box_pack_start (GTK_BOX (vbox3), header, FALSE, TRUE, 0);
   gtk_widget_set_size_request (header, -1, 24);
+  gtk_widget_set_events (header, GDK_POINTER_MOTION_MASK);
 
   playlist = gtk_drawing_area_new ();
   gtk_widget_show (playlist);
@@ -428,6 +429,9 @@ create_mainwin (void)
                     NULL);
   g_signal_connect ((gpointer) header, "realize",
                     G_CALLBACK (on_header_realize),
+                    NULL);
+  g_signal_connect ((gpointer) header, "motion_notify_event",
+                    G_CALLBACK (on_header_motion_notify_event),
                     NULL);
   g_signal_connect ((gpointer) playlist, "configure_event",
                     G_CALLBACK (on_playlist_configure_event),

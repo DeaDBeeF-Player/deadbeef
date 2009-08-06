@@ -218,3 +218,8 @@ on_header_configure_event              (GtkWidget       *widget,
 void
 on_header_realize                      (GtkWidget       *widget,
                                         gpointer         user_data);
+
+gboolean
+on_header_motion_notify_event          (GtkWidget       *widget,
+                                        GdkEventMotion  *event,
+                                        gpointer         user_data);

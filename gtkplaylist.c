@@ -1136,9 +1136,33 @@ on_header_configure_event              (GtkWidget       *widget,
 }
 
 
+GdkCursor* cursor_sz;
+
 void
 on_header_realize                      (GtkWidget       *widget,
                                         gpointer         user_data)
 {
+    // create cursor for sizing headers
+    cursor_sz = gdk_cursor_new (GDK_SB_H_DOUBLE_ARROW);
+}
+
+gboolean
+on_header_motion_notify_event          (GtkWidget       *widget,
+                                        GdkEventMotion  *event,
+                                        gpointer         user_data)
+{
+    int x = 0;
+    for (int i = 0; i < ncolumns; i++) {
+        int w = colwidths[i];
+        if (event->x >= x + w && event->x <= x+w+2) {
+            gdk_window_set_cursor (widget->window, cursor_sz);
+            break;
+        }
+        else {
+            gdk_window_set_cursor (widget->window, NULL);
+        }
+        x += w + 2;
+    }
+    return FALSE;
 }
 
