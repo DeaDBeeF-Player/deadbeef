@@ -24,6 +24,8 @@ static int bufsize = 4096*4;
 static float volume = 1;
 static int alsa_terminate = 0;
 static int alsa_rate = 48000;
+static int state = 0; // 0 = stopped, 1 = playing, 2 = pause
+static uintptr_t mutex;
 
 static void
 palsa_callback (char *stream, int len);
@@ -36,6 +38,7 @@ palsa_init (void) {
     int err;
     snd_pcm_hw_params_t *hw_params;
     snd_pcm_sw_params_t *sw_params;
+    state = 0;
 
     if ((err = snd_pcm_open (&audio, "default", SND_PCM_STREAM_PLAYBACK, 0))) {
         fprintf (stderr, "could not open audio device (%s)\n",
@@ -134,8 +137,10 @@ palsa_init (void) {
         printf ("AUDIO: Unable to allocate memory for sample buffers.\n");
         goto open_error;
     }
+    snd_pcm_pause (audio, 1); // put into STOPPED state
 
     alsa_terminate = 0;
+    mutex = mutex_create ();
     thread_start (palsa_thread, 0);
 
     return 0;
@@ -152,44 +157,70 @@ open_error:
 void
 palsa_free (void) {
     if (audio) {
+        mutex_lock (mutex);
         alsa_terminate = 1;
-        usleep (1000);
         snd_pcm_close(audio);
         audio = NULL;
         if (samplebuffer) {
             free (samplebuffer);
             samplebuffer = NULL;
         }
+        mutex_unlock (mutex);
+        mutex_free (mutex);
     }
 }
 
 int
 palsa_play (void) {
     // start updating thread
+    int err;
+    if (state == 0) {
+#if 0
+        if ((err = snd_pcm_drop (audio)) < 0) {
+            fprintf (stderr, "cannot drop audio interface(%s)\n",
+                    snd_strerror (err));
+        }
+#endif
+        if ((err = snd_pcm_prepare (audio)) < 0) {
+            fprintf (stderr, "cannot prepare audio interface for use (%s)\n",
+                    snd_strerror (err));
+        }
+        streamer_reset (1);
+    }
+    if (state != 1) {
+        state = 1;
+        snd_pcm_pause (audio, 0);
+    }
     return 0;
 }
 
 int
 palsa_stop (void) {
     // set stop state
+    state = 0;
+    snd_pcm_pause (audio, 1);
     return 0;
 }
 
 int
 palsa_ispaused (void) {
     // return pause state
-    return 0;
+    return (state == 2);
 }
 
 int
 palsa_pause (void) {
     // set pause state
+    state = 2;
+    snd_pcm_pause (audio, 1);
     return 0;
 }
 
 int
 palsa_unpause (void) {
     // unset pause state
+    state = 1;
+    snd_pcm_pause (audio, 0);
     return 0;
 }
 
@@ -206,14 +237,24 @@ palsa_get_rate (void) {
 static void
 palsa_thread (uintptr_t context) {
     int err;
-    while (!alsa_terminate) {
+    for (;;) {
+        mutex_lock (mutex);
+        if (alsa_terminate) {
+            mutex_unlock (mutex);
+            break;
+        }
         /* wait till the interface is ready for data, or 1 second
            has elapsed.
          */
+//        if (state != 1) {
+//            usleep (1000);
+//            continue;
+//        }
 
         if ((err = snd_pcm_wait (audio, 1000)) < 0) {
-            fprintf (stderr, "poll failed (%s)\n", strerror (errno));
-            break;
+            mutex_unlock (mutex);
+            fprintf (stderr, "alsa poll failed (%s)\n", strerror (errno));
+            continue;
         }	           
 
         /* find out how much space is available for playback data */
@@ -221,12 +262,14 @@ palsa_thread (uintptr_t context) {
         snd_pcm_sframes_t frames_to_deliver;
         if ((frames_to_deliver = snd_pcm_avail_update (audio)) < 0) {
             if (frames_to_deliver == -EPIPE) {
+                mutex_unlock (mutex);
                 fprintf (stderr, "an xrun occured\n");
-                break;
+                continue;
             } else {
+                mutex_unlock (mutex);
                 fprintf (stderr, "unknown ALSA avail update return value (%d)\n", 
                         frames_to_deliver);
-                break;
+                continue;
             }
         }
 
@@ -238,8 +281,9 @@ palsa_thread (uintptr_t context) {
         if ((err = snd_pcm_writei (audio, buf, frames_to_deliver)) < 0) {
             fprintf (stderr, "write failed (%s)\n", snd_strerror (err));
         }
+        mutex_unlock (mutex);
+        usleep (0); // let other threads gain some spin (avoid deadlock)
     }
-    alsa_terminate = 0;
 }
 
 static void

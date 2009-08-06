@@ -676,6 +676,8 @@ ps_set_current (playItem_t *it) {
     int ret = 0;
     int from = ps_get_idx_of (playlist_current_ptr);
     int to = ps_get_idx_of (it);
+#if 0
+    // this produces some kind of bug in the beginning of track
     if (it == playlist_current_ptr) {
         if (it && it->codec) {
             codec_lock ();
@@ -684,6 +686,7 @@ ps_set_current (playItem_t *it) {
         }
         return ret;
     }
+#endif
     codec_lock ();
     if (playlist_current_ptr && playlist_current_ptr->codec) {
         playlist_current_ptr->codec->free ();
@@ -701,7 +704,7 @@ ps_set_current (playItem_t *it) {
         }
     }
     if (playlist_current_ptr) {
-        streamer_reset ();
+        streamer_reset (0);
     }
     codec_unlock ();
     messagepump_push (M_SONGCHANGED, 0, from, to);

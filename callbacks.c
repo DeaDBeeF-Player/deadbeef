@@ -93,7 +93,7 @@ on_playlist_realize                    (GtkWidget       *widget,
     // setup drag-drop target
     gtk_drag_dest_set (widget, GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_DROP, &entry, 1, GDK_ACTION_COPY | GDK_ACTION_MOVE);
     gtk_drag_dest_add_uri_targets (widget);
-    gtk_drag_dest_set_track_motion (widget, TRUE);
+//    gtk_drag_dest_set_track_motion (widget, TRUE);
 }
 
 
@@ -452,7 +452,7 @@ on_playlist_drag_failed                (GtkWidget       *widget,
                                         GtkDragResult    arg2,
                                         gpointer         user_data)
 {
-    return FALSE;
+    return TRUE;
 }
 
 

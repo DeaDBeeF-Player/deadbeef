@@ -50,6 +50,7 @@ streamer_thread (uintptr_t ctx) {
                     usleep (3000);
                 }
             }
+            p_play ();
         }
         streamer_lock ();
         if (streambuffer_fill < STREAM_BUFFER_SIZE) {
@@ -93,8 +94,11 @@ streamer_free (void) {
 }
 
 void
-streamer_reset (void) { // must be called when current song changes by external reasons
+streamer_reset (int full) { // must be called when current song changes by external reasons
     codecleft = 0;
+    if (full) {
+        streambuffer_fill = 0;
+    }
     src_reset (src);
 }
 

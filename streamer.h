@@ -11,7 +11,7 @@ int
 streamer_read (char *bytes, int size);
 
 void
-streamer_reset (void);
+streamer_reset (int full);
 
 void
 streamer_lock (void);
