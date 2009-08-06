@@ -84,6 +84,8 @@ create_mainwin (void)
   GtkWidget *handlebox4;
   GtkWidget *playpos;
   GtkWidget *_;
+  GtkWidget *vbox3;
+  GtkWidget *header;
   GtkWidget *playlist;
   GtkWidget *playscroll;
   GtkWidget *statusbar;
@@ -343,9 +345,18 @@ create_mainwin (void)
   gtk_box_pack_start (GTK_BOX (vbox1), _, TRUE, TRUE, 0);
   gtk_container_set_border_width (GTK_CONTAINER (_), 3);
 
+  vbox3 = gtk_vbox_new (FALSE, 0);
+  gtk_widget_show (vbox3);
+  gtk_box_pack_start (GTK_BOX (_), vbox3, TRUE, TRUE, 0);
+
+  header = gtk_drawing_area_new ();
+  gtk_widget_show (header);
+  gtk_box_pack_start (GTK_BOX (vbox3), header, FALSE, TRUE, 0);
+  gtk_widget_set_size_request (header, -1, 24);
+
   playlist = gtk_drawing_area_new ();
   gtk_widget_show (playlist);
-  gtk_box_pack_start (GTK_BOX (_), playlist, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox3), playlist, TRUE, TRUE, 0);
   gtk_widget_set_events (playlist, GDK_EXPOSURE_MASK | GDK_POINTER_MOTION_MASK | GDK_BUTTON_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK);
 
   playscroll = gtk_vscrollbar_new (GTK_ADJUSTMENT (gtk_adjustment_new (0, 0, 1, 1, 0, 0)));
@@ -430,6 +441,15 @@ create_mainwin (void)
                     NULL);
   g_signal_connect ((gpointer) playpos, "value_changed",
                     G_CALLBACK (on_playpos_value_changed),
+                    NULL);
+  g_signal_connect ((gpointer) header, "expose_event",
+                    G_CALLBACK (on_header_expose_event),
+                    NULL);
+  g_signal_connect ((gpointer) header, "configure_event",
+                    G_CALLBACK (on_header_configure_event),
+                    NULL);
+  g_signal_connect ((gpointer) header, "realize",
+                    G_CALLBACK (on_header_realize),
                     NULL);
   g_signal_connect ((gpointer) playlist, "configure_event",
                     G_CALLBACK (on_playlist_configure_event),
@@ -539,6 +559,8 @@ create_mainwin (void)
   GLADE_HOOKUP_OBJECT (mainwin, handlebox4, "handlebox4");
   GLADE_HOOKUP_OBJECT (mainwin, playpos, "playpos");
   GLADE_HOOKUP_OBJECT (mainwin, _, "_");
+  GLADE_HOOKUP_OBJECT (mainwin, vbox3, "vbox3");
+  GLADE_HOOKUP_OBJECT (mainwin, header, "header");
   GLADE_HOOKUP_OBJECT (mainwin, playlist, "playlist");
   GLADE_HOOKUP_OBJECT (mainwin, playscroll, "playscroll");
   GLADE_HOOKUP_OBJECT (mainwin, statusbar, "statusbar");

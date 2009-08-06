@@ -30,6 +30,64 @@ static double playlist_clicktime = 0;
 static double ps_lastpos[2];
 static int shift_sel_anchor = -1;
 
+#define ncolumns 5
+#define colname_max 100
+
+int refit_header = 1;
+
+const char *colnames[ncolumns] = {
+    "Playing Status",
+    "Album / Title",
+    "Track №",
+    "Title / Track Artist",
+    "Duration"
+};
+char colnames_fitted[ncolumns][colname_max];
+
+int colwidths[] = {
+    50, 200, 50, 200, 50
+};
+
+int
+fit_text (cairo_t *cr, char *out, int len, const char *in, int width) {
+    int l = strlen (in);
+    len--;
+    l = min (len, l);
+    strncpy (out, in, l);
+    out[l] = 0;
+    int w = 0;
+
+    char *p = &out[l-1];
+    p = g_utf8_find_prev_char (out, p);
+    int processed = 0;
+    for (;;) {
+        cairo_text_extents_t e;
+        cairo_text_extents (cr, out, &e);
+        w = e.width;// + e.x_bearing + e.x_advance;
+        if (e.width <= width && (processed == 0 || processed >= 3)) {
+            break;
+        }
+        char *prev = g_utf8_find_prev_char (out, p);
+
+        if (!prev) {
+            break;
+        }
+        int i;
+        for (i = 0; i < p-prev; i++) {
+            prev[i] = '.';
+        }
+        processed += p-prev;
+        p = prev;
+        if (processed >= 3) {
+            for (int i = 0; i < 3; i++) {
+                p[i] = '.';
+            }
+            p[3] = 0;
+        }
+    }
+    return w;
+}
+
 static void
 text_draw (cairo_t *cr, int x, int y, const char *text) {
     cairo_move_to (cr, x, y+rowheight-3);
@@ -142,10 +200,37 @@ draw_ps_row (GdkDrawable *drawable, cairo_t *cr, int row, playItem_t *it) {
     else {
         cairo_set_source_rgb (cr, 0xf4/255.f, 0x7e/255.f, 0x46/255.f);
     }
+    cairo_set_font_size (cr, rowheight-4);
+    // draw as columns
+    const char *columns[ncolumns] = {
+        "",
+        ps_find_meta (it, "artist"),
+        ps_find_meta (it, "track"),
+        ps_find_meta (it, "title"),
+        "0:00"
+    };
+    int x = 0;
+#if 1
+    for (int i = 0; i < ncolumns; i++) {
+        char str[512];
+        if (i > 0) {
+            int w = fit_text (cr, str, 512, columns[i], colwidths[i]-6);
+//            printf ("draw %s -> %s\n", columns[i], str);
+            if (i == 2) {
+                text_draw (cr, x + colwidths[i] - w - 3, row * rowheight - scrollpos * rowheight, str);
+            }
+            else {
+                text_draw (cr, x + 3, row * rowheight - scrollpos * rowheight, str);
+            }
+        }
+        x += colwidths[i] + 2;
+    }
+#endif
+#if 0
     char dname[512];
     ps_format_item_display_name (it, dname, 512);
-    cairo_set_font_size (cr, rowheight-4);
     text_draw (cr, rowheight, row * rowheight - scrollpos * rowheight, dname);
+#endif
 }
 
 
@@ -995,3 +1080,65 @@ gtkps_handle_fm_drag_drop (int drop_y, void *ptr, int length) {
     draw_playlist (widget, 0, 0, widget->allocation.width, widget->allocation.height);
     gtkps_expose (widget, 0, 0, widget->allocation.width, widget->allocation.height);
 }
+
+gboolean
+on_header_expose_event                 (GtkWidget       *widget,
+                                        GdkEventExpose  *event,
+                                        gpointer         user_data)
+{
+    int x = 0;
+    int w = 100;
+    int h = widget->allocation.height;
+    const char *detail = "toolbar";
+
+    for (int i = 0; i < ncolumns; i++) {
+        if (x >= widget->allocation.width) {
+            break;
+        }
+        w = colwidths[i];
+        gtk_paint_box (widget->style, widget->window, GTK_STATE_NORMAL, GTK_SHADOW_OUT, NULL, NULL, detail, x, 0, w, h);
+        gtk_paint_vline (widget->style, widget->window, GTK_STATE_NORMAL, NULL, NULL, NULL, 0, h, x+w);
+        x += w + 2;
+    }
+    if (x < widget->allocation.width) {
+        gtk_paint_box (widget->style, widget->window, GTK_STATE_INSENSITIVE, GTK_SHADOW_OUT, NULL, NULL, detail, x, 0, widget->allocation.width-x, h);
+    }
+    cairo_t *cr;
+    cr = gdk_cairo_create (widget->window);
+    if (!cr) {
+        return FALSE;
+    }
+    x = 0;
+    for (int i = 0; i < ncolumns; i++) {
+        if (x >= widget->allocation.width) {
+            break;
+        }
+        w = colwidths[i];
+        cairo_move_to (cr, x + 5, 15);
+        if (refit_header) {
+            fit_text (cr, colnames_fitted[i], colname_max, colnames[i], colwidths[i]-10);
+        }
+        cairo_show_text (cr, colnames_fitted[i]);
+        x += w + 2;
+    }
+    refit_header = 0;
+    cairo_destroy (cr);
+    return FALSE;
+}
+
+
+gboolean
+on_header_configure_event              (GtkWidget       *widget,
+                                        GdkEventConfigure *event,
+                                        gpointer         user_data)
+{
+    return FALSE;
+}
+
+
+void
+on_header_realize                      (GtkWidget       *widget,
+                                        gpointer         user_data)
+{
+}
+

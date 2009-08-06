@@ -642,25 +642,53 @@
 	  <property name="spacing">0</property>
 
 	  <child>
-	    <widget class="GtkDrawingArea" id="playlist">
+	    <widget class="GtkVBox" id="vbox3">
 	      <property name="visible">True</property>
-	      <property name="events">GDK_EXPOSURE_MASK | GDK_POINTER_MOTION_MASK | GDK_BUTTON_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK</property>
-	      <signal name="configure_event" handler="on_playlist_configure_event" last_modification_time="Sat, 04 Jul 2009 00:03:23 GMT"/>
-	      <signal name="expose_event" handler="on_playlist_expose_event" last_modification_time="Sat, 04 Jul 2009 00:03:29 GMT"/>
-	      <signal name="realize" handler="on_playlist_realize" last_modification_time="Sat, 04 Jul 2009 00:03:36 GMT"/>
-	      <signal name="button_press_event" handler="on_playlist_button_press_event" last_modification_time="Sat, 04 Jul 2009 00:41:38 GMT"/>
-	      <signal name="scroll_event" handler="on_playlist_scroll_event" last_modification_time="Sat, 04 Jul 2009 17:16:21 GMT"/>
-	      <signal name="drag_begin" handler="on_playlist_drag_begin" last_modification_time="Fri, 31 Jul 2009 10:36:23 GMT"/>
-	      <signal name="drag_motion" handler="on_playlist_drag_motion" last_modification_time="Fri, 31 Jul 2009 10:36:30 GMT"/>
-	      <signal name="drag_drop" handler="on_playlist_drag_drop" last_modification_time="Fri, 31 Jul 2009 10:36:39 GMT"/>
-	      <signal name="drag_data_get" handler="on_playlist_drag_data_get" last_modification_time="Fri, 31 Jul 2009 10:36:43 GMT"/>
-	      <signal name="drag_end" handler="on_playlist_drag_end" last_modification_time="Fri, 31 Jul 2009 11:41:00 GMT"/>
-	      <signal name="drag_failed" handler="on_playlist_drag_failed" last_modification_time="Fri, 31 Jul 2009 11:41:05 GMT"/>
-	      <signal name="drag_leave" handler="on_playlist_drag_leave" last_modification_time="Fri, 31 Jul 2009 11:41:11 GMT"/>
-	      <signal name="button_release_event" handler="on_playlist_button_release_event" last_modification_time="Fri, 31 Jul 2009 12:20:56 GMT"/>
-	      <signal name="motion_notify_event" handler="on_playlist_motion_notify_event" last_modification_time="Fri, 31 Jul 2009 12:23:49 GMT"/>
-	      <signal name="drag_data_received" handler="on_playlist_drag_data_received" last_modification_time="Mon, 03 Aug 2009 12:07:39 GMT"/>
-	      <signal name="drag_data_delete" handler="on_playlist_drag_data_delete" last_modification_time="Mon, 03 Aug 2009 12:35:47 GMT"/>
+	      <property name="homogeneous">False</property>
+	      <property name="spacing">0</property>
+
+	      <child>
+		<widget class="GtkDrawingArea" id="header">
+		  <property name="height_request">24</property>
+		  <property name="visible">True</property>
+		  <signal name="expose_event" handler="on_header_expose_event" last_modification_time="Thu, 06 Aug 2009 14:54:29 GMT"/>
+		  <signal name="configure_event" handler="on_header_configure_event" last_modification_time="Thu, 06 Aug 2009 14:54:33 GMT"/>
+		  <signal name="realize" handler="on_header_realize" last_modification_time="Thu, 06 Aug 2009 14:54:41 GMT"/>
+		</widget>
+		<packing>
+		  <property name="padding">0</property>
+		  <property name="expand">False</property>
+		  <property name="fill">True</property>
+		</packing>
+	      </child>
+
+	      <child>
+		<widget class="GtkDrawingArea" id="playlist">
+		  <property name="visible">True</property>
+		  <property name="events">GDK_EXPOSURE_MASK | GDK_POINTER_MOTION_MASK | GDK_BUTTON_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK</property>
+		  <signal name="configure_event" handler="on_playlist_configure_event" last_modification_time="Sat, 04 Jul 2009 00:03:23 GMT"/>
+		  <signal name="expose_event" handler="on_playlist_expose_event" last_modification_time="Sat, 04 Jul 2009 00:03:29 GMT"/>
+		  <signal name="realize" handler="on_playlist_realize" last_modification_time="Sat, 04 Jul 2009 00:03:36 GMT"/>
+		  <signal name="button_press_event" handler="on_playlist_button_press_event" last_modification_time="Sat, 04 Jul 2009 00:41:38 GMT"/>
+		  <signal name="scroll_event" handler="on_playlist_scroll_event" last_modification_time="Sat, 04 Jul 2009 17:16:21 GMT"/>
+		  <signal name="drag_begin" handler="on_playlist_drag_begin" last_modification_time="Fri, 31 Jul 2009 10:36:23 GMT"/>
+		  <signal name="drag_motion" handler="on_playlist_drag_motion" last_modification_time="Fri, 31 Jul 2009 10:36:30 GMT"/>
+		  <signal name="drag_drop" handler="on_playlist_drag_drop" last_modification_time="Fri, 31 Jul 2009 10:36:39 GMT"/>
+		  <signal name="drag_data_get" handler="on_playlist_drag_data_get" last_modification_time="Fri, 31 Jul 2009 10:36:43 GMT"/>
+		  <signal name="drag_end" handler="on_playlist_drag_end" last_modification_time="Fri, 31 Jul 2009 11:41:00 GMT"/>
+		  <signal name="drag_failed" handler="on_playlist_drag_failed" last_modification_time="Fri, 31 Jul 2009 11:41:05 GMT"/>
+		  <signal name="drag_leave" handler="on_playlist_drag_leave" last_modification_time="Fri, 31 Jul 2009 11:41:11 GMT"/>
+		  <signal name="button_release_event" handler="on_playlist_button_release_event" last_modification_time="Fri, 31 Jul 2009 12:20:56 GMT"/>
+		  <signal name="motion_notify_event" handler="on_playlist_motion_notify_event" last_modification_time="Fri, 31 Jul 2009 12:23:49 GMT"/>
+		  <signal name="drag_data_received" handler="on_playlist_drag_data_received" last_modification_time="Mon, 03 Aug 2009 12:07:39 GMT"/>
+		  <signal name="drag_data_delete" handler="on_playlist_drag_data_delete" last_modification_time="Mon, 03 Aug 2009 12:35:47 GMT"/>
+		</widget>
+		<packing>
+		  <property name="padding">0</property>
+		  <property name="expand">True</property>
+		  <property name="fill">True</property>
+		</packing>
+	      </child>
 	    </widget>
 	    <packing>
 	      <property name="padding">0</property>

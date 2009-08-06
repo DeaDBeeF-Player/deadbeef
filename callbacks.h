@@ -204,3 +204,17 @@ void
 on_playlist_drag_data_delete           (GtkWidget       *widget,
                                         GdkDragContext  *drag_context,
                                         gpointer         user_data);
+
+gboolean
+on_header_expose_event                 (GtkWidget       *widget,
+                                        GdkEventExpose  *event,
+                                        gpointer         user_data);
+
+gboolean
+on_header_configure_event              (GtkWidget       *widget,
+                                        GdkEventConfigure *event,
+                                        gpointer         user_data);
+
+void
+on_header_realize                      (GtkWidget       *widget,
+                                        gpointer         user_data);

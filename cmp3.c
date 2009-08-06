@@ -586,6 +586,7 @@ static const char *
 convstr (const char* str, int sz) {
     static char out[2048];
     const char *enc = "iso8859-1";
+    char *ret = out;
 
     // hack to add limited cp1251 recoding support
 
@@ -624,8 +625,10 @@ convstr (const char* str, int sz) {
         memset (out, 0, sizeof (out));
         size_t res = iconv (cd, &pin, &inbytesleft, &pout, &outbytesleft);
         iconv_close (cd);
+        ret = out + 3;
     }
-    return out;
+    //printf ("decoded %s\n", out+3);
+    return ret;
 }
 
 const char *convstr_id3v1 (const char* str, int sz) {
