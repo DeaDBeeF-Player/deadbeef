@@ -391,15 +391,17 @@ gtkps_draw_areasel (GtkWidget *widget, int x, int y) {
 void
 gtkps_mousemove (GdkEventMotion *event) {
     if (dragwait) {
-        dragwait = 0;
         GtkWidget *widget = lookup_widget (mainwin, "playlist");
-        GtkTargetEntry entry = {
-            .target = "STRING",
-            .flags = GTK_TARGET_SAME_WIDGET,
-            .info = TARGET_SAMEWIDGET
-        };
-        GtkTargetList *lst = gtk_target_list_new (&entry, 1);
-        gtk_drag_begin (widget, lst, GDK_ACTION_MOVE, TARGET_SAMEWIDGET, (GdkEvent *)event);
+        if (gtk_drag_check_threshold (widget, ps_lastpos[0], event->x, ps_lastpos[1], event->y)) {
+            dragwait = 0;
+            GtkTargetEntry entry = {
+                .target = "STRING",
+                .flags = GTK_TARGET_SAME_WIDGET,
+                .info = TARGET_SAMEWIDGET
+            };
+            GtkTargetList *lst = gtk_target_list_new (&entry, 1);
+            gtk_drag_begin (widget, lst, GDK_ACTION_MOVE, TARGET_SAMEWIDGET, (GdkEvent *)event);
+        }
     }
     else if (areaselect) {
         GtkWidget *widget = lookup_widget (mainwin, "playlist");
