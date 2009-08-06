@@ -32,7 +32,6 @@ create_mainwin (void)
   GtkWidget *mainwin;
   GtkWidget *vbox1;
   GtkWidget *hbox2;
-  GtkWidget *handlebox1;
   GtkWidget *menubar1;
   GtkWidget *menuitem1;
   GtkWidget *menuitem1_menu;
@@ -55,7 +54,6 @@ create_mainwin (void)
   GtkWidget *menuitem4;
   GtkWidget *menuitem4_menu;
   GtkWidget *about1;
-  GtkWidget *handlebox2;
   GtkWidget *hbox3;
   GtkWidget *stopbtn;
   GtkWidget *image1;
@@ -72,7 +70,6 @@ create_mainwin (void)
   GtkWidget *hbox4;
   GtkWidget *image6;
   GtkWidget *label3;
-  GtkWidget *handlebox3;
   GtkWidget *vbox2;
   GtkWidget *volume;
   GtkWidget *hbox5;
@@ -81,7 +78,6 @@ create_mainwin (void)
   GtkWidget *voice3;
   GtkWidget *voice4;
   GtkWidget *voice5;
-  GtkWidget *handlebox4;
   GtkWidget *playpos;
   GtkWidget *_;
   GtkWidget *vbox3;
@@ -106,13 +102,9 @@ create_mainwin (void)
   gtk_widget_show (hbox2);
   gtk_box_pack_start (GTK_BOX (vbox1), hbox2, FALSE, FALSE, 0);
 
-  handlebox1 = gtk_handle_box_new ();
-  gtk_widget_show (handlebox1);
-  gtk_box_pack_start (GTK_BOX (hbox2), handlebox1, TRUE, TRUE, 0);
-
   menubar1 = gtk_menu_bar_new ();
   gtk_widget_show (menubar1);
-  gtk_container_add (GTK_CONTAINER (handlebox1), menubar1);
+  gtk_box_pack_start (GTK_BOX (hbox2), menubar1, TRUE, TRUE, 0);
 
   menuitem1 = gtk_menu_item_new_with_mnemonic ("_File");
   gtk_widget_show (menuitem1);
@@ -197,13 +189,9 @@ create_mainwin (void)
   gtk_widget_show (about1);
   gtk_container_add (GTK_CONTAINER (menuitem4_menu), about1);
 
-  handlebox2 = gtk_handle_box_new ();
-  gtk_widget_show (handlebox2);
-  gtk_box_pack_start (GTK_BOX (hbox2), handlebox2, FALSE, TRUE, 0);
-
   hbox3 = gtk_hbox_new (FALSE, 0);
   gtk_widget_show (hbox3);
-  gtk_container_add (GTK_CONTAINER (handlebox2), hbox3);
+  gtk_box_pack_start (GTK_BOX (hbox2), hbox3, FALSE, TRUE, 0);
 
   stopbtn = gtk_button_new ();
   gtk_widget_show (stopbtn);
@@ -277,14 +265,9 @@ create_mainwin (void)
   gtk_widget_show (label3);
   gtk_box_pack_start (GTK_BOX (hbox4), label3, FALSE, FALSE, 0);
 
-  handlebox3 = gtk_handle_box_new ();
-  gtk_widget_show (handlebox3);
-  gtk_box_pack_start (GTK_BOX (hbox2), handlebox3, FALSE, TRUE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (handlebox3), 1);
-
   vbox2 = gtk_vbox_new (FALSE, 0);
   gtk_widget_show (vbox2);
-  gtk_container_add (GTK_CONTAINER (handlebox3), vbox2);
+  gtk_box_pack_start (GTK_BOX (hbox2), vbox2, FALSE, TRUE, 0);
 
   volume = gtk_hscale_new (GTK_ADJUSTMENT (gtk_adjustment_new (100, 0, 100, 0, 0, 0)));
   gtk_widget_show (volume);
@@ -327,14 +310,9 @@ create_mainwin (void)
   GTK_WIDGET_UNSET_FLAGS (voice5, GTK_CAN_FOCUS);
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (voice5), TRUE);
 
-  handlebox4 = gtk_handle_box_new ();
-  gtk_widget_show (handlebox4);
-  gtk_box_pack_start (GTK_BOX (hbox2), handlebox4, FALSE, TRUE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (handlebox4), 1);
-
   playpos = gtk_hscale_new (GTK_ADJUSTMENT (gtk_adjustment_new (0, 0, 1000, 0, 0, 0)));
   gtk_widget_show (playpos);
-  gtk_container_add (GTK_CONTAINER (handlebox4), playpos);
+  gtk_box_pack_start (GTK_BOX (hbox2), playpos, FALSE, TRUE, 0);
   gtk_widget_set_size_request (playpos, 200, -1);
   GTK_WIDGET_UNSET_FLAGS (playpos, GTK_CAN_FOCUS);
   gtk_scale_set_draw_value (GTK_SCALE (playpos), FALSE);
@@ -507,7 +485,6 @@ create_mainwin (void)
   GLADE_HOOKUP_OBJECT_NO_REF (mainwin, mainwin, "mainwin");
   GLADE_HOOKUP_OBJECT (mainwin, vbox1, "vbox1");
   GLADE_HOOKUP_OBJECT (mainwin, hbox2, "hbox2");
-  GLADE_HOOKUP_OBJECT (mainwin, handlebox1, "handlebox1");
   GLADE_HOOKUP_OBJECT (mainwin, menubar1, "menubar1");
   GLADE_HOOKUP_OBJECT (mainwin, menuitem1, "menuitem1");
   GLADE_HOOKUP_OBJECT (mainwin, menuitem1_menu, "menuitem1_menu");
@@ -530,7 +507,6 @@ create_mainwin (void)
   GLADE_HOOKUP_OBJECT (mainwin, menuitem4, "menuitem4");
   GLADE_HOOKUP_OBJECT (mainwin, menuitem4_menu, "menuitem4_menu");
   GLADE_HOOKUP_OBJECT (mainwin, about1, "about1");
-  GLADE_HOOKUP_OBJECT (mainwin, handlebox2, "handlebox2");
   GLADE_HOOKUP_OBJECT (mainwin, hbox3, "hbox3");
   GLADE_HOOKUP_OBJECT (mainwin, stopbtn, "stopbtn");
   GLADE_HOOKUP_OBJECT (mainwin, image1, "image1");
@@ -547,7 +523,6 @@ create_mainwin (void)
   GLADE_HOOKUP_OBJECT (mainwin, hbox4, "hbox4");
   GLADE_HOOKUP_OBJECT (mainwin, image6, "image6");
   GLADE_HOOKUP_OBJECT (mainwin, label3, "label3");
-  GLADE_HOOKUP_OBJECT (mainwin, handlebox3, "handlebox3");
   GLADE_HOOKUP_OBJECT (mainwin, vbox2, "vbox2");
   GLADE_HOOKUP_OBJECT (mainwin, volume, "volume");
   GLADE_HOOKUP_OBJECT (mainwin, hbox5, "hbox5");
@@ -556,7 +531,6 @@ create_mainwin (void)
   GLADE_HOOKUP_OBJECT (mainwin, voice3, "voice3");
   GLADE_HOOKUP_OBJECT (mainwin, voice4, "voice4");
   GLADE_HOOKUP_OBJECT (mainwin, voice5, "voice5");
-  GLADE_HOOKUP_OBJECT (mainwin, handlebox4, "handlebox4");
   GLADE_HOOKUP_OBJECT (mainwin, playpos, "playpos");
   GLADE_HOOKUP_OBJECT (mainwin, _, "_");
   GLADE_HOOKUP_OBJECT (mainwin, vbox3, "vbox3");
