@@ -33,7 +33,9 @@ static int shift_sel_anchor = -1;
 #define ncolumns 5
 #define colname_max 100
 
-int refit_header = 1;
+int refit_header[ncolumns] = {
+    1, 1, 1, 1, 1
+};
 
 const char *colnames[ncolumns] = {
     "Playing Status",
@@ -223,7 +225,7 @@ draw_ps_row (GdkDrawable *drawable, cairo_t *cr, int row, playItem_t *it) {
                 text_draw (cr, x + 3, row * rowheight - scrollpos * rowheight, str);
             }
         }
-        x += colwidths[i] + 2;
+        x += colwidths[i];
     }
 #endif
 #if 0
@@ -1081,11 +1083,8 @@ gtkps_handle_fm_drag_drop (int drop_y, void *ptr, int length) {
     gtkps_expose (widget, 0, 0, widget->allocation.width, widget->allocation.height);
 }
 
-gboolean
-on_header_expose_event                 (GtkWidget       *widget,
-                                        GdkEventExpose  *event,
-                                        gpointer         user_data)
-{
+void
+header_draw (GtkWidget *widget) {
     int x = 0;
     int w = 100;
     int h = widget->allocation.height;
@@ -1096,9 +1095,9 @@ on_header_expose_event                 (GtkWidget       *widget,
             break;
         }
         w = colwidths[i];
-        gtk_paint_box (widget->style, widget->window, GTK_STATE_NORMAL, GTK_SHADOW_OUT, NULL, NULL, detail, x, 0, w, h);
-        gtk_paint_vline (widget->style, widget->window, GTK_STATE_NORMAL, NULL, NULL, NULL, 0, h, x+w);
-        x += w + 2;
+        gtk_paint_box (widget->style, widget->window, GTK_STATE_NORMAL, GTK_SHADOW_OUT, NULL, NULL, detail, x, 0, w - 2, h);
+        gtk_paint_vline (widget->style, widget->window, GTK_STATE_NORMAL, NULL, NULL, NULL, 0, h, x+w - 2);
+        x += w;
     }
     if (x < widget->allocation.width) {
         gtk_paint_box (widget->style, widget->window, GTK_STATE_INSENSITIVE, GTK_SHADOW_OUT, NULL, NULL, detail, x, 0, widget->allocation.width-x, h);
@@ -1106,7 +1105,7 @@ on_header_expose_event                 (GtkWidget       *widget,
     cairo_t *cr;
     cr = gdk_cairo_create (widget->window);
     if (!cr) {
-        return FALSE;
+        return;
     }
     x = 0;
     for (int i = 0; i < ncolumns; i++) {
@@ -1115,14 +1114,22 @@ on_header_expose_event                 (GtkWidget       *widget,
         }
         w = colwidths[i];
         cairo_move_to (cr, x + 5, 15);
-        if (refit_header) {
+        if (refit_header[i]) {
             fit_text (cr, colnames_fitted[i], colname_max, colnames[i], colwidths[i]-10);
+            refit_header[i] = 0;
         }
         cairo_show_text (cr, colnames_fitted[i]);
-        x += w + 2;
+        x += w;
     }
-    refit_header = 0;
     cairo_destroy (cr);
+}
+
+gboolean
+on_header_expose_event                 (GtkWidget       *widget,
+                                        GdkEventExpose  *event,
+                                        gpointer         user_data)
+{
+    header_draw (widget);
     return FALSE;
 }
 
@@ -1137,6 +1144,10 @@ on_header_configure_event              (GtkWidget       *widget,
 
 
 GdkCursor* cursor_sz;
+GdkCursor* cursor_drag;
+int header_dragging = -1;
+int header_sizing = -1;
+int header_dragpt[2];
 
 void
 on_header_realize                      (GtkWidget       *widget,
@@ -1144,6 +1155,7 @@ on_header_realize                      (GtkWidget       *widget,
 {
     // create cursor for sizing headers
     cursor_sz = gdk_cursor_new (GDK_SB_H_DOUBLE_ARROW);
+    cursor_drag = gdk_cursor_new (GDK_FLEUR);
 }
 
 gboolean
@@ -1151,17 +1163,89 @@ on_header_motion_notify_event          (GtkWidget       *widget,
                                         GdkEventMotion  *event,
                                         gpointer         user_data)
 {
+    if (header_dragging >= 0) {
+        gdk_window_set_cursor (widget->window, cursor_drag);
+    }
+    else if (header_sizing >= 0) {
+        gdk_window_set_cursor (widget->window, cursor_sz);
+        // get column start pos
+        int x = 0;
+        for (int i = 0; i < header_sizing; i++) {
+            int w = colwidths[i];
+            x += w;
+        }
+        int newx = event->x > x + 20 ? event->x : x + 20;
+        colwidths[header_sizing] = newx - x;
+        //printf ("ev->x = %d, w = %d\n", (int)event->x, newx - x - 2);
+        refit_header[header_sizing] = 1;
+        header_draw (widget);
+        GtkWidget *ps = lookup_widget (mainwin, "playlist");
+        draw_playlist (ps, 0, 0, ps->allocation.width, ps->allocation.height);
+        gtkps_expose (ps, 0, 0, ps->allocation.width, ps->allocation.height);
+    }
+    else {
+        int x = 0;
+        for (int i = 0; i < ncolumns; i++) {
+            int w = colwidths[i];
+            if (event->x >= x + w - 2 && event->x <= x + w) {
+                gdk_window_set_cursor (widget->window, cursor_sz);
+                break;
+            }
+            else {
+                gdk_window_set_cursor (widget->window, NULL);
+            }
+            x += w;
+        }
+    }
+    return FALSE;
+}
+
+gboolean
+on_header_button_press_event           (GtkWidget       *widget,
+                                        GdkEventButton  *event,
+                                        gpointer         user_data)
+{
+    if (event->button == 1) {
+        // start sizing/dragging
+        header_dragging = -1;
+        header_sizing = -1;
+        header_dragpt[0] = event->x;
+        header_dragpt[1] = event->y;
+        int x = 0;
+        for (int i = 0; i < ncolumns; i++) {
+            int w = colwidths[i];
+            if (event->x >= x + w - 2 && event->x <= x + w) {
+                header_sizing = i;
+                header_dragging = -1;
+                break;
+            }
+            else {
+                header_dragging = i;
+            }
+            x += w;
+        }
+    }
+    return FALSE;
+}
+
+gboolean
+on_header_button_release_event         (GtkWidget       *widget,
+                                        GdkEventButton  *event,
+                                        gpointer         user_data)
+{
+    header_dragging = -1;
+    header_sizing = -1;
     int x = 0;
     for (int i = 0; i < ncolumns; i++) {
         int w = colwidths[i];
-        if (event->x >= x + w && event->x <= x+w+2) {
+        if (event->x >= x + w - 2 && event->x <= x + w) {
             gdk_window_set_cursor (widget->window, cursor_sz);
             break;
         }
         else {
             gdk_window_set_cursor (widget->window, NULL);
         }
-        x += w + 2;
+        x += w;
     }
     return FALSE;
 }
