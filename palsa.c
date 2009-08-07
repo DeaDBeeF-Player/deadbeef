@@ -250,14 +250,16 @@ palsa_thread (uintptr_t context) {
 //            usleep (1000);
 //            continue;
 //        }
-        snd_pcm_wait (audio, 1000);
-#if 0
-        if ((err = ) < 0) {
-            mutex_unlock (mutex);
+        ;
+        if ((err = snd_pcm_wait (audio, 1000)) < 0 && state == 1) {
             fprintf (stderr, "alsa poll failed (%s)\n", strerror (errno));
-//            continue;
+            if ((err = snd_pcm_prepare (audio)) < 0) {
+                fprintf (stderr, "cannot prepare audio interface for use (%s)\n",
+                        snd_strerror (err));
+            }
+            mutex_unlock (mutex);
+            continue;
         }	           
-#endif
 
         /* find out how much space is available for playback data */
 

@@ -177,8 +177,41 @@ cflac_init_write_callback (const FLAC__StreamDecoder *decoder, const FLAC__Frame
 
 void
 cflac_init_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMetadata *metadata, void *client_data) {
-    int *psr = (int *)client_data;
-    *psr = metadata->data.stream_info.sample_rate;
+    playItem_t *it = (playItem_t *)client_data;
+    it->tracknum = 0;
+    if (metadata->type == FLAC__METADATA_TYPE_VORBIS_COMMENT) {
+        const FLAC__StreamMetadata_VorbisComment *vc = &metadata->data.vorbis_comment;
+        for (int i = 0; i < vc->num_comments; i++) {
+            const FLAC__StreamMetadata_VorbisComment_Entry *c = &vc->comments[i];
+            if (c->length > 0) {
+                char s[c->length+1];
+                s[c->length] = 0;
+                memcpy (s, c->entry, c->length);
+                if (!strncmp (s, "ARTIST=", 7)) {
+                    ps_add_meta (it, "artist", s + 7);
+                }
+                else if (!strncmp (s, "TITLE=", 6)) {
+                    ps_add_meta (it, "title", s + 6);
+                }
+                else if (!strncmp (s, "ALBUM=", 6)) {
+                    ps_add_meta (it, "album", s + 6);
+                }
+                else if (!strncmp (s, "TRACKNUMBER=", 12)) {
+                    ps_add_meta (it, "track", s + 12);
+                }
+                else if (!strncmp (s, "DATE=", 5)) {
+                    ps_add_meta (it, "date", s + 5);
+                }
+            }
+        }
+
+//    ps_add_meta (it, "artist", performer);
+//    ps_add_meta (it, "album", albumtitle);
+//    ps_add_meta (it, "track", track);
+//    ps_add_meta (it, "title", title);
+    }
+//    int *psr = (int *)client_data;
+//    *psr = metadata->data.stream_info.sample_rate;
 }
 
 playItem_t *
@@ -208,22 +241,9 @@ cflac_insert (playItem_t *after, const char *fname) {
         printf ("FLAC__stream_decoder_new failed\n");
         return NULL;
     }
+    FLAC__stream_decoder_set_metadata_respond_all (decoder);
     FLAC__stream_decoder_set_md5_checking(decoder, 0);
     int samplerate = -1;
-    status = FLAC__stream_decoder_init_file(decoder, fname, cflac_init_write_callback, cflac_init_metadata_callback, cflac_error_callback, &samplerate);
-    if (status != FLAC__STREAM_DECODER_INIT_STATUS_OK) {
-        FLAC__stream_decoder_delete(decoder);
-        return NULL;
-    }
-    if (!FLAC__stream_decoder_process_until_end_of_metadata (decoder)) {
-        FLAC__stream_decoder_delete(decoder);
-        return NULL;
-    }
-    if (samplerate == -1) { // not a FLAC stream
-        FLAC__stream_decoder_delete(decoder);
-        return NULL;
-    }
-    FLAC__stream_decoder_delete(decoder);
     playItem_t *it = malloc (sizeof (playItem_t));
     memset (it, 0, sizeof (playItem_t));
     it->codec = &cflac;
@@ -231,6 +251,24 @@ cflac_insert (playItem_t *after, const char *fname) {
     it->tracknum = 0;
     it->timestart = 0;
     it->timeend = 0;
+    it->tracknum = -1;
+    status = FLAC__stream_decoder_init_file(decoder, fname, cflac_init_write_callback, cflac_init_metadata_callback, cflac_error_callback, it);
+    if (status != FLAC__STREAM_DECODER_INIT_STATUS_OK) {
+        FLAC__stream_decoder_delete(decoder);
+        ps_item_free (it);
+        return NULL;
+    }
+    if (!FLAC__stream_decoder_process_until_end_of_metadata (decoder)) {
+        FLAC__stream_decoder_delete(decoder);
+        ps_item_free (it);
+        return NULL;
+    }
+    if (it->tracknum == -1) { // not a FLAC stream
+        FLAC__stream_decoder_delete(decoder);
+        ps_item_free (it);
+        return NULL;
+    }
+    FLAC__stream_decoder_delete(decoder);
     after = ps_insert_item (after, it);
     return after;
 }

@@ -753,6 +753,7 @@ cmp3_read_id3v1 (playItem_t *it, FILE *fp) {
 
 int
 cmp3_read_id3v2 (playItem_t *it, FILE *fp) {
+    int title_added = 0;
     if (!it || !fp) {
         printf ("bad call to cmp3_read_id3v2!\n");
         return -1;
@@ -872,6 +873,7 @@ cmp3_read_id3v2 (playItem_t *it, FILE *fp) {
                 memcpy (str, readptr, sz);
                 str[sz] = 0;
                 ps_add_meta (it, "title", convstr (str, sz));
+                title_added = 1;
             }
             readptr += sz;
         }
@@ -910,9 +912,13 @@ cmp3_read_id3v2 (playItem_t *it, FILE *fp) {
                 memcpy (str, readptr, sz);
                 str[sz] = 0;
                 ps_add_meta (it, "title", convstr (str, sz));
+                title_added = 1;
             }
             readptr += sz;
         }
+    }
+    if (!title_added) {
+        ps_add_meta (it, "title", NULL);
     }
 
     return 0;

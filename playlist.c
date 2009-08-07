@@ -213,8 +213,10 @@ ps_insert_cue (playItem_t *after, const char *cuename) {
             it->timestart = tstart;
             it->timeend = -1; // will be filled by next read, or by codec
             after = ps_insert_item (after, it);
-//            ps_append_item (it);
-//            printf ("added item %x\n", it);
+            ps_add_meta (it, "artist", performer);
+            ps_add_meta (it, "album", albumtitle);
+            ps_add_meta (it, "track", track);
+            ps_add_meta (it, "title", title);
             prev = it;
             track[0] = 0;
         }
@@ -748,8 +750,29 @@ ps_start_current (void) {
 
 void
 ps_add_meta (playItem_t *it, const char *key, const char *value) {
+    char str[256];
     if (!value || !*value) {
-        value = "?";
+        if (!strcmp (key, "title")) {
+            int len = 256;
+            // cut filename without path and extension
+            const char *pext = it->fname + strlen (it->fname) - 1;
+            while (pext >= it->fname && *pext != '.') {
+                pext--;
+            }
+            const char *pname = pext;
+            while (pname >= it->fname && *pname != '/') {
+                pname--;
+            }
+            if (*pname == '/') {
+                pname++;
+            }
+            strncpy (str, pname, pext-pname);
+            str[pext-pname] = 0;
+            value = str;
+        }
+        else {
+            value = "?";
+        }
     }
     metaInfo_t *m = malloc (sizeof (metaInfo_t));
     m->key = key;

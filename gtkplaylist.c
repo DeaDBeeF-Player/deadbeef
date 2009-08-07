@@ -48,7 +48,7 @@ int refit_header[ncolumns] = {
 
 const char *colnames[ncolumns] = {
     "Playing Status",
-    "Album / Title",
+    "Artist / Album",
     "Track №",
     "Title / Track Artist",
     "Duration"
