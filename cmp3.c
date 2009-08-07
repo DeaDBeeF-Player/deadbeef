@@ -625,7 +625,7 @@ convstr (const char* str, int sz) {
         memset (out, 0, sizeof (out));
         size_t res = iconv (cd, &pin, &inbytesleft, &pout, &outbytesleft);
         iconv_close (cd);
-        ret = out + 3;
+        ret = out;
     }
     //printf ("decoded %s\n", out+3);
     return ret;

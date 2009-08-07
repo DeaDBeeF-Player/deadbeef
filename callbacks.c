@@ -59,16 +59,6 @@ on_playpos_value_changed               (GtkRange        *range,
 }
 
 
-// change properties
-gboolean
-on_playlist_configure_event            (GtkWidget       *widget,
-        GdkEventConfigure *event,
-        gpointer         user_data)
-{
-    gtkps_reconf (widget);
-    return FALSE;
-}
-
 // redraw
 gboolean
 on_playlist_expose_event               (GtkWidget       *widget,

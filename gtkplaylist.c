@@ -29,6 +29,15 @@ static int playlist_row = -1;
 static double playlist_clicktime = 0;
 static double ps_lastpos[2];
 static int shift_sel_anchor = -1;
+static int nvisiblerows = 0;
+
+// array of lengths and widths
+// N = number of columns
+// M = number of visible rows,
+// cache[(ROW*ncolumns+COLUMN)*3+0] --- position to insert "...", or -1 if the whole line fits
+// cache[(ROW*ncolumns+COLUMN)*3+1] --- width extent in pixels
+// cache[(ROW*ncolumns+COLUMN)*3+2] --- 0 if needs recalc
+static int16_t *drawps_cache = NULL;
 
 #define ncolumns 5
 #define colname_max 100
@@ -51,7 +60,7 @@ int colwidths[] = {
 };
 
 int
-fit_text (cairo_t *cr, char *out, int len, const char *in, int width) {
+fit_text (cairo_t *cr, char *out, int *dotpos, int len, const char *in, int width) {
     int l = strlen (in);
     len--;
     l = min (len, l);
@@ -59,9 +68,12 @@ fit_text (cairo_t *cr, char *out, int len, const char *in, int width) {
     out[l] = 0;
     int w = 0;
 
-    char *p = &out[l-1];
+    char *p = &out[l];
     p = g_utf8_find_prev_char (out, p);
     int processed = 0;
+    if (dotpos) {
+        *dotpos = -1;
+    }
     for (;;) {
         cairo_text_extents_t e;
         cairo_text_extents (cr, out, &e);
@@ -81,6 +93,9 @@ fit_text (cairo_t *cr, char *out, int len, const char *in, int width) {
         processed += p-prev;
         p = prev;
         if (processed >= 3) {
+            if (dotpos) {
+                *dotpos = p-out;
+            }
             for (int i = 0; i < 3; i++) {
                 p[i] = '.';
             }
@@ -189,6 +204,10 @@ draw_ps_row_back (GdkDrawable *drawable, cairo_t *cr, int row, playItem_t *it) {
 
 void
 draw_ps_row (GdkDrawable *drawable, cairo_t *cr, int row, playItem_t *it) {
+    if (row-scrollpos >= nvisiblerows || row-scrollpos < 0) {
+        fprintf (stderr, "WARNING: attempt to draw row outside of screen bounds (%d)\n", row-scrollpos);
+        return;
+    }
 	int width, height;
 	gdk_drawable_get_size (drawable, &width, &height);
     if (it == playlist_current_ptr) {
@@ -216,13 +235,33 @@ draw_ps_row (GdkDrawable *drawable, cairo_t *cr, int row, playItem_t *it) {
     for (int i = 0; i < ncolumns; i++) {
         char str[512];
         if (i > 0) {
-            int w = fit_text (cr, str, 512, columns[i], colwidths[i]-6);
-//            printf ("draw %s -> %s\n", columns[i], str);
-            if (i == 2) {
-                text_draw (cr, x + colwidths[i] - w - 3, row * rowheight - scrollpos * rowheight, str);
+            
+            int dotpos;
+            int cidx = ((row-scrollpos) * ncolumns + i) * 3;
+            if (!drawps_cache[cidx + 2]) {
+                drawps_cache[cidx + 1] = fit_text (cr, str, &dotpos, 512, columns[i], colwidths[i]-10);
+                drawps_cache[cidx + 0] = dotpos;
+                drawps_cache[cidx + 2] = 1;
+
             }
             else {
-                text_draw (cr, x + 3, row * rowheight - scrollpos * rowheight, str);
+                // reconstruct from cache
+                dotpos = drawps_cache[cidx + 0];
+                strncpy (str, columns[i], 512);
+                if (dotpos >= 0) {
+                    for (int k = 0; k < 3; k++) {
+                        str[k+dotpos] = '.';
+                    }
+                    str[dotpos+3] = 0;
+                }
+            }
+            int w = drawps_cache[cidx + 1];
+//            printf ("draw %s -> %s\n", columns[i], str);
+            if (i == 2) {
+                text_draw (cr, x + colwidths[i] - w - 5, row * rowheight - scrollpos * rowheight, str);
+            }
+            else {
+                text_draw (cr, x + 5, row * rowheight - scrollpos * rowheight, str);
             }
         }
         x += colwidths[i];
@@ -238,6 +277,10 @@ draw_ps_row (GdkDrawable *drawable, cairo_t *cr, int row, playItem_t *it) {
 
 void
 draw_playlist (GtkWidget *widget, int x, int y, int w, int h) {
+    if (!drawps_cache && nvisiblerows > 0 && ncolumns > 0) {
+        drawps_cache = malloc (nvisiblerows * ncolumns * 3 * sizeof (int16_t));
+        memset (drawps_cache, 0, nvisiblerows * ncolumns * 3 * sizeof (int16_t));
+    }
 	cairo_t *cr;
 	cr = gdk_cairo_create (backbuf);
 	if (!cr) {
@@ -254,6 +297,7 @@ draw_playlist (GtkWidget *widget, int x, int y, int w, int h) {
 	row1 = max (0, y / rowheight + scrollpos);
 	row2 = min (ps_getcount (), (y+h) / rowheight + scrollpos + 1);
 	row2_full = (y+h) / rowheight + scrollpos + 1;
+	//printf ("drawing row %d (nvis=%d)\n", row2_full, nvisiblerows);
 	// draw background
 	playItem_t *it = ps_get_for_idx (scrollpos);
 	playItem_t *it_copy = it;
@@ -273,14 +317,25 @@ draw_playlist (GtkWidget *widget, int x, int y, int w, int h) {
     cairo_destroy (cr);
 }
 
-void
-gtkps_reconf (GtkWidget *widget) {
+// change properties
+gboolean
+on_playlist_configure_event            (GtkWidget       *widget,
+        GdkEventConfigure *event,
+        gpointer         user_data)
+{
     gtkps_setup_scrollbar ();
     if (backbuf) {
         g_object_unref (backbuf);
+        backbuf = NULL;
     }
+    if (drawps_cache) {
+        free (drawps_cache);
+        drawps_cache = NULL;
+    }
+    nvisiblerows = ceil (widget->allocation.height / (float)rowheight);
     backbuf = gdk_pixmap_new (widget->window, widget->allocation.width, widget->allocation.height, -1);
     draw_playlist (widget, 0, 0, widget->allocation.width, widget->allocation.height);
+    return FALSE;
 }
 
 void
@@ -541,6 +596,31 @@ gtkps_handle_scroll_event (int direction) {
 void
 gtkps_scroll (int newscroll) {
     if (newscroll != scrollpos) {
+        int d = abs (newscroll - scrollpos);
+        if (abs (newscroll - scrollpos) < nvisiblerows) {
+            // move untouched cache part
+            // and invalidate changed part
+            if (newscroll < scrollpos) {
+                //printf ("scroll up\n");
+                int r;
+                for (r = nvisiblerows-1; r >= d; r--) {
+                    memcpy (&drawps_cache[r * ncolumns * 3], &drawps_cache[(r - d) * ncolumns * 3], sizeof (int16_t) * 3 * ncolumns);
+                }
+                for (r = 0; r < d; r++) {
+                    memset (&drawps_cache[r * ncolumns * 3], 0, sizeof (int16_t) * 3 * ncolumns);
+                }
+            }
+            else {
+                //printf ("scroll down\n");
+                int r;
+                for (r = 0; r < nvisiblerows-d; r++) {
+                    memcpy (&drawps_cache[r * ncolumns * 3], &drawps_cache[(r + d) * ncolumns * 3], sizeof (int16_t) * 3 * ncolumns);
+                }
+                for (r = nvisiblerows-d; r < nvisiblerows; r++) {
+                    memset (&drawps_cache[r * ncolumns * 3], 0, sizeof (int16_t) * 3 * ncolumns);
+                }
+            }
+        }
         scrollpos = newscroll;
         GtkWidget *widget = lookup_widget (mainwin, "playlist");
         draw_playlist (widget, 0, 0, widget->allocation.width, widget->allocation.height);
@@ -1115,7 +1195,7 @@ header_draw (GtkWidget *widget) {
         w = colwidths[i];
         cairo_move_to (cr, x + 5, 15);
         if (refit_header[i]) {
-            fit_text (cr, colnames_fitted[i], colname_max, colnames[i], colwidths[i]-10);
+            fit_text (cr, colnames_fitted[i], NULL, colname_max, colnames[i], colwidths[i]-10);
             refit_header[i] = 0;
         }
         cairo_show_text (cr, colnames_fitted[i]);
@@ -1158,6 +1238,9 @@ on_header_realize                      (GtkWidget       *widget,
     cursor_drag = gdk_cursor_new (GDK_FLEUR);
 }
 
+float last_header_motion_ev = -1;
+int prev_header_x = -1;
+
 gboolean
 on_header_motion_notify_event          (GtkWidget       *widget,
                                         GdkEventMotion  *event,
@@ -1167,6 +1250,13 @@ on_header_motion_notify_event          (GtkWidget       *widget,
         gdk_window_set_cursor (widget->window, cursor_drag);
     }
     else if (header_sizing >= 0) {
+        // limit event rate
+        if (event->time - last_header_motion_ev < 20 || prev_header_x == event->x) {
+            return FALSE;
+        }
+        //printf ("%f\n", event->time - last_header_motion_ev);
+        last_header_motion_ev = event->time;
+        prev_header_x = event->x;
         gdk_window_set_cursor (widget->window, cursor_sz);
         // get column start pos
         int x = 0;
@@ -1174,10 +1264,14 @@ on_header_motion_notify_event          (GtkWidget       *widget,
             int w = colwidths[i];
             x += w;
         }
-        int newx = event->x > x + 20 ? event->x : x + 20;
+        int newx = event->x > x + 40 ? event->x : x + 40;
         colwidths[header_sizing] = newx - x;
         //printf ("ev->x = %d, w = %d\n", (int)event->x, newx - x - 2);
         refit_header[header_sizing] = 1;
+        for (int k = 0; k < nvisiblerows; k++) {
+            int cidx = (k * ncolumns + header_sizing) * 3;
+            drawps_cache[cidx+2] = 0;
+        }
         header_draw (widget);
         GtkWidget *ps = lookup_widget (mainwin, "playlist");
         draw_playlist (ps, 0, 0, ps->allocation.width, ps->allocation.height);
@@ -1225,6 +1319,8 @@ on_header_button_press_event           (GtkWidget       *widget,
             x += w;
         }
     }
+    prev_header_x = -1;
+    last_header_motion_ev = -1;
     return FALSE;
 }
 

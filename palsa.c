@@ -250,12 +250,14 @@ palsa_thread (uintptr_t context) {
 //            usleep (1000);
 //            continue;
 //        }
-
-        if ((err = snd_pcm_wait (audio, 1000)) < 0) {
+        snd_pcm_wait (audio, 1000);
+#if 0
+        if ((err = ) < 0) {
             mutex_unlock (mutex);
             fprintf (stderr, "alsa poll failed (%s)\n", strerror (errno));
-            continue;
+//            continue;
         }	           
+#endif
 
         /* find out how much space is available for playback data */
 
