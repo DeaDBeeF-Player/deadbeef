@@ -120,6 +120,7 @@ cvorbis_insert (playItem_t *after, const char *fname) {
     it->timeend = 0;
 
     // metainfo
+    int title_added = 0;
     vorbis_comment *vc = ov_comment (&vorbis_file, -1);
     if (vc) {
         ps_add_meta (it, "vendor", vc->vendor);
@@ -129,11 +130,15 @@ cvorbis_insert (playItem_t *after, const char *fname) {
             }
             else if (!strncmp (vc->user_comments[i], "title=", 6)) {
                 ps_add_meta (it, "title", vc->user_comments[i] + 6);
+                title_added = 1;
             }
             else if (!strncmp (vc->user_comments[i], "date=", 5)) {
                 ps_add_meta (it, "date", vc->user_comments[i] + 5);
             }
         }
+    }
+    if (!title_added) {
+        ps_add_meta (it, "title", NULL);
     }
     ov_clear (&vorbis_file);
     after = ps_insert_item (after, it);
