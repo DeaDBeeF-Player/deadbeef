@@ -583,7 +583,7 @@ static const char *cmp3_genretbl[] = {
 };
 
 static const char *
-convstr (const char* str, int sz) {
+convstr_id3v2_2to3 (const char* str, int sz) {
     static char out[2048];
     const char *enc = "iso8859-1";
     char *ret = out;
@@ -631,8 +631,86 @@ convstr (const char* str, int sz) {
     return ret;
 }
 
+static const char *
+convstr_id3v2_4 (const char* str, int sz) {
+    static char out[2048];
+    const char *enc = "iso8859-1";
+    char *ret = out;
+
+    // hack to add limited cp1251 recoding support
+
+    if (*str == 3) {
+        // utf8
+        strncpy (out, str+1, 2047);
+        sz--;
+        out[min (sz, 2047)] = 0;
+        return out;
+    }
+    else if (*str == 0) {
+        // iso8859-1
+        enc = "iso8859-1";
+    }
+    else if (*str == 1) {
+        enc = "UTF-16";
+    }
+    else if (*str == 2) {
+        enc = "UTF-16BE";
+    }
+    else {
+        return "";
+    }
+#if 0
+    else {
+        int latin = 0;
+        int rus = 0;
+        for (int i = 1; i < sz; i++) {
+            if ((str[i] >= 'A' && str[i] <= 'Z')
+                    || str[i] >= 'a' && str[i] <= 'z') {
+                latin++;
+            }
+            else if (str[i] < 0) {
+                rus++;
+            }
+        }
+        if (rus > latin/2) {
+            // might be russian
+            enc = "cp1251";
+        }
+    }
+#endif
+    str++;
+    sz--;
+    iconv_t cd = iconv_open ("utf8", enc);
+    if (!cd) {
+        // printf ("unknown encoding: %s\n", enc);
+        return NULL;
+    }
+    else {
+        size_t inbytesleft = sz;
+        size_t outbytesleft = 2047;
+        char *pin = (char*)str;
+        char *pout = out;
+        memset (out, 0, sizeof (out));
+        size_t res = iconv (cd, &pin, &inbytesleft, &pout, &outbytesleft);
+        iconv_close (cd);
+        ret = out;
+    }
+    //printf ("decoded %s\n", out+3);
+    return ret;
+}
+
 const char *convstr_id3v1 (const char* str, int sz) {
     static char out[2048];
+    int i;
+    for (i = 0; i < sz; i++) {
+        if (str[i] != ' ') {
+            break;
+        }
+    }
+    if (i == sz) {
+        out[0] = 0;
+        return out;
+    }
 
     // check for utf8 (hack)
     iconv_t cd;
@@ -768,7 +846,8 @@ cmp3_read_id3v2 (playItem_t *it, FILE *fp) {
     }
     uint8_t version_major = header[3];
     uint8_t version_minor = header[4];
-    if (version_major > 3 || version_major < 2) {
+    if (version_major > 4 || version_major < 2) {
+        printf ("id3v2.%d.%d is unsupported (crap)\n", version_major, version_minor);
         return -1; // unsupported
     }
     uint8_t flags = header[5];
@@ -818,8 +897,15 @@ cmp3_read_id3v2 (playItem_t *it, FILE *fp) {
         }
         readptr += 4; // skip crc
     }
+    const char * (*convstr)(const char *, int);
+    if (version_major == 3) {
+        convstr = convstr_id3v2_2to3;
+    }
+    else {
+        convstr = convstr_id3v2_4;
+    }
     while (readptr - tag < size - 4) {
-        if (version_major == 3) {
+        if (version_major == 3 || version_major == 4) {
             char frameid[5];
             memcpy (frameid, readptr, 4);
             frameid[4] = 0;
@@ -915,6 +1001,9 @@ cmp3_read_id3v2 (playItem_t *it, FILE *fp) {
                 title_added = 1;
             }
             readptr += sz;
+        }
+        else {
+            printf ("id3v2.%d (unsupported!)\n", version_minor);
         }
     }
     if (!title_added) {

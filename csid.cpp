@@ -377,8 +377,17 @@ csid_insert (playItem_t *after, const char *fname) {
             SidTuneInfo sidinfo;
             tune->getInfo (sidinfo);
             int i = sidinfo.numberOfInfoStrings;
+            int title_added = 0;
             if (i >= 1 && sidinfo.infoString[0] && sidinfo.infoString[0][0]) {
-                ps_add_meta (it, sidinfo.songs > 1 ? "album" : "title", convstr (sidinfo.infoString[0]));
+                const char *meta;
+                if (sidinfo.songs > 1) {
+                    meta = "album";
+                }
+                else {
+                    meta = "title";
+                    title_added = 1;
+                }
+                ps_add_meta (it, meta, convstr (sidinfo.infoString[0]));
             }
             if (i >= 2 && sidinfo.infoString[1] && sidinfo.infoString[1][0]) {
                 ps_add_meta (it, "artist", convstr (sidinfo.infoString[1]));
@@ -396,6 +405,9 @@ csid_insert (playItem_t *after, const char *fname) {
             char trk[10];
             snprintf (trk, 10, "%d", s+1);
             ps_add_meta (it, "track", trk);
+            if (!title_added) {
+                ps_add_meta (it, "title", NULL);
+            }
             after = ps_insert_item (after, it);
         }
     }

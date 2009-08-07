@@ -1,11 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <iconv.h>
 #include "dumb/dumb-kode54/include/dumb.h"
+#include "dumb/dumb-kode54/include/internal/it.h"
 #include "codec.h"
 #include "cdumb.h"
 #include "playlist.h"
 #include "playback.h"
+#include "common.h"
 
 static int dumb_initialized;
 static DUH *duh;
@@ -656,6 +659,67 @@ static DUH * open_module(const char *fname, const char *ext, int *start_order, i
 	return duh;
 }
 
+static const char *convstr (const char* str, int sz) {
+    static char out[2048];
+    int i;
+    for (i = 0; i < sz; i++) {
+        if (str[i] != ' ') {
+            break;
+        }
+    }
+    if (i == sz) {
+        out[0] = 0;
+        return out;
+    }
+
+    // check for utf8 (hack)
+    iconv_t cd;
+    cd = iconv_open ("utf8", "utf8");
+    size_t inbytesleft = sz;
+    size_t outbytesleft = 2047;
+    char *pin = (char*)str;
+    char *pout = out;
+    memset (out, 0, sizeof (out));
+    size_t res = iconv (cd, &pin, &inbytesleft, &pout, &outbytesleft);
+    iconv_close (cd);
+    if (res == 0) {
+        strncpy (out, str, 2047);
+        out[min (sz, 2047)] = 0;
+        return out;
+    }
+
+    const char *enc = "iso8859-1";
+    int latin = 0;
+    int rus = 0;
+    for (int i = 0; i < sz; i++) {
+        if ((str[i] >= 'A' && str[i] <= 'Z')
+                || str[i] >= 'a' && str[i] <= 'z') {
+            latin++;
+        }
+        else if (str[i] < 0) {
+            rus++;
+        }
+    }
+    if (rus > latin/2) {
+        // might be russian
+        enc = "cp1251";
+    }
+    cd = iconv_open ("utf8", enc);
+    if (!cd) {
+        // printf ("unknown encoding: %s\n", enc);
+        return NULL;
+    }
+    else {
+        size_t inbytesleft = sz;
+        size_t outbytesleft = 2047;
+        char *pin = (char*)str;
+        char *pout = out;
+        memset (out, 0, sizeof (out));
+        size_t res = iconv (cd, &pin, &inbytesleft, &pout, &outbytesleft);
+        iconv_close (cd);
+    }
+    return out;
+}
 playItem_t *
 cdumb_insert (playItem_t *after, const char *fname) {
     const char *ext = fname + strlen (fname) - 1;
@@ -671,7 +735,6 @@ cdumb_insert (playItem_t *after, const char *fname) {
     if (!duh) {
         return NULL;
     }
-    unload_duh (duh);
     playItem_t *it = malloc (sizeof (playItem_t));
     memset (it, 0, sizeof (playItem_t));
     it->codec = &cdumb;
@@ -679,7 +742,13 @@ cdumb_insert (playItem_t *after, const char *fname) {
     it->tracknum = 0;
     it->timestart = 0;
     it->timeend = 0;
+    DUMB_IT_SIGDATA * itsd = duh_get_it_sigdata(duh);
+    if (itsd->name[0])
+    {
+        ps_add_meta (it, "title", convstr ((char*)&itsd->name, sizeof(itsd->name)));
+    }
     after = ps_insert_item (after, it);
+    unload_duh (duh);
 
     return after;
 }

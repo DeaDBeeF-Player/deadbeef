@@ -181,28 +181,33 @@ cflac_init_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__Str
     it->tracknum = 0;
     if (metadata->type == FLAC__METADATA_TYPE_VORBIS_COMMENT) {
         const FLAC__StreamMetadata_VorbisComment *vc = &metadata->data.vorbis_comment;
+        int title_added = 0;
         for (int i = 0; i < vc->num_comments; i++) {
             const FLAC__StreamMetadata_VorbisComment_Entry *c = &vc->comments[i];
             if (c->length > 0) {
                 char s[c->length+1];
                 s[c->length] = 0;
                 memcpy (s, c->entry, c->length);
-                if (!strncmp (s, "ARTIST=", 7)) {
+                if (!strncasecmp (s, "ARTIST=", 7)) {
                     ps_add_meta (it, "artist", s + 7);
                 }
-                else if (!strncmp (s, "TITLE=", 6)) {
+                else if (!strncasecmp (s, "TITLE=", 6)) {
                     ps_add_meta (it, "title", s + 6);
+                    title_added = 1;
                 }
-                else if (!strncmp (s, "ALBUM=", 6)) {
+                else if (!strncasecmp (s, "ALBUM=", 6)) {
                     ps_add_meta (it, "album", s + 6);
                 }
-                else if (!strncmp (s, "TRACKNUMBER=", 12)) {
+                else if (!strncasecmp (s, "TRACKNUMBER=", 12)) {
                     ps_add_meta (it, "track", s + 12);
                 }
-                else if (!strncmp (s, "DATE=", 5)) {
+                else if (!strncasecmp (s, "DATE=", 5)) {
                     ps_add_meta (it, "date", s + 5);
                 }
             }
+        }
+        if (!title_added) {
+            ps_add_meta (it, "title", NULL);
         }
 
 //    ps_add_meta (it, "artist", performer);
