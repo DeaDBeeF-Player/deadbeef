@@ -76,6 +76,10 @@ psdl_thread (uintptr_t ctx) {
                     p_unpause ();
                 }
                 break;
+            case M_ADDDIR:
+                // long time processing
+                gtkps_add_dir ((char *)ctx);
+                break;
             }
         }
         usleep(10000);

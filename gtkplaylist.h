@@ -88,4 +88,7 @@ gtkps_handle_drag_drop (int drop_y, uint32_t *d, int length);
 void
 gtkps_handle_fm_drag_drop (int drop_y, void *ptr, int length);
 
+void
+gtkps_add_dir (char *dir);
+
 #endif

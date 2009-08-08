@@ -29,16 +29,16 @@ extern playItem_t *playlist_current_ptr; // pointer to a real current playlist i
 extern playItem_t playlist_current; // copy of playlist item being played (stays in memory even if removed from playlist)
 
 int
-ps_add_dir (const char *dirname);
+ps_add_dir (const char *dirname, int (*cb)(playItem_t *it, void *data), void *user_data);
 
 int
-ps_add_file (const char *fname);
+ps_add_file (const char *fname, int (*cb)(playItem_t *it, void *data), void *user_data);
 
 playItem_t *
-ps_insert_dir (playItem_t *after, const char *dirname);
+ps_insert_dir (playItem_t *after, const char *dirname, int (*cb)(playItem_t *it, void *data), void *user_data);
 
 playItem_t *
-ps_insert_file (playItem_t *after, const char *fname);
+ps_insert_file (playItem_t *after, const char *fname, int (*cb)(playItem_t *it, void *data), void *user_data);
 
 playItem_t *
 ps_insert_item (playItem_t *after, playItem_t *it);

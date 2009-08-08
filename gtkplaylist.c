@@ -9,6 +9,7 @@
 #include <time.h>
 #include <string.h>
 #include <assert.h>
+#include <unistd.h>
 #include "gtkplaylist.h"
 #include "callbacks.h"
 #include "interface.h"
@@ -1123,9 +1124,9 @@ gtkps_handle_fm_drag_drop (int drop_y, void *ptr, int length) {
             strcopy_special (fname, p, pe-p);
             //strncpy (fname, p, pe - p);
             //fname[pe - p] = 0;
-            playItem_t *inserted = ps_insert_dir (after, fname + 7);
+            playItem_t *inserted = ps_insert_dir (after, fname + 7, NULL, NULL);
             if (!inserted) {
-                inserted = ps_insert_file (after, fname + 7);
+                inserted = ps_insert_file (after, fname + 7, NULL, NULL);
             }
             if (inserted) {
                 after = inserted;
@@ -1331,3 +1332,38 @@ on_header_button_release_event         (GtkWidget       *widget,
     return FALSE;
 }
 
+int
+gtkps_add_file_cb (playItem_t *it, void *data) {
+    GtkEntry *e = (GtkEntry *)data;
+//    printf ("%s\n", it->fname);
+    GDK_THREADS_ENTER();
+    gtk_entry_set_text (GTK_ENTRY (e), it->fname);
+    GDK_THREADS_LEAVE();
+    usleep (0);
+    return 0;
+}
+
+void
+gtkps_add_dir (char *folder) {
+    // create window
+    GDK_THREADS_ENTER();
+    gtk_widget_set_sensitive (mainwin, FALSE);
+    GtkWidget *d = gtk_dialog_new ();
+    GtkWidget *e = gtk_entry_new ();
+    gtk_widget_set_size_request (e, 500, -1);
+    gtk_widget_set_sensitive (GTK_WIDGET (e), FALSE);
+    gtk_container_add (GTK_CONTAINER (gtk_dialog_get_content_area (GTK_DIALOG (d))), e);
+    gtk_widget_show_all (d);
+    GDK_THREADS_LEAVE();
+    ps_add_dir (folder, gtkps_add_file_cb, e);
+    g_free (folder);
+    ps_shuffle ();
+    GDK_THREADS_ENTER();
+    gtk_widget_destroy (d);
+    gtk_widget_set_sensitive (mainwin, TRUE);
+    gtkps_setup_scrollbar ();
+    GtkWidget *widget = lookup_widget (mainwin, "playlist");
+    draw_playlist (widget, 0, 0, widget->allocation.width, widget->allocation.height);
+    gtkps_expose (widget, 0, 0, widget->allocation.width, widget->allocation.height);
+    GDK_THREADS_LEAVE();
+}

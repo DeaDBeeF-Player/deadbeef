@@ -24,7 +24,7 @@ extern GtkWidget *mainwin;
 
 static void
 addfile_func (gpointer data, gpointer userdata) {
-    ps_add_file (data);
+    ps_add_file (data, NULL, NULL);
     g_free (data);
 }
 
@@ -174,7 +174,6 @@ on_add_files_activate                  (GtkMenuItem     *menuitem,
     gtkps_expose (widget, 0, 0, widget->allocation.width, widget->allocation.height);
 }
 
-
 void
 on_add_folder1_activate                (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
@@ -185,17 +184,11 @@ on_add_folder1_activate                (GtkMenuItem     *menuitem,
     if (gtk_dialog_run (GTK_DIALOG (dlg)) == GTK_RESPONSE_OK)
     {
         gchar *folder = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dlg));
+        gtk_widget_destroy (dlg);
         if (folder) {
-            ps_add_dir (folder);
-            g_free (folder);
+            messagepump_push (M_ADDDIR, (uintptr_t)folder, 0, 0);
         }
     }
-    gtk_widget_destroy (dlg);
-    ps_shuffle ();
-    gtkps_setup_scrollbar ();
-    GtkWidget *widget = lookup_widget (mainwin, "playlist");
-    draw_playlist (widget, 0, 0, widget->allocation.width, widget->allocation.height);
-    gtkps_expose (widget, 0, 0, widget->allocation.width, widget->allocation.height);
 }
 
 

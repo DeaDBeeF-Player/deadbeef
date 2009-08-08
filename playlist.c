@@ -235,7 +235,7 @@ ps_insert_cue (playItem_t *after, const char *cuename, const char *ftype) {
 }
 
 playItem_t *
-ps_insert_file (playItem_t *after, const char *fname) {
+ps_insert_file (playItem_t *after, const char *fname, int (*cb)(playItem_t *it, void *data), void *user_data) {
     if (!fname) {
         return NULL;
     }
@@ -259,6 +259,9 @@ ps_insert_file (playItem_t *after, const char *fname) {
                     if (!strcasecmp (exts[e], eol)) {
                         playItem_t *inserted = NULL;
                         if ((inserted = codecs[i]->insert (after, fname)) != NULL) {
+                            if (cb) {
+                                cb (inserted, user_data);
+                            }
                             return inserted;
                         }
                     }
@@ -270,7 +273,7 @@ ps_insert_file (playItem_t *after, const char *fname) {
 }
 
 playItem_t *
-ps_insert_dir (playItem_t *after, const char *dirname) {
+ps_insert_dir (playItem_t *after, const char *dirname, int (*cb)(playItem_t *it, void *data), void *user_data) {
     struct stat buf;
     lstat (dirname, &buf);
     if (S_ISLNK(buf.st_mode)) {
@@ -298,9 +301,9 @@ ps_insert_dir (playItem_t *after, const char *dirname) {
                 strcpy (fullname, dirname);
                 strncat (fullname, "/", 1024);
                 strncat (fullname, namelist[i]->d_name, 1024);
-                playItem_t *inserted = ps_insert_dir (after, fullname);
+                playItem_t *inserted = ps_insert_dir (after, fullname, cb, user_data);
                 if (!inserted) {
-                    inserted = ps_insert_file (after, fullname);
+                    inserted = ps_insert_file (after, fullname, cb, user_data);
                 }
                 if (inserted) {
                     after = inserted;
@@ -314,8 +317,8 @@ ps_insert_dir (playItem_t *after, const char *dirname) {
 }
 
 int
-ps_add_file (const char *fname) {
-    if (ps_insert_file (playlist_tail, fname)) {
+ps_add_file (const char *fname, int (*cb)(playItem_t *it, void *data), void *user_data) {
+    if (ps_insert_file (playlist_tail, fname, cb, user_data)) {
         return 0;
     }
     return -1;
@@ -359,8 +362,8 @@ ps_add_file (const char *fname) {
 }
 
 int
-ps_add_dir (const char *dirname) {
-    if (ps_insert_dir (playlist_tail, dirname)) {
+ps_add_dir (const char *dirname, int (*cb)(playItem_t *it, void *data), void *user_data) {
+    if (ps_insert_dir (playlist_tail, dirname, cb, user_data)) {
         return 0;
     }
     return -1;
