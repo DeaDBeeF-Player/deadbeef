@@ -756,9 +756,11 @@ cdumb_insert (playItem_t *after, const char *fname) {
     it->timestart = 0;
     it->timeend = 0;
     DUMB_IT_SIGDATA * itsd = duh_get_it_sigdata(duh);
-    if (itsd->name[0])
-    {
+    if (itsd->name[0])     {
         ps_add_meta (it, "title", convstr ((char*)&itsd->name, sizeof(itsd->name)));
+    }
+    else {
+        ps_add_meta (it, "title", NULL);
     }
     dumb_it_do_initial_runthrough (duh);
     it->duration = duh_get_length (duh)/65536.0f;
