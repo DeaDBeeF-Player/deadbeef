@@ -625,6 +625,10 @@ gtkps_scroll (int newscroll) {
                 }
             }
         }
+        else {
+            // invalidate entire cache
+            memset (drawps_cache, 0, sizeof (int16_t) * 3 * ncolumns * nvisiblerows);
+        }
         scrollpos = newscroll;
         GtkWidget *widget = lookup_widget (mainwin, "playlist");
         draw_playlist (widget, 0, 0, widget->allocation.width, widget->allocation.height);
