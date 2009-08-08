@@ -24,10 +24,12 @@ static int streambuffer_fill;
 static char streambuffer[STREAM_BUFFER_SIZE+1000];
 static uintptr_t mutex;
 static int nextsong = -1;
+static int nextsong_pstate = -1;
 
 void
-streamer_set_nextsong (int song) {
+streamer_set_nextsong (int song, int pstate) {
     nextsong = song;
+    nextsong_pstate = pstate;
 }
 
 static int
@@ -40,6 +42,7 @@ streamer_thread (uintptr_t ctx) {
     while (!streaming_terminate) {
         if (nextsong >= 0) {
             int sng = nextsong;
+            int pstate = nextsong_pstate;
             nextsong = -1;
             codec_lock ();
             //streambuffer_fill = 0;
@@ -50,7 +53,17 @@ streamer_thread (uintptr_t ctx) {
                     usleep (3000);
                 }
             }
-            p_play ();
+            if (pstate >= 0) {
+                if (pstate == 0) {
+                    p_stop ();
+                }
+                else if (pstate == 1) {
+                    p_play ();
+                }
+                else if (pstate == 2) {
+                    p_pause ();
+                }
+            }
         }
         streamer_lock ();
         if (streambuffer_fill < STREAM_BUFFER_SIZE) {

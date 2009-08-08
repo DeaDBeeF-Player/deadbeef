@@ -19,7 +19,10 @@ streamer_lock (void);
 void
 streamer_unlock (void);
 
+// pstate indicates what to do with playback
+// -1 means "don't do anything"
+// otherwise "set state to this value"
 void
-streamer_set_nextsong (int song);
+streamer_set_nextsong (int song, int pstate);
 
 #endif // __STREAMER_H

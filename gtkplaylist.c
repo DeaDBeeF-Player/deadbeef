@@ -643,8 +643,9 @@ gtkps_playsong (void) {
         p_unpause ();
     }
     else if (playlist_current_ptr) {
+        p_stop ();
         printf ("restart\n");
-        streamer_set_nextsong (ps_get_idx_of (playlist_current_ptr));
+        streamer_set_nextsong (ps_get_idx_of (playlist_current_ptr), 1);
 #if 0
         ps_start_current ();
         GtkWidget *widget = lookup_widget (mainwin, "playlist");
@@ -653,7 +654,7 @@ gtkps_playsong (void) {
     }
     else if (playlist_row != -1) {
         printf ("start under cursor\n");
-        streamer_set_nextsong (playlist_row);
+        streamer_set_nextsong (playlist_row, 1);
 #if 0
         playItem_t *it = ps_get_for_idx (playlist_row);
         if (it) {
@@ -665,7 +666,7 @@ gtkps_playsong (void) {
     }
     else {
         printf ("play 1st in list\n");
-        streamer_set_nextsong (0);
+        streamer_set_nextsong (0, 1);
 #if 0
         ps_set_current (playlist_head);
         if (playlist_current_ptr) {
@@ -765,7 +766,8 @@ gtkps_pausesong (void) {
 
 void
 gtkps_playsongnum (int idx) {
-    streamer_set_nextsong (idx);
+    p_stop ();
+    streamer_set_nextsong (idx, 1);
 #if 0
     playItem_t *it = ps_get_for_idx (playlist_row);
     if (it) {
