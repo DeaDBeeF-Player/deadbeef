@@ -26,12 +26,6 @@ cgme_init (const char *fname, int track, float start, float end) {
     cgme.info.samplesPerSecond = p_get_rate ();
     reallength = inf.length; 
     nzerosamples = 0;
-    if (inf.length == -1) {
-        cgme.info.duration = 300;
-    }
-    else {
-        cgme.info.duration = (float)inf.length/1000.f;
-    }
     cgme.info.position = 0;
     return 0;
 }
@@ -47,8 +41,8 @@ cgme_free (void) {
 int
 cgme_read (char *bytes, int size) {
     float t = (size/4) / (float)cgme.info.samplesPerSecond;
-    if (cgme.info.position + t >= cgme.info.duration) {
-        t = cgme.info.duration - cgme.info.position;
+    if (cgme.info.position + t >= playlist_current.duration) {
+        t = playlist_current.duration - cgme.info.position;
         if (t <= 0) {
             return 0;
         }
@@ -123,6 +117,12 @@ cgme_insert (playItem_t *after, const char *fname) {
                 char trk[10];
                 snprintf (trk, 10, "%d", i+1);
                 ps_add_meta (it, "track", trk);
+                if (inf.length == -1) {
+                    it->duration = 300;
+                }
+                else {
+                    it->duration = (float)inf.length/1000.f;
+                }
                 after = ps_insert_item (after, it);
             }
             else {

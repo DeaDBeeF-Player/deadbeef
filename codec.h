@@ -8,7 +8,6 @@ typedef struct {
     int bitsPerSample;
     int channels;
     int samplesPerSecond;
-    float duration;
     float position;
 } fileinfo_t;
 

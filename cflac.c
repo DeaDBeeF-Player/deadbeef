@@ -52,7 +52,6 @@ cflac_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMe
     cflac.info.samplesPerSecond = sample_rate;
     cflac.info.channels = channels;
     cflac.info.bitsPerSample = bps;
-    cflac.info.duration = total_samples / (float)sample_rate;
     cflac.info.position = 0;
 }
 
@@ -91,20 +90,20 @@ cflac_init (const char *fname, int track, float start, float end) {
     timeend = end;
     if (timeend > timestart || timeend < 0) {
         // take from cue and seek
-        if (timeend < 0) {
-            // must be last (or broken) track
-            timeend = cflac.info.duration; // set from metainfo
-        }
-        cflac.info.duration = timeend - timestart;
+//        if (timeend < 0) {
+//            // must be last (or broken) track
+//            timeend = playlist_current.duration; // set from metainfo
+//        }
+//        cflac.info.duration = timeend - timestart;
         cflac.seek (0);
     }
-    if (cflac.info.duration == -1) {
-        printf ("FLAC duration calculation failed\n");
-        return -1;
-    }
-    else {
-        //printf ("%s duration %f, start %f (%f), end %f (%f)\n", fname, cflac.info.duration, timestart, start, timeend, end);
-    }
+//    if (cflac.info.duration == -1) {
+//        printf ("FLAC duration calculation failed\n");
+//        return -1;
+//    }
+//    else {
+//        //printf ("%s duration %f, start %f (%f), end %f (%f)\n", fname, cflac.info.duration, timestart, start, timeend, end);
+//    }
 
     remaining = 0;
     return 0;
@@ -181,6 +180,7 @@ typedef struct {
     const char *fname;
     int samplerate;
     int nchannels;
+    float duration;
 } cue_cb_data_t;
 
 void
@@ -189,6 +189,7 @@ cflac_init_cue_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC_
     if (metadata->type == FLAC__METADATA_TYPE_STREAMINFO) {
         cb->samplerate = metadata->data.stream_info.sample_rate;
         cb->nchannels = metadata->data.stream_info.channels;
+        cb->duration = metadata->data.stream_info.total_samples / (float)metadata->data.stream_info.sample_rate;
     }
     else if (metadata->type == FLAC__METADATA_TYPE_CUESHEET) {
         //printf ("loading embedded cuesheet!\n");
@@ -204,9 +205,10 @@ cflac_init_cue_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC_
                 it->fname = strdup (cb->fname);
                 it->tracknum = t->number;
                 it->timestart = (float)t->offset / cb->samplerate;
-                it->timeend = -1; // will be filled by next read, or by codec
+                it->timeend = -1; // will be filled by next read
                 if (prev) {
                     prev->timeend = it->timestart;
+                    prev->duration = prev->timeend - prev->timestart;
                 }
                 //printf ("N: %d, t: %f, bps=%d\n", it->tracknum, it->timestart/60.f, cb->samplerate);
                 playItem_t *ins = ps_insert_item (cb->last, it);
@@ -219,6 +221,10 @@ cflac_init_cue_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC_
                 }
                 prev = it;
             }
+        }
+        if (prev) {
+            prev->timeend = cb->duration;
+            prev->duration = prev->timeend - prev->timestart;
         }
     }
     else if (metadata->type == FLAC__METADATA_TYPE_VORBIS_COMMENT) {
@@ -243,7 +249,10 @@ void
 cflac_init_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMetadata *metadata, void *client_data) {
     playItem_t *it = (playItem_t *)client_data;
     //it->tracknum = 0;
-    if (metadata->type == FLAC__METADATA_TYPE_VORBIS_COMMENT) {
+    if (metadata->type == FLAC__METADATA_TYPE_STREAMINFO) {
+        it->duration = metadata->data.stream_info.total_samples / (float)metadata->data.stream_info.sample_rate;
+    }
+    else if (metadata->type == FLAC__METADATA_TYPE_VORBIS_COMMENT) {
         const FLAC__StreamMetadata_VorbisComment *vc = &metadata->data.vorbis_comment;
         int title_added = 0;
         for (int i = 0; i < vc->num_comments; i++) {
@@ -285,24 +294,7 @@ cflac_init_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__Str
 
 playItem_t *
 cflac_insert (playItem_t *after, const char *fname) {
-    // try cue
-    char cuename[1024];
-    snprintf (cuename, 1024, "%s.cue", fname);
-//    printf ("loading %s\n", cuename);
-    playItem_t *cue_after;
-    if ((cue_after = ps_insert_cue (after, cuename)) != NULL) {
-        return cue_after;
-    }
-    int n = strlen (fname) - 4;
-    if (n > 0) {
-        strncpy (cuename, fname, n);
-        strcpy (cuename + n, "cue");
-    //    printf ("loading %s\n", cuename);
-        if ((cue_after = ps_insert_cue (after, cuename)) != NULL) {
-            return cue_after;
-        }
-    }
-
+    //try embedded cue, and calculate duration
     FLAC__StreamDecoder *decoder = 0;
     FLAC__StreamDecoderInitStatus status;
     decoder = FLAC__stream_decoder_new();
@@ -338,6 +330,25 @@ cflac_insert (playItem_t *after, const char *fname) {
         return cb.last;
     }
 
+    // try external cue
+    char cuename[1024];
+    snprintf (cuename, 1024, "%s.cue", fname);
+    playItem_t *cue_after;
+    if ((cue_after = ps_insert_cue (after, cuename)) != NULL) {
+        cue_after->timeend = cb.duration;
+        cue_after->duration = cue_after->timeend - cue_after->timestart;
+        return cue_after;
+    }
+    int n = strlen (fname) - 4;
+    if (n > 0) {
+        strncpy (cuename, fname, n);
+        strcpy (cuename + n, "cue");
+    //    printf ("loading %s\n", cuename);
+        if ((cue_after = ps_insert_cue (after, cuename)) != NULL) {
+            return cue_after;
+        }
+    }
+
     //printf ("adding flac without cue\n");
     decoder = FLAC__stream_decoder_new();
     if (!decoder) {
@@ -346,7 +357,7 @@ cflac_insert (playItem_t *after, const char *fname) {
     }
     FLAC__stream_decoder_set_md5_checking(decoder, 0);
     // try single FLAC file without cue
-    FLAC__stream_decoder_set_metadata_respond (decoder, FLAC__METADATA_TYPE_VORBIS_COMMENT);
+    FLAC__stream_decoder_set_metadata_respond_all (decoder);
     int samplerate = -1;
     playItem_t *it = malloc (sizeof (playItem_t));
     memset (it, 0, sizeof (playItem_t));

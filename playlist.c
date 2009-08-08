@@ -199,6 +199,7 @@ ps_insert_cue (playItem_t *after, const char *cuename) {
             }
             if (prev) {
                 prev->timeend = tstart;
+                prev->duration = prev->timeend - prev->timestart;
 //                printf ("end time for prev track (%x): %f\n", prev, tstart);
             }
             // add this track
