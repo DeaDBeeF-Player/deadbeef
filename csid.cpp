@@ -220,6 +220,7 @@ csid_init (const char *fname, int track, float start, float end) {
     resid->filter (true);
     resid->sampling (p_get_rate ());
     tune = new SidTune (fname);
+#if 0
     // calc md5
     uint8_t sig[16];
     md5_t md5;
@@ -242,6 +243,7 @@ csid_init (const char *fname, int track, float start, float end) {
         md5_process (&md5, &tune->getInfo ().clockSpeed, sizeof (tune->getInfo ().clockSpeed));
     }
     md5_finish (&md5, sig);
+#endif
 
     tune->selectSong (track+1);
     csid.info.channels = tune->isStereo () ? 2 : 1;
@@ -257,22 +259,6 @@ csid_init (const char *fname, int track, float start, float end) {
     csid.info.bitsPerSample = 16;
     csid.info.samplesPerSecond = p_get_rate ();
     csid.info.position = 0;
-    float length = 120;
-    sldb_load(sldb_fname);
-    if (sldb_loaded) {
-        int song = sldb_find (sig);
-        if (song >= 0 && sldb_lengths[song][track] >= 0) {
-            length = sldb_lengths[song][track];
-        }
-//        if (song < 0) {
-//            printf ("song %s not found in db, md5: ", fname);
-//            for (int j = 0; j < 16; j++) {
-//                printf ("%02x", (int)sig[j]);
-//            }
-//            printf ("\n");
-//        }
-    }
-    csid.info.duration = length;
 
     int maxsids = sidplay->info ().maxsids;
     for (int k = 0; k < maxsids; k++) {
@@ -299,7 +285,7 @@ csid_free (void) {
 
 extern "C" int
 csid_read (char *bytes, int size) {
-    if (csid.info.position > csid.info.duration) {
+    if (csid.info.position > playlist_current.duration) {
         return 0;
     }
     int rd = sidplay->play (bytes, size/csid.info.channels);
@@ -364,9 +350,37 @@ csid_insert (playItem_t *after, const char *fname) {
     SidTune *tune;
     tune = new SidTune (fname);
     int tunes = tune->getInfo ().songs;
+
+    uint8_t sig[16];
+    md5_t md5;
+    md5_init (&md5);
+    md5_process (&md5, (const char *)tune->cache.get () + tune->fileOffset, tune->getInfo ().c64dataLen);
+    char tmp[2];
+    le_int16 (tune->getInfo ().initAddr, tmp);
+    md5_process (&md5, tmp, 2);
+    le_int16 (tune->getInfo ().playAddr, tmp);
+    md5_process (&md5, tmp, 2);
+    le_int16 (tune->getInfo ().songs, tmp);
+    md5_process (&md5, tmp, 2);
+    for (int s = 1; s <= tunes; s++)
+    {
+        tune->selectSong (s);
+        // songspeed is uint8_t, so no need for byteswap
+        md5_process (&md5, &tune->getInfo ().songSpeed, 1);
+    }
+    if (tune->getInfo ().clockSpeed == SIDTUNE_CLOCK_NTSC) {
+        md5_process (&md5, &tune->getInfo ().clockSpeed, sizeof (tune->getInfo ().clockSpeed));
+    }
+    md5_finish (&md5, sig);
+
+    sldb_load(sldb_fname);
+    int song = -1;
+    if (sldb_loaded) {
+        song = sldb_find (sig);
+    }
+
     for (int s = 0; s < tunes; s++) {
         if (tune->selectSong (s+1)) {
-            unsigned length = 120;
             playItem_t *it = (playItem_t*)malloc (sizeof (playItem_t));
             memset (it, 0, sizeof (playItem_t));
             it->codec = &csid;
@@ -408,6 +422,24 @@ csid_insert (playItem_t *after, const char *fname) {
             if (!title_added) {
                 ps_add_meta (it, "title", NULL);
             }
+
+            float length = 120;
+            sldb_load(sldb_fname);
+            if (sldb_loaded) {
+                if (song >= 0 && sldb_lengths[song][s] >= 0) {
+                    length = sldb_lengths[song][s];
+                }
+                //        if (song < 0) {
+                //            printf ("song %s not found in db, md5: ", fname);
+                //            for (int j = 0; j < 16; j++) {
+                //                printf ("%02x", (int)sig[j]);
+                //            }
+                //            printf ("\n");
+                //        }
+            }
+            it->duration = length;
+            it->filetype = "SID";
+
             after = ps_insert_item (after, it);
         }
     }
