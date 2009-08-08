@@ -636,6 +636,7 @@ ps_item_copy (playItem_t *out, playItem_t *it) {
     out->tracknum = it->tracknum;
     out->timestart = it->timestart;
     out->timeend = it->timeend;
+    out->duration = it->duration;
     out->next = it->next;
     out->prev = it->prev;
     // copy metainfo

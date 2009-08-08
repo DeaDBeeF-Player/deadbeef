@@ -223,12 +223,16 @@ draw_ps_row (GdkDrawable *drawable, cairo_t *cr, int row, playItem_t *it) {
     }
     cairo_set_font_size (cr, rowheight-4);
     // draw as columns
+    char dur[10];
+    int min = (int)it->duration/60;
+    int sec = (int)(it->duration-min*60);
+    snprintf (dur, 10, "%d:%02d", min, sec);
     const char *columns[ncolumns] = {
         "",
         ps_find_meta (it, "artist"),
         ps_find_meta (it, "track"),
         ps_find_meta (it, "title"),
-        "0:00"
+        dur
     };
     int x = 0;
 #if 1
@@ -798,13 +802,13 @@ gtkps_update_songinfo (void) {
         codec_t *c = playlist_current.codec;
         int minpos = c->info.position / 60;
         int secpos = c->info.position - minpos * 60;
-        int mindur = c->info.duration / 60;
-        int secdur = c->info.duration - mindur * 60;
+        int mindur = playlist_current.duration / 60;
+        int secdur = playlist_current.duration - mindur * 60;
         const char *mode = c->info.channels == 1 ? "Mono" : "Stereo";
         int samplerate = c->info.samplesPerSecond;
         int bitspersample = c->info.bitsPerSample;
         float pos = c->info.position;
-        int dur = c->info.duration;
+        int dur = playlist_current.duration;
         songpos = pos * 1000 / dur;
         codec_unlock ();
 

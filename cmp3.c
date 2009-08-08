@@ -55,12 +55,12 @@ cmp3_init (const char *fname, int track, float start, float end) {
 	mad_synth_init(&synth);
 	mad_timer_reset(&timer);
 
+#if 0
     if (cmp3_scan_stream (-1) < 0) {
         return -1;
     }
-//    printf ("song %s samplerate %d\n", fname, cmp3.info.samplesPerSecond);
-    fseek (buffer.file, 0, SEEK_SET);
-//	cmp3_decode (); // this 1st run will read 1st frame, but will not decode anything except header
+    rewind (buffer.file);
+#endif
 
     return 0;
 }
@@ -116,7 +116,7 @@ cmp3_scan_stream (float position) {
             // set decoder timer
             timer.seconds = (int)duration;
             timer.fraction = (int)((duration - (float)timer.seconds)*MAD_TIMER_RESOLUTION);
-            return 0;
+            return duration;
         }
         uint32_t hdr;
         uint8_t sync;
@@ -246,7 +246,7 @@ cmp3_scan_stream (float position) {
             fseek (buffer.file, packetlength-4, SEEK_CUR);
         }
     }
-    cmp3.info.duration = duration;
+//    cmp3.info.duration = duration;
     if (position >= 0 && duration > position) {
         // set decoder timer
         timer.seconds = (int)duration;
@@ -257,7 +257,7 @@ cmp3_scan_stream (float position) {
         return -1;
     }
     //printf ("song duration: %f\n", duration);
-    return 0;
+    return duration;
 }
 
 static int
@@ -659,6 +659,7 @@ convstr_id3v2_4 (const char* str, int sz) {
     else {
         return "";
     }
+// {{{ cp1251 detection (disabled)
 #if 0
     else {
         int latin = 0;
@@ -678,6 +679,7 @@ convstr_id3v2_4 (const char* str, int sz) {
         }
     }
 #endif
+// }}}
     str++;
     sz--;
     iconv_t cd = iconv_open ("utf8", enc);
@@ -1031,8 +1033,29 @@ cmp3_insert (playItem_t *after, const char *fname) {
             ps_add_meta (it, "title", NULL);
         }
     }
+    rewind (fp);
+
+
+    // calculate duration
+    buffer.file = fp;
+    buffer.remaining = 0;
+    buffer.output = NULL;
+    buffer.readsize = 0;
+    buffer.cachefill = 0;
+    cmp3.info.position = 0;
+	mad_timer_reset(&timer);
+
+    float dur;
+    if ((dur = cmp3_scan_stream (-1)) >= 0) {
+        it->duration = dur;
+        //printf ("duration: %f\n", dur);
+        after = ps_insert_item (after, it);
+    }
+    else {
+        ps_item_free (it);
+    }
+    memset (&buffer, 0, sizeof (buffer));
     fclose (fp);
-    after = ps_insert_item (after, it);
     return after;
 }
 

@@ -13,6 +13,7 @@ typedef struct playItem_s {
     int tracknum; // used for stuff like sid, nsf, cue (will be ignored by most codecs)
     float timestart; // start time of cue track, or -1
     float timeend; // end time of cue track, or -1
+    float duration; // in seconds
     struct playItem_s *next; // next item in linked list
     struct playItem_s *prev; // prev item in linked list
     struct metaInfo_s *meta; // linked list storing metainfo
