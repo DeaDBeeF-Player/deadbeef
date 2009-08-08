@@ -428,15 +428,6 @@ on_playlist_drag_data_delete           (GtkWidget       *widget,
 {
 }
 
-void
-on_playlist_drag_end                   (GtkWidget       *widget,
-                                        GdkDragContext  *drag_context,
-                                        gpointer         user_data)
-{
-    draw_playlist (widget, 0, 0, widget->allocation.width, widget->allocation.height);
-    gtkps_expose (widget, 0, 0, widget->allocation.width, widget->allocation.height);
-}
-
 
 gboolean
 on_playlist_drag_failed                (GtkWidget       *widget,

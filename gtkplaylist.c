@@ -1115,6 +1115,17 @@ gtkps_handle_drag_drop (int drop_y, uint32_t *d, int length) {
 }
 
 void
+on_playlist_drag_end                   (GtkWidget       *widget,
+                                        GdkDragContext  *drag_context,
+                                        gpointer         user_data)
+{
+    // invalidate entire cache - slow, but rare
+    memset (drawps_cache, 0, sizeof (int16_t) * 3 * ncolumns * nvisiblerows);
+    draw_playlist (widget, 0, 0, widget->allocation.width, widget->allocation.height);
+    gtkps_expose (widget, 0, 0, widget->allocation.width, widget->allocation.height);
+}
+
+void
 strcopy_special (char *dest, const char *src, int len) {
     while (len > 0) {
         if (len >= 3 && !strncmp (src, "\%20", 3)) {
@@ -1169,6 +1180,10 @@ gtkps_handle_fm_drag_drop (int drop_y, void *ptr, int length) {
     }
     gtkps_setup_scrollbar ();
     GtkWidget *widget = lookup_widget (mainwin, "playlist");
+
+    // invalidate entire cache - slow, but rare
+    memset (drawps_cache, 0, sizeof (int16_t) * 3 * ncolumns * nvisiblerows);
+
     draw_playlist (widget, 0, 0, widget->allocation.width, widget->allocation.height);
     gtkps_expose (widget, 0, 0, widget->allocation.width, widget->allocation.height);
 }
