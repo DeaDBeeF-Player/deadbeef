@@ -1028,6 +1028,7 @@ cmp3_insert (playItem_t *after, const char *fname) {
     it->tracknum = 0;
     it->timestart = 0;
     it->timeend = 0;
+    it->filetype = "MP3";
     if (cmp3_read_id3v2 (it, fp) < 0) {
         if (cmp3_read_id3v1 (it, fp) < 0) {
             ps_add_meta (it, "title", NULL);

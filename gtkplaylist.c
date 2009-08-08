@@ -812,7 +812,7 @@ gtkps_update_songinfo (void) {
         songpos = pos * 1000 / dur;
         codec_unlock ();
 
-        snprintf (sbtext_new, 512, "%dHz | %d bit | %s | %d:%02d / %d:%02d | %d songs total", samplerate, bitspersample, mode, minpos, secpos, mindur, secdur, ps_getcount ());
+        snprintf (sbtext_new, 512, "[%s] %dHz | %d bit | %s | %d:%02d / %d:%02d | %d songs total", playlist_current.filetype ? playlist_current.filetype:"-", samplerate, bitspersample, mode, minpos, secpos, mindur, secdur, ps_getcount ());
     }
     else {
         strcpy (sbtext_new, "Stopped");

@@ -14,6 +14,7 @@ typedef struct playItem_s {
     float timestart; // start time of cue track, or -1
     float timeend; // end time of cue track, or -1
     float duration; // in seconds
+    const char *filetype; // e.g. MP3 or OGG
     struct playItem_s *next; // next item in linked list
     struct playItem_s *prev; // prev item in linked list
     struct metaInfo_s *meta; // linked list storing metainfo
