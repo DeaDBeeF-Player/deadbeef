@@ -239,7 +239,9 @@ void
 on_about1_activate                     (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-
+    GtkWidget *d = create_aboutdialog ();
+    gtk_dialog_run (GTK_DIALOG (d));
+    gtk_widget_destroy (d);
 }
 
 
