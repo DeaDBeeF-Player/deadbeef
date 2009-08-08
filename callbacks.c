@@ -561,11 +561,6 @@ on_voice5_clicked                      (GtkButton       *button,
     codec_unlock ();
 }
 
-
-
-
-
-
 void
 on_order_linear_activate               (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
@@ -612,4 +607,5 @@ on_loop_disable_activate               (GtkMenuItem     *menuitem,
 {
     ps_set_loop_mode (1);
 }
+
 

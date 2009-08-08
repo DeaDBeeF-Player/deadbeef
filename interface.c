@@ -676,3 +676,78 @@ create_aboutdialog (void)
   return aboutdialog;
 }
 
+GtkWidget*
+create_searchwin (void)
+{
+  GtkWidget *searchwin;
+  GtkWidget *vbox4;
+  GtkWidget *searchentry;
+  GtkWidget *hbox6;
+  GtkWidget *vbox5;
+  GtkWidget *searchheader;
+  GtkWidget *searchlist;
+  GtkWidget *searchscroll;
+
+  searchwin = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+  gtk_widget_set_size_request (searchwin, 300, 150);
+  gtk_widget_set_events (searchwin, GDK_KEY_PRESS_MASK);
+  gtk_window_set_title (GTK_WINDOW (searchwin), "Search");
+  gtk_window_set_position (GTK_WINDOW (searchwin), GTK_WIN_POS_CENTER_ON_PARENT);
+  gtk_window_set_skip_taskbar_hint (GTK_WINDOW (searchwin), TRUE);
+  gtk_window_set_skip_pager_hint (GTK_WINDOW (searchwin), TRUE);
+
+  vbox4 = gtk_vbox_new (FALSE, 0);
+  gtk_widget_show (vbox4);
+  gtk_container_add (GTK_CONTAINER (searchwin), vbox4);
+  gtk_container_set_border_width (GTK_CONTAINER (vbox4), 4);
+
+  searchentry = gtk_entry_new ();
+  gtk_widget_show (searchentry);
+  gtk_box_pack_start (GTK_BOX (vbox4), searchentry, FALSE, FALSE, 0);
+  gtk_entry_set_invisible_char (GTK_ENTRY (searchentry), 8226);
+  gtk_entry_set_activates_default (GTK_ENTRY (searchentry), TRUE);
+
+  hbox6 = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show (hbox6);
+  gtk_box_pack_start (GTK_BOX (vbox4), hbox6, TRUE, TRUE, 0);
+
+  vbox5 = gtk_vbox_new (FALSE, 0);
+  gtk_widget_show (vbox5);
+  gtk_box_pack_start (GTK_BOX (hbox6), vbox5, TRUE, TRUE, 0);
+
+  searchheader = gtk_drawing_area_new ();
+  gtk_widget_show (searchheader);
+  gtk_box_pack_start (GTK_BOX (vbox5), searchheader, FALSE, TRUE, 0);
+  gtk_widget_set_size_request (searchheader, -1, 24);
+
+  searchlist = gtk_drawing_area_new ();
+  gtk_widget_show (searchlist);
+  gtk_box_pack_start (GTK_BOX (vbox5), searchlist, TRUE, TRUE, 0);
+  GTK_WIDGET_SET_FLAGS (searchlist, GTK_CAN_DEFAULT);
+  gtk_widget_set_events (searchlist, GDK_EXPOSURE_MASK | GDK_POINTER_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK);
+
+  searchscroll = gtk_vscrollbar_new (GTK_ADJUSTMENT (gtk_adjustment_new (0, 0, 0, 0, 0, 0)));
+  gtk_widget_show (searchscroll);
+  gtk_box_pack_start (GTK_BOX (hbox6), searchscroll, FALSE, TRUE, 0);
+
+  g_signal_connect ((gpointer) searchwin, "key_press_event",
+                    G_CALLBACK (on_searchwin_key_press_event),
+                    NULL);
+  g_signal_connect ((gpointer) searchentry, "changed",
+                    G_CALLBACK (on_searchentry_changed),
+                    NULL);
+
+  /* Store pointers to all widgets, for use by lookup_widget(). */
+  GLADE_HOOKUP_OBJECT_NO_REF (searchwin, searchwin, "searchwin");
+  GLADE_HOOKUP_OBJECT (searchwin, vbox4, "vbox4");
+  GLADE_HOOKUP_OBJECT (searchwin, searchentry, "searchentry");
+  GLADE_HOOKUP_OBJECT (searchwin, hbox6, "hbox6");
+  GLADE_HOOKUP_OBJECT (searchwin, vbox5, "vbox5");
+  GLADE_HOOKUP_OBJECT (searchwin, searchheader, "searchheader");
+  GLADE_HOOKUP_OBJECT (searchwin, searchlist, "searchlist");
+  GLADE_HOOKUP_OBJECT (searchwin, searchscroll, "searchscroll");
+
+  gtk_widget_grab_default (searchlist);
+  return searchwin;
+}
+

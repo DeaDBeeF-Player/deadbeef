@@ -38,6 +38,7 @@
 #include "messagepump.h"
 #include "messages.h"
 #include "streamer.h"
+#include "search.h"
 
 extern GtkWidget *mainwin;
 static GdkPixmap *backbuf;
@@ -864,7 +865,10 @@ gtkps_keypress (int keyval, int state) {
     GtkWidget *range = lookup_widget (mainwin, "playscroll");
     int prev = playlist_row;
     int newscroll = scrollpos;
-    if ((keyval == GDK_A || keyval == GDK_a) && (state & GDK_CONTROL_MASK)) {
+    if ((keyval == GDK_F || keyval == GDK_f) && (state & GDK_CONTROL_MASK)) {
+        search_start ();       
+    }
+    else if ((keyval == GDK_A || keyval == GDK_a) && (state & GDK_CONTROL_MASK)) {
         // select all
         for (playItem_t *it = playlist_head; it; it = it->next) {
             it->selected = 1;
@@ -1139,6 +1143,7 @@ gtkps_add_fm_dropped_files (char *ptr, int length, int drop_y) {
     gtk_widget_set_sensitive (GTK_WIDGET (e), FALSE);
     gtk_container_add (GTK_CONTAINER (gtk_dialog_get_content_area (GTK_DIALOG (d))), e);
     gtk_widget_show_all (d);
+    gtk_window_present (GTK_WINDOW (d));
     GDK_THREADS_LEAVE();
 
     int drop_row = drop_y / rowheight + scrollpos;
@@ -1389,6 +1394,7 @@ gtkps_add_dir (char *folder) {
     gtk_widget_set_sensitive (GTK_WIDGET (e), FALSE);
     gtk_container_add (GTK_CONTAINER (gtk_dialog_get_content_area (GTK_DIALOG (d))), e);
     gtk_widget_show_all (d);
+    gtk_window_present (GTK_WINDOW (d));
     GDK_THREADS_LEAVE();
     ps_add_dir (folder, gtkps_add_file_info_cb, e);
     g_free (folder);
@@ -1420,6 +1426,7 @@ gtkps_add_files (GSList *lst) {
     gtk_widget_set_sensitive (GTK_WIDGET (e), FALSE);
     gtk_container_add (GTK_CONTAINER (gtk_dialog_get_content_area (GTK_DIALOG (d))), e);
     gtk_widget_show_all (d);
+    gtk_window_present (GTK_WINDOW (d));
     GDK_THREADS_LEAVE();
     g_slist_foreach(lst, gtkps_addfile_cb, e);
     g_slist_free (lst);

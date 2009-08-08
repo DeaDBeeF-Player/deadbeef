@@ -4,3 +4,4 @@
 
 GtkWidget* create_mainwin (void);
 GtkWidget* create_aboutdialog (void);
+GtkWidget* create_searchwin (void);

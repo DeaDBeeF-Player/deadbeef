@@ -274,3 +274,12 @@ on_loop_single_activate                (GtkMenuItem     *menuitem,
 void
 on_loop_disable_activate               (GtkMenuItem     *menuitem,
                                         gpointer         user_data);
+
+gboolean
+on_searchwin_key_press_event           (GtkWidget       *widget,
+                                        GdkEventKey     *event,
+                                        gpointer         user_data);
+
+void
+on_searchentry_changed                 (GtkEditable     *editable,
+                                        gpointer         user_data);
