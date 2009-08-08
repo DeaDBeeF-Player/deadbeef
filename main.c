@@ -48,7 +48,7 @@ psdl_thread (uintptr_t ctx) {
             case M_NEXTSONG:
                 GDK_THREADS_ENTER();
                 p_stop ();
-                ps_nextsong ();
+                ps_nextsong (1);
                 GDK_THREADS_LEAVE();
                 break;
             case M_PREVSONG:

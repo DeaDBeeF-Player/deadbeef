@@ -48,11 +48,14 @@ streamer_thread (uintptr_t ctx) {
             //streambuffer_fill = 0;
             codecleft = 0;
             codec_unlock ();
+            ps_set_current (ps_get_for_idx (sng));
+#if 0
             if (ps_set_current (ps_get_for_idx (sng)) < 0) {
                 while (ps_nextsong () < 0) {
                     usleep (3000);
                 }
             }
+#endif
             if (pstate == 0) {
                 p_stop ();
             }
@@ -221,9 +224,12 @@ streamer_read_async (char *bytes, int size) {
         }
         else {
             // that means EOF
-            while (ps_nextsong () < 0) {
+            ps_nextsong (0);
+#if 0
+            while (ps_nextsong (0) < 0) {
                 usleep (3000);
             }
+#endif
             break;
         }
     }

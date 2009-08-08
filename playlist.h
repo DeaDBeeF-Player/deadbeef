@@ -74,8 +74,9 @@ int
 ps_set_current (playItem_t *it);
 
 // returns -1 if theres no next song, or playlist finished
+// reason 0 means "song finished", 1 means "user clicked next"
 int
-ps_nextsong (void);
+ps_nextsong (int reason);
 
 int
 ps_prevsong (void);
@@ -102,5 +103,11 @@ ps_delete_selected (void);
 
 void
 ps_shuffle (void);
+
+void
+ps_set_order (int order);
+
+void
+ps_set_loop_mode (int mode);
 
 #endif // __PLAYLIST_H

@@ -233,3 +233,27 @@ gboolean
 on_header_button_release_event         (GtkWidget       *widget,
                                         GdkEventButton  *event,
                                         gpointer         user_data);
+
+void
+on_order_linear_activate               (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_order_shuffle_activate              (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_order_random_activate               (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_loop_all_activate                   (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_loop_single_activate                (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_loop_disable_activate               (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);

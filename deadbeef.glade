@@ -181,6 +181,109 @@
 	      </child>
 
 	      <child>
+		<widget class="GtkMenuItem" id="playlist1">
+		  <property name="visible">True</property>
+		  <property name="label" translatable="yes">Playlist</property>
+		  <property name="use_underline">True</property>
+
+		  <child>
+		    <widget class="GtkMenu" id="playlist1_menu">
+
+		      <child>
+			<widget class="GtkMenuItem" id="order1">
+			  <property name="visible">True</property>
+			  <property name="label" translatable="yes">Order</property>
+			  <property name="use_underline">True</property>
+
+			  <child>
+			    <widget class="GtkMenu" id="order1_menu">
+
+			      <child>
+				<widget class="GtkRadioMenuItem" id="order_linear">
+				  <property name="visible">True</property>
+				  <property name="label" translatable="yes">Linear</property>
+				  <property name="use_underline">True</property>
+				  <property name="active">False</property>
+				  <signal name="activate" handler="on_order_linear_activate" last_modification_time="Sat, 08 Aug 2009 12:26:33 GMT"/>
+				</widget>
+			      </child>
+
+			      <child>
+				<widget class="GtkRadioMenuItem" id="order_shuffle">
+				  <property name="visible">True</property>
+				  <property name="label" translatable="yes">Shuffle</property>
+				  <property name="use_underline">True</property>
+				  <property name="active">False</property>
+				  <property name="group">order_linear</property>
+				  <signal name="activate" handler="on_order_shuffle_activate" last_modification_time="Sat, 08 Aug 2009 12:26:33 GMT"/>
+				</widget>
+			      </child>
+
+			      <child>
+				<widget class="GtkRadioMenuItem" id="order_random">
+				  <property name="visible">True</property>
+				  <property name="label" translatable="yes">Random</property>
+				  <property name="use_underline">True</property>
+				  <property name="active">False</property>
+				  <property name="group">order_linear</property>
+				  <signal name="activate" handler="on_order_random_activate" last_modification_time="Sat, 08 Aug 2009 12:26:33 GMT"/>
+				</widget>
+			      </child>
+			    </widget>
+			  </child>
+			</widget>
+		      </child>
+
+		      <child>
+			<widget class="GtkMenuItem" id="looping1">
+			  <property name="visible">True</property>
+			  <property name="label" translatable="yes">Looping</property>
+			  <property name="use_underline">True</property>
+
+			  <child>
+			    <widget class="GtkMenu" id="looping1_menu">
+
+			      <child>
+				<widget class="GtkRadioMenuItem" id="loop_all">
+				  <property name="visible">True</property>
+				  <property name="label" translatable="yes">Loop All</property>
+				  <property name="use_underline">True</property>
+				  <property name="active">False</property>
+				  <signal name="activate" handler="on_loop_all_activate" last_modification_time="Sat, 08 Aug 2009 12:26:33 GMT"/>
+				</widget>
+			      </child>
+
+			      <child>
+				<widget class="GtkRadioMenuItem" id="loop_single">
+				  <property name="visible">True</property>
+				  <property name="label" translatable="yes">Loop Single Song</property>
+				  <property name="use_underline">True</property>
+				  <property name="active">False</property>
+				  <property name="group">loop_all</property>
+				  <signal name="activate" handler="on_loop_single_activate" last_modification_time="Sat, 08 Aug 2009 12:26:33 GMT"/>
+				</widget>
+			      </child>
+
+			      <child>
+				<widget class="GtkRadioMenuItem" id="loop_disable">
+				  <property name="visible">True</property>
+				  <property name="label" translatable="yes">Don't Loop</property>
+				  <property name="use_underline">True</property>
+				  <property name="active">False</property>
+				  <property name="group">loop_all</property>
+				  <signal name="activate" handler="on_loop_disable_activate" last_modification_time="Sat, 08 Aug 2009 12:26:33 GMT"/>
+				</widget>
+			      </child>
+			    </widget>
+			  </child>
+			</widget>
+		      </child>
+		    </widget>
+		  </child>
+		</widget>
+	      </child>
+
+	      <child>
 		<widget class="GtkMenuItem" id="menuitem4">
 		  <property name="visible">True</property>
 		  <property name="label" translatable="yes">_Help</property>

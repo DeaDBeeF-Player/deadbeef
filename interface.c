@@ -51,6 +51,20 @@ create_mainwin (void)
   GtkWidget *selection1_menu;
   GtkWidget *remove1;
   GtkWidget *crop1;
+  GtkWidget *playlist1;
+  GtkWidget *playlist1_menu;
+  GtkWidget *order1;
+  GtkWidget *order1_menu;
+  GSList *order_linear_group = NULL;
+  GtkWidget *order_linear;
+  GtkWidget *order_shuffle;
+  GtkWidget *order_random;
+  GtkWidget *looping1;
+  GtkWidget *looping1_menu;
+  GSList *loop_all_group = NULL;
+  GtkWidget *loop_all;
+  GtkWidget *loop_single;
+  GtkWidget *loop_disable;
   GtkWidget *menuitem4;
   GtkWidget *menuitem4_menu;
   GtkWidget *about1;
@@ -177,6 +191,57 @@ create_mainwin (void)
   crop1 = gtk_menu_item_new_with_mnemonic ("Crop");
   gtk_widget_show (crop1);
   gtk_container_add (GTK_CONTAINER (selection1_menu), crop1);
+
+  playlist1 = gtk_menu_item_new_with_mnemonic ("Playlist");
+  gtk_widget_show (playlist1);
+  gtk_container_add (GTK_CONTAINER (menubar1), playlist1);
+
+  playlist1_menu = gtk_menu_new ();
+  gtk_menu_item_set_submenu (GTK_MENU_ITEM (playlist1), playlist1_menu);
+
+  order1 = gtk_menu_item_new_with_mnemonic ("Order");
+  gtk_widget_show (order1);
+  gtk_container_add (GTK_CONTAINER (playlist1_menu), order1);
+
+  order1_menu = gtk_menu_new ();
+  gtk_menu_item_set_submenu (GTK_MENU_ITEM (order1), order1_menu);
+
+  order_linear = gtk_radio_menu_item_new_with_mnemonic (order_linear_group, "Linear");
+  order_linear_group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (order_linear));
+  gtk_widget_show (order_linear);
+  gtk_container_add (GTK_CONTAINER (order1_menu), order_linear);
+
+  order_shuffle = gtk_radio_menu_item_new_with_mnemonic (order_linear_group, "Shuffle");
+  order_linear_group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (order_shuffle));
+  gtk_widget_show (order_shuffle);
+  gtk_container_add (GTK_CONTAINER (order1_menu), order_shuffle);
+
+  order_random = gtk_radio_menu_item_new_with_mnemonic (order_linear_group, "Random");
+  order_linear_group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (order_random));
+  gtk_widget_show (order_random);
+  gtk_container_add (GTK_CONTAINER (order1_menu), order_random);
+
+  looping1 = gtk_menu_item_new_with_mnemonic ("Looping");
+  gtk_widget_show (looping1);
+  gtk_container_add (GTK_CONTAINER (playlist1_menu), looping1);
+
+  looping1_menu = gtk_menu_new ();
+  gtk_menu_item_set_submenu (GTK_MENU_ITEM (looping1), looping1_menu);
+
+  loop_all = gtk_radio_menu_item_new_with_mnemonic (loop_all_group, "Loop All");
+  loop_all_group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (loop_all));
+  gtk_widget_show (loop_all);
+  gtk_container_add (GTK_CONTAINER (looping1_menu), loop_all);
+
+  loop_single = gtk_radio_menu_item_new_with_mnemonic (loop_all_group, "Loop Single Song");
+  loop_all_group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (loop_single));
+  gtk_widget_show (loop_single);
+  gtk_container_add (GTK_CONTAINER (looping1_menu), loop_single);
+
+  loop_disable = gtk_radio_menu_item_new_with_mnemonic (loop_all_group, "Don't Loop");
+  loop_all_group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (loop_disable));
+  gtk_widget_show (loop_disable);
+  gtk_container_add (GTK_CONTAINER (looping1_menu), loop_disable);
 
   menuitem4 = gtk_menu_item_new_with_mnemonic ("_Help");
   gtk_widget_show (menuitem4);
@@ -379,6 +444,24 @@ create_mainwin (void)
   g_signal_connect ((gpointer) crop1, "activate",
                     G_CALLBACK (on_crop1_activate),
                     NULL);
+  g_signal_connect ((gpointer) order_linear, "activate",
+                    G_CALLBACK (on_order_linear_activate),
+                    NULL);
+  g_signal_connect ((gpointer) order_shuffle, "activate",
+                    G_CALLBACK (on_order_shuffle_activate),
+                    NULL);
+  g_signal_connect ((gpointer) order_random, "activate",
+                    G_CALLBACK (on_order_random_activate),
+                    NULL);
+  g_signal_connect ((gpointer) loop_all, "activate",
+                    G_CALLBACK (on_loop_all_activate),
+                    NULL);
+  g_signal_connect ((gpointer) loop_single, "activate",
+                    G_CALLBACK (on_loop_single_activate),
+                    NULL);
+  g_signal_connect ((gpointer) loop_disable, "activate",
+                    G_CALLBACK (on_loop_disable_activate),
+                    NULL);
   g_signal_connect ((gpointer) about1, "activate",
                     G_CALLBACK (on_about1_activate),
                     NULL);
@@ -514,6 +597,18 @@ create_mainwin (void)
   GLADE_HOOKUP_OBJECT (mainwin, selection1_menu, "selection1_menu");
   GLADE_HOOKUP_OBJECT (mainwin, remove1, "remove1");
   GLADE_HOOKUP_OBJECT (mainwin, crop1, "crop1");
+  GLADE_HOOKUP_OBJECT (mainwin, playlist1, "playlist1");
+  GLADE_HOOKUP_OBJECT (mainwin, playlist1_menu, "playlist1_menu");
+  GLADE_HOOKUP_OBJECT (mainwin, order1, "order1");
+  GLADE_HOOKUP_OBJECT (mainwin, order1_menu, "order1_menu");
+  GLADE_HOOKUP_OBJECT (mainwin, order_linear, "order_linear");
+  GLADE_HOOKUP_OBJECT (mainwin, order_shuffle, "order_shuffle");
+  GLADE_HOOKUP_OBJECT (mainwin, order_random, "order_random");
+  GLADE_HOOKUP_OBJECT (mainwin, looping1, "looping1");
+  GLADE_HOOKUP_OBJECT (mainwin, looping1_menu, "looping1_menu");
+  GLADE_HOOKUP_OBJECT (mainwin, loop_all, "loop_all");
+  GLADE_HOOKUP_OBJECT (mainwin, loop_single, "loop_single");
+  GLADE_HOOKUP_OBJECT (mainwin, loop_disable, "loop_disable");
   GLADE_HOOKUP_OBJECT (mainwin, menuitem4, "menuitem4");
   GLADE_HOOKUP_OBJECT (mainwin, menuitem4_menu, "menuitem4_menu");
   GLADE_HOOKUP_OBJECT (mainwin, about1, "about1");

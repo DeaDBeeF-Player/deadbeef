@@ -29,8 +29,8 @@ playItem_t *playlist_shuffle_head;
 playItem_t playlist_current;
 playItem_t *playlist_current_ptr;
 static int ps_count = 0;
-static int ps_mode = 0; // 0 = linear, 1 = shuffle, 2 = random
-static int ps_loop_mode = 0; // 0 = loop, 1 = don't loop
+static int ps_order = 0; // 0 = linear, 1 = shuffle, 2 = random
+static int ps_loop_mode = 0; // 0 = loop, 1 = don't loop, 2 = loop single
 
 void
 ps_free (void) {
@@ -613,9 +613,9 @@ ps_set_current (playItem_t *it) {
 
 int
 ps_prevsong (void) {
-    if (ps_mode == 1) { // shuffle
+    if (ps_order == 1) { // shuffle
         if (!playlist_current_ptr) {
-            return ps_nextsong ();
+            return ps_nextsong (1);
         }
         else {
             playItem_t *it = NULL;
@@ -628,7 +628,9 @@ ps_prevsong (void) {
             }
             if (!it && last) {
                 // means we were on 1st song, jump to tail
-                it = last;
+                if (ps_loop_mode == 0) {
+                    it = last;
+                }
             }
             if (!it) {
                 return -1;
@@ -638,13 +640,15 @@ ps_prevsong (void) {
             return 0;
         }
     }
-    else if (ps_mode == 0) { // linear
+    else if (ps_order == 0) { // linear
         playItem_t *it = NULL;
         if (playlist_current_ptr) {
             it = playlist_current_ptr->prev;
         }
         if (!it) {
-            it = playlist_tail;
+            if (ps_loop_mode == 0) {
+                it = playlist_tail;
+            }
         }
         if (!it) {
             return -1;
@@ -653,15 +657,15 @@ ps_prevsong (void) {
         streamer_set_nextsong (r, 1);
         return 0;
     }
-    else if (ps_mode == 2) { // random
+    else if (ps_order == 2) { // random
         ps_randomsong ();
     }
     return -1;
 }
 
 int
-ps_nextsong (void) {
-    if (ps_mode == 1) { // shuffle
+ps_nextsong (int reason) {
+    if (ps_order == 1) { // shuffle
         if (!playlist_current_ptr) {
             playItem_t *it = playlist_shuffle_head;
             if (!it) {
@@ -672,6 +676,11 @@ ps_nextsong (void) {
             return 0;
         }
         else {
+            if (reason == 0 && ps_loop_mode == 2) {
+                int r = ps_get_idx_of (playlist_current_ptr);
+                streamer_set_nextsong (r, 1);
+                return 0;
+            }
             playItem_t *it = playlist_current_ptr->shufflenext;
             if (!it) {
                 if (ps_loop_mode == 0) { // loop
@@ -689,13 +698,20 @@ ps_nextsong (void) {
             return 0;
         }
     }
-    else if (ps_mode == 0) { // linear
+    else if (ps_order == 0) { // linear
         playItem_t *it = NULL;
         if (playlist_current_ptr) {
+            if (reason == 0 && ps_loop_mode == 2) {
+                int r = ps_get_idx_of (playlist_current_ptr);
+                streamer_set_nextsong (r, 1);
+                return 0;
+            }
             it = playlist_current_ptr->next;
         }
         if (!it) {
-            it = playlist_head;
+            if (ps_loop_mode == 0) {
+                it = playlist_head;
+            }
         }
         if (!it) {
             return -1;
@@ -704,7 +720,12 @@ ps_nextsong (void) {
         streamer_set_nextsong (r, 1);
         return 0;
     }
-    else if (ps_mode == 2) { // random
+    else if (ps_order == 2) { // random
+        if (reason == 0 && ps_loop_mode == 2 && playlist_current_ptr) {
+            int r = ps_get_idx_of (playlist_current_ptr);
+            streamer_set_nextsong (r, 1);
+            return 0;
+        }
         return ps_randomsong ();
     }
     return -1;
@@ -895,4 +916,14 @@ ps_shuffle (void) {
         tail->shufflenext = playlist_shuffle_head;
     }
 #endif
+}
+
+void
+ps_set_order (int order) {
+    ps_order = order;
+}
+
+void
+ps_set_loop_mode (int mode) {
+    ps_loop_mode = mode;
 }
