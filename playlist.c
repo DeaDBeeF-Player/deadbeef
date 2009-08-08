@@ -947,3 +947,4 @@ void
 ps_set_loop_mode (int mode) {
     ps_loop_mode = mode;
 }
+

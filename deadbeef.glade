@@ -1562,11 +1562,11 @@ Public License instead of this License.  But first, please read
 		  <property name="height_request">24</property>
 		  <property name="visible">True</property>
 		  <property name="events">GDK_EXPOSURE_MASK | GDK_POINTER_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-		  <signal name="button_press_event" handler="on_searchheader_button_press_event" last_modification_time="Sat, 08 Aug 2009 18:50:49 GMT"/>
-		  <signal name="button_release_event" handler="on_searchheader_button_release_event" last_modification_time="Sat, 08 Aug 2009 18:50:53 GMT"/>
-		  <signal name="configure_event" handler="on_searchheader_configure_event" last_modification_time="Sat, 08 Aug 2009 18:51:08 GMT"/>
-		  <signal name="expose_event" handler="on_searchheader_expose_event" last_modification_time="Sat, 08 Aug 2009 18:51:15 GMT"/>
-		  <signal name="motion_notify_event" handler="on_searchheader_motion_notify_event" last_modification_time="Sat, 08 Aug 2009 18:51:30 GMT"/>
+		  <signal name="button_press_event" handler="on_header_button_press_event" last_modification_time="Sat, 08 Aug 2009 22:38:34 GMT"/>
+		  <signal name="button_release_event" handler="on_header_button_release_event" last_modification_time="Sat, 08 Aug 2009 22:38:38 GMT"/>
+		  <signal name="configure_event" handler="on_header_configure_event" last_modification_time="Sat, 08 Aug 2009 22:38:42 GMT"/>
+		  <signal name="expose_event" handler="on_header_expose_event" last_modification_time="Sat, 08 Aug 2009 22:38:46 GMT"/>
+		  <signal name="motion_notify_event" handler="on_header_motion_notify_event" last_modification_time="Sat, 08 Aug 2009 22:38:49 GMT"/>
 		</widget>
 		<packing>
 		  <property name="padding">0</property>
@@ -1581,11 +1581,13 @@ Public License instead of this License.  But first, please read
 		  <property name="can_default">True</property>
 		  <property name="has_default">True</property>
 		  <property name="events">GDK_EXPOSURE_MASK | GDK_POINTER_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK</property>
-		  <signal name="button_press_event" handler="on_searchlist_button_press_event" last_modification_time="Sat, 08 Aug 2009 18:51:43 GMT"/>
+		  <signal name="button_press_event" handler="on_playlist_button_press_event" last_modification_time="Sat, 08 Aug 2009 22:37:04 GMT"/>
 		  <signal name="configure_event" handler="on_searchlist_configure_event" last_modification_time="Sat, 08 Aug 2009 18:51:52 GMT"/>
-		  <signal name="expose_event" handler="on_searchlist_expose_event" last_modification_time="Sat, 08 Aug 2009 18:52:01 GMT"/>
-		  <signal name="scroll_event" handler="on_searchlist_scroll_event" last_modification_time="Sat, 08 Aug 2009 18:52:13 GMT"/>
+		  <signal name="expose_event" handler="on_playlist_expose_event" last_modification_time="Sat, 08 Aug 2009 22:36:26 GMT"/>
+		  <signal name="scroll_event" handler="on_playlist_scroll_event" last_modification_time="Sat, 08 Aug 2009 22:36:45 GMT"/>
 		  <signal name="realize" handler="on_searchlist_realize" last_modification_time="Sat, 08 Aug 2009 19:12:45 GMT"/>
+		  <signal name="button_release_event" handler="on_playlist_button_release_event" last_modification_time="Sat, 08 Aug 2009 22:37:24 GMT"/>
+		  <signal name="motion_notify_event" handler="on_playlist_motion_notify_event" last_modification_time="Sat, 08 Aug 2009 22:38:04 GMT"/>
 		</widget>
 		<packing>
 		  <property name="padding">0</property>

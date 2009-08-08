@@ -20,6 +20,7 @@
 
 #include <gtk/gtk.h>
 #include <stdint.h>
+#include <assert.h>
 #include "playlist.h"
 
 enum {
@@ -41,8 +42,10 @@ typedef struct {
     GdkPixmap *backbuf;
     // parameters
     playItem_t **phead; // pointer to head of list to display
+    playItem_t **pcurr; // pointer to current item
     int update_statusbar; // whether it needs to update status bar in certain cases
     int has_dragndrop; // whether it has drag and drop capability
+    int lastpos[2]; // last mouse position (for playlist widget)
     // current state
     int scrollpos;
     int row;
@@ -54,45 +57,92 @@ typedef struct {
     int colwidths[ps_ncolumns]; // current column widths
 } gtkplaylist_t;
 
-void
-redraw_ps_row (GtkWidget *widget, int row);
+#define GTKPS_PROLOGUE \
+    gtkplaylist_t *ps = (gtkplaylist_t *)gtk_object_get_data (GTK_OBJECT (widget), "ps"); assert (ps); 
 
 void
-gtkps_setup_scrollbar (void);
+gtkps_redraw_ps_row (gtkplaylist_t *ps, int row);
 
 void
-draw_ps_row_back (GdkDrawable *drawable, cairo_t *cr, int row, playItem_t *it);
+gtkps_redraw_ps_row_novis (gtkplaylist_t *ps, int row);
 
 void
-draw_ps_row (GdkDrawable *drawable, cairo_t *cr, int row, playItem_t *it);
+gtkps_setup_scrollbar (gtkplaylist_t *ps);
 
 void
-draw_playlist (GtkWidget *widget, int x, int y, int w, int h);
+gtkps_draw_ps_row_back (gtkplaylist_t *ps, cairo_t *cr, int row, playItem_t *it);
 
 void
-gtkps_reconf (GtkWidget *widget);
+gtkps_draw_ps_row (gtkplaylist_t *ps, cairo_t *cr, int row, playItem_t *it);
 
 void
-gtkps_expose (GtkWidget       *widget, int x, int y, int w, int h);
+gtkps_draw_playlist (gtkplaylist_t *ps, int x, int y, int w, int h);
 
 void
-gtkps_mouse1_pressed (int state, int ex, int ey, double time);
+gtkps_reconf (gtkplaylist_t *ps);
 
 void
-gtkps_mouse1_released (int state, int ex, int ey, double time);
+gtkps_expose (gtkplaylist_t *ps, int x, int y, int w, int h);
 
 void
-gtkps_mousemove (GdkEventMotion *event);
+gtkps_mouse1_pressed (gtkplaylist_t *ps, int state, int ex, int ey, double time);
 
 void
-gtkps_scroll (int newscroll);
+gtkps_mouse1_released (gtkplaylist_t *ps, int state, int ex, int ey, double time);
 
 void
-gtkps_stopsong (void);
+gtkps_mousemove (gtkplaylist_t *ps, GdkEventMotion *event);
 
 void
-gtkps_playsong (void);
+gtkps_scroll (gtkplaylist_t *ps, int newscroll);
 
+void
+gtkps_handle_scroll_event (gtkplaylist_t *ps, int direction);
+
+void
+gtkps_keypress (gtkplaylist_t *ps, int keyval, int state);
+
+void
+gtkps_track_dragdrop (gtkplaylist_t *ps, int y);
+
+void
+gtkps_handle_drag_drop (gtkplaylist_t *ps, int drop_y, uint32_t *d, int length);
+
+void
+gtkps_handle_fm_drag_drop (gtkplaylist_t *ps, int drop_y, void *ptr, int length);
+
+void
+gtkps_add_fm_dropped_files (gtkplaylist_t *ps, char *ptr, int length, int drop_y);
+
+void
+gtkps_select_single (gtkplaylist_t *ps, int sel);
+
+void
+gtkps_header_draw (gtkplaylist_t *ps);
+
+void
+gtkps_add_dir (gtkplaylist_t *ps, char *folder);
+
+void
+gtkps_add_files (gtkplaylist_t *ps, GSList *lst);
+
+void
+gtkps_configure (gtkplaylist_t *ps);
+
+// this functions take value from passed playlist, that's why it's here
+void
+gtkps_playsong (gtkplaylist_t *ps);
+
+void
+gtkps_songchanged (gtkplaylist_t *ps, int from, int to);
+
+// these functions operate on global playlist level,
+// no need to pass gtkplaylist_t ptr to them
+
+void
+gtkps_add_fm_dropped_files (gtkplaylist_t *ps, char *ptr, int length, int drop_y);
+
+// these functions should not belong here
 void
 gtkps_prevsong (void);
 
@@ -108,34 +158,4 @@ gtkps_pausesong (void);
 void
 gtkps_playsongnum (int idx);
 
-void
-gtkps_update_songinfo (void);
-
-void
-gtkps_songchanged (int from, int to);
-
-void
-gtkps_handle_scroll_event (int direction);
-
-void
-gtkps_keypress (int keyval, int state);
-
-void
-gtkps_track_dragdrop (int y);
-
-void
-gtkps_handle_drag_drop (int drop_y, uint32_t *d, int length);
-
-void
-gtkps_handle_fm_drag_drop (int drop_y, void *ptr, int length);
-
-void
-gtkps_add_dir (char *dir);
-
-void
-gtkps_add_files (GSList *lst);
-
-void
-gtkps_add_fm_dropped_files (char *ptr, int length, int drop_y);
-
-#endif
+#endif // __GTKPLAYLIST_H

@@ -29,9 +29,11 @@
 #include "support.h"
 
 #include "search.h"
+#include "gtkplaylist.h"
 
-static GtkWidget *searchwin = NULL;
+GtkWidget *searchwin = NULL;
 struct playItem_s *search_head = NULL;
+struct playItem_s *search_current = NULL;
 
 void
 search_start (void) {
@@ -78,8 +80,7 @@ on_searchheader_configure_event        (GtkWidget       *widget,
                                         GdkEventConfigure *event,
                                         gpointer         user_data)
 {
-
-  return FALSE;
+    return FALSE;
 }
 
 
@@ -130,6 +131,10 @@ on_searchlist_configure_event          (GtkWidget       *widget,
                                         GdkEventConfigure *event,
                                         gpointer         user_data)
 {
+    extern void search_playlist_init (GtkWidget *widget);
+    search_playlist_init (widget);
+    GTKPS_PROLOGUE;
+    gtkps_configure (ps);
 
   return FALSE;
 }

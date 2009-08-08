@@ -57,7 +57,8 @@ static int sldb_poolmark;
 static int16_t *sldb_lengths[SLDB_MAX_SONGS];
 static int sldb_size;
 static int sldb_loaded;
-static const char *sldb_fname = "/home/waker/hvsc/C64Music/DOCUMENTS/Songlengths.txt";
+//static const char *sldb_fname = "/home/waker/hvsc/C64Music/DOCUMENTS/Songlengths.txt";
+static const char *sldb_fname = "/mnt/win/mus/chiptune/C64Music/DOCUMENTS/Songlengths.txt";
 
 static void sldb_load(const char *fname)
 {

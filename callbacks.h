@@ -336,3 +336,53 @@ on_searchscroll_value_changed          (GtkRange        *range,
 void
 on_searchlist_realize                  (GtkWidget       *widget,
                                         gpointer         user_data);
+
+gboolean
+on_header_button_press_event           (GtkWidget       *widget,
+                                        GdkEventButton  *event,
+                                        gpointer         user_data);
+
+gboolean
+on_header_button_release_event         (GtkWidget       *widget,
+                                        GdkEventButton  *event,
+                                        gpointer         user_data);
+
+gboolean
+on_header_configure_event              (GtkWidget       *widget,
+                                        GdkEventConfigure *event,
+                                        gpointer         user_data);
+
+gboolean
+on_header_expose_event                 (GtkWidget       *widget,
+                                        GdkEventExpose  *event,
+                                        gpointer         user_data);
+
+gboolean
+on_header_motion_notify_event          (GtkWidget       *widget,
+                                        GdkEventMotion  *event,
+                                        gpointer         user_data);
+
+gboolean
+on_playlist_button_press_event         (GtkWidget       *widget,
+                                        GdkEventButton  *event,
+                                        gpointer         user_data);
+
+gboolean
+on_playlist_expose_event               (GtkWidget       *widget,
+                                        GdkEventExpose  *event,
+                                        gpointer         user_data);
+
+gboolean
+on_playlist_scroll_event               (GtkWidget       *widget,
+                                        GdkEvent        *event,
+                                        gpointer         user_data);
+
+gboolean
+on_playlist_button_release_event       (GtkWidget       *widget,
+                                        GdkEventButton  *event,
+                                        gpointer         user_data);
+
+gboolean
+on_playlist_motion_notify_event        (GtkWidget       *widget,
+                                        GdkEventMotion  *event,
+                                        gpointer         user_data);

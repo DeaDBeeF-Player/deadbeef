@@ -738,34 +738,40 @@ create_searchwin (void)
                     G_CALLBACK (on_searchentry_changed),
                     NULL);
   g_signal_connect ((gpointer) searchheader, "button_press_event",
-                    G_CALLBACK (on_searchheader_button_press_event),
+                    G_CALLBACK (on_header_button_press_event),
                     NULL);
   g_signal_connect ((gpointer) searchheader, "button_release_event",
-                    G_CALLBACK (on_searchheader_button_release_event),
+                    G_CALLBACK (on_header_button_release_event),
                     NULL);
   g_signal_connect ((gpointer) searchheader, "configure_event",
-                    G_CALLBACK (on_searchheader_configure_event),
+                    G_CALLBACK (on_header_configure_event),
                     NULL);
   g_signal_connect ((gpointer) searchheader, "expose_event",
-                    G_CALLBACK (on_searchheader_expose_event),
+                    G_CALLBACK (on_header_expose_event),
                     NULL);
   g_signal_connect ((gpointer) searchheader, "motion_notify_event",
-                    G_CALLBACK (on_searchheader_motion_notify_event),
+                    G_CALLBACK (on_header_motion_notify_event),
                     NULL);
   g_signal_connect ((gpointer) searchlist, "button_press_event",
-                    G_CALLBACK (on_searchlist_button_press_event),
+                    G_CALLBACK (on_playlist_button_press_event),
                     NULL);
   g_signal_connect ((gpointer) searchlist, "configure_event",
                     G_CALLBACK (on_searchlist_configure_event),
                     NULL);
   g_signal_connect ((gpointer) searchlist, "expose_event",
-                    G_CALLBACK (on_searchlist_expose_event),
+                    G_CALLBACK (on_playlist_expose_event),
                     NULL);
   g_signal_connect ((gpointer) searchlist, "scroll_event",
-                    G_CALLBACK (on_searchlist_scroll_event),
+                    G_CALLBACK (on_playlist_scroll_event),
                     NULL);
   g_signal_connect ((gpointer) searchlist, "realize",
                     G_CALLBACK (on_searchlist_realize),
+                    NULL);
+  g_signal_connect ((gpointer) searchlist, "button_release_event",
+                    G_CALLBACK (on_playlist_button_release_event),
+                    NULL);
+  g_signal_connect ((gpointer) searchlist, "motion_notify_event",
+                    G_CALLBACK (on_playlist_motion_notify_event),
                     NULL);
   g_signal_connect ((gpointer) searchscroll, "value_changed",
                     G_CALLBACK (on_searchscroll_value_changed),

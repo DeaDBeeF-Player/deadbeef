@@ -19,6 +19,7 @@
 #define __SEARCH_H
 
 extern struct playItem_s *search_head;
+extern struct playItem_s *search_current;
 
 void
 search_start (void);

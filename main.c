@@ -18,6 +18,7 @@
 #include <gtk/gtk.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <string.h>
 #include "interface.h"
 #include "support.h"
 #include "playlist.h"
@@ -31,8 +32,74 @@
 #include "streamer.h"
 
 GtkWidget *mainwin;
+gtkplaylist_t main_playlist;
+gtkplaylist_t search_playlist;
 
 int psdl_terminate = 0;
+
+// update status bar and window title
+static int sb_context_id = -1;
+static char sb_text[512];
+static int last_songpos = -1;
+
+void
+update_songinfo (void) {
+    if (!mainwin) {
+        return;
+    }
+    char sbtext_new[512] = "-";
+    int songpos = 0;
+    if (p_ispaused ()) {
+        strcpy (sbtext_new, "Paused");
+        songpos = 0;
+    }
+    else if (playlist_current.codec) {
+        codec_lock ();
+        codec_t *c = playlist_current.codec;
+        int minpos = c->info.position / 60;
+        int secpos = c->info.position - minpos * 60;
+        int mindur = playlist_current.duration / 60;
+        int secdur = playlist_current.duration - mindur * 60;
+        const char *mode = c->info.channels == 1 ? "Mono" : "Stereo";
+        int samplerate = c->info.samplesPerSecond;
+        int bitspersample = c->info.bitsPerSample;
+        float pos = c->info.position;
+        int dur = playlist_current.duration;
+        songpos = pos * 1000 / dur;
+        codec_unlock ();
+
+        snprintf (sbtext_new, 512, "[%s] %dHz | %d bit | %s | %d:%02d / %d:%02d | %d songs total", playlist_current.filetype ? playlist_current.filetype:"-", samplerate, bitspersample, mode, minpos, secpos, mindur, secdur, ps_getcount ());
+    }
+    else {
+        strcpy (sbtext_new, "Stopped");
+    }
+
+    if (strcmp (sbtext_new, sb_text)) {
+        strcpy (sb_text, sbtext_new);
+
+        // form statusline
+        GDK_THREADS_ENTER();
+        // FIXME: don't update if window is not visible
+        GtkStatusbar *sb = GTK_STATUSBAR (lookup_widget (mainwin, "statusbar"));
+        if (sb_context_id == -1) {
+            sb_context_id = gtk_statusbar_get_context_id (sb, "msg");
+        }
+
+        gtk_statusbar_pop (sb, sb_context_id);
+        gtk_statusbar_push (sb, sb_context_id, sb_text);
+
+        GDK_THREADS_LEAVE();
+    }
+
+    if (songpos != last_songpos) {
+        last_songpos = songpos;
+        extern int g_disable_seekbar_handler;
+        g_disable_seekbar_handler = 1;
+        GtkRange *seekbar = GTK_RANGE (lookup_widget (mainwin, "playpos"));
+        gtk_range_set_value (seekbar, songpos);
+        g_disable_seekbar_handler = 0;
+    }
+}
 
 void
 psdl_thread (uintptr_t ctx) {
@@ -45,11 +112,30 @@ psdl_thread (uintptr_t ctx) {
         while (messagepump_pop(&msg, &ctx, &p1, &p2) != -1) {
             switch (msg) {
             case M_SONGCHANGED:
-                gtkps_songchanged (p1, p2);
+                GDK_THREADS_ENTER();
+                // update window title
+                int from = p1;
+                int to = p2;
+                if (from >= 0 || to >= 0) {
+                    if (to >= 0) {
+                        playItem_t *it = ps_get_for_idx (to);
+                        char str[600];
+                        char dname[512];
+                        ps_format_item_display_name (it, dname, 512);
+                        snprintf (str, 600, "DeaDBeeF - %s", dname);
+                        gtk_window_set_title (GTK_WINDOW (mainwin), str);
+                    }
+                    else {
+                        gtk_window_set_title (GTK_WINDOW (mainwin), "DeaDBeeF");
+                    }
+                }
+                // update playlist view
+                gtkps_songchanged (&main_playlist, p1, p2);
+                GDK_THREADS_LEAVE();
                 break;
             case M_PLAYSONG:
                 GDK_THREADS_ENTER();
-                gtkps_playsong ();
+                gtkps_playsong (&main_playlist);
                 GDK_THREADS_LEAVE();
                 break;
             case M_PLAYSONGNUM:
@@ -59,7 +145,7 @@ psdl_thread (uintptr_t ctx) {
                 break;
             case M_STOPSONG:
                 GDK_THREADS_ENTER();
-                gtkps_stopsong ();
+                p_stop ();
                 GDK_THREADS_LEAVE();
                 break;
             case M_NEXTSONG:
@@ -76,7 +162,12 @@ psdl_thread (uintptr_t ctx) {
                 break;
             case M_PAUSESONG:
                 GDK_THREADS_ENTER();
-                gtkps_pausesong ();
+                if (p_ispaused ()) {
+                    p_unpause ();
+                }
+                else {
+                    p_pause ();
+                }
                 GDK_THREADS_LEAVE();
                 break;
             case M_PLAYRANDOM:
@@ -95,18 +186,18 @@ psdl_thread (uintptr_t ctx) {
                 break;
             case M_ADDDIR:
                 // long time processing
-                gtkps_add_dir ((char *)ctx);
+                gtkps_add_dir (&main_playlist, (char *)ctx);
                 break;
             case M_ADDFILES:
-                gtkps_add_files ((GSList *)ctx);
+                gtkps_add_files (&main_playlist, (GSList *)ctx);
                 break;
             case M_FMDRAGDROP:
-                gtkps_add_fm_dropped_files ((char *)ctx, p1, p2);
+                gtkps_add_fm_dropped_files (&main_playlist, (char *)ctx, p1, p2);
                 break;
             }
         }
         usleep(10000);
-        gtkps_update_songinfo ();
+        update_songinfo ();
     }
 }
 

@@ -47,8 +47,68 @@
 #include "csid.h"
 
 extern GtkWidget *mainwin;
-static gtkplaylist_t main_playlist;
-static gtkplaylist_t search_playlist;
+extern gtkplaylist_t main_playlist;
+extern gtkplaylist_t search_playlist;
+
+static int main_playlist_initialized = 0;
+static int search_playlist_initialized = 0;
+
+void
+main_playlist_init (GtkWidget *widget) {
+    if (!main_playlist_initialized) {
+        printf ("main_playlist_init\n");
+        main_playlist_initialized = 1;
+        // init playlist control structure, and put it into widget user-data
+        memset (&main_playlist, 0, sizeof (main_playlist));
+        main_playlist.playlist = widget;
+        main_playlist.header = lookup_widget (mainwin, "header");
+        main_playlist.scrollbar = lookup_widget (mainwin, "playscroll");
+        main_playlist.phead = &playlist_head;
+        main_playlist.pcurr = &playlist_current_ptr;
+        main_playlist.update_statusbar = 1;
+        main_playlist.has_dragndrop = 1;
+        main_playlist.scrollpos = 0;
+        main_playlist.row = -1;
+        main_playlist.clicktime = -1;
+        main_playlist.nvisiblerows = 0;
+        main_playlist.fmtcache = NULL;
+        int colwidths[ps_ncolumns] = { 50, 200, 50, 200, 50 };
+        memcpy (main_playlist.colwidths, colwidths, sizeof (colwidths));
+        gtk_object_set_data (GTK_OBJECT (main_playlist.playlist), "ps", &main_playlist);
+        gtk_object_set_data (GTK_OBJECT (main_playlist.header), "ps", &main_playlist);
+        gtk_object_set_data (GTK_OBJECT (main_playlist.scrollbar), "ps", &main_playlist);
+    }
+}
+
+void
+search_playlist_init (GtkWidget *widget) {
+    if (!search_playlist_initialized) {
+        extern GtkWidget *searchwin;
+        printf ("search_playlist_init\n");
+        search_playlist_initialized = 1;
+        // init playlist control structure, and put it into widget user-data
+        memset (&search_playlist, 0, sizeof (search_playlist));
+        search_playlist.playlist = widget;
+        search_playlist.header = lookup_widget (searchwin, "searchheader");
+        search_playlist.scrollbar = lookup_widget (searchwin, "searchscroll");
+        assert (search_playlist.header);
+        assert (search_playlist.scrollbar);
+        search_playlist.phead = &search_head;
+    //    main_playlist.pcurr = &search_current;
+        search_playlist.update_statusbar = 0;
+        search_playlist.has_dragndrop = 0;
+        search_playlist.scrollpos = 0;
+        search_playlist.row = -1;
+        search_playlist.clicktime = -1;
+        search_playlist.nvisiblerows = 0;
+        search_playlist.fmtcache = NULL;
+        int colwidths[ps_ncolumns] = { 0, 200, 50, 200, 50 };
+        memcpy (search_playlist.colwidths, colwidths, sizeof (colwidths));
+        gtk_object_set_data (GTK_OBJECT (search_playlist.playlist), "ps", &search_playlist);
+        gtk_object_set_data (GTK_OBJECT (search_playlist.header), "ps", &search_playlist);
+        gtk_object_set_data (GTK_OBJECT (search_playlist.scrollbar), "ps", &search_playlist);
+    }
+}
 
 void
 on_volume_value_changed                (GtkRange        *range,
@@ -86,8 +146,9 @@ on_playlist_expose_event               (GtkWidget       *widget,
         GdkEventExpose  *event,
         gpointer         user_data)
 {
+    GTKPS_PROLOGUE;
     // draw visible area of playlist
-    gtkps_expose (widget, event->area.x, event->area.y, event->area.width, event->area.height);
+    gtkps_expose (ps, event->area.x, event->area.y, event->area.width, event->area.height);
 
     return FALSE;
 }
@@ -98,8 +159,9 @@ on_playlist_button_press_event         (GtkWidget       *widget,
                                         GdkEventButton  *event,
                                         gpointer         user_data)
 {
+    GTKPS_PROLOGUE;
     if (event->button == 1) {
-        gtkps_mouse1_pressed (event->state, event->x, event->y, event->time);
+        gtkps_mouse1_pressed (ps, event->state, event->x, event->y, event->time);
     }
     return FALSE;
 }
@@ -109,8 +171,9 @@ on_playlist_button_release_event       (GtkWidget       *widget,
                                         GdkEventButton  *event,
                                         gpointer         user_data)
 {
+    GTKPS_PROLOGUE;
     if (event->button == 1) {
-        gtkps_mouse1_released (event->state, event->x, event->y, event->time);
+        gtkps_mouse1_released (ps, event->state, event->x, event->y, event->time);
     }
     return FALSE;
 }
@@ -120,17 +183,19 @@ on_playlist_motion_notify_event        (GtkWidget       *widget,
                                         GdkEventMotion  *event,
                                         gpointer         user_data)
 {
-    gtkps_mousemove (event);
+    GTKPS_PROLOGUE;
+    gtkps_mousemove (ps, event);
     return FALSE;
 }
 
 
 void
-on_playscroll_value_changed            (GtkRange        *range,
+on_playscroll_value_changed            (GtkRange        *widget,
                                         gpointer         user_data)
 {
-    int newscroll = gtk_range_get_value (GTK_RANGE (range));
-    gtkps_scroll (newscroll);
+    GTKPS_PROLOGUE;
+    int newscroll = gtk_range_get_value (GTK_RANGE (widget));
+    gtkps_scroll (ps, newscroll);
 }
 
 
@@ -298,8 +363,9 @@ on_playlist_scroll_event               (GtkWidget       *widget,
                                         GdkEvent        *event,
                                         gpointer         user_data)
 {
+    GTKPS_PROLOGUE;
 	GdkEventScroll *ev = (GdkEventScroll*)event;
-    gtkps_handle_scroll_event (ev->direction);
+    gtkps_handle_scroll_event (ps, ev->direction);
     return FALSE;
 }
 
@@ -357,7 +423,7 @@ on_mainwin_key_press_event             (GtkWidget       *widget,
                                         GdkEventKey     *event,
                                         gpointer         user_data)
 {
-    gtkps_keypress (event->keyval, event->state);
+    gtkps_keypress (&main_playlist, event->keyval, event->state);
     return FALSE;
 }
 
@@ -377,7 +443,8 @@ on_playlist_drag_motion                (GtkWidget       *widget,
                                         guint            time,
                                         gpointer         user_data)
 {
-    gtkps_track_dragdrop (y);
+    GTKPS_PROLOGUE;
+    gtkps_track_dragdrop (ps, y);
     return FALSE;
 }
 
@@ -447,15 +514,16 @@ on_playlist_drag_data_received         (GtkWidget       *widget,
                                         guint            time,
                                         gpointer         user_data)
 {
+    GTKPS_PROLOGUE;
     gchar *ptr=(char*)data->data;
     if (target_type == 0) { // uris
         if (!strncmp(ptr,"file:///",8)) {
-            gtkps_handle_fm_drag_drop (y, ptr, data->length);
+            gtkps_handle_fm_drag_drop (ps, y, ptr, data->length);
         }
     }
     else if (target_type == 1) {
         uint32_t *d= (uint32_t *)ptr;
-        gtkps_handle_drag_drop (y, d, data->length/4);
+        gtkps_handle_drag_drop (ps, y, d, data->length/4);
     }
     gtk_drag_finish (drag_context, FALSE, FALSE, time);
 }
@@ -485,7 +553,8 @@ on_playlist_drag_leave                 (GtkWidget       *widget,
                                         guint            time,
                                         gpointer         user_data)
 {
-    gtkps_track_dragdrop (-1);
+    GTKPS_PROLOGUE;
+    gtkps_track_dragdrop (ps, -1);
 }
 
 void
@@ -598,22 +667,7 @@ void
 on_playlist_realize                    (GtkWidget       *widget,
         gpointer         user_data)
 {
-    // init playlist control structure, and put it into widget user-data
-    memset (&main_playlist, 0, sizeof (main_playlist));
-    main_playlist.playlist = widget;
-    main_playlist.header = lookup_widget (mainwin, "header");
-    main_playlist.scrollbar = lookup_widget (mainwin, "playscroll");
-    main_playlist.phead = &playlist_head;
-    main_playlist.update_statusbar = 1;
-    main_playlist.has_dragndrop = 1;
-    main_playlist.scrollpos = 0;
-    main_playlist.row = -1;
-    main_playlist.clicktime = -1;
-    main_playlist.nvisiblerows = 0;
-    main_playlist.fmtcache = NULL;
-    int colwidths[ps_ncolumns] = { 50, 200, 50, 200, 50 };
-    memcpy (main_playlist.colwidths, colwidths, sizeof (colwidths));
-
+    printf ("on_playlist_realize\n");
     GtkTargetEntry entry = {
         .target = "STRING",
         .flags = GTK_TARGET_SAME_WIDGET/* | GTK_TARGET_OTHER_APP*/,
@@ -631,21 +685,7 @@ void
 on_searchlist_realize                  (GtkWidget       *widget,
                                         gpointer         user_data)
 {
-    // init playlist control structure, and put it into widget user-data
-    memset (&search_playlist, 0, sizeof (search_playlist));
-    search_playlist.playlist = widget;
-    search_playlist.header = lookup_widget (mainwin, "header");
-    search_playlist.scrollbar = lookup_widget (mainwin, "playscroll");
-    search_playlist.phead = &search_head;
-    search_playlist.update_statusbar = 0;
-    search_playlist.has_dragndrop = 0;
-    search_playlist.scrollpos = 0;
-    search_playlist.row = -1;
-    search_playlist.clicktime = -1;
-    search_playlist.nvisiblerows = 0;
-    search_playlist.fmtcache = NULL;
-    int colwidths[ps_ncolumns] = { 50, 200, 50, 200, 50 };
-    memcpy (search_playlist.colwidths, colwidths, sizeof (colwidths));
-
+    printf ("on_searchlist_realize\n");
 }
+
 
