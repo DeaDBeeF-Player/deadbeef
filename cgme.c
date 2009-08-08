@@ -123,6 +123,7 @@ cgme_insert (playItem_t *after, const char *fname) {
                 else {
                     it->duration = (float)inf.length/1000.f;
                 }
+                it->filetype = "GME";
                 after = ps_insert_item (after, it);
             }
             else {

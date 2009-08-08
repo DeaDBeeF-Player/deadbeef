@@ -210,6 +210,7 @@ cflac_init_cue_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC_
                     prev->timeend = it->timestart;
                     prev->duration = prev->timeend - prev->timestart;
                 }
+                it->filetype = "FLAC";
                 //printf ("N: %d, t: %f, bps=%d\n", it->tracknum, it->timestart/60.f, cb->samplerate);
                 playItem_t *ins = ps_insert_item (cb->last, it);
                 if (ins) {
@@ -334,7 +335,7 @@ cflac_insert (playItem_t *after, const char *fname) {
     char cuename[1024];
     snprintf (cuename, 1024, "%s.cue", fname);
     playItem_t *cue_after;
-    if ((cue_after = ps_insert_cue (after, cuename)) != NULL) {
+    if ((cue_after = ps_insert_cue (after, cuename, "FLAC")) != NULL) {
         cue_after->timeend = cb.duration;
         cue_after->duration = cue_after->timeend - cue_after->timestart;
         return cue_after;
@@ -344,7 +345,9 @@ cflac_insert (playItem_t *after, const char *fname) {
         strncpy (cuename, fname, n);
         strcpy (cuename + n, "cue");
     //    printf ("loading %s\n", cuename);
-        if ((cue_after = ps_insert_cue (after, cuename)) != NULL) {
+        if ((cue_after = ps_insert_cue (after, cuename, "FLAC")) != NULL) {
+            cue_after->timeend = cb.duration;
+            cue_after->duration = cue_after->timeend - cue_after->timestart;
             return cue_after;
         }
     }
@@ -386,6 +389,7 @@ cflac_insert (playItem_t *after, const char *fname) {
     }
 #endif
     FLAC__stream_decoder_delete(decoder);
+    it->filetype = "FLAC";
     after = ps_insert_item (after, it);
     return after;
 }

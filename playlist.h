@@ -65,14 +65,8 @@ ps_get_for_idx (int idx);
 int
 ps_get_idx_of (playItem_t *it);
 
-int
-ps_add_cue (const char *cuename);
-
 playItem_t *
-ps_insert_cue (playItem_t *after, const char *cuename);
-
-playItem_t *
-ps_insert_cue (playItem_t *after, const char *cuename);
+ps_insert_cue (playItem_t *after, const char *cuename, const char *ftype);
 
 int
 ps_set_current (playItem_t *it);
