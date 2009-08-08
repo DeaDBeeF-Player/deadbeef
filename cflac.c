@@ -248,13 +248,13 @@ cflac_init_cue_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC_
     else if (metadata->type == FLAC__METADATA_TYPE_VORBIS_COMMENT) {
         playItem_t *it = NULL;
         if (cb->after) {
-            it = cb->after->next;
+            it = cb->after->next[PS_NEXT];
         }
         else if (cb->last) {
             it = playlist_head;
         }
         if (it) {
-            for (; it != cb->last->next; it = it->next) {
+            for (; it != cb->last->next[PS_NEXT]; it = it->next[PS_NEXT]) {
                 char str[10];
                 snprintf (str, 10, "%d", it->tracknum);
                 ps_add_meta (it, "track", str);

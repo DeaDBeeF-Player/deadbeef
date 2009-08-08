@@ -692,7 +692,7 @@ create_searchwin (void)
   gtk_widget_set_size_request (searchwin, 300, 150);
   gtk_widget_set_events (searchwin, GDK_KEY_PRESS_MASK);
   gtk_window_set_title (GTK_WINDOW (searchwin), "Search");
-  gtk_window_set_position (GTK_WINDOW (searchwin), GTK_WIN_POS_CENTER_ON_PARENT);
+  gtk_window_set_position (GTK_WINDOW (searchwin), GTK_WIN_POS_CENTER_ALWAYS);
   gtk_window_set_skip_taskbar_hint (GTK_WINDOW (searchwin), TRUE);
   gtk_window_set_skip_pager_hint (GTK_WINDOW (searchwin), TRUE);
 
@@ -733,6 +733,9 @@ create_searchwin (void)
 
   g_signal_connect ((gpointer) searchwin, "key_press_event",
                     G_CALLBACK (on_searchwin_key_press_event),
+                    NULL);
+  g_signal_connect ((gpointer) searchwin, "delete_event",
+                    G_CALLBACK (gtk_widget_hide_on_delete),
                     NULL);
   g_signal_connect ((gpointer) searchentry, "changed",
                     G_CALLBACK (on_searchentry_changed),

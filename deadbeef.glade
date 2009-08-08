@@ -1505,7 +1505,7 @@ Public License instead of this License.  But first, please read
   <property name="events">GDK_KEY_PRESS_MASK</property>
   <property name="title" translatable="yes">Search</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
-  <property name="window_position">GTK_WIN_POS_CENTER_ON_PARENT</property>
+  <property name="window_position">GTK_WIN_POS_CENTER_ALWAYS</property>
   <property name="modal">False</property>
   <property name="resizable">True</property>
   <property name="destroy_with_parent">False</property>
@@ -1517,6 +1517,7 @@ Public License instead of this License.  But first, please read
   <property name="focus_on_map">True</property>
   <property name="urgency_hint">False</property>
   <signal name="key_press_event" handler="on_searchwin_key_press_event" last_modification_time="Sat, 08 Aug 2009 18:19:17 GMT"/>
+  <signal name="delete_event" handler="gtk_widget_hide_on_delete" last_modification_time="Sat, 08 Aug 2009 23:03:33 GMT"/>
 
   <child>
     <widget class="GtkVBox" id="vbox4">

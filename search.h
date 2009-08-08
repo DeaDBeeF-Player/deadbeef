@@ -20,6 +20,7 @@
 
 extern struct playItem_s *search_head;
 extern struct playItem_s *search_current;
+extern int search_count;
 
 void
 search_start (void);

@@ -24,6 +24,11 @@ typedef struct metaInfo_s {
     struct metaInfo_s *next;
 } metaInfo_t;
 
+#define PS_MAX_ITERATORS 3
+#define PS_NEXT 0
+#define PS_SEARCH_NEXT 1
+#define PS_SHUFFLE_NEXT 2
+
 typedef struct playItem_s {
     char *fname; // full pathname
     struct codec_s *codec; // codec to use with this file
@@ -32,10 +37,10 @@ typedef struct playItem_s {
     float timeend; // end time of cue track, or -1
     float duration; // in seconds
     const char *filetype; // e.g. MP3 or OGG
-    struct playItem_s *next; // next item in linked list
+    struct playItem_s *next[PS_MAX_ITERATORS]; // next item in linked list
     struct playItem_s *prev; // prev item in linked list
-    struct playItem_s *shufflenext; // next item in shuffle list
-    struct playItem_s *searchnext; // next in search results list
+//    struct playItem_s *shufflenext; // next item in shuffle list
+//    struct playItem_s *searchnext; // next in search results list
     struct metaInfo_s *meta; // linked list storing metainfo
     unsigned selected : 1;
 } playItem_t;
@@ -45,6 +50,7 @@ extern playItem_t *playlist_tail; // tail of linked list
 extern playItem_t *playlist_shuffle_head; // head of shuffled playlist
 extern playItem_t *playlist_current_ptr; // pointer to a real current playlist item
 extern playItem_t playlist_current; // copy of playlist item being played (stays in memory even if removed from playlist)
+extern int ps_count;
 
 int
 ps_add_dir (const char *dirname, int (*cb)(playItem_t *it, void *data), void *user_data);

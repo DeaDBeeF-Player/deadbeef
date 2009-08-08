@@ -45,7 +45,7 @@ playItem_t *playlist_tail;
 playItem_t *playlist_shuffle_head;
 playItem_t playlist_current;
 playItem_t *playlist_current_ptr;
-static int ps_count = 0;
+int ps_count = 0;
 static int ps_order = 0; // 0 = linear, 1 = shuffle, 2 = random
 static int ps_loop_mode = 0; // 0 = loop, 1 = don't loop, 2 = loop single
 
@@ -433,11 +433,11 @@ ps_remove (playItem_t *it) {
     ps_count--;
 
     // remove from shuffle list
-    for (playItem_t *i = playlist_head; i; i = i->next) {
-        if (i->shufflenext == it) {
-            i->shufflenext = it->shufflenext;
+    for (playItem_t *i = playlist_head; i; i = i->next[PS_NEXT]) {
+        if (i->next[PS_SHUFFLE_NEXT] == it) {
+            i->next[PS_SHUFFLE_NEXT] = it->next[PS_SHUFFLE_NEXT];
             if (it == playlist_shuffle_head) {
-                playlist_shuffle_head = it->shufflenext;
+                playlist_shuffle_head = it->next[PS_SHUFFLE_NEXT];
             }
             break;
         }
@@ -445,13 +445,13 @@ ps_remove (playItem_t *it) {
 
     // remove from linear list
     if (it->prev) {
-        it->prev->next = it->next;
+        it->prev->next[PS_NEXT] = it->next[PS_NEXT];
     }
     else {
-        playlist_head = it->next;
+        playlist_head = it->next[PS_NEXT];
     }
-    if (it->next) {
-        it->next->prev = it->prev;
+    if (it->next[PS_NEXT]) {
+        it->next[PS_NEXT]->prev = it->prev;
     }
     else {
         playlist_tail = it->prev;
@@ -470,7 +470,7 @@ int
 ps_getselcount (void) {
     // FIXME: slow!
     int cnt = 0;
-    for (playItem_t *it = playlist_head; it; it = it->next) {
+    for (playItem_t *it = playlist_head; it; it = it->next[PS_NEXT]) {
         if (it->selected) {
             cnt++;
         }
@@ -484,7 +484,7 @@ ps_get_for_idx (int idx) {
     while (idx--) {
         if (!it)
             return NULL;
-        it = it->next;
+        it = it->next[PS_NEXT];
     }
     return it;
 }
@@ -494,7 +494,7 @@ ps_get_idx_of (playItem_t *it) {
     playItem_t *c = playlist_head;
     int idx = 0;
     while (c && c != it) {
-        c = c->next;
+        c = c->next[PS_NEXT];
         idx++;
     }
     if (!c) {
@@ -509,7 +509,7 @@ ps_append_item (playItem_t *it) {
         playlist_tail = playlist_head = it;
     }
     else {
-        playlist_tail->next = it;
+        playlist_tail->next[PS_NEXT] = it;
         it->prev = playlist_tail;
         playlist_tail = it;
     }
@@ -519,7 +519,7 @@ ps_append_item (playItem_t *it) {
 playItem_t *
 ps_insert_item (playItem_t *after, playItem_t *it) {
     if (!after) {
-        it->next = playlist_head;
+        it->next[PS_NEXT] = playlist_head;
         it->prev = NULL;
         if (playlist_head) {
             playlist_head->prev = it;
@@ -531,11 +531,11 @@ ps_insert_item (playItem_t *after, playItem_t *it) {
     }
     else {
         it->prev= after;
-        it->next = after->next;
-        if (after->next) {
-            after->next->prev = it;
+        it->next[PS_NEXT] = after->next[PS_NEXT];
+        if (after->next[PS_NEXT]) {
+            after->next[PS_NEXT]->prev = it;
         }
-        after->next = it;
+        after->next[PS_NEXT] = it;
         if (after == playlist_tail) {
             playlist_tail = it;
         }
@@ -553,9 +553,9 @@ ps_item_copy (playItem_t *out, playItem_t *it) {
     out->timeend = it->timeend;
     out->duration = it->duration;
     out->filetype = it->filetype;
-    out->next = it->next;
+    out->next[PS_NEXT] = it->next[PS_NEXT];
     out->prev = it->prev;
-    out->shufflenext = it->shufflenext;
+    out->next[PS_SHUFFLE_NEXT] = it->next[PS_SHUFFLE_NEXT];
     // copy metainfo
     metaInfo_t *prev = NULL;
     metaInfo_t *meta = it->meta;
@@ -640,8 +640,8 @@ ps_prevsong (void) {
         else {
             playItem_t *it = NULL;
             playItem_t *last = NULL;
-            for (it = playlist_shuffle_head; it; it = it->shufflenext) {
-                if (it->shufflenext == playlist_current_ptr) {
+            for (it = playlist_shuffle_head; it; it = it->next[PS_SHUFFLE_NEXT]) {
+                if (it->next[PS_SHUFFLE_NEXT] == playlist_current_ptr) {
                     break;
                 }
                 last = it;
@@ -701,7 +701,7 @@ ps_nextsong (int reason) {
                 streamer_set_nextsong (r, 1);
                 return 0;
             }
-            playItem_t *it = playlist_current_ptr->shufflenext;
+            playItem_t *it = playlist_current_ptr->next[PS_SHUFFLE_NEXT];
             if (!it) {
                 if (ps_loop_mode == 0) { // loop
                     it = playlist_shuffle_head;
@@ -726,7 +726,7 @@ ps_nextsong (int reason) {
                 streamer_set_nextsong (r, 1);
                 return 0;
             }
-            it = playlist_current_ptr->next;
+            it = playlist_current_ptr->next[PS_NEXT];
         }
         if (!it) {
             if (ps_loop_mode == 0) {
@@ -870,16 +870,16 @@ void
 ps_delete_selected (void) {
     playItem_t *next = NULL;
     for (playItem_t *it = playlist_head; it; it = next) {
-        next = it->next;
+        next = it->next[PS_NEXT];
         if (it->selected) {
             if (it->prev) {
-                it->prev->next = it->next;
+                it->prev->next[PS_NEXT] = it->next[PS_NEXT];
             }
-            if (it->next) {
-                it->next->prev = it->prev;
+            if (it->next[PS_NEXT]) {
+                it->next[PS_NEXT]->prev = it->prev;
             }
             if (playlist_head == it) {
-                playlist_head = it->next;
+                playlist_head = it->next[PS_NEXT];
             }
             if (playlist_tail == it) {
                 playlist_tail = it->prev;
@@ -900,8 +900,8 @@ ps_shuffle (void) {
     playItem_t *tail = NULL;
     playItem_t *it;
     int cnt = 0;
-    for (it = playlist_head; it; it = it->next) {
-        it->shufflenext = head;
+    for (it = playlist_head; it; it = it->next[PS_NEXT]) {
+        it->next[PS_SHUFFLE_NEXT] = head;
         head = it;
         cnt++;
     }
@@ -910,16 +910,16 @@ ps_shuffle (void) {
         int idx = (float)rand ()/RAND_MAX * cnt;
         int i = 0;
         playItem_t *prev = NULL;
-        for (it = head; it; it = it->shufflenext, i++) {
+        for (it = head; it; it = it->next[PS_SHUFFLE_NEXT], i++) {
             if (i == idx) {
                 if (prev) {
-                    prev->shufflenext = it->shufflenext;
+                    prev->next[PS_SHUFFLE_NEXT] = it->next[PS_SHUFFLE_NEXT];
                 }
                 else {
-                    head = it->shufflenext;
+                    head = it->next[PS_SHUFFLE_NEXT];
                 }
                 // prepend to shuffled playlist
-                it->shufflenext = playlist_shuffle_head;
+                it->next[PS_SHUFFLE_NEXT] = playlist_shuffle_head;
                 if (!playlist_shuffle_head) {
                     tail = it;
                 }
@@ -933,7 +933,7 @@ ps_shuffle (void) {
 #if 0
     // loop this list
     if (tail) {
-        tail->shufflenext = playlist_shuffle_head;
+        tail->next[PS_SHUFFLE_NEXT] = playlist_shuffle_head;
     }
 #endif
 }

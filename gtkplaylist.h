@@ -43,8 +43,10 @@ typedef struct {
     // parameters
     playItem_t **phead; // pointer to head of list to display
     playItem_t **pcurr; // pointer to current item
+    int *count; // pointer to count of items in list
     int update_statusbar; // whether it needs to update status bar in certain cases
     int has_dragndrop; // whether it has drag and drop capability
+    int iterator; // index into next array of playItem_t struct
     int lastpos[2]; // last mouse position (for playlist widget)
     // current state
     int scrollpos;
@@ -128,6 +130,12 @@ gtkps_add_files (gtkplaylist_t *ps, GSList *lst);
 
 void
 gtkps_configure (gtkplaylist_t *ps);
+
+int
+gtkps_get_idx_of (gtkplaylist_t *ps, playItem_t *it);
+
+playItem_t *
+gtkps_get_for_idx (gtkplaylist_t *ps, int idx);
 
 // this functions take value from passed playlist, that's why it's here
 void

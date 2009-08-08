@@ -386,3 +386,4 @@ gboolean
 on_playlist_motion_notify_event        (GtkWidget       *widget,
                                         GdkEventMotion  *event,
                                         gpointer         user_data);
+

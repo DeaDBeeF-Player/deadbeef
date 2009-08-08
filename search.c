@@ -20,6 +20,7 @@
 #endif
 
 #include <gtk/gtk.h>
+#include <gdk/gdkkeysyms.h>
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
@@ -34,11 +35,14 @@
 GtkWidget *searchwin = NULL;
 struct playItem_s *search_head = NULL;
 struct playItem_s *search_current = NULL;
+int search_count = 0;
 
 void
 search_start (void) {
     if (!searchwin) {
         searchwin = create_searchwin ();
+        extern GtkWidget *mainwin;
+        gtk_window_set_transient_for (GTK_WINDOW (searchwin), GTK_WINDOW (mainwin));
     }
     gtk_widget_show (searchwin);
     gtk_window_present (GTK_WINDOW (searchwin));
@@ -51,6 +55,42 @@ on_searchentry_changed                 (GtkEditable     *editable,
     // final implementation must work in separate thread, and catch up when
     // value was changed
     // but for alpha, let's do it in GTK thread
+    
+    // walk playlist starting with playlist_head, and populate list starting
+    // with search_head
+
+    const gchar *text = gtk_entry_get_text (GTK_ENTRY (editable));
+    printf ("%s\n", text);
+
+    search_head = NULL;
+    playItem_t *tail = NULL;
+    search_count = 0;
+    if (*text) {
+        for (playItem_t *it = playlist_head; it; it = it->next[PS_NEXT]) {
+            for (metaInfo_t *m = it->meta; m; m = m->next) {
+                if (strcasestr (m->value, text)) {
+                    // add to list
+                    it->next[PS_SEARCH_NEXT] = NULL;
+                    if (tail) {
+                        tail->next[PS_SEARCH_NEXT] = it;
+                        tail = it;
+                    }
+                    else {
+                        search_head = tail = it;
+                    }
+                    printf ("found matching item: %s -> %s\n", text, m->value);
+                    search_count++;
+                    break;
+                }
+            }
+        }
+    }
+
+    extern gtkplaylist_t search_playlist;
+    gtkplaylist_t *ps = &search_playlist;
+    memset (ps->fmtcache, 0, sizeof (int16_t) * 3 * ps_ncolumns * ps->nvisiblerows);
+    gtkps_draw_playlist (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
+    gtkps_expose (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
 }
 
 ///////// searchwin header handlers
@@ -112,6 +152,9 @@ on_searchwin_key_press_event           (GtkWidget       *widget,
                                         gpointer         user_data)
 {
     // that's for when user attempts to navigate list while entry has focus
+    if (event->keyval == GDK_Escape) {
+        gtk_widget_hide (widget);
+    }
     return FALSE;
 }
 
