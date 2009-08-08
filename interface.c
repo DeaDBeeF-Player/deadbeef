@@ -405,7 +405,7 @@ create_mainwin (void)
 
   playscroll = gtk_vscrollbar_new (GTK_ADJUSTMENT (gtk_adjustment_new (0, 0, 1, 1, 0, 0)));
   gtk_widget_show (playscroll);
-  gtk_box_pack_start (GTK_BOX (_), playscroll, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (_), playscroll, FALSE, TRUE, 0);
 
   statusbar = gtk_statusbar_new ();
   gtk_widget_show (statusbar);
@@ -719,6 +719,7 @@ create_searchwin (void)
   gtk_widget_show (searchheader);
   gtk_box_pack_start (GTK_BOX (vbox5), searchheader, FALSE, TRUE, 0);
   gtk_widget_set_size_request (searchheader, -1, 24);
+  gtk_widget_set_events (searchheader, GDK_EXPOSURE_MASK | GDK_POINTER_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK);
 
   searchlist = gtk_drawing_area_new ();
   gtk_widget_show (searchlist);
@@ -726,7 +727,7 @@ create_searchwin (void)
   GTK_WIDGET_SET_FLAGS (searchlist, GTK_CAN_DEFAULT);
   gtk_widget_set_events (searchlist, GDK_EXPOSURE_MASK | GDK_POINTER_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK);
 
-  searchscroll = gtk_vscrollbar_new (GTK_ADJUSTMENT (gtk_adjustment_new (0, 0, 0, 0, 0, 0)));
+  searchscroll = gtk_vscrollbar_new (GTK_ADJUSTMENT (gtk_adjustment_new (0, 0, 1, 1, 0, 0)));
   gtk_widget_show (searchscroll);
   gtk_box_pack_start (GTK_BOX (hbox6), searchscroll, FALSE, TRUE, 0);
 
@@ -735,6 +736,36 @@ create_searchwin (void)
                     NULL);
   g_signal_connect ((gpointer) searchentry, "changed",
                     G_CALLBACK (on_searchentry_changed),
+                    NULL);
+  g_signal_connect ((gpointer) searchheader, "button_press_event",
+                    G_CALLBACK (on_searchheader_button_press_event),
+                    NULL);
+  g_signal_connect ((gpointer) searchheader, "button_release_event",
+                    G_CALLBACK (on_searchheader_button_release_event),
+                    NULL);
+  g_signal_connect ((gpointer) searchheader, "configure_event",
+                    G_CALLBACK (on_searchheader_configure_event),
+                    NULL);
+  g_signal_connect ((gpointer) searchheader, "expose_event",
+                    G_CALLBACK (on_searchheader_expose_event),
+                    NULL);
+  g_signal_connect ((gpointer) searchheader, "motion_notify_event",
+                    G_CALLBACK (on_searchheader_motion_notify_event),
+                    NULL);
+  g_signal_connect ((gpointer) searchlist, "button_press_event",
+                    G_CALLBACK (on_searchlist_button_press_event),
+                    NULL);
+  g_signal_connect ((gpointer) searchlist, "configure_event",
+                    G_CALLBACK (on_searchlist_configure_event),
+                    NULL);
+  g_signal_connect ((gpointer) searchlist, "expose_event",
+                    G_CALLBACK (on_searchlist_expose_event),
+                    NULL);
+  g_signal_connect ((gpointer) searchlist, "scroll_event",
+                    G_CALLBACK (on_searchlist_scroll_event),
+                    NULL);
+  g_signal_connect ((gpointer) searchscroll, "value_changed",
+                    G_CALLBACK (on_searchscroll_value_changed),
                     NULL);
 
   /* Store pointers to all widgets, for use by lookup_widget(). */

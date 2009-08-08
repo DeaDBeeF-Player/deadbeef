@@ -777,7 +777,7 @@
 	    <packing>
 	      <property name="padding">0</property>
 	      <property name="expand">False</property>
-	      <property name="fill">False</property>
+	      <property name="fill">True</property>
 	    </packing>
 	  </child>
 	</widget>
@@ -1561,6 +1561,12 @@ Public License instead of this License.  But first, please read
 		<widget class="GtkDrawingArea" id="searchheader">
 		  <property name="height_request">24</property>
 		  <property name="visible">True</property>
+		  <property name="events">GDK_EXPOSURE_MASK | GDK_POINTER_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+		  <signal name="button_press_event" handler="on_searchheader_button_press_event" last_modification_time="Sat, 08 Aug 2009 18:50:49 GMT"/>
+		  <signal name="button_release_event" handler="on_searchheader_button_release_event" last_modification_time="Sat, 08 Aug 2009 18:50:53 GMT"/>
+		  <signal name="configure_event" handler="on_searchheader_configure_event" last_modification_time="Sat, 08 Aug 2009 18:51:08 GMT"/>
+		  <signal name="expose_event" handler="on_searchheader_expose_event" last_modification_time="Sat, 08 Aug 2009 18:51:15 GMT"/>
+		  <signal name="motion_notify_event" handler="on_searchheader_motion_notify_event" last_modification_time="Sat, 08 Aug 2009 18:51:30 GMT"/>
 		</widget>
 		<packing>
 		  <property name="padding">0</property>
@@ -1575,6 +1581,10 @@ Public License instead of this License.  But first, please read
 		  <property name="can_default">True</property>
 		  <property name="has_default">True</property>
 		  <property name="events">GDK_EXPOSURE_MASK | GDK_POINTER_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK</property>
+		  <signal name="button_press_event" handler="on_searchlist_button_press_event" last_modification_time="Sat, 08 Aug 2009 18:51:43 GMT"/>
+		  <signal name="configure_event" handler="on_searchlist_configure_event" last_modification_time="Sat, 08 Aug 2009 18:51:52 GMT"/>
+		  <signal name="expose_event" handler="on_searchlist_expose_event" last_modification_time="Sat, 08 Aug 2009 18:52:01 GMT"/>
+		  <signal name="scroll_event" handler="on_searchlist_scroll_event" last_modification_time="Sat, 08 Aug 2009 18:52:13 GMT"/>
 		</widget>
 		<packing>
 		  <property name="padding">0</property>
@@ -1595,7 +1605,8 @@ Public License instead of this License.  But first, please read
 	      <property name="visible">True</property>
 	      <property name="update_policy">GTK_UPDATE_CONTINUOUS</property>
 	      <property name="inverted">False</property>
-	      <property name="adjustment">0 0 0 0 0 0</property>
+	      <property name="adjustment">0 0 1 1 0 0</property>
+	      <signal name="value_changed" handler="on_searchscroll_value_changed" last_modification_time="Sat, 08 Aug 2009 18:53:05 GMT"/>
 	    </widget>
 	    <packing>
 	      <property name="padding">0</property>
