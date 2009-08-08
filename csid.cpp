@@ -25,7 +25,7 @@ extern "C" {
 #include "codec.h"
 #include "playlist.h"
 #include "csid.h"
-#include "md5.h"
+#include "md5/md5.h"
 #include "common.h"
 #include "playback.h"
 }
