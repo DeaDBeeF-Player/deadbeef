@@ -27,7 +27,7 @@ static int
 cdumb_startrenderer (void);
 
 static DUH*
-open_module(const char *fname, const char *ext, int *start_order, int *is_it, int *is_dos);
+open_module(const char *fname, const char *ext, int *start_order, int *is_it, int *is_dos, const char **filetype);
 
 int
 cdumb_init (const char *fname, int track, float start, float end) {
@@ -43,7 +43,8 @@ cdumb_init (const char *fname, int track, float start, float end) {
         ext--;
     }
     ext++;
-    duh = open_module(fname, ext, &start_order, &is_it, &is_dos );
+    const char *ftype;
+    duh = open_module(fname, ext, &start_order, &is_it, &is_dos, &ftype);
 
 //    if (is_it) ReadIT(ptr, size, *m_info, !read_tag);
 //    else ReadDUH(duh, *m_info, !read_tag, is_dos);
@@ -80,8 +81,6 @@ cdumb_init (const char *fname, int track, float start, float end) {
     cdumb.info.channels = 2;
     cdumb.info.samplesPerSecond = p_get_rate ();
     cdumb.info.position = 0;
-    cdumb.info.duration = duh_get_length (duh)/65536.0f;
-    printf ("duration: %f\n", cdumb.info.duration);
 
     if (cdumb_startrenderer () < 0) {
         return -1;
@@ -165,8 +164,9 @@ static const char * exts[]=
 };
 
 // derived from mod.cpp of foo_dumb source code
-static DUH * open_module(const char *fname, const char *ext, int *start_order, int *is_it, int *is_dos)
+static DUH * open_module(const char *fname, const char *ext, int *start_order, int *is_it, int *is_dos, const char** filetype)
 {
+    *filetype = NULL;
 	DUH * duh = 0;
 
 	*is_it = 0;
@@ -261,16 +261,19 @@ static DUH * open_module(const char *fname, const char *ext, int *start_order, i
 	{
 		*is_it = 1;
 		duh = dumb_read_it_quick(f);
+		*filetype = "IT";
 	}
 	else if (size >= 17 && !memcmp(ptr, "Extended Module: ", 17))
 	{
 		duh = dumb_read_xm_quick(f);
+		*filetype = "XM";
 	}
 	else if (size >= 0x30 &&
 		ptr[0x2C] == 'S' && ptr[0x2D] == 'C' &&
 		ptr[0x2E] == 'R' && ptr[0x2F] == 'M')
 	{
 		duh = dumb_read_s3m_quick(f);
+		*filetype = "S3M";
 	}
 	else if (size >= 1168 &&
 		/*ptr[28] == 0x1A &&*/ ptr[29] == 2 &&
@@ -279,18 +282,21 @@ static DUH * open_module(const char *fname, const char *ext, int *start_order, i
 		! strncasecmp( ( const char * ) ptr + 20, "WUZAMOD!", 8 ) ) )
 	{
 		duh = dumb_read_stm_quick(f);
+		*filetype = "STM";
 	}
 	else if (size >= 2 &&
 		((ptr[0] == 0x69 && ptr[1] == 0x66) ||
 		(ptr[0] == 0x4A && ptr[1] == 0x4E)))
 	{
 		duh = dumb_read_669_quick(f);
+		*filetype = "669";
 	}
 	else if (size >= 0x30 &&
 		ptr[0x2C] == 'P' && ptr[0x2D] == 'T' &&
 		ptr[0x2E] == 'M' && ptr[0x2F] == 'F')
 	{
 		duh = dumb_read_ptm_quick(f);
+		*filetype = "PTM";
 	}
 	else if (size >= 4 &&
 		ptr[0] == 'P' && ptr[1] == 'S' &&
@@ -298,30 +304,35 @@ static DUH * open_module(const char *fname, const char *ext, int *start_order, i
 	{
 		duh = dumb_read_psm_quick(f, *start_order);
 		*start_order = 0;
+		*filetype = "PSM";
 	}
 	else if (size >= 4 &&
 		ptr[0] == 'P' && ptr[1] == 'S' &&
 		ptr[2] == 'M' && ptr[3] == 254)
 	{
 		duh = dumb_read_old_psm_quick(f);
+		*filetype = "PSM";
 	}
 	else if (size >= 3 &&
 		ptr[0] == 'M' && ptr[1] == 'T' &&
 		ptr[2] == 'M')
 	{
 		duh = dumb_read_mtm_quick(f);
+		*filetype = "MTM";
 	}
 	else if ( size >= 4 &&
 		ptr[0] == 'R' && ptr[1] == 'I' &&
 		ptr[2] == 'F' && ptr[3] == 'F')
 	{
 		duh = dumb_read_riff_quick(f);
+		*filetype = "RIFF";
 	}
 	else if ( size >= 32 &&
 		!memcmp( ptr, "ASYLUM Music Format", 19 ) &&
 		!memcmp( ptr + 19, " V1.0", 5 ) )
 	{
 		duh = dumb_read_asy_quick(f);
+		*filetype = "ASY";
 	}
 
 	if (!duh)
@@ -330,6 +341,7 @@ static DUH * open_module(const char *fname, const char *ext, int *start_order, i
         f = dumbfile_open (fname);
 		*is_dos = 0;
 		duh = dumb_read_mod_quick (f, (!strcasecmp (ext, exts[0]) || !strcasecmp (ext, exts[1])) ? 0 : 1);
+		*filetype = "MOD";
 	}
 
     if (f) {
@@ -731,7 +743,8 @@ cdumb_insert (playItem_t *after, const char *fname) {
     int is_it;
     int is_dos;
     dumb_register_stdfiles ();
-    DUH* duh = open_module(fname, ext, &start_order, &is_it, &is_dos);
+    const char *ftype;
+    DUH* duh = open_module(fname, ext, &start_order, &is_it, &is_dos, &ftype);
     if (!duh) {
         return NULL;
     }
@@ -747,6 +760,10 @@ cdumb_insert (playItem_t *after, const char *fname) {
     {
         ps_add_meta (it, "title", convstr ((char*)&itsd->name, sizeof(itsd->name)));
     }
+    dumb_it_do_initial_runthrough (duh);
+    it->duration = duh_get_length (duh)/65536.0f;
+    it->filetype = ftype;
+//    printf ("duration: %f\n", cdumb.info.duration);
     after = ps_insert_item (after, it);
     unload_duh (duh);
 
