@@ -1333,7 +1333,7 @@ on_header_button_release_event         (GtkWidget       *widget,
 }
 
 int
-gtkps_add_file_cb (playItem_t *it, void *data) {
+gtkps_add_file_info_cb (playItem_t *it, void *data) {
     GtkEntry *e = (GtkEntry *)data;
 //    printf ("%s\n", it->fname);
     GDK_THREADS_ENTER();
@@ -1355,8 +1355,39 @@ gtkps_add_dir (char *folder) {
     gtk_container_add (GTK_CONTAINER (gtk_dialog_get_content_area (GTK_DIALOG (d))), e);
     gtk_widget_show_all (d);
     GDK_THREADS_LEAVE();
-    ps_add_dir (folder, gtkps_add_file_cb, e);
+    ps_add_dir (folder, gtkps_add_file_info_cb, e);
     g_free (folder);
+    ps_shuffle ();
+    GDK_THREADS_ENTER();
+    gtk_widget_destroy (d);
+    gtk_widget_set_sensitive (mainwin, TRUE);
+    gtkps_setup_scrollbar ();
+    GtkWidget *widget = lookup_widget (mainwin, "playlist");
+    draw_playlist (widget, 0, 0, widget->allocation.width, widget->allocation.height);
+    gtkps_expose (widget, 0, 0, widget->allocation.width, widget->allocation.height);
+    GDK_THREADS_LEAVE();
+}
+
+static void
+gtkps_addfile_cb (gpointer data, gpointer userdata) {
+    ps_add_file (data, gtkps_add_file_info_cb, userdata);
+    g_free (data);
+}
+
+void
+gtkps_add_files (GSList *lst) {
+    // create window
+    GDK_THREADS_ENTER();
+    gtk_widget_set_sensitive (mainwin, FALSE);
+    GtkWidget *d = gtk_dialog_new ();
+    GtkWidget *e = gtk_entry_new ();
+    gtk_widget_set_size_request (e, 500, -1);
+    gtk_widget_set_sensitive (GTK_WIDGET (e), FALSE);
+    gtk_container_add (GTK_CONTAINER (gtk_dialog_get_content_area (GTK_DIALOG (d))), e);
+    gtk_widget_show_all (d);
+    GDK_THREADS_LEAVE();
+    g_slist_foreach(lst, gtkps_addfile_cb, e);
+    g_slist_free (lst);
     ps_shuffle ();
     GDK_THREADS_ENTER();
     gtk_widget_destroy (d);

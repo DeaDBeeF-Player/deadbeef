@@ -13,6 +13,7 @@ enum {
     M_SONGSEEK,
     M_SONGCHANGED, // p1=from, p2=to
     M_ADDDIR, // ctx = pointer to string, which must be freed by f_free
+    M_ADDFILES, // ctx = GSList pointer, must be freed with g_slist_free
 };
 
 #endif // __MESSAGES_H
