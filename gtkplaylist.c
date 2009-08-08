@@ -677,6 +677,7 @@ gtkps_playsong (void) {
     }
 }
 
+#if 0
 void
 gtkps_prevsong (void) {
     GtkWidget *widget = lookup_widget (mainwin, "playlist");
@@ -699,28 +700,7 @@ gtkps_prevsong (void) {
         }
     }
 }
-
-void
-gtkps_nextsong (void) {
-    GtkWidget *widget = lookup_widget (mainwin, "playlist");
-    playItem_t *prev = playlist_current_ptr;
-    if (playlist_current_ptr) {
-        printf ("gtkps_nextsong\n");
-        ps_set_current (playlist_current_ptr->next);
-    }
-    if (!playlist_current_ptr) {
-        printf ("gtkps_nextsong2\n");
-        ps_set_current (playlist_head);
-    }
-    if (playlist_current_ptr != prev) {
-        if (prev) {
-            redraw_ps_row (widget, ps_get_idx_of (prev));
-        }
-        if (playlist_current_ptr) {
-            redraw_ps_row (widget, ps_get_idx_of (playlist_current_ptr));
-        }
-    }
-}
+#endif
 
 void
 gtkps_randomsong (void) {
@@ -729,24 +709,9 @@ gtkps_randomsong (void) {
     }
     GtkWidget *widget = lookup_widget (mainwin, "playlist");
     playItem_t *prev = playlist_current_ptr;
-    int r = rand () % ps_getcount ();
-    playItem_t *it = ps_get_for_idx (r);
-    if (it) {
-        printf ("gtkps_randomsong\n");
-        ps_set_current (it);
-    }
-    else {
-        printf ("gtkps_randomsong2\n");
-        ps_set_current (NULL);
-    }
-    if (playlist_current_ptr != prev) {
-        if (prev) {
-            redraw_ps_row (widget, ps_get_idx_of (prev));
-        }
-        if (playlist_current_ptr) {
-            redraw_ps_row (widget, ps_get_idx_of (playlist_current_ptr));
-        }
-    }
+    int r = (float)rand ()/RAND_MAX * ps_getcount ();
+    p_stop ();
+    streamer_set_nextsong (r, 1);
 }
 
 void
@@ -1178,6 +1143,7 @@ gtkps_handle_fm_drag_drop (int drop_y, void *ptr, int length) {
             p++;
         }
     }
+    ps_shuffle ();
     gtkps_setup_scrollbar ();
     GtkWidget *widget = lookup_widget (mainwin, "playlist");
 

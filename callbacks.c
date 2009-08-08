@@ -167,6 +167,7 @@ on_add_files_activate                  (GtkMenuItem     *menuitem,
         g_slist_free (lst);
     }
     gtk_widget_destroy (dlg);
+    ps_shuffle ();
     gtkps_setup_scrollbar ();
     GtkWidget *widget = lookup_widget (mainwin, "playlist");
     draw_playlist (widget, 0, 0, widget->allocation.width, widget->allocation.height);
@@ -190,6 +191,7 @@ on_add_folder1_activate                (GtkMenuItem     *menuitem,
         }
     }
     gtk_widget_destroy (dlg);
+    ps_shuffle ();
     gtkps_setup_scrollbar ();
     GtkWidget *widget = lookup_widget (mainwin, "playlist");
     draw_playlist (widget, 0, 0, widget->allocation.width, widget->allocation.height);

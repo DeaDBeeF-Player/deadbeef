@@ -19,11 +19,13 @@
 #include "streamer.h"
 #include "messagepump.h"
 #include "messages.h"
+#include "playback.h"
 
 #define SKIP_BLANK_CUE_TRACKS 1
 
 playItem_t *playlist_head;
 playItem_t *playlist_tail;
+playItem_t *playlist_shuffle_head;
 playItem_t playlist_current;
 playItem_t *playlist_current_ptr;
 int ps_count = 0;
@@ -407,6 +409,19 @@ ps_remove (playItem_t *it) {
     if (!it)
         return -1;
     ps_count--;
+
+    // remove from shuffle list
+    for (playItem_t *i = playlist_head; i; i = i->next) {
+        if (i->shufflenext == it) {
+            i->shufflenext = it->shufflenext;
+            if (it == playlist_shuffle_head) {
+                playlist_shuffle_head = it->shufflenext;
+            }
+            break;
+        }
+    }
+
+    // remove from linear list
     if (it->prev) {
         it->prev->next = it->next;
     }
@@ -518,6 +533,7 @@ ps_item_copy (playItem_t *out, playItem_t *it) {
     out->filetype = it->filetype;
     out->next = it->next;
     out->prev = it->prev;
+    out->shufflenext = it->shufflenext;
     // copy metainfo
     metaInfo_t *prev = NULL;
     metaInfo_t *meta = it->meta;
@@ -594,17 +610,63 @@ ps_set_current (playItem_t *it) {
 }
 
 int
-ps_nextsong (void) {
-    if (playlist_current_ptr && playlist_current_ptr->next) {
-        return ps_set_current (playlist_current_ptr->next);
+ps_prevsong (void) {
+    //if (shuffle)
+    {
+        if (!playlist_current_ptr) {
+            return ps_nextsong ();
+        }
+        else {
+            playItem_t *it = NULL;
+            for (it = playlist_shuffle_head; it; it = it->shufflenext) {
+                if (it->shufflenext == playlist_current_ptr) {
+                    break;
+                }
+            }
+            int r = ps_get_idx_of (it);
+            streamer_set_nextsong (r, 1);
+            return 0;
+        }
     }
-    if (playlist_head) {
-        return ps_set_current (playlist_head);
+#if 0
+    else {
     }
-    ps_set_current (NULL);
+#endif
     return -1;
 }
 
+int
+ps_nextsong (void) {
+    //if (shuffle)
+    {
+        if (!playlist_current_ptr) {
+            playItem_t *it = playlist_shuffle_head;
+            int r = ps_get_idx_of (it);
+            streamer_set_nextsong (r, 1);
+            return 0;
+        }
+        else {
+            playItem_t *it = playlist_current_ptr->shufflenext;
+            int r = ps_get_idx_of (it);
+            streamer_set_nextsong (r, 1);
+            return 0;
+        }
+    }
+#if 0
+    else {
+        if (playlist_current_ptr && playlist_current_ptr->next) {
+            return ps_set_current (playlist_current_ptr->next);
+        }
+        if (playlist_head) {
+            return ps_set_current (playlist_head);
+        }
+        ps_set_current (NULL);
+    }
+#endif
+    return -1;
+}
+
+#if 0
 playItem_t *
 ps_getnext (void) {
     if (playlist_current_ptr && playlist_current_ptr->next) {
@@ -615,6 +677,7 @@ ps_getnext (void) {
     }
     return NULL;
 }
+#endif
 
 void
 ps_start_current (void) {
@@ -749,3 +812,44 @@ ps_delete_selected (void) {
     }
 }
 
+void
+ps_shuffle (void) {
+    playItem_t *head = NULL;
+    playItem_t *tail = NULL;
+    playItem_t *it;
+    int cnt = 0;
+    for (it = playlist_head; it; it = it->next) {
+        it->shufflenext = head;
+        head = it;
+        cnt++;
+    }
+    playlist_shuffle_head = NULL;
+    while (cnt > 0) {
+        int idx = (float)rand ()/RAND_MAX * cnt;
+        int i = 0;
+        playItem_t *prev = NULL;
+        for (it = head; it; it = it->shufflenext, i++) {
+            if (i == idx) {
+                if (prev) {
+                    prev->shufflenext = it->shufflenext;
+                }
+                else {
+                    head = it->shufflenext;
+                }
+                // prepend to shuffled playlist
+                it->shufflenext = playlist_shuffle_head;
+                if (!playlist_shuffle_head) {
+                    tail = it;
+                }
+                playlist_shuffle_head = it;
+                cnt--;
+                break;
+            }
+            prev = it;
+        }
+    }
+    // loop this list
+    if (tail) {
+        tail->shufflenext = playlist_shuffle_head;
+    }
+}

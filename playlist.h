@@ -17,12 +17,14 @@ typedef struct playItem_s {
     const char *filetype; // e.g. MP3 or OGG
     struct playItem_s *next; // next item in linked list
     struct playItem_s *prev; // prev item in linked list
+    struct playItem_s *shufflenext; // next item in shuffle list
     struct metaInfo_s *meta; // linked list storing metainfo
     unsigned selected : 1;
 } playItem_t;
 
 extern playItem_t *playlist_head; // head of linked list
 extern playItem_t *playlist_tail; // tail of linked list
+extern playItem_t *playlist_shuffle_head; // head of shuffled playlist
 extern playItem_t *playlist_current_ptr; // pointer to a real current playlist item
 extern playItem_t playlist_current; // copy of playlist item being played (stays in memory even if removed from playlist)
 
@@ -75,6 +77,9 @@ ps_set_current (playItem_t *it);
 int
 ps_nextsong (void);
 
+int
+ps_prevsong (void);
+
 // starts current playlist item from position 0
 // only if the item is still in playlist
 void
@@ -91,5 +96,8 @@ ps_find_meta (playItem_t *it, const char *key);
 
 void
 ps_delete_selected (void);
+
+void
+ps_shuffle (void);
 
 #endif // __PLAYLIST_H

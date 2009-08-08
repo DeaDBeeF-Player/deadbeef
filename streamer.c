@@ -53,16 +53,14 @@ streamer_thread (uintptr_t ctx) {
                     usleep (3000);
                 }
             }
-            if (pstate >= 0) {
-                if (pstate == 0) {
-                    p_stop ();
-                }
-                else if (pstate == 1) {
-                    p_play ();
-                }
-                else if (pstate == 2) {
-                    p_pause ();
-                }
+            if (pstate == 0) {
+                p_stop ();
+            }
+            else if (pstate == 1) {
+                p_play ();
+            }
+            else if (pstate == 2) {
+                p_pause ();
             }
         }
         streamer_lock ();
@@ -226,6 +224,7 @@ streamer_read_async (char *bytes, int size) {
             while (ps_nextsong () < 0) {
                 usleep (3000);
             }
+            break;
         }
     }
     return initsize - size;

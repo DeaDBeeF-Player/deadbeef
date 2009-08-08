@@ -30,12 +30,6 @@ psdl_thread (uintptr_t ctx) {
             case M_SONGCHANGED:
                 gtkps_songchanged (p1, p2);
                 break;
-            case M_SONGFINISHED:
-                // play next song in playlists
-                GDK_THREADS_ENTER();
-                gtkps_nextsong ();
-                GDK_THREADS_LEAVE();
-                break;
             case M_PLAYSONG:
                 GDK_THREADS_ENTER();
                 gtkps_playsong ();
@@ -53,12 +47,14 @@ psdl_thread (uintptr_t ctx) {
                 break;
             case M_NEXTSONG:
                 GDK_THREADS_ENTER();
-                gtkps_nextsong ();
+                p_stop ();
+                ps_nextsong ();
                 GDK_THREADS_LEAVE();
                 break;
             case M_PREVSONG:
                 GDK_THREADS_ENTER();
-                gtkps_prevsong ();
+                p_stop ();
+                ps_prevsong ();
                 GDK_THREADS_LEAVE();
                 break;
             case M_PAUSESONG:
