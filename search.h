@@ -18,6 +18,8 @@
 #ifndef __SEARCH_H
 #define __SEARCH_H
 
+extern struct playItem_s *search_head;
+
 void
 search_start (void);
 

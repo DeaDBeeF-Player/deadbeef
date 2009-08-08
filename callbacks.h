@@ -332,3 +332,7 @@ on_searchlist_scroll_event             (GtkWidget       *widget,
 void
 on_searchscroll_value_changed          (GtkRange        *range,
                                         gpointer         user_data);
+
+void
+on_searchlist_realize                  (GtkWidget       *widget,
+                                        gpointer         user_data);

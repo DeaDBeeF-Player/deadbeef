@@ -36,6 +36,7 @@
 #include "messages.h"
 #include "codec.h"
 #include "playback.h"
+#include "search.h"
 
 #include "cwav.h"
 #include "cvorbis.h"
@@ -46,6 +47,8 @@
 #include "csid.h"
 
 extern GtkWidget *mainwin;
+static gtkplaylist_t main_playlist;
+static gtkplaylist_t search_playlist;
 
 void
 on_volume_value_changed                (GtkRange        *range,
@@ -87,23 +90,6 @@ on_playlist_expose_event               (GtkWidget       *widget,
     gtkps_expose (widget, event->area.x, event->area.y, event->area.width, event->area.height);
 
     return FALSE;
-}
-
-void
-on_playlist_realize                    (GtkWidget       *widget,
-        gpointer         user_data)
-{
-    GtkTargetEntry entry = {
-        .target = "STRING",
-        .flags = GTK_TARGET_SAME_WIDGET/* | GTK_TARGET_OTHER_APP*/,
-        TARGET_SAMEWIDGET
-    };
-    // setup drag-drop source
-//    gtk_drag_source_set (widget, GDK_BUTTON1_MASK, &entry, 1, GDK_ACTION_MOVE);
-    // setup drag-drop target
-    gtk_drag_dest_set (widget, GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_DROP, &entry, 1, GDK_ACTION_COPY | GDK_ACTION_MOVE);
-    gtk_drag_dest_add_uri_targets (widget);
-//    gtk_drag_dest_set_track_motion (widget, TRUE);
 }
 
 
@@ -608,5 +594,58 @@ on_loop_disable_activate               (GtkMenuItem     *menuitem,
     ps_set_loop_mode (1);
 }
 
+void
+on_playlist_realize                    (GtkWidget       *widget,
+        gpointer         user_data)
+{
+    // init playlist control structure, and put it into widget user-data
+    memset (&main_playlist, 0, sizeof (main_playlist));
+    main_playlist.playlist = widget;
+    main_playlist.header = lookup_widget (mainwin, "header");
+    main_playlist.scrollbar = lookup_widget (mainwin, "playscroll");
+    main_playlist.phead = &playlist_head;
+    main_playlist.update_statusbar = 1;
+    main_playlist.has_dragndrop = 1;
+    main_playlist.scrollpos = 0;
+    main_playlist.row = -1;
+    main_playlist.clicktime = -1;
+    main_playlist.nvisiblerows = 0;
+    main_playlist.fmtcache = NULL;
+    int colwidths[ps_ncolumns] = { 50, 200, 50, 200, 50 };
+    memcpy (main_playlist.colwidths, colwidths, sizeof (colwidths));
 
+    GtkTargetEntry entry = {
+        .target = "STRING",
+        .flags = GTK_TARGET_SAME_WIDGET/* | GTK_TARGET_OTHER_APP*/,
+        TARGET_SAMEWIDGET
+    };
+    // setup drag-drop source
+//    gtk_drag_source_set (widget, GDK_BUTTON1_MASK, &entry, 1, GDK_ACTION_MOVE);
+    // setup drag-drop target
+    gtk_drag_dest_set (widget, GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_DROP, &entry, 1, GDK_ACTION_COPY | GDK_ACTION_MOVE);
+    gtk_drag_dest_add_uri_targets (widget);
+//    gtk_drag_dest_set_track_motion (widget, TRUE);
+}
+
+void
+on_searchlist_realize                  (GtkWidget       *widget,
+                                        gpointer         user_data)
+{
+    // init playlist control structure, and put it into widget user-data
+    memset (&search_playlist, 0, sizeof (search_playlist));
+    search_playlist.playlist = widget;
+    search_playlist.header = lookup_widget (mainwin, "header");
+    search_playlist.scrollbar = lookup_widget (mainwin, "playscroll");
+    search_playlist.phead = &search_head;
+    search_playlist.update_statusbar = 0;
+    search_playlist.has_dragndrop = 0;
+    search_playlist.scrollpos = 0;
+    search_playlist.row = -1;
+    search_playlist.clicktime = -1;
+    search_playlist.nvisiblerows = 0;
+    search_playlist.fmtcache = NULL;
+    int colwidths[ps_ncolumns] = { 50, 200, 50, 200, 50 };
+    memcpy (search_playlist.colwidths, colwidths, sizeof (colwidths));
+
+}
 

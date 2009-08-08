@@ -35,6 +35,7 @@ typedef struct playItem_s {
     struct playItem_s *next; // next item in linked list
     struct playItem_s *prev; // prev item in linked list
     struct playItem_s *shufflenext; // next item in shuffle list
+    struct playItem_s *searchnext; // next in search results list
     struct metaInfo_s *meta; // linked list storing metainfo
     unsigned selected : 1;
 } playItem_t;

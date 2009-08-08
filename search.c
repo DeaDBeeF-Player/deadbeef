@@ -31,6 +31,7 @@
 #include "search.h"
 
 static GtkWidget *searchwin = NULL;
+struct playItem_s *search_head = NULL;
 
 void
 search_start (void) {

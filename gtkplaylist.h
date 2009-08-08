@@ -27,8 +27,32 @@ enum {
     TARGET_SAMEWIDGET,
 };
 
-void
-gtkps_nextsong (void);
+#define ps_ncolumns 5
+#define ps_colname_max 100
+
+// structure of this kind must be set as user data for playlist, header and scrollbar widgets
+// pointer to this structure must be passed too all functions that
+// implement playlist functionality (like this pointer)
+typedef struct {
+    // cached gtk/gdk object pointers
+    GtkWidget *playlist;
+    GtkWidget *header;
+    GtkWidget *scrollbar;
+    GdkPixmap *backbuf;
+    // parameters
+    playItem_t **phead; // pointer to head of list to display
+    int update_statusbar; // whether it needs to update status bar in certain cases
+    int has_dragndrop; // whether it has drag and drop capability
+    // current state
+    int scrollpos;
+    int row;
+    double clicktime; // for doubleclick detection
+    int nvisiblerows;
+    int16_t *fmtcache; // cached text formatting
+    int header_fitted[ps_ncolumns];
+    char colnames_fitted[ps_ncolumns][ps_colname_max]; // cached formatted names of columns
+    int colwidths[ps_ncolumns]; // current column widths
+} gtkplaylist_t;
 
 void
 redraw_ps_row (GtkWidget *widget, int row);

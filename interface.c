@@ -764,6 +764,9 @@ create_searchwin (void)
   g_signal_connect ((gpointer) searchlist, "scroll_event",
                     G_CALLBACK (on_searchlist_scroll_event),
                     NULL);
+  g_signal_connect ((gpointer) searchlist, "realize",
+                    G_CALLBACK (on_searchlist_realize),
+                    NULL);
   g_signal_connect ((gpointer) searchscroll, "value_changed",
                     G_CALLBACK (on_searchscroll_value_changed),
                     NULL);
