@@ -704,14 +704,8 @@ gtkps_prevsong (void) {
 
 void
 gtkps_randomsong (void) {
-    if (!ps_getcount ()) {
-        return;
-    }
-    GtkWidget *widget = lookup_widget (mainwin, "playlist");
-    playItem_t *prev = playlist_current_ptr;
-    int r = (float)rand ()/RAND_MAX * ps_getcount ();
     p_stop ();
-    streamer_set_nextsong (r, 1);
+    ps_randomsong ();
 }
 
 void

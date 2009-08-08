@@ -654,6 +654,7 @@ ps_prevsong (void) {
         return 0;
     }
     else if (ps_mode == 2) { // random
+        ps_randomsong ();
     }
     return -1;
 }
@@ -704,8 +705,19 @@ ps_nextsong (void) {
         return 0;
     }
     else if (ps_mode == 2) { // random
+        return ps_randomsong ();
     }
     return -1;
+}
+
+int
+ps_randomsong (void) {
+    if (!ps_getcount ()) {
+        return -1;
+    }
+    int r = (float)rand ()/RAND_MAX * ps_getcount ();
+    streamer_set_nextsong (r, 1);
+    return 0;
 }
 
 void

@@ -80,6 +80,9 @@ ps_nextsong (void);
 int
 ps_prevsong (void);
 
+int
+ps_randomsong (void);
+
 // starts current playlist item from position 0
 // only if the item is still in playlist
 void
