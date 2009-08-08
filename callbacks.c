@@ -37,6 +37,14 @@
 #include "codec.h"
 #include "playback.h"
 
+#include "cwav.h"
+#include "cvorbis.h"
+#include "cdumb.h"
+#include "cmp3.h"
+#include "cgme.h"
+#include "cflac.h"
+#include "csid.h"
+
 extern GtkWidget *mainwin;
 
 void
@@ -156,12 +164,23 @@ on_add_files_activate                  (GtkMenuItem     *menuitem,
     GtkFileFilter* flt;
     flt = gtk_file_filter_new ();
     gtk_file_filter_set_name (flt, "Supported music files");
-    gtk_file_filter_add_pattern (flt, "*.ogg");
-    gtk_file_filter_add_pattern (flt, "*.mod");
-    gtk_file_filter_add_pattern (flt, "*.wav");
-    gtk_file_filter_add_pattern (flt, "*.mp3");
-    gtk_file_filter_add_pattern (flt, "*.nsf");
-    gtk_file_filter_add_pattern (flt, "*.flac");
+
+    codec_t *codecs[] = {
+        &cdumb, &cvorbis, &cflac, &cgme, &cmp3, &csid, NULL
+    };
+    for (int i = 0; codecs[i]; i++) {
+        if (codecs[i]->getexts && codecs[i]->insert) {
+            const char **exts = codecs[i]->getexts ();
+            if (exts) {
+                for (int e = 0; exts[e]; e++) {
+                    char filter[20];
+                    snprintf (filter, 20, "*.%s", exts[e]);
+                    gtk_file_filter_add_pattern (flt, filter);
+                }
+            }
+        }
+    }
+
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
     gtk_file_chooser_set_filter (GTK_FILE_CHOOSER (dlg), flt);
     flt = gtk_file_filter_new ();
@@ -190,6 +209,32 @@ on_add_folder1_activate                (GtkMenuItem     *menuitem,
 
     GtkWidget *dlg = gtk_file_chooser_dialog_new ("Add folder to playlist...", GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
 
+    GtkFileFilter* flt;
+    flt = gtk_file_filter_new ();
+    gtk_file_filter_set_name (flt, "Supported music files");
+
+    codec_t *codecs[] = {
+        &cdumb, &cvorbis, &cflac, &cgme, &cmp3, &csid, NULL
+    };
+    for (int i = 0; codecs[i]; i++) {
+        if (codecs[i]->getexts && codecs[i]->insert) {
+            const char **exts = codecs[i]->getexts ();
+            if (exts) {
+                for (int e = 0; exts[e]; e++) {
+                    char filter[20];
+                    snprintf (filter, 20, "*.%s", exts[e]);
+                    gtk_file_filter_add_pattern (flt, filter);
+                }
+            }
+        }
+    }
+
+    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
+    gtk_file_chooser_set_filter (GTK_FILE_CHOOSER (dlg), flt);
+    flt = gtk_file_filter_new ();
+    gtk_file_filter_set_name (flt, "Other files (*)");
+    gtk_file_filter_add_pattern (flt, "*");
+    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
     if (gtk_dialog_run (GTK_DIALOG (dlg)) == GTK_RESPONSE_OK)
     {
         gchar *folder = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dlg));
