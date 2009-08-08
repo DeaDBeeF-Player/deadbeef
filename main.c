@@ -83,11 +83,13 @@ psdl_thread (uintptr_t ctx) {
             case M_ADDFILES:
                 gtkps_add_files ((GSList *)ctx);
                 break;
+            case M_FMDRAGDROP:
+                gtkps_add_fm_dropped_files ((char *)ctx, p1, p2);
+                break;
             }
         }
         usleep(10000);
         gtkps_update_songinfo ();
-        // handle message pump here
     }
 }
 

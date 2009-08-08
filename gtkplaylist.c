@@ -1102,17 +1102,34 @@ strcopy_special (char *dest, const char *src, int len) {
     *dest = 0;
 }
 
+int
+gtkps_add_file_info_cb (playItem_t *it, void *data) {
+    GtkEntry *e = (GtkEntry *)data;
+    GDK_THREADS_ENTER();
+    gtk_entry_set_text (GTK_ENTRY (e), it->fname);
+    GDK_THREADS_LEAVE();
+    usleep (0);
+    return 0;
+}
+
 void
-gtkps_handle_fm_drag_drop (int drop_y, void *ptr, int length) {
+gtkps_add_fm_dropped_files (char *ptr, int length, int drop_y) {
+    GDK_THREADS_ENTER();
+    gtk_widget_set_sensitive (mainwin, FALSE);
+    GtkWidget *d = gtk_dialog_new ();
+    GtkWidget *e = gtk_entry_new ();
+    gtk_widget_set_size_request (e, 500, -1);
+    gtk_widget_set_sensitive (GTK_WIDGET (e), FALSE);
+    gtk_container_add (GTK_CONTAINER (gtk_dialog_get_content_area (GTK_DIALOG (d))), e);
+    gtk_widget_show_all (d);
+    GDK_THREADS_LEAVE();
+
     int drop_row = drop_y / rowheight + scrollpos;
     playItem_t *drop_before = ps_get_for_idx (drop_row);
     playItem_t *after = NULL;
     if (drop_before) {
         after = drop_before->prev;
     }
-    //printf ("data: %s\n", ptr);
-    // this happens when dropped from file manager
-    // parse, and try to add to playlist
     const gchar *p = ptr;
     while (*p) {
         const gchar *pe = p+1;
@@ -1124,9 +1141,9 @@ gtkps_handle_fm_drag_drop (int drop_y, void *ptr, int length) {
             strcopy_special (fname, p, pe-p);
             //strncpy (fname, p, pe - p);
             //fname[pe - p] = 0;
-            playItem_t *inserted = ps_insert_dir (after, fname + 7, NULL, NULL);
+            playItem_t *inserted = ps_insert_dir (after, fname + 7, gtkps_add_file_info_cb, e);
             if (!inserted) {
-                inserted = ps_insert_file (after, fname + 7, NULL, NULL);
+                inserted = ps_insert_file (after, fname + 7, gtkps_add_file_info_cb, e);
             }
             if (inserted) {
                 after = inserted;
@@ -1138,15 +1155,27 @@ gtkps_handle_fm_drag_drop (int drop_y, void *ptr, int length) {
             p++;
         }
     }
+    free (ptr);
     ps_shuffle ();
-    gtkps_setup_scrollbar ();
-    GtkWidget *widget = lookup_widget (mainwin, "playlist");
-
     // invalidate entire cache - slow, but rare
     memset (drawps_cache, 0, sizeof (int16_t) * 3 * ncolumns * nvisiblerows);
-
+    GDK_THREADS_ENTER();
+    gtk_widget_destroy (d);
+    gtk_widget_set_sensitive (mainwin, TRUE);
+    gtkps_setup_scrollbar ();
+    GtkWidget *widget = lookup_widget (mainwin, "playlist");
     draw_playlist (widget, 0, 0, widget->allocation.width, widget->allocation.height);
     gtkps_expose (widget, 0, 0, widget->allocation.width, widget->allocation.height);
+    GDK_THREADS_LEAVE();
+
+}
+
+void
+gtkps_handle_fm_drag_drop (int drop_y, void *ptr, int length) {
+    // this happens when dropped from file manager
+    char *mem = malloc (length);
+    memcpy (mem, ptr, length);
+    messagepump_push (M_FMDRAGDROP, (uintptr_t)mem, length, drop_y);
 }
 
 void
@@ -1330,17 +1359,6 @@ on_header_button_release_event         (GtkWidget       *widget,
         x += w;
     }
     return FALSE;
-}
-
-int
-gtkps_add_file_info_cb (playItem_t *it, void *data) {
-    GtkEntry *e = (GtkEntry *)data;
-//    printf ("%s\n", it->fname);
-    GDK_THREADS_ENTER();
-    gtk_entry_set_text (GTK_ENTRY (e), it->fname);
-    GDK_THREADS_LEAVE();
-    usleep (0);
-    return 0;
 }
 
 void

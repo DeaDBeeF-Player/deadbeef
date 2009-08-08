@@ -94,4 +94,7 @@ gtkps_add_dir (char *dir);
 void
 gtkps_add_files (GSList *lst);
 
+void
+gtkps_add_fm_dropped_files (char *ptr, int length, int drop_y);
+
 #endif

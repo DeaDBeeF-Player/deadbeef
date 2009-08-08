@@ -161,6 +161,9 @@ on_add_files_activate                  (GtkMenuItem     *menuitem,
             messagepump_push (M_ADDFILES, (uintptr_t)lst, 0, 0);
         }
     }
+    else {
+        gtk_widget_destroy (dlg);
+    }
 }
 
 void
@@ -177,6 +180,9 @@ on_add_folder1_activate                (GtkMenuItem     *menuitem,
         if (folder) {
             messagepump_push (M_ADDDIR, (uintptr_t)folder, 0, 0);
         }
+    }
+    else {
+        gtk_widget_destroy (dlg);
     }
 }
 
