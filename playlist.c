@@ -898,7 +898,9 @@ ps_delete_selected (void) {
     playItem_t *next = NULL;
     for (playItem_t *it = playlist_head[PS_MAIN]; it; it = next) {
         next = it->next[PS_MAIN];
-        ps_remove (it);
+        if (it->selected) {
+            ps_remove (it);
+        }
     }
 }
 
