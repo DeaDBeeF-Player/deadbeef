@@ -905,47 +905,6 @@ ps_delete_selected (void) {
 }
 
 void
-ps_shuffle (void) {
-    return;
-#if 0
-    playItem_t *head = NULL;
-    playItem_t *tail = NULL;
-    playItem_t *it;
-    int cnt = 0;
-    for (it = playlist_head[PS_MAIN]; it; it = it->next[PS_MAIN]) {
-        it->next[PS_SHUFFLE] = head;
-        head = it;
-        cnt++;
-    }
-    playlist_head[PS_SHUFFLE] = NULL;
-    while (cnt > 0) {
-        int idx = (float)rand ()/RAND_MAX * cnt;
-        int i = 0;
-        playItem_t *prev = NULL;
-        for (it = head; it; it = it->next[PS_SHUFFLE], i++) {
-            if (i == idx) {
-                if (prev) {
-                    prev->next[PS_SHUFFLE] = it->next[PS_SHUFFLE];
-                }
-                else {
-                    head = it->next[PS_SHUFFLE];
-                }
-                // prepend to shuffled playlist
-                it->next[PS_SHUFFLE] = playlist_shuffle_head;
-                if (!playlist_shuffle_head) {
-                    tail = it;
-                }
-                playlist_shuffle_head = it;
-                cnt--;
-                break;
-            }
-            prev = it;
-        }
-    }
-#endif
-}
-
-void
 ps_set_order (int order) {
     ps_order = order;
 }

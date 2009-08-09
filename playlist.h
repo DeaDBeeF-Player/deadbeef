@@ -125,9 +125,6 @@ void
 ps_delete_selected (void);
 
 void
-ps_shuffle (void);
-
-void
 ps_set_order (int order);
 
 void

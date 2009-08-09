@@ -1078,7 +1078,6 @@ gtkps_add_fm_dropped_files (gtkplaylist_t *ps, char *ptr, int length, int drop_y
         }
     }
     free (ptr);
-    ps_shuffle ();
     // invalidate entire cache - slow, but rare
     memset (ps->fmtcache, 0, sizeof (int16_t) * 3 * ps_ncolumns * ps->nvisiblerows);
     GDK_THREADS_ENTER();
@@ -1088,6 +1087,7 @@ gtkps_add_fm_dropped_files (gtkplaylist_t *ps, char *ptr, int length, int drop_y
     GtkWidget *widget = ps->playlist;
     gtkps_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
     gtkps_expose (ps, 0, 0, widget->allocation.width, widget->allocation.height);
+    search_refresh ();
     GDK_THREADS_LEAVE();
 
 }
@@ -1313,7 +1313,6 @@ gtkps_add_dir (gtkplaylist_t *ps, char *folder) {
     GDK_THREADS_LEAVE();
     ps_add_dir (folder, gtkps_add_file_info_cb, e);
     g_free (folder);
-    ps_shuffle ();
     GDK_THREADS_ENTER();
     gtk_widget_destroy (d);
     gtk_widget_set_sensitive (mainwin, TRUE);
@@ -1321,6 +1320,7 @@ gtkps_add_dir (gtkplaylist_t *ps, char *folder) {
     GtkWidget *widget = ps->playlist;
     gtkps_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
     gtkps_expose (ps, 0, 0, widget->allocation.width, widget->allocation.height);
+    search_refresh ();
     GDK_THREADS_LEAVE();
 }
 
@@ -1346,7 +1346,6 @@ gtkps_add_files (gtkplaylist_t *ps, GSList *lst) {
     GDK_THREADS_LEAVE();
     g_slist_foreach(lst, gtkps_addfile_cb, e);
     g_slist_free (lst);
-    ps_shuffle ();
     GDK_THREADS_ENTER();
     gtk_widget_destroy (d);
     gtk_widget_set_sensitive (mainwin, TRUE);
@@ -1354,6 +1353,7 @@ gtkps_add_files (gtkplaylist_t *ps, GSList *lst) {
     GtkWidget *widget = ps->playlist;
     gtkps_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
     gtkps_expose (ps, 0, 0, widget->allocation.width, widget->allocation.height);
+    search_refresh ();
     GDK_THREADS_LEAVE();
 }
 
