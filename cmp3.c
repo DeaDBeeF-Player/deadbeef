@@ -1321,7 +1321,8 @@ codec_t cmp3 = {
     .read = cmp3_read,
     .seek = cmp3_seek,
     .insert = cmp3_insert,
-    .getexts = cmp3_getexts
+    .getexts = cmp3_getexts,
+    .id = "stdmp3"
 };
 
 

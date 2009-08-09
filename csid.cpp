@@ -507,6 +507,7 @@ codec_t csid = {
     csid_insert,
     csid_getexts,
     csid_numvoices,
-    csid_mutevoice
+    csid_mutevoice,
+    "stdsid"
 };
 

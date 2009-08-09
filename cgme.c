@@ -191,6 +191,7 @@ codec_t cgme = {
     .insert = cgme_insert,
     .getexts = cgme_getexts,
     .numvoices = cgme_numvoices,
-    .mutevoice = cgme_mutevoice
+    .mutevoice = cgme_mutevoice,
+    .id = "stdgme"
 };
 

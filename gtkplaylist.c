@@ -133,7 +133,7 @@ void
 gtkpl_setup_scrollbar (gtkplaylist_t *ps) {
     GtkWidget *playlist = ps->playlist;
     int h = playlist->allocation.height / rowheight;
-    int size = (*ps->count);
+    int size = (*ps->pcount);
     if (h >= size) {
         size = 0;
     }
@@ -241,14 +241,13 @@ gtkpl_draw_pl_row (gtkplaylist_t *ps, cairo_t *cr, int row, playItem_t *it) {
     }
     cairo_set_font_size (cr, rowheight-4);
     // draw as columns
-    char dur[10];
-    if (it->duration < 0) { // means not initialized yet
-        strcpy (dur, "-:--");
-    }
-    else {
-        int min = (int)it->duration/60;
-        int sec = (int)(it->duration-min*60);
-        snprintf (dur, 10, "%d:%02d", min, sec);
+    char dur[10] = "-:--";
+    if (it) {
+        if (it->duration >= 0) {
+            int min = (int)it->duration/60;
+            int sec = (int)(it->duration-min*60);
+            snprintf (dur, 10, "%d:%02d", min, sec);
+        }
     }
     const char *columns[pl_ncolumns] = {
         "",
@@ -323,13 +322,13 @@ gtkpl_draw_playlist (gtkplaylist_t *ps, int x, int y, int w, int h) {
 	int row2;
 	int row2_full;
 	row1 = max (0, y / rowheight + ps->scrollpos);
-	row2 = min ((*ps->count), (y+h) / rowheight + ps->scrollpos + 1);
+	row2 = min ((*ps->pcount), (y+h) / rowheight + ps->scrollpos + 1);
 	row2_full = (y+h) / rowheight + ps->scrollpos + 1;
-	//printf ("drawing row %d (nvis=%d)\n", row2_full, ps->nvisiblerows);
 	// draw background
 	playItem_t *it = gtkpl_get_for_idx (ps, ps->scrollpos);
 	playItem_t *it_copy = it;
 	for (row = row1; row < row2_full; row++) {
+        //printf ("drawing row %d (nvis=%d), row1=%d, row2=%d, row2_full=%d\n", row, ps->nvisiblerows, row1, row2, row2_full);
 		gtkpl_draw_pl_row_back (ps, cr, row, it);
 		if (it) {
             it = it->next[ps->iterator];
@@ -338,6 +337,7 @@ gtkpl_draw_playlist (gtkplaylist_t *ps, int x, int y, int w, int h) {
 	it = it_copy;
 	int idx = 0;
 	for (row = row1; row < row2; row++, idx++) {
+	//printf ("drawing row %d (nvis=%d), row1=%d, row2=%d, row2_full=%d\n", row, ps->nvisiblerows, row1, row2, row2_full);
         gtkpl_draw_pl_row (ps, cr, row, it);
         it = it->next[ps->iterator];
 	}
@@ -431,7 +431,7 @@ static int shift_sel_anchor = -1;
 void
 gtkpl_mouse1_pressed (gtkplaylist_t *ps, int state, int ex, int ey, double time) {
     // cursor must be set here, but selection must be handled in keyrelease
-    if ((*ps->count) == 0) {
+    if ((*ps->pcount) == 0) {
         return;
     }
     GtkWidget *widget = ps->playlist;
@@ -440,7 +440,7 @@ gtkpl_mouse1_pressed (gtkplaylist_t *ps, int state, int ex, int ey, double time)
     ps->lastpos[1] = ey;
     // select item
     int y = ey/rowheight + ps->scrollpos;
-    if (y < 0 || y >= (*ps->count)) {
+    if (y < 0 || y >= (*ps->pcount)) {
         y = -1;
     }
 
@@ -463,7 +463,7 @@ gtkpl_mouse1_pressed (gtkplaylist_t *ps, int state, int ex, int ey, double time)
 
     int sel = y;
     if (y == -1) {
-        y = (*ps->count) - 1;
+        y = (*ps->pcount) - 1;
     }
     int prev = ps->row;
     ps->row = y;
@@ -627,7 +627,7 @@ gtkpl_handle_scroll_event (gtkplaylist_t *ps, int direction) {
     GtkWidget *range = ps->scrollbar;;
     GtkWidget *playlist = ps->playlist;
     int h = playlist->allocation.height / rowheight;
-    int size = (*ps->count);
+    int size = (*ps->pcount);
     if (h >= size) {
         size = 0;
     }
@@ -777,8 +777,8 @@ gtkpl_keypress (gtkplaylist_t *ps, int keyval, int state) {
     }
     else if (keyval == GDK_Delete) {
         pl_delete_selected ();
-        if (ps->row >= (*ps->count)) {
-            ps->row = (*ps->count) - 1;
+        if (ps->row >= (*ps->pcount)) {
+            ps->row = (*ps->pcount) - 1;
         }
         gtkpl_setup_scrollbar (ps);
         gtkpl_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
@@ -786,7 +786,7 @@ gtkpl_keypress (gtkplaylist_t *ps, int keyval, int state) {
         search_refresh ();
         return;
     }
-    else if (keyval == GDK_Down && ps->row < (*ps->count) - 1) {
+    else if (keyval == GDK_Down && ps->row < (*ps->pcount) - 1) {
         ps->row++;
         if (ps->row > ps->scrollpos + widget->allocation.height / rowheight - 1) {
             newscroll = ps->row - widget->allocation.height / rowheight + 1;
@@ -798,10 +798,10 @@ gtkpl_keypress (gtkplaylist_t *ps, int keyval, int state) {
             newscroll = ps->row;
         }
     }
-    else if (keyval == GDK_Page_Down && ps->row < (*ps->count) - 1) {
+    else if (keyval == GDK_Page_Down && ps->row < (*ps->pcount) - 1) {
         ps->row += 10;
-        if (ps->row >= (*ps->count)) {
-            ps->row = (*ps->count) - 1;
+        if (ps->row >= (*ps->pcount)) {
+            ps->row = (*ps->pcount) - 1;
         }
         if (ps->row > ps->scrollpos + widget->allocation.height / rowheight - 1) {
             newscroll = ps->row - widget->allocation.height / rowheight + 1;
@@ -816,8 +816,8 @@ gtkpl_keypress (gtkplaylist_t *ps, int keyval, int state) {
             newscroll = ps->row;
         }
     }
-    else if (keyval == GDK_End && ps->row != (*ps->count) - 1) {
-        ps->row = (*ps->count) - 1;
+    else if (keyval == GDK_End && ps->row != (*ps->pcount) - 1) {
+        ps->row = (*ps->pcount) - 1;
         if (ps->row > ps->scrollpos + widget->allocation.height / rowheight - 1) {
             newscroll = ps->row - widget->allocation.height / rowheight + 1;
         }

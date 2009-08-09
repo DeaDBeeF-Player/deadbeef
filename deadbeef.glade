@@ -190,6 +190,33 @@
 		    <widget class="GtkMenu" id="playlist1_menu">
 
 		      <child>
+			<widget class="GtkMenuItem" id="playlist_load">
+			  <property name="visible">True</property>
+			  <property name="label" translatable="yes">Load</property>
+			  <property name="use_underline">True</property>
+			  <signal name="activate" handler="on_playlist_load_activate" last_modification_time="Sun, 09 Aug 2009 19:04:52 GMT"/>
+			</widget>
+		      </child>
+
+		      <child>
+			<widget class="GtkMenuItem" id="playlist_save">
+			  <property name="visible">True</property>
+			  <property name="label" translatable="yes">Save</property>
+			  <property name="use_underline">True</property>
+			  <signal name="activate" handler="on_playlist_save_activate" last_modification_time="Sun, 09 Aug 2009 19:04:52 GMT"/>
+			</widget>
+		      </child>
+
+		      <child>
+			<widget class="GtkMenuItem" id="playlist_save_as">
+			  <property name="visible">True</property>
+			  <property name="label" translatable="yes">Save As</property>
+			  <property name="use_underline">True</property>
+			  <signal name="activate" handler="on_playlist_save_as_activate" last_modification_time="Sun, 09 Aug 2009 19:04:52 GMT"/>
+			</widget>
+		      </child>
+
+		      <child>
 			<widget class="GtkMenuItem" id="order1">
 			  <property name="visible">True</property>
 			  <property name="label" translatable="yes">Order</property>
@@ -203,7 +230,7 @@
 				  <property name="visible">True</property>
 				  <property name="label" translatable="yes">Linear</property>
 				  <property name="use_underline">True</property>
-				  <property name="active">False</property>
+				  <property name="active">True</property>
 				  <signal name="activate" handler="on_order_linear_activate" last_modification_time="Sat, 08 Aug 2009 12:26:33 GMT"/>
 				</widget>
 			      </child>
@@ -213,7 +240,7 @@
 				  <property name="visible">True</property>
 				  <property name="label" translatable="yes">Shuffle</property>
 				  <property name="use_underline">True</property>
-				  <property name="active">False</property>
+				  <property name="active">True</property>
 				  <property name="group">order_linear</property>
 				  <signal name="activate" handler="on_order_shuffle_activate" last_modification_time="Sat, 08 Aug 2009 12:26:33 GMT"/>
 				</widget>
@@ -224,7 +251,7 @@
 				  <property name="visible">True</property>
 				  <property name="label" translatable="yes">Random</property>
 				  <property name="use_underline">True</property>
-				  <property name="active">False</property>
+				  <property name="active">True</property>
 				  <property name="group">order_linear</property>
 				  <signal name="activate" handler="on_order_random_activate" last_modification_time="Sat, 08 Aug 2009 12:26:33 GMT"/>
 				</widget>
@@ -248,7 +275,7 @@
 				  <property name="visible">True</property>
 				  <property name="label" translatable="yes">Loop All</property>
 				  <property name="use_underline">True</property>
-				  <property name="active">False</property>
+				  <property name="active">True</property>
 				  <signal name="activate" handler="on_loop_all_activate" last_modification_time="Sat, 08 Aug 2009 12:26:33 GMT"/>
 				</widget>
 			      </child>
@@ -258,7 +285,7 @@
 				  <property name="visible">True</property>
 				  <property name="label" translatable="yes">Loop Single Song</property>
 				  <property name="use_underline">True</property>
-				  <property name="active">False</property>
+				  <property name="active">True</property>
 				  <property name="group">loop_all</property>
 				  <signal name="activate" handler="on_loop_single_activate" last_modification_time="Sat, 08 Aug 2009 12:26:33 GMT"/>
 				</widget>
@@ -269,7 +296,7 @@
 				  <property name="visible">True</property>
 				  <property name="label" translatable="yes">Don't Loop</property>
 				  <property name="use_underline">True</property>
-				  <property name="active">False</property>
+				  <property name="active">True</property>
 				  <property name="group">loop_all</property>
 				  <signal name="activate" handler="on_loop_disable_activate" last_modification_time="Sat, 08 Aug 2009 12:26:33 GMT"/>
 				</widget>

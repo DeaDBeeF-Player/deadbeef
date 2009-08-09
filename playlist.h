@@ -39,8 +39,6 @@ typedef struct playItem_s {
     const char *filetype; // e.g. MP3 or OGG
     struct playItem_s *next[PL_MAX_ITERATORS]; // next item in linked list
     struct playItem_s *prev[PL_MAX_ITERATORS]; // prev item in linked list
-//    struct playItem_s *shufflenext; // next item in shuffle list
-//    struct playItem_s *searchnext; // next in search results list
     struct metaInfo_s *meta; // linked list storing metainfo
     unsigned selected : 1;
 } playItem_t;
@@ -129,5 +127,11 @@ pl_set_order (int order);
 
 void
 pl_set_loop_mode (int mode);
+
+int
+pl_save (const char *fname);
+
+int
+pl_load (const char *fname);
 
 #endif // __PLAYLIST_H

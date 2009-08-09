@@ -426,5 +426,6 @@ codec_t cflac = {
     .read = cflac_read,
     .seek = cflac_seek,
     .insert = cflac_insert,
-    .getexts = cflac_getexts
+    .getexts = cflac_getexts,
+    .id = "stdflac"
 };

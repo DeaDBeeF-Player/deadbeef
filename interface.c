@@ -53,6 +53,9 @@ create_mainwin (void)
   GtkWidget *crop1;
   GtkWidget *playlist1;
   GtkWidget *playlist1_menu;
+  GtkWidget *playlist_load;
+  GtkWidget *playlist_save;
+  GtkWidget *playlist_save_as;
   GtkWidget *order1;
   GtkWidget *order1_menu;
   GSList *order_linear_group = NULL;
@@ -199,6 +202,18 @@ create_mainwin (void)
   playlist1_menu = gtk_menu_new ();
   gtk_menu_item_set_submenu (GTK_MENU_ITEM (playlist1), playlist1_menu);
 
+  playlist_load = gtk_menu_item_new_with_mnemonic ("Load");
+  gtk_widget_show (playlist_load);
+  gtk_container_add (GTK_CONTAINER (playlist1_menu), playlist_load);
+
+  playlist_save = gtk_menu_item_new_with_mnemonic ("Save");
+  gtk_widget_show (playlist_save);
+  gtk_container_add (GTK_CONTAINER (playlist1_menu), playlist_save);
+
+  playlist_save_as = gtk_menu_item_new_with_mnemonic ("Save As");
+  gtk_widget_show (playlist_save_as);
+  gtk_container_add (GTK_CONTAINER (playlist1_menu), playlist_save_as);
+
   order1 = gtk_menu_item_new_with_mnemonic ("Order");
   gtk_widget_show (order1);
   gtk_container_add (GTK_CONTAINER (playlist1_menu), order1);
@@ -210,16 +225,19 @@ create_mainwin (void)
   order_linear_group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (order_linear));
   gtk_widget_show (order_linear);
   gtk_container_add (GTK_CONTAINER (order1_menu), order_linear);
+  gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (order_linear), TRUE);
 
   order_shuffle = gtk_radio_menu_item_new_with_mnemonic (order_linear_group, "Shuffle");
   order_linear_group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (order_shuffle));
   gtk_widget_show (order_shuffle);
   gtk_container_add (GTK_CONTAINER (order1_menu), order_shuffle);
+  gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (order_shuffle), TRUE);
 
   order_random = gtk_radio_menu_item_new_with_mnemonic (order_linear_group, "Random");
   order_linear_group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (order_random));
   gtk_widget_show (order_random);
   gtk_container_add (GTK_CONTAINER (order1_menu), order_random);
+  gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (order_random), TRUE);
 
   looping1 = gtk_menu_item_new_with_mnemonic ("Looping");
   gtk_widget_show (looping1);
@@ -232,16 +250,19 @@ create_mainwin (void)
   loop_all_group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (loop_all));
   gtk_widget_show (loop_all);
   gtk_container_add (GTK_CONTAINER (looping1_menu), loop_all);
+  gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (loop_all), TRUE);
 
   loop_single = gtk_radio_menu_item_new_with_mnemonic (loop_all_group, "Loop Single Song");
   loop_all_group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (loop_single));
   gtk_widget_show (loop_single);
   gtk_container_add (GTK_CONTAINER (looping1_menu), loop_single);
+  gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (loop_single), TRUE);
 
   loop_disable = gtk_radio_menu_item_new_with_mnemonic (loop_all_group, "Don't Loop");
   loop_all_group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (loop_disable));
   gtk_widget_show (loop_disable);
   gtk_container_add (GTK_CONTAINER (looping1_menu), loop_disable);
+  gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (loop_disable), TRUE);
 
   menuitem4 = gtk_menu_item_new_with_mnemonic ("_Help");
   gtk_widget_show (menuitem4);
@@ -444,6 +465,15 @@ create_mainwin (void)
   g_signal_connect ((gpointer) crop1, "activate",
                     G_CALLBACK (on_crop1_activate),
                     NULL);
+  g_signal_connect ((gpointer) playlist_load, "activate",
+                    G_CALLBACK (on_playlist_load_activate),
+                    NULL);
+  g_signal_connect ((gpointer) playlist_save, "activate",
+                    G_CALLBACK (on_playlist_save_activate),
+                    NULL);
+  g_signal_connect ((gpointer) playlist_save_as, "activate",
+                    G_CALLBACK (on_playlist_save_as_activate),
+                    NULL);
   g_signal_connect ((gpointer) order_linear, "activate",
                     G_CALLBACK (on_order_linear_activate),
                     NULL);
@@ -599,6 +629,9 @@ create_mainwin (void)
   GLADE_HOOKUP_OBJECT (mainwin, crop1, "crop1");
   GLADE_HOOKUP_OBJECT (mainwin, playlist1, "playlist1");
   GLADE_HOOKUP_OBJECT (mainwin, playlist1_menu, "playlist1_menu");
+  GLADE_HOOKUP_OBJECT (mainwin, playlist_load, "playlist_load");
+  GLADE_HOOKUP_OBJECT (mainwin, playlist_save, "playlist_save");
+  GLADE_HOOKUP_OBJECT (mainwin, playlist_save_as, "playlist_save_as");
   GLADE_HOOKUP_OBJECT (mainwin, order1, "order1");
   GLADE_HOOKUP_OBJECT (mainwin, order1_menu, "order1_menu");
   GLADE_HOOKUP_OBJECT (mainwin, order_linear, "order_linear");

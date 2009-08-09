@@ -40,6 +40,7 @@ typedef struct codec_s {
     const char ** (*getexts) (void);
     int (*numvoices) (void);
     void (*mutevoice) (int voice, int mute);
+    const char *id; // codec id used for playlist serialization
     fileinfo_t info;
 } codec_t;
 

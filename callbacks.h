@@ -391,3 +391,15 @@ on_playlist_motion_notify_event        (GtkWidget       *widget,
 void
 on_playscroll_value_changed            (GtkRange        *range,
                                         gpointer         user_data);
+
+void
+on_playlist_load_activate              (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_playlist_save_activate              (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_playlist_save_as_activate           (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);

@@ -38,6 +38,10 @@
 #include "messages.h"
 #include "playback.h"
 
+codec_t *codecs[] = {
+    &cdumb, &cvorbis, &cflac, &cgme, &cmp3, &csid, NULL
+};
+
 #define SKIP_BLANK_CUE_TRACKS 1
 
 playItem_t *playlist_head[PL_MAX_ITERATORS];
@@ -265,9 +269,6 @@ pl_insert_file (playItem_t *after, const char *fname, int (*cb)(playItem_t *it, 
     eol++;
 
     // match by codec
-    codec_t *codecs[] = {
-        &cdumb, &cvorbis, &cflac, &cgme, &cmp3, &csid, NULL
-    };
     for (int i = 0; codecs[i]; i++) {
         if (codecs[i]->getexts && codecs[i]->insert) {
             const char **exts = codecs[i]->getexts ();
@@ -339,43 +340,6 @@ pl_add_file (const char *fname, int (*cb)(playItem_t *it, void *data), void *use
         return 0;
     }
     return -1;
-// {{{ original pl_add_file
-#if 0
-    if (!fname) {
-        return -1;
-    }
-    // detect codec
-    codec_t *codec = NULL;
-    const char *eol = fname + strlen (fname) - 1;
-    while (eol > fname && *eol != '.') {
-        eol--;
-    }
-    eol++;
-
-    // match by codec
-    codec_t *codecs[] = {
-        &cdumb, &cvorbis, &cflac, &cgme, &cmp3, &csid, NULL
-    };
-    playItem_t *after = playlist_tail;
-    for (int i = 0; codecs[i]; i++) {
-        if (codecs[i]->getexts && codecs[i]->insert) {
-            const char **exts = codecs[i]->getexts ();
-            if (exts) {
-                for (int e = 0; exts[e]; e++) {
-                    if (!strcasecmp (exts[e], eol)) {
-                        playItem_t *inserted = NULL;
-                        if ((inserted = codecs[i]->insert (after, fname)) != NULL) {
-                            return 0;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    return -1;
-#endif
-// }}}
 }
 
 int
@@ -914,5 +878,268 @@ pl_set_order (int order) {
 void
 pl_set_loop_mode (int mode) {
     pl_loop_mode = mode;
+}
+
+int
+pl_save (const char *fname) {
+    const char magic[] = "DBPL";
+    uint8_t majorver = 1;
+    uint8_t minorver = 0;
+    FILE *fp = fopen (fname, "w+b");
+    if (!fp) {
+        return -1;
+    }
+    if (fwrite (magic, 1, 4, fp) != 4) {
+        goto save_fail;
+    }
+    if (fwrite (&majorver, 1, 1, fp) != 1) {
+        goto save_fail;
+    }
+    if (fwrite (&minorver, 1, 1, fp) != 1) {
+        goto save_fail;
+    }
+    uint32_t cnt = pl_count;
+    if (fwrite (&cnt, 1, 4, fp) != 4) {
+        goto save_fail;
+    }
+    for (playItem_t *it = playlist_head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
+        uint16_t l;
+        uint8_t ll;
+        l = strlen (it->fname);
+        if (fwrite (&l, 1, 2, fp) != 2) {
+            goto save_fail;
+        }
+        if (fwrite (it->fname, 1, l, fp) != l) {
+            goto save_fail;
+        }
+        ll = strlen (it->codec->id);
+        if (fwrite (&ll, 1, 1, fp) != 1) {
+            goto save_fail;
+        }
+        if (fwrite (it->codec->id, 1, ll, fp) != ll) {
+            goto save_fail;
+        }
+        l = it->tracknum;
+        if (fwrite (&l, 1, 2, fp) != 2) {
+            goto save_fail;
+        }
+        if (fwrite (&it->timestart, 1, 4, fp) != 4) {
+            goto save_fail;
+        }
+        if (fwrite (&it->timeend, 1, 4, fp) != 4) {
+            goto save_fail;
+        }
+        if (fwrite (&it->duration, 1, 4, fp) != 4) {
+            goto save_fail;
+        }
+#if 0
+        uint8_t ft = it->filetype ? strlen (it->filetype) : 0;
+        if (fwrite (&ft, 1, 1, fp) != 1) {
+            goto save_fail;
+        }
+        if (ft) {
+            if (fwrite (it->filetype, 1, ft, fp) != ft) {
+                goto save_fail;
+            }
+        }
+#endif
+        int16_t nm = 0;
+        metaInfo_t *m;
+        for (m = it->meta; m; m = m->next) {
+            nm++;
+        }
+        if (fwrite (&nm, 1, 2, fp) != 2) {
+            goto save_fail;
+        }
+        for (m = it->meta; m; m = m->next) {
+            l = strlen (m->key);
+            if (fwrite (&l, 1, 2, fp) != 2) {
+                goto save_fail;
+            }
+            if (l) {
+                if (fwrite (m->key, 1, l, fp) != l) {
+                    goto save_fail;
+                }
+            }
+            l = strlen (m->value);
+            if (fwrite (&l, 1, 2, fp) != 2) {
+                goto save_fail;
+            }
+            if (l) {
+                if (fwrite (m->value, 1, l, fp) != l) {
+                    goto save_fail;
+                }
+            }
+        }
+    }
+    fclose (fp);
+    return 0;
+save_fail:
+    fclose (fp);
+    unlink (fname);
+    return -1;
+}
+
+int
+pl_load (const char *fname) {
+    pl_free ();
+    uint8_t majorver = 1;
+    uint8_t minorver = 0;
+    FILE *fp = fopen (fname, "rb");
+    if (!fp) {
+        return -1;
+    }
+    char magic[4];
+    if (fread (magic, 1, 4, fp) != 4) {
+        goto load_fail;
+    }
+    if (strncmp (magic, "DBPL", 4)) {
+        goto load_fail;
+    }
+    if (fread (&majorver, 1, 1, fp) != 1) {
+        goto load_fail;
+    }
+    if (majorver != 1) {
+        goto load_fail;
+    }
+    if (fread (&minorver, 1, 1, fp) != 1) {
+        goto load_fail;
+    }
+    if (minorver != 0) {
+        goto load_fail;
+    }
+    uint32_t cnt;
+    if (fread (&cnt, 1, 4, fp) != 4) {
+        goto load_fail;
+    }
+    playItem_t *it = NULL;
+    for (uint32_t i = 0; i < cnt; i++) {
+        it = malloc (sizeof (playItem_t));
+        if (!it) {
+            goto load_fail;
+        }
+        memset (it, 0, sizeof (playItem_t));
+        uint16_t l;
+        // fname
+        if (fread (&l, 1, 2, fp) != 2) {
+            goto load_fail;
+        }
+        it->fname = malloc (l+1);
+        if (fread (it->fname, 1, l, fp) != l) {
+            goto load_fail;
+        }
+        it->fname[l] = 0;
+        // codec
+        uint8_t ll;
+        if (fread (&ll, 1, 1, fp) != 1) {
+            goto load_fail;
+        }
+        if (ll >= 20) {
+            goto load_fail;
+        }
+        char codec[20];
+        if (fread (codec, 1, ll, fp) != ll) {
+            goto load_fail;
+        }
+        codec[ll] = 0;
+        for (int c = 0; codecs[c]; c++) {
+            if (!strcmp (codec, codecs[c]->id)) {
+                it->codec = codecs[c];
+            }
+        }
+        if (!it->codec) {
+            goto load_fail;
+        }
+        // tracknum
+        if (fread (&l, 1, 2, fp) != 2) {
+            goto load_fail;
+        }
+        it->tracknum = l;
+        // timestart
+        if (fread (&it->timestart, 1, 4, fp) != 4) {
+            goto load_fail;
+        }
+        // timeend
+        if (fread (&it->timeend, 1, 4, fp) != 4) {
+            goto load_fail;
+        }
+        // duration
+        if (fread (&it->duration, 1, 4, fp) != 4) {
+            goto load_fail;
+        }
+#if 0
+        // filetype
+        uint8_t ft;
+        if (fread (&ft, 1, 1, fp) != 1) {
+            goto load_fail;
+        }
+        if (ft) {
+            it->filetype = malloc (ft+1)
+            if (fread (it->filetype, 1, ft, fp) != ft) {
+                goto load_fail;
+            }
+            it->filetype[ft] = 0;
+        }
+#endif
+        // printf ("loading file %s\n", it->fname);
+        int16_t nm = 0;
+        if (fread (&nm, 1, 2, fp) != 2) {
+            goto load_fail;
+        }
+        for (int i = 0; i < nm; i++) {
+            char key[1024];
+            char value[1024];
+            const char *valid_keys[] = {
+                "title",
+                "artist",
+                "album",
+                "vendor",
+                "year",
+                "genre",
+                "comment",
+                "track",
+                "band",
+                NULL
+            };
+
+            if (fread (&l, 1, 2, fp) != 2) {
+                goto load_fail;
+            }
+            if (!l || l >= 1024) {
+                goto load_fail;
+            }
+            if (fread (key, 1, l, fp) != l) {
+                goto load_fail;
+            }
+            key[l] = 0;
+            if (fread (&l, 1, 2, fp) != 2) {
+                goto load_fail;
+            }
+            if (!l || l >= 1024) {
+                goto load_fail;
+            }
+            if (fread (value, 1, l, fp) != l) {
+                goto load_fail;
+            }
+            value[l] = 0;
+            //printf ("%s=%s\n", key, value);
+            for (int n = 0; valid_keys[n]; n++) {
+                if (!strcmp (valid_keys[n], key)) {
+                    pl_add_meta (it, valid_keys[n], value);
+                    break;
+                }
+            }
+        }
+        pl_insert_item (playlist_tail[PL_MAIN], it);
+    }
+    fclose (fp);
+    return 0;
+load_fail:
+    fclose (fp);
+    if (it) {
+        pl_item_free (it);
+    }
+    pl_free ();
+    return -1;
 }
 

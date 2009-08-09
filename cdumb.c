@@ -799,6 +799,7 @@ codec_t cdumb = {
     .read = cdumb_read,
     .seek = cdumb_seek,
     .insert = cdumb_insert,
-    .getexts = cdumb_getexts
+    .getexts = cdumb_getexts,
+    .id = "stddumb"
 };
 

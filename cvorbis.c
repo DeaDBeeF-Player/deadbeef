@@ -178,6 +178,7 @@ codec_t cvorbis = {
     .read = cvorbis_read,
     .seek = cvorbis_seek,
     .insert = cvorbis_insert,
-    .getexts = cvorbis_getexts
+    .getexts = cvorbis_getexts,
+    .id = "stdogg"
 };
 

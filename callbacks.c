@@ -64,7 +64,7 @@ main_playlist_init (GtkWidget *widget) {
         main_playlist.header = lookup_widget (mainwin, "header");
         main_playlist.scrollbar = lookup_widget (mainwin, "playscroll");
         main_playlist.pcurr = &playlist_current_ptr;
-        main_playlist.count = &pl_count;
+        main_playlist.pcount = &pl_count;
         main_playlist.iterator = PL_MAIN;
         main_playlist.multisel = 1;
         main_playlist.scrollpos = 0;
@@ -94,7 +94,7 @@ search_playlist_init (GtkWidget *widget) {
         assert (search_playlist.header);
         assert (search_playlist.scrollbar);
     //    main_playlist.pcurr = &search_current;
-        search_playlist.count = &search_count;
+        search_playlist.pcount = &search_count;
         search_playlist.multisel = 0;
         search_playlist.iterator = PL_SEARCH;
         search_playlist.scrollpos = 0;
@@ -690,4 +690,74 @@ on_searchlist_realize                  (GtkWidget       *widget,
 
 
 
+
+
+void
+on_playlist_load_activate              (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    GtkWidget *dlg = gtk_file_chooser_dialog_new ("Load Playlist", GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
+
+    GtkFileFilter* flt;
+    flt = gtk_file_filter_new ();
+    gtk_file_filter_set_name (flt, "DeaDBeeF playlist files (*.dbpl)");
+    gtk_file_filter_add_pattern (flt, "*.dbpl");
+    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
+
+    if (gtk_dialog_run (GTK_DIALOG (dlg)) == GTK_RESPONSE_OK)
+    {
+        gchar *fname = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dlg));
+        gtk_widget_destroy (dlg);
+        if (fname) {
+            int res = pl_load (fname);
+            printf ("load result: %d\n", res);
+            g_free (fname);
+            gtkplaylist_t *ps = &main_playlist;
+            gtkpl_setup_scrollbar (ps);
+            gtkpl_draw_playlist (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
+            gtkpl_expose (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
+            search_refresh ();
+        }
+    }
+    else {
+        gtk_widget_destroy (dlg);
+    }
+}
+
+
+void
+on_playlist_save_activate              (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+
+}
+
+
+void
+on_playlist_save_as_activate           (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    GtkWidget *dlg = gtk_file_chooser_dialog_new ("Save Playlist As", GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_SAVE, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_SAVE, GTK_RESPONSE_OK, NULL);
+
+    GtkFileFilter* flt;
+    flt = gtk_file_filter_new ();
+    gtk_file_filter_set_name (flt, "DeaDBeeF playlist files (*.dbpl)");
+    gtk_file_filter_add_pattern (flt, "*.dbpl");
+    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
+
+    if (gtk_dialog_run (GTK_DIALOG (dlg)) == GTK_RESPONSE_OK)
+    {
+        gchar *fname = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dlg));
+        gtk_widget_destroy (dlg);
+
+        if (fname) {
+            int res = pl_save (fname);
+            printf ("save res: %d\n", res);
+            g_free (fname);
+        }
+    }
+    else {
+        gtk_widget_destroy (dlg);
+    }
+}
 
