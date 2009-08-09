@@ -47,7 +47,7 @@ static DUH*
 open_module(const char *fname, const char *ext, int *start_order, int *is_it, int *is_dos, const char **filetype);
 
 int
-cdumb_init (const char *fname, int track, float start, float end) {
+cdumb_init (playItem_t *it) {
     if (!dumb_initialized) {
         atexit (&dumb_exit);
     }
@@ -55,13 +55,13 @@ cdumb_init (const char *fname, int track, float start, float end) {
 
     int start_order = 0;
 	int is_dos, is_it;
-    const char *ext = fname + strlen (fname) - 1;
-    while (*ext != '.' && ext > fname) {
+    const char *ext = it->fname + strlen (it->fname) - 1;
+    while (*ext != '.' && ext > it->fname) {
         ext--;
     }
     ext++;
     const char *ftype;
-    duh = open_module(fname, ext, &start_order, &is_it, &is_dos, &ftype);
+    duh = open_module(it->fname, ext, &start_order, &is_it, &is_dos, &ftype);
 
 //    if (is_it) ReadIT(ptr, size, *m_info, !read_tag);
 //    else ReadDUH(duh, *m_info, !read_tag, is_dos);

@@ -41,7 +41,6 @@ typedef struct {
     GtkWidget *scrollbar;
     GdkPixmap *backbuf;
     // parameters
-    playItem_t **phead; // pointer to head of list to display
     playItem_t **pcurr; // pointer to current item
     int *count; // pointer to count of items in list
     int update_statusbar; // whether it needs to update status bar in certain cases

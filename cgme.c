@@ -30,14 +30,14 @@ static int nzerosamples;
 static uint32_t cgme_voicemask = 0;
 
 int
-cgme_init (const char *fname, int track, float start, float end) {
-    if (gme_open_file (fname, &emu, p_get_rate ())) {
+cgme_init (playItem_t *it) {
+    if (gme_open_file (it->fname, &emu, p_get_rate ())) {
         return -1;
     }
     gme_mute_voices (emu, cgme_voicemask);
-    gme_start_track (emu, track);
+    gme_start_track (emu, it->tracknum);
     track_info_t inf;
-    gme_track_info (emu, &inf, track);
+    gme_track_info (emu, &inf, it->tracknum);
     cgme.info.bitsPerSample = 16;
     cgme.info.channels = 2;
     cgme.info.samplesPerSecond = p_get_rate ();

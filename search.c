@@ -33,7 +33,6 @@
 #include "gtkplaylist.h"
 
 GtkWidget *searchwin = NULL;
-struct playItem_s *search_head = NULL;
 struct playItem_s *search_current = NULL;
 int search_count = 0;
 
@@ -61,21 +60,21 @@ on_searchentry_changed                 (GtkEditable     *editable,
 
     const gchar *text = gtk_entry_get_text (GTK_ENTRY (editable));
 
-    search_head = NULL;
-    playItem_t *tail = NULL;
+    playlist_head[PS_SEARCH] = NULL;
+    playlist_tail[PS_SEARCH] = NULL;
     search_count = 0;
     if (*text) {
-        for (playItem_t *it = playlist_head; it; it = it->next[PS_NEXT]) {
+        for (playItem_t *it = playlist_head[PS_MAIN]; it; it = it->next[PS_MAIN]) {
             for (metaInfo_t *m = it->meta; m; m = m->next) {
                 if (strcasestr (m->value, text)) {
                     // add to list
-                    it->next[PS_SEARCH_NEXT] = NULL;
-                    if (tail) {
-                        tail->next[PS_SEARCH_NEXT] = it;
-                        tail = it;
+                    it->next[PS_SEARCH] = NULL;
+                    if (playlist_tail[PS_SEARCH]) {
+                        playlist_tail[PS_SEARCH]->next[PS_SEARCH] = it;
+                        playlist_tail[PS_SEARCH] = it;
                     }
                     else {
-                        search_head = tail = it;
+                        playlist_head[PS_SEARCH] = playlist_tail[PS_SEARCH] = it;
                     }
                     search_count++;
                     break;

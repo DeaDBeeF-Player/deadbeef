@@ -385,7 +385,7 @@ void
 gtkps_select_single (gtkplaylist_t *ps, int sel) {
     int idx=0;
     GtkWidget *widget = ps->playlist;
-    for (playItem_t *it = (*ps->phead); it; it = it->next[ps->iterator], idx++) {
+    for (playItem_t *it = playlist_head[ps->iterator]; it; it = it->next[ps->iterator], idx++) {
         if (idx == sel) {
             if (!it->selected) {
                 it->selected = 1;
@@ -500,7 +500,7 @@ gtkps_mouse1_pressed (gtkplaylist_t *ps, int state, int ex, int ey, double time)
         int start = min (prev, ps->row);
         int end = max (prev, ps->row);
         int idx = 0;
-        for (playItem_t *it = (*ps->phead); it; it = it->next[ps->iterator], idx++) {
+        for (playItem_t *it = playlist_head[ps->iterator]; it; it = it->next[ps->iterator], idx++) {
             if (idx >= start && idx <= end) {
                 if (!it->selected) {
                     it->selected = 1;
@@ -595,7 +595,7 @@ gtkps_mousemove (gtkplaylist_t *ps, GdkEventMotion *event) {
             int start = min (y, shift_sel_anchor);
             int end = max (y, shift_sel_anchor);
             int idx=0;
-            for (playItem_t *it = (*ps->phead); it; it = it->next[ps->iterator], idx++) {
+            for (playItem_t *it = playlist_head[ps->iterator]; it; it = it->next[ps->iterator], idx++) {
                 if (idx >= start && idx <= end) {
                     it->selected = 1;
                     gtkps_redraw_ps_row (ps, idx);
@@ -754,7 +754,7 @@ gtkps_keypress (gtkplaylist_t *ps, int keyval, int state) {
     }
     else if ((keyval == GDK_A || keyval == GDK_a) && (state & GDK_CONTROL_MASK)) {
         // select all
-        for (playItem_t *it = (*ps->phead); it; it = it->next[ps->iterator]) {
+        for (playItem_t *it = playlist_head[ps->iterator]; it; it = it->next[ps->iterator]) {
             it->selected = 1;
         }
         gtkps_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
@@ -823,7 +823,7 @@ gtkps_keypress (gtkplaylist_t *ps, int keyval, int state) {
             int start = min (ps->row, shift_sel_anchor);
             int end = max (ps->row, shift_sel_anchor);
             int idx=0;
-            for (playItem_t *it = (*ps->phead); it; it = it->next[ps->iterator], idx++) {
+            for (playItem_t *it = playlist_head[ps->iterator]; it; it = it->next[ps->iterator], idx++) {
                 if (idx >= start && idx <= end) {
 //                    if (!it->selected) {
                         it->selected = 1;
@@ -853,7 +853,7 @@ gtkps_keypress (gtkplaylist_t *ps, int keyval, int state) {
         if (prev != ps->row) {
             shift_sel_anchor = ps->row;
             int idx=0;
-            for (playItem_t *it = (*ps->phead); it; it = it->next[ps->iterator], idx++) {
+            for (playItem_t *it = playlist_head[ps->iterator]; it; it = it->next[ps->iterator], idx++) {
                 if (idx == ps->row) {
                     if (!it->selected) {
                         it->selected = 1;
@@ -924,30 +924,30 @@ gtkps_handle_drag_drop (gtkplaylist_t *ps, int drop_y, uint32_t *d, int length) 
     int processed = 0;
     int idx = 0;
     playItem_t *next = NULL;
-    for (playItem_t *it = (*ps->phead); it && processed < length; it = next, idx++) {
+    for (playItem_t *it = playlist_head[ps->iterator]; it && processed < length; it = next, idx++) {
         //            printf ("idx: %d\n", d[i]);
         next = it->next[ps->iterator];
         if (idx == d[processed]) {
             if (it->prev) {
-                it->prev->next[ps->iterator] = it->next[ps->iterator];
+                it->prev[ps->iterator]->next[ps->iterator] = it->next[ps->iterator];
             }
             else {
-                (*ps->phead) = it->next[ps->iterator];
+                playlist_head[ps->iterator] = it->next[ps->iterator];
             }
             if (it->next[ps->iterator]) {
-                it->next[ps->iterator]->prev = it->prev;
+                it->next[ps->iterator]->prev[ps->iterator] = it->prev[ps->iterator];
             }
             else {
-                playlist_tail = it->prev;
+                playlist_tail[ps->iterator] = it->prev[ps->iterator];
             }
             if (tail) {
                 tail->next[ps->iterator] = it;
-                it->prev = tail;
+                it->prev[ps->iterator] = tail;
                 tail = it;
             }
             else {
                 head = tail = it;
-                it->prev = it->next[ps->iterator] = NULL;
+                it->prev[ps->iterator] = it->next[ps->iterator] = NULL;
             }
             processed++;
         }
@@ -955,25 +955,25 @@ gtkps_handle_drag_drop (gtkplaylist_t *ps, int drop_y, uint32_t *d, int length) 
     // find insertion point
     playItem_t *drop_after = NULL;
     if (drop_before) {
-        drop_after = drop_before->prev;
+        drop_after = drop_before->prev[ps->iterator];
     }
     else {
-        drop_after = playlist_tail;
+        drop_after = playlist_tail[ps->iterator];
     }
     // insert in between
-    head->prev = drop_after;
+    head->prev[ps->iterator] = drop_after;
     if (drop_after) {
         drop_after->next[ps->iterator] = head;
     }
     else {
-        (*ps->phead) = head;
+        playlist_head[ps->iterator] = head;
     }
     tail->next[ps->iterator] = drop_before;
     if (drop_before) {
-        drop_before->prev = tail;
+        drop_before->prev[ps->iterator] = tail;
     }
     else {
-        playlist_tail = tail;
+        playlist_tail[ps->iterator] = tail;
     }
 }
 
@@ -1008,16 +1008,16 @@ strcopy_special (char *dest, const char *src, int len) {
 
 int
 gtkps_add_file_info_cb (playItem_t *it, void *data) {
-//    static int countdown = 0;
-//    if (countdown == 0) {
+    static int countdown = 0;
+    if (countdown == 0) {
         GtkEntry *e = (GtkEntry *)data;
         GDK_THREADS_ENTER();
         gtk_entry_set_text (GTK_ENTRY (e), it->fname);
         GDK_THREADS_LEAVE();
         usleep (0);
-//        countdown = 10;
-//    }
-//    countdown--;
+        countdown = 10;
+    }
+    countdown--;
     return 0;
 }
 
@@ -1039,7 +1039,7 @@ gtkps_add_fm_dropped_files (gtkplaylist_t *ps, char *ptr, int length, int drop_y
     playItem_t *drop_before = gtkps_get_for_idx (ps, drop_row);
     playItem_t *after = NULL;
     if (drop_before) {
-        after = drop_before->prev;
+        after = drop_before->prev[ps->iterator];
     }
     const gchar *p = ptr;
     while (*p) {
@@ -1369,7 +1369,7 @@ gtkps_playsong (gtkplaylist_t *ps) {
 
 int
 gtkps_get_idx_of (gtkplaylist_t *ps, playItem_t *it) {
-    playItem_t *c = *ps->phead;
+    playItem_t *c = playlist_head[ps->iterator];
     int idx = 0;
     while (c && c != it) {
         c = c->next[ps->iterator];
@@ -1383,7 +1383,7 @@ gtkps_get_idx_of (gtkplaylist_t *ps, playItem_t *it) {
 
 playItem_t *
 gtkps_get_for_idx (gtkplaylist_t *ps, int idx) {
-    playItem_t *it = *ps->phead;
+    playItem_t *it = playlist_head[ps->iterator];
     while (idx--) {
         if (!it)
             return NULL;

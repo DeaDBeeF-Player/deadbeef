@@ -81,7 +81,7 @@ void
 cflac_free (void);
 
 int
-cflac_init (const char *fname, int track, float start, float end) {
+cflac_init (playItem_t *it) {
     FLAC__StreamDecoderInitStatus status;
     decoder = FLAC__stream_decoder_new();
     if (!decoder) {
@@ -89,7 +89,7 @@ cflac_init (const char *fname, int track, float start, float end) {
         return -1;
     }
     FLAC__stream_decoder_set_md5_checking(decoder, 0);
-    status = FLAC__stream_decoder_init_file(decoder, fname, cflac_write_callback, cflac_metadata_callback, cflac_error_callback, NULL);
+    status = FLAC__stream_decoder_init_file(decoder, it->fname, cflac_write_callback, cflac_metadata_callback, cflac_error_callback, NULL);
     if (status != FLAC__STREAM_DECODER_INIT_STATUS_OK) {
         cflac_free ();
         return -1;
@@ -103,8 +103,8 @@ cflac_init (const char *fname, int track, float start, float end) {
         cflac_free ();
         return -1;
     }
-    timestart = start;
-    timeend = end;
+    timestart = it->timestart;
+    timeend = it->timeend;
     if (timeend > timestart || timeend < 0) {
         // take from cue and seek
 //        if (timeend < 0) {
@@ -248,13 +248,13 @@ cflac_init_cue_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC_
     else if (metadata->type == FLAC__METADATA_TYPE_VORBIS_COMMENT) {
         playItem_t *it = NULL;
         if (cb->after) {
-            it = cb->after->next[PS_NEXT];
+            it = cb->after->next[PS_MAIN];
         }
         else if (cb->last) {
-            it = playlist_head;
+            it = playlist_head[PS_MAIN];
         }
         if (it) {
-            for (; it != cb->last->next[PS_NEXT]; it = it->next[PS_NEXT]) {
+            for (; it != cb->last->next[PS_MAIN]; it = it->next[PS_MAIN]) {
                 char str[10];
                 snprintf (str, 10, "%d", it->tracknum);
                 ps_add_meta (it, "track", str);

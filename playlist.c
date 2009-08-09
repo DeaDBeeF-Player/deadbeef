@@ -40,9 +40,8 @@
 
 #define SKIP_BLANK_CUE_TRACKS 1
 
-playItem_t *playlist_head;
-playItem_t *playlist_tail;
-playItem_t *playlist_shuffle_head;
+playItem_t *playlist_head[PS_MAX_ITERATORS];
+playItem_t *playlist_tail[PS_MAX_ITERATORS];
 playItem_t playlist_current;
 playItem_t *playlist_current_ptr;
 int ps_count = 0;
@@ -51,8 +50,9 @@ static int ps_loop_mode = 0; // 0 = loop, 1 = don't loop, 2 = loop single
 
 void
 ps_free (void) {
-    while (playlist_head) {
-        ps_remove (playlist_head);
+    while (playlist_head[PS_MAIN]) {
+        ps_remove (playlist_head[PS_MAIN]);
+        ps_count--;
     }
 }
 
@@ -335,7 +335,7 @@ ps_insert_dir (playItem_t *after, const char *dirname, int (*cb)(playItem_t *it,
 
 int
 ps_add_file (const char *fname, int (*cb)(playItem_t *it, void *data), void *user_data) {
-    if (ps_insert_file (playlist_tail, fname, cb, user_data)) {
+    if (ps_insert_file (playlist_tail[PS_MAIN], fname, cb, user_data)) {
         return 0;
     }
     return -1;
@@ -380,7 +380,7 @@ ps_add_file (const char *fname, int (*cb)(playItem_t *it, void *data), void *use
 
 int
 ps_add_dir (const char *dirname, int (*cb)(playItem_t *it, void *data), void *user_data) {
-    if (ps_insert_dir (playlist_tail, dirname, cb, user_data)) {
+    if (ps_insert_dir (playlist_tail[PS_MAIN], dirname, cb, user_data)) {
         return 0;
     }
     return -1;
@@ -433,28 +433,32 @@ ps_remove (playItem_t *it) {
     ps_count--;
 
     // remove from shuffle list
-    for (playItem_t *i = playlist_head; i; i = i->next[PS_NEXT]) {
-        if (i->next[PS_SHUFFLE_NEXT] == it) {
-            i->next[PS_SHUFFLE_NEXT] = it->next[PS_SHUFFLE_NEXT];
-            if (it == playlist_shuffle_head) {
-                playlist_shuffle_head = it->next[PS_SHUFFLE_NEXT];
-            }
-            break;
+    {
+        playItem_t *prev = it->prev[PS_SHUFFLE];
+        playItem_t *next = it->next[PS_SHUFFLE];
+        if (prev) {
+            prev->next[PS_SHUFFLE] = next;
+        }
+        else {
+            playlist_head[PS_SHUFFLE] = next;
+        }
+        if (!next) {
+            playlist_tail[PS_SHUFFLE] = prev;
         }
     }
 
     // remove from linear list
-    if (it->prev) {
-        it->prev->next[PS_NEXT] = it->next[PS_NEXT];
+    if (it->prev[PS_MAIN]) {
+        it->prev[PS_MAIN]->next[PS_MAIN] = it->next[PS_MAIN];
     }
     else {
-        playlist_head = it->next[PS_NEXT];
+        playlist_head[PS_MAIN] = it->next[PS_MAIN];
     }
-    if (it->next[PS_NEXT]) {
-        it->next[PS_NEXT]->prev = it->prev;
+    if (it->next[PS_MAIN]) {
+        it->next[PS_MAIN]->prev[PS_MAIN] = it->prev[PS_MAIN];
     }
     else {
-        playlist_tail = it->prev;
+        playlist_tail[PS_MAIN] = it->prev[PS_MAIN];
     }
     ps_item_free (it);
     free (it);
@@ -470,7 +474,7 @@ int
 ps_getselcount (void) {
     // FIXME: slow!
     int cnt = 0;
-    for (playItem_t *it = playlist_head; it; it = it->next[PS_NEXT]) {
+    for (playItem_t *it = playlist_head[PS_MAIN]; it; it = it->next[PS_MAIN]) {
         if (it->selected) {
             cnt++;
         }
@@ -480,21 +484,21 @@ ps_getselcount (void) {
 
 playItem_t *
 ps_get_for_idx (int idx) {
-    playItem_t *it = playlist_head;
+    playItem_t *it = playlist_head[PS_MAIN];
     while (idx--) {
         if (!it)
             return NULL;
-        it = it->next[PS_NEXT];
+        it = it->next[PS_MAIN];
     }
     return it;
 }
 
 int
 ps_get_idx_of (playItem_t *it) {
-    playItem_t *c = playlist_head;
+    playItem_t *c = playlist_head[PS_MAIN];
     int idx = 0;
     while (c && c != it) {
-        c = c->next[PS_NEXT];
+        c = c->next[PS_MAIN];
         idx++;
     }
     if (!c) {
@@ -505,13 +509,13 @@ ps_get_idx_of (playItem_t *it) {
 
 int
 ps_append_item (playItem_t *it) {
-    if (!playlist_tail) {
-        playlist_tail = playlist_head = it;
+    if (!playlist_tail[PS_MAIN]) {
+        playlist_tail[PS_MAIN] = playlist_head[PS_MAIN] = it;
     }
     else {
-        playlist_tail->next[PS_NEXT] = it;
-        it->prev = playlist_tail;
-        playlist_tail = it;
+        playlist_tail[PS_MAIN]->next[PS_MAIN] = it;
+        it->prev[PS_MAIN] = playlist_tail[PS_MAIN];
+        playlist_tail[PS_MAIN] = it;
     }
     ps_count++;
 }
@@ -519,28 +523,58 @@ ps_append_item (playItem_t *it) {
 playItem_t *
 ps_insert_item (playItem_t *after, playItem_t *it) {
     if (!after) {
-        it->next[PS_NEXT] = playlist_head;
-        it->prev = NULL;
-        if (playlist_head) {
-            playlist_head->prev = it;
+        it->next[PS_MAIN] = playlist_head[PS_MAIN];
+        it->prev[PS_MAIN] = NULL;
+        if (playlist_head[PS_MAIN]) {
+            playlist_head[PS_MAIN]->prev[PS_MAIN] = it;
         }
         else {
-            playlist_tail = it;
+            playlist_tail[PS_MAIN] = it;
         }
-        playlist_head = it;
+        playlist_head[PS_MAIN] = it;
     }
     else {
-        it->prev= after;
-        it->next[PS_NEXT] = after->next[PS_NEXT];
-        if (after->next[PS_NEXT]) {
-            after->next[PS_NEXT]->prev = it;
+        it->prev[PS_MAIN] = after;
+        it->next[PS_MAIN] = after->next[PS_MAIN];
+        if (after->next[PS_MAIN]) {
+            after->next[PS_MAIN]->prev[PS_MAIN] = it;
         }
-        after->next[PS_NEXT] = it;
-        if (after == playlist_tail) {
-            playlist_tail = it;
+        after->next[PS_MAIN] = it;
+        if (after == playlist_tail[PS_MAIN]) {
+            playlist_tail[PS_MAIN] = it;
         }
     }
     ps_count++;
+    int idx = (float)rand ()/RAND_MAX * ps_count;
+
+    // shuffle
+    playItem_t *prev = NULL;
+    if (!playlist_head[PS_SHUFFLE]) {
+        playlist_head[PS_SHUFFLE] = playlist_tail[PS_SHUFFLE] = it;
+    }
+    else if (idx == ps_count-1) {
+        // append to end
+        playlist_tail[PS_SHUFFLE]->next[PS_SHUFFLE] = it;
+        playlist_tail[PS_SHUFFLE] = it;
+    }
+    else {
+        for (playItem_t *sh = playlist_head[PS_SHUFFLE]; sh; sh = sh->next[PS_SHUFFLE], idx--) {
+            if (!idx) {
+                if (prev) {
+                    prev->next[PS_SHUFFLE] = it;
+                }
+                else {
+                    playlist_head[PS_SHUFFLE] = it;
+                }
+                it->next[PS_SHUFFLE] = sh;
+                it->prev[PS_SHUFFLE] = sh->prev[PS_SHUFFLE];
+                sh->prev[PS_SHUFFLE] = it;
+                break;
+            }
+            prev = sh;
+        }
+    }
+
     return it;
 }
 
@@ -553,9 +587,10 @@ ps_item_copy (playItem_t *out, playItem_t *it) {
     out->timeend = it->timeend;
     out->duration = it->duration;
     out->filetype = it->filetype;
-    out->next[PS_NEXT] = it->next[PS_NEXT];
-    out->prev = it->prev;
-    out->next[PS_SHUFFLE_NEXT] = it->next[PS_SHUFFLE_NEXT];
+    out->next[PS_MAIN] = it->next[PS_MAIN];
+    out->prev[PS_MAIN] = it->prev[PS_MAIN];
+    out->next[PS_SHUFFLE] = it->next[PS_SHUFFLE];
+    out->prev[PS_SHUFFLE] = it->prev[PS_SHUFFLE];
     // copy metainfo
     metaInfo_t *prev = NULL;
     metaInfo_t *meta = it->meta;
@@ -638,18 +673,10 @@ ps_prevsong (void) {
             return ps_nextsong (1);
         }
         else {
-            playItem_t *it = NULL;
-            playItem_t *last = NULL;
-            for (it = playlist_shuffle_head; it; it = it->next[PS_SHUFFLE_NEXT]) {
-                if (it->next[PS_SHUFFLE_NEXT] == playlist_current_ptr) {
-                    break;
-                }
-                last = it;
-            }
-            if (!it && last) {
-                // means we were on 1st song, jump to tail
+            playItem_t *it = playlist_current_ptr->prev[PS_SHUFFLE];
+            if (!it) {
                 if (ps_loop_mode == 0) {
-                    it = last;
+                    it = playlist_tail[PS_SHUFFLE];
                 }
             }
             if (!it) {
@@ -663,11 +690,11 @@ ps_prevsong (void) {
     else if (ps_order == 0) { // linear
         playItem_t *it = NULL;
         if (playlist_current_ptr) {
-            it = playlist_current_ptr->prev;
+            it = playlist_current_ptr->prev[PS_MAIN];
         }
         if (!it) {
             if (ps_loop_mode == 0) {
-                it = playlist_tail;
+                it = playlist_tail[PS_MAIN];
             }
         }
         if (!it) {
@@ -687,7 +714,7 @@ int
 ps_nextsong (int reason) {
     if (ps_order == 1) { // shuffle
         if (!playlist_current_ptr) {
-            playItem_t *it = playlist_shuffle_head;
+            playItem_t *it = playlist_head[PS_SHUFFLE];
             if (!it) {
                 return -1;
             }
@@ -701,10 +728,10 @@ ps_nextsong (int reason) {
                 streamer_set_nextsong (r, 1);
                 return 0;
             }
-            playItem_t *it = playlist_current_ptr->next[PS_SHUFFLE_NEXT];
+            playItem_t *it = playlist_current_ptr->next[PS_SHUFFLE];
             if (!it) {
                 if (ps_loop_mode == 0) { // loop
-                    it = playlist_shuffle_head;
+                    it = playlist_head[PS_SHUFFLE];
                 }
                 else {
                     return -1;
@@ -726,11 +753,11 @@ ps_nextsong (int reason) {
                 streamer_set_nextsong (r, 1);
                 return 0;
             }
-            it = playlist_current_ptr->next[PS_NEXT];
+            it = playlist_current_ptr->next[PS_MAIN];
         }
         if (!it) {
             if (ps_loop_mode == 0) {
-                it = playlist_head;
+                it = playlist_head[PS_MAIN];
             }
         }
         if (!it) {
@@ -869,57 +896,40 @@ ps_find_meta (playItem_t *it, const char *key) {
 void
 ps_delete_selected (void) {
     playItem_t *next = NULL;
-    for (playItem_t *it = playlist_head; it; it = next) {
-        next = it->next[PS_NEXT];
-        if (it->selected) {
-            if (it->prev) {
-                it->prev->next[PS_NEXT] = it->next[PS_NEXT];
-            }
-            if (it->next[PS_NEXT]) {
-                it->next[PS_NEXT]->prev = it->prev;
-            }
-            if (playlist_head == it) {
-                playlist_head = it->next[PS_NEXT];
-            }
-            if (playlist_tail == it) {
-                playlist_tail = it->prev;
-            }
-            if (playlist_current_ptr == it) {
-                playlist_current_ptr = NULL;
-            }
-            ps_item_free (it);
-            free (it);
-            ps_count--;
-        }
+    for (playItem_t *it = playlist_head[PS_MAIN]; it; it = next) {
+        next = it->next[PS_MAIN];
+        ps_remove (it);
     }
 }
 
 void
 ps_shuffle (void) {
+    return;
+#if 0
     playItem_t *head = NULL;
     playItem_t *tail = NULL;
     playItem_t *it;
     int cnt = 0;
-    for (it = playlist_head; it; it = it->next[PS_NEXT]) {
-        it->next[PS_SHUFFLE_NEXT] = head;
+    for (it = playlist_head[PS_MAIN]; it; it = it->next[PS_MAIN]) {
+        it->next[PS_SHUFFLE] = head;
         head = it;
         cnt++;
     }
-    playlist_shuffle_head = NULL;
+    playlist_head[PS_SHUFFLE] = NULL;
     while (cnt > 0) {
         int idx = (float)rand ()/RAND_MAX * cnt;
         int i = 0;
         playItem_t *prev = NULL;
-        for (it = head; it; it = it->next[PS_SHUFFLE_NEXT], i++) {
+        for (it = head; it; it = it->next[PS_SHUFFLE], i++) {
             if (i == idx) {
                 if (prev) {
-                    prev->next[PS_SHUFFLE_NEXT] = it->next[PS_SHUFFLE_NEXT];
+                    prev->next[PS_SHUFFLE] = it->next[PS_SHUFFLE];
                 }
                 else {
-                    head = it->next[PS_SHUFFLE_NEXT];
+                    head = it->next[PS_SHUFFLE];
                 }
                 // prepend to shuffled playlist
-                it->next[PS_SHUFFLE_NEXT] = playlist_shuffle_head;
+                it->next[PS_SHUFFLE] = playlist_shuffle_head;
                 if (!playlist_shuffle_head) {
                     tail = it;
                 }
@@ -929,11 +939,6 @@ ps_shuffle (void) {
             }
             prev = it;
         }
-    }
-#if 0
-    // loop this list
-    if (tail) {
-        tail->next[PS_SHUFFLE_NEXT] = playlist_shuffle_head;
     }
 #endif
 }

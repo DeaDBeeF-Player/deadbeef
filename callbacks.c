@@ -63,12 +63,11 @@ main_playlist_init (GtkWidget *widget) {
         main_playlist.playlist = widget;
         main_playlist.header = lookup_widget (mainwin, "header");
         main_playlist.scrollbar = lookup_widget (mainwin, "playscroll");
-        main_playlist.phead = &playlist_head;
         main_playlist.pcurr = &playlist_current_ptr;
         main_playlist.count = &ps_count;
         main_playlist.update_statusbar = 1;
         main_playlist.has_dragndrop = 1;
-        search_playlist.iterator = PS_NEXT;
+        search_playlist.iterator = PS_MAIN;
         main_playlist.scrollpos = 0;
         main_playlist.row = -1;
         main_playlist.clicktime = -1;
@@ -95,12 +94,11 @@ search_playlist_init (GtkWidget *widget) {
         search_playlist.scrollbar = lookup_widget (searchwin, "searchscroll");
         assert (search_playlist.header);
         assert (search_playlist.scrollbar);
-        search_playlist.phead = &search_head;
     //    main_playlist.pcurr = &search_current;
         search_playlist.count = &search_count;
         search_playlist.update_statusbar = 0;
         search_playlist.has_dragndrop = 0;
-        search_playlist.iterator = PS_SEARCH_NEXT;
+        search_playlist.iterator = PS_SEARCH;
         search_playlist.scrollpos = 0;
         search_playlist.row = -1;
         search_playlist.clicktime = -1;
@@ -492,7 +490,7 @@ on_playlist_drag_data_get              (GtkWidget       *widget,
             uint32_t *ptr = malloc (nsel * sizeof (uint32_t));
             int idx = 0;
             int i = 0;
-            for (playItem_t *it = playlist_head; it; it = it->next[PS_NEXT], idx++) {
+            for (playItem_t *it = playlist_head[PS_MAIN]; it; it = it->next[PS_MAIN], idx++) {
                 if (it->selected) {
                     ptr[i] = idx;
                     i++;
