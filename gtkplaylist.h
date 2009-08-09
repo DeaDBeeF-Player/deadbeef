@@ -43,10 +43,9 @@ typedef struct {
     // parameters
     playItem_t **pcurr; // pointer to current item
     int *count; // pointer to count of items in list
-    int update_statusbar; // whether it needs to update status bar in certain cases
-    int has_dragndrop; // whether it has drag and drop capability
     int iterator; // index into next array of playItem_t struct
     int lastpos[2]; // last mouse position (for playlist widget)
+    int multisel; // if it uses multiple selection
     // current state
     int scrollpos;
     int row;

@@ -86,9 +86,19 @@ on_searchentry_changed                 (GtkEditable     *editable,
     extern gtkplaylist_t search_playlist;
     gtkplaylist_t *ps = &search_playlist;
     gtkps_setup_scrollbar (ps);
+    if (ps->row >= search_count) {
+        ps->row = search_count-1;
+    }
     memset (ps->fmtcache, 0, sizeof (int16_t) * 3 * ps_ncolumns * ps->nvisiblerows);
     gtkps_draw_playlist (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
     gtkps_expose (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
+}
+
+void
+search_refresh (void) {
+    if (searchwin) {
+        on_searchentry_changed (GTK_EDITABLE (lookup_widget (searchwin, "searchentry")), NULL);
+    }
 }
 
 ///////// searchwin header handlers

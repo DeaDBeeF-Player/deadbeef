@@ -191,7 +191,7 @@ gtkps_draw_ps_row_back (gtkplaylist_t *ps, cairo_t *cr, int row, playItem_t *it)
 	int width, height;
 	gdk_drawable_get_size (ps->backbuf, &width, &height);
 	w = width;
-	if (it && it->selected) {
+	if (it && ((it->selected && ps->multisel) || (row == ps->row && !ps->multisel))) {
         if (row % 2) {
             cairo_set_source_rgb (cr, 0xa7/255.f, 0x9f/255.f, 0x96/255.f);
         }
@@ -228,12 +228,12 @@ gtkps_draw_ps_row (gtkplaylist_t *ps, cairo_t *cr, int row, playItem_t *it) {
     }
 	int width, height;
 	gdk_drawable_get_size (ps->backbuf, &width, &height);
-    if (it == playlist_current_ptr) {
+    if (it == playlist_current_ptr && ps->colwidths[0] > 0) {
         cairo_set_source_rgb (cr, 1, 1, 1);
         cairo_rectangle (cr, 3, row * rowheight - ps->scrollpos * rowheight + 3, rowheight-6, rowheight-6);
         cairo_fill (cr);
     }
-	if (it && it->selected) {
+	if (it && ((it->selected && ps->multisel) || (row == ps->row && !ps->multisel))) {
         cairo_set_source_rgb (cr, 0, 0, 0);
     }
     else {
@@ -383,6 +383,9 @@ gtkps_expose (gtkplaylist_t *ps, int x, int y, int w, int h) {
 
 void
 gtkps_select_single (gtkplaylist_t *ps, int sel) {
+    if (!ps->multisel) {
+        return;
+    }
     int idx=0;
     GtkWidget *widget = ps->playlist;
     for (playItem_t *it = playlist_head[ps->iterator]; it; it = it->next[ps->iterator], idx++) {
@@ -465,63 +468,70 @@ gtkps_mouse1_pressed (gtkplaylist_t *ps, int state, int ex, int ey, double time)
     int prev = ps->row;
     ps->row = y;
     shift_sel_anchor = ps->row;
-    // handle selection
-    if (!(state & (GDK_CONTROL_MASK|GDK_SHIFT_MASK)))
-    {
-        playItem_t *it = gtkps_get_for_idx (ps, sel);
-        if (!it || !it->selected) {
-            // reset selection, and set it to single item
-            gtkps_select_single (ps, sel);
-            areaselect = 1;
-            areaselect_x = ex;
-            areaselect_y = ey;
-            areaselect_dx = -1;
-            areaselect_dy = -1;
-            shift_sel_anchor = ps->row;
+    // handle multiple selection
+    if (ps->multisel) {
+        if (!(state & (GDK_CONTROL_MASK|GDK_SHIFT_MASK)))
+        {
+            playItem_t *it = gtkps_get_for_idx (ps, sel);
+            if (!it || !it->selected) {
+                // reset selection, and set it to single item
+                gtkps_select_single (ps, sel);
+                areaselect = 1;
+                areaselect_x = ex;
+                areaselect_y = ey;
+                areaselect_dx = -1;
+                areaselect_dy = -1;
+                shift_sel_anchor = ps->row;
+            }
+            else {
+                dragwait = 1;
+                gtkps_redraw_ps_row (ps, prev);
+                gtkps_redraw_ps_row (ps, ps->row);
+            }
         }
-        else {
-            dragwait = 1;
-            gtkps_redraw_ps_row (ps, prev);
+        else if (state & GDK_CONTROL_MASK) {
+            // toggle selection
+            if (y != -1) {
+                playItem_t *it = gtkps_get_for_idx (ps, y);
+                if (it) {
+                    it->selected = 1 - it->selected;
+                    gtkps_redraw_ps_row (ps, y);
+                }
+            }
+        }
+        else if (state & GDK_SHIFT_MASK) {
+            // select range
+            int start = min (prev, ps->row);
+            int end = max (prev, ps->row);
+            int idx = 0;
+            for (playItem_t *it = playlist_head[ps->iterator]; it; it = it->next[ps->iterator], idx++) {
+                if (idx >= start && idx <= end) {
+                    if (!it->selected) {
+                        it->selected = 1;
+                        gtkps_redraw_ps_row (ps, idx);
+                    }
+                }
+                else {
+                    if (it->selected) {
+                        it->selected = 0;
+                        gtkps_redraw_ps_row (ps, idx);
+                    }
+                }
+            }
+        }
+        if (ps->row != -1 && sel == -1) {
             gtkps_redraw_ps_row (ps, ps->row);
         }
     }
-    else if (state & GDK_CONTROL_MASK) {
-        // toggle selection
-        if (y != -1) {
-            playItem_t *it = gtkps_get_for_idx (ps, y);
-            if (it) {
-                it->selected = 1 - it->selected;
-                gtkps_redraw_ps_row (ps, y);
-            }
+    else {
+        if (ps->row != -1) {
+            gtkps_redraw_ps_row (ps, ps->row);
         }
     }
-    else if (state & GDK_SHIFT_MASK) {
-        // select range
-        int start = min (prev, ps->row);
-        int end = max (prev, ps->row);
-        int idx = 0;
-        for (playItem_t *it = playlist_head[ps->iterator]; it; it = it->next[ps->iterator], idx++) {
-            if (idx >= start && idx <= end) {
-                if (!it->selected) {
-                    it->selected = 1;
-                    gtkps_redraw_ps_row (ps, idx);
-                }
-            }
-            else {
-                if (it->selected) {
-                    it->selected = 0;
-                    gtkps_redraw_ps_row (ps, idx);
-                }
-            }
-        }
-    }
-
     if (prev != -1 && prev != ps->row) {
         gtkps_redraw_ps_row (ps, prev);
     }
-    if (ps->row != -1 && sel == -1) {
-        gtkps_redraw_ps_row (ps, ps->row);
-    }
+
 }
 
 void
@@ -773,6 +783,7 @@ gtkps_keypress (gtkplaylist_t *ps, int keyval, int state) {
         gtkps_setup_scrollbar (ps);
         gtkps_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
         gtkps_expose (ps, 0, 0, widget->allocation.width, widget->allocation.height);
+        search_refresh ();
         return;
     }
     else if (keyval == GDK_Down && ps->row < (*ps->count) - 1) {

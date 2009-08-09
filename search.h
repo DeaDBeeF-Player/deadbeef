@@ -24,4 +24,8 @@ extern int search_count;
 void
 search_start (void);
 
+// should be called whenever playlist was changed
+void
+search_refresh (void);
+
 #endif // __SEARCH_H

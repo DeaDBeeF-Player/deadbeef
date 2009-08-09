@@ -65,9 +65,8 @@ main_playlist_init (GtkWidget *widget) {
         main_playlist.scrollbar = lookup_widget (mainwin, "playscroll");
         main_playlist.pcurr = &playlist_current_ptr;
         main_playlist.count = &ps_count;
-        main_playlist.update_statusbar = 1;
-        main_playlist.has_dragndrop = 1;
-        search_playlist.iterator = PS_MAIN;
+        main_playlist.iterator = PS_MAIN;
+        main_playlist.multisel = 1;
         main_playlist.scrollpos = 0;
         main_playlist.row = -1;
         main_playlist.clicktime = -1;
@@ -96,8 +95,7 @@ search_playlist_init (GtkWidget *widget) {
         assert (search_playlist.scrollbar);
     //    main_playlist.pcurr = &search_current;
         search_playlist.count = &search_count;
-        search_playlist.update_statusbar = 0;
-        search_playlist.has_dragndrop = 0;
+        search_playlist.multisel = 0;
         search_playlist.iterator = PS_SEARCH;
         search_playlist.scrollpos = 0;
         search_playlist.row = -1;
