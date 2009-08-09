@@ -685,31 +685,6 @@ gtkpl_scroll (gtkplaylist_t *ps, int newscroll) {
     }
 }
 
-#if 0
-void
-gtkpl_prevsong (void) {
-    GtkWidget *widget = ps->playlist;
-    playItem_t *prev = playlist_current_ptr;
-
-    if (playlist_current_ptr) {
-        printf ("gtkpl_prevsong\n");
-        pl_set_current (playlist_current_ptr->prev);
-    }
-    if (!playlist_current_ptr) {
-        printf ("gtkpl_prevsong2\n");
-        pl_set_current (playlist_tail);
-    }
-    if (playlist_current_ptr != prev) {
-        if (prev) {
-            gtkpl_redraw_pl_row (widget, gtkpl_get_idx_of (ps, prev));
-        }
-        if (playlist_current_ptr) {
-            gtkpl_redraw_pl_row (widget, gtkpl_get_idx_of (ps, playlist_current_ptr));
-        }
-    }
-}
-#endif
-
 void
 gtkpl_randomsong (void) {
     p_stop ();
@@ -720,24 +695,6 @@ void
 gtkpl_playsongnum (int idx) {
     p_stop ();
     streamer_set_nextsong (idx, 1);
-#if 0
-    playItem_t *it = gtkpl_get_for_idx (ps, ps->row);
-    if (it) {
-        //if (it != playlist_current_ptr)
-        {
-            GtkWidget *widget = ps->playlist;
-            int prev = -1;
-            if (playlist_current_ptr) {
-                prev = gtkpl_get_idx_of (ps, playlist_current_ptr);
-            }
-            pl_set_current (it);
-            if (prev != -1) {
-                gtkpl_redraw_pl_row (widget, prev);
-            }
-            gtkpl_redraw_pl_row (widget, idx);
-        }
-    }
-#endif
 }
 
 void
@@ -939,7 +896,7 @@ gtkpl_handle_drag_drop (gtkplaylist_t *ps, int drop_y, uint32_t *d, int length) 
         //            printf ("idx: %d\n", d[i]);
         next = it->next[ps->iterator];
         if (idx == d[processed]) {
-            if (it->prev) {
+            if (it->prev[ps->iterator]) {
                 it->prev[ps->iterator]->next[ps->iterator] = it->next[ps->iterator];
             }
             else {

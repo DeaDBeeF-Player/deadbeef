@@ -19,6 +19,9 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
+#include <stdlib.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include "interface.h"
 #include "support.h"
 #include "playlist.h"
@@ -203,6 +206,20 @@ psdl_thread (uintptr_t ctx) {
 
 int
 main (int argc, char *argv[]) {
+    char *homedir = getenv ("HOME");
+    if (!homedir) {
+        fprintf (stderr, "unable to find home directory. stopping.\n");
+        return -1;
+    }
+    char defpl[1024];
+    snprintf (defpl, 1024, "%s/.config/deadbeef/default.dbpl", homedir);
+    char confdir[1024];
+    snprintf (confdir, 1024, "%s/.config", homedir);
+    mkdir (confdir, 0755);
+    char dbconfdir[1024];
+    snprintf (dbconfdir, 1024, "%s/.config/deadbeef", homedir);
+    mkdir (dbconfdir, 0755);
+
     messagepump_init ();
     codec_init_locking ();
     streamer_init ();
@@ -215,6 +232,7 @@ main (int argc, char *argv[]) {
     gtk_set_locale ();
     gtk_init (&argc, &argv);
 
+    pl_load (defpl);
     mainwin = create_mainwin ();
     gtk_widget_show (mainwin);
     gtk_main ();
@@ -224,6 +242,8 @@ main (int argc, char *argv[]) {
     p_free ();
     streamer_free ();
     codec_free_locking ();
+
+    pl_save (defpl);
     pl_free ();
     return 0;
 }
