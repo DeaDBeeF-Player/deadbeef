@@ -24,6 +24,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <assert.h>
 #include "playlist.h"
 #include "codec.h"
 #include "cwav.h"
@@ -406,7 +407,10 @@ pl_remove (playItem_t *it) {
         else {
             playlist_head[PL_SHUFFLE] = next;
         }
-        if (!next) {
+        if (next) {
+            next->prev[PL_SHUFFLE] = prev;
+        }
+        else {
             playlist_tail[PL_SHUFFLE] = prev;
         }
     }
@@ -518,6 +522,7 @@ pl_insert_item (playItem_t *after, playItem_t *it) {
     }
     else if (idx == pl_count-1) {
         // append to end
+        assert (playlist_tail[PL_SHUFFLE]);
         playlist_tail[PL_SHUFFLE]->next[PL_SHUFFLE] = it;
         playlist_tail[PL_SHUFFLE] = it;
     }
