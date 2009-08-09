@@ -242,9 +242,14 @@ gtkps_draw_ps_row (gtkplaylist_t *ps, cairo_t *cr, int row, playItem_t *it) {
     cairo_set_font_size (cr, rowheight-4);
     // draw as columns
     char dur[10];
-    int min = (int)it->duration/60;
-    int sec = (int)(it->duration-min*60);
-    snprintf (dur, 10, "%d:%02d", min, sec);
+    if (it->duration < 0) { // means not initialized yet
+        strcpy (dur, "-:--");
+    }
+    else {
+        int min = (int)it->duration/60;
+        int sec = (int)(it->duration-min*60);
+        snprintf (dur, 10, "%d:%02d", min, sec);
+    }
     const char *columns[ps_ncolumns] = {
         "",
         ps_find_meta (it, "artist"),

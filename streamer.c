@@ -58,6 +58,7 @@ streamer_thread (uintptr_t ctx) {
 
     while (!streaming_terminate) {
         if (nextsong >= 0) {
+            printf ("starting next song: %d\n", nextsong);
             int sng = nextsong;
             int pstate = nextsong_pstate;
             nextsong = -1;

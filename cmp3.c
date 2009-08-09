@@ -57,9 +57,12 @@ cmp3_decode (void);
 static int
 cmp3_scan_stream (float position);
 
+static int
+cmp3_scan_stream2 (float position);
+
 int
-cmp3_init (const char *fname, int track, float start, float end) {
-    buffer.file = fopen (fname, "rb");
+cmp3_init (struct playItem_s *it) {
+    buffer.file = fopen (it->fname, "rb");
     if (!buffer.file) {
         return -1;
     }
@@ -68,17 +71,15 @@ cmp3_init (const char *fname, int track, float start, float end) {
     buffer.readsize = 0;
     buffer.cachefill = 0;
     cmp3.info.position = 0;
+	mad_timer_reset(&timer);
+
+    if (it->duration <= 0) {
+        it->duration = cmp3_scan_stream (-1);
+        rewind (buffer.file);
+    }
 	mad_stream_init(&stream);
 	mad_frame_init(&frame);
 	mad_synth_init(&synth);
-	mad_timer_reset(&timer);
-
-#if 0
-    if (cmp3_scan_stream (-1) < 0) {
-        return -1;
-    }
-    rewind (buffer.file);
-#endif
 
     return 0;
 }
@@ -281,7 +282,6 @@ cmp3_scan_stream (float position) {
         //printf ("file doesn't looks like mpeg stream\n");
         return -1;
     }
-    printf ("mp3 scan stats: %d reads, %d seeks\n", nreads, nseeks);
     return duration;
 }
 
@@ -448,7 +448,6 @@ cmp3_scan_stream2 (float position) {
         //printf ("file doesn't looks like mpeg stream\n");
         duration = -1;
     }
-    printf ("mp3 scan stats: %d reads, %d seeks\n", nreads, nseeks);
     munmap (map, len);
     return duration;
 }
@@ -1229,7 +1228,7 @@ cmp3_insert (playItem_t *after, const char *fname) {
     }
     rewind (fp);
 
-
+#if 0
     // calculate duration
     buffer.file = fp;
     buffer.remaining = 0;
@@ -1249,6 +1248,9 @@ cmp3_insert (playItem_t *after, const char *fname) {
         ps_item_free (it);
     }
     memset (&buffer, 0, sizeof (buffer));
+#endif
+    after = ps_insert_item (after, it);
+    it->duration = -1;
     fclose (fp);
     return after;
 }

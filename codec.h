@@ -31,7 +31,7 @@ typedef struct {
 struct playItem_s;
 
 typedef struct codec_s {
-    int (*init) (const char *fname, int track, float start, float end);
+    int (*init) (struct playItem_s *it);
     void (*free) (void);
     // player is responsible for starting next song if -1 is returned
     int (*read) (char *bytes, int size);

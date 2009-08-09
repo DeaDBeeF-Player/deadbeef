@@ -618,7 +618,7 @@ ps_set_current (playItem_t *it) {
     playlist_current_ptr = it;
     if (it && it->codec) {
         // don't do anything on fail, streamer will take care
-        ret = it->codec->init (it->fname, it->tracknum, it->timestart, it->timeend);
+        ret = it->codec->init (it);
         if (ret < 0) {
             it->codec->info.samplesPerSecond = -1;
         }
@@ -768,7 +768,7 @@ ps_start_current (void) {
     if (it && it->codec) {
         // don't do anything on fail, streamer will take care
         it->codec->free ();
-        it->codec->init (it->fname, it->tracknum, it->timestart, it->timeend);
+        it->codec->init (it);
     }
     codec_unlock ();
 }

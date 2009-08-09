@@ -230,14 +230,14 @@ sldb_find (const uint8_t *digest) {
 }
 
 extern "C" int
-csid_init (const char *fname, int track, float start, float end) {
+csid_init (struct playItem_s *it) {
     sidplay = new sidplay2;
     resid = new ReSIDBuilder ("wtf");
     resid->create (sidplay->info ().maxsids);
 //    resid->create (1);
     resid->filter (true);
     resid->sampling (p_get_rate ());
-    tune = new SidTune (fname);
+    tune = new SidTune (it->fname);
 #if 0
     // calc md5
     uint8_t sig[16];
@@ -263,7 +263,7 @@ csid_init (const char *fname, int track, float start, float end) {
     md5_finish (&md5, sig);
 #endif
 
-    tune->selectSong (track+1);
+    tune->selectSong (it->tracknum+1);
     csid.info.channels = tune->isStereo () ? 2 : 1;
     sid2_config_t conf;
     conf = sidplay->config ();

@@ -33,12 +33,12 @@ void
 cvorbis_free (void);
 
 int
-cvorbis_init (const char *fname, int track, float start, float end) {
+cvorbis_init (struct playItem_s *it) {
     file = NULL;
     vi = NULL;
     cur_bit_stream = -1;
 
-    file = fopen (fname, "rb");
+    file = fopen (it->fname, "rb");
     if (!file) {
         return -1;
     }
