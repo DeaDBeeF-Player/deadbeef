@@ -29,6 +29,7 @@
 #include "interface.h"
 #include "support.h"
 
+#include "common.h"
 #include "search.h"
 #include "gtkplaylist.h"
 
@@ -60,21 +61,21 @@ on_searchentry_changed                 (GtkEditable     *editable,
 
     const gchar *text = gtk_entry_get_text (GTK_ENTRY (editable));
 
-    playlist_head[PS_SEARCH] = NULL;
-    playlist_tail[PS_SEARCH] = NULL;
+    playlist_head[PL_SEARCH] = NULL;
+    playlist_tail[PL_SEARCH] = NULL;
     search_count = 0;
     if (*text) {
-        for (playItem_t *it = playlist_head[PS_MAIN]; it; it = it->next[PS_MAIN]) {
+        for (playItem_t *it = playlist_head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
             for (metaInfo_t *m = it->meta; m; m = m->next) {
                 if (strcasestr (m->value, text)) {
                     // add to list
-                    it->next[PS_SEARCH] = NULL;
-                    if (playlist_tail[PS_SEARCH]) {
-                        playlist_tail[PS_SEARCH]->next[PS_SEARCH] = it;
-                        playlist_tail[PS_SEARCH] = it;
+                    it->next[PL_SEARCH] = NULL;
+                    if (playlist_tail[PL_SEARCH]) {
+                        playlist_tail[PL_SEARCH]->next[PL_SEARCH] = it;
+                        playlist_tail[PL_SEARCH] = it;
                     }
                     else {
-                        playlist_head[PS_SEARCH] = playlist_tail[PS_SEARCH] = it;
+                        playlist_head[PL_SEARCH] = playlist_tail[PL_SEARCH] = it;
                     }
                     search_count++;
                     break;
@@ -85,13 +86,18 @@ on_searchentry_changed                 (GtkEditable     *editable,
 
     extern gtkplaylist_t search_playlist;
     gtkplaylist_t *ps = &search_playlist;
-    gtkps_setup_scrollbar (ps);
+    gtkpl_setup_scrollbar (ps);
+    int n = gtk_range_get_value (GTK_RANGE (ps->scrollbar));
+    printf ("scroll=%d/size=%d\n", n, search_count);
+    if (n >= search_count) {
+        gtk_range_set_value (GTK_RANGE (ps->scrollbar), max (0, search_count-1));
+    }
     if (ps->row >= search_count) {
         ps->row = search_count-1;
     }
-    memset (ps->fmtcache, 0, sizeof (int16_t) * 3 * ps_ncolumns * ps->nvisiblerows);
-    gtkps_draw_playlist (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
-    gtkps_expose (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
+    memset (ps->fmtcache, 0, sizeof (int16_t) * 3 * pl_ncolumns * ps->nvisiblerows);
+    gtkpl_draw_playlist (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
+    gtkpl_expose (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
 }
 
 void
@@ -184,8 +190,8 @@ on_searchlist_configure_event          (GtkWidget       *widget,
 {
     extern void search_playlist_init (GtkWidget *widget);
     search_playlist_init (widget);
-    GTKPS_PROLOGUE;
-    gtkps_configure (ps);
+    GTKpl_PROLOGUE;
+    gtkpl_configure (ps);
 
   return FALSE;
 }

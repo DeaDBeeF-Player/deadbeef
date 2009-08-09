@@ -420,26 +420,26 @@ csid_insert (playItem_t *after, const char *fname) {
                     meta = "title";
                     title_added = 1;
                 }
-                ps_add_meta (it, meta, convstr (sidinfo.infoString[0]));
+                pl_add_meta (it, meta, convstr (sidinfo.infoString[0]));
             }
             if (i >= 2 && sidinfo.infoString[1] && sidinfo.infoString[1][0]) {
-                ps_add_meta (it, "artist", convstr (sidinfo.infoString[1]));
+                pl_add_meta (it, "artist", convstr (sidinfo.infoString[1]));
             }
             if (i >= 3 && sidinfo.infoString[2] && sidinfo.infoString[2][0]) {
-                ps_add_meta (it, "copyright", convstr (sidinfo.infoString[2]));
+                pl_add_meta (it, "copyright", convstr (sidinfo.infoString[2]));
             }
 
             for (int j = 3; j < i; j++)
             {
                 if (sidinfo.infoString[j] && sidinfo.infoString[j][0]) {
-                    ps_add_meta (it, "info", convstr (sidinfo.infoString[j]));
+                    pl_add_meta (it, "info", convstr (sidinfo.infoString[j]));
                 }
             }
             char trk[10];
             snprintf (trk, 10, "%d", s+1);
-            ps_add_meta (it, "track", trk);
+            pl_add_meta (it, "track", trk);
             if (!title_added) {
-                ps_add_meta (it, "title", NULL);
+                pl_add_meta (it, "title", NULL);
             }
 
             float length = 120;
@@ -460,7 +460,7 @@ csid_insert (playItem_t *after, const char *fname) {
             it->duration = length;
             it->filetype = "SID";
 
-            after = ps_insert_item (after, it);
+            after = pl_insert_item (after, it);
         }
     }
     delete tune;

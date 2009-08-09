@@ -124,16 +124,16 @@ cgme_insert (playItem_t *after, const char *fname) {
                 it->tracknum = i;
 
                 // add metadata
-                ps_add_meta (it, "system", inf.system);
-                ps_add_meta (it, "album", inf.game);
-                ps_add_meta (it, "title", inf.song);
-                ps_add_meta (it, "artist", inf.author);
-                ps_add_meta (it, "copyright", inf.copyright);
-                ps_add_meta (it, "comment", inf.comment);
-                ps_add_meta (it, "dumper", inf.dumper);
+                pl_add_meta (it, "system", inf.system);
+                pl_add_meta (it, "album", inf.game);
+                pl_add_meta (it, "title", inf.song);
+                pl_add_meta (it, "artist", inf.author);
+                pl_add_meta (it, "copyright", inf.copyright);
+                pl_add_meta (it, "comment", inf.comment);
+                pl_add_meta (it, "dumper", inf.dumper);
                 char trk[10];
                 snprintf (trk, 10, "%d", i+1);
-                ps_add_meta (it, "track", trk);
+                pl_add_meta (it, "track", trk);
                 if (inf.length == -1) {
                     it->duration = 300;
                 }
@@ -141,7 +141,7 @@ cgme_insert (playItem_t *after, const char *fname) {
                     it->duration = (float)inf.length/1000.f;
                 }
                 it->filetype = "GME";
-                after = ps_insert_item (after, it);
+                after = pl_insert_item (after, it);
             }
             else {
                 printf ("gme error: %s\n", ret);

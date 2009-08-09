@@ -139,27 +139,27 @@ cvorbis_insert (playItem_t *after, const char *fname) {
     int title_added = 0;
     vorbis_comment *vc = ov_comment (&vorbis_file, -1);
     if (vc) {
-        ps_add_meta (it, "vendor", vc->vendor);
+        pl_add_meta (it, "vendor", vc->vendor);
         for (int i = 0; i < vc->comments; i++) {
             if (!strncmp (vc->user_comments[i], "artist=", 7)) {
-                ps_add_meta (it, "artist", vc->user_comments[i] + 7);
+                pl_add_meta (it, "artist", vc->user_comments[i] + 7);
             }
             else if (!strncmp (vc->user_comments[i], "title=", 6)) {
-                ps_add_meta (it, "title", vc->user_comments[i] + 6);
+                pl_add_meta (it, "title", vc->user_comments[i] + 6);
                 title_added = 1;
             }
             else if (!strncmp (vc->user_comments[i], "date=", 5)) {
-                ps_add_meta (it, "date", vc->user_comments[i] + 5);
+                pl_add_meta (it, "date", vc->user_comments[i] + 5);
             }
         }
     }
     it->filetype = "OggVorbis";
     it->duration = ov_seekable (&vorbis_file) ? ov_time_total (&vorbis_file, -1) : -1;
     if (!title_added) {
-        ps_add_meta (it, "title", NULL);
+        pl_add_meta (it, "title", NULL);
     }
     ov_clear (&vorbis_file);
-    after = ps_insert_item (after, it);
+    after = pl_insert_item (after, it);
     return after;
 }
 

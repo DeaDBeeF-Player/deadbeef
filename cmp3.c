@@ -1007,21 +1007,39 @@ cmp3_read_id3v1 (playItem_t *it, FILE *fp) {
 
     // add meta
 //    printf ("%s - %s - %s - %s - %s - %s\n", title, artist, album, year, comment, genre);
-    ps_add_meta (it, "title", convstr_id3v1 (title, strlen (title)));
-    ps_add_meta (it, "artist", convstr_id3v1 (artist, strlen (artist)));
-    ps_add_meta (it, "album", convstr_id3v1 (album, strlen (album)));
-    ps_add_meta (it, "year", year);
-    ps_add_meta (it, "comment", convstr_id3v1 (comment, strlen (comment)));
-    ps_add_meta (it, "genre", convstr_id3v1 (genre, strlen (genre)));
+    pl_add_meta (it, "title", convstr_id3v1 (title, strlen (title)));
+    pl_add_meta (it, "artist", convstr_id3v1 (artist, strlen (artist)));
+    pl_add_meta (it, "album", convstr_id3v1 (album, strlen (album)));
+    pl_add_meta (it, "year", year);
+    pl_add_meta (it, "comment", convstr_id3v1 (comment, strlen (comment)));
+    pl_add_meta (it, "genre", convstr_id3v1 (genre, strlen (genre)));
     if (tracknum != 0xff) {
         char s[4];
         snprintf (s, 4, "%d", tracknum);
-        ps_add_meta (it, "track", s);
+        pl_add_meta (it, "track", s);
     }
 
     return 0;
 }
 
+void
+id3v2_string_read (char *out, int sz, int unsync, uint8_t **pread) {
+    // control byte
+    *out = *(*pread);
+    (*pread)++;
+    out++;
+    sz--;
+    while (sz > 0) {
+        *out = *(*pread);
+        (*pread)++;
+        if (unsync && !(*out)) {
+            continue;
+        }
+        out++;
+        sz--;
+    }
+    *out = 0;
+}
 
 int
 cmp3_read_id3v2 (playItem_t *it, FILE *fp) {
@@ -1068,7 +1086,7 @@ cmp3_read_id3v2 (playItem_t *it, FILE *fp) {
     }
     uint8_t *readptr = tag;
     int crcpresent = 0;
-//    printf ("version: 2.%d.%d, unsync: %d, extheader: %d, experimental: %d\n", version_major, version_minor, unsync, extheader, expindicator);
+    //printf ("version: 2.%d.%d, unsync: %d, extheader: %d, experimental: %d\n", version_major, version_minor, unsync, extheader, expindicator);
     
     if (extheader) {
         if (size < 6) {
@@ -1098,6 +1116,12 @@ cmp3_read_id3v2 (playItem_t *it, FILE *fp) {
     else {
         convstr = convstr_id3v2_4;
     }
+    char *artist = NULL;
+    char *band = NULL;
+    char *track = NULL;
+    char *title = NULL;
+    char *vendor = NULL;
+    int err = 0;
     while (readptr - tag < size - 4) {
         if (version_major == 3 || version_major == 4) {
             char frameid[5];
@@ -1105,14 +1129,17 @@ cmp3_read_id3v2 (playItem_t *it, FILE *fp) {
             frameid[4] = 0;
             readptr += 4;
             if (readptr - tag >= size - 4) {
+                err = 1;
                 break;
             }
             uint32_t sz = (readptr[3] << 0) | (readptr[2] << 8) | (readptr[1] << 16) | (readptr[0] << 24);
             readptr += 4;
             if (readptr - tag >= size - sz) {
-                break; // size of frame is less than size of tag
+                err = 1;
+                break; // size of frame is more than size of tag
             }
             if (sz < 1) {
+                err = 1;
                 break; // frame must be at least 1 byte long
             }
             uint16_t flags = (readptr[1] << 0) | (readptr[0] << 8);
@@ -1120,42 +1147,40 @@ cmp3_read_id3v2 (playItem_t *it, FILE *fp) {
 //            printf ("found id3v2.3 frame: %s, size=%d\n", frameid, sz);
             if (!strcmp (frameid, "TPE1")) {
                 if (sz > 1000) {
+                    err = 1;
                     break; // too large
                 }
                 char str[sz+1];
-                memcpy (str, readptr, sz);
-                str[sz] = 0;
-                ps_add_meta (it, "artist", convstr (str, sz));
+                id3v2_string_read (&str[1], sz, unsync, &readptr);
+                artist = strdup (convstr (str, sz));
             }
             else if (!strcmp (frameid, "TPE2")) {
                 if (sz > 1000) {
+                    err = 1;
                     break; // too large
                 }
                 char str[sz+1];
-                memcpy (str, readptr, sz);
-                str[sz] = 0;
-                ps_add_meta (it, "band", convstr (str, sz));
+                id3v2_string_read (&str[1], sz, unsync, &readptr);
+                band = strdup (convstr (str, sz));
             }
             else if (!strcmp (frameid, "TRCK")) {
                 if (sz > 1000) {
+                    err = 1;
                     break; // too large
                 }
                 char str[sz+1];
-                memcpy (str, readptr, sz);
-                str[sz] = 0;
-                ps_add_meta (it, "track", convstr (str, sz));
+                id3v2_string_read (&str[1], sz, unsync, &readptr);
+                track = strdup (convstr (str, sz));
             }
             else if (!strcmp (frameid, "TIT2")) {
                 if (sz > 1000) {
+                    err = 1;
                     break; // too large
                 }
                 char str[sz+1];
-                memcpy (str, readptr, sz);
-                str[sz] = 0;
-                ps_add_meta (it, "title", convstr (str, sz));
-                title_added = 1;
+                id3v2_string_read (&str[1], sz, unsync, &readptr);
+                title = strdup (convstr (str, sz));
             }
-            readptr += sz;
         }
         else if (version_major == 2) {
             char frameid[4];
@@ -1163,36 +1188,40 @@ cmp3_read_id3v2 (playItem_t *it, FILE *fp) {
             frameid[3] = 0;
             readptr += 3;
             if (readptr - tag >= size - 3) {
+                err = 1;
                 break;
             }
             uint32_t sz = (readptr[2] << 0) | (readptr[1] << 8) | (readptr[0] << 16);
             readptr += 3;
             if (readptr - tag >= size - sz) {
+                err = 1;
                 break; // size of frame is less than size of tag
             }
             //sz -= 6;
             if (sz < 1) {
+                err = 1;
                 break; // frame must be at least 1 byte long
             }
 //            printf ("found id3v2.2 frame: %s, size=%d\n", frameid, sz);
             if (!strcmp (frameid, "TEN")) {
                 if (sz > 1000) {
+                    err = 1;
                     break; // too large
                 }
                 char str[sz+1];
                 memcpy (str, readptr, sz);
                 str[sz] = 0;
-                ps_add_meta (it, "vendor", convstr (str, sz));
+                vendor = strdup (convstr (str, sz));
             }
             else if (!strcmp (frameid, "TT2")) {
                 if (sz > 1000) {
+                    err = 1;
                     break; // too large
                 }
                 char str[sz+1];
                 memcpy (str, readptr, sz);
                 str[sz] = 0;
-                ps_add_meta (it, "title", convstr (str, sz));
-                title_added = 1;
+                title = strdup (convstr (str, sz));
             }
             readptr += sz;
         }
@@ -1200,11 +1229,33 @@ cmp3_read_id3v2 (playItem_t *it, FILE *fp) {
             printf ("id3v2.%d (unsupported!)\n", version_minor);
         }
     }
-    if (!title_added) {
-        ps_add_meta (it, "title", NULL);
+    if (!err) {
+        if (artist) {
+            pl_add_meta (it, "artist", artist);
+            free (artist);
+        }
+        if (band) {
+            pl_add_meta (it, "band", band);
+            free (band);
+        }
+        if (track) {
+            pl_add_meta (it, "track", track);
+            free (track);
+        }
+        if (title) {
+            pl_add_meta (it, "title", title);
+            free (title);
+        }
+        if (vendor) {
+            pl_add_meta (it, "vendor", vendor);
+            free (vendor);
+        }
+        if (!title) {
+            pl_add_meta (it, "title", NULL);
+        }
+        return 0;
     }
-
-    return 0;
+    return -1;
 }
 
 playItem_t *
@@ -1223,7 +1274,7 @@ cmp3_insert (playItem_t *after, const char *fname) {
     it->filetype = "MP3";
     if (cmp3_read_id3v2 (it, fp) < 0) {
         if (cmp3_read_id3v1 (it, fp) < 0) {
-            ps_add_meta (it, "title", NULL);
+            pl_add_meta (it, "title", NULL);
         }
     }
     rewind (fp);
@@ -1242,14 +1293,14 @@ cmp3_insert (playItem_t *after, const char *fname) {
     if ((dur = cmp3_scan_stream2 (-1)) >= 0) {
         it->duration = dur;
         //printf ("duration: %f\n", dur);
-        after = ps_insert_item (after, it);
+        after = pl_insert_item (after, it);
     }
     else {
-        ps_item_free (it);
+        pl_item_free (it);
     }
     memset (&buffer, 0, sizeof (buffer));
 #endif
-    after = ps_insert_item (after, it);
+    after = pl_insert_item (after, it);
     it->duration = -1;
     fclose (fp);
     return after;

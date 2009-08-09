@@ -64,15 +64,15 @@ main_playlist_init (GtkWidget *widget) {
         main_playlist.header = lookup_widget (mainwin, "header");
         main_playlist.scrollbar = lookup_widget (mainwin, "playscroll");
         main_playlist.pcurr = &playlist_current_ptr;
-        main_playlist.count = &ps_count;
-        main_playlist.iterator = PS_MAIN;
+        main_playlist.count = &pl_count;
+        main_playlist.iterator = PL_MAIN;
         main_playlist.multisel = 1;
         main_playlist.scrollpos = 0;
         main_playlist.row = -1;
         main_playlist.clicktime = -1;
         main_playlist.nvisiblerows = 0;
         main_playlist.fmtcache = NULL;
-        int colwidths[ps_ncolumns] = { 50, 200, 50, 200, 50 };
+        int colwidths[pl_ncolumns] = { 50, 200, 50, 200, 50 };
         memcpy (main_playlist.colwidths, colwidths, sizeof (colwidths));
         gtk_object_set_data (GTK_OBJECT (main_playlist.playlist), "ps", &main_playlist);
         gtk_object_set_data (GTK_OBJECT (main_playlist.header), "ps", &main_playlist);
@@ -96,13 +96,13 @@ search_playlist_init (GtkWidget *widget) {
     //    main_playlist.pcurr = &search_current;
         search_playlist.count = &search_count;
         search_playlist.multisel = 0;
-        search_playlist.iterator = PS_SEARCH;
+        search_playlist.iterator = PL_SEARCH;
         search_playlist.scrollpos = 0;
         search_playlist.row = -1;
         search_playlist.clicktime = -1;
         search_playlist.nvisiblerows = 0;
         search_playlist.fmtcache = NULL;
-        int colwidths[ps_ncolumns] = { 0, 200, 50, 200, 50 };
+        int colwidths[pl_ncolumns] = { 0, 200, 50, 200, 50 };
         memcpy (search_playlist.colwidths, colwidths, sizeof (colwidths));
         gtk_object_set_data (GTK_OBJECT (search_playlist.playlist), "ps", &search_playlist);
         gtk_object_set_data (GTK_OBJECT (search_playlist.header), "ps", &search_playlist);
@@ -146,9 +146,9 @@ on_playlist_expose_event               (GtkWidget       *widget,
         GdkEventExpose  *event,
         gpointer         user_data)
 {
-    GTKPS_PROLOGUE;
+    GTKpl_PROLOGUE;
     // draw visible area of playlist
-    gtkps_expose (ps, event->area.x, event->area.y, event->area.width, event->area.height);
+    gtkpl_expose (ps, event->area.x, event->area.y, event->area.width, event->area.height);
 
     return FALSE;
 }
@@ -159,9 +159,9 @@ on_playlist_button_press_event         (GtkWidget       *widget,
                                         GdkEventButton  *event,
                                         gpointer         user_data)
 {
-    GTKPS_PROLOGUE;
+    GTKpl_PROLOGUE;
     if (event->button == 1) {
-        gtkps_mouse1_pressed (ps, event->state, event->x, event->y, event->time);
+        gtkpl_mouse1_pressed (ps, event->state, event->x, event->y, event->time);
     }
     return FALSE;
 }
@@ -171,9 +171,9 @@ on_playlist_button_release_event       (GtkWidget       *widget,
                                         GdkEventButton  *event,
                                         gpointer         user_data)
 {
-    GTKPS_PROLOGUE;
+    GTKpl_PROLOGUE;
     if (event->button == 1) {
-        gtkps_mouse1_released (ps, event->state, event->x, event->y, event->time);
+        gtkpl_mouse1_released (ps, event->state, event->x, event->y, event->time);
     }
     return FALSE;
 }
@@ -183,8 +183,8 @@ on_playlist_motion_notify_event        (GtkWidget       *widget,
                                         GdkEventMotion  *event,
                                         gpointer         user_data)
 {
-    GTKPS_PROLOGUE;
-    gtkps_mousemove (ps, event);
+    GTKpl_PROLOGUE;
+    gtkpl_mousemove (ps, event);
     return FALSE;
 }
 
@@ -193,9 +193,9 @@ void
 on_playscroll_value_changed            (GtkRange        *widget,
                                         gpointer         user_data)
 {
-    GTKPS_PROLOGUE;
+    GTKpl_PROLOGUE;
     int newscroll = gtk_range_get_value (GTK_RANGE (widget));
-    gtkps_scroll (ps, newscroll);
+    gtkpl_scroll (ps, newscroll);
 }
 
 
@@ -363,9 +363,9 @@ on_playlist_scroll_event               (GtkWidget       *widget,
                                         GdkEvent        *event,
                                         gpointer         user_data)
 {
-    GTKPS_PROLOGUE;
+    GTKpl_PROLOGUE;
 	GdkEventScroll *ev = (GdkEventScroll*)event;
-    gtkps_handle_scroll_event (ps, ev->direction);
+    gtkpl_handle_scroll_event (ps, ev->direction);
     return FALSE;
 }
 
@@ -423,7 +423,7 @@ on_mainwin_key_press_event             (GtkWidget       *widget,
                                         GdkEventKey     *event,
                                         gpointer         user_data)
 {
-    gtkps_keypress (&main_playlist, event->keyval, event->state);
+    gtkpl_keypress (&main_playlist, event->keyval, event->state);
     return FALSE;
 }
 
@@ -443,8 +443,8 @@ on_playlist_drag_motion                (GtkWidget       *widget,
                                         guint            time,
                                         gpointer         user_data)
 {
-    GTKPS_PROLOGUE;
-    gtkps_track_dragdrop (ps, y);
+    GTKpl_PROLOGUE;
+    gtkpl_track_dragdrop (ps, y);
     return FALSE;
 }
 
@@ -481,14 +481,14 @@ on_playlist_drag_data_get              (GtkWidget       *widget,
     case TARGET_SAMEWIDGET:
         {
             // format as "STRING" consisting of array of pointers
-            int nsel = ps_getselcount ();
+            int nsel = pl_getselcount ();
             if (!nsel) {
                 break; // something wrong happened
             }
             uint32_t *ptr = malloc (nsel * sizeof (uint32_t));
             int idx = 0;
             int i = 0;
-            for (playItem_t *it = playlist_head[PS_MAIN]; it; it = it->next[PS_MAIN], idx++) {
+            for (playItem_t *it = playlist_head[PL_MAIN]; it; it = it->next[PL_MAIN], idx++) {
                 if (it->selected) {
                     ptr[i] = idx;
                     i++;
@@ -514,16 +514,16 @@ on_playlist_drag_data_received         (GtkWidget       *widget,
                                         guint            time,
                                         gpointer         user_data)
 {
-    GTKPS_PROLOGUE;
+    GTKpl_PROLOGUE;
     gchar *ptr=(char*)data->data;
     if (target_type == 0) { // uris
         if (!strncmp(ptr,"file:///",8)) {
-            gtkps_handle_fm_drag_drop (ps, y, ptr, data->length);
+            gtkpl_handle_fm_drag_drop (ps, y, ptr, data->length);
         }
     }
     else if (target_type == 1) {
         uint32_t *d= (uint32_t *)ptr;
-        gtkps_handle_drag_drop (ps, y, d, data->length/4);
+        gtkpl_handle_drag_drop (ps, y, d, data->length/4);
     }
     gtk_drag_finish (drag_context, FALSE, FALSE, time);
 }
@@ -553,8 +553,8 @@ on_playlist_drag_leave                 (GtkWidget       *widget,
                                         guint            time,
                                         gpointer         user_data)
 {
-    GTKPS_PROLOGUE;
-    gtkps_track_dragdrop (ps, -1);
+    GTKpl_PROLOGUE;
+    gtkpl_track_dragdrop (ps, -1);
 }
 
 void
@@ -620,7 +620,7 @@ void
 on_order_linear_activate               (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    ps_set_order (0);
+    pl_set_order (0);
 }
 
 
@@ -628,7 +628,7 @@ void
 on_order_shuffle_activate              (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    ps_set_order (1);
+    pl_set_order (1);
 }
 
 
@@ -636,7 +636,7 @@ void
 on_order_random_activate               (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    ps_set_order (2);
+    pl_set_order (2);
 }
 
 
@@ -644,7 +644,7 @@ void
 on_loop_all_activate                   (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    ps_set_loop_mode (0);
+    pl_set_loop_mode (0);
 }
 
 
@@ -652,7 +652,7 @@ void
 on_loop_single_activate                (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    ps_set_loop_mode (2);
+    pl_set_loop_mode (2);
 }
 
 
@@ -660,7 +660,7 @@ void
 on_loop_disable_activate               (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    ps_set_loop_mode (1);
+    pl_set_loop_mode (1);
 }
 
 void

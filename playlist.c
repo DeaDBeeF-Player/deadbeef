@@ -40,24 +40,24 @@
 
 #define SKIP_BLANK_CUE_TRACKS 1
 
-playItem_t *playlist_head[PS_MAX_ITERATORS];
-playItem_t *playlist_tail[PS_MAX_ITERATORS];
+playItem_t *playlist_head[PL_MAX_ITERATORS];
+playItem_t *playlist_tail[PL_MAX_ITERATORS];
 playItem_t playlist_current;
 playItem_t *playlist_current_ptr;
-int ps_count = 0;
-static int ps_order = 0; // 0 = linear, 1 = shuffle, 2 = random
-static int ps_loop_mode = 0; // 0 = loop, 1 = don't loop, 2 = loop single
+int pl_count = 0;
+static int pl_order = 0; // 0 = linear, 1 = shuffle, 2 = random
+static int pl_loop_mode = 0; // 0 = loop, 1 = don't loop, 2 = loop single
 
 void
-ps_free (void) {
-    while (playlist_head[PS_MAIN]) {
-        ps_remove (playlist_head[PS_MAIN]);
-        ps_count--;
+pl_free (void) {
+    while (playlist_head[PL_MAIN]) {
+        pl_remove (playlist_head[PL_MAIN]);
+        pl_count--;
     }
 }
 
 static char *
-ps_cue_skipspaces (char *p) {
+pl_cue_skipspaces (char *p) {
     while (*p && *p <= ' ') {
         p++;
     }
@@ -65,7 +65,7 @@ ps_cue_skipspaces (char *p) {
 }
 
 static void
-ps_get_qvalue_from_cue (char *p, char *out) {
+pl_get_qvalue_from_cue (char *p, char *out) {
     if (*p == 0) {
         *out = 0;
         return;
@@ -79,7 +79,7 @@ ps_get_qvalue_from_cue (char *p, char *out) {
         return;
     }
     p++;
-    p = ps_cue_skipspaces (p);
+    p = pl_cue_skipspaces (p);
     while (*p && *p != '"') {
         *out++ = *p++;
     }
@@ -87,7 +87,7 @@ ps_get_qvalue_from_cue (char *p, char *out) {
 }
 
 static void
-ps_get_value_from_cue (char *p, char *out) {
+pl_get_value_from_cue (char *p, char *out) {
     while (*p >= ' ') {
         *out++ = *p++;
     }
@@ -95,7 +95,7 @@ ps_get_value_from_cue (char *p, char *out) {
 }
 
 static float
-ps_cue_parse_time (const char *p) {
+pl_cue_parse_time (const char *p) {
     char tmp[3] = {0};
     const char *next = p;
     int s;
@@ -132,7 +132,7 @@ ps_cue_parse_time (const char *p) {
 }
 
 playItem_t *
-ps_insert_cue (playItem_t *after, const char *cuename, const char *ftype) {
+pl_insert_cue (playItem_t *after, const char *cuename, const char *ftype) {
     FILE *fp = fopen (cuename, "rt");
     if (!fp) {
         return NULL;
@@ -149,23 +149,23 @@ ps_insert_cue (playItem_t *after, const char *cuename, const char *ftype) {
         if (!fgets (str, 1024, fp)) {
             break; // eof
         }
-        char *p = ps_cue_skipspaces (str);
+        char *p = pl_cue_skipspaces (str);
         if (!strncmp (p, "PERFORMER ", 10)) {
-            ps_get_qvalue_from_cue (p + 10, performer);
+            pl_get_qvalue_from_cue (p + 10, performer);
 //            printf ("got performer: %s\n", performer);
         }
         else if (!strncmp (p, "TITLE ", 6)) {
             if (str[0] > ' ') {
-                ps_get_qvalue_from_cue (p + 6, albumtitle);
+                pl_get_qvalue_from_cue (p + 6, albumtitle);
 //                printf ("got albumtitle: %s\n", albumtitle);
             }
             else {
-                ps_get_qvalue_from_cue (p + 6, title);
+                pl_get_qvalue_from_cue (p + 6, title);
 //                printf ("got title: %s\n", title);
             }
         }
         else if (!strncmp (p, "FILE ", 5)) {
-            ps_get_qvalue_from_cue (p + 5, file);
+            pl_get_qvalue_from_cue (p + 5, file);
 //            printf ("got filename: %s\n", file);
             // copy directory name
             char fname[1024];
@@ -191,11 +191,11 @@ ps_insert_cue (playItem_t *after, const char *cuename, const char *ftype) {
 //            printf ("ended up as: %s\n", file);
         }
         else if (!strncmp (p, "TRACK ", 6)) {
-            ps_get_value_from_cue (p + 6, track);
+            pl_get_value_from_cue (p + 6, track);
 //            printf ("got track: %s\n", track);
         }
 //        else if (!strncmp (p, "PERFORMER ", 10)) {
-//            ps_get_qvalue_from_cue (p + 10, performer);
+//            pl_get_qvalue_from_cue (p + 10, performer);
 //        }
         else if (!strncmp (p, "INDEX 00 ", 9) || !strncmp (p, "INDEX 01 ", 9)) {
             if (!track[0]) {
@@ -205,7 +205,7 @@ ps_insert_cue (playItem_t *after, const char *cuename, const char *ftype) {
             if (!title[0])
                 continue;
 #endif
-            ps_get_value_from_cue (p + 9, start);
+            pl_get_value_from_cue (p + 9, start);
 //            printf ("got index0: %s\n", start);
             char *p = track;
             while (*p && isdigit (*p)) {
@@ -213,7 +213,7 @@ ps_insert_cue (playItem_t *after, const char *cuename, const char *ftype) {
             }
             *p = 0;
             // check that indexes have valid timestamps
-            float tstart = ps_cue_parse_time (start);
+            float tstart = pl_cue_parse_time (start);
             if (tstart < 0) {
 //                printf ("cue file %s has bad timestamp(s)\n", cuename);
                 continue;
@@ -235,11 +235,11 @@ ps_insert_cue (playItem_t *after, const char *cuename, const char *ftype) {
             it->timestart = tstart;
             it->timeend = -1; // will be filled by next read, or by codec
             it->filetype = ftype;
-            after = ps_insert_item (after, it);
-            ps_add_meta (it, "artist", performer);
-            ps_add_meta (it, "album", albumtitle);
-            ps_add_meta (it, "track", track);
-            ps_add_meta (it, "title", title);
+            after = pl_insert_item (after, it);
+            pl_add_meta (it, "artist", performer);
+            pl_add_meta (it, "album", albumtitle);
+            pl_add_meta (it, "track", track);
+            pl_add_meta (it, "title", title);
             prev = it;
             track[0] = 0;
         }
@@ -252,7 +252,7 @@ ps_insert_cue (playItem_t *after, const char *cuename, const char *ftype) {
 }
 
 playItem_t *
-ps_insert_file (playItem_t *after, const char *fname, int (*cb)(playItem_t *it, void *data), void *user_data) {
+pl_insert_file (playItem_t *after, const char *fname, int (*cb)(playItem_t *it, void *data), void *user_data) {
     if (!fname) {
         return NULL;
     }
@@ -290,7 +290,7 @@ ps_insert_file (playItem_t *after, const char *fname, int (*cb)(playItem_t *it, 
 }
 
 playItem_t *
-ps_insert_dir (playItem_t *after, const char *dirname, int (*cb)(playItem_t *it, void *data), void *user_data) {
+pl_insert_dir (playItem_t *after, const char *dirname, int (*cb)(playItem_t *it, void *data), void *user_data) {
     struct stat buf;
     lstat (dirname, &buf);
     if (S_ISLNK(buf.st_mode)) {
@@ -318,9 +318,9 @@ ps_insert_dir (playItem_t *after, const char *dirname, int (*cb)(playItem_t *it,
                 strcpy (fullname, dirname);
                 strncat (fullname, "/", 1024);
                 strncat (fullname, namelist[i]->d_name, 1024);
-                playItem_t *inserted = ps_insert_dir (after, fullname, cb, user_data);
+                playItem_t *inserted = pl_insert_dir (after, fullname, cb, user_data);
                 if (!inserted) {
-                    inserted = ps_insert_file (after, fullname, cb, user_data);
+                    inserted = pl_insert_file (after, fullname, cb, user_data);
                 }
                 if (inserted) {
                     after = inserted;
@@ -334,12 +334,12 @@ ps_insert_dir (playItem_t *after, const char *dirname, int (*cb)(playItem_t *it,
 }
 
 int
-ps_add_file (const char *fname, int (*cb)(playItem_t *it, void *data), void *user_data) {
-    if (ps_insert_file (playlist_tail[PS_MAIN], fname, cb, user_data)) {
+pl_add_file (const char *fname, int (*cb)(playItem_t *it, void *data), void *user_data) {
+    if (pl_insert_file (playlist_tail[PL_MAIN], fname, cb, user_data)) {
         return 0;
     }
     return -1;
-// {{{ original ps_add_file
+// {{{ original pl_add_file
 #if 0
     if (!fname) {
         return -1;
@@ -379,12 +379,12 @@ ps_add_file (const char *fname, int (*cb)(playItem_t *it, void *data), void *use
 }
 
 int
-ps_add_dir (const char *dirname, int (*cb)(playItem_t *it, void *data), void *user_data) {
-    if (ps_insert_dir (playlist_tail[PS_MAIN], dirname, cb, user_data)) {
+pl_add_dir (const char *dirname, int (*cb)(playItem_t *it, void *data), void *user_data) {
+    if (pl_insert_dir (playlist_tail[PL_MAIN], dirname, cb, user_data)) {
         return 0;
     }
     return -1;
-// {{{ original ps_add_dir code
+// {{{ original pl_add_dir code
 #if 0
     struct stat buf;
     lstat (dirname, &buf);
@@ -413,8 +413,8 @@ ps_add_dir (const char *dirname, int (*cb)(playItem_t *it, void *data), void *us
                 strcpy (fullname, dirname);
                 strncat (fullname, "/", 1024);
                 strncat (fullname, namelist[i]->d_name, 1024);
-                if (ps_add_dir (fullname)) {
-                    ps_add_file (fullname);
+                if (pl_add_dir (fullname)) {
+                    pl_add_file (fullname);
                 }
             }
             free (namelist[i]);
@@ -427,54 +427,54 @@ ps_add_dir (const char *dirname, int (*cb)(playItem_t *it, void *data), void *us
 }
 
 int
-ps_remove (playItem_t *it) {
+pl_remove (playItem_t *it) {
     if (!it)
         return -1;
-    ps_count--;
+    pl_count--;
 
     // remove from shuffle list
     {
-        playItem_t *prev = it->prev[PS_SHUFFLE];
-        playItem_t *next = it->next[PS_SHUFFLE];
+        playItem_t *prev = it->prev[PL_SHUFFLE];
+        playItem_t *next = it->next[PL_SHUFFLE];
         if (prev) {
-            prev->next[PS_SHUFFLE] = next;
+            prev->next[PL_SHUFFLE] = next;
         }
         else {
-            playlist_head[PS_SHUFFLE] = next;
+            playlist_head[PL_SHUFFLE] = next;
         }
         if (!next) {
-            playlist_tail[PS_SHUFFLE] = prev;
+            playlist_tail[PL_SHUFFLE] = prev;
         }
     }
 
     // remove from linear list
-    if (it->prev[PS_MAIN]) {
-        it->prev[PS_MAIN]->next[PS_MAIN] = it->next[PS_MAIN];
+    if (it->prev[PL_MAIN]) {
+        it->prev[PL_MAIN]->next[PL_MAIN] = it->next[PL_MAIN];
     }
     else {
-        playlist_head[PS_MAIN] = it->next[PS_MAIN];
+        playlist_head[PL_MAIN] = it->next[PL_MAIN];
     }
-    if (it->next[PS_MAIN]) {
-        it->next[PS_MAIN]->prev[PS_MAIN] = it->prev[PS_MAIN];
+    if (it->next[PL_MAIN]) {
+        it->next[PL_MAIN]->prev[PL_MAIN] = it->prev[PL_MAIN];
     }
     else {
-        playlist_tail[PS_MAIN] = it->prev[PS_MAIN];
+        playlist_tail[PL_MAIN] = it->prev[PL_MAIN];
     }
-    ps_item_free (it);
+    pl_item_free (it);
     free (it);
     return 0;
 }
 
 int
-ps_getcount (void) {
-    return ps_count;
+pl_getcount (void) {
+    return pl_count;
 }
 
 int
-ps_getselcount (void) {
+pl_getselcount (void) {
     // FIXME: slow!
     int cnt = 0;
-    for (playItem_t *it = playlist_head[PS_MAIN]; it; it = it->next[PS_MAIN]) {
+    for (playItem_t *it = playlist_head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
         if (it->selected) {
             cnt++;
         }
@@ -483,22 +483,22 @@ ps_getselcount (void) {
 }
 
 playItem_t *
-ps_get_for_idx (int idx) {
-    playItem_t *it = playlist_head[PS_MAIN];
+pl_get_for_idx (int idx) {
+    playItem_t *it = playlist_head[PL_MAIN];
     while (idx--) {
         if (!it)
             return NULL;
-        it = it->next[PS_MAIN];
+        it = it->next[PL_MAIN];
     }
     return it;
 }
 
 int
-ps_get_idx_of (playItem_t *it) {
-    playItem_t *c = playlist_head[PS_MAIN];
+pl_get_idx_of (playItem_t *it) {
+    playItem_t *c = playlist_head[PL_MAIN];
     int idx = 0;
     while (c && c != it) {
-        c = c->next[PS_MAIN];
+        c = c->next[PL_MAIN];
         idx++;
     }
     if (!c) {
@@ -508,67 +508,67 @@ ps_get_idx_of (playItem_t *it) {
 }
 
 int
-ps_append_item (playItem_t *it) {
-    if (!playlist_tail[PS_MAIN]) {
-        playlist_tail[PS_MAIN] = playlist_head[PS_MAIN] = it;
+pl_append_item (playItem_t *it) {
+    if (!playlist_tail[PL_MAIN]) {
+        playlist_tail[PL_MAIN] = playlist_head[PL_MAIN] = it;
     }
     else {
-        playlist_tail[PS_MAIN]->next[PS_MAIN] = it;
-        it->prev[PS_MAIN] = playlist_tail[PS_MAIN];
-        playlist_tail[PS_MAIN] = it;
+        playlist_tail[PL_MAIN]->next[PL_MAIN] = it;
+        it->prev[PL_MAIN] = playlist_tail[PL_MAIN];
+        playlist_tail[PL_MAIN] = it;
     }
-    ps_count++;
+    pl_count++;
 }
 
 playItem_t *
-ps_insert_item (playItem_t *after, playItem_t *it) {
+pl_insert_item (playItem_t *after, playItem_t *it) {
     if (!after) {
-        it->next[PS_MAIN] = playlist_head[PS_MAIN];
-        it->prev[PS_MAIN] = NULL;
-        if (playlist_head[PS_MAIN]) {
-            playlist_head[PS_MAIN]->prev[PS_MAIN] = it;
+        it->next[PL_MAIN] = playlist_head[PL_MAIN];
+        it->prev[PL_MAIN] = NULL;
+        if (playlist_head[PL_MAIN]) {
+            playlist_head[PL_MAIN]->prev[PL_MAIN] = it;
         }
         else {
-            playlist_tail[PS_MAIN] = it;
+            playlist_tail[PL_MAIN] = it;
         }
-        playlist_head[PS_MAIN] = it;
+        playlist_head[PL_MAIN] = it;
     }
     else {
-        it->prev[PS_MAIN] = after;
-        it->next[PS_MAIN] = after->next[PS_MAIN];
-        if (after->next[PS_MAIN]) {
-            after->next[PS_MAIN]->prev[PS_MAIN] = it;
+        it->prev[PL_MAIN] = after;
+        it->next[PL_MAIN] = after->next[PL_MAIN];
+        if (after->next[PL_MAIN]) {
+            after->next[PL_MAIN]->prev[PL_MAIN] = it;
         }
-        after->next[PS_MAIN] = it;
-        if (after == playlist_tail[PS_MAIN]) {
-            playlist_tail[PS_MAIN] = it;
+        after->next[PL_MAIN] = it;
+        if (after == playlist_tail[PL_MAIN]) {
+            playlist_tail[PL_MAIN] = it;
         }
     }
-    ps_count++;
-    int idx = (float)rand ()/RAND_MAX * ps_count;
+    pl_count++;
+    int idx = (float)rand ()/RAND_MAX * pl_count;
 
     // shuffle
     playItem_t *prev = NULL;
-    if (!playlist_head[PS_SHUFFLE]) {
-        playlist_head[PS_SHUFFLE] = playlist_tail[PS_SHUFFLE] = it;
+    if (!playlist_head[PL_SHUFFLE]) {
+        playlist_head[PL_SHUFFLE] = playlist_tail[PL_SHUFFLE] = it;
     }
-    else if (idx == ps_count-1) {
+    else if (idx == pl_count-1) {
         // append to end
-        playlist_tail[PS_SHUFFLE]->next[PS_SHUFFLE] = it;
-        playlist_tail[PS_SHUFFLE] = it;
+        playlist_tail[PL_SHUFFLE]->next[PL_SHUFFLE] = it;
+        playlist_tail[PL_SHUFFLE] = it;
     }
     else {
-        for (playItem_t *sh = playlist_head[PS_SHUFFLE]; sh; sh = sh->next[PS_SHUFFLE], idx--) {
+        for (playItem_t *sh = playlist_head[PL_SHUFFLE]; sh; sh = sh->next[PL_SHUFFLE], idx--) {
             if (!idx) {
                 if (prev) {
-                    prev->next[PS_SHUFFLE] = it;
+                    prev->next[PL_SHUFFLE] = it;
                 }
                 else {
-                    playlist_head[PS_SHUFFLE] = it;
+                    playlist_head[PL_SHUFFLE] = it;
                 }
-                it->next[PS_SHUFFLE] = sh;
-                it->prev[PS_SHUFFLE] = sh->prev[PS_SHUFFLE];
-                sh->prev[PS_SHUFFLE] = it;
+                it->next[PL_SHUFFLE] = sh;
+                it->prev[PL_SHUFFLE] = sh->prev[PL_SHUFFLE];
+                sh->prev[PL_SHUFFLE] = it;
                 break;
             }
             prev = sh;
@@ -579,7 +579,7 @@ ps_insert_item (playItem_t *after, playItem_t *it) {
 }
 
 void
-ps_item_copy (playItem_t *out, playItem_t *it) {
+pl_item_copy (playItem_t *out, playItem_t *it) {
     out->fname = strdup (it->fname);
     out->codec = it->codec;
     out->tracknum = it->tracknum;
@@ -587,10 +587,12 @@ ps_item_copy (playItem_t *out, playItem_t *it) {
     out->timeend = it->timeend;
     out->duration = it->duration;
     out->filetype = it->filetype;
-    out->next[PS_MAIN] = it->next[PS_MAIN];
-    out->prev[PS_MAIN] = it->prev[PS_MAIN];
-    out->next[PS_SHUFFLE] = it->next[PS_SHUFFLE];
-    out->prev[PS_SHUFFLE] = it->prev[PS_SHUFFLE];
+    out->next[PL_MAIN] = it->next[PL_MAIN];
+    out->prev[PL_MAIN] = it->prev[PL_MAIN];
+    out->next[PL_SHUFFLE] = it->next[PL_SHUFFLE];
+    out->prev[PL_SHUFFLE] = it->prev[PL_SHUFFLE];
+    out->next[PL_SEARCH] = it->next[PL_SEARCH];
+    out->prev[PL_SEARCH] = it->prev[PL_SEARCH];
     // copy metainfo
     metaInfo_t *prev = NULL;
     metaInfo_t *meta = it->meta;
@@ -611,7 +613,7 @@ ps_item_copy (playItem_t *out, playItem_t *it) {
 }
 
 void
-ps_item_free (playItem_t *it) {
+pl_item_free (playItem_t *it) {
     if (it) {
         if (it->fname) {
             free (it->fname);
@@ -627,10 +629,10 @@ ps_item_free (playItem_t *it) {
 }
 
 int
-ps_set_current (playItem_t *it) {
+pl_set_current (playItem_t *it) {
     int ret = 0;
-    int from = ps_get_idx_of (playlist_current_ptr);
-    int to = ps_get_idx_of (it);
+    int from = pl_get_idx_of (playlist_current_ptr);
+    int to = pl_get_idx_of (it);
 #if 0
     // this produces some kind of bug in the beginning of track
     if (it == playlist_current_ptr) {
@@ -646,10 +648,7 @@ ps_set_current (playItem_t *it) {
     if (playlist_current_ptr && playlist_current_ptr->codec) {
         playlist_current_ptr->codec->free ();
     }
-    ps_item_free (&playlist_current);
-    if (it) {
-        ps_item_copy (&playlist_current, it);
-    }
+    pl_item_free (&playlist_current);
     playlist_current_ptr = it;
     if (it && it->codec) {
         // don't do anything on fail, streamer will take care
@@ -661,77 +660,80 @@ ps_set_current (playItem_t *it) {
     if (playlist_current_ptr) {
         streamer_reset (0);
     }
+    if (it) {
+        pl_item_copy (&playlist_current, it);
+    }
     codec_unlock ();
     messagepump_push (M_SONGCHANGED, 0, from, to);
     return ret;
 }
 
 int
-ps_prevsong (void) {
-    if (ps_order == 1) { // shuffle
+pl_prevsong (void) {
+    if (pl_order == 1) { // shuffle
         if (!playlist_current_ptr) {
-            return ps_nextsong (1);
+            return pl_nextsong (1);
         }
         else {
-            playItem_t *it = playlist_current_ptr->prev[PS_SHUFFLE];
+            playItem_t *it = playlist_current_ptr->prev[PL_SHUFFLE];
             if (!it) {
-                if (ps_loop_mode == 0) {
-                    it = playlist_tail[PS_SHUFFLE];
+                if (pl_loop_mode == 0) {
+                    it = playlist_tail[PL_SHUFFLE];
                 }
             }
             if (!it) {
                 return -1;
             }
-            int r = ps_get_idx_of (it);
+            int r = pl_get_idx_of (it);
             streamer_set_nextsong (r, 1);
             return 0;
         }
     }
-    else if (ps_order == 0) { // linear
+    else if (pl_order == 0) { // linear
         playItem_t *it = NULL;
         if (playlist_current_ptr) {
-            it = playlist_current_ptr->prev[PS_MAIN];
+            it = playlist_current_ptr->prev[PL_MAIN];
         }
         if (!it) {
-            if (ps_loop_mode == 0) {
-                it = playlist_tail[PS_MAIN];
+            if (pl_loop_mode == 0) {
+                it = playlist_tail[PL_MAIN];
             }
         }
         if (!it) {
             return -1;
         }
-        int r = ps_get_idx_of (it);
+        int r = pl_get_idx_of (it);
         streamer_set_nextsong (r, 1);
         return 0;
     }
-    else if (ps_order == 2) { // random
-        ps_randomsong ();
+    else if (pl_order == 2) { // random
+        pl_randomsong ();
     }
     return -1;
 }
 
 int
-ps_nextsong (int reason) {
-    if (ps_order == 1) { // shuffle
+pl_nextsong (int reason) {
+    if (pl_order == 1) { // shuffle
         if (!playlist_current_ptr) {
-            playItem_t *it = playlist_head[PS_SHUFFLE];
+            playItem_t *it = playlist_head[PL_SHUFFLE];
             if (!it) {
                 return -1;
             }
-            int r = ps_get_idx_of (it);
+            int r = pl_get_idx_of (it);
             streamer_set_nextsong (r, 1);
             return 0;
         }
         else {
-            if (reason == 0 && ps_loop_mode == 2) {
-                int r = ps_get_idx_of (playlist_current_ptr);
+            if (reason == 0 && pl_loop_mode == 2) {
+                int r = pl_get_idx_of (playlist_current_ptr);
                 streamer_set_nextsong (r, 1);
                 return 0;
             }
-            playItem_t *it = playlist_current_ptr->next[PS_SHUFFLE];
+            playItem_t *it = playlist_current_ptr->next[PL_SHUFFLE];
             if (!it) {
-                if (ps_loop_mode == 0) { // loop
-                    it = playlist_head[PS_SHUFFLE];
+                if (pl_loop_mode == 0) { // loop
+                    it = playlist_head[PL_SHUFFLE];
                 }
                 else {
                     return -1;
@@ -740,56 +742,56 @@ ps_nextsong (int reason) {
             if (!it) {
                 return -1;
             }
-            int r = ps_get_idx_of (it);
+            int r = pl_get_idx_of (it);
             streamer_set_nextsong (r, 1);
             return 0;
         }
     }
-    else if (ps_order == 0) { // linear
+    else if (pl_order == 0) { // linear
         playItem_t *it = NULL;
         if (playlist_current_ptr) {
-            if (reason == 0 && ps_loop_mode == 2) {
-                int r = ps_get_idx_of (playlist_current_ptr);
+            if (reason == 0 && pl_loop_mode == 2) {
+                int r = pl_get_idx_of (playlist_current_ptr);
                 streamer_set_nextsong (r, 1);
                 return 0;
             }
-            it = playlist_current_ptr->next[PS_MAIN];
+            it = playlist_current_ptr->next[PL_MAIN];
         }
         if (!it) {
-            if (ps_loop_mode == 0) {
-                it = playlist_head[PS_MAIN];
+            if (pl_loop_mode == 0) {
+                it = playlist_head[PL_MAIN];
             }
         }
         if (!it) {
             return -1;
         }
-        int r = ps_get_idx_of (it);
+        int r = pl_get_idx_of (it);
         streamer_set_nextsong (r, 1);
         return 0;
     }
-    else if (ps_order == 2) { // random
-        if (reason == 0 && ps_loop_mode == 2 && playlist_current_ptr) {
-            int r = ps_get_idx_of (playlist_current_ptr);
+    else if (pl_order == 2) { // random
+        if (reason == 0 && pl_loop_mode == 2 && playlist_current_ptr) {
+            int r = pl_get_idx_of (playlist_current_ptr);
             streamer_set_nextsong (r, 1);
             return 0;
         }
-        return ps_randomsong ();
+        return pl_randomsong ();
     }
     return -1;
 }
 
 int
-ps_randomsong (void) {
-    if (!ps_getcount ()) {
+pl_randomsong (void) {
+    if (!pl_getcount ()) {
         return -1;
     }
-    int r = (float)rand ()/RAND_MAX * ps_getcount ();
+    int r = (float)rand ()/RAND_MAX * pl_getcount ();
     streamer_set_nextsong (r, 1);
     return 0;
 }
 
 void
-ps_start_current (void) {
+pl_start_current (void) {
     codec_lock ();
     playItem_t *it = playlist_current_ptr;
     if (it && it->codec) {
@@ -801,7 +803,7 @@ ps_start_current (void) {
 }
 
 void
-ps_add_meta (playItem_t *it, const char *key, const char *value) {
+pl_add_meta (playItem_t *it, const char *key, const char *value) {
     char str[256];
     if (!value || !*value) {
         if (!strcmp (key, "title")) {
@@ -836,12 +838,12 @@ ps_add_meta (playItem_t *it, const char *key, const char *value) {
 }
 
 void
-ps_format_item_display_name (playItem_t *it, char *str, int len) {
+pl_format_item_display_name (playItem_t *it, char *str, int len) {
     // artist - title
-    const char *track = ps_find_meta (it, "track");
-    const char *artist = ps_find_meta (it, "artist");
-    const char *album = ps_find_meta (it, "album");
-    const char *title = ps_find_meta (it, "title");
+    const char *track = pl_find_meta (it, "track");
+    const char *artist = pl_find_meta (it, "artist");
+    const char *album = pl_find_meta (it, "album");
+    const char *title = pl_find_meta (it, "title");
     if (*track == '?' && *album == '?' && *artist != '?' && *title != '?') {
         snprintf (str, len, "%s - %s", artist, title);
     }
@@ -882,7 +884,7 @@ ps_format_item_display_name (playItem_t *it, char *str, int len) {
 }
 
 const char *
-ps_find_meta (playItem_t *it, const char *key) {
+pl_find_meta (playItem_t *it, const char *key) {
     metaInfo_t *m = it->meta;
     while (m) {
         if (!strcmp (key, m->key)) {
@@ -894,23 +896,23 @@ ps_find_meta (playItem_t *it, const char *key) {
 }
 
 void
-ps_delete_selected (void) {
+pl_delete_selected (void) {
     playItem_t *next = NULL;
-    for (playItem_t *it = playlist_head[PS_MAIN]; it; it = next) {
-        next = it->next[PS_MAIN];
+    for (playItem_t *it = playlist_head[PL_MAIN]; it; it = next) {
+        next = it->next[PL_MAIN];
         if (it->selected) {
-            ps_remove (it);
+            pl_remove (it);
         }
     }
 }
 
 void
-ps_set_order (int order) {
-    ps_order = order;
+pl_set_order (int order) {
+    pl_order = order;
 }
 
 void
-ps_set_loop_mode (int mode) {
-    ps_loop_mode = mode;
+pl_set_loop_mode (int mode) {
+    pl_loop_mode = mode;
 }
 

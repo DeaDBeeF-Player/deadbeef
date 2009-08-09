@@ -774,16 +774,16 @@ cdumb_insert (playItem_t *after, const char *fname) {
     it->timeend = 0;
     DUMB_IT_SIGDATA * itsd = duh_get_it_sigdata(duh);
     if (itsd->name[0])     {
-        ps_add_meta (it, "title", convstr ((char*)&itsd->name, sizeof(itsd->name)));
+        pl_add_meta (it, "title", convstr ((char*)&itsd->name, sizeof(itsd->name)));
     }
     else {
-        ps_add_meta (it, "title", NULL);
+        pl_add_meta (it, "title", NULL);
     }
     dumb_it_do_initial_runthrough (duh);
     it->duration = duh_get_length (duh)/65536.0f;
     it->filetype = ftype;
 //    printf ("duration: %f\n", cdumb.info.duration);
-    after = ps_insert_item (after, it);
+    after = pl_insert_item (after, it);
     unload_duh (duh);
 
     return after;

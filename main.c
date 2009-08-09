@@ -68,7 +68,7 @@ update_songinfo (void) {
         songpos = pos * 1000 / dur;
         codec_unlock ();
 
-        snprintf (sbtext_new, 512, "[%s] %dHz | %d bit | %s | %d:%02d / %d:%02d | %d songs total", playlist_current.filetype ? playlist_current.filetype:"-", samplerate, bitspersample, mode, minpos, secpos, mindur, secdur, ps_getcount ());
+        snprintf (sbtext_new, 512, "[%s] %dHz | %d bit | %s | %d:%02d / %d:%02d | %d songs total", playlist_current.filetype ? playlist_current.filetype:"-", samplerate, bitspersample, mode, minpos, secpos, mindur, secdur, pl_getcount ());
     }
     else {
         strcpy (sbtext_new, "Stopped");
@@ -118,10 +118,10 @@ psdl_thread (uintptr_t ctx) {
                 int to = p2;
                 if (from >= 0 || to >= 0) {
                     if (to >= 0) {
-                        playItem_t *it = ps_get_for_idx (to);
+                        playItem_t *it = pl_get_for_idx (to);
                         char str[600];
                         char dname[512];
-                        ps_format_item_display_name (it, dname, 512);
+                        pl_format_item_display_name (it, dname, 512);
                         snprintf (str, 600, "DeaDBeeF - %s", dname);
                         gtk_window_set_title (GTK_WINDOW (mainwin), str);
                     }
@@ -130,17 +130,17 @@ psdl_thread (uintptr_t ctx) {
                     }
                 }
                 // update playlist view
-                gtkps_songchanged (&main_playlist, p1, p2);
+                gtkpl_songchanged (&main_playlist, p1, p2);
                 GDK_THREADS_LEAVE();
                 break;
             case M_PLAYSONG:
                 GDK_THREADS_ENTER();
-                gtkps_playsong (&main_playlist);
+                gtkpl_playsong (&main_playlist);
                 GDK_THREADS_LEAVE();
                 break;
             case M_PLAYSONGNUM:
                 GDK_THREADS_ENTER();
-                gtkps_playsongnum (p1);
+                gtkpl_playsongnum (p1);
                 GDK_THREADS_LEAVE();
                 break;
             case M_STOPSONG:
@@ -151,13 +151,13 @@ psdl_thread (uintptr_t ctx) {
             case M_NEXTSONG:
                 GDK_THREADS_ENTER();
                 p_stop ();
-                ps_nextsong (1);
+                pl_nextsong (1);
                 GDK_THREADS_LEAVE();
                 break;
             case M_PREVSONG:
                 GDK_THREADS_ENTER();
                 p_stop ();
-                ps_prevsong ();
+                pl_prevsong ();
                 GDK_THREADS_LEAVE();
                 break;
             case M_PAUSESONG:
@@ -172,7 +172,7 @@ psdl_thread (uintptr_t ctx) {
                 break;
             case M_PLAYRANDOM:
                 GDK_THREADS_ENTER();
-                gtkps_randomsong ();
+                gtkpl_randomsong ();
                 GDK_THREADS_LEAVE();
                 break;
             case M_SONGSEEK:
@@ -186,13 +186,13 @@ psdl_thread (uintptr_t ctx) {
                 break;
             case M_ADDDIR:
                 // long time processing
-                gtkps_add_dir (&main_playlist, (char *)ctx);
+                gtkpl_add_dir (&main_playlist, (char *)ctx);
                 break;
             case M_ADDFILES:
-                gtkps_add_files (&main_playlist, (GSList *)ctx);
+                gtkpl_add_files (&main_playlist, (GSList *)ctx);
                 break;
             case M_FMDRAGDROP:
-                gtkps_add_fm_dropped_files (&main_playlist, (char *)ctx, p1, p2);
+                gtkpl_add_fm_dropped_files (&main_playlist, (char *)ctx, p1, p2);
                 break;
             }
         }
@@ -224,6 +224,6 @@ main (int argc, char *argv[]) {
     p_free ();
     streamer_free ();
     codec_free_locking ();
-    ps_free ();
+    pl_free ();
     return 0;
 }

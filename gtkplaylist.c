@@ -41,7 +41,7 @@
 #include "search.h"
 
 #define rowheight 17
-const char *colnames[ps_ncolumns] = {
+const char *colnames[pl_ncolumns] = {
     "Playing Status",
     "Artist / Album",
     "Track №",
@@ -67,18 +67,18 @@ const char *colnames[ps_ncolumns] = {
 //// cache[(ROW*ncolumns+COLUMN)*3+2] --- 0 if needs recalc
 //static int16_t *ps->fmtcache = NULL;
 //
-//int ps->header_fitted[ps_ncolumns] = {
+//int ps->header_fitted[pl_ncolumns] = {
 //    1, 1, 1, 1, 1
 //};
 
-//char ps->colnames_fitted[ps_ncolumns][ps_colname_max];
+//char ps->colnames_fitted[pl_ncolumns][pl_colname_max];
 //
 //int ps->colwidths[] = {
 //    50, 200, 50, 200, 50
 //};
 
 int
-gtkps_fit_text (cairo_t *cr, char *out, int *dotpos, int len, const char *in, int width) {
+gtkpl_fit_text (cairo_t *cr, char *out, int *dotpos, int len, const char *in, int width) {
     int l = strlen (in);
     len--;
     l = min (len, l);
@@ -130,7 +130,7 @@ text_draw (cairo_t *cr, int x, int y, const char *text) {
 }
 
 void
-gtkps_setup_scrollbar (gtkplaylist_t *ps) {
+gtkpl_setup_scrollbar (gtkplaylist_t *ps) {
     GtkWidget *playlist = ps->playlist;
     int h = playlist->allocation.height / rowheight;
     int size = (*ps->count);
@@ -149,7 +149,7 @@ gtkps_setup_scrollbar (gtkplaylist_t *ps) {
 }
 
 void
-gtkps_redraw_ps_row_novis (gtkplaylist_t *ps, int row) {
+gtkpl_redraw_pl_row_novis (gtkplaylist_t *ps, int row) {
 	cairo_t *cr;
 	cr = gdk_cairo_create (ps->backbuf);
 	if (!cr) {
@@ -159,17 +159,17 @@ gtkps_redraw_ps_row_novis (gtkplaylist_t *ps, int row) {
 
 //    cairo_select_font_face (cr, "fixed", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
 
-	playItem_t *it = gtkps_get_for_idx (ps, row);
+	playItem_t *it = gtkpl_get_for_idx (ps, row);
 //    printf ("redraw row %d (selected = %d, cursor = %d)\n", row, it->selected, ps->row == row ? 1 : 0);
 	if (it) {
-        gtkps_draw_ps_row_back (ps, cr, row, it);
-        gtkps_draw_ps_row (ps, cr, row, it);
+        gtkpl_draw_pl_row_back (ps, cr, row, it);
+        gtkpl_draw_pl_row (ps, cr, row, it);
     }
     cairo_destroy (cr);
 }
 
 void
-gtkps_redraw_ps_row (gtkplaylist_t *ps, int row) {
+gtkpl_redraw_pl_row (gtkplaylist_t *ps, int row) {
     int x, y, w, h;
     GtkWidget *widget = ps->playlist;
     x = 0;
@@ -177,13 +177,13 @@ gtkps_redraw_ps_row (gtkplaylist_t *ps, int row) {
     w = widget->allocation.width;
     h = rowheight;
 
-    gtkps_redraw_ps_row_novis (ps, row);
+    gtkpl_redraw_pl_row_novis (ps, row);
 	gdk_draw_drawable (widget->window, widget->style->black_gc, ps->backbuf, x, y, x, y, w, h);
 	//gdk_draw_drawable (widget->window, widget->style->black_gc, ps->backbuf, 0, 0, 0, 0, widget->allocation.width, widget->allocation.height);
 }
 
 void
-gtkps_draw_ps_row_back (gtkplaylist_t *ps, cairo_t *cr, int row, playItem_t *it) {
+gtkpl_draw_pl_row_back (gtkplaylist_t *ps, cairo_t *cr, int row, playItem_t *it) {
 	// draw background
 	float w;
 	int start, end;
@@ -221,7 +221,7 @@ gtkps_draw_ps_row_back (gtkplaylist_t *ps, cairo_t *cr, int row, playItem_t *it)
 }
 
 void
-gtkps_draw_ps_row (gtkplaylist_t *ps, cairo_t *cr, int row, playItem_t *it) {
+gtkpl_draw_pl_row (gtkplaylist_t *ps, cairo_t *cr, int row, playItem_t *it) {
     if (row-ps->scrollpos >= ps->nvisiblerows || row-ps->scrollpos < 0) {
         fprintf (stderr, "WARNING: attempt to draw row outside of screen bounds (%d)\n", row-ps->scrollpos);
         return;
@@ -250,23 +250,23 @@ gtkps_draw_ps_row (gtkplaylist_t *ps, cairo_t *cr, int row, playItem_t *it) {
         int sec = (int)(it->duration-min*60);
         snprintf (dur, 10, "%d:%02d", min, sec);
     }
-    const char *columns[ps_ncolumns] = {
+    const char *columns[pl_ncolumns] = {
         "",
-        ps_find_meta (it, "artist"),
-        ps_find_meta (it, "track"),
-        ps_find_meta (it, "title"),
+        pl_find_meta (it, "artist"),
+        pl_find_meta (it, "track"),
+        pl_find_meta (it, "title"),
         dur
     };
     int x = 0;
 #if 1
-    for (int i = 0; i < ps_ncolumns; i++) {
+    for (int i = 0; i < pl_ncolumns; i++) {
         char str[512];
         if (i > 0) {
             
             int dotpos;
-            int cidx = ((row-ps->scrollpos) * ps_ncolumns + i) * 3;
+            int cidx = ((row-ps->scrollpos) * pl_ncolumns + i) * 3;
             if (!ps->fmtcache[cidx + 2]) {
-                ps->fmtcache[cidx + 1] = gtkps_fit_text (cr, str, &dotpos, 512, columns[i], ps->colwidths[i]-10);
+                ps->fmtcache[cidx + 1] = gtkpl_fit_text (cr, str, &dotpos, 512, columns[i], ps->colwidths[i]-10);
                 ps->fmtcache[cidx + 0] = dotpos;
                 ps->fmtcache[cidx + 2] = 1;
 
@@ -296,18 +296,18 @@ gtkps_draw_ps_row (gtkplaylist_t *ps, cairo_t *cr, int row, playItem_t *it) {
 #endif
 #if 0
     char dname[512];
-    ps_format_item_display_name (it, dname, 512);
+    pl_format_item_display_name (it, dname, 512);
     text_draw (cr, rowheight, row * rowheight - ps->scrollpos * rowheight, dname);
 #endif
 }
 
 
 void
-gtkps_draw_playlist (gtkplaylist_t *ps, int x, int y, int w, int h) {
+gtkpl_draw_playlist (gtkplaylist_t *ps, int x, int y, int w, int h) {
     GtkWidget *widget = ps->playlist;
-    if (!ps->fmtcache && ps->nvisiblerows > 0 && ps_ncolumns > 0) {
-        ps->fmtcache = malloc (ps->nvisiblerows * ps_ncolumns * 3 * sizeof (int16_t));
-        memset (ps->fmtcache, 0, ps->nvisiblerows * ps_ncolumns * 3 * sizeof (int16_t));
+    if (!ps->fmtcache && ps->nvisiblerows > 0 && pl_ncolumns > 0) {
+        ps->fmtcache = malloc (ps->nvisiblerows * pl_ncolumns * 3 * sizeof (int16_t));
+        memset (ps->fmtcache, 0, ps->nvisiblerows * pl_ncolumns * 3 * sizeof (int16_t));
     }
 	cairo_t *cr;
 	cr = gdk_cairo_create (ps->backbuf);
@@ -327,10 +327,10 @@ gtkps_draw_playlist (gtkplaylist_t *ps, int x, int y, int w, int h) {
 	row2_full = (y+h) / rowheight + ps->scrollpos + 1;
 	//printf ("drawing row %d (nvis=%d)\n", row2_full, ps->nvisiblerows);
 	// draw background
-	playItem_t *it = gtkps_get_for_idx (ps, ps->scrollpos);
+	playItem_t *it = gtkpl_get_for_idx (ps, ps->scrollpos);
 	playItem_t *it_copy = it;
 	for (row = row1; row < row2_full; row++) {
-		gtkps_draw_ps_row_back (ps, cr, row, it);
+		gtkpl_draw_pl_row_back (ps, cr, row, it);
 		if (it) {
             it = it->next[ps->iterator];
         }
@@ -338,7 +338,7 @@ gtkps_draw_playlist (gtkplaylist_t *ps, int x, int y, int w, int h) {
 	it = it_copy;
 	int idx = 0;
 	for (row = row1; row < row2; row++, idx++) {
-        gtkps_draw_ps_row (ps, cr, row, it);
+        gtkpl_draw_pl_row (ps, cr, row, it);
         it = it->next[ps->iterator];
 	}
 
@@ -346,8 +346,8 @@ gtkps_draw_playlist (gtkplaylist_t *ps, int x, int y, int w, int h) {
 }
 
 void
-gtkps_configure (gtkplaylist_t *ps) {
-    gtkps_setup_scrollbar (ps);
+gtkpl_configure (gtkplaylist_t *ps) {
+    gtkpl_setup_scrollbar (ps);
     GtkWidget *widget = ps->playlist;
     if (ps->backbuf) {
         g_object_unref (ps->backbuf);
@@ -359,7 +359,7 @@ gtkps_configure (gtkplaylist_t *ps) {
     }
     ps->nvisiblerows = ceil (widget->allocation.height / (float)rowheight);
     ps->backbuf = gdk_pixmap_new (widget->window, widget->allocation.width, widget->allocation.height, -1);
-    gtkps_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
+    gtkpl_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
 }
 
 // change properties
@@ -370,19 +370,19 @@ on_playlist_configure_event            (GtkWidget       *widget,
 {
     extern void main_playlist_init (GtkWidget *widget);
     main_playlist_init (widget);
-    GTKPS_PROLOGUE;
-    gtkps_configure (ps);
+    GTKpl_PROLOGUE;
+    gtkpl_configure (ps);
     return FALSE;
 }
 
 void
-gtkps_expose (gtkplaylist_t *ps, int x, int y, int w, int h) {
+gtkpl_expose (gtkplaylist_t *ps, int x, int y, int w, int h) {
     GtkWidget *widget = ps->playlist;
 	gdk_draw_drawable (widget->window, widget->style->black_gc, ps->backbuf, x, y, x, y, w, h);
 }
 
 void
-gtkps_select_single (gtkplaylist_t *ps, int sel) {
+gtkpl_select_single (gtkplaylist_t *ps, int sel) {
     if (!ps->multisel) {
         return;
     }
@@ -392,12 +392,12 @@ gtkps_select_single (gtkplaylist_t *ps, int sel) {
         if (idx == sel) {
             if (!it->selected) {
                 it->selected = 1;
-                gtkps_redraw_ps_row (ps, idx);
+                gtkpl_redraw_pl_row (ps, idx);
             }
         }
         else if (it->selected) {
             it->selected = 0;
-            gtkps_redraw_ps_row (ps, idx);
+            gtkpl_redraw_pl_row (ps, idx);
         }
     }
 }
@@ -429,7 +429,7 @@ static int dragwait = 0;
 static int shift_sel_anchor = -1;
 
 void
-gtkps_mouse1_pressed (gtkplaylist_t *ps, int state, int ex, int ey, double time) {
+gtkpl_mouse1_pressed (gtkplaylist_t *ps, int state, int ex, int ey, double time) {
     // cursor must be set here, but selection must be handled in keyrelease
     if ((*ps->count) == 0) {
         return;
@@ -449,8 +449,8 @@ gtkps_mouse1_pressed (gtkplaylist_t *ps, int state, int ex, int ey, double time)
             && fabs(ps->lastpos[1] - ey) < 3) {
         // doubleclick - play this item
         if (ps->row != -1) {
-            playItem_t *it = gtkps_get_for_idx (ps, ps->row);
-            messagepump_push (M_PLAYSONGNUM, 0, ps_get_idx_of (it), 0);
+            playItem_t *it = gtkpl_get_for_idx (ps, ps->row);
+            messagepump_push (M_PLAYSONGNUM, 0, pl_get_idx_of (it), 0);
         }
 
 
@@ -472,10 +472,10 @@ gtkps_mouse1_pressed (gtkplaylist_t *ps, int state, int ex, int ey, double time)
     if (ps->multisel) {
         if (!(state & (GDK_CONTROL_MASK|GDK_SHIFT_MASK)))
         {
-            playItem_t *it = gtkps_get_for_idx (ps, sel);
+            playItem_t *it = gtkpl_get_for_idx (ps, sel);
             if (!it || !it->selected) {
                 // reset selection, and set it to single item
-                gtkps_select_single (ps, sel);
+                gtkpl_select_single (ps, sel);
                 areaselect = 1;
                 areaselect_x = ex;
                 areaselect_y = ey;
@@ -485,17 +485,17 @@ gtkps_mouse1_pressed (gtkplaylist_t *ps, int state, int ex, int ey, double time)
             }
             else {
                 dragwait = 1;
-                gtkps_redraw_ps_row (ps, prev);
-                gtkps_redraw_ps_row (ps, ps->row);
+                gtkpl_redraw_pl_row (ps, prev);
+                gtkpl_redraw_pl_row (ps, ps->row);
             }
         }
         else if (state & GDK_CONTROL_MASK) {
             // toggle selection
             if (y != -1) {
-                playItem_t *it = gtkps_get_for_idx (ps, y);
+                playItem_t *it = gtkpl_get_for_idx (ps, y);
                 if (it) {
                     it->selected = 1 - it->selected;
-                    gtkps_redraw_ps_row (ps, y);
+                    gtkpl_redraw_pl_row (ps, y);
                 }
             }
         }
@@ -508,38 +508,38 @@ gtkps_mouse1_pressed (gtkplaylist_t *ps, int state, int ex, int ey, double time)
                 if (idx >= start && idx <= end) {
                     if (!it->selected) {
                         it->selected = 1;
-                        gtkps_redraw_ps_row (ps, idx);
+                        gtkpl_redraw_pl_row (ps, idx);
                     }
                 }
                 else {
                     if (it->selected) {
                         it->selected = 0;
-                        gtkps_redraw_ps_row (ps, idx);
+                        gtkpl_redraw_pl_row (ps, idx);
                     }
                 }
             }
         }
         if (ps->row != -1 && sel == -1) {
-            gtkps_redraw_ps_row (ps, ps->row);
+            gtkpl_redraw_pl_row (ps, ps->row);
         }
     }
     else {
         if (ps->row != -1) {
-            gtkps_redraw_ps_row (ps, ps->row);
+            gtkpl_redraw_pl_row (ps, ps->row);
         }
     }
     if (prev != -1 && prev != ps->row) {
-        gtkps_redraw_ps_row (ps, prev);
+        gtkpl_redraw_pl_row (ps, prev);
     }
 
 }
 
 void
-gtkps_mouse1_released (gtkplaylist_t *ps, int state, int ex, int ey, double time) {
+gtkpl_mouse1_released (gtkplaylist_t *ps, int state, int ex, int ey, double time) {
     if (dragwait) {
         dragwait = 0;
         int y = ey/rowheight + ps->scrollpos;
-        gtkps_select_single (ps, y);
+        gtkpl_select_single (ps, y);
     }
     else if (areaselect) {
         areaselect = 0;
@@ -548,7 +548,7 @@ gtkps_mouse1_released (gtkplaylist_t *ps, int state, int ex, int ey, double time
 
 #if 0
 void
-gtkps_draw_areasel (GtkWidget *widget, int x, int y) {
+gtkpl_draw_areasel (GtkWidget *widget, int x, int y) {
     // erase previous rect using 4 blits from ps->backbuffer
     if (areaselect_dx != -1) {
         int sx = min (areaselect_x, areaselect_dx);
@@ -584,7 +584,7 @@ gtkps_draw_areasel (GtkWidget *widget, int x, int y) {
 #endif
 
 void
-gtkps_mousemove (gtkplaylist_t *ps, GdkEventMotion *event) {
+gtkpl_mousemove (gtkplaylist_t *ps, GdkEventMotion *event) {
     if (dragwait) {
         GtkWidget *widget = ps->playlist;
         if (gtk_drag_check_threshold (widget, ps->lastpos[0], event->x, ps->lastpos[1], event->y)) {
@@ -608,22 +608,22 @@ gtkps_mousemove (gtkplaylist_t *ps, GdkEventMotion *event) {
             for (playItem_t *it = playlist_head[ps->iterator]; it; it = it->next[ps->iterator], idx++) {
                 if (idx >= start && idx <= end) {
                     it->selected = 1;
-                    gtkps_redraw_ps_row (ps, idx);
+                    gtkpl_redraw_pl_row (ps, idx);
                 }
                 else if (it->selected)
                 {
                     it->selected = 0;
-                    gtkps_redraw_ps_row (ps, idx);
+                    gtkpl_redraw_pl_row (ps, idx);
                 }
             }
         }
         // debug only
-        // gtkps_draw_areasel (widget, event->x, event->y);
+        // gtkpl_draw_areasel (widget, event->x, event->y);
     }
 }
 
 void
-gtkps_handle_scroll_event (gtkplaylist_t *ps, int direction) {
+gtkpl_handle_scroll_event (gtkplaylist_t *ps, int direction) {
     GtkWidget *range = ps->scrollbar;;
     GtkWidget *playlist = ps->playlist;
     int h = playlist->allocation.height / rowheight;
@@ -647,7 +647,7 @@ gtkps_handle_scroll_event (gtkplaylist_t *ps, int direction) {
 }
 
 void
-gtkps_scroll (gtkplaylist_t *ps, int newscroll) {
+gtkpl_scroll (gtkplaylist_t *ps, int newscroll) {
     if (newscroll != ps->scrollpos) {
         int d = abs (newscroll - ps->scrollpos);
         if (abs (newscroll - ps->scrollpos) < ps->nvisiblerows) {
@@ -657,104 +657,104 @@ gtkps_scroll (gtkplaylist_t *ps, int newscroll) {
                 //printf ("scroll up\n");
                 int r;
                 for (r = ps->nvisiblerows-1; r >= d; r--) {
-                    memcpy (&ps->fmtcache[r * ps_ncolumns * 3], &ps->fmtcache[(r - d) * ps_ncolumns * 3], sizeof (int16_t) * 3 * ps_ncolumns);
+                    memcpy (&ps->fmtcache[r * pl_ncolumns * 3], &ps->fmtcache[(r - d) * pl_ncolumns * 3], sizeof (int16_t) * 3 * pl_ncolumns);
                 }
                 for (r = 0; r < d; r++) {
-                    memset (&ps->fmtcache[r * ps_ncolumns * 3], 0, sizeof (int16_t) * 3 * ps_ncolumns);
+                    memset (&ps->fmtcache[r * pl_ncolumns * 3], 0, sizeof (int16_t) * 3 * pl_ncolumns);
                 }
             }
             else {
                 //printf ("scroll down\n");
                 int r;
                 for (r = 0; r < ps->nvisiblerows-d; r++) {
-                    memcpy (&ps->fmtcache[r * ps_ncolumns * 3], &ps->fmtcache[(r + d) * ps_ncolumns * 3], sizeof (int16_t) * 3 * ps_ncolumns);
+                    memcpy (&ps->fmtcache[r * pl_ncolumns * 3], &ps->fmtcache[(r + d) * pl_ncolumns * 3], sizeof (int16_t) * 3 * pl_ncolumns);
                 }
                 for (r = ps->nvisiblerows-d; r < ps->nvisiblerows; r++) {
-                    memset (&ps->fmtcache[r * ps_ncolumns * 3], 0, sizeof (int16_t) * 3 * ps_ncolumns);
+                    memset (&ps->fmtcache[r * pl_ncolumns * 3], 0, sizeof (int16_t) * 3 * pl_ncolumns);
                 }
             }
         }
         else {
             // invalidate entire cache
-            memset (ps->fmtcache, 0, sizeof (int16_t) * 3 * ps_ncolumns * ps->nvisiblerows);
+            memset (ps->fmtcache, 0, sizeof (int16_t) * 3 * pl_ncolumns * ps->nvisiblerows);
         }
         ps->scrollpos = newscroll;
         GtkWidget *widget = ps->playlist;
-        gtkps_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
+        gtkpl_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
         gdk_draw_drawable (widget->window, widget->style->black_gc, ps->backbuf, 0, 0, 0, 0, widget->allocation.width, widget->allocation.height);
     }
 }
 
 #if 0
 void
-gtkps_prevsong (void) {
+gtkpl_prevsong (void) {
     GtkWidget *widget = ps->playlist;
     playItem_t *prev = playlist_current_ptr;
 
     if (playlist_current_ptr) {
-        printf ("gtkps_prevsong\n");
-        ps_set_current (playlist_current_ptr->prev);
+        printf ("gtkpl_prevsong\n");
+        pl_set_current (playlist_current_ptr->prev);
     }
     if (!playlist_current_ptr) {
-        printf ("gtkps_prevsong2\n");
-        ps_set_current (playlist_tail);
+        printf ("gtkpl_prevsong2\n");
+        pl_set_current (playlist_tail);
     }
     if (playlist_current_ptr != prev) {
         if (prev) {
-            gtkps_redraw_ps_row (widget, gtkps_get_idx_of (ps, prev));
+            gtkpl_redraw_pl_row (widget, gtkpl_get_idx_of (ps, prev));
         }
         if (playlist_current_ptr) {
-            gtkps_redraw_ps_row (widget, gtkps_get_idx_of (ps, playlist_current_ptr));
+            gtkpl_redraw_pl_row (widget, gtkpl_get_idx_of (ps, playlist_current_ptr));
         }
     }
 }
 #endif
 
 void
-gtkps_randomsong (void) {
+gtkpl_randomsong (void) {
     p_stop ();
-    ps_randomsong ();
+    pl_randomsong ();
 }
 
 void
-gtkps_playsongnum (int idx) {
+gtkpl_playsongnum (int idx) {
     p_stop ();
     streamer_set_nextsong (idx, 1);
 #if 0
-    playItem_t *it = gtkps_get_for_idx (ps, ps->row);
+    playItem_t *it = gtkpl_get_for_idx (ps, ps->row);
     if (it) {
         //if (it != playlist_current_ptr)
         {
             GtkWidget *widget = ps->playlist;
             int prev = -1;
             if (playlist_current_ptr) {
-                prev = gtkps_get_idx_of (ps, playlist_current_ptr);
+                prev = gtkpl_get_idx_of (ps, playlist_current_ptr);
             }
-            ps_set_current (it);
+            pl_set_current (it);
             if (prev != -1) {
-                gtkps_redraw_ps_row (widget, prev);
+                gtkpl_redraw_pl_row (widget, prev);
             }
-            gtkps_redraw_ps_row (widget, idx);
+            gtkpl_redraw_pl_row (widget, idx);
         }
     }
 #endif
 }
 
 void
-gtkps_songchanged (gtkplaylist_t *ps, int from, int to) {
+gtkpl_songchanged (gtkplaylist_t *ps, int from, int to) {
     if (from >= 0 || to >= 0) {
         GtkWidget *widget = ps->playlist;
         if (from >= 0) {
-            gtkps_redraw_ps_row (ps, from);
+            gtkpl_redraw_pl_row (ps, from);
         }
         if (to >= 0) {
-            gtkps_redraw_ps_row (ps, to);
+            gtkpl_redraw_pl_row (ps, to);
         }
     }
 }
 
 void
-gtkps_keypress (gtkplaylist_t *ps, int keyval, int state) {
+gtkpl_keypress (gtkplaylist_t *ps, int keyval, int state) {
     GtkWidget *widget = ps->playlist;
     GtkWidget *range = ps->scrollbar;
     int prev = ps->row;
@@ -767,7 +767,7 @@ gtkps_keypress (gtkplaylist_t *ps, int keyval, int state) {
         for (playItem_t *it = playlist_head[ps->iterator]; it; it = it->next[ps->iterator]) {
             it->selected = 1;
         }
-        gtkps_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
+        gtkpl_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
         gdk_draw_drawable (widget->window, widget->style->black_gc, ps->backbuf, 0, 0, 0, 0, widget->allocation.width, widget->allocation.height);
         return;
     }
@@ -776,13 +776,13 @@ gtkps_keypress (gtkplaylist_t *ps, int keyval, int state) {
         return;
     }
     else if (keyval == GDK_Delete) {
-        ps_delete_selected ();
+        pl_delete_selected ();
         if (ps->row >= (*ps->count)) {
             ps->row = (*ps->count) - 1;
         }
-        gtkps_setup_scrollbar (ps);
-        gtkps_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
-        gtkps_expose (ps, 0, 0, widget->allocation.width, widget->allocation.height);
+        gtkpl_setup_scrollbar (ps);
+        gtkpl_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
+        gtkpl_expose (ps, 0, 0, widget->allocation.width, widget->allocation.height);
         search_refresh ();
         return;
     }
@@ -839,10 +839,10 @@ gtkps_keypress (gtkplaylist_t *ps, int keyval, int state) {
 //                    if (!it->selected) {
                         it->selected = 1;
                         if (newscroll == ps->scrollpos) {
-                            gtkps_redraw_ps_row (ps, idx);
+                            gtkpl_redraw_pl_row (ps, idx);
                         }
                         else {
-                            gtkps_redraw_ps_row_novis (ps, idx);
+                            gtkpl_redraw_pl_row_novis (ps, idx);
                         }
 //                    }
                 }
@@ -850,10 +850,10 @@ gtkps_keypress (gtkplaylist_t *ps, int keyval, int state) {
                 {
                     it->selected = 0;
                     if (newscroll == ps->scrollpos) {
-                        gtkps_redraw_ps_row (ps, idx);
+                        gtkpl_redraw_pl_row (ps, idx);
                     }
                     else {
-                        gtkps_redraw_ps_row_novis (ps, idx);
+                        gtkpl_redraw_pl_row_novis (ps, idx);
                     }
                 }
             }
@@ -869,20 +869,20 @@ gtkps_keypress (gtkplaylist_t *ps, int keyval, int state) {
                     if (!it->selected) {
                         it->selected = 1;
                         if (newscroll == ps->scrollpos) {
-                            gtkps_redraw_ps_row (ps, idx);
+                            gtkpl_redraw_pl_row (ps, idx);
                         }
                         else {
-                            gtkps_redraw_ps_row_novis (ps, idx);
+                            gtkpl_redraw_pl_row_novis (ps, idx);
                         }
                     }
                 }
                 else if (it->selected) {
                     it->selected = 0;
                     if (newscroll == ps->scrollpos) {
-                        gtkps_redraw_ps_row (ps, idx);
+                        gtkpl_redraw_pl_row (ps, idx);
                     }
                     else {
-                        gtkps_redraw_ps_row_novis (ps, idx);
+                        gtkpl_redraw_pl_row_novis (ps, idx);
                     }
                 }
             }
@@ -896,7 +896,7 @@ gtkps_keypress (gtkplaylist_t *ps, int keyval, int state) {
 static int drag_motion_y = -1;
 
 void
-gtkps_track_dragdrop (gtkplaylist_t *ps, int y) {
+gtkpl_track_dragdrop (gtkplaylist_t *ps, int y) {
     GtkWidget *widget = ps->playlist;
     if (drag_motion_y != -1) {
         // erase previous track
@@ -923,9 +923,9 @@ gtkps_track_dragdrop (gtkplaylist_t *ps, int y) {
 }
 
 void
-gtkps_handle_drag_drop (gtkplaylist_t *ps, int drop_y, uint32_t *d, int length) {
+gtkpl_handle_drag_drop (gtkplaylist_t *ps, int drop_y, uint32_t *d, int length) {
     int drop_row = drop_y / rowheight + ps->scrollpos;
-    playItem_t *drop_before = gtkps_get_for_idx (ps, drop_row);
+    playItem_t *drop_before = gtkpl_get_for_idx (ps, drop_row);
     while (drop_before && drop_before->selected) {
         drop_before = drop_before->next[ps->iterator];
     }
@@ -993,11 +993,11 @@ on_playlist_drag_end                   (GtkWidget       *widget,
                                         GdkDragContext  *drag_context,
                                         gpointer         user_data)
 {
-    GTKPS_PROLOGUE;
+    GTKpl_PROLOGUE;
     // invalidate entire cache - slow, but rare
-    memset (ps->fmtcache, 0, sizeof (int16_t) * 3 * ps_ncolumns * ps->nvisiblerows);
-    gtkps_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
-    gtkps_expose (ps, 0, 0, widget->allocation.width, widget->allocation.height);
+    memset (ps->fmtcache, 0, sizeof (int16_t) * 3 * pl_ncolumns * ps->nvisiblerows);
+    gtkpl_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
+    gtkpl_expose (ps, 0, 0, widget->allocation.width, widget->allocation.height);
 }
 
 void
@@ -1018,7 +1018,7 @@ strcopy_special (char *dest, const char *src, int len) {
 }
 
 int
-gtkps_add_file_info_cb (playItem_t *it, void *data) {
+gtkpl_add_file_info_cb (playItem_t *it, void *data) {
     static int countdown = 0;
     if (countdown == 0) {
         GtkEntry *e = (GtkEntry *)data;
@@ -1033,7 +1033,7 @@ gtkps_add_file_info_cb (playItem_t *it, void *data) {
 }
 
 void
-gtkps_add_fm_dropped_files (gtkplaylist_t *ps, char *ptr, int length, int drop_y) {
+gtkpl_add_fm_dropped_files (gtkplaylist_t *ps, char *ptr, int length, int drop_y) {
     GDK_THREADS_ENTER();
     extern GtkWidget *mainwin;
     gtk_widget_set_sensitive (mainwin, FALSE);
@@ -1047,7 +1047,7 @@ gtkps_add_fm_dropped_files (gtkplaylist_t *ps, char *ptr, int length, int drop_y
     GDK_THREADS_LEAVE();
 
     int drop_row = drop_y / rowheight + ps->scrollpos;
-    playItem_t *drop_before = gtkps_get_for_idx (ps, drop_row);
+    playItem_t *drop_before = gtkpl_get_for_idx (ps, drop_row);
     playItem_t *after = NULL;
     if (drop_before) {
         after = drop_before->prev[ps->iterator];
@@ -1063,9 +1063,9 @@ gtkps_add_fm_dropped_files (gtkplaylist_t *ps, char *ptr, int length, int drop_y
             strcopy_special (fname, p, pe-p);
             //strncpy (fname, p, pe - p);
             //fname[pe - p] = 0;
-            playItem_t *inserted = ps_insert_dir (after, fname + 7, gtkps_add_file_info_cb, e);
+            playItem_t *inserted = pl_insert_dir (after, fname + 7, gtkpl_add_file_info_cb, e);
             if (!inserted) {
-                inserted = ps_insert_file (after, fname + 7, gtkps_add_file_info_cb, e);
+                inserted = pl_insert_file (after, fname + 7, gtkpl_add_file_info_cb, e);
             }
             if (inserted) {
                 after = inserted;
@@ -1079,21 +1079,21 @@ gtkps_add_fm_dropped_files (gtkplaylist_t *ps, char *ptr, int length, int drop_y
     }
     free (ptr);
     // invalidate entire cache - slow, but rare
-    memset (ps->fmtcache, 0, sizeof (int16_t) * 3 * ps_ncolumns * ps->nvisiblerows);
+    memset (ps->fmtcache, 0, sizeof (int16_t) * 3 * pl_ncolumns * ps->nvisiblerows);
     GDK_THREADS_ENTER();
     gtk_widget_destroy (d);
     gtk_widget_set_sensitive (mainwin, TRUE);
-    gtkps_setup_scrollbar (ps);
+    gtkpl_setup_scrollbar (ps);
     GtkWidget *widget = ps->playlist;
-    gtkps_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
-    gtkps_expose (ps, 0, 0, widget->allocation.width, widget->allocation.height);
+    gtkpl_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
+    gtkpl_expose (ps, 0, 0, widget->allocation.width, widget->allocation.height);
     search_refresh ();
     GDK_THREADS_LEAVE();
 
 }
 
 void
-gtkps_handle_fm_drag_drop (gtkplaylist_t *ps, int drop_y, void *ptr, int length) {
+gtkpl_handle_fm_drag_drop (gtkplaylist_t *ps, int drop_y, void *ptr, int length) {
     // this happens when dropped from file manager
     char *mem = malloc (length);
     memcpy (mem, ptr, length);
@@ -1102,14 +1102,14 @@ gtkps_handle_fm_drag_drop (gtkplaylist_t *ps, int drop_y, void *ptr, int length)
 }
 
 void
-gtkps_header_draw (gtkplaylist_t *ps) {
+gtkpl_header_draw (gtkplaylist_t *ps) {
     GtkWidget *widget = ps->header;
     int x = 0;
     int w = 100;
     int h = widget->allocation.height;
     const char *detail = "toolbar";
 
-    for (int i = 0; i < ps_ncolumns; i++) {
+    for (int i = 0; i < pl_ncolumns; i++) {
         if (x >= widget->allocation.width) {
             break;
         }
@@ -1129,7 +1129,7 @@ gtkps_header_draw (gtkplaylist_t *ps) {
         return;
     }
     x = 0;
-    for (int i = 0; i < ps_ncolumns; i++) {
+    for (int i = 0; i < pl_ncolumns; i++) {
         if (x >= widget->allocation.width) {
             break;
         }
@@ -1137,7 +1137,7 @@ gtkps_header_draw (gtkplaylist_t *ps) {
         if (w > 0) {
             cairo_move_to (cr, x + 5, 15);
             if (!ps->header_fitted[i]) {
-                gtkps_fit_text (cr, ps->colnames_fitted[i], NULL, ps_colname_max, colnames[i], ps->colwidths[i]-10);
+                gtkpl_fit_text (cr, ps->colnames_fitted[i], NULL, pl_colname_max, colnames[i], ps->colwidths[i]-10);
                 ps->header_fitted[i] = 1;
             }
             cairo_show_text (cr, ps->colnames_fitted[i]);
@@ -1152,8 +1152,8 @@ on_header_expose_event                 (GtkWidget       *widget,
                                         GdkEventExpose  *event,
                                         gpointer         user_data)
 {
-    GTKPS_PROLOGUE;
-    gtkps_header_draw (ps);
+    GTKpl_PROLOGUE;
+    gtkpl_header_draw (ps);
     return FALSE;
 }
 
@@ -1190,7 +1190,7 @@ on_header_motion_notify_event          (GtkWidget       *widget,
                                         GdkEventMotion  *event,
                                         gpointer         user_data)
 {
-    GTKPS_PROLOGUE;
+    GTKpl_PROLOGUE;
     if (header_dragging >= 0) {
         gdk_window_set_cursor (widget->window, cursor_drag);
     }
@@ -1214,16 +1214,16 @@ on_header_motion_notify_event          (GtkWidget       *widget,
         //printf ("ev->x = %d, w = %d\n", (int)event->x, newx - x - 2);
         ps->header_fitted[header_sizing] = 0;
         for (int k = 0; k < ps->nvisiblerows; k++) {
-            int cidx = (k * ps_ncolumns + header_sizing) * 3;
+            int cidx = (k * pl_ncolumns + header_sizing) * 3;
             ps->fmtcache[cidx+2] = 0;
         }
-        gtkps_header_draw (ps);
-        gtkps_draw_playlist (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
-        gtkps_expose (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
+        gtkpl_header_draw (ps);
+        gtkpl_draw_playlist (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
+        gtkpl_expose (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
     }
     else {
         int x = 0;
-        for (int i = 0; i < ps_ncolumns; i++) {
+        for (int i = 0; i < pl_ncolumns; i++) {
             int w = ps->colwidths[i];
             if (w > 0) { // ignore collapsed columns (hack for search window)
                 if (event->x >= x + w - 2 && event->x <= x + w) {
@@ -1248,7 +1248,7 @@ on_header_button_press_event           (GtkWidget       *widget,
                                         GdkEventButton  *event,
                                         gpointer         user_data)
 {
-    GTKPS_PROLOGUE;
+    GTKpl_PROLOGUE;
     if (event->button == 1) {
         // start sizing/dragging
         header_dragging = -1;
@@ -1256,7 +1256,7 @@ on_header_button_press_event           (GtkWidget       *widget,
         header_dragpt[0] = event->x;
         header_dragpt[1] = event->y;
         int x = 0;
-        for (int i = 0; i < ps_ncolumns; i++) {
+        for (int i = 0; i < pl_ncolumns; i++) {
             int w = ps->colwidths[i];
             if (event->x >= x + w - 2 && event->x <= x + w) {
                 header_sizing = i;
@@ -1279,11 +1279,11 @@ on_header_button_release_event         (GtkWidget       *widget,
                                         GdkEventButton  *event,
                                         gpointer         user_data)
 {
-    GTKPS_PROLOGUE;
+    GTKpl_PROLOGUE;
     header_dragging = -1;
     header_sizing = -1;
     int x = 0;
-    for (int i = 0; i < ps_ncolumns; i++) {
+    for (int i = 0; i < pl_ncolumns; i++) {
         int w = ps->colwidths[i];
         if (event->x >= x + w - 2 && event->x <= x + w) {
             gdk_window_set_cursor (widget->window, cursor_sz);
@@ -1298,7 +1298,7 @@ on_header_button_release_event         (GtkWidget       *widget,
 }
 
 void
-gtkps_add_dir (gtkplaylist_t *ps, char *folder) {
+gtkpl_add_dir (gtkplaylist_t *ps, char *folder) {
     // create window
     GDK_THREADS_ENTER();
     extern GtkWidget *mainwin;
@@ -1311,27 +1311,27 @@ gtkps_add_dir (gtkplaylist_t *ps, char *folder) {
     gtk_widget_show_all (d);
     gtk_window_present (GTK_WINDOW (d));
     GDK_THREADS_LEAVE();
-    ps_add_dir (folder, gtkps_add_file_info_cb, e);
+    pl_add_dir (folder, gtkpl_add_file_info_cb, e);
     g_free (folder);
     GDK_THREADS_ENTER();
     gtk_widget_destroy (d);
     gtk_widget_set_sensitive (mainwin, TRUE);
-    gtkps_setup_scrollbar (ps);
+    gtkpl_setup_scrollbar (ps);
     GtkWidget *widget = ps->playlist;
-    gtkps_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
-    gtkps_expose (ps, 0, 0, widget->allocation.width, widget->allocation.height);
+    gtkpl_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
+    gtkpl_expose (ps, 0, 0, widget->allocation.width, widget->allocation.height);
     search_refresh ();
     GDK_THREADS_LEAVE();
 }
 
 static void
-gtkps_addfile_cb (gpointer data, gpointer userdata) {
-    ps_add_file (data, gtkps_add_file_info_cb, userdata);
+gtkpl_addfile_cb (gpointer data, gpointer userdata) {
+    pl_add_file (data, gtkpl_add_file_info_cb, userdata);
     g_free (data);
 }
 
 void
-gtkps_add_files (gtkplaylist_t *ps, GSList *lst) {
+gtkpl_add_files (gtkplaylist_t *ps, GSList *lst) {
     // create window
     GDK_THREADS_ENTER();
     extern GtkWidget *mainwin;
@@ -1344,21 +1344,21 @@ gtkps_add_files (gtkplaylist_t *ps, GSList *lst) {
     gtk_widget_show_all (d);
     gtk_window_present (GTK_WINDOW (d));
     GDK_THREADS_LEAVE();
-    g_slist_foreach(lst, gtkps_addfile_cb, e);
+    g_slist_foreach(lst, gtkpl_addfile_cb, e);
     g_slist_free (lst);
     GDK_THREADS_ENTER();
     gtk_widget_destroy (d);
     gtk_widget_set_sensitive (mainwin, TRUE);
-    gtkps_setup_scrollbar (ps);
+    gtkpl_setup_scrollbar (ps);
     GtkWidget *widget = ps->playlist;
-    gtkps_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
-    gtkps_expose (ps, 0, 0, widget->allocation.width, widget->allocation.height);
+    gtkpl_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
+    gtkpl_expose (ps, 0, 0, widget->allocation.width, widget->allocation.height);
     search_refresh ();
     GDK_THREADS_LEAVE();
 }
 
 void
-gtkps_playsong (gtkplaylist_t *ps) {
+gtkpl_playsong (gtkplaylist_t *ps) {
     if (p_ispaused ()) {
         printf ("unpause\n");
         p_unpause ();
@@ -1366,7 +1366,7 @@ gtkps_playsong (gtkplaylist_t *ps) {
     else if (playlist_current_ptr) {
         p_stop ();
         printf ("restart\n");
-        streamer_set_nextsong (gtkps_get_idx_of (ps, playlist_current_ptr), 1);
+        streamer_set_nextsong (gtkpl_get_idx_of (ps, playlist_current_ptr), 1);
     }
     else if (ps->row != -1) {
         printf ("start under cursor\n");
@@ -1379,7 +1379,7 @@ gtkps_playsong (gtkplaylist_t *ps) {
 }
 
 int
-gtkps_get_idx_of (gtkplaylist_t *ps, playItem_t *it) {
+gtkpl_get_idx_of (gtkplaylist_t *ps, playItem_t *it) {
     playItem_t *c = playlist_head[ps->iterator];
     int idx = 0;
     while (c && c != it) {
@@ -1393,7 +1393,7 @@ gtkps_get_idx_of (gtkplaylist_t *ps, playItem_t *it) {
 }
 
 playItem_t *
-gtkps_get_for_idx (gtkplaylist_t *ps, int idx) {
+gtkpl_get_for_idx (gtkplaylist_t *ps, int idx) {
     playItem_t *it = playlist_head[ps->iterator];
     while (idx--) {
         if (!it)
