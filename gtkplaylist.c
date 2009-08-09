@@ -441,7 +441,8 @@ gtkps_mouse1_pressed (gtkplaylist_t *ps, int state, int ex, int ey, double time)
             && fabs(ps->lastpos[1] - ey) < 3) {
         // doubleclick - play this item
         if (ps->row != -1) {
-            messagepump_push (M_PLAYSONGNUM, 0, ps->row, 0);
+            playItem_t *it = gtkps_get_for_idx (ps, ps->row);
+            messagepump_push (M_PLAYSONGNUM, 0, ps_get_idx_of (it), 0);
         }
 
 
@@ -1002,16 +1003,16 @@ strcopy_special (char *dest, const char *src, int len) {
 
 int
 gtkps_add_file_info_cb (playItem_t *it, void *data) {
-    static int countdown = 0;
-    if (countdown == 0) {
+//    static int countdown = 0;
+//    if (countdown == 0) {
         GtkEntry *e = (GtkEntry *)data;
         GDK_THREADS_ENTER();
         gtk_entry_set_text (GTK_ENTRY (e), it->fname);
         GDK_THREADS_LEAVE();
-        countdown = 10;
-        //usleep (0);
-    }
-    countdown--;
+        usleep (0);
+//        countdown = 10;
+//    }
+//    countdown--;
     return 0;
 }
 

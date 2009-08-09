@@ -21,6 +21,7 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <iconv.h>
+#include <sys/mman.h>
 #include "codec.h"
 #include "cmp3.h"
 #include "playlist.h"
@@ -128,6 +129,8 @@ cmp3_scan_stream (float position) {
     int nframe = 0;
     int nskipped = 0;
     float duration = 0;
+    int nreads = 0;
+    int nseeks = 0;
     for (;;) {
         if (position >= 0 && duration > position) {
             // set decoder timer
@@ -140,6 +143,7 @@ cmp3_scan_stream (float position) {
         if (fread (&sync, 1, 1, buffer.file) != 1) {
             break; // eof
         }
+        nreads++;
         if (sync != 0xff) {
             nskipped++;
             continue; // not an mpeg frame
@@ -149,6 +153,7 @@ cmp3_scan_stream (float position) {
             if (fread (&sync, 1, 1, buffer.file) != 1) {
                 break; // eof
             }
+                nreads++;
             if ((sync >> 5) != 7) {
                 nskipped++;
                 continue;
@@ -160,10 +165,12 @@ cmp3_scan_stream (float position) {
         if (fread (&sync, 1, 1, buffer.file) != 1) {
             break; // eof
         }
+        nreads++;
         hdr |= sync << 8;
         if (fread (&sync, 1, 1, buffer.file) != 1) {
             break; // eof
         }
+        nreads++;
         hdr |= sync;
         nskipped = 0;
 
@@ -261,6 +268,7 @@ cmp3_scan_stream (float position) {
         nframe++;
         if (packetlength > 0) {
             fseek (buffer.file, packetlength-4, SEEK_CUR);
+            nseeks++;
         }
     }
 //    cmp3.info.duration = duration;
@@ -273,7 +281,175 @@ cmp3_scan_stream (float position) {
         //printf ("file doesn't looks like mpeg stream\n");
         return -1;
     }
-    //printf ("song duration: %f\n", duration);
+    printf ("mp3 scan stats: %d reads, %d seeks\n", nreads, nseeks);
+    return duration;
+}
+
+static int
+cmp3_scan_stream2 (float position) {
+    fseek (buffer.file, 0, SEEK_END);
+    size_t len = ftell (buffer.file);
+    uint8_t *map = mmap (NULL, len, PROT_READ, MAP_PRIVATE, buffer.file->_fileno, 0);
+    assert (map);
+    uint8_t *curr = map;
+    int nframe = 0;
+    int nskipped = 0;
+    float duration = 0;
+    int nreads = 0;
+    int nseeks = 0;
+
+#define read_byte(x) \
+    if ((curr-map)>=len) break; \
+    x = *curr; \
+    curr++;
+
+    for (;;) {
+        if (position >= 0 && duration > position) {
+            // set decoder timer
+            timer.seconds = (int)duration;
+            timer.fraction = (int)((duration - (float)timer.seconds)*MAD_TIMER_RESOLUTION);
+            break;
+        }
+        uint32_t hdr;
+        uint8_t sync;
+        read_byte (sync);
+        nreads++;
+        if (sync != 0xff) {
+            nskipped++;
+            continue; // not an mpeg frame
+        }
+        else {
+            // 2nd sync byte
+            read_byte(sync);
+            nreads++;
+            if ((sync >> 5) != 7) {
+                nskipped++;
+                continue;
+            }
+        }
+        // found frame
+        hdr = (0xff<<24) | (sync << 16);
+        // read 2 bytes more
+        read_byte (sync);
+        nreads++;
+        hdr |= sync << 8;
+        read_byte (sync);
+        nreads++;
+        hdr |= sync;
+        nskipped = 0;
+
+        // parse header
+        
+        // sync bits
+        int usync = hdr & 0xffe00000;
+        if (usync != 0xffe00000) {
+            printf ("fatal error: mp3 header parser is broken\n");
+        }
+
+        // mpeg version
+        int vertbl[] = {3, -1, 2, 1}; // 3 is 2.5
+        int ver = (hdr & (3<<19)) >> 19;
+        ver = vertbl[ver];
+        if (ver < 0) {
+            continue; // invalid frame
+        }
+
+        // layer info
+        int ltbl[] = { -1, 3, 2, 1 };
+        int layer = (hdr & (3<<17)) >> 17;
+        layer = ltbl[layer];
+        if (layer < 0) {
+            continue; // invalid frame
+        }
+
+        // bitrate
+        int brtable[5][16] = {
+            { 0, 32, 64, 96, 128, 160, 192, 224, 256, 288, 320, 352, 384, 416, 448, -1 },
+            { 0, 32, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320, 384, -1 },
+            { 0, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320, -1 },
+            { 0, 32, 48, 56, 64, 80, 96, 112, 128, 144, 160, 176, 192, 224, 256, -1 },
+            { 0, 8, 16, 24, 32, 40, 48, 56, 64, 80, 96, 112, 128, 144, 160, -1 }
+        };
+        int bitrate = (hdr & (0x0f<<12)) >> 12;
+        int idx = 0;
+        if (ver == 1) {
+            idx = layer - 1;
+        }
+        else {
+            idx = layer == 1 ? 3 : 4;
+        }
+        bitrate = brtable[idx][bitrate];
+        if (bitrate < 0) {
+            continue; // invalid frame
+        }
+
+        // samplerate
+        int srtable[3][4] = {
+            {44100, 48000, 32000, -1},
+            {22050, 24000, 16000, -1},
+            {11025, 12000, 8000, -1},
+        };
+        int samplerate = (hdr & (0x03<<10))>>10;
+        samplerate = srtable[ver-1][samplerate];
+        if (samplerate < 0) {
+            continue; // invalid frame
+        }
+
+        // padding
+        int padding = (hdr & (0x1 << 9)) >> 9;
+
+        int chantbl[4] = { 2, 2, 2, 1 };
+        int nchannels = (hdr & (0x3 << 6)) >> 6;
+        nchannels = chantbl[nchannels];
+
+        if (nframe == 0 || cmp3.info.samplesPerSecond == -1)
+        {
+            cmp3.info.bitsPerSample = 16;
+            cmp3.info.channels = nchannels;
+            cmp3.info.samplesPerSecond = samplerate;
+        }
+
+        // packetlength
+        int packetlength = 0;
+        bitrate *= 1000;
+        if (samplerate > 0 && bitrate > 0) {
+            if (layer == 1) {
+                duration += (float)384 / samplerate;
+                packetlength = (12 * bitrate / samplerate + padding) * 4;
+            }
+            else if (layer == 2) {
+                duration += (float)1152 / samplerate;
+                packetlength = 144 * bitrate / samplerate + padding;
+            }
+            else if (layer == 3) {
+                duration += (float)1152 / samplerate;
+                packetlength = 144 * bitrate / samplerate + padding;
+            }
+        }
+        else {
+            packetlength = 0;
+        }
+        nframe++;
+        if (packetlength > 0) {
+            curr += packetlength-4;
+            if ((curr - map) >= len) {
+                break;
+            }
+            nseeks++;
+        }
+    }
+//    cmp3.info.duration = duration;
+    if (position >= 0 && duration > position) {
+        // set decoder timer
+        timer.seconds = (int)duration;
+        timer.fraction = (int)((duration - (float)timer.seconds)*MAD_TIMER_RESOLUTION);
+    }
+    if (nframe == 0) {
+        //printf ("file doesn't looks like mpeg stream\n");
+        duration = -1;
+    }
+    printf ("mp3 scan stats: %d reads, %d seeks\n", nreads, nseeks);
+    munmap (map, len);
     return duration;
 }
 
@@ -1063,8 +1239,8 @@ cmp3_insert (playItem_t *after, const char *fname) {
     cmp3.info.position = 0;
 	mad_timer_reset(&timer);
 
-    float dur;
-    if ((dur = cmp3_scan_stream (-1)) >= 0) {
+    float dur = 0;
+    if ((dur = cmp3_scan_stream2 (-1)) >= 0) {
         it->duration = dur;
         //printf ("duration: %f\n", dur);
         after = ps_insert_item (after, it);
