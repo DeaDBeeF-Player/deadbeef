@@ -387,3 +387,7 @@ on_playlist_motion_notify_event        (GtkWidget       *widget,
                                         GdkEventMotion  *event,
                                         gpointer         user_data);
 
+
+void
+on_playscroll_value_changed            (GtkRange        *range,
+                                        gpointer         user_data);

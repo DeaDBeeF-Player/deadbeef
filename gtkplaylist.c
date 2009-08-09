@@ -317,7 +317,6 @@ gtkps_draw_playlist (gtkplaylist_t *ps, int x, int y, int w, int h) {
 	int row1;
 	int row2;
 	int row2_full;
-	printf ("number of items in ps: %d\n", *ps->count);
 	row1 = max (0, y / rowheight + ps->scrollpos);
 	row2 = min ((*ps->count), (y+h) / rowheight + ps->scrollpos + 1);
 	row2_full = (y+h) / rowheight + ps->scrollpos + 1;
@@ -1003,11 +1002,16 @@ strcopy_special (char *dest, const char *src, int len) {
 
 int
 gtkps_add_file_info_cb (playItem_t *it, void *data) {
-    GtkEntry *e = (GtkEntry *)data;
-    GDK_THREADS_ENTER();
-    gtk_entry_set_text (GTK_ENTRY (e), it->fname);
-    GDK_THREADS_LEAVE();
-    usleep (0);
+    static int countdown = 0;
+    if (countdown == 0) {
+        GtkEntry *e = (GtkEntry *)data;
+        GDK_THREADS_ENTER();
+        gtk_entry_set_text (GTK_ENTRY (e), it->fname);
+        GDK_THREADS_LEAVE();
+        countdown = 10;
+        //usleep (0);
+    }
+    countdown--;
     return 0;
 }
 

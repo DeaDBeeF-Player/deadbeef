@@ -60,7 +60,6 @@ on_searchentry_changed                 (GtkEditable     *editable,
     // with search_head
 
     const gchar *text = gtk_entry_get_text (GTK_ENTRY (editable));
-    printf ("%s\n", text);
 
     search_head = NULL;
     playItem_t *tail = NULL;
@@ -78,7 +77,6 @@ on_searchentry_changed                 (GtkEditable     *editable,
                     else {
                         search_head = tail = it;
                     }
-                    printf ("found matching item: %s -> %s\n", text, m->value);
                     search_count++;
                     break;
                 }
@@ -88,6 +86,7 @@ on_searchentry_changed                 (GtkEditable     *editable,
 
     extern gtkplaylist_t search_playlist;
     gtkplaylist_t *ps = &search_playlist;
+    gtkps_setup_scrollbar (ps);
     memset (ps->fmtcache, 0, sizeof (int16_t) * 3 * ps_ncolumns * ps->nvisiblerows);
     gtkps_draw_playlist (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
     gtkps_expose (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);

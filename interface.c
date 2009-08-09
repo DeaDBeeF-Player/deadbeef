@@ -777,7 +777,7 @@ create_searchwin (void)
                     G_CALLBACK (on_playlist_motion_notify_event),
                     NULL);
   g_signal_connect ((gpointer) searchscroll, "value_changed",
-                    G_CALLBACK (on_searchscroll_value_changed),
+                    G_CALLBACK (on_playscroll_value_changed),
                     NULL);
 
   /* Store pointers to all widgets, for use by lookup_widget(). */

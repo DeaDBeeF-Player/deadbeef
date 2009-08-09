@@ -1610,7 +1610,7 @@ Public License instead of this License.  But first, please read
 	      <property name="update_policy">GTK_UPDATE_CONTINUOUS</property>
 	      <property name="inverted">False</property>
 	      <property name="adjustment">0 0 1 1 0 0</property>
-	      <signal name="value_changed" handler="on_searchscroll_value_changed" last_modification_time="Sat, 08 Aug 2009 18:53:05 GMT"/>
+	      <signal name="value_changed" handler="on_playscroll_value_changed" last_modification_time="Sat, 08 Aug 2009 23:47:34 GMT"/>
 	    </widget>
 	    <packing>
 	      <property name="padding">0</property>
