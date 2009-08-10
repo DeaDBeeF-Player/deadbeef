@@ -57,8 +57,8 @@ static int sldb_poolmark;
 static int16_t *sldb_lengths[SLDB_MAX_SONGS];
 static int sldb_size;
 static int sldb_loaded;
-//static const char *sldb_fname = "/home/waker/hvsc/C64Music/DOCUMENTS/Songlengths.txt";
-static const char *sldb_fname = "/mnt/win/mus/chiptune/C64Music/DOCUMENTS/Songlengths.txt";
+static const char *sldb_fname = "/home/waker/hvsc/C64Music/DOCUMENTS/Songlengths.txt";
+//static const char *sldb_fname = "/mnt/win/mus/chiptune/C64Music/DOCUMENTS/Songlengths.txt";
 
 static void sldb_load(const char *fname)
 {
@@ -368,7 +368,6 @@ csid_insert (playItem_t *after, const char *fname) {
     SidTune *tune;
     tune = new SidTune (fname);
     int tunes = tune->getInfo ().songs;
-#if 0
     uint8_t sig[16];
     md5_t md5;
     md5_init (&md5);
@@ -396,7 +395,6 @@ csid_insert (playItem_t *after, const char *fname) {
     if (sldb_loaded) {
         song = sldb_find (sig);
     }
-#endif
 
     for (int s = 0; s < tunes; s++) {
         if (tune->selectSong (s+1)) {
@@ -443,7 +441,6 @@ csid_insert (playItem_t *after, const char *fname) {
             }
 
             float length = 120;
-#if 0
             if (sldb_loaded) {
                 if (song >= 0 && sldb_lengths[song][s] >= 0) {
                     length = sldb_lengths[song][s];
@@ -456,7 +453,6 @@ csid_insert (playItem_t *after, const char *fname) {
                 //            printf ("\n");
                 //        }
             }
-#endif
             it->duration = length;
             it->filetype = "SID";
 

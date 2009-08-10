@@ -515,6 +515,7 @@ pl_insert_item (playItem_t *after, playItem_t *it) {
     pl_count++;
     int idx = (float)rand ()/RAND_MAX * pl_count;
 
+#if 0
     // shuffle
     playItem_t *prev = NULL;
     if (!playlist_head[PL_SHUFFLE]) {
@@ -543,6 +544,7 @@ pl_insert_item (playItem_t *after, playItem_t *it) {
             prev = sh;
         }
     }
+#endif
 
     return it;
 }
