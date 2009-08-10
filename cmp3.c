@@ -62,6 +62,7 @@ cmp3_scan_stream2 (float position);
 
 int
 cmp3_init (struct playItem_s *it) {
+    printf ("opening file %s\n", it->fname);
     buffer.file = fopen (it->fname, "rb");
     if (!buffer.file) {
         return -1;
@@ -74,8 +75,11 @@ cmp3_init (struct playItem_s *it) {
 	mad_timer_reset(&timer);
 
     if (it->duration <= 0) {
-        it->duration = cmp3_scan_stream (-1);
+        it->duration = cmp3_scan_stream (-1); // scan entire stream, calc duration
         rewind (buffer.file);
+    }
+    else {
+        cmp3_scan_stream (0); // load up to 1st frame
     }
 	mad_stream_init(&stream);
 	mad_frame_init(&frame);
