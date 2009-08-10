@@ -30,6 +30,7 @@ GtkWidget*
 create_mainwin (void)
 {
   GtkWidget *mainwin;
+  GdkPixbuf *mainwin_icon_pixbuf;
   GtkWidget *vbox1;
   GtkWidget *hbox2;
   GtkWidget *menubar1;
@@ -83,10 +84,7 @@ create_mainwin (void)
   GtkWidget *nextbtn;
   GtkWidget *image5;
   GtkWidget *playrand;
-  GtkWidget *alignment1;
-  GtkWidget *hbox4;
   GtkWidget *image6;
-  GtkWidget *label3;
   GtkWidget *vbox2;
   GtkWidget *volume;
   GtkWidget *hbox5;
@@ -110,6 +108,12 @@ create_mainwin (void)
   gtk_widget_set_events (mainwin, GDK_KEY_PRESS_MASK);
   gtk_window_set_title (GTK_WINDOW (mainwin), "DeaDBeeF");
   gtk_window_set_default_size (GTK_WINDOW (mainwin), 750, 650);
+  mainwin_icon_pixbuf = create_pixbuf ("play_24.png");
+  if (mainwin_icon_pixbuf)
+    {
+      gtk_window_set_icon (GTK_WINDOW (mainwin), mainwin_icon_pixbuf);
+      gdk_pixbuf_unref (mainwin_icon_pixbuf);
+    }
 
   vbox1 = gtk_vbox_new (FALSE, 0);
   gtk_widget_show (vbox1);
@@ -285,7 +289,7 @@ create_mainwin (void)
   GTK_WIDGET_UNSET_FLAGS (stopbtn, GTK_CAN_FOCUS);
   gtk_button_set_relief (GTK_BUTTON (stopbtn), GTK_RELIEF_NONE);
 
-  image1 = gtk_image_new_from_stock ("gtk-media-stop", GTK_ICON_SIZE_BUTTON);
+  image1 = create_pixmap (mainwin, "stop_24.png");
   gtk_widget_show (image1);
   gtk_container_add (GTK_CONTAINER (stopbtn), image1);
 
@@ -295,7 +299,7 @@ create_mainwin (void)
   GTK_WIDGET_UNSET_FLAGS (playbtn, GTK_CAN_FOCUS);
   gtk_button_set_relief (GTK_BUTTON (playbtn), GTK_RELIEF_NONE);
 
-  image2 = gtk_image_new_from_stock ("gtk-media-play", GTK_ICON_SIZE_BUTTON);
+  image2 = create_pixmap (mainwin, "play_24.png");
   gtk_widget_show (image2);
   gtk_container_add (GTK_CONTAINER (playbtn), image2);
 
@@ -305,7 +309,7 @@ create_mainwin (void)
   GTK_WIDGET_UNSET_FLAGS (pausebtn, GTK_CAN_FOCUS);
   gtk_button_set_relief (GTK_BUTTON (pausebtn), GTK_RELIEF_NONE);
 
-  image3 = gtk_image_new_from_stock ("gtk-media-pause", GTK_ICON_SIZE_BUTTON);
+  image3 = create_pixmap (mainwin, "pause_24.png");
   gtk_widget_show (image3);
   gtk_container_add (GTK_CONTAINER (pausebtn), image3);
 
@@ -315,7 +319,7 @@ create_mainwin (void)
   GTK_WIDGET_UNSET_FLAGS (prevbtn, GTK_CAN_FOCUS);
   gtk_button_set_relief (GTK_BUTTON (prevbtn), GTK_RELIEF_NONE);
 
-  image4 = gtk_image_new_from_stock ("gtk-media-previous", GTK_ICON_SIZE_BUTTON);
+  image4 = create_pixmap (mainwin, "prev_24.png");
   gtk_widget_show (image4);
   gtk_container_add (GTK_CONTAINER (prevbtn), image4);
 
@@ -325,7 +329,7 @@ create_mainwin (void)
   GTK_WIDGET_UNSET_FLAGS (nextbtn, GTK_CAN_FOCUS);
   gtk_button_set_relief (GTK_BUTTON (nextbtn), GTK_RELIEF_NONE);
 
-  image5 = gtk_image_new_from_stock ("gtk-media-next", GTK_ICON_SIZE_BUTTON);
+  image5 = create_pixmap (mainwin, "next_24.png");
   gtk_widget_show (image5);
   gtk_container_add (GTK_CONTAINER (nextbtn), image5);
 
@@ -335,21 +339,9 @@ create_mainwin (void)
   GTK_WIDGET_UNSET_FLAGS (playrand, GTK_CAN_FOCUS);
   gtk_button_set_relief (GTK_BUTTON (playrand), GTK_RELIEF_NONE);
 
-  alignment1 = gtk_alignment_new (0.5, 0.5, 0, 0);
-  gtk_widget_show (alignment1);
-  gtk_container_add (GTK_CONTAINER (playrand), alignment1);
-
-  hbox4 = gtk_hbox_new (FALSE, 2);
-  gtk_widget_show (hbox4);
-  gtk_container_add (GTK_CONTAINER (alignment1), hbox4);
-
-  image6 = gtk_image_new_from_stock ("gtk-media-play", GTK_ICON_SIZE_BUTTON);
+  image6 = create_pixmap (mainwin, "random_24.png");
   gtk_widget_show (image6);
-  gtk_box_pack_start (GTK_BOX (hbox4), image6, FALSE, FALSE, 0);
-
-  label3 = gtk_label_new_with_mnemonic ("?");
-  gtk_widget_show (label3);
-  gtk_box_pack_start (GTK_BOX (hbox4), label3, FALSE, FALSE, 0);
+  gtk_container_add (GTK_CONTAINER (playrand), image6);
 
   vbox2 = gtk_vbox_new (FALSE, 0);
   gtk_widget_show (vbox2);
@@ -657,10 +649,7 @@ create_mainwin (void)
   GLADE_HOOKUP_OBJECT (mainwin, nextbtn, "nextbtn");
   GLADE_HOOKUP_OBJECT (mainwin, image5, "image5");
   GLADE_HOOKUP_OBJECT (mainwin, playrand, "playrand");
-  GLADE_HOOKUP_OBJECT (mainwin, alignment1, "alignment1");
-  GLADE_HOOKUP_OBJECT (mainwin, hbox4, "hbox4");
   GLADE_HOOKUP_OBJECT (mainwin, image6, "image6");
-  GLADE_HOOKUP_OBJECT (mainwin, label3, "label3");
   GLADE_HOOKUP_OBJECT (mainwin, vbox2, "vbox2");
   GLADE_HOOKUP_OBJECT (mainwin, volume, "volume");
   GLADE_HOOKUP_OBJECT (mainwin, hbox5, "hbox5");

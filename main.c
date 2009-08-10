@@ -227,6 +227,7 @@ main (int argc, char *argv[]) {
     thread_start (psdl_thread, 0);
 
     g_thread_init (NULL);
+    add_pixmap_directory ("/usr/share/deadbeef/images");
     gdk_threads_init ();
     gdk_threads_enter ();
     gtk_set_locale ();
