@@ -31,6 +31,9 @@ int
 palsa_stop (void);
 
 int
+palsa_isstopped (void);
+
+int
 palsa_ispaused (void);
 
 int

@@ -51,6 +51,12 @@ typedef struct {
     int row;
     double clicktime; // for doubleclick detection
     int nvisiblerows;
+// array of lengths and widths
+// N = number of columns
+// M = number of visible rows,
+// cache[(ROW*ncolumns+COLUMN)*3+0] --- position to insert "...", or -1 if the whole line fits
+// cache[(ROW*ncolumns+COLUMN)*3+1] --- width extent in pixels
+// cache[(ROW*ncolumns+COLUMN)*3+2] --- 0 if needs recalc
     int16_t *fmtcache; // cached text formatting
     int header_fitted[pl_ncolumns];
     char colnames_fitted[pl_ncolumns][pl_colname_max]; // cached formatted names of columns

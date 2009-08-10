@@ -56,6 +56,9 @@ update_songinfo (void) {
         strcpy (sbtext_new, "Paused");
         songpos = 0;
     }
+    else if (p_isstopped ()) {
+        strcpy (sbtext_new, "Stopped");
+    }
     else if (playlist_current.codec) {
         codec_lock ();
         codec_t *c = playlist_current.codec;
@@ -72,9 +75,6 @@ update_songinfo (void) {
         codec_unlock ();
 
         snprintf (sbtext_new, 512, "[%s] %dHz | %d bit | %s | %d:%02d / %d:%02d | %d songs total", playlist_current.filetype ? playlist_current.filetype:"-", samplerate, bitspersample, mode, minpos, secpos, mindur, secdur, pl_getcount ());
-    }
-    else {
-        strcpy (sbtext_new, "Stopped");
     }
 
     if (strcmp (sbtext_new, sb_text)) {
@@ -147,8 +147,9 @@ psdl_thread (uintptr_t ctx) {
                 GDK_THREADS_LEAVE();
                 break;
             case M_STOPSONG:
-                GDK_THREADS_ENTER();
                 p_stop ();
+                GDK_THREADS_ENTER();
+                gtkpl_redraw_pl_row (&main_playlist, main_playlist.row);
                 GDK_THREADS_LEAVE();
                 break;
             case M_NEXTSONG:
@@ -164,13 +165,15 @@ psdl_thread (uintptr_t ctx) {
                 GDK_THREADS_LEAVE();
                 break;
             case M_PAUSESONG:
-                GDK_THREADS_ENTER();
                 if (p_ispaused ()) {
                     p_unpause ();
                 }
                 else {
                     p_pause ();
                 }
+
+                GDK_THREADS_ENTER();
+                gtkpl_redraw_pl_row (&main_playlist, main_playlist.row);
                 GDK_THREADS_LEAVE();
                 break;
             case M_PLAYRANDOM:

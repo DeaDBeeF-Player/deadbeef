@@ -62,7 +62,6 @@ cmp3_scan_stream2 (float position);
 
 int
 cmp3_init (struct playItem_s *it) {
-    printf ("opening file %s\n", it->fname);
     buffer.file = fopen (it->fname, "rb");
     if (!buffer.file) {
         return -1;

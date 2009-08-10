@@ -220,6 +220,11 @@ palsa_stop (void) {
 }
 
 int
+palsa_isstopped (void) {
+    return (state == 0);
+}
+
+int
 palsa_ispaused (void) {
     // return pause state
     return (state == 2);

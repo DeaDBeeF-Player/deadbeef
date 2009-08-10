@@ -40,6 +40,7 @@
 #define p_unpause palsa_unpause
 #define p_set_volume palsa_set_volume
 #define p_get_rate palsa_get_rate
+#define p_isstopped palsa_isstopped
 #endif
 
 #endif // __PLAYBACK_H

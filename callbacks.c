@@ -724,19 +724,10 @@ on_playlist_load_activate              (GtkMenuItem     *menuitem,
     }
 }
 
+char last_playlist_save_name[1024] = "";
 
 void
-on_playlist_save_activate              (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
-
-}
-
-
-void
-on_playlist_save_as_activate           (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
+save_playlist_as (void) {
     GtkWidget *dlg = gtk_file_chooser_dialog_new ("Save Playlist As", GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_SAVE, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_SAVE, GTK_RESPONSE_OK, NULL);
 
     GtkFileFilter* flt;
@@ -752,12 +743,36 @@ on_playlist_save_as_activate           (GtkMenuItem     *menuitem,
 
         if (fname) {
             int res = pl_save (fname);
-            printf ("save res: %d\n", res);
+            printf ("save as res: %d\n", res);
+            if (res >= 0 && strlen (fname) < 1024) {
+                strcpy (last_playlist_save_name, fname);
+            }
             g_free (fname);
         }
     }
     else {
         gtk_widget_destroy (dlg);
     }
+}
+
+void
+on_playlist_save_activate              (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    if (!last_playlist_save_name[0]) {
+        save_playlist_as ();
+    }
+    else {
+        int res = pl_save (last_playlist_save_name);
+        printf ("save res: %d\n", res);
+    }
+}
+
+
+void
+on_playlist_save_as_activate           (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    save_playlist_as ();
 }
 

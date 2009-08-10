@@ -49,22 +49,9 @@ const char *colnames[pl_ncolumns] = {
     "Duration"
 };
 
+static cairo_surface_t *play16_pixmap;
+static cairo_surface_t *pause16_pixmap;
 
-//extern GtkWidget *mainwin;
-//static GdkPixmap *ps->backbuf;
-//static int rowheight = 17;
-//static int ps->scrollpos = 0;
-//static int ps->row = -1;
-//static double ps->clicktime = 0;
-//static double ps->lastpos[2];
-//static int ps->nvisiblerows = 0;
-
-//// array of lengths and widths
-//// N = number of columns
-//// M = number of visible rows,
-//// cache[(ROW*ncolumns+COLUMN)*3+0] --- position to insert "...", or -1 if the whole line fits
-//// cache[(ROW*ncolumns+COLUMN)*3+1] --- width extent in pixels
-//// cache[(ROW*ncolumns+COLUMN)*3+2] --- 0 if needs recalc
 //static int16_t *ps->fmtcache = NULL;
 //
 //int ps->header_fitted[pl_ncolumns] = {
@@ -228,10 +215,13 @@ gtkpl_draw_pl_row (gtkplaylist_t *ps, cairo_t *cr, int row, playItem_t *it) {
     }
 	int width, height;
 	gdk_drawable_get_size (ps->backbuf, &width, &height);
-    if (it == playlist_current_ptr && ps->colwidths[0] > 0) {
-        cairo_set_source_rgb (cr, 1, 1, 1);
-        cairo_rectangle (cr, 3, row * rowheight - ps->scrollpos * rowheight + 3, rowheight-6, rowheight-6);
-        cairo_fill (cr);
+    if (it == playlist_current_ptr && ps->colwidths[0] > 0 && !p_isstopped ()) {
+        cairo_surface_t *surf = p_ispaused () ? pause16_pixmap : play16_pixmap;
+        cairo_set_source_surface (cr, surf, ps->colwidths[0]/2-8, row * rowheight - ps->scrollpos * rowheight);
+        cairo_rectangle (cr, ps->colwidths[0]/2-8, row * rowheight - ps->scrollpos * rowheight, 16, 16);
+        cairo_clip (cr);
+        cairo_paint (cr);
+        cairo_reset_clip (cr);
     }
 	if (it && ((it->selected && ps->multisel) || (row == ps->row && !ps->multisel))) {
         cairo_set_source_rgb (cr, 0, 0, 0);
@@ -359,6 +349,12 @@ gtkpl_configure (gtkplaylist_t *ps) {
     }
     ps->nvisiblerows = ceil (widget->allocation.height / (float)rowheight);
     ps->backbuf = gdk_pixmap_new (widget->window, widget->allocation.width, widget->allocation.height, -1);
+
+    if (!play16_pixmap) {
+        play16_pixmap = cairo_image_surface_create_from_png ("/usr/share/deadbeef/images/play_16.png");
+        pause16_pixmap = cairo_image_surface_create_from_png ("/usr/share/deadbeef/images/pause_16.png");
+    }
+
     gtkpl_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
 }
 

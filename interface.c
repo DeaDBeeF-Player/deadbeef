@@ -61,7 +61,6 @@ create_mainwin (void)
   GtkWidget *order1_menu;
   GSList *order_linear_group = NULL;
   GtkWidget *order_linear;
-  GtkWidget *order_shuffle;
   GtkWidget *order_random;
   GtkWidget *looping1;
   GtkWidget *looping1_menu;
@@ -231,17 +230,10 @@ create_mainwin (void)
   gtk_container_add (GTK_CONTAINER (order1_menu), order_linear);
   gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (order_linear), TRUE);
 
-  order_shuffle = gtk_radio_menu_item_new_with_mnemonic (order_linear_group, "Shuffle");
-  order_linear_group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (order_shuffle));
-  gtk_widget_show (order_shuffle);
-  gtk_container_add (GTK_CONTAINER (order1_menu), order_shuffle);
-  gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (order_shuffle), TRUE);
-
   order_random = gtk_radio_menu_item_new_with_mnemonic (order_linear_group, "Random");
   order_linear_group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (order_random));
   gtk_widget_show (order_random);
   gtk_container_add (GTK_CONTAINER (order1_menu), order_random);
-  gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (order_random), TRUE);
 
   looping1 = gtk_menu_item_new_with_mnemonic ("Looping");
   gtk_widget_show (looping1);
@@ -260,13 +252,11 @@ create_mainwin (void)
   loop_all_group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (loop_single));
   gtk_widget_show (loop_single);
   gtk_container_add (GTK_CONTAINER (looping1_menu), loop_single);
-  gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (loop_single), TRUE);
 
   loop_disable = gtk_radio_menu_item_new_with_mnemonic (loop_all_group, "Don't Loop");
   loop_all_group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (loop_disable));
   gtk_widget_show (loop_disable);
   gtk_container_add (GTK_CONTAINER (looping1_menu), loop_disable);
-  gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (loop_disable), TRUE);
 
   menuitem4 = gtk_menu_item_new_with_mnemonic ("_Help");
   gtk_widget_show (menuitem4);
@@ -469,9 +459,6 @@ create_mainwin (void)
   g_signal_connect ((gpointer) order_linear, "activate",
                     G_CALLBACK (on_order_linear_activate),
                     NULL);
-  g_signal_connect ((gpointer) order_shuffle, "activate",
-                    G_CALLBACK (on_order_shuffle_activate),
-                    NULL);
   g_signal_connect ((gpointer) order_random, "activate",
                     G_CALLBACK (on_order_random_activate),
                     NULL);
@@ -627,7 +614,6 @@ create_mainwin (void)
   GLADE_HOOKUP_OBJECT (mainwin, order1, "order1");
   GLADE_HOOKUP_OBJECT (mainwin, order1_menu, "order1_menu");
   GLADE_HOOKUP_OBJECT (mainwin, order_linear, "order_linear");
-  GLADE_HOOKUP_OBJECT (mainwin, order_shuffle, "order_shuffle");
   GLADE_HOOKUP_OBJECT (mainwin, order_random, "order_random");
   GLADE_HOOKUP_OBJECT (mainwin, looping1, "looping1");
   GLADE_HOOKUP_OBJECT (mainwin, looping1_menu, "looping1_menu");
