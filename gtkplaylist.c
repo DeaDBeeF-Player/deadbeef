@@ -125,6 +125,11 @@ gtkpl_setup_scrollbar (gtkplaylist_t *ps) {
         size = 0;
     }
     GtkWidget *scroll = ps->scrollbar;
+    if (ps->scrollpos > (*ps->pcount)-ps->nvisiblerows+1) {
+        int n = (*ps->pcount) - ps->nvisiblerows + 1;
+        ps->scrollpos = max (0, n);
+        gtk_range_set_value (GTK_RANGE (scroll), ps->scrollpos);
+    }
     if (size == 0) {
         gtk_widget_hide (scroll);
     }
