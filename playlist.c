@@ -710,7 +710,8 @@ pl_nextsong (int reason) {
                     it = playlist_head[PL_SHUFFLE];
                 }
                 else {
-                    return -1;
+                    streamer_set_nextsong (-2, 1);
+                    return 0;
                 }
             }
             if (!it) {
@@ -734,6 +735,10 @@ pl_nextsong (int reason) {
         if (!it) {
             if (pl_loop_mode == 0) {
                 it = playlist_head[PL_MAIN];
+            }
+            else {
+                streamer_set_nextsong (-2, 1);
+                return 0;
             }
         }
         if (!it) {
@@ -875,6 +880,17 @@ pl_delete_selected (void) {
     for (playItem_t *it = playlist_head[PL_MAIN]; it; it = next) {
         next = it->next[PL_MAIN];
         if (it->selected) {
+            pl_remove (it);
+        }
+    }
+}
+
+void
+pl_crop_selected (void) {
+    playItem_t *next = NULL;
+    for (playItem_t *it = playlist_head[PL_MAIN]; it; it = next) {
+        next = it->next[PL_MAIN];
+        if (!it->selected) {
             pl_remove (it);
         }
     }
@@ -1153,3 +1169,9 @@ load_fail:
     return -1;
 }
 
+void
+pl_select_all (void) {
+    for (playItem_t *it = playlist_head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
+        it->selected = 1;
+    }
+}

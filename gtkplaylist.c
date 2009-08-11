@@ -125,6 +125,9 @@ gtkpl_setup_scrollbar (gtkplaylist_t *ps) {
         size = 0;
     }
     GtkWidget *scroll = ps->scrollbar;
+    if (ps->row >= (*ps->pcount)) {
+        ps->row = (*ps->pcount) - 1;
+    }
     if (ps->scrollpos > (*ps->pcount)-ps->nvisiblerows+1) {
         int n = (*ps->pcount) - ps->nvisiblerows + 1;
         ps->scrollpos = max (0, n);
@@ -722,9 +725,7 @@ gtkpl_keypress (gtkplaylist_t *ps, int keyval, int state) {
     }
     else if ((keyval == GDK_A || keyval == GDK_a) && (state & GDK_CONTROL_MASK)) {
         // select all
-        for (playItem_t *it = playlist_head[ps->iterator]; it; it = it->next[ps->iterator]) {
-            it->selected = 1;
-        }
+        pl_select_all ();
         gtkpl_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
         gdk_draw_drawable (widget->window, widget->style->black_gc, ps->backbuf, 0, 0, 0, 0, widget->allocation.width, widget->allocation.height);
         return;
@@ -735,9 +736,6 @@ gtkpl_keypress (gtkplaylist_t *ps, int keyval, int state) {
     }
     else if (keyval == GDK_Delete) {
         pl_delete_selected ();
-        if (ps->row >= (*ps->pcount)) {
-            ps->row = (*ps->pcount) - 1;
-        }
         gtkpl_setup_scrollbar (ps);
         gtkpl_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
         gtkpl_expose (ps, 0, 0, widget->allocation.width, widget->allocation.height);

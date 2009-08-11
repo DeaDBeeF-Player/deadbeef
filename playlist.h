@@ -123,6 +123,9 @@ void
 pl_delete_selected (void);
 
 void
+pl_crop_selected (void);
+
+void
 pl_set_order (int order);
 
 void
@@ -133,5 +136,8 @@ pl_save (const char *fname);
 
 int
 pl_load (const char *fname);
+
+void
+pl_select_all (void);
 
 #endif // __PLAYLIST_H

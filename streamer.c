@@ -27,6 +27,8 @@
 #include "common.h"
 #include "streamer.h"
 #include "playback.h"
+#include "messagepump.h"
+#include "messages.h"
 
 static SRC_STATE *src;
 static SRC_DATA srcdata;
@@ -82,6 +84,16 @@ streamer_thread (uintptr_t ctx) {
             else if (pstate == 2) {
                 p_pause ();
             }
+        }
+        else if (nextsong == -2) {
+            nextsong = -1;
+            p_stop ();
+            messagepump_push (M_SONGCHANGED, 0, pl_get_idx_of (playlist_current_ptr), -1);
+            continue;
+        }
+        else if (p_isstopped ()) {
+            usleep (3000);
+            continue;
         }
         streamer_lock ();
         if (streambuffer_fill < STREAM_BUFFER_SIZE) {

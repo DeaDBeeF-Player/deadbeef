@@ -290,7 +290,13 @@ void
 on_clear1_activate                     (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-
+    pl_free ();
+    gtkplaylist_t *ps = &main_playlist;
+    GtkWidget *widget = ps->playlist;
+    gtkpl_setup_scrollbar (ps);
+    gtkpl_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
+    gtkpl_expose (ps, 0, 0, widget->allocation.width, widget->allocation.height);
+    search_refresh ();
 }
 
 
@@ -298,7 +304,11 @@ void
 on_select_all1_activate                (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-
+    pl_select_all ();
+    gtkplaylist_t *ps = &main_playlist;
+    GtkWidget *widget = ps->playlist;
+    gtkpl_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
+    gdk_draw_drawable (widget->window, widget->style->black_gc, ps->backbuf, 0, 0, 0, 0, widget->allocation.width, widget->allocation.height);
 }
 
 
@@ -306,7 +316,13 @@ void
 on_remove1_activate                    (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-
+    gtkplaylist_t *ps = &main_playlist;
+    GtkWidget *widget = ps->playlist;
+    pl_delete_selected ();
+    gtkpl_setup_scrollbar (ps);
+    gtkpl_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
+    gtkpl_expose (ps, 0, 0, widget->allocation.width, widget->allocation.height);
+    search_refresh ();
 }
 
 
@@ -314,7 +330,13 @@ void
 on_crop1_activate                      (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-
+    gtkplaylist_t *ps = &main_playlist;
+    GtkWidget *widget = ps->playlist;
+    pl_crop_selected ();
+    gtkpl_setup_scrollbar (ps);
+    gtkpl_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
+    gtkpl_expose (ps, 0, 0, widget->allocation.width, widget->allocation.height);
+    search_refresh ();
 }
 
 
