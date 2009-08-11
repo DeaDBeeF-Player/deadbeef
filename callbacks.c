@@ -776,3 +776,160 @@ on_playlist_save_as_activate           (GtkMenuItem     *menuitem,
     save_playlist_as ();
 }
 
+
+gboolean
+on_seekbar_configure_event             (GtkWidget       *widget,
+                                        GdkEventConfigure *event,
+                                        gpointer         user_data)
+{
+
+  return FALSE;
+}
+
+enum
+{
+	CORNER_NONE        = 0,
+	CORNER_TOPLEFT     = 1,
+	CORNER_TOPRIGHT    = 2,
+	CORNER_BOTTOMLEFT  = 4,
+	CORNER_BOTTOMRIGHT = 8,
+	CORNER_ALL         = 15
+};
+
+static void
+clearlooks_rounded_rectangle (cairo_t * cr,
+			      double x, double y, double w, double h,
+			      double radius, uint8_t corners)
+{
+    if (radius < 0.01 || (corners == CORNER_NONE)) {
+        cairo_rectangle (cr, x, y, w, h);
+        return;
+    }
+	
+    if (corners & CORNER_TOPLEFT)
+        cairo_move_to (cr, x + radius, y);
+    else
+        cairo_move_to (cr, x, y);
+
+    if (corners & CORNER_TOPRIGHT)
+        cairo_arc (cr, x + w - radius, y + radius, radius, M_PI * 1.5, M_PI * 2);
+    else
+        cairo_line_to (cr, x + w, y);
+
+    if (corners & CORNER_BOTTOMRIGHT)
+        cairo_arc (cr, x + w - radius, y + h - radius, radius, 0, M_PI * 0.5);
+    else
+        cairo_line_to (cr, x + w, y + h);
+
+    if (corners & CORNER_BOTTOMLEFT)
+        cairo_arc (cr, x + radius, y + h - radius, radius, M_PI * 0.5, M_PI);
+    else
+        cairo_line_to (cr, x, y + h);
+
+    if (corners & CORNER_TOPLEFT)
+        cairo_arc (cr, x + radius, y + radius, radius, M_PI, M_PI * 1.5);
+    else
+        cairo_line_to (cr, x, y);
+	
+}
+
+int seekbar_moving = 0;
+int seekbar_move_x = 0;
+
+void
+seekbar_draw (GtkWidget *widget) {
+    if (!widget) {
+        return;
+    }
+	cairo_t *cr;
+	cr = gdk_cairo_create (widget->window);
+	if (!cr) {
+        return;
+    }
+    float pos = 0;
+    if (playlist_current.codec && playlist_current.duration > 0) {
+        pos = playlist_current.codec->info.position / playlist_current.duration;
+        pos *= widget->allocation.width;
+    }
+    // left
+    cairo_set_source_rgb (cr, 0xf4/255.f, 0x7e/255.f, 0x46/255.f);
+    cairo_rectangle (cr, 0, widget->allocation.height/2-4, pos, 8);
+    cairo_clip (cr);
+    clearlooks_rounded_rectangle (cr, 0, widget->allocation.height/2-4, widget->allocation.width, 8, 4, 0xff);
+    cairo_fill (cr);
+    cairo_reset_clip (cr);
+
+    // right
+    cairo_rectangle (cr, pos, widget->allocation.height/2-4, widget->allocation.width-pos, 8);
+    cairo_clip (cr);
+    cairo_set_source_rgb (cr, 0x21/255.f, 0x23/255.f, 0x1f/255.f);
+    clearlooks_rounded_rectangle (cr, 0, widget->allocation.height/2-4, widget->allocation.width, 8, 4, 0xff);
+    cairo_fill (cr);
+    cairo_reset_clip (cr);
+
+    if (seekbar_moving) {
+        cairo_set_source_rgb (cr, 1,1,1);
+        int x = seekbar_move_x;
+        if (x < 0) {
+            x = 0;
+        }
+        if (x > widget->allocation.width-8) {
+            x = widget->allocation.width-8;
+        }
+        clearlooks_rounded_rectangle (cr, x, widget->allocation.height/2-4, 8, 8, 4, 0xff);
+        cairo_fill (cr);
+    }
+
+    cairo_destroy (cr);
+}
+
+gboolean
+on_seekbar_expose_event                (GtkWidget       *widget,
+                                        GdkEventExpose  *event,
+                                        gpointer         user_data)
+{
+    seekbar_draw (widget);
+    return FALSE;
+}
+
+
+gboolean
+on_seekbar_motion_notify_event         (GtkWidget       *widget,
+                                        GdkEventMotion  *event,
+                                        gpointer         user_data)
+{
+    if (seekbar_moving) {
+        seekbar_move_x = event->x;
+        seekbar_draw (widget);
+    }
+    return FALSE;
+}
+
+gboolean
+on_seekbar_button_press_event          (GtkWidget       *widget,
+                                        GdkEventButton  *event,
+                                        gpointer         user_data)
+{
+    seekbar_moving = 1;
+    seekbar_move_x = event->x;
+    seekbar_draw (widget);
+    return FALSE;
+}
+
+
+gboolean
+on_seekbar_button_release_event        (GtkWidget       *widget,
+                                        GdkEventButton  *event,
+                                        gpointer         user_data)
+{
+    seekbar_moving = 0;
+    seekbar_draw (widget);
+    float time = event->x * playlist_current.duration / (widget->allocation.width-8);
+    if (time < 0) {
+        time = 0;
+    }
+    messagepump_push (M_SONGSEEK, 0, time * 1000, 0);
+    return FALSE;
+}
+
+

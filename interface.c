@@ -86,7 +86,7 @@ create_mainwin (void)
   GtkWidget *image6;
   GtkWidget *vbox2;
   GtkWidget *volume;
-  GtkWidget *playpos;
+  GtkWidget *seekbar;
   GtkWidget *_;
   GtkWidget *vbox3;
   GtkWidget *header;
@@ -338,13 +338,11 @@ create_mainwin (void)
   GTK_WIDGET_UNSET_FLAGS (volume, GTK_CAN_FOCUS);
   gtk_scale_set_draw_value (GTK_SCALE (volume), FALSE);
 
-  playpos = gtk_hscale_new (GTK_ADJUSTMENT (gtk_adjustment_new (0, 0, 1000, 0, 0, 0)));
-  gtk_widget_show (playpos);
-  gtk_box_pack_start (GTK_BOX (hbox2), playpos, FALSE, TRUE, 0);
-  gtk_widget_set_size_request (playpos, 200, -1);
-  GTK_WIDGET_UNSET_FLAGS (playpos, GTK_CAN_FOCUS);
-  gtk_scale_set_draw_value (GTK_SCALE (playpos), FALSE);
-  gtk_range_set_update_policy (GTK_RANGE (playpos), GTK_UPDATE_DISCONTINUOUS);
+  seekbar = gtk_drawing_area_new ();
+  gtk_widget_show (seekbar);
+  gtk_box_pack_start (GTK_BOX (hbox2), seekbar, FALSE, TRUE, 2);
+  gtk_widget_set_size_request (seekbar, 200, -1);
+  gtk_widget_set_events (seekbar, GDK_EXPOSURE_MASK | GDK_POINTER_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK);
 
   _ = gtk_hbox_new (FALSE, 0);
   gtk_widget_show (_);
@@ -455,8 +453,20 @@ create_mainwin (void)
   g_signal_connect ((gpointer) volume, "value_changed",
                     G_CALLBACK (on_volume_value_changed),
                     NULL);
-  g_signal_connect ((gpointer) playpos, "value_changed",
-                    G_CALLBACK (on_playpos_value_changed),
+  g_signal_connect ((gpointer) seekbar, "button_press_event",
+                    G_CALLBACK (on_seekbar_button_press_event),
+                    NULL);
+  g_signal_connect ((gpointer) seekbar, "button_release_event",
+                    G_CALLBACK (on_seekbar_button_release_event),
+                    NULL);
+  g_signal_connect ((gpointer) seekbar, "configure_event",
+                    G_CALLBACK (on_seekbar_configure_event),
+                    NULL);
+  g_signal_connect ((gpointer) seekbar, "expose_event",
+                    G_CALLBACK (on_seekbar_expose_event),
+                    NULL);
+  g_signal_connect ((gpointer) seekbar, "motion_notify_event",
+                    G_CALLBACK (on_seekbar_motion_notify_event),
                     NULL);
   g_signal_connect ((gpointer) header, "expose_event",
                     G_CALLBACK (on_header_expose_event),
@@ -583,7 +593,7 @@ create_mainwin (void)
   GLADE_HOOKUP_OBJECT (mainwin, image6, "image6");
   GLADE_HOOKUP_OBJECT (mainwin, vbox2, "vbox2");
   GLADE_HOOKUP_OBJECT (mainwin, volume, "volume");
-  GLADE_HOOKUP_OBJECT (mainwin, playpos, "playpos");
+  GLADE_HOOKUP_OBJECT (mainwin, seekbar, "seekbar");
   GLADE_HOOKUP_OBJECT (mainwin, _, "_");
   GLADE_HOOKUP_OBJECT (mainwin, vbox3, "vbox3");
   GLADE_HOOKUP_OBJECT (mainwin, header, "header");

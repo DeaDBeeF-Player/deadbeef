@@ -43,7 +43,7 @@ int psdl_terminate = 0;
 // update status bar and window title
 static int sb_context_id = -1;
 static char sb_text[512];
-static int last_songpos = -1;
+static float last_songpos = -1;
 
 void
 update_songinfo (void) {
@@ -51,10 +51,9 @@ update_songinfo (void) {
         return;
     }
     char sbtext_new[512] = "-";
-    int songpos = 0;
+    float songpos = last_songpos;
     if (p_ispaused ()) {
         strcpy (sbtext_new, "Paused");
-        songpos = 0;
     }
     else if (p_isstopped ()) {
         strcpy (sbtext_new, "Stopped");
@@ -69,9 +68,7 @@ update_songinfo (void) {
         const char *mode = c->info.channels == 1 ? "Mono" : "Stereo";
         int samplerate = c->info.samplesPerSecond;
         int bitspersample = c->info.bitsPerSample;
-        float pos = c->info.position;
-        int dur = playlist_current.duration;
-        songpos = pos * 1000 / dur;
+        songpos = c->info.position;
         codec_unlock ();
 
         snprintf (sbtext_new, 512, "[%s] %dHz | %d bit | %s | %d:%02d / %d:%02d | %d songs total", playlist_current.filetype ? playlist_current.filetype:"-", samplerate, bitspersample, mode, minpos, secpos, mindur, secdur, pl_getcount ());
@@ -95,12 +92,13 @@ update_songinfo (void) {
     }
 
     if (songpos != last_songpos) {
-        last_songpos = songpos;
-        extern int g_disable_seekbar_handler;
-        g_disable_seekbar_handler = 1;
-        GtkRange *seekbar = GTK_RANGE (lookup_widget (mainwin, "playpos"));
-        gtk_range_set_value (seekbar, songpos);
-        g_disable_seekbar_handler = 0;
+        void seekbar_draw (GtkWidget *widget);
+        if (mainwin) {
+            GDK_THREADS_ENTER();
+            seekbar_draw (lookup_widget (mainwin, "seekbar"));
+            GDK_THREADS_LEAVE();
+            last_songpos = songpos;
+        }
     }
 }
 
@@ -240,6 +238,7 @@ main (int argc, char *argv[]) {
     mainwin = create_mainwin ();
     gtk_widget_show (mainwin);
     gtk_main ();
+    mainwin = NULL;
     gdk_threads_leave ();
     messagepump_free ();
     psdl_terminate = 1;
