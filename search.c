@@ -32,6 +32,8 @@
 #include "common.h"
 #include "search.h"
 #include "gtkplaylist.h"
+#include "messagepump.h"
+#include "messages.h"
 
 GtkWidget *searchwin = NULL;
 struct playItem_s *search_current = NULL;
@@ -161,18 +163,19 @@ on_searchwin_key_press_event           (GtkWidget       *widget,
     if (event->keyval == GDK_Escape) {
         gtk_widget_hide (widget);
     }
+    else if (event->keyval == GDK_Return) {
+        extern gtkplaylist_t search_playlist;
+        gtkplaylist_t *ps = &search_playlist;
+        if (search_count > 0) {
+            playItem_t *it = gtkpl_get_for_idx (ps, max (ps->row, 0));
+            if (it) {
+                messagepump_push (M_PLAYSONGNUM, 0, pl_get_idx_of (it), 0);
+            }
+        }
+    }
     return FALSE;
 }
 
-
-gboolean
-on_searchlist_button_press_event       (GtkWidget       *widget,
-                                        GdkEventButton  *event,
-                                        gpointer         user_data)
-{
-
-  return FALSE;
-}
 
 
 gboolean
@@ -184,37 +187,7 @@ on_searchlist_configure_event          (GtkWidget       *widget,
     search_playlist_init (widget);
     GTKpl_PROLOGUE;
     gtkpl_configure (ps);
-
-  return FALSE;
-}
-
-
-gboolean
-on_searchlist_expose_event             (GtkWidget       *widget,
-                                        GdkEventExpose  *event,
-                                        gpointer         user_data)
-{
-
-  return FALSE;
-}
-
-
-gboolean
-on_searchlist_scroll_event             (GtkWidget       *widget,
-                                        GdkEvent        *event,
-                                        gpointer         user_data)
-{
-
-  return FALSE;
-}
-
-///////////// searchwin scrollbar handlers
-
-void
-on_searchscroll_value_changed          (GtkRange        *range,
-                                        gpointer         user_data)
-{
-
+    return FALSE;
 }
 
 
