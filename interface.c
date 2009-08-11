@@ -84,8 +84,7 @@ create_mainwin (void)
   GtkWidget *image5;
   GtkWidget *playrand;
   GtkWidget *image6;
-  GtkWidget *vbox2;
-  GtkWidget *volume;
+  GtkWidget *volumebar;
   GtkWidget *seekbar;
   GtkWidget *_;
   GtkWidget *vbox3;
@@ -327,16 +326,11 @@ create_mainwin (void)
   gtk_widget_show (image6);
   gtk_container_add (GTK_CONTAINER (playrand), image6);
 
-  vbox2 = gtk_vbox_new (FALSE, 0);
-  gtk_widget_show (vbox2);
-  gtk_box_pack_start (GTK_BOX (hbox2), vbox2, FALSE, TRUE, 0);
-
-  volume = gtk_hscale_new (GTK_ADJUSTMENT (gtk_adjustment_new (100, 0, 100, 0, 0, 0)));
-  gtk_widget_show (volume);
-  gtk_box_pack_start (GTK_BOX (vbox2), volume, TRUE, TRUE, 0);
-  gtk_widget_set_size_request (volume, 80, -1);
-  GTK_WIDGET_UNSET_FLAGS (volume, GTK_CAN_FOCUS);
-  gtk_scale_set_draw_value (GTK_SCALE (volume), FALSE);
+  volumebar = gtk_drawing_area_new ();
+  gtk_widget_show (volumebar);
+  gtk_box_pack_start (GTK_BOX (hbox2), volumebar, FALSE, TRUE, 2);
+  gtk_widget_set_size_request (volumebar, 70, -1);
+  gtk_widget_set_events (volumebar, GDK_EXPOSURE_MASK | GDK_POINTER_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK);
 
   seekbar = gtk_drawing_area_new ();
   gtk_widget_show (seekbar);
@@ -450,8 +444,20 @@ create_mainwin (void)
   g_signal_connect ((gpointer) playrand, "clicked",
                     G_CALLBACK (on_playrand_clicked),
                     NULL);
-  g_signal_connect ((gpointer) volume, "value_changed",
-                    G_CALLBACK (on_volume_value_changed),
+  g_signal_connect ((gpointer) volumebar, "button_press_event",
+                    G_CALLBACK (on_volumebar_button_press_event),
+                    NULL);
+  g_signal_connect ((gpointer) volumebar, "button_release_event",
+                    G_CALLBACK (on_volumebar_button_release_event),
+                    NULL);
+  g_signal_connect ((gpointer) volumebar, "configure_event",
+                    G_CALLBACK (on_volumebar_configure_event),
+                    NULL);
+  g_signal_connect ((gpointer) volumebar, "expose_event",
+                    G_CALLBACK (on_volumebar_expose_event),
+                    NULL);
+  g_signal_connect ((gpointer) volumebar, "motion_notify_event",
+                    G_CALLBACK (on_volumebar_motion_notify_event),
                     NULL);
   g_signal_connect ((gpointer) seekbar, "button_press_event",
                     G_CALLBACK (on_seekbar_button_press_event),
@@ -591,8 +597,7 @@ create_mainwin (void)
   GLADE_HOOKUP_OBJECT (mainwin, image5, "image5");
   GLADE_HOOKUP_OBJECT (mainwin, playrand, "playrand");
   GLADE_HOOKUP_OBJECT (mainwin, image6, "image6");
-  GLADE_HOOKUP_OBJECT (mainwin, vbox2, "vbox2");
-  GLADE_HOOKUP_OBJECT (mainwin, volume, "volume");
+  GLADE_HOOKUP_OBJECT (mainwin, volumebar, "volumebar");
   GLADE_HOOKUP_OBJECT (mainwin, seekbar, "seekbar");
   GLADE_HOOKUP_OBJECT (mainwin, _, "_");
   GLADE_HOOKUP_OBJECT (mainwin, vbox3, "vbox3");

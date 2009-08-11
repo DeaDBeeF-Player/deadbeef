@@ -251,6 +251,11 @@ palsa_set_volume (float vol) {
     volume = vol;
 }
 
+float
+palsa_get_volume (void) {
+    return volume;
+}
+
 int
 palsa_get_rate (void) {
     return alsa_rate;

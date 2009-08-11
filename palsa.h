@@ -45,6 +45,9 @@ palsa_unpause (void);
 void
 palsa_set_volume (float vol);
 
+float
+palsa_get_volume (void);
+
 int
 palsa_get_rate (void);
 

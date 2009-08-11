@@ -428,3 +428,28 @@ gboolean
 on_seekbar_motion_notify_event         (GtkWidget       *widget,
                                         GdkEventMotion  *event,
                                         gpointer         user_data);
+
+gboolean
+on_volumebar_button_press_event        (GtkWidget       *widget,
+                                        GdkEventButton  *event,
+                                        gpointer         user_data);
+
+gboolean
+on_volumebar_button_release_event      (GtkWidget       *widget,
+                                        GdkEventButton  *event,
+                                        gpointer         user_data);
+
+gboolean
+on_volumebar_configure_event           (GtkWidget       *widget,
+                                        GdkEventConfigure *event,
+                                        gpointer         user_data);
+
+gboolean
+on_volumebar_expose_event              (GtkWidget       *widget,
+                                        GdkEventExpose  *event,
+                                        gpointer         user_data);
+
+gboolean
+on_volumebar_motion_notify_event       (GtkWidget       *widget,
+                                        GdkEventMotion  *event,
+                                        gpointer         user_data);

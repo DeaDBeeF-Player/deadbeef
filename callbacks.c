@@ -933,3 +933,99 @@ on_seekbar_button_release_event        (GtkWidget       *widget,
 }
 
 
+
+
+gboolean
+on_volumebar_configure_event           (GtkWidget       *widget,
+                                        GdkEventConfigure *event,
+                                        gpointer         user_data)
+{
+
+  return FALSE;
+}
+
+
+void
+volumebar_draw (GtkWidget *widget) {
+    if (!widget) {
+        return;
+    }
+	cairo_t *cr;
+	cr = gdk_cairo_create (widget->window);
+	if (!cr) {
+        return;
+    }
+
+    int n = widget->allocation.width / 4;
+    int vol = p_get_volume () * n;
+    int h = 16;
+    for (int i = 0; i < n; i++) {
+        if (i <= vol) {
+            cairo_set_source_rgb (cr, 0xf4/255.f, 0x7e/255.f, 0x46/255.f);
+        }
+        else {
+            cairo_set_source_rgb (cr, 0x21/255.f, 0x23/255.f, 0x1f/255.f);
+        }
+        cairo_rectangle (cr, i * 4, (widget->allocation.height/2-h/2) + h - 1 - (h* i / n), 3, h * i / n);
+        cairo_fill (cr);
+    }
+
+    cairo_destroy (cr);
+}
+
+gboolean
+on_volumebar_expose_event              (GtkWidget       *widget,
+                                        GdkEventExpose  *event,
+                                        gpointer         user_data)
+{
+    volumebar_draw (widget);
+    return FALSE;
+}
+
+
+gboolean
+on_volumebar_motion_notify_event       (GtkWidget       *widget,
+                                        GdkEventMotion  *event,
+                                        gpointer         user_data)
+{
+    if (event->state & GDK_BUTTON1_MASK) {
+        float volume = event->x / widget->allocation.width;
+        if (volume < 0) {
+            volume = 0;
+        }
+        if (volume > 1) {
+            volume = 1;
+        }
+        p_set_volume (volume);
+        volumebar_draw (widget);
+    }
+  return FALSE;
+}
+
+gboolean
+on_volumebar_button_press_event        (GtkWidget       *widget,
+                                        GdkEventButton  *event,
+                                        gpointer         user_data)
+{
+    float volume = event->x / widget->allocation.width;
+    if (volume < 0) {
+        volume = 0;
+    }
+    if (volume > 1) {
+        volume = 1;
+    }
+    p_set_volume (volume);
+    volumebar_draw (widget);
+    return FALSE;
+}
+
+
+gboolean
+on_volumebar_button_release_event      (GtkWidget       *widget,
+                                        GdkEventButton  *event,
+                                        gpointer         user_data)
+{
+
+  return FALSE;
+}
+
