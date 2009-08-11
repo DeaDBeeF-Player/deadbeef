@@ -110,36 +110,6 @@ search_playlist_init (GtkWidget *widget) {
     }
 }
 
-void
-on_volume_value_changed                (GtkRange        *range,
-        gpointer         user_data)
-{
-    //float db = -(40 - (gtk_range_get_value (range) * 0.4f));
-    //float a = db <= -40.f ? 0 : pow (10, db/20.f);
-    //p_set_volume (a);
-    float a = gtk_range_get_value (range) * 0.01;
-    p_set_volume (a*a);
-}
-
-int g_disable_seekbar_handler = 0;
-void
-on_playpos_value_changed               (GtkRange        *range,
-        gpointer         user_data)
-{
-    if (g_disable_seekbar_handler) {
-        return;
-    }
-    if (playlist_current.codec) {
-        if (playlist_current.duration > 0) {
-            int val = gtk_range_get_value (range);
-            int upper = gtk_adjustment_get_upper (gtk_range_get_adjustment (range));
-            float time = playlist_current.duration / (float)upper * (float)val;
-            messagepump_push (M_SONGSEEK, 0, (int)time * 1000, 0);
-        }
-    }
-}
-
-
 // redraw
 gboolean
 on_playlist_expose_event               (GtkWidget       *widget,
