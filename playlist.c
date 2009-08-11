@@ -396,6 +396,9 @@ pl_remove (playItem_t *it) {
     if (!it)
         return -1;
     pl_count--;
+    if (playlist_current_ptr == it) {
+        playlist_current_ptr = NULL;
+    }
 
     // remove from shuffle list
     {

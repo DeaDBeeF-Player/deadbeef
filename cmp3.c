@@ -21,7 +21,7 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <iconv.h>
-#include <sys/mman.h>
+//#include <sys/mman.h>
 #include "codec.h"
 #include "cmp3.h"
 #include "playlist.h"
@@ -29,10 +29,11 @@
 
 #define READBUFFER 5*8192
 #define CACHESIZE 81920
-struct buffer {
+typedef struct {
     FILE *file;
 
     // input buffer, for MPEG data
+    mad_timer_t timer;
     char input[READBUFFER];
     int remaining;
 
@@ -43,22 +44,29 @@ struct buffer {
     // cache, for extra decoded samples
     char cache[CACHESIZE];
     int cachefill;
-};
 
-static struct buffer buffer;
+    // information, filled by cmp3_scan_stream
+    int version;
+    int layer;
+    int bitrate;
+    int samplerate;
+    int packetlength;
+    float frameduration;
+} buffer_t;
+
+static buffer_t buffer;
 static struct mad_stream stream;
 static struct mad_frame frame;
 static struct mad_synth synth;
-static mad_timer_t timer;
 
 static int
 cmp3_decode (void);
 
 static int
-cmp3_scan_stream (float position);
+cmp3_scan_stream (buffer_t *buffer, float position);
 
-static int
-cmp3_scan_stream2 (float position);
+//static int
+//cmp3_scan_stream2 (float position);
 
 int
 cmp3_init (struct playItem_s *it) {
@@ -71,15 +79,15 @@ cmp3_init (struct playItem_s *it) {
     buffer.readsize = 0;
     buffer.cachefill = 0;
     cmp3.info.position = 0;
-	mad_timer_reset(&timer);
+	mad_timer_reset(&buffer.timer);
 
-    if (it->duration <= 0) {
-        it->duration = cmp3_scan_stream (-1); // scan entire stream, calc duration
+//    if (it->duration <= 0) {
+        it->duration = cmp3_scan_stream (&buffer, -1); // scan entire stream, calc duration
         rewind (buffer.file);
-    }
-    else {
-        cmp3_scan_stream (0); // load up to 1st frame
-    }
+//    }
+//    else {
+//        cmp3_scan_stream (0); // load up to 1st frame
+//    }
 	mad_stream_init(&stream);
 	mad_frame_init(&frame);
 	mad_synth_init(&synth);
@@ -129,7 +137,7 @@ static signed short MadFixedToSshort(mad_fixed_t Fixed)
 // function scans file and calculates duration
 // if position >= 0 -- scanning is stopped after duration is greater than position
 static int
-cmp3_scan_stream (float position) {
+cmp3_scan_stream (buffer_t *buffer, float position) {
     int nframe = 0;
     int nskipped = 0;
     float duration = 0;
@@ -138,13 +146,13 @@ cmp3_scan_stream (float position) {
     for (;;) {
         if (position >= 0 && duration > position) {
             // set decoder timer
-            timer.seconds = (int)duration;
-            timer.fraction = (int)((duration - (float)timer.seconds)*MAD_TIMER_RESOLUTION);
+            buffer->timer.seconds = (int)duration;
+            buffer->timer.fraction = (int)((duration - (float)buffer->timer.seconds)*MAD_TIMER_RESOLUTION);
             return duration;
         }
         uint32_t hdr;
         uint8_t sync;
-        if (fread (&sync, 1, 1, buffer.file) != 1) {
+        if (fread (&sync, 1, 1, buffer->file) != 1) {
             break; // eof
         }
         nreads++;
@@ -154,7 +162,7 @@ cmp3_scan_stream (float position) {
         }
         else {
             // 2nd sync byte
-            if (fread (&sync, 1, 1, buffer.file) != 1) {
+            if (fread (&sync, 1, 1, buffer->file) != 1) {
                 break; // eof
             }
                 nreads++;
@@ -166,12 +174,12 @@ cmp3_scan_stream (float position) {
         // found frame
         hdr = (0xff<<24) | (sync << 16);
         // read 2 bytes more
-        if (fread (&sync, 1, 1, buffer.file) != 1) {
+        if (fread (&sync, 1, 1, buffer->file) != 1) {
             break; // eof
         }
         nreads++;
         hdr |= sync << 8;
-        if (fread (&sync, 1, 1, buffer.file) != 1) {
+        if (fread (&sync, 1, 1, buffer->file) != 1) {
             break; // eof
         }
         nreads++;
@@ -252,34 +260,45 @@ cmp3_scan_stream (float position) {
         // packetlength
         int packetlength = 0;
         bitrate *= 1000;
+        float dur = 0;
         if (samplerate > 0 && bitrate > 0) {
             if (layer == 1) {
-                duration += (float)384 / samplerate;
+                dur = (float)384 / samplerate;
                 packetlength = (12 * bitrate / samplerate + padding) * 4;
             }
             else if (layer == 2) {
-                duration += (float)1152 / samplerate;
+                dur = (float)1152 / samplerate;
                 packetlength = 144 * bitrate / samplerate + padding;
             }
             else if (layer == 3) {
-                duration += (float)1152 / samplerate;
+                dur = (float)1152 / samplerate;
                 packetlength = 144 * bitrate / samplerate + padding;
             }
         }
         else {
             packetlength = 0;
         }
+        buffer->version = ver;
+        buffer->layer = layer;
+        buffer->bitrate = bitrate;
+        buffer->samplerate = samplerate;
+        buffer->packetlength = packetlength;
+        buffer->frameduration = dur;
+        duration += dur;
+        if (position == 0) {
+            return 0;
+        }
         nframe++;
         if (packetlength > 0) {
-            fseek (buffer.file, packetlength-4, SEEK_CUR);
+            fseek (buffer->file, packetlength-4, SEEK_CUR);
             nseeks++;
         }
     }
 //    cmp3.info.duration = duration;
-    if (position >= 0 && duration > position) {
+    if (position >= 0 && duration >= position) {
         // set decoder timer
-        timer.seconds = (int)duration;
-        timer.fraction = (int)((duration - (float)timer.seconds)*MAD_TIMER_RESOLUTION);
+        buffer->timer.seconds = (int)duration;
+        buffer->timer.fraction = (int)((duration - (float)buffer->timer.seconds)*MAD_TIMER_RESOLUTION);
     }
     if (nframe == 0) {
         //printf ("file doesn't looks like mpeg stream\n");
@@ -288,6 +307,7 @@ cmp3_scan_stream (float position) {
     return duration;
 }
 
+#if 0
 static int
 cmp3_scan_stream2 (float position) {
     fseek (buffer.file, 0, SEEK_END);
@@ -454,6 +474,7 @@ cmp3_scan_stream2 (float position) {
     munmap (map, len);
     return duration;
 }
+#endif
 
 static int
 cmp3_decode (void) {
@@ -517,7 +538,7 @@ cmp3_decode (void) {
 		cmp3.info.samplesPerSecond = frame.header.samplerate;
 		cmp3.info.channels = MAD_NCHANNELS(&frame.header);
 
-		mad_timer_add(&timer,frame.header.duration);
+		mad_timer_add(&buffer.timer,frame.header.duration);
 		
 		mad_synth_frame(&synth,&frame);
 
@@ -564,7 +585,6 @@ cmp3_decode (void) {
 //            return -1;
 //        }
     }
-    cmp3.info.position = (float)timer.seconds + (float)timer.fraction / MAD_TIMER_RESOLUTION;
     return nread;
 }
 
@@ -601,6 +621,7 @@ cmp3_read (char *bytes, int size) {
         buffer.output = bytes;
         buffer.readsize = size;
         ret += cmp3_decode ();
+        cmp3.info.position = (float)buffer.timer.seconds + (float)buffer.timer.fraction / MAD_TIMER_RESOLUTION;
     }
     return ret;
 }
@@ -618,9 +639,9 @@ cmp3_seek (float time) {
 	mad_stream_init(&stream);
 	mad_frame_init(&frame);
 	mad_synth_init(&synth);
-	mad_timer_reset(&timer);
+	mad_timer_reset(&buffer.timer);
 
-    if (cmp3_scan_stream (time) == -1) {
+    if (cmp3_scan_stream (&buffer, time) == -1) {
         return -1;
     }
     return 0;
@@ -1282,29 +1303,27 @@ cmp3_insert (playItem_t *after, const char *fname) {
     }
     rewind (fp);
 
-#if 0
-    // calculate duration
+// calculate CBR duration
+    buffer_t buffer;
     buffer.file = fp;
     buffer.remaining = 0;
     buffer.output = NULL;
     buffer.readsize = 0;
     buffer.cachefill = 0;
-    cmp3.info.position = 0;
-	mad_timer_reset(&timer);
+	mad_timer_reset(&buffer.timer);
 
-    float dur = 0;
-    if ((dur = cmp3_scan_stream2 (-1)) >= 0) {
-        it->duration = dur;
-        //printf ("duration: %f\n", dur);
-        after = pl_insert_item (after, it);
-    }
-    else {
+    // calc approx. mp3 duration 
+    int res = cmp3_scan_stream (&buffer, 0);
+    if (res < 0) {
         pl_item_free (it);
+        return NULL;
     }
-    memset (&buffer, 0, sizeof (buffer));
-#endif
+    fseek (fp, 0, SEEK_END);
+    int sz = ftell (fp);
+    int nframes = sz / buffer.packetlength;
+    it->duration = nframes * buffer.frameduration;
+
     after = pl_insert_item (after, it);
-    it->duration = -1;
     fclose (fp);
     return after;
 }
