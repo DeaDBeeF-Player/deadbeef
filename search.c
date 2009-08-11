@@ -46,6 +46,8 @@ search_start (void) {
         extern GtkWidget *mainwin;
         gtk_window_set_transient_for (GTK_WINDOW (searchwin), GTK_WINDOW (mainwin));
     }
+
+    gtk_entry_set_text (GTK_ENTRY (lookup_widget (searchwin, "searchentry")), "");
     gtk_widget_show (searchwin);
     gtk_window_present (GTK_WINDOW (searchwin));
 }
