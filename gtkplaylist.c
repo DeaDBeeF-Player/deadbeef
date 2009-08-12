@@ -42,7 +42,7 @@
 
 #define rowheight 17
 const char *colnames[pl_ncolumns] = {
-    "Playing Status",
+    "Playing",
     "Artist / Album",
     "Track №",
     "Title / Track Artist",

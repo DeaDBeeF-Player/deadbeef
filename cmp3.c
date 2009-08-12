@@ -830,7 +830,7 @@ convstr_id3v2_2to3 (const char* str, int sz) {
     sz--;
     iconv_t cd = iconv_open ("utf8", enc);
     if (!cd) {
-        // printf ("unknown encoding: %s\n", enc);
+        printf ("unknown encoding: %s\n", enc);
         return NULL;
     }
     else {
@@ -843,7 +843,6 @@ convstr_id3v2_2to3 (const char* str, int sz) {
         iconv_close (cd);
         ret = out;
     }
-    //printf ("decoded %s\n", out+3);
     return ret;
 }
 
@@ -1047,22 +1046,47 @@ cmp3_read_id3v1 (playItem_t *it, FILE *fp) {
 }
 
 void
-id3v2_string_read (char *out, int sz, int unsync, uint8_t **pread) {
-    // control byte
-    *out = *(*pread);
-    (*pread)++;
-    out++;
-    sz--;
-    while (sz > 0) {
+id3v2_string_read (int version, char *out, int sz, int unsync, uint8_t **pread) {
+    if (!unsync) {
+        memcpy (out, *pread, sz);
+        *pread += sz;
+        out[sz] = 0;
+        out[sz+1] = 0;
+        return;
+    }
+    if (version == 3 && *(*pread) == 1) {
         *out = *(*pread);
         (*pread)++;
-        if (unsync && !(*out)) {
-            continue;
-        }
         out++;
         sz--;
+        while (sz >= 2) {
+            if (unsync && !(*pread)[0] && !(*pread)[1]) {
+                (*pread) += 2;
+                continue;
+            }
+            *out++ = *(*pread)++;
+            *out++ = *(*pread)++;
+            sz -= 2;
+        }
+        *out++ = 0;
+        *out++ = 0;
     }
-    *out = 0;
+    else {
+        *out = *(*pread);
+        (*pread)++;
+        out++;
+        sz--;
+        while (sz > 0) {
+            *out = *(*pread);
+            (*pread)++;
+            if (unsync && !(*out)) {
+                continue;
+            }
+            out++;
+            sz--;
+        }
+        *out = 0;
+    }
 }
 
 int
@@ -1163,7 +1187,7 @@ cmp3_read_id3v2 (playItem_t *it, FILE *fp) {
                 break; // size of frame is more than size of tag
             }
             if (sz < 1) {
-                err = 1;
+//                err = 1;
                 break; // frame must be at least 1 byte long
             }
             uint16_t flags = (readptr[1] << 0) | (readptr[0] << 8);
@@ -1174,8 +1198,8 @@ cmp3_read_id3v2 (playItem_t *it, FILE *fp) {
                     err = 1;
                     break; // too large
                 }
-                char str[sz+1];
-                id3v2_string_read (&str[1], sz, unsync, &readptr);
+                char str[sz+2];
+                id3v2_string_read (version_major, &str[0], sz, unsync, &readptr);
                 artist = strdup (convstr (str, sz));
             }
             else if (!strcmp (frameid, "TPE2")) {
@@ -1183,8 +1207,8 @@ cmp3_read_id3v2 (playItem_t *it, FILE *fp) {
                     err = 1;
                     break; // too large
                 }
-                char str[sz+1];
-                id3v2_string_read (&str[1], sz, unsync, &readptr);
+                char str[sz+2];
+                id3v2_string_read (version_major, &str[0], sz, unsync, &readptr);
                 band = strdup (convstr (str, sz));
             }
             else if (!strcmp (frameid, "TRCK")) {
@@ -1192,8 +1216,8 @@ cmp3_read_id3v2 (playItem_t *it, FILE *fp) {
                     err = 1;
                     break; // too large
                 }
-                char str[sz+1];
-                id3v2_string_read (&str[1], sz, unsync, &readptr);
+                char str[sz+2];
+                id3v2_string_read (version_major, &str[0], sz, unsync, &readptr);
                 track = strdup (convstr (str, sz));
             }
             else if (!strcmp (frameid, "TIT2")) {
@@ -1201,8 +1225,9 @@ cmp3_read_id3v2 (playItem_t *it, FILE *fp) {
                     err = 1;
                     break; // too large
                 }
-                char str[sz+1];
-                id3v2_string_read (&str[1], sz, unsync, &readptr);
+                char str[sz+2];
+                printf ("got tit2 frame, length: %d\n", sz);
+                id3v2_string_read (version_major, &str[0], sz, unsync, &readptr);
                 title = strdup (convstr (str, sz));
             }
         }
@@ -1232,7 +1257,7 @@ cmp3_read_id3v2 (playItem_t *it, FILE *fp) {
                     err = 1;
                     break; // too large
                 }
-                char str[sz+1];
+                char str[sz+2];
                 memcpy (str, readptr, sz);
                 str[sz] = 0;
                 vendor = strdup (convstr (str, sz));
@@ -1242,7 +1267,7 @@ cmp3_read_id3v2 (playItem_t *it, FILE *fp) {
                     err = 1;
                     break; // too large
                 }
-                char str[sz+1];
+                char str[sz+2];
                 memcpy (str, readptr, sz);
                 str[sz] = 0;
                 title = strdup (convstr (str, sz));
