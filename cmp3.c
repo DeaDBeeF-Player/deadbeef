@@ -276,7 +276,7 @@ cmp3_scan_stream (buffer_t *buffer, float position) {
             }
         }
         else {
-            packetlength = 0;
+            continue;
         }
         buffer->version = ver;
         buffer->layer = layer;
@@ -1345,6 +1345,7 @@ cmp3_insert (playItem_t *after, const char *fname) {
     }
     fseek (fp, 0, SEEK_END);
     int sz = ftell (fp);
+    assert (buffer.packetlength);
     int nframes = sz / buffer.packetlength;
     it->duration = nframes * buffer.frameduration;
 
