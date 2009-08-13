@@ -764,7 +764,6 @@ on_playlist_save_as_activate           (GtkMenuItem     *menuitem,
 
 
 static GdkPixmap *seekbar_backbuf;
-static GdkPixmap *volumebar_backbuf;
 
 enum
 {
@@ -939,43 +938,55 @@ on_seekbar_button_release_event        (GtkWidget       *widget,
 
 
 
-
-gboolean
-on_volumebar_configure_event           (GtkWidget       *widget,
-                                        GdkEventConfigure *event,
-                                        gpointer         user_data)
-{
-
-  return FALSE;
-}
-
+static GdkPixmap *volumebar_backbuf;
 
 void
 volumebar_draw (GtkWidget *widget) {
     if (!widget) {
         return;
     }
+    gdk_draw_rectangle (volumebar_backbuf, widget->style->bg_gc[0], TRUE, 0, 0, widget->allocation.width, widget->allocation.height);
 	cairo_t *cr;
-	cr = gdk_cairo_create (widget->window);
+	cr = gdk_cairo_create (volumebar_backbuf);
 	if (!cr) {
         return;
     }
 
-    float n = widget->allocation.width / 4.f;
+    int n = widget->allocation.width / 4;
     float vol = p_get_volume () * n;
     float h = 16;
     for (int i = 0; i < n; i++) {
+        float iy = (float)i + 3;
         if (i <= vol) {
             gtkpl_set_cairo_source_rgb (cr, COLO_VOLUMEBAR_FRONT);
         }
         else {
             gtkpl_set_cairo_source_rgb (cr, COLO_VOLUMEBAR_BACK);
         }
-        cairo_rectangle (cr, i * 4, (widget->allocation.height/2-h/2) + h - 1 - (h* i / n), 3, h * i / n);
+        cairo_rectangle (cr, i * 4, (widget->allocation.height/2-h/2) + h - 1 - (h* i / n), 3, h * iy / n);
         cairo_fill (cr);
     }
 
     cairo_destroy (cr);
+}
+
+void
+volumebar_expose (GtkWidget *widget, int x, int y, int w, int h) {
+	gdk_draw_drawable (widget->window, widget->style->black_gc, volumebar_backbuf, x, y, x, y, w, h);
+}
+
+gboolean
+on_volumebar_configure_event           (GtkWidget       *widget,
+                                        GdkEventConfigure *event,
+                                        gpointer         user_data)
+{
+    if (volumebar_backbuf) {
+        g_object_unref (volumebar_backbuf);
+        volumebar_backbuf = NULL;
+    }
+    volumebar_backbuf = gdk_pixmap_new (widget->window, widget->allocation.width, widget->allocation.height, -1);
+    volumebar_draw (widget);
+    return FALSE;
 }
 
 gboolean
@@ -983,7 +994,7 @@ on_volumebar_expose_event              (GtkWidget       *widget,
                                         GdkEventExpose  *event,
                                         gpointer         user_data)
 {
-    volumebar_draw (widget);
+    volumebar_expose (widget, event->area.x, event->area.y, event->area.width, event->area.height);
     return FALSE;
 }
 
@@ -1003,8 +1014,9 @@ on_volumebar_motion_notify_event       (GtkWidget       *widget,
         }
         p_set_volume (volume);
         volumebar_draw (widget);
+        volumebar_expose (widget, 0, 0, widget->allocation.width, widget->allocation.height);
     }
-  return FALSE;
+    return FALSE;
 }
 
 gboolean
@@ -1021,6 +1033,7 @@ on_volumebar_button_press_event        (GtkWidget       *widget,
     }
     p_set_volume (volume);
     volumebar_draw (widget);
+    volumebar_expose (widget, 0, 0, widget->allocation.width, widget->allocation.height);
     return FALSE;
 }
 
