@@ -23,6 +23,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "callbacks.h"
 #include "interface.h"
@@ -1045,5 +1046,15 @@ on_volumebar_button_release_event      (GtkWidget       *widget,
 {
 
   return FALSE;
+}
+
+
+gboolean
+on_mainwin_delete_event                (GtkWidget       *widget,
+                                        GdkEvent        *event,
+                                        gpointer         user_data)
+{
+    messagepump_push (M_TERMINATE, 0, 0, 0);
+    return TRUE;
 }
 

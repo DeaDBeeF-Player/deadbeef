@@ -39,8 +39,6 @@ GtkWidget *searchwin;
 gtkplaylist_t main_playlist;
 gtkplaylist_t search_playlist;
 
-int psdl_terminate = 0;
-
 // update status bar and window title
 static int sb_context_id = -1;
 static char sb_text[512];
@@ -48,9 +46,6 @@ static float last_songpos = -1;
 
 void
 update_songinfo (void) {
-    if (!mainwin) {
-        return;
-    }
     char sbtext_new[512] = "-";
     float songpos = last_songpos;
     if (p_ispaused ()) {
@@ -107,15 +102,19 @@ update_songinfo (void) {
 }
 
 void
-psdl_thread (uintptr_t ctx) {
-    p_play ();
-    while (!psdl_terminate) {
+player_thread (uintptr_t ctx) {
+    for (;;) {
         uint32_t msg;
         uintptr_t ctx;
         uint32_t p1;
         uint32_t p2;
         while (messagepump_pop(&msg, &ctx, &p1, &p2) != -1) {
             switch (msg) {
+            case M_TERMINATE:
+                GDK_THREADS_ENTER();
+                gtk_main_quit ();
+                GDK_THREADS_LEAVE();
+                return;
             case M_SONGCHANGED:
                 GDK_THREADS_ENTER();
                 // update window title
@@ -222,7 +221,7 @@ main (int argc, char *argv[]) {
     codec_init_locking ();
     streamer_init ();
     p_init ();
-    thread_start (psdl_thread, 0);
+    thread_start (player_thread, 0);
 
     g_thread_init (NULL);
     add_pixmap_directory ("/usr/share/deadbeef/images");
@@ -241,10 +240,8 @@ main (int argc, char *argv[]) {
     search_playlist_init (lookup_widget (searchwin, "searchlist"));
     gtk_widget_show (mainwin);
     gtk_main ();
-    mainwin = NULL;
     gdk_threads_leave ();
     messagepump_free ();
-    psdl_terminate = 1;
     p_free ();
     streamer_free ();
     codec_free_locking ();

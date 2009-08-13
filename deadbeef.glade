@@ -22,8 +22,8 @@
   <property name="gravity">GDK_GRAVITY_NORTH_WEST</property>
   <property name="focus_on_map">True</property>
   <property name="urgency_hint">False</property>
-  <signal name="destroy" handler="gtk_main_quit" last_modification_time="Fri, 03 Jul 2009 23:48:26 GMT"/>
   <signal name="key_press_event" handler="on_mainwin_key_press_event" last_modification_time="Thu, 30 Jul 2009 21:14:26 GMT"/>
+  <signal name="delete_event" handler="on_mainwin_delete_event" last_modification_time="Thu, 13 Aug 2009 20:35:55 GMT"/>
 
   <child>
     <widget class="GtkVBox" id="vbox1">
