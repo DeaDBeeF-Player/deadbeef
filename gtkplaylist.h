@@ -196,4 +196,7 @@ gtkpl_playsongnum (int idx);
 void
 gtkpl_set_cairo_source_rgb (cairo_t *cr, int col);
 
+void
+gtkpl_set_cairo_font (cairo_t *cr);
+
 #endif // __GTKPLAYLIST_H

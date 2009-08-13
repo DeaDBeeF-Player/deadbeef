@@ -64,7 +64,13 @@ float colo_system_gtk[COLO_COUNT][3];
 // current color scheme
 float colo_current[COLO_COUNT][3];
 
-#define rowheight 17
+// playlist font
+const char *fontface = "DejaVu Sans";
+float fontheight = 11;
+
+// playlist row height
+int rowheight = 17;
+
 const char *colnames[pl_ncolumns] = {
     "Playing",
     "Artist / Album",
@@ -96,6 +102,17 @@ gtkpl_system_colo_init (GtkWidget *widget) {
 void
 gtkpl_init (void) {
     memcpy (colo_current, colo_dark_orange, sizeof (colo_current));
+}
+
+void
+gtkpl_set_cairo_source_rgb (cairo_t *cr, int col) {
+    cairo_set_source_rgb (cr, colo_current[col][0], colo_current[col][1], colo_current[col][2]);
+}
+
+void
+gtkpl_set_cairo_font (cairo_t *cr) {
+    cairo_select_font_face (cr, fontface, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+    cairo_set_font_size (cr, fontheight);
 }
 
 int
@@ -146,6 +163,7 @@ gtkpl_fit_text (cairo_t *cr, char *out, int *dotpos, int len, const char *in, in
 
 static void
 text_draw (cairo_t *cr, int x, int y, const char *text) {
+    gtkpl_set_cairo_font (cr);
     cairo_move_to (cr, x, y+rowheight-3);
     cairo_show_text (cr, text);
 }
@@ -209,11 +227,6 @@ gtkpl_redraw_pl_row (gtkplaylist_t *ps, int row) {
     gtkpl_redraw_pl_row_novis (ps, row);
 	gdk_draw_drawable (widget->window, widget->style->black_gc, ps->backbuf, x, y, x, y, w, h);
 	//gdk_draw_drawable (widget->window, widget->style->black_gc, ps->backbuf, 0, 0, 0, 0, widget->allocation.width, widget->allocation.height);
-}
-
-void
-gtkpl_set_cairo_source_rgb (cairo_t *cr, int col) {
-    cairo_set_source_rgb (cr, colo_current[col][0], colo_current[col][1], colo_current[col][2]);
 }
 
 void
