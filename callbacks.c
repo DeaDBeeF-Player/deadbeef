@@ -449,6 +449,7 @@ on_playlist_drag_drop                  (GtkWidget       *widget,
                                         guint            time,
                                         gpointer         user_data)
 {
+#if 0
     if (drag_context->targets) {
         GdkAtom target_type = GDK_POINTER_TO_ATOM (g_list_nth_data (drag_context->targets, TARGET_SAMEWIDGET));
         if (!target_type) {
@@ -457,6 +458,7 @@ on_playlist_drag_drop                  (GtkWidget       *widget,
         gtk_drag_get_data (widget, drag_context, target_type, time);
         return TRUE;
     }
+#endif
     return FALSE;
 }
 
@@ -517,7 +519,7 @@ on_playlist_drag_data_received         (GtkWidget       *widget,
         uint32_t *d= (uint32_t *)ptr;
         gtkpl_handle_drag_drop (ps, y, d, data->length/4);
     }
-    gtk_drag_finish (drag_context, FALSE, FALSE, time);
+    gtk_drag_finish (drag_context, TRUE, FALSE, time);
 }
 
 

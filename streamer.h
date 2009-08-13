@@ -42,4 +42,7 @@ streamer_unlock (void);
 void
 streamer_set_nextsong (int song, int pstate);
 
+int
+streamer_get_fill_level (void);
+
 #endif // __STREAMER_H

@@ -71,7 +71,7 @@ update_songinfo (void) {
         songpos = c->info.position;
         codec_unlock ();
 
-        snprintf (sbtext_new, 512, "[%s] %dHz | %d bit | %s | %d:%02d / %d:%02d | %d songs total", playlist_current.filetype ? playlist_current.filetype:"-", samplerate, bitspersample, mode, minpos, secpos, mindur, secdur, pl_getcount ());
+        snprintf (sbtext_new, 512, "[%s] %dHz | %d bit | %s | %d:%02d / %d:%02d | %d songs total | streambuffer: %d%%", playlist_current.filetype ? playlist_current.filetype:"-", samplerate, bitspersample, mode, minpos, secpos, mindur, secdur, pl_getcount (), streamer_get_fill_level ());
     }
 
     if (strcmp (sbtext_new, sb_text)) {

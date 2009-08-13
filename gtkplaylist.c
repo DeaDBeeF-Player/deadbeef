@@ -27,6 +27,7 @@
 #include <string.h>
 #include <assert.h>
 #include <unistd.h>
+#include <ctype.h>
 #include "gtkplaylist.h"
 #include "callbacks.h"
 #include "interface.h"
@@ -959,11 +960,36 @@ on_playlist_drag_end                   (GtkWidget       *widget,
 void
 strcopy_special (char *dest, const char *src, int len) {
     while (len > 0) {
-        if (len >= 3 && !strncmp (src, "\%20", 3)) {
-            *dest = ' ';
+        if (*src == '%' && len >= 3) {
+            int charcode = 0;
+            int byte;
+            byte = tolower (src[2]);
+            if (byte >= '0' && byte <= '9') {
+                charcode = byte - '0';
+            }
+            else if (byte >= 'a' && byte <= 'f') {
+                charcode = byte - 'a' + 10;
+            }
+            else {
+                charcode = '?';
+            }
+            if (charcode != '?') {
+                byte = tolower (src[1]);
+                if (byte >= '0' && byte <= '9') {
+                    charcode |= (byte - '0') << 4;
+                }
+                else if (byte >= 'a' && byte <= 'f') {
+                    charcode |= (byte - 'a' + 10) << 4;
+                }
+                else {
+                    charcode = '?';
+                }
+            }
+            *dest = charcode;
             dest++;
             src += 3;
             len -= 3;
+            continue;
         }
         else {
             *dest++ = *src++;
@@ -1008,9 +1034,12 @@ gtkpl_add_fm_dropped_files (gtkplaylist_t *ps, char *ptr, int length, int drop_y
     if (drop_before) {
         after = drop_before->prev[ps->iterator];
     }
-    const gchar *p = ptr;
+    else {
+        after = playlist_tail[ps->iterator];
+    }
+    const uint8_t *p = (const uint8_t*)ptr;
     while (*p) {
-        const gchar *pe = p+1;
+        const uint8_t *pe = p;
         while (*pe && *pe > ' ') {
             pe++;
         }

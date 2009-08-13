@@ -108,7 +108,7 @@ streamer_thread (uintptr_t ctx) {
             streambuffer_fill += bytesread;
         }
         streamer_unlock ();
-        usleep (3000);
+        usleep (2000);
         //printf ("fill: %d        \r", streambuffer_fill);
     }
 
@@ -289,4 +289,9 @@ streamer_read (char *bytes, int size) {
     }
     streamer_unlock ();
     return sz;
+}
+
+int
+streamer_get_fill_level (void) {
+    return streambuffer_fill / (STREAM_BUFFER_SIZE / 100);
 }
