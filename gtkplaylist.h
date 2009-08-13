@@ -23,9 +23,28 @@
 #include <assert.h>
 #include "playlist.h"
 
+// drag and drop targets
 enum {
     TARGET_URILIST,
     TARGET_SAMEWIDGET,
+};
+
+// color scheme constants
+enum {
+    COLO_PLAYLIST_CURSOR,
+    COLO_PLAYLIST_ODD,
+    COLO_PLAYLIST_EVEN,
+    COLO_PLAYLIST_SEL_ODD,
+    COLO_PLAYLIST_SEL_EVEN,
+    COLO_PLAYLIST_TEXT,
+    COLO_PLAYLIST_SEL_TEXT,
+    COLO_SEEKBAR_BACK,
+    COLO_SEEKBAR_FRONT,
+    COLO_SEEKBAR_MARKER,
+    COLO_VOLUMEBAR_BACK,
+    COLO_VOLUMEBAR_FRONT,
+    COLO_DRAGDROP_MARKER,
+    COLO_COUNT
 };
 
 #define pl_ncolumns 5
@@ -63,8 +82,12 @@ typedef struct {
     int colwidths[pl_ncolumns]; // current column widths
 } gtkplaylist_t;
 
-#define GTKpl_PROLOGUE \
+#define GTKPL_PROLOGUE \
     gtkplaylist_t *ps = (gtkplaylist_t *)gtk_object_get_data (GTK_OBJECT (widget), "ps"); assert (ps); 
+
+// that must be called before gtk_init
+void
+gtkpl_init (void);
 
 void
 gtkpl_redraw_pl_row (gtkplaylist_t *ps, int row);
@@ -169,5 +192,8 @@ gtkpl_pausesong (void);
 
 void
 gtkpl_playsongnum (int idx);
+
+void
+gtkpl_set_cairo_source_rgb (cairo_t *cr, int col);
 
 #endif // __GTKPLAYLIST_H

@@ -41,6 +41,29 @@
 #include "streamer.h"
 #include "search.h"
 
+// orange on dark color scheme
+float colo_dark_orange[COLO_COUNT][3] = {
+    { 0x7f/255.f, 0x7f/255.f, 0x7f/255.f }, // cursor
+    { 0x1d/255.f, 0x1f/255.f, 0x1b/255.f }, // odd
+    { 0x21/255.f, 0x23/255.f, 0x1f/255.f }, // even
+    { 0xaf/255.f, 0xa7/255.f, 0x9e/255.f }, // sel odd
+    { 0xa7/255.f, 0x9f/255.f, 0x96/255.f }, // sel even
+    { 0xf4/255.f, 0x7e/255.f, 0x46/255.f }, // text
+    { 0,          0,          0          }, // sel text
+    { 0x1d/255.f, 0x1f/255.f, 0x1b/255.f }, // seekbar back
+    { 0xf4/255.f, 0x7e/255.f, 0x46/255.f }, // seekbar front
+    { 1,          1,          1          }, // seekbar marker
+    { 0x1d/255.f, 0x1f/255.f, 0x1b/255.f }, // volumebar back
+    { 0xf4/255.f, 0x7e/255.f, 0x46/255.f }, // volumebar front
+    { 0xf4/255.f, 0x7e/255.f, 0x46/255.f }, // dragdrop marker
+};
+
+// gtk color scheme
+float colo_system_gtk[COLO_COUNT][3];
+
+// current color scheme
+float colo_current[COLO_COUNT][3];
+
 #define rowheight 17
 const char *colnames[pl_ncolumns] = {
     "Playing",
@@ -64,6 +87,16 @@ static cairo_surface_t *pause16_pixmap;
 //int ps->colwidths[] = {
 //    50, 200, 50, 200, 50
 //};
+
+void
+gtkpl_system_colo_init (GtkWidget *widget) {
+}
+
+// that must be called before gtk_init
+void
+gtkpl_init (void) {
+    memcpy (colo_current, colo_dark_orange, sizeof (colo_current));
+}
 
 int
 gtkpl_fit_text (cairo_t *cr, char *out, int *dotpos, int len, const char *in, int width) {
@@ -179,6 +212,11 @@ gtkpl_redraw_pl_row (gtkplaylist_t *ps, int row) {
 }
 
 void
+gtkpl_set_cairo_source_rgb (cairo_t *cr, int col) {
+    cairo_set_source_rgb (cr, colo_current[col][0], colo_current[col][1], colo_current[col][2]);
+}
+
+void
 gtkpl_draw_pl_row_back (gtkplaylist_t *ps, cairo_t *cr, int row, playItem_t *it) {
 	// draw background
 	float w;
@@ -189,26 +227,26 @@ gtkpl_draw_pl_row_back (gtkplaylist_t *ps, cairo_t *cr, int row, playItem_t *it)
 	w = width;
 	if (it && ((it->selected && ps->multisel) || (row == ps->row && !ps->multisel))) {
         if (row % 2) {
-            cairo_set_source_rgb (cr, 0xa7/255.f, 0x9f/255.f, 0x96/255.f);
+            gtkpl_set_cairo_source_rgb (cr, COLO_PLAYLIST_SEL_EVEN);
         }
         else {
-            cairo_set_source_rgb (cr, 0xaf/255.f, 0xa7/255.f, 0x9e/255.f);
+            gtkpl_set_cairo_source_rgb (cr, COLO_PLAYLIST_SEL_ODD);
         }
         cairo_rectangle (cr, 0, row * rowheight - ps->scrollpos * rowheight, width, rowheight);
         cairo_fill (cr);
     }
     else {
         if (row % 2) {
-            cairo_set_source_rgb (cr, 0x1d/255.f, 0x1f/255.f, 0x1b/255.f);
+            gtkpl_set_cairo_source_rgb (cr, COLO_PLAYLIST_EVEN);
         }
         else {
-            cairo_set_source_rgb (cr, 0x21/255.f, 0x23/255.f, 0x1f/255.f);
+            gtkpl_set_cairo_source_rgb (cr, COLO_PLAYLIST_ODD);
         }
         cairo_rectangle (cr, 0, row * rowheight - ps->scrollpos * rowheight, width, rowheight);
         cairo_fill (cr);
     }
 	if (row == ps->row) {
-        cairo_set_source_rgb (cr, 0x7f/255.f, 0x7f/255.f, 0x7f/255.f);
+        gtkpl_set_cairo_source_rgb (cr, COLO_PLAYLIST_CURSOR);
         cairo_set_antialias (cr, CAIRO_ANTIALIAS_NONE);
         cairo_rectangle (cr, 0, row * rowheight - ps->scrollpos * rowheight, width, rowheight-1);
         cairo_set_line_width (cr, 1);
@@ -233,10 +271,10 @@ gtkpl_draw_pl_row (gtkplaylist_t *ps, cairo_t *cr, int row, playItem_t *it) {
         cairo_reset_clip (cr);
     }
 	if (it && ((it->selected && ps->multisel) || (row == ps->row && !ps->multisel))) {
-        cairo_set_source_rgb (cr, 0, 0, 0);
+        gtkpl_set_cairo_source_rgb (cr, COLO_PLAYLIST_SEL_TEXT);
     }
     else {
-        cairo_set_source_rgb (cr, 0xf4/255.f, 0x7e/255.f, 0x46/255.f);
+        gtkpl_set_cairo_source_rgb (cr, COLO_PLAYLIST_TEXT);
     }
     cairo_set_font_size (cr, rowheight-4);
     // draw as columns
@@ -375,7 +413,7 @@ on_playlist_configure_event            (GtkWidget       *widget,
 {
     extern void main_playlist_init (GtkWidget *widget);
     main_playlist_init (widget);
-    GTKpl_PROLOGUE;
+    GTKPL_PROLOGUE;
     gtkpl_configure (ps);
     return FALSE;
 }
@@ -575,7 +613,7 @@ gtkpl_draw_areasel (GtkWidget *widget, int x, int y) {
 	if (!cr) {
 		return;
 	}
-    cairo_set_source_rgb (cr, 1.f, 1.f, 1.f);
+	gtkpl_set_cairo_source_rgb (cr, COLO_PLAYLIST_CURSOR);
     cairo_set_antialias (cr, CAIRO_ANTIALIAS_NONE);
     cairo_set_line_width (cr, 1);
     int sx = min (areaselect_x, x);
@@ -871,7 +909,7 @@ gtkpl_track_dragdrop (gtkplaylist_t *ps, int y) {
 	}
     drag_motion_y = y / rowheight;
 
-    cairo_set_source_rgb (cr, 0xf4/255.f, 0x7e/255.f, 0x46/255.f);
+    gtkpl_set_cairo_source_rgb (cr, COLO_DRAGDROP_MARKER);
     cairo_rectangle (cr, 0, drag_motion_y * rowheight-1, widget->allocation.width, 3);
     cairo_rectangle (cr, 0, drag_motion_y * rowheight-3, 3, 7);
     cairo_rectangle (cr, widget->allocation.width-3, drag_motion_y * rowheight-3, 3, 7);
@@ -950,7 +988,7 @@ on_playlist_drag_end                   (GtkWidget       *widget,
                                         GdkDragContext  *drag_context,
                                         gpointer         user_data)
 {
-    GTKpl_PROLOGUE;
+    GTKPL_PROLOGUE;
     // invalidate entire cache - slow, but rare
     memset (ps->fmtcache, 0, sizeof (int16_t) * 3 * pl_ncolumns * ps->nvisiblerows);
     gtkpl_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
@@ -1137,7 +1175,7 @@ on_header_expose_event                 (GtkWidget       *widget,
                                         GdkEventExpose  *event,
                                         gpointer         user_data)
 {
-    GTKpl_PROLOGUE;
+    GTKPL_PROLOGUE;
     gtkpl_header_draw (ps);
     return FALSE;
 }
@@ -1175,7 +1213,7 @@ on_header_motion_notify_event          (GtkWidget       *widget,
                                         GdkEventMotion  *event,
                                         gpointer         user_data)
 {
-    GTKpl_PROLOGUE;
+    GTKPL_PROLOGUE;
     if (header_dragging >= 0) {
         gdk_window_set_cursor (widget->window, cursor_drag);
     }
@@ -1233,7 +1271,7 @@ on_header_button_press_event           (GtkWidget       *widget,
                                         GdkEventButton  *event,
                                         gpointer         user_data)
 {
-    GTKpl_PROLOGUE;
+    GTKPL_PROLOGUE;
     if (event->button == 1) {
         // start sizing/dragging
         header_dragging = -1;
@@ -1264,7 +1302,7 @@ on_header_button_release_event         (GtkWidget       *widget,
                                         GdkEventButton  *event,
                                         gpointer         user_data)
 {
-    GTKpl_PROLOGUE;
+    GTKPL_PROLOGUE;
     header_dragging = -1;
     header_sizing = -1;
     int x = 0;

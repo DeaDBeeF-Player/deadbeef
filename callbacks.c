@@ -116,7 +116,7 @@ on_playlist_expose_event               (GtkWidget       *widget,
         GdkEventExpose  *event,
         gpointer         user_data)
 {
-    GTKpl_PROLOGUE;
+    GTKPL_PROLOGUE;
     // draw visible area of playlist
     gtkpl_expose (ps, event->area.x, event->area.y, event->area.width, event->area.height);
 
@@ -129,7 +129,7 @@ on_playlist_button_press_event         (GtkWidget       *widget,
                                         GdkEventButton  *event,
                                         gpointer         user_data)
 {
-    GTKpl_PROLOGUE;
+    GTKPL_PROLOGUE;
     if (event->button == 1) {
         gtkpl_mouse1_pressed (ps, event->state, event->x, event->y, event->time);
     }
@@ -141,7 +141,7 @@ on_playlist_button_release_event       (GtkWidget       *widget,
                                         GdkEventButton  *event,
                                         gpointer         user_data)
 {
-    GTKpl_PROLOGUE;
+    GTKPL_PROLOGUE;
     if (event->button == 1) {
         gtkpl_mouse1_released (ps, event->state, event->x, event->y, event->time);
     }
@@ -153,7 +153,7 @@ on_playlist_motion_notify_event        (GtkWidget       *widget,
                                         GdkEventMotion  *event,
                                         gpointer         user_data)
 {
-    GTKpl_PROLOGUE;
+    GTKPL_PROLOGUE;
     gtkpl_mousemove (ps, event);
     return FALSE;
 }
@@ -163,7 +163,7 @@ void
 on_playscroll_value_changed            (GtkRange        *widget,
                                         gpointer         user_data)
 {
-    GTKpl_PROLOGUE;
+    GTKPL_PROLOGUE;
     int newscroll = gtk_range_get_value (GTK_RANGE (widget));
     gtkpl_scroll (ps, newscroll);
 }
@@ -355,7 +355,7 @@ on_playlist_scroll_event               (GtkWidget       *widget,
                                         GdkEvent        *event,
                                         gpointer         user_data)
 {
-    GTKpl_PROLOGUE;
+    GTKPL_PROLOGUE;
 	GdkEventScroll *ev = (GdkEventScroll*)event;
     gtkpl_handle_scroll_event (ps, ev->direction);
     return FALSE;
@@ -435,7 +435,7 @@ on_playlist_drag_motion                (GtkWidget       *widget,
                                         guint            time,
                                         gpointer         user_data)
 {
-    GTKpl_PROLOGUE;
+    GTKPL_PROLOGUE;
     gtkpl_track_dragdrop (ps, y);
     return FALSE;
 }
@@ -508,7 +508,7 @@ on_playlist_drag_data_received         (GtkWidget       *widget,
                                         guint            time,
                                         gpointer         user_data)
 {
-    GTKpl_PROLOGUE;
+    GTKPL_PROLOGUE;
     gchar *ptr=(char*)data->data;
     if (target_type == 0) { // uris
         if (!strncmp(ptr,"file:///",8)) {
@@ -547,7 +547,7 @@ on_playlist_drag_leave                 (GtkWidget       *widget,
                                         guint            time,
                                         gpointer         user_data)
 {
-    GTKpl_PROLOGUE;
+    GTKPL_PROLOGUE;
     gtkpl_track_dragdrop (ps, -1);
 }
 
@@ -846,23 +846,25 @@ seekbar_draw (GtkWidget *widget) {
         pos *= widget->allocation.width;
     }
     // left
-    cairo_set_source_rgb (cr, 0xf4/255.f, 0x7e/255.f, 0x46/255.f);
-    cairo_rectangle (cr, 0, widget->allocation.height/2-4, pos, 8);
-    cairo_clip (cr);
-    clearlooks_rounded_rectangle (cr, 0, widget->allocation.height/2-4, widget->allocation.width, 8, 4, 0xff);
-    cairo_fill (cr);
-    cairo_reset_clip (cr);
+    if (pos > 0) {
+        gtkpl_set_cairo_source_rgb (cr, COLO_SEEKBAR_FRONT);
+        cairo_rectangle (cr, 0, widget->allocation.height/2-4, pos, 8);
+        cairo_clip (cr);
+        clearlooks_rounded_rectangle (cr, 0, widget->allocation.height/2-4, widget->allocation.width, 8, 4, 0xff);
+        cairo_fill (cr);
+        cairo_reset_clip (cr);
+    }
 
     // right
+    gtkpl_set_cairo_source_rgb (cr, COLO_SEEKBAR_BACK);
     cairo_rectangle (cr, pos, widget->allocation.height/2-4, widget->allocation.width-pos, 8);
     cairo_clip (cr);
-    cairo_set_source_rgb (cr, 0x21/255.f, 0x23/255.f, 0x1f/255.f);
     clearlooks_rounded_rectangle (cr, 0, widget->allocation.height/2-4, widget->allocation.width, 8, 4, 0xff);
     cairo_fill (cr);
     cairo_reset_clip (cr);
 
     if (seekbar_moving) {
-        cairo_set_source_rgb (cr, 1,1,1);
+        gtkpl_set_cairo_source_rgb (cr, COLO_SEEKBAR_MARKER);
         int x = seekbar_move_x;
         if (x < 0) {
             x = 0;
@@ -955,10 +957,10 @@ volumebar_draw (GtkWidget *widget) {
     int h = 16;
     for (int i = 0; i < n; i++) {
         if (i <= vol) {
-            cairo_set_source_rgb (cr, 0xf4/255.f, 0x7e/255.f, 0x46/255.f);
+            gtkpl_set_cairo_source_rgb (cr, COLO_VOLUMEBAR_FRONT);
         }
         else {
-            cairo_set_source_rgb (cr, 0x21/255.f, 0x23/255.f, 0x1f/255.f);
+            gtkpl_set_cairo_source_rgb (cr, COLO_VOLUMEBAR_BACK);
         }
         cairo_rectangle (cr, i * 4, (widget->allocation.height/2-h/2) + h - 1 - (h* i / n), 3, h * i / n);
         cairo_fill (cr);

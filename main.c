@@ -221,6 +221,8 @@ main (int argc, char *argv[]) {
     snprintf (dbconfdir, 1024, "%s/.config/deadbeef", homedir);
     mkdir (dbconfdir, 0755);
 
+    gtkpl_init ();
+
     messagepump_init ();
     codec_init_locking ();
     streamer_init ();

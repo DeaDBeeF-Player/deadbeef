@@ -187,7 +187,7 @@ on_searchlist_configure_event          (GtkWidget       *widget,
 {
     extern void search_playlist_init (GtkWidget *widget);
     search_playlist_init (widget);
-    GTKpl_PROLOGUE;
+    GTKPL_PROLOGUE;
     gtkpl_configure (ps);
     return FALSE;
 }
