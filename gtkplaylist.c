@@ -71,6 +71,10 @@ float fontheight = 11;
 // playlist row height
 int rowheight = 17;
 
+// header widget font/height
+const char *header_fontface = "DejaVu Sans";
+float header_fontheight = 11; // must be set as widget_height-2
+
 const char *colnames[pl_ncolumns] = {
     "Playing",
     "Artist / Album",
@@ -113,6 +117,12 @@ void
 gtkpl_set_cairo_font (cairo_t *cr) {
     cairo_select_font_face (cr, fontface, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
     cairo_set_font_size (cr, fontheight);
+}
+
+void
+gtkpl_set_cairo_header_font (cairo_t *cr) {
+    cairo_select_font_face (cr, header_fontface, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+    cairo_set_font_size (cr, header_fontheight);
 }
 
 int
@@ -424,8 +434,8 @@ on_playlist_configure_event            (GtkWidget       *widget,
         GdkEventConfigure *event,
         gpointer         user_data)
 {
-    extern void main_playlist_init (GtkWidget *widget);
-    main_playlist_init (widget);
+//    extern void main_playlist_init (GtkWidget *widget);
+//    main_playlist_init (widget);
     GTKPL_PROLOGUE;
     gtkpl_configure (ps);
     return FALSE;
@@ -435,6 +445,12 @@ void
 gtkpl_expose (gtkplaylist_t *ps, int x, int y, int w, int h) {
     GtkWidget *widget = ps->playlist;
 	gdk_draw_drawable (widget->window, widget->style->black_gc, ps->backbuf, x, y, x, y, w, h);
+}
+
+void
+gtkpl_expose_header (gtkplaylist_t *ps, int x, int y, int w, int h) {
+    GtkWidget *widget = ps->header;
+	gdk_draw_drawable (widget->window, widget->style->black_gc, ps->backbuf_header, x, y, x, y, w, h);
 }
 
 void
@@ -1145,33 +1161,36 @@ gtkpl_header_draw (gtkplaylist_t *ps) {
     int h = widget->allocation.height;
     const char *detail = "toolbar";
 
+    // fill background
+    gdk_draw_rectangle (ps->backbuf_header, widget->style->bg_gc[0], TRUE, 0, 0, widget->allocation.width, widget->allocation.height);
     for (int i = 0; i < pl_ncolumns; i++) {
         if (x >= widget->allocation.width) {
             break;
         }
         w = ps->colwidths[i];
         if (w > 0) {
-            gtk_paint_box (widget->style, widget->window, GTK_STATE_NORMAL, GTK_SHADOW_OUT, NULL, NULL, detail, x, 0, w - 2, h);
-            gtk_paint_vline (widget->style, widget->window, GTK_STATE_NORMAL, NULL, NULL, NULL, 0, h, x+w - 2);
+            gtk_paint_box (widget->style, ps->backbuf_header, GTK_STATE_NORMAL, GTK_SHADOW_OUT, NULL, NULL, detail, x, 0, w - 2, h);
+            gtk_paint_vline (widget->style, ps->backbuf_header, GTK_STATE_NORMAL, NULL, NULL, NULL, 0, h, x+w - 2);
         }
         x += w;
     }
     if (x < widget->allocation.width) {
-        gtk_paint_box (widget->style, widget->window, GTK_STATE_INSENSITIVE, GTK_SHADOW_OUT, NULL, NULL, detail, x, 0, widget->allocation.width-x, h);
+        gtk_paint_box (widget->style, ps->backbuf_header, GTK_STATE_INSENSITIVE, GTK_SHADOW_OUT, NULL, NULL, detail, x, 0, widget->allocation.width-x, h);
     }
     cairo_t *cr;
-    cr = gdk_cairo_create (widget->window);
+    cr = gdk_cairo_create (ps->backbuf_header);
     if (!cr) {
         return;
     }
     x = 0;
+    gtkpl_set_cairo_header_font (cr);
     for (int i = 0; i < pl_ncolumns; i++) {
         if (x >= widget->allocation.width) {
             break;
         }
         w = ps->colwidths[i];
         if (w > 0) {
-            cairo_move_to (cr, x + 5, 15);
+            cairo_move_to (cr, x + 5, widget->allocation.height/2 + header_fontheight/3);
             if (!ps->header_fitted[i]) {
                 gtkpl_fit_text (cr, ps->colnames_fitted[i], NULL, pl_colname_max, colnames[i], ps->colwidths[i]-10);
                 ps->header_fitted[i] = 1;
@@ -1190,6 +1209,7 @@ on_header_expose_event                 (GtkWidget       *widget,
 {
     GTKPL_PROLOGUE;
     gtkpl_header_draw (ps);
+    gtkpl_expose_header (ps, event->area.x, event->area.y, event->area.width, event->area.height);
     return FALSE;
 }
 
@@ -1199,6 +1219,13 @@ on_header_configure_event              (GtkWidget       *widget,
                                         GdkEventConfigure *event,
                                         gpointer         user_data)
 {
+    GTKPL_PROLOGUE;
+    if (ps->backbuf_header) {
+        g_object_unref (ps->backbuf_header);
+        ps->backbuf_header = NULL;
+    }
+    ps->backbuf_header = gdk_pixmap_new (widget->window, widget->allocation.width, widget->allocation.height, -1);
+    gtkpl_header_draw (ps);
     return FALSE;
 }
 
@@ -1254,6 +1281,7 @@ on_header_motion_notify_event          (GtkWidget       *widget,
             ps->fmtcache[cidx+2] = 0;
         }
         gtkpl_header_draw (ps);
+        gtkpl_expose_header (ps, 0, 0, ps->header->allocation.width, ps->header->allocation.height);
         gtkpl_draw_playlist (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
         gtkpl_expose (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
     }

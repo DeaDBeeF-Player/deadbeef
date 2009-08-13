@@ -35,18 +35,12 @@
 #include "messagepump.h"
 #include "messages.h"
 
-GtkWidget *searchwin = NULL;
+extern GtkWidget *searchwin;
 struct playItem_s *search_current = NULL;
 int search_count = 0;
 
 void
 search_start (void) {
-    if (!searchwin) {
-        searchwin = create_searchwin ();
-        extern GtkWidget *mainwin;
-        gtk_window_set_transient_for (GTK_WINDOW (searchwin), GTK_WINDOW (mainwin));
-    }
-
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (searchwin, "searchentry")), "");
     gtk_widget_show (searchwin);
     gtk_window_present (GTK_WINDOW (searchwin));
@@ -185,8 +179,6 @@ on_searchlist_configure_event          (GtkWidget       *widget,
                                         GdkEventConfigure *event,
                                         gpointer         user_data)
 {
-    extern void search_playlist_init (GtkWidget *widget);
-    search_playlist_init (widget);
     GTKPL_PROLOGUE;
     gtkpl_configure (ps);
     return FALSE;

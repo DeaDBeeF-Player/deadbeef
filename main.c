@@ -35,6 +35,7 @@
 #include "streamer.h"
 
 GtkWidget *mainwin;
+GtkWidget *searchwin;
 gtkplaylist_t main_playlist;
 gtkplaylist_t search_playlist;
 
@@ -93,9 +94,12 @@ update_songinfo (void) {
 
     if (songpos != last_songpos) {
         void seekbar_draw (GtkWidget *widget);
+        void seekbar_expose (GtkWidget *widget, int x, int y, int w, int h);
         if (mainwin) {
             GDK_THREADS_ENTER();
-            seekbar_draw (lookup_widget (mainwin, "seekbar"));
+            GtkWidget *widget = lookup_widget (mainwin, "seekbar");
+            seekbar_draw (widget);
+            seekbar_expose (widget, 0, 0, widget->allocation.width, widget->allocation.height);
             GDK_THREADS_LEAVE();
             last_songpos = songpos;
         }
@@ -238,6 +242,12 @@ main (int argc, char *argv[]) {
 
     pl_load (defpl);
     mainwin = create_mainwin ();
+    searchwin = create_searchwin ();
+    gtk_window_set_transient_for (GTK_WINDOW (searchwin), GTK_WINDOW (mainwin));
+    extern void main_playlist_init (GtkWidget *widget);
+    main_playlist_init (lookup_widget (mainwin, "playlist"));
+    extern void search_playlist_init (GtkWidget *widget);
+    search_playlist_init (lookup_widget (mainwin, "searchlist"));
     gtk_widget_show (mainwin);
     gtk_main ();
     mainwin = NULL;
