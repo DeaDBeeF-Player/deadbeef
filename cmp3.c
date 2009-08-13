@@ -1134,7 +1134,7 @@ cmp3_read_id3v2 (playItem_t *it, FILE *fp) {
     }
     uint8_t *readptr = tag;
     int crcpresent = 0;
-    //printf ("version: 2.%d.%d, unsync: %d, extheader: %d, experimental: %d\n", version_major, version_minor, unsync, extheader, expindicator);
+//    printf ("version: 2.%d.%d, unsync: %d, extheader: %d, experimental: %d\n", version_major, version_minor, unsync, extheader, expindicator);
     
     if (extheader) {
         if (size < 6) {
@@ -1170,7 +1170,7 @@ cmp3_read_id3v2 (playItem_t *it, FILE *fp) {
     char *title = NULL;
     char *vendor = NULL;
     int err = 0;
-    while (readptr - tag < size - 4) {
+    while (readptr - tag <= size - 4) {
         if (version_major == 3 || version_major == 4) {
             char frameid[5];
             memcpy (frameid, readptr, 4);
@@ -1182,6 +1182,7 @@ cmp3_read_id3v2 (playItem_t *it, FILE *fp) {
             }
             uint32_t sz = (readptr[3] << 0) | (readptr[2] << 8) | (readptr[1] << 16) | (readptr[0] << 24);
             readptr += 4;
+            //printf ("got frame %s, size %d, pos %d, tagsize %d\n", frameid, sz, readptr-tag, size);
             if (readptr - tag >= size - sz) {
                 err = 1;
                 break; // size of frame is more than size of tag
@@ -1226,9 +1227,11 @@ cmp3_read_id3v2 (playItem_t *it, FILE *fp) {
                     break; // too large
                 }
                 char str[sz+2];
-                printf ("got tit2 frame, length: %d\n", sz);
                 id3v2_string_read (version_major, &str[0], sz, unsync, &readptr);
                 title = strdup (convstr (str, sz));
+            }
+            else {
+                readptr += sz;
             }
         }
         else if (version_major == 2) {
@@ -1322,7 +1325,6 @@ cmp3_insert (playItem_t *after, const char *fname) {
     it->timeend = 0;
     it->filetype = "MP3";
     if (cmp3_read_id3v2 (it, fp) < 0) {
-        printf ("bad id3v2\n");
         if (cmp3_read_id3v1 (it, fp) < 0) {
             pl_add_meta (it, "title", NULL);
         }

@@ -106,7 +106,7 @@ streamer_thread (uintptr_t ctx) {
         if (seekpos >= 0) {
             float pos = seekpos;
             seekpos = -1;
-            if (playlist_current.codec->seek (pos) >= 0) {
+            if (playlist_current.codec && playlist_current.codec->seek (pos) >= 0) {
                 streamer_lock ();
                 streambuffer_fill = 0;
                 streamer_unlock ();

@@ -961,9 +961,9 @@ volumebar_draw (GtkWidget *widget) {
         return;
     }
 
-    int n = widget->allocation.width / 4;
-    int vol = p_get_volume () * n;
-    int h = 16;
+    float n = widget->allocation.width / 4.f;
+    float vol = p_get_volume () * n;
+    float h = 16;
     for (int i = 0; i < n; i++) {
         if (i <= vol) {
             gtkpl_set_cairo_source_rgb (cr, COLO_VOLUMEBAR_FRONT);
