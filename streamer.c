@@ -45,10 +45,17 @@ static uintptr_t mutex;
 static int nextsong = -1;
 static int nextsong_pstate = -1;
 
+static float seekpos = -1;
+
 void
 streamer_set_nextsong (int song, int pstate) {
     nextsong = song;
     nextsong_pstate = pstate;
+}
+
+void
+streamer_set_seek (float pos) {
+    seekpos = pos;
 }
 
 static int
@@ -95,6 +102,20 @@ streamer_thread (uintptr_t ctx) {
             usleep (3000);
             continue;
         }
+
+        if (seekpos >= 0) {
+            float pos = seekpos;
+            seekpos = -1;
+            if (playlist_current.codec->seek (pos) >= 0) {
+                streamer_lock ();
+                streambuffer_fill = 0;
+                streamer_unlock ();
+                codec_lock ();
+                codecleft = 0;
+                codec_unlock ();
+            }
+        }
+
         streamer_lock ();
         if (streambuffer_fill < STREAM_BUFFER_SIZE) {
             int sz = STREAM_BUFFER_SIZE - streambuffer_fill;

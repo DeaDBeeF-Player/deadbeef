@@ -183,15 +183,6 @@ psdl_thread (uintptr_t ctx) {
                 gtkpl_randomsong ();
                 GDK_THREADS_LEAVE();
                 break;
-            case M_SONGSEEK:
-                if (playlist_current.codec) {
-                    p_pause ();
-                    codec_lock ();
-                    playlist_current.codec->seek (p1 / 1000.f);
-                    codec_unlock ();
-                    p_unpause ();
-                }
-                break;
             case M_ADDDIR:
                 // long time processing
                 gtkpl_add_dir (&main_playlist, (char *)ctx);

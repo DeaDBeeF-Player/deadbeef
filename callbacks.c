@@ -37,6 +37,7 @@
 #include "codec.h"
 #include "playback.h"
 #include "search.h"
+#include "streamer.h"
 
 #include "cwav.h"
 #include "cvorbis.h"
@@ -940,7 +941,8 @@ on_seekbar_button_release_event        (GtkWidget       *widget,
     if (time < 0) {
         time = 0;
     }
-    messagepump_push (M_SONGSEEK, 0, time * 1000, 0);
+    streamer_set_seek (time);
+//    messagepump_push (M_SONGSEEK, 0, time * 1000, 0);
     return FALSE;
 }
 

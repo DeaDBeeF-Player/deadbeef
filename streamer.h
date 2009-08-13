@@ -38,9 +38,13 @@ streamer_unlock (void);
 
 // pstate indicates what to do with playback
 // -1 means "don't do anything"
+// -2 means "end of playlist"
 // otherwise "set state to this value"
 void
 streamer_set_nextsong (int song, int pstate);
+
+void
+streamer_set_seek (float pos);
 
 int
 streamer_get_fill_level (void);
