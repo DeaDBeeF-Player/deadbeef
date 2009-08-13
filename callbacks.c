@@ -51,64 +51,55 @@ extern GtkWidget *mainwin;
 extern gtkplaylist_t main_playlist;
 extern gtkplaylist_t search_playlist;
 
-static int main_playlist_initialized = 0;
-static int search_playlist_initialized = 0;
-
 void
 main_playlist_init (GtkWidget *widget) {
-    if (!main_playlist_initialized) {
-        printf ("main_playlist_init\n");
-        main_playlist_initialized = 1;
-        // init playlist control structure, and put it into widget user-data
-        memset (&main_playlist, 0, sizeof (main_playlist));
-        main_playlist.playlist = widget;
-        main_playlist.header = lookup_widget (mainwin, "header");
-        main_playlist.scrollbar = lookup_widget (mainwin, "playscroll");
-        main_playlist.pcurr = &playlist_current_ptr;
-        main_playlist.pcount = &pl_count;
-        main_playlist.iterator = PL_MAIN;
-        main_playlist.multisel = 1;
-        main_playlist.scrollpos = 0;
-        main_playlist.row = -1;
-        main_playlist.clicktime = -1;
-        main_playlist.nvisiblerows = 0;
-        main_playlist.fmtcache = NULL;
-        int colwidths[pl_ncolumns] = { 50, 200, 50, 200, 50 };
-        memcpy (main_playlist.colwidths, colwidths, sizeof (colwidths));
-        gtk_object_set_data (GTK_OBJECT (main_playlist.playlist), "ps", &main_playlist);
-        gtk_object_set_data (GTK_OBJECT (main_playlist.header), "ps", &main_playlist);
-        gtk_object_set_data (GTK_OBJECT (main_playlist.scrollbar), "ps", &main_playlist);
-    }
+    printf ("main_playlist_init\n");
+    // init playlist control structure, and put it into widget user-data
+    memset (&main_playlist, 0, sizeof (main_playlist));
+    main_playlist.playlist = widget;
+    main_playlist.header = lookup_widget (mainwin, "header");
+    main_playlist.scrollbar = lookup_widget (mainwin, "playscroll");
+    main_playlist.pcurr = &playlist_current_ptr;
+    main_playlist.pcount = &pl_count;
+    main_playlist.iterator = PL_MAIN;
+    main_playlist.multisel = 1;
+    main_playlist.scrollpos = 0;
+    main_playlist.row = -1;
+    main_playlist.clicktime = -1;
+    main_playlist.nvisiblerows = 0;
+    main_playlist.fmtcache = NULL;
+    int colwidths[pl_ncolumns] = { 50, 200, 50, 200, 50 };
+    memcpy (main_playlist.colwidths, colwidths, sizeof (colwidths));
+    gtk_object_set_data (GTK_OBJECT (main_playlist.playlist), "ps", &main_playlist);
+    gtk_object_set_data (GTK_OBJECT (main_playlist.header), "ps", &main_playlist);
+    gtk_object_set_data (GTK_OBJECT (main_playlist.scrollbar), "ps", &main_playlist);
 }
 
 void
 search_playlist_init (GtkWidget *widget) {
-    if (!search_playlist_initialized) {
-        extern GtkWidget *searchwin;
-        printf ("search_playlist_init\n");
-        search_playlist_initialized = 1;
-        // init playlist control structure, and put it into widget user-data
-        memset (&search_playlist, 0, sizeof (search_playlist));
-        search_playlist.playlist = widget;
-        search_playlist.header = lookup_widget (searchwin, "searchheader");
-        search_playlist.scrollbar = lookup_widget (searchwin, "searchscroll");
-        assert (search_playlist.header);
-        assert (search_playlist.scrollbar);
+    extern GtkWidget *searchwin;
+    printf ("search_playlist_init\n");
+    // init playlist control structure, and put it into widget user-data
+    memset (&search_playlist, 0, sizeof (search_playlist));
+    search_playlist.playlist = widget;
+    search_playlist.header = lookup_widget (searchwin, "searchheader");
+    search_playlist.scrollbar = lookup_widget (searchwin, "searchscroll");
+    assert (search_playlist.header);
+    assert (search_playlist.scrollbar);
     //    main_playlist.pcurr = &search_current;
-        search_playlist.pcount = &search_count;
-        search_playlist.multisel = 0;
-        search_playlist.iterator = PL_SEARCH;
-        search_playlist.scrollpos = 0;
-        search_playlist.row = -1;
-        search_playlist.clicktime = -1;
-        search_playlist.nvisiblerows = 0;
-        search_playlist.fmtcache = NULL;
-        int colwidths[pl_ncolumns] = { 0, 200, 50, 200, 50 };
-        memcpy (search_playlist.colwidths, colwidths, sizeof (colwidths));
-        gtk_object_set_data (GTK_OBJECT (search_playlist.playlist), "ps", &search_playlist);
-        gtk_object_set_data (GTK_OBJECT (search_playlist.header), "ps", &search_playlist);
-        gtk_object_set_data (GTK_OBJECT (search_playlist.scrollbar), "ps", &search_playlist);
-    }
+    search_playlist.pcount = &search_count;
+    search_playlist.multisel = 0;
+    search_playlist.iterator = PL_SEARCH;
+    search_playlist.scrollpos = 0;
+    search_playlist.row = -1;
+    search_playlist.clicktime = -1;
+    search_playlist.nvisiblerows = 0;
+    search_playlist.fmtcache = NULL;
+    int colwidths[pl_ncolumns] = { 0, 200, 50, 200, 50 };
+    memcpy (search_playlist.colwidths, colwidths, sizeof (colwidths));
+    gtk_object_set_data (GTK_OBJECT (search_playlist.playlist), "ps", &search_playlist);
+    gtk_object_set_data (GTK_OBJECT (search_playlist.header), "ps", &search_playlist);
+    gtk_object_set_data (GTK_OBJECT (search_playlist.scrollbar), "ps", &search_playlist);
 }
 
 // redraw

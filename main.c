@@ -238,7 +238,7 @@ main (int argc, char *argv[]) {
     extern void main_playlist_init (GtkWidget *widget);
     main_playlist_init (lookup_widget (mainwin, "playlist"));
     extern void search_playlist_init (GtkWidget *widget);
-    search_playlist_init (lookup_widget (mainwin, "searchlist"));
+    search_playlist_init (lookup_widget (searchwin, "searchlist"));
     gtk_widget_show (mainwin);
     gtk_main ();
     mainwin = NULL;
