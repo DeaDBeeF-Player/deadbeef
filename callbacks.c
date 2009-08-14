@@ -54,7 +54,6 @@ extern gtkplaylist_t search_playlist;
 
 void
 main_playlist_init (GtkWidget *widget) {
-    printf ("main_playlist_init\n");
     // init playlist control structure, and put it into widget user-data
     memset (&main_playlist, 0, sizeof (main_playlist));
     main_playlist.playlist = widget;
@@ -79,7 +78,6 @@ main_playlist_init (GtkWidget *widget) {
 void
 search_playlist_init (GtkWidget *widget) {
     extern GtkWidget *searchwin;
-    printf ("search_playlist_init\n");
     // init playlist control structure, and put it into widget user-data
     memset (&search_playlist, 0, sizeof (search_playlist));
     search_playlist.playlist = widget;
@@ -654,7 +652,6 @@ void
 on_playlist_realize                    (GtkWidget       *widget,
         gpointer         user_data)
 {
-    printf ("on_playlist_realize\n");
     GtkTargetEntry entry = {
         .target = "STRING",
         .flags = GTK_TARGET_SAME_WIDGET/* | GTK_TARGET_OTHER_APP*/,
@@ -672,7 +669,6 @@ void
 on_searchlist_realize                  (GtkWidget       *widget,
                                         gpointer         user_data)
 {
-    printf ("on_searchlist_realize\n");
 }
 
 
@@ -884,6 +880,7 @@ on_seekbar_configure_event             (GtkWidget       *widget,
     seekbar_draw (widget);
     return FALSE;
 }
+
 gboolean
 on_seekbar_expose_event                (GtkWidget       *widget,
                                         GdkEventExpose  *event,
@@ -892,7 +889,6 @@ on_seekbar_expose_event                (GtkWidget       *widget,
     seekbar_expose (widget, event->area.x, event->area.y, event->area.width, event->area.height);
     return FALSE;
 }
-
 
 gboolean
 on_seekbar_motion_notify_event         (GtkWidget       *widget,

@@ -91,12 +91,17 @@ update_songinfo (void) {
         void seekbar_draw (GtkWidget *widget);
         void seekbar_expose (GtkWidget *widget, int x, int y, int w, int h);
         if (mainwin) {
-            GDK_THREADS_ENTER();
             GtkWidget *widget = lookup_widget (mainwin, "seekbar");
-            seekbar_draw (widget);
-            seekbar_expose (widget, 0, 0, widget->allocation.width, widget->allocation.height);
-            GDK_THREADS_LEAVE();
-            last_songpos = songpos;
+            // translate volume to seekbar pixels
+            songpos /= playlist_current.duration;
+            songpos *= widget->allocation.width;
+            if ((int)(songpos*2) != (int)(last_songpos*2)) {
+                GDK_THREADS_ENTER();
+                seekbar_draw (widget);
+                seekbar_expose (widget, 0, 0, widget->allocation.width, widget->allocation.height);
+                GDK_THREADS_LEAVE();
+                last_songpos = songpos;
+            }
         }
     }
 }
@@ -194,7 +199,7 @@ player_thread (uintptr_t ctx) {
                 break;
             }
         }
-        usleep(10000);
+        usleep(100000);
         update_songinfo ();
     }
 }
