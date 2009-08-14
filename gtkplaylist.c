@@ -1069,12 +1069,13 @@ strcopy_special (char *dest, const char *src, int len) {
 int
 gtkpl_add_file_info_cb (playItem_t *it, void *data) {
     static int countdown = 0;
-    if (countdown == 0) {
+    //if (countdown == 0)
+    {
         GtkEntry *e = (GtkEntry *)data;
         GDK_THREADS_ENTER();
         gtk_entry_set_text (GTK_ENTRY (e), it->fname);
         GDK_THREADS_LEAVE();
-        usleep (0);
+        usleep (100);
         countdown = 10;
     }
     countdown--;

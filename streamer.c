@@ -40,7 +40,7 @@ static int streaming_terminate;
 
 #define STREAM_BUFFER_SIZE 200000
 static int streambuffer_fill;
-static char streambuffer[STREAM_BUFFER_SIZE+1000];
+static char streambuffer[STREAM_BUFFER_SIZE];
 static uintptr_t mutex;
 static int nextsong = -1;
 static int nextsong_pstate = -1;
@@ -120,16 +120,17 @@ streamer_thread (uintptr_t ctx) {
         if (streambuffer_fill < STREAM_BUFFER_SIZE) {
             int sz = STREAM_BUFFER_SIZE - streambuffer_fill;
             int minsize = 512;
-            if (streambuffer_fill < 16384) {
+//            if (streambuffer_fill < 16384) {
                 minsize = 16384;
-            }
+//            }
             sz = min (minsize, sz);
+            assert ((sz&3) == 0);
             int bytesread = streamer_read_async (&streambuffer[streambuffer_fill], sz);
             //printf ("req=%d, got=%d\n", sz, bytesread);
             streambuffer_fill += bytesread;
         }
         streamer_unlock ();
-        usleep (2000);
+        usleep (6000);
         //printf ("fill: %d        \r", streambuffer_fill);
     }
 

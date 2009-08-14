@@ -544,6 +544,7 @@ cmp3_decode (void) {
 
         char *cache = &buffer.cache[buffer.cachefill];
         int i;
+        printf ("decoded %d samples, requested %d bytes, cachefill %d, eof=%f\n", synth.pcm.length, buffer.readsize, buffer.cachefill, eof);
 		for(i=0;i<synth.pcm.length;i++)
 		{
             if (buffer.readsize > 0) {
@@ -579,6 +580,7 @@ cmp3_decode (void) {
         if (buffer.readsize == 0 || eof) {
             break;
         }
+        printf ("... left to read: %d samples\n", buffer.readsize/2);
 //        if (buffer.readsize > 0 && endoffile) {
 //            // fill rest with zeroes, and return -1
 //            memset (buffer.output, 0, buffer.readsize);
