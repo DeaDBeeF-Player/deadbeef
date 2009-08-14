@@ -1328,7 +1328,6 @@ cmp3_insert (playItem_t *after, const char *fname) {
     it->tracknum = 0;
     it->timestart = 0;
     it->timeend = 0;
-    it->filetype = "MP3";
     if (cmp3_read_id3v2 (it, fp) < 0) {
         if (cmp3_read_id3v1 (it, fp) < 0) {
             pl_add_meta (it, "title", NULL);
@@ -1356,6 +1355,17 @@ cmp3_insert (playItem_t *after, const char *fname) {
     assert (buffer.packetlength);
     int nframes = sz / buffer.packetlength;
     it->duration = nframes * buffer.frameduration;
+    switch (buffer.layer) {
+    case 1:
+        it->filetype = "mp1";
+        break;
+    case 2:
+        it->filetype = "mp2";
+        break;
+    case 3:
+        it->filetype = "mp3";
+        break;
+    }
 
     after = pl_insert_item (after, it);
     fclose (fp);
@@ -1378,7 +1388,8 @@ codec_t cmp3 = {
     .seek = cmp3_seek,
     .insert = cmp3_insert,
     .getexts = cmp3_getexts,
-    .id = "stdmp3"
+    .id = "stdmp3",
+    .filetypes = { "mp1", "mp2", "mp3", NULL }
 };
 
 

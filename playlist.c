@@ -958,7 +958,6 @@ pl_save (const char *fname) {
         if (fwrite (&it->duration, 1, 4, fp) != 4) {
             goto save_fail;
         }
-#if 0
         uint8_t ft = it->filetype ? strlen (it->filetype) : 0;
         if (fwrite (&ft, 1, 1, fp) != 1) {
             goto save_fail;
@@ -968,7 +967,6 @@ pl_save (const char *fname) {
                 goto save_fail;
             }
         }
-#endif
         int16_t nm = 0;
         metaInfo_t *m;
         for (m = it->meta; m; m = m->next) {
@@ -1093,20 +1091,26 @@ pl_load (const char *fname) {
         if (fread (&it->duration, 1, 4, fp) != 4) {
             goto load_fail;
         }
-#if 0
-        // filetype
+        // get const filetype string from codec
         uint8_t ft;
         if (fread (&ft, 1, 1, fp) != 1) {
             goto load_fail;
         }
         if (ft) {
-            it->filetype = malloc (ft+1)
-            if (fread (it->filetype, 1, ft, fp) != ft) {
+            char ftype[ft+1];
+            if (fread (ftype, 1, ft, fp) != ft) {
                 goto load_fail;
             }
-            it->filetype[ft] = 0;
+            ftype[ft] = 0;
+            if (it->codec && it->codec->filetypes) {
+                for (int i = 0; it->codec->filetypes[i]; i++) {
+                    if (!strcasecmp (it->codec->filetypes[i], ftype)) {
+                        it->filetype = it->codec->filetypes[i];
+                        break;
+                    }
+                }
+            }
         }
-#endif
         // printf ("loading file %s\n", it->fname);
         int16_t nm = 0;
         if (fread (&nm, 1, 2, fp) != 2) {

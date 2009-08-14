@@ -278,19 +278,19 @@ static DUH * open_module(const char *fname, const char *ext, int *start_order, i
 	{
 		*is_it = 1;
 		duh = dumb_read_it_quick(f);
-		*filetype = "IT";
+		*filetype = "it";
 	}
 	else if (size >= 17 && !memcmp(ptr, "Extended Module: ", 17))
 	{
 		duh = dumb_read_xm_quick(f);
-		*filetype = "XM";
+		*filetype = "xm";
 	}
 	else if (size >= 0x30 &&
 		ptr[0x2C] == 'S' && ptr[0x2D] == 'C' &&
 		ptr[0x2E] == 'R' && ptr[0x2F] == 'M')
 	{
 		duh = dumb_read_s3m_quick(f);
-		*filetype = "S3M";
+		*filetype = "s3m";
 	}
 	else if (size >= 1168 &&
 		/*ptr[28] == 0x1A &&*/ ptr[29] == 2 &&
@@ -299,7 +299,7 @@ static DUH * open_module(const char *fname, const char *ext, int *start_order, i
 		! strncasecmp( ( const char * ) ptr + 20, "WUZAMOD!", 8 ) ) )
 	{
 		duh = dumb_read_stm_quick(f);
-		*filetype = "STM";
+		*filetype = "stm";
 	}
 	else if (size >= 2 &&
 		((ptr[0] == 0x69 && ptr[1] == 0x66) ||
@@ -313,7 +313,7 @@ static DUH * open_module(const char *fname, const char *ext, int *start_order, i
 		ptr[0x2E] == 'M' && ptr[0x2F] == 'F')
 	{
 		duh = dumb_read_ptm_quick(f);
-		*filetype = "PTM";
+		*filetype = "ptm";
 	}
 	else if (size >= 4 &&
 		ptr[0] == 'P' && ptr[1] == 'S' &&
@@ -321,35 +321,35 @@ static DUH * open_module(const char *fname, const char *ext, int *start_order, i
 	{
 		duh = dumb_read_psm_quick(f, *start_order);
 		*start_order = 0;
-		*filetype = "PSM";
+		*filetype = "psm";
 	}
 	else if (size >= 4 &&
 		ptr[0] == 'P' && ptr[1] == 'S' &&
 		ptr[2] == 'M' && ptr[3] == 254)
 	{
 		duh = dumb_read_old_psm_quick(f);
-		*filetype = "PSM";
+		*filetype = "psm";
 	}
 	else if (size >= 3 &&
 		ptr[0] == 'M' && ptr[1] == 'T' &&
 		ptr[2] == 'M')
 	{
 		duh = dumb_read_mtm_quick(f);
-		*filetype = "MTM";
+		*filetype = "mtm";
 	}
 	else if ( size >= 4 &&
 		ptr[0] == 'R' && ptr[1] == 'I' &&
 		ptr[2] == 'F' && ptr[3] == 'F')
 	{
 		duh = dumb_read_riff_quick(f);
-		*filetype = "RIFF";
+		*filetype = "riff";
 	}
 	else if ( size >= 32 &&
 		!memcmp( ptr, "ASYLUM Music Format", 19 ) &&
 		!memcmp( ptr + 19, " V1.0", 5 ) )
 	{
 		duh = dumb_read_asy_quick(f);
-		*filetype = "ASY";
+		*filetype = "asy";
 	}
 
 	if (!duh)
@@ -358,7 +358,7 @@ static DUH * open_module(const char *fname, const char *ext, int *start_order, i
         f = dumbfile_open (fname);
 		*is_dos = 0;
 		duh = dumb_read_mod_quick (f, (!strcasecmp (ext, exts[0]) || !strcasecmp (ext, exts[1])) ? 0 : 1);
-		*filetype = "MOD";
+		*filetype = "mod";
 	}
 
     if (f) {
@@ -800,6 +800,7 @@ codec_t cdumb = {
     .seek = cdumb_seek,
     .insert = cdumb_insert,
     .getexts = cdumb_getexts,
-    .id = "stddumb"
+    .id = "stddumb",
+    .filetypes = { "it", "xm", "s3m", "stm", "669", "ptm", "psm", "mtm", "riff", "asy", "mod", NULL }
 };
 

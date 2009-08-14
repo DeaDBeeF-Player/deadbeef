@@ -179,6 +179,7 @@ codec_t cvorbis = {
     .seek = cvorbis_seek,
     .insert = cvorbis_insert,
     .getexts = cvorbis_getexts,
-    .id = "stdogg"
+    .id = "stdogg",
+    .filetypes = { "OggVorbis", NULL }
 };
 

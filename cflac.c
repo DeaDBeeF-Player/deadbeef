@@ -406,7 +406,7 @@ cflac_insert (playItem_t *after, const char *fname) {
     }
 #endif
     FLAC__stream_decoder_delete(decoder);
-    it->filetype = "FLAC";
+    it->filetype = "flac";
     after = pl_insert_item (after, it);
     return after;
 }
@@ -427,5 +427,6 @@ codec_t cflac = {
     .seek = cflac_seek,
     .insert = cflac_insert,
     .getexts = cflac_getexts,
-    .id = "stdflac"
+    .id = "stdflac",
+    .filetypes = { "flac", NULL }
 };

@@ -140,7 +140,7 @@ cgme_insert (playItem_t *after, const char *fname) {
                 else {
                     it->duration = (float)inf.length/1000.f;
                 }
-                it->filetype = "GME";
+                it->filetype = "gme";
                 after = pl_insert_item (after, it);
             }
             else {
@@ -192,6 +192,7 @@ codec_t cgme = {
     .getexts = cgme_getexts,
     .numvoices = cgme_numvoices,
     .mutevoice = cgme_mutevoice,
-    .id = "stdgme"
+    .id = "stdgme",
+    .filetypes = { "gme", NULL }
 };
 

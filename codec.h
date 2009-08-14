@@ -41,6 +41,7 @@ typedef struct codec_s {
     int (*numvoices) (void);
     void (*mutevoice) (int voice, int mute);
     const char *id; // codec id used for playlist serialization
+    const char *filetypes[20]; // NULL terminated array of const strings, representing supported file types (can be NULL)
     fileinfo_t info;
 } codec_t;
 
