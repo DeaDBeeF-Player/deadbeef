@@ -319,7 +319,6 @@ palsa_thread (uintptr_t context) {
 
 static void
 palsa_callback (char *stream, int len) {
-    printf ("alsa requests %d bytes\n", len);
     int bytesread = streamer_read (stream, len);
     int ivolume = volume * 1000;
     for (int i = 0; i < bytesread/2; i++) {

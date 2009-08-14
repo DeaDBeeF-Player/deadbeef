@@ -28,6 +28,8 @@
 #include "common.h"
 
 #define READBUFFER 5*8192
+
+// FIXME: cache is bad name for this
 #define CACHESIZE 81920
 typedef struct {
     FILE *file;
@@ -52,6 +54,8 @@ typedef struct {
     int samplerate;
     int packetlength;
     float frameduration;
+    int bitspersample;
+    int channels;
 } buffer_t;
 
 static buffer_t buffer;
@@ -81,13 +85,12 @@ cmp3_init (struct playItem_s *it) {
     cmp3.info.position = 0;
 	mad_timer_reset(&buffer.timer);
 
-//    if (it->duration <= 0) {
-        it->duration = cmp3_scan_stream (&buffer, -1); // scan entire stream, calc duration
-        rewind (buffer.file);
-//    }
-//    else {
-//        cmp3_scan_stream (0); // load up to 1st frame
-//    }
+    it->duration = cmp3_scan_stream (&buffer, -1); // scan entire stream, calc duration
+    cmp3.info.bitsPerSample = buffer.bitspersample;
+    cmp3.info.samplesPerSecond = buffer.samplerate;
+    cmp3.info.channels = buffer.channels;
+    rewind (buffer.file);
+
 	mad_stream_init(&stream);
 	mad_frame_init(&frame);
 	mad_synth_init(&synth);
@@ -250,12 +253,12 @@ cmp3_scan_stream (buffer_t *buffer, float position) {
         int nchannels = (hdr & (0x3 << 6)) >> 6;
         nchannels = chantbl[nchannels];
 
-        if (nframe == 0 || cmp3.info.samplesPerSecond == -1)
-        {
-            cmp3.info.bitsPerSample = 16;
-            cmp3.info.channels = nchannels;
-            cmp3.info.samplesPerSecond = samplerate;
-        }
+//        if (nframe == 0 || cmp3.info.samplesPerSecond == -1)
+//        {
+//            cmp3.info.bitsPerSample = 16;
+//            cmp3.info.channels = nchannels;
+//            cmp3.info.samplesPerSecond = samplerate;
+//        }
 
         // packetlength
         int packetlength = 0;
@@ -284,6 +287,8 @@ cmp3_scan_stream (buffer_t *buffer, float position) {
         buffer->samplerate = samplerate;
         buffer->packetlength = packetlength;
         buffer->frameduration = dur;
+        buffer->channels = nchannels;
+        buffer->bitspersample = 16;
         duration += dur;
         if (position == 0) {
             return 0;
@@ -544,7 +549,6 @@ cmp3_decode (void) {
 
         char *cache = &buffer.cache[buffer.cachefill];
         int i;
-        printf ("decoded %d samples, requested %d bytes, cachefill %d, eof=%f\n", synth.pcm.length, buffer.readsize, buffer.cachefill, eof);
 		for(i=0;i<synth.pcm.length;i++)
 		{
             if (buffer.readsize > 0) {
@@ -580,7 +584,6 @@ cmp3_decode (void) {
         if (buffer.readsize == 0 || eof) {
             break;
         }
-        printf ("... left to read: %d samples\n", buffer.readsize/2);
 //        if (buffer.readsize > 0 && endoffile) {
 //            // fill rest with zeroes, and return -1
 //            memset (buffer.output, 0, buffer.readsize);

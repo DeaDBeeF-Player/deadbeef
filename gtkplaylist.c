@@ -523,6 +523,7 @@ gtkpl_mouse1_pressed (gtkplaylist_t *ps, int state, int ex, int ey, double time)
         if (ps->row != -1) {
             playItem_t *it = gtkpl_get_for_idx (ps, ps->row);
             messagepump_push (M_PLAYSONGNUM, 0, pl_get_idx_of (it), 0);
+            return;
         }
 
 

@@ -214,7 +214,10 @@ streamer_read_async (char *bytes, int size) {
                     nbytes = 0;
                 }
                 else {
-                    //printf ("reading %d bytes from mp3\n", nbytes);
+//                    if (nbytes & 3) {
+//                        printf ("FATAL: nbytes=%d, nsamples=%d, codecleft=%d, nchannels=%d, ratio=%f\n", nbytes, nsamples, codecleft, nchannels, (float)p_get_rate ()/samplerate);
+//                        assert ((nbytes & 3) == 0);
+//                    }
                     bytesread = codec->read (g_readbuffer, nbytes);
                 }
                 codec_unlock ();
