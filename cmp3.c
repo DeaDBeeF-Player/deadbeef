@@ -1577,7 +1577,7 @@ cmp3_insert (playItem_t *after, const char *fname) {
 
 static const char * exts[]=
 {
-	"mp2","mp3",NULL
+	"mp1", "mp2","mp3",NULL
 };
 
 const char **cmp3_getexts (void) {
