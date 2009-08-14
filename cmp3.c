@@ -31,6 +31,16 @@
 
 // FIXME: cache is bad name for this
 #define CACHESIZE 81920
+
+// vbrmethod constants
+#define LAME_CBR  1 
+#define LAME_CBR2 8
+#define LAME_ABR  2
+#define LAME_VBR1 3
+#define LAME_VBR2 4
+#define LAME_VBR3 5
+#define LAME_VBR4 6
+
 typedef struct {
     FILE *file;
 
@@ -56,6 +66,21 @@ typedef struct {
     float frameduration;
     int bitspersample;
     int channels;
+    // only for xing/lame header
+    uint32_t frames;
+    uint32_t flags;
+    uint32_t vbr_scale;
+    uint32_t bytes;
+    uint8_t lame_revision;
+    uint8_t vbrmethod;
+    uint8_t vbrbitrate;
+    uint8_t mp3gain;
+    float peak_signal_amp;
+    uint16_t radio_replay_gain;
+    uint16_t audiophile_replay_gain;
+    uint16_t delay_start;
+    uint16_t delay_end;
+    uint32_t musiclength;
 } buffer_t;
 
 static buffer_t buffer;
@@ -1315,6 +1340,172 @@ cmp3_read_id3v2 (playItem_t *it, FILE *fp) {
     return -1;
 }
 
+// read xing/lame header
+// based on Xing example code
+#define FRAMES_FLAG     0x0001
+#define BYTES_FLAG      0x0002
+#define TOC_FLAG        0x0004
+#define VBR_SCALE_FLAG  0x0008
+
+#define FRAMES_AND_BYTES (FRAMES_FLAG | BYTES_FLAG)
+static uint32_t
+extract_i32 (unsigned char *buf)
+{
+    uint32_t x;
+    // big endian extract
+
+    x = buf[0];
+    x <<= 8;
+    x |= buf[1];
+    x <<= 8;
+    x |= buf[2];
+    x <<= 8;
+    x |= buf[3];
+
+    return x;
+}
+
+static uint16_t
+extract_i16 (unsigned char *buf)
+{
+    uint16_t x;
+    // big endian extract
+
+    x = buf[0];
+    x <<= 8;
+    x |= buf[1];
+    x <<= 8;
+
+    return x;
+}
+
+static float
+extract_f32 (unsigned char *buf) {
+    float f;
+    uint32_t *x = (uint32_t *)&f;
+    *x = buf[0];
+    *x <<= 8;
+    *x |= buf[1];
+    *x <<= 8;
+    *x |= buf[2];
+    *x <<= 8;
+    *x |= buf[3];
+    return f;
+}
+
+int
+cmp3_read_info_tag (buffer_t *buffer, playItem_t *it, FILE *fp) {
+    rewind (fp);
+    int h_id, h_mode, h_sr_index;
+    static int sr_table[4] = { 44100, 48000, 32000, -1 };
+    uint8_t header[1024];
+    if (fread (header, 1, 1024, fp) != 1024) {
+        return -1;
+    }
+    uint8_t *buf = header;
+
+    // get selected MPEG header data
+    h_id       = (buf[1] >> 3) & 1;
+    h_sr_index = (buf[2] >> 2) & 3;
+    h_mode     = (buf[3] >> 6) & 3;
+
+    // determine offset of header
+    if (h_id) { // mpeg1
+        if (h_mode != 3) {
+            buf += (32+4);
+        }
+        else {
+            buf += (17+4);
+        }
+    }
+    else { // mpeg2
+        if (h_mode != 3) {
+            buf += (17+4);
+        }
+        else {
+            buf += (9+4);
+        }
+    }
+
+    int is_vbr = 0;
+    if (!strncmp (buf, "Xing", 4)) {
+        is_vbr = 1;
+    }
+    else if (!strncmp (buf, "Info", 4)) {
+        is_vbr = 0;
+    }
+    else {
+        return -1; // no xing header found
+    }
+
+    buf+=4;
+
+    if (h_id) {
+        buffer->version = 1;
+    }
+    else {
+        buffer->version = 2;
+    }
+
+    buffer->samplerate = sr_table[h_sr_index];
+    if (!h_id) {
+        buffer->samplerate >>= 1;
+    }
+
+    // get flags
+    buffer->flags = extract_i32 (buf);
+    buf+=4;
+
+    if (buffer->flags & FRAMES_FLAG) {
+        buffer->frames = extract_i32(buf);
+        buf+=4;
+    }
+    if (buffer->flags & BYTES_FLAG) {
+        buffer->bytes = extract_i32(buf);
+        buf+=4;
+    }
+
+    if (buffer->flags & TOC_FLAG) {
+        // read toc
+        buf+=100;
+    }
+
+    buffer->vbr_scale = -1;
+    if (buffer->flags & VBR_SCALE_FLAG) {
+        buffer->vbr_scale = extract_i32(buf);
+        buf+=4;
+    }
+
+    // check for lame header
+    if( buf[0] != 'L' ) return 0;
+    if( buf[1] != 'A' ) return 0;
+    if( buf[2] != 'M' ) return 0;
+    if( buf[3] != 'E' ) return 0;
+    printf ("found LAME header\n");
+    buf += 20;
+    buf += 140;
+
+    uint8_t vbrmethod = header[0xa5];
+    if (vbrmethod & 0xf0) {
+        buffer->lame_revision = 1;
+    }
+    else {
+        buffer->lame_revision = 0;
+    }
+    buffer->vbrmethod = vbrmethod & 0x0f;
+
+    buffer->peak_signal_amp = extract_f32 (&header[0xa7]);
+    buffer->radio_replay_gain = extract_i16 (&header[0xab]);
+    buffer->audiophile_replay_gain = extract_i16 (&header[0xad]);
+    buffer->vbrbitrate = header[0xb0];
+    buffer->delay_start = (((uint16_t)header[0xb1]) << 4) | (((uint16_t)header[0xb2])>>4);
+    buffer->delay_end = ((((uint16_t)header[0xb2]) & 0x0f) << 8) | ((uint16_t)header[0xb3]);
+    buffer->mp3gain = header[0xb5];
+    buffer->musiclength = extract_i32 (&header[0xb8]);
+
+    return 0;
+}
+
 playItem_t *
 cmp3_insert (playItem_t *after, const char *fname) {
     FILE *fp = fopen (fname, "rb");
@@ -1328,6 +1519,25 @@ cmp3_insert (playItem_t *after, const char *fname) {
     it->tracknum = 0;
     it->timestart = 0;
     it->timeend = 0;
+
+    buffer_t buffer;
+    memset (&buffer, 0, sizeof (buffer));
+    buffer.file = fp;
+//    buffer.remaining = 0;
+//    buffer.output = NULL;
+//    buffer.readsize = 0;
+//    buffer.cachefill = 0;
+//    mad_timer_reset(&buffer.timer);
+
+    if (!cmp3_read_info_tag (&buffer, it, fp)) {
+        printf ("got xing info header\n");
+        printf ("version: %d\n", buffer.version);
+        printf ("samplerate: %d\n", buffer.samplerate);
+        printf ("flags: %d\n", buffer.flags);
+        printf ("frames: %d\n", buffer.frames);
+        printf ("bytes: %d\n", buffer.bytes);
+        printf ("vbr_scale: %d\n", buffer.vbr_scale);
+    }
     if (cmp3_read_id3v2 (it, fp) < 0) {
         if (cmp3_read_id3v1 (it, fp) < 0) {
             pl_add_meta (it, "title", NULL);
@@ -1336,13 +1546,6 @@ cmp3_insert (playItem_t *after, const char *fname) {
     rewind (fp);
 
 // calculate CBR duration
-    buffer_t buffer;
-    buffer.file = fp;
-    buffer.remaining = 0;
-    buffer.output = NULL;
-    buffer.readsize = 0;
-    buffer.cachefill = 0;
-	mad_timer_reset(&buffer.timer);
 
     // calc approx. mp3 duration 
     int res = cmp3_scan_stream (&buffer, 0);
