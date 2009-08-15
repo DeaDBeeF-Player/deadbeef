@@ -783,9 +783,18 @@ pl_start_current (void) {
 
 void
 pl_add_meta (playItem_t *it, const char *key, const char *value) {
+    // check if it's already set
+    metaInfo_t *m = it->meta;
+    while (m) {
+        if (!strcasecmp (key, m->key)) {
+            return;
+        }
+        m = m->next;
+    }
+    // add
     char str[256];
     if (!value || !*value) {
-        if (!strcmp (key, "title")) {
+        if (!strcasecmp (key, "title")) {
             int len = 256;
             // cut filename without path and extension
             const char *pext = it->fname + strlen (it->fname) - 1;
@@ -807,7 +816,7 @@ pl_add_meta (playItem_t *it, const char *key, const char *value) {
             value = "?";
         }
     }
-    metaInfo_t *m = malloc (sizeof (metaInfo_t));
+    m = malloc (sizeof (metaInfo_t));
     m->key = key;
     m->value = strdup (value);
 //    strncpy (m->value, value, META_FIELD_SIZE-1);
@@ -866,7 +875,7 @@ const char *
 pl_find_meta (playItem_t *it, const char *key) {
     metaInfo_t *m = it->meta;
     while (m) {
-        if (!strcmp (key, m->key)) {
+        if (!strcasecmp (key, m->key)) {
             return m->value;
         }
         m = m->next;

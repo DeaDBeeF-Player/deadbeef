@@ -187,6 +187,22 @@ extract_i32 (unsigned char *buf)
     return x;
 }
 
+static uint32_t
+extract_i32_le (unsigned char *buf)
+{
+    uint32_t x;
+    // little endian extract
+
+    x = buf[3];
+    x <<= 8;
+    x |= buf[2];
+    x <<= 8;
+    x |= buf[1];
+    x <<= 8;
+    x |= buf[0];
+
+    return x;
+}
 static uint16_t
 extract_i16 (unsigned char *buf)
 {
@@ -393,8 +409,7 @@ cmp3_scan_stream (buffer_t *buffer, float position) {
             }
 
             if (!strncmp (xing, magic, 4) || !strncmp (info, magic, 4)) {
-                printf ("found xing header!\n");
-                // found xing/lame header
+//                printf ("found xing header!\n");
                 // read flags
                 uint32_t flags;
                 char buf[4];
@@ -1012,6 +1027,91 @@ cmp3_read_id3v1 (playItem_t *it, FILE *fp) {
     return 0;
 }
 
+int
+cmp3_read_ape (playItem_t *it, FILE *fp) {
+//    printf ("trying to read ape tag\n");
+    // try to read footer, position must be already at the EOF right before
+    // id3v1 (if present)
+    uint8_t header[32];
+    if (fseek (fp, -32, SEEK_CUR) == -1) {
+        return -1; // something bad happened
+    }
+
+    if (fread (header, 1, 32, fp) != 32) {
+        return -1; // something bad happened
+    }
+
+    if (strncmp (header, "APETAGEX", 8)) {
+        return -1; // no ape tag here
+    }
+
+    // end of footer must be 0
+    if (memcmp (&header[24], "\0\0\0\0\0\0\0\0", 8)) {
+        return -1;
+    }
+
+    uint32_t version = extract_i32_le (&header[8]);
+    uint32_t size = extract_i32_le (&header[12]);
+    uint32_t numitems = extract_i32_le (&header[16]);
+    uint32_t flags = extract_i32_le (&header[20]);
+
+//    printf ("APEv%d, size=%d, items=%d, flags=%x\n", version, size, numitems, flags);
+    // now seek to beginning of the tag (exluding header)
+    if (fseek (fp, -size, SEEK_CUR) == -1) {
+        printf ("4\n");
+        return -1;
+    }
+
+    for (int i = 0; i < numitems; i++) {
+        uint8_t buffer[8];
+        if (fread (buffer, 1, 8, fp) != 8) {
+            return -1;
+        }
+        uint32_t itemsize = extract_i32_le (&buffer[0]);
+        uint32_t itemflags = extract_i32_le (&buffer[4]);
+        // read key until 0 (stupid and slow)
+        char key[256];
+        int keysize = 0;
+        while (keysize <= 255) {
+            if (fread (&key[keysize], 1, 1, fp) != 1) {
+                return -1;
+            }
+            if (key[keysize] == 0) {
+                break;
+            }
+            if (key[keysize] < 0x20) {
+                return -1; // non-ascii chars and chars with coded 0..0x1f not allowed in ape item keys
+            }
+            keysize++;
+        }
+        key[255] = 0;
+        // read value
+        char value[itemsize+1];
+        if (fread (value, 1, itemsize, fp) != itemsize) {
+            return -1;
+        }
+        value[itemsize] = 0;
+        // add metainfo only if it's textual
+        int valuetype = ((itemflags & (0x3<<1)) >> 1);
+        if (valuetype == 0) {
+            if (!strcasecmp (key, "artist")) {
+                pl_add_meta (it, "artist", value);
+            }
+            else if (!strcasecmp (key, "title")) {
+                pl_add_meta (it, "title", value);
+            }
+            else if (!strcasecmp (key, "album")) {
+                pl_add_meta (it, "album", value);
+            }
+            else if (!strcasecmp (key, "track")) {
+                pl_add_meta (it, "track", value);
+            }
+        }
+    }
+
+    return 0;
+}
+
 void
 id3v2_string_read (int version, char *out, int sz, int unsync, uint8_t **pread) {
     if (!unsync) {
@@ -1440,12 +1540,24 @@ cmp3_insert (playItem_t *after, const char *fname) {
     memset (&buffer, 0, sizeof (buffer));
     buffer.file = fp;
 
-    // cmp3_scan_stream know where to seek to ignore tags
+#if 0
     if (cmp3_read_id3v2 (it, fp) < 0) {
         if (cmp3_read_id3v1 (it, fp) < 0) {
             pl_add_meta (it, "title", NULL);
         }
     }
+#endif
+    int v2err = cmp3_read_id3v2 (it, fp);
+    int v1err = cmp3_read_id3v1 (it, fp);
+    if (v1err >= 0) {
+        fseek (fp, -128, SEEK_END);
+    }
+    else {
+        fseek (fp, 0, SEEK_END);
+    }
+    int apeerr = cmp3_read_ape (it, fp);
+    pl_add_meta (it, "title", NULL);
+
     buffer.startoffset = it->startoffset;
     fseek (fp, buffer.startoffset, SEEK_SET);
     // calc approx. mp3 duration 
