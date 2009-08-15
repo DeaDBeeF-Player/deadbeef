@@ -52,10 +52,24 @@ float colo_dark_orange[COLO_COUNT][3] = {
     { 0,          0,          0          }, // sel text
     { 0x1d/255.f, 0x1f/255.f, 0x1b/255.f }, // seekbar back
     { 0xf4/255.f, 0x7e/255.f, 0x46/255.f }, // seekbar front
-    { 1,          1,          1          }, // seekbar marker
     { 0x1d/255.f, 0x1f/255.f, 0x1b/255.f }, // volumebar back
     { 0xf4/255.f, 0x7e/255.f, 0x46/255.f }, // volumebar front
     { 0xf4/255.f, 0x7e/255.f, 0x46/255.f }, // dragdrop marker
+};
+
+float colo_white_blue[COLO_COUNT][3] = {
+    { 0x7f/255.f, 0x7f/255.f, 0x7f/255.f }, // cursor
+    { 1,          1,          1          }, // odd
+    { 0xea/255.f, 0xeb/255.f, 0xec/255.f }, // even
+    { 0x24/255.f, 0x89/255.f, 0xb8/255.f }, // sel odd
+    { 0x20/255.f, 0x85/255.f, 0xb4/255.f }, // sel even
+    { 0,          0,          0          }, // text
+    { 1,          1,          1          }, // sel text
+    { 0x1d/255.f, 0x1f/255.f, 0x1b/255.f }, // seekbar back
+    { 0x24/255.f, 0x89/255.f, 0xb8/255.f }, // seekbar front
+    { 0x1d/255.f, 0x1f/255.f, 0x1b/255.f }, // volumebar back
+    { 0x24/255.f, 0x89/255.f, 0xb8/255.f }, // volumebar front
+    { 0x09/255.f, 0x22/255.f, 0x3a/255.f }, // dragdrop marker
 };
 
 // gtk color scheme
@@ -69,7 +83,6 @@ float colo_system_gtk[COLO_COUNT][3] = {
     { 0,          0,          0          }, // sel text
     { 0x1d/255.f, 0x1f/255.f, 0x1b/255.f }, // seekbar back
     { 0xf4/255.f, 0x7e/255.f, 0x46/255.f }, // seekbar front
-    { 1,          1,          1          }, // seekbar marker
     { 0x1d/255.f, 0x1f/255.f, 0x1b/255.f }, // volumebar back
     { 0xf4/255.f, 0x7e/255.f, 0x46/255.f }, // volumebar front
     { 0xf4/255.f, 0x7e/255.f, 0x46/255.f }, // dragdrop marker
@@ -100,18 +113,6 @@ const char *colnames[pl_ncolumns] = {
 static cairo_surface_t *play16_pixmap;
 static cairo_surface_t *pause16_pixmap;
 
-//static int16_t *ps->fmtcache = NULL;
-//
-//int ps->header_fitted[pl_ncolumns] = {
-//    1, 1, 1, 1, 1
-//};
-
-//char ps->colnames_fitted[pl_ncolumns][pl_colname_max];
-//
-//int ps->colwidths[] = {
-//    50, 200, 50, 200, 50
-//};
-
 void
 color_gdk_to_cairo (GdkColor *gdk, float *cairo) {
     cairo[0] = gdk->red / 65535.f;
@@ -136,9 +137,10 @@ gtkpl_system_colo_init (void) {
 // that must be called before gtk_init
 void
 gtkpl_init (void) {
-    gtkpl_system_colo_init ();
+    //gtkpl_system_colo_init ();
     //memcpy (colo_current, colo_system_gtk, sizeof (colo_current));
-    memcpy (colo_current, colo_dark_orange, sizeof (colo_current));
+    //memcpy (colo_current, colo_dark_orange, sizeof (colo_current));
+    memcpy (colo_current, colo_white_blue, sizeof (colo_current));
 }
 
 void
