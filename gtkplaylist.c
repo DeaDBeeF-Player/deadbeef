@@ -1465,20 +1465,16 @@ gtkpl_add_files (gtkplaylist_t *ps, GSList *lst) {
 void
 gtkpl_playsong (gtkplaylist_t *ps) {
     if (p_ispaused ()) {
-        printf ("unpause\n");
         p_unpause ();
     }
     else if (playlist_current_ptr) {
         p_stop ();
-        printf ("restart\n");
         streamer_set_nextsong (gtkpl_get_idx_of (ps, playlist_current_ptr), 1);
     }
     else if (ps->row != -1) {
-        printf ("start under cursor\n");
         streamer_set_nextsong (ps->row, 1);
     }
     else {
-        printf ("play 1st in list\n");
         streamer_set_nextsong (0, 1);
     }
 }

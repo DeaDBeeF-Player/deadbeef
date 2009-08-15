@@ -22,6 +22,11 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/un.h>
+#include <sys/fcntl.h>
+#include <sys/errno.h>
 #include "interface.h"
 #include "support.h"
 #include "playlist.h"
@@ -43,6 +48,11 @@ gtkplaylist_t search_playlist;
 static int sb_context_id = -1;
 static char sb_text[512];
 static float last_songpos = -1;
+
+// some common global variables
+char confdir[1024]; // $HOME/.config
+char dbconfdir[1024]; // $HOME/.config/deadbeef
+char defpl[1024]; // $HOME/.config/deadbeef/default.dbpl
 
 void
 update_songinfo (void) {
@@ -106,9 +116,100 @@ update_songinfo (void) {
     }
 }
 
+
+// -1 error, program must exit with error code -1
+//  0 proceed normally as nothing happened
+//  1 no error, but program must exit with error code 0
+//  2 no error, don't load default playlist, start playback immediately after startup
+int
+exec_command_line (const char *cmdline, int len, int filter) {
+    const uint8_t *parg = (const uint8_t *)cmdline;
+    const uint8_t *pend = cmdline + len;
+    int exitcode = 0;
+    while (parg < pend) {
+        if (filter == 1) {
+            if (!strcmp (parg, "--help") || !strcmp (parg, "-h")) {
+                printf ("<help text here>\n");
+                return 1;
+            }
+        }
+        else if (filter == 0) {
+            if (!strcmp (parg, "--nextsong")) {
+                printf ("next song\n");
+            }
+            else if (!strcmp (parg, "--prevsong")) {
+                printf ("prev song\n");
+            }
+            else if (!strcmp (parg, "--play")) {
+                printf ("play\n");
+            }
+            else if (!strcmp (parg, "--stop")) {
+                printf ("stop\n");
+            }
+            else if (!strcmp (parg, "--pause")) {
+                printf ("pause\n");
+            }
+            else if (!strcmp (parg, "--playrandom")) {
+                printf ("play random\n");
+            }
+            else {
+                if (pl_add_file (parg, NULL, NULL) >= 0) {
+                    exitcode = 2;
+                }
+            }
+        }
+        parg += strlen (parg);
+        parg++;
+    }
+    return exitcode;
+}
+
 void
 player_thread (uintptr_t ctx) {
+    // become a server
+    struct sockaddr_un local, remote;
+    unsigned s = socket(AF_UNIX, SOCK_STREAM, 0);
+    int flags;
+    flags = fcntl(s,F_GETFL,0);
+    assert(flags != -1);
+    fcntl(s, F_SETFL, flags | O_NONBLOCK);
+    local.sun_family = AF_UNIX;  /* local is declared before socket() ^ */
+    snprintf (local.sun_path, 108, "%s/socket", dbconfdir);
+    unlink(local.sun_path);
+    int len = strlen(local.sun_path) + sizeof(local.sun_family);
+    bind(s, (struct sockaddr *)&local, len);
+
+    if (listen(s, 5) == -1) {
+        perror("listen");
+        exit(1);
+    }
     for (;;) {
+        // handle remote stuff
+        int t = sizeof(remote);
+        unsigned s2;
+        s2 = accept(s, (struct sockaddr *)&remote, &t);
+        if (s2 == -1 && errno != EAGAIN && errno != EWOULDBLOCK) {
+            perror("accept");
+            exit(1);
+        }
+        else if (s2 != -1) {
+            char str[2048];
+            int size;
+            if (size = recv (s2, str, 2048, 0) >= 0) {
+//                if (size > 0) {
+//                    printf ("received: %s\n", str);
+//                }
+                int res = exec_command_line (str, size, 0);
+                if (res == 2) {
+                    GDK_THREADS_ENTER();
+                    gtkpl_playsong (&main_playlist);
+                    GDK_THREADS_LEAVE();
+                }
+            }
+            send (s2, "", 1, 0);
+            close(s2);
+        }
+
         uint32_t msg;
         uintptr_t ctx;
         uint32_t p1;
@@ -117,6 +218,7 @@ player_thread (uintptr_t ctx) {
             switch (msg) {
             case M_TERMINATE:
                 GDK_THREADS_ENTER();
+                gtk_widget_hide (mainwin);
                 gtk_main_quit ();
                 GDK_THREADS_LEAVE();
                 return;
@@ -199,7 +301,7 @@ player_thread (uintptr_t ctx) {
                 break;
             }
         }
-        usleep(100000);
+        usleep(1000);
         update_songinfo ();
     }
 }
@@ -211,15 +313,77 @@ main (int argc, char *argv[]) {
         fprintf (stderr, "unable to find home directory. stopping.\n");
         return -1;
     }
-    char defpl[1024];
     snprintf (defpl, 1024, "%s/.config/deadbeef/default.dbpl", homedir);
-    char confdir[1024];
     snprintf (confdir, 1024, "%s/.config", homedir);
     mkdir (confdir, 0755);
-    char dbconfdir[1024];
     snprintf (dbconfdir, 1024, "%s/.config/deadbeef", homedir);
     mkdir (dbconfdir, 0755);
 
+    // join command line into single string
+    char cmdline[2048];
+    char *p = cmdline;
+    int size = 2048;
+    cmdline[0] = 0;
+    for (int i = 1; i < argc; i++) {
+        if (size < 2) {
+            break;
+        }
+        if (i > 1) {
+            size--;
+            p++;
+        }
+        int len = strlen (argv[i]);
+        if (len >= size) {
+            break;
+        }
+        memcpy (p, argv[i], len+1);
+        p += len;
+        size -= len;
+    }
+    size = 2048-size;
+    if (exec_command_line (cmdline, size, 1) == 1) {
+        return 0; // if it was help request
+    }
+    // try to connect to remote player
+    {
+        int s, t, len;
+        struct sockaddr_un remote;
+        char str[100];
+
+        if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
+            perror("socket");
+            exit(1);
+        }
+
+//        printf("Trying to connect...\n");
+
+        remote.sun_family = AF_UNIX;
+        snprintf (remote.sun_path, 108, "%s/socket", dbconfdir);
+        len = strlen(remote.sun_path) + sizeof(remote.sun_family);
+        if (connect(s, (struct sockaddr *)&remote, len) == 0) {
+
+            // pass args to remote and exit
+            if (send(s, cmdline, size, 0) == -1) {
+                perror ("send");
+                exit (-1);
+            }
+            char out[1];
+            if (recv(s, out, 1, 0) == -1) {
+                printf ("failed to pass args to remote!\n");
+                exit (-1);
+            }
+            exit (0);
+        }
+        close(s);
+    }
+
+    int res = exec_command_line (cmdline, size, 1);
+    if (res == -1) {
+        return -1;
+    }
+    else if (res == 0) {
+        pl_load (defpl);
+    }
 
     messagepump_init ();
     codec_init_locking ();
@@ -236,7 +400,6 @@ main (int argc, char *argv[]) {
 
     gtkpl_init ();
 
-    pl_load (defpl);
     mainwin = create_mainwin ();
     searchwin = create_searchwin ();
     gtk_window_set_transient_for (GTK_WINDOW (searchwin), GTK_WINDOW (mainwin));
@@ -244,6 +407,11 @@ main (int argc, char *argv[]) {
     main_playlist_init (lookup_widget (mainwin, "playlist"));
     extern void search_playlist_init (GtkWidget *widget);
     search_playlist_init (lookup_widget (searchwin, "searchlist"));
+
+    if (res == 2) {
+        messagepump_push (M_PLAYSONG, 0, 0, 0);
+    }
+
     gtk_widget_show (mainwin);
     gtk_main ();
     gdk_threads_leave ();
