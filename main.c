@@ -129,28 +129,37 @@ exec_command_line (const char *cmdline, int len, int filter) {
     while (parg < pend) {
         if (filter == 1) {
             if (!strcmp (parg, "--help") || !strcmp (parg, "-h")) {
-                printf ("<help text here>\n");
+                printf ("DeaDBeeF %s Copyright (C) 2009 Alexey Yakovenko\n", VERSION);
+                printf ("Usage: deadbeef [options] [files]\n");
+                printf ("Options:\n");
+                printf ("   --help  or  -h     Print help (this message) and exit\n");
+                printf ("   --play             Start playback\n");
+                printf ("   --stop             Stop playback\n");
+                printf ("   --pause            Pause playback\n");
+                printf ("   --next             Next song in playlist\n");
+                printf ("   --prev             Previous song in playlist\n");
+                printf ("   --random           Previous song in playlist\n");
                 return 1;
             }
         }
         else if (filter == 0) {
-            if (!strcmp (parg, "--nextsong")) {
-                printf ("next song\n");
+            if (!strcmp (parg, "--next")) {
+                messagepump_push (M_NEXTSONG, 0, 0, 0);
             }
-            else if (!strcmp (parg, "--prevsong")) {
-                printf ("prev song\n");
+            else if (!strcmp (parg, "--prev")) {
+                messagepump_push (M_PREVSONG, 0, 0, 0);
             }
             else if (!strcmp (parg, "--play")) {
-                printf ("play\n");
+                messagepump_push (M_PLAYSONG, 0, 0, 0);
             }
             else if (!strcmp (parg, "--stop")) {
-                printf ("stop\n");
+                messagepump_push (M_STOPSONG, 0, 0, 0);
             }
             else if (!strcmp (parg, "--pause")) {
-                printf ("pause\n");
+                messagepump_push (M_PAUSESONG, 0, 0, 0);
             }
-            else if (!strcmp (parg, "--playrandom")) {
-                printf ("play random\n");
+            else if (!strcmp (parg, "--random")) {
+                messagepump_push (M_PLAYRANDOM, 0, 0, 0);
             }
             else {
                 if (pl_add_file (parg, NULL, NULL) >= 0) {
@@ -196,9 +205,9 @@ player_thread (uintptr_t ctx) {
             char str[2048];
             int size;
             if (size = recv (s2, str, 2048, 0) >= 0) {
-//                if (size > 0) {
-//                    printf ("received: %s\n", str);
-//                }
+                if (size > 0) {
+                    printf ("received: %s\n", str);
+                }
                 int res = exec_command_line (str, size, 0);
                 if (res == 2) {
                     GDK_THREADS_ENTER();
@@ -304,6 +313,7 @@ player_thread (uintptr_t ctx) {
         usleep(1000);
         update_songinfo ();
     }
+    close (s);
 }
 
 int
@@ -363,7 +373,7 @@ main (int argc, char *argv[]) {
         if (connect(s, (struct sockaddr *)&remote, len) == 0) {
 
             // pass args to remote and exit
-            if (send(s, cmdline, size, 0) == -1) {
+            if (send(s, cmdline, size+1, 0) == -1) {
                 perror ("send");
                 exit (-1);
             }

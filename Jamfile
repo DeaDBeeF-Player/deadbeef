@@ -3,7 +3,7 @@ SubInclude ROOT gme ;
 SubInclude ROOT dumb ;
 SubInclude ROOT sidplay-libs-2.1.0 ;
 SubDir ROOT ;
-CCFLAGS += -DVERSION=\\\"0.1\\\" ;
+CCFLAGS += -DVERSION=\\\"0.1.0\\\" ;
 CCFLAGS += -D_GNU_SOURCE ;
 CCFLAGS += -std=c99 ;
 #CCFLAGS += -DUSE_SDL ;
