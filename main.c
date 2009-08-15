@@ -120,17 +120,19 @@ update_songinfo (void) {
 // -1 error, program must exit with error code -1
 //  0 proceed normally as nothing happened
 //  1 no error, but program must exit with error code 0
-//  2 no error, don't load default playlist, start playback immediately after startup
+//  2 no error, start playback immediately after startup
+//  3 no error, don't start playback immediately after startup
 int
 exec_command_line (const char *cmdline, int len, int filter) {
     const uint8_t *parg = (const uint8_t *)cmdline;
     const uint8_t *pend = cmdline + len;
     int exitcode = 0;
+    int queue = 0;
     while (parg < pend) {
         if (filter == 1) {
             if (!strcmp (parg, "--help") || !strcmp (parg, "-h")) {
                 printf ("DeaDBeeF %s Copyright (C) 2009 Alexey Yakovenko\n", VERSION);
-                printf ("Usage: deadbeef [options] [files]\n");
+                printf ("Usage: deadbeef [options] [file(s)]\n");
                 printf ("Options:\n");
                 printf ("   --help  or  -h     Print help (this message) and exit\n");
                 printf ("   --play             Start playback\n");
@@ -139,6 +141,7 @@ exec_command_line (const char *cmdline, int len, int filter) {
                 printf ("   --next             Next song in playlist\n");
                 printf ("   --prev             Previous song in playlist\n");
                 printf ("   --random           Previous song in playlist\n");
+                printf ("   --queue            Append file(s) to existing playlist\n");
                 return 1;
             }
         }
@@ -161,14 +164,30 @@ exec_command_line (const char *cmdline, int len, int filter) {
             else if (!strcmp (parg, "--random")) {
                 messagepump_push (M_PLAYRANDOM, 0, 0, 0);
             }
+            else if (!strcmp (parg, "--queue")) {
+                queue = 1;
+            }
             else {
-                if (pl_add_file (parg, NULL, NULL) >= 0) {
-                    exitcode = 2;
-                }
+                break;
             }
         }
         parg += strlen (parg);
         parg++;
+    }
+    if (parg < pend) {
+        // add files
+        if (!queue) {
+            pl_free ();
+        }
+        while (parg < pend) {
+            if (pl_add_file (parg, NULL, NULL) >= 0) {
+                if (queue) {
+                    exitcode = 3;
+                }
+            }
+            parg += strlen (parg);
+            parg++;
+        }
     }
     return exitcode;
 }
@@ -204,10 +223,10 @@ player_thread (uintptr_t ctx) {
         else if (s2 != -1) {
             char str[2048];
             int size;
-            if (size = recv (s2, str, 2048, 0) >= 0) {
-                if (size > 0) {
-                    printf ("received: %s\n", str);
-                }
+            if ((size = recv (s2, str, 2048, 0)) >= 0) {
+//                if (size > 0) {
+//                    printf ("received: %s %d\n", str, size);
+//                }
                 int res = exec_command_line (str, size, 0);
                 if (res == 2) {
                     GDK_THREADS_ENTER();
@@ -387,14 +406,11 @@ main (int argc, char *argv[]) {
         close(s);
     }
 
+    pl_load (defpl);
     int res = exec_command_line (cmdline, size, 1);
     if (res == -1) {
         return -1;
     }
-    else if (res == 0) {
-        pl_load (defpl);
-    }
-
     messagepump_init ();
     codec_init_locking ();
     streamer_init ();
