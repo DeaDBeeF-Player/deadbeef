@@ -66,6 +66,8 @@ typedef struct {
     float frameduration;
     int bitspersample;
     int channels;
+    float duration;
+#if 0
     // only for xing/lame header
     uint32_t frames;
     uint32_t flags;
@@ -81,6 +83,7 @@ typedef struct {
     uint16_t delay_start;
     uint16_t delay_end;
     uint32_t musiclength;
+#endif
 } buffer_t;
 
 static buffer_t buffer;
@@ -162,6 +165,51 @@ static signed short MadFixedToSshort(mad_fixed_t Fixed)
 
 #define MadErrorString(x) mad_stream_errorstr(x)
 
+static uint32_t
+extract_i32 (unsigned char *buf)
+{
+    uint32_t x;
+    // big endian extract
+
+    x = buf[0];
+    x <<= 8;
+    x |= buf[1];
+    x <<= 8;
+    x |= buf[2];
+    x <<= 8;
+    x |= buf[3];
+
+    return x;
+}
+
+static uint16_t
+extract_i16 (unsigned char *buf)
+{
+    uint16_t x;
+    // big endian extract
+
+    x = buf[0];
+    x <<= 8;
+    x |= buf[1];
+    x <<= 8;
+
+    return x;
+}
+
+static float
+extract_f32 (unsigned char *buf) {
+    float f;
+    uint32_t *x = (uint32_t *)&f;
+    *x = buf[0];
+    *x <<= 8;
+    *x |= buf[1];
+    *x <<= 8;
+    *x |= buf[2];
+    *x <<= 8;
+    *x |= buf[3];
+    return f;
+}
+
 // function scans file and calculates duration
 // if position >= 0 -- scanning is stopped after duration is greater than position
 static int
@@ -223,7 +271,7 @@ cmp3_scan_stream (buffer_t *buffer, float position) {
         }
 
         // mpeg version
-        int vertbl[] = {3, -1, 2, 1}; // 3 is 2.5
+        static int vertbl[] = {3, -1, 2, 1}; // 3 is 2.5
         int ver = (hdr & (3<<19)) >> 19;
         ver = vertbl[ver];
         if (ver < 0) {
@@ -231,7 +279,7 @@ cmp3_scan_stream (buffer_t *buffer, float position) {
         }
 
         // layer info
-        int ltbl[] = { -1, 3, 2, 1 };
+        static int ltbl[] = { -1, 3, 2, 1 };
         int layer = (hdr & (3<<17)) >> 17;
         layer = ltbl[layer];
         if (layer < 0) {
@@ -239,7 +287,7 @@ cmp3_scan_stream (buffer_t *buffer, float position) {
         }
 
         // bitrate
-        int brtable[5][16] = {
+        static int brtable[5][16] = {
             { 0, 32, 64, 96, 128, 160, 192, 224, 256, 288, 320, 352, 384, 416, 448, -1 },
             { 0, 32, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320, 384, -1 },
             { 0, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320, -1 },
@@ -260,7 +308,7 @@ cmp3_scan_stream (buffer_t *buffer, float position) {
         }
 
         // samplerate
-        int srtable[3][4] = {
+        static int srtable[3][4] = {
             {44100, 48000, 32000, -1},
             {22050, 24000, 16000, -1},
             {11025, 12000, 8000, -1},
@@ -274,7 +322,7 @@ cmp3_scan_stream (buffer_t *buffer, float position) {
         // padding
         int padding = (hdr & (0x1 << 9)) >> 9;
 
-        int chantbl[4] = { 2, 2, 2, 1 };
+        static int chantbl[4] = { 2, 2, 2, 1 };
         int nchannels = (hdr & (0x3 << 6)) >> 6;
         nchannels = chantbl[nchannels];
 
@@ -289,18 +337,29 @@ cmp3_scan_stream (buffer_t *buffer, float position) {
         int packetlength = 0;
         bitrate *= 1000;
         float dur = 0;
+        int samples_per_frame = 0;
         if (samplerate > 0 && bitrate > 0) {
             if (layer == 1) {
+                samples_per_frame = 384;
                 dur = (float)384 / samplerate;
                 packetlength = (12 * bitrate / samplerate + padding) * 4;
             }
             else if (layer == 2) {
+                samples_per_frame = 1152;
                 dur = (float)1152 / samplerate;
                 packetlength = 144 * bitrate / samplerate + padding;
             }
             else if (layer == 3) {
-                dur = (float)1152 / samplerate;
-                packetlength = 144 * bitrate / samplerate + padding;
+                if (ver == 1) {
+                    samples_per_frame = 1152;
+                    dur = (float)1152 / samplerate;
+                    packetlength = 144 * bitrate / samplerate + padding;
+                }
+                else {
+                    samples_per_frame = 576;
+                    dur = (float)576 / samplerate;
+                    packetlength = 144 * bitrate / samplerate + padding;
+                }
             }
         }
         else {
@@ -316,6 +375,44 @@ cmp3_scan_stream (buffer_t *buffer, float position) {
         buffer->bitspersample = 16;
         duration += dur;
         if (position == 0) {
+            // try to read xing/info tag
+            if (ver == 1) {
+                fseek (buffer->file, 32, SEEK_CUR);
+            }
+            else {
+                fseek (buffer->file, 17, SEEK_CUR);
+            }
+            const char xing[] = "Xing";
+            const char info[] = "Info";
+            char magic[4];
+            if (fread (magic, 1, 4, buffer->file) != 4) {
+                return -1; // EOF
+            }
+            if (!strncmp (xing, magic, 4) || !strncmp (info, magic, 4)) {
+                // found xing/lame header
+                // read flags
+                uint32_t flags;
+                char buf[4];
+                if (fread (buf, 1, 4, buffer->file) != 4) {
+                    return -1; // EOF
+                }
+                flags = extract_i32 (buf);
+                if (flags & 0x01) {
+                    // read number of frames
+                    if (fread (buf, 1, 4, buffer->file) != 4) {
+                        return -1; // EOF
+                    }
+                    uint32_t nframes = extract_i32 (buf);
+                    buffer->duration = (float)nframes * (float)samples_per_frame / (float)samplerate;
+                    return 0;
+                }
+            }
+            // xing header failed, calculate based on file size
+            fseek (buffer->file, 0, SEEK_END);
+            int sz = ftell (buffer->file);
+            int nframes = sz / packetlength;
+            buffer->duration = nframes * samples_per_frame / samplerate;
+
             return 0;
         }
         nframe++;
@@ -324,187 +421,16 @@ cmp3_scan_stream (buffer_t *buffer, float position) {
             nseeks++;
         }
     }
-//    cmp3.info.duration = duration;
     if (position >= 0 && duration >= position) {
         // set decoder timer
         buffer->timer.seconds = (int)duration;
         buffer->timer.fraction = (int)((duration - (float)buffer->timer.seconds)*MAD_TIMER_RESOLUTION);
     }
     if (nframe == 0) {
-        //printf ("file doesn't looks like mpeg stream\n");
         return -1;
     }
     return duration;
 }
-
-#if 0
-static int
-cmp3_scan_stream2 (float position) {
-    fseek (buffer.file, 0, SEEK_END);
-    size_t len = ftell (buffer.file);
-    uint8_t *map = mmap (NULL, len, PROT_READ, MAP_PRIVATE, buffer.file->_fileno, 0);
-    assert (map);
-    uint8_t *curr = map;
-    int nframe = 0;
-    int nskipped = 0;
-    float duration = 0;
-    int nreads = 0;
-    int nseeks = 0;
-
-#define read_byte(x) \
-    if ((curr-map)>=len) break; \
-    x = *curr; \
-    curr++;
-
-    for (;;) {
-        if (position >= 0 && duration > position) {
-            // set decoder timer
-            timer.seconds = (int)duration;
-            timer.fraction = (int)((duration - (float)timer.seconds)*MAD_TIMER_RESOLUTION);
-            break;
-        }
-        uint32_t hdr;
-        uint8_t sync;
-        read_byte (sync);
-        nreads++;
-        if (sync != 0xff) {
-            nskipped++;
-            continue; // not an mpeg frame
-        }
-        else {
-            // 2nd sync byte
-            read_byte(sync);
-            nreads++;
-            if ((sync >> 5) != 7) {
-                nskipped++;
-                continue;
-            }
-        }
-        // found frame
-        hdr = (0xff<<24) | (sync << 16);
-        // read 2 bytes more
-        read_byte (sync);
-        nreads++;
-        hdr |= sync << 8;
-        read_byte (sync);
-        nreads++;
-        hdr |= sync;
-        nskipped = 0;
-
-        // parse header
-        
-        // sync bits
-        int usync = hdr & 0xffe00000;
-        if (usync != 0xffe00000) {
-            printf ("fatal error: mp3 header parser is broken\n");
-        }
-
-        // mpeg version
-        int vertbl[] = {3, -1, 2, 1}; // 3 is 2.5
-        int ver = (hdr & (3<<19)) >> 19;
-        ver = vertbl[ver];
-        if (ver < 0) {
-            continue; // invalid frame
-        }
-
-        // layer info
-        int ltbl[] = { -1, 3, 2, 1 };
-        int layer = (hdr & (3<<17)) >> 17;
-        layer = ltbl[layer];
-        if (layer < 0) {
-            continue; // invalid frame
-        }
-
-        // bitrate
-        int brtable[5][16] = {
-            { 0, 32, 64, 96, 128, 160, 192, 224, 256, 288, 320, 352, 384, 416, 448, -1 },
-            { 0, 32, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320, 384, -1 },
-            { 0, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320, -1 },
-            { 0, 32, 48, 56, 64, 80, 96, 112, 128, 144, 160, 176, 192, 224, 256, -1 },
-            { 0, 8, 16, 24, 32, 40, 48, 56, 64, 80, 96, 112, 128, 144, 160, -1 }
-        };
-        int bitrate = (hdr & (0x0f<<12)) >> 12;
-        int idx = 0;
-        if (ver == 1) {
-            idx = layer - 1;
-        }
-        else {
-            idx = layer == 1 ? 3 : 4;
-        }
-        bitrate = brtable[idx][bitrate];
-        if (bitrate < 0) {
-            continue; // invalid frame
-        }
-
-        // samplerate
-        int srtable[3][4] = {
-            {44100, 48000, 32000, -1},
-            {22050, 24000, 16000, -1},
-            {11025, 12000, 8000, -1},
-        };
-        int samplerate = (hdr & (0x03<<10))>>10;
-        samplerate = srtable[ver-1][samplerate];
-        if (samplerate < 0) {
-            continue; // invalid frame
-        }
-
-        // padding
-        int padding = (hdr & (0x1 << 9)) >> 9;
-
-        int chantbl[4] = { 2, 2, 2, 1 };
-        int nchannels = (hdr & (0x3 << 6)) >> 6;
-        nchannels = chantbl[nchannels];
-
-        if (nframe == 0 || cmp3.info.samplesPerSecond == -1)
-        {
-            cmp3.info.bitsPerSample = 16;
-            cmp3.info.channels = nchannels;
-            cmp3.info.samplesPerSecond = samplerate;
-        }
-
-        // packetlength
-        int packetlength = 0;
-        bitrate *= 1000;
-        if (samplerate > 0 && bitrate > 0) {
-            if (layer == 1) {
-                duration += (float)384 / samplerate;
-                packetlength = (12 * bitrate / samplerate + padding) * 4;
-            }
-            else if (layer == 2) {
-                duration += (float)1152 / samplerate;
-                packetlength = 144 * bitrate / samplerate + padding;
-            }
-            else if (layer == 3) {
-                duration += (float)1152 / samplerate;
-                packetlength = 144 * bitrate / samplerate + padding;
-            }
-        }
-        else {
-            packetlength = 0;
-        }
-        nframe++;
-        if (packetlength > 0) {
-            curr += packetlength-4;
-            if ((curr - map) >= len) {
-                break;
-            }
-            nseeks++;
-        }
-    }
-//    cmp3.info.duration = duration;
-    if (position >= 0 && duration > position) {
-        // set decoder timer
-        timer.seconds = (int)duration;
-        timer.fraction = (int)((duration - (float)timer.seconds)*MAD_TIMER_RESOLUTION);
-    }
-    if (nframe == 0) {
-        //printf ("file doesn't looks like mpeg stream\n");
-        duration = -1;
-    }
-    munmap (map, len);
-    return duration;
-}
-#endif
 
 static int
 cmp3_decode (void) {
@@ -1340,6 +1266,7 @@ cmp3_read_id3v2 (playItem_t *it, FILE *fp) {
     return -1;
 }
 
+#if 0
 // read xing/lame header
 // based on Xing example code
 #define FRAMES_FLAG     0x0001
@@ -1348,55 +1275,10 @@ cmp3_read_id3v2 (playItem_t *it, FILE *fp) {
 #define VBR_SCALE_FLAG  0x0008
 
 #define FRAMES_AND_BYTES (FRAMES_FLAG | BYTES_FLAG)
-static uint32_t
-extract_i32 (unsigned char *buf)
-{
-    uint32_t x;
-    // big endian extract
-
-    x = buf[0];
-    x <<= 8;
-    x |= buf[1];
-    x <<= 8;
-    x |= buf[2];
-    x <<= 8;
-    x |= buf[3];
-
-    return x;
-}
-
-static uint16_t
-extract_i16 (unsigned char *buf)
-{
-    uint16_t x;
-    // big endian extract
-
-    x = buf[0];
-    x <<= 8;
-    x |= buf[1];
-    x <<= 8;
-
-    return x;
-}
-
-static float
-extract_f32 (unsigned char *buf) {
-    float f;
-    uint32_t *x = (uint32_t *)&f;
-    *x = buf[0];
-    *x <<= 8;
-    *x |= buf[1];
-    *x <<= 8;
-    *x |= buf[2];
-    *x <<= 8;
-    *x |= buf[3];
-    return f;
-}
-
 int
 cmp3_read_info_tag (buffer_t *buffer, playItem_t *it, FILE *fp) {
     rewind (fp);
-    int h_id, h_mode, h_sr_index;
+    int h_id, h_mode, h_sr_index, h_ly_index;
     static int sr_table[4] = { 44100, 48000, 32000, -1 };
     uint8_t header[1024];
     if (fread (header, 1, 1024, fp) != 1024) {
@@ -1404,10 +1286,25 @@ cmp3_read_info_tag (buffer_t *buffer, playItem_t *it, FILE *fp) {
     }
     uint8_t *buf = header;
 
+    // check sync
+    if (buf[0] != 0xff || (buf[1]&(3<<5)) != (3<<5)) {
+        printf ("sync bits not set, not a mpeg frame\n");
+        return -1;
+    }
+
     // get selected MPEG header data
     h_id       = (buf[1] >> 3) & 1;
     h_sr_index = (buf[2] >> 2) & 3;
     h_mode     = (buf[3] >> 6) & 3;
+    h_ly_index = (buf[1] >> 1) & 3;
+
+    static int ltbl[] = { -1, 3, 2, 1 };
+    int layer = ltbl[h_ly_index];
+    printf ("layer%d\n", layer);
+    if (layer < 0) {
+        printf ("invalid layer\n");
+        return -1;
+    }
 
     // determine offset of header
     if (h_id) { // mpeg1
@@ -1452,27 +1349,28 @@ cmp3_read_info_tag (buffer_t *buffer, playItem_t *it, FILE *fp) {
         buffer->samplerate >>= 1;
     }
 
+    uint32_t flags, frames, bytes, vbr_scale;
     // get flags
-    buffer->flags = extract_i32 (buf);
+    flags = extract_i32 (buf);
     buf+=4;
 
-    if (buffer->flags & FRAMES_FLAG) {
-        buffer->frames = extract_i32(buf);
+    if (flags & FRAMES_FLAG) {
+        frames = extract_i32(buf);
         buf+=4;
     }
-    if (buffer->flags & BYTES_FLAG) {
-        buffer->bytes = extract_i32(buf);
+    if (flags & BYTES_FLAG) {
+        bytes = extract_i32(buf);
         buf+=4;
     }
 
-    if (buffer->flags & TOC_FLAG) {
+    if (flags & TOC_FLAG) {
         // read toc
         buf+=100;
     }
 
-    buffer->vbr_scale = -1;
-    if (buffer->flags & VBR_SCALE_FLAG) {
-        buffer->vbr_scale = extract_i32(buf);
+    vbr_scale = -1;
+    if (flags & VBR_SCALE_FLAG) {
+        vbr_scale = extract_i32(buf);
         buf+=4;
     }
 
@@ -1502,9 +1400,9 @@ cmp3_read_info_tag (buffer_t *buffer, playItem_t *it, FILE *fp) {
     buffer->delay_end = ((((uint16_t)header[0xb2]) & 0x0f) << 8) | ((uint16_t)header[0xb3]);
     buffer->mp3gain = header[0xb5];
     buffer->musiclength = extract_i32 (&header[0xb8]);
-
     return 0;
 }
+#endif
 
 playItem_t *
 cmp3_insert (playItem_t *after, const char *fname) {
@@ -1529,6 +1427,7 @@ cmp3_insert (playItem_t *after, const char *fname) {
 //    buffer.cachefill = 0;
 //    mad_timer_reset(&buffer.timer);
 
+#if 0
     if (!cmp3_read_info_tag (&buffer, it, fp)) {
         printf ("got xing info header\n");
         printf ("version: %d\n", buffer.version);
@@ -1538,6 +1437,7 @@ cmp3_insert (playItem_t *after, const char *fname) {
         printf ("bytes: %d\n", buffer.bytes);
         printf ("vbr_scale: %d\n", buffer.vbr_scale);
     }
+#endif
     if (cmp3_read_id3v2 (it, fp) < 0) {
         if (cmp3_read_id3v1 (it, fp) < 0) {
             pl_add_meta (it, "title", NULL);
@@ -1553,11 +1453,11 @@ cmp3_insert (playItem_t *after, const char *fname) {
         pl_item_free (it);
         return NULL;
     }
-    fseek (fp, 0, SEEK_END);
-    int sz = ftell (fp);
-    assert (buffer.packetlength);
-    int nframes = sz / buffer.packetlength;
-    it->duration = nframes * buffer.frameduration;
+//    fseek (fp, 0, SEEK_END);
+//    int sz = ftell (fp);
+//    assert (buffer.packetlength);
+//    int nframes = sz / buffer.packetlength;
+    it->duration = buffer.duration;//nframes * buffer.frameduration;
     switch (buffer.layer) {
     case 1:
         it->filetype = "mp1";
