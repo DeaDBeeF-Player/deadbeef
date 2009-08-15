@@ -184,6 +184,9 @@ exec_command_line (const char *cmdline, int len, int filter) {
                 if (queue) {
                     exitcode = 3;
                 }
+                else {
+                    exitcode = 2;
+                }
             }
             parg += strlen (parg);
             parg++;
@@ -407,10 +410,6 @@ main (int argc, char *argv[]) {
     }
 
     pl_load (defpl);
-    int res = exec_command_line (cmdline, size, 1);
-    if (res == -1) {
-        return -1;
-    }
     messagepump_init ();
     codec_init_locking ();
     streamer_init ();
@@ -434,6 +433,10 @@ main (int argc, char *argv[]) {
     extern void search_playlist_init (GtkWidget *widget);
     search_playlist_init (lookup_widget (searchwin, "searchlist"));
 
+    int res = exec_command_line (cmdline, size, 0);
+    if (res == -1) {
+        return -1;
+    }
     if (res == 2) {
         messagepump_push (M_PLAYSONG, 0, 0, 0);
     }
