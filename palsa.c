@@ -39,10 +39,11 @@ static snd_pcm_t *audio;
 static int16_t *samplebuffer;
 static int bufsize = 4096*4;
 static float volume = 1;
-static int alsa_terminate = 0;
+static int alsa_terminate;
 static int alsa_rate = 48000;
-static int state = 0; // 0 = stopped, 1 = playing, 2 = pause
+static int state; // 0 = stopped, 1 = playing, 2 = pause
 static uintptr_t mutex;
+static int canpause;
 
 static void
 palsa_callback (char *stream, int len);
@@ -86,6 +87,8 @@ palsa_init (void) {
                 snd_strerror (err));
         goto open_error;
     }
+
+    canpause = snd_pcm_hw_params_can_pause (hw_params);
 
     int val = alsa_rate;
     int ret = 0;
@@ -187,17 +190,29 @@ palsa_free (void) {
     }
 }
 
+static int hwpaused;
+static void
+palsa_hw_pause (int pause) {
+    if (canpause) {
+        snd_pcm_pause (audio, pause);
+    }
+    else {
+        if (pause == 1) {
+            snd_pcm_drop (audio);
+        }
+        else {
+            snd_pcm_prepare (audio);
+        }
+        hwpaused = pause;
+    }
+    hwpaused = pause;
+}
+
 int
 palsa_play (void) {
     // start updating thread
     int err;
     if (state == 0) {
-#if 0
-        if ((err = snd_pcm_drop (audio)) < 0) {
-            fprintf (stderr, "cannot drop audio interface(%s)\n",
-                    snd_strerror (err));
-        }
-#endif
         if ((err = snd_pcm_prepare (audio)) < 0) {
             fprintf (stderr, "cannot prepare audio interface for use (%s)\n",
                     snd_strerror (err));
@@ -206,16 +221,17 @@ palsa_play (void) {
     }
     if (state != 1) {
         state = 1;
-        snd_pcm_pause (audio, 0);
+        palsa_hw_pause (0);
     }
     return 0;
 }
+
 
 int
 palsa_stop (void) {
     // set stop state
     state = 0;
-    snd_pcm_pause (audio, 1);
+    palsa_hw_pause (1);
     return 0;
 }
 
@@ -234,7 +250,7 @@ int
 palsa_pause (void) {
     // set pause state
     state = 2;
-    snd_pcm_pause (audio, 1);
+    palsa_hw_pause (1);
     return 0;
 }
 
@@ -242,7 +258,7 @@ int
 palsa_unpause (void) {
     // unset pause state
     state = 1;
-    snd_pcm_pause (audio, 0);
+    palsa_hw_pause (0);
     return 0;
 }
 
@@ -270,20 +286,22 @@ palsa_thread (uintptr_t context) {
             mutex_unlock (mutex);
             break;
         }
+        if (state != 1) {
+            usleep (1000);
+            mutex_unlock (mutex);
+            continue;
+        }
         /* wait till the interface is ready for data, or 1 second
            has elapsed.
          */
-//        if (state != 1) {
-//            usleep (1000);
-//            continue;
-//        }
-        ;
-        if ((err = snd_pcm_wait (audio, 1000)) < 0 && state == 1) {
+        if ((err = snd_pcm_wait (audio, 1000)) < 0) {
+#if 0
             fprintf (stderr, "alsa poll failed (%s)\n", strerror (errno));
             if ((err = snd_pcm_prepare (audio)) < 0) {
                 fprintf (stderr, "cannot prepare audio interface for use (%s)\n",
                         snd_strerror (err));
             }
+#endif
             mutex_unlock (mutex);
             continue;
         }	           
