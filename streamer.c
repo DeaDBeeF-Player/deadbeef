@@ -55,6 +55,7 @@ streamer_set_nextsong (int song, int pstate) {
 
 void
 streamer_set_seek (float pos) {
+    printf ("seeking to %d\n", pos);
     seekpos = pos;
 }
 

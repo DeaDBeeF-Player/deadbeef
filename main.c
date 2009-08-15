@@ -235,6 +235,7 @@ main (int argc, char *argv[]) {
     gtk_init (&argc, &argv);
 
     gtkpl_init ();
+
     pl_load (defpl);
     mainwin = create_mainwin ();
     searchwin = create_searchwin ();

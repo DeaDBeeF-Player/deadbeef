@@ -619,6 +619,10 @@ cmp3_seek (float time) {
 	mad_synth_init(&synth);
 	mad_timer_reset(&buffer.timer);
 
+	if (time == 0) { 
+        return 0;
+    }
+
     if (cmp3_scan_stream (&buffer, time) == -1) {
         return -1;
     }
