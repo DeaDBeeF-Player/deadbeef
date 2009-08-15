@@ -1382,6 +1382,8 @@ gtkpl_add_dir (gtkplaylist_t *ps, char *folder) {
     GDK_THREADS_ENTER();
     gtk_widget_destroy (d);
     gtk_widget_set_sensitive (mainwin, TRUE);
+    // invalidate entire cache - slow, but rare
+    memset (ps->fmtcache, 0, sizeof (int16_t) * 3 * pl_ncolumns * ps->nvisiblerows);
     gtkpl_setup_scrollbar (ps);
     GtkWidget *widget = ps->playlist;
     gtkpl_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
@@ -1415,6 +1417,8 @@ gtkpl_add_files (gtkplaylist_t *ps, GSList *lst) {
     GDK_THREADS_ENTER();
     gtk_widget_destroy (d);
     gtk_widget_set_sensitive (mainwin, TRUE);
+    // invalidate entire cache - slow, but rare
+    memset (ps->fmtcache, 0, sizeof (int16_t) * 3 * pl_ncolumns * ps->nvisiblerows);
     gtkpl_setup_scrollbar (ps);
     GtkWidget *widget = ps->playlist;
     gtkpl_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
