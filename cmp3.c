@@ -67,6 +67,8 @@ typedef struct {
     int bitspersample;
     int channels;
     float duration;
+    int startoffset;
+    int endoffset;
 #if 0
     // only for xing/lame header
     uint32_t frames;
@@ -103,6 +105,8 @@ cmp3_scan_stream (buffer_t *buffer, float position);
 int
 cmp3_init (struct playItem_s *it) {
     buffer.file = fopen (it->fname, "rb");
+    buffer.startoffset = it->startoffset;
+    buffer.endoffset = it->endoffset;
     if (!buffer.file) {
         return -1;
     }
@@ -113,11 +117,12 @@ cmp3_init (struct playItem_s *it) {
     cmp3.info.position = 0;
 	mad_timer_reset(&buffer.timer);
 
+    fseek (buffer.file, buffer.startoffset, SEEK_SET);
     it->duration = cmp3_scan_stream (&buffer, -1); // scan entire stream, calc duration
     cmp3.info.bitsPerSample = buffer.bitspersample;
     cmp3.info.samplesPerSecond = buffer.samplerate;
     cmp3.info.channels = buffer.channels;
-    rewind (buffer.file);
+    fseek (buffer.file, buffer.startoffset, SEEK_SET);
 
 	mad_stream_init(&stream);
 	mad_frame_init(&frame);
@@ -326,13 +331,6 @@ cmp3_scan_stream (buffer_t *buffer, float position) {
         int nchannels = (hdr & (0x3 << 6)) >> 6;
         nchannels = chantbl[nchannels];
 
-//        if (nframe == 0 || cmp3.info.samplesPerSecond == -1)
-//        {
-//            cmp3.info.bitsPerSample = 16;
-//            cmp3.info.channels = nchannels;
-//            cmp3.info.samplesPerSecond = samplerate;
-//        }
-
         // packetlength
         int packetlength = 0;
         bitrate *= 1000;
@@ -388,7 +386,14 @@ cmp3_scan_stream (buffer_t *buffer, float position) {
             if (fread (magic, 1, 4, buffer->file) != 4) {
                 return -1; // EOF
             }
+            // add information to skip this frame
+            int startoffset = ftell (buffer->file) + packetlength;
+            if (startoffset > buffer->startoffset) {
+                buffer->startoffset = startoffset;
+            }
+
             if (!strncmp (xing, magic, 4) || !strncmp (info, magic, 4)) {
+                printf ("found xing header!\n");
                 // found xing/lame header
                 // read flags
                 uint32_t flags;
@@ -397,6 +402,7 @@ cmp3_scan_stream (buffer_t *buffer, float position) {
                     return -1; // EOF
                 }
                 flags = extract_i32 (buf);
+//                printf ("xing header flags: 0x%x\n", flags);
                 if (flags & 0x01) {
                     // read number of frames
                     if (fread (buf, 1, 4, buffer->file) != 4) {
@@ -404,12 +410,13 @@ cmp3_scan_stream (buffer_t *buffer, float position) {
                     }
                     uint32_t nframes = extract_i32 (buf);
                     buffer->duration = (float)nframes * (float)samples_per_frame / (float)samplerate;
+//                    printf ("mp3 duration calculated based on vbr header: %f\n", buffer->duration);
                     return 0;
                 }
             }
             // xing header failed, calculate based on file size
             fseek (buffer->file, 0, SEEK_END);
-            int sz = ftell (buffer->file);
+            int sz = ftell (buffer->file) - buffer->startoffset - buffer->endoffset;
             int nframes = sz / packetlength;
             buffer->duration = nframes * samples_per_frame / samplerate;
 
@@ -591,7 +598,7 @@ cmp3_seek (float time) {
     mad_synth_finish (&synth);
     mad_frame_finish (&frame);
     mad_stream_finish (&stream);
-    fseek(buffer.file, 0, SEEK_SET);
+    fseek(buffer.file, buffer.startoffset, SEEK_SET);
 	mad_stream_init(&stream);
 	mad_frame_init(&frame);
 	mad_synth_init(&synth);
@@ -998,6 +1005,10 @@ cmp3_read_id3v1 (playItem_t *it, FILE *fp) {
         pl_add_meta (it, "track", s);
     }
 
+    if (it->endoffset < 128) {
+        it->endoffset = 128;
+    }
+
     return 0;
 }
 
@@ -1063,7 +1074,7 @@ cmp3_read_id3v2 (playItem_t *it, FILE *fp) {
     uint8_t version_major = header[3];
     uint8_t version_minor = header[4];
     if (version_major > 4 || version_major < 2) {
-        printf ("id3v2.%d.%d is unsupported (crap)\n", version_major, version_minor);
+//        printf ("id3v2.%d.%d is unsupported\n", version_major, version_minor);
         return -1; // unsupported
     }
     uint8_t flags = header[5];
@@ -1073,12 +1084,20 @@ cmp3_read_id3v2 (playItem_t *it, FILE *fp) {
     int unsync = (flags & (1<<7)) ? 1 : 0;
     int extheader = (flags & (1<<6)) ? 1 : 0;
     int expindicator = (flags & (1<<5)) ? 1 : 0;
+    int footerpresent = (flags & (1<<4)) ? 1 : 0;
     // check for bad size
     if ((header[9] & 0x80) || (header[8] & 0x80) || (header[7] & 0x80) || (header[6] & 0x80)) {
         return -1; // bad header
     }
     uint32_t size = (header[9] << 0) | (header[8] << 7) | (header[7] << 14) | (header[6] << 21);
+    int startoffset = size + 10 + 10 * footerpresent;
+    if (startoffset > it->startoffset) {
+        it->startoffset = startoffset;
+        //printf ("id3v2 end: %x\n", startoffset);
+    }
+
 //    printf ("tag size: %d\n", size);
+
 
     // try to read full tag if size is small enough
     if (size > 1000000) {
@@ -1266,6 +1285,7 @@ cmp3_read_id3v2 (playItem_t *it, FILE *fp) {
     return -1;
 }
 
+// {{{ separate xing/lame header reader (unused)
 #if 0
 // read xing/lame header
 // based on Xing example code
@@ -1403,6 +1423,7 @@ cmp3_read_info_tag (buffer_t *buffer, playItem_t *it, FILE *fp) {
     return 0;
 }
 #endif
+// }}}
 
 playItem_t *
 cmp3_insert (playItem_t *after, const char *fname) {
@@ -1414,50 +1435,27 @@ cmp3_insert (playItem_t *after, const char *fname) {
     memset (it, 0, sizeof (playItem_t));
     it->codec = &cmp3;
     it->fname = strdup (fname);
-    it->tracknum = 0;
-    it->timestart = 0;
-    it->timeend = 0;
 
     buffer_t buffer;
     memset (&buffer, 0, sizeof (buffer));
     buffer.file = fp;
-//    buffer.remaining = 0;
-//    buffer.output = NULL;
-//    buffer.readsize = 0;
-//    buffer.cachefill = 0;
-//    mad_timer_reset(&buffer.timer);
 
-#if 0
-    if (!cmp3_read_info_tag (&buffer, it, fp)) {
-        printf ("got xing info header\n");
-        printf ("version: %d\n", buffer.version);
-        printf ("samplerate: %d\n", buffer.samplerate);
-        printf ("flags: %d\n", buffer.flags);
-        printf ("frames: %d\n", buffer.frames);
-        printf ("bytes: %d\n", buffer.bytes);
-        printf ("vbr_scale: %d\n", buffer.vbr_scale);
-    }
-#endif
+    // cmp3_scan_stream know where to seek to ignore tags
     if (cmp3_read_id3v2 (it, fp) < 0) {
         if (cmp3_read_id3v1 (it, fp) < 0) {
             pl_add_meta (it, "title", NULL);
         }
     }
-    rewind (fp);
-
-// calculate CBR duration
-
+    buffer.startoffset = it->startoffset;
+    fseek (fp, buffer.startoffset, SEEK_SET);
     // calc approx. mp3 duration 
     int res = cmp3_scan_stream (&buffer, 0);
     if (res < 0) {
         pl_item_free (it);
         return NULL;
     }
-//    fseek (fp, 0, SEEK_END);
-//    int sz = ftell (fp);
-//    assert (buffer.packetlength);
-//    int nframes = sz / buffer.packetlength;
-    it->duration = buffer.duration;//nframes * buffer.frameduration;
+    it->startoffset = buffer.startoffset;
+    it->duration = buffer.duration;
     switch (buffer.layer) {
     case 1:
         it->filetype = "mp1";
@@ -1477,7 +1475,7 @@ cmp3_insert (playItem_t *after, const char *fname) {
 
 static const char * exts[]=
 {
-	"mp1", "mp2","mp3",NULL
+	"mp1", "mp2", "mp3", NULL
 };
 
 const char **cmp3_getexts (void) {
