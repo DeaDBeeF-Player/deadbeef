@@ -59,7 +59,21 @@ float colo_dark_orange[COLO_COUNT][3] = {
 };
 
 // gtk color scheme
-float colo_system_gtk[COLO_COUNT][3];
+float colo_system_gtk[COLO_COUNT][3] = {
+    { 0x7f/255.f, 0x7f/255.f, 0x7f/255.f }, // cursor
+    { 0x1d/255.f, 0x1f/255.f, 0x1b/255.f }, // odd
+    { 0x21/255.f, 0x23/255.f, 0x1f/255.f }, // even
+    { 0xaf/255.f, 0xa7/255.f, 0x9e/255.f }, // sel odd
+    { 0xa7/255.f, 0x9f/255.f, 0x96/255.f }, // sel even
+    { 0xf4/255.f, 0x7e/255.f, 0x46/255.f }, // text
+    { 0,          0,          0          }, // sel text
+    { 0x1d/255.f, 0x1f/255.f, 0x1b/255.f }, // seekbar back
+    { 0xf4/255.f, 0x7e/255.f, 0x46/255.f }, // seekbar front
+    { 1,          1,          1          }, // seekbar marker
+    { 0x1d/255.f, 0x1f/255.f, 0x1b/255.f }, // volumebar back
+    { 0xf4/255.f, 0x7e/255.f, 0x46/255.f }, // volumebar front
+    { 0xf4/255.f, 0x7e/255.f, 0x46/255.f }, // dragdrop marker
+};
 
 // current color scheme
 float colo_current[COLO_COUNT][3];
@@ -99,12 +113,31 @@ static cairo_surface_t *pause16_pixmap;
 //};
 
 void
-gtkpl_system_colo_init (GtkWidget *widget) {
+color_gdk_to_cairo (GdkColor *gdk, float *cairo) {
+    cairo[0] = gdk->red / 65535.f;
+    cairo[1] = gdk->green / 65535.f;
+    cairo[2] = gdk->blue / 65535.f;
+}
+
+void
+gtkpl_system_colo_init (void) {
+    // list view colors
+    GtkWidget *list = gtk_cell_view_new ();
+    color_gdk_to_cairo (&list->style->bg[GTK_STATE_NORMAL], colo_system_gtk[COLO_PLAYLIST_EVEN]);
+    color_gdk_to_cairo (&list->style->bg[GTK_STATE_PRELIGHT], colo_system_gtk[COLO_PLAYLIST_ODD]);
+    color_gdk_to_cairo (&list->style->fg[GTK_STATE_PRELIGHT], colo_system_gtk[COLO_PLAYLIST_CURSOR]);
+    color_gdk_to_cairo (&list->style->bg[GTK_STATE_ACTIVE], colo_system_gtk[COLO_PLAYLIST_SEL_EVEN]);
+    color_gdk_to_cairo (&list->style->bg[GTK_STATE_ACTIVE], colo_system_gtk[COLO_PLAYLIST_SEL_ODD]);
+    color_gdk_to_cairo (&list->style->text[GTK_STATE_NORMAL], colo_system_gtk[COLO_PLAYLIST_TEXT]);
+    color_gdk_to_cairo (&list->style->text[GTK_STATE_ACTIVE], colo_system_gtk[COLO_PLAYLIST_SEL_TEXT]);
+    g_object_unref (list);
 }
 
 // that must be called before gtk_init
 void
 gtkpl_init (void) {
+    gtkpl_system_colo_init ();
+    //memcpy (colo_current, colo_system_gtk, sizeof (colo_current));
     memcpy (colo_current, colo_dark_orange, sizeof (colo_current));
 }
 

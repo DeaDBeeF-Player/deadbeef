@@ -824,9 +824,21 @@ seekbar_draw (GtkWidget *widget) {
         return;
     }
     float pos = 0;
-    if (playlist_current.codec && playlist_current.duration > 0) {
-        pos = playlist_current.codec->info.position / playlist_current.duration;
-        pos *= widget->allocation.width;
+    if (seekbar_moving) {
+        int x = seekbar_move_x;
+        if (x < 0) {
+            x = 0;
+        }
+        if (x > widget->allocation.width-1) {
+            x = widget->allocation.width-1;
+        }
+        pos = x;
+    }
+    else {
+        if (playlist_current.codec && playlist_current.duration > 0) {
+            pos = playlist_current.codec->info.position / playlist_current.duration;
+            pos *= widget->allocation.width;
+        }
     }
     // left
     if (pos > 0) {
@@ -845,19 +857,6 @@ seekbar_draw (GtkWidget *widget) {
     clearlooks_rounded_rectangle (cr, 0, widget->allocation.height/2-4, widget->allocation.width, 8, 4, 0xff);
     cairo_fill (cr);
     cairo_reset_clip (cr);
-
-    if (seekbar_moving) {
-        gtkpl_set_cairo_source_rgb (cr, COLO_SEEKBAR_MARKER);
-        int x = seekbar_move_x;
-        if (x < 0) {
-            x = 0;
-        }
-        if (x > widget->allocation.width-8) {
-            x = widget->allocation.width-8;
-        }
-        clearlooks_rounded_rectangle (cr, x, widget->allocation.height/2-4, 8, 8, 4, 0xff);
-        cairo_fill (cr);
-    }
 
     cairo_destroy (cr);
 }

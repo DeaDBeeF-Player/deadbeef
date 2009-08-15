@@ -220,7 +220,6 @@ main (int argc, char *argv[]) {
     snprintf (dbconfdir, 1024, "%s/.config/deadbeef", homedir);
     mkdir (dbconfdir, 0755);
 
-    gtkpl_init ();
 
     messagepump_init ();
     codec_init_locking ();
@@ -235,6 +234,7 @@ main (int argc, char *argv[]) {
     gtk_set_locale ();
     gtk_init (&argc, &argv);
 
+    gtkpl_init ();
     pl_load (defpl);
     mainwin = create_mainwin ();
     searchwin = create_searchwin ();
