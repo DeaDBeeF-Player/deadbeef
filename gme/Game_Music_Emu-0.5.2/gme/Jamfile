@@ -1,4 +1,4 @@
-SubDir ROOT gme ;
+SubDir ROOT gme Game_Music_Emu-0.5.2 gme ;
 C++FLAGS += -DHAVE_STDINT_H ;
 
 Library libgme : Ay_Apu.cpp          Gb_Apu.cpp    Hes_Emu.cpp       Nes_Fme7_Apu.cpp   Sms_Apu.cpp
