@@ -1,13 +1,13 @@
-SubDir ROOT sidplay-libs-2.1.0 ;
+SubDir ROOT libsidplay2 sidplay-libs-2.1.0 ;
 C++FLAGS += -DHAVE_UNIX ;
 C++FLAGS += -DVERSION=\\\"2.1.0\\\" ;
-SubDirHdrs $(ROOT)/sidplay-libs-2.1.0 ;
-SubDirHdrs $(ROOT)/sidplay-libs-2.1.0/libsidplay ;
-SubDirHdrs $(ROOT)/sidplay-libs-2.1.0/libsidplay/include ;
-SubDirHdrs $(ROOT)/sidplay-libs-2.1.0/libsidplay/include/sidplay ;
-SubDirHdrs $(ROOT)/sidplay-libs-2.1.0/libsidutils/include/sidplay/utils ;
-SubDirHdrs $(ROOT)/sidplay-libs-2.1.0/builders/resid-builder/include/sidplay/builders ;
-SubDirHdrs $(ROOT)/sidplay-libs-2.1.0/builders/resid-builder/include/ ;
+SubDirHdrs $(ROOT)/libsidplay2/sidplay-libs-2.1.0 ;
+SubDirHdrs $(ROOT)/libsidplay2/sidplay-libs-2.1.0/libsidplay ;
+SubDirHdrs $(ROOT)/libsidplay2/sidplay-libs-2.1.0/libsidplay/include ;
+SubDirHdrs $(ROOT)/libsidplay2/sidplay-libs-2.1.0/libsidplay/include/sidplay ;
+SubDirHdrs $(ROOT)/libsidplay2/sidplay-libs-2.1.0/libsidutils/include/sidplay/utils ;
+SubDirHdrs $(ROOT)/libsidplay2/sidplay-libs-2.1.0/builders/resid-builder/include/sidplay/builders ;
+SubDirHdrs $(ROOT)/libsidplay2/sidplay-libs-2.1.0/builders/resid-builder/include/ ;
 
 Library libsidplay :
 libsidutils/src/SidDatabase.cpp

@@ -1,12 +1,11 @@
 SubDir ROOT ;
 SubInclude ROOT gme Game_Music_Emu-0.5.2 gme ;
 SubInclude ROOT dumb ;
-SubInclude ROOT sidplay-libs-2.1.0 ;
+SubInclude ROOT libsidplay2 sidplay-libs-2.1.0 ;
 SubDir ROOT ;
 CCFLAGS += -DVERSION=\\\"0.1.0\\\" ;
 CCFLAGS += -D_GNU_SOURCE ;
 CCFLAGS += -std=c99 ;
-CCFLAGS += -Igme/Game_Music_Emu-0.5.2 ;
 #CCFLAGS += -DUSE_SDL ;
 # CCFLAGS += -D_REENTRANT ;
 OPTIM += -O2 ;
@@ -19,8 +18,9 @@ HDRS += /usr/lib/glib-2.0/include ;
 HDRS += /usr/include/atk-1.0 ;
 HDRS += /usr/include/pango-1.0 ;
 HDRS += /usr/include/cairo ;
-HDRS += $(ROOT)/sidplay-libs-2.1.0/libsidplay/include ;
-HDRS += $(ROOT)/sidplay-libs-2.1.0/builders/resid-builder/include ;
+HDRS += $(ROOT)/libsidplay2/sidplay-libs-2.1.0/libsidplay/include ;
+HDRS += $(ROOT)/libsidplay2/sidplay-libs-2.1.0/builders/resid-builder/include ;
+HDRS += $(ROOT)/gme/Game_Music_Emu-0.5.2 ;
 
 Main deadbeef : 
     codec.c cvorbis.c cmp3.c cgme.c cdumb.c cwav.c cflac.c csid.cpp playlist.c palsa.c streamer.c md5/md5.c main.c support.c interface.c callbacks.c threading_pthread.c messagepump.c gtkplaylist.c search.c progress.c ;
