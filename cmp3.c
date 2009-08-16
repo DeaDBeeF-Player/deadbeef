@@ -99,9 +99,6 @@ cmp3_decode (void);
 static int
 cmp3_scan_stream (buffer_t *buffer, float position);
 
-//static int
-//cmp3_scan_stream2 (float position);
-
 int
 cmp3_init (struct playItem_s *it) {
     buffer.file = fopen (it->fname, "rb");
@@ -599,7 +596,7 @@ cmp3_read (char *bytes, int size) {
         buffer.output = bytes;
         buffer.readsize = size;
         ret += cmp3_decode ();
-        cmp3.info.position = (float)buffer.timer.seconds + (float)buffer.timer.fraction / MAD_TIMER_RESOLUTION;
+//        cmp3.info.position = (float)buffer.timer.seconds + (float)buffer.timer.fraction / MAD_TIMER_RESOLUTION;
     }
     return ret;
 }
@@ -620,12 +617,15 @@ cmp3_seek (float time) {
 	mad_timer_reset(&buffer.timer);
 
 	if (time == 0) { 
+        cmp3.info.position = 0;
         return 0;
     }
 
     if (cmp3_scan_stream (&buffer, time) == -1) {
+        cmp3.info.position = 0;
         return -1;
     }
+    cmp3.info.position = (float)buffer.timer.seconds + (float)buffer.timer.fraction / MAD_TIMER_RESOLUTION;
     return 0;
 }
 

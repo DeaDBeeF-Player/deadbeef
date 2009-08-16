@@ -40,6 +40,7 @@ static int streaming_terminate;
 
 #define STREAM_BUFFER_SIZE 200000
 static int streambuffer_fill;
+static int bytes_until_next_song = 0;
 static char streambuffer[STREAM_BUFFER_SIZE];
 static uintptr_t mutex;
 static int nextsong = -1;
@@ -55,7 +56,6 @@ streamer_set_nextsong (int song, int pstate) {
 
 void
 streamer_set_seek (float pos) {
-    printf ("seeking to %d\n", pos);
     seekpos = pos;
 }
 
@@ -67,22 +67,15 @@ streamer_thread (uintptr_t ctx) {
     codecleft = 0;
 
     while (!streaming_terminate) {
-        if (nextsong >= 0) {
+//        printf ("buns: %d\n", bytes_until_next_song);
+        if (nextsong >= 0 && bytes_until_next_song == 0) {
             int sng = nextsong;
             int pstate = nextsong_pstate;
             nextsong = -1;
             codec_lock ();
-            //streambuffer_fill = 0;
             codecleft = 0;
             codec_unlock ();
             pl_set_current (pl_get_for_idx (sng));
-#if 0
-            if (pl_set_current (pl_get_for_idx (sng)) < 0) {
-                while (pl_nextsong () < 0) {
-                    usleep (3000);
-                }
-            }
-#endif
             if (pstate == 0) {
                 p_stop ();
             }
@@ -279,12 +272,8 @@ streamer_read_async (char *bytes, int size) {
         }
         else {
             // that means EOF
+            bytes_until_next_song = streambuffer_fill;
             pl_nextsong (0);
-#if 0
-            while (pl_nextsong (0) < 0) {
-                usleep (3000);
-            }
-#endif
             break;
         }
     }
@@ -312,6 +301,13 @@ streamer_read (char *bytes, int size) {
             memmove (streambuffer, &streambuffer[sz], streambuffer_fill-sz);
         }
         streambuffer_fill -= sz;
+        if (playlist_current.codec) {
+            playlist_current.codec->info.position += (float)sz/p_get_rate ()/4.f;
+        }
+        bytes_until_next_song -= sz;
+        if (bytes_until_next_song < 0) {
+            bytes_until_next_song = 0;
+        }
     }
     streamer_unlock ();
     return sz;
