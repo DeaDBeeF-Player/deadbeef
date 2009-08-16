@@ -43,7 +43,7 @@
 
 GtkWidget *mainwin;
 GtkWidget *searchwin;
-GtkWidget *trayicon;
+GtkStatusIcon *trayicon;
 GtkWidget *traymenu;
 
 gtkplaylist_t main_playlist;
@@ -509,9 +509,8 @@ main (int argc, char *argv[]) {
     // system tray icon
     traymenu = create_traymenu ();
     GdkPixbuf *trayicon_pixbuf = create_pixbuf ("play_24.png");
-    trayicon = GTK_WIDGET (gtk_status_icon_new_from_pixbuf (trayicon_pixbuf));
-    gtk_widget_show (trayicon);
-    gtk_status_icon_set_tooltip_text (GTK_STATUS_ICON (trayicon), "DeaDBeeF");
+    trayicon = gtk_status_icon_new_from_pixbuf (trayicon_pixbuf);
+    gtk_status_icon_set_tooltip_text (trayicon, "DeaDBeeF");
     //gtk_status_icon_set_title (GTK_STATUS_ICON (trayicon), "DeaDBeeF");
     g_signal_connect ((gpointer)trayicon, "scroll_event", G_CALLBACK (on_trayicon_scroll_event), NULL);
     g_signal_connect ((gpointer)trayicon, "button_press_event", G_CALLBACK (on_trayicon_button_press_event), NULL);
