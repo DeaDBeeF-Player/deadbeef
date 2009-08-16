@@ -91,7 +91,7 @@ int
 pl_get_idx_of (playItem_t *it);
 
 playItem_t *
-pl_insert_cue (playItem_t *after, const char *cuename, const char *ftype);
+pl_insert_cue (playItem_t *after, const char *cuename, struct codec_s *codec, const char *ftype);
 
 int
 pl_set_current (playItem_t *it);

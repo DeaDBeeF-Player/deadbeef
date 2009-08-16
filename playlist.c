@@ -27,6 +27,11 @@
 #include <assert.h>
 #include "playlist.h"
 #include "codec.h"
+#include "streamer.h"
+#include "messagepump.h"
+#include "messages.h"
+#include "playback.h"
+
 #include "cwav.h"
 #include "cvorbis.h"
 #include "cdumb.h"
@@ -34,10 +39,6 @@
 #include "cgme.h"
 #include "cflac.h"
 #include "csid.h"
-#include "streamer.h"
-#include "messagepump.h"
-#include "messages.h"
-#include "playback.h"
 
 codec_t *codecs[] = {
     &cdumb, &cvorbis, &cflac, &cgme, &cmp3, &csid, NULL
@@ -136,10 +137,22 @@ pl_cue_parse_time (const char *p) {
 }
 
 playItem_t *
-pl_insert_cue (playItem_t *after, const char *cuename, const char *ftype) {
+pl_insert_cue (playItem_t *after, const char *fname, codec_t *codec, const char *ftype) {
+    int len = strlen (fname);
+    char cuename[len+5];
+    strcpy (cuename, fname);
+    strcpy (cuename+len, ".cue");
     FILE *fp = fopen (cuename, "rt");
     if (!fp) {
-        return NULL;
+        char *ptr = cuename + len;
+        while (ptr >= cuename && *ptr != '.') {
+            ptr--;
+        }
+        strcpy (ptr+1, "cue");
+        fp = fopen (cuename, "rt");
+        if (!fp) {
+            return NULL;
+        }
     }
     char performer[1024];
     char albumtitle[1024];
@@ -233,7 +246,7 @@ pl_insert_cue (playItem_t *after, const char *cuename, const char *ftype) {
 //            printf ("adding %s\n", str);
             playItem_t *it = malloc (sizeof (playItem_t));
             memset (it, 0, sizeof (playItem_t));
-            it->codec = &cflac;
+            it->codec = codec;
             it->fname = strdup (file);
             it->tracknum = atoi (track);
             it->timestart = tstart;

@@ -349,10 +349,17 @@ cflac_insert (playItem_t *after, const char *fname) {
     }
 
     // try external cue
+    playItem_t *cue_after = pl_insert_cue (after, fname, &cflac, "flac");
+    if (cue_after) {
+        cue_after->timeend = cb.duration;
+        cue_after->duration = cue_after->timeend - cue_after->timestart;
+        return cue_after;
+    }
+#if 0
     char cuename[1024];
     snprintf (cuename, 1024, "%s.cue", fname);
     playItem_t *cue_after;
-    if ((cue_after = pl_insert_cue (after, cuename, "FLAC")) != NULL) {
+    if ((cue_after = pl_insert_cue (after, cuename, &cflac, "flac")) != NULL) {
         cue_after->timeend = cb.duration;
         cue_after->duration = cue_after->timeend - cue_after->timestart;
         return cue_after;
@@ -362,13 +369,13 @@ cflac_insert (playItem_t *after, const char *fname) {
         strncpy (cuename, fname, n);
         strcpy (cuename + n, "cue");
     //    printf ("loading %s\n", cuename);
-        if ((cue_after = pl_insert_cue (after, cuename, "FLAC")) != NULL) {
+        if ((cue_after = pl_insert_cue (after, cuename, &cflac, "flac")) != NULL) {
             cue_after->timeend = cb.duration;
             cue_after->duration = cue_after->timeend - cue_after->timestart;
             return cue_after;
         }
     }
-
+#endif
     //printf ("adding flac without cue\n");
     decoder = FLAC__stream_decoder_new();
     if (!decoder) {
