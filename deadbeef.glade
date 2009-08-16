@@ -10,8 +10,8 @@
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
   <property name="modal">False</property>
-  <property name="default_width">750</property>
-  <property name="default_height">650</property>
+  <property name="default_width">500</property>
+  <property name="default_height">300</property>
   <property name="resizable">True</property>
   <property name="destroy_with_parent">False</property>
   <property name="icon">play_24.png</property>
@@ -32,289 +32,140 @@
       <property name="spacing">0</property>
 
       <child>
-	<widget class="GtkHBox" id="hbox2">
+	<widget class="GtkMenuBar" id="menubar1">
 	  <property name="visible">True</property>
-	  <property name="homogeneous">False</property>
-	  <property name="spacing">0</property>
+	  <property name="pack_direction">GTK_PACK_DIRECTION_LTR</property>
+	  <property name="child_pack_direction">GTK_PACK_DIRECTION_LTR</property>
 
 	  <child>
-	    <widget class="GtkMenuBar" id="menubar1">
+	    <widget class="GtkMenuItem" id="menuitem1">
 	      <property name="visible">True</property>
-	      <property name="pack_direction">GTK_PACK_DIRECTION_LTR</property>
-	      <property name="child_pack_direction">GTK_PACK_DIRECTION_LTR</property>
+	      <property name="label" translatable="yes">_File</property>
+	      <property name="use_underline">True</property>
 
 	      <child>
-		<widget class="GtkMenuItem" id="menuitem1">
-		  <property name="visible">True</property>
-		  <property name="label" translatable="yes">_File</property>
-		  <property name="use_underline">True</property>
+		<widget class="GtkMenu" id="menuitem1_menu">
 
 		  <child>
-		    <widget class="GtkMenu" id="menuitem1_menu">
+		    <widget class="GtkImageMenuItem" id="open">
+		      <property name="visible">True</property>
+		      <property name="label">gtk-open</property>
+		      <property name="use_stock">True</property>
+		      <signal name="activate" handler="on_open_activate" last_modification_time="Sat, 04 Jul 2009 12:57:58 GMT"/>
+		    </widget>
+		  </child>
 
-		      <child>
-			<widget class="GtkImageMenuItem" id="open">
-			  <property name="visible">True</property>
-			  <property name="label">gtk-open</property>
-			  <property name="use_stock">True</property>
-			  <signal name="activate" handler="on_open_activate" last_modification_time="Sat, 04 Jul 2009 12:57:58 GMT"/>
-			</widget>
-		      </child>
+		  <child>
+		    <widget class="GtkSeparatorMenuItem" id="separator2">
+		      <property name="visible">True</property>
+		    </widget>
+		  </child>
 
-		      <child>
-			<widget class="GtkSeparatorMenuItem" id="separator2">
-			  <property name="visible">True</property>
-			</widget>
-		      </child>
+		  <child>
+		    <widget class="GtkMenuItem" id="add_files">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">Add files</property>
+		      <property name="use_underline">True</property>
+		      <signal name="activate" handler="on_add_files_activate" last_modification_time="Sat, 04 Jul 2009 13:04:01 GMT"/>
+		    </widget>
+		  </child>
 
-		      <child>
-			<widget class="GtkMenuItem" id="add_files">
-			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">Add files</property>
-			  <property name="use_underline">True</property>
-			  <signal name="activate" handler="on_add_files_activate" last_modification_time="Sat, 04 Jul 2009 13:04:01 GMT"/>
-			</widget>
-		      </child>
+		  <child>
+		    <widget class="GtkMenuItem" id="add_folder1">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">Add folder</property>
+		      <property name="use_underline">True</property>
+		      <signal name="activate" handler="on_add_folder1_activate" last_modification_time="Sat, 04 Jul 2009 13:04:01 GMT"/>
+		    </widget>
+		  </child>
 
-		      <child>
-			<widget class="GtkMenuItem" id="add_folder1">
-			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">Add folder</property>
-			  <property name="use_underline">True</property>
-			  <signal name="activate" handler="on_add_folder1_activate" last_modification_time="Sat, 04 Jul 2009 13:04:01 GMT"/>
-			</widget>
-		      </child>
+		  <child>
+		    <widget class="GtkSeparatorMenuItem" id="separator1">
+		      <property name="visible">True</property>
+		    </widget>
+		  </child>
 
-		      <child>
-			<widget class="GtkSeparatorMenuItem" id="separator1">
-			  <property name="visible">True</property>
-			</widget>
-		      </child>
+		  <child>
+		    <widget class="GtkMenuItem" id="preferences1">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">_Preferences</property>
+		      <property name="use_underline">True</property>
+		      <signal name="activate" handler="on_preferences1_activate" last_modification_time="Sat, 04 Jul 2009 13:04:01 GMT"/>
+		    </widget>
+		  </child>
 
-		      <child>
-			<widget class="GtkMenuItem" id="preferences1">
-			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">_Preferences</property>
-			  <property name="use_underline">True</property>
-			  <signal name="activate" handler="on_preferences1_activate" last_modification_time="Sat, 04 Jul 2009 13:04:01 GMT"/>
-			</widget>
-		      </child>
+		  <child>
+		    <widget class="GtkSeparatorMenuItem" id="separatormenuitem1">
+		      <property name="visible">True</property>
+		    </widget>
+		  </child>
 
-		      <child>
-			<widget class="GtkSeparatorMenuItem" id="separatormenuitem1">
-			  <property name="visible">True</property>
-			</widget>
-		      </child>
-
-		      <child>
-			<widget class="GtkImageMenuItem" id="quit1">
-			  <property name="visible">True</property>
-			  <property name="label">gtk-quit</property>
-			  <property name="use_stock">True</property>
-			  <signal name="activate" handler="on_quit1_activate" last_modification_time="Sat, 04 Jul 2009 12:57:58 GMT"/>
-			</widget>
-		      </child>
+		  <child>
+		    <widget class="GtkImageMenuItem" id="quit1">
+		      <property name="visible">True</property>
+		      <property name="label">gtk-quit</property>
+		      <property name="use_stock">True</property>
+		      <signal name="activate" handler="on_quit1_activate" last_modification_time="Sat, 04 Jul 2009 12:57:58 GMT"/>
 		    </widget>
 		  </child>
 		</widget>
 	      </child>
+	    </widget>
+	  </child>
+
+	  <child>
+	    <widget class="GtkMenuItem" id="edit1">
+	      <property name="visible">True</property>
+	      <property name="label" translatable="yes">Edit</property>
+	      <property name="use_underline">True</property>
 
 	      <child>
-		<widget class="GtkMenuItem" id="edit1">
-		  <property name="visible">True</property>
-		  <property name="label" translatable="yes">Edit</property>
-		  <property name="use_underline">True</property>
+		<widget class="GtkMenu" id="edit1_menu">
 
 		  <child>
-		    <widget class="GtkMenu" id="edit1_menu">
-
-		      <child>
-			<widget class="GtkImageMenuItem" id="clear1">
-			  <property name="visible">True</property>
-			  <property name="label">gtk-clear</property>
-			  <property name="use_stock">True</property>
-			  <signal name="activate" handler="on_clear1_activate" last_modification_time="Sat, 04 Jul 2009 13:04:01 GMT"/>
-			</widget>
-		      </child>
-
-		      <child>
-			<widget class="GtkImageMenuItem" id="select_all1">
-			  <property name="visible">True</property>
-			  <property name="label">gtk-select-all</property>
-			  <property name="use_stock">True</property>
-			  <signal name="activate" handler="on_select_all1_activate" last_modification_time="Sat, 04 Jul 2009 13:04:01 GMT"/>
-			</widget>
-		      </child>
-
-		      <child>
-			<widget class="GtkMenuItem" id="selection1">
-			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">Selection</property>
-			  <property name="use_underline">True</property>
-
-			  <child>
-			    <widget class="GtkMenu" id="selection1_menu">
-
-			      <child>
-				<widget class="GtkImageMenuItem" id="remove1">
-				  <property name="visible">True</property>
-				  <property name="label">gtk-remove</property>
-				  <property name="use_stock">True</property>
-				  <signal name="activate" handler="on_remove1_activate" last_modification_time="Sat, 04 Jul 2009 13:04:01 GMT"/>
-				</widget>
-			      </child>
-
-			      <child>
-				<widget class="GtkMenuItem" id="crop1">
-				  <property name="visible">True</property>
-				  <property name="label" translatable="yes">Crop</property>
-				  <property name="use_underline">True</property>
-				  <signal name="activate" handler="on_crop1_activate" last_modification_time="Sat, 04 Jul 2009 13:04:01 GMT"/>
-				</widget>
-			      </child>
-			    </widget>
-			  </child>
-			</widget>
-		      </child>
+		    <widget class="GtkImageMenuItem" id="clear1">
+		      <property name="visible">True</property>
+		      <property name="label">gtk-clear</property>
+		      <property name="use_stock">True</property>
+		      <signal name="activate" handler="on_clear1_activate" last_modification_time="Sat, 04 Jul 2009 13:04:01 GMT"/>
 		    </widget>
 		  </child>
-		</widget>
-	      </child>
-
-	      <child>
-		<widget class="GtkMenuItem" id="playlist1">
-		  <property name="visible">True</property>
-		  <property name="label" translatable="yes">Playlist</property>
-		  <property name="use_underline">True</property>
 
 		  <child>
-		    <widget class="GtkMenu" id="playlist1_menu">
-
-		      <child>
-			<widget class="GtkMenuItem" id="playlist_load">
-			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">Load</property>
-			  <property name="use_underline">True</property>
-			  <signal name="activate" handler="on_playlist_load_activate" last_modification_time="Sun, 09 Aug 2009 19:04:52 GMT"/>
-			</widget>
-		      </child>
-
-		      <child>
-			<widget class="GtkMenuItem" id="playlist_save">
-			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">Save</property>
-			  <property name="use_underline">True</property>
-			  <signal name="activate" handler="on_playlist_save_activate" last_modification_time="Sun, 09 Aug 2009 19:04:52 GMT"/>
-			</widget>
-		      </child>
-
-		      <child>
-			<widget class="GtkMenuItem" id="playlist_save_as">
-			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">Save As</property>
-			  <property name="use_underline">True</property>
-			  <signal name="activate" handler="on_playlist_save_as_activate" last_modification_time="Sun, 09 Aug 2009 19:04:52 GMT"/>
-			</widget>
-		      </child>
-
-		      <child>
-			<widget class="GtkMenuItem" id="order1">
-			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">Order</property>
-			  <property name="use_underline">True</property>
-
-			  <child>
-			    <widget class="GtkMenu" id="order1_menu">
-
-			      <child>
-				<widget class="GtkRadioMenuItem" id="order_linear">
-				  <property name="visible">True</property>
-				  <property name="label" translatable="yes">Linear</property>
-				  <property name="use_underline">True</property>
-				  <property name="active">True</property>
-				  <signal name="activate" handler="on_order_linear_activate" last_modification_time="Sat, 08 Aug 2009 12:26:33 GMT"/>
-				</widget>
-			      </child>
-
-			      <child>
-				<widget class="GtkRadioMenuItem" id="order_random">
-				  <property name="visible">True</property>
-				  <property name="label" translatable="yes">Random</property>
-				  <property name="use_underline">True</property>
-				  <property name="active">False</property>
-				  <property name="group">order_linear</property>
-				  <signal name="activate" handler="on_order_random_activate" last_modification_time="Sat, 08 Aug 2009 12:26:33 GMT"/>
-				</widget>
-			      </child>
-			    </widget>
-			  </child>
-			</widget>
-		      </child>
-
-		      <child>
-			<widget class="GtkMenuItem" id="looping1">
-			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">Looping</property>
-			  <property name="use_underline">True</property>
-
-			  <child>
-			    <widget class="GtkMenu" id="looping1_menu">
-
-			      <child>
-				<widget class="GtkRadioMenuItem" id="loop_all">
-				  <property name="visible">True</property>
-				  <property name="label" translatable="yes">Loop All</property>
-				  <property name="use_underline">True</property>
-				  <property name="active">True</property>
-				  <signal name="activate" handler="on_loop_all_activate" last_modification_time="Sat, 08 Aug 2009 12:26:33 GMT"/>
-				</widget>
-			      </child>
-
-			      <child>
-				<widget class="GtkRadioMenuItem" id="loop_single">
-				  <property name="visible">True</property>
-				  <property name="label" translatable="yes">Loop Single Song</property>
-				  <property name="use_underline">True</property>
-				  <property name="active">False</property>
-				  <property name="group">loop_all</property>
-				  <signal name="activate" handler="on_loop_single_activate" last_modification_time="Sat, 08 Aug 2009 12:26:33 GMT"/>
-				</widget>
-			      </child>
-
-			      <child>
-				<widget class="GtkRadioMenuItem" id="loop_disable">
-				  <property name="visible">True</property>
-				  <property name="label" translatable="yes">Don't Loop</property>
-				  <property name="use_underline">True</property>
-				  <property name="active">False</property>
-				  <property name="group">loop_all</property>
-				  <signal name="activate" handler="on_loop_disable_activate" last_modification_time="Sat, 08 Aug 2009 12:26:33 GMT"/>
-				</widget>
-			      </child>
-			    </widget>
-			  </child>
-			</widget>
-		      </child>
+		    <widget class="GtkImageMenuItem" id="select_all1">
+		      <property name="visible">True</property>
+		      <property name="label">gtk-select-all</property>
+		      <property name="use_stock">True</property>
+		      <signal name="activate" handler="on_select_all1_activate" last_modification_time="Sat, 04 Jul 2009 13:04:01 GMT"/>
 		    </widget>
 		  </child>
-		</widget>
-	      </child>
-
-	      <child>
-		<widget class="GtkMenuItem" id="menuitem4">
-		  <property name="visible">True</property>
-		  <property name="label" translatable="yes">_Help</property>
-		  <property name="use_underline">True</property>
 
 		  <child>
-		    <widget class="GtkMenu" id="menuitem4_menu">
+		    <widget class="GtkMenuItem" id="selection1">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">Selection</property>
+		      <property name="use_underline">True</property>
 
 		      <child>
-			<widget class="GtkMenuItem" id="about1">
-			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">_About</property>
-			  <property name="use_underline">True</property>
-			  <signal name="activate" handler="on_about1_activate" last_modification_time="Sat, 04 Jul 2009 12:57:58 GMT"/>
+			<widget class="GtkMenu" id="selection1_menu">
+
+			  <child>
+			    <widget class="GtkImageMenuItem" id="remove1">
+			      <property name="visible">True</property>
+			      <property name="label">gtk-remove</property>
+			      <property name="use_stock">True</property>
+			      <signal name="activate" handler="on_remove1_activate" last_modification_time="Sat, 04 Jul 2009 13:04:01 GMT"/>
+			    </widget>
+			  </child>
+
+			  <child>
+			    <widget class="GtkMenuItem" id="crop1">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">Crop</property>
+			      <property name="use_underline">True</property>
+			      <signal name="activate" handler="on_crop1_activate" last_modification_time="Sat, 04 Jul 2009 13:04:01 GMT"/>
+			    </widget>
+			  </child>
 			</widget>
 		      </child>
 		    </widget>
@@ -322,12 +173,161 @@
 		</widget>
 	      </child>
 	    </widget>
-	    <packing>
-	      <property name="padding">0</property>
-	      <property name="expand">True</property>
-	      <property name="fill">True</property>
-	    </packing>
 	  </child>
+
+	  <child>
+	    <widget class="GtkMenuItem" id="playlist1">
+	      <property name="visible">True</property>
+	      <property name="label" translatable="yes">Playlist</property>
+	      <property name="use_underline">True</property>
+
+	      <child>
+		<widget class="GtkMenu" id="playlist1_menu">
+
+		  <child>
+		    <widget class="GtkMenuItem" id="playlist_load">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">Load</property>
+		      <property name="use_underline">True</property>
+		      <signal name="activate" handler="on_playlist_load_activate" last_modification_time="Sun, 09 Aug 2009 19:04:52 GMT"/>
+		    </widget>
+		  </child>
+
+		  <child>
+		    <widget class="GtkMenuItem" id="playlist_save">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">Save</property>
+		      <property name="use_underline">True</property>
+		      <signal name="activate" handler="on_playlist_save_activate" last_modification_time="Sun, 09 Aug 2009 19:04:52 GMT"/>
+		    </widget>
+		  </child>
+
+		  <child>
+		    <widget class="GtkMenuItem" id="playlist_save_as">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">Save As</property>
+		      <property name="use_underline">True</property>
+		      <signal name="activate" handler="on_playlist_save_as_activate" last_modification_time="Sun, 09 Aug 2009 19:04:52 GMT"/>
+		    </widget>
+		  </child>
+
+		  <child>
+		    <widget class="GtkMenuItem" id="order1">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">Order</property>
+		      <property name="use_underline">True</property>
+
+		      <child>
+			<widget class="GtkMenu" id="order1_menu">
+
+			  <child>
+			    <widget class="GtkRadioMenuItem" id="order_linear">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">Linear</property>
+			      <property name="use_underline">True</property>
+			      <property name="active">True</property>
+			      <signal name="activate" handler="on_order_linear_activate" last_modification_time="Sat, 08 Aug 2009 12:26:33 GMT"/>
+			    </widget>
+			  </child>
+
+			  <child>
+			    <widget class="GtkRadioMenuItem" id="order_random">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">Random</property>
+			      <property name="use_underline">True</property>
+			      <property name="active">False</property>
+			      <property name="group">order_linear</property>
+			      <signal name="activate" handler="on_order_random_activate" last_modification_time="Sat, 08 Aug 2009 12:26:33 GMT"/>
+			    </widget>
+			  </child>
+			</widget>
+		      </child>
+		    </widget>
+		  </child>
+
+		  <child>
+		    <widget class="GtkMenuItem" id="looping1">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">Looping</property>
+		      <property name="use_underline">True</property>
+
+		      <child>
+			<widget class="GtkMenu" id="looping1_menu">
+
+			  <child>
+			    <widget class="GtkRadioMenuItem" id="loop_all">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">Loop All</property>
+			      <property name="use_underline">True</property>
+			      <property name="active">True</property>
+			      <signal name="activate" handler="on_loop_all_activate" last_modification_time="Sat, 08 Aug 2009 12:26:33 GMT"/>
+			    </widget>
+			  </child>
+
+			  <child>
+			    <widget class="GtkRadioMenuItem" id="loop_single">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">Loop Single Song</property>
+			      <property name="use_underline">True</property>
+			      <property name="active">False</property>
+			      <property name="group">loop_all</property>
+			      <signal name="activate" handler="on_loop_single_activate" last_modification_time="Sat, 08 Aug 2009 12:26:33 GMT"/>
+			    </widget>
+			  </child>
+
+			  <child>
+			    <widget class="GtkRadioMenuItem" id="loop_disable">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">Don't Loop</property>
+			      <property name="use_underline">True</property>
+			      <property name="active">False</property>
+			      <property name="group">loop_all</property>
+			      <signal name="activate" handler="on_loop_disable_activate" last_modification_time="Sat, 08 Aug 2009 12:26:33 GMT"/>
+			    </widget>
+			  </child>
+			</widget>
+		      </child>
+		    </widget>
+		  </child>
+		</widget>
+	      </child>
+	    </widget>
+	  </child>
+
+	  <child>
+	    <widget class="GtkMenuItem" id="menuitem4">
+	      <property name="visible">True</property>
+	      <property name="label" translatable="yes">_Help</property>
+	      <property name="use_underline">True</property>
+
+	      <child>
+		<widget class="GtkMenu" id="menuitem4_menu">
+
+		  <child>
+		    <widget class="GtkMenuItem" id="about1">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">_About</property>
+		      <property name="use_underline">True</property>
+		      <signal name="activate" handler="on_about1_activate" last_modification_time="Sat, 04 Jul 2009 12:57:58 GMT"/>
+		    </widget>
+		  </child>
+		</widget>
+	      </child>
+	    </widget>
+	  </child>
+	</widget>
+	<packing>
+	  <property name="padding">0</property>
+	  <property name="expand">False</property>
+	  <property name="fill">False</property>
+	</packing>
+      </child>
+
+      <child>
+	<widget class="GtkHBox" id="hbox2">
+	  <property name="visible">True</property>
+	  <property name="homogeneous">False</property>
+	  <property name="spacing">0</property>
 
 	  <child>
 	    <widget class="GtkHBox" id="hbox3">
@@ -487,7 +487,7 @@
 	    </widget>
 	    <packing>
 	      <property name="padding">0</property>
-	      <property name="expand">False</property>
+	      <property name="expand">True</property>
 	      <property name="fill">True</property>
 	    </packing>
 	  </child>

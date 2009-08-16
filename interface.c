@@ -32,7 +32,6 @@ create_mainwin (void)
   GtkWidget *mainwin;
   GdkPixbuf *mainwin_icon_pixbuf;
   GtkWidget *vbox1;
-  GtkWidget *hbox2;
   GtkWidget *menubar1;
   GtkWidget *menuitem1;
   GtkWidget *menuitem1_menu;
@@ -71,6 +70,7 @@ create_mainwin (void)
   GtkWidget *menuitem4;
   GtkWidget *menuitem4_menu;
   GtkWidget *about1;
+  GtkWidget *hbox2;
   GtkWidget *hbox3;
   GtkWidget *stopbtn;
   GtkWidget *image1;
@@ -99,7 +99,7 @@ create_mainwin (void)
   mainwin = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_widget_set_events (mainwin, GDK_KEY_PRESS_MASK);
   gtk_window_set_title (GTK_WINDOW (mainwin), "DeaDBeeF");
-  gtk_window_set_default_size (GTK_WINDOW (mainwin), 750, 650);
+  gtk_window_set_default_size (GTK_WINDOW (mainwin), 500, 300);
   mainwin_icon_pixbuf = create_pixbuf ("play_24.png");
   if (mainwin_icon_pixbuf)
     {
@@ -111,13 +111,9 @@ create_mainwin (void)
   gtk_widget_show (vbox1);
   gtk_container_add (GTK_CONTAINER (mainwin), vbox1);
 
-  hbox2 = gtk_hbox_new (FALSE, 0);
-  gtk_widget_show (hbox2);
-  gtk_box_pack_start (GTK_BOX (vbox1), hbox2, FALSE, FALSE, 0);
-
   menubar1 = gtk_menu_bar_new ();
   gtk_widget_show (menubar1);
-  gtk_box_pack_start (GTK_BOX (hbox2), menubar1, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox1), menubar1, FALSE, FALSE, 0);
 
   menuitem1 = gtk_menu_item_new_with_mnemonic ("_File");
   gtk_widget_show (menuitem1);
@@ -262,9 +258,13 @@ create_mainwin (void)
   gtk_widget_show (about1);
   gtk_container_add (GTK_CONTAINER (menuitem4_menu), about1);
 
+  hbox2 = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show (hbox2);
+  gtk_box_pack_start (GTK_BOX (vbox1), hbox2, FALSE, FALSE, 0);
+
   hbox3 = gtk_hbox_new (FALSE, 0);
   gtk_widget_show (hbox3);
-  gtk_box_pack_start (GTK_BOX (hbox2), hbox3, FALSE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (hbox2), hbox3, TRUE, TRUE, 0);
 
   stopbtn = gtk_button_new ();
   gtk_widget_show (stopbtn);
@@ -547,7 +547,6 @@ create_mainwin (void)
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (mainwin, mainwin, "mainwin");
   GLADE_HOOKUP_OBJECT (mainwin, vbox1, "vbox1");
-  GLADE_HOOKUP_OBJECT (mainwin, hbox2, "hbox2");
   GLADE_HOOKUP_OBJECT (mainwin, menubar1, "menubar1");
   GLADE_HOOKUP_OBJECT (mainwin, menuitem1, "menuitem1");
   GLADE_HOOKUP_OBJECT (mainwin, menuitem1_menu, "menuitem1_menu");
@@ -584,6 +583,7 @@ create_mainwin (void)
   GLADE_HOOKUP_OBJECT (mainwin, menuitem4, "menuitem4");
   GLADE_HOOKUP_OBJECT (mainwin, menuitem4_menu, "menuitem4_menu");
   GLADE_HOOKUP_OBJECT (mainwin, about1, "about1");
+  GLADE_HOOKUP_OBJECT (mainwin, hbox2, "hbox2");
   GLADE_HOOKUP_OBJECT (mainwin, hbox3, "hbox3");
   GLADE_HOOKUP_OBJECT (mainwin, stopbtn, "stopbtn");
   GLADE_HOOKUP_OBJECT (mainwin, image1, "image1");
