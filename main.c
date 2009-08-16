@@ -28,6 +28,7 @@
 #include <sys/fcntl.h>
 #include <sys/errno.h>
 #include "interface.h"
+#include "callbacks.h"
 #include "support.h"
 #include "playlist.h"
 #include "playback.h"
@@ -42,6 +43,9 @@
 
 GtkWidget *mainwin;
 GtkWidget *searchwin;
+GtkWidget *trayicon;
+GtkWidget *traymenu;
+
 gtkplaylist_t main_playlist;
 gtkplaylist_t search_playlist;
 
@@ -78,7 +82,7 @@ update_songinfo (void) {
         songpos = c->info.position;
         codec_unlock ();
 
-        snprintf (sbtext_new, 512, "[%s] %dHz | %d bit | %s | %d:%02d / %d:%02d | %d songs total | streambuffer: %d%%", playlist_current.filetype ? playlist_current.filetype:"-", samplerate, bitspersample, mode, minpos, secpos, mindur, secdur, pl_getcount (), streamer_get_fill_level ());
+        snprintf (sbtext_new, 512, "[%s] %dHz | %d bit | %s | %d:%02d / %d:%02d | %d songs total", playlist_current.filetype ? playlist_current.filetype:"-", samplerate, bitspersample, mode, minpos, secpos, mindur, secdur, pl_getcount ());
     }
 
     if (strcmp (sbtext_new, sb_text)) {
@@ -279,9 +283,11 @@ player_thread (uintptr_t ctx) {
                         pl_format_item_display_name (it, dname, 512);
                         snprintf (str, 600, "DeaDBeeF - %s", dname);
                         gtk_window_set_title (GTK_WINDOW (mainwin), str);
+                        gtk_status_icon_set_tooltip_text (GTK_STATUS_ICON (trayicon), str);
                     }
                     else {
                         gtk_window_set_title (GTK_WINDOW (mainwin), "DeaDBeeF");
+                        gtk_status_icon_set_tooltip_text (GTK_STATUS_ICON (trayicon), "DeaDBeeF");
                     }
                 }
                 // update playlist view
@@ -289,9 +295,7 @@ player_thread (uintptr_t ctx) {
                 GDK_THREADS_LEAVE();
                 break;
             case M_PLAYSONG:
-                GDK_THREADS_ENTER();
                 gtkpl_playsong (&main_playlist);
-                GDK_THREADS_LEAVE();
                 break;
             case M_PLAYSONGNUM:
                 GDK_THREADS_ENTER();
@@ -340,6 +344,10 @@ player_thread (uintptr_t ctx) {
             case M_ADDFILES:
                 gtkpl_add_files (&main_playlist, (GSList *)ctx);
                 break;
+            case M_OPENFILES:
+                gtkpl_add_files (&main_playlist, (GSList *)ctx);
+                gtkpl_playsong (&main_playlist);
+                break;
             case M_FMDRAGDROP:
                 gtkpl_add_fm_dropped_files (&main_playlist, (char *)ctx, p1, p2);
                 break;
@@ -355,6 +363,57 @@ player_thread (uintptr_t ctx) {
         update_songinfo ();
     }
     close (s);
+}
+
+gboolean
+on_trayicon_scroll_event               (GtkWidget       *widget,
+                                        GdkEventScroll  *event,
+                                        gpointer         user_data)
+{
+    float vol = p_get_volume ();
+    if (event->direction == GDK_SCROLL_UP || event->direction == GDK_SCROLL_RIGHT) {
+        vol += 0.1f;
+    }
+    else if (event->direction == GDK_SCROLL_DOWN || event->direction == GDK_SCROLL_LEFT) {
+        vol -= 0.1f;
+    }
+    if (vol < 0) {
+        vol = 0;
+    }
+    else if (vol > 1) {
+        vol = 1;
+    }
+    p_set_volume (vol);
+    GtkWidget *volumebar = lookup_widget (mainwin, "volumebar");
+    volumebar_draw (volumebar);
+    volumebar_expose (volumebar, 0, 0, volumebar->allocation.width, volumebar->allocation.height);
+    return FALSE;
+}
+
+gboolean
+on_trayicon_button_press_event (GtkWidget       *widget,
+                                        GdkEventButton  *event,
+                                        gpointer         user_data)
+{
+    if (event->button == 1) {
+        if (GTK_WIDGET_VISIBLE (mainwin)) {
+            gtk_widget_hide (mainwin);
+        }
+        else {
+            gtk_widget_show (mainwin);
+        }
+    }
+    return FALSE;
+}
+
+gboolean
+on_trayicon_popup_menu (GtkWidget       *widget,
+        guint button,
+        guint time,
+                                        gpointer         user_data)
+{
+    gtk_menu_popup (GTK_MENU (traymenu), NULL, NULL, gtk_status_icon_position_menu, trayicon, button, time);
+    return FALSE;
 }
 
 int
@@ -446,6 +505,17 @@ main (int argc, char *argv[]) {
     gdk_threads_enter ();
     gtk_set_locale ();
     gtk_init (&argc, &argv);
+
+    // system tray icon
+    traymenu = create_traymenu ();
+    GdkPixbuf *trayicon_pixbuf = create_pixbuf ("play_24.png");
+    trayicon = GTK_WIDGET (gtk_status_icon_new_from_pixbuf (trayicon_pixbuf));
+    gtk_widget_show (trayicon);
+    gtk_status_icon_set_tooltip_text (GTK_STATUS_ICON (trayicon), "DeaDBeeF");
+    //gtk_status_icon_set_title (GTK_STATUS_ICON (trayicon), "DeaDBeeF");
+    g_signal_connect ((gpointer)trayicon, "scroll_event", G_CALLBACK (on_trayicon_scroll_event), NULL);
+    g_signal_connect ((gpointer)trayicon, "button_press_event", G_CALLBACK (on_trayicon_button_press_event), NULL);
+    g_signal_connect ((gpointer)trayicon, "popup_menu", G_CALLBACK (on_trayicon_popup_menu), NULL);
 
     gtkpl_init ();
 

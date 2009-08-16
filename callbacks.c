@@ -164,6 +164,48 @@ void
 on_open_activate                       (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
+    GtkWidget *dlg = gtk_file_chooser_dialog_new ("Open file(s)...", GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
+
+    GtkFileFilter* flt;
+    flt = gtk_file_filter_new ();
+    gtk_file_filter_set_name (flt, "Supported music files");
+
+    codec_t *codecs[] = {
+        &cdumb, &cvorbis, &cflac, &cgme, &cmp3, &csid, NULL
+    };
+    for (int i = 0; codecs[i]; i++) {
+        if (codecs[i]->getexts && codecs[i]->insert) {
+            const char **exts = codecs[i]->getexts ();
+            if (exts) {
+                for (int e = 0; exts[e]; e++) {
+                    char filter[20];
+                    snprintf (filter, 20, "*.%s", exts[e]);
+                    gtk_file_filter_add_pattern (flt, filter);
+                }
+            }
+        }
+    }
+
+    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
+    gtk_file_chooser_set_filter (GTK_FILE_CHOOSER (dlg), flt);
+    flt = gtk_file_filter_new ();
+    gtk_file_filter_set_name (flt, "Other files (*)");
+    gtk_file_filter_add_pattern (flt, "*");
+    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
+    gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dlg), TRUE);
+
+    if (gtk_dialog_run (GTK_DIALOG (dlg)) == GTK_RESPONSE_OK)
+    {
+        pl_free ();
+        GSList *lst = gtk_file_chooser_get_filenames (GTK_FILE_CHOOSER (dlg));
+        gtk_widget_destroy (dlg);
+        if (lst) {
+            messagepump_push (M_OPENFILES, (uintptr_t)lst, 0, 0);
+        }
+    }
+    else {
+        gtk_widget_destroy (dlg);
+    }
 }
 
 
@@ -273,7 +315,7 @@ void
 on_quit1_activate                      (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-
+    messagepump_push (M_TERMINATE, 0, 0, 0);
 }
 
 
@@ -1049,7 +1091,10 @@ on_mainwin_delete_event                (GtkWidget       *widget,
                                         GdkEvent        *event,
                                         gpointer         user_data)
 {
-    messagepump_push (M_TERMINATE, 0, 0, 0);
+//    messagepump_push (M_TERMINATE, 0, 0, 0);
+
+    gtk_widget_hide (widget);
     return TRUE;
 }
+
 

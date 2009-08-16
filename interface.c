@@ -30,7 +30,6 @@ GtkWidget*
 create_mainwin (void)
 {
   GtkWidget *mainwin;
-  GdkPixbuf *mainwin_icon_pixbuf;
   GtkWidget *vbox1;
   GtkWidget *menubar1;
   GtkWidget *menuitem1;
@@ -39,8 +38,6 @@ create_mainwin (void)
   GtkWidget *separator2;
   GtkWidget *add_files;
   GtkWidget *add_folder1;
-  GtkWidget *separator1;
-  GtkWidget *preferences1;
   GtkWidget *separatormenuitem1;
   GtkWidget *quit1;
   GtkWidget *edit1;
@@ -73,7 +70,7 @@ create_mainwin (void)
   GtkWidget *hbox2;
   GtkWidget *hbox3;
   GtkWidget *stopbtn;
-  GtkWidget *image1;
+  GtkWidget *image7;
   GtkWidget *playbtn;
   GtkWidget *image2;
   GtkWidget *pausebtn;
@@ -100,12 +97,7 @@ create_mainwin (void)
   gtk_widget_set_events (mainwin, GDK_KEY_PRESS_MASK);
   gtk_window_set_title (GTK_WINDOW (mainwin), "DeaDBeeF");
   gtk_window_set_default_size (GTK_WINDOW (mainwin), 500, 300);
-  mainwin_icon_pixbuf = create_pixbuf ("play_24.png");
-  if (mainwin_icon_pixbuf)
-    {
-      gtk_window_set_icon (GTK_WINDOW (mainwin), mainwin_icon_pixbuf);
-      gdk_pixbuf_unref (mainwin_icon_pixbuf);
-    }
+  gtk_window_set_icon_name (GTK_WINDOW (mainwin), "stock_media-play");
 
   vbox1 = gtk_vbox_new (FALSE, 0);
   gtk_widget_show (vbox1);
@@ -138,15 +130,6 @@ create_mainwin (void)
   add_folder1 = gtk_menu_item_new_with_mnemonic ("Add folder");
   gtk_widget_show (add_folder1);
   gtk_container_add (GTK_CONTAINER (menuitem1_menu), add_folder1);
-
-  separator1 = gtk_separator_menu_item_new ();
-  gtk_widget_show (separator1);
-  gtk_container_add (GTK_CONTAINER (menuitem1_menu), separator1);
-  gtk_widget_set_sensitive (separator1, FALSE);
-
-  preferences1 = gtk_menu_item_new_with_mnemonic ("_Preferences");
-  gtk_widget_show (preferences1);
-  gtk_container_add (GTK_CONTAINER (menuitem1_menu), preferences1);
 
   separatormenuitem1 = gtk_separator_menu_item_new ();
   gtk_widget_show (separatormenuitem1);
@@ -223,6 +206,7 @@ create_mainwin (void)
   order_linear_group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (order_random));
   gtk_widget_show (order_random);
   gtk_container_add (GTK_CONTAINER (order1_menu), order_random);
+  gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (order_random), TRUE);
 
   looping1 = gtk_menu_item_new_with_mnemonic ("Looping");
   gtk_widget_show (looping1);
@@ -241,11 +225,13 @@ create_mainwin (void)
   loop_all_group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (loop_single));
   gtk_widget_show (loop_single);
   gtk_container_add (GTK_CONTAINER (looping1_menu), loop_single);
+  gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (loop_single), TRUE);
 
   loop_disable = gtk_radio_menu_item_new_with_mnemonic (loop_all_group, "Don't Loop");
   loop_all_group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (loop_disable));
   gtk_widget_show (loop_disable);
   gtk_container_add (GTK_CONTAINER (looping1_menu), loop_disable);
+  gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (loop_disable), TRUE);
 
   menuitem4 = gtk_menu_item_new_with_mnemonic ("_Help");
   gtk_widget_show (menuitem4);
@@ -272,9 +258,9 @@ create_mainwin (void)
   GTK_WIDGET_UNSET_FLAGS (stopbtn, GTK_CAN_FOCUS);
   gtk_button_set_relief (GTK_BUTTON (stopbtn), GTK_RELIEF_NONE);
 
-  image1 = create_pixmap (mainwin, "stop_24.png");
-  gtk_widget_show (image1);
-  gtk_container_add (GTK_CONTAINER (stopbtn), image1);
+  image7 = gtk_image_new_from_stock ("gtk-media-stop", GTK_ICON_SIZE_BUTTON);
+  gtk_widget_show (image7);
+  gtk_container_add (GTK_CONTAINER (stopbtn), image7);
 
   playbtn = gtk_button_new ();
   gtk_widget_show (playbtn);
@@ -282,7 +268,7 @@ create_mainwin (void)
   GTK_WIDGET_UNSET_FLAGS (playbtn, GTK_CAN_FOCUS);
   gtk_button_set_relief (GTK_BUTTON (playbtn), GTK_RELIEF_NONE);
 
-  image2 = create_pixmap (mainwin, "play_24.png");
+  image2 = gtk_image_new_from_stock ("gtk-media-play", GTK_ICON_SIZE_BUTTON);
   gtk_widget_show (image2);
   gtk_container_add (GTK_CONTAINER (playbtn), image2);
 
@@ -292,7 +278,7 @@ create_mainwin (void)
   GTK_WIDGET_UNSET_FLAGS (pausebtn, GTK_CAN_FOCUS);
   gtk_button_set_relief (GTK_BUTTON (pausebtn), GTK_RELIEF_NONE);
 
-  image3 = create_pixmap (mainwin, "pause_24.png");
+  image3 = gtk_image_new_from_stock ("gtk-media-pause", GTK_ICON_SIZE_BUTTON);
   gtk_widget_show (image3);
   gtk_container_add (GTK_CONTAINER (pausebtn), image3);
 
@@ -302,7 +288,7 @@ create_mainwin (void)
   GTK_WIDGET_UNSET_FLAGS (prevbtn, GTK_CAN_FOCUS);
   gtk_button_set_relief (GTK_BUTTON (prevbtn), GTK_RELIEF_NONE);
 
-  image4 = create_pixmap (mainwin, "prev_24.png");
+  image4 = gtk_image_new_from_stock ("gtk-media-previous", GTK_ICON_SIZE_BUTTON);
   gtk_widget_show (image4);
   gtk_container_add (GTK_CONTAINER (prevbtn), image4);
 
@@ -312,7 +298,7 @@ create_mainwin (void)
   GTK_WIDGET_UNSET_FLAGS (nextbtn, GTK_CAN_FOCUS);
   gtk_button_set_relief (GTK_BUTTON (nextbtn), GTK_RELIEF_NONE);
 
-  image5 = create_pixmap (mainwin, "next_24.png");
+  image5 = gtk_image_new_from_stock ("gtk-media-next", GTK_ICON_SIZE_BUTTON);
   gtk_widget_show (image5);
   gtk_container_add (GTK_CONTAINER (nextbtn), image5);
 
@@ -322,7 +308,7 @@ create_mainwin (void)
   GTK_WIDGET_UNSET_FLAGS (playrand, GTK_CAN_FOCUS);
   gtk_button_set_relief (GTK_BUTTON (playrand), GTK_RELIEF_NONE);
 
-  image6 = create_pixmap (mainwin, "random_24.png");
+  image6 = gtk_image_new_from_stock ("gtk-missing-image", GTK_ICON_SIZE_BUTTON);
   gtk_widget_show (image6);
   gtk_container_add (GTK_CONTAINER (playrand), image6);
 
@@ -380,9 +366,6 @@ create_mainwin (void)
                     NULL);
   g_signal_connect ((gpointer) add_folder1, "activate",
                     G_CALLBACK (on_add_folder1_activate),
-                    NULL);
-  g_signal_connect ((gpointer) preferences1, "activate",
-                    G_CALLBACK (on_preferences1_activate),
                     NULL);
   g_signal_connect ((gpointer) quit1, "activate",
                     G_CALLBACK (on_quit1_activate),
@@ -554,8 +537,6 @@ create_mainwin (void)
   GLADE_HOOKUP_OBJECT (mainwin, separator2, "separator2");
   GLADE_HOOKUP_OBJECT (mainwin, add_files, "add_files");
   GLADE_HOOKUP_OBJECT (mainwin, add_folder1, "add_folder1");
-  GLADE_HOOKUP_OBJECT (mainwin, separator1, "separator1");
-  GLADE_HOOKUP_OBJECT (mainwin, preferences1, "preferences1");
   GLADE_HOOKUP_OBJECT (mainwin, separatormenuitem1, "separatormenuitem1");
   GLADE_HOOKUP_OBJECT (mainwin, quit1, "quit1");
   GLADE_HOOKUP_OBJECT (mainwin, edit1, "edit1");
@@ -586,7 +567,7 @@ create_mainwin (void)
   GLADE_HOOKUP_OBJECT (mainwin, hbox2, "hbox2");
   GLADE_HOOKUP_OBJECT (mainwin, hbox3, "hbox3");
   GLADE_HOOKUP_OBJECT (mainwin, stopbtn, "stopbtn");
-  GLADE_HOOKUP_OBJECT (mainwin, image1, "image1");
+  GLADE_HOOKUP_OBJECT (mainwin, image7, "image7");
   GLADE_HOOKUP_OBJECT (mainwin, playbtn, "playbtn");
   GLADE_HOOKUP_OBJECT (mainwin, image2, "image2");
   GLADE_HOOKUP_OBJECT (mainwin, pausebtn, "pausebtn");
@@ -616,7 +597,7 @@ create_aboutdialog (void)
 {
   GtkWidget *aboutdialog;
   const gchar *authors[] = {
-    "Alexey Yakovenko",
+    "Alexey Yakovenko <waker@users.sourceforge.net>",
     NULL
   };
 
@@ -754,5 +735,110 @@ create_searchwin (void)
 
   gtk_widget_grab_default (searchlist);
   return searchwin;
+}
+
+GtkWidget*
+create_traymenu (void)
+{
+  GtkWidget *traymenu;
+  GtkWidget *stop1;
+  GtkWidget *play1;
+  GtkWidget *pause1;
+  GtkWidget *previous1;
+  GtkWidget *next1;
+  GtkWidget *play_random1;
+  GtkWidget *separator4;
+  GtkWidget *about2;
+  GtkWidget *separator3;
+  GtkWidget *quit2;
+  GtkAccelGroup *accel_group;
+
+  accel_group = gtk_accel_group_new ();
+
+  traymenu = gtk_menu_new ();
+
+  stop1 = gtk_image_menu_item_new_from_stock ("gtk-media-stop", accel_group);
+  gtk_widget_show (stop1);
+  gtk_container_add (GTK_CONTAINER (traymenu), stop1);
+
+  play1 = gtk_image_menu_item_new_from_stock ("gtk-media-play", accel_group);
+  gtk_widget_show (play1);
+  gtk_container_add (GTK_CONTAINER (traymenu), play1);
+
+  pause1 = gtk_image_menu_item_new_from_stock ("gtk-media-pause", accel_group);
+  gtk_widget_show (pause1);
+  gtk_container_add (GTK_CONTAINER (traymenu), pause1);
+
+  previous1 = gtk_image_menu_item_new_from_stock ("gtk-media-previous", accel_group);
+  gtk_widget_show (previous1);
+  gtk_container_add (GTK_CONTAINER (traymenu), previous1);
+
+  next1 = gtk_image_menu_item_new_from_stock ("gtk-media-next", accel_group);
+  gtk_widget_show (next1);
+  gtk_container_add (GTK_CONTAINER (traymenu), next1);
+
+  play_random1 = gtk_menu_item_new_with_mnemonic ("Play Random");
+  gtk_widget_show (play_random1);
+  gtk_container_add (GTK_CONTAINER (traymenu), play_random1);
+
+  separator4 = gtk_separator_menu_item_new ();
+  gtk_widget_show (separator4);
+  gtk_container_add (GTK_CONTAINER (traymenu), separator4);
+  gtk_widget_set_sensitive (separator4, FALSE);
+
+  about2 = gtk_image_menu_item_new_from_stock ("gtk-about", accel_group);
+  gtk_widget_show (about2);
+  gtk_container_add (GTK_CONTAINER (traymenu), about2);
+
+  separator3 = gtk_separator_menu_item_new ();
+  gtk_widget_show (separator3);
+  gtk_container_add (GTK_CONTAINER (traymenu), separator3);
+  gtk_widget_set_sensitive (separator3, FALSE);
+
+  quit2 = gtk_image_menu_item_new_from_stock ("gtk-quit", accel_group);
+  gtk_widget_show (quit2);
+  gtk_container_add (GTK_CONTAINER (traymenu), quit2);
+
+  g_signal_connect ((gpointer) stop1, "activate",
+                    G_CALLBACK (on_stopbtn_clicked),
+                    NULL);
+  g_signal_connect ((gpointer) play1, "activate",
+                    G_CALLBACK (on_playbtn_clicked),
+                    NULL);
+  g_signal_connect ((gpointer) pause1, "activate",
+                    G_CALLBACK (on_pausebtn_clicked),
+                    NULL);
+  g_signal_connect ((gpointer) previous1, "activate",
+                    G_CALLBACK (on_prevbtn_clicked),
+                    NULL);
+  g_signal_connect ((gpointer) next1, "activate",
+                    G_CALLBACK (on_nextbtn_clicked),
+                    NULL);
+  g_signal_connect ((gpointer) play_random1, "activate",
+                    G_CALLBACK (on_playrand_clicked),
+                    NULL);
+  g_signal_connect ((gpointer) about2, "activate",
+                    G_CALLBACK (on_about1_activate),
+                    NULL);
+  g_signal_connect ((gpointer) quit2, "activate",
+                    G_CALLBACK (on_quit1_activate),
+                    NULL);
+
+  /* Store pointers to all widgets, for use by lookup_widget(). */
+  GLADE_HOOKUP_OBJECT_NO_REF (traymenu, traymenu, "traymenu");
+  GLADE_HOOKUP_OBJECT (traymenu, stop1, "stop1");
+  GLADE_HOOKUP_OBJECT (traymenu, play1, "play1");
+  GLADE_HOOKUP_OBJECT (traymenu, pause1, "pause1");
+  GLADE_HOOKUP_OBJECT (traymenu, previous1, "previous1");
+  GLADE_HOOKUP_OBJECT (traymenu, next1, "next1");
+  GLADE_HOOKUP_OBJECT (traymenu, play_random1, "play_random1");
+  GLADE_HOOKUP_OBJECT (traymenu, separator4, "separator4");
+  GLADE_HOOKUP_OBJECT (traymenu, about2, "about2");
+  GLADE_HOOKUP_OBJECT (traymenu, separator3, "separator3");
+  GLADE_HOOKUP_OBJECT (traymenu, quit2, "quit2");
+
+  gtk_menu_set_accel_group (GTK_MENU (traymenu), accel_group);
+
+  return traymenu;
 }
 

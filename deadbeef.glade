@@ -14,7 +14,7 @@
   <property name="default_height">300</property>
   <property name="resizable">True</property>
   <property name="destroy_with_parent">False</property>
-  <property name="icon">play_24.png</property>
+  <property name="icon_name">stock_media-play</property>
   <property name="decorated">True</property>
   <property name="skip_taskbar_hint">False</property>
   <property name="skip_pager_hint">False</property>
@@ -76,21 +76,6 @@
 		      <property name="label" translatable="yes">Add folder</property>
 		      <property name="use_underline">True</property>
 		      <signal name="activate" handler="on_add_folder1_activate" last_modification_time="Sat, 04 Jul 2009 13:04:01 GMT"/>
-		    </widget>
-		  </child>
-
-		  <child>
-		    <widget class="GtkSeparatorMenuItem" id="separator1">
-		      <property name="visible">True</property>
-		    </widget>
-		  </child>
-
-		  <child>
-		    <widget class="GtkMenuItem" id="preferences1">
-		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">_Preferences</property>
-		      <property name="use_underline">True</property>
-		      <signal name="activate" handler="on_preferences1_activate" last_modification_time="Sat, 04 Jul 2009 13:04:01 GMT"/>
 		    </widget>
 		  </child>
 
@@ -235,7 +220,7 @@
 			      <property name="visible">True</property>
 			      <property name="label" translatable="yes">Random</property>
 			      <property name="use_underline">True</property>
-			      <property name="active">False</property>
+			      <property name="active">True</property>
 			      <property name="group">order_linear</property>
 			      <signal name="activate" handler="on_order_random_activate" last_modification_time="Sat, 08 Aug 2009 12:26:33 GMT"/>
 			    </widget>
@@ -269,7 +254,7 @@
 			      <property name="visible">True</property>
 			      <property name="label" translatable="yes">Loop Single Song</property>
 			      <property name="use_underline">True</property>
-			      <property name="active">False</property>
+			      <property name="active">True</property>
 			      <property name="group">loop_all</property>
 			      <signal name="activate" handler="on_loop_single_activate" last_modification_time="Sat, 08 Aug 2009 12:26:33 GMT"/>
 			    </widget>
@@ -280,7 +265,7 @@
 			      <property name="visible">True</property>
 			      <property name="label" translatable="yes">Don't Loop</property>
 			      <property name="use_underline">True</property>
-			      <property name="active">False</property>
+			      <property name="active">True</property>
 			      <property name="group">loop_all</property>
 			      <signal name="activate" handler="on_loop_disable_activate" last_modification_time="Sat, 08 Aug 2009 12:26:33 GMT"/>
 			    </widget>
@@ -343,9 +328,10 @@
 		  <signal name="clicked" handler="on_stopbtn_clicked" last_modification_time="Sun, 05 Jul 2009 10:48:41 GMT"/>
 
 		  <child>
-		    <widget class="GtkImage" id="image1">
+		    <widget class="GtkImage" id="image7">
 		      <property name="visible">True</property>
-		      <property name="pixbuf">stop_24.png</property>
+		      <property name="stock">gtk-media-stop</property>
+		      <property name="icon_size">4</property>
 		      <property name="xalign">0.5</property>
 		      <property name="yalign">0.5</property>
 		      <property name="xpad">0</property>
@@ -370,7 +356,8 @@
 		  <child>
 		    <widget class="GtkImage" id="image2">
 		      <property name="visible">True</property>
-		      <property name="pixbuf">play_24.png</property>
+		      <property name="stock">gtk-media-play</property>
+		      <property name="icon_size">4</property>
 		      <property name="xalign">0.5</property>
 		      <property name="yalign">0.5</property>
 		      <property name="xpad">0</property>
@@ -395,7 +382,8 @@
 		  <child>
 		    <widget class="GtkImage" id="image3">
 		      <property name="visible">True</property>
-		      <property name="pixbuf">pause_24.png</property>
+		      <property name="stock">gtk-media-pause</property>
+		      <property name="icon_size">4</property>
 		      <property name="xalign">0.5</property>
 		      <property name="yalign">0.5</property>
 		      <property name="xpad">0</property>
@@ -420,7 +408,8 @@
 		  <child>
 		    <widget class="GtkImage" id="image4">
 		      <property name="visible">True</property>
-		      <property name="pixbuf">prev_24.png</property>
+		      <property name="stock">gtk-media-previous</property>
+		      <property name="icon_size">4</property>
 		      <property name="xalign">0.5</property>
 		      <property name="yalign">0.5</property>
 		      <property name="xpad">0</property>
@@ -445,7 +434,8 @@
 		  <child>
 		    <widget class="GtkImage" id="image5">
 		      <property name="visible">True</property>
-		      <property name="pixbuf">next_24.png</property>
+		      <property name="stock">gtk-media-next</property>
+		      <property name="icon_size">4</property>
 		      <property name="xalign">0.5</property>
 		      <property name="yalign">0.5</property>
 		      <property name="xpad">0</property>
@@ -470,7 +460,8 @@
 		  <child>
 		    <widget class="GtkImage" id="image6">
 		      <property name="visible">True</property>
-		      <property name="pixbuf">random_24.png</property>
+		      <property name="stock">gtk-missing-image</property>
+		      <property name="icon_size">4</property>
 		      <property name="xalign">0.5</property>
 		      <property name="yalign">0.5</property>
 		      <property name="xpad">0</property>
@@ -1330,7 +1321,7 @@ Public License instead of this License.  But first, please read
   <property name="wrap_license">False</property>
   <property name="website">http://deadbeef.sf.net</property>
   <property name="website_label" translatable="yes">website</property>
-  <property name="authors">Alexey Yakovenko</property>
+  <property name="authors">Alexey Yakovenko &lt;waker@users.sourceforge.net&gt;</property>
   <property name="translator_credits" translatable="yes" comments="TRANSLATORS: Replace this string with your names, one name per line.">translator-credits</property>
 </widget>
 
@@ -1461,6 +1452,93 @@ Public License instead of this License.  But first, please read
 	  <property name="fill">True</property>
 	</packing>
       </child>
+    </widget>
+  </child>
+</widget>
+
+<widget class="GtkMenu" id="traymenu">
+
+  <child>
+    <widget class="GtkImageMenuItem" id="stop1">
+      <property name="visible">True</property>
+      <property name="label">gtk-media-stop</property>
+      <property name="use_stock">True</property>
+      <signal name="activate" handler="on_stopbtn_clicked" last_modification_time="Sun, 16 Aug 2009 14:48:58 GMT"/>
+    </widget>
+  </child>
+
+  <child>
+    <widget class="GtkImageMenuItem" id="play1">
+      <property name="visible">True</property>
+      <property name="label">gtk-media-play</property>
+      <property name="use_stock">True</property>
+      <signal name="activate" handler="on_playbtn_clicked" last_modification_time="Sun, 16 Aug 2009 14:48:58 GMT"/>
+    </widget>
+  </child>
+
+  <child>
+    <widget class="GtkImageMenuItem" id="pause1">
+      <property name="visible">True</property>
+      <property name="label">gtk-media-pause</property>
+      <property name="use_stock">True</property>
+      <signal name="activate" handler="on_pausebtn_clicked" last_modification_time="Sun, 16 Aug 2009 14:48:58 GMT"/>
+    </widget>
+  </child>
+
+  <child>
+    <widget class="GtkImageMenuItem" id="previous1">
+      <property name="visible">True</property>
+      <property name="label">gtk-media-previous</property>
+      <property name="use_stock">True</property>
+      <signal name="activate" handler="on_prevbtn_clicked" last_modification_time="Sun, 16 Aug 2009 14:48:58 GMT"/>
+    </widget>
+  </child>
+
+  <child>
+    <widget class="GtkImageMenuItem" id="next1">
+      <property name="visible">True</property>
+      <property name="label">gtk-media-next</property>
+      <property name="use_stock">True</property>
+      <signal name="activate" handler="on_nextbtn_clicked" last_modification_time="Sun, 16 Aug 2009 14:48:58 GMT"/>
+    </widget>
+  </child>
+
+  <child>
+    <widget class="GtkMenuItem" id="play_random1">
+      <property name="visible">True</property>
+      <property name="label" translatable="yes">Play Random</property>
+      <property name="use_underline">True</property>
+      <signal name="activate" handler="on_playrand_clicked" last_modification_time="Sun, 16 Aug 2009 14:48:58 GMT"/>
+    </widget>
+  </child>
+
+  <child>
+    <widget class="GtkSeparatorMenuItem" id="separator4">
+      <property name="visible">True</property>
+    </widget>
+  </child>
+
+  <child>
+    <widget class="GtkImageMenuItem" id="about2">
+      <property name="visible">True</property>
+      <property name="label">gtk-about</property>
+      <property name="use_stock">True</property>
+      <signal name="activate" handler="on_about1_activate" last_modification_time="Sun, 16 Aug 2009 14:44:07 GMT"/>
+    </widget>
+  </child>
+
+  <child>
+    <widget class="GtkSeparatorMenuItem" id="separator3">
+      <property name="visible">True</property>
+    </widget>
+  </child>
+
+  <child>
+    <widget class="GtkImageMenuItem" id="quit2">
+      <property name="visible">True</property>
+      <property name="label">gtk-quit</property>
+      <property name="use_stock">True</property>
+      <signal name="activate" handler="on_quit1_activate" last_modification_time="Sun, 16 Aug 2009 14:45:24 GMT"/>
     </widget>
   </child>
 </widget>

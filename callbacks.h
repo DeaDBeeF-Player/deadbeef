@@ -462,3 +462,9 @@ gboolean
 on_mainwin_delete_event                (GtkWidget       *widget,
                                         GdkEvent        *event,
                                         gpointer         user_data);
+void
+volumebar_draw (GtkWidget *widget);
+void
+volumebar_expose (GtkWidget *widget, int x, int y, int w, int h);
+
+
