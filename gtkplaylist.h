@@ -199,4 +199,7 @@ gtkpl_set_cairo_source_rgb (cairo_t *cr, int col);
 void
 gtkpl_set_cairo_font (cairo_t *cr);
 
+void
+playlist_refresh (void);
+
 #endif // __GTKPLAYLIST_H

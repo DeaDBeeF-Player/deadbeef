@@ -38,6 +38,7 @@
 #include "gtkplaylist.h"
 #include "codec.h"
 #include "streamer.h"
+#include "search.h"
 
 GtkWidget *mainwin;
 GtkWidget *searchwin;
@@ -192,6 +193,10 @@ exec_command_line (const char *cmdline, int len, int filter) {
             parg++;
         }
     }
+    if (exitcode == 2 || exitcode == 3) {
+        // added some files, need to redraw
+        messagepump_push (M_PLAYLISTREFRESH, 0, 0, 0);
+    }
     return exitcode;
 }
 
@@ -329,6 +334,12 @@ player_thread (uintptr_t ctx) {
                 break;
             case M_FMDRAGDROP:
                 gtkpl_add_fm_dropped_files (&main_playlist, (char *)ctx, p1, p2);
+                break;
+            case M_PLAYLISTREFRESH:
+                GDK_THREADS_ENTER();
+                playlist_refresh ();
+                search_refresh ();
+                GDK_THREADS_LEAVE();
                 break;
             }
         }

@@ -1503,3 +1503,15 @@ gtkpl_get_for_idx (gtkplaylist_t *ps, int idx) {
     }
     return it;
 }
+
+void
+playlist_refresh (void) {
+    extern gtkplaylist_t main_playlist;
+    gtkplaylist_t *ps = &main_playlist;
+    memset (ps->fmtcache, 0, sizeof (int16_t) * 3 * pl_ncolumns * ps->nvisiblerows);
+    gtkpl_setup_scrollbar (ps);
+    GtkWidget *widget = ps->playlist;
+    gtkpl_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
+    gtkpl_expose (ps, 0, 0, widget->allocation.width, widget->allocation.height);
+    search_refresh ();
+}
