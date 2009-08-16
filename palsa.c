@@ -281,16 +281,14 @@ static void
 palsa_thread (uintptr_t context) {
     int err;
     for (;;) {
-        mutex_lock (mutex);
         if (alsa_terminate) {
-            mutex_unlock (mutex);
             break;
         }
         if (state != 1) {
-            usleep (1000);
-            mutex_unlock (mutex);
+            usleep (10000);
             continue;
         }
+        mutex_lock (mutex);
         /* wait till the interface is ready for data, or 1 second
            has elapsed.
          */
