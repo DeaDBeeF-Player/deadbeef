@@ -57,7 +57,6 @@ void
 pl_free (void) {
     while (playlist_head[PL_MAIN]) {
         pl_remove (playlist_head[PL_MAIN]);
-        pl_count--;
     }
 }
 
