@@ -1608,6 +1608,15 @@ cmp3_insert (playItem_t *after, const char *fname) {
         break;
     }
 
+    playItem_t *cue_after = pl_insert_cue (after, fname, &cmp3, "mp3");
+    if (cue_after) {
+        cue_after->timeend = buffer.duration;
+        cue_after->duration = cue_after->timeend - cue_after->timestart;
+        pl_item_free (it);
+        fclose (fp);
+        return cue_after;
+    }
+
     after = pl_insert_item (after, it);
     fclose (fp);
     return after;

@@ -83,6 +83,7 @@ streamer_thread (uintptr_t ctx) {
             codecleft = 0;
             codec_unlock ();
             pl_set_current (pl_get_for_idx (sng));
+            playpos = 0;
             if (pstate == 0) {
                 p_stop ();
             }
