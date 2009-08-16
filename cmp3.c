@@ -1244,6 +1244,7 @@ cmp3_read_id3v2 (playItem_t *it, FILE *fp) {
         convstr = convstr_id3v2_4;
     }
     char *artist = NULL;
+    char *album = NULL;
     char *band = NULL;
     char *track = NULL;
     char *title = NULL;
@@ -1309,6 +1310,15 @@ cmp3_read_id3v2 (playItem_t *it, FILE *fp) {
                 id3v2_string_read (version_major, &str[0], sz, unsync, &readptr);
                 title = strdup (convstr (str, sz));
             }
+            else if (!strcmp (frameid, "TALB")) {
+                if (sz > 1000) {
+                    err = 1;
+                    break; // too large
+                }
+                char str[sz+2];
+                id3v2_string_read (version_major, &str[0], sz, unsync, &readptr);
+                album = strdup (convstr (str, sz));
+            }
             else {
                 readptr += sz;
             }
@@ -1364,6 +1374,10 @@ cmp3_read_id3v2 (playItem_t *it, FILE *fp) {
         if (artist) {
             pl_add_meta (it, "artist", artist);
             free (artist);
+        }
+        if (album) {
+            pl_add_meta (it, "album", album);
+            free (album);
         }
         if (band) {
             pl_add_meta (it, "band", band);
