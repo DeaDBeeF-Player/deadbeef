@@ -95,7 +95,7 @@ cvorbis_read (char *bytes, int size) {
             break;
         }
     }
-    cvorbis.info.position = ov_time_tell(&vorbis_file);
+//    cvorbis.info.position = ov_time_tell(&vorbis_file);
 
     return initsize - size;
 }
@@ -109,6 +109,7 @@ cvorbis_seek (float time) {
     int res = ov_time_seek (&vorbis_file, time);
     if (res != 0 && res != OV_ENOSEEK)
         return -1;
+    cvorbis.info.position = ov_time_tell(&vorbis_file);
 //    printf ("seek result: %d\n", res);
     return 0;
 }

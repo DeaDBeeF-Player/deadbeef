@@ -69,7 +69,7 @@ cgme_read (char *bytes, int size) {
     if (gme_play (emu, size/2, (short*)bytes)) {
         return 0;
     }
-    cgme.info.position += t;
+//    cgme.info.position += t;
     if (reallength == -1) {
         // check if whole buffer is zeroes
         int i;

@@ -307,7 +307,7 @@ csid_read (char *bytes, int size) {
         return 0;
     }
     int rd = sidplay->play (bytes, size/csid.info.channels);
-    csid.info.position += size/csid.info.channels/2 / (float)csid.info.samplesPerSecond;
+//    csid.info.position += size/csid.info.channels/2 / (float)csid.info.samplesPerSecond;
     return rd * csid.info.channels;
 }
 

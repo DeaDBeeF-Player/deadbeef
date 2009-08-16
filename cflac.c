@@ -148,7 +148,7 @@ cflac_read (char *bytes, int size) {
             remaining -= sz;
             bytes += sz;
             size -= sz;
-            cflac.info.position += (float)sz / (cflac.info.channels * cflac.info.samplesPerSecond * cflac.info.bitsPerSample / 8);
+//            cflac.info.position += (float)sz / (cflac.info.channels * cflac.info.samplesPerSecond * cflac.info.bitsPerSample / 8);
             if (timeend > timestart) {
                 if (cflac.info.position + timestart > timeend) {
                     break;
