@@ -144,7 +144,7 @@ cdumb_read (char *bytes, int size) {
     int length = size / 4;
     long ret;
     ret = duh_render (renderer, 16, 0, 1, 65536.f / cdumb.info.samplesPerSecond, length, bytes);
-    //cdumb.info.position += ret / (float)cdumb.info.samplesPerSecond;
+    cdumb.info.readposition += ret / (float)cdumb.info.samplesPerSecond;
     return ret*4;
 }
 

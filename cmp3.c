@@ -596,7 +596,7 @@ cmp3_read (char *bytes, int size) {
         buffer.output = bytes;
         buffer.readsize = size;
         ret += cmp3_decode ();
-//        cmp3.info.position = (float)buffer.timer.seconds + (float)buffer.timer.fraction / MAD_TIMER_RESOLUTION;
+        cmp3.info.readposition = (float)buffer.timer.seconds + (float)buffer.timer.fraction / MAD_TIMER_RESOLUTION;
     }
     return ret;
 }
