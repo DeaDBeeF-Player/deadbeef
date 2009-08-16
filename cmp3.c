@@ -1364,6 +1364,16 @@ cmp3_read_id3v2 (playItem_t *it, FILE *fp) {
                 str[sz] = 0;
                 title = strdup (convstr (str, sz));
             }
+            else if (!strcmp (frameid, "TAL")) {
+                if (sz > 1000) {
+                    err = 1;
+                    break; // too large
+                }
+                char str[sz+2];
+                memcpy (str, readptr, sz);
+                str[sz] = 0;
+                album = strdup (convstr (str, sz));
+            }
             readptr += sz;
         }
         else {
