@@ -73,14 +73,15 @@ update_songinfo (void) {
     else if (playlist_current.codec) {
         codec_lock ();
         codec_t *c = playlist_current.codec;
-        int minpos = c->info.position / 60;
-        int secpos = c->info.position - minpos * 60;
+        float playpos = streamer_get_playpos ();
+        int minpos = playpos / 60;
+        int secpos = playpos - minpos * 60;
         int mindur = playlist_current.duration / 60;
         int secdur = playlist_current.duration - mindur * 60;
         const char *mode = c->info.channels == 1 ? "Mono" : "Stereo";
         int samplerate = c->info.samplesPerSecond;
         int bitspersample = c->info.bitsPerSample;
-        songpos = c->info.position;
+        songpos = playpos;
         codec_unlock ();
 
         snprintf (sbtext_new, 512, "[%s] %dHz | %d bit | %s | %d:%02d / %d:%02d | %d songs total", playlist_current.filetype ? playlist_current.filetype:"-", samplerate, bitspersample, mode, minpos, secpos, mindur, secdur, pl_getcount ());

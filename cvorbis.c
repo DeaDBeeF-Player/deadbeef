@@ -54,7 +54,7 @@ cvorbis_init (struct playItem_s *it) {
     //cvorbis.info.dataSize = ov_pcm_total (&vorbis_file, -1) * vi->channels * 2;
     cvorbis.info.channels = vi->channels;
     cvorbis.info.samplesPerSecond = vi->rate;
-    cvorbis.info.position = 0;
+    cvorbis.info.readposition = 0;
 //    printf ("vorbis info: bps: %d, size: %d, chan: %d, rate: %d, dur: %f\n", cvorbis.info.bitsPerSample, cvorbis.info.dataSize, cvorbis.info.channels, cvorbis.info.samplesPerSecond, cvorbis.info.duration);
     return 0;
 }
@@ -109,7 +109,7 @@ cvorbis_seek (float time) {
     int res = ov_time_seek (&vorbis_file, time);
     if (res != 0 && res != OV_ENOSEEK)
         return -1;
-    cvorbis.info.position = ov_time_tell(&vorbis_file);
+    cvorbis.info.readposition = ov_time_tell(&vorbis_file);
 //    printf ("seek result: %d\n", res);
     return 0;
 }

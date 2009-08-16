@@ -276,7 +276,7 @@ csid_init (struct playItem_s *it) {
     sidplay->load (tune);
     csid.info.bitsPerSample = 16;
     csid.info.samplesPerSecond = p_get_rate ();
-    csid.info.position = 0;
+    csid.info.readposition = 0;
 
     int maxsids = sidplay->info ().maxsids;
     for (int k = 0; k < maxsids; k++) {
@@ -303,23 +303,23 @@ csid_free (void) {
 
 extern "C" int
 csid_read (char *bytes, int size) {
-    if (csid.info.position > playlist_current.duration) {
+    if (csid.info.readposition > playlist_current.duration) {
         return 0;
     }
     int rd = sidplay->play (bytes, size/csid.info.channels);
-//    csid.info.position += size/csid.info.channels/2 / (float)csid.info.samplesPerSecond;
+    csid.info.readposition += size/csid.info.channels/2 / (float)csid.info.samplesPerSecond;
     return rd * csid.info.channels;
 }
 
 extern "C" int
 csid_seek (float time) {
     float t = time;
-    if (t < csid.info.position) {
+    if (t < csid.info.readposition) {
         // reinit
         sidplay->load (tune);
     }
     else {
-        t -= csid.info.position;
+        t -= csid.info.readposition;
     }
     resid->filter (false);
     int samples = t * csid.info.samplesPerSecond;
@@ -335,7 +335,7 @@ csid_seek (float time) {
         samples -= done;
     }
     resid->filter (true);
-    csid.info.position = time;
+    csid.info.readposition = time;
 
     return 0;
 }

@@ -48,6 +48,13 @@ static int nextsong_pstate = -1;
 
 static float seekpos = -1;
 
+static float playpos = 0; // play position of current song
+
+float
+streamer_get_playpos (void) {
+    return playpos;
+}
+
 void
 streamer_set_nextsong (int song, int pstate) {
     nextsong = song;
@@ -102,6 +109,7 @@ streamer_thread (uintptr_t ctx) {
             seekpos = -1;
             if (playlist_current.codec && playlist_current.codec->seek (pos) >= 0) {
                 streamer_lock ();
+                playpos = playlist_current.codec->info.readposition;
                 streambuffer_fill = 0;
                 streamer_unlock ();
                 codec_lock ();
@@ -301,9 +309,7 @@ streamer_read (char *bytes, int size) {
             memmove (streambuffer, &streambuffer[sz], streambuffer_fill-sz);
         }
         streambuffer_fill -= sz;
-        if (playlist_current.codec) {
-            playlist_current.codec->info.position += (float)sz/p_get_rate ()/4.f;
-        }
+        playpos += (float)sz/p_get_rate ()/4.f;
         bytes_until_next_song -= sz;
         if (bytes_until_next_song < 0) {
             bytes_until_next_song = 0;

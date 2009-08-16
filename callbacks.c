@@ -880,7 +880,7 @@ seekbar_draw (GtkWidget *widget) {
     }
     else {
         if (playlist_current.codec && playlist_current.duration > 0) {
-            pos = playlist_current.codec->info.position / playlist_current.duration;
+            pos = streamer_get_playpos () / playlist_current.duration;
             pos *= widget->allocation.width;
         }
     }

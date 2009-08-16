@@ -69,7 +69,7 @@ cflac_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMe
     cflac.info.samplesPerSecond = sample_rate;
     cflac.info.channels = channels;
     cflac.info.bitsPerSample = bps;
-    cflac.info.position = 0;
+    cflac.info.readposition = 0;
 }
 
 void
@@ -106,21 +106,8 @@ cflac_init (playItem_t *it) {
     timestart = it->timestart;
     timeend = it->timeend;
     if (timeend > timestart || timeend < 0) {
-        // take from cue and seek
-//        if (timeend < 0) {
-//            // must be last (or broken) track
-//            timeend = playlist_current.duration; // set from metainfo
-//        }
-//        cflac.info.duration = timeend - timestart;
         cflac.seek (0);
     }
-//    if (cflac.info.duration == -1) {
-//        printf ("FLAC duration calculation failed\n");
-//        return -1;
-//    }
-//    else {
-//        //printf ("%s duration %f, start %f (%f), end %f (%f)\n", fname, cflac.info.duration, timestart, start, timeend, end);
-//    }
 
     remaining = 0;
     return 0;
@@ -138,6 +125,11 @@ int
 cflac_read (char *bytes, int size) {
     int initsize = size;
     int nsamples = size / (cflac.info.channels * cflac.info.bitsPerSample / 8);
+    if (timeend > timestart) {
+        if (cflac.info.readposition + timestart > timeend) {
+            return 0;
+        }
+    }
     do {
         if (remaining) {
             int sz = min (remaining, size);
@@ -148,9 +140,9 @@ cflac_read (char *bytes, int size) {
             remaining -= sz;
             bytes += sz;
             size -= sz;
-//            cflac.info.position += (float)sz / (cflac.info.channels * cflac.info.samplesPerSecond * cflac.info.bitsPerSample / 8);
+            cflac.info.readposition += (float)sz / (cflac.info.channels * cflac.info.samplesPerSecond * cflac.info.bitsPerSample / 8);
             if (timeend > timestart) {
-                if (cflac.info.position + timestart > timeend) {
+                if (cflac.info.readposition + timestart > timeend) {
                     break;
                 }
             }
@@ -179,7 +171,7 @@ cflac_seek (float time) {
         return -1;
     }
     remaining = 0;
-    cflac.info.position = time - timestart;
+    cflac.info.readposition = time - timestart;
     return 0;
 }
 

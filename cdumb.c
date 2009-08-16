@@ -97,7 +97,7 @@ cdumb_init (playItem_t *it) {
     cdumb.info.bitsPerSample = 16;
     cdumb.info.channels = 2;
     cdumb.info.samplesPerSecond = p_get_rate ();
-    cdumb.info.position = 0;
+    cdumb.info.readposition = 0;
 
     if (cdumb_startrenderer () < 0) {
         return -1;
@@ -150,15 +150,15 @@ cdumb_read (char *bytes, int size) {
 
 int
 cdumb_seek (float time) {
-    if (time < cdumb.info.position) {
+    if (time < cdumb.info.readposition) {
         cdumb_startrenderer ();
     }
     else {
-        time -= cdumb.info.position;
+        time -= cdumb.info.readposition;
     }
     int pos = time * cdumb.info.samplesPerSecond;
     duh_sigrenderer_generate_samples (renderer, 0, 65536.0f / cdumb.info.samplesPerSecond, pos, NULL);
-    cdumb.info.position = duh_sigrenderer_get_position (renderer) / 65536.f;
+    cdumb.info.readposition = duh_sigrenderer_get_position (renderer) / 65536.f;
     return 0;
 }
 

@@ -25,7 +25,8 @@ typedef struct {
     int bitsPerSample;
     int channels;
     int samplesPerSecond;
-    float position;
+//    float position;
+    float readposition;
 } fileinfo_t;
 
 struct playItem_s;

@@ -43,7 +43,7 @@ cgme_init (playItem_t *it) {
     cgme.info.samplesPerSecond = p_get_rate ();
     reallength = inf.length; 
     nzerosamples = 0;
-    cgme.info.position = 0;
+    cgme.info.readposition = 0;
     return 0;
 }
 
@@ -58,8 +58,8 @@ cgme_free (void) {
 int
 cgme_read (char *bytes, int size) {
     float t = (size/4) / (float)cgme.info.samplesPerSecond;
-    if (cgme.info.position + t >= playlist_current.duration) {
-        t = playlist_current.duration - cgme.info.position;
+    if (cgme.info.readposition + t >= playlist_current.duration) {
+        t = playlist_current.duration - cgme.info.readposition;
         if (t <= 0) {
             return 0;
         }
@@ -96,7 +96,7 @@ cgme_seek (float time) {
     if (gme_seek (emu, (long)(time * 1000))) {
         return -1;
     }
-    cgme.info.position = time;
+    cgme.info.readposition = time;
     return 0;
 }
 

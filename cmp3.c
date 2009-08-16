@@ -111,7 +111,7 @@ cmp3_init (struct playItem_s *it) {
     buffer.output = NULL;
     buffer.readsize = 0;
     buffer.cachefill = 0;
-    cmp3.info.position = 0;
+    cmp3.info.readposition = 0;
 	mad_timer_reset(&buffer.timer);
 
     fseek (buffer.file, buffer.startoffset, SEEK_SET);
@@ -617,15 +617,15 @@ cmp3_seek (float time) {
 	mad_timer_reset(&buffer.timer);
 
 	if (time == 0) { 
-        cmp3.info.position = 0;
+        cmp3.info.readposition = 0;
         return 0;
     }
 
     if (cmp3_scan_stream (&buffer, time) == -1) {
-        cmp3.info.position = 0;
+        cmp3.info.readposition = 0;
         return -1;
     }
-    cmp3.info.position = (float)buffer.timer.seconds + (float)buffer.timer.fraction / MAD_TIMER_RESOLUTION;
+    cmp3.info.readposition = (float)buffer.timer.seconds + (float)buffer.timer.fraction / MAD_TIMER_RESOLUTION;
     return 0;
 }
 

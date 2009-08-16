@@ -49,4 +49,7 @@ streamer_set_seek (float pos);
 int
 streamer_get_fill_level (void);
 
+float
+streamer_get_playpos (void);
+
 #endif // __STREAMER_H
