@@ -57,6 +57,11 @@ progress_settext (const char *text) {
 }
 
 void
+progress_abort (void) {
+    progress_aborted = 1;
+}
+
+void
 on_progress_abort                      (GtkButton       *button,
                                         gpointer         user_data)
 {

@@ -34,4 +34,7 @@ progress_settext (const char *text);
 int
 progress_is_aborted (void);
 
+void
+progress_abort (void);
+
 #endif // __PROGRESS_H

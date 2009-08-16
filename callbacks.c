@@ -39,6 +39,7 @@
 #include "playback.h"
 #include "search.h"
 #include "streamer.h"
+#include "progress.h"
 
 #include "cwav.h"
 #include "cvorbis.h"
@@ -315,6 +316,7 @@ void
 on_quit1_activate                      (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
+    progress_abort ();
     messagepump_push (M_TERMINATE, 0, 0, 0);
 }
 
