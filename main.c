@@ -168,7 +168,7 @@ exec_command_line (const char *cmdline, int len, int filter) {
             else if (!strcmp (parg, "--queue")) {
                 queue = 1;
             }
-            else {
+            else if (parg[0] != '-') {
                 break;
             }
         }
@@ -235,11 +235,19 @@ player_thread (uintptr_t ctx) {
 //                if (size > 0) {
 //                    printf ("received: %s %d\n", str, size);
 //                }
-                int res = exec_command_line (str, size, 0);
-                if (res == 2) {
+                if (size == 1 && str[0] == 0) {
                     GDK_THREADS_ENTER();
-                    gtkpl_playsong (&main_playlist);
+                    gtk_widget_show (mainwin);
+                    gtk_window_present (GTK_WINDOW (mainwin));
                     GDK_THREADS_LEAVE();
+                }
+                else {
+                    int res = exec_command_line (str, size, 0);
+                    if (res == 2) {
+                        GDK_THREADS_ENTER();
+                        gtkpl_playsong (&main_playlist);
+                        GDK_THREADS_LEAVE();
+                    }
                 }
             }
             send (s2, "", 1, 0);
@@ -362,63 +370,68 @@ main (int argc, char *argv[]) {
     snprintf (dbconfdir, 1024, "%s/.config/deadbeef", homedir);
     mkdir (dbconfdir, 0755);
 
-    // join command line into single string
     char cmdline[2048];
-    char *p = cmdline;
-    int size = 2048;
-    cmdline[0] = 0;
-    for (int i = 1; i < argc; i++) {
-        if (size < 2) {
-            break;
+    int size = 0;
+    if (argc > 1) {
+        size = 2048;
+        // join command line into single string
+        char *p = cmdline;
+        cmdline[0] = 0;
+        for (int i = 1; i < argc; i++) {
+            if (size < 2) {
+                break;
+            }
+            if (i > 1) {
+                size--;
+                p++;
+            }
+            int len = strlen (argv[i]);
+            if (len >= size) {
+                break;
+            }
+            memcpy (p, argv[i], len+1);
+            p += len;
+            size -= len;
         }
-        if (i > 1) {
-            size--;
-            p++;
+        size = 2048 - size + 1;
+        if (exec_command_line (cmdline, size, 1) == 1) {
+            return 0; // if it was help request
         }
-        int len = strlen (argv[i]);
-        if (len >= size) {
-            break;
-        }
-        memcpy (p, argv[i], len+1);
-        p += len;
-        size -= len;
-    }
-    size = 2048-size;
-    if (exec_command_line (cmdline, size, 1) == 1) {
-        return 0; // if it was help request
     }
     // try to connect to remote player
-    {
-        int s, t, len;
-        struct sockaddr_un remote;
-        char str[100];
+    int s, t, len;
+    struct sockaddr_un remote;
+    char str[100];
 
-        if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
-            perror("socket");
-            exit(1);
-        }
-
-//        printf("Trying to connect...\n");
-
-        remote.sun_family = AF_UNIX;
-        snprintf (remote.sun_path, 108, "%s/socket", dbconfdir);
-        len = strlen(remote.sun_path) + sizeof(remote.sun_family);
-        if (connect(s, (struct sockaddr *)&remote, len) == 0) {
-
-            // pass args to remote and exit
-            if (send(s, cmdline, size+1, 0) == -1) {
-                perror ("send");
-                exit (-1);
-            }
-            char out[1];
-            if (recv(s, out, 1, 0) == -1) {
-                printf ("failed to pass args to remote!\n");
-                exit (-1);
-            }
-            exit (0);
-        }
-        close(s);
+    if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
+        perror("socket");
+        exit(1);
     }
+
+    printf ("argc: %d\n", argc);
+    remote.sun_family = AF_UNIX;
+    snprintf (remote.sun_path, 108, "%s/socket", dbconfdir);
+    len = strlen(remote.sun_path) + sizeof(remote.sun_family);
+    if (connect(s, (struct sockaddr *)&remote, len) == 0) {
+        if (argc <= 1) {
+            cmdline[0] = 0;
+            size = 1;
+        }
+
+        // pass args to remote and exit
+        if (send(s, cmdline, size, 0) == -1) {
+            perror ("send");
+            exit (-1);
+        }
+        char out[1];
+        if (recv(s, out, 1, 0) == -1) {
+            printf ("failed to pass args to remote!\n");
+            exit (-1);
+        }
+        close (s);
+        exit (0);
+    }
+    close(s);
 
     pl_load (defpl);
     messagepump_init ();
@@ -444,12 +457,14 @@ main (int argc, char *argv[]) {
     extern void search_playlist_init (GtkWidget *widget);
     search_playlist_init (lookup_widget (searchwin, "searchlist"));
 
-    int res = exec_command_line (cmdline, size, 0);
-    if (res == -1) {
-        return -1;
-    }
-    if (res == 2) {
-        messagepump_push (M_PLAYSONG, 0, 0, 0);
+    if (argc > 1) {
+        int res = exec_command_line (cmdline, size, 0);
+        if (res == -1) {
+            return -1;
+        }
+        if (res == 2) {
+            messagepump_push (M_PLAYSONG, 0, 0, 0);
+        }
     }
 
     gtk_widget_show (mainwin);
