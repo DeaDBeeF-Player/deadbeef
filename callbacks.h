@@ -468,3 +468,12 @@ void
 volumebar_expose (GtkWidget *widget, int x, int y, int w, int h);
 
 
+
+void
+on_progress_abort                      (GtkButton       *button,
+                                        gpointer         user_data);
+
+gboolean
+on_addprogress_delete_event            (GtkWidget       *widget,
+                                        GdkEvent        *event,
+                                        gpointer         user_data);

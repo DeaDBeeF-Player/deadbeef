@@ -40,6 +40,7 @@
 #include "messages.h"
 #include "streamer.h"
 #include "search.h"
+#include "progress.h"
 
 // orange on dark color scheme
 float colo_dark_orange[COLO_COUNT][3] = {
@@ -1109,32 +1110,27 @@ strcopy_special (char *dest, const char *src, int len) {
 
 int
 gtkpl_add_file_info_cb (playItem_t *it, void *data) {
-    static int countdown = 0;
-    //if (countdown == 0)
-    {
+    if (progress_is_aborted ()) {
+        return -1;
+    }
+    GDK_THREADS_ENTER();
+    progress_settext (it->fname);
+    GDK_THREADS_LEAVE();
+#if 0
         GtkEntry *e = (GtkEntry *)data;
         GDK_THREADS_ENTER();
         gtk_entry_set_text (GTK_ENTRY (e), it->fname);
         GDK_THREADS_LEAVE();
         usleep (100);
         countdown = 10;
-    }
-    countdown--;
+#endif
     return 0;
 }
 
 void
 gtkpl_add_fm_dropped_files (gtkplaylist_t *ps, char *ptr, int length, int drop_y) {
     GDK_THREADS_ENTER();
-    extern GtkWidget *mainwin;
-    gtk_widget_set_sensitive (mainwin, FALSE);
-    GtkWidget *d = gtk_dialog_new ();
-    GtkWidget *e = gtk_entry_new ();
-    gtk_widget_set_size_request (e, 500, -1);
-    gtk_widget_set_sensitive (GTK_WIDGET (e), FALSE);
-    gtk_container_add (GTK_CONTAINER (gtk_dialog_get_content_area (GTK_DIALOG (d))), e);
-    gtk_widget_show_all (d);
-    gtk_window_present (GTK_WINDOW (d));
+    progress_show ();
     GDK_THREADS_LEAVE();
 
     int drop_row = drop_y / rowheight + ps->scrollpos;
@@ -1157,9 +1153,10 @@ gtkpl_add_fm_dropped_files (gtkplaylist_t *ps, char *ptr, int length, int drop_y
             strcopy_special (fname, p, pe-p);
             //strncpy (fname, p, pe - p);
             //fname[pe - p] = 0;
-            playItem_t *inserted = pl_insert_dir (after, fname + 7, gtkpl_add_file_info_cb, e);
-            if (!inserted) {
-                inserted = pl_insert_file (after, fname + 7, gtkpl_add_file_info_cb, e);
+            int abort = 0;
+            playItem_t *inserted = pl_insert_dir (after, fname + 7, &abort, gtkpl_add_file_info_cb, NULL);
+            if (!inserted && !abort) {
+                inserted = pl_insert_file (after, fname + 7, &abort, gtkpl_add_file_info_cb, NULL);
             }
             if (inserted) {
                 after = inserted;
@@ -1172,18 +1169,11 @@ gtkpl_add_fm_dropped_files (gtkplaylist_t *ps, char *ptr, int length, int drop_y
         }
     }
     free (ptr);
-    // invalidate entire cache - slow, but rare
-    memset (ps->fmtcache, 0, sizeof (int16_t) * 3 * pl_ncolumns * ps->nvisiblerows);
-    GDK_THREADS_ENTER();
-    gtk_widget_destroy (d);
-    gtk_widget_set_sensitive (mainwin, TRUE);
-    gtkpl_setup_scrollbar (ps);
-    GtkWidget *widget = ps->playlist;
-    gtkpl_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
-    gtkpl_expose (ps, 0, 0, widget->allocation.width, widget->allocation.height);
-    search_refresh ();
-    GDK_THREADS_LEAVE();
 
+    GDK_THREADS_ENTER();
+    progress_hide ();
+    playlist_refresh ();
+    GDK_THREADS_LEAVE();
 }
 
 void
@@ -1405,30 +1395,14 @@ on_header_button_release_event         (GtkWidget       *widget,
 
 void
 gtkpl_add_dir (gtkplaylist_t *ps, char *folder) {
-    // create window
     GDK_THREADS_ENTER();
-    extern GtkWidget *mainwin;
-    gtk_widget_set_sensitive (mainwin, FALSE);
-    GtkWidget *d = gtk_dialog_new ();
-    GtkWidget *e = gtk_entry_new ();
-    gtk_widget_set_size_request (e, 500, -1);
-    gtk_widget_set_sensitive (GTK_WIDGET (e), FALSE);
-    gtk_container_add (GTK_CONTAINER (gtk_dialog_get_content_area (GTK_DIALOG (d))), e);
-    gtk_widget_show_all (d);
-    gtk_window_present (GTK_WINDOW (d));
+    progress_show ();
     GDK_THREADS_LEAVE();
-    pl_add_dir (folder, gtkpl_add_file_info_cb, e);
+    pl_add_dir (folder, gtkpl_add_file_info_cb, NULL);
     g_free (folder);
     GDK_THREADS_ENTER();
-    gtk_widget_destroy (d);
-    gtk_widget_set_sensitive (mainwin, TRUE);
-    // invalidate entire cache - slow, but rare
-    memset (ps->fmtcache, 0, sizeof (int16_t) * 3 * pl_ncolumns * ps->nvisiblerows);
-    gtkpl_setup_scrollbar (ps);
-    GtkWidget *widget = ps->playlist;
-    gtkpl_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
-    gtkpl_expose (ps, 0, 0, widget->allocation.width, widget->allocation.height);
-    search_refresh ();
+    progress_hide ();
+    playlist_refresh ();
     GDK_THREADS_LEAVE();
 }
 
@@ -1440,30 +1414,14 @@ gtkpl_addfile_cb (gpointer data, gpointer userdata) {
 
 void
 gtkpl_add_files (gtkplaylist_t *ps, GSList *lst) {
-    // create window
     GDK_THREADS_ENTER();
-    extern GtkWidget *mainwin;
-    gtk_widget_set_sensitive (mainwin, FALSE);
-    GtkWidget *d = gtk_dialog_new ();
-    GtkWidget *e = gtk_entry_new ();
-    gtk_widget_set_size_request (e, 500, -1);
-    gtk_widget_set_sensitive (GTK_WIDGET (e), FALSE);
-    gtk_container_add (GTK_CONTAINER (gtk_dialog_get_content_area (GTK_DIALOG (d))), e);
-    gtk_widget_show_all (d);
-    gtk_window_present (GTK_WINDOW (d));
+    progress_show ();
     GDK_THREADS_LEAVE();
-    g_slist_foreach(lst, gtkpl_addfile_cb, e);
+    g_slist_foreach(lst, gtkpl_addfile_cb, NULL);
     g_slist_free (lst);
     GDK_THREADS_ENTER();
-    gtk_widget_destroy (d);
-    gtk_widget_set_sensitive (mainwin, TRUE);
-    // invalidate entire cache - slow, but rare
-    memset (ps->fmtcache, 0, sizeof (int16_t) * 3 * pl_ncolumns * ps->nvisiblerows);
-    gtkpl_setup_scrollbar (ps);
-    GtkWidget *widget = ps->playlist;
-    gtkpl_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
-    gtkpl_expose (ps, 0, 0, widget->allocation.width, widget->allocation.height);
-    search_refresh ();
+    progress_hide ();
+    playlist_refresh ();
     GDK_THREADS_LEAVE();
 }
 

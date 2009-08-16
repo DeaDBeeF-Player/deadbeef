@@ -58,10 +58,10 @@ int
 pl_add_file (const char *fname, int (*cb)(playItem_t *it, void *data), void *user_data);
 
 playItem_t *
-pl_insert_dir (playItem_t *after, const char *dirname, int (*cb)(playItem_t *it, void *data), void *user_data);
+pl_insert_dir (playItem_t *after, const char *dirname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data);
 
 playItem_t *
-pl_insert_file (playItem_t *after, const char *fname, int (*cb)(playItem_t *it, void *data), void *user_data);
+pl_insert_file (playItem_t *after, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data);
 
 playItem_t *
 pl_insert_item (playItem_t *after, playItem_t *it);

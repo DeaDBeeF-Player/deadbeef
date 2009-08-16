@@ -6,3 +6,4 @@ GtkWidget* create_mainwin (void);
 GtkWidget* create_aboutdialog (void);
 GtkWidget* create_searchwin (void);
 GtkWidget* create_traymenu (void);
+GtkWidget* create_addprogress (void);

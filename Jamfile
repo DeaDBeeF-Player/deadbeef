@@ -22,7 +22,7 @@ HDRS += $(ROOT)/sidplay-libs-2.1.0/libsidplay/include ;
 HDRS += $(ROOT)/sidplay-libs-2.1.0/builders/resid-builder/include ;
 
 Main deadbeef : 
-    codec.c cvorbis.c cmp3.c cgme.c cdumb.c cwav.c cflac.c csid.cpp playlist.c palsa.c streamer.c md5/md5.c main.c support.c interface.c callbacks.c threading_pthread.c messagepump.c gtkplaylist.c search.c ;
+    codec.c cvorbis.c cmp3.c cgme.c cdumb.c cwav.c cflac.c csid.cpp playlist.c palsa.c streamer.c md5/md5.c main.c support.c interface.c callbacks.c threading_pthread.c messagepump.c gtkplaylist.c search.c progress.c ;
 
 LINKLIBS on deadbeef =  -lm -lvorbis -logg -lvorbisfile -lmad -lFLAC -lsamplerate -lgtk-x11-2.0 -lgdk-x11-2.0 -latk-1.0 -lgdk_pixbuf-2.0 -lm -lpangocairo-1.0 -lpango-1.0 -lcairo -lgobject-2.0 -lgmodule-2.0 -lglib-2.0 -lgthread-2.0 -lstdc++ -lasound ;
 

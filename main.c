@@ -40,6 +40,7 @@
 #include "codec.h"
 #include "streamer.h"
 #include "search.h"
+#include "progress.h"
 
 GtkWidget *mainwin;
 GtkWidget *searchwin;
@@ -525,6 +526,8 @@ main (int argc, char *argv[]) {
     main_playlist_init (lookup_widget (mainwin, "playlist"));
     extern void search_playlist_init (GtkWidget *widget);
     search_playlist_init (lookup_widget (searchwin, "searchlist"));
+
+    progress_init ();
 
     if (argc > 1) {
         int res = exec_command_line (cmdline, size, 0);

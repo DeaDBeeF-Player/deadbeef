@@ -256,7 +256,7 @@ pl_insert_cue (playItem_t *after, const char *cuename, const char *ftype) {
 }
 
 playItem_t *
-pl_insert_file (playItem_t *after, const char *fname, int (*cb)(playItem_t *it, void *data), void *user_data) {
+pl_insert_file (playItem_t *after, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
     if (!fname) {
         return NULL;
     }
@@ -278,7 +278,9 @@ pl_insert_file (playItem_t *after, const char *fname, int (*cb)(playItem_t *it, 
                         playItem_t *inserted = NULL;
                         if ((inserted = codecs[i]->insert (after, fname)) != NULL) {
                             if (cb) {
-                                cb (inserted, user_data);
+                                if (cb (inserted, user_data) < 0) {
+                                    *pabort = 1;
+                                }
                             }
                             return inserted;
                         }
@@ -291,7 +293,7 @@ pl_insert_file (playItem_t *after, const char *fname, int (*cb)(playItem_t *it, 
 }
 
 playItem_t *
-pl_insert_dir (playItem_t *after, const char *dirname, int (*cb)(playItem_t *it, void *data), void *user_data) {
+pl_insert_dir (playItem_t *after, const char *dirname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
     struct stat buf;
     lstat (dirname, &buf);
     if (S_ISLNK(buf.st_mode)) {
@@ -319,12 +321,15 @@ pl_insert_dir (playItem_t *after, const char *dirname, int (*cb)(playItem_t *it,
                 strcpy (fullname, dirname);
                 strncat (fullname, "/", 1024);
                 strncat (fullname, namelist[i]->d_name, 1024);
-                playItem_t *inserted = pl_insert_dir (after, fullname, cb, user_data);
+                playItem_t *inserted = pl_insert_dir (after, fullname, pabort, cb, user_data);
                 if (!inserted) {
-                    inserted = pl_insert_file (after, fullname, cb, user_data);
+                    inserted = pl_insert_file (after, fullname, pabort, cb, user_data);
                 }
                 if (inserted) {
                     after = inserted;
+                }
+                if (*pabort) {
+                    break;
                 }
             }
             free (namelist[i]);
@@ -336,7 +341,8 @@ pl_insert_dir (playItem_t *after, const char *dirname, int (*cb)(playItem_t *it,
 
 int
 pl_add_file (const char *fname, int (*cb)(playItem_t *it, void *data), void *user_data) {
-    if (pl_insert_file (playlist_tail[PL_MAIN], fname, cb, user_data)) {
+    int abort = 0;
+    if (pl_insert_file (playlist_tail[PL_MAIN], fname, &abort, cb, user_data)) {
         return 0;
     }
     return -1;
@@ -344,7 +350,8 @@ pl_add_file (const char *fname, int (*cb)(playItem_t *it, void *data), void *use
 
 int
 pl_add_dir (const char *dirname, int (*cb)(playItem_t *it, void *data), void *user_data) {
-    if (pl_insert_dir (playlist_tail[PL_MAIN], dirname, cb, user_data)) {
+    int abort = 0;
+    if (pl_insert_dir (playlist_tail[PL_MAIN], dirname, &abort, cb, user_data)) {
         return 0;
     }
     return -1;

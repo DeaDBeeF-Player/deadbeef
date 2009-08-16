@@ -842,3 +842,58 @@ create_traymenu (void)
   return traymenu;
 }
 
+GtkWidget*
+create_addprogress (void)
+{
+  GtkWidget *addprogress;
+  GtkWidget *vbox6;
+  GtkWidget *progresstitle;
+  GtkWidget *hbox7;
+  GtkWidget *button1;
+
+  addprogress = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+  gtk_window_set_title (GTK_WINDOW (addprogress), "Adding files...");
+  gtk_window_set_position (GTK_WINDOW (addprogress), GTK_WIN_POS_CENTER_ON_PARENT);
+  gtk_window_set_skip_taskbar_hint (GTK_WINDOW (addprogress), TRUE);
+  gtk_window_set_skip_pager_hint (GTK_WINDOW (addprogress), TRUE);
+
+  vbox6 = gtk_vbox_new (FALSE, 0);
+  gtk_widget_show (vbox6);
+  gtk_container_add (GTK_CONTAINER (addprogress), vbox6);
+  gtk_container_set_border_width (GTK_CONTAINER (vbox6), 4);
+
+  progresstitle = gtk_entry_new ();
+  gtk_widget_show (progresstitle);
+  gtk_box_pack_start (GTK_BOX (vbox6), progresstitle, TRUE, FALSE, 0);
+  gtk_widget_set_size_request (progresstitle, 500, -1);
+  GTK_WIDGET_UNSET_FLAGS (progresstitle, GTK_CAN_FOCUS);
+  gtk_editable_set_editable (GTK_EDITABLE (progresstitle), FALSE);
+  gtk_entry_set_invisible_char (GTK_ENTRY (progresstitle), 8226);
+
+  hbox7 = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show (hbox7);
+  gtk_box_pack_start (GTK_BOX (vbox6), hbox7, FALSE, TRUE, 2);
+
+  button1 = gtk_button_new_with_mnemonic ("Abort");
+  gtk_widget_show (button1);
+  gtk_box_pack_start (GTK_BOX (hbox7), button1, FALSE, FALSE, 0);
+  gtk_widget_set_size_request (button1, 83, -1);
+  GTK_WIDGET_UNSET_FLAGS (button1, GTK_CAN_FOCUS);
+
+  g_signal_connect ((gpointer) addprogress, "delete_event",
+                    G_CALLBACK (on_addprogress_delete_event),
+                    NULL);
+  g_signal_connect ((gpointer) button1, "clicked",
+                    G_CALLBACK (on_progress_abort),
+                    NULL);
+
+  /* Store pointers to all widgets, for use by lookup_widget(). */
+  GLADE_HOOKUP_OBJECT_NO_REF (addprogress, addprogress, "addprogress");
+  GLADE_HOOKUP_OBJECT (addprogress, vbox6, "vbox6");
+  GLADE_HOOKUP_OBJECT (addprogress, progresstitle, "progresstitle");
+  GLADE_HOOKUP_OBJECT (addprogress, hbox7, "hbox7");
+  GLADE_HOOKUP_OBJECT (addprogress, button1, "button1");
+
+  return addprogress;
+}
+
