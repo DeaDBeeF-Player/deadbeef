@@ -22,7 +22,7 @@ conf_load (void) {
     int line = 0;
     while (fgets (str, 1024, fp) != NULL) {
         line++;
-        if (str[0] == '#') {
+        if (str[0] == '#' || str[0] <= 0x20) {
             continue;
         }
         uint8_t *p = (uint8_t *)str;

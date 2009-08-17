@@ -1,16 +1,27 @@
+# alsa soundcard ID
+# normally you should keep default here
 # for secondary soundcard enter it's name as reported by "aplay -L"
 # e.g. default:CARD=I82801DBICH4
 # or   default:CARD=Audigy2
 alsa_soundcard default
-# prefer native samplerate of soundcard
-# 48k is good default on creative cards
+
+# mixing frequency (samplerate)
+# prefer native samplerate of your soundcard
+# e.g. 48k for creative cards
+# consult your soundcard manual if you don't want to get crappy results
 samplerate 48000
-# 0 - sinc_best_quality
-# ^^^^^ my pc can't handle that btw :)
-# 1 - sinc_medium_quality
+
+# samplerate conversion quality
+# that thing controls how your 44100 mp3s are being converted into soundcard samplerate (see above)
+# 0 - sinc_best_quality (my pc can't handle that)
+# 1 - sinc_medium_quality (good enough but still slow)
 # 2 - sinc_fastest
 # 3 - sinc_zero_order_hold
 # 4 - linear
+# sinc_fastest is a good balance between performance and quality.
 src_quality 2
-hvsc_path /home/waker/hvsc/C64Music/DOCUMENTS/Songlengths.txt
-hvsc_enable 1
+
+# those next 2 are disabled by default, cause most people probably don't have HVSC
+# in case you don't know what HVSC is - keep disabled
+#hvsc_path /home/waker/hvsc/C64Music/DOCUMENTS/Songlengths.txt
+#hvsc_enable 1
