@@ -14,6 +14,7 @@
   <property name="default_height">300</property>
   <property name="resizable">True</property>
   <property name="destroy_with_parent">False</property>
+  <property name="icon">play_24.png</property>
   <property name="icon_name">stock_media-play</property>
   <property name="decorated">True</property>
   <property name="skip_taskbar_hint">False</property>
@@ -330,8 +331,7 @@
 		  <child>
 		    <widget class="GtkImage" id="image7">
 		      <property name="visible">True</property>
-		      <property name="stock">gtk-media-stop</property>
-		      <property name="icon_size">4</property>
+		      <property name="pixbuf">stop_24.png</property>
 		      <property name="xalign">0.5</property>
 		      <property name="yalign">0.5</property>
 		      <property name="xpad">0</property>
@@ -356,8 +356,7 @@
 		  <child>
 		    <widget class="GtkImage" id="image2">
 		      <property name="visible">True</property>
-		      <property name="stock">gtk-media-play</property>
-		      <property name="icon_size">4</property>
+		      <property name="pixbuf">play_24.png</property>
 		      <property name="xalign">0.5</property>
 		      <property name="yalign">0.5</property>
 		      <property name="xpad">0</property>
@@ -382,8 +381,7 @@
 		  <child>
 		    <widget class="GtkImage" id="image3">
 		      <property name="visible">True</property>
-		      <property name="stock">gtk-media-pause</property>
-		      <property name="icon_size">4</property>
+		      <property name="pixbuf">pause_24.png</property>
 		      <property name="xalign">0.5</property>
 		      <property name="yalign">0.5</property>
 		      <property name="xpad">0</property>
@@ -408,8 +406,7 @@
 		  <child>
 		    <widget class="GtkImage" id="image4">
 		      <property name="visible">True</property>
-		      <property name="stock">gtk-media-previous</property>
-		      <property name="icon_size">4</property>
+		      <property name="pixbuf">prev_24.png</property>
 		      <property name="xalign">0.5</property>
 		      <property name="yalign">0.5</property>
 		      <property name="xpad">0</property>
@@ -434,8 +431,7 @@
 		  <child>
 		    <widget class="GtkImage" id="image5">
 		      <property name="visible">True</property>
-		      <property name="stock">gtk-media-next</property>
-		      <property name="icon_size">4</property>
+		      <property name="pixbuf">next_24.png</property>
 		      <property name="xalign">0.5</property>
 		      <property name="yalign">0.5</property>
 		      <property name="xpad">0</property>
@@ -460,8 +456,7 @@
 		  <child>
 		    <widget class="GtkImage" id="image6">
 		      <property name="visible">True</property>
-		      <property name="stock">gtk-missing-image</property>
-		      <property name="icon_size">4</property>
+		      <property name="pixbuf">random_24.png</property>
 		      <property name="xalign">0.5</property>
 		      <property name="yalign">0.5</property>
 		      <property name="xpad">0</property>
