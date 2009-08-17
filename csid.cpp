@@ -28,6 +28,7 @@ extern "C" {
 #include "md5/md5.h"
 #include "common.h"
 #include "playback.h"
+#include "conf.h"
 }
 
 static inline void
@@ -57,15 +58,14 @@ static int sldb_poolmark;
 static int16_t *sldb_lengths[SLDB_MAX_SONGS];
 static int sldb_size;
 static int sldb_loaded;
-static const char *sldb_fname = "/home/waker/hvsc/C64Music/DOCUMENTS/Songlengths.txt";
-//static const char *sldb_fname = "/mnt/win/mus/chiptune/C64Music/DOCUMENTS/Songlengths.txt";
 
-static void sldb_load(const char *fname)
+static void sldb_load()
 {
-    if (sldb_loaded) {
+    if (sldb_loaded || !conf_hvsc_enable) {
         return;
     }
     sldb_loaded = 1;
+    const char *fname = conf_hvsc_path;
     FILE *fp = fopen (fname, "r");
     if (!fp) {
         return;
@@ -364,7 +364,7 @@ convstr (const char* str) {
 
 extern "C" playItem_t *
 csid_insert (playItem_t *after, const char *fname) {
-    sldb_load(sldb_fname);
+    sldb_load ();
     SidTune *tune;
     tune = new SidTune (fname);
     int tunes = tune->getInfo ().songs;
@@ -390,7 +390,7 @@ csid_insert (playItem_t *after, const char *fname) {
     }
     md5_finish (&md5, sig);
 
-    sldb_load(sldb_fname);
+    sldb_load ();
     int song = -1;
     if (sldb_loaded) {
         song = sldb_find (sig);

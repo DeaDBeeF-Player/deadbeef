@@ -29,6 +29,7 @@
 #include "playback.h"
 #include "messagepump.h"
 #include "messages.h"
+#include "conf.h"
 
 static SRC_STATE *src;
 static SRC_DATA srcdata;
@@ -166,7 +167,8 @@ int
 streamer_init (void) {
     mutex = mutex_create ();
 //    src = src_new (SRC_SINC_BEST_QUALITY, 2, NULL);
-    src = src_new (SRC_LINEAR, 2, NULL);
+//    src = src_new (SRC_LINEAR, 2, NULL);
+    src = src_new (conf_src_quality, 2, NULL);
     if (!src) {
         return -1;
     }

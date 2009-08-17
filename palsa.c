@@ -22,6 +22,7 @@
 #include "palsa.h"
 #include "threading.h"
 #include "streamer.h"
+#include "conf.h"
 
 static inline void
 le_int16 (int16_t in, char *out) {
@@ -57,11 +58,12 @@ palsa_init (void) {
     snd_pcm_hw_params_t *hw_params;
     snd_pcm_sw_params_t *sw_params;
     state = 0;
+    alsa_rate = conf_samplerate;
 
-    if ((err = snd_pcm_open (&audio, "default", SND_PCM_STREAM_PLAYBACK, 0))) {
+    if ((err = snd_pcm_open (&audio, conf_alsa_soundcard, SND_PCM_STREAM_PLAYBACK, 0))) {
         fprintf (stderr, "could not open audio device (%s)\n",
                 snd_strerror (err));
-        return -1;
+        exit (-1);
     }
 
     if ((err = snd_pcm_hw_params_malloc (&hw_params)) < 0) {
@@ -98,6 +100,7 @@ palsa_init (void) {
                 snd_strerror (err));
         goto open_error;
     }
+    alsa_rate = val;
 
     if ((err = snd_pcm_hw_params_set_channels (audio, hw_params, 2)) < 0) {
         fprintf (stderr, "cannot set channel count (%s)\n",

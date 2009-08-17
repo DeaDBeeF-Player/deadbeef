@@ -41,12 +41,20 @@
 #include "streamer.h"
 #include "search.h"
 #include "progress.h"
+#include "conf.h"
 
+// some common global variables
+char confdir[1024]; // $HOME/.config
+char dbconfdir[1024]; // $HOME/.config/deadbeef
+char defpl[1024]; // $HOME/.config/deadbeef/default.dbpl
+
+// main widgets
 GtkWidget *mainwin;
 GtkWidget *searchwin;
 GtkStatusIcon *trayicon;
 GtkWidget *traymenu;
 
+// playlist configuration structures
 gtkplaylist_t main_playlist;
 gtkplaylist_t search_playlist;
 
@@ -54,11 +62,6 @@ gtkplaylist_t search_playlist;
 static int sb_context_id = -1;
 static char sb_text[512];
 static float last_songpos = -1;
-
-// some common global variables
-char confdir[1024]; // $HOME/.config
-char dbconfdir[1024]; // $HOME/.config/deadbeef
-char defpl[1024]; // $HOME/.config/deadbeef/default.dbpl
 
 void
 update_songinfo (void) {
@@ -469,7 +472,6 @@ main (int argc, char *argv[]) {
         exit(1);
     }
 
-    printf ("argc: %d\n", argc);
     remote.sun_family = AF_UNIX;
     snprintf (remote.sun_path, 108, "%s/socket", dbconfdir);
     len = strlen(remote.sun_path) + sizeof(remote.sun_family);
@@ -486,7 +488,7 @@ main (int argc, char *argv[]) {
         }
         char out[1];
         if (recv(s, out, 1, 0) == -1) {
-            printf ("failed to pass args to remote!\n");
+            fprintf (stderr, "failed to pass args to remote!\n");
             exit (-1);
         }
         close (s);
@@ -494,6 +496,7 @@ main (int argc, char *argv[]) {
     }
     close(s);
 
+    conf_load ();
     pl_load (defpl);
     messagepump_init ();
     codec_init_locking ();
