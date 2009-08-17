@@ -88,7 +88,7 @@ palsa_init (void) {
         goto open_error;
     }
 
-    canpause = snd_pcm_hw_params_can_pause (hw_params);
+    canpause = 0;//snd_pcm_hw_params_can_pause (hw_params);
 
     int val = alsa_rate;
     int ret = 0;
@@ -149,6 +149,8 @@ palsa_init (void) {
         goto open_error;
     }
 
+    snd_pcm_start (audio);
+
     // take returned fragsize
     samplebuffer = malloc (bufsize);
 
@@ -157,7 +159,6 @@ palsa_init (void) {
         printf ("AUDIO: Unable to allocate memory for sample buffers.\n");
         goto open_error;
     }
-    snd_pcm_pause (audio, 1); // put into STOPPED state
 
     alsa_terminate = 0;
     mutex = mutex_create ();
@@ -202,6 +203,7 @@ palsa_hw_pause (int pause) {
         }
         else {
             snd_pcm_prepare (audio);
+            snd_pcm_start (audio);
         }
         hwpaused = pause;
     }
@@ -221,7 +223,7 @@ palsa_play (void) {
     }
     if (state != 1) {
         state = 1;
-        palsa_hw_pause (0);
+        snd_pcm_start (audio);
     }
     return 0;
 }
@@ -231,7 +233,7 @@ int
 palsa_stop (void) {
     // set stop state
     state = 0;
-    palsa_hw_pause (1);
+    snd_pcm_drop (audio);
     return 0;
 }
 
@@ -257,8 +259,10 @@ palsa_pause (void) {
 int
 palsa_unpause (void) {
     // unset pause state
-    state = 1;
-    palsa_hw_pause (0);
+    if (state == 2) {
+        state = 1;
+        palsa_hw_pause (0);
+    }
     return 0;
 }
 
