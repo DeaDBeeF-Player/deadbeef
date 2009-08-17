@@ -1,0 +1,16 @@
+# for secondary soundcard enter it's name as reported by "aplay -L"
+# e.g. default:CARD=I82801DBICH4
+# or   default:CARD=Audigy2
+alsa_soundcard default
+# prefer native samplerate of soundcard
+# 48k is good default on creative cards
+samplerate 48000
+# 0 - sinc_best_quality
+# ^^^^^ my pc can't handle that btw :)
+# 1 - sinc_medium_quality
+# 2 - sinc_fastest
+# 3 - sinc_zero_order_hold
+# 4 - linear
+src_quality 2
+hvsc_path /home/waker/hvsc/C64Music/DOCUMENTS/Songlengths.txt
+hvsc_enable 1

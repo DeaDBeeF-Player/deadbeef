@@ -142,10 +142,10 @@ streamer_thread (uintptr_t ctx) {
         streamer_lock ();
         if (streambuffer_fill < STREAM_BUFFER_SIZE) {
             int sz = STREAM_BUFFER_SIZE - streambuffer_fill;
-            int minsize = 512;
-//            if (streambuffer_fill < 16384) {
+            int minsize = 4096;
+            if (streambuffer_fill < 16384) {
                 minsize = 16384;
-//            }
+            }
             sz = min (minsize, sz);
             assert ((sz&3) == 0);
             int bytesread = streamer_read_async (&streambuffer[streambuffer_fill], sz);
