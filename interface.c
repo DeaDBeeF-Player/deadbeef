@@ -30,7 +30,6 @@ GtkWidget*
 create_mainwin (void)
 {
   GtkWidget *mainwin;
-  GdkPixbuf *mainwin_icon_pixbuf;
   GtkWidget *vbox1;
   GtkWidget *menubar1;
   GtkWidget *menuitem1;
@@ -98,12 +97,6 @@ create_mainwin (void)
   gtk_widget_set_events (mainwin, GDK_KEY_PRESS_MASK);
   gtk_window_set_title (GTK_WINDOW (mainwin), "DeaDBeeF");
   gtk_window_set_default_size (GTK_WINDOW (mainwin), 500, 300);
-  mainwin_icon_pixbuf = create_pixbuf ("play_24.png");
-  if (mainwin_icon_pixbuf)
-    {
-      gtk_window_set_icon (GTK_WINDOW (mainwin), mainwin_icon_pixbuf);
-      gdk_pixbuf_unref (mainwin_icon_pixbuf);
-    }
 
   vbox1 = gtk_vbox_new (FALSE, 0);
   gtk_widget_show (vbox1);
@@ -606,6 +599,10 @@ create_aboutdialog (void)
     "Alexey Yakovenko <waker@users.sourceforge.net>",
     NULL
   };
+  const gchar *artists[] = {
+    "Stas \"uncle lag\" Akimushkin <uncle.lag@gmail.com>",
+    NULL
+  };
 
   aboutdialog = gtk_about_dialog_new ();
   gtk_container_set_border_width (GTK_CONTAINER (aboutdialog), 4);
@@ -617,6 +614,7 @@ create_aboutdialog (void)
   gtk_about_dialog_set_website (GTK_ABOUT_DIALOG (aboutdialog), "http://deadbeef.sf.net");
   gtk_about_dialog_set_website_label (GTK_ABOUT_DIALOG (aboutdialog), "website");
   gtk_about_dialog_set_authors (GTK_ABOUT_DIALOG (aboutdialog), authors);
+  gtk_about_dialog_set_artists (GTK_ABOUT_DIALOG (aboutdialog), artists);
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (aboutdialog, aboutdialog, "aboutdialog");

@@ -14,7 +14,6 @@
   <property name="default_height">300</property>
   <property name="resizable">True</property>
   <property name="destroy_with_parent">False</property>
-  <property name="icon">play_24.png</property>
   <property name="icon_name"></property>
   <property name="decorated">True</property>
   <property name="skip_taskbar_hint">False</property>
@@ -671,6 +670,7 @@ Copyright (C) Simon White and other authors.</property>
   <property name="website">http://deadbeef.sf.net</property>
   <property name="website_label" translatable="yes">website</property>
   <property name="authors">Alexey Yakovenko &lt;waker@users.sourceforge.net&gt;</property>
+  <property name="artists">Stas &quot;uncle lag&quot; Akimushkin &lt;uncle.lag@gmail.com&gt;</property>
   <property name="translator_credits" translatable="yes" comments="TRANSLATORS: Replace this string with your names, one name per line.">translator-credits</property>
 </widget>
 
