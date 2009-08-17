@@ -647,7 +647,10 @@ pl_set_current (playItem_t *it) {
         // don't do anything on fail, streamer will take care
         ret = it->codec->init (it);
         if (ret < 0) {
-            it->codec->info.samplesPerSecond = -1;
+//            pl_item_free (&playlist_current);
+//            playlist_current_ptr = NULL;
+//            return ret;
+////            it->codec->info.samplesPerSecond = -1;
         }
     }
     if (playlist_current_ptr) {

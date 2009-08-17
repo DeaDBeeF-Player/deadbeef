@@ -45,6 +45,7 @@ static char streambuffer[STREAM_BUFFER_SIZE];
 static uintptr_t mutex;
 static int nextsong = -1;
 static int nextsong_pstate = -1;
+static int badsong = -1;
 
 static float seekpos = -1;
 
@@ -82,7 +83,25 @@ streamer_thread (uintptr_t ctx) {
             codec_lock ();
             codecleft = 0;
             codec_unlock ();
-            pl_set_current (pl_get_for_idx (sng));
+            if (badsong == sng) {
+                //printf ("looped to bad file. stopping...\n");
+                streamer_set_nextsong (-2, 1);
+                badsong = -1;
+                continue;
+            }
+            int ret = pl_set_current (pl_get_for_idx (sng));
+            if (ret < 0) {
+                //printf ("bad file in playlist, skipping...\n");
+                // remember bad song number in case of looping
+                if (badsong == -1) {
+                    badsong = sng;
+                }
+                // try jump to next song
+                pl_nextsong (0);
+                usleep (3000);
+                continue;
+            }
+            badsong = -1;
             playpos = 0;
             if (pstate == 0) {
                 p_stop ();
