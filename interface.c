@@ -104,7 +104,6 @@ create_mainwin (void)
       gtk_window_set_icon (GTK_WINDOW (mainwin), mainwin_icon_pixbuf);
       gdk_pixbuf_unref (mainwin_icon_pixbuf);
     }
-  gtk_window_set_icon_name (GTK_WINDOW (mainwin), "stock_media-play");
 
   vbox1 = gtk_vbox_new (FALSE, 0);
   gtk_widget_show (vbox1);
