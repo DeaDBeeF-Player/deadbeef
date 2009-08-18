@@ -1101,3 +1101,29 @@ on_mainwin_delete_event                (GtkWidget       *widget,
 
 
 
+
+gboolean
+on_volumebar_scroll_event              (GtkWidget       *widget,
+                                        GdkEventScroll        *event,
+                                        gpointer         user_data)
+{
+    float vol = p_get_volume ();
+    if (event->direction == GDK_SCROLL_UP || event->direction == GDK_SCROLL_RIGHT) {
+        vol += 0.1f;
+    }
+    else if (event->direction == GDK_SCROLL_DOWN || event->direction == GDK_SCROLL_LEFT) {
+        vol -= 0.1f;
+    }
+    if (vol < 0) {
+        vol = 0;
+    }
+    else if (vol > 1) {
+        vol = 1;
+    }
+    p_set_volume (vol);
+    GtkWidget *volumebar = lookup_widget (mainwin, "volumebar");
+    volumebar_draw (volumebar);
+    volumebar_expose (volumebar, 0, 0, volumebar->allocation.width, volumebar->allocation.height);
+    return FALSE;
+}
+

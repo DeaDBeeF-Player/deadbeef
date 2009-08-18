@@ -477,3 +477,8 @@ gboolean
 on_addprogress_delete_event            (GtkWidget       *widget,
                                         GdkEvent        *event,
                                         gpointer         user_data);
+
+gboolean
+on_volumebar_scroll_event              (GtkWidget       *widget,
+                                        GdkEventScroll        *event,
+                                        gpointer         user_data);

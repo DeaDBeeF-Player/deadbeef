@@ -487,6 +487,7 @@
 	      <signal name="configure_event" handler="on_volumebar_configure_event" last_modification_time="Tue, 11 Aug 2009 18:57:55 GMT"/>
 	      <signal name="expose_event" handler="on_volumebar_expose_event" last_modification_time="Tue, 11 Aug 2009 18:58:00 GMT"/>
 	      <signal name="motion_notify_event" handler="on_volumebar_motion_notify_event" last_modification_time="Tue, 11 Aug 2009 18:58:05 GMT"/>
+	      <signal name="scroll_event" handler="on_volumebar_scroll_event" last_modification_time="Tue, 18 Aug 2009 18:44:31 GMT"/>
 	    </widget>
 	    <packing>
 	      <property name="padding">2</property>

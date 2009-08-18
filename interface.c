@@ -441,6 +441,9 @@ create_mainwin (void)
   g_signal_connect ((gpointer) volumebar, "motion_notify_event",
                     G_CALLBACK (on_volumebar_motion_notify_event),
                     NULL);
+  g_signal_connect ((gpointer) volumebar, "scroll_event",
+                    G_CALLBACK (on_volumebar_scroll_event),
+                    NULL);
   g_signal_connect ((gpointer) seekbar, "button_press_event",
                     G_CALLBACK (on_seekbar_button_press_event),
                     NULL);
