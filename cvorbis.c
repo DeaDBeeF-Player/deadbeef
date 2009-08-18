@@ -28,9 +28,14 @@ static FILE *file;
 static OggVorbis_File vorbis_file;
 static vorbis_info *vi;
 static int cur_bit_stream;
+static float timestart;
+static float timeend;
 
 void
 cvorbis_free (void);
+
+int
+cvorbis_seek (float time);
 
 int
 cvorbis_init (struct playItem_s *it) {
@@ -55,6 +60,15 @@ cvorbis_init (struct playItem_s *it) {
     cvorbis.info.channels = vi->channels;
     cvorbis.info.samplesPerSecond = vi->rate;
     cvorbis.info.readposition = 0;
+    if (timeend > 0) {
+        timestart = it->timestart;
+        timeend = it->timeend;
+        cvorbis_seek (0);
+    }
+    else {
+        timestart = 0;
+        timeend = it->duration;
+    }
 //    printf ("vorbis info: bps: %d, size: %d, chan: %d, rate: %d, dur: %f\n", cvorbis.info.bitsPerSample, cvorbis.info.dataSize, cvorbis.info.channels, cvorbis.info.samplesPerSecond, cvorbis.info.duration);
     return 0;
 }
@@ -71,8 +85,9 @@ cvorbis_free (void) {
 
 int
 cvorbis_read (char *bytes, int size) {
-    if (!file)
+    if (cvorbis.info.readposition >= (timeend - timestart)) {
         return 0;
+    }
     int initsize = size;
     for (;;)
     {
@@ -95,20 +110,24 @@ cvorbis_read (char *bytes, int size) {
             break;
         }
     }
-    cvorbis.info.readposition = ov_time_tell(&vorbis_file);
+    cvorbis.info.readposition = ov_time_tell(&vorbis_file) - timestart;
+    if (cvorbis.info.readposition >= (timeend - timestart)) {
+        return 0;
+    }
 
     return initsize - size;
 }
 
 int
 cvorbis_seek (float time) {
+    time += timestart;
     if (!file) {
         return -1;
     }
     int res = ov_time_seek (&vorbis_file, time);
     if (res != 0 && res != OV_ENOSEEK)
         return -1;
-    cvorbis.info.readposition = ov_time_tell(&vorbis_file);
+    cvorbis.info.readposition = ov_time_tell(&vorbis_file) - timestart;
     return 0;
 }
 
@@ -130,9 +149,17 @@ cvorbis_insert (playItem_t *after, const char *fname) {
     memset (it, 0, sizeof (playItem_t));
     it->codec = &cvorbis;
     it->fname = strdup (fname);
-    it->tracknum = 0;
-    it->timestart = 0;
-    it->timeend = 0;
+    it->filetype = "OggVorbis";
+    it->duration = ov_seekable (&vorbis_file) ? ov_time_total (&vorbis_file, -1) : -1;
+
+    playItem_t *cue_after = pl_insert_cue (after, fname, &cvorbis, it->filetype);
+    if (cue_after) {
+        cue_after->timeend = it->duration;
+        cue_after->duration = cue_after->timeend - cue_after->timestart;
+        pl_item_free (it);
+        ov_clear (&vorbis_file);
+        return cue_after;
+    }
 
     // metainfo
     int title_added = 0;
@@ -152,8 +179,6 @@ cvorbis_insert (playItem_t *after, const char *fname) {
             }
         }
     }
-    it->filetype = "OggVorbis";
-    it->duration = ov_seekable (&vorbis_file) ? ov_time_total (&vorbis_file, -1) : -1;
     if (!title_added) {
         pl_add_meta (it, "title", NULL);
     }
