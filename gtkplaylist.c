@@ -172,7 +172,6 @@ gtkpl_fit_text (cairo_t *cr, char *out, int *dotpos, int len, const char *in, in
 
     char *p = &out[l];
     p = g_utf8_find_prev_char (out, p);
-    int processed = 0;
     if (dotpos) {
         *dotpos = -1;
     }
@@ -180,7 +179,7 @@ gtkpl_fit_text (cairo_t *cr, char *out, int *dotpos, int len, const char *in, in
         cairo_text_extents_t e;
         cairo_text_extents (cr, out, &e);
         w = e.width;// + e.x_bearing + e.x_advance;
-        if (e.width <= width && (processed == 0 || processed >= 3)) {
+        if (e.width <= width) {
             break;
         }
         char *prev = g_utf8_find_prev_char (out, p);
@@ -188,20 +187,10 @@ gtkpl_fit_text (cairo_t *cr, char *out, int *dotpos, int len, const char *in, in
         if (!prev) {
             break;
         }
-        int i;
-        for (i = 0; i < p-prev; i++) {
-            prev[i] = '.';
-        }
-        processed += p-prev;
+        strcpy (prev, "…");
         p = prev;
-        if (processed >= 3) {
-            if (dotpos) {
-                *dotpos = p-out;
-            }
-            for (int i = 0; i < 3; i++) {
-                p[i] = '.';
-            }
-            p[3] = 0;
+        if (dotpos) {
+            *dotpos = p-out;
         }
     }
     return w;
@@ -376,10 +365,7 @@ gtkpl_draw_pl_row (gtkplaylist_t *ps, cairo_t *cr, int row, playItem_t *it) {
                 dotpos = ps->fmtcache[cidx + 0];
                 strncpy (str, columns[i], 512);
                 if (dotpos >= 0) {
-                    for (int k = 0; k < 3; k++) {
-                        str[k+dotpos] = '.';
-                    }
-                    str[dotpos+3] = 0;
+                    strcpy (str+dotpos, "…");
                 }
             }
             int w = ps->fmtcache[cidx + 1];
