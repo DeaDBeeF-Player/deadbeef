@@ -131,6 +131,8 @@ cmp3_init (struct playItem_s *it) {
     }
     else {
         buffer.trackduration = it->duration = cmp3_scan_stream (&buffer, -1); // scan entire stream, calc duration
+        timestart = 0;
+        timeend = buffer.trackduration;
         fseek (buffer.file, buffer.startoffset, SEEK_SET);
     }
     cmp3.info.bitsPerSample = buffer.bitspersample;
