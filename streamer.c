@@ -300,10 +300,12 @@ streamer_read_async (char *bytes, int size) {
         if (size == 0) {
             return initsize;
         }
-        else {
+        else  {
             // that means EOF
-            bytes_until_next_song = streambuffer_fill;
-            pl_nextsong (0);
+            if (bytes_until_next_song == 0) {
+                bytes_until_next_song = streambuffer_fill;
+                pl_nextsong (0);
+            }
             break;
         }
     }
@@ -344,6 +346,14 @@ streamer_read (char *bytes, int size) {
 int
 streamer_get_fill (void) {
     return streambuffer_fill;
+}
+
+int
+streamer_ok_to_read (int len) {
+    if (bytes_until_next_song > 0) {
+        return 1;
+    }
+    return streambuffer_fill >= len;
 }
 
 int

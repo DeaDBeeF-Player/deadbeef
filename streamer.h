@@ -49,6 +49,9 @@ streamer_set_seek (float pos);
 int
 streamer_get_fill (void);
 
+int
+streamer_ok_to_read (int len);
+
 float
 streamer_get_playpos (void);
 

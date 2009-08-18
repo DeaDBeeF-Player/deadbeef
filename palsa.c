@@ -342,7 +342,7 @@ palsa_thread (uintptr_t context) {
 
 static void
 palsa_callback (char *stream, int len) {
-    if (streamer_get_fill () < len) {
+    if (!streamer_ok_to_read (len)) {
         memset (stream, 0, len);
         return;
     }

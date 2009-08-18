@@ -44,6 +44,10 @@
 typedef struct {
     FILE *file;
 
+    // cuesheet info
+    float timestart;
+    float timeend;
+
     // input buffer, for MPEG data
     mad_timer_t timer;
     char input[READBUFFER];
@@ -67,6 +71,7 @@ typedef struct {
     int bitspersample;
     int channels;
     float duration;
+    float trackduration;
     int startoffset;
     int endoffset;
 #if 0
@@ -101,6 +106,7 @@ cmp3_scan_stream (buffer_t *buffer, float position);
 
 int
 cmp3_init (struct playItem_s *it) {
+    memset (&buffer, 0, sizeof (buffer));
     buffer.file = fopen (it->fname, "rb");
     buffer.startoffset = it->startoffset;
     buffer.endoffset = it->endoffset;
@@ -115,11 +121,21 @@ cmp3_init (struct playItem_s *it) {
 	mad_timer_reset(&buffer.timer);
 
     fseek (buffer.file, buffer.startoffset, SEEK_SET);
-    it->duration = cmp3_scan_stream (&buffer, -1); // scan entire stream, calc duration
+	if (it->timeend > 0) {
+        buffer.timestart = it->timestart;
+        buffer.timeend = it->timeend;
+        buffer.trackduration = it->duration;
+        printf ("duration: %f\n", it->duration);
+        // that comes from cue, don't calc duration, just seek and play
+        cmp3_scan_stream (&buffer, it->timestart);
+    }
+    else {
+        buffer.trackduration = it->duration = cmp3_scan_stream (&buffer, -1); // scan entire stream, calc duration
+        fseek (buffer.file, buffer.startoffset, SEEK_SET);
+    }
     cmp3.info.bitsPerSample = buffer.bitspersample;
     cmp3.info.samplesPerSecond = buffer.samplerate;
     cmp3.info.channels = buffer.channels;
-    fseek (buffer.file, buffer.startoffset, SEEK_SET);
 
 	mad_stream_init(&stream);
 	mad_frame_init(&frame);
@@ -598,11 +614,15 @@ cmp3_read (char *bytes, int size) {
         ret += cmp3_decode ();
         cmp3.info.readposition = (float)buffer.timer.seconds + (float)buffer.timer.fraction / MAD_TIMER_RESOLUTION;
     }
+    if (cmp3.info.readposition >= buffer.trackduration) {
+        return 0;
+    }
     return ret;
 }
 
 int
 cmp3_seek (float time) {
+    time += buffer.timestart;
     if (!buffer.file) {
         return -1;
     }
@@ -625,7 +645,11 @@ cmp3_seek (float time) {
         cmp3.info.readposition = 0;
         return -1;
     }
+    // fixup timer
     cmp3.info.readposition = (float)buffer.timer.seconds + (float)buffer.timer.fraction / MAD_TIMER_RESOLUTION;
+    cmp3.info.readposition -= buffer.timestart;
+    buffer.timer.seconds = (int)cmp3.info.readposition;
+    buffer.timer.fraction = (cmp3.info.readposition - buffer.timer.seconds) * MAD_TIMER_RESOLUTION;
     return 0;
 }
 
