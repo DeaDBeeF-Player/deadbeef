@@ -140,7 +140,7 @@ streamer_thread (uintptr_t ctx) {
         }
 
         streamer_lock ();
-        if (streambuffer_fill < STREAM_BUFFER_SIZE) {
+        if (streambuffer_fill < STREAM_BUFFER_SIZE && bytes_until_next_song == 0) {
             int sz = STREAM_BUFFER_SIZE - streambuffer_fill;
             int minsize = 4096;
             if (streambuffer_fill < 16384) {

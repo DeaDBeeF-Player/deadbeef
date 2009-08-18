@@ -71,7 +71,6 @@ typedef struct {
     int bitspersample;
     int channels;
     float duration;
-    float trackduration;
     int startoffset;
     int endoffset;
 #if 0
@@ -124,15 +123,14 @@ cmp3_init (struct playItem_s *it) {
 	if (it->timeend > 0) {
         buffer.timestart = it->timestart;
         buffer.timeend = it->timeend;
-        buffer.trackduration = it->duration;
-        printf ("duration: %f\n", it->duration);
         // that comes from cue, don't calc duration, just seek and play
         cmp3_scan_stream (&buffer, it->timestart);
+        mad_timer_reset(&buffer.timer);
     }
     else {
-        buffer.trackduration = it->duration = cmp3_scan_stream (&buffer, -1); // scan entire stream, calc duration
-        timestart = 0;
-        timeend = buffer.trackduration;
+        it->duration = cmp3_scan_stream (&buffer, -1); // scan entire stream, calc duration
+        buffer.timestart = 0;
+        buffer.timeend = it->duration;
         fseek (buffer.file, buffer.startoffset, SEEK_SET);
     }
     cmp3.info.bitsPerSample = buffer.bitspersample;
@@ -596,6 +594,9 @@ int
 cmp3_read (char *bytes, int size) {
     int result;
     int ret = 0;
+    if (cmp3.info.readposition >= (buffer.timeend - buffer.timestart)) {
+        return 0;
+    }
     if (buffer.cachefill > 0) {
         int sz = min (size, buffer.cachefill);
         memcpy (bytes, buffer.cache, sz);
@@ -616,7 +617,7 @@ cmp3_read (char *bytes, int size) {
         ret += cmp3_decode ();
         cmp3.info.readposition = (float)buffer.timer.seconds + (float)buffer.timer.fraction / MAD_TIMER_RESOLUTION;
     }
-    if (cmp3.info.readposition >= buffer.trackduration) {
+    if (cmp3.info.readposition >= (buffer.timeend - buffer.timestart)) {
         return 0;
     }
     return ret;
