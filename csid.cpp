@@ -505,6 +505,6 @@ codec_t csid = {
     csid_numvoices,
     csid_mutevoice,
     "stdsid",
-    { "sid", NULL }
+    { "SID", NULL }
 };
 

@@ -140,7 +140,7 @@ cgme_insert (playItem_t *after, const char *fname) {
                 else {
                     it->duration = (float)inf.length/1000.f;
                 }
-                it->filetype = "gme";
+                it->filetype = "GameMusic";
                 after = pl_insert_item (after, it);
             }
             else {
@@ -193,6 +193,6 @@ codec_t cgme = {
     .numvoices = cgme_numvoices,
     .mutevoice = cgme_mutevoice,
     .id = "stdgme",
-    .filetypes = { "gme", NULL }
+    .filetypes = { "GameMusic", NULL }
 };
 

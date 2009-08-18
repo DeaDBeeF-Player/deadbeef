@@ -353,7 +353,7 @@ streamer_ok_to_read (int len) {
     if (bytes_until_next_song > 0) {
         return 1;
     }
-    return streambuffer_fill >= len;
+    return streambuffer_fill >= (len*2);
 }
 
 int

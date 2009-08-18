@@ -405,14 +405,14 @@ cflac_insert (playItem_t *after, const char *fname) {
     }
 #endif
     FLAC__stream_decoder_delete(decoder);
-    it->filetype = "flac";
+    it->filetype = "FLAC";
     after = pl_insert_item (after, it);
     return after;
 }
 
 static const char * exts[]=
 {
-	"flac","ogg",NULL
+	"flac",NULL
 };
 
 const char **cflac_getexts (void) {
@@ -427,5 +427,5 @@ codec_t cflac = {
     .insert = cflac_insert,
     .getexts = cflac_getexts,
     .id = "stdflac",
-    .filetypes = { "flac", NULL }
+    .filetypes = { "FLAC", NULL }
 };

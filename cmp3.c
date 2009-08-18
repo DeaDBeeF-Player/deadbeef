@@ -1622,17 +1622,17 @@ cmp3_insert (playItem_t *after, const char *fname) {
     it->duration = buffer.duration;
     switch (buffer.layer) {
     case 1:
-        it->filetype = "mp1";
+        it->filetype = "MP1";
         break;
     case 2:
-        it->filetype = "mp2";
+        it->filetype = "MP2";
         break;
     case 3:
-        it->filetype = "mp3";
+        it->filetype = "MP3";
         break;
     }
 
-    playItem_t *cue_after = pl_insert_cue (after, fname, &cmp3, "mp3");
+    playItem_t *cue_after = pl_insert_cue (after, fname, &cmp3, it->filetype);
     if (cue_after) {
         cue_after->timeend = buffer.duration;
         cue_after->duration = cue_after->timeend - cue_after->timestart;
@@ -1663,7 +1663,7 @@ codec_t cmp3 = {
     .insert = cmp3_insert,
     .getexts = cmp3_getexts,
     .id = "stdmp3",
-    .filetypes = { "mp1", "mp2", "mp3", NULL }
+    .filetypes = { "MP1", "MP2", "MP3", NULL }
 };
 
 
