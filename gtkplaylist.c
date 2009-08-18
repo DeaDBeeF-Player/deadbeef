@@ -832,10 +832,7 @@ gtkpl_keypress (gtkplaylist_t *ps, int keyval, int state) {
     }
     else if (keyval == GDK_Delete) {
         pl_delete_selected ();
-        gtkpl_setup_scrollbar (ps);
-        gtkpl_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
-        gtkpl_expose (ps, 0, 0, widget->allocation.width, widget->allocation.height);
-        search_refresh ();
+        playlist_refresh ();
         return;
     }
     else if (keyval == GDK_Down && ps->row < (*ps->pcount) - 1) {
