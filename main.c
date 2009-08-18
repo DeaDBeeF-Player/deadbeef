@@ -350,6 +350,7 @@ player_thread (uintptr_t ctx) {
                 gtkpl_add_files (&main_playlist, (GSList *)ctx);
                 break;
             case M_OPENFILES:
+                p_stop ();
                 gtkpl_add_files (&main_playlist, (GSList *)ctx);
                 gtkpl_playsong (&main_playlist);
                 break;

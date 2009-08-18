@@ -342,6 +342,10 @@ palsa_thread (uintptr_t context) {
 
 static void
 palsa_callback (char *stream, int len) {
+    if (streamer_get_fill () < len) {
+        memset (stream, 0, len);
+        return;
+    }
     int bytesread = streamer_read (stream, len);
     int ivolume = volume * 1000;
     for (int i = 0; i < bytesread/2; i++) {

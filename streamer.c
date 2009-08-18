@@ -342,6 +342,16 @@ streamer_read (char *bytes, int size) {
 }
 
 int
-streamer_get_fill_level (void) {
-    return streambuffer_fill / (STREAM_BUFFER_SIZE / 100);
+streamer_get_fill (void) {
+    return streambuffer_fill;
+}
+
+int
+streamer_is_buffering (void) {
+    if (streambuffer_fill < 16384) {
+        return 1;
+    }
+    else {
+        return 0;
+    }
 }
