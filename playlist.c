@@ -144,7 +144,7 @@ pl_insert_cue (playItem_t *after, const char *fname, codec_t *codec, const char 
     strcpy (cuename+len, ".cue");
     FILE *fp = fopen (cuename, "rt");
     if (!fp) {
-        char *ptr = cuename + len;
+        char *ptr = cuename + len-1;
         while (ptr >= cuename && *ptr != '.') {
             ptr--;
         }
