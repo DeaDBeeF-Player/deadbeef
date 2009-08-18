@@ -310,7 +310,7 @@ gtkpl_draw_pl_row (gtkplaylist_t *ps, cairo_t *cr, int row, playItem_t *it) {
     }
 	int width, height;
 	gdk_drawable_get_size (ps->backbuf, &width, &height);
-    if (it == playlist_current_ptr && ps->colwidths[0] > 0 && !p_isstopped ()) {
+    if (it == playlist_current_ptr && ps->colwidths[0] > 0/* && !p_isstopped ()*/) {
         cairo_surface_t *surf = p_ispaused () ? pause16_pixmap : play16_pixmap;
         cairo_set_source_surface (cr, surf, ps->colwidths[0]/2-8, row * rowheight - ps->scrollpos * rowheight);
         cairo_rectangle (cr, ps->colwidths[0]/2-8, row * rowheight - ps->scrollpos * rowheight, 16, 16);
