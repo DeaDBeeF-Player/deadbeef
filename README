@@ -1,0 +1,12 @@
+dependencies:
+    libmad
+    libogg
+    libvorbis
+    libvorbisfile
+    gtk+ 2.x (and gthread, and glib)
+    libsamplerate
+    libalsa
+
+if you want to build from git - install automake, and run ./bootstrap.sh before compiling
+also it's convenient to use jam to build instead of ./configure && make && make install
+

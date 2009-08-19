@@ -32,7 +32,6 @@
 #include "messages.h"
 #include "playback.h"
 
-#include "cwav.h"
 #include "cvorbis.h"
 #include "cdumb.h"
 #include "cmp3.h"
