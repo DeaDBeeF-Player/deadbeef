@@ -1,0 +1,18 @@
+/* config.h.in.  Generated from configure.in by autoheader.  */
+
+/* Define to 1 if you have the `FLAC' library (-lFLAC). */
+#undef HAVE_LIBFLAC
+
+/* Name of package */
+#undef PACKAGE
+
+/* Define to the version of this package. */
+#undef PACKAGE_VERSION
+
+/* Define to 1 if you have the ANSI C header files. */
+#undef STDC_HEADERS
+
+/* Version number of package */
+#undef VERSION
+
+#undef PREFIX

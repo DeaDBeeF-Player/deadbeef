@@ -2,11 +2,6 @@
 
 SUBDIRS = gme/Game_Music_Emu-0.5.2/gme libsidplay2/sidplay-libs-2.1.0 dumb
 
-#EXTRA_DIST = \
-#	autogen.sh \
-#	deadbeef.glade \
-#	deadbeef.gladep
-
 bin_PROGRAMS = deadbeef
 
 deadbeef_SOURCES = callbacks.c csid.cpp interface.c playlist.c streamer.c\

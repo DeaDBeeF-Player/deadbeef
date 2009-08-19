@@ -448,8 +448,8 @@ gtkpl_configure (gtkplaylist_t *ps) {
     ps->backbuf = gdk_pixmap_new (widget->window, widget->allocation.width, widget->allocation.height, -1);
 
     if (!play16_pixmap) {
-        play16_pixmap = cairo_image_surface_create_from_png ("/usr/share/deadbeef/images/play_16.png");
-        pause16_pixmap = cairo_image_surface_create_from_png ("/usr/share/deadbeef/images/pause_16.png");
+        play16_pixmap = cairo_image_surface_create_from_png (PREFIX"/share/deadbeef/pixmaps/play_16.png");
+        pause16_pixmap = cairo_image_surface_create_from_png (PREFIX"/share/deadbeef/pixmaps/pause_16.png");
     }
 
     gtkpl_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);

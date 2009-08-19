@@ -30,6 +30,7 @@ GtkWidget*
 create_mainwin (void)
 {
   GtkWidget *mainwin;
+  GdkPixbuf *mainwin_icon_pixbuf;
   GtkWidget *vbox1;
   GtkWidget *menubar1;
   GtkWidget *menuitem1;
@@ -97,6 +98,12 @@ create_mainwin (void)
   gtk_widget_set_events (mainwin, GDK_KEY_PRESS_MASK);
   gtk_window_set_title (GTK_WINDOW (mainwin), "DeaDBeeF");
   gtk_window_set_default_size (GTK_WINDOW (mainwin), 500, 300);
+  mainwin_icon_pixbuf = create_pixbuf ("play_24.png");
+  if (mainwin_icon_pixbuf)
+    {
+      gtk_window_set_icon (GTK_WINDOW (mainwin), mainwin_icon_pixbuf);
+      gdk_pixbuf_unref (mainwin_icon_pixbuf);
+    }
 
   vbox1 = gtk_vbox_new (FALSE, 0);
   gtk_widget_show (vbox1);

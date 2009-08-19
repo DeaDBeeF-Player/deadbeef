@@ -506,7 +506,7 @@ main (int argc, char *argv[]) {
     thread_start (player_thread, 0);
 
     g_thread_init (NULL);
-    add_pixmap_directory ("/usr/share/deadbeef/images");
+    add_pixmap_directory (PREFIX "/share/deadbeef/pixmaps");
     gdk_threads_init ();
     gdk_threads_enter ();
     gtk_set_locale ();
