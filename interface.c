@@ -30,7 +30,6 @@ GtkWidget*
 create_mainwin (void)
 {
   GtkWidget *mainwin;
-  GdkPixbuf *mainwin_icon_pixbuf;
   GtkWidget *vbox1;
   GtkWidget *menubar1;
   GtkWidget *menuitem1;
@@ -98,12 +97,6 @@ create_mainwin (void)
   gtk_widget_set_events (mainwin, GDK_KEY_PRESS_MASK);
   gtk_window_set_title (GTK_WINDOW (mainwin), "DeaDBeeF");
   gtk_window_set_default_size (GTK_WINDOW (mainwin), 500, 300);
-  mainwin_icon_pixbuf = create_pixbuf ("play_24.png");
-  if (mainwin_icon_pixbuf)
-    {
-      gtk_window_set_icon (GTK_WINDOW (mainwin), mainwin_icon_pixbuf);
-      gdk_pixbuf_unref (mainwin_icon_pixbuf);
-    }
 
   vbox1 = gtk_vbox_new (FALSE, 0);
   gtk_widget_show (vbox1);
@@ -212,7 +205,6 @@ create_mainwin (void)
   order_linear_group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (order_random));
   gtk_widget_show (order_random);
   gtk_container_add (GTK_CONTAINER (order1_menu), order_random);
-  gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (order_random), TRUE);
 
   looping1 = gtk_menu_item_new_with_mnemonic ("Looping");
   gtk_widget_show (looping1);
@@ -231,13 +223,11 @@ create_mainwin (void)
   loop_all_group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (loop_single));
   gtk_widget_show (loop_single);
   gtk_container_add (GTK_CONTAINER (looping1_menu), loop_single);
-  gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (loop_single), TRUE);
 
   loop_disable = gtk_radio_menu_item_new_with_mnemonic (loop_all_group, "Don't Loop");
   loop_all_group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (loop_disable));
   gtk_widget_show (loop_disable);
   gtk_container_add (GTK_CONTAINER (looping1_menu), loop_disable);
-  gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (loop_disable), TRUE);
 
   menuitem4 = gtk_menu_item_new_with_mnemonic ("_Help");
   gtk_widget_show (menuitem4);
