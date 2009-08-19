@@ -849,6 +849,10 @@ pl_add_meta (playItem_t *it, const char *key, const char *value) {
 
 void
 pl_format_item_display_name (playItem_t *it, char *str, int len) {
+    const char *artist = pl_find_meta (it, "artist");
+    const char *title = pl_find_meta (it, "title");
+    snprintf (str, len, "%s - %s", artist, title);
+#if 0
     // artist - title
     const char *track = pl_find_meta (it, "track");
     const char *artist = pl_find_meta (it, "artist");
@@ -891,6 +895,7 @@ pl_format_item_display_name (playItem_t *it, char *str, int len) {
         strncpy (str, pname, pext-pname);
         str[pext-pname] = 0;
     }
+#endif
 }
 
 const char *
