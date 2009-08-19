@@ -1,0 +1,33 @@
+dnl Process this file with autoconf to produce a configure script.
+AC_INIT
+AC_CONFIG_HEADER(config.h)
+
+PACKAGE="deadbeef"
+VERSION="0.1.0"
+
+AM_INIT_AUTOMAKE($PACKAGE,$VERSION)
+
+dnl AC_ISC_POSIX
+AC_PROG_CC
+AC_PROG_CXX
+AC_STDC_HEADERS
+dnl AC_HEADER_STDC
+AC_PROG_INSTALL
+dnl AC_PROG_LIBTOOL
+AC_PROG_RANLIB
+
+CFLAGS="$CFLAGS -D_GNU_SOURCE -O2 -DHAVE_UNIX"
+CPPFLAGS="$CFLAGS"
+
+PKG_CHECK_MODULES(DEPS, gtk+-2.0 gthread-2.0 glib-2.0 vorbis vorbisfile mad samplerate alsa)
+AC_CHECK_LIB([FLAC], [main],,AC_MSG_ERROR([flac not found]))
+AC_SUBST(DEPS_CFLAGS)
+AC_SUBST(DEPS_LIBS)
+
+AC_OUTPUT([
+Makefile
+gme/Game_Music_Emu-0.5.2/gme/Makefile
+libsidplay2/sidplay-libs-2.1.0/Makefile
+dumb/Makefile
+])
+
