@@ -54,6 +54,15 @@ GtkWidget *searchwin;
 GtkStatusIcon *trayicon;
 GtkWidget *traymenu;
 
+void
+set_tray_tooltip (const char *text) {
+#if (GTK_MINOR_VERSION < 16)
+        gtk_status_icon_set_tooltip (trayicon, text);
+#else
+        gtk_status_icon_set_tooltip_text (trayicon, text);
+#endif
+}
+
 // playlist configuration structures
 gtkplaylist_t main_playlist;
 gtkplaylist_t search_playlist;
@@ -288,11 +297,11 @@ player_thread (uintptr_t ctx) {
                         pl_format_item_display_name (it, dname, 512);
                         snprintf (str, 600, "DeaDBeeF - %s", dname);
                         gtk_window_set_title (GTK_WINDOW (mainwin), str);
-                        gtk_status_icon_set_tooltip_text (GTK_STATUS_ICON (trayicon), str);
+                        set_tray_tooltip (str);
                     }
                     else {
                         gtk_window_set_title (GTK_WINDOW (mainwin), "DeaDBeeF");
-                        gtk_status_icon_set_tooltip_text (GTK_STATUS_ICON (trayicon), "DeaDBeeF");
+                        set_tray_tooltip ("DeaDBeeF");
                     }
                 }
                 // update playlist view
@@ -516,7 +525,7 @@ main (int argc, char *argv[]) {
     traymenu = create_traymenu ();
     GdkPixbuf *trayicon_pixbuf = create_pixbuf ("play_24.png");
     trayicon = gtk_status_icon_new_from_pixbuf (trayicon_pixbuf);
-    gtk_status_icon_set_tooltip_text (trayicon, "DeaDBeeF");
+    set_tray_tooltip ("DeaDBeeF");
     //gtk_status_icon_set_title (GTK_STATUS_ICON (trayicon), "DeaDBeeF");
     g_signal_connect ((gpointer)trayicon, "scroll_event", G_CALLBACK (on_trayicon_scroll_event), NULL);
     g_signal_connect ((gpointer)trayicon, "button_press_event", G_CALLBACK (on_trayicon_button_press_event), NULL);
