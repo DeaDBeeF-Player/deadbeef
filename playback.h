@@ -27,7 +27,6 @@
 #define p_ispaused psdl_ispaused
 #define p_pause psdl_pause
 #define p_unpause psdl_unpause
-#define p_set_volume psdl_set_volume
 #define p_get_rate psdl_get_rate
 #else
 #include "palsa.h"
@@ -38,8 +37,6 @@
 #define p_ispaused palsa_ispaused
 #define p_pause palsa_pause
 #define p_unpause palsa_unpause
-#define p_set_volume palsa_set_volume
-#define p_get_volume palsa_get_volume
 #define p_get_rate palsa_get_rate
 #define p_isstopped palsa_isstopped
 #endif

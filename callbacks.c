@@ -41,6 +41,7 @@
 #include "search.h"
 #include "streamer.h"
 #include "progress.h"
+#include "volume.h"
 
 #include "cvorbis.h"
 #include "cdumb.h"
@@ -993,7 +994,7 @@ volumebar_draw (GtkWidget *widget) {
     }
 
     int n = widget->allocation.width / 4;
-    float vol = p_get_volume () * n;
+    float vol = (60.f + volume_get_db ()) / 60.f * n;
     float h = 16;
     for (int i = 0; i < n; i++) {
         float iy = (float)i + 3;
@@ -1045,14 +1046,14 @@ on_volumebar_motion_notify_event       (GtkWidget       *widget,
                                         gpointer         user_data)
 {
     if (event->state & GDK_BUTTON1_MASK) {
-        float volume = event->x / widget->allocation.width;
-        if (volume < 0) {
+        float volume = event->x / widget->allocation.width * 60.f - 60.f;
+        if (volume > 0) {
             volume = 0;
         }
-        if (volume > 1) {
-            volume = 1;
+        if (volume < -60) {
+            volume = -60;
         }
-        p_set_volume (volume);
+        volume_set_db (volume);
         volumebar_draw (widget);
         volumebar_expose (widget, 0, 0, widget->allocation.width, widget->allocation.height);
     }
@@ -1064,14 +1065,14 @@ on_volumebar_button_press_event        (GtkWidget       *widget,
                                         GdkEventButton  *event,
                                         gpointer         user_data)
 {
-    float volume = event->x / widget->allocation.width;
-    if (volume < 0) {
+    float volume = event->x / widget->allocation.width * 60.f - 60.f;
+    if (volume < -60) {
+        volume = -60;
+    }
+    if (volume > 0) {
         volume = 0;
     }
-    if (volume > 1) {
-        volume = 1;
-    }
-    p_set_volume (volume);
+    volume_set_db (volume);
     volumebar_draw (widget);
     volumebar_expose (widget, 0, 0, widget->allocation.width, widget->allocation.height);
     return FALSE;
@@ -1107,20 +1108,20 @@ on_volumebar_scroll_event              (GtkWidget       *widget,
                                         GdkEventScroll        *event,
                                         gpointer         user_data)
 {
-    float vol = p_get_volume ();
+    float vol = volume_get_db ();
     if (event->direction == GDK_SCROLL_UP || event->direction == GDK_SCROLL_RIGHT) {
-        vol += 0.1f;
+        vol += 1;
     }
     else if (event->direction == GDK_SCROLL_DOWN || event->direction == GDK_SCROLL_LEFT) {
-        vol -= 0.1f;
+        vol -= 1;
     }
-    if (vol < 0) {
+    if (vol > 0) {
         vol = 0;
     }
-    else if (vol > 1) {
-        vol = 1;
+    else if (vol < -60) {
+        vol = -60;
     }
-    p_set_volume (vol);
+    volume_set_db (vol);
     GtkWidget *volumebar = lookup_widget (mainwin, "volumebar");
     volumebar_draw (volumebar);
     volumebar_expose (volumebar, 0, 0, volumebar->allocation.width, volumebar->allocation.height);

@@ -27,6 +27,9 @@
 #include <sys/un.h>
 #include <sys/fcntl.h>
 #include <sys/errno.h>
+#ifdef HAVE_CONFIG_H
+#  include <config.h>
+#endif
 #include "interface.h"
 #include "callbacks.h"
 #include "support.h"
@@ -42,6 +45,11 @@
 #include "search.h"
 #include "progress.h"
 #include "conf.h"
+#include "volume.h"
+
+#ifndef PREFIX
+#error PREFIX must be defined
+#endif
 
 // some common global variables
 char confdir[1024]; // $HOME/.config
@@ -385,20 +393,20 @@ on_trayicon_scroll_event               (GtkWidget       *widget,
                                         GdkEventScroll  *event,
                                         gpointer         user_data)
 {
-    float vol = p_get_volume ();
+    float vol = volume_get_db ();
     if (event->direction == GDK_SCROLL_UP || event->direction == GDK_SCROLL_RIGHT) {
-        vol += 0.1f;
+        vol += 1;
     }
     else if (event->direction == GDK_SCROLL_DOWN || event->direction == GDK_SCROLL_LEFT) {
-        vol -= 0.1f;
+        vol -= 1;
     }
-    if (vol < 0) {
+    if (vol > 0) {
         vol = 0;
     }
-    else if (vol > 1) {
-        vol = 1;
+    else if (vol < -60) {
+        vol = -60;
     }
-    p_set_volume (vol);
+    volume_set_db (vol);
     GtkWidget *volumebar = lookup_widget (mainwin, "volumebar");
     volumebar_draw (volumebar);
     volumebar_expose (volumebar, 0, 0, volumebar->allocation.width, volumebar->allocation.height);

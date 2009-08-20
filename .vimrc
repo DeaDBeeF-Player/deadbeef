@@ -1,2 +1,2 @@
-"set makeprg=jam
+set makeprg=jam
 

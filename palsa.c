@@ -23,6 +23,7 @@
 #include "threading.h"
 #include "streamer.h"
 #include "conf.h"
+#include "volume.h"
 
 static inline void
 le_int16 (int16_t in, char *out) {
@@ -39,7 +40,6 @@ le_int16 (int16_t in, char *out) {
 static snd_pcm_t *audio;
 static int16_t *samplebuffer;
 static int bufsize = 4096*4;
-static float volume = 1;
 static int alsa_terminate;
 static int alsa_rate = 48000;
 static int state; // 0 = stopped, 1 = playing, 2 = pause
@@ -269,16 +269,6 @@ palsa_unpause (void) {
     return 0;
 }
 
-void
-palsa_set_volume (float vol) {
-    volume = vol;
-}
-
-float
-palsa_get_volume (void) {
-    return volume;
-}
-
 int
 palsa_get_rate (void) {
     return alsa_rate;
@@ -347,7 +337,7 @@ palsa_callback (char *stream, int len) {
         return;
     }
     int bytesread = streamer_read (stream, len);
-    int ivolume = volume * 1000;
+    int ivolume = volume_get_amp () * 1000;
     for (int i = 0; i < bytesread/2; i++) {
         int16_t sample = (int16_t)(((int32_t)(((int16_t*)stream)[i])) * ivolume / 1000);
         le_int16 (sample, (char*)&(((int16_t*)stream)[i]));
