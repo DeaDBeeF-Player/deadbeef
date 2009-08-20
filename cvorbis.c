@@ -60,7 +60,7 @@ cvorbis_init (struct playItem_s *it) {
     cvorbis.info.channels = vi->channels;
     cvorbis.info.samplesPerSecond = vi->rate;
     cvorbis.info.readposition = 0;
-    if (timeend > 0) {
+    if (it->timeend > 0) {
         timestart = it->timestart;
         timeend = it->timeend;
         cvorbis_seek (0);
@@ -69,7 +69,6 @@ cvorbis_init (struct playItem_s *it) {
         timestart = 0;
         timeend = it->duration;
     }
-//    printf ("vorbis info: bps: %d, size: %d, chan: %d, rate: %d, dur: %f\n", cvorbis.info.bitsPerSample, cvorbis.info.dataSize, cvorbis.info.channels, cvorbis.info.samplesPerSecond, cvorbis.info.duration);
     return 0;
 }
 
