@@ -4,7 +4,7 @@ SubInclude ROOT dumb ;
 SubInclude ROOT sid sidplay-libs-2.1.0 ;
 SubDir ROOT ;
 CCFLAGS += -DPREFIX=\\\"/usr\\\" ;
-CCFLAGS += -DVERSION=\\\"0.1.0\\\" ;
+CCFLAGS += -DVERSION=\\\"0.1.1-dev\\\" ;
 CCFLAGS += -D_GNU_SOURCE ;
 CCFLAGS += -std=c99 ;
 OPTIM += -O2 ;
