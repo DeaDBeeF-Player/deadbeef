@@ -1,10 +1,13 @@
 noinst_LIBRARIES = libdumb.a
 
-dumbpath=@top_srcdir@/dumb
+dumbpath=@top_srcdir@/dumb/dumb-kode54
 
-AM_CFLAGS = $(CFLAGS) -I$(dumbpath)/dumb-kode54/include
+EXTRA_DIST = $(dumbpath)/readme.txt $(dumbpath)/ChangeLog $(dumbpath)/licence.txt $(dumbpath)/release.txt $(dumbpath)/todo.txt
 
-libdumb_a_SOURCES = dumb-kode54/src/it/readam.c\
+AM_CFLAGS = $(CFLAGS) -I$(dumbpath)/include
+
+libdumb_a_SOURCES =\
+dumb-kode54/src/it/readam.c\
 dumb-kode54/src/it/readstm.c\
 dumb-kode54/src/it/loads3m.c\
 dumb-kode54/src/it/loadxm.c\

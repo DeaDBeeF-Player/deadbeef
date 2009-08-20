@@ -2,7 +2,7 @@ noinst_LIBRARIES = libsidplay2.a
 
 sidpath=@top_srcdir@/sid/sidplay-libs-2.1.0
 
-dist_pkgdata_SIDFILES = \
+EXTRA_DIST = \
 	$(sidpath)/libsidutils/README $(sidpath)/libsidplay/README $(sidpath)/resid/README\
 	$(sidpath)/libsidutils/COPYING $(sidpath)/libsidplay/COPYING $(sidpath)/resid/COPYING\
 	$(sidpath)/libsidutils/AUTHORS $(sidpath)/libsidplay/AUTHORS $(sidpath)/resid/AUTHORS

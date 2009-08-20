@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-SUBDIRS = gme/Game_Music_Emu-0.5.2/gme sid/sidplay-libs-2.1.0 dumb pixmaps
+SUBDIRS = gme/Game_Music_Emu-0.5.2 gme/Game_Music_Emu-0.5.2/gme sid/sidplay-libs-2.1.0 dumb pixmaps
 
 dumbpath=@top_srcdir@/dumb
 sidpath=@top_srcdir@/sid/sidplay-libs-2.1.0
