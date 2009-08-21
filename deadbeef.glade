@@ -14,7 +14,6 @@
   <property name="default_height">300</property>
   <property name="resizable">True</property>
   <property name="destroy_with_parent">False</property>
-  <property name="icon">play_24.png</property>
   <property name="icon_name"></property>
   <property name="decorated">True</property>
   <property name="skip_taskbar_hint">False</property>
@@ -213,6 +212,17 @@
 			      <property name="use_underline">True</property>
 			      <property name="active">True</property>
 			      <signal name="activate" handler="on_order_linear_activate" last_modification_time="Sat, 08 Aug 2009 12:26:33 GMT"/>
+			    </widget>
+			  </child>
+
+			  <child>
+			    <widget class="GtkRadioMenuItem" id="order_shuffle">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">Shuffle</property>
+			      <property name="use_underline">True</property>
+			      <property name="active">False</property>
+			      <property name="group">order_linear</property>
+			      <signal name="activate" handler="on_order_shuffle_activate" last_modification_time="Fri, 21 Aug 2009 16:46:02 GMT"/>
 			    </widget>
 			  </child>
 

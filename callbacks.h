@@ -482,3 +482,8 @@ gboolean
 on_volumebar_scroll_event              (GtkWidget       *widget,
                                         GdkEventScroll        *event,
                                         gpointer         user_data);
+
+
+void
+on_order_shuffle_activate              (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
