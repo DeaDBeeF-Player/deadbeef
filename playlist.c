@@ -1191,6 +1191,7 @@ pl_select_all (void) {
 
 void
 pl_shuffle_item (playItem_t *it, int cnt) {
+#if 0
     int idx = (float)rand ()/RAND_MAX * (cnt-1);
     playItem_t *prev = NULL;
 
@@ -1214,10 +1215,12 @@ pl_shuffle_item (playItem_t *it, int cnt) {
     if (!it->next[PL_SHUFFLE]) {
         playlist_tail[PL_SHUFFLE] = it;
     }
+#endif
 }
 
 void
 pl_reshuffle (void) {
+#if 0
     playlist_head[PL_SHUFFLE] = playlist_tail[PL_SHUFFLE] = NULL;
     for (playItem_t *it = playlist_head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
         it->prev[PL_SHUFFLE] = it->next[PL_SHUFFLE] = NULL;
@@ -1226,4 +1229,5 @@ pl_reshuffle (void) {
     for (playItem_t *it = playlist_head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
         pl_shuffle_item (it, ++i);
     }
+#endif
 }
