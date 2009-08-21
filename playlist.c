@@ -534,38 +534,9 @@ pl_insert_item (playItem_t *after, playItem_t *it) {
         }
     }
     pl_count++;
-    int idx = (float)rand ()/RAND_MAX * pl_count;
 
-#if 0
     // shuffle
-    playItem_t *prev = NULL;
-    if (!playlist_head[PL_SHUFFLE]) {
-        playlist_head[PL_SHUFFLE] = playlist_tail[PL_SHUFFLE] = it;
-    }
-    else if (idx == pl_count-1) {
-        // append to end
-        assert (playlist_tail[PL_SHUFFLE]);
-        playlist_tail[PL_SHUFFLE]->next[PL_SHUFFLE] = it;
-        playlist_tail[PL_SHUFFLE] = it;
-    }
-    else {
-        for (playItem_t *sh = playlist_head[PL_SHUFFLE]; sh; sh = sh->next[PL_SHUFFLE], idx--) {
-            if (!idx) {
-                if (prev) {
-                    prev->next[PL_SHUFFLE] = it;
-                }
-                else {
-                    playlist_head[PL_SHUFFLE] = it;
-                }
-                it->next[PL_SHUFFLE] = sh;
-                it->prev[PL_SHUFFLE] = sh->prev[PL_SHUFFLE];
-                sh->prev[PL_SHUFFLE] = it;
-                break;
-            }
-            prev = sh;
-        }
-    }
-#endif
+    pl_shuffle_item (it, pl_count);
 
     return it;
 }
@@ -673,6 +644,7 @@ pl_prevsong (void) {
             playItem_t *it = playlist_current_ptr->prev[PL_SHUFFLE];
             if (!it) {
                 if (pl_loop_mode == 0) {
+                    pl_reshuffle ();
                     it = playlist_tail[PL_SHUFFLE];
                 }
             }
@@ -728,6 +700,7 @@ pl_nextsong (int reason) {
             playItem_t *it = playlist_current_ptr->next[PL_SHUFFLE];
             if (!it) {
                 if (pl_loop_mode == 0) { // loop
+                    pl_reshuffle ();
                     it = playlist_head[PL_SHUFFLE];
                 }
                 else {
@@ -1212,5 +1185,45 @@ void
 pl_select_all (void) {
     for (playItem_t *it = playlist_head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
         it->selected = 1;
+    }
+}
+
+
+void
+pl_shuffle_item (playItem_t *it, int cnt) {
+    int idx = (float)rand ()/RAND_MAX * (cnt-1);
+    playItem_t *prev = NULL;
+
+    if (idx > 0) {
+        for (prev = playlist_head[PL_SHUFFLE]; idx > 0 && prev; prev = prev->next[PL_SHUFFLE], idx--);
+    }
+
+    if (!prev) {
+        it->next[PL_SHUFFLE] = playlist_head[PL_SHUFFLE];
+        playlist_head[PL_SHUFFLE] = it;
+    }
+    else {
+        playItem_t *next = prev->next[PL_SHUFFLE];
+        prev->next[PL_SHUFFLE] = it;
+        it->prev[PL_SHUFFLE] = prev;
+        if (next) {
+            next->prev[PL_SHUFFLE] = it;
+        }
+        it->next[PL_SHUFFLE] = next;
+    }
+    if (!it->next[PL_SHUFFLE]) {
+        playlist_tail[PL_SHUFFLE] = it;
+    }
+}
+
+void
+pl_reshuffle (void) {
+    playlist_head[PL_SHUFFLE] = playlist_tail[PL_SHUFFLE] = NULL;
+    for (playItem_t *it = playlist_head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
+        it->prev[PL_SHUFFLE] = it->next[PL_SHUFFLE] = NULL;
+    }
+    int i = 0;
+    for (playItem_t *it = playlist_head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
+        pl_shuffle_item (it, ++i);
     }
 }

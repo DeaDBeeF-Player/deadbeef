@@ -305,7 +305,7 @@ gtkpl_draw_pl_row_back (gtkplaylist_t *ps, cairo_t *cr, int row, playItem_t *it)
 void
 gtkpl_draw_pl_row (gtkplaylist_t *ps, cairo_t *cr, int row, playItem_t *it) {
     if (row-ps->scrollpos >= ps->nvisiblerows || row-ps->scrollpos < 0) {
-        fprintf (stderr, "WARNING: attempt to draw row outside of screen bounds (%d)\n", row-ps->scrollpos);
+//        fprintf (stderr, "WARNING: attempt to draw row outside of screen bounds (%d)\n", row-ps->scrollpos);
         return;
     }
 	int width, height;

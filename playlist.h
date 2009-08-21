@@ -142,4 +142,10 @@ pl_load (const char *fname);
 void
 pl_select_all (void);
 
+void
+pl_shuffle_item (playItem_t *it, int cnt);
+
+void
+pl_reshuffle (void);
+
 #endif // __PLAYLIST_H
