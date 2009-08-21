@@ -3,6 +3,7 @@
 # for secondary soundcard enter it's name as reported by "aplay -L"
 # e.g. default:CARD=I82801DBICH4
 # or   default:CARD=Audigy2
+# or   default:CARD=Xio
 alsa_soundcard default
 
 # mixing frequency (samplerate)
@@ -19,6 +20,9 @@ samplerate 48000
 # 3 - sinc_zero_order_hold
 # 4 - linear
 # sinc_fastest is a good balance between performance and quality.
+# also, it gives best result on udial resampling test
+# get it here, and check for yourself
+# http://www.hydrogenaudio.org/forums/index.php?s=&showtopic=9772&view=findpost&p=98252
 src_quality 2
 
 # those next 2 are disabled by default, cause most people probably don't have HVSC
