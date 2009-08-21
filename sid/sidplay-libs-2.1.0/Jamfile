@@ -6,17 +6,17 @@ SubDirHdrs $(ROOT)/sid/sidplay-libs-2.1.0 ;
 SubDirHdrs $(ROOT)/sid/sidplay-libs-2.1.0/libsidplay ;
 SubDirHdrs $(ROOT)/sid/sidplay-libs-2.1.0/libsidplay/include ;
 SubDirHdrs $(ROOT)/sid/sidplay-libs-2.1.0/libsidplay/include/sidplay ;
-SubDirHdrs $(ROOT)/sid/sidplay-libs-2.1.0/libsidutils/include/sidplay/utils ;
+# SubDirHdrs $(ROOT)/sid/sidplay-libs-2.1.0/libsidutils/include/sidplay/utils ;
 SubDirHdrs $(ROOT)/sid/sidplay-libs-2.1.0/builders/resid-builder/include/sidplay/builders ;
 SubDirHdrs $(ROOT)/sid/sidplay-libs-2.1.0/builders/resid-builder/include/ ;
 
 Library libsidplay :
-libsidutils/src/SidDatabase.cpp
-libsidutils/src/SidFilter.cpp
-libsidutils/src/SidTuneMod.cpp
-libsidutils/src/MD5/MD5.cpp
-libsidutils/src/SidUsage.cpp
-libsidutils/src/ini/ini.cpp
+# libsidutils/src/SidDatabase.cpp
+# libsidutils/src/SidFilter.cpp
+# libsidutils/src/SidTuneMod.cpp
+# libsidutils/src/MD5/MD5.cpp
+# libsidutils/src/SidUsage.cpp
+# libsidutils/src/ini/ini.cpp
 libsidplay/src/mixer.cpp
 libsidplay/src/player.cpp
 libsidplay/src/mos656x/mos656x.cpp

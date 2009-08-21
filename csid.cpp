@@ -21,6 +21,8 @@
 #include <iconv.h>
 #include "sidplay/sidplay2.h"
 #include "sidplay/builders/resid.h"
+// #include "md5/MD5.h" // include those 2 files if you want to use md5 impl from libsidplay2
+// #include "sidplay/sidendian.h"
 extern "C" {
 #include "codec.h"
 #include "playlist.h"
@@ -32,7 +34,7 @@ extern "C" {
 }
 
 static inline void
-le_int16 (int16_t in, char *out) {
+le_int16 (int16_t in, unsigned char *out) {
     char *pin = (char *)&in;
 #if !BIGENDIAN
     out[0] = pin[0];
@@ -238,30 +240,6 @@ csid_init (struct playItem_s *it) {
     resid->filter (true);
     resid->sampling (p_get_rate ());
     tune = new SidTune (it->fname);
-#if 0
-    // calc md5
-    uint8_t sig[16];
-    md5_t md5;
-    md5_init (&md5);
-    md5_process (&md5, (const char *)tune->cache.get () + tune->fileOffset, tune->getInfo ().c64dataLen);
-    char tmp[2];
-    le_int16 (tune->getInfo ().initAddr, tmp);
-    md5_process (&md5, tmp, 2);
-    le_int16 (tune->getInfo ().playAddr, tmp);
-    md5_process (&md5, tmp, 2);
-    le_int16 (tune->getInfo ().songs, tmp);
-    md5_process (&md5, tmp, 2);
-    for (int s = 1; s <= tune->getInfo ().songs; s++)
-    {
-        tune->selectSong (s);
-        // songspeed is uint8_t, so no need for byteswap
-        md5_process (&md5, &tune->getInfo ().songSpeed, 1);
-    }
-    if (tune->getInfo ().clockSpeed == SIDTUNE_CLOCK_NTSC) {
-        md5_process (&md5, &tune->getInfo ().clockSpeed, sizeof (tune->getInfo ().clockSpeed));
-    }
-    md5_finish (&md5, sig);
-#endif
 
     tune->selectSong (it->tracknum+1);
     csid.info.channels = tune->isStereo () ? 2 : 1;
@@ -369,10 +347,10 @@ csid_insert (playItem_t *after, const char *fname) {
     tune = new SidTune (fname);
     int tunes = tune->getInfo ().songs;
     uint8_t sig[16];
+    unsigned char tmp[2];
     md5_t md5;
     md5_init (&md5);
     md5_process (&md5, (const char *)tune->cache.get () + tune->fileOffset, tune->getInfo ().c64dataLen);
-    char tmp[2];
     le_int16 (tune->getInfo ().initAddr, tmp);
     md5_process (&md5, tmp, 2);
     le_int16 (tune->getInfo ().playAddr, tmp);
@@ -389,6 +367,38 @@ csid_insert (playItem_t *after, const char *fname) {
         md5_process (&md5, &tune->getInfo ().clockSpeed, sizeof (tune->getInfo ().clockSpeed));
     }
     md5_finish (&md5, sig);
+#if 0
+    // md5 calc from libsidplay2
+    MD5 myMD5;
+    myMD5.append ((const char *)tune->cache.get() + tune->fileOffset, tune->getInfo ().c64dataLen);
+    // Include INIT and PLAY address.
+    endian_little16 (tmp,tune->getInfo ().initAddr);
+    myMD5.append    (tmp,sizeof(tmp));
+    endian_little16 (tmp,tune->getInfo ().playAddr);
+    myMD5.append    (tmp,sizeof(tmp));
+    // Include number of songs.
+    endian_little16 (tmp,tune->getInfo ().songs);
+    myMD5.append    (tmp,sizeof(tmp));
+    {   // Include song speed for each song.
+        //uint_least16_t currentSong = tune->getInfo ().currentSong;
+        for (uint_least16_t s = 1; s <= tune->getInfo ().songs; s++)
+        {
+            tune->selectSong (s);
+            myMD5.append (&tune->getInfo ().songSpeed,1);
+        }
+        // Restore old song
+        //tune->selectSong (currentSong);
+    }
+    // Deal with PSID v2NG clock speed flags: Let only NTSC
+    // clock speed change the MD5 fingerprint. That way the
+    // fingerprint of a PAL-speed sidtune in PSID v1, v2, and
+    // PSID v2NG format is the same.
+    if (tune->getInfo ().clockSpeed == SIDTUNE_CLOCK_NTSC) {
+        myMD5.append (&tune->getInfo ().clockSpeed,sizeof(tune->getInfo ().clockSpeed));
+    }
+    myMD5.finish ();
+    memcpy (sig, myMD5.getDigest (), 16);
+#endif
 
     sldb_load ();
     int song = -1;

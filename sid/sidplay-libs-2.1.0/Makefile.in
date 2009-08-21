@@ -47,9 +47,7 @@ AR = ar
 ARFLAGS = cru
 libsidplay2_a_AR = $(AR) $(ARFLAGS)
 libsidplay2_a_LIBADD =
-am_libsidplay2_a_OBJECTS = SidDatabase.$(OBJEXT) SidFilter.$(OBJEXT) \
-	SidTuneMod.$(OBJEXT) MD5.$(OBJEXT) SidUsage.$(OBJEXT) \
-	ini.$(OBJEXT) mixer.$(OBJEXT) player.$(OBJEXT) \
+am_libsidplay2_a_OBJECTS = mixer.$(OBJEXT) player.$(OBJEXT) \
 	mos656x.$(OBJEXT) mos6510.$(OBJEXT) sid6526.$(OBJEXT) \
 	MUS.$(OBJEXT) SidTuneTools.$(OBJEXT) InfoFile.$(OBJEXT) \
 	SidTune.$(OBJEXT) PSID.$(OBJEXT) PP20.$(OBJEXT) \
@@ -184,12 +182,7 @@ EXTRA_DIST = \
 	$(sidpath)/libsidutils/AUTHORS $(sidpath)/libsidplay/AUTHORS $(sidpath)/resid/AUTHORS
 
 AM_CPPFLAGS = $(CPPFLAGS) -DVERSION=\"2.1.0\" -DHAVE_STRNCASECMP -DHAVE_STRCASECMP -I$(sidpath)/libsidplay -I$(sidpath)/libsidplay/include -I$(sidpath)/libsidplay/include/sidplay -I$(sidpath)/libsidutils/include/sidplay/utils -I$(sidpath)/builders/resid-builder/include/sidplay/builders -I$(sidpath)/builders/resid-builder/include
-libsidplay2_a_SOURCES = libsidutils/src/SidDatabase.cpp\
-libsidutils/src/SidFilter.cpp\
-libsidutils/src/SidTuneMod.cpp\
-libsidutils/src/MD5/MD5.cpp\
-libsidutils/src/SidUsage.cpp\
-libsidutils/src/ini/ini.cpp\
+libsidplay2_a_SOURCES = \
 libsidplay/src/mixer.cpp\
 libsidplay/src/player.cpp\
 libsidplay/src/mos656x/mos656x.cpp\
@@ -227,20 +220,6 @@ resid/sid.cc\
 resid/wave8580__ST.cc\
 resid/wave8580_P_T.cc\
 libsidplay/src/reloc65.c\
-libsidutils/win/VC/config.h\
-libsidutils/src/ini/keys.h\
-libsidutils/src/ini/list.h\
-libsidutils/src/ini/ini.h\
-libsidutils/src/ini/headings.h\
-libsidutils/src/MD5/MD5_Defs.h\
-libsidutils/src/MD5/MD5.h\
-libsidutils/src/smm0.h\
-libsidutils/include/sidplay/utils/SidTuneMod.h\
-libsidutils/include/sidplay/utils/libini.h\
-libsidutils/include/sidplay/utils/SidFilter.h\
-libsidutils/include/sidplay/utils/SidDatabase.h\
-libsidutils/include/sidplay/utils/SidUsage.h\
-libsidutils/include/config.h\
 unix/config.h\
 libsidplay/win/VC/sidconfig.h\
 libsidplay/win/VC/sidint.h\
@@ -294,10 +273,6 @@ resid/envelope.h\
 resid/spline.h\
 resid/pot.h\
 resid/extfilt.h\
-libsidutils/src/ini/headings.i\
-libsidutils/src/ini/list.i\
-libsidutils/src/ini/keys.i\
-libsidutils/src/ini/types.i\
 libsidplay/src/mos6510/cycle_based/mos6510c.i\
 libsidplay/src/mos6510/cycle_based/sid6510c.i\
 libsidplay/src/kernal.bin\
@@ -354,22 +329,16 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IconInfo.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/InfoFile.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MD5.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MUS.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PP20.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PSID.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SidDatabase.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SidFilter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SidTune.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SidTuneMod.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SidTuneTools.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SidUsage.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/config.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/envelope.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/event.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/extfilt.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/filter.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ini.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mixer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mos6510.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mos6526.Po@am__quote@
@@ -437,90 +406,6 @@ reloc65.obj: libsidplay/src/reloc65.c
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
-
-SidDatabase.o: libsidutils/src/SidDatabase.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT SidDatabase.o -MD -MP -MF $(DEPDIR)/SidDatabase.Tpo -c -o SidDatabase.o `test -f 'libsidutils/src/SidDatabase.cpp' || echo '$(srcdir)/'`libsidutils/src/SidDatabase.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/SidDatabase.Tpo $(DEPDIR)/SidDatabase.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='libsidutils/src/SidDatabase.cpp' object='SidDatabase.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SidDatabase.o `test -f 'libsidutils/src/SidDatabase.cpp' || echo '$(srcdir)/'`libsidutils/src/SidDatabase.cpp
-
-SidDatabase.obj: libsidutils/src/SidDatabase.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT SidDatabase.obj -MD -MP -MF $(DEPDIR)/SidDatabase.Tpo -c -o SidDatabase.obj `if test -f 'libsidutils/src/SidDatabase.cpp'; then $(CYGPATH_W) 'libsidutils/src/SidDatabase.cpp'; else $(CYGPATH_W) '$(srcdir)/libsidutils/src/SidDatabase.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/SidDatabase.Tpo $(DEPDIR)/SidDatabase.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='libsidutils/src/SidDatabase.cpp' object='SidDatabase.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SidDatabase.obj `if test -f 'libsidutils/src/SidDatabase.cpp'; then $(CYGPATH_W) 'libsidutils/src/SidDatabase.cpp'; else $(CYGPATH_W) '$(srcdir)/libsidutils/src/SidDatabase.cpp'; fi`
-
-SidFilter.o: libsidutils/src/SidFilter.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT SidFilter.o -MD -MP -MF $(DEPDIR)/SidFilter.Tpo -c -o SidFilter.o `test -f 'libsidutils/src/SidFilter.cpp' || echo '$(srcdir)/'`libsidutils/src/SidFilter.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/SidFilter.Tpo $(DEPDIR)/SidFilter.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='libsidutils/src/SidFilter.cpp' object='SidFilter.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SidFilter.o `test -f 'libsidutils/src/SidFilter.cpp' || echo '$(srcdir)/'`libsidutils/src/SidFilter.cpp
-
-SidFilter.obj: libsidutils/src/SidFilter.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT SidFilter.obj -MD -MP -MF $(DEPDIR)/SidFilter.Tpo -c -o SidFilter.obj `if test -f 'libsidutils/src/SidFilter.cpp'; then $(CYGPATH_W) 'libsidutils/src/SidFilter.cpp'; else $(CYGPATH_W) '$(srcdir)/libsidutils/src/SidFilter.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/SidFilter.Tpo $(DEPDIR)/SidFilter.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='libsidutils/src/SidFilter.cpp' object='SidFilter.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SidFilter.obj `if test -f 'libsidutils/src/SidFilter.cpp'; then $(CYGPATH_W) 'libsidutils/src/SidFilter.cpp'; else $(CYGPATH_W) '$(srcdir)/libsidutils/src/SidFilter.cpp'; fi`
-
-SidTuneMod.o: libsidutils/src/SidTuneMod.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT SidTuneMod.o -MD -MP -MF $(DEPDIR)/SidTuneMod.Tpo -c -o SidTuneMod.o `test -f 'libsidutils/src/SidTuneMod.cpp' || echo '$(srcdir)/'`libsidutils/src/SidTuneMod.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/SidTuneMod.Tpo $(DEPDIR)/SidTuneMod.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='libsidutils/src/SidTuneMod.cpp' object='SidTuneMod.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SidTuneMod.o `test -f 'libsidutils/src/SidTuneMod.cpp' || echo '$(srcdir)/'`libsidutils/src/SidTuneMod.cpp
-
-SidTuneMod.obj: libsidutils/src/SidTuneMod.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT SidTuneMod.obj -MD -MP -MF $(DEPDIR)/SidTuneMod.Tpo -c -o SidTuneMod.obj `if test -f 'libsidutils/src/SidTuneMod.cpp'; then $(CYGPATH_W) 'libsidutils/src/SidTuneMod.cpp'; else $(CYGPATH_W) '$(srcdir)/libsidutils/src/SidTuneMod.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/SidTuneMod.Tpo $(DEPDIR)/SidTuneMod.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='libsidutils/src/SidTuneMod.cpp' object='SidTuneMod.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SidTuneMod.obj `if test -f 'libsidutils/src/SidTuneMod.cpp'; then $(CYGPATH_W) 'libsidutils/src/SidTuneMod.cpp'; else $(CYGPATH_W) '$(srcdir)/libsidutils/src/SidTuneMod.cpp'; fi`
-
-MD5.o: libsidutils/src/MD5/MD5.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT MD5.o -MD -MP -MF $(DEPDIR)/MD5.Tpo -c -o MD5.o `test -f 'libsidutils/src/MD5/MD5.cpp' || echo '$(srcdir)/'`libsidutils/src/MD5/MD5.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/MD5.Tpo $(DEPDIR)/MD5.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='libsidutils/src/MD5/MD5.cpp' object='MD5.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o MD5.o `test -f 'libsidutils/src/MD5/MD5.cpp' || echo '$(srcdir)/'`libsidutils/src/MD5/MD5.cpp
-
-MD5.obj: libsidutils/src/MD5/MD5.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT MD5.obj -MD -MP -MF $(DEPDIR)/MD5.Tpo -c -o MD5.obj `if test -f 'libsidutils/src/MD5/MD5.cpp'; then $(CYGPATH_W) 'libsidutils/src/MD5/MD5.cpp'; else $(CYGPATH_W) '$(srcdir)/libsidutils/src/MD5/MD5.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/MD5.Tpo $(DEPDIR)/MD5.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='libsidutils/src/MD5/MD5.cpp' object='MD5.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o MD5.obj `if test -f 'libsidutils/src/MD5/MD5.cpp'; then $(CYGPATH_W) 'libsidutils/src/MD5/MD5.cpp'; else $(CYGPATH_W) '$(srcdir)/libsidutils/src/MD5/MD5.cpp'; fi`
-
-SidUsage.o: libsidutils/src/SidUsage.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT SidUsage.o -MD -MP -MF $(DEPDIR)/SidUsage.Tpo -c -o SidUsage.o `test -f 'libsidutils/src/SidUsage.cpp' || echo '$(srcdir)/'`libsidutils/src/SidUsage.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/SidUsage.Tpo $(DEPDIR)/SidUsage.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='libsidutils/src/SidUsage.cpp' object='SidUsage.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SidUsage.o `test -f 'libsidutils/src/SidUsage.cpp' || echo '$(srcdir)/'`libsidutils/src/SidUsage.cpp
-
-SidUsage.obj: libsidutils/src/SidUsage.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT SidUsage.obj -MD -MP -MF $(DEPDIR)/SidUsage.Tpo -c -o SidUsage.obj `if test -f 'libsidutils/src/SidUsage.cpp'; then $(CYGPATH_W) 'libsidutils/src/SidUsage.cpp'; else $(CYGPATH_W) '$(srcdir)/libsidutils/src/SidUsage.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/SidUsage.Tpo $(DEPDIR)/SidUsage.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='libsidutils/src/SidUsage.cpp' object='SidUsage.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SidUsage.obj `if test -f 'libsidutils/src/SidUsage.cpp'; then $(CYGPATH_W) 'libsidutils/src/SidUsage.cpp'; else $(CYGPATH_W) '$(srcdir)/libsidutils/src/SidUsage.cpp'; fi`
-
-ini.o: libsidutils/src/ini/ini.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ini.o -MD -MP -MF $(DEPDIR)/ini.Tpo -c -o ini.o `test -f 'libsidutils/src/ini/ini.cpp' || echo '$(srcdir)/'`libsidutils/src/ini/ini.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/ini.Tpo $(DEPDIR)/ini.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='libsidutils/src/ini/ini.cpp' object='ini.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ini.o `test -f 'libsidutils/src/ini/ini.cpp' || echo '$(srcdir)/'`libsidutils/src/ini/ini.cpp
-
-ini.obj: libsidutils/src/ini/ini.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ini.obj -MD -MP -MF $(DEPDIR)/ini.Tpo -c -o ini.obj `if test -f 'libsidutils/src/ini/ini.cpp'; then $(CYGPATH_W) 'libsidutils/src/ini/ini.cpp'; else $(CYGPATH_W) '$(srcdir)/libsidutils/src/ini/ini.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/ini.Tpo $(DEPDIR)/ini.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='libsidutils/src/ini/ini.cpp' object='ini.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ini.obj `if test -f 'libsidutils/src/ini/ini.cpp'; then $(CYGPATH_W) 'libsidutils/src/ini/ini.cpp'; else $(CYGPATH_W) '$(srcdir)/libsidutils/src/ini/ini.cpp'; fi`
 
 mixer.o: libsidplay/src/mixer.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mixer.o -MD -MP -MF $(DEPDIR)/mixer.Tpo -c -o mixer.o `test -f 'libsidplay/src/mixer.cpp' || echo '$(srcdir)/'`libsidplay/src/mixer.cpp
@@ -1235,6 +1120,31 @@ uninstall-am:
 	mostlyclean-generic pdf pdf-am ps ps-am tags uninstall \
 	uninstall-am
 
+
+#libsidutils/win/VC/config.h
+#libsidutils/src/ini/keys.h
+#libsidutils/src/ini/list.h
+#libsidutils/src/ini/ini.h
+#libsidutils/src/ini/headings.h
+#libsidutils/src/MD5/MD5_Defs.h
+#libsidutils/src/MD5/MD5.h
+#libsidutils/src/smm0.h
+#libsidutils/include/sidplay/utils/SidTuneMod.h
+#libsidutils/include/sidplay/utils/libini.h
+#libsidutils/include/sidplay/utils/SidFilter.h
+#libsidutils/include/sidplay/utils/SidDatabase.h
+#libsidutils/include/sidplay/utils/SidUsage.h
+#libsidutils/include/config.h
+#libsidutils/src/SidDatabase.cpp
+#libsidutils/src/SidFilter.cpp
+#libsidutils/src/SidTuneMod.cpp
+#libsidutils/src/MD5/MD5.cpp
+#libsidutils/src/SidUsage.cpp
+#libsidutils/src/ini/ini.cpp
+#libsidutils/src/ini/headings.i
+#libsidutils/src/ini/list.i
+#libsidutils/src/ini/keys.i
+#libsidutils/src/ini/types.i
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

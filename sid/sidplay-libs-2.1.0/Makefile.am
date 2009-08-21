@@ -9,12 +9,7 @@ EXTRA_DIST = \
 
 AM_CPPFLAGS = $(CPPFLAGS) -DVERSION=\"2.1.0\" -DHAVE_STRNCASECMP -DHAVE_STRCASECMP -I$(sidpath)/libsidplay -I$(sidpath)/libsidplay/include -I$(sidpath)/libsidplay/include/sidplay -I$(sidpath)/libsidutils/include/sidplay/utils -I$(sidpath)/builders/resid-builder/include/sidplay/builders -I$(sidpath)/builders/resid-builder/include
 
-libsidplay2_a_SOURCES = libsidutils/src/SidDatabase.cpp\
-libsidutils/src/SidFilter.cpp\
-libsidutils/src/SidTuneMod.cpp\
-libsidutils/src/MD5/MD5.cpp\
-libsidutils/src/SidUsage.cpp\
-libsidutils/src/ini/ini.cpp\
+libsidplay2_a_SOURCES = \
 libsidplay/src/mixer.cpp\
 libsidplay/src/player.cpp\
 libsidplay/src/mos656x/mos656x.cpp\
@@ -52,20 +47,6 @@ resid/sid.cc\
 resid/wave8580__ST.cc\
 resid/wave8580_P_T.cc\
 libsidplay/src/reloc65.c\
-libsidutils/win/VC/config.h\
-libsidutils/src/ini/keys.h\
-libsidutils/src/ini/list.h\
-libsidutils/src/ini/ini.h\
-libsidutils/src/ini/headings.h\
-libsidutils/src/MD5/MD5_Defs.h\
-libsidutils/src/MD5/MD5.h\
-libsidutils/src/smm0.h\
-libsidutils/include/sidplay/utils/SidTuneMod.h\
-libsidutils/include/sidplay/utils/libini.h\
-libsidutils/include/sidplay/utils/SidFilter.h\
-libsidutils/include/sidplay/utils/SidDatabase.h\
-libsidutils/include/sidplay/utils/SidUsage.h\
-libsidutils/include/config.h\
 unix/config.h\
 libsidplay/win/VC/sidconfig.h\
 libsidplay/win/VC/sidint.h\
@@ -119,12 +100,34 @@ resid/envelope.h\
 resid/spline.h\
 resid/pot.h\
 resid/extfilt.h\
-libsidutils/src/ini/headings.i\
-libsidutils/src/ini/list.i\
-libsidutils/src/ini/keys.i\
-libsidutils/src/ini/types.i\
 libsidplay/src/mos6510/cycle_based/mos6510c.i\
 libsidplay/src/mos6510/cycle_based/sid6510c.i\
 libsidplay/src/kernal.bin\
 libsidplay/src/psiddrv.bin\
 libsidplay/src/poweron.bin
+
+
+#libsidutils/win/VC/config.h
+#libsidutils/src/ini/keys.h
+#libsidutils/src/ini/list.h
+#libsidutils/src/ini/ini.h
+#libsidutils/src/ini/headings.h
+#libsidutils/src/MD5/MD5_Defs.h
+#libsidutils/src/MD5/MD5.h
+#libsidutils/src/smm0.h
+#libsidutils/include/sidplay/utils/SidTuneMod.h
+#libsidutils/include/sidplay/utils/libini.h
+#libsidutils/include/sidplay/utils/SidFilter.h
+#libsidutils/include/sidplay/utils/SidDatabase.h
+#libsidutils/include/sidplay/utils/SidUsage.h
+#libsidutils/include/config.h
+#libsidutils/src/SidDatabase.cpp
+#libsidutils/src/SidFilter.cpp
+#libsidutils/src/SidTuneMod.cpp
+#libsidutils/src/MD5/MD5.cpp
+#libsidutils/src/SidUsage.cpp
+#libsidutils/src/ini/ini.cpp
+#libsidutils/src/ini/headings.i
+#libsidutils/src/ini/list.i
+#libsidutils/src/ini/keys.i
+#libsidutils/src/ini/types.i
