@@ -101,6 +101,7 @@ palsa_init (void) {
         goto open_error;
     }
     alsa_rate = val;
+    printf ("chosen samplerate: %d\n", alsa_rate);
 
     if ((err = snd_pcm_hw_params_set_channels (audio, hw_params, 2)) < 0) {
         fprintf (stderr, "cannot set channel count (%s)\n",
@@ -323,7 +324,9 @@ palsa_thread (uintptr_t context) {
         char buf[bufsize];
         palsa_callback (buf, frames_to_deliver*4);
         if ((err = snd_pcm_writei (audio, buf, frames_to_deliver)) < 0) {
-            fprintf (stderr, "write failed (%s)\n", snd_strerror (err));
+            //fprintf (stderr, "write failed (%s)\n", snd_strerror (err));
+            snd_pcm_prepare (audio);
+            snd_pcm_start (audio);
         }
         mutex_unlock (mutex);
         usleep (0); // let other threads gain some spin (avoid deadlock)
