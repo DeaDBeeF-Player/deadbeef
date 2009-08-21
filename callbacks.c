@@ -25,6 +25,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <assert.h>
+#include <ctype.h>
 
 #include "callbacks.h"
 #include "interface.h"
@@ -183,6 +184,11 @@ on_open_activate                       (GtkMenuItem     *menuitem,
                     char filter[20];
                     snprintf (filter, 20, "*.%s", exts[e]);
                     gtk_file_filter_add_pattern (flt, filter);
+                    char *p;
+                    for (p = filter; *p; p++) {
+                        *p = toupper (*p);
+                    }
+                    gtk_file_filter_add_pattern (flt, filter);
                 }
             }
         }
@@ -232,6 +238,11 @@ on_add_files_activate                  (GtkMenuItem     *menuitem,
                     char filter[20];
                     snprintf (filter, 20, "*.%s", exts[e]);
                     gtk_file_filter_add_pattern (flt, filter);
+                    char *p;
+                    for (p = filter; *p; p++) {
+                        *p = toupper (*p);
+                    }
+                    gtk_file_filter_add_pattern (flt, filter);
                 }
             }
         }
@@ -279,6 +290,11 @@ on_add_folder1_activate                (GtkMenuItem     *menuitem,
                 for (int e = 0; exts[e]; e++) {
                     char filter[20];
                     snprintf (filter, 20, "*.%s", exts[e]);
+                    gtk_file_filter_add_pattern (flt, filter);
+                    char *p;
+                    for (p = filter; *p; p++) {
+                        *p = toupper (*p);
+                    }
                     gtk_file_filter_add_pattern (flt, filter);
                 }
             }
