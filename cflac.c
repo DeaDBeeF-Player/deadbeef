@@ -74,7 +74,15 @@ cflac_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMe
 
 void
 cflac_error_callback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorStatus status, void *client_data) {
-    fprintf(stderr, "cflac: got error callback: %s\n", FLAC__StreamDecoderErrorStatusString[status]);
+//    fprintf(stderr, "cflac: got error callback: %s\n", FLAC__StreamDecoderErrorStatusString[status]);
+}
+
+static int cflac_init_stop_decoding;
+
+void
+cflac_init_error_callback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorStatus status, void *client_data) {
+//    fprintf(stderr, "cflac: got error callback: %s\n", FLAC__StreamDecoderErrorStatusString[status]);
+    cflac_init_stop_decoding = 1;
 }
 
 void
@@ -82,10 +90,26 @@ cflac_free (void);
 
 int
 cflac_init (playItem_t *it) {
+    FILE *fp = fopen (it->fname, "rb");
+    if (!fp) {
+        return -1;
+    }
+    char sign[4];
+    if (fread (sign, 1, 4, fp) != 4) {
+        fclose (fp);
+        return -1;
+    }
+    if (strncmp (sign, "fLaC", 4)) {
+        fclose (fp);
+        return -1;
+    }
+    fclose (fp);
+    fp = NULL;
+
     FLAC__StreamDecoderInitStatus status;
     decoder = FLAC__stream_decoder_new();
     if (!decoder) {
-        printf ("FLAC__stream_decoder_new failed\n");
+//        printf ("FLAC__stream_decoder_new failed\n");
         return -1;
     }
     FLAC__stream_decoder_set_md5_checking(decoder, 0);
@@ -177,7 +201,7 @@ cflac_seek (float time) {
 
 static FLAC__StreamDecoderWriteStatus
 cflac_init_write_callback (const FLAC__StreamDecoder *decoder, const FLAC__Frame *frame, const FLAC__int32 * const inputbuffer[], void *client_data) {
-    if (frame->header.blocksize == 0) {
+    if (frame->header.blocksize == 0 || cflac_init_stop_decoding) {
         return FLAC__STREAM_DECODER_WRITE_STATUS_ABORT;
     }
     return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;
@@ -194,6 +218,9 @@ typedef struct {
 
 void
 cflac_init_cue_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMetadata *metadata, void *client_data) {
+    if (cflac_init_stop_decoding) {
+        return;
+    }
     cue_cb_data_t *cb = (cue_cb_data_t *)client_data;
     if (metadata->type == FLAC__METADATA_TYPE_STREAMINFO) {
         cb->samplerate = metadata->data.stream_info.sample_rate;
@@ -257,6 +284,10 @@ cflac_init_cue_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC_
 }
 void
 cflac_init_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMetadata *metadata, void *client_data) {
+    if (cflac_init_stop_decoding) {
+        printf ("error flag is set, ignoring init_metadata callback..\n");
+        return;
+    }
     playItem_t *it = (playItem_t *)client_data;
     //it->tracknum = 0;
     if (metadata->type == FLAC__METADATA_TYPE_STREAMINFO) {
@@ -304,39 +335,49 @@ cflac_init_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__Str
 
 playItem_t *
 cflac_insert (playItem_t *after, const char *fname) {
+    playItem_t *it = NULL;
+    FLAC__StreamDecoder *decoder = NULL;
+    FILE *fp = fopen (fname, "rb");
+    if (!fp) {
+        goto cflac_insert_fail;
+    }
+    char sign[4];
+    if (fread (sign, 1, 4, fp) != 4) {
+        goto cflac_insert_fail;
+    }
+    if (strncmp (sign, "fLaC", 4)) {
+        goto cflac_insert_fail;
+    }
+    fclose (fp);
+    fp = NULL;
+    cflac_init_stop_decoding = 0;
     //try embedded cue, and calculate duration
-    FLAC__StreamDecoder *decoder = 0;
     FLAC__StreamDecoderInitStatus status;
     decoder = FLAC__stream_decoder_new();
     if (!decoder) {
-        printf ("FLAC__stream_decoder_new failed\n");
-        return NULL;
+        goto cflac_insert_fail;
     }
     FLAC__stream_decoder_set_md5_checking(decoder, 0);
 
     // try embedded cue
-    //printf ("trying embedded cue\n");
     cue_cb_data_t cb = {
         .fname = fname,
         .after = after,
         .last = after
     };
     FLAC__stream_decoder_set_metadata_respond_all (decoder);
-    status = FLAC__stream_decoder_init_file(decoder, fname, cflac_init_write_callback, cflac_init_cue_metadata_callback, cflac_error_callback, &cb);
-    if (status != FLAC__STREAM_DECODER_INIT_STATUS_OK) {
-        printf ("init_file failed\n");
-        FLAC__stream_decoder_delete(decoder);
-        return NULL;
+    status = FLAC__stream_decoder_init_file (decoder, fname, cflac_init_write_callback, cflac_init_cue_metadata_callback, cflac_init_error_callback, &cb);
+    if (status != FLAC__STREAM_DECODER_INIT_STATUS_OK || cflac_init_stop_decoding) {
+        goto cflac_insert_fail;
     }
-    if (!FLAC__stream_decoder_process_until_end_of_metadata (decoder)) {
-        printf ("process_until_end_of_metadata failed\n");
-        FLAC__stream_decoder_delete(decoder);
-        return NULL;
+    if (!FLAC__stream_decoder_process_until_end_of_metadata (decoder) || cflac_init_stop_decoding) {
+        goto cflac_insert_fail;
     }
 
     FLAC__stream_decoder_delete(decoder);
+    decoder = NULL;
     if (cb.last != after) {
-        //printf ("embedded cue found!\n");
+//        printf ("embedded cue found!\n");
         return cb.last;
     }
 
@@ -347,67 +388,44 @@ cflac_insert (playItem_t *after, const char *fname) {
         cue_after->duration = cue_after->timeend - cue_after->timestart;
         return cue_after;
     }
-#if 0
-    char cuename[1024];
-    snprintf (cuename, 1024, "%s.cue", fname);
-    playItem_t *cue_after;
-    if ((cue_after = pl_insert_cue (after, cuename, &cflac, "flac")) != NULL) {
-        cue_after->timeend = cb.duration;
-        cue_after->duration = cue_after->timeend - cue_after->timestart;
-        return cue_after;
-    }
-    int n = strlen (fname) - 4;
-    if (n > 0) {
-        strncpy (cuename, fname, n);
-        strcpy (cuename + n, "cue");
-    //    printf ("loading %s\n", cuename);
-        if ((cue_after = pl_insert_cue (after, cuename, &cflac, "flac")) != NULL) {
-            cue_after->timeend = cb.duration;
-            cue_after->duration = cue_after->timeend - cue_after->timestart;
-            return cue_after;
-        }
-    }
-#endif
-    //printf ("adding flac without cue\n");
     decoder = FLAC__stream_decoder_new();
     if (!decoder) {
-        printf ("FLAC__stream_decoder_new failed\n");
-        return NULL;
+        goto cflac_insert_fail;
     }
     FLAC__stream_decoder_set_md5_checking(decoder, 0);
     // try single FLAC file without cue
     FLAC__stream_decoder_set_metadata_respond_all (decoder);
     int samplerate = -1;
-    playItem_t *it = malloc (sizeof (playItem_t));
+    it = malloc (sizeof (playItem_t));
     memset (it, 0, sizeof (playItem_t));
     it->codec = &cflac;
     it->fname = strdup (fname);
     it->tracknum = 0;
     it->timestart = 0;
     it->timeend = 0;
-//    it->tracknum = -1;
-    status = FLAC__stream_decoder_init_file(decoder, fname, cflac_init_write_callback, cflac_init_metadata_callback, cflac_error_callback, it);
-    if (status != FLAC__STREAM_DECODER_INIT_STATUS_OK) {
-        FLAC__stream_decoder_delete(decoder);
-        pl_item_free (it);
-        return NULL;
+    status = FLAC__stream_decoder_init_file (decoder, fname, cflac_init_write_callback, cflac_init_metadata_callback, cflac_init_error_callback, it);
+    if (status != FLAC__STREAM_DECODER_INIT_STATUS_OK || cflac_init_stop_decoding) {
+        goto cflac_insert_fail;
     }
-    if (!FLAC__stream_decoder_process_until_end_of_metadata (decoder)) {
-        FLAC__stream_decoder_delete(decoder);
-        pl_item_free (it);
-        return NULL;
+    if (!FLAC__stream_decoder_process_until_end_of_metadata (decoder) || cflac_init_stop_decoding) {
+        goto cflac_insert_fail;
     }
-#if 0
-    if (it->tracknum == -1) { // not a FLAC stream
-        FLAC__stream_decoder_delete(decoder);
-        pl_item_free (it);
-        return NULL;
-    }
-#endif
     FLAC__stream_decoder_delete(decoder);
+    decoder = NULL;
     it->filetype = "FLAC";
     after = pl_insert_item (after, it);
     return after;
+cflac_insert_fail:
+    if (it) {
+        pl_item_free (it);
+    }
+    if (decoder) {
+        FLAC__stream_decoder_delete(decoder);
+    }
+    if (fp) {
+        fclose (fp);
+    }
+    return NULL;
 }
 
 static const char * exts[]=
