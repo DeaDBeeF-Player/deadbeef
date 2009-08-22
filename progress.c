@@ -40,7 +40,7 @@ progress_init (void) {
 void
 progress_show (void) {
     progress_aborted = 0;
-    progress_settext ("");
+    progress_settext ("Initializing...");
     gtk_widget_show_all (progressdlg);
     gtk_window_present (GTK_WINDOW (progressdlg));
 }
