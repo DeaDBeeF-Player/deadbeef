@@ -421,7 +421,7 @@ player_thread (uintptr_t ctx) {
                 break;
             }
         }
-        usleep(1000);
+        usleep(50000);
         update_songinfo ();
     }
     server_close ();

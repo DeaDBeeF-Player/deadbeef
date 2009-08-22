@@ -331,7 +331,7 @@ palsa_thread (uintptr_t context) {
             snd_pcm_start (audio);
         }
         mutex_unlock (mutex);
-        usleep (0); // let other threads gain some spin (avoid deadlock)
+        usleep (10000); // let other threads gain some spin (avoid deadlock)
     }
 }
 

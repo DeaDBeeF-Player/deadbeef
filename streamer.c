@@ -104,7 +104,7 @@ streamer_thread (uintptr_t ctx) {
                 }
                 // try jump to next song
                 pl_nextsong (0);
-                usleep (3000);
+                usleep (50000);
                 continue;
             }
             badsong = -1;
@@ -126,7 +126,7 @@ streamer_thread (uintptr_t ctx) {
             continue;
         }
         else if (p_isstopped ()) {
-            usleep (3000);
+            usleep (50000);
             continue;
         }
 
@@ -158,7 +158,7 @@ streamer_thread (uintptr_t ctx) {
             streambuffer_fill += bytesread;
         }
         streamer_unlock ();
-        usleep (6000);
+        usleep (10000);
         //printf ("fill: %d        \r", streambuffer_fill);
     }
 
