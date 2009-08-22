@@ -880,29 +880,33 @@ gtkpl_keypress (gtkplaylist_t *ps, int keyval, int state) {
     if (state & GDK_SHIFT_MASK) {
         // select all between shift_sel_anchor and ps->row
         if (prev != ps->row) {
+            int minvis = ps->scrollpos;
+            int maxvis = ps->scrollpos + ps->nvisiblerows-1;
             int start = min (ps->row, shift_sel_anchor);
             int end = max (ps->row, shift_sel_anchor);
             int idx=0;
             for (playItem_t *it = playlist_head[ps->iterator]; it; it = it->next[ps->iterator], idx++) {
                 if (idx >= start && idx <= end) {
-//                    if (!it->selected) {
-                        it->selected = 1;
+                    it->selected = 1;
+                    if (idx >= minvis && idx <= maxvis) {
                         if (newscroll == ps->scrollpos) {
                             gtkpl_redraw_pl_row (ps, idx);
                         }
                         else {
                             gtkpl_redraw_pl_row_novis (ps, idx);
                         }
-//                    }
+                    }
                 }
                 else if (it->selected)
                 {
                     it->selected = 0;
-                    if (newscroll == ps->scrollpos) {
-                        gtkpl_redraw_pl_row (ps, idx);
-                    }
-                    else {
-                        gtkpl_redraw_pl_row_novis (ps, idx);
+                    if (idx >= minvis && idx <= maxvis) {
+                        if (newscroll == ps->scrollpos) {
+                            gtkpl_redraw_pl_row (ps, idx);
+                        }
+                        else {
+                            gtkpl_redraw_pl_row_novis (ps, idx);
+                        }
                     }
                 }
             }
@@ -911,27 +915,33 @@ gtkpl_keypress (gtkplaylist_t *ps, int keyval, int state) {
     else {
         // reset selection, set new single cursor/selection
         if (prev != ps->row) {
+            int minvis = ps->scrollpos;
+            int maxvis = ps->scrollpos + ps->nvisiblerows-1;
             shift_sel_anchor = ps->row;
             int idx=0;
             for (playItem_t *it = playlist_head[ps->iterator]; it; it = it->next[ps->iterator], idx++) {
                 if (idx == ps->row) {
                     if (!it->selected) {
                         it->selected = 1;
+                        if (idx >= minvis && idx <= maxvis) {
+                            if (newscroll == ps->scrollpos) {
+                                gtkpl_redraw_pl_row (ps, idx);
+                            }
+                            else {
+                                gtkpl_redraw_pl_row_novis (ps, idx);
+                            }
+                        }
+                    }
+                }
+                else if (it->selected) {
+                    it->selected = 0;
+                    if (idx >= minvis && idx <= maxvis) {
                         if (newscroll == ps->scrollpos) {
                             gtkpl_redraw_pl_row (ps, idx);
                         }
                         else {
                             gtkpl_redraw_pl_row_novis (ps, idx);
                         }
-                    }
-                }
-                else if (it->selected) {
-                    it->selected = 0;
-                    if (newscroll == ps->scrollpos) {
-                        gtkpl_redraw_pl_row (ps, idx);
-                    }
-                    else {
-                        gtkpl_redraw_pl_row_novis (ps, idx);
                     }
                 }
             }
