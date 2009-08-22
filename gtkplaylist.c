@@ -231,18 +231,12 @@ gtkpl_setup_scrollbar (gtkplaylist_t *ps) {
 }
 
 void
-gtkpl_redraw_pl_row_novis (gtkplaylist_t *ps, int row) {
+gtkpl_redraw_pl_row_novis (gtkplaylist_t *ps, int row, playItem_t *it) {
 	cairo_t *cr;
 	cr = gdk_cairo_create (ps->backbuf);
 	if (!cr) {
 		return;
 	}
-	//cairo_set_antialias (cr, CAIRO_ANTIALIAS_NONE);
-
-//    cairo_select_font_face (cr, "fixed", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
-
-	playItem_t *it = gtkpl_get_for_idx (ps, row);
-//    printf ("redraw row %d (selected = %d, cursor = %d)\n", row, it->selected, ps->row == row ? 1 : 0);
 	if (it) {
         gtkpl_draw_pl_row_back (ps, cr, row, it);
         gtkpl_draw_pl_row (ps, cr, row, it);
@@ -251,7 +245,7 @@ gtkpl_redraw_pl_row_novis (gtkplaylist_t *ps, int row) {
 }
 
 void
-gtkpl_redraw_pl_row (gtkplaylist_t *ps, int row) {
+gtkpl_redraw_pl_row (gtkplaylist_t *ps, int row, playItem_t *it) {
     int x, y, w, h;
     GtkWidget *widget = ps->playlist;
     x = 0;
@@ -259,7 +253,7 @@ gtkpl_redraw_pl_row (gtkplaylist_t *ps, int row) {
     w = widget->allocation.width;
     h = rowheight;
 
-    gtkpl_redraw_pl_row_novis (ps, row);
+    gtkpl_redraw_pl_row_novis (ps, row, it);
 	gdk_draw_drawable (widget->window, widget->style->black_gc, ps->backbuf, x, y, x, y, w, h);
 	//gdk_draw_drawable (widget->window, widget->style->black_gc, ps->backbuf, 0, 0, 0, 0, widget->allocation.width, widget->allocation.height);
 }
@@ -491,12 +485,12 @@ gtkpl_select_single (gtkplaylist_t *ps, int sel) {
         if (idx == sel) {
             if (!it->selected) {
                 it->selected = 1;
-                gtkpl_redraw_pl_row (ps, idx);
+                gtkpl_redraw_pl_row (ps, idx, it);
             }
         }
         else if (it->selected) {
             it->selected = 0;
-            gtkpl_redraw_pl_row (ps, idx);
+            gtkpl_redraw_pl_row (ps, idx, it);
         }
     }
 }
@@ -585,8 +579,10 @@ gtkpl_mouse1_pressed (gtkplaylist_t *ps, int state, int ex, int ey, double time)
             }
             else {
                 dragwait = 1;
-                gtkpl_redraw_pl_row (ps, prev);
-                gtkpl_redraw_pl_row (ps, ps->row);
+                gtkpl_redraw_pl_row (ps, prev, pl_get_for_idx (prev));
+                if (ps->row != prev) {
+                    gtkpl_redraw_pl_row (ps, ps->row, pl_get_for_idx (ps->row));
+                }
             }
         }
         else if (state & GDK_CONTROL_MASK) {
@@ -595,7 +591,7 @@ gtkpl_mouse1_pressed (gtkplaylist_t *ps, int state, int ex, int ey, double time)
                 playItem_t *it = gtkpl_get_for_idx (ps, y);
                 if (it) {
                     it->selected = 1 - it->selected;
-                    gtkpl_redraw_pl_row (ps, y);
+                    gtkpl_redraw_pl_row (ps, y, it);
                 }
             }
         }
@@ -608,28 +604,28 @@ gtkpl_mouse1_pressed (gtkplaylist_t *ps, int state, int ex, int ey, double time)
                 if (idx >= start && idx <= end) {
                     if (!it->selected) {
                         it->selected = 1;
-                        gtkpl_redraw_pl_row (ps, idx);
+                        gtkpl_redraw_pl_row (ps, idx, it);
                     }
                 }
                 else {
                     if (it->selected) {
                         it->selected = 0;
-                        gtkpl_redraw_pl_row (ps, idx);
+                        gtkpl_redraw_pl_row (ps, idx, it);
                     }
                 }
             }
         }
         if (ps->row != -1 && sel == -1) {
-            gtkpl_redraw_pl_row (ps, ps->row);
+            gtkpl_redraw_pl_row (ps, ps->row, pl_get_for_idx (ps->row));
         }
     }
     else {
         if (ps->row != -1) {
-            gtkpl_redraw_pl_row (ps, ps->row);
+            gtkpl_redraw_pl_row (ps, ps->row, pl_get_for_idx (ps->row));
         }
     }
     if (prev != -1 && prev != ps->row) {
-        gtkpl_redraw_pl_row (ps, prev);
+        gtkpl_redraw_pl_row (ps, prev, pl_get_for_idx (prev));
     }
 
 }
@@ -708,12 +704,12 @@ gtkpl_mousemove (gtkplaylist_t *ps, GdkEventMotion *event) {
             for (playItem_t *it = playlist_head[ps->iterator]; it; it = it->next[ps->iterator], idx++) {
                 if (idx >= start && idx <= end) {
                     it->selected = 1;
-                    gtkpl_redraw_pl_row (ps, idx);
+                    gtkpl_redraw_pl_row (ps, idx, it);
                 }
                 else if (it->selected)
                 {
                     it->selected = 0;
-                    gtkpl_redraw_pl_row (ps, idx);
+                    gtkpl_redraw_pl_row (ps, idx, it);
                 }
             }
         }
@@ -802,10 +798,10 @@ gtkpl_songchanged (gtkplaylist_t *ps, int from, int to) {
     if (from >= 0 || to >= 0) {
         GtkWidget *widget = ps->playlist;
         if (from >= 0) {
-            gtkpl_redraw_pl_row (ps, from);
+            gtkpl_redraw_pl_row (ps, from, pl_get_for_idx (from));
         }
         if (to >= 0) {
-            gtkpl_redraw_pl_row (ps, to);
+            gtkpl_redraw_pl_row (ps, to, pl_get_for_idx (to));
         }
     }
 }
@@ -890,10 +886,10 @@ gtkpl_keypress (gtkplaylist_t *ps, int keyval, int state) {
                     it->selected = 1;
                     if (idx >= minvis && idx <= maxvis) {
                         if (newscroll == ps->scrollpos) {
-                            gtkpl_redraw_pl_row (ps, idx);
+                            gtkpl_redraw_pl_row (ps, idx, it);
                         }
                         else {
-                            gtkpl_redraw_pl_row_novis (ps, idx);
+                            gtkpl_redraw_pl_row_novis (ps, idx, it);
                         }
                     }
                 }
@@ -902,10 +898,10 @@ gtkpl_keypress (gtkplaylist_t *ps, int keyval, int state) {
                     it->selected = 0;
                     if (idx >= minvis && idx <= maxvis) {
                         if (newscroll == ps->scrollpos) {
-                            gtkpl_redraw_pl_row (ps, idx);
+                            gtkpl_redraw_pl_row (ps, idx, it);
                         }
                         else {
-                            gtkpl_redraw_pl_row_novis (ps, idx);
+                            gtkpl_redraw_pl_row_novis (ps, idx, it);
                         }
                     }
                 }
@@ -925,10 +921,10 @@ gtkpl_keypress (gtkplaylist_t *ps, int keyval, int state) {
                         it->selected = 1;
                         if (idx >= minvis && idx <= maxvis) {
                             if (newscroll == ps->scrollpos) {
-                                gtkpl_redraw_pl_row (ps, idx);
+                                gtkpl_redraw_pl_row (ps, idx, it);
                             }
                             else {
-                                gtkpl_redraw_pl_row_novis (ps, idx);
+                                gtkpl_redraw_pl_row_novis (ps, idx, it);
                             }
                         }
                     }
@@ -937,10 +933,10 @@ gtkpl_keypress (gtkplaylist_t *ps, int keyval, int state) {
                     it->selected = 0;
                     if (idx >= minvis && idx <= maxvis) {
                         if (newscroll == ps->scrollpos) {
-                            gtkpl_redraw_pl_row (ps, idx);
+                            gtkpl_redraw_pl_row (ps, idx, it);
                         }
                         else {
-                            gtkpl_redraw_pl_row_novis (ps, idx);
+                            gtkpl_redraw_pl_row_novis (ps, idx, it);
                         }
                     }
                 }

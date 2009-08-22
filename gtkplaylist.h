@@ -90,10 +90,10 @@ void
 gtkpl_init (void);
 
 void
-gtkpl_redraw_pl_row (gtkplaylist_t *ps, int row);
+gtkpl_redraw_pl_row (gtkplaylist_t *ps, int row, playItem_t *it);
 
 void
-gtkpl_redraw_pl_row_novis (gtkplaylist_t *ps, int row);
+gtkpl_redraw_pl_row_novis (gtkplaylist_t *ps, int row, playItem_t *it);
 
 void
 gtkpl_setup_scrollbar (gtkplaylist_t *ps);
