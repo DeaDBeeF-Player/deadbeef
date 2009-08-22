@@ -24,10 +24,9 @@ typedef struct metaInfo_s {
     struct metaInfo_s *next;
 } metaInfo_t;
 
-#define PL_MAX_ITERATORS 3
+#define PL_MAX_ITERATORS 2
 #define PL_MAIN 0
 #define PL_SEARCH 1
-#define PL_SHUFFLE 2
 
 typedef struct playItem_s {
     char *fname; // full pathname
@@ -38,11 +37,13 @@ typedef struct playItem_s {
     float duration; // in seconds
     int startoffset; // offset to seek to skip tags and info-headers (mp3)
     int endoffset; // offset from end of file where music data ends (mp3)
+    int shufflerating; // sort order for shuffle mode
     const char *filetype; // e.g. MP3 or OGG
     struct playItem_s *next[PL_MAX_ITERATORS]; // next item in linked list
     struct playItem_s *prev[PL_MAX_ITERATORS]; // prev item in linked list
     struct metaInfo_s *meta; // linked list storing metainfo
     unsigned selected : 1;
+    unsigned played : 1; // mark as played in shuffle mode
 } playItem_t;
 
 extern playItem_t *playlist_head[PL_MAX_ITERATORS]; // head of linked list
@@ -143,9 +144,6 @@ void
 pl_select_all (void);
 
 void
-pl_shuffle_item (playItem_t *it, int cnt);
-
-void
-pl_reshuffle (void);
+pl_reshuffle (playItem_t **ppmin, playItem_t **ppmax);
 
 #endif // __PLAYLIST_H
