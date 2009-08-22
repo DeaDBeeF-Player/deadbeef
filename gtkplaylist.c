@@ -394,10 +394,6 @@ gtkpl_draw_playlist (gtkplaylist_t *ps, int x, int y, int w, int h) {
 	if (!cr) {
 		return;
 	}
-	//cairo_set_antialias (cr, CAIRO_ANTIALIAS_NONE);
-
-//    cairo_select_font_face (cr, "fixed", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
-//    cairo_set_font_size (cr, rowheight);
 	int row;
 	int row1;
 	int row2;
@@ -409,7 +405,6 @@ gtkpl_draw_playlist (gtkplaylist_t *ps, int x, int y, int w, int h) {
 	playItem_t *it = gtkpl_get_for_idx (ps, ps->scrollpos);
 	playItem_t *it_copy = it;
 	for (row = row1; row < row2_full; row++) {
-        //printf ("drawing row %d (nvis=%d), row1=%d, row2=%d, row2_full=%d\n", row, ps->nvisiblerows, row1, row2, row2_full);
 		gtkpl_draw_pl_row_back (ps, cr, row, it);
 		if (it) {
             it = it->next[ps->iterator];
@@ -418,7 +413,6 @@ gtkpl_draw_playlist (gtkplaylist_t *ps, int x, int y, int w, int h) {
 	it = it_copy;
 	int idx = 0;
 	for (row = row1; row < row2; row++, idx++) {
-	//printf ("drawing row %d (nvis=%d), row1=%d, row2=%d, row2_full=%d\n", row, ps->nvisiblerows, row1, row2, row2_full);
         gtkpl_draw_pl_row (ps, cr, row, it);
         it = it->next[ps->iterator];
 	}
@@ -734,10 +728,10 @@ gtkpl_handle_scroll_event (gtkplaylist_t *ps, int direction) {
     GtkAdjustment* adj = gtk_range_get_adjustment (GTK_RANGE (range));
     int newscroll = gtk_range_get_value (GTK_RANGE (range));
     if (direction == GDK_SCROLL_UP) {
-        newscroll -= 10;//gtk_adjustment_get_page_increment (adj);
+        newscroll -= 2;
     }
     else if (direction == GDK_SCROLL_DOWN) {
-        newscroll += 10;//gtk_adjustment_get_page_increment (adj);
+        newscroll += 2;
     }
     gtk_range_set_value (GTK_RANGE (range), newscroll);
 }
