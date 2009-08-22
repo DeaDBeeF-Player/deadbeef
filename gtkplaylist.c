@@ -130,6 +130,9 @@ void
 gtkpl_init (void) {
     //memcpy (colo_current, colo_system_gtk, sizeof (colo_current));
     //memcpy (colo_current, colo_dark_orange, sizeof (colo_current));
+    play16_pixbuf = draw_load_pixbuf ("play_16.png");
+    pause16_pixbuf = draw_load_pixbuf ("pause_16.png");
+    rowheight = draw_get_font_size () + 8;
     memcpy (colo_current, colo_white_blue, sizeof (colo_current));
 }
 
@@ -428,10 +431,10 @@ gtkpl_draw_pl_row (gtkplaylist_t *ps, int row, playItem_t *it) {
             int w = ps->fmtcache[cidx + 1];
 //            printf ("draw %s -> %s\n", columns[i], str);
             if (i == 2) {
-                draw_text (x + ps->colwidths[i] - w - 5, row * rowheight - ps->scrollpos * rowheight + rowheight/2 - draw_get_text_size ()/2, str);
+                draw_text (x + ps->colwidths[i] - w - 5, row * rowheight - ps->scrollpos * rowheight + rowheight/2 - draw_get_font_size ()/2, str);
             }
             else {
-                draw_text (x + 5, row * rowheight - ps->scrollpos * rowheight + rowheight/2 - draw_get_text_size ()/2, str);
+                draw_text (x + 5, row * rowheight - ps->scrollpos * rowheight + rowheight/2 - draw_get_font_size ()/2, str);
             }
         }
         x += ps->colwidths[i];
@@ -493,11 +496,6 @@ gtkpl_configure (gtkplaylist_t *ps) {
     }
     ps->nvisiblerows = ceil (widget->allocation.height / (float)rowheight);
     ps->backbuf = gdk_pixmap_new (widget->window, widget->allocation.width, widget->allocation.height, -1);
-
-    if (!play16_pixbuf) {
-        play16_pixbuf = draw_load_pixbuf ("play_16.png");
-        pause16_pixbuf = draw_load_pixbuf ("pause_16.png");
-    }
 
     gtkpl_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
 }
@@ -1260,7 +1258,7 @@ gtkpl_header_draw (gtkplaylist_t *ps) {
                 gtkpl_fit_text (ps->colnames_fitted[i], NULL, pl_colname_max, colnames[i], ps->colwidths[i]-10);
                 ps->header_fitted[i] = 1;
             }
-            draw_text (x + 5, h/2-draw_get_text_size()/2, ps->colnames_fitted[i]);
+            draw_text (x + 5, h/2-draw_get_font_size()/2, ps->colnames_fitted[i]);
         }
         x += w;
     }
@@ -1306,6 +1304,8 @@ on_header_realize                      (GtkWidget       *widget,
                                         gpointer         user_data)
 {
     // create cursor for sizing headers
+    int h = draw_get_font_size ();
+    gtk_widget_set_size_request (widget, -1, h + 8);
     cursor_sz = gdk_cursor_new (GDK_SB_H_DOUBLE_ARROW);
     cursor_drag = gdk_cursor_new (GDK_FLEUR);
 }

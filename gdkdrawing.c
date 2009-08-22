@@ -94,10 +94,12 @@ draw_init_font (void) {
 }
 
 float
-draw_get_text_size (void) {
+draw_get_font_size (void) {
+    GdkScreen *screen = gdk_screen_get_default ();
+    float dpi = gdk_screen_get_resolution (screen);
     GtkStyle *style = gtk_widget_get_default_style ();
     PangoFontDescription *desc = style->font_desc;
-    return (float)pango_font_description_get_size (desc) / PANGO_SCALE * 96 / 72;
+    return (float)pango_font_description_get_size (desc) / PANGO_SCALE * dpi / 72;
 }
 
 void

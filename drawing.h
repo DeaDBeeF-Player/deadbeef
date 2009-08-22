@@ -42,7 +42,7 @@ void
 draw_rect (float x, float y, float w, float h, int fill);
 
 float
-draw_get_text_size (void);
+draw_get_font_size (void);
 
 void
 draw_text (float x, float y, const char *text);
