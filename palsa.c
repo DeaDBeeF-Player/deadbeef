@@ -19,6 +19,7 @@
 #include <alsa/asoundlib.h>
 #include <stdint.h>
 #include <unistd.h>
+#include <sys/prctl.h>
 #include "palsa.h"
 #include "threading.h"
 #include "streamer.h"
@@ -277,6 +278,7 @@ palsa_get_rate (void) {
 
 static void
 palsa_thread (uintptr_t context) {
+    prctl (PR_SET_NAME, "deadbeef-alsa", 0, 0, 0, 0);
     int err;
     for (;;) {
         if (alsa_terminate) {

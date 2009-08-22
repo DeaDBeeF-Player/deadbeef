@@ -21,6 +21,7 @@
 #include <assert.h>
 #include <unistd.h>
 #include <samplerate.h>
+#include <sys/prctl.h>
 #include "threading.h"
 #include "codec.h"
 #include "playlist.h"
@@ -77,6 +78,7 @@ streamer_read_async (char *bytes, int size);
 
 void
 streamer_thread (uintptr_t ctx) {
+    prctl (PR_SET_NAME, "deadbeef-stream", 0, 0, 0, 0);
     codecleft = 0;
 
     while (!streaming_terminate) {

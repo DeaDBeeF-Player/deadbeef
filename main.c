@@ -27,6 +27,7 @@
 #include <sys/un.h>
 #include <sys/fcntl.h>
 #include <sys/errno.h>
+#include <sys/prctl.h>
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
 #endif
@@ -226,60 +227,89 @@ exec_command_line (const char *cmdline, int len, int filter) {
     return exitcode;
 }
 
-void
-player_thread (uintptr_t ctx) {
-    // become a server
-    struct sockaddr_un local, remote;
-    unsigned s = socket(AF_UNIX, SOCK_STREAM, 0);
-    int flags;
-    flags = fcntl(s,F_GETFL,0);
-    assert(flags != -1);
-    fcntl(s, F_SETFL, flags | O_NONBLOCK);
-    local.sun_family = AF_UNIX;  /* local is declared before socket() ^ */
-    snprintf (local.sun_path, 108, "%s/socket", dbconfdir);
-    unlink(local.sun_path);
-    int len = strlen(local.sun_path) + sizeof(local.sun_family);
-    bind(s, (struct sockaddr *)&local, len);
+static struct sockaddr_un srv_local;
+static struct sockaddr_un srv_remote;
+static unsigned srv_socket;
 
-    if (listen(s, 5) == -1) {
-        perror("listen");
-        exit(1);
+int
+server_start (void) {
+    srv_socket = socket (AF_UNIX, SOCK_STREAM, 0);
+    int flags;
+    flags = fcntl (srv_socket, F_GETFL,0);
+    if (flags == -1) {
+        fprintf (stderr, "server_start failed, flags == -1\n");
+        return -1;
     }
-    for (;;) {
-        // handle remote stuff
-        int t = sizeof(remote);
-        unsigned s2;
-        s2 = accept(s, (struct sockaddr *)&remote, &t);
-        if (s2 == -1 && errno != EAGAIN && errno != EWOULDBLOCK) {
-            perror("accept");
-            exit(1);
-        }
-        else if (s2 != -1) {
-            char str[2048];
-            int size;
-            if ((size = recv (s2, str, 2048, 0)) >= 0) {
-//                if (size > 0) {
-//                    printf ("received: %s %d\n", str, size);
-//                }
-                if (size == 1 && str[0] == 0) {
+    fcntl(srv_socket, F_SETFL, flags | O_NONBLOCK);
+    srv_local.sun_family = AF_UNIX;  /* local is declared before socket() ^ */
+    snprintf (srv_local.sun_path, 108, "%s/socket", dbconfdir);
+    unlink(srv_local.sun_path);
+    int len = strlen(srv_local.sun_path) + sizeof(srv_local.sun_family);
+    bind(srv_socket, (struct sockaddr *)&srv_local, len);
+
+    if (listen(srv_socket, 5) == -1) {
+        perror("listen");
+        return -1;
+    }
+    return 0;
+}
+
+void
+server_close (void) {
+    if (srv_socket) {
+        close (srv_socket);
+        srv_socket = 0;
+    }
+}
+
+int
+server_update (void) {
+    // handle remote stuff
+    int t = sizeof (srv_remote);
+    unsigned s2;
+    s2 = accept(srv_socket, (struct sockaddr *)&srv_remote, &t);
+    if (s2 == -1 && errno != EAGAIN && errno != EWOULDBLOCK) {
+        perror("accept");
+        return -1;
+    }
+    else if (s2 != -1) {
+        char str[2048];
+        int size;
+        if ((size = recv (s2, str, 2048, 0)) >= 0) {
+            if (size == 1 && str[0] == 0) {
+                GDK_THREADS_ENTER();
+                gtk_widget_show (mainwin);
+                gtk_window_present (GTK_WINDOW (mainwin));
+                GDK_THREADS_LEAVE();
+            }
+            else {
+                int res = exec_command_line (str, size, 0);
+                if (res == 2) {
                     GDK_THREADS_ENTER();
-                    gtk_widget_show (mainwin);
-                    gtk_window_present (GTK_WINDOW (mainwin));
+                    gtkpl_playsong (&main_playlist);
                     GDK_THREADS_LEAVE();
                 }
-                else {
-                    int res = exec_command_line (str, size, 0);
-                    if (res == 2) {
-                        GDK_THREADS_ENTER();
-                        gtkpl_playsong (&main_playlist);
-                        GDK_THREADS_LEAVE();
-                    }
-                }
             }
-            send (s2, "", 1, 0);
-            close(s2);
         }
+        send (s2, "", 1, 0);
+        close(s2);
+    }
+    return 0;
+}
 
+void
+player_thread (uintptr_t ctx) {
+    prctl (PR_SET_NAME, "deadbeef-player", 0, 0, 0, 0);
+    // become a server
+    server_start ();
+    for (;;) {
+        static int srvupd_count = 0;
+        if (--srvupd_count <= 0) {
+            srvupd_count = 10;
+            if (server_update () < 0) {
+                messagepump_push (M_TERMINATE, 0, 0, 0);
+            }
+        }
         uint32_t msg;
         uintptr_t ctx;
         uint32_t p1;
@@ -394,7 +424,7 @@ player_thread (uintptr_t ctx) {
         usleep(1000);
         update_songinfo ();
     }
-    close (s);
+    server_close ();
 }
 
 gboolean
@@ -450,6 +480,7 @@ on_trayicon_popup_menu (GtkWidget       *widget,
 
 int
 main (int argc, char *argv[]) {
+    prctl (PR_SET_NAME, "deadbeef-main", 0, 0, 0, 0);
     char *homedir = getenv ("HOME");
     if (!homedir) {
         fprintf (stderr, "unable to find home directory. stopping.\n");
@@ -563,6 +594,7 @@ main (int argc, char *argv[]) {
     if (argc > 1) {
         int res = exec_command_line (cmdline, size, 0);
         if (res == -1) {
+            server_close ();
             return -1;
         }
         if (res == 2) {
