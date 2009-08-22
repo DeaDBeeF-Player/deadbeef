@@ -61,6 +61,10 @@ void
 streamer_set_nextsong (int song, int pstate) {
     nextsong = song;
     nextsong_pstate = pstate;
+    if (p_isstopped ()) {
+        // no sense to wait until end of previous song, reset buffer
+        bytes_until_next_song = 0;
+    }
 }
 
 void
@@ -76,7 +80,6 @@ streamer_thread (uintptr_t ctx) {
     codecleft = 0;
 
     while (!streaming_terminate) {
-//        printf ("buns: %d\n", bytes_until_next_song);
         if (nextsong >= 0 && bytes_until_next_song == 0) {
             int sng = nextsong;
             int pstate = nextsong_pstate;
