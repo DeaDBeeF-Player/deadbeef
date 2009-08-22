@@ -41,6 +41,9 @@
 #include "streamer.h"
 #include "search.h"
 #include "progress.h"
+#include "drawing.h"
+
+#define TEXT_USE_PANGO 0
 
 // orange on dark color scheme
 float colo_dark_orange[COLO_COUNT][3] = {
@@ -73,22 +76,6 @@ float colo_white_blue[COLO_COUNT][3] = {
     { 0x09/255.f, 0x22/255.f, 0x3a/255.f }, // dragdrop marker
 };
 
-// gtk color scheme
-float colo_system_gtk[COLO_COUNT][3] = {
-    { 0x7f/255.f, 0x7f/255.f, 0x7f/255.f }, // cursor
-    { 0x1d/255.f, 0x1f/255.f, 0x1b/255.f }, // odd
-    { 0x21/255.f, 0x23/255.f, 0x1f/255.f }, // even
-    { 0xaf/255.f, 0xa7/255.f, 0x9e/255.f }, // sel odd
-    { 0xa7/255.f, 0x9f/255.f, 0x96/255.f }, // sel even
-    { 0xf4/255.f, 0x7e/255.f, 0x46/255.f }, // text
-    { 0,          0,          0          }, // sel text
-    { 0x1d/255.f, 0x1f/255.f, 0x1b/255.f }, // seekbar back
-    { 0xf4/255.f, 0x7e/255.f, 0x46/255.f }, // seekbar front
-    { 0x1d/255.f, 0x1f/255.f, 0x1b/255.f }, // volumebar back
-    { 0xf4/255.f, 0x7e/255.f, 0x46/255.f }, // volumebar front
-    { 0xf4/255.f, 0x7e/255.f, 0x46/255.f }, // dragdrop marker
-};
-
 // current color scheme
 float colo_current[COLO_COUNT][3];
 
@@ -112,15 +99,10 @@ const char *colnames[pl_ncolumns] = {
     "Duration"
 };
 
-static cairo_surface_t *play16_pixmap;
-static cairo_surface_t *pause16_pixmap;
+static uintptr_t play16_pixbuf;
+static uintptr_t pause16_pixbuf;
 
-void
-gtkpl_cairo_destroy (cairo_t *cr) {
-    cairo_destroy (cr);
-    cairo_font_invalid = 1;
-}
-
+#if 0
 void
 color_gdk_to_cairo (GdkColor *gdk, float *cairo) {
     cairo[0] = gdk->red / 65535.f;
@@ -141,36 +123,89 @@ gtkpl_system_colo_init (void) {
     color_gdk_to_cairo (&list->style->text[GTK_STATE_ACTIVE], colo_system_gtk[COLO_PLAYLIST_SEL_TEXT]);
     g_object_unref (list);
 }
+#endif
 
 // that must be called before gtk_init
 void
 gtkpl_init (void) {
-    //gtkpl_system_colo_init ();
     //memcpy (colo_current, colo_system_gtk, sizeof (colo_current));
     //memcpy (colo_current, colo_dark_orange, sizeof (colo_current));
     memcpy (colo_current, colo_white_blue, sizeof (colo_current));
 }
 
 void
-gtkpl_set_cairo_source_rgb (cairo_t *cr, int col) {
+theme_set_cairo_source_rgb (cairo_t *cr, int col) {
     cairo_set_source_rgb (cr, colo_current[col][0], colo_current[col][1], colo_current[col][2]);
+}
+
+void
+theme_set_fg_color (int col) {
+    draw_set_fg_color (colo_current[col]);
+}
+
+void
+theme_set_bg_color (int col) {
+    draw_set_bg_color (colo_current[col]);
+}
+
+
+#if TEXT_USE_PANGO
+static PangoLayout *layout;
+#endif
+
+#if 0
+void
+gtkpl_cairo_destroy (cairo_t *cr) {
+    cairo_destroy (cr);
+    cairo_font_invalid = 1;
+#if TEXT_USE_PANGO
+    if (layout) {
+        g_object_unref (layout);
+        layout = NULL;
+    }
+#endif
 }
 
 void
 gtkpl_set_cairo_font (cairo_t *cr) {
     if (cairo_font_invalid) {
+#if TEXT_USE_PANGO
+        layout = pango_cairo_create_layout (cr);
+        PangoFontDescription *desc = pango_font_description_from_string ("Numbus Sans L 10");
+        pango_layout_set_font_description (layout, desc);
+        pango_font_description_free (desc);
+#else
         cairo_select_font_face (cr, fontface, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
         cairo_set_font_size (cr, fontheight);
+#endif
         cairo_font_invalid = 0;
     }
 }
 
 void
 gtkpl_set_cairo_header_font (cairo_t *cr) {
-    cairo_select_font_face (cr, header_fontface, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
-    cairo_set_font_size (cr, header_fontheight);
+    if (cairo_font_invalid) {
+        cairo_select_font_face (cr, header_fontface, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+        cairo_set_font_size (cr, header_fontheight);
+        cairo_font_invalid = 0;
+    }
 }
 
+static void
+text_draw (cairo_t *cr, int x, int y, const char *text) {
+    gtkpl_set_cairo_font (cr);
+#if TEXT_USE_PANGO
+    pango_layout_set_text (layout, text, -1);
+    cairo_move_to (cr, x, y);
+    pango_cairo_show_layout (cr, layout);
+#else
+    cairo_move_to (cr, x, y+rowheight-3);
+    cairo_show_text (cr, text);
+#endif
+}
+#endif
+
+#if 0
 int
 gtkpl_fit_text (cairo_t *cr, char *out, int *dotpos, int len, const char *in, int width) {
     int l = strlen (in);
@@ -205,12 +240,42 @@ gtkpl_fit_text (cairo_t *cr, char *out, int *dotpos, int len, const char *in, in
     }
     return w;
 }
+#endif
 
-static void
-text_draw (cairo_t *cr, int x, int y, const char *text) {
-    gtkpl_set_cairo_font (cr);
-    cairo_move_to (cr, x, y+rowheight-3);
-    cairo_show_text (cr, text);
+int
+gtkpl_fit_text (char *out, int *dotpos, int len, const char *in, int width) {
+    int l = strlen (in);
+    len--;
+    l = min (len, l);
+    strncpy (out, in, l);
+    out[l] = 0;
+    int w = 0;
+    int dotlen = strlen ("…");
+
+    char *p = &out[l];
+    p = g_utf8_find_prev_char (out, p);
+    if (dotpos) {
+        *dotpos = -1;
+    }
+    for (;;) {
+        int h;
+        draw_get_text_extents (out, l, &w, &h);
+        if (w <= width) {
+            break;
+        }
+        char *prev = g_utf8_find_prev_char (out, p);
+
+        if (!prev) {
+            break;
+        }
+        strcpy (prev, "…");
+        l = prev - out + dotlen;
+        p = prev;
+        if (dotpos) {
+            *dotpos = p-out;
+        }
+    }
+    return w;
 }
 
 void
@@ -242,16 +307,12 @@ gtkpl_setup_scrollbar (gtkplaylist_t *ps) {
 
 void
 gtkpl_redraw_pl_row_novis (gtkplaylist_t *ps, int row, playItem_t *it) {
-	cairo_t *cr;
-	cr = gdk_cairo_create (ps->backbuf);
-	if (!cr) {
-		return;
-	}
+    draw_begin ((uintptr_t)ps->backbuf);
 	if (it) {
-        gtkpl_draw_pl_row_back (ps, cr, row, it);
-        gtkpl_draw_pl_row (ps, cr, row, it);
+        gtkpl_draw_pl_row_back (ps, row, it);
+        gtkpl_draw_pl_row (ps, row, it);
     }
-    gtkpl_cairo_destroy (cr);
+    draw_end ();
 }
 
 void
@@ -269,64 +330,56 @@ gtkpl_redraw_pl_row (gtkplaylist_t *ps, int row, playItem_t *it) {
 }
 
 void
-gtkpl_draw_pl_row_back (gtkplaylist_t *ps, cairo_t *cr, int row, playItem_t *it) {
+gtkpl_draw_pl_row_back (gtkplaylist_t *ps, int row, playItem_t *it) {
 	// draw background
 	float w;
 	int start, end;
 	int startx, endx;
 	int width, height;
-	gdk_drawable_get_size (ps->backbuf, &width, &height);
+	draw_get_canvas_size ((uintptr_t)ps->backbuf, &width, &height);
 	w = width;
 	if (it && ((it->selected && ps->multisel) || (row == ps->row && !ps->multisel))) {
         if (row % 2) {
-            gtkpl_set_cairo_source_rgb (cr, COLO_PLAYLIST_SEL_EVEN);
+            theme_set_fg_color (COLO_PLAYLIST_SEL_EVEN);
+            theme_set_fg_color (COLO_PLAYLIST_SEL_EVEN);
         }
         else {
-            gtkpl_set_cairo_source_rgb (cr, COLO_PLAYLIST_SEL_ODD);
+            theme_set_fg_color (COLO_PLAYLIST_SEL_ODD);
         }
-        cairo_rectangle (cr, 0, row * rowheight - ps->scrollpos * rowheight, width, rowheight);
-        cairo_fill (cr);
+        draw_rect (0, row * rowheight - ps->scrollpos * rowheight, width, rowheight, 1);
     }
     else {
         if (row % 2) {
-            gtkpl_set_cairo_source_rgb (cr, COLO_PLAYLIST_EVEN);
+            theme_set_fg_color (COLO_PLAYLIST_EVEN);
         }
         else {
-            gtkpl_set_cairo_source_rgb (cr, COLO_PLAYLIST_ODD);
+            theme_set_fg_color (COLO_PLAYLIST_ODD);
         }
-        cairo_rectangle (cr, 0, row * rowheight - ps->scrollpos * rowheight, width, rowheight);
-        cairo_fill (cr);
+        draw_rect (0, row * rowheight - ps->scrollpos * rowheight, width, rowheight, 1);
     }
 	if (row == ps->row) {
-        gtkpl_set_cairo_source_rgb (cr, COLO_PLAYLIST_CURSOR);
-        cairo_set_antialias (cr, CAIRO_ANTIALIAS_NONE);
-        cairo_rectangle (cr, 0, row * rowheight - ps->scrollpos * rowheight, width, rowheight-1);
-        cairo_set_line_width (cr, 1);
-        cairo_stroke (cr);
+        theme_set_fg_color (COLO_PLAYLIST_CURSOR);
+        draw_rect (0, row * rowheight - ps->scrollpos * rowheight, width, rowheight-1, 0);
     }
 }
 
 void
-gtkpl_draw_pl_row (gtkplaylist_t *ps, cairo_t *cr, int row, playItem_t *it) {
+gtkpl_draw_pl_row (gtkplaylist_t *ps, int row, playItem_t *it) {
     if (row-ps->scrollpos >= ps->nvisiblerows || row-ps->scrollpos < 0) {
 //        fprintf (stderr, "WARNING: attempt to draw row outside of screen bounds (%d)\n", row-ps->scrollpos);
         return;
     }
 	int width, height;
-	gdk_drawable_get_size (ps->backbuf, &width, &height);
+	draw_get_canvas_size ((uintptr_t)ps->backbuf, &width, &height);
     if (it == playlist_current_ptr && ps->colwidths[0] > 0/* && !p_isstopped ()*/) {
-        cairo_surface_t *surf = p_ispaused () ? pause16_pixmap : play16_pixmap;
-        cairo_set_source_surface (cr, surf, ps->colwidths[0]/2-8, row * rowheight - ps->scrollpos * rowheight);
-        cairo_rectangle (cr, ps->colwidths[0]/2-8, row * rowheight - ps->scrollpos * rowheight, 16, 16);
-        cairo_clip (cr);
-        cairo_paint (cr);
-        cairo_reset_clip (cr);
+        uintptr_t pixbuf = p_ispaused () ? pause16_pixbuf : play16_pixbuf;
+        draw_pixbuf ((uintptr_t)ps->backbuf, pixbuf, ps->colwidths[0]/2-8, row * rowheight - ps->scrollpos * rowheight, 0, 0, 16, 16);
     }
 	if (it && ((it->selected && ps->multisel) || (row == ps->row && !ps->multisel))) {
-        gtkpl_set_cairo_source_rgb (cr, COLO_PLAYLIST_SEL_TEXT);
+        theme_set_fg_color (COLO_PLAYLIST_SEL_TEXT);
     }
     else {
-        gtkpl_set_cairo_source_rgb (cr, COLO_PLAYLIST_TEXT);
+        theme_set_fg_color (COLO_PLAYLIST_TEXT);
     }
     // draw as columns
     char dur[10] = "-:--";
@@ -358,7 +411,8 @@ gtkpl_draw_pl_row (gtkplaylist_t *ps, cairo_t *cr, int row, playItem_t *it) {
             int dotpos;
             int cidx = ((row-ps->scrollpos) * pl_ncolumns + i) * 3;
             if (!ps->fmtcache[cidx + 2]) {
-                ps->fmtcache[cidx + 1] = gtkpl_fit_text (cr, str, &dotpos, 512, columns[i], ps->colwidths[i]-10);
+//                gtkpl_set_cairo_font (cr);
+                ps->fmtcache[cidx + 1] = gtkpl_fit_text (str, &dotpos, 512, columns[i], ps->colwidths[i]-10);
                 ps->fmtcache[cidx + 0] = dotpos;
                 ps->fmtcache[cidx + 2] = 1;
 
@@ -374,10 +428,10 @@ gtkpl_draw_pl_row (gtkplaylist_t *ps, cairo_t *cr, int row, playItem_t *it) {
             int w = ps->fmtcache[cidx + 1];
 //            printf ("draw %s -> %s\n", columns[i], str);
             if (i == 2) {
-                text_draw (cr, x + ps->colwidths[i] - w - 5, row * rowheight - ps->scrollpos * rowheight, str);
+                draw_text (x + ps->colwidths[i] - w - 5, row * rowheight - ps->scrollpos * rowheight + rowheight/2 - draw_get_text_size ()/2, str);
             }
             else {
-                text_draw (cr, x + 5, row * rowheight - ps->scrollpos * rowheight, str);
+                draw_text (x + 5, row * rowheight - ps->scrollpos * rowheight + rowheight/2 - draw_get_text_size ()/2, str);
             }
         }
         x += ps->colwidths[i];
@@ -398,11 +452,7 @@ gtkpl_draw_playlist (gtkplaylist_t *ps, int x, int y, int w, int h) {
         ps->fmtcache = malloc (ps->nvisiblerows * pl_ncolumns * 3 * sizeof (int16_t));
         memset (ps->fmtcache, 0, ps->nvisiblerows * pl_ncolumns * 3 * sizeof (int16_t));
     }
-	cairo_t *cr;
-	cr = gdk_cairo_create (ps->backbuf);
-	if (!cr) {
-		return;
-	}
+    draw_begin ((uintptr_t)ps->backbuf);
 	int row;
 	int row1;
 	int row2;
@@ -414,7 +464,7 @@ gtkpl_draw_playlist (gtkplaylist_t *ps, int x, int y, int w, int h) {
 	playItem_t *it = gtkpl_get_for_idx (ps, ps->scrollpos);
 	playItem_t *it_copy = it;
 	for (row = row1; row < row2_full; row++) {
-		gtkpl_draw_pl_row_back (ps, cr, row, it);
+		gtkpl_draw_pl_row_back (ps, row, it);
 		if (it) {
             it = it->next[ps->iterator];
         }
@@ -422,11 +472,11 @@ gtkpl_draw_playlist (gtkplaylist_t *ps, int x, int y, int w, int h) {
 	it = it_copy;
 	int idx = 0;
 	for (row = row1; row < row2; row++, idx++) {
-        gtkpl_draw_pl_row (ps, cr, row, it);
+        gtkpl_draw_pl_row (ps, row, it);
         it = it->next[ps->iterator];
 	}
 
-    gtkpl_cairo_destroy (cr);
+    draw_end ();
 }
 
 void
@@ -444,9 +494,9 @@ gtkpl_configure (gtkplaylist_t *ps) {
     ps->nvisiblerows = ceil (widget->allocation.height / (float)rowheight);
     ps->backbuf = gdk_pixmap_new (widget->window, widget->allocation.width, widget->allocation.height, -1);
 
-    if (!play16_pixmap) {
-        play16_pixmap = cairo_image_surface_create_from_png (PREFIX"/share/deadbeef/pixmaps/play_16.png");
-        pause16_pixmap = cairo_image_surface_create_from_png (PREFIX"/share/deadbeef/pixmaps/pause_16.png");
+    if (!play16_pixbuf) {
+        play16_pixbuf = draw_load_pixbuf ("play_16.png");
+        pause16_pixbuf = draw_load_pixbuf ("pause_16.png");
     }
 
     gtkpl_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
@@ -669,7 +719,7 @@ gtkpl_draw_areasel (GtkWidget *widget, int x, int y) {
 	if (!cr) {
 		return;
 	}
-	gtkpl_set_cairo_source_rgb (cr, COLO_PLAYLIST_CURSOR);
+	theme_set_fg_color (COLO_PLAYLIST_CURSOR);
     cairo_set_antialias (cr, CAIRO_ANTIALIAS_NONE);
     cairo_set_line_width (cr, 1);
     int sx = min (areaselect_x, x);
@@ -965,19 +1015,14 @@ gtkpl_track_dragdrop (gtkplaylist_t *ps, int y) {
         drag_motion_y = -1;
         return;
     }
-	cairo_t *cr;
-	cr = gdk_cairo_create (widget->window);
-	if (!cr) {
-		return;
-	}
+    draw_begin ((uintptr_t)widget->window);
     drag_motion_y = y / rowheight;
 
-    gtkpl_set_cairo_source_rgb (cr, COLO_DRAGDROP_MARKER);
-    cairo_rectangle (cr, 0, drag_motion_y * rowheight-1, widget->allocation.width, 3);
-    cairo_rectangle (cr, 0, drag_motion_y * rowheight-3, 3, 7);
-    cairo_rectangle (cr, widget->allocation.width-3, drag_motion_y * rowheight-3, 3, 7);
-    cairo_fill (cr);
-    gtkpl_cairo_destroy (cr);
+    theme_set_fg_color (COLO_DRAGDROP_MARKER);
+    draw_rect (0, drag_motion_y * rowheight-1, widget->allocation.width, 3, 1);
+    draw_rect (0, drag_motion_y * rowheight-3, 3, 7, 1);
+    draw_rect (widget->allocation.width-3, drag_motion_y * rowheight-3, 3, 7, 1);
+    draw_end ();
 }
 
 void
@@ -1201,29 +1246,25 @@ gtkpl_header_draw (gtkplaylist_t *ps) {
     if (x < widget->allocation.width) {
         gtk_paint_box (widget->style, ps->backbuf_header, GTK_STATE_INSENSITIVE, GTK_SHADOW_OUT, NULL, NULL, detail, x, 0, widget->allocation.width-x, h);
     }
-    cairo_t *cr;
-    cr = gdk_cairo_create (ps->backbuf_header);
-    if (!cr) {
-        return;
-    }
+    draw_begin ((uintptr_t)ps->backbuf_header);
     x = 0;
-    gtkpl_set_cairo_header_font (cr);
+//    gtkpl_set_cairo_header_font (cr);
     for (int i = 0; i < pl_ncolumns; i++) {
         if (x >= widget->allocation.width) {
             break;
         }
         w = ps->colwidths[i];
         if (w > 0) {
-            cairo_move_to (cr, x + 5, widget->allocation.height/2 + header_fontheight/3);
             if (!ps->header_fitted[i]) {
-                gtkpl_fit_text (cr, ps->colnames_fitted[i], NULL, pl_colname_max, colnames[i], ps->colwidths[i]-10);
+                //gtkpl_set_cairo_header_font (cr);
+                gtkpl_fit_text (ps->colnames_fitted[i], NULL, pl_colname_max, colnames[i], ps->colwidths[i]-10);
                 ps->header_fitted[i] = 1;
             }
-            cairo_show_text (cr, ps->colnames_fitted[i]);
+            draw_text (x + 5, h/2-draw_get_text_size()/2, ps->colnames_fitted[i]);
         }
         x += w;
     }
-    gtkpl_cairo_destroy (cr);
+    draw_end ();
 }
 
 gboolean

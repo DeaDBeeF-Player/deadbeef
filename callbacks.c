@@ -903,7 +903,7 @@ seekbar_draw (GtkWidget *widget) {
     }
     // left
     if (pos > 0) {
-        gtkpl_set_cairo_source_rgb (cr, COLO_SEEKBAR_FRONT);
+        theme_set_cairo_source_rgb (cr, COLO_SEEKBAR_FRONT);
         cairo_rectangle (cr, 0, widget->allocation.height/2-4, pos, 8);
         cairo_clip (cr);
         clearlooks_rounded_rectangle (cr, 0, widget->allocation.height/2-4, widget->allocation.width, 8, 4, 0xff);
@@ -912,7 +912,7 @@ seekbar_draw (GtkWidget *widget) {
     }
 
     // right
-    gtkpl_set_cairo_source_rgb (cr, COLO_SEEKBAR_BACK);
+    theme_set_cairo_source_rgb (cr, COLO_SEEKBAR_BACK);
     cairo_rectangle (cr, pos, widget->allocation.height/2-4, widget->allocation.width-pos, 8);
     cairo_clip (cr);
     clearlooks_rounded_rectangle (cr, 0, widget->allocation.height/2-4, widget->allocation.width, 8, 4, 0xff);
@@ -1015,10 +1015,10 @@ volumebar_draw (GtkWidget *widget) {
     for (int i = 0; i < n; i++) {
         float iy = (float)i + 3;
         if (i <= vol) {
-            gtkpl_set_cairo_source_rgb (cr, COLO_VOLUMEBAR_FRONT);
+            theme_set_cairo_source_rgb (cr, COLO_VOLUMEBAR_FRONT);
         }
         else {
-            gtkpl_set_cairo_source_rgb (cr, COLO_VOLUMEBAR_BACK);
+            theme_set_cairo_source_rgb (cr, COLO_VOLUMEBAR_BACK);
         }
         cairo_rectangle (cr, i * 4, (widget->allocation.height/2-h/2) + h - 1 - (h* i / n), 3, h * iy / n);
         cairo_fill (cr);

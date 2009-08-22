@@ -99,10 +99,10 @@ void
 gtkpl_setup_scrollbar (gtkplaylist_t *ps);
 
 void
-gtkpl_draw_pl_row_back (gtkplaylist_t *ps, cairo_t *cr, int row, playItem_t *it);
+gtkpl_draw_pl_row_back (gtkplaylist_t *ps, int row, playItem_t *it);
 
 void
-gtkpl_draw_pl_row (gtkplaylist_t *ps, cairo_t *cr, int row, playItem_t *it);
+gtkpl_draw_pl_row (gtkplaylist_t *ps, int row, playItem_t *it);
 
 void
 gtkpl_draw_playlist (gtkplaylist_t *ps, int x, int y, int w, int h);
@@ -194,10 +194,13 @@ void
 gtkpl_playsongnum (int idx);
 
 void
-gtkpl_set_cairo_source_rgb (cairo_t *cr, int col);
+theme_set_fg_color (int col);
 
 void
-gtkpl_set_cairo_font (cairo_t *cr);
+theme_set_bg_color (int col);
+
+void
+theme_set_cairo_source_rgb (cairo_t *cr, int col);
 
 void
 playlist_refresh (void);

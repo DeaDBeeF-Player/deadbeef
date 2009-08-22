@@ -18,6 +18,7 @@ deadbeef_SOURCES = callbacks.c csid.cpp interface.c playlist.c streamer.c\
 	cflac.h codec.h csid.h interface.h playback.h search.h\
 	cgme.h common.h cvorbis.h messagepump.h playlist.h streamer.h\
 	volume.c volume.h\
+	drawing.h gdkdrawing.c\
 	md5/md5.h md5/md5_loc.h
 
 
