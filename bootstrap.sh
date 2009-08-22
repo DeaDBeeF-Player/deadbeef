@@ -1,5 +1,5 @@
 #!/bin/sh
 aclocal
-automake -a -c
 autoconf
+automake -a -c
 
