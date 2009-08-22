@@ -95,6 +95,7 @@ float colo_current[COLO_COUNT][3];
 // playlist font
 const char *fontface = "DejaVu Sans";
 float fontheight = 11;
+int cairo_font_invalid = 1;
 
 // playlist row height
 int rowheight = 17;
@@ -113,6 +114,12 @@ const char *colnames[pl_ncolumns] = {
 
 static cairo_surface_t *play16_pixmap;
 static cairo_surface_t *pause16_pixmap;
+
+void
+gtkpl_cairo_destroy (cairo_t *cr) {
+    cairo_destroy (cr);
+    cairo_font_invalid = 1;
+}
 
 void
 color_gdk_to_cairo (GdkColor *gdk, float *cairo) {
@@ -151,8 +158,11 @@ gtkpl_set_cairo_source_rgb (cairo_t *cr, int col) {
 
 void
 gtkpl_set_cairo_font (cairo_t *cr) {
-    cairo_select_font_face (cr, fontface, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
-    cairo_set_font_size (cr, fontheight);
+    if (cairo_font_invalid) {
+        cairo_select_font_face (cr, fontface, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+        cairo_set_font_size (cr, fontheight);
+        cairo_font_invalid = 0;
+    }
 }
 
 void
@@ -241,7 +251,7 @@ gtkpl_redraw_pl_row_novis (gtkplaylist_t *ps, int row, playItem_t *it) {
         gtkpl_draw_pl_row_back (ps, cr, row, it);
         gtkpl_draw_pl_row (ps, cr, row, it);
     }
-    cairo_destroy (cr);
+    gtkpl_cairo_destroy (cr);
 }
 
 void
@@ -318,7 +328,6 @@ gtkpl_draw_pl_row (gtkplaylist_t *ps, cairo_t *cr, int row, playItem_t *it) {
     else {
         gtkpl_set_cairo_source_rgb (cr, COLO_PLAYLIST_TEXT);
     }
-    cairo_set_font_size (cr, rowheight-4);
     // draw as columns
     char dur[10] = "-:--";
     if (it) {
@@ -417,7 +426,7 @@ gtkpl_draw_playlist (gtkplaylist_t *ps, int x, int y, int w, int h) {
         it = it->next[ps->iterator];
 	}
 
-    cairo_destroy (cr);
+    gtkpl_cairo_destroy (cr);
 }
 
 void
@@ -669,7 +678,7 @@ gtkpl_draw_areasel (GtkWidget *widget, int x, int y) {
     int dy = max (areaselect_y, y);
     cairo_rectangle (cr, sx, sy, dx-sx, dy-sy);
     cairo_stroke (cr);
-    cairo_destroy (cr);
+    gtkpl_cairo_destroy (cr);
 }
 #endif
 
@@ -968,7 +977,7 @@ gtkpl_track_dragdrop (gtkplaylist_t *ps, int y) {
     cairo_rectangle (cr, 0, drag_motion_y * rowheight-3, 3, 7);
     cairo_rectangle (cr, widget->allocation.width-3, drag_motion_y * rowheight-3, 3, 7);
     cairo_fill (cr);
-    cairo_destroy (cr);
+    gtkpl_cairo_destroy (cr);
 }
 
 void
@@ -1214,7 +1223,7 @@ gtkpl_header_draw (gtkplaylist_t *ps) {
         }
         x += w;
     }
-    cairo_destroy (cr);
+    gtkpl_cairo_destroy (cr);
 }
 
 gboolean
