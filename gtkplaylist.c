@@ -632,9 +632,9 @@ gtkpl_mouse1_pressed (gtkplaylist_t *ps, int state, int ex, int ey, double time)
             }
             else {
                 dragwait = 1;
-                gtkpl_redraw_pl_row (ps, prev, pl_get_for_idx (prev));
+                gtkpl_redraw_pl_row (ps, prev, gtkpl_get_for_idx (ps, prev));
                 if (ps->row != prev) {
-                    gtkpl_redraw_pl_row (ps, ps->row, pl_get_for_idx (ps->row));
+                    gtkpl_redraw_pl_row (ps, ps->row, gtkpl_get_for_idx (ps, ps->row));
                 }
             }
         }
@@ -669,16 +669,16 @@ gtkpl_mouse1_pressed (gtkplaylist_t *ps, int state, int ex, int ey, double time)
             }
         }
         if (ps->row != -1 && sel == -1) {
-            gtkpl_redraw_pl_row (ps, ps->row, pl_get_for_idx (ps->row));
+            gtkpl_redraw_pl_row (ps, ps->row, gtkpl_get_for_idx (ps, ps->row));
         }
     }
     else {
         if (ps->row != -1) {
-            gtkpl_redraw_pl_row (ps, ps->row, pl_get_for_idx (ps->row));
+            gtkpl_redraw_pl_row (ps, ps->row, gtkpl_get_for_idx (ps, ps->row));
         }
     }
     if (prev != -1 && prev != ps->row) {
-        gtkpl_redraw_pl_row (ps, prev, pl_get_for_idx (prev));
+        gtkpl_redraw_pl_row (ps, prev, gtkpl_get_for_idx (ps, prev));
     }
 
 }
@@ -851,10 +851,10 @@ gtkpl_songchanged (gtkplaylist_t *ps, int from, int to) {
     if (from >= 0 || to >= 0) {
         GtkWidget *widget = ps->playlist;
         if (from >= 0) {
-            gtkpl_redraw_pl_row (ps, from, pl_get_for_idx (from));
+            gtkpl_redraw_pl_row (ps, from, gtkpl_get_for_idx (ps, from));
         }
         if (to >= 0) {
-            gtkpl_redraw_pl_row (ps, to, pl_get_for_idx (to));
+            gtkpl_redraw_pl_row (ps, to, gtkpl_get_for_idx (ps, to));
         }
     }
 }
