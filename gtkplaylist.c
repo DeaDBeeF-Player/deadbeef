@@ -43,8 +43,6 @@
 #include "progress.h"
 #include "drawing.h"
 
-#define TEXT_USE_PANGO 0
-
 // orange on dark color scheme
 float colo_dark_orange[COLO_COUNT][3] = {
     { 0x7f/255.f, 0x7f/255.f, 0x7f/255.f }, // cursor
@@ -79,17 +77,8 @@ float colo_white_blue[COLO_COUNT][3] = {
 // current color scheme
 float colo_current[COLO_COUNT][3];
 
-// playlist font
-const char *fontface = "DejaVu Sans";
-float fontheight = 11;
-int cairo_font_invalid = 1;
-
 // playlist row height
-int rowheight = 17;
-
-// header widget font/height
-const char *header_fontface = "DejaVu Sans";
-float header_fontheight = 11; // must be set as widget_height-2
+int rowheight = -1;
 
 const char *colnames[pl_ncolumns] = {
     "Playing",
@@ -101,29 +90,6 @@ const char *colnames[pl_ncolumns] = {
 
 static uintptr_t play16_pixbuf;
 static uintptr_t pause16_pixbuf;
-
-#if 0
-void
-color_gdk_to_cairo (GdkColor *gdk, float *cairo) {
-    cairo[0] = gdk->red / 65535.f;
-    cairo[1] = gdk->green / 65535.f;
-    cairo[2] = gdk->blue / 65535.f;
-}
-
-void
-gtkpl_system_colo_init (void) {
-    // list view colors
-    GtkWidget *list = gtk_cell_view_new ();
-    color_gdk_to_cairo (&list->style->bg[GTK_STATE_NORMAL], colo_system_gtk[COLO_PLAYLIST_EVEN]);
-    color_gdk_to_cairo (&list->style->bg[GTK_STATE_PRELIGHT], colo_system_gtk[COLO_PLAYLIST_ODD]);
-    color_gdk_to_cairo (&list->style->fg[GTK_STATE_PRELIGHT], colo_system_gtk[COLO_PLAYLIST_CURSOR]);
-    color_gdk_to_cairo (&list->style->bg[GTK_STATE_ACTIVE], colo_system_gtk[COLO_PLAYLIST_SEL_EVEN]);
-    color_gdk_to_cairo (&list->style->bg[GTK_STATE_ACTIVE], colo_system_gtk[COLO_PLAYLIST_SEL_ODD]);
-    color_gdk_to_cairo (&list->style->text[GTK_STATE_NORMAL], colo_system_gtk[COLO_PLAYLIST_TEXT]);
-    color_gdk_to_cairo (&list->style->text[GTK_STATE_ACTIVE], colo_system_gtk[COLO_PLAYLIST_SEL_TEXT]);
-    g_object_unref (list);
-}
-#endif
 
 // that must be called before gtk_init
 void
@@ -151,99 +117,6 @@ theme_set_bg_color (int col) {
     draw_set_bg_color (colo_current[col]);
 }
 
-
-#if TEXT_USE_PANGO
-static PangoLayout *layout;
-#endif
-
-#if 0
-void
-gtkpl_cairo_destroy (cairo_t *cr) {
-    cairo_destroy (cr);
-    cairo_font_invalid = 1;
-#if TEXT_USE_PANGO
-    if (layout) {
-        g_object_unref (layout);
-        layout = NULL;
-    }
-#endif
-}
-
-void
-gtkpl_set_cairo_font (cairo_t *cr) {
-    if (cairo_font_invalid) {
-#if TEXT_USE_PANGO
-        layout = pango_cairo_create_layout (cr);
-        PangoFontDescription *desc = pango_font_description_from_string ("Numbus Sans L 10");
-        pango_layout_set_font_description (layout, desc);
-        pango_font_description_free (desc);
-#else
-        cairo_select_font_face (cr, fontface, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
-        cairo_set_font_size (cr, fontheight);
-#endif
-        cairo_font_invalid = 0;
-    }
-}
-
-void
-gtkpl_set_cairo_header_font (cairo_t *cr) {
-    if (cairo_font_invalid) {
-        cairo_select_font_face (cr, header_fontface, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
-        cairo_set_font_size (cr, header_fontheight);
-        cairo_font_invalid = 0;
-    }
-}
-
-static void
-text_draw (cairo_t *cr, int x, int y, const char *text) {
-    gtkpl_set_cairo_font (cr);
-#if TEXT_USE_PANGO
-    pango_layout_set_text (layout, text, -1);
-    cairo_move_to (cr, x, y);
-    pango_cairo_show_layout (cr, layout);
-#else
-    cairo_move_to (cr, x, y+rowheight-3);
-    cairo_show_text (cr, text);
-#endif
-}
-#endif
-
-#if 0
-int
-gtkpl_fit_text (cairo_t *cr, char *out, int *dotpos, int len, const char *in, int width) {
-    int l = strlen (in);
-    len--;
-    l = min (len, l);
-    strncpy (out, in, l);
-    out[l] = 0;
-    int w = 0;
-
-    char *p = &out[l];
-    p = g_utf8_find_prev_char (out, p);
-    if (dotpos) {
-        *dotpos = -1;
-    }
-    for (;;) {
-        cairo_text_extents_t e;
-        cairo_text_extents (cr, out, &e);
-        w = e.width;// + e.x_bearing + e.x_advance;
-        if (e.width <= width) {
-            break;
-        }
-        char *prev = g_utf8_find_prev_char (out, p);
-
-        if (!prev) {
-            break;
-        }
-        strcpy (prev, "…");
-        p = prev;
-        if (dotpos) {
-            *dotpos = p-out;
-        }
-    }
-    return w;
-}
-#endif
 
 int
 gtkpl_fit_text (char *out, int *dotpos, int len, const char *in, int width) {
