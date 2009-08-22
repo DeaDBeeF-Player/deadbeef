@@ -300,8 +300,6 @@ server_update (void) {
 void
 player_thread (uintptr_t ctx) {
     prctl (PR_SET_NAME, "deadbeef-player", 0, 0, 0, 0);
-    // become a server
-    server_start ();
     for (;;) {
         static int srvupd_count = 0;
         if (--srvupd_count <= 0) {
@@ -424,7 +422,6 @@ player_thread (uintptr_t ctx) {
         usleep(50000);
         update_songinfo ();
     }
-    server_close ();
 }
 
 gboolean
@@ -554,6 +551,9 @@ main (int argc, char *argv[]) {
     }
     close(s);
 
+    // become a server
+    server_start ();
+
     conf_load ();
     pl_load (defpl);
     messagepump_init ();
@@ -604,6 +604,7 @@ main (int argc, char *argv[]) {
 
     gtk_widget_show (mainwin);
     gtk_main ();
+    server_close ();
     gdk_threads_leave ();
     messagepump_free ();
     p_free ();
