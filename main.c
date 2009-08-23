@@ -449,6 +449,22 @@ on_trayicon_scroll_event               (GtkWidget       *widget,
     return FALSE;
 }
 
+#if GTK_MINOR_VERSION<=14
+gboolean
+on_trayicon_activate (GtkWidget       *widget,
+                                        GdkEvent  *event,
+                                        gpointer         user_data)
+{
+    if (GTK_WIDGET_VISIBLE (mainwin)) {
+        gtk_widget_hide (mainwin);
+    }
+    else {
+        gtk_widget_show (mainwin);
+    }
+    return FALSE;
+}
+#endif
+
 gboolean
 on_trayicon_button_press_event (GtkWidget       *widget,
                                         GdkEventButton  *event,
@@ -575,8 +591,12 @@ main (int argc, char *argv[]) {
     trayicon = gtk_status_icon_new_from_pixbuf (trayicon_pixbuf);
     set_tray_tooltip ("DeaDBeeF");
     //gtk_status_icon_set_title (GTK_STATUS_ICON (trayicon), "DeaDBeeF");
+#if GTK_MINOR_VERSION <= 14
+    g_signal_connect ((gpointer)trayicon, "activate", G_CALLBACK (on_trayicon_activate), NULL);
+#else
     g_signal_connect ((gpointer)trayicon, "scroll_event", G_CALLBACK (on_trayicon_scroll_event), NULL);
     g_signal_connect ((gpointer)trayicon, "button_press_event", G_CALLBACK (on_trayicon_button_press_event), NULL);
+#endif
     g_signal_connect ((gpointer)trayicon, "popup_menu", G_CALLBACK (on_trayicon_popup_menu), NULL);
 
     gtkpl_init ();
