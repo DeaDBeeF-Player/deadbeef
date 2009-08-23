@@ -807,8 +807,27 @@ static const char *cmp3_genretbl[] = {
     "SynthPop",
 };
 
-static const char *
-convstr_id3v2_2to3 (const char* str, int sz) {
+int
+can_be_russian (const char *str) {
+    int latin = 0;
+    int rus = 0;
+    for (; *str; str++) {
+        if ((*str >= 'A' && *str <= 'Z')
+                || *str >= 'a' && *str <= 'z') {
+            latin++;
+        }
+        else if (*str < 0) {
+            rus++;
+        }
+    }
+    if (rus > latin/2) {
+        return 1;
+    }
+    return 0;
+}
+
+static char *
+convstr_id3v2_2to3 (const unsigned char* str, int sz) {
     static char out[2048];
     const char *enc = "iso8859-1";
     char *ret = out;
@@ -817,8 +836,15 @@ convstr_id3v2_2to3 (const char* str, int sz) {
 
     if (*str == 1) {
         enc = "UCS-2";
+        // standard says it must have endianess header
+        if (!((str[1] == 0xff && str[2] == 0xfe)
+            || (str[2] == 0xff && str[1] == 0xfe))) {
+//            printf ("invalid ucs-2 signature %x %x\n", (int)str[1], (int)str[2]);
+            return NULL;
+        }
     }
     else {
+#if 0
         int latin = 0;
         int rus = 0;
         for (int i = 1; i < sz; i++) {
@@ -832,6 +858,10 @@ convstr_id3v2_2to3 (const char* str, int sz) {
         }
         if (rus > latin/2) {
             // might be russian
+            enc = "cp1251";
+        }
+#endif
+        if (can_be_russian (&str[1])) {
             enc = "cp1251";
         }
     }
@@ -852,27 +882,27 @@ convstr_id3v2_2to3 (const char* str, int sz) {
         iconv_close (cd);
         ret = out;
     }
-    return ret;
+    return strdup (ret);
 }
 
-static const char *
-convstr_id3v2_4 (const char* str, int sz) {
+static char *
+convstr_id3v2_4 (const unsigned char* str, int sz) {
     static char out[2048];
     const char *enc = "iso8859-1";
     char *ret = out;
 
     // hack to add limited cp1251 recoding support
 
-    if (*str == 3) {
+    if (*str == 0) {
+        // iso8859-1
+        enc = "iso8859-1";
+    }
+    else if (*str == 3) {
         // utf8
         strncpy (out, str+1, 2047);
         sz--;
         out[min (sz, 2047)] = 0;
         return out;
-    }
-    else if (*str == 0) {
-        // iso8859-1
-        enc = "iso8859-1";
     }
     else if (*str == 1) {
         enc = "UTF-16";
@@ -881,11 +911,7 @@ convstr_id3v2_4 (const char* str, int sz) {
         enc = "UTF-16BE";
     }
     else {
-        return "";
-    }
-// {{{ cp1251 detection (disabled)
 #if 0
-    else {
         int latin = 0;
         int rus = 0;
         for (int i = 1; i < sz; i++) {
@@ -901,9 +927,11 @@ convstr_id3v2_4 (const char* str, int sz) {
             // might be russian
             enc = "cp1251";
         }
-    }
 #endif
-// }}}
+        if (can_be_russian (&str[1])) {
+            enc = "cp1251";
+        }
+    }
     str++;
     sz--;
     iconv_t cd = iconv_open ("utf8", enc);
@@ -922,7 +950,7 @@ convstr_id3v2_4 (const char* str, int sz) {
         ret = out;
     }
     //printf ("decoded %s\n", out+3);
-    return ret;
+    return strdup (ret);
 }
 
 const char *convstr_id3v1 (const char* str, int sz) {
@@ -1157,9 +1185,21 @@ id3v2_string_read (int version, char *out, int sz, int unsync, uint8_t **pread) 
         (*pread)++;
         out++;
         sz--;
+        // read 2-byte signature
+        int n = 2;
+        while (sz > 0 && n > 0) {
+            if (unsync && !(*pread)[0]) {
+                (*pread)++;
+                continue;
+            }
+            *out++ = *(*pread)++;
+            n--;
+            sz--;
+        }
+        // read line itself
         while (sz >= 2) {
-            if (unsync && !(*pread)[0] && !(*pread)[1]) {
-                (*pread) += 2;
+            if (unsync && !(*pread)[0]) {
+                (*pread)++;
                 continue;
             }
             *out++ = *(*pread)++;
@@ -1169,7 +1209,8 @@ id3v2_string_read (int version, char *out, int sz, int unsync, uint8_t **pread) 
         *out++ = 0;
         *out++ = 0;
     }
-    else {
+    else
+    {
         *out = *(*pread);
         (*pread)++;
         out++;
@@ -1263,7 +1304,7 @@ cmp3_read_id3v2 (playItem_t *it, FILE *fp) {
         }
         readptr += 4; // skip crc
     }
-    const char * (*convstr)(const char *, int);
+    char * (*convstr)(const unsigned char *, int);
     if (version_major == 3) {
         convstr = convstr_id3v2_2to3;
     }
@@ -1308,7 +1349,7 @@ cmp3_read_id3v2 (playItem_t *it, FILE *fp) {
                 }
                 char str[sz+2];
                 id3v2_string_read (version_major, &str[0], sz, unsync, &readptr);
-                artist = strdup (convstr (str, sz));
+                artist = convstr (str, sz);
             }
             else if (!strcmp (frameid, "TPE2")) {
                 if (sz > 1000) {
@@ -1317,7 +1358,7 @@ cmp3_read_id3v2 (playItem_t *it, FILE *fp) {
                 }
                 char str[sz+2];
                 id3v2_string_read (version_major, &str[0], sz, unsync, &readptr);
-                band = strdup (convstr (str, sz));
+                band = convstr (str, sz);
             }
             else if (!strcmp (frameid, "TRCK")) {
                 if (sz > 1000) {
@@ -1326,7 +1367,7 @@ cmp3_read_id3v2 (playItem_t *it, FILE *fp) {
                 }
                 char str[sz+2];
                 id3v2_string_read (version_major, &str[0], sz, unsync, &readptr);
-                track = strdup (convstr (str, sz));
+                track = convstr (str, sz);
             }
             else if (!strcmp (frameid, "TIT2")) {
                 if (sz > 1000) {
@@ -1335,7 +1376,7 @@ cmp3_read_id3v2 (playItem_t *it, FILE *fp) {
                 }
                 char str[sz+2];
                 id3v2_string_read (version_major, &str[0], sz, unsync, &readptr);
-                title = strdup (convstr (str, sz));
+                title = convstr (str, sz);
             }
             else if (!strcmp (frameid, "TALB")) {
                 if (sz > 1000) {
@@ -1344,7 +1385,7 @@ cmp3_read_id3v2 (playItem_t *it, FILE *fp) {
                 }
                 char str[sz+2];
                 id3v2_string_read (version_major, &str[0], sz, unsync, &readptr);
-                album = strdup (convstr (str, sz));
+                album = convstr (str, sz);
             }
             else {
                 readptr += sz;
@@ -1379,7 +1420,7 @@ cmp3_read_id3v2 (playItem_t *it, FILE *fp) {
                 char str[sz+2];
                 memcpy (str, readptr, sz);
                 str[sz] = 0;
-                vendor = strdup (convstr (str, sz));
+                vendor = convstr (str, sz);
             }
             else if (!strcmp (frameid, "TT2")) {
                 if (sz > 1000) {
@@ -1389,7 +1430,7 @@ cmp3_read_id3v2 (playItem_t *it, FILE *fp) {
                 char str[sz+2];
                 memcpy (str, readptr, sz);
                 str[sz] = 0;
-                title = strdup (convstr (str, sz));
+                title = convstr (str, sz);
             }
             else if (!strcmp (frameid, "TAL")) {
                 if (sz > 1000) {
@@ -1399,7 +1440,7 @@ cmp3_read_id3v2 (playItem_t *it, FILE *fp) {
                 char str[sz+2];
                 memcpy (str, readptr, sz);
                 str[sz] = 0;
-                album = strdup (convstr (str, sz));
+                album = convstr (str, sz);
             }
             readptr += sz;
         }
