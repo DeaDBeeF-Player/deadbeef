@@ -16,45 +16,26 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
-#include <math.h>
 #include <stdio.h>
-#include "volume.h"
+#include <gtk/gtk.h>
+#ifdef HAVE_CONFIG_H
+#  include <config.h>
+#endif
 #include "session.h"
 
-static float volume_db = 0; // in dB
-static float volume_amp = 1; // amplitude [0..1]
-
 void
-volume_set_db (float dB) {
-    session_set_volume (dB);
-    volume_db = dB;
-    volume_amp = dB > -60 ? db_to_amp (dB) : 0;
-}
-
-float
-volume_get_db (void) {
-    return volume_db;
+session_capture_window_attrs (uintptr_t window) {
+    GtkWindow *wnd = GTK_WINDOW (window);
+    extern int session_win_attrs[5];
+    gtk_window_get_position (wnd, &session_win_attrs[0], &session_win_attrs[1]);
+    gtk_window_get_size (wnd, &session_win_attrs[2], &session_win_attrs[3]);
+    //printf ("attrs: %d %d %d %d\n", session_win_attrs[0], session_win_attrs[1],  session_win_attrs[2], session_win_attrs[3]);
 }
 
 void
-volume_set_amp (float amp) {
-    volume_amp = amp;
-    volume_db = amp > 0 ? amp_to_db (amp) : -60.f;
-    session_set_volume (volume_db);
+session_restore_window_attrs (uintptr_t window) {
+    GtkWindow *wnd = GTK_WINDOW (window);
+    extern int session_win_attrs[5];
+    gtk_window_move (wnd, session_win_attrs[0], session_win_attrs[1]);
+    gtk_window_resize (wnd, session_win_attrs[2], session_win_attrs[3]);
 }
-
-float
-volume_get_amp (void) {
-    return volume_amp;
-}
-
-float
-db_to_amp (float dB) {
-    return pow (10, dB/20.f);
-}
-
-float
-amp_to_db (float amp) {
-    return 20*log10 (amp);
-}
-

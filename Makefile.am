@@ -8,19 +8,24 @@ gmepath=@top_srcdir@/gme/Game_Music_Emu-0.5.2
 
 bin_PROGRAMS = deadbeef
 
-deadbeef_SOURCES = callbacks.c csid.cpp interface.c playlist.c streamer.c\
-	cdumb.c cmp3.c cvorbis.c main.c progress.c support.c\
-	cflac.c codec.c messagepump.c\
-	cgme.c conf.c gtkplaylist.c palsa.c search.c threading_pthread.c\
-	md5/md5.c\
-	callbacks.h cmod.h conf.h messages.h progress.h support.h\
-	cdumb.h cmp3.h gtkplaylist.h palsa.h threading.h\
-	cflac.h codec.h csid.h interface.h playback.h search.h\
-	cgme.h common.h cvorbis.h messagepump.h playlist.h streamer.h\
+deadbeef_SOURCES =\
+	main.c common.h\
+	callbacks.c interface.c support.c callbacks.h interface.h support.h\
+	playlist.c playlist.h gtkplaylist.c gtkplaylist.h\
+	streamer.c streamer.h\
+	progress.c  progress.h\
+	codec.c codec.h\
+	messagepump.c messagepump.h messages.h\
+	conf.c  conf.h\
+	search.c search.h\
+	csid.cpp cdumb.c cmp3.c cvorbis.c cflac.c cgme.c \
+	palsa.c palsa.h playback.h\
+	threading_pthread.c threading.h\
+	md5/md5.c md5/md5.h md5/md5_loc.h\
+	csid.h cdumb.h cmp3.h cvorbis.h cflac.h cgme.h\
 	volume.c volume.h\
 	drawing.h gdkdrawing.c\
-	md5/md5.h md5/md5_loc.h
-
+	session.h session.c gtksession.c
 
 deadbeef_LDADD = $(LDADD) $(DEPS_LIBS) gme/Game_Music_Emu-0.5.2/gme/libgme.a sid/sidplay-libs-2.1.0/libsidplay2.a dumb/libdumb.a
 

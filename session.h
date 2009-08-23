@@ -16,45 +16,33 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
-#include <math.h>
-#include <stdio.h>
-#include "volume.h"
-#include "session.h"
+#ifndef __SESSION_H
+#define __SESSION_H
 
-static float volume_db = 0; // in dB
-static float volume_amp = 1; // amplitude [0..1]
+#include <stdint.h>
 
-void
-volume_set_db (float dB) {
-    session_set_volume (dB);
-    volume_db = dB;
-    volume_amp = dB > -60 ? db_to_amp (dB) : 0;
-}
+int
+session_save (const char *fname);
 
-float
-volume_get_db (void) {
-    return volume_db;
-}
+int
+session_load (const char *fname);
 
 void
-volume_set_amp (float amp) {
-    volume_amp = amp;
-    volume_db = amp > 0 ? amp_to_db (amp) : -60.f;
-    session_set_volume (volume_db);
-}
+session_capture_window_attrs (uintptr_t window);
+
+void
+session_set_directory (const char *path);
+
+void
+session_set_volume (float vol);
+
+void
+session_restore_window_attrs (uintptr_t window);
+
+const char *
+session_get_directory (void);
 
 float
-volume_get_amp (void) {
-    return volume_amp;
-}
+session_get_volume (void);
 
-float
-db_to_amp (float dB) {
-    return pow (10, dB/20.f);
-}
-
-float
-amp_to_db (float amp) {
-    return 20*log10 (amp);
-}
-
+#endif // __SESSION_H

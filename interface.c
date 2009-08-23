@@ -360,6 +360,9 @@ create_mainwin (void)
   g_signal_connect ((gpointer) mainwin, "delete_event",
                     G_CALLBACK (on_mainwin_delete_event),
                     NULL);
+  g_signal_connect ((gpointer) mainwin, "configure_event",
+                    G_CALLBACK (on_mainwin_configure_event),
+                    NULL);
   g_signal_connect ((gpointer) open, "activate",
                     G_CALLBACK (on_open_activate),
                     NULL);

@@ -47,6 +47,7 @@
 #include "progress.h"
 #include "conf.h"
 #include "volume.h"
+#include "session.h"
 
 #ifndef PREFIX
 #error PREFIX must be defined
@@ -56,6 +57,7 @@
 char confdir[1024]; // $HOME/.config
 char dbconfdir[1024]; // $HOME/.config/deadbeef
 char defpl[1024]; // $HOME/.config/deadbeef/default.dbpl
+char sessfile[1024]; // $HOME/.config/deadbeef/session
 
 // main widgets
 GtkWidget *mainwin;
@@ -500,6 +502,7 @@ main (int argc, char *argv[]) {
         return -1;
     }
     snprintf (defpl, 1024, "%s/.config/deadbeef/default.dbpl", homedir);
+    snprintf (sessfile, 1024, "%s/.config/deadbeef/session", homedir);
     snprintf (confdir, 1024, "%s/.config", homedir);
     mkdir (confdir, 0755);
     snprintf (dbconfdir, 1024, "%s/.config/deadbeef", homedir);
@@ -572,6 +575,7 @@ main (int argc, char *argv[]) {
 
     conf_load ();
     pl_load (defpl);
+    session_load (sessfile);
     messagepump_init ();
     codec_init_locking ();
     streamer_init ();
@@ -602,6 +606,8 @@ main (int argc, char *argv[]) {
     gtkpl_init ();
 
     mainwin = create_mainwin ();
+    session_restore_window_attrs ((uintptr_t)mainwin);
+    volume_set_db (session_get_volume ());
     searchwin = create_searchwin ();
     gtk_window_set_transient_for (GTK_WINDOW (searchwin), GTK_WINDOW (mainwin));
     extern void main_playlist_init (GtkWidget *widget);
@@ -631,6 +637,7 @@ main (int argc, char *argv[]) {
     streamer_free ();
     codec_free_locking ();
 
+    session_save (sessfile);
     pl_save (defpl);
     pl_free ();
     return 0;

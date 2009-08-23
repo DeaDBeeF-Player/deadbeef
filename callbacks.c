@@ -43,6 +43,7 @@
 #include "streamer.h"
 #include "progress.h"
 #include "volume.h"
+#include "session.h"
 
 #include "cvorbis.h"
 #include "cdumb.h"
@@ -201,8 +202,16 @@ on_open_activate                       (GtkMenuItem     *menuitem,
     gtk_file_filter_add_pattern (flt, "*");
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
     gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dlg), TRUE);
-
-    if (gtk_dialog_run (GTK_DIALOG (dlg)) == GTK_RESPONSE_OK)
+    // restore folder
+    gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dlg), session_get_directory ());
+    int response = gtk_dialog_run (GTK_DIALOG (dlg));
+    // store folder
+    gchar *folder = gtk_file_chooser_get_current_folder_uri (GTK_FILE_CHOOSER (dlg));
+    if (folder) {
+        session_set_directory (folder);
+        g_free (folder);
+    }
+    if (response == GTK_RESPONSE_OK)
     {
         pl_free ();
         GSList *lst = gtk_file_chooser_get_filenames (GTK_FILE_CHOOSER (dlg));
@@ -256,7 +265,16 @@ on_add_files_activate                  (GtkMenuItem     *menuitem,
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
     gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dlg), TRUE);
 
-    if (gtk_dialog_run (GTK_DIALOG (dlg)) == GTK_RESPONSE_OK)
+    // restore folder
+    gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dlg), session_get_directory ());
+    int response = gtk_dialog_run (GTK_DIALOG (dlg));
+    // store folder
+    gchar *folder = gtk_file_chooser_get_current_folder_uri (GTK_FILE_CHOOSER (dlg));
+    if (folder) {
+        session_set_directory (folder);
+        g_free (folder);
+    }
+    if (response == GTK_RESPONSE_OK)
     {
         GSList *lst = gtk_file_chooser_get_filenames (GTK_FILE_CHOOSER (dlg));
         gtk_widget_destroy (dlg);
@@ -307,7 +325,16 @@ on_add_folder1_activate                (GtkMenuItem     *menuitem,
     gtk_file_filter_set_name (flt, "Other files (*)");
     gtk_file_filter_add_pattern (flt, "*");
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
-    if (gtk_dialog_run (GTK_DIALOG (dlg)) == GTK_RESPONSE_OK)
+    // restore folder
+    gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dlg), session_get_directory ());
+    int response = gtk_dialog_run (GTK_DIALOG (dlg));
+    // store folder
+    gchar *folder = gtk_file_chooser_get_current_folder_uri (GTK_FILE_CHOOSER (dlg));
+    if (folder) {
+        session_set_directory (folder);
+        g_free (folder);
+    }
+    if (response == GTK_RESPONSE_OK)
     {
         gchar *folder = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dlg));
         gtk_widget_destroy (dlg);
@@ -1144,4 +1171,14 @@ on_volumebar_scroll_event              (GtkWidget       *widget,
     return FALSE;
 }
 
+
+
+gboolean
+on_mainwin_configure_event             (GtkWidget       *widget,
+                                        GdkEventConfigure *event,
+                                        gpointer         user_data)
+{
+    session_capture_window_attrs ((uintptr_t)widget);
+    return FALSE;
+}
 
