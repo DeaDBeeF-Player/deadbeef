@@ -158,7 +158,7 @@ streamer_thread (uintptr_t ctx) {
             streambuffer_fill += bytesread;
         }
         streamer_unlock ();
-        usleep (10000);
+        usleep (1000);
         //printf ("fill: %d        \r", streambuffer_fill);
     }
 

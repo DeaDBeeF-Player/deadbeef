@@ -19,6 +19,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <iconv.h>
+#ifdef HAVE_CONFIG_H
+#  include <config.h>
+#endif
 #include "sidplay/sidplay2.h"
 #include "sidplay/builders/resid.h"
 // #include "md5/MD5.h" // include those 2 files if you want to use md5 impl from libsidplay2
@@ -36,7 +39,7 @@ extern "C" {
 static inline void
 le_int16 (int16_t in, unsigned char *out) {
     char *pin = (char *)&in;
-#if !BIGENDIAN
+#if !WORDS_BIGENDIAN
     out[0] = pin[0];
     out[1] = pin[1];
 #else
@@ -286,6 +289,19 @@ csid_read (char *bytes, int size) {
     }
     int rd = sidplay->play (bytes, size/csid.info.channels);
     csid.info.readposition += size/csid.info.channels/2 / (float)csid.info.samplesPerSecond;
+
+#if WORDS_BIGENDIAN
+    // convert samples from le to be
+    int n = rd * csid.info.channels/2;
+    int16_t *ptr = (int16_t *)bytes;
+    while (n > 0) {
+        int16_t out;
+        le_int16 (*ptr, (unsigned char *)&out);
+        *ptr = out;
+        ptr++;
+        n--;
+    }
+#endif
     return rd * csid.info.channels;
 }
 

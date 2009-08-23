@@ -20,16 +20,20 @@
 #include <stdint.h>
 #include <unistd.h>
 #include <sys/prctl.h>
+#ifdef HAVE_CONFIG_H
+#  include <config.h>
+#endif
 #include "palsa.h"
 #include "threading.h"
 #include "streamer.h"
 #include "conf.h"
 #include "volume.h"
 
+#if 0
 static inline void
 le_int16 (int16_t in, char *out) {
     char *pin = (char *)&in;
-#if !BIGENDIAN
+#if !WORDS_BIGENDIAN
     out[0] = pin[0];
     out[1] = pin[1];
 #else
@@ -37,10 +41,11 @@ le_int16 (int16_t in, char *out) {
     out[0] = pin[1];
 #endif
 }
+#endif
 
 static snd_pcm_t *audio;
 static int16_t *samplebuffer;
-static int bufsize = 4096*4;
+static int bufsize = 2048*4;
 static int alsa_terminate;
 static int alsa_rate = 48000;
 static int state; // 0 = stopped, 1 = playing, 2 = pause
@@ -85,11 +90,20 @@ palsa_init (void) {
         goto open_error;
     }
 
-    if ((err = snd_pcm_hw_params_set_format (audio, hw_params, SND_PCM_FORMAT_S16_LE)) < 0) {
+    snd_pcm_format_t fmt;
+#if WORDS_BIGENDIAN
+    fmt = SND_PCM_FORMAT_S16_BE;
+#else
+    fmt = SND_PCM_FORMAT_S16_LE;
+#endif
+    if ((err = snd_pcm_hw_params_set_format (audio, hw_params, fmt)) < 0) {
         fprintf (stderr, "cannot set sample format (%s)\n",
                 snd_strerror (err));
         goto open_error;
     }
+
+    snd_pcm_hw_params_get_format (hw_params, &fmt);
+    printf ("chosen format: %d\n", (int)fmt);
 
     canpause = 0;//snd_pcm_hw_params_can_pause (hw_params);
 
@@ -109,6 +123,10 @@ palsa_init (void) {
                 snd_strerror (err));
         goto open_error;
     }
+
+    int nchan;
+    snd_pcm_hw_params_get_channels (hw_params, &nchan);
+    printf ("nchannels: %d\n", nchan);
 
     if ((err = snd_pcm_hw_params (audio, hw_params)) < 0) {
         fprintf (stderr, "cannot set parameters (%s)\n",
@@ -133,6 +151,12 @@ palsa_init (void) {
                 snd_strerror (err));
         goto open_error;
     }
+
+    snd_pcm_uframes_t nsamp;
+    snd_pcm_sw_params_get_avail_min (sw_params, &nsamp);
+    printf ("nsamples: %d\n", (int)nsamp);
+    bufsize = nsamp * 4;
+
     if ((err = snd_pcm_sw_params_set_start_threshold (audio, sw_params, 0U)) < 0) {
         fprintf (stderr, "cannot set start mode (%s)\n",
                 snd_strerror (err));
@@ -315,7 +339,7 @@ palsa_thread (uintptr_t context) {
             } else {
                 mutex_unlock (mutex);
                 fprintf (stderr, "unknown ALSA avail update return value (%d)\n", 
-                        frames_to_deliver);
+                        (int)frames_to_deliver);
                 continue;
             }
         }
@@ -331,7 +355,7 @@ palsa_thread (uintptr_t context) {
             snd_pcm_start (audio);
         }
         mutex_unlock (mutex);
-        usleep (10000); // removing this causes deadlock on exit
+        usleep (1000); // removing this causes deadlock on exit
     }
 }
 
@@ -344,8 +368,7 @@ palsa_callback (char *stream, int len) {
     int bytesread = streamer_read (stream, len);
     int ivolume = volume_get_amp () * 1000;
     for (int i = 0; i < bytesread/2; i++) {
-        int16_t sample = (int16_t)(((int32_t)(((int16_t*)stream)[i])) * ivolume / 1000);
-        le_int16 (sample, (char*)&(((int16_t*)stream)[i]));
+        ((int16_t*)stream)[i] = (int16_t)(((int32_t)(((int16_t*)stream)[i])) * ivolume / 1000);
     }
     if (bytesread < len) {
         memset (stream + bytesread, 0, len-bytesread);

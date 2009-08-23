@@ -20,6 +20,9 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#ifdef HAVE_CONFIG_H
+#  include <config.h>
+#endif
 #include "codec.h"
 #include "cvorbis.h"
 #include "playlist.h"
@@ -91,7 +94,11 @@ cvorbis_read (char *bytes, int size) {
     for (;;)
     {
         // read ogg
-        long ret=ov_read (&vorbis_file, bytes, size, 0, 2, 1, &cur_bit_stream);
+        int endianess = 0;
+#if WORDS_BIGENDIAN
+        endianess = 1;
+#endif
+        long ret=ov_read (&vorbis_file, bytes, size, endianess, 2, 1, &cur_bit_stream);
         if (ret < 0)
         {
             break;
