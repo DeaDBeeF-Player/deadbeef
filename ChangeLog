@@ -1,0 +1,15 @@
+version 0.1.1
+	volume control now works on dB scale
+	fixed bug in ogg vorbis decoder that was skipping songs
+	flac decoder now can ignore corrupted files to some extent
+	added shuffle playback mode
+	removed some of the unused code from build scripts
+	player no longer hangs if song change happend near the end of current song
+	playlist redraw fixed for pause/unpause
+	speed optimizations on playlist drawing
+	changed scrollwheel step to 2 rows
+	changed playlist drawing from cairo to gdk, uses proper font now
+	fixed server part to be started earlier, to prevent multiple instances bug
+	fixed several things preventing player to work on ppc64 architecture
+	fixed id3v2 unsynchronized frames reading
+	implemented basic session management, window size/position, volume, playmode are remembered across sessions

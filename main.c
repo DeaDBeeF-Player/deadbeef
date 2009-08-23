@@ -620,10 +620,8 @@ main (int argc, char *argv[]) {
     const char *loopingwidgets[3] = { "loop_all", "loop_disable", "loop_single" };
     const char *w;
     w = orderwidgets[session_get_playlist_order ()];
-    printf ("%s\n", w);
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, w)), TRUE);
     w = loopingwidgets[session_get_playlist_looping ()];
-    printf ("%s\n", w);
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, w)), TRUE);
 
     searchwin = create_searchwin ();
