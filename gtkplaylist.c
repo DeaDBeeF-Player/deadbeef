@@ -315,10 +315,10 @@ gtkpl_draw_pl_row (gtkplaylist_t *ps, int row, playItem_t *it) {
             int w = ps->fmtcache[cidx + 1];
 //            printf ("draw %s -> %s\n", columns[i], str);
             if (i == 2) {
-                draw_text (x + ps->colwidths[i] - w - 5, row * rowheight - ps->scrollpos * rowheight + rowheight/2 - draw_get_font_size ()/2, str);
+                draw_text_with_colors (x + ps->colwidths[i] - w - 5, row * rowheight - ps->scrollpos * rowheight + rowheight/2 - draw_get_font_size ()/2, str);
             }
             else {
-                draw_text (x + 5, row * rowheight - ps->scrollpos * rowheight + rowheight/2 - draw_get_font_size ()/2, str);
+                draw_text_with_colors (x + 5, row * rowheight - ps->scrollpos * rowheight + rowheight/2 - draw_get_font_size ()/2, str);
             }
         }
         x += ps->colwidths[i];
@@ -1142,12 +1142,12 @@ gtkpl_header_draw (gtkplaylist_t *ps) {
                 gtkpl_fit_text (ps->colnames_fitted[i], NULL, pl_colname_max, colnames[i], ps->colwidths[i]-10);
                 ps->header_fitted[i] = 1;
             }
-            GdkColor *gdkbg = &widget->style->bg[0];
-            GdkColor *gdkfg = &widget->style->fg[0];
-            float bg[3] = {(float)gdkbg->red/0xffff, (float)gdkbg->green/0xffff, (float)gdkbg->blue/0xffff};
-            float fg[3] = {(float)gdkfg->red/0xffff, (float)gdkfg->green/0xffff, (float)gdkfg->blue/0xffff};
-            draw_set_bg_color (bg);
-            draw_set_fg_color (fg);
+//            GdkColor *gdkbg = &widget->style->bg[0];
+//            GdkColor *gdkfg = &widget->style->fg[0];
+//            float bg[3] = {(float)gdkbg->red/0xffff, (float)gdkbg->green/0xffff, (float)gdkbg->blue/0xffff};
+//            float fg[3] = {(float)gdkfg->red/0xffff, (float)gdkfg->green/0xffff, (float)gdkfg->blue/0xffff};
+//            draw_set_bg_color (bg);
+//            draw_set_fg_color (fg);
             draw_text (x + 5, h/2-draw_get_font_size()/2, ps->colnames_fitted[i]);
         }
         x += w;

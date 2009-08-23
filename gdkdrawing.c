@@ -106,8 +106,14 @@ void
 draw_text (float x, float y, const char *text) {
     draw_init_font ();
     pango_layout_set_text (pangolayout, text, -1);
+    gdk_draw_layout (drawable, gc, x, y, pangolayout);
+}
+
+void
+draw_text_with_colors (float x, float y, const char *text) {
+    draw_init_font ();
+    pango_layout_set_text (pangolayout, text, -1);
     gdk_draw_layout_with_colors (drawable, gc, x, y, pangolayout, &clrfg, &clrbg);
-    //gdk_draw_layout (drawable, gc, x, y, pangolayout);
 }
 
 void

@@ -48,6 +48,9 @@ void
 draw_text (float x, float y, const char *text);
 
 void
+draw_text_with_colors (float x, float y, const char *text);
+
+void
 draw_get_text_extents (const char *text, int len, int *w, int *h);
 
 #endif // __DRAWING_H
