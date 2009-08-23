@@ -844,23 +844,6 @@ convstr_id3v2_2to3 (const unsigned char* str, int sz) {
         }
     }
     else {
-#if 0
-        int latin = 0;
-        int rus = 0;
-        for (int i = 1; i < sz; i++) {
-            if ((str[i] >= 'A' && str[i] <= 'Z')
-                    || str[i] >= 'a' && str[i] <= 'z') {
-                latin++;
-            }
-            else if (str[i] < 0) {
-                rus++;
-            }
-        }
-        if (rus > latin/2) {
-            // might be russian
-            enc = "cp1251";
-        }
-#endif
         if (can_be_russian (&str[1])) {
             enc = "cp1251";
         }
@@ -911,23 +894,6 @@ convstr_id3v2_4 (const unsigned char* str, int sz) {
         enc = "UTF-16BE";
     }
     else {
-#if 0
-        int latin = 0;
-        int rus = 0;
-        for (int i = 1; i < sz; i++) {
-            if ((str[i] >= 'A' && str[i] <= 'Z')
-                    || str[i] >= 'a' && str[i] <= 'z') {
-                latin++;
-            }
-            else if (str[i] < 0) {
-                rus++;
-            }
-        }
-        if (rus > latin/2) {
-            // might be russian
-            enc = "cp1251";
-        }
-#endif
         if (can_be_russian (&str[1])) {
             enc = "cp1251";
         }
@@ -1172,7 +1138,7 @@ cmp3_read_ape (playItem_t *it, FILE *fp) {
 }
 
 void
-id3v2_string_read (int version, char *out, int sz, int unsync, uint8_t **pread) {
+id3v2_string_read (int version, uint8_t *out, int sz, int unsync, uint8_t **pread) {
     if (!unsync) {
         memcpy (out, *pread, sz);
         *pread += sz;
@@ -1180,52 +1146,19 @@ id3v2_string_read (int version, char *out, int sz, int unsync, uint8_t **pread) 
         out[sz+1] = 0;
         return;
     }
-    if (version == 3 && *(*pread) == 1) {
-        *out = *(*pread);
-        (*pread)++;
-        out++;
-        sz--;
-        // read 2-byte signature
-        int n = 2;
-        while (sz > 0 && n > 0) {
-            if (unsync && !(*pread)[0]) {
-                (*pread)++;
-                continue;
-            }
-            *out++ = *(*pread)++;
-            n--;
-            sz--;
-        }
-        // read line itself
-        while (sz >= 2) {
-            if (unsync && !(*pread)[0]) {
-                (*pread)++;
-                continue;
-            }
-            *out++ = *(*pread)++;
-            *out++ = *(*pread)++;
-            sz -= 2;
-        }
-        *out++ = 0;
-        *out++ = 0;
-    }
-    else
-    {
-        *out = *(*pread);
-        (*pread)++;
-        out++;
-        sz--;
-        while (sz > 0) {
-            *out = *(*pread);
+    uint8_t prev = 0;
+    while (sz > 0) {
+        if (prev == 0xff && !*(*pread)) {
+            prev = 0;
             (*pread)++;
-            if (unsync && !(*out)) {
-                continue;
-            }
-            out++;
-            sz--;
+            continue;
         }
-        *out = 0;
+        prev = *out = *(*pread);
+        (*pread)++;
+        out++;
+        sz--;
     }
+    *out = 0;
 }
 
 int
