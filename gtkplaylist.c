@@ -98,7 +98,7 @@ gtkpl_init (void) {
     //memcpy (colo_current, colo_dark_orange, sizeof (colo_current));
     play16_pixbuf = draw_load_pixbuf ("play_16.png");
     pause16_pixbuf = draw_load_pixbuf ("pause_16.png");
-    rowheight = draw_get_font_size () + 8;
+    rowheight = draw_get_font_size () + 10;
     memcpy (colo_current, colo_white_blue, sizeof (colo_current));
 }
 
@@ -217,7 +217,6 @@ gtkpl_draw_pl_row_back (gtkplaylist_t *ps, int row, playItem_t *it) {
 	if (it && ((it->selected && ps->multisel) || (row == ps->row && !ps->multisel))) {
         if (row % 2) {
             theme_set_fg_color (COLO_PLAYLIST_SEL_EVEN);
-            theme_set_fg_color (COLO_PLAYLIST_SEL_EVEN);
         }
         else {
             theme_set_fg_color (COLO_PLAYLIST_SEL_ODD);
@@ -252,9 +251,21 @@ gtkpl_draw_pl_row (gtkplaylist_t *ps, int row, playItem_t *it) {
         draw_pixbuf ((uintptr_t)ps->backbuf, pixbuf, ps->colwidths[0]/2-8, row * rowheight - ps->scrollpos * rowheight, 0, 0, 16, 16);
     }
 	if (it && ((it->selected && ps->multisel) || (row == ps->row && !ps->multisel))) {
+        if (row % 2) {
+            theme_set_bg_color (COLO_PLAYLIST_SEL_EVEN);
+        }
+        else {
+            theme_set_bg_color (COLO_PLAYLIST_SEL_ODD);
+        }
         theme_set_fg_color (COLO_PLAYLIST_SEL_TEXT);
     }
     else {
+        if (row % 2) {
+            theme_set_bg_color (COLO_PLAYLIST_EVEN);
+        }
+        else {
+            theme_set_bg_color (COLO_PLAYLIST_ODD);
+        }
         theme_set_fg_color (COLO_PLAYLIST_TEXT);
     }
     // draw as columns
@@ -1131,6 +1142,12 @@ gtkpl_header_draw (gtkplaylist_t *ps) {
                 gtkpl_fit_text (ps->colnames_fitted[i], NULL, pl_colname_max, colnames[i], ps->colwidths[i]-10);
                 ps->header_fitted[i] = 1;
             }
+            GdkColor *gdkbg = &widget->style->bg[0];
+            GdkColor *gdkfg = &widget->style->fg[0];
+            float bg[3] = {(float)gdkbg->red/0xffff, (float)gdkbg->green/0xffff, (float)gdkbg->blue/0xffff};
+            float fg[3] = {(float)gdkfg->red/0xffff, (float)gdkfg->green/0xffff, (float)gdkfg->blue/0xffff};
+            draw_set_bg_color (bg);
+            draw_set_fg_color (fg);
             draw_text (x + 5, h/2-draw_get_font_size()/2, ps->colnames_fitted[i]);
         }
         x += w;
@@ -1178,7 +1195,7 @@ on_header_realize                      (GtkWidget       *widget,
 {
     // create cursor for sizing headers
     int h = draw_get_font_size ();
-    gtk_widget_set_size_request (widget, -1, h + 8);
+    gtk_widget_set_size_request (widget, -1, h + 10);
     cursor_sz = gdk_cursor_new (GDK_SB_H_DOUBLE_ARROW);
     cursor_drag = gdk_cursor_new (GDK_FLEUR);
 }
