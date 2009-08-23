@@ -45,4 +45,16 @@ session_get_directory (void);
 float
 session_get_volume (void);
 
+void
+session_set_playlist_order (int order);
+
+int
+session_get_playlist_order (void);
+
+void
+session_set_playlist_looping (int looping);
+
+int
+session_get_playlist_looping (void);
+
 #endif // __SESSION_H

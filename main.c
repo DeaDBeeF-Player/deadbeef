@@ -606,8 +606,26 @@ main (int argc, char *argv[]) {
     gtkpl_init ();
 
     mainwin = create_mainwin ();
+    GdkPixbuf *mainwin_icon_pixbuf;
+    mainwin_icon_pixbuf = create_pixbuf ("play_24.png");
+    if (mainwin_icon_pixbuf)
+    {
+        gtk_window_set_icon (GTK_WINDOW (mainwin), mainwin_icon_pixbuf);
+        gdk_pixbuf_unref (mainwin_icon_pixbuf);
+    }
     session_restore_window_attrs ((uintptr_t)mainwin);
     volume_set_db (session_get_volume ());
+    // order and looping
+    const char *orderwidgets[3] = { "order_linear", "order_shuffle", "order_random" };
+    const char *loopingwidgets[3] = { "loop_all", "loop_disable", "loop_single" };
+    const char *w;
+    w = orderwidgets[session_get_playlist_order ()];
+    printf ("%s\n", w);
+    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, w)), TRUE);
+    w = loopingwidgets[session_get_playlist_looping ()];
+    printf ("%s\n", w);
+    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, w)), TRUE);
+
     searchwin = create_searchwin ();
     gtk_window_set_transient_for (GTK_WINDOW (searchwin), GTK_WINDOW (mainwin));
     extern void main_playlist_init (GtkWidget *widget);

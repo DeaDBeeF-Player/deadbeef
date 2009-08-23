@@ -24,6 +24,8 @@
 
 char session_dir[2048];
 float session_volume;
+int session_playlist_order;
+int session_playlist_looping;
 int session_win_attrs[5] = { 40, 40, 500, 300, 0 };
 static uint8_t sessfile_magic[] = { 0xdb, 0xef, 0x5e, 0x55 }; // dbefsess in hexspeak
 
@@ -107,6 +109,8 @@ void
 session_reset (void) {
     session_volume = 0;
     session_dir[0] = 0;
+    session_playlist_looping = 0;
+    session_playlist_order = 0;
     session_win_attrs[0] = 40;
     session_win_attrs[1] = 40;
     session_win_attrs[2] = 500;
@@ -137,6 +141,12 @@ session_save (const char *fname) {
         goto session_save_fail;
     }
     if (write_i32_be (*((uint32_t*)&session_volume), fp) != 4) {
+        goto session_save_fail;
+    }
+    if (write_i32_be (session_playlist_order, fp) != 4) {
+        goto session_save_fail;
+    }
+    if (write_i32_be (session_playlist_looping, fp) != 4) {
         goto session_save_fail;
     }
     for (int k = 0; k < 5; k++) {
@@ -187,6 +197,18 @@ session_load (const char *fname) {
     if (read_i32_be ((uint32_t*)&session_volume, fp) != 4) {
         goto session_load_fail;
     }
+    if (read_i32_be (&session_playlist_order, fp) != 4) {
+        goto session_load_fail;
+    }
+    if (session_playlist_order < 0 || session_playlist_order > 2) {
+        goto session_load_fail;
+    }
+    if (read_i32_be (&session_playlist_looping, fp) != 4) {
+        goto session_load_fail;
+    }
+    if (session_playlist_looping < 0 || session_playlist_looping > 2) {
+        goto session_load_fail;
+    }
     for (int k = 0; k < 5; k++) {
         if (read_i32_be (&session_win_attrs[k], fp) != 4) {
             goto session_load_fail;
@@ -224,3 +246,22 @@ session_get_volume (void) {
     return session_volume;
 }
 
+void
+session_set_playlist_order (int order) {
+    session_playlist_order = order;
+}
+
+int
+session_get_playlist_order (void) {
+    return session_playlist_order;
+}
+
+void
+session_set_playlist_looping (int looping) {
+    session_playlist_looping = looping;
+}
+
+int
+session_get_playlist_looping (void) {
+    return session_playlist_looping;
+}
