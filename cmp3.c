@@ -885,7 +885,7 @@ convstr_id3v2_4 (const unsigned char* str, int sz) {
         strncpy (out, str+1, 2047);
         sz--;
         out[min (sz, 2047)] = 0;
-        return out;
+        return strdup (out);
     }
     else if (*str == 1) {
         enc = "UTF-16";
