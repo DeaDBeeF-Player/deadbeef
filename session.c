@@ -211,7 +211,6 @@ session_set_directory (const char *path) {
 
 void
 session_set_volume (float vol) {
-    printf ("volume: %f\n", vol);
     session_volume = vol;
 }
 
