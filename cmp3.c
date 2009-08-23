@@ -119,7 +119,7 @@ cmp3_init (struct playItem_s *it) {
     cmp3.info.readposition = 0;
 	mad_timer_reset(&buffer.timer);
 
-    fseek (buffer.file, buffer.startoffset, SEEK_SET);
+//    fseek (buffer.file, buffer.startoffset, SEEK_SET);
 	if (it->timeend > 0) {
         buffer.timestart = it->timestart;
         buffer.timeend = it->timeend;
