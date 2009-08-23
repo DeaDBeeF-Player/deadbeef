@@ -1,7 +1,7 @@
 # Maintainer: Alexey Yakovenko <waker@users.sourceforge.net>
 
 pkgname=deadbeef
-pkgver=0.1.0
+pkgver=0.1.1
 pkgrel=1
 pkgdesc="mp3/ogg/flac/sid/mod/nsf music player based on GTK2"
 arch=(i686 x86_64)

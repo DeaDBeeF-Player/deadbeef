@@ -9,6 +9,27 @@
 
 <h1 id="news">News</h1>
 
+<h2>release 0.1.1 is out!</h2>
+<p>2009/08/23</p>
+<p>changelog:</p>
+<pre>
+volume control now works on dB scale
+fixed bug in ogg vorbis decoder that was skipping songs
+flac decoder can now ignore corrupted files to some extent
+added shuffle playback mode
+removed some of the unused code from build scripts
+player no longer hangs if song change happened near the end of current song
+playlist redraw fixed for pause/unpause
+speed optimizations on playlist drawing
+changed scrollwheel step to 2 rows
+changed playlist drawing from cairo to gdk, to improve speed and use proper fonts
+fixed server part to be started earlier, to prevent multiple instances bug
+fixed several things preventing player to work on ppc64 architecture
+fixed id3v2 unsynchronized frames reading
+implemented basic session management, window size/position, volume, playmode are remembered across sessions
+</pre>
+<p><a href="#download">download</a> now!</p>
+
 <h2>Arch Linux PKGBUILD is available</h2>
 <p><a href="http://aur.archlinux.org/packages.php?ID=29497">here</a></p>
 <p>or even better, just do yaourt -S deadbeef</p>
@@ -67,7 +88,7 @@
 </pre>
 <h1 id="download">Download</h1>
 <p><a href="http://sourceforge.net/projects/deadbeef/files/">browse all files</a></p>
-<p>source code for version 0.1.0 <a href="http://sourceforge.net/projects/deadbeef/files/deadbeef-0.1.0.tar.gz/download">deadbeef-0.1.0.tar.gz</a></p>
+<p>source code for version 0.1.1 <a href="http://sourceforge.net/projects/deadbeef/files/deadbeef-0.1.1.tar.gz/download">deadbeef-0.1.1.tar.gz</a></p>
 <h1 id='bugs'>Reporting Bugs And Requesting Features</h1>
 <p>i don't want to receive bug reports or feature requests yet. but if you really feel like it - send me an <a href="mailto:waker@users.sourceforge.net">email</a>, or come to one of our irc/jabber chats.</p>
 <h1 id="developers">Developer Information</h1>
