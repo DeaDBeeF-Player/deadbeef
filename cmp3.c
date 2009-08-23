@@ -107,11 +107,11 @@ int
 cmp3_init (struct playItem_s *it) {
     memset (&buffer, 0, sizeof (buffer));
     buffer.file = fopen (it->fname, "rb");
-    buffer.startoffset = it->startoffset;
-    buffer.endoffset = it->endoffset;
     if (!buffer.file) {
         return -1;
     }
+    buffer.startoffset = it->startoffset;
+    buffer.endoffset = it->endoffset;
     buffer.remaining = 0;
     buffer.output = NULL;
     buffer.readsize = 0;
@@ -132,6 +132,11 @@ cmp3_init (struct playItem_s *it) {
         buffer.timestart = 0;
         buffer.timeend = it->duration;
         fseek (buffer.file, buffer.startoffset, SEEK_SET);
+    }
+    if (buffer.samplerate == 0) {
+        //fprintf (stderr, "bad mpeg file: %f\n", it->fname);
+        fclose (buffer.file);
+        return -1;
     }
     cmp3.info.bitsPerSample = buffer.bitspersample;
     cmp3.info.samplesPerSecond = buffer.samplerate;
@@ -981,6 +986,16 @@ const char *convstr_id3v1 (const char* str, int sz) {
     return out;
 }
 
+static void
+str_trim_right (uint8_t *str, int len) {
+    uint8_t *p = str + len - 1;
+    while (p >= str && *p <= 0x20) {
+        p--;
+    }
+    p++;
+    *p = 0;
+}
+
 // should read both id3v1 and id3v1.1
 int
 cmp3_read_id3v1 (playItem_t *it, FILE *fp) {
@@ -1011,10 +1026,15 @@ cmp3_read_id3v1 (playItem_t *it, FILE *fp) {
     memset (year, 0, 5);
     memset (comment, 0, 31);
     memcpy (title, &buffer[3], 30);
+    str_trim_right (title, 30);
     memcpy (artist, &buffer[3+30], 30);
+    str_trim_right (artist, 30);
     memcpy (album, &buffer[3+60], 30);
+    str_trim_right (album, 30);
     memcpy (year, &buffer[3+90], 4);
+    str_trim_right (year, 4);
     memcpy (comment, &buffer[3+94], 30);
+    str_trim_right (comment, 30);
     genreid = buffer[3+124];
     tracknum = 0xff;
     if (comment[28] == 0) {
