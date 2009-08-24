@@ -32,6 +32,12 @@ deadbeef_LDADD = $(LDADD) $(DEPS_LIBS) gme/Game_Music_Emu-0.5.2/gme/libgme.a sid
 AM_CFLAGS = $(DEPS_CFLAGS) -I$(gmepath) -std=c99
 AM_CPPFLAGS = $(DEPS_CFLAGS) -I$(sidpath)/libsidplay/include -I$(sidpath)/builders/resid-builder/include
 
+docsdir = $(datadir)/doc/$(PACKAGE)
+
+docs_DATA = README COPYING config-example
+
+EXTRA_DIST = $(docs_DATA)
+
 #install-data-local:
 #	@$(NORMAL_INSTALL)
 #	if test -d $(srcdir)/pixmaps; then \
