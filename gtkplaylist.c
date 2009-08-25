@@ -117,17 +117,27 @@ theme_set_bg_color (int col) {
     draw_set_bg_color (colo_current[col]);
 }
 
+static int avg_glyph_width = -1;
+static int tridot_len = -1;
 
 int
 gtkpl_fit_text (char *out, int *dotpos, int len, const char *in, int width) {
+    if (avg_glyph_width == -1) {
+        int h;
+        draw_get_text_extents ("m", 1, &avg_glyph_width, &h);
+        tridot_len = strlen ("…");
+    }
     int l = strlen (in);
     len--;
     l = min (len, l);
     strncpy (out, in, l);
     out[l] = 0;
     int w = 0;
-    int dotlen = strlen ("…");
 
+#if 0
+    // try to approximate
+    int apx_len = width / avg_glyph_width;
+#else
     char *p = &out[l];
     p = g_utf8_find_prev_char (out, p);
     if (dotpos) {
@@ -145,12 +155,13 @@ gtkpl_fit_text (char *out, int *dotpos, int len, const char *in, int width) {
             break;
         }
         strcpy (prev, "…");
-        l = prev - out + dotlen;
+        l = prev - out + tridot_len;
         p = prev;
         if (dotpos) {
             *dotpos = p-out;
         }
     }
+#endif
     return w;
 }
 
