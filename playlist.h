@@ -73,6 +73,9 @@ pl_append_item (playItem_t *it);
 int
 pl_remove (playItem_t *i);
 
+playItem_t *
+pl_item_alloc (void);
+
 void
 pl_item_free (playItem_t *it);
 

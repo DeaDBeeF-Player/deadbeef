@@ -559,6 +559,11 @@ pl_item_copy (playItem_t *out, playItem_t *it) {
     }
 }
 
+playItem_t *
+pl_item_alloc (void) {
+    return malloc (sizeof (playItem_t));
+}
+
 void
 pl_item_free (playItem_t *it) {
     if (it) {
