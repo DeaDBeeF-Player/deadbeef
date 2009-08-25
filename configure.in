@@ -15,7 +15,7 @@ AC_PROG_RANLIB
 AC_C_BIGENDIAN
 AC_DEFINE([PREFIX], [], [Installation prefix])
 if test "x$prefix" = "xNONE" ; then
-    AC_DEFINE_UNQUOTED(PREFIX, "/usr/local")
+    AC_DEFINE_UNQUOTED(PREFIX, "${ac_default_prefix}")
 else
     AC_DEFINE_UNQUOTED(PREFIX, "${prefix}")
 fi
