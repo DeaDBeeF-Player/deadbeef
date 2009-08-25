@@ -10,7 +10,7 @@ license=('GPL2')
 depends=('gtk2' 'libsamplerate' 'libvorbis' 'libmad' 'flac' 'alsa-lib')
 makedepends=('pkgconfig')
 source=(http://downloads.sourceforge.net/project/$pkgname/$pkgname-$pkgver.tar.gz)
-md5sums=('53256f1cd7e221560513b5f30c5ed924')
+md5sums=('3735cfe880ceb060ba53b0a67aab6a67')
 
 build() {
     cd $srcdir/$pkgname-$pkgver
