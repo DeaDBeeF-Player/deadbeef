@@ -324,6 +324,8 @@ palsa_thread (uintptr_t context) {
                         snd_strerror (err));
             }
 #endif
+            snd_pcm_prepare (audio);
+            snd_pcm_start (audio);
             mutex_unlock (mutex);
             continue;
         }	           

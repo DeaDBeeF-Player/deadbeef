@@ -1,6 +1,7 @@
 ## Process this file with automake to produce Makefile.in
+ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = gme/Game_Music_Emu-0.5.2 gme/Game_Music_Emu-0.5.2/gme sid/sidplay-libs-2.1.0 dumb pixmaps
+SUBDIRS = gme/Game_Music_Emu-0.5.2 gme/Game_Music_Emu-0.5.2/gme sid/sidplay-libs-2.1.0 dumb pixmaps plugins/lastfm
 
 dumbpath=@top_srcdir@/dumb
 sidpath=@top_srcdir@/sid/sidplay-libs-2.1.0
@@ -10,6 +11,7 @@ bin_PROGRAMS = deadbeef
 
 deadbeef_SOURCES =\
 	main.c common.h\
+	plugins.c plugins.h\
 	callbacks.c interface.c support.c callbacks.h interface.h support.h\
 	playlist.c playlist.h gtkplaylist.c gtkplaylist.h\
 	streamer.c streamer.h\

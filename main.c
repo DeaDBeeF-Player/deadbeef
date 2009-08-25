@@ -48,6 +48,7 @@
 #include "conf.h"
 #include "volume.h"
 #include "session.h"
+#include "plugins.h"
 
 #ifndef PREFIX
 #error PREFIX must be defined
@@ -310,6 +311,7 @@ player_thread (uintptr_t ctx) {
                 messagepump_push (M_TERMINATE, 0, 0, 0);
             }
         }
+        plug_trigger_event (DB_EV_FRAMEUPDATE);
         uint32_t msg;
         uintptr_t ctx;
         uint32_t p1;
@@ -345,6 +347,7 @@ player_thread (uintptr_t ctx) {
                 // update playlist view
                 gtkpl_songchanged (&main_playlist, p1, p2);
                 GDK_THREADS_LEAVE();
+                plug_trigger_event (DB_EV_SONGCHANGED);
                 break;
             case M_PLAYSONG:
                 gtkpl_playsong (&main_playlist);
@@ -576,6 +579,7 @@ main (int argc, char *argv[]) {
     conf_load ();
     pl_load (defpl);
     session_load (sessfile);
+    plug_load_all ();
     messagepump_init ();
     codec_init_locking ();
     streamer_init ();
