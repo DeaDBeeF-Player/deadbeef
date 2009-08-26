@@ -29,3 +29,10 @@ shots
 install-sh
 missing
 images
+libtool
+ltmain.sh
+m4
+.libs
+*.la
+*.lo
+

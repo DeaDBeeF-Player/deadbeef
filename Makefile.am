@@ -10,7 +10,7 @@ gmepath=@top_srcdir@/gme/Game_Music_Emu-0.5.2
 bin_PROGRAMS = deadbeef
 
 deadbeef_SOURCES =\
-	main.c common.h\
+	main.c common.h deadbeef.h\
 	plugins.c plugins.h\
 	callbacks.c interface.c support.c callbacks.h interface.h support.h\
 	playlist.c playlist.h gtkplaylist.c gtkplaylist.h\
@@ -28,6 +28,9 @@ deadbeef_SOURCES =\
 	volume.c volume.h\
 	drawing.h gdkdrawing.c\
 	session.h session.c gtksession.c
+
+sdkdir = $(pkgincludedir)
+sdk_HEADERS = deadbeef.h
 
 deadbeef_LDADD = $(LDADD) $(DEPS_LIBS) gme/Game_Music_Emu-0.5.2/gme/libgme.a sid/sidplay-libs-2.1.0/libsidplay2.a dumb/libdumb.a
 
