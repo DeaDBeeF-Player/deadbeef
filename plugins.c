@@ -9,13 +9,24 @@
 #endif
 #include "plugins.h"
 #include "md5/md5.h"
+#include "messagepump.h"
+#include "messages.h"
 
 // deadbeef api
 DB_functions_t deadbeef_api = {
+    // FIXME: set to 1.0 after api freeze
+    .vmajor = 0,
+    .vminor = 0,
     .ev_subscribe = plug_ev_subscribe,
     .ev_unsubscribe = plug_ev_unsubscribe,
     .md5 = plug_md5,
-    .md5_to_str = plug_md5_to_str
+    .md5_to_str = plug_md5_to_str,
+    .playback_next = plug_playback_next,
+    .playback_prev = plug_playback_prev,
+    .playback_pause = plug_playback_pause,
+    .playback_stop = plug_playback_stop,
+    .playback_play = plug_playback_play,
+    .quit = plug_quit,
 };
 
 void
@@ -72,6 +83,38 @@ plug_ev_unsubscribe (DB_plugin_t *plugin, int ev, db_callback_t callback, uintpt
     }
 }
 
+void
+plug_playback_next (void) {
+    messagepump_push (M_NEXTSONG, 0, 0, 0);
+}
+
+void
+plug_playback_prev (void) {
+    messagepump_push (M_PREVSONG, 0, 0, 0);
+}
+
+void
+plug_playback_pause (void) {
+    messagepump_push (M_PAUSESONG, 0, 0, 0);
+}
+
+void 
+plug_playback_stop (void) {
+    messagepump_push (M_STOPSONG, 0, 0, 0);
+}
+
+void 
+plug_playback_play (void) {
+    messagepump_push (M_PLAYSONG, 0, 0, 0);
+}
+
+void 
+plug_quit (void) {
+    progress_abort ();
+    messagepump_push (M_TERMINATE, 0, 0, 0);
+}
+
+/////// non-api functions (plugin support)
 void
 plug_trigger_event (int ev) {
     for (int i = 0; i < MAX_HANDLERS; i++) {

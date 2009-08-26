@@ -86,23 +86,22 @@ struct DB_plugin_s;
 
 // player api definition
 typedef struct {
+    // versioning
+    int vmajor;
+    int vminor;
     // event subscribing
     void (*ev_subscribe) (struct DB_plugin_s *plugin, int ev, db_callback_t callback, uintptr_t data);
     void (*ev_unsubscribe) (struct DB_plugin_s *plugin, int ev, db_callback_t callback, uintptr_t data);
     // md5sum calc
     void (*md5) (uint8_t sig[16], const char *in, int len);
     void (*md5_to_str) (char *str, const uint8_t sig[16]);
-
-    // event sending and handling
-    int (*messagepump_push)(uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2);
-    int (*messagepump_pop)(uint32_t *id, uintptr_t *ctx, uint32_t *p1, uint32_t *p2);
-    // playlist access
-    DB_playItem_t *(*pl_item_alloc) (void);
-    void (*pl_item_free)(DB_playItem_t *it);
-    int (*pl_add_dir) (const char *dirname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
-    int (*pl_add_file) (const char *fname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
-    DB_playItem_t *(*pl_insert_dir) (DB_playItem_t *after, const char *dirname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
-    DB_playItem_t *(*pl_insert_file) (DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
+    // playback control
+    void (*playback_next) (void);
+    void (*playback_prev) (void);
+    void (*playback_pause) (void);
+    void (*playback_stop) (void);
+    void (*playback_play) (void);
+    void (*quit) (void);
 } DB_functions_t;
 
 // base plugin interface
