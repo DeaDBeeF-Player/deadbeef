@@ -3,10 +3,10 @@
 #include "deadbeef.h"
 
 void
-plug_ev_subscribe (DB_plugin_t *plugin, int ev, db_callback_t callback, uintptr_t data);
+plug_ev_subscribe (DB_plugin_t *plugin, int ev, DB_callback_t callback, uintptr_t data);
 
 void
-plug_ev_unsubscribe (DB_plugin_t *plugin, int ev, db_callback_t callback, uintptr_t data);
+plug_ev_unsubscribe (DB_plugin_t *plugin, int ev, DB_callback_t callback, uintptr_t data);
 
 void
 plug_trigger_event (int ev);
@@ -40,5 +40,8 @@ plug_playback_play (void);
 
 void 
 plug_quit (void);
+
+int
+plug_show_uri (const char *uri);
 
 #endif // __PLUGINS_H

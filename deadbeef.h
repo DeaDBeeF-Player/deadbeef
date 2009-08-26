@@ -56,6 +56,7 @@ typedef struct {
     int startoffset; // offset to seek to skip tags and info-headers
     int endoffset; // offset from end of file where music data ends
     int shufflerating; // sort order for shuffle mode
+    float playtime; // total playtime
     const char *filetype; // e.g. MP3 or OGG
 } DB_playItem_t;
 
@@ -67,19 +68,33 @@ enum {
     DB_PLUGIN_MISC    = 4
 };
 
+typedef struct {
+    int event;
+    double time;
+} DB_event_t;
+
+typedef struct {
+    DB_event_t ev;
+    DB_playItem_t *song;
+} DB_event_song_t;
+
 // event callback type
-typedef int (*db_callback_t)(int ev, uintptr_t data);
-#define DB_CALLBACK(x) ((db_callback_t)(x))
+typedef int (*DB_callback_t)(DB_event_t *, uintptr_t data);
 
 // events
 enum {
     DB_EV_FRAMEUPDATE = 0, // ticks around 20 times per second, but ticker may stop sometimes
     DB_EV_SONGCHANGED = 1, // triggers when song was just changed
+    DB_EV_SONGSTARTED = 2, // triggers when song started playing (for scrobblers and such)
+    DB_EV_SONGFINISHED = 3, // triggers when song finished playing (for scrobblers and such)
     DB_EV_MAX
 };
 
 // typecasting macros
 #define DB_PLUGIN(x) ((DB_plugin_t *)(x))
+#define DB_CALLBACK(x) ((DB_callback_t)(x))
+#define DB_EVENT(x) ((DB_event_t *)(x))
+#define DB_PLAYITEM(x) ((DB_playItem_t *)(x))
 
 // forward decl for plugin struct
 struct DB_plugin_s;
@@ -90,8 +105,8 @@ typedef struct {
     int vmajor;
     int vminor;
     // event subscribing
-    void (*ev_subscribe) (struct DB_plugin_s *plugin, int ev, db_callback_t callback, uintptr_t data);
-    void (*ev_unsubscribe) (struct DB_plugin_s *plugin, int ev, db_callback_t callback, uintptr_t data);
+    void (*ev_subscribe) (struct DB_plugin_s *plugin, int ev, DB_callback_t callback, uintptr_t data);
+    void (*ev_unsubscribe) (struct DB_plugin_s *plugin, int ev, DB_callback_t callback, uintptr_t data);
     // md5sum calc
     void (*md5) (uint8_t sig[16], const char *in, int len);
     void (*md5_to_str) (char *str, const uint8_t sig[16]);
@@ -108,12 +123,19 @@ typedef struct {
     void (*mutex_free) (uintptr_t mtx);
     int (*mutex_lock) (uintptr_t mtx);
     int (*mutex_unlock) (uintptr_t mtx);
+    // playlist access
+    const char *(*pl_find_meta) (DB_playItem_t *song, const char *meta);
+    // web browser
+    int (*show_uri) (const char *uri);
 } DB_functions_t;
 
 // base plugin interface
 typedef struct DB_plugin_s {
     // type must be one of DB_PLUGIN_ types
     int32_t type;
+    // version
+    int16_t version_major;
+    int16_t version_minor;
     // may be deactivated on failures after load
     int inactive;
     // any of those can be left NULL

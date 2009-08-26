@@ -31,6 +31,7 @@
 #include "messagepump.h"
 #include "messages.h"
 #include "playback.h"
+#include "plugins.h"
 
 #include "cvorbis.h"
 #include "cdumb.h"
@@ -620,6 +621,7 @@ pl_set_current (playItem_t *it) {
     }
     codec_unlock ();
     it->played = 1;
+    plug_trigger_event (DB_EV_SONGSTARTED);
     messagepump_push (M_SONGCHANGED, 0, from, to);
     return ret;
 }

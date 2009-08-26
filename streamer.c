@@ -31,6 +31,7 @@
 #include "messagepump.h"
 #include "messages.h"
 #include "conf.h"
+#include "plugins.h"
 
 static SRC_STATE *src;
 static SRC_DATA srcdata;
@@ -95,6 +96,7 @@ streamer_thread (uintptr_t ctx) {
                 badsong = -1;
                 continue;
             }
+            plug_trigger_event (DB_EV_SONGFINISHED);
             int ret = pl_set_current (pl_get_for_idx (sng));
             if (ret < 0) {
                 //printf ("bad file in playlist, skipping...\n");
@@ -339,6 +341,10 @@ streamer_read (char *bytes, int size) {
         }
         streambuffer_fill -= sz;
         playpos += (float)sz/p_get_rate ()/4.f;
+        playlist_current.playtime += (float)sz/p_get_rate ()/4.f;
+        if (playlist_current_ptr) {
+            playlist_current_ptr->playtime = playlist_current.playtime;
+        }
         bytes_until_next_song -= sz;
         if (bytes_until_next_song < 0) {
             bytes_until_next_song = 0;

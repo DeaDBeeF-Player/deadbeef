@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <gtk/gtk.h>
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
 #endif
@@ -13,6 +14,7 @@
 #include "messages.h"
 #include "threading.h"
 #include "progress.h"
+#include "playlist.h"
 
 // deadbeef api
 DB_functions_t deadbeef_api = {
@@ -34,6 +36,8 @@ DB_functions_t deadbeef_api = {
     .mutex_free = mutex_free,
     .mutex_lock = mutex_lock,
     .mutex_unlock = mutex_unlock,
+    .pl_find_meta = (const char *(*) (DB_playItem_t *song, const char *meta))pl_find_meta,
+    .show_uri = plug_show_uri,
 };
 
 void
@@ -49,7 +53,7 @@ plug_md5_to_str (char *str, const uint8_t sig[16]) {
 // event handlers
 typedef struct {
     DB_plugin_t *plugin;
-    db_callback_t callback;
+    DB_callback_t callback;
     uintptr_t data;
 } evhandler_t;
 #define MAX_HANDLERS 100
@@ -64,7 +68,7 @@ typedef struct plugin_s {
 plugin_t *plugins;
 
 void
-plug_ev_subscribe (DB_plugin_t *plugin, int ev, db_callback_t callback, uintptr_t data) {
+plug_ev_subscribe (DB_plugin_t *plugin, int ev, DB_callback_t callback, uintptr_t data) {
     assert (ev < DB_EV_MAX && ev >= 0);
     for (int i = 0; i < MAX_HANDLERS; i++) {
         if (!handlers[ev][i].plugin) {
@@ -78,7 +82,7 @@ plug_ev_subscribe (DB_plugin_t *plugin, int ev, db_callback_t callback, uintptr_
 }
 
 void
-plug_ev_unsubscribe (DB_plugin_t *plugin, int ev, db_callback_t callback, uintptr_t data) {
+plug_ev_unsubscribe (DB_plugin_t *plugin, int ev, DB_callback_t callback, uintptr_t data) {
     assert (ev < DB_EV_MAX && ev >= 0);
     for (int i = 0; i < MAX_HANDLERS; i++) {
         if (handlers[ev][i].plugin == plugin) {
@@ -121,14 +125,39 @@ plug_quit (void) {
     messagepump_push (M_TERMINATE, 0, 0, 0);
 }
 
+int
+plug_show_uri (const char *uri) {
+    GError *error = NULL;
+    GDK_THREADS_ENTER();
+    gboolean ret = gtk_show_uri (NULL, uri, GDK_CURRENT_TIME, &error);
+    GDK_THREADS_LEAVE();
+    return ret;
+}
+
 /////// non-api functions (plugin support)
 void
 plug_trigger_event (int ev) {
+    DB_event_t *event;
+    switch (ev) {
+    case DB_EV_SONGSTARTED:
+    case DB_EV_SONGFINISHED:
+        {
+        DB_event_song_t *pev = malloc (sizeof (DB_event_song_t));
+        pev->song = DB_PLAYITEM (&playlist_current);
+        event = DB_EVENT (pev);
+        }
+        break;
+    default:
+        event = malloc (sizeof (DB_event_t));
+    }
+    event->event = ev;
+    event->time = (double)clock () / CLOCKS_PER_SEC;
     for (int i = 0; i < MAX_HANDLERS; i++) {
         if (handlers[ev][i].plugin && !handlers[ev][i].plugin->inactive) {
-            handlers[ev][i].callback (ev, handlers[ev][i].data);
+            handlers[ev][i].callback (event, handlers[ev][i].data);
         }
     }
+    free (event);
 }
 
 void
