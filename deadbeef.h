@@ -102,6 +102,12 @@ typedef struct {
     void (*playback_stop) (void);
     void (*playback_play) (void);
     void (*quit) (void);
+    // threading
+    void (*thread_start) (void (*fn)(uintptr_t ctx), uintptr_t ctx);
+    uintptr_t (*mutex_create) (void);
+    void (*mutex_free) (uintptr_t mtx);
+    int (*mutex_lock) (uintptr_t mtx);
+    int (*mutex_unlock) (uintptr_t mtx);
 } DB_functions_t;
 
 // base plugin interface

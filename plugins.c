@@ -11,6 +11,8 @@
 #include "md5/md5.h"
 #include "messagepump.h"
 #include "messages.h"
+#include "threading.h"
+#include "progress.h"
 
 // deadbeef api
 DB_functions_t deadbeef_api = {
@@ -27,6 +29,11 @@ DB_functions_t deadbeef_api = {
     .playback_stop = plug_playback_stop,
     .playback_play = plug_playback_play,
     .quit = plug_quit,
+    .thread_start = thread_start,
+    .mutex_create = mutex_create,
+    .mutex_free = mutex_free,
+    .mutex_lock = mutex_lock,
+    .mutex_unlock = mutex_unlock,
 };
 
 void
