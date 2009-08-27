@@ -22,12 +22,30 @@
 #include "session.h"
 #include "common.h"
 
+#define SESS_CURRENT_VER 2
+
+// NOTE: dont forget to update session_reset when changing that
 char session_dir[2048];
 float session_volume;
-int session_playlist_order;
-int session_playlist_looping;
+int8_t session_playlist_order;
+int8_t session_playlist_looping;
+int8_t session_cursor_follows_playback = 1;
 int session_win_attrs[5] = { 40, 40, 500, 300, 0 };
 static uint8_t sessfile_magic[] = { 0xdb, 0xef, 0x5e, 0x55 }; // dbefsess in hexspeak
+
+void
+session_reset (void) {
+    session_volume = 0;
+    session_dir[0] = 0;
+    session_playlist_looping = 0;
+    session_playlist_order = 0;
+    session_cursor_follows_playback = 1;
+    session_win_attrs[0] = 40;
+    session_win_attrs[1] = 40;
+    session_win_attrs[2] = 500;
+    session_win_attrs[3] = 300;
+    session_win_attrs[4] = 0;
+}
 
 static int
 write_i16_be (uint16_t val, FILE *fp) {
@@ -105,19 +123,6 @@ read_i32_be (uint32_t *pval, FILE *fp) {
     return 4;
 }
 
-void
-session_reset (void) {
-    session_volume = 0;
-    session_dir[0] = 0;
-    session_playlist_looping = 0;
-    session_playlist_order = 0;
-    session_win_attrs[0] = 40;
-    session_win_attrs[1] = 40;
-    session_win_attrs[2] = 500;
-    session_win_attrs[3] = 300;
-    session_win_attrs[4] = 0;
-}
-
 int
 session_save (const char *fname) {
     FILE *fp = fopen (fname, "w+b");
@@ -129,7 +134,7 @@ session_save (const char *fname) {
     if (fwrite (sessfile_magic, 1, 4, fp) != 4) {
         goto session_save_fail;
     }
-    uint8_t version = 1;
+    uint8_t version = SESS_CURRENT_VER;
     if (fwrite (&version, 1, 1, fp) != 1) {
         goto session_save_fail;
     }
@@ -143,10 +148,13 @@ session_save (const char *fname) {
     if (write_i32_be (*((uint32_t*)&session_volume), fp) != 4) {
         goto session_save_fail;
     }
-    if (write_i32_be (session_playlist_order, fp) != 4) {
+    if (fwrite (&session_playlist_order, 1, 1, fp) != 1) {
         goto session_save_fail;
     }
-    if (write_i32_be (session_playlist_looping, fp) != 4) {
+    if (fwrite (&session_playlist_looping, 1, 1, fp) != 1) {
+        goto session_save_fail;
+    }
+    if (fwrite (&session_cursor_follows_playback, 1, 1, fp) != 1) {
         goto session_save_fail;
     }
     for (int k = 0; k < 5; k++) {
@@ -180,7 +188,7 @@ session_load (const char *fname) {
     if (fread (&version, 1, 1, fp) != 1) {
         goto session_load_fail;
     }
-    if (version != 1) {
+    if (version != SESS_CURRENT_VER) {
         goto session_load_fail;
     }
     uint16_t l;
@@ -197,16 +205,19 @@ session_load (const char *fname) {
     if (read_i32_be ((uint32_t*)&session_volume, fp) != 4) {
         goto session_load_fail;
     }
-    if (read_i32_be (&session_playlist_order, fp) != 4) {
+    if (fread (&session_playlist_order, 1, 1, fp) != 1) {
         goto session_load_fail;
     }
     if (session_playlist_order < 0 || session_playlist_order > 2) {
         goto session_load_fail;
     }
-    if (read_i32_be (&session_playlist_looping, fp) != 4) {
+    if (fread (&session_playlist_looping, 1, 1, fp) != 1) {
         goto session_load_fail;
     }
     if (session_playlist_looping < 0 || session_playlist_looping > 2) {
+        goto session_load_fail;
+    }
+    if (fread (&session_cursor_follows_playback, 1, 1, fp) != 1) {
         goto session_load_fail;
     }
     for (int k = 0; k < 5; k++) {
@@ -264,4 +275,14 @@ session_set_playlist_looping (int looping) {
 int
 session_get_playlist_looping (void) {
     return session_playlist_looping;
+}
+
+void
+session_set_cursor_follows_playback (int on) {
+    session_cursor_follows_playback = on;
+}
+
+int
+session_get_cursor_follows_playback (void) {
+    return session_cursor_follows_playback;
 }
