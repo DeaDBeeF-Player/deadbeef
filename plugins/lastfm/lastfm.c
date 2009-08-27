@@ -355,7 +355,7 @@ lastfm_songstarted (DB_event_song_t *ev, uintptr_t data) {
     }
 
     char req[4096];
-    snprintf (req, sizeof (req), "s=%s&a=%s&t=%s&b=%s&l=%d&n=%s&m=%s&", lfm_sess, a, t, b, (int)l, n, m);
+    snprintf (req, sizeof (req), "s=%s&a=%s&t=%s&b=%s&l=%d&n=%s&m=%s", lfm_sess, a, t, b, (int)l, n, m);
     fprintf (stderr, "sending nowplaying to lfm:\n%s\n", req);
     int status = curl_req_send (lfm_nowplaying_url, req);
     if (!status) {
@@ -383,7 +383,38 @@ lastfm_songfinished (DB_event_song_t *ev, uintptr_t data) {
     }
     else {
         printf ("file %s doesn't have enough tags to submit to last.fm\n", ev->song->fname);
+        return 0;
     }
+
+    // check submission rules
+
+#if 0
+    // must be played for >=240sec of half the total time
+    if (ev->song->playtime < 240 && ev->song->playtime < ev->song->duration/2) {
+        return 0;
+    }
+
+    // duration must be >= 30 sec
+    if (ev->song->duration < 30) {
+        return 0;
+    }
+
+    if (auth () < 0) {
+        return;
+    }
+#endif
+
+    char req[4096];
+    snprintf (req, sizeof (req), "s=%s&a[0]=%s&t[0]=%s&i[0]=%d&o[0]=P&r[0]=&b[0]=%s&l[0]=%d&n[0]=%s&m[0]=%s", lfm_sess, a, t, ev->song->started_timestamp, b, (int)l, n, m);
+    fprintf (stderr, "sending submission to lfm:\n%s\n", req);
+    int status = curl_req_send (lfm_submission_url, req);
+    if (!status) {
+        if (strncmp (lfm_reply, "OK", 2)) {
+            fprintf (stderr, "submission failed, response:\n%s\n", lfm_reply);
+            lfm_sess[0] = 0;
+        }
+    }
+    curl_req_cleanup ();
 
     return 0;
 }

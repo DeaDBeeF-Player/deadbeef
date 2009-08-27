@@ -57,6 +57,7 @@ typedef struct {
     int endoffset; // offset from end of file where music data ends
     int shufflerating; // sort order for shuffle mode
     float playtime; // total playtime
+    time_t started_timestamp; // result of calling time(NULL)
     const char *filetype; // e.g. MP3 or OGG
 } DB_playItem_t;
 

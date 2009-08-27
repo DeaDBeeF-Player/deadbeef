@@ -25,6 +25,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <assert.h>
+#include <time.h>
 #include "playlist.h"
 #include "codec.h"
 #include "streamer.h"
@@ -608,8 +609,9 @@ pl_set_current (playItem_t *it) {
         streamer_reset (0);
     }
     if (it) {
-        pl_item_copy (&playlist_current, it);
         it->played = 1;
+        it->started_timestamp = time (NULL);
+        pl_item_copy (&playlist_current, it);
     }
     codec_unlock ();
     if (it) {

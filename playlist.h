@@ -39,6 +39,7 @@ typedef struct playItem_s {
     int endoffset; // offset from end of file where music data ends (mp3)
     int shufflerating; // sort order for shuffle mode
     float playtime; // total playtime
+    time_t started_timestamp; // result of calling time(NULL)
     const char *filetype; // e.g. MP3 or OGG
     struct playItem_s *next[PL_MAX_ITERATORS]; // next item in linked list
     struct playItem_s *prev[PL_MAX_ITERATORS]; // prev item in linked list
