@@ -23,17 +23,25 @@
 #include <curl/curl.h>
 #include "../../deadbeef.h"
 
+#define TESTMODE 1
+
 static DB_misc_t plugin;
 static DB_functions_t *deadbeef;
 
+#define LFM_CLIENTID "ddb"
+#define LFM_MAJORVER 0
+#define LFM_MINORVER 1
 #define SCROBBLER_URL_V1 "http://post.audioscrobbler.com"
 #define SCROBBLER_URL_V2 "http://ws.audioscrobbler.com/2.0"
-#define LASTFM_API_KEY "6b33c8ae4d598a9aff8fe63e334e6e86"
-#define LASTFM_API_SECRET "a9f5e17e358377d96e96477d870b2b18"
+#define LFM_API_KEY "6b33c8ae4d598a9aff8fe63e334e6e86"
+#define LFM_API_SECRET "a9f5e17e358377d96e96477d870b2b18"
 
-char lfm_sess[33];
 char lfm_user[100];
 char lfm_pass[100];
+
+char lfm_sess[33];
+char lfm_nowplaying_url[256];
+char lfm_submission_url[256];
 
 DB_plugin_t *
 lastfm_load (DB_functions_t *api) {
@@ -41,7 +49,8 @@ lastfm_load (DB_functions_t *api) {
     return DB_PLUGIN (&plugin);
 }
 
-static char *lfm_reply;
+#define MAX_REPLY 4096
+static char lfm_reply[MAX_REPLY];
 static char lfm_reply_sz;
 static char lfm_err[CURL_ERROR_SIZE];
 
@@ -49,20 +58,22 @@ static size_t
 lastfm_curl_res (void *ptr, size_t size, size_t nmemb, void *stream)
 {
     int len = size * nmemb;
-    lfm_reply = realloc (lfm_reply, lfm_reply_sz + len + 1);
+    if (lfm_reply_sz + len >= MAX_REPLY) {
+        fprintf (stderr, "reply is too large. stopping.\n");
+        return 0;
+    }
     memcpy (lfm_reply + lfm_reply_sz, ptr, len);
     lfm_reply_sz += len;
-
     char s[size*nmemb+1];
     memcpy (s, ptr, size*nmemb);
     s[size*nmemb] = 0;
-
+    fprintf (stderr, "got from net: %s\n", s);
     return len;
 }
 
 static int
 curl_req_send (const char *req, const char *post) {
-    printf ("sending request: %s\n", req);
+    fprintf (stderr, "sending request: %s\n", req);
     CURL *curl;
     curl = curl_easy_init ();
     if (!curl) {
@@ -85,16 +96,15 @@ curl_req_send (const char *req, const char *post) {
     if (!status) {
         lfm_reply[lfm_reply_sz] = 0;
     }
+    if (status != 0) {
+        fprintf (stderr, "curl request failed, err:\n%s\n", lfm_err);
+    }
     return status;
 }
 
 static void
 curl_req_cleanup (void) {
-    if (lfm_reply) {
-        free (lfm_reply);
-        lfm_reply = NULL;
-        lfm_reply_sz = 0;
-    }
+    lfm_reply_sz = 0;
 }
 
 
@@ -188,6 +198,9 @@ auth_v2 (void) {
 
 int
 auth (void) {
+    if (lfm_sess[0]) {
+        return 0;
+    }
     char req[4096];
     time_t timestamp = time(0);
     uint8_t sig[16];
@@ -200,14 +213,97 @@ auth (void) {
     deadbeef->md5 (sig, token, strlen (token));
     deadbeef->md5_to_str (token, sig);
 
+#if TESTMODE
     snprintf (req, sizeof (req), "%s/?hs=true&p=1.2.1&c=tst&v=1.0&u=%s&t=%d&a=%s", SCROBBLER_URL_V1, lfm_user, timestamp, token);
+#else
+    snprintf (req, sizeof (req), "%s/?hs=true&p=1.2.1&c=%s&v=%d.%d&u=%s&t=%d&a=%s", SCROBBLER_URL_V1, LFM_CLIENTID, LFM_MAJORVER, LFM_MINORVER, lfm_user, timestamp, token);
+#endif
     // handshake
     int status = curl_req_send (req, NULL);
     if (!status) {
         printf ("%s\n", lfm_reply);
+        // check status and extract session id, nowplaying url, submission url
+        if (strncmp (lfm_reply, "OK", 2)) {
+            uint8_t *p = lfm_reply;
+            while (*p && *p >= 0x20) {
+                p++;
+            }
+            *p = 0;
+            fprintf (stderr, "scrobbler auth failed, response: %s\n", lfm_reply);
+            goto fail;
+        }
+        uint8_t *p = lfm_reply + 2;
+        // skip whitespace
+        while (*p && *p < 0x20) {
+            p++;
+        }
+        // get session
+        if (!*p) {
+            fprintf (stderr, "unrecognized scrobbler reply:\n%s\n", lfm_reply);
+            goto fail;
+        }
+        uint8_t *end = p+1;
+        while (*end && *end >= 0x20) {
+            end++;
+        }
+        if (end-p > 32) {
+            fprintf (stderr, "scrobbler session id is invalid length. probably plugin needs fixing.\n");
+            goto fail;
+        }
+        strncpy (lfm_sess, p, 32);
+        lfm_sess[32] = 0;
+        fprintf (stderr, "obtained scrobbler session: %s\n", lfm_sess);
+        p = end;
+        // skip whitespace
+        while (*p && *p < 0x20) {
+            p++;
+        }
+        // get nowplaying url
+        if (!*p) {
+            fprintf (stderr, "unrecognized scrobbler reply:\n%s\n", lfm_reply);
+            goto fail;
+        }
+        end = p+1;
+        while (*end && *end >= 0x20) {
+            end++;
+        }
+        if (end - p > sizeof (lfm_nowplaying_url)-1) {
+            fprintf (stderr, "scrobbler nowplaying url is too long:\n", lfm_reply);
+            goto fail;
+        }
+        strncpy (lfm_nowplaying_url, p, end-p);
+        lfm_nowplaying_url[end-p] = 0;
+        fprintf (stderr, "obtained scrobbler nowplaying url: %s\n", lfm_nowplaying_url);
+        p = end;
+        // skip whitespace
+        while (*p && *p < 0x20) {
+            p++;
+        }
+        // get submission url
+        if (!*p) {
+            fprintf (stderr, "unrecognized scrobbler reply:\n%s\n", lfm_reply);
+            goto fail;
+        }
+        end = p+1;
+        while (*end && *end >= 0x20) {
+            end++;
+        }
+        if (end - p > sizeof (lfm_submission_url)-1) {
+            fprintf (stderr, "scrobbler submission url is too long:\n", lfm_reply);
+            goto fail;
+        }
+        strncpy (lfm_submission_url, p, end-p);
+        lfm_submission_url[end-p] = 0;
+        fprintf (stderr, "obtained scrobbler submission url: %s\n", lfm_submission_url);
+        p = end;
     }
+
     curl_req_cleanup ();
     return 0;
+fail:
+    lfm_sess[0] = 0;
+    curl_req_cleanup ();
+    return -1;
 }
 
 static int
@@ -250,7 +346,25 @@ lastfm_songstarted (DB_event_song_t *ev, uintptr_t data) {
     }
     else {
         printf ("file %s doesn't have enough tags to submit to last.fm\n", ev->song->fname);
+        return 0;
     }
+
+    // submit to nowplaying
+    if (auth () < 0) {
+        return;
+    }
+
+    char req[4096];
+    snprintf (req, sizeof (req), "s=%s&a=%s&t=%s&b=%s&l=%d&n=%s&m=%s&", lfm_sess, a, t, b, (int)l, n, m);
+    fprintf (stderr, "sending nowplaying to lfm:\n%s\n", req);
+    int status = curl_req_send (lfm_nowplaying_url, req);
+    if (!status) {
+        if (strncmp (lfm_reply, "OK", 2)) {
+            fprintf (stderr, "nowplaying failed, response:\n%s\n", lfm_reply);
+            lfm_sess[0] = 0;
+        }
+    }
+    curl_req_cleanup ();
 
     return 0;
 }
@@ -276,8 +390,6 @@ lastfm_songfinished (DB_event_song_t *ev, uintptr_t data) {
 static int
 lastfm_start (void) {
     // subscribe to frameupdate event
-//    deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_FRAMEUPDATE, lastfm_frameupdate, 0);
-//    deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_SONGCHANGED, lastfm_songchanged, 0);
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_SONGSTARTED, DB_CALLBACK (lastfm_songstarted), 0);
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_SONGFINISHED, DB_CALLBACK (lastfm_songfinished), 0);
     // load login/pass
