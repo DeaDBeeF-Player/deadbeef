@@ -355,12 +355,8 @@ player_thread (uintptr_t ctx) {
                 GDK_THREADS_LEAVE();
                 break;
             case M_STOPSONG:
-                p_stop ();
-                GDK_THREADS_ENTER();
-                if (playlist_current_ptr) {
-                    gtkpl_redraw_pl_row (&main_playlist, pl_get_idx_of (playlist_current_ptr), playlist_current_ptr);
-                }
-                GDK_THREADS_LEAVE();
+                //p_stop ();
+                streamer_set_nextsong (-2, 0);
                 break;
             case M_NEXTSONG:
                 GDK_THREADS_ENTER();
