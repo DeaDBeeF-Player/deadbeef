@@ -1364,11 +1364,8 @@ gtkpl_playsong (gtkplaylist_t *ps) {
     if (p_ispaused ()) {
         p_unpause ();
     }
-    else if (playlist_current_ptr) {
-        p_stop ();
-        streamer_set_nextsong (gtkpl_get_idx_of (ps, playlist_current_ptr), 1);
-    }
     else if (ps->row != -1) {
+        p_stop ();
         streamer_set_nextsong (ps->row, 1);
     }
     else {
