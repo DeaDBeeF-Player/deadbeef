@@ -47,7 +47,6 @@ progress_show (void) {
 
 void
 progress_hide (void) {
-    printf ("progress_hide\n");
     gtk_widget_hide (progressdlg);
 }
 

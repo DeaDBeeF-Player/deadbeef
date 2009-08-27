@@ -358,12 +358,8 @@ player_thread (uintptr_t ctx) {
                 GDK_THREADS_LEAVE();
                 break;
             case M_STOPSONG:
-                p_stop ();
-                GDK_THREADS_ENTER();
-                if (playlist_current_ptr) {
-                    gtkpl_redraw_pl_row (&main_playlist, pl_get_idx_of (playlist_current_ptr), playlist_current_ptr);
-                }
-                GDK_THREADS_LEAVE();
+                //p_stop ();
+                streamer_set_nextsong (-2, 0);
                 break;
             case M_NEXTSONG:
                 GDK_THREADS_ENTER();
@@ -627,6 +623,7 @@ main (int argc, char *argv[]) {
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, w)), TRUE);
     w = loopingwidgets[session_get_playlist_looping ()];
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, w)), TRUE);
+    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "cursor_follows_playback")), session_get_cursor_follows_playback () ? TRUE : FALSE);
 
     searchwin = create_searchwin ();
     gtk_window_set_transient_for (GTK_WINDOW (searchwin), GTK_WINDOW (mainwin));

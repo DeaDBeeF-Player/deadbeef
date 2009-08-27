@@ -42,6 +42,7 @@
 #include "search.h"
 #include "progress.h"
 #include "drawing.h"
+#include "session.h"
 
 // orange on dark color scheme
 float colo_dark_orange[COLO_COUNT][3] = {
@@ -741,14 +742,17 @@ gtkpl_playsongnum (int idx) {
 
 void
 gtkpl_songchanged (gtkplaylist_t *ps, int from, int to) {
-    if (from >= 0 || to >= 0) {
-        GtkWidget *widget = ps->playlist;
-        if (from >= 0) {
-            gtkpl_redraw_pl_row (ps, from, gtkpl_get_for_idx (ps, from));
-        }
-        if (to >= 0) {
-            gtkpl_redraw_pl_row (ps, to, gtkpl_get_for_idx (ps, to));
-        }
+    GtkWidget *widget = ps->playlist;
+    if (to >= 0 && session_get_cursor_follows_playback ()) {
+        gtk_range_set_value (GTK_RANGE (ps->scrollbar), to - ps->nvisiblerows/2);
+        return;
+    }
+
+    if (from >= 0) {
+        gtkpl_redraw_pl_row (ps, from, gtkpl_get_for_idx (ps, from));
+    }
+    if (to >= 0) {
+        gtkpl_redraw_pl_row (ps, to, gtkpl_get_for_idx (ps, to));
     }
 }
 
@@ -1364,11 +1368,8 @@ gtkpl_playsong (gtkplaylist_t *ps) {
     if (p_ispaused ()) {
         p_unpause ();
     }
-    else if (playlist_current_ptr) {
-        p_stop ();
-        streamer_set_nextsong (gtkpl_get_idx_of (ps, playlist_current_ptr), 1);
-    }
     else if (ps->row != -1) {
+        p_stop ();
         streamer_set_nextsong (ps->row, 1);
     }
     else {

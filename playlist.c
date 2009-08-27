@@ -584,7 +584,7 @@ int
 pl_set_current (playItem_t *it) {
     int ret = 0;
     int from = pl_get_idx_of (playlist_current_ptr);
-    int to = pl_get_idx_of (it);
+    int to = it ? pl_get_idx_of (it) : -1;
 #if 0
     // this produces some kind of bug in the beginning of track
     if (it == playlist_current_ptr) {
@@ -617,10 +617,12 @@ pl_set_current (playItem_t *it) {
     }
     if (it) {
         pl_item_copy (&playlist_current, it);
+        it->played = 1;
     }
     codec_unlock ();
-    it->played = 1;
-    plug_trigger_event (DB_EV_SONGSTARTED);
+    if (it) {
+        plug_trigger_event (DB_EV_SONGSTARTED);
+    }
     messagepump_push (M_SONGCHANGED, 0, from, to);
     return ret;
 }

@@ -492,3 +492,7 @@ gboolean
 on_mainwin_configure_event             (GtkWidget       *widget,
                                         GdkEventConfigure *event,
                                         gpointer         user_data);
+
+void
+on_cursor_follows_playback_activate    (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);

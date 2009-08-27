@@ -125,6 +125,7 @@ streamer_thread (uintptr_t ctx) {
             nextsong = -1;
             p_stop ();
             messagepump_push (M_SONGCHANGED, 0, pl_get_idx_of (playlist_current_ptr), -1);
+            pl_set_current (NULL);
             continue;
         }
         else if (p_isstopped ()) {

@@ -65,6 +65,7 @@ create_mainwin (void)
   GtkWidget *loop_all;
   GtkWidget *loop_single;
   GtkWidget *loop_disable;
+  GtkWidget *cursor_follows_playback;
   GtkWidget *menuitem4;
   GtkWidget *menuitem4_menu;
   GtkWidget *about1;
@@ -206,11 +207,13 @@ create_mainwin (void)
   order_linear_group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (order_shuffle));
   gtk_widget_show (order_shuffle);
   gtk_container_add (GTK_CONTAINER (order1_menu), order_shuffle);
+  gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (order_shuffle), TRUE);
 
   order_random = gtk_radio_menu_item_new_with_mnemonic (order_linear_group, "Random");
   order_linear_group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (order_random));
   gtk_widget_show (order_random);
   gtk_container_add (GTK_CONTAINER (order1_menu), order_random);
+  gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (order_random), TRUE);
 
   looping1 = gtk_menu_item_new_with_mnemonic ("Looping");
   gtk_widget_show (looping1);
@@ -229,11 +232,18 @@ create_mainwin (void)
   loop_all_group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (loop_single));
   gtk_widget_show (loop_single);
   gtk_container_add (GTK_CONTAINER (looping1_menu), loop_single);
+  gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (loop_single), TRUE);
 
   loop_disable = gtk_radio_menu_item_new_with_mnemonic (loop_all_group, "Don't Loop");
   loop_all_group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (loop_disable));
   gtk_widget_show (loop_disable);
   gtk_container_add (GTK_CONTAINER (looping1_menu), loop_disable);
+  gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (loop_disable), TRUE);
+
+  cursor_follows_playback = gtk_check_menu_item_new_with_mnemonic ("Cursor follows playback");
+  gtk_widget_show (cursor_follows_playback);
+  gtk_container_add (GTK_CONTAINER (playlist1_menu), cursor_follows_playback);
+  gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (cursor_follows_playback), TRUE);
 
   menuitem4 = gtk_menu_item_new_with_mnemonic ("_Help");
   gtk_widget_show (menuitem4);
@@ -414,6 +424,9 @@ create_mainwin (void)
   g_signal_connect ((gpointer) loop_disable, "activate",
                     G_CALLBACK (on_loop_disable_activate),
                     NULL);
+  g_signal_connect ((gpointer) cursor_follows_playback, "activate",
+                    G_CALLBACK (on_cursor_follows_playback_activate),
+                    NULL);
   g_signal_connect ((gpointer) about1, "activate",
                     G_CALLBACK (on_about1_activate),
                     NULL);
@@ -573,6 +586,7 @@ create_mainwin (void)
   GLADE_HOOKUP_OBJECT (mainwin, loop_all, "loop_all");
   GLADE_HOOKUP_OBJECT (mainwin, loop_single, "loop_single");
   GLADE_HOOKUP_OBJECT (mainwin, loop_disable, "loop_disable");
+  GLADE_HOOKUP_OBJECT (mainwin, cursor_follows_playback, "cursor_follows_playback");
   GLADE_HOOKUP_OBJECT (mainwin, menuitem4, "menuitem4");
   GLADE_HOOKUP_OBJECT (mainwin, menuitem4_menu, "menuitem4_menu");
   GLADE_HOOKUP_OBJECT (mainwin, about1, "about1");
