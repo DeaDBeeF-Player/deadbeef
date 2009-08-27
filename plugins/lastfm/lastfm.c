@@ -249,7 +249,7 @@ lastfm_songstarted (DB_event_song_t *ev, uintptr_t data) {
         printf ("playtime: %f\nartist: %s\ntitle: %s\nalbum: %s\nduration: %f\ntracknum: %s\n---\n", ev->song->playtime, a, t, b, l, n);
     }
     else {
-        printf ("file %f doesn't have enough tags to submit to last.fm\n", ev->song->fname);
+        printf ("file %s doesn't have enough tags to submit to last.fm\n", ev->song->fname);
     }
 
     return 0;
@@ -268,7 +268,7 @@ lastfm_songfinished (DB_event_song_t *ev, uintptr_t data) {
         printf ("playtime: %f\nartist: %s\ntitle: %s\nalbum: %s\nduration: %f\ntracknum: %s\n---\n", ev->song->playtime, a, t, b, l, n);
     }
     else {
-        printf ("file %f doesn't have enough tags to submit to last.fm\n", ev->song->fname);
+        printf ("file %s doesn't have enough tags to submit to last.fm\n", ev->song->fname);
     }
 
     return 0;

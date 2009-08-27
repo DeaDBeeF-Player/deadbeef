@@ -96,7 +96,6 @@ streamer_thread (uintptr_t ctx) {
                 badsong = -1;
                 continue;
             }
-            plug_trigger_event (DB_EV_SONGFINISHED);
             int ret = pl_set_current (pl_get_for_idx (sng));
             if (ret < 0) {
                 //printf ("bad file in playlist, skipping...\n");
