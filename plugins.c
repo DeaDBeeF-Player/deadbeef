@@ -15,6 +15,8 @@
 #include "threading.h"
 #include "progress.h"
 #include "playlist.h"
+#include "volume.h"
+#include "streamer.h"
 
 // deadbeef api
 DB_functions_t deadbeef_api = {
@@ -30,6 +32,8 @@ DB_functions_t deadbeef_api = {
     .playback_pause = plug_playback_pause,
     .playback_stop = plug_playback_stop,
     .playback_play = plug_playback_play,
+    .playback_get_pos = plug_playback_get_pos,
+    .playback_set_pos = plug_playback_set_pos,
     .quit = plug_quit,
     .thread_start = thread_start,
     .mutex_create = mutex_create,
@@ -37,7 +41,11 @@ DB_functions_t deadbeef_api = {
     .mutex_lock = mutex_lock,
     .mutex_unlock = mutex_unlock,
     .pl_find_meta = (const char *(*) (DB_playItem_t *song, const char *meta))pl_find_meta,
-    .show_uri = plug_show_uri,
+    // volume control
+    .volume_set_db = volume_set_db,
+    .volume_get_db = volume_get_db,
+    .volume_set_amp = volume_set_amp,
+    .volume_get_amp = volume_get_amp,
 };
 
 void
@@ -119,19 +127,27 @@ plug_playback_play (void) {
     messagepump_push (M_PLAYSONG, 0, 0, 0);
 }
 
+float
+plug_playback_get_pos (void) {
+    if (playlist_current.duration <= 0) {
+        return 0;
+    }
+    return streamer_get_playpos () * 100 / playlist_current.duration;
+}
+
+void
+plug_playback_set_pos (float pos) {
+    if (playlist_current.duration <= 0) {
+        return;
+    }
+    float t = pos * playlist_current.duration / 100.f;
+    streamer_set_seek (t);
+}
+
 void 
 plug_quit (void) {
     progress_abort ();
     messagepump_push (M_TERMINATE, 0, 0, 0);
-}
-
-int
-plug_show_uri (const char *uri) {
-    GError *error = NULL;
-    GDK_THREADS_ENTER();
-    gboolean ret = gtk_show_uri (NULL, uri, GDK_CURRENT_TIME, &error);
-    GDK_THREADS_LEAVE();
-    return ret;
 }
 
 /////// non-api functions (plugin support)

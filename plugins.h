@@ -41,7 +41,10 @@ plug_playback_play (void);
 void 
 plug_quit (void);
 
-int
-plug_show_uri (const char *uri);
+float
+plug_playback_get_pos (void);
+
+void
+plug_playback_set_pos (float pos);
 
 #endif // __PLUGINS_H

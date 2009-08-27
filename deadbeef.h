@@ -116,6 +116,9 @@ typedef struct {
     void (*playback_pause) (void);
     void (*playback_stop) (void);
     void (*playback_play) (void);
+    float (*playback_get_pos) (void); // [0..100]
+    void (*playback_set_pos) (float pos); // [0..100]
+    // process control
     void (*quit) (void);
     // threading
     void (*thread_start) (void (*fn)(uintptr_t ctx), uintptr_t ctx);
@@ -125,8 +128,11 @@ typedef struct {
     int (*mutex_unlock) (uintptr_t mtx);
     // playlist access
     const char *(*pl_find_meta) (DB_playItem_t *song, const char *meta);
-    // web browser
-    int (*show_uri) (const char *uri);
+    // volume control
+    void (*volume_set_db) (float dB);
+    float (*volume_get_db) (void);
+    void (*volume_set_amp) (float amp);
+    float (*volume_get_amp) (void);
 } DB_functions_t;
 
 // base plugin interface
