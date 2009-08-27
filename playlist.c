@@ -61,7 +61,7 @@ pl_free (void) {
 }
 
 static char *
-pl_cue_skipspaces (char *p) {
+pl_cue_skipspaces (uint8_t *p) {
     while (*p && *p <= ' ') {
         p++;
     }
@@ -182,7 +182,6 @@ pl_insert_cue (playItem_t *after, const char *fname, codec_t *codec, const char 
         }
         else if (!strncmp (p, "FILE ", 5)) {
             pl_get_qvalue_from_cue (p + 5, file);
-//            printf ("got filename: %s\n", file);
             // copy directory name
             char fname[1024];
             int len = strlen (cuename);
