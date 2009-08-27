@@ -116,6 +116,7 @@ typedef struct {
     void (*playback_pause) (void);
     void (*playback_stop) (void);
     void (*playback_play) (void);
+    void (*playback_random) (void);
     float (*playback_get_pos) (void); // [0..100]
     void (*playback_set_pos) (float pos); // [0..100]
     // process control

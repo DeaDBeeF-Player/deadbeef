@@ -32,6 +32,7 @@ DB_functions_t deadbeef_api = {
     .playback_pause = plug_playback_pause,
     .playback_stop = plug_playback_stop,
     .playback_play = plug_playback_play,
+    .playback_random = plug_playback_random,
     .playback_get_pos = plug_playback_get_pos,
     .playback_set_pos = plug_playback_set_pos,
     .quit = plug_quit,
@@ -125,6 +126,11 @@ plug_playback_stop (void) {
 void 
 plug_playback_play (void) {
     messagepump_push (M_PLAYSONG, 0, 0, 0);
+}
+
+void 
+plug_playback_random (void) {
+    messagepump_push (M_PLAYRANDOM, 0, 0, 0);
 }
 
 float

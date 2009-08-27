@@ -39,6 +39,9 @@ void
 plug_playback_play (void);
 
 void 
+plug_playback_random (void);
+
+void 
 plug_quit (void);
 
 float
