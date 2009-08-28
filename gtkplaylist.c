@@ -391,6 +391,7 @@ gtkpl_configure (gtkplaylist_t *ps) {
         ps->fmtcache = NULL;
     }
     ps->nvisiblerows = ceil (widget->allocation.height / (float)rowheight);
+    ps->nvisiblefullrows = floor (widget->allocation.height / (float)rowheight);
     ps->backbuf = gdk_pixmap_new (widget->window, widget->allocation.width, widget->allocation.height, -1);
 
     gtkpl_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
@@ -490,7 +491,8 @@ gtkpl_mouse1_pressed (gtkplaylist_t *ps, int state, int ex, int ey, double time)
         // doubleclick - play this item
         if (ps->row != -1) {
             playItem_t *it = gtkpl_get_for_idx (ps, ps->row);
-            messagepump_push (M_PLAYSONGNUM, 0, pl_get_idx_of (it), 0);
+            it->selected = 1;
+            messagepump_push (M_PLAYSONGNUM, 0, ps->row, 0);
             return;
         }
 
@@ -742,10 +744,13 @@ gtkpl_playsongnum (int idx) {
 
 void
 gtkpl_songchanged (gtkplaylist_t *ps, int from, int to) {
-    GtkWidget *widget = ps->playlist;
-    if (to >= 0 && session_get_cursor_follows_playback ()) {
-        gtk_range_set_value (GTK_RANGE (ps->scrollbar), to - ps->nvisiblerows/2);
-        return;
+    if (!dragwait) {
+        GtkWidget *widget = ps->playlist;
+        if (session_get_cursor_follows_playback ()) {
+            if (to < ps->scrollpos || to >= ps->scrollpos + ps->nvisiblefullrows) {
+                gtk_range_set_value (GTK_RANGE (ps->scrollbar), to - ps->nvisiblerows/2);
+            }
+        }
     }
 
     if (from >= 0) {
