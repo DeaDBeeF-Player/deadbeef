@@ -292,13 +292,27 @@ gtkpl_draw_pl_row (gtkplaylist_t *ps, int row, playItem_t *it) {
 
     char artistalbum[1024];
     const char *artist = pl_find_meta (it, "artist");
+    if (!artist) {
+        artist = "?";
+    }
     const char *album = pl_find_meta (it, "album");
+    if (!album) {
+        album = "?";
+    }
+    const char *track = pl_find_meta (it, "track");
+    if (!track) {
+        track = "";
+    }
+    const char *title = pl_find_meta (it, "title");
+    if (!title) {
+        title = "?";
+    }
     snprintf (artistalbum, 1024, "%s - %s", artist, album);
     const char *columns[pl_ncolumns] = {
         "",
         artistalbum,
-        pl_find_meta (it, "track"),
-        pl_find_meta (it, "title"),
+        track,
+        title,
         dur
     };
     int x = 0;

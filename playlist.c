@@ -864,6 +864,12 @@ void
 pl_format_item_display_name (playItem_t *it, char *str, int len) {
     const char *artist = pl_find_meta (it, "artist");
     const char *title = pl_find_meta (it, "title");
+    if (!artist) {
+        artist = "Unknown artist";
+    }
+    if (!title) {
+        title = "Unknown title";
+    }
     snprintf (str, len, "%s - %s", artist, title);
 #if 0
     // artist - title
@@ -920,7 +926,7 @@ pl_find_meta (playItem_t *it, const char *key) {
         }
         m = m->next;
     }
-    return "?";
+    return NULL;
 }
 
 void
