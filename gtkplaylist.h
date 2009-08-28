@@ -70,6 +70,7 @@ typedef struct {
     int row;
     double clicktime; // for doubleclick detection
     int nvisiblerows;
+    int nvisiblefullrows;
 // array of lengths and widths
 // N = number of columns
 // M = number of visible rows,
