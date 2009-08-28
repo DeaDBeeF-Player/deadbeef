@@ -24,6 +24,7 @@
 #include "../../deadbeef.h"
 
 #define TESTMODE 1
+#define LFM_IGNORE_RULES 0
 
 static DB_misc_t plugin;
 static DB_functions_t *deadbeef;
@@ -292,6 +293,7 @@ lastfm_songfinished (DB_event_song_t *ev, uintptr_t data) {
         return 0;
     }
 
+#if !LFM_IGNORE_RULES
     // check submission rules
     // must be played for >=240sec of half the total time
     if (ev->song->playtime < 240 && ev->song->playtime < ev->song->duration/2) {
@@ -302,6 +304,7 @@ lastfm_songfinished (DB_event_song_t *ev, uintptr_t data) {
     if (ev->song->duration < 30) {
         return 0;
     }
+#endif
 
     deadbeef->mutex_lock (lfm_mutex);
     // find free place in queue
@@ -340,21 +343,24 @@ lfm_send_nowplaying (void) {
 
 static void
 lfm_send_submissions (void) {
-    if (auth () < 0) {
-        return;
-    }
     for (;;) {
         int i;
-        deadbeef->mutex_lock (lfm_mutex);
+//        deadbeef->mutex_lock (lfm_mutex);
         for (i = 0; i < LFM_SUBMISSION_QUEUE_SIZE; i++) {
             if (lfm_subm_queue[i][0]) {
                 break;
             }
         }
-        deadbeef->mutex_unlock (lfm_mutex);
+//        deadbeef->mutex_unlock (lfm_mutex);
         if (i == LFM_SUBMISSION_QUEUE_SIZE) {
             break;
         }
+        if (auth () < 0) {
+            break;
+        }
+        char s[100];
+        snprintf (s, sizeof (s), "&s=%s", lfm_sess);
+        strcat (lfm_subm_queue[i], s);
         int status = curl_req_send (lfm_submission_url, lfm_subm_queue[i]);
         if (!status) {
             if (strncmp (lfm_reply, "OK", 2)) {
@@ -362,9 +368,10 @@ lfm_send_submissions (void) {
                 lfm_sess[0] = 0;
             }
             else {
-                deadbeef->mutex_lock (lfm_mutex);
+                fprintf (stderr, "submission successful, response:\n%s\n", lfm_reply);
+//                deadbeef->mutex_lock (lfm_mutex);
                 lfm_subm_queue[i][0] = 0;
-                deadbeef->mutex_unlock (lfm_mutex);
+//                deadbeef->mutex_unlock (lfm_mutex);
             }
         }
         curl_req_cleanup ();
