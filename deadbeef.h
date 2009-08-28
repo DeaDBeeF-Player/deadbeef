@@ -123,7 +123,8 @@ typedef struct {
     // process control
     void (*quit) (void);
     // threading
-    void (*thread_start) (void (*fn)(uintptr_t ctx), uintptr_t ctx);
+    int (*thread_start) (void (*fn)(uintptr_t ctx), uintptr_t ctx);
+    int (*thread_join) (int tid);
     uintptr_t (*mutex_create) (void);
     void (*mutex_free) (uintptr_t mtx);
     int (*mutex_lock) (uintptr_t mtx);

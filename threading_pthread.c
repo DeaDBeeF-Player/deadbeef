@@ -20,26 +20,40 @@
 #include <stdlib.h>
 #include "threading.h"
 
-void
+int
 thread_start (void (*fn)(uintptr_t ctx), uintptr_t ctx) {
     pthread_t tid;
     pthread_attr_t attr;
     int s = pthread_attr_init (&attr);
     if (s) {
-        printf ("pthread_attr_init failed\n");
-        return;
+        fprintf (stderr, "pthread_attr_init failed\n");
+        return -1;
     }
 
     if (pthread_create (&tid, &attr, (void *(*)(void *))fn, (void*)ctx)) {
-        printf ("pthread_create failed\n");
-        return;
+        fprintf (stderr, "pthread_create failed\n");
+        return -1;
     }
     s = pthread_attr_destroy (&attr);
     if (s) {
-        printf ("pthread_attr_destroy failed\n");
-        return;
+        fprintf (stderr, "pthread_attr_destroy failed\n");
+        pthread_cancel (tid);
+        return -1;
     }
+    return tid;
 }
+
+int
+thread_join (int tid) {
+    void *retval;
+    int s = pthread_join ((pthread_t)tid, &retval);
+    if (s) {
+        fprintf (stderr, "pthread_join failed\n");
+        return -1;
+    }
+    return 0;
+}
+
 uintptr_t
 mutex_create (void) {
     pthread_mutex_t *mtx = malloc (sizeof (pthread_mutex_t));

@@ -46,6 +46,7 @@ static char lfm_submission_url[256];
 static uintptr_t lfm_mutex;
 static uintptr_t lfm_cond;
 static int lfm_stopthread;
+static int lfm_tid;
 
 DB_plugin_t *
 lastfm_load (DB_functions_t *api) {
@@ -381,9 +382,8 @@ lfm_thread (uintptr_t ctx) {
         fprintf (stderr, "cond signalled!\n");
         if (lfm_stopthread) {
             deadbeef->mutex_unlock (lfm_mutex);
+            deadbeef->cond_signal (lfm_cond);
             fprintf (stderr, "lfm_thread end\n");
-            deadbeef->cond_free (lfm_cond);
-            deadbeef->mutex_free (lfm_mutex);
             return;
         }
         deadbeef->mutex_unlock (lfm_mutex);
@@ -491,7 +491,7 @@ lastfm_start (void) {
     lfm_stopthread = 0;
     lfm_mutex = deadbeef->mutex_create ();
     lfm_cond = deadbeef->cond_create ();
-    deadbeef->thread_start (lfm_thread, 0);
+    lfm_tid = deadbeef->thread_start (lfm_thread, 0);
     // subscribe to frameupdate event
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_SONGSTARTED, DB_CALLBACK (lastfm_songstarted), 0);
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_SONGFINISHED, DB_CALLBACK (lastfm_songfinished), 0);
@@ -560,7 +560,10 @@ lastfm_stop (void) {
     deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_SONGFINISHED, DB_CALLBACK (lastfm_songfinished), 0);
     lfm_stopthread = 1;
     deadbeef->cond_signal (lfm_cond);
-    fprintf (stderr, "signalled to stop thread\n");
+    deadbeef->thread_join (lfm_tid);
+    lfm_tid = -1;
+    deadbeef->cond_free (lfm_cond);
+    deadbeef->mutex_free (lfm_mutex);
     return 0;
 }
 

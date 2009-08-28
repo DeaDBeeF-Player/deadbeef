@@ -38,6 +38,7 @@ DB_functions_t deadbeef_api = {
     .quit = plug_quit,
     // threading
     .thread_start = thread_start,
+    .thread_join = thread_join,
     .mutex_create = mutex_create,
     .mutex_free = mutex_free,
     .mutex_lock = mutex_lock,
