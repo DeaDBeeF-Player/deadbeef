@@ -128,6 +128,11 @@ typedef struct {
     void (*mutex_free) (uintptr_t mtx);
     int (*mutex_lock) (uintptr_t mtx);
     int (*mutex_unlock) (uintptr_t mtx);
+    uintptr_t (*cond_create) (void);
+    void (*cond_free) (uintptr_t cond);
+    int (*cond_wait) (uintptr_t cond, uintptr_t mutex);
+    int (*cond_signal) (uintptr_t cond);
+    int (*cond_broadcast) (uintptr_t cond);
     // playlist access
     const char *(*pl_find_meta) (DB_playItem_t *song, const char *meta);
     // volume control

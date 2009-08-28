@@ -20,6 +20,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/types.h>
@@ -494,6 +495,7 @@ on_trayicon_popup_menu (GtkWidget       *widget,
 
 int
 main (int argc, char *argv[]) {
+    srand (time (NULL));
     prctl (PR_SET_NAME, "deadbeef-main", 0, 0, 0, 0);
     char *homedir = getenv ("HOME");
     if (!homedir) {
@@ -653,7 +655,7 @@ main (int argc, char *argv[]) {
     p_free ();
     streamer_free ();
     codec_free_locking ();
-
+    plug_unload_all ();
     session_save (sessfile);
     pl_save (defpl);
     pl_free ();

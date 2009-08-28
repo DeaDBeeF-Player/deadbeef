@@ -36,11 +36,18 @@ DB_functions_t deadbeef_api = {
     .playback_get_pos = plug_playback_get_pos,
     .playback_set_pos = plug_playback_set_pos,
     .quit = plug_quit,
+    // threading
     .thread_start = thread_start,
     .mutex_create = mutex_create,
     .mutex_free = mutex_free,
     .mutex_lock = mutex_lock,
     .mutex_unlock = mutex_unlock,
+    .cond_create = cond_create,
+    .cond_free = cond_free,
+    .cond_wait = cond_wait,
+    .cond_signal = cond_signal,
+    .cond_broadcast = cond_broadcast,
+    // metadata
     .pl_find_meta = (const char *(*) (DB_playItem_t *song, const char *meta))pl_find_meta,
     // volume control
     .volume_set_db = volume_set_db,

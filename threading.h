@@ -21,10 +21,17 @@
 #include <stdint.h>
 
 void thread_start (void (*fn)(uintptr_t ctx), uintptr_t ctx);
+
 uintptr_t mutex_create (void);
 void mutex_free (uintptr_t mtx);
 int mutex_lock (uintptr_t mtx);
 int mutex_unlock (uintptr_t mtx);
+
+uintptr_t cond_create (void);
+void cond_free (uintptr_t cond);
+int cond_wait (uintptr_t cond, uintptr_t mutex);
+int cond_signal (uintptr_t cond);
+int cond_broadcast (uintptr_t cond);
 
 #endif
 
