@@ -36,7 +36,7 @@ static DB_functions_t *deadbeef;
 #define READBUFFER 5*8192
 
 // FIXME: cache is bad name for this
-#define CACHESIZE 81920
+#define BUFSIZE 81920
 
 // vbrmethod constants
 #define LAME_CBR  1 
@@ -59,12 +59,14 @@ typedef struct {
     char input[READBUFFER];
     int remaining;
 
-    // output buffer, supplied by player
-    char *output;
+    // NOTE: both "output" and "cache" buffers store sampels in libmad fixed point format
+
+//    // output buffer, supplied by player
+//    char output[BUFSIZE];
     int readsize;
 
     // cache, for extra decoded samples
-    char cache[CACHESIZE];
+    char cache[BUFSIZE];
     int cachefill;
 
     // information, filled by cmp3_scan_stream
@@ -119,7 +121,7 @@ cmp3_init (DB_playItem_t *it) {
     buffer.startoffset = it->startoffset;
     buffer.endoffset = it->endoffset;
     buffer.remaining = 0;
-    buffer.output = NULL;
+    //buffer.output = NULL;
     buffer.readsize = 0;
     buffer.cachefill = 0;
     plugin.info.readpos = 0;
@@ -159,7 +161,8 @@ cmp3_init (DB_playItem_t *it) {
  * Converts a sample from libmad's fixed point number format to a signed	*
  * short (16 bits).															*
  ****************************************************************************/
-static signed short MadFixedToSshort(mad_fixed_t Fixed)
+static inline int16_t
+MadFixedToSshort(mad_fixed_t Fixed)
 {
 	/* A fixed point number is formed of the following bit pattern:
 	 *
@@ -190,6 +193,11 @@ static signed short MadFixedToSshort(mad_fixed_t Fixed)
 	/* Conversion. */
 	Fixed=Fixed>>(MAD_F_FRACBITS-15);
 	return((signed short)Fixed);
+}
+
+static inline float
+MadFixedToFloat (mad_fixed_t Fixed) {
+    return (float)((Fixed) / (float)(1L << MAD_F_FRACBITS));
 }
 
 #define MadErrorString(x) mad_stream_errorstr(x)
@@ -480,8 +488,8 @@ cmp3_scan_stream (buffer_t *buffer, float position) {
 
 static int
 cmp3_decode (void) {
-    int nread = 0;
     int eof = 0;
+//    char *output = buffer.output;
     for (;;) {
         if (eof) {
             break;
@@ -548,37 +556,47 @@ cmp3_decode (void) {
         int i;
 		for(i=0;i<synth.pcm.length;i++)
 		{
+#if 0
             if (buffer.readsize > 0) {
-                *((int16_t*)buffer.output) = MadFixedToSshort(synth.pcm.samples[0][i]);
-                buffer.output+=2;
+                *((int16_t*)output) = MadFixedToSshort(synth.pcm.samples[0][i]);
+                output+=2;
                 buffer.readsize-=2;
-                nread += 2;
 
                 if(MAD_NCHANNELS(&frame.header)==2) {
-                    *((int16_t*)buffer.output) = MadFixedToSshort(synth.pcm.samples[1][i]);
-                    buffer.output+=2;
+                    *((int16_t*)output) = MadFixedToSshort(synth.pcm.samples[1][i]);
+                    output+=2;
                     buffer.readsize-=2;
-                    nread += 2;
                 }
             }
-            else if (buffer.cachefill < CACHESIZE) {
-                assert (buffer.cachefill < CACHESIZE-2);
-                *((int16_t*)cache) = MadFixedToSshort(synth.pcm.samples[0][i]);
-                cache+=2;
-                buffer.cachefill+=2;
-                if (MAD_NCHANNELS(&frame.header) == 2) {
-                    assert (buffer.cachefill < CACHESIZE-2);
-                    *((int16_t*)cache) = MadFixedToSshort(synth.pcm.samples[1][i]);
-                    cache+=2;
-                    buffer.cachefill+=2;
-                }
-            }
-            else {
+            else
+#endif
+            if (buffer.cachefill >= BUFSIZE) {
                 printf ("cache overflow!\n");
                 break;
             }
+            if (buffer.cachefill >= BUFSIZE - sizeof (mad_fixed_t)) {
+//                printf ("readsize=%d, pcm.length=%d(%d)\n", buffer.readsize, synth.pcm.length, i);
+            }
+            assert (buffer.cachefill < BUFSIZE - sizeof (mad_fixed_t));
+            memcpy (cache, &synth.pcm.samples[0][i], sizeof (mad_fixed_t));
+//            *((int16_t*)cache) = MadFixedToSshort(synth.pcm.samples[0][i]);
+            cache += sizeof (mad_fixed_t);
+            buffer.cachefill += sizeof (mad_fixed_t);
+            buffer.readsize -= sizeof (mad_fixed_t);
+            if (MAD_NCHANNELS(&frame.header) == 2) {
+                if (buffer.cachefill >= BUFSIZE - sizeof (mad_fixed_t)) {
+//                    printf ("readsize=%d, pcm.length=%d(%d)\n", buffer.readsize, synth.pcm.length, i);
+                }
+                assert (buffer.cachefill < BUFSIZE - sizeof (mad_fixed_t));
+//                *((int16_t*)cache) = MadFixedToSshort(synth.pcm.samples[1][i]);
+                memcpy (cache, &synth.pcm.samples[1][i], sizeof (mad_fixed_t));
+                cache += sizeof (mad_fixed_t);
+                buffer.cachefill += sizeof (mad_fixed_t);
+                buffer.readsize -= sizeof (mad_fixed_t);
+            }
         }
-        if (buffer.readsize == 0 || eof) {
+        //printf ("readsize at end of frame: %d\n", buffer.readsize);
+        if (buffer.readsize <= 0 || eof) {
             break;
         }
 //        if (buffer.readsize > 0 && endoffile) {
@@ -587,7 +605,7 @@ cmp3_decode (void) {
 //            return -1;
 //        }
     }
-    return nread;
+    return 0;
 }
 
 void
@@ -608,12 +626,28 @@ cmp3_read (char *bytes, int size) {
     if (plugin.info.readpos >= (buffer.timeend - buffer.timestart)) {
         return 0;
     }
+    int nsamples = size / 2 / plugin.info.channels;
+    size *= 2; // convert to mad sample size
+    if (buffer.cachefill < size) {
+        buffer.readsize = (size - buffer.cachefill);
+        cmp3_decode ();
+        plugin.info.readpos = (float)buffer.timer.seconds + (float)buffer.timer.fraction / MAD_TIMER_RESOLUTION;
+    }
     if (buffer.cachefill > 0) {
         int sz = min (size, buffer.cachefill);
-        memcpy (bytes, buffer.cache, sz);
-        bytes += sz;
-        size -= sz;
-        ret += sz;
+        mad_fixed_t *cache = (mad_fixed_t *)buffer.cache;
+        for (int i = 0; i < nsamples; i++) {
+            *((int16_t*)bytes) = MadFixedToSshort(cache[i * plugin.info.channels]);
+            bytes += 2;
+            size -= 2;
+            ret += 2;
+            if (plugin.info.channels == 2) {
+                *((int16_t*)bytes) = MadFixedToSshort(cache[i * plugin.info.channels + 1]);
+                bytes += 2;
+                size -= 2;
+                ret += 2;
+            }
+        }
         if (buffer.cachefill > sz) {
             memmove (buffer.cache, &buffer.cache[sz], buffer.cachefill-sz);
             buffer.cachefill -= sz;
@@ -622,18 +656,54 @@ cmp3_read (char *bytes, int size) {
             buffer.cachefill = 0;
         }
     }
-    if (size > 0) {
-        buffer.output = bytes;
-        buffer.readsize = size;
-        ret += cmp3_decode ();
-        plugin.info.readpos = (float)buffer.timer.seconds + (float)buffer.timer.fraction / MAD_TIMER_RESOLUTION;
-    }
     if (plugin.info.readpos >= (buffer.timeend - buffer.timestart)) {
         return 0;
     }
     return ret;
 }
 
+int
+cmp3_read_float32 (char *bytes, int size) {
+    int result;
+    int ret = 0;
+    if (plugin.info.readpos >= (buffer.timeend - buffer.timestart)) {
+        return 0;
+    }
+    int nsamples = size / 4 / plugin.info.channels;
+    if (buffer.cachefill < size) {
+        buffer.readsize = (size - buffer.cachefill);
+        //printf ("decoding %d bytes using read_float32\n", buffer.readsize);
+        cmp3_decode ();
+        plugin.info.readpos = (float)buffer.timer.seconds + (float)buffer.timer.fraction / MAD_TIMER_RESOLUTION;
+    }
+    if (buffer.cachefill > 0) {
+        int sz = min (size, buffer.cachefill);
+        mad_fixed_t *cache = (mad_fixed_t *)buffer.cache;
+        for (int i = 0; i < nsamples; i++) {
+            *((float*)bytes) = MadFixedToFloat(cache[i * plugin.info.channels]);
+            bytes += 4;
+            size -= 4;
+            ret += 4;
+            if (plugin.info.channels == 2) {
+                *((float*)bytes) = MadFixedToFloat(cache[i * plugin.info.channels + 1]);
+                bytes += 4;
+                size -= 4;
+                ret += 4;
+            }
+        }
+        if (buffer.cachefill > sz) {
+            memmove (buffer.cache, &buffer.cache[sz], buffer.cachefill-sz);
+            buffer.cachefill -= sz;
+        }
+        else {
+            buffer.cachefill = 0;
+        }
+    }
+    if (plugin.info.readpos >= (buffer.timeend - buffer.timestart)) {
+        return 0;
+    }
+    return ret;
+}
 int
 cmp3_seek (float time) {
     time += buffer.timestart;
@@ -1672,7 +1742,9 @@ static DB_decoder_t plugin = {
     .plugin.website = "http://deadbeef.sf.net",
     .init = cmp3_init,
     .free = cmp3_free,
-    .read = cmp3_read,
+//    .read = cmp3_read,
+    .read_int16 = cmp3_read,
+    .read_float32 = cmp3_read_float32,
     .seek = cmp3_seek,
     .insert = cmp3_insert,
     .exts = exts,

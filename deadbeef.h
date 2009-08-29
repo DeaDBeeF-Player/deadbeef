@@ -198,8 +198,8 @@ typedef struct DB_decoder_s {
     // read is called by streamer to decode specified number of bytes
     // must return number of bytes that were successfully decoded (sample aligned)
 
-    // dummy function ptr
-    int (*read) (char *buffer, int size);
+//    // dummy function ptr
+//    int (*read) (char *buffer, int size);
     
     // read_int16 must always output 16 bit signed integer samples
     int (*read_int16) (char *buffer, int size);
