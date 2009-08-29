@@ -848,7 +848,7 @@ pl_add_meta (playItem_t *it, const char *key, const char *value) {
             value = str;
         }
         else {
-            value = "?";
+            return;
         }
     }
     m = malloc (sizeof (metaInfo_t));
