@@ -32,6 +32,7 @@
 #include "messages.h"
 #include "conf.h"
 #include "plugins.h"
+#include "optmath.h"
 
 static int streamer_tid;
 static SRC_STATE *src;
@@ -320,7 +321,7 @@ streamer_read_async (char *bytes, int size) {
                     if (sample < -1) {
                         sample = -1;
                     }
-                    ((int16_t*)bytes)[i] = (int16_t)(sample*32767.f);
+                    ((int16_t*)bytes)[i] = (int16_t)ftoi (sample*32767.f);
                 }
                 // calculate how many unused input samples left
                 codecleft = nsamples - srcdata.input_frames_used;
