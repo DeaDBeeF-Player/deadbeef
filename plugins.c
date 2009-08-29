@@ -48,7 +48,10 @@ DB_functions_t deadbeef_api = {
     .cond_wait = cond_wait,
     .cond_signal = cond_signal,
     .cond_broadcast = cond_broadcast,
-    // metadata
+    // playlist access
+    .pl_item_alloc = (DB_playItem_t* (*)(void))pl_item_alloc,
+    .pl_item_free = (void (*)(DB_playItem_t *))pl_item_free,
+    .pl_item_copy = (void (*)(DB_playItem_t *, DB_playItem_t *))pl_item_copy,
     .pl_find_meta = (const char *(*) (DB_playItem_t *song, const char *meta))pl_find_meta,
     // volume control
     .volume_set_db = volume_set_db,

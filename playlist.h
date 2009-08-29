@@ -82,6 +82,9 @@ void
 pl_item_free (playItem_t *it);
 
 void
+pl_item_copy (playItem_t *out, playItem_t *it);
+
+void
 pl_free (void);
 
 int

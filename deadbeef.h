@@ -135,6 +135,9 @@ typedef struct {
     int (*cond_signal) (uintptr_t cond);
     int (*cond_broadcast) (uintptr_t cond);
     // playlist access
+    DB_playItem_t * (*pl_item_alloc) (void);
+    void (*pl_item_free) (DB_playItem_t *it);
+    void (*pl_item_copy) (DB_playItem_t *out, DB_playItem_t *in);
     const char *(*pl_find_meta) (DB_playItem_t *song, const char *meta);
     // volume control
     void (*volume_set_db) (float dB);

@@ -562,7 +562,9 @@ pl_item_copy (playItem_t *out, playItem_t *it) {
 
 playItem_t *
 pl_item_alloc (void) {
-    return malloc (sizeof (playItem_t));
+    playItem_t *it = malloc (sizeof (playItem_t));
+    memset (it, 0, sizeof (playItem_t));
+    return it;
 }
 
 void
