@@ -19,7 +19,9 @@
 #ifndef __OPTMATH_H
 #define __OPTMATH_H
 
+#ifdef __SSE2__ // that comes from -msse2
 #define __FORCE_SSE2__
+#endif
 // some maths
 // taken from vorbis/lib/os.h, (C) 1994-2007 Xiph.Org Foundation http://www.xiph.org/
 

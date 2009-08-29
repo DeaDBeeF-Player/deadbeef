@@ -29,6 +29,8 @@ CPPFLAGS="$CFLAGS"
 PKG_CHECK_MODULES(DEPS, gtk+-2.0 gthread-2.0 glib-2.0 vorbis vorbisfile mad samplerate alsa)
 PKG_CHECK_MODULES(LASTFM_DEPS, libcurl)
 
+AX_EXT()
+
 AC_CHECK_LIB([FLAC], [main],,AC_MSG_ERROR([flac not found]))
 AC_SUBST(DEPS_CFLAGS)
 AC_SUBST(DEPS_LIBS)

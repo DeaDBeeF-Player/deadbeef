@@ -36,7 +36,7 @@ sdk_HEADERS = deadbeef.h
 
 deadbeef_LDADD = $(LDADD) $(DEPS_LIBS) gme/Game_Music_Emu-0.5.2/gme/libgme.a sid/sidplay-libs-2.1.0/libsidplay2.a dumb/libdumb.a
 
-AM_CFLAGS = $(DEPS_CFLAGS) -I$(gmepath) -std=c99 -msse2
+AM_CFLAGS = $(DEPS_CFLAGS) $(SIMD_FLAGS) -I$(gmepath) -std=c99
 AM_CPPFLAGS = $(DEPS_CFLAGS) -I$(sidpath)/libsidplay/include -I$(sidpath)/builders/resid-builder/include
 
 docsdir = $(datadir)/doc/$(PACKAGE)
