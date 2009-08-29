@@ -21,6 +21,7 @@
 #include <stdint.h>
 //#include "playlist.h"
 
+#if 0
 typedef struct {
     int bitsPerSample;
     int channels;
@@ -45,8 +46,9 @@ typedef struct codec_s {
     const char *filetypes[20]; // NULL terminated array of const strings, representing supported file types (can be NULL)
     fileinfo_t info;
 } codec_t;
+#endif
 
-codec_t *get_codec_for_file (const char *fname);
+//codec_t *get_codec_for_file (const char *fname);
 
 void
 codec_init_locking (void);

@@ -48,7 +48,7 @@ extern "C" {
 // there are "public" fields, available to plugins
 typedef struct {
     char *fname; // full pathname
-    struct codec_s *codec; // codec to use with this file
+    struct DB_decoder_s *decoder; // codec to use with this file
     int tracknum; // used for stuff like sid, nsf, cue (will be ignored by most codecs)
     float timestart; // start time of cue track, or -1
     float timeend; // end time of cue track, or -1
@@ -138,7 +138,12 @@ typedef struct {
     DB_playItem_t * (*pl_item_alloc) (void);
     void (*pl_item_free) (DB_playItem_t *it);
     void (*pl_item_copy) (DB_playItem_t *out, DB_playItem_t *in);
+    DB_playItem_t *(*pl_insert_item) (DB_playItem_t *after, DB_playItem_t *it);
+    // metainfo
+    void (*pl_add_meta) (DB_playItem_t *it, const char *key, const char *value);
     const char *(*pl_find_meta) (DB_playItem_t *song, const char *meta);
+    // cuesheet support
+    DB_playItem_t * (*pl_insert_cue) (DB_playItem_t *after, const char *cuename, struct DB_decoder_s *decoder, const char *ftype);
     // volume control
     void (*volume_set_db) (float dB);
     float (*volume_get_db) (void);
@@ -173,9 +178,17 @@ typedef struct DB_plugin_s {
     int (*exec_cmdline) (const char *cmdline, int cmdline_size);
 } DB_plugin_t;
 
-// decoder plugin
 typedef struct {
+    int bps;
+    int channels;
+    int samplerate;
+    float readpos;
+} DB_fileinfo_t;
+
+// decoder plugin
+typedef struct DB_decoder_s {
     DB_plugin_t plugin;
+    DB_fileinfo_t info;
     // init is called to prepare song to be started
     int (*init) (DB_playItem_t *it);
 
@@ -184,21 +197,36 @@ typedef struct {
 
     // read is called by streamer to decode specified number of bytes
     // must return number of bytes that were successfully decoded (sample aligned)
-    // output format is always single precision float
+
+    // dummy function ptr
     int (*read) (char *buffer, int size);
+    
+    // read_int16 must always output 16 bit signed integer samples
+    int (*read_int16) (char *buffer, int size);
+
+    // read_float32 must always output 32 bit floating point samples
+    int (*read_float32) (char *buffer, int size);
+
+    int (*seek) (float seconds);
 
     // perform seeking in samples (if possible)
     // return -1 if failed, or 0 on success
     // if -1 is returned, that will mean that streamer must skip that song
-    int (*seek) (int64_t samples);
+    int (*seek_sample) (int64_t samples);
 
     // 'insert' is called to insert new item to playlist
     // decoder is responsible to calculate duration, split it into subsongs, load cuesheet, etc
     // after==NULL means "prepend before 1st item in playlist"
-    struct playItem_s * (*insert) (DB_playItem_t *after, const char *fname); 
+    DB_playItem_t * (*insert) (DB_playItem_t *after, const char *fname); 
+
+    int (*numvoices) (void);
+    void (*mutevoice) (int voice, int mute);
 
     // NULL terminated array of all supported extensions
     const char **exts;
+
+    // NULL terminated array of all file type names
+    const char **filetypes;
 
     // codec id used for playlist serialization
     const char *id;

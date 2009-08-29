@@ -52,13 +52,22 @@ DB_functions_t deadbeef_api = {
     .pl_item_alloc = (DB_playItem_t* (*)(void))pl_item_alloc,
     .pl_item_free = (void (*)(DB_playItem_t *))pl_item_free,
     .pl_item_copy = (void (*)(DB_playItem_t *, DB_playItem_t *))pl_item_copy,
-    .pl_find_meta = (const char *(*) (DB_playItem_t *song, const char *meta))pl_find_meta,
+    .pl_insert_item = (DB_playItem_t *(*) (DB_playItem_t *after, DB_playItem_t *it))pl_insert_item,
+    // metainfo
+    .pl_add_meta = (void (*) (DB_playItem_t *, const char *, const char *))pl_add_meta,
+    .pl_find_meta = (const char *(*) (DB_playItem_t *, const char *))pl_find_meta,
+    // cuesheet support
+    .pl_insert_cue = (DB_playItem_t *(*)(DB_playItem_t *, const char *, struct DB_decoder_s *, const char *))pl_insert_cue,
     // volume control
     .volume_set_db = volume_set_db,
     .volume_get_db = volume_get_db,
     .volume_set_amp = volume_set_amp,
     .volume_get_amp = volume_get_amp,
 };
+
+// hack: mp3 decoder module
+DB_plugin_t *cmp3;
+DB_decoder_t *g_decoders[2];
 
 void
 plug_md5 (uint8_t sig[16], const char *in, int len) {
@@ -263,6 +272,11 @@ plug_load_all (void) {
         }
         free (namelist);
     }
+    // hack: init mp3 decoder module, and store pointer
+    extern DB_plugin_t *mpegmad_load (DB_functions_t *api);
+    cmp3 = mpegmad_load (&deadbeef_api);
+    g_decoders[0] = (DB_decoder_t*)cmp3;
+    g_decoders[1] = NULL;
 }
 
 void
@@ -276,3 +290,9 @@ plug_unload_all (void) {
         plugins = next;
     }
 }
+
+struct DB_decoder_s **
+plug_get_decoder_list (void) {
+    return g_decoders;
+}
+

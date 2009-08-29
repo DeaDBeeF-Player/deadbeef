@@ -30,7 +30,7 @@ typedef struct metaInfo_s {
 
 typedef struct playItem_s {
     char *fname; // full pathname
-    struct codec_s *codec; // codec to use with this file
+    struct DB_decoder_s *decoder; // codec to use with this file
     int tracknum; // used for stuff like sid, nsf, cue (will be ignored by most codecs)
     float timestart; // start time of cue track, or -1
     float timeend; // end time of cue track, or -1
@@ -100,7 +100,7 @@ int
 pl_get_idx_of (playItem_t *it);
 
 playItem_t *
-pl_insert_cue (playItem_t *after, const char *cuename, struct codec_s *codec, const char *ftype);
+pl_insert_cue (playItem_t *after, const char *cuename, struct DB_decoder_s *decoder, const char *ftype);
 
 int
 pl_set_current (playItem_t *it);

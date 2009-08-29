@@ -50,4 +50,7 @@ plug_playback_get_pos (void);
 void
 plug_playback_set_pos (float pos);
 
+struct DB_decoder_s **
+plug_get_decoder_list (void);
+
 #endif // __PLUGINS_H

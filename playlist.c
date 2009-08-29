@@ -34,16 +34,12 @@
 #include "playback.h"
 #include "plugins.h"
 
-#include "cvorbis.h"
-#include "cdumb.h"
-#include "cmp3.h"
-#include "cgme.h"
-#include "cflac.h"
-#include "csid.h"
-
-codec_t *codecs[] = {
-    &cdumb, &cvorbis, &cflac, &cgme, &cmp3, &csid, NULL
-};
+//#include "cvorbis.h"
+//#include "cdumb.h"
+//#include "cmp3.h"
+//#include "cgme.h"
+//#include "cflac.h"
+//#include "csid.h"
 
 #define SKIP_BLANK_CUE_TRACKS 1
 
@@ -138,7 +134,7 @@ pl_cue_parse_time (const char *p) {
 }
 
 playItem_t *
-pl_insert_cue (playItem_t *after, const char *fname, codec_t *codec, const char *ftype) {
+pl_insert_cue (playItem_t *after, const char *fname, struct DB_decoder_s *decoder, const char *ftype) {
     int len = strlen (fname);
     char cuename[len+5];
     strcpy (cuename, fname);
@@ -246,11 +242,11 @@ pl_insert_cue (playItem_t *after, const char *fname, codec_t *codec, const char 
 //            printf ("adding %s\n", str);
             playItem_t *it = malloc (sizeof (playItem_t));
             memset (it, 0, sizeof (playItem_t));
-            it->codec = codec;
+            it->decoder = decoder;
             it->fname = strdup (file);
             it->tracknum = atoi (track);
             it->timestart = tstart;
-            it->timeend = -1; // will be filled by next read, or by codec
+            it->timeend = -1; // will be filled by next read, or by decoder
             it->filetype = ftype;
             after = pl_insert_item (after, it);
             pl_add_meta (it, "artist", performer);
@@ -273,23 +269,24 @@ pl_insert_file (playItem_t *after, const char *fname, int *pabort, int (*cb)(pla
     if (!fname) {
         return NULL;
     }
-    // detect codec
-    codec_t *codec = NULL;
+    // detect decoder
+//    DB_decoder_t *decoder = NULL;
     const char *eol = fname + strlen (fname) - 1;
     while (eol > fname && *eol != '.') {
         eol--;
     }
     eol++;
 
-    // match by codec
-    for (int i = 0; codecs[i]; i++) {
-        if (codecs[i]->getexts && codecs[i]->insert) {
-            const char **exts = codecs[i]->getexts ();
+    DB_decoder_t **decoders = plug_get_decoder_list ();
+    // match by decoder
+    for (int i = 0; decoders[i]; i++) {
+        if (decoders[i]->exts && decoders[i]->insert) {
+            const char **exts = decoders[i]->exts;
             if (exts) {
                 for (int e = 0; exts[e]; e++) {
                     if (!strcasecmp (exts[e], eol)) {
                         playItem_t *inserted = NULL;
-                        if ((inserted = codecs[i]->insert (after, fname)) != NULL) {
+                        if ((inserted = (playItem_t *)decoders[i]->insert (DB_PLAYITEM (after), fname)) != NULL) {
                             if (cb) {
                                 if (cb (inserted, user_data) < 0) {
                                     *pabort = 1;
@@ -528,7 +525,7 @@ pl_insert_item (playItem_t *after, playItem_t *it) {
 void
 pl_item_copy (playItem_t *out, playItem_t *it) {
     out->fname = strdup (it->fname);
-    out->codec = it->codec;
+    out->decoder = it->decoder;
     out->tracknum = it->tracknum;
     out->timestart = it->timestart;
     out->timeend = it->timeend;
@@ -588,23 +585,23 @@ pl_set_current (playItem_t *it) {
     int ret = 0;
     int from = pl_get_idx_of (playlist_current_ptr);
     int to = it ? pl_get_idx_of (it) : -1;
-    if (playlist_current.codec) {
+    if (playlist_current.decoder) {
         plug_trigger_event (DB_EV_SONGFINISHED);
     }
     codec_lock ();
-    if (playlist_current.codec) {
-        playlist_current.codec->free ();
+    if (playlist_current.decoder) {
+        playlist_current.decoder->free ();
     }
     pl_item_free (&playlist_current);
     playlist_current_ptr = it;
-    if (it && it->codec) {
+    if (it && it->decoder) {
         // don't do anything on fail, streamer will take care
-        ret = it->codec->init (it);
+        ret = it->decoder->init (DB_PLAYITEM (it));
         if (ret < 0) {
 //            pl_item_free (&playlist_current);
 //            playlist_current_ptr = NULL;
 //            return ret;
-////            it->codec->info.samplesPerSecond = -1;
+////            it->decoder->info.samplesPerSecond = -1;
         }
     }
     if (playlist_current_ptr) {
@@ -810,10 +807,10 @@ void
 pl_start_current (void) {
     codec_lock ();
     playItem_t *it = playlist_current_ptr;
-    if (it && it->codec) {
+    if (it && it->decoder) {
         // don't do anything on fail, streamer will take care
-        it->codec->free ();
-        it->codec->init (it);
+        it->decoder->free ();
+        it->decoder->init (DB_PLAYITEM (it));
     }
     codec_unlock ();
 }
@@ -995,11 +992,11 @@ pl_save (const char *fname) {
         if (fwrite (it->fname, 1, l, fp) != l) {
             goto save_fail;
         }
-        ll = strlen (it->codec->id);
+        ll = strlen (it->decoder->id);
         if (fwrite (&ll, 1, 1, fp) != 1) {
             goto save_fail;
         }
-        if (fwrite (it->codec->id, 1, ll, fp) != ll) {
+        if (fwrite (it->decoder->id, 1, ll, fp) != ll) {
             goto save_fail;
         }
         l = it->tracknum;
@@ -1064,6 +1061,7 @@ save_fail:
 int
 pl_load (const char *fname) {
     pl_free ();
+    DB_decoder_t **decoders = plug_get_decoder_list ();
     uint8_t majorver = 1;
     uint8_t minorver = 0;
     FILE *fp = fopen (fname, "rb");
@@ -1110,7 +1108,7 @@ pl_load (const char *fname) {
             goto load_fail;
         }
         it->fname[l] = 0;
-        // codec
+        // decoder
         uint8_t ll;
         if (fread (&ll, 1, 1, fp) != 1) {
             goto load_fail;
@@ -1118,17 +1116,17 @@ pl_load (const char *fname) {
         if (ll >= 20) {
             goto load_fail;
         }
-        char codec[20];
-        if (fread (codec, 1, ll, fp) != ll) {
+        char decoder[20];
+        if (fread (decoder, 1, ll, fp) != ll) {
             goto load_fail;
         }
-        codec[ll] = 0;
-        for (int c = 0; codecs[c]; c++) {
-            if (!strcmp (codec, codecs[c]->id)) {
-                it->codec = codecs[c];
+        decoder[ll] = 0;
+        for (int c = 0; decoders[c]; c++) {
+            if (!strcmp (decoder, decoders[c]->id)) {
+                it->decoder = decoders[c];
             }
         }
-        if (!it->codec) {
+        if (!it->decoder) {
             goto load_fail;
         }
         // tracknum
@@ -1148,7 +1146,7 @@ pl_load (const char *fname) {
         if (fread (&it->duration, 1, 4, fp) != 4) {
             goto load_fail;
         }
-        // get const filetype string from codec
+        // get const filetype string from decoder
         uint8_t ft;
         if (fread (&ft, 1, 1, fp) != 1) {
             goto load_fail;
@@ -1159,10 +1157,10 @@ pl_load (const char *fname) {
                 goto load_fail;
             }
             ftype[ft] = 0;
-            if (it->codec && it->codec->filetypes) {
-                for (int i = 0; it->codec->filetypes[i]; i++) {
-                    if (!strcasecmp (it->codec->filetypes[i], ftype)) {
-                        it->filetype = it->codec->filetypes[i];
+            if (it->decoder && it->decoder->filetypes) {
+                for (int i = 0; it->decoder->filetypes[i]; i++) {
+                    if (!strcasecmp (it->decoder->filetypes[i], ftype)) {
+                        it->filetype = it->decoder->filetypes[i];
                         break;
                     }
                 }

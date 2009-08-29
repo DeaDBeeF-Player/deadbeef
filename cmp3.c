@@ -22,10 +22,16 @@
 #include <stdlib.h>
 #include <iconv.h>
 //#include <sys/mman.h>
-#include "codec.h"
-#include "cmp3.h"
-#include "playlist.h"
-#include "common.h"
+//#include "plugin.h"
+//#include "playlist.h"
+//#include "common.h"
+#include "deadbeef.h"
+
+#define min(x,y) ((x)<(y)?(x):(y))
+#define max(x,y) ((x)>(y)?(x):(y))
+
+static DB_decoder_t plugin;
+static DB_functions_t *deadbeef;
 
 #define READBUFFER 5*8192
 
@@ -104,7 +110,7 @@ static int
 cmp3_scan_stream (buffer_t *buffer, float position);
 
 int
-cmp3_init (struct playItem_s *it) {
+cmp3_init (DB_playItem_t *it) {
     memset (&buffer, 0, sizeof (buffer));
     buffer.file = fopen (it->fname, "rb");
     if (!buffer.file) {
@@ -116,7 +122,7 @@ cmp3_init (struct playItem_s *it) {
     buffer.output = NULL;
     buffer.readsize = 0;
     buffer.cachefill = 0;
-    cmp3.info.readposition = 0;
+    plugin.info.readpos = 0;
 	mad_timer_reset(&buffer.timer);
 
 //    fseek (buffer.file, buffer.startoffset, SEEK_SET);
@@ -138,9 +144,9 @@ cmp3_init (struct playItem_s *it) {
         fclose (buffer.file);
         return -1;
     }
-    cmp3.info.bitsPerSample = buffer.bitspersample;
-    cmp3.info.samplesPerSecond = buffer.samplerate;
-    cmp3.info.channels = buffer.channels;
+    plugin.info.bps = buffer.bitspersample;
+    plugin.info.samplerate = buffer.samplerate;
+    plugin.info.channels = buffer.channels;
 
 	mad_stream_init(&stream);
 	mad_frame_init(&frame);
@@ -531,8 +537,8 @@ cmp3_decode (void) {
             }
 		}
 
-		cmp3.info.samplesPerSecond = frame.header.samplerate;
-		cmp3.info.channels = MAD_NCHANNELS(&frame.header);
+		plugin.info.samplerate = frame.header.samplerate;
+		plugin.info.channels = MAD_NCHANNELS(&frame.header);
 
 		mad_timer_add(&buffer.timer,frame.header.duration);
 		
@@ -599,7 +605,7 @@ int
 cmp3_read (char *bytes, int size) {
     int result;
     int ret = 0;
-    if (cmp3.info.readposition >= (buffer.timeend - buffer.timestart)) {
+    if (plugin.info.readpos >= (buffer.timeend - buffer.timestart)) {
         return 0;
     }
     if (buffer.cachefill > 0) {
@@ -620,9 +626,9 @@ cmp3_read (char *bytes, int size) {
         buffer.output = bytes;
         buffer.readsize = size;
         ret += cmp3_decode ();
-        cmp3.info.readposition = (float)buffer.timer.seconds + (float)buffer.timer.fraction / MAD_TIMER_RESOLUTION;
+        plugin.info.readpos = (float)buffer.timer.seconds + (float)buffer.timer.fraction / MAD_TIMER_RESOLUTION;
     }
-    if (cmp3.info.readposition >= (buffer.timeend - buffer.timestart)) {
+    if (plugin.info.readpos >= (buffer.timeend - buffer.timestart)) {
         return 0;
     }
     return ret;
@@ -645,19 +651,19 @@ cmp3_seek (float time) {
 	mad_timer_reset(&buffer.timer);
 
 	if (time == 0) { 
-        cmp3.info.readposition = 0;
+        plugin.info.readpos = 0;
         return 0;
     }
 
     if (cmp3_scan_stream (&buffer, time) == -1) {
-        cmp3.info.readposition = 0;
+        plugin.info.readpos = 0;
         return -1;
     }
     // fixup timer
-    cmp3.info.readposition = (float)buffer.timer.seconds + (float)buffer.timer.fraction / MAD_TIMER_RESOLUTION;
-    cmp3.info.readposition -= buffer.timestart;
-    buffer.timer.seconds = (int)cmp3.info.readposition;
-    buffer.timer.fraction = (cmp3.info.readposition - buffer.timer.seconds) * MAD_TIMER_RESOLUTION;
+    plugin.info.readpos = (float)buffer.timer.seconds + (float)buffer.timer.fraction / MAD_TIMER_RESOLUTION;
+    plugin.info.readpos -= buffer.timestart;
+    buffer.timer.seconds = (int)plugin.info.readpos;
+    buffer.timer.fraction = (plugin.info.readpos - buffer.timer.seconds) * MAD_TIMER_RESOLUTION;
     return 0;
 }
 
@@ -998,7 +1004,7 @@ str_trim_right (uint8_t *str, int len) {
 
 // should read both id3v1 and id3v1.1
 int
-cmp3_read_id3v1 (playItem_t *it, FILE *fp) {
+cmp3_read_id3v1 (DB_playItem_t *it, FILE *fp) {
     if (!it || !fp) {
         printf ("bad call to cmp3_read_id3v1!\n");
         return -1;
@@ -1053,16 +1059,16 @@ cmp3_read_id3v1 (playItem_t *it, FILE *fp) {
 
     // add meta
 //    printf ("%s - %s - %s - %s - %s - %s\n", title, artist, album, year, comment, genre);
-    pl_add_meta (it, "title", convstr_id3v1 (title, strlen (title)));
-    pl_add_meta (it, "artist", convstr_id3v1 (artist, strlen (artist)));
-    pl_add_meta (it, "album", convstr_id3v1 (album, strlen (album)));
-    pl_add_meta (it, "year", year);
-    pl_add_meta (it, "comment", convstr_id3v1 (comment, strlen (comment)));
-    pl_add_meta (it, "genre", convstr_id3v1 (genre, strlen (genre)));
+    deadbeef->pl_add_meta (it, "title", convstr_id3v1 (title, strlen (title)));
+    deadbeef->pl_add_meta (it, "artist", convstr_id3v1 (artist, strlen (artist)));
+    deadbeef->pl_add_meta (it, "album", convstr_id3v1 (album, strlen (album)));
+    deadbeef->pl_add_meta (it, "year", year);
+    deadbeef->pl_add_meta (it, "comment", convstr_id3v1 (comment, strlen (comment)));
+    deadbeef->pl_add_meta (it, "genre", convstr_id3v1 (genre, strlen (genre)));
     if (tracknum != 0xff) {
         char s[4];
         snprintf (s, 4, "%d", tracknum);
-        pl_add_meta (it, "track", s);
+        deadbeef->pl_add_meta (it, "track", s);
     }
 
     if (it->endoffset < 128) {
@@ -1073,7 +1079,7 @@ cmp3_read_id3v1 (playItem_t *it, FILE *fp) {
 }
 
 int
-cmp3_read_ape (playItem_t *it, FILE *fp) {
+cmp3_read_ape (DB_playItem_t *it, FILE *fp) {
 //    printf ("trying to read ape tag\n");
     // try to read footer, position must be already at the EOF right before
     // id3v1 (if present)
@@ -1140,16 +1146,16 @@ cmp3_read_ape (playItem_t *it, FILE *fp) {
         int valuetype = ((itemflags & (0x3<<1)) >> 1);
         if (valuetype == 0) {
             if (!strcasecmp (key, "artist")) {
-                pl_add_meta (it, "artist", value);
+                deadbeef->pl_add_meta (it, "artist", value);
             }
             else if (!strcasecmp (key, "title")) {
-                pl_add_meta (it, "title", value);
+                deadbeef->pl_add_meta (it, "title", value);
             }
             else if (!strcasecmp (key, "album")) {
-                pl_add_meta (it, "album", value);
+                deadbeef->pl_add_meta (it, "album", value);
             }
             else if (!strcasecmp (key, "track")) {
-                pl_add_meta (it, "track", value);
+                deadbeef->pl_add_meta (it, "track", value);
             }
         }
     }
@@ -1182,7 +1188,7 @@ id3v2_string_read (int version, uint8_t *out, int sz, int unsync, uint8_t **prea
 }
 
 int
-cmp3_read_id3v2 (playItem_t *it, FILE *fp) {
+cmp3_read_id3v2 (DB_playItem_t *it, FILE *fp) {
     int title_added = 0;
     if (!it || !fp) {
         printf ("bad call to cmp3_read_id3v2!\n");
@@ -1403,31 +1409,31 @@ cmp3_read_id3v2 (playItem_t *it, FILE *fp) {
     }
     if (!err) {
         if (artist) {
-            pl_add_meta (it, "artist", artist);
+            deadbeef->pl_add_meta (it, "artist", artist);
             free (artist);
         }
         if (album) {
-            pl_add_meta (it, "album", album);
+            deadbeef->pl_add_meta (it, "album", album);
             free (album);
         }
         if (band) {
-            pl_add_meta (it, "band", band);
+            deadbeef->pl_add_meta (it, "band", band);
             free (band);
         }
         if (track) {
-            pl_add_meta (it, "track", track);
+            deadbeef->pl_add_meta (it, "track", track);
             free (track);
         }
         if (title) {
-            pl_add_meta (it, "title", title);
+            deadbeef->pl_add_meta (it, "title", title);
             free (title);
         }
         if (vendor) {
-            pl_add_meta (it, "vendor", vendor);
+            deadbeef->pl_add_meta (it, "vendor", vendor);
             free (vendor);
         }
         if (!title) {
-            pl_add_meta (it, "title", NULL);
+            deadbeef->pl_add_meta (it, "title", NULL);
         }
         return 0;
     }
@@ -1445,7 +1451,7 @@ cmp3_read_id3v2 (playItem_t *it, FILE *fp) {
 
 #define FRAMES_AND_BYTES (FRAMES_FLAG | BYTES_FLAG)
 int
-cmp3_read_info_tag (buffer_t *buffer, playItem_t *it, FILE *fp) {
+cmp3_read_info_tag (buffer_t *buffer, DB_playItem_t *it, FILE *fp) {
     rewind (fp);
     int h_id, h_mode, h_sr_index, h_ly_index;
     static int sr_table[4] = { 44100, 48000, 32000, -1 };
@@ -1574,15 +1580,14 @@ cmp3_read_info_tag (buffer_t *buffer, playItem_t *it, FILE *fp) {
 #endif
 // }}}
 
-playItem_t *
-cmp3_insert (playItem_t *after, const char *fname) {
+DB_playItem_t *
+cmp3_insert (DB_playItem_t *after, const char *fname) {
     FILE *fp = fopen (fname, "rb");
     if (!fp) {
         return NULL;
     }
-    playItem_t *it = malloc (sizeof (playItem_t));
-    memset (it, 0, sizeof (playItem_t));
-    it->codec = &cmp3;
+    DB_playItem_t *it = deadbeef->pl_item_alloc ();
+    it->decoder = &plugin;
     it->fname = strdup (fname);
 
     buffer_t buffer;
@@ -1605,14 +1610,14 @@ cmp3_insert (playItem_t *after, const char *fname) {
         fseek (fp, 0, SEEK_END);
     }
     int apeerr = cmp3_read_ape (it, fp);
-    pl_add_meta (it, "title", NULL);
+    deadbeef->pl_add_meta (it, "title", NULL);
 
     buffer.startoffset = it->startoffset;
     fseek (fp, buffer.startoffset, SEEK_SET);
     // calc approx. mp3 duration 
     int res = cmp3_scan_stream (&buffer, 0);
     if (res < 0) {
-        pl_item_free (it);
+        deadbeef->pl_item_free (it);
         return NULL;
     }
     it->startoffset = buffer.startoffset;
@@ -1629,38 +1634,54 @@ cmp3_insert (playItem_t *after, const char *fname) {
         break;
     }
 
-    playItem_t *cue_after = pl_insert_cue (after, fname, &cmp3, it->filetype);
+    DB_playItem_t *cue_after = deadbeef->pl_insert_cue (after, fname, &plugin, it->filetype);
     if (cue_after) {
         cue_after->timeend = buffer.duration;
         cue_after->duration = cue_after->timeend - cue_after->timestart;
-        pl_item_free (it);
+        deadbeef->pl_item_free (it);
         fclose (fp);
         return cue_after;
     }
 
-    after = pl_insert_item (after, it);
+    after = deadbeef->pl_insert_item (after, it);
     fclose (fp);
     return after;
 }
 
-static const char * exts[]=
-{
+static const char *exts[] = {
 	"mp1", "mp2", "mp3", NULL
+};
+
+static const char *filetypes[] = {
+    "MP1", "MP2", "MP3", NULL
 };
 
 const char **cmp3_getexts (void) {
     return exts;
 }
 
-codec_t cmp3 = {
+// define plugin interface
+static DB_decoder_t plugin = {
+    .plugin.version_major = 0,
+    .plugin.version_minor = 1,
+    .plugin.type = DB_PLUGIN_DECODER,
+    .plugin.name = "MPEG 1/2/3 decoder",
+    .plugin.descr = "based on libmad",
+    .plugin.author = "Alexey Yakovenko",
+    .plugin.email = "waker@users.sourceforge.net",
+    .plugin.website = "http://deadbeef.sf.net",
     .init = cmp3_init,
     .free = cmp3_free,
     .read = cmp3_read,
     .seek = cmp3_seek,
     .insert = cmp3_insert,
-    .getexts = cmp3_getexts,
+    .exts = exts,
     .id = "stdmp3",
-    .filetypes = { "MP1", "MP2", "MP3", NULL }
+    .filetypes = filetypes
 };
 
-
+DB_plugin_t *
+mpegmad_load (DB_functions_t *api) {
+    deadbeef = api;
+    return DB_PLUGIN (&plugin);
+}

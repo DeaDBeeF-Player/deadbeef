@@ -95,17 +95,17 @@ update_songinfo (void) {
     else if (p_isstopped ()) {
         strcpy (sbtext_new, "Stopped");
     }
-    else if (playlist_current.codec) {
+    else if (playlist_current.decoder) {
         codec_lock ();
-        codec_t *c = playlist_current.codec;
+        DB_decoder_t *c = playlist_current.decoder;
         float playpos = streamer_get_playpos ();
         int minpos = playpos / 60;
         int secpos = playpos - minpos * 60;
         int mindur = playlist_current.duration / 60;
         int secdur = playlist_current.duration - mindur * 60;
         const char *mode = c->info.channels == 1 ? "Mono" : "Stereo";
-        int samplerate = c->info.samplesPerSecond;
-        int bitspersample = c->info.bitsPerSample;
+        int samplerate = c->info.samplerate;
+        int bitspersample = c->info.bps;
         songpos = playpos;
         codec_unlock ();
 
@@ -575,9 +575,9 @@ main (int argc, char *argv[]) {
     server_start ();
 
     conf_load ();
+    plug_load_all ();
     pl_load (defpl);
     session_load (sessfile);
-    plug_load_all ();
     messagepump_init ();
     codec_init_locking ();
     streamer_init ();

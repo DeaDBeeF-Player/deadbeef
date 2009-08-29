@@ -45,12 +45,14 @@
 #include "volume.h"
 #include "session.h"
 
-#include "cvorbis.h"
-#include "cdumb.h"
-#include "cmp3.h"
-#include "cgme.h"
-#include "cflac.h"
-#include "csid.h"
+#include "plugins.h"
+
+//#include "cmp3.h"
+//#include "cvorbis.h"
+//#include "cdumb.h"
+//#include "cgme.h"
+//#include "cflac.h"
+//#include "csid.h"
 
 extern GtkWidget *mainwin;
 extern gtkplaylist_t main_playlist;
@@ -174,12 +176,11 @@ on_open_activate                       (GtkMenuItem     *menuitem,
     flt = gtk_file_filter_new ();
     gtk_file_filter_set_name (flt, "Supported music files");
 
-    codec_t *codecs[] = {
-        &cdumb, &cvorbis, &cflac, &cgme, &cmp3, &csid, NULL
-    };
+    DB_decoder_t **codecs = plug_get_decoder_list ();
+
     for (int i = 0; codecs[i]; i++) {
-        if (codecs[i]->getexts && codecs[i]->insert) {
-            const char **exts = codecs[i]->getexts ();
+        if (codecs[i]->exts && codecs[i]->insert) {
+            const char **exts = codecs[i]->exts;
             if (exts) {
                 for (int e = 0; exts[e]; e++) {
                     char filter[20];
@@ -236,12 +237,10 @@ on_add_files_activate                  (GtkMenuItem     *menuitem,
     flt = gtk_file_filter_new ();
     gtk_file_filter_set_name (flt, "Supported music files");
 
-    codec_t *codecs[] = {
-        &cdumb, &cvorbis, &cflac, &cgme, &cmp3, &csid, NULL
-    };
+    DB_decoder_t **codecs = plug_get_decoder_list ();
     for (int i = 0; codecs[i]; i++) {
-        if (codecs[i]->getexts && codecs[i]->insert) {
-            const char **exts = codecs[i]->getexts ();
+        if (codecs[i]->exts && codecs[i]->insert) {
+            const char **exts = codecs[i]->exts;
             if (exts) {
                 for (int e = 0; exts[e]; e++) {
                     char filter[20];
@@ -298,12 +297,10 @@ on_add_folder1_activate                (GtkMenuItem     *menuitem,
     flt = gtk_file_filter_new ();
     gtk_file_filter_set_name (flt, "Supported music files");
 
-    codec_t *codecs[] = {
-        &cdumb, &cvorbis, &cflac, &cgme, &cmp3, &csid, NULL
-    };
+    DB_decoder_t **codecs = plug_get_decoder_list ();
     for (int i = 0; codecs[i]; i++) {
-        if (codecs[i]->getexts && codecs[i]->insert) {
-            const char **exts = codecs[i]->getexts ();
+        if (codecs[i]->exts && codecs[i]->insert) {
+            const char **exts = codecs[i]->exts;
             if (exts) {
                 for (int e = 0; exts[e]; e++) {
                     char filter[20];
@@ -635,8 +632,8 @@ on_voice1_clicked                      (GtkButton       *button,
                                         gpointer         user_data)
 {
     codec_lock ();
-    if (playlist_current.codec && playlist_current.codec->mutevoice) {
-        playlist_current.codec->mutevoice (0, gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button)) ? 0 : 1);
+    if (playlist_current.decoder && playlist_current.decoder->mutevoice) {
+        playlist_current.decoder->mutevoice (0, gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button)) ? 0 : 1);
     }
     codec_unlock ();
 }
@@ -647,8 +644,8 @@ on_voice2_clicked                      (GtkButton       *button,
                                         gpointer         user_data)
 {
     codec_lock ();
-    if (playlist_current.codec && playlist_current.codec->mutevoice) {
-        playlist_current.codec->mutevoice (1, gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button)) ? 0 : 1);
+    if (playlist_current.decoder && playlist_current.decoder->mutevoice) {
+        playlist_current.decoder->mutevoice (1, gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button)) ? 0 : 1);
     }
     codec_unlock ();
 }
@@ -659,8 +656,8 @@ on_voice3_clicked                      (GtkButton       *button,
                                         gpointer         user_data)
 {
     codec_lock ();
-    if (playlist_current.codec && playlist_current.codec->mutevoice) {
-        playlist_current.codec->mutevoice (2, gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button)) ? 0 : 1);
+    if (playlist_current.decoder && playlist_current.decoder->mutevoice) {
+        playlist_current.decoder->mutevoice (2, gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button)) ? 0 : 1);
     }
     codec_unlock ();
 }
@@ -671,8 +668,8 @@ on_voice4_clicked                      (GtkButton       *button,
                                         gpointer         user_data)
 {
     codec_lock ();
-    if (playlist_current.codec && playlist_current.codec->mutevoice) {
-        playlist_current.codec->mutevoice (3, gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button)) ? 0 : 1);
+    if (playlist_current.decoder && playlist_current.decoder->mutevoice) {
+        playlist_current.decoder->mutevoice (3, gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button)) ? 0 : 1);
     }
     codec_unlock ();
 }
@@ -683,8 +680,8 @@ on_voice5_clicked                      (GtkButton       *button,
                                         gpointer         user_data)
 {
     codec_lock ();
-    if (playlist_current.codec && playlist_current.codec->mutevoice) {
-        playlist_current.codec->mutevoice (4, gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button)) ? 0 : 1);
+    if (playlist_current.decoder && playlist_current.decoder->mutevoice) {
+        playlist_current.decoder->mutevoice (4, gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button)) ? 0 : 1);
     }
     codec_unlock ();
 }
@@ -929,7 +926,7 @@ seekbar_draw (GtkWidget *widget) {
         pos = x;
     }
     else {
-        if (playlist_current.codec && playlist_current.duration > 0) {
+        if (playlist_current.decoder && playlist_current.duration > 0) {
             pos = streamer_get_playpos () / playlist_current.duration;
             pos *= widget->allocation.width;
         }

@@ -119,11 +119,6 @@ curl_req_cleanup (void) {
 
 static int
 auth (void) {
-    static int count = 5;
-    if (count > 0) {
-        count--;
-        return -1;
-    }
     if (lfm_sess[0]) {
         return 0;
     }

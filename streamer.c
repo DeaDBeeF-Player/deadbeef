@@ -33,6 +33,7 @@
 #include "conf.h"
 #include "plugins.h"
 
+static int streamer_tid;
 static SRC_STATE *src;
 static SRC_DATA srcdata;
 static int codecleft;
@@ -135,9 +136,9 @@ streamer_thread (uintptr_t ctx) {
         if (seekpos >= 0) {
             float pos = seekpos;
             seekpos = -1;
-            if (playlist_current.codec && playlist_current.codec->seek (pos) >= 0) {
+            if (playlist_current.decoder && playlist_current.decoder->seek (pos) >= 0) {
                 streamer_lock ();
-                playpos = playlist_current.codec->info.readposition;
+                playpos = playlist_current.decoder->info.readpos;
                 streambuffer_fill = 0;
                 streamer_unlock ();
                 codec_lock ();
@@ -179,13 +180,14 @@ streamer_init (void) {
     if (!src) {
         return -1;
     }
-    thread_start (streamer_thread, 0);
+    streamer_tid = thread_start (streamer_thread, 0);
     return 0;
 }
 
 void
 streamer_free (void) {
     streaming_terminate = 1;
+    thread_join (streamer_tid);
     mutex_free (mutex);
 }
 
@@ -205,23 +207,23 @@ streamer_read_async (char *bytes, int size) {
     for (;;) {
         int bytesread = 0;
         codec_lock ();
-        codec_t *codec = playlist_current.codec;
-        if (!codec) {
+        DB_decoder_t *decoder = playlist_current.decoder;
+        if (!decoder) {
             codec_unlock ();
             break;
         }
-        if (codec->info.samplesPerSecond != -1) {
-            int nchannels = codec->info.channels;
-            int samplerate = codec->info.samplesPerSecond;
+        if (decoder->info.samplerate != -1) {
+            int nchannels = decoder->info.channels;
+            int samplerate = decoder->info.samplerate;
             // read and do SRC
-            if (codec->info.samplesPerSecond == p_get_rate ()) {
+            if (decoder->info.samplerate == p_get_rate ()) {
                 int i;
-                if (codec->info.channels == 2) {
-                    bytesread = codec->read (bytes, size);
+                if (decoder->info.channels == 2) {
+                    bytesread = decoder->read (bytes, size);
                     codec_unlock ();
                 }
                 else {
-                    bytesread = codec->read (g_readbuffer, size/2);
+                    bytesread = decoder->read (g_readbuffer, size/2);
                     codec_unlock ();
                     for (i = 0; i < size/4; i++) {
                         int16_t sample = (int16_t)(((int32_t)(((int16_t*)g_readbuffer)[i])));
@@ -249,7 +251,7 @@ streamer_read_async (char *bytes, int size) {
 //                        printf ("FATAL: nbytes=%d, nsamples=%d, codecleft=%d, nchannels=%d, ratio=%f\n", nbytes, nsamples, codecleft, nchannels, (float)p_get_rate ()/samplerate);
 //                        assert ((nbytes & 3) == 0);
 //                    }
-                    bytesread = codec->read (g_readbuffer, nbytes);
+                    bytesread = decoder->read (g_readbuffer, nbytes);
                 }
                 codec_unlock ();
                 // recalculate nsamples according to how many bytes we've got
