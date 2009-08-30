@@ -1,1 +1,2 @@
 PLUG(mpegmad)
+PLUG(oggvorbis)
