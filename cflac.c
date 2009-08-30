@@ -288,6 +288,20 @@ cflac_init_cue_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC_
     }
 #endif
 // }}}
+    else if (metadata->type == FLAC__METADATA_TYPE_VORBIS_COMMENT) {
+        const FLAC__StreamMetadata_VorbisComment *vc = &metadata->data.vorbis_comment;
+        for (int i = 0; i < vc->num_comments; i++) {
+            const FLAC__StreamMetadata_VorbisComment_Entry *c = &vc->comments[i];
+            if (c->length > 0) {
+                char s[c->length+1];
+                s[c->length] = 0;
+                memcpy (s, c->entry, c->length);
+                if (!strncasecmp (s, "cuesheet=", 9)) {
+                    cb->last = deadbeef->pl_insert_cue_from_buffer (cb->after, cb->fname, s+9, c->length-9, &plugin, "FLAC");
+                }
+            }
+        }
+    }
 }
 
 static void

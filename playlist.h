@@ -18,6 +18,8 @@
 #ifndef __PLAYLIST_H
 #define __PLAYLIST_H
 
+#include <stdint.h>
+
 typedef struct metaInfo_s {
     const char *key;
     char *value;
@@ -98,6 +100,9 @@ pl_get_for_idx (int idx);
 
 int
 pl_get_idx_of (playItem_t *it);
+
+playItem_t *
+pl_insert_cue_from_buffer (playItem_t *after, const char *fname, const uint8_t *buffer, int buffersize, struct DB_decoder_s *decoder, const char *ftype);
 
 playItem_t *
 pl_insert_cue (playItem_t *after, const char *cuename, struct DB_decoder_s *decoder, const char *ftype);

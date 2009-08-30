@@ -58,8 +58,8 @@ pl_free (void) {
     }
 }
 
-static char *
-pl_cue_skipspaces (uint8_t *p) {
+static const char *
+pl_cue_skipspaces (const uint8_t *p) {
     while (*p && *p <= ' ') {
         p++;
     }
@@ -67,7 +67,7 @@ pl_cue_skipspaces (uint8_t *p) {
 }
 
 static void
-pl_get_qvalue_from_cue (char *p, char *out) {
+pl_get_qvalue_from_cue (const char *p, char *out) {
     if (*p == 0) {
         *out = 0;
         return;
@@ -89,7 +89,7 @@ pl_get_qvalue_from_cue (char *p, char *out) {
 }
 
 static void
-pl_get_value_from_cue (char *p, char *out) {
+pl_get_value_from_cue (const char *p, char *out) {
     while (*p >= ' ') {
         *out++ = *p++;
     }
@@ -134,23 +134,7 @@ pl_cue_parse_time (const char *p) {
 }
 
 playItem_t *
-pl_insert_cue (playItem_t *after, const char *fname, struct DB_decoder_s *decoder, const char *ftype) {
-    int len = strlen (fname);
-    char cuename[len+5];
-    strcpy (cuename, fname);
-    strcpy (cuename+len, ".cue");
-    FILE *fp = fopen (cuename, "rt");
-    if (!fp) {
-        char *ptr = cuename + len-1;
-        while (ptr >= cuename && *ptr != '.') {
-            ptr--;
-        }
-        strcpy (ptr+1, "cue");
-        fp = fopen (cuename, "rt");
-        if (!fp) {
-            return NULL;
-        }
-    }
+pl_insert_cue_from_buffer (playItem_t *after, const char *fname, const uint8_t *buffer, int buffersize, struct DB_decoder_s *decoder, const char *ftype) {
     char performer[1024];
     char albumtitle[1024];
     char file[1024];
@@ -158,12 +142,27 @@ pl_insert_cue (playItem_t *after, const char *fname, struct DB_decoder_s *decode
     char title[1024];
     char start[1024];
     playItem_t *prev = NULL;
-    for (;;) {
-        char str[1024];
-        if (!fgets (str, 1024, fp)) {
-            break; // eof
+    while (buffersize > 0) {
+        const uint8_t *p = buffer;
+        // find end of line
+        while (p - buffer < buffersize && *p >= 0x20) {
+            p++;
         }
-        char *p = pl_cue_skipspaces (str);
+        // skip linebreak(s)
+        while (p - buffer < buffersize && *p < 0x20) {
+            *p++;
+        }
+        if (p-buffer > 2048) { // huge string, ignore
+            buffer = p;
+            buffersize -= p-buffer;
+            continue;
+        }
+        char str[p-buffer+1];
+        strncpy (str, buffer, p-buffer);
+        str[p-buffer] = 0;
+        buffersize -= p-buffer;
+        buffer = p;
+        p = pl_cue_skipspaces (str);
         if (!strncmp (p, "PERFORMER ", 10)) {
             pl_get_qvalue_from_cue (p + 10, performer);
 //            printf ("got performer: %s\n", performer);
@@ -181,10 +180,10 @@ pl_insert_cue (playItem_t *after, const char *fname, struct DB_decoder_s *decode
         else if (!strncmp (p, "FILE ", 5)) {
             pl_get_qvalue_from_cue (p + 5, file);
             // copy directory name
-            char fname[1024];
-            int len = strlen (cuename);
-            memcpy (fname, cuename, len+1);
-            char *p = fname + len;
+            char dirname[1024];
+            int len = strlen (fname);
+            memcpy (dirname, fname, len+1);
+            char *p = dirname + len;
             while (*p != '/') {
                 p--;
                 len--;
@@ -200,7 +199,7 @@ pl_insert_cue (playItem_t *after, const char *fname, struct DB_decoder_s *decode
             }
             strcpy (p, file);
             // copy full name in place of relative name
-            strcpy (file, fname);
+            strcpy (file, dirname);
 //            printf ("ended up as: %s\n", file);
         }
         else if (!strncmp (p, "TRACK ", 6)) {
@@ -260,8 +259,41 @@ pl_insert_cue (playItem_t *after, const char *fname, struct DB_decoder_s *decode
 //            printf ("got unknown line:\n%s\n", p);
         }
     }
-    fclose (fp);
     return after;
+}
+
+playItem_t *
+pl_insert_cue (playItem_t *after, const char *fname, struct DB_decoder_s *decoder, const char *ftype) {
+    int len = strlen (fname);
+    char cuename[len+5];
+    strcpy (cuename, fname);
+    strcpy (cuename+len, ".cue");
+    FILE *fp = fopen (cuename, "rb");
+    if (!fp) {
+        char *ptr = cuename + len-1;
+        while (ptr >= cuename && *ptr != '.') {
+            ptr--;
+        }
+        strcpy (ptr+1, "cue");
+        fp = fopen (cuename, "rb");
+        if (!fp) {
+            return NULL;
+        }
+    }
+    fseek (fp, 0, SEEK_END);
+    size_t sz = ftell (fp);
+    if (sz == 0) {
+        fclose (fp);
+        return NULL;
+    }
+    rewind (fp);
+    uint8_t buf[sz];
+    if (fread (buf, 1, sz, fp) != sz) {
+        fclose (fp);
+        return NULL;
+    }
+    fclose (fp);
+    return pl_insert_cue_from_buffer (after, fname, buf, sz, decoder, ftype);
 }
 
 playItem_t *
