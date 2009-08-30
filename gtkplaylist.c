@@ -758,7 +758,7 @@ gtkpl_playsongnum (int idx) {
 
 void
 gtkpl_songchanged (gtkplaylist_t *ps, int from, int to) {
-    if (!dragwait) {
+    if (!dragwait && to != -1) {
         GtkWidget *widget = ps->playlist;
         if (session_get_cursor_follows_playback ()) {
             if (to < ps->scrollpos || to >= ps->scrollpos + ps->nvisiblefullrows) {
