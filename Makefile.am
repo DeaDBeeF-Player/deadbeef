@@ -20,7 +20,7 @@ deadbeef_SOURCES =\
 	messagepump.c messagepump.h messages.h\
 	conf.c  conf.h\
 	search.c search.h\
-	cmp3.c cvorbis.c cflac.c\
+	cmp3.c cvorbis.c cflac.c cgme.c\
 	palsa.c palsa.h playback.h\
 	threading_pthread.c threading.h\
 	md5/md5.c md5/md5.h md5/md5_loc.h\
@@ -34,7 +34,7 @@ deadbeef_SOURCES =\
 sdkdir = $(pkgincludedir)
 sdk_HEADERS = deadbeef.h
 
-deadbeef_LDADD = $(LDADD) $(DEPS_LIBS) gme/Game_Music_Emu-0.5.2/gme/libgme.a sid/sidplay-libs-2.1.0/libsidplay2.a dumb/libdumb.a
+deadbeef_LDADD = $(LDADD) $(DEPS_LIBS) gme/Game_Music_Emu-0.5.2/gme/libgme.a sid/sidplay-libs-2.1.0/libsidplay2.a dumb/libdumb.a -lstdc++
 
 AM_CFLAGS = $(DEPS_CFLAGS) $(SIMD_FLAGS) -I$(gmepath) -std=c99
 AM_CPPFLAGS = $(DEPS_CFLAGS) -I$(sidpath)/libsidplay/include -I$(sidpath)/builders/resid-builder/include

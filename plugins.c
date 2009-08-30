@@ -35,6 +35,7 @@
 #include "playlist.h"
 #include "volume.h"
 #include "streamer.h"
+#include "playback.h"
 
 // deadbeef api
 DB_functions_t deadbeef_api = {
@@ -53,6 +54,7 @@ DB_functions_t deadbeef_api = {
     .playback_random = plug_playback_random,
     .playback_get_pos = plug_playback_get_pos,
     .playback_set_pos = plug_playback_set_pos,
+    .playback_get_samplerate = p_get_rate,
     .quit = plug_quit,
     // threading
     .thread_start = thread_start,

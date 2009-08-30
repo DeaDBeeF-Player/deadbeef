@@ -19,35 +19,37 @@
 #include <stdlib.h>
 #include <string.h>
 #include "gme/gme.h"
-#include "codec.h"
-#include "cgme.h"
-#include "playlist.h"
-#include "playback.h"
+#include "deadbeef.h"
+
+static DB_decoder_t plugin;
+static DB_functions_t *deadbeef;
 
 static Music_Emu *emu;
 static int reallength;
 static int nzerosamples;
 static uint32_t cgme_voicemask = 0;
+static float duration; // of current song
 
-int
-cgme_init (playItem_t *it) {
-    if (gme_open_file (it->fname, &emu, p_get_rate ())) {
+static int
+cgme_init (DB_playItem_t *it) {
+    if (gme_open_file (it->fname, &emu, deadbeef->playback_get_samplerate ())) {
         return -1;
     }
     gme_mute_voices (emu, cgme_voicemask);
     gme_start_track (emu, it->tracknum);
     track_info_t inf;
     gme_track_info (emu, &inf, it->tracknum);
-    cgme.info.bitsPerSample = 16;
-    cgme.info.channels = 2;
-    cgme.info.samplesPerSecond = p_get_rate ();
+    plugin.info.bps = 16;
+    plugin.info.channels = 2;
+    plugin.info.samplerate = deadbeef->playback_get_samplerate ();
+    duration = it->duration;
     reallength = inf.length; 
     nzerosamples = 0;
-    cgme.info.readposition = 0;
+    plugin.info.readpos = 0;
     return 0;
 }
 
-void
+static void
 cgme_free (void) {
     if (emu) {
         gme_delete (emu);
@@ -55,21 +57,21 @@ cgme_free (void) {
     }
 }
 
-int
+static int
 cgme_read (char *bytes, int size) {
-    float t = (size/4) / (float)cgme.info.samplesPerSecond;
-    if (cgme.info.readposition + t >= playlist_current.duration) {
-        t = playlist_current.duration - cgme.info.readposition;
+    float t = (size/4) / (float)plugin.info.samplerate;
+    if (plugin.info.readpos + t >= duration) {
+        t = duration - plugin.info.readpos;
         if (t <= 0) {
             return 0;
         }
         // DON'T ajust size, buffer must always be po2
-        //size = t * (float)cgme.info.samplesPerSecond * 4;
+        //size = t * (float)plugin.info.samplerate * 4;
     }
     if (gme_play (emu, size/2, (short*)bytes)) {
         return 0;
     }
-    cgme.info.readposition += t;
+    plugin.info.readpos += t;
     if (reallength == -1) {
         // check if whole buffer is zeroes
         int i;
@@ -80,7 +82,7 @@ cgme_read (char *bytes, int size) {
         }
         if (i == size) {
             nzerosamples += size / 4;
-            if (nzerosamples > cgme.info.samplesPerSecond * 4) {
+            if (nzerosamples > plugin.info.samplerate * 4) {
                 return 0;
             }
         }
@@ -91,17 +93,17 @@ cgme_read (char *bytes, int size) {
     return size;
 }
 
-int
+static int
 cgme_seek (float time) {
     if (gme_seek (emu, (long)(time * 1000))) {
         return -1;
     }
-    cgme.info.readposition = time;
+    plugin.info.readpos = time;
     return 0;
 }
 
-playItem_t *
-cgme_insert (playItem_t *after, const char *fname) {
+static DB_playItem_t *
+cgme_insert (DB_playItem_t *after, const char *fname) {
 //    printf ("adding %s chiptune\n", fname);
     Music_Emu *emu;
     if (!gme_open_file (fname, &emu, gme_info_only)) {
@@ -110,9 +112,8 @@ cgme_insert (playItem_t *after, const char *fname) {
             track_info_t inf;
             const char *ret = gme_track_info (emu, &inf, i);
             if (!ret) {
-                playItem_t *it = malloc (sizeof (playItem_t));
-                memset (it, 0, sizeof (playItem_t));
-                it->codec = &cgme;
+                DB_playItem_t *it = deadbeef->pl_item_alloc ();
+                it->decoder = &plugin;
                 it->fname = strdup (fname);
                 char str[1024];
                 if (inf.song[0]) {
@@ -124,24 +125,36 @@ cgme_insert (playItem_t *after, const char *fname) {
                 it->tracknum = i;
 
                 // add metadata
-                pl_add_meta (it, "system", inf.system);
-                pl_add_meta (it, "album", inf.game);
-                pl_add_meta (it, "title", inf.song);
-                pl_add_meta (it, "artist", inf.author);
-                pl_add_meta (it, "copyright", inf.copyright);
-                pl_add_meta (it, "comment", inf.comment);
-                pl_add_meta (it, "dumper", inf.dumper);
+                deadbeef->pl_add_meta (it, "system", inf.system);
+                deadbeef->pl_add_meta (it, "album", inf.game);
+                deadbeef->pl_add_meta (it, "title", inf.song);
+                deadbeef->pl_add_meta (it, "artist", inf.author);
+                deadbeef->pl_add_meta (it, "copyright", inf.copyright);
+                deadbeef->pl_add_meta (it, "comment", inf.comment);
+                deadbeef->pl_add_meta (it, "dumper", inf.dumper);
                 char trk[10];
                 snprintf (trk, 10, "%d", i+1);
-                pl_add_meta (it, "track", trk);
+                deadbeef->pl_add_meta (it, "track", trk);
                 if (inf.length == -1) {
                     it->duration = 300;
                 }
                 else {
                     it->duration = (float)inf.length/1000.f;
                 }
-                it->filetype = "GameMusic";
-                after = pl_insert_item (after, it);
+                const char *ext = fname + strlen (fname) - 1;
+                while (ext >= fname && *ext != '.') {
+                    ext--;
+                }
+                it->filetype = NULL;
+                if (*ext == '.') {
+                    ext++;
+                    for (int i = 0; plugin.exts[i]; i++) {
+                        if (!strcasecmp (ext, plugin.exts[i])) {
+                            it->filetype = plugin.exts[i];
+                        }
+                    }
+                }
+                after = deadbeef->pl_insert_item (after, it);
             }
             else {
                 printf ("gme error: %s\n", ret);
@@ -162,11 +175,7 @@ static const char * exts[]=
 	"ay","gbs","gym","hes","kss","nsf","nsfe","sap","spc","vgm","vgz",NULL
 };
 
-const char **cgme_getexts (void) {
-    return exts;
-}
-
-int
+static int
 cgme_numvoices (void) {
     if (!emu) {
         return 0;
@@ -174,7 +183,7 @@ cgme_numvoices (void) {
     return gme_voice_count (emu);
 }
 
-void
+static void
 cgme_mutevoice (int voice, int mute) {
     cgme_voicemask &= ~ (1<<voice);
     cgme_voicemask |= ((mute ? 1 : 0) << voice);
@@ -183,16 +192,27 @@ cgme_mutevoice (int voice, int mute) {
     }
 }
 
-codec_t cgme = {
+// define plugin interface
+static DB_decoder_t plugin = {
+    .plugin.version_major = 0,
+    .plugin.version_minor = 1,
+    .plugin.type = DB_PLUGIN_DECODER,
+    .plugin.name = "Game_Music_Emu decoder",
+    .plugin.author = "Alexey Yakovenko",
+    .plugin.email = "waker@users.sourceforge.net",
+    .plugin.website = "http://deadbeef.sf.net",
     .init = cgme_init,
     .free = cgme_free,
-    .read = cgme_read,
+    .read_int16 = cgme_read,
     .seek = cgme_seek,
     .insert = cgme_insert,
-    .getexts = cgme_getexts,
-    .numvoices = cgme_numvoices,
-    .mutevoice = cgme_mutevoice,
+    .exts = exts,
     .id = "stdgme",
-    .filetypes = { "GameMusic", NULL }
+    .filetypes = exts
 };
 
+DB_plugin_t *
+gme_load (DB_functions_t *api) {
+    deadbeef = api;
+    return DB_PLUGIN (&plugin);
+}
