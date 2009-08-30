@@ -122,6 +122,7 @@ typedef struct {
     void (*playback_set_pos) (float pos); // [0..100]
     int (*playback_get_samplerate) (void); // output samplerate
     // process control
+    const char *(*get_config_dir) (void);
     void (*quit) (void);
     // threading
     int (*thread_start) (void (*fn)(uintptr_t ctx), uintptr_t ctx);

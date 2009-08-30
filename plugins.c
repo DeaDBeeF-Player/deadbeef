@@ -36,6 +36,7 @@
 #include "volume.h"
 #include "streamer.h"
 #include "playback.h"
+#include "common.h"
 
 // deadbeef api
 DB_functions_t deadbeef_api = {
@@ -55,6 +56,7 @@ DB_functions_t deadbeef_api = {
     .playback_get_pos = plug_playback_get_pos,
     .playback_set_pos = plug_playback_set_pos,
     .playback_get_samplerate = p_get_rate,
+    .get_config_dir = plug_get_config_dir,
     .quit = plug_quit,
     // threading
     .thread_start = thread_start,
@@ -85,6 +87,11 @@ DB_functions_t deadbeef_api = {
     .volume_set_amp = plug_volume_set_amp,
     .volume_get_amp = volume_get_amp,
 };
+
+const char *
+plug_get_config_dir (void) {
+    return dbconfdir;
+}
 
 void
 volumebar_notify_changed (void);

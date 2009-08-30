@@ -659,7 +659,7 @@ lastfm_start (void) {
 #endif
 // }}}
 
-    snprintf (config, 1024, "%s/.config/deadbeef/lastfm", getenv ("HOME"));
+    snprintf (config, 1024, "%s/lastfm", deadbeef->get_config_dir ());
     FILE *fp = fopen (config, "rt");
     if (!fp) {
         fprintf (stderr, "lastfm: failed open %s\n", config);

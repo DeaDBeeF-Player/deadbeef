@@ -502,11 +502,33 @@ main (int argc, char *argv[]) {
         fprintf (stderr, "unable to find home directory. stopping.\n");
         return -1;
     }
-    snprintf (defpl, 1024, "%s/.config/deadbeef/default.dbpl", homedir);
-    snprintf (sessfile, 1024, "%s/.config/deadbeef/session", homedir);
-    snprintf (confdir, 1024, "%s/.config", homedir);
+
+    char *xdg_conf_dir = getenv ("XDG_CONFIG_HOME");
+    if (xdg_conf_dir) {
+        if (snprintf (confdir, sizeof (confdir), "%s", xdg_conf_dir) > sizeof (confdir)) {
+            fprintf (stderr, "fatal: XDG_CONFIG_HOME value is too long: %s\n", xdg_conf_dir);
+            return -1;
+        }
+    }
+    else {
+        if (snprintf (confdir, sizeof (confdir), "%s/.config", homedir) > sizeof (confdir)) {
+            fprintf (stderr, "fatal: HOME value is too long: %s\n", homedir);
+            return -1;
+        }
+    }
+    if (snprintf (defpl, sizeof (defpl), "%s/deadbeef/default.dbpl", confdir) > sizeof (defpl)) {
+        fprintf (stderr, "fatal: out of memory while configuring\n");
+        return -1;
+    }
+    if (snprintf (sessfile, sizeof (sessfile), "%s/deadbeef/session", confdir) > sizeof (sessfile)) {
+        fprintf (stderr, "fatal: out of memory while configuring\n");
+        return -1;
+    }
     mkdir (confdir, 0755);
-    snprintf (dbconfdir, 1024, "%s/.config/deadbeef", homedir);
+    if (snprintf (dbconfdir, sizeof (dbconfdir), "%s/deadbeef", confdir) > sizeof (dbconfdir)) {
+        fprintf (stderr, "fatal: out of memory while configuring\n");
+        return -1;
+    }
     mkdir (dbconfdir, 0755);
 
     char cmdline[2048];

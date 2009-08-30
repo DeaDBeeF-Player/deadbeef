@@ -77,4 +77,7 @@ plug_volume_set_db (float db);
 void
 plug_volume_set_amp (float amp);
 
+const char *
+plug_get_config_dir (void);
+
 #endif // __PLUGINS_H
