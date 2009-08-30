@@ -176,14 +176,17 @@ cvorbis_insert (DB_playItem_t *after, const char *fname) {
     if (vc) {
         deadbeef->pl_add_meta (it, "vendor", vc->vendor);
         for (int i = 0; i < vc->comments; i++) {
-            if (!strncmp (vc->user_comments[i], "artist=", 7)) {
+            if (!strncasecmp (vc->user_comments[i], "artist=", 7)) {
                 deadbeef->pl_add_meta (it, "artist", vc->user_comments[i] + 7);
             }
-            else if (!strncmp (vc->user_comments[i], "title=", 6)) {
+            else if (!strncasecmp (vc->user_comments[i], "album=", 6)) {
+                deadbeef->pl_add_meta (it, "album", vc->user_comments[i] + 6);
+            }
+            else if (!strncasecmp (vc->user_comments[i], "title=", 6)) {
                 deadbeef->pl_add_meta (it, "title", vc->user_comments[i] + 6);
                 title_added = 1;
             }
-            else if (!strncmp (vc->user_comments[i], "date=", 5)) {
+            else if (!strncasecmp (vc->user_comments[i], "date=", 5)) {
                 deadbeef->pl_add_meta (it, "date", vc->user_comments[i] + 5);
             }
         }
