@@ -28,7 +28,7 @@ static DB_functions_t *deadbeef;
 #define max(x,y) ((x)>(y)?(x):(y))
 
 static FLAC__StreamDecoder *decoder = 0;
-#define BUFFERSIZE 40000
+#define BUFFERSIZE 100000
 static char buffer[BUFFERSIZE]; // this buffer always has int32 samples
 static int remaining; // bytes remaining in buffer from last read
 static float timestart;
