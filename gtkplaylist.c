@@ -791,6 +791,9 @@ gtkpl_keypress (gtkplaylist_t *ps, int keyval, int state) {
         gdk_draw_drawable (widget->window, widget->style->black_gc, ps->backbuf, 0, 0, 0, 0, widget->allocation.width, widget->allocation.height);
         return;
     }
+    else if ((keyval == GDK_P || keyval == GDK_p) && (state & GDK_CONTROL_MASK)) {
+        messagepump_push (M_PAUSESONG, 0, 0, 0);
+    }
     else if (keyval == GDK_Return && ps->row != -1) {
         messagepump_push (M_PLAYSONGNUM, 0, ps->row, 0);
         return;
