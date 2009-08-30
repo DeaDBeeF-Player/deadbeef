@@ -26,7 +26,7 @@ fi
 CFLAGS="$CFLAGS -D_GNU_SOURCE -O2 -DHAVE_UNIX"
 CPPFLAGS="$CFLAGS"
 
-PKG_CHECK_MODULES(DEPS, gtk+-2.0 gthread-2.0 glib-2.0 vorbis vorbisfile mad samplerate alsa)
+PKG_CHECK_MODULES(DEPS, gtk+-2.0 >= 2.14 gthread-2.0 glib-2.0 vorbis vorbisfile mad samplerate alsa)
 PKG_CHECK_MODULES(LASTFM_DEPS, libcurl)
 
 AX_EXT()
@@ -43,5 +43,6 @@ gme/Game_Music_Emu-0.5.2/gme/Makefile
 sid/sidplay-libs-2.1.0/Makefile
 dumb/Makefile
 plugins/lastfm/Makefile
+plugins/ape/Makefile
 ])
 

@@ -28,6 +28,7 @@
 #define __DEADBEEF_H
 
 #include <stdint.h>
+#include <time.h>
 
 #ifdef __cplusplus
 extern "C" {
