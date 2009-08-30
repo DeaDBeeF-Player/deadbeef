@@ -21,11 +21,10 @@
 #include <iconv.h>
 #include "dumb/dumb-kode54/include/dumb.h"
 #include "dumb/dumb-kode54/include/internal/it.h"
-#include "codec.h"
-#include "cdumb.h"
-#include "playlist.h"
-#include "playback.h"
-#include "common.h"
+#include "deadbeef.h"
+
+static DB_decoder_t plugin;
+static DB_functions_t *deadbeef;
 
 static int dumb_initialized;
 static DUH *duh;
@@ -46,8 +45,8 @@ cdumb_startrenderer (void);
 static DUH*
 open_module(const char *fname, const char *ext, int *start_order, int *is_it, int *is_dos, const char **filetype);
 
-int
-cdumb_init (playItem_t *it) {
+static int
+cdumb_init (DB_playItem_t *it) {
     if (!dumb_initialized) {
         atexit (&dumb_exit);
     }
@@ -63,41 +62,12 @@ cdumb_init (playItem_t *it) {
     const char *ftype;
     duh = open_module(it->fname, ext, &start_order, &is_it, &is_dos, &ftype);
 
-//    if (is_it) ReadIT(ptr, size, *m_info, !read_tag);
-//    else ReadDUH(duh, *m_info, !read_tag, is_dos);
-//
-//    // subsong magic time
-//    g_cache.run( ptr, size, p_path, m_file->get_timestamp( p_abort ), m_subsong_info, p_abort );
-
-
-#if 0
-    const char *ext = fname + strlen (fname) - 1;
-    while (*ext != '.' && ext > fname) {
-        ext--;
-    }
-    ext++;
-    if (!strcasecmp (ext, "mod")) {
-        duh = dumb_load_mod_quick (fname, 0);
-    }
-    else if (!strcasecmp (ext, "s3m")) {
-        duh = dumb_load_s3m_quick (fname);
-    }
-    else if (!strcasecmp (ext, "it")) {
-        duh = dumb_load_it_quick (fname);
-    }
-    else if (!strcasecmp (ext, "xm")) {
-        duh = dumb_load_xm_quick (fname);
-    }
-    else {
-        return -1;
-    }
-#endif
     dumb_it_do_initial_runthrough (duh);
 
-    cdumb.info.bitsPerSample = 16;
-    cdumb.info.channels = 2;
-    cdumb.info.samplesPerSecond = p_get_rate ();
-    cdumb.info.readposition = 0;
+    plugin.info.bps = 16;
+    plugin.info.channels = 2;
+    plugin.info.samplerate = deadbeef->playback_get_samplerate ();
+    plugin.info.readpos = 0;
 
     if (cdumb_startrenderer () < 0) {
         return -1;
@@ -139,26 +109,26 @@ cdumb_free (void) {
     }
 }
 
-int
+static int
 cdumb_read (char *bytes, int size) {
     int length = size / 4;
     long ret;
-    ret = duh_render (renderer, 16, 0, 1, 65536.f / cdumb.info.samplesPerSecond, length, bytes);
-    cdumb.info.readposition += ret / (float)cdumb.info.samplesPerSecond;
+    ret = duh_render (renderer, 16, 0, 1, 65536.f / plugin.info.samplerate, length, bytes);
+    plugin.info.readpos += ret / (float)plugin.info.samplerate;
     return ret*4;
 }
 
-int
+static int
 cdumb_seek (float time) {
-    if (time < cdumb.info.readposition) {
+    if (time < plugin.info.readpos) {
         cdumb_startrenderer ();
     }
     else {
-        time -= cdumb.info.readposition;
+        time -= plugin.info.readpos;
     }
-    int pos = time * cdumb.info.samplesPerSecond;
-    duh_sigrenderer_generate_samples (renderer, 0, 65536.0f / cdumb.info.samplesPerSecond, pos, NULL);
-    cdumb.info.readposition = duh_sigrenderer_get_position (renderer) / 65536.f;
+    int pos = time * plugin.info.samplerate;
+    duh_sigrenderer_generate_samples (renderer, 0, 65536.0f / plugin.info.samplerate, pos, NULL);
+    plugin.info.readpos = duh_sigrenderer_get_position (renderer) / 65536.f;
     return 0;
 }
 
@@ -749,8 +719,9 @@ static const char *convstr (const char* str, int sz) {
     }
     return out;
 }
-playItem_t *
-cdumb_insert (playItem_t *after, const char *fname) {
+
+static DB_playItem_t *
+cdumb_insert (DB_playItem_t *after, const char *fname) {
     const char *ext = fname + strlen (fname) - 1;
     while (*ext != '.' && ext > fname) {
         ext--;
@@ -765,42 +736,52 @@ cdumb_insert (playItem_t *after, const char *fname) {
     if (!duh) {
         return NULL;
     }
-    playItem_t *it = malloc (sizeof (playItem_t));
-    memset (it, 0, sizeof (playItem_t));
-    it->codec = &cdumb;
+    DB_playItem_t *it = deadbeef->pl_item_alloc ();
+    it->decoder = &plugin;
     it->fname = strdup (fname);
     it->tracknum = 0;
     it->timestart = 0;
     it->timeend = 0;
     DUMB_IT_SIGDATA * itsd = duh_get_it_sigdata(duh);
     if (itsd->name[0])     {
-        pl_add_meta (it, "title", convstr ((char*)&itsd->name, sizeof(itsd->name)));
+        deadbeef->pl_add_meta (it, "title", convstr ((char*)&itsd->name, sizeof(itsd->name)));
     }
     else {
-        pl_add_meta (it, "title", NULL);
+        deadbeef->pl_add_meta (it, "title", NULL);
     }
     dumb_it_do_initial_runthrough (duh);
     it->duration = duh_get_length (duh)/65536.0f;
     it->filetype = ftype;
-//    printf ("duration: %f\n", cdumb.info.duration);
-    after = pl_insert_item (after, it);
+//    printf ("duration: %f\n", plugin.info.duration);
+    after = deadbeef->pl_insert_item (after, it);
     unload_duh (duh);
 
     return after;
 }
 
-const char **cdumb_getexts (void) {
-    return exts;
-}
+static const char *filetypes[] = { "IT", "XM", "S3M", "STM", "669", "PTM", "PSM", "MTM", "RIFF", "ASY", "MOD", NULL };
 
-codec_t cdumb = {
+// define plugin interface
+static DB_decoder_t plugin = {
+    .plugin.version_major = 0,
+    .plugin.version_minor = 1,
+    .plugin.type = DB_PLUGIN_DECODER,
+    .plugin.name = "DUMB module player",
+    .plugin.author = "Alexey Yakovenko",
+    .plugin.email = "waker@users.sourceforge.net",
+    .plugin.website = "http://deadbeef.sf.net",
     .init = cdumb_init,
     .free = cdumb_free,
-    .read = cdumb_read,
+    .read_int16 = cdumb_read,
     .seek = cdumb_seek,
     .insert = cdumb_insert,
-    .getexts = cdumb_getexts,
+    .exts = exts,
     .id = "stddumb",
-    .filetypes = { "IT", "XM", "S3M", "STM", "669", "PTM", "PSM", "MTM", "RIFF", "ASY", "MOD", NULL }
+    .filetypes = filetypes
 };
 
+DB_plugin_t *
+dumb_load (DB_functions_t *api) {
+    deadbeef = api;
+    return DB_PLUGIN (&plugin);
+}
