@@ -29,7 +29,7 @@ static DB_functions_t *deadbeef;
 
 static FLAC__StreamDecoder *decoder = 0;
 #define BUFFERSIZE 40000
-static char buffer[BUFFERSIZE];
+static char buffer[BUFFERSIZE]; // this buffer always has int32 samples
 static int remaining; // bytes remaining in buffer from last read
 static float timestart;
 static float timeend;
@@ -44,16 +44,22 @@ cflac_write_callback (const FLAC__StreamDecoder *decoder, const FLAC__Frame *fra
     int bufsamples = bufsize / (plugin.info.channels * plugin.info.bps / 8);
     int nsamples = min (bufsamples, frame->header.blocksize);
     char *bufptr = &buffer[remaining];
+    int32_t mask = (1<<(frame->header.bits_per_sample-1))-1;
+    float scaler = 1.f / ((1<<(frame->header.bits_per_sample-1))-1);
+    int32_t neg = 1<<frame->header.bits_per_sample;
+    int32_t sign = (1<<31);
+    int32_t signshift = frame->header.bits_per_sample-1;
+
     for (int i = 0; i < nsamples; i++) {
-        FLAC__int16 lsample = (FLAC__int16)inputbuffer[0][i];
-        ((int16_t*)bufptr)[0] = lsample;
-        bufptr += plugin.info.bps / 8;
-        remaining += plugin.info.bps / 8;
+        int32_t sample = inputbuffer[0][i];
+        ((float*)bufptr)[0] = (sample - ((sample&sign)>>signshift)*neg) * scaler;
+        bufptr += sizeof (float);
+        remaining += sizeof (float);
         if (plugin.info.channels > 1) {
-            FLAC__int16 rsample = (FLAC__int16)inputbuffer[1][i];
-            ((int16_t*)bufptr)[0] = rsample;
-            bufptr += plugin.info.bps / 8;
-            remaining += plugin.info.bps / 8;
+            int32_t sample = inputbuffer[1][i];
+            ((float*)bufptr)[0] = (sample - ((sample&sign)>>signshift)*neg) * scaler;
+            bufptr += sizeof (float);
+            remaining += sizeof (float);
         }
     }
     if (readbytes > bufsize) {
@@ -149,7 +155,7 @@ cflac_free (void) {
 }
 
 static int
-cflac_read (char *bytes, int size) {
+cflac_read_int16 (char *bytes, int size) {
     int initsize = size;
     int nsamples = size / (plugin.info.channels * plugin.info.bps / 8);
     if (timeend > timestart) {
@@ -159,15 +165,21 @@ cflac_read (char *bytes, int size) {
     }
     do {
         if (remaining) {
-            int sz = min (remaining, size);
-            memcpy (bytes, buffer, sz);
+            int s = size * 2;
+            int sz = min (remaining, s);
+            // convert from float to int16
+            float *in = (float *)buffer;
+            for (int i = 0; i < sz/4; i++) {
+                *((int16_t *)bytes) = (int16_t)((*in) * 0x7fff);
+                size -= 2;
+                bytes += 2;
+                in++;
+            }
             if (sz < remaining) {
                 memmove (buffer, &buffer[sz], remaining-sz);
             }
             remaining -= sz;
-            bytes += sz;
-            size -= sz;
-            plugin.info.readpos += (float)sz / (plugin.info.channels * plugin.info.samplerate * plugin.info.bps / 8);
+            plugin.info.readpos += (float)sz / (plugin.info.channels * plugin.info.samplerate * sizeof (int32_t) / 8);
             if (timeend > timestart) {
                 if (plugin.info.readpos + timestart > timeend) {
                     break;
@@ -179,12 +191,49 @@ cflac_read (char *bytes, int size) {
         }
         if (!FLAC__stream_decoder_process_single (decoder)) {
             break;
-//            memset (bytes, 0, size);
-//            return -1;
         }
         if (FLAC__stream_decoder_get_state (decoder) == FLAC__STREAM_DECODER_END_OF_STREAM) {
             break;
-//            return -1;
+        }
+    } while (size > 0);
+
+    return initsize - size;
+}
+
+static int
+cflac_read_float32 (char *bytes, int size) {
+    int initsize = size;
+    int nsamples = size / (plugin.info.channels * plugin.info.bps / 8);
+    if (timeend > timestart) {
+        if (plugin.info.readpos + timestart > timeend) {
+            return 0;
+        }
+    }
+    do {
+        if (remaining) {
+            int sz = min (remaining, size);
+            memcpy (bytes, buffer, sz);
+            size -= sz;
+            bytes += sz;
+            if (sz < remaining) {
+                memmove (buffer, &buffer[sz], remaining-sz);
+            }
+            remaining -= sz;
+            plugin.info.readpos += (float)sz / (plugin.info.channels * plugin.info.samplerate * sizeof (int32_t) / 8);
+            if (timeend > timestart) {
+                if (plugin.info.readpos + timestart > timeend) {
+                    break;
+                }
+            }
+        }
+        if (!size) {
+            break;
+        }
+        if (!FLAC__stream_decoder_process_single (decoder)) {
+            break;
+        }
+        if (FLAC__stream_decoder_get_state (decoder) == FLAC__STREAM_DECODER_END_OF_STREAM) {
+            break;
         }
     } while (size > 0);
 
@@ -464,8 +513,8 @@ static DB_decoder_t plugin = {
     .plugin.website = "http://deadbeef.sf.net",
     .init = cflac_init,
     .free = cflac_free,
-    .read_int16 = cflac_read,
-//    .read_float32 = cflac_read_float32,
+    .read_int16 = cflac_read_int16,
+    .read_float32 = cflac_read_float32,
     .seek = cflac_seek,
     .insert = cflac_insert,
     .exts = exts,
