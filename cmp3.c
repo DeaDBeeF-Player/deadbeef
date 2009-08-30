@@ -21,10 +21,6 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <iconv.h>
-//#include <sys/mman.h>
-//#include "plugin.h"
-//#include "playlist.h"
-//#include "common.h"
 #include "deadbeef.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
@@ -33,10 +29,12 @@
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
 
-#define READBUFFER 5*8192
+#define READBUFFER 0x10000
+#define READBUFFER_MASK 0xffff
 
 // FIXME: cache is bad name for this
-#define BUFSIZE 81920
+#define CACHE_SIZE 0x20000
+#define CACHE_MASK 0x1ffff
 
 // vbrmethod constants
 #define LAME_CBR  1 
@@ -55,6 +53,7 @@ typedef struct {
     float timeend;
 
     // input buffer, for MPEG data
+    // FIXME: this should go away if reading happens per-frame
     mad_timer_t timer;
     char input[READBUFFER];
     int remaining;
@@ -62,12 +61,12 @@ typedef struct {
     // NOTE: both "output" and "cache" buffers store sampels in libmad fixed point format
 
 //    // output buffer, supplied by player
-//    char output[BUFSIZE];
     int readsize;
 
     // cache, for extra decoded samples
-    char cache[BUFSIZE];
+    char cache[CACHE_SIZE];
     int cachefill;
+    int cachepos;
 
     // information, filled by cmp3_scan_stream
     int version;
@@ -124,6 +123,7 @@ cmp3_init (DB_playItem_t *it) {
     //buffer.output = NULL;
     buffer.readsize = 0;
     buffer.cachefill = 0;
+    buffer.cachepos = 0;
     plugin.info.readpos = 0;
 	mad_timer_reset(&buffer.timer);
 
@@ -552,45 +552,30 @@ cmp3_decode (void) {
 		
 		mad_synth_frame(&synth,&frame);
 
-        char *cache = &buffer.cache[buffer.cachefill];
+//        char *cache = &buffer.cache[(buffer.cachefill + buffer.cachepos) & CACHE_MASK];
+        int cachepos = (buffer.cachefill + buffer.cachepos) & CACHE_MASK;
         int i;
 		for(i=0;i<synth.pcm.length;i++)
 		{
-#if 0
-            if (buffer.readsize > 0) {
-                *((int16_t*)output) = MadFixedToSshort(synth.pcm.samples[0][i]);
-                output+=2;
-                buffer.readsize-=2;
-
-                if(MAD_NCHANNELS(&frame.header)==2) {
-                    *((int16_t*)output) = MadFixedToSshort(synth.pcm.samples[1][i]);
-                    output+=2;
-                    buffer.readsize-=2;
-                }
-            }
-            else
-#endif
-            if (buffer.cachefill >= BUFSIZE) {
+            if (buffer.cachefill >= CACHE_SIZE) {
                 printf ("cache overflow!\n");
                 break;
             }
-            if (buffer.cachefill >= BUFSIZE - sizeof (mad_fixed_t)) {
+            if (buffer.cachefill >= CACHE_SIZE - sizeof (mad_fixed_t)) {
 //                printf ("readsize=%d, pcm.length=%d(%d)\n", buffer.readsize, synth.pcm.length, i);
             }
-            assert (buffer.cachefill < BUFSIZE - sizeof (mad_fixed_t));
-            memcpy (cache, &synth.pcm.samples[0][i], sizeof (mad_fixed_t));
-//            *((int16_t*)cache) = MadFixedToSshort(synth.pcm.samples[0][i]);
-            cache += sizeof (mad_fixed_t);
+            assert (buffer.cachefill < CACHE_SIZE - sizeof (mad_fixed_t));
+            memcpy (buffer.cache+cachepos, &synth.pcm.samples[0][i], sizeof (mad_fixed_t));
+            cachepos = (cachepos + sizeof (mad_fixed_t)) & CACHE_MASK;
             buffer.cachefill += sizeof (mad_fixed_t);
             buffer.readsize -= sizeof (mad_fixed_t);
             if (MAD_NCHANNELS(&frame.header) == 2) {
-                if (buffer.cachefill >= BUFSIZE - sizeof (mad_fixed_t)) {
-//                    printf ("readsize=%d, pcm.length=%d(%d)\n", buffer.readsize, synth.pcm.length, i);
+                if (buffer.cachefill >= CACHE_SIZE - sizeof (mad_fixed_t)) {
+                    printf ("readsize=%d, pcm.length=%d(%d), cachefill=%d, cachepos=%d(%d)\n", buffer.readsize, synth.pcm.length, i, buffer.cachefill, buffer.cachepos, cachepos);
                 }
-                assert (buffer.cachefill < BUFSIZE - sizeof (mad_fixed_t));
-//                *((int16_t*)cache) = MadFixedToSshort(synth.pcm.samples[1][i]);
-                memcpy (cache, &synth.pcm.samples[1][i], sizeof (mad_fixed_t));
-                cache += sizeof (mad_fixed_t);
+                assert (buffer.cachefill < CACHE_SIZE - sizeof (mad_fixed_t));
+                memcpy (buffer.cache+cachepos, &synth.pcm.samples[1][i], sizeof (mad_fixed_t));
+                cachepos = (cachepos + sizeof (mad_fixed_t)) & CACHE_MASK;
                 buffer.cachefill += sizeof (mad_fixed_t);
                 buffer.readsize -= sizeof (mad_fixed_t);
             }
@@ -599,11 +584,6 @@ cmp3_decode (void) {
         if (buffer.readsize <= 0 || eof) {
             break;
         }
-//        if (buffer.readsize > 0 && endoffile) {
-//            // fill rest with zeroes, and return -1
-//            memset (buffer.output, 0, buffer.readsize);
-//            return -1;
-//        }
     }
     return 0;
 }
@@ -635,25 +615,30 @@ cmp3_read (char *bytes, int size) {
     }
     if (buffer.cachefill > 0) {
         int sz = min (size, buffer.cachefill);
-        mad_fixed_t *cache = (mad_fixed_t *)buffer.cache;
+        int cachepos = buffer.cachepos;
         for (int i = 0; i < nsamples; i++) {
-            *((int16_t*)bytes) = MadFixedToSshort(cache[i * plugin.info.channels]);
+            mad_fixed_t sample = *((mad_fixed_t*)(buffer.cache + cachepos));
+            cachepos = (cachepos + sizeof (mad_fixed_t)) & CACHE_MASK;
+            *((int16_t*)bytes) = MadFixedToSshort (sample);
             bytes += 2;
             size -= 2;
             ret += 2;
             if (plugin.info.channels == 2) {
-                *((int16_t*)bytes) = MadFixedToSshort(cache[i * plugin.info.channels + 1]);
+                sample = *((mad_fixed_t*)(buffer.cache + cachepos));
+                cachepos = (cachepos + sizeof (mad_fixed_t)) & CACHE_MASK;
+                *((int16_t*)bytes) = MadFixedToSshort (sample);
                 bytes += 2;
                 size -= 2;
                 ret += 2;
             }
         }
         if (buffer.cachefill > sz) {
-            memmove (buffer.cache, &buffer.cache[sz], buffer.cachefill-sz);
+            buffer.cachepos = (buffer.cachepos + sz) & CACHE_MASK;
             buffer.cachefill -= sz;
         }
         else {
             buffer.cachefill = 0;
+            buffer.cachepos = 0;
         }
     }
     if (plugin.info.readpos >= (buffer.timeend - buffer.timestart)) {
@@ -678,21 +663,25 @@ cmp3_read_float32 (char *bytes, int size) {
     }
     if (buffer.cachefill > 0) {
         int sz = min (size, buffer.cachefill);
-        mad_fixed_t *cache = (mad_fixed_t *)buffer.cache;
+        int cachepos = buffer.cachepos;
         for (int i = 0; i < nsamples; i++) {
-            *((float*)bytes) = MadFixedToFloat(cache[i * plugin.info.channels]);
+            mad_fixed_t sample = *((mad_fixed_t*)(buffer.cache + cachepos));
+            cachepos = (cachepos + sizeof (mad_fixed_t)) & CACHE_MASK;
+            *((float*)bytes) = MadFixedToFloat (sample);
             bytes += 4;
             size -= 4;
             ret += 4;
             if (plugin.info.channels == 2) {
-                *((float*)bytes) = MadFixedToFloat(cache[i * plugin.info.channels + 1]);
+                sample = *((mad_fixed_t*)(buffer.cache + cachepos));
+                cachepos = (cachepos + sizeof (mad_fixed_t)) & CACHE_MASK;
+                *((float*)bytes) = MadFixedToFloat (sample);
                 bytes += 4;
                 size -= 4;
                 ret += 4;
             }
         }
         if (buffer.cachefill > sz) {
-            memmove (buffer.cache, &buffer.cache[sz], buffer.cachefill-sz);
+            buffer.cachepos = (buffer.cachepos + sz) & CACHE_MASK;
             buffer.cachefill -= sz;
         }
         else {
