@@ -79,11 +79,26 @@ DB_functions_t deadbeef_api = {
     // cuesheet support
     .pl_insert_cue = (DB_playItem_t *(*)(DB_playItem_t *, const char *, struct DB_decoder_s *, const char *))pl_insert_cue,
     // volume control
-    .volume_set_db = volume_set_db,
+    .volume_set_db = plug_volume_set_db,
     .volume_get_db = volume_get_db,
-    .volume_set_amp = volume_set_amp,
+    .volume_set_amp = plug_volume_set_amp,
     .volume_get_amp = volume_get_amp,
 };
+
+void
+volumebar_notify_changed (void);
+
+void
+plug_volume_set_db (float db) {
+    volume_set_db (db);
+    volumebar_notify_changed ();
+}
+
+void
+plug_volume_set_amp (float amp) {
+    volume_set_amp (amp);
+    volumebar_notify_changed ();
+}
 
 #define MAX_DECODERS 50
 DB_decoder_t *g_decoders[MAX_DECODERS+1];

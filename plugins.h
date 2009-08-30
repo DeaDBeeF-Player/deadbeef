@@ -71,4 +71,10 @@ plug_playback_set_pos (float pos);
 struct DB_decoder_s **
 plug_get_decoder_list (void);
 
+void
+plug_volume_set_db (float db);
+
+void
+plug_volume_set_amp (float amp);
+
 #endif // __PLUGINS_H

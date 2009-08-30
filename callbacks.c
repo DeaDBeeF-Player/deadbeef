@@ -1130,10 +1130,15 @@ on_volumebar_button_release_event      (GtkWidget       *widget,
                                         GdkEventButton  *event,
                                         gpointer         user_data)
 {
-
   return FALSE;
 }
 
+void
+volumebar_notify_changed (void) {
+    GtkWidget *widget = lookup_widget (mainwin, "volumebar");
+    volumebar_draw (widget);
+    volumebar_expose (widget, 0, 0, widget->allocation.width, widget->allocation.height);
+}
 
 gboolean
 on_mainwin_delete_event                (GtkWidget       *widget,
