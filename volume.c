@@ -26,6 +26,12 @@ static float volume_amp = 1; // amplitude [0..1]
 
 void
 volume_set_db (float dB) {
+    if (dB < -60) {
+        dB = -60;
+    }
+    if (dB > 0) {
+        dB = 0;
+    }
     session_set_volume (dB);
     volume_db = dB;
     volume_amp = dB > -60 ? db_to_amp (dB) : 0;
@@ -38,6 +44,12 @@ volume_get_db (void) {
 
 void
 volume_set_amp (float amp) {
+    if (amp < 0) {
+        amp = 0;
+    }
+    if (amp > 1) {
+        amp = 1;
+    }
     volume_amp = amp;
     volume_db = amp > 0 ? amp_to_db (amp) : -60.f;
     session_set_volume (volume_db);
