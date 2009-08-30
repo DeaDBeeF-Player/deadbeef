@@ -141,6 +141,7 @@ cflac_init (DB_playItem_t *it) {
     if (timeend > timestart || timeend < 0) {
         plugin.seek (0);
     }
+    plugin.info.readpos = 0;
 
     remaining = 0;
     return 0;
@@ -179,7 +180,7 @@ cflac_read_int16 (char *bytes, int size) {
                 memmove (buffer, &buffer[sz], remaining-sz);
             }
             remaining -= sz;
-            plugin.info.readpos += (float)sz / (plugin.info.channels * plugin.info.samplerate * sizeof (int32_t) / 8);
+            plugin.info.readpos += (float)sz / (plugin.info.channels * plugin.info.samplerate * sizeof (float));
             if (timeend > timestart) {
                 if (plugin.info.readpos + timestart > timeend) {
                     break;
@@ -206,6 +207,7 @@ cflac_read_float32 (char *bytes, int size) {
     int nsamples = size / (plugin.info.channels * plugin.info.bps / 8);
     if (timeend > timestart) {
         if (plugin.info.readpos + timestart > timeend) {
+            fprintf (stderr, "readpos %f + timestart %f = %f is > timeend %f\n", plugin.info.readpos, timestart, plugin.info.readpos + timestart, timeend);
             return 0;
         }
     }
@@ -219,7 +221,7 @@ cflac_read_float32 (char *bytes, int size) {
                 memmove (buffer, &buffer[sz], remaining-sz);
             }
             remaining -= sz;
-            plugin.info.readpos += (float)sz / (plugin.info.channels * plugin.info.samplerate * sizeof (int32_t) / 8);
+            plugin.info.readpos += (float)sz / (plugin.info.channels * plugin.info.samplerate * sizeof (int32_t));
             if (timeend > timestart) {
                 if (plugin.info.readpos + timestart > timeend) {
                     break;
@@ -248,6 +250,7 @@ cflac_seek (float time) {
     }
     remaining = 0;
     plugin.info.readpos = time - timestart;
+    printf ("readpos: %f\n", plugin.info.readpos);
     return 0;
 }
 
