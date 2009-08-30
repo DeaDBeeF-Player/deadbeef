@@ -111,7 +111,7 @@ cmp3_decode (void);
 static int
 cmp3_scan_stream (buffer_t *buffer, float position);
 
-int
+static int
 cmp3_init (DB_playItem_t *it) {
     memset (&buffer, 0, sizeof (buffer));
     buffer.file = fopen (it->fname, "rb");
@@ -219,7 +219,7 @@ extract_i32 (unsigned char *buf)
     return x;
 }
 
-static uint32_t
+static inline uint32_t
 extract_i32_le (unsigned char *buf)
 {
     uint32_t x;
@@ -235,7 +235,7 @@ extract_i32_le (unsigned char *buf)
 
     return x;
 }
-static uint16_t
+static inline uint16_t
 extract_i16 (unsigned char *buf)
 {
     uint16_t x;
@@ -249,7 +249,7 @@ extract_i16 (unsigned char *buf)
     return x;
 }
 
-static float
+static inline float
 extract_f32 (unsigned char *buf) {
     float f;
     uint32_t *x = (uint32_t *)&f;
@@ -608,7 +608,7 @@ cmp3_decode (void) {
     return 0;
 }
 
-void
+static void
 cmp3_free (void) {
     if (buffer.file) {
         fclose (buffer.file);
@@ -619,7 +619,7 @@ cmp3_free (void) {
     }
 }
 
-int
+static int
 cmp3_read (char *bytes, int size) {
     int result;
     int ret = 0;
@@ -662,7 +662,7 @@ cmp3_read (char *bytes, int size) {
     return ret;
 }
 
-int
+static int
 cmp3_read_float32 (char *bytes, int size) {
     int result;
     int ret = 0;
@@ -704,7 +704,8 @@ cmp3_read_float32 (char *bytes, int size) {
     }
     return ret;
 }
-int
+
+static int
 cmp3_seek (float time) {
     time += buffer.timestart;
     if (!buffer.file) {
@@ -888,7 +889,7 @@ static const char *cmp3_genretbl[] = {
     "SynthPop",
 };
 
-int
+static int
 can_be_russian (const char *str) {
     int latin = 0;
     int rus = 0;
@@ -1000,7 +1001,8 @@ convstr_id3v2_4 (const unsigned char* str, int sz) {
     return strdup (ret);
 }
 
-const char *convstr_id3v1 (const char* str, int sz) {
+static const char *
+convstr_id3v1 (const char* str, int sz) {
     static char out[2048];
     int i;
     for (i = 0; i < sz; i++) {
@@ -1073,7 +1075,7 @@ str_trim_right (uint8_t *str, int len) {
 }
 
 // should read both id3v1 and id3v1.1
-int
+static int
 cmp3_read_id3v1 (DB_playItem_t *it, FILE *fp) {
     if (!it || !fp) {
         printf ("bad call to cmp3_read_id3v1!\n");
@@ -1148,7 +1150,7 @@ cmp3_read_id3v1 (DB_playItem_t *it, FILE *fp) {
     return 0;
 }
 
-int
+static int
 cmp3_read_ape (DB_playItem_t *it, FILE *fp) {
 //    printf ("trying to read ape tag\n");
     // try to read footer, position must be already at the EOF right before
@@ -1233,7 +1235,7 @@ cmp3_read_ape (DB_playItem_t *it, FILE *fp) {
     return 0;
 }
 
-void
+static void
 id3v2_string_read (int version, uint8_t *out, int sz, int unsync, uint8_t **pread) {
     if (!unsync) {
         memcpy (out, *pread, sz);
@@ -1257,7 +1259,7 @@ id3v2_string_read (int version, uint8_t *out, int sz, int unsync, uint8_t **prea
     *out = 0;
 }
 
-int
+static int
 cmp3_read_id3v2 (DB_playItem_t *it, FILE *fp) {
     int title_added = 0;
     if (!it || !fp) {
@@ -1650,7 +1652,7 @@ cmp3_read_info_tag (buffer_t *buffer, DB_playItem_t *it, FILE *fp) {
 #endif
 // }}}
 
-DB_playItem_t *
+static DB_playItem_t *
 cmp3_insert (DB_playItem_t *after, const char *fname) {
     FILE *fp = fopen (fname, "rb");
     if (!fp) {
@@ -1725,10 +1727,6 @@ static const char *exts[] = {
 static const char *filetypes[] = {
     "MP1", "MP2", "MP3", NULL
 };
-
-const char **cmp3_getexts (void) {
-    return exts;
-}
 
 // define plugin interface
 static DB_decoder_t plugin = {
