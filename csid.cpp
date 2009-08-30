@@ -26,15 +26,68 @@
 #include "sidplay/builders/resid.h"
 // #include "md5/MD5.h" // include those 2 files if you want to use md5 impl from libsidplay2
 // #include "sidplay/sidendian.h"
-extern "C" {
-#include "codec.h"
-#include "playlist.h"
-#include "csid.h"
-#include "md5/md5.h"
-#include "common.h"
-#include "playback.h"
+
+#include "deadbeef.h"
 #include "conf.h"
+
+extern "C" {
+#include "md5/md5.h"
 }
+
+// forward decls
+extern "C" {
+    int csid_init (DB_playItem_t *it);
+    void csid_free (void);
+    int csid_read (char *bytes, int size);
+    int csid_seek (float time);
+    DB_playItem_t *csid_insert (DB_playItem_t *after, const char *fname);
+    int csid_numvoices (void);
+    void csid_mutevoice (int voice, int mute);
+}
+
+static const char *exts[] = { "sid",NULL };
+const char *filetypes[] = { "SID", NULL };
+
+// define plugin interface
+static DB_decoder_t plugin = {
+    { // plugin
+        /* .plugin.type = */DB_PLUGIN_DECODER,
+        /* .plugin.version_major = */0,
+        /* .plugin.version_minor = */1,
+        /* .inactive = */0,
+        /* .plugin.name = */"SID decoder",
+        /* .plugin.descr = */"based on libsidplay2",
+        /* .plugin.author = */"Alexey Yakovenko",
+        /* .plugin.email = */"waker@users.sourceforge.net",
+        /* .plugin.website = */"http://deadbeef.sf.net",
+        /* .plugin.start = */NULL,
+        /* .plugin.stop = */NULL,
+        /* .plugin.exec_cmdline = */NULL,
+    },
+    { // info
+        /* .info.bps = */0,
+        /* .info.channels = */0,
+        /* .info.samplerate = */0,
+        /* .info.readpos = */0,
+    },
+    /* .init = */csid_init,
+    /* .free = */csid_free,
+    /* .read_int16 = */csid_read,
+    /* .read_float32 = */NULL,
+    /* .seek = */csid_seek,
+    /* .seek_sample = */NULL,
+    /* .insert = */csid_insert,
+    /* .numvoices = */csid_numvoices,
+    /* .mutevoice = */csid_mutevoice,
+    /* .exts = */exts,
+    /* .filetypes = */filetypes,
+    /* .id = */"stdsid"
+};
+
+static DB_functions_t *deadbeef;
+
+#define min(x,y) ((x)<(y)?(x):(y))
+#define max(x,y) ((x)>(y)?(x):(y))
 
 static inline void
 le_int16 (int16_t in, unsigned char *out) {
@@ -51,6 +104,7 @@ le_int16 (int16_t in, unsigned char *out) {
 static sidplay2 *sidplay;
 static ReSIDBuilder *resid;
 static SidTune *tune;
+static float duration; // of the current song
 static uint32_t csid_voicemask = 0;
 // SLDB support costs ~1M!!!
 // current hvsc sldb size is ~35k songs
@@ -235,29 +289,30 @@ sldb_find (const uint8_t *digest) {
 }
 
 extern "C" int
-csid_init (struct playItem_s *it) {
+csid_init (DB_playItem_t *it) {
     sidplay = new sidplay2;
     resid = new ReSIDBuilder ("wtf");
     resid->create (sidplay->info ().maxsids);
 //    resid->create (1);
     resid->filter (true);
-    resid->sampling (p_get_rate ());
+    resid->sampling (deadbeef->playback_get_samplerate ());
+    duration = it->duration;
     tune = new SidTune (it->fname);
 
     tune->selectSong (it->tracknum+1);
-    csid.info.channels = tune->isStereo () ? 2 : 1;
+    plugin.info.channels = tune->isStereo () ? 2 : 1;
     sid2_config_t conf;
     conf = sidplay->config ();
-    conf.frequency = p_get_rate ();
+    conf.frequency = deadbeef->playback_get_samplerate ();
     conf.precision = 16;
-    conf.playback = csid.info.channels == 2 ? sid2_stereo : sid2_mono;
+    conf.playback = plugin.info.channels == 2 ? sid2_stereo : sid2_mono;
     conf.sidEmulation = resid;
     conf.optimisation = 0;
     sidplay->config (conf);
     sidplay->load (tune);
-    csid.info.bitsPerSample = 16;
-    csid.info.samplesPerSecond = p_get_rate ();
-    csid.info.readposition = 0;
+    plugin.info.bps = 16;
+    plugin.info.samplerate = conf.frequency;
+    plugin.info.readpos = 0;
 
     int maxsids = sidplay->info ().maxsids;
     for (int k = 0; k < maxsids; k++) {
@@ -284,15 +339,15 @@ csid_free (void) {
 
 extern "C" int
 csid_read (char *bytes, int size) {
-    if (csid.info.readposition > playlist_current.duration) {
+    if (plugin.info.readpos > duration) {
         return 0;
     }
-    int rd = sidplay->play (bytes, size/csid.info.channels);
-    csid.info.readposition += size/csid.info.channels/2 / (float)csid.info.samplesPerSecond;
+    int rd = sidplay->play (bytes, size/plugin.info.channels);
+    plugin.info.readpos += size/plugin.info.channels/2 / (float)plugin.info.samplerate;
 
 #if WORDS_BIGENDIAN
     // convert samples from le to be
-    int n = rd * csid.info.channels/2;
+    int n = rd * plugin.info.channels/2;
     int16_t *ptr = (int16_t *)bytes;
     while (n > 0) {
         int16_t out;
@@ -302,25 +357,25 @@ csid_read (char *bytes, int size) {
         n--;
     }
 #endif
-    return rd * csid.info.channels;
+    return rd * plugin.info.channels;
 }
 
 extern "C" int
 csid_seek (float time) {
     float t = time;
-    if (t < csid.info.readposition) {
+    if (t < plugin.info.readpos) {
         // reinit
         sidplay->load (tune);
     }
     else {
-        t -= csid.info.readposition;
+        t -= plugin.info.readpos;
     }
     resid->filter (false);
-    int samples = t * csid.info.samplesPerSecond;
-    samples *= 2 * csid.info.channels;
-    uint16_t buffer[4096 * csid.info.channels];
+    int samples = t * plugin.info.samplerate;
+    samples *= 2 * plugin.info.channels;
+    uint16_t buffer[4096 * plugin.info.channels];
     while (samples > 0) {
-        int n = min (samples, 4096) * csid.info.channels;
+        int n = min (samples, 4096) * plugin.info.channels;
         int done = sidplay->play (buffer, n);
         if (done < n) {
             printf ("sid seek failure\n");
@@ -329,7 +384,7 @@ csid_seek (float time) {
         samples -= done;
     }
     resid->filter (true);
-    csid.info.readposition = time;
+    plugin.info.readpos = time;
 
     return 0;
 }
@@ -356,8 +411,8 @@ convstr (const char* str) {
     return out;
 }
 
-extern "C" playItem_t *
-csid_insert (playItem_t *after, const char *fname) {
+extern "C" DB_playItem_t *
+csid_insert (DB_playItem_t *after, const char *fname) {
     sldb_load ();
     SidTune *tune;
     tune = new SidTune (fname);
@@ -424,9 +479,8 @@ csid_insert (playItem_t *after, const char *fname) {
 
     for (int s = 0; s < tunes; s++) {
         if (tune->selectSong (s+1)) {
-            playItem_t *it = (playItem_t*)malloc (sizeof (playItem_t));
-            memset (it, 0, sizeof (playItem_t));
-            it->codec = &csid;
+            DB_playItem_t *it = deadbeef->pl_item_alloc ();
+            it->decoder = &plugin;
             it->fname = strdup (fname);
             it->tracknum = s;
             it->timestart = 0;
@@ -444,26 +498,26 @@ csid_insert (playItem_t *after, const char *fname) {
                     meta = "title";
                     title_added = 1;
                 }
-                pl_add_meta (it, meta, convstr (sidinfo.infoString[0]));
+                deadbeef->pl_add_meta (it, meta, convstr (sidinfo.infoString[0]));
             }
             if (i >= 2 && sidinfo.infoString[1] && sidinfo.infoString[1][0]) {
-                pl_add_meta (it, "artist", convstr (sidinfo.infoString[1]));
+                deadbeef->pl_add_meta (it, "artist", convstr (sidinfo.infoString[1]));
             }
             if (i >= 3 && sidinfo.infoString[2] && sidinfo.infoString[2][0]) {
-                pl_add_meta (it, "copyright", convstr (sidinfo.infoString[2]));
+                deadbeef->pl_add_meta (it, "copyright", convstr (sidinfo.infoString[2]));
             }
 
             for (int j = 3; j < i; j++)
             {
                 if (sidinfo.infoString[j] && sidinfo.infoString[j][0]) {
-                    pl_add_meta (it, "info", convstr (sidinfo.infoString[j]));
+                    deadbeef->pl_add_meta (it, "info", convstr (sidinfo.infoString[j]));
                 }
             }
             char trk[10];
             snprintf (trk, 10, "%d", s+1);
-            pl_add_meta (it, "track", trk);
+            deadbeef->pl_add_meta (it, "track", trk);
             if (!title_added) {
-                pl_add_meta (it, "title", NULL);
+                deadbeef->pl_add_meta (it, "title", NULL);
             }
 
             float length = 120;
@@ -482,20 +536,11 @@ csid_insert (playItem_t *after, const char *fname) {
             it->duration = length;
             it->filetype = "SID";
 
-            after = pl_insert_item (after, it);
+            after = deadbeef->pl_insert_item (after, it);
         }
     }
     delete tune;
     return after;
-}
-
-static const char *exts[]=
-{
-	"sid",NULL
-};
-
-extern "C" const char **csid_getexts (void) {
-    return exts;
 }
 
 int
@@ -521,16 +566,8 @@ csid_mutevoice (int voice, int mute) {
     }
 }
 
-codec_t csid = {
-    csid_init,
-    csid_free,
-    csid_read,
-    csid_seek,
-    csid_insert,
-    csid_getexts,
-    csid_numvoices,
-    csid_mutevoice,
-    "stdsid",
-    { "SID", NULL }
-};
-
+extern "C" DB_plugin_t *
+sid_load (DB_functions_t *api) {
+    deadbeef = api;
+    return DB_PLUGIN (&plugin);
+}

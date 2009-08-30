@@ -20,15 +20,13 @@ deadbeef_SOURCES =\
 	messagepump.c messagepump.h messages.h\
 	conf.c  conf.h\
 	search.c search.h\
-	cmp3.c cvorbis.c cflac.c cgme.c cdumb.c\
+	cmp3.c cvorbis.c cflac.c cgme.c cdumb.c csid.cpp\
 	palsa.c palsa.h playback.h\
 	threading_pthread.c threading.h\
 	md5/md5.c md5/md5.h md5/md5_loc.h\
 	volume.c volume.h\
 	drawing.h gdkdrawing.c\
 	session.h session.c gtksession.c
-
-#	csid.cpp cdumb.c
 
 sdkdir = $(pkgincludedir)
 sdk_HEADERS = deadbeef.h
