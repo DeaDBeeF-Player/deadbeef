@@ -83,9 +83,8 @@ DB_functions_t deadbeef_api = {
     .volume_get_amp = volume_get_amp,
 };
 
-// hack: mp3 decoder module
-DB_plugin_t *cmp3;
-DB_decoder_t *g_decoders[2];
+#define MAX_DECODERS 50
+DB_decoder_t *g_decoders[MAX_DECODERS+1];
 
 void
 plug_md5 (uint8_t sig[16], const char *in, int len) {
@@ -220,6 +219,26 @@ plug_trigger_event (int ev) {
     free (event);
 }
 
+int
+plug_init_plugin (DB_plugin_t* (*loadfunc)(DB_functions_t *), void *handle) {
+    DB_plugin_t *plugin_api = loadfunc (&deadbeef_api);
+    if (!plugin_api) {
+        return -1;
+    }
+    plugin_t *plug = malloc (sizeof (plugin_t));
+    memset (plug, 0, sizeof (plugin_t));
+    plug->plugin = plugin_api;
+    plug->handle = handle;
+    plug->next = plugins;
+    if (plug->plugin->start) {
+        if (plug->plugin->start () < 0) {
+            plug->plugin->inactive = 1;
+        }
+    }
+    plugins = plug;
+    return 0;
+}
+
 void
 plug_load_all (void) {
     char dirname[1024];
@@ -267,34 +286,38 @@ plug_load_all (void) {
                     dlclose (handle);
                     continue;
                 }
-                DB_plugin_t *plugin_api = plug_load (&deadbeef_api);
-                if (!plugin_api) {
+                if (plug_init_plugin (plug_load, handle) < 0) {
                     namelist[i]->d_name[l-3] = 0;
-                    fprintf (stderr, "plugin %s is incompatible with current version of deadbeef, please upgrade the plugin\n");
+                    fprintf (stderr, "plugin %s is incompatible with current version of deadbeef, please upgrade the plugin\n", namelist[i]->d_name);
                     dlclose (handle);
                     continue;
                 }
-                plugin_t *plug = malloc (sizeof (plugin_t));
-                memset (plug, 0, sizeof (plugin_t));
-                plug->plugin = plugin_api;
-                plug->handle = handle;
-                plug->next = plugins;
-                if (plug->plugin->start) {
-                    if (plug->plugin->start () < 0) {
-                        plug->plugin->inactive = 1;
-                    }
-                }
-                plugins = plug;
             }
             free (namelist[i]);
         }
         free (namelist);
     }
-    // hack: init mp3 decoder module, and store pointer
-    extern DB_plugin_t *mpegmad_load (DB_functions_t *api);
-    cmp3 = mpegmad_load (&deadbeef_api);
-    g_decoders[0] = (DB_decoder_t*)cmp3;
-    g_decoders[1] = NULL;
+// load all compiled-in modules
+#define PLUG(n) extern DB_plugin_t * n##_load (DB_functions_t *api);
+#include "moduleconf.h"
+#undef PLUG
+#define PLUG(n) plug_init_plugin (n##_load, NULL);
+#include "moduleconf.h"
+#undef PLUG
+
+    // find all decoders, and put in g_decoders list
+    int numdecoders = 0;
+    for (plugin_t *plug = plugins; plug; plug = plug->next) {
+        if (plug->plugin->type == DB_PLUGIN_DECODER) {
+            printf ("found decoder plugin %s\n", plug->plugin->name);
+            if (numdecoders >= MAX_DECODERS) {
+                break;
+            }
+            g_decoders[numdecoders] = (DB_decoder_t *)plug->plugin;
+            numdecoders++;
+        }
+    }
+    g_decoders[numdecoders] = NULL;
 }
 
 void
@@ -304,7 +327,9 @@ plug_unload_all (void) {
         if (plugins->plugin->stop) {
             plugins->plugin->stop ();
         }
-        dlclose (plugins->handle);
+        if (plugins->handle) {
+            dlclose (plugins->handle);
+        }
         plugins = next;
     }
 }
