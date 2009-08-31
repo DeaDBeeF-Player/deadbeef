@@ -46,6 +46,7 @@ static int
 ape_init (DB_playItem_t *it) {
     ape_dec = ape_decompress_create (it->fname);
     if (!ape_dec) {
+        printf ("ape_decompress_create failed for file %s\n", it->fname);
         return -1;
     }
     WAVEFORMATEX wfe;

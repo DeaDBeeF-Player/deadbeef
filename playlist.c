@@ -178,6 +178,8 @@ pl_insert_cue_from_buffer (playItem_t *after, const char *fname, const uint8_t *
             }
         }
         else if (!strncmp (p, "FILE ", 5)) {
+        // ignore
+#if 0
             pl_get_qvalue_from_cue (p + 5, file);
             // copy directory name
             char dirname[1024];
@@ -201,6 +203,7 @@ pl_insert_cue_from_buffer (playItem_t *after, const char *fname, const uint8_t *
             // copy full name in place of relative name
             strcpy (file, dirname);
 //            printf ("ended up as: %s\n", file);
+#endif
         }
         else if (!strncmp (p, "TRACK ", 6)) {
             pl_get_value_from_cue (p + 6, track);
@@ -242,7 +245,7 @@ pl_insert_cue_from_buffer (playItem_t *after, const char *fname, const uint8_t *
             playItem_t *it = malloc (sizeof (playItem_t));
             memset (it, 0, sizeof (playItem_t));
             it->decoder = decoder;
-            it->fname = strdup (file);
+            it->fname = strdup (fname);
             it->tracknum = atoi (track);
             it->timestart = tstart;
             it->timeend = -1; // will be filled by next read, or by decoder

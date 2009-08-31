@@ -17,11 +17,9 @@ LT_INIT
 AC_CONFIG_MACRO_DIR([m4])
 AC_C_BIGENDIAN
 AC_DEFINE([PREFIX], [], [Installation prefix])
-if test "x$prefix" = "xNONE" ; then
-    AC_DEFINE_UNQUOTED(PREFIX, "${ac_default_prefix}")
-else
-    AC_DEFINE_UNQUOTED(PREFIX, "${prefix}")
-fi
+
+test "x$prefix" = xNONE && prefix=$ac_default_prefix
+AC_DEFINE_UNQUOTED(PREFIX, "${prefix}")
 
 CFLAGS="$CFLAGS -D_GNU_SOURCE -O2 -DHAVE_UNIX"
 CPPFLAGS="$CFLAGS"
@@ -34,6 +32,11 @@ AX_EXT()
 AC_CHECK_LIB([FLAC], [main],,AC_MSG_ERROR([flac not found]))
 AC_SUBST(DEPS_CFLAGS)
 AC_SUBST(DEPS_LIBS)
+
+# ape plugin
+AC_CHECK_LIB([mac], [main], [HAVE_LIBMAC=1 ; APE_LIBS="-lmac"])
+AC_SUBST(HAVE_LIBMAC)
+AC_SUBST(APE_LIBS)
 
 AC_OUTPUT([
 Makefile
