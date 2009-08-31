@@ -18,6 +18,7 @@
 */
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 #include "../../deadbeef.h"
 #include "apewrapper.h"
 
@@ -31,14 +32,17 @@ static void *ape_dec;
 static int ape_blk_size;
 
 #define READBUF_SIZE 0x20000
-#define READBUF_MASK 0x1ffff
 
 static char ape_readbuf[READBUF_SIZE];
 static int ape_blocks_left;
-//static int ape_remaining;
-//static int ape_position;
+static int ape_total_blocks;
+static float timestart;
+static float timeend;
 
-int
+static int
+ape_seek (float seconds);
+
+static int
 ape_init (DB_playItem_t *it) {
     ape_dec = ape_decompress_create (it->fname);
     if (!ape_dec) {
@@ -50,16 +54,25 @@ ape_init (DB_playItem_t *it) {
     char buf[size];
     ape_decompress_get_info_data_sized (ape_dec, APE_INFO_WAV_HEADER_DATA, buf, size);
     ape_blk_size = ape_decompress_get_info_int (ape_dec, APE_INFO_BLOCK_ALIGN);
-    ape_blocks_left = ape_decompress_get_info_int (ape_dec, APE_DECOMPRESS_TOTAL_BLOCKS);
+    ape_total_blocks = ape_blocks_left = ape_decompress_get_info_int (ape_dec, APE_DECOMPRESS_TOTAL_BLOCKS);
     plugin.info.bps = wfe.wBitsPerSample;
     plugin.info.samplerate = wfe.nSamplesPerSec;
     plugin.info.channels = wfe.nChannels;
     plugin.info.readpos = 0;
+    if (it->timeend > 0) {
+        timestart = it->timestart;
+        timeend = it->timeend;
+        ape_seek (0);
+    }
+    else {
+        timestart = 0;
+        timeend = it->duration;
+    }
 
     return 0;
 }
 
-void
+static void
 ape_free (void) {
     if (ape_dec) {
         ape_decompress_destroy (ape_dec);
@@ -67,40 +80,59 @@ ape_free (void) {
     }
 }
 
-int
+static int
 ape_read (char *buffer, int size) {
+    int t1 = clock ();
     int initsize = size;
     int nblocks = size / plugin.info.channels / 2;
     nblocks = min (nblocks, ape_blocks_left);
     nblocks = ape_decompress_getdata (ape_dec, buffer, nblocks);
     ape_blocks_left -= nblocks;
-    printf ("samples left: %d       \r", ape_blocks_left);
+    int t2 = clock ();
+    float t = (t2-t1) / (float)CLOCKS_PER_SEC;
+    if (t > 1) {
+        fprintf (stderr, "ape_decompress_get_data(%d bytes) took %f sec\n", size, t);
+    }
     return nblocks * 2 * plugin.info.channels;
 }
 
-int
+static int
 ape_seek (float seconds) {
+    seconds += timestart;
+    fprintf (stderr, "seek to %f seconds\n", seconds);
+    float t1 = clock ();
     int nblock = seconds * plugin.info.samplerate;
     ape_decompress_seek (ape_dec, nblock);
-    ape_blocks_left = ape_decompress_get_info_int (ape_dec, APE_DECOMPRESS_TOTAL_BLOCKS) - nblock;
-    plugin.info.readpos = seconds;
+    ape_blocks_left = ape_total_blocks - nblock;
+    plugin.info.readpos = seconds - timestart;
+    float t2 = clock ();
+    fprintf (stderr, "seek took %f sec\n", (t2-t1)/(float)CLOCKS_PER_SEC);
 }
 
-DB_playItem_t *
+static DB_playItem_t *
 ape_insert (DB_playItem_t *after, const char *fname) {
     void *dec = ape_decompress_create (fname);
     if (!dec) {
+        ape_decompress_destroy (dec);
         return NULL;
     }
     WAVEFORMATEX wfe;
     ape_decompress_get_info_data (dec, APE_INFO_WAVEFORMATEX, &wfe);
     fprintf (stderr, "%s\nWAVEFORMATEX:\nwFormatTag=%04x\nnChannels=%d\nnSamplesPerSec=%d\nnAvgBytesPerSec=%d\nnBlockAlign=%d\nwBitsPerSample=%d\ncbSize=%d\n", fname, wfe.wFormatTag, wfe.nChannels, wfe.nSamplesPerSec, wfe.nAvgBytesPerSec, wfe.nBlockAlign, wfe.wBitsPerSample, wfe.cbSize);
 
-    DB_playItem_t *it = deadbeef->pl_item_alloc ();
+    float duration = ape_decompress_get_info_int (dec, APE_DECOMPRESS_TOTAL_BLOCKS) / (float)wfe.nSamplesPerSec;
+    DB_playItem_t *it = deadbeef->pl_insert_cue (after, fname, &plugin, "APE");
+    if (it) {
+        it->timeend = duration;
+        it->duration = it->timeend - it->timestart;
+        return it;
+    }
+
+    it = deadbeef->pl_item_alloc ();
     it->decoder = &plugin;
     it->fname = strdup (fname);
     it->filetype = "APE";
-    it->duration = ape_decompress_get_info_int (dec, APE_DECOMPRESS_TOTAL_BLOCKS) / (float)wfe.nSamplesPerSec;
+    it->duration = duration;
  
     deadbeef->pl_add_meta (it, "title", NULL);
     after = deadbeef->pl_insert_item (after, it);
@@ -138,29 +170,3 @@ ape_load (DB_functions_t *api) {
     return DB_PLUGIN (&plugin);
 }
 
-// {{{
-#if 0
-    for (;;) {
-        // fill buffer
-        int nblocks = (READBUF_SIZE-ape_remaining)/ape_blksize;
-        nblocks = min (nblocks, ape_blocks_left);
-        int n = ape_decompress_getdata (ape_dec, ape_readbuf, nblocks);
-        if (ape_remaining > 0) {
-            int sz = min (size, ape_remaining);
-            int nsamples = sz / 4;
-            for (int i = 0; i < nsamples; i++) {
-                int32_t sample = *((int32_t*)&ape_readbuf[ape_position]);
-                *((int16_t *)buffer) = (int16_t)sample;
-                ape_position = (ape_position + sizeof (int32_t)) & ape_ring_mask;
-                ape_remaining -= sizeof (int32_t);
-                buffer += sizeof (int16_t);
-                size -= sizeof (int16_t);
-            }
-        }
-        assert (size >= 0);
-        if (size == 0) {
-            return initsize - size;
-        }
-    }
-#endif
-// }}}
