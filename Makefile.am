@@ -36,7 +36,10 @@ docsdir = $(datadir)/doc/$(PACKAGE)
 
 docs_DATA = README COPYING config-example
 
-EXTRA_DIST = $(docs_DATA)
+desktopdir = $(datadir)/applications
+desktop_DATA = deadbeef.desktop.in
+
+EXTRA_DIST = $(docs_DATA) $(desktop_DATA)
 
 #install-data-local:
 #	@$(NORMAL_INSTALL)

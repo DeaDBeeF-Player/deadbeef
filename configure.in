@@ -35,5 +35,6 @@ gme/Game_Music_Emu-0.5.2/Makefile
 gme/Game_Music_Emu-0.5.2/gme/Makefile
 sid/sidplay-libs-2.1.0/Makefile
 dumb/Makefile
+deadbeef.desktop
 ])
 
