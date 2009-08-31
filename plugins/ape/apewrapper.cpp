@@ -20,40 +20,30 @@ ape_decompress_destroy (void *d) {
     delete dec;
 }
 
-
-// decode process:
-// 1. get input format:
-//    WAVEFORMATEX wfe;
-//    GetInfo(APE_INFO_WAVEFORMATEX, (intptr_t)&wfe)
-// 2. get wav header
-//    int size = GetInfo(APE_INFO_WAV_HEADER_BYTES)
-//    char buf[size];
-//    GetInfo (APE_INFO_WAV_HEADER_DATA, (intptr_t)buf, size);
-// 3. allocate space for readbuffer
-//    int bufsize = GetInfo(APE_INFO_BLOCK_ALIGN) * BLOCKS_PER_DECODE;
-//    char readbuf[bufsize];
-// 4. get total number of blocks
-//    int blocksleft = GetInfo(APE_DECOMPRESS_TOTAL_BLOCKS);
-// 5. decompress
-//    while (blocksleft > 0) {
-//      int ndecoded;
-//      GetData (readbuf, BLOCKS_PER_DECODE, &ndecoded);
-//      nblocksleft -= ndecoded;
-//    }
-// 6. terminate output
-//    if (GetInfo(APE_INFO_WAV_TERMINATING_BYTES) > 0) {
-//      GetInfo(APE_INFO_WAV_TERMINATING_DATA, (intptr_t)readbuf, GetInfo(APE_INFO_WAV_TERMINATING_BYTES));
-//    }
 int
-ape_decompress_info_int (void *d, int id) {
+ape_decompress_get_info_int (void *d, int id) {
     IAPEDecompress *dec = (IAPEDecompress *)d;
     return dec->GetInfo ((APE_DECOMPRESS_FIELDS)id);
 }
 
 int
-ape_decompress_getdata (void *d, char *buffer, int nblocks, int *retr) {
+ape_decompress_get_info_data (void *d, int id, void *ptr) {
     IAPEDecompress *dec = (IAPEDecompress *)d;
-    return dec->GetData (buffer, nblocks, retr);
+    return dec->GetInfo ((APE_DECOMPRESS_FIELDS)id, (intptr_t)ptr);
+}
+
+int
+ape_decompress_get_info_data_sized (void *d, int id, void *ptr, int size) {
+    IAPEDecompress *dec = (IAPEDecompress *)d;
+    return dec->GetInfo ((APE_DECOMPRESS_FIELDS)id, (intptr_t)ptr, size);
+}
+
+int
+ape_decompress_getdata (void *d, char *buffer, int nblocks) {
+    IAPEDecompress *dec = (IAPEDecompress *)d;
+    int retr;
+    int res = dec->GetData (buffer, nblocks, &retr);
+    return retr;
 }
 
 int

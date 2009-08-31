@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = gme/Game_Music_Emu-0.5.2 gme/Game_Music_Emu-0.5.2/gme sid/sidplay-libs-2.1.0 dumb pixmaps plugins/lastfm
+SUBDIRS = gme/Game_Music_Emu-0.5.2 gme/Game_Music_Emu-0.5.2/gme sid/sidplay-libs-2.1.0 dumb pixmaps plugins/lastfm plugins/ape
 
 dumbpath=@top_srcdir@/dumb
 sidpath=@top_srcdir@/sid/sidplay-libs-2.1.0

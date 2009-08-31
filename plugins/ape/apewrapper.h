@@ -5,7 +5,43 @@
 extern "C" {
 #endif
 
+// decode process:
+// 1. get input format:
+//    WAVEFORMATEX wfe;
+//    GetInfo(APE_INFO_WAVEFORMATEX, (intptr_t)&wfe)
+// 2. get wav header
+//    int size = GetInfo(APE_INFO_WAV_HEADER_BYTES)
+//    char buf[size];
+//    GetInfo (APE_INFO_WAV_HEADER_DATA, (intptr_t)buf, size);
+// 3. allocate space for readbuffer
+//    int bufsize = GetInfo(APE_INFO_BLOCK_ALIGN) * BLOCKS_PER_DECODE;
+//    char readbuf[bufsize];
+// 4. get total number of blocks
+//    int blocksleft = GetInfo(APE_DECOMPRESS_TOTAL_BLOCKS);
+// 5. decompress
+//    while (blocksleft > 0) {
+//      int ndecoded;
+//      GetData (readbuf, BLOCKS_PER_DECODE, &ndecoded);
+//      nblocksleft -= ndecoded;
+//    }
+// 6. terminate output
+//    if (GetInfo(APE_INFO_WAV_TERMINATING_BYTES) > 0) {
+//      GetInfo(APE_INFO_WAV_TERMINATING_DATA, (intptr_t)readbuf, GetInfo(APE_INFO_WAV_TERMINATING_BYTES));
+//    }
 #ifndef APE_MACLIB_H
+
+typedef struct tWAVEFORMATEX
+{
+    uint16_t        wFormatTag;         /* format type */
+    uint16_t        nChannels;          /* number of channels (i.e. mono, stereo...) */
+    uint32_t       nSamplesPerSec;     /* sample rate */
+    uint32_t       nAvgBytesPerSec;    /* for buffer estimation */
+    uint16_t        nBlockAlign;        /* block size of data */
+    uint16_t        wBitsPerSample;     /* number of bits per sample of mono data */
+    uint16_t        cbSize;             /* the count in bytes of the size of */
+                    /* extra information (after cbSize) */
+} WAVEFORMATEX;
+
 enum APE_DECOMPRESS_FIELDS
 {
     APE_INFO_FILE_VERSION = 1000,               // version of the APE file * 1000 (3.93 = 3930) [ignored, ignored]
@@ -58,10 +94,16 @@ void
 ape_decompress_destroy (void *d);
 
 int
-ape_decompress_info (void *d, int id);
+ape_decompress_get_info_int (void *d, int id);
 
 int
-ape_decompress_getdata (void *d, char *buffer, int nblocks, int *retr);
+ape_decompress_get_info_data (void *d, int id, void *ptr);
+
+int
+ape_decompress_get_info_data_sized (void *d, int id, void *ptr, int size);
+
+int
+ape_decompress_getdata (void *d, char *buffer, int nblocks);
 
 int
 ape_decompress_seek (void *d, int nblockoffs);

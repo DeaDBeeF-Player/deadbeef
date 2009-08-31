@@ -677,9 +677,9 @@ main (int argc, char *argv[]) {
     p_free ();
     streamer_free ();
     codec_free_locking ();
-    plug_unload_all ();
     session_save (sessfile);
     pl_save (defpl);
     pl_free ();
+    plug_unload_all ();
     return 0;
 }
