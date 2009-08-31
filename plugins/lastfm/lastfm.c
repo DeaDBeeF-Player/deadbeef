@@ -399,12 +399,12 @@ lfm_format_uri (int subm, DB_playItem_t *song, char *out, int outl) {
 static int
 lastfm_songstarted (DB_event_song_t *ev, uintptr_t data) {
     deadbeef->mutex_lock (lfm_mutex);
-    if (lfm_format_uri (-1, ev->song, lfm_nowplaying_url, sizeof (lfm_nowplaying_url)) < 0) {
-        lfm_nowplaying_url[0] = 0;
+    if (lfm_format_uri (-1, ev->song, lfm_nowplaying, sizeof (lfm_nowplaying)) < 0) {
+        lfm_nowplaying[0] = 0;
     }
-    fprintf (stderr, "%s\n", lfm_nowplaying_url);
+//    fprintf (stderr, "%s\n", lfm_nowplaying);
     deadbeef->mutex_unlock (lfm_mutex);
-    if (lfm_nowplaying_url[0]) {
+    if (lfm_nowplaying[0]) {
         deadbeef->cond_signal (lfm_cond);
     }
 
@@ -426,6 +426,12 @@ lastfm_songfinished (DB_event_song_t *ev, uintptr_t data) {
     }
 #endif
 
+    if (!deadbeef->pl_find_meta (ev->song, "artist")
+            || !deadbeef->pl_find_meta (ev->song, "title")
+            || !deadbeef->pl_find_meta (ev->song, "album")
+       ) {
+        return 0;
+    }
     deadbeef->mutex_lock (lfm_mutex);
     // find free place in queue
     for (int i = 0; i < LFM_SUBMISSION_QUEUE_SIZE; i++) {
@@ -444,6 +450,7 @@ lastfm_songfinished (DB_event_song_t *ev, uintptr_t data) {
 static void
 lfm_send_nowplaying (void) {
     if (auth () < 0) {
+        fprintf (stderr, "auth failed! nowplaying cancelled.\n");
         lfm_nowplaying[0] = 0;
         return;
     }
@@ -457,6 +464,9 @@ lfm_send_nowplaying (void) {
         if (strncmp (lfm_reply, "OK", 2)) {
             fprintf (stderr, "nowplaying failed, response:\n%s\n", lfm_reply);
             lfm_sess[0] = 0;
+        }
+        else {
+            fprintf (stderr, "nowplaying success! response:\n%s\n", lfm_reply);
         }
     }
     curl_req_cleanup ();
