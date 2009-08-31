@@ -33,10 +33,11 @@ AC_CHECK_LIB([FLAC], [main],,AC_MSG_ERROR([flac not found]))
 AC_SUBST(DEPS_CFLAGS)
 AC_SUBST(DEPS_LIBS)
 
-# ape plugin
-AC_CHECK_LIB([mac], [main], [HAVE_LIBMAC=1 ; APE_LIBS="-lmac"])
+dnl ape plugin
+AC_CHECK_LIB([mac], [main], [HAVE_LIBMAC=1 ; APE_LIBS="-lmac" ; APE_DIR="plugins/ape"])
 AC_SUBST(HAVE_LIBMAC)
 AC_SUBST(APE_LIBS)
+AC_SUBST(APE_DIR)
 
 AC_OUTPUT([
 Makefile
