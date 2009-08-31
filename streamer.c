@@ -34,7 +34,7 @@
 #include "plugins.h"
 #include "optmath.h"
 
-static int streamer_tid;
+static intptr_t streamer_tid;
 static SRC_STATE *src;
 static SRC_DATA srcdata;
 static int codecleft;

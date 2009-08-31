@@ -20,7 +20,7 @@
 #include <stdlib.h>
 #include "threading.h"
 
-int
+intptr_t
 thread_start (void (*fn)(uintptr_t ctx), uintptr_t ctx) {
     pthread_t tid;
     pthread_attr_t attr;
@@ -44,7 +44,7 @@ thread_start (void (*fn)(uintptr_t ctx), uintptr_t ctx) {
 }
 
 int
-thread_join (int tid) {
+thread_join (intptr_t tid) {
     void *retval;
     int s = pthread_join ((pthread_t)tid, &retval);
     if (s) {

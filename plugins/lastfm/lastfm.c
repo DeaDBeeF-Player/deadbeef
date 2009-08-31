@@ -46,7 +46,7 @@ static char lfm_submission_url[256];
 static uintptr_t lfm_mutex;
 static uintptr_t lfm_cond;
 static int lfm_stopthread;
-static int lfm_tid;
+static intptr_t lfm_tid;
 
 DB_plugin_t *
 lastfm_load (DB_functions_t *api) {
