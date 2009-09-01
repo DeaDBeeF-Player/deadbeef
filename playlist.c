@@ -569,6 +569,7 @@ pl_item_copy (playItem_t *out, playItem_t *it) {
     out->endoffset = it->endoffset;
     out->shufflerating = it->shufflerating;
     out->filetype = it->filetype;
+    out->started_timestamp = it->started_timestamp;
     out->next[PL_MAIN] = it->next[PL_MAIN];
     out->prev[PL_MAIN] = it->prev[PL_MAIN];
     out->next[PL_SEARCH] = it->next[PL_SEARCH];

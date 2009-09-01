@@ -216,6 +216,11 @@ auth (void) {
         fprintf (stderr, "obtained scrobbler submission url: %s\n", lfm_submission_url);
         p = end;
     }
+    else {
+        // send failed, but that doesn't mean session is invalid
+        curl_req_cleanup ();
+        return -1;
+    }
 
     curl_req_cleanup ();
     return 0;
@@ -237,7 +242,7 @@ lfm_fetch_song_info (DB_playItem_t *song, const char **a, const char **t, const 
     }
     *b = deadbeef->pl_find_meta (song, "album");
     if (!*b) {
-        return -1;
+        *b = "";
     }
     *l = song->duration;
     *n = deadbeef->pl_find_meta (song, "track");
@@ -428,7 +433,7 @@ lastfm_songfinished (DB_event_song_t *ev, uintptr_t data) {
 
     if (!deadbeef->pl_find_meta (ev->song, "artist")
             || !deadbeef->pl_find_meta (ev->song, "title")
-            || !deadbeef->pl_find_meta (ev->song, "album")
+//            || !deadbeef->pl_find_meta (ev->song, "album")
        ) {
         return 0;
     }
@@ -463,7 +468,9 @@ lfm_send_nowplaying (void) {
     if (!status) {
         if (strncmp (lfm_reply, "OK", 2)) {
             fprintf (stderr, "nowplaying failed, response:\n%s\n", lfm_reply);
-            lfm_sess[0] = 0;
+            if (!strncmp (lfm_reply, "BADSESS", 7)) {
+                lfm_sess[0] = 0;
+            }
         }
         else {
             fprintf (stderr, "nowplaying success! response:\n%s\n", lfm_reply);
