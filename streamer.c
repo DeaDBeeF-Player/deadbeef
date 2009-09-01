@@ -245,7 +245,7 @@ streamer_read_async (char *bytes, int size) {
                 // read data at source samplerate (with some room for SRC)
                 int nbytes = (nsamples - codecleft) * 2 * nchannels;
                 int samplesize = 2;
-                if (nbytes < 0) {
+                if (nbytes <= 0) {
                     nbytes = 0;
                 }
                 else {
@@ -262,40 +262,42 @@ streamer_read_async (char *bytes, int size) {
                 }
                 codec_unlock ();
                 // recalculate nsamples according to how many bytes we've got
-                int i;
-                if (!decoder->read_float32) {
-                    nsamples = bytesread / (samplesize * nchannels) + codecleft;
-                    // convert to float
-                    float *fbuffer = g_fbuffer + codecleft*2;
-                    if (nchannels == 2) {
-                        for (i = 0; i < (nsamples - codecleft) * 2; i++) {
-                            fbuffer[i] = ((int16_t *)g_readbuffer)[i]/32767.f;
-                        }
-                    }
-                    else if (nchannels == 1) { // convert mono to stereo
-                        for (i = 0; i < (nsamples - codecleft); i++) {
-                            fbuffer[i*2+0] = ((int16_t *)g_readbuffer)[i]/32767.f;
-                            fbuffer[i*2+1] = fbuffer[i*2+0];
-                        }
-                    }
-                }
-                else {
-                    float *fbuffer = g_fbuffer + codecleft*2;
-                    if (nchannels == 1) {
-                        codec_lock ();
-                        bytesread = decoder->read_float32 (g_readbuffer, nbytes*2);
-                        codec_unlock ();
+                if (nbytes != 0) {
+                    int i;
+                    if (!decoder->read_float32) {
                         nsamples = bytesread / (samplesize * nchannels) + codecleft;
-                        for (i = 0; i < (nsamples - codecleft); i++) {
-                            fbuffer[i*2+0] = ((float *)g_readbuffer)[i];
-                            fbuffer[i*2+1] = fbuffer[i*2+0];
+                        // convert to float
+                        float *fbuffer = g_fbuffer + codecleft*2;
+                        if (nchannels == 2) {
+                            for (i = 0; i < (nsamples - codecleft) * 2; i++) {
+                                fbuffer[i] = ((int16_t *)g_readbuffer)[i]/32767.f;
+                            }
+                        }
+                        else if (nchannels == 1) { // convert mono to stereo
+                            for (i = 0; i < (nsamples - codecleft); i++) {
+                                fbuffer[i*2+0] = ((int16_t *)g_readbuffer)[i]/32767.f;
+                                fbuffer[i*2+1] = fbuffer[i*2+0];
+                            }
                         }
                     }
                     else {
-                        codec_lock ();
-                        bytesread = decoder->read_float32 ((char *)fbuffer, nbytes*2);
-                        codec_unlock ();
-                        nsamples = bytesread / (samplesize * nchannels) + codecleft;
+                        float *fbuffer = g_fbuffer + codecleft*2;
+                        if (nchannels == 1) {
+                            codec_lock ();
+                            bytesread = decoder->read_float32 (g_readbuffer, nbytes*2);
+                            codec_unlock ();
+                            nsamples = bytesread / (samplesize * nchannels) + codecleft;
+                            for (i = 0; i < (nsamples - codecleft); i++) {
+                                fbuffer[i*2+0] = ((float *)g_readbuffer)[i];
+                                fbuffer[i*2+1] = fbuffer[i*2+0];
+                            }
+                        }
+                        else {
+                            codec_lock ();
+                            bytesread = decoder->read_float32 ((char *)fbuffer, nbytes*2);
+                            codec_unlock ();
+                            nsamples = bytesread / (samplesize * nchannels) + codecleft;
+                        }
                     }
                 }
                 //codec_lock ();
@@ -313,6 +315,7 @@ streamer_read_async (char *bytes, int size) {
                 nbytes = size;
                 int genbytes = srcdata.output_frames_gen * 4;
                 bytesread = min(size, genbytes);
+                int i;
                 for (i = 0; i < bytesread/2; i++) {
                     float sample = g_srcbuffer[i];
                     if (sample > 1) {
