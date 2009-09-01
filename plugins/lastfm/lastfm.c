@@ -518,6 +518,9 @@ lfm_send_submissions (void) {
     if (!status) {
         if (strncmp (lfm_reply, "OK", 2)) {
             fprintf (stderr, "submission failed, response:\n%s\n", lfm_reply);
+            if (!strncmp (lfm_reply, "BADSESS", 7)) {
+                lfm_sess[0] = 0;
+            }
         }
         else {
             fprintf (stderr, "submission successful, response:\n%s\n", lfm_reply);
