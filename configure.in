@@ -48,6 +48,7 @@ sid/sidplay-libs-2.1.0/Makefile
 dumb/Makefile
 plugins/lastfm/Makefile
 plugins/ape/Makefile
+plugins/demac/Makefile
 deadbeef.desktop
 ])
 
