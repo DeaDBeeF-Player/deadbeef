@@ -123,7 +123,7 @@ auth (void) {
         return 0;
     }
     char req[4096];
-    time_t timestamp = time(0);
+    time_t timestamp = time(NULL);
     uint8_t sig[16];
     char passmd5[33];
     char token[100];
@@ -353,10 +353,10 @@ lfm_format_uri (int subm, DB_playItem_t *song, char *out, int outl) {
     }
 
     if (lfm_fetch_song_info (song, &a, &t, &b, &l, &n, &m) == 0) {
-        fprintf (stderr, "playtime: %f\nartist: %s\ntitle: %s\nalbum: %s\nduration: %f\ntracknum: %s\n---\n", song->playtime, a, t, b, l, n);
+//        fprintf (stderr, "playtime: %f\nartist: %s\ntitle: %s\nalbum: %s\nduration: %f\ntracknum: %s\n---\n", song->playtime, a, t, b, l, n);
     }
     else {
-        fprintf (stderr, "file %s doesn't have enough tags to submit to last.fm\n", song->fname);
+//        fprintf (stderr, "file %s doesn't have enough tags to submit to last.fm\n", song->fname);
         return -1;
     }
 
@@ -462,21 +462,35 @@ lfm_send_nowplaying (void) {
     fprintf (stderr, "auth successful! setting nowplaying\n");
     char s[100];
     snprintf (s, sizeof (s), "s=%s&", lfm_sess);
-    strcat (lfm_nowplaying, s);
+    int l = strlen (lfm_nowplaying);
+    strcpy (lfm_nowplaying+l, s);
 #if !LFM_NOSEND
-    int status = curl_req_send (lfm_nowplaying_url, lfm_nowplaying);
-    if (!status) {
-        if (strncmp (lfm_reply, "OK", 2)) {
-            fprintf (stderr, "nowplaying failed, response:\n%s\n", lfm_reply);
-            if (!strncmp (lfm_reply, "BADSESSION", 7)) {
-                lfm_sess[0] = 0;
+    for (int attempts = 2; attempts > 0; attempts--) {
+        int status = curl_req_send (lfm_nowplaying_url, lfm_nowplaying);
+        if (!status) {
+            if (strncmp (lfm_reply, "OK", 2)) {
+                fprintf (stderr, "nowplaying failed, response:\n%s\n", lfm_reply);
+                if (!strncmp (lfm_reply, "BADSESSION", 7)) {
+                    fprintf (stderr, "got badsession; trying to restore session...\n");
+                    lfm_sess[0] = 0;
+                    curl_req_cleanup ();
+                    if (auth () < 0) {
+                        fprintf (stderr, "fail!\n");
+                        break; // total fail
+                    }
+                    fprintf (stderr, "success! retrying send nowplaying...\n");
+                    snprintf (s, sizeof (s), "s=%s&", lfm_sess);
+                    strcpy (lfm_nowplaying+l, s);
+                    continue; // retry with new session
+                }
+            }
+            else {
+                fprintf (stderr, "nowplaying success! response:\n%s\n", lfm_reply);
             }
         }
-        else {
-            fprintf (stderr, "nowplaying success! response:\n%s\n", lfm_reply);
-        }
+        curl_req_cleanup ();
+        break;
     }
-    curl_req_cleanup ();
 #endif
     lfm_nowplaying[0] = 0;
 }
@@ -514,27 +528,39 @@ lfm_send_submissions (void) {
     }
     fprintf (stderr, "submission req string:\n%s\n", req);
 #if !LFM_NOSEND
-    int status = curl_req_send (lfm_submission_url, req);
-    if (!status) {
-        if (strncmp (lfm_reply, "OK", 2)) {
-            fprintf (stderr, "submission failed, response:\n%s\n", lfm_reply);
-            if (!strncmp (lfm_reply, "BADSESSION", 7)) {
-                lfm_sess[0] = 0;
-            }
-        }
-        else {
-            fprintf (stderr, "submission successful, response:\n%s\n", lfm_reply);
-            deadbeef->mutex_lock (lfm_mutex);
-            for (i = 0; i < LFM_SUBMISSION_QUEUE_SIZE; i++) {
-                if (lfm_subm_queue[i]) {
-                    deadbeef->pl_item_free (lfm_subm_queue[i]);
-                    lfm_subm_queue[i] = NULL;
+    for (int attempts = 2; attempts > 0; attempts--) {
+        int status = curl_req_send (lfm_submission_url, req);
+        if (!status) {
+            if (strncmp (lfm_reply, "OK", 2)) {
+                fprintf (stderr, "submission failed, response:\n%s\n", lfm_reply);
+                if (!strncmp (lfm_reply, "BADSESSION", 7)) {
+                    fprintf (stderr, "got badsession; trying to restore session...\n");
+                    lfm_sess[0] = 0;
+                    curl_req_cleanup ();
+                    if (auth () < 0) {
+                        fprintf (stderr, "fail!\n");
+                        break; // total fail
+                    }
+                    fprintf (stderr, "success! retrying send nowplaying...\n");
+                    res = snprintf (r, len, "s=%s&", lfm_sess);
+                    continue; // retry with new session
                 }
             }
-            deadbeef->mutex_unlock (lfm_mutex);
+            else {
+                fprintf (stderr, "submission successful, response:\n%s\n", lfm_reply);
+                deadbeef->mutex_lock (lfm_mutex);
+                for (i = 0; i < LFM_SUBMISSION_QUEUE_SIZE; i++) {
+                    if (lfm_subm_queue[i]) {
+                        deadbeef->pl_item_free (lfm_subm_queue[i]);
+                        lfm_subm_queue[i] = NULL;
+                    }
+                }
+                deadbeef->mutex_unlock (lfm_mutex);
+            }
         }
+        curl_req_cleanup ();
+        break;
     }
-    curl_req_cleanup ();
 #endif
 }
 
