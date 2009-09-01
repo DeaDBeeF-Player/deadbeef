@@ -14,6 +14,20 @@
 
 <h1 id="news">News</h1>
 
+<h2>APE support status</h2>
+<p>2009/09/01</p>
+<p>a lot of people are asking me about whether deadbeef is going to support APE (Monkey's Audio Codec) format.</p>
+<p>indeed, support is already in plugins branch, and everyone brave enough can try it. it's not fully finished yet, but working.</p>
+<p>unique feature of deadbeef is that it supports BOTH ape decoders available for linux: libmac (unofficial port of official sdk with crappy license), and libdemac (unofficial decoder licensed under GPL, developed by <a href="http://www.rockbox.org/">rockbox</a> people)</p>
+<p>here's some interesting info:</p>
+<p>mac decoder takes extra 10 megabytes of memory for itself (that's approximately same size, as taken by whole deadbeef player with all plugins except mac decoder!)</p>
+<p>mac decoder may take up to 5 seconds to seek or start playback</p>
+<p>libdemac takes almost no memory for itself, i would say i take around 250K for streaming (which is gonna be shared with other decoders btw)</p>
+<p>libdemac is approximately 2 times slower, than libmac</p>
+<p>worst case i've seen until now was 40% cpu time on libdemac, while 20% cpu time on libmac (3GHz Xeon CPU, same .ape file with extreme compression)</p>
+<p>that's it for now!</p>
+<p>happy listening</p>
+
 <h2>One more Gentoo Ebuild</h2>
 <p>2009/08/31</h2>
 <p><a href="mailto:tonn.post@gmail.com">Anton Novikov</a> sent another ebuild for GIT version of DeaDBeeF</p>
