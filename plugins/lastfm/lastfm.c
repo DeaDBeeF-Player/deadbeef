@@ -468,7 +468,7 @@ lfm_send_nowplaying (void) {
     if (!status) {
         if (strncmp (lfm_reply, "OK", 2)) {
             fprintf (stderr, "nowplaying failed, response:\n%s\n", lfm_reply);
-            if (!strncmp (lfm_reply, "BADSESS", 7)) {
+            if (!strncmp (lfm_reply, "BADSESSION", 7)) {
                 lfm_sess[0] = 0;
             }
         }
@@ -518,7 +518,7 @@ lfm_send_submissions (void) {
     if (!status) {
         if (strncmp (lfm_reply, "OK", 2)) {
             fprintf (stderr, "submission failed, response:\n%s\n", lfm_reply);
-            if (!strncmp (lfm_reply, "BADSESS", 7)) {
+            if (!strncmp (lfm_reply, "BADSESSION", 7)) {
                 lfm_sess[0] = 0;
             }
         }
