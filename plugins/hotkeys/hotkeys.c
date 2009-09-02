@@ -130,7 +130,7 @@ get_command( const char* command )
         return deadbeef->playback_play;
 
     if ( 0 == strcasecmp( command, "prev" ) )
-        return deadbeef->playback_play;
+        return deadbeef->playback_prev;
 
     if ( 0 == strcasecmp( command, "next" ) )
         return deadbeef->playback_next;
