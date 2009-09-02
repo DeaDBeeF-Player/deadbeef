@@ -31,7 +31,7 @@
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
 
-#define CALC_CRC 1
+#define CALC_CRC 0
 
 #define BLOCKS_PER_LOOP     4608
 #define MAX_CHANNELS        2
@@ -354,49 +354,22 @@ demac_read (char *buffer, int size) {
             }
 
             /* Convert the output samples to WAV format and write to output file */
+#if CALC_CRC
             uint8_t *pp = wavbuffer + bufferfill;
+#endif
             uint8_t *p = wavbuffer + bufferfill;
-            if (ape_ctx.bps == 8) {
-                assert (0);
-                for (i = 0 ; i < blockstodecode ; i++)
-                {
-                    /* 8 bit WAV uses unsigned samples */
-                    *(p++) = (decoded0[i] + 0x80) & 0xff;
+            for (i = 0 ; i < blockstodecode ; i++)
+            {
+                sample16 = decoded0[i];
+                *(p++) = sample16 & 0xff;
+                *(p++) = (sample16 >> 8) & 0xff;
+                bufferfill += 2;
 
-                    if (ape_ctx.channels == 2) {
-                        *(p++) = (decoded1[i] + 0x80) & 0xff;
-                    }
-                }
-            } else if (ape_ctx.bps == 16) {
-                for (i = 0 ; i < blockstodecode ; i++)
-                {
-                    sample16 = decoded0[i];
+                if (ape_ctx.channels == 2) {
+                    sample16 = decoded1[i];
                     *(p++) = sample16 & 0xff;
                     *(p++) = (sample16 >> 8) & 0xff;
                     bufferfill += 2;
-
-                    if (ape_ctx.channels == 2) {
-                        sample16 = decoded1[i];
-                        *(p++) = sample16 & 0xff;
-                        *(p++) = (sample16 >> 8) & 0xff;
-                        bufferfill += 2;
-                    }
-                }
-            } else if (ape_ctx.bps == 24) {
-                assert (0);
-                for (i = 0 ; i < blockstodecode ; i++)
-                {
-                    sample32 = decoded0[i];
-                    *(p++) = sample32 & 0xff;
-                    *(p++) = (sample32 >> 8) & 0xff;
-                    *(p++) = (sample32 >> 16) & 0xff;
-
-                    if (ape_ctx.channels == 2) {
-                        sample32 = decoded1[i];
-                        *(p++) = sample32 & 0xff;
-                        *(p++) = (sample32 >> 8) & 0xff;
-                        *(p++) = (sample32 >> 16) & 0xff;
-                    }
                 }
             }
 
