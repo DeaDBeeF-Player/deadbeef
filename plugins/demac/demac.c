@@ -31,7 +31,7 @@
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
 
-#define CALC_CRC 0
+#define CALC_CRC 1
 
 #define BLOCKS_PER_LOOP     4608
 #define MAX_CHANNELS        2
@@ -60,7 +60,10 @@ static int timestart;
 static int timeend;
 static int nblocks;
 
+static float ape_duration;
+
 /* 4608*2*3 = 27648 bytes */
+// 5x big to fit extra data while streaming
 #define WAVBUFFER_SIZE (BLOCKS_PER_LOOP*MAX_CHANNELS*MAX_BYTESPERSAMPLE * 5)
 static uint8_t wavbuffer[WAVBUFFER_SIZE];
 static int bufferfill;
@@ -108,6 +111,7 @@ int
 demac_ape_parseheader(FILE *fp, struct ape_ctx_t* ape_ctx)
 {
     int i,n;
+    memset (ape_ctx, 0, sizeof (struct ape_ctx_t));
 
     /* TODO: Skip any leading junk such as id3v2 tags */
     ape_ctx->junklength = 0;
@@ -243,6 +247,7 @@ demac_ape_parseheader(FILE *fp, struct ape_ctx_t* ape_ctx)
             if (read_uint32(fp,&ape_ctx->seektable[i]) < 0)
             {
                  free(ape_ctx->seektable);
+                 ape_ctx->seektable = NULL;
                  return -1;
             }
         }
@@ -265,11 +270,21 @@ demac_init (DB_playItem_t *it) {
     if (demac_ape_parseheader (fp, &ape_ctx) < 0) {
         fprintf (stderr, "demac: failed to read ape header\n");
         fclose (fp);
+        fp = NULL;
+        if (ape_ctx.seektable) {
+            free (ape_ctx.seektable);
+            ape_ctx.seektable = NULL;
+        }
         return -1;
     }
     if ((ape_ctx.fileversion < APE_MIN_VERSION) || (ape_ctx.fileversion > APE_MAX_VERSION)) {
         fprintf(stderr, "demac: unsupported file version - %.2f\n", ape_ctx.fileversion/1000.0);
         fclose (fp);
+        fp = NULL;
+        if (ape_ctx.seektable) {
+            free (ape_ctx.seektable);
+            ape_ctx.seektable = NULL;
+        }
         return -1;
     }
     fprintf(stderr, "demac: decoding file - v%.2f, compression level %d\n", ape_ctx.fileversion/1000.0, ape_ctx.compressiontype);
@@ -278,11 +293,15 @@ demac_init (DB_playItem_t *it) {
     fseek (fp, ape_ctx.firstframe, SEEK_SET);
     bytesinbuffer = fread (inbuffer, 1, INPUT_CHUNKSIZE, fp);
     firstbyte = 3;
+    bufferfill = 0;
+    bytesconsumed = 0;
+    nblocks = 0;
 
     plugin.info.bps = ape_ctx.bps;
     plugin.info.samplerate = ape_ctx.samplerate;
     plugin.info.channels = ape_ctx.channels;
     plugin.info.readpos = 0;
+    ape_duration = it->duration;
     if (it->timeend > 0) {
         timestart = it->timestart;
         timeend = it->timeend;
@@ -291,7 +310,6 @@ demac_init (DB_playItem_t *it) {
         timestart = 0;
         timeend = it->duration;
     }
-    nblocks = 0;
 
     return 0;
 }
@@ -301,6 +319,10 @@ demac_free (void) {
     if (fp) {
         fclose (fp);
         fp = NULL;
+        if (ape_ctx.seektable) {
+            free (ape_ctx.seektable);
+            ape_ctx.seektable = NULL;
+        }
     }
 }
 
@@ -325,6 +347,7 @@ demac_read (char *buffer, int size) {
             init_frame_decoder(&ape_ctx, inbuffer, &firstbyte, &bytesconsumed);
 
             /* Update buffer */
+            printf ("bytesinbuffer=%d, bytesconsumed=%d\n", bytesinbuffer, bytesconsumed);
             memmove(inbuffer,inbuffer + bytesconsumed, bytesinbuffer - bytesconsumed);
             bytesinbuffer -= bytesconsumed;
 
@@ -378,10 +401,6 @@ demac_read (char *buffer, int size) {
 #if CALC_CRC
             frame_crc = ape_updatecrc(pp, p - pp, frame_crc);
 #endif
-            //write(fdwav,wavbuffer,p - wavbuffer);
-
-            /* Update the buffer */
-//            fprintf (stderr, "size=%d, nblocks=%d, currframe=%d, bufferfill=%d(%d), bytesconsumed=%d, bytesinbuffer=%d\n", size, nblocks, currentframe, bufferfill, startbfill, bytesconsumed, bytesinbuffer);
             memmove(inbuffer,inbuffer + bytesconsumed, bytesinbuffer - bytesconsumed);
             bytesinbuffer -= bytesconsumed;
 
@@ -424,7 +443,31 @@ demac_read (char *buffer, int size) {
 
 static int
 demac_seek (float seconds) {
-    return 0;
+    seconds += timestart;
+    int npt = ape_ctx.seektablelength / sizeof (uint32_t);
+    if (npt == ape_ctx.totalframes) {
+        // convert to seekpoint number
+        int nseekpt = seconds / ape_duration * npt;
+        if (nseekpt >= npt) {
+            nseekpt = npt-1;
+        }
+        // reset all cached stuff
+        bufferfill = 0;
+        currentframe = nseekpt;
+        bytesinbuffer = 0;
+        nblocks = 0;
+        bytesconsumed = 0;
+        fseek (fp, ape_ctx.firstframe + ape_ctx.seektable[nseekpt], SEEK_SET);
+        bytesinbuffer = fread (inbuffer, 1, INPUT_CHUNKSIZE, fp);
+        firstbyte = 3;
+        plugin.info.readpos = npt * ape_duration / ape_ctx.totalframes;
+        return 0;
+    }
+    else {
+        fprintf (stderr, "demac: ape without seektable - not implemented yet\n");
+        return -1;
+    }
+    return -1;
 }
 
 static DB_playItem_t *
@@ -439,6 +482,7 @@ demac_insert (DB_playItem_t *after, const char *fname) {
         fclose (fp);
         return NULL;
     }
+    ape_dumpinfo (&ape_ctx);
     if ((ape_ctx.fileversion < APE_MIN_VERSION) || (ape_ctx.fileversion > APE_MAX_VERSION)) {
         fprintf(stderr, "demac: unsupported file version - %.2f\n", ape_ctx.fileversion/1000.0);
         fclose (fp);
