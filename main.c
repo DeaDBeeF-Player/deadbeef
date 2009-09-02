@@ -163,10 +163,10 @@ exec_command_line (const char *cmdline, int len, int filter) {
     while (parg < pend) {
         if (filter == 1) {
             if (!strcmp (parg, "--help") || !strcmp (parg, "-h")) {
-                printf ("DeaDBeeF %s Copyright (C) 2009 Alexey Yakovenko\n", VERSION);
                 printf ("Usage: deadbeef [options] [file(s)]\n");
                 printf ("Options:\n");
                 printf ("   --help  or  -h     Print help (this message) and exit\n");
+                printf ("   --version          Print version info and exit\n");
                 printf ("   --play             Start playback\n");
                 printf ("   --stop             Stop playback\n");
                 printf ("   --pause            Pause playback\n");
@@ -174,6 +174,10 @@ exec_command_line (const char *cmdline, int len, int filter) {
                 printf ("   --prev             Previous song in playlist\n");
                 printf ("   --random           Previous song in playlist\n");
                 printf ("   --queue            Append file(s) to existing playlist\n");
+                return 1;
+            }
+            else if (!strcmp (parg, "--version")) {
+                printf ("DeaDBeeF %s Copyright (C) 2009 Alexey Yakovenko\n", VERSION);
                 return 1;
             }
         }
