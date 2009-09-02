@@ -255,12 +255,9 @@ demac_ape_parseheader(FILE *fp, struct ape_ctx_t* ape_ctx)
     return 0;
 }
 
-FILE *fw;
-
 static int
 demac_init (DB_playItem_t *it) {
     crc_errors = 0;
-    fw = fopen ("out.raw", "w+b");
     fp = fopen (it->fname, "rb");
     if (!fp) {
         return -1;
