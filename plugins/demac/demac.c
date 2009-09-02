@@ -31,7 +31,7 @@
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
 
-#define CALC_CRC 1
+#define CALC_CRC 0
 
 #define BLOCKS_PER_LOOP     4608
 #define MAX_CHANNELS        2
@@ -59,6 +59,8 @@ static int bytesconsumed;
 static int timestart;
 static int timeend;
 static int nblocks;
+static int samplestoskip;
+static int samplesdecoded;
 
 static float ape_duration;
 
@@ -251,6 +253,7 @@ demac_ape_parseheader(FILE *fp, struct ape_ctx_t* ape_ctx)
                  return -1;
             }
         }
+        ape_ctx->numseekpoints = ape_ctx->seektablelength/sizeof (int32_t);
     }
 
     ape_ctx->firstframe = ape_ctx->junklength + ape_ctx->descriptorlength +
@@ -259,6 +262,9 @@ demac_ape_parseheader(FILE *fp, struct ape_ctx_t* ape_ctx)
 
     return 0;
 }
+
+static int
+demac_seek (float seconds);
 
 static int
 demac_init (DB_playItem_t *it) {
@@ -290,12 +296,15 @@ demac_init (DB_playItem_t *it) {
     fprintf(stderr, "demac: decoding file - v%.2f, compression level %d\n", ape_ctx.fileversion/1000.0, ape_ctx.compressiontype);
 
     currentframe = 0;
+    fprintf (stderr, "seek first frame: %d\n", ape_ctx.firstframe);
     fseek (fp, ape_ctx.firstframe, SEEK_SET);
     bytesinbuffer = fread (inbuffer, 1, INPUT_CHUNKSIZE, fp);
     firstbyte = 3;
     bufferfill = 0;
     bytesconsumed = 0;
     nblocks = 0;
+    samplestoskip = 0;
+    samplesdecoded = 0;
 
     plugin.info.bps = ape_ctx.bps;
     plugin.info.samplerate = ape_ctx.samplerate;
@@ -305,6 +314,7 @@ demac_init (DB_playItem_t *it) {
     if (it->timeend > 0) {
         timestart = it->timestart;
         timeend = it->timeend;
+        demac_seek (0);
     }
     else {
         timestart = 0;
@@ -347,7 +357,6 @@ demac_read (char *buffer, int size) {
             init_frame_decoder(&ape_ctx, inbuffer, &firstbyte, &bytesconsumed);
 
             /* Update buffer */
-            printf ("bytesinbuffer=%d, bytesconsumed=%d\n", bytesinbuffer, bytesconsumed);
             memmove(inbuffer,inbuffer + bytesconsumed, bytesinbuffer - bytesconsumed);
             bytesinbuffer -= bytesconsumed;
 
@@ -381,7 +390,15 @@ demac_read (char *buffer, int size) {
             uint8_t *pp = wavbuffer + bufferfill;
 #endif
             uint8_t *p = wavbuffer + bufferfill;
-            for (i = 0 ; i < blockstodecode ; i++)
+            int i = 0;
+            while (samplestoskip > 0 && i < blockstodecode) {
+                i++;
+                samplestoskip--;
+                p += ape_ctx.channels * 2;
+                samplesdecoded++;
+            }
+
+            for (; i < blockstodecode ; i++)
             {
                 sample16 = decoded0[i];
                 *(p++) = sample16 & 0xff;
@@ -394,6 +411,7 @@ demac_read (char *buffer, int size) {
                     *(p++) = (sample16 >> 8) & 0xff;
                     bufferfill += 2;
                 }
+                samplesdecoded++;
             }
 
             assert (bufferfill <= WAVBUFFER_SIZE);
@@ -437,37 +455,80 @@ demac_read (char *buffer, int size) {
             bufferfill -= sz;
         }
     }
-
+    plugin.info.readpos = samplesdecoded / (float)plugin.info.samplerate - timestart;
+    if (plugin.info.readpos >= (timeend - timestart)) {
+        return 0;
+    }
     return sz;
 }
+
+/* Given an ape_ctx and a sample to seek to, return the file position
+   to the frame containing that sample, and the number of samples to
+   skip in that frame.
+   */
+
+static int ape_calc_seekpos(struct ape_ctx_t* ape_ctx,
+        uint32_t new_sample,
+        uint32_t* newframe,
+        uint32_t* filepos,
+        uint32_t* samplestoskip)
+{
+    uint32_t n;
+
+    n = new_sample / ape_ctx->blocksperframe;
+    if (n >= ape_ctx->numseekpoints)
+    {
+        /* We don't have a seekpoint for that frame */
+        return 0;
+    }
+
+    *newframe = n;
+    *filepos = ape_ctx->seektable[n];
+    *samplestoskip = new_sample - (n * ape_ctx->blocksperframe);
+
+    return 1;
+}
+
 
 static int
 demac_seek (float seconds) {
     seconds += timestart;
-    int npt = ape_ctx.seektablelength / sizeof (uint32_t);
-    if (npt == ape_ctx.totalframes) {
-        // convert to seekpoint number
-        int nseekpt = seconds / ape_duration * npt;
-        if (nseekpt >= npt) {
-            nseekpt = npt-1;
-        }
-        // reset all cached stuff
-        bufferfill = 0;
-        currentframe = nseekpt;
-        bytesinbuffer = 0;
-        nblocks = 0;
-        bytesconsumed = 0;
-        fseek (fp, ape_ctx.firstframe + ape_ctx.seektable[nseekpt], SEEK_SET);
-        bytesinbuffer = fread (inbuffer, 1, INPUT_CHUNKSIZE, fp);
-        firstbyte = 3;
-        plugin.info.readpos = npt * ape_duration / ape_ctx.totalframes;
-        return 0;
-    }
-    else {
-        fprintf (stderr, "demac: ape without seektable - not implemented yet\n");
+    uint32_t newsample = seconds * plugin.info.samplerate;
+    if (newsample > ape_ctx.totalsamples) {
         return -1;
     }
-    return -1;
+    uint32_t nf, fpos;
+    if (ape_calc_seekpos (&ape_ctx, newsample, &nf, &fpos, &samplestoskip)) {
+        firstbyte = 3 - (fpos & 3);
+        fpos &= ~3;
+        fseek (fp, fpos, SEEK_SET);
+        bytesinbuffer = fread (inbuffer, 1, INPUT_CHUNKSIZE, fp);
+        bufferfill = 0;
+        bytesconsumed = 0;
+        nblocks = 0;
+        samplesdecoded = newsample-samplestoskip;
+        plugin.info.readpos = seconds;
+    }
+    else {
+        // no seektable
+        if (newsample > samplesdecoded) {
+            samplestoskip = newsample - samplesdecoded;
+        }
+        else {
+            fpos = ape_ctx.firstframe;
+            samplestoskip = newsample;
+            firstbyte = 3 - (fpos & 3);
+            fpos &= ~3;
+            fseek (fp, fpos, SEEK_SET);
+            bytesinbuffer = fread (inbuffer, 1, INPUT_CHUNKSIZE, fp);
+            bufferfill = 0;
+            bytesconsumed = 0;
+            nblocks = 0;
+            samplesdecoded = 0;
+        }
+    }
+    plugin.info.readpos = seconds - timestart;
+    return 0;
 }
 
 static DB_playItem_t *
@@ -482,7 +543,7 @@ demac_insert (DB_playItem_t *after, const char *fname) {
         fclose (fp);
         return NULL;
     }
-    ape_dumpinfo (&ape_ctx);
+//    ape_dumpinfo (&ape_ctx);
     if ((ape_ctx.fileversion < APE_MIN_VERSION) || (ape_ctx.fileversion > APE_MAX_VERSION)) {
         fprintf(stderr, "demac: unsupported file version - %.2f\n", ape_ctx.fileversion/1000.0);
         fclose (fp);
