@@ -37,6 +37,7 @@
 #include "streamer.h"
 #include "playback.h"
 #include "common.h"
+#include "conf.h"
 
 // deadbeef api
 DB_functions_t deadbeef_api = {
@@ -290,6 +291,28 @@ plug_load_all (void) {
                     continue;
                 }
                 if (strcasecmp (&namelist[i]->d_name[l-3], ".so")) {
+                    continue;
+                }
+                // no blacklisted
+                const uint8_t *p = conf_blacklist_plugins;
+                while (*p) {
+                    const uint8_t *e = p;
+                    while (*e && *e > 0x20) {
+                        e++;
+                    }
+                    if (l-3 == e-p) {
+                        if (!strncmp (p, namelist[i]->d_name, e-p)) {
+                            p = NULL;
+                            break;
+                        }
+                    }
+                    p = e;
+                    while (*p && *p <= 0x20) {
+                        p++;
+                    }
+                }
+                if (!p) {
+                    fprintf (stderr, "plugin %s is blacklisted in config file\n", namelist[i]->d_name);
                     continue;
                 }
                 char fullname[1024];

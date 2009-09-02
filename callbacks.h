@@ -496,3 +496,7 @@ on_mainwin_configure_event             (GtkWidget       *widget,
 void
 on_cursor_follows_playback_activate    (GtkMenuItem     *menuitem,
                                         gpointer         user_data);
+
+void
+on_scroll_follows_playback_activate    (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);

@@ -52,10 +52,10 @@ int
 session_get_playlist_order (void);
 
 void
-session_set_cursor_follows_playback (int on);
+session_set_scroll_follows_playback (int on);
 
 int
-session_get_cursor_follows_playback (void);
+session_get_scroll_follows_playback (void);
 
 void
 session_set_playlist_looping (int looping);

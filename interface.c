@@ -65,7 +65,7 @@ create_mainwin (void)
   GtkWidget *loop_all;
   GtkWidget *loop_single;
   GtkWidget *loop_disable;
-  GtkWidget *cursor_follows_playback;
+  GtkWidget *scroll_follows_playback;
   GtkWidget *menuitem4;
   GtkWidget *menuitem4_menu;
   GtkWidget *about1;
@@ -240,10 +240,10 @@ create_mainwin (void)
   gtk_container_add (GTK_CONTAINER (looping1_menu), loop_disable);
   gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (loop_disable), TRUE);
 
-  cursor_follows_playback = gtk_check_menu_item_new_with_mnemonic ("Cursor follows playback");
-  gtk_widget_show (cursor_follows_playback);
-  gtk_container_add (GTK_CONTAINER (playlist1_menu), cursor_follows_playback);
-  gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (cursor_follows_playback), TRUE);
+  scroll_follows_playback = gtk_check_menu_item_new_with_mnemonic ("Scroll follows playback");
+  gtk_widget_show (scroll_follows_playback);
+  gtk_container_add (GTK_CONTAINER (playlist1_menu), scroll_follows_playback);
+  gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (scroll_follows_playback), TRUE);
 
   menuitem4 = gtk_menu_item_new_with_mnemonic ("_Help");
   gtk_widget_show (menuitem4);
@@ -424,8 +424,8 @@ create_mainwin (void)
   g_signal_connect ((gpointer) loop_disable, "activate",
                     G_CALLBACK (on_loop_disable_activate),
                     NULL);
-  g_signal_connect ((gpointer) cursor_follows_playback, "activate",
-                    G_CALLBACK (on_cursor_follows_playback_activate),
+  g_signal_connect ((gpointer) scroll_follows_playback, "activate",
+                    G_CALLBACK (on_scroll_follows_playback_activate),
                     NULL);
   g_signal_connect ((gpointer) about1, "activate",
                     G_CALLBACK (on_about1_activate),
@@ -586,7 +586,7 @@ create_mainwin (void)
   GLADE_HOOKUP_OBJECT (mainwin, loop_all, "loop_all");
   GLADE_HOOKUP_OBJECT (mainwin, loop_single, "loop_single");
   GLADE_HOOKUP_OBJECT (mainwin, loop_disable, "loop_disable");
-  GLADE_HOOKUP_OBJECT (mainwin, cursor_follows_playback, "cursor_follows_playback");
+  GLADE_HOOKUP_OBJECT (mainwin, scroll_follows_playback, "scroll_follows_playback");
   GLADE_HOOKUP_OBJECT (mainwin, menuitem4, "menuitem4");
   GLADE_HOOKUP_OBJECT (mainwin, menuitem4_menu, "menuitem4_menu");
   GLADE_HOOKUP_OBJECT (mainwin, about1, "about1");

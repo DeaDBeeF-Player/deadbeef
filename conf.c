@@ -25,6 +25,7 @@ int conf_samplerate = 48000;
 int conf_src_quality = 1;
 char conf_hvsc_path[1024] = "";
 int conf_hvsc_enable = 0;
+char conf_blacklist_plugins[1024]; // plugins listed in this option will not be loaded
 
 int
 conf_load (void) {
@@ -70,18 +71,23 @@ conf_load (void) {
             conf_samplerate = atoi (value);
         }
         else if (!strcasecmp (str, "alsa_soundcard")) {
-            strncpy (conf_alsa_soundcard, value, 1024);
-            conf_alsa_soundcard[1023] = 0;
+            strncpy (conf_alsa_soundcard, value, sizeof (conf_alsa_soundcard));
+            conf_alsa_soundcard[sizeof (conf_alsa_soundcard) - 1] = 0;
         }
         else if (!strcasecmp (str, "src_quality")) {
             conf_src_quality = atoi (value);
         }
         else if (!strcasecmp (str, "hvsc_path")) {
-            strncpy (conf_hvsc_path, value, 1024);
-            conf_hvsc_path[1023] = 0;
+            strncpy (conf_hvsc_path, value, sizeof (conf_hvsc_path));
+            conf_hvsc_path[sizeof (conf_hvsc_path)-1] = 0;
         }
         else if (!strcasecmp (str, "hvsc_enable")) {
             conf_hvsc_enable = atoi (value);
+        }
+        else if (!strcasecmp (str, "blacklist_plugins")) {
+            fprintf (stderr, "blacklisted plugins: %s\n", value);
+            strncpy (conf_blacklist_plugins, value, sizeof (conf_blacklist_plugins));
+            conf_blacklist_plugins[sizeof (conf_blacklist_plugins)-1] = 0;
         }
         else {
             fprintf (stderr, "error in config file line %d\n", line);

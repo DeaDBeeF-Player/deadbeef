@@ -29,7 +29,7 @@ char session_dir[2048];
 float session_volume;
 int8_t session_playlist_order;
 int8_t session_playlist_looping;
-int8_t session_cursor_follows_playback = 1;
+int8_t session_scroll_follows_playback = 1;
 int session_win_attrs[5] = { 40, 40, 500, 300, 0 };
 static uint8_t sessfile_magic[] = { 0xdb, 0xef, 0x5e, 0x55 }; // dbefsess in hexspeak
 
@@ -39,7 +39,7 @@ session_reset (void) {
     session_dir[0] = 0;
     session_playlist_looping = 0;
     session_playlist_order = 0;
-    session_cursor_follows_playback = 1;
+    session_scroll_follows_playback = 1;
     session_win_attrs[0] = 40;
     session_win_attrs[1] = 40;
     session_win_attrs[2] = 500;
@@ -154,7 +154,7 @@ session_save (const char *fname) {
     if (fwrite (&session_playlist_looping, 1, 1, fp) != 1) {
         goto session_save_fail;
     }
-    if (fwrite (&session_cursor_follows_playback, 1, 1, fp) != 1) {
+    if (fwrite (&session_scroll_follows_playback, 1, 1, fp) != 1) {
         goto session_save_fail;
     }
     for (int k = 0; k < 5; k++) {
@@ -217,7 +217,7 @@ session_load (const char *fname) {
     if (session_playlist_looping < 0 || session_playlist_looping > 2) {
         goto session_load_fail;
     }
-    if (fread (&session_cursor_follows_playback, 1, 1, fp) != 1) {
+    if (fread (&session_scroll_follows_playback, 1, 1, fp) != 1) {
         goto session_load_fail;
     }
     for (int k = 0; k < 5; k++) {
@@ -278,11 +278,11 @@ session_get_playlist_looping (void) {
 }
 
 void
-session_set_cursor_follows_playback (int on) {
-    session_cursor_follows_playback = on;
+session_set_scroll_follows_playback (int on) {
+    session_scroll_follows_playback = on;
 }
 
 int
-session_get_cursor_follows_playback (void) {
-    return session_cursor_follows_playback;
+session_get_scroll_follows_playback (void) {
+    return session_scroll_follows_playback;
 }

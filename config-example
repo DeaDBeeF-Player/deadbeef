@@ -29,3 +29,7 @@ src_quality 2
 # in case you don't know what HVSC is - keep disabled
 #hvsc_path /home/waker/hvsc/C64Music/DOCUMENTS/Songlengths.txt
 #hvsc_enable 1
+
+# plugin blacklisting
+# i use it for testing
+#blacklist_plugins ape hotkeys

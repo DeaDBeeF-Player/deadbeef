@@ -288,12 +288,12 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkCheckMenuItem" id="cursor_follows_playback">
+		    <widget class="GtkCheckMenuItem" id="scroll_follows_playback">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">Cursor follows playback</property>
+		      <property name="label" translatable="yes">Scroll follows playback</property>
 		      <property name="use_underline">True</property>
 		      <property name="active">True</property>
-		      <signal name="activate" handler="on_cursor_follows_playback_activate" last_modification_time="Thu, 27 Aug 2009 18:17:17 GMT"/>
+		      <signal name="activate" handler="on_scroll_follows_playback_activate" last_modification_time="Wed, 02 Sep 2009 17:46:43 GMT"/>
 		    </widget>
 		  </child>
 		</widget>
