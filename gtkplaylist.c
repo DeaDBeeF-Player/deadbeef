@@ -504,9 +504,11 @@ gtkpl_mouse1_pressed (gtkplaylist_t *ps, int state, int ex, int ey, double time)
             && fabs(ps->lastpos[1] - ey) < 3) {
         // doubleclick - play this item
         if (ps->row != -1) {
+            gtkplaylist_t main_playlist;
             playItem_t *it = gtkpl_get_for_idx (ps, ps->row);
             it->selected = 1;
-            messagepump_push (M_PLAYSONGNUM, 0, ps->row, 0);
+            int r = pl_get_idx_of (it);
+            messagepump_push (M_PLAYSONGNUM, 0, r, 0);
             return;
         }
 
