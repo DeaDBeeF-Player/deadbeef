@@ -1,6 +1,6 @@
 /*
     Hotkeys plugin for DeaDBeeF
-    Copyright (C) 2009 Viktor Semykin
+    Copyright (C) 2009 Viktor Semykin <thesame.ml@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -294,7 +294,7 @@ x_err_handler (Display *disp, XErrorEvent *evt) {
 static int
 hotkeys_start (void) {
     finished = 0;
-
+    loop_tid = 0;
     disp = XOpenDisplay( NULL );
     if ( !disp )
     {
@@ -304,17 +304,21 @@ hotkeys_start (void) {
     XSetErrorHandler( x_err_handler );
 
     read_config( disp );
-    loop_tid = deadbeef->thread_start( hotkeys_event_loop, 0 );
+    if (command_count > 0) {
+        loop_tid = deadbeef->thread_start( hotkeys_event_loop, 0 );
+    }
+    else {
+        cleanup();
+    }
 }
 
 static int
 hotkeys_stop (void) {
-    XEvent evt;
-
-    finished = 1;
-
-    deadbeef->thread_join( loop_tid );
-    cleanup();
+    if (loop_tid) {
+        finished = 1;
+        deadbeef->thread_join( loop_tid );
+        cleanup();
+    }
 }
 
 // define plugin interface
