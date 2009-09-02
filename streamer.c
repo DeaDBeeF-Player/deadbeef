@@ -22,6 +22,7 @@
 #include <unistd.h>
 #include <samplerate.h>
 #include <sys/prctl.h>
+#include <sys/time.h>
 #include "threading.h"
 #include "codec.h"
 #include "playlist.h"
@@ -85,6 +86,8 @@ streamer_thread (uintptr_t ctx) {
     codecleft = 0;
 
     while (!streaming_terminate) {
+        struct timeval tm1;
+        gettimeofday (&tm1, NULL);
         if (nextsong >= 0 && bytes_until_next_song == 0) {
             int sng = nextsong;
             int pstate = nextsong_pstate;
@@ -148,12 +151,17 @@ streamer_thread (uintptr_t ctx) {
             }
         }
 
+        // read ahead at 384K per second
+        // that means 10ms per 4k block, or 40ms per 16k block
+        int alloc_time = 1000 / (96000 * 4 / 4096);
+
         streamer_lock ();
-        if (streambuffer_fill < STREAM_BUFFER_SIZE && bytes_until_next_song == 0) {
+        if (streambuffer_fill < (STREAM_BUFFER_SIZE-4096) && bytes_until_next_song == 0) {
             int sz = STREAM_BUFFER_SIZE - streambuffer_fill;
             int minsize = 4096;
             if (streambuffer_fill < 16384) {
                 minsize = 16384;
+                alloc_time *= 4;
             }
             sz = min (minsize, sz);
             assert ((sz&3) == 0);
@@ -162,8 +170,14 @@ streamer_thread (uintptr_t ctx) {
             streambuffer_fill += bytesread;
         }
         streamer_unlock ();
-        usleep (1000);
-        //printf ("fill: %d        \r", streambuffer_fill);
+        struct timeval tm2;
+        gettimeofday (&tm2, NULL);
+
+        int ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
+        alloc_time -= ms;
+        if (alloc_time > 0) {
+            usleep (alloc_time * 1000);
+        }
     }
 
     if (src) {

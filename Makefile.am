@@ -49,7 +49,7 @@ docsdir = $(datadir)/doc/$(PACKAGE)
 docs_DATA = README COPYING config-example
 
 desktopdir = $(datadir)/applications
-desktop_DATA = deadbeef.desktop.in
+desktop_DATA = deadbeef.desktop
 
 EXTRA_DIST = $(docs_DATA) $(desktop_DATA)
 
