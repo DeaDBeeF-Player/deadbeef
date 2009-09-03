@@ -575,6 +575,15 @@ junk_read_ape (playItem_t *it, FILE *fp) {
             else if (!strcasecmp (key, "track")) {
                 pl_add_meta (it, "track", value);
             }
+            else if (!strcasecmp (key, "year")) {
+                pl_add_meta (it, "year", value);
+            }
+            else if (!strcasecmp (key, "genre")) {
+                pl_add_meta (it, "genre", value);
+            }
+            else if (!strcasecmp (key, "comment")) {
+                pl_add_meta (it, "genre", value);
+            }
         }
     }
 
