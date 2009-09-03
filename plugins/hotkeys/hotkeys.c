@@ -27,7 +27,7 @@ static DB_misc_t plugin;
 static DB_functions_t *deadbeef;
 static int finished;
 static Display *disp;
-static int loop_tid;
+static intptr_t loop_tid;
 
 #define MAX_COMMAND_COUNT 256
 
