@@ -98,6 +98,9 @@ ape_read (char *buffer, int size) {
     ape_blocks_left -= nblocks;
     samplesdecoded += nblocks;
     plugin.info.readpos = samplesdecoded / (float)plugin.info.samplerate - timestart;
+    if (plugin.info.readpos >= timeend) {
+        return 0;
+    }
     return nblocks * 2 * plugin.info.channels;
 }
 
