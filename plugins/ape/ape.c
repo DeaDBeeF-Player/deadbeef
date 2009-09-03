@@ -126,7 +126,8 @@ ape_insert (DB_playItem_t *after, const char *fname) {
 
     float duration = ape_decompress_get_info_int (dec, APE_DECOMPRESS_TOTAL_BLOCKS) / (float)wfe.nSamplesPerSec;
     ape_decompress_destroy (dec);
-    DB_playItem_t *it = deadbeef->pl_insert_cue (after, fname, &plugin, "APE", duration);
+    DB_playItem_t *it;
+    it = deadbeef->pl_insert_cue (after, fname, &plugin, "APE", duration);
     if (it) {
         return it;
     }
