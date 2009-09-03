@@ -1014,7 +1014,7 @@ on_seekbar_button_release_event        (GtkWidget       *widget,
     seekbar_moving = 0;
     seekbar_draw (widget);
     seekbar_expose (widget, 0, 0, widget->allocation.width, widget->allocation.height);
-    float time = event->x * playlist_current.duration / (widget->allocation.width-8);
+    float time = event->x * playlist_current.duration / (widget->allocation.width);
     if (time < 0) {
         time = 0;
     }
