@@ -551,11 +551,12 @@ demac_insert (DB_playItem_t *after, const char *fname) {
     }
 
     float duration = ape_ctx.totalsamples / (float)ape_ctx.samplerate;
-    DB_playItem_t *it = deadbeef->pl_insert_cue (after, fname, &plugin, "APE", duration);
-    if (it) {
-        fclose (fp);
-        return it;
-    }
+    DB_playItem_t *it;
+//    it  = deadbeef->pl_insert_cue (after, fname, &plugin, "APE", duration);
+//    if (it) {
+//        fclose (fp);
+//        return it;
+//    }
 
     it = deadbeef->pl_item_alloc ();
     it->decoder = &plugin;
@@ -563,6 +564,15 @@ demac_insert (DB_playItem_t *after, const char *fname) {
     it->filetype = "APE";
     it->duration = duration;
  
+    int v2err = deadbeef->junk_read_id3v2 (it, fp);
+    int v1err = deadbeef->junk_read_id3v1 (it, fp);
+    if (v1err >= 0) {
+        fseek (fp, -128, SEEK_END);
+    }
+    else {
+        fseek (fp, 0, SEEK_END);
+    }
+    int apeerr = deadbeef->junk_read_ape (it, fp);
     deadbeef->pl_add_meta (it, "title", NULL);
     after = deadbeef->pl_insert_item (after, it);
 
