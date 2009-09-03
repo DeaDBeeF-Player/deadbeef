@@ -1647,21 +1647,68 @@ cmp3_insert (DB_playItem_t *after, const char *fname) {
     if (!fp) {
         return NULL;
     }
+    buffer_t buffer;
+    memset (&buffer, 0, sizeof (buffer));
+    buffer.file = fp;
+    // calc approx. mp3 duration 
+    int res = cmp3_scan_stream (&buffer, 0);
+    if (res < 0) {
+        fclose (fp);
+        return NULL;
+    }
+
+    const char *ftype;
+    if (buffer.version == 1) {
+        switch (buffer.layer) {
+        case 1:
+            ftype = "MP1";
+            break;
+        case 2:
+            ftype = "MP2";
+            break;
+        case 3:
+            ftype = "MP3";
+            break;
+        }
+    }
+    else if (buffer.version == 2) {
+        switch (buffer.layer) {
+        case 1:
+            ftype = "MPEG2l1";
+            break;
+        case 2:
+            ftype = "MPEG2l2";
+            break;
+        case 3:
+            ftype = "MPEG2l3";
+            break;
+        }
+    }
+    else {
+        switch (buffer.layer) {
+        case 1:
+            ftype = "MPEG2.5l1";
+            break;
+        case 2:
+            ftype = "MPEG2.5l2";
+            break;
+        case 3:
+            ftype = "MPEG2.5l3";
+            break;
+        }
+    }
+    DB_playItem_t *cue_after = deadbeef->pl_insert_cue (after, fname, &plugin, ftype, buffer.duration);
+    if (cue_after) {
+        fclose (fp);
+        return cue_after;
+    }
+
+    rewind (fp);
+
     DB_playItem_t *it = deadbeef->pl_item_alloc ();
     it->decoder = &plugin;
     it->fname = strdup (fname);
 
-    buffer_t buffer;
-    memset (&buffer, 0, sizeof (buffer));
-    buffer.file = fp;
-
-#if 0
-    if (cmp3_read_id3v2 (it, fp) < 0) {
-        if (cmp3_read_id3v1 (it, fp) < 0) {
-            pl_add_meta (it, "title", NULL);
-        }
-    }
-#endif
     int v2err = cmp3_read_id3v2 (it, fp);
     int v1err = cmp3_read_id3v1 (it, fp);
     if (v1err >= 0) {
@@ -1672,37 +1719,9 @@ cmp3_insert (DB_playItem_t *after, const char *fname) {
     }
     int apeerr = cmp3_read_ape (it, fp);
     deadbeef->pl_add_meta (it, "title", NULL);
-
-    buffer.startoffset = it->startoffset;
-    fseek (fp, buffer.startoffset, SEEK_SET);
-    // calc approx. mp3 duration 
-    int res = cmp3_scan_stream (&buffer, 0);
-    if (res < 0) {
-        deadbeef->pl_item_free (it);
-        return NULL;
-    }
     it->startoffset = buffer.startoffset;
     it->duration = buffer.duration;
-    switch (buffer.layer) {
-    case 1:
-        it->filetype = "MP1";
-        break;
-    case 2:
-        it->filetype = "MP2";
-        break;
-    case 3:
-        it->filetype = "MP3";
-        break;
-    }
-
-    DB_playItem_t *cue_after = deadbeef->pl_insert_cue (after, fname, &plugin, it->filetype);
-    if (cue_after) {
-        cue_after->timeend = buffer.duration;
-        cue_after->duration = cue_after->timeend - cue_after->timestart;
-        deadbeef->pl_item_free (it);
-        fclose (fp);
-        return cue_after;
-    }
+    it->filetype = ftype;
 
     after = deadbeef->pl_insert_item (after, it);
     fclose (fp);
@@ -1714,7 +1733,7 @@ static const char *exts[] = {
 };
 
 static const char *filetypes[] = {
-    "MP1", "MP2", "MP3", NULL
+    "MP1", "MP2", "MP3", "MPEG2l1", "MPEG2l2", "MPEG2l3", "MPEG2.5l1", "MPEG2.5l2", "MPEG2.5l3", NULL
 };
 
 // define plugin interface

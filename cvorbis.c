@@ -155,20 +155,18 @@ cvorbis_insert (DB_playItem_t *after, const char *fname) {
     if (!vi) { // not a vorbis stream
         return NULL;
     }
+    float duration = ov_time_total (&vorbis_file, -1);
+    DB_playItem_t *cue_after = deadbeef->pl_insert_cue (after, fname, &plugin, "OggVorbis", duration);
+    if (cue_after) {
+        ov_clear (&vorbis_file);
+        return cue_after;
+    }
+
     DB_playItem_t *it = deadbeef->pl_item_alloc ();
     it->decoder = &plugin;
     it->fname = strdup (fname);
     it->filetype = "OggVorbis";
-    it->duration = ov_seekable (&vorbis_file) ? ov_time_total (&vorbis_file, -1) : -1;
-
-    DB_playItem_t *cue_after = deadbeef->pl_insert_cue (after, fname, &plugin, it->filetype);
-    if (cue_after) {
-        cue_after->timeend = it->duration;
-        cue_after->duration = cue_after->timeend - cue_after->timestart;
-        deadbeef->pl_item_free (it);
-        ov_clear (&vorbis_file);
-        return cue_after;
-    }
+    it->duration = duration;
 
     // metainfo
     int title_added = 0;

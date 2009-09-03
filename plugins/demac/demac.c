@@ -551,11 +551,9 @@ demac_insert (DB_playItem_t *after, const char *fname) {
     }
 
     float duration = ape_ctx.totalsamples / (float)ape_ctx.samplerate;
-    DB_playItem_t *it = deadbeef->pl_insert_cue (after, fname, &plugin, "APE");
+    DB_playItem_t *it = deadbeef->pl_insert_cue (after, fname, &plugin, "APE", duration);
     if (it) {
         fclose (fp);
-        it->timeend = duration;
-        it->duration = it->timeend - it->timestart;
         return it;
     }
 

@@ -63,7 +63,7 @@ cflac_write_callback (const FLAC__StreamDecoder *decoder, const FLAC__Frame *fra
         }
     }
     if (readbytes > bufsize) {
-        printf ("flac: buffer overflow, distortion will occur\n");
+        fprintf (stderr, "flac: buffer overflow, distortion will occur\n");
     //    return FLAC__STREAM_DECODER_WRITE_STATUS_ABORT;
     }
     return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;
@@ -207,7 +207,6 @@ cflac_read_float32 (char *bytes, int size) {
     int nsamples = size / (plugin.info.channels * plugin.info.bps / 8);
     if (timeend > timestart) {
         if (plugin.info.readpos + timestart > timeend) {
-            fprintf (stderr, "readpos %f + timestart %f = %f is > timeend %f\n", plugin.info.readpos, timestart, plugin.info.readpos + timestart, timeend);
             return 0;
         }
     }
@@ -250,7 +249,6 @@ cflac_seek (float time) {
     }
     remaining = 0;
     plugin.info.readpos = time - timestart;
-    printf ("readpos: %f\n", plugin.info.readpos);
     return 0;
 }
 
@@ -349,7 +347,7 @@ cflac_init_cue_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC_
                 s[c->length] = 0;
                 memcpy (s, c->entry, c->length);
                 if (!strncasecmp (s, "cuesheet=", 9)) {
-                    cb->last = deadbeef->pl_insert_cue_from_buffer (cb->after, cb->fname, s+9, c->length-9, &plugin, "FLAC");
+                    cb->last = deadbeef->pl_insert_cue_from_buffer (cb->after, cb->fname, s+9, c->length-9, &plugin, "FLAC", cb->duration);
                 }
             }
         }
@@ -359,7 +357,7 @@ cflac_init_cue_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC_
 static void
 cflac_init_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMetadata *metadata, void *client_data) {
     if (cflac_init_stop_decoding) {
-        printf ("error flag is set, ignoring init_metadata callback..\n");
+        fprintf (stderr, "error flag is set, ignoring init_metadata callback..\n");
         return;
     }
     DB_playItem_t *it = (DB_playItem_t *)client_data;
@@ -451,12 +449,12 @@ cflac_insert (DB_playItem_t *after, const char *fname) {
     FLAC__stream_decoder_delete(decoder);
     decoder = NULL;
     if (cb.last != after) {
-//        printf ("embedded cue found!\n");
+        // that means embedded cue is loaded
         return cb.last;
     }
 
     // try external cue
-    DB_playItem_t *cue_after = deadbeef->pl_insert_cue (after, fname, &plugin, "flac");
+    DB_playItem_t *cue_after = deadbeef->pl_insert_cue (after, fname, &plugin, "flac", cb.duration);
     if (cue_after) {
         cue_after->timeend = cb.duration;
         cue_after->duration = cue_after->timeend - cue_after->timestart;

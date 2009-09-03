@@ -134,7 +134,7 @@ pl_cue_parse_time (const char *p) {
 }
 
 playItem_t *
-pl_insert_cue_from_buffer (playItem_t *after, const char *fname, const uint8_t *buffer, int buffersize, struct DB_decoder_s *decoder, const char *ftype) {
+pl_insert_cue_from_buffer (playItem_t *after, const char *fname, const uint8_t *buffer, int buffersize, struct DB_decoder_s *decoder, const char *ftype, float duration) {
     char performer[1024];
     char albumtitle[1024];
     char file[1024];
@@ -262,11 +262,15 @@ pl_insert_cue_from_buffer (playItem_t *after, const char *fname, const uint8_t *
 //            printf ("got unknown line:\n%s\n", p);
         }
     }
+    if (after) {
+        after->timeend = duration;
+        after->duration = after->timeend - after->timestart;
+    }
     return after;
 }
 
 playItem_t *
-pl_insert_cue (playItem_t *after, const char *fname, struct DB_decoder_s *decoder, const char *ftype) {
+pl_insert_cue (playItem_t *after, const char *fname, struct DB_decoder_s *decoder, const char *ftype, float duration) {
     int len = strlen (fname);
     char cuename[len+5];
     strcpy (cuename, fname);
@@ -296,7 +300,7 @@ pl_insert_cue (playItem_t *after, const char *fname, struct DB_decoder_s *decode
         return NULL;
     }
     fclose (fp);
-    return pl_insert_cue_from_buffer (after, fname, buf, sz, decoder, ftype);
+    return pl_insert_cue_from_buffer (after, fname, buf, sz, decoder, ftype, duration);
 }
 
 playItem_t *
