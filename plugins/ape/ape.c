@@ -44,6 +44,7 @@ static int ape_blocks_left;
 static int ape_total_blocks;
 static float timestart;
 static float timeend;
+static int samplesdecoded;
 
 static int
 ape_seek (float seconds);
@@ -62,6 +63,7 @@ ape_init (DB_playItem_t *it) {
     ape_decompress_get_info_data_sized (ape_dec, APE_INFO_WAV_HEADER_DATA, buf, size);
     ape_blk_size = ape_decompress_get_info_int (ape_dec, APE_INFO_BLOCK_ALIGN);
     ape_total_blocks = ape_blocks_left = ape_decompress_get_info_int (ape_dec, APE_DECOMPRESS_TOTAL_BLOCKS);
+    samplesdecoded = 0;
     plugin.info.bps = wfe.wBitsPerSample;
     plugin.info.samplerate = wfe.nSamplesPerSec;
     plugin.info.channels = wfe.nChannels;
@@ -89,31 +91,24 @@ ape_free (void) {
 
 static int
 ape_read (char *buffer, int size) {
-    int t1 = clock ();
     int initsize = size;
     int nblocks = size / plugin.info.channels / 2;
     nblocks = min (nblocks, ape_blocks_left);
     nblocks = ape_decompress_getdata (ape_dec, buffer, nblocks);
     ape_blocks_left -= nblocks;
-    int t2 = clock ();
-    float t = (t2-t1) / (float)CLOCKS_PER_SEC;
-    if (t > 1) {
-        fprintf (stderr, "ape_decompress_get_data(%d bytes) took %f sec\n", size, t);
-    }
+    samplesdecoded += nblocks;
+    plugin.info.readpos = samplesdecoded / (float)plugin.info.samplerate - timestart;
     return nblocks * 2 * plugin.info.channels;
 }
 
 static int
 ape_seek (float seconds) {
     seconds += timestart;
-    fprintf (stderr, "seek to %f seconds\n", seconds);
-    float t1 = clock ();
     int nblock = seconds * plugin.info.samplerate;
     ape_decompress_seek (ape_dec, nblock);
+    samplesdecoded = nblock;
     ape_blocks_left = ape_total_blocks - nblock;
-    plugin.info.readpos = seconds - timestart;
-    float t2 = clock ();
-    fprintf (stderr, "seek took %f sec\n", (t2-t1)/(float)CLOCKS_PER_SEC);
+    plugin.info.readpos = samplesdecoded / (float)plugin.info.samplerate - timestart;
 }
 
 static DB_playItem_t *
@@ -125,7 +120,6 @@ ape_insert (DB_playItem_t *after, const char *fname) {
     }
     WAVEFORMATEX wfe;
     ape_decompress_get_info_data (dec, APE_INFO_WAVEFORMATEX, &wfe);
-    fprintf (stderr, "%s\nWAVEFORMATEX:\nwFormatTag=%04x\nnChannels=%d\nnSamplesPerSec=%d\nnAvgBytesPerSec=%d\nnBlockAlign=%d\nwBitsPerSample=%d\ncbSize=%d\n", fname, wfe.wFormatTag, wfe.nChannels, wfe.nSamplesPerSec, wfe.nAvgBytesPerSec, wfe.nBlockAlign, wfe.wBitsPerSample, wfe.cbSize);
 
     float duration = ape_decompress_get_info_int (dec, APE_DECOMPRESS_TOTAL_BLOCKS) / (float)wfe.nSamplesPerSec;
     DB_playItem_t *it = deadbeef->pl_insert_cue (after, fname, &plugin, "APE");
