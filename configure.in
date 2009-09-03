@@ -24,7 +24,7 @@ AC_DEFINE_UNQUOTED(PREFIX, "${prefix}")
 CFLAGS="$CFLAGS -D_GNU_SOURCE -O2 -DHAVE_UNIX"
 CPPFLAGS="$CFLAGS"
 
-PKG_CHECK_MODULES(DEPS, gtk+-2.0 >= 2.12 gthread-2.0 glib-2.0 vorbis vorbisfile mad samplerate alsa)
+PKG_CHECK_MODULES(DEPS, gtk+-2.0 >= 2.12 gthread-2.0 glib-2.0 vorbis vorbisfile samplerate alsa)
 PKG_CHECK_MODULES(LASTFM_DEPS, libcurl)
 
 AX_EXT()
@@ -39,6 +39,12 @@ AC_SUBST(HAVE_LIBMAC)
 AC_SUBST(APE_LIBS)
 AC_SUBST(APE_DIR)
 
+dnl mpgmad plugin
+AC_CHECK_LIB([mad], [main], [HAVE_LIBMAD=1 ; MAD_DEPS_LIBS="-lmad" ; MPGMAD_DIR="plugins/mpgmad"])
+AC_SUBST(HAVE_LIBMAD)
+AC_SUBST(MAD_DEPS_LIBS)
+AC_SUBST(MPGMAD_DIR)
+
 AC_OUTPUT([
 Makefile
 pixmaps/Makefile
@@ -50,6 +56,7 @@ plugins/hotkeys/Makefile
 plugins/lastfm/Makefile
 plugins/ape/Makefile
 plugins/demac/Makefile
+plugins/mpgmad/Makefile
 deadbeef.desktop
 ])
 

@@ -998,7 +998,7 @@ static DB_decoder_t plugin = {
     .plugin.version_major = 0,
     .plugin.version_minor = 1,
     .plugin.type = DB_PLUGIN_DECODER,
-    .plugin.name = "MPEG 1/2/3 decoder",
+    .plugin.name = "MPEG v1,2 layer1,2,3 decoder",
     .plugin.descr = "based on libmad",
     .plugin.author = "Alexey Yakovenko",
     .plugin.email = "waker@users.sourceforge.net",
@@ -1011,12 +1011,12 @@ static DB_decoder_t plugin = {
     .seek = cmp3_seek,
     .insert = cmp3_insert,
     .exts = exts,
-    .id = "stdmp3",
+    .id = "stdmpg",
     .filetypes = filetypes
 };
 
 DB_plugin_t *
-mpegmad_load (DB_functions_t *api) {
+mpgmad_load (DB_functions_t *api) {
     deadbeef = api;
     return DB_PLUGIN (&plugin);
 }
