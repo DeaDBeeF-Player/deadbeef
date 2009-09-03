@@ -411,14 +411,17 @@ cmp3_scan_stream (buffer_t *buffer, float position) {
         else {
             continue;
         }
-        buffer->version = ver;
-        buffer->layer = layer;
-        buffer->bitrate = bitrate;
-        buffer->samplerate = samplerate;
-        buffer->packetlength = packetlength;
-        buffer->frameduration = dur;
-        buffer->channels = nchannels;
-        buffer->bitspersample = 16;
+
+        if (nframe == 0/* || buffer->version != ver || buffer->layer != layer*/) {
+            buffer->version = ver;
+            buffer->layer = layer;
+            buffer->bitrate = bitrate;
+            buffer->samplerate = samplerate;
+            buffer->packetlength = packetlength;
+            buffer->frameduration = dur;
+            buffer->channels = nchannels;
+            buffer->bitspersample = 16;
+        }
         duration += dur;
         if (position == 0) {
             // try to read xing/info tag
@@ -1641,6 +1644,10 @@ cmp3_read_info_tag (buffer_t *buffer, DB_playItem_t *it, FILE *fp) {
 #endif
 // }}}
 
+static const char *filetypes[] = {
+    "MPEG 1.0 layer I", "MPEG 1.0 layer II", "MPEG 1.0 layer III", "MPEG 2.0 layer I", "MPEG 2.0 layer II", "MPEG 2.0 layer III", "MPEG 2.5 layer I", "MPEG 2.5 layer II", "MPEG 2.5 layer III", NULL
+};
+
 static DB_playItem_t *
 cmp3_insert (DB_playItem_t *after, const char *fname) {
     FILE *fp = fopen (fname, "rb");
@@ -1661,39 +1668,39 @@ cmp3_insert (DB_playItem_t *after, const char *fname) {
     if (buffer.version == 1) {
         switch (buffer.layer) {
         case 1:
-            ftype = "MP1";
+            ftype = filetypes[0];
             break;
         case 2:
-            ftype = "MP2";
+            ftype = filetypes[1];
             break;
         case 3:
-            ftype = "MP3";
+            ftype = filetypes[2];
             break;
         }
     }
     else if (buffer.version == 2) {
         switch (buffer.layer) {
         case 1:
-            ftype = "MPEG2l1";
+            ftype = filetypes[3];
             break;
         case 2:
-            ftype = "MPEG2l2";
+            ftype = filetypes[4];
             break;
         case 3:
-            ftype = "MPEG2l3";
+            ftype = filetypes[5];
             break;
         }
     }
     else {
         switch (buffer.layer) {
         case 1:
-            ftype = "MPEG2.5l1";
+            ftype = filetypes[6];
             break;
         case 2:
-            ftype = "MPEG2.5l2";
+            ftype = filetypes[7];
             break;
         case 3:
-            ftype = "MPEG2.5l3";
+            ftype = filetypes[8];
             break;
         }
     }
@@ -1730,10 +1737,6 @@ cmp3_insert (DB_playItem_t *after, const char *fname) {
 
 static const char *exts[] = {
 	"mp1", "mp2", "mp3", NULL
-};
-
-static const char *filetypes[] = {
-    "MP1", "MP2", "MP3", "MPEG2l1", "MPEG2l2", "MPEG2l3", "MPEG2.5l1", "MPEG2.5l2", "MPEG2.5l3", NULL
 };
 
 // define plugin interface
