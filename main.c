@@ -216,12 +216,18 @@ exec_command_line (const char *cmdline, int len, int filter) {
             pl_free ();
         }
         while (parg < pend) {
-            if (pl_add_file (parg, NULL, NULL) >= 0) {
-                if (queue) {
-                    exitcode = 3;
-                }
-                else {
-                    exitcode = 2;
+            char resolved[PATH_MAX];
+            if (!realpath (parg, resolved)) {
+                fprintf (stderr, "error: cannot expand filename %s, file will not play\n", parg);
+            }
+            else {
+                if (pl_add_file (resolved, NULL, NULL) >= 0) {
+                    if (queue) {
+                        exitcode = 3;
+                    }
+                    else {
+                        exitcode = 2;
+                    }
                 }
             }
             parg += strlen (parg);
