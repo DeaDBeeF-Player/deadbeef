@@ -34,7 +34,8 @@ deadbeef_SOURCES =\
 	md5/md5.c md5/md5.h md5/md5_loc.h\
 	volume.c volume.h\
 	drawing.h gdkdrawing.c\
-	session.h session.c gtksession.c
+	session.h session.c gtksession.c\
+	junklib.h junklib.c
 
 sdkdir = $(pkgincludedir)
 sdk_HEADERS = deadbeef.h

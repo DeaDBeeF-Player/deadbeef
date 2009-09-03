@@ -19,6 +19,7 @@
 #define __PLAYLIST_H
 
 #include <stdint.h>
+#include <time.h>
 
 typedef struct metaInfo_s {
     const char *key;

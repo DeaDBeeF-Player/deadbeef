@@ -29,6 +29,7 @@
 
 #include <stdint.h>
 #include <time.h>
+#include <stdio.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -153,6 +154,11 @@ typedef struct {
     float (*volume_get_db) (void);
     void (*volume_set_amp) (float amp);
     float (*volume_get_amp) (void);
+    // junk reading
+    int (*junk_read_id3v1) (DB_playItem_t *it, FILE *fp);
+    int (*junk_read_id3v2) (DB_playItem_t *it, FILE *fp);
+    int (*junk_read_ape) (DB_playItem_t *it, FILE *fp);
+    int (*junk_get_leading_size) (FILE *fp);
 } DB_functions_t;
 
 // base plugin interface

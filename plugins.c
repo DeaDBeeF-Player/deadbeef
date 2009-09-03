@@ -38,6 +38,7 @@
 #include "playback.h"
 #include "common.h"
 #include "conf.h"
+#include "junklib.h"
 
 // deadbeef api
 DB_functions_t deadbeef_api = {
@@ -87,6 +88,11 @@ DB_functions_t deadbeef_api = {
     .volume_get_db = volume_get_db,
     .volume_set_amp = plug_volume_set_amp,
     .volume_get_amp = volume_get_amp,
+    // junk reading
+    .junk_read_id3v1 = (int (*)(DB_playItem_t *it, FILE *fp))junk_read_id3v1,
+    .junk_read_id3v2 = (int (*)(DB_playItem_t *it, FILE *fp))junk_read_id3v2,
+    .junk_read_ape = (int (*)(DB_playItem_t *it, FILE *fp))junk_read_ape,
+    .junk_get_leading_size = junk_get_leading_size,
 };
 
 const char *

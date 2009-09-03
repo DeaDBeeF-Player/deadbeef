@@ -125,9 +125,9 @@ ape_insert (DB_playItem_t *after, const char *fname) {
     ape_decompress_get_info_data (dec, APE_INFO_WAVEFORMATEX, &wfe);
 
     float duration = ape_decompress_get_info_int (dec, APE_DECOMPRESS_TOTAL_BLOCKS) / (float)wfe.nSamplesPerSec;
+    ape_decompress_destroy (dec);
     DB_playItem_t *it = deadbeef->pl_insert_cue (after, fname, &plugin, "APE", duration);
     if (it) {
-        ape_decompress_destroy (dec);
         return it;
     }
 
@@ -136,12 +136,28 @@ ape_insert (DB_playItem_t *after, const char *fname) {
     it->fname = strdup (fname);
     it->filetype = "APE";
     it->duration = duration;
- 
+
+    // try to read tags
+    FILE *fp = fopen (fname, "rb");
+    if (!fp) {
+        deadbeef->pl_item_free (it);
+        return NULL;
+    }
+
+    int v2err = deadbeef->junk_read_id3v2 (it, fp);
+    int v1err = deadbeef->junk_read_id3v1 (it, fp);
+    if (v1err >= 0) {
+        fseek (fp, -128, SEEK_END);
+    }
+    else {
+        fseek (fp, 0, SEEK_END);
+    }
+    int apeerr = deadbeef->junk_read_ape (it, fp);
     deadbeef->pl_add_meta (it, "title", NULL);
+    fclose (fp);
+ 
     after = deadbeef->pl_insert_item (after, it);
 
-    // print info about ape
-    ape_decompress_destroy (dec);
     return after;
 }
 
