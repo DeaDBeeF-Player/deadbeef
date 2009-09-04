@@ -655,9 +655,11 @@ main (int argc, char *argv[]) {
     const char *w;
     w = orderwidgets[session_get_playlist_order ()];
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, w)), TRUE);
+    pl_set_order (session_get_playlist_order ());
     w = loopingwidgets[session_get_playlist_looping ()];
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, w)), TRUE);
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "scroll_follows_playback")), session_get_scroll_follows_playback () ? TRUE : FALSE);
+    pl_set_loop_mode (session_get_playlist_looping ());
 
     searchwin = create_searchwin ();
     gtk_window_set_transient_for (GTK_WINDOW (searchwin), GTK_WINDOW (mainwin));
