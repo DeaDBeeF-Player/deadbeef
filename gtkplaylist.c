@@ -260,7 +260,7 @@ gtkpl_draw_pl_row (gtkplaylist_t *ps, int row, playItem_t *it) {
 	draw_get_canvas_size ((uintptr_t)ps->backbuf, &width, &height);
     if (it == playlist_current_ptr && ps->colwidths[0] > 0/* && !p_isstopped ()*/) {
         uintptr_t pixbuf = p_ispaused () ? pause16_pixbuf : play16_pixbuf;
-        draw_pixbuf ((uintptr_t)ps->backbuf, pixbuf, ps->colwidths[0]/2-8, row * rowheight - ps->scrollpos * rowheight, 0, 0, 16, 16);
+        draw_pixbuf ((uintptr_t)ps->backbuf, pixbuf, ps->colwidths[0]/2-8, (row - ps->scrollpos) * rowheight + rowheight/2 - 8, 0, 0, 16, 16);
     }
 	if (it && ((it->selected && ps->multisel) || (row == ps->row && !ps->multisel))) {
         if (row % 2) {
