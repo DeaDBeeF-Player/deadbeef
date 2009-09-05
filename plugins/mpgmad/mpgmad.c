@@ -273,7 +273,7 @@ cmp3_scan_stream (buffer_t *buffer, float position) {
     int nseeks = 0;
 
     int pos = ftell (buffer->file);
-    if (pos == 0) {
+    if (pos <= 0) {
         // try to skip id3v2
         int skip = deadbeef->junk_get_leading_size (buffer->file);
         if (skip > 0) {
@@ -447,7 +447,7 @@ cmp3_scan_stream (buffer_t *buffer, float position) {
             buffer->frameduration = dur;
             buffer->channels = nchannels;
             buffer->bitspersample = 16;
-//            fprintf (stderr, "frame %d(@%d) mpeg v%d layer %d bitrate %d samplerate %d packetlength %d framedur %f channels %d\n", nframe, pos, ver, layer, bitrate, samplerate, packetlength, dur, nchannels);
+            //fprintf (stderr, "frame %d(@%d) mpeg v%d layer %d bitrate %d samplerate %d packetlength %d framedur %f channels %d\n", nframe, pos, ver, layer, bitrate, samplerate, packetlength, dur, nchannels);
         }
         // try to read xing/info tag
         if (position == 0) {
@@ -470,7 +470,7 @@ cmp3_scan_stream (buffer_t *buffer, float position) {
             }
 
             if (!strncmp (xing, magic, 4) || !strncmp (info, magic, 4)) {
-//                printf ("found xing header!\n");
+                printf ("found xing header!\n");
                 // read flags
                 uint32_t flags;
                 char buf[4];
@@ -478,7 +478,7 @@ cmp3_scan_stream (buffer_t *buffer, float position) {
                     return -1; // EOF
                 }
                 flags = extract_i32 (buf);
-//                printf ("xing header flags: 0x%x\n", flags);
+                printf ("xing header flags: 0x%x\n", flags);
                 if (flags & 0x01) {
                     // read number of frames
                     if (fread (buf, 1, 4, buffer->file) != 4) {
@@ -486,7 +486,8 @@ cmp3_scan_stream (buffer_t *buffer, float position) {
                     }
                     uint32_t nframes = extract_i32 (buf);
                     buffer->duration = (float)nframes * (float)samples_per_frame / (float)samplerate;
-//                    printf ("mp3 duration calculated based on vbr header: %f\n", buffer->duration);
+                    printf ("nframes=%d, samples_per_frame=%d, samplerate=%d\n", nframes, samples_per_frame, samplerate);
+                    printf ("mp3 duration calculated based on vbr header: %f\n", buffer->duration);
                     return 0;
                 }
             }
@@ -514,6 +515,7 @@ cmp3_scan_stream (buffer_t *buffer, float position) {
     if (nframe == 0) {
         return -1;
     }
+    printf ("nframe=%d\n", nframe);
     return duration;
 }
 
