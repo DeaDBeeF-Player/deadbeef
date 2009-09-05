@@ -281,7 +281,7 @@ convstr_id3v2_2to3 (const unsigned char* str, int sz) {
     sz--;
     iconv_t cd = iconv_open ("utf8", enc);
     if (!cd) {
-        fprintf (stderr, "unknown encoding: %s\n", enc);
+//        fprintf (stderr, "unknown encoding: %s\n", enc);
         return NULL;
     }
     else {
@@ -685,7 +685,7 @@ junk_read_id3v2 (playItem_t *it, FILE *fp) {
     int startoffset = size + 10 + 10 * footerpresent;
     if (startoffset > it->startoffset) {
         it->startoffset = startoffset;
-        //fprintf (stderr, "id3v2 end: %x\n", startoffset);
+//        fprintf (stderr, "id3v2 end: %x\n", startoffset);
     }
 
 //    fprintf (stderr, "tag size: %d\n", size);
@@ -817,26 +817,18 @@ junk_read_id3v2 (playItem_t *it, FILE *fp) {
             frameid[3] = 0;
             readptr += 3;
             if (readptr - tag >= size - 3) {
-                err = 1;
                 break;
             }
             uint32_t sz = (readptr[2] << 0) | (readptr[1] << 8) | (readptr[0] << 16);
             readptr += 3;
             if (readptr - tag >= size - sz) {
-                err = 1;
                 break; // size of frame is less than size of tag
             }
-            //sz -= 6;
             if (sz < 1) {
-                err = 1;
                 break; // frame must be at least 1 byte long
             }
 //            fprintf (stderr, "found id3v2.2 frame: %s, size=%d\n", frameid, sz);
             if (!strcmp (frameid, "TEN")) {
-                if (sz > 1000) {
-                    err = 1;
-                    break; // too large
-                }
                 char str[sz+2];
                 memcpy (str, readptr, sz);
                 str[sz] = 0;
@@ -844,8 +836,7 @@ junk_read_id3v2 (playItem_t *it, FILE *fp) {
             }
             else if (!strcmp (frameid, "TT2")) {
                 if (sz > 1000) {
-                    err = 1;
-                    break; // too large
+                    continue;
                 }
                 char str[sz+2];
                 memcpy (str, readptr, sz);
@@ -854,18 +845,44 @@ junk_read_id3v2 (playItem_t *it, FILE *fp) {
             }
             else if (!strcmp (frameid, "TAL")) {
                 if (sz > 1000) {
-                    err = 1;
-                    break; // too large
+                    continue;
                 }
                 char str[sz+2];
                 memcpy (str, readptr, sz);
                 str[sz] = 0;
                 album = convstr (str, sz);
             }
+            else if (!strcmp (frameid, "TP1")) {
+                if (sz > 1000) {
+                    continue;
+                }
+                char str[sz+2];
+                memcpy (str, readptr, sz);
+                str[sz] = 0;
+                artist = convstr (str, sz);
+            }
+            else if (!strcmp (frameid, "TP2")) {
+                if (sz > 1000) {
+                    continue;
+                }
+                char str[sz+2];
+                memcpy (str, readptr, sz);
+                str[sz] = 0;
+                band = convstr (str, sz);
+            }
+            else if (!strcmp (frameid, "TRK")) {
+                if (sz > 1000) {
+                    continue;
+                }
+                char str[sz+2];
+                memcpy (str, readptr, sz);
+                str[sz] = 0;
+                track = convstr (str, sz);
+            }
             readptr += sz;
         }
         else {
-            fprintf (stderr, "id3v2.%d (unsupported!)\n", version_minor);
+//            fprintf (stderr, "id3v2.%d (unsupported!)\n", version_minor);
         }
     }
     if (!err) {
