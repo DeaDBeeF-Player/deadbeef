@@ -1,12 +1,14 @@
-dependencies:
-    libmad
-    libogg
-    libvorbis
-    libvorbisfile
+dependencies (player core, included support for sid, game music and chiptune music):
     gtk+ 2.x (and gthread, and glib)
     libsamplerate
     libalsa
-    libcurl (for audioscrobbler plugin)
+    libmad
 
-if you want to build from git - install automake, and run ./bootstrap.sh before compiling
+optional dependencies
+    libvorbis: for ogg vorbis plugin
+    libcurl: for last.fm plugin
+    libmad: for mpgmad plugin (mpeg1,2 layers1,2,3)
+    libFLAC: for flac plugin
+
+if you want to build from git - install autotools, and run ./bootstrap.sh before compiling
 
