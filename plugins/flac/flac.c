@@ -103,6 +103,10 @@ cflac_init (DB_playItem_t *it) {
     if (!fp) {
         return -1;
     }
+    int skip = deadbeef->junk_get_leading_size (fp);
+    if (skip > 0) {
+        fseek (fp, skip, SEEK_SET);
+    }
     char sign[4];
     if (fread (sign, 1, 4, fp) != 4) {
         fclose (fp);
@@ -412,6 +416,11 @@ cflac_insert (DB_playItem_t *after, const char *fname) {
     FILE *fp = fopen (fname, "rb");
     if (!fp) {
         goto cflac_insert_fail;
+    }
+    // skip id3 junk
+    int skip = deadbeef->junk_get_leading_size (fp);
+    if (skip > 0) {
+        fseek (fp, skip, SEEK_SET);
     }
     char sign[4];
     if (fread (sign, 1, 4, fp) != 4) {
