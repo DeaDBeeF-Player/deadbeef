@@ -11,7 +11,8 @@ SUBDIRS = gme/Game_Music_Emu-0.5.2\
 		  plugins/demac\
 		  ${APE_DIR}\
           ${MPGMAD_DIR}\
-          ${VORBIS_DIR}
+          ${VORBIS_DIR}\
+          ${FLAC_DIR}
 
 dumbpath=@top_srcdir@/dumb
 sidpath=@top_srcdir@/sid/sidplay-libs-2.1.0
@@ -30,7 +31,7 @@ deadbeef_SOURCES =\
 	messagepump.c messagepump.h messages.h\
 	conf.c  conf.h\
 	search.c search.h\
-	cflac.c cgme.c cdumb.c csid.cpp\
+	cgme.c cdumb.c csid.cpp\
 	palsa.c palsa.h playback.h\
 	threading_pthread.c threading.h\
 	md5/md5.c md5/md5.h md5/md5_loc.h\

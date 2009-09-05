@@ -29,10 +29,6 @@ PKG_CHECK_MODULES(LASTFM_DEPS, libcurl)
 
 AX_EXT()
 
-AC_CHECK_LIB([FLAC], [main],,AC_MSG_ERROR([flac not found]))
-AC_SUBST(DEPS_CFLAGS)
-AC_SUBST(DEPS_LIBS)
-
 dnl ape plugin
 AC_CHECK_LIB([mac], [main], [HAVE_LIBMAC=1])
 if test ${HAVE_LIBMAC}; then
@@ -62,6 +58,16 @@ if test ${HAVE_VORBIS} && test ${HAVE_VORBISFILE} ; then
     AC_SUBST(VORBIS_LIBS)
 fi
 
+dnl flac plugin
+AC_CHECK_LIB([FLAC], [main], [HAVE_FLAC=1])
+
+if test ${HAVE_FLAC} ; then
+    FLAC_LIBS="-lFLAC"
+    FLAC_DIR="plugins/flac"
+    AC_SUBST(FLAC_LIBS)
+    AC_SUBST(FLAC_DIR)
+fi
+
 
 AC_OUTPUT([
 Makefile
@@ -76,6 +82,7 @@ plugins/ape/Makefile
 plugins/demac/Makefile
 plugins/mpgmad/Makefile
 plugins/vorbis/Makefile
+plugins/flac/Makefile
 deadbeef.desktop
 ])
 
