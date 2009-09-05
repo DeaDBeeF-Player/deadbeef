@@ -35,7 +35,7 @@ static DB_functions_t *deadbeef;
 
 #define BLOCKS_PER_LOOP     4608
 #define MAX_CHANNELS        2
-#define MAX_BYTESPERSAMPLE  3
+#define MAX_BYTESPERSAMPLE  4
 
 #define INPUT_CHUNKSIZE (32*1024)
 
@@ -64,11 +64,17 @@ static int samplesdecoded;
 
 static float ape_duration;
 
-/* 4608*2*3 = 27648 bytes */
 // 5x big to fit extra data while streaming
 #define WAVBUFFER_SIZE (BLOCKS_PER_LOOP*MAX_CHANNELS*MAX_BYTESPERSAMPLE * 5)
 static uint8_t wavbuffer[WAVBUFFER_SIZE];
 static int bufferfill;
+
+// precalc for converting samples from internal format to float32
+static int32_t mask;
+static float scaler;
+static int32_t neg;
+static int32_t sign;
+static int32_t signshift;
 
 inline static int
 read_uint16(FILE *fp, uint16_t* x)
@@ -293,10 +299,9 @@ demac_init (DB_playItem_t *it) {
         }
         return -1;
     }
-    fprintf(stderr, "demac: decoding file - v%.2f, compression level %d\n", ape_ctx.fileversion/1000.0, ape_ctx.compressiontype);
+//    fprintf(stderr, "demac: decoding file - v%.2f, compression level %d\n", ape_ctx.fileversion/1000.0, ape_ctx.compressiontype);
 
     currentframe = 0;
-    fprintf (stderr, "seek first frame: %d\n", ape_ctx.firstframe);
     fseek (fp, ape_ctx.firstframe, SEEK_SET);
     bytesinbuffer = fread (inbuffer, 1, INPUT_CHUNKSIZE, fp);
     firstbyte = 3;
@@ -321,6 +326,11 @@ demac_init (DB_playItem_t *it) {
         timeend = it->duration;
     }
 
+    mask = (1<<(ape_ctx.bps-1))-1;
+    scaler = 1.f / ((1<<(ape_ctx.bps-1))-1);
+    neg = 1<<ape_ctx.bps;
+    sign = (1<<31);
+    signshift = ape_ctx.bps-1;
     return 0;
 }
 
@@ -337,9 +347,13 @@ demac_free (void) {
 }
 
 static int
-demac_read (char *buffer, int size) {
+demac_decode (int size) {
     /* The main decoding loop - we decode the frames a small chunk at a time */
-//    fprintf (stderr, "starting read size=%d bufferfill=%d!\n", size, bufferfill);
+    int32_t mask = (1<<(ape_ctx.bps-1))-1;
+    float scaler = 1.f / ((1<<(ape_ctx.bps-1))-1);
+    int32_t neg = 1<<ape_ctx.bps;
+    int32_t sign = (1<<31);
+    int32_t signshift = ape_ctx.bps-1;
     while (currentframe < ape_ctx.totalframes && bufferfill < size)
     {
         int n, i;
@@ -373,43 +387,38 @@ demac_read (char *buffer, int size) {
         {
             int blockstodecode = min (BLOCKS_PER_LOOP, nblocks);
             int res;
-            int16_t sample16;
-            int32_t sample32;
-
             if ((res = decode_chunk(&ape_ctx, inbuffer, &firstbyte,
                                     &bytesconsumed,
                                     decoded0, decoded1,
                                     blockstodecode)) < 0)
             {
                 /* Frame decoding error, abort */
-                return 0;
+                return -1;
             }
 
-            /* Convert the output samples to WAV format and write to output file */
 #if CALC_CRC
             uint8_t *pp = wavbuffer + bufferfill;
 #endif
             uint8_t *p = wavbuffer + bufferfill;
             int i = 0;
-            while (samplestoskip > 0 && i < blockstodecode) {
-                i++;
-                samplestoskip--;
-                p += ape_ctx.channels * 2;
-                samplesdecoded++;
-            }
+            // skip if needed
+            int n = min (samplestoskip, blockstodecode);
+            i += n;
+            samplestoskip -= n;
+            samplesdecoded += n;
 
             for (; i < blockstodecode ; i++)
             {
-                sample16 = decoded0[i];
-                *(p++) = sample16 & 0xff;
-                *(p++) = (sample16 >> 8) & 0xff;
-                bufferfill += 2;
-
+                int32_t sample;
+                sample = decoded0[i];
+                *((float *)p) = (sample - ((sample&sign)>>signshift)*neg) * scaler;
+                p += sizeof (float);
+                bufferfill += sizeof (float);
                 if (ape_ctx.channels == 2) {
-                    sample16 = decoded1[i];
-                    *(p++) = sample16 & 0xff;
-                    *(p++) = (sample16 >> 8) & 0xff;
-                    bufferfill += 2;
+                    sample = decoded1[i];
+                    *((float *)p) = (sample - ((sample&sign)>>signshift)*neg) * scaler;
+                    p += sizeof (float);
+                    bufferfill += sizeof (float);
                 }
                 samplesdecoded++;
             }
@@ -442,18 +451,52 @@ demac_read (char *buffer, int size) {
             currentframe++;
         }
     }
+    return 0;
+}
 
-    // copy from wavbuffer to buffer
+static int
+demac_read_int16 (char *buffer, int size) {
+    if (demac_decode (size*2) < 0) {
+        return -1;
+    }
+    // float->int16
+    int avail = bufferfill / sizeof (float);
+    int s = size/2;
+    int sz = min (avail, s);
+    if (sz) {
+        float *p = (float *)wavbuffer;
+        for (int i = 0; i < sz; i++) {
+            *((int16_t *)buffer) = (int16_t)(*p * 0x7fff);
+            buffer += 2;
+            p++;
+        }
+//        memcpy (buffer, wavbuffer, sz);
+        if (bufferfill > sz * sizeof (float)) {
+            memmove (wavbuffer, wavbuffer + (sz * sizeof (float)), bufferfill - (sz * sizeof (float)));
+        }
+        bufferfill -= sz * sizeof (float);
+        assert (bufferfill >= 0);
+    }
+    plugin.info.readpos = samplesdecoded / (float)plugin.info.samplerate - timestart;
+    if (plugin.info.readpos >= (timeend - timestart)) {
+        return 0;
+    }
+    return sz * 2;
+}
+
+static int
+demac_read_float32 (char *buffer, int size) {
+    if (demac_decode (size) < 0) {
+        return -1;
+    }
     int sz = min (bufferfill, size);
     if (sz) {
         memcpy (buffer, wavbuffer, sz);
-        if (sz == bufferfill) {
-            bufferfill = 0;
+        if (bufferfill > sz) {
+            memmove (wavbuffer, wavbuffer + sz, bufferfill - sz);
         }
-        else if (bufferfill > sz) {
-            memmove (wavbuffer, wavbuffer+sz, bufferfill-sz);
-            bufferfill -= sz;
-        }
+        bufferfill -= sz;
+        assert (bufferfill >= 0);
     }
     plugin.info.readpos = samplesdecoded / (float)plugin.info.samplerate - timestart;
     if (plugin.info.readpos >= (timeend - timestart)) {
@@ -595,7 +638,8 @@ static DB_decoder_t plugin = {
     .plugin.website = "http://deadbeef.sf.net",
     .init = demac_init,
     .free = demac_free,
-    .read_int16 = demac_read,
+    .read_int16 = demac_read_int16,
+    .read_float32 = demac_read_float32,
     .seek = demac_seek,
     .insert = demac_insert,
     .exts = exts,
