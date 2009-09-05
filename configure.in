@@ -34,16 +34,34 @@ AC_SUBST(DEPS_CFLAGS)
 AC_SUBST(DEPS_LIBS)
 
 dnl ape plugin
-AC_CHECK_LIB([mac], [main], [HAVE_LIBMAC=1 ; APE_LIBS="-lmac" ; APE_DIR="plugins/ape"])
-AC_SUBST(HAVE_LIBMAC)
-AC_SUBST(APE_LIBS)
-AC_SUBST(APE_DIR)
+AC_CHECK_LIB([mac], [main], [HAVE_LIBMAC=1])
+if test ${HAVE_LIBMAC}; then
+    APE_LIBS="-lmac"
+    APE_DIR="plugins/ape"
+    AC_SUBST(APE_LIBS)
+    AC_SUBST(APE_DIR)
+fi
 
 dnl mpgmad plugin
-AC_CHECK_LIB([mad], [main], [HAVE_LIBMAD=1 ; MAD_DEPS_LIBS="-lmad" ; MPGMAD_DIR="plugins/mpgmad"])
-AC_SUBST(HAVE_LIBMAD)
-AC_SUBST(MAD_DEPS_LIBS)
-AC_SUBST(MPGMAD_DIR)
+AC_CHECK_LIB([mad], [main], [HAVE_LIBMAD=1])
+if test ${HAVE_LIBMAD}; then
+    MAD_LIBS="-lmad"
+    MPGMAD_DIR="plugins/mpgmad"
+    AC_SUBST(MAD_LIBS)
+    AC_SUBST(MPGMAD_DIR)
+fi
+
+dnl vorbis plugin
+AC_CHECK_LIB([vorbis], [main], [HAVE_VORBIS=1])
+AC_CHECK_LIB([vorbisfile], [main], [HAVE_VORBISFILE=1])
+
+if test ${HAVE_VORBIS} && test ${HAVE_VORBISFILE} ; then
+    VORBIS_LIBS="-lvorbis -lvorbisfile"
+    VORBIS_DIR="plugins/vorbis"
+    AC_SUBST(VORBIS_DIR)
+    AC_SUBST(VORBIS_LIBS)
+fi
+
 
 AC_OUTPUT([
 Makefile
@@ -57,6 +75,7 @@ plugins/lastfm/Makefile
 plugins/ape/Makefile
 plugins/demac/Makefile
 plugins/mpgmad/Makefile
+plugins/vorbis/Makefile
 deadbeef.desktop
 ])
 

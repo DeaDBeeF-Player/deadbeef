@@ -23,10 +23,7 @@
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
 #endif
-#include "deadbeef.h"
-//#include "decoder.h"
-//#include "plugin.h"
-//#include "playlist.h"
+#include "../../deadbeef.h"
 
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;

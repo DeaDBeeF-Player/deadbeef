@@ -27,8 +27,7 @@ libdemac/vector_math_generic.h
 EXTRA_demac_la_SOURCES = libdemac/filter.c
 
 demac_la_LDFLAGS = -module
-#demac_la_LIBADD = $(LDADD) $(demac_LIBS)
-#AM_CFLAGS = $(demac_DEPS_CFLAGS) -std=c99
+AM_CFLAGS = $(CFLAGS) -std=c99
 
 
 
