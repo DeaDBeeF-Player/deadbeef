@@ -415,25 +415,22 @@ cmp3_scan_stream (buffer_t *buffer, float position) {
             if (layer == 1) {
                 samples_per_frame = 384;
                 dur = (float)384 / samplerate;
-                packetlength = (12 * bitrate / samplerate + padding) * 4;
             }
             else if (layer == 2) {
                 samples_per_frame = 1152;
                 dur = (float)1152 / samplerate;
-                packetlength = 144 * bitrate / samplerate + padding;
             }
             else if (layer == 3) {
                 if (ver == 1) {
                     samples_per_frame = 1152;
                     dur = (float)1152 / samplerate;
-                    packetlength = 144 * bitrate / samplerate + padding;
                 }
                 else {
                     samples_per_frame = 576;
                     dur = (float)576 / samplerate;
-                    packetlength = 144 * bitrate / samplerate + padding;
                 }
             }
+            packetlength = samples_per_frame / 8 * bitrate / samplerate + padding;
         }
         else {
             continue;
