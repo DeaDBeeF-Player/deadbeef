@@ -2,7 +2,6 @@ dependencies (player core, included support for sid, game music and chiptune mus
     gtk+ 2.x (and gthread, and glib)
     libsamplerate
     libalsa
-    libmad
 
 optional dependencies
     libvorbis: for ogg vorbis plugin
