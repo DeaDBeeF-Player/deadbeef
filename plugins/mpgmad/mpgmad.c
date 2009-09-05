@@ -273,12 +273,10 @@ cmp3_scan_stream (buffer_t *buffer, float position) {
     int nseeks = 0;
 
     int pos = ftell (buffer->file);
-    fprintf (stderr, "filepos: %d\n", pos);
     if (pos <= 0) {
         // try to skip id3v2
         int skip = deadbeef->junk_get_leading_size (buffer->file);
         if (skip > 0) {
-            fprintf (stderr, "skipping %d bytes of junk\n", skip);
             fseek (buffer->file, skip, SEEK_SET);
         }
     }
@@ -469,7 +467,6 @@ cmp3_scan_stream (buffer_t *buffer, float position) {
             }
 
             if (!strncmp (xing, magic, 4) || !strncmp (info, magic, 4)) {
-                printf ("found xing header!\n");
                 // read flags
                 uint32_t flags;
                 char buf[4];
@@ -477,7 +474,6 @@ cmp3_scan_stream (buffer_t *buffer, float position) {
                     return -1; // EOF
                 }
                 flags = extract_i32 (buf);
-                printf ("xing header flags: 0x%x\n", flags);
                 if (flags & 0x01) {
                     // read number of frames
                     if (fread (buf, 1, 4, buffer->file) != 4) {
@@ -485,8 +481,6 @@ cmp3_scan_stream (buffer_t *buffer, float position) {
                     }
                     uint32_t nframes = extract_i32 (buf);
                     buffer->duration = (float)nframes * (float)samples_per_frame / (float)samplerate;
-                    printf ("nframes=%d, samples_per_frame=%d, samplerate=%d\n", nframes, samples_per_frame, samplerate);
-                    printf ("mp3 duration calculated based on vbr header: %f\n", buffer->duration);
                     return 0;
                 }
             }
@@ -514,7 +508,6 @@ cmp3_scan_stream (buffer_t *buffer, float position) {
     if (nframe == 0) {
         return -1;
     }
-    printf ("nframe=%d\n", nframe);
     return duration;
 }
 
