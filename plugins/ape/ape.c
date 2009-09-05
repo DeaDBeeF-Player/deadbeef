@@ -46,6 +46,13 @@ static float timestart;
 static float timeend;
 static int samplesdecoded;
 
+// precalc for bps conversion
+static int32_t mask;
+static float scaler;
+static int32_t neg;
+static int32_t sign;
+static int32_t signshift;
+
 static int
 ape_seek (float seconds);
 
@@ -78,6 +85,12 @@ ape_init (DB_playItem_t *it) {
         timeend = it->duration;
     }
 
+    mask = (1<<(plugin.info.bps-1))-1;
+    scaler = 1.f / ((1<<(plugin.info.bps-1))-1);
+    neg = 1<<plugin.info.bps;
+    sign = (1<<31);
+    signshift = plugin.info.bps-1;
+
     return 0;
 }
 
@@ -90,11 +103,30 @@ ape_free (void) {
 }
 
 static int
-ape_read (char *buffer, int size) {
+ape_read_int16 (char *buffer, int size) {
     int initsize = size;
     int nblocks = size / plugin.info.channels / 2;
     nblocks = min (nblocks, ape_blocks_left);
-    nblocks = ape_decompress_getdata (ape_dec, buffer, nblocks);
+    nblocks = ape_decompress_getdata (ape_dec, ape_readbuf, nblocks);
+
+    uint8_t *in = ape_readbuf;
+    for (int i = 0; i < nblocks*plugin.info.channels; i++) {
+        // convert from bps to int32_t
+        int32_t sample = 0;
+        int shift = 0;
+        while (shift < plugin.info.bps - 8) {
+            sample |= (*in << shift);
+            in++;
+            shift += 8;
+        }
+        sample |= ((char)(*in)) << (plugin.info.bps - 8);
+        in++;
+
+        // now that's convertable to 16 bit
+        *((int16_t*)buffer) = (int16_t)sample;
+        buffer += 2;
+    }
+
     ape_blocks_left -= nblocks;
     samplesdecoded += nblocks;
     plugin.info.readpos = samplesdecoded / (float)plugin.info.samplerate - timestart;
@@ -102,6 +134,40 @@ ape_read (char *buffer, int size) {
         return 0;
     }
     return nblocks * 2 * plugin.info.channels;
+}
+
+static int
+ape_read_float32 (char *buffer, int size) {
+    int initsize = size;
+    int nblocks = size / plugin.info.channels / sizeof (float);
+    nblocks = min (nblocks, ape_blocks_left);
+    nblocks = ape_decompress_getdata (ape_dec, ape_readbuf, nblocks);
+
+    uint8_t *in = ape_readbuf;
+    for (int i = 0; i < nblocks*plugin.info.channels; i++) {
+        // convert from bps to int32_t
+        int32_t sample = 0;
+        int shift = 0;
+        while (shift < plugin.info.bps - 8) {
+            sample |= (*in << shift);
+            in++;
+            shift += 8;
+        }
+        sample |= ((char)(*in)) << (plugin.info.bps - 8);
+        in++;
+
+        // now that's convertable to float32
+        *((float*)buffer) = (sample - ((sample&sign)>>signshift)*neg) * scaler;
+        buffer += sizeof (float);
+    }
+
+    ape_blocks_left -= nblocks;
+    samplesdecoded += nblocks;
+    plugin.info.readpos = samplesdecoded / (float)plugin.info.samplerate - timestart;
+    if (plugin.info.readpos >= timeend) {
+        return 0;
+    }
+    return nblocks * sizeof (float) * plugin.info.channels;
 }
 
 static int
@@ -176,7 +242,8 @@ static DB_decoder_t plugin = {
     .plugin.website = "http://deadbeef.sf.net",
     .init = ape_init,
     .free = ape_free,
-    .read_int16 = ape_read,
+    .read_int16 = ape_read_int16,
+    .read_float32 = ape_read_float32,
     .seek = ape_seek,
     .insert = ape_insert,
     .exts = exts,
