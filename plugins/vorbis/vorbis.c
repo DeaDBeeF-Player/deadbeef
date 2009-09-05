@@ -219,7 +219,7 @@ static DB_decoder_t plugin = {
 };
 
 DB_plugin_t *
-oggvorbis_load (DB_functions_t *api) {
+vorbis_load (DB_functions_t *api) {
     deadbeef = api;
     return DB_PLUGIN (&plugin);
 }
