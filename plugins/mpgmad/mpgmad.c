@@ -273,10 +273,12 @@ cmp3_scan_stream (buffer_t *buffer, float position) {
     int nseeks = 0;
 
     int pos = ftell (buffer->file);
+    fprintf (stderr, "filepos: %d\n", pos);
     if (pos <= 0) {
         // try to skip id3v2
         int skip = deadbeef->junk_get_leading_size (buffer->file);
         if (skip > 0) {
+            fprintf (stderr, "skipping %d bytes of junk\n", skip);
             fseek (buffer->file, skip, SEEK_SET);
         }
     }
