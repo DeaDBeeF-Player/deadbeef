@@ -266,7 +266,7 @@ hotkeys_event_loop( uintptr_t unused ) {
     while (!finished) {
         XEvent event;
 
-        if ( XPending( disp ) )
+        while ( XPending( disp ) )
         {
             XNextEvent( disp, &event );
 
@@ -281,8 +281,7 @@ hotkeys_event_loop( uintptr_t unused ) {
                     }
             }
         }
-        else
-            usleep( 200 * 1000 );
+        usleep( 200 * 1000 );
     }
 }
 
