@@ -40,8 +40,10 @@
 #include "conf.h"
 #include "junklib.h"
 
+static uintptr_t mutex;
+
 // deadbeef api
-DB_functions_t deadbeef_api = {
+static DB_functions_t deadbeef_api = {
     // FIXME: set to 1.0 after api freeze
     .vmajor = 0,
     .vminor = 0,
@@ -148,28 +150,35 @@ plugin_t *plugins;
 void
 plug_ev_subscribe (DB_plugin_t *plugin, int ev, DB_callback_t callback, uintptr_t data) {
     assert (ev < DB_EV_MAX && ev >= 0);
-    for (int i = 0; i < MAX_HANDLERS; i++) {
+    int i;
+    mutex_lock (mutex);
+    for (i = 0; i < MAX_HANDLERS; i++) {
         if (!handlers[ev][i].plugin) {
             handlers[ev][i].plugin = plugin;
             handlers[ev][i].callback = callback;
             handlers[ev][i].data = data;
-            return;
+            break;
         }
     }
-    fprintf (stderr, "failed to subscribe plugin %s to event %d (too many event handlers)\n", plugin->name, ev);
+    mutex_unlock (mutex);
+    if (i == MAX_HANDLERS) {
+        fprintf (stderr, "failed to subscribe plugin %s to event %d (too many event handlers)\n", plugin->name, ev);
+    }
 }
 
 void
 plug_ev_unsubscribe (DB_plugin_t *plugin, int ev, DB_callback_t callback, uintptr_t data) {
     assert (ev < DB_EV_MAX && ev >= 0);
+    mutex_lock (mutex);
     for (int i = 0; i < MAX_HANDLERS; i++) {
         if (handlers[ev][i].plugin == plugin) {
             handlers[ev][i].plugin = NULL;
             handlers[ev][i].callback = NULL;
             handlers[ev][i].data = 0;
-            return;
+            break;
         }
     }
+    mutex_unlock (mutex);
 }
 
 void
@@ -228,6 +237,7 @@ plug_quit (void) {
 /////// non-api functions (plugin support)
 void
 plug_trigger_event (int ev) {
+    mutex_lock (mutex);
     DB_event_t *event;
     switch (ev) {
     case DB_EV_SONGSTARTED:
@@ -249,6 +259,7 @@ plug_trigger_event (int ev) {
         }
     }
     free (event);
+    mutex_unlock (mutex);
 }
 
 int
@@ -273,6 +284,7 @@ plug_init_plugin (DB_plugin_t* (*loadfunc)(DB_functions_t *), void *handle) {
 
 void
 plug_load_all (void) {
+    mutex = mutex_create ();
     char dirname[1024];
     snprintf (dirname, 1024, "%s/lib/deadbeef", PREFIX);
     struct dirent **namelist = NULL;
@@ -388,6 +400,7 @@ plug_unload_all (void) {
         }
         plugins = next;
     }
+    mutex_free (mutex);
 }
 
 struct DB_decoder_s **
