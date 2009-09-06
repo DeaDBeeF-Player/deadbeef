@@ -750,12 +750,16 @@ Copyright (C) Simon White and other authors.</property>
   <property name="wrap_license">False</property>
   <property name="website">http://deadbeef.sf.net</property>
   <property name="website_label" translatable="yes">website</property>
-  <property name="authors">Core developer: Alexey Yakovenko &lt;waker@users.sourceforge.net&gt;
-
-Hotkeys plugin: Viktor Semykin &lt;thesame.ml@gmail.com&gt;
-
-Desktop file and Debian packages: Alexey A. Smirnov &lt;alexey.smirnov@gmx.com&gt;</property>
-  <property name="artists">Button artwork: Stas &quot;uncle lag&quot; Akimushkin &lt;uncle.lag@gmail.com&gt;</property>
+  <property name="authors">Core developer:
+Alexey Yakovenko &lt;waker@users.sourceforge.net&gt;
+ 
+Hotkeys plugin:
+Viktor Semykin &lt;thesame.ml@gmail.com&gt;
+ 
+Desktop file and Debian packages:
+Alexey A. Smirnov &lt;alexey.smirnov@gmx.com&gt;</property>
+  <property name="artists">Button artwork:
+Stas &quot;uncle lag&quot; Akimushkin &lt;uncle.lag@gmail.com&gt;</property>
   <property name="translator_credits" translatable="yes" comments="TRANSLATORS: Replace this string with your names, one name per line.">translator-credits</property>
 </widget>
 
