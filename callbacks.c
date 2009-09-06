@@ -75,8 +75,9 @@ main_playlist_init (GtkWidget *widget) {
     main_playlist.clicktime = -1;
     main_playlist.nvisiblerows = 0;
     main_playlist.fmtcache = NULL;
-    int colwidths[pl_ncolumns] = { 50, 150, 50, 150, 50 };
-    memcpy (main_playlist.colwidths, colwidths, sizeof (colwidths));
+//    int colwidths[pl_ncolumns] = { 50, 150, 50, 150, 50 };
+//    memcpy (main_playlist.colwidths, colwidths, sizeof (colwidths));
+    main_playlist.colwidths = session_get_main_colwidths_ptr ();
     gtk_object_set_data (GTK_OBJECT (main_playlist.playlist), "ps", &main_playlist);
     gtk_object_set_data (GTK_OBJECT (main_playlist.header), "ps", &main_playlist);
     gtk_object_set_data (GTK_OBJECT (main_playlist.scrollbar), "ps", &main_playlist);
@@ -101,8 +102,9 @@ search_playlist_init (GtkWidget *widget) {
     search_playlist.clicktime = -1;
     search_playlist.nvisiblerows = 0;
     search_playlist.fmtcache = NULL;
-    int colwidths[pl_ncolumns] = { 0, 150, 50, 150, 50 };
-    memcpy (search_playlist.colwidths, colwidths, sizeof (colwidths));
+//    int colwidths[pl_ncolumns] = { 0, 150, 50, 150, 50 };
+//    memcpy (search_playlist.colwidths, colwidths, sizeof (colwidths));
+    search_playlist.colwidths = session_get_search_colwidths_ptr ();
     gtk_object_set_data (GTK_OBJECT (search_playlist.playlist), "ps", &search_playlist);
     gtk_object_set_data (GTK_OBJECT (search_playlist.header), "ps", &search_playlist);
     gtk_object_set_data (GTK_OBJECT (search_playlist.scrollbar), "ps", &search_playlist);
