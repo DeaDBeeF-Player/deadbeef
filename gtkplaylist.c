@@ -793,26 +793,29 @@ gtkpl_keypress (gtkplaylist_t *ps, int keyval, int state) {
 //        search_start ();       
 //    }
 //    else
-    if ((keyval == GDK_A || keyval == GDK_a) && (state & GDK_CONTROL_MASK)) {
-        // select all
-        pl_select_all ();
-        gtkpl_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
-        gdk_draw_drawable (widget->window, widget->style->black_gc, ps->backbuf, 0, 0, 0, 0, widget->allocation.width, widget->allocation.height);
-        return;
-    }
-    else if ((keyval == GDK_P || keyval == GDK_p) && (state & GDK_CONTROL_MASK)) {
-        messagepump_push (M_PAUSESONG, 0, 0, 0);
-    }
-    else if (keyval == GDK_Return && ps->row != -1) {
-        messagepump_push (M_PLAYSONGNUM, 0, ps->row, 0);
-        return;
-    }
-    else if (keyval == GDK_Delete) {
-        pl_delete_selected ();
-        playlist_refresh ();
-        return;
-    }
-    else if (keyval == GDK_Down && ps->row < (*ps->pcount) - 1) {
+//    if ((keyval == GDK_A || keyval == GDK_a) && (state & GDK_CONTROL_MASK)) {
+//        // select all
+//        pl_select_all ();
+//        gtkpl_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
+//        gdk_draw_drawable (widget->window, widget->style->black_gc, ps->backbuf, 0, 0, 0, 0, widget->allocation.width, widget->allocation.height);
+//        return;
+//    }
+//    else if ((keyval == GDK_P || keyval == GDK_p) && (state & GDK_CONTROL_MASK)) {
+//        messagepump_push (M_PAUSESONG, 0, 0, 0);
+//    }
+//    else
+//    if (keyval == GDK_Return && ps->row != -1) {
+//        messagepump_push (M_PLAYSONGNUM, 0, ps->row, 0);
+//        return;
+//    }
+//    else
+//    if (keyval == GDK_Delete) {
+//        pl_delete_selected ();
+//        playlist_refresh ();
+//        return;
+//    }
+//    else
+    if (keyval == GDK_Down && ps->row < (*ps->pcount) - 1) {
         ps->row++;
         if (ps->row > ps->scrollpos + widget->allocation.height / rowheight - 1) {
             newscroll = ps->row - widget->allocation.height / rowheight + 1;

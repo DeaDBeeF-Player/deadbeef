@@ -508,3 +508,20 @@ on_find_activate                       (GtkMenuItem     *menuitem,
 void
 on_add_folders_activate                (GtkMenuItem     *menuitem,
                                         gpointer         user_data);
+
+void
+on_clear1_activate                     (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_select_all1_activate                (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_remove1_activate                    (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_find_activate                       (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
