@@ -14,6 +14,21 @@
 
 <h1 id="news">News</h1>
 
+<h2>tag loading/recoding policy</h2>
+<p>2009/09/06</p>
+<ul>
+    <li>id3v1 loader will always try to detect cp1251.</li>
+    <li>id3v2 loader will only try to detect cp1251 if encoding is not specified.</li>
+    <li>vorbis comment tags (both in ogg vorbis and flac files) and APE tags
+    (both in ape and mp3 files) must always be utf8, so no detection will be
+    done here.</li>
+    <li>id3v2 tags with encoding explicitly set to iso8859-1 will always be
+    loaded as iso8859-1. period.</li>
+    <li>id3v2 tags inserted into flac files will be ignored.</li>
+    <li>8bit charsets other than cp1251 and iso8859-1 (like koi8-r) are not
+    supported now, but might be added in the future.</li>
+</ul>
+
 <h2>APE support status</h2>
 <p>2009/09/01</p>
 <p>a lot of people are asking me about whether deadbeef is going to support APE (Monkey's Audio Codec) format.</p>
