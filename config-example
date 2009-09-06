@@ -25,6 +25,10 @@ samplerate 48000
 # http://www.hydrogenaudio.org/forums/index.php?s=&showtopic=9772&view=findpost&p=98252
 src_quality 2
 
+# default behaviour of close(X) button is to close player
+# this option allows to minimize to tray instead
+#close_send_to_tray 1
+
 # those next 2 are disabled by default, cause most people probably don't have HVSC
 # in case you don't know what HVSC is - keep disabled
 #hvsc_path /home/waker/hvsc/C64Music/DOCUMENTS/Songlengths.txt

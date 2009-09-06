@@ -44,6 +44,7 @@
 #include "progress.h"
 #include "volume.h"
 #include "session.h"
+#include "conf.h"
 
 #include "plugins.h"
 
@@ -1145,9 +1146,12 @@ on_mainwin_delete_event                (GtkWidget       *widget,
                                         GdkEvent        *event,
                                         gpointer         user_data)
 {
-//    messagepump_push (M_TERMINATE, 0, 0, 0);
-
-    gtk_widget_hide (widget);
+    if (conf_close_send_to_tray) {
+        gtk_widget_hide (widget);
+    }
+    else {
+        messagepump_push (M_TERMINATE, 0, 0, 0);
+    }
     return TRUE;
 }
 

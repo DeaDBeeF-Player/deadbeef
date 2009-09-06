@@ -24,6 +24,7 @@ extern int conf_src_quality;
 extern char conf_hvsc_path[1024];
 extern int conf_hvsc_enable;
 extern char conf_blacklist_plugins[1024];
+extern int conf_close_send_to_tray;
 
 int
 conf_load (void);

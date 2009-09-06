@@ -26,6 +26,7 @@ int conf_src_quality = 1;
 char conf_hvsc_path[1024] = "";
 int conf_hvsc_enable = 0;
 char conf_blacklist_plugins[1024]; // plugins listed in this option will not be loaded
+int conf_close_send_to_tray = 0;
 
 int
 conf_load (void) {
@@ -88,6 +89,9 @@ conf_load (void) {
             fprintf (stderr, "blacklisted plugins: %s\n", value);
             strncpy (conf_blacklist_plugins, value, sizeof (conf_blacklist_plugins));
             conf_blacklist_plugins[sizeof (conf_blacklist_plugins)-1] = 0;
+        }
+        else if (!strcasecmp (str, "close_send_to_tray")) {
+            conf_close_send_to_tray = atoi (value);
         }
         else {
             fprintf (stderr, "error in config file line %d\n", line);
