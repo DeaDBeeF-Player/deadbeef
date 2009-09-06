@@ -788,10 +788,12 @@ gtkpl_keypress (gtkplaylist_t *ps, int keyval, int state) {
     GtkWidget *range = ps->scrollbar;
     int prev = ps->row;
     int newscroll = ps->scrollpos;
-    if ((keyval == GDK_F || keyval == GDK_f) && (state & GDK_CONTROL_MASK)) {
-        search_start ();       
-    }
-    else if ((keyval == GDK_A || keyval == GDK_a) && (state & GDK_CONTROL_MASK)) {
+// C-f is now handled by gtk
+//    if ((keyval == GDK_F || keyval == GDK_f) && (state & GDK_CONTROL_MASK)) {
+//        search_start ();       
+//    }
+//    else
+    if ((keyval == GDK_A || keyval == GDK_a) && (state & GDK_CONTROL_MASK)) {
         // select all
         pl_select_all ();
         gtkpl_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);

@@ -500,3 +500,7 @@ on_cursor_follows_playback_activate    (GtkMenuItem     *menuitem,
 void
 on_scroll_follows_playback_activate    (GtkMenuItem     *menuitem,
                                         gpointer         user_data);
+
+void
+on_find_activate                       (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);

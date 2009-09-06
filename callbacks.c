@@ -1202,3 +1202,11 @@ on_scroll_follows_playback_activate    (GtkMenuItem     *menuitem,
     session_set_scroll_follows_playback (gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (menuitem)));
 }
 
+
+void
+on_find_activate                       (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    search_start ();       
+}
+

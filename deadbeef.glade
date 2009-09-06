@@ -156,6 +156,15 @@
 		      </child>
 		    </widget>
 		  </child>
+
+		  <child>
+		    <widget class="GtkImageMenuItem" id="find">
+		      <property name="visible">True</property>
+		      <property name="label">gtk-find</property>
+		      <property name="use_stock">True</property>
+		      <signal name="activate" handler="on_find_activate" last_modification_time="Sun, 06 Sep 2009 16:00:58 GMT"/>
+		    </widget>
+		  </child>
 		</widget>
 	      </child>
 	    </widget>

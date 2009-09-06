@@ -48,6 +48,7 @@ create_mainwin (void)
   GtkWidget *selection1_menu;
   GtkWidget *remove1;
   GtkWidget *crop1;
+  GtkWidget *find;
   GtkWidget *playlist1;
   GtkWidget *playlist1_menu;
   GtkWidget *playlist_load;
@@ -97,7 +98,7 @@ create_mainwin (void)
 
   mainwin = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_widget_set_events (mainwin, GDK_KEY_PRESS_MASK);
-  gtk_window_set_title (GTK_WINDOW (mainwin), "DeaDBeeF");
+  gtk_window_set_title (GTK_WINDOW (mainwin), _("DeaDBeeF"));
   gtk_window_set_default_size (GTK_WINDOW (mainwin), 500, 300);
 
   vbox1 = gtk_vbox_new (FALSE, 0);
@@ -108,7 +109,7 @@ create_mainwin (void)
   gtk_widget_show (menubar1);
   gtk_box_pack_start (GTK_BOX (vbox1), menubar1, FALSE, FALSE, 0);
 
-  menuitem1 = gtk_menu_item_new_with_mnemonic ("_File");
+  menuitem1 = gtk_menu_item_new_with_mnemonic (_("_File"));
   gtk_widget_show (menuitem1);
   gtk_container_add (GTK_CONTAINER (menubar1), menuitem1);
 
@@ -124,11 +125,11 @@ create_mainwin (void)
   gtk_container_add (GTK_CONTAINER (menuitem1_menu), separator2);
   gtk_widget_set_sensitive (separator2, FALSE);
 
-  add_files = gtk_menu_item_new_with_mnemonic ("Add files");
+  add_files = gtk_menu_item_new_with_mnemonic (_("Add files"));
   gtk_widget_show (add_files);
   gtk_container_add (GTK_CONTAINER (menuitem1_menu), add_files);
 
-  add_folder1 = gtk_menu_item_new_with_mnemonic ("Add folder");
+  add_folder1 = gtk_menu_item_new_with_mnemonic (_("Add folder"));
   gtk_widget_show (add_folder1);
   gtk_container_add (GTK_CONTAINER (menuitem1_menu), add_folder1);
 
@@ -141,7 +142,7 @@ create_mainwin (void)
   gtk_widget_show (quit1);
   gtk_container_add (GTK_CONTAINER (menuitem1_menu), quit1);
 
-  edit1 = gtk_menu_item_new_with_mnemonic ("Edit");
+  edit1 = gtk_menu_item_new_with_mnemonic (_("Edit"));
   gtk_widget_show (edit1);
   gtk_container_add (GTK_CONTAINER (menubar1), edit1);
 
@@ -156,7 +157,7 @@ create_mainwin (void)
   gtk_widget_show (select_all1);
   gtk_container_add (GTK_CONTAINER (edit1_menu), select_all1);
 
-  selection1 = gtk_menu_item_new_with_mnemonic ("Selection");
+  selection1 = gtk_menu_item_new_with_mnemonic (_("Selection"));
   gtk_widget_show (selection1);
   gtk_container_add (GTK_CONTAINER (edit1_menu), selection1);
 
@@ -167,92 +168,96 @@ create_mainwin (void)
   gtk_widget_show (remove1);
   gtk_container_add (GTK_CONTAINER (selection1_menu), remove1);
 
-  crop1 = gtk_menu_item_new_with_mnemonic ("Crop");
+  crop1 = gtk_menu_item_new_with_mnemonic (_("Crop"));
   gtk_widget_show (crop1);
   gtk_container_add (GTK_CONTAINER (selection1_menu), crop1);
 
-  playlist1 = gtk_menu_item_new_with_mnemonic ("Playlist");
+  find = gtk_image_menu_item_new_from_stock ("gtk-find", accel_group);
+  gtk_widget_show (find);
+  gtk_container_add (GTK_CONTAINER (edit1_menu), find);
+
+  playlist1 = gtk_menu_item_new_with_mnemonic (_("Playlist"));
   gtk_widget_show (playlist1);
   gtk_container_add (GTK_CONTAINER (menubar1), playlist1);
 
   playlist1_menu = gtk_menu_new ();
   gtk_menu_item_set_submenu (GTK_MENU_ITEM (playlist1), playlist1_menu);
 
-  playlist_load = gtk_menu_item_new_with_mnemonic ("Load");
+  playlist_load = gtk_menu_item_new_with_mnemonic (_("Load"));
   gtk_widget_show (playlist_load);
   gtk_container_add (GTK_CONTAINER (playlist1_menu), playlist_load);
 
-  playlist_save = gtk_menu_item_new_with_mnemonic ("Save");
+  playlist_save = gtk_menu_item_new_with_mnemonic (_("Save"));
   gtk_widget_show (playlist_save);
   gtk_container_add (GTK_CONTAINER (playlist1_menu), playlist_save);
 
-  playlist_save_as = gtk_menu_item_new_with_mnemonic ("Save As");
+  playlist_save_as = gtk_menu_item_new_with_mnemonic (_("Save As"));
   gtk_widget_show (playlist_save_as);
   gtk_container_add (GTK_CONTAINER (playlist1_menu), playlist_save_as);
 
-  order1 = gtk_menu_item_new_with_mnemonic ("Order");
+  order1 = gtk_menu_item_new_with_mnemonic (_("Order"));
   gtk_widget_show (order1);
   gtk_container_add (GTK_CONTAINER (playlist1_menu), order1);
 
   order1_menu = gtk_menu_new ();
   gtk_menu_item_set_submenu (GTK_MENU_ITEM (order1), order1_menu);
 
-  order_linear = gtk_radio_menu_item_new_with_mnemonic (order_linear_group, "Linear");
+  order_linear = gtk_radio_menu_item_new_with_mnemonic (order_linear_group, _("Linear"));
   order_linear_group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (order_linear));
   gtk_widget_show (order_linear);
   gtk_container_add (GTK_CONTAINER (order1_menu), order_linear);
   gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (order_linear), TRUE);
 
-  order_shuffle = gtk_radio_menu_item_new_with_mnemonic (order_linear_group, "Shuffle");
+  order_shuffle = gtk_radio_menu_item_new_with_mnemonic (order_linear_group, _("Shuffle"));
   order_linear_group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (order_shuffle));
   gtk_widget_show (order_shuffle);
   gtk_container_add (GTK_CONTAINER (order1_menu), order_shuffle);
   gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (order_shuffle), TRUE);
 
-  order_random = gtk_radio_menu_item_new_with_mnemonic (order_linear_group, "Random");
+  order_random = gtk_radio_menu_item_new_with_mnemonic (order_linear_group, _("Random"));
   order_linear_group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (order_random));
   gtk_widget_show (order_random);
   gtk_container_add (GTK_CONTAINER (order1_menu), order_random);
   gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (order_random), TRUE);
 
-  looping1 = gtk_menu_item_new_with_mnemonic ("Looping");
+  looping1 = gtk_menu_item_new_with_mnemonic (_("Looping"));
   gtk_widget_show (looping1);
   gtk_container_add (GTK_CONTAINER (playlist1_menu), looping1);
 
   looping1_menu = gtk_menu_new ();
   gtk_menu_item_set_submenu (GTK_MENU_ITEM (looping1), looping1_menu);
 
-  loop_all = gtk_radio_menu_item_new_with_mnemonic (loop_all_group, "Loop All");
+  loop_all = gtk_radio_menu_item_new_with_mnemonic (loop_all_group, _("Loop All"));
   loop_all_group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (loop_all));
   gtk_widget_show (loop_all);
   gtk_container_add (GTK_CONTAINER (looping1_menu), loop_all);
   gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (loop_all), TRUE);
 
-  loop_single = gtk_radio_menu_item_new_with_mnemonic (loop_all_group, "Loop Single Song");
+  loop_single = gtk_radio_menu_item_new_with_mnemonic (loop_all_group, _("Loop Single Song"));
   loop_all_group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (loop_single));
   gtk_widget_show (loop_single);
   gtk_container_add (GTK_CONTAINER (looping1_menu), loop_single);
   gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (loop_single), TRUE);
 
-  loop_disable = gtk_radio_menu_item_new_with_mnemonic (loop_all_group, "Don't Loop");
+  loop_disable = gtk_radio_menu_item_new_with_mnemonic (loop_all_group, _("Don't Loop"));
   loop_all_group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (loop_disable));
   gtk_widget_show (loop_disable);
   gtk_container_add (GTK_CONTAINER (looping1_menu), loop_disable);
   gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (loop_disable), TRUE);
 
-  scroll_follows_playback = gtk_check_menu_item_new_with_mnemonic ("Scroll follows playback");
+  scroll_follows_playback = gtk_check_menu_item_new_with_mnemonic (_("Scroll follows playback"));
   gtk_widget_show (scroll_follows_playback);
   gtk_container_add (GTK_CONTAINER (playlist1_menu), scroll_follows_playback);
   gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (scroll_follows_playback), TRUE);
 
-  menuitem4 = gtk_menu_item_new_with_mnemonic ("_Help");
+  menuitem4 = gtk_menu_item_new_with_mnemonic (_("_Help"));
   gtk_widget_show (menuitem4);
   gtk_container_add (GTK_CONTAINER (menubar1), menuitem4);
 
   menuitem4_menu = gtk_menu_new ();
   gtk_menu_item_set_submenu (GTK_MENU_ITEM (menuitem4), menuitem4_menu);
 
-  about1 = gtk_menu_item_new_with_mnemonic ("_About");
+  about1 = gtk_menu_item_new_with_mnemonic (_("_About"));
   gtk_widget_show (about1);
   gtk_container_add (GTK_CONTAINER (menuitem4_menu), about1);
 
@@ -396,6 +401,9 @@ create_mainwin (void)
                     NULL);
   g_signal_connect ((gpointer) crop1, "activate",
                     G_CALLBACK (on_crop1_activate),
+                    NULL);
+  g_signal_connect ((gpointer) find, "activate",
+                    G_CALLBACK (on_find_activate),
                     NULL);
   g_signal_connect ((gpointer) playlist_load, "activate",
                     G_CALLBACK (on_playlist_load_activate),
@@ -571,6 +579,7 @@ create_mainwin (void)
   GLADE_HOOKUP_OBJECT (mainwin, selection1_menu, "selection1_menu");
   GLADE_HOOKUP_OBJECT (mainwin, remove1, "remove1");
   GLADE_HOOKUP_OBJECT (mainwin, crop1, "crop1");
+  GLADE_HOOKUP_OBJECT (mainwin, find, "find");
   GLADE_HOOKUP_OBJECT (mainwin, playlist1, "playlist1");
   GLADE_HOOKUP_OBJECT (mainwin, playlist1_menu, "playlist1_menu");
   GLADE_HOOKUP_OBJECT (mainwin, playlist_load, "playlist_load");
@@ -632,18 +641,21 @@ create_aboutdialog (void)
     "Button artwork: Stas \"uncle lag\" Akimushkin <uncle.lag@gmail.com>",
     NULL
   };
+  /* TRANSLATORS: Replace this string with your names, one name per line. */
+  gchar *translators = _("translator-credits");
 
   aboutdialog = gtk_about_dialog_new ();
   gtk_container_set_border_width (GTK_CONTAINER (aboutdialog), 4);
   gtk_window_set_destroy_with_parent (GTK_WINDOW (aboutdialog), TRUE);
   gtk_about_dialog_set_version (GTK_ABOUT_DIALOG (aboutdialog), VERSION);
-  gtk_about_dialog_set_name (GTK_ABOUT_DIALOG (aboutdialog), "DeaDBeeF");
-  gtk_about_dialog_set_copyright (GTK_ABOUT_DIALOG (aboutdialog), "Copyright \302\251 2009 Alexey Yakovenko");
-  gtk_about_dialog_set_license (GTK_ABOUT_DIALOG (aboutdialog), "DeaDBeeF - ultimate music player for GNU/Linux systems with X11\nCopyright (C) 2009  Alexey Yakovenko\n\nThis program is free software; you can redistribute it and/or\nmodify it under the terms of the GNU General Public License\nas published by the Free Software Foundation; either version 2\nof the License, or (at your option) any later version.\n\nThis program is distributed in the hope that it will be useful,\nbut WITHOUT ANY WARRANTY; without even the implied warranty of\nMERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\nGNU General Public License for more details.\n\nYou should have received a copy of the GNU General Public License\nalong with this program; if not, write to the Free Software\nFoundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.\n\n\nNote that other included libraries have separate licensing terms.\n\n\nDUMB - Dynamic Universal Music Bibliotheque, Version 0.9.3\nCopyright (C) 2001-2005 Ben Davis, Robert J Ohannessian and Julien Cugniere.\n\n\nGame_Music_Emu Version 0.5.2\nCopyright (C) 2003-2006 Shay Green.\n\n\nFunctions to compute MD5 message digest of files or memory blocks\nWritten by Ulrich Drepper <drepper@gnu.ai.mit.edu>, 1995.\nModified by Gray Watson <http://256.com/gray/>, 1997.\n\n\nlibsidplay2 - commodore 64 SID emulation library\nCopyright (C) Simon White and other authors.");
+  gtk_about_dialog_set_name (GTK_ABOUT_DIALOG (aboutdialog), _("DeaDBeeF"));
+  gtk_about_dialog_set_copyright (GTK_ABOUT_DIALOG (aboutdialog), _("Copyright \302\251 2009 Alexey Yakovenko"));
+  gtk_about_dialog_set_license (GTK_ABOUT_DIALOG (aboutdialog), _("DeaDBeeF - ultimate music player for GNU/Linux systems with X11\nCopyright (C) 2009  Alexey Yakovenko\n\nThis program is free software; you can redistribute it and/or\nmodify it under the terms of the GNU General Public License\nas published by the Free Software Foundation; either version 2\nof the License, or (at your option) any later version.\n\nThis program is distributed in the hope that it will be useful,\nbut WITHOUT ANY WARRANTY; without even the implied warranty of\nMERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\nGNU General Public License for more details.\n\nYou should have received a copy of the GNU General Public License\nalong with this program; if not, write to the Free Software\nFoundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.\n\n\nNote that other included libraries have separate licensing terms.\n\n\nDUMB - Dynamic Universal Music Bibliotheque, Version 0.9.3\nCopyright (C) 2001-2005 Ben Davis, Robert J Ohannessian and Julien Cugniere.\n\n\nGame_Music_Emu Version 0.5.2\nCopyright (C) 2003-2006 Shay Green.\n\n\nFunctions to compute MD5 message digest of files or memory blocks\nWritten by Ulrich Drepper <drepper@gnu.ai.mit.edu>, 1995.\nModified by Gray Watson <http://256.com/gray/>, 1997.\n\n\nlibsidplay2 - commodore 64 SID emulation library\nCopyright (C) Simon White and other authors."));
   gtk_about_dialog_set_website (GTK_ABOUT_DIALOG (aboutdialog), "http://deadbeef.sf.net");
-  gtk_about_dialog_set_website_label (GTK_ABOUT_DIALOG (aboutdialog), "website");
+  gtk_about_dialog_set_website_label (GTK_ABOUT_DIALOG (aboutdialog), _("website"));
   gtk_about_dialog_set_authors (GTK_ABOUT_DIALOG (aboutdialog), authors);
   gtk_about_dialog_set_artists (GTK_ABOUT_DIALOG (aboutdialog), artists);
+  gtk_about_dialog_set_translator_credits (GTK_ABOUT_DIALOG (aboutdialog), translators);
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (aboutdialog, aboutdialog, "aboutdialog");
@@ -666,7 +678,7 @@ create_searchwin (void)
   searchwin = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_widget_set_size_request (searchwin, 600, 150);
   gtk_widget_set_events (searchwin, GDK_KEY_PRESS_MASK);
-  gtk_window_set_title (GTK_WINDOW (searchwin), "Search");
+  gtk_window_set_title (GTK_WINDOW (searchwin), _("Search"));
   gtk_window_set_position (GTK_WINDOW (searchwin), GTK_WIN_POS_CENTER_ALWAYS);
   gtk_window_set_skip_taskbar_hint (GTK_WINDOW (searchwin), TRUE);
   gtk_window_set_skip_pager_hint (GTK_WINDOW (searchwin), TRUE);
@@ -809,7 +821,7 @@ create_traymenu (void)
   gtk_widget_show (next1);
   gtk_container_add (GTK_CONTAINER (traymenu), next1);
 
-  play_random1 = gtk_menu_item_new_with_mnemonic ("Play Random");
+  play_random1 = gtk_menu_item_new_with_mnemonic (_("Play Random"));
   gtk_widget_show (play_random1);
   gtk_container_add (GTK_CONTAINER (traymenu), play_random1);
 
@@ -884,7 +896,7 @@ create_addprogress (void)
   GtkWidget *button1;
 
   addprogress = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_title (GTK_WINDOW (addprogress), "Adding files...");
+  gtk_window_set_title (GTK_WINDOW (addprogress), _("Adding files..."));
   gtk_window_set_position (GTK_WINDOW (addprogress), GTK_WIN_POS_CENTER_ON_PARENT);
   gtk_window_set_skip_taskbar_hint (GTK_WINDOW (addprogress), TRUE);
   gtk_window_set_skip_pager_hint (GTK_WINDOW (addprogress), TRUE);
@@ -906,7 +918,7 @@ create_addprogress (void)
   gtk_widget_show (hbox7);
   gtk_box_pack_start (GTK_BOX (vbox6), hbox7, FALSE, TRUE, 2);
 
-  button1 = gtk_button_new_with_mnemonic ("Abort");
+  button1 = gtk_button_new_with_mnemonic (_("Abort"));
   gtk_widget_show (button1);
   gtk_box_pack_start (GTK_BOX (hbox7), button1, FALSE, FALSE, 0);
   gtk_widget_set_size_request (button1, 83, -1);
