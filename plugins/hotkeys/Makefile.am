@@ -5,5 +5,5 @@ hotkeys_la_LDFLAGS = -module
 
 EXTRA_hotkeys_la_SOURCES = keysyms.inc
 
-hotkeys_la_LIBADD = $(LDADD) $(hotkeys_DEPS_LIBS)
-AM_CFLAGS = $(hotkeys_DEPS_CFLAGS) -std=c99
+hotkeys_la_LIBADD = $(LDADD) -lX11
+AM_CFLAGS = $(CFLAGS) -std=c99
