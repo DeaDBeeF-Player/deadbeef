@@ -361,6 +361,9 @@ gtkpl_draw_pl_row (gtkplaylist_t *ps, int row, playItem_t *it) {
 void
 gtkpl_draw_playlist (gtkplaylist_t *ps, int x, int y, int w, int h) {
     GtkWidget *widget = ps->playlist;
+    if (!ps->backbuf) {
+        return;
+    }
     if (!ps->fmtcache && ps->nvisiblerows > 0 && pl_ncolumns > 0) {
         ps->fmtcache = malloc (ps->nvisiblerows * pl_ncolumns * 3 * sizeof (int16_t));
         memset (ps->fmtcache, 0, ps->nvisiblerows * pl_ncolumns * 3 * sizeof (int16_t));
@@ -427,7 +430,9 @@ on_playlist_configure_event            (GtkWidget       *widget,
 void
 gtkpl_expose (gtkplaylist_t *ps, int x, int y, int w, int h) {
     GtkWidget *widget = ps->playlist;
-	gdk_draw_drawable (widget->window, widget->style->black_gc, ps->backbuf, x, y, x, y, w, h);
+    if (widget->window) {
+        gdk_draw_drawable (widget->window, widget->style->black_gc, ps->backbuf, x, y, x, y, w, h);
+    }
 }
 
 void
