@@ -21,6 +21,9 @@
 
 #include <stdint.h>
 
+void
+session_reset (void);
+
 int
 session_save (const char *fname);
 
@@ -62,5 +65,11 @@ session_set_playlist_looping (int looping);
 
 int
 session_get_playlist_looping (void);
+
+int *
+session_get_main_colwidths_ptr (void);
+
+int *
+session_get_search_colwidths_ptr (void);
 
 #endif // __SESSION_H

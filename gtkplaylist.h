@@ -80,7 +80,7 @@ typedef struct {
     int16_t *fmtcache; // cached text formatting
     int header_fitted[pl_ncolumns];
     char colnames_fitted[pl_ncolumns][pl_colname_max]; // cached formatted names of columns
-    int colwidths[pl_ncolumns]; // current column widths
+    int *colwidths;//[pl_ncolumns]; // current column widths
 } gtkplaylist_t;
 
 #define GTKPL_PROLOGUE \
