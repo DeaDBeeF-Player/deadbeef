@@ -322,6 +322,7 @@ hotkeys_stop (void) {
 
 // define plugin interface
 static DB_misc_t plugin = {
+    DB_PLUGIN_SET_API_VERSION
     .plugin.type = DB_PLUGIN_MISC,
     .plugin.name = "Global Hotkeys",
     .plugin.descr = "Allows to control player using xlib global hotkeys",

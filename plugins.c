@@ -40,6 +40,8 @@
 #include "conf.h"
 #include "junklib.h"
 
+//#define DISABLE_VERSIONCHECK 1
+
 static uintptr_t mutex;
 
 // deadbeef api
@@ -268,6 +270,18 @@ plug_init_plugin (DB_plugin_t* (*loadfunc)(DB_functions_t *), void *handle) {
     if (!plugin_api) {
         return -1;
     }
+#if !DISABLE_VERSIONCHECK
+    if (plugin_api->api_vmajor != 0 || plugin_api->api_vminor != 0) {
+        // version check enabled
+        if (plugin_api->api_vmajor != DB_API_VERSION_MAJOR || plugin_api->api_vminor != DB_API_VERSION_MINOR) {
+            fprintf (stderr, "\033[0;31mWARNING: plugin \"%s\" wants API v%d.%d (got %d.%d), will not be loaded\033[0;m\n", plugin_api->name, plugin_api->api_vmajor, plugin_api->api_vminor, DB_API_VERSION_MAJOR, DB_API_VERSION_MINOR);
+            return -1;
+        }
+    }
+    else {
+            fprintf (stderr, "\033[0;31mWARNING: plugin \"%s\" has disabled version check. do not distribute!\033[0;m\n", plugin_api->name);
+    }
+#endif
     plugin_t *plug = malloc (sizeof (plugin_t));
     memset (plug, 0, sizeof (plugin_t));
     plug->plugin = plugin_api;
@@ -284,6 +298,9 @@ plug_init_plugin (DB_plugin_t* (*loadfunc)(DB_functions_t *), void *handle) {
 
 void
 plug_load_all (void) {
+#if DISABLE_VERSIONCHECK
+    fprintf (stderr, "\033[0;31mDISABLE_VERSIONCHECK=1! do not distribute!\033[0;m\n");
+#endif
     mutex = mutex_create ();
     char dirname[1024];
     snprintf (dirname, 1024, "%s/lib/deadbeef", PREFIX);

@@ -51,7 +51,10 @@ const char *filetypes[] = { "SID", NULL };
 // define plugin interface
 static DB_decoder_t plugin = {
     { // plugin
+        // C macro won't work here, so do it by hand
         /* .plugin.type = */DB_PLUGIN_DECODER,
+        /* .api_vmajor = */DB_API_VERSION_MAJOR,
+        /* .api_vminor = */DB_API_VERSION_MINOR,
         /* .plugin.version_major = */0,
         /* .plugin.version_minor = */1,
         /* .inactive = */0,

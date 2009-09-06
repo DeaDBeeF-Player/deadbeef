@@ -39,11 +39,28 @@ extern "C" {
 // extern "C" DB_plugin_t* $MODULENAME_load (DB_functions_t *api);
 // where $MODULENAME is a name of module
 // e.g. if your plugin is called "myplugin.so", $MODULENAME is "myplugin"
-// plugin should check vmajor and vminor members of api,
-// and return NULL if they are not compatible
-// otherwise it should return pointer to DB_plugin_t structure
+// this function should return pointer to DB_plugin_t structure
 // that is enough for both static and dynamic modules
 
+// add DB_PLUGIN_SET_API_VERSION macro when you define plugin structure
+// like this:
+// static DB_decoder_t plugin = {
+//   DB_PLUGIN_SET_API_VERSION
+//  ............
+// }
+// this is required for versioning
+// if you don't do it -- no version checking will be done (usefull for
+// debugging/development)
+// DON'T release plugins without DB_PLUGIN_SET_API_VERSION
+
+#define DB_API_VERSION_MAJOR 0
+#define DB_API_VERSION_MINOR 1
+
+#define DB_PLUGIN_SET_API_VERSION\
+    .plugin.api_vmajor = DB_API_VERSION_MAJOR,\
+    .plugin.api_vminor = DB_API_VERSION_MINOR,
+
+////////////////////////////
 // playlist structures
 
 // playlist item
@@ -165,7 +182,10 @@ typedef struct {
 typedef struct DB_plugin_s {
     // type must be one of DB_PLUGIN_ types
     int32_t type;
-    // version
+    // api version
+    int16_t api_vmajor;
+    int16_t api_vminor;
+    // plugin version
     int16_t version_major;
     int16_t version_minor;
     // may be deactivated on failures after load
