@@ -1376,6 +1376,25 @@ gtkpl_add_dir (gtkplaylist_t *ps, char *folder) {
 }
 
 static void
+gtkpl_adddir_cb (gpointer data, gpointer userdata) {
+    pl_add_dir (data, gtkpl_add_file_info_cb, userdata);
+    g_free (data);
+}
+
+void
+gtkpl_add_dirs (gtkplaylist_t *ps, GSList *lst) {
+    GDK_THREADS_ENTER();
+    progress_show ();
+    GDK_THREADS_LEAVE();
+    g_slist_foreach(lst, gtkpl_adddir_cb, NULL);
+    g_slist_free (lst);
+    GDK_THREADS_ENTER();
+    progress_hide ();
+    playlist_refresh ();
+    GDK_THREADS_LEAVE();
+}
+
+static void
 gtkpl_addfile_cb (gpointer data, gpointer userdata) {
     pl_add_file (data, gtkpl_add_file_info_cb, userdata);
     g_free (data);

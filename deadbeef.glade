@@ -50,9 +50,21 @@
 		  <child>
 		    <widget class="GtkImageMenuItem" id="open">
 		      <property name="visible">True</property>
-		      <property name="label">gtk-open</property>
-		      <property name="use_stock">True</property>
+		      <property name="label" translatable="yes">Open file(s)</property>
+		      <property name="use_underline">True</property>
 		      <signal name="activate" handler="on_open_activate" last_modification_time="Sat, 04 Jul 2009 12:57:58 GMT"/>
+
+		      <child internal-child="image">
+			<widget class="GtkImage" id="image17">
+			  <property name="visible">True</property>
+			  <property name="stock">gtk-open</property>
+			  <property name="icon_size">1</property>
+			  <property name="xalign">0.5</property>
+			  <property name="yalign">0.5</property>
+			  <property name="xpad">0</property>
+			  <property name="ypad">0</property>
+			</widget>
+		      </child>
 		    </widget>
 		  </child>
 
@@ -63,20 +75,44 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkMenuItem" id="add_files">
+		    <widget class="GtkImageMenuItem" id="add_files">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">Add files</property>
+		      <property name="label" translatable="yes">Add file(s)</property>
 		      <property name="use_underline">True</property>
 		      <signal name="activate" handler="on_add_files_activate" last_modification_time="Sat, 04 Jul 2009 13:04:01 GMT"/>
+
+		      <child internal-child="image">
+			<widget class="GtkImage" id="image18">
+			  <property name="visible">True</property>
+			  <property name="stock">gtk-add</property>
+			  <property name="icon_size">1</property>
+			  <property name="xalign">0.5</property>
+			  <property name="yalign">0.5</property>
+			  <property name="xpad">0</property>
+			  <property name="ypad">0</property>
+			</widget>
+		      </child>
 		    </widget>
 		  </child>
 
 		  <child>
-		    <widget class="GtkMenuItem" id="add_folder1">
+		    <widget class="GtkImageMenuItem" id="add_folders">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">Add folder</property>
+		      <property name="label" translatable="yes">Add folder(s)</property>
 		      <property name="use_underline">True</property>
-		      <signal name="activate" handler="on_add_folder1_activate" last_modification_time="Sat, 04 Jul 2009 13:04:01 GMT"/>
+		      <signal name="activate" handler="on_add_folders_activate" last_modification_time="Sun, 06 Sep 2009 17:51:40 GMT"/>
+
+		      <child internal-child="image">
+			<widget class="GtkImage" id="image19">
+			  <property name="visible">True</property>
+			  <property name="stock">gtk-add</property>
+			  <property name="icon_size">1</property>
+			  <property name="xalign">0.5</property>
+			  <property name="yalign">0.5</property>
+			  <property name="xpad">0</property>
+			  <property name="ypad">0</property>
+			</widget>
+		      </child>
 		    </widget>
 		  </child>
 
@@ -87,11 +123,23 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkImageMenuItem" id="quit1">
+		    <widget class="GtkImageMenuItem" id="quit">
 		      <property name="visible">True</property>
-		      <property name="label">gtk-quit</property>
-		      <property name="use_stock">True</property>
-		      <signal name="activate" handler="on_quit1_activate" last_modification_time="Sat, 04 Jul 2009 12:57:58 GMT"/>
+		      <property name="label" translatable="yes">Quit</property>
+		      <property name="use_underline">True</property>
+		      <signal name="activate" handler="on_quit_activate" last_modification_time="Sat, 04 Jul 2009 12:57:58 GMT"/>
+
+		      <child internal-child="image">
+			<widget class="GtkImage" id="image20">
+			  <property name="visible">True</property>
+			  <property name="stock">gtk-quit</property>
+			  <property name="icon_size">1</property>
+			  <property name="xalign">0.5</property>
+			  <property name="yalign">0.5</property>
+			  <property name="xpad">0</property>
+			  <property name="ypad">0</property>
+			</widget>
+		      </child>
 		    </widget>
 		  </child>
 		</widget>
@@ -920,11 +968,11 @@ Desktop file and Debian packages: Alexey A. Smirnov &lt;alexey.smirnov@gmx.com&g
   </child>
 
   <child>
-    <widget class="GtkImageMenuItem" id="quit2">
+    <widget class="GtkMenuItem" id="quit">
       <property name="visible">True</property>
-      <property name="label">gtk-quit</property>
-      <property name="use_stock">True</property>
-      <signal name="activate" handler="on_quit1_activate" last_modification_time="Sun, 16 Aug 2009 14:45:24 GMT"/>
+      <property name="label" translatable="yes">Quit</property>
+      <property name="use_underline">True</property>
+      <signal name="activate" handler="on_quit_activate" last_modification_time="Sun, 16 Aug 2009 14:45:24 GMT"/>
     </widget>
   </child>
 </widget>

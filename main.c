@@ -412,6 +412,15 @@ player_thread (uintptr_t ctx) {
 //                printf ("time: %f\n", t2-t1);
                 }
                 break;
+            case M_ADDDIRS:
+                {
+                // long time processing
+//                float t1 = (float)clock () / CLOCKS_PER_SEC;
+                gtkpl_add_dirs (&main_playlist, (GSList *)ctx);
+//                float t2 = (float)clock () / CLOCKS_PER_SEC;
+//                printf ("time: %f\n", t2-t1);
+                }
+                break;
             case M_ADDFILES:
                 gtkpl_add_files (&main_playlist, (GSList *)ctx);
                 break;

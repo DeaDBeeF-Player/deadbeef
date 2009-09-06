@@ -154,6 +154,9 @@ void
 gtkpl_add_dir (gtkplaylist_t *ps, char *folder);
 
 void
+gtkpl_add_dirs (gtkplaylist_t *ps, GSList *lst);
+
+void
 gtkpl_add_files (gtkplaylist_t *ps, GSList *lst);
 
 void

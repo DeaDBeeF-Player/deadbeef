@@ -35,11 +35,15 @@ create_mainwin (void)
   GtkWidget *menuitem1;
   GtkWidget *menuitem1_menu;
   GtkWidget *open;
+  GtkWidget *image17;
   GtkWidget *separator2;
   GtkWidget *add_files;
-  GtkWidget *add_folder1;
+  GtkWidget *image18;
+  GtkWidget *add_folders;
+  GtkWidget *image19;
   GtkWidget *separatormenuitem1;
-  GtkWidget *quit1;
+  GtkWidget *quit;
+  GtkWidget *image20;
   GtkWidget *edit1;
   GtkWidget *edit1_menu;
   GtkWidget *clear1;
@@ -116,31 +120,47 @@ create_mainwin (void)
   menuitem1_menu = gtk_menu_new ();
   gtk_menu_item_set_submenu (GTK_MENU_ITEM (menuitem1), menuitem1_menu);
 
-  open = gtk_image_menu_item_new_from_stock ("gtk-open", accel_group);
+  open = gtk_image_menu_item_new_with_mnemonic ("Open file(s)");
   gtk_widget_show (open);
   gtk_container_add (GTK_CONTAINER (menuitem1_menu), open);
+
+  image17 = gtk_image_new_from_stock ("gtk-open", GTK_ICON_SIZE_MENU);
+  gtk_widget_show (image17);
+  gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (open), image17);
 
   separator2 = gtk_separator_menu_item_new ();
   gtk_widget_show (separator2);
   gtk_container_add (GTK_CONTAINER (menuitem1_menu), separator2);
   gtk_widget_set_sensitive (separator2, FALSE);
 
-  add_files = gtk_menu_item_new_with_mnemonic ("Add files");
+  add_files = gtk_image_menu_item_new_with_mnemonic ("Add file(s)");
   gtk_widget_show (add_files);
   gtk_container_add (GTK_CONTAINER (menuitem1_menu), add_files);
 
-  add_folder1 = gtk_menu_item_new_with_mnemonic ("Add folder");
-  gtk_widget_show (add_folder1);
-  gtk_container_add (GTK_CONTAINER (menuitem1_menu), add_folder1);
+  image18 = gtk_image_new_from_stock ("gtk-add", GTK_ICON_SIZE_MENU);
+  gtk_widget_show (image18);
+  gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (add_files), image18);
+
+  add_folders = gtk_image_menu_item_new_with_mnemonic ("Add folder(s)");
+  gtk_widget_show (add_folders);
+  gtk_container_add (GTK_CONTAINER (menuitem1_menu), add_folders);
+
+  image19 = gtk_image_new_from_stock ("gtk-add", GTK_ICON_SIZE_MENU);
+  gtk_widget_show (image19);
+  gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (add_folders), image19);
 
   separatormenuitem1 = gtk_separator_menu_item_new ();
   gtk_widget_show (separatormenuitem1);
   gtk_container_add (GTK_CONTAINER (menuitem1_menu), separatormenuitem1);
   gtk_widget_set_sensitive (separatormenuitem1, FALSE);
 
-  quit1 = gtk_image_menu_item_new_from_stock ("gtk-quit", accel_group);
-  gtk_widget_show (quit1);
-  gtk_container_add (GTK_CONTAINER (menuitem1_menu), quit1);
+  quit = gtk_image_menu_item_new_with_mnemonic ("Quit");
+  gtk_widget_show (quit);
+  gtk_container_add (GTK_CONTAINER (menuitem1_menu), quit);
+
+  image20 = gtk_image_new_from_stock ("gtk-quit", GTK_ICON_SIZE_MENU);
+  gtk_widget_show (image20);
+  gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (quit), image20);
 
   edit1 = gtk_menu_item_new_with_mnemonic ("Edit");
   gtk_widget_show (edit1);
@@ -384,11 +404,11 @@ create_mainwin (void)
   g_signal_connect ((gpointer) add_files, "activate",
                     G_CALLBACK (on_add_files_activate),
                     NULL);
-  g_signal_connect ((gpointer) add_folder1, "activate",
-                    G_CALLBACK (on_add_folder1_activate),
+  g_signal_connect ((gpointer) add_folders, "activate",
+                    G_CALLBACK (on_add_folders_activate),
                     NULL);
-  g_signal_connect ((gpointer) quit1, "activate",
-                    G_CALLBACK (on_quit1_activate),
+  g_signal_connect ((gpointer) quit, "activate",
+                    G_CALLBACK (on_quit_activate),
                     NULL);
   g_signal_connect ((gpointer) clear1, "activate",
                     G_CALLBACK (on_clear1_activate),
@@ -566,11 +586,15 @@ create_mainwin (void)
   GLADE_HOOKUP_OBJECT (mainwin, menuitem1, "menuitem1");
   GLADE_HOOKUP_OBJECT (mainwin, menuitem1_menu, "menuitem1_menu");
   GLADE_HOOKUP_OBJECT (mainwin, open, "open");
+  GLADE_HOOKUP_OBJECT (mainwin, image17, "image17");
   GLADE_HOOKUP_OBJECT (mainwin, separator2, "separator2");
   GLADE_HOOKUP_OBJECT (mainwin, add_files, "add_files");
-  GLADE_HOOKUP_OBJECT (mainwin, add_folder1, "add_folder1");
+  GLADE_HOOKUP_OBJECT (mainwin, image18, "image18");
+  GLADE_HOOKUP_OBJECT (mainwin, add_folders, "add_folders");
+  GLADE_HOOKUP_OBJECT (mainwin, image19, "image19");
   GLADE_HOOKUP_OBJECT (mainwin, separatormenuitem1, "separatormenuitem1");
-  GLADE_HOOKUP_OBJECT (mainwin, quit1, "quit1");
+  GLADE_HOOKUP_OBJECT (mainwin, quit, "quit");
+  GLADE_HOOKUP_OBJECT (mainwin, image20, "image20");
   GLADE_HOOKUP_OBJECT (mainwin, edit1, "edit1");
   GLADE_HOOKUP_OBJECT (mainwin, edit1_menu, "edit1_menu");
   GLADE_HOOKUP_OBJECT (mainwin, clear1, "clear1");
@@ -791,7 +815,7 @@ create_traymenu (void)
   GtkWidget *separator4;
   GtkWidget *about2;
   GtkWidget *separator3;
-  GtkWidget *quit2;
+  GtkWidget *quit;
   GtkAccelGroup *accel_group;
 
   accel_group = gtk_accel_group_new ();
@@ -836,9 +860,9 @@ create_traymenu (void)
   gtk_container_add (GTK_CONTAINER (traymenu), separator3);
   gtk_widget_set_sensitive (separator3, FALSE);
 
-  quit2 = gtk_image_menu_item_new_from_stock ("gtk-quit", accel_group);
-  gtk_widget_show (quit2);
-  gtk_container_add (GTK_CONTAINER (traymenu), quit2);
+  quit = gtk_menu_item_new_with_mnemonic ("Quit");
+  gtk_widget_show (quit);
+  gtk_container_add (GTK_CONTAINER (traymenu), quit);
 
   g_signal_connect ((gpointer) stop1, "activate",
                     G_CALLBACK (on_stopbtn_clicked),
@@ -861,8 +885,8 @@ create_traymenu (void)
   g_signal_connect ((gpointer) about2, "activate",
                     G_CALLBACK (on_about1_activate),
                     NULL);
-  g_signal_connect ((gpointer) quit2, "activate",
-                    G_CALLBACK (on_quit1_activate),
+  g_signal_connect ((gpointer) quit, "activate",
+                    G_CALLBACK (on_quit_activate),
                     NULL);
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
@@ -876,7 +900,7 @@ create_traymenu (void)
   GLADE_HOOKUP_OBJECT (traymenu, separator4, "separator4");
   GLADE_HOOKUP_OBJECT (traymenu, about2, "about2");
   GLADE_HOOKUP_OBJECT (traymenu, separator3, "separator3");
-  GLADE_HOOKUP_OBJECT (traymenu, quit2, "quit2");
+  GLADE_HOOKUP_OBJECT (traymenu, quit, "quit");
 
   gtk_menu_set_accel_group (GTK_MENU (traymenu), accel_group);
 

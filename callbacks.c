@@ -290,11 +290,10 @@ on_add_files_activate                  (GtkMenuItem     *menuitem,
 }
 
 void
-on_add_folder1_activate                (GtkMenuItem     *menuitem,
+on_add_folders_activate                (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-
-    GtkWidget *dlg = gtk_file_chooser_dialog_new ("Add folder to playlist...", GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
+    GtkWidget *dlg = gtk_file_chooser_dialog_new ("Add folder(s) to playlist...", GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
 
     GtkFileFilter* flt;
     flt = gtk_file_filter_new ();
@@ -325,6 +324,7 @@ on_add_folder1_activate                (GtkMenuItem     *menuitem,
     gtk_file_filter_set_name (flt, "Other files (*)");
     gtk_file_filter_add_pattern (flt, "*");
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
+    gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dlg), TRUE);
     // restore folder
     gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dlg), session_get_directory ());
     int response = gtk_dialog_run (GTK_DIALOG (dlg));
@@ -337,9 +337,10 @@ on_add_folder1_activate                (GtkMenuItem     *menuitem,
     if (response == GTK_RESPONSE_OK)
     {
         gchar *folder = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dlg));
+        GSList *lst = gtk_file_chooser_get_filenames (GTK_FILE_CHOOSER (dlg));
         gtk_widget_destroy (dlg);
-        if (folder) {
-            messagepump_push (M_ADDDIR, (uintptr_t)folder, 0, 0);
+        if (lst) {
+            messagepump_push (M_ADDDIRS, (uintptr_t)lst, 0, 0);
         }
     }
     else {
@@ -357,7 +358,7 @@ on_preferences1_activate               (GtkMenuItem     *menuitem,
 
 
 void
-on_quit1_activate                      (GtkMenuItem     *menuitem,
+on_quit_activate                      (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     progress_abort ();
@@ -1211,4 +1212,5 @@ on_find_activate                       (GtkMenuItem     *menuitem,
 {
     search_start ();       
 }
+
 
