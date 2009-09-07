@@ -708,13 +708,16 @@ create_aboutdialog (void)
   GtkWidget *aboutdialog;
   const gchar *authors[] = {
     "Core developer:",
-    "Alexey Yakovenko <waker@users.sourceforge.net>",
+    "Alexey Yakovenko",
+    "<waker@users.sourceforge.net>",
     " ",
     "Hotkeys plugin:",
-    "Viktor Semykin <thesame.ml@gmail.com>",
+    "Viktor Semykin",
+    "<thesame.ml@gmail.com>",
     " ",
     "Desktop file and Debian packages:",
-    "Alexey A. Smirnov <alexey.smirnov@gmx.com>",
+    "Alexey A. Smirnov",
+    "<alexey.smirnov@gmx.com>",
     NULL
   };
   const gchar *artists[] = {
