@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "playlist.h"
+#include "utf8.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -918,3 +919,32 @@ junk_read_id3v2 (playItem_t *it, FILE *fp) {
     return -1;
 }
 
+const char *
+junk_detect_charset (const char *s) {
+    // check if that's already utf8
+    if (u8_valid (s, strlen (s), NULL)) {
+        return NULL; // means no recoding required
+    }
+    // check if that could be non-latin1 (too many nonascii chars)
+    if (can_be_russian (s)) {
+        return "cp1251";
+    }
+    return "iso8859-1";
+}
+
+void
+junk_recode (const char *in, int inlen, char *out, int outlen, const char *cs) {
+    iconv_t cd = iconv_open ("utf8", cs);
+    if (!cd) {
+        return;
+    }
+    else {
+        size_t inbytesleft = inlen;
+        size_t outbytesleft = outlen;
+        char *pin = (char*)in;
+        char *pout = out;
+        memset (out, 0, outlen);
+        size_t res = iconv (cd, &pin, &inbytesleft, &pout, &outbytesleft);
+        iconv_close (cd);
+    }
+}

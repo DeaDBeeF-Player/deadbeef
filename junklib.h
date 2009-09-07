@@ -34,4 +34,10 @@ junk_read_ape (struct playItem_s *it, FILE *fp);
 int
 junk_get_leading_size (FILE *fp);
 
+const char *
+junk_detect_charset (const char *s);
+
+void
+junk_recode (const char *in, int inlen, char *out, int outlen, const char *cs);
+
 #endif // __JUNKLIB_H

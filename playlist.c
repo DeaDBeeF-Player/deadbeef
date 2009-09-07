@@ -33,6 +33,7 @@
 #include "messages.h"
 #include "playback.h"
 #include "plugins.h"
+#include "junklib.h"
 
 //#include "cvorbis.h"
 //#include "cdumb.h"
@@ -68,6 +69,7 @@ pl_cue_skipspaces (const uint8_t *p) {
 
 static void
 pl_get_qvalue_from_cue (const char *p, char *out) {
+    char *str = out;
     if (*p == 0) {
         *out = 0;
         return;
@@ -86,6 +88,15 @@ pl_get_qvalue_from_cue (const char *p, char *out) {
         *out++ = *p++;
     }
     *out = 0;
+    const char *charset = junk_detect_charset (str);
+    if (!charset) {
+        return;
+    }
+    // recode
+    int l = strlen (str);
+    char in[l+1];
+    memcpy (in, str, l+1);
+    junk_recode (in, l, str, 1024, charset);
 }
 
 static void
