@@ -551,6 +551,7 @@ demac_seek (float seconds) {
         nblocks = 0;
         samplesdecoded = newsample-samplestoskip;
         plugin.info.readpos = seconds;
+        currentframe = nf;
     }
     else {
         // no seektable
