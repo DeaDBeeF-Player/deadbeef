@@ -30,13 +30,13 @@ PKG_CHECK_MODULES(LASTFM_DEPS, libcurl)
 AX_EXT()
 
 dnl ape plugin
-AC_CHECK_LIB([mac], [main], [HAVE_LIBMAC=1])
-if test ${HAVE_LIBMAC}; then
-    APE_LIBS="-lmac"
-    APE_DIR="plugins/ape"
-    AC_SUBST(APE_LIBS)
-    AC_SUBST(APE_DIR)
-fi
+dnl AC_CHECK_LIB([mac], [main], [HAVE_LIBMAC=1])
+dnl if test ${HAVE_LIBMAC}; then
+dnl     APE_LIBS="-lmac"
+dnl     APE_DIR="plugins/ape"
+dnl     AC_SUBST(APE_LIBS)
+dnl     AC_SUBST(APE_DIR)
+dnl fi
 
 dnl mpgmad plugin
 AC_CHECK_LIB([mad], [main], [HAVE_LIBMAD=1])
@@ -78,7 +78,6 @@ sid/sidplay-libs-2.1.0/Makefile
 dumb/Makefile
 plugins/hotkeys/Makefile
 plugins/lastfm/Makefile
-plugins/ape/Makefile
 plugins/demac/Makefile
 plugins/mpgmad/Makefile
 plugins/vorbis/Makefile
