@@ -783,7 +783,12 @@ Modified by Gray Watson &lt;http://256.com/gray/&gt;, 1997.
 
 
 libsidplay2 - commodore 64 SID emulation library
-Copyright (C) Simon White and other authors.</property>
+Copyright (C) Simon White and other authors.
+
+
+libdemac - A Monkey's Audio decoder
+Copyright (C) Dave Chapman 2007
+</property>
   <property name="wrap_license">False</property>
   <property name="website">http://deadbeef.sf.net</property>
   <property name="website_label" translatable="yes">website</property>
