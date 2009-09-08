@@ -1,4 +1,4 @@
-dependencies (player core, included support for sid, game music and chiptune music):
+dependencies (player core, includes support for sid, game music and chiptune music):
     gtk+ 2.x (and gthread, and glib)
     libsamplerate
     libalsa
