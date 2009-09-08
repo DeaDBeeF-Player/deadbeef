@@ -14,6 +14,39 @@
 
 <h1 id="news">News</h1>
 
+<h2>deadbeef-0.2.0 is out!</h2>
+<p>2009/09/08</p>
+<p><a href="#download">get it!</a></p>
+<p>Changelog since 0.1.1:</p>
+<p><i>please note this changelog is what most users should notice. actual changelog is 10 times bigger, and is not worth reading. i don't want to count each of 1000 bugfixes here.</i></p>
+<ul>
+    <li>plugin API - decoder and misc plugins working, other types are work in progress</li>
+    <li>most decoders are in plugins now, which means that most dependencies are optional (libmad, libFLAC, etc)</li>
+    <li>global hotkeys plugin</li>
+    <li>last.fm scrobbler plugin</li>
+    <li>added help page (under help menu)</li>
+    <li>huge amount of performance tweaks (including power consumption tweaks)</li>
+    <li>cuesheets embedded into FLAC's vorbis comments</li>
+    <li>24 bit flac support</li>
+    <li>$XDG_CONFIG_HOME env variable support</li>
+    <li>APE format support through libdemac</li>
+    <li>launcher (.desktop) file</li>
+    <li>scroll follows playback (optional)</li>
+    <li>no more "?" when no track number in tags</li>
+    <li>fixed seekbar accuracy bug</li>
+    <li>improved cuesheet reader</li>
+    <li>cuesheet text charset detection (utf8, iso8859-1, cp1251)</li>
+    <li>improved mp3 parser (better vbr duration calc, more accurate seeking, etc)</li>
+    <li>fixed bug when starting files from command line using relative paths</li>
+    <li>fixed order/loopmode session saving</li>
+    <li>fixed id3v2.2 reader</li>
+    <li>focus/deiconify window on trayicon click</li>
+    <li>X button no longer minimizes to tray by default (configurable)</li>
+    <li>search is now accessible from menu</li>
+    <li>column sizes are now saved between sessions</li>
+    <li>select multiple folders in "add folder(s)" dialog</li>
+</ul>
+
 <h2>tag loading/recoding policy</h2>
 <p>2009/09/06</p>
 <ul>
@@ -135,7 +168,10 @@ implemented basic session management, window size/position, volume, playmode are
 </pre>
 
 <h1 id="download">Download</h1>
-<p><a href="http://sourceforge.net/projects/deadbeef/files/">browse all files</a></p>
+<h2>Latest version:</h2>
+<p>source code for version 0.2.0 <a href="http://sourceforge.net/projects/deadbeef/files/deadbeef-0.2.0.tar.gz/download">deadbeef-0.2.0.tar.gz</a></p>
+<p>or <a href="http://sourceforge.net/projects/deadbeef/files/">browse all files</a></p>
+<h2>Old stuff</h2>
 <p>source code for version 0.1.1 <a href="http://sourceforge.net/projects/deadbeef/files/deadbeef-0.1.1.tar.gz/download">deadbeef-0.1.1.tar.gz</a></p>
 <p>Arch Linux PKGBUILD: <a href="http://aur.archlinux.org/packages.php?ID=29497">here</a></p>
 <p><b>unsupported</b> debian packages for version 0.1.1 from <a href="mailto:alexey.smirnov@gmx.com">sceptic</a>:</p>
