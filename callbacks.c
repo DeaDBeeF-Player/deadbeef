@@ -1216,3 +1216,38 @@ on_find_activate                       (GtkMenuItem     *menuitem,
 
 
 
+
+void
+on_help1_activate                      (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    GtkWidget *widget = create_helpwindow ();
+    gtk_window_set_transient_for (GTK_WINDOW (widget), GTK_WINDOW (mainwin));
+    GtkWidget *txt = lookup_widget (widget, "helptext");
+    GtkTextBuffer *buffer = gtk_text_buffer_new (NULL);
+
+    FILE *fp = fopen (PREFIX "/share/doc/deadbeef/help.txt", "rb");
+    if (fp) {
+        fseek (fp, 0, SEEK_END);
+        size_t s = ftell (fp);
+        rewind (fp);
+        char buf[s+1];
+        if (fread (buf, 1, s, fp) != s) {
+            fprintf (stderr, "error reading help file contents\n");
+            const char *error = "Failed while reading help file";
+            gtk_text_buffer_set_text (buffer, error, strlen (error));
+        }
+        else {
+            buf[s] = 0;
+            gtk_text_buffer_set_text (buffer, buf, s);
+        }
+        fclose (fp);
+    }
+    else {
+        const char *error = "Failed to load help file";
+        gtk_text_buffer_set_text (buffer, error, strlen (error));
+    }
+    gtk_text_view_set_buffer (GTK_TEXT_VIEW (txt), buffer);
+    gtk_widget_show (widget);
+}
+

@@ -1,0 +1,46 @@
+help file for deadbeef player
+
+CONFIGURATION
+
+currently there's no gui for configuration.
+there is one config file for player core, and separate file per plugin.
+
+MAIN CONFIG FILE
+
+example is located in PREFIX/share/doc/deadbeef/config-example
+copy it into $HOME/.config/deadbeef/config, and modify according to your needs.
+
+HOTKEYS PLUGIN CONFIGURATION
+
+create file in $HOME/.config/deadbeef/hotkeys
+syntax is following:
+
+<key_combination>: <action>
+
+some examples:
+
+Ctrl Alt c: toggle_pause
+Ctrl Alt z: prev
+Ctrl Alt b: next
+Ctrl Alt v: stop
+Ctrl Alt x: play
+Ctrl Alt n: play_random
+
+full list of actions:
+
+toggle_pause, play, prev, next, stop, play_random, seek_fwd, seek_back, volume_up, volume_down
+
+LAST.FM PLUGIN CONFIGURATION
+
+create file in $HOME/.config/deadbeef/lastfm
+
+file must have 2 lines:
+your_lastfm_login
+your_lastfm_password
+
+you can see if it works by looking at lastfm profile page after you start playing music (it should say something like "now playing with DeaDBeeF")
+
+also note, that it's subject to last.fm policy to submit songs under certain rules.
+songs without at least Artist and Title tags will not be submitted.
+
+

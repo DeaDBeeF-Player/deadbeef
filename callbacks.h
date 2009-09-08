@@ -525,3 +525,7 @@ void
 on_find_activate                       (GtkMenuItem     *menuitem,
                                         gpointer         user_data);
 
+
+void
+on_help1_activate                      (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);

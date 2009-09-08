@@ -21,7 +21,7 @@ bin_PROGRAMS = deadbeef
 
 deadbeef_SOURCES =\
 	main.c common.h deadbeef.h\
-	plugins.c plugins.h\
+	plugins.c plugins.h moduleconf.h\
 	callbacks.c interface.c support.c callbacks.h interface.h support.h\
 	playlist.c playlist.h gtkplaylist.c gtkplaylist.h\
 	streamer.c streamer.h\
@@ -37,7 +37,8 @@ deadbeef_SOURCES =\
 	volume.c volume.h\
 	drawing.h gdkdrawing.c\
 	session.h session.c gtksession.c\
-	junklib.h junklib.c utf8.c utf8.h
+	junklib.h junklib.c utf8.c utf8.h\
+	optmath.h
 
 sdkdir = $(pkgincludedir)
 sdk_HEADERS = deadbeef.h
@@ -49,7 +50,7 @@ AM_CPPFLAGS = $(DEPS_CFLAGS) -I$(sidpath)/libsidplay/include -I$(sidpath)/builde
 
 docsdir = $(datadir)/doc/$(PACKAGE)
 
-docs_DATA = README COPYING config-example
+docs_DATA = README COPYING config-example help.txt
 
 desktopdir = $(datadir)/applications
 desktop_DATA = deadbeef.desktop

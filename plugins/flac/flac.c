@@ -19,7 +19,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <FLAC/stream_decoder.h>
-#include "deadbeef.h"
+#include "../../deadbeef.h"
 
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
