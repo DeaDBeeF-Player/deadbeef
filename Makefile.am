@@ -9,6 +9,7 @@ SUBDIRS = gme/Game_Music_Emu-0.5.2\
 		  plugins/hotkeys\
 		  plugins/lastfm\
 		  plugins/demac\
+		  plugins/ffap\
           ${MPGMAD_DIR}\
           ${VORBIS_DIR}\
           ${FLAC_DIR}

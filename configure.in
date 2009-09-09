@@ -79,6 +79,7 @@ dumb/Makefile
 plugins/hotkeys/Makefile
 plugins/lastfm/Makefile
 plugins/demac/Makefile
+plugins/ffap/Makefile
 plugins/mpgmad/Makefile
 plugins/vorbis/Makefile
 plugins/flac/Makefile
