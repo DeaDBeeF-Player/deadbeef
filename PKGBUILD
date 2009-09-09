@@ -1,16 +1,18 @@
 # Maintainer: Alexey Yakovenko <waker@users.sourceforge.net>
 
 pkgname=deadbeef
-pkgver=0.1.1
+pkgver=0.2.0
 pkgrel=1
 pkgdesc="mp3/ogg/flac/sid/mod/nsf music player based on GTK2"
 arch=(i686 x86_64)
 url="http://deadbeef.sourceforge.net"
 license=('GPL2')
-depends=('gtk2' 'libsamplerate' 'libvorbis' 'libmad' 'flac' 'alsa-lib')
+makedepends=('gtk2', 'libsamplerate', 'libvorbis', 'libmad', 'flac', 'curl', 'alsa-lib')
+depends=('gtk2' 'libsamplerate' 'alsa-lib')
+optdepends=('libvorbis: ogg vorbis playback', 'libmad: mp1/2/3 playback', 'flac: flac playback', 'curl: lastfm scrobbler')
 makedepends=('pkgconfig')
 source=(http://downloads.sourceforge.net/project/$pkgname/$pkgname-$pkgver.tar.gz)
-md5sums=('3735cfe880ceb060ba53b0a67aab6a67')
+md5sums=('62bb5c8cc29db463811aea39b47bd780')
 
 build() {
     cd $srcdir/$pkgname-$pkgver
