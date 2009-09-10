@@ -24,7 +24,7 @@ AC_DEFINE_UNQUOTED(PREFIX, "${prefix}")
 CFLAGS="$CFLAGS -D_GNU_SOURCE -O2 -DHAVE_UNIX"
 CPPFLAGS="$CFLAGS"
 
-PKG_CHECK_MODULES(DEPS, gtk+-2.0 >= 2.12 gthread-2.0 glib-2.0 vorbis vorbisfile samplerate alsa)
+PKG_CHECK_MODULES(DEPS, gtk+-2.0 >= 2.12 gthread-2.0 glib-2.0 samplerate alsa)
 PKG_CHECK_MODULES(LASTFM_DEPS, libcurl)
 
 AX_EXT()

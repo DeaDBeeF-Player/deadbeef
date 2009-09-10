@@ -33,10 +33,10 @@ static DB_functions_t *deadbeef;
 float timestart;
 float timeend;
 
-#define PACKET_MAX_SIZE 2000000
-uint8_t packet_data[PACKET_MAX_SIZE];
-int packet_size;
-int packet_left;
+#define PACKET_BUFFER_SIZE 100000
+uint8_t packet_data[PACKET_BUFFER_SIZE];
+int packet_remaining; // number of bytes in packet_data
+int packet_sizeleft; // number of bytes left unread for current ape frame
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -238,10 +238,9 @@ typedef struct APEContext {
     APERice riceY;                           ///< rice code parameters for the first channel
     APEFilter filters[APE_FILTER_LEVELS][2]; ///< filters used for reconstruction
 
-    uint8_t *data;                           ///< current frame data
     uint8_t *data_end;                       ///< frame data end
     const uint8_t *ptr;                      ///< current position in frame data
-    const uint8_t *last_ptr;                 ///< position where last 4608-sample block ended
+    const uint8_t *last_ptr;
 
     int error;
 } APEContext;
@@ -580,18 +579,20 @@ static int ape_read_packet(FILE *fp, APEContext *ape_ctx)
     else
         nblocks = ape->blocksperframe;
 
-    if (PACKET_MAX_SIZE < ape->frames[ape->currentframe].size + extra_size) {
-        return -1;
-    }
-    packet_size = ape->frames[ape->currentframe].size + extra_size;
+//    if (PACKET_MAX_SIZE < ape->frames[ape->currentframe].size + extra_size) {
+//        return -1;
+//    }
+    packet_sizeleft = ape->frames[ape->currentframe].size + extra_size;
 
     AV_WL32(packet_data    , nblocks);
     AV_WL32(packet_data + 4, ape->frames[ape->currentframe].skip);
-    ret = fread (packet_data+extra_size, 1, ape->frames[ape->currentframe].size, fp);
+    packet_sizeleft -= 8;
 
-    /* note: we need to modify the packet size here to handle the last
-       packet */
-    packet_size = ret + extra_size;
+    int sz = min (PACKET_BUFFER_SIZE, packet_sizeleft) - 8;
+    fprintf (stderr, "readsize: %d\n", sz);
+    ret = fread (&packet_data[extra_size], 1, sz, fp);
+    packet_sizeleft -= sz;
+    packet_remaining = sz + 8;
 
     ape->currentframe++;
 
@@ -1355,22 +1356,13 @@ static void ape_unpack_stereo(APEContext * ctx, int count)
 }
 
 static int
-ape_decode_frame(APEContext *s,
-                            void *data, int *data_size,
-                            uint8_t *pdata, int psize)
+ape_decode_frame(APEContext *s, void *data, int *data_size)
 {
-    const uint8_t *buf = pdata;
-    int buf_size = psize;
     int16_t *samples = data;
     int nblocks;
     int i, n;
     int blockstodecode;
     int bytes_used;
-
-    if (buf_size == 0 && !s->samples) {
-        *data_size = 0;
-        return 0;
-    }
 
     /* should not happen but who knows */
     if (BLOCKS_PER_LOOP * 2 * s->channels > *data_size) {
@@ -1378,40 +1370,79 @@ ape_decode_frame(APEContext *s,
         return -1;
     }
 
+    if (packet_remaining < PACKET_BUFFER_SIZE) {
+        assert (packet_sizeleft >= 0 && packet_remaining >= 0);
+        if (packet_sizeleft == 0 && packet_remaining == 0) {
+            assert (!s->samples);
+            fprintf (stderr, "start reading packet %d\n", ape_ctx.currentframe);
+            assert (s->samples == 0); // all samples from prev packet must have been read
+            // start new packet
+            if (ape_read_packet (fp, &ape_ctx) < 0) {
+                fprintf (stderr, "error reading packet\n");
+                return -1;
+            }
+            bswap_buf((uint32_t*)(packet_data), (const uint32_t*)(packet_data), packet_remaining >> 2);
+
+            fprintf (stderr, "packet_sizeleft=%d packet_remaining=%d\n", packet_sizeleft, packet_remaining);
+        }
+        else {
+            int s = PACKET_BUFFER_SIZE - packet_remaining;
+            s = min (s, packet_sizeleft);
+            s = s&~3;
+            uint8_t *p = packet_data + packet_remaining;
+            int r = fread (p, 1, s, fp);
+            if (r != s) {
+                fprintf (stderr, "unexpected eof while reading ape frame\n");
+                return -1;
+            }
+            bswap_buf((uint32_t*)p, (const uint32_t*)p, r >> 2);
+            packet_sizeleft -= r;
+            packet_remaining += r;
+            fprintf (stderr, "read more %d bytes for current packet, sizeleft=%d, packet_remaining=%d\n", r, packet_sizeleft, packet_remaining);
+        }
+    }
+    s->data_end = packet_data + packet_remaining;
+
+    if (packet_remaining == 0 && !s->samples) {
+        *data_size = 0;
+        return 0;
+    }
     if(!s->samples){
-        // beginning of ape frame, read entire frame and byteswap every 4 bytes
-        s->data = packet_data;
-//        s->data = realloc(s->data, (buf_size + 3) & ~3);
-//        bswap_buf((uint32_t*)s->data, (const uint32_t*)buf, buf_size >> 2);
-        s->ptr = s->last_ptr = s->data;
-        s->data_end = s->data + buf_size;
+        s->ptr = s->last_ptr = packet_data;
 
         nblocks = s->samples = bytestream_get_be32(&s->ptr);
+        //fprintf (stderr, "s->samples=%d (1)\n", s->samples);
         n = bytestream_get_be32(&s->ptr);
         if(n < 0 || n > 3){
             fprintf (stderr, "Incorrect offset passed\n");
-            s->data = NULL;
             return -1;
         }
         s->ptr += n;
 
         s->currentframeblocks = nblocks;
-        buf += 4;
+        //buf += 4;
         if (s->samples <= 0) {
             *data_size = 0;
-            return buf_size;
+            bytes_used = packet_remaining;
+            goto error;
         }
 
         memset(s->decoded0,  0, sizeof(s->decoded0));
         memset(s->decoded1,  0, sizeof(s->decoded1));
 
         /* Initialize the frame decoder */
+        fprintf (stderr, "init frame decoder\n");
         init_frame_decoder(s);
     }
+    else {
+        //fprintf (stderr, "s->samples=%d (2)\n", s->samples);
+    }
 
-    if (!s->data) {
+    if (!packet_remaining) {
+        fprintf (stderr, "packetbuf is empty!!\n");
         *data_size = 0;
-        return buf_size;
+        bytes_used = packet_remaining;
+        goto error;
     }
 
     nblocks = s->samples;
@@ -1419,12 +1450,14 @@ ape_decode_frame(APEContext *s,
 
     s->error=0;
 
+    //fprintf (stderr, "unpack %d blocks\n", blockstodecode);
     if ((s->channels == 1) || (s->frameflags & APE_FRAMECODE_PSEUDO_STEREO))
         ape_unpack_mono(s, blockstodecode);
     else
         ape_unpack_stereo(s, blockstodecode);
 
-    if(s->error || s->ptr > s->data_end){
+    //fprintf (stderr, "s->samples=%d (3)\n", s->samples);
+    if(s->error || s->ptr >= s->data_end){
         s->samples=0;
         if (s->error) {
             fprintf (stderr, "Error decoding frame, error=%d\n", s->error);
@@ -1445,8 +1478,20 @@ ape_decode_frame(APEContext *s,
     s->samples -= blockstodecode;
 
     *data_size = blockstodecode * 2 * s->channels;
-    bytes_used = s->samples ? s->ptr - s->last_ptr : buf_size;
+    bytes_used = s->samples ? s->ptr - s->last_ptr : packet_remaining;
+
+    // shift everything
+error:
+    if (bytes_used < packet_remaining) {
+        memmove (packet_data, packet_data+bytes_used, packet_remaining-bytes_used);
+    }
+    packet_remaining -= bytes_used;
+    s->ptr -= bytes_used;
+//    s->data_end -= bytes_used;
     s->last_ptr = s->ptr;
+    //fprintf (stderr, "bytes_used=%d, packet_remaining=%d\n", bytes_used, packet_remaining);
+    //fprintf (stderr, "ptr=%p, data_end=%p\n", s->ptr, s->data_end);
+
     return bytes_used;
 }
 
@@ -1520,18 +1565,11 @@ ffap_read_int16 (char *buffer, int size) {
             remaining -= sz;
             continue;
         }
-        if (packet_left <= 0) {
-            if (ape_read_packet (fp, &ape_ctx) < 0) {
-                return 0;
-            }
-            bswap_buf((uint32_t*)packet_data, (const uint32_t*)packet_data, packet_size >> 2);
-            packet_left = packet_size;
-        }
         int s = BLOCKS_PER_LOOP * 2 * 2 * 2;
         assert (remaining <= s/2);
         s -= remaining;
         uint8_t *buf = g_buffer + remaining;
-        int n = ape_decode_frame (&ape_ctx, buf, &s, packet_data, packet_size);
+        int n = ape_decode_frame (&ape_ctx, buf, &s);
         remaining += s;
 
         int sz = min (size, remaining);
@@ -1542,7 +1580,6 @@ ffap_read_int16 (char *buffer, int size) {
             memmove (g_buffer, g_buffer + sz, remaining-sz);
         }
         remaining -= sz;
-        packet_left -= n;
     }
     plugin.info.readpos = ape_ctx.blocksdecoded / (float)plugin.info.samplerate - timestart;
     return inits - size;
