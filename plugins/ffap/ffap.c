@@ -599,23 +599,28 @@ static int ape_read_packet(FILE *fp, APEContext *ape_ctx)
 }
 
 static void
-ffap_free (void)
-{
+ape_free_ctx (APEContext *ape_ctx) {
     int i;
-    if (ape_ctx.frames) {
-        free (ape_ctx.frames);
-        ape_ctx.frames = NULL;
+    if (ape_ctx->frames) {
+        free (ape_ctx->frames);
+        ape_ctx->frames = NULL;
     }
-    if (ape_ctx.seektable) {
-        free (ape_ctx.seektable);
-        ape_ctx.seektable = NULL;
+    if (ape_ctx->seektable) {
+        free (ape_ctx->seektable);
+        ape_ctx->seektable = NULL;
     }
     for (i = 0; i < APE_FILTER_LEVELS; i++) {
-        if (ape_ctx.filterbuf) {
-            free (ape_ctx.filterbuf[i]);
+        if (ape_ctx->filterbuf) {
+            free (ape_ctx->filterbuf[i]);
+            ape_ctx->filterbuf[i] = NULL;
         }
     }
+}
 
+static void
+ffap_free (void)
+{
+    ape_free_ctx (&ape_ctx);
 }
 
 #if 0
@@ -1374,8 +1379,10 @@ ape_decode_frame(APEContext *s,
     }
 
     if(!s->samples){
-        s->data = realloc(s->data, (buf_size + 3) & ~3);
-        bswap_buf((uint32_t*)s->data, (const uint32_t*)buf, buf_size >> 2);
+        // beginning of ape frame, read entire frame and byteswap every 4 bytes
+        s->data = packet_data;
+//        s->data = realloc(s->data, (buf_size + 3) & ~3);
+//        bswap_buf((uint32_t*)s->data, (const uint32_t*)buf, buf_size >> 2);
         s->ptr = s->last_ptr = s->data;
         s->data_end = s->data + buf_size;
 
@@ -1453,11 +1460,13 @@ ffap_insert (DB_playItem_t *after, const char *fname) {
     if (ape_read_header (fp, &ape_ctx) < 0) {
         fprintf (stderr, "failed to read ape header\n");
         fclose (fp);
+        ape_free_ctx (&ape_ctx);
         return NULL;
     }
     if ((ape_ctx.fileversion < APE_MIN_VERSION) || (ape_ctx.fileversion > APE_MAX_VERSION)) {
         fprintf(stderr, "unsupported file version - %.2f\n", ape_ctx.fileversion/1000.0);
         fclose (fp);
+        ape_free_ctx (&ape_ctx);
         return NULL;
     }
 
@@ -1466,6 +1475,7 @@ ffap_insert (DB_playItem_t *after, const char *fname) {
     it  = deadbeef->pl_insert_cue (after, fname, &plugin, "APE", duration);
     if (it) {
         fclose (fp);
+        ape_free_ctx (&ape_ctx);
         return it;
     }
 
@@ -1488,6 +1498,7 @@ ffap_insert (DB_playItem_t *after, const char *fname) {
     after = deadbeef->pl_insert_item (after, it);
 
     fclose (fp);
+    ape_free_ctx (&ape_ctx);
     return after;
 }
 
@@ -1511,8 +1522,9 @@ ffap_read_int16 (char *buffer, int size) {
         }
         if (packet_left <= 0) {
             if (ape_read_packet (fp, &ape_ctx) < 0) {
-                return -1;
+                return 0;
             }
+            bswap_buf((uint32_t*)packet_data, (const uint32_t*)packet_data, packet_size >> 2);
             packet_left = packet_size;
         }
         int s = BLOCKS_PER_LOOP * 2 * 2 * 2;
@@ -1550,7 +1562,7 @@ static DB_decoder_t plugin = {
     .plugin.version_minor = 1,
     .plugin.type = DB_PLUGIN_DECODER,
     .plugin.name = "FFAP Monkey's Audio decoder",
-    .plugin.descr = "Based on ffmpeg apedec by Benjamin Zores",
+    .plugin.descr = "Based on ffmpeg apedec by Benjamin Zores and rockbox libdemac by Dave Chapman",
     .plugin.author = "Alexey Yakovenko",
     .plugin.email = "waker@users.sourceforge.net",
     .plugin.website = "http://deadbeef.sf.net",
