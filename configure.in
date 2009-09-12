@@ -3,7 +3,7 @@ AC_INIT
 AC_CONFIG_HEADER(config.h)
 
 PACKAGE="deadbeef"
-VERSION="0.2.1-dev"
+VERSION="0.2.1"
 
 AM_INIT_AUTOMAKE($PACKAGE,$VERSION)
 
@@ -28,18 +28,9 @@ PKG_CHECK_MODULES(DEPS, gtk+-2.0 >= 2.12 gthread-2.0 glib-2.0 samplerate alsa)
 
 AX_EXT()
 
-dnl ape plugin
-dnl AC_CHECK_LIB([mac], [main], [HAVE_LIBMAC=1])
-dnl if test ${HAVE_LIBMAC}; then
-dnl     APE_LIBS="-lmac"
-dnl     APE_DIR="plugins/ape"
-dnl     AC_SUBST(APE_LIBS)
-dnl     AC_SUBST(APE_DIR)
-dnl fi
-
 dnl lastfm plugin
-AC_CHECK_LIB([libcurl], [main], [HAVE_LIBCURL=1])
-if test ${HAVE_LIBCURL}; then
+AC_CHECK_LIB([curl], [main], [HAVE_CURL=1])
+if test ${HAVE_CURL}; then
     LFM_LIBS="-lmad"
     LFM_DIR="plugins/lastfm"
     AC_SUBST(LFM_LIBS)
