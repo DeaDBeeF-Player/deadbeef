@@ -963,47 +963,107 @@ Stas &quot;uncle lag&quot; Akimushkin &lt;uncle.lag@gmail.com&gt;</property>
 <widget class="GtkMenu" id="traymenu">
 
   <child>
-    <widget class="GtkMenuItem" id="stop2">
+    <widget class="GtkImageMenuItem" id="stop2">
       <property name="visible">True</property>
       <property name="label" translatable="yes">Stop</property>
       <property name="use_underline">True</property>
       <signal name="activate" handler="on_stopbtn_clicked" last_modification_time="Sun, 06 Sep 2009 18:34:01 GMT"/>
+
+      <child internal-child="image">
+	<widget class="GtkImage" id="image59">
+	  <property name="visible">True</property>
+	  <property name="stock">gtk-media-stop</property>
+	  <property name="icon_size">1</property>
+	  <property name="xalign">0.5</property>
+	  <property name="yalign">0.5</property>
+	  <property name="xpad">0</property>
+	  <property name="ypad">0</property>
+	</widget>
+      </child>
     </widget>
   </child>
 
   <child>
-    <widget class="GtkMenuItem" id="play2">
+    <widget class="GtkImageMenuItem" id="play2">
       <property name="visible">True</property>
       <property name="label" translatable="yes">Play</property>
       <property name="use_underline">True</property>
       <signal name="activate" handler="on_playbtn_clicked" last_modification_time="Sun, 06 Sep 2009 18:34:01 GMT"/>
+
+      <child internal-child="image">
+	<widget class="GtkImage" id="image60">
+	  <property name="visible">True</property>
+	  <property name="stock">gtk-media-play</property>
+	  <property name="icon_size">1</property>
+	  <property name="xalign">0.5</property>
+	  <property name="yalign">0.5</property>
+	  <property name="xpad">0</property>
+	  <property name="ypad">0</property>
+	</widget>
+      </child>
     </widget>
   </child>
 
   <child>
-    <widget class="GtkMenuItem" id="pause2">
+    <widget class="GtkImageMenuItem" id="pause2">
       <property name="visible">True</property>
       <property name="label" translatable="yes">Pause</property>
       <property name="use_underline">True</property>
       <signal name="activate" handler="on_pausebtn_clicked" last_modification_time="Sun, 06 Sep 2009 18:34:01 GMT"/>
+
+      <child internal-child="image">
+	<widget class="GtkImage" id="image61">
+	  <property name="visible">True</property>
+	  <property name="stock">gtk-media-pause</property>
+	  <property name="icon_size">1</property>
+	  <property name="xalign">0.5</property>
+	  <property name="yalign">0.5</property>
+	  <property name="xpad">0</property>
+	  <property name="ypad">0</property>
+	</widget>
+      </child>
     </widget>
   </child>
 
   <child>
-    <widget class="GtkMenuItem" id="previous2">
+    <widget class="GtkImageMenuItem" id="previous2">
       <property name="visible">True</property>
       <property name="label" translatable="yes">Previous</property>
       <property name="use_underline">True</property>
       <signal name="activate" handler="on_prevbtn_clicked" last_modification_time="Sun, 06 Sep 2009 18:34:01 GMT"/>
+
+      <child internal-child="image">
+	<widget class="GtkImage" id="image62">
+	  <property name="visible">True</property>
+	  <property name="stock">gtk-media-previous</property>
+	  <property name="icon_size">1</property>
+	  <property name="xalign">0.5</property>
+	  <property name="yalign">0.5</property>
+	  <property name="xpad">0</property>
+	  <property name="ypad">0</property>
+	</widget>
+      </child>
     </widget>
   </child>
 
   <child>
-    <widget class="GtkMenuItem" id="next2">
+    <widget class="GtkImageMenuItem" id="next2">
       <property name="visible">True</property>
       <property name="label" translatable="yes">Next</property>
       <property name="use_underline">True</property>
       <signal name="activate" handler="on_nextbtn_clicked" last_modification_time="Sun, 06 Sep 2009 18:34:01 GMT"/>
+
+      <child internal-child="image">
+	<widget class="GtkImage" id="image63">
+	  <property name="visible">True</property>
+	  <property name="stock">gtk-media-next</property>
+	  <property name="icon_size">1</property>
+	  <property name="xalign">0.5</property>
+	  <property name="yalign">0.5</property>
+	  <property name="xpad">0</property>
+	  <property name="ypad">0</property>
+	</widget>
+      </child>
     </widget>
   </child>
 
@@ -1023,11 +1083,23 @@ Stas &quot;uncle lag&quot; Akimushkin &lt;uncle.lag@gmail.com&gt;</property>
   </child>
 
   <child>
-    <widget class="GtkMenuItem" id="about3">
+    <widget class="GtkImageMenuItem" id="about3">
       <property name="visible">True</property>
       <property name="label" translatable="yes">About</property>
       <property name="use_underline">True</property>
       <signal name="activate" handler="on_about1_activate" last_modification_time="Sun, 06 Sep 2009 18:34:01 GMT"/>
+
+      <child internal-child="image">
+	<widget class="GtkImage" id="image64">
+	  <property name="visible">True</property>
+	  <property name="stock">gtk-about</property>
+	  <property name="icon_size">1</property>
+	  <property name="xalign">0.5</property>
+	  <property name="yalign">0.5</property>
+	  <property name="xpad">0</property>
+	  <property name="ypad">0</property>
+	</widget>
+      </child>
     </widget>
   </child>
 
@@ -1038,11 +1110,23 @@ Stas &quot;uncle lag&quot; Akimushkin &lt;uncle.lag@gmail.com&gt;</property>
   </child>
 
   <child>
-    <widget class="GtkMenuItem" id="quit">
+    <widget class="GtkImageMenuItem" id="quit">
       <property name="visible">True</property>
       <property name="label" translatable="yes">Quit</property>
       <property name="use_underline">True</property>
       <signal name="activate" handler="on_quit_activate" last_modification_time="Sun, 16 Aug 2009 14:45:24 GMT"/>
+
+      <child internal-child="image">
+	<widget class="GtkImage" id="image65">
+	  <property name="visible">True</property>
+	  <property name="stock">gtk-quit</property>
+	  <property name="icon_size">1</property>
+	  <property name="xalign">0.5</property>
+	  <property name="yalign">0.5</property>
+	  <property name="xpad">0</property>
+	  <property name="ypad">0</property>
+	</widget>
+      </child>
     </widget>
   </child>
 </widget>

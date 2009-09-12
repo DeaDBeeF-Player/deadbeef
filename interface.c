@@ -882,37 +882,64 @@ create_traymenu (void)
 {
   GtkWidget *traymenu;
   GtkWidget *stop2;
+  GtkWidget *image59;
   GtkWidget *play2;
+  GtkWidget *image60;
   GtkWidget *pause2;
+  GtkWidget *image61;
   GtkWidget *previous2;
+  GtkWidget *image62;
   GtkWidget *next2;
+  GtkWidget *image63;
   GtkWidget *play_random1;
   GtkWidget *separator4;
   GtkWidget *about3;
+  GtkWidget *image64;
   GtkWidget *separator3;
   GtkWidget *quit;
+  GtkWidget *image65;
 
   traymenu = gtk_menu_new ();
 
-  stop2 = gtk_menu_item_new_with_mnemonic ("Stop");
+  stop2 = gtk_image_menu_item_new_with_mnemonic ("Stop");
   gtk_widget_show (stop2);
   gtk_container_add (GTK_CONTAINER (traymenu), stop2);
 
-  play2 = gtk_menu_item_new_with_mnemonic ("Play");
+  image59 = gtk_image_new_from_stock ("gtk-media-stop", GTK_ICON_SIZE_MENU);
+  gtk_widget_show (image59);
+  gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (stop2), image59);
+
+  play2 = gtk_image_menu_item_new_with_mnemonic ("Play");
   gtk_widget_show (play2);
   gtk_container_add (GTK_CONTAINER (traymenu), play2);
 
-  pause2 = gtk_menu_item_new_with_mnemonic ("Pause");
+  image60 = gtk_image_new_from_stock ("gtk-media-play", GTK_ICON_SIZE_MENU);
+  gtk_widget_show (image60);
+  gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (play2), image60);
+
+  pause2 = gtk_image_menu_item_new_with_mnemonic ("Pause");
   gtk_widget_show (pause2);
   gtk_container_add (GTK_CONTAINER (traymenu), pause2);
 
-  previous2 = gtk_menu_item_new_with_mnemonic ("Previous");
+  image61 = gtk_image_new_from_stock ("gtk-media-pause", GTK_ICON_SIZE_MENU);
+  gtk_widget_show (image61);
+  gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (pause2), image61);
+
+  previous2 = gtk_image_menu_item_new_with_mnemonic ("Previous");
   gtk_widget_show (previous2);
   gtk_container_add (GTK_CONTAINER (traymenu), previous2);
 
-  next2 = gtk_menu_item_new_with_mnemonic ("Next");
+  image62 = gtk_image_new_from_stock ("gtk-media-previous", GTK_ICON_SIZE_MENU);
+  gtk_widget_show (image62);
+  gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (previous2), image62);
+
+  next2 = gtk_image_menu_item_new_with_mnemonic ("Next");
   gtk_widget_show (next2);
   gtk_container_add (GTK_CONTAINER (traymenu), next2);
+
+  image63 = gtk_image_new_from_stock ("gtk-media-next", GTK_ICON_SIZE_MENU);
+  gtk_widget_show (image63);
+  gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (next2), image63);
 
   play_random1 = gtk_menu_item_new_with_mnemonic ("Play Random");
   gtk_widget_show (play_random1);
@@ -923,18 +950,26 @@ create_traymenu (void)
   gtk_container_add (GTK_CONTAINER (traymenu), separator4);
   gtk_widget_set_sensitive (separator4, FALSE);
 
-  about3 = gtk_menu_item_new_with_mnemonic ("About");
+  about3 = gtk_image_menu_item_new_with_mnemonic ("About");
   gtk_widget_show (about3);
   gtk_container_add (GTK_CONTAINER (traymenu), about3);
+
+  image64 = gtk_image_new_from_stock ("gtk-about", GTK_ICON_SIZE_MENU);
+  gtk_widget_show (image64);
+  gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (about3), image64);
 
   separator3 = gtk_separator_menu_item_new ();
   gtk_widget_show (separator3);
   gtk_container_add (GTK_CONTAINER (traymenu), separator3);
   gtk_widget_set_sensitive (separator3, FALSE);
 
-  quit = gtk_menu_item_new_with_mnemonic ("Quit");
+  quit = gtk_image_menu_item_new_with_mnemonic ("Quit");
   gtk_widget_show (quit);
   gtk_container_add (GTK_CONTAINER (traymenu), quit);
+
+  image65 = gtk_image_new_from_stock ("gtk-quit", GTK_ICON_SIZE_MENU);
+  gtk_widget_show (image65);
+  gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (quit), image65);
 
   g_signal_connect ((gpointer) stop2, "activate",
                     G_CALLBACK (on_stopbtn_clicked),
@@ -964,15 +999,22 @@ create_traymenu (void)
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (traymenu, traymenu, "traymenu");
   GLADE_HOOKUP_OBJECT (traymenu, stop2, "stop2");
+  GLADE_HOOKUP_OBJECT (traymenu, image59, "image59");
   GLADE_HOOKUP_OBJECT (traymenu, play2, "play2");
+  GLADE_HOOKUP_OBJECT (traymenu, image60, "image60");
   GLADE_HOOKUP_OBJECT (traymenu, pause2, "pause2");
+  GLADE_HOOKUP_OBJECT (traymenu, image61, "image61");
   GLADE_HOOKUP_OBJECT (traymenu, previous2, "previous2");
+  GLADE_HOOKUP_OBJECT (traymenu, image62, "image62");
   GLADE_HOOKUP_OBJECT (traymenu, next2, "next2");
+  GLADE_HOOKUP_OBJECT (traymenu, image63, "image63");
   GLADE_HOOKUP_OBJECT (traymenu, play_random1, "play_random1");
   GLADE_HOOKUP_OBJECT (traymenu, separator4, "separator4");
   GLADE_HOOKUP_OBJECT (traymenu, about3, "about3");
+  GLADE_HOOKUP_OBJECT (traymenu, image64, "image64");
   GLADE_HOOKUP_OBJECT (traymenu, separator3, "separator3");
   GLADE_HOOKUP_OBJECT (traymenu, quit, "quit");
+  GLADE_HOOKUP_OBJECT (traymenu, image65, "image65");
 
   return traymenu;
 }
