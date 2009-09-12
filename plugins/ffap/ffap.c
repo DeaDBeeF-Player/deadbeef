@@ -18,6 +18,9 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
+#if HAVE_CONFIG_H
+#include "config.h"
+#endif
 #include <stdio.h>
 #include <string.h>
 #include <limits.h>
@@ -1134,7 +1137,16 @@ static void init_filter(APEContext * ctx, APEFilter *f, int16_t * buf, int order
     do_init_filter(&f[1], buf + order * 3 + HISTORY_SIZE, order);
 }
 
+#if __WORDSIZE==64
 typedef int64_t x86_reg;
+#elif __WORDSIZE==32
+typedef int32_t x86_reg;
+#else
+#warning unknown arch
+typedef int x86_reg;
+#endif
+
+#ifdef HAVE_SSE2
 typedef struct { uint64_t a, b; } xmm_reg;
 #define DECLARE_ALIGNED(n,t,v)      t v __attribute__ ((aligned (n)))
 #define DECLARE_ALIGNED_16(t, v) DECLARE_ALIGNED(16, t, v)
@@ -1169,10 +1181,60 @@ static int32_t scalarproduct_int16 (int16_t * v1, int16_t * v2, int order, int s
     );
     return res;
 }
+static void add_int16(int16_t * v1, int16_t * v2, int order)
+{
+    x86_reg o = -(order << 1);
+    v1 += order;
+    v2 += order;
+    __asm__ volatile(
+        "1:                          \n\t"
+        "movdqu   (%1,%2),   %%xmm0  \n\t"
+        "movdqu 16(%1,%2),   %%xmm1  \n\t"
+        "paddw    (%0,%2),   %%xmm0  \n\t"
+        "paddw  16(%0,%2),   %%xmm1  \n\t"
+        "movdqa   %%xmm0,    (%0,%2) \n\t"
+        "movdqa   %%xmm1,  16(%0,%2) \n\t"
+        "add      $32,       %2      \n\t"
+        "js       1b                 \n\t"
+        : "+r"(v1), "+r"(v2), "+r"(o)
+    );
+}
+
+static void sub_int16(int16_t * v1, int16_t * v2, int order)
+{
+    x86_reg o = -(order << 1);
+    v1 += order;
+    v2 += order;
+    __asm__ volatile(
+        "1:                           \n\t"
+        "movdqa    (%0,%2),   %%xmm0  \n\t"
+        "movdqa  16(%0,%2),   %%xmm2  \n\t"
+        "movdqu    (%1,%2),   %%xmm1  \n\t"
+        "movdqu  16(%1,%2),   %%xmm3  \n\t"
+        "psubw     %%xmm1,    %%xmm0  \n\t"
+        "psubw     %%xmm3,    %%xmm2  \n\t"
+        "movdqa    %%xmm0,    (%0,%2) \n\t"
+        "movdqa    %%xmm2,  16(%0,%2) \n\t"
+        "add       $32,       %2      \n\t"
+        "js        1b                 \n\t"
+        : "+r"(v1), "+r"(v2), "+r"(o)
+    );
+}
+
+#else
+static int32_t
+scalarproduct_int16(int16_t * v1, int16_t * v2, int order, int shift)
+{
+    int res = 0;
+
+    while (order--)
+        res += (*v1++ * *v2++) >> shift;
+
+    return res;
+}
 
 static inline void
 add_int16 (int16_t *v1/*align 16*/, int16_t *v2, int len) {
-    int i;
     while (len--) {
         *v1++ += *v2++;
     }
@@ -1180,11 +1242,11 @@ add_int16 (int16_t *v1/*align 16*/, int16_t *v2, int len) {
 
 static inline void
 sub_int16 (int16_t *v1/*align 16*/, int16_t *v2, int len) {
-    int i;
     while (len--) {
         *v1++ -= *v2++;
     }
 }
+#endif
 
 static inline int16_t clip_int16(int a)
 {
