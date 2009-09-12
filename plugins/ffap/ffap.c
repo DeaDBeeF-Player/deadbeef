@@ -25,7 +25,7 @@
 #include <assert.h>
 #include "../../deadbeef.h"
 
-#define ENABLE_DEBUG 1
+#define ENABLE_DEBUG 0
 
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
@@ -242,6 +242,7 @@ typedef struct APEContext {
     uint8_t packet_data[PACKET_BUFFER_SIZE];
     int packet_remaining; // number of bytes in packet_data
     int packet_sizeleft; // number of bytes left unread for current ape frame
+    int samplestoskip;
 
     int error;
 } APEContext;
@@ -537,7 +538,9 @@ ape_read_header(FILE *fp, APEContext *ape)
 
     ape_dumpinfo(ape);
 
+#if ENABLE_DEBUG
     fprintf (stderr, "Decoding file - v%d.%02d, compression level %d\n", ape->fileversion / 1000, (ape->fileversion % 1000) / 10, ape->compressiontype);
+#endif
 
     total_blocks = (ape->totalframes == 0) ? 0 : ((ape->totalframes - 1) * ape->blocksperframe) + ape->finalframeblocks;
 
@@ -661,7 +664,9 @@ ffap_init(DB_playItem_t *it)
         return -1;
     }
 
+#if ENABLE_DEBUG
     fprintf (stderr, "Compression Level: %d - Flags: %d\n", ape_ctx.compressiontype, ape_ctx.formatflags);
+#endif
     if (ape_ctx.compressiontype % 1000 || ape_ctx.compressiontype > COMPRESSION_LEVEL_INSANE) {
         fprintf (stderr, "Incorrect compression level %d\n", ape_ctx.compressiontype);
         return -1;
@@ -1465,16 +1470,20 @@ ape_decode_frame(APEContext *s, void *data, int *data_size)
         return -1;
     }
 
-    for (i = 0; i < blockstodecode; i++) {
+    int skip = min (s->samplestoskip, blockstodecode);
+    i = skip;
+
+    for (; i < blockstodecode; i++) {
         *samples++ = s->decoded0[i];
         if(s->channels == 2) {
             *samples++ = s->decoded1[i];
         }
     }
 
+    s->samplestoskip -= skip;
     s->samples -= blockstodecode;
 
-    *data_size = blockstodecode * 2 * s->channels;
+    *data_size = (blockstodecode - skip) * 2 * s->channels;
     bytes_used = s->samples ? s->ptr - s->last_ptr : s->packet_remaining;
 
     // shift everything
@@ -1584,7 +1593,23 @@ ffap_read_int16 (char *buffer, int size) {
 }
 
 static int
-ffap_seek (float sec) {
+ffap_seek (float seconds) {
+    seconds += timestart;
+    uint32_t newsample = seconds * plugin.info.samplerate;
+    if (newsample > ape_ctx.totalsamples) {
+        return -1;
+    }
+    int nframe = newsample / ape_ctx.blocksperframe;
+    if (nframe >= ape_ctx.totalframes) {
+        return -1;
+    }
+    ape_ctx.currentframe = nframe;
+    ape_ctx.samplestoskip = newsample - nframe * ape_ctx.blocksperframe;
+
+    // reset decoder
+    ape_ctx.packet_remaining = 0;
+    ape_ctx.samples = 0;
+    plugin.info.readpos = seconds - timestart;
     return 0;
 }
 
