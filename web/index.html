@@ -131,11 +131,11 @@ implemented basic session management, window size/position, volume, playmode are
 <p>Current alpha version features:</p>
 <ul>
     <li>written in C99 except sid module, because of libsidplay2, which only has a C++ API (though some 3rd party libraries are entirely in C++)</li>
-    <li>mp3, ogg vorbis, flac</li>
+    <li>mp3, ogg vorbis, flac, ape</li>
     <li>reading id3 v1, v2.2, v2.3, v2.4, apev2, xing/info tags for mp3</li>
     <li>character set detection for non-unicode id3 tags - supports cp1251 and iso8859-1</li>
     <li>unicode tags are fully supported as well (both utf8 and ucs2)</li>
-    <li>cuesheet support for mp3, ogg and flac</li>
+    <li>cuesheet support for mp3, ogg, flac, ape</li>
     <li>sid and some popular chiptune formats like nsf</li>
     <li>tracker modules like mod, s3m, it, xm, etc</li>
     <li>HVSC song length database support for sid</li>
@@ -145,8 +145,9 @@ implemented basic session management, window size/position, volume, playmode are
     <li>drag and drop, both inside of playlist, and from filemanagers and such</li>
     <li>control playback from command line (allows global hotkeys using xbindkeys)</li>
     <li>seeking works in all supported formats</li>
+    <li>plugin support; ships with several standard plugins, such as global hotkeys and last.fm scrobbler; sdk is included</li>
     <li>duration calculation is as precise as possible for vbr mp3 files (with and without xing/info tags)</li>
-    <li>fully functional on x86 and x86_64 architectures. ppc and ppc64 support untested, but may work as well</li>
+    <li>fully functional on x86 and x86_64 architectures. (was also tested on ppc64 - works, but has some problems)</li>
 </ul>
 <h1 id="license">Copying</h1>
 <pre>
