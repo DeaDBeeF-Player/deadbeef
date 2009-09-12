@@ -238,7 +238,7 @@ static const char *junk_genretbl[] = {
 };
 
 static int
-can_be_russian (const char *str) {
+can_be_russian (const signed char *str) {
     int latin = 0;
     int rus = 0;
     for (; *str; str++) {
@@ -264,12 +264,15 @@ convstr_id3v2_2to3 (const unsigned char* str, int sz) {
 
     // hack to add limited cp1251 recoding support
 
-    if (*str == 1) {
-        enc = "UCS-2";
-        // standard says it must have endianess header
-        if (!((str[1] == 0xff && str[2] == 0xfe)
-            || (str[2] == 0xff && str[1] == 0xfe))) {
-//            fprintf (stderr, "invalid ucs-2 signature %x %x\n", (int)str[1], (int)str[2]);
+      if (*str == 1) {
+        if (str[1] == 0xff && str[2] == 0xfe) {
+            enc = "UCS-2LE";
+        }
+        else if (str[2] == 0xff && str[1] == 0xfe) {
+            enc = "UCS-2BE";
+        }
+        else {
+            fprintf (stderr, "invalid ucs-2 signature %x %x\n", (int)str[1], (int)str[2]);
             return NULL;
         }
     }
@@ -307,10 +310,12 @@ convstr_id3v2_4 (const unsigned char* str, int sz) {
     // hack to add limited cp1251 recoding support
 
     if (*str == 0) {
+        fprintf (stderr, "v2.4 8859-1\n");
         // iso8859-1
         enc = "iso8859-1";
     }
     else if (*str == 3) {
+        fprintf (stderr, "v2.4 utf8\n");
         // utf8
         strncpy (out, str+1, 2047);
         sz--;
@@ -318,12 +323,15 @@ convstr_id3v2_4 (const unsigned char* str, int sz) {
         return strdup (out);
     }
     else if (*str == 1) {
+        fprintf (stderr, "v2.4 utf16\n");
         enc = "UTF-16";
     }
     else if (*str == 2) {
+        fprintf (stderr, "v2.4 utf16be\n");
         enc = "UTF-16BE";
     }
     else {
+        fprintf (stderr, "v2.4 unknown 8bit\n");
         if (can_be_russian (&str[1])) {
             enc = "cp1251";
         }
@@ -380,19 +388,7 @@ convstr_id3v1 (const char* str, int sz) {
     }
 
     const char *enc = "iso8859-1";
-    int latin = 0;
-    int rus = 0;
-    for (int i = 0; i < sz; i++) {
-        if ((str[i] >= 'A' && str[i] <= 'Z')
-                || str[i] >= 'a' && str[i] <= 'z') {
-            latin++;
-        }
-        else if (str[i] < 0) {
-            rus++;
-        }
-    }
-    if (rus > latin/2) {
-        // might be russian
+    if (can_be_russian (str)) {
         enc = "cp1251";
     }
     cd = iconv_open ("utf8", enc);
