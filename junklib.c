@@ -310,12 +310,10 @@ convstr_id3v2_4 (const unsigned char* str, int sz) {
     // hack to add limited cp1251 recoding support
 
     if (*str == 0) {
-        fprintf (stderr, "v2.4 8859-1\n");
         // iso8859-1
         enc = "iso8859-1";
     }
     else if (*str == 3) {
-        fprintf (stderr, "v2.4 utf8\n");
         // utf8
         strncpy (out, str+1, 2047);
         sz--;
@@ -323,15 +321,12 @@ convstr_id3v2_4 (const unsigned char* str, int sz) {
         return strdup (out);
     }
     else if (*str == 1) {
-        fprintf (stderr, "v2.4 utf16\n");
         enc = "UTF-16";
     }
     else if (*str == 2) {
-        fprintf (stderr, "v2.4 utf16be\n");
         enc = "UTF-16BE";
     }
     else {
-        fprintf (stderr, "v2.4 unknown 8bit\n");
         if (can_be_russian (&str[1])) {
             enc = "cp1251";
         }
