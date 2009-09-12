@@ -68,7 +68,7 @@ pl_cue_skipspaces (const uint8_t *p) {
 }
 
 static void
-pl_get_qvalue_from_cue (const char *p, char *out) {
+pl_get_qvalue_from_cue (const char *p, int sz, char *out) {
     char *str = out;
     if (*p == 0) {
         *out = 0;
@@ -84,7 +84,8 @@ pl_get_qvalue_from_cue (const char *p, char *out) {
     }
     p++;
     p = pl_cue_skipspaces (p);
-    while (*p && *p != '"') {
+    while (*p && *p != '"' && sz > 1) {
+        sz--;
         *out++ = *p++;
     }
     *out = 0;
@@ -96,12 +97,13 @@ pl_get_qvalue_from_cue (const char *p, char *out) {
     int l = strlen (str);
     char in[l+1];
     memcpy (in, str, l+1);
-    junk_recode (in, l, str, 1024, charset);
+    junk_recode (in, l, str, sz, charset);
 }
 
 static void
-pl_get_value_from_cue (const char *p, char *out) {
-    while (*p >= ' ') {
+pl_get_value_from_cue (const char *p, int sz, char *out) {
+    while (*p >= ' ' && sz > 1) {
+        sz--;
         *out++ = *p++;
     }
     *out = 0;
@@ -212,10 +214,10 @@ pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, c
 
 playItem_t *
 pl_insert_cue_from_buffer (playItem_t *after, const char *fname, const uint8_t *buffer, int buffersize, struct DB_decoder_s *decoder, const char *ftype, float duration) {
-    char performer[1024];
-    char albumtitle[1024];
-    char track[1024];
-    char title[1024];
+    char performer[256];
+    char albumtitle[256];
+    char track[256];
+    char title[256];
     char pregap[256];
     char index00[256];
     char index01[256];
@@ -242,16 +244,16 @@ pl_insert_cue_from_buffer (playItem_t *after, const char *fname, const uint8_t *
         buffer = p;
         p = pl_cue_skipspaces (str);
         if (!strncmp (p, "PERFORMER ", 10)) {
-            pl_get_qvalue_from_cue (p + 10, performer);
+            pl_get_qvalue_from_cue (p + 10, sizeof (performer), performer);
 //            printf ("got performer: %s\n", performer);
         }
         else if (!strncmp (p, "TITLE ", 6)) {
             if (str[0] > ' ') {
-                pl_get_qvalue_from_cue (p + 6, albumtitle);
+                pl_get_qvalue_from_cue (p + 6, sizeof (albumtitle), albumtitle);
 //                printf ("got albumtitle: %s\n", albumtitle);
             }
             else {
-                pl_get_qvalue_from_cue (p + 6, title);
+                pl_get_qvalue_from_cue (p + 6, sizeof (title), title);
 //                printf ("got title: %s\n", title);
             }
         }
@@ -263,7 +265,7 @@ pl_insert_cue_from_buffer (playItem_t *after, const char *fname, const uint8_t *
             pregap[0] = 0;
             index00[0] = 0;
             index01[0] = 0;
-            pl_get_value_from_cue (p + 6, track);
+            pl_get_value_from_cue (p + 6, sizeof (track), track);
 //            printf ("got track: %s\n", track);
         }
 //        else if (!strncmp (p, "PERFORMER ", 10)) {
@@ -271,13 +273,13 @@ pl_insert_cue_from_buffer (playItem_t *after, const char *fname, const uint8_t *
 //        }
 
         else if (!strncmp (p, "PREGAP ", 7)) {
-            pl_get_value_from_cue (p + 7, pregap);
+            pl_get_value_from_cue (p + 7, sizeof (pregap), pregap);
         }
         else if (!strncmp (p, "INDEX 00 ", 9)) {
-            pl_get_value_from_cue (p + 9, index00);
+            pl_get_value_from_cue (p + 9, sizeof (index00), index00);
         }
         else if (!strncmp (p, "INDEX 01 ", 9)) {
-            pl_get_value_from_cue (p + 9, index01);
+            pl_get_value_from_cue (p + 9, sizeof (index01), index01);
         }
         else {
 //            fprintf (stderr, "got unknown line:\n%s\n", p);
