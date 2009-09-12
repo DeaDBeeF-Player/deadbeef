@@ -3,7 +3,7 @@ version 0.2.1
 	fixed APEv2 tag reader
 	fixed id3 tag reader on big-endian systems
 	player now builds without errors on big-endian systems
-	memory for HSVC song length database is now allocated on demand
+	memory for HVSC song length database is now allocated on demand
 	fixed icons in system tray menu
 	fixed color detection for column header text
 	improved cuesheet reader (pregap support and better bounds checking)
