@@ -182,6 +182,11 @@ pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, c
         }
         (*prev)->duration = (*prev)->timeend - (*prev)->timestart;
     }
+    // non-compliant hack to handle tracks which only store pregap info
+    if (!index01[0]) {
+        *prev = NULL;
+        return after;
+    }
     playItem_t *it = malloc (sizeof (playItem_t));
     memset (it, 0, sizeof (playItem_t));
     it->decoder = decoder;
