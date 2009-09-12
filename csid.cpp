@@ -43,6 +43,7 @@ extern "C" {
     DB_playItem_t *csid_insert (DB_playItem_t *after, const char *fname);
     int csid_numvoices (void);
     void csid_mutevoice (int voice, int mute);
+    int csid_stop (void);
 }
 
 static const char *exts[] = { "sid",NULL };
@@ -64,7 +65,7 @@ static DB_decoder_t plugin = {
         /* .plugin.email = */"waker@users.sourceforge.net",
         /* .plugin.website = */"http://deadbeef.sf.net",
         /* .plugin.start = */NULL,
-        /* .plugin.stop = */NULL,
+        /* .plugin.stop = */csid_stop,
         /* .plugin.exec_cmdline = */NULL,
     },
     { // info
@@ -109,17 +110,21 @@ static ReSIDBuilder *resid;
 static SidTune *tune;
 static float duration; // of the current song
 static uint32_t csid_voicemask = 0;
+
 // SLDB support costs ~1M!!!
 // current hvsc sldb size is ~35k songs
 #define SLDB_MAX_SONGS 40000
 // ~50k subsongs in current sldb
 #define SLDB_POOL_SIZE 55000
-static uint8_t sldb_digests[SLDB_MAX_SONGS][16];
-static int16_t sldb_pool[SLDB_POOL_SIZE];
-static int sldb_poolmark;
-static int16_t *sldb_lengths[SLDB_MAX_SONGS];
-static int sldb_size;
+typedef struct {
+    uint8_t sldb_digests[SLDB_MAX_SONGS][16];
+    int16_t sldb_pool[SLDB_POOL_SIZE];
+    int sldb_poolmark;
+    int16_t *sldb_lengths[SLDB_MAX_SONGS];
+    int sldb_size;
+} sldb_t;
 static int sldb_loaded;
+static sldb_t *sldb;
 
 static void sldb_load()
 {
@@ -142,8 +147,12 @@ static void sldb_load()
         goto fail; // bad format
     }
 
+    if (!sldb) {
+        sldb = (sldb_t *)malloc (sizeof (sldb_t));
+        memset (sldb, 0, sizeof (sldb_t));
+    }
     while (fgets (str, 1024, fp) == str) {
-        if (sldb_size >= SLDB_MAX_SONGS) {
+        if (sldb->sldb_size >= SLDB_MAX_SONGS) {
             printf ("sldb loader ran out of memory.\n");
             break;
         }
@@ -202,9 +211,9 @@ static void sldb_load()
 //            printf ("\n");
 //            exit (0);
 //        }
-        memcpy (sldb_digests[sldb_size], digest, 16);
-        sldb_lengths[sldb_size] = &sldb_pool[sldb_poolmark];
-        sldb_size++;
+        memcpy (sldb->sldb_digests[sldb->sldb_size], digest, 16);
+        sldb->sldb_lengths[sldb->sldb_size] = &sldb->sldb_pool[sldb->sldb_poolmark];
+        sldb->sldb_size++;
         // check '=' sign
         if (*p != '=') {
             continue; // no '=' sign
@@ -247,13 +256,13 @@ static void sldb_load()
                 //printf ("subsong %d, time %s:%s\n", subsong, minute, second);
                 time = atoi (minute) * 60 + atoi (second);
             }
-            if (sldb_poolmark >= SLDB_POOL_SIZE) {
+            if (sldb->sldb_poolmark >= SLDB_POOL_SIZE) {
                 printf ("sldb ran out of memory\n");
                 goto fail;
             }
             
-            sldb_lengths[sldb_size-1][subsong] = time;
-            sldb_poolmark++;
+            sldb->sldb_lengths[sldb->sldb_size-1][subsong] = time;
+            sldb->sldb_poolmark++;
             subsong++;
 
             // prepare for next timestamp
@@ -278,13 +287,13 @@ static void sldb_load()
 
 fail:
     fclose (fp);
-    printf ("HVSC sldb loaded %d songs, %d subsongs total\n", sldb_size, sldb_poolmark);
+    printf ("HVSC sldb loaded %d songs, %d subsongs total\n", sldb->sldb_size, sldb->sldb_poolmark);
 }
 
 static int
 sldb_find (const uint8_t *digest) {
-    for (int i = 0; i < sldb_size; i++) {
-        if (!memcmp (digest, sldb_digests[i], 16)) {
+    for (int i = 0; i < sldb->sldb_size; i++) {
+        if (!memcmp (digest, sldb->sldb_digests[i], 16)) {
             return i;
         }
     }
@@ -525,8 +534,8 @@ csid_insert (DB_playItem_t *after, const char *fname) {
 
             float length = 120;
             if (sldb_loaded) {
-                if (song >= 0 && sldb_lengths[song][s] >= 0) {
-                    length = sldb_lengths[song][s];
+                if (song >= 0 && sldb->sldb_lengths[song][s] >= 0) {
+                    length = sldb->sldb_lengths[song][s];
                 }
                 //        if (song < 0) {
                 //            printf ("song %s not found in db, md5: ", fname);
@@ -567,6 +576,16 @@ csid_mutevoice (int voice, int mute) {
             }
         }
     }
+}
+
+int
+csid_stop (void) {
+    if (sldb) {
+        free (sldb);
+        sldb = NULL;
+    }
+    sldb_loaded = 0;
+    return 0;
 }
 
 extern "C" DB_plugin_t *
