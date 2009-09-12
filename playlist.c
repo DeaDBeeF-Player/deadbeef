@@ -141,17 +141,79 @@ pl_cue_parse_time (const char *p) {
     }
     strncpy (tmp, p, 2);
     float frm = atoi (tmp);
-    return mins * 60 + sec;
+    return mins * 60 + sec + frm / 75.f;
+}
+
+static playItem_t *
+pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, char *track, char *index00, char *index01, char *pregap, char *title, char *performer, char *albumtitle, struct DB_decoder_s *decoder, const char *ftype) {
+    if (!track[0]) {
+        return after;
+    }
+    if (!index00[0] && !index01[0]) {
+        return after;
+    }
+#if SKIP_BLANK_CUE_TRACKS
+    if (!title[0]) {
+        return after;
+    }
+#endif
+    // fix track number
+    char *p = track;
+    while (*p && isdigit (*p)) {
+        p++;
+    }
+    *p = 0;
+    // check that indexes have valid timestamps
+    float f_index00 = index00[0] ? pl_cue_parse_time (index00) : 0;
+    float f_index01 = index01[0] ? pl_cue_parse_time (index01) : 0;
+    float f_pregap = pregap[0] ? pl_cue_parse_time (pregap) : 0;
+    if (*prev) {
+        if (pregap[0] && index01[0]) {
+            // PREGAP command
+            (*prev)->timeend = f_index01 - f_pregap;
+        }
+        else if (index00[0]) {
+            // pregap in index 00
+            (*prev)->timeend = f_index00;
+        }
+        else if (index01[0]) {
+            // no pregap
+            (*prev)->timeend = f_index01;
+        }
+        (*prev)->duration = (*prev)->timeend - (*prev)->timestart;
+    }
+    playItem_t *it = malloc (sizeof (playItem_t));
+    memset (it, 0, sizeof (playItem_t));
+    it->decoder = decoder;
+    it->fname = strdup (fname);
+    it->tracknum = atoi (track);
+    if (index01[0]) {
+        it->timestart = f_index01;
+    }
+    else {
+        it->timestart = f_index00;
+    }
+
+    it->timeend = -1; // will be filled by next read, or by decoder
+    it->filetype = ftype;
+    after = pl_insert_item (after, it);
+    pl_add_meta (it, "artist", performer);
+    pl_add_meta (it, "album", albumtitle);
+    pl_add_meta (it, "track", track);
+    pl_add_meta (it, "title", title);
+    *prev = it;
+    return it;
 }
 
 playItem_t *
 pl_insert_cue_from_buffer (playItem_t *after, const char *fname, const uint8_t *buffer, int buffersize, struct DB_decoder_s *decoder, const char *ftype, float duration) {
     char performer[1024];
     char albumtitle[1024];
-    char file[1024];
     char track[1024];
     char title[1024];
-    char start[1024];
+    char pregap[256];
+    char index00[256];
+    char index01[256];
     playItem_t *prev = NULL;
     while (buffersize > 0) {
         const uint8_t *p = buffer;
@@ -188,91 +250,35 @@ pl_insert_cue_from_buffer (playItem_t *after, const char *fname, const uint8_t *
 //                printf ("got title: %s\n", title);
             }
         }
-        else if (!strncmp (p, "FILE ", 5)) {
-        // ignore
-#if 0
-            pl_get_qvalue_from_cue (p + 5, file);
-            // copy directory name
-            char dirname[1024];
-            int len = strlen (fname);
-            memcpy (dirname, fname, len+1);
-            char *p = dirname + len;
-            while (*p != '/') {
-                p--;
-                len--;
-            }
-            p++;
-            len++;
-            // add file name
-            int flen = strlen (file);
-            // ensure fullname fills in buffer
-            if (flen + len >= 1024) {
-//                printf ("cue file name is too long");
-                return NULL;
-            }
-            strcpy (p, file);
-            // copy full name in place of relative name
-            strcpy (file, dirname);
-//            printf ("ended up as: %s\n", file);
-#endif
-        }
         else if (!strncmp (p, "TRACK ", 6)) {
+            // add previous track
+            after = pl_process_cue_track (after, fname, &prev, track, index00, index01, pregap, title, performer, albumtitle, decoder, ftype);
+            track[0] = 0;
+            title[0] = 0;
+            pregap[0] = 0;
+            index00[0] = 0;
+            index01[0] = 0;
             pl_get_value_from_cue (p + 6, track);
 //            printf ("got track: %s\n", track);
         }
 //        else if (!strncmp (p, "PERFORMER ", 10)) {
 //            pl_get_qvalue_from_cue (p + 10, performer);
 //        }
-        else if (!strncmp (p, "INDEX 00 ", 9) || !strncmp (p, "INDEX 01 ", 9)) {
-            if (!track[0]) {
-                continue;
-            }
-#if SKIP_BLANK_CUE_TRACKS
-            if (!title[0])
-                continue;
-#endif
-            pl_get_value_from_cue (p + 9, start);
-//            printf ("got index0: %s\n", start);
-            char *p = track;
-            while (*p && isdigit (*p)) {
-                p++;
-            }
-            *p = 0;
-            // check that indexes have valid timestamps
-            float tstart = pl_cue_parse_time (start);
-            if (tstart < 0) {
-//                printf ("cue file %s has bad timestamp(s)\n", cuename);
-                continue;
-            }
-            if (prev) {
-                prev->timeend = tstart;
-                prev->duration = prev->timeend - prev->timestart;
-//                printf ("end time for prev track (%x): %f\n", prev, tstart);
-            }
-            // add this track
-//            char str[1024];
-//            snprintf (str, 1024, "%d. %s - %s", atoi (track), performer, title[0] ? title : "?", start, tstart);
-//            printf ("adding %s\n", str);
-            playItem_t *it = malloc (sizeof (playItem_t));
-            memset (it, 0, sizeof (playItem_t));
-            it->decoder = decoder;
-            it->fname = strdup (fname);
-            it->tracknum = atoi (track);
-            it->timestart = tstart;
-            it->timeend = -1; // will be filled by next read, or by decoder
-            it->filetype = ftype;
-            after = pl_insert_item (after, it);
-            pl_add_meta (it, "artist", performer);
-            pl_add_meta (it, "album", albumtitle);
-            pl_add_meta (it, "track", track);
-            pl_add_meta (it, "title", title);
-            prev = it;
-            track[0] = 0;
+
+        else if (!strncmp (p, "PREGAP ", 7)) {
+            pl_get_value_from_cue (p + 7, pregap);
+        }
+        else if (!strncmp (p, "INDEX 00 ", 9)) {
+            pl_get_value_from_cue (p + 9, index00);
+        }
+        else if (!strncmp (p, "INDEX 01 ", 9)) {
+            pl_get_value_from_cue (p + 9, index01);
         }
         else {
-//            printf ("got unknown line:\n%s\n", p);
+//            fprintf (stderr, "got unknown line:\n%s\n", p);
         }
     }
+    after = pl_process_cue_track (after, fname, &prev, track, index00, index01, pregap, title, performer, albumtitle, decoder, ftype);
     if (after) {
         after->timeend = duration;
         after->duration = after->timeend - after->timestart;
