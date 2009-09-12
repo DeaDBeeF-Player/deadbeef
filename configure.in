@@ -78,7 +78,6 @@ sid/sidplay-libs-2.1.0/Makefile
 dumb/Makefile
 plugins/hotkeys/Makefile
 plugins/lastfm/Makefile
-plugins/demac/Makefile
 plugins/ffap/Makefile
 plugins/mpgmad/Makefile
 plugins/vorbis/Makefile

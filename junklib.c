@@ -511,28 +511,29 @@ junk_read_ape (playItem_t *it, FILE *fp) {
     if (fread (header, 1, 32, fp) != 32) {
         return -1; // something bad happened
     }
-
     if (strncmp (header, "APETAGEX", 8)) {
         return -1; // no ape tag here
     }
 
     // end of footer must be 0
-    if (memcmp (&header[24], "\0\0\0\0\0\0\0\0", 8)) {
-        return -1;
-    }
+//    if (memcmp (&header[24], "\0\0\0\0\0\0\0\0", 8)) {
+//        fprintf (stderr, "bad footer\n");
+//        return -1;
+//    }
 
     uint32_t version = extract_i32_le (&header[8]);
-    uint32_t size = extract_i32_le (&header[12]);
+    int32_t size = extract_i32_le (&header[12]);
     uint32_t numitems = extract_i32_le (&header[16]);
     uint32_t flags = extract_i32_le (&header[20]);
 
-//    fprintf (stderr, "APEv%d, size=%d, items=%d, flags=%x\n", version, size, numitems, flags);
+    //fprintf (stderr, "APEv%d, size=%d, items=%d, flags=%x\n", version, size, numitems, flags);
     // now seek to beginning of the tag (exluding header)
     if (fseek (fp, -size, SEEK_CUR) == -1) {
+        fprintf (stderr, "failed to seek to tag start (-%d)\n", size);
         return -1;
     }
-
-    for (int i = 0; i < numitems; i++) {
+    int i;
+    for (i = 0; i < numitems; i++) {
         uint8_t buffer[8];
         if (fread (buffer, 1, 8, fp) != 8) {
             return -1;
@@ -550,7 +551,7 @@ junk_read_ape (playItem_t *it, FILE *fp) {
                 break;
             }
             if (key[keysize] < 0x20) {
-                return -1; // non-ascii chars and chars with coded 0..0x1f not allowed in ape item keys
+                return -1; // non-ascii chars and chars with codes 0..0x1f not allowed in ape item keys
             }
             keysize++;
         }
@@ -561,6 +562,9 @@ junk_read_ape (playItem_t *it, FILE *fp) {
             return -1;
         }
         value[itemsize] = 0;
+        if (!u8_valid (value, itemsize, NULL)) {
+            strcpy (value, "<bad encoding>");
+        }
         // add metainfo only if it's textual
         int valuetype = ((itemflags & (0x3<<1)) >> 1);
         if (valuetype == 0) {
