@@ -7,8 +7,8 @@ SUBDIRS = gme/Game_Music_Emu-0.5.2\
 		  dumb\
 		  pixmaps\
 		  plugins/hotkeys\
-		  plugins/lastfm\
 		  plugins/ffap\
+		  ${LFM_DIR}\
           ${MPGMAD_DIR}\
           ${VORBIS_DIR}\
           ${FLAC_DIR}

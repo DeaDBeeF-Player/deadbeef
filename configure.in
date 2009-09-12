@@ -25,7 +25,6 @@ CFLAGS="$CFLAGS -D_GNU_SOURCE -O2 -DHAVE_UNIX"
 CPPFLAGS="$CFLAGS"
 
 PKG_CHECK_MODULES(DEPS, gtk+-2.0 >= 2.12 gthread-2.0 glib-2.0 samplerate alsa)
-PKG_CHECK_MODULES(LASTFM_DEPS, libcurl)
 
 AX_EXT()
 
@@ -37,6 +36,15 @@ dnl     APE_DIR="plugins/ape"
 dnl     AC_SUBST(APE_LIBS)
 dnl     AC_SUBST(APE_DIR)
 dnl fi
+
+dnl lastfm plugin
+AC_CHECK_LIB([libcurl], [main], [HAVE_LIBCURL=1])
+if test ${HAVE_LIBCURL}; then
+    LFM_LIBS="-lmad"
+    LFM_DIR="plugins/lastfm"
+    AC_SUBST(LFM_LIBS)
+    AC_SUBST(LFM_DIR)
+fi
 
 dnl mpgmad plugin
 AC_CHECK_LIB([mad], [main], [HAVE_LIBMAD=1])
