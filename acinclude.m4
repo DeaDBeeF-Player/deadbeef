@@ -130,14 +130,18 @@ AC_DEFUN([AX_EXT],
   ecx=`echo $ax_cv_gcc_x86_cpuid_0x00000001 | cut -d ":" -f 3`
   edx=`echo $ax_cv_gcc_x86_cpuid_0x00000001 | cut -d ":" -f 4`
 
-
- AC_CACHE_CHECK([whether sse2 is supported], [ax_have_sse2_ext],
-  [
+  if test "x$edx" = "xunknown"; then
     ax_have_sse2_ext=no
-    if test "$((0x$edx>>26&0x01))" = 1; then
-      ax_have_sse2_ext=yes
-    fi
-  ])
+
+  else
+      AC_CACHE_CHECK([whether sse2 is supported], [ax_have_sse2_ext],
+      [
+        ax_have_sse2_ext=no
+        if test "$((0x$edx>>26&0x01))" = 1; then
+          ax_have_sse2_ext=yes
+        fi
+      ])
+  fi
 
   if test "$ax_have_sse2_ext" = yes; then
     AC_DEFINE(HAVE_SSE2, , [Support SSE2 (Streaming SIMD Extensions 2) instructions])
