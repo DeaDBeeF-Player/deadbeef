@@ -246,6 +246,7 @@ typedef struct APEContext {
     int packet_remaining; // number of bytes in packet_data
     int packet_sizeleft; // number of bytes left unread for current ape frame
     int samplestoskip;
+    int currentsample; // current sample from beginning of file
 
     int error;
 } APEContext;
@@ -1541,11 +1542,12 @@ ape_decode_frame(APEContext *s, void *data, int *data_size)
             *samples++ = s->decoded1[i];
         }
     }
-
+    
     s->samplestoskip -= skip;
     s->samples -= blockstodecode;
 
     *data_size = (blockstodecode - skip) * 2 * s->channels;
+    ape_ctx.currentsample += blockstodecode - skip;
     bytes_used = s->samples ? s->ptr - s->last_ptr : s->packet_remaining;
 
     // shift everything
@@ -1619,6 +1621,9 @@ static int remaining = 0;
 static int
 ffap_read_int16 (char *buffer, int size) {
     int inits = size;
+    if (plugin.info.readpos >= (timeend - timestart)) {
+        return 0;
+    }
     while (size > 0) {
         if (remaining > 0) {
             int sz = min (size, remaining);
@@ -1650,7 +1655,7 @@ ffap_read_int16 (char *buffer, int size) {
         }
         remaining -= sz;
     }
-    plugin.info.readpos = ape_ctx.blocksdecoded / (float)plugin.info.samplerate - timestart;
+    plugin.info.readpos = ape_ctx.currentsample / (float)plugin.info.samplerate - timestart;
     return inits - size;
 }
 
@@ -1671,6 +1676,7 @@ ffap_seek (float seconds) {
     // reset decoder
     ape_ctx.packet_remaining = 0;
     ape_ctx.samples = 0;
+    ape_ctx.currentsample = newsample;
     plugin.info.readpos = seconds - timestart;
     return 0;
 }
