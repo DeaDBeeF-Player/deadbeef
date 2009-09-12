@@ -807,9 +807,8 @@ libsidplay2 - commodore 64 SID emulation library
 Copyright (C) Simon White and other authors.
 
 
-libdemac - A Monkey's Audio decoder
-Copyright (C) Dave Chapman 2007
-</property>
+ffap - monkey's audio decoder based on apedec code from ffmpeg
+Copyright (c) 2007 Benjamin Zores &lt;ben@geexbox.org&gt;</property>
   <property name="wrap_license">False</property>
   <property name="website">http://deadbeef.sf.net</property>
   <property name="website_label" translatable="yes">website</property>
