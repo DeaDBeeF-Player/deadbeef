@@ -3,7 +3,7 @@ AC_INIT
 AC_CONFIG_HEADER(config.h)
 
 PACKAGE="deadbeef"
-VERSION="0.2.0"
+VERSION="0.2.1-dev"
 
 AM_INIT_AUTOMAKE($PACKAGE,$VERSION)
 
@@ -24,7 +24,7 @@ AC_DEFINE_UNQUOTED(PREFIX, "${prefix}")
 CFLAGS="$CFLAGS -D_GNU_SOURCE -O2 -DHAVE_UNIX"
 CPPFLAGS="$CFLAGS"
 
-PKG_CHECK_MODULES(DEPS, gtk+-2.0 >= 2.12 gthread-2.0 glib-2.0 vorbis vorbisfile samplerate alsa)
+PKG_CHECK_MODULES(DEPS, gtk+-2.0 >= 2.12 gthread-2.0 glib-2.0 samplerate alsa)
 PKG_CHECK_MODULES(LASTFM_DEPS, libcurl)
 
 AX_EXT()
@@ -78,7 +78,7 @@ sid/sidplay-libs-2.1.0/Makefile
 dumb/Makefile
 plugins/hotkeys/Makefile
 plugins/lastfm/Makefile
-plugins/demac/Makefile
+plugins/ffap/Makefile
 plugins/mpgmad/Makefile
 plugins/vorbis/Makefile
 plugins/flac/Makefile
