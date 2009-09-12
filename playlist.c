@@ -250,8 +250,8 @@ pl_insert_cue_from_buffer (playItem_t *after, const char *fname, const uint8_t *
 //                printf ("end time for prev track (%x): %f\n", prev, tstart);
             }
             // add this track
-            char str[1024];
-            snprintf (str, 1024, "%d. %s - %s", atoi (track), performer, title[0] ? title : "?", start, tstart);
+//            char str[1024];
+//            snprintf (str, 1024, "%d. %s - %s", atoi (track), performer, title[0] ? title : "?", start, tstart);
 //            printf ("adding %s\n", str);
             playItem_t *it = malloc (sizeof (playItem_t));
             memset (it, 0, sizeof (playItem_t));
