@@ -4,15 +4,11 @@
 #ifndef BLIP_BUFFER_H
 #define BLIP_BUFFER_H
 
-	// internal
-	#include <limits.h>
-	#if INT_MAX >= 0x7FFFFFFF
-		typedef int blip_long;
-		typedef unsigned blip_ulong;
-	#else
-		typedef long blip_long;
-		typedef unsigned long blip_ulong;
-	#endif
+// internal
+#include <limits.h>
+#include <stdint.h>
+typedef int32_t blip_long;
+typedef uint32_t blip_ulong;
 
 // Time unit at source clock rate
 typedef blip_long blip_time_t;
