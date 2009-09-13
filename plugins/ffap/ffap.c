@@ -1149,23 +1149,6 @@ static void init_filter(APEContext * ctx, APEFilter *f, int16_t * buf, int order
 #ifdef HAVE_SSE2
 
 #if ARCH_X86_64
-#    define REG_a "eax"
-#    define REG_b "ebx"
-#    define REG_c "ecx"
-#    define REG_d "edx"
-#    define REG_D "edi"
-#    define REG_S "esi"
-#    define PTR_SIZE "4"
-#    define REG_SP "esp"
-#    define REG_BP "ebp"
-#    define REGBP   ebp
-#    define REGa    eax
-#    define REGb    ebx
-#    define REGc    ecx
-#    define REGd    edx
-#    define REGSP   esp
-typedef int64_t x86_reg;
-#elif ARCH_X86_32
 #    define REG_a "rax"
 #    define REG_b "rbx"
 #    define REG_c "rcx"
@@ -1181,6 +1164,23 @@ typedef int64_t x86_reg;
 #    define REGc    rcx
 #    define REGd    rdx
 #    define REGSP   rsp
+typedef int64_t x86_reg;
+#elif ARCH_X86_32
+#    define REG_a "eax"
+#    define REG_b "ebx"
+#    define REG_c "ecx"
+#    define REG_d "edx"
+#    define REG_D "edi"
+#    define REG_S "esi"
+#    define PTR_SIZE "4"
+#    define REG_SP "esp"
+#    define REG_BP "ebp"
+#    define REGBP   ebp
+#    define REGa    eax
+#    define REGb    ebx
+#    define REGc    ecx
+#    define REGd    edx
+#    define REGSP   esp
 typedef int32_t x86_reg;
 #else
 #warning unknown arch
