@@ -50,7 +50,7 @@ AC_SUBST(SIMD_FLAGS)
 dnl lastfm plugin
 AC_CHECK_LIB([curl], [main], [HAVE_CURL=1])
 if test ${HAVE_CURL}; then
-    LFM_LIBS="-lmad"
+    LFM_LIBS="-lcurl"
     LFM_DIR="plugins/lastfm"
     AC_SUBST(LFM_LIBS)
     AC_SUBST(LFM_DIR)
