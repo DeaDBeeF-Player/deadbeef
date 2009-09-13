@@ -18,6 +18,14 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
+
+/*
+   main changes compared to ffmpeg:
+     demuxer and decoder joined into 1 module
+     no mallocs/reallocs during decoding
+     streaming through fixed ringbuffer (small mem footprint)
+*/
+
 #if HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -1140,9 +1148,39 @@ static void init_filter(APEContext * ctx, APEFilter *f, int16_t * buf, int order
 
 #ifdef HAVE_SSE2
 
-#if __WORDSIZE==64
+#if ARCH_X86_64
+#    define REG_a "eax"
+#    define REG_b "ebx"
+#    define REG_c "ecx"
+#    define REG_d "edx"
+#    define REG_D "edi"
+#    define REG_S "esi"
+#    define PTR_SIZE "4"
+#    define REG_SP "esp"
+#    define REG_BP "ebp"
+#    define REGBP   ebp
+#    define REGa    eax
+#    define REGb    ebx
+#    define REGc    ecx
+#    define REGd    edx
+#    define REGSP   esp
 typedef int64_t x86_reg;
-#elif __WORDSIZE==32
+#elif ARCH_X86_32
+#    define REG_a "rax"
+#    define REG_b "rbx"
+#    define REG_c "rcx"
+#    define REG_d "rdx"
+#    define REG_D "rdi"
+#    define REG_S "rsi"
+#    define PTR_SIZE "8"
+#    define REG_SP "rsp"
+#    define REG_BP "rbp"
+#    define REGBP   rbp
+#    define REGa    rax
+#    define REGb    rbx
+#    define REGc    rcx
+#    define REGd    rdx
+#    define REGSP   rsp
 typedef int32_t x86_reg;
 #else
 #warning unknown arch
@@ -1714,40 +1752,6 @@ static DB_decoder_t plugin = {
 };
 
 #ifdef HAVE_SSE2
-
-#if __WORDSIZE==64
-#    define REG_a "rax"
-#    define REG_b "rbx"
-#    define REG_c "rcx"
-#    define REG_d "rdx"
-#    define REG_D "rdi"
-#    define REG_S "rsi"
-#    define PTR_SIZE "8"
-#    define REG_SP "rsp"
-#    define REG_BP "rbp"
-#    define REGBP   rbp
-#    define REGa    rax
-#    define REGb    rbx
-#    define REGc    rcx
-#    define REGd    rdx
-#    define REGSP   rsp
-#else
-#    define REG_a "eax"
-#    define REG_b "ebx"
-#    define REG_c "ecx"
-#    define REG_d "edx"
-#    define REG_D "edi"
-#    define REG_S "esi"
-#    define PTR_SIZE "4"
-#    define REG_SP "esp"
-#    define REG_BP "ebp"
-#    define REGBP   ebp
-#    define REGa    eax
-#    define REGb    ebx
-#    define REGc    ecx
-#    define REGd    edx
-#    define REGSP   esp
-#endif
 
 #define FF_MM_MMX      0x0001 ///< standard MMX
 #define FF_MM_3DNOW    0x0004 ///< AMD 3DNOW
