@@ -787,7 +787,7 @@ gtkpl_scroll (gtkplaylist_t *ps, int newscroll) {
     if (newscroll != ps->scrollpos) {
 #if 0
         int d = abs (newscroll - ps->scrollpos);
-        if (abs (newscroll - ps->scrollpos) < ps->nvisiblerows) {
+        if (d < ps->nvisiblerows) {
             // move untouched cache part
             // and invalidate changed part
             if (newscroll < ps->scrollpos) {
@@ -816,9 +816,28 @@ gtkpl_scroll (gtkplaylist_t *ps, int newscroll) {
             memset (ps->fmtcache, 0, sizeof (int16_t) * 3 * pl_ncolumns * ps->nvisiblerows);
         }
 #endif
-        ps->scrollpos = newscroll;
         GtkWidget *widget = ps->playlist;
-        gtkpl_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
+        int di = newscroll - ps->scrollpos;
+        int d = abs (di);
+        if (d < ps->nvisiblerows) {
+            if (di > 0) {
+                gdk_draw_drawable (ps->backbuf, widget->style->black_gc, ps->backbuf, 0, d * rowheight, 0, 0, widget->allocation.width, widget->allocation.height-d * rowheight);
+                int i;
+                ps->scrollpos = newscroll;
+                for (i = ps->nvisiblerows-d; i <= ps->nvisiblerows; i++) {
+                    gtkpl_redraw_pl_row (ps, i+ps->scrollpos, gtkpl_get_for_idx (ps, i+ps->scrollpos));
+                }
+            }
+            else {
+                gdk_draw_drawable (ps->backbuf, widget->style->black_gc, ps->backbuf, 0, 0, 0, d*rowheight, widget->allocation.width, widget->allocation.height);
+                ps->scrollpos = newscroll;
+                int i;
+                for (i = 0; i <= d; i++) {
+                    gtkpl_redraw_pl_row (ps, i+ps->scrollpos, gtkpl_get_for_idx (ps, i+ps->scrollpos));
+                }
+            }
+        }
+//        gtkpl_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
         gdk_draw_drawable (widget->window, widget->style->black_gc, ps->backbuf, 0, 0, 0, 0, widget->allocation.width, widget->allocation.height);
     }
 }
