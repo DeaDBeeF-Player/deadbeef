@@ -1344,7 +1344,7 @@ on_header_motion_notify_event          (GtkWidget       *widget,
     }
     else if (header_sizing >= 0) {
         // limit event rate
-        if (event->time - last_header_motion_ev < 20 || prev_header_x == event->x) {
+        if (event->time - last_header_motion_ev < 50 || prev_header_x == event->x) {
             return FALSE;
         }
         //printf ("%f\n", event->time - last_header_motion_ev);
