@@ -1,3 +1,13 @@
+version 0.2.2	
+	fixed several build problems reported by users
+	added app icons, updated launcher script
+	proper sse2 detection and usage in ape plugin
+	reduced volumebar range to -50dB
+	horizontal scrolling in playlist
+	pango is now used for ellipsizing
+	case-insensitive search using russian, danish, french and other alphabets
+	vertical scroll is much faster now
+
 version 0.2.1
 	new ape decoder - faster, doesn't crash
 	fixed APEv2 tag reader
