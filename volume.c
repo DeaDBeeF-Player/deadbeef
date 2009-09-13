@@ -21,20 +21,22 @@
 #include "volume.h"
 #include "session.h"
 
+#define VOLUME_MIN (-50.f)
+
 static float volume_db = 0; // in dB
 static float volume_amp = 1; // amplitude [0..1]
 
 void
 volume_set_db (float dB) {
-    if (dB < -60) {
-        dB = -60;
+    if (dB < VOLUME_MIN) {
+        dB = VOLUME_MIN;
     }
     if (dB > 0) {
         dB = 0;
     }
     session_set_volume (dB);
     volume_db = dB;
-    volume_amp = dB > -60 ? db_to_amp (dB) : 0;
+    volume_amp = dB > VOLUME_MIN ? db_to_amp (dB) : 0;
 }
 
 float
@@ -51,7 +53,7 @@ volume_set_amp (float amp) {
         amp = 1;
     }
     volume_amp = amp;
-    volume_db = amp > 0 ? amp_to_db (amp) : -60.f;
+    volume_db = amp > 0 ? amp_to_db (amp) : VOLUME_MIN;
     session_set_volume (volume_db);
 }
 
@@ -70,3 +72,7 @@ amp_to_db (float amp) {
     return 20*log10 (amp);
 }
 
+float
+volume_get_min_db (void) {
+    return VOLUME_MIN;
+}

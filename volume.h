@@ -37,4 +37,7 @@ db_to_amp (float dB);
 float
 amp_to_db (float amp);
 
+float
+volume_get_min_db (void);
+
 #endif // __VOLUME_H

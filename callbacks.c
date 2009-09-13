@@ -1042,9 +1042,9 @@ volumebar_draw (GtkWidget *widget) {
 	if (!cr) {
         return;
     }
-
+    float range = -volume_get_min_db ();
     int n = widget->allocation.width / 4;
-    float vol = (60.f + volume_get_db ()) / 60.f * n;
+    float vol = (range + volume_get_db ()) / range * n;
     float h = 16;
     for (int i = 0; i < n; i++) {
         float iy = (float)i + 3;
@@ -1096,12 +1096,13 @@ on_volumebar_motion_notify_event       (GtkWidget       *widget,
                                         gpointer         user_data)
 {
     if (event->state & GDK_BUTTON1_MASK) {
-        float volume = event->x / widget->allocation.width * 60.f - 60.f;
+        float range = -volume_get_min_db ();
+        float volume = event->x / widget->allocation.width * range - range;
         if (volume > 0) {
             volume = 0;
         }
-        if (volume < -60) {
-            volume = -60;
+        if (volume < -range) {
+            volume = -range;
         }
         volume_set_db (volume);
         volumebar_draw (widget);
@@ -1115,9 +1116,10 @@ on_volumebar_button_press_event        (GtkWidget       *widget,
                                         GdkEventButton  *event,
                                         gpointer         user_data)
 {
-    float volume = event->x / widget->allocation.width * 60.f - 60.f;
-    if (volume < -60) {
-        volume = -60;
+    float range = -volume_get_min_db ();
+    float volume = event->x / widget->allocation.width * range - range;
+    if (volume < -range) {
+        volume = -range;
     }
     if (volume > 0) {
         volume = 0;
@@ -1166,6 +1168,7 @@ on_volumebar_scroll_event              (GtkWidget       *widget,
                                         GdkEventScroll        *event,
                                         gpointer         user_data)
 {
+    float range = -volume_get_min_db ();
     float vol = volume_get_db ();
     if (event->direction == GDK_SCROLL_UP || event->direction == GDK_SCROLL_RIGHT) {
         vol += 1;
@@ -1176,8 +1179,8 @@ on_volumebar_scroll_event              (GtkWidget       *widget,
     if (vol > 0) {
         vol = 0;
     }
-    else if (vol < -60) {
-        vol = -60;
+    else if (vol < -range) {
+        vol = -range;
     }
     volume_set_db (vol);
     GtkWidget *volumebar = lookup_widget (mainwin, "volumebar");
