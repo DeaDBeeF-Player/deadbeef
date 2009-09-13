@@ -6,6 +6,7 @@ SUBDIRS = gme/Game_Music_Emu-0.5.2\
 		  sid/sidplay-libs-2.1.0\
 		  dumb\
 		  pixmaps\
+		  icons\
 		  plugins/hotkeys\
 		  plugins/ffap\
 		  ${LFM_DIR}\

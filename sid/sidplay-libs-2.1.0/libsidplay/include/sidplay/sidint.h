@@ -15,10 +15,4 @@
  *                                                                         *
  ***************************************************************************/
 
-#if defined(HAVE_UNIX)
-#   include "../../unix/sidint.h"
-#elif defined(HAVE_MSWINDOWS)
-#   include "../../win/VC/sidint.h"
-#else
-#   error Platform not supported!
-#endif
+#include "../../unix/sidint.h"

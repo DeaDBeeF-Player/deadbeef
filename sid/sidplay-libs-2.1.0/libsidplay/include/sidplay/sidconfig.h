@@ -24,10 +24,4 @@
  *
  ***************************************************************************/
 
-#if defined(HAVE_UNIX)
-#   include "../../unix/sidconfig.h"
-#elif defined(HAVE_MSWINDOWS)
-#   include "../../win/VC/sidconfig.h"
-#else
-#   error Platform not supported!
-#endif
+#include "../../unix/sidconfig.h"

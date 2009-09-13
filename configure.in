@@ -16,12 +16,17 @@ AC_PROG_LIBTOOL
 LT_INIT
 AC_CONFIG_MACRO_DIR([m4])
 AC_C_BIGENDIAN
-AC_DEFINE([PREFIX], [], [Installation prefix])
 
 test "x$prefix" = xNONE && prefix=$ac_default_prefix
-AC_DEFINE_UNQUOTED(PREFIX, "${prefix}")
 
-CFLAGS="$CFLAGS -D_GNU_SOURCE -O2 -DHAVE_UNIX"
+dnl AC_DEFINE([PREFIX], [], [Installation prefix])
+dnl AC_DEFINE_UNQUOTED(PREFIX, "${prefix}")
+dnl 
+dnl AC_DEFINE([LIBDIR], [], [Library path])
+dnl LIBDIR="${libdir}"
+dnl AC_DEFINE_UNQUOTED(LIBDIR, "$LIBDIR")
+
+CFLAGS="$CFLAGS -D_GNU_SOURCE -DLIBDIR=\\\"$libdir\\\" -DPREFIX=\\\"$prefix\\\""
 CPPFLAGS="$CFLAGS"
 
 PKG_CHECK_MODULES(DEPS, gtk+-2.0 >= 2.12 gthread-2.0 glib-2.0 samplerate alsa)
@@ -71,6 +76,7 @@ fi
 AC_OUTPUT([
 Makefile
 pixmaps/Makefile
+icons/Makefile
 gme/Game_Music_Emu-0.5.2/Makefile
 gme/Game_Music_Emu-0.5.2/gme/Makefile
 sid/sidplay-libs-2.1.0/Makefile

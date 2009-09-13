@@ -7,7 +7,7 @@ EXTRA_DIST = \
 	$(sidpath)/libsidutils/COPYING $(sidpath)/libsidplay/COPYING $(sidpath)/resid/COPYING\
 	$(sidpath)/libsidutils/AUTHORS $(sidpath)/libsidplay/AUTHORS $(sidpath)/resid/AUTHORS
 
-AM_CPPFLAGS = $(CPPFLAGS) -DVERSION=\"2.1.0\" -DHAVE_STRNCASECMP -DHAVE_STRCASECMP -I$(sidpath)/libsidplay -I$(sidpath)/libsidplay/include -I$(sidpath)/libsidplay/include/sidplay -I$(sidpath)/libsidutils/include/sidplay/utils -I$(sidpath)/builders/resid-builder/include/sidplay/builders -I$(sidpath)/builders/resid-builder/include
+AM_CPPFLAGS = $(CPPFLAGS) -DHAVEUNIX -DVERSION=\"2.1.0\" -DHAVE_STRNCASECMP -DHAVE_STRCASECMP -I$(sidpath)/libsidplay -I$(sidpath)/libsidplay/include -I$(sidpath)/libsidplay/include/sidplay -I$(sidpath)/libsidutils/include/sidplay/utils -I$(sidpath)/builders/resid-builder/include/sidplay/builders -I$(sidpath)/builders/resid-builder/include
 
 libsidplay2_a_SOURCES = \
 libsidplay/src/mixer.cpp\
