@@ -1,3 +1,6 @@
+version 0.2.2.1
+	fixed playlist drawing regressions encountered in 0.2.2
+
 version 0.2.2	
 	fixed several build problems reported by users
 	added app icons, updated launcher script

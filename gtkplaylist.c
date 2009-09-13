@@ -176,8 +176,8 @@ gtkpl_setup_hscrollbar (gtkplaylist_t *ps) {
 void
 gtkpl_redraw_pl_row_novis (gtkplaylist_t *ps, int row, playItem_t *it) {
     draw_begin ((uintptr_t)ps->backbuf);
+    gtkpl_draw_pl_row_back (ps, row, it);
 	if (it) {
-        gtkpl_draw_pl_row_back (ps, row, it);
         gtkpl_draw_pl_row (ps, row, it);
     }
     draw_end ();
@@ -670,16 +670,18 @@ gtkpl_scroll (gtkplaylist_t *ps, int newscroll) {
                 gdk_draw_drawable (ps->backbuf, widget->style->black_gc, ps->backbuf, 0, d * rowheight, 0, 0, widget->allocation.width, widget->allocation.height-d * rowheight);
                 int i;
                 ps->scrollpos = newscroll;
-                for (i = ps->nvisiblerows-d; i <= ps->nvisiblerows; i++) {
-                    gtkpl_redraw_pl_row (ps, i+ps->scrollpos, gtkpl_get_for_idx (ps, i+ps->scrollpos));
+                int start = ps->nvisiblerows-d-1;
+                start = max (0, ps->nvisiblerows-d-1);
+                for (i = start; i <= ps->nvisiblerows; i++) {
+                    gtkpl_redraw_pl_row_novis (ps, i+ps->scrollpos, gtkpl_get_for_idx (ps, i+ps->scrollpos));
                 }
             }
             else {
                 gdk_draw_drawable (ps->backbuf, widget->style->black_gc, ps->backbuf, 0, 0, 0, d*rowheight, widget->allocation.width, widget->allocation.height);
                 ps->scrollpos = newscroll;
                 int i;
-                for (i = 0; i <= d; i++) {
-                    gtkpl_redraw_pl_row (ps, i+ps->scrollpos, gtkpl_get_for_idx (ps, i+ps->scrollpos));
+                for (i = 0; i <= d+1; i++) {
+                    gtkpl_redraw_pl_row_novis (ps, i+ps->scrollpos, gtkpl_get_for_idx (ps, i+ps->scrollpos));
                 }
             }
         }
