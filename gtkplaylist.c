@@ -125,7 +125,7 @@ int
 gtkpl_fit_text (char *out, int *dotpos, int len, const char *in, int width) {
     if (avg_glyph_width == -1) {
         int h;
-        draw_get_text_extents ("m", 1, &avg_glyph_width, &h);
+        draw_get_text_extents ("a", 1, &avg_glyph_width, &h);
         tridot_len = strlen ("…");
     }
     int l = strlen (in);
@@ -135,15 +135,55 @@ gtkpl_fit_text (char *out, int *dotpos, int len, const char *in, int width) {
     out[l] = 0;
     int w = 0;
 
-#if 0
-    // try to approximate
-    int apx_len = width / avg_glyph_width;
-#else
-    char *p = &out[l];
-    p = g_utf8_find_prev_char (out, p);
     if (dotpos) {
         *dotpos = -1;
     }
+#if 1
+    // initial approximation
+    int u8len = g_utf8_strlen (in, l);
+    int apx_len = width / avg_glyph_width;
+    char *p;
+    if (apx_len >= u8len) {
+        int h;
+        draw_get_text_extents (out, l, &w, &h);
+        if (w <= width) {
+            return w;
+        }
+        // start from end
+        p = g_utf8_find_prev_char (out, &out[l]);
+    }
+    else {
+        p = &out[l];
+        while (u8len > apx_len) {
+            p = g_utf8_find_prev_char (out, p);
+            l = p - out;
+            if (!p) {
+                strcpy (out, "…");
+                return tridot_len;
+            }
+            u8len--;
+        }
+        for (;;) {
+            int h;
+            draw_get_text_extents (out, l, &w, &h);
+            if (w > width) {
+                break;
+            }
+            char *next = g_utf8_find_next_char (p, NULL);
+            if (!next) {
+                break;
+            }
+            if (next - out == l) {
+                break;
+            }
+            l = next - out;
+            p = next;
+        }
+    }
+#else
+    char *p = &out[l];
+    p = g_utf8_find_prev_char (out, p);
+#endif
     for (;;) {
         int h;
         draw_get_text_extents (out, l, &w, &h);
@@ -162,7 +202,6 @@ gtkpl_fit_text (char *out, int *dotpos, int len, const char *in, int width) {
             *dotpos = p-out;
         }
     }
-#endif
     return w;
 }
 
