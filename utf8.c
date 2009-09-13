@@ -1,17 +1,23 @@
 /*
-  Basic UTF-8 manipulation routines
-  by Jeff Bezanson
-  placed in the public domain Fall 2005
+    DeaDBeeF - ultimate music player for GNU/Linux systems with X11
+    Copyright (C) 2009  Alexey Yakovenko
 
-  This code is designed to provide the utilities you need to manipulate
-  UTF-8 as an int32_ternal string encoding. These functions do not perform the
-  error checking normally needed when handling UTF-8 data, so if you happen
-  to be from the Unicode Consortium you will want to flay me alive.
-  I do this because error checking can be performed at the boundaries (I/O),
-  with these routines reserved for higher performance on data known to be
-  valid.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 2 of the License, or
+    (at your option) any later version.
 
-  adoption to deadbeef player by Alexey Yakovenko <waker@users.sourceforge.net>
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+    utf8 code is based on Basic UTF-8 manipulation routines
+    by Jeff Bezanson
+    placed in the public domain Fall 2005
 */
 #include <stdlib.h>
 #include <stdio.h>
