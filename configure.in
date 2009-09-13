@@ -18,19 +18,19 @@ AC_C_BIGENDIAN
 
 case "$host" in
   i386-*-* | i486-*-* | i586-*-* | i686-*-* | i86pc-*-*)
-    AC_DEFINE(ARCH_X86_32, 1, [x86])
+    AC_DEFINE(ARCH_X86_32, 1, [architecture is x86])
     ;;
   x86_64-*-*)
-    AC_DEFINE(ARCH_X86_64, 1, [x86_64])
+    AC_DEFINE(ARCH_X86_64, 1, [architecture is x86_64])
     ;;
   powerpc-*-* )
-    AC_DEFINE(ARCH_PPC_32, 1, [ppc32])
+    AC_DEFINE(ARCH_PPC_32, 1, [architecture is ppc32])
     ;;
   powerpc64-*-* )
-    AC_DEFINE(ARCH_PPC_64, 1, [ppc64])
+    AC_DEFINE(ARCH_PPC_64, 1, [architecture is ppc64])
     ;;
   *)
-    AC_DEFINE(ARCH_UNKNOWN, 1, [unknown])
+    AC_DEFINE(ARCH_UNKNOWN, 1, [architecture is unknown])
     ;;
 esac
 
