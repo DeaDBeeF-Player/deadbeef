@@ -88,3 +88,6 @@ int u8_printf(char *fmt, ...);
 int u8_valid (const char  *str,
         int max_len,
         const char **end);
+
+const char *
+utfcasestr (const char *s1, const char *s2);
