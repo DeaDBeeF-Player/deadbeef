@@ -76,7 +76,7 @@ main_playlist_init (GtkWidget *widget) {
     main_playlist.row = -1;
     main_playlist.clicktime = -1;
     main_playlist.nvisiblerows = 0;
-    main_playlist.fmtcache = NULL;
+    //main_playlist.fmtcache = NULL;
 //    int colwidths[pl_ncolumns] = { 50, 150, 50, 150, 50 };
 //    memcpy (main_playlist.colwidths, colwidths, sizeof (colwidths));
     main_playlist.colwidths = session_get_main_colwidths_ptr ();
@@ -106,7 +106,7 @@ search_playlist_init (GtkWidget *widget) {
     search_playlist.row = -1;
     search_playlist.clicktime = -1;
     search_playlist.nvisiblerows = 0;
-    search_playlist.fmtcache = NULL;
+    //search_playlist.fmtcache = NULL;
 //    int colwidths[pl_ncolumns] = { 0, 150, 50, 150, 50 };
 //    memcpy (search_playlist.colwidths, colwidths, sizeof (colwidths));
     search_playlist.colwidths = session_get_search_colwidths_ptr ();

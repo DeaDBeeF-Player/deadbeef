@@ -79,9 +79,11 @@ typedef struct {
 // cache[(ROW*ncolumns+COLUMN)*3+0] --- position to insert "...", or -1 if the whole line fits
 // cache[(ROW*ncolumns+COLUMN)*3+1] --- width extent in pixels
 // cache[(ROW*ncolumns+COLUMN)*3+2] --- 0 if needs recalc
+#if 0
     int16_t *fmtcache; // cached text formatting
     int header_fitted[pl_ncolumns];
     char colnames_fitted[pl_ncolumns][pl_colname_max]; // cached formatted names of columns
+#endif
     int *colwidths;//[pl_ncolumns]; // current column widths
 } gtkplaylist_t;
 

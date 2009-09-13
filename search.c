@@ -85,7 +85,7 @@ on_searchentry_changed                 (GtkEditable     *editable,
     extern gtkplaylist_t search_playlist;
     gtkplaylist_t *ps = &search_playlist;
     gtkpl_setup_scrollbar (ps);
-    memset (ps->fmtcache, 0, sizeof (int16_t) * 3 * pl_ncolumns * ps->nvisiblerows);
+    //memset (ps->fmtcache, 0, sizeof (int16_t) * 3 * pl_ncolumns * ps->nvisiblerows);
     gtkpl_draw_playlist (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
     gtkpl_expose (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
 }
