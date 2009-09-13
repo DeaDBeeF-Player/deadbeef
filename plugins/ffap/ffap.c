@@ -1138,6 +1138,8 @@ static void init_filter(APEContext * ctx, APEFilter *f, int16_t * buf, int order
     do_init_filter(&f[1], buf + order * 3 + HISTORY_SIZE, order);
 }
 
+#ifdef HAVE_SSE2
+
 #if __WORDSIZE==64
 typedef int64_t x86_reg;
 #elif __WORDSIZE==32
@@ -1147,11 +1149,10 @@ typedef int32_t x86_reg;
 typedef int x86_reg;
 #endif
 
-#ifdef HAVE_SSE2
 typedef struct { uint64_t a, b; } xmm_reg;
 #define DECLARE_ALIGNED(n,t,v)      t v __attribute__ ((aligned (n)))
 #define DECLARE_ALIGNED_16(t, v) DECLARE_ALIGNED(16, t, v)
-static int32_t scalarproduct_int16 (int16_t * v1, int16_t * v2, int order, int shift)
+static int32_t scalarproduct_int16_sse2 (int16_t * v1, int16_t * v2, int order, int shift)
 {
     int res = 0;
     DECLARE_ALIGNED_16(xmm_reg, sh);
@@ -1182,7 +1183,7 @@ static int32_t scalarproduct_int16 (int16_t * v1, int16_t * v2, int order, int s
     );
     return res;
 }
-static void add_int16(int16_t * v1, int16_t * v2, int order)
+static void add_int16_sse2(int16_t * v1, int16_t * v2, int order)
 {
     x86_reg o = -(order << 1);
     v1 += order;
@@ -1201,7 +1202,7 @@ static void add_int16(int16_t * v1, int16_t * v2, int order)
     );
 }
 
-static void sub_int16(int16_t * v1, int16_t * v2, int order)
+static void sub_int16_sse2(int16_t * v1, int16_t * v2, int order)
 {
     x86_reg o = -(order << 1);
     v1 += order;
@@ -1221,10 +1222,10 @@ static void sub_int16(int16_t * v1, int16_t * v2, int order)
         : "+r"(v1), "+r"(v2), "+r"(o)
     );
 }
+#endif
 
-#else
 static int32_t
-scalarproduct_int16(int16_t * v1, int16_t * v2, int order, int shift)
+scalarproduct_int16_c(int16_t * v1, int16_t * v2, int order, int shift)
 {
     int res = 0;
 
@@ -1234,20 +1235,28 @@ scalarproduct_int16(int16_t * v1, int16_t * v2, int order, int shift)
     return res;
 }
 
-static inline void
-add_int16 (int16_t *v1/*align 16*/, int16_t *v2, int len) {
+static void
+add_int16_c (int16_t *v1/*align 16*/, int16_t *v2, int len) {
     while (len--) {
         *v1++ += *v2++;
     }
 }
 
-static inline void
-sub_int16 (int16_t *v1/*align 16*/, int16_t *v2, int len) {
+static void
+sub_int16_c (int16_t *v1/*align 16*/, int16_t *v2, int len) {
     while (len--) {
         *v1++ -= *v2++;
     }
 }
-#endif
+
+static int32_t
+(*scalarproduct_int16)(int16_t * v1, int16_t * v2, int order, int shift);
+
+static void
+(*add_int16) (int16_t *v1/*align 16*/, int16_t *v2, int len);
+
+static void
+(*sub_int16) (int16_t *v1/*align 16*/, int16_t *v2, int len);
 
 static inline int16_t clip_int16(int a)
 {
@@ -1704,8 +1713,161 @@ static DB_decoder_t plugin = {
     .filetypes = filetypes
 };
 
+#ifdef HAVE_SSE2
+
+#if __WORDSIZE==64
+#    define REG_a "rax"
+#    define REG_b "rbx"
+#    define REG_c "rcx"
+#    define REG_d "rdx"
+#    define REG_D "rdi"
+#    define REG_S "rsi"
+#    define PTR_SIZE "8"
+#    define REG_SP "rsp"
+#    define REG_BP "rbp"
+#    define REGBP   rbp
+#    define REGa    rax
+#    define REGb    rbx
+#    define REGc    rcx
+#    define REGd    rdx
+#    define REGSP   rsp
+#else
+#    define REG_a "eax"
+#    define REG_b "ebx"
+#    define REG_c "ecx"
+#    define REG_d "edx"
+#    define REG_D "edi"
+#    define REG_S "esi"
+#    define PTR_SIZE "4"
+#    define REG_SP "esp"
+#    define REG_BP "ebp"
+#    define REGBP   ebp
+#    define REGa    eax
+#    define REGb    ebx
+#    define REGc    ecx
+#    define REGd    edx
+#    define REGSP   esp
+#endif
+
+#define FF_MM_MMX      0x0001 ///< standard MMX
+#define FF_MM_3DNOW    0x0004 ///< AMD 3DNOW
+#define FF_MM_MMX2     0x0002 ///< SSE integer functions or AMD MMX ext
+#define FF_MM_SSE      0x0008 ///< SSE functions
+#define FF_MM_SSE2     0x0010 ///< PIV SSE2 functions
+#define FF_MM_3DNOWEXT 0x0020 ///< AMD 3DNowExt
+#define FF_MM_SSE3     0x0040 ///< Prescott SSE3 functions
+#define FF_MM_SSSE3    0x0080 ///< Conroe SSSE3 functions
+#define FF_MM_SSE4     0x0100 ///< Penryn SSE4.1 functions
+#define FF_MM_SSE42    0x0200 ///< Nehalem SSE4.2 functions
+#define FF_MM_IWMMXT   0x0100 ///< XScale IWMMXT
+#define FF_MM_ALTIVEC  0x0001 ///< standard AltiVec
+
+/* ebx saving is necessary for PIC. gcc seems unable to see it alone */
+#define cpuid(index,eax,ebx,ecx,edx)\
+    __asm__ volatile\
+        ("mov %%"REG_b", %%"REG_S"\n\t"\
+         "cpuid\n\t"\
+         "xchg %%"REG_b", %%"REG_S\
+         : "=a" (eax), "=S" (ebx),\
+           "=c" (ecx), "=d" (edx)\
+         : "0" (index));
+
+/* Function to test if multimedia instructions are supported...  */
+int mm_support(void)
+{
+    int rval = 0;
+    int eax, ebx, ecx, edx;
+    int max_std_level, max_ext_level, std_caps=0, ext_caps=0;
+
+#if ARCH_X86_32
+    x86_reg a, c;
+    __asm__ volatile (
+        /* See if CPUID instruction is supported ... */
+        /* ... Get copies of EFLAGS into eax and ecx */
+        "pushfl\n\t"
+        "pop %0\n\t"
+        "mov %0, %1\n\t"
+
+        /* ... Toggle the ID bit in one copy and store */
+        /*     to the EFLAGS reg */
+        "xor $0x200000, %0\n\t"
+        "push %0\n\t"
+        "popfl\n\t"
+
+        /* ... Get the (hopefully modified) EFLAGS */
+        "pushfl\n\t"
+        "pop %0\n\t"
+        : "=a" (a), "=c" (c)
+        :
+        : "cc"
+        );
+
+    if (a == c)
+        return 0; /* CPUID not supported */
+#endif
+
+    cpuid(0, max_std_level, ebx, ecx, edx);
+
+    if(max_std_level >= 1){
+        cpuid(1, eax, ebx, ecx, std_caps);
+        if (std_caps & (1<<23))
+            rval |= FF_MM_MMX;
+        if (std_caps & (1<<25))
+            rval |= FF_MM_MMX2
+#ifdef HAVE_SSE
+                  | FF_MM_SSE;
+        if (std_caps & (1<<26))
+            rval |= FF_MM_SSE2;
+        if (ecx & 1)
+            rval |= FF_MM_SSE3;
+        if (ecx & 0x00000200 )
+            rval |= FF_MM_SSSE3;
+        if (ecx & 0x00080000 )
+            rval |= FF_MM_SSE4;
+        if (ecx & 0x00100000 )
+            rval |= FF_MM_SSE42;
+#endif
+                  ;
+    }
+
+    cpuid(0x80000000, max_ext_level, ebx, ecx, edx);
+
+    if(max_ext_level >= 0x80000001){
+        cpuid(0x80000001, eax, ebx, ecx, ext_caps);
+        if (ext_caps & (1<<31))
+            rval |= FF_MM_3DNOW;
+        if (ext_caps & (1<<30))
+            rval |= FF_MM_3DNOWEXT;
+        if (ext_caps & (1<<23))
+            rval |= FF_MM_MMX;
+        if (ext_caps & (1<<22))
+            rval |= FF_MM_MMX2;
+    }
+
+    return rval;
+}
+#endif
+
 DB_plugin_t *
 ffap_load (DB_functions_t *api) {
+    // detect sse2
+#ifdef HAVE_SSE2
+    int mm_flags = mm_support ();
+    if (mm_flags & FF_MM_SSE2) {
+        scalarproduct_int16 = scalarproduct_int16_sse2;
+        add_int16 = add_int16_sse2;
+        sub_int16 = sub_int16_sse2;
+    }
+    else {
+        scalarproduct_int16 = scalarproduct_int16_c;
+        add_int16 = add_int16_c;
+        sub_int16 = sub_int16_c;
+    }
+#else
+    scalarproduct_int16 = scalarproduct_int16_c;
+    add_int16 = add_int16_c;
+    sub_int16 = sub_int16_c;
+#endif
     deadbeef = api;
     return DB_PLUGIN (&plugin);
 }
