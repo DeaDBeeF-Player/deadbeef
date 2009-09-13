@@ -529,3 +529,11 @@ on_find_activate                       (GtkMenuItem     *menuitem,
 void
 on_help1_activate                      (GtkMenuItem     *menuitem,
                                         gpointer         user_data);
+
+void
+on_playhscroll_value_changed           (GtkRange        *range,
+                                        gpointer         user_data);
+
+void
+on_searchhscroll_value_changed         (GtkRange        *range,
+                                        gpointer         user_data);

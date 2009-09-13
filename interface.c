@@ -94,11 +94,13 @@ create_mainwin (void)
   GtkWidget *image6;
   GtkWidget *volumebar;
   GtkWidget *seekbar;
+  GtkWidget *table1;
   GtkWidget *_;
   GtkWidget *vbox3;
   GtkWidget *header;
   GtkWidget *playlist;
   GtkWidget *playscroll;
+  GtkWidget *playhscroll;
   GtkWidget *statusbar;
   GtkAccelGroup *accel_group;
 
@@ -420,9 +422,15 @@ create_mainwin (void)
   gtk_widget_set_size_request (seekbar, 200, -1);
   gtk_widget_set_events (seekbar, GDK_EXPOSURE_MASK | GDK_POINTER_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK);
 
+  table1 = gtk_table_new (2, 2, FALSE);
+  gtk_widget_show (table1);
+  gtk_box_pack_start (GTK_BOX (vbox1), table1, TRUE, TRUE, 0);
+
   _ = gtk_hbox_new (FALSE, 0);
   gtk_widget_show (_);
-  gtk_box_pack_start (GTK_BOX (vbox1), _, TRUE, TRUE, 0);
+  gtk_table_attach (GTK_TABLE (table1), _, 0, 1, 0, 1,
+                    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+                    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
   gtk_container_set_border_width (GTK_CONTAINER (_), 3);
 
   vbox3 = gtk_vbox_new (FALSE, 0);
@@ -442,7 +450,15 @@ create_mainwin (void)
 
   playscroll = gtk_vscrollbar_new (GTK_ADJUSTMENT (gtk_adjustment_new (0, 0, 1, 1, 0, 0)));
   gtk_widget_show (playscroll);
-  gtk_box_pack_start (GTK_BOX (_), playscroll, FALSE, TRUE, 0);
+  gtk_table_attach (GTK_TABLE (table1), playscroll, 1, 2, 0, 1,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (GTK_FILL), 0, 0);
+
+  playhscroll = gtk_hscrollbar_new (GTK_ADJUSTMENT (gtk_adjustment_new (0, 0, 0, 0, 0, 0)));
+  gtk_widget_show (playhscroll);
+  gtk_table_attach (GTK_TABLE (table1), playhscroll, 0, 1, 1, 2,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (GTK_FILL), 0, 0);
 
   statusbar = gtk_statusbar_new ();
   gtk_widget_show (statusbar);
@@ -640,6 +656,9 @@ create_mainwin (void)
   g_signal_connect ((gpointer) playscroll, "value_changed",
                     G_CALLBACK (on_playscroll_value_changed),
                     NULL);
+  g_signal_connect ((gpointer) playhscroll, "value_changed",
+                    G_CALLBACK (on_playhscroll_value_changed),
+                    NULL);
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (mainwin, mainwin, "mainwin");
@@ -705,11 +724,13 @@ create_mainwin (void)
   GLADE_HOOKUP_OBJECT (mainwin, image6, "image6");
   GLADE_HOOKUP_OBJECT (mainwin, volumebar, "volumebar");
   GLADE_HOOKUP_OBJECT (mainwin, seekbar, "seekbar");
+  GLADE_HOOKUP_OBJECT (mainwin, table1, "table1");
   GLADE_HOOKUP_OBJECT (mainwin, _, "_");
   GLADE_HOOKUP_OBJECT (mainwin, vbox3, "vbox3");
   GLADE_HOOKUP_OBJECT (mainwin, header, "header");
   GLADE_HOOKUP_OBJECT (mainwin, playlist, "playlist");
   GLADE_HOOKUP_OBJECT (mainwin, playscroll, "playscroll");
+  GLADE_HOOKUP_OBJECT (mainwin, playhscroll, "playhscroll");
   GLADE_HOOKUP_OBJECT (mainwin, statusbar, "statusbar");
 
   gtk_window_add_accel_group (GTK_WINDOW (mainwin), accel_group);
@@ -765,11 +786,12 @@ create_searchwin (void)
   GtkWidget *searchwin;
   GtkWidget *vbox4;
   GtkWidget *searchentry;
-  GtkWidget *hbox6;
+  GtkWidget *table2;
+  GtkWidget *searchscroll;
   GtkWidget *vbox5;
   GtkWidget *searchheader;
   GtkWidget *searchlist;
-  GtkWidget *searchscroll;
+  GtkWidget *searchhscroll;
 
   searchwin = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_widget_set_size_request (searchwin, 600, 150);
@@ -790,13 +812,21 @@ create_searchwin (void)
   gtk_entry_set_invisible_char (GTK_ENTRY (searchentry), 8226);
   gtk_entry_set_activates_default (GTK_ENTRY (searchentry), TRUE);
 
-  hbox6 = gtk_hbox_new (FALSE, 0);
-  gtk_widget_show (hbox6);
-  gtk_box_pack_start (GTK_BOX (vbox4), hbox6, TRUE, TRUE, 0);
+  table2 = gtk_table_new (2, 2, FALSE);
+  gtk_widget_show (table2);
+  gtk_box_pack_start (GTK_BOX (vbox4), table2, TRUE, TRUE, 0);
+
+  searchscroll = gtk_vscrollbar_new (GTK_ADJUSTMENT (gtk_adjustment_new (0, 0, 1, 1, 0, 0)));
+  gtk_widget_show (searchscroll);
+  gtk_table_attach (GTK_TABLE (table2), searchscroll, 1, 2, 0, 1,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (GTK_FILL), 0, 0);
 
   vbox5 = gtk_vbox_new (FALSE, 0);
   gtk_widget_show (vbox5);
-  gtk_box_pack_start (GTK_BOX (hbox6), vbox5, TRUE, TRUE, 0);
+  gtk_table_attach (GTK_TABLE (table2), vbox5, 0, 1, 0, 1,
+                    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+                    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
 
   searchheader = gtk_drawing_area_new ();
   gtk_widget_show (searchheader);
@@ -810,9 +840,11 @@ create_searchwin (void)
   GTK_WIDGET_SET_FLAGS (searchlist, GTK_CAN_DEFAULT);
   gtk_widget_set_events (searchlist, GDK_EXPOSURE_MASK | GDK_POINTER_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK);
 
-  searchscroll = gtk_vscrollbar_new (GTK_ADJUSTMENT (gtk_adjustment_new (0, 0, 1, 1, 0, 0)));
-  gtk_widget_show (searchscroll);
-  gtk_box_pack_start (GTK_BOX (hbox6), searchscroll, FALSE, TRUE, 0);
+  searchhscroll = gtk_hscrollbar_new (GTK_ADJUSTMENT (gtk_adjustment_new (0, 0, 0, 0, 0, 0)));
+  gtk_widget_show (searchhscroll);
+  gtk_table_attach (GTK_TABLE (table2), searchhscroll, 0, 1, 1, 2,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (GTK_FILL), 0, 0);
 
   g_signal_connect ((gpointer) searchwin, "key_press_event",
                     G_CALLBACK (on_searchwin_key_press_event),
@@ -822,6 +854,9 @@ create_searchwin (void)
                     NULL);
   g_signal_connect ((gpointer) searchentry, "changed",
                     G_CALLBACK (on_searchentry_changed),
+                    NULL);
+  g_signal_connect ((gpointer) searchscroll, "value_changed",
+                    G_CALLBACK (on_playscroll_value_changed),
                     NULL);
   g_signal_connect ((gpointer) searchheader, "button_press_event",
                     G_CALLBACK (on_header_button_press_event),
@@ -859,19 +894,20 @@ create_searchwin (void)
   g_signal_connect ((gpointer) searchlist, "motion_notify_event",
                     G_CALLBACK (on_playlist_motion_notify_event),
                     NULL);
-  g_signal_connect ((gpointer) searchscroll, "value_changed",
-                    G_CALLBACK (on_playscroll_value_changed),
+  g_signal_connect ((gpointer) searchhscroll, "value_changed",
+                    G_CALLBACK (on_searchhscroll_value_changed),
                     NULL);
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (searchwin, searchwin, "searchwin");
   GLADE_HOOKUP_OBJECT (searchwin, vbox4, "vbox4");
   GLADE_HOOKUP_OBJECT (searchwin, searchentry, "searchentry");
-  GLADE_HOOKUP_OBJECT (searchwin, hbox6, "hbox6");
+  GLADE_HOOKUP_OBJECT (searchwin, table2, "table2");
+  GLADE_HOOKUP_OBJECT (searchwin, searchscroll, "searchscroll");
   GLADE_HOOKUP_OBJECT (searchwin, vbox5, "vbox5");
   GLADE_HOOKUP_OBJECT (searchwin, searchheader, "searchheader");
   GLADE_HOOKUP_OBJECT (searchwin, searchlist, "searchlist");
-  GLADE_HOOKUP_OBJECT (searchwin, searchscroll, "searchscroll");
+  GLADE_HOOKUP_OBJECT (searchwin, searchhscroll, "searchhscroll");
 
   gtk_widget_grab_default (searchlist);
   return searchwin;

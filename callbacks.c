@@ -66,11 +66,13 @@ main_playlist_init (GtkWidget *widget) {
     main_playlist.playlist = widget;
     main_playlist.header = lookup_widget (mainwin, "header");
     main_playlist.scrollbar = lookup_widget (mainwin, "playscroll");
+    main_playlist.hscrollbar = lookup_widget (mainwin, "playhscroll");
     main_playlist.pcurr = &playlist_current_ptr;
     main_playlist.pcount = &pl_count;
     main_playlist.iterator = PL_MAIN;
     main_playlist.multisel = 1;
     main_playlist.scrollpos = 0;
+    main_playlist.hscrollpos = 0;
     main_playlist.row = -1;
     main_playlist.clicktime = -1;
     main_playlist.nvisiblerows = 0;
@@ -81,6 +83,7 @@ main_playlist_init (GtkWidget *widget) {
     gtk_object_set_data (GTK_OBJECT (main_playlist.playlist), "ps", &main_playlist);
     gtk_object_set_data (GTK_OBJECT (main_playlist.header), "ps", &main_playlist);
     gtk_object_set_data (GTK_OBJECT (main_playlist.scrollbar), "ps", &main_playlist);
+    gtk_object_set_data (GTK_OBJECT (main_playlist.hscrollbar), "ps", &main_playlist);
 }
 
 void
@@ -91,6 +94,7 @@ search_playlist_init (GtkWidget *widget) {
     search_playlist.playlist = widget;
     search_playlist.header = lookup_widget (searchwin, "searchheader");
     search_playlist.scrollbar = lookup_widget (searchwin, "searchscroll");
+    search_playlist.hscrollbar = lookup_widget (searchwin, "searchhscroll");
     assert (search_playlist.header);
     assert (search_playlist.scrollbar);
     //    main_playlist.pcurr = &search_current;
@@ -98,6 +102,7 @@ search_playlist_init (GtkWidget *widget) {
     search_playlist.multisel = 0;
     search_playlist.iterator = PL_SEARCH;
     search_playlist.scrollpos = 0;
+    search_playlist.hscrollpos = 0;
     search_playlist.row = -1;
     search_playlist.clicktime = -1;
     search_playlist.nvisiblerows = 0;
@@ -108,6 +113,7 @@ search_playlist_init (GtkWidget *widget) {
     gtk_object_set_data (GTK_OBJECT (search_playlist.playlist), "ps", &search_playlist);
     gtk_object_set_data (GTK_OBJECT (search_playlist.header), "ps", &search_playlist);
     gtk_object_set_data (GTK_OBJECT (search_playlist.scrollbar), "ps", &search_playlist);
+    gtk_object_set_data (GTK_OBJECT (search_playlist.hscrollbar), "ps", &search_playlist);
 }
 
 // redraw
@@ -1252,5 +1258,25 @@ on_help1_activate                      (GtkMenuItem     *menuitem,
     }
     gtk_text_view_set_buffer (GTK_TEXT_VIEW (txt), buffer);
     gtk_widget_show (widget);
+}
+
+
+void
+on_playhscroll_value_changed           (GtkRange        *widget,
+                                        gpointer         user_data)
+{
+    GTKPL_PROLOGUE;
+    int newscroll = gtk_range_get_value (GTK_RANGE (widget));
+    gtkpl_hscroll (ps, newscroll);
+}
+
+
+void
+on_searchhscroll_value_changed         (GtkRange        *widget,
+                                        gpointer         user_data)
+{
+    GTKPL_PROLOGUE;
+    int newscroll = gtk_range_get_value (GTK_RANGE (widget));
+    gtkpl_hscroll (ps, newscroll);
 }
 

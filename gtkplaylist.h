@@ -57,6 +57,7 @@ typedef struct {
     GtkWidget *playlist;
     GtkWidget *header;
     GtkWidget *scrollbar;
+    GtkWidget *hscrollbar;
     GdkPixmap *backbuf;
     GdkPixmap *backbuf_header;
     // parameters
@@ -67,6 +68,7 @@ typedef struct {
     int multisel; // if it uses multiple selection
     // current state
     int scrollpos;
+    int hscrollpos;
     int row;
     double clicktime; // for doubleclick detection
     int nvisiblerows;
@@ -125,6 +127,9 @@ gtkpl_mousemove (gtkplaylist_t *ps, GdkEventMotion *event);
 
 void
 gtkpl_scroll (gtkplaylist_t *ps, int newscroll);
+
+void
+gtkpl_hscroll (gtkplaylist_t *ps, int newscroll);
 
 void
 gtkpl_handle_scroll_event (gtkplaylist_t *ps, int direction);
