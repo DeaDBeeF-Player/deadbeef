@@ -46,7 +46,6 @@
 
 playItem_t *playlist_head[PL_MAX_ITERATORS];
 playItem_t *playlist_tail[PL_MAX_ITERATORS];
-playItem_t playlist_current;
 playItem_t *playlist_current_ptr;
 int pl_count = 0;
 static int pl_order = 0; // 0 = linear, 1 = shuffle, 2 = random
@@ -642,46 +641,6 @@ pl_item_free (playItem_t *it) {
         }
         memset (it, 0, sizeof (playItem_t));
     }
-}
-
-int
-pl_set_current (playItem_t *it) {
-    int ret = 0;
-    int from = pl_get_idx_of (playlist_current_ptr);
-    int to = it ? pl_get_idx_of (it) : -1;
-    if (playlist_current.decoder) {
-        plug_trigger_event (DB_EV_SONGFINISHED);
-    }
-    codec_lock ();
-    if (playlist_current.decoder) {
-        playlist_current.decoder->free ();
-    }
-    pl_item_free (&playlist_current);
-    playlist_current_ptr = it;
-    if (it && it->decoder) {
-        // don't do anything on fail, streamer will take care
-        ret = it->decoder->init (DB_PLAYITEM (it));
-        if (ret < 0) {
-//            pl_item_free (&playlist_current);
-//            playlist_current_ptr = NULL;
-//            return ret;
-////            it->decoder->info.samplesPerSecond = -1;
-        }
-    }
-    if (playlist_current_ptr) {
-        streamer_reset (0);
-    }
-    if (it) {
-        it->played = 1;
-        it->started_timestamp = time (NULL);
-        pl_item_copy (&playlist_current, it);
-    }
-    codec_unlock ();
-    if (it) {
-        plug_trigger_event (DB_EV_SONGSTARTED);
-    }
-    messagepump_push (M_SONGCHANGED, 0, from, to);
-    return ret;
 }
 
 int

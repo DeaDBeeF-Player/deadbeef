@@ -18,6 +18,11 @@
 #ifndef __STREAMER_H
 #define __STREAMER_H
 
+#include "playlist.h"
+
+extern playItem_t str_playing_song;
+extern playItem_t str_streaming_song;
+
 int
 streamer_init (void);
 

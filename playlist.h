@@ -53,8 +53,8 @@ typedef struct playItem_s {
 
 extern playItem_t *playlist_head[PL_MAX_ITERATORS]; // head of linked list
 extern playItem_t *playlist_tail[PL_MAX_ITERATORS]; // tail of linked list
-extern playItem_t *playlist_current_ptr; // pointer to a real current playlist item
-extern playItem_t playlist_current; // copy of playlist item being played (stays in memory even if removed from playlist)
+extern playItem_t *playlist_current_ptr; // pointer to a real current playlist item (or NULL)
+
 extern int pl_count;
 
 int
@@ -108,8 +108,8 @@ pl_insert_cue_from_buffer (playItem_t *after, const char *fname, const uint8_t *
 playItem_t *
 pl_insert_cue (playItem_t *after, const char *cuename, struct DB_decoder_s *decoder, const char *ftype, float duration);
 
-int
-pl_set_current (playItem_t *it);
+//int
+//pl_set_current (playItem_t *it);
 
 // returns -1 if theres no next song, or playlist finished
 // reason 0 means "song finished", 1 means "user clicked next"

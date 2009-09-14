@@ -44,7 +44,7 @@ static float g_fbuffer[200000]; // hack!
 static float g_srcbuffer[200000]; // hack!
 static int streaming_terminate;
 
-#define STREAM_BUFFER_SIZE 200000
+#define STREAM_BUFFER_SIZE (200000*5)
 static int streambuffer_fill;
 static int bytes_until_next_song = 0;
 static char streambuffer[STREAM_BUFFER_SIZE];
@@ -57,6 +57,100 @@ static float seekpos = -1;
 
 static float playpos = 0; // play position of current song
 
+playItem_t str_playing_song;
+playItem_t str_streaming_song;
+// remember pointers to original instances of playitems
+static playItem_t *orig_playing_song;
+static playItem_t *orig_streaming_song;
+
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
+
+// playlist must call that whenever item was removed
+void
+streamer_song_removed_notify (playItem_t *it) {
+    if (it == orig_playing_song) {
+        orig_playing_song = NULL;
+    }
+    if (it == orig_streaming_song) {
+        orig_streaming_song = NULL;
+        // FIXME: must queue new next song for streaming
+    }
+}
+
+// that must be called after last sample from str_playing_song was done reading
+static int
+streamer_set_current (playItem_t *it) {
+    trace ("streamer_set_current %p, buns=%d\n", it);
+    if (str_streaming_song.decoder) {
+        str_streaming_song.decoder->free ();
+    }
+    pl_item_free (&str_streaming_song);
+    orig_streaming_song = it;
+    if (!it) {
+        return 0;
+    }
+    if (it->decoder) {
+        pl_item_copy (&str_streaming_song, it);
+        int ret = it->decoder->init (DB_PLAYITEM (it));
+        if (ret < 0) {
+            trace ("decoder->init returned %d\n", ret);
+            return ret;
+        }
+        else {
+            trace ("bps=%d, channels=%d, samplerate=%d\n", it->decoder->info.bps, it->decoder->info.channels, it->decoder->info.samplerate);
+        }
+        streamer_reset (0); // reset SRC
+    }
+    else {
+        trace ("no decoder in playitem!\n");
+        orig_streaming_song = NULL;
+        return -1;
+    }
+    if (bytes_until_next_song == -1) {
+        bytes_until_next_song = 0;
+    }
+    return 0;
+}
+
+#if 0
+static int
+str_set_current (playItem_t *it) {
+    int ret = 0;
+    int from = pl_get_idx_of (playlist_current_ptr);
+    int to = it ? pl_get_idx_of (it) : -1;
+    if (str_playing_song.decoder) {
+        plug_trigger_event (DB_EV_SONGFINISHED);
+    }
+    codec_lock ();
+    if (str_playing_song.decoder) {
+        str_playing_song.decoder->free ();
+    }
+    pl_item_free (&str_playing_song);
+    playlist_current_ptr = it;
+    if (it && it->decoder) {
+        // don't do anything on fail, streamer will take care
+        ret = it->decoder->init (DB_PLAYITEM (it));
+//        if (ret < 0) {
+//        }
+    }
+    if (playlist_current_ptr) {
+        streamer_reset (0);
+    }
+    if (it) {
+        it->played = 1;
+        it->started_timestamp = time (NULL);
+        pl_item_copy (&str_playing_song, it);
+    }
+    codec_unlock ();
+    if (it) {
+        plug_trigger_event (DB_EV_SONGSTARTED);
+    }
+    messagepump_push (M_SONGCHANGED, 0, from, to);
+    return ret;
+}
+#endif
+
 float
 streamer_get_playpos (void) {
     return playpos;
@@ -64,10 +158,12 @@ streamer_get_playpos (void) {
 
 void
 streamer_set_nextsong (int song, int pstate) {
+    trace ("streamer_set_nextsong %d %d\n", song, pstate);
     nextsong = song;
     nextsong_pstate = pstate;
     if (p_isstopped ()) {
         // no sense to wait until end of previous song, reset buffer
+        trace ("fuck!\n");
         bytes_until_next_song = 0;
     }
 }
@@ -88,7 +184,8 @@ streamer_thread (uintptr_t ctx) {
     while (!streaming_terminate) {
         struct timeval tm1;
         gettimeofday (&tm1, NULL);
-        if (nextsong >= 0 && bytes_until_next_song == 0) {
+        if (nextsong >= 0) { // start streaming next song
+            trace ("nextsong=%d\n", nextsong);
             int sng = nextsong;
             int pstate = nextsong_pstate;
             nextsong = -1;
@@ -96,14 +193,14 @@ streamer_thread (uintptr_t ctx) {
             codecleft = 0;
             codec_unlock ();
             if (badsong == sng) {
-                //printf ("looped to bad file. stopping...\n");
+                trace ("looped to bad file. stopping...\n");
                 streamer_set_nextsong (-2, 1);
                 badsong = -1;
                 continue;
             }
-            int ret = pl_set_current (pl_get_for_idx (sng));
+            int ret = streamer_set_current (pl_get_for_idx (sng));
             if (ret < 0) {
-                //printf ("bad file in playlist, skipping...\n");
+                trace ("bad file in playlist, skipping...\n");
                 // remember bad song number in case of looping
                 if (badsong == -1) {
                     badsong = sng;
@@ -114,7 +211,6 @@ streamer_thread (uintptr_t ctx) {
                 continue;
             }
             badsong = -1;
-            playpos = 0;
             if (pstate == 0) {
                 p_stop ();
             }
@@ -126,10 +222,11 @@ streamer_thread (uintptr_t ctx) {
             }
         }
         else if (nextsong == -2) {
+            trace ("nextsong=-2\n");
             nextsong = -1;
             p_stop ();
             messagepump_push (M_SONGCHANGED, 0, pl_get_idx_of (playlist_current_ptr), -1);
-            pl_set_current (NULL);
+            streamer_set_current (NULL);
             continue;
         }
         else if (p_isstopped ()) {
@@ -137,12 +234,46 @@ streamer_thread (uintptr_t ctx) {
             continue;
         }
 
+        if (bytes_until_next_song == 0) {
+            trace ("bytes_until_next_song=0, starting playback of new song\n");
+            bytes_until_next_song = -1;
+            // plugin will get pointer to str_playing_song
+            trace ("sending songfinished to plugins\n");
+            plug_trigger_event (DB_EV_SONGFINISHED);
+            // copy streaming into playing
+            pl_item_copy (&str_playing_song, &str_streaming_song);
+            int from = orig_playing_song ? pl_get_idx_of (orig_playing_song) : -1;
+            int to = orig_streaming_song ? pl_get_idx_of (orig_streaming_song) : -1;
+            trace ("from=%d, to=%d\n", from, to);
+            orig_playing_song = orig_streaming_song;
+            str_playing_song.played = 1;
+            str_playing_song.started_timestamp = time (NULL);
+            playlist_current_ptr = orig_playing_song;
+            // that is needed for playlist drawing
+            trace ("sending songchanged\n");
+            messagepump_push (M_SONGCHANGED, 0, from, to);
+            // plugin will get pointer to new str_playing_song
+            trace ("sending songstarted to plugins\n");
+            plug_trigger_event (DB_EV_SONGSTARTED);
+            playpos = 0;
+        }
+
         if (seekpos >= 0) {
+            trace ("seeking to %f\n", seekpos);
             float pos = seekpos;
             seekpos = -1;
-            if (playlist_current.decoder && playlist_current.decoder->seek (pos) >= 0) {
+
+            if (orig_playing_song != orig_streaming_song) {
+                // restart playing from new position
+                pl_item_free (&str_streaming_song);
+                orig_streaming_song = orig_playing_song;
+                pl_item_copy (&str_streaming_song, orig_streaming_song);
+                bytes_until_next_song = -1;
+            }
+
+            if (str_playing_song.decoder && str_playing_song.decoder->seek (pos) >= 0) {
                 streamer_lock ();
-                playpos = playlist_current.decoder->info.readpos;
+                playpos = str_playing_song.decoder->info.readpos;
                 streambuffer_fill = 0;
                 streamer_unlock ();
                 codec_lock ();
@@ -156,7 +287,7 @@ streamer_thread (uintptr_t ctx) {
         int alloc_time = 1000 / (96000 * 4 / 4096);
 
         streamer_lock ();
-        if (streambuffer_fill < (STREAM_BUFFER_SIZE-4096) && bytes_until_next_song == 0) {
+        if (streambuffer_fill < (STREAM_BUFFER_SIZE-4096)/* && bytes_until_next_song == 0*/) {
             int sz = STREAM_BUFFER_SIZE - streambuffer_fill;
             int minsize = 4096;
             if (streambuffer_fill < 16384) {
@@ -178,6 +309,7 @@ streamer_thread (uintptr_t ctx) {
         if (alloc_time > 0) {
             usleep (alloc_time * 1000);
         }
+//        trace ("fill: %d/%d\n", streambuffer_fill, STREAM_BUFFER_SIZE);
     }
 
     if (src) {
@@ -222,8 +354,9 @@ streamer_read_async (char *bytes, int size) {
     for (;;) {
         int bytesread = 0;
         codec_lock ();
-        DB_decoder_t *decoder = playlist_current.decoder;
+        DB_decoder_t *decoder = str_streaming_song.decoder;
         if (!decoder) {
+            trace ("no decoder!\n");
             codec_unlock ();
             break;
         }
@@ -356,7 +489,8 @@ streamer_read_async (char *bytes, int size) {
         }
         else  {
             // that means EOF
-            if (bytes_until_next_song == 0) {
+            if (bytes_until_next_song < 0) {
+                trace ("finished streaming song, queueing next\n");
                 bytes_until_next_song = streambuffer_fill;
                 pl_nextsong (0);
             }
@@ -388,13 +522,16 @@ streamer_read (char *bytes, int size) {
         }
         streambuffer_fill -= sz;
         playpos += (float)sz/p_get_rate ()/4.f;
-        playlist_current.playtime += (float)sz/p_get_rate ()/4.f;
+        str_streaming_song.playtime += (float)sz/p_get_rate ()/4.f;
         if (playlist_current_ptr) {
-            playlist_current_ptr->playtime = playlist_current.playtime;
+            playlist_current_ptr->playtime = str_streaming_song.playtime;
         }
-        bytes_until_next_song -= sz;
-        if (bytes_until_next_song < 0) {
-            bytes_until_next_song = 0;
+        if (bytes_until_next_song > 0) {
+            bytes_until_next_song -= sz;
+            if (bytes_until_next_song < 0) {
+                bytes_until_next_song = 0;
+            }
+            trace ("buns: %d\n", bytes_until_next_song);
         }
     }
     streamer_unlock ();
