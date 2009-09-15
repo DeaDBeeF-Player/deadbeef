@@ -213,13 +213,13 @@ pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, c
 
 playItem_t *
 pl_insert_cue_from_buffer (playItem_t *after, const char *fname, const uint8_t *buffer, int buffersize, struct DB_decoder_s *decoder, const char *ftype, float duration) {
-    char performer[256];
-    char albumtitle[256];
-    char track[256];
-    char title[256];
-    char pregap[256];
-    char index00[256];
-    char index01[256];
+    char performer[256] = "";
+    char albumtitle[256] = "";
+    char track[256] = "";
+    char title[256] = "";
+    char pregap[256] = "";
+    char index00[256] = "";
+    char index01[256] = "";
     playItem_t *prev = NULL;
     while (buffersize > 0) {
         const uint8_t *p = buffer;

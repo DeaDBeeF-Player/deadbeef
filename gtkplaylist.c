@@ -685,6 +685,10 @@ gtkpl_scroll (gtkplaylist_t *ps, int newscroll) {
                 }
             }
         }
+        else {
+            ps->scrollpos = newscroll;
+            gtkpl_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
+        }
         gdk_draw_drawable (widget->window, widget->style->black_gc, ps->backbuf, 0, 0, 0, 0, widget->allocation.width, widget->allocation.height);
     }
 }
