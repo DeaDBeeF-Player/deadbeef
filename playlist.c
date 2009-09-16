@@ -35,8 +35,13 @@
 #include "plugins.h"
 #include "junklib.h"
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+// 1.0->1.1 changelog:
+//    added sample-accurate seek positions for sub-tracks
+#define PLAYLIST_MAJOR_VER 1
+#define PLAYLIST_MINOR_VER 1
+
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 #define SKIP_BLANK_CUE_TRACKS 1
 
@@ -994,8 +999,8 @@ pl_set_loop_mode (int mode) {
 int
 pl_save (const char *fname) {
     const char magic[] = "DBPL";
-    uint8_t majorver = 1;
-    uint8_t minorver = 0;
+    uint8_t majorver = PLAYLIST_MAJOR_VER;
+    uint8_t minorver = PLAYLIST_MINOR_VER;
     FILE *fp = fopen (fname, "w+b");
     if (!fp) {
         return -1;
@@ -1099,8 +1104,8 @@ int
 pl_load (const char *fname) {
     pl_free ();
     DB_decoder_t **decoders = plug_get_decoder_list ();
-    uint8_t majorver = 1;
-    uint8_t minorver = 0;
+    uint8_t majorver;
+    uint8_t minorver;
     FILE *fp = fopen (fname, "rb");
     if (!fp) {
         return -1;
@@ -1115,13 +1120,13 @@ pl_load (const char *fname) {
     if (fread (&majorver, 1, 1, fp) != 1) {
         goto load_fail;
     }
-    if (majorver != 1) {
+    if (majorver > PLAYLIST_MAJOR_VER) {
         goto load_fail;
     }
     if (fread (&minorver, 1, 1, fp) != 1) {
         goto load_fail;
     }
-    if (minorver != 0) {
+    if (minorver > PLAYLIST_MINOR_VER) {
         goto load_fail;
     }
     uint32_t cnt;
@@ -1171,13 +1176,16 @@ pl_load (const char *fname) {
             goto load_fail;
         }
         it->tracknum = l;
-        // startsample
-        if (fread (&it->startsample, 1, 4, fp) != 4) {
-            goto load_fail;
-        }
-        // endsample
-        if (fread (&it->endsample, 1, 4, fp) != 4) {
-            goto load_fail;
+        if (minorver>=1) {
+            // dbpl-1.1 and later
+            // startsample
+            if (fread (&it->startsample, 1, 4, fp) != 4) {
+                goto load_fail;
+            }
+            // endsample
+            if (fread (&it->endsample, 1, 4, fp) != 4) {
+                goto load_fail;
+            }
         }
         // timestart
         if (fread (&it->timestart, 1, 4, fp) != 4) {
