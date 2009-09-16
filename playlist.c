@@ -35,12 +35,8 @@
 #include "plugins.h"
 #include "junklib.h"
 
-//#include "cvorbis.h"
-//#include "cdumb.h"
-//#include "cmp3.h"
-//#include "cgme.h"
-//#include "cflac.h"
-//#include "csid.h"
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 #define SKIP_BLANK_CUE_TRACKS 1
 
@@ -146,7 +142,7 @@ pl_cue_parse_time (const char *p) {
 }
 
 static playItem_t *
-pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, char *track, char *index00, char *index01, char *pregap, char *title, char *performer, char *albumtitle, struct DB_decoder_s *decoder, const char *ftype) {
+pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, char *track, char *index00, char *index01, char *pregap, char *title, char *performer, char *albumtitle, struct DB_decoder_s *decoder, const char *ftype, int samplerate) {
     if (!track[0]) {
         return after;
     }
@@ -181,6 +177,11 @@ pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, c
             // no pregap
             (*prev)->timeend = f_index01;
         }
+        else {
+            return after;
+        }
+        (*prev)->endsample = ((*prev)->timeend * samplerate) - 1;
+        trace ("calc endsample=%d, timeend=%f, samplerate=%d\n", (*prev)->endsample, (*prev)->timeend, samplerate);
         (*prev)->duration = (*prev)->timeend - (*prev)->timestart;
     }
     // non-compliant hack to handle tracks which only store pregap info
@@ -199,6 +200,7 @@ pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, c
     else {
         it->timestart = f_index00;
     }
+    it->startsample = it->timestart * samplerate;
 
     it->timeend = -1; // will be filled by next read, or by decoder
     it->filetype = ftype;
@@ -212,7 +214,8 @@ pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, c
 }
 
 playItem_t *
-pl_insert_cue_from_buffer (playItem_t *after, const char *fname, const uint8_t *buffer, int buffersize, struct DB_decoder_s *decoder, const char *ftype, float duration) {
+pl_insert_cue_from_buffer (playItem_t *after, const char *fname, const uint8_t *buffer, int buffersize, struct DB_decoder_s *decoder, const char *ftype, int numsamples, int samplerate) {
+    trace ("pl_insert_cue_from_buffer numsamples=%d, samplerate=%d\n", numsamples, samplerate);
     char performer[256] = "";
     char albumtitle[256] = "";
     char track[256] = "";
@@ -258,7 +261,7 @@ pl_insert_cue_from_buffer (playItem_t *after, const char *fname, const uint8_t *
         }
         else if (!strncmp (p, "TRACK ", 6)) {
             // add previous track
-            after = pl_process_cue_track (after, fname, &prev, track, index00, index01, pregap, title, performer, albumtitle, decoder, ftype);
+            after = pl_process_cue_track (after, fname, &prev, track, index00, index01, pregap, title, performer, albumtitle, decoder, ftype, samplerate);
             track[0] = 0;
             title[0] = 0;
             pregap[0] = 0;
@@ -284,16 +287,18 @@ pl_insert_cue_from_buffer (playItem_t *after, const char *fname, const uint8_t *
 //            fprintf (stderr, "got unknown line:\n%s\n", p);
         }
     }
-    after = pl_process_cue_track (after, fname, &prev, track, index00, index01, pregap, title, performer, albumtitle, decoder, ftype);
+    after = pl_process_cue_track (after, fname, &prev, track, index00, index01, pregap, title, performer, albumtitle, decoder, ftype, samplerate);
     if (after) {
-        after->timeend = duration;
+        after->endsample = numsamples-1;
+        after->timeend = (float)numsamples/samplerate;
         after->duration = after->timeend - after->timestart;
     }
     return after;
 }
 
 playItem_t *
-pl_insert_cue (playItem_t *after, const char *fname, struct DB_decoder_s *decoder, const char *ftype, float duration) {
+pl_insert_cue (playItem_t *after, const char *fname, struct DB_decoder_s *decoder, const char *ftype, int numsamples, int samplerate) {
+    trace ("pl_insert_cue numsamples=%d, samplerate=%d\n", numsamples, samplerate);
     int len = strlen (fname);
     char cuename[len+5];
     strcpy (cuename, fname);
@@ -323,7 +328,7 @@ pl_insert_cue (playItem_t *after, const char *fname, struct DB_decoder_s *decode
         return NULL;
     }
     fclose (fp);
-    return pl_insert_cue_from_buffer (after, fname, buf, sz, decoder, ftype, duration);
+    return pl_insert_cue_from_buffer (after, fname, buf, sz, decoder, ftype, numsamples, samplerate);
 }
 
 playItem_t *
@@ -590,6 +595,8 @@ pl_item_copy (playItem_t *out, playItem_t *it) {
     out->fname = strdup (it->fname);
     out->decoder = it->decoder;
     out->tracknum = it->tracknum;
+    out->startsample = it->startsample;
+    out->endsample = it->endsample;
     out->timestart = it->timestart;
     out->timeend = it->timeend;
     out->duration = it->duration;
@@ -1027,6 +1034,12 @@ pl_save (const char *fname) {
         if (fwrite (&l, 1, 2, fp) != 2) {
             goto save_fail;
         }
+        if (fwrite (&it->startsample, 1, 4, fp) != 4) {
+            goto save_fail;
+        }
+        if (fwrite (&it->endsample, 1, 4, fp) != 4) {
+            goto save_fail;
+        }
         if (fwrite (&it->timestart, 1, 4, fp) != 4) {
             goto save_fail;
         }
@@ -1158,6 +1171,14 @@ pl_load (const char *fname) {
             goto load_fail;
         }
         it->tracknum = l;
+        // startsample
+        if (fread (&it->startsample, 1, 4, fp) != 4) {
+            goto load_fail;
+        }
+        // endsample
+        if (fread (&it->endsample, 1, 4, fp) != 4) {
+            goto load_fail;
+        }
         // timestart
         if (fread (&it->timestart, 1, 4, fp) != 4) {
             goto load_fail;

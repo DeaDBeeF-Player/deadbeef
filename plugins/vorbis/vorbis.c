@@ -153,7 +153,7 @@ cvorbis_insert (DB_playItem_t *after, const char *fname) {
         return NULL;
     }
     float duration = ov_time_total (&vorbis_file, -1);
-    DB_playItem_t *cue_after = deadbeef->pl_insert_cue (after, fname, &plugin, "OggVorbis", duration);
+    DB_playItem_t *cue_after = deadbeef->pl_insert_cue (after, fname, &plugin, "OggVorbis", duration, vi->rate);
     if (cue_after) {
         ov_clear (&vorbis_file);
         return cue_after;

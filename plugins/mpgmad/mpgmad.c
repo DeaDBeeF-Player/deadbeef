@@ -952,7 +952,8 @@ cmp3_insert (DB_playItem_t *after, const char *fname) {
             break;
         }
     }
-    DB_playItem_t *cue_after = deadbeef->pl_insert_cue (after, fname, &plugin, ftype, buffer.duration);
+    // FIXME! bad numsamples passed to cue
+    DB_playItem_t *cue_after = deadbeef->pl_insert_cue (after, fname, &plugin, ftype, buffer.duration*buffer.samplerate, buffer.samplerate);
     if (cue_after) {
         fclose (fp);
         return cue_after;

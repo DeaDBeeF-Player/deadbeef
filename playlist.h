@@ -35,6 +35,8 @@ typedef struct playItem_s {
     char *fname; // full pathname
     struct DB_decoder_s *decoder; // codec to use with this file
     int tracknum; // used for stuff like sid, nsf, cue (will be ignored by most codecs)
+    int startsample;
+    int endsample;
     float timestart; // start time of cue track, or -1
     float timeend; // end time of cue track, or -1
     float duration; // in seconds
@@ -103,10 +105,10 @@ int
 pl_get_idx_of (playItem_t *it);
 
 playItem_t *
-pl_insert_cue_from_buffer (playItem_t *after, const char *fname, const uint8_t *buffer, int buffersize, struct DB_decoder_s *decoder, const char *ftype, float duration);
+pl_insert_cue_from_buffer (playItem_t *after, const char *fname, const uint8_t *buffer, int buffersize, struct DB_decoder_s *decoder, const char *ftype, int numsamples, int samplerate);
 
 playItem_t *
-pl_insert_cue (playItem_t *after, const char *cuename, struct DB_decoder_s *decoder, const char *ftype, float duration);
+pl_insert_cue (playItem_t *after, const char *cuename, struct DB_decoder_s *decoder, const char *ftype, int numsamples, int samplerate);
 
 //int
 //pl_set_current (playItem_t *it);
