@@ -36,6 +36,16 @@ static float timeend;
 static int startsample;
 static int endsample;
 
+typedef struct {
+    DB_playItem_t *after;
+    DB_playItem_t *last;
+    const char *fname;
+    int samplerate;
+    int channels;
+    int totalsamples;
+    int bps;
+} cue_cb_data_t;
+
 static FLAC__StreamDecoderWriteStatus
 cflac_write_callback (const FLAC__StreamDecoder *decoder, const FLAC__Frame *frame, const FLAC__int32 * const inputbuffer[], void *client_data) {
     if (frame->header.blocksize == 0) {
@@ -73,14 +83,11 @@ cflac_write_callback (const FLAC__StreamDecoder *decoder, const FLAC__Frame *fra
 
 static void
 cflac_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMetadata *metadata, void *client_data) {
-    FLAC__uint64 total_samples = metadata->data.stream_info.total_samples;
-    int sample_rate = metadata->data.stream_info.sample_rate;
-    int channels = metadata->data.stream_info.channels;
-    int bps = metadata->data.stream_info.bits_per_sample;
-    plugin.info.samplerate = sample_rate;
-    plugin.info.channels = channels;
-    plugin.info.bps = bps;
-    plugin.info.readpos = 0;
+    cue_cb_data_t *cb = (cue_cb_data_t *)client_data;
+    cb->totalsamples = metadata->data.stream_info.total_samples;
+    cb->samplerate = metadata->data.stream_info.sample_rate;
+    cb->channels = metadata->data.stream_info.channels;
+    cb->bps = metadata->data.stream_info.bits_per_sample;
 }
 
 static void
@@ -128,26 +135,37 @@ cflac_init (DB_playItem_t *it) {
         return -1;
     }
     FLAC__stream_decoder_set_md5_checking(decoder, 0);
-    status = FLAC__stream_decoder_init_file(decoder, it->fname, cflac_write_callback, cflac_metadata_callback, cflac_error_callback, NULL);
+    cue_cb_data_t cb;
+    status = FLAC__stream_decoder_init_file(decoder, it->fname, cflac_write_callback, cflac_metadata_callback, cflac_error_callback, &cb);
     if (status != FLAC__STREAM_DECODER_INIT_STATUS_OK) {
         cflac_free ();
         return -1;
     }
-    plugin.info.samplerate = -1;
+    //plugin.info.samplerate = -1;
     if (!FLAC__stream_decoder_process_until_end_of_metadata (decoder)) {
         cflac_free ();
         return -1;
     }
+    plugin.info.samplerate = cb.samplerate;
+    plugin.info.channels = cb.channels;
+    plugin.info.bps = cb.bps;
+    plugin.info.readpos = 0;
     if (plugin.info.samplerate == -1) { // not a FLAC stream
         cflac_free ();
         return -1;
     }
-    timestart = it->timestart;
-    timeend = it->timeend;
-    startsample = it->startsample;
-    endsample = it->endsample;
     if (timeend > timestart || timeend < 0) {
+        timestart = it->timestart;
+        timeend = it->timeend;
+        startsample = it->startsample;
+        endsample = it->endsample;
         plugin.seek_sample (0);
+    }
+    else {
+        timestart = 0;
+        timeend = it->duration;
+        startsample = 0;
+        endsample = cb.totalsamples-1;
     }
     plugin.info.readpos = 0;
 
@@ -279,16 +297,6 @@ cflac_init_write_callback (const FLAC__StreamDecoder *decoder, const FLAC__Frame
     return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;
 }
 
-typedef struct {
-    DB_playItem_t *after;
-    DB_playItem_t *last;
-    const char *fname;
-    int samplerate;
-    int nchannels;
-    float duration;
-    int totalsamples;
-} cue_cb_data_t;
-
 static void
 cflac_init_cue_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMetadata *metadata, void *client_data) {
     if (cflac_init_stop_decoding) {
@@ -297,8 +305,8 @@ cflac_init_cue_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC_
     cue_cb_data_t *cb = (cue_cb_data_t *)client_data;
     if (metadata->type == FLAC__METADATA_TYPE_STREAMINFO) {
         cb->samplerate = metadata->data.stream_info.sample_rate;
-        cb->nchannels = metadata->data.stream_info.channels;
-        cb->duration = metadata->data.stream_info.total_samples / (float)metadata->data.stream_info.sample_rate;
+        cb->channels = metadata->data.stream_info.channels;
+        //cb->duration = metadata->data.stream_info.total_samples / (float)metadata->data.stream_info.sample_rate;
         cb->totalsamples = metadata->data.stream_info.total_samples;
     }
     else if (metadata->type == FLAC__METADATA_TYPE_VORBIS_COMMENT) {
@@ -424,7 +432,7 @@ cflac_insert (DB_playItem_t *after, const char *fname) {
     // try external cue
     DB_playItem_t *cue_after = deadbeef->pl_insert_cue (after, fname, &plugin, "flac", cb.totalsamples, cb.samplerate);
     if (cue_after) {
-        cue_after->timeend = cb.duration;
+        cue_after->timeend = (float)cb.totalsamples/cb.samplerate;
         cue_after->duration = cue_after->timeend - cue_after->timestart;
         return cue_after;
     }
