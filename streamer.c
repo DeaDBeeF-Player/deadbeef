@@ -63,8 +63,8 @@ playItem_t str_streaming_song;
 static playItem_t *orig_playing_song;
 static playItem_t *orig_streaming_song;
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 // playlist must call that whenever item was removed
 void
@@ -239,6 +239,14 @@ streamer_thread (uintptr_t ctx) {
         }
 
         if (bytes_until_next_song == 0) {
+            if (!str_streaming_song.fname) {
+                // means last song was deleted during final drain
+                nextsong = -1;
+                p_stop ();
+                messagepump_push (M_SONGCHANGED, 0, pl_get_idx_of (playlist_current_ptr), -1);
+                streamer_set_current (NULL);
+                continue;
+            }
             trace ("bytes_until_next_song=0, starting playback of new song\n");
             bytes_until_next_song = -1;
             // plugin will get pointer to str_playing_song
@@ -360,7 +368,7 @@ streamer_read_async (char *bytes, int size) {
         codec_lock ();
         DB_decoder_t *decoder = str_streaming_song.decoder;
         if (!decoder) {
-            trace ("no decoder!\n");
+            // means there's nothing left to stream, so just do nothing
             codec_unlock ();
             break;
         }
