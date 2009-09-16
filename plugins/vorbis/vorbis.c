@@ -34,12 +34,11 @@ static vorbis_info *vi;
 static int cur_bit_stream;
 static float timestart;
 static float timeend;
+static int startsample;
+static int endsample;
 
 static void
 cvorbis_free (void);
-
-static int
-cvorbis_seek (float time);
 
 static int
 cvorbis_init (DB_playItem_t *it) {
@@ -67,11 +66,15 @@ cvorbis_init (DB_playItem_t *it) {
     if (it->timeend > 0) {
         timestart = it->timestart;
         timeend = it->timeend;
-        cvorbis_seek (0);
+        startsample = it->startsample;
+        endsample = it->endsample;
+        plugin.seek_sample (0);
     }
     else {
         timestart = 0;
         timeend = it->duration;
+        startsample = 0;
+        endsample = ov_pcm_total (&vorbis_file, -1)-1;
     }
     return 0;
 }
@@ -138,6 +141,23 @@ cvorbis_seek (float time) {
     return 0;
 }
 
+static int
+cvorbis_seek_sample (int sample) {
+    if (!file) {
+        return -1;
+    }
+    sample += startsample;
+    int res = ov_pcm_seek (&vorbis_file, sample);
+    if (res != 0 && res != OV_ENOSEEK)
+        return -1;
+    int tell = ov_pcm_tell (&vorbis_file);
+    if (tell != sample) {
+        fprintf (stderr, "oggvorbis: failed to do sample-accurate seek (%d->%d)\n", sample, tell);
+    }
+    plugin.info.readpos = ov_time_tell(&vorbis_file) - timestart;
+    return 0;
+}
+
 static DB_playItem_t *
 cvorbis_insert (DB_playItem_t *after, const char *fname) {
     // check for validity
@@ -153,7 +173,8 @@ cvorbis_insert (DB_playItem_t *after, const char *fname) {
         return NULL;
     }
     float duration = ov_time_total (&vorbis_file, -1);
-    DB_playItem_t *cue_after = deadbeef->pl_insert_cue (after, fname, &plugin, "OggVorbis", duration, vi->rate);
+    int totalsamples = ov_pcm_total (&vorbis_file, -1);
+    DB_playItem_t *cue_after = deadbeef->pl_insert_cue (after, fname, &plugin, "OggVorbis", totalsamples, vi->rate);
     if (cue_after) {
         ov_clear (&vorbis_file);
         return cue_after;
@@ -213,6 +234,7 @@ static DB_decoder_t plugin = {
     // vorbisfile can't output float32
 //    .read_float32 = cvorbis_read_float32,
     .seek = cvorbis_seek,
+    .seek_sample = cvorbis_seek_sample,
     .insert = cvorbis_insert,
     .exts = exts,
     .id = "stdogg",
