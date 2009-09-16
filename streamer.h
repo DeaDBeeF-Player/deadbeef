@@ -63,4 +63,7 @@ streamer_get_playpos (void);
 int
 streamer_is_buffering (void);
 
+void
+streamer_song_removed_notify (playItem_t *it);
+
 #endif // __STREAMER_H

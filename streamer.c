@@ -74,7 +74,11 @@ streamer_song_removed_notify (playItem_t *it) {
     }
     if (it == orig_streaming_song) {
         orig_streaming_song = NULL;
-        // FIXME: must queue new next song for streaming
+        // queue new next song for streaming
+        if (bytes_until_next_song > 0) {
+            streambuffer_fill = bytes_until_next_song;
+            pl_nextsong (0);
+        }
     }
 }
 

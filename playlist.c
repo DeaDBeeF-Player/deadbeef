@@ -473,6 +473,7 @@ int
 pl_remove (playItem_t *it) {
     if (!it)
         return -1;
+    streamer_song_removed_notify (it);
     pl_count--;
     if (playlist_current_ptr == it) {
         playlist_current_ptr = NULL;
