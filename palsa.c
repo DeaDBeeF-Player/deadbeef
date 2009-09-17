@@ -28,20 +28,8 @@
 #include "streamer.h"
 #include "conf.h"
 #include "volume.h"
-
-#if 0
-static inline void
-le_int16 (int16_t in, char *out) {
-    char *pin = (char *)&in;
-#if !WORDS_BIGENDIAN
-    out[0] = pin[0];
-    out[1] = pin[1];
-#else
-    out[1] = pin[0];
-    out[0] = pin[1];
-#endif
-}
-#endif
+#include "messagepump.h"
+#include "messages.h"
 
 static snd_pcm_t *audio;
 static int16_t *samplebuffer;
@@ -51,6 +39,7 @@ static int alsa_rate = 48000;
 static int state; // 0 = stopped, 1 = playing, 2 = pause
 static uintptr_t mutex;
 static int canpause;
+static intptr_t alsa_tid;
 
 static void
 palsa_callback (char *stream, int len);
@@ -191,7 +180,7 @@ palsa_init (void) {
 
     alsa_terminate = 0;
     mutex = mutex_create ();
-    thread_start (palsa_thread, 0);
+    alsa_tid = thread_start (palsa_thread, 0);
 
     return 0;
 
@@ -209,6 +198,9 @@ palsa_free (void) {
     if (audio) {
         mutex_lock (mutex);
         alsa_terminate = 1;
+        if (alsa_tid) {
+            thread_join (alsa_tid);
+        }
         snd_pcm_close(audio);
         audio = NULL;
         if (samplebuffer) {
@@ -317,17 +309,20 @@ palsa_thread (uintptr_t context) {
            has elapsed.
          */
         if ((err = snd_pcm_wait (audio, 1000)) < 0) {
+            messagepump_push (M_REINIT_SOUND, 0, 0, 0);
+            mutex_unlock (mutex);
+            break;
 #if 0
             fprintf (stderr, "alsa poll failed (%s)\n", strerror (errno));
             if ((err = snd_pcm_prepare (audio)) < 0) {
                 fprintf (stderr, "cannot prepare audio interface for use (%s)\n",
                         snd_strerror (err));
             }
-#endif
             snd_pcm_prepare (audio);
             snd_pcm_start (audio);
             mutex_unlock (mutex);
             continue;
+#endif
         }	           
 
         /* find out how much space is available for playback data */
