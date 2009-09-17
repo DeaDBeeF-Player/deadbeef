@@ -35,6 +35,7 @@ enum {
     M_FMDRAGDROP, // ctx = char* ptr, must be freed with standard free, p1 is length of data, p2 is drop_y
     M_TERMINATE, // must be sent to player thread to terminate
     M_PLAYLISTREFRESH,
+    M_REINIT_SOUND,
 };
 
 #endif // __MESSAGES_H

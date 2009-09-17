@@ -329,6 +329,11 @@ player_thread (uintptr_t ctx) {
         uint32_t p2;
         while (messagepump_pop(&msg, &ctx, &p1, &p2) != -1) {
             switch (msg) {
+            case M_REINIT_SOUND:
+                palsa_free ();
+                palsa_init ();
+                palsa_play ();
+                break;
             case M_TERMINATE:
                 GDK_THREADS_ENTER();
                 gtk_widget_hide (mainwin);
