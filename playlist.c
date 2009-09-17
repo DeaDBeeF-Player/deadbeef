@@ -605,8 +605,6 @@ pl_item_copy (playItem_t *out, playItem_t *it) {
     out->timestart = it->timestart;
     out->timeend = it->timeend;
     out->duration = it->duration;
-    out->startoffset = it->startoffset;
-    out->endoffset = it->endoffset;
     out->shufflerating = it->shufflerating;
     out->filetype = it->filetype;
     out->started_timestamp = it->started_timestamp;

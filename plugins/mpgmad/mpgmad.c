@@ -79,6 +79,8 @@ typedef struct {
     float duration;
     int startoffset;
     int endoffset;
+    int startsample;
+    int endsample;
 #if 0
     // only for xing/lame header
     uint32_t frames;
@@ -105,101 +107,6 @@ static struct mad_synth synth;
 
 static int
 cmp3_decode (void);
-
-static int
-cmp3_scan_stream (buffer_t *buffer, float position);
-
-static int
-cmp3_init (DB_playItem_t *it) {
-    memset (&buffer, 0, sizeof (buffer));
-    buffer.file = fopen (it->fname, "rb");
-    if (!buffer.file) {
-        return -1;
-    }
-    buffer.startoffset = it->startoffset;
-    buffer.endoffset = it->endoffset;
-    buffer.remaining = 0;
-    //buffer.output = NULL;
-    buffer.readsize = 0;
-    buffer.cachefill = 0;
-    buffer.cachepos = 0;
-    plugin.info.readpos = 0;
-	mad_timer_reset(&buffer.timer);
-
-//    fseek (buffer.file, buffer.startoffset, SEEK_SET);
-	if (it->timeend > 0) {
-        buffer.timestart = it->timestart;
-        buffer.timeend = it->timeend;
-        // that comes from cue, don't calc duration, just seek and play
-        cmp3_scan_stream (&buffer, it->timestart);
-        mad_timer_reset(&buffer.timer);
-    }
-    else {
-        it->duration = cmp3_scan_stream (&buffer, -1); // scan entire stream, calc duration
-        buffer.timestart = 0;
-        buffer.timeend = it->duration;
-        fseek (buffer.file, buffer.startoffset, SEEK_SET);
-    }
-    if (buffer.samplerate == 0) {
-        //fprintf (stderr, "bad mpeg file: %f\n", it->fname);
-        fclose (buffer.file);
-        return -1;
-    }
-    plugin.info.bps = buffer.bitspersample;
-    plugin.info.samplerate = buffer.samplerate;
-    plugin.info.channels = buffer.channels;
-
-	mad_stream_init(&stream);
-	mad_frame_init(&frame);
-	mad_synth_init(&synth);
-
-    return 0;
-}
-
-/****************************************************************************
- * Converts a sample from libmad's fixed point number format to a signed	*
- * short (16 bits).															*
- ****************************************************************************/
-static inline int16_t
-MadFixedToSshort(mad_fixed_t Fixed)
-{
-	/* A fixed point number is formed of the following bit pattern:
-	 *
-	 * SWWWFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-	 * MSB                          LSB
-	 * S ==> Sign (0 is positive, 1 is negative)
-	 * W ==> Whole part bits
-	 * F ==> Fractional part bits
-	 *
-	 * This pattern contains MAD_F_FRACBITS fractional bits, one
-	 * should alway use this macro when working on the bits of a fixed
-	 * point number. It is not guaranteed to be constant over the
-	 * different platforms supported by libmad.
-	 *
-	 * The signed short value is formed, after clipping, by the least
-	 * significant whole part bit, followed by the 15 most significant
-	 * fractional part bits. Warning: this is a quick and dirty way to
-	 * compute the 16-bit number, madplay includes much better
-	 * algorithms.
-	 */
-
-	/* Clipping */
-	if(Fixed>=MAD_F_ONE)
-		return(32767);
-	if(Fixed<=-MAD_F_ONE)
-		return(-32768);
-
-	/* Conversion. */
-	Fixed=Fixed>>(MAD_F_FRACBITS-15);
-	return((signed short)Fixed);
-}
-
-static inline float
-MadFixedToFloat (mad_fixed_t Fixed) {
-    return (float)((Fixed) / (float)(1L << MAD_F_FRACBITS));
-}
-
-#define MadErrorString(x) mad_stream_errorstr(x)
 
 static uint32_t
 extract_i32 (unsigned char *buf)
@@ -262,10 +169,13 @@ extract_f32 (unsigned char *buf) {
     return f;
 }
 
-// function scans file and calculates duration
-// if position >= 0 -- scanning is stopped after duration is greater than position
+// sample=-1: scan entire stream, calculate precise duration
+// sample=0: read headers/tags, calculate approximate duration
+// sample>0: seek to the frame with the sample, update skipsamples
+// return value: -1 on error
 static int
 cmp3_scan_stream (buffer_t *buffer, float position) {
+    int totalsamples = 0;
     int nframe = 0;
     int nskipped = 0;
     float duration = 0;
@@ -273,7 +183,7 @@ cmp3_scan_stream (buffer_t *buffer, float position) {
     int nseeks = 0;
 
     int pos = ftell (buffer->file);
-    if (pos <= 0) {
+    if (pos == 0) {
         // try to skip id3v2
         int skip = deadbeef->junk_get_leading_size (buffer->file);
         if (skip > 0) {
@@ -511,6 +421,103 @@ cmp3_scan_stream (buffer_t *buffer, float position) {
     return duration;
 }
 
+
+static int
+cmp3_init (DB_playItem_t *it) {
+    memset (&buffer, 0, sizeof (buffer));
+    buffer.file = fopen (it->fname, "rb");
+    if (!buffer.file) {
+        return -1;
+    }
+    buffer.remaining = 0;
+    //buffer.output = NULL;
+    buffer.readsize = 0;
+    buffer.cachefill = 0;
+    buffer.cachepos = 0;
+    plugin.info.readpos = 0;
+	mad_timer_reset(&buffer.timer);
+
+//    fseek (buffer.file, buffer.startoffset, SEEK_SET);
+	if (it->timeend > 0) {
+        buffer.timestart = it->timestart;
+        buffer.timeend = it->timeend;
+        buffer.startsample = it->startsample;
+        buffer.endsample = it->endsample;
+        // that comes from cue, don't calc duration, just seek and play
+        plugin.seek_sample (0);
+//        cmp3_scan_stream (&buffer, it->timestart);
+//        mad_timer_reset(&buffer.timer);
+    }
+    else {
+        cmp3_scan_stream (&buffer, -1); // scan entire stream, calc duration
+        it->duration = buffer.duration;
+        buffer.timestart = 0;
+        buffer.timeend = it->duration;
+        buffer.startsample = 0;
+        buffer.endsample = it->duration * buffer.samplerate - 1;
+        fseek (buffer.file, buffer.startoffset, SEEK_SET);
+    }
+    if (buffer.samplerate == 0) {
+        //fprintf (stderr, "bad mpeg file: %f\n", it->fname);
+        fclose (buffer.file);
+        return -1;
+    }
+    plugin.info.bps = buffer.bitspersample;
+    plugin.info.samplerate = buffer.samplerate;
+    plugin.info.channels = buffer.channels;
+
+	mad_stream_init(&stream);
+	mad_frame_init(&frame);
+	mad_synth_init(&synth);
+
+    return 0;
+}
+
+/****************************************************************************
+ * Converts a sample from libmad's fixed point number format to a signed	*
+ * short (16 bits).															*
+ ****************************************************************************/
+static inline int16_t
+MadFixedToSshort(mad_fixed_t Fixed)
+{
+	/* A fixed point number is formed of the following bit pattern:
+	 *
+	 * SWWWFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+	 * MSB                          LSB
+	 * S ==> Sign (0 is positive, 1 is negative)
+	 * W ==> Whole part bits
+	 * F ==> Fractional part bits
+	 *
+	 * This pattern contains MAD_F_FRACBITS fractional bits, one
+	 * should alway use this macro when working on the bits of a fixed
+	 * point number. It is not guaranteed to be constant over the
+	 * different platforms supported by libmad.
+	 *
+	 * The signed short value is formed, after clipping, by the least
+	 * significant whole part bit, followed by the 15 most significant
+	 * fractional part bits. Warning: this is a quick and dirty way to
+	 * compute the 16-bit number, madplay includes much better
+	 * algorithms.
+	 */
+
+	/* Clipping */
+	if(Fixed>=MAD_F_ONE)
+		return(32767);
+	if(Fixed<=-MAD_F_ONE)
+		return(-32768);
+
+	/* Conversion. */
+	Fixed=Fixed>>(MAD_F_FRACBITS-15);
+	return((signed short)Fixed);
+}
+
+static inline float
+MadFixedToFloat (mad_fixed_t Fixed) {
+    return (float)((Fixed) / (float)(1L << MAD_F_FRACBITS));
+}
+
+#define MadErrorString(x) mad_stream_errorstr(x)
+
 static int
 cmp3_decode (void) {
     int eof = 0;
@@ -729,7 +736,10 @@ cmp3_seek (float time) {
     mad_synth_finish (&synth);
     mad_frame_finish (&frame);
     mad_stream_finish (&stream);
-    fseek(buffer.file, buffer.startoffset, SEEK_SET);
+    int skip = deadbeef->junk_get_leading_size (buffer.file);
+    if (skip > 0) {
+        fseek(buffer.file, skip, SEEK_SET);
+    }
 	mad_stream_init(&stream);
 	mad_frame_init(&frame);
 	mad_synth_init(&synth);
@@ -975,7 +985,6 @@ cmp3_insert (DB_playItem_t *after, const char *fname) {
     }
     int apeerr = deadbeef->junk_read_ape (it, fp);
     deadbeef->pl_add_meta (it, "title", NULL);
-    it->startoffset = buffer.startoffset;
     it->duration = buffer.duration;
     it->filetype = ftype;
 
@@ -1001,7 +1010,6 @@ static DB_decoder_t plugin = {
     .plugin.website = "http://deadbeef.sf.net",
     .init = cmp3_init,
     .free = cmp3_free,
-//    .read = cmp3_read,
     .read_int16 = cmp3_read,
     .read_float32 = cmp3_read_float32,
     .seek = cmp3_seek,

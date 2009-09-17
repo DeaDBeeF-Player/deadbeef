@@ -482,9 +482,10 @@ junk_read_id3v1 (playItem_t *it, FILE *fp) {
         pl_add_meta (it, "track", s);
     }
 
-    if (it->endoffset < 128) {
-        it->endoffset = 128;
-    }
+// FIXME: that should be accounted for
+//    if (it->endoffset < 128) {
+//        it->endoffset = 128;
+//    }
 
     return 0;
 }
@@ -678,11 +679,11 @@ junk_read_id3v2 (playItem_t *it, FILE *fp) {
         return -1; // bad header
     }
     uint32_t size = (header[9] << 0) | (header[8] << 7) | (header[7] << 14) | (header[6] << 21);
-    int startoffset = size + 10 + 10 * footerpresent;
-    if (startoffset > it->startoffset) {
-        it->startoffset = startoffset;
-//        fprintf (stderr, "id3v2 end: %x\n", startoffset);
-    }
+    // FIXME: that should be accounted for
+//    int startoffset = size + 10 + 10 * footerpresent;
+//    if (startoffset > it->startoffset) {
+//        it->startoffset = startoffset;
+//    }
 
 //    fprintf (stderr, "tag size: %d\n", size);
 

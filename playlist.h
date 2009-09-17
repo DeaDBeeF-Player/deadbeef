@@ -40,8 +40,6 @@ typedef struct playItem_s {
     float timestart; // start time of cue track, or -1
     float timeend; // end time of cue track, or -1
     float duration; // in seconds
-    int startoffset; // offset to seek to skip tags and info-headers (mp3)
-    int endoffset; // offset from end of file where music data ends (mp3)
     int shufflerating; // sort order for shuffle mode
     float playtime; // total playtime
     time_t started_timestamp; // result of calling time(NULL)
