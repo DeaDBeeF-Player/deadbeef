@@ -256,6 +256,9 @@ typedef struct APEContext {
     int samplestoskip;
     int currentsample; // current sample from beginning of file
 
+    uint8_t buffer[BLOCKS_PER_LOOP * 2 * 2 * 2];
+    int remaining;
+
     int error;
 } APEContext;
 
@@ -1662,9 +1665,6 @@ ffap_insert (DB_playItem_t *after, const char *fname) {
     return after;
 }
 
-static uint8_t g_buffer[BLOCKS_PER_LOOP * 2 * 2 * 2];
-static int remaining = 0;
-
 static int
 ffap_read_int16 (char *buffer, int size) {
     int inits = size;
@@ -1672,35 +1672,35 @@ ffap_read_int16 (char *buffer, int size) {
         return 0;
     }
     while (size > 0) {
-        if (remaining > 0) {
-            int sz = min (size, remaining);
-            memcpy (buffer, g_buffer, sz);
+        if (ape_ctx.remaining > 0) {
+            int sz = min (size, ape_ctx.remaining);
+            memcpy (buffer, ape_ctx.buffer, sz);
             buffer += sz;
             size -= sz;
-            if (remaining > sz) {
-                memmove (g_buffer, g_buffer + sz, remaining-sz);
+            if (ape_ctx.remaining > sz) {
+                memmove (ape_ctx.buffer, ape_ctx.buffer + sz, ape_ctx.remaining-sz);
             }
-            remaining -= sz;
+            ape_ctx.remaining -= sz;
             continue;
         }
         int s = BLOCKS_PER_LOOP * 2 * 2 * 2;
-        assert (remaining <= s/2);
-        s -= remaining;
-        uint8_t *buf = g_buffer + remaining;
+        assert (ape_ctx.remaining <= s/2);
+        s -= ape_ctx.remaining;
+        uint8_t *buf = ape_ctx.buffer + ape_ctx.remaining;
         int n = ape_decode_frame (&ape_ctx, buf, &s);
         if (n == -1) {
             break;
         }
-        remaining += s;
+        ape_ctx.remaining += s;
 
-        int sz = min (size, remaining);
-        memcpy (buffer, g_buffer, sz);
+        int sz = min (size, ape_ctx.remaining);
+        memcpy (buffer, ape_ctx.buffer, sz);
         buffer += sz;
         size -= sz;
-        if (remaining > sz) {
-            memmove (g_buffer, g_buffer + sz, remaining-sz);
+        if (ape_ctx.remaining > sz) {
+            memmove (ape_ctx.buffer, ape_ctx.buffer + sz, ape_ctx.remaining-sz);
         }
-        remaining -= sz;
+        ape_ctx.remaining -= sz;
     }
     plugin.info.readpos = ape_ctx.currentsample / (float)plugin.info.samplerate - timestart;
     return inits - size;
