@@ -1,3 +1,9 @@
+version 0.2.2.2
+	fixed resume after suspend/hibernate
+	fixed cue reader regression
+	fixed another playlist drawing regression
+	fixed stutter at the start of ape tracks
+
 version 0.2.2.1
 	fixed playlist drawing regressions encountered in 0.2.2
 
