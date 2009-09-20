@@ -47,6 +47,12 @@ static DB_functions_t *deadbeef;
 #define LAME_VBR3 5
 #define LAME_VBR4 6
 
+// xing header flags
+#define FRAMES_FLAG     0x0001
+#define BYTES_FLAG      0x0002
+#define TOC_FLAG        0x0004
+#define VBR_SCALE_FLAG  0x0008
+
 typedef struct {
     FILE *file;
 
@@ -86,26 +92,8 @@ typedef struct {
     int endoffset;
     int startsample;
     int endsample;
-
     int startdelay;
     int enddelay;
-#if 0
-    // only for xing/lame header
-    uint32_t frames;
-    uint32_t flags;
-    uint32_t vbr_scale;
-    uint32_t bytes;
-    uint8_t lame_revision;
-    uint8_t vbrmethod;
-    uint8_t vbrbitrate;
-    uint8_t mp3gain;
-    float peak_signal_amp;
-    uint16_t radio_replay_gain;
-    uint16_t audiophile_replay_gain;
-    uint16_t delay_start;
-    uint16_t delay_end;
-    uint32_t musiclength;
-#endif
 } buffer_t;
 
 static buffer_t buffer;
@@ -181,17 +169,18 @@ extract_f32 (unsigned char *buf) {
 // sample=0: read headers/tags, calculate approximate duration
 // sample>0: seek to the frame with the sample, update skipsamples
 // return value: -1 on error
-#define FRAMES_FLAG     0x0001
-#define BYTES_FLAG      0x0002
-#define TOC_FLAG        0x0004
-#define VBR_SCALE_FLAG  0x0008
 static int
 cmp3_scan_stream (buffer_t *buffer, int sample) {
     int nframe = 0;
+    int got_xing_header = 0;
     buffer->duration = 0;
-    buffer->totalsamples = 0;
+    int scansamples = 0;
     buffer->currentsample = 0;
     buffer->skipsamples = 0;
+
+    if (sample <= 0) {
+        buffer->totalsamples = 0;
+    }
 
     for (;;) {
         uint32_t hdr;
@@ -345,8 +334,11 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
             buffer->bitspersample = 16;
             //fprintf (stderr, "frame %d(@%d) mpeg v%d layer %d bitrate %d samplerate %d packetlength %d framedur %f channels %d\n", nframe, pos, ver, layer, bitrate, samplerate, packetlength, dur, nchannels);
         }
-        // try to read xing/info tag
-        if (sample == 0) {
+        // try to read xing/info tag (only on initial scans)
+        if (sample <= 0 && !got_xing_header)
+        {
+            size_t framepos = ftell (buffer->file);
+            trace ("trying to read xing header\n");
             if (ver == 1) {
                 fseek (buffer->file, 32, SEEK_CUR);
             }
@@ -382,6 +374,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
                     uint32_t nframes = extract_i32 (buf);
                     buffer->duration = (float)nframes * (float)samples_per_frame / (float)samplerate;
                     buffer->totalsamples = nframes * samples_per_frame;
+                    trace ("xing totalsamples: %d\n", buffer->totalsamples);
                     buffer->samplerate = samplerate;
                 }
                 if (flags & BYTES_FLAG) {
@@ -433,27 +426,37 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
                     buffer->startdelay = startdelay;
                     buffer->enddelay = enddelay;
                 }
-                if (flags&FRAMES_FLAG) {
+                if (sample <= 0 && (flags&FRAMES_FLAG)) {
+                    buffer->totalsamples -= buffer->enddelay;
+                    fseek (buffer->file, framepos+packetlength-4, SEEK_SET);
                     return 0;
                 }
             }
-            // xing header failed, calculate based on file size
-            fseek (buffer->file, 0, SEEK_END);
-            int sz = ftell (buffer->file) - buffer->startoffset - buffer->endoffset;
-            int nframes = sz / packetlength;
-            buffer->duration = nframes * samples_per_frame / samplerate;
-            buffer->totalsamples = nframes * samples_per_frame;
-            buffer->samplerate = samplerate;
+            if (sample == 0) {
+                // xing header failed, calculate based on file size
+                fseek (buffer->file, 0, SEEK_END);
+                int sz = ftell (buffer->file) - buffer->startoffset - buffer->endoffset;
+                int nframes = sz / packetlength;
+                buffer->duration = nframes * samples_per_frame / samplerate;
+                buffer->totalsamples = nframes * samples_per_frame;
+                buffer->samplerate = samplerate;
 
-            return 0;
+                if (sample == 0) {
+                    fseek (buffer->file, framepos+packetlength-4, SEEK_SET);
+                    return 0;
+                }
+            }
+            fseek (buffer->file, framepos+packetlength-4, SEEK_SET);
+            got_xing_header = 1;
         }
 
-        if (sample >= 0 && buffer->totalsamples + samples_per_frame >= sample) {
+        if (sample >= 0 && scansamples + samples_per_frame >= sample) {
+            fseek (buffer->file, -4, SEEK_CUR);
             buffer->currentsample = sample;
-            buffer->skipsamples = buffer->totalsamples + samples_per_frame - sample;
+            buffer->skipsamples = scansamples + samples_per_frame - sample;
             return 0;
         }
-        buffer->totalsamples += samples_per_frame;
+        scansamples += samples_per_frame;
 
         buffer->duration += dur;
         nframe++;
@@ -464,6 +467,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
     if (nframe == 0) {
         return -1;
     }
+    buffer->totalsamples = scansamples;
     buffer->duration = buffer->totalsamples / buffer->samplerate;
     return 0;
 }
@@ -487,6 +491,7 @@ cmp3_init (DB_playItem_t *it) {
     buffer.cachepos = 0;
     plugin.info.readpos = 0;
 
+    cmp3_scan_stream (&buffer, -1); // scan entire stream, calc duration
 	if (it->timeend > 0) {
         buffer.timestart = it->timestart;
         buffer.timeend = it->timeend;
@@ -496,7 +501,6 @@ cmp3_init (DB_playItem_t *it) {
         plugin.seek_sample (0);
     }
     else {
-        cmp3_scan_stream (&buffer, -1); // scan entire stream, calc duration
         it->duration = buffer.duration;
         buffer.timestart = 0;
         buffer.timeend = it->duration;
@@ -573,6 +577,7 @@ cmp3_decode (void) {
         if (eof) {
             break;
         }
+        // FIXME: read single frame here
         // read more MPEG data if needed
         if(stream.buffer==NULL || stream.error==MAD_ERROR_BUFLEN) {
             // copy part of last frame to beginning
@@ -597,28 +602,31 @@ cmp3_decode (void) {
             }
             bytesread += buffer.remaining;
             mad_stream_buffer(&stream,buffer.input,bytesread);
-            stream.error=0;
+            if (stream.buffer==NULL) {
+                // check sync bits
+                if (bytes[0] != 0xff || (bytes[1]&(3<<5)) != (3<<5)) {
+                    trace ("mpgmad: read didn't start at frame boundary!\ncmp3_scan_stream is broken\n");
+                }
+            }
         }
+        stream.error=0;
         // decode next frame
 		if(mad_frame_decode(&frame,&stream))
 		{
 			if(MAD_RECOVERABLE(stream.error))
 			{
-				if(stream.error!=MAD_ERROR_LOSTSYNC)
-				{
-					//fprintf(stderr,"recoverable frame level error (%s)\n",
-					//		MadErrorString(&stream));
-					//fflush(stderr);
+				if(stream.error!=MAD_ERROR_LOSTSYNC) {
+					trace ("mpgmad: recoverable frame level error (%s)\n", MadErrorString(&stream));
 				}
 				continue;
 			}
 			else {
-				if(stream.error==MAD_ERROR_BUFLEN)
+				if(stream.error==MAD_ERROR_BUFLEN) {
 					continue;
+                }
 				else
 				{
-					//fprintf(stderr,"unrecoverable frame level error (%s).\n",
-					//		MadErrorString(&stream));
+					trace ("mpgmad: unrecoverable frame level error (%s).\n", MadErrorString(&stream));
 					break;
 				}
             }
@@ -629,18 +637,13 @@ cmp3_decode (void) {
 		
 		mad_synth_frame(&synth,&frame);
 
-//        char *cache = &buffer.cache[(buffer.cachefill + buffer.cachepos) & CACHE_MASK];
         int cachepos = (buffer.cachefill + buffer.cachepos) & CACHE_MASK;
+        int len = synth.pcm.length;
+        if (buffer.currentsample + len >= buffer.totalsamples) {
+            len = buffer.totalsamples - buffer.currentsample;
+        }
         int i = min (synth.pcm.length, buffer.skipsamples);
         buffer.skipsamples -= i;
-        int len = synth.pcm.length;
-//        if (buffer.currentsample + len >= buffer.totalsamples-buffer.enddelay) {
-//            len = buffer.totalsamples - buffer.enddelay - buffer.currentsample;
-//            if (len < 0) {
-//                len = 0;
-//            }
-//            //trace ("currentsample=%d, enddelay=%d, totalsamples=%d, len=%d\n", buffer.currentsample, buffer.enddelay, buffer.totalsamples, len);
-//        }
         buffer.currentsample += len-i;
 		for(;i<len;i++)
 		{
@@ -648,9 +651,9 @@ cmp3_decode (void) {
                 printf ("cache overflow!\n");
                 break;
             }
-            if (buffer.cachefill >= CACHE_SIZE - sizeof (mad_fixed_t)) {
+//            if (buffer.cachefill >= CACHE_SIZE - sizeof (mad_fixed_t)) {
 //                printf ("readsize=%d, pcm.length=%d(%d)\n", buffer.readsize, synth.pcm.length, i);
-            }
+//            }
             assert (buffer.cachefill < CACHE_SIZE - sizeof (mad_fixed_t));
             memcpy (buffer.cache+cachepos, &synth.pcm.samples[0][i], sizeof (mad_fixed_t));
             cachepos = (cachepos + sizeof (mad_fixed_t)) & CACHE_MASK;
@@ -658,7 +661,7 @@ cmp3_decode (void) {
             buffer.readsize -= sizeof (mad_fixed_t);
             if (MAD_NCHANNELS(&frame.header) == 2) {
                 if (buffer.cachefill >= CACHE_SIZE - sizeof (mad_fixed_t)) {
-                    printf ("readsize=%d, pcm.length=%d(%d), cachefill=%d, cachepos=%d(%d)\n", buffer.readsize, synth.pcm.length, i, buffer.cachefill, buffer.cachepos, cachepos);
+                    trace ("readsize=%d, pcm.length=%d(%d), cachefill=%d, cachepos=%d(%d)\n", buffer.readsize, synth.pcm.length, i, buffer.cachefill, buffer.cachepos, cachepos);
                 }
                 assert (buffer.cachefill < CACHE_SIZE - sizeof (mad_fixed_t));
                 memcpy (buffer.cache+cachepos, &synth.pcm.samples[1][i], sizeof (mad_fixed_t));
@@ -667,8 +670,10 @@ cmp3_decode (void) {
                 buffer.readsize -= sizeof (mad_fixed_t);
             }
         }
-        //printf ("readsize at end of frame: %d\n", buffer.readsize);
-        if (buffer.readsize <= 0 || eof) {
+        if (buffer.currentsample > buffer.totalsamples) {
+            trace ("mpgmad: warning: extra samples were read after end of stream\n");
+        }
+        if (buffer.readsize <= 0 || eof || buffer.currentsample >= buffer.totalsamples) {
             break;
         }
     }
@@ -786,7 +791,10 @@ cmp3_seek_sample (int sample) {
     if (!buffer.file) {
         return -1;
     }
-    sample += buffer.startsample;
+    sample += buffer.startsample + buffer.startdelay;
+    if (sample >= buffer.totalsamples) {
+        return -1; // eof
+    }
     // restart file, and load until we hit required pos
     fseek (buffer.file, 0, SEEK_SET);
     int skip = deadbeef->junk_get_leading_size (buffer.file);
@@ -796,10 +804,10 @@ cmp3_seek_sample (int sample) {
     mad_synth_finish (&synth);
     mad_frame_finish (&frame);
     mad_stream_finish (&stream);
-	mad_stream_init(&stream);
-	mad_frame_init(&frame);
-	mad_synth_init(&synth);
-	//mad_timer_reset(&buffer.timer);
+    buffer.remaining = 0;
+    buffer.readsize = 0;
+    buffer.cachefill = 0;
+    buffer.cachepos = 0;
 
 	if (sample == 0) { 
         plugin.info.readpos = 0;
@@ -812,10 +820,10 @@ cmp3_seek_sample (int sample) {
         plugin.info.readpos = 0;
         return -1;
     }
-    // fixup timer
+	mad_stream_init(&stream);
+	mad_frame_init(&frame);
+	mad_synth_init(&synth);
     plugin.info.readpos = (float)buffer.currentsample / buffer.samplerate - buffer.timestart;
-    //buffer.timer.seconds = (int)plugin.info.readpos;
-    //buffer.timer.fraction = (plugin.info.readpos - buffer.timer.seconds) * MAD_TIMER_RESOLUTION;
     return 0;
 }
 
@@ -824,146 +832,6 @@ cmp3_seek (float time) {
     int sample = time * buffer.samplerate;
     return cmp3_seek_sample (sample);
 }
-
-// {{{ separate xing/lame header reader (unused)
-#if 0
-// read xing/lame header
-// based on Xing example code
-#define FRAMES_FLAG     0x0001
-#define BYTES_FLAG      0x0002
-#define TOC_FLAG        0x0004
-#define VBR_SCALE_FLAG  0x0008
-
-#define FRAMES_AND_BYTES (FRAMES_FLAG | BYTES_FLAG)
-int
-cmp3_read_info_tag (buffer_t *buffer, DB_playItem_t *it, FILE *fp) {
-    rewind (fp);
-    int h_id, h_mode, h_sr_index, h_ly_index;
-    static int sr_table[4] = { 44100, 48000, 32000, -1 };
-    uint8_t header[1024];
-    if (fread (header, 1, 1024, fp) != 1024) {
-        return -1;
-    }
-    uint8_t *buf = header;
-
-    // check sync
-    if (buf[0] != 0xff || (buf[1]&(3<<5)) != (3<<5)) {
-        printf ("sync bits not set, not a mpeg frame\n");
-        return -1;
-    }
-
-    // get selected MPEG header data
-    h_id       = (buf[1] >> 3) & 1;
-    h_sr_index = (buf[2] >> 2) & 3;
-    h_mode     = (buf[3] >> 6) & 3;
-    h_ly_index = (buf[1] >> 1) & 3;
-
-    static int ltbl[] = { -1, 3, 2, 1 };
-    int layer = ltbl[h_ly_index];
-    printf ("layer%d\n", layer);
-    if (layer < 0) {
-        printf ("invalid layer\n");
-        return -1;
-    }
-
-    // determine offset of header
-    if (h_id) { // mpeg1
-        if (h_mode != 3) {
-            buf += (32+4);
-        }
-        else {
-            buf += (17+4);
-        }
-    }
-    else { // mpeg2
-        if (h_mode != 3) {
-            buf += (17+4);
-        }
-        else {
-            buf += (9+4);
-        }
-    }
-
-    int is_vbr = 0;
-    if (!strncmp (buf, "Xing", 4)) {
-        is_vbr = 1;
-    }
-    else if (!strncmp (buf, "Info", 4)) {
-        is_vbr = 0;
-    }
-    else {
-        return -1; // no xing header found
-    }
-
-    buf+=4;
-
-    if (h_id) {
-        buffer->version = 1;
-    }
-    else {
-        buffer->version = 2;
-    }
-
-    buffer->samplerate = sr_table[h_sr_index];
-    if (!h_id) {
-        buffer->samplerate >>= 1;
-    }
-
-    uint32_t flags, frames, bytes, vbr_scale;
-    // get flags
-    flags = extract_i32 (buf);
-    buf+=4;
-
-    if (flags & FRAMES_FLAG) {
-        frames = extract_i32(buf);
-        buf+=4;
-    }
-    if (flags & BYTES_FLAG) {
-        bytes = extract_i32(buf);
-        buf+=4;
-    }
-
-    if (flags & TOC_FLAG) {
-        // read toc
-        buf+=100;
-    }
-
-    vbr_scale = -1;
-    if (flags & VBR_SCALE_FLAG) {
-        vbr_scale = extract_i32(buf);
-        buf+=4;
-    }
-
-    // check for lame header
-    if( buf[0] != 'L' ) return 0;
-    if( buf[1] != 'A' ) return 0;
-    if( buf[2] != 'M' ) return 0;
-    if( buf[3] != 'E' ) return 0;
-    printf ("found LAME header\n");
-    buf += 20;
-    buf += 140;
-
-    uint8_t vbrmethod = header[0xa5];
-    if (vbrmethod & 0xf0) {
-        buffer->lame_revision = 1;
-    }
-    else {
-        buffer->lame_revision = 0;
-    }
-    buffer->vbrmethod = vbrmethod & 0x0f;
-
-    buffer->peak_signal_amp = extract_f32 (&header[0xa7]);
-    buffer->radio_replay_gain = extract_i16 (&header[0xab]);
-    buffer->audiophile_replay_gain = extract_i16 (&header[0xad]);
-    buffer->vbrbitrate = header[0xb0];
-    buffer->delay_start = (((uint16_t)header[0xb1]) << 4) | (((uint16_t)header[0xb2])>>4);
-    buffer->delay_end = ((((uint16_t)header[0xb2]) & 0x0f) << 8) | ((uint16_t)header[0xb3]);
-    buffer->mp3gain = header[0xb5];
-    buffer->musiclength = extract_i32 (&header[0xb8]);
-    return 0;
-}
-#endif
-// }}}
 
 static const char *filetypes[] = {
     "MPEG 1.0 layer I", "MPEG 1.0 layer II", "MPEG 1.0 layer III", "MPEG 2.0 layer I", "MPEG 2.0 layer II", "MPEG 2.0 layer III", "MPEG 2.5 layer I", "MPEG 2.5 layer II", "MPEG 2.5 layer III", NULL
