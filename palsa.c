@@ -308,7 +308,7 @@ palsa_thread (uintptr_t context) {
         /* wait till the interface is ready for data, or 1 second
            has elapsed.
          */
-        if ((err = snd_pcm_wait (audio, 1000)) < 0) {
+        if ((err = snd_pcm_wait (audio, 1000)) < 0 && state == 1) {
             messagepump_push (M_REINIT_SOUND, 0, 0, 0);
             mutex_unlock (mutex);
             break;

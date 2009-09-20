@@ -330,9 +330,18 @@ player_thread (uintptr_t ctx) {
         while (messagepump_pop(&msg, &ctx, &p1, &p2) != -1) {
             switch (msg) {
             case M_REINIT_SOUND:
-                palsa_free ();
-                palsa_init ();
-                palsa_play ();
+                {
+                    int play = 0;
+                    if (!palsa_ispaused () && !palsa_isstopped ()) {
+                        play = 1;
+                    }
+                
+                    palsa_free ();
+                    palsa_init ();
+                    if (play) {
+                        palsa_play ();
+                    }
+                }
                 break;
             case M_TERMINATE:
                 GDK_THREADS_ENTER();
