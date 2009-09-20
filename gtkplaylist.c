@@ -44,6 +44,9 @@
 #include "drawing.h"
 #include "session.h"
 
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
+
 // orange on dark color scheme
 float colo_dark_orange[COLO_COUNT][3] = {
     { 0x7f/255.f, 0x7f/255.f, 0x7f/255.f }, // cursor
@@ -237,7 +240,7 @@ gtkpl_draw_pl_row (gtkplaylist_t *ps, int row, playItem_t *it) {
     }
 	int width, height;
 	draw_get_canvas_size ((uintptr_t)ps->backbuf, &width, &height);
-    if (it == playlist_current_ptr && ps->colwidths[0] > 0/* && !p_isstopped ()*/) {
+    if (it == playlist_current_ptr && ps->colwidths[0] > 0 && !p_isstopped ()) {
         uintptr_t pixbuf = p_ispaused () ? pause16_pixbuf : play16_pixbuf;
         draw_pixbuf ((uintptr_t)ps->backbuf, pixbuf, ps->colwidths[0]/2-8-ps->hscrollpos, (row - ps->scrollpos) * rowheight + rowheight/2 - 8, 0, 0, 16, 16);
     }
