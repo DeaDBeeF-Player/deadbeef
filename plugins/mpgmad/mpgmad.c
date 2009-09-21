@@ -645,8 +645,8 @@ cmp3_decode (void) {
 
         int cachepos = (buffer.cachefill + buffer.cachepos) & CACHE_MASK;
         int len = synth.pcm.length;
-        if (buffer.currentsample + len >= buffer.totalsamples) {
-            len = buffer.totalsamples - buffer.currentsample;
+        if (buffer.currentsample + len > buffer.endsample) {
+            len = buffer.endsample - buffer.currentsample + 1;
         }
         int i = min (synth.pcm.length, buffer.skipsamples);
         if (buffer.skipsamples > 0) {
@@ -682,8 +682,8 @@ cmp3_decode (void) {
         if (buffer.currentsample > buffer.totalsamples) {
             trace ("mpgmad: warning: extra samples were read after end of stream\n");
         }
-        if (buffer.readsize <= 0 || eof || buffer.currentsample >= buffer.totalsamples) {
-            if (buffer.currentsample >= buffer.totalsamples) {
+        if (buffer.readsize <= 0 || eof || buffer.currentsample > buffer.endsample) {
+            if (buffer.endsample >= buffer.endsample) {
                 trace ("finished at sample %d (%d)\n", buffer.currentsample, buffer.totalsamples);
             }
             break;
