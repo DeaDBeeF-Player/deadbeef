@@ -420,7 +420,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
                     // musiclen
                     fread (buf, 1, 4, buffer->file);
                     uint32_t musiclen = extract_i32 (buf);
-                    //trace ("lpf: %d, peaksignalamp: %f, radiogain: %d, audiophile: %d, startdelay: %d, enddelay: %d, mp3gain: %d, musiclen: %d\n", lpf, rg_peaksignalamp, rg_radio, rg_audiophile, startdelay, enddelay, mp3gain, musiclen);
+                    trace ("lpf: %d, peaksignalamp: %f, radiogain: %d, audiophile: %d, startdelay: %d, enddelay: %d, mp3gain: %d, musiclen: %d\n", lpf, rg_peaksignalamp, rg_radio, rg_audiophile, startdelay, enddelay, mp3gain, musiclen);
                     // skip crc
                     //fseek (buffer->file, 4, SEEK_CUR);
                     buffer->startdelay = startdelay;
@@ -428,6 +428,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
                 }
                 if (sample <= 0 && (flags&FRAMES_FLAG)) {
                     buffer->totalsamples -= buffer->enddelay;
+                    trace ("lame totalsamples: %d\n", buffer->totalsamples);
                     fseek (buffer->file, framepos+packetlength-4, SEEK_SET);
                     return 0;
                 }
@@ -453,7 +454,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
         if (sample >= 0 && scansamples + samples_per_frame >= sample) {
             fseek (buffer->file, -4, SEEK_CUR);
             buffer->currentsample = sample;
-            buffer->skipsamples = scansamples + samples_per_frame - sample;
+            buffer->skipsamples = sample - scansamples;
             return 0;
         }
         scansamples += samples_per_frame;
@@ -506,6 +507,8 @@ cmp3_init (DB_playItem_t *it) {
         buffer.timeend = it->duration;
         buffer.startsample = 0;
         buffer.endsample = it->duration * buffer.samplerate - 1;
+        buffer.skipsamples = buffer.startdelay;
+        buffer.currentsample = buffer.startdelay;
         fseek (buffer.file, buffer.startoffset, SEEK_SET);
     }
     if (buffer.samplerate == 0) {
@@ -571,6 +574,9 @@ MadFixedToFloat (mad_fixed_t Fixed) {
 
 static int
 cmp3_decode (void) {
+    if (buffer.currentsample >= buffer.totalsamples) {
+        return 0;
+    }
     int eof = 0;
 //    char *output = buffer.output;
     for (;;) {
@@ -643,7 +649,10 @@ cmp3_decode (void) {
             len = buffer.totalsamples - buffer.currentsample;
         }
         int i = min (synth.pcm.length, buffer.skipsamples);
-        buffer.skipsamples -= i;
+        if (buffer.skipsamples > 0) {
+            buffer.skipsamples -= i;
+            trace ("skipped %d samples\n", i);
+        }
         buffer.currentsample += len-i;
 		for(;i<len;i++)
 		{
@@ -674,6 +683,9 @@ cmp3_decode (void) {
             trace ("mpgmad: warning: extra samples were read after end of stream\n");
         }
         if (buffer.readsize <= 0 || eof || buffer.currentsample >= buffer.totalsamples) {
+            if (buffer.currentsample >= buffer.totalsamples) {
+                trace ("finished at sample %d (%d)\n", buffer.currentsample, buffer.totalsamples);
+            }
             break;
         }
     }
