@@ -25,6 +25,12 @@
 #endif
 #include "../../deadbeef.h"
 
+#define min(x,y) ((x)<(y)?(x):(y))
+#define max(x,y) ((x)>(y)?(x):(y))
+
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
+
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
 
@@ -36,6 +42,7 @@ static float timestart;
 static float timeend;
 static int startsample;
 static int endsample;
+static int currentsample;
 
 static void
 cvorbis_free (void);
@@ -63,6 +70,7 @@ cvorbis_init (DB_playItem_t *it) {
     plugin.info.channels = vi->channels;
     plugin.info.samplerate = vi->rate;
     plugin.info.readpos = 0;
+    currentsample = 0;
     if (it->timeend > 0) {
         timestart = it->timestart;
         timeend = it->timeend;
@@ -91,9 +99,13 @@ cvorbis_free (void) {
 
 static int
 cvorbis_read (char *bytes, int size) {
-    if (plugin.info.readpos >= (timeend - timestart)) {
+    if (currentsample > endsample) {
+        trace ("[1] ogg finished at sample %d (%d)\n", currentsample, ov_pcm_total (&vorbis_file, -1));
         return 0;
     }
+//    if (plugin.info.readpos >= (timeend - timestart)) {
+//        return 0;
+//    }
     int initsize = size;
     for (;;)
     {
@@ -102,43 +114,33 @@ cvorbis_read (char *bytes, int size) {
 #if WORDS_BIGENDIAN
         endianess = 1;
 #endif
-        long ret=ov_read (&vorbis_file, bytes, size, endianess, 2, 1, &cur_bit_stream);
-        if (ret < 0)
-        {
+        int nmax = endsample - currentsample + 1;
+        nmax *= vi->channels * 2;
+        int sz = min (size, nmax);
+        if (sz == 0) {
+            trace ("[2] ogg finished at sample %d (%d)\n", currentsample, ov_pcm_total (&vorbis_file, -1));
             break;
         }
-        else if (ret == 0) {
+        long ret=ov_read (&vorbis_file, bytes, sz, endianess, 2, 1, &cur_bit_stream);
+        if (ret <= 0)
+        {
+            // error or eof
             break;
         }
         else if (ret < size)
         {
+            currentsample += ret / (vi->channels * 2);
             size -= ret;
             bytes += ret;
         }
         else {
+            currentsample += ret / (vi->channels * 2);
             size = 0;
             break;
         }
     }
     plugin.info.readpos = ov_time_tell(&vorbis_file) - timestart;
-    if (plugin.info.readpos >= (timeend - timestart)) {
-        return 0;
-    }
-
     return initsize - size;
-}
-
-static int
-cvorbis_seek (float time) {
-    time += timestart;
-    if (!file) {
-        return -1;
-    }
-    int res = ov_time_seek (&vorbis_file, time);
-    if (res != 0 && res != OV_ENOSEEK)
-        return -1;
-    plugin.info.readpos = ov_time_tell(&vorbis_file) - timestart;
-    return 0;
 }
 
 static int
@@ -154,8 +156,14 @@ cvorbis_seek_sample (int sample) {
     if (tell != sample) {
         fprintf (stderr, "oggvorbis: failed to do sample-accurate seek (%d->%d)\n", sample, tell);
     }
+    currentsample = sample;
     plugin.info.readpos = ov_time_tell(&vorbis_file) - timestart;
     return 0;
+}
+
+static int
+cvorbis_seek (float time) {
+    return cvorbis_seek_sample (time * vi->rate);
 }
 
 static DB_playItem_t *
