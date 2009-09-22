@@ -1607,7 +1607,7 @@ ape_decode_frame(APEContext *s, void *data, int *data_size)
     s->samples -= blockstodecode;
 
     *data_size = (blockstodecode - skip) * 2 * s->channels;
-    ape_ctx.currentsample += blockstodecode - skip;
+//    ape_ctx.currentsample += blockstodecode - skip;
     bytes_used = s->samples ? s->ptr - s->last_ptr : s->packet_remaining;
 
     // shift everything
@@ -1677,10 +1677,14 @@ ffap_insert (DB_playItem_t *after, const char *fname) {
 
 static int
 ffap_read_int16 (char *buffer, int size) {
-    int inits = size;
-    if (plugin.info.readpos >= (timeend - timestart)) {
-        return 0;
+    if (ape_ctx.currentsample + size / (2 * ape_ctx.channels) > endsample) {
+        size = (endsample - ape_ctx.currentsample + 1) * 2 * ape_ctx.channels;
+        trace ("size truncated to %d bytes, cursample=%d, endsample=%d, totalsamples=%d\n", size, ape_ctx.currentsample, endsample, ape_ctx.totalsamples);
+        if (size <= 0) {
+            return 0;
+        }
     }
+    int inits = size;
     while (size > 0) {
         if (ape_ctx.remaining > 0) {
             int sz = min (size, ape_ctx.remaining);
@@ -1712,6 +1716,7 @@ ffap_read_int16 (char *buffer, int size) {
         }
         ape_ctx.remaining -= sz;
     }
+    ape_ctx.currentsample += (inits - size) / (2 * ape_ctx.channels);
     plugin.info.readpos = ape_ctx.currentsample / (float)plugin.info.samplerate - timestart;
     return inits - size;
 }

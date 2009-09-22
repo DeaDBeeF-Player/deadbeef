@@ -512,6 +512,7 @@ streamer_read_async (char *bytes, int size) {
             return initsize;
         }
         else  {
+            trace ("EOF, buns=%d\n", bytes_until_next_song);
             // that means EOF
             if (bytes_until_next_song < 0) {
                 trace ("finished streaming song, queueing next\n");
