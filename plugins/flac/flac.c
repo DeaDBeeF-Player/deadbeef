@@ -24,8 +24,8 @@
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -200,15 +200,6 @@ cflac_read_int16 (char *bytes, int size) {
             return 0;
         }
     }
-//    int nsamples = size / (plugin.info.channels * plugin.info.bps / 8);
-//    if (currentsample + nsamples > endsample) {
-//        nsamples = endsample-currentsample+1;
-//    }
-//    if (timeend > timestart) {
-//        if (plugin.info.readpos + timestart > timeend) {
-//            return 0;
-//        }
-//    }
     do {
         if (remaining) {
             int s = size * 2;
@@ -225,13 +216,8 @@ cflac_read_int16 (char *bytes, int size) {
                 memmove (buffer, &buffer[sz], remaining-sz);
             }
             remaining -= sz;
-            currentsample += sz / (2 * plugin.info.channels);
+            currentsample += sz / (4 * plugin.info.channels);
             plugin.info.readpos += (float)sz / (plugin.info.channels * plugin.info.samplerate * sizeof (float));
-//            if (timeend > timestart) {
-//                if (plugin.info.readpos + timestart > timeend) {
-//                    break;
-//                }
-//            }
         }
         if (!size) {
             break;
@@ -250,9 +236,10 @@ cflac_read_int16 (char *bytes, int size) {
 static int
 cflac_read_float32 (char *bytes, int size) {
     int initsize = size;
-    int nsamples = size / (plugin.info.channels * plugin.info.bps / 8);
-    if (timeend > timestart) {
-        if (plugin.info.readpos + timestart > timeend) {
+    if (size / (4 * plugin.info.channels) + currentsample > endsample) {
+        size = (endsample - currentsample + 1) * 4 * plugin.info.channels;
+        trace ("size truncated to %d bytes, cursample=%d, endsample=%d\n", size, currentsample, endsample);
+        if (size <= 0) {
             return 0;
         }
     }
@@ -266,12 +253,8 @@ cflac_read_float32 (char *bytes, int size) {
                 memmove (buffer, &buffer[sz], remaining-sz);
             }
             remaining -= sz;
+            currentsample += sz / (4 * plugin.info.channels);
             plugin.info.readpos += (float)sz / (plugin.info.channels * plugin.info.samplerate * sizeof (int32_t));
-            if (timeend > timestart) {
-                if (plugin.info.readpos + timestart > timeend) {
-                    break;
-                }
-            }
         }
         if (!size) {
             break;
@@ -507,7 +490,7 @@ static DB_decoder_t plugin = {
     .init = cflac_init,
     .free = cflac_free,
     .read_int16 = cflac_read_int16,
-//    .read_float32 = cflac_read_float32,
+    .read_float32 = cflac_read_float32,
     .seek = cflac_seek,
     .seek_sample = cflac_seek_sample,
     .insert = cflac_insert,
