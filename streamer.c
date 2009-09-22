@@ -63,8 +63,8 @@ playItem_t str_streaming_song;
 static playItem_t *orig_playing_song;
 static playItem_t *orig_streaming_song;
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 // playlist must call that whenever item was removed
 void

@@ -24,6 +24,9 @@
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
 
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
+
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
@@ -35,6 +38,7 @@ static float timestart;
 static float timeend;
 static int startsample;
 static int endsample;
+static int currentsample;
 
 typedef struct {
     DB_playItem_t *after;
@@ -154,18 +158,23 @@ cflac_init (DB_playItem_t *it) {
         cflac_free ();
         return -1;
     }
-    if (timeend > timestart || timeend < 0) {
+    if (it->timeend > 0) {
         timestart = it->timestart;
         timeend = it->timeend;
         startsample = it->startsample;
         endsample = it->endsample;
-        plugin.seek_sample (0);
+        if (plugin.seek_sample (0) < 0) {
+            cflac_free ();
+            return -1;
+        }
     }
     else {
         timestart = 0;
         timeend = it->duration;
         startsample = 0;
         endsample = cb.totalsamples-1;
+        currentsample = 0;
+        trace ("startsample=%d, endsample=%d\n", startsample, endsample);
     }
     plugin.info.readpos = 0;
 
@@ -184,12 +193,22 @@ cflac_free (void) {
 static int
 cflac_read_int16 (char *bytes, int size) {
     int initsize = size;
-    int nsamples = size / (plugin.info.channels * plugin.info.bps / 8);
-    if (timeend > timestart) {
-        if (plugin.info.readpos + timestart > timeend) {
+    if (size / (2 * plugin.info.channels) + currentsample > endsample) {
+        size = (endsample - currentsample + 1) * 2 * plugin.info.channels;
+        trace ("size truncated to %d bytes, cursample=%d, endsample=%d\n", size, currentsample, endsample);
+        if (size <= 0) {
             return 0;
         }
     }
+//    int nsamples = size / (plugin.info.channels * plugin.info.bps / 8);
+//    if (currentsample + nsamples > endsample) {
+//        nsamples = endsample-currentsample+1;
+//    }
+//    if (timeend > timestart) {
+//        if (plugin.info.readpos + timestart > timeend) {
+//            return 0;
+//        }
+//    }
     do {
         if (remaining) {
             int s = size * 2;
@@ -206,12 +225,13 @@ cflac_read_int16 (char *bytes, int size) {
                 memmove (buffer, &buffer[sz], remaining-sz);
             }
             remaining -= sz;
+            currentsample += sz / (2 * plugin.info.channels);
             plugin.info.readpos += (float)sz / (plugin.info.channels * plugin.info.samplerate * sizeof (float));
-            if (timeend > timestart) {
-                if (plugin.info.readpos + timestart > timeend) {
-                    break;
-                }
-            }
+//            if (timeend > timestart) {
+//                if (plugin.info.readpos + timestart > timeend) {
+//                    break;
+//                }
+//            }
         }
         if (!size) {
             break;
@@ -268,25 +288,20 @@ cflac_read_float32 (char *bytes, int size) {
 }
 
 static int
-cflac_seek (float time) {
-    time += timestart;
-    if (!FLAC__stream_decoder_seek_absolute (decoder, (FLAC__uint64)(time * plugin.info.samplerate))) {
-        return -1;
-    }
-    remaining = 0;
-    plugin.info.readpos = time - timestart;
-    return 0;
-}
-
-static int
 cflac_seek_sample (int sample) {
     sample += startsample;
     if (!FLAC__stream_decoder_seek_absolute (decoder, (FLAC__uint64)(sample))) {
         return -1;
     }
     remaining = 0;
+    currentsample = sample;
     plugin.info.readpos = (float)sample / plugin.info.samplerate - timestart;
     return 0;
+}
+
+static int
+cflac_seek (float time) {
+    return cflac_seek_sample (time * plugin.info.samplerate);
 }
 
 static FLAC__StreamDecoderWriteStatus
@@ -492,7 +507,7 @@ static DB_decoder_t plugin = {
     .init = cflac_init,
     .free = cflac_free,
     .read_int16 = cflac_read_int16,
-    .read_float32 = cflac_read_float32,
+//    .read_float32 = cflac_read_float32,
     .seek = cflac_seek,
     .seek_sample = cflac_seek_sample,
     .insert = cflac_insert,
