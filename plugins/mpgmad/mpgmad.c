@@ -22,8 +22,8 @@
 #include <stdlib.h>
 #include "../../deadbeef.h"
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -574,11 +574,14 @@ MadFixedToFloat (mad_fixed_t Fixed) {
 
 static int
 cmp3_decode (void) {
-    if (buffer.currentsample >= buffer.totalsamples) {
-        return 0;
+    if (buffer.currentsample + buffer.readsize / (4 * buffer.channels) > buffer.endsample) {
+        buffer.readsize = (buffer.endsample - buffer.currentsample + 1) * 4 * buffer.channels;
+        trace ("size truncated to %d bytes, cursample=%d, endsample=%d, totalsamples=%d\n", buffer.readsize, buffer.currentsample, buffer.endsample, buffer.totalsamples);
+        if (buffer.readsize <= 0) {
+            return 0;
+        }
     }
     int eof = 0;
-//    char *output = buffer.output;
     for (;;) {
         if (eof) {
             break;
@@ -683,7 +686,7 @@ cmp3_decode (void) {
             trace ("mpgmad: warning: extra samples were read after end of stream\n");
         }
         if (buffer.readsize <= 0 || eof || buffer.currentsample > buffer.endsample) {
-            if (buffer.endsample >= buffer.endsample) {
+            if (buffer.currentsample > buffer.endsample) {
                 trace ("finished at sample %d (%d)\n", buffer.currentsample, buffer.totalsamples);
             }
             break;
