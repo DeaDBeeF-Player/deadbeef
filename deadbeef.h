@@ -69,10 +69,8 @@ typedef struct {
     char *fname; // full pathname
     struct DB_decoder_s *decoder; // codec to use with this file
     int tracknum; // used for stuff like sid, nsf, cue (will be ignored by most codecs)
-    int startsample;
-    int endsample;
-    float timestart; // start time of cue track, or -1
-    float timeend; // end time of cue track, or -1
+    int startsample; // start sample of track, or -1 for auto
+    int endsample; // end sample of track, or -1 for auto
     float duration; // in seconds
     int shufflerating; // sort order for shuffle mode
     float playtime; // total playtime

@@ -170,24 +170,25 @@ pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, c
     float f_index01 = index01[0] ? pl_cue_parse_time (index01) : 0;
     float f_pregap = pregap[0] ? pl_cue_parse_time (pregap) : 0;
     if (*prev) {
+        float prevtime = 0;
         if (pregap[0] && index01[0]) {
             // PREGAP command
-            (*prev)->timeend = f_index01 - f_pregap;
+            prevtime = f_index01 - f_pregap;
         }
         else if (index00[0]) {
             // pregap in index 00
-            (*prev)->timeend = f_index00;
+            prevtime = f_index00;
         }
         else if (index01[0]) {
             // no pregap
-            (*prev)->timeend = f_index01;
+            prevtime = f_index01;
         }
         else {
             return after;
         }
-        (*prev)->endsample = ((*prev)->timeend * samplerate) - 1;
+        (*prev)->endsample = (prevtime * samplerate) - 1;
         trace ("calc endsample=%d, timeend=%f, samplerate=%d\n", (*prev)->endsample, (*prev)->timeend, samplerate);
-        (*prev)->duration = (*prev)->timeend - (*prev)->timestart;
+        (*prev)->duration = (float)((*prev)->endsample - (*prev)->startsample + 1) / samplerate;
     }
     // non-compliant hack to handle tracks which only store pregap info
     if (!index01[0]) {
@@ -199,15 +200,16 @@ pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, c
     it->decoder = decoder;
     it->fname = strdup (fname);
     it->tracknum = atoi (track);
+    float t = 0;
     if (index01[0]) {
-        it->timestart = f_index01;
+        t = f_index01;
     }
     else {
-        it->timestart = f_index00;
+        t = f_index00;
     }
-    it->startsample = it->timestart * samplerate;
+    it->startsample = t * samplerate;
 
-    it->timeend = -1; // will be filled by next read, or by decoder
+    it->endsample = -1; // will be filled by next read, or by decoder
     it->filetype = ftype;
     after = pl_insert_item (after, it);
     pl_add_meta (it, "artist", performer);
@@ -295,8 +297,7 @@ pl_insert_cue_from_buffer (playItem_t *after, const char *fname, const uint8_t *
     after = pl_process_cue_track (after, fname, &prev, track, index00, index01, pregap, title, performer, albumtitle, decoder, ftype, samplerate);
     if (after) {
         after->endsample = numsamples-1;
-        after->timeend = (float)numsamples/samplerate;
-        after->duration = after->timeend - after->timestart;
+        after->duration = (float)(after->endsample - after->startsample + 1) / samplerate;
     }
     return after;
 }
@@ -602,8 +603,6 @@ pl_item_copy (playItem_t *out, playItem_t *it) {
     out->tracknum = it->tracknum;
     out->startsample = it->startsample;
     out->endsample = it->endsample;
-    out->timestart = it->timestart;
-    out->timeend = it->timeend;
     out->duration = it->duration;
     out->shufflerating = it->shufflerating;
     out->filetype = it->filetype;
@@ -1043,12 +1042,6 @@ pl_save (const char *fname) {
         if (fwrite (&it->endsample, 1, 4, fp) != 4) {
             goto save_fail;
         }
-        if (fwrite (&it->timestart, 1, 4, fp) != 4) {
-            goto save_fail;
-        }
-        if (fwrite (&it->timeend, 1, 4, fp) != 4) {
-            goto save_fail;
-        }
         if (fwrite (&it->duration, 1, 4, fp) != 4) {
             goto save_fail;
         }
@@ -1184,14 +1177,6 @@ pl_load (const char *fname) {
             if (fread (&it->endsample, 1, 4, fp) != 4) {
                 goto load_fail;
             }
-        }
-        // timestart
-        if (fread (&it->timestart, 1, 4, fp) != 4) {
-            goto load_fail;
-        }
-        // timeend
-        if (fread (&it->timeend, 1, 4, fp) != 4) {
-            goto load_fail;
         }
         // duration
         if (fread (&it->duration, 1, 4, fp) != 4) {

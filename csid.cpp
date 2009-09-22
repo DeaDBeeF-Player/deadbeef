@@ -495,8 +495,6 @@ csid_insert (DB_playItem_t *after, const char *fname) {
             it->decoder = &plugin;
             it->fname = strdup (fname);
             it->tracknum = s;
-            it->timestart = 0;
-            it->timeend = 0;
             SidTuneInfo sidinfo;
             tune->getInfo (sidinfo);
             int i = sidinfo.numberOfInfoStrings;

@@ -56,10 +56,6 @@ static DB_functions_t *deadbeef;
 typedef struct {
     FILE *file;
 
-    // cuesheet info
-    float timestart;
-    float timeend;
-
 //    // input buffer, for MPEG data
 //    // FIXME: this should go away if reading happens per-frame
     char input[READBUFFER];
@@ -494,9 +490,7 @@ cmp3_init (DB_playItem_t *it) {
     plugin.info.readpos = 0;
 
     cmp3_scan_stream (&buffer, -1); // scan entire stream, calc duration
-	if (it->timeend > 0) {
-        buffer.timestart = it->timestart;
-        buffer.timeend = it->timeend;
+	if (it->endsample > 0) {
         buffer.startsample = it->startsample;
         buffer.endsample = it->endsample;
         // that comes from cue, don't calc duration, just seek and play
@@ -504,8 +498,6 @@ cmp3_init (DB_playItem_t *it) {
     }
     else {
         it->duration = buffer.duration;
-        buffer.timestart = 0;
-        buffer.timeend = it->duration;
         buffer.startsample = 0;
         buffer.endsample = buffer.totalsamples-1;
         buffer.skipsamples = buffer.startdelay;
@@ -711,15 +703,12 @@ static int
 cmp3_read (char *bytes, int size) {
     int result;
     int ret = 0;
-    if (plugin.info.readpos >= (buffer.timeend - buffer.timestart)) {
-        return 0;
-    }
     int nsamples = size / 2 / plugin.info.channels;
     size *= 2; // convert to mad sample size
     if (buffer.cachefill < size) {
         buffer.readsize = (size - buffer.cachefill);
         cmp3_decode ();
-        plugin.info.readpos = (float)buffer.currentsample / buffer.samplerate - buffer.timestart;
+        plugin.info.readpos = (float)(buffer.currentsample-buffer.startsample) / buffer.samplerate;
     }
     if (buffer.cachefill > 0) {
         int sz = min (size, buffer.cachefill);
@@ -749,9 +738,6 @@ cmp3_read (char *bytes, int size) {
             buffer.cachepos = 0;
         }
     }
-    if (plugin.info.readpos >= (buffer.timeend - buffer.timestart)) {
-        return 0;
-    }
     return ret;
 }
 
@@ -759,15 +745,12 @@ static int
 cmp3_read_float32 (char *bytes, int size) {
     int result;
     int ret = 0;
-    if (plugin.info.readpos >= (buffer.timeend - buffer.timestart)) {
-        return 0;
-    }
     int nsamples = size / 4 / plugin.info.channels;
     if (buffer.cachefill < size) {
         buffer.readsize = (size - buffer.cachefill);
         //printf ("decoding %d bytes using read_float32\n", buffer.readsize);
         cmp3_decode ();
-        plugin.info.readpos = (float)buffer.currentsample / buffer.samplerate - buffer.timestart;
+        plugin.info.readpos = (float)(buffer.currentsample - buffer.startsample) / buffer.samplerate;
     }
     if (buffer.cachefill > 0) {
         int sz = min (size, buffer.cachefill);
@@ -795,9 +778,6 @@ cmp3_read_float32 (char *bytes, int size) {
         else {
             buffer.cachefill = 0;
         }
-    }
-    if (plugin.info.readpos >= (buffer.timeend - buffer.timestart)) {
-        return 0;
     }
     return ret;
 }
@@ -841,7 +821,7 @@ cmp3_seek_sample (int sample) {
 	mad_stream_init(&stream);
 	mad_frame_init(&frame);
 	mad_synth_init(&synth);
-    plugin.info.readpos = (float)buffer.currentsample / buffer.samplerate - buffer.timestart;
+    plugin.info.readpos = (float)(buffer.currentsample - buffer.startsample) / buffer.samplerate;
     return 0;
 }
 

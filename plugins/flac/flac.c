@@ -158,9 +158,7 @@ cflac_init (DB_playItem_t *it) {
         cflac_free ();
         return -1;
     }
-    if (it->timeend > 0) {
-        timestart = it->timestart;
-        timeend = it->timeend;
+    if (it->endsample > 0) {
         startsample = it->startsample;
         endsample = it->endsample;
         if (plugin.seek_sample (0) < 0) {
@@ -169,8 +167,6 @@ cflac_init (DB_playItem_t *it) {
         }
     }
     else {
-        timestart = 0;
-        timeend = it->duration;
         startsample = 0;
         endsample = cb.totalsamples-1;
         currentsample = 0;
@@ -430,8 +426,8 @@ cflac_insert (DB_playItem_t *after, const char *fname) {
     // try external cue
     DB_playItem_t *cue_after = deadbeef->pl_insert_cue (after, fname, &plugin, "flac", cb.totalsamples, cb.samplerate);
     if (cue_after) {
-        cue_after->timeend = (float)cb.totalsamples/cb.samplerate;
-        cue_after->duration = cue_after->timeend - cue_after->timestart;
+        cue_after->endsample = cb.totalsamples-1;
+        cue_after->duration = (cue_after->endsample - cue_after->startsample+1) * cb.samplerate;
         return cue_after;
     }
     decoder = FLAC__stream_decoder_new();
@@ -445,9 +441,6 @@ cflac_insert (DB_playItem_t *after, const char *fname) {
     it = deadbeef->pl_item_alloc ();
     it->decoder = &plugin;
     it->fname = strdup (fname);
-    it->tracknum = 0;
-    it->timestart = 0;
-    it->timeend = 0;
     status = FLAC__stream_decoder_init_file (decoder, fname, cflac_init_write_callback, cflac_init_metadata_callback, cflac_init_error_callback, it);
     if (status != FLAC__STREAM_DECODER_INIT_STATUS_OK || cflac_init_stop_decoding) {
         goto cflac_insert_fail;

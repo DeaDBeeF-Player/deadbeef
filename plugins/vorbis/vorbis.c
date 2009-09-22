@@ -71,16 +71,12 @@ cvorbis_init (DB_playItem_t *it) {
     plugin.info.samplerate = vi->rate;
     plugin.info.readpos = 0;
     currentsample = 0;
-    if (it->timeend > 0) {
-        timestart = it->timestart;
-        timeend = it->timeend;
+    if (it->endsample > 0) {
         startsample = it->startsample;
         endsample = it->endsample;
         plugin.seek_sample (0);
     }
     else {
-        timestart = 0;
-        timeend = it->duration;
         startsample = 0;
         endsample = ov_pcm_total (&vorbis_file, -1)-1;
     }

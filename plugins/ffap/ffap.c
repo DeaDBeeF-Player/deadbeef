@@ -44,8 +44,8 @@
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
 
-static float timestart;
-static float timeend;
+//static float timestart;
+//static float timeend;
 static int startsample;
 static int endsample;
 
@@ -702,17 +702,17 @@ ffap_init(DB_playItem_t *it)
     plugin.info.samplerate = ape_ctx.samplerate;
     plugin.info.channels = ape_ctx.channels;
     plugin.info.readpos = 0;
-    if (it->timeend > 0) {
+    if (it->endsample > 0) {
         startsample = it->startsample;
         endsample = it->endsample;
-        timestart = it->timestart;
-        timeend = it->timeend;
+//        timestart = it->timestart;
+//        timeend = it->timeend;
         plugin.seek_sample (0);
-        trace ("start: %d/%f, end: %d/%f\n", startsample, timestart, endsample, timeend);
+        //trace ("start: %d/%f, end: %d/%f\n", startsample, timestart, endsample, timeend);
     }
     else {
-        timestart = 0;
-        timeend = it->duration;
+        //timestart = 0;
+        //timeend = it->duration;
         startsample = 0;
         endsample = ape_ctx.totalsamples-1;
     }
@@ -1717,7 +1717,7 @@ ffap_read_int16 (char *buffer, int size) {
         ape_ctx.remaining -= sz;
     }
     ape_ctx.currentsample += (inits - size) / (2 * ape_ctx.channels);
-    plugin.info.readpos = ape_ctx.currentsample / (float)plugin.info.samplerate - timestart;
+    plugin.info.readpos = (ape_ctx.currentsample-startsample) / (float)plugin.info.samplerate;
     return inits - size;
 }
 
@@ -1742,30 +1742,13 @@ ffap_seek_sample (int sample) {
     ape_ctx.packet_remaining = 0;
     ape_ctx.samples = 0;
     ape_ctx.currentsample = newsample;
-    plugin.info.readpos = (float)newsample/ape_ctx.samplerate-timestart;
+    plugin.info.readpos = (float)(newsample-startsample)/ape_ctx.samplerate;
     return 0;
 }
 
 static int
 ffap_seek (float seconds) {
-    seconds += timestart;
-    uint32_t newsample = seconds * plugin.info.samplerate;
-    if (newsample > ape_ctx.totalsamples) {
-        return -1;
-    }
-    int nframe = newsample / ape_ctx.blocksperframe;
-    if (nframe >= ape_ctx.totalframes) {
-        return -1;
-    }
-    ape_ctx.currentframe = nframe;
-    ape_ctx.samplestoskip = newsample - nframe * ape_ctx.blocksperframe;
-
-    // reset decoder
-    ape_ctx.packet_remaining = 0;
-    ape_ctx.samples = 0;
-    ape_ctx.currentsample = newsample;
-    plugin.info.readpos = (float)newsample / ape_ctx.samplerate - timestart;
-    return 0;
+    return ffap_seek_sample (seconds * plugin.info.samplerate);
 }
 
 static const char *exts[] = { "ape", NULL };
