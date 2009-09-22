@@ -22,8 +22,8 @@
 #include <stdlib.h>
 #include "../../deadbeef.h"
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -332,7 +332,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
             buffer->frameduration = dur;
             buffer->channels = nchannels;
             buffer->bitspersample = 16;
-            //fprintf (stderr, "frame %d(@%d) mpeg v%d layer %d bitrate %d samplerate %d packetlength %d framedur %f channels %d\n", nframe, pos, ver, layer, bitrate, samplerate, packetlength, dur, nchannels);
+//            fprintf (stderr, "frame %d(@%d) mpeg v%d layer %d bitrate %d samplerate %d packetlength %d framedur %f channels %d\n", nframe, pos, ver, layer, bitrate, samplerate, packetlength, dur, nchannels);
         }
         // try to read xing/info tag (only on initial scans)
         if (sample <= 0 && !got_xing_header)
@@ -441,6 +441,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
                 buffer->duration = nframes * samples_per_frame / samplerate;
                 buffer->totalsamples = nframes * samples_per_frame;
                 buffer->samplerate = samplerate;
+//                trace ("packetlength=%d, fsize=%d, nframes=%d, samples_per_frame=%d, samplerate=%d, duration=%f, totalsamples=%d\n", packetlength, sz, nframes, samples_per_frame, samplerate, buffer->duration, buffer->totalsamples);
 
                 if (sample == 0) {
                     fseek (buffer->file, framepos+packetlength-4, SEEK_SET);
@@ -863,6 +864,10 @@ cmp3_insert (DB_playItem_t *after, const char *fname) {
     buffer_t buffer;
     memset (&buffer, 0, sizeof (buffer));
     buffer.file = fp;
+    int skip = deadbeef->junk_get_leading_size (buffer.file);
+    if (skip > 0) {
+        fseek(buffer.file, skip, SEEK_SET);
+    }
     // calc approx. mp3 duration 
     int res = cmp3_scan_stream (&buffer, 0);
     if (res < 0) {
