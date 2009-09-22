@@ -506,7 +506,7 @@ cmp3_init (DB_playItem_t *it) {
         buffer.timestart = 0;
         buffer.timeend = it->duration;
         buffer.startsample = 0;
-        buffer.endsample = it->duration * buffer.samplerate - 1;
+        buffer.endsample = buffer.totalsamples-1;
         buffer.skipsamples = buffer.startdelay;
         buffer.currentsample = buffer.startdelay;
         fseek (buffer.file, buffer.startoffset, SEEK_SET);
@@ -807,7 +807,8 @@ cmp3_seek_sample (int sample) {
         return -1;
     }
     sample += buffer.startsample + buffer.startdelay;
-    if (sample >= buffer.totalsamples) {
+    if (sample > buffer.endsample) {
+        trace ("seek sample %d is beyond end of track (%d)\n", sample, buffer.endsample);
         return -1; // eof
     }
     // restart file, and load until we hit required pos
@@ -832,6 +833,7 @@ cmp3_seek_sample (int sample) {
     }
 
     if (cmp3_scan_stream (&buffer, sample) == -1) {
+        trace ("failed to seek to sample %d\n", sample);
         plugin.info.readpos = 0;
         return -1;
     }
