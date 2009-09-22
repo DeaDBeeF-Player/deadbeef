@@ -99,13 +99,13 @@ cvorbis_free (void) {
 
 static int
 cvorbis_read (char *bytes, int size) {
-    if (currentsample > endsample) {
-        trace ("[1] ogg finished at sample %d (%d)\n", currentsample, ov_pcm_total (&vorbis_file, -1));
-        return 0;
+    if (currentsample + size / (2 * plugin.info.channels) > endsample) {
+        size = (endsample - currentsample + 1) * 2 * plugin.info.channels;
+        trace ("size truncated to %d bytes, cursample=%d, endsample=%d, totalsamples=%d\n", size, currentsample, endsample, ov_pcm_total (&vorbis_file, -1));
+        if (size <= 0) {
+            return 0;
+        }
     }
-//    if (plugin.info.readpos >= (timeend - timestart)) {
-//        return 0;
-//    }
     int initsize = size;
     for (;;)
     {
@@ -114,14 +114,7 @@ cvorbis_read (char *bytes, int size) {
 #if WORDS_BIGENDIAN
         endianess = 1;
 #endif
-        int nmax = endsample - currentsample + 1;
-        nmax *= vi->channels * 2;
-        int sz = min (size, nmax);
-        if (sz == 0) {
-            trace ("[2] ogg finished at sample %d (%d)\n", currentsample, ov_pcm_total (&vorbis_file, -1));
-            break;
-        }
-        long ret=ov_read (&vorbis_file, bytes, sz, endianess, 2, 1, &cur_bit_stream);
+        long ret=ov_read (&vorbis_file, bytes, size, endianess, 2, 1, &cur_bit_stream);
         if (ret <= 0)
         {
             // error or eof
