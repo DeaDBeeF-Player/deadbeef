@@ -850,18 +850,48 @@ junk_read_id3v2 (playItem_t *it, FILE *fp) {
             else if (!strcmp (frameid, "COMM")) {
             }
             else if (!strcmp (frameid, "TXXX")) {
-#if 0
-                uint32_t peak_amp = extract_i32 (readptr);
-                readptr += 4;
-
-                uint16_t radio_rga = extract_i16 (readptr);
-                readptr += 2;
-
-                uint16_t audiophile_rga = extract_i16 (readptr);
-                readptr += 2;
-
-                trace ("got RGAD tag, %d %d %d\n", peak_amp, radio_rga, audiophile_rga);
-#endif
+                if (sz < 2) {
+                    trace ("TXXX frame is too short, skipped\n");
+                    readptr += sz; // bad tag
+                    continue;
+                }
+                uint8_t *p = readptr;
+                uint8_t encoding = *p;
+                p++;
+                uint8_t *desc = p;
+                int desc_sz = 0;
+                while (*p && p - readptr < sz) {
+                    p++;
+                    desc_sz++;
+                }
+                p++;
+                if (p - readptr >= sz) {
+                    trace ("bad TXXX frame, skipped\n");
+                    readptr += sz; // bad tag
+                    continue;
+                }
+                char desc_s[desc_sz+2];
+                id3v2_string_read (version_major, desc_s, desc_sz, unsync, desc);
+                //trace ("desc=%s\n", desc_s);
+                char value_s[readptr+sz-p+2];
+                id3v2_string_read (version_major, value_s, readptr+sz-p, unsync, p);
+                //trace ("value=%s\n", value_s);
+                if (!strcasecmp (desc_s, "replaygain_album_gain")) {
+                    it->replaygain_album_gain = atof (value_s);
+                    trace ("%s=%s (%f)\n", desc_s, value_s, it->replaygain_album_gain);
+                }
+                else if (!strcasecmp (desc_s, "replaygain_album_peak")) {
+                    it->replaygain_album_peak = atof (value_s);
+                    trace ("%s=%s (%f)\n", desc_s, value_s, it->replaygain_album_peak);
+                }
+                else if (!strcasecmp (desc_s, "replaygain_track_gain")) {
+                    it->replaygain_track_gain = atof (value_s);
+                    trace ("%s=%s (%f)\n", desc_s, value_s, it->replaygain_track_gain);
+                }
+                else if (!strcasecmp (desc_s, "replaygain_track_peak")) {
+                    it->replaygain_track_peak = atof (value_s);
+                    trace ("%s=%s (%f)\n", desc_s, value_s, it->replaygain_track_peak);
+                }
             }
             readptr += sz;
         }

@@ -778,6 +778,11 @@ gtkpl_keypress (gtkplaylist_t *ps, int keyval, int state) {
             newscroll = ps->row - widget->allocation.height / rowheight + 1;
         }
     }
+    else if (keyval == GDK_r) {
+        extern int replaygain;
+        replaygain = 1-replaygain;
+        fprintf (stderr, "replaygain=%d\n", replaygain);
+    }
     else if (keyval == GDK_Up && ps->row > 0) {
         ps->row--;
         if (ps->row < ps->scrollpos) {

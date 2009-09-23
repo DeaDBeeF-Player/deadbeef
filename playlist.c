@@ -40,8 +40,8 @@
 #define PLAYLIST_MAJOR_VER 1
 #define PLAYLIST_MINOR_VER 1
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 #define SKIP_BLANK_CUE_TRACKS 1
 
@@ -606,6 +606,10 @@ pl_item_copy (playItem_t *out, playItem_t *it) {
     out->duration = it->duration;
     out->shufflerating = it->shufflerating;
     out->filetype = it->filetype;
+    out->replaygain_album_gain = it->replaygain_album_gain;
+    out->replaygain_album_peak = it->replaygain_album_peak;
+    out->replaygain_track_gain = it->replaygain_track_gain;
+    out->replaygain_track_peak = it->replaygain_track_peak;
     out->started_timestamp = it->started_timestamp;
     out->next[PL_MAIN] = it->next[PL_MAIN];
     out->prev[PL_MAIN] = it->prev[PL_MAIN];
@@ -1054,6 +1058,19 @@ pl_save (const char *fname) {
                 goto save_fail;
             }
         }
+        if (fwrite (&it->replaygain_album_gain, 1, 4, fp) != 4) {
+            goto save_fail;
+        }
+        if (fwrite (&it->replaygain_album_peak, 1, 4, fp) != 4) {
+            goto save_fail;
+        }
+        if (fwrite (&it->replaygain_track_gain, 1, 4, fp) != 4) {
+            goto save_fail;
+        }
+        if (fwrite (&it->replaygain_track_peak, 1, 4, fp) != 4) {
+            goto save_fail;
+        }
+
         int16_t nm = 0;
         metaInfo_t *m;
         for (m = it->meta; m; m = m->next) {
@@ -1111,13 +1128,13 @@ pl_load (const char *fname) {
     if (fread (&majorver, 1, 1, fp) != 1) {
         goto load_fail;
     }
-    if (majorver > PLAYLIST_MAJOR_VER) {
+    if (majorver != PLAYLIST_MAJOR_VER) {
         goto load_fail;
     }
     if (fread (&minorver, 1, 1, fp) != 1) {
         goto load_fail;
     }
-    if (minorver > PLAYLIST_MINOR_VER) {
+    if (minorver != PLAYLIST_MINOR_VER) {
         goto load_fail;
     }
     uint32_t cnt;
@@ -1167,16 +1184,13 @@ pl_load (const char *fname) {
             goto load_fail;
         }
         it->tracknum = l;
-        if (minorver>=1) {
-            // dbpl-1.1 and later
-            // startsample
-            if (fread (&it->startsample, 1, 4, fp) != 4) {
-                goto load_fail;
-            }
-            // endsample
-            if (fread (&it->endsample, 1, 4, fp) != 4) {
-                goto load_fail;
-            }
+        // startsample
+        if (fread (&it->startsample, 1, 4, fp) != 4) {
+            goto load_fail;
+        }
+        // endsample
+        if (fread (&it->endsample, 1, 4, fp) != 4) {
+            goto load_fail;
         }
         // duration
         if (fread (&it->duration, 1, 4, fp) != 4) {
@@ -1201,6 +1215,18 @@ pl_load (const char *fname) {
                     }
                 }
             }
+        }
+        if (fread (&it->replaygain_album_gain, 1, 4, fp) != 4) {
+            goto load_fail;
+        }
+        if (fread (&it->replaygain_album_peak, 1, 4, fp) != 4) {
+            goto load_fail;
+        }
+        if (fread (&it->replaygain_track_gain, 1, 4, fp) != 4) {
+            goto load_fail;
+        }
+        if (fread (&it->replaygain_track_peak, 1, 4, fp) != 4) {
+            goto load_fail;
         }
         // printf ("loading file %s\n", it->fname);
         int16_t nm = 0;
@@ -1256,6 +1282,7 @@ pl_load (const char *fname) {
     fclose (fp);
     return 0;
 load_fail:
+    trace ("playlist load fail!\n");
     fclose (fp);
     if (it) {
         pl_item_free (it);

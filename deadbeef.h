@@ -76,6 +76,10 @@ typedef struct {
     float playtime; // total playtime
     time_t started_timestamp; // result of calling time(NULL)
     const char *filetype; // e.g. MP3 or OGG
+    float replaygain_album_gain;
+    float replaygain_album_peak;
+    float replaygain_track_gain;
+    float replaygain_track_peak;
 } DB_playItem_t;
 
 // plugin types

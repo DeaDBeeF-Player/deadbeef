@@ -34,6 +34,7 @@
 #include "conf.h"
 #include "plugins.h"
 #include "optmath.h"
+#include "volume.h"
 
 static intptr_t streamer_tid;
 static SRC_STATE *src;
@@ -371,6 +372,52 @@ streamer_reset (int full) { // must be called when current song changes by exter
     src_reset (src);
 }
 
+int replaygain = 0;
+
+static void
+apply_replay_gain_int16 (playItem_t *it, char *bytes, int size) {
+    if (!replaygain) {
+        return;
+    }
+    if (it->replaygain_track_gain != 0) {
+        int vol = db_to_amp (str_streaming_song.replaygain_track_gain) * 1000;
+        int16_t *s = (int16_t*)bytes;
+        for (int j = 0; j < size/2; j++) {
+            int32_t sample = ((int32_t)*s) * vol / 1000;
+            if (sample > 0x7fff) {
+                sample = 0x7fff;
+            }
+            else if (sample < -0x8000) {
+                sample = -0x8000;
+            }
+            *s = (int16_t)sample;
+            s++;
+        }
+    }
+}
+
+static void
+apply_replay_gain_float32 (playItem_t *it, char *bytes, int size) {
+    if (!replaygain) {
+        return;
+    }
+    if (it->replaygain_track_gain != 0) {
+        float vol = db_to_amp (str_streaming_song.replaygain_track_gain);
+        float *s = (float*)bytes;
+        for (int j = 0; j < size/4; j++) {
+            float sample = ((float)*s) * vol;
+            if (sample > 1.f) {
+                sample = 1.f;
+            }
+            else if (sample < -1.f) {
+                sample = -1.f;
+            }
+            *s = sample;
+            s++;
+        }
+    }
+}
+
 // returns number of bytes been read
 static int
 streamer_read_async (char *bytes, int size) {
@@ -393,10 +440,12 @@ streamer_read_async (char *bytes, int size) {
                 if (decoder->info.channels == 2) {
                     bytesread = decoder->read_int16 (bytes, size);
                     codec_unlock ();
+                    apply_replay_gain_int16 (&str_streaming_song, bytes, size);
                 }
                 else {
                     bytesread = decoder->read_int16 (g_readbuffer, size/2);
                     codec_unlock ();
+                    apply_replay_gain_int16 (&str_streaming_song, g_readbuffer, size/2);
                     for (i = 0; i < size/4; i++) {
                         int16_t sample = (int16_t)(((int32_t)(((int16_t*)g_readbuffer)[i])));
                         ((int16_t*)bytes)[i*2+0] = sample;
@@ -426,6 +475,7 @@ streamer_read_async (char *bytes, int size) {
 //                    }
                     if (!decoder->read_float32) {
                         bytesread = decoder->read_int16 (g_readbuffer, nbytes);
+                        apply_replay_gain_int16 (&str_streaming_song, g_readbuffer, nbytes/2);
                     }
                     else {
                         samplesize = 4;
@@ -457,6 +507,7 @@ streamer_read_async (char *bytes, int size) {
                             codec_lock ();
                             bytesread = decoder->read_float32 (g_readbuffer, nbytes*2);
                             codec_unlock ();
+                            apply_replay_gain_float32 (&str_streaming_song, g_readbuffer, nbytes*2);
                             nsamples = bytesread / (samplesize * nchannels) + codecleft;
                             for (i = 0; i < (nsamples - codecleft); i++) {
                                 fbuffer[i*2+0] = ((float *)g_readbuffer)[i];
@@ -467,6 +518,7 @@ streamer_read_async (char *bytes, int size) {
                             codec_lock ();
                             bytesread = decoder->read_float32 ((char *)fbuffer, nbytes*2);
                             codec_unlock ();
+                            apply_replay_gain_float32 (&str_streaming_song, (char *)fbuffer, nbytes*2);
                             nsamples = bytesread / (samplesize * nchannels) + codecleft;
                         }
                     }
