@@ -426,8 +426,6 @@ cflac_insert (DB_playItem_t *after, const char *fname) {
     // try external cue
     DB_playItem_t *cue_after = deadbeef->pl_insert_cue (after, fname, &plugin, "flac", cb.totalsamples, cb.samplerate);
     if (cue_after) {
-        cue_after->endsample = cb.totalsamples-1;
-        cue_after->duration = (cue_after->endsample - cue_after->startsample+1) * cb.samplerate;
         return cue_after;
     }
     decoder = FLAC__stream_decoder_new();

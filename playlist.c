@@ -187,7 +187,7 @@ pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, c
             return after;
         }
         (*prev)->endsample = (prevtime * samplerate) - 1;
-        trace ("calc endsample=%d, timeend=%f, samplerate=%d\n", (*prev)->endsample, (*prev)->timeend, samplerate);
+        trace ("calc endsample=%d, prevtime=%f, samplerate=%d\n", (*prev)->endsample,  prevtime, samplerate);
         (*prev)->duration = (float)((*prev)->endsample - (*prev)->startsample + 1) / samplerate;
     }
     // non-compliant hack to handle tracks which only store pregap info
