@@ -753,7 +753,7 @@ junk_read_id3v2 (playItem_t *it, FILE *fp) {
                 err = 1;
                 break;
             }
-            uint32_t sz = (readptr[3] << 0) | (readptr[2] << 8) | (readptr[1] << 16) | (readptr[0] << 24);
+            uint32_t sz = (readptr[3] << 0) | (readptr[2] << 7) | (readptr[1] << 14) | (readptr[0] << 21);
             readptr += 4;
             trace ("got frame %s, size %d, pos %d, tagsize %d\n", frameid, sz, readptr-tag, size);
             if (readptr - tag >= size - sz) {
