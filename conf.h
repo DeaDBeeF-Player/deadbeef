@@ -25,6 +25,7 @@ extern char conf_hvsc_path[1024];
 extern int conf_hvsc_enable;
 extern char conf_blacklist_plugins[1024];
 extern int conf_close_send_to_tray;
+extern int conf_replaygain_mode;
 
 int
 conf_load (void);

@@ -372,15 +372,27 @@ streamer_reset (int full) { // must be called when current song changes by exter
     src_reset (src);
 }
 
-int replaygain = 0;
+int replaygain = 1;
 
 static void
 apply_replay_gain_int16 (playItem_t *it, char *bytes, int size) {
-    if (!replaygain) {
+    if (!replaygain || !conf_replaygain_mode) {
         return;
     }
+    int vol = 1000;
+    if (conf_replaygain_mode == 1) {
+        if (it->replaygain_track_gain == 0) {
+            return;
+        }
+        vol = db_to_amp (str_streaming_song.replaygain_track_gain) * 1000;
+    }
+    else if (conf_replaygain_mode == 2) {
+        if (it->replaygain_album_gain == 0) {
+            return;
+        }
+        vol = db_to_amp (str_streaming_song.replaygain_album_gain) * 1000;
+    }
     if (it->replaygain_track_gain != 0) {
-        int vol = db_to_amp (str_streaming_song.replaygain_track_gain) * 1000;
         int16_t *s = (int16_t*)bytes;
         for (int j = 0; j < size/2; j++) {
             int32_t sample = ((int32_t)*s) * vol / 1000;
@@ -398,11 +410,23 @@ apply_replay_gain_int16 (playItem_t *it, char *bytes, int size) {
 
 static void
 apply_replay_gain_float32 (playItem_t *it, char *bytes, int size) {
-    if (!replaygain) {
+    if (!replaygain && !conf_replaygain_mode) {
         return;
     }
+    float vol = 1;
+    if (conf_replaygain_mode == 1) {
+        if (it->replaygain_track_gain == 0) {
+            return;
+        }
+        vol = db_to_amp (it->replaygain_track_gain);
+    }
+    else if (conf_replaygain_mode == 2) {
+        if (it->replaygain_album_gain == 0) {
+            return;
+        }
+        vol = db_to_amp (it->replaygain_album_gain);
+    }
     if (it->replaygain_track_gain != 0) {
-        float vol = db_to_amp (str_streaming_song.replaygain_track_gain);
         float *s = (float*)bytes;
         for (int j = 0; j < size/4; j++) {
             float sample = ((float)*s) * vol;
