@@ -586,6 +586,22 @@ junk_read_ape (playItem_t *it, FILE *fp) {
             else if (!strcasecmp (key, "comment")) {
                 pl_add_meta (it, "genre", value);
             }
+            else if (!strncasecmp (key, "replaygain_album_gain", 21)) {
+                it->replaygain_album_gain = atof (value);
+                trace ("album_gain=%s\n", value);
+            }
+            else if (!strncasecmp (key, "replaygain_album_peak", 21)) {
+                it->replaygain_album_peak = atof (value);
+                trace ("album_peak=%s\n", value);
+            }
+            else if (!strncasecmp (key, "replaygain_track_gain", 21)) {
+                it->replaygain_track_gain = atof (value);
+                trace ("track_gain=%s\n", value);
+            }
+            else if (!strncasecmp (key, "replaygain_track_peak", 21)) {
+                it->replaygain_track_peak = atof (value);
+                trace ("track_peak=%s\n", value);
+            }
         }
     }
 
