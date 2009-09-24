@@ -394,7 +394,7 @@ apply_replay_gain_int16 (playItem_t *it, char *bytes, int size) {
     }
     int16_t *s = (int16_t*)bytes;
     for (int j = 0; j < size/2; j++) {
-        int32_t sample = ((int32_t)*s) * vol / 1000;
+        int32_t sample = ((int32_t)(*s)) * vol / 1000;
         if (sample > 0x7fff) {
             sample = 0x7fff;
         }
@@ -495,7 +495,7 @@ streamer_read_async (char *bytes, int size) {
 //                    }
                     if (!decoder->read_float32) {
                         bytesread = decoder->read_int16 (g_readbuffer, nbytes);
-                        apply_replay_gain_int16 (&str_streaming_song, g_readbuffer, nbytes/2);
+                        apply_replay_gain_int16 (&str_streaming_song, g_readbuffer, nbytes);
                     }
                     else {
                         samplesize = 4;
