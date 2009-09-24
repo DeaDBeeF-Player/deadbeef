@@ -202,6 +202,18 @@ cvorbis_insert (DB_playItem_t *after, const char *fname) {
             else if (!strncasecmp (vc->user_comments[i], "date=", 5)) {
                 deadbeef->pl_add_meta (it, "date", vc->user_comments[i] + 5);
             }
+            else if (!strncasecmp (vc->user_comments[i], "replaygain_album_gain=", 22)) {
+                it->replaygain_album_gain = atof (vc->user_comments[i] + 22);
+            }
+            else if (!strncasecmp (vc->user_comments[i], "replaygain_album_peak=", 22)) {
+                it->replaygain_album_peak = atof (vc->user_comments[i] + 22);
+            }
+            else if (!strncasecmp (vc->user_comments[i], "replaygain_track_gain=", 22)) {
+                it->replaygain_track_gain = atof (vc->user_comments[i] + 22);
+            }
+            else if (!strncasecmp (vc->user_comments[i], "replaygain_track_peak=", 22)) {
+                it->replaygain_track_peak = atof (vc->user_comments[i] + 22);
+            }
         }
     }
     if (!title_added) {
