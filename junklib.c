@@ -265,8 +265,7 @@ convstr_id3v2_2to3 (const unsigned char* str, int sz) {
     char *ret = out;
 
     // hack to add limited cp1251 recoding support
-
-      if (*str == 1) {
+    if (*str == 1) {
         if (str[1] == 0xff && str[2] == 0xfe) {
             enc = "UCS-2LE";
         }
@@ -750,13 +749,19 @@ junk_read_id3v2 (playItem_t *it, FILE *fp) {
             frameid[4] = 0;
             readptr += 4;
             if (readptr - tag >= size - 4) {
-                err = 1;
                 break;
             }
-            uint32_t sz = (readptr[3] << 0) | (readptr[2] << 7) | (readptr[1] << 14) | (readptr[0] << 21);
+            uint32_t sz;
+            if (version_major == 4) {
+                sz = (readptr[3] << 0) | (readptr[2] << 7) | (readptr[1] << 14) | (readptr[0] << 21);
+            }
+            else if (version_major == 3) {
+                sz = (readptr[3] << 0) | (readptr[2] << 8) | (readptr[1] << 16) | (readptr[0] << 24);
+            }
             readptr += 4;
             trace ("got frame %s, size %d, pos %d, tagsize %d\n", frameid, sz, readptr-tag, size);
             if (readptr - tag >= size - sz) {
+                trace ("frame is out of tag bounds\n");
                 err = 1;
                 break; // size of frame is more than size of tag
             }
@@ -767,40 +772,70 @@ junk_read_id3v2 (playItem_t *it, FILE *fp) {
             uint8_t flags1 = readptr[0];
             uint8_t flags2 = readptr[1];
             readptr += 2;
-            if (flags1 & 0x8f) {
-                // unknown flags
-                trace ("unknown status flags: %02x\n", flags1);
-                readptr += sz;
-                continue;
-            }
-            if (flags2 & 0xb0) {
-                // unknown flags
-                trace ("unknown format flags: %02x\n", flags2);
-                readptr += sz;
-                continue;
-            }
+            if (version_major == 4) {
+                if (flags1 & 0x8f) {
+                    // unknown flags
+                    trace ("unknown status flags: %02x\n", flags1);
+                    readptr += sz;
+                    continue;
+                }
+                if (flags2 & 0xb0) {
+                    // unknown flags
+                    trace ("unknown format flags: %02x\n", flags2);
+                    readptr += sz;
+                    continue;
+                }
 
-            if (flags2 & 0x40) { // group id
-                trace ("frame has group id\n");
-                readptr++; // skip id
+                if (flags2 & 0x40) { // group id
+                    trace ("frame has group id\n");
+                    readptr++; // skip id
+                    sz--;
+                }
+                if (flags2 & 0x08) { // compressed frame, ignore
+                    trace ("frame is compressed, skipping\n");
+                    readptr += sz;
+                    continue;
+                }
+                if (flags2 & 0x04) { // encrypted frame, skip
+                    trace ("frame is encrypted, skipping\n");
+                    readptr += sz;
+                    continue;
+                }
+                if (flags2 & 0x02) { // unsync, just do nothing
+                }
+                if (flags2 & 0x01) { // data size
+                    uint32_t size = extract_i32 (readptr);
+                    trace ("frame has extra size field = %d\n", size);
+                    readptr += 4;
+                    sz -= 4;
+                }
             }
-            if (flags2 & 0x08) { // compressed frame, ignore
-                trace ("frame is compressed, skipping\n");
-                readptr += sz;
-                continue;
-            }
-            if (flags2 & 0x04) { // encrypted frame, skip
-                trace ("frame is encrypted, skipping\n");
-                readptr += sz;
-                continue;
-            }
-            if (flags2 & 0x02) { // unsync, just do nothing
-            }
-            if (flags2 & 0x01) { // data size
-                uint32_t size = extract_i32 (readptr);
-                trace ("frame has extra size field = %d\n", size);
-                readptr += 4;
-                sz -= 4;
+            else if (version_major == 3) {
+                if (flags1 & 0x1F) {
+                    trace ("unknown status flags: %02x\n", flags1);
+                    readptr += sz;
+                    continue;
+                }
+                if (flags2 & 0x1F) {
+                    trace ("unknown format flags: %02x\n", flags2);
+                    readptr += sz;
+                    continue;
+                }
+                if (flags2 & 0x80) {
+                    trace ("frame is compressed, skipping\n");
+                    readptr += sz;
+                    continue;
+                }
+                if (flags2 & 0x40) {
+                    trace ("frame is encrypted, skipping\n");
+                    readptr += sz;
+                    continue;
+                }
+                if (flags2 & 0x20) {
+                    trace ("frame has group id\n");
+                    readptr++; // skip id
+                    sz--;
+                }
             }
             if (!strcmp (frameid, "TPE1")) {
                 if (sz > 1000) {
@@ -830,10 +865,12 @@ junk_read_id3v2 (playItem_t *it, FILE *fp) {
                 track = convstr (str, sz);
             }
             else if (!strcmp (frameid, "TIT2")) {
+                trace ("parsing TIT2...\n");
                 if (sz > 1000) {
                     err = 1;
                     break; // too large
                 }
+                trace ("parsing TIT2....\n");
                 char str[sz+2];
                 id3v2_string_read (version_major, &str[0], sz, unsync, readptr);
                 title = convstr (str, sz);
@@ -998,6 +1035,9 @@ junk_read_id3v2 (playItem_t *it, FILE *fp) {
             pl_add_meta (it, "title", NULL);
         }
         return 0;
+    }
+    else {
+        trace ("error parsing id3v2\n");
     }
     return -1;
 }
