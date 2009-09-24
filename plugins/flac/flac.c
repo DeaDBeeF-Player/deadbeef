@@ -24,8 +24,8 @@
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -354,6 +354,21 @@ cflac_init_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__Str
                 }
                 else if (!strncasecmp (s, "DATE=", 5)) {
                     deadbeef->pl_add_meta (it, "date", s + 5);
+                }
+                else if (!strncasecmp (s, "replaygain_album_gain=", 22)) {
+                    it->replaygain_album_gain = atof (s + 22);
+                }
+                else if (!strncasecmp (s, "replaygain_album_peak=", 22)) {
+                    it->replaygain_album_peak = atof (s + 22);
+                }
+                else if (!strncasecmp (s, "replaygain_track_gain=", 22)) {
+                    it->replaygain_track_gain = atof (s + 22);
+                }
+                else if (!strncasecmp (s, "replaygain_track_peak=", 22)) {
+                    it->replaygain_track_peak = atof (s + 22);
+                }
+                else {
+                    trace ("found flac meta: %s\n", s);
                 }
             }
         }
