@@ -34,8 +34,6 @@ static FLAC__StreamDecoder *decoder = 0;
 #define BUFFERSIZE 100000
 static char buffer[BUFFERSIZE]; // this buffer always has int32 samples
 static int remaining; // bytes remaining in buffer from last read
-static float timestart;
-static float timeend;
 static int startsample;
 static int endsample;
 static int currentsample;
@@ -274,7 +272,7 @@ cflac_seek_sample (int sample) {
     }
     remaining = 0;
     currentsample = sample;
-    plugin.info.readpos = (float)sample / plugin.info.samplerate - timestart;
+    plugin.info.readpos = (float)(sample - startsample)/ plugin.info.samplerate;
     return 0;
 }
 
