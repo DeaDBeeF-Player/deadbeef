@@ -24,8 +24,8 @@
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -170,7 +170,7 @@ cflac_init (DB_playItem_t *it) {
         startsample = 0;
         endsample = cb.totalsamples-1;
         currentsample = 0;
-        trace ("startsample=%d, endsample=%d\n", startsample, endsample);
+        trace ("startsample=%d, endsample=%d, totalsamples=%d\n", startsample, endsample, cb.totalsamples);
     }
     plugin.info.readpos = 0;
 
@@ -188,7 +188,6 @@ cflac_free (void) {
 
 static int
 cflac_read_int16 (char *bytes, int size) {
-    int initsize = size;
     if (size / (2 * plugin.info.channels) + currentsample > endsample) {
         size = (endsample - currentsample + 1) * 2 * plugin.info.channels;
         trace ("size truncated to %d bytes, cursample=%d, endsample=%d\n", size, currentsample, endsample);
@@ -196,6 +195,7 @@ cflac_read_int16 (char *bytes, int size) {
             return 0;
         }
     }
+    int initsize = size;
     do {
         if (remaining) {
             int s = size * 2;

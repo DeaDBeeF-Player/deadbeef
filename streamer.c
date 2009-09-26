@@ -64,8 +64,8 @@ playItem_t str_streaming_song;
 static playItem_t *orig_playing_song;
 static playItem_t *orig_streaming_song;
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 // playlist must call that whenever item was removed
 void
@@ -99,6 +99,7 @@ streamer_set_current (playItem_t *it) {
     }
     if (it->decoder) {
         int ret = it->decoder->init (DB_PLAYITEM (it));
+        trace ("input samplerate: %d\n", it->decoder->info.samplerate);
         pl_item_copy (&str_streaming_song, it);
         if (ret < 0) {
             trace ("decoder->init returned %d\n", ret);
@@ -170,7 +171,6 @@ streamer_set_nextsong (int song, int pstate) {
     nextsong_pstate = pstate;
     if (p_isstopped ()) {
         // no sense to wait until end of previous song, reset buffer
-        trace ("fuck!\n");
         bytes_until_next_song = 0;
     }
 }
@@ -584,10 +584,10 @@ streamer_read_async (char *bytes, int size) {
             return initsize;
         }
         else  {
-            trace ("EOF, buns=%d\n", bytes_until_next_song);
+//            trace ("EOF, buns=%d\n", bytes_until_next_song);
             // that means EOF
             if (bytes_until_next_song < 0) {
-                trace ("finished streaming song, queueing next\n");
+//                trace ("finished streaming song, queueing next\n");
                 bytes_until_next_song = streambuffer_fill;
                 pl_nextsong (0);
             }
