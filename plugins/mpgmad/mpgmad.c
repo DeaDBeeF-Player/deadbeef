@@ -908,21 +908,15 @@ cmp3_insert (DB_playItem_t *after, const char *fname) {
     it->decoder = &plugin;
     it->fname = strdup (fname);
 
+    int apeerr = deadbeef->junk_read_ape (it, fp);
     int v2err = deadbeef->junk_read_id3v2 (it, fp);
     int v1err = deadbeef->junk_read_id3v1 (it, fp);
-    if (v1err >= 0) {
-        fseek (fp, -128, SEEK_END);
-    }
-    else {
-        fseek (fp, 0, SEEK_END);
-    }
-    int apeerr = deadbeef->junk_read_ape (it, fp);
+    fclose (fp);
     deadbeef->pl_add_meta (it, "title", NULL);
     it->duration = buffer.duration;
     it->filetype = ftype;
 
     after = deadbeef->pl_insert_item (after, it);
-    fclose (fp);
     return after;
 }
 

@@ -501,7 +501,7 @@ junk_read_ape (playItem_t *it, FILE *fp) {
     // try to read footer, position must be already at the EOF right before
     // id3v1 (if present)
     uint8_t header[32];
-    if (fseek (fp, -32, SEEK_CUR) == -1) {
+    if (fseek (fp, -32, SEEK_END) == -1) {
         return -1; // something bad happened
     }
 
@@ -509,7 +509,16 @@ junk_read_ape (playItem_t *it, FILE *fp) {
         return -1; // something bad happened
     }
     if (strncmp (header, "APETAGEX", 8)) {
-        return -1; // no ape tag here
+        // try to skip 128 bytes backwards (id3v1)
+        if (fseek (fp, -128-32, SEEK_END) == -1) {
+            return -1; // something bad happened
+        }
+        if (fread (header, 1, 32, fp) != 32) {
+            return -1; // something bad happened
+        }
+        if (strncmp (header, "APETAGEX", 8)) {
+            return -1; // no ape tag here
+        }
     }
 
     // end of footer must be 0
