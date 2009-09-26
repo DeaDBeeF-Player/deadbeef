@@ -357,12 +357,14 @@ player_thread (uintptr_t ctx) {
                 if (from >= 0 || to >= 0) {
                     if (to >= 0) {
                         playItem_t *it = pl_get_for_idx (to);
-                        char str[600];
-                        char dname[512];
-                        pl_format_item_display_name (it, dname, 512);
-                        snprintf (str, 600, "DeaDBeeF - %s", dname);
-                        gtk_window_set_title (GTK_WINDOW (mainwin), str);
-                        set_tray_tooltip (str);
+                        if (it) { // it might have been deleted after event was sent
+                            char str[600];
+                            char dname[512];
+                            pl_format_item_display_name (it, dname, 512);
+                            snprintf (str, 600, "DeaDBeeF - %s", dname);
+                            gtk_window_set_title (GTK_WINDOW (mainwin), str);
+                            set_tray_tooltip (str);
+                        }
                     }
                     else {
                         gtk_window_set_title (GTK_WINDOW (mainwin), "DeaDBeeF");
