@@ -45,7 +45,7 @@ static float g_fbuffer[200000]; // hack!
 static float g_srcbuffer[200000]; // hack!
 static int streaming_terminate;
 
-#define STREAM_BUFFER_SIZE (200000*5)
+#define STREAM_BUFFER_SIZE (200000)
 static int streambuffer_fill;
 static int bytes_until_next_song = 0;
 static char streambuffer[STREAM_BUFFER_SIZE];
@@ -274,6 +274,7 @@ streamer_thread (uintptr_t ctx) {
             if (orig_playing_song) {
                 orig_playing_song->played = 1;
                 orig_playing_song->started_timestamp = time (NULL);
+                str_playing_song.started_timestamp = time (NULL);
             }
             playlist_current_ptr = orig_playing_song;
             // that is needed for playlist drawing
@@ -375,6 +376,7 @@ streamer_reset (int full) { // must be called when current song changes by exter
 }
 
 int replaygain = 1;
+int replaygain_scale = 1;
 
 static void
 apply_replay_gain_int16 (playItem_t *it, char *bytes, int size) {
@@ -386,13 +388,23 @@ apply_replay_gain_int16 (playItem_t *it, char *bytes, int size) {
         if (it->replaygain_track_gain == 0) {
             return;
         }
-        vol = db_to_amp (str_streaming_song.replaygain_track_gain) * 1000;
+        if (conf_replaygain_scale && replaygain_scale) {
+            vol = db_to_amp (str_streaming_song.replaygain_track_gain)/str_streaming_song.replaygain_track_peak * 1000;
+        }
+        else {
+            vol = db_to_amp (str_streaming_song.replaygain_track_gain) * 1000;
+        }
     }
     else if (conf_replaygain_mode == 2) {
         if (it->replaygain_album_gain == 0) {
             return;
         }
-        vol = db_to_amp (str_streaming_song.replaygain_album_gain) * 1000;
+        if (conf_replaygain_scale && replaygain_scale) {
+            vol = db_to_amp (str_streaming_song.replaygain_album_gain)/str_streaming_song.replaygain_album_peak * 1000;
+        }
+        else {
+            vol = db_to_amp (str_streaming_song.replaygain_album_gain) * 1000;
+        }
     }
     int16_t *s = (int16_t*)bytes;
     for (int j = 0; j < size/2; j++) {
@@ -413,18 +425,28 @@ apply_replay_gain_float32 (playItem_t *it, char *bytes, int size) {
     if (!replaygain || !conf_replaygain_mode) {
         return;
     }
-    float vol = 1;
+    float vol = 1.f;
     if (conf_replaygain_mode == 1) {
         if (it->replaygain_track_gain == 0) {
             return;
         }
-        vol = db_to_amp (it->replaygain_track_gain);
+        if (conf_replaygain_scale && replaygain_scale) {
+            vol = db_to_amp (it->replaygain_track_gain)/it->replaygain_track_peak;
+        }
+        else {
+            vol = db_to_amp (it->replaygain_track_gain);
+        }
     }
     else if (conf_replaygain_mode == 2) {
         if (it->replaygain_album_gain == 0) {
             return;
         }
-        vol = db_to_amp (it->replaygain_album_gain);
+        if (conf_replaygain_scale && replaygain_scale) {
+            vol = db_to_amp (it->replaygain_album_gain)/it->replaygain_album_peak;
+        }
+        else {
+            vol = db_to_amp (it->replaygain_album_gain);
+        }
     }
     float *s = (float*)bytes;
     for (int j = 0; j < size/4; j++) {

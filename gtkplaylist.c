@@ -783,6 +783,11 @@ gtkpl_keypress (gtkplaylist_t *ps, int keyval, int state) {
         replaygain = 1-replaygain;
         fprintf (stderr, "replaygain=%d\n", replaygain);
     }
+    else if (keyval == GDK_t) {
+        extern int replaygain_scale;
+        replaygain_scale = 1-replaygain_scale;
+        fprintf (stderr, "replaygain_scale=%d\n", replaygain_scale);
+    }
     else if (keyval == GDK_Up && ps->row > 0) {
         ps->row--;
         if (ps->row < ps->scrollpos) {

@@ -48,4 +48,9 @@ src_quality 2
 # 1 track
 # 2 album (audiophile)
 # you must preprocess your collection with some external application to use that
+# foobar2000 is the best to do it so far
 replaygain_mode 0
+
+# replay gain scale
+# set to 0 if you'd like to ignore peak scale (default is 1)
+replaygain_scale 1
