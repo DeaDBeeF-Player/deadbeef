@@ -642,8 +642,8 @@ on_voice1_clicked                      (GtkButton       *button,
                                         gpointer         user_data)
 {
     codec_lock ();
-    if (playlist_current.decoder && playlist_current.decoder->mutevoice) {
-        playlist_current.decoder->mutevoice (0, gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button)) ? 0 : 1);
+    if (str_playing_song.decoder && str_playing_song.decoder->mutevoice) {
+        str_playing_song.decoder->mutevoice (0, gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button)) ? 0 : 1);
     }
     codec_unlock ();
 }
@@ -654,8 +654,8 @@ on_voice2_clicked                      (GtkButton       *button,
                                         gpointer         user_data)
 {
     codec_lock ();
-    if (playlist_current.decoder && playlist_current.decoder->mutevoice) {
-        playlist_current.decoder->mutevoice (1, gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button)) ? 0 : 1);
+    if (str_playing_song.decoder && str_playing_song.decoder->mutevoice) {
+        str_playing_song.decoder->mutevoice (1, gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button)) ? 0 : 1);
     }
     codec_unlock ();
 }
@@ -666,8 +666,8 @@ on_voice3_clicked                      (GtkButton       *button,
                                         gpointer         user_data)
 {
     codec_lock ();
-    if (playlist_current.decoder && playlist_current.decoder->mutevoice) {
-        playlist_current.decoder->mutevoice (2, gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button)) ? 0 : 1);
+    if (str_playing_song.decoder && str_playing_song.decoder->mutevoice) {
+        str_playing_song.decoder->mutevoice (2, gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button)) ? 0 : 1);
     }
     codec_unlock ();
 }
@@ -678,8 +678,8 @@ on_voice4_clicked                      (GtkButton       *button,
                                         gpointer         user_data)
 {
     codec_lock ();
-    if (playlist_current.decoder && playlist_current.decoder->mutevoice) {
-        playlist_current.decoder->mutevoice (3, gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button)) ? 0 : 1);
+    if (str_playing_song.decoder && str_playing_song.decoder->mutevoice) {
+        str_playing_song.decoder->mutevoice (3, gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button)) ? 0 : 1);
     }
     codec_unlock ();
 }
@@ -690,8 +690,8 @@ on_voice5_clicked                      (GtkButton       *button,
                                         gpointer         user_data)
 {
     codec_lock ();
-    if (playlist_current.decoder && playlist_current.decoder->mutevoice) {
-        playlist_current.decoder->mutevoice (4, gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button)) ? 0 : 1);
+    if (str_playing_song.decoder && str_playing_song.decoder->mutevoice) {
+        str_playing_song.decoder->mutevoice (4, gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button)) ? 0 : 1);
     }
     codec_unlock ();
 }
@@ -936,8 +936,8 @@ seekbar_draw (GtkWidget *widget) {
         pos = x;
     }
     else {
-        if (playlist_current.decoder && playlist_current.duration > 0) {
-            pos = streamer_get_playpos () / playlist_current.duration;
+        if (str_playing_song.decoder && str_playing_song.duration > 0) {
+            pos = streamer_get_playpos () / str_playing_song.duration;
             pos *= widget->allocation.width;
         }
     }
@@ -1024,7 +1024,7 @@ on_seekbar_button_release_event        (GtkWidget       *widget,
     seekbar_moving = 0;
     seekbar_draw (widget);
     seekbar_expose (widget, 0, 0, widget->allocation.width, widget->allocation.height);
-    float time = event->x * playlist_current.duration / (widget->allocation.width);
+    float time = event->x * str_playing_song.duration / (widget->allocation.width);
     if (time < 0) {
         time = 0;
     }

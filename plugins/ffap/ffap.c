@@ -38,11 +38,16 @@
 
 #define ENABLE_DEBUG 0
 
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
+
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
 
-float timestart;
-float timeend;
+//static float timestart;
+//static float timeend;
+static int startsample;
+static int endsample;
 
 #define PACKET_BUFFER_SIZE 100000
 
@@ -697,14 +702,19 @@ ffap_init(DB_playItem_t *it)
     plugin.info.samplerate = ape_ctx.samplerate;
     plugin.info.channels = ape_ctx.channels;
     plugin.info.readpos = 0;
-    if (it->timeend > 0) {
-        timestart = it->timestart;
-        timeend = it->timeend;
-        plugin.seek (0);
+    if (it->endsample > 0) {
+        startsample = it->startsample;
+        endsample = it->endsample;
+//        timestart = it->timestart;
+//        timeend = it->timeend;
+        plugin.seek_sample (0);
+        //trace ("start: %d/%f, end: %d/%f\n", startsample, timestart, endsample, timeend);
     }
     else {
-        timestart = 0;
-        timeend = it->duration;
+        //timestart = 0;
+        //timeend = it->duration;
+        startsample = 0;
+        endsample = ape_ctx.totalsamples-1;
     }
     return 0;
 }
@@ -1597,7 +1607,7 @@ ape_decode_frame(APEContext *s, void *data, int *data_size)
     s->samples -= blockstodecode;
 
     *data_size = (blockstodecode - skip) * 2 * s->channels;
-    ape_ctx.currentsample += blockstodecode - skip;
+//    ape_ctx.currentsample += blockstodecode - skip;
     bytes_used = s->samples ? s->ptr - s->last_ptr : s->packet_remaining;
 
     // shift everything
@@ -1635,7 +1645,7 @@ ffap_insert (DB_playItem_t *after, const char *fname) {
 
     float duration = ape_ctx.totalsamples / (float)ape_ctx.samplerate;
     DB_playItem_t *it;
-    it  = deadbeef->pl_insert_cue (after, fname, &plugin, "APE", duration);
+    it  = deadbeef->pl_insert_cue (after, fname, &plugin, "APE", ape_ctx.totalsamples, ape_ctx.samplerate);
     if (it) {
         fclose (fp);
         ape_free_ctx (&ape_ctx);
@@ -1667,10 +1677,14 @@ ffap_insert (DB_playItem_t *after, const char *fname) {
 
 static int
 ffap_read_int16 (char *buffer, int size) {
-    int inits = size;
-    if (plugin.info.readpos >= (timeend - timestart)) {
-        return 0;
+    if (ape_ctx.currentsample + size / (2 * ape_ctx.channels) > endsample) {
+        size = (endsample - ape_ctx.currentsample + 1) * 2 * ape_ctx.channels;
+        trace ("size truncated to %d bytes, cursample=%d, endsample=%d, totalsamples=%d\n", size, ape_ctx.currentsample, endsample, ape_ctx.totalsamples);
+        if (size <= 0) {
+            return 0;
+        }
     }
+    int inits = size;
     while (size > 0) {
         if (ape_ctx.remaining > 0) {
             int sz = min (size, ape_ctx.remaining);
@@ -1702,19 +1716,23 @@ ffap_read_int16 (char *buffer, int size) {
         }
         ape_ctx.remaining -= sz;
     }
-    plugin.info.readpos = ape_ctx.currentsample / (float)plugin.info.samplerate - timestart;
+    ape_ctx.currentsample += (inits - size) / (2 * ape_ctx.channels);
+    plugin.info.readpos = (ape_ctx.currentsample-startsample) / (float)plugin.info.samplerate;
     return inits - size;
 }
 
 static int
-ffap_seek (float seconds) {
-    seconds += timestart;
-    uint32_t newsample = seconds * plugin.info.samplerate;
+ffap_seek_sample (int sample) {
+    sample += startsample;
+    trace ("seeking to %d/%d\n", sample, ape_ctx.totalsamples);
+    uint32_t newsample = sample;
     if (newsample > ape_ctx.totalsamples) {
+        trace ("eof\n");
         return -1;
     }
     int nframe = newsample / ape_ctx.blocksperframe;
     if (nframe >= ape_ctx.totalframes) {
+        trace ("eof2\n");
         return -1;
     }
     ape_ctx.currentframe = nframe;
@@ -1724,8 +1742,13 @@ ffap_seek (float seconds) {
     ape_ctx.packet_remaining = 0;
     ape_ctx.samples = 0;
     ape_ctx.currentsample = newsample;
-    plugin.info.readpos = seconds - timestart;
+    plugin.info.readpos = (float)(newsample-startsample)/ape_ctx.samplerate;
     return 0;
+}
+
+static int
+ffap_seek (float seconds) {
+    return ffap_seek_sample (seconds * plugin.info.samplerate);
 }
 
 static const char *exts[] = { "ape", NULL };
@@ -1745,6 +1768,7 @@ static DB_decoder_t plugin = {
     .free = ffap_free,
     .read_int16 = ffap_read_int16,
     .seek = ffap_seek,
+    .seek_sample = ffap_seek_sample,
     .insert = ffap_insert,
     .exts = exts,
     .id = "ffap",

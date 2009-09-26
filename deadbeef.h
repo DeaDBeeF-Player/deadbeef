@@ -54,7 +54,7 @@ extern "C" {
 // DON'T release plugins without DB_PLUGIN_SET_API_VERSION
 
 #define DB_API_VERSION_MAJOR 0
-#define DB_API_VERSION_MINOR 1
+#define DB_API_VERSION_MINOR 2
 
 #define DB_PLUGIN_SET_API_VERSION\
     .plugin.api_vmajor = DB_API_VERSION_MAJOR,\
@@ -64,20 +64,22 @@ extern "C" {
 // playlist structures
 
 // playlist item
-// there are "public" fields, available to plugins
+// these are "public" fields, available to plugins
 typedef struct {
     char *fname; // full pathname
     struct DB_decoder_s *decoder; // codec to use with this file
     int tracknum; // used for stuff like sid, nsf, cue (will be ignored by most codecs)
-    float timestart; // start time of cue track, or -1
-    float timeend; // end time of cue track, or -1
+    int startsample; // start sample of track, or -1 for auto
+    int endsample; // end sample of track, or -1 for auto
     float duration; // in seconds
-    int startoffset; // offset to seek to skip tags and info-headers
-    int endoffset; // offset from end of file where music data ends
     int shufflerating; // sort order for shuffle mode
     float playtime; // total playtime
     time_t started_timestamp; // result of calling time(NULL)
     const char *filetype; // e.g. MP3 or OGG
+    float replaygain_album_gain;
+    float replaygain_album_peak;
+    float replaygain_track_gain;
+    float replaygain_track_peak;
 } DB_playItem_t;
 
 // plugin types
@@ -164,8 +166,8 @@ typedef struct {
     void (*pl_add_meta) (DB_playItem_t *it, const char *key, const char *value);
     const char *(*pl_find_meta) (DB_playItem_t *song, const char *meta);
     // cuesheet support
-    DB_playItem_t *(*pl_insert_cue_from_buffer) (DB_playItem_t *after, const char *fname, const uint8_t *buffer, int buffersize, struct DB_decoder_s *decoder, const char *ftype, float duration);
-    DB_playItem_t * (*pl_insert_cue) (DB_playItem_t *after, const char *filename, struct DB_decoder_s *decoder, const char *ftype, float duration);
+    DB_playItem_t *(*pl_insert_cue_from_buffer) (DB_playItem_t *after, const char *fname, const uint8_t *buffer, int buffersize, struct DB_decoder_s *decoder, const char *ftype, int numsamples, int samplerate);
+    DB_playItem_t * (*pl_insert_cue) (DB_playItem_t *after, const char *filename, struct DB_decoder_s *decoder, const char *ftype, int numsamples, int samplerate);
     // volume control
     void (*volume_set_db) (float dB);
     float (*volume_get_db) (void);
@@ -239,7 +241,7 @@ typedef struct DB_decoder_s {
     // perform seeking in samples (if possible)
     // return -1 if failed, or 0 on success
     // if -1 is returned, that will mean that streamer must skip that song
-    int (*seek_sample) (int64_t samples);
+    int (*seek_sample) (int sample);
 
     // 'insert' is called to insert new item to playlist
     // decoder is responsible to calculate duration, split it into subsongs, load cuesheet, etc

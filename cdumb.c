@@ -739,9 +739,6 @@ cdumb_insert (DB_playItem_t *after, const char *fname) {
     DB_playItem_t *it = deadbeef->pl_item_alloc ();
     it->decoder = &plugin;
     it->fname = strdup (fname);
-    it->tracknum = 0;
-    it->timestart = 0;
-    it->timeend = 0;
     DUMB_IT_SIGDATA * itsd = duh_get_it_sigdata(duh);
     if (itsd->name[0])     {
         deadbeef->pl_add_meta (it, "title", convstr ((char*)&itsd->name, sizeof(itsd->name)));

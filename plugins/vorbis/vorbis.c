@@ -25,6 +25,12 @@
 #endif
 #include "../../deadbeef.h"
 
+#define min(x,y) ((x)<(y)?(x):(y))
+#define max(x,y) ((x)>(y)?(x):(y))
+
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
+
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
 
@@ -34,12 +40,12 @@ static vorbis_info *vi;
 static int cur_bit_stream;
 static float timestart;
 static float timeend;
+static int startsample;
+static int endsample;
+static int currentsample;
 
 static void
 cvorbis_free (void);
-
-static int
-cvorbis_seek (float time);
 
 static int
 cvorbis_init (DB_playItem_t *it) {
@@ -64,14 +70,15 @@ cvorbis_init (DB_playItem_t *it) {
     plugin.info.channels = vi->channels;
     plugin.info.samplerate = vi->rate;
     plugin.info.readpos = 0;
-    if (it->timeend > 0) {
-        timestart = it->timestart;
-        timeend = it->timeend;
-        cvorbis_seek (0);
+    currentsample = 0;
+    if (it->endsample > 0) {
+        startsample = it->startsample;
+        endsample = it->endsample;
+        plugin.seek_sample (0);
     }
     else {
-        timestart = 0;
-        timeend = it->duration;
+        startsample = 0;
+        endsample = ov_pcm_total (&vorbis_file, -1)-1;
     }
     return 0;
 }
@@ -88,8 +95,12 @@ cvorbis_free (void) {
 
 static int
 cvorbis_read (char *bytes, int size) {
-    if (plugin.info.readpos >= (timeend - timestart)) {
-        return 0;
+    if (currentsample + size / (2 * plugin.info.channels) > endsample) {
+        size = (endsample - currentsample + 1) * 2 * plugin.info.channels;
+        trace ("size truncated to %d bytes, cursample=%d, endsample=%d, totalsamples=%d\n", size, currentsample, endsample, ov_pcm_total (&vorbis_file, -1));
+        if (size <= 0) {
+            return 0;
+        }
     }
     int initsize = size;
     for (;;)
@@ -100,42 +111,48 @@ cvorbis_read (char *bytes, int size) {
         endianess = 1;
 #endif
         long ret=ov_read (&vorbis_file, bytes, size, endianess, 2, 1, &cur_bit_stream);
-        if (ret < 0)
+        if (ret <= 0)
         {
-            break;
-        }
-        else if (ret == 0) {
+            // error or eof
             break;
         }
         else if (ret < size)
         {
+            currentsample += ret / (vi->channels * 2);
             size -= ret;
             bytes += ret;
         }
         else {
+            currentsample += ret / (vi->channels * 2);
             size = 0;
             break;
         }
     }
     plugin.info.readpos = ov_time_tell(&vorbis_file) - timestart;
-    if (plugin.info.readpos >= (timeend - timestart)) {
-        return 0;
-    }
-
     return initsize - size;
 }
 
 static int
-cvorbis_seek (float time) {
-    time += timestart;
+cvorbis_seek_sample (int sample) {
     if (!file) {
         return -1;
     }
-    int res = ov_time_seek (&vorbis_file, time);
+    sample += startsample;
+    int res = ov_pcm_seek (&vorbis_file, sample);
     if (res != 0 && res != OV_ENOSEEK)
         return -1;
+    int tell = ov_pcm_tell (&vorbis_file);
+    if (tell != sample) {
+        fprintf (stderr, "oggvorbis: failed to do sample-accurate seek (%d->%d)\n", sample, tell);
+    }
+    currentsample = sample;
     plugin.info.readpos = ov_time_tell(&vorbis_file) - timestart;
     return 0;
+}
+
+static int
+cvorbis_seek (float time) {
+    return cvorbis_seek_sample (time * vi->rate);
 }
 
 static DB_playItem_t *
@@ -153,7 +170,8 @@ cvorbis_insert (DB_playItem_t *after, const char *fname) {
         return NULL;
     }
     float duration = ov_time_total (&vorbis_file, -1);
-    DB_playItem_t *cue_after = deadbeef->pl_insert_cue (after, fname, &plugin, "OggVorbis", duration);
+    int totalsamples = ov_pcm_total (&vorbis_file, -1);
+    DB_playItem_t *cue_after = deadbeef->pl_insert_cue (after, fname, &plugin, "OggVorbis", totalsamples, vi->rate);
     if (cue_after) {
         ov_clear (&vorbis_file);
         return cue_after;
@@ -184,6 +202,18 @@ cvorbis_insert (DB_playItem_t *after, const char *fname) {
             else if (!strncasecmp (vc->user_comments[i], "date=", 5)) {
                 deadbeef->pl_add_meta (it, "date", vc->user_comments[i] + 5);
             }
+            else if (!strncasecmp (vc->user_comments[i], "replaygain_album_gain=", 22)) {
+                it->replaygain_album_gain = atof (vc->user_comments[i] + 22);
+            }
+            else if (!strncasecmp (vc->user_comments[i], "replaygain_album_peak=", 22)) {
+                it->replaygain_album_peak = atof (vc->user_comments[i] + 22);
+            }
+            else if (!strncasecmp (vc->user_comments[i], "replaygain_track_gain=", 22)) {
+                it->replaygain_track_gain = atof (vc->user_comments[i] + 22);
+            }
+            else if (!strncasecmp (vc->user_comments[i], "replaygain_track_peak=", 22)) {
+                it->replaygain_track_peak = atof (vc->user_comments[i] + 22);
+            }
         }
     }
     if (!title_added) {
@@ -213,6 +243,7 @@ static DB_decoder_t plugin = {
     // vorbisfile can't output float32
 //    .read_float32 = cvorbis_read_float32,
     .seek = cvorbis_seek,
+    .seek_sample = cvorbis_seek_sample,
     .insert = cvorbis_insert,
     .exts = exts,
     .id = "stdogg",

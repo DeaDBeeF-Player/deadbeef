@@ -85,8 +85,8 @@ static DB_functions_t deadbeef_api = {
     .pl_add_meta = (void (*) (DB_playItem_t *, const char *, const char *))pl_add_meta,
     .pl_find_meta = (const char *(*) (DB_playItem_t *, const char *))pl_find_meta,
     // cuesheet support
-    .pl_insert_cue_from_buffer = (DB_playItem_t *(*) (DB_playItem_t *after, const char *fname, const uint8_t *buffer, int buffersize, struct DB_decoder_s *decoder, const char *ftype, float duration))pl_insert_cue_from_buffer,
-    .pl_insert_cue = (DB_playItem_t *(*)(DB_playItem_t *, const char *, struct DB_decoder_s *, const char *ftype, float duration))pl_insert_cue,
+    .pl_insert_cue_from_buffer = (DB_playItem_t *(*) (DB_playItem_t *after, const char *fname, const uint8_t *buffer, int buffersize, struct DB_decoder_s *decoder, const char *ftype, int numsamples, int samplerate))pl_insert_cue_from_buffer,
+    .pl_insert_cue = (DB_playItem_t *(*)(DB_playItem_t *, const char *, struct DB_decoder_s *, const char *ftype, int numsamples, int samplerate))pl_insert_cue,
     // volume control
     .volume_set_db = plug_volume_set_db,
     .volume_get_db = volume_get_db,
@@ -215,18 +215,18 @@ plug_playback_random (void) {
 
 float
 plug_playback_get_pos (void) {
-    if (playlist_current.duration <= 0) {
+    if (str_playing_song.duration <= 0) {
         return 0;
     }
-    return streamer_get_playpos () * 100 / playlist_current.duration;
+    return streamer_get_playpos () * 100 / str_playing_song.duration;
 }
 
 void
 plug_playback_set_pos (float pos) {
-    if (playlist_current.duration <= 0) {
+    if (str_playing_song.duration <= 0) {
         return;
     }
-    float t = pos * playlist_current.duration / 100.f;
+    float t = pos * str_playing_song.duration / 100.f;
     streamer_set_seek (t);
 }
 
@@ -246,7 +246,7 @@ plug_trigger_event (int ev) {
     case DB_EV_SONGFINISHED:
         {
         DB_event_song_t *pev = malloc (sizeof (DB_event_song_t));
-        pev->song = DB_PLAYITEM (&playlist_current);
+        pev->song = DB_PLAYITEM (&str_playing_song);
         event = DB_EVENT (pev);
         }
         break;

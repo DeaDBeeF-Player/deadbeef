@@ -23,11 +23,13 @@
 #include "playlist.h"
 #include "utf8.h"
 
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
 static uint32_t
-extract_i32 (unsigned char *buf)
+extract_i32 (const uint8_t *buf)
 {
     uint32_t x;
     // big endian extract
@@ -60,7 +62,7 @@ extract_i32_le (unsigned char *buf)
     return x;
 }
 static inline uint16_t
-extract_i16 (unsigned char *buf)
+extract_i16 (const uint8_t *buf)
 {
     uint16_t x;
     // big endian extract
@@ -263,8 +265,7 @@ convstr_id3v2_2to3 (const unsigned char* str, int sz) {
     char *ret = out;
 
     // hack to add limited cp1251 recoding support
-
-      if (*str == 1) {
+    if (*str == 1) {
         if (str[1] == 0xff && str[2] == 0xfe) {
             enc = "UCS-2LE";
         }
@@ -272,7 +273,7 @@ convstr_id3v2_2to3 (const unsigned char* str, int sz) {
             enc = "UCS-2BE";
         }
         else {
-            fprintf (stderr, "invalid ucs-2 signature %x %x\n", (int)str[1], (int)str[2]);
+            trace ("invalid ucs-2 signature %x %x\n", (int)str[1], (int)str[2]);
             return NULL;
         }
     }
@@ -285,7 +286,7 @@ convstr_id3v2_2to3 (const unsigned char* str, int sz) {
     sz--;
     iconv_t cd = iconv_open ("utf8", enc);
     if (!cd) {
-//        fprintf (stderr, "unknown encoding: %s\n", enc);
+        trace ("unknown encoding: %s\n", enc);
         return NULL;
     }
     else {
@@ -311,19 +312,23 @@ convstr_id3v2_4 (const unsigned char* str, int sz) {
 
     if (*str == 0) {
         // iso8859-1
+        trace ("iso8859-1\n");
         enc = "iso8859-1";
     }
     else if (*str == 3) {
         // utf8
+        trace ("utf8\n");
         strncpy (out, str+1, 2047);
         sz--;
         out[min (sz, 2047)] = 0;
         return strdup (out);
     }
     else if (*str == 1) {
+        trace ("utf16\n");
         enc = "UTF-16";
     }
     else if (*str == 2) {
+        trace ("utf16be\n");
         enc = "UTF-16BE";
     }
     else {
@@ -335,7 +340,7 @@ convstr_id3v2_4 (const unsigned char* str, int sz) {
     sz--;
     iconv_t cd = iconv_open ("utf8", enc);
     if (!cd) {
-        // printf ("unknown encoding: %s\n", enc);
+        trace ("unknown encoding: %s\n", enc);
         return NULL;
     }
     else {
@@ -348,7 +353,7 @@ convstr_id3v2_4 (const unsigned char* str, int sz) {
         iconv_close (cd);
         ret = out;
     }
-    //fprintf (stderr, "decoded %s\n", out+3);
+//    trace ("decoded %s\n", out+3);
     return strdup (ret);
 }
 
@@ -388,7 +393,7 @@ convstr_id3v1 (const char* str, int sz) {
     }
     cd = iconv_open ("utf8", enc);
     if (!cd) {
-        // fprintf (stderr, "unknown encoding: %s\n", enc);
+        // trace ("unknown encoding: %s\n", enc);
         return NULL;
     }
     else {
@@ -417,7 +422,7 @@ str_trim_right (uint8_t *str, int len) {
 int
 junk_read_id3v1 (playItem_t *it, FILE *fp) {
     if (!it || !fp) {
-        fprintf (stderr, "bad call to junk_read_id3v1!\n");
+        trace ("bad call to junk_read_id3v1!\n");
         return -1;
     }
     uint8_t buffer[128];
@@ -469,7 +474,7 @@ junk_read_id3v1 (playItem_t *it, FILE *fp) {
     }
 
     // add meta
-//    fprintf (stderr, "%s - %s - %s - %s - %s - %s\n", title, artist, album, year, comment, genre);
+//    trace ("%s - %s - %s - %s - %s - %s\n", title, artist, album, year, comment, genre);
     pl_add_meta (it, "title", convstr_id3v1 (title, strlen (title)));
     pl_add_meta (it, "artist", convstr_id3v1 (artist, strlen (artist)));
     pl_add_meta (it, "album", convstr_id3v1 (album, strlen (album)));
@@ -482,20 +487,21 @@ junk_read_id3v1 (playItem_t *it, FILE *fp) {
         pl_add_meta (it, "track", s);
     }
 
-    if (it->endoffset < 128) {
-        it->endoffset = 128;
-    }
+// FIXME: that should be accounted for
+//    if (it->endoffset < 128) {
+//        it->endoffset = 128;
+//    }
 
     return 0;
 }
 
 int
 junk_read_ape (playItem_t *it, FILE *fp) {
-//    fprintf (stderr, "trying to read ape tag\n");
+//    trace ("trying to read ape tag\n");
     // try to read footer, position must be already at the EOF right before
     // id3v1 (if present)
     uint8_t header[32];
-    if (fseek (fp, -32, SEEK_CUR) == -1) {
+    if (fseek (fp, -32, SEEK_END) == -1) {
         return -1; // something bad happened
     }
 
@@ -503,12 +509,21 @@ junk_read_ape (playItem_t *it, FILE *fp) {
         return -1; // something bad happened
     }
     if (strncmp (header, "APETAGEX", 8)) {
-        return -1; // no ape tag here
+        // try to skip 128 bytes backwards (id3v1)
+        if (fseek (fp, -128-32, SEEK_END) == -1) {
+            return -1; // something bad happened
+        }
+        if (fread (header, 1, 32, fp) != 32) {
+            return -1; // something bad happened
+        }
+        if (strncmp (header, "APETAGEX", 8)) {
+            return -1; // no ape tag here
+        }
     }
 
     // end of footer must be 0
 //    if (memcmp (&header[24], "\0\0\0\0\0\0\0\0", 8)) {
-//        fprintf (stderr, "bad footer\n");
+//        trace ("bad footer\n");
 //        return -1;
 //    }
 
@@ -517,10 +532,10 @@ junk_read_ape (playItem_t *it, FILE *fp) {
     uint32_t numitems = extract_i32_le (&header[16]);
     uint32_t flags = extract_i32_le (&header[20]);
 
-    //fprintf (stderr, "APEv%d, size=%d, items=%d, flags=%x\n", version, size, numitems, flags);
+    //trace ("APEv%d, size=%d, items=%d, flags=%x\n", version, size, numitems, flags);
     // now seek to beginning of the tag (exluding header)
     if (fseek (fp, -size, SEEK_CUR) == -1) {
-        fprintf (stderr, "failed to seek to tag start (-%d)\n", size);
+        trace ("failed to seek to tag start (-%d)\n", size);
         return -1;
     }
     int i;
@@ -580,6 +595,22 @@ junk_read_ape (playItem_t *it, FILE *fp) {
             else if (!strcasecmp (key, "comment")) {
                 pl_add_meta (it, "genre", value);
             }
+            else if (!strncasecmp (key, "replaygain_album_gain", 21)) {
+                it->replaygain_album_gain = atof (value);
+                trace ("album_gain=%s\n", value);
+            }
+            else if (!strncasecmp (key, "replaygain_album_peak", 21)) {
+                it->replaygain_album_peak = atof (value);
+                trace ("album_peak=%s\n", value);
+            }
+            else if (!strncasecmp (key, "replaygain_track_gain", 21)) {
+                it->replaygain_track_gain = atof (value);
+                trace ("track_gain=%s\n", value);
+            }
+            else if (!strncasecmp (key, "replaygain_track_peak", 21)) {
+                it->replaygain_track_peak = atof (value);
+                trace ("track_peak=%s\n", value);
+            }
         }
     }
 
@@ -587,27 +618,29 @@ junk_read_ape (playItem_t *it, FILE *fp) {
 }
 
 static void
-id3v2_string_read (int version, uint8_t *out, int sz, int unsync, uint8_t **pread) {
+id3v2_string_read (int version, uint8_t *out, int sz, int unsync, const uint8_t *pread) {
     if (!unsync) {
-        memcpy (out, *pread, sz);
-        *pread += sz;
+        memcpy (out, pread, sz);
         out[sz] = 0;
         out[sz+1] = 0;
         return;
     }
     uint8_t prev = 0;
     while (sz > 0) {
-        if (prev == 0xff && !*(*pread)) {
+        if (prev == 0xff && !(*pread)) {
+//            trace ("found unsync 0x00 byte\n");
             prev = 0;
-            (*pread)++;
+            pread++;
             continue;
         }
-        prev = *out = *(*pread);
-        (*pread)++;
+        prev = *out = *pread;
+//        trace ("%02x ", prev);
+        pread++;
         out++;
         sz--;
     }
-    *out = 0;
+//    trace ("\n");
+    *out++ = 0;
 }
 
 int
@@ -640,7 +673,7 @@ junk_get_leading_size (FILE *fp) {
         return -1; // bad header
     }
     uint32_t size = (header[9] << 0) | (header[8] << 7) | (header[7] << 14) | (header[6] << 21);
-    //fprintf (stderr, "junklib: leading junk size %d\n", size);
+    //trace ("junklib: leading junk size %d\n", size);
     return size + 10 + 10 * footerpresent;
 }
 
@@ -648,7 +681,7 @@ int
 junk_read_id3v2 (playItem_t *it, FILE *fp) {
     int title_added = 0;
     if (!it || !fp) {
-        fprintf (stderr, "bad call to junk_read_id3v2!\n");
+        trace ("bad call to junk_read_id3v2!\n");
         return -1;
     }
     rewind (fp);
@@ -662,7 +695,7 @@ junk_read_id3v2 (playItem_t *it, FILE *fp) {
     uint8_t version_major = header[3];
     uint8_t version_minor = header[4];
     if (version_major > 4 || version_major < 2) {
-//        fprintf (stderr, "id3v2.%d.%d is unsupported\n", version_major, version_minor);
+//        trace ("id3v2.%d.%d is unsupported\n", version_major, version_minor);
         return -1; // unsupported
     }
     uint8_t flags = header[5];
@@ -678,13 +711,13 @@ junk_read_id3v2 (playItem_t *it, FILE *fp) {
         return -1; // bad header
     }
     uint32_t size = (header[9] << 0) | (header[8] << 7) | (header[7] << 14) | (header[6] << 21);
-    int startoffset = size + 10 + 10 * footerpresent;
-    if (startoffset > it->startoffset) {
-        it->startoffset = startoffset;
-//        fprintf (stderr, "id3v2 end: %x\n", startoffset);
-    }
+    // FIXME: that should be accounted for
+//    int startoffset = size + 10 + 10 * footerpresent;
+//    if (startoffset > it->startoffset) {
+//        it->startoffset = startoffset;
+//    }
 
-//    fprintf (stderr, "tag size: %d\n", size);
+//    trace ("tag size: %d\n", size);
 
 
     // try to read full tag if size is small enough
@@ -697,7 +730,7 @@ junk_read_id3v2 (playItem_t *it, FILE *fp) {
     }
     uint8_t *readptr = tag;
     int crcpresent = 0;
-//    fprintf (stderr, "version: 2.%d.%d, unsync: %d, extheader: %d, experimental: %d\n", version_major, version_minor, unsync, extheader, expindicator);
+    trace ("version: 2.%d.%d, unsync: %d, extheader: %d, experimental: %d\n", version_major, version_minor, unsync, extheader, expindicator);
     
     if (extheader) {
         if (size < 6) {
@@ -741,13 +774,19 @@ junk_read_id3v2 (playItem_t *it, FILE *fp) {
             frameid[4] = 0;
             readptr += 4;
             if (readptr - tag >= size - 4) {
-                err = 1;
                 break;
             }
-            uint32_t sz = (readptr[3] << 0) | (readptr[2] << 8) | (readptr[1] << 16) | (readptr[0] << 24);
+            uint32_t sz;
+            if (version_major == 4) {
+                sz = (readptr[3] << 0) | (readptr[2] << 7) | (readptr[1] << 14) | (readptr[0] << 21);
+            }
+            else if (version_major == 3) {
+                sz = (readptr[3] << 0) | (readptr[2] << 8) | (readptr[1] << 16) | (readptr[0] << 24);
+            }
             readptr += 4;
-            //fprintf (stderr, "got frame %s, size %d, pos %d, tagsize %d\n", frameid, sz, readptr-tag, size);
+            trace ("got frame %s, size %d, pos %d, tagsize %d\n", frameid, sz, readptr-tag, size);
             if (readptr - tag >= size - sz) {
+                trace ("frame is out of tag bounds\n");
                 err = 1;
                 break; // size of frame is more than size of tag
             }
@@ -755,16 +794,81 @@ junk_read_id3v2 (playItem_t *it, FILE *fp) {
 //                err = 1;
                 break; // frame must be at least 1 byte long
             }
-            uint16_t flags = (readptr[1] << 0) | (readptr[0] << 8);
+            uint8_t flags1 = readptr[0];
+            uint8_t flags2 = readptr[1];
             readptr += 2;
-//            fprintf (stderr, "found id3v2.3 frame: %s, size=%d\n", frameid, sz);
+            if (version_major == 4) {
+                if (flags1 & 0x8f) {
+                    // unknown flags
+                    trace ("unknown status flags: %02x\n", flags1);
+                    readptr += sz;
+                    continue;
+                }
+                if (flags2 & 0xb0) {
+                    // unknown flags
+                    trace ("unknown format flags: %02x\n", flags2);
+                    readptr += sz;
+                    continue;
+                }
+
+                if (flags2 & 0x40) { // group id
+                    trace ("frame has group id\n");
+                    readptr++; // skip id
+                    sz--;
+                }
+                if (flags2 & 0x08) { // compressed frame, ignore
+                    trace ("frame is compressed, skipping\n");
+                    readptr += sz;
+                    continue;
+                }
+                if (flags2 & 0x04) { // encrypted frame, skip
+                    trace ("frame is encrypted, skipping\n");
+                    readptr += sz;
+                    continue;
+                }
+                if (flags2 & 0x02) { // unsync, just do nothing
+                }
+                if (flags2 & 0x01) { // data size
+                    uint32_t size = extract_i32 (readptr);
+                    trace ("frame has extra size field = %d\n", size);
+                    readptr += 4;
+                    sz -= 4;
+                }
+            }
+            else if (version_major == 3) {
+                if (flags1 & 0x1F) {
+                    trace ("unknown status flags: %02x\n", flags1);
+                    readptr += sz;
+                    continue;
+                }
+                if (flags2 & 0x1F) {
+                    trace ("unknown format flags: %02x\n", flags2);
+                    readptr += sz;
+                    continue;
+                }
+                if (flags2 & 0x80) {
+                    trace ("frame is compressed, skipping\n");
+                    readptr += sz;
+                    continue;
+                }
+                if (flags2 & 0x40) {
+                    trace ("frame is encrypted, skipping\n");
+                    readptr += sz;
+                    continue;
+                }
+                if (flags2 & 0x20) {
+                    trace ("frame has group id\n");
+                    readptr++; // skip id
+                    sz--;
+                }
+            }
             if (!strcmp (frameid, "TPE1")) {
                 if (sz > 1000) {
                     err = 1;
                     break; // too large
                 }
                 char str[sz+2];
-                id3v2_string_read (version_major, &str[0], sz, unsync, &readptr);
+                id3v2_string_read (version_major, &str[0], sz, unsync, readptr);
                 artist = convstr (str, sz);
             }
             else if (!strcmp (frameid, "TPE2")) {
@@ -773,7 +877,7 @@ junk_read_id3v2 (playItem_t *it, FILE *fp) {
                     break; // too large
                 }
                 char str[sz+2];
-                id3v2_string_read (version_major, &str[0], sz, unsync, &readptr);
+                id3v2_string_read (version_major, &str[0], sz, unsync, readptr);
                 band = convstr (str, sz);
             }
             else if (!strcmp (frameid, "TRCK")) {
@@ -782,16 +886,18 @@ junk_read_id3v2 (playItem_t *it, FILE *fp) {
                     break; // too large
                 }
                 char str[sz+2];
-                id3v2_string_read (version_major, &str[0], sz, unsync, &readptr);
+                id3v2_string_read (version_major, &str[0], sz, unsync, readptr);
                 track = convstr (str, sz);
             }
             else if (!strcmp (frameid, "TIT2")) {
+                trace ("parsing TIT2...\n");
                 if (sz > 1000) {
                     err = 1;
                     break; // too large
                 }
+                trace ("parsing TIT2....\n");
                 char str[sz+2];
-                id3v2_string_read (version_major, &str[0], sz, unsync, &readptr);
+                id3v2_string_read (version_major, &str[0], sz, unsync, readptr);
                 title = convstr (str, sz);
             }
             else if (!strcmp (frameid, "TALB")) {
@@ -800,12 +906,56 @@ junk_read_id3v2 (playItem_t *it, FILE *fp) {
                     break; // too large
                 }
                 char str[sz+2];
-                id3v2_string_read (version_major, &str[0], sz, unsync, &readptr);
+                id3v2_string_read (version_major, &str[0], sz, unsync, readptr);
                 album = convstr (str, sz);
             }
-            else {
-                readptr += sz;
+            else if (!strcmp (frameid, "COMM")) {
             }
+            else if (!strcmp (frameid, "TXXX")) {
+                if (sz < 2) {
+                    trace ("TXXX frame is too short, skipped\n");
+                    readptr += sz; // bad tag
+                    continue;
+                }
+                uint8_t *p = readptr;
+                uint8_t encoding = *p;
+                p++;
+                uint8_t *desc = p;
+                int desc_sz = 0;
+                while (*p && p - readptr < sz) {
+                    p++;
+                    desc_sz++;
+                }
+                p++;
+                if (p - readptr >= sz) {
+                    trace ("bad TXXX frame, skipped\n");
+                    readptr += sz; // bad tag
+                    continue;
+                }
+                char desc_s[desc_sz+2];
+                id3v2_string_read (version_major, desc_s, desc_sz, unsync, desc);
+                //trace ("desc=%s\n", desc_s);
+                char value_s[readptr+sz-p+2];
+                id3v2_string_read (version_major, value_s, readptr+sz-p, unsync, p);
+                //trace ("value=%s\n", value_s);
+                if (!strcasecmp (desc_s, "replaygain_album_gain")) {
+                    it->replaygain_album_gain = atof (value_s);
+                    trace ("%s=%s (%f)\n", desc_s, value_s, it->replaygain_album_gain);
+                }
+                else if (!strcasecmp (desc_s, "replaygain_album_peak")) {
+                    it->replaygain_album_peak = atof (value_s);
+                    trace ("%s=%s (%f)\n", desc_s, value_s, it->replaygain_album_peak);
+                }
+                else if (!strcasecmp (desc_s, "replaygain_track_gain")) {
+                    it->replaygain_track_gain = atof (value_s);
+                    trace ("%s=%s (%f)\n", desc_s, value_s, it->replaygain_track_gain);
+                }
+                else if (!strcasecmp (desc_s, "replaygain_track_peak")) {
+                    it->replaygain_track_peak = atof (value_s);
+                    trace ("%s=%s (%f)\n", desc_s, value_s, it->replaygain_track_peak);
+                }
+            }
+            readptr += sz;
         }
         else if (version_major == 2) {
             char frameid[4];
@@ -823,7 +973,7 @@ junk_read_id3v2 (playItem_t *it, FILE *fp) {
             if (sz < 1) {
                 break; // frame must be at least 1 byte long
             }
-//            fprintf (stderr, "found id3v2.2 frame: %s, size=%d\n", frameid, sz);
+//            trace ("found id3v2.2 frame: %s, size=%d\n", frameid, sz);
             if (!strcmp (frameid, "TEN")) {
                 char str[sz+2];
                 memcpy (str, readptr, sz);
@@ -878,7 +1028,7 @@ junk_read_id3v2 (playItem_t *it, FILE *fp) {
             readptr += sz;
         }
         else {
-//            fprintf (stderr, "id3v2.%d (unsupported!)\n", version_minor);
+//            trace ("id3v2.%d (unsupported!)\n", version_minor);
         }
     }
     if (!err) {
@@ -910,6 +1060,9 @@ junk_read_id3v2 (playItem_t *it, FILE *fp) {
             pl_add_meta (it, "title", NULL);
         }
         return 0;
+    }
+    else {
+        trace ("error parsing id3v2\n");
     }
     return -1;
 }

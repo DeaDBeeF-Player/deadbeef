@@ -35,18 +35,18 @@
 #include "plugins.h"
 #include "junklib.h"
 
-//#include "cvorbis.h"
-//#include "cdumb.h"
-//#include "cmp3.h"
-//#include "cgme.h"
-//#include "cflac.h"
-//#include "csid.h"
+// 1.0->1.1 changelog:
+//    added sample-accurate seek positions for sub-tracks
+#define PLAYLIST_MAJOR_VER 1
+#define PLAYLIST_MINOR_VER 1
+
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 #define SKIP_BLANK_CUE_TRACKS 1
 
 playItem_t *playlist_head[PL_MAX_ITERATORS];
 playItem_t *playlist_tail[PL_MAX_ITERATORS];
-playItem_t playlist_current;
 playItem_t *playlist_current_ptr;
 int pl_count = 0;
 static int pl_order = 0; // 0 = linear, 1 = shuffle, 2 = random
@@ -147,7 +147,7 @@ pl_cue_parse_time (const char *p) {
 }
 
 static playItem_t *
-pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, char *track, char *index00, char *index01, char *pregap, char *title, char *performer, char *albumtitle, struct DB_decoder_s *decoder, const char *ftype) {
+pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, char *track, char *index00, char *index01, char *pregap, char *title, char *performer, char *albumtitle, struct DB_decoder_s *decoder, const char *ftype, int samplerate) {
     if (!track[0]) {
         return after;
     }
@@ -170,19 +170,25 @@ pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, c
     float f_index01 = index01[0] ? pl_cue_parse_time (index01) : 0;
     float f_pregap = pregap[0] ? pl_cue_parse_time (pregap) : 0;
     if (*prev) {
+        float prevtime = 0;
         if (pregap[0] && index01[0]) {
             // PREGAP command
-            (*prev)->timeend = f_index01 - f_pregap;
+            prevtime = f_index01 - f_pregap;
         }
         else if (index00[0]) {
             // pregap in index 00
-            (*prev)->timeend = f_index00;
+            prevtime = f_index00;
         }
         else if (index01[0]) {
             // no pregap
-            (*prev)->timeend = f_index01;
+            prevtime = f_index01;
         }
-        (*prev)->duration = (*prev)->timeend - (*prev)->timestart;
+        else {
+            return after;
+        }
+        (*prev)->endsample = (prevtime * samplerate) - 1;
+        trace ("calc endsample=%d, prevtime=%f, samplerate=%d\n", (*prev)->endsample,  prevtime, samplerate);
+        (*prev)->duration = (float)((*prev)->endsample - (*prev)->startsample + 1) / samplerate;
     }
     // non-compliant hack to handle tracks which only store pregap info
     if (!index01[0]) {
@@ -194,14 +200,16 @@ pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, c
     it->decoder = decoder;
     it->fname = strdup (fname);
     it->tracknum = atoi (track);
+    float t = 0;
     if (index01[0]) {
-        it->timestart = f_index01;
+        t = f_index01;
     }
     else {
-        it->timestart = f_index00;
+        t = f_index00;
     }
+    it->startsample = t * samplerate;
 
-    it->timeend = -1; // will be filled by next read, or by decoder
+    it->endsample = -1; // will be filled by next read, or by decoder
     it->filetype = ftype;
     after = pl_insert_item (after, it);
     pl_add_meta (it, "artist", performer);
@@ -213,7 +221,8 @@ pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, c
 }
 
 playItem_t *
-pl_insert_cue_from_buffer (playItem_t *after, const char *fname, const uint8_t *buffer, int buffersize, struct DB_decoder_s *decoder, const char *ftype, float duration) {
+pl_insert_cue_from_buffer (playItem_t *after, const char *fname, const uint8_t *buffer, int buffersize, struct DB_decoder_s *decoder, const char *ftype, int numsamples, int samplerate) {
+    trace ("pl_insert_cue_from_buffer numsamples=%d, samplerate=%d\n", numsamples, samplerate);
     char performer[256] = "";
     char albumtitle[256] = "";
     char track[256] = "";
@@ -259,7 +268,7 @@ pl_insert_cue_from_buffer (playItem_t *after, const char *fname, const uint8_t *
         }
         else if (!strncmp (p, "TRACK ", 6)) {
             // add previous track
-            after = pl_process_cue_track (after, fname, &prev, track, index00, index01, pregap, title, performer, albumtitle, decoder, ftype);
+            after = pl_process_cue_track (after, fname, &prev, track, index00, index01, pregap, title, performer, albumtitle, decoder, ftype, samplerate);
             track[0] = 0;
             title[0] = 0;
             pregap[0] = 0;
@@ -285,16 +294,17 @@ pl_insert_cue_from_buffer (playItem_t *after, const char *fname, const uint8_t *
 //            fprintf (stderr, "got unknown line:\n%s\n", p);
         }
     }
-    after = pl_process_cue_track (after, fname, &prev, track, index00, index01, pregap, title, performer, albumtitle, decoder, ftype);
+    after = pl_process_cue_track (after, fname, &prev, track, index00, index01, pregap, title, performer, albumtitle, decoder, ftype, samplerate);
     if (after) {
-        after->timeend = duration;
-        after->duration = after->timeend - after->timestart;
+        after->endsample = numsamples-1;
+        after->duration = (float)(after->endsample - after->startsample + 1) / samplerate;
     }
     return after;
 }
 
 playItem_t *
-pl_insert_cue (playItem_t *after, const char *fname, struct DB_decoder_s *decoder, const char *ftype, float duration) {
+pl_insert_cue (playItem_t *after, const char *fname, struct DB_decoder_s *decoder, const char *ftype, int numsamples, int samplerate) {
+    trace ("pl_insert_cue numsamples=%d, samplerate=%d\n", numsamples, samplerate);
     int len = strlen (fname);
     char cuename[len+5];
     strcpy (cuename, fname);
@@ -324,7 +334,7 @@ pl_insert_cue (playItem_t *after, const char *fname, struct DB_decoder_s *decode
         return NULL;
     }
     fclose (fp);
-    return pl_insert_cue_from_buffer (after, fname, buf, sz, decoder, ftype, duration);
+    return pl_insert_cue_from_buffer (after, fname, buf, sz, decoder, ftype, numsamples, samplerate);
 }
 
 playItem_t *
@@ -474,6 +484,7 @@ int
 pl_remove (playItem_t *it) {
     if (!it)
         return -1;
+    streamer_song_removed_notify (it);
     pl_count--;
     if (playlist_current_ptr == it) {
         playlist_current_ptr = NULL;
@@ -590,13 +601,15 @@ pl_item_copy (playItem_t *out, playItem_t *it) {
     out->fname = strdup (it->fname);
     out->decoder = it->decoder;
     out->tracknum = it->tracknum;
-    out->timestart = it->timestart;
-    out->timeend = it->timeend;
+    out->startsample = it->startsample;
+    out->endsample = it->endsample;
     out->duration = it->duration;
-    out->startoffset = it->startoffset;
-    out->endoffset = it->endoffset;
     out->shufflerating = it->shufflerating;
     out->filetype = it->filetype;
+    out->replaygain_album_gain = it->replaygain_album_gain;
+    out->replaygain_album_peak = it->replaygain_album_peak;
+    out->replaygain_track_gain = it->replaygain_track_gain;
+    out->replaygain_track_peak = it->replaygain_track_peak;
     out->started_timestamp = it->started_timestamp;
     out->next[PL_MAIN] = it->next[PL_MAIN];
     out->prev[PL_MAIN] = it->prev[PL_MAIN];
@@ -642,46 +655,6 @@ pl_item_free (playItem_t *it) {
         }
         memset (it, 0, sizeof (playItem_t));
     }
-}
-
-int
-pl_set_current (playItem_t *it) {
-    int ret = 0;
-    int from = pl_get_idx_of (playlist_current_ptr);
-    int to = it ? pl_get_idx_of (it) : -1;
-    if (playlist_current.decoder) {
-        plug_trigger_event (DB_EV_SONGFINISHED);
-    }
-    codec_lock ();
-    if (playlist_current.decoder) {
-        playlist_current.decoder->free ();
-    }
-    pl_item_free (&playlist_current);
-    playlist_current_ptr = it;
-    if (it && it->decoder) {
-        // don't do anything on fail, streamer will take care
-        ret = it->decoder->init (DB_PLAYITEM (it));
-        if (ret < 0) {
-//            pl_item_free (&playlist_current);
-//            playlist_current_ptr = NULL;
-//            return ret;
-////            it->decoder->info.samplesPerSecond = -1;
-        }
-    }
-    if (playlist_current_ptr) {
-        streamer_reset (0);
-    }
-    if (it) {
-        it->played = 1;
-        it->started_timestamp = time (NULL);
-        pl_item_copy (&playlist_current, it);
-    }
-    codec_unlock ();
-    if (it) {
-        plug_trigger_event (DB_EV_SONGSTARTED);
-    }
-    messagepump_push (M_SONGCHANGED, 0, from, to);
-    return ret;
 }
 
 int
@@ -1027,8 +1000,8 @@ pl_set_loop_mode (int mode) {
 int
 pl_save (const char *fname) {
     const char magic[] = "DBPL";
-    uint8_t majorver = 1;
-    uint8_t minorver = 0;
+    uint8_t majorver = PLAYLIST_MAJOR_VER;
+    uint8_t minorver = PLAYLIST_MINOR_VER;
     FILE *fp = fopen (fname, "w+b");
     if (!fp) {
         return -1;
@@ -1067,10 +1040,10 @@ pl_save (const char *fname) {
         if (fwrite (&l, 1, 2, fp) != 2) {
             goto save_fail;
         }
-        if (fwrite (&it->timestart, 1, 4, fp) != 4) {
+        if (fwrite (&it->startsample, 1, 4, fp) != 4) {
             goto save_fail;
         }
-        if (fwrite (&it->timeend, 1, 4, fp) != 4) {
+        if (fwrite (&it->endsample, 1, 4, fp) != 4) {
             goto save_fail;
         }
         if (fwrite (&it->duration, 1, 4, fp) != 4) {
@@ -1085,6 +1058,19 @@ pl_save (const char *fname) {
                 goto save_fail;
             }
         }
+        if (fwrite (&it->replaygain_album_gain, 1, 4, fp) != 4) {
+            goto save_fail;
+        }
+        if (fwrite (&it->replaygain_album_peak, 1, 4, fp) != 4) {
+            goto save_fail;
+        }
+        if (fwrite (&it->replaygain_track_gain, 1, 4, fp) != 4) {
+            goto save_fail;
+        }
+        if (fwrite (&it->replaygain_track_peak, 1, 4, fp) != 4) {
+            goto save_fail;
+        }
+
         int16_t nm = 0;
         metaInfo_t *m;
         for (m = it->meta; m; m = m->next) {
@@ -1126,8 +1112,8 @@ int
 pl_load (const char *fname) {
     pl_free ();
     DB_decoder_t **decoders = plug_get_decoder_list ();
-    uint8_t majorver = 1;
-    uint8_t minorver = 0;
+    uint8_t majorver;
+    uint8_t minorver;
     FILE *fp = fopen (fname, "rb");
     if (!fp) {
         return -1;
@@ -1142,13 +1128,13 @@ pl_load (const char *fname) {
     if (fread (&majorver, 1, 1, fp) != 1) {
         goto load_fail;
     }
-    if (majorver != 1) {
+    if (majorver != PLAYLIST_MAJOR_VER) {
         goto load_fail;
     }
     if (fread (&minorver, 1, 1, fp) != 1) {
         goto load_fail;
     }
-    if (minorver != 0) {
+    if (minorver != PLAYLIST_MINOR_VER) {
         goto load_fail;
     }
     uint32_t cnt;
@@ -1198,12 +1184,12 @@ pl_load (const char *fname) {
             goto load_fail;
         }
         it->tracknum = l;
-        // timestart
-        if (fread (&it->timestart, 1, 4, fp) != 4) {
+        // startsample
+        if (fread (&it->startsample, 1, 4, fp) != 4) {
             goto load_fail;
         }
-        // timeend
-        if (fread (&it->timeend, 1, 4, fp) != 4) {
+        // endsample
+        if (fread (&it->endsample, 1, 4, fp) != 4) {
             goto load_fail;
         }
         // duration
@@ -1229,6 +1215,18 @@ pl_load (const char *fname) {
                     }
                 }
             }
+        }
+        if (fread (&it->replaygain_album_gain, 1, 4, fp) != 4) {
+            goto load_fail;
+        }
+        if (fread (&it->replaygain_album_peak, 1, 4, fp) != 4) {
+            goto load_fail;
+        }
+        if (fread (&it->replaygain_track_gain, 1, 4, fp) != 4) {
+            goto load_fail;
+        }
+        if (fread (&it->replaygain_track_peak, 1, 4, fp) != 4) {
+            goto load_fail;
         }
         // printf ("loading file %s\n", it->fname);
         int16_t nm = 0;
@@ -1284,6 +1282,7 @@ pl_load (const char *fname) {
     fclose (fp);
     return 0;
 load_fail:
+    trace ("playlist load fail!\n");
     fclose (fp);
     if (it) {
         pl_item_free (it);

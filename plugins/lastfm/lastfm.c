@@ -23,6 +23,9 @@
 #include <curl/curl.h>
 #include "../../deadbeef.h"
 
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
+
 #define LFM_TESTMODE 0
 #define LFM_IGNORE_RULES 0
 #define LFM_NOSEND 0
@@ -69,7 +72,7 @@ lastfm_curl_res (void *ptr, size_t size, size_t nmemb, void *stream)
 {
     int len = size * nmemb;
     if (lfm_reply_sz + len >= MAX_REPLY) {
-        fprintf (stderr, "reply is too large. stopping.\n");
+        trace ("reply is too large. stopping.\n");
         return 0;
     }
     memcpy (lfm_reply + lfm_reply_sz, ptr, len);
@@ -77,17 +80,17 @@ lastfm_curl_res (void *ptr, size_t size, size_t nmemb, void *stream)
 //    char s[size*nmemb+1];
 //    memcpy (s, ptr, size*nmemb);
 //    s[size*nmemb] = 0;
-//    fprintf (stderr, "got from net: %s\n", s);
+//    trace ("got from net: %s\n", s);
     return len;
 }
 
 static int
 curl_req_send (const char *req, const char *post) {
-    fprintf (stderr, "sending request: %s\n", req);
+    trace ("sending request: %s\n", req);
     CURL *curl;
     curl = curl_easy_init ();
     if (!curl) {
-        fprintf (stderr, "lastfm: failed to init curl\n");
+        trace ("lastfm: failed to init curl\n");
         return -1;
     }
     curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1);
@@ -107,7 +110,7 @@ curl_req_send (const char *req, const char *post) {
         lfm_reply[lfm_reply_sz] = 0;
     }
     if (status != 0) {
-        fprintf (stderr, "curl request failed, err:\n%s\n", lfm_err);
+        trace ("curl request failed, err:\n%s\n", lfm_err);
     }
     return status;
 }
@@ -148,7 +151,7 @@ auth (void) {
                 p++;
             }
             *p = 0;
-            fprintf (stderr, "scrobbler auth failed, response: %s\n", lfm_reply);
+            trace ("scrobbler auth failed, response: %s\n", lfm_reply);
             goto fail;
         }
         uint8_t *p = lfm_reply + 2;
@@ -158,7 +161,7 @@ auth (void) {
         }
         // get session
         if (!*p) {
-            fprintf (stderr, "unrecognized scrobbler reply:\n%s\n", lfm_reply);
+            trace ("unrecognized scrobbler reply:\n%s\n", lfm_reply);
             goto fail;
         }
         uint8_t *end = p+1;
@@ -166,12 +169,12 @@ auth (void) {
             end++;
         }
         if (end-p > 32) {
-            fprintf (stderr, "scrobbler session id is invalid length. probably plugin needs fixing.\n");
+            trace ("scrobbler session id is invalid length. probably plugin needs fixing.\n");
             goto fail;
         }
         strncpy (lfm_sess, p, 32);
         lfm_sess[32] = 0;
-        fprintf (stderr, "obtained scrobbler session: %s\n", lfm_sess);
+        trace ("obtained scrobbler session: %s\n", lfm_sess);
         p = end;
         // skip whitespace
         while (*p && *p < 0x20) {
@@ -179,7 +182,7 @@ auth (void) {
         }
         // get nowplaying url
         if (!*p) {
-            fprintf (stderr, "unrecognized scrobbler reply:\n%s\n", lfm_reply);
+            trace ("unrecognized scrobbler reply:\n%s\n", lfm_reply);
             goto fail;
         }
         end = p+1;
@@ -187,12 +190,12 @@ auth (void) {
             end++;
         }
         if (end - p > sizeof (lfm_nowplaying_url)-1) {
-            fprintf (stderr, "scrobbler nowplaying url is too long:\n", lfm_reply);
+            trace ("scrobbler nowplaying url is too long:\n", lfm_reply);
             goto fail;
         }
         strncpy (lfm_nowplaying_url, p, end-p);
         lfm_nowplaying_url[end-p] = 0;
-        fprintf (stderr, "obtained scrobbler nowplaying url: %s\n", lfm_nowplaying_url);
+        trace ("obtained scrobbler nowplaying url: %s\n", lfm_nowplaying_url);
         p = end;
         // skip whitespace
         while (*p && *p < 0x20) {
@@ -200,7 +203,7 @@ auth (void) {
         }
         // get submission url
         if (!*p) {
-            fprintf (stderr, "unrecognized scrobbler reply:\n%s\n", lfm_reply);
+            trace ("unrecognized scrobbler reply:\n%s\n", lfm_reply);
             goto fail;
         }
         end = p+1;
@@ -208,12 +211,12 @@ auth (void) {
             end++;
         }
         if (end - p > sizeof (lfm_submission_url)-1) {
-            fprintf (stderr, "scrobbler submission url is too long:\n", lfm_reply);
+            trace ("scrobbler submission url is too long:\n", lfm_reply);
             goto fail;
         }
         strncpy (lfm_submission_url, p, end-p);
         lfm_submission_url[end-p] = 0;
-        fprintf (stderr, "obtained scrobbler submission url: %s\n", lfm_submission_url);
+        trace ("obtained scrobbler submission url: %s\n", lfm_submission_url);
         p = end;
     }
     else {
@@ -261,18 +264,18 @@ static int
 lfm_uri_encode (char *out, int outl, const char *str) {
     int l = outl;
     static const char echars[] = " ;/?:@=#&";
-    //fprintf (stderr, "lfm_uri_encode %p %d %s\n", out, outl, str);
+    //trace ("lfm_uri_encode %p %d %s\n", out, outl, str);
     while (*str) {
         if (outl <= 1) {
-            //fprintf (stderr, "no space left for 1 byte in buffer\n");
+            //trace ("no space left for 1 byte in buffer\n");
             return -1;
         }
         if (strchr (echars, *str)) {
             if (outl <= 3) {
-                //fprintf (stderr, "no space left for 3 bytes in the buffer\n");
+                //trace ("no space left for 3 bytes in the buffer\n");
                 return -1;
             }
-            //fprintf (stderr, "adding escaped value for %c\n", *str);
+            //trace ("adding escaped value for %c\n", *str);
             snprintf (out, outl, "%%%02x", (int)*str);
             outl -= 3;
             str++;
@@ -325,7 +328,7 @@ lfm_add_keyvalue_uri_encoded (char **out, int *outl, const char *key, const char
 static int
 lfm_format_uri (int subm, DB_playItem_t *song, char *out, int outl) {
     if (subm > 50) {
-        fprintf (stderr, "lastfm: it's only allowed to send up to 50 submissions at once (got idx=%d)\n", subm);
+        trace ("lastfm: it's only allowed to send up to 50 submissions at once (got idx=%d)\n", subm);
         return -1;
     }
     int sz = outl;
@@ -353,37 +356,37 @@ lfm_format_uri (int subm, DB_playItem_t *song, char *out, int outl) {
     }
 
     if (lfm_fetch_song_info (song, &a, &t, &b, &l, &n, &m) == 0) {
-//        fprintf (stderr, "playtime: %f\nartist: %s\ntitle: %s\nalbum: %s\nduration: %f\ntracknum: %s\n---\n", song->playtime, a, t, b, l, n);
+//        trace ("playtime: %f\nartist: %s\ntitle: %s\nalbum: %s\nduration: %f\ntracknum: %s\n---\n", song->playtime, a, t, b, l, n);
     }
     else {
-//        fprintf (stderr, "file %s doesn't have enough tags to submit to last.fm\n", song->fname);
+//        trace ("file %s doesn't have enough tags to submit to last.fm\n", song->fname);
         return -1;
     }
 
     if (lfm_add_keyvalue_uri_encoded (&out, &outl, ka, a) < 0) {
-//        fprintf (stderr, "failed to add %s=%s\n", ka, a);
+//        trace ("failed to add %s=%s\n", ka, a);
         return -1;
     }
     if (lfm_add_keyvalue_uri_encoded (&out, &outl, kt, t) < 0) {
-//        fprintf (stderr, "failed to add %s=%s\n", kt, t);
+//        trace ("failed to add %s=%s\n", kt, t);
         return -1;
     }
     if (lfm_add_keyvalue_uri_encoded (&out, &outl, kb, b) < 0) {
-//        fprintf (stderr, "failed to add %s=%s\n", kb, b);
+//        trace ("failed to add %s=%s\n", kb, b);
         return -1;
     }
     if (lfm_add_keyvalue_uri_encoded (&out, &outl, kn, n) < 0) {
-//        fprintf (stderr, "failed to add %s=%s\n", kn, n);
+//        trace ("failed to add %s=%s\n", kn, n);
         return -1;
     }
     if (lfm_add_keyvalue_uri_encoded (&out, &outl, km, m) < 0) {
-//        fprintf (stderr, "failed to add %s=%s\n", km, m);
+//        trace ("failed to add %s=%s\n", km, m);
         return -1;
     }
     int processed;
     processed = snprintf (out, outl, "%s=%d&", kl, (int)l);
     if (processed > outl) {
-//        fprintf (stderr, "failed to add %s=%d\n", kl, (int)l);
+//        trace ("failed to add %s=%d\n", kl, (int)l);
         return -1;
     }
     out += processed;
@@ -391,7 +394,7 @@ lfm_format_uri (int subm, DB_playItem_t *song, char *out, int outl) {
     if (subm >= 0) {
         processed = snprintf (out, outl, "i[%d]=%d&o[%d]=P&r[%d]=&", subm, (int)song->started_timestamp, subm, subm);
         if (processed > outl) {
-//            fprintf (stderr, "failed to add i[%d]=%d&o[%d]=P&r[%d]=&\n", subm, (int)song->started_timestamp, subm, subm);
+//            trace ("failed to add i[%d]=%d&o[%d]=P&r[%d]=&\n", subm, (int)song->started_timestamp, subm, subm);
             return -1;
         }
         out += processed;
@@ -407,7 +410,7 @@ lastfm_songstarted (DB_event_song_t *ev, uintptr_t data) {
     if (lfm_format_uri (-1, ev->song, lfm_nowplaying, sizeof (lfm_nowplaying)) < 0) {
         lfm_nowplaying[0] = 0;
     }
-//    fprintf (stderr, "%s\n", lfm_nowplaying);
+//    trace ("%s\n", lfm_nowplaying);
     deadbeef->mutex_unlock (lfm_mutex);
     if (lfm_nowplaying[0]) {
         deadbeef->cond_signal (lfm_cond);
@@ -418,29 +421,34 @@ lastfm_songstarted (DB_event_song_t *ev, uintptr_t data) {
 
 static int
 lastfm_songfinished (DB_event_song_t *ev, uintptr_t data) {
+    trace ("lfm songfinished\n");
 #if !LFM_IGNORE_RULES
     // check submission rules
+    // duration must be >= 30 sec
+    if (ev->song->duration < 30) {
+        trace ("song duration is %f seconds. not eligible for submission\n", ev->song->duration);
+        return 0;
+    }
     // must be played for >=240sec of half the total time
     if (ev->song->playtime < 240 && ev->song->playtime < ev->song->duration/2) {
+        trace ("song playtime=%f seconds. not eligible for submission\n", ev->song->playtime);
         return 0;
     }
 
-    // duration must be >= 30 sec
-    if (ev->song->duration < 30) {
-        return 0;
-    }
 #endif
 
     if (!deadbeef->pl_find_meta (ev->song, "artist")
             || !deadbeef->pl_find_meta (ev->song, "title")
 //            || !deadbeef->pl_find_meta (ev->song, "album")
        ) {
+        trace ("lfm: not enough metadata for submission, artist=%s, title=%s, album=%s\n", deadbeef->pl_find_meta (ev->song, "artist"), deadbeef->pl_find_meta (ev->song, "title"), deadbeef->pl_find_meta (ev->song, "album"));
         return 0;
     }
     deadbeef->mutex_lock (lfm_mutex);
     // find free place in queue
     for (int i = 0; i < LFM_SUBMISSION_QUEUE_SIZE; i++) {
         if (!lfm_subm_queue[i]) {
+            trace ("lfm: song is now in queue for submission\n");
             lfm_subm_queue[i] = deadbeef->pl_item_alloc ();
             deadbeef->pl_item_copy (lfm_subm_queue[i], ev->song);
             break;
@@ -455,11 +463,11 @@ lastfm_songfinished (DB_event_song_t *ev, uintptr_t data) {
 static void
 lfm_send_nowplaying (void) {
     if (auth () < 0) {
-        fprintf (stderr, "auth failed! nowplaying cancelled.\n");
+        trace ("auth failed! nowplaying cancelled.\n");
         lfm_nowplaying[0] = 0;
         return;
     }
-    fprintf (stderr, "auth successful! setting nowplaying\n");
+    trace ("auth successful! setting nowplaying\n");
     char s[100];
     snprintf (s, sizeof (s), "s=%s&", lfm_sess);
     int l = strlen (lfm_nowplaying);
@@ -469,23 +477,23 @@ lfm_send_nowplaying (void) {
         int status = curl_req_send (lfm_nowplaying_url, lfm_nowplaying);
         if (!status) {
             if (strncmp (lfm_reply, "OK", 2)) {
-                fprintf (stderr, "nowplaying failed, response:\n%s\n", lfm_reply);
+                trace ("nowplaying failed, response:\n%s\n", lfm_reply);
                 if (!strncmp (lfm_reply, "BADSESSION", 7)) {
-                    fprintf (stderr, "got badsession; trying to restore session...\n");
+                    trace ("got badsession; trying to restore session...\n");
                     lfm_sess[0] = 0;
                     curl_req_cleanup ();
                     if (auth () < 0) {
-                        fprintf (stderr, "fail!\n");
+                        trace ("fail!\n");
                         break; // total fail
                     }
-                    fprintf (stderr, "success! retrying send nowplaying...\n");
+                    trace ("success! retrying send nowplaying...\n");
                     snprintf (s, sizeof (s), "s=%s&", lfm_sess);
                     strcpy (lfm_nowplaying+l, s);
                     continue; // retry with new session
                 }
             }
             else {
-                fprintf (stderr, "nowplaying success! response:\n%s\n", lfm_reply);
+                trace ("nowplaying success! response:\n%s\n", lfm_reply);
             }
         }
         curl_req_cleanup ();
@@ -497,6 +505,7 @@ lfm_send_nowplaying (void) {
 
 static void
 lfm_send_submissions (void) {
+    trace ("lfm_send_submissions\n");
     int i;
     char req[1024*50];
     int idx = 0;
@@ -508,6 +517,7 @@ lfm_send_submissions (void) {
         if (lfm_subm_queue[i]) {
             res = lfm_format_uri (idx, lfm_subm_queue[i], r, len);
             if (res < 0) {
+                trace ("lfm: failed to format uri\n");
                 return;
             }
             len -= res;
@@ -526,28 +536,28 @@ lfm_send_submissions (void) {
     if (res > len) {
         return;
     }
-    fprintf (stderr, "submission req string:\n%s\n", req);
+    trace ("submission req string:\n%s\n", req);
 #if !LFM_NOSEND
     for (int attempts = 2; attempts > 0; attempts--) {
         int status = curl_req_send (lfm_submission_url, req);
         if (!status) {
             if (strncmp (lfm_reply, "OK", 2)) {
-                fprintf (stderr, "submission failed, response:\n%s\n", lfm_reply);
+                trace ("submission failed, response:\n%s\n", lfm_reply);
                 if (!strncmp (lfm_reply, "BADSESSION", 7)) {
-                    fprintf (stderr, "got badsession; trying to restore session...\n");
+                    trace ("got badsession; trying to restore session...\n");
                     lfm_sess[0] = 0;
                     curl_req_cleanup ();
                     if (auth () < 0) {
-                        fprintf (stderr, "fail!\n");
+                        trace ("fail!\n");
                         break; // total fail
                     }
-                    fprintf (stderr, "success! retrying send nowplaying...\n");
+                    trace ("success! retrying send nowplaying...\n");
                     res = snprintf (r, len, "s=%s&", lfm_sess);
                     continue; // retry with new session
                 }
             }
             else {
-                fprintf (stderr, "submission successful, response:\n%s\n", lfm_reply);
+                trace ("submission successful, response:\n%s\n", lfm_reply);
                 deadbeef->mutex_lock (lfm_mutex);
                 for (i = 0; i < LFM_SUBMISSION_QUEUE_SIZE; i++) {
                     if (lfm_subm_queue[i]) {
@@ -561,19 +571,29 @@ lfm_send_submissions (void) {
         curl_req_cleanup ();
         break;
     }
+#else
+    trace ("submission successful (NOSEND=1):\n");
+    deadbeef->mutex_lock (lfm_mutex);
+    for (i = 0; i < LFM_SUBMISSION_QUEUE_SIZE; i++) {
+        if (lfm_subm_queue[i]) {
+            deadbeef->pl_item_free (lfm_subm_queue[i]);
+            lfm_subm_queue[i] = NULL;
+        }
+    }
+    deadbeef->mutex_unlock (lfm_mutex);
 #endif
 }
 
 static void
 lfm_thread (uintptr_t ctx) {
-    //fprintf (stderr, "lfm_thread started\n");
+    //trace ("lfm_thread started\n");
     for (;;) {
         deadbeef->cond_wait (lfm_cond, lfm_mutex);
-        fprintf (stderr, "cond signalled!\n");
+        trace ("cond signalled!\n");
         if (lfm_stopthread) {
             deadbeef->mutex_unlock (lfm_mutex);
             deadbeef->cond_signal (lfm_cond);
-            fprintf (stderr, "lfm_thread end\n");
+            trace ("lfm_thread end\n");
             return;
         }
         deadbeef->mutex_unlock (lfm_mutex);
@@ -615,9 +635,9 @@ auth_v2 (void) {
                 if (end) {
                     *end = 0;
                     snprintf (msg, sizeof (msg), "http://www.last.fm/api/auth/?api_key=%s&token=%s", LASTFM_API_KEY, token);
-                    fprintf (stderr, "Dear user. Please visit this URL and authenticate deadbeef. Thanks.\n");
+                    trace ("Dear user. Please visit this URL and authenticate deadbeef. Thanks.\n");
 
-                    fprintf (stderr, "%s\n", msg);
+                    trace ("%s\n", msg);
                     strncpy (lfm_token, token, 32);
                     lfm_token[32] = 0;
                 }
@@ -645,16 +665,16 @@ auth_v2 (void) {
                     *end = 0;
                     char config[1024];
                     snprintf (config, sizeof (config), "%s/.config/deadbeef/lastfmv2", getenv ("HOME"));
-                    fprintf (stderr, "got session key %s\n", sess);
+                    trace ("got session key %s\n", sess);
                     FILE *fp = fopen (config, "w+b");
                     if (!fp) {
-                        fprintf (stderr, "lastfm: failed to write config file %s\n", config);
+                        trace ("lastfm: failed to write config file %s\n", config);
                         curl_req_cleanup ();
                         return -1;
                     }
                     if (fwrite (sess, 1, 32, fp) != 32) {
                         fclose (fp);
-                        fprintf (stderr, "lastfm: failed to write config file %s\n", config);
+                        trace ("lastfm: failed to write config file %s\n", config);
                         curl_req_cleanup ();
                         return -1;
                     }
@@ -662,7 +682,7 @@ auth_v2 (void) {
                     strcpy (lfm_sess, sess);
                 }
             }
-//            fprintf (stderr, "reply: %s\n", lfm_reply);
+//            trace ("reply: %s\n", lfm_reply);
         }
         curl_req_cleanup ();
         if (lfm_sess[0]) {
@@ -708,16 +728,16 @@ lastfm_start (void) {
     snprintf (config, 1024, "%s/lastfm", deadbeef->get_config_dir ());
     FILE *fp = fopen (config, "rt");
     if (!fp) {
-        fprintf (stderr, "lastfm: failed open %s\n", config);
+        trace ("lastfm: failed open %s\n", config);
         return -1;
     }
     if (!fgets (lfm_user, 50, fp)) {
-        fprintf (stderr, "lastfm: failed to read login from %s\n", config);
+        trace ("lastfm: failed to read login from %s\n", config);
         fclose (fp);
         return -1;
     }
     if (!fgets (lfm_pass, 50, fp)) {
-        fprintf (stderr, "lastfm: failed to read pass from %s\n", config);
+        trace ("lastfm: failed to read pass from %s\n", config);
         fclose (fp);
         return -1;
     }
@@ -745,7 +765,7 @@ lastfm_start (void) {
 
 static int
 lastfm_stop (void) {
-    //fprintf (stderr, "lastfm_stop\n");
+    //trace ("lastfm_stop\n");
     deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_SONGSTARTED, DB_CALLBACK (lastfm_songstarted), 0);
     deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_SONGFINISHED, DB_CALLBACK (lastfm_songfinished), 0);
     lfm_stopthread = 1;

@@ -35,15 +35,17 @@ typedef struct playItem_s {
     char *fname; // full pathname
     struct DB_decoder_s *decoder; // codec to use with this file
     int tracknum; // used for stuff like sid, nsf, cue (will be ignored by most codecs)
-    float timestart; // start time of cue track, or -1
-    float timeend; // end time of cue track, or -1
+    int startsample;
+    int endsample;
     float duration; // in seconds
-    int startoffset; // offset to seek to skip tags and info-headers (mp3)
-    int endoffset; // offset from end of file where music data ends (mp3)
     int shufflerating; // sort order for shuffle mode
     float playtime; // total playtime
     time_t started_timestamp; // result of calling time(NULL)
     const char *filetype; // e.g. MP3 or OGG
+    float replaygain_album_gain;
+    float replaygain_album_peak;
+    float replaygain_track_gain;
+    float replaygain_track_peak;
     struct playItem_s *next[PL_MAX_ITERATORS]; // next item in linked list
     struct playItem_s *prev[PL_MAX_ITERATORS]; // prev item in linked list
     struct metaInfo_s *meta; // linked list storing metainfo
@@ -53,8 +55,8 @@ typedef struct playItem_s {
 
 extern playItem_t *playlist_head[PL_MAX_ITERATORS]; // head of linked list
 extern playItem_t *playlist_tail[PL_MAX_ITERATORS]; // tail of linked list
-extern playItem_t *playlist_current_ptr; // pointer to a real current playlist item
-extern playItem_t playlist_current; // copy of playlist item being played (stays in memory even if removed from playlist)
+extern playItem_t *playlist_current_ptr; // pointer to a real current playlist item (or NULL)
+
 extern int pl_count;
 
 int
@@ -103,13 +105,13 @@ int
 pl_get_idx_of (playItem_t *it);
 
 playItem_t *
-pl_insert_cue_from_buffer (playItem_t *after, const char *fname, const uint8_t *buffer, int buffersize, struct DB_decoder_s *decoder, const char *ftype, float duration);
+pl_insert_cue_from_buffer (playItem_t *after, const char *fname, const uint8_t *buffer, int buffersize, struct DB_decoder_s *decoder, const char *ftype, int numsamples, int samplerate);
 
 playItem_t *
-pl_insert_cue (playItem_t *after, const char *cuename, struct DB_decoder_s *decoder, const char *ftype, float duration);
+pl_insert_cue (playItem_t *after, const char *cuename, struct DB_decoder_s *decoder, const char *ftype, int numsamples, int samplerate);
 
-int
-pl_set_current (playItem_t *it);
+//int
+//pl_set_current (playItem_t *it);
 
 // returns -1 if theres no next song, or playlist finished
 // reason 0 means "song finished", 1 means "user clicked next"

@@ -27,6 +27,7 @@ char conf_hvsc_path[1024] = "";
 int conf_hvsc_enable = 0;
 char conf_blacklist_plugins[1024]; // plugins listed in this option will not be loaded
 int conf_close_send_to_tray = 0;
+int conf_replaygain_mode = 0;
 
 int
 conf_load (void) {
@@ -92,6 +93,15 @@ conf_load (void) {
         }
         else if (!strcasecmp (str, "close_send_to_tray")) {
             conf_close_send_to_tray = atoi (value);
+        }
+        else if (!strcasecmp (str, "replaygain_mode")) {
+            int rg = atoi (value);
+            if (rg >= 0 && rg <= 2) {
+                conf_replaygain_mode = atoi (value);
+            }
+            else {
+                fprintf (stderr, "config warning: replaygain_mode must be one of 0, 1 or 2\n");
+            }
         }
         else {
             fprintf (stderr, "error in config file line %d\n", line);

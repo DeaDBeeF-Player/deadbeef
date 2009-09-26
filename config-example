@@ -7,9 +7,12 @@
 alsa_soundcard default
 
 # mixing frequency (samplerate)
-# prefer native samplerate of your soundcard
-# e.g. 48k for creative cards
+# you should prefer native samplerate of your soundcard
+# that's 48k for creative cards
 # consult your soundcard manual if you don't want to get crappy results
+# this parameter heavily impacts quality and CPU use
+# if you set this to wrong value - you will loose both
+# default is 48000
 samplerate 48000
 
 # samplerate conversion quality
@@ -26,7 +29,7 @@ samplerate 48000
 src_quality 2
 
 # default behaviour of close(X) button is to close player
-# this option allows to minimize to tray instead
+# set to 1 to minimize to tray instead
 #close_send_to_tray 1
 
 # those next 2 are disabled by default, cause most people probably don't have HVSC
@@ -36,4 +39,13 @@ src_quality 2
 
 # plugin blacklisting
 # i use it for testing
+# but it can also be used to save some memory by ignoring unused plugins
 #blacklist_plugins ape hotkeys
+
+# replay gain mode
+# see http://wiki.hydrogenaudio.org/index.php?title=Replaygain for details
+# 0 none (default)
+# 1 track
+# 2 album (audiophile)
+# you must preprocess your collection with some external application to use that
+replaygain_mode 0

@@ -44,6 +44,9 @@
 #include "drawing.h"
 #include "session.h"
 
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
+
 // orange on dark color scheme
 float colo_dark_orange[COLO_COUNT][3] = {
     { 0x7f/255.f, 0x7f/255.f, 0x7f/255.f }, // cursor
@@ -99,7 +102,7 @@ gtkpl_init (void) {
     //memcpy (colo_current, colo_dark_orange, sizeof (colo_current));
     play16_pixbuf = draw_load_pixbuf ("play_16.png");
     pause16_pixbuf = draw_load_pixbuf ("pause_16.png");
-    rowheight = draw_get_font_size () + 10;
+    rowheight = draw_get_font_size () + 12;
     memcpy (colo_current, colo_white_blue, sizeof (colo_current));
 }
 
@@ -237,7 +240,7 @@ gtkpl_draw_pl_row (gtkplaylist_t *ps, int row, playItem_t *it) {
     }
 	int width, height;
 	draw_get_canvas_size ((uintptr_t)ps->backbuf, &width, &height);
-    if (it == playlist_current_ptr && ps->colwidths[0] > 0/* && !p_isstopped ()*/) {
+    if (it == playlist_current_ptr && ps->colwidths[0] > 0 && !p_isstopped ()) {
         uintptr_t pixbuf = p_ispaused () ? pause16_pixbuf : play16_pixbuf;
         draw_pixbuf ((uintptr_t)ps->backbuf, pixbuf, ps->colwidths[0]/2-8-ps->hscrollpos, (row - ps->scrollpos) * rowheight + rowheight/2 - 8, 0, 0, 16, 16);
     }
@@ -301,10 +304,10 @@ gtkpl_draw_pl_row (gtkplaylist_t *ps, int row, playItem_t *it) {
             int dotpos;
             int cidx = ((row-ps->scrollpos) * pl_ncolumns + i) * 3;
             if (i == 2) {
-                draw_text_with_colors (x+5, row * rowheight - ps->scrollpos * rowheight + rowheight/2 - draw_get_font_size ()/2, ps->colwidths[i]-10, 1, columns[i]);
+                draw_text_with_colors (x+5, row * rowheight - ps->scrollpos * rowheight + rowheight/2 - draw_get_font_size ()/2 - 2, ps->colwidths[i]-10, 1, columns[i]);
             }
             else {
-                draw_text_with_colors (x + 5, row * rowheight - ps->scrollpos * rowheight + rowheight/2 - draw_get_font_size ()/2, ps->colwidths[i]-10, 0, columns[i]);
+                draw_text_with_colors (x + 5, row * rowheight - ps->scrollpos * rowheight + rowheight/2 - draw_get_font_size ()/2 - 2, ps->colwidths[i]-10, 0, columns[i]);
             }
         }
         x += ps->colwidths[i];
@@ -774,6 +777,11 @@ gtkpl_keypress (gtkplaylist_t *ps, int keyval, int state) {
         if (ps->row > ps->scrollpos + widget->allocation.height / rowheight - 1) {
             newscroll = ps->row - widget->allocation.height / rowheight + 1;
         }
+    }
+    else if (keyval == GDK_r) {
+        extern int replaygain;
+        replaygain = 1-replaygain;
+        fprintf (stderr, "replaygain=%d\n", replaygain);
     }
     else if (keyval == GDK_Up && ps->row > 0) {
         ps->row--;

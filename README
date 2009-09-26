@@ -1,7 +1,7 @@
-dependencies (player core, includes support for sid, game music and chiptune music):
-    gtk+ 2.x (and gthread, and glib)
+dependencies for player core - includes support for sid, tracker music and chiptune music:
+    gtk+-2.0 >= 2.12 (+ gthread, + glib)
     libsamplerate
-    libalsa
+    alsa-lib
 
 optional dependencies
     libvorbis: for ogg vorbis plugin
@@ -9,5 +9,5 @@ optional dependencies
     libmad: for mpgmad plugin (mpeg1,2 layers1,2,3)
     libFLAC: for flac plugin
 
-if you want to build from git - install autotools, and run ./bootstrap.sh before compiling
+if you want to build from git - install autotools, and run ./autogen.sh before compiling
 
