@@ -91,6 +91,7 @@ update_songinfo (void) {
     float songpos = last_songpos;
     if (p_ispaused ()) {
         strcpy (sbtext_new, "Paused");
+        songpos = streamer_get_playpos ();
     }
     else if (p_isstopped ()) {
         strcpy (sbtext_new, "Stopped");
