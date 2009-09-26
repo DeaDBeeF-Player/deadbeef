@@ -1008,6 +1008,9 @@ on_seekbar_button_press_event          (GtkWidget       *widget,
                                         GdkEventButton  *event,
                                         gpointer         user_data)
 {
+    if (p_isstopped ()) {
+        return FALSE;
+    }
     seekbar_moving = 1;
     seekbar_move_x = event->x;
     seekbar_draw (widget);

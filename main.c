@@ -95,6 +95,7 @@ update_songinfo (void) {
     }
     else if (p_isstopped ()) {
         strcpy (sbtext_new, "Stopped");
+        songpos = 0;
     }
     else if (str_playing_song.decoder) {
         codec_lock ();
