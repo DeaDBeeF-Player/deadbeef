@@ -40,8 +40,8 @@
 #define PLAYLIST_MAJOR_VER 1
 #define PLAYLIST_MINOR_VER 1
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 #define SKIP_BLANK_CUE_TRACKS 1
 
@@ -761,6 +761,7 @@ pl_nextsong (int reason) {
             return 0;
         }
         else {
+            trace ("pl_next_song: reason=%d, loop=%d\n", reason, pl_loop_mode);
             if (reason == 0 && pl_loop_mode == 2) { // song finished, loop mode is "loop 1 track"
                 int r = pl_get_idx_of (playlist_current_ptr);
                 streamer_set_nextsong (r, 1);
@@ -780,6 +781,7 @@ pl_nextsong (int reason) {
             }
             playItem_t *it = pmin;
             if (!it) {
+                trace ("all songs played! reshuffle\n");
                 // all songs played, reshuffle and try again
                 if (pl_loop_mode == 0) { // loop
                     pl_reshuffle (&it, NULL);

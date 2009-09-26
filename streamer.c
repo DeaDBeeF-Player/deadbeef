@@ -271,8 +271,10 @@ streamer_thread (uintptr_t ctx) {
             int to = orig_streaming_song ? pl_get_idx_of (orig_streaming_song) : -1;
             trace ("from=%d, to=%d\n", from, to);
             orig_playing_song = orig_streaming_song;
-            str_playing_song.played = 1;
-            str_playing_song.started_timestamp = time (NULL);
+            if (orig_playing_song) {
+                orig_playing_song->played = 1;
+                orig_playing_song->started_timestamp = time (NULL);
+            }
             playlist_current_ptr = orig_playing_song;
             // that is needed for playlist drawing
             trace ("sending songchanged\n");
