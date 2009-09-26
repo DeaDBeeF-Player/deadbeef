@@ -102,7 +102,7 @@ gtkpl_init (void) {
     //memcpy (colo_current, colo_dark_orange, sizeof (colo_current));
     play16_pixbuf = draw_load_pixbuf ("play_16.png");
     pause16_pixbuf = draw_load_pixbuf ("pause_16.png");
-    rowheight = draw_get_font_size () + 10;
+    rowheight = draw_get_font_size () + 12;
     memcpy (colo_current, colo_white_blue, sizeof (colo_current));
 }
 
@@ -304,10 +304,10 @@ gtkpl_draw_pl_row (gtkplaylist_t *ps, int row, playItem_t *it) {
             int dotpos;
             int cidx = ((row-ps->scrollpos) * pl_ncolumns + i) * 3;
             if (i == 2) {
-                draw_text_with_colors (x+5, row * rowheight - ps->scrollpos * rowheight + rowheight/2 - draw_get_font_size ()/2, ps->colwidths[i]-10, 1, columns[i]);
+                draw_text_with_colors (x+5, row * rowheight - ps->scrollpos * rowheight + rowheight/2 - draw_get_font_size ()/2 - 2, ps->colwidths[i]-10, 1, columns[i]);
             }
             else {
-                draw_text_with_colors (x + 5, row * rowheight - ps->scrollpos * rowheight + rowheight/2 - draw_get_font_size ()/2, ps->colwidths[i]-10, 0, columns[i]);
+                draw_text_with_colors (x + 5, row * rowheight - ps->scrollpos * rowheight + rowheight/2 - draw_get_font_size ()/2 - 2, ps->colwidths[i]-10, 0, columns[i]);
             }
         }
         x += ps->colwidths[i];
