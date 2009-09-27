@@ -170,7 +170,6 @@ cflac_init (DB_playItem_t *it) {
         currentsample = 0;
         trace ("startsample=%d, endsample=%d, totalsamples=%d\n", startsample, endsample, cb.totalsamples);
     }
-    plugin.info.readpos = 0;
 
     remaining = 0;
     return 0;
