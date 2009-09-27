@@ -38,8 +38,6 @@ static FILE *file;
 static OggVorbis_File vorbis_file;
 static vorbis_info *vi;
 static int cur_bit_stream;
-static float timestart;
-static float timeend;
 static int startsample;
 static int endsample;
 static int currentsample;
@@ -128,7 +126,7 @@ cvorbis_read (char *bytes, int size) {
             break;
         }
     }
-    plugin.info.readpos = ov_time_tell(&vorbis_file) - timestart;
+    plugin.info.readpos = (float)(ov_pcm_tell(&vorbis_file)-startsample)/vi->rate;
     return initsize - size;
 }
 
@@ -146,7 +144,7 @@ cvorbis_seek_sample (int sample) {
         fprintf (stderr, "oggvorbis: failed to do sample-accurate seek (%d->%d)\n", sample, tell);
     }
     currentsample = sample;
-    plugin.info.readpos = ov_time_tell(&vorbis_file) - timestart;
+    plugin.info.readpos = (float)(ov_pcm_tell(&vorbis_file) - startsample)/vi->rate;
     return 0;
 }
 
