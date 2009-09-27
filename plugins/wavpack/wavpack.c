@@ -72,7 +72,6 @@ wv_free (void) {
     memset (&wvctx, 0, sizeof (wvctx));
 }
 
-
 static int
 wv_read_int16 (char *bytes, int size) {
     int currentsample = WavpackGetSampleIndex (wvctx.ctx);
@@ -93,6 +92,34 @@ wv_read_int16 (char *bytes, int size) {
     while (n > 0) {
         *((int16_t *)bytes) = (int16_t)(*p);
         bytes += sizeof (int16_t);
+        p++;
+        n--;
+    }
+    plugin.info.readpos = (float)(WavpackGetSampleIndex (wvctx.ctx)-wvctx.startsample)/WavpackGetSampleRate (wvctx.ctx);
+    return size;
+}
+
+static int
+wv_read_float32 (char *bytes, int size) {
+    int currentsample = WavpackGetSampleIndex (wvctx.ctx);
+    if (size / (4 * plugin.info.channels) + currentsample > wvctx.endsample) {
+        size = (wvctx.endsample - currentsample + 1) * 4 * plugin.info.channels;
+        trace ("wv: size truncated to %d bytes, cursample=%d, endsample=%d\n", size, currentsample, wvctx.endsample);
+        if (size <= 0) {
+            return 0;
+        }
+    }
+    int32_t buffer[size/4];
+    int nchannels = WavpackGetNumChannels (wvctx.ctx);
+    int n = WavpackUnpackSamples (wvctx.ctx, buffer, size/(4*nchannels));
+    size = n * 4 * nchannels;
+    // convert to int16
+    int32_t *p = buffer;
+    n *= nchannels;
+    float mul = 1.f/ ((1 << (plugin.info.bps-1))-1);
+    while (n > 0) {
+        *((float *)bytes) = (*p) * mul;
+        bytes += sizeof (float);
         p++;
         n--;
     }
@@ -171,7 +198,7 @@ static DB_decoder_t plugin = {
     .init = wv_init,
     .free = wv_free,
     .read_int16 = wv_read_int16,
-//    .read_float32 = wv_read_float32,
+    .read_float32 = wv_read_float32,
     .seek = wv_seek,
     .seek_sample = wv_seek_sample,
     .insert = wv_insert,
