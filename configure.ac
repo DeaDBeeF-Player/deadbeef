@@ -96,6 +96,16 @@ if test ${HAVE_WAVPACK} ; then
     AC_SUBST(WAVPACK_DIR)
 fi
 
+dnl libsndfile plugin
+AC_CHECK_LIB([sndfile], [main], [HAVE_SNDFILE=1])
+
+if test ${HAVE_SNDFILE} ; then
+    SNDFILE_LIBS="-lsndfile"
+    SNDFILE_DIR="plugins/sndfile"
+    AC_SUBST(SNDFILE_LIBS)
+    AC_SUBST(SNDFILE_DIR)
+fi
+
 AC_OUTPUT([
 Makefile
 pixmaps/Makefile
@@ -111,6 +121,7 @@ plugins/mpgmad/Makefile
 plugins/vorbis/Makefile
 plugins/flac/Makefile
 plugins/wavpack/Makefile
+plugins/sndfile/Makefile
 deadbeef.desktop
 ])
 
