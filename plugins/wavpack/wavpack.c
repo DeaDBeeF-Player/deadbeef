@@ -41,7 +41,7 @@ static wvctx_t wvctx;
 static int
 wv_init (DB_playItem_t *it) {
     memset (&wvctx, 0, sizeof (wvctx));
-    wvctx.ctx = WavpackOpenFileInput (it->fname, NULL, 0, 0);
+    wvctx.ctx = WavpackOpenFileInput (it->fname, NULL, OPEN_2CH_MAX|OPEN_WVC, 0);
     if (!wvctx.ctx) {
         return -1;
     }
