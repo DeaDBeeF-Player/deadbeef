@@ -200,6 +200,7 @@ palsa_free (void) {
         alsa_terminate = 1;
         if (alsa_tid) {
             thread_join (alsa_tid);
+            alsa_tid = 0;
         }
         snd_pcm_close(audio);
         audio = NULL;

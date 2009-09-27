@@ -100,7 +100,10 @@ streamer_set_current (playItem_t *it) {
 //        plug_trigger_event (DB_EV_SONGFINISHED);
 //        str_streaming_song.decoder->free ();
 //    }
-    pl_item_free (&str_streaming_song);
+    if(str_streaming_song.decoder) {
+        str_streaming_song.decoder->free ();
+        pl_item_free (&str_streaming_song);
+    }
     orig_streaming_song = it;
     if (!it) {
         return 0;
@@ -246,10 +249,8 @@ streamer_thread (uintptr_t ctx) {
             }
             messagepump_push (M_SONGCHANGED, 0, pl_get_idx_of (orig_playing_song), -1);
             streamer_set_current (NULL);
-            if (str_playing_song.decoder) {
-                pl_item_free (&str_playing_song);
-                orig_playing_song = NULL;
-            }
+            pl_item_free (&str_playing_song);
+            orig_playing_song = NULL;
             continue;
         }
         else if (p_isstopped ()) {
@@ -273,6 +274,8 @@ streamer_thread (uintptr_t ctx) {
                 trace ("sending songfinished to plugins [2]\n");
                 plug_trigger_event (DB_EV_SONGFINISHED);
             }
+            // free old copy of playing
+            pl_item_free (&str_playing_song);
             // copy streaming into playing
             pl_item_copy (&str_playing_song, &str_streaming_song);
             int from = orig_playing_song ? pl_get_idx_of (orig_playing_song) : -1;
@@ -301,7 +304,10 @@ streamer_thread (uintptr_t ctx) {
 
             if (orig_playing_song != orig_streaming_song) {
                 // restart playing from new position
-                pl_item_free (&str_streaming_song);
+                if(str_streaming_song.decoder) {
+                    str_streaming_song.decoder->free ();
+                    pl_item_free (&str_streaming_song);
+                }
                 orig_streaming_song = orig_playing_song;
                 pl_item_copy (&str_streaming_song, orig_streaming_song);
                 bytes_until_next_song = -1;
