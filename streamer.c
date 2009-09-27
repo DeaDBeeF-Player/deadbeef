@@ -471,12 +471,11 @@ apply_replay_gain_float32 (playItem_t *it, char *bytes, int size) {
 }
 
 static void
-mono_int16_to_stereo_int16 (int16_t *in, uint16_t *out, int nsamples) {
+mono_int16_to_stereo_int16 (int16_t *in, int16_t *out, int nsamples) {
     while (nsamples > 0) {
-        int16_t sample = *in;
+        int16_t sample = *in++;
         *out++ = sample;
         *out++ = sample;
-        in++;
         nsamples--;
     }
 }
@@ -541,15 +540,15 @@ streamer_read_async (char *bytes, int size) {
                 int i;
                 if (decoder->info.channels == 2) {
                     bytesread = decoder->read_int16 (bytes, size);
-                    codec_unlock ();
                     apply_replay_gain_int16 (&str_streaming_song, bytes, size);
+                    codec_unlock ();
                 }
                 else {
                     bytesread = decoder->read_int16 (g_readbuffer, size>>1);
-                    codec_unlock ();
                     apply_replay_gain_int16 (&str_streaming_song, g_readbuffer, size>>1);
-                    mono_int16_to_stereo_int16 ((int16_t*)g_readbuffer, (int16_t*)bytes, size>>1);
+                    mono_int16_to_stereo_int16 ((int16_t*)g_readbuffer, (int16_t*)bytes, size>>2);
                     bytesread *= 2;
+                    codec_unlock ();
                 }
             }
             else if (src_is_valid_ratio ((double)p_get_rate ()/samplerate)) {
