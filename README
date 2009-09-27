@@ -8,6 +8,8 @@ optional dependencies
     libcurl: for last.fm plugin
     libmad: for mpgmad plugin (mpeg1,2 layers1,2,3)
     libFLAC: for flac plugin
+    wavpack: for wavpack plugin
+    libsndfile: for sndfile plugin
 
 if you want to build from git - install autotools, and run ./autogen.sh before compiling
 
