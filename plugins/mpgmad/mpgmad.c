@@ -22,8 +22,8 @@
 #include <stdlib.h>
 #include "../../deadbeef.h"
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -482,13 +482,7 @@ cmp3_init (DB_playItem_t *it) {
     if (skip > 0) {
         fseek(buffer.file, skip, SEEK_SET);
     }
-    buffer.remaining = 0;
-    //buffer.output = NULL;
-    buffer.readsize = 0;
-    buffer.cachefill = 0;
-    buffer.cachepos = 0;
     plugin.info.readpos = 0;
-
     cmp3_scan_stream (&buffer, -1); // scan entire stream, calc duration
 	if (it->endsample > 0) {
         buffer.startsample = it->startsample;
@@ -505,7 +499,7 @@ cmp3_init (DB_playItem_t *it) {
         fseek (buffer.file, buffer.startoffset, SEEK_SET);
     }
     if (buffer.samplerate == 0) {
-        //fprintf (stderr, "bad mpeg file: %f\n", it->fname);
+        trace ("bad mpeg file: %f\n", it->fname);
         fclose (buffer.file);
         return -1;
     }
@@ -666,7 +660,8 @@ cmp3_decode (void) {
             buffer.readsize -= sizeof (mad_fixed_t);
             if (MAD_NCHANNELS(&frame.header) == 2) {
                 if (buffer.cachefill >= CACHE_SIZE - sizeof (mad_fixed_t)) {
-                    trace ("readsize=%d, pcm.length=%d(%d), cachefill=%d, cachepos=%d(%d)\n", buffer.readsize, synth.pcm.length, i, buffer.cachefill, buffer.cachepos, cachepos);
+                    trace ("mpgmad: readsize=%d, pcm.length=%d(%d), cachefill=%d, cachepos=%d(%d)\n", buffer.readsize, synth.pcm.length, i, buffer.cachefill, buffer.cachepos, cachepos);
+                    return 0;
                 }
                 assert (buffer.cachefill < CACHE_SIZE - sizeof (mad_fixed_t));
                 memcpy (buffer.cache+cachepos, &synth.pcm.samples[1][i], sizeof (mad_fixed_t));

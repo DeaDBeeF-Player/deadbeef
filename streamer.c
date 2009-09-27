@@ -40,12 +40,20 @@ static intptr_t streamer_tid;
 static SRC_STATE *src;
 static SRC_DATA srcdata;
 static int codecleft;
-static char g_readbuffer[200000]; // hack!
-static float g_fbuffer[200000]; // hack!
-static float g_srcbuffer[200000]; // hack!
+
+// that's buffer for resampling.
+// our worst case is 192KHz downsampling to 22050Hz with 2048 sample output buffer
+#define INPUT_BUFFER_SIZE (2048*192000/22050*8)
+static char g_readbuffer[INPUT_BUFFER_SIZE];
+// fbuffer contains readbuffer converted to floating point, to pass to SRC
+static float g_fbuffer[INPUT_BUFFER_SIZE];
+// output SRC buffer - can't really exceed INPUT_BUFFER_SIZE
+#define SRC_BUFFER_SIZE (INPUT_BUFFER_SIZE*2)
+static float g_srcbuffer[SRC_BUFFER_SIZE];
 static int streaming_terminate;
 
-#define STREAM_BUFFER_SIZE (200000)
+// buffer up to 3 seconds at 44100Hz stereo
+#define STREAM_BUFFER_SIZE (44100*3*4)
 static int streambuffer_fill;
 static int bytes_until_next_song = 0;
 static char streambuffer[STREAM_BUFFER_SIZE];
@@ -64,8 +72,8 @@ playItem_t str_streaming_song;
 static playItem_t *orig_playing_song;
 static playItem_t *orig_streaming_song;
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 // playlist must call that whenever item was removed
 void
@@ -462,6 +470,56 @@ apply_replay_gain_float32 (playItem_t *it, char *bytes, int size) {
     }
 }
 
+static void
+mono_int16_to_stereo_int16 (int16_t *in, uint16_t *out, int nsamples) {
+    while (nsamples > 0) {
+        int16_t sample = *in;
+        *out++ = sample;
+        *out++ = sample;
+        in++;
+        nsamples--;
+    }
+}
+
+static void
+int16_to_float32 (int16_t *in, float *out, int nsamples) {
+    while (nsamples > 0) {
+        *out++ = (*in++)/(float)0x7fff;
+        nsamples--;
+    }
+}
+
+static void
+mono_int16_to_stereo_float32 (int16_t *in, float *out, int nsamples) {
+    while (nsamples > 0) {
+        float sample = (*in++)/(float)0x7fff;
+        *out++ = sample;
+        *out++ = sample;
+        nsamples--;
+    }
+}
+
+static void
+mono_float32_to_stereo_float32 (float *in, float *out, int nsamples) {
+    while (nsamples > 0) {
+        float sample = *in++;
+        *out++ = sample;
+        *out++ = sample;
+        nsamples--;
+    }
+}
+
+static void
+float32_to_int16 (float *in, int16_t *out, int nsamples) {
+    fpu_control ctl;
+    fpu_setround (&ctl);
+    while (nsamples > 0) {
+        *out++ = (int16_t)ftoi ((*in++)*0x7fff);
+        nsamples--;
+    }
+    fpu_restore (ctl);
+}
+
 // returns number of bytes been read
 static int
 streamer_read_async (char *bytes, int size) {
@@ -478,8 +536,8 @@ streamer_read_async (char *bytes, int size) {
         if (decoder->info.samplerate != -1) {
             int nchannels = decoder->info.channels;
             int samplerate = decoder->info.samplerate;
-            // read and do SRC
             if (decoder->info.samplerate == p_get_rate ()) {
+                // samplerate match
                 int i;
                 if (decoder->info.channels == 2) {
                     bytesread = decoder->read_int16 (bytes, size);
@@ -487,25 +545,17 @@ streamer_read_async (char *bytes, int size) {
                     apply_replay_gain_int16 (&str_streaming_song, bytes, size);
                 }
                 else {
-                    bytesread = decoder->read_int16 (g_readbuffer, size/2);
+                    bytesread = decoder->read_int16 (g_readbuffer, size>>1);
                     codec_unlock ();
-                    apply_replay_gain_int16 (&str_streaming_song, g_readbuffer, size/2);
-                    for (i = 0; i < size/4; i++) {
-                        int16_t sample = (int16_t)(((int32_t)(((int16_t*)g_readbuffer)[i])));
-                        ((int16_t*)bytes)[i*2+0] = sample;
-                        ((int16_t*)bytes)[i*2+1] = sample;
-                    }
+                    apply_replay_gain_int16 (&str_streaming_song, g_readbuffer, size>>1);
+                    mono_int16_to_stereo_int16 ((int16_t*)g_readbuffer, (int16_t*)bytes, size>>1);
                     bytesread *= 2;
                 }
             }
-            else {
+            else if (src_is_valid_ratio ((double)p_get_rate ()/samplerate)) {
+                // read and do SRC
                 int nsamples = size/4;
-                // convert to codec samplerate
                 nsamples = nsamples * samplerate / p_get_rate () * 2;
-                if (!src_is_valid_ratio ((double)p_get_rate ()/samplerate)) {
-                    printf ("invalid ratio! %d / %d = %f", p_get_rate (), samplerate, (float)p_get_rate ()/samplerate);
-                }
-                assert (src_is_valid_ratio ((double)p_get_rate ()/samplerate));
                 // read data at source samplerate (with some room for SRC)
                 int nbytes = (nsamples - codecleft) * 2 * nchannels;
                 int samplesize = 2;
@@ -513,11 +563,11 @@ streamer_read_async (char *bytes, int size) {
                     nbytes = 0;
                 }
                 else {
-//                    if (nbytes & 3) {
-//                        printf ("FATAL: nbytes=%d, nsamples=%d, codecleft=%d, nchannels=%d, ratio=%f\n", nbytes, nsamples, codecleft, nchannels, (float)p_get_rate ()/samplerate);
-//                        assert ((nbytes & 3) == 0);
-//                    }
                     if (!decoder->read_float32) {
+                        if (nbytes > INPUT_BUFFER_SIZE) {
+                            trace ("input buffer overflow\n");
+                            nbytes = INPUT_BUFFER_SIZE;
+                        }
                         bytesread = decoder->read_int16 (g_readbuffer, nbytes);
                         apply_replay_gain_int16 (&str_streaming_song, g_readbuffer, nbytes);
                     }
@@ -533,16 +583,13 @@ streamer_read_async (char *bytes, int size) {
                         nsamples = bytesread / (samplesize * nchannels) + codecleft;
                         // convert to float
                         float *fbuffer = g_fbuffer + codecleft*2;
+                        int n = nsamples - codecleft;
                         if (nchannels == 2) {
-                            for (i = 0; i < (nsamples - codecleft) * 2; i++) {
-                                fbuffer[i] = ((int16_t *)g_readbuffer)[i]/32767.f;
-                            }
+                            n <<= 1;
+                            int16_to_float32 ((int16_t*)g_readbuffer, fbuffer, n);
                         }
                         else if (nchannels == 1) { // convert mono to stereo
-                            for (i = 0; i < (nsamples - codecleft); i++) {
-                                fbuffer[i*2+0] = ((int16_t *)g_readbuffer)[i]/32767.f;
-                                fbuffer[i*2+1] = fbuffer[i*2+0];
-                            }
+                            mono_int16_to_stereo_float32 ((int16_t*)g_readbuffer, fbuffer, n);
                         }
                     }
                     else {
@@ -553,10 +600,7 @@ streamer_read_async (char *bytes, int size) {
                             codec_unlock ();
                             apply_replay_gain_float32 (&str_streaming_song, g_readbuffer, nbytes*2);
                             nsamples = bytesread / (samplesize * nchannels) + codecleft;
-                            for (i = 0; i < (nsamples - codecleft); i++) {
-                                fbuffer[i*2+0] = ((float *)g_readbuffer)[i];
-                                fbuffer[i*2+1] = fbuffer[i*2+0];
-                            }
+                            mono_float32_to_stereo_float32 ((float *)g_readbuffer, fbuffer, nsamples-codecleft);
                         }
                         else {
                             codec_lock ();
@@ -582,6 +626,7 @@ streamer_read_async (char *bytes, int size) {
                 nbytes = size;
                 int genbytes = srcdata.output_frames_gen * 4;
                 bytesread = min(size, genbytes);
+#if 0
                 int i;
                 for (i = 0; i < bytesread/2; i++) {
                     float sample = g_srcbuffer[i];
@@ -593,10 +638,15 @@ streamer_read_async (char *bytes, int size) {
                     }
                     ((int16_t*)bytes)[i] = (int16_t)ftoi (sample*32767.f);
                 }
+#endif
+                float32_to_int16 ((float*)g_srcbuffer, (int16_t*)bytes, bytesread>>1);
                 // calculate how many unused input samples left
                 codecleft = nsamples - srcdata.input_frames_used;
                 // copy spare samples for next update
                 memmove (g_fbuffer, &g_fbuffer[srcdata.input_frames_used*2], codecleft * 8);
+            }
+            else {
+                fprintf (stderr, "invalid ratio! %d / %d = %f", p_get_rate (), samplerate, (float)p_get_rate ()/samplerate);
             }
         }
         else {
@@ -608,10 +658,9 @@ streamer_read_async (char *bytes, int size) {
             return initsize;
         }
         else  {
-//            trace ("EOF, buns=%d\n", bytes_until_next_song);
             // that means EOF
             if (bytes_until_next_song < 0) {
-//                trace ("finished streaming song, queueing next\n");
+                trace ("finished streaming song, queueing next\n");
                 bytes_until_next_song = streambuffer_fill;
                 pl_nextsong (0);
             }

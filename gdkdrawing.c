@@ -41,11 +41,11 @@ draw_begin (uintptr_t canvas) {
 
 void
 draw_end (void) {
-    if (pango_ready) {
-        g_object_unref (pangolayout);
-        g_object_unref (pangoctx);
-        pango_ready = 0;
-    }
+//    if (pango_ready) {
+//        g_object_unref (pangolayout);
+//        g_object_unref (pangoctx);
+//        pango_ready = 0;
+//    }
     drawable = NULL;
     if (gc) {
         g_object_unref (gc);

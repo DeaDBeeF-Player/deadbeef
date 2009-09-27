@@ -124,11 +124,6 @@ pl_prevsong (void);
 int
 pl_randomsong (void);
 
-// starts current playlist item from position 0
-// only if the item is still in playlist
-void
-pl_start_current (void);
-
 void
 pl_add_meta (playItem_t *it, const char *key, const char *value);
 

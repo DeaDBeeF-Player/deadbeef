@@ -843,18 +843,6 @@ pl_randomsong (void) {
 }
 
 void
-pl_start_current (void) {
-    codec_lock ();
-    playItem_t *it = playlist_current_ptr;
-    if (it && it->decoder) {
-        // don't do anything on fail, streamer will take care
-        it->decoder->free ();
-        it->decoder->init (DB_PLAYITEM (it));
-    }
-    codec_unlock ();
-}
-
-void
 pl_add_meta (playItem_t *it, const char *key, const char *value) {
     // check if it's already set
     metaInfo_t *m = it->meta;

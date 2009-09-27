@@ -1378,6 +1378,7 @@ gtkpl_playsong (gtkplaylist_t *ps) {
         streamer_set_nextsong (ps->row, 1);
     }
     else {
+        p_stop ();
         streamer_set_nextsong (0, 1);
     }
 }
