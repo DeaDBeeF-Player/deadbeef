@@ -148,10 +148,10 @@ wv_insert (DB_playItem_t *after, const char *fname) {
     }
     int totalsamples = WavpackGetNumSamples (ctx);
     int samplerate = WavpackGetSampleRate (ctx);
+    WavpackCloseFile (ctx);
     float duration = (float)totalsamples / samplerate;
     DB_playItem_t *cue_after = deadbeef->pl_insert_cue (after, fname, &plugin, "wv", totalsamples, samplerate);
     if (cue_after) {
-        WavpackCloseFile (ctx);
         return cue_after;
     }
 
@@ -160,7 +160,6 @@ wv_insert (DB_playItem_t *after, const char *fname) {
     it->fname = strdup (fname);
     it->filetype = "wv";
     it->duration = duration;
-    WavpackCloseFile (ctx);
 
     trace ("wv: totalsamples=%d, samplerate=%d, duration=%f\n", totalsamples, samplerate, duration);
 
