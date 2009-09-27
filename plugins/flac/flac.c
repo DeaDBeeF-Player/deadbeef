@@ -32,7 +32,7 @@ static DB_functions_t *deadbeef;
 
 static FLAC__StreamDecoder *decoder = 0;
 #define BUFFERSIZE 100000
-static char buffer[BUFFERSIZE]; // this buffer always has int32 samples
+static char buffer[BUFFERSIZE]; // this buffer always has float samples
 static int remaining; // bytes remaining in buffer from last read
 static int startsample;
 static int endsample;
@@ -58,20 +58,16 @@ cflac_write_callback (const FLAC__StreamDecoder *decoder, const FLAC__Frame *fra
     int bufsamples = bufsize / (plugin.info.channels * plugin.info.bps / 8);
     int nsamples = min (bufsamples, frame->header.blocksize);
     char *bufptr = &buffer[remaining];
-    int32_t mask = (1<<(frame->header.bits_per_sample-1))-1;
-    float scaler = 1.f / ((1<<(frame->header.bits_per_sample-1))-1);
-    int32_t neg = 1<<frame->header.bits_per_sample;
-    int32_t sign = (1<<31);
-    int32_t signshift = frame->header.bits_per_sample-1;
+    float mul = 1.f/ ((1 << (plugin.info.bps-1))-1);
 
     for (int i = 0; i < nsamples; i++) {
         int32_t sample = inputbuffer[0][i];
-        ((float*)bufptr)[0] = (sample - ((sample&sign)>>signshift)*neg) * scaler;
+        *((float*)bufptr) = sample * mul;
         bufptr += sizeof (float);
         remaining += sizeof (float);
         if (plugin.info.channels > 1) {
             int32_t sample = inputbuffer[1][i];
-            ((float*)bufptr)[0] = (sample - ((sample&sign)>>signshift)*neg) * scaler;
+            *((float*)bufptr) = sample * mul;
             bufptr += sizeof (float);
             remaining += sizeof (float);
         }
