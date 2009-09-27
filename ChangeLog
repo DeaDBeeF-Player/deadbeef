@@ -1,3 +1,13 @@
+version 0.2.3
+	added native gapless playback which works with most decoders
+	added replaygain support
+	added wavpack plugin
+	added libsndfile plugin
+	fixed seeking in paused and stopped states
+	fixed reading of some id3v2 tags
+	changed tag reading order to APEv2->ID3v2->ID3v1
+	improved cuesheet reader
+
 version 0.2.2.2
 	fixed resume after suspend/hibernate
 	fixed cue reader regression
