@@ -86,6 +86,15 @@ if test ${HAVE_FLAC} ; then
     AC_SUBST(FLAC_DIR)
 fi
 
+dnl wavpack plugin
+AC_CHECK_LIB([wavpack], [main], [HAVE_WAVPACK=1])
+
+if test ${HAVE_WAVPACK} ; then
+    WAVPACK_LIBS="-lwavpack"
+    WAVPACK_DIR="plugins/wavpack"
+    AC_SUBST(WAVPACK_LIBS)
+    AC_SUBST(WAVPACK_DIR)
+fi
 
 AC_OUTPUT([
 Makefile
@@ -101,6 +110,7 @@ plugins/ffap/Makefile
 plugins/mpgmad/Makefile
 plugins/vorbis/Makefile
 plugins/flac/Makefile
+plugins/wavpack/Makefile
 deadbeef.desktop
 ])
 
