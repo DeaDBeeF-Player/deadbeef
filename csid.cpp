@@ -128,6 +128,7 @@ static sldb_t *sldb;
 
 static void sldb_load()
 {
+    fprintf (stderr, "sldb_load\n");
     if (sldb_loaded || !conf_hvsc_enable) {
         return;
     }
@@ -135,6 +136,7 @@ static void sldb_load()
     const char *fname = conf_hvsc_path;
     FILE *fp = fopen (fname, "r");
     if (!fp) {
+        fprintf (stderr, "sid: failed to open file %s\n", fname);
         return;
     }
     char str[1024];
@@ -287,11 +289,15 @@ static void sldb_load()
 
 fail:
     fclose (fp);
-    printf ("HVSC sldb loaded %d songs, %d subsongs total\n", sldb->sldb_size, sldb->sldb_poolmark);
+    fprintf (stderr, "HVSC sldb loaded %d songs, %d subsongs total\n", sldb->sldb_size, sldb->sldb_poolmark);
 }
 
 static int
 sldb_find (const uint8_t *digest) {
+    if (!sldb) {
+        fprintf (stderr, "sldb not loaded\n");
+        return -1;
+    }
     for (int i = 0; i < sldb->sldb_size; i++) {
         if (!memcmp (digest, sldb->sldb_digests[i], 16)) {
             return i;
