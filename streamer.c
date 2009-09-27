@@ -513,7 +513,14 @@ float32_to_int16 (float *in, int16_t *out, int nsamples) {
     fpu_control ctl;
     fpu_setround (&ctl);
     while (nsamples > 0) {
-        *out++ = (int16_t)ftoi ((*in++)*0x7fff);
+        float sample = *in++;
+        if (sample > 1) {
+            sample = 1;
+        }
+        else if (sample < -1) {
+            sample = -1;
+        }
+        *out++ = (int16_t)ftoi (sample*0x7fff);
         nsamples--;
     }
     fpu_restore (ctl);
