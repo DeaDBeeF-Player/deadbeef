@@ -22,6 +22,7 @@
 #include <string.h>
 #include "playlist.h"
 #include "utf8.h"
+#include "plugins.h"
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
@@ -420,15 +421,15 @@ str_trim_right (uint8_t *str, int len) {
 
 // should read both id3v1 and id3v1.1
 int
-junk_read_id3v1 (playItem_t *it, FILE *fp) {
+junk_read_id3v1 (playItem_t *it, DB_FILE *fp) {
     if (!it || !fp) {
         trace ("bad call to junk_read_id3v1!\n");
         return -1;
     }
     uint8_t buffer[128];
     // try reading from end
-    fseek (fp, -128, SEEK_END);
-    if (fread (buffer, 1, 128, fp) != 128) {
+    deadbeef->fseek (fp, -128, SEEK_END);
+    if (deadbeef->fread (buffer, 1, 128, fp) != 128) {
         return -1;
     }
     if (strncmp (buffer, "TAG", 3)) {
@@ -496,24 +497,24 @@ junk_read_id3v1 (playItem_t *it, FILE *fp) {
 }
 
 int
-junk_read_ape (playItem_t *it, FILE *fp) {
+junk_read_ape (playItem_t *it, DB_FILE *fp) {
 //    trace ("trying to read ape tag\n");
     // try to read footer, position must be already at the EOF right before
     // id3v1 (if present)
     uint8_t header[32];
-    if (fseek (fp, -32, SEEK_END) == -1) {
+    if (deadbeef->fseek (fp, -32, SEEK_END) == -1) {
         return -1; // something bad happened
     }
 
-    if (fread (header, 1, 32, fp) != 32) {
+    if (deadbeef->fread (header, 1, 32, fp) != 32) {
         return -1; // something bad happened
     }
     if (strncmp (header, "APETAGEX", 8)) {
         // try to skip 128 bytes backwards (id3v1)
-        if (fseek (fp, -128-32, SEEK_END) == -1) {
+        if (deadbeef->fseek (fp, -128-32, SEEK_END) == -1) {
             return -1; // something bad happened
         }
-        if (fread (header, 1, 32, fp) != 32) {
+        if (deadbeef->fread (header, 1, 32, fp) != 32) {
             return -1; // something bad happened
         }
         if (strncmp (header, "APETAGEX", 8)) {
@@ -534,14 +535,14 @@ junk_read_ape (playItem_t *it, FILE *fp) {
 
     //trace ("APEv%d, size=%d, items=%d, flags=%x\n", version, size, numitems, flags);
     // now seek to beginning of the tag (exluding header)
-    if (fseek (fp, -size, SEEK_CUR) == -1) {
+    if (deadbeef->fseek (fp, -size, SEEK_CUR) == -1) {
         trace ("failed to seek to tag start (-%d)\n", size);
         return -1;
     }
     int i;
     for (i = 0; i < numitems; i++) {
         uint8_t buffer[8];
-        if (fread (buffer, 1, 8, fp) != 8) {
+        if (deadbeef->fread (buffer, 1, 8, fp) != 8) {
             return -1;
         }
         uint32_t itemsize = extract_i32_le (&buffer[0]);
@@ -550,7 +551,7 @@ junk_read_ape (playItem_t *it, FILE *fp) {
         char key[256];
         int keysize = 0;
         while (keysize <= 255) {
-            if (fread (&key[keysize], 1, 1, fp) != 1) {
+            if (deadbeef->fread (&key[keysize], 1, 1, fp) != 1) {
                 return -1;
             }
             if (key[keysize] == 0) {
@@ -564,7 +565,7 @@ junk_read_ape (playItem_t *it, FILE *fp) {
         key[255] = 0;
         // read value
         char value[itemsize+1];
-        if (fread (value, 1, itemsize, fp) != itemsize) {
+        if (deadbeef->fread (value, 1, itemsize, fp) != itemsize) {
             return -1;
         }
         value[itemsize] = 0;
@@ -644,14 +645,14 @@ id3v2_string_read (int version, uint8_t *out, int sz, int unsync, const uint8_t 
 }
 
 int
-junk_get_leading_size (FILE *fp) {
+junk_get_leading_size (DB_FILE *fp) {
     uint8_t header[10];
-    int pos = ftell (fp);
-    if (fread (header, 1, 10, fp) != 10) {
-        fseek (fp, pos, SEEK_SET);
+    int pos = deadbeef->ftell (fp);
+    if (deadbeef->fread (header, 1, 10, fp) != 10) {
+        deadbeef->fseek (fp, pos, SEEK_SET);
         return -1; // too short
     }
-    fseek (fp, pos, SEEK_SET);
+    deadbeef->fseek (fp, pos, SEEK_SET);
     if (strncmp (header, "ID3", 3)) {
         return -1; // no tag
     }
@@ -678,15 +679,15 @@ junk_get_leading_size (FILE *fp) {
 }
 
 int
-junk_read_id3v2 (playItem_t *it, FILE *fp) {
+junk_read_id3v2 (playItem_t *it, DB_FILE *fp) {
     int title_added = 0;
     if (!it || !fp) {
         trace ("bad call to junk_read_id3v2!\n");
         return -1;
     }
-    rewind (fp);
+    deadbeef->rewind (fp);
     uint8_t header[10];
-    if (fread (header, 1, 10, fp) != 10) {
+    if (deadbeef->fread (header, 1, 10, fp) != 10) {
         return -1; // too short
     }
     if (strncmp (header, "ID3", 3)) {
@@ -725,7 +726,7 @@ junk_read_id3v2 (playItem_t *it, FILE *fp) {
         return -1;
     }
     uint8_t tag[size];
-    if (fread (tag, 1, size, fp) != size) {
+    if (deadbeef->fread (tag, 1, size, fp) != size) {
         return -1; // bad size
     }
     uint8_t *readptr = tag;

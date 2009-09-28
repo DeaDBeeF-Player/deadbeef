@@ -20,6 +20,8 @@
 #define __PLUGINS_H
 #include "deadbeef.h"
 
+extern DB_functions_t *deadbeef;
+
 void
 plug_load_all (void);
 
@@ -70,6 +72,9 @@ plug_playback_set_pos (float pos);
 
 struct DB_decoder_s **
 plug_get_decoder_list (void);
+
+struct DB_vfs_s **
+plug_get_vfs_list (void);
 
 void
 plug_volume_set_db (float db);

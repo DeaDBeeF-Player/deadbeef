@@ -54,7 +54,7 @@ static DB_functions_t *deadbeef;
 #define VBR_SCALE_FLAG  0x0008
 
 typedef struct {
-    FILE *file;
+    DB_FILE *file;
 
 //    // input buffer, for MPEG data
 //    // FIXME: this should go away if reading happens per-frame
@@ -181,8 +181,8 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
     for (;;) {
         uint32_t hdr;
         uint8_t sync;
-        size_t pos = ftell (buffer->file);
-        if (fread (&sync, 1, 1, buffer->file) != 1) {
+        size_t pos = deadbeef->ftell (buffer->file);
+        if (deadbeef->fread (&sync, 1, 1, buffer->file) != 1) {
             break; // eof
         }
         if (sync != 0xff) {
@@ -190,7 +190,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
         }
         else {
             // 2nd sync byte
-            if (fread (&sync, 1, 1, buffer->file) != 1) {
+            if (deadbeef->fread (&sync, 1, 1, buffer->file) != 1) {
                 break; // eof
             }
             if ((sync >> 5) != 7) {
@@ -200,11 +200,11 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
         // found frame
         hdr = (0xff<<24) | (sync << 16);
         // read 2 bytes more
-        if (fread (&sync, 1, 1, buffer->file) != 1) {
+        if (deadbeef->fread (&sync, 1, 1, buffer->file) != 1) {
             break; // eof
         }
         hdr |= sync << 8;
-        if (fread (&sync, 1, 1, buffer->file) != 1) {
+        if (deadbeef->fread (&sync, 1, 1, buffer->file) != 1) {
             break; // eof
         }
         hdr |= sync;
@@ -333,22 +333,22 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
         // try to read xing/info tag (only on initial scans)
         if (sample <= 0 && !got_xing_header)
         {
-            size_t framepos = ftell (buffer->file);
+            size_t framepos = deadbeef->ftell (buffer->file);
             trace ("trying to read xing header\n");
             if (ver == 1) {
-                fseek (buffer->file, 32, SEEK_CUR);
+                deadbeef->fseek (buffer->file, 32, SEEK_CUR);
             }
             else {
-                fseek (buffer->file, 17, SEEK_CUR);
+                deadbeef->fseek (buffer->file, 17, SEEK_CUR);
             }
             const char xing[] = "Xing";
             const char info[] = "Info";
             char magic[4];
-            if (fread (magic, 1, 4, buffer->file) != 4) {
+            if (deadbeef->fread (magic, 1, 4, buffer->file) != 4) {
                 return -1; // EOF
             }
             // add information to skip this frame
-            int startoffset = ftell (buffer->file) + packetlength;
+            int startoffset = deadbeef->ftell (buffer->file) + packetlength;
             if (startoffset > buffer->startoffset) {
                 buffer->startoffset = startoffset;
             }
@@ -358,13 +358,13 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
                 // read flags
                 uint32_t flags;
                 uint8_t buf[4];
-                if (fread (buf, 1, 4, buffer->file) != 4) {
+                if (deadbeef->fread (buf, 1, 4, buffer->file) != 4) {
                     return -1; // EOF
                 }
                 flags = extract_i32 (buf);
                 if (flags & FRAMES_FLAG) {
                     // read number of frames
-                    if (fread (buf, 1, 4, buffer->file) != 4) {
+                    if (deadbeef->fread (buf, 1, 4, buffer->file) != 4) {
                         return -1; // EOF
                     }
                     uint32_t nframes = extract_i32 (buf);
@@ -374,65 +374,65 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
                     buffer->samplerate = samplerate;
                 }
                 if (flags & BYTES_FLAG) {
-                    fseek (buffer->file, 4, SEEK_CUR);
+                    deadbeef->fseek (buffer->file, 4, SEEK_CUR);
                 }
                 if (flags & TOC_FLAG) {
-                    fseek (buffer->file, 100, SEEK_CUR);
+                    deadbeef->fseek (buffer->file, 100, SEEK_CUR);
                 }
                 if (flags & VBR_SCALE_FLAG) {
-                    fseek (buffer->file, 4, SEEK_CUR);
+                    deadbeef->fseek (buffer->file, 4, SEEK_CUR);
                 }
                 // lame header
-                if (fread (buf, 1, 4, buffer->file) != 4) {
+                if (deadbeef->fread (buf, 1, 4, buffer->file) != 4) {
                     return -1; // EOF
                 }
-                trace ("tell=%x, %c%c%c%c\n", ftell(buffer->file), buf[0], buf[1], buf[2], buf[3]);
+                trace ("tell=%x, %c%c%c%c\n", deadbeef->ftell(buffer->file), buf[0], buf[1], buf[2], buf[3]);
                 if (!memcmp (buf, "LAME", 4)) {
                     trace ("lame header found\n");
-                    fseek (buffer->file, 6, SEEK_CUR);
+                    deadbeef->fseek (buffer->file, 6, SEEK_CUR);
 
                     // FIXME: that can be optimized by single read
                     uint8_t lpf;
-                    fread (&lpf, 1, 1, buffer->file);
+                    deadbeef->fread (&lpf, 1, 1, buffer->file);
                     //3 floats: replay gain
-                    fread (buf, 1, 4, buffer->file);
+                    deadbeef->fread (buf, 1, 4, buffer->file);
                     float rg_peaksignalamp = extract_f32 (buf);
-                    fread (buf, 1, 2, buffer->file);
+                    deadbeef->fread (buf, 1, 2, buffer->file);
                     uint16_t rg_radio = extract_i16 (buf);
-                    fread (buf, 1, 2, buffer->file);
+                    deadbeef->fread (buf, 1, 2, buffer->file);
                     uint16_t rg_audiophile = extract_i16 (buf);
                     // skip
-                    fseek (buffer->file, 2, SEEK_CUR);
-                    fread (buf, 1, 3, buffer->file);
+                    deadbeef->fseek (buffer->file, 2, SEEK_CUR);
+                    deadbeef->fread (buf, 1, 3, buffer->file);
                     uint32_t startdelay = (((uint32_t)buf[0]) << 4) | ((((uint32_t)buf[1]) & 0xf0)>>4);
                     uint32_t enddelay = ((((uint32_t)buf[1])&0x0f)<<8) | ((uint32_t)buf[2]);
                     // skip
-                    fseek (buffer->file, 1, SEEK_CUR);
+                    deadbeef->fseek (buffer->file, 1, SEEK_CUR);
                     // mp3gain
                     uint8_t mp3gain;
-                    fread (&mp3gain, 1, 1, buffer->file);
+                    deadbeef->fread (&mp3gain, 1, 1, buffer->file);
                     // skip
-                    fseek (buffer->file, 2, SEEK_CUR);
+                    deadbeef->fseek (buffer->file, 2, SEEK_CUR);
                     // musiclen
-                    fread (buf, 1, 4, buffer->file);
+                    deadbeef->fread (buf, 1, 4, buffer->file);
                     uint32_t musiclen = extract_i32 (buf);
                     trace ("lpf: %d, peaksignalamp: %f, radiogain: %d, audiophile: %d, startdelay: %d, enddelay: %d, mp3gain: %d, musiclen: %d\n", lpf, rg_peaksignalamp, rg_radio, rg_audiophile, startdelay, enddelay, mp3gain, musiclen);
                     // skip crc
-                    //fseek (buffer->file, 4, SEEK_CUR);
+                    //deadbeef->fseek (buffer->file, 4, SEEK_CUR);
                     buffer->startdelay = startdelay;
                     buffer->enddelay = enddelay;
                 }
                 if (sample <= 0 && (flags&FRAMES_FLAG)) {
                     buffer->totalsamples -= buffer->enddelay;
                     trace ("lame totalsamples: %d\n", buffer->totalsamples);
-                    fseek (buffer->file, framepos+packetlength-4, SEEK_SET);
+                    deadbeef->fseek (buffer->file, framepos+packetlength-4, SEEK_SET);
                     return 0;
                 }
             }
             if (sample == 0) {
                 // xing header failed, calculate based on file size
-                fseek (buffer->file, 0, SEEK_END);
-                int sz = ftell (buffer->file) - buffer->startoffset - buffer->endoffset;
+                deadbeef->fseek (buffer->file, 0, SEEK_END);
+                int sz = deadbeef->ftell (buffer->file) - buffer->startoffset - buffer->endoffset;
                 int nframes = sz / packetlength;
                 buffer->duration = nframes * samples_per_frame / samplerate;
                 buffer->totalsamples = nframes * samples_per_frame;
@@ -440,16 +440,16 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
 //                trace ("packetlength=%d, fsize=%d, nframes=%d, samples_per_frame=%d, samplerate=%d, duration=%f, totalsamples=%d\n", packetlength, sz, nframes, samples_per_frame, samplerate, buffer->duration, buffer->totalsamples);
 
                 if (sample == 0) {
-                    fseek (buffer->file, framepos+packetlength-4, SEEK_SET);
+                    deadbeef->fseek (buffer->file, framepos+packetlength-4, SEEK_SET);
                     return 0;
                 }
             }
-            fseek (buffer->file, framepos+packetlength-4, SEEK_SET);
+            deadbeef->fseek (buffer->file, framepos+packetlength-4, SEEK_SET);
             got_xing_header = 1;
         }
 
         if (sample >= 0 && scansamples + samples_per_frame >= sample) {
-            fseek (buffer->file, -4, SEEK_CUR);
+            deadbeef->fseek (buffer->file, -4, SEEK_CUR);
             buffer->currentsample = sample;
             buffer->skipsamples = sample - scansamples;
             return 0;
@@ -459,7 +459,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
         buffer->duration += dur;
         nframe++;
         if (packetlength > 0) {
-            fseek (buffer->file, packetlength-4, SEEK_CUR);
+            deadbeef->fseek (buffer->file, packetlength-4, SEEK_CUR);
         }
     }
     if (nframe == 0) {
@@ -474,13 +474,13 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
 static int
 cmp3_init (DB_playItem_t *it) {
     memset (&buffer, 0, sizeof (buffer));
-    buffer.file = fopen (it->fname, "rb");
+    buffer.file = deadbeef->fopen (it->fname);
     if (!buffer.file) {
         return -1;
     }
     int skip = deadbeef->junk_get_leading_size (buffer.file);
     if (skip > 0) {
-        fseek(buffer.file, skip, SEEK_SET);
+        deadbeef->fseek(buffer.file, skip, SEEK_SET);
     }
     plugin.info.readpos = 0;
     cmp3_scan_stream (&buffer, -1); // scan entire stream, calc duration
@@ -496,11 +496,11 @@ cmp3_init (DB_playItem_t *it) {
         buffer.endsample = buffer.totalsamples-1;
         buffer.skipsamples = buffer.startdelay;
         buffer.currentsample = buffer.startdelay;
-        fseek (buffer.file, buffer.startoffset, SEEK_SET);
+        deadbeef->fseek (buffer.file, buffer.startoffset, SEEK_SET);
     }
     if (buffer.samplerate == 0) {
         trace ("bad mpeg file: %f\n", it->fname);
-        fclose (buffer.file);
+        deadbeef->fclose (buffer.file);
         return -1;
     }
     plugin.info.bps = buffer.bitspersample;
@@ -584,7 +584,7 @@ cmp3_decode (void) {
             int size = READBUFFER - buffer.remaining;
             int bytesread = 0;
             char *bytes = buffer.input + buffer.remaining;
-            bytesread = fread (bytes, 1, size, buffer.file);
+            bytesread = deadbeef->fread (bytes, 1, size, buffer.file);
             if (!bytesread) {
                 // add guard
                 eof = 1;
@@ -686,7 +686,7 @@ cmp3_decode (void) {
 static void
 cmp3_free (void) {
     if (buffer.file) {
-        fclose (buffer.file);
+        deadbeef->fclose (buffer.file);
         buffer.file = NULL;
         mad_synth_finish (&synth);
         mad_frame_finish (&frame);
@@ -788,10 +788,10 @@ cmp3_seek_sample (int sample) {
         return -1; // eof
     }
     // restart file, and load until we hit required pos
-    fseek (buffer.file, 0, SEEK_SET);
+    deadbeef->fseek (buffer.file, 0, SEEK_SET);
     int skip = deadbeef->junk_get_leading_size (buffer.file);
     if (skip > 0) {
-        fseek(buffer.file, skip, SEEK_SET);
+        deadbeef->fseek(buffer.file, skip, SEEK_SET);
     }
     mad_synth_finish (&synth);
     mad_frame_finish (&frame);
@@ -832,7 +832,7 @@ static const char *filetypes[] = {
 
 static DB_playItem_t *
 cmp3_insert (DB_playItem_t *after, const char *fname) {
-    FILE *fp = fopen (fname, "rb");
+    DB_FILE *fp = deadbeef->fopen (fname);
     if (!fp) {
         return NULL;
     }
@@ -841,12 +841,12 @@ cmp3_insert (DB_playItem_t *after, const char *fname) {
     buffer.file = fp;
     int skip = deadbeef->junk_get_leading_size (buffer.file);
     if (skip > 0) {
-        fseek(buffer.file, skip, SEEK_SET);
+        deadbeef->fseek(buffer.file, skip, SEEK_SET);
     }
     // calc approx. mp3 duration 
     int res = cmp3_scan_stream (&buffer, 0);
     if (res < 0) {
-        fclose (fp);
+        deadbeef->fclose (fp);
         return NULL;
     }
 
@@ -893,11 +893,11 @@ cmp3_insert (DB_playItem_t *after, const char *fname) {
     // FIXME! bad numsamples passed to cue
     DB_playItem_t *cue_after = deadbeef->pl_insert_cue (after, fname, &plugin, ftype, buffer.duration*buffer.samplerate, buffer.samplerate);
     if (cue_after) {
-        fclose (fp);
+        deadbeef->fclose (fp);
         return cue_after;
     }
 
-    rewind (fp);
+    deadbeef->rewind (fp);
 
     DB_playItem_t *it = deadbeef->pl_item_alloc ();
     it->decoder = &plugin;
@@ -906,7 +906,7 @@ cmp3_insert (DB_playItem_t *after, const char *fname) {
     int apeerr = deadbeef->junk_read_ape (it, fp);
     int v2err = deadbeef->junk_read_id3v2 (it, fp);
     int v1err = deadbeef->junk_read_id3v1 (it, fp);
-    fclose (fp);
+    deadbeef->fclose (fp);
     deadbeef->pl_add_meta (it, "title", NULL);
     it->duration = buffer.duration;
     it->filetype = ftype;

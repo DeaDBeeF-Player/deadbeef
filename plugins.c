@@ -39,6 +39,7 @@
 #include "common.h"
 #include "conf.h"
 #include "junklib.h"
+#include "vfs.h"
 
 //#define DISABLE_VERSIONCHECK 1
 
@@ -97,7 +98,16 @@ static DB_functions_t deadbeef_api = {
     .junk_read_id3v2 = (int (*)(DB_playItem_t *it, FILE *fp))junk_read_id3v2,
     .junk_read_ape = (int (*)(DB_playItem_t *it, FILE *fp))junk_read_ape,
     .junk_get_leading_size = junk_get_leading_size,
+    // vfs
+    .fopen = vfs_fopen,
+    .fclose = vfs_fclose,
+    .fread = vfs_fread,
+    .fseek = vfs_fseek,
+    .ftell = vfs_ftell,
+    .rewind = vfs_rewind,
 };
+
+DB_functions_t *deadbeef = &deadbeef_api;
 
 const char *
 plug_get_config_dir (void) {
@@ -119,8 +129,11 @@ plug_volume_set_amp (float amp) {
     volumebar_notify_changed ();
 }
 
-#define MAX_DECODERS 50
-DB_decoder_t *g_decoders[MAX_DECODERS+1];
+#define MAX_DECODER_PLUGINS 50
+DB_decoder_t *g_decoder_plugins[MAX_DECODER_PLUGINS+1];
+
+#define MAX_VFS_PLUGINS 10
+DB_vfs_t *g_vfs_plugins[MAX_VFS_PLUGINS+1];
 
 void
 plug_md5 (uint8_t sig[16], const char *in, int len) {
@@ -390,19 +403,29 @@ plug_load_all (void) {
 #include "moduleconf.h"
 #undef PLUG
 
-    // find all decoders, and put in g_decoders list
+    // categorize plugins
     int numdecoders = 0;
+    int numvfs = 0;
     for (plugin_t *plug = plugins; plug; plug = plug->next) {
         if (plug->plugin->type == DB_PLUGIN_DECODER) {
-            printf ("found decoder plugin %s\n", plug->plugin->name);
-            if (numdecoders >= MAX_DECODERS) {
+            fprintf (stderr, "found decoder plugin %s\n", plug->plugin->name);
+            if (numdecoders >= MAX_DECODER_PLUGINS) {
                 break;
             }
-            g_decoders[numdecoders] = (DB_decoder_t *)plug->plugin;
+            g_decoder_plugins[numdecoders] = (DB_decoder_t *)plug->plugin;
             numdecoders++;
         }
+        else if (plug->plugin->type == DB_PLUGIN_VFS) {
+            fprintf (stderr, "found vfs plugin %s\n", plug->plugin->name);
+            if (numvfs >= MAX_VFS_PLUGINS) {
+                break;
+            }
+            g_vfs_plugins[numvfs] = (DB_vfs_t *)plug->plugin;
+            numvfs++;
+        }
     }
-    g_decoders[numdecoders] = NULL;
+    g_decoder_plugins[numdecoders] = NULL;
+    g_vfs_plugins[numvfs] = NULL;
 }
 
 void
@@ -422,6 +445,11 @@ plug_unload_all (void) {
 
 struct DB_decoder_s **
 plug_get_decoder_list (void) {
-    return g_decoders;
+    return g_decoder_plugins;
+}
+
+struct DB_vfs_s **
+plug_get_vfs_list (void) {
+    return g_vfs_plugins;
 }
 

@@ -268,15 +268,14 @@ typedef struct APEContext {
 } APEContext;
 
 APEContext ape_ctx;
-FILE *fp;
 
 inline static int
-read_uint16(FILE *fp, uint16_t* x)
+read_uint16(DB_FILE *fp, uint16_t* x)
 {
     unsigned char tmp[2];
     int n;
 
-    n = fread(tmp, 1, 2, fp);
+    n = deadbeef->fread(tmp, 1, 2, fp);
 
     if (n != 2)
         return -1;
@@ -288,18 +287,18 @@ read_uint16(FILE *fp, uint16_t* x)
 
 
 inline static int
-read_int16(FILE *fp, int16_t* x)
+read_int16(DB_FILE *fp, int16_t* x)
 {
     return read_uint16(fp, (uint16_t*)x);
 }
 
 inline static int
-read_uint32(FILE *fp, uint32_t* x)
+read_uint32(DB_FILE *fp, uint32_t* x)
 {
     unsigned char tmp[4];
     int n;
 
-    n = fread(tmp, 1, 4, fp);
+    n = deadbeef->fread(tmp, 1, 4, fp);
 
     if (n != 4)
         return -1;
@@ -365,7 +364,7 @@ static void ape_dumpinfo(APEContext * ape_ctx)
 }
 
 static int
-ape_read_header(FILE *fp, APEContext *ape)
+ape_read_header(DB_FILE *fp, APEContext *ape)
 {
     int i;
     int total_blocks;
@@ -373,7 +372,7 @@ ape_read_header(FILE *fp, APEContext *ape)
     /* TODO: Skip any leading junk such as id3v2 tags */
     ape->junklength = 0;
 
-    if (fread (ape->magic, 1, 4, fp) != 4) {
+    if (deadbeef->fread (ape->magic, 1, 4, fp) != 4) {
         return -1;
     }
     if (memcmp (ape->magic, "MAC ", 4))
@@ -413,14 +412,14 @@ ape_read_header(FILE *fp, APEContext *ape)
         if (read_uint32 (fp, &ape->wavtaillength) < 0) {
             return -1;
         }
-        if (fread (ape->md5, 1, 16, fp) != 16) {
+        if (deadbeef->fread (ape->md5, 1, 16, fp) != 16) {
             return -1;
         }
 
         /* Skip any unknown bytes at the end of the descriptor.
            This is for future compatibility */
         if (ape->descriptorlength > 52) {
-            fseek (fp, ape->descriptorlength - 52, SEEK_CUR);
+            deadbeef->fseek (fp, ape->descriptorlength - 52, SEEK_CUR);
         }
 
         /* Read header data */
@@ -478,7 +477,7 @@ ape_read_header(FILE *fp, APEContext *ape)
         }
 
         if (ape->formatflags & MAC_FORMAT_FLAG_HAS_PEAK_LEVEL) {
-            fseek(fp, 4, SEEK_CUR); /* Skip the peak level */
+            deadbeef->fseek(fp, 4, SEEK_CUR); /* Skip the peak level */
             ape->headerlength += 4;
         }
 
@@ -507,7 +506,7 @@ ape_read_header(FILE *fp, APEContext *ape)
 
         /* Skip any stored wav header */
         if (!(ape->formatflags & MAC_FORMAT_FLAG_CREATE_WAV_HEADER)) {
-            fseek (fp, ape->wavheaderlength, SEEK_CUR);
+            deadbeef->fseek (fp, ape->wavheaderlength, SEEK_CUR);
         }
     }
 
@@ -583,19 +582,19 @@ static inline const uint32_t bswap_32(uint32_t x)
     return x;
 }
 
-static int ape_read_packet(FILE *fp, APEContext *ape_ctx)
+static int ape_read_packet(DB_FILE *fp, APEContext *ape_ctx)
 {
     int ret;
     int nblocks;
     APEContext *ape = ape_ctx;
     uint32_t extra_size = 8;
 
-    if (feof(fp))
-        return -1;
     if (ape->currentframe > ape->totalframes)
         return -1;
 //    fprintf (stderr, "seeking to %d\n", ape->frames[ape->currentframe].pos);
-    fseek (fp, ape->frames[ape->currentframe].pos, SEEK_SET);
+    if (deadbeef->fseek (fp, ape->frames[ape->currentframe].pos, SEEK_SET) != 0) {
+        return -1;
+    }
 
     /* Calculate how many blocks there are in this frame */
     if (ape->currentframe == (ape->totalframes - 1))
@@ -615,7 +614,7 @@ static int ape_read_packet(FILE *fp, APEContext *ape_ctx)
     int sz = PACKET_BUFFER_SIZE-8;
     sz = min (sz, ape->frames[ape->currentframe].size);
 //    fprintf (stderr, "readsize: %d, packetsize: %d\n", sz, ape->frames[ape->currentframe].size);
-    ret = fread (ape->packet_data + extra_size, 1, sz, fp);
+    ret = deadbeef->fread (ape->packet_data + extra_size, 1, sz, fp);
     ape->packet_sizeleft = ape->frames[ape->currentframe].size - sz + 8;
     ape->packet_remaining = sz+8;
 
@@ -664,10 +663,12 @@ static int ape_read_seek(AVFormatContext *s, int stream_index, int64_t timestamp
 }
 #endif
 
+static DB_FILE *fp;
+
 static int
 ffap_init(DB_playItem_t *it)
 {
-    fp = fopen (it->fname, "rb");
+    fp = deadbeef->fopen (it->fname);
     if (!fp) {
         return -1;
     }
@@ -1548,7 +1549,7 @@ ape_decode_frame(APEContext *s, void *data, int *data_size)
             sz = min (sz, s->packet_sizeleft);
             sz = sz&~3;
             uint8_t *p = s->packet_data + s->packet_remaining;
-            int r = fread (p, 1, sz, fp);
+            int r = deadbeef->fread (p, 1, sz, fp);
             //if (r != s) {
             //    fprintf (stderr, "unexpected eof while reading ape frame\n");
             //    return -1;
@@ -1626,19 +1627,19 @@ static DB_playItem_t *
 ffap_insert (DB_playItem_t *after, const char *fname) {
     APEContext ape_ctx;
     memset (&ape_ctx, 0, sizeof (ape_ctx));
-    FILE *fp = fopen (fname, "rb");
+    DB_FILE *fp = deadbeef->fopen (fname);
     if (!fp) {
         return NULL;
     }
     if (ape_read_header (fp, &ape_ctx) < 0) {
         fprintf (stderr, "failed to read ape header\n");
-        fclose (fp);
+        deadbeef->fclose (fp);
         ape_free_ctx (&ape_ctx);
         return NULL;
     }
     if ((ape_ctx.fileversion < APE_MIN_VERSION) || (ape_ctx.fileversion > APE_MAX_VERSION)) {
         fprintf(stderr, "unsupported file version - %.2f\n", ape_ctx.fileversion/1000.0);
-        fclose (fp);
+        deadbeef->fclose (fp);
         ape_free_ctx (&ape_ctx);
         return NULL;
     }
@@ -1647,7 +1648,7 @@ ffap_insert (DB_playItem_t *after, const char *fname) {
     DB_playItem_t *it;
     it  = deadbeef->pl_insert_cue (after, fname, &plugin, "APE", ape_ctx.totalsamples, ape_ctx.samplerate);
     if (it) {
-        fclose (fp);
+        deadbeef->fclose (fp);
         ape_free_ctx (&ape_ctx);
         return it;
     }
@@ -1661,16 +1662,16 @@ ffap_insert (DB_playItem_t *after, const char *fname) {
     int v2err = deadbeef->junk_read_id3v2 (it, fp);
     int v1err = deadbeef->junk_read_id3v1 (it, fp);
     if (v1err >= 0) {
-        fseek (fp, -128, SEEK_END);
+        deadbeef->fseek (fp, -128, SEEK_END);
     }
     else {
-        fseek (fp, 0, SEEK_END);
+        deadbeef->fseek (fp, 0, SEEK_END);
     }
     int apeerr = deadbeef->junk_read_ape (it, fp);
     deadbeef->pl_add_meta (it, "title", NULL);
     after = deadbeef->pl_insert_item (after, it);
 
-    fclose (fp);
+    deadbeef->fclose (fp);
     ape_free_ctx (&ape_ctx);
     return after;
 }

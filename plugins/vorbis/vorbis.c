@@ -18,7 +18,6 @@
 #include <vorbis/codec.h>
 #include <vorbis/vorbisfile.h>
 #include <string.h>
-#include <stdio.h>
 #include <stdlib.h>
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
@@ -34,7 +33,7 @@
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
 
-static FILE *file;
+static DB_FILE *file;
 static OggVorbis_File vorbis_file;
 static vorbis_info *vi;
 static int cur_bit_stream;
@@ -45,19 +44,48 @@ static int currentsample;
 static void
 cvorbis_free (void);
 
+static size_t
+cvorbis_fread (void *ptr, size_t size, size_t nmemb, void *datasource) {
+    return deadbeef->fread (ptr, size, nmemb, datasource);
+}
+
+static int
+cvorbis_fseek (void *datasource, ogg_int64_t offset, int whence) {
+    DB_FILE *f = (DB_FILE *)datasource;
+    return deadbeef->fseek (datasource, offset, whence);
+}
+
+static int
+cvorbis_fclose (void *datasource) {
+    deadbeef->fclose (datasource);
+    return 0;
+}
+
+static long
+cvorbis_ftell (void *datasource) {
+    return deadbeef->ftell (datasource);
+}
+
 static int
 cvorbis_init (DB_playItem_t *it) {
     file = NULL;
     vi = NULL;
     cur_bit_stream = -1;
 
-    file = fopen (it->fname, "rb");
+    file = deadbeef->fopen (it->fname);
     if (!file) {
         return -1;
     }
+    ov_callbacks ovcb = {
+        .read_func = cvorbis_fread,
+        .seek_func = cvorbis_fseek,
+        .close_func = cvorbis_fclose,
+        .tell_func = cvorbis_ftell
+    };
 
     memset (&plugin.info, 0, sizeof (plugin.info));
-    ov_open (file, &vorbis_file, NULL, 0);
+
+    ov_open_callbacks (file, &vorbis_file, NULL, 0, ovcb);
     vi = ov_info (&vorbis_file, -1);
     if (!vi) { // not a vorbis stream
         cvorbis_free ();
@@ -156,15 +184,23 @@ cvorbis_seek (float time) {
 static DB_playItem_t *
 cvorbis_insert (DB_playItem_t *after, const char *fname) {
     // check for validity
-    FILE *fp = fopen (fname, "rb");
+    DB_FILE *fp = deadbeef->fopen (fname);
     if (!fp) {
+        fprintf (stderr, "vorbis: failed to fopen %s\n", fname);
         return NULL;
     }
+    ov_callbacks ovcb = {
+        .read_func = cvorbis_fread,
+        .seek_func = cvorbis_fseek,
+        .close_func = cvorbis_fclose,
+        .tell_func = cvorbis_ftell
+    };
     OggVorbis_File vorbis_file;
     vorbis_info *vi;
-    ov_open (fp, &vorbis_file, NULL, 0);
+    ov_open_callbacks (fp, &vorbis_file, NULL, 0, ovcb);
     vi = ov_info (&vorbis_file, -1);
     if (!vi) { // not a vorbis stream
+        fprintf (stderr, "vorbis: failed to ov_open %s\n", fname);
         return NULL;
     }
     float duration = ov_time_total (&vorbis_file, -1);

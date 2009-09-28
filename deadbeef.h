@@ -29,7 +29,6 @@
 
 #include <stdint.h>
 #include <time.h>
-#include <stdio.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -54,7 +53,7 @@ extern "C" {
 // DON'T release plugins without DB_PLUGIN_SET_API_VERSION
 
 #define DB_API_VERSION_MAJOR 0
-#define DB_API_VERSION_MINOR 2
+#define DB_API_VERSION_MINOR 3
 
 #define DB_PLUGIN_SET_API_VERSION\
     .plugin.api_vmajor = DB_API_VERSION_MAJOR,\
@@ -87,7 +86,8 @@ enum {
     DB_PLUGIN_DECODER = 1,
     DB_PLUGIN_OUTPUT  = 2,
     DB_PLUGIN_DSP     = 3,
-    DB_PLUGIN_MISC    = 4
+    DB_PLUGIN_MISC    = 4,
+    DB_PLUGIN_VFS     = 5,
 };
 
 typedef struct {
@@ -117,6 +117,11 @@ enum {
 #define DB_CALLBACK(x) ((DB_callback_t)(x))
 #define DB_EVENT(x) ((DB_event_t *)(x))
 #define DB_PLAYITEM(x) ((DB_playItem_t *)(x))
+
+// FILE object wrapper for vfs access
+typedef struct {
+    struct DB_vfs_s *vfs;
+} DB_FILE;
 
 // forward decl for plugin struct
 struct DB_plugin_s;
@@ -174,10 +179,17 @@ typedef struct {
     void (*volume_set_amp) (float amp);
     float (*volume_get_amp) (void);
     // junk reading
-    int (*junk_read_id3v1) (DB_playItem_t *it, FILE *fp);
-    int (*junk_read_id3v2) (DB_playItem_t *it, FILE *fp);
-    int (*junk_read_ape) (DB_playItem_t *it, FILE *fp);
-    int (*junk_get_leading_size) (FILE *fp);
+    int (*junk_read_id3v1) (DB_playItem_t *it, DB_FILE *fp);
+    int (*junk_read_id3v2) (DB_playItem_t *it, DB_FILE *fp);
+    int (*junk_read_ape) (DB_playItem_t *it, DB_FILE *fp);
+    int (*junk_get_leading_size) (DB_FILE *fp);
+    // vfs
+    DB_FILE* (*fopen) (const char *fname);
+    void (*fclose) (DB_FILE *f);
+    size_t (*fread) (void *ptr, size_t size, size_t nmemb, DB_FILE *stream);
+    int (*fseek) (DB_FILE *stream, long offset, int whence);
+    long (*ftell) (DB_FILE *stream);
+    void (*rewind) (DB_FILE *stream);
 } DB_functions_t;
 
 // base plugin interface
@@ -301,6 +313,20 @@ typedef struct {
 typedef struct {
     DB_plugin_t plugin;
 } DB_misc_t;
+
+// vfs plugin
+// provides means for reading, seeking, etc
+// api is based on stdio
+typedef struct DB_vfs_s {
+    DB_plugin_t plugin;
+    DB_FILE* (*open) (const char *fname);
+    void (*close) (DB_FILE *f);
+    size_t (*read) (void *ptr, size_t size, size_t nmemb, DB_FILE *stream);
+    int (*seek) (DB_FILE *stream, long offset, int whence);
+    long (*tell) (DB_FILE *stream);
+    void (*rewind) (DB_FILE *stream);
+    const char **scheme_names; // NULL-terminated list of supported schemes, e.g. {"http", "ftp", NULL}
+} DB_vfs_t;
 
 #ifdef __cplusplus
 }

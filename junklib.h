@@ -18,21 +18,21 @@
 #ifndef __JUNKLIB_H
 #define __JUNKLIB_H
 
-#include <stdio.h>
+#include "deadbeef.h"
 
 struct playItem_s;
 
 int
-junk_read_id3v1 (struct playItem_s *it, FILE *fp);
+junk_read_id3v1 (struct playItem_s *it, DB_FILE *fp);
 
 int
-junk_read_id3v2 (struct playItem_s *it, FILE *fp);
+junk_read_id3v2 (struct playItem_s *it, DB_FILE *fp);
 
 int
-junk_read_ape (struct playItem_s *it, FILE *fp);
+junk_read_ape (struct playItem_s *it, DB_FILE *fp);
 
 int
-junk_get_leading_size (FILE *fp);
+junk_get_leading_size (DB_FILE *fp);
 
 const char *
 junk_detect_charset (const char *s);
