@@ -404,7 +404,7 @@ on_remove1_activate                    (GtkMenuItem     *menuitem,
 {
     gtkplaylist_t *ps = &main_playlist;
     GtkWidget *widget = ps->playlist;
-    pl_delete_selected ();
+    ps->row = pl_delete_selected ();
     gtkpl_setup_scrollbar (ps);
     gtkpl_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
     gtkpl_expose (ps, 0, 0, widget->allocation.width, widget->allocation.height);

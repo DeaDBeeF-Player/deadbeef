@@ -955,15 +955,21 @@ pl_find_meta (playItem_t *it, const char *key) {
     return NULL;
 }
 
-void
+int
 pl_delete_selected (void) {
+    int i = 0;
+    int ret = -1;
     playItem_t *next = NULL;
-    for (playItem_t *it = playlist_head[PL_MAIN]; it; it = next) {
+    for (playItem_t *it = playlist_head[PL_MAIN]; it; it = next, i++) {
         next = it->next[PL_MAIN];
         if (it->selected) {
+            if (ret == -1) {
+                ret = i;
+            }
             pl_remove (it);
         }
     }
+    return ret;
 }
 
 void
