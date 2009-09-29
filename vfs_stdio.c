@@ -20,6 +20,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <string.h>
 
 static DB_functions_t *deadbeef;
 typedef struct {
@@ -29,8 +30,11 @@ typedef struct {
 
 static DB_vfs_t plugin;
 
-DB_FILE *
+static DB_FILE *
 stdio_open (const char *fname) {
+    if (!memcmp (fname, "file://", 7)) {
+        fname += 7;
+    }
     FILE *file = fopen (fname, "rb");
     if (!file) {
         return NULL;
@@ -41,32 +45,33 @@ stdio_open (const char *fname) {
     return (DB_FILE*)fp;
 }
 
-void
+static void
 stdio_close (DB_FILE *stream) {
     assert (stream);
     fclose (((STDIO_FILE *)stream)->stream);
     free (stream);
 }
 
-size_t stdio_read (void *ptr, size_t size, size_t nmemb, DB_FILE *stream) {
+static size_t
+stdio_read (void *ptr, size_t size, size_t nmemb, DB_FILE *stream) {
     assert (stream);
     assert (ptr);
     return fread (ptr, size, nmemb, ((STDIO_FILE *)stream)->stream);
 }
 
-int
+static int
 stdio_seek (DB_FILE *stream, long offset, int whence) {
     assert (stream);
     return fseek (((STDIO_FILE *)stream)->stream, offset, whence);
 }
 
-long
+static long
 stdio_tell (DB_FILE *stream) {
     assert (stream);
     return ftell (((STDIO_FILE *)stream)->stream);
 }
 
-void
+static void
 stdio_rewind (DB_FILE *stream) {
     assert (stream);
     rewind (((STDIO_FILE *)stream)->stream);

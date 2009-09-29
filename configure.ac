@@ -47,12 +47,16 @@ if test ${HAVE_SSE2}; then
 fi
 AC_SUBST(SIMD_FLAGS)
 
-dnl lastfm plugin
+dnl curl lib
 AC_CHECK_LIB([curl], [main], [HAVE_CURL=1])
 if test ${HAVE_CURL}; then
-    LFM_LIBS="-lcurl"
+    CURL_LIBS="-lcurl"
+    AC_SUBST(CURL_LIBS)
+fi
+
+dnl lastfm plugin
+if test ${HAVE_CURL}; then
     LFM_DIR="plugins/lastfm"
-    AC_SUBST(LFM_LIBS)
     AC_SUBST(LFM_DIR)
 fi
 
@@ -106,6 +110,12 @@ if test ${HAVE_SNDFILE} ; then
     AC_SUBST(SNDFILE_DIR)
 fi
 
+dnl lastfm plugin
+if test ${HAVE_CURL}; then
+    VFS_CURL_DIR="plugins/vfs_curl"
+    AC_SUBST(VFS_CURL_DIR)
+fi
+
 AC_OUTPUT([
 Makefile
 pixmaps/Makefile
@@ -122,6 +132,7 @@ plugins/vorbis/Makefile
 plugins/flac/Makefile
 plugins/wavpack/Makefile
 plugins/sndfile/Makefile
+plugins/vfs_curl/Makefile
 deadbeef.desktop
 ])
 

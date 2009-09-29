@@ -1088,9 +1088,9 @@ gtkpl_add_fm_dropped_files (gtkplaylist_t *ps, char *ptr, int length, int drop_y
             //strncpy (fname, p, pe - p);
             //fname[pe - p] = 0;
             int abort = 0;
-            playItem_t *inserted = pl_insert_dir (after, fname + 7, &abort, gtkpl_add_file_info_cb, NULL);
+            playItem_t *inserted = pl_insert_dir (after, fname, &abort, gtkpl_add_file_info_cb, NULL);
             if (!inserted && !abort) {
-                inserted = pl_insert_file (after, fname + 7, &abort, gtkpl_add_file_info_cb, NULL);
+                inserted = pl_insert_file (after, fname, &abort, gtkpl_add_file_info_cb, NULL);
             }
             if (inserted) {
                 after = inserted;

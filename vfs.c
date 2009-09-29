@@ -17,11 +17,16 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 #include <string.h>
+#include <stdio.h>
 #include "vfs.h"
 #include "plugins.h"
 
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
+
 DB_FILE *
 vfs_fopen (const char *fname) {
+    trace ("vfs_open %s\n", fname);
     DB_vfs_t **plugs = plug_get_vfs_list ();
     DB_vfs_t *fallback = NULL;
     int i;

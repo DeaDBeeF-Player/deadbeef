@@ -597,9 +597,10 @@ on_playlist_drag_data_received         (GtkWidget       *widget,
     GTKPL_PROLOGUE;
     gchar *ptr=(char*)data->data;
     if (target_type == 0) { // uris
-        if (!strncmp(ptr,"file:///",8)) {
+        fprintf (stderr, "calling gtkpl_handle_fm_drag_drop\n");
+//        if (!strncmp(ptr,"file:///",8)) {
             gtkpl_handle_fm_drag_drop (ps, y, ptr, data->length);
-        }
+//        }
     }
     else if (target_type == 1) {
         uint32_t *d= (uint32_t *)ptr;

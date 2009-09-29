@@ -372,11 +372,15 @@ pl_insert_file (playItem_t *after, const char *fname, int *pabort, int (*cb)(pla
             }
         }
     }
+    fprintf (stderr, "no decoder found for %s\n", fname);
     return NULL;
 }
 
 playItem_t *
 pl_insert_dir (playItem_t *after, const char *dirname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
+    if (!memcmp (dirname, "file://", 7)) {
+        dirname += 7;
+    }
     struct stat buf;
     lstat (dirname, &buf);
     if (S_ISLNK(buf.st_mode)) {

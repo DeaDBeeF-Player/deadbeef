@@ -326,6 +326,7 @@ typedef struct DB_vfs_s {
     long (*tell) (DB_FILE *stream);
     void (*rewind) (DB_FILE *stream);
     const char **scheme_names; // NULL-terminated list of supported schemes, e.g. {"http", "ftp", NULL}
+    unsigned streaming : 1;
 } DB_vfs_t;
 
 #ifdef __cplusplus
