@@ -353,6 +353,8 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
                 buffer->startoffset = startoffset;
             }
 
+            trace ("xing magic: %c%c%c%c\n", magic[0], magic[1], magic[2], magic[3]);
+
             if (!strncmp (xing, magic, 4) || !strncmp (info, magic, 4)) {
                 trace ("xing/info frame found\n");
                 // read flags
@@ -431,6 +433,14 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
             }
             if (sample == 0) {
                 // xing header failed, calculate based on file size
+                trace ("xing header failed\n");
+                if (buffer->file->vfs->streaming) {
+                    // set infinite lenght
+                    buffer->duration = -1;
+                    buffer->totalsamples = -1;
+                    buffer->samplerate = samplerate;
+                    return 0;
+                }
                 deadbeef->fseek (buffer->file, 0, SEEK_END);
                 int sz = deadbeef->ftell (buffer->file) - buffer->startoffset - buffer->endoffset;
                 int nframes = sz / packetlength;
@@ -483,24 +493,37 @@ cmp3_init (DB_playItem_t *it) {
         deadbeef->fseek(buffer.file, skip, SEEK_SET);
     }
     plugin.info.readpos = 0;
-    cmp3_scan_stream (&buffer, -1); // scan entire stream, calc duration
-	if (it->endsample > 0) {
-        buffer.startsample = it->startsample;
-        buffer.endsample = it->endsample;
-        // that comes from cue, don't calc duration, just seek and play
-        plugin.seek_sample (0);
+    if (!buffer.file->vfs->streaming) {
+        cmp3_scan_stream (&buffer, -1); // scan entire stream, calc duration
+        if (it->endsample > 0) {
+            buffer.startsample = it->startsample;
+            buffer.endsample = it->endsample;
+            // that comes from cue, don't calc duration, just seek and play
+            plugin.seek_sample (0);
+        }
+        else {
+            it->duration = buffer.duration;
+            buffer.startsample = 0;
+            buffer.endsample = buffer.totalsamples-1;
+            buffer.skipsamples = buffer.startdelay;
+            buffer.currentsample = buffer.startdelay;
+            deadbeef->fseek (buffer.file, buffer.startoffset, SEEK_SET);
+        }
     }
     else {
+        int res = cmp3_scan_stream (&buffer, 0);
+        if (res < 0) {
+            plugin.free ();
+            return -1;
+        }
         it->duration = buffer.duration;
-        buffer.startsample = 0;
-        buffer.endsample = buffer.totalsamples-1;
-        buffer.skipsamples = buffer.startdelay;
-        buffer.currentsample = buffer.startdelay;
-        deadbeef->fseek (buffer.file, buffer.startoffset, SEEK_SET);
+        buffer.endsample = buffer.totalsamples - 1;
+        buffer.skipsamples = 0;
+        buffer.currentsample = 0;
     }
     if (buffer.samplerate == 0) {
         trace ("bad mpeg file: %f\n", it->fname);
-        deadbeef->fclose (buffer.file);
+        plugin.free ();
         return -1;
     }
     plugin.info.bps = buffer.bitspersample;
@@ -835,6 +858,17 @@ cmp3_insert (DB_playItem_t *after, const char *fname) {
     DB_FILE *fp = deadbeef->fopen (fname);
     if (!fp) {
         return NULL;
+    }
+    if (fp->vfs->streaming) {
+        DB_playItem_t *it = deadbeef->pl_item_alloc ();
+        it->decoder = &plugin;
+        it->fname = strdup (fname);
+        deadbeef->fclose (fp);
+        deadbeef->pl_add_meta (it, "title", NULL);
+        it->duration = -1;
+        it->filetype = filetypes[0];
+        after = deadbeef->pl_insert_item (after, it);
+        return after;
     }
     buffer_t buffer;
     memset (&buffer, 0, sizeof (buffer));
