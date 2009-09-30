@@ -31,7 +31,7 @@
 
 static DB_functions_t *deadbeef;
 
-#define BUFFER_SIZE (0x10000/2)
+#define BUFFER_SIZE (0x10000)
 #define BUFFER_MASK 0xffff
 
 #define STATUS_INITIAL  0
@@ -42,8 +42,7 @@ static DB_functions_t *deadbeef;
 
 typedef struct {
     DB_vfs_t *vfs;
-    // buffer must be 2x size of BUFFER_SIZE, to be able to seek back a bit
-    uint8_t buffer[BUFFER_SIZE*2];
+    uint8_t buffer[BUFFER_SIZE];
     int pos; // position in stream; use "& BUFFER_MASK" to make it index into ringbuffer
     int remaining; // remaining bytes in buffer read from stream
     int skipbytes;
@@ -57,12 +56,13 @@ static DB_vfs_t plugin;
 
 static char http_err[CURL_ERROR_SIZE];
 
+
 static size_t
 http_curl_write (void *ptr, size_t size, size_t nmemb, void *stream) {
     trace ("http_curl_write %d bytes\n", size * nmemb);
     HTTP_FILE *fp = (HTTP_FILE *)stream;
     int avail = size * nmemb;
-    for (;;) {
+    while (avail > 0) {
         if (fp->status == STATUS_REWIND) {
             return 0;
         }
@@ -70,35 +70,30 @@ http_curl_write (void *ptr, size_t size, size_t nmemb, void *stream) {
             break;
         }
         deadbeef->mutex_lock (fp->mutex);
-        int sz = BUFFER_SIZE - fp->remaining;
-        int cp = min (avail, 10000);
-        if (sz >= cp) {
-            trace ("pos=%d, remaining=%d, avail=%d\n", fp->pos, fp->remaining, avail);
-            cp = min (avail, sz);
+        int sz = BUFFER_SIZE/2 - fp->remaining; // number of bytes free in buffer
+                                                // don't allow to fill more than half -- used for seeking backwards
+        if (sz > 5000) { // wait until there are at least 5k bytes free
+            int cp = min (avail, sz);
             int writepos = (fp->pos + fp->remaining) & BUFFER_MASK;
-            // copy data
-            int part1 = BUFFER_SIZE * 2 - writepos;
-            part1 = min (part1, BUFFER_SIZE);
+            // copy 1st portion (before end of buffer
+            int part1 = BUFFER_SIZE - writepos;
+            // may not be more than total
             part1 = min (part1, cp);
             //trace ("part1=%d\n", part1);
+            trace ("writepos=%d, remaining=%d, avail=%d, free=%d, writing=%d, part1=%d, part2=%d\n", writepos, fp->remaining, avail, sz, cp, part1, cp-part1);
             memcpy (fp->buffer+writepos, ptr, part1);
             ptr += part1;
             avail -= part1;
             fp->remaining += part1;
-            int part2 = BUFFER_SIZE - fp->remaining;
-            part2 = min (avail, part2);
-            //trace ("part2=%d\n", part2);
-            if (part2 > 0) {
-                memcpy (fp->buffer, ptr, part2);
-                ptr += part2;
-                avail -= part2;
-                fp->remaining += part2;
+            cp -= part1;
+            if (cp > 0) {
+                memcpy (fp->buffer, ptr, cp);
+                ptr += cp;
+                avail -= cp;
+                fp->remaining += cp;
             }
         }
         deadbeef->mutex_unlock (fp->mutex);
-        if (avail == 0) {
-            break;
-        }
         usleep (3000);
     }
 
@@ -119,7 +114,7 @@ http_thread_func (uintptr_t ctx) {
         curl_easy_setopt (curl, CURLOPT_WRITEFUNCTION, http_curl_write);
         curl_easy_setopt (curl, CURLOPT_WRITEDATA, ctx);
         curl_easy_setopt (curl, CURLOPT_ERRORBUFFER, http_err);
-        curl_easy_setopt (curl, CURLOPT_BUFFERSIZE, BUFFER_SIZE - fp->remaining);
+        curl_easy_setopt (curl, CURLOPT_BUFFERSIZE, BUFFER_SIZE/2);
         curl_easy_setopt (curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
         fp->status = STATUS_READING;
         int status = curl_easy_perform (curl);
@@ -161,9 +156,10 @@ http_read (void *ptr, size_t size, size_t nmemb, DB_FILE *stream) {
     trace ("http_read %d\n", size*nmemb);
     assert (stream);
     assert (ptr);
+    HTTP_FILE *fp = (HTTP_FILE *)stream;
     int sz = size * nmemb;
 //    assert (size * nmemb <= BUFFER_SIZE);
-    HTTP_FILE *fp = (HTTP_FILE *)stream;
+//    trace ("readpos=%d, readsize=%d\n", fp->pos & BUFFER_SIZE, sz);
     if (!fp->tid) {
         fp->mutex = deadbeef->mutex_create ();
         fp->tid = deadbeef->thread_start (http_thread_func, (uintptr_t)fp);
@@ -183,25 +179,25 @@ http_read (void *ptr, size_t size, size_t nmemb, DB_FILE *stream) {
             deadbeef->mutex_unlock (fp->mutex);
             usleep (3000);
         }
-    //    trace ("http thread status=%d\n", fp->status);
     //    trace ("buffer remaining: %d\n", fp->remaining);
         deadbeef->mutex_lock (fp->mutex);
+        int cp = min (sz, fp->remaining);
         int readpos = fp->pos & BUFFER_MASK;
-        int part1 = BUFFER_SIZE*2-(fp->pos&BUFFER_MASK);
-        part1 = min (part1, sz);
-        part1 = min (part1, fp->remaining);
+        int part1 = BUFFER_SIZE-readpos;
+        part1 = min (part1, cp);
+        trace ("readpos=%d, remaining=%d, req=%d, cp=%d, part1=%d, part2=%d\n", readpos, fp->remaining, sz, cp, part1, cp-part1);
         memcpy (ptr, fp->buffer+readpos, part1);
         fp->remaining -= part1;
         fp->pos += part1;
         sz -= part1;
         ptr += part1;
-        if (fp->remaining > 0) {
-            int part2 = min (fp->remaining, sz);
-            memcpy (((char *)ptr) + part1, fp->buffer, part2);
-            fp->remaining -= part2;
-            fp->pos += part2;
-            sz -= part2;
-            ptr += part2;
+        cp -= part1;
+        if (cp > 0) {
+            memcpy (ptr, fp->buffer, cp);
+            fp->remaining -= cp;
+            fp->pos += cp;
+            sz -= cp;
+            ptr += cp;
         }
         deadbeef->mutex_unlock (fp->mutex);
     }
