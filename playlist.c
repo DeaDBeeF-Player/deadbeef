@@ -1320,3 +1320,14 @@ pl_reshuffle (playItem_t **ppmin, playItem_t **ppmax) {
         *ppmax = pmax;
     }
 }
+
+void
+pl_delete_all_meta (playItem_t *it) {
+    while (it->meta) {
+        metaInfo_t *m = it->meta;
+        it->meta = m->next;
+        free (m->value);
+        free (m);
+    }
+    it->meta = NULL;
+}

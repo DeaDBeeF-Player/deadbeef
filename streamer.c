@@ -354,6 +354,12 @@ streamer_thread (uintptr_t ctx) {
 //        trace ("fill: %d/%d\n", streambuffer_fill, STREAM_BUFFER_SIZE);
     }
 
+    // stop streaming song
+    if(str_streaming_song.decoder) {
+        str_streaming_song.decoder->free ();
+    }
+    pl_item_free (&str_streaming_song);
+    pl_item_free (&str_playing_song);
     if (src) {
         src_delete (src);
         src = NULL;

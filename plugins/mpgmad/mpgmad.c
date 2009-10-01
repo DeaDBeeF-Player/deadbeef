@@ -488,12 +488,12 @@ cmp3_init (DB_playItem_t *it) {
     if (!buffer.file) {
         return -1;
     }
-    int skip = deadbeef->junk_get_leading_size (buffer.file);
-    if (skip > 0) {
-        deadbeef->fseek(buffer.file, skip, SEEK_SET);
-    }
     plugin.info.readpos = 0;
     if (!buffer.file->vfs->streaming) {
+        int skip = deadbeef->junk_get_leading_size (buffer.file);
+        if (skip > 0) {
+            deadbeef->fseek(buffer.file, skip, SEEK_SET);
+        }
         cmp3_scan_stream (&buffer, -1); // scan entire stream, calc duration
         if (it->endsample > 0) {
             buffer.startsample = it->startsample;
@@ -511,6 +511,12 @@ cmp3_init (DB_playItem_t *it) {
         }
     }
     else {
+        deadbeef->pl_delete_all_meta (it);
+        int v2err = deadbeef->junk_read_id3v2 (it, buffer.file);
+        deadbeef->pl_add_meta (it, "title", NULL);
+        if (v2err != 0) {
+            deadbeef->fseek (buffer.file, 0, SEEK_SET);
+        }
         int res = cmp3_scan_stream (&buffer, 0);
         if (res < 0) {
             plugin.free ();

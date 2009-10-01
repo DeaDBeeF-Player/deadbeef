@@ -133,6 +133,9 @@ pl_format_item_display_name (playItem_t *it, char *str, int len);
 const char *
 pl_find_meta (playItem_t *it, const char *key);
 
+void
+pl_delete_all_meta (playItem_t *it);
+
 // returns index of 1st deleted item
 int
 pl_delete_selected (void);
