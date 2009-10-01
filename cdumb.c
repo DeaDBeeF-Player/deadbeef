@@ -45,12 +45,46 @@ cdumb_startrenderer (void);
 static DUH*
 open_module(const char *fname, const char *ext, int *start_order, int *is_it, int *is_dos, const char **filetype);
 
+static DUMBFILE_SYSTEM dumb_vfs;
+
+static int
+dumb_vfs_skip (void *f, long n) {
+    return deadbeef->fseek (f, n, SEEK_CUR);
+}
+
+static int
+dumb_vfs_getc (void *f) {
+    uint8_t c;
+    deadbeef->fread (&c, 1, 1, f);
+    return (int)c;
+}
+
+static long
+dumb_vfs_getnc (char *ptr, long n, void *f) {
+    return deadbeef->fread (ptr, 1, n, f);
+}
+
+static void
+dumb_vfs_close (void *f) {
+    deadbeef->fclose (f);
+}
+
+static void
+dumb_register_db_vfs (void) {
+    dumb_vfs.open = (void *(*)(const char *))deadbeef->fopen;
+    dumb_vfs.skip = dumb_vfs_skip;
+    dumb_vfs.getc = dumb_vfs_getc;
+    dumb_vfs.getnc = dumb_vfs_getnc;
+    dumb_vfs.close = dumb_vfs_close;
+    register_dumbfile_system (&dumb_vfs);
+}
+
 static int
 cdumb_init (DB_playItem_t *it) {
     if (!dumb_initialized) {
         atexit (&dumb_exit);
     }
-    dumb_register_stdfiles ();
+    dumb_register_db_vfs ();
 
     int start_order = 0;
 	int is_dos, is_it;
@@ -160,12 +194,12 @@ static DUH * open_module(const char *fname, const char *ext, int *start_order, i
 	*is_dos = 1;
 
     char ptr[2000];
-    FILE *fp = fopen (fname, "rb");
+    DB_FILE *fp = deadbeef->fopen (fname);
     if (!fp) {
         return NULL;
     }
-    int size = fread (ptr, 1, 2000, fp);
-    fclose (fp);
+    int size = deadbeef->fread (ptr, 1, 2000, fp);
+    deadbeef->fclose (fp);
 
 	DUMBFILE * f = dumbfile_open (fname);
 	if (!f) {
@@ -730,7 +764,7 @@ cdumb_insert (DB_playItem_t *after, const char *fname) {
     int start_order = 0;
     int is_it;
     int is_dos;
-    dumb_register_stdfiles ();
+    dumb_register_db_vfs ();
     const char *ftype;
     DUH* duh = open_module(fname, ext, &start_order, &is_it, &is_dos, &ftype);
     if (!duh) {
