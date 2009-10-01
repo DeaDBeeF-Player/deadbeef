@@ -519,13 +519,24 @@ cmp3_init (DB_playItem_t *it) {
         }
         int res = cmp3_scan_stream (&buffer, 0);
         if (res < 0) {
+            trace ("mpgmad: cmp3_init: initial cmp3_scan_stream failed\n");
             plugin.free ();
             return -1;
         }
         it->duration = buffer.duration;
-        buffer.endsample = buffer.totalsamples - 1;
+        if (buffer.duration >= 0) {
+            buffer.endsample = buffer.totalsamples - 1;
+        }
+        else {
+//            buffer.duration = 200;
+//            buffer.totalsamples = 10000000;
+//            buffer.endsample = buffer.totalsamples-1;
+            buffer.endsample = -1;
+            buffer.totalsamples = -1;
+        }
         buffer.skipsamples = 0;
         buffer.currentsample = 0;
+        trace ("duration=%d, endsample=%d, totalsamples=%d\n", buffer.duration, buffer.endsample, buffer.totalsamples);
     }
     if (buffer.samplerate == 0) {
         trace ("bad mpeg file: %f\n", it->fname);
@@ -590,11 +601,13 @@ MadFixedToFloat (mad_fixed_t Fixed) {
 
 static int
 cmp3_decode (void) {
-    if (buffer.currentsample + buffer.readsize / (4 * buffer.channels) > buffer.endsample) {
-        buffer.readsize = (buffer.endsample - buffer.currentsample + 1) * 4 * buffer.channels;
-        trace ("size truncated to %d bytes, cursample=%d, endsample=%d, totalsamples=%d\n", buffer.readsize, buffer.currentsample, buffer.endsample, buffer.totalsamples);
-        if (buffer.readsize <= 0) {
-            return 0;
+    if (buffer.duration >= 0) {
+        if (buffer.currentsample + buffer.readsize / (4 * buffer.channels) > buffer.endsample) {
+            buffer.readsize = (buffer.endsample - buffer.currentsample + 1) * 4 * buffer.channels;
+            trace ("size truncated to %d bytes, cursample=%d, endsample=%d, totalsamples=%d\n", buffer.readsize, buffer.currentsample, buffer.endsample, buffer.totalsamples);
+            if (buffer.readsize <= 0) {
+                return 0;
+            }
         }
     }
     int eof = 0;
@@ -664,7 +677,7 @@ cmp3_decode (void) {
 
         int cachepos = (buffer.cachefill + buffer.cachepos) & CACHE_MASK;
         int len = synth.pcm.length;
-        if (buffer.currentsample + len > buffer.endsample) {
+        if (buffer.duration >= 0 && buffer.currentsample + len > buffer.endsample) {
             len = buffer.endsample - buffer.currentsample + 1;
         }
         int i = min (synth.pcm.length, buffer.skipsamples);
@@ -699,12 +712,9 @@ cmp3_decode (void) {
                 buffer.readsize -= sizeof (mad_fixed_t);
             }
         }
-        if (buffer.currentsample > buffer.totalsamples) {
-            trace ("mpgmad: warning: extra samples were read after end of stream\n");
-        }
-        if (buffer.readsize <= 0 || eof || buffer.currentsample > buffer.endsample) {
-            if (buffer.currentsample > buffer.endsample) {
-                trace ("finished at sample %d (%d)\n", buffer.currentsample, buffer.totalsamples);
+        if (buffer.readsize <= 0 || eof || (buffer.duration >= 0 && buffer.currentsample > buffer.endsample)) {
+            if (buffer.duration >= 0 && buffer.currentsample > buffer.endsample) {
+                trace ("finished at sample %d (%dsamples/%fsec), eof=%d, buffer.readsize=%d\n", buffer.currentsample, buffer.totalsamples, buffer.duration, eof, buffer.readsize);
             }
             break;
         }

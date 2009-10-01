@@ -111,7 +111,15 @@ update_songinfo (void) {
         songpos = playpos;
         codec_unlock ();
 
-        snprintf (sbtext_new, 512, "[%s] %dHz | %d bit | %s | %d:%02d / %d:%02d | %d songs total", str_playing_song.filetype ? str_playing_song.filetype:"-", samplerate, bitspersample, mode, minpos, secpos, mindur, secdur, pl_getcount ());
+        char t[100];
+        if (str_playing_song.duration >= 0) {
+            snprintf (t, sizeof (t), "%d:%02d", mindur, secdur);
+        }
+        else {
+            strcpy (t, "-:--");
+        }
+
+        snprintf (sbtext_new, 512, "[%s] %dHz | %d bit | %s | %d:%02d / %s | %d songs total", str_playing_song.filetype ? str_playing_song.filetype:"-", samplerate, bitspersample, mode, minpos, secpos, t, pl_getcount ());
     }
 
     if (strcmp (sbtext_new, sb_text)) {
