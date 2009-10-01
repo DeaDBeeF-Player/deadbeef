@@ -434,6 +434,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
             if (sample == 0) {
                 // xing header failed, calculate based on file size
                 trace ("xing header failed\n");
+#if 0
                 if (buffer->file->vfs->streaming) {
                     // set infinite lenght
                     buffer->duration = -1;
@@ -441,8 +442,11 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
                     buffer->samplerate = samplerate;
                     return 0;
                 }
-                deadbeef->fseek (buffer->file, 0, SEEK_END);
-                int sz = deadbeef->ftell (buffer->file) - buffer->startoffset - buffer->endoffset;
+#endif
+                
+                //deadbeef->fseek (buffer->file, 0, SEEK_END);
+                //int sz = deadbeef->ftell (buffer->file) - buffer->startoffset - buffer->endoffset;
+                int sz = deadbeef->fgetlength (buffer->file) - buffer->startoffset - buffer->endoffset;
                 int nframes = sz / packetlength;
                 buffer->duration = nframes * samples_per_frame / samplerate;
                 buffer->totalsamples = nframes * samples_per_frame;

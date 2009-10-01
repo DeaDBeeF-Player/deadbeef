@@ -188,9 +188,10 @@ typedef struct {
     DB_FILE* (*fopen) (const char *fname);
     void (*fclose) (DB_FILE *f);
     size_t (*fread) (void *ptr, size_t size, size_t nmemb, DB_FILE *stream);
-    int (*fseek) (DB_FILE *stream, long offset, int whence);
-    long (*ftell) (DB_FILE *stream);
+    int (*fseek) (DB_FILE *stream, int64_t offset, int whence);
+    int64_t (*ftell) (DB_FILE *stream);
     void (*rewind) (DB_FILE *stream);
+    int64_t (*fgetlength) (DB_FILE *stream);
 } DB_functions_t;
 
 // base plugin interface
@@ -323,9 +324,10 @@ typedef struct DB_vfs_s {
     DB_FILE* (*open) (const char *fname);
     void (*close) (DB_FILE *f);
     size_t (*read) (void *ptr, size_t size, size_t nmemb, DB_FILE *stream);
-    int (*seek) (DB_FILE *stream, long offset, int whence);
-    long (*tell) (DB_FILE *stream);
+    int (*seek) (DB_FILE *stream, int64_t offset, int whence);
+    int64_t (*tell) (DB_FILE *stream);
     void (*rewind) (DB_FILE *stream);
+    int64_t (*getlength)(DB_FILE *stream);
     const char **scheme_names; // NULL-terminated list of supported schemes, e.g. {"http", "ftp", NULL}
     unsigned streaming : 1;
 } DB_vfs_t;

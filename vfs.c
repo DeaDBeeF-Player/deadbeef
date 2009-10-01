@@ -61,11 +61,11 @@ vfs_fread (void *ptr, size_t size, size_t nmemb, DB_FILE *stream) {
 }
 
 int
-vfs_fseek (DB_FILE *stream, long offset, int whence) {
+vfs_fseek (DB_FILE *stream, int64_t offset, int whence) {
     return stream->vfs->seek (stream, offset, whence);
 }
 
-long
+int64_t
 vfs_ftell (DB_FILE *stream) {
     return stream->vfs->tell (stream);
 }
@@ -75,3 +75,7 @@ vfs_rewind (DB_FILE *stream) {
     stream->vfs->rewind (stream);
 }
 
+int64_t
+vfs_fgetlength (DB_FILE *stream) {
+    return stream->vfs->getlength (stream);
+}

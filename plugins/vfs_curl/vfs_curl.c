@@ -35,21 +35,23 @@ static DB_functions_t *deadbeef;
 #define BUFFER_MASK 0xffff
 
 #define STATUS_INITIAL  0
-#define STATUS_READING  1
-#define STATUS_FINISHED 2
-#define STATUS_ABORTED  3
-#define STATUS_SEEK     4
+#define STATUS_STARTING 1
+#define STATUS_READING  2
+#define STATUS_FINISHED 3
+#define STATUS_ABORTED  4
+#define STATUS_SEEK     5
 
 typedef struct {
     DB_vfs_t *vfs;
-    uint8_t buffer[BUFFER_SIZE];
-    int pos; // position in stream; use "& BUFFER_MASK" to make it index into ringbuffer
-    int remaining; // remaining bytes in buffer read from stream
-    int skipbytes;
-    int status;
     char *url;
+    uint8_t buffer[BUFFER_SIZE];
+    int64_t pos; // position in stream; use "& BUFFER_MASK" to make it index into ringbuffer
+    int64_t length;
+    int32_t remaining; // remaining bytes in buffer read from stream
+    int32_t skipbytes;
     intptr_t tid; // thread id which does http requests
     intptr_t mutex;
+    uint8_t status;
 } HTTP_FILE;
 
 static DB_vfs_t plugin;
@@ -103,11 +105,51 @@ http_curl_write (void *ptr, size_t size, size_t nmemb, void *stream) {
     return nmemb * size - avail;
 }
 
+static size_t
+http_size_request_handler (void *ptr, size_t size, size_t nmemb, void *stream) {
+    assert (stream);
+    HTTP_FILE *fp = (HTTP_FILE *)stream;
+    // don't copy/allocate mem, just grep for "Content-Length: "
+    const char *cl = strstr (ptr, "Content-Length: ");
+    if (cl) {
+        cl += 16;
+        fp->length = atoi (cl);
+        trace ("vfs_curl: file size is %d bytes\n", fp->length);
+    }
+//    else {
+//        trace ("vfs_curl: unable to get file size\n");
+//        fp->length = -1; // infinite
+//    }
+    return size * nmemb;
+}
+
 static void
 http_thread_func (uintptr_t ctx) {
     HTTP_FILE *fp = (HTTP_FILE *)ctx;
     CURL *curl;
     curl = curl_easy_init ();
+    fp->length = -1;
+    fp->status = STATUS_INITIAL;
+
+    // get filesize (once)
+    int status;
+    curl_easy_setopt(curl, CURLOPT_URL, fp->url);
+    curl_easy_setopt(curl, CURLOPT_NOBODY, 1);
+    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
+    curl_easy_setopt(curl, CURLOPT_MAXREDIRS, 10);
+    curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, http_size_request_handler);
+    curl_easy_setopt (curl, CURLOPT_HEADERDATA, ctx);
+    status = curl_easy_perform(curl);
+    if (status != 0) {
+        trace ("vfs_curl: curl_easy_perform failed while getting filesize, status %d\n", status);
+        fp->status = STATUS_FINISHED;
+        fp->tid = 0;
+        return;
+    }
+
+    curl_easy_reset (curl);
+    fp->status = STATUS_STARTING;
+
     for (;;) {
         curl_easy_setopt (curl, CURLOPT_URL, fp->url);
         curl_easy_setopt (curl, CURLOPT_NOPROGRESS, 1);
@@ -116,13 +158,16 @@ http_thread_func (uintptr_t ctx) {
         curl_easy_setopt (curl, CURLOPT_ERRORBUFFER, http_err);
         curl_easy_setopt (curl, CURLOPT_BUFFERSIZE, BUFFER_SIZE/2);
         curl_easy_setopt (curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+        // enable up to 10 redirects
+        curl_easy_setopt (curl, CURLOPT_FOLLOWLOCATION, 1);
+        curl_easy_setopt (curl, CURLOPT_MAXREDIRS, 10);
         if (fp->pos > 0) {
             curl_easy_setopt (curl, CURLOPT_RESUME_FROM, fp->pos);
         }
         deadbeef->mutex_lock (fp->mutex);
         fp->status = STATUS_READING;
         deadbeef->mutex_unlock (fp->mutex);
-        int status = curl_easy_perform (curl);
+        status = curl_easy_perform (curl);
         trace ("curl: curl_easy_perform status=%d\n", status);
         deadbeef->mutex_lock (fp->mutex);
         if (fp->status != STATUS_SEEK) {
@@ -138,6 +183,13 @@ http_thread_func (uintptr_t ctx) {
     deadbeef->mutex_lock (fp->mutex);
     fp->status = STATUS_FINISHED;
     deadbeef->mutex_unlock (fp->mutex);
+    fp->tid = 0;
+}
+
+static void
+http_start_streamer (HTTP_FILE *fp) {
+    fp->mutex = deadbeef->mutex_create ();
+    fp->tid = deadbeef->thread_start (http_thread_func, (uintptr_t)fp);
 }
 
 static DB_FILE *
@@ -176,8 +228,7 @@ http_read (void *ptr, size_t size, size_t nmemb, DB_FILE *stream) {
 //    assert (size * nmemb <= BUFFER_SIZE);
 //    trace ("readpos=%d, readsize=%d\n", fp->pos & BUFFER_SIZE, sz);
     if (!fp->tid) {
-        fp->mutex = deadbeef->mutex_create ();
-        fp->tid = deadbeef->thread_start (http_thread_func, (uintptr_t)fp);
+        http_start_streamer (fp);
     }
     while (fp->status != STATUS_FINISHED && sz > 0)
     {
@@ -223,7 +274,7 @@ http_read (void *ptr, size_t size, size_t nmemb, DB_FILE *stream) {
 }
 
 static int
-http_seek (DB_FILE *stream, long offset, int whence) {
+http_seek (DB_FILE *stream, int64_t offset, int whence) {
     trace ("http_seek %x %d\n", offset, whence);
     if (whence == SEEK_END) {
         trace ("vfs_curl: can't seek in curl stream relative to EOF\n");
@@ -277,7 +328,7 @@ http_seek (DB_FILE *stream, long offset, int whence) {
     return -1;
 }
 
-static long
+static int64_t
 http_tell (DB_FILE *stream) {
     assert (stream);
     HTTP_FILE *fp = (HTTP_FILE *)stream;
@@ -298,6 +349,20 @@ http_rewind (DB_FILE *stream) {
     }
 }
 
+static int64_t
+http_getlength (DB_FILE *stream) {
+    trace ("http_getlength");
+    assert (stream);
+    HTTP_FILE *fp = (HTTP_FILE *)stream;
+    if (!fp->tid) {
+        http_start_streamer (fp);
+    }
+    while (fp->status == STATUS_INITIAL) {
+        sleep (3000);
+    }
+    return fp->length;
+}
+
 static const char *scheme_names[] = { "http://", NULL };
 
 // standard stdio vfs
@@ -316,6 +381,7 @@ static DB_vfs_t plugin = {
     .seek = http_seek,
     .tell = http_tell,
     .rewind = http_rewind,
+    .getlength = http_getlength,
     .scheme_names = scheme_names,
     .streaming = 1
 };

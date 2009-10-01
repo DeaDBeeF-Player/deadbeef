@@ -85,7 +85,7 @@ static DB_functions_t deadbeef_api = {
     // metainfo
     .pl_add_meta = (void (*) (DB_playItem_t *, const char *, const char *))pl_add_meta,
     .pl_find_meta = (const char *(*) (DB_playItem_t *, const char *))pl_find_meta,
-    .pl_delete_all_meta = (void (*) (playItem_t *it))pl_delete_all_meta,
+    .pl_delete_all_meta = (void (*) (DB_playItem_t *it))pl_delete_all_meta,
     // cuesheet support
     .pl_insert_cue_from_buffer = (DB_playItem_t *(*) (DB_playItem_t *after, const char *fname, const uint8_t *buffer, int buffersize, struct DB_decoder_s *decoder, const char *ftype, int numsamples, int samplerate))pl_insert_cue_from_buffer,
     .pl_insert_cue = (DB_playItem_t *(*)(DB_playItem_t *, const char *, struct DB_decoder_s *, const char *ftype, int numsamples, int samplerate))pl_insert_cue,
@@ -95,9 +95,9 @@ static DB_functions_t deadbeef_api = {
     .volume_set_amp = plug_volume_set_amp,
     .volume_get_amp = volume_get_amp,
     // junk reading
-    .junk_read_id3v1 = (int (*)(DB_playItem_t *it, FILE *fp))junk_read_id3v1,
-    .junk_read_id3v2 = (int (*)(DB_playItem_t *it, FILE *fp))junk_read_id3v2,
-    .junk_read_ape = (int (*)(DB_playItem_t *it, FILE *fp))junk_read_ape,
+    .junk_read_id3v1 = (int (*)(DB_playItem_t *it, DB_FILE *fp))junk_read_id3v1,
+    .junk_read_id3v2 = (int (*)(DB_playItem_t *it, DB_FILE *fp))junk_read_id3v2,
+    .junk_read_ape = (int (*)(DB_playItem_t *it, DB_FILE *fp))junk_read_ape,
     .junk_get_leading_size = junk_get_leading_size,
     // vfs
     .fopen = vfs_fopen,
@@ -106,6 +106,7 @@ static DB_functions_t deadbeef_api = {
     .fseek = vfs_fseek,
     .ftell = vfs_ftell,
     .rewind = vfs_rewind,
+    .fgetlength = vfs_fgetlength,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;

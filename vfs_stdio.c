@@ -77,6 +77,17 @@ stdio_rewind (DB_FILE *stream) {
     rewind (((STDIO_FILE *)stream)->stream);
 }
 
+static int64_t
+stdio_getlength (DB_FILE *stream) {
+    assert (stream);
+    STDIO_FILE *f = (STDIO_FILE *)stream;
+    size_t pos = ftell (f->stream);
+    fseek (f->stream, 0, SEEK_END);
+    size_t sz = ftell (f->stream);
+    fseek (f->stream, pos, SEEK_SET);
+    return sz;
+}
+
 // standard stdio vfs
 static DB_vfs_t plugin = {
     DB_PLUGIN_SET_API_VERSION
@@ -93,6 +104,7 @@ static DB_vfs_t plugin = {
     .seek = stdio_seek,
     .tell = stdio_tell,
     .rewind = stdio_rewind,
+    .getlength = stdio_getlength,
     .scheme_names = NULL // this is NULL because that's a fallback vfs, used when no other matching vfs plugin found
 };
 
