@@ -825,6 +825,22 @@ cmp3_seek_sample (int sample) {
     if (!buffer.file) {
         return -1;
     }
+
+    if (buffer.file->vfs->streaming) {
+        if (buffer.totalsamples > 0) {
+            // approximation
+            int64_t l = deadbeef->fgetlength (buffer.file);
+            l = l * sample / buffer.totalsamples;
+            int r = deadbeef->fseek (buffer.file, l, SEEK_SET);
+            if (!r) {
+                buffer.currentsample = sample;
+                return 0;
+            }
+            return -1;
+        }
+        return 0;
+    }
+
     sample += buffer.startsample + buffer.startdelay;
     if (sample > buffer.endsample) {
         trace ("seek sample %d is beyond end of track (%d)\n", sample, buffer.endsample);
