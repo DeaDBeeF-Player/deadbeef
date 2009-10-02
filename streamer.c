@@ -53,8 +53,11 @@ static float g_srcbuffer[SRC_BUFFER_SIZE];
 static int streaming_terminate;
 
 // buffer up to 3 seconds at 44100Hz stereo
-#define STREAM_BUFFER_SIZE (44100*3*4)
+#define STREAM_BUFFER_SIZE 0x80000 // slightly more than 3 seconds of 44100 stereo
+#define STREAM_BUFFER_MASK 0x7ffff
+
 static int streambuffer_fill;
+static int streambuffer_pos;
 static int bytes_until_next_song = 0;
 static char streambuffer[STREAM_BUFFER_SIZE];
 static uintptr_t mutex;
@@ -317,6 +320,7 @@ streamer_thread (uintptr_t ctx) {
                 streamer_lock ();
                 playpos = str_playing_song.decoder->info.readpos;
                 streambuffer_fill = 0;
+                streambuffer_pos = 0;
                 streamer_unlock ();
                 codec_lock ();
                 codecleft = 0;
@@ -338,9 +342,23 @@ streamer_thread (uintptr_t ctx) {
             }
             sz = min (minsize, sz);
             assert ((sz&3) == 0);
-            int bytesread = streamer_read_async (&streambuffer[streambuffer_fill], sz);
-            //printf ("req=%d, got=%d\n", sz, bytesread);
-            streambuffer_fill += bytesread;
+
+            int writepos = (streambuffer_pos + streambuffer_fill) & STREAM_BUFFER_MASK;
+            int part1 = STREAM_BUFFER_SIZE-writepos;
+            part1 = min (part1, sz);
+            if (part1 > 0) {
+                streamer_unlock ();
+                int bytesread = streamer_read_async (streambuffer + writepos, part1);
+                streamer_lock ();
+                streambuffer_fill += bytesread;
+            }
+            sz -= part1;
+            if (sz > 0) {
+                streamer_unlock ();
+                int bytesread = streamer_read_async (streambuffer, sz);
+                streamer_lock ();
+                streambuffer_fill += bytesread;
+            }
         }
         streamer_unlock ();
         struct timeval tm2;
@@ -384,6 +402,7 @@ void
 streamer_reset (int full) { // must be called when current song changes by external reasons
     codecleft = 0;
     if (full) {
+        streambuffer_pos = 0;
         streambuffer_fill = 0;
     }
     src_reset (src);
@@ -638,19 +657,6 @@ streamer_read_async (char *bytes, int size) {
                 nbytes = size;
                 int genbytes = srcdata.output_frames_gen * 4;
                 bytesread = min(size, genbytes);
-#if 0
-                int i;
-                for (i = 0; i < bytesread/2; i++) {
-                    float sample = g_srcbuffer[i];
-                    if (sample > 1) {
-                        sample = 1;
-                    }
-                    if (sample < -1) {
-                        sample = -1;
-                    }
-                    ((int16_t*)bytes)[i] = (int16_t)ftoi (sample*32767.f);
-                }
-#endif
                 float32_to_int16 ((float*)g_srcbuffer, (int16_t*)bytes, bytesread>>1);
                 // calculate how many unused input samples left
                 codecleft = nsamples - srcdata.input_frames_used;
@@ -697,12 +703,24 @@ streamer_read (char *bytes, int size) {
     streamer_lock ();
     int sz = min (size, streambuffer_fill);
     if (sz) {
-        memcpy (bytes, streambuffer, sz);
-        if (sz < streambuffer_fill) {
-            // shift buffer
-            memmove (streambuffer, &streambuffer[sz], streambuffer_fill-sz);
+        int cp = sz;
+        int readpos = streambuffer_pos & STREAM_BUFFER_MASK;
+        int part1 = STREAM_BUFFER_SIZE-readpos;
+        part1 = min (part1, cp);
+        if (part1 > 0) {
+            memcpy (bytes, streambuffer+readpos, part1);
+            streambuffer_pos += part1;
+            streambuffer_fill -= part1;
+            cp -= part1;
+            bytes += part1;
         }
-        streambuffer_fill -= sz;
+        if (cp > 0) {
+            memcpy (bytes, streambuffer, cp);
+            streambuffer_pos += cp;
+            streambuffer_fill -= cp;
+            bytes += cp;
+        }
+        streambuffer_pos &= STREAM_BUFFER_MASK;
         playpos += (float)sz/p_get_rate ()/4.f;
         str_playing_song.playtime += (float)sz/p_get_rate ()/4.f;
         if (playlist_current_ptr) {
