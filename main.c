@@ -388,6 +388,11 @@ player_thread (uintptr_t ctx) {
                 break;
             case M_PLAYSONG:
                 gtkpl_playsong (&main_playlist);
+                GDK_THREADS_ENTER();
+                if (playlist_current_ptr) {
+                    gtkpl_redraw_pl_row (&main_playlist, pl_get_idx_of (playlist_current_ptr), playlist_current_ptr);
+                }
+                GDK_THREADS_LEAVE();
                 break;
             case M_PLAYSONGNUM:
                 GDK_THREADS_ENTER();
