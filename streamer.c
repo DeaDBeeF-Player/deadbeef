@@ -30,7 +30,6 @@
 #include "streamer.h"
 #include "playback.h"
 #include "messagepump.h"
-#include "messages.h"
 #include "conf.h"
 #include "plugins.h"
 #include "optmath.h"
@@ -55,6 +54,8 @@ static int streaming_terminate;
 // buffer up to 3 seconds at 44100Hz stereo
 #define STREAM_BUFFER_SIZE 0x80000 // slightly more than 3 seconds of 44100 stereo
 #define STREAM_BUFFER_MASK 0x7ffff
+//#define STREAM_BUFFER_SIZE 0x10000 // slightly more than 3 seconds of 44100 stereo
+//#define STREAM_BUFFER_MASK 0xffff
 
 static int streambuffer_fill;
 static int streambuffer_pos;
@@ -75,8 +76,8 @@ playItem_t str_streaming_song;
 static playItem_t *orig_playing_song;
 static playItem_t *orig_streaming_song;
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 // playlist must call that whenever item was removed
 void
@@ -323,9 +324,7 @@ streamer_thread (uintptr_t ctx) {
             codecleft = 0;
             codec_unlock ();
             if (str_playing_song.decoder && str_playing_song.decoder->seek (pos) >= 0) {
-                //streamer_lock ();
                 playpos = str_playing_song.decoder->info.readpos;
-                //streamer_unlock ();
             }
             streamer_unlock();
         }
@@ -344,7 +343,15 @@ streamer_thread (uintptr_t ctx) {
             }
             sz = min (minsize, sz);
             assert ((sz&3) == 0);
+            char buf[sz];
+            streamer_unlock ();
+            int bytesread = streamer_read_async (buf,sz);
+            streamer_lock ();
+            memcpy (streambuffer+streambuffer_fill, buf, sz);
+            streambuffer_fill += bytesread;
 
+
+#if 0
             int writepos = (streambuffer_pos + streambuffer_fill) & STREAM_BUFFER_MASK;
             int part1 = STREAM_BUFFER_SIZE-writepos;
             part1 = min (part1, sz);
@@ -361,6 +368,7 @@ streamer_thread (uintptr_t ctx) {
                 streamer_lock ();
                 streambuffer_fill += bytesread;
             }
+#endif
         }
         streamer_unlock ();
         struct timeval tm2;
@@ -711,6 +719,10 @@ streamer_read (char *bytes, int size) {
     streamer_lock ();
     int sz = min (size, streambuffer_fill);
     if (sz) {
+        memcpy (bytes, streambuffer, sz);
+        memmove (streambuffer, streambuffer+sz, streambuffer_fill-sz);
+        streambuffer_fill -= sz;
+#if 0
         int cp = sz;
         int readpos = streambuffer_pos & STREAM_BUFFER_MASK;
         int part1 = STREAM_BUFFER_SIZE-readpos;
@@ -728,7 +740,9 @@ streamer_read (char *bytes, int size) {
             streambuffer_fill -= cp;
             bytes += cp;
         }
+        assert (streambuffer_fill>=0);
         streambuffer_pos &= STREAM_BUFFER_MASK;
+#endif
         playpos += (float)sz/p_get_rate ()/4.f;
         str_playing_song.playtime += (float)sz/p_get_rate ()/4.f;
         if (playlist_current_ptr) {
@@ -739,7 +753,6 @@ streamer_read (char *bytes, int size) {
             if (bytes_until_next_song < 0) {
                 bytes_until_next_song = 0;
             }
-//            trace ("buns: %d\n", bytes_until_next_song);
         }
     }
     streamer_unlock ();
