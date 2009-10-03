@@ -657,9 +657,11 @@ cmp3_decode (void) {
 		{
 			if(MAD_RECOVERABLE(stream.error))
 			{
+#if 0
 				if(stream.error!=MAD_ERROR_LOSTSYNC) {
 					trace ("mpgmad: recoverable frame level error (%s)\n", MadErrorString(&stream));
 				}
+#endif
 				continue;
 			}
 			else {
