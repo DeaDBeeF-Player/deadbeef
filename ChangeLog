@@ -7,6 +7,7 @@ version 0.2.3
 	fixed reading of some id3v2 tags
 	changed tag reading order to APEv2->ID3v2->ID3v1
 	improved cuesheet reader
+	fixed interlocking bug in streamer (should reduce skips)
 
 version 0.2.2.2
 	fixed resume after suspend/hibernate
