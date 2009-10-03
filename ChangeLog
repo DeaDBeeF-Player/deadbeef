@@ -1,3 +1,8 @@
+version 0.2.3.1
+	disabled debug tracing in most modules, to prevent slow-downs
+	fixed streaming bug introduced last moment before 0.2.3
+	fixed redrawing of playing status after resume from pause
+
 version 0.2.3
 	added native gapless playback which works with most decoders
 	added replaygain support
