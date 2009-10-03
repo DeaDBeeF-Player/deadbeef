@@ -49,6 +49,23 @@
 
 <h1 id="news">News</h1>
 
+<h2>release 0.2.3 is out</h2>
+<div class="post">
+    <p class="date">2009/10/03</p>
+    <p><a href="#download">get it!</a></p>
+    <p>Changelog since 0.2.2.2</p>
+    <ul>
+	<li>added native gapless playback which works with most decoders</li>
+	<li>added replaygain support</li>
+	<li>added wavpack plugin</li>
+	<li>added libsndfile plugin</li>
+	<li>fixed seeking in paused and stopped states</li>
+	<li>fixed reading of some id3v2 tags</li>
+	<li>changed tag reading order to APEv2-&gt;ID3v2-&gt;ID3v1</li>
+	<li>improved cuesheet reader</li>
+	<li>fixed interlocking bug in streamer (should reduce skips)</li>
+    </ul>
+</div>
 <h2>release 0.2.2.2 is out</h2>
 <div class="post">
     <p class="date">2009/09/20</p>
@@ -109,13 +126,6 @@
     </ul>
 </div>
 
-<h2>updated debian packages</h2>
-<div class="post">
-<p class="date">2009/09/12</p>
-<p>debian packages for 0.2.0 are available, thanx to Alexey Smirnov</p>
-<p><a href='#download'>download</a></p>
-</div>
-
 <h2>deadbeef-0.2.0 is out!</h2>
 <div class='post'>
 <p class='date'>2009/09/08</p>
@@ -168,43 +178,6 @@
 </ul>
 </div>
 
-<h2>APE support status</h2>
-<div class='post'>
-<p class='date'>2009/09/01</p>
-<p>a lot of people are asking me about whether deadbeef is going to support APE (Monkey's Audio Codec) format.</p>
-<p>indeed, support is already in plugins branch, and everyone brave enough can try it. it's not fully finished yet, but working.</p>
-<p>unique feature of deadbeef is that it supports BOTH ape decoders available for linux: libmac (unofficial port of official sdk with crappy license), and libdemac (unofficial decoder licensed under GPL, developed by <a href="http://www.rockbox.org/">rockbox</a> people)</p>
-<p>here's some interesting info:</p>
-<p>mac decoder takes extra 10 megabytes of memory for itself (that's approximately same size, as taken by whole deadbeef player with all plugins except mac decoder!)</p>
-<p>mac decoder may take up to 5 seconds to seek or start playback</p>
-<p>libdemac takes almost no memory for itself, i would say i take around 250K for streaming (which is gonna be shared with other decoders btw)</p>
-<p>libdemac is approximately 2 times slower, than libmac</p>
-<p>worst case i've seen until now was 40% cpu time on libdemac, while 20% cpu time on libmac (3GHz Xeon CPU, same .ape file with extreme compression)</p>
-<p>that's it for now!</p>
-<p>happy listening</p>
-</div>
-
-<h2>One more Gentoo Ebuild</h2>
-<div class='post'>
-<p class='date'>2009/08/31</h2>
-<p><a href="mailto:tonn.post@gmail.com">Anton Novikov</a> sent another ebuild for GIT version of DeaDBeeF</p>
-<p>as always, check <a href="#download">download section</a></p>
-</div>
-
-<h2>Gentoo ebuild</h2>
-<div class='post'>
-<p class='date'>2009/08/31</p>
-<p><a href="mailto:prodoomman@gmail.com">proDOOMman</a> sent nice ebuild for gentoo linux</p>
-<p>check <a href="#download">download section</a></p>
-</div>
-
-<h2>Slackware Packages</h2>
-<div class='post'>
-<p class='date'>2009/08/30</p>
-<p><a href="mailto:sftp.mtuci@gmail.com">happy user</a> provided packages for Slackware 12.1 and 12.2</p>
-<p>check <a href="#download">download section</a></p>
-</div>
-
 <h2>release 0.1.1 is out!</h2>
 <div class='post'>
 <p class='date'>2009/08/23</p>
@@ -228,11 +201,6 @@ implemented basic session management, window size/position, volume, playmode are
 <p><a href="#download">download</a> now!</p>
 </div>
 
-<h2>Arch Linux PKGBUILD is available</h2>
-<div class='post'>
-<p>yaourt -S deadbeef</p>
-</div>
-
 <h2>GIT repository</h2>
 <div class='post'>
 <p>i pushed my git repository to sf.net on Thu Aug 20 2009</p>
@@ -252,12 +220,12 @@ implemented basic session management, window size/position, volume, playmode are
 <p>DeaDBeeF (as in 0xDEADBEEF) is an audio player for GNU/Linux systems with X11.</p>
 <p>Current alpha version features:</p>
 <ul>
-    <li>written in C99 except sid module, because of libsidplay2, which only has a C++ API (though some 3rd party libraries are entirely in C++)</li>
-    <li>mp3, ogg vorbis, flac, ape</li>
-    <li>reading id3 v1, v2.2, v2.3, v2.4, apev2, xing/info tags for mp3</li>
+    <li>mp3, ogg vorbis, flac, ape, wv, wav</li>
+    <li>ID3v1, ID3v2.2, ID3v2.3, ID3v2.4, APEv2, xing/info tags support</li>
     <li>character set detection for non-unicode id3 tags - supports cp1251 and iso8859-1</li>
     <li>unicode tags are fully supported as well (both utf8 and ucs2)</li>
     <li>cuesheet support for mp3, ogg, flac, ape</li>
+    <li>autodetection of utf8/cp1251/iso8859-1 charsets in cuesheets</li>
     <li>sid and some popular chiptune formats like nsf</li>
     <li>tracker modules like mod, s3m, it, xm, etc</li>
     <li>HVSC song length database support for sid</li>
@@ -291,16 +259,19 @@ implemented basic session management, window size/position, volume, playmode are
 </pre>
 
 <h1 id="download">Download</h1>
-<h2>Latest version 0.2.2.2:</h2>
+<h2>Latest version 0.2.3:</h2>
 <p>official Arch Linux PKGBUILD: <a href="http://aur.archlinux.org/packages.php?ID=29497">here</a></p>
 <p>if you have yaourt, you can simply do yaourt -S deadbeef</p>
+<p>source code for version 0.2.3 <a href="http://sourceforge.net/projects/deadbeef/files/deadbeef-0.2.3.tar.gz/download">deadbeef-0.2.3.tar.gz</a></p>
+<p>or <a href="http://sourceforge.net/projects/deadbeef/files/">browse all files</a></p>
+<p><b>unsupported</b> live gentoo ebuild from <a href="mailto:tonn.post@gmail.com">tonn</a>: <a href="http://sourceforge.net/projects/deadbeef/files/deadbeef-9999.ebuild/download">deadbeef-9999.ebuild</a></p>
+<p></p>
+<h2>version 0.2.2.2:</h2>
 <p>source code for version 0.2.2.2 <a href="http://sourceforge.net/projects/deadbeef/files/deadbeef-0.2.2.2.tar.gz/download">deadbeef-0.2.2.2.tar.gz</a></p>
 <p>or <a href="http://sourceforge.net/projects/deadbeef/files/">browse all files</a></p>
 <p><b>unsupported</b> debian packages for version 0.2.2.2 from <a href="mailto:alexey.smirnov@gmx.com">Alexey Smirnov</a>:</p>
 <p><a href="http://sourceforge.net/projects/deadbeef/files/debian/deadbeef_0.2.2.2-1_i386.deb/download">i386</a>, <a href="http://sourceforge.net/projects/deadbeef/files/debian/deadbeef_0.2.2.2-1_amd64.deb/download">x86_64</a>, <a href="http://sourceforge.net/projects/deadbeef/files/debian/deadbeef-plugins-dev_0.2.2.2-1_all.deb/download">plugin sdk</a></p>
 <p>deb-src git repository is <a href="http://github.com/asv/deadbeef-debian">here</a></p>
-<p><b>unsupported</b> live gentoo ebuild from <a href="mailto:tonn.post@gmail.com">tonn</a>:</p>
-<p><a href="http://sourceforge.net/projects/deadbeef/files/deadbeef-9999.ebuild/download">deadbeef-9999.ebuild</a></p>
 <h2>version 0.2.2.1</h2>
 <p>source code for version 0.2.2.1 <a href="http://sourceforge.net/projects/deadbeef/files/deadbeef-0.2.2.1.tar.gz/download">deadbeef-0.2.2.1.tar.gz</a></p>
 <p><b>unsupported</b> debian packages for version 0.2.2.1 from <a href="mailto:alexey.smirnov@gmx.com">Alexey Smirnov</a>:</p>
