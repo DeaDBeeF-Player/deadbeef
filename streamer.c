@@ -316,16 +316,18 @@ streamer_thread (uintptr_t ctx) {
                 bytes_until_next_song = -1;
             }
 
+            streamer_lock ();
+            streambuffer_fill = 0;
+            streambuffer_pos = 0;
+            codec_lock ();
+            codecleft = 0;
+            codec_unlock ();
             if (str_playing_song.decoder && str_playing_song.decoder->seek (pos) >= 0) {
-                streamer_lock ();
+                //streamer_lock ();
                 playpos = str_playing_song.decoder->info.readpos;
-                streambuffer_fill = 0;
-                streambuffer_pos = 0;
-                streamer_unlock ();
-                codec_lock ();
-                codecleft = 0;
-                codec_unlock ();
+                //streamer_unlock ();
             }
+            streamer_unlock();
         }
 
         // read ahead at 384K per second

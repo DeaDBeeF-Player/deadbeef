@@ -67,6 +67,7 @@ http_curl_write (void *ptr, size_t size, size_t nmemb, void *stream) {
     while (avail > 0) {
         deadbeef->mutex_lock (fp->mutex);
         if (fp->status == STATUS_SEEK) {
+            trace ("vfs_curl seek request, aborting current request\n");
             deadbeef->mutex_unlock (fp->mutex);
             return 0;
         }
@@ -147,10 +148,10 @@ http_thread_func (uintptr_t ctx) {
         return;
     }
 
-    curl_easy_reset (curl);
     fp->status = STATUS_STARTING;
 
     for (;;) {
+        curl_easy_reset (curl);
         curl_easy_setopt (curl, CURLOPT_URL, fp->url);
         curl_easy_setopt (curl, CURLOPT_NOPROGRESS, 1);
         curl_easy_setopt (curl, CURLOPT_WRITEFUNCTION, http_curl_write);
@@ -168,7 +169,10 @@ http_thread_func (uintptr_t ctx) {
         fp->status = STATUS_READING;
         deadbeef->mutex_unlock (fp->mutex);
         status = curl_easy_perform (curl);
-        trace ("curl: curl_easy_perform status=%d\n", status);
+        trace ("vfs_curl: curl_easy_perform status=%d\n", status);
+        if (status != 0) {
+            trace ("curl error:\n%s\n", http_err);
+        }
         deadbeef->mutex_lock (fp->mutex);
         if (fp->status != STATUS_SEEK) {
             deadbeef->mutex_unlock (fp->mutex);
@@ -302,13 +306,12 @@ http_seek (DB_FILE *stream, int64_t offset, int whence) {
             deadbeef->mutex_unlock (fp->mutex);
             return 0;
         }
-        else if (fp->pos < offset) {
+        else if (fp->pos < offset && fp->pos + BUFFER_SIZE > offset) {
             fp->skipbytes = offset - fp->pos;
-//            trace ("will skip %d bytes\n", fp->skipbytes);
             deadbeef->mutex_unlock (fp->mutex);
             return 0;
         }
-        else if (fp->pos-BUFFER_SIZE < offset) {
+        else if (fp->pos-offset >= 0 && fp->pos-offset <= BUFFER_SIZE-fp->remaining) {
             fp->skipbytes = 0;
             fp->remaining += fp->pos - offset;
             fp->pos = offset;
@@ -322,10 +325,8 @@ http_seek (DB_FILE *stream, int64_t offset, int whence) {
     fp->pos = offset;
     fp->status = STATUS_SEEK;
 
-//    // FIXME: can do some limited seeking
-//    trace ("vfs_curl: can't seek backwards (requested %d->%d)\n", fp->pos, offset);
     deadbeef->mutex_unlock (fp->mutex);
-    return -1;
+    return 0;
 }
 
 static int64_t
@@ -351,7 +352,7 @@ http_rewind (DB_FILE *stream) {
 
 static int64_t
 http_getlength (DB_FILE *stream) {
-    trace ("http_getlength");
+    trace ("http_getlength\n");
     assert (stream);
     HTTP_FILE *fp = (HTTP_FILE *)stream;
     if (!fp->tid) {

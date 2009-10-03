@@ -22,8 +22,8 @@
 #include <stdlib.h>
 #include "../../deadbeef.h"
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -836,6 +836,20 @@ cmp3_seek_sample (int sample) {
             int r = deadbeef->fseek (buffer.file, l, SEEK_SET);
             if (!r) {
                 buffer.currentsample = sample;
+                plugin.info.readpos = (float)(buffer.currentsample - buffer.startsample) / buffer.samplerate;
+
+
+                mad_synth_finish (&synth);
+                mad_frame_finish (&frame);
+                mad_stream_finish (&stream);
+                buffer.remaining = 0;
+                buffer.readsize = 0;
+                buffer.cachefill = 0;
+                buffer.cachepos = 0;
+                mad_stream_init(&stream);
+                mad_frame_init(&frame);
+                mad_synth_init(&synth);
+
                 return 0;
             }
             return -1;
