@@ -31,7 +31,7 @@ deadbeef_SOURCES =\
 	streamer.c streamer.h\
 	progress.c  progress.h\
 	codec.c codec.h\
-	messagepump.c messagepump.h messages.h\
+	messagepump.c messagepump.h\
 	conf.c  conf.h\
 	search.c search.h\
 	cgme.c cdumb.c csid.cpp\

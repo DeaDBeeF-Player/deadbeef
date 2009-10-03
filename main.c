@@ -388,11 +388,21 @@ player_thread (uintptr_t ctx) {
                 break;
             case M_PLAYSONG:
                 gtkpl_playsong (&main_playlist);
-                GDK_THREADS_ENTER();
                 if (playlist_current_ptr) {
+                    GDK_THREADS_ENTER();
                     gtkpl_redraw_pl_row (&main_playlist, pl_get_idx_of (playlist_current_ptr), playlist_current_ptr);
+                    GDK_THREADS_LEAVE();
                 }
-                GDK_THREADS_LEAVE();
+                break;
+            case M_TRACKCHANGED:
+                {
+                    playItem_t *it = pl_get_for_idx (p1);
+                    if (it) {
+                        GDK_THREADS_ENTER();
+                        gtkpl_redraw_pl_row (&main_playlist, p1, it);
+                        GDK_THREADS_LEAVE();
+                    }
+                }
                 break;
             case M_PLAYSONGNUM:
                 GDK_THREADS_ENTER();

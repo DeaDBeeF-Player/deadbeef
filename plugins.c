@@ -82,6 +82,7 @@ static DB_functions_t deadbeef_api = {
     .pl_item_free = (void (*)(DB_playItem_t *))pl_item_free,
     .pl_item_copy = (void (*)(DB_playItem_t *, DB_playItem_t *))pl_item_copy,
     .pl_insert_item = (DB_playItem_t *(*) (DB_playItem_t *after, DB_playItem_t *it))pl_insert_item,
+    .pl_get_idx_of = (int (*) (DB_playItem_t *it))pl_get_idx_of,
     // metainfo
     .pl_add_meta = (void (*) (DB_playItem_t *, const char *, const char *))pl_add_meta,
     .pl_find_meta = (const char *(*) (DB_playItem_t *, const char *))pl_find_meta,
@@ -107,6 +108,8 @@ static DB_functions_t deadbeef_api = {
     .ftell = vfs_ftell,
     .rewind = vfs_rewind,
     .fgetlength = vfs_fgetlength,
+    // message passing
+    .sendmessage = messagepump_push,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;

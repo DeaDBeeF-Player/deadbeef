@@ -112,6 +112,28 @@ enum {
     DB_EV_MAX
 };
 
+// message ids for communicating with player
+enum {
+    M_SONGFINISHED,
+    M_NEXTSONG,
+    M_PREVSONG,
+    M_PLAYSONG,
+    M_PLAYSONGNUM,
+    M_STOPSONG,
+    M_PAUSESONG,
+    M_PLAYRANDOM,
+    M_SONGCHANGED, // p1=from, p2=to
+    M_ADDDIR, // ctx = pointer to string, which must be freed by g_free
+    M_ADDFILES, // ctx = GSList pointer, must be freed with g_slist_free
+    M_ADDDIRS, // ctx = GSList pointer, must be freed with g_slist_free
+    M_OPENFILES, // ctx = GSList pointer, must be freed with g_slist_free
+    M_FMDRAGDROP, // ctx = char* ptr, must be freed with standard free, p1 is length of data, p2 is drop_y
+    M_TERMINATE, // must be sent to player thread to terminate
+    M_PLAYLISTREFRESH,
+    M_REINIT_SOUND,
+    M_TRACKCHANGED, // p1=tracknumber
+};
+
 // typecasting macros
 #define DB_PLUGIN(x) ((DB_plugin_t *)(x))
 #define DB_CALLBACK(x) ((DB_callback_t)(x))
@@ -167,6 +189,7 @@ typedef struct {
     void (*pl_item_free) (DB_playItem_t *it);
     void (*pl_item_copy) (DB_playItem_t *out, DB_playItem_t *in);
     DB_playItem_t *(*pl_insert_item) (DB_playItem_t *after, DB_playItem_t *it);
+    int (*pl_get_idx_of) (DB_playItem_t *it);
     // metainfo
     void (*pl_add_meta) (DB_playItem_t *it, const char *key, const char *value);
     const char *(*pl_find_meta) (DB_playItem_t *song, const char *meta);
@@ -192,6 +215,8 @@ typedef struct {
     int64_t (*ftell) (DB_FILE *stream);
     void (*rewind) (DB_FILE *stream);
     int64_t (*fgetlength) (DB_FILE *stream);
+    // message passing
+    int (*sendmessage) (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2);
 } DB_functions_t;
 
 // base plugin interface
