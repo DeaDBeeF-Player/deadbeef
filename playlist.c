@@ -30,7 +30,6 @@
 #include "codec.h"
 #include "streamer.h"
 #include "messagepump.h"
-#include "messages.h"
 #include "playback.h"
 #include "plugins.h"
 #include "junklib.h"

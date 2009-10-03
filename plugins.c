@@ -29,7 +29,6 @@
 #include "plugins.h"
 #include "md5/md5.h"
 #include "messagepump.h"
-#include "messages.h"
 #include "threading.h"
 #include "progress.h"
 #include "playlist.h"

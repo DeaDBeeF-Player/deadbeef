@@ -37,7 +37,6 @@
 #include "codec.h"
 #include "common.h"
 #include "messagepump.h"
-#include "messages.h"
 #include "streamer.h"
 #include "search.h"
 #include "progress.h"

@@ -40,7 +40,6 @@
 #include "unistd.h"
 #include "threading.h"
 #include "messagepump.h"
-#include "messages.h"
 #include "gtkplaylist.h"
 #include "codec.h"
 #include "streamer.h"

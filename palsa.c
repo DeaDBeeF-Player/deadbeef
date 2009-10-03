@@ -29,7 +29,6 @@
 #include "conf.h"
 #include "volume.h"
 #include "messagepump.h"
-#include "messages.h"
 #include "deadbeef.h"
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }

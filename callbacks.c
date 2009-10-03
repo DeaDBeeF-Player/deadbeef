@@ -36,7 +36,6 @@
 #include "playlist.h"
 #include "gtkplaylist.h"
 #include "messagepump.h"
-#include "messages.h"
 #include "codec.h"
 #include "playback.h"
 #include "search.h"

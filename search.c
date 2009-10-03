@@ -33,7 +33,6 @@
 #include "search.h"
 #include "gtkplaylist.h"
 #include "messagepump.h"
-#include "messages.h"
 #include "utf8.h"
 #include "deadbeef.h"
 
