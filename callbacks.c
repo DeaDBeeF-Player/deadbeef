@@ -26,6 +26,7 @@
 #include <unistd.h>
 #include <assert.h>
 #include <ctype.h>
+#include <gdk/gdkkeysyms.h>
 
 #include "callbacks.h"
 #include "interface.h"
@@ -46,13 +47,6 @@
 #include "conf.h"
 
 #include "plugins.h"
-
-//#include "cmp3.h"
-//#include "cvorbis.h"
-//#include "cdumb.h"
-//#include "cgme.h"
-//#include "cflac.h"
-//#include "csid.h"
 
 extern GtkWidget *mainwin;
 extern gtkplaylist_t main_playlist;
@@ -424,15 +418,6 @@ on_crop1_activate                      (GtkMenuItem     *menuitem,
     search_refresh ();
 }
 
-
-void
-on_about1_activate                     (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
-    GtkWidget *d = create_aboutdialog ();
-    gtk_dialog_run (GTK_DIALOG (d));
-    gtk_widget_destroy (d);
-}
 
 
 gboolean
@@ -1225,20 +1210,15 @@ on_find_activate                       (GtkMenuItem     *menuitem,
     search_start ();       
 }
 
-
-
-
-
 void
-on_help1_activate                      (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
+show_info_window (const char *fname, const char *title) {
     GtkWidget *widget = create_helpwindow ();
+    gtk_window_set_title (GTK_WINDOW (widget), title);
     gtk_window_set_transient_for (GTK_WINDOW (widget), GTK_WINDOW (mainwin));
     GtkWidget *txt = lookup_widget (widget, "helptext");
     GtkTextBuffer *buffer = gtk_text_buffer_new (NULL);
 
-    FILE *fp = fopen (PREFIX "/share/doc/deadbeef/help.txt", "rb");
+    FILE *fp = fopen (fname, "rb");
     if (fp) {
         fseek (fp, 0, SEEK_END);
         size_t s = ftell (fp);
@@ -1260,7 +1240,22 @@ on_help1_activate                      (GtkMenuItem     *menuitem,
         gtk_text_buffer_set_text (buffer, error, strlen (error));
     }
     gtk_text_view_set_buffer (GTK_TEXT_VIEW (txt), buffer);
+    g_object_unref (buffer);
     gtk_widget_show (widget);
+}
+
+void
+on_help1_activate                      (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    show_info_window (PREFIX "/share/doc/deadbeef/help.txt", "Help");
+}
+
+void
+on_about1_activate                     (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    show_info_window (PREFIX "/share/doc/deadbeef/about.txt", "About DeaDBeeF " VERSION);
 }
 
 
@@ -1281,5 +1276,19 @@ on_searchhscroll_value_changed         (GtkRange        *widget,
     GTKPL_PROLOGUE;
     int newscroll = gtk_range_get_value (GTK_RANGE (widget));
     gtkpl_hscroll (ps, newscroll);
+}
+
+
+gboolean
+on_helpwindow_key_press_event          (GtkWidget       *widget,
+                                        GdkEventKey     *event,
+                                        gpointer         user_data)
+{
+    if (event->keyval == GDK_Escape) {
+        gtk_widget_hide (widget);
+        gtk_widget_destroy (widget);
+//        g_object_unref (widget);
+    }
+  return FALSE;
 }
 

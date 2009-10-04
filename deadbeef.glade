@@ -800,72 +800,6 @@
   </child>
 </widget>
 
-<widget class="GtkAboutDialog" id="aboutdialog">
-  <property name="border_width">4</property>
-  <property name="visible">True</property>
-  <property name="destroy_with_parent">True</property>
-  <property name="name" translatable="yes">DeaDBeeF</property>
-  <property name="copyright" translatable="yes">Copyright © 2009 Alexey Yakovenko</property>
-  <property name="comments" translatable="yes"></property>
-  <property name="license" translatable="yes">DeaDBeeF - ultimate music player for GNU/Linux systems with X11
-Copyright (C) 2009  Alexey Yakovenko
-
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
-as published by the Free Software Foundation; either version 2
-of the License, or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-
-
-Note that other included libraries have separate licensing terms.
-
-
-DUMB - Dynamic Universal Music Bibliotheque, Version 0.9.3
-Copyright (C) 2001-2005 Ben Davis, Robert J Ohannessian and Julien Cugniere.
-
-
-Game_Music_Emu Version 0.5.2
-Copyright (C) 2003-2006 Shay Green.
-
-
-Functions to compute MD5 message digest of files or memory blocks
-Written by Ulrich Drepper &lt;drepper@gnu.ai.mit.edu&gt;, 1995.
-Modified by Gray Watson &lt;http://256.com/gray/&gt;, 1997.
-
-
-libsidplay2 - commodore 64 SID emulation library
-Copyright (C) Simon White and other authors.
-
-
-ffap - monkey's audio decoder based on apedec code from ffmpeg
-Copyright (c) 2007 Benjamin Zores &lt;ben@geexbox.org&gt;</property>
-  <property name="wrap_license">False</property>
-  <property name="website">http://deadbeef.sf.net</property>
-  <property name="website_label" translatable="yes">website</property>
-  <property name="authors">Core developer:
-Alexey Yakovenko
-&lt;waker@users.sourceforge.net&gt;
- 
-Hotkeys plugin:
-Viktor Semykin
-&lt;thesame.ml@gmail.com&gt;
- 
-Desktop file and Debian packages:
-Alexey A. Smirnov
-&lt;alexey.smirnov@gmx.com&gt;</property>
-  <property name="artists">Button artwork:
-Stas &quot;uncle lag&quot; Akimushkin &lt;uncle.lag@gmail.com&gt;</property>
-  <property name="translator_credits" translatable="yes" comments="TRANSLATORS: Replace this string with your names, one name per line.">translator-credits</property>
-</widget>
-
 <widget class="GtkWindow" id="searchwin">
   <property name="width_request">600</property>
   <property name="height_request">150</property>
@@ -1277,6 +1211,7 @@ Stas &quot;uncle lag&quot; Akimushkin &lt;uncle.lag@gmail.com&gt;</property>
   <property name="width_request">600</property>
   <property name="height_request">400</property>
   <property name="visible">True</property>
+  <property name="events">GDK_KEY_PRESS_MASK</property>
   <property name="title" translatable="yes">Help</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
@@ -1290,6 +1225,7 @@ Stas &quot;uncle lag&quot; Akimushkin &lt;uncle.lag@gmail.com&gt;</property>
   <property name="gravity">GDK_GRAVITY_NORTH_WEST</property>
   <property name="focus_on_map">True</property>
   <property name="urgency_hint">False</property>
+  <signal name="key_press_event" handler="on_helpwindow_key_press_event" last_modification_time="Sun, 04 Oct 2009 19:06:07 GMT"/>
 
   <child>
     <widget class="GtkScrolledWindow" id="scrolledwindow1">

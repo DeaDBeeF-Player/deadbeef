@@ -739,48 +739,6 @@ create_mainwin (void)
 }
 
 GtkWidget*
-create_aboutdialog (void)
-{
-  GtkWidget *aboutdialog;
-  const gchar *authors[] = {
-    "Core developer:",
-    "Alexey Yakovenko",
-    "<waker@users.sourceforge.net>",
-    " ",
-    "Hotkeys plugin:",
-    "Viktor Semykin",
-    "<thesame.ml@gmail.com>",
-    " ",
-    "Desktop file and Debian packages:",
-    "Alexey A. Smirnov",
-    "<alexey.smirnov@gmx.com>",
-    NULL
-  };
-  const gchar *artists[] = {
-    "Button artwork:",
-    "Stas \"uncle lag\" Akimushkin <uncle.lag@gmail.com>",
-    NULL
-  };
-
-  aboutdialog = gtk_about_dialog_new ();
-  gtk_container_set_border_width (GTK_CONTAINER (aboutdialog), 4);
-  gtk_window_set_destroy_with_parent (GTK_WINDOW (aboutdialog), TRUE);
-  gtk_about_dialog_set_version (GTK_ABOUT_DIALOG (aboutdialog), VERSION);
-  gtk_about_dialog_set_name (GTK_ABOUT_DIALOG (aboutdialog), "DeaDBeeF");
-  gtk_about_dialog_set_copyright (GTK_ABOUT_DIALOG (aboutdialog), "Copyright \302\251 2009 Alexey Yakovenko");
-  gtk_about_dialog_set_license (GTK_ABOUT_DIALOG (aboutdialog), "DeaDBeeF - ultimate music player for GNU/Linux systems with X11\nCopyright (C) 2009  Alexey Yakovenko\n\nThis program is free software; you can redistribute it and/or\nmodify it under the terms of the GNU General Public License\nas published by the Free Software Foundation; either version 2\nof the License, or (at your option) any later version.\n\nThis program is distributed in the hope that it will be useful,\nbut WITHOUT ANY WARRANTY; without even the implied warranty of\nMERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\nGNU General Public License for more details.\n\nYou should have received a copy of the GNU General Public License\nalong with this program; if not, write to the Free Software\nFoundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.\n\n\nNote that other included libraries have separate licensing terms.\n\n\nDUMB - Dynamic Universal Music Bibliotheque, Version 0.9.3\nCopyright (C) 2001-2005 Ben Davis, Robert J Ohannessian and Julien Cugniere.\n\n\nGame_Music_Emu Version 0.5.2\nCopyright (C) 2003-2006 Shay Green.\n\n\nFunctions to compute MD5 message digest of files or memory blocks\nWritten by Ulrich Drepper <drepper@gnu.ai.mit.edu>, 1995.\nModified by Gray Watson <http://256.com/gray/>, 1997.\n\n\nlibsidplay2 - commodore 64 SID emulation library\nCopyright (C) Simon White and other authors.\n\n\nffap - monkey's audio decoder based on apedec code from ffmpeg\nCopyright (c) 2007 Benjamin Zores <ben@geexbox.org>");
-  gtk_about_dialog_set_website (GTK_ABOUT_DIALOG (aboutdialog), "http://deadbeef.sf.net");
-  gtk_about_dialog_set_website_label (GTK_ABOUT_DIALOG (aboutdialog), "website");
-  gtk_about_dialog_set_authors (GTK_ABOUT_DIALOG (aboutdialog), authors);
-  gtk_about_dialog_set_artists (GTK_ABOUT_DIALOG (aboutdialog), artists);
-
-  /* Store pointers to all widgets, for use by lookup_widget(). */
-  GLADE_HOOKUP_OBJECT_NO_REF (aboutdialog, aboutdialog, "aboutdialog");
-
-  return aboutdialog;
-}
-
-GtkWidget*
 create_searchwin (void)
 {
   GtkWidget *searchwin;
@@ -1119,6 +1077,7 @@ create_helpwindow (void)
 
   helpwindow = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_widget_set_size_request (helpwindow, 600, 400);
+  gtk_widget_set_events (helpwindow, GDK_KEY_PRESS_MASK);
   gtk_window_set_title (GTK_WINDOW (helpwindow), "Help");
   gtk_window_set_modal (GTK_WINDOW (helpwindow), TRUE);
   gtk_window_set_destroy_with_parent (GTK_WINDOW (helpwindow), TRUE);
@@ -1135,6 +1094,10 @@ create_helpwindow (void)
   gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW (helptext), GTK_WRAP_WORD);
   gtk_text_view_set_left_margin (GTK_TEXT_VIEW (helptext), 10);
   gtk_text_view_set_right_margin (GTK_TEXT_VIEW (helptext), 10);
+
+  g_signal_connect ((gpointer) helpwindow, "key_press_event",
+                    G_CALLBACK (on_helpwindow_key_press_event),
+                    NULL);
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (helpwindow, helpwindow, "helpwindow");

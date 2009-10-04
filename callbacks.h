@@ -537,3 +537,8 @@ on_playhscroll_value_changed           (GtkRange        *range,
 void
 on_searchhscroll_value_changed         (GtkRange        *range,
                                         gpointer         user_data);
+
+gboolean
+on_helpwindow_key_press_event          (GtkWidget       *widget,
+                                        GdkEventKey     *event,
+                                        gpointer         user_data);

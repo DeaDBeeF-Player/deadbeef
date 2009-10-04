@@ -55,7 +55,7 @@ AM_CPPFLAGS = $(DEPS_CFLAGS) -I$(sidpath)/libsidplay/include -I$(sidpath)/builde
 
 docsdir = $(datadir)/doc/$(PACKAGE)
 
-docs_DATA = README COPYING config-example help.txt
+docs_DATA = README COPYING config-example help.txt about.txt
 
 desktopdir = $(datadir)/applications
 desktop_DATA = deadbeef.desktop
