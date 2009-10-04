@@ -35,7 +35,7 @@ void
 plug_ev_unsubscribe (DB_plugin_t *plugin, int ev, DB_callback_t callback, uintptr_t data);
 
 void
-plug_trigger_event (int ev);
+plug_trigger_event (int ev, uintptr_t param);
 
 void
 plug_md5 (uint8_t sig[16], const char *in, int len);

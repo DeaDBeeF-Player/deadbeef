@@ -109,6 +109,7 @@ enum {
     DB_EV_SONGCHANGED = 1, // triggers when song was just changed
     DB_EV_SONGSTARTED = 2, // triggers when song started playing (for scrobblers and such)
     DB_EV_SONGFINISHED = 3, // triggers when song finished playing (for scrobblers and such)
+    DB_EV_TRACKDELETED = 4, // triggers when track is to be deleted from playlist
     DB_EV_MAX
 };
 

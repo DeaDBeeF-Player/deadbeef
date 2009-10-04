@@ -82,6 +82,7 @@ static playItem_t *orig_streaming_song;
 // playlist must call that whenever item was removed
 void
 streamer_song_removed_notify (playItem_t *it) {
+    plug_trigger_event (DB_EV_TRACKDELETED, (uintptr_t)it);
     if (it == orig_playing_song) {
         orig_playing_song = NULL;
     }
@@ -249,7 +250,7 @@ streamer_thread (uintptr_t ctx) {
             p_stop ();
             if (str_playing_song.decoder) {
                 trace ("sending songfinished to plugins [1]\n");
-                plug_trigger_event (DB_EV_SONGFINISHED);
+                plug_trigger_event (DB_EV_SONGFINISHED, 0);
             }
             messagepump_push (M_SONGCHANGED, 0, pl_get_idx_of (orig_playing_song), -1);
             streamer_set_current (NULL);
@@ -276,7 +277,7 @@ streamer_thread (uintptr_t ctx) {
             // plugin will get pointer to str_playing_song
             if (str_playing_song.decoder) {
                 trace ("sending songfinished to plugins [2]\n");
-                plug_trigger_event (DB_EV_SONGFINISHED);
+                plug_trigger_event (DB_EV_SONGFINISHED, 0);
             }
             // free old copy of playing
             pl_item_free (&str_playing_song);
@@ -297,7 +298,7 @@ streamer_thread (uintptr_t ctx) {
             messagepump_push (M_SONGCHANGED, 0, from, to);
             // plugin will get pointer to new str_playing_song
             trace ("sending songstarted to plugins\n");
-            plug_trigger_event (DB_EV_SONGSTARTED);
+            plug_trigger_event (DB_EV_SONGSTARTED, 0);
             playpos = 0;
         }
 

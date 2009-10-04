@@ -351,6 +351,24 @@ cvorbis_insert (DB_playItem_t *after, const char *fname) {
     return after;
 }
 
+static int
+vorbis_trackdeleted (DB_event_song_t *ev, uintptr_t data) {
+    if (ev->song == ptrack) {
+        ptrack = NULL;
+    }
+    return 0;
+}
+
+static int
+vorbis_start (void) {
+    deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_TRACKDELETED, DB_CALLBACK (vorbis_trackdeleted), 0);
+}
+
+static int
+vorbis_stop (void) {
+    deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_TRACKDELETED, DB_CALLBACK (vorbis_trackdeleted), 0);
+}
+
 static const char * exts[] = { "ogg", NULL };
 static const char *filetypes[] = { "OggVorbis", NULL };
 
@@ -364,6 +382,8 @@ static DB_decoder_t plugin = {
     .plugin.author = "Alexey Yakovenko",
     .plugin.email = "waker@users.sourceforge.net",
     .plugin.website = "http://deadbeef.sf.net",
+    .plugin.start = vorbis_start,
+    .plugin.stop = vorbis_stop,
     .init = cvorbis_init,
     .free = cvorbis_free,
     .read_int16 = cvorbis_read,

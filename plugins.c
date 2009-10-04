@@ -255,7 +255,7 @@ plug_quit (void) {
 
 /////// non-api functions (plugin support)
 void
-plug_trigger_event (int ev) {
+plug_trigger_event (int ev, uintptr_t param) {
     mutex_lock (mutex);
     DB_event_t *event;
     switch (ev) {
@@ -265,6 +265,13 @@ plug_trigger_event (int ev) {
         DB_event_song_t *pev = malloc (sizeof (DB_event_song_t));
         pev->song = DB_PLAYITEM (&str_playing_song);
         event = DB_EVENT (pev);
+        }
+        break;
+    case DB_EV_TRACKDELETED:
+        {
+            DB_event_song_t *pev = malloc (sizeof (DB_event_song_t));
+            pev->song = DB_PLAYITEM (param);
+            event = DB_EVENT (pev);
         }
         break;
     default:

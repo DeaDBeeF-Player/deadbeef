@@ -341,7 +341,7 @@ player_thread (uintptr_t ctx) {
                 messagepump_push (M_TERMINATE, 0, 0, 0);
             }
         }
-        plug_trigger_event (DB_EV_FRAMEUPDATE);
+        plug_trigger_event (DB_EV_FRAMEUPDATE, 0);
         uint32_t msg;
         uintptr_t ctx;
         uint32_t p1;
@@ -388,7 +388,7 @@ player_thread (uintptr_t ctx) {
                 // update playlist view
                 gtkpl_songchanged (&main_playlist, p1, p2);
                 GDK_THREADS_LEAVE();
-                plug_trigger_event (DB_EV_SONGCHANGED);
+                plug_trigger_event (DB_EV_SONGCHANGED, 0);
                 break;
             case M_PLAYSONG:
                 gtkpl_playsong (&main_playlist);
