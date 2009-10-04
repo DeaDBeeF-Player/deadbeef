@@ -23,8 +23,8 @@
 #include <assert.h>
 #include "../../deadbeef.h"
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -72,6 +72,7 @@ http_curl_write (void *ptr, size_t size, size_t nmemb, void *stream) {
             return 0;
         }
         if (fp->status == STATUS_ABORTED) {
+            trace ("vfs_curl STATUS_ABORTED\n");
             deadbeef->mutex_unlock (fp->mutex);
             break;
         }
@@ -132,8 +133,8 @@ http_thread_func (uintptr_t ctx) {
     fp->length = -1;
     fp->status = STATUS_INITIAL;
 
-    // get filesize (once)
     int status;
+    // get filesize (once)
     curl_easy_setopt(curl, CURLOPT_URL, fp->url);
     curl_easy_setopt(curl, CURLOPT_NOBODY, 1);
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
@@ -142,12 +143,12 @@ http_thread_func (uintptr_t ctx) {
     curl_easy_setopt (curl, CURLOPT_HEADERDATA, ctx);
     status = curl_easy_perform(curl);
     if (status != 0) {
+        fp->length = -1;
         trace ("vfs_curl: curl_easy_perform failed while getting filesize, status %d\n", status);
-        fp->status = STATUS_FINISHED;
-        fp->tid = 0;
-        return;
+//        fp->status = STATUS_FINISHED;
+//        fp->tid = 0;
+//        return;
     }
-
     fp->status = STATUS_STARTING;
 
     for (;;) {
@@ -224,7 +225,7 @@ http_close (DB_FILE *stream) {
 
 static size_t
 http_read (void *ptr, size_t size, size_t nmemb, DB_FILE *stream) {
-//    trace ("http_read %d\n", size*nmemb);
+    trace ("http_read %d\n", size*nmemb);
     assert (stream);
     assert (ptr);
     HTTP_FILE *fp = (HTTP_FILE *)stream;
