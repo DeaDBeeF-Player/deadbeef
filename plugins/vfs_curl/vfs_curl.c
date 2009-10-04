@@ -360,8 +360,9 @@ http_getlength (DB_FILE *stream) {
         http_start_streamer (fp);
     }
     while (fp->status == STATUS_INITIAL) {
-        sleep (3000);
+        usleep (3000);
     }
+    //trace ("length: %d\n", fp->length);
     return fp->length;
 }
 
