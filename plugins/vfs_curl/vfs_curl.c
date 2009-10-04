@@ -46,6 +46,7 @@ typedef struct {
     char *url;
     uint8_t buffer[BUFFER_SIZE];
     int64_t pos; // position in stream; use "& BUFFER_MASK" to make it index into ringbuffer
+    int seektoend; // indicates that next tell must return length
     int64_t length;
     int32_t remaining; // remaining bytes in buffer read from stream
     int32_t skipbytes;
@@ -118,10 +119,6 @@ http_size_request_handler (void *ptr, size_t size, size_t nmemb, void *stream) {
         fp->length = atoi (cl);
         trace ("vfs_curl: file size is %d bytes\n", fp->length);
     }
-//    else {
-//        trace ("vfs_curl: unable to get file size\n");
-//        fp->length = -1; // infinite
-//    }
     return size * nmemb;
 }
 
@@ -229,6 +226,7 @@ http_read (void *ptr, size_t size, size_t nmemb, DB_FILE *stream) {
     assert (stream);
     assert (ptr);
     HTTP_FILE *fp = (HTTP_FILE *)stream;
+    fp->seektoend = 0;
     int sz = size * nmemb;
 //    assert (size * nmemb <= BUFFER_SIZE);
 //    trace ("readpos=%d, readsize=%d\n", fp->pos & BUFFER_SIZE, sz);
@@ -281,12 +279,17 @@ http_read (void *ptr, size_t size, size_t nmemb, DB_FILE *stream) {
 static int
 http_seek (DB_FILE *stream, int64_t offset, int whence) {
     trace ("http_seek %x %d\n", offset, whence);
+    assert (stream);
+    HTTP_FILE *fp = (HTTP_FILE *)stream;
+    fp->seektoend = 0;
     if (whence == SEEK_END) {
+        if (offset == 0) {
+            fp->seektoend = 1;
+            return 0;
+        }
         trace ("vfs_curl: can't seek in curl stream relative to EOF\n");
         return -1;
     }
-    assert (stream);
-    HTTP_FILE *fp = (HTTP_FILE *)stream;
     if (!fp->tid) {
         if (offset == 0 && (whence == SEEK_SET || whence == SEEK_CUR)) {
             return 0;
@@ -334,6 +337,9 @@ static int64_t
 http_tell (DB_FILE *stream) {
     assert (stream);
     HTTP_FILE *fp = (HTTP_FILE *)stream;
+    if (fp->seektoend) {
+        return fp->length;
+    }
     return fp->pos + fp->skipbytes;
 }
 
@@ -366,7 +372,7 @@ http_getlength (DB_FILE *stream) {
     return fp->length;
 }
 
-static const char *scheme_names[] = { "http://", NULL };
+static const char *scheme_names[] = { "http://", "ftp://", NULL };
 
 // standard stdio vfs
 static DB_vfs_t plugin = {

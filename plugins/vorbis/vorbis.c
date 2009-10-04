@@ -27,7 +27,7 @@
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(...) { fprintf (stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
 static DB_decoder_t plugin;
@@ -54,9 +54,6 @@ cvorbis_fread (void *ptr, size_t size, size_t nmemb, void *datasource) {
 static int
 cvorbis_fseek (void *datasource, ogg_int64_t offset, int whence) {
     DB_FILE *f = (DB_FILE *)datasource;
-    if (f->vfs->streaming) {
-        return -1;
-    }
     return deadbeef->fseek (datasource, offset, whence);
 }
 
@@ -119,7 +116,8 @@ cvorbis_init (DB_playItem_t *it) {
     }
     memset (&plugin.info, 0, sizeof (plugin.info));
 
-    if (file->vfs->streaming) {
+    int ln = deadbeef->fgetlength (file);
+    if (file->vfs->streaming && ln == -1) {
         ov_callbacks ovcb = {
             .read_func = cvorbis_fread,
             .seek_func = NULL,
@@ -134,6 +132,7 @@ cvorbis_init (DB_playItem_t *it) {
             plugin.free ();
             return -1;
         }
+        it->duration = -1;
     }
     else
     {
@@ -151,6 +150,7 @@ cvorbis_init (DB_playItem_t *it) {
             plugin.free ();
             return -1;
         }
+        it->duration = ov_time_total (&vorbis_file, -1);
     }
     vi = ov_info (&vorbis_file, -1);
     if (!vi) { // not a vorbis stream
@@ -177,11 +177,12 @@ cvorbis_init (DB_playItem_t *it) {
     }
     else {
         startsample = 0;
-        endsample = ov_pcm_total (&vorbis_file, -1)-1;
-        if (endsample <= 0) {
+        if (it->duration < 0) {
             endsample = -1;
         }
-        it->duration = -1;
+        else {
+            endsample = ov_pcm_total (&vorbis_file, -1)-1;
+        }
         vorbis_comment *vc = ov_comment (&vorbis_file, -1);
         update_vorbis_comments (it, vc);
     }
@@ -285,7 +286,7 @@ cvorbis_seek_sample (int sample) {
         return -1;
     int tell = ov_pcm_tell (&vorbis_file);
     if (tell != sample) {
-        fprintf (stderr, "oggvorbis: failed to do sample-accurate seek (%d->%d)\n", sample, tell);
+        trace ("oggvorbis: failed to do sample-accurate seek (%d->%d)\n", sample, tell);
     }
     currentsample = sample;
     plugin.info.readpos = (float)(ov_pcm_tell(&vorbis_file) - startsample)/vi->rate;
@@ -302,7 +303,7 @@ cvorbis_insert (DB_playItem_t *after, const char *fname) {
     // check for validity
     DB_FILE *fp = deadbeef->fopen (fname);
     if (!fp) {
-        fprintf (stderr, "vorbis: failed to fopen %s\n", fname);
+        trace ("vorbis: failed to fopen %s\n", fname);
         return NULL;
     }
     if (fp->vfs->streaming) {
@@ -326,7 +327,7 @@ cvorbis_insert (DB_playItem_t *after, const char *fname) {
     ov_open_callbacks (fp, &vorbis_file, NULL, 0, ovcb);
     vi = ov_info (&vorbis_file, -1);
     if (!vi) { // not a vorbis stream
-        fprintf (stderr, "vorbis: failed to ov_open %s\n", fname);
+        trace ("vorbis: failed to ov_open %s\n", fname);
         return NULL;
     }
     float duration = ov_time_total (&vorbis_file, -1);
