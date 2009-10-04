@@ -321,6 +321,16 @@ server_update (void) {
 }
 
 void
+current_track_changed (playItem_t *it) {
+    char str[600];
+    char dname[512];
+    pl_format_item_display_name (it, dname, 512);
+    snprintf (str, 600, "DeaDBeeF - %s", dname);
+    gtk_window_set_title (GTK_WINDOW (mainwin), str);
+    set_tray_tooltip (str);
+}
+
+void
 player_thread (uintptr_t ctx) {
     prctl (PR_SET_NAME, "deadbeef-player", 0, 0, 0, 0);
     for (;;) {
@@ -367,12 +377,7 @@ player_thread (uintptr_t ctx) {
                     if (to >= 0) {
                         playItem_t *it = pl_get_for_idx (to);
                         if (it) { // it might have been deleted after event was sent
-                            char str[600];
-                            char dname[512];
-                            pl_format_item_display_name (it, dname, 512);
-                            snprintf (str, 600, "DeaDBeeF - %s", dname);
-                            gtk_window_set_title (GTK_WINDOW (mainwin), str);
-                            set_tray_tooltip (str);
+                            current_track_changed (it);
                         }
                     }
                     else {
@@ -399,6 +404,9 @@ player_thread (uintptr_t ctx) {
                     if (it) {
                         GDK_THREADS_ENTER();
                         gtkpl_redraw_pl_row (&main_playlist, p1, it);
+                        if (it == playlist_current_ptr) {
+                            current_track_changed (it);
+                        }
                         GDK_THREADS_LEAVE();
                     }
                 }
