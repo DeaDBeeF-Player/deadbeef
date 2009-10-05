@@ -1113,6 +1113,7 @@ pl_load (const char *fname) {
     DB_decoder_t **decoders = plug_get_decoder_list ();
     uint8_t majorver;
     uint8_t minorver;
+    playItem_t *it = NULL;
     FILE *fp = fopen (fname, "rb");
     if (!fp) {
         return -1;
@@ -1140,7 +1141,6 @@ pl_load (const char *fname) {
     if (fread (&cnt, 1, 4, fp) != 4) {
         goto load_fail;
     }
-    playItem_t *it = NULL;
     for (uint32_t i = 0; i < cnt; i++) {
         it = malloc (sizeof (playItem_t));
         if (!it) {
