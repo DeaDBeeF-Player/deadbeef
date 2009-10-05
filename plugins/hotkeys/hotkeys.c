@@ -20,6 +20,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <X11/Xlib.h>
+#include <ctype.h>
 
 #include "../../deadbeef.h"
 
@@ -216,8 +217,22 @@ read_config( Display *disp )
             else if ( 0 == strcasecmp( p, "Shift" ) )
                 cmd_entry->modifier |= ShiftMask;
 
+            else if ( 0 == strcasecmp( p, "Super" ) ) {
+                cmd_entry->modifier |= Mod2Mask;
+            }
+
             else {
-                cmd_entry->keycode = get_keycode( disp, p );
+                if (p[0] == '0' && p[1] == 'x') {
+                    // parse hex keycode
+                    int r = sscanf (p, "0x%x", &cmd_entry->keycode);
+                    if (!r) {
+                        cmd_entry->keycode = 0;
+                    }
+                }
+                else {
+                    // lookup name table
+                    cmd_entry->keycode = get_keycode( disp, p );
+                }
                 if ( !cmd_entry->keycode )
                 {
                     fprintf( stderr, "hotkeys: [Config line %d] Unknown key: <%s>\n", line_nr, key );
