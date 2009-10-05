@@ -20,11 +20,13 @@ syntax is following:
 some examples:
 
 Ctrl Alt c: toggle_pause
-Ctrl Alt z: prev
+Ctrl 0x76: prev
 Ctrl Alt b: next
 Ctrl Alt v: stop
 Ctrl Alt x: play
 Ctrl Alt n: play_random
+Super u: volume_up
+XF86AudioLowerVolume: volume_down
 
 full list of actions:
 
