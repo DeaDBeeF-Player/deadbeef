@@ -116,6 +116,16 @@ if test ${HAVE_CURL}; then
     AC_SUBST(VFS_CURL_DIR)
 fi
 
+dnl faad2 plugin
+AC_CHECK_LIB([faad], [main], [HAVE_FAAD=1])
+AC_CHECK_LIB([mp4ff], [main], [HAVE_MP4FF=1])
+if test ${HAVE_FAAD} && test ${HAVE_MP4FF} ; then
+    FAAD2_LIBS="-lfaad -lmp4ff -lmp4v2"
+    FAAD2_DIR="plugins/faad2"
+    AC_SUBST(FAAD2_LIBS)
+    AC_SUBST(FAAD2_DIR)
+fi
+
 AC_OUTPUT([
 Makefile
 pixmaps/Makefile
@@ -133,6 +143,7 @@ plugins/flac/Makefile
 plugins/wavpack/Makefile
 plugins/sndfile/Makefile
 plugins/vfs_curl/Makefile
+plugins/faad2/Makefile
 deadbeef.desktop
 ])
 

@@ -15,7 +15,8 @@ SUBDIRS = gme/Game_Music_Emu-0.5.2\
           ${FLAC_DIR}\
           ${WAVPACK_DIR}\
           ${SNDFILE_DIR}\
-          ${VFS_CURL_DIR}
+          ${VFS_CURL_DIR}\
+          ${FAAD2_DIR}
 
 dumbpath=@top_srcdir@/dumb
 sidpath=@top_srcdir@/sid/sidplay-libs-2.1.0
