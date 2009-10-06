@@ -295,6 +295,7 @@ pl_insert_cue_from_buffer (playItem_t *after, const char *fname, const uint8_t *
     }
     after = pl_process_cue_track (after, fname, &prev, track, index00, index01, pregap, title, performer, albumtitle, decoder, ftype, samplerate);
     if (after) {
+        trace ("last track endsample: %d\n", numsamples-1);
         after->endsample = numsamples-1;
         after->duration = (float)(after->endsample - after->startsample + 1) / samplerate;
     }
