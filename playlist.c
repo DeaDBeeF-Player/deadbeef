@@ -174,7 +174,7 @@ pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, c
             // PREGAP command
             prevtime = f_index01 - f_pregap;
         }
-        else if (index00[0]) {
+        else if (index00[0] && index01[0]) {
             // pregap in index 00
             prevtime = f_index00;
         }
@@ -186,8 +186,22 @@ pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, c
             return after;
         }
         (*prev)->endsample = (prevtime * samplerate) - 1;
-        trace ("calc endsample=%d, prevtime=%f, samplerate=%d\n", (*prev)->endsample,  prevtime, samplerate);
         (*prev)->duration = (float)((*prev)->endsample - (*prev)->startsample + 1) / samplerate;
+        if ((*prev)->duration < 0) {
+            // might be bad cuesheet file, try to fix
+            trace ("cuesheet seems to be corrupted, trying workaround\n");
+            trace ("[bad:] calc endsample=%d, prevtime=%f, samplerate=%d, prev track duration=%f\n", (*prev)->endsample,  prevtime, samplerate, (*prev)->duration);
+            prevtime = f_index01;
+            (*prev)->endsample = (prevtime * samplerate) - 1;
+            (*prev)->duration = (float)((*prev)->endsample - (*prev)->startsample + 1) / samplerate;
+            if ((*prev)->duration > 0) {
+                trace ("success :-D\n");
+            }
+            else {
+                trace ("fail :-(\n");
+            }
+        }
+        trace ("calc endsample=%d, prevtime=%f, samplerate=%d, prev track duration=%f\n", (*prev)->endsample,  prevtime, samplerate, (*prev)->duration);
     }
     // non-compliant hack to handle tracks which only store pregap info
     if (!index01[0]) {
@@ -202,9 +216,6 @@ pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, c
     float t = 0;
     if (index01[0]) {
         t = f_index01;
-    }
-    else {
-        t = f_index00;
     }
     it->startsample = t * samplerate;
 
