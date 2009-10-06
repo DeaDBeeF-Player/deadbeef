@@ -196,12 +196,13 @@ cflac_init (DB_playItem_t *it) {
             plugin.free ();
             return -1;
         }
+        trace ("flac(cue): startsample=%d, endsample=%d, totalsamples=%d, currentsample=%d\n", startsample, endsample, flac_callbacks.totalsamples, currentsample);
     }
     else {
         startsample = 0;
         endsample = flac_callbacks.totalsamples-1;
         currentsample = 0;
-        trace ("startsample=%d, endsample=%d, totalsamples=%d\n", startsample, endsample, flac_callbacks.totalsamples);
+        trace ("flac: startsample=%d, endsample=%d, totalsamples=%d\n", startsample, endsample, flac_callbacks.totalsamples);
     }
 
     remaining = 0;
@@ -261,7 +262,7 @@ cflac_read_int16 (char *bytes, int size) {
 
 static int
 cflac_read_float32 (char *bytes, int size) {
-    int initsize = size;
+//    trace ("currentsample=%d\n", currentsample);
     if (size / (4 * plugin.info.channels) + currentsample > endsample) {
         size = (endsample - currentsample + 1) * 4 * plugin.info.channels;
         trace ("size truncated to %d bytes, cursample=%d, endsample=%d\n", size, currentsample, endsample);
@@ -269,6 +270,7 @@ cflac_read_float32 (char *bytes, int size) {
             return 0;
         }
     }
+    int initsize = size;
     do {
         if (remaining) {
             int sz = min (remaining, size);
