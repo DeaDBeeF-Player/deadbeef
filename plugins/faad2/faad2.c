@@ -211,7 +211,7 @@ aac_insert (DB_playItem_t *after, const char *fname) {
         if (parse_aac_stream (fp)) {
             trace ("not aac stream either\n");
             deadbeef->fclose (fp);
-            return -1;
+            return NULL;
         }
         else {
             trace ("yes, it's aac indeed\n");
