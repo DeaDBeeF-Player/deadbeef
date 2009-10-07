@@ -1,3 +1,11 @@
+version 0.2.3.2
+	added winkey (Super) modifier support to hotkeys plugin
+	added multimedia keys support to hotkeys plugin
+	added hex keycodes (as reported by xev) support to hotkeys plugin
+	fixed crashbug in playlist loader when loading playlist files from older releases
+	fixed bug in flac decoder attempting to read past end of file
+	added new workarounds for malformed cusheet files
+
 version 0.2.3.1
 	disabled debug tracing in most modules, to prevent slow-downs
 	fixed streaming bug introduced last moment before 0.2.3
