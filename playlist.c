@@ -174,10 +174,10 @@ pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, c
             // PREGAP command
             prevtime = f_index01 - f_pregap;
         }
-        else if (index00[0] && index01[0]) {
-            // pregap in index 00
-            prevtime = f_index00;
-        }
+//        else if (index00[0] && index01[0]) {
+//            // pregap in index 00
+//            prevtime = f_index00;
+//        }
         else if (index01[0]) {
             // no pregap
             prevtime = f_index01;
