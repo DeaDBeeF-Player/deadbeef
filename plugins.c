@@ -302,8 +302,9 @@ plug_load_all (void) {
     fprintf (stderr, "\033[0;31mDISABLE_VERSIONCHECK=1! do not distribute!\033[0;m\n");
 #endif
     mutex = mutex_create ();
-    char dirname[1024];
-    snprintf (dirname, 1024, "%s/lib/deadbeef", PREFIX);
+//    char dirname[1024];
+//    snprintf (dirname, 1024, "%s/lib/deadbeef", PREFIX);
+    const char *dirname = LIBDIR "/deadbeef";
     struct dirent **namelist = NULL;
     int n = scandir (dirname, &namelist, NULL, alphasort);
     if (n < 0)
