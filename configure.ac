@@ -126,6 +126,17 @@ if test ${HAVE_FAAD} && test ${HAVE_MP4FF} ; then
     AC_SUBST(FAAD2_DIR)
 fi
 
+dnl cdda plugin
+AC_CHECK_LIB([cdio], [main], [HAVE_CDIO=1])
+AC_CHECK_LIB([cddb], [main], [HAVE_CDDB=1])
+
+if test ${HAVE_CDIO} && test ${HAVE_CDDB}; then
+    CDDA_LIBS="-lcdio -lcddb"
+    CDDA_DIR="plugins/cdda"
+    AC_SUBST(CDDA_LIBS)
+    AC_SUBST(CDDA_DIR)
+fi
+
 AC_OUTPUT([
 Makefile
 pixmaps/Makefile
@@ -144,6 +155,7 @@ plugins/wavpack/Makefile
 plugins/sndfile/Makefile
 plugins/vfs_curl/Makefile
 plugins/faad2/Makefile
+plugins/cdda/Makefile
 deadbeef.desktop
 ])
 

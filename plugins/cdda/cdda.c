@@ -1,3 +1,20 @@
+/*
+    CD audio plugin for DeaDBeeF
+    Copyright (C) 2009 Viktor Semykin <thesame.ml@gmail.com>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -8,6 +25,9 @@
 #include <cddb/cddb.h>
 
 #include "../../deadbeef.h"
+
+#define trace(...) { fprintf (stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 #define SECTORSIZE CDIO_CD_FRAMESIZE_RAW //2352
 #define SAMPLESIZE 4 //bytes
@@ -22,32 +42,34 @@ static unsigned int sector_count;
 static uint8_t tail [SECTORSIZE];
 static unsigned int tail_len;
 static int current_sector;
+static unsigned int current_sample = 0;
+static uintptr_t mutex;
 
 static int use_cddb = 1;
-static const char *server;
-static int port;
-static const char *proxy = NULL;
-static int proxy_port;
+static char server[1024] = "freedb.org";
+static int port = 888;
+static char proxy[1024] = "";
+static int proxy_port = -1;
 static int proto_cddb = 1;
-
-static unsigned int current_sample = 0;
-
-inline int min(int a, int b) { return a<b ? a : b; }
 
 struct cddb_thread_params
 {
-    DB_playItem_t **items;
+    DB_playItem_t *items[100];
     CdIo_t *cdio;
 };
 
+static inline int
+min (int a, int b) {
+    return a < b ? a : b;
+}
+
 static char*
-trim(char* s)
+trim (char* s)
 {
     char *h, *t;
     
     for ( h = s; *h == ' ' || *h == '\t'; h++ );
-    for ( t = s + strlen(s); *t == ' ' || *t == '\t'; t-- );
-    *(t+1) = 0;
+    for ( t = s + strlen(s); *t == ' ' || *t == '\t'; *t = 0, t-- );
     return h;
 }
 
@@ -61,7 +83,7 @@ read_config ()
 
     FILE *cfg_file = fopen (config, "rt");
     if (!cfg_file) {
-        fprintf (stderr, "cdaudio: failed open %s\n", config);
+        trace ("cdaudio: failed open %s\n", config);
         return -1;
     }
 
@@ -74,7 +96,7 @@ read_config ()
         char *colon = strchr (param, ':');
         if (!colon)
         {
-            fprintf (stderr, "cdaudio: malformed config string: %s\n", param);
+            trace ("cdaudio: malformed config string: %s\n", param);
             continue;
         }
         *(colon++) = 0;
@@ -90,12 +112,13 @@ read_config ()
             else
             {
                 use_cddb = 0;
-                fprintf (stderr, "cdaudio: warning, wrong value %s\n", value);
+                trace ("cdaudio: warning, wrong value %s\n", value);
             }
         }
         else if (0 == strcmp (key, "cddb_server"))
         {
-            server = strdup (value);
+            server[0] = 0;
+            strncat (server, value, sizeof (server));
         }
         else if (0 == strcmp (key, "cddb_port"))
         {
@@ -103,7 +126,8 @@ read_config ()
         }
         else if (0 == strcmp (key, "cddb_proxy"))
         {
-            proxy = strdup (value);
+            proxy[0] = 0;
+            strncat (proxy, value, sizeof (server));
         }
         else if (0 == strcmp (key, "cddb_proxy_port"))
         {
@@ -116,35 +140,43 @@ read_config ()
             else if (0 == strcmp (value, "http"))
                 proto_cddb = 0;
             else
-                fprintf (stderr, "cdaudio: unknown protocol \"%s\"\n", value);
+                trace ("cdaudio: unknown protocol \"%s\"\n", value);
         }
         else
-            fprintf (stderr, "cdaudio: warning, unknown option %s\n", key);
+            trace ("cdaudio: warning, unknown option %s\n", key);
     }
     fclose (cfg_file);
 }
 
 static int
 cda_init (DB_playItem_t *it) {
-    printf ("CDA: initing %s\n", it->fname);
+//    trace ("CDA: initing %s\n", it->fname);
 
-    char *location = strdup (it->fname);
+    size_t l = strlen (it->fname);
+    char location[l+1];
+    memcpy (location, it->fname, l+1);
 
     char *nr = strchr (location, '#');
-    *nr = 0; nr++;
+    if (nr) {
+        *nr = 0; nr++;
+    }
+    else {
+        trace ("malformed cdaudio track filename\n");
+        return -1;
+    }
     int track_nr = atoi (nr);
     char *fname = (*location) ? location : NULL; //NULL if empty string; means pysical CD drive
 
     cdio = cdio_open (fname, DRIVER_UNKNOWN);
     if  (!cdio)
     {
-        fprintf (stderr, "Could not open CD\n");
+        trace ("Could not open CD\n");
         return -1;
     }
 
     if (TRACK_FORMAT_AUDIO != cdio_get_track_format (cdio, track_nr))
     {
-        fprintf (stderr, "Not an audio track (%d)\n", track_nr);
+        trace ("Not an audio track (%d)\n", track_nr);
         return -1;
     }
 
@@ -169,13 +201,13 @@ cda_read_int16 (char *bytes, int size) {
     {
         if (tail_len >= size)
         {
-            printf ("Easy case\n");
+//            trace ("Easy case\n");
             memcpy (bytes, tail, size);
             tail_len -= size;
             memmove (tail, tail+size, tail_len);
             return size;
         }
-        printf ("Prepending with tail of %d bytes\n", tail_len);
+//        trace ("Prepending with tail of %d bytes\n", tail_len);
         extrasize = tail_len;
         memcpy (bytes, tail, tail_len);
         bytes += tail_len;
@@ -190,7 +222,7 @@ cda_read_int16 (char *bytes, int size) {
     {
         end = 1;
         sectors_to_read = first_sector + sector_count - current_sector;
-        printf ("We reached end of track\n");
+//        trace ("We reached end of track\n");
     }
 
     int bufsize = sectors_to_read * SECTORSIZE;
@@ -211,7 +243,7 @@ cda_read_int16 (char *bytes, int size) {
         memcpy (tail, buf+retsize, tail_len);
 
     retsize += extrasize;
-    printf ("requested: %d; tail_len: %d; size: %d; sectors_to_read: %d; return: %d\n", initsize, tail_len, size, sectors_to_read, retsize);
+//    trace ("requested: %d; tail_len: %d; size: %d; sectors_to_read: %d; return: %d\n", initsize, tail_len, size, sectors_to_read, retsize);
     current_sample += retsize / SAMPLESIZE;
     plugin.info.readpos = current_sample / 44100;
     return retsize;
@@ -303,7 +335,7 @@ resolve_disc (CdIo_t *cdio)
 static DB_playItem_t *
 insert_single_track (CdIo_t* cdio, DB_playItem_t *after, const char* file, int track_nr)
 {
-    char tmp[512]; //FIXME: how much?
+    char tmp[file ? strlen (file) + 20 : 20];
     if (file)
         snprintf (tmp, sizeof (tmp), "%s#%d.cda", file, track_nr);
     else
@@ -311,7 +343,7 @@ insert_single_track (CdIo_t* cdio, DB_playItem_t *after, const char* file, int t
 
     if (TRACK_FORMAT_AUDIO != cdio_get_track_format (cdio, track_nr))
     {
-        fprintf (stderr, "Not an audio track (%d)\n", track_nr);
+        trace ("Not an audio track (%d)\n", track_nr);
         return NULL;
     }
 
@@ -320,7 +352,7 @@ insert_single_track (CdIo_t* cdio, DB_playItem_t *after, const char* file, int t
     DB_playItem_t *it = deadbeef->pl_item_alloc ();
     it->decoder = &plugin;
     it->fname = strdup (tmp);
-    it->filetype = "cda";
+    it->filetype = "cdda";
     it->duration = (float)sector_count / 75.0;
 
     snprintf (tmp, sizeof (tmp), "CD Track %d", track_nr);
@@ -338,21 +370,32 @@ cddb_thread (uintptr_t items_i)
     DB_playItem_t **items = params->items;
     DB_playItem_t *item;
 
+    trace ("calling resolve_disc\n");
+    deadbeef->mutex_lock (mutex);
     cddb_disc_t* disc = resolve_disc (params->cdio);
+    deadbeef->mutex_unlock (mutex);
     if (!disc)
     {
-        printf ("disc not resolved\n");
+        trace ("disc not resolved\n");
+        free (params);
         return;
     }
+    trace ("disc resolved\n");
 
+    deadbeef->mutex_lock (mutex);
     const char *disc_title = cddb_disc_get_title (disc);
     const char *artist = cddb_disc_get_artist (disc);
+    trace ("disc_title=%s, disk_artist=%s\n", disc_title, artist);
     cddb_track_t *track;
     int i;
     
+    // FIXME: playlist must be locked before doing that
     for (i = 0, track = cddb_disc_get_track_first (disc); items[i]; ++i, track = cddb_disc_get_track_next (disc))
     {
+        // FIXME: problem will happen here if item(s) were deleted from playlist, and new items were added in their places
+        // possible solutions: catch EV_TRACKDELETED and mark item(s) in every thread as NULL
         int idx = deadbeef->pl_get_idx_of (items[i]);
+        trace ("track %d, artist=%s, album=%s, title=%s\n", i, artist, disc_title, cddb_track_get_title (track));
         if (idx == -1)
             continue;
 
@@ -363,48 +406,56 @@ cddb_thread (uintptr_t items_i)
         deadbeef->sendmessage (M_TRACKCHANGED, 0, idx, 0);
     }
     cddb_disc_destroy (disc);
+    deadbeef->mutex_unlock (mutex);
+    free (params);
 }
 
 static DB_playItem_t *
 cda_insert (DB_playItem_t *after, const char *fname) {
-    printf ("CDA insert: %s\n", fname);
+//    trace ("CDA insert: %s\n", fname);
 
     int all = 0;
     int track_nr;
     DB_playItem_t *res;
     CdIo_t *cdio; //we need its local inst
 
-    static DB_playItem_t *items[100];
-    
-    char* shortname = strdup (strrchr (fname, '/') + 1);
+    const char* shortname = strrchr (fname, '/');
+    if (shortname) {
+        shortname++;
+    }
+    else {
+        shortname = fname;
+    }
     const char *ext = strrchr (shortname, '.') + 1;
-    int is_image = (0 == strcmp (ext, "nrg"));
+    int is_image = ext && (0 == strcmp (ext, "nrg"));
 
-    if (0 == strcmp (ext, "cda"))
+    if (0 == strcmp (ext, "cda")) {
         cdio = cdio_open (NULL, DRIVER_UNKNOWN);
-
-    else if (is_image)
+    }
+    else if (is_image) {
         cdio = cdio_open (fname, DRIVER_NRG);
+    }
 
-    if (!cdio)
+    if (!cdio) {
         return NULL;
+    }
 
     if (0 == strcasecmp (shortname, "all.cda") || is_image)
     {
+        trace ("querying freedb...\n");
         track_t first_track = cdio_get_first_track_num (cdio);
         track_t tracks = cdio_get_num_tracks (cdio);
         track_t i;
         res = after;
+        struct cddb_thread_params *p = malloc (sizeof (struct cddb_thread_params));
+        memset (p, 0, sizeof (struct cddb_thread_params));
+        p->cdio = cdio;
         for (i = 0; i < tracks; i++)
         {
             res = insert_single_track (cdio, res, is_image ? fname : NULL, i+first_track);
-            items[i] = res;
+            p->items[i] = res;
         }
-        items[tracks] = NULL;
-        static struct cddb_thread_params p;
-        p.items = items;
-        p.cdio = cdio;
-        deadbeef->thread_start (cddb_thread, (uintptr_t)&p); //will destroy cdio
+        deadbeef->thread_start (cddb_thread, (uintptr_t)p); //will destroy cdio
     }
     else
     {
@@ -415,8 +466,18 @@ cda_insert (DB_playItem_t *after, const char *fname) {
     return res;
 }
 
-static const char * exts[] = { "cda", "nrg", NULL };
-static const char *filetypes[] = { "cda", "Nero CD image", NULL };
+static int
+cda_start (void) {
+    mutex = deadbeef->mutex_create ();
+}
+
+static int
+cda_stop (void) {
+    deadbeef->mutex_free (mutex);
+}
+
+static const char *exts[] = { "cda", "nrg", NULL };
+static const char *filetypes[] = { "cdda", NULL };
 
 // define plugin interface
 static DB_decoder_t plugin = {
@@ -428,6 +489,8 @@ static DB_decoder_t plugin = {
     .plugin.author = "Viktor Semykin",
     .plugin.email = "thesame.ml@gmail.com",
     .plugin.website = "http://deadbeef.sf.net",
+    .plugin.start = cda_start,
+    .plugin.stop = cda_stop,
     .init = cda_init,
     .free = cda_free,
     .read_int16 = cda_read_int16,
@@ -440,7 +503,7 @@ static DB_decoder_t plugin = {
 };
 
 DB_plugin_t *
-cda_load (DB_functions_t *api) {
+cdda_load (DB_functions_t *api) {
     deadbeef = api;
     read_config();
     return DB_PLUGIN (&plugin);

@@ -16,6 +16,7 @@ SUBDIRS = gme/Game_Music_Emu-0.5.2\
           ${WAVPACK_DIR}\
           ${SNDFILE_DIR}\
           ${VFS_CURL_DIR}\
+          ${CDDA_DIR}\
           ${FAAD2_DIR}
 
 dumbpath=@top_srcdir@/dumb
