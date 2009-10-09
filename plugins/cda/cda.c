@@ -28,6 +28,7 @@ static const char *server;
 static int port;
 static const char *proxy = NULL;
 static int proxy_port;
+static int proto_cddb = 1;
 
 static unsigned int current_sample = 0;
 
@@ -107,6 +108,15 @@ read_config ()
         else if (0 == strcmp (key, "cddb_proxy_port"))
         {
             proxy_port = atoi (value);
+        }
+        else if (0 == strcmp (key, "proto"))
+        {
+            if (0 == strcmp (value, "cddb"))
+                proto_cddb = 1;
+            else if (0 == strcmp (value, "http"))
+                proto_cddb = 0;
+            else
+                fprintf (stderr, "cdaudio: unknown protocol \"%s\"\n", value);
         }
         else
             fprintf (stderr, "cdaudio: warning, unknown option %s\n", key);
@@ -267,6 +277,16 @@ resolve_disc (CdIo_t *cdio)
 
     cddb_set_server_name (conn, server);
     cddb_set_server_port (conn, port);
+
+    if (!proto_cddb)
+    {
+        cddb_http_enable (conn);
+        if (proxy)
+        {
+            cddb_set_server_port(conn, proxy_port);
+            cddb_set_server_name(conn, proxy);
+        }
+    }
 
     int matches = cddb_query (conn, disc);
     if (matches == -1)
