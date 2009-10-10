@@ -355,8 +355,10 @@ insert_single_track (CdIo_t* cdio, DB_playItem_t *after, const char* file, int t
     it->filetype = "cdda";
     it->duration = (float)sector_count / 75.0;
 
-    snprintf (tmp, sizeof (tmp), "CD Track %d", track_nr);
+    snprintf (tmp, sizeof (tmp), "CD Track %02d", track_nr);
     deadbeef->pl_add_meta (it, "title", tmp);
+    snprintf (tmp, sizeof (tmp), "%02d", track_nr);
+    deadbeef->pl_add_meta (it, "track", tmp);
 
     after = deadbeef->pl_insert_item (after, it);
 
@@ -390,7 +392,8 @@ cddb_thread (uintptr_t items_i)
     int i;
     
     // FIXME: playlist must be locked before doing that
-    for (i = 0, track = cddb_disc_get_track_first (disc); items[i]; ++i, track = cddb_disc_get_track_next (disc))
+    int trk = 1;
+    for (i = 0, track = cddb_disc_get_track_first (disc); items[i]; trk++, ++i, track = cddb_disc_get_track_next (disc))
     {
         // FIXME: problem will happen here if item(s) were deleted from playlist, and new items were added in their places
         // possible solutions: catch EV_TRACKDELETED and mark item(s) in every thread as NULL
@@ -403,6 +406,9 @@ cddb_thread (uintptr_t items_i)
         deadbeef->pl_add_meta (items[i], "artist", artist);
         deadbeef->pl_add_meta (items[i], "album", disc_title);
         deadbeef->pl_add_meta (items[i], "title", cddb_track_get_title (track));
+        char tmp[5];
+        snprintf (tmp, sizeof (tmp), "%02d", trk);
+        deadbeef->pl_add_meta (items[i], "track", tmp);
         deadbeef->sendmessage (M_TRACKCHANGED, 0, idx, 0);
     }
     cddb_disc_destroy (disc);
