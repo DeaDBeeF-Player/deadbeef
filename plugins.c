@@ -325,6 +325,7 @@ plug_load_all (void) {
 #if DISABLE_VERSIONCHECK
     fprintf (stderr, "\033[0;31mDISABLE_VERSIONCHECK=1! do not distribute!\033[0;m\n");
 #endif
+    const char *conf_blacklist_plugins = conf_get_str ("blacklist_plugins", "");
     mutex = mutex_create ();
     char dirname[1024];
     snprintf (dirname, 1024, "%s/lib/deadbeef", PREFIX);

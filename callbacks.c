@@ -1145,6 +1145,7 @@ on_mainwin_delete_event                (GtkWidget       *widget,
                                         GdkEvent        *event,
                                         gpointer         user_data)
 {
+    int conf_close_send_to_tray = conf_get_int ("close_send_to_tray", 0);
     if (conf_close_send_to_tray) {
         gtk_widget_hide (widget);
     }

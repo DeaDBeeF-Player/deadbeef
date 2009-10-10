@@ -19,16 +19,15 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
+#include "conf.h"
 
-char conf_alsa_soundcard[1024] = "default"; // name of soundcard for alsa player
-int conf_samplerate = 48000;
-int conf_src_quality = 1;
-char conf_hvsc_path[1024] = "";
-int conf_hvsc_enable = 0;
-char conf_blacklist_plugins[1024]; // plugins listed in this option will not be loaded
-int conf_close_send_to_tray = 0;
-int conf_replaygain_mode = 0;
-int conf_replaygain_scale = 1;
+struct conf_item_t {
+    char *key;
+    char *value;
+    struct conf_item_t *next;
+};
+
+static struct conf_item_t *conf_items;
 
 int
 conf_load (void) {
@@ -70,48 +69,57 @@ conf_load (void) {
             p++;
         }
         *p = 0;
-        if (!strcasecmp (str, "samplerate")) {
-            conf_samplerate = atoi (value);
-        }
-        else if (!strcasecmp (str, "alsa_soundcard")) {
-            strncpy (conf_alsa_soundcard, value, sizeof (conf_alsa_soundcard));
-            conf_alsa_soundcard[sizeof (conf_alsa_soundcard) - 1] = 0;
-        }
-        else if (!strcasecmp (str, "src_quality")) {
-            conf_src_quality = atoi (value);
-        }
-        else if (!strcasecmp (str, "hvsc_path")) {
-            strncpy (conf_hvsc_path, value, sizeof (conf_hvsc_path));
-            conf_hvsc_path[sizeof (conf_hvsc_path)-1] = 0;
-        }
-        else if (!strcasecmp (str, "hvsc_enable")) {
-            conf_hvsc_enable = atoi (value);
-        }
-        else if (!strcasecmp (str, "blacklist_plugins")) {
-            fprintf (stderr, "blacklisted plugins: %s\n", value);
-            strncpy (conf_blacklist_plugins, value, sizeof (conf_blacklist_plugins));
-            conf_blacklist_plugins[sizeof (conf_blacklist_plugins)-1] = 0;
-        }
-        else if (!strcasecmp (str, "close_send_to_tray")) {
-            conf_close_send_to_tray = atoi (value);
-        }
-        else if (!strcasecmp (str, "replaygain_mode")) {
-            int rg = atoi (value);
-            if (rg >= 0 && rg <= 2) {
-                conf_replaygain_mode = atoi (value);
-            }
-            else {
-                fprintf (stderr, "config warning: replaygain_mode must be one of 0, 1 or 2\n");
-            }
-        }
-        else if (!strcasecmp (str, "replaygain_scale")) {
-            conf_replaygain_scale = atoi (value);
-        }
-        else {
-            fprintf (stderr, "error in config file line %d\n", line);
-        }
+        conf_set_str (str, value);
     }
     fclose (fp);
     return 0;
+}
+
+int
+conf_save (void) {
+    return 0;
+}
+
+void
+conf_free (void) {
+}
+
+const char *
+conf_get_str (const char *key, const char *def) {
+    for (struct conf_item_t *it = conf_items; it; it = it->next) {
+        if (!strcasecmp (key, it->key)) {
+            return it->value;
+        }
+    }
+    return def;
+}
+
+float
+conf_get_float (const char *key, float def) {
+    const char *v = conf_get_str (key, NULL);
+    return v ? atof (v) : def;
+}
+
+int
+conf_get_int (const char *key, int def) {
+    const char *v = conf_get_str (key, NULL);
+    return v ? atoi (v) : def;
+}
+
+void
+conf_set_str (const char *key, const char *val) {
+    for (struct conf_item_t *it = conf_items; it; it = it->next) {
+        if (!strcasecmp (key, it->key)) {
+            free (it->value);
+            it->value = strdup (val);
+            return;
+        }
+    }
+    struct conf_item_t *it = malloc (sizeof (struct conf_item_t));
+    memset (it, 0, sizeof (struct conf_item_t));
+    it->next = conf_items;
+    it->key = strdup (key);
+    it->value = strdup (val);
+    conf_items = it;
 }
 

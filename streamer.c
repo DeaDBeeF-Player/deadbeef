@@ -400,7 +400,7 @@ streamer_init (void) {
     mutex = mutex_create ();
 //    src = src_new (SRC_SINC_BEST_QUALITY, 2, NULL);
 //    src = src_new (SRC_LINEAR, 2, NULL);
-    src = src_new (conf_src_quality, 2, NULL);
+    src = src_new (conf_get_int ("src_quality", 2), 2, NULL);
     if (!src) {
         return -1;
     }
@@ -430,6 +430,9 @@ int replaygain_scale = 1;
 
 static void
 apply_replay_gain_int16 (playItem_t *it, char *bytes, int size) {
+    int conf_replaygain_mode = conf_get_int ("replaygain_mode", 0);
+    int conf_replaygain_scale = conf_get_int ("replaygain_scale", 1);
+
     if (!replaygain || !conf_replaygain_mode) {
         return;
     }
@@ -472,6 +475,8 @@ apply_replay_gain_int16 (playItem_t *it, char *bytes, int size) {
 
 static void
 apply_replay_gain_float32 (playItem_t *it, char *bytes, int size) {
+    int conf_replaygain_mode = conf_get_int ("replaygain_mode", 0);
+    int conf_replaygain_scale = conf_get_int ("replaygain_scale", 1);
     if (!replaygain || !conf_replaygain_mode) {
         return;
     }

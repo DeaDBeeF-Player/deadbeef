@@ -28,10 +28,10 @@
 // #include "sidplay/sidendian.h"
 
 #include "deadbeef.h"
-#include "conf.h"
 
 extern "C" {
 #include "md5/md5.h"
+#include "conf.h"
 }
 
 // forward decls
@@ -129,7 +129,12 @@ static sldb_t *sldb;
 static void sldb_load()
 {
     fprintf (stderr, "sldb_load\n");
+    int conf_hvsc_enable = conf_get_int ("hvsc_enable", 0);
     if (sldb_loaded || !conf_hvsc_enable) {
+        return;
+    }
+    const char *conf_hvsc_path = conf_get_str ("hvsc_path", NULL);
+    if (!conf_hvsc_path) {
         return;
     }
     sldb_loaded = 1;

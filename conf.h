@@ -18,17 +18,25 @@
 #ifndef __CONF_H
 #define __CONF_H
 
-extern char conf_alsa_soundcard[1024];
-extern int conf_samplerate;
-extern int conf_src_quality;
-extern char conf_hvsc_path[1024];
-extern int conf_hvsc_enable;
-extern char conf_blacklist_plugins[1024];
-extern int conf_close_send_to_tray;
-extern int conf_replaygain_mode;
-extern int conf_replaygain_scale;
-
 int
 conf_load (void);
+
+int
+conf_save (void);
+
+void
+conf_free (void);
+
+const char *
+conf_get_str (const char *key, const char *def);
+
+float
+conf_get_float (const char *key, float def);
+
+int
+conf_get_int (const char *key, int def);
+
+void
+conf_set_str (const char *key, const char *val);
 
 #endif // __CONF_H

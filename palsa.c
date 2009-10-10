@@ -56,7 +56,8 @@ palsa_init (void) {
     snd_pcm_hw_params_t *hw_params;
     snd_pcm_sw_params_t *sw_params;
     state = 0;
-    alsa_rate = conf_samplerate;
+    alsa_rate = conf_get_int ("samplerate", 48000);
+    const char *conf_alsa_soundcard = conf_get_str ("alsa_soundcard", "default");
 
     if ((err = snd_pcm_open (&audio, conf_alsa_soundcard, SND_PCM_STREAM_PLAYBACK, 0))) {
         trace ("could not open audio device (%s)\n",
