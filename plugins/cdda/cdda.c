@@ -76,76 +76,12 @@ trim (char* s)
 static int
 read_config ()
 {
-    char param[ 256 ];
-    char config[1024];
-    char *key, *value;
-    snprintf (config, 1024, "%s/cdaudio", deadbeef->get_config_dir());
-
-    FILE *cfg_file = fopen (config, "rt");
-    if (!cfg_file) {
-        trace ("cdaudio: failed open %s\n", config);
-        return -1;
-    }
-
-    while ( fgets( param, sizeof(param), cfg_file ) )
-    {
-        param[ strlen( param )-1 ] = 0; //terminating \n
-        if (param[0] == '#' || param[0] == 0)
-            continue;
-
-        char *colon = strchr (param, ':');
-        if (!colon)
-        {
-            trace ("cdaudio: malformed config string: %s\n", param);
-            continue;
-        }
-        *(colon++) = 0;
-        key = trim (param);
-        value = trim (colon + 1);
-
-        if (0 == strcmp (key, "cddb"))
-        {
-            if (0 == strcmp (value, "on"))
-                use_cddb = 1;
-            else if (0 == strcmp (value, "off"))
-                use_cddb = 0;
-            else
-            {
-                use_cddb = 0;
-                trace ("cdaudio: warning, wrong value %s\n", value);
-            }
-        }
-        else if (0 == strcmp (key, "cddb_server"))
-        {
-            server[0] = 0;
-            strncat (server, value, sizeof (server));
-        }
-        else if (0 == strcmp (key, "cddb_port"))
-        {
-            port = atoi (value);
-        }
-        else if (0 == strcmp (key, "cddb_proxy"))
-        {
-            proxy[0] = 0;
-            strncat (proxy, value, sizeof (server));
-        }
-        else if (0 == strcmp (key, "cddb_proxy_port"))
-        {
-            proxy_port = atoi (value);
-        }
-        else if (0 == strcmp (key, "proto"))
-        {
-            if (0 == strcmp (value, "cddb"))
-                proto_cddb = 1;
-            else if (0 == strcmp (value, "http"))
-                proto_cddb = 0;
-            else
-                trace ("cdaudio: unknown protocol \"%s\"\n", value);
-        }
-        else
-            trace ("cdaudio: warning, unknown option %s\n", key);
-    }
-    fclose (cfg_file);
+    use_cddb = deadbeef->conf_get_int ("cdda.freedb.enable", 1);
+    strncpy (server, deadbeef->conf_get_str ("cdda.freedb.host", "freedb.org"), sizeof (server)-1);
+    port = deadbeef->conf_get_int ("cdda.freedb.port", 888);
+    strncpy (proxy, deadbeef->conf_get_str ("cdda.freedb.proxy", ""), sizeof (proxy)-1);
+    proxy_port = deadbeef->conf_get_int ("cdda.freedb.proxy_port", 8080);
+    proto_cddb = deadbeef->conf_get_int ("cdda.protocol", 1); // 1 is cddb, 0 is http
 }
 
 static int

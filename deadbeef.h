@@ -100,6 +100,12 @@ typedef struct {
     DB_playItem_t *song;
 } DB_event_song_t;
 
+typedef struct DB_conf_item_s {
+    char *key;
+    char *value;
+    struct DB_conf_item_s *next;
+} DB_conf_item_t;
+
 // event callback type
 typedef int (*DB_callback_t)(DB_event_t *, uintptr_t data);
 
@@ -218,6 +224,12 @@ typedef struct {
     int64_t (*fgetlength) (DB_FILE *stream);
     // message passing
     int (*sendmessage) (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2);
+    // configuration access
+    const char * (*conf_get_str) (const char *key, const char *def);
+    float (*conf_get_float) (const char *key, float def);
+    int (*conf_get_int) (const char *key, int def);
+    void (*conf_set_str) (const char *key, const char *val);
+    DB_conf_item_t * (*conf_find) (const char *group, DB_conf_item_t *prev);
 } DB_functions_t;
 
 // base plugin interface

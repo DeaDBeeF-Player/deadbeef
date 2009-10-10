@@ -103,22 +103,22 @@ trim(char* s)
 
 static void
 cmd_seek_fwd() {
-        deadbeef->playback_set_pos( deadbeef->playback_get_pos() + 5 );
+    deadbeef->playback_set_pos( deadbeef->playback_get_pos() + 5 );
 }
 
 static void
 cmd_seek_back() {
-        deadbeef->playback_set_pos( deadbeef->playback_get_pos() - 5 );
+    deadbeef->playback_set_pos( deadbeef->playback_get_pos() - 5 );
 }
 
 static void
 cmd_volume_up() {
-        deadbeef->volume_set_db( deadbeef->volume_get_db() + 2 );
+    deadbeef->volume_set_db( deadbeef->volume_get_db() + 2 );
 }
 
 static void
 cmd_volume_down() {
-        deadbeef->volume_set_db( deadbeef->volume_get_db() - 2 );
+    deadbeef->volume_set_db( deadbeef->volume_get_db() - 2 );
 }
 
 static command_func_t
@@ -160,35 +160,27 @@ get_command( const char* command )
 static int
 read_config( Display *disp )
 {
-    char param[ 256 ];
-    char config[1024];
-    snprintf (config, 1024, "%s/hotkeys", deadbeef->get_config_dir());
-    FILE *cfg_file = fopen (config, "rt");
-    if (!cfg_file) {
-        fprintf (stderr, "hotkeys: failed open %s\n", config);
-        return -1;
-    }
-
-    int line_nr = 0;
-
-    while ( fgets( param, sizeof(param), cfg_file ) )
-    {
-        line_nr++;
+    DB_conf_item_t *item = deadbeef->conf_find ("hotkeys.", NULL);
+    while (item) {
+//        fprintf (stderr, "hotkeys: adding %s %s\n", item->key, item->value);
         if ( command_count == MAX_COMMAND_COUNT )
         {
-            fprintf( stderr, "hotkeys: [Config line %d] Maximum count (%d) of commands exceeded\n", line_nr, MAX_COMMAND_COUNT );
+            fprintf( stderr, "hotkeys: maximum number (%d) of commands exceeded\n", MAX_COMMAND_COUNT );
             break;
         }
 
         command_t *cmd_entry = &commands[ command_count ];
         cmd_entry->modifier = 0;
         cmd_entry->keycode = 0;
+
+        size_t l = strlen (item->value);
+        char param[l+1];
+        memcpy (param, item->value, l+1);
         
-        param[ strlen( param )-1 ] = 0; //terminating \n
         char* colon = strchr( param, ':' );
         if ( !colon )
         {
-            fprintf( stderr, "hotkeys: [Config line %d] Wrong config line\n", line_nr );
+            fprintf( stderr, "hotkeys: bad config option %s %s\n", item->key, item->value);
             continue;
         }
         char* command = colon+1;
@@ -235,7 +227,7 @@ read_config( Display *disp )
                 }
                 if ( !cmd_entry->keycode )
                 {
-                    fprintf( stderr, "hotkeys: [Config line %d] Unknown key: <%s>\n", line_nr, key );
+                    fprintf( stderr, "hotkeys: Unknown key: <%s> while parsing %s %s\n", key, item->key, item->value );
                     continue;
                 }
             }
@@ -244,7 +236,7 @@ read_config( Display *disp )
 
         if ( cmd_entry->keycode == 0 )
         {
-            fprintf( stderr, "hotkeys: [Config line %d] Key not specified\n", line_nr );
+            fprintf( stderr, "hotkeys: Key not found while parsing %s %s\n", item->key, item->value);
             continue;
         }
 
@@ -252,10 +244,11 @@ read_config( Display *disp )
         cmd_entry->func = get_command( command );
         if ( !cmd_entry->func )
         {
-            fprintf( stderr, "hotkeys: [Config line %d] Unknown command <%s>\n", line_nr, command );
+            fprintf( stderr, "hotkeys: Unknown command <%s> while parsing %s %s\n", command,  item->key, item->value);
             continue;        
         }
         command_count++;
+        item = deadbeef->conf_find ("hotkeys.", item);
     }
 }
 

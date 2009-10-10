@@ -109,6 +109,12 @@ static DB_functions_t deadbeef_api = {
     .fgetlength = vfs_fgetlength,
     // message passing
     .sendmessage = messagepump_push,
+    // configuration access
+    .conf_get_str = conf_get_str,
+    .conf_get_float = conf_get_float,
+    .conf_get_int = conf_get_int,
+    .conf_set_str = conf_set_str,
+    .conf_find = conf_find,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;

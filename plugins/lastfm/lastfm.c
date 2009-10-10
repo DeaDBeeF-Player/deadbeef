@@ -705,8 +705,6 @@ lastfm_start (void) {
     // subscribe to frameupdate event
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_SONGSTARTED, DB_CALLBACK (lastfm_songstarted), 0);
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_SONGFINISHED, DB_CALLBACK (lastfm_songfinished), 0);
-    // load login/pass
-    char config[1024];
 
 // {{{ lastfm v2 auth
 #if 0
@@ -725,41 +723,9 @@ lastfm_start (void) {
 #endif
 // }}}
 
-    snprintf (config, 1024, "%s/lastfm", deadbeef->get_config_dir ());
-    FILE *fp = fopen (config, "rt");
-    if (!fp) {
-        trace ("lastfm: failed open %s\n", config);
-        return -1;
-    }
-    if (!fgets (lfm_user, 50, fp)) {
-        trace ("lastfm: failed to read login from %s\n", config);
-        fclose (fp);
-        return -1;
-    }
-    if (!fgets (lfm_pass, 50, fp)) {
-        trace ("lastfm: failed to read pass from %s\n", config);
-        fclose (fp);
-        return -1;
-    }
-    fclose (fp);
-    // remove trailing garbage
-    int l;
-    char *p;
-    l = strlen (lfm_user);
-    p = lfm_user+l-1;
-    while (p >= lfm_user && *p < 0x20) {
-        p--;
-    }
-    p++;
-    *p = 0;
-    l = strlen (lfm_pass);
-    p = lfm_pass+l-1;
-    while (p >= lfm_pass && *p < 0x20) {
-        p--;
-    }
-    p++;
-    *p = 0;
-
+    // load login/pass
+    strcpy (lfm_user, deadbeef->conf_get_str ("lastfm.login", ""));
+    strcpy (lfm_pass, deadbeef->conf_get_str ("lastfm.password", ""));
     return 0;
 }
 

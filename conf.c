@@ -21,13 +21,7 @@
 #include <stdlib.h>
 #include "conf.h"
 
-struct conf_item_t {
-    char *key;
-    char *value;
-    struct conf_item_t *next;
-};
-
-static struct conf_item_t *conf_items;
+static DB_conf_item_t *conf_items;
 
 int
 conf_load (void) {
@@ -86,7 +80,7 @@ conf_free (void) {
 
 const char *
 conf_get_str (const char *key, const char *def) {
-    for (struct conf_item_t *it = conf_items; it; it = it->next) {
+    for (DB_conf_item_t *it = conf_items; it; it = it->next) {
         if (!strcasecmp (key, it->key)) {
             return it->value;
         }
@@ -106,17 +100,28 @@ conf_get_int (const char *key, int def) {
     return v ? atoi (v) : def;
 }
 
+DB_conf_item_t *
+conf_find (const char *group, DB_conf_item_t *prev) {
+    int l = strlen (group);
+    for (DB_conf_item_t *it = prev ? prev->next : conf_items; it; it = it->next) {
+        if (!strncasecmp (group, it->key, l)) {
+            return it;
+        }
+    }
+    return NULL;
+}
+
 void
 conf_set_str (const char *key, const char *val) {
-    for (struct conf_item_t *it = conf_items; it; it = it->next) {
+    for (DB_conf_item_t *it = conf_items; it; it = it->next) {
         if (!strcasecmp (key, it->key)) {
             free (it->value);
             it->value = strdup (val);
             return;
         }
     }
-    struct conf_item_t *it = malloc (sizeof (struct conf_item_t));
-    memset (it, 0, sizeof (struct conf_item_t));
+    DB_conf_item_t *it = malloc (sizeof (DB_conf_item_t));
+    memset (it, 0, sizeof (DB_conf_item_t));
     it->next = conf_items;
     it->key = strdup (key);
     it->value = strdup (val);

@@ -18,6 +18,8 @@
 #ifndef __CONF_H
 #define __CONF_H
 
+#include "deadbeef.h"
+
 int
 conf_load (void);
 
@@ -38,5 +40,8 @@ conf_get_int (const char *key, int def);
 
 void
 conf_set_str (const char *key, const char *val);
+
+DB_conf_item_t *
+conf_find (const char *group, DB_conf_item_t *prev);
 
 #endif // __CONF_H
