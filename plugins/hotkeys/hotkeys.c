@@ -332,8 +332,8 @@ hotkeys_stop (void) {
 static DB_misc_t plugin = {
     DB_PLUGIN_SET_API_VERSION
     .plugin.type = DB_PLUGIN_MISC,
-    .plugin.name = "Global Hotkeys",
-    .plugin.descr = "Allows to control player using xlib global hotkeys",
+    .plugin.name = "Global hotkeys support",
+    .plugin.descr = "Allows to control player with global hotkeys",
     .plugin.author = "Viktor Semykin",
     .plugin.email = "thesame.ml@gmail.com",
     .plugin.website = "http://deadbeef.sf.net",

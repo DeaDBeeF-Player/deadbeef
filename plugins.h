@@ -70,6 +70,9 @@ plug_playback_get_pos (void);
 void
 plug_playback_set_pos (float pos);
 
+struct DB_plugin_s **
+plug_get_list (void);
+
 struct DB_decoder_s **
 plug_get_decoder_list (void);
 

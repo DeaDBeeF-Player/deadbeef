@@ -35,28 +35,30 @@ create_mainwin (void)
   GtkWidget *menuitem1;
   GtkWidget *menuitem1_menu;
   GtkWidget *open;
-  GtkWidget *image85;
+  GtkWidget *image99;
   GtkWidget *separator2;
   GtkWidget *add_files;
-  GtkWidget *image86;
+  GtkWidget *image100;
   GtkWidget *add_folders;
-  GtkWidget *image87;
+  GtkWidget *image101;
   GtkWidget *add_audio_cd;
-  GtkWidget *image88;
+  GtkWidget *image102;
   GtkWidget *separatormenuitem1;
   GtkWidget *quit;
-  GtkWidget *image89;
+  GtkWidget *image103;
   GtkWidget *edit1;
   GtkWidget *edit1_menu;
   GtkWidget *clear1;
-  GtkWidget *image90;
+  GtkWidget *image104;
   GtkWidget *select_all1;
   GtkWidget *selection1;
   GtkWidget *selection1_menu;
   GtkWidget *remove1;
-  GtkWidget *image91;
+  GtkWidget *image105;
   GtkWidget *crop1;
   GtkWidget *find1;
+  GtkWidget *separator5;
+  GtkWidget *preferences;
   GtkWidget *playlist1;
   GtkWidget *playlist1_menu;
   GtkWidget *playlist_load;
@@ -79,7 +81,7 @@ create_mainwin (void)
   GtkWidget *menuitem4_menu;
   GtkWidget *about1;
   GtkWidget *help1;
-  GtkWidget *image92;
+  GtkWidget *image106;
   GtkWidget *hbox2;
   GtkWidget *hbox3;
   GtkWidget *stopbtn;
@@ -135,9 +137,9 @@ create_mainwin (void)
                               GDK_O, (GdkModifierType) GDK_CONTROL_MASK,
                               GTK_ACCEL_VISIBLE);
 
-  image85 = gtk_image_new_from_stock ("gtk-open", GTK_ICON_SIZE_MENU);
-  gtk_widget_show (image85);
-  gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (open), image85);
+  image99 = gtk_image_new_from_stock ("gtk-open", GTK_ICON_SIZE_MENU);
+  gtk_widget_show (image99);
+  gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (open), image99);
 
   separator2 = gtk_separator_menu_item_new ();
   gtk_widget_show (separator2);
@@ -148,25 +150,25 @@ create_mainwin (void)
   gtk_widget_show (add_files);
   gtk_container_add (GTK_CONTAINER (menuitem1_menu), add_files);
 
-  image86 = gtk_image_new_from_stock ("gtk-add", GTK_ICON_SIZE_MENU);
-  gtk_widget_show (image86);
-  gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (add_files), image86);
+  image100 = gtk_image_new_from_stock ("gtk-add", GTK_ICON_SIZE_MENU);
+  gtk_widget_show (image100);
+  gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (add_files), image100);
 
   add_folders = gtk_image_menu_item_new_with_mnemonic ("Add folder(s)");
   gtk_widget_show (add_folders);
   gtk_container_add (GTK_CONTAINER (menuitem1_menu), add_folders);
 
-  image87 = gtk_image_new_from_stock ("gtk-add", GTK_ICON_SIZE_MENU);
-  gtk_widget_show (image87);
-  gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (add_folders), image87);
+  image101 = gtk_image_new_from_stock ("gtk-add", GTK_ICON_SIZE_MENU);
+  gtk_widget_show (image101);
+  gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (add_folders), image101);
 
   add_audio_cd = gtk_image_menu_item_new_with_mnemonic ("Add Audio CD");
   gtk_widget_show (add_audio_cd);
   gtk_container_add (GTK_CONTAINER (menuitem1_menu), add_audio_cd);
 
-  image88 = gtk_image_new_from_stock ("gtk-add", GTK_ICON_SIZE_MENU);
-  gtk_widget_show (image88);
-  gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (add_audio_cd), image88);
+  image102 = gtk_image_new_from_stock ("gtk-add", GTK_ICON_SIZE_MENU);
+  gtk_widget_show (image102);
+  gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (add_audio_cd), image102);
 
   separatormenuitem1 = gtk_separator_menu_item_new ();
   gtk_widget_show (separatormenuitem1);
@@ -180,9 +182,9 @@ create_mainwin (void)
                               GDK_Q, (GdkModifierType) GDK_CONTROL_MASK,
                               GTK_ACCEL_VISIBLE);
 
-  image89 = gtk_image_new_from_stock ("gtk-quit", GTK_ICON_SIZE_MENU);
-  gtk_widget_show (image89);
-  gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (quit), image89);
+  image103 = gtk_image_new_from_stock ("gtk-quit", GTK_ICON_SIZE_MENU);
+  gtk_widget_show (image103);
+  gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (quit), image103);
 
   edit1 = gtk_menu_item_new_with_mnemonic ("Edit");
   gtk_widget_show (edit1);
@@ -195,9 +197,9 @@ create_mainwin (void)
   gtk_widget_show (clear1);
   gtk_container_add (GTK_CONTAINER (edit1_menu), clear1);
 
-  image90 = gtk_image_new_from_stock ("gtk-clear", GTK_ICON_SIZE_MENU);
-  gtk_widget_show (image90);
-  gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (clear1), image90);
+  image104 = gtk_image_new_from_stock ("gtk-clear", GTK_ICON_SIZE_MENU);
+  gtk_widget_show (image104);
+  gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (clear1), image104);
 
   select_all1 = gtk_menu_item_new_with_mnemonic ("Select all");
   gtk_widget_show (select_all1);
@@ -220,9 +222,9 @@ create_mainwin (void)
                               GDK_Delete, (GdkModifierType) 0,
                               GTK_ACCEL_VISIBLE);
 
-  image91 = gtk_image_new_from_stock ("gtk-remove", GTK_ICON_SIZE_MENU);
-  gtk_widget_show (image91);
-  gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (remove1), image91);
+  image105 = gtk_image_new_from_stock ("gtk-remove", GTK_ICON_SIZE_MENU);
+  gtk_widget_show (image105);
+  gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (remove1), image105);
 
   crop1 = gtk_menu_item_new_with_mnemonic ("Crop");
   gtk_widget_show (crop1);
@@ -234,6 +236,15 @@ create_mainwin (void)
   gtk_widget_add_accelerator (find1, "activate", accel_group,
                               GDK_F, (GdkModifierType) GDK_CONTROL_MASK,
                               GTK_ACCEL_VISIBLE);
+
+  separator5 = gtk_separator_menu_item_new ();
+  gtk_widget_show (separator5);
+  gtk_container_add (GTK_CONTAINER (edit1_menu), separator5);
+  gtk_widget_set_sensitive (separator5, FALSE);
+
+  preferences = gtk_menu_item_new_with_mnemonic ("Preferences");
+  gtk_widget_show (preferences);
+  gtk_container_add (GTK_CONTAINER (edit1_menu), preferences);
 
   playlist1 = gtk_menu_item_new_with_mnemonic ("Playlist");
   gtk_widget_show (playlist1);
@@ -324,9 +335,9 @@ create_mainwin (void)
   gtk_widget_show (help1);
   gtk_container_add (GTK_CONTAINER (menuitem4_menu), help1);
 
-  image92 = gtk_image_new_from_stock ("gtk-help", GTK_ICON_SIZE_MENU);
-  gtk_widget_show (image92);
-  gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (help1), image92);
+  image106 = gtk_image_new_from_stock ("gtk-help", GTK_ICON_SIZE_MENU);
+  gtk_widget_show (image106);
+  gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (help1), image106);
 
   hbox2 = gtk_hbox_new (FALSE, 0);
   gtk_widget_show (hbox2);
@@ -513,6 +524,9 @@ create_mainwin (void)
   g_signal_connect ((gpointer) find1, "activate",
                     G_CALLBACK (on_find_activate),
                     NULL);
+  g_signal_connect ((gpointer) preferences, "activate",
+                    G_CALLBACK (on_preferences_activate),
+                    NULL);
   g_signal_connect ((gpointer) playlist_load, "activate",
                     G_CALLBACK (on_playlist_load_activate),
                     NULL);
@@ -680,28 +694,30 @@ create_mainwin (void)
   GLADE_HOOKUP_OBJECT (mainwin, menuitem1, "menuitem1");
   GLADE_HOOKUP_OBJECT (mainwin, menuitem1_menu, "menuitem1_menu");
   GLADE_HOOKUP_OBJECT (mainwin, open, "open");
-  GLADE_HOOKUP_OBJECT (mainwin, image85, "image85");
+  GLADE_HOOKUP_OBJECT (mainwin, image99, "image99");
   GLADE_HOOKUP_OBJECT (mainwin, separator2, "separator2");
   GLADE_HOOKUP_OBJECT (mainwin, add_files, "add_files");
-  GLADE_HOOKUP_OBJECT (mainwin, image86, "image86");
+  GLADE_HOOKUP_OBJECT (mainwin, image100, "image100");
   GLADE_HOOKUP_OBJECT (mainwin, add_folders, "add_folders");
-  GLADE_HOOKUP_OBJECT (mainwin, image87, "image87");
+  GLADE_HOOKUP_OBJECT (mainwin, image101, "image101");
   GLADE_HOOKUP_OBJECT (mainwin, add_audio_cd, "add_audio_cd");
-  GLADE_HOOKUP_OBJECT (mainwin, image88, "image88");
+  GLADE_HOOKUP_OBJECT (mainwin, image102, "image102");
   GLADE_HOOKUP_OBJECT (mainwin, separatormenuitem1, "separatormenuitem1");
   GLADE_HOOKUP_OBJECT (mainwin, quit, "quit");
-  GLADE_HOOKUP_OBJECT (mainwin, image89, "image89");
+  GLADE_HOOKUP_OBJECT (mainwin, image103, "image103");
   GLADE_HOOKUP_OBJECT (mainwin, edit1, "edit1");
   GLADE_HOOKUP_OBJECT (mainwin, edit1_menu, "edit1_menu");
   GLADE_HOOKUP_OBJECT (mainwin, clear1, "clear1");
-  GLADE_HOOKUP_OBJECT (mainwin, image90, "image90");
+  GLADE_HOOKUP_OBJECT (mainwin, image104, "image104");
   GLADE_HOOKUP_OBJECT (mainwin, select_all1, "select_all1");
   GLADE_HOOKUP_OBJECT (mainwin, selection1, "selection1");
   GLADE_HOOKUP_OBJECT (mainwin, selection1_menu, "selection1_menu");
   GLADE_HOOKUP_OBJECT (mainwin, remove1, "remove1");
-  GLADE_HOOKUP_OBJECT (mainwin, image91, "image91");
+  GLADE_HOOKUP_OBJECT (mainwin, image105, "image105");
   GLADE_HOOKUP_OBJECT (mainwin, crop1, "crop1");
   GLADE_HOOKUP_OBJECT (mainwin, find1, "find1");
+  GLADE_HOOKUP_OBJECT (mainwin, separator5, "separator5");
+  GLADE_HOOKUP_OBJECT (mainwin, preferences, "preferences");
   GLADE_HOOKUP_OBJECT (mainwin, playlist1, "playlist1");
   GLADE_HOOKUP_OBJECT (mainwin, playlist1_menu, "playlist1_menu");
   GLADE_HOOKUP_OBJECT (mainwin, playlist_load, "playlist_load");
@@ -722,7 +738,7 @@ create_mainwin (void)
   GLADE_HOOKUP_OBJECT (mainwin, menuitem4_menu, "menuitem4_menu");
   GLADE_HOOKUP_OBJECT (mainwin, about1, "about1");
   GLADE_HOOKUP_OBJECT (mainwin, help1, "help1");
-  GLADE_HOOKUP_OBJECT (mainwin, image92, "image92");
+  GLADE_HOOKUP_OBJECT (mainwin, image106, "image106");
   GLADE_HOOKUP_OBJECT (mainwin, hbox2, "hbox2");
   GLADE_HOOKUP_OBJECT (mainwin, hbox3, "hbox3");
   GLADE_HOOKUP_OBJECT (mainwin, stopbtn, "stopbtn");
@@ -1120,5 +1136,311 @@ create_helpwindow (void)
   GLADE_HOOKUP_OBJECT (helpwindow, helptext, "helptext");
 
   return helpwindow;
+}
+
+GtkWidget*
+create_prefwin (void)
+{
+  GtkWidget *prefwin;
+  GtkWidget *notebook2;
+  GtkWidget *table3;
+  GtkWidget *label4;
+  GtkWidget *pref_soundcard;
+  GtkWidget *label5;
+  GtkWidget *pref_samplerate;
+  GtkWidget *label6;
+  GtkWidget *label8;
+  GtkWidget *label9;
+  GtkWidget *pref_replaygain_scale;
+  GtkWidget *pref_src_quality;
+  GtkWidget *pref_replaygain_mode;
+  GtkWidget *Sound;
+  GtkWidget *table4;
+  GtkWidget *label7;
+  GtkWidget *pref_close_send_to_tray;
+  GtkWidget *label2;
+  GtkWidget *hpaned1;
+  GtkWidget *scrolledwindow2;
+  GtkWidget *pref_pluginlist;
+  GtkWidget *table5;
+  GtkWidget *label11;
+  GtkWidget *label12;
+  GtkWidget *label13;
+  GtkWidget *label14;
+  GtkWidget *pref_plugin_descr;
+  GtkWidget *pref_plugin_author;
+  GtkWidget *pref_plugin_email;
+  GtkWidget *pref_plugin_website;
+  GtkWidget *pref_plugin_configure;
+  GtkWidget *label3;
+
+  prefwin = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+  gtk_widget_set_size_request (prefwin, 642, 372);
+  gtk_window_set_title (GTK_WINDOW (prefwin), "Preferences");
+  gtk_window_set_modal (GTK_WINDOW (prefwin), TRUE);
+
+  notebook2 = gtk_notebook_new ();
+  gtk_widget_show (notebook2);
+  gtk_container_add (GTK_CONTAINER (prefwin), notebook2);
+
+  table3 = gtk_table_new (5, 2, FALSE);
+  gtk_widget_show (table3);
+  gtk_container_add (GTK_CONTAINER (notebook2), table3);
+  gtk_container_set_border_width (GTK_CONTAINER (table3), 3);
+  gtk_table_set_col_spacings (GTK_TABLE (table3), 3);
+
+  label4 = gtk_label_new ("Soundcard");
+  gtk_widget_show (label4);
+  gtk_table_attach (GTK_TABLE (table3), label4, 0, 1, 0, 1,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
+  gtk_misc_set_alignment (GTK_MISC (label4), 0, 0.5);
+
+  pref_soundcard = gtk_combo_box_entry_new_text ();
+  gtk_widget_show (pref_soundcard);
+  gtk_table_attach (GTK_TABLE (table3), pref_soundcard, 1, 2, 0, 1,
+                    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+                    (GtkAttachOptions) (GTK_FILL), 0, 0);
+  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_soundcard), "default");
+
+  label5 = gtk_label_new ("Samplerate (Hz)");
+  gtk_widget_show (label5);
+  gtk_table_attach (GTK_TABLE (table3), label5, 0, 1, 1, 2,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
+  gtk_misc_set_alignment (GTK_MISC (label5), 0, 0.5);
+
+  pref_samplerate = gtk_entry_new ();
+  gtk_widget_show (pref_samplerate);
+  gtk_table_attach (GTK_TABLE (table3), pref_samplerate, 1, 2, 1, 2,
+                    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
+  gtk_entry_set_text (GTK_ENTRY (pref_samplerate), "48000");
+  gtk_entry_set_invisible_char (GTK_ENTRY (pref_samplerate), 9679);
+
+  label6 = gtk_label_new ("SRC quality");
+  gtk_widget_show (label6);
+  gtk_table_attach (GTK_TABLE (table3), label6, 0, 1, 2, 3,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
+  gtk_misc_set_alignment (GTK_MISC (label6), 0, 0.5);
+
+  label8 = gtk_label_new ("Replaygain mode");
+  gtk_widget_show (label8);
+  gtk_table_attach (GTK_TABLE (table3), label8, 0, 1, 3, 4,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
+  gtk_misc_set_alignment (GTK_MISC (label8), 0, 0.5);
+
+  label9 = gtk_label_new ("Apply replaygain peak scale");
+  gtk_widget_show (label9);
+  gtk_table_attach (GTK_TABLE (table3), label9, 0, 1, 4, 5,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
+  gtk_misc_set_alignment (GTK_MISC (label9), 0, 0.5);
+
+  pref_replaygain_scale = gtk_check_button_new_with_mnemonic ("");
+  gtk_widget_show (pref_replaygain_scale);
+  gtk_table_attach (GTK_TABLE (table3), pref_replaygain_scale, 1, 2, 4, 5,
+                    (GtkAttachOptions) (GTK_EXPAND),
+                    (GtkAttachOptions) (0), 0, 0);
+
+  pref_src_quality = gtk_combo_box_new_text ();
+  gtk_widget_show (pref_src_quality);
+  gtk_table_attach (GTK_TABLE (table3), pref_src_quality, 1, 2, 2, 3,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (GTK_FILL), 0, 0);
+  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_src_quality), "sinc_best_quality");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_src_quality), "sinc_medium_quality");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_src_quality), "sinc_fastest");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_src_quality), "sinc_zero_order_hold");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_src_quality), "linear");
+
+  pref_replaygain_mode = gtk_combo_box_new_text ();
+  gtk_widget_show (pref_replaygain_mode);
+  gtk_table_attach (GTK_TABLE (table3), pref_replaygain_mode, 1, 2, 3, 4,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (GTK_FILL), 0, 0);
+  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_replaygain_mode), "Disable");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_replaygain_mode), "Track");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_replaygain_mode), "Album");
+
+  Sound = gtk_label_new ("Sound");
+  gtk_widget_show (Sound);
+  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook2), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook2), 0), Sound);
+
+  table4 = gtk_table_new (1, 2, FALSE);
+  gtk_widget_show (table4);
+  gtk_container_add (GTK_CONTAINER (notebook2), table4);
+  gtk_container_set_border_width (GTK_CONTAINER (table4), 3);
+  gtk_table_set_col_spacings (GTK_TABLE (table4), 3);
+
+  label7 = gtk_label_new ("Close minimizes to tray");
+  gtk_widget_show (label7);
+  gtk_table_attach (GTK_TABLE (table4), label7, 0, 1, 0, 1,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
+  gtk_misc_set_alignment (GTK_MISC (label7), 0, 0.5);
+
+  pref_close_send_to_tray = gtk_check_button_new_with_mnemonic ("");
+  gtk_widget_show (pref_close_send_to_tray);
+  gtk_table_attach (GTK_TABLE (table4), pref_close_send_to_tray, 1, 2, 0, 1,
+                    (GtkAttachOptions) (GTK_EXPAND),
+                    (GtkAttachOptions) (0), 0, 0);
+
+  label2 = gtk_label_new ("GUI");
+  gtk_widget_show (label2);
+  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook2), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook2), 1), label2);
+
+  hpaned1 = gtk_hpaned_new ();
+  gtk_widget_show (hpaned1);
+  gtk_container_add (GTK_CONTAINER (notebook2), hpaned1);
+
+  scrolledwindow2 = gtk_scrolled_window_new (NULL, NULL);
+  gtk_widget_show (scrolledwindow2);
+  gtk_paned_pack1 (GTK_PANED (hpaned1), scrolledwindow2, FALSE, TRUE);
+  gtk_widget_set_size_request (scrolledwindow2, 280, -1);
+  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow2), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+  gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow2), GTK_SHADOW_IN);
+
+  pref_pluginlist = gtk_tree_view_new ();
+  gtk_widget_show (pref_pluginlist);
+  gtk_container_add (GTK_CONTAINER (scrolledwindow2), pref_pluginlist);
+
+  table5 = gtk_table_new (5, 2, FALSE);
+  gtk_widget_show (table5);
+  gtk_paned_pack2 (GTK_PANED (hpaned1), table5, TRUE, TRUE);
+  gtk_widget_set_size_request (table5, 400, -1);
+
+  label11 = gtk_label_new ("Description");
+  gtk_widget_show (label11);
+  gtk_table_attach (GTK_TABLE (table5), label11, 0, 1, 0, 1,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
+  gtk_misc_set_alignment (GTK_MISC (label11), 0, 0.5);
+
+  label12 = gtk_label_new ("Author(s)");
+  gtk_widget_show (label12);
+  gtk_table_attach (GTK_TABLE (table5), label12, 0, 1, 1, 2,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
+  gtk_misc_set_alignment (GTK_MISC (label12), 0, 0.5);
+
+  label13 = gtk_label_new ("Email");
+  gtk_widget_show (label13);
+  gtk_table_attach (GTK_TABLE (table5), label13, 0, 1, 2, 3,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
+  gtk_misc_set_alignment (GTK_MISC (label13), 0, 0.5);
+
+  label14 = gtk_label_new ("Website");
+  gtk_widget_show (label14);
+  gtk_table_attach (GTK_TABLE (table5), label14, 0, 1, 3, 4,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
+  gtk_misc_set_alignment (GTK_MISC (label14), 0, 0.5);
+
+  pref_plugin_descr = gtk_entry_new ();
+  gtk_widget_show (pref_plugin_descr);
+  gtk_table_attach (GTK_TABLE (table5), pref_plugin_descr, 1, 2, 0, 1,
+                    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
+  gtk_editable_set_editable (GTK_EDITABLE (pref_plugin_descr), FALSE);
+  gtk_entry_set_invisible_char (GTK_ENTRY (pref_plugin_descr), 9679);
+
+  pref_plugin_author = gtk_entry_new ();
+  gtk_widget_show (pref_plugin_author);
+  gtk_table_attach (GTK_TABLE (table5), pref_plugin_author, 1, 2, 1, 2,
+                    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
+  gtk_editable_set_editable (GTK_EDITABLE (pref_plugin_author), FALSE);
+  gtk_entry_set_invisible_char (GTK_ENTRY (pref_plugin_author), 9679);
+
+  pref_plugin_email = gtk_entry_new ();
+  gtk_widget_show (pref_plugin_email);
+  gtk_table_attach (GTK_TABLE (table5), pref_plugin_email, 1, 2, 2, 3,
+                    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
+  gtk_editable_set_editable (GTK_EDITABLE (pref_plugin_email), FALSE);
+  gtk_entry_set_invisible_char (GTK_ENTRY (pref_plugin_email), 9679);
+
+  pref_plugin_website = gtk_entry_new ();
+  gtk_widget_show (pref_plugin_website);
+  gtk_table_attach (GTK_TABLE (table5), pref_plugin_website, 1, 2, 3, 4,
+                    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
+  gtk_editable_set_editable (GTK_EDITABLE (pref_plugin_website), FALSE);
+  gtk_entry_set_invisible_char (GTK_ENTRY (pref_plugin_website), 9679);
+
+  pref_plugin_configure = gtk_button_new_with_mnemonic ("Configure");
+  gtk_widget_show (pref_plugin_configure);
+  gtk_table_attach (GTK_TABLE (table5), pref_plugin_configure, 1, 2, 4, 5,
+                    (GtkAttachOptions) (0),
+                    (GtkAttachOptions) (0), 0, 0);
+
+  label3 = gtk_label_new ("Plugins");
+  gtk_widget_show (label3);
+  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook2), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook2), 2), label3);
+
+  g_signal_connect ((gpointer) pref_soundcard, "changed",
+                    G_CALLBACK (on_pref_soundcard_changed),
+                    NULL);
+  g_signal_connect ((gpointer) pref_samplerate, "changed",
+                    G_CALLBACK (on_pref_samplerate_changed),
+                    NULL);
+  g_signal_connect ((gpointer) pref_replaygain_scale, "clicked",
+                    G_CALLBACK (on_pref_replaygain_scale_clicked),
+                    NULL);
+  g_signal_connect ((gpointer) pref_src_quality, "changed",
+                    G_CALLBACK (on_pref_src_quality_changed),
+                    NULL);
+  g_signal_connect ((gpointer) pref_replaygain_mode, "changed",
+                    G_CALLBACK (on_pref_replaygain_mode_changed),
+                    NULL);
+  g_signal_connect ((gpointer) pref_close_send_to_tray, "clicked",
+                    G_CALLBACK (on_pref_close_send_to_tray_clicked),
+                    NULL);
+  g_signal_connect ((gpointer) pref_pluginlist, "cursor_changed",
+                    G_CALLBACK (on_pref_pluginlist_cursor_changed),
+                    NULL);
+  g_signal_connect ((gpointer) pref_plugin_configure, "clicked",
+                    G_CALLBACK (on_pref_plugin_configure_activate),
+                    NULL);
+
+  /* Store pointers to all widgets, for use by lookup_widget(). */
+  GLADE_HOOKUP_OBJECT_NO_REF (prefwin, prefwin, "prefwin");
+  GLADE_HOOKUP_OBJECT (prefwin, notebook2, "notebook2");
+  GLADE_HOOKUP_OBJECT (prefwin, table3, "table3");
+  GLADE_HOOKUP_OBJECT (prefwin, label4, "label4");
+  GLADE_HOOKUP_OBJECT (prefwin, pref_soundcard, "pref_soundcard");
+  GLADE_HOOKUP_OBJECT (prefwin, label5, "label5");
+  GLADE_HOOKUP_OBJECT (prefwin, pref_samplerate, "pref_samplerate");
+  GLADE_HOOKUP_OBJECT (prefwin, label6, "label6");
+  GLADE_HOOKUP_OBJECT (prefwin, label8, "label8");
+  GLADE_HOOKUP_OBJECT (prefwin, label9, "label9");
+  GLADE_HOOKUP_OBJECT (prefwin, pref_replaygain_scale, "pref_replaygain_scale");
+  GLADE_HOOKUP_OBJECT (prefwin, pref_src_quality, "pref_src_quality");
+  GLADE_HOOKUP_OBJECT (prefwin, pref_replaygain_mode, "pref_replaygain_mode");
+  GLADE_HOOKUP_OBJECT (prefwin, Sound, "Sound");
+  GLADE_HOOKUP_OBJECT (prefwin, table4, "table4");
+  GLADE_HOOKUP_OBJECT (prefwin, label7, "label7");
+  GLADE_HOOKUP_OBJECT (prefwin, pref_close_send_to_tray, "pref_close_send_to_tray");
+  GLADE_HOOKUP_OBJECT (prefwin, label2, "label2");
+  GLADE_HOOKUP_OBJECT (prefwin, hpaned1, "hpaned1");
+  GLADE_HOOKUP_OBJECT (prefwin, scrolledwindow2, "scrolledwindow2");
+  GLADE_HOOKUP_OBJECT (prefwin, pref_pluginlist, "pref_pluginlist");
+  GLADE_HOOKUP_OBJECT (prefwin, table5, "table5");
+  GLADE_HOOKUP_OBJECT (prefwin, label11, "label11");
+  GLADE_HOOKUP_OBJECT (prefwin, label12, "label12");
+  GLADE_HOOKUP_OBJECT (prefwin, label13, "label13");
+  GLADE_HOOKUP_OBJECT (prefwin, label14, "label14");
+  GLADE_HOOKUP_OBJECT (prefwin, pref_plugin_descr, "pref_plugin_descr");
+  GLADE_HOOKUP_OBJECT (prefwin, pref_plugin_author, "pref_plugin_author");
+  GLADE_HOOKUP_OBJECT (prefwin, pref_plugin_email, "pref_plugin_email");
+  GLADE_HOOKUP_OBJECT (prefwin, pref_plugin_website, "pref_plugin_website");
+  GLADE_HOOKUP_OBJECT (prefwin, pref_plugin_configure, "pref_plugin_configure");
+  GLADE_HOOKUP_OBJECT (prefwin, label3, "label3");
+
+  return prefwin;
 }
 

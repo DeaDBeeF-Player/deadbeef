@@ -128,3 +128,16 @@ conf_set_str (const char *key, const char *val) {
     conf_items = it;
 }
 
+void
+conf_set_int (const char *key, int val) {
+    char s[10];
+    snprintf (s, sizeof (s), "%d", val);
+    conf_set_str (key, s);
+}
+
+void
+conf_set_float (const char *key, float val) {
+    char s[10];
+    snprintf (s, sizeof (s), "%0.7f", val);
+    conf_set_str (key, s);
+}

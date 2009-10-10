@@ -139,6 +139,9 @@ plug_volume_set_amp (float amp) {
     volumebar_notify_changed ();
 }
 
+#define MAX_PLUGINS 100
+DB_plugin_t *g_plugins[MAX_PLUGINS+1];
+
 #define MAX_DECODER_PLUGINS 50
 DB_decoder_t *g_decoder_plugins[MAX_DECODER_PLUGINS+1];
 
@@ -422,26 +425,27 @@ plug_load_all (void) {
 #undef PLUG
 
     // categorize plugins
+    int numplugins = 0;
     int numdecoders = 0;
     int numvfs = 0;
     for (plugin_t *plug = plugins; plug; plug = plug->next) {
+        g_plugins[numplugins++] = plug->plugin;
         if (plug->plugin->type == DB_PLUGIN_DECODER) {
             fprintf (stderr, "found decoder plugin %s\n", plug->plugin->name);
             if (numdecoders >= MAX_DECODER_PLUGINS) {
                 break;
             }
-            g_decoder_plugins[numdecoders] = (DB_decoder_t *)plug->plugin;
-            numdecoders++;
+            g_decoder_plugins[numdecoders++] = (DB_decoder_t *)plug->plugin;
         }
         else if (plug->plugin->type == DB_PLUGIN_VFS) {
             fprintf (stderr, "found vfs plugin %s\n", plug->plugin->name);
             if (numvfs >= MAX_VFS_PLUGINS) {
                 break;
             }
-            g_vfs_plugins[numvfs] = (DB_vfs_t *)plug->plugin;
-            numvfs++;
+            g_vfs_plugins[numvfs++] = (DB_vfs_t *)plug->plugin;
         }
     }
+    g_plugins[numplugins] = NULL;
     g_decoder_plugins[numdecoders] = NULL;
     g_vfs_plugins[numvfs] = NULL;
 }
@@ -471,3 +475,7 @@ plug_get_vfs_list (void) {
     return g_vfs_plugins;
 }
 
+struct DB_plugin_s **
+plug_get_list (void) {
+    return g_plugins;
+}

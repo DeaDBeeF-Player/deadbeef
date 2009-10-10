@@ -40,6 +40,8 @@ static SRC_STATE *src;
 static SRC_DATA srcdata;
 static int codecleft;
 
+static int conf_replaygain_mode = 0;
+static int conf_replaygain_scale = 1;
 // that's buffer for resampling.
 // our worst case is 192KHz downsampling to 22050Hz with 2048 sample output buffer
 #define INPUT_BUFFER_SIZE (2048*192000/22050*8)
@@ -401,6 +403,8 @@ streamer_init (void) {
 //    src = src_new (SRC_SINC_BEST_QUALITY, 2, NULL);
 //    src = src_new (SRC_LINEAR, 2, NULL);
     src = src_new (conf_get_int ("src_quality", 2), 2, NULL);
+    conf_replaygain_mode = conf_get_int ("replaygain_mode", 0);
+    conf_replaygain_scale = conf_get_int ("replaygain_scale", 1);
     if (!src) {
         return -1;
     }
@@ -430,9 +434,6 @@ int replaygain_scale = 1;
 
 static void
 apply_replay_gain_int16 (playItem_t *it, char *bytes, int size) {
-    int conf_replaygain_mode = conf_get_int ("replaygain_mode", 0);
-    int conf_replaygain_scale = conf_get_int ("replaygain_scale", 1);
-
     if (!replaygain || !conf_replaygain_mode) {
         return;
     }
@@ -475,8 +476,6 @@ apply_replay_gain_int16 (playItem_t *it, char *bytes, int size) {
 
 static void
 apply_replay_gain_float32 (playItem_t *it, char *bytes, int size) {
-    int conf_replaygain_mode = conf_get_int ("replaygain_mode", 0);
-    int conf_replaygain_scale = conf_get_int ("replaygain_scale", 1);
     if (!replaygain || !conf_replaygain_mode) {
         return;
     }

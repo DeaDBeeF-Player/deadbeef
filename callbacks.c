@@ -1302,3 +1302,146 @@ on_add_audio_cd_activate               (GtkMenuItem     *menuitem,
     playlist_refresh ();
 }
 
+static GtkWidget *prefwin;
+
+void
+on_preferences_activate                (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    GtkWidget *w = prefwin = create_prefwin ();
+    gtk_window_set_transient_for (GTK_WINDOW (w), GTK_WINDOW (mainwin));
+
+    // alsa_soundcard
+    // FIXME: get list of soundcards from alsa
+    const char *s = conf_get_str ("alsa_soundcard", "default");
+    GtkComboBox *combobox = GTK_COMBO_BOX (lookup_widget (w, "pref_soundcard"));
+    if (strcasecmp (s, "default")) {
+        gtk_combo_box_append_text (combobox, s);
+        gtk_combo_box_set_active (combobox, 1);
+    }
+    else {
+        gtk_combo_box_set_active (combobox, 0);
+    }
+
+    // samplerate
+    gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "pref_samplerate")), conf_get_str ("samplerate", "48000"));
+
+    // src_quality
+    combobox = GTK_COMBO_BOX (lookup_widget (w, "pref_src_quality"));
+    gtk_combo_box_set_active (combobox, conf_get_int ("src_quality", 2));
+
+    // replaygain_mode
+    combobox = GTK_COMBO_BOX (lookup_widget (w, "pref_replaygain_mode"));
+    gtk_combo_box_set_active (combobox, conf_get_int ("replaygain_mode", 0));
+
+    // replaygain_scale
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "pref_replaygain_scale")), conf_get_int ("replaygain_scale", 1));
+
+    // close_send_to_tray
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "pref_close_send_to_tray")), conf_get_int ("close_send_to_tray", 0));
+
+    // list of plugins
+    GtkTreeView *tree = GTK_TREE_VIEW (lookup_widget (w, "pref_pluginlist"));
+    GtkListStore *store = gtk_list_store_new (1, G_TYPE_STRING);//GTK_LIST_STORE (gtk_tree_view_get_model (tree));
+    GtkCellRenderer *rend = gtk_cell_renderer_text_new ();
+    GtkTreeViewColumn *col = gtk_tree_view_column_new_with_attributes ("Title", rend, "text", 0, NULL);
+    gtk_tree_view_append_column (tree, col);
+    DB_plugin_t **plugins = plug_get_list ();
+    int i;
+    for (i = 0; plugins[i]; i++) {
+        GtkTreeIter it;
+        gtk_list_store_append (store, &it);
+        gtk_list_store_set (store, &it, 0, plugins[i]->name, -1);
+    }
+    gtk_tree_view_set_model (tree, GTK_TREE_MODEL (store));
+
+    gtk_widget_show (w);
+}
+
+
+void
+on_pref_soundcard_changed              (GtkComboBox     *combobox,
+                                        gpointer         user_data)
+{
+    char *text = gtk_combo_box_get_active_text (combobox);
+    conf_set_str ("alsa_soundcard", text ? text : "default");
+}
+
+
+void
+on_pref_samplerate_changed             (GtkEditable     *editable,
+                                        gpointer         user_data)
+{
+    const char *text = gtk_entry_get_text (GTK_ENTRY (editable));
+    conf_set_str ("samplerate", text ? text : "48000");
+}
+
+
+void
+on_pref_src_quality_changed            (GtkComboBox     *combobox,
+                                        gpointer         user_data)
+{
+    int active = gtk_combo_box_get_active (combobox);
+    conf_set_int ("src_quality", active == -1 ? 2 : active);
+}
+
+
+void
+on_pref_replaygain_mode_changed        (GtkComboBox     *combobox,
+                                        gpointer         user_data)
+{
+    int active = gtk_combo_box_get_active (combobox);
+    conf_set_int ("replaygain_mode", active == -1 ? 0 : active);
+}
+
+void
+on_pref_replaygain_scale_clicked       (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button));
+    conf_set_int ("replaygain_mode", active);
+}
+
+
+void
+on_pref_close_send_to_tray_clicked     (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button));
+    conf_set_int ("close_send_to_tray", active);
+}
+
+
+void
+on_pref_plugin_configure_activate      (GtkButton       *button,
+                                        gpointer         user_data)
+{
+}
+
+void
+on_pref_pluginlist_cursor_changed      (GtkTreeView     *treeview,
+                                        gpointer         user_data)
+{
+    GtkTreePath *path;
+    GtkTreeViewColumn *col;
+    gtk_tree_view_get_cursor (treeview, &path, &col);
+    if (!path || !col) {
+        // reset
+        return;
+    }
+    int *indices = gtk_tree_path_get_indices (path);
+    DB_plugin_t **plugins = plug_get_list ();
+    DB_plugin_t *p = plugins[*indices];
+    assert (p);
+    GtkWidget *w = prefwin;//GTK_WIDGET (gtk_widget_get_parent_window (GTK_WIDGET (treeview)));
+    assert (w);
+    GtkEntry *e = GTK_ENTRY (lookup_widget (w, "pref_plugin_descr"));
+    gtk_entry_set_text (e, p->descr ? p->descr : "");
+    e = GTK_ENTRY (lookup_widget (w, "pref_plugin_author"));
+    gtk_entry_set_text (e, p->author ? p->author : "");
+    e = GTK_ENTRY (lookup_widget (w, "pref_plugin_email"));
+    gtk_entry_set_text (e, p->email ? p->email : "");
+    e = GTK_ENTRY (lookup_widget (w, "pref_plugin_website"));
+    gtk_entry_set_text (e, p->website ? p->website : "");
+}
+

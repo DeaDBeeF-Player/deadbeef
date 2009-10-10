@@ -230,6 +230,15 @@ typedef struct {
     int (*conf_get_int) (const char *key, int def);
     void (*conf_set_str) (const char *key, const char *val);
     DB_conf_item_t * (*conf_find) (const char *group, DB_conf_item_t *prev);
+    // exporting plugin conf options for gui
+    // all exported options are grouped by plugin, and will be available to user
+    // from gui
+//    void (*export_plugin_option_string) (DB_plugin_t *plugin, const char *key);
+//    void (*export_plugin_option_path) (DB_plugin_t *plugin, const char *key);
+//    void (*export_plugin_option_check) (DB_plugin_t *plugin, const char *key);
+//    void (*export_plugin_option_radio) (DB_plugin_t *plugin, const char *key);
+//    void (*export_plugin_option_combo) (DB_plugin_t *plugin, const char *key);
+//    void (*export_plugin_option_comboentry) (DB_plugin_t *plugin, const char *key);
 } DB_functions_t;
 
 // base plugin interface

@@ -7,3 +7,4 @@ GtkWidget* create_searchwin (void);
 GtkWidget* create_traymenu (void);
 GtkWidget* create_addprogress (void);
 GtkWidget* create_helpwindow (void);
+GtkWidget* create_prefwin (void);
