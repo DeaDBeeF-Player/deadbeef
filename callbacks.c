@@ -1293,3 +1293,12 @@ on_helpwindow_key_press_event          (GtkWidget       *widget,
   return FALSE;
 }
 
+
+void
+on_add_audio_cd_activate               (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    pl_add_file ("all.cda", NULL, NULL);
+    playlist_refresh ();
+}
+
