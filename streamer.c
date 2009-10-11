@@ -71,6 +71,7 @@ static int badsong = -1;
 static float seekpos = -1;
 
 static float playpos = 0; // play position of current song
+static float avg_bitrate = -1; // avg bitrate of current song
 
 playItem_t str_playing_song;
 playItem_t str_streaming_song;
@@ -180,6 +181,16 @@ str_set_current (playItem_t *it) {
 float
 streamer_get_playpos (void) {
     return playpos;
+}
+
+float
+streamer_get_bitrate (void) {
+    return avg_bitrate;
+}
+
+void
+streamer_update_bitrate (float bitrate) {
+    avg_bitrate = bitrate;
 }
 
 void
@@ -302,6 +313,7 @@ streamer_thread (uintptr_t ctx) {
             trace ("sending songstarted to plugins\n");
             plug_trigger_event (DB_EV_SONGSTARTED, 0);
             playpos = 0;
+            avg_bitrate = -1;
         }
 
         if (seekpos >= 0) {

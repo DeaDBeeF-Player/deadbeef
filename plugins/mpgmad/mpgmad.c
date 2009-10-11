@@ -684,6 +684,7 @@ cmp3_decode (void) {
 		plugin.info.channels = MAD_NCHANNELS(&frame.header);
 		
 		mad_synth_frame(&synth,&frame);
+		deadbeef->playback_update_bitrate (frame.header.bitrate/1000);
 
         int cachepos = (buffer.cachefill + buffer.cachepos) & CACHE_MASK;
         int len = synth.pcm.length;

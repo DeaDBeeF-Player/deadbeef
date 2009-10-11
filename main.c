@@ -120,7 +120,12 @@ update_songinfo (void) {
             strcpy (t, "-:--");
         }
 
-        snprintf (sbtext_new, sizeof (sbtext_new), "[%s] %dHz | %d bit | %s | %d:%02d / %s | %d songs | %d:%02d total playtime", str_playing_song.filetype ? str_playing_song.filetype:"-", samplerate, bitspersample, mode, minpos, secpos, t, pl_getcount (), mintotal, sectotal);
+        int bitrate = streamer_get_bitrate ();
+        char sbitrate[20] = "";
+        if (bitrate > 0) {
+            snprintf (sbitrate, sizeof (sbitrate), "%d kbps ", bitrate);
+        }
+        snprintf (sbtext_new, sizeof (sbtext_new), "[%s] %s| %dHz | %d bit | %s | %d:%02d / %s | %d songs | %d:%02d total playtime", str_playing_song.filetype ? str_playing_song.filetype:"-", sbitrate, samplerate, bitspersample, mode, minpos, secpos, t, pl_getcount (), mintotal, sectotal);
     }
 
     if (strcmp (sbtext_new, sb_text)) {

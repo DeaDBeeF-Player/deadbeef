@@ -175,6 +175,7 @@ typedef struct {
     float (*playback_get_pos) (void); // [0..100]
     void (*playback_set_pos) (float pos); // [0..100]
     int (*playback_get_samplerate) (void); // output samplerate
+    void (*playback_update_bitrate) (float bitrate);
     // process control
     const char *(*get_config_dir) (void);
     void (*quit) (void);

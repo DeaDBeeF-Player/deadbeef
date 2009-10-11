@@ -62,6 +62,7 @@ static DB_functions_t deadbeef_api = {
     .playback_get_pos = plug_playback_get_pos,
     .playback_set_pos = plug_playback_set_pos,
     .playback_get_samplerate = p_get_rate,
+    .playback_update_bitrate = streamer_update_bitrate,
     .get_config_dir = plug_get_config_dir,
     .quit = plug_quit,
     // threading
