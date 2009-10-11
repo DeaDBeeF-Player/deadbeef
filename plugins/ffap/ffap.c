@@ -1657,7 +1657,7 @@ ffap_insert (DB_playItem_t *after, const char *fname) {
     it->decoder = &plugin;
     it->fname = strdup (fname);
     it->filetype = "APE";
-    it->duration = duration;
+    deadbeef->pl_set_item_duration (it, duration);
  
     int v2err = deadbeef->junk_read_id3v2 (it, fp);
     int v1err = deadbeef->junk_read_id3v1 (it, fp);

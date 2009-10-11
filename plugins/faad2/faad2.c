@@ -223,7 +223,7 @@ aac_insert (DB_playItem_t *after, const char *fname) {
     it->decoder = &plugin;
     it->fname = strdup (fname);
     it->filetype = ftype;
-    it->duration = duration;
+    deadbeef->pl_set_item_duration (it, duration);
 
     // read tags
     if (ftype == "aac") {

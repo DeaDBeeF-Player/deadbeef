@@ -70,7 +70,6 @@ typedef struct {
     int tracknum; // used for stuff like sid, nsf, cue (will be ignored by most codecs)
     int startsample; // start sample of track, or -1 for auto
     int endsample; // end sample of track, or -1 for auto
-    float duration; // in seconds
     int shufflerating; // sort order for shuffle mode
     float playtime; // total playtime
     time_t started_timestamp; // result of calling time(NULL)
@@ -201,6 +200,8 @@ typedef struct {
     void (*pl_add_meta) (DB_playItem_t *it, const char *key, const char *value);
     const char *(*pl_find_meta) (DB_playItem_t *song, const char *meta);
     void (*pl_delete_all_meta) (DB_playItem_t *it);
+    void (*pl_set_item_duration) (DB_playItem_t *it, float duration);
+    float (*pl_get_item_duration) (DB_playItem_t *it);
     // cuesheet support
     DB_playItem_t *(*pl_insert_cue_from_buffer) (DB_playItem_t *after, const char *fname, const uint8_t *buffer, int buffersize, struct DB_decoder_s *decoder, const char *ftype, int numsamples, int samplerate);
     DB_playItem_t * (*pl_insert_cue) (DB_playItem_t *after, const char *filename, struct DB_decoder_s *decoder, const char *ftype, int numsamples, int samplerate);

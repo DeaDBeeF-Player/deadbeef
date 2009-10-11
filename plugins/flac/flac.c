@@ -364,7 +364,7 @@ cflac_init_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__Str
     DB_playItem_t *it = cb->it;
     //it->tracknum = 0;
     if (metadata->type == FLAC__METADATA_TYPE_STREAMINFO) {
-        it->duration = metadata->data.stream_info.total_samples / (float)metadata->data.stream_info.sample_rate;
+        deadbeef->pl_set_item_duration (it, metadata->data.stream_info.total_samples / (float)metadata->data.stream_info.sample_rate);
     }
     else if (metadata->type == FLAC__METADATA_TYPE_VORBIS_COMMENT) {
         const FLAC__StreamMetadata_VorbisComment *vc = &metadata->data.vorbis_comment;

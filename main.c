@@ -102,8 +102,10 @@ update_songinfo (void) {
         float playpos = streamer_get_playpos ();
         int minpos = playpos / 60;
         int secpos = playpos - minpos * 60;
-        int mindur = str_playing_song.duration / 60;
-        int secdur = str_playing_song.duration - mindur * 60;
+        int mindur = str_playing_song._duration / 60;
+        int secdur = str_playing_song._duration - mindur * 60;
+        int mintotal = pl_totaltime / 60;
+        int sectotal = pl_totaltime - mintotal * 60;
         const char *mode = c->info.channels == 1 ? "Mono" : "Stereo";
         int samplerate = c->info.samplerate;
         int bitspersample = c->info.bps;
@@ -111,14 +113,14 @@ update_songinfo (void) {
         codec_unlock ();
 
         char t[100];
-        if (str_playing_song.duration >= 0) {
+        if (str_playing_song._duration >= 0) {
             snprintf (t, sizeof (t), "%d:%02d", mindur, secdur);
         }
         else {
             strcpy (t, "-:--");
         }
 
-        snprintf (sbtext_new, 512, "[%s] %dHz | %d bit | %s | %d:%02d / %s | %d songs total", str_playing_song.filetype ? str_playing_song.filetype:"-", samplerate, bitspersample, mode, minpos, secpos, t, pl_getcount ());
+        snprintf (sbtext_new, sizeof (sbtext_new), "[%s] %dHz | %d bit | %s | %d:%02d / %s | %d songs | %d:%02d total playtime", str_playing_song.filetype ? str_playing_song.filetype:"-", samplerate, bitspersample, mode, minpos, secpos, t, pl_getcount (), mintotal, sectotal);
     }
 
     if (strcmp (sbtext_new, sb_text)) {
@@ -144,7 +146,7 @@ update_songinfo (void) {
         if (mainwin) {
             GtkWidget *widget = lookup_widget (mainwin, "seekbar");
             // translate volume to seekbar pixels
-            songpos /= str_playing_song.duration;
+            songpos /= str_playing_song._duration;
             songpos *= widget->allocation.width;
             if ((int)(songpos*2) != (int)(last_songpos*2)) {
                 GDK_THREADS_ENTER();

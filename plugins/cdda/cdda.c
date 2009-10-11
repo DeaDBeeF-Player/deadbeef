@@ -289,7 +289,7 @@ insert_single_track (CdIo_t* cdio, DB_playItem_t *after, const char* file, int t
     it->decoder = &plugin;
     it->fname = strdup (tmp);
     it->filetype = "cdda";
-    it->duration = (float)sector_count / 75.0;
+    deadbeef->pl_set_item_duration (it, (float)sector_count / 75.0);
 
     snprintf (tmp, sizeof (tmp), "CD Track %02d", track_nr);
     deadbeef->pl_add_meta (it, "title", tmp);

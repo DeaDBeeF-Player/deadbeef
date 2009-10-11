@@ -82,6 +82,8 @@ static DB_functions_t deadbeef_api = {
     .pl_item_copy = (void (*)(DB_playItem_t *, DB_playItem_t *))pl_item_copy,
     .pl_insert_item = (DB_playItem_t *(*) (DB_playItem_t *after, DB_playItem_t *it))pl_insert_item,
     .pl_get_idx_of = (int (*) (DB_playItem_t *it))pl_get_idx_of,
+    .pl_set_item_duration = (void (*) (DB_playItem_t *it, float duration))pl_set_item_duration,
+    .pl_get_item_duration = (float (*) (DB_playItem_t *it))pl_get_item_duration,
     // metainfo
     .pl_add_meta = (void (*) (DB_playItem_t *, const char *, const char *))pl_add_meta,
     .pl_find_meta = (const char *(*) (DB_playItem_t *, const char *))pl_find_meta,
@@ -241,18 +243,18 @@ plug_playback_random (void) {
 
 float
 plug_playback_get_pos (void) {
-    if (str_playing_song.duration <= 0) {
+    if (str_playing_song._duration <= 0) {
         return 0;
     }
-    return streamer_get_playpos () * 100 / str_playing_song.duration;
+    return streamer_get_playpos () * 100 / str_playing_song._duration;
 }
 
 void
 plug_playback_set_pos (float pos) {
-    if (str_playing_song.duration <= 0) {
+    if (str_playing_song._duration <= 0) {
         return;
     }
-    float t = pos * str_playing_song.duration / 100.f;
+    float t = pos * str_playing_song._duration / 100.f;
     streamer_set_seek (t);
 }
 

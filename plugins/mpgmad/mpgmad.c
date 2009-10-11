@@ -502,7 +502,7 @@ cmp3_init (DB_playItem_t *it) {
             plugin.seek_sample (0);
         }
         else {
-            it->duration = buffer.duration;
+            deadbeef->pl_set_item_duration (it, buffer.duration);
             buffer.startsample = 0;
             buffer.endsample = buffer.totalsamples-1;
             buffer.skipsamples = buffer.startdelay;
@@ -526,7 +526,7 @@ cmp3_init (DB_playItem_t *it) {
             plugin.free ();
             return -1;
         }
-        it->duration = buffer.duration;
+        deadbeef->pl_set_item_duration (it, buffer.duration);
         if (buffer.duration >= 0) {
             buffer.endsample = buffer.totalsamples - 1;
         }
@@ -921,7 +921,7 @@ cmp3_insert (DB_playItem_t *after, const char *fname) {
         it->fname = strdup (fname);
         deadbeef->fclose (fp);
         deadbeef->pl_add_meta (it, "title", NULL);
-        it->duration = -1;
+        deadbeef->pl_set_item_duration (it, -1);
         it->filetype = filetypes[0];
         after = deadbeef->pl_insert_item (after, it);
         return after;
@@ -998,7 +998,7 @@ cmp3_insert (DB_playItem_t *after, const char *fname) {
     int v1err = deadbeef->junk_read_id3v1 (it, fp);
     deadbeef->fclose (fp);
     deadbeef->pl_add_meta (it, "title", NULL);
-    it->duration = buffer.duration;
+    deadbeef->pl_set_item_duration (it, buffer.duration);
     it->filetype = ftype;
 
     after = deadbeef->pl_insert_item (after, it);

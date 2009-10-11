@@ -247,7 +247,7 @@ lfm_fetch_song_info (DB_playItem_t *song, const char **a, const char **t, const 
     if (!*b) {
         *b = "";
     }
-    *l = song->duration;
+    *l = deadbeef->pl_get_item_duration (song);
     *n = deadbeef->pl_find_meta (song, "track");
     if (!*n) {
         *n = "";
@@ -425,12 +425,12 @@ lastfm_songfinished (DB_event_song_t *ev, uintptr_t data) {
 #if !LFM_IGNORE_RULES
     // check submission rules
     // duration must be >= 30 sec
-    if (ev->song->duration < 30) {
+    if (deadbeef->pl_get_item_duration (ev->song) < 30) {
         trace ("song duration is %f seconds. not eligible for submission\n", ev->song->duration);
         return 0;
     }
     // must be played for >=240sec of half the total time
-    if (ev->song->playtime < 240 && ev->song->playtime < ev->song->duration/2) {
+    if (ev->song->playtime < 240 && ev->song->playtime < deadbeef->pl_get_item_duration (ev->song)/2) {
         trace ("song playtime=%f seconds. not eligible for submission\n", ev->song->playtime);
         return 0;
     }

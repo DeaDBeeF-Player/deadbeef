@@ -89,7 +89,7 @@ const char *colnames[pl_ncolumns] = {
     "Artist / Album",
     "Track №",
     "Title / Track Artist",
-    "Duration"
+    "_duration"
 };
 
 static uintptr_t play16_pixbuf;
@@ -265,9 +265,9 @@ gtkpl_draw_pl_row (gtkplaylist_t *ps, int row, playItem_t *it) {
     // draw as columns
     char dur[10] = "-:--";
     if (it) {
-        if (it->duration >= 0) {
-            int min = (int)it->duration/60;
-            int sec = (int)(it->duration-min*60);
+        if (it->_duration >= 0) {
+            int min = (int)it->_duration/60;
+            int sec = (int)(it->_duration-min*60);
             snprintf (dur, 10, "%d:%02d", min, sec);
         }
     }

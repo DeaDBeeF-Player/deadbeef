@@ -921,8 +921,8 @@ seekbar_draw (GtkWidget *widget) {
         pos = x;
     }
     else {
-        if (str_playing_song.decoder && str_playing_song.duration > 0) {
-            pos = streamer_get_playpos () / str_playing_song.duration;
+        if (str_playing_song.decoder && str_playing_song._duration > 0) {
+            pos = streamer_get_playpos () / str_playing_song._duration;
             pos *= widget->allocation.width;
         }
     }
@@ -1012,7 +1012,7 @@ on_seekbar_button_release_event        (GtkWidget       *widget,
     seekbar_moving = 0;
     seekbar_draw (widget);
     seekbar_expose (widget, 0, 0, widget->allocation.width, widget->allocation.height);
-    float time = event->x * str_playing_song.duration / (widget->allocation.width);
+    float time = event->x * str_playing_song._duration / (widget->allocation.width);
     if (time < 0) {
         time = 0;
     }

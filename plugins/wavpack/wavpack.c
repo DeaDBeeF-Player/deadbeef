@@ -230,7 +230,7 @@ wv_insert (DB_playItem_t *after, const char *fname) {
     it->decoder = &plugin;
     it->fname = strdup (fname);
     it->filetype = "wv";
-    it->duration = duration;
+    deadbeef->pl_set_item_duration (it, duration);
 
     trace ("wv: totalsamples=%d, samplerate=%d, duration=%f\n", totalsamples, samplerate, duration);
 

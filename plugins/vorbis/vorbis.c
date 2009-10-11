@@ -132,7 +132,7 @@ cvorbis_init (DB_playItem_t *it) {
             plugin.free ();
             return -1;
         }
-        it->duration = -1;
+        deadbeef->pl_set_item_duration (it, -1);
     }
     else
     {
@@ -150,7 +150,7 @@ cvorbis_init (DB_playItem_t *it) {
             plugin.free ();
             return -1;
         }
-        it->duration = ov_time_total (&vorbis_file, -1);
+        deadbeef->pl_set_item_duration (it, ov_time_total (&vorbis_file, -1));
     }
     vi = ov_info (&vorbis_file, -1);
     if (!vi) { // not a vorbis stream
@@ -177,7 +177,7 @@ cvorbis_init (DB_playItem_t *it) {
     }
     else {
         startsample = 0;
-        if (it->duration < 0) {
+        if (deadbeef->pl_get_item_duration (it) < 0) {
             endsample = -1;
         }
         else {
@@ -311,7 +311,7 @@ cvorbis_insert (DB_playItem_t *after, const char *fname) {
         it->decoder = &plugin;
         it->fname = strdup (fname);
         it->filetype = "OggVorbis";
-        it->duration = -1;
+        deadbeef->pl_set_item_duration (it, -1);
         deadbeef->pl_add_meta (it, "title", NULL);
         after = deadbeef->pl_insert_item (after, it);
         return after;
@@ -342,7 +342,7 @@ cvorbis_insert (DB_playItem_t *after, const char *fname) {
     it->decoder = &plugin;
     it->fname = strdup (fname);
     it->filetype = "OggVorbis";
-    it->duration = duration;
+    deadbeef->pl_set_item_duration (it, duration);
 
     // metainfo
     vorbis_comment *vc = ov_comment (&vorbis_file, -1);

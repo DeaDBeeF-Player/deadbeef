@@ -48,6 +48,7 @@ playItem_t *playlist_head[PL_MAX_ITERATORS];
 playItem_t *playlist_tail[PL_MAX_ITERATORS];
 playItem_t *playlist_current_ptr;
 int pl_count = 0;
+float pl_totaltime = 0;
 static int pl_order = 0; // 0 = linear, 1 = shuffle, 2 = random
 static int pl_loop_mode = 0; // 0 = loop, 1 = don't loop, 2 = loop single
 
@@ -186,15 +187,15 @@ pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, c
             return after;
         }
         (*prev)->endsample = (prevtime * samplerate) - 1;
-        (*prev)->duration = (float)((*prev)->endsample - (*prev)->startsample + 1) / samplerate;
-        if ((*prev)->duration < 0) {
+        pl_set_item_duration (*prev, (float)((*prev)->endsample - (*prev)->startsample + 1) / samplerate);
+        if ((*prev)->_duration < 0) {
             // might be bad cuesheet file, try to fix
             trace ("cuesheet seems to be corrupted, trying workaround\n");
             trace ("[bad:] calc endsample=%d, prevtime=%f, samplerate=%d, prev track duration=%f\n", (*prev)->endsample,  prevtime, samplerate, (*prev)->duration);
             prevtime = f_index01;
             (*prev)->endsample = (prevtime * samplerate) - 1;
-            (*prev)->duration = (float)((*prev)->endsample - (*prev)->startsample + 1) / samplerate;
-            if ((*prev)->duration > 0) {
+            pl_set_item_duration (*prev, (float)((*prev)->endsample - (*prev)->startsample + 1) / samplerate);
+            if ((*prev)->_duration > 0) {
                 trace ("success :-D\n");
             }
             else {
@@ -308,7 +309,7 @@ pl_insert_cue_from_buffer (playItem_t *after, const char *fname, const uint8_t *
     if (after) {
         trace ("last track endsample: %d\n", numsamples-1);
         after->endsample = numsamples-1;
-        after->duration = (float)(after->endsample - after->startsample + 1) / samplerate;
+        pl_set_item_duration (after, (float)(after->endsample - after->startsample + 1) / samplerate);
     }
     return after;
 }
@@ -518,6 +519,10 @@ pl_remove (playItem_t *it) {
     else {
         playlist_tail[PL_MAIN] = it->prev[PL_MAIN];
     }
+    // totaltime
+    if (it->_duration > 0) {
+        pl_totaltime -= it->_duration;
+    }
     pl_item_free (it);
     free (it);
     return 0;
@@ -608,6 +613,11 @@ pl_insert_item (playItem_t *after, playItem_t *it) {
     it->shufflerating = rand ();
     it->played = 0;
 
+    // totaltime
+    if (it->_duration > 0) {
+        pl_totaltime += it->_duration;
+    }
+
     return it;
 }
 
@@ -618,7 +628,7 @@ pl_item_copy (playItem_t *out, playItem_t *it) {
     out->tracknum = it->tracknum;
     out->startsample = it->startsample;
     out->endsample = it->endsample;
-    out->duration = it->duration;
+    pl_set_item_duration (out, it->_duration);
     out->shufflerating = it->shufflerating;
     out->filetype = it->filetype;
     out->replaygain_album_gain = it->replaygain_album_gain;
@@ -1057,7 +1067,7 @@ pl_save (const char *fname) {
         if (fwrite (&it->endsample, 1, 4, fp) != 4) {
             goto save_fail;
         }
-        if (fwrite (&it->duration, 1, 4, fp) != 4) {
+        if (fwrite (&it->_duration, 1, 4, fp) != 4) {
             goto save_fail;
         }
         uint8_t ft = it->filetype ? strlen (it->filetype) : 0;
@@ -1204,9 +1214,11 @@ pl_load (const char *fname) {
             goto load_fail;
         }
         // duration
-        if (fread (&it->duration, 1, 4, fp) != 4) {
+        float d;
+        if (fread (&d, 1, 4, fp) != 4) {
             goto load_fail;
         }
+        pl_set_item_duration (it, d);
         // get const filetype string from decoder
         uint8_t ft;
         if (fread (&ft, 1, 1, fp) != 1) {
@@ -1341,4 +1353,25 @@ pl_delete_all_meta (playItem_t *it) {
         free (m);
     }
     it->meta = NULL;
+}
+
+void
+pl_set_item_duration (playItem_t *it, float duration) {
+    if (pl_get_idx_of (it) != -1) {
+        if (it->_duration > 0) {
+            pl_totaltime -= it->_duration;
+        }
+        if (duration > 0) {
+            pl_totaltime += duration;
+        }
+        if (pl_totaltime < 0) {
+            pl_totaltime = 0;
+        }
+    }
+    it->_duration = duration;
+}
+
+float
+pl_get_item_duration (playItem_t *it) {
+    return it->_duration;
 }

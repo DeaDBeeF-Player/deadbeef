@@ -319,7 +319,7 @@ csid_init (DB_playItem_t *it) {
 //    resid->create (1);
     resid->filter (true);
     resid->sampling (deadbeef->playback_get_samplerate ());
-    duration = it->duration;
+    duration = deadbeef->pl_get_item_duration (it);
     tune = new SidTune (it->fname);
 
     tune->selectSong (it->tracknum+1);
@@ -554,7 +554,7 @@ csid_insert (DB_playItem_t *after, const char *fname) {
                 //            printf ("\n");
                 //        }
             }
-            it->duration = length;
+            deadbeef->pl_set_item_duration (it, length);
             it->filetype = "SID";
 
             after = deadbeef->pl_insert_item (after, it);
