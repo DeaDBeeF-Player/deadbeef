@@ -752,6 +752,8 @@ main (int argc, char *argv[]) {
     session_save (sessfile);
     pl_save (defpl);
     pl_free ();
+    conf_save ();
+    conf_free ();
     plug_unload_all ();
     return 0;
 }

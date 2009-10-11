@@ -22,6 +22,7 @@
 #include "conf.h"
 
 static DB_conf_item_t *conf_items;
+static int changed = 0;
 
 int
 conf_load (void) {
@@ -34,6 +35,7 @@ conf_load (void) {
         return -1;
     }
     int line = 0;
+    DB_conf_item_t *tail = NULL;
     while (fgets (str, 1024, fp) != NULL) {
         line++;
         if (str[0] == '#' || str[0] <= 0x20) {
@@ -63,19 +65,50 @@ conf_load (void) {
             p++;
         }
         *p = 0;
-        conf_set_str (str, value);
+        // new items are appended, to preserve order
+        DB_conf_item_t *it = malloc (sizeof (DB_conf_item_t));
+        memset (it, 0, sizeof (DB_conf_item_t));
+        it->key = strdup (str);
+        it->value = strdup (value);
+        if (!tail) {
+            conf_items = it;
+        }
+        else {
+            tail->next = it;
+        }
+        tail = it;
     }
     fclose (fp);
+    changed = 0;
     return 0;
 }
 
 int
 conf_save (void) {
+    extern char dbconfdir[1024]; // $HOME/.config/deadbeef
+    char str[1024];
+    snprintf (str, 1024, "%s/config", dbconfdir);
+    FILE *fp = fopen (str, "w+t");
+    if (!fp) {
+        fprintf (stderr, "failed to open config file for writing\n");
+        return -1;
+    }
+    for (DB_conf_item_t *it = conf_items; it; it = it->next) {
+        fprintf (fp, "%s %s\n", it->key, it->value);
+    }
+    fclose (fp);
     return 0;
 }
 
 void
 conf_free (void) {
+    DB_conf_item_t *next = NULL;
+    for (DB_conf_item_t *it = conf_items; it; it = next) {
+        next = it->next;
+        free (it->key);
+        free (it->value);
+        free (it);
+    }
 }
 
 const char *
@@ -113,6 +146,7 @@ conf_find (const char *group, DB_conf_item_t *prev) {
 
 void
 conf_set_str (const char *key, const char *val) {
+    changed = 1;
     for (DB_conf_item_t *it = conf_items; it; it = it->next) {
         if (!strcasecmp (key, it->key)) {
             free (it->value);
@@ -140,4 +174,14 @@ conf_set_float (const char *key, float val) {
     char s[10];
     snprintf (s, sizeof (s), "%0.7f", val);
     conf_set_str (key, s);
+}
+
+int
+conf_ischanged (void) {
+    return changed;
+}
+
+void
+conf_setchanged (int c) {
+    changed = c;
 }

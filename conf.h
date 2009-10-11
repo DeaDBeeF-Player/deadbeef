@@ -29,6 +29,12 @@ conf_save (void);
 void
 conf_free (void);
 
+int
+conf_ischanged (void);
+
+void
+conf_setchanged (int c);
+
 const char *
 conf_get_str (const char *key, const char *def);
 
