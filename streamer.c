@@ -201,6 +201,7 @@ streamer_set_nextsong (int song, int pstate) {
     if (p_isstopped ()) {
         // no sense to wait until end of previous song, reset buffer
         bytes_until_next_song = 0;
+        playpos = 0;
     }
 }
 
