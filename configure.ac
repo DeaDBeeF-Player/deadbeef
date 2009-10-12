@@ -49,6 +49,7 @@ AC_SUBST(SIMD_FLAGS)
 
 dnl curl lib
 AC_CHECK_LIB([curl], [main], [HAVE_CURL=1])
+AM_CONDITIONAL(HAVE_CURL, test $HAVE_CURL)
 if test ${HAVE_CURL}; then
     CURL_LIBS="-lcurl"
     AC_SUBST(CURL_LIBS)
@@ -62,6 +63,7 @@ fi
 
 dnl mpgmad plugin
 AC_CHECK_LIB([mad], [main], [HAVE_LIBMAD=1])
+AM_CONDITIONAL(HAVE_LIBMAD, test $HAVE_LIBMAD)
 if test ${HAVE_LIBMAD}; then
     MAD_LIBS="-lmad"
     MPGMAD_DIR="plugins/mpgmad"
@@ -72,7 +74,8 @@ fi
 dnl vorbis plugin
 AC_CHECK_LIB([vorbis], [main], [HAVE_VORBIS=1])
 AC_CHECK_LIB([vorbisfile], [main], [HAVE_VORBISFILE=1])
-
+AM_CONDITIONAL(HAVE_VORBIS, test $HAVE_VORBIS)
+AM_CONDITIONAL(HAVE_VORBISFILE, test $HAVE_VORBISFILE)
 if test ${HAVE_VORBIS} && test ${HAVE_VORBISFILE} ; then
     VORBIS_LIBS="-lvorbis -lvorbisfile"
     VORBIS_DIR="plugins/vorbis"
@@ -82,7 +85,7 @@ fi
 
 dnl flac plugin
 AC_CHECK_LIB([FLAC], [main], [HAVE_FLAC=1])
-
+AM_CONDITIONAL(HAVE_FLAC, test $HAVE_FLAC)
 if test ${HAVE_FLAC} ; then
     FLAC_LIBS="-lFLAC"
     FLAC_DIR="plugins/flac"
@@ -92,7 +95,7 @@ fi
 
 dnl wavpack plugin
 AC_CHECK_LIB([wavpack], [main], [HAVE_WAVPACK=1])
-
+AM_CONDITIONAL(HAVE_WAVPACK, test $HAVE_WAVPACK)
 if test ${HAVE_WAVPACK} ; then
     WAVPACK_LIBS="-lwavpack"
     WAVPACK_DIR="plugins/wavpack"
@@ -102,7 +105,7 @@ fi
 
 dnl libsndfile plugin
 AC_CHECK_LIB([sndfile], [main], [HAVE_SNDFILE=1])
-
+AM_CONDITIONAL(HAVE_SNDFILE, test $HAVE_SNDFILE)
 if test ${HAVE_SNDFILE} ; then
     SNDFILE_LIBS="-lsndfile"
     SNDFILE_DIR="plugins/sndfile"
@@ -110,7 +113,7 @@ if test ${HAVE_SNDFILE} ; then
     AC_SUBST(SNDFILE_DIR)
 fi
 
-dnl lastfm plugin
+dnl vfs_curl plugin
 if test ${HAVE_CURL}; then
     VFS_CURL_DIR="plugins/vfs_curl"
     AC_SUBST(VFS_CURL_DIR)
@@ -119,6 +122,8 @@ fi
 dnl faad2 plugin
 AC_CHECK_LIB([faad], [main], [HAVE_FAAD=1])
 AC_CHECK_LIB([mp4ff], [main], [HAVE_MP4FF=1])
+AM_CONDITIONAL(HAVE_FAAD, test $HAVE_FAAD)
+AM_CONDITIONAL(HAVE_MP4FF, test $HAVE_MP4FF)
 if test ${HAVE_FAAD} && test ${HAVE_MP4FF} ; then
     FAAD2_LIBS="-lfaad -lmp4ff -lmp4v2"
     FAAD2_DIR="plugins/faad2"
@@ -129,13 +134,45 @@ fi
 dnl cdda plugin
 AC_CHECK_LIB([cdio], [main], [HAVE_CDIO=1])
 AC_CHECK_LIB([cddb], [main], [HAVE_CDDB=1])
-
+AM_CONDITIONAL(HAVE_CDIO, test $HAVE_CDIO)
+AM_CONDITIONAL(HAVE_CDDB, test $HAVE_CDDB)
 if test ${HAVE_CDIO} && test ${HAVE_CDDB}; then
     CDDA_LIBS="-lcdio -lcddb"
     CDDA_DIR="plugins/cdda"
     AC_SUBST(CDDA_LIBS)
     AC_SUBST(CDDA_DIR)
 fi
+
+dnl print summary
+echo
+echo "plugin summary:"
+echo
+
+AC_DEFUN([PRINT_PLUGIN_INFO],
+    [
+        if $3 ; then
+            echo "    $1: yes - $2"
+        else
+            echo "    $1: no - $2"
+        fi
+    ]
+)
+
+PRINT_PLUGIN_INFO([stdio],[Standard IO plugin],[true])
+PRINT_PLUGIN_INFO([sid],[SID player based on libsidplay2],[true])
+PRINT_PLUGIN_INFO([gme],[chiptune music player based on GME],[true])
+PRINT_PLUGIN_INFO([dumb],[module player based on DUMB library],[true])
+PRINT_PLUGIN_INFO([ffap],[Monkey's audio (APE) decoder],[true])
+PRINT_PLUGIN_INFO([lastfm],[last.fm scrobbler],[test $HAVE_CURL])
+PRINT_PLUGIN_INFO([mpgmad],[mpeg player based on libmad],[test $HAVE_LIBMAD])
+PRINT_PLUGIN_INFO([vorbis],[ogg vorbis player],[test $HAVE_VORBISFILE && test $HAVE_VORBIS])
+PRINT_PLUGIN_INFO([flac],[flac player],[test $HAVE_FLAC])
+PRINT_PLUGIN_INFO([wavpack],[wavpack player],[test $HAVE_WAVPACK])
+PRINT_PLUGIN_INFO([sndfile],[PCM (wav,aiff,etc) player based on libsndfile],[test $HAVE_SNDFILE])
+PRINT_PLUGIN_INFO([vfs_curl],[http/ftp streaming support],[test $HAVE_CURL])
+PRINT_PLUGIN_INFO([faad2],[aac/mp4 player],[test $HAVE_FAAD && test $HAVE_MP4FF])
+PRINT_PLUGIN_INFO([cdda],[cd audio player],[test $HAVE_CDIO && test $HAVE_CDDB])
+echo
 
 AC_OUTPUT([
 Makefile
