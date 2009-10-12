@@ -484,7 +484,7 @@ cflac_insert (DB_playItem_t *after, const char *fname) {
     }
 
     // try external cue
-    DB_playItem_t *cue_after = deadbeef->pl_insert_cue (after, fname, &plugin, "flac", cb.totalsamples, cb.samplerate);
+    DB_playItem_t *cue_after = deadbeef->pl_insert_cue (after, fname, &plugin, "FLAC", cb.totalsamples, cb.samplerate);
     if (cue_after) {
         if (cb.file) {
             deadbeef->fclose (cb.file);
