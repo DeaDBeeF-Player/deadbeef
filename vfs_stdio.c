@@ -60,12 +60,12 @@ stdio_read (void *ptr, size_t size, size_t nmemb, DB_FILE *stream) {
 }
 
 static int
-stdio_seek (DB_FILE *stream, long offset, int whence) {
+stdio_seek (DB_FILE *stream, int64_t offset, int whence) {
     assert (stream);
     return fseek (((STDIO_FILE *)stream)->stream, offset, whence);
 }
 
-static long
+static int64_t
 stdio_tell (DB_FILE *stream) {
     assert (stream);
     return ftell (((STDIO_FILE *)stream)->stream);
