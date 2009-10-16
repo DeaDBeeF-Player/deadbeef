@@ -89,7 +89,7 @@ const char *colnames[pl_ncolumns] = {
     "Artist / Album",
     "Track №",
     "Title / Track Artist",
-    "_duration"
+    "Duration"
 };
 
 static uintptr_t play16_pixbuf;
