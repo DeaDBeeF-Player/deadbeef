@@ -1375,3 +1375,76 @@ float
 pl_get_item_duration (playItem_t *it) {
     return it->_duration;
 }
+
+int
+pl_format_title (playItem_t *it, char *s, int size, const char *fmt) {
+    int n = size-1;
+    while (*fmt && n) {
+        if (*fmt != '%') {
+            *s++ = *fmt;
+            n--;
+        }
+        else {
+            fmt++;
+            const char *meta = NULL;
+            if (*fmt == 0) {
+                break;
+            }
+            else if (*fmt == 'a') {
+                meta = "artist";
+            }
+            else if (*fmt == 't') {
+                meta = "title";
+            }
+            else if (*fmt == 'b') {
+                meta = "album";
+            }
+            else if (*fmt == 'n') {
+                meta = "track";
+            }
+            else if (*fmt == 'l') {
+                char dur[50];
+                if (it->_duration >= 0) {
+                    int hourdur = it->_duration / (60 * 60);
+                    int mindur = (it->_duration - hourdur * 60 * 60) / 60;
+                    int secdur = it->_duration - mindur * 60;
+
+                    if (hourdur) {
+                        snprintf (dur, sizeof (dur), "%d:%02d:%02d", hourdur, mindur, secdur);
+                    }
+                    else {
+                        snprintf (dur, sizeof (dur), "%d:%02d", mindur, secdur);
+                    }
+                }
+                else {
+                    strcpy (dur, "-:--");
+                }
+                const char *value = dur;
+                while (n > 0 && *value) {
+                    *s++ = *value++;
+                    n--;
+                }
+            }
+            else {
+                *s++ = *fmt;
+                n--;
+            }
+
+            if (meta) {
+                const char *value = pl_find_meta (it, meta);
+                if (!value) {
+                    value = "?";
+                }
+                while (n > 0 && *value) {
+                    *s++ = *value++;
+                    n--;
+                }
+            }
+        }
+        fmt++;
+    }
+    *s = 0;
+
+    return size - n - 1;
+}
+

@@ -56,4 +56,11 @@ conf_set_float (const char *key, float val);
 DB_conf_item_t *
 conf_find (const char *group, DB_conf_item_t *prev);
 
+// remove all items starting with key
+void
+conf_remove_items (const char *key);
+
+void
+conf_item_free (DB_conf_item_t *it);
+
 #endif // __CONF_H

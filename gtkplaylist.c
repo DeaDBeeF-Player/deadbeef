@@ -28,6 +28,7 @@
 #include <assert.h>
 #include <unistd.h>
 #include <ctype.h>
+#include <assert.h>
 #include "gtkplaylist.h"
 #include "callbacks.h"
 #include "interface.h"
@@ -43,6 +44,7 @@
 #include "drawing.h"
 #include "session.h"
 #include "deadbeef.h"
+#include "conf.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -84,6 +86,7 @@ float colo_current[COLO_COUNT][3];
 // playlist row height
 int rowheight = -1;
 
+#if 0
 const char *colnames[pl_ncolumns] = {
     "Playing",
     "Artist / Album",
@@ -91,6 +94,7 @@ const char *colnames[pl_ncolumns] = {
     "Title / Track Artist",
     "Duration"
 };
+#endif
 
 static uintptr_t play16_pixbuf;
 static uintptr_t pause16_pixbuf;
@@ -104,6 +108,15 @@ gtkpl_init (void) {
     pause16_pixbuf = draw_load_pixbuf ("pause_16.png");
     rowheight = draw_get_font_size () + 12;
     memcpy (colo_current, colo_white_blue, sizeof (colo_current));
+}
+
+void
+gtkpl_free (gtkplaylist_t *pl) {
+    while (pl->columns) {
+        gtkpl_column_t *next = pl->columns->next;
+        gtkpl_column_free (pl->columns);
+        pl->columns = next;
+    }
 }
 
 void
@@ -154,8 +167,9 @@ gtkpl_setup_hscrollbar (gtkplaylist_t *ps) {
     int w = playlist->allocation.width;
     int size = 0;
     int i;
-    for (i = 0; i < pl_ncolumns; i++) {
-        size += ps->colwidths[i];
+    gtkpl_column_t *c;
+    for (c = ps->columns; c; c = c->next) {
+        size += c->width;
     }
     if (w >= size) {
         size = 0;
@@ -240,10 +254,10 @@ gtkpl_draw_pl_row (gtkplaylist_t *ps, int row, playItem_t *it) {
     }
 	int width, height;
 	draw_get_canvas_size ((uintptr_t)ps->backbuf, &width, &height);
-    if (it == playlist_current_ptr && ps->colwidths[0] > 0 && !p_isstopped ()) {
-        uintptr_t pixbuf = p_ispaused () ? pause16_pixbuf : play16_pixbuf;
-        draw_pixbuf ((uintptr_t)ps->backbuf, pixbuf, ps->colwidths[0]/2-8-ps->hscrollpos, (row - ps->scrollpos) * rowheight + rowheight/2 - 8, 0, 0, 16, 16);
-    }
+//    if (it == playlist_current_ptr && ps->colwidths[0] > 0 && !p_isstopped ()) {
+//        uintptr_t pixbuf = p_ispaused () ? pause16_pixbuf : play16_pixbuf;
+//        draw_pixbuf ((uintptr_t)ps->backbuf, pixbuf, ps->colwidths[0]/2-8-ps->hscrollpos, (row - ps->scrollpos) * rowheight + rowheight/2 - 8, 0, 0, 16, 16);
+//    }
 	if (it && ((it->selected && ps->multisel) || (row == ps->row && !ps->multisel))) {
         if (row % 2) {
             theme_set_bg_color (COLO_PLAYLIST_SEL_EVEN);
@@ -263,16 +277,9 @@ gtkpl_draw_pl_row (gtkplaylist_t *ps, int row, playItem_t *it) {
         theme_set_fg_color (COLO_PLAYLIST_TEXT);
     }
     // draw as columns
-    char dur[10] = "-:--";
-    if (it) {
-        if (it->_duration >= 0) {
-            int min = (int)it->_duration/60;
-            int sec = (int)(it->_duration-min*60);
-            snprintf (dur, 10, "%d:%02d", min, sec);
-        }
-    }
+    char dur[50];
+    pl_format_title (it, dur, sizeof (dur), "%l");
 
-    char artistalbum[1024];
     const char *artist = pl_find_meta (it, "artist");
     if (!artist) {
         artist = "?";
@@ -289,7 +296,9 @@ gtkpl_draw_pl_row (gtkplaylist_t *ps, int row, playItem_t *it) {
     if (!title) {
         title = "?";
     }
-    snprintf (artistalbum, 1024, "%s - %s", artist, album);
+    char artistalbum[1024];
+    pl_format_title (it, artistalbum, sizeof (artistalbum), "%a - %b");
+#if 0
     const char *columns[pl_ncolumns] = {
         "",
         artistalbum,
@@ -297,20 +306,53 @@ gtkpl_draw_pl_row (gtkplaylist_t *ps, int row, playItem_t *it) {
         title,
         dur
     };
+#endif
     int x = -ps->hscrollpos;
-    for (int i = 0; i < pl_ncolumns; i++) {
-        if (i > 0) {
-            
-            int dotpos;
-            int cidx = ((row-ps->scrollpos) * pl_ncolumns + i) * 3;
-            if (i == 2) {
-                draw_text_with_colors (x+5, row * rowheight - ps->scrollpos * rowheight + rowheight/2 - draw_get_font_size ()/2 - 2, ps->colwidths[i]-10, 1, columns[i]);
+    gtkpl_column_t *c;
+    for (c = ps->columns; c; c = c->next) {
+        if (it == playlist_current_ptr && c->id == DB_COLUMN_PLAYING && !p_isstopped ()) {
+            uintptr_t pixbuf = p_ispaused () ? pause16_pixbuf : play16_pixbuf;
+            draw_pixbuf ((uintptr_t)ps->backbuf, pixbuf, x + c->width/2 - 8 - ps->hscrollpos, (row - ps->scrollpos) * rowheight + rowheight/2 - 8, 0, 0, 16, 16);
+        }
+        else {
+            char fmt_text[1024];
+            const char *text = NULL;
+            if (c->id != -1) {
+                switch (c->id) {
+                case DB_COLUMN_ARTIST_ALBUM: 
+                    text = artistalbum;
+                    break;
+                case DB_COLUMN_ARTIST:
+                    text = artist;
+                    break;
+                case DB_COLUMN_ALBUM:
+                    text = album;
+                    break;
+                case DB_COLUMN_TITLE:
+                    text = title;
+                    break;
+                case DB_COLUMN_DURATION:
+                    text = dur;
+                    break;
+                case DB_COLUMN_TRACK:
+                    text = track;
+                    break;
+                }
             }
-            else {
-                draw_text_with_colors (x + 5, row * rowheight - ps->scrollpos * rowheight + rowheight/2 - draw_get_font_size ()/2 - 2, ps->colwidths[i]-10, 0, columns[i]);
+            else if (c->format) {
+                pl_format_title (it, fmt_text, sizeof (fmt_text), c->format);
+                text = fmt_text;
+            }
+            if (text) {
+                if (c->align_right) {
+                    draw_text_with_colors (x+5, row * rowheight - ps->scrollpos * rowheight + rowheight/2 - draw_get_font_size ()/2 - 2, c->width-10, 1, text);
+                }
+                else {
+                    draw_text_with_colors (x + 5, row * rowheight - ps->scrollpos * rowheight + rowheight/2 - draw_get_font_size ()/2 - 2, c->width-10, 0, text);
+                }
             }
         }
-        x += ps->colwidths[i];
+        x += c->width;
     }
 }
 
@@ -1129,11 +1171,12 @@ gtkpl_header_draw (gtkplaylist_t *ps) {
 
     // fill background
     gdk_draw_rectangle (ps->backbuf_header, widget->style->bg_gc[0], TRUE, 0, 0, widget->allocation.width, widget->allocation.height);
-    for (int i = 0; i < pl_ncolumns; i++) {
+    gtkpl_column_t *c;
+    for (c = ps->columns; c; c = c->next) {
         if (x >= widget->allocation.width) {
             break;
         }
-        w = ps->colwidths[i];
+        w = c->width;
         if (w > 0) {
             gtk_paint_box (widget->style, ps->backbuf_header, GTK_STATE_NORMAL, GTK_SHADOW_OUT, NULL, NULL, detail, x, 0, w - 2, h);
             gtk_paint_vline (widget->style, ps->backbuf_header, GTK_STATE_NORMAL, NULL, NULL, NULL, 0, h, x+w - 2);
@@ -1145,16 +1188,16 @@ gtkpl_header_draw (gtkplaylist_t *ps) {
     }
     draw_begin ((uintptr_t)ps->backbuf_header);
     x = -ps->hscrollpos;
-    for (int i = 0; i < pl_ncolumns; i++) {
+    for (c = ps->columns; c; c = c->next) {
         if (x >= widget->allocation.width) {
             break;
         }
-        w = ps->colwidths[i];
+        w = c->width;
         if (w > 0) {
             GdkColor *gdkfg = &widget->style->fg[0];
             float fg[3] = {(float)gdkfg->red/0xffff, (float)gdkfg->green/0xffff, (float)gdkfg->blue/0xffff};
             draw_set_fg_color (fg);
-            draw_text (x + 5, h/2-draw_get_font_size()/2, ps->colwidths[i]-10, 0, colnames[i]);
+            draw_text (x + 5, h/2-draw_get_font_size()/2, c->width-10, 0, c->title);
         }
         x += w;
     }
@@ -1229,22 +1272,26 @@ on_header_motion_notify_event          (GtkWidget       *widget,
         gdk_window_set_cursor (widget->window, cursor_sz);
         // get column start pos
         int x = -ps->hscrollpos;
-        for (int i = 0; i < header_sizing; i++) {
-            int w = ps->colwidths[i];
-            x += w;
+        int i = 0;
+        gtkpl_column_t *c;
+        for (c = ps->columns; c && i < header_sizing; c = c->next, i++) {
+            x += c->width;
         }
+
         int newx = event->x > x + 40 ? event->x : x + 40;
-        ps->colwidths[header_sizing] = newx - x;
+        c->width = newx - x;
         gtkpl_setup_hscrollbar (ps);
         gtkpl_header_draw (ps);
         gtkpl_expose_header (ps, 0, 0, ps->header->allocation.width, ps->header->allocation.height);
         gtkpl_draw_playlist (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
         gtkpl_expose (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
+        gtkpl_column_update_config (ps, c, i);
     }
     else {
         int x = -ps->hscrollpos;
-        for (int i = 0; i < pl_ncolumns; i++) {
-            int w = ps->colwidths[i];
+        gtkpl_column_t *c;
+        for (c = ps->columns; c; c = c->next) {
+            int w = c->width;
             if (w > 0) { // ignore collapsed columns (hack for search window)
                 if (event->x >= x + w - 2 && event->x <= x + w) {
                     gdk_window_set_cursor (widget->window, cursor_sz);
@@ -1276,8 +1323,10 @@ on_header_button_press_event           (GtkWidget       *widget,
         header_dragpt[0] = event->x;
         header_dragpt[1] = event->y;
         int x = -ps->hscrollpos;
-        for (int i = 0; i < pl_ncolumns; i++) {
-            int w = ps->colwidths[i];
+        int i = 0;
+        gtkpl_column_t *c;
+        for (c = ps->columns; c; c = c->next, i++) {
+            int w = c->width;
             if (event->x >= x + w - 2 && event->x <= x + w) {
                 header_sizing = i;
                 header_dragging = -1;
@@ -1303,8 +1352,9 @@ on_header_button_release_event         (GtkWidget       *widget,
     header_dragging = -1;
     header_sizing = -1;
     int x = 0;
-    for (int i = 0; i < pl_ncolumns; i++) {
-        int w = ps->colwidths[i];
+    gtkpl_column_t *c;
+    for (c = ps->columns; c; c = c->next) {
+        int w = c->width;
         if (event->x >= x + w - 2 && event->x <= x + w) {
             gdk_window_set_cursor (widget->window, cursor_sz);
             break;
@@ -1417,4 +1467,210 @@ playlist_refresh (void) {
     gtkpl_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
     gtkpl_expose (ps, 0, 0, widget->allocation.width, widget->allocation.height);
     search_refresh ();
+}
+
+gtkpl_column_t *
+gtkpl_column_alloc (const char *title, int width, int id, const char *format, int align_right) {
+    gtkpl_column_t *c = malloc (sizeof (gtkpl_column_t));
+    memset (c, 0, sizeof (gtkpl_column_t));
+    c->title = strdup (title);
+    c->id = id;
+    c->format = format ? strdup (format) : NULL;
+    c->width = width;
+    c->align_right = align_right;
+    return c;
+}
+
+void
+gtkpl_column_append (gtkplaylist_t *pl, gtkpl_column_t *c) {
+    int idx = 0;
+    if (pl->columns) {
+        idx++;
+        gtkpl_column_t *tail = pl->columns;
+        while (tail->next) {
+            tail = tail->next;
+            idx++;
+        }
+        tail->next = c;
+    }
+    else {
+        pl->columns = c;
+    }
+    gtkpl_column_update_config (pl, c, idx);
+}
+
+void
+gtkpl_column_free (gtkpl_column_t *c) {
+    if (c->title) {
+        free (c->title);
+    }
+    if (c->format) {
+        free (c->format);
+    }
+    free (c);
+}
+
+void
+gtkpl_column_remove (gtkplaylist_t *pl, gtkpl_column_t *c) {
+    if (pl->columns == c) {
+        pl->columns = pl->columns->next;
+        gtkpl_column_free (c);
+        return;
+    }
+    gtkpl_column_t *cc = pl->columns;
+    while (cc) {
+        if (cc->next == c) {
+            cc->next = cc->next->next;
+            gtkpl_column_free (c);
+            return;
+        }
+        cc = cc->next;
+    }
+    assert (cc && "gtkpl: attempted to remove column that is not in list");
+}
+
+void
+gtkpl_append_column_from_textdef (gtkplaylist_t *pl, const uint8_t *def) {
+    // syntax: "title" "format" id width alignright
+    char title[128];
+    char format[128];
+    int id;
+    int width;
+    int align_right;
+    // title
+    if (*def != '"') {
+        return;
+    }
+    def++;
+    if (*def == 0) {
+        return;
+    }
+    const uint8_t *e = def;
+    e++;
+    while (*e && *e != '"') {
+        e++;
+    }
+    if (*e == 0) {
+        return;
+    }
+    memcpy (title, def, e-def);
+    title[e-def] = 0;
+    // skip whitespace
+    def = e;
+    def++;
+    while (*def && *def <= ' ') {
+        def++;
+    }
+    if (*def == 0) {
+        return;
+    }
+    // format
+    if (*def != '"') {
+        return;
+    }
+    def++;
+    if (*def == 0) {
+        return;
+    }
+    e = def;
+    while (*e && *e != '"') {
+        e++;
+    }
+    if (*e == 0) {
+        return;
+    }
+    memcpy (format, def, e-def);
+    format[e-def] = 0;
+    // skip whitespace
+    def = e;
+    def++;
+    while (*def && *def <= ' ') {
+        def++;
+    }
+    if (*def == 0) {
+        return;
+    }
+    // id
+    e = def;
+    while (*e && isdigit (*e)) {
+        e++;
+    }
+    if (*e == 0) {
+        return;
+    }
+    {
+        char s[e-def+1];
+        memcpy (s, def, e-def);
+        s[e-def] = 0;
+        id = atoi (s);
+    }
+    // skip whitespace
+    def = e;
+    def++;
+    while (*def && *def <= ' ') {
+        def++;
+    }
+    if (*def == 0) {
+        return;
+    }
+    // width
+    e = def;
+    while (*e && isdigit (*e)) {
+        e++;
+    }
+    if (*e == 0) {
+        return;
+    }
+    {
+        char s[e-def+1];
+        memcpy (s, def, e-def);
+        s[e-def] = 0;
+        width = atoi (s);
+    }
+    // skip whitespace
+    def = e;
+    def++;
+    while (*def && *def <= ' ') {
+        def++;
+    }
+    if (*def == 0) {
+        return;
+    }
+    // align_right
+    e = def;
+    while (*e && isdigit (*e)) {
+        e++;
+    }
+    {
+        char s[e-def+1];
+        memcpy (s, def, e-def);
+        s[e-def] = 0;
+        align_right = atoi (s);
+    }
+    gtkpl_column_append (pl, gtkpl_column_alloc (title, width, id, format[0] ? format : NULL, align_right));
+}
+
+void
+gtkpl_column_update_config (gtkplaylist_t *pl, gtkpl_column_t *c, int idx) {
+    char key[128];
+    char value[128];
+    snprintf (key, sizeof (key), "%s.column.%d", pl->title, idx);
+    snprintf (value, sizeof (value), "\"%s\" \"%s\" %d %d %d", c->title, c->format ? c->format : "", c->id, c->width, c->align_right);
+    conf_set_str (key, value);
+}
+
+void
+gtkpl_column_rewrite_config (gtkplaylist_t *pl) {
+    char key[128];
+    char value[128];
+    snprintf (key, sizeof (key), "%s.column.", pl->title);
+    conf_remove_items (key);
+
+    gtkpl_column_t *c;
+    int i = 0;
+    for (c = pl->columns; c; c = c->next, i++) {
+        snprintf (key, sizeof (key), "%s.column.%d", pl->title, i);
+        snprintf (value, sizeof (value), "\"%s\" \"%s\" %d %d %d", c->title, c->format ? c->format : "", c->id, c->width, c->align_right);
+        conf_set_str (key, value);
+    }
 }

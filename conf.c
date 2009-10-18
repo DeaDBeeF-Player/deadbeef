@@ -66,6 +66,8 @@ conf_load (void) {
         }
         *p = 0;
         // new items are appended, to preserve order
+        conf_set_str (str, value);
+#if 0
         DB_conf_item_t *it = malloc (sizeof (DB_conf_item_t));
         memset (it, 0, sizeof (DB_conf_item_t));
         it->key = strdup (str);
@@ -77,6 +79,7 @@ conf_load (void) {
             tail->next = it;
         }
         tail = it;
+#endif
     }
     fclose (fp);
     changed = 0;
@@ -105,8 +108,19 @@ conf_free (void) {
     DB_conf_item_t *next = NULL;
     for (DB_conf_item_t *it = conf_items; it; it = next) {
         next = it->next;
-        free (it->key);
-        free (it->value);
+        conf_item_free (it);
+    }
+}
+
+void
+conf_item_free (DB_conf_item_t *it) {
+    if (it) {
+        if (it->key) {
+            free (it->key);
+        }
+        if (it->value) {
+            free (it->value);
+        }
         free (it);
     }
 }
@@ -147,19 +161,32 @@ conf_find (const char *group, DB_conf_item_t *prev) {
 void
 conf_set_str (const char *key, const char *val) {
     changed = 1;
+    DB_conf_item_t *prev = NULL;
     for (DB_conf_item_t *it = conf_items; it; it = it->next) {
-        if (!strcasecmp (key, it->key)) {
+        int cmp = strcasecmp (key, it->key);
+        if (!cmp) {
             free (it->value);
             it->value = strdup (val);
             return;
         }
+        else if (cmp < 0) {
+            break;
+        }
+        prev = it;
     }
     DB_conf_item_t *it = malloc (sizeof (DB_conf_item_t));
     memset (it, 0, sizeof (DB_conf_item_t));
-    it->next = conf_items;
     it->key = strdup (key);
     it->value = strdup (val);
-    conf_items = it;
+    if (prev) {
+        DB_conf_item_t *next = prev->next;
+        prev->next = it;
+        it->next = next;
+    }
+    else {
+        it->next = conf_items;
+        conf_items = it;
+    }
 }
 
 void
@@ -184,4 +211,18 @@ conf_ischanged (void) {
 void
 conf_setchanged (int c) {
     changed = c;
+}
+
+void
+conf_remove_items (const char *key) {
+    int l = strlen (key);
+    DB_conf_item_t *it = conf_find (key, NULL);
+    while (it) {
+        DB_conf_item_t *next = it->next;
+        conf_item_free (it);
+        it = next;
+        if (strncasecmp (key, it->key, l)) {
+            break;
+        }
+    }
 }

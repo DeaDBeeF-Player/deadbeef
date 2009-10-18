@@ -169,4 +169,10 @@ pl_set_item_duration (playItem_t *it, float duration);
 
 float
 pl_get_item_duration (playItem_t *it);
+
+// returns number of characters printed, not including trailing 0
+// [a]rtist, [t]itle, al[b]um, [l]ength, track[n]umber
+int
+pl_format_title (playItem_t *it, char *s, int size, const char *fmt);
+
 #endif // __PLAYLIST_H

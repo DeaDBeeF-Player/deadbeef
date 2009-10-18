@@ -750,6 +750,8 @@ main (int argc, char *argv[]) {
 
     gtk_widget_show (mainwin);
     gtk_main ();
+    gtkpl_free (&main_playlist);
+    gtkpl_free (&search_playlist);
     server_close ();
     gdk_threads_leave ();
     messagepump_free ();

@@ -21,9 +21,12 @@
 #include <stdint.h>
 #include "session.h"
 #include "common.h"
+#include "deadbeef.h"
+#include "conf.h"
 
-#define SESS_CURRENT_VER 3
+#define SESS_CURRENT_VER 4
 // changelog:
+// version 4 column settings moved to common config
 // version 3 adds column widths
 
 // NOTE: dont forget to update session_reset when changing that
@@ -33,11 +36,6 @@ int8_t session_playlist_order;
 int8_t session_playlist_looping;
 int8_t session_scroll_follows_playback = 1;
 int session_win_attrs[5] = { 40, 40, 500, 300, 0 };
-#define PL_MAX_COLUMNS 5
-static int session_main_colwidths[PL_MAX_COLUMNS] = { 50, 150, 50, 150, 50 };
-static int session_main_numcols = 5;
-static int session_search_colwidths[PL_MAX_COLUMNS] = { 0, 150, 50, 150, 50 };;
-static int session_search_numcols = 5;
 
 static uint8_t sessfile_magic[] = { 0xdb, 0xef, 0x5e, 0x55 }; // dbefsess in hexspeak
 
@@ -53,16 +51,6 @@ session_reset (void) {
     session_win_attrs[2] = 500;
     session_win_attrs[3] = 300;
     session_win_attrs[4] = 0;
-    {
-        session_main_numcols = 5;
-        int colwidths[] = { 50, 150, 50, 150, 50 };
-        memcpy (session_main_colwidths, colwidths, sizeof (colwidths));
-    }
-    {
-        session_search_numcols = 5;
-        int colwidths[] = { 0, 150, 50, 150, 50 };
-        memcpy (session_search_colwidths, colwidths, sizeof (colwidths));
-    }
 }
 
 static int
@@ -180,32 +168,6 @@ session_save (const char *fname) {
             goto session_save_fail;
         }
     }
-    {
-        // main column widths
-        uint8_t cl = session_main_numcols;
-        if (fwrite (&cl, 1, 1, fp) != 1) {
-            goto session_save_fail;
-        }
-        for (int i = 0; i < cl; i++) {
-            int16_t w = session_main_colwidths[i];
-            if (fwrite (&w, 1, sizeof (w), fp) != sizeof (w)) {
-                goto session_save_fail;
-            }
-        }
-    }
-    {
-        // search column widths
-        uint8_t cl = session_search_numcols;
-        if (fwrite (&cl, 1, 1, fp) != 1) {
-            goto session_save_fail;
-        }
-        for (int i = 0; i < cl; i++) {
-            int16_t w = session_search_colwidths[i];
-            if (fwrite (&w, 1, sizeof (w), fp) != sizeof (w)) {
-                goto session_save_fail;
-            }
-        }
-    }
     fclose (fp);
     return 0;
 session_save_fail:
@@ -269,7 +231,13 @@ session_load (const char *fname) {
             goto session_load_fail;
         }
     }
-    if (version >= 3) {
+    if (version == 3) {
+        // import playlist and search columns to new common config
+#define PL_MAX_COLUMNS 5
+        int session_main_colwidths[PL_MAX_COLUMNS] = { 50, 150, 50, 150, 50 };
+        int session_main_numcols = 5;
+        int session_search_colwidths[PL_MAX_COLUMNS] = { 0, 150, 50, 150, 50 };;
+        int session_search_numcols = 5;
         {
             // main column widths
             uint8_t l;
@@ -305,6 +273,36 @@ session_load (const char *fname) {
                 }
                 session_search_colwidths[i] = w;
             }
+        }
+        // convert to common config
+        const char *colnames[] = {
+            "Playing",
+            "Artist / Album",
+            "Track №",
+            "Title / Track Artist",
+            "Duration"
+        };
+        int colids[] = {
+            DB_COLUMN_PLAYING,
+            DB_COLUMN_ARTIST_ALBUM,
+            DB_COLUMN_TRACK,
+            DB_COLUMN_TITLE,
+            DB_COLUMN_DURATION
+        };
+        int i;
+        for (i = 0; i < 5; i++) {
+            char key[128];
+            char value[128];
+            snprintf (key, sizeof (key), "playlist.column.%d", i);
+            snprintf (value, sizeof (value), "\"%s\" \"%s\" %d %d %d", colnames[i], "", colids[i], session_main_colwidths[i], i == 2 ? 1 : 0);
+            conf_set_str (key, value);
+        }
+        for (i = 1; i < 5; i++) {
+            char key[128];
+            char value[128];
+            snprintf (key, sizeof (key), "search.column.%d", i-1);
+            snprintf (value, sizeof (value), "\"%s\" \"%s\" %d %d %d", colnames[i], "", colids[i], session_main_colwidths[i], i == 2 ? 1 : 0);
+            conf_set_str (key, value);
         }
     }
 //    printf ("dir: %s\n", session_dir);
@@ -369,12 +367,3 @@ session_get_scroll_follows_playback (void) {
     return session_scroll_follows_playback;
 }
 
-int *
-session_get_main_colwidths_ptr (void) {
-    return session_main_colwidths;
-}
-
-int *
-session_get_search_colwidths_ptr (void) {
-    return session_search_colwidths;
-}

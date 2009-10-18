@@ -118,6 +118,17 @@ enum {
     DB_EV_MAX
 };
 
+// preset columns, working using IDs
+enum {
+    DB_COLUMN_PLAYING = 1,
+    DB_COLUMN_ARTIST_ALBUM = 2,
+    DB_COLUMN_ARTIST = 3,
+    DB_COLUMN_ALBUM = 4,
+    DB_COLUMN_TITLE = 5,
+    DB_COLUMN_DURATION = 6,
+    DB_COLUMN_TRACK = 7
+};
+
 // message ids for communicating with player
 enum {
     M_SONGFINISHED,
