@@ -358,10 +358,44 @@ palsa_callback (char *stream, int len) {
         return;
     }
     int bytesread = streamer_read (stream, len);
-    int ivolume = volume_get_amp () * 1000;
+
+// FIXME: move volume control to streamer_read for copy optimization
+#if 0
+    int16_t vol[4];
+    vol[0] = volume_get_amp () * 255; // that will be extra 8 bits
+    // pack 4 times
+    vol[1] = vol[2] = vol[3] = vol[0];
+
+    // apply volume with mmx
+    __asm__ volatile(
+            "  mov %0, %%ecx\n\t"
+            "  shr $4, %%ecx\n\t"
+            "  mov %1, %%eax\n\t"
+            "  movq %2, %mm1\n\t"
+            "1:\n\t"
+            "  movq [%%eax], %mm0\n\t"
+            "  movq %mm0, %mm2\n\t"
+            "  movq %mm0, %mm3\n\t"
+            "  pmullw %mm1, %mm2\n\t"
+            "  pmulhw %mm1, %mm3\n\t"
+            "  psrlw $8, %mm2\n\t" // discard lowest 8 bits
+            "  psllw $8, %mm3\n\t" // shift left 8 lsbs of hiwords
+            "  por %mm3, %mm2\n\t" // OR them together
+            "  movq %mm3, [%%eax]\n\t" // load back to memory
+            "  add $8, %%eax\n\t"
+            "  dec %%ecx\n\t"
+            "  jnz 1b\n\t"
+            :
+            : "r"(len), "r"(stream), "r"(vol)
+            : "%ecx", "%eax"
+       );
+
+#else
+    int16_t ivolume = volume_get_amp () * 1000;
     for (int i = 0; i < bytesread/2; i++) {
         ((int16_t*)stream)[i] = (int16_t)(((int32_t)(((int16_t*)stream)[i])) * ivolume / 1000);
     }
+#endif
     if (bytesread < len) {
         memset (stream + bytesread, 0, len-bytesread);
     }
