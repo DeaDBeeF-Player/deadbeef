@@ -1677,7 +1677,7 @@ gtkpl_append_column_from_textdef (gtkplaylist_t *pl, const uint8_t *def) {
     }
     // id
     e = def;
-    while (*e && isdigit (*e)) {
+    while (*e && (isdigit (*e) || *e == '-')) {
         e++;
     }
     if (*e == 0) {
