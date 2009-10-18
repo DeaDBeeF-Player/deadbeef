@@ -45,7 +45,7 @@ typedef struct {
     DB_vfs_t *vfs;
     char *url;
     uint8_t buffer[BUFFER_SIZE];
-    int64_t pos; // position in stream; use "& BUFFER_MASK" to make it index into ringbuffer
+    long pos; // position in stream; use "& BUFFER_MASK" to make it index into ringbuffer
     int seektoend; // indicates that next tell must return length
     int64_t length;
     int32_t remaining; // remaining bytes in buffer read from stream
