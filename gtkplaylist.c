@@ -80,6 +80,8 @@ float colo_white_blue[COLO_COUNT][3] = {
     { 0x09/255.f, 0x22/255.f, 0x3a/255.f }, // dragdrop marker
 };
 
+#define MIN_COLUMN_WIDTH 16
+
 // current color scheme
 float colo_current[COLO_COUNT][3];
 
@@ -1351,7 +1353,7 @@ on_header_motion_notify_event          (GtkWidget       *widget,
             x += c->width;
         }
 
-        int newx = event->x > x + 40 ? event->x : x + 40;
+        int newx = event->x > x + MIN_COLUMN_WIDTH ? event->x : x + MIN_COLUMN_WIDTH;
         c->width = newx - x;
         gtkpl_setup_hscrollbar (ps);
         gtkpl_header_draw (ps);
