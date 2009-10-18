@@ -1170,36 +1170,53 @@ gtkpl_header_draw (gtkplaylist_t *ps) {
     const char *detail = "toolbar";
 
     // fill background
-    gdk_draw_rectangle (ps->backbuf_header, widget->style->bg_gc[0], TRUE, 0, 0, widget->allocation.width, widget->allocation.height);
-    gtkpl_column_t *c;
-    for (c = ps->columns; c; c = c->next) {
-        if (x >= widget->allocation.width) {
-            break;
-        }
-        w = c->width;
-        if (w > 0) {
-            gtk_paint_box (widget->style, ps->backbuf_header, GTK_STATE_NORMAL, GTK_SHADOW_OUT, NULL, NULL, detail, x, 0, w - 2, h);
-            gtk_paint_vline (widget->style, ps->backbuf_header, GTK_STATE_NORMAL, NULL, NULL, NULL, 0, h, x+w - 2);
-        }
-        x += w;
-    }
-    if (x < widget->allocation.width) {
-        gtk_paint_box (widget->style, ps->backbuf_header, GTK_STATE_INSENSITIVE, GTK_SHADOW_OUT, NULL, NULL, detail, x, 0, widget->allocation.width-x, h);
-    }
+    gtk_paint_box (widget->style, ps->backbuf_header, GTK_STATE_NORMAL, GTK_SHADOW_OUT, NULL, NULL, detail, 0, 0, widget->allocation.width, widget->allocation.height);
     draw_begin ((uintptr_t)ps->backbuf_header);
     x = -ps->hscrollpos;
+    gtkpl_column_t *c;
+    int need_draw_moving = 0;
     for (c = ps->columns; c; c = c->next) {
-        if (x >= widget->allocation.width) {
-            break;
-        }
         w = c->width;
-        if (w > 0) {
-            GdkColor *gdkfg = &widget->style->fg[0];
-            float fg[3] = {(float)gdkfg->red/0xffff, (float)gdkfg->green/0xffff, (float)gdkfg->blue/0xffff};
-            draw_set_fg_color (fg);
-            draw_text (x + 5, h/2-draw_get_font_size()/2, c->width-10, 0, c->title);
+        if (!c->moving) {
+            if (x >= widget->allocation.width) {
+                continue;
+            }
+            if (w > 0) {
+                gtk_paint_vline (widget->style, ps->backbuf_header, GTK_STATE_NORMAL, NULL, NULL, NULL, 0, h, x+w - 2);
+                GdkColor *gdkfg = &widget->style->fg[0];
+                float fg[3] = {(float)gdkfg->red/0xffff, (float)gdkfg->green/0xffff, (float)gdkfg->blue/0xffff};
+                draw_set_fg_color (fg);
+                draw_text (x + 5, h/2-draw_get_font_size()/2, c->width-10, 0, c->title);
+            }
+        }
+        else {
+            need_draw_moving = 1;
         }
         x += w;
+    }
+    if (need_draw_moving) {
+        x = -ps->hscrollpos;
+        for (c = ps->columns; c; c = c->next) {
+            w = c->width;
+            if (c->moving) {
+                // draw empty slot
+                if (x < widget->allocation.width) {
+                    gtk_paint_box (widget->style, ps->backbuf_header, GTK_STATE_ACTIVE, GTK_SHADOW_ETCHED_IN, NULL, NULL, "button", x, 0, w, h);
+                }
+                x = c->movepos;
+                if (x >= widget->allocation.width) {
+                    break;
+                }
+                if (w > 0) {
+                    gtk_paint_box (widget->style, ps->backbuf_header, GTK_STATE_SELECTED, GTK_SHADOW_OUT, NULL, NULL, "button", x, 0, w, h);
+                    GdkColor *gdkfg = &widget->style->fg[0];
+                    float fg[3] = {(float)gdkfg->red/0xffff, (float)gdkfg->green/0xffff, (float)gdkfg->blue/0xffff};
+                    draw_set_fg_color (fg);
+                    draw_text (x + 5, h/2-draw_get_font_size()/2, c->width-10, 0, c->title);
+                }
+            }
+            x += w;
+        }
     }
     draw_end ();
 }
@@ -1260,6 +1277,62 @@ on_header_motion_notify_event          (GtkWidget       *widget,
     GTKPL_PROLOGUE;
     if (header_dragging >= 0) {
         gdk_window_set_cursor (widget->window, cursor_drag);
+        gtkpl_column_t *c;
+        int i;
+        for (i = 0, c = ps->columns; i < header_dragging && c; c = c->next, i++);
+        c->moving = 1;
+        c->movepos = event->x - header_dragpt[0];
+
+        // find closest column to the left
+        int inspos = -1;
+        gtkpl_column_t *cc;
+        int x = 0;
+        int idx = 0;
+        for (cc = ps->columns; cc; cc = cc->next, idx++) {
+            if (x < c->movepos && x + c->width > c->movepos) {
+                inspos = idx;
+            }
+            x += cc->width;
+        }
+        if (inspos >= 0 && inspos != header_dragging) {
+            // remove c from list
+            if (c == ps->columns) {
+                ps->columns = c->next;
+            }
+            else {
+                for (cc = ps->columns; cc; cc = cc->next) {
+                    if (cc->next == c) {
+                        cc->next = c->next;
+                    }
+                }
+            }
+            c->next = NULL;
+            // reinsert c at position inspos update header_dragging to new idx
+            header_dragging = inspos;
+            if (inspos == 0) {
+                c->next = ps->columns;
+                ps->columns = c;
+            }
+            else {
+                idx = 0;
+                gtkpl_column_t *prev = NULL;
+                for (cc = ps->columns; cc; cc = cc->next, idx++, prev = cc) {
+                    if (idx+1 == inspos) {
+                        gtkpl_column_t *next = cc->next;
+                        cc->next = c;
+                        c->next = next;
+                        break;
+                    }
+                }
+            }
+            // force redraw of everything
+            gtkpl_setup_hscrollbar (ps);
+            gtkpl_draw_playlist (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
+            gtkpl_expose (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
+            gtkpl_column_update_config (ps, c, i);
+        }
+        gtkpl_header_draw (ps);
+        gtkpl_expose_header (ps, 0, 0, ps->header->allocation.width, ps->header->allocation.height);
     }
     else if (header_sizing >= 0) {
         // limit event rate
@@ -1332,8 +1405,11 @@ on_header_button_press_event           (GtkWidget       *widget,
                 header_dragging = -1;
                 break;
             }
-            else {
+            else if (event->x > x + 2 && event->x < x + w - 2) {
+                header_dragpt[0] = event->x - x;
                 header_dragging = i;
+                header_sizing = -1;
+                break;
             }
             x += w;
         }
@@ -1349,8 +1425,6 @@ on_header_button_release_event         (GtkWidget       *widget,
                                         gpointer         user_data)
 {
     GTKPL_PROLOGUE;
-    header_dragging = -1;
-    header_sizing = -1;
     int x = 0;
     gtkpl_column_t *c;
     for (c = ps->columns; c; c = c->next) {
@@ -1362,8 +1436,19 @@ on_header_button_release_event         (GtkWidget       *widget,
         else {
             gdk_window_set_cursor (widget->window, NULL);
         }
+        c->moving = 0;
         x += w;
     }
+    if (header_dragging >= 0) {
+        gtkpl_setup_hscrollbar (ps);
+        gtkpl_header_draw (ps);
+        gtkpl_expose_header (ps, 0, 0, ps->header->allocation.width, ps->header->allocation.height);
+        gtkpl_draw_playlist (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
+        gtkpl_expose (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
+        gtkpl_column_rewrite_config (ps);
+    }
+    header_dragging = -1;
+    header_sizing = -1;
     return FALSE;
 }
 

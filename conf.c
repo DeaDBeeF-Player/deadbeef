@@ -216,13 +216,23 @@ conf_setchanged (int c) {
 void
 conf_remove_items (const char *key) {
     int l = strlen (key);
-    DB_conf_item_t *it = conf_find (key, NULL);
-    while (it) {
-        DB_conf_item_t *next = it->next;
-        conf_item_free (it);
-        it = next;
-        if (strncasecmp (key, it->key, l)) {
+    DB_conf_item_t *prev = NULL;
+    DB_conf_item_t *it;
+    for (it = conf_items; it; prev = it, it = it->next) {
+        if (!strncasecmp (key, it->key, l)) {
             break;
         }
+    }
+    DB_conf_item_t *next = NULL;
+    while (it) {
+        next = it->next;
+        conf_item_free (it);
+        it = next;
+        if (!it || strncasecmp (key, it->key, l)) {
+            break;
+        }
+    }
+    if (prev) {
+        prev->next = next;
     }
 }
