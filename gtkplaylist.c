@@ -88,18 +88,14 @@ float colo_current[COLO_COUNT][3];
 // playlist row height
 int rowheight = -1;
 
-#if 0
-const char *colnames[pl_ncolumns] = {
-    "Playing",
-    "Artist / Album",
-    "Track №",
-    "Title / Track Artist",
-    "Duration"
-};
-#endif
-
 static uintptr_t play16_pixbuf;
 static uintptr_t pause16_pixbuf;
+
+static GdkCursor* cursor_sz;
+static GdkCursor* cursor_drag;
+static int header_dragging = -1;
+static int header_sizing = -1;
+static int header_dragpt[2];
 
 // that must be called before gtk_init
 void
@@ -1177,9 +1173,10 @@ gtkpl_header_draw (gtkplaylist_t *ps) {
     x = -ps->hscrollpos;
     gtkpl_column_t *c;
     int need_draw_moving = 0;
-    for (c = ps->columns; c; c = c->next) {
+    int idx = 0;
+    for (c = ps->columns; c; c = c->next, idx++) {
         w = c->width;
-        if (!c->moving) {
+        if (header_dragging < 0 || idx != header_dragging) {
             if (x >= widget->allocation.width) {
                 continue;
             }
@@ -1198,9 +1195,10 @@ gtkpl_header_draw (gtkplaylist_t *ps) {
     }
     if (need_draw_moving) {
         x = -ps->hscrollpos;
-        for (c = ps->columns; c; c = c->next) {
+        idx = 0;
+        for (c = ps->columns; c; c = c->next, idx++) {
             w = c->width;
-            if (c->moving) {
+            if (idx == header_dragging) {
                 // draw empty slot
                 if (x < widget->allocation.width) {
                     gtk_paint_box (widget->style, ps->backbuf_header, GTK_STATE_ACTIVE, GTK_SHADOW_ETCHED_IN, NULL, NULL, "button", x, 0, w, h);
@@ -1251,12 +1249,6 @@ on_header_configure_event              (GtkWidget       *widget,
 }
 
 
-GdkCursor* cursor_sz;
-GdkCursor* cursor_drag;
-int header_dragging = -1;
-int header_sizing = -1;
-int header_dragpt[2];
-
 void
 on_header_realize                      (GtkWidget       *widget,
                                         gpointer         user_data)
@@ -1282,7 +1274,6 @@ on_header_motion_notify_event          (GtkWidget       *widget,
         gtkpl_column_t *c;
         int i;
         for (i = 0, c = ps->columns; i < header_dragging && c; c = c->next, i++);
-        c->moving = 1;
         c->movepos = event->x - header_dragpt[0];
 
         // find closest column to the left
@@ -1427,30 +1418,35 @@ on_header_button_release_event         (GtkWidget       *widget,
                                         gpointer         user_data)
 {
     GTKPL_PROLOGUE;
-    int x = 0;
-    gtkpl_column_t *c;
-    for (c = ps->columns; c; c = c->next) {
-        int w = c->width;
-        if (event->x >= x + w - 2 && event->x <= x + w) {
-            gdk_window_set_cursor (widget->window, cursor_sz);
-            break;
+    if (event->button == 1) {
+        header_sizing = -1;
+        int x = 0;
+        gtkpl_column_t *c;
+        for (c = ps->columns; c; c = c->next) {
+            int w = c->width;
+            if (event->x >= x + w - 2 && event->x <= x + w) {
+                gdk_window_set_cursor (widget->window, cursor_sz);
+                break;
+            }
+            else {
+                gdk_window_set_cursor (widget->window, NULL);
+            }
+            x += w;
         }
-        else {
-            gdk_window_set_cursor (widget->window, NULL);
+        if (header_dragging >= 0) {
+            header_dragging = -1;
+            gtkpl_setup_hscrollbar (ps);
+            gtkpl_header_draw (ps);
+            gtkpl_expose_header (ps, 0, 0, ps->header->allocation.width, ps->header->allocation.height);
+            gtkpl_draw_playlist (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
+            gtkpl_expose (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
+            gtkpl_column_rewrite_config (ps);
         }
-        c->moving = 0;
-        x += w;
     }
-    if (header_dragging >= 0) {
-        gtkpl_setup_hscrollbar (ps);
-        gtkpl_header_draw (ps);
-        gtkpl_expose_header (ps, 0, 0, ps->header->allocation.width, ps->header->allocation.height);
-        gtkpl_draw_playlist (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
-        gtkpl_expose (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
-        gtkpl_column_rewrite_config (ps);
+    else if (event->button == 3) {
+        GtkWidget *menu = create_headermenu ();
+        gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, widget, 0, gtk_get_current_event_time());
     }
-    header_dragging = -1;
-    header_sizing = -1;
     return FALSE;
 }
 

@@ -594,3 +594,39 @@ on_pref_replaygain_mode_changed        (GtkComboBox     *combobox,
 void
 on_pref_pluginlist_cursor_changed      (GtkTreeView     *treeview,
                                         gpointer         user_data);
+
+gboolean
+on_header_popup_menu                   (GtkWidget       *widget,
+                                        gpointer         user_data);
+
+void
+on_artist_activate                     (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_album_activate                      (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_tracknum_activate                   (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_duration_activate                   (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_playing_activate                    (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_title_activate                      (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_custom_activate                     (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_remove_column_activate              (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);

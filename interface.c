@@ -462,7 +462,7 @@ create_mainwin (void)
   gtk_widget_show (header);
   gtk_box_pack_start (GTK_BOX (vbox3), header, FALSE, TRUE, 0);
   gtk_widget_set_size_request (header, -1, 24);
-  gtk_widget_set_events (header, GDK_POINTER_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK);
+  gtk_widget_set_events (header, GDK_POINTER_MOTION_MASK | GDK_BUTTON_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK);
 
   playlist = gtk_drawing_area_new ();
   gtk_widget_show (playlist);
@@ -1442,5 +1442,109 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, label3, "label3");
 
   return prefwin;
+}
+
+GtkWidget*
+create_headermenu (void)
+{
+  GtkWidget *headermenu;
+  GtkWidget *add_column;
+  GtkWidget *add_column_menu;
+  GtkWidget *artist;
+  GtkWidget *album;
+  GtkWidget *tracknum;
+  GtkWidget *duration;
+  GtkWidget *playing;
+  GtkWidget *title;
+  GtkWidget *separator7;
+  GtkWidget *custom;
+  GtkWidget *remove_column;
+
+  headermenu = gtk_menu_new ();
+
+  add_column = gtk_menu_item_new_with_mnemonic ("Add column");
+  gtk_widget_show (add_column);
+  gtk_container_add (GTK_CONTAINER (headermenu), add_column);
+
+  add_column_menu = gtk_menu_new ();
+  gtk_menu_item_set_submenu (GTK_MENU_ITEM (add_column), add_column_menu);
+
+  artist = gtk_menu_item_new_with_mnemonic ("Artist");
+  gtk_widget_show (artist);
+  gtk_container_add (GTK_CONTAINER (add_column_menu), artist);
+
+  album = gtk_menu_item_new_with_mnemonic ("Album");
+  gtk_widget_show (album);
+  gtk_container_add (GTK_CONTAINER (add_column_menu), album);
+
+  tracknum = gtk_menu_item_new_with_mnemonic ("Track number");
+  gtk_widget_show (tracknum);
+  gtk_container_add (GTK_CONTAINER (add_column_menu), tracknum);
+
+  duration = gtk_menu_item_new_with_mnemonic ("Duration");
+  gtk_widget_show (duration);
+  gtk_container_add (GTK_CONTAINER (add_column_menu), duration);
+
+  playing = gtk_menu_item_new_with_mnemonic ("Playing status");
+  gtk_widget_show (playing);
+  gtk_container_add (GTK_CONTAINER (add_column_menu), playing);
+
+  title = gtk_menu_item_new_with_mnemonic ("Title");
+  gtk_widget_show (title);
+  gtk_container_add (GTK_CONTAINER (add_column_menu), title);
+
+  separator7 = gtk_separator_menu_item_new ();
+  gtk_widget_show (separator7);
+  gtk_container_add (GTK_CONTAINER (add_column_menu), separator7);
+  gtk_widget_set_sensitive (separator7, FALSE);
+
+  custom = gtk_menu_item_new_with_mnemonic ("Custom");
+  gtk_widget_show (custom);
+  gtk_container_add (GTK_CONTAINER (add_column_menu), custom);
+
+  remove_column = gtk_menu_item_new_with_mnemonic ("Remove this column");
+  gtk_widget_show (remove_column);
+  gtk_container_add (GTK_CONTAINER (headermenu), remove_column);
+
+  g_signal_connect ((gpointer) artist, "activate",
+                    G_CALLBACK (on_artist_activate),
+                    NULL);
+  g_signal_connect ((gpointer) album, "activate",
+                    G_CALLBACK (on_album_activate),
+                    NULL);
+  g_signal_connect ((gpointer) tracknum, "activate",
+                    G_CALLBACK (on_tracknum_activate),
+                    NULL);
+  g_signal_connect ((gpointer) duration, "activate",
+                    G_CALLBACK (on_duration_activate),
+                    NULL);
+  g_signal_connect ((gpointer) playing, "activate",
+                    G_CALLBACK (on_playing_activate),
+                    NULL);
+  g_signal_connect ((gpointer) title, "activate",
+                    G_CALLBACK (on_title_activate),
+                    NULL);
+  g_signal_connect ((gpointer) custom, "activate",
+                    G_CALLBACK (on_custom_activate),
+                    NULL);
+  g_signal_connect ((gpointer) remove_column, "activate",
+                    G_CALLBACK (on_remove_column_activate),
+                    NULL);
+
+  /* Store pointers to all widgets, for use by lookup_widget(). */
+  GLADE_HOOKUP_OBJECT_NO_REF (headermenu, headermenu, "headermenu");
+  GLADE_HOOKUP_OBJECT (headermenu, add_column, "add_column");
+  GLADE_HOOKUP_OBJECT (headermenu, add_column_menu, "add_column_menu");
+  GLADE_HOOKUP_OBJECT (headermenu, artist, "artist");
+  GLADE_HOOKUP_OBJECT (headermenu, album, "album");
+  GLADE_HOOKUP_OBJECT (headermenu, tracknum, "tracknum");
+  GLADE_HOOKUP_OBJECT (headermenu, duration, "duration");
+  GLADE_HOOKUP_OBJECT (headermenu, playing, "playing");
+  GLADE_HOOKUP_OBJECT (headermenu, title, "title");
+  GLADE_HOOKUP_OBJECT (headermenu, separator7, "separator7");
+  GLADE_HOOKUP_OBJECT (headermenu, custom, "custom");
+  GLADE_HOOKUP_OBJECT (headermenu, remove_column, "remove_column");
+
+  return headermenu;
 }
 

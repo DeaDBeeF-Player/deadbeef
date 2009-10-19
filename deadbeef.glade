@@ -720,7 +720,7 @@
 		    <widget class="GtkDrawingArea" id="header">
 		      <property name="height_request">24</property>
 		      <property name="visible">True</property>
-		      <property name="events">GDK_POINTER_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+		      <property name="events">GDK_POINTER_MOTION_MASK | GDK_BUTTON_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
 		      <signal name="expose_event" handler="on_header_expose_event" last_modification_time="Thu, 06 Aug 2009 14:54:29 GMT"/>
 		      <signal name="configure_event" handler="on_header_configure_event" last_modification_time="Thu, 06 Aug 2009 14:54:33 GMT"/>
 		      <signal name="realize" handler="on_header_realize" last_modification_time="Thu, 06 Aug 2009 14:54:41 GMT"/>
@@ -1993,6 +1993,100 @@ Album</property>
 	  <property name="type">tab</property>
 	</packing>
       </child>
+    </widget>
+  </child>
+</widget>
+
+<widget class="GtkMenu" id="headermenu">
+
+  <child>
+    <widget class="GtkMenuItem" id="add_column">
+      <property name="visible">True</property>
+      <property name="label" translatable="yes">Add column</property>
+      <property name="use_underline">True</property>
+
+      <child>
+	<widget class="GtkMenu" id="add_column_menu">
+
+	  <child>
+	    <widget class="GtkMenuItem" id="artist">
+	      <property name="visible">True</property>
+	      <property name="label" translatable="yes">Artist</property>
+	      <property name="use_underline">True</property>
+	      <signal name="activate" handler="on_artist_activate" last_modification_time="Mon, 19 Oct 2009 19:30:04 GMT"/>
+	    </widget>
+	  </child>
+
+	  <child>
+	    <widget class="GtkMenuItem" id="album">
+	      <property name="visible">True</property>
+	      <property name="label" translatable="yes">Album</property>
+	      <property name="use_underline">True</property>
+	      <signal name="activate" handler="on_album_activate" last_modification_time="Mon, 19 Oct 2009 19:30:04 GMT"/>
+	    </widget>
+	  </child>
+
+	  <child>
+	    <widget class="GtkMenuItem" id="tracknum">
+	      <property name="visible">True</property>
+	      <property name="label" translatable="yes">Track number</property>
+	      <property name="use_underline">True</property>
+	      <signal name="activate" handler="on_tracknum_activate" last_modification_time="Mon, 19 Oct 2009 19:30:04 GMT"/>
+	    </widget>
+	  </child>
+
+	  <child>
+	    <widget class="GtkMenuItem" id="duration">
+	      <property name="visible">True</property>
+	      <property name="label" translatable="yes">Duration</property>
+	      <property name="use_underline">True</property>
+	      <signal name="activate" handler="on_duration_activate" last_modification_time="Mon, 19 Oct 2009 19:30:04 GMT"/>
+	    </widget>
+	  </child>
+
+	  <child>
+	    <widget class="GtkMenuItem" id="playing">
+	      <property name="visible">True</property>
+	      <property name="label" translatable="yes">Playing status</property>
+	      <property name="use_underline">True</property>
+	      <signal name="activate" handler="on_playing_activate" last_modification_time="Mon, 19 Oct 2009 19:30:04 GMT"/>
+	    </widget>
+	  </child>
+
+	  <child>
+	    <widget class="GtkMenuItem" id="title">
+	      <property name="visible">True</property>
+	      <property name="label" translatable="yes">Title</property>
+	      <property name="use_underline">True</property>
+	      <signal name="activate" handler="on_title_activate" last_modification_time="Mon, 19 Oct 2009 19:30:04 GMT"/>
+	    </widget>
+	  </child>
+
+	  <child>
+	    <widget class="GtkSeparatorMenuItem" id="separator7">
+	      <property name="visible">True</property>
+	    </widget>
+	  </child>
+
+	  <child>
+	    <widget class="GtkMenuItem" id="custom">
+	      <property name="visible">True</property>
+	      <property name="label" translatable="yes">Custom</property>
+	      <property name="use_underline">True</property>
+	      <signal name="activate" handler="on_custom_activate" last_modification_time="Mon, 19 Oct 2009 19:30:04 GMT"/>
+	    </widget>
+	  </child>
+	</widget>
+      </child>
+    </widget>
+  </child>
+
+  <child>
+    <widget class="GtkMenuItem" id="remove_column">
+      <property name="visible">True</property>
+      <property name="label" translatable="yes">Remove this column</property>
+      <property name="use_underline">True</property>
+      <signal name="activate" handler="on_remove_column_activate" last_modification_time="Mon, 19 Oct 2009 19:30:04 GMT"/>
     </widget>
   </child>
 </widget>

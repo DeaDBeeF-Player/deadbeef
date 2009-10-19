@@ -57,7 +57,7 @@ typedef struct gtkpl_column_s {
     int movepos; // valid only while `moving' is 1
     struct gtkpl_column_s *next;
     unsigned align_right : 1;
-    unsigned moving : 1;
+//    unsigned moving : 1;
 } gtkpl_column_t;
 
 // structure of this kind must be set as user data for playlist, header and scrollbar widgets
