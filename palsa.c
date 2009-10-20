@@ -36,7 +36,7 @@
 
 static snd_pcm_t *audio;
 static int16_t *samplebuffer;
-static int bufsize = 2048*4;
+static int bufsize = -1;
 static int alsa_terminate;
 static int alsa_rate = 48000;
 static int state; // 0 = stopped, 1 = playing, 2 = pause
@@ -96,12 +96,18 @@ palsa_init (void) {
     }
 
     snd_pcm_hw_params_get_format (hw_params, &fmt);
-    printf ("chosen format: %d\n", (int)fmt);
+    printf ("chosen sample format: %04Xh\n", (int)fmt);
 
     canpause = 0;//snd_pcm_hw_params_can_pause (hw_params);
 
     int val = alsa_rate;
     int ret = 0;
+
+    if ((err = snd_pcm_hw_params_set_rate_resample (audio, hw_params, 0)) < 0) {
+        trace ("cannot setup resampling (%s)\n",
+                snd_strerror (err));
+        goto open_error;
+    }
 
     if ((err = snd_pcm_hw_params_set_rate_near (audio, hw_params, &val, &ret)) < 0) {
         trace ("cannot set sample rate (%s)\n",
@@ -109,7 +115,22 @@ palsa_init (void) {
         goto open_error;
     }
     alsa_rate = val;
-    printf ("chosen samplerate: %d\n", alsa_rate);
+    printf ("chosen samplerate: %d Hz\n", alsa_rate);
+
+    unsigned int buffer_time = 500000;
+    int dir;
+    if ((err = snd_pcm_hw_params_set_buffer_time_near (audio, hw_params, &buffer_time, &dir)) < 0) {
+        trace ("Unable to set buffer time %i for playback: %s\n", buffer_time, snd_strerror(err));
+        goto open_error;
+    }
+    trace ("alsa buffer time: %d ms\n", buffer_time);
+    snd_pcm_uframes_t size;
+    if ((err = snd_pcm_hw_params_get_buffer_size (hw_params, &size)) < 0) {
+        trace ("Unable to get buffer size for playback: %s\n", snd_strerror(err));
+        goto open_error;
+    }
+    trace ("alsa buffer size: %d frames\n", size);
+    bufsize = size;
 
     if ((err = snd_pcm_hw_params_set_channels (audio, hw_params, 2)) < 0) {
         trace ("cannot set channel count (%s)\n",
@@ -119,7 +140,7 @@ palsa_init (void) {
 
     int nchan;
     snd_pcm_hw_params_get_channels (hw_params, &nchan);
-    printf ("nchannels: %d\n", nchan);
+    printf ("alsa channels: %d\n", nchan);
 
     if ((err = snd_pcm_hw_params (audio, hw_params)) < 0) {
         trace ("cannot set parameters (%s)\n",
@@ -139,16 +160,19 @@ palsa_init (void) {
                 snd_strerror (err));
         goto open_error;
     }
-    if ((err = snd_pcm_sw_params_set_avail_min (audio, sw_params, bufsize/4)) < 0) {
+
+    if ((err = snd_pcm_sw_params_set_avail_min (audio, sw_params, size/2)) < 0) {
         trace ("cannot set minimum available count (%s)\n",
                 snd_strerror (err));
         goto open_error;
     }
-
-    snd_pcm_uframes_t nsamp;
-    snd_pcm_sw_params_get_avail_min (sw_params, &nsamp);
-    printf ("nsamples: %d\n", (int)nsamp);
-    bufsize = nsamp * 4;
+    snd_pcm_uframes_t av;
+    if ((err = snd_pcm_sw_params_get_avail_min (sw_params, &av)) < 0) {
+        trace ("snd_pcm_sw_params_get_avail_min failed (%s)\n",
+                snd_strerror (err));
+        goto open_error;
+    }
+    trace ("alsa period size: %d frames\n", av);
 
     if ((err = snd_pcm_sw_params_set_start_threshold (audio, sw_params, 0U)) < 0) {
         trace ("cannot set start mode (%s)\n",
@@ -178,7 +202,7 @@ palsa_init (void) {
 
     if (!samplebuffer)
     {
-        printf ("AUDIO: Unable to allocate memory for sample buffers.\n");
+        trace ("AUDIO: Unable to allocate memory for sample buffers.\n");
         goto open_error;
     }
 
@@ -305,7 +329,7 @@ palsa_thread (uintptr_t context) {
         if (alsa_terminate) {
             break;
         }
-        if (state != 1) {
+        if (state == 0) {
             usleep (10000);
             continue;
         }
@@ -313,7 +337,11 @@ palsa_thread (uintptr_t context) {
         /* wait till the interface is ready for data, or 1 second
            has elapsed.
          */
-        if ((err = snd_pcm_wait (audio, 1000)) < 0 && state == 1) {
+        if ((err = snd_pcm_wait (audio, 500)) < 0 && state == 1) {
+            printf ("snd_pcm_wait failed, error: %s\n", snd_strerror (err));
+            mutex_unlock (mutex);
+            snd_pcm_prepare (audio);
+            continue;
             trace ("snd_pcm_wait failed, restarting alsa\n");
             messagepump_push (M_REINIT_SOUND, 0, 0, 0);
             mutex_unlock (mutex);
@@ -336,10 +364,8 @@ palsa_thread (uintptr_t context) {
             }
         }
 
-        frames_to_deliver = frames_to_deliver > bufsize/4 ? bufsize/4 : frames_to_deliver;
-
         /* deliver the data */
-        char buf[bufsize];
+        char buf[frames_to_deliver*4];
         palsa_callback (buf, frames_to_deliver*4);
         if ((err = snd_pcm_writei (audio, buf, frames_to_deliver)) < 0) {
             trace ("write %d frames failed (%s)\n", frames_to_deliver, snd_strerror (err));
