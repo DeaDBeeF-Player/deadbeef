@@ -711,6 +711,10 @@ streamer_unlock (void) {
 
 int
 streamer_read (char *bytes, int size) {
+#if 0
+    struct timeval tm1;
+    gettimeofday (&tm1, NULL);
+#endif
     streamer_lock ();
     int sz = min (size, streambuffer_fill);
     if (sz) {
@@ -751,6 +755,13 @@ streamer_read (char *bytes, int size) {
         }
     }
     streamer_unlock ();
+#if 0
+    struct timeval tm2;
+    gettimeofday (&tm2, NULL);
+
+    int ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
+    printf ("streamer_read took %d ms\n", ms);
+#endif
     return sz;
 }
 
