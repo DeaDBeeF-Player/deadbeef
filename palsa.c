@@ -338,14 +338,18 @@ palsa_thread (uintptr_t context) {
            has elapsed.
          */
         if ((err = snd_pcm_wait (audio, 500)) < 0 && state == 1) {
-            printf ("snd_pcm_wait failed, error: %s\n", snd_strerror (err));
-            mutex_unlock (mutex);
-            snd_pcm_prepare (audio);
-            continue;
-            trace ("snd_pcm_wait failed, restarting alsa\n");
-            messagepump_push (M_REINIT_SOUND, 0, 0, 0);
-            mutex_unlock (mutex);
-            break;
+            if (err == -ESTRPIPE) {
+                trace ("alsa: trying to recover from suspend...\n");
+                messagepump_push (M_REINIT_SOUND, 0, 0, 0);
+                mutex_unlock (mutex);
+                break;
+            }
+            else {
+                trace ("alsa: trying to recover from xrun...\n");
+                snd_pcm_prepare (audio);
+                mutex_unlock (mutex);
+                continue;
+            }
         }	           
 
         /* find out how much space is available for playback data */
