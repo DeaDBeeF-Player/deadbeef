@@ -65,6 +65,7 @@ palsa_init (void) {
         exit (-1);
     }
 
+    mutex = mutex_create ();
     if ((err = snd_pcm_hw_params_malloc (&hw_params)) < 0) {
         trace ("cannot allocate hardware parameter structure (%s)\n",
                 snd_strerror (err));
@@ -117,6 +118,16 @@ palsa_init (void) {
     alsa_rate = val;
     printf ("chosen samplerate: %d Hz\n", alsa_rate);
 
+    if ((err = snd_pcm_hw_params_set_channels (audio, hw_params, 2)) < 0) {
+        trace ("cannot set channel count (%s)\n",
+                snd_strerror (err));
+        goto open_error;
+    }
+
+    int nchan;
+    snd_pcm_hw_params_get_channels (hw_params, &nchan);
+    printf ("alsa channels: %d\n", nchan);
+
     unsigned int buffer_time = 500000;
     int dir;
     if ((err = snd_pcm_hw_params_set_buffer_time_near (audio, hw_params, &buffer_time, &dir)) < 0) {
@@ -131,16 +142,6 @@ palsa_init (void) {
     }
     trace ("alsa buffer size: %d frames\n", size);
     bufsize = size;
-
-    if ((err = snd_pcm_hw_params_set_channels (audio, hw_params, 2)) < 0) {
-        trace ("cannot set channel count (%s)\n",
-                snd_strerror (err));
-        goto open_error;
-    }
-
-    int nchan;
-    snd_pcm_hw_params_get_channels (hw_params, &nchan);
-    printf ("alsa channels: %d\n", nchan);
 
     if ((err = snd_pcm_hw_params (audio, hw_params)) < 0) {
         trace ("cannot set parameters (%s)\n",
@@ -207,7 +208,6 @@ palsa_init (void) {
     }
 
     alsa_terminate = 0;
-    mutex = mutex_create ();
     alsa_tid = thread_start (palsa_thread, 0);
 
     return 0;
