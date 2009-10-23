@@ -244,4 +244,7 @@ gtkpl_column_update_config (gtkplaylist_t *pl, gtkpl_column_t *c, int idx);
 void
 gtkpl_column_rewrite_config (gtkplaylist_t *pl);
 
+void
+gtkpl_expose_header (gtkplaylist_t *ps, int x, int y, int w, int h);
+
 #endif // __GTKPLAYLIST_H

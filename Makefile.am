@@ -45,7 +45,8 @@ deadbeef_SOURCES =\
 	session.h session.c gtksession.c\
 	junklib.h junklib.c utf8.c utf8.h\
 	optmath.h\
-	vfs.c vfs.h vfs_stdio.c
+	vfs.c vfs.h vfs_stdio.c\
+	timeline.c timeline.h
 
 sdkdir = $(pkgincludedir)
 sdk_HEADERS = deadbeef.h
