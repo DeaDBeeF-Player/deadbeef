@@ -243,6 +243,7 @@ palsa_free (void) {
 static int hwpaused;
 static void
 palsa_hw_pause (int pause) {
+    mutex_lock (mutex);
     if (canpause) {
         snd_pcm_pause (audio, pause);
     }
@@ -257,6 +258,7 @@ palsa_hw_pause (int pause) {
         hwpaused = pause;
     }
     hwpaused = pause;
+    mutex_unlock (mutex);
 }
 
 int
@@ -328,7 +330,7 @@ palsa_thread (uintptr_t context) {
         if (alsa_terminate) {
             break;
         }
-        if (state == 0) {
+        if (state != 1) {
             usleep (10000);
             continue;
         }
