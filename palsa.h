@@ -25,6 +25,9 @@ void
 palsa_free (void);
 
 int
+palsa_change_rate (int rate);
+
+int
 palsa_play (void);
 
 int

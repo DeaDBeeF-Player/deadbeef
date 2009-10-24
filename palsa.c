@@ -35,7 +35,6 @@
 //#define trace(fmt,...)
 
 static snd_pcm_t *audio;
-static int16_t *samplebuffer;
 static int bufsize = -1;
 static int alsa_terminate;
 static int alsa_rate = 48000;
@@ -50,38 +49,28 @@ palsa_callback (char *stream, int len);
 static void
 palsa_thread (uintptr_t context);
 
-int
-palsa_init (void) {
-    int err;
-    snd_pcm_hw_params_t *hw_params;
-    snd_pcm_sw_params_t *sw_params;
-    state = 0;
-    alsa_rate = conf_get_int ("samplerate", 48000);
-    const char *conf_alsa_soundcard = conf_get_str ("alsa_soundcard", "default");
+static int
+palsa_set_hw_params (int samplerate) {
+    snd_pcm_hw_params_t *hw_params = NULL;
+    int alsa_resample = conf_get_int ("alsa.resample", 0);
+    int err = 0;
 
-    if ((err = snd_pcm_open (&audio, conf_alsa_soundcard, SND_PCM_STREAM_PLAYBACK, 0))) {
-        trace ("could not open audio device (%s)\n",
-                snd_strerror (err));
-        exit (-1);
-    }
-
-    mutex = mutex_create ();
     if ((err = snd_pcm_hw_params_malloc (&hw_params)) < 0) {
         trace ("cannot allocate hardware parameter structure (%s)\n",
                 snd_strerror (err));
-        goto open_error;
+        goto error;
     }
 
     if ((err = snd_pcm_hw_params_any (audio, hw_params)) < 0) {
         trace ("cannot initialize hardware parameter structure (%s)\n",
                 snd_strerror (err));
-        goto open_error;
+        goto error;
     }
 
     if ((err = snd_pcm_hw_params_set_access (audio, hw_params, SND_PCM_ACCESS_RW_INTERLEAVED)) < 0) {
         trace ("cannot set access type (%s)\n",
                 snd_strerror (err));
-        goto open_error;
+        goto error;
     }
 
     snd_pcm_format_t fmt;
@@ -93,7 +82,7 @@ palsa_init (void) {
     if ((err = snd_pcm_hw_params_set_format (audio, hw_params, fmt)) < 0) {
         trace ("cannot set sample format (%s)\n",
                 snd_strerror (err));
-        goto open_error;
+        goto error;
     }
 
     snd_pcm_hw_params_get_format (hw_params, &fmt);
@@ -101,19 +90,19 @@ palsa_init (void) {
 
     canpause = 0;//snd_pcm_hw_params_can_pause (hw_params);
 
-    int val = alsa_rate;
+    int val = samplerate;
     int ret = 0;
 
-    if ((err = snd_pcm_hw_params_set_rate_resample (audio, hw_params, 0)) < 0) {
+    if ((err = snd_pcm_hw_params_set_rate_resample (audio, hw_params, alsa_resample)) < 0) {
         trace ("cannot setup resampling (%s)\n",
                 snd_strerror (err));
-        goto open_error;
+        goto error;
     }
 
     if ((err = snd_pcm_hw_params_set_rate_near (audio, hw_params, &val, &ret)) < 0) {
         trace ("cannot set sample rate (%s)\n",
                 snd_strerror (err));
-        goto open_error;
+        goto error;
     }
     alsa_rate = val;
     printf ("chosen samplerate: %d Hz\n", alsa_rate);
@@ -121,7 +110,7 @@ palsa_init (void) {
     if ((err = snd_pcm_hw_params_set_channels (audio, hw_params, 2)) < 0) {
         trace ("cannot set channel count (%s)\n",
                 snd_strerror (err));
-        goto open_error;
+        goto error;
     }
 
     int nchan;
@@ -132,13 +121,13 @@ palsa_init (void) {
     int dir;
     if ((err = snd_pcm_hw_params_set_buffer_time_near (audio, hw_params, &buffer_time, &dir)) < 0) {
         trace ("Unable to set buffer time %i for playback: %s\n", buffer_time, snd_strerror(err));
-        goto open_error;
+        goto error;
     }
     trace ("alsa buffer time: %d ms\n", buffer_time);
     snd_pcm_uframes_t size;
     if ((err = snd_pcm_hw_params_get_buffer_size (hw_params, &size)) < 0) {
         trace ("Unable to get buffer size for playback: %s\n", snd_strerror(err));
-        goto open_error;
+        goto error;
     }
     trace ("alsa buffer size: %d frames\n", size);
     bufsize = size;
@@ -146,10 +135,33 @@ palsa_init (void) {
     if ((err = snd_pcm_hw_params (audio, hw_params)) < 0) {
         trace ("cannot set parameters (%s)\n",
                 snd_strerror (err));
-        goto open_error;
+        goto error;
+    }
+error:
+    if (hw_params) {
+        snd_pcm_hw_params_free (hw_params);
+    }
+    return err;
+}
+
+int
+palsa_init (void) {
+    int err;
+    snd_pcm_sw_params_t *sw_params = NULL;
+    state = 0;
+    //alsa_rate = conf_get_int ("samplerate", 48000);
+    const char *conf_alsa_soundcard = conf_get_str ("alsa_soundcard", "default");
+    if ((err = snd_pcm_open (&audio, conf_alsa_soundcard, SND_PCM_STREAM_PLAYBACK, 0))) {
+        trace ("could not open audio device (%s)\n",
+                snd_strerror (err));
+        exit (-1);
     }
 
-    snd_pcm_hw_params_free (hw_params);
+    mutex = mutex_create ();
+
+    if (palsa_set_hw_params (44100) < 0) {
+        goto open_error;
+    }
 
     if ((err = snd_pcm_sw_params_malloc (&sw_params)) < 0) {
         trace ("cannot allocate software parameters structure (%s)\n",
@@ -162,7 +174,7 @@ palsa_init (void) {
         goto open_error;
     }
 
-    if ((err = snd_pcm_sw_params_set_avail_min (audio, sw_params, size/2)) < 0) {
+    if ((err = snd_pcm_sw_params_set_avail_min (audio, sw_params, bufsize/2)) < 0) {
         trace ("cannot set minimum available count (%s)\n",
                 snd_strerror (err));
         goto open_error;
@@ -185,6 +197,8 @@ palsa_init (void) {
                 snd_strerror (err));
         goto open_error;
     }
+    snd_pcm_sw_params_free (sw_params);
+    sw_params = NULL;
 
     /* the interface will interrupt the kernel every N frames, and ALSA
        will wake up this program very soon after that.
@@ -198,27 +212,37 @@ palsa_init (void) {
 
     snd_pcm_start (audio);
 
-    // take returned fragsize
-    samplebuffer = malloc (bufsize);
-
-    if (!samplebuffer)
-    {
-        trace ("AUDIO: Unable to allocate memory for sample buffers.\n");
-        goto open_error;
-    }
-
     alsa_terminate = 0;
     alsa_tid = thread_start (palsa_thread, 0);
 
     return 0;
 
 open_error:
-    if (audio != NULL)
-    {
+    if (sw_params) {
+        snd_pcm_sw_params_free (sw_params);
+    }
+    if (audio != NULL) {
         palsa_free ();
     }
 
     return -1;
+}
+
+int
+palsa_change_rate (int rate) {
+    if (rate == alsa_rate) {
+        trace ("palsa_change_rate: same rate (%d), ignored\n", rate);
+        return rate;
+    }
+    trace ("trying to change samplerate to: %d\n", rate);
+    mutex_lock (mutex);
+    int ret = palsa_set_hw_params (rate);
+    mutex_unlock (mutex);
+    if (ret < 0) {
+        return -1;
+    }
+    trace ("chosen samplerate: %d Hz\n", alsa_rate);
+    return alsa_rate;
 }
 
 void
@@ -232,10 +256,6 @@ palsa_free (void) {
         }
         snd_pcm_close(audio);
         audio = NULL;
-        if (samplebuffer) {
-            free (samplebuffer);
-            samplebuffer = NULL;
-        }
         mutex_unlock (mutex);
         mutex_free (mutex);
     }

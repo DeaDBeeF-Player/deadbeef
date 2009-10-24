@@ -73,6 +73,8 @@ static float seekpos = -1;
 static float playpos = 0; // play position of current song
 static float avg_bitrate = -1; // avg bitrate of current song
 
+static int prevtrack_samplerate = -1;
+
 playItem_t str_playing_song;
 playItem_t str_streaming_song;
 // remember pointers to original instances of playitems
@@ -315,6 +317,11 @@ streamer_thread (uintptr_t ctx) {
             plug_trigger_event (DB_EV_SONGSTARTED, 0);
             playpos = 0;
             avg_bitrate = -1;
+            // change samplerate
+            if (prevtrack_samplerate != str_playing_song.decoder->info.samplerate) {
+                palsa_change_rate (str_playing_song.decoder->info.samplerate);
+                prevtrack_samplerate = str_playing_song.decoder->info.samplerate;
+            }
         }
 
         if (seekpos >= 0) {
