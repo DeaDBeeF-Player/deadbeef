@@ -237,7 +237,8 @@ streamer_thread (uintptr_t ctx) {
                 badsong = -1;
                 continue;
             }
-            int ret = streamer_set_current (pl_get_for_idx (sng));
+            playItem_t *try = pl_get_for_idx (sng);
+            int ret = streamer_set_current (try);
             if (ret < 0) {
                 trace ("bad file in playlist, skipping...\n");
                 // remember bad song number in case of looping
@@ -245,6 +246,7 @@ streamer_thread (uintptr_t ctx) {
                     badsong = sng;
                 }
                 // try jump to next song
+                playlist_current_ptr = try;
                 pl_nextsong (0);
                 usleep (50000);
                 continue;
