@@ -1448,3 +1448,7 @@ pl_format_title (playItem_t *it, char *s, int size, const char *fmt) {
     return size - n - 1;
 }
 
+void
+pl_sort (const char *meta) {
+}
+

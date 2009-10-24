@@ -630,3 +630,7 @@ on_custom_activate                     (GtkMenuItem     *menuitem,
 void
 on_remove_column_activate              (GtkMenuItem     *menuitem,
                                         gpointer         user_data);
+
+void
+on_pref_alsa_resampling_clicked        (GtkButton       *button,
+                                        gpointer         user_data);

@@ -1354,8 +1354,9 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
         gtk_combo_box_set_active (combobox, 0);
     }
 
-    // samplerate
-    gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "pref_samplerate")), conf_get_str ("samplerate", "48000"));
+    // alsa resampling
+//    gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "pref_samplerate")), conf_get_str ("samplerate", "48000"));
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "pref_alsa_resampling")), conf_get_int ("alsa.resample", 0));
 
     // src_quality
     combobox = GTK_COMBO_BOX (lookup_widget (w, "pref_src_quality"));
@@ -1400,11 +1401,11 @@ on_pref_soundcard_changed              (GtkComboBox     *combobox,
 
 
 void
-on_pref_samplerate_changed             (GtkEditable     *editable,
+on_pref_alsa_resampling_clicked        (GtkButton       *button,
                                         gpointer         user_data)
 {
-    const char *text = gtk_entry_get_text (GTK_ENTRY (editable));
-    conf_set_str ("samplerate", text ? text : "48000");
+    int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button));
+    conf_set_int ("alsa.resample", active);
 }
 
 
