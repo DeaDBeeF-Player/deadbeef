@@ -115,7 +115,8 @@ typedef struct {
 static colhdr_animator_t colhdr_anim;
 
 static gboolean
-redraw_header (colhdr_animator_t *anim) {
+redraw_header (void *data) {
+    colhdr_animator_t *anim = (colhdr_animator_t *)data;
     gtkpl_header_draw (anim->pl);
     gtkpl_expose_header (anim->pl, 0, 0, anim->pl->header->allocation.width, anim->pl->header->allocation.height);
     return FALSE;
