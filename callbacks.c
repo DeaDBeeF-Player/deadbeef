@@ -1431,7 +1431,7 @@ on_pref_replaygain_scale_clicked       (GtkButton       *button,
                                         gpointer         user_data)
 {
     int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button));
-    conf_set_int ("replaygain_mode", active);
+    conf_set_int ("replaygain_scale", active);
 }
 
 
