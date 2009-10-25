@@ -52,12 +52,15 @@ extern GtkWidget *mainwin;
 extern gtkplaylist_t main_playlist;
 extern gtkplaylist_t search_playlist;
 
-void
+gboolean
 playlist_tooltip_handler (GtkWidget *widget, gint x, gint y, gboolean keyboard_mode, GtkTooltip *tooltip, gpointer unused)
 {
     playItem_t *item = gtkpl_get_for_idx (&main_playlist, main_playlist.scrollpos + y / rowheight);
-    gtk_tooltip_set_text (tooltip, item->fname);
-    return TRUE;
+    if (item && item->fname) {
+        gtk_tooltip_set_text (tooltip, item->fname);
+        return TRUE;
+    }
+    return FALSE;
 }
 
 void
