@@ -153,7 +153,7 @@ palsa_init (void) {
     if ((err = snd_pcm_open (&audio, conf_alsa_soundcard, SND_PCM_STREAM_PLAYBACK, 0))) {
         trace ("could not open audio device (%s)\n",
                 snd_strerror (err));
-        exit (-1);
+        return -1;
     }
 
     mutex = mutex_create ();
