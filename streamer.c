@@ -35,6 +35,9 @@
 #include "optmath.h"
 #include "volume.h"
 
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
+
 static intptr_t streamer_tid;
 static SRC_STATE *src;
 static SRC_DATA srcdata;
@@ -81,9 +84,6 @@ playItem_t str_streaming_song;
 static playItem_t *orig_playing_song;
 static playItem_t *orig_streaming_song;
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
-
 // playlist must call that whenever item was removed
 void
 streamer_song_removed_notify (playItem_t *it) {
@@ -120,7 +120,7 @@ streamer_set_current (playItem_t *it) {
     }
     if (it->decoder) {
         int ret = it->decoder->init (DB_PLAYITEM (it));
-        trace ("input samplerate: %d\n", it->decoder->info.samplerate);
+//        trace ("input samplerate: %d\n", it->decoder->info.samplerate);
         pl_item_copy (&str_streaming_song, it);
         if (ret < 0) {
             trace ("decoder->init returned %d\n", ret);

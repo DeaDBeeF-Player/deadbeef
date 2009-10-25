@@ -680,7 +680,7 @@ main (int argc, char *argv[]) {
     messagepump_init ();
     codec_init_locking ();
     streamer_init ();
-    p_init ();
+//    p_init ();
     thread_start (player_thread, 0);
 
     g_thread_init (NULL);

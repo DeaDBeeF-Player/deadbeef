@@ -37,7 +37,7 @@
 static snd_pcm_t *audio;
 static int bufsize = -1;
 static int alsa_terminate;
-static int alsa_rate = 48000;
+static int alsa_rate = 44100;
 static int state; // 0 = stopped, 1 = playing, 2 = pause
 static uintptr_t mutex;
 static int canpause;
@@ -149,7 +149,6 @@ palsa_init (void) {
     int err;
     snd_pcm_sw_params_t *sw_params = NULL;
     state = 0;
-    //alsa_rate = conf_get_int ("samplerate", 48000);
     const char *conf_alsa_soundcard = conf_get_str ("alsa_soundcard", "default");
     if ((err = snd_pcm_open (&audio, conf_alsa_soundcard, SND_PCM_STREAM_PLAYBACK, 0))) {
         trace ("could not open audio device (%s)\n",
@@ -159,7 +158,7 @@ palsa_init (void) {
 
     mutex = mutex_create ();
 
-    if (palsa_set_hw_params (44100) < 0) {
+    if (palsa_set_hw_params (alsa_rate) < 0) {
         goto open_error;
     }
 
@@ -251,23 +250,25 @@ palsa_change_rate (int rate) {
 
 void
 palsa_free (void) {
-    if (audio) {
-        mutex_lock (mutex);
+    trace ("palsa_free\n");
+    if (audio && !alsa_terminate) {
         alsa_terminate = 1;
-        if (alsa_tid) {
-            thread_join (alsa_tid);
-            alsa_tid = 0;
-        }
+        thread_join (alsa_tid);
+        alsa_tid = 0;
         snd_pcm_close(audio);
         audio = NULL;
-        mutex_unlock (mutex);
         mutex_free (mutex);
+        state = 0;
+        alsa_terminate = 0;
     }
 }
 
 static int hwpaused;
 static void
 palsa_hw_pause (int pause) {
+    if (state == 0) {
+        return;
+    }
     mutex_lock (mutex);
     if (canpause) {
         snd_pcm_pause (audio, pause);
@@ -288,14 +289,21 @@ palsa_hw_pause (int pause) {
 
 int
 palsa_play (void) {
-    // start updating thread
     int err;
     if (state == 0) {
-        if ((err = snd_pcm_prepare (audio)) < 0) {
-            trace ("cannot prepare audio interface for use (%s)\n",
-                    snd_strerror (err));
+        if (!audio) {
+            if (palsa_init () < 0) {
+                state = 0;
+                return -1;
+            }
         }
-        streamer_reset (1);
+        else {
+            if ((err = snd_pcm_prepare (audio)) < 0) {
+                trace ("cannot prepare audio interface for use (%s)\n",
+                        snd_strerror (err));
+                return -1;
+            }
+        }
     }
     if (state != 1) {
         state = 1;
@@ -307,9 +315,20 @@ palsa_play (void) {
 
 int
 palsa_stop (void) {
-    // set stop state
+    if (!audio) {
+        return 0;
+    }
     state = 0;
-    snd_pcm_drop (audio);
+    int freeonstop = conf_get_int ("alsa.freeonstop", 0);
+    if (freeonstop)  {
+        palsa_free ();
+    }
+    else {
+        mutex_lock (mutex);
+        snd_pcm_drop (audio);
+        mutex_unlock (mutex);
+    }
+    streamer_reset (1);
     return 0;
 }
 
@@ -359,6 +378,7 @@ palsa_thread (uintptr_t context) {
             usleep (10000);
             continue;
         }
+        
         mutex_lock (mutex);
         /* wait till the interface is ready for data, or 1 second
            has elapsed.
@@ -403,7 +423,7 @@ palsa_thread (uintptr_t context) {
             snd_pcm_start (audio);
         }
         mutex_unlock (mutex);
-        usleep (1000); // removing this causes deadlock on exit
+//        usleep (1000); // removing this causes deadlock on exit
     }
 }
 
