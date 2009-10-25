@@ -40,7 +40,6 @@ static int alsa_terminate;
 static int alsa_rate = 44100;
 static int state; // 0 = stopped, 1 = playing, 2 = pause
 static uintptr_t mutex;
-static int canpause;
 static intptr_t alsa_tid;
 
 static void
@@ -87,8 +86,6 @@ palsa_set_hw_params (int samplerate) {
 
     snd_pcm_hw_params_get_format (hw_params, &fmt);
     printf ("chosen sample format: %04Xh\n", (int)fmt);
-
-    canpause = 0;//snd_pcm_hw_params_can_pause (hw_params);
 
     int val = samplerate;
     int ret = 0;
@@ -263,28 +260,18 @@ palsa_free (void) {
     }
 }
 
-static int hwpaused;
 static void
 palsa_hw_pause (int pause) {
     if (state == 0) {
         return;
     }
-    mutex_lock (mutex);
-    if (canpause) {
-        snd_pcm_pause (audio, pause);
+    if (pause == 1) {
+        snd_pcm_drop (audio);
     }
     else {
-        if (pause == 1) {
-            snd_pcm_drop (audio);
-        }
-        else {
-            snd_pcm_prepare (audio);
-            snd_pcm_start (audio);
-        }
-        hwpaused = pause;
+        snd_pcm_prepare (audio);
+        snd_pcm_start (audio);
     }
-    hwpaused = pause;
-    mutex_unlock (mutex);
 }
 
 int
