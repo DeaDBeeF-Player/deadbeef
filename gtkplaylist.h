@@ -93,6 +93,8 @@ typedef struct {
 #define GTKPL_PROLOGUE \
     gtkplaylist_t *ps = (gtkplaylist_t *)gtk_object_get_data (GTK_OBJECT (widget), "ps"); assert (ps); 
 
+extern int rowheight;
+
 // that must be called before gtk_init
 void
 gtkpl_init (void);

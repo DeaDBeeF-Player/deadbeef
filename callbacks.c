@@ -53,6 +53,14 @@ extern gtkplaylist_t main_playlist;
 extern gtkplaylist_t search_playlist;
 
 void
+playlist_tooltip_handler (GtkWidget *widget, gint x, gint y, gboolean keyboard_mode, GtkTooltip *tooltip, gpointer unused)
+{
+    playItem_t *item = gtkpl_get_for_idx (&main_playlist, main_playlist.scrollpos + y / rowheight);
+    gtk_tooltip_set_text (tooltip, item->fname);
+    return TRUE;
+}
+
+void
 main_playlist_init (GtkWidget *widget) {
     // init playlist control structure, and put it into widget user-data
     memset (&main_playlist, 0, sizeof (main_playlist));
@@ -94,6 +102,13 @@ main_playlist_init (GtkWidget *widget) {
     gtk_object_set_data (GTK_OBJECT (main_playlist.header), "ps", &main_playlist);
     gtk_object_set_data (GTK_OBJECT (main_playlist.scrollbar), "ps", &main_playlist);
     gtk_object_set_data (GTK_OBJECT (main_playlist.hscrollbar), "ps", &main_playlist);
+
+    /*****/
+    GValue value = {0, };
+    g_value_init (&value, G_TYPE_BOOLEAN);
+    g_value_set_boolean (&value, TRUE);
+    g_object_set_property (G_OBJECT (widget), "has-tooltip", &value);
+    g_signal_connect (G_OBJECT (widget), "query-tooltip", G_CALLBACK (playlist_tooltip_handler), NULL);
 }
 
 void
