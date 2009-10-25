@@ -236,7 +236,11 @@ palsa_change_rate (int rate) {
     }
     trace ("trying to change samplerate to: %d\n", rate);
     mutex_lock (mutex);
+    snd_pcm_drop (audio);
     int ret = palsa_set_hw_params (rate);
+    if (state != 0) {
+        snd_pcm_start (audio);
+    }
     mutex_unlock (mutex);
     if (ret < 0) {
         return -1;
