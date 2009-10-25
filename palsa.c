@@ -345,9 +345,12 @@ palsa_ispaused (void) {
 
 int
 palsa_pause (void) {
+    if (state == 0 || !audio) {
+        return -1;
+    }
     // set pause state
-    state = 2;
     palsa_hw_pause (1);
+    state = 2;
     return 0;
 }
 
