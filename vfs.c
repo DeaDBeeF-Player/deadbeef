@@ -79,3 +79,8 @@ int64_t
 vfs_fgetlength (DB_FILE *stream) {
     return stream->vfs->getlength (stream);
 }
+
+const char *
+vfs_get_content_type (DB_FILE *stream) {
+    return stream->vfs->get_content_type (stream);
+}

@@ -34,6 +34,7 @@
 #include "plugins.h"
 #include "optmath.h"
 #include "volume.h"
+#include "vfs.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -118,6 +119,39 @@ streamer_set_current (playItem_t *it) {
     if (!it) {
         return 0;
     }
+    if (!it->decoder && it->filetype && !strcmp (it->filetype, "content")) {
+        // try to get content-type
+        DB_FILE *fp = vfs_fopen (it->fname);
+        const char *ext = NULL;
+        if (fp) {
+            const char *ct = vfs_get_content_type (fp);
+            if (ct) {
+                fprintf (stderr, "got content-type: %s\n", ct);
+                if (!strcmp (ct, "audio/mpeg")) {
+                    ext = "mp3";
+                }
+                else if (!strcmp (ct, "application/ogg")) {
+                    ext = "ogg";
+                }
+            }
+            vfs_fclose (fp);
+        }
+        if (ext) {
+            DB_decoder_t **decoders = plug_get_decoder_list ();
+            // match by decoder
+            for (int i = 0; decoders[i]; i++) {
+                if (decoders[i]->exts) {
+                    const char **exts = decoders[i]->exts;
+                    for (int e = 0; exts[e]; e++) {
+                        if (!strcasecmp (exts[e], ext)) {
+                            it->decoder = decoders[i];
+                            it->filetype = decoders[i]->filetypes[0];
+                        }
+                    }
+                }
+            }
+        }
+    }
     if (it->decoder) {
         int ret = it->decoder->init (DB_PLAYITEM (it));
 //        trace ("input samplerate: %d\n", it->decoder->info.samplerate);
@@ -141,44 +175,6 @@ streamer_set_current (playItem_t *it) {
     }
     return 0;
 }
-
-#if 0
-static int
-str_set_current (playItem_t *it) {
-    int ret = 0;
-    int from = pl_get_idx_of (playlist_current_ptr);
-    int to = it ? pl_get_idx_of (it) : -1;
-    if (str_playing_song.decoder) {
-        plug_trigger_event (DB_EV_SONGFINISHED);
-    }
-    codec_lock ();
-    if (str_playing_song.decoder) {
-        str_playing_song.decoder->free ();
-    }
-    pl_item_free (&str_playing_song);
-    playlist_current_ptr = it;
-    if (it && it->decoder) {
-        // don't do anything on fail, streamer will take care
-        ret = it->decoder->init (DB_PLAYITEM (it));
-//        if (ret < 0) {
-//        }
-    }
-    if (playlist_current_ptr) {
-        streamer_reset (0);
-    }
-    if (it) {
-        it->played = 1;
-        it->started_timestamp = time (NULL);
-        pl_item_copy (&str_playing_song, it);
-    }
-    codec_unlock ();
-    if (it) {
-        plug_trigger_event (DB_EV_SONGSTARTED);
-    }
-    messagepump_push (M_SONGCHANGED, 0, from, to);
-    return ret;
-}
-#endif
 
 float
 streamer_get_playpos (void) {
@@ -374,26 +370,6 @@ streamer_thread (uintptr_t ctx) {
             streamer_lock ();
             memcpy (streambuffer+streambuffer_fill, buf, sz);
             streambuffer_fill += bytesread;
-
-
-#if 0
-            int writepos = (streambuffer_pos + streambuffer_fill) & STREAM_BUFFER_MASK;
-            int part1 = STREAM_BUFFER_SIZE-writepos;
-            part1 = min (part1, sz);
-            if (part1 > 0) {
-                streamer_unlock ();
-                int bytesread = streamer_read_async (streambuffer + writepos, part1);
-                streamer_lock ();
-                streambuffer_fill += bytesread;
-            }
-            sz -= part1;
-            if (sz > 0) {
-                streamer_unlock ();
-                int bytesread = streamer_read_async (streambuffer, sz);
-                streamer_lock ();
-                streambuffer_fill += bytesread;
-            }
-#endif
         }
         streamer_unlock ();
         struct timeval tm2;

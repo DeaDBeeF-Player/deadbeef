@@ -88,6 +88,11 @@ stdio_getlength (DB_FILE *stream) {
     return sz;
 }
 
+const char *
+stdio_get_content_type (DB_FILE *stream) {
+    return NULL;
+}
+
 // standard stdio vfs
 static DB_vfs_t plugin = {
     DB_PLUGIN_SET_API_VERSION
@@ -106,6 +111,7 @@ static DB_vfs_t plugin = {
     .tell = stdio_tell,
     .rewind = stdio_rewind,
     .getlength = stdio_getlength,
+    .get_content_type = stdio_get_content_type,
     .scheme_names = NULL // this is NULL because that's a fallback vfs, used when no other matching vfs plugin found
 };
 
@@ -114,3 +120,4 @@ stdio_load (DB_functions_t *api) {
     deadbeef = api;
     return DB_PLUGIN (&plugin);
 }
+

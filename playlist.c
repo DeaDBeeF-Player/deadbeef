@@ -354,8 +354,35 @@ pl_insert_file (playItem_t *after, const char *fname, int *pabort, int (*cb)(pla
     if (!fname) {
         return NULL;
     }
+
+    // add all posible streams as special-case:
+    // set decoder to NULL, and filetype to "content"
+    // streamer is responsible to determine content type on 1st access and
+    // update decoder and filetype fields
+    if (strcasecmp (fname, "file://")) {
+        const char *p = fname;
+        int detect_on_access = 1;
+        for (p = fname; *p; p++) {
+            if (!strncmp (p, "://", 3)) {
+                break;
+            }
+            if (!isalpha (*p)) {
+                detect_on_access = 0;
+                break;
+            }
+        }
+        if (detect_on_access && *fname != ':') {
+            playItem_t *it = pl_item_alloc ();
+            it->decoder = NULL;
+            it->fname = strdup (fname);
+            it->filetype = "content";
+            pl_set_item_duration (it, -1);
+            pl_add_meta (it, "title", NULL);
+            return pl_insert_item (after, it);
+        }
+    }
+
     // detect decoder
-//    DB_decoder_t *decoder = NULL;
     const char *eol = fname + strlen (fname) - 1;
     while (eol > fname && *eol != '.') {
         eol--;
@@ -367,18 +394,16 @@ pl_insert_file (playItem_t *after, const char *fname, int *pabort, int (*cb)(pla
     for (int i = 0; decoders[i]; i++) {
         if (decoders[i]->exts && decoders[i]->insert) {
             const char **exts = decoders[i]->exts;
-            if (exts) {
-                for (int e = 0; exts[e]; e++) {
-                    if (!strcasecmp (exts[e], eol)) {
-                        playItem_t *inserted = NULL;
-                        if ((inserted = (playItem_t *)decoders[i]->insert (DB_PLAYITEM (after), fname)) != NULL) {
-                            if (cb) {
-                                if (cb (inserted, user_data) < 0) {
-                                    *pabort = 1;
-                                }
+            for (int e = 0; exts[e]; e++) {
+                if (!strcasecmp (exts[e], eol)) {
+                    playItem_t *inserted = NULL;
+                    if ((inserted = (playItem_t *)decoders[i]->insert (DB_PLAYITEM (after), fname)) != NULL) {
+                        if (cb) {
+                            if (cb (inserted, user_data) < 0) {
+                                *pabort = 1;
                             }
-                            return inserted;
                         }
+                        return inserted;
                     }
                 }
             }
@@ -454,46 +479,6 @@ pl_add_dir (const char *dirname, int (*cb)(playItem_t *it, void *data), void *us
         return 0;
     }
     return -1;
-// {{{ original pl_add_dir code
-#if 0
-    struct stat buf;
-    lstat (dirname, &buf);
-    if (S_ISLNK(buf.st_mode)) {
-        return -1;
-    }
-    struct dirent **namelist = NULL;
-    int n;
-
-    n = scandir (dirname, &namelist, NULL, alphasort);
-    if (n < 0)
-    {
-        if (namelist)
-            free (namelist);
-        return -1;	// not a dir or no read access
-    }
-    else
-    {
-        int i;
-        for (i = 0; i < n; i++)
-        {
-            // no hidden files
-            if (namelist[i]->d_name[0] != '.')
-            {
-                char fullname[1024];
-                strcpy (fullname, dirname);
-                strncat (fullname, "/", 1024);
-                strncat (fullname, namelist[i]->d_name, 1024);
-                if (pl_add_dir (fullname)) {
-                    pl_add_file (fullname);
-                }
-            }
-            free (namelist[i]);
-        }
-        free (namelist);
-    }
-    return 0;
-#endif
-// }}}
 }
 
 int
@@ -905,8 +890,6 @@ pl_add_meta (playItem_t *it, const char *key, const char *value) {
     m = malloc (sizeof (metaInfo_t));
     m->key = key;
     m->value = strdup (value);
-//    strncpy (m->value, value, META_FIELD_SIZE-1);
-//    m->value[META_FIELD_SIZE-1] = 0;
     m->next = it->meta;
     it->meta = m;
 }
@@ -922,50 +905,6 @@ pl_format_item_display_name (playItem_t *it, char *str, int len) {
         title = "Unknown title";
     }
     snprintf (str, len, "%s - %s", artist, title);
-#if 0
-    // artist - title
-    const char *track = pl_find_meta (it, "track");
-    const char *artist = pl_find_meta (it, "artist");
-    const char *album = pl_find_meta (it, "album");
-    const char *title = pl_find_meta (it, "title");
-    if (*track == '?' && *album == '?' && *artist != '?' && *title != '?') {
-        snprintf (str, len, "%s - %s", artist, title);
-    }
-    else if (*artist != '?' && *track != '?' && *title != '?') {
-        snprintf (str, len, "%s. %s - %s", track, artist, title);
-    }
-    else if (*artist == '?' && *track != '?' && *album != '?') {
-        snprintf (str, len, "%s. %s", track, album);
-    }
-    else if (*artist != '?' && *track != '?' && *album != '?') {
-        snprintf (str, len, "%s. %s - %s", track, artist, album);
-    }
-    else if (*artist != '?' && *title != '?') {
-        snprintf (str, len, "%s - %s", artist, title);
-    }
-    else if (*artist != '?') {
-        snprintf (str, len, "%s", artist);
-    }
-    else if (*title != '?') {
-        snprintf (str, len, "%s", title);
-    }
-    else {
-        // cut filename without path and extension
-        char *pext = it->fname + strlen (it->fname) - 1;
-        while (pext >= it->fname && *pext != '.') {
-            pext--;
-        }
-        char *pname = pext;
-        while (pname >= it->fname && *pname != '/') {
-            pname--;
-        }
-        if (*pname == '/') {
-            pname++;
-        }
-        strncpy (str, pname, pext-pname);
-        str[pext-pname] = 0;
-    }
-#endif
 }
 
 const char *
@@ -1050,12 +989,20 @@ pl_save (const char *fname) {
         if (fwrite (it->fname, 1, l, fp) != l) {
             goto save_fail;
         }
-        ll = strlen (it->decoder->id);
-        if (fwrite (&ll, 1, 1, fp) != 1) {
-            goto save_fail;
+        if (it->decoder) {
+            ll = strlen (it->decoder->id);
+            if (fwrite (&ll, 1, 1, fp) != 1) {
+                goto save_fail;
+            }
+            if (fwrite (it->decoder->id, 1, ll, fp) != ll) {
+                goto save_fail;
+            }
         }
-        if (fwrite (it->decoder->id, 1, ll, fp) != ll) {
-            goto save_fail;
+        else {
+            ll = 0;
+            if (fwrite (&ll, 1, 1, fp) != 1) {
+                goto save_fail;
+            }
         }
         l = it->tracknum;
         if (fwrite (&l, 1, 2, fp) != 2) {
@@ -1187,18 +1134,23 @@ pl_load (const char *fname) {
         if (ll >= 20) {
             goto load_fail;
         }
-        char decoder[20];
-        if (fread (decoder, 1, ll, fp) != ll) {
-            goto load_fail;
-        }
-        decoder[ll] = 0;
-        for (int c = 0; decoders[c]; c++) {
-            if (!strcmp (decoder, decoders[c]->id)) {
-                it->decoder = decoders[c];
+        if (ll) {
+            char decoder[20];
+            if (fread (decoder, 1, ll, fp) != ll) {
+                goto load_fail;
             }
+            decoder[ll] = 0;
+            for (int c = 0; decoders[c]; c++) {
+                if (!strcmp (decoder, decoders[c]->id)) {
+                    it->decoder = decoders[c];
+                }
+            }
+//            if (!it->decoder) {
+//                goto load_fail;
+//            }
         }
-        if (!it->decoder) {
-            goto load_fail;
+        else {
+            it->decoder = NULL;
         }
         // tracknum
         if (fread (&l, 1, 2, fp) != 2) {
@@ -1230,11 +1182,16 @@ pl_load (const char *fname) {
                 goto load_fail;
             }
             ftype[ft] = 0;
-            if (it->decoder && it->decoder->filetypes) {
-                for (int i = 0; it->decoder->filetypes[i]; i++) {
-                    if (!strcasecmp (it->decoder->filetypes[i], ftype)) {
-                        it->filetype = it->decoder->filetypes[i];
-                        break;
+            if (!strcmp (ftype, "content")) {
+                it->filetype = "content";
+            }
+            else {
+                if (it->decoder && it->decoder->filetypes) {
+                    for (int i = 0; it->decoder->filetypes[i]; i++) {
+                        if (!strcasecmp (it->decoder->filetypes[i], ftype)) {
+                            it->filetype = it->decoder->filetypes[i];
+                            break;
+                        }
                     }
                 }
             }

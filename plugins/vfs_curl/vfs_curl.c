@@ -52,13 +52,14 @@ typedef struct {
     int32_t skipbytes;
     intptr_t tid; // thread id which does http requests
     intptr_t mutex;
+    int gotheader;
+    char *content_type;
     uint8_t status;
 } HTTP_FILE;
 
 static DB_vfs_t plugin;
 
 static char http_err[CURL_ERROR_SIZE];
-
 
 static size_t
 http_curl_write (void *ptr, size_t size, size_t nmemb, void *stream) {
@@ -109,7 +110,7 @@ http_curl_write (void *ptr, size_t size, size_t nmemb, void *stream) {
 }
 
 static size_t
-http_size_request_handler (void *ptr, size_t size, size_t nmemb, void *stream) {
+http_size_header_handler (void *ptr, size_t size, size_t nmemb, void *stream) {
     assert (stream);
     HTTP_FILE *fp = (HTTP_FILE *)stream;
     // don't copy/allocate mem, just grep for "Content-Length: "
@@ -119,6 +120,28 @@ http_size_request_handler (void *ptr, size_t size, size_t nmemb, void *stream) {
         fp->length = atoi (cl);
         trace ("vfs_curl: file size is %d bytes\n", fp->length);
     }
+    return size * nmemb;
+}
+
+static size_t
+http_content_header_handler (void *ptr, size_t size, size_t nmemb, void *stream) {
+    assert (stream);
+    HTTP_FILE *fp = (HTTP_FILE *)stream;
+    const char c_type_str[] ="Content-Type: "; 
+    const char *cl = strstr (ptr, c_type_str);
+    if (cl) {
+        cl += sizeof (c_type_str)-1;
+        const uint8_t *p = (const uint8_t *)cl;
+        while (*p >= 0x20) {
+            p++;
+        }
+        int len = (const char *)p-cl;
+        char str[len+1];
+        strncpy (str, cl, len);
+        str[len] = 0;
+        fp->content_type = strdup (str);
+    }
+    fp->gotheader = 1;
     return size * nmemb;
 }
 
@@ -136,15 +159,12 @@ http_thread_func (uintptr_t ctx) {
     curl_easy_setopt(curl, CURLOPT_NOBODY, 1);
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
     curl_easy_setopt(curl, CURLOPT_MAXREDIRS, 10);
-    curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, http_size_request_handler);
+    curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, http_size_header_handler);
     curl_easy_setopt (curl, CURLOPT_HEADERDATA, ctx);
     status = curl_easy_perform(curl);
     if (status != 0) {
         fp->length = -1;
         trace ("vfs_curl: curl_easy_perform failed while getting filesize, status %d\n", status);
-//        fp->status = STATUS_FINISHED;
-//        fp->tid = 0;
-//        return;
     }
     fp->status = STATUS_STARTING;
 
@@ -157,6 +177,8 @@ http_thread_func (uintptr_t ctx) {
         curl_easy_setopt (curl, CURLOPT_ERRORBUFFER, http_err);
         curl_easy_setopt (curl, CURLOPT_BUFFERSIZE, BUFFER_SIZE/2);
         curl_easy_setopt (curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+        curl_easy_setopt (curl, CURLOPT_HEADERFUNCTION, http_content_header_handler);
+        curl_easy_setopt (curl, CURLOPT_HEADERDATA, ctx);
         // enable up to 10 redirects
         curl_easy_setopt (curl, CURLOPT_FOLLOWLOCATION, 1);
         curl_easy_setopt (curl, CURLOPT_MAXREDIRS, 10);
@@ -216,7 +238,12 @@ http_close (DB_FILE *stream) {
         deadbeef->thread_join (fp->tid);
         deadbeef->mutex_free (fp->mutex);
     }
-    free (fp->url);
+    if (fp->content_type) {
+        free (fp->content_type);
+    }
+    if (fp->url) {
+        free (fp->url);
+    }
     free (stream);
 }
 
@@ -372,6 +399,20 @@ http_getlength (DB_FILE *stream) {
     return fp->length;
 }
 
+static const char *
+http_get_content_type (DB_FILE *stream) {
+    trace ("http_get_content_type\n");
+    assert (stream);
+    HTTP_FILE *fp = (HTTP_FILE *)stream;
+    if (!fp->tid) {
+        http_start_streamer (fp);
+    }
+    while (fp->status != STATUS_FINISHED && fp->status != STATUS_ABORTED && !fp->gotheader) {
+        usleep (3000);
+    }
+    return fp->content_type;
+}
+
 static const char *scheme_names[] = { "http://", "ftp://", NULL };
 
 // standard stdio vfs
@@ -392,6 +433,7 @@ static DB_vfs_t plugin = {
     .tell = http_tell,
     .rewind = http_rewind,
     .getlength = http_getlength,
+    .get_content_type = http_get_content_type,
     .scheme_names = scheme_names,
     .streaming = 1
 };

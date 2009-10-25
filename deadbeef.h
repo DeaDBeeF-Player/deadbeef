@@ -235,6 +235,7 @@ typedef struct {
     int64_t (*ftell) (DB_FILE *stream);
     void (*rewind) (DB_FILE *stream);
     int64_t (*fgetlength) (DB_FILE *stream);
+    const char *(*fget_content_type) (DB_FILE *stream);
     // message passing
     int (*sendmessage) (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2);
     // configuration access
@@ -388,6 +389,7 @@ typedef struct DB_vfs_s {
     int64_t (*tell) (DB_FILE *stream);
     void (*rewind) (DB_FILE *stream);
     int64_t (*getlength)(DB_FILE *stream);
+    const char * (*get_content_type) (DB_FILE *stream);
     const char **scheme_names; // NULL-terminated list of supported schemes, e.g. {"http", "ftp", NULL}
     unsigned streaming : 1;
 } DB_vfs_t;

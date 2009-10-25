@@ -110,6 +110,7 @@ static DB_functions_t deadbeef_api = {
     .ftell = vfs_ftell,
     .rewind = vfs_rewind,
     .fgetlength = vfs_fgetlength,
+    .fget_content_type = vfs_get_content_type,
     // message passing
     .sendmessage = messagepump_push,
     // configuration access
