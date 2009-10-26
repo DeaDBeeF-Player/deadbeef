@@ -249,4 +249,13 @@ gtkpl_column_rewrite_config (gtkplaylist_t *pl);
 void
 gtkpl_expose_header (gtkplaylist_t *ps, int x, int y, int w, int h);
 
+void
+set_tray_tooltip (const char *text);
+
+void
+gtkpl_songchanged_wrapper (int from, int to);
+
+void
+gtkpl_current_track_changed (playItem_t *it);
+
 #endif // __GTKPLAYLIST_H

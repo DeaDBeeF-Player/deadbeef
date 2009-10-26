@@ -66,15 +66,6 @@ GtkWidget *searchwin;
 GtkStatusIcon *trayicon;
 GtkWidget *traymenu;
 
-void
-set_tray_tooltip (const char *text) {
-#if (GTK_MINOR_VERSION < 16)
-        gtk_status_icon_set_tooltip (trayicon, text);
-#else
-        gtk_status_icon_set_tooltip_text (trayicon, text);
-#endif
-}
-
 // playlist configuration structures
 gtkplaylist_t main_playlist;
 gtkplaylist_t search_playlist;
@@ -109,7 +100,7 @@ update_songinfo (void) {
         songpos = 0;
     }
     else if (str_playing_song.decoder) {
-        codec_lock ();
+//        codec_lock ();
         DB_decoder_t *c = str_playing_song.decoder;
         float playpos = streamer_get_playpos ();
         int minpos = playpos / 60;
@@ -121,7 +112,7 @@ update_songinfo (void) {
         int samplerate = c->info.samplerate;
         int bitspersample = c->info.bps;
         songpos = playpos;
-        codec_unlock ();
+//        codec_unlock ();
 
         char t[100];
         if (str_playing_song._duration >= 0) {
@@ -340,16 +331,6 @@ server_update (void) {
 }
 
 void
-current_track_changed (playItem_t *it) {
-    char str[600];
-    char dname[512];
-    pl_format_item_display_name (it, dname, 512);
-    snprintf (str, 600, "DeaDBeeF - %s", dname);
-    gtk_window_set_title (GTK_WINDOW (mainwin), str);
-    set_tray_tooltip (str);
-}
-
-void
 player_thread (uintptr_t ctx) {
     prctl (PR_SET_NAME, "deadbeef-player", 0, 0, 0, 0);
     for (;;) {
@@ -388,26 +369,12 @@ player_thread (uintptr_t ctx) {
                 GDK_THREADS_LEAVE();
                 return;
             case M_SONGCHANGED:
-                GDK_THREADS_ENTER();
-                // update window title
-                int from = p1;
-                int to = p2;
-                if (from >= 0 || to >= 0) {
-                    if (to >= 0) {
-                        playItem_t *it = pl_get_for_idx (to);
-                        if (it) { // it might have been deleted after event was sent
-                            current_track_changed (it);
-                        }
-                    }
-                    else {
-                        gtk_window_set_title (GTK_WINDOW (mainwin), "DeaDBeeF");
-                        set_tray_tooltip ("DeaDBeeF");
-                    }
+                {
+                    int from = p1;
+                    int to = p2;
+                    gtkpl_songchanged_wrapper (from, to);
+                    plug_trigger_event (DB_EV_SONGCHANGED, 0);
                 }
-                // update playlist view
-                gtkpl_songchanged (&main_playlist, p1, p2);
-                GDK_THREADS_LEAVE();
-                plug_trigger_event (DB_EV_SONGCHANGED, 0);
                 break;
             case M_PLAYSONG:
                 gtkpl_playsong (&main_playlist);
@@ -424,7 +391,7 @@ player_thread (uintptr_t ctx) {
                         GDK_THREADS_ENTER();
                         gtkpl_redraw_pl_row (&main_playlist, p1, it);
                         if (it == playlist_current_ptr) {
-                            current_track_changed (it);
+                            gtkpl_current_track_changed (it);
                         }
                         GDK_THREADS_LEAVE();
                     }

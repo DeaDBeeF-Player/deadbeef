@@ -648,6 +648,8 @@ playItem_t *
 pl_item_alloc (void) {
     playItem_t *it = malloc (sizeof (playItem_t));
     memset (it, 0, sizeof (playItem_t));
+    it->replaygain_album_peak = 1;
+    it->replaygain_track_peak = 1;
     return it;
 }
 
@@ -1202,11 +1204,17 @@ pl_load (const char *fname) {
         if (fread (&it->replaygain_album_peak, 1, 4, fp) != 4) {
             goto load_fail;
         }
+        if (it->replaygain_album_peak == 0) {
+            it->replaygain_album_peak = 1;
+        }
         if (fread (&it->replaygain_track_gain, 1, 4, fp) != 4) {
             goto load_fail;
         }
         if (fread (&it->replaygain_track_peak, 1, 4, fp) != 4) {
             goto load_fail;
+        }
+        if (it->replaygain_track_peak == 0) {
+            it->replaygain_track_peak = 1;
         }
         // printf ("loading file %s\n", it->fname);
         int16_t nm = 0;

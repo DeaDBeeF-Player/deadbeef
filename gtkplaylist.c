@@ -50,6 +50,10 @@
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
+extern GtkWidget *mainwin;
+extern GtkStatusIcon *trayicon;
+extern gtkplaylist_t main_playlist;
+
 // orange on dark color scheme
 float colo_dark_orange[COLO_COUNT][3] = {
     { 0x7f/255.f, 0x7f/255.f, 0x7f/255.f }, // cursor
@@ -91,6 +95,7 @@ int rowheight = -1;
 
 static uintptr_t play16_pixbuf;
 static uintptr_t pause16_pixbuf;
+static uintptr_t buffering16_pixbuf;
 
 static GdkCursor* cursor_sz;
 static GdkCursor* cursor_drag;
@@ -167,7 +172,6 @@ colhdr_anim_swap (gtkplaylist_t *pl, int c1, int c2, int x1, int x2) {
     colhdr_anim.anim_active = 1;
     timeline_stop (colhdr_anim.timeline, 0);
     timeline_init (colhdr_anim.timeline, COLHDR_ANIM_TIME, 100, colhdr_anim_cb, &colhdr_anim);
-    printf ("timeline_start\n");
     timeline_start (colhdr_anim.timeline);
 }
 
@@ -178,6 +182,7 @@ gtkpl_init (void) {
     //memcpy (colo_current, colo_dark_orange, sizeof (colo_current));
     play16_pixbuf = draw_load_pixbuf ("play_16.png");
     pause16_pixbuf = draw_load_pixbuf ("pause_16.png");
+    buffering16_pixbuf = draw_load_pixbuf ("buffering_16.png");
     rowheight = draw_get_font_size () + 12;
     memcpy (colo_current, colo_white_blue, sizeof (colo_current));
 }
@@ -330,10 +335,6 @@ gtkpl_draw_pl_row (gtkplaylist_t *ps, int row, playItem_t *it) {
     }
 	int width, height;
 	draw_get_canvas_size ((uintptr_t)ps->backbuf, &width, &height);
-//    if (it == playlist_current_ptr && ps->colwidths[0] > 0 && !p_isstopped ()) {
-//        uintptr_t pixbuf = p_ispaused () ? pause16_pixbuf : play16_pixbuf;
-//        draw_pixbuf ((uintptr_t)ps->backbuf, pixbuf, ps->colwidths[0]/2-8-ps->hscrollpos, (row - ps->scrollpos) * rowheight + rowheight/2 - 8, 0, 0, 16, 16);
-//    }
 	if (it && ((it->selected && ps->multisel) || (row == ps->row && !ps->multisel))) {
         if (row % 2) {
             theme_set_bg_color (COLO_PLAYLIST_SEL_EVEN);
@@ -386,8 +387,19 @@ gtkpl_draw_pl_row (gtkplaylist_t *ps, int row, playItem_t *it) {
     int x = -ps->hscrollpos;
     gtkpl_column_t *c;
     for (c = ps->columns; c; c = c->next) {
-        if (it == playlist_current_ptr && c->id == DB_COLUMN_PLAYING && !p_isstopped ()) {
-            uintptr_t pixbuf = p_ispaused () ? pause16_pixbuf : play16_pixbuf;
+        if (it == playlist_current_ptr && c->id == DB_COLUMN_PLAYING/* && !p_isstopped ()*/) {
+            int paused = p_ispaused ();
+            int buffering = !streamer_ok_to_read (-1);
+            uintptr_t pixbuf;
+            if (paused) {
+                pixbuf = pause16_pixbuf;
+            }
+            else if (!buffering) {
+                pixbuf = play16_pixbuf;
+            }
+            else {
+                pixbuf = buffering16_pixbuf;
+            }
             draw_pixbuf ((uintptr_t)ps->backbuf, pixbuf, x + c->width/2 - 8 - ps->hscrollpos, (row - ps->scrollpos) * rowheight + rowheight/2 - 8, 0, 0, 16, 16);
         }
         else {
@@ -1055,7 +1067,6 @@ gtkpl_handle_drag_drop (gtkplaylist_t *ps, int drop_y, uint32_t *d, int length) 
     int idx = 0;
     playItem_t *next = NULL;
     for (playItem_t *it = playlist_head[ps->iterator]; it && processed < length; it = next, idx++) {
-        //            printf ("idx: %d\n", d[i]);
         next = it->next[ps->iterator];
         if (idx == d[processed]) {
             if (it->prev[ps->iterator]) {
@@ -1439,7 +1450,6 @@ on_header_motion_notify_event          (GtkWidget       *widget,
         if (event->time - last_header_motion_ev < 50 || prev_header_x == event->x) {
             return FALSE;
         }
-        //printf ("%f\n", event->time - last_header_motion_ev);
         last_header_motion_ev = event->time;
         prev_header_x = event->x;
         gdk_window_set_cursor (widget->window, cursor_sz);
@@ -1863,4 +1873,59 @@ gtkpl_column_rewrite_config (gtkplaylist_t *pl) {
         snprintf (value, sizeof (value), "\"%s\" \"%s\" %d %d %d", c->title, c->format ? c->format : "", c->id, c->width, c->align_right);
         conf_set_str (key, value);
     }
+}
+
+void
+set_tray_tooltip (const char *text) {
+#if (GTK_MINOR_VERSION < 16)
+        gtk_status_icon_set_tooltip (trayicon, text);
+#else
+        gtk_status_icon_set_tooltip_text (trayicon, text);
+#endif
+}
+
+void
+gtkpl_current_track_changed (playItem_t *it) {
+    char str[600];
+    char dname[512];
+    pl_format_item_display_name (it, dname, 512);
+    snprintf (str, 600, "DeaDBeeF - %s", dname);
+    gtk_window_set_title (GTK_WINDOW (mainwin), str);
+    set_tray_tooltip (str);
+}
+
+struct songchange_t {
+    int from, to;
+};
+
+static gboolean
+gtkpl_songchanged_callback (void *data) {
+    struct songchange_t *sc = (struct songchange_t *)data;
+    int from = sc->from;
+    int to = sc->to;
+    free (sc);
+    // update window title
+    if (from >= 0 || to >= 0) {
+        if (to >= 0) {
+            playItem_t *it = pl_get_for_idx (to);
+            if (it) { // it might have been deleted after event was sent
+                gtkpl_current_track_changed (it);
+            }
+        }
+        else {
+            gtk_window_set_title (GTK_WINDOW (mainwin), "DeaDBeeF");
+            set_tray_tooltip ("DeaDBeeF");
+        }
+    }
+    // update playlist view
+    gtkpl_songchanged (&main_playlist, from, to);
+    return FALSE;
+}
+
+void
+gtkpl_songchanged_wrapper (int from, int to) {
+    struct songchange_t *sc = malloc (sizeof (struct songchange_t));
+    sc->from = from;
+    sc->to = to;
+    g_idle_add (gtkpl_songchanged_callback, sc);
 }
