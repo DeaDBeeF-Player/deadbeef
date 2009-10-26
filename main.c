@@ -88,12 +88,28 @@ void
 update_songinfo (void) {
     char sbtext_new[512] = "-";
     float songpos = last_songpos;
+
+    int daystotal = (int)pl_totaltime / (3600*24);
+    int hourtotal = ((int)pl_totaltime / 3600) % 24;
+    int mintotal = ((int)pl_totaltime/60) % 60;
+    int sectotal = ((int)pl_totaltime) % 60;
+
+    char totaltime_str[512] = "";
+    if (daystotal == 0)
+        snprintf (totaltime_str, sizeof (totaltime_str), "%d:%02d:%02d", hourtotal, mintotal, sectotal);
+
+    else if (daystotal == 1)
+        snprintf (totaltime_str, sizeof (totaltime_str), "1 day %d:%02d:%02d", hourtotal, mintotal, sectotal);
+
+    else
+        snprintf (totaltime_str, sizeof (totaltime_str), "%d days %d:%02d:%02d", daystotal, hourtotal, mintotal, sectotal);
+
     if (p_ispaused ()) {
-        strcpy (sbtext_new, "Paused");
+        snprintf (sbtext_new, sizeof (sbtext_new), "Paused | %s total playtime", totaltime_str);
         songpos = streamer_get_playpos ();
     }
     else if (p_isstopped ()) {
-        strcpy (sbtext_new, "Stopped");
+        snprintf (sbtext_new, sizeof (sbtext_new), "Stopped | %s total playtime", totaltime_str);
         songpos = 0;
     }
     else if (str_playing_song.decoder) {
@@ -104,8 +120,7 @@ update_songinfo (void) {
         int secpos = playpos - minpos * 60;
         int mindur = str_playing_song._duration / 60;
         int secdur = str_playing_song._duration - mindur * 60;
-        int mintotal = pl_totaltime / 60;
-        int sectotal = pl_totaltime - mintotal * 60;
+
         const char *mode = c->info.channels == 1 ? "Mono" : "Stereo";
         int samplerate = c->info.samplerate;
         int bitspersample = c->info.bps;
@@ -125,7 +140,7 @@ update_songinfo (void) {
         if (bitrate > 0) {
             snprintf (sbitrate, sizeof (sbitrate), "%d kbps ", bitrate);
         }
-        snprintf (sbtext_new, sizeof (sbtext_new), "[%s] %s| %dHz | %d bit | %s | %d:%02d / %s | %d songs | %d:%02d total playtime", str_playing_song.filetype ? str_playing_song.filetype:"-", sbitrate, samplerate, bitspersample, mode, minpos, secpos, t, pl_getcount (), mintotal, sectotal);
+        snprintf (sbtext_new, sizeof (sbtext_new), "[%s] %s| %dHz | %d bit | %s | %d:%02d / %s | %d songs | %s total playtime", str_playing_song.filetype ? str_playing_song.filetype:"-", sbitrate, samplerate, bitspersample, mode, minpos, secpos, t, pl_getcount (), totaltime_str);
     }
 
     if (strcmp (sbtext_new, sb_text)) {
