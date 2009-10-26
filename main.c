@@ -104,11 +104,7 @@ update_songinfo (void) {
     else
         snprintf (totaltime_str, sizeof (totaltime_str), "%d days %d:%02d:%02d", daystotal, hourtotal, mintotal, sectotal);
 
-    if (p_ispaused ()) {
-        snprintf (sbtext_new, sizeof (sbtext_new), "Paused | %s total playtime", totaltime_str);
-        songpos = streamer_get_playpos ();
-    }
-    else if (p_isstopped ()) {
+    if (p_isstopped ()) {
         snprintf (sbtext_new, sizeof (sbtext_new), "Stopped | %s total playtime", totaltime_str);
         songpos = 0;
     }
@@ -140,7 +136,8 @@ update_songinfo (void) {
         if (bitrate > 0) {
             snprintf (sbitrate, sizeof (sbitrate), "%d kbps ", bitrate);
         }
-        snprintf (sbtext_new, sizeof (sbtext_new), "[%s] %s| %dHz | %d bit | %s | %d:%02d / %s | %d songs | %s total playtime", str_playing_song.filetype ? str_playing_song.filetype:"-", sbitrate, samplerate, bitspersample, mode, minpos, secpos, t, pl_getcount (), totaltime_str);
+        const char *spaused = p_ispaused () ? "Paused | " : "";
+        snprintf (sbtext_new, sizeof (sbtext_new), "%s[%s] %s| %dHz | %d bit | %s | %d:%02d / %s | %d songs | %s total playtime", spaused, str_playing_song.filetype ? str_playing_song.filetype:"-", sbitrate, samplerate, bitspersample, mode, minpos, secpos, t, pl_getcount (), totaltime_str);
     }
 
     if (strcmp (sbtext_new, sb_text)) {
