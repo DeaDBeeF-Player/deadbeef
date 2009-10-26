@@ -1894,16 +1894,9 @@ gtkpl_current_track_changed (playItem_t *it) {
     set_tray_tooltip (str);
 }
 
-struct songchange_t {
-    int from, to;
-};
-
-static gboolean
-gtkpl_songchanged_callback (void *data) {
-    struct songchange_t *sc = (struct songchange_t *)data;
-    int from = sc->from;
-    int to = sc->to;
-    free (sc);
+void
+gtkpl_songchanged_wrapper (int from, int to) {
+    GDK_THREADS_ENTER ();
     // update window title
     if (from >= 0 || to >= 0) {
         if (to >= 0) {
@@ -1919,13 +1912,5 @@ gtkpl_songchanged_callback (void *data) {
     }
     // update playlist view
     gtkpl_songchanged (&main_playlist, from, to);
-    return FALSE;
-}
-
-void
-gtkpl_songchanged_wrapper (int from, int to) {
-    struct songchange_t *sc = malloc (sizeof (struct songchange_t));
-    sc->from = from;
-    sc->to = to;
-    g_idle_add (gtkpl_songchanged_callback, sc);
+    GDK_THREADS_LEAVE ();
 }
