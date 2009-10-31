@@ -228,26 +228,27 @@ read_config( Display *disp )
                 if ( !cmd_entry->keycode )
                 {
                     fprintf( stderr, "hotkeys: Unknown key: <%s> while parsing %s %s\n", key, item->key, item->value );
-                    continue;
+                    break;
+                }
+            }
+        } while ( !done );
+
+        if (done) {
+            if ( cmd_entry->keycode == 0 ) {
+                fprintf( stderr, "hotkeys: Key not found while parsing %s %s\n", item->key, item->value);
+            }
+            else {
+                command = trim (command);
+                cmd_entry->func = get_command( command );
+                if ( !cmd_entry->func )
+                {
+                    fprintf( stderr, "hotkeys: Unknown command <%s> while parsing %s %s\n", command,  item->key, item->value);
+                }
+                else {
+                    command_count++;
                 }
             }
         }
-        while ( !done );
-
-        if ( cmd_entry->keycode == 0 )
-        {
-            fprintf( stderr, "hotkeys: Key not found while parsing %s %s\n", item->key, item->value);
-            continue;
-        }
-
-        command = trim (command);
-        cmd_entry->func = get_command( command );
-        if ( !cmd_entry->func )
-        {
-            fprintf( stderr, "hotkeys: Unknown command <%s> while parsing %s %s\n", command,  item->key, item->value);
-            continue;        
-        }
-        command_count++;
         item = deadbeef->conf_find ("hotkeys.", item);
     }
 }
@@ -264,12 +265,22 @@ cleanup() {
     XCloseDisplay( disp );
 }
 
+static int
+x_err_handler (Display *d, XErrorEvent *evt) {
+    char buffer[1024];
+    XGetErrorText(d, evt->error_code, buffer, sizeof (buffer));
+    fprintf( stderr, "hotkeys: xlib error: %s\n", buffer);
+}
+
 static void
 hotkeys_event_loop( uintptr_t unused ) {
     int i;
+    XSetErrorHandler( x_err_handler );
 
-    for ( i = 0; i < command_count; i++ )
+    for ( i = 0; i < command_count; i++ ) {
         XGrabKey( disp, commands[ i ].keycode, commands[ i ].modifier, DefaultRootWindow( disp ), False, GrabModeAsync, GrabModeAsync );
+    }
+    XSync (disp, 0);
 
     while (!finished) {
         XEvent event;
@@ -294,22 +305,16 @@ hotkeys_event_loop( uintptr_t unused ) {
 }
 
 static int
-x_err_handler (Display *disp, XErrorEvent *evt) {
-    fprintf( stderr, "hotkeys: We got an Xlib error. Most probably one or more of your hotkeys won't work\n" );
-}
-
-static int
 hotkeys_start (void) {
     finished = 0;
     loop_tid = 0;
     disp = XOpenDisplay( NULL );
     if ( !disp )
     {
-        fprintf( stderr, "Could not open display\n" );
+        fprintf( stderr, "hotkeys: could not open display\n" );
         return -1;
     }
     XSetErrorHandler( x_err_handler );
-
     read_config( disp );
     if (command_count > 0) {
         loop_tid = deadbeef->thread_start( hotkeys_event_loop, 0 );
