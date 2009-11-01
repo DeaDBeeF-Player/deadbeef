@@ -44,6 +44,8 @@
 
 #define SKIP_BLANK_CUE_TRACKS 1
 
+#define min(x,y) ((x)<(y)?(x):(y))
+
 playItem_t *playlist_head[PL_MAX_ITERATORS];
 playItem_t *playlist_tail[PL_MAX_ITERATORS];
 playItem_t *playlist_current_ptr;
@@ -59,8 +61,8 @@ pl_free (void) {
     }
 }
 
-static const char *
-pl_cue_skipspaces (const uint8_t *p) {
+static const uint8_t *
+pl_str_skipspaces (const uint8_t *p) {
     while (*p && *p <= ' ') {
         p++;
     }
@@ -68,7 +70,7 @@ pl_cue_skipspaces (const uint8_t *p) {
 }
 
 static void
-pl_get_qvalue_from_cue (const char *p, int sz, char *out) {
+pl_get_qvalue_from_cue (const uint8_t *p, int sz, char *out) {
     char *str = out;
     if (*p == 0) {
         *out = 0;
@@ -83,7 +85,7 @@ pl_get_qvalue_from_cue (const char *p, int sz, char *out) {
         return;
     }
     p++;
-    p = pl_cue_skipspaces (p);
+    p = pl_str_skipspaces (p);
     while (*p && *p != '"' && sz > 1) {
         sz--;
         *out++ = *p++;
@@ -191,7 +193,7 @@ pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, c
         if ((*prev)->_duration < 0) {
             // might be bad cuesheet file, try to fix
             trace ("cuesheet seems to be corrupted, trying workaround\n");
-            trace ("[bad:] calc endsample=%d, prevtime=%f, samplerate=%d, prev track duration=%f\n", (*prev)->endsample,  prevtime, samplerate, (*prev)->duration);
+            //trace ("[bad:] calc endsample=%d, prevtime=%f, samplerate=%d, prev track duration=%f\n", (*prev)->endsample,  prevtime, samplerate, (*prev)->duration);
             prevtime = f_index01;
             (*prev)->endsample = (prevtime * samplerate) - 1;
             pl_set_item_duration (*prev, (float)((*prev)->endsample - (*prev)->startsample + 1) / samplerate);
@@ -202,7 +204,7 @@ pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, c
                 trace ("fail :-(\n");
             }
         }
-        trace ("calc endsample=%d, prevtime=%f, samplerate=%d, prev track duration=%f\n", (*prev)->endsample,  prevtime, samplerate, (*prev)->duration);
+        //trace ("calc endsample=%d, prevtime=%f, samplerate=%d, prev track duration=%f\n", (*prev)->endsample,  prevtime, samplerate, (*prev)->duration);
     }
     // non-compliant hack to handle tracks which only store pregap info
     if (!index01[0]) {
@@ -262,7 +264,7 @@ pl_insert_cue_from_buffer (playItem_t *after, const char *fname, const uint8_t *
         str[p-buffer] = 0;
         buffersize -= p-buffer;
         buffer = p;
-        p = pl_cue_skipspaces (str);
+        p = pl_str_skipspaces (str);
         if (!strncmp (p, "PERFORMER ", 10)) {
             pl_get_qvalue_from_cue (p + 10, sizeof (performer), performer);
 //            printf ("got performer: %s\n", performer);
@@ -350,6 +352,145 @@ pl_insert_cue (playItem_t *after, const char *fname, struct DB_decoder_s *decode
 }
 
 playItem_t *
+pl_insert_m3u (playItem_t *after, const char *fname) {
+    return NULL;
+}
+
+playItem_t *
+pl_insert_pls (playItem_t *after, const char *fname) {
+    FILE *fp = fopen (fname, "rb");
+    if (!fp) {
+        trace ("failed to open file %s\n", fname);
+        return NULL;
+    }
+    fseek (fp, 0, SEEK_END);
+    int sz = ftell (fp);
+    if (sz > 1024*1024) {
+        fclose (fp);
+        trace ("file %s is more than 1Mb\n", fname);
+        return NULL;
+    }
+    if (sz < 30) {
+        fclose (fp);
+        trace ("file %s is too small to be playlist\n", fname);
+        return NULL;
+    }
+    rewind (fp);
+    uint8_t buffer[sz];
+    fread (buffer, 1, sz, fp);
+    fclose (fp);
+    // 1st line must be "[playlist]"
+    const uint8_t *p = buffer;
+    const uint8_t *end = buffer+sz;
+    if (strncasecmp (p, "[playlist]", 10)) {
+        trace ("file %s doesn't begin with [playlist]\n", fname);
+        return NULL;
+    }
+    p += 10;
+    p = pl_str_skipspaces (p);
+    if (p >= end) {
+        trace ("file %s finished before numberofentries had been read\n", fname);
+        return NULL;
+    }
+    if (strncasecmp (p, "numberofentries=", 16)) {
+        trace ("can't get number of entries from %s\n", fname);
+        return NULL;
+    }
+    p += 15;
+    // ignore numentries - no real need for it here
+    while (p < end && *p > 0x20) {
+        p++;
+    }
+    p = pl_str_skipspaces (p);
+    // fetch all tracks
+    char url[1024] = "";
+    char title[1024] = "";
+    char length[20] = "";
+    int nfile = 1;
+    while (p < end) {
+        if (p >= end) {
+            break;
+        }
+        if (end-p < 6) {
+            break;
+        }
+        if (strncasecmp (p, "file", 4)) {
+            break;
+        }
+        p += 4;
+        while (p < end && *p != '=') {
+            p++;
+        }
+        p++;
+        if (p >= end) {
+            break;
+        }
+        const uint8_t *e = p;
+        while (e < end && *e >= 0x20) {
+            e++;
+        }
+        int n = e-p;
+        n = min (n, sizeof (url)-1);
+        memcpy (url, p, n);
+        url[n] = 0;
+        trace ("url: %s\n", url);
+        p = ++e;
+        p = pl_str_skipspaces (p);
+        if (strncasecmp (p, "title", 5)) {
+            break;
+        }
+        p += 5;
+        while (p < end && *p != '=') {
+            p++;
+        }
+        p++;
+        if (p >= end) {
+            break;
+        }
+        e = p;
+        while (e < end && *e >= 0x20) {
+            e++;
+        }
+        n = e-p;
+        n = min (n, sizeof (title)-1);
+        memcpy (title, p, n);
+        title[n] = 0;
+        trace ("title: %s\n", title);
+        p = ++e;
+        p = pl_str_skipspaces (p);
+        if (strncasecmp (p, "length", 6)) {
+            break;
+        }
+        p += 6;
+        while (p < end && *p != '=') {
+            p++;
+        }
+        p++;
+        if (p >= end) {
+            break;
+        }
+        e = p;
+        while (e < end && *e >= 0x20) {
+            e++;
+        }
+        n = e-p;
+        n = min (n, sizeof (length)-1);
+        memcpy (length, p, n);
+        length[n] = 0;
+        trace ("length: %s\n", length);
+        // add track
+        playItem_t *it = pl_item_alloc ();
+        it->decoder = NULL;
+        it->fname = strdup (url);
+        it->filetype = "content";
+        pl_set_item_duration (it, atoi (length));
+        pl_add_meta (it, "title", title);
+        after = pl_insert_item (after, it);
+    }
+    return after;
+}
+
+playItem_t *
 pl_insert_file (playItem_t *after, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
     if (!fname) {
         return NULL;
@@ -359,7 +500,7 @@ pl_insert_file (playItem_t *after, const char *fname, int *pabort, int (*cb)(pla
     // set decoder to NULL, and filetype to "content"
     // streamer is responsible to determine content type on 1st access and
     // update decoder and filetype fields
-    if (strcasecmp (fname, "file://")) {
+    if (strncasecmp (fname, "file://", 7)) {
         const char *p = fname;
         int detect_on_access = 1;
         for (p = fname; *p; p++) {
@@ -381,6 +522,9 @@ pl_insert_file (playItem_t *after, const char *fname, int *pabort, int (*cb)(pla
             return pl_insert_item (after, it);
         }
     }
+    else {
+        fname += 7;
+    }
 
     // detect decoder
     const char *eol = fname + strlen (fname) - 1;
@@ -388,6 +532,14 @@ pl_insert_file (playItem_t *after, const char *fname, int *pabort, int (*cb)(pla
         eol--;
     }
     eol++;
+
+    // detect pls/m3u files
+    if (!memcmp (eol, "m3u", 4)) {
+        return pl_insert_m3u (after, fname);
+    }
+    else if (!memcmp (eol, "pls", 4)) {
+        return pl_insert_pls (after, fname);
+    }
 
     DB_decoder_t **decoders = plug_get_decoder_list ();
     // match by decoder
