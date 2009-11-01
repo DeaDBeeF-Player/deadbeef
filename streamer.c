@@ -365,18 +365,16 @@ streamer_thread (uintptr_t ctx) {
 
         // read ahead at 384K per second
         // that means 10ms per 4k block, or 40ms per 16k block
-        int minsize = 16484;
-        int alloc_time = 1000 / (96000 * 4 / minsize);
+        int alloc_time = 1000 / (96000 * 4 / 4096);
 
         streamer_lock ();
         if (streambuffer_fill < (STREAM_BUFFER_SIZE-4096)/* && bytes_until_next_song == 0*/) {
             int sz = STREAM_BUFFER_SIZE - streambuffer_fill;
-#if 0
+            int minsize = 4096;
             if (streambuffer_fill < 16384) {
                 minsize = 16384;
                 alloc_time *= 4;
             }
-#endif
             sz = min (minsize, sz);
             assert ((sz&3) == 0);
             char buf[sz];
@@ -395,7 +393,7 @@ streamer_thread (uintptr_t ctx) {
         if (alloc_time > 0) {
             usleep (alloc_time * 1000);
         }
-//        printf ("fill: %d/%d\n", streambuffer_fill, STREAM_BUFFER_SIZE);
+//        trace ("fill: %d/%d\n", streambuffer_fill, STREAM_BUFFER_SIZE);
     }
 
     // stop streaming song
