@@ -244,6 +244,9 @@ typedef struct {
     int (*conf_get_int) (const char *key, int def);
     void (*conf_set_str) (const char *key, const char *val);
     DB_conf_item_t * (*conf_find) (const char *group, DB_conf_item_t *prev);
+    // gui locking
+    void (*gui_lock) (void);
+    void (*gui_unlock) (void);
     // exporting plugin conf options for gui
     // all exported options are grouped by plugin, and will be available to user
     // from gui

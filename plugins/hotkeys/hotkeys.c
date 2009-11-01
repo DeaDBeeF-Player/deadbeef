@@ -275,12 +275,15 @@ x_err_handler (Display *d, XErrorEvent *evt) {
 static void
 hotkeys_event_loop( uintptr_t unused ) {
     int i;
-    XSetErrorHandler( x_err_handler );
 
+    deadbeef->gui_lock ();
     for ( i = 0; i < command_count; i++ ) {
+        XSetErrorHandler( x_err_handler );
         XGrabKey( disp, commands[ i ].keycode, commands[ i ].modifier, DefaultRootWindow( disp ), False, GrabModeAsync, GrabModeAsync );
     }
+    XSetErrorHandler( x_err_handler );
     XSync (disp, 0);
+    deadbeef->gui_unlock ();
 
     while (!finished) {
         XEvent event;

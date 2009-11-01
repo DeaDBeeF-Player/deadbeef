@@ -119,6 +119,8 @@ static DB_functions_t deadbeef_api = {
     .conf_get_int = conf_get_int,
     .conf_set_str = conf_set_str,
     .conf_find = conf_find,
+    .gui_lock = plug_gui_lock,
+    .gui_unlock = plug_gui_unlock,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;
@@ -151,6 +153,16 @@ DB_decoder_t *g_decoder_plugins[MAX_DECODER_PLUGINS+1];
 
 #define MAX_VFS_PLUGINS 10
 DB_vfs_t *g_vfs_plugins[MAX_VFS_PLUGINS+1];
+
+void
+plug_gui_lock (void) {
+    gdk_threads_enter ();
+}
+
+void
+plug_gui_unlock (void) {
+    gdk_threads_leave ();
+}
 
 void
 plug_md5 (uint8_t sig[16], const char *in, int len) {
