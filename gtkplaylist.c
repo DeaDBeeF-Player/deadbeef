@@ -29,6 +29,7 @@
 #include <unistd.h>
 #include <ctype.h>
 #include <assert.h>
+#include <sys/time.h>
 #include "gtkplaylist.h"
 #include "callbacks.h"
 #include "interface.h"
@@ -93,6 +94,13 @@ float colo_current[COLO_COUNT][3];
 // playlist row height
 int rowheight = -1;
 
+// playlist scrolling during dragging
+static int playlist_scroll_pointer_y = -1;
+static int playlist_scroll_direction = 0;
+static int playlist_scroll_active = 0;
+static struct timeval tm_prevscroll;
+static float scroll_sleep_time = 0;
+
 static uintptr_t play16_pixbuf;
 static uintptr_t pause16_pixbuf;
 static uintptr_t buffering16_pixbuf;
@@ -126,7 +134,6 @@ redraw_header (void *data) {
     gtkpl_expose_header (anim->pl, 0, 0, anim->pl->header->allocation.width, anim->pl->header->allocation.height);
     return FALSE;
 }
-
 
 static int
 colhdr_anim_cb (float _progress, int _last, void *_ctx) {
@@ -688,6 +695,8 @@ gtkpl_mouse1_released (gtkplaylist_t *ps, int state, int ex, int ey, double time
         gtkpl_select_single (ps, y);
     }
     else if (areaselect) {
+        playlist_scroll_direction = 0;
+        playlist_scroll_pointer_y = -1;
         areaselect = 0;
     }
 }
@@ -729,6 +738,46 @@ gtkpl_draw_areasel (GtkWidget *widget, int x, int y) {
 }
 #endif
 
+static gboolean
+gtkpl_scroll_playlist_cb (gpointer data) {
+    gtkplaylist_t *ps = (gtkplaylist_t *)data;
+    playlist_scroll_active = 1;
+    struct timeval tm;
+    gettimeofday (&tm, NULL);
+    if (tm.tv_sec - tm_prevscroll.tv_sec + (tm.tv_usec - tm_prevscroll.tv_usec) / 1000000.0 < scroll_sleep_time) {
+        return TRUE;
+    }
+    memcpy (&tm_prevscroll, &tm, sizeof (tm));
+    if (playlist_scroll_pointer_y == -1) {
+        playlist_scroll_active = 0;
+        return FALSE;
+    }
+    if (playlist_scroll_direction == 0) {
+        playlist_scroll_active = 0;
+        return FALSE;
+    }
+    int sc = ps->scrollpos + playlist_scroll_direction;
+    if (sc < 0) {
+        playlist_scroll_active = 0;
+        return FALSE;
+    }
+    if (sc >= *ps->pcount) {
+        playlist_scroll_active = 0;
+        return FALSE;
+    }
+    GDK_THREADS_ENTER ();
+    gtk_range_set_value (GTK_RANGE (ps->scrollbar), sc);
+    GdkEventMotion ev;
+    ev.y = playlist_scroll_pointer_y;
+    gtkpl_mousemove (ps, &ev);
+    GDK_THREADS_LEAVE ();
+    scroll_sleep_time -= 0.1;
+    if (scroll_sleep_time < 0.05) {
+        scroll_sleep_time = 0.05;
+    }
+    return TRUE;
+}
+
 void
 gtkpl_mousemove (gtkplaylist_t *ps, GdkEventMotion *event) {
     if (dragwait) {
@@ -753,15 +802,41 @@ gtkpl_mousemove (gtkplaylist_t *ps, GdkEventMotion *event) {
             int idx=0;
             for (playItem_t *it = playlist_head[ps->iterator]; it; it = it->next[ps->iterator], idx++) {
                 if (idx >= start && idx <= end) {
-                    it->selected = 1;
-                    gtkpl_redraw_pl_row (ps, idx, it);
+                    if (!it->selected) {
+                        it->selected = 1;
+                        gtkpl_redraw_pl_row (ps, idx, it);
+                    }
                 }
-                else if (it->selected)
-                {
+                else if (it->selected) {
                     it->selected = 0;
                     gtkpl_redraw_pl_row (ps, idx, it);
                 }
             }
+        }
+
+        if (event->y < 10) {
+            playlist_scroll_pointer_y = event->y;
+            playlist_scroll_direction = -1;
+            // start scrolling up
+            if (!playlist_scroll_active) {
+                scroll_sleep_time = 0.2;
+                gettimeofday (&tm_prevscroll, NULL);
+                g_idle_add (gtkpl_scroll_playlist_cb, ps);
+            }
+        }
+        else if (event->y > ps->playlist->allocation.height-10) {
+            playlist_scroll_pointer_y = event->y;
+            playlist_scroll_direction = 1;
+            // start scrolling up
+            if (!playlist_scroll_active) {
+                scroll_sleep_time = 0.2;
+                gettimeofday (&tm_prevscroll, NULL);
+                g_idle_add (gtkpl_scroll_playlist_cb, ps);
+            }
+        }
+        else {
+            playlist_scroll_direction = 0;
+            playlist_scroll_pointer_y = -1;
         }
         // debug only
         // gtkpl_draw_areasel (widget, event->x, event->y);
