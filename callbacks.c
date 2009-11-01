@@ -106,12 +106,15 @@ main_playlist_init (GtkWidget *widget) {
     gtk_object_set_data (GTK_OBJECT (main_playlist.scrollbar), "ps", &main_playlist);
     gtk_object_set_data (GTK_OBJECT (main_playlist.hscrollbar), "ps", &main_playlist);
 
-    /*****/
-    GValue value = {0, };
-    g_value_init (&value, G_TYPE_BOOLEAN);
-    g_value_set_boolean (&value, TRUE);
-    g_object_set_property (G_OBJECT (widget), "has-tooltip", &value);
-    g_signal_connect (G_OBJECT (widget), "query-tooltip", G_CALLBACK (playlist_tooltip_handler), NULL);
+    // FIXME: filepath should be in properties dialog, while tooltip should be
+    // used to show text that doesn't fit in column width
+    if (conf_get_int ("playlist.showpathtooltip", 0)) {
+        GValue value = {0, };
+        g_value_init (&value, G_TYPE_BOOLEAN);
+        g_value_set_boolean (&value, TRUE);
+        g_object_set_property (G_OBJECT (widget), "has-tooltip", &value);
+        g_signal_connect (G_OBJECT (widget), "query-tooltip", G_CALLBACK (playlist_tooltip_handler), NULL);
+    }
 }
 
 void
