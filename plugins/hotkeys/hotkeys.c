@@ -265,29 +265,12 @@ cleanup() {
     XCloseDisplay( disp );
 }
 
-static int
-x_err_handler (Display *d, XErrorEvent *evt) {
-    char buffer[1024];
-    XGetErrorText(d, evt->error_code, buffer, sizeof (buffer));
-    fprintf( stderr, "hotkeys: xlib error: %s\n", buffer);
-}
-
 static void
 hotkeys_event_loop( uintptr_t unused ) {
     int i;
 
-    deadbeef->gui_lock ();
-    for ( i = 0; i < command_count; i++ ) {
-        XSetErrorHandler( x_err_handler );
-        XGrabKey( disp, commands[ i ].keycode, commands[ i ].modifier, DefaultRootWindow( disp ), False, GrabModeAsync, GrabModeAsync );
-    }
-    XSetErrorHandler( x_err_handler );
-    XSync (disp, 0);
-    deadbeef->gui_unlock ();
-
     while (!finished) {
         XEvent event;
-
         while ( XPending( disp ) )
         {
             XNextEvent( disp, &event );
@@ -308,6 +291,13 @@ hotkeys_event_loop( uintptr_t unused ) {
 }
 
 static int
+x_err_handler (Display *d, XErrorEvent *evt) {
+    char buffer[1024];
+    XGetErrorText(d, evt->error_code, buffer, sizeof (buffer));
+    fprintf( stderr, "hotkeys: xlib error: %s\n", buffer);
+}
+
+static int
 hotkeys_start (void) {
     finished = 0;
     loop_tid = 0;
@@ -318,7 +308,15 @@ hotkeys_start (void) {
         return -1;
     }
     XSetErrorHandler( x_err_handler );
+
     read_config( disp );
+    int i;
+    // need to grab it here to prevent gdk_x_error from being called while we're
+    // doing it on other thread
+    for (i = 0; i < command_count; i++) {
+        XGrabKey (disp, commands[i].keycode, commands[i].modifier, DefaultRootWindow (disp), False, GrabModeAsync, GrabModeAsync);
+    }
+    XSync (disp, 0);
     if (command_count > 0) {
         loop_tid = deadbeef->thread_start( hotkeys_event_loop, 0 );
     }
