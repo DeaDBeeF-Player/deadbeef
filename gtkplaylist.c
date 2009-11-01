@@ -95,6 +95,7 @@ float colo_current[COLO_COUNT][3];
 int rowheight = -1;
 
 // playlist scrolling during dragging
+static int playlist_scroll_mode = 0; // 0=select, 1=dragndrop
 static int playlist_scroll_pointer_y = -1;
 static int playlist_scroll_direction = 0;
 static int playlist_scroll_active = 0;
@@ -767,9 +768,14 @@ gtkpl_scroll_playlist_cb (gpointer data) {
     }
     GDK_THREADS_ENTER ();
     gtk_range_set_value (GTK_RANGE (ps->scrollbar), sc);
-    GdkEventMotion ev;
-    ev.y = playlist_scroll_pointer_y;
-    gtkpl_mousemove (ps, &ev);
+    if (playlist_scroll_mode == 0) {
+        GdkEventMotion ev;
+        ev.y = playlist_scroll_pointer_y;
+        gtkpl_mousemove (ps, &ev);
+    }
+    else if (playlist_scroll_mode == 1) {
+        gtkpl_track_dragdrop (ps, playlist_scroll_pointer_y);
+    }
     GDK_THREADS_LEAVE ();
     scroll_sleep_time -= 0.1;
     if (scroll_sleep_time < 0.05) {
@@ -796,7 +802,8 @@ gtkpl_mousemove (gtkplaylist_t *ps, GdkEventMotion *event) {
     else if (areaselect) {
         GtkWidget *widget = ps->playlist;
         int y = event->y/rowheight + ps->scrollpos;
-        if (y != shift_sel_anchor) {
+        //if (y != shift_sel_anchor)
+        {
             int start = min (y, shift_sel_anchor);
             int end = max (y, shift_sel_anchor);
             int idx=0;
@@ -815,6 +822,7 @@ gtkpl_mousemove (gtkplaylist_t *ps, GdkEventMotion *event) {
         }
 
         if (event->y < 10) {
+            playlist_scroll_mode = 0;
             playlist_scroll_pointer_y = event->y;
             playlist_scroll_direction = -1;
             // start scrolling up
@@ -825,6 +833,7 @@ gtkpl_mousemove (gtkplaylist_t *ps, GdkEventMotion *event) {
             }
         }
         else if (event->y > ps->playlist->allocation.height-10) {
+            playlist_scroll_mode = 0;
             playlist_scroll_pointer_y = event->y;
             playlist_scroll_direction = 1;
             // start scrolling up
@@ -1126,6 +1135,32 @@ gtkpl_track_dragdrop (gtkplaylist_t *ps, int y) {
     draw_rect (0, drag_motion_y * rowheight-3, 3, 7, 1);
     draw_rect (widget->allocation.width-3, drag_motion_y * rowheight-3, 3, 7, 1);
     draw_end ();
+    if (y < 10) {
+        playlist_scroll_pointer_y = y;
+        playlist_scroll_direction = -1;
+        playlist_scroll_mode = 1;
+        // start scrolling up
+        if (!playlist_scroll_active) {
+            scroll_sleep_time = 0.2;
+            gettimeofday (&tm_prevscroll, NULL);
+            g_idle_add (gtkpl_scroll_playlist_cb, ps);
+        }
+    }
+    else if (y > ps->playlist->allocation.height-10) {
+        playlist_scroll_mode = 1;
+        playlist_scroll_pointer_y = y;
+        playlist_scroll_direction = 1;
+        // start scrolling up
+        if (!playlist_scroll_active) {
+            scroll_sleep_time = 0.2;
+            gettimeofday (&tm_prevscroll, NULL);
+            g_idle_add (gtkpl_scroll_playlist_cb, ps);
+        }
+    }
+    else {
+        playlist_scroll_direction = 0;
+        playlist_scroll_pointer_y = -1;
+    }
 }
 
 void
@@ -1202,6 +1237,8 @@ on_playlist_drag_end                   (GtkWidget       *widget,
     // invalidate entire cache - slow, but rare
     gtkpl_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
     gtkpl_expose (ps, 0, 0, widget->allocation.width, widget->allocation.height);
+    playlist_scroll_direction = 0;
+    playlist_scroll_pointer_y = -1;
 }
 
 void
