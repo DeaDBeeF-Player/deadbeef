@@ -122,13 +122,15 @@ update_songinfo (void) {
             strcpy (t, "-:--");
         }
 
-        int bitrate = streamer_get_bitrate ();
         char sbitrate[20] = "";
+#if 0 // NOTE: do not enable that for stable branch yet
+        int bitrate = streamer_get_bitrate ();
         if (bitrate > 0) {
             snprintf (sbitrate, sizeof (sbitrate), "%d kbps ", bitrate);
         }
+#endif
         const char *spaused = p_ispaused () ? "Paused | " : "";
-        snprintf (sbtext_new, sizeof (sbtext_new), "%s[%s] %s| %dHz | %d bit | %s | %d:%02d / %s | %d songs | %s total playtime", spaused, str_playing_song.filetype ? str_playing_song.filetype:"-", sbitrate, samplerate, bitspersample, mode, minpos, secpos, t, pl_getcount (), totaltime_str);
+        snprintf (sbtext_new, sizeof (sbtext_new), "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d songs | %s total playtime", spaused, str_playing_song.filetype ? str_playing_song.filetype:"-", sbitrate, samplerate, bitspersample, mode, minpos, secpos, t, pl_getcount (), totaltime_str);
     }
 
     if (strcmp (sbtext_new, sb_text)) {
