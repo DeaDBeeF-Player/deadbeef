@@ -961,6 +961,12 @@ seekbar_draw (GtkWidget *widget) {
 	if (!cr) {
         return;
     }
+    if (!str_playing_song.decoder || str_playing_song._duration < 0) {
+        clearlooks_rounded_rectangle (cr, 2, widget->allocation.height/2-4, widget->allocation.width-4, 8, 4, 0xff);
+        theme_set_cairo_source_rgb (cr, COLO_SEEKBAR_FRONT);
+        cairo_stroke (cr);
+        return;
+    }
     float pos = 0;
     if (seekbar_moving) {
         int x = seekbar_move_x;

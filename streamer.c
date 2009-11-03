@@ -351,16 +351,18 @@ streamer_thread (uintptr_t ctx) {
             if (trk != -1) {
                 messagepump_push (M_TRACKCHANGED, 0, trk, 0);
             }
-            streamer_lock ();
-            streambuffer_fill = 0;
-            streambuffer_pos = 0;
-            codec_lock ();
-            codecleft = 0;
-            codec_unlock ();
-            if (str_playing_song.decoder && str_playing_song.decoder->seek (pos) >= 0) {
-                playpos = str_playing_song.decoder->info.readpos;
+            if (str_playing_song.decoder && str_playing_song._duration > 0) {
+                streamer_lock ();
+                streambuffer_fill = 0;
+                streambuffer_pos = 0;
+                codec_lock ();
+                codecleft = 0;
+                codec_unlock ();
+                if (str_playing_song.decoder->seek (pos) >= 0) {
+                    playpos = str_playing_song.decoder->info.readpos;
+                }
+                streamer_unlock();
             }
-            streamer_unlock();
         }
 
         // read ahead at 384K per second
