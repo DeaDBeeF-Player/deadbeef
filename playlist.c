@@ -33,6 +33,7 @@
 #include "playback.h"
 #include "plugins.h"
 #include "junklib.h"
+#include "vfs.h"
 
 // 1.0->1.1 changelog:
 //    added sample-accurate seek positions for sub-tracks
@@ -356,29 +357,30 @@ pl_insert_m3u (playItem_t *after, const char *fname) {
     return NULL;
 }
 
+// that has to be opened with vfs functions to allow loading from http, as
+// referenced from M3U.
 playItem_t *
 pl_insert_pls (playItem_t *after, const char *fname) {
-    FILE *fp = fopen (fname, "rb");
+    DB_FILE *fp = vfs_fopen (fname);
     if (!fp) {
         trace ("failed to open file %s\n", fname);
         return NULL;
     }
-    fseek (fp, 0, SEEK_END);
-    int sz = ftell (fp);
+    int sz = vfs_fgetlength (fp);
     if (sz > 1024*1024) {
-        fclose (fp);
-        trace ("file %s is more than 1Mb\n", fname);
+        vfs_fclose (fp);
+        trace ("file %s is too large to be a playlist\n", fname);
         return NULL;
     }
     if (sz < 30) {
-        fclose (fp);
-        trace ("file %s is too small to be playlist\n", fname);
+        vfs_fclose (fp);
+        trace ("file %s is too small to be a playlist\n", fname);
         return NULL;
     }
-    rewind (fp);
+    vfs_rewind (fp);
     uint8_t buffer[sz];
-    fread (buffer, 1, sz, fp);
-    fclose (fp);
+    vfs_fread (buffer, 1, sz, fp);
+    vfs_fclose (fp);
     // 1st line must be "[playlist]"
     const uint8_t *p = buffer;
     const uint8_t *end = buffer+sz;
