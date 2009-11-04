@@ -120,16 +120,16 @@ if test ${HAVE_CURL}; then
 fi
 
 dnl faad2 plugin
-AC_CHECK_LIB([faad], [main], [HAVE_FAAD=1])
-AC_CHECK_LIB([mp4ff], [main], [HAVE_MP4FF=1])
-AM_CONDITIONAL(HAVE_FAAD, test $HAVE_FAAD)
-AM_CONDITIONAL(HAVE_MP4FF, test $HAVE_MP4FF)
-if test ${HAVE_FAAD} && test ${HAVE_MP4FF} ; then
-    FAAD2_LIBS="-lfaad -lmp4ff -lmp4v2"
-    FAAD2_DIR="plugins/faad2"
-    AC_SUBST(FAAD2_LIBS)
-    AC_SUBST(FAAD2_DIR)
-fi
+dnl AC_CHECK_LIB([faad], [main], [HAVE_FAAD=1])
+dnl AC_CHECK_LIB([mp4ff], [main], [HAVE_MP4FF=1])
+dnl AM_CONDITIONAL(HAVE_FAAD, test $HAVE_FAAD)
+dnl AM_CONDITIONAL(HAVE_MP4FF, test $HAVE_MP4FF)
+dnl if test ${HAVE_FAAD} && test ${HAVE_MP4FF} ; then
+dnl     FAAD2_LIBS="-lfaad -lmp4ff -lmp4v2"
+dnl     FAAD2_DIR="plugins/faad2"
+dnl     AC_SUBST(FAAD2_LIBS)
+dnl     AC_SUBST(FAAD2_DIR)
+dnl fi
 
 dnl cdda plugin
 AC_CHECK_LIB([cdio], [main], [HAVE_CDIO=1])
@@ -170,7 +170,7 @@ PRINT_PLUGIN_INFO([flac],[flac player],[test $HAVE_FLAC])
 PRINT_PLUGIN_INFO([wavpack],[wavpack player],[test $HAVE_WAVPACK])
 PRINT_PLUGIN_INFO([sndfile],[PCM (wav,aiff,etc) player based on libsndfile],[test $HAVE_SNDFILE])
 PRINT_PLUGIN_INFO([vfs_curl],[http/ftp streaming support],[test $HAVE_CURL])
-PRINT_PLUGIN_INFO([faad2],[aac/mp4 player],[test $HAVE_FAAD && test $HAVE_MP4FF])
+dnl PRINT_PLUGIN_INFO([faad2],[aac/mp4 player],[test $HAVE_FAAD && test $HAVE_MP4FF])
 PRINT_PLUGIN_INFO([cdda],[cd audio player],[test $HAVE_CDIO && test $HAVE_CDDB])
 echo
 
@@ -191,7 +191,6 @@ plugins/flac/Makefile
 plugins/wavpack/Makefile
 plugins/sndfile/Makefile
 plugins/vfs_curl/Makefile
-plugins/faad2/Makefile
 plugins/cdda/Makefile
 deadbeef.desktop
 ])
