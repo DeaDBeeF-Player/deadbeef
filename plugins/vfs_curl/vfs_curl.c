@@ -23,8 +23,8 @@
 #include <assert.h>
 #include "../../deadbeef.h"
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -138,11 +138,15 @@ http_size_header_handler (void *ptr, size_t size, size_t nmemb, void *stream) {
     assert (stream);
     HTTP_FILE *fp = (HTTP_FILE *)stream;
     // don't copy/allocate mem, just grep for "Content-Length: "
-    const char *cl = strstr (ptr, "Content-Length: ");
+    const char *cl = strcasestr (ptr, "Content-Length:");
     if (cl) {
-        cl += 16;
+        cl += 15;
+        while (*cl <= 0x20) {
+            cl++;
+        }
         fp->length = atoi (cl);
         trace ("vfs_curl: file size is %d bytes\n", fp->length);
+        return 0;
     }
     return size * nmemb;
 }
@@ -173,6 +177,11 @@ http_content_header_handler (void *ptr, size_t size, size_t nmemb, void *stream)
     return size * nmemb;
 }
 
+static size_t
+http_curl_write_abort (void *ptr, size_t size, size_t nmemb, void *stream) {
+    return 0;
+}
+
 static void
 http_thread_func (uintptr_t ctx) {
     HTTP_FILE *fp = (HTTP_FILE *)ctx;
@@ -183,17 +192,19 @@ http_thread_func (uintptr_t ctx) {
 
     int status;
     // get filesize (once)
-    curl_easy_setopt(curl, CURLOPT_URL, fp->url);
-    curl_easy_setopt(curl, CURLOPT_NOBODY, 1);
-    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
-    curl_easy_setopt(curl, CURLOPT_MAXREDIRS, 10);
-    curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, http_size_header_handler);
+    curl_easy_setopt (curl, CURLOPT_URL, fp->url);
+    curl_easy_setopt (curl, CURLOPT_NOBODY, 0);
+    curl_easy_setopt (curl, CURLOPT_FOLLOWLOCATION, 1);
+    curl_easy_setopt (curl, CURLOPT_MAXREDIRS, 10);
+    curl_easy_setopt (curl, CURLOPT_HEADERFUNCTION, http_size_header_handler);
     curl_easy_setopt (curl, CURLOPT_HEADERDATA, ctx);
+    curl_easy_setopt (curl, CURLOPT_WRITEFUNCTION, http_curl_write_abort);
     status = curl_easy_perform(curl);
+#if 0
     if (status != 0) {
-        fp->length = -1;
         trace ("vfs_curl: curl_easy_perform failed while getting filesize, status %d\n", status);
     }
+#endif
     fp->status = STATUS_STARTING;
 
     trace ("vfs_curl: started loading data\n");

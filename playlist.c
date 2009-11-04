@@ -375,10 +375,10 @@ pl_insert_m3u (playItem_t *after, const char *fname, int *pabort, int (*cb)(play
     }
     if (sz < 30) {
         vfs_fclose (fp);
-        trace ("file %s is too small to be a playlist\n", fname);
+        trace ("file %s is too small to be a playlist (%d)\n", fname, sz);
         return NULL;
     }
-    vfs_rewind (fp);
+    trace ("loading m3u...\n");
     uint8_t buffer[sz];
     vfs_fread (buffer, 1, sz, fp);
     vfs_fclose (fp);
@@ -406,6 +406,7 @@ pl_insert_m3u (playItem_t *after, const char *fname, int *pabort, int (*cb)(play
         uint8_t nm[n+1];
         memcpy (nm, p, n);
         nm[n] = 0;
+        trace ("adding file %s\n", nm);
         playItem_t *it = pl_insert_file (after, nm, pabort, cb, user_data);
         if (it) {
             after = it;
@@ -413,6 +414,7 @@ pl_insert_m3u (playItem_t *after, const char *fname, int *pabort, int (*cb)(play
         if (pabort && *pabort) {
             return after;
         }
+        p = e;
         if (p >= end) {
             break;
         }
