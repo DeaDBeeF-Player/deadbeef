@@ -63,7 +63,14 @@ pl_free (void) {
 }
 
 static const uint8_t *
-pl_str_skipspaces (const uint8_t *p) {
+pl_str_skipspaces (const uint8_t *p, const uint8_t *end) {
+    while (p < end && *p <= ' ') {
+        p++;
+    }
+    return p;
+}
+static const uint8_t *
+pl_cue_skipspaces (const uint8_t *p) {
     while (*p && *p <= ' ') {
         p++;
     }
@@ -86,7 +93,7 @@ pl_get_qvalue_from_cue (const uint8_t *p, int sz, char *out) {
         return;
     }
     p++;
-    p = pl_str_skipspaces (p);
+    p = pl_cue_skipspaces (p);
     while (*p && *p != '"' && sz > 1) {
         sz--;
         *out++ = *p++;
@@ -265,7 +272,7 @@ pl_insert_cue_from_buffer (playItem_t *after, const char *fname, const uint8_t *
         str[p-buffer] = 0;
         buffersize -= p-buffer;
         buffer = p;
-        p = pl_str_skipspaces (str);
+        p = pl_cue_skipspaces (str);
         if (!strncmp (p, "PERFORMER ", 10)) {
             pl_get_qvalue_from_cue (p + 10, sizeof (performer), performer);
 //            printf ("got performer: %s\n", performer);
@@ -353,14 +360,70 @@ pl_insert_cue (playItem_t *after, const char *fname, struct DB_decoder_s *decode
 }
 
 playItem_t *
-pl_insert_m3u (playItem_t *after, const char *fname) {
-    return NULL;
+pl_insert_m3u (playItem_t *after, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
+    // skip all empty lines and comments
+    DB_FILE *fp = vfs_fopen (fname);
+    if (!fp) {
+        trace ("failed to open file %s\n", fname);
+        return NULL;
+    }
+    int sz = vfs_fgetlength (fp);
+    if (sz > 1024*1024) {
+        vfs_fclose (fp);
+        trace ("file %s is too large to be a playlist\n", fname);
+        return NULL;
+    }
+    if (sz < 30) {
+        vfs_fclose (fp);
+        trace ("file %s is too small to be a playlist\n", fname);
+        return NULL;
+    }
+    vfs_rewind (fp);
+    uint8_t buffer[sz];
+    vfs_fread (buffer, 1, sz, fp);
+    vfs_fclose (fp);
+    const uint8_t *p = buffer;
+    const uint8_t *end = buffer+sz;
+    while (p < end) {
+        p = pl_str_skipspaces (p, end);
+        if (p >= end) {
+            break;
+        }
+        if (*p == '#') {
+            while (p < end && *p >= 0x20) {
+                p++;
+            }
+            if (p >= end) {
+                break;
+            }
+            continue;
+        }
+        const uint8_t *e = p;
+        while (e < end && *e >= 0x20) {
+            e++;
+        }
+        int n = e-p;
+        uint8_t nm[n+1];
+        memcpy (nm, p, n);
+        nm[n] = 0;
+        playItem_t *it = pl_insert_file (after, nm, pabort, cb, user_data);
+        if (it) {
+            after = it;
+        }
+        if (pabort && *pabort) {
+            return after;
+        }
+        if (p >= end) {
+            break;
+        }
+    }
+    return after;
 }
 
 // that has to be opened with vfs functions to allow loading from http, as
 // referenced from M3U.
 playItem_t *
-pl_insert_pls (playItem_t *after, const char *fname) {
+pl_insert_pls (playItem_t *after, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
     DB_FILE *fp = vfs_fopen (fname);
     if (!fp) {
         trace ("failed to open file %s\n", fname);
@@ -389,7 +452,7 @@ pl_insert_pls (playItem_t *after, const char *fname) {
         return NULL;
     }
     p += 10;
-    p = pl_str_skipspaces (p);
+    p = pl_str_skipspaces (p, end);
     if (p >= end) {
         trace ("file %s finished before numberofentries had been read\n", fname);
         return NULL;
@@ -403,7 +466,7 @@ pl_insert_pls (playItem_t *after, const char *fname) {
     while (p < end && *p > 0x20) {
         p++;
     }
-    p = pl_str_skipspaces (p);
+    p = pl_str_skipspaces (p, end);
     // fetch all tracks
     char url[1024] = "";
     char title[1024] = "";
@@ -437,7 +500,7 @@ pl_insert_pls (playItem_t *after, const char *fname) {
         url[n] = 0;
         trace ("url: %s\n", url);
         p = ++e;
-        p = pl_str_skipspaces (p);
+        p = pl_str_skipspaces (p, end);
         if (strncasecmp (p, "title", 5)) {
             break;
         }
@@ -459,7 +522,7 @@ pl_insert_pls (playItem_t *after, const char *fname) {
         title[n] = 0;
         trace ("title: %s\n", title);
         p = ++e;
-        p = pl_str_skipspaces (p);
+        p = pl_str_skipspaces (p, end);
         if (strncasecmp (p, "length", 6)) {
             break;
         }
@@ -481,13 +544,15 @@ pl_insert_pls (playItem_t *after, const char *fname) {
         length[n] = 0;
         trace ("length: %s\n", length);
         // add track
-        playItem_t *it = pl_item_alloc ();
-        it->decoder = NULL;
-        it->fname = strdup (url);
-        it->filetype = "content";
-        pl_set_item_duration (it, atoi (length));
-        pl_add_meta (it, "title", title);
-        after = pl_insert_item (after, it);
+        playItem_t *it = pl_insert_file (after, url, pabort, cb, user_data);
+        if (it) {
+            after = it;
+            pl_set_item_duration (it, atoi (length));
+            pl_add_meta (it, "title", title);
+        }
+        if (pabort && *pabort) {
+            return after;
+        }
     }
     return after;
 }
@@ -496,6 +561,25 @@ playItem_t *
 pl_insert_file (playItem_t *after, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
     if (!fname) {
         return NULL;
+    }
+
+    // detect decoder
+    const char *eol = fname + strlen (fname) - 1;
+    while (eol > fname && *eol != '.') {
+        eol--;
+    }
+    eol++;
+
+    // detect pls/m3u files
+    // they must be handled before checking for http://,
+    // so that remote playlist files referenced from other playlist files could
+    // be loaded correctly
+    if (!memcmp (eol, "m3u", 4)) {
+        return pl_insert_m3u (after, fname, pabort, cb, user_data);
+    }
+    else if (!memcmp (eol, "pls", 4)) {
+
+        return pl_insert_pls (after, fname, pabort, cb, user_data);
     }
 
     // add all posible streams as special-case:
@@ -526,21 +610,6 @@ pl_insert_file (playItem_t *after, const char *fname, int *pabort, int (*cb)(pla
     }
     else {
         fname += 7;
-    }
-
-    // detect decoder
-    const char *eol = fname + strlen (fname) - 1;
-    while (eol > fname && *eol != '.') {
-        eol--;
-    }
-    eol++;
-
-    // detect pls/m3u files
-    if (!memcmp (eol, "m3u", 4)) {
-        return pl_insert_m3u (after, fname);
-    }
-    else if (!memcmp (eol, "pls", 4)) {
-        return pl_insert_pls (after, fname);
     }
 
     DB_decoder_t **decoders = plug_get_decoder_list ();

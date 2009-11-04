@@ -23,8 +23,8 @@
 #include <assert.h>
 #include "../../deadbeef.h"
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -41,6 +41,8 @@ static DB_functions_t *deadbeef;
 #define STATUS_ABORTED  4
 #define STATUS_SEEK     5
 
+#define HEADERS_BUFFER_SIZE 2048
+
 typedef struct {
     DB_vfs_t *vfs;
     char *url;
@@ -53,6 +55,7 @@ typedef struct {
     intptr_t tid; // thread id which does http requests
     intptr_t mutex;
     int gotheader;
+    int icyheader;
     char *content_type;
     uint8_t status;
 } HTTP_FILE;
@@ -62,10 +65,31 @@ static DB_vfs_t plugin;
 static char http_err[CURL_ERROR_SIZE];
 
 static size_t
+http_content_header_handler (void *ptr, size_t size, size_t nmemb, void *stream);
+
+static size_t
 http_curl_write (void *ptr, size_t size, size_t nmemb, void *stream) {
-//    trace ("http_curl_write %d bytes\n", size * nmemb);
-    HTTP_FILE *fp = (HTTP_FILE *)stream;
+    trace ("http_curl_write %d bytes\n", size * nmemb);
     int avail = size * nmemb;
+    HTTP_FILE *fp = (HTTP_FILE *)stream;
+    if (!fp->gotheader) {
+        // check if that's ICY
+        if (!fp->icyheader && avail >= 10 && !memcmp (ptr, "ICY 200 OK", 10)) {
+            trace ("icy headers in the stream\n");
+            fp->icyheader = 1;
+            avail = 0;
+
+        }
+        else if (fp->icyheader) {
+            http_content_header_handler (ptr, size, nmemb, stream);
+            if (fp->gotheader) {
+                fp->icyheader = 0;
+            }
+        }
+        else {
+            fp->gotheader = 1;
+        }
+    }
     while (avail > 0) {
         deadbeef->mutex_lock (fp->mutex);
         if (fp->status == STATUS_SEEK) {
@@ -125,23 +149,27 @@ http_size_header_handler (void *ptr, size_t size, size_t nmemb, void *stream) {
 
 static size_t
 http_content_header_handler (void *ptr, size_t size, size_t nmemb, void *stream) {
+    trace ("http_content_header_handler\n");
     assert (stream);
     HTTP_FILE *fp = (HTTP_FILE *)stream;
-    const char c_type_str[] ="Content-Type: "; 
-    const char *cl = strstr (ptr, c_type_str);
+    const uint8_t c_type_str[] ="Content-Type:"; 
+    const uint8_t *cl = strcasestr (ptr, c_type_str);
     if (cl) {
+        fp->gotheader = 1;
         cl += sizeof (c_type_str)-1;
+        while (*cl <= 0x20) {
+            cl++;
+        }
         const uint8_t *p = (const uint8_t *)cl;
         while (*p >= 0x20) {
             p++;
         }
-        int len = (const char *)p-cl;
+        int len = (const uint8_t *)p-cl;
         char str[len+1];
         strncpy (str, cl, len);
         str[len] = 0;
         fp->content_type = strdup (str);
     }
-    fp->gotheader = 1;
     return size * nmemb;
 }
 
@@ -168,6 +196,7 @@ http_thread_func (uintptr_t ctx) {
     }
     fp->status = STATUS_STARTING;
 
+    trace ("vfs_curl: started loading data\n");
     for (;;) {
         curl_easy_reset (curl);
         curl_easy_setopt (curl, CURLOPT_URL, fp->url);
@@ -404,9 +433,13 @@ http_get_content_type (DB_FILE *stream) {
     trace ("http_get_content_type\n");
     assert (stream);
     HTTP_FILE *fp = (HTTP_FILE *)stream;
+    if (fp->gotheader) {
+        return fp->content_type;
+    }
     if (!fp->tid) {
         http_start_streamer (fp);
     }
+    trace ("http_get_content_type waiting for response...\n");
     while (fp->status != STATUS_FINISHED && fp->status != STATUS_ABORTED && !fp->gotheader) {
         usleep (3000);
     }
