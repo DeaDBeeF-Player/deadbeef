@@ -235,4 +235,7 @@ conf_remove_items (const char *key) {
     if (prev) {
         prev->next = next;
     }
+    else {
+        conf_items = next;
+    }
 }
