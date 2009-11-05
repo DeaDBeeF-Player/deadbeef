@@ -219,16 +219,15 @@ on_playscroll_value_changed            (GtkRange        *widget,
     gtkpl_scroll (ps, newscroll);
 }
 
-
-void
-on_open_activate                       (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
-    GtkWidget *dlg = gtk_file_chooser_dialog_new ("Open file(s)...", GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
+static GtkFileFilter *
+set_file_filter (GtkWidget *dlg, const char *name) {
+    if (!name) {
+        name = "Supported sound formats";
+    }
 
     GtkFileFilter* flt;
     flt = gtk_file_filter_new ();
-    gtk_file_filter_set_name (flt, "Supported music files");
+    gtk_file_filter_set_name (flt, name);
 
     DB_decoder_t **codecs = plug_get_decoder_list ();
 
@@ -249,6 +248,8 @@ on_open_activate                       (GtkMenuItem     *menuitem,
             }
         }
     }
+    gtk_file_filter_add_pattern (flt, "*.pls");
+    gtk_file_filter_add_pattern (flt, "*.m3u");
 
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
     gtk_file_chooser_set_filter (GTK_FILE_CHOOSER (dlg), flt);
@@ -256,6 +257,16 @@ on_open_activate                       (GtkMenuItem     *menuitem,
     gtk_file_filter_set_name (flt, "Other files (*)");
     gtk_file_filter_add_pattern (flt, "*");
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
+}
+
+void
+on_open_activate                       (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    GtkWidget *dlg = gtk_file_chooser_dialog_new ("Open file(s)...", GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
+
+    set_file_filter (dlg, NULL);
+
     gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dlg), TRUE);
     // restore folder
     gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dlg), session_get_directory ());
@@ -287,35 +298,8 @@ on_add_files_activate                  (GtkMenuItem     *menuitem,
 {
     GtkWidget *dlg = gtk_file_chooser_dialog_new ("Add file(s) to playlist...", GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
 
-    GtkFileFilter* flt;
-    flt = gtk_file_filter_new ();
-    gtk_file_filter_set_name (flt, "Supported music files");
+    set_file_filter (dlg, NULL);
 
-    DB_decoder_t **codecs = plug_get_decoder_list ();
-    for (int i = 0; codecs[i]; i++) {
-        if (codecs[i]->exts && codecs[i]->insert) {
-            const char **exts = codecs[i]->exts;
-            if (exts) {
-                for (int e = 0; exts[e]; e++) {
-                    char filter[20];
-                    snprintf (filter, 20, "*.%s", exts[e]);
-                    gtk_file_filter_add_pattern (flt, filter);
-                    char *p;
-                    for (p = filter; *p; p++) {
-                        *p = toupper (*p);
-                    }
-                    gtk_file_filter_add_pattern (flt, filter);
-                }
-            }
-        }
-    }
-
-    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
-    gtk_file_chooser_set_filter (GTK_FILE_CHOOSER (dlg), flt);
-    flt = gtk_file_filter_new ();
-    gtk_file_filter_set_name (flt, "Other files (*)");
-    gtk_file_filter_add_pattern (flt, "*");
-    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
     gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dlg), TRUE);
 
     // restore folder
@@ -346,35 +330,8 @@ on_add_folders_activate                (GtkMenuItem     *menuitem,
 {
     GtkWidget *dlg = gtk_file_chooser_dialog_new ("Add folder(s) to playlist...", GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
 
-    GtkFileFilter* flt;
-    flt = gtk_file_filter_new ();
-    gtk_file_filter_set_name (flt, "Supported music files");
+    set_file_filter (dlg, NULL);
 
-    DB_decoder_t **codecs = plug_get_decoder_list ();
-    for (int i = 0; codecs[i]; i++) {
-        if (codecs[i]->exts && codecs[i]->insert) {
-            const char **exts = codecs[i]->exts;
-            if (exts) {
-                for (int e = 0; exts[e]; e++) {
-                    char filter[20];
-                    snprintf (filter, 20, "*.%s", exts[e]);
-                    gtk_file_filter_add_pattern (flt, filter);
-                    char *p;
-                    for (p = filter; *p; p++) {
-                        *p = toupper (*p);
-                    }
-                    gtk_file_filter_add_pattern (flt, filter);
-                }
-            }
-        }
-    }
-
-    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
-    gtk_file_chooser_set_filter (GTK_FILE_CHOOSER (dlg), flt);
-    flt = gtk_file_filter_new ();
-    gtk_file_filter_set_name (flt, "Other files (*)");
-    gtk_file_filter_add_pattern (flt, "*");
-    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
     gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dlg), TRUE);
     // restore folder
     gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dlg), session_get_directory ());
