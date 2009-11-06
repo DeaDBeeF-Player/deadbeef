@@ -966,12 +966,13 @@ pl_prevsong (void) {
 
 int
 pl_nextsong (int reason) {
+    playItem_t *curr = streamer_get_streaming_track ();
     if (!playlist_head[PL_MAIN]) {
         streamer_set_nextsong (-2, 1);
         return 0;
     }
     if (pl_order == 1) { // shuffle
-        if (!playlist_current_ptr) {
+        if (!curr) {
             // find minimal notplayed
             playItem_t *pmin = NULL; // notplayed minimum
             playItem_t *i = NULL;
@@ -1000,12 +1001,12 @@ pl_nextsong (int reason) {
         else {
             trace ("pl_next_song: reason=%d, loop=%d\n", reason, pl_loop_mode);
             if (reason == 0 && pl_loop_mode == 2) { // song finished, loop mode is "loop 1 track"
-                int r = pl_get_idx_of (playlist_current_ptr);
+                int r = pl_get_idx_of (curr);
                 streamer_set_nextsong (r, 1);
                 return 0;
             }
             // find minimal notplayed above current
-            int rating = playlist_current_ptr->shufflerating;
+            int rating = curr->shufflerating;
             playItem_t *pmin = NULL; // notplayed minimum
             playItem_t *i = NULL;
             for (playItem_t *i = playlist_head[PL_MAIN]; i; i = i->next[PL_MAIN]) {
@@ -1034,13 +1035,15 @@ pl_nextsong (int reason) {
     }
     else if (pl_order == 0) { // linear
         playItem_t *it = NULL;
-        if (playlist_current_ptr) {
-            if (reason == 0 && pl_loop_mode == 2) {
-                int r = pl_get_idx_of (playlist_current_ptr);
+        if (curr) {
+            if (reason == 0 && pl_loop_mode == 2) { // loop same track
+                int r = pl_get_idx_of (curr);
                 streamer_set_nextsong (r, 1);
                 return 0;
             }
-            it = playlist_current_ptr->next[PL_MAIN];
+            printf ("getting next after %p %s\n", curr, curr->fname);
+            it = curr->next[PL_MAIN];
+            printf ("which is %p\n", it);
         }
         if (!it) {
             if (pl_loop_mode == 0) {
@@ -1055,12 +1058,13 @@ pl_nextsong (int reason) {
             return -1;
         }
         int r = pl_get_idx_of (it);
+        printf ("which is int(%d)\n", r);
         streamer_set_nextsong (r, 1);
         return 0;
     }
     else if (pl_order == 2) { // random
-        if (reason == 0 && pl_loop_mode == 2 && playlist_current_ptr) {
-            int r = pl_get_idx_of (playlist_current_ptr);
+        if (reason == 0 && pl_loop_mode == 2 && curr) {
+            int r = pl_get_idx_of (curr);
             streamer_set_nextsong (r, 1);
             return 0;
         }

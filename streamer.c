@@ -87,6 +87,10 @@ static playItem_t *orig_streaming_song;
 
 static int streamer_buffering;
 
+playItem_t *
+streamer_get_streaming_track (void) {
+    return orig_streaming_song;
+}
 // playlist must call that whenever item was removed
 void
 streamer_song_removed_notify (playItem_t *it) {
@@ -161,10 +165,14 @@ streamer_set_current (playItem_t *it) {
     }
     if (it->decoder) {
         int ret = it->decoder->init (DB_PLAYITEM (it));
-//        trace ("input samplerate: %d\n", it->decoder->info.samplerate);
         pl_item_copy (&str_streaming_song, it);
         if (ret < 0) {
             trace ("decoder->init returned %d\n", ret);
+            trace ("orig_playing_song = %p\n", orig_playing_song);
+            if (playlist_current_ptr == it) {
+                playlist_current_ptr = NULL;
+                messagepump_push (M_TRACKCHANGED, 0, to, 0);
+            }
             return ret;
         }
         else {
@@ -245,13 +253,14 @@ streamer_thread (uintptr_t ctx) {
             playItem_t *try = pl_get_for_idx (sng);
             int ret = streamer_set_current (try);
             if (ret < 0) {
-                trace ("bad file in playlist, skipping...\n");
+                trace ("failed to play track %s, skipping...\n", try->fname);
                 // remember bad song number in case of looping
                 if (badsong == -1) {
                     badsong = sng;
                 }
                 // try jump to next song
                 pl_nextsong (0);
+                trace ("pl_nextsong switched to track %d\n", nextsong);
                 usleep (50000);
                 continue;
             }
