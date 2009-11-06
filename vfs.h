@@ -30,5 +30,7 @@ int64_t vfs_ftell (DB_FILE *stream);
 void vfs_rewind (DB_FILE *stream);
 int64_t vfs_fgetlength (DB_FILE *stream);
 const char *vfs_get_content_type (DB_FILE *stream);
+const char *vfs_get_content_name (DB_FILE *stream);
+const char *vfs_get_content_genre (DB_FILE *stream);
 
 #endif // __VFS_H

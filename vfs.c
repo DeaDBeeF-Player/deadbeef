@@ -84,3 +84,18 @@ const char *
 vfs_get_content_type (DB_FILE *stream) {
     return stream->vfs->get_content_type (stream);
 }
+
+const char *
+vfs_get_content_name (DB_FILE *stream) {
+    if (stream->vfs->get_content_name) {
+        return stream->vfs->get_content_name (stream);
+    }
+    return NULL;
+}
+const char *
+vfs_get_content_genre (DB_FILE *stream) {
+    if (stream->vfs->get_content_genre) {
+        return stream->vfs->get_content_genre (stream);
+    }
+    return NULL;
+}

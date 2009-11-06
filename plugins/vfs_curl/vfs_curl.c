@@ -58,6 +58,8 @@ typedef struct {
     int icyheader;
     int nheaderpackets;
     char *content_type;
+    char *content_name;
+    char *content_genre;
     uint8_t status;
 } HTTP_FILE;
 
@@ -170,28 +172,91 @@ http_size_header_handler (void *ptr, size_t size, size_t nmemb, void *stream) {
     return size * nmemb;
 }
 
+static const uint8_t *
+parse_header (const uint8_t *p, const uint8_t *e, uint8_t *key, int keysize, uint8_t *value, int valuesize) {
+    int sz; // will hold lenght of extracted string
+    const uint8_t *v; // pointer to current character
+    keysize--;
+    valuesize--;
+    *key = 0;
+    *value = 0;
+    v = p;
+    // find :
+    while (v < e && *v != 0x0d && *v != 0x0a && *v != ':') {
+        v++;
+    }
+    if (*v != ':') {
+        // skip linebreaks
+        while (v < e && (*v == 0x0d || *v == 0x0a)) {
+            v++;
+        }
+        return v;
+    }
+    // copy key
+    sz = v-p;
+    sz = min (keysize, sz);
+    memcpy (key, p, sz);
+    key[sz] = 0;
+
+    // skip whitespace
+    v++;
+    while (v < e && (*v == 0x20 || *v == 0x08)) {
+        v++;
+    }
+    if (*v == 0x0d || *v == 0x0a) {
+        // skip linebreaks
+        while (v < e && (*v == 0x0d || *v == 0x0a)) {
+            v++;
+        }
+        return v;
+    }
+    p = v;
+
+    // find linebreak
+    while (v < e && *v != 0x0d || *v == 0x0a) {
+        v++;
+    }
+    
+    // copy value
+    sz = v-p;
+    sz = min (valuesize, sz);
+    memcpy (value, p, sz);
+    value[sz] = 0;
+
+    // skip linebreaks
+    while (v < e && (*v == 0x0d || *v == 0x0a)) {
+        v++;
+    }
+    return v;
+}
+
 static size_t
 http_content_header_handler (void *ptr, size_t size, size_t nmemb, void *stream) {
     trace ("http_content_header_handler\n");
     assert (stream);
     HTTP_FILE *fp = (HTTP_FILE *)stream;
     const uint8_t c_type_str[] ="Content-Type:"; 
-    const uint8_t *cl = strcasestr (ptr, c_type_str);
-    if (cl) {
+    const uint8_t icy_name_str[] ="icy-name:"; 
+    const uint8_t icy_genre_str[] ="icy-genre:"; 
+    const uint8_t *p = ptr;
+    const uint8_t *end = p + size*nmemb;
+    uint8_t key[256];
+    uint8_t value[256];
+    while (p < end) {
+        p = parse_header (p, end, key, sizeof (key), value, sizeof (value));
+        trace ("%skey=%s value=%s\n", fp->icyheader ? "[icy] " : "", key, value);
+        if (!strcasecmp (key, "Content-Type")) {
+            fp->content_type = strdup (value);
+        }
+        else if (!strcasecmp (key, "icy-name")) {
+            fp->content_name = strdup (value);
+        }
+        else if (!strcasecmp (key, "icy-genre")) {
+            fp->content_genre = strdup (value);
+        }
+    }
+    if (!fp->icyheader) {
         fp->gotheader = 1;
-        cl += sizeof (c_type_str)-1;
-        while (*cl <= 0x20) {
-            cl++;
-        }
-        const uint8_t *p = (const uint8_t *)cl;
-        while (*p >= 0x20) {
-            p++;
-        }
-        int len = (const uint8_t *)p-cl;
-        char str[len+1];
-        strncpy (str, cl, len);
-        str[len] = 0;
-        fp->content_type = strdup (str);
     }
     return size * nmemb;
 }
@@ -299,6 +364,12 @@ http_close (DB_FILE *stream) {
     }
     if (fp->content_type) {
         free (fp->content_type);
+    }
+    if (fp->content_name) {
+        free (fp->content_name);
+    }
+    if (fp->content_genre) {
+        free (fp->content_genre);
     }
     if (fp->url) {
         free (fp->url);
@@ -476,6 +547,42 @@ http_get_content_type (DB_FILE *stream) {
     return fp->content_type;
 }
 
+static const char *
+http_get_content_name (DB_FILE *stream) {
+    trace ("http_get_content_name\n");
+    assert (stream);
+    HTTP_FILE *fp = (HTTP_FILE *)stream;
+    if (fp->gotheader) {
+        return fp->content_name;
+    }
+    if (!fp->tid) {
+        http_start_streamer (fp);
+    }
+    trace ("http_get_content_name waiting for response...\n");
+    while (fp->status != STATUS_FINISHED && fp->status != STATUS_ABORTED && !fp->gotheader) {
+        usleep (3000);
+    }
+    return fp->content_name;
+}
+
+static const char *
+http_get_content_genre (DB_FILE *stream) {
+    trace ("http_get_content_genre\n");
+    assert (stream);
+    HTTP_FILE *fp = (HTTP_FILE *)stream;
+    if (fp->gotheader) {
+        return fp->content_genre;
+    }
+    if (!fp->tid) {
+        http_start_streamer (fp);
+    }
+    trace ("http_get_content_genre waiting for response...\n");
+    while (fp->status != STATUS_FINISHED && fp->status != STATUS_ABORTED && !fp->gotheader) {
+        usleep (3000);
+    }
+    return fp->content_genre;
+}
+
 static const char *scheme_names[] = { "http://", "ftp://", NULL };
 
 // standard stdio vfs
@@ -497,6 +604,8 @@ static DB_vfs_t plugin = {
     .rewind = http_rewind,
     .getlength = http_getlength,
     .get_content_type = http_get_content_type,
+    .get_content_name = http_get_content_name,
+    .get_content_genre = http_get_content_type,
     .scheme_names = scheme_names,
     .streaming = 1
 };

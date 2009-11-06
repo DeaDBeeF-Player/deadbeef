@@ -498,12 +498,26 @@ cmp3_init (DB_playItem_t *it) {
     }
     else {
         int len = deadbeef->fgetlength (buffer.file);
+        const char *name = deadbeef->fget_content_name (buffer.file);
+        const char *genre = deadbeef->fget_content_genre (buffer.file);
         if (len > 0) {
             deadbeef->pl_delete_all_meta (it);
             int v2err = deadbeef->junk_read_id3v2 (it, buffer.file);
             deadbeef->pl_add_meta (it, "title", NULL);
             if (v2err != 0) {
                 deadbeef->fseek (buffer.file, 0, SEEK_SET);
+            }
+        }
+        else {
+            deadbeef->pl_delete_all_meta (it);
+            if (name) {
+                deadbeef->pl_add_meta (it, "title", name);
+            }
+            else {
+                deadbeef->pl_add_meta (it, "title", NULL);
+            }
+            if (genre) {
+                deadbeef->pl_add_meta (it, "genre", genre);
             }
         }
         int res = cmp3_scan_stream (&buffer, 0);
