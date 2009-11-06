@@ -31,8 +31,8 @@
 #include "messagepump.h"
 #include "deadbeef.h"
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 static snd_pcm_t *audio;
 static int bufsize = -1;
