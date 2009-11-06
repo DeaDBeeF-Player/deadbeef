@@ -1041,9 +1041,7 @@ pl_nextsong (int reason) {
                 streamer_set_nextsong (r, 1);
                 return 0;
             }
-            printf ("getting next after %p %s\n", curr, curr->fname);
             it = curr->next[PL_MAIN];
-            printf ("which is %p\n", it);
         }
         if (!it) {
             if (pl_loop_mode == 0) {
@@ -1058,7 +1056,6 @@ pl_nextsong (int reason) {
             return -1;
         }
         int r = pl_get_idx_of (it);
-        printf ("which is int(%d)\n", r);
         streamer_set_nextsong (r, 1);
         return 0;
     }
