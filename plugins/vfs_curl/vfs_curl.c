@@ -41,26 +41,25 @@ static DB_functions_t *deadbeef;
 #define STATUS_ABORTED  4
 #define STATUS_SEEK     5
 
-#define HEADERS_BUFFER_SIZE 2048
-
 typedef struct {
     DB_vfs_t *vfs;
     char *url;
     uint8_t buffer[BUFFER_SIZE];
     long pos; // position in stream; use "& BUFFER_MASK" to make it index into ringbuffer
-    int seektoend; // indicates that next tell must return length
     int64_t length;
     int32_t remaining; // remaining bytes in buffer read from stream
     int32_t skipbytes;
     intptr_t tid; // thread id which does http requests
     intptr_t mutex;
-    int gotheader;
-    int icyheader;
-    int nheaderpackets;
+    uint8_t nheaderpackets;
     char *content_type;
     char *content_name;
     char *content_genre;
     uint8_t status;
+    // flags (bitfields to save some space)
+    unsigned seektoend : 1; // indicates that next tell must return length
+    unsigned gotheader : 1; // tells that all headers (including ICY) were processed (to start reading body)
+    unsigned icyheader : 1; // tells that we're currently reading ICY headers
 } HTTP_FILE;
 
 static DB_vfs_t plugin;
@@ -75,6 +74,10 @@ http_curl_write (void *ptr, size_t size, size_t nmemb, void *stream) {
 //    trace ("http_curl_write %d bytes\n", size * nmemb);
     int avail = size * nmemb;
     HTTP_FILE *fp = (HTTP_FILE *)stream;
+    if (fp->status == STATUS_ABORTED) {
+        trace ("vfs_curl STATUS_ABORTED at start of packet\n");
+        return 0;
+    }
     if (!fp->gotheader) {
         // check if that's ICY
         if (!fp->icyheader && avail >= 10 && !memcmp (ptr, "ICY 200 OK", 10)) {
@@ -119,7 +122,7 @@ http_curl_write (void *ptr, size_t size, size_t nmemb, void *stream) {
             return 0;
         }
         if (fp->status == STATUS_ABORTED) {
-            trace ("vfs_curl STATUS_ABORTED\n");
+            trace ("vfs_curl STATUS_ABORTED in the middle of packet\n");
             deadbeef->mutex_unlock (fp->mutex);
             break;
         }
@@ -266,6 +269,17 @@ http_curl_write_abort (void *ptr, size_t size, size_t nmemb, void *stream) {
     return 0;
 }
 
+static int
+http_curl_control (void *stream, double dltotal, double dlnow, double ultotal, double ulnow) {
+    assert (stream);
+    HTTP_FILE *fp = (HTTP_FILE *)stream;
+    if (fp->status == STATUS_ABORTED) {
+        trace ("vfs_curl STATUS_ABORTED in progress callback\n");
+        return -1;
+    }
+    return 0;
+}
+
 static void
 http_thread_func (uintptr_t ctx) {
     HTTP_FILE *fp = (HTTP_FILE *)ctx;
@@ -283,6 +297,7 @@ http_thread_func (uintptr_t ctx) {
     curl_easy_setopt (curl, CURLOPT_HEADERFUNCTION, http_size_header_handler);
     curl_easy_setopt (curl, CURLOPT_HEADERDATA, ctx);
     curl_easy_setopt (curl, CURLOPT_WRITEFUNCTION, http_curl_write_abort);
+    curl_easy_setopt (curl, CURLOPT_PROGRESSFUNCTION, http_curl_control);
     status = curl_easy_perform(curl);
 #if 0
     if (status != 0) {
@@ -303,6 +318,7 @@ http_thread_func (uintptr_t ctx) {
         curl_easy_setopt (curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
         curl_easy_setopt (curl, CURLOPT_HEADERFUNCTION, http_content_header_handler);
         curl_easy_setopt (curl, CURLOPT_HEADERDATA, ctx);
+        curl_easy_setopt (curl, CURLOPT_PROGRESSFUNCTION, http_curl_control);
         // enable up to 10 redirects
         curl_easy_setopt (curl, CURLOPT_FOLLOWLOCATION, 1);
         curl_easy_setopt (curl, CURLOPT_MAXREDIRS, 10);
@@ -592,7 +608,7 @@ static DB_vfs_t plugin = {
     .plugin.version_minor = 1,
     .plugin.type = DB_PLUGIN_VFS,
     .plugin.name = "cURL vfs",
-    .plugin.descr = "http and ftp streaming module using libcurl",
+    .plugin.descr = "http and ftp streaming module using libcurl, with ICY protocol support",
     .plugin.author = "Alexey Yakovenko",
     .plugin.email = "waker@users.sourceforge.net",
     .plugin.website = "http://deadbeef.sf.net",
