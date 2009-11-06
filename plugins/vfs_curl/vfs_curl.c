@@ -56,6 +56,7 @@ typedef struct {
     intptr_t mutex;
     int gotheader;
     int icyheader;
+    int nheaderpackets;
     char *content_type;
     uint8_t status;
 } HTTP_FILE;
@@ -69,7 +70,7 @@ http_content_header_handler (void *ptr, size_t size, size_t nmemb, void *stream)
 
 static size_t
 http_curl_write (void *ptr, size_t size, size_t nmemb, void *stream) {
-    trace ("http_curl_write %d bytes\n", size * nmemb);
+//    trace ("http_curl_write %d bytes\n", size * nmemb);
     int avail = size * nmemb;
     HTTP_FILE *fp = (HTTP_FILE *)stream;
     if (!fp->gotheader) {
@@ -77,13 +78,31 @@ http_curl_write (void *ptr, size_t size, size_t nmemb, void *stream) {
         if (!fp->icyheader && avail >= 10 && !memcmp (ptr, "ICY 200 OK", 10)) {
             trace ("icy headers in the stream\n");
             fp->icyheader = 1;
-            avail = 0;
-
         }
-        else if (fp->icyheader) {
-            http_content_header_handler (ptr, size, nmemb, stream);
-            if (fp->gotheader) {
-                fp->icyheader = 0;
+        if (fp->icyheader) {
+            if (fp->nheaderpackets > 10) {
+                fprintf (stderr, "vfs_curl: warning: seems like stream has unterminated ICY headers\n");
+                fp->gotheader = 1;
+            }
+            else {
+                trace ("parsing icy headers:\n%s\n", ptr);
+                fp->nheaderpackets++;
+                http_content_header_handler (ptr, size, nmemb, stream);
+                if (fp->gotheader) {
+                    fp->gotheader = 0; // don't reset icy header
+                }
+                uint8_t *p = ptr;
+                int i;
+                for (i = 0; i < avail-3; i++) {
+                    const char end[4] = { 0x0d, 0x0a, 0x0d, 0x0a };
+                    if (!memcmp (p, end, 4)) {
+                        trace ("icy headers end\n");
+                        fp->gotheader = 1;
+                        break;
+                    }
+                    p++;
+                }
+                avail = 0;
             }
         }
         else {
@@ -289,7 +308,7 @@ http_close (DB_FILE *stream) {
 
 static size_t
 http_read (void *ptr, size_t size, size_t nmemb, DB_FILE *stream) {
-    trace ("http_read %d\n", size*nmemb);
+//    trace ("http_read %d\n", size*nmemb);
     assert (stream);
     assert (ptr);
     HTTP_FILE *fp = (HTTP_FILE *)stream;
