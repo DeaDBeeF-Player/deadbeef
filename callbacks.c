@@ -219,6 +219,42 @@ on_playscroll_value_changed            (GtkRange        *widget,
     gtkpl_scroll (ps, newscroll);
 }
 
+static gboolean
+file_filter_func (const GtkFileFilterInfo *filter_info, gpointer data) {
+    // get ext
+    const char *p = filter_info->filename + strlen (filter_info->filename)-1;
+    while (p >= filter_info->filename) {
+        if (*p == '.') {
+            break;
+        }
+        p--;
+    }
+    if (*p != '.') {
+        return FALSE;
+    }
+    p++;
+    DB_decoder_t **codecs = plug_get_decoder_list ();
+    for (int i = 0; codecs[i]; i++) {
+        if (codecs[i]->exts && codecs[i]->insert) {
+            const char **exts = codecs[i]->exts;
+            if (exts) {
+                for (int e = 0; exts[e]; e++) {
+                    if (!strcasecmp (exts[e], p)) {
+                        return TRUE;
+                    }
+                }
+            }
+        }
+    }
+    if (!strcasecmp (p, "pls")) {
+        return TRUE;
+    }
+    if (!strcasecmp (p, "m3u")) {
+        return TRUE;
+    }
+    return FALSE;
+}
+
 static GtkFileFilter *
 set_file_filter (GtkWidget *dlg, const char *name) {
     if (!name) {
@@ -229,8 +265,9 @@ set_file_filter (GtkWidget *dlg, const char *name) {
     flt = gtk_file_filter_new ();
     gtk_file_filter_set_name (flt, name);
 
+    gtk_file_filter_add_custom (flt, GTK_FILE_FILTER_FILENAME, file_filter_func, NULL, NULL);
+#if 0
     DB_decoder_t **codecs = plug_get_decoder_list ();
-
     for (int i = 0; codecs[i]; i++) {
         if (codecs[i]->exts && codecs[i]->insert) {
             const char **exts = codecs[i]->exts;
@@ -250,6 +287,7 @@ set_file_filter (GtkWidget *dlg, const char *name) {
     }
     gtk_file_filter_add_pattern (flt, "*.pls");
     gtk_file_filter_add_pattern (flt, "*.m3u");
+#endif
 
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
     gtk_file_chooser_set_filter (GTK_FILE_CHOOSER (dlg), flt);
