@@ -667,3 +667,28 @@ gboolean
 on_prefwin_key_press_event             (GtkWidget       *widget,
                                         GdkEventKey     *event,
                                         gpointer         user_data);
+
+void
+on_addlocation_ok_activate             (GtkButton       *button,
+                                        gpointer         user_data);
+
+gboolean
+on_addlocation_key_press_event         (GtkWidget       *widget,
+                                        GdkEventKey     *event,
+                                        gpointer         user_data);
+
+void
+on_add_location_activate               (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_location_activate                   (GtkEntry        *entry,
+                                        gpointer         user_data);
+
+void
+on_addlocation_ok_clicked              (GtkButton       *button,
+                                        gpointer         user_data);
+
+void
+on_addlocation_entry_activate          (GtkEntry        *entry,
+                                        gpointer         user_data);

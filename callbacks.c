@@ -1692,3 +1692,69 @@ on_prefwin_key_press_event             (GtkWidget       *widget,
     return FALSE;
 }
 
+
+static GtkWidget *addlocation_window;
+
+void
+on_add_location_activate               (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    GtkWidget *widget = addlocation_window = create_addlocation ();
+    gtk_window_set_transient_for (GTK_WINDOW (widget), GTK_WINDOW (mainwin));
+    gtk_widget_show (widget);
+}
+
+static void
+add_location_destroy (void) {
+    if (addlocation_window) {
+        gtk_widget_hide (addlocation_window);
+        gtk_widget_destroy (addlocation_window);
+        addlocation_window = NULL;
+    }
+}
+
+void
+on_addlocation_entry_activate          (GtkEntry        *entry,
+                                        gpointer         user_data)
+{
+    const char *text = gtk_entry_get_text (entry);
+    if (text) {
+        pl_add_file (text, NULL, NULL);
+        playlist_refresh ();
+    }
+    add_location_destroy ();
+}
+
+void
+on_addlocation_ok_clicked              (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    if (addlocation_window) {
+        GtkEntry *entry = GTK_ENTRY (lookup_widget (addlocation_window, "addlocation_entry"));
+        if (entry) {
+            const char *text = gtk_entry_get_text (entry);
+            if (text) {
+                pl_add_file (text, NULL, NULL);
+                playlist_refresh ();
+            }
+        }
+    }
+    add_location_destroy ();
+}
+
+gboolean
+on_addlocation_key_press_event         (GtkWidget       *widget,
+                                        GdkEventKey     *event,
+                                        gpointer         user_data)
+{
+    if (event->keyval == GDK_Escape) {
+        add_location_destroy ();
+    }
+    return FALSE;
+}
+
+
+
+
+
+
