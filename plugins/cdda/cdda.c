@@ -380,8 +380,12 @@ cda_insert (DB_playItem_t *after, const char *fname) {
 
     if (0 == strcasecmp (shortname, "all.cda") || is_image)
     {
-        trace ("querying freedb...\n");
         track_t first_track = cdio_get_first_track_num (cdio);
+        if (first_track == 0xff) {
+            trace ("cdda: no medium found\n");
+            cdio_destroy (cdio);
+            return NULL;
+        }
         track_t tracks = cdio_get_num_tracks (cdio);
         track_t i;
         res = after;
@@ -393,6 +397,7 @@ cda_insert (DB_playItem_t *after, const char *fname) {
             res = insert_single_track (cdio, res, is_image ? fname : NULL, i+first_track);
             p->items[i] = res;
         }
+        trace ("cdda: querying freedb...\n");
         deadbeef->thread_start (cddb_thread, (uintptr_t)p); //will destroy cdio
     }
     else
