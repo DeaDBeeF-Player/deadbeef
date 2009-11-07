@@ -1680,10 +1680,11 @@ on_header_button_release_event         (GtkWidget       *widget,
             gtkpl_column_rewrite_config (ps);
         }
     }
-    else if (event->button == 3) {
-        GtkWidget *menu = create_headermenu ();
-        gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, widget, 0, gtk_get_current_event_time());
-    }
+// NOTE: disabled for 0.3.0 release
+//    else if (event->button == 3) {
+//        GtkWidget *menu = create_headermenu ();
+//        gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, widget, 0, gtk_get_current_event_time());
+//    }
     return FALSE;
 }
 
