@@ -733,6 +733,9 @@ pl_remove (playItem_t *it) {
     // totaltime
     if (it->_duration > 0) {
         pl_totaltime -= it->_duration;
+        if (pl_totaltime < 0) {
+            pl_totaltime = 0;
+        }
     }
     pl_item_free (it);
     free (it);
