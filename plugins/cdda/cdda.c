@@ -245,7 +245,7 @@ resolve_disc (CdIo_t *cdio)
     if (!proto_cddb)
     {
         cddb_http_enable (conn);
-        if (conf_get_int ("network.proxy"))
+        if (deadbeef->conf_get_int ("network.proxy", 0))
         {
             cddb_set_server_port(conn, deadbeef->conf_get_int ("network.proxy.port", 8080));
             cddb_set_server_name(conn, deadbeef->conf_get_str ("network.proxy.address", ""));
