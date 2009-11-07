@@ -60,6 +60,7 @@ typedef struct {
     unsigned seektoend : 1; // indicates that next tell must return length
     unsigned gotheader : 1; // tells that all headers (including ICY) were processed (to start reading body)
     unsigned icyheader : 1; // tells that we're currently reading ICY headers
+    unsigned gotsomeheader : 1; // tells that we got some headers before body started
 } HTTP_FILE;
 
 static DB_vfs_t plugin;
@@ -77,6 +78,9 @@ http_curl_write (void *ptr, size_t size, size_t nmemb, void *stream) {
     if (fp->status == STATUS_ABORTED) {
         trace ("vfs_curl STATUS_ABORTED at start of packet\n");
         return 0;
+    }
+    if (fp->gotsomeheader) {
+        fp->gotheader = 1;
     }
     if (!fp->gotheader) {
         // check if that's ICY
@@ -157,6 +161,7 @@ http_curl_write (void *ptr, size_t size, size_t nmemb, void *stream) {
     return nmemb * size - avail;
 }
 
+#if 0
 static size_t
 http_size_header_handler (void *ptr, size_t size, size_t nmemb, void *stream) {
     assert (stream);
@@ -174,6 +179,7 @@ http_size_header_handler (void *ptr, size_t size, size_t nmemb, void *stream) {
     }
     return size * nmemb;
 }
+#endif
 
 static const uint8_t *
 parse_header (const uint8_t *p, const uint8_t *e, uint8_t *key, int keysize, uint8_t *value, int valuesize) {
@@ -249,17 +255,29 @@ http_content_header_handler (void *ptr, size_t size, size_t nmemb, void *stream)
         p = parse_header (p, end, key, sizeof (key), value, sizeof (value));
         trace ("%skey=%s value=%s\n", fp->icyheader ? "[icy] " : "", key, value);
         if (!strcasecmp (key, "Content-Type")) {
+            if (fp->content_type) {
+                free (fp->content_type);
+            }
             fp->content_type = strdup (value);
         }
+        else if (!strcasecmp (key, "Content-Length")) {
+            fp->length = atoi (value);
+        }
         else if (!strcasecmp (key, "icy-name")) {
+            if (fp->content_name) {
+                free (fp->content_name);
+            }
             fp->content_name = strdup (value);
         }
         else if (!strcasecmp (key, "icy-genre")) {
+            if (fp->content_genre) {
+                free (fp->content_genre);
+            }
             fp->content_genre = strdup (value);
         }
     }
     if (!fp->icyheader) {
-        fp->gotheader = 1;
+        fp->gotsomeheader = 1;
     }
     return size * nmemb;
 }
@@ -289,6 +307,7 @@ http_thread_func (uintptr_t ctx) {
     fp->status = STATUS_INITIAL;
 
     int status;
+#if 0
     // get filesize (once)
     curl_easy_setopt (curl, CURLOPT_URL, fp->url);
     curl_easy_setopt (curl, CURLOPT_NOBODY, 0);
@@ -298,11 +317,14 @@ http_thread_func (uintptr_t ctx) {
     curl_easy_setopt (curl, CURLOPT_HEADERDATA, ctx);
     curl_easy_setopt (curl, CURLOPT_WRITEFUNCTION, http_curl_write_abort);
     curl_easy_setopt (curl, CURLOPT_PROGRESSFUNCTION, http_curl_control);
+    curl_easy_setopt (curl, CURLOPT_FOLLOWLOCATION, 1);
+    curl_easy_setopt (curl, CURLOPT_MAXREDIRS, 10);
     status = curl_easy_perform(curl);
 #if 0
     if (status != 0) {
         trace ("vfs_curl: curl_easy_perform failed while getting filesize, status %d\n", status);
     }
+#endif
 #endif
     fp->status = STATUS_STARTING;
 
