@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <assert.h>
+#include <curl/curlver.h>
 #include "../../deadbeef.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
@@ -352,26 +353,30 @@ http_thread_func (uintptr_t ctx) {
             curl_easy_setopt (curl, CURLOPT_PROXYPORT, deadbeef->conf_get_int ("network.proxy.port", 8080));
             const char *type = deadbeef->conf_get_str ("network.proxy.type", "HTTP");
             int curlproxytype = CURLPROXY_HTTP;
-// this is default            
-//            if (!strcasecmp (type, "HTTP")) {
-//                curlproxytype = CURLPROXY_HTTP;
-//            }
-//            else
-            if (!strcasecmp (type, "HTTP_1_0")) {
+            if (!strcasecmp (type, "HTTP")) {
+                curlproxytype = CURLPROXY_HTTP;
+            }
+#if LIBCURL_VERSION_MINOR >= 19 && LIBCURL_VERSION_PATCH >= 4
+            else if (!strcasecmp (type, "HTTP_1_0")) {
                 curlproxytype = CURLPROXY_HTTP_1_0;
             }
+#endif
+#if LIBCURL_VERSION_MINOR >= 15 && LIBCURL_VERSION_PATCH >= 2
             else if (!strcasecmp (type, "SOCKS4")) {
                 curlproxytype = CURLPROXY_SOCKS4;
             }
+#endif
             else if (!strcasecmp (type, "SOCKS5")) {
                 curlproxytype = CURLPROXY_SOCKS5;
             }
+#if LIBCURL_VERSION_MINOR >= 18 && LIBCURL_VERSION_PATCH >= 0
             else if (!strcasecmp (type, "SOCKS4A")) {
                 curlproxytype = CURLPROXY_SOCKS4A;
             }
             else if (!strcasecmp (type, "SOCKS5_HOSTNAME")) {
                 curlproxytype = CURLPROXY_SOCKS5_HOSTNAME;
             }
+#endif
             curl_easy_setopt (curl, CURLOPT_PROXYTYPE, curlproxytype);
         }
         deadbeef->mutex_lock (fp->mutex);

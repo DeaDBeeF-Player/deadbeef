@@ -5,7 +5,7 @@ dependencies for player core - includes support for sid, tracker music and chipt
 
 optional dependencies
     libvorbis: for ogg vorbis plugin
-    libcurl: for last.fm plugin
+    libcurl >= 7.10: for last.fm plugin
     libmad: for mpgmad plugin (mpeg1,2 layers1,2,3)
     libFLAC: for flac plugin
     wavpack: for wavpack plugin
