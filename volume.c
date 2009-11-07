@@ -19,7 +19,7 @@
 #include <math.h>
 #include <stdio.h>
 #include "volume.h"
-#include "session.h"
+#include "conf.h"
 
 #define VOLUME_MIN (-50.f)
 
@@ -34,7 +34,7 @@ volume_set_db (float dB) {
     if (dB > 0) {
         dB = 0;
     }
-    session_set_volume (dB);
+    conf_set_float ("playback.volume", dB);
     volume_db = dB;
     volume_amp = dB > VOLUME_MIN ? db_to_amp (dB) : 0;
 }
@@ -54,7 +54,7 @@ volume_set_amp (float amp) {
     }
     volume_amp = amp;
     volume_db = amp > 0 ? amp_to_db (amp) : VOLUME_MIN;
-    session_set_volume (volume_db);
+    conf_set_float ("playback.volume", volume_db);
 }
 
 float

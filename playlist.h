@@ -145,12 +145,6 @@ pl_delete_selected (void);
 void
 pl_crop_selected (void);
 
-void
-pl_set_order (int order);
-
-void
-pl_set_loop_mode (int mode);
-
 int
 pl_save (const char *fname);
 

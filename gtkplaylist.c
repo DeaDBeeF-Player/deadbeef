@@ -938,7 +938,7 @@ void
 gtkpl_songchanged (gtkplaylist_t *ps, int from, int to) {
     if (!dragwait && to != -1) {
         GtkWidget *widget = ps->playlist;
-        if (session_get_scroll_follows_playback ()) {
+        if (conf_get_int ("playlist.scroll.followplayback", 0)) {
             if (to < ps->scrollpos || to >= ps->scrollpos + ps->nvisiblefullrows) {
                 gtk_range_set_value (GTK_RANGE (ps->scrollbar), to - ps->nvisiblerows/2);
             }

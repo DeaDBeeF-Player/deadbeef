@@ -21,9 +21,6 @@
 
 #include <stdint.h>
 
-void
-session_reset (void);
-
 int
 session_save (const char *fname);
 
@@ -34,42 +31,7 @@ void
 session_capture_window_attrs (uintptr_t window);
 
 void
-session_set_directory (const char *path);
-
-void
-session_set_volume (float vol);
-
-void
 session_restore_window_attrs (uintptr_t window);
 
-const char *
-session_get_directory (void);
-
-float
-session_get_volume (void);
-
-void
-session_set_playlist_order (int order);
-
-int
-session_get_playlist_order (void);
-
-void
-session_set_scroll_follows_playback (int on);
-
-int
-session_get_scroll_follows_playback (void);
-
-void
-session_set_playlist_looping (int looping);
-
-int
-session_get_playlist_looping (void);
-
-int *
-session_get_main_colwidths_ptr (void);
-
-int *
-session_get_search_colwidths_ptr (void);
 
 #endif // __SESSION_H

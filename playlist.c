@@ -34,6 +34,7 @@
 #include "plugins.h"
 #include "junklib.h"
 #include "vfs.h"
+#include "conf.h"
 
 // 1.0->1.1 changelog:
 //    added sample-accurate seek positions for sub-tracks
@@ -52,8 +53,8 @@ playItem_t *playlist_tail[PL_MAX_ITERATORS];
 playItem_t *playlist_current_ptr;
 int pl_count = 0;
 float pl_totaltime = 0;
-static int pl_order = 0; // 0 = linear, 1 = shuffle, 2 = random
-static int pl_loop_mode = 0; // 0 = loop, 1 = don't loop, 2 = loop single
+//static int pl_order = 0; // 0 = linear, 1 = shuffle, 2 = random
+//static int pl_loop_mode = 0; // 0 = loop, 1 = don't loop, 2 = loop single
 
 void
 pl_free (void) {
@@ -900,6 +901,8 @@ pl_prevsong (void) {
         streamer_set_nextsong (-2, 1);
         return 0;
     }
+    int pl_order = conf_get_int ("playback.order", 0);
+    int pl_loop_mode = conf_get_int ("playback.loop", 0);
     if (pl_order == 1) { // shuffle
         if (!playlist_current_ptr) {
             return pl_nextsong (1);
@@ -971,6 +974,8 @@ pl_nextsong (int reason) {
         streamer_set_nextsong (-2, 1);
         return 0;
     }
+    int pl_order = conf_get_int ("playback.order", 0);
+    int pl_loop_mode = conf_get_int ("playback.loop", 0);
     if (pl_order == 1) { // shuffle
         if (!curr) {
             // find minimal notplayed
@@ -1173,16 +1178,6 @@ pl_crop_selected (void) {
             pl_remove (it);
         }
     }
-}
-
-void
-pl_set_order (int order) {
-    pl_order = order;
-}
-
-void
-pl_set_loop_mode (int mode) {
-    pl_loop_mode = mode;
 }
 
 int

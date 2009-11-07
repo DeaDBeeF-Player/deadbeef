@@ -26,31 +26,16 @@
 
 #define SESS_CURRENT_VER 4
 // changelog:
+// version 5 everything moved to common config
 // version 4 column settings moved to common config
 // version 3 adds column widths
 
 // NOTE: dont forget to update session_reset when changing that
-char session_dir[2048];
-float session_volume;
-int8_t session_playlist_order;
-int8_t session_playlist_looping;
-int8_t session_scroll_follows_playback = 1;
-int session_win_attrs[5] = { 40, 40, 500, 300, 0 };
 
-static uint8_t sessfile_magic[] = { 0xdb, 0xef, 0x5e, 0x55 }; // dbefsess in hexspeak
+static const uint8_t sessfile_magic[] = { 0xdb, 0xef, 0x5e, 0x55 }; // dbefsess in hexspeak
 
 void
 session_reset (void) {
-    session_volume = 0;
-    session_dir[0] = 0;
-    session_playlist_looping = 0;
-    session_playlist_order = 0;
-    session_scroll_follows_playback = 1;
-    session_win_attrs[0] = 40;
-    session_win_attrs[1] = 40;
-    session_win_attrs[2] = 500;
-    session_win_attrs[3] = 300;
-    session_win_attrs[4] = 0;
 }
 
 static int
@@ -131,6 +116,8 @@ read_i32_be (uint32_t *pval, FILE *fp) {
 
 int
 session_save (const char *fname) {
+    unlink (fname);
+#if 0
     FILE *fp = fopen (fname, "w+b");
     if (!fp) {
         fprintf (stderr, "failed to save session, file %s could not be opened\n");
@@ -174,10 +161,29 @@ session_save_fail:
     fprintf (stderr, "failed to save session, seems to be a disk error\n");
     fclose (fp);
     return -1;
+#endif
 }
 
 int
 session_load (const char *fname) {
+    char session_dir[2048];
+    float session_volume;
+    int8_t session_playlist_order;
+    int8_t session_playlist_looping;
+    int8_t session_scroll_follows_playback = 1;
+    int session_win_attrs[5] = { 40, 40, 500, 300, 0 };
+
+    session_volume = 0;
+    session_dir[0] = 0;
+    session_playlist_looping = 0;
+    session_playlist_order = 0;
+    session_scroll_follows_playback = 1;
+    session_win_attrs[0] = 40;
+    session_win_attrs[1] = 40;
+    session_win_attrs[2] = 500;
+    session_win_attrs[3] = 300;
+    session_win_attrs[4] = 0;
+
     FILE *fp = fopen (fname, "r+b");
     if (!fp) {
         return -1;
@@ -309,61 +315,24 @@ session_load (const char *fname) {
 //    printf ("volume: %f\n", session_volume);
 //    printf ("win: %d %d %d %d %d\n", session_win_attrs[0], session_win_attrs[1], session_win_attrs[2], session_win_attrs[3], session_win_attrs[4]);
     fclose (fp);
+
+    if (version <= 4) {
+        // move everything to common config
+        conf_set_str ("filechooser.lastdir", session_dir);
+        conf_set_int ("playback.loop", session_playlist_looping);
+        conf_set_int ("playback.order", session_playlist_order);
+        conf_set_float ("playback.volume", session_volume);
+        conf_set_int ("playlist.scroll.followplayback", session_scroll_follows_playback);
+        conf_set_int ("mainwin.geometry.x", session_win_attrs[0]);
+        conf_set_int ("mainwin.geometry.y", session_win_attrs[1]);
+        conf_set_int ("mainwin.geometry.w", session_win_attrs[2]);
+        conf_set_int ("mainwin.geometry.h", session_win_attrs[3]);
+    }
+
     return 0;
 session_load_fail:
     fprintf (stderr, "failed to load session, session file is corrupt\n");
     fclose (fp);
-    session_reset ();
+//    session_reset ();
     return -1;
 }
-
-void
-session_set_directory (const char *path) {
-    strncpy (session_dir, path, 2048);
-}
-
-void
-session_set_volume (float vol) {
-    session_volume = vol;
-}
-
-const char *
-session_get_directory (void) {
-    return session_dir;
-}
-
-float
-session_get_volume (void) {
-    return session_volume;
-}
-
-void
-session_set_playlist_order (int order) {
-    session_playlist_order = order;
-}
-
-int
-session_get_playlist_order (void) {
-    return session_playlist_order;
-}
-
-void
-session_set_playlist_looping (int looping) {
-    session_playlist_looping = looping;
-}
-
-int
-session_get_playlist_looping (void) {
-    return session_playlist_looping;
-}
-
-void
-session_set_scroll_follows_playback (int on) {
-    session_scroll_follows_playback = on;
-}
-
-int
-session_get_scroll_follows_playback (void) {
-    return session_scroll_follows_playback;
-}
-

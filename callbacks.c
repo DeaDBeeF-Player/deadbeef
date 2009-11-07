@@ -307,12 +307,12 @@ on_open_activate                       (GtkMenuItem     *menuitem,
 
     gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dlg), TRUE);
     // restore folder
-    gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dlg), session_get_directory ());
+    gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dlg), conf_get_str ("filechooser.lastdir", ""));
     int response = gtk_dialog_run (GTK_DIALOG (dlg));
     // store folder
     gchar *folder = gtk_file_chooser_get_current_folder_uri (GTK_FILE_CHOOSER (dlg));
     if (folder) {
-        session_set_directory (folder);
+        conf_set_str ("filechooser.lastdir", folder);
         g_free (folder);
     }
     if (response == GTK_RESPONSE_OK)
@@ -341,12 +341,12 @@ on_add_files_activate                  (GtkMenuItem     *menuitem,
     gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dlg), TRUE);
 
     // restore folder
-    gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dlg), session_get_directory ());
+    gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dlg), conf_get_str ("filechooser.lastdir", ""));
     int response = gtk_dialog_run (GTK_DIALOG (dlg));
     // store folder
     gchar *folder = gtk_file_chooser_get_current_folder_uri (GTK_FILE_CHOOSER (dlg));
     if (folder) {
-        session_set_directory (folder);
+        conf_set_str ("filechooser.lastdir", folder);
         g_free (folder);
     }
     if (response == GTK_RESPONSE_OK)
@@ -372,12 +372,12 @@ on_add_folders_activate                (GtkMenuItem     *menuitem,
 
     gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dlg), TRUE);
     // restore folder
-    gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dlg), session_get_directory ());
+    gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dlg), conf_get_str ("filechooser.lastdir", ""));
     int response = gtk_dialog_run (GTK_DIALOG (dlg));
     // store folder
     gchar *folder = gtk_file_chooser_get_current_folder_uri (GTK_FILE_CHOOSER (dlg));
     if (folder) {
-        session_set_directory (folder);
+        conf_set_str ("filechooser.lastdir", folder);
         g_free (folder);
     }
     if (response == GTK_RESPONSE_OK)
@@ -732,8 +732,7 @@ void
 on_order_linear_activate               (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    session_set_playlist_order (0);
-    pl_set_order (0);
+    conf_set_int ("playback.order", 0);
 }
 
 
@@ -741,8 +740,7 @@ void
 on_order_shuffle_activate              (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    session_set_playlist_order (1);
-    pl_set_order (1);
+    conf_set_int ("playback.order", 1);
 }
 
 
@@ -750,8 +748,7 @@ void
 on_order_random_activate               (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    session_set_playlist_order (2);
-    pl_set_order (2);
+    conf_set_int ("playback.order", 2);
 }
 
 
@@ -759,8 +756,7 @@ void
 on_loop_all_activate                   (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    session_set_playlist_looping (0);
-    pl_set_loop_mode (0);
+    conf_set_int ("playback.loop", 0);
 }
 
 
@@ -768,8 +764,7 @@ void
 on_loop_single_activate                (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    session_set_playlist_looping (2);
-    pl_set_loop_mode (2);
+    conf_set_int ("playback.loop", 2);
 }
 
 
@@ -777,8 +772,7 @@ void
 on_loop_disable_activate               (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    session_set_playlist_looping (1);
-    pl_set_loop_mode (1);
+    conf_set_int ("playback.loop", 1);
 }
 
 void
@@ -1253,7 +1247,7 @@ void
 on_scroll_follows_playback_activate    (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    session_set_scroll_follows_playback (gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (menuitem)));
+    conf_set_int ("playlist.scroll.followplayback", gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (menuitem)));
 }
 
 

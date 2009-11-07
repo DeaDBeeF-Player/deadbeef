@@ -661,7 +661,6 @@ main (int argc, char *argv[]) {
     conf_load ();
     plug_load_all ();
     pl_load (defpl);
-    session_reset ();
     session_load (sessfile);
     messagepump_init ();
     codec_init_locking ();
@@ -701,18 +700,16 @@ main (int argc, char *argv[]) {
         gdk_pixbuf_unref (mainwin_icon_pixbuf);
     }
     session_restore_window_attrs ((uintptr_t)mainwin);
-    volume_set_db (session_get_volume ());
+    volume_set_db (conf_get_float ("playback.volume", 0));
     // order and looping
     const char *orderwidgets[3] = { "order_linear", "order_shuffle", "order_random" };
     const char *loopingwidgets[3] = { "loop_all", "loop_disable", "loop_single" };
     const char *w;
-    w = orderwidgets[session_get_playlist_order ()];
+    w = orderwidgets[conf_get_int ("playback.order", 0)];
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, w)), TRUE);
-    pl_set_order (session_get_playlist_order ());
-    w = loopingwidgets[session_get_playlist_looping ()];
+    w = loopingwidgets[conf_get_int ("playback.loop", 0)];
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, w)), TRUE);
-    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "scroll_follows_playback")), session_get_scroll_follows_playback () ? TRUE : FALSE);
-    pl_set_loop_mode (session_get_playlist_looping ());
+    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "scroll_follows_playback")), conf_get_int ("playlist.scroll.followplayback", 0) ? TRUE : FALSE);
 
     searchwin = create_searchwin ();
     gtk_window_set_transient_for (GTK_WINDOW (searchwin), GTK_WINDOW (mainwin));
