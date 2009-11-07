@@ -347,6 +347,33 @@ http_thread_func (uintptr_t ctx) {
         if (fp->pos > 0) {
             curl_easy_setopt (curl, CURLOPT_RESUME_FROM, fp->pos);
         }
+        if (deadbeef->conf_get_int ("network.proxy", 0)) {
+            curl_easy_setopt (curl, CURLOPT_PROXY, deadbeef->conf_get_str ("network.proxy.address", ""));
+            curl_easy_setopt (curl, CURLOPT_PROXYPORT, deadbeef->conf_get_int ("network.proxy.port", 8080));
+            const char *type = deadbeef->conf_get_str ("network.proxy.type", "HTTP");
+            int curlproxytype = CURLPROXY_HTTP;
+// this is default            
+//            if (!strcasecmp (type, "HTTP")) {
+//                curlproxytype = CURLPROXY_HTTP;
+//            }
+//            else
+            if (!strcasecmp (type, "HTTP_1_0")) {
+                curlproxytype = CURLPROXY_HTTP_1_0;
+            }
+            else if (!strcasecmp (type, "SOCKS4")) {
+                curlproxytype = CURLPROXY_SOCKS4;
+            }
+            else if (!strcasecmp (type, "SOCKS5")) {
+                curlproxytype = CURLPROXY_SOCKS5;
+            }
+            else if (!strcasecmp (type, "SOCKS4A")) {
+                curlproxytype = CURLPROXY_SOCKS4A;
+            }
+            else if (!strcasecmp (type, "SOCKS5_HOSTNAME")) {
+                curlproxytype = CURLPROXY_SOCKS5_HOSTNAME;
+            }
+            curl_easy_setopt (curl, CURLOPT_PROXYTYPE, curlproxytype);
+        }
         deadbeef->mutex_lock (fp->mutex);
         fp->status = STATUS_READING;
         deadbeef->mutex_unlock (fp->mutex);

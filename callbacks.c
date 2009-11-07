@@ -1414,6 +1414,31 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
     // close_send_to_tray
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "pref_close_send_to_tray")), conf_get_int ("close_send_to_tray", 0));
 
+    // network
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "pref_network_enableproxy")), conf_get_int ("network.proxy", 0));
+    gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "pref_network_proxyaddress")), conf_get_str ("network.proxy.address", ""));
+    gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "pref_network_proxyport")), conf_get_str ("network.proxy.port", "8080"));
+    combobox = GTK_COMBO_BOX (lookup_widget (w, "pref_network_proxytype"));
+    const char *type = conf_get_str ("network.proxy.type", "HTTP");
+    if (!strcasecmp (type, "HTTP")) {
+        gtk_combo_box_set_active (combobox, 0);
+    }
+    else if (!strcasecmp (type, "HTTP_1_0")) {
+        gtk_combo_box_set_active (combobox, 1);
+    }
+    else if (!strcasecmp (type, "SOCKS4")) {
+        gtk_combo_box_set_active (combobox, 2);
+    }
+    else if (!strcasecmp (type, "SOCKS5")) {
+        gtk_combo_box_set_active (combobox, 3);
+    }
+    else if (!strcasecmp (type, "SOCKS4A")) {
+        gtk_combo_box_set_active (combobox, 4);
+    }
+    else if (!strcasecmp (type, "SOCKS5_HOSTNAME")) {
+        gtk_combo_box_set_active (combobox, 5);
+    }
+
     // list of plugins
     GtkTreeView *tree = GTK_TREE_VIEW (lookup_widget (w, "pref_pluginlist"));
     GtkListStore *store = gtk_list_store_new (1, G_TYPE_STRING);//GTK_LIST_STORE (gtk_tree_view_get_model (tree));
@@ -1600,15 +1625,11 @@ on_pref_alsa_freewhenstopped_clicked   (GtkButton       *button,
     conf_set_int ("alsa.freeonstop", active);
 }
 
-
-
-
-
 void
 on_pref_network_proxyaddress_changed   (GtkEditable     *editable,
                                         gpointer         user_data)
 {
-
+    conf_set_str ("network.proxy.address", gtk_entry_get_text (GTK_ENTRY (editable)));
 }
 
 
@@ -1616,7 +1637,7 @@ void
 on_pref_network_enableproxy_clicked    (GtkButton       *button,
                                         gpointer         user_data)
 {
-
+    conf_set_int ("network.proxy", gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button)));
 }
 
 
@@ -1624,6 +1645,38 @@ void
 on_pref_network_proxyport_changed      (GtkEditable     *editable,
                                         gpointer         user_data)
 {
+    conf_set_int ("network.proxy.port", atoi (gtk_entry_get_text (GTK_ENTRY (editable))));
+}
 
+
+void
+on_pref_network_proxytype_changed      (GtkComboBox     *combobox,
+                                        gpointer         user_data)
+{
+
+    int active = gtk_combo_box_get_active (combobox);
+    switch (active) {
+    case 0:
+        conf_set_str ("network.proxy.type", "HTTP");
+        break;
+    case 1:
+        conf_set_str ("network.proxy.type", "HTTP_1_0");
+        break;
+    case 2:
+        conf_set_str ("network.proxy.type", "SOCKS4");
+        break;
+    case 3:
+        conf_set_str ("network.proxy.type", "SOCKS5");
+        break;
+    case 4:
+        conf_set_str ("network.proxy.type", "SOCKS4A");
+        break;
+    case 5:
+        conf_set_str ("network.proxy.type", "SOCKS5_HOSTNAME");
+        break;
+    default:
+        conf_set_str ("network.proxy.type", "HTTP");
+        break;
+    }
 }
 

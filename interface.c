@@ -1168,6 +1168,8 @@ create_prefwin (void)
   GtkWidget *pref_network_enableproxy;
   GtkWidget *label19;
   GtkWidget *pref_network_proxyport;
+  GtkWidget *label20;
+  GtkWidget *pref_network_proxytype;
   GtkWidget *label16;
   GtkWidget *hpaned1;
   GtkWidget *scrolledwindow2;
@@ -1311,7 +1313,7 @@ create_prefwin (void)
   gtk_widget_show (label2);
   gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook2), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook2), 1), label2);
 
-  table6 = gtk_table_new (3, 2, FALSE);
+  table6 = gtk_table_new (4, 2, FALSE);
   gtk_widget_show (table6);
   gtk_container_add (GTK_CONTAINER (notebook2), table6);
   gtk_container_set_border_width (GTK_CONTAINER (table6), 3);
@@ -1357,6 +1359,25 @@ create_prefwin (void)
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
   gtk_entry_set_invisible_char (GTK_ENTRY (pref_network_proxyport), 8226);
+
+  label20 = gtk_label_new ("Proxy type");
+  gtk_widget_show (label20);
+  gtk_table_attach (GTK_TABLE (table6), label20, 0, 1, 3, 4,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
+  gtk_misc_set_alignment (GTK_MISC (label20), 0, 0.5);
+
+  pref_network_proxytype = gtk_combo_box_new_text ();
+  gtk_widget_show (pref_network_proxytype);
+  gtk_table_attach (GTK_TABLE (table6), pref_network_proxytype, 1, 2, 3, 4,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (GTK_FILL), 0, 0);
+  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_network_proxytype), "HTTP");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_network_proxytype), "HTTP_1_0");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_network_proxytype), "SOCKS4");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_network_proxytype), "SOCKS5");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_network_proxytype), "SOCKS4A");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_network_proxytype), "SOCKS5_HOSTNAME");
 
   label16 = gtk_label_new ("Network");
   gtk_widget_show (label16);
@@ -1476,6 +1497,9 @@ create_prefwin (void)
   g_signal_connect ((gpointer) pref_network_proxyport, "changed",
                     G_CALLBACK (on_pref_network_proxyport_changed),
                     NULL);
+  g_signal_connect ((gpointer) pref_network_proxytype, "changed",
+                    G_CALLBACK (on_pref_network_proxytype_changed),
+                    NULL);
   g_signal_connect ((gpointer) pref_pluginlist, "cursor_changed",
                     G_CALLBACK (on_pref_pluginlist_cursor_changed),
                     NULL);
@@ -1508,6 +1532,8 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, pref_network_enableproxy, "pref_network_enableproxy");
   GLADE_HOOKUP_OBJECT (prefwin, label19, "label19");
   GLADE_HOOKUP_OBJECT (prefwin, pref_network_proxyport, "pref_network_proxyport");
+  GLADE_HOOKUP_OBJECT (prefwin, label20, "label20");
+  GLADE_HOOKUP_OBJECT (prefwin, pref_network_proxytype, "pref_network_proxytype");
   GLADE_HOOKUP_OBJECT (prefwin, label16, "label16");
   GLADE_HOOKUP_OBJECT (prefwin, hpaned1, "hpaned1");
   GLADE_HOOKUP_OBJECT (prefwin, scrolledwindow2, "scrolledwindow2");

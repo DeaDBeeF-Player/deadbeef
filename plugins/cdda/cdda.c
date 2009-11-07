@@ -48,8 +48,6 @@ static uintptr_t mutex;
 static int use_cddb = 1;
 static char server[1024] = "freedb.org";
 static int port = 888;
-static char proxy[1024] = "";
-static int proxy_port = -1;
 static int proto_cddb = 1;
 
 struct cddb_thread_params
@@ -79,8 +77,6 @@ read_config ()
     use_cddb = deadbeef->conf_get_int ("cdda.freedb.enable", 1);
     strncpy (server, deadbeef->conf_get_str ("cdda.freedb.host", "freedb.org"), sizeof (server)-1);
     port = deadbeef->conf_get_int ("cdda.freedb.port", 888);
-    strncpy (proxy, deadbeef->conf_get_str ("cdda.freedb.proxy", ""), sizeof (proxy)-1);
-    proxy_port = deadbeef->conf_get_int ("cdda.freedb.proxy_port", 8080);
     proto_cddb = deadbeef->conf_get_int ("cdda.protocol", 1); // 1 is cddb, 0 is http
 }
 
@@ -249,10 +245,10 @@ resolve_disc (CdIo_t *cdio)
     if (!proto_cddb)
     {
         cddb_http_enable (conn);
-        if (proxy)
+        if (conf_get_int ("network.proxy"))
         {
-            cddb_set_server_port(conn, proxy_port);
-            cddb_set_server_name(conn, proxy);
+            cddb_set_server_port(conn, deadbeef->conf_get_int ("network.proxy.port", 8080));
+            cddb_set_server_name(conn, deadbeef->conf_get_str ("network.proxy.address", ""));
         }
     }
 
