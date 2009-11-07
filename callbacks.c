@@ -1341,9 +1341,8 @@ on_helpwindow_key_press_event          (GtkWidget       *widget,
     if (event->keyval == GDK_Escape) {
         gtk_widget_hide (widget);
         gtk_widget_destroy (widget);
-//        g_object_unref (widget);
     }
-  return FALSE;
+    return FALSE;
 }
 
 
@@ -1678,5 +1677,18 @@ on_pref_network_proxytype_changed      (GtkComboBox     *combobox,
         conf_set_str ("network.proxy.type", "HTTP");
         break;
     }
+}
+
+
+gboolean
+on_prefwin_key_press_event             (GtkWidget       *widget,
+                                        GdkEventKey     *event,
+                                        gpointer         user_data)
+{
+    if (event->keyval == GDK_Escape) {
+        gtk_widget_hide (widget);
+        gtk_widget_destroy (widget);
+    }
+    return FALSE;
 }
 

@@ -1467,6 +1467,9 @@ create_prefwin (void)
   gtk_widget_show (label3);
   gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook2), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook2), 3), label3);
 
+  g_signal_connect ((gpointer) prefwin, "key_press_event",
+                    G_CALLBACK (on_prefwin_key_press_event),
+                    NULL);
   g_signal_connect ((gpointer) pref_alsa_resampling, "clicked",
                     G_CALLBACK (on_pref_alsa_resampling_clicked),
                     NULL);

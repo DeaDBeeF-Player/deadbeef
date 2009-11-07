@@ -662,3 +662,8 @@ on_pref_network_proxyport_changed      (GtkEditable     *editable,
 void
 on_pref_network_proxytype_changed      (GtkComboBox     *combobox,
                                         gpointer         user_data);
+
+gboolean
+on_prefwin_key_press_event             (GtkWidget       *widget,
+                                        GdkEventKey     *event,
+                                        gpointer         user_data);
