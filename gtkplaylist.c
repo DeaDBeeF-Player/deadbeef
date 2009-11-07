@@ -597,14 +597,22 @@ gtkpl_mouse1_pressed (gtkplaylist_t *ps, int state, int ex, int ey, double time)
             && fabs(ps->lastpos[1] - ey) < 3) {
         // doubleclick - play this item
         if (ps->row != -1) {
-            gtkplaylist_t main_playlist;
             playItem_t *it = gtkpl_get_for_idx (ps, ps->row);
             it->selected = 1;
             int r = pl_get_idx_of (it);
+            int prev = main_playlist.row;
+            if (prev != r) {
+                main_playlist.row = r;
+                if (prev != -1) {
+                    gtkpl_redraw_pl_row (&main_playlist, prev, pl_get_for_idx (prev));
+                }
+                if (r != -1) {
+                    gtkpl_redraw_pl_row (&main_playlist, r, it);
+                }
+            }
             messagepump_push (M_PLAYSONGNUM, 0, r, 0);
             return;
         }
-
 
         // prevent next click to trigger doubleclick
         ps->clicktime = time-1;
