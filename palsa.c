@@ -42,6 +42,9 @@ static int state; // 0 = stopped, 1 = playing, 2 = pause
 static uintptr_t mutex;
 static intptr_t alsa_tid;
 
+static int conf_alsa_resample = 0;
+static char conf_alsa_soundcard[100] = "default";
+
 static void
 palsa_callback (char *stream, int len);
 
@@ -51,7 +54,7 @@ palsa_thread (uintptr_t context);
 static int
 palsa_set_hw_params (int samplerate) {
     snd_pcm_hw_params_t *hw_params = NULL;
-    int alsa_resample = conf_get_int ("alsa.resample", 0);
+//    int alsa_resample = conf_get_int ("alsa.resample", 0);
     int err = 0;
 
     if ((err = snd_pcm_hw_params_malloc (&hw_params)) < 0) {
@@ -85,12 +88,12 @@ palsa_set_hw_params (int samplerate) {
     }
 
     snd_pcm_hw_params_get_format (hw_params, &fmt);
-    printf ("chosen sample format: %04Xh\n", (int)fmt);
+    trace ("chosen sample format: %04Xh\n", (int)fmt);
 
     int val = samplerate;
     int ret = 0;
 
-    if ((err = snd_pcm_hw_params_set_rate_resample (audio, hw_params, alsa_resample)) < 0) {
+    if ((err = snd_pcm_hw_params_set_rate_resample (audio, hw_params, conf_alsa_resample)) < 0) {
         trace ("cannot setup resampling (%s)\n",
                 snd_strerror (err));
         goto error;
@@ -102,7 +105,7 @@ palsa_set_hw_params (int samplerate) {
         goto error;
     }
     alsa_rate = val;
-    printf ("chosen samplerate: %d Hz\n", alsa_rate);
+    trace ("chosen samplerate: %d Hz\n", alsa_rate);
 
     if ((err = snd_pcm_hw_params_set_channels (audio, hw_params, 2)) < 0) {
         trace ("cannot set channel count (%s)\n",
@@ -112,7 +115,7 @@ palsa_set_hw_params (int samplerate) {
 
     int nchan;
     snd_pcm_hw_params_get_channels (hw_params, &nchan);
-    printf ("alsa channels: %d\n", nchan);
+    trace ("alsa channels: %d\n", nchan);
 
     unsigned int buffer_time = 500000;
     int dir;
@@ -144,9 +147,16 @@ error:
 int
 palsa_init (void) {
     int err;
+
+    // get and cache conf variables
+    strcpy (conf_alsa_soundcard, conf_get_str ("alsa_soundcard", "default"));
+    conf_alsa_resample = conf_get_int ("alsa.resample", 0);
+    trace ("alsa_soundcard: %s\n", conf_alsa_soundcard);
+    trace ("alsa.resample: %d\n", conf_alsa_resample);
+
     snd_pcm_sw_params_t *sw_params = NULL;
     state = 0;
-    const char *conf_alsa_soundcard = conf_get_str ("alsa_soundcard", "default");
+    //const char *conf_alsa_soundcard = conf_get_str ("alsa_soundcard", "default");
     if ((err = snd_pcm_open (&audio, conf_alsa_soundcard, SND_PCM_STREAM_PLAYBACK, 0))) {
         trace ("could not open audio device (%s)\n",
                 snd_strerror (err));
@@ -226,6 +236,9 @@ open_error:
 
 int
 palsa_change_rate (int rate) {
+    if (!audio) {
+        return 0;
+    }
     if (rate == alsa_rate) {
         trace ("palsa_change_rate: same rate (%d), ignored\n", rate);
         return rate;
@@ -262,6 +275,9 @@ palsa_free (void) {
 
 static void
 palsa_hw_pause (int pause) {
+    if (!audio) {
+        return;
+    }
     if (state == 0) {
         return;
     }
@@ -306,8 +322,7 @@ palsa_stop (void) {
         return 0;
     }
     state = 0;
-    int freeonstop = conf_get_int ("alsa.freeonstop", 0);
-    if (freeonstop)  {
+    if (conf_get_int ("alsa.freeonstop", 0))  {
         palsa_free ();
     }
     else {
@@ -465,4 +480,43 @@ palsa_callback (char *stream, int len) {
     if (bytesread < len) {
         memset (stream + bytesread, 0, len-bytesread);
     }
+}
+
+void
+palsa_configchanged (void) {
+    int alsa_resample = conf_get_int ("alsa.resample", 0);
+    const char *alsa_soundcard = conf_get_str ("alsa_soundcard", "default");
+    if (alsa_resample != conf_alsa_resample
+            || strcmp (alsa_soundcard, conf_alsa_soundcard)) {
+        messagepump_push (M_REINIT_SOUND, 0, 0, 0);
+    }
+}
+
+// derived from alsa-utils/aplay.c
+void
+palsa_enum_soundcards (void (*callback)(const char *name, const char *desc, void *), void *userdata) {
+    void **hints, **n;
+    char *name, *descr, *descr1, *io;
+    const char *filter = "Output";
+    if (snd_device_name_hint(-1, "pcm", &hints) < 0)
+        return;
+    n = hints;
+    while (*n != NULL) {
+        name = snd_device_name_get_hint(*n, "NAME");
+        descr = snd_device_name_get_hint(*n, "DESC");
+        io = snd_device_name_get_hint(*n, "IOID");
+        if (io == NULL || !strcmp(io, filter)) {
+            if (name && descr && callback) {
+                callback (name, descr, userdata);
+            }
+        }
+        if (name != NULL)
+            free(name);
+        if (descr != NULL)
+            free(descr);
+        if (io != NULL)
+            free(io);
+        n++;
+    }
+    snd_device_name_free_hint(hints);
 }

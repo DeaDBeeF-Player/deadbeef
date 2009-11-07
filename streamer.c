@@ -40,6 +40,7 @@
 #define trace(fmt,...)
 
 static intptr_t streamer_tid;
+static int src_quality;
 static SRC_STATE *src;
 static SRC_DATA srcdata;
 static int codecleft;
@@ -422,9 +423,8 @@ streamer_thread (uintptr_t ctx) {
 int
 streamer_init (void) {
     mutex = mutex_create ();
-//    src = src_new (SRC_SINC_BEST_QUALITY, 2, NULL);
-//    src = src_new (SRC_LINEAR, 2, NULL);
-    src = src_new (conf_get_int ("src_quality", 2), 2, NULL);
+    src_quality = conf_get_int ("src_quality", 2);
+    src = src_new (src_quality, 2, NULL);
     conf_replaygain_mode = conf_get_int ("replaygain_mode", 0);
     conf_replaygain_scale = conf_get_int ("replaygain_scale", 1);
     if (!src) {
@@ -829,5 +829,23 @@ streamer_is_buffering (void) {
     }
     else {
         return 0;
+    }
+}
+
+void
+streamer_configchanged (void) {
+    conf_replaygain_mode = conf_get_int ("replaygain_mode", 0);
+    conf_replaygain_scale = conf_get_int ("replaygain_scale", 1);
+    int q = conf_get_int ("src_quality", 2);
+    if (q != src_quality && q >= SRC_SINC_BEST_QUALITY && q <= SRC_LINEAR) {
+        fprintf (stderr, "changing src_quality from %d to %d\n", src_quality, q);
+        src_quality = q;
+        streamer_lock ();
+        if (src) {
+            src_delete (src);
+            src = NULL;
+        }
+        src = src_new (src_quality, 2, NULL);
+        streamer_unlock ();
     }
 }

@@ -67,19 +67,6 @@ conf_load (void) {
         *p = 0;
         // new items are appended, to preserve order
         conf_set_str (str, value);
-#if 0
-        DB_conf_item_t *it = malloc (sizeof (DB_conf_item_t));
-        memset (it, 0, sizeof (DB_conf_item_t));
-        it->key = strdup (str);
-        it->value = strdup (value);
-        if (!tail) {
-            conf_items = it;
-        }
-        else {
-            tail->next = it;
-        }
-        tail = it;
-#endif
     }
     fclose (fp);
     changed = 0;

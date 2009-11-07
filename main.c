@@ -474,6 +474,11 @@ player_thread (uintptr_t ctx) {
                 search_refresh ();
                 GDK_THREADS_LEAVE();
                 break;
+            case M_CONFIGCHANGED:
+                palsa_configchanged ();
+                streamer_configchanged ();
+                plug_trigger_event (DB_EV_CONFIGCHANGED, 0);
+                break;
             }
         }
         usleep(50000);

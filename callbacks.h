@@ -634,3 +634,27 @@ on_remove_column_activate              (GtkMenuItem     *menuitem,
 void
 on_pref_alsa_resampling_clicked        (GtkButton       *button,
                                         gpointer         user_data);
+
+void
+on_pref_alsa_freewhenstopped_clicked   (GtkButton       *button,
+                                        gpointer         user_data);
+
+void
+on_pref_soundcard_editing_done         (GtkCellEditable *celleditable,
+                                        gpointer         user_data);
+
+void
+on_pref_soundcard_changed              (GtkComboBox     *combobox,
+                                        gpointer         user_data);
+
+void
+on_pref_network_proxyaddress_changed   (GtkEditable     *editable,
+                                        gpointer         user_data);
+
+void
+on_pref_network_enableproxy_clicked    (GtkButton       *button,
+                                        gpointer         user_data);
+
+void
+on_pref_network_proxyport_changed      (GtkEditable     *editable,
+                                        gpointer         user_data);

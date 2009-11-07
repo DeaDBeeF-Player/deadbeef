@@ -115,6 +115,7 @@ enum {
     DB_EV_SONGSTARTED = 2, // triggers when song started playing (for scrobblers and such)
     DB_EV_SONGFINISHED = 3, // triggers when song finished playing (for scrobblers and such)
     DB_EV_TRACKDELETED = 4, // triggers when track is to be deleted from playlist
+    DB_EV_CONFIGCHANGED = 5, // configuration option changed
     DB_EV_MAX
 };
 
@@ -149,6 +150,7 @@ enum {
     M_PLAYLISTREFRESH,
     M_REINIT_SOUND,
     M_TRACKCHANGED, // p1=tracknumber
+    M_CONFIGCHANGED, // no arguments
 };
 
 // typecasting macros
