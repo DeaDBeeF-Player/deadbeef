@@ -50,6 +50,7 @@ static DB_functions_t *deadbeef;
 
 typedef struct {
     DB_FILE *file;
+    DB_playItem_t *it;
 
     // input buffer, for MPEG data
     char input[READBUFFER];
@@ -474,6 +475,7 @@ cmp3_init (DB_playItem_t *it) {
     if (!buffer.file) {
         return -1;
     }
+    buffer.it = it;
     plugin.info.readpos = 0;
     if (!buffer.file->vfs->streaming) {
         int skip = deadbeef->junk_get_leading_size (buffer.file);
@@ -497,6 +499,7 @@ cmp3_init (DB_playItem_t *it) {
         }
     }
     else {
+        buffer.it->filetype = NULL;
         int len = deadbeef->fgetlength (buffer.file);
         const char *name = deadbeef->fget_content_name (buffer.file);
         const char *genre = deadbeef->fget_content_genre (buffer.file);
@@ -733,6 +736,13 @@ cmp3_stream_frame (void) {
             }
         }
 
+        if (!buffer.it->filetype) {
+            int layer = frame.header.layer;
+            if (layer >= 1 && layer <= 3) {
+                buffer.it->filetype = plugin.filetypes[layer-1];
+            }
+        }
+
         plugin.info.samplerate = frame.header.samplerate;
         plugin.info.channels = MAD_NCHANNELS(&frame.header);
 
@@ -901,7 +911,7 @@ cmp3_insert (DB_playItem_t *after, const char *fname) {
         deadbeef->fclose (fp);
         deadbeef->pl_add_meta (it, "title", NULL);
         deadbeef->pl_set_item_duration (it, -1);
-        it->filetype = filetypes[0];
+        it->filetype = NULL;//filetypes[0];
         after = deadbeef->pl_insert_item (after, it);
         return after;
     }

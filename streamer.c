@@ -803,6 +803,9 @@ streamer_read (char *bytes, int size) {
         playpos += (float)sz/p_get_rate ()/4.f;
         str_playing_song.playtime += (float)sz/p_get_rate ()/4.f;
         if (playlist_current_ptr) {
+            str_playing_song.filetype = playlist_current_ptr->filetype;
+        }
+        if (playlist_current_ptr) {
             playlist_current_ptr->playtime = str_playing_song.playtime;
         }
         if (bytes_until_next_song > 0) {
