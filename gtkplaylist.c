@@ -1362,8 +1362,9 @@ gtkpl_add_fm_dropped_files (gtkplaylist_t *ps, char *ptr, int length, int drop_y
 void
 gtkpl_handle_fm_drag_drop (gtkplaylist_t *ps, int drop_y, void *ptr, int length) {
     // this happens when dropped from file manager
-    char *mem = malloc (length);
+    char *mem = malloc (length+1);
     memcpy (mem, ptr, length);
+    mem[length] = 0;
     // we don't pass control structure, but there's only one drag-drop view currently
     messagepump_push (M_FMDRAGDROP, (uintptr_t)mem, length, drop_y);
 }
