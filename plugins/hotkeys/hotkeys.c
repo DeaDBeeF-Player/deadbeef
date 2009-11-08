@@ -103,22 +103,22 @@ trim(char* s)
 
 static void
 cmd_seek_fwd() {
-        deadbeef->playback_set_pos( deadbeef->playback_get_pos() + 5 );
+    deadbeef->playback_set_pos( deadbeef->playback_get_pos() + 5 );
 }
 
 static void
 cmd_seek_back() {
-        deadbeef->playback_set_pos( deadbeef->playback_get_pos() - 5 );
+    deadbeef->playback_set_pos( deadbeef->playback_get_pos() - 5 );
 }
 
 static void
 cmd_volume_up() {
-        deadbeef->volume_set_db( deadbeef->volume_get_db() + 2 );
+    deadbeef->volume_set_db( deadbeef->volume_get_db() + 2 );
 }
 
 static void
 cmd_volume_down() {
-        deadbeef->volume_set_db( deadbeef->volume_get_db() - 2 );
+    deadbeef->volume_set_db( deadbeef->volume_get_db() - 2 );
 }
 
 static command_func_t
@@ -160,35 +160,27 @@ get_command( const char* command )
 static int
 read_config( Display *disp )
 {
-    char param[ 256 ];
-    char config[1024];
-    snprintf (config, 1024, "%s/hotkeys", deadbeef->get_config_dir());
-    FILE *cfg_file = fopen (config, "rt");
-    if (!cfg_file) {
-        fprintf (stderr, "hotkeys: failed open %s\n", config);
-        return -1;
-    }
-
-    int line_nr = 0;
-
-    while ( fgets( param, sizeof(param), cfg_file ) )
-    {
-        line_nr++;
+    DB_conf_item_t *item = deadbeef->conf_find ("hotkeys.", NULL);
+    while (item) {
+//        fprintf (stderr, "hotkeys: adding %s %s\n", item->key, item->value);
         if ( command_count == MAX_COMMAND_COUNT )
         {
-            fprintf( stderr, "hotkeys: [Config line %d] Maximum count (%d) of commands exceeded\n", line_nr, MAX_COMMAND_COUNT );
+            fprintf( stderr, "hotkeys: maximum number (%d) of commands exceeded\n", MAX_COMMAND_COUNT );
             break;
         }
 
         command_t *cmd_entry = &commands[ command_count ];
         cmd_entry->modifier = 0;
         cmd_entry->keycode = 0;
+
+        size_t l = strlen (item->value);
+        char param[l+1];
+        memcpy (param, item->value, l+1);
         
-        param[ strlen( param )-1 ] = 0; //terminating \n
         char* colon = strchr( param, ':' );
         if ( !colon )
         {
-            fprintf( stderr, "hotkeys: [Config line %d] Wrong config line\n", line_nr );
+            fprintf( stderr, "hotkeys: bad config option %s %s\n", item->key, item->value);
             continue;
         }
         char* command = colon+1;
@@ -235,27 +227,29 @@ read_config( Display *disp )
                 }
                 if ( !cmd_entry->keycode )
                 {
-                    fprintf( stderr, "hotkeys: [Config line %d] Unknown key: <%s>\n", line_nr, key );
-                    continue;
+                    fprintf( stderr, "hotkeys: Unknown key: <%s> while parsing %s %s\n", key, item->key, item->value );
+                    break;
+                }
+            }
+        } while ( !done );
+
+        if (done) {
+            if ( cmd_entry->keycode == 0 ) {
+                fprintf( stderr, "hotkeys: Key not found while parsing %s %s\n", item->key, item->value);
+            }
+            else {
+                command = trim (command);
+                cmd_entry->func = get_command( command );
+                if ( !cmd_entry->func )
+                {
+                    fprintf( stderr, "hotkeys: Unknown command <%s> while parsing %s %s\n", command,  item->key, item->value);
+                }
+                else {
+                    command_count++;
                 }
             }
         }
-        while ( !done );
-
-        if ( cmd_entry->keycode == 0 )
-        {
-            fprintf( stderr, "hotkeys: [Config line %d] Key not specified\n", line_nr );
-            continue;
-        }
-
-        command = trim (command);
-        cmd_entry->func = get_command( command );
-        if ( !cmd_entry->func )
-        {
-            fprintf( stderr, "hotkeys: [Config line %d] Unknown command <%s>\n", line_nr, command );
-            continue;        
-        }
-        command_count++;
+        item = deadbeef->conf_find ("hotkeys.", item);
     }
 }
 
@@ -275,12 +269,8 @@ static void
 hotkeys_event_loop( uintptr_t unused ) {
     int i;
 
-    for ( i = 0; i < command_count; i++ )
-        XGrabKey( disp, commands[ i ].keycode, commands[ i ].modifier, DefaultRootWindow( disp ), False, GrabModeAsync, GrabModeAsync );
-
     while (!finished) {
         XEvent event;
-
         while ( XPending( disp ) )
         {
             XNextEvent( disp, &event );
@@ -301,8 +291,10 @@ hotkeys_event_loop( uintptr_t unused ) {
 }
 
 static int
-x_err_handler (Display *disp, XErrorEvent *evt) {
-    fprintf( stderr, "hotkeys: We got an Xlib error. Most probably one or more of your hotkeys won't work\n" );
+x_err_handler (Display *d, XErrorEvent *evt) {
+    char buffer[1024];
+    XGetErrorText(d, evt->error_code, buffer, sizeof (buffer));
+    fprintf( stderr, "hotkeys: xlib error: %s\n", buffer);
 }
 
 static int
@@ -312,12 +304,19 @@ hotkeys_start (void) {
     disp = XOpenDisplay( NULL );
     if ( !disp )
     {
-        fprintf( stderr, "Could not open display\n" );
+        fprintf( stderr, "hotkeys: could not open display\n" );
         return -1;
     }
     XSetErrorHandler( x_err_handler );
 
     read_config( disp );
+    int i;
+    // need to grab it here to prevent gdk_x_error from being called while we're
+    // doing it on other thread
+    for (i = 0; i < command_count; i++) {
+        XGrabKey (disp, commands[i].keycode, commands[i].modifier, DefaultRootWindow (disp), False, GrabModeAsync, GrabModeAsync);
+    }
+    XSync (disp, 0);
     if (command_count > 0) {
         loop_tid = deadbeef->thread_start( hotkeys_event_loop, 0 );
     }
@@ -339,8 +338,8 @@ hotkeys_stop (void) {
 static DB_misc_t plugin = {
     DB_PLUGIN_SET_API_VERSION
     .plugin.type = DB_PLUGIN_MISC,
-    .plugin.name = "Global Hotkeys",
-    .plugin.descr = "Allows to control player using xlib global hotkeys",
+    .plugin.name = "Global hotkeys support",
+    .plugin.descr = "Allows to control player with global hotkeys",
     .plugin.author = "Viktor Semykin",
     .plugin.email = "thesame.ml@gmail.com",
     .plugin.website = "http://deadbeef.sf.net",

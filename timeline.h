@@ -16,22 +16,37 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
-#ifndef __SESSION_H
-#define __SESSION_H
+#ifndef __TIMELINE_H
+#define __TIMELINE_H
 
 #include <stdint.h>
 
-int
-session_save (const char *fname);
+typedef struct {
+    float fps;
+    float duration;
+    float progress;
+    struct timeval time;
+    intptr_t tid;
+    int stop;
+    int destroy;
+    int (*callback)(float _progress, int _last, void *_ctx);
+    void *callback_ctx;
+} timeline_t;
 
-int
-session_load (const char *fname);
+// callback must return 0 to continue, or -1 to abort
+timeline_t *
+timeline_create (void);
 
 void
-session_capture_window_attrs (uintptr_t window);
+timeline_free (timeline_t *timeline, int wait);
 
 void
-session_restore_window_attrs (uintptr_t window);
+timeline_stop (timeline_t *tl, int wait);
 
+void
+timeline_init (timeline_t *timeline, float seconds, float fps, int (*callback)(float _progress, int _last, void *_ctx), void *ctx);
 
-#endif // __SESSION_H
+void
+timeline_start (timeline_t *timeline);
+
+#endif // __TIMELINE_H

@@ -26,6 +26,7 @@
 #include <unistd.h>
 #include <assert.h>
 #include <ctype.h>
+#include <gdk/gdkkeysyms.h>
 
 #include "callbacks.h"
 #include "interface.h"
@@ -36,7 +37,6 @@
 #include "playlist.h"
 #include "gtkplaylist.h"
 #include "messagepump.h"
-#include "messages.h"
 #include "codec.h"
 #include "playback.h"
 #include "search.h"
@@ -48,21 +48,26 @@
 
 #include "plugins.h"
 
-//#include "cmp3.h"
-//#include "cvorbis.h"
-//#include "cdumb.h"
-//#include "cgme.h"
-//#include "cflac.h"
-//#include "csid.h"
-
 extern GtkWidget *mainwin;
 extern gtkplaylist_t main_playlist;
 extern gtkplaylist_t search_playlist;
+
+gboolean
+playlist_tooltip_handler (GtkWidget *widget, gint x, gint y, gboolean keyboard_mode, GtkTooltip *tooltip, gpointer unused)
+{
+    playItem_t *item = gtkpl_get_for_idx (&main_playlist, main_playlist.scrollpos + y / rowheight);
+    if (item && item->fname) {
+        gtk_tooltip_set_text (tooltip, item->fname);
+        return TRUE;
+    }
+    return FALSE;
+}
 
 void
 main_playlist_init (GtkWidget *widget) {
     // init playlist control structure, and put it into widget user-data
     memset (&main_playlist, 0, sizeof (main_playlist));
+    main_playlist.title = "playlist";
     main_playlist.playlist = widget;
     main_playlist.header = lookup_widget (mainwin, "header");
     main_playlist.scrollbar = lookup_widget (mainwin, "playscroll");
@@ -76,14 +81,40 @@ main_playlist_init (GtkWidget *widget) {
     main_playlist.row = -1;
     main_playlist.clicktime = -1;
     main_playlist.nvisiblerows = 0;
-    //main_playlist.fmtcache = NULL;
-//    int colwidths[pl_ncolumns] = { 50, 150, 50, 150, 50 };
-//    memcpy (main_playlist.colwidths, colwidths, sizeof (colwidths));
-    main_playlist.colwidths = session_get_main_colwidths_ptr ();
+
+// FIXME: on 1st run, copy colwidths to new columns
+//    main_playlist.colwidths = session_get_main_colwidths_ptr ();
+
+    DB_conf_item_t *col = conf_find ("playlist.column.", NULL);
+    if (!col) {
+        // create default set of columns
+        gtkpl_column_append (&main_playlist, gtkpl_column_alloc ("Playing", 50, DB_COLUMN_PLAYING, NULL, 0));
+        gtkpl_column_append (&main_playlist, gtkpl_column_alloc ("Artist / Album", 150, DB_COLUMN_ARTIST_ALBUM, NULL, 0));
+        gtkpl_column_append (&main_playlist, gtkpl_column_alloc ("Track №", 50, DB_COLUMN_TRACK, NULL, 1));
+        gtkpl_column_append (&main_playlist, gtkpl_column_alloc ("Title / Track Artist", 150, DB_COLUMN_TITLE, NULL, 0));
+        gtkpl_column_append (&main_playlist, gtkpl_column_alloc ("Duration", 50, DB_COLUMN_DURATION, NULL, 0));
+    }
+    else {
+        while (col) {
+            gtkpl_append_column_from_textdef (&main_playlist, col->value);
+            col = conf_find ("playlist.column.", col);
+        }
+    }
+
     gtk_object_set_data (GTK_OBJECT (main_playlist.playlist), "ps", &main_playlist);
     gtk_object_set_data (GTK_OBJECT (main_playlist.header), "ps", &main_playlist);
     gtk_object_set_data (GTK_OBJECT (main_playlist.scrollbar), "ps", &main_playlist);
     gtk_object_set_data (GTK_OBJECT (main_playlist.hscrollbar), "ps", &main_playlist);
+
+    // FIXME: filepath should be in properties dialog, while tooltip should be
+    // used to show text that doesn't fit in column width
+    if (conf_get_int ("playlist.showpathtooltip", 0)) {
+        GValue value = {0, };
+        g_value_init (&value, G_TYPE_BOOLEAN);
+        g_value_set_boolean (&value, TRUE);
+        g_object_set_property (G_OBJECT (widget), "has-tooltip", &value);
+        g_signal_connect (G_OBJECT (widget), "query-tooltip", G_CALLBACK (playlist_tooltip_handler), NULL);
+    }
 }
 
 void
@@ -91,6 +122,7 @@ search_playlist_init (GtkWidget *widget) {
     extern GtkWidget *searchwin;
     // init playlist control structure, and put it into widget user-data
     memset (&search_playlist, 0, sizeof (search_playlist));
+    search_playlist.title = "search";
     search_playlist.playlist = widget;
     search_playlist.header = lookup_widget (searchwin, "searchheader");
     search_playlist.scrollbar = lookup_widget (searchwin, "searchscroll");
@@ -106,10 +138,23 @@ search_playlist_init (GtkWidget *widget) {
     search_playlist.row = -1;
     search_playlist.clicktime = -1;
     search_playlist.nvisiblerows = 0;
-    //search_playlist.fmtcache = NULL;
-//    int colwidths[pl_ncolumns] = { 0, 150, 50, 150, 50 };
-//    memcpy (search_playlist.colwidths, colwidths, sizeof (colwidths));
-    search_playlist.colwidths = session_get_search_colwidths_ptr ();
+
+// FIXME: port to new columns
+//    search_playlist.colwidths = session_get_search_colwidths_ptr ();
+    // create default set of columns
+    DB_conf_item_t *col = conf_find ("search.column.", NULL);
+    if (!col) {
+        gtkpl_column_append (&search_playlist, gtkpl_column_alloc ("Artist / Album", 150, DB_COLUMN_ARTIST_ALBUM, NULL, 0));
+        gtkpl_column_append (&search_playlist, gtkpl_column_alloc ("Track №", 50, DB_COLUMN_TRACK, NULL, 1));
+        gtkpl_column_append (&search_playlist, gtkpl_column_alloc ("Title / Track Artist", 150, DB_COLUMN_TITLE, NULL, 0));
+        gtkpl_column_append (&search_playlist, gtkpl_column_alloc ("Duration", 50, DB_COLUMN_DURATION, NULL, 0));
+    }
+    else {
+        while (col) {
+            gtkpl_append_column_from_textdef (&search_playlist, col->value);
+            col = conf_find ("search.column.", col);
+        }
+    }
     gtk_object_set_data (GTK_OBJECT (search_playlist.playlist), "ps", &search_playlist);
     gtk_object_set_data (GTK_OBJECT (search_playlist.header), "ps", &search_playlist);
     gtk_object_set_data (GTK_OBJECT (search_playlist.scrollbar), "ps", &search_playlist);
@@ -174,19 +219,55 @@ on_playscroll_value_changed            (GtkRange        *widget,
     gtkpl_scroll (ps, newscroll);
 }
 
+static gboolean
+file_filter_func (const GtkFileFilterInfo *filter_info, gpointer data) {
+    // get ext
+    const char *p = filter_info->filename + strlen (filter_info->filename)-1;
+    while (p >= filter_info->filename) {
+        if (*p == '.') {
+            break;
+        }
+        p--;
+    }
+    if (*p != '.') {
+        return FALSE;
+    }
+    p++;
+    DB_decoder_t **codecs = plug_get_decoder_list ();
+    for (int i = 0; codecs[i]; i++) {
+        if (codecs[i]->exts && codecs[i]->insert) {
+            const char **exts = codecs[i]->exts;
+            if (exts) {
+                for (int e = 0; exts[e]; e++) {
+                    if (!strcasecmp (exts[e], p)) {
+                        return TRUE;
+                    }
+                }
+            }
+        }
+    }
+    if (!strcasecmp (p, "pls")) {
+        return TRUE;
+    }
+    if (!strcasecmp (p, "m3u")) {
+        return TRUE;
+    }
+    return FALSE;
+}
 
-void
-on_open_activate                       (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
-    GtkWidget *dlg = gtk_file_chooser_dialog_new ("Open file(s)...", GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
+static GtkFileFilter *
+set_file_filter (GtkWidget *dlg, const char *name) {
+    if (!name) {
+        name = "Supported sound formats";
+    }
 
     GtkFileFilter* flt;
     flt = gtk_file_filter_new ();
-    gtk_file_filter_set_name (flt, "Supported music files");
+    gtk_file_filter_set_name (flt, name);
 
+    gtk_file_filter_add_custom (flt, GTK_FILE_FILTER_FILENAME, file_filter_func, NULL, NULL);
+#if 0
     DB_decoder_t **codecs = plug_get_decoder_list ();
-
     for (int i = 0; codecs[i]; i++) {
         if (codecs[i]->exts && codecs[i]->insert) {
             const char **exts = codecs[i]->exts;
@@ -204,6 +285,9 @@ on_open_activate                       (GtkMenuItem     *menuitem,
             }
         }
     }
+    gtk_file_filter_add_pattern (flt, "*.pls");
+    gtk_file_filter_add_pattern (flt, "*.m3u");
+#endif
 
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
     gtk_file_chooser_set_filter (GTK_FILE_CHOOSER (dlg), flt);
@@ -211,14 +295,24 @@ on_open_activate                       (GtkMenuItem     *menuitem,
     gtk_file_filter_set_name (flt, "Other files (*)");
     gtk_file_filter_add_pattern (flt, "*");
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
+}
+
+void
+on_open_activate                       (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    GtkWidget *dlg = gtk_file_chooser_dialog_new ("Open file(s)...", GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
+
+    set_file_filter (dlg, NULL);
+
     gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dlg), TRUE);
     // restore folder
-    gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dlg), session_get_directory ());
+    gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dlg), conf_get_str ("filechooser.lastdir", ""));
     int response = gtk_dialog_run (GTK_DIALOG (dlg));
     // store folder
     gchar *folder = gtk_file_chooser_get_current_folder_uri (GTK_FILE_CHOOSER (dlg));
     if (folder) {
-        session_set_directory (folder);
+        conf_set_str ("filechooser.lastdir", folder);
         g_free (folder);
     }
     if (response == GTK_RESPONSE_OK)
@@ -242,44 +336,17 @@ on_add_files_activate                  (GtkMenuItem     *menuitem,
 {
     GtkWidget *dlg = gtk_file_chooser_dialog_new ("Add file(s) to playlist...", GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
 
-    GtkFileFilter* flt;
-    flt = gtk_file_filter_new ();
-    gtk_file_filter_set_name (flt, "Supported music files");
+    set_file_filter (dlg, NULL);
 
-    DB_decoder_t **codecs = plug_get_decoder_list ();
-    for (int i = 0; codecs[i]; i++) {
-        if (codecs[i]->exts && codecs[i]->insert) {
-            const char **exts = codecs[i]->exts;
-            if (exts) {
-                for (int e = 0; exts[e]; e++) {
-                    char filter[20];
-                    snprintf (filter, 20, "*.%s", exts[e]);
-                    gtk_file_filter_add_pattern (flt, filter);
-                    char *p;
-                    for (p = filter; *p; p++) {
-                        *p = toupper (*p);
-                    }
-                    gtk_file_filter_add_pattern (flt, filter);
-                }
-            }
-        }
-    }
-
-    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
-    gtk_file_chooser_set_filter (GTK_FILE_CHOOSER (dlg), flt);
-    flt = gtk_file_filter_new ();
-    gtk_file_filter_set_name (flt, "Other files (*)");
-    gtk_file_filter_add_pattern (flt, "*");
-    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
     gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dlg), TRUE);
 
     // restore folder
-    gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dlg), session_get_directory ());
+    gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dlg), conf_get_str ("filechooser.lastdir", ""));
     int response = gtk_dialog_run (GTK_DIALOG (dlg));
     // store folder
     gchar *folder = gtk_file_chooser_get_current_folder_uri (GTK_FILE_CHOOSER (dlg));
     if (folder) {
-        session_set_directory (folder);
+        conf_set_str ("filechooser.lastdir", folder);
         g_free (folder);
     }
     if (response == GTK_RESPONSE_OK)
@@ -301,43 +368,16 @@ on_add_folders_activate                (GtkMenuItem     *menuitem,
 {
     GtkWidget *dlg = gtk_file_chooser_dialog_new ("Add folder(s) to playlist...", GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
 
-    GtkFileFilter* flt;
-    flt = gtk_file_filter_new ();
-    gtk_file_filter_set_name (flt, "Supported music files");
+    set_file_filter (dlg, NULL);
 
-    DB_decoder_t **codecs = plug_get_decoder_list ();
-    for (int i = 0; codecs[i]; i++) {
-        if (codecs[i]->exts && codecs[i]->insert) {
-            const char **exts = codecs[i]->exts;
-            if (exts) {
-                for (int e = 0; exts[e]; e++) {
-                    char filter[20];
-                    snprintf (filter, 20, "*.%s", exts[e]);
-                    gtk_file_filter_add_pattern (flt, filter);
-                    char *p;
-                    for (p = filter; *p; p++) {
-                        *p = toupper (*p);
-                    }
-                    gtk_file_filter_add_pattern (flt, filter);
-                }
-            }
-        }
-    }
-
-    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
-    gtk_file_chooser_set_filter (GTK_FILE_CHOOSER (dlg), flt);
-    flt = gtk_file_filter_new ();
-    gtk_file_filter_set_name (flt, "Other files (*)");
-    gtk_file_filter_add_pattern (flt, "*");
-    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
     gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dlg), TRUE);
     // restore folder
-    gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dlg), session_get_directory ());
+    gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dlg), conf_get_str ("filechooser.lastdir", ""));
     int response = gtk_dialog_run (GTK_DIALOG (dlg));
     // store folder
     gchar *folder = gtk_file_chooser_get_current_folder_uri (GTK_FILE_CHOOSER (dlg));
     if (folder) {
-        session_set_directory (folder);
+        conf_set_str ("filechooser.lastdir", folder);
         g_free (folder);
     }
     if (response == GTK_RESPONSE_OK)
@@ -405,6 +445,12 @@ on_remove1_activate                    (GtkMenuItem     *menuitem,
     gtkplaylist_t *ps = &main_playlist;
     GtkWidget *widget = ps->playlist;
     ps->row = pl_delete_selected ();
+    if (ps->row != -1) {
+        playItem_t *it = pl_get_for_idx (ps->row);
+        if (it) {
+            it->selected = 1;
+        }
+    }
     gtkpl_setup_scrollbar (ps);
     gtkpl_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
     gtkpl_expose (ps, 0, 0, widget->allocation.width, widget->allocation.height);
@@ -425,15 +471,6 @@ on_crop1_activate                      (GtkMenuItem     *menuitem,
     search_refresh ();
 }
 
-
-void
-on_about1_activate                     (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
-    GtkWidget *d = create_aboutdialog ();
-    gtk_dialog_run (GTK_DIALOG (d));
-    gtk_widget_destroy (d);
-}
 
 
 gboolean
@@ -597,9 +634,10 @@ on_playlist_drag_data_received         (GtkWidget       *widget,
     GTKPL_PROLOGUE;
     gchar *ptr=(char*)data->data;
     if (target_type == 0) { // uris
-        if (!strncmp(ptr,"file:///",8)) {
+        fprintf (stderr, "calling gtkpl_handle_fm_drag_drop\n");
+//        if (!strncmp(ptr,"file:///",8)) {
             gtkpl_handle_fm_drag_drop (ps, y, ptr, data->length);
-        }
+//        }
     }
     else if (target_type == 1) {
         uint32_t *d= (uint32_t *)ptr;
@@ -700,8 +738,7 @@ void
 on_order_linear_activate               (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    session_set_playlist_order (0);
-    pl_set_order (0);
+    conf_set_int ("playback.order", 0);
 }
 
 
@@ -709,8 +746,7 @@ void
 on_order_shuffle_activate              (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    session_set_playlist_order (1);
-    pl_set_order (1);
+    conf_set_int ("playback.order", 1);
 }
 
 
@@ -718,8 +754,7 @@ void
 on_order_random_activate               (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    session_set_playlist_order (2);
-    pl_set_order (2);
+    conf_set_int ("playback.order", 2);
 }
 
 
@@ -727,8 +762,7 @@ void
 on_loop_all_activate                   (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    session_set_playlist_looping (0);
-    pl_set_loop_mode (0);
+    conf_set_int ("playback.loop", 0);
 }
 
 
@@ -736,8 +770,7 @@ void
 on_loop_single_activate                (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    session_set_playlist_looping (2);
-    pl_set_loop_mode (2);
+    conf_set_int ("playback.loop", 2);
 }
 
 
@@ -745,8 +778,7 @@ void
 on_loop_disable_activate               (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    session_set_playlist_looping (1);
-    pl_set_loop_mode (1);
+    conf_set_int ("playback.loop", 1);
 }
 
 void
@@ -924,6 +956,12 @@ seekbar_draw (GtkWidget *widget) {
 	if (!cr) {
         return;
     }
+    if (!str_playing_song.decoder || str_playing_song._duration < 0) {
+        clearlooks_rounded_rectangle (cr, 2, widget->allocation.height/2-4, widget->allocation.width-4, 8, 4, 0xff);
+        theme_set_cairo_source_rgb (cr, COLO_SEEKBAR_FRONT);
+        cairo_stroke (cr);
+        return;
+    }
     float pos = 0;
     if (seekbar_moving) {
         int x = seekbar_move_x;
@@ -936,8 +974,8 @@ seekbar_draw (GtkWidget *widget) {
         pos = x;
     }
     else {
-        if (str_playing_song.decoder && str_playing_song.duration > 0) {
-            pos = streamer_get_playpos () / str_playing_song.duration;
+        if (str_playing_song.decoder && str_playing_song._duration > 0) {
+            pos = streamer_get_playpos () / str_playing_song._duration;
             pos *= widget->allocation.width;
         }
     }
@@ -1027,7 +1065,7 @@ on_seekbar_button_release_event        (GtkWidget       *widget,
     seekbar_moving = 0;
     seekbar_draw (widget);
     seekbar_expose (widget, 0, 0, widget->allocation.width, widget->allocation.height);
-    float time = event->x * str_playing_song.duration / (widget->allocation.width);
+    float time = event->x * str_playing_song._duration / (widget->allocation.width);
     if (time < 0) {
         time = 0;
     }
@@ -1160,6 +1198,7 @@ on_mainwin_delete_event                (GtkWidget       *widget,
                                         GdkEvent        *event,
                                         gpointer         user_data)
 {
+    int conf_close_send_to_tray = conf_get_int ("close_send_to_tray", 0);
     if (conf_close_send_to_tray) {
         gtk_widget_hide (widget);
     }
@@ -1214,7 +1253,7 @@ void
 on_scroll_follows_playback_activate    (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    session_set_scroll_follows_playback (gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (menuitem)));
+    conf_set_int ("playlist.scroll.followplayback", gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (menuitem)));
 }
 
 
@@ -1225,20 +1264,15 @@ on_find_activate                       (GtkMenuItem     *menuitem,
     search_start ();       
 }
 
-
-
-
-
 void
-on_help1_activate                      (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
+show_info_window (const char *fname, const char *title) {
     GtkWidget *widget = create_helpwindow ();
+    gtk_window_set_title (GTK_WINDOW (widget), title);
     gtk_window_set_transient_for (GTK_WINDOW (widget), GTK_WINDOW (mainwin));
     GtkWidget *txt = lookup_widget (widget, "helptext");
     GtkTextBuffer *buffer = gtk_text_buffer_new (NULL);
 
-    FILE *fp = fopen (PREFIX "/share/doc/deadbeef/help.txt", "rb");
+    FILE *fp = fopen (fname, "rb");
     if (fp) {
         fseek (fp, 0, SEEK_END);
         size_t s = ftell (fp);
@@ -1260,7 +1294,22 @@ on_help1_activate                      (GtkMenuItem     *menuitem,
         gtk_text_buffer_set_text (buffer, error, strlen (error));
     }
     gtk_text_view_set_buffer (GTK_TEXT_VIEW (txt), buffer);
+    g_object_unref (buffer);
     gtk_widget_show (widget);
+}
+
+void
+on_help1_activate                      (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    show_info_window (PREFIX "/share/doc/deadbeef/help.txt", "Help");
+}
+
+void
+on_about1_activate                     (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    show_info_window (PREFIX "/share/doc/deadbeef/about.txt", "About DeaDBeeF " VERSION);
 }
 
 
@@ -1282,4 +1331,433 @@ on_searchhscroll_value_changed         (GtkRange        *widget,
     int newscroll = gtk_range_get_value (GTK_RANGE (widget));
     gtkpl_hscroll (ps, newscroll);
 }
+
+
+gboolean
+on_helpwindow_key_press_event          (GtkWidget       *widget,
+                                        GdkEventKey     *event,
+                                        gpointer         user_data)
+{
+    if (event->keyval == GDK_Escape) {
+        gtk_widget_hide (widget);
+        gtk_widget_destroy (widget);
+    }
+    return FALSE;
+}
+
+
+void
+on_add_audio_cd_activate               (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    pl_add_file ("all.cda", NULL, NULL);
+    playlist_refresh ();
+}
+
+static GtkWidget *prefwin;
+
+static char alsa_device_names[100][64];
+static int num_alsa_devices;
+
+static void
+gtk_enum_sound_callback (const char *name, const char *desc, void *userdata) {
+    if (num_alsa_devices >= 100) {
+        fprintf (stderr, "wtf!! more than 100 alsa devices??\n");
+        return;
+    }
+    GtkComboBox *combobox = GTK_COMBO_BOX (userdata);
+    gtk_combo_box_append_text (combobox, desc);
+
+    if (!strcmp (conf_get_str ("alsa_soundcard", "default"), name)) {
+        gtk_combo_box_set_active (combobox, num_alsa_devices);
+    }
+
+    strncpy (alsa_device_names[num_alsa_devices], name, 63);
+    alsa_device_names[num_alsa_devices][63] = 0;
+    num_alsa_devices++;
+}
+
+void
+on_preferences_activate                (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    GtkWidget *w = prefwin = create_prefwin ();
+    gtk_window_set_transient_for (GTK_WINDOW (w), GTK_WINDOW (mainwin));
+
+    // alsa_soundcard
+
+    const char *s = conf_get_str ("alsa_soundcard", "default");
+    GtkComboBox *combobox = GTK_COMBO_BOX (lookup_widget (w, "pref_soundcard"));
+    gtk_combo_box_append_text (combobox, "Default Audio Device");
+    if (!strcmp (s, "default")) {
+        gtk_combo_box_set_active (combobox, 0);
+    }
+    num_alsa_devices = 1;
+    strcpy (alsa_device_names[0], "default");
+    palsa_enum_soundcards (gtk_enum_sound_callback, combobox);
+
+    // alsa resampling
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "pref_alsa_resampling")), conf_get_int ("alsa.resample", 0));
+
+    // alsa freeonstop
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "pref_alsa_freewhenstopped")), conf_get_int ("alsa.freeonstop", 0));
+
+    // src_quality
+    combobox = GTK_COMBO_BOX (lookup_widget (w, "pref_src_quality"));
+    gtk_combo_box_set_active (combobox, conf_get_int ("src_quality", 2));
+
+    // replaygain_mode
+    combobox = GTK_COMBO_BOX (lookup_widget (w, "pref_replaygain_mode"));
+    gtk_combo_box_set_active (combobox, conf_get_int ("replaygain_mode", 0));
+
+    // replaygain_scale
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "pref_replaygain_scale")), conf_get_int ("replaygain_scale", 1));
+
+    // close_send_to_tray
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "pref_close_send_to_tray")), conf_get_int ("close_send_to_tray", 0));
+
+    // network
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "pref_network_enableproxy")), conf_get_int ("network.proxy", 0));
+    gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "pref_network_proxyaddress")), conf_get_str ("network.proxy.address", ""));
+    gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "pref_network_proxyport")), conf_get_str ("network.proxy.port", "8080"));
+    combobox = GTK_COMBO_BOX (lookup_widget (w, "pref_network_proxytype"));
+    const char *type = conf_get_str ("network.proxy.type", "HTTP");
+    if (!strcasecmp (type, "HTTP")) {
+        gtk_combo_box_set_active (combobox, 0);
+    }
+    else if (!strcasecmp (type, "HTTP_1_0")) {
+        gtk_combo_box_set_active (combobox, 1);
+    }
+    else if (!strcasecmp (type, "SOCKS4")) {
+        gtk_combo_box_set_active (combobox, 2);
+    }
+    else if (!strcasecmp (type, "SOCKS5")) {
+        gtk_combo_box_set_active (combobox, 3);
+    }
+    else if (!strcasecmp (type, "SOCKS4A")) {
+        gtk_combo_box_set_active (combobox, 4);
+    }
+    else if (!strcasecmp (type, "SOCKS5_HOSTNAME")) {
+        gtk_combo_box_set_active (combobox, 5);
+    }
+
+    // list of plugins
+    GtkTreeView *tree = GTK_TREE_VIEW (lookup_widget (w, "pref_pluginlist"));
+    GtkListStore *store = gtk_list_store_new (1, G_TYPE_STRING);//GTK_LIST_STORE (gtk_tree_view_get_model (tree));
+    GtkCellRenderer *rend = gtk_cell_renderer_text_new ();
+    GtkTreeViewColumn *col = gtk_tree_view_column_new_with_attributes ("Title", rend, "text", 0, NULL);
+    gtk_tree_view_append_column (tree, col);
+    DB_plugin_t **plugins = plug_get_list ();
+    int i;
+    for (i = 0; plugins[i]; i++) {
+        GtkTreeIter it;
+        gtk_list_store_append (store, &it);
+        gtk_list_store_set (store, &it, 0, plugins[i]->name, -1);
+    }
+    gtk_tree_view_set_model (tree, GTK_TREE_MODEL (store));
+
+    gtk_widget_show (w);
+}
+
+
+void
+on_pref_soundcard_changed              (GtkComboBox     *combobox,
+                                        gpointer         user_data)
+{
+    int active = gtk_combo_box_get_active (combobox);
+    if (active >= 0 && active < num_alsa_devices) {
+        conf_set_str ("alsa_soundcard", alsa_device_names[active]);
+        messagepump_push (M_CONFIGCHANGED, 0, 0, 0);
+    }
+}
+
+void
+on_pref_alsa_resampling_clicked        (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button));
+    conf_set_int ("alsa.resample", active);
+    messagepump_push (M_CONFIGCHANGED, 0, 0, 0);
+}
+
+
+void
+on_pref_src_quality_changed            (GtkComboBox     *combobox,
+                                        gpointer         user_data)
+{
+    int active = gtk_combo_box_get_active (combobox);
+    conf_set_int ("src_quality", active == -1 ? 2 : active);
+    messagepump_push (M_CONFIGCHANGED, 0, 0, 0);
+}
+
+
+void
+on_pref_replaygain_mode_changed        (GtkComboBox     *combobox,
+                                        gpointer         user_data)
+{
+    int active = gtk_combo_box_get_active (combobox);
+    conf_set_int ("replaygain_mode", active == -1 ? 0 : active);
+    messagepump_push (M_CONFIGCHANGED, 0, 0, 0);
+}
+
+void
+on_pref_replaygain_scale_clicked       (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button));
+    conf_set_int ("replaygain_scale", active);
+    messagepump_push (M_CONFIGCHANGED, 0, 0, 0);
+}
+
+
+void
+on_pref_close_send_to_tray_clicked     (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button));
+    conf_set_int ("close_send_to_tray", active);
+    messagepump_push (M_CONFIGCHANGED, 0, 0, 0);
+}
+
+
+void
+on_pref_plugin_configure_activate      (GtkButton       *button,
+                                        gpointer         user_data)
+{
+}
+
+void
+on_pref_pluginlist_cursor_changed      (GtkTreeView     *treeview,
+                                        gpointer         user_data)
+{
+    GtkTreePath *path;
+    GtkTreeViewColumn *col;
+    gtk_tree_view_get_cursor (treeview, &path, &col);
+    if (!path || !col) {
+        // reset
+        return;
+    }
+    int *indices = gtk_tree_path_get_indices (path);
+    DB_plugin_t **plugins = plug_get_list ();
+    DB_plugin_t *p = plugins[*indices];
+    assert (p);
+    GtkWidget *w = prefwin;//GTK_WIDGET (gtk_widget_get_parent_window (GTK_WIDGET (treeview)));
+    assert (w);
+    GtkEntry *e = GTK_ENTRY (lookup_widget (w, "pref_plugin_descr"));
+    gtk_entry_set_text (e, p->descr ? p->descr : "");
+    e = GTK_ENTRY (lookup_widget (w, "pref_plugin_author"));
+    gtk_entry_set_text (e, p->author ? p->author : "");
+    e = GTK_ENTRY (lookup_widget (w, "pref_plugin_email"));
+    gtk_entry_set_text (e, p->email ? p->email : "");
+    e = GTK_ENTRY (lookup_widget (w, "pref_plugin_website"));
+    gtk_entry_set_text (e, p->website ? p->website : "");
+}
+
+
+
+void
+on_artist_activate                     (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+
+}
+
+
+void
+on_album_activate                      (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+
+}
+
+
+void
+on_tracknum_activate                   (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+
+}
+
+
+void
+on_duration_activate                   (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+
+}
+
+
+void
+on_playing_activate                    (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+
+}
+
+
+void
+on_title_activate                      (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+
+}
+
+
+void
+on_custom_activate                     (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+
+}
+
+
+void
+on_remove_column_activate              (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+
+}
+
+
+void
+on_pref_alsa_freewhenstopped_clicked   (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button));
+    conf_set_int ("alsa.freeonstop", active);
+}
+
+void
+on_pref_network_proxyaddress_changed   (GtkEditable     *editable,
+                                        gpointer         user_data)
+{
+    conf_set_str ("network.proxy.address", gtk_entry_get_text (GTK_ENTRY (editable)));
+}
+
+
+void
+on_pref_network_enableproxy_clicked    (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    conf_set_int ("network.proxy", gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button)));
+}
+
+
+void
+on_pref_network_proxyport_changed      (GtkEditable     *editable,
+                                        gpointer         user_data)
+{
+    conf_set_int ("network.proxy.port", atoi (gtk_entry_get_text (GTK_ENTRY (editable))));
+}
+
+
+void
+on_pref_network_proxytype_changed      (GtkComboBox     *combobox,
+                                        gpointer         user_data)
+{
+
+    int active = gtk_combo_box_get_active (combobox);
+    switch (active) {
+    case 0:
+        conf_set_str ("network.proxy.type", "HTTP");
+        break;
+    case 1:
+        conf_set_str ("network.proxy.type", "HTTP_1_0");
+        break;
+    case 2:
+        conf_set_str ("network.proxy.type", "SOCKS4");
+        break;
+    case 3:
+        conf_set_str ("network.proxy.type", "SOCKS5");
+        break;
+    case 4:
+        conf_set_str ("network.proxy.type", "SOCKS4A");
+        break;
+    case 5:
+        conf_set_str ("network.proxy.type", "SOCKS5_HOSTNAME");
+        break;
+    default:
+        conf_set_str ("network.proxy.type", "HTTP");
+        break;
+    }
+}
+
+
+gboolean
+on_prefwin_key_press_event             (GtkWidget       *widget,
+                                        GdkEventKey     *event,
+                                        gpointer         user_data)
+{
+    if (event->keyval == GDK_Escape) {
+        gtk_widget_hide (widget);
+        gtk_widget_destroy (widget);
+    }
+    return FALSE;
+}
+
+
+static GtkWidget *addlocation_window;
+
+void
+on_add_location_activate               (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    GtkWidget *widget = addlocation_window = create_addlocation ();
+    gtk_window_set_transient_for (GTK_WINDOW (widget), GTK_WINDOW (mainwin));
+    gtk_widget_show (widget);
+}
+
+static void
+add_location_destroy (void) {
+    if (addlocation_window) {
+        gtk_widget_hide (addlocation_window);
+        gtk_widget_destroy (addlocation_window);
+        addlocation_window = NULL;
+    }
+}
+
+void
+on_addlocation_entry_activate          (GtkEntry        *entry,
+                                        gpointer         user_data)
+{
+    const char *text = gtk_entry_get_text (entry);
+    if (text) {
+        pl_add_file (text, NULL, NULL);
+        playlist_refresh ();
+    }
+    add_location_destroy ();
+}
+
+void
+on_addlocation_ok_clicked              (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    if (addlocation_window) {
+        GtkEntry *entry = GTK_ENTRY (lookup_widget (addlocation_window, "addlocation_entry"));
+        if (entry) {
+            const char *text = gtk_entry_get_text (entry);
+            if (text) {
+                pl_add_file (text, NULL, NULL);
+                playlist_refresh ();
+            }
+        }
+    }
+    add_location_destroy ();
+}
+
+gboolean
+on_addlocation_key_press_event         (GtkWidget       *widget,
+                                        GdkEventKey     *event,
+                                        gpointer         user_data)
+{
+    if (event->keyval == GDK_Escape) {
+        add_location_destroy ();
+    }
+    return FALSE;
+}
+
+
+
+
+
 

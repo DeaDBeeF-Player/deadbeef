@@ -19,16 +19,10 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
+#include "conf.h"
 
-char conf_alsa_soundcard[1024] = "default"; // name of soundcard for alsa player
-int conf_samplerate = 48000;
-int conf_src_quality = 1;
-char conf_hvsc_path[1024] = "";
-int conf_hvsc_enable = 0;
-char conf_blacklist_plugins[1024]; // plugins listed in this option will not be loaded
-int conf_close_send_to_tray = 0;
-int conf_replaygain_mode = 0;
-int conf_replaygain_scale = 1;
+static DB_conf_item_t *conf_items;
+static int changed = 0;
 
 int
 conf_load (void) {
@@ -41,6 +35,7 @@ conf_load (void) {
         return -1;
     }
     int line = 0;
+    DB_conf_item_t *tail = NULL;
     while (fgets (str, 1024, fp) != NULL) {
         line++;
         if (str[0] == '#' || str[0] <= 0x20) {
@@ -70,48 +65,164 @@ conf_load (void) {
             p++;
         }
         *p = 0;
-        if (!strcasecmp (str, "samplerate")) {
-            conf_samplerate = atoi (value);
-        }
-        else if (!strcasecmp (str, "alsa_soundcard")) {
-            strncpy (conf_alsa_soundcard, value, sizeof (conf_alsa_soundcard));
-            conf_alsa_soundcard[sizeof (conf_alsa_soundcard) - 1] = 0;
-        }
-        else if (!strcasecmp (str, "src_quality")) {
-            conf_src_quality = atoi (value);
-        }
-        else if (!strcasecmp (str, "hvsc_path")) {
-            strncpy (conf_hvsc_path, value, sizeof (conf_hvsc_path));
-            conf_hvsc_path[sizeof (conf_hvsc_path)-1] = 0;
-        }
-        else if (!strcasecmp (str, "hvsc_enable")) {
-            conf_hvsc_enable = atoi (value);
-        }
-        else if (!strcasecmp (str, "blacklist_plugins")) {
-            fprintf (stderr, "blacklisted plugins: %s\n", value);
-            strncpy (conf_blacklist_plugins, value, sizeof (conf_blacklist_plugins));
-            conf_blacklist_plugins[sizeof (conf_blacklist_plugins)-1] = 0;
-        }
-        else if (!strcasecmp (str, "close_send_to_tray")) {
-            conf_close_send_to_tray = atoi (value);
-        }
-        else if (!strcasecmp (str, "replaygain_mode")) {
-            int rg = atoi (value);
-            if (rg >= 0 && rg <= 2) {
-                conf_replaygain_mode = atoi (value);
-            }
-            else {
-                fprintf (stderr, "config warning: replaygain_mode must be one of 0, 1 or 2\n");
-            }
-        }
-        else if (!strcasecmp (str, "replaygain_scale")) {
-            conf_replaygain_scale = atoi (value);
-        }
-        else {
-            fprintf (stderr, "error in config file line %d\n", line);
-        }
+        // new items are appended, to preserve order
+        conf_set_str (str, value);
+    }
+    fclose (fp);
+    changed = 0;
+    return 0;
+}
+
+int
+conf_save (void) {
+    extern char dbconfdir[1024]; // $HOME/.config/deadbeef
+    char str[1024];
+    snprintf (str, 1024, "%s/config", dbconfdir);
+    FILE *fp = fopen (str, "w+t");
+    if (!fp) {
+        fprintf (stderr, "failed to open config file for writing\n");
+        return -1;
+    }
+    for (DB_conf_item_t *it = conf_items; it; it = it->next) {
+        fprintf (fp, "%s %s\n", it->key, it->value);
     }
     fclose (fp);
     return 0;
 }
 
+void
+conf_free (void) {
+    DB_conf_item_t *next = NULL;
+    for (DB_conf_item_t *it = conf_items; it; it = next) {
+        next = it->next;
+        conf_item_free (it);
+    }
+}
+
+void
+conf_item_free (DB_conf_item_t *it) {
+    if (it) {
+        if (it->key) {
+            free (it->key);
+        }
+        if (it->value) {
+            free (it->value);
+        }
+        free (it);
+    }
+}
+
+const char *
+conf_get_str (const char *key, const char *def) {
+    for (DB_conf_item_t *it = conf_items; it; it = it->next) {
+        if (!strcasecmp (key, it->key)) {
+            return it->value;
+        }
+    }
+    return def;
+}
+
+float
+conf_get_float (const char *key, float def) {
+    const char *v = conf_get_str (key, NULL);
+    return v ? atof (v) : def;
+}
+
+int
+conf_get_int (const char *key, int def) {
+    const char *v = conf_get_str (key, NULL);
+    return v ? atoi (v) : def;
+}
+
+DB_conf_item_t *
+conf_find (const char *group, DB_conf_item_t *prev) {
+    int l = strlen (group);
+    for (DB_conf_item_t *it = prev ? prev->next : conf_items; it; it = it->next) {
+        if (!strncasecmp (group, it->key, l)) {
+            return it;
+        }
+    }
+    return NULL;
+}
+
+void
+conf_set_str (const char *key, const char *val) {
+    changed = 1;
+    DB_conf_item_t *prev = NULL;
+    for (DB_conf_item_t *it = conf_items; it; it = it->next) {
+        int cmp = strcasecmp (key, it->key);
+        if (!cmp) {
+            free (it->value);
+            it->value = strdup (val);
+            return;
+        }
+        else if (cmp < 0) {
+            break;
+        }
+        prev = it;
+    }
+    DB_conf_item_t *it = malloc (sizeof (DB_conf_item_t));
+    memset (it, 0, sizeof (DB_conf_item_t));
+    it->key = strdup (key);
+    it->value = strdup (val);
+    if (prev) {
+        DB_conf_item_t *next = prev->next;
+        prev->next = it;
+        it->next = next;
+    }
+    else {
+        it->next = conf_items;
+        conf_items = it;
+    }
+}
+
+void
+conf_set_int (const char *key, int val) {
+    char s[10];
+    snprintf (s, sizeof (s), "%d", val);
+    conf_set_str (key, s);
+}
+
+void
+conf_set_float (const char *key, float val) {
+    char s[10];
+    snprintf (s, sizeof (s), "%0.7f", val);
+    conf_set_str (key, s);
+}
+
+int
+conf_ischanged (void) {
+    return changed;
+}
+
+void
+conf_setchanged (int c) {
+    changed = c;
+}
+
+void
+conf_remove_items (const char *key) {
+    int l = strlen (key);
+    DB_conf_item_t *prev = NULL;
+    DB_conf_item_t *it;
+    for (it = conf_items; it; prev = it, it = it->next) {
+        if (!strncasecmp (key, it->key, l)) {
+            break;
+        }
+    }
+    DB_conf_item_t *next = NULL;
+    while (it) {
+        next = it->next;
+        conf_item_free (it);
+        it = next;
+        if (!it || strncasecmp (key, it->key, l)) {
+            break;
+        }
+    }
+    if (prev) {
+        prev->next = next;
+    }
+    else {
+        conf_items = next;
+    }
+}

@@ -18,7 +18,6 @@
 #include <vorbis/codec.h>
 #include <vorbis/vorbisfile.h>
 #include <string.h>
-#include <stdio.h>
 #include <stdlib.h>
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
@@ -28,163 +27,51 @@
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(...) { fprintf (stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
 
-static FILE *file;
+static DB_FILE *file;
 static OggVorbis_File vorbis_file;
 static vorbis_info *vi;
 static int cur_bit_stream;
 static int startsample;
 static int endsample;
 static int currentsample;
+static int last_comment_update;
+static DB_playItem_t *ptrack;
 
 static void
 cvorbis_free (void);
 
+static size_t
+cvorbis_fread (void *ptr, size_t size, size_t nmemb, void *datasource) {
+    return deadbeef->fread (ptr, size, nmemb, datasource);
+}
+
 static int
-cvorbis_init (DB_playItem_t *it) {
-    file = NULL;
-    vi = NULL;
-    cur_bit_stream = -1;
+cvorbis_fseek (void *datasource, ogg_int64_t offset, int whence) {
+    DB_FILE *f = (DB_FILE *)datasource;
+    return deadbeef->fseek (datasource, offset, whence);
+}
 
-    file = fopen (it->fname, "rb");
-    if (!file) {
-        return -1;
-    }
-
-    memset (&plugin.info, 0, sizeof (plugin.info));
-    ov_open (file, &vorbis_file, NULL, 0);
-    vi = ov_info (&vorbis_file, -1);
-    if (!vi) { // not a vorbis stream
-        cvorbis_free ();
-        return -1;
-    }
-    plugin.info.bps = 16;
-    //plugin.info.dataSize = ov_pcm_total (&vorbis_file, -1) * vi->channels * 2;
-    plugin.info.channels = vi->channels;
-    plugin.info.samplerate = vi->rate;
-    plugin.info.readpos = 0;
-    currentsample = 0;
-    if (it->endsample > 0) {
-        startsample = it->startsample;
-        endsample = it->endsample;
-        plugin.seek_sample (0);
-    }
-    else {
-        startsample = 0;
-        endsample = ov_pcm_total (&vorbis_file, -1)-1;
-    }
+static int
+cvorbis_fclose (void *datasource) {
+    deadbeef->fclose (datasource);
     return 0;
+}
+
+static long
+cvorbis_ftell (void *datasource) {
+    return deadbeef->ftell (datasource);
 }
 
 static void
-cvorbis_free (void) {
-    if (file) {
-        ov_clear (&vorbis_file);
-        //fclose (file); //-- ov_clear closes it
-        file = NULL;
-        vi = NULL;
-    }
-}
-
-static int
-cvorbis_read (char *bytes, int size) {
-    if (currentsample + size / (2 * plugin.info.channels) > endsample) {
-        size = (endsample - currentsample + 1) * 2 * plugin.info.channels;
-        trace ("size truncated to %d bytes, cursample=%d, endsample=%d, totalsamples=%d\n", size, currentsample, endsample, ov_pcm_total (&vorbis_file, -1));
-        if (size <= 0) {
-            return 0;
-        }
-    }
-    int initsize = size;
-    for (;;)
-    {
-        // read ogg
-        int endianess = 0;
-#if WORDS_BIGENDIAN
-        endianess = 1;
-#endif
-        long ret=ov_read (&vorbis_file, bytes, size, endianess, 2, 1, &cur_bit_stream);
-        if (ret <= 0)
-        {
-            // error or eof
-            break;
-        }
-        else if (ret < size)
-        {
-            currentsample += ret / (vi->channels * 2);
-            size -= ret;
-            bytes += ret;
-        }
-        else {
-            currentsample += ret / (vi->channels * 2);
-            size = 0;
-            break;
-        }
-    }
-    plugin.info.readpos = (float)(ov_pcm_tell(&vorbis_file)-startsample)/vi->rate;
-    return initsize - size;
-}
-
-static int
-cvorbis_seek_sample (int sample) {
-    if (!file) {
-        return -1;
-    }
-    sample += startsample;
-    int res = ov_pcm_seek (&vorbis_file, sample);
-    if (res != 0 && res != OV_ENOSEEK)
-        return -1;
-    int tell = ov_pcm_tell (&vorbis_file);
-    if (tell != sample) {
-        fprintf (stderr, "oggvorbis: failed to do sample-accurate seek (%d->%d)\n", sample, tell);
-    }
-    currentsample = sample;
-    plugin.info.readpos = (float)(ov_pcm_tell(&vorbis_file) - startsample)/vi->rate;
-    return 0;
-}
-
-static int
-cvorbis_seek (float time) {
-    return cvorbis_seek_sample (time * vi->rate);
-}
-
-static DB_playItem_t *
-cvorbis_insert (DB_playItem_t *after, const char *fname) {
-    // check for validity
-    FILE *fp = fopen (fname, "rb");
-    if (!fp) {
-        return NULL;
-    }
-    OggVorbis_File vorbis_file;
-    vorbis_info *vi;
-    ov_open (fp, &vorbis_file, NULL, 0);
-    vi = ov_info (&vorbis_file, -1);
-    if (!vi) { // not a vorbis stream
-        return NULL;
-    }
-    float duration = ov_time_total (&vorbis_file, -1);
-    int totalsamples = ov_pcm_total (&vorbis_file, -1);
-    DB_playItem_t *cue_after = deadbeef->pl_insert_cue (after, fname, &plugin, "OggVorbis", totalsamples, vi->rate);
-    if (cue_after) {
-        ov_clear (&vorbis_file);
-        return cue_after;
-    }
-
-    DB_playItem_t *it = deadbeef->pl_item_alloc ();
-    it->decoder = &plugin;
-    it->fname = strdup (fname);
-    it->filetype = "OggVorbis";
-    it->duration = duration;
-
-    // metainfo
-    int title_added = 0;
-    vorbis_comment *vc = ov_comment (&vorbis_file, -1);
+update_vorbis_comments (DB_playItem_t *it, vorbis_comment *vc) {
     if (vc) {
+        deadbeef->pl_delete_all_meta (it);
         deadbeef->pl_add_meta (it, "vendor", vc->vendor);
         for (int i = 0; i < vc->comments; i++) {
             if (!strncasecmp (vc->user_comments[i], "artist=", 7)) {
@@ -195,7 +82,6 @@ cvorbis_insert (DB_playItem_t *after, const char *fname) {
             }
             else if (!strncasecmp (vc->user_comments[i], "title=", 6)) {
                 deadbeef->pl_add_meta (it, "title", vc->user_comments[i] + 6);
-                title_added = 1;
             }
             else if (!strncasecmp (vc->user_comments[i], "date=", 5)) {
                 deadbeef->pl_add_meta (it, "date", vc->user_comments[i] + 5);
@@ -214,12 +100,275 @@ cvorbis_insert (DB_playItem_t *after, const char *fname) {
             }
         }
     }
-    if (!title_added) {
-        deadbeef->pl_add_meta (it, "title", NULL);
+    deadbeef->pl_add_meta (it, "title", NULL);
+}
+
+static int
+cvorbis_init (DB_playItem_t *it) {
+    file = NULL;
+    vi = NULL;
+    cur_bit_stream = -1;
+    ptrack = it;
+
+    file = plugin.info.file = deadbeef->fopen (it->fname);
+    if (!file) {
+        return -1;
     }
+    memset (&plugin.info, 0, sizeof (plugin.info));
+
+    int ln = deadbeef->fgetlength (file);
+    if (file->vfs->streaming && ln == -1) {
+        ov_callbacks ovcb = {
+            .read_func = cvorbis_fread,
+            .seek_func = NULL,
+            .close_func = cvorbis_fclose,
+            .tell_func = NULL
+        };
+
+        int err;
+        trace ("calling ov_open_callbacks\n");
+        if (err = ov_open_callbacks (file, &vorbis_file, NULL, 0, ovcb) != 0) {
+            trace ("ov_open_callbacks returned %d\n", err);
+            plugin.free ();
+            return -1;
+        }
+        deadbeef->pl_set_item_duration (it, -1);
+    }
+    else
+    {
+        ov_callbacks ovcb = {
+            .read_func = cvorbis_fread,
+            .seek_func = cvorbis_fseek,
+            .close_func = cvorbis_fclose,
+            .tell_func = cvorbis_ftell
+        };
+
+        trace ("calling ov_open_callbacks\n");
+        int err;
+        if (err = ov_open_callbacks (file, &vorbis_file, NULL, 0, ovcb) != 0) {
+            trace ("ov_open_callbacks returned %d\n", err);
+            plugin.free ();
+            return -1;
+        }
+        deadbeef->pl_set_item_duration (it, ov_time_total (&vorbis_file, -1));
+    }
+    vi = ov_info (&vorbis_file, -1);
+    if (!vi) { // not a vorbis stream
+        cvorbis_free ();
+        trace ("not a vorbis stream\n");
+        return -1;
+    }
+    plugin.info.bps = 16;
+    //plugin.info.dataSize = ov_pcm_total (&vorbis_file, -1) * vi->channels * 2;
+    plugin.info.channels = vi->channels;
+    plugin.info.samplerate = vi->rate;
+    plugin.info.readpos = 0;
+    currentsample = 0;
+    if (!file->vfs->streaming) {
+        if (it->endsample > 0) {
+            startsample = it->startsample;
+            endsample = it->endsample;
+            plugin.seek_sample (0);
+        }
+        else {
+            startsample = 0;
+            endsample = ov_pcm_total (&vorbis_file, -1)-1;
+        }
+    }
+    else {
+        startsample = 0;
+        if (deadbeef->pl_get_item_duration (it) < 0) {
+            endsample = -1;
+        }
+        else {
+            endsample = ov_pcm_total (&vorbis_file, -1)-1;
+        }
+        vorbis_comment *vc = ov_comment (&vorbis_file, -1);
+        update_vorbis_comments (it, vc);
+    }
+    return 0;
+}
+
+static void
+cvorbis_free (void) {
+    plugin.info.file = NULL;
+    if (file) {
+        ptrack = NULL;
+        ov_clear (&vorbis_file);
+        //fclose (file); //-- ov_clear closes it
+        file = NULL;
+        vi = NULL;
+    }
+}
+
+static int
+cvorbis_read (char *bytes, int size) {
+//    trace ("cvorbis_read %d bytes\n", size);
+    if (!file->vfs->streaming) {
+        if (currentsample + size / (2 * plugin.info.channels) > endsample) {
+            size = (endsample - currentsample + 1) * 2 * plugin.info.channels;
+//            trace ("size truncated to %d bytes, cursample=%d, endsample=%d, totalsamples=%d\n", size, currentsample, endsample, ov_pcm_total (&vorbis_file, -1));
+            if (size <= 0) {
+                return 0;
+            }
+        }
+    }
+    else {
+        if (ptrack && currentsample - last_comment_update > 5 * plugin.info.samplerate) {
+            int idx = deadbeef->pl_get_idx_of (ptrack);
+            if (idx >= 0) {
+                last_comment_update = currentsample;
+                vorbis_comment *vc = ov_comment (&vorbis_file, -1);
+                update_vorbis_comments (ptrack, vc);
+                deadbeef->sendmessage (M_TRACKCHANGED, 0, idx, 0);
+            }
+            else {
+                ptrack = NULL;
+            }
+        }
+    }
+//    trace ("cvorbis_read %d bytes[2]\n", size);
+    int initsize = size;
+    for (;;)
+    {
+        // read ogg
+        int endianess = 0;
+#if WORDS_BIGENDIAN
+        endianess = 1;
+#endif
+        long ret=ov_read (&vorbis_file, bytes, size, endianess, 2, 1, &cur_bit_stream);
+        if (ret <= 0)
+        {
+            if (ret < 0) {
+                trace ("ov_read returned %d\n", ret);
+                switch (ret) {
+                case OV_HOLE:
+                    trace ("OV_HOLE\n");
+                    break;
+                case OV_EBADLINK:
+                    trace ("OV_EBADLINK\n");
+                    break;
+                case OV_EINVAL:
+                    trace ("OV_EINVAL\n");
+                    break;
+                }
+            }
+            if (ret == OV_HOLE) {
+                continue;
+            }
+            // error or eof
+            break;
+        }
+        else if (ret < size)
+        {
+            currentsample += ret / (vi->channels * 2);
+            size -= ret;
+            bytes += ret;
+        }
+        else {
+            currentsample += ret / (vi->channels * 2);
+            size = 0;
+            break;
+        }
+    }
+    plugin.info.readpos = (float)(ov_pcm_tell(&vorbis_file)-startsample)/vi->rate;
+//    trace ("cvorbis_read got %d bytes\n", initsize-size);
+    return initsize - size;
+}
+
+static int
+cvorbis_seek_sample (int sample) {
+    if (!file) {
+        return -1;
+    }
+    sample += startsample;
+    int res = ov_pcm_seek (&vorbis_file, sample);
+    if (res != 0 && res != OV_ENOSEEK)
+        return -1;
+    int tell = ov_pcm_tell (&vorbis_file);
+    if (tell != sample) {
+        trace ("oggvorbis: failed to do sample-accurate seek (%d->%d)\n", sample, tell);
+    }
+    currentsample = sample;
+    plugin.info.readpos = (float)(ov_pcm_tell(&vorbis_file) - startsample)/vi->rate;
+    return 0;
+}
+
+static int
+cvorbis_seek (float time) {
+    return cvorbis_seek_sample (time * vi->rate);
+}
+
+static DB_playItem_t *
+cvorbis_insert (DB_playItem_t *after, const char *fname) {
+    // check for validity
+    DB_FILE *fp = deadbeef->fopen (fname);
+    if (!fp) {
+        trace ("vorbis: failed to fopen %s\n", fname);
+        return NULL;
+    }
+    if (fp->vfs->streaming) {
+        DB_playItem_t *it = deadbeef->pl_item_alloc ();
+        it->decoder = &plugin;
+        it->fname = strdup (fname);
+        it->filetype = "OggVorbis";
+        deadbeef->pl_set_item_duration (it, -1);
+        deadbeef->pl_add_meta (it, "title", NULL);
+        after = deadbeef->pl_insert_item (after, it);
+        return after;
+    }
+    ov_callbacks ovcb = {
+        .read_func = cvorbis_fread,
+        .seek_func = cvorbis_fseek,
+        .close_func = cvorbis_fclose,
+        .tell_func = cvorbis_ftell
+    };
+    OggVorbis_File vorbis_file;
+    vorbis_info *vi;
+    ov_open_callbacks (fp, &vorbis_file, NULL, 0, ovcb);
+    vi = ov_info (&vorbis_file, -1);
+    if (!vi) { // not a vorbis stream
+        trace ("vorbis: failed to ov_open %s\n", fname);
+        return NULL;
+    }
+    float duration = ov_time_total (&vorbis_file, -1);
+    int totalsamples = ov_pcm_total (&vorbis_file, -1);
+    DB_playItem_t *cue_after = deadbeef->pl_insert_cue (after, fname, &plugin, "OggVorbis", totalsamples, vi->rate);
+    if (cue_after) {
+        ov_clear (&vorbis_file);
+        return cue_after;
+    }
+
+    DB_playItem_t *it = deadbeef->pl_item_alloc ();
+    it->decoder = &plugin;
+    it->fname = strdup (fname);
+    it->filetype = "OggVorbis";
+    deadbeef->pl_set_item_duration (it, duration);
+
+    // metainfo
+    vorbis_comment *vc = ov_comment (&vorbis_file, -1);
+    update_vorbis_comments (it, vc);
     ov_clear (&vorbis_file);
     after = deadbeef->pl_insert_item (after, it);
     return after;
+}
+
+static int
+vorbis_trackdeleted (DB_event_song_t *ev, uintptr_t data) {
+    if (ev->song == ptrack) {
+        ptrack = NULL;
+    }
+    return 0;
+}
+
+static int
+vorbis_start (void) {
+    deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_TRACKDELETED, DB_CALLBACK (vorbis_trackdeleted), 0);
+}
+
+static int
+vorbis_stop (void) {
+    deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_TRACKDELETED, DB_CALLBACK (vorbis_trackdeleted), 0);
 }
 
 static const char * exts[] = { "ogg", NULL };
@@ -232,9 +381,12 @@ static DB_decoder_t plugin = {
     .plugin.version_minor = 1,
     .plugin.type = DB_PLUGIN_DECODER,
     .plugin.name = "OggVorbis decoder",
+    .plugin.descr = "OggVorbis decoder using standard xiph.org libraries",
     .plugin.author = "Alexey Yakovenko",
     .plugin.email = "waker@users.sourceforge.net",
     .plugin.website = "http://deadbeef.sf.net",
+    .plugin.start = vorbis_start,
+    .plugin.stop = vorbis_stop,
     .init = cvorbis_init,
     .free = cvorbis_free,
     .read_int16 = cvorbis_read,

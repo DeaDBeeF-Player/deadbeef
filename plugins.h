@@ -20,6 +20,8 @@
 #define __PLUGINS_H
 #include "deadbeef.h"
 
+extern DB_functions_t *deadbeef;
+
 void
 plug_load_all (void);
 
@@ -33,7 +35,7 @@ void
 plug_ev_unsubscribe (DB_plugin_t *plugin, int ev, DB_callback_t callback, uintptr_t data);
 
 void
-plug_trigger_event (int ev);
+plug_trigger_event (int ev, uintptr_t param);
 
 void
 plug_md5 (uint8_t sig[16], const char *in, int len);
@@ -68,8 +70,14 @@ plug_playback_get_pos (void);
 void
 plug_playback_set_pos (float pos);
 
+struct DB_plugin_s **
+plug_get_list (void);
+
 struct DB_decoder_s **
 plug_get_decoder_list (void);
+
+struct DB_vfs_s **
+plug_get_vfs_list (void);
 
 void
 plug_volume_set_db (float db);
@@ -79,5 +87,11 @@ plug_volume_set_amp (float amp);
 
 const char *
 plug_get_config_dir (void);
+
+void
+plug_gui_lock (void);
+
+void
+plug_gui_unlock (void);
 
 #endif // __PLUGINS_H

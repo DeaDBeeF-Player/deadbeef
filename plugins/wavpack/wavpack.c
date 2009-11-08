@@ -19,6 +19,7 @@
 
 #include <string.h>
 #include <wavpack/wavpack.h>
+#include <stdio.h>
 #include "../../deadbeef.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
@@ -31,6 +32,7 @@ static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
 
 typedef struct {
+    DB_FILE *file;
     WavpackContext *ctx;
     int startsample;
     int endsample;
@@ -38,11 +40,68 @@ typedef struct {
 
 static wvctx_t wvctx;
 
+int32_t wv_read_bytes(void *id, void *data, int32_t bcount) {
+    trace ("wv_read_bytes\n");
+    return deadbeef->fread (data, 1, bcount, id);
+}
+
+uint32_t wv_get_pos(void *id) {
+    trace ("wv_get_pos\n");
+    return deadbeef->ftell (id);
+}
+
+int wv_set_pos_abs(void *id, uint32_t pos) {
+    trace ("wv_set_pos_abs\n");
+    return deadbeef->fseek (id, pos, SEEK_SET);
+}
+int wv_set_pos_rel(void *id, int32_t delta, int mode) {
+    trace ("wv_set_pos_rel\n");
+    return deadbeef->fseek (id, delta, SEEK_CUR);
+}
+int wv_push_back_byte(void *id, int c) {
+    trace ("wv_push_back_byte\n");
+    deadbeef->fseek (id, -1, SEEK_CUR);
+    return deadbeef->ftell (id);
+}
+uint32_t wv_get_length(void *id) {
+    trace ("wv_get_length\n");
+    size_t pos = deadbeef->ftell (id);
+    deadbeef->fseek (id, 0, SEEK_END);
+    size_t sz = deadbeef->ftell (id);
+    deadbeef->fseek (id, pos, SEEK_SET);
+    return sz;
+}
+int wv_can_seek(void *id) {
+    trace ("wv_can_seek\n");
+    return 1;
+}
+
+int32_t wv_write_bytes (void *id, void *data, int32_t bcount) {
+    return 0;
+}
+
+static WavpackStreamReader wsr = {
+    .read_bytes = wv_read_bytes,
+    .get_pos = wv_get_pos,
+    .set_pos_abs = wv_set_pos_abs,
+    .set_pos_rel = wv_set_pos_rel,
+    .push_back_byte = wv_push_back_byte,
+    .get_length = wv_get_length,
+    .can_seek = wv_can_seek,
+    .write_bytes = wv_write_bytes
+};
+
 static int
 wv_init (DB_playItem_t *it) {
     memset (&wvctx, 0, sizeof (wvctx));
-    wvctx.ctx = WavpackOpenFileInput (it->fname, NULL, OPEN_2CH_MAX|OPEN_WVC, 0);
+
+    wvctx.file = deadbeef->fopen (it->fname);
+    if (!wvctx.file) {
+        return -1;
+    }
+    wvctx.ctx = WavpackOpenFileInputEx (&wsr, wvctx.file, NULL, NULL, OPEN_2CH_MAX/*|OPEN_WVC*/, 0);
     if (!wvctx.ctx) {
+        plugin.free ();
         return -1;
     }
     plugin.info.bps = WavpackGetBitsPerSample (wvctx.ctx);
@@ -66,8 +125,13 @@ wv_init (DB_playItem_t *it) {
 
 static void
 wv_free (void) {
+    if (wvctx.file) {
+        deadbeef->fclose (wvctx.file);
+        wvctx.file = NULL;
+    }
     if (wvctx.ctx) {
         WavpackCloseFile (wvctx.ctx);
+        wvctx.ctx = NULL;
     }
     memset (&wvctx, 0, sizeof (wvctx));
 }
@@ -141,9 +205,15 @@ wv_seek (float sec) {
 
 static DB_playItem_t *
 wv_insert (DB_playItem_t *after, const char *fname) {
-    WavpackContext *ctx = WavpackOpenFileInput (fname, NULL, 0, 0);
+
+    DB_FILE *fp = deadbeef->fopen (fname);
+    if (!fp) {
+        return NULL;
+    }
+    WavpackContext *ctx = WavpackOpenFileInputEx (&wsr, fp, NULL, NULL, 0, 0);
     if (!ctx) {
         trace ("WavpackOpenFileInput failed");
+        deadbeef->fclose (fp);
         return NULL;
     }
     int totalsamples = WavpackGetNumSamples (ctx);
@@ -152,6 +222,7 @@ wv_insert (DB_playItem_t *after, const char *fname) {
     float duration = (float)totalsamples / samplerate;
     DB_playItem_t *cue_after = deadbeef->pl_insert_cue (after, fname, &plugin, "wv", totalsamples, samplerate);
     if (cue_after) {
+        deadbeef->fclose (fp);
         return cue_after;
     }
 
@@ -159,22 +230,19 @@ wv_insert (DB_playItem_t *after, const char *fname) {
     it->decoder = &plugin;
     it->fname = strdup (fname);
     it->filetype = "wv";
-    it->duration = duration;
+    deadbeef->pl_set_item_duration (it, duration);
 
     trace ("wv: totalsamples=%d, samplerate=%d, duration=%f\n", totalsamples, samplerate, duration);
 
-    FILE *fp = fopen (fname, "rb");
-    if (fp) {
-        int apeerr = deadbeef->junk_read_ape (it, fp);
-        if (!apeerr) {
-            trace ("wv: ape tag found\n");
-        }
-        int v1err = deadbeef->junk_read_id3v1 (it, fp);
-        if (!v1err) {
-            trace ("wv: id3v1 tag found\n");
-        }
-        fclose (fp);
+    int apeerr = deadbeef->junk_read_ape (it, fp);
+    if (!apeerr) {
+        trace ("wv: ape tag found\n");
     }
+    int v1err = deadbeef->junk_read_id3v1 (it, fp);
+    if (!v1err) {
+        trace ("wv: id3v1 tag found\n");
+    }
+    deadbeef->fclose (fp);
     deadbeef->pl_add_meta (it, "title", NULL);
     after = deadbeef->pl_insert_item (after, it);
 
@@ -191,6 +259,7 @@ static DB_decoder_t plugin = {
     .plugin.version_minor = 1,
     .plugin.type = DB_PLUGIN_DECODER,
     .plugin.name = "WavPack decoder",
+    .plugin.descr = ".wv player using libwavpack",
     .plugin.author = "Alexey Yakovenko",
     .plugin.email = "waker@users.sourceforge.net",
     .plugin.website = "http://deadbeef.sf.net",

@@ -42,7 +42,7 @@ cgme_init (DB_playItem_t *it) {
     plugin.info.bps = 16;
     plugin.info.channels = 2;
     plugin.info.samplerate = deadbeef->playback_get_samplerate ();
-    duration = it->duration;
+    duration = deadbeef->pl_get_item_duration (it);
     reallength = inf.length; 
     nzerosamples = 0;
     plugin.info.readpos = 0;
@@ -136,10 +136,10 @@ cgme_insert (DB_playItem_t *after, const char *fname) {
                 snprintf (trk, 10, "%d", i+1);
                 deadbeef->pl_add_meta (it, "track", trk);
                 if (inf.length == -1) {
-                    it->duration = 300;
+                    deadbeef->pl_set_item_duration (it, 300);
                 }
                 else {
-                    it->duration = (float)inf.length/1000.f;
+                    deadbeef->pl_set_item_duration (it, (float)inf.length/1000.f);
                 }
                 const char *ext = fname + strlen (fname) - 1;
                 while (ext >= fname && *ext != '.') {
@@ -199,6 +199,7 @@ static DB_decoder_t plugin = {
     .plugin.version_minor = 1,
     .plugin.type = DB_PLUGIN_DECODER,
     .plugin.name = "Game_Music_Emu decoder",
+    .plugin.descr = "chiptune music player based on GME",
     .plugin.author = "Alexey Yakovenko",
     .plugin.email = "waker@users.sourceforge.net",
     .plugin.website = "http://deadbeef.sf.net",

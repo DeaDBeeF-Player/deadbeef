@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-ACLOCAL_AMFLAGS = -I m4
+#ACLOCAL_AMFLAGS = -I m4
 
 SUBDIRS = gme/Game_Music_Emu-0.5.2\
 		  gme/Game_Music_Emu-0.5.2/gme\
@@ -14,7 +14,9 @@ SUBDIRS = gme/Game_Music_Emu-0.5.2\
           ${VORBIS_DIR}\
           ${FLAC_DIR}\
           ${WAVPACK_DIR}\
-          ${SNDFILE_DIR}
+          ${SNDFILE_DIR}\
+          ${VFS_CURL_DIR}\
+          ${CDDA_DIR}
 
 dumbpath=@top_srcdir@/dumb
 sidpath=@top_srcdir@/sid/sidplay-libs-2.1.0
@@ -30,7 +32,7 @@ deadbeef_SOURCES =\
 	streamer.c streamer.h\
 	progress.c  progress.h\
 	codec.c codec.h\
-	messagepump.c messagepump.h messages.h\
+	messagepump.c messagepump.h\
 	conf.c  conf.h\
 	search.c search.h\
 	cgme.c cdumb.c csid.cpp\
@@ -41,7 +43,9 @@ deadbeef_SOURCES =\
 	drawing.h gdkdrawing.c\
 	session.h session.c gtksession.c\
 	junklib.h junklib.c utf8.c utf8.h\
-	optmath.h
+	optmath.h\
+	vfs.c vfs.h vfs_stdio.c\
+	timeline.c timeline.h
 
 sdkdir = $(pkgincludedir)
 sdk_HEADERS = deadbeef.h
@@ -53,7 +57,7 @@ AM_CPPFLAGS = $(DEPS_CFLAGS) -I$(sidpath)/libsidplay/include -I$(sidpath)/builde
 
 docsdir = $(datadir)/doc/$(PACKAGE)
 
-docs_DATA = README COPYING config-example help.txt
+docs_DATA = README COPYING config-example help.txt about.txt
 
 desktopdir = $(datadir)/applications
 desktop_DATA = deadbeef.desktop

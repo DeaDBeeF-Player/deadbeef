@@ -18,17 +18,49 @@
 #ifndef __CONF_H
 #define __CONF_H
 
-extern char conf_alsa_soundcard[1024];
-extern int conf_samplerate;
-extern int conf_src_quality;
-extern char conf_hvsc_path[1024];
-extern int conf_hvsc_enable;
-extern char conf_blacklist_plugins[1024];
-extern int conf_close_send_to_tray;
-extern int conf_replaygain_mode;
-extern int conf_replaygain_scale;
+#include "deadbeef.h"
 
 int
 conf_load (void);
+
+int
+conf_save (void);
+
+void
+conf_free (void);
+
+int
+conf_ischanged (void);
+
+void
+conf_setchanged (int c);
+
+const char *
+conf_get_str (const char *key, const char *def);
+
+float
+conf_get_float (const char *key, float def);
+
+int
+conf_get_int (const char *key, int def);
+
+void
+conf_set_str (const char *key, const char *val);
+
+void
+conf_set_int (const char *key, int val);
+
+void
+conf_set_float (const char *key, float val);
+
+DB_conf_item_t *
+conf_find (const char *group, DB_conf_item_t *prev);
+
+// remove all items starting with key
+void
+conf_remove_items (const char *key);
+
+void
+conf_item_free (DB_conf_item_t *it);
 
 #endif // __CONF_H

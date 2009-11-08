@@ -29,7 +29,6 @@
 #include "plugins.h"
 #include "md5/md5.h"
 #include "messagepump.h"
-#include "messages.h"
 #include "threading.h"
 #include "progress.h"
 #include "playlist.h"
@@ -39,6 +38,7 @@
 #include "common.h"
 #include "conf.h"
 #include "junklib.h"
+#include "vfs.h"
 
 //#define DISABLE_VERSIONCHECK 1
 
@@ -62,6 +62,7 @@ static DB_functions_t deadbeef_api = {
     .playback_get_pos = plug_playback_get_pos,
     .playback_set_pos = plug_playback_set_pos,
     .playback_get_samplerate = p_get_rate,
+    .playback_update_bitrate = streamer_update_bitrate,
     .get_config_dir = plug_get_config_dir,
     .quit = plug_quit,
     // threading
@@ -81,9 +82,13 @@ static DB_functions_t deadbeef_api = {
     .pl_item_free = (void (*)(DB_playItem_t *))pl_item_free,
     .pl_item_copy = (void (*)(DB_playItem_t *, DB_playItem_t *))pl_item_copy,
     .pl_insert_item = (DB_playItem_t *(*) (DB_playItem_t *after, DB_playItem_t *it))pl_insert_item,
+    .pl_get_idx_of = (int (*) (DB_playItem_t *it))pl_get_idx_of,
+    .pl_set_item_duration = (void (*) (DB_playItem_t *it, float duration))pl_set_item_duration,
+    .pl_get_item_duration = (float (*) (DB_playItem_t *it))pl_get_item_duration,
     // metainfo
     .pl_add_meta = (void (*) (DB_playItem_t *, const char *, const char *))pl_add_meta,
     .pl_find_meta = (const char *(*) (DB_playItem_t *, const char *))pl_find_meta,
+    .pl_delete_all_meta = (void (*) (DB_playItem_t *it))pl_delete_all_meta,
     // cuesheet support
     .pl_insert_cue_from_buffer = (DB_playItem_t *(*) (DB_playItem_t *after, const char *fname, const uint8_t *buffer, int buffersize, struct DB_decoder_s *decoder, const char *ftype, int numsamples, int samplerate))pl_insert_cue_from_buffer,
     .pl_insert_cue = (DB_playItem_t *(*)(DB_playItem_t *, const char *, struct DB_decoder_s *, const char *ftype, int numsamples, int samplerate))pl_insert_cue,
@@ -93,11 +98,35 @@ static DB_functions_t deadbeef_api = {
     .volume_set_amp = plug_volume_set_amp,
     .volume_get_amp = volume_get_amp,
     // junk reading
-    .junk_read_id3v1 = (int (*)(DB_playItem_t *it, FILE *fp))junk_read_id3v1,
-    .junk_read_id3v2 = (int (*)(DB_playItem_t *it, FILE *fp))junk_read_id3v2,
-    .junk_read_ape = (int (*)(DB_playItem_t *it, FILE *fp))junk_read_ape,
+    .junk_read_id3v1 = (int (*)(DB_playItem_t *it, DB_FILE *fp))junk_read_id3v1,
+    .junk_read_id3v2 = (int (*)(DB_playItem_t *it, DB_FILE *fp))junk_read_id3v2,
+    .junk_read_ape = (int (*)(DB_playItem_t *it, DB_FILE *fp))junk_read_ape,
     .junk_get_leading_size = junk_get_leading_size,
+    // vfs
+    .fopen = vfs_fopen,
+    .fclose = vfs_fclose,
+    .fread = vfs_fread,
+    .fseek = vfs_fseek,
+    .ftell = vfs_ftell,
+    .rewind = vfs_rewind,
+    .fgetlength = vfs_fgetlength,
+    .fget_content_type = vfs_get_content_type,
+    .fget_content_name = vfs_get_content_name,
+    .fget_content_genre = vfs_get_content_genre,
+    .fstop = vfs_fstop,
+    // message passing
+    .sendmessage = messagepump_push,
+    // configuration access
+    .conf_get_str = conf_get_str,
+    .conf_get_float = conf_get_float,
+    .conf_get_int = conf_get_int,
+    .conf_set_str = conf_set_str,
+    .conf_find = conf_find,
+    .gui_lock = plug_gui_lock,
+    .gui_unlock = plug_gui_unlock,
 };
+
+DB_functions_t *deadbeef = &deadbeef_api;
 
 const char *
 plug_get_config_dir (void) {
@@ -119,8 +148,24 @@ plug_volume_set_amp (float amp) {
     volumebar_notify_changed ();
 }
 
-#define MAX_DECODERS 50
-DB_decoder_t *g_decoders[MAX_DECODERS+1];
+#define MAX_PLUGINS 100
+DB_plugin_t *g_plugins[MAX_PLUGINS+1];
+
+#define MAX_DECODER_PLUGINS 50
+DB_decoder_t *g_decoder_plugins[MAX_DECODER_PLUGINS+1];
+
+#define MAX_VFS_PLUGINS 10
+DB_vfs_t *g_vfs_plugins[MAX_VFS_PLUGINS+1];
+
+void
+plug_gui_lock (void) {
+    gdk_threads_enter ();
+}
+
+void
+plug_gui_unlock (void) {
+    gdk_threads_leave ();
+}
 
 void
 plug_md5 (uint8_t sig[16], const char *in, int len) {
@@ -215,18 +260,18 @@ plug_playback_random (void) {
 
 float
 plug_playback_get_pos (void) {
-    if (str_playing_song.duration <= 0) {
+    if (str_playing_song._duration <= 0) {
         return 0;
     }
-    return streamer_get_playpos () * 100 / str_playing_song.duration;
+    return streamer_get_playpos () * 100 / str_playing_song._duration;
 }
 
 void
 plug_playback_set_pos (float pos) {
-    if (str_playing_song.duration <= 0) {
+    if (str_playing_song._duration <= 0) {
         return;
     }
-    float t = pos * str_playing_song.duration / 100.f;
+    float t = pos * str_playing_song._duration / 100.f;
     streamer_set_seek (t);
 }
 
@@ -238,7 +283,7 @@ plug_quit (void) {
 
 /////// non-api functions (plugin support)
 void
-plug_trigger_event (int ev) {
+plug_trigger_event (int ev, uintptr_t param) {
     mutex_lock (mutex);
     DB_event_t *event;
     switch (ev) {
@@ -248,6 +293,13 @@ plug_trigger_event (int ev) {
         DB_event_song_t *pev = malloc (sizeof (DB_event_song_t));
         pev->song = DB_PLAYITEM (&str_playing_song);
         event = DB_EVENT (pev);
+        }
+        break;
+    case DB_EV_TRACKDELETED:
+        {
+            DB_event_song_t *pev = malloc (sizeof (DB_event_song_t));
+            pev->song = DB_PLAYITEM (param);
+            event = DB_EVENT (pev);
         }
         break;
     default:
@@ -301,9 +353,8 @@ plug_load_all (void) {
 #if DISABLE_VERSIONCHECK
     fprintf (stderr, "\033[0;31mDISABLE_VERSIONCHECK=1! do not distribute!\033[0;m\n");
 #endif
+    const char *conf_blacklist_plugins = conf_get_str ("blacklist_plugins", "");
     mutex = mutex_create ();
-//    char dirname[1024];
-//    snprintf (dirname, 1024, "%s/lib/deadbeef", PREFIX);
     const char *dirname = LIBDIR "/deadbeef";
     struct dirent **namelist = NULL;
     int n = scandir (dirname, &namelist, NULL, alphasort);
@@ -391,19 +442,30 @@ plug_load_all (void) {
 #include "moduleconf.h"
 #undef PLUG
 
-    // find all decoders, and put in g_decoders list
+    // categorize plugins
+    int numplugins = 0;
     int numdecoders = 0;
+    int numvfs = 0;
     for (plugin_t *plug = plugins; plug; plug = plug->next) {
+        g_plugins[numplugins++] = plug->plugin;
         if (plug->plugin->type == DB_PLUGIN_DECODER) {
-            printf ("found decoder plugin %s\n", plug->plugin->name);
-            if (numdecoders >= MAX_DECODERS) {
+            fprintf (stderr, "found decoder plugin %s\n", plug->plugin->name);
+            if (numdecoders >= MAX_DECODER_PLUGINS) {
                 break;
             }
-            g_decoders[numdecoders] = (DB_decoder_t *)plug->plugin;
-            numdecoders++;
+            g_decoder_plugins[numdecoders++] = (DB_decoder_t *)plug->plugin;
+        }
+        else if (plug->plugin->type == DB_PLUGIN_VFS) {
+            fprintf (stderr, "found vfs plugin %s\n", plug->plugin->name);
+            if (numvfs >= MAX_VFS_PLUGINS) {
+                break;
+            }
+            g_vfs_plugins[numvfs++] = (DB_vfs_t *)plug->plugin;
         }
     }
-    g_decoders[numdecoders] = NULL;
+    g_plugins[numplugins] = NULL;
+    g_decoder_plugins[numdecoders] = NULL;
+    g_vfs_plugins[numvfs] = NULL;
 }
 
 void
@@ -423,6 +485,15 @@ plug_unload_all (void) {
 
 struct DB_decoder_s **
 plug_get_decoder_list (void) {
-    return g_decoders;
+    return g_decoder_plugins;
 }
 
+struct DB_vfs_s **
+plug_get_vfs_list (void) {
+    return g_vfs_plugins;
+}
+
+struct DB_plugin_s **
+plug_get_list (void) {
+    return g_plugins;
+}

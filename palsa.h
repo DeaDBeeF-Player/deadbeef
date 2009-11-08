@@ -25,6 +25,9 @@ void
 palsa_free (void);
 
 int
+palsa_change_rate (int rate);
+
+int
 palsa_play (void);
 
 int
@@ -44,6 +47,12 @@ palsa_unpause (void);
 
 int
 palsa_get_rate (void);
+
+void
+palsa_configchanged (void);
+
+void
+palsa_enum_soundcards (void (*callback)(const char *name, const char *desc, void*), void *userdata);
 
 #endif // __PALSA_H
 

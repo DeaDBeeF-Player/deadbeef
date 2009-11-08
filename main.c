@@ -29,6 +29,7 @@
 #include <sys/fcntl.h>
 #include <sys/errno.h>
 #include <sys/prctl.h>
+#include <signal.h>
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
 #endif
@@ -40,7 +41,6 @@
 #include "unistd.h"
 #include "threading.h"
 #include "messagepump.h"
-#include "messages.h"
 #include "gtkplaylist.h"
 #include "codec.h"
 #include "streamer.h"
@@ -67,15 +67,6 @@ GtkWidget *searchwin;
 GtkStatusIcon *trayicon;
 GtkWidget *traymenu;
 
-void
-set_tray_tooltip (const char *text) {
-#if (GTK_MINOR_VERSION < 16)
-        gtk_status_icon_set_tooltip (trayicon, text);
-#else
-        gtk_status_icon_set_tooltip_text (trayicon, text);
-#endif
-}
-
 // playlist configuration structures
 gtkplaylist_t main_playlist;
 gtkplaylist_t search_playlist;
@@ -89,29 +80,58 @@ void
 update_songinfo (void) {
     char sbtext_new[512] = "-";
     float songpos = last_songpos;
-    if (p_ispaused ()) {
-        strcpy (sbtext_new, "Paused");
-        songpos = streamer_get_playpos ();
-    }
-    else if (p_isstopped ()) {
-        strcpy (sbtext_new, "Stopped");
+
+    int daystotal = (int)pl_totaltime / (3600*24);
+    int hourtotal = ((int)pl_totaltime / 3600) % 24;
+    int mintotal = ((int)pl_totaltime/60) % 60;
+    int sectotal = ((int)pl_totaltime) % 60;
+
+    char totaltime_str[512] = "";
+    if (daystotal == 0)
+        snprintf (totaltime_str, sizeof (totaltime_str), "%d:%02d:%02d", hourtotal, mintotal, sectotal);
+
+    else if (daystotal == 1)
+        snprintf (totaltime_str, sizeof (totaltime_str), "1 day %d:%02d:%02d", hourtotal, mintotal, sectotal);
+
+    else
+        snprintf (totaltime_str, sizeof (totaltime_str), "%d days %d:%02d:%02d", daystotal, hourtotal, mintotal, sectotal);
+
+    if (p_isstopped ()) {
+        snprintf (sbtext_new, sizeof (sbtext_new), "Stopped | %s total playtime", totaltime_str);
         songpos = 0;
     }
     else if (str_playing_song.decoder) {
-        codec_lock ();
+//        codec_lock ();
         DB_decoder_t *c = str_playing_song.decoder;
         float playpos = streamer_get_playpos ();
         int minpos = playpos / 60;
         int secpos = playpos - minpos * 60;
-        int mindur = str_playing_song.duration / 60;
-        int secdur = str_playing_song.duration - mindur * 60;
+        int mindur = str_playing_song._duration / 60;
+        int secdur = str_playing_song._duration - mindur * 60;
+
         const char *mode = c->info.channels == 1 ? "Mono" : "Stereo";
         int samplerate = c->info.samplerate;
         int bitspersample = c->info.bps;
         songpos = playpos;
-        codec_unlock ();
+//        codec_unlock ();
 
-        snprintf (sbtext_new, 512, "[%s] %dHz | %d bit | %s | %d:%02d / %d:%02d | %d songs total", str_playing_song.filetype ? str_playing_song.filetype:"-", samplerate, bitspersample, mode, minpos, secpos, mindur, secdur, pl_getcount ());
+        char t[100];
+        if (str_playing_song._duration >= 0) {
+            snprintf (t, sizeof (t), "%d:%02d", mindur, secdur);
+        }
+        else {
+            strcpy (t, "-:--");
+        }
+
+        char sbitrate[20] = "";
+#if 0 // NOTE: do not enable that for stable branch yet
+        int bitrate = streamer_get_bitrate ();
+        if (bitrate > 0) {
+            snprintf (sbitrate, sizeof (sbitrate), "%d kbps ", bitrate);
+        }
+#endif
+        const char *spaused = p_ispaused () ? "Paused | " : "";
+        snprintf (sbtext_new, sizeof (sbtext_new), "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d songs | %s total playtime", spaused, str_playing_song.filetype ? str_playing_song.filetype:"-", sbitrate, samplerate, bitspersample, mode, minpos, secpos, t, pl_getcount (), totaltime_str);
     }
 
     if (strcmp (sbtext_new, sb_text)) {
@@ -137,7 +157,7 @@ update_songinfo (void) {
         if (mainwin) {
             GtkWidget *widget = lookup_widget (mainwin, "seekbar");
             // translate volume to seekbar pixels
-            songpos /= str_playing_song.duration;
+            songpos /= str_playing_song._duration;
             songpos *= widget->allocation.width;
             if ((int)(songpos*2) != (int)(last_songpos*2)) {
                 GDK_THREADS_ENTER();
@@ -324,7 +344,7 @@ player_thread (uintptr_t ctx) {
                 messagepump_push (M_TERMINATE, 0, 0, 0);
             }
         }
-        plug_trigger_event (DB_EV_FRAMEUPDATE);
+        plug_trigger_event (DB_EV_FRAMEUPDATE, 0);
         uint32_t msg;
         uintptr_t ctx;
         uint32_t p1;
@@ -352,39 +372,33 @@ player_thread (uintptr_t ctx) {
                 GDK_THREADS_LEAVE();
                 return;
             case M_SONGCHANGED:
-                GDK_THREADS_ENTER();
-                // update window title
-                int from = p1;
-                int to = p2;
-                if (from >= 0 || to >= 0) {
-                    if (to >= 0) {
-                        playItem_t *it = pl_get_for_idx (to);
-                        if (it) { // it might have been deleted after event was sent
-                            char str[600];
-                            char dname[512];
-                            pl_format_item_display_name (it, dname, 512);
-                            snprintf (str, 600, "DeaDBeeF - %s", dname);
-                            gtk_window_set_title (GTK_WINDOW (mainwin), str);
-                            set_tray_tooltip (str);
-                        }
-                    }
-                    else {
-                        gtk_window_set_title (GTK_WINDOW (mainwin), "DeaDBeeF");
-                        set_tray_tooltip ("DeaDBeeF");
-                    }
+                {
+                    int from = p1;
+                    int to = p2;
+                    gtkpl_songchanged_wrapper (from, to);
+                    plug_trigger_event (DB_EV_SONGCHANGED, 0);
                 }
-                // update playlist view
-                gtkpl_songchanged (&main_playlist, p1, p2);
-                GDK_THREADS_LEAVE();
-                plug_trigger_event (DB_EV_SONGCHANGED);
                 break;
             case M_PLAYSONG:
                 gtkpl_playsong (&main_playlist);
-                GDK_THREADS_ENTER();
                 if (playlist_current_ptr) {
+                    GDK_THREADS_ENTER();
                     gtkpl_redraw_pl_row (&main_playlist, pl_get_idx_of (playlist_current_ptr), playlist_current_ptr);
+                    GDK_THREADS_LEAVE();
                 }
-                GDK_THREADS_LEAVE();
+                break;
+            case M_TRACKCHANGED:
+                {
+                    playItem_t *it = pl_get_for_idx (p1);
+                    if (it) {
+                        GDK_THREADS_ENTER();
+                        gtkpl_redraw_pl_row (&main_playlist, p1, it);
+                        if (it == playlist_current_ptr) {
+                            gtkpl_current_track_changed (it);
+                        }
+                        GDK_THREADS_LEAVE();
+                    }
+                }
                 break;
             case M_PLAYSONGNUM:
                 GDK_THREADS_ENTER();
@@ -461,6 +475,11 @@ player_thread (uintptr_t ctx) {
                 search_refresh ();
                 GDK_THREADS_LEAVE();
                 break;
+            case M_CONFIGCHANGED:
+                palsa_configchanged ();
+                streamer_configchanged ();
+                plug_trigger_event (DB_EV_CONFIGCHANGED, 0);
+                break;
             }
         }
         usleep(50000);
@@ -535,6 +554,15 @@ on_trayicon_popup_menu (GtkWidget       *widget,
 {
     gtk_menu_popup (GTK_MENU (traymenu), NULL, NULL, gtk_status_icon_position_menu, trayicon, button, time);
     return FALSE;
+}
+
+void
+sigterm_handler (int sig) {
+    fprintf (stderr, "got sigterm, saving...\n");
+    pl_save (defpl);
+    conf_save ();
+    fprintf (stderr, "bye.\n");
+    exit (0);
 }
 
 int
@@ -637,18 +665,18 @@ main (int argc, char *argv[]) {
     }
     close(s);
 
+    signal (SIGTERM, sigterm_handler);
     // become a server
     server_start ();
 
     conf_load ();
     plug_load_all ();
     pl_load (defpl);
-    session_reset ();
     session_load (sessfile);
     messagepump_init ();
     codec_init_locking ();
     streamer_init ();
-    p_init ();
+//    p_init ();
     thread_start (player_thread, 0);
 
     g_thread_init (NULL);
@@ -683,18 +711,16 @@ main (int argc, char *argv[]) {
         gdk_pixbuf_unref (mainwin_icon_pixbuf);
     }
     session_restore_window_attrs ((uintptr_t)mainwin);
-    volume_set_db (session_get_volume ());
+    volume_set_db (conf_get_float ("playback.volume", 0));
     // order and looping
     const char *orderwidgets[3] = { "order_linear", "order_shuffle", "order_random" };
     const char *loopingwidgets[3] = { "loop_all", "loop_disable", "loop_single" };
     const char *w;
-    w = orderwidgets[session_get_playlist_order ()];
+    w = orderwidgets[conf_get_int ("playback.order", 0)];
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, w)), TRUE);
-    pl_set_order (session_get_playlist_order ());
-    w = loopingwidgets[session_get_playlist_looping ()];
+    w = loopingwidgets[conf_get_int ("playback.loop", 0)];
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, w)), TRUE);
-    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "scroll_follows_playback")), session_get_scroll_follows_playback () ? TRUE : FALSE);
-    pl_set_loop_mode (session_get_playlist_looping ());
+    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "scroll_follows_playback")), conf_get_int ("playlist.scroll.followplayback", 0) ? TRUE : FALSE);
 
     searchwin = create_searchwin ();
     gtk_window_set_transient_for (GTK_WINDOW (searchwin), GTK_WINDOW (mainwin));
@@ -718,15 +744,22 @@ main (int argc, char *argv[]) {
 
     gtk_widget_show (mainwin);
     gtk_main ();
+    // save config
+    pl_save (defpl);
+    conf_save ();
+    // stop receiving messages from outside
     server_close ();
+    // at this point we can simply do exit(0), but let's clean up for debugging
+    gtkpl_free (&main_playlist);
+    gtkpl_free (&search_playlist);
     gdk_threads_leave ();
     messagepump_free ();
     p_free ();
     streamer_free ();
     codec_free_locking ();
     session_save (sessfile);
-    pl_save (defpl);
     pl_free ();
+    conf_free ();
     plug_unload_all ();
     return 0;
 }

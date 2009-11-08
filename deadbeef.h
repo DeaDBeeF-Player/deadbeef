@@ -29,7 +29,6 @@
 
 #include <stdint.h>
 #include <time.h>
-#include <stdio.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -54,7 +53,7 @@ extern "C" {
 // DON'T release plugins without DB_PLUGIN_SET_API_VERSION
 
 #define DB_API_VERSION_MAJOR 0
-#define DB_API_VERSION_MINOR 2
+#define DB_API_VERSION_MINOR 3
 
 #define DB_PLUGIN_SET_API_VERSION\
     .plugin.api_vmajor = DB_API_VERSION_MAJOR,\
@@ -71,7 +70,6 @@ typedef struct {
     int tracknum; // used for stuff like sid, nsf, cue (will be ignored by most codecs)
     int startsample; // start sample of track, or -1 for auto
     int endsample; // end sample of track, or -1 for auto
-    float duration; // in seconds
     int shufflerating; // sort order for shuffle mode
     float playtime; // total playtime
     time_t started_timestamp; // result of calling time(NULL)
@@ -87,7 +85,8 @@ enum {
     DB_PLUGIN_DECODER = 1,
     DB_PLUGIN_OUTPUT  = 2,
     DB_PLUGIN_DSP     = 3,
-    DB_PLUGIN_MISC    = 4
+    DB_PLUGIN_MISC    = 4,
+    DB_PLUGIN_VFS     = 5,
 };
 
 typedef struct {
@@ -100,6 +99,12 @@ typedef struct {
     DB_playItem_t *song;
 } DB_event_song_t;
 
+typedef struct DB_conf_item_s {
+    char *key;
+    char *value;
+    struct DB_conf_item_s *next;
+} DB_conf_item_t;
+
 // event callback type
 typedef int (*DB_callback_t)(DB_event_t *, uintptr_t data);
 
@@ -109,7 +114,43 @@ enum {
     DB_EV_SONGCHANGED = 1, // triggers when song was just changed
     DB_EV_SONGSTARTED = 2, // triggers when song started playing (for scrobblers and such)
     DB_EV_SONGFINISHED = 3, // triggers when song finished playing (for scrobblers and such)
+    DB_EV_TRACKDELETED = 4, // triggers when track is to be deleted from playlist
+    DB_EV_CONFIGCHANGED = 5, // configuration option changed
     DB_EV_MAX
+};
+
+// preset columns, working using IDs
+enum {
+    DB_COLUMN_PLAYING = 1,
+    DB_COLUMN_ARTIST_ALBUM = 2,
+    DB_COLUMN_ARTIST = 3,
+    DB_COLUMN_ALBUM = 4,
+    DB_COLUMN_TITLE = 5,
+    DB_COLUMN_DURATION = 6,
+    DB_COLUMN_TRACK = 7
+};
+
+// message ids for communicating with player
+enum {
+    M_SONGFINISHED,
+    M_NEXTSONG,
+    M_PREVSONG,
+    M_PLAYSONG,
+    M_PLAYSONGNUM,
+    M_STOPSONG,
+    M_PAUSESONG,
+    M_PLAYRANDOM,
+    M_SONGCHANGED, // p1=from, p2=to
+    M_ADDDIR, // ctx = pointer to string, which must be freed by g_free
+    M_ADDFILES, // ctx = GSList pointer, must be freed with g_slist_free
+    M_ADDDIRS, // ctx = GSList pointer, must be freed with g_slist_free
+    M_OPENFILES, // ctx = GSList pointer, must be freed with g_slist_free
+    M_FMDRAGDROP, // ctx = char* ptr, must be freed with standard free, p1 is length of data, p2 is drop_y
+    M_TERMINATE, // must be sent to player thread to terminate
+    M_PLAYLISTREFRESH,
+    M_REINIT_SOUND,
+    M_TRACKCHANGED, // p1=tracknumber
+    M_CONFIGCHANGED, // no arguments
 };
 
 // typecasting macros
@@ -117,6 +158,11 @@ enum {
 #define DB_CALLBACK(x) ((DB_callback_t)(x))
 #define DB_EVENT(x) ((DB_event_t *)(x))
 #define DB_PLAYITEM(x) ((DB_playItem_t *)(x))
+
+// FILE object wrapper for vfs access
+typedef struct {
+    struct DB_vfs_s *vfs;
+} DB_FILE;
 
 // forward decl for plugin struct
 struct DB_plugin_s;
@@ -142,6 +188,7 @@ typedef struct {
     float (*playback_get_pos) (void); // [0..100]
     void (*playback_set_pos) (float pos); // [0..100]
     int (*playback_get_samplerate) (void); // output samplerate
+    void (*playback_update_bitrate) (float bitrate);
     // process control
     const char *(*get_config_dir) (void);
     void (*quit) (void);
@@ -162,9 +209,13 @@ typedef struct {
     void (*pl_item_free) (DB_playItem_t *it);
     void (*pl_item_copy) (DB_playItem_t *out, DB_playItem_t *in);
     DB_playItem_t *(*pl_insert_item) (DB_playItem_t *after, DB_playItem_t *it);
+    int (*pl_get_idx_of) (DB_playItem_t *it);
     // metainfo
     void (*pl_add_meta) (DB_playItem_t *it, const char *key, const char *value);
     const char *(*pl_find_meta) (DB_playItem_t *song, const char *meta);
+    void (*pl_delete_all_meta) (DB_playItem_t *it);
+    void (*pl_set_item_duration) (DB_playItem_t *it, float duration);
+    float (*pl_get_item_duration) (DB_playItem_t *it);
     // cuesheet support
     DB_playItem_t *(*pl_insert_cue_from_buffer) (DB_playItem_t *after, const char *fname, const uint8_t *buffer, int buffersize, struct DB_decoder_s *decoder, const char *ftype, int numsamples, int samplerate);
     DB_playItem_t * (*pl_insert_cue) (DB_playItem_t *after, const char *filename, struct DB_decoder_s *decoder, const char *ftype, int numsamples, int samplerate);
@@ -174,10 +225,42 @@ typedef struct {
     void (*volume_set_amp) (float amp);
     float (*volume_get_amp) (void);
     // junk reading
-    int (*junk_read_id3v1) (DB_playItem_t *it, FILE *fp);
-    int (*junk_read_id3v2) (DB_playItem_t *it, FILE *fp);
-    int (*junk_read_ape) (DB_playItem_t *it, FILE *fp);
-    int (*junk_get_leading_size) (FILE *fp);
+    int (*junk_read_id3v1) (DB_playItem_t *it, DB_FILE *fp);
+    int (*junk_read_id3v2) (DB_playItem_t *it, DB_FILE *fp);
+    int (*junk_read_ape) (DB_playItem_t *it, DB_FILE *fp);
+    int (*junk_get_leading_size) (DB_FILE *fp);
+    // vfs
+    DB_FILE* (*fopen) (const char *fname);
+    void (*fclose) (DB_FILE *f);
+    size_t (*fread) (void *ptr, size_t size, size_t nmemb, DB_FILE *stream);
+    int (*fseek) (DB_FILE *stream, int64_t offset, int whence);
+    int64_t (*ftell) (DB_FILE *stream);
+    void (*rewind) (DB_FILE *stream);
+    int64_t (*fgetlength) (DB_FILE *stream);
+    const char *(*fget_content_type) (DB_FILE *stream);
+    const char *(*fget_content_name) (DB_FILE *stream);
+    const char *(*fget_content_genre) (DB_FILE *stream);
+    void (*fstop) (DB_FILE *stream);
+    // message passing
+    int (*sendmessage) (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2);
+    // configuration access
+    const char * (*conf_get_str) (const char *key, const char *def);
+    float (*conf_get_float) (const char *key, float def);
+    int (*conf_get_int) (const char *key, int def);
+    void (*conf_set_str) (const char *key, const char *val);
+    DB_conf_item_t * (*conf_find) (const char *group, DB_conf_item_t *prev);
+    // gui locking
+    void (*gui_lock) (void);
+    void (*gui_unlock) (void);
+    // exporting plugin conf options for gui
+    // all exported options are grouped by plugin, and will be available to user
+    // from gui
+//    void (*export_plugin_option_string) (DB_plugin_t *plugin, const char *key);
+//    void (*export_plugin_option_path) (DB_plugin_t *plugin, const char *key);
+//    void (*export_plugin_option_check) (DB_plugin_t *plugin, const char *key);
+//    void (*export_plugin_option_radio) (DB_plugin_t *plugin, const char *key);
+//    void (*export_plugin_option_combo) (DB_plugin_t *plugin, const char *key);
+//    void (*export_plugin_option_comboentry) (DB_plugin_t *plugin, const char *key);
 } DB_functions_t;
 
 // base plugin interface
@@ -211,6 +294,7 @@ typedef struct DB_plugin_s {
 } DB_plugin_t;
 
 typedef struct {
+    DB_FILE *file;
     int bps;
     int channels;
     int samplerate;
@@ -301,6 +385,26 @@ typedef struct {
 typedef struct {
     DB_plugin_t plugin;
 } DB_misc_t;
+
+// vfs plugin
+// provides means for reading, seeking, etc
+// api is based on stdio
+typedef struct DB_vfs_s {
+    DB_plugin_t plugin;
+    DB_FILE* (*open) (const char *fname);
+    void (*close) (DB_FILE *f);
+    size_t (*read) (void *ptr, size_t size, size_t nmemb, DB_FILE *stream);
+    int (*seek) (DB_FILE *stream, int64_t offset, int whence);
+    int64_t (*tell) (DB_FILE *stream);
+    void (*rewind) (DB_FILE *stream);
+    int64_t (*getlength)(DB_FILE *stream);
+    void (*stop)(DB_FILE *stream);
+    const char * (*get_content_type) (DB_FILE *stream);
+    const char * (*get_content_name) (DB_FILE *stream);
+    const char * (*get_content_genre) (DB_FILE *stream);
+    const char **scheme_names; // NULL-terminated list of supported schemes, e.g. {"http", "ftp", NULL}
+    unsigned streaming : 1;
+} DB_vfs_t;
 
 #ifdef __cplusplus
 }

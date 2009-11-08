@@ -16,22 +16,22 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
-#ifndef __SESSION_H
-#define __SESSION_H
 
-#include <stdint.h>
+#ifndef __VFS_H
+#define __VFS_H
 
-int
-session_save (const char *fname);
+#include "deadbeef.h"
 
-int
-session_load (const char *fname);
+DB_FILE* vfs_fopen (const char *fname);
+void vfs_fclose (DB_FILE *f);
+size_t vfs_fread (void *ptr, size_t size, size_t nmemb, DB_FILE *stream);
+int vfs_fseek (DB_FILE *stream, int64_t offset, int whence);
+int64_t vfs_ftell (DB_FILE *stream);
+void vfs_rewind (DB_FILE *stream);
+int64_t vfs_fgetlength (DB_FILE *stream);
+const char *vfs_get_content_type (DB_FILE *stream);
+const char *vfs_get_content_name (DB_FILE *stream);
+const char *vfs_get_content_genre (DB_FILE *stream);
+void vfs_fstop (DB_FILE *stream);
 
-void
-session_capture_window_attrs (uintptr_t window);
-
-void
-session_restore_window_attrs (uintptr_t window);
-
-
-#endif // __SESSION_H
+#endif // __VFS_H

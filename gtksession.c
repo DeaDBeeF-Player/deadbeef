@@ -22,20 +22,23 @@
 #  include <config.h>
 #endif
 #include "session.h"
+#include "conf.h"
 
 void
 session_capture_window_attrs (uintptr_t window) {
     GtkWindow *wnd = GTK_WINDOW (window);
-    extern int session_win_attrs[5];
-    gtk_window_get_position (wnd, &session_win_attrs[0], &session_win_attrs[1]);
-    gtk_window_get_size (wnd, &session_win_attrs[2], &session_win_attrs[3]);
-    //printf ("attrs: %d %d %d %d\n", session_win_attrs[0], session_win_attrs[1],  session_win_attrs[2], session_win_attrs[3]);
+    int win_attrs[4];
+    gtk_window_get_position (wnd, &win_attrs[0], &win_attrs[1]);
+    gtk_window_get_size (wnd, &win_attrs[2], &win_attrs[3]);
+    conf_set_int ("mainwin.geometry.x", win_attrs[0]);
+    conf_set_int ("mainwin.geometry.y", win_attrs[1]);
+    conf_set_int ("mainwin.geometry.w", win_attrs[2]);
+    conf_set_int ("mainwin.geometry.h", win_attrs[3]);
 }
 
 void
 session_restore_window_attrs (uintptr_t window) {
     GtkWindow *wnd = GTK_WINDOW (window);
-    extern int session_win_attrs[5];
-    gtk_window_move (wnd, session_win_attrs[0], session_win_attrs[1]);
-    gtk_window_resize (wnd, session_win_attrs[2], session_win_attrs[3]);
+    gtk_window_move (wnd, conf_get_int ("mainwin.geometry.x", 40), conf_get_int ("mainwin.geometry.y", 40));
+    gtk_window_resize (wnd, conf_get_int ("mainwin.geometry.w", 500), conf_get_int ("mainwin.geometry.h", 300));
 }

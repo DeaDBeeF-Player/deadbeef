@@ -46,8 +46,19 @@ enum {
     COLO_COUNT
 };
 
-#define pl_ncolumns 5
-#define pl_colname_max 100
+//#define pl_ncolumns 5
+//#define pl_colname_max 100
+
+typedef struct gtkpl_column_s {
+    char *title;
+    int id; // id is faster than format, set to -1 to use format
+    char *format;
+    int width;
+    int movepos; // valid only while `moving' is 1
+    struct gtkpl_column_s *next;
+    unsigned align_right : 1;
+//    unsigned moving : 1;
+} gtkpl_column_t;
 
 // structure of this kind must be set as user data for playlist, header and scrollbar widgets
 // pointer to this structure must be passed too all functions that
@@ -60,6 +71,7 @@ typedef struct {
     GtkWidget *hscrollbar;
     GdkPixmap *backbuf;
     GdkPixmap *backbuf_header;
+    const char *title; // unique id, used for config writing, etc
     // parameters
     playItem_t **pcurr; // pointer to current item
     int *pcount; // pointer to count of items in list
@@ -73,15 +85,22 @@ typedef struct {
     double clicktime; // for doubleclick detection
     int nvisiblerows;
     int nvisiblefullrows;
-    int *colwidths;//[pl_ncolumns]; // current column widths
+//    int *colwidths;//[pl_ncolumns]; // current column widths
+//    int ncolumns;
+    gtkpl_column_t *columns;
 } gtkplaylist_t;
 
 #define GTKPL_PROLOGUE \
     gtkplaylist_t *ps = (gtkplaylist_t *)gtk_object_get_data (GTK_OBJECT (widget), "ps"); assert (ps); 
 
+extern int rowheight;
+
 // that must be called before gtk_init
 void
 gtkpl_init (void);
+
+void
+gtkpl_free (gtkplaylist_t *pl);
 
 void
 gtkpl_redraw_pl_row (gtkplaylist_t *ps, int row, playItem_t *it);
@@ -204,5 +223,39 @@ theme_set_cairo_source_rgb (cairo_t *cr, int col);
 
 void
 playlist_refresh (void);
+
+// column utilities
+gtkpl_column_t *
+gtkpl_column_alloc (const char *title, int width, int id, const char *format, int align_right);
+
+void
+gtkpl_column_append (gtkplaylist_t *pl, gtkpl_column_t *c);
+
+void
+gtkpl_column_remove (gtkplaylist_t *pl, gtkpl_column_t *c);
+
+void
+gtkpl_column_free (gtkpl_column_t *c);
+
+void
+gtkpl_append_column_from_textdef (gtkplaylist_t *pl, const uint8_t *def);
+
+void
+gtkpl_column_update_config (gtkplaylist_t *pl, gtkpl_column_t *c, int idx);
+
+void
+gtkpl_column_rewrite_config (gtkplaylist_t *pl);
+
+void
+gtkpl_expose_header (gtkplaylist_t *ps, int x, int y, int w, int h);
+
+void
+set_tray_tooltip (const char *text);
+
+void
+gtkpl_songchanged_wrapper (int from, int to);
+
+void
+gtkpl_current_track_changed (playItem_t *it);
 
 #endif // __GTKPLAYLIST_H

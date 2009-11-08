@@ -37,7 +37,6 @@ typedef struct playItem_s {
     int tracknum; // used for stuff like sid, nsf, cue (will be ignored by most codecs)
     int startsample;
     int endsample;
-    float duration; // in seconds
     int shufflerating; // sort order for shuffle mode
     float playtime; // total playtime
     time_t started_timestamp; // result of calling time(NULL)
@@ -46,6 +45,8 @@ typedef struct playItem_s {
     float replaygain_album_peak;
     float replaygain_track_gain;
     float replaygain_track_peak;
+    // private area, must not be visible to plugins
+    float _duration; // in seconds
     struct playItem_s *next[PL_MAX_ITERATORS]; // next item in linked list
     struct playItem_s *prev[PL_MAX_ITERATORS]; // prev item in linked list
     struct metaInfo_s *meta; // linked list storing metainfo
@@ -58,6 +59,7 @@ extern playItem_t *playlist_tail[PL_MAX_ITERATORS]; // tail of linked list
 extern playItem_t *playlist_current_ptr; // pointer to a real current playlist item (or NULL)
 
 extern int pl_count;
+extern float pl_totaltime;
 
 int
 pl_add_dir (const char *dirname, int (*cb)(playItem_t *it, void *data), void *user_data);
@@ -133,18 +135,15 @@ pl_format_item_display_name (playItem_t *it, char *str, int len);
 const char *
 pl_find_meta (playItem_t *it, const char *key);
 
+void
+pl_delete_all_meta (playItem_t *it);
+
 // returns index of 1st deleted item
 int
 pl_delete_selected (void);
 
 void
 pl_crop_selected (void);
-
-void
-pl_set_order (int order);
-
-void
-pl_set_loop_mode (int mode);
 
 int
 pl_save (const char *fname);
@@ -157,5 +156,17 @@ pl_select_all (void);
 
 void
 pl_reshuffle (playItem_t **ppmin, playItem_t **ppmax);
+
+// required to calculate total playtime
+void
+pl_set_item_duration (playItem_t *it, float duration);
+
+float
+pl_get_item_duration (playItem_t *it);
+
+// returns number of characters printed, not including trailing 0
+// [a]rtist, [t]itle, al[b]um, [l]ength, track[n]umber
+int
+pl_format_title (playItem_t *it, char *s, int size, const char *fmt);
 
 #endif // __PLAYLIST_H

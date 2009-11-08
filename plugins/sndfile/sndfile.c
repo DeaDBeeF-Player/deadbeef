@@ -138,7 +138,7 @@ sndfile_insert (DB_playItem_t *after, const char *fname) {
     it->decoder = &plugin;
     it->fname = strdup (fname);
     it->filetype = "wav";
-    it->duration = duration;
+    deadbeef->pl_set_item_duration (it, duration);
 
     trace ("sndfile: totalsamples=%d, samplerate=%d, duration=%f\n", totalsamples, samplerate, duration);
 
@@ -148,7 +148,7 @@ sndfile_insert (DB_playItem_t *after, const char *fname) {
     return after;
 }
 
-static const char * exts[] = { "wav", NULL };
+static const char * exts[] = { "wav", "aif", "aiff", "snd", "au", "paf", "svx", "nist", "voc", "ircam", "w64", "mat4", "mat5", "pvf", "xi", "htk", "sds", "avr", "wavex", "sd2", "caf", "wve", NULL };
 static const char *filetypes[] = { "wav", NULL };
 
 // define plugin interface
@@ -157,7 +157,8 @@ static DB_decoder_t plugin = {
     .plugin.version_major = 0,
     .plugin.version_minor = 1,
     .plugin.type = DB_PLUGIN_DECODER,
-    .plugin.name = "SNDFILE decoder",
+    .plugin.name = "pcm player",
+    .plugin.descr = "wav/aiff player using libsndfile",
     .plugin.author = "Alexey Yakovenko",
     .plugin.email = "waker@users.sourceforge.net",
     .plugin.website = "http://deadbeef.sf.net",

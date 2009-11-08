@@ -33,9 +33,8 @@
 #include "search.h"
 #include "gtkplaylist.h"
 #include "messagepump.h"
-#include "messages.h"
-
 #include "utf8.h"
+#include "deadbeef.h"
 
 extern GtkWidget *searchwin;
 struct playItem_s *search_current = NULL;

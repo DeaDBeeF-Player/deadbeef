@@ -29,20 +29,21 @@
 #include "conf.h"
 #include "volume.h"
 #include "messagepump.h"
-#include "messages.h"
+#include "deadbeef.h"
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 static snd_pcm_t *audio;
-static int16_t *samplebuffer;
 static int bufsize = -1;
 static int alsa_terminate;
-static int alsa_rate = 48000;
+static int alsa_rate = 44100;
 static int state; // 0 = stopped, 1 = playing, 2 = pause
 static uintptr_t mutex;
-static int canpause;
 static intptr_t alsa_tid;
+
+static int conf_alsa_resample = 0;
+static char conf_alsa_soundcard[100] = "default";
 
 static void
 palsa_callback (char *stream, int len);
@@ -50,37 +51,28 @@ palsa_callback (char *stream, int len);
 static void
 palsa_thread (uintptr_t context);
 
-int
-palsa_init (void) {
-    int err;
-    snd_pcm_hw_params_t *hw_params;
-    snd_pcm_sw_params_t *sw_params;
-    state = 0;
-    alsa_rate = conf_samplerate;
+static int
+palsa_set_hw_params (int samplerate) {
+    snd_pcm_hw_params_t *hw_params = NULL;
+//    int alsa_resample = conf_get_int ("alsa.resample", 0);
+    int err = 0;
 
-    if ((err = snd_pcm_open (&audio, conf_alsa_soundcard, SND_PCM_STREAM_PLAYBACK, 0))) {
-        trace ("could not open audio device (%s)\n",
-                snd_strerror (err));
-        exit (-1);
-    }
-
-    mutex = mutex_create ();
     if ((err = snd_pcm_hw_params_malloc (&hw_params)) < 0) {
         trace ("cannot allocate hardware parameter structure (%s)\n",
                 snd_strerror (err));
-        goto open_error;
+        goto error;
     }
 
     if ((err = snd_pcm_hw_params_any (audio, hw_params)) < 0) {
         trace ("cannot initialize hardware parameter structure (%s)\n",
                 snd_strerror (err));
-        goto open_error;
+        goto error;
     }
 
     if ((err = snd_pcm_hw_params_set_access (audio, hw_params, SND_PCM_ACCESS_RW_INTERLEAVED)) < 0) {
         trace ("cannot set access type (%s)\n",
                 snd_strerror (err));
-        goto open_error;
+        goto error;
     }
 
     snd_pcm_format_t fmt;
@@ -92,52 +84,50 @@ palsa_init (void) {
     if ((err = snd_pcm_hw_params_set_format (audio, hw_params, fmt)) < 0) {
         trace ("cannot set sample format (%s)\n",
                 snd_strerror (err));
-        goto open_error;
+        goto error;
     }
 
     snd_pcm_hw_params_get_format (hw_params, &fmt);
-    printf ("chosen sample format: %04Xh\n", (int)fmt);
+    trace ("chosen sample format: %04Xh\n", (int)fmt);
 
-    canpause = 0;//snd_pcm_hw_params_can_pause (hw_params);
-
-    int val = alsa_rate;
+    int val = samplerate;
     int ret = 0;
 
-    if ((err = snd_pcm_hw_params_set_rate_resample (audio, hw_params, 0)) < 0) {
+    if ((err = snd_pcm_hw_params_set_rate_resample (audio, hw_params, conf_alsa_resample)) < 0) {
         trace ("cannot setup resampling (%s)\n",
                 snd_strerror (err));
-        goto open_error;
+        goto error;
     }
 
     if ((err = snd_pcm_hw_params_set_rate_near (audio, hw_params, &val, &ret)) < 0) {
         trace ("cannot set sample rate (%s)\n",
                 snd_strerror (err));
-        goto open_error;
+        goto error;
     }
     alsa_rate = val;
-    printf ("chosen samplerate: %d Hz\n", alsa_rate);
+    trace ("chosen samplerate: %d Hz\n", alsa_rate);
 
     if ((err = snd_pcm_hw_params_set_channels (audio, hw_params, 2)) < 0) {
         trace ("cannot set channel count (%s)\n",
                 snd_strerror (err));
-        goto open_error;
+        goto error;
     }
 
     int nchan;
     snd_pcm_hw_params_get_channels (hw_params, &nchan);
-    printf ("alsa channels: %d\n", nchan);
+    trace ("alsa channels: %d\n", nchan);
 
     unsigned int buffer_time = 500000;
     int dir;
     if ((err = snd_pcm_hw_params_set_buffer_time_near (audio, hw_params, &buffer_time, &dir)) < 0) {
         trace ("Unable to set buffer time %i for playback: %s\n", buffer_time, snd_strerror(err));
-        goto open_error;
+        goto error;
     }
     trace ("alsa buffer time: %d ms\n", buffer_time);
     snd_pcm_uframes_t size;
     if ((err = snd_pcm_hw_params_get_buffer_size (hw_params, &size)) < 0) {
         trace ("Unable to get buffer size for playback: %s\n", snd_strerror(err));
-        goto open_error;
+        goto error;
     }
     trace ("alsa buffer size: %d frames\n", size);
     bufsize = size;
@@ -145,10 +135,39 @@ palsa_init (void) {
     if ((err = snd_pcm_hw_params (audio, hw_params)) < 0) {
         trace ("cannot set parameters (%s)\n",
                 snd_strerror (err));
-        goto open_error;
+        goto error;
+    }
+error:
+    if (hw_params) {
+        snd_pcm_hw_params_free (hw_params);
+    }
+    return err;
+}
+
+int
+palsa_init (void) {
+    int err;
+
+    // get and cache conf variables
+    strcpy (conf_alsa_soundcard, conf_get_str ("alsa_soundcard", "default"));
+    conf_alsa_resample = conf_get_int ("alsa.resample", 0);
+    trace ("alsa_soundcard: %s\n", conf_alsa_soundcard);
+    trace ("alsa.resample: %d\n", conf_alsa_resample);
+
+    snd_pcm_sw_params_t *sw_params = NULL;
+    state = 0;
+    //const char *conf_alsa_soundcard = conf_get_str ("alsa_soundcard", "default");
+    if ((err = snd_pcm_open (&audio, conf_alsa_soundcard, SND_PCM_STREAM_PLAYBACK, 0))) {
+        trace ("could not open audio device (%s)\n",
+                snd_strerror (err));
+        return -1;
     }
 
-    snd_pcm_hw_params_free (hw_params);
+    mutex = mutex_create ();
+
+    if (palsa_set_hw_params (alsa_rate) < 0) {
+        goto open_error;
+    }
 
     if ((err = snd_pcm_sw_params_malloc (&sw_params)) < 0) {
         trace ("cannot allocate software parameters structure (%s)\n",
@@ -161,7 +180,7 @@ palsa_init (void) {
         goto open_error;
     }
 
-    if ((err = snd_pcm_sw_params_set_avail_min (audio, sw_params, size/2)) < 0) {
+    if ((err = snd_pcm_sw_params_set_avail_min (audio, sw_params, bufsize/2)) < 0) {
         trace ("cannot set minimum available count (%s)\n",
                 snd_strerror (err));
         goto open_error;
@@ -184,6 +203,8 @@ palsa_init (void) {
                 snd_strerror (err));
         goto open_error;
     }
+    snd_pcm_sw_params_free (sw_params);
+    sw_params = NULL;
 
     /* the interface will interrupt the kernel every N frames, and ALSA
        will wake up this program very soon after that.
@@ -197,80 +218,95 @@ palsa_init (void) {
 
     snd_pcm_start (audio);
 
-    // take returned fragsize
-    samplebuffer = malloc (bufsize);
-
-    if (!samplebuffer)
-    {
-        trace ("AUDIO: Unable to allocate memory for sample buffers.\n");
-        goto open_error;
-    }
-
     alsa_terminate = 0;
     alsa_tid = thread_start (palsa_thread, 0);
 
     return 0;
 
 open_error:
-    if (audio != NULL)
-    {
+    if (sw_params) {
+        snd_pcm_sw_params_free (sw_params);
+    }
+    if (audio != NULL) {
         palsa_free ();
     }
 
     return -1;
 }
 
+int
+palsa_change_rate (int rate) {
+    if (!audio) {
+        return 0;
+    }
+    if (rate == alsa_rate) {
+        trace ("palsa_change_rate: same rate (%d), ignored\n", rate);
+        return rate;
+    }
+    trace ("trying to change samplerate to: %d\n", rate);
+    mutex_lock (mutex);
+    snd_pcm_drop (audio);
+    int ret = palsa_set_hw_params (rate);
+    if (state != 0) {
+        snd_pcm_start (audio);
+    }
+    mutex_unlock (mutex);
+    if (ret < 0) {
+        return -1;
+    }
+    trace ("chosen samplerate: %d Hz\n", alsa_rate);
+    return alsa_rate;
+}
+
 void
 palsa_free (void) {
-    if (audio) {
-        mutex_lock (mutex);
+    trace ("palsa_free\n");
+    if (audio && !alsa_terminate) {
         alsa_terminate = 1;
-        if (alsa_tid) {
-            thread_join (alsa_tid);
-            alsa_tid = 0;
-        }
+        thread_join (alsa_tid);
+        alsa_tid = 0;
         snd_pcm_close(audio);
         audio = NULL;
-        if (samplebuffer) {
-            free (samplebuffer);
-            samplebuffer = NULL;
-        }
-        mutex_unlock (mutex);
         mutex_free (mutex);
+        state = 0;
+        alsa_terminate = 0;
     }
 }
 
-static int hwpaused;
 static void
 palsa_hw_pause (int pause) {
-    mutex_lock (mutex);
-    if (canpause) {
-        snd_pcm_pause (audio, pause);
+    if (!audio) {
+        return;
+    }
+    if (state == 0) {
+        return;
+    }
+    if (pause == 1) {
+        snd_pcm_drop (audio);
     }
     else {
-        if (pause == 1) {
-            snd_pcm_drop (audio);
-        }
-        else {
-            snd_pcm_prepare (audio);
-            snd_pcm_start (audio);
-        }
-        hwpaused = pause;
+        snd_pcm_prepare (audio);
+        snd_pcm_start (audio);
     }
-    hwpaused = pause;
-    mutex_unlock (mutex);
 }
 
 int
 palsa_play (void) {
-    // start updating thread
     int err;
     if (state == 0) {
-        if ((err = snd_pcm_prepare (audio)) < 0) {
-            trace ("cannot prepare audio interface for use (%s)\n",
-                    snd_strerror (err));
+        if (!audio) {
+            if (palsa_init () < 0) {
+                state = 0;
+                return -1;
+            }
         }
-        streamer_reset (1);
+        else {
+            if ((err = snd_pcm_prepare (audio)) < 0) {
+                trace ("cannot prepare audio interface for use (%s)\n",
+                        snd_strerror (err));
+                return -1;
+            }
+        }
     }
     if (state != 1) {
         state = 1;
@@ -282,9 +318,19 @@ palsa_play (void) {
 
 int
 palsa_stop (void) {
-    // set stop state
+    if (!audio) {
+        return 0;
+    }
     state = 0;
-    snd_pcm_drop (audio);
+    if (conf_get_int ("alsa.freeonstop", 0))  {
+        palsa_free ();
+    }
+    else {
+        mutex_lock (mutex);
+        snd_pcm_drop (audio);
+        mutex_unlock (mutex);
+    }
+    streamer_reset (1);
     return 0;
 }
 
@@ -301,9 +347,12 @@ palsa_ispaused (void) {
 
 int
 palsa_pause (void) {
+    if (state == 0 || !audio) {
+        return -1;
+    }
     // set pause state
-    state = 2;
     palsa_hw_pause (1);
+    state = 2;
     return 0;
 }
 
@@ -334,6 +383,7 @@ palsa_thread (uintptr_t context) {
             usleep (10000);
             continue;
         }
+        
         mutex_lock (mutex);
         /* wait till the interface is ready for data, or 1 second
            has elapsed.
@@ -378,7 +428,7 @@ palsa_thread (uintptr_t context) {
             snd_pcm_start (audio);
         }
         mutex_unlock (mutex);
-        usleep (1000); // removing this causes deadlock on exit
+//        usleep (1000); // removing this causes deadlock on exit
     }
 }
 
@@ -389,11 +439,84 @@ palsa_callback (char *stream, int len) {
         return;
     }
     int bytesread = streamer_read (stream, len);
-    int ivolume = volume_get_amp () * 1000;
+
+// FIXME: move volume control to streamer_read for copy optimization
+#if 0
+    int16_t vol[4];
+    vol[0] = volume_get_amp () * 255; // that will be extra 8 bits
+    // pack 4 times
+    vol[1] = vol[2] = vol[3] = vol[0];
+
+    // apply volume with mmx
+    __asm__ volatile(
+            "  mov %0, %%ecx\n\t"
+            "  shr $4, %%ecx\n\t"
+            "  mov %1, %%eax\n\t"
+            "  movq %2, %mm1\n\t"
+            "1:\n\t"
+            "  movq [%%eax], %mm0\n\t"
+            "  movq %mm0, %mm2\n\t"
+            "  movq %mm0, %mm3\n\t"
+            "  pmullw %mm1, %mm2\n\t"
+            "  pmulhw %mm1, %mm3\n\t"
+            "  psrlw $8, %mm2\n\t" // discard lowest 8 bits
+            "  psllw $8, %mm3\n\t" // shift left 8 lsbs of hiwords
+            "  por %mm3, %mm2\n\t" // OR them together
+            "  movq %mm3, [%%eax]\n\t" // load back to memory
+            "  add $8, %%eax\n\t"
+            "  dec %%ecx\n\t"
+            "  jnz 1b\n\t"
+            :
+            : "r"(len), "r"(stream), "r"(vol)
+            : "%ecx", "%eax"
+       );
+
+#else
+    int16_t ivolume = volume_get_amp () * 1000;
     for (int i = 0; i < bytesread/2; i++) {
         ((int16_t*)stream)[i] = (int16_t)(((int32_t)(((int16_t*)stream)[i])) * ivolume / 1000);
     }
+#endif
     if (bytesread < len) {
         memset (stream + bytesread, 0, len-bytesread);
     }
+}
+
+void
+palsa_configchanged (void) {
+    int alsa_resample = conf_get_int ("alsa.resample", 0);
+    const char *alsa_soundcard = conf_get_str ("alsa_soundcard", "default");
+    if (alsa_resample != conf_alsa_resample
+            || strcmp (alsa_soundcard, conf_alsa_soundcard)) {
+        messagepump_push (M_REINIT_SOUND, 0, 0, 0);
+    }
+}
+
+// derived from alsa-utils/aplay.c
+void
+palsa_enum_soundcards (void (*callback)(const char *name, const char *desc, void *), void *userdata) {
+    void **hints, **n;
+    char *name, *descr, *descr1, *io;
+    const char *filter = "Output";
+    if (snd_device_name_hint(-1, "pcm", &hints) < 0)
+        return;
+    n = hints;
+    while (*n != NULL) {
+        name = snd_device_name_get_hint(*n, "NAME");
+        descr = snd_device_name_get_hint(*n, "DESC");
+        io = snd_device_name_get_hint(*n, "IOID");
+        if (io == NULL || !strcmp(io, filter)) {
+            if (name && descr && callback) {
+                callback (name, descr, userdata);
+            }
+        }
+        if (name != NULL)
+            free(name);
+        if (descr != NULL)
+            free(descr);
+        if (io != NULL)
+            free(io);
+        n++;
+    }
+    snd_device_name_free_hint(hints);
 }

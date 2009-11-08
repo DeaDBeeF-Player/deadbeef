@@ -537,3 +537,158 @@ on_playhscroll_value_changed           (GtkRange        *range,
 void
 on_searchhscroll_value_changed         (GtkRange        *range,
                                         gpointer         user_data);
+
+gboolean
+on_helpwindow_key_press_event          (GtkWidget       *widget,
+                                        GdkEventKey     *event,
+                                        gpointer         user_data);
+
+void
+on_add_audio_cd_activate               (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_preferences_activate                (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_pref_soundcard_changed              (GtkComboBox     *combobox,
+                                        gpointer         user_data);
+
+void
+on_pref_samplerate_changed             (GtkEditable     *editable,
+                                        gpointer         user_data);
+
+void
+on_pref_src_quality_changed            (GtkComboBox     *combobox,
+                                        gpointer         user_data);
+
+void
+on_pref_replaygain_clicked             (GtkButton       *button,
+                                        gpointer         user_data);
+
+void
+on_pref_replaygain_scale_clicked       (GtkButton       *button,
+                                        gpointer         user_data);
+
+void
+on_pref_close_send_to_tray_clicked     (GtkButton       *button,
+                                        gpointer         user_data);
+
+void
+on_pref_plugin_configure_activate      (GtkButton       *button,
+                                        gpointer         user_data);
+
+void
+on_pref_src_quality_changed            (GtkComboBox     *combobox,
+                                        gpointer         user_data);
+
+void
+on_conf_replaygain_mode_changed        (GtkComboBox     *combobox,
+                                        gpointer         user_data);
+
+void
+on_pref_replaygain_mode_changed        (GtkComboBox     *combobox,
+                                        gpointer         user_data);
+
+void
+on_pref_pluginlist_cursor_changed      (GtkTreeView     *treeview,
+                                        gpointer         user_data);
+
+gboolean
+on_header_popup_menu                   (GtkWidget       *widget,
+                                        gpointer         user_data);
+
+void
+on_artist_activate                     (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_album_activate                      (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_tracknum_activate                   (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_duration_activate                   (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_playing_activate                    (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_title_activate                      (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_custom_activate                     (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_remove_column_activate              (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_pref_alsa_resampling_clicked        (GtkButton       *button,
+                                        gpointer         user_data);
+
+void
+on_pref_alsa_freewhenstopped_clicked   (GtkButton       *button,
+                                        gpointer         user_data);
+
+void
+on_pref_soundcard_editing_done         (GtkCellEditable *celleditable,
+                                        gpointer         user_data);
+
+void
+on_pref_soundcard_changed              (GtkComboBox     *combobox,
+                                        gpointer         user_data);
+
+void
+on_pref_network_proxyaddress_changed   (GtkEditable     *editable,
+                                        gpointer         user_data);
+
+void
+on_pref_network_enableproxy_clicked    (GtkButton       *button,
+                                        gpointer         user_data);
+
+void
+on_pref_network_proxyport_changed      (GtkEditable     *editable,
+                                        gpointer         user_data);
+
+void
+on_pref_network_proxytype_changed      (GtkComboBox     *combobox,
+                                        gpointer         user_data);
+
+gboolean
+on_prefwin_key_press_event             (GtkWidget       *widget,
+                                        GdkEventKey     *event,
+                                        gpointer         user_data);
+
+void
+on_addlocation_ok_activate             (GtkButton       *button,
+                                        gpointer         user_data);
+
+gboolean
+on_addlocation_key_press_event         (GtkWidget       *widget,
+                                        GdkEventKey     *event,
+                                        gpointer         user_data);
+
+void
+on_add_location_activate               (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_location_activate                   (GtkEntry        *entry,
+                                        gpointer         user_data);
+
+void
+on_addlocation_ok_clicked              (GtkButton       *button,
+                                        gpointer         user_data);
+
+void
+on_addlocation_entry_activate          (GtkEntry        *entry,
+                                        gpointer         user_data);
