@@ -1399,6 +1399,9 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
     // alsa resampling
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "pref_alsa_resampling")), conf_get_int ("alsa.resample", 0));
 
+    // alsa freeonstop
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "pref_alsa_freewhenstopped")), conf_get_int ("alsa.freeonstop", 0));
+
     // src_quality
     combobox = GTK_COMBO_BOX (lookup_widget (w, "pref_src_quality"));
     gtk_combo_box_set_active (combobox, conf_get_int ("src_quality", 2));
