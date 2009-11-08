@@ -29,6 +29,7 @@
 #include <sys/fcntl.h>
 #include <sys/errno.h>
 #include <sys/prctl.h>
+#include <signal.h>
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
 #endif
@@ -555,6 +556,15 @@ on_trayicon_popup_menu (GtkWidget       *widget,
     return FALSE;
 }
 
+void
+sigterm_handler (int sig) {
+    fprintf (stderr, "got sigterm, saving...\n");
+    pl_save (defpl);
+    conf_save ();
+    fprintf (stderr, "bye.\n");
+    exit (0);
+}
+
 int
 main (int argc, char *argv[]) {
     srand (time (NULL));
@@ -655,6 +665,7 @@ main (int argc, char *argv[]) {
     }
     close(s);
 
+    signal (SIGTERM, sigterm_handler);
     // become a server
     server_start ();
 
