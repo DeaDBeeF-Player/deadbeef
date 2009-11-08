@@ -1,3 +1,35 @@
+version 0.3.0
+	vfs plugins - for implementing http/ftp streaming, etc
+	improved mpeg (libmad) plugin - eats less memory, works faster
+	added support for icecast and shoutcast streams (mp3, ogg)
+	added support for podcasts (basically, for any files residing on http/ftp)
+	added support for opening pls and m3u files
+	improved about dialog
+	added support for Super (winkey) modifier and multimedia keys in global hotkeys plugin
+	fixed random crash in global hotkeys plugin if key combination was used elsewhere
+	improved cuesheet reader
+	added cd audio support, including cddb/freedb
+	added preferences window
+	new unified config file for everything
+	added total playtime display in statusbar
+	improved plugin build system, displays list of plugins to be built
+	custom columns (through manual config editing yet)
+	column header drag-and-drop
+	improved alsa compatibility
+	player can release sound device while not playing
+	better alsa resume after suspend support
+	support for hardware samplerate conversion (when supported by hardware)
+	support for alsa software resampling
+	improved skipping through bad files
+	fixed replaygain bugs
+	added full file path display via tooltip (optional, disabled by default)
+	statusbar shows info while paused
+	added new buffering icon while streamer loads data
+	added scrolling in playlist while dragging/selecting tracks
+	case-insensitive file filter in gtkfilechooser dialogs
+	added cursor sync between playlist and search windows
+	player saves playlist/config on SIGTERM (should improve things on shutdown)
+
 version 0.2.3.2
 	added winkey (Super) modifier support to hotkeys plugin
 	added multimedia keys support to hotkeys plugin
