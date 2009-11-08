@@ -236,6 +236,7 @@ exec_command_line (const char *cmdline, int len, int filter) {
         // add files
         if (!queue) {
             pl_free ();
+            main_playlist.row = -1;
         }
         while (parg < pend) {
             char resolved[PATH_MAX];
