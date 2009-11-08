@@ -290,6 +290,7 @@ http_curl_write_abort (void *ptr, size_t size, size_t nmemb, void *stream) {
 
 static int
 http_curl_control (void *stream, double dltotal, double dlnow, double ultotal, double ulnow) {
+    trace ("http_curl_control\n");
     assert (stream);
     HTTP_FILE *fp = (HTTP_FILE *)stream;
     if (fp->status == STATUS_ABORTED) {
@@ -342,6 +343,8 @@ http_thread_func (uintptr_t ctx) {
         curl_easy_setopt (curl, CURLOPT_HEADERFUNCTION, http_content_header_handler);
         curl_easy_setopt (curl, CURLOPT_HEADERDATA, ctx);
         curl_easy_setopt (curl, CURLOPT_PROGRESSFUNCTION, http_curl_control);
+        curl_easy_setopt (curl, CURLOPT_NOPROGRESS, 0);
+        curl_easy_setopt (curl, CURLOPT_PROGRESSDATA, ctx);
         // enable up to 10 redirects
         curl_easy_setopt (curl, CURLOPT_FOLLOWLOCATION, 1);
         curl_easy_setopt (curl, CURLOPT_MAXREDIRS, 10);
@@ -589,6 +592,9 @@ http_getlength (DB_FILE *stream) {
     trace ("http_getlength\n");
     assert (stream);
     HTTP_FILE *fp = (HTTP_FILE *)stream;
+    if (fp->status == STATUS_ABORTED) {
+        return -1;
+    }
     if (!fp->tid) {
         http_start_streamer (fp);
     }
@@ -604,6 +610,9 @@ http_get_content_type (DB_FILE *stream) {
     trace ("http_get_content_type\n");
     assert (stream);
     HTTP_FILE *fp = (HTTP_FILE *)stream;
+    if (fp->status == STATUS_ABORTED) {
+        return NULL;
+    }
     if (fp->gotheader) {
         return fp->content_type;
     }
@@ -622,6 +631,9 @@ http_get_content_name (DB_FILE *stream) {
     trace ("http_get_content_name\n");
     assert (stream);
     HTTP_FILE *fp = (HTTP_FILE *)stream;
+    if (fp->status == STATUS_ABORTED) {
+        return NULL;
+    }
     if (fp->gotheader) {
         return fp->content_name;
     }
@@ -640,6 +652,9 @@ http_get_content_genre (DB_FILE *stream) {
     trace ("http_get_content_genre\n");
     assert (stream);
     HTTP_FILE *fp = (HTTP_FILE *)stream;
+    if (fp->status == STATUS_ABORTED) {
+        return NULL;
+    }
     if (fp->gotheader) {
         return fp->content_genre;
     }
@@ -651,6 +666,14 @@ http_get_content_genre (DB_FILE *stream) {
         usleep (3000);
     }
     return fp->content_genre;
+}
+
+static void
+http_stop (DB_FILE *stream) {
+    trace ("http_stop\n");
+    assert (stream);
+    HTTP_FILE *fp = (HTTP_FILE *)stream;
+    fp->status = STATUS_ABORTED;
 }
 
 static const char *scheme_names[] = { "http://", "ftp://", NULL };
@@ -676,6 +699,7 @@ static DB_vfs_t plugin = {
     .get_content_type = http_get_content_type,
     .get_content_name = http_get_content_name,
     .get_content_genre = http_get_content_type,
+    .stop = http_stop,
     .scheme_names = scheme_names,
     .streaming = 1
 };

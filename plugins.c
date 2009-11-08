@@ -113,6 +113,7 @@ static DB_functions_t deadbeef_api = {
     .fget_content_type = vfs_get_content_type,
     .fget_content_name = vfs_get_content_name,
     .fget_content_genre = vfs_get_content_genre,
+    .fstop = vfs_fstop,
     // message passing
     .sendmessage = messagepump_push,
     // configuration access

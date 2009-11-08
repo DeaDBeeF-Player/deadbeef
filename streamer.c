@@ -57,6 +57,7 @@ static float g_fbuffer[INPUT_BUFFER_SIZE];
 #define SRC_BUFFER_SIZE (INPUT_BUFFER_SIZE*2)
 static float g_srcbuffer[SRC_BUFFER_SIZE];
 static int streaming_terminate;
+static playItem_t *streamer_initializing_item;
 
 // buffer up to 3 seconds at 44100Hz stereo
 #define STREAM_BUFFER_SIZE 0x80000 // slightly more than 3 seconds of 44100 stereo
@@ -88,10 +89,14 @@ static playItem_t *orig_streaming_song;
 
 static int streamer_buffering;
 
+// to allow interruption of stall file requests
+static DB_FILE *streamer_file;
+
 playItem_t *
 streamer_get_streaming_track (void) {
     return orig_streaming_song;
 }
+
 // playlist must call that whenever item was removed
 void
 streamer_song_removed_notify (playItem_t *it) {
@@ -133,7 +138,7 @@ streamer_set_current (playItem_t *it) {
     }
     if (!it->decoder && it->filetype && !strcmp (it->filetype, "content")) {
         // try to get content-type
-        DB_FILE *fp = vfs_fopen (it->fname);
+        DB_FILE *fp = streamer_file = vfs_fopen (it->fname);
         const char *ext = NULL;
         if (fp) {
             const char *ct = vfs_get_content_type (fp);
@@ -146,6 +151,7 @@ streamer_set_current (playItem_t *it) {
                     ext = "ogg";
                 }
             }
+            streamer_file = NULL;
             vfs_fclose (fp);
         }
         if (ext) {
@@ -165,7 +171,13 @@ streamer_set_current (playItem_t *it) {
         }
     }
     if (it->decoder) {
+        streamer_lock ();
+        streamer_initializing_item = it;
+        streamer_unlock ();
         int ret = it->decoder->init (DB_PLAYITEM (it));
+        streamer_lock ();
+        streamer_initializing_item = NULL;
+        streamer_unlock ();
         pl_item_copy (&str_streaming_song, it);
         if (ret < 0) {
             trace ("decoder->init returned %d\n", ret);
@@ -218,6 +230,20 @@ streamer_set_nextsong (int song, int pstate) {
         // no sense to wait until end of previous song, reset buffer
         bytes_until_next_song = 0;
         playpos = 0;
+        // try to interrupt file operation
+        streamer_lock ();
+        if (streamer_file && streamer_file->vfs->streaming) {
+            trace ("interrupting streamer file access...\n");
+            vfs_fstop (streamer_file);
+        }
+        else if (streamer_initializing_item) {
+            playItem_t *it = streamer_initializing_item;
+            if (it->decoder->info.file && it->decoder->info.file->vfs->streaming) {
+                trace ("interrupting plugin stream %p...\n", it->decoder->info.file);
+                vfs_fstop (it->decoder->info.file);
+            }
+        }
+        streamer_unlock ();
     }
 }
 

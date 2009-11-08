@@ -240,6 +240,7 @@ typedef struct {
     const char *(*fget_content_type) (DB_FILE *stream);
     const char *(*fget_content_name) (DB_FILE *stream);
     const char *(*fget_content_genre) (DB_FILE *stream);
+    void (*fstop) (DB_FILE *stream);
     // message passing
     int (*sendmessage) (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2);
     // configuration access
@@ -293,6 +294,7 @@ typedef struct DB_plugin_s {
 } DB_plugin_t;
 
 typedef struct {
+    DB_FILE *file;
     int bps;
     int channels;
     int samplerate;
@@ -396,6 +398,7 @@ typedef struct DB_vfs_s {
     int64_t (*tell) (DB_FILE *stream);
     void (*rewind) (DB_FILE *stream);
     int64_t (*getlength)(DB_FILE *stream);
+    void (*stop)(DB_FILE *stream);
     const char * (*get_content_type) (DB_FILE *stream);
     const char * (*get_content_name) (DB_FILE *stream);
     const char * (*get_content_genre) (DB_FILE *stream);

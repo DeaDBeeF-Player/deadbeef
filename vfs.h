@@ -32,5 +32,6 @@ int64_t vfs_fgetlength (DB_FILE *stream);
 const char *vfs_get_content_type (DB_FILE *stream);
 const char *vfs_get_content_name (DB_FILE *stream);
 const char *vfs_get_content_genre (DB_FILE *stream);
+void vfs_fstop (DB_FILE *stream);
 
 #endif // __VFS_H

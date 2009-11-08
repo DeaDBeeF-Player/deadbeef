@@ -733,18 +733,21 @@ main (int argc, char *argv[]) {
 
     gtk_widget_show (mainwin);
     gtk_main ();
+    // save config
+    pl_save (defpl);
+    conf_save ();
+    // stop receiving messages from outside
+    server_close ();
+    // at this point we can simply do exit(0), but let's clean up for debugging
     gtkpl_free (&main_playlist);
     gtkpl_free (&search_playlist);
-    server_close ();
     gdk_threads_leave ();
     messagepump_free ();
     p_free ();
     streamer_free ();
     codec_free_locking ();
     session_save (sessfile);
-    pl_save (defpl);
     pl_free ();
-    conf_save ();
     conf_free ();
     plug_unload_all ();
     return 0;
