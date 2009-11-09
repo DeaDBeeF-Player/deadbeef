@@ -70,6 +70,7 @@ static int streambuffer_pos;
 static int bytes_until_next_song = 0;
 static char streambuffer[STREAM_BUFFER_SIZE];
 static uintptr_t mutex;
+static uintptr_t decodemutex;
 static int nextsong = -1;
 static int nextsong_pstate = -1;
 static int badsong = -1;
@@ -449,6 +450,7 @@ streamer_thread (uintptr_t ctx) {
 int
 streamer_init (void) {
     mutex = mutex_create ();
+    decodemutex = mutex_create ();
     src_quality = conf_get_int ("src_quality", 2);
     src = src_new (src_quality, 2, NULL);
     conf_replaygain_mode = conf_get_int ("replaygain_mode", 0);
@@ -464,6 +466,7 @@ void
 streamer_free (void) {
     streaming_terminate = 1;
     thread_join (streamer_tid);
+    mutex_free (decodemutex);
     mutex_free (mutex);
 }
 
@@ -713,6 +716,7 @@ streamer_read_async (char *bytes, int size) {
                 }
                 //codec_lock ();
                 // convert samplerate
+                mutex_lock (decodemutex);
                 srcdata.data_in = g_fbuffer;
                 srcdata.data_out = g_srcbuffer;
                 srcdata.input_frames = nsamples;
@@ -729,6 +733,7 @@ streamer_read_async (char *bytes, int size) {
                 float32_to_int16 ((float*)g_srcbuffer, (int16_t*)bytes, bytesread>>1);
                 // calculate how many unused input samples left
                 codecleft = nsamples - srcdata.input_frames_used;
+                mutex_unlock (decodemutex);
                 // copy spare samples for next update
                 memmove (g_fbuffer, &g_fbuffer[srcdata.input_frames_used*2], codecleft * 8);
             }
@@ -867,14 +872,15 @@ streamer_configchanged (void) {
     conf_replaygain_scale = conf_get_int ("replaygain_scale", 1);
     int q = conf_get_int ("src_quality", 2);
     if (q != src_quality && q >= SRC_SINC_BEST_QUALITY && q <= SRC_LINEAR) {
+        mutex_lock (decodemutex);
         fprintf (stderr, "changing src_quality from %d to %d\n", src_quality, q);
         src_quality = q;
-        streamer_lock ();
         if (src) {
             src_delete (src);
             src = NULL;
         }
+        memset (&srcdata, 0, sizeof (srcdata));
         src = src_new (src_quality, 2, NULL);
-        streamer_unlock ();
+        mutex_unlock (decodemutex);
     }
 }
