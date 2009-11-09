@@ -139,7 +139,9 @@ static int cflac_init_stop_decoding;
 static void
 cflac_init_error_callback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorStatus status, void *client_data) {
     fprintf(stderr, "cflac: got error callback: %s\n", FLAC__StreamDecoderErrorStatusString[status]);
-    cflac_init_stop_decoding = 1;
+    if (status != FLAC__STREAM_DECODER_ERROR_STATUS_LOST_SYNC) {
+        cflac_init_stop_decoding = 1;
+    }
 }
 
 static int
