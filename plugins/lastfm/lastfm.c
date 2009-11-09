@@ -35,9 +35,6 @@ static DB_functions_t *deadbeef;
 
 #define LFM_CLIENTID "ddb"
 #define SCROBBLER_URL_V1 "http://post.audioscrobbler.com"
-#define SCROBBLER_URL_V2 "http://ws.audioscrobbler.com/2.0"
-#define LFM_API_KEY "6b33c8ae4d598a9aff8fe63e334e6e86"
-#define LFM_API_SECRET "a9f5e17e358377d96e96477d870b2b18"
 
 static char lfm_user[100];
 static char lfm_pass[100];
@@ -50,6 +47,7 @@ static uintptr_t lfm_mutex;
 static uintptr_t lfm_cond;
 static int lfm_stopthread;
 static intptr_t lfm_tid;
+static int lfm_abort;
 
 DB_plugin_t *
 lastfm_load (DB_functions_t *api) {
@@ -85,6 +83,15 @@ lastfm_curl_res (void *ptr, size_t size, size_t nmemb, void *stream)
 }
 
 static int
+lfm_curl_control (void *stream, double dltotal, double dlnow, double ultotal, double ulnow) {
+    trace ("lfm_curl_control\n");
+    if (lfm_abort) {
+        trace ("lfm: aborting current request\n");
+        return -1;
+    }
+    return 0;
+}
+static int
 curl_req_send (const char *req, const char *post) {
     trace ("sending request: %s\n", req);
     CURL *curl;
@@ -99,10 +106,43 @@ curl_req_send (const char *req, const char *post) {
     memset(lfm_err, 0, sizeof(lfm_err));
     curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, lfm_err);
     curl_easy_setopt(curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+    curl_easy_setopt (curl, CURLOPT_PROGRESSFUNCTION, lfm_curl_control);
+    curl_easy_setopt (curl, CURLOPT_NOPROGRESS, 0);
     if (post) {
         curl_easy_setopt(curl, CURLOPT_POST, 1);
         curl_easy_setopt(curl, CURLOPT_POSTFIELDS, post);
         curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, strlen(post));
+    }
+    if (deadbeef->conf_get_int ("network.proxy", 0)) {
+        curl_easy_setopt (curl, CURLOPT_PROXY, deadbeef->conf_get_str ("network.proxy.address", ""));
+        curl_easy_setopt (curl, CURLOPT_PROXYPORT, deadbeef->conf_get_int ("network.proxy.port", 8080));
+        const char *type = deadbeef->conf_get_str ("network.proxy.type", "HTTP");
+        int curlproxytype = CURLPROXY_HTTP;
+        if (!strcasecmp (type, "HTTP")) {
+            curlproxytype = CURLPROXY_HTTP;
+        }
+#if LIBCURL_VERSION_MINOR >= 19 && LIBCURL_VERSION_PATCH >= 4
+        else if (!strcasecmp (type, "HTTP_1_0")) {
+            curlproxytype = CURLPROXY_HTTP_1_0;
+        }
+#endif
+#if LIBCURL_VERSION_MINOR >= 15 && LIBCURL_VERSION_PATCH >= 2
+        else if (!strcasecmp (type, "SOCKS4")) {
+            curlproxytype = CURLPROXY_SOCKS4;
+        }
+#endif
+        else if (!strcasecmp (type, "SOCKS5")) {
+            curlproxytype = CURLPROXY_SOCKS5;
+        }
+#if LIBCURL_VERSION_MINOR >= 18 && LIBCURL_VERSION_PATCH >= 0
+        else if (!strcasecmp (type, "SOCKS4A")) {
+            curlproxytype = CURLPROXY_SOCKS4A;
+        }
+        else if (!strcasecmp (type, "SOCKS5_HOSTNAME")) {
+            curlproxytype = CURLPROXY_SOCKS5_HOSTNAME;
+        }
+#endif
+        curl_easy_setopt (curl, CURLOPT_PROXYTYPE, curlproxytype);
     }
     int status = curl_easy_perform(curl);
     curl_easy_cleanup (curl);
@@ -698,6 +738,16 @@ auth_v2 (void) {
 
 static int
 lastfm_start (void) {
+    // load login/pass
+    lfm_mutex = 0;
+    lfm_cond = 9;
+    lfm_tid = 0;
+    lfm_abort = 0;
+    strcpy (lfm_user, deadbeef->conf_get_str ("lastfm.login", ""));
+    strcpy (lfm_pass, deadbeef->conf_get_str ("lastfm.password", ""));
+    if (!lfm_user[0] || !lfm_pass[0]) {
+        return 0;
+    }
     lfm_stopthread = 0;
     lfm_mutex = deadbeef->mutex_create ();
     lfm_cond = deadbeef->cond_create ();
@@ -706,40 +756,23 @@ lastfm_start (void) {
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_SONGSTARTED, DB_CALLBACK (lastfm_songstarted), 0);
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_SONGFINISHED, DB_CALLBACK (lastfm_songfinished), 0);
 
-// {{{ lastfm v2 auth
-#if 0
-    snprintf (config, 1024, "%s/.config/deadbeef/lastfmv2", getenv ("HOME"));
-    FILE *fp = fopen (config, "rt");
-    if (fp) {
-        if (fread (lfm_sess, 1, 32, fp) != 32) {
-            lfm_sess[0] = 0;
-        }
-        else {
-            lfm_sess[32] = 0;
-        }
-        fclose (fp);
-    }
-    auth_v2 ();
-#endif
-// }}}
-
-    // load login/pass
-    strcpy (lfm_user, deadbeef->conf_get_str ("lastfm.login", ""));
-    strcpy (lfm_pass, deadbeef->conf_get_str ("lastfm.password", ""));
     return 0;
 }
 
 static int
 lastfm_stop (void) {
-    //trace ("lastfm_stop\n");
-    deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_SONGSTARTED, DB_CALLBACK (lastfm_songstarted), 0);
-    deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_SONGFINISHED, DB_CALLBACK (lastfm_songfinished), 0);
-    lfm_stopthread = 1;
-    deadbeef->cond_signal (lfm_cond);
-    deadbeef->thread_join (lfm_tid);
-    lfm_tid = -1;
-    deadbeef->cond_free (lfm_cond);
-    deadbeef->mutex_free (lfm_mutex);
+    trace ("lastfm_stop\n");
+    if (lfm_mutex) {
+        lfm_abort = 1;
+        deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_SONGSTARTED, DB_CALLBACK (lastfm_songstarted), 0);
+        deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_SONGFINISHED, DB_CALLBACK (lastfm_songfinished), 0);
+        lfm_stopthread = 1;
+        deadbeef->cond_signal (lfm_cond);
+        deadbeef->thread_join (lfm_tid);
+        lfm_tid = 0;
+        deadbeef->cond_free (lfm_cond);
+        deadbeef->mutex_free (lfm_mutex);
+    }
     return 0;
 }
 
