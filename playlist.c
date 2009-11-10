@@ -1596,7 +1596,7 @@ pl_format_title (playItem_t *it, char *s, int size, const char *fmt) {
                 if (it->_duration >= 0) {
                     int hourdur = it->_duration / (60 * 60);
                     int mindur = (it->_duration - hourdur * 60 * 60) / 60;
-                    int secdur = it->_duration - mindur * 60;
+                    int secdur = it->_duration - hourdur*60*60 - mindur * 60;
 
                     if (hourdur) {
                         snprintf (dur, sizeof (dur), "%d:%02d:%02d", hourdur, mindur, secdur);
