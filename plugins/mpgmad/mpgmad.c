@@ -154,15 +154,25 @@ extract_f32 (unsigned char *buf) {
 // return value: -1 on error
 static int
 cmp3_scan_stream (buffer_t *buffer, int sample) {
+    trace ("cmp3_scan_stream %d\n", sample);
+//    if (sample == 0) {
+//        sample = -1;
+//    }
+    int packetlength = 0;
     int nframe = 0;
     int got_xing_header = 0;
     buffer->duration = 0;
     int scansamples = 0;
     buffer->currentsample = 0;
     buffer->skipsamples = 0;
+    int fsize = 0;
+    int avg_packetlength = 0;
+    int avg_samplerate = 0;
+    int avg_samples_per_frame = 0;
 
     if (sample <= 0) {
         buffer->totalsamples = 0;
+        fsize = deadbeef->fgetlength (buffer->file);
     }
 
     for (;;) {
@@ -276,7 +286,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
         }
 
         // packetlength
-        int packetlength = 0;
+        packetlength = 0;
         bitrate *= 1000;
         float dur = 0;
         int samples_per_frame = 0;
@@ -315,7 +325,9 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
             buffer->frameduration = dur;
             buffer->channels = nchannels;
             buffer->bitspersample = 16;
-//            fprintf (stderr, "frame %d(@%d) mpeg v%d layer %d bitrate %d samplerate %d packetlength %d framedur %f channels %d\n", nframe, pos, ver, layer, bitrate, samplerate, packetlength, dur, nchannels);
+            if (packetlength != 144) {
+            trace ("frame %d(@%d) mpeg v%d layer %d bitrate %d samplerate %d packetlength %d framedur %f channels %d\n", nframe, pos, ver, layer, bitrate, samplerate, packetlength, dur, nchannels);
+            }
         }
         // try to read xing/info tag (only on initial scans)
         if (sample <= 0 && !got_xing_header)
@@ -422,37 +434,64 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
                 // xing header failed, calculate based on file size
                 trace ("xing header failed\n");
                 buffer->samplerate = samplerate;
-                int sz = deadbeef->fgetlength (buffer->file) - buffer->startoffset - buffer->endoffset;
-                if (sz < 0) {
-                    buffer->duration = -1;
-                    buffer->totalsamples = -1;
+                if (buffer->file->vfs->streaming) {
+                    // only suitable for cbr files, used if streaming
+                    int sz = deadbeef->fgetlength (buffer->file) - buffer->startoffset - buffer->endoffset;
+                    if (sz < 0) {
+                        buffer->duration = -1;
+                        buffer->totalsamples = -1;
+                        if (sample == 0) {
+                            deadbeef->fseek (buffer->file, framepos+packetlength-4, SEEK_SET);
+                        }
+                        return 0;
+                    }
+                    int nframes = sz / packetlength;
+                    buffer->duration = nframes * samples_per_frame / samplerate;
+                    buffer->totalsamples = nframes * samples_per_frame;
+//                    trace ("bitrate=%d, layer=%d, packetlength=%d, fsize=%d, nframes=%d, samples_per_frame=%d, samplerate=%d, duration=%f, totalsamples=%d\n", bitrate, layer, packetlength, sz, nframes, samples_per_frame, samplerate, buffer->duration, buffer->totalsamples);
+
                     if (sample == 0) {
                         deadbeef->fseek (buffer->file, framepos+packetlength-4, SEEK_SET);
+                        return 0;
                     }
-                    return 0;
-                }
-                int nframes = sz / packetlength;
-                buffer->duration = nframes * samples_per_frame / samplerate;
-                buffer->totalsamples = nframes * samples_per_frame;
-//                trace ("packetlength=%d, fsize=%d, nframes=%d, samples_per_frame=%d, samplerate=%d, duration=%f, totalsamples=%d\n", packetlength, sz, nframes, samples_per_frame, samplerate, buffer->duration, buffer->totalsamples);
-
-                if (sample == 0) {
-                    deadbeef->fseek (buffer->file, framepos+packetlength-4, SEEK_SET);
-                    return 0;
                 }
             }
-            deadbeef->fseek (buffer->file, framepos+packetlength-4, SEEK_SET);
-            got_xing_header = 1;
+            else {
+                deadbeef->fseek (buffer->file, framepos+packetlength-4, SEEK_SET);
+                got_xing_header = 1;
+            }
         }
 
-        if (sample >= 0 && scansamples + samples_per_frame >= sample) {
-            deadbeef->fseek (buffer->file, -4, SEEK_CUR);
-            buffer->currentsample = sample;
-            buffer->skipsamples = sample - scansamples;
-            return 0;
+        if (sample == 0) {
+            if (fsize <= 0) {
+                return -1;
+            }
+            // calculating apx duration based on 1st 100 frames
+            avg_packetlength += packetlength;
+            avg_samplerate += samplerate;
+            avg_samples_per_frame += samples_per_frame;
+            if (nframe >= 100) {
+                avg_packetlength /= nframe;
+                avg_samplerate /= nframe;
+                avg_samples_per_frame /= nframe;
+
+                trace ("avg_packetlength=%d, avg_samplerate=%d, avg_samples_per_frame=%d\n", avg_packetlength, avg_samplerate, avg_samples_per_frame);
+
+                int nframes = fsize / avg_packetlength;
+                buffer->duration = nframes * avg_samples_per_frame / avg_samplerate;
+                buffer->totalsamples = nframes * avg_samples_per_frame;
+                return 0;
+            }
+        }
+        else {
+            if (sample > 0 && scansamples + samples_per_frame >= sample) {
+                deadbeef->fseek (buffer->file, -4, SEEK_CUR);
+                buffer->currentsample = sample;
+                buffer->skipsamples = sample - scansamples;
+                return 0;
+            }
         }
         scansamples += samples_per_frame;
-
         buffer->duration += dur;
         nframe++;
         if (packetlength > 0) {
@@ -462,6 +501,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
     if (nframe == 0) {
         return -1;
     }
+    trace ("nframes=%d, packetlength=%d\n", nframe, packetlength);
     buffer->totalsamples = scansamples;
     buffer->duration = buffer->totalsamples / buffer->samplerate;
     return 0;
