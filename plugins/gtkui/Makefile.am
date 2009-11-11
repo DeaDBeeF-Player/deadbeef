@@ -5,6 +5,8 @@
 #				   callbacks.c interface.c support.c callbacks.h interface.h support.h\
 #				   gtkplaylist.c gtkplaylist.h\
 #				   drawing.h gdkdrawing.c\
+#                  progress.c progress.h\
+#                  search.c search.h\
 #				   gtksession.c
 #
 #

@@ -227,7 +227,6 @@ player_thread (uintptr_t ctx) {
                 messagepump_push (M_TERMINATE, 0, 0, 0);
             }
         }
-        plug_trigger_event (DB_EV_FRAMEUPDATE, 0);
         uint32_t msg;
         uintptr_t ctx;
         uint32_t p1;
@@ -259,22 +258,17 @@ player_thread (uintptr_t ctx) {
 #endif 
                 return;
             case M_SONGCHANGED:
-                plug_trigger_event_songchanged (p1, p2);
+                plug_trigger_event_trackchange (p1, p2);
                 break;
             case M_PLAYSONG:
-                // <placeholder>
-                // start a track
-                guiplug_start_current_track ();
+                streamer_play_current_track ();
                 break;
             case M_TRACKCHANGED:
-                // <placeholder>
-                // notify gui that track information was changed
-                guiplug_track_changed (p1);
+                plug_trigger_event_trackinfochanged (p1);
                 break;
             case M_PLAYSONGNUM:
-                // <placeholder>
-                // start track by number in p1
-                guiplug_start_track (p1);
+                p_stop ();
+                streamer_set_nextsong (p1, 1);
                 break;
             case M_STOPSONG:
                 streamer_set_nextsong (-2, 0);
@@ -290,54 +284,48 @@ player_thread (uintptr_t ctx) {
             case M_PAUSESONG:
                 if (p_ispaused ()) {
                     p_unpause ();
+                    plug_trigger_event_paused (0);
                 }
                 else {
                     p_pause ();
-                }
-                // <placeholder>
-                // notify that current track was paused
-                if (playlist_current_ptr) {
-                    guiplug_track_paused (pl_get_idx_of (playlist_current_ptr));
+                    plug_trigger_event_paused (1);
                 }
                 break;
             case M_PLAYRANDOM:
-                // <placeholder>
-                // play random song
-                guiplug_start_random ();
+                p_stop ();
+                pl_randomsong ();
                 break;
             case M_ADDDIR:
                 // <placeholder>
                 // * let guiplug know that addition is in progress
                 // * call it back on every file
                 // * let guiplug know that addition is done
-                guiplug_add_dir ((char *)ctx);
+                // guiplug_add_dir ((char *)ctx);
                 break;
             case M_ADDDIRS:
                 // <placeholder>
                 // same as above, but for many folders
-                guiplug_add_dirs ((GSList *)ctx);
+                // guiplug_add_dirs ((GSList *)ctx);
                 break;
             case M_ADDFILES:
                 // <placeholder>
                 // same as above but for many files
-                guiplug_add_files ((GSList *)ctx);
+                // guiplug_add_files ((GSList *)ctx);
                 break;
             case M_OPENFILES:
                 p_stop ();
                 // <placeholder>
                 // open many files and start 1st of them
-                guiplug_open_files ((GSList *)ctx);
+                // guiplug_open_files ((GSList *)ctx);
                 break;
             case M_FMDRAGDROP:
                 // <placeholder>
                 // handle drag-n-drop from filemanager
                 // that should be handled internally in ui plugin
-                guiplug_add_fm_dropped_files ((char *)ctx, p1, p2)
+                // guiplug_add_fm_dropped_files ((char *)ctx, p1, p2)
                 break;
             case M_PLAYLISTREFRESH:
-                // <placeholder>
-                // refresh all playlist windows
-                guiplug_refresh_playlist ();
+                plug_trigger_event_playlistchanged ();
                 break;
             case M_CONFIGCHANGED:
                 palsa_configchanged ();
@@ -347,7 +335,7 @@ player_thread (uintptr_t ctx) {
             }
         }
         usleep(50000);
-        guiplug_frameupdate ();
+        plug_trigger_event (DB_EV_FRAMEUPDATE, 0);
     }
 }
 
@@ -474,58 +462,7 @@ main (int argc, char *argv[]) {
 //    p_init ();
     thread_start (player_thread, 0);
 
-    g_thread_init (NULL);
-    add_pixmap_directory (PREFIX "/share/deadbeef/pixmaps");
-    gdk_threads_init ();
-    gdk_threads_enter ();
-    gtk_set_locale ();
-    gtk_init (&argc, &argv);
-
-    // system tray icon
-    traymenu = create_traymenu ();
-    GdkPixbuf *trayicon_pixbuf = create_pixbuf ("play_24.png");
-    trayicon = gtk_status_icon_new_from_pixbuf (trayicon_pixbuf);
-    set_tray_tooltip ("DeaDBeeF");
-    //gtk_status_icon_set_title (GTK_STATUS_ICON (trayicon), "DeaDBeeF");
-#if GTK_MINOR_VERSION <= 14
-    g_signal_connect ((gpointer)trayicon, "activate", G_CALLBACK (on_trayicon_activate), NULL);
-#else
-    g_signal_connect ((gpointer)trayicon, "scroll_event", G_CALLBACK (on_trayicon_scroll_event), NULL);
-    g_signal_connect ((gpointer)trayicon, "button_press_event", G_CALLBACK (on_trayicon_button_press_event), NULL);
-#endif
-    g_signal_connect ((gpointer)trayicon, "popup_menu", G_CALLBACK (on_trayicon_popup_menu), NULL);
-
-    gtkpl_init ();
-
-    mainwin = create_mainwin ();
-    GdkPixbuf *mainwin_icon_pixbuf;
-    mainwin_icon_pixbuf = create_pixbuf ("play_24.png");
-    if (mainwin_icon_pixbuf)
-    {
-        gtk_window_set_icon (GTK_WINDOW (mainwin), mainwin_icon_pixbuf);
-        gdk_pixbuf_unref (mainwin_icon_pixbuf);
-    }
-    session_restore_window_attrs ((uintptr_t)mainwin);
     volume_set_db (conf_get_float ("playback.volume", 0));
-    // order and looping
-    const char *orderwidgets[3] = { "order_linear", "order_shuffle", "order_random" };
-    const char *loopingwidgets[3] = { "loop_all", "loop_disable", "loop_single" };
-    const char *w;
-    w = orderwidgets[conf_get_int ("playback.order", 0)];
-    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, w)), TRUE);
-    w = loopingwidgets[conf_get_int ("playback.loop", 0)];
-    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, w)), TRUE);
-    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "scroll_follows_playback")), conf_get_int ("playlist.scroll.followplayback", 0) ? TRUE : FALSE);
-
-    searchwin = create_searchwin ();
-    gtk_window_set_transient_for (GTK_WINDOW (searchwin), GTK_WINDOW (mainwin));
-    extern void main_playlist_init (GtkWidget *widget);
-    main_playlist_init (lookup_widget (mainwin, "playlist"));
-    extern void search_playlist_init (GtkWidget *widget);
-    search_playlist_init (lookup_widget (searchwin, "searchlist"));
-
-    progress_init ();
-
     if (argc > 1) {
         int res = exec_command_line (cmdline, size, 0);
         if (res == -1) {
@@ -537,17 +474,12 @@ main (int argc, char *argv[]) {
         }
     }
 
-    gtk_widget_show (mainwin);
-    gtk_main ();
     // save config
     pl_save (defpl);
     conf_save ();
     // stop receiving messages from outside
     server_close ();
     // at this point we can simply do exit(0), but let's clean up for debugging
-    gtkpl_free (&main_playlist);
-    gtkpl_free (&search_playlist);
-    gdk_threads_leave ();
     messagepump_free ();
     p_free ();
     streamer_free ();

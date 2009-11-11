@@ -50,6 +50,8 @@
 
 playItem_t *playlist_head[PL_MAX_ITERATORS];
 playItem_t *playlist_tail[PL_MAX_ITERATORS];
+int playlist_current_row[PL_MAX_ITERATORS];
+
 playItem_t *playlist_current_ptr;
 int pl_count = 0;
 float pl_totaltime = 0;

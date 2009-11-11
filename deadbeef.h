@@ -97,19 +97,25 @@ enum {
 
 typedef struct {
     int event;
-    double time;
+    time_t time;
 } DB_event_t;
 
 typedef struct {
     DB_event_t ev;
-    DB_playItem_t *song;
-} DB_event_song_t;
+    int index;
+    DB_playItem_t *track;
+} DB_event_track_t;
 
 typedef struct {
     DB_event_t ev;
     int from;
     int to;
-} DB_event_songchange_t;
+} DB_event_trackchange_t;
+
+typedef struct {
+    DB_event_t ev;
+    int state;
+} DB_event_state_t;
 
 typedef struct DB_conf_item_s {
     char *key;
@@ -129,6 +135,10 @@ enum {
     DB_EV_TRACKDELETED = 4, // triggers when track is to be deleted from playlist
     DB_EV_CONFIGCHANGED = 5, // configuration option changed
     DB_EV_ACTIVATE = 6, // will be fired every time player is activated
+    DB_EV_TRACKINFOCHANGED = 7, // notify plugins that trackinfo was changed
+    DB_EV_PAUSED = 8, // player was paused or unpaused
+    DB_EV_PLAYLISTCHANGED = 9, // playlist contents were changed
+    DB_EV_VOLUMECHANGED = 10, // volume was changed
     DB_EV_MAX
 };
 
@@ -262,9 +272,6 @@ typedef struct {
     int (*conf_get_int) (const char *key, int def);
     void (*conf_set_str) (const char *key, const char *val);
     DB_conf_item_t * (*conf_find) (const char *group, DB_conf_item_t *prev);
-    // gui locking
-    void (*gui_lock) (void);
-    void (*gui_unlock) (void);
     // exporting plugin conf options for gui
     // all exported options are grouped by plugin, and will be available to user
     // from gui

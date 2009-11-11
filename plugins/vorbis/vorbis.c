@@ -354,8 +354,8 @@ cvorbis_insert (DB_playItem_t *after, const char *fname) {
 }
 
 static int
-vorbis_trackdeleted (DB_event_song_t *ev, uintptr_t data) {
-    if (ev->song == ptrack) {
+vorbis_trackdeleted (DB_event_track_t *ev, uintptr_t data) {
+    if (ev->track == ptrack) {
         ptrack = NULL;
     }
     return 0;

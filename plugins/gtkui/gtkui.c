@@ -235,18 +235,6 @@ guiplug_start_current_track (void) {
         GDK_THREADS_LEAVE();
     }
 }
-void
-guiplug_track_changed (int idx) {
-    playItem_t *it = pl_get_for_idx (idx);
-    if (it) {
-        GDK_THREADS_ENTER();
-        gtkpl_redraw_pl_row (&main_playlist, idx, it);
-        if (it == playlist_current_ptr) {
-            gtkpl_current_track_changed (it);
-        }
-        GDK_THREADS_LEAVE();
-    }
-}
 
 void
 guiplug_start_track (int idx) {
@@ -256,17 +244,9 @@ guiplug_start_track (int idx) {
 }
 
 void
-guiplug_track_paused (int idx) {
-    GDK_THREADS_ENTER();
-    gtkpl_redraw_pl_row (&main_playlist, idx, pl_get_for_idx (idx));
-    GDK_THREADS_LEAVE();
-}
-
-void
 guiplug_start_random (void) {
-    GDK_THREADS_ENTER();
-    gtkpl_randomsong ();
-    GDK_THREADS_LEAVE();
+    // <deprecated>
+    assert (0);
 }
 
 void
@@ -300,20 +280,13 @@ guiplug_open_files (GSList *files) {
 
 void
 guiplug_refresh_playlist (void) {
-    GDK_THREADS_ENTER();
-    playlist_refresh ();
-    search_refresh ();
-    GDK_THREADS_LEAVE();
+    // <deprecated>
+    assert (0);
 }
 
 void
 guiplug_add_fm_dropped_files (char *files, int p1, int p2) {
     gtkpl_add_fm_dropped_files (&main_playlist, (char *)ctx, p1, p2);
-}
-
-void
-guiplug_frameupdate (void) {
-    update_songinfo ();
 }
 
 static int
@@ -325,14 +298,110 @@ gtkui_on_activate (DB_event_t *ev, uintptr_t data) {
 }
 
 static int
-gtkui_on_songchanged (DB_event_song_t *ev, uintptr_t data) {
+gtkui_on_songchanged (DB_event_songchange_t *ev, uintptr_t data) {
     gtkpl_songchanged_wrapper (from, to);
 }
 
 static int
+gtkui_on_trackinfochanged (DB_event_track_t *ev, uintptr_t data) {
+    GDK_THREADS_ENTER();
+    gtkpl_redraw_pl_row (&main_playlist, ev->index, ev->track);
+    if (ev->track == playlist_current_ptr) {
+        gtkpl_current_track_changed (ev->track);
+    }
+    GDK_THREADS_LEAVE();
+}
+
+static int
+gtkui_on_paused (DB_event_state_t *ev, uintptr_t data) {
+    GDK_THREADS_ENTER();
+    gtkpl_redraw_pl_row (&main_playlist, pl_get_idx_of (playlist_current_ptr), playlist_current_ptr);
+    GDK_THREADS_LEAVE();
+}
+
+static int
+gtkui_on_playlistchanged (DB_event_t *ev, uintptr_t data) {
+    GDK_THREADS_ENTER();
+    playlist_refresh ();
+    search_refresh ();
+    GDK_THREADS_LEAVE();
+}
+
+static int
+gtkui_on_frameupdate (DB_event_t *ev, uintptr_t data) {
+    update_songinfo ();
+}
+
+static int
+gtkui_on_volumechanged (DB_event_t *ev, uintptr_t data) {
+    void volumebar_notify_changed (void); // FIXME: do it properly
+    volumebar_notify_changed ();
+}
+
+static int
 gtkui_start (void) {
+    // let's start some gtk
+    g_thread_init (NULL);
+    add_pixmap_directory (PREFIX "/share/deadbeef/pixmaps");
+    gdk_threads_init ();
+    gdk_threads_enter ();
+    gtk_set_locale ();
+    gtk_init (&argc, &argv);
+
+    // system tray icon
+    traymenu = create_traymenu ();
+    GdkPixbuf *trayicon_pixbuf = create_pixbuf ("play_24.png");
+    trayicon = gtk_status_icon_new_from_pixbuf (trayicon_pixbuf);
+    set_tray_tooltip ("DeaDBeeF");
+    //gtk_status_icon_set_title (GTK_STATUS_ICON (trayicon), "DeaDBeeF");
+#if GTK_MINOR_VERSION <= 14
+    g_signal_connect ((gpointer)trayicon, "activate", G_CALLBACK (on_trayicon_activate), NULL);
+#else
+    g_signal_connect ((gpointer)trayicon, "scroll_event", G_CALLBACK (on_trayicon_scroll_event), NULL);
+    g_signal_connect ((gpointer)trayicon, "button_press_event", G_CALLBACK (on_trayicon_button_press_event), NULL);
+#endif
+    g_signal_connect ((gpointer)trayicon, "popup_menu", G_CALLBACK (on_trayicon_popup_menu), NULL);
+
+    gtkpl_init ();
+
+    mainwin = create_mainwin ();
+    GdkPixbuf *mainwin_icon_pixbuf;
+    mainwin_icon_pixbuf = create_pixbuf ("play_24.png");
+    if (mainwin_icon_pixbuf)
+    {
+        gtk_window_set_icon (GTK_WINDOW (mainwin), mainwin_icon_pixbuf);
+        gdk_pixbuf_unref (mainwin_icon_pixbuf);
+    }
+    session_restore_window_attrs ((uintptr_t)mainwin);
+    // order and looping
+    const char *orderwidgets[3] = { "order_linear", "order_shuffle", "order_random" };
+    const char *loopingwidgets[3] = { "loop_all", "loop_disable", "loop_single" };
+    const char *w;
+    w = orderwidgets[conf_get_int ("playback.order", 0)];
+    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, w)), TRUE);
+    w = loopingwidgets[conf_get_int ("playback.loop", 0)];
+    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, w)), TRUE);
+    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "scroll_follows_playback")), conf_get_int ("playlist.scroll.followplayback", 0) ? TRUE : FALSE);
+
+    searchwin = create_searchwin ();
+    gtk_window_set_transient_for (GTK_WINDOW (searchwin), GTK_WINDOW (mainwin));
+    extern void main_playlist_init (GtkWidget *widget);
+    main_playlist_init (lookup_widget (mainwin, "playlist"));
+    extern void search_playlist_init (GtkWidget *widget);
+    search_playlist_init (lookup_widget (searchwin, "searchlist"));
+
+    progress_init ();
+    gtk_widget_show (mainwin);
+
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_ACTIVATE, DB_CALLBACK (gtkui_on_activate), 0);
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_SONGCHANGED, DB_CALLBACK (gtkui_on_songchanged), 0);
+    deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_TRACKINFOCHANGED, DB_CALLBACK (gtkui_on_trackinfochanged), 0);
+    deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_PAUSED, DB_CALLBACK (gtkui_on_paused), 0);
+    deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_PLAYLISTCHANGED, DB_CALLBACK (gtkui_on_playlistchanged), 0);
+    deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_FRAMEUPDATE, DB_CALLBACK (gtkui_on_frameupdate), 0);
+    deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_VOLUMECHANGED, DB_CALLBACK (gtkui_on_volumechanged), 0);
+    gtk_main ();
+
     return 0;
 }
 
@@ -340,6 +409,14 @@ static int
 gtkui_stop (void) {
     deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_ACTIVATE, DB_CALLBACK (gtkui_on_activate), 0);
     deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_SONGCHANGED, DB_CALLBACK (gtkui_on_songchanged), 0);
+    deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_TRACKINFOCHANGED, DB_CALLBACK (gtkui_on_trackinfochanged), 0);
+    deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_PAUSED, DB_CALLBACK (gtkui_on_paused), 0);
+    deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_PLAYLISTCHANGED, DB_CALLBACK (gtkui_on_playlistchanged), 0);
+    deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_FRAMEUPDATE, DB_CALLBACK (gtkui_on_frameupdate), 0);
+    deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_VOLUMECHANGED, DB_CALLBACK (gtkui_on_volumechanged), 0);
+    gtkpl_free (&main_playlist);
+    gtkpl_free (&search_playlist);
+    gdk_threads_leave ();
     return 0;
 }
 

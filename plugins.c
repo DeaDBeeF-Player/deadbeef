@@ -22,7 +22,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <gtk/gtk.h>
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
 #endif
@@ -30,7 +29,6 @@
 #include "md5/md5.h"
 #include "messagepump.h"
 #include "threading.h"
-#include "progress.h"
 #include "playlist.h"
 #include "volume.h"
 #include "streamer.h"
@@ -122,8 +120,6 @@ static DB_functions_t deadbeef_api = {
     .conf_get_int = conf_get_int,
     .conf_set_str = conf_set_str,
     .conf_find = conf_find,
-    .gui_lock = plug_gui_lock,
-    .gui_unlock = plug_gui_unlock,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;
@@ -134,18 +130,15 @@ plug_get_config_dir (void) {
 }
 
 void
-volumebar_notify_changed (void);
-
-void
 plug_volume_set_db (float db) {
     volume_set_db (db);
-    volumebar_notify_changed ();
+    plug_trigger_event_volumechanged ();
 }
 
 void
 plug_volume_set_amp (float amp) {
     volume_set_amp (amp);
-    volumebar_notify_changed ();
+    plug_trigger_event_volumechanged ();
 }
 
 #define MAX_PLUGINS 100
@@ -156,16 +149,6 @@ DB_decoder_t *g_decoder_plugins[MAX_DECODER_PLUGINS+1];
 
 #define MAX_VFS_PLUGINS 10
 DB_vfs_t *g_vfs_plugins[MAX_VFS_PLUGINS+1];
-
-void
-plug_gui_lock (void) {
-    gdk_threads_enter ();
-}
-
-void
-plug_gui_unlock (void) {
-    gdk_threads_leave ();
-}
 
 void
 plug_md5 (uint8_t sig[16], const char *in, int len) {
@@ -277,66 +260,90 @@ plug_playback_set_pos (float pos) {
 
 void 
 plug_quit (void) {
-    progress_abort ();
+    // FIXME progress_abort ();
     messagepump_push (M_TERMINATE, 0, 0, 0);
 }
 
 /////// non-api functions (plugin support)
 void
 plug_event_call (DB_event_t *ev) {
+    ev->time = time (NULL);
+    mutex_lock (mutex);
     for (int i = 0; i < MAX_HANDLERS; i++) {
-        if (handlers[ev->event][i].plugin && !handlers[ev][i].plugin->inactive) {
-            handlers[ev->event][i].callback (event, handlers[ev->event][i].data);
+        if (handlers[ev->event][i].plugin && !handlers[ev->event][i].plugin->inactive) {
+            handlers[ev->event][i].callback (ev, handlers[ev->event][i].data);
         }
     }
+    mutex_unlock (mutex);
 }
 
 void
 plug_trigger_event (int ev, uintptr_t param) {
-    mutex_lock (mutex);
     DB_event_t *event;
     switch (ev) {
     case DB_EV_SONGSTARTED:
     case DB_EV_SONGFINISHED:
         {
-        DB_event_song_t *pev = _alloca (sizeof (DB_event_song_t));
-        pev->song = DB_PLAYITEM (&str_playing_song);
+        DB_event_track_t *pev = alloca (sizeof (DB_event_track_t));
+        pev->index = -1;
+        pev->track = DB_PLAYITEM (&str_playing_song);
         event = DB_EVENT (pev);
         }
         break;
     case DB_EV_TRACKDELETED:
         {
-            DB_event_song_t *pev = _alloca (sizeof (DB_event_song_t));
-            pev->song = DB_PLAYITEM (param);
+            DB_event_track_t *pev = alloca (sizeof (DB_event_track_t));
+            pev->index = -1; // FIXME
+            pev->track = DB_PLAYITEM (param);
             event = DB_EVENT (pev);
         }
         break;
     default:
-        event = _alloca (sizeof (DB_event_t));
+        event = alloca (sizeof (DB_event_t));
     }
     event->event = ev;
-    event->time = (double)clock () / CLOCKS_PER_SEC;
     plug_event_call (event);
-    mutex_unlock (mutex);
 }
 
 void
-plug_trigger_event_songchanged (int from, int to) {
-    mutex_lock (mutex);
-    DB_event_songchange_t event;
+plug_trigger_event_trackchange (int from, int to) {
+    DB_event_trackchange_t event;
     event.ev.event = DB_EV_SONGCHANGED;
-    event.ev.time = (double)clock () / CLOCKS_PER_SEC;
     event.from = from;
     event.to = to;
-
-    for (int i = 0; i < MAX_HANDLERS; i++) {
-        if (handlers[ev][i].plugin && !handlers[ev][i].plugin->inactive) {
-            handlers[ev][i].callback (event.ev.event, handlers[ev][i].data);
-        }
-    }
-    free (event);
-    mutex_unlock (mutex);
+    plug_event_call (DB_EVENT (&event));
 }
+void
+plug_trigger_event_trackinfochanged (int trk) {
+    DB_event_track_t event;
+    event.ev.event = DB_EV_SONGCHANGED;
+    event.index = trk;
+    event.track = DB_PLAYITEM (pl_get_for_idx (trk));
+    plug_event_call (DB_EVENT (&event));
+}
+
+void
+plug_trigger_event_paused (int paused) {
+    DB_event_state_t event;
+    event.ev.event = DB_EV_PAUSED;
+    event.state = paused;
+    plug_event_call (DB_EVENT (&event));
+}
+
+void
+plug_trigger_event_playlistchanged (void) {
+    DB_event_t event;
+    event.event = DB_EV_PLAYLISTCHANGED;
+    plug_event_call (DB_EVENT (&event));
+}
+
+void
+plug_trigger_event_volumechanged (void) {
+    DB_event_t event;
+    event.event = DB_EV_VOLUMECHANGED;
+    plug_event_call (DB_EVENT (&event));
+}
+
 int
 plug_init_plugin (DB_plugin_t* (*loadfunc)(DB_functions_t *), void *handle) {
     DB_plugin_t *plugin_api = loadfunc (&deadbeef_api);

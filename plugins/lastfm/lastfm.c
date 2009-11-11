@@ -445,9 +445,9 @@ lfm_format_uri (int subm, DB_playItem_t *song, char *out, int outl) {
 }
 
 static int
-lastfm_songstarted (DB_event_song_t *ev, uintptr_t data) {
+lastfm_songstarted (DB_event_track_t *ev, uintptr_t data) {
     deadbeef->mutex_lock (lfm_mutex);
-    if (lfm_format_uri (-1, ev->song, lfm_nowplaying, sizeof (lfm_nowplaying)) < 0) {
+    if (lfm_format_uri (-1, ev->track, lfm_nowplaying, sizeof (lfm_nowplaying)) < 0) {
         lfm_nowplaying[0] = 0;
     }
 //    trace ("%s\n", lfm_nowplaying);
@@ -460,28 +460,28 @@ lastfm_songstarted (DB_event_song_t *ev, uintptr_t data) {
 }
 
 static int
-lastfm_songfinished (DB_event_song_t *ev, uintptr_t data) {
+lastfm_songfinished (DB_event_track_t *ev, uintptr_t data) {
     trace ("lfm songfinished\n");
 #if !LFM_IGNORE_RULES
     // check submission rules
     // duration must be >= 30 sec
-    if (deadbeef->pl_get_item_duration (ev->song) < 30) {
-        trace ("song duration is %f seconds. not eligible for submission\n", ev->song->duration);
+    if (deadbeef->pl_get_item_duration (ev->track) < 30) {
+        trace ("track duration is %f seconds. not eligible for submission\n", ev->song->duration);
         return 0;
     }
     // must be played for >=240sec of half the total time
-    if (ev->song->playtime < 240 && ev->song->playtime < deadbeef->pl_get_item_duration (ev->song)/2) {
-        trace ("song playtime=%f seconds. not eligible for submission\n", ev->song->playtime);
+    if (ev->track->playtime < 240 && ev->track->playtime < deadbeef->pl_get_item_duration (ev->track)/2) {
+        trace ("track playtime=%f seconds. not eligible for submission\n", ev->track->playtime);
         return 0;
     }
 
 #endif
 
-    if (!deadbeef->pl_find_meta (ev->song, "artist")
-            || !deadbeef->pl_find_meta (ev->song, "title")
-//            || !deadbeef->pl_find_meta (ev->song, "album")
+    if (!deadbeef->pl_find_meta (ev->track, "artist")
+            || !deadbeef->pl_find_meta (ev->track, "title")
+//            || !deadbeef->pl_find_meta (ev->track, "album")
        ) {
-        trace ("lfm: not enough metadata for submission, artist=%s, title=%s, album=%s\n", deadbeef->pl_find_meta (ev->song, "artist"), deadbeef->pl_find_meta (ev->song, "title"), deadbeef->pl_find_meta (ev->song, "album"));
+        trace ("lfm: not enough metadata for submission, artist=%s, title=%s, album=%s\n", deadbeef->pl_find_meta (ev->track, "artist"), deadbeef->pl_find_meta (ev->track, "title"), deadbeef->pl_find_meta (ev->track, "album"));
         return 0;
     }
     deadbeef->mutex_lock (lfm_mutex);
@@ -490,7 +490,7 @@ lastfm_songfinished (DB_event_song_t *ev, uintptr_t data) {
         if (!lfm_subm_queue[i]) {
             trace ("lfm: song is now in queue for submission\n");
             lfm_subm_queue[i] = deadbeef->pl_item_alloc ();
-            deadbeef->pl_item_copy (lfm_subm_queue[i], ev->song);
+            deadbeef->pl_item_copy (lfm_subm_queue[i], ev->track);
             break;
         }
     }

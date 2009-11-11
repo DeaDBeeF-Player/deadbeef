@@ -38,7 +38,19 @@ void
 plug_trigger_event (int ev, uintptr_t param);
 
 void
-plug_trigger_event_songchanged (int from, int to);
+plug_trigger_event_trackchange (int from, int to);
+
+void
+plug_trigger_event_trackinfochanged (int trk);
+
+void
+plug_trigger_event_paused (int paused);
+
+void
+plug_trigger_event_playlistchanged (void);
+
+void
+plug_trigger_event_volumechanged (void);
 
 void
 plug_md5 (uint8_t sig[16], const char *in, int len);

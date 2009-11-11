@@ -932,14 +932,16 @@ gtkpl_hscroll (gtkplaylist_t *ps, int newscroll) {
 
 void
 gtkpl_randomsong (void) {
-    p_stop ();
-    pl_randomsong ();
+// <deprecated>
+//    p_stop ();
+//    pl_randomsong ();
 }
 
 void
 gtkpl_playsongnum (int idx) {
-    p_stop ();
-    streamer_set_nextsong (idx, 1);
+// <deprecated>
+//    p_stop ();
+//    streamer_set_nextsong (idx, 1);
 }
 
 void
