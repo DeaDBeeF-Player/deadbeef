@@ -15,7 +15,6 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include <gtk/gtk.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
@@ -33,19 +32,13 @@
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
 #endif
-#include "interface.h"
-#include "callbacks.h"
-#include "support.h"
 #include "playlist.h"
 #include "playback.h"
 #include "unistd.h"
 #include "threading.h"
 #include "messagepump.h"
-#include "gtkplaylist.h"
 #include "codec.h"
 #include "streamer.h"
-#include "search.h"
-#include "progress.h"
 #include "conf.h"
 #include "volume.h"
 #include "session.h"
@@ -60,116 +53,6 @@ char confdir[1024]; // $HOME/.config
 char dbconfdir[1024]; // $HOME/.config/deadbeef
 char defpl[1024]; // $HOME/.config/deadbeef/default.dbpl
 char sessfile[1024]; // $HOME/.config/deadbeef/session
-
-// main widgets
-GtkWidget *mainwin;
-GtkWidget *searchwin;
-GtkStatusIcon *trayicon;
-GtkWidget *traymenu;
-
-// playlist configuration structures
-gtkplaylist_t main_playlist;
-gtkplaylist_t search_playlist;
-
-// update status bar and window title
-static int sb_context_id = -1;
-static char sb_text[512];
-static float last_songpos = -1;
-
-void
-update_songinfo (void) {
-    char sbtext_new[512] = "-";
-    float songpos = last_songpos;
-
-    int daystotal = (int)pl_totaltime / (3600*24);
-    int hourtotal = ((int)pl_totaltime / 3600) % 24;
-    int mintotal = ((int)pl_totaltime/60) % 60;
-    int sectotal = ((int)pl_totaltime) % 60;
-
-    char totaltime_str[512] = "";
-    if (daystotal == 0)
-        snprintf (totaltime_str, sizeof (totaltime_str), "%d:%02d:%02d", hourtotal, mintotal, sectotal);
-
-    else if (daystotal == 1)
-        snprintf (totaltime_str, sizeof (totaltime_str), "1 day %d:%02d:%02d", hourtotal, mintotal, sectotal);
-
-    else
-        snprintf (totaltime_str, sizeof (totaltime_str), "%d days %d:%02d:%02d", daystotal, hourtotal, mintotal, sectotal);
-
-    if (p_isstopped ()) {
-        snprintf (sbtext_new, sizeof (sbtext_new), "Stopped | %s total playtime", totaltime_str);
-        songpos = 0;
-    }
-    else if (str_playing_song.decoder) {
-//        codec_lock ();
-        DB_decoder_t *c = str_playing_song.decoder;
-        float playpos = streamer_get_playpos ();
-        int minpos = playpos / 60;
-        int secpos = playpos - minpos * 60;
-        int mindur = str_playing_song._duration / 60;
-        int secdur = str_playing_song._duration - mindur * 60;
-
-        const char *mode = c->info.channels == 1 ? "Mono" : "Stereo";
-        int samplerate = c->info.samplerate;
-        int bitspersample = c->info.bps;
-        songpos = playpos;
-//        codec_unlock ();
-
-        char t[100];
-        if (str_playing_song._duration >= 0) {
-            snprintf (t, sizeof (t), "%d:%02d", mindur, secdur);
-        }
-        else {
-            strcpy (t, "-:--");
-        }
-
-        char sbitrate[20] = "";
-#if 0 // NOTE: do not enable that for stable branch yet
-        int bitrate = streamer_get_bitrate ();
-        if (bitrate > 0) {
-            snprintf (sbitrate, sizeof (sbitrate), "%d kbps ", bitrate);
-        }
-#endif
-        const char *spaused = p_ispaused () ? "Paused | " : "";
-        snprintf (sbtext_new, sizeof (sbtext_new), "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d songs | %s total playtime", spaused, str_playing_song.filetype ? str_playing_song.filetype:"-", sbitrate, samplerate, bitspersample, mode, minpos, secpos, t, pl_getcount (), totaltime_str);
-    }
-
-    if (strcmp (sbtext_new, sb_text)) {
-        strcpy (sb_text, sbtext_new);
-
-        // form statusline
-        GDK_THREADS_ENTER();
-        // FIXME: don't update if window is not visible
-        GtkStatusbar *sb = GTK_STATUSBAR (lookup_widget (mainwin, "statusbar"));
-        if (sb_context_id == -1) {
-            sb_context_id = gtk_statusbar_get_context_id (sb, "msg");
-        }
-
-        gtk_statusbar_pop (sb, sb_context_id);
-        gtk_statusbar_push (sb, sb_context_id, sb_text);
-
-        GDK_THREADS_LEAVE();
-    }
-
-    if (songpos != last_songpos) {
-        void seekbar_draw (GtkWidget *widget);
-        void seekbar_expose (GtkWidget *widget, int x, int y, int w, int h);
-        if (mainwin) {
-            GtkWidget *widget = lookup_widget (mainwin, "seekbar");
-            // translate volume to seekbar pixels
-            songpos /= str_playing_song._duration;
-            songpos *= widget->allocation.width;
-            if ((int)(songpos*2) != (int)(last_songpos*2)) {
-                GDK_THREADS_ENTER();
-                seekbar_draw (widget);
-                seekbar_expose (widget, 0, 0, widget->allocation.width, widget->allocation.height);
-                GDK_THREADS_LEAVE();
-                last_songpos = songpos;
-            }
-        }
-    }
-}
-
 
 // -1 error, program must exit with error code -1
 //  0 proceed normally as nothing happened
@@ -236,7 +119,9 @@ exec_command_line (const char *cmdline, int len, int filter) {
         // add files
         if (!queue) {
             pl_free ();
-            main_playlist.row = -1;
+            // <placeholder>
+            // reset selection in playlist
+            guiplug_reset_selection ();
         }
         while (parg < pend) {
             char resolved[PATH_MAX];
@@ -316,17 +201,17 @@ server_update (void) {
         int size;
         if ((size = recv (s2, str, 2048, 0)) >= 0) {
             if (size == 1 && str[0] == 0) {
-                GDK_THREADS_ENTER();
-                gtk_widget_show (mainwin);
-                gtk_window_present (GTK_WINDOW (mainwin));
-                GDK_THREADS_LEAVE();
+            // <placeholder>
+            // should notify gui plugin that user tried to run
+            // application while already running
+                guiplug_showwindow ();
             }
             else {
                 int res = exec_command_line (str, size, 0);
                 if (res == 2) {
-                    GDK_THREADS_ENTER();
-                    gtkpl_playsong (&main_playlist);
-                    GDK_THREADS_LEAVE();
+                    // <placeholder>
+                    // play a song, notify gui plugin
+                    guiplug_play_current_song ();
                 }
             }
         }
@@ -369,60 +254,47 @@ player_thread (uintptr_t ctx) {
                 }
                 break;
             case M_TERMINATE:
-                GDK_THREADS_ENTER();
-                gtk_widget_hide (mainwin);
-                gtk_main_quit ();
-                GDK_THREADS_LEAVE();
+                // <placeholder>
+                // tell gui plugin to shut down
+                // FIXME: cleanup properly on main thread
+                guiplug_shutdown ();
                 return;
             case M_SONGCHANGED:
                 {
                     int from = p1;
                     int to = p2;
-                    gtkpl_songchanged_wrapper (from, to);
+                    // <placeholder>
+                    // notify gui that song was changed
+                    // probably using DB_EV_SONGCHANGED
+                    guiplug_songchanged (from, to);
                     plug_trigger_event (DB_EV_SONGCHANGED, 0);
                 }
                 break;
             case M_PLAYSONG:
-                gtkpl_playsong (&main_playlist);
-                if (playlist_current_ptr) {
-                    GDK_THREADS_ENTER();
-                    gtkpl_redraw_pl_row (&main_playlist, pl_get_idx_of (playlist_current_ptr), playlist_current_ptr);
-                    GDK_THREADS_LEAVE();
-                }
+                // <placeholder>
+                // start a track
+                guiplug_start_current_track ();
                 break;
             case M_TRACKCHANGED:
-                {
-                    playItem_t *it = pl_get_for_idx (p1);
-                    if (it) {
-                        GDK_THREADS_ENTER();
-                        gtkpl_redraw_pl_row (&main_playlist, p1, it);
-                        if (it == playlist_current_ptr) {
-                            gtkpl_current_track_changed (it);
-                        }
-                        GDK_THREADS_LEAVE();
-                    }
-                }
+                // <placeholder>
+                // notify gui that track information was changed
+                guiplug_track_changed (p1);
                 break;
             case M_PLAYSONGNUM:
-                GDK_THREADS_ENTER();
-                gtkpl_playsongnum (p1);
-                GDK_THREADS_LEAVE();
+                // <placeholder>
+                // start track by number in p1
+                guiplug_start_track (p1);
                 break;
             case M_STOPSONG:
-                //p_stop ();
                 streamer_set_nextsong (-2, 0);
                 break;
             case M_NEXTSONG:
-                GDK_THREADS_ENTER();
                 p_stop ();
                 pl_nextsong (1);
-                GDK_THREADS_LEAVE();
                 break;
             case M_PREVSONG:
-                GDK_THREADS_ENTER();
                 p_stop ();
                 pl_prevsong ();
-                GDK_THREADS_LEAVE();
                 break;
             case M_PAUSESONG:
                 if (p_ispaused ()) {
@@ -431,52 +303,50 @@ player_thread (uintptr_t ctx) {
                 else {
                     p_pause ();
                 }
-
-                GDK_THREADS_ENTER();
+                // <placeholder>
+                // notify that current track was paused
                 if (playlist_current_ptr) {
-                    gtkpl_redraw_pl_row (&main_playlist, pl_get_idx_of (playlist_current_ptr), playlist_current_ptr);
+                    guiplug_track_paused (pl_get_idx_of (playlist_current_ptr));
                 }
-                GDK_THREADS_LEAVE();
                 break;
             case M_PLAYRANDOM:
-                GDK_THREADS_ENTER();
-                gtkpl_randomsong ();
-                GDK_THREADS_LEAVE();
+                // <placeholder>
+                // play random song
+                guiplug_start_random ();
                 break;
             case M_ADDDIR:
-                {
-                // long time processing
-//                float t1 = (float)clock () / CLOCKS_PER_SEC;
-                gtkpl_add_dir (&main_playlist, (char *)ctx);
-//                float t2 = (float)clock () / CLOCKS_PER_SEC;
-//                printf ("time: %f\n", t2-t1);
-                }
+                // <placeholder>
+                // * let guiplug know that addition is in progress
+                // * call it back on every file
+                // * let guiplug know that addition is done
+                guiplug_add_dir ((char *)ctx);
                 break;
             case M_ADDDIRS:
-                {
-                // long time processing
-//                float t1 = (float)clock () / CLOCKS_PER_SEC;
-                gtkpl_add_dirs (&main_playlist, (GSList *)ctx);
-//                float t2 = (float)clock () / CLOCKS_PER_SEC;
-//                printf ("time: %f\n", t2-t1);
-                }
+                // <placeholder>
+                // same as above, but for many folders
+                guiplug_add_dirs ((GSList *)ctx);
                 break;
             case M_ADDFILES:
-                gtkpl_add_files (&main_playlist, (GSList *)ctx);
+                // <placeholder>
+                // same as above but for many files
+                guiplug_add_files ((GSList *)ctx);
                 break;
             case M_OPENFILES:
                 p_stop ();
-                gtkpl_add_files (&main_playlist, (GSList *)ctx);
-                gtkpl_playsong (&main_playlist);
+                // <placeholder>
+                // open many files and start 1st of them
+                guiplug_open_files ((GSList *)ctx);
                 break;
             case M_FMDRAGDROP:
-                gtkpl_add_fm_dropped_files (&main_playlist, (char *)ctx, p1, p2);
+                // <placeholder>
+                // handle drag-n-drop from filemanager
+                // that should be handled internally in ui plugin
+                guiplug_add_fm_dropped_files ((char *)ctx, p1, p2)
                 break;
             case M_PLAYLISTREFRESH:
-                GDK_THREADS_ENTER();
-                playlist_refresh ();
-                search_refresh ();
-                GDK_THREADS_LEAVE();
+                // <placeholder>
+                // refresh all playlist windows
+                guiplug_refresh_playlist ();
                 break;
             case M_CONFIGCHANGED:
                 palsa_configchanged ();
@@ -486,77 +356,8 @@ player_thread (uintptr_t ctx) {
             }
         }
         usleep(50000);
-        update_songinfo ();
+        guiplug_frameupdate ();
     }
-}
-
-gboolean
-on_trayicon_scroll_event               (GtkWidget       *widget,
-                                        GdkEventScroll  *event,
-                                        gpointer         user_data)
-{
-    float vol = volume_get_db ();
-    if (event->direction == GDK_SCROLL_UP || event->direction == GDK_SCROLL_RIGHT) {
-        vol += 1;
-    }
-    else if (event->direction == GDK_SCROLL_DOWN || event->direction == GDK_SCROLL_LEFT) {
-        vol -= 1;
-    }
-    if (vol > 0) {
-        vol = 0;
-    }
-    else if (vol < -60) {
-        vol = -60;
-    }
-    volume_set_db (vol);
-    GtkWidget *volumebar = lookup_widget (mainwin, "volumebar");
-    volumebar_draw (volumebar);
-    volumebar_expose (volumebar, 0, 0, volumebar->allocation.width, volumebar->allocation.height);
-    return FALSE;
-}
-
-#if GTK_MINOR_VERSION<=14
-gboolean
-on_trayicon_activate (GtkWidget       *widget,
-                                        GdkEvent  *event,
-                                        gpointer         user_data)
-{
-    if (GTK_WIDGET_VISIBLE (mainwin)) {
-        gtk_widget_hide (mainwin);
-    }
-    else {
-        gtk_widget_show (mainwin);
-        gtk_window_present (GTK_WINDOW (mainwin));
-    }
-    return FALSE;
-}
-#endif
-
-gboolean
-on_trayicon_button_press_event (GtkWidget       *widget,
-                                        GdkEventButton  *event,
-                                        gpointer         user_data)
-{
-    if (event->button == 1) {
-        if (GTK_WIDGET_VISIBLE (mainwin)) {
-            gtk_widget_hide (mainwin);
-        }
-        else {
-            gtk_widget_show (mainwin);
-            gtk_window_present (GTK_WINDOW (mainwin));
-        }
-    }
-    return FALSE;
-}
-
-gboolean
-on_trayicon_popup_menu (GtkWidget       *widget,
-        guint button,
-        guint time,
-                                        gpointer         user_data)
-{
-    gtk_menu_popup (GTK_MENU (traymenu), NULL, NULL, gtk_status_icon_position_menu, trayicon, button, time);
-    return FALSE;
 }
 
 void

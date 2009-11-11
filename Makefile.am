@@ -16,7 +16,8 @@ SUBDIRS = gme/Game_Music_Emu-0.5.2\
           ${WAVPACK_DIR}\
           ${SNDFILE_DIR}\
           ${VFS_CURL_DIR}\
-          ${CDDA_DIR}
+          ${CDDA_DIR}\
+          ${GTKUI_DIR}
 
 dumbpath=@top_srcdir@/dumb
 sidpath=@top_srcdir@/sid/sidplay-libs-2.1.0
@@ -27,8 +28,7 @@ bin_PROGRAMS = deadbeef
 deadbeef_SOURCES =\
 	main.c common.h deadbeef.h\
 	plugins.c plugins.h moduleconf.h\
-	callbacks.c interface.c support.c callbacks.h interface.h support.h\
-	playlist.c playlist.h gtkplaylist.c gtkplaylist.h\
+	playlist.c playlist.h \
 	streamer.c streamer.h\
 	progress.c  progress.h\
 	codec.c codec.h\
@@ -40,8 +40,7 @@ deadbeef_SOURCES =\
 	threading_pthread.c threading.h\
 	md5/md5.c md5/md5.h md5/md5_loc.h\
 	volume.c volume.h\
-	drawing.h gdkdrawing.c\
-	session.h session.c gtksession.c\
+	session.h session.c \
 	junklib.h junklib.c utf8.c utf8.h\
 	optmath.h\
 	vfs.c vfs.h vfs_stdio.c\

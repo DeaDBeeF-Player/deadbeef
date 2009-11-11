@@ -39,7 +39,8 @@ test "x$prefix" = xNONE && prefix=$ac_default_prefix
 CFLAGS="$CFLAGS -D_GNU_SOURCE -DLIBDIR=\\\"$libdir\\\" -DPREFIX=\\\"$prefix\\\""
 CPPFLAGS="$CFLAGS"
 
-PKG_CHECK_MODULES(DEPS, gtk+-2.0 >= 2.12 gthread-2.0 glib-2.0 samplerate alsa)
+PKG_CHECK_MODULES(DEPS, samplerate alsa)
+PKG_CHECK_MODULES(GTKUI_DEPS, gtk+-2.0 >= 2.12 gthread-2.0 glib-2.0, HAVE_GTK=1)
 
 AX_CHECK_COMPILER_FLAGS(-msse2, SIMD_FLAGS="$SIMD_FLAGS -msse2";HAVE_SSE2=1, [])
 if test ${HAVE_SSE2}; then
@@ -143,6 +144,16 @@ if test ${HAVE_CDIO} && test ${HAVE_CDDB}; then
     AC_SUBST(CDDA_DIR)
 fi
 
+dnl gtkui plugin
+AM_CONDITIONAL(HAVE_GTK, test $HAVE_GTK)
+if test ${HAVE_GTK}; then
+    GTKUI_DIR="plugins/gtkui"
+    AC_SUBST(GTKUI_DEPS_CFLAGS)
+    AC_SUBST(GTKUI_DEPS_LIBS)
+    AC_SUBST(GTKUI_DIR)
+fi
+
+
 dnl print summary
 echo
 echo "plugin summary:"
@@ -172,6 +183,7 @@ PRINT_PLUGIN_INFO([sndfile],[PCM (wav,aiff,etc) player based on libsndfile],[tes
 PRINT_PLUGIN_INFO([vfs_curl],[http/ftp streaming support],[test $HAVE_CURL])
 dnl PRINT_PLUGIN_INFO([faad2],[aac/mp4 player],[test $HAVE_FAAD && test $HAVE_MP4FF])
 PRINT_PLUGIN_INFO([cdda],[cd audio player],[test $HAVE_CDIO && test $HAVE_CDDB])
+PRINT_PLUGIN_INFO([gtkui],[GTK user interface],[test $HAVE_GTK])
 echo
 
 AC_OUTPUT([
@@ -192,6 +204,7 @@ plugins/wavpack/Makefile
 plugins/sndfile/Makefile
 plugins/vfs_curl/Makefile
 plugins/cdda/Makefile
+plugins/gtkui/Makefile
 deadbeef.desktop
 ])
 

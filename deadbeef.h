@@ -412,6 +412,13 @@ typedef struct DB_vfs_s {
     unsigned streaming : 1;
 } DB_vfs_t;
 
+// gui plugin
+// implements pretty much anything it wants
+// works mostly like misc plugin, except we need separate type for that
+typedef struct DB_gui_s {
+    DB_plugin_t plugin;
+} DB_gui_t;
+
 #ifdef __cplusplus
 }
 #endif
