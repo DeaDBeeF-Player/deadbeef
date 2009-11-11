@@ -460,7 +460,7 @@ main (int argc, char *argv[]) {
     codec_init_locking ();
     streamer_init ();
 //    p_init ();
-    thread_start (player_thread, 0);
+//    thread_start (player_thread, 0);
 
     volume_set_db (conf_get_float ("playback.volume", 0));
     if (argc > 1) {
@@ -473,6 +473,8 @@ main (int argc, char *argv[]) {
             messagepump_push (M_PLAYSONG, 0, 0, 0);
         }
     }
+
+    player_thread (0);
 
     // save config
     pl_save (defpl);
