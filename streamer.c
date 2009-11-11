@@ -884,3 +884,19 @@ streamer_configchanged (void) {
         mutex_unlock (decodemutex);
     }
 }
+
+void
+streamer_play_current_track (void) {
+    if (p_ispaused ()) {
+        p_unpause ();
+    }
+    else if (ps->row != -1) {
+        p_stop ();
+        streamer_set_nextsong (ps->row, 1);
+    }
+    else {
+        p_stop ();
+        streamer_set_nextsong (0, 1);
+    }
+}
+

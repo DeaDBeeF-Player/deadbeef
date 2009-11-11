@@ -56,6 +56,7 @@ typedef struct playItem_s {
 
 extern playItem_t *playlist_head[PL_MAX_ITERATORS]; // head of linked list
 extern playItem_t *playlist_tail[PL_MAX_ITERATORS]; // tail of linked list
+extern int playlist_current_row[PL_MAX_ITERATORS]; // current row (cursor)
 extern playItem_t *playlist_current_ptr; // pointer to a real current playlist item (or NULL)
 
 extern int pl_count;
@@ -168,5 +169,8 @@ pl_get_item_duration (playItem_t *it);
 // [a]rtist, [t]itle, al[b]um, [l]ength, track[n]umber
 int
 pl_format_title (playItem_t *it, char *s, int size, const char *fmt);
+
+void
+pl_reset_cursor (void);
 
 #endif // __PLAYLIST_H

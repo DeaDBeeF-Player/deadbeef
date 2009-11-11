@@ -1740,21 +1740,6 @@ gtkpl_add_files (gtkplaylist_t *ps, GSList *lst) {
     GDK_THREADS_LEAVE();
 }
 
-void
-gtkpl_playsong (gtkplaylist_t *ps) {
-    if (p_ispaused ()) {
-        p_unpause ();
-    }
-    else if (ps->row != -1) {
-        p_stop ();
-        streamer_set_nextsong (ps->row, 1);
-    }
-    else {
-        p_stop ();
-        streamer_set_nextsong (0, 1);
-    }
-}
-
 int
 gtkpl_get_idx_of (gtkplaylist_t *ps, playItem_t *it) {
     playItem_t *c = playlist_head[ps->iterator];

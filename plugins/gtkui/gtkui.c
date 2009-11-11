@@ -227,11 +227,6 @@ guiplug_shutdown (void) {
 }
 
 void
-guiplug_songchanged (int from, int to) {
-    gtkpl_songchanged_wrapper (from, to);
-}
-
-void
 guiplug_start_current_track (void) {
     gtkpl_playsong (&main_playlist);
     if (playlist_current_ptr) {
@@ -321,10 +316,31 @@ guiplug_frameupdate (void) {
     update_songinfo ();
 }
 
-void
-guiplug_reset_selection (void) {
-    search_playlist.row = -1;
-    main_playlist.row = -1;
+static int
+gtkui_on_activate (DB_event_t *ev, uintptr_t data) {
+    GDK_THREADS_ENTER();
+    gtk_widget_show (mainwin);
+    gtk_window_present (GTK_WINDOW (mainwin));
+    GDK_THREADS_LEAVE();
+}
+
+static int
+gtkui_on_songchanged (DB_event_song_t *ev, uintptr_t data) {
+    gtkpl_songchanged_wrapper (from, to);
+}
+
+static int
+gtkui_start (void) {
+    deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_ACTIVATE, DB_CALLBACK (gtkui_on_activate), 0);
+    deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_SONGCHANGED, DB_CALLBACK (gtkui_on_songchanged), 0);
+    return 0;
+}
+
+static int
+gtkui_stop (void) {
+    deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_ACTIVATE, DB_CALLBACK (gtkui_on_activate), 0);
+    deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_SONGCHANGED, DB_CALLBACK (gtkui_on_songchanged), 0);
+    return 0;
 }
 
 // define plugin interface

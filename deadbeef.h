@@ -105,6 +105,12 @@ typedef struct {
     DB_playItem_t *song;
 } DB_event_song_t;
 
+typedef struct {
+    DB_event_t ev;
+    int from;
+    int to;
+} DB_event_songchange_t;
+
 typedef struct DB_conf_item_s {
     char *key;
     char *value;
@@ -122,6 +128,7 @@ enum {
     DB_EV_SONGFINISHED = 3, // triggers when song finished playing (for scrobblers and such)
     DB_EV_TRACKDELETED = 4, // triggers when track is to be deleted from playlist
     DB_EV_CONFIGCHANGED = 5, // configuration option changed
+    DB_EV_ACTIVATE = 6, // will be fired every time player is activated
     DB_EV_MAX
 };
 

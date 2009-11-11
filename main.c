@@ -20,6 +20,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
+#include <limits.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/types.h>
@@ -119,9 +120,7 @@ exec_command_line (const char *cmdline, int len, int filter) {
         // add files
         if (!queue) {
             pl_free ();
-            // <placeholder>
-            // reset selection in playlist
-            guiplug_reset_selection ();
+            pl_reset_cursor ();
         }
         while (parg < pend) {
             char resolved[PATH_MAX];
@@ -201,17 +200,13 @@ server_update (void) {
         int size;
         if ((size = recv (s2, str, 2048, 0)) >= 0) {
             if (size == 1 && str[0] == 0) {
-            // <placeholder>
-            // should notify gui plugin that user tried to run
-            // application while already running
-                guiplug_showwindow ();
+                // FIXME: that should be called right after activation of gui plugin
+                plug_trigger_event (DB_EV_ACTIVATE, 0);
             }
             else {
                 int res = exec_command_line (str, size, 0);
                 if (res == 2) {
-                    // <placeholder>
-                    // play a song, notify gui plugin
-                    guiplug_play_current_song ();
+                    streamer_play_current_track ();
                 }
             }
         }
@@ -254,21 +249,17 @@ player_thread (uintptr_t ctx) {
                 }
                 break;
             case M_TERMINATE:
+            // FIXME: should signal main thread about termination
+            // or will that be new main thread?
+#if 0
                 // <placeholder>
                 // tell gui plugin to shut down
                 // FIXME: cleanup properly on main thread
                 guiplug_shutdown ();
+#endif 
                 return;
             case M_SONGCHANGED:
-                {
-                    int from = p1;
-                    int to = p2;
-                    // <placeholder>
-                    // notify gui that song was changed
-                    // probably using DB_EV_SONGCHANGED
-                    guiplug_songchanged (from, to);
-                    plug_trigger_event (DB_EV_SONGCHANGED, 0);
-                }
+                plug_trigger_event_songchanged (p1, p2);
                 break;
             case M_PLAYSONG:
                 // <placeholder>

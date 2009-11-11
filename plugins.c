@@ -283,6 +283,15 @@ plug_quit (void) {
 
 /////// non-api functions (plugin support)
 void
+plug_event_call (DB_event_t *ev) {
+    for (int i = 0; i < MAX_HANDLERS; i++) {
+        if (handlers[ev->event][i].plugin && !handlers[ev][i].plugin->inactive) {
+            handlers[ev->event][i].callback (event, handlers[ev->event][i].data);
+        }
+    }
+}
+
+void
 plug_trigger_event (int ev, uintptr_t param) {
     mutex_lock (mutex);
     DB_event_t *event;
@@ -290,32 +299,44 @@ plug_trigger_event (int ev, uintptr_t param) {
     case DB_EV_SONGSTARTED:
     case DB_EV_SONGFINISHED:
         {
-        DB_event_song_t *pev = malloc (sizeof (DB_event_song_t));
+        DB_event_song_t *pev = _alloca (sizeof (DB_event_song_t));
         pev->song = DB_PLAYITEM (&str_playing_song);
         event = DB_EVENT (pev);
         }
         break;
     case DB_EV_TRACKDELETED:
         {
-            DB_event_song_t *pev = malloc (sizeof (DB_event_song_t));
+            DB_event_song_t *pev = _alloca (sizeof (DB_event_song_t));
             pev->song = DB_PLAYITEM (param);
             event = DB_EVENT (pev);
         }
         break;
     default:
-        event = malloc (sizeof (DB_event_t));
+        event = _alloca (sizeof (DB_event_t));
     }
     event->event = ev;
     event->time = (double)clock () / CLOCKS_PER_SEC;
+    plug_event_call (event);
+    mutex_unlock (mutex);
+}
+
+void
+plug_trigger_event_songchanged (int from, int to) {
+    mutex_lock (mutex);
+    DB_event_songchange_t event;
+    event.ev.event = DB_EV_SONGCHANGED;
+    event.ev.time = (double)clock () / CLOCKS_PER_SEC;
+    event.from = from;
+    event.to = to;
+
     for (int i = 0; i < MAX_HANDLERS; i++) {
         if (handlers[ev][i].plugin && !handlers[ev][i].plugin->inactive) {
-            handlers[ev][i].callback (event, handlers[ev][i].data);
+            handlers[ev][i].callback (event.ev.event, handlers[ev][i].data);
         }
     }
     free (event);
     mutex_unlock (mutex);
 }
-
 int
 plug_init_plugin (DB_plugin_t* (*loadfunc)(DB_functions_t *), void *handle) {
     DB_plugin_t *plugin_api = loadfunc (&deadbeef_api);

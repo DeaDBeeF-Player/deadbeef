@@ -38,6 +38,9 @@ void
 plug_trigger_event (int ev, uintptr_t param);
 
 void
+plug_trigger_event_songchanged (int from, int to);
+
+void
 plug_md5 (uint8_t sig[16], const char *in, int len);
 
 void

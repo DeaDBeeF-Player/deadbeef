@@ -1641,3 +1641,10 @@ void
 pl_sort (const char *meta) {
 }
 
+void
+pl_reset_cursor (void) {
+    int i;
+    for (i = 0; i < PL_MAX_ITERATORS; i++) {
+        playlist_current_row[i] = -1;
+    }
+}

@@ -78,4 +78,7 @@ streamer_get_streaming_track (void);
 void
 streamer_configchanged (void);
 
+void
+streamer_play_current_track (void);
+
 #endif // __STREAMER_H

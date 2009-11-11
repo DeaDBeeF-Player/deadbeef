@@ -81,7 +81,6 @@ typedef struct {
     // current state
     int scrollpos;
     int hscrollpos;
-    int row;
     double clicktime; // for doubleclick detection
     int nvisiblerows;
     int nvisiblefullrows;
