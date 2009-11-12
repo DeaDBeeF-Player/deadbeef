@@ -18,12 +18,19 @@
 */
 #include "../../deadbeef.h"
 #include <gtk/gtk.h>
+#include <string.h>
 #include "gtkplaylist.h"
 #include "search.h"
 #include "progress.h"
 #include "interface.h"
 #include "callbacks.h"
 #include "support.h"
+
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
+
+static DB_gui_t plugin;
+static DB_functions_t *deadbeef;
 
 // main widgets
 GtkWidget *mainwin;
@@ -45,6 +52,7 @@ update_songinfo (void) {
     char sbtext_new[512] = "-";
     float songpos = last_songpos;
 
+    float pl_totaltime = deadbeef->pl_get_totaltime ();
     int daystotal = (int)pl_totaltime / (3600*24);
     int hourtotal = ((int)pl_totaltime / 3600) % 24;
     int mintotal = ((int)pl_totaltime/60) % 60;
@@ -60,18 +68,23 @@ update_songinfo (void) {
     else
         snprintf (totaltime_str, sizeof (totaltime_str), "%d days %d:%02d:%02d", daystotal, hourtotal, mintotal, sectotal);
 
-    if (p_isstopped ()) {
+
+
+    DB_playItem_t *track = deadbeef->streamer_get_playing_track ();
+    float duration = deadbeef->pl_get_item_duration (track);
+
+    if (deadbeef->playback_isstopped ()) {
         snprintf (sbtext_new, sizeof (sbtext_new), "Stopped | %s total playtime", totaltime_str);
         songpos = 0;
     }
-    else if (str_playing_song.decoder) {
+    else if (track->decoder) {
 //        codec_lock ();
-        DB_decoder_t *c = str_playing_song.decoder;
-        float playpos = streamer_get_playpos ();
+        DB_decoder_t *c = track->decoder;
+        float playpos = deadbeef->streamer_get_playpos ();
         int minpos = playpos / 60;
         int secpos = playpos - minpos * 60;
-        int mindur = str_playing_song._duration / 60;
-        int secdur = str_playing_song._duration - mindur * 60;
+        int mindur = duration / 60;
+        int secdur = duration - mindur * 60;
 
         const char *mode = c->info.channels == 1 ? "Mono" : "Stereo";
         int samplerate = c->info.samplerate;
@@ -80,7 +93,7 @@ update_songinfo (void) {
 //        codec_unlock ();
 
         char t[100];
-        if (str_playing_song._duration >= 0) {
+        if (duration >= 0) {
             snprintf (t, sizeof (t), "%d:%02d", mindur, secdur);
         }
         else {
@@ -94,8 +107,8 @@ update_songinfo (void) {
             snprintf (sbitrate, sizeof (sbitrate), "%d kbps ", bitrate);
         }
 #endif
-        const char *spaused = p_ispaused () ? "Paused | " : "";
-        snprintf (sbtext_new, sizeof (sbtext_new), "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d songs | %s total playtime", spaused, str_playing_song.filetype ? str_playing_song.filetype:"-", sbitrate, samplerate, bitspersample, mode, minpos, secpos, t, pl_getcount (), totaltime_str);
+        const char *spaused = deadbeef->playback_ispaused () ? "Paused | " : "";
+        snprintf (sbtext_new, sizeof (sbtext_new), "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d songs | %s total playtime", spaused, track->filetype ? track->filetype:"-", sbitrate, samplerate, bitspersample, mode, minpos, secpos, t, pl_getcount (), totaltime_str);
     }
 
     if (strcmp (sbtext_new, sb_text)) {
@@ -121,7 +134,7 @@ update_songinfo (void) {
         if (mainwin) {
             GtkWidget *widget = lookup_widget (mainwin, "seekbar");
             // translate volume to seekbar pixels
-            songpos /= str_playing_song._duration;
+            songpos /= duration;
             songpos *= widget->allocation.width;
             if ((int)(songpos*2) != (int)(last_songpos*2)) {
                 GDK_THREADS_ENTER();
@@ -139,7 +152,7 @@ on_trayicon_scroll_event               (GtkWidget       *widget,
                                         GdkEventScroll  *event,
                                         gpointer         user_data)
 {
-    float vol = volume_get_db ();
+    float vol = deadbeef->volume_get_db ();
     if (event->direction == GDK_SCROLL_UP || event->direction == GDK_SCROLL_RIGHT) {
         vol += 1;
     }
@@ -152,7 +165,7 @@ on_trayicon_scroll_event               (GtkWidget       *widget,
     else if (vol < -60) {
         vol = -60;
     }
-    volume_set_db (vol);
+    deadbeef->volume_set_db (vol);
     GtkWidget *volumebar = lookup_widget (mainwin, "volumebar");
     volumebar_draw (volumebar);
     volumebar_expose (volumebar, 0, 0, volumebar->allocation.width, volumebar->allocation.height);
@@ -286,7 +299,7 @@ guiplug_refresh_playlist (void) {
 
 void
 guiplug_add_fm_dropped_files (char *files, int p1, int p2) {
-    gtkpl_add_fm_dropped_files (&main_playlist, (char *)ctx, p1, p2);
+    gtkpl_add_fm_dropped_files (&main_playlist, files, p1, p2);
 }
 
 static int
@@ -298,8 +311,8 @@ gtkui_on_activate (DB_event_t *ev, uintptr_t data) {
 }
 
 static int
-gtkui_on_songchanged (DB_event_songchange_t *ev, uintptr_t data) {
-    gtkpl_songchanged_wrapper (from, to);
+gtkui_on_songchanged (DB_event_trackchange_t *ev, uintptr_t data) {
+    gtkpl_songchanged_wrapper (ev->from, ev->to);
 }
 
 static int
@@ -418,6 +431,12 @@ gtkui_stop (void) {
     gtkpl_free (&search_playlist);
     gdk_threads_leave ();
     return 0;
+}
+
+DB_plugin_t *
+gtkui_load (DB_functions_t *api) {
+    deadbeef = api;
+    return DB_PLUGIN (&plugin);
 }
 
 // define plugin interface

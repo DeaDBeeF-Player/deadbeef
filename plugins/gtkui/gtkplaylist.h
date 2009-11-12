@@ -21,7 +21,7 @@
 #include <gtk/gtk.h>
 #include <stdint.h>
 #include <assert.h>
-#include "playlist.h"
+#include "../../deadbeef.h"
 
 // drag and drop targets
 enum {
@@ -73,9 +73,9 @@ typedef struct {
     GdkPixmap *backbuf_header;
     const char *title; // unique id, used for config writing, etc
     // parameters
-    playItem_t **pcurr; // pointer to current item
+    DB_playItem_t **pcurr; // pointer to current item
     int *pcount; // pointer to count of items in list
-    int iterator; // index into next array of playItem_t struct
+    int iterator; // index into next array of DB_playItem_t struct
     int lastpos[2]; // last mouse position (for playlist widget)
     int multisel; // if it uses multiple selection
     // current state
@@ -102,19 +102,19 @@ void
 gtkpl_free (gtkplaylist_t *pl);
 
 void
-gtkpl_redraw_pl_row (gtkplaylist_t *ps, int row, playItem_t *it);
+gtkpl_redraw_pl_row (gtkplaylist_t *ps, int row, DB_playItem_t *it);
 
 void
-gtkpl_redraw_pl_row_novis (gtkplaylist_t *ps, int row, playItem_t *it);
+gtkpl_redraw_pl_row_novis (gtkplaylist_t *ps, int row, DB_playItem_t *it);
 
 void
 gtkpl_setup_scrollbar (gtkplaylist_t *ps);
 
 void
-gtkpl_draw_pl_row_back (gtkplaylist_t *ps, int row, playItem_t *it);
+gtkpl_draw_pl_row_back (gtkplaylist_t *ps, int row, DB_playItem_t *it);
 
 void
-gtkpl_draw_pl_row (gtkplaylist_t *ps, int row, playItem_t *it);
+gtkpl_draw_pl_row (gtkplaylist_t *ps, int row, DB_playItem_t *it);
 
 void
 gtkpl_draw_playlist (gtkplaylist_t *ps, int x, int y, int w, int h);
@@ -165,7 +165,7 @@ void
 gtkpl_header_draw (gtkplaylist_t *ps);
 
 void
-gtkpl_add_dir (gtkplaylist_t *ps, char *folder);
+gtkpl_add_dir (gtkplaylist_t *ps, const char *folder);
 
 void
 gtkpl_add_dirs (gtkplaylist_t *ps, GSList *lst);
@@ -177,9 +177,9 @@ void
 gtkpl_configure (gtkplaylist_t *ps);
 
 int
-gtkpl_get_idx_of (gtkplaylist_t *ps, playItem_t *it);
+gtkpl_get_idx_of (gtkplaylist_t *ps, DB_playItem_t *it);
 
-playItem_t *
+DB_playItem_t *
 gtkpl_get_for_idx (gtkplaylist_t *ps, int idx);
 
 // this functions take value from passed playlist, that's why it's here
@@ -255,6 +255,6 @@ void
 gtkpl_songchanged_wrapper (int from, int to);
 
 void
-gtkpl_current_track_changed (playItem_t *it);
+gtkpl_current_track_changed (DB_playItem_t *it);
 
 #endif // __GTKPLAYLIST_H

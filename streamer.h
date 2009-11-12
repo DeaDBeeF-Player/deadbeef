@@ -75,6 +75,9 @@ streamer_song_removed_notify (playItem_t *it);
 playItem_t *
 streamer_get_streaming_track (void);
 
+playItem_t *
+streamer_get_playing_track (void);
+
 void
 streamer_configchanged (void);
 

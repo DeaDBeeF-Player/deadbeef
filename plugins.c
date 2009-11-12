@@ -61,6 +61,14 @@ static DB_functions_t deadbeef_api = {
     .playback_set_pos = plug_playback_set_pos,
     .playback_get_samplerate = p_get_rate,
     .playback_update_bitrate = streamer_update_bitrate,
+    // playback status
+    .playback_isstopped = p_isstopped,
+    .playback_ispaused = p_ispaused,
+    // streamer access
+    .streamer_get_playing_track = streamer_get_playing_track,
+    .streamer_get_streaming_track = streamer_get_streaming_track,
+    .streamer_get_playpos = streamer_get_playpos,
+    // process control
     .get_config_dir = plug_get_config_dir,
     .quit = plug_quit,
     // threading
@@ -83,6 +91,7 @@ static DB_functions_t deadbeef_api = {
     .pl_get_idx_of = (int (*) (DB_playItem_t *it))pl_get_idx_of,
     .pl_set_item_duration = (void (*) (DB_playItem_t *it, float duration))pl_set_item_duration,
     .pl_get_item_duration = (float (*) (DB_playItem_t *it))pl_get_item_duration,
+    .pl_get_totaltime = pl_get_totaltime,
     // metainfo
     .pl_add_meta = (void (*) (DB_playItem_t *, const char *, const char *))pl_add_meta,
     .pl_find_meta = (const char *(*) (DB_playItem_t *, const char *))pl_find_meta,

@@ -173,4 +173,7 @@ pl_format_title (playItem_t *it, char *s, int size, const char *fmt);
 void
 pl_reset_cursor (void);
 
+float
+pl_get_totaltime (void);
+
 #endif // __PLAYLIST_H

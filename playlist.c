@@ -1650,3 +1650,8 @@ pl_reset_cursor (void) {
         playlist_current_row[i] = -1;
     }
 }
+
+float
+pl_get_totaltime (void) {
+    return pl_totaltime;
+}

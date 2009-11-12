@@ -212,6 +212,14 @@ typedef struct {
     void (*playback_set_pos) (float pos); // [0..100]
     int (*playback_get_samplerate) (void); // output samplerate
     void (*playback_update_bitrate) (float bitrate);
+    // playback status
+    int (*playback_isstopped) (void);
+    int (*playback_ispaused) (void);
+    // streamer access
+    // FIXME: needs to be thread-safe
+    DB_playItem_t *(*streamer_get_playing_track) (void);
+    DB_playItem_t *(*streamer_get_streaming_track) (void);
+    float (*streamer_get_playpos) (void);
     // process control
     const char *(*get_config_dir) (void);
     void (*quit) (void);
@@ -233,6 +241,7 @@ typedef struct {
     void (*pl_item_copy) (DB_playItem_t *out, DB_playItem_t *in);
     DB_playItem_t *(*pl_insert_item) (DB_playItem_t *after, DB_playItem_t *it);
     int (*pl_get_idx_of) (DB_playItem_t *it);
+    float (*pl_get_totaltime) (void);
     // metainfo
     void (*pl_add_meta) (DB_playItem_t *it, const char *key, const char *value);
     const char *(*pl_find_meta) (DB_playItem_t *song, const char *meta);

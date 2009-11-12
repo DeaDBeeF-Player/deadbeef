@@ -98,6 +98,11 @@ streamer_get_streaming_track (void) {
     return orig_streaming_song;
 }
 
+playItem_t *
+streamer_get_playing_track (void) {
+    return &str_playing_song;
+}
+
 // playlist must call that whenever item was removed
 void
 streamer_song_removed_notify (playItem_t *it) {

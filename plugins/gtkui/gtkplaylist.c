@@ -290,7 +290,7 @@ gtkpl_redraw_pl_row_novis (gtkplaylist_t *ps, int row, playItem_t *it) {
 }
 
 void
-gtkpl_redraw_pl_row (gtkplaylist_t *ps, int row, playItem_t *it) {
+gtkpl_redraw_pl_row (gtkplaylist_t *ps, int row, DB_playItem_t *it) {
     int x, y, w, h;
     GtkWidget *widget = ps->playlist;
     x = 0;
