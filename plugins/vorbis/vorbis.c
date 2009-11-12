@@ -83,6 +83,9 @@ update_vorbis_comments (DB_playItem_t *it, vorbis_comment *vc) {
             else if (!strncasecmp (vc->user_comments[i], "title=", 6)) {
                 deadbeef->pl_add_meta (it, "title", vc->user_comments[i] + 6);
             }
+            else if (!strncasecmp (vc->user_comments[i], "tracknumber=", 12)) {
+                deadbeef->pl_add_meta (it, "track", vc->user_comments[i] + 12);
+            }
             else if (!strncasecmp (vc->user_comments[i], "date=", 5)) {
                 deadbeef->pl_add_meta (it, "date", vc->user_comments[i] + 5);
             }
