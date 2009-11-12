@@ -191,6 +191,7 @@ cflac_init (DB_playItem_t *it) {
         plugin.free ();
         return -1;
     }
+    buffer = malloc (BUFFERSIZE);
     if (it->endsample > 0) {
         startsample = it->startsample;
         endsample = it->endsample;
@@ -208,7 +209,6 @@ cflac_init (DB_playItem_t *it) {
     }
 
     remaining = 0;
-    buffer = malloc (BUFFERSIZE);
     return 0;
 }
 
