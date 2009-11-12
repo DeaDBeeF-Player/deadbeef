@@ -32,7 +32,7 @@ static DB_functions_t *deadbeef;
 
 static FLAC__StreamDecoder *decoder = 0;
 #define BUFFERSIZE 100000
-static char buffer[BUFFERSIZE]; // this buffer always has float samples
+static char *buffer; // this buffer always has float samples
 static int remaining; // bytes remaining in buffer from last read
 static int startsample;
 static int endsample;
@@ -208,6 +208,7 @@ cflac_init (DB_playItem_t *it) {
     }
 
     remaining = 0;
+    buffer = malloc (BUFFERSIZE);
     return 0;
 }
 
@@ -216,6 +217,10 @@ cflac_free (void) {
     if (decoder) {
         FLAC__stream_decoder_delete(decoder);
         decoder = NULL;
+    }
+    if (buffer) {
+        free (buffer);
+        buffer = NULL;
     }
 }
 
