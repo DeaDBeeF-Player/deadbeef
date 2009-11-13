@@ -51,6 +51,14 @@
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
+// debug function for gdk_draw_drawable
+static inline void
+draw_drawable (GdkDrawable *window, GdkGC *gc, GdkDrawable *drawable, int x1, int y1, int x2, int y2, int w, int h) {
+//    printf ("dd: %p %p %p %d %d %d %d %d %d\n", window, gc, drawable, x1, y1, x2, y2, w, h);
+    gdk_draw_drawable (window, gc, drawable, x1, y1, x2, y2, w, h);
+}
+
+
 extern GtkWidget *mainwin;
 extern GtkStatusIcon *trayicon;
 extern gtkplaylist_t main_playlist;
@@ -291,6 +299,9 @@ gtkpl_redraw_pl_row_novis (gtkplaylist_t *ps, int row, playItem_t *it) {
 
 void
 gtkpl_redraw_pl_row (gtkplaylist_t *ps, int row, playItem_t *it) {
+    if (row < ps->scrollpos || row >= ps->scrollpos+ps->nvisiblerows) {
+        return;
+    }
     int x, y, w, h;
     GtkWidget *widget = ps->playlist;
     x = 0;
@@ -299,7 +310,7 @@ gtkpl_redraw_pl_row (gtkplaylist_t *ps, int row, playItem_t *it) {
     h = rowheight;
 
     gtkpl_redraw_pl_row_novis (ps, row, it);
-	gdk_draw_drawable (widget->window, widget->style->black_gc, ps->backbuf, x, y, x, y, w, h);
+	draw_drawable (widget->window, widget->style->black_gc, ps->backbuf, x, y, x, y, w, h);
 }
 
 void
@@ -519,14 +530,14 @@ void
 gtkpl_expose (gtkplaylist_t *ps, int x, int y, int w, int h) {
     GtkWidget *widget = ps->playlist;
     if (widget->window) {
-        gdk_draw_drawable (widget->window, widget->style->black_gc, ps->backbuf, x, y, x, y, w, h);
+        draw_drawable (widget->window, widget->style->black_gc, ps->backbuf, x, y, x, y, w, h);
     }
 }
 
 void
 gtkpl_expose_header (gtkplaylist_t *ps, int x, int y, int w, int h) {
     GtkWidget *widget = ps->header;
-	gdk_draw_drawable (widget->window, widget->style->black_gc, ps->backbuf_header, x, y, x, y, w, h);
+	draw_drawable (widget->window, widget->style->black_gc, ps->backbuf_header, x, y, x, y, w, h);
 }
 
 void
@@ -721,11 +732,11 @@ gtkpl_draw_areasel (GtkWidget *widget, int x, int y) {
         int dy = max (areaselect_y, areaselect_dy);
         int w = dx - sx + 1;
         int h = dy - sy + 1;
-        //gdk_draw_drawable (widget->window, widget->style->black_gc, ps->backbuf, sx, sy, sx, sy, dx - sx + 1, dy - sy + 1);
-        gdk_draw_drawable (widget->window, widget->style->black_gc, ps->backbuf, sx, sy, sx, sy, w, 1);
-        gdk_draw_drawable (widget->window, widget->style->black_gc, ps->backbuf, sx, sy, sx, sy, 1, h);
-        gdk_draw_drawable (widget->window, widget->style->black_gc, ps->backbuf, sx, sy + h - 1, sx, sy + h - 1, w, 1);
-        gdk_draw_drawable (widget->window, widget->style->black_gc, ps->backbuf, sx + w - 1, sy, sx + w - 1, sy, 1, h);
+        //draw_drawable (widget->window, widget->style->black_gc, ps->backbuf, sx, sy, sx, sy, dx - sx + 1, dy - sy + 1);
+        draw_drawable (widget->window, widget->style->black_gc, ps->backbuf, sx, sy, sx, sy, w, 1);
+        draw_drawable (widget->window, widget->style->black_gc, ps->backbuf, sx, sy, sx, sy, 1, h);
+        draw_drawable (widget->window, widget->style->black_gc, ps->backbuf, sx, sy + h - 1, sx, sy + h - 1, w, 1);
+        draw_drawable (widget->window, widget->style->black_gc, ps->backbuf, sx + w - 1, sy, sx + w - 1, sy, 1, h);
     }
     areaselect_dx = x;
     areaselect_dy = y;
@@ -892,7 +903,7 @@ gtkpl_scroll (gtkplaylist_t *ps, int newscroll) {
         int d = abs (di);
         if (d < ps->nvisiblerows) {
             if (di > 0) {
-                gdk_draw_drawable (ps->backbuf, widget->style->black_gc, ps->backbuf, 0, d * rowheight, 0, 0, widget->allocation.width, widget->allocation.height-d * rowheight);
+                draw_drawable (ps->backbuf, widget->style->black_gc, ps->backbuf, 0, d * rowheight, 0, 0, widget->allocation.width, widget->allocation.height-d * rowheight);
                 int i;
                 ps->scrollpos = newscroll;
                 int start = ps->nvisiblerows-d-1;
@@ -902,7 +913,7 @@ gtkpl_scroll (gtkplaylist_t *ps, int newscroll) {
                 }
             }
             else {
-                gdk_draw_drawable (ps->backbuf, widget->style->black_gc, ps->backbuf, 0, 0, 0, d*rowheight, widget->allocation.width, widget->allocation.height);
+                draw_drawable (ps->backbuf, widget->style->black_gc, ps->backbuf, 0, 0, 0, d*rowheight, widget->allocation.width, widget->allocation.height);
                 ps->scrollpos = newscroll;
                 int i;
                 for (i = 0; i <= d+1; i++) {
@@ -914,7 +925,7 @@ gtkpl_scroll (gtkplaylist_t *ps, int newscroll) {
             ps->scrollpos = newscroll;
             gtkpl_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
         }
-        gdk_draw_drawable (widget->window, widget->style->black_gc, ps->backbuf, 0, 0, 0, 0, widget->allocation.width, widget->allocation.height);
+        draw_drawable (widget->window, widget->style->black_gc, ps->backbuf, 0, 0, 0, 0, widget->allocation.width, widget->allocation.height);
     }
 }
 
@@ -926,7 +937,7 @@ gtkpl_hscroll (gtkplaylist_t *ps, int newscroll) {
         gtkpl_header_draw (ps);
         gtkpl_expose_header (ps, 0, 0, ps->header->allocation.width, ps->header->allocation.height);
         gtkpl_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
-        gdk_draw_drawable (widget->window, widget->style->black_gc, ps->backbuf, 0, 0, 0, 0, widget->allocation.width, widget->allocation.height);
+        draw_drawable (widget->window, widget->style->black_gc, ps->backbuf, 0, 0, 0, 0, widget->allocation.width, widget->allocation.height);
     }
 }
 
@@ -976,7 +987,7 @@ gtkpl_keypress (gtkplaylist_t *ps, int keyval, int state) {
 //        // select all
 //        pl_select_all ();
 //        gtkpl_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
-//        gdk_draw_drawable (widget->window, widget->style->black_gc, ps->backbuf, 0, 0, 0, 0, widget->allocation.width, widget->allocation.height);
+//        draw_drawable (widget->window, widget->style->black_gc, ps->backbuf, 0, 0, 0, 0, widget->allocation.width, widget->allocation.height);
 //        return;
 //    }
 //    else if ((keyval == GDK_P || keyval == GDK_p) && (state & GDK_CONTROL_MASK)) {
@@ -1128,7 +1139,7 @@ gtkpl_track_dragdrop (gtkplaylist_t *ps, int y) {
     GtkWidget *widget = ps->playlist;
     if (drag_motion_y != -1) {
         // erase previous track
-        gdk_draw_drawable (widget->window, widget->style->black_gc, ps->backbuf, 0, drag_motion_y * rowheight-3, 0, drag_motion_y * rowheight-3, widget->allocation.width, 7);
+        draw_drawable (widget->window, widget->style->black_gc, ps->backbuf, 0, drag_motion_y * rowheight-3, 0, drag_motion_y * rowheight-3, widget->allocation.width, 7);
 
     }
     if (y == -1) {
