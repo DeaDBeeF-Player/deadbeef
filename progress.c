@@ -39,10 +39,12 @@ progress_init (void) {
 
 void
 progress_show (void) {
+    extern GtkWidget *mainwin;
     progress_aborted = 0;
     progress_settext ("Initializing...");
     gtk_widget_show_all (progressdlg);
     gtk_window_present (GTK_WINDOW (progressdlg));
+    gtk_window_set_transient_for (GTK_WINDOW (progressdlg), GTK_WINDOW (mainwin));
 }
 
 void

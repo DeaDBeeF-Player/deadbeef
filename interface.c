@@ -1066,6 +1066,7 @@ create_addprogress (void)
   addprogress = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_window_set_title (GTK_WINDOW (addprogress), "Adding files...");
   gtk_window_set_position (GTK_WINDOW (addprogress), GTK_WIN_POS_CENTER_ON_PARENT);
+  gtk_window_set_modal (GTK_WINDOW (addprogress), TRUE);
   gtk_window_set_skip_taskbar_hint (GTK_WINDOW (addprogress), TRUE);
   gtk_window_set_skip_pager_hint (GTK_WINDOW (addprogress), TRUE);
 
