@@ -1567,10 +1567,6 @@ on_header_motion_notify_event          (GtkWidget       *widget,
         }
     }
     else if (header_sizing >= 0) {
-        // limit event rate
-        if (event->time - last_header_motion_ev < 50 || prev_header_x == event->x) {
-            return FALSE;
-        }
         last_header_motion_ev = event->time;
         prev_header_x = event->x;
         gdk_window_set_cursor (widget->window, cursor_sz);
