@@ -1396,7 +1396,9 @@ pl_load (const char *fname) {
         if (fread (&d, 1, 4, fp) != 4) {
             goto load_fail;
         }
-        pl_set_item_duration (it, d);
+//        pl_set_item_duration (it, d);
+        it->_duration = d;
+        pl_totaltime += d;
         // get const filetype string from decoder
         uint8_t ft;
         if (fread (&ft, 1, 1, fp) != 1) {
