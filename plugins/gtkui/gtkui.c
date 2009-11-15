@@ -225,12 +225,14 @@ guiplug_showwindow (void) {
     GDK_THREADS_LEAVE();
 }
 
+#if 0
 void
 guiplug_play_current_song (void) {
     GDK_THREADS_ENTER();
     gtkpl_playsong (&main_playlist);
     GDK_THREADS_LEAVE();
 }
+#endif
 
 void
 guiplug_shutdown (void) {
@@ -291,7 +293,7 @@ guiplug_add_files (GSList *files) {
 void
 guiplug_open_files (GSList *files) {
     gtkpl_add_files (&main_playlist, files);
-    gtkpl_playsong (&main_playlist);
+    //gtkpl_playsong (&main_playlist);
 }
 
 void

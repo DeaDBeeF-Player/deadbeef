@@ -1017,6 +1017,7 @@ gtkpl_keypress (gtkplaylist_t *ps, int keyval, int state) {
             newscroll = deadbeef->pl_get_cursor (ps->iterator) - widget->allocation.height / rowheight + 1;
         }
     }
+#if 0
     else if (keyval == GDK_r) {
         extern int replaygain;
         replaygain = 1-replaygain;
@@ -1027,6 +1028,7 @@ gtkpl_keypress (gtkplaylist_t *ps, int keyval, int state) {
         replaygain_scale = 1-replaygain_scale;
         fprintf (stderr, "replaygain_scale=%d\n", replaygain_scale);
     }
+#endif
     else if (keyval == GDK_Up && deadbeef->pl_get_cursor (ps->iterator) > 0) {
         deadbeef->pl_set_cursor (ps->iterator, deadbeef->pl_get_cursor (ps->iterator) - 1);
         if (deadbeef->pl_get_cursor (ps->iterator) < ps->scrollpos) {

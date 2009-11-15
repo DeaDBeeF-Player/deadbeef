@@ -179,9 +179,9 @@ gtkpl_get_idx_of (gtkplaylist_t *ps, DB_playItem_t *it);
 DB_playItem_t *
 gtkpl_get_for_idx (gtkplaylist_t *ps, int idx);
 
-// this functions take value from passed playlist, that's why it's here
-void
-gtkpl_playsong (gtkplaylist_t *ps);
+//// this functions take value from passed playlist, that's why it's here
+//void
+//gtkpl_playsong (gtkplaylist_t *ps);
 
 void
 gtkpl_songchanged (gtkplaylist_t *ps, int from, int to);

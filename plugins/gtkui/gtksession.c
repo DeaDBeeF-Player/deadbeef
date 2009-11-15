@@ -22,7 +22,9 @@
 #  include <config.h>
 #endif
 #include "session.h"
-#include "conf.h"
+#include "deadbeef.h"
+
+extern DB_functions_t *deadbeef; // defined in gtkui.c
 
 void
 session_capture_window_attrs (uintptr_t window) {
@@ -30,15 +32,15 @@ session_capture_window_attrs (uintptr_t window) {
     int win_attrs[4];
     gtk_window_get_position (wnd, &win_attrs[0], &win_attrs[1]);
     gtk_window_get_size (wnd, &win_attrs[2], &win_attrs[3]);
-    conf_set_int ("mainwin.geometry.x", win_attrs[0]);
-    conf_set_int ("mainwin.geometry.y", win_attrs[1]);
-    conf_set_int ("mainwin.geometry.w", win_attrs[2]);
-    conf_set_int ("mainwin.geometry.h", win_attrs[3]);
+    deadbeef->conf_set_int ("mainwin.geometry.x", win_attrs[0]);
+    deadbeef->conf_set_int ("mainwin.geometry.y", win_attrs[1]);
+    deadbeef->conf_set_int ("mainwin.geometry.w", win_attrs[2]);
+    deadbeef->conf_set_int ("mainwin.geometry.h", win_attrs[3]);
 }
 
 void
 session_restore_window_attrs (uintptr_t window) {
     GtkWindow *wnd = GTK_WINDOW (window);
-    gtk_window_move (wnd, conf_get_int ("mainwin.geometry.x", 40), conf_get_int ("mainwin.geometry.y", 40));
-    gtk_window_resize (wnd, conf_get_int ("mainwin.geometry.w", 500), conf_get_int ("mainwin.geometry.h", 300));
+    gtk_window_move (wnd, deadbeef->conf_get_int ("mainwin.geometry.x", 40), deadbeef->conf_get_int ("mainwin.geometry.y", 40));
+    gtk_window_resize (wnd, deadbeef->conf_get_int ("mainwin.geometry.w", 500), deadbeef->conf_get_int ("mainwin.geometry.h", 300));
 }
