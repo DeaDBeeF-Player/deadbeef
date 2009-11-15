@@ -1669,3 +1669,22 @@ pl_set_selected (playItem_t *it, int sel) {
     it->selected = sel;
 }
 
+int
+pl_is_selected (playItem_t *it) {
+    return it->selected;
+}
+
+playItem_t *
+pl_get_first (int iter) {
+    return playlist_head[iter];
+}
+
+playItem_t *
+pl_get_next (DB_playItem_t *it, int iter) {
+    return it ? it->next[iter] : NULL;
+}
+
+playItem_t *
+pl_get_prev (DB_playItem_t *it, int iter) {
+    return it ? it->prev[iter] : NULL;
+}

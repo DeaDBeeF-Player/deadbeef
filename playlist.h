@@ -28,8 +28,6 @@ typedef struct metaInfo_s {
 } metaInfo_t;
 
 #define PL_MAX_ITERATORS 2
-#define PL_MAIN 0
-#define PL_SEARCH 1
 
 typedef struct playItem_s {
     char *fname; // full pathname
@@ -182,5 +180,17 @@ pl_getcurrent (void);
 
 void
 pl_set_selected (playItem_t *it, int sel);
+
+int
+pl_is_selected (playItem_t *it);
+
+playItem_t *
+pl_get_first (int iter);
+
+playItem_t *
+pl_get_next (DB_playItem_t *it, int iter);
+
+playItem_t *
+pl_get_prev (DB_playItem_t *it, int iter);
 
 #endif // __PLAYLIST_H

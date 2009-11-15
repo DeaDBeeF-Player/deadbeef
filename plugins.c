@@ -61,6 +61,7 @@ static DB_functions_t deadbeef_api = {
     .playback_set_pos = plug_playback_set_pos,
     .playback_get_samplerate = p_get_rate,
     .playback_update_bitrate = streamer_update_bitrate,
+    .playback_enum_soundcards = palsa_enum_soundcards,
     // playback status
     .playback_isstopped = p_isstopped,
     .playback_ispaused = p_ispaused,
@@ -68,6 +69,7 @@ static DB_functions_t deadbeef_api = {
     .streamer_get_playing_track = streamer_get_playing_track,
     .streamer_get_streaming_track = streamer_get_streaming_track,
     .streamer_get_playpos = streamer_get_playpos,
+    .streamer_seek = streamer_set_seek,
     // process control
     .get_config_dir = plug_get_config_dir,
     .quit = plug_quit,
@@ -87,6 +89,7 @@ static DB_functions_t deadbeef_api = {
     .pl_item_alloc = (DB_playItem_t* (*)(void))pl_item_alloc,
     .pl_item_free = (void (*)(DB_playItem_t *))pl_item_free,
     .pl_item_copy = (void (*)(DB_playItem_t *, DB_playItem_t *))pl_item_copy,
+    .pl_add_file = (int (*) (const char *, int (*cb)(DB_playItem_t *it, void *data), void *))pl_add_file,
     .pl_insert_item = (DB_playItem_t *(*) (DB_playItem_t *after, DB_playItem_t *it))pl_insert_item,
     .pl_get_idx_of = (int (*) (DB_playItem_t *it))pl_get_idx_of,
     .pl_get_for_idx = (DB_playItem_t * (*)(int))pl_get_for_idx,
@@ -97,7 +100,18 @@ static DB_functions_t deadbeef_api = {
     .pl_getcurrent = (DB_playItem_t *(*)(void))pl_getcurrent,
     .pl_delete_selected = pl_delete_selected,
     .pl_set_cursor = pl_set_cursor,
+    .pl_get_cursor = pl_get_cursor,
     .pl_set_selected = (void (*) (DB_playItem_t *, int))pl_set_selected,
+    .pl_is_selected = (int (*) (DB_playItem_t *))pl_is_selected,
+    .pl_free = pl_free,
+    .pl_load = pl_load,
+    .pl_save = pl_save,
+    .pl_select_all = pl_select_all,
+    .pl_crop_selected = pl_crop_selected,
+    .pl_getselcount = pl_getselcount,
+    .pl_get_first = (DB_playItem_t *(*) (int))pl_get_first,
+    .pl_get_next = (DB_playItem_t *(*) (DB_playItem_t *, int))pl_get_next,
+    .pl_get_prev = (DB_playItem_t *(*) (DB_playItem_t *, int))pl_get_prev,
     // metainfo
     .pl_add_meta = (void (*) (DB_playItem_t *, const char *, const char *))pl_add_meta,
     .pl_find_meta = (const char *(*) (DB_playItem_t *, const char *))pl_find_meta,
@@ -110,6 +124,7 @@ static DB_functions_t deadbeef_api = {
     .volume_get_db = volume_get_db,
     .volume_set_amp = plug_volume_set_amp,
     .volume_get_amp = volume_get_amp,
+    .volume_get_min_db = volume_get_min_db,
     // junk reading
     .junk_read_id3v1 = (int (*)(DB_playItem_t *it, DB_FILE *fp))junk_read_id3v1,
     .junk_read_id3v2 = (int (*)(DB_playItem_t *it, DB_FILE *fp))junk_read_id3v2,
@@ -134,7 +149,11 @@ static DB_functions_t deadbeef_api = {
     .conf_get_float = conf_get_float,
     .conf_get_int = conf_get_int,
     .conf_set_str = conf_set_str,
+    .conf_set_int = conf_set_int,
     .conf_find = conf_find,
+    // plugin communication
+    .plug_get_decoder_list = plug_get_decoder_list,
+    .plug_get_list = plug_get_list,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;

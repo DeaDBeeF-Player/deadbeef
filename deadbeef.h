@@ -68,6 +68,11 @@ extern "C" {
 ////////////////////////////
 // playlist structures
 
+// iterators
+// that's a good candidate for redesign
+#define PL_MAIN 0
+#define PL_SEARCH 1
+
 // playlist item
 // these are "public" fields, available to plugins
 typedef struct {
@@ -212,6 +217,7 @@ typedef struct {
     void (*playback_set_pos) (float pos); // [0..100]
     int (*playback_get_samplerate) (void); // output samplerate
     void (*playback_update_bitrate) (float bitrate);
+    void (*playback_enum_soundcards) (void (*callback)(const char *name, const char *desc, void*), void *userdata);
     // playback status
     int (*playback_isstopped) (void);
     int (*playback_ispaused) (void);
@@ -220,6 +226,7 @@ typedef struct {
     DB_playItem_t *(*streamer_get_playing_track) (void);
     DB_playItem_t *(*streamer_get_streaming_track) (void);
     float (*streamer_get_playpos) (void);
+    void (*streamer_seek) (float time);
     // process control
     const char *(*get_config_dir) (void);
     void (*quit) (void);
@@ -239,6 +246,7 @@ typedef struct {
     DB_playItem_t * (*pl_item_alloc) (void);
     void (*pl_item_free) (DB_playItem_t *it);
     void (*pl_item_copy) (DB_playItem_t *out, DB_playItem_t *in);
+    int (*pl_add_file) (const char *fname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
     DB_playItem_t *(*pl_insert_item) (DB_playItem_t *after, DB_playItem_t *it);
     int (*pl_get_idx_of) (DB_playItem_t *it);
     DB_playItem_t * (*pl_get_for_idx) (int);
@@ -247,7 +255,18 @@ typedef struct {
     DB_playItem_t *(*pl_getcurrent) (void);
     int (*pl_delete_selected) (void);
     void (*pl_set_cursor) (int cursor);
+    int (*pl_get_cursor) (void);
     void (*pl_set_selected) (DB_playItem_t *it, int sel);
+    int (*pl_is_selected) (DB_playItem_t *it);
+    void (*pl_free) (void);
+    int (*pl_load) (const char *name);
+    int (*pl_save) (const char *name);
+    void (*pl_select_all) (void);
+    void (*pl_crop_selected) (void);
+    int (*pl_getselcount) (void);
+    DB_playItem_t *(*pl_get_first) (int iter);
+    DB_playItem_t *(*pl_get_next) (DB_playItem_t *it, int iter);
+    DB_playItem_t *(*pl_get_prev) (DB_playItem_t *it, int iter);
     // metainfo
     void (*pl_add_meta) (DB_playItem_t *it, const char *key, const char *value);
     const char *(*pl_find_meta) (DB_playItem_t *song, const char *meta);
@@ -262,6 +281,7 @@ typedef struct {
     float (*volume_get_db) (void);
     void (*volume_set_amp) (float amp);
     float (*volume_get_amp) (void);
+    float (*volume_get_min_db) (void);
     // junk reading
     int (*junk_read_id3v1) (DB_playItem_t *it, DB_FILE *fp);
     int (*junk_read_id3v2) (DB_playItem_t *it, DB_FILE *fp);
@@ -286,7 +306,11 @@ typedef struct {
     float (*conf_get_float) (const char *key, float def);
     int (*conf_get_int) (const char *key, int def);
     void (*conf_set_str) (const char *key, const char *val);
+    void (*conf_set_int) (const char *key, int val);
     DB_conf_item_t * (*conf_find) (const char *group, DB_conf_item_t *prev);
+    // plugin communication
+    struct DB_decoder_s **(*plug_get_decoder_list) (void);
+    struct DB_plugin_s **(*plug_get_list) (void);
     // exporting plugin conf options for gui
     // all exported options are grouped by plugin, and will be available to user
     // from gui

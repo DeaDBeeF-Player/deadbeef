@@ -240,8 +240,9 @@ gtkpl_setup_scrollbar (gtkplaylist_t *ps) {
         size = 0;
     }
     GtkWidget *scroll = ps->scrollbar;
-    if (ps->row >= (*ps->pcount)) {
-        ps->row = (*ps->pcount) - 1;
+    int row = deadbeef->pl_get_cursor ();
+    if (row >= (*ps->pcount)) {
+        row = (*ps->pcount) - 1;
     }
     if (ps->scrollpos > (*ps->pcount)-ps->nvisiblerows+1) {
         int n = (*ps->pcount) - ps->nvisiblerows + 1;
