@@ -52,6 +52,7 @@ typedef struct playItem_s {
     struct metaInfo_s *meta; // linked list storing metainfo
     unsigned selected : 1;
     unsigned played : 1; // mark as played in shuffle mode
+    unsigned in_playlist : 1; // 1 if item is in playlist
 } playItem_t;
 
 extern playItem_t *playlist_head[PL_MAX_ITERATORS]; // head of linked list

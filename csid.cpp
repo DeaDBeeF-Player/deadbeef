@@ -29,6 +29,9 @@
 
 #include "deadbeef.h"
 
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
+
 extern "C" {
 #include "md5/md5.h"
 #include "conf.h"
@@ -125,23 +128,30 @@ typedef struct {
 } sldb_t;
 static int sldb_loaded;
 static sldb_t *sldb;
+static int sldb_disable;
 
 static void sldb_load()
 {
-    fprintf (stderr, "sldb_load\n");
+    if (sldb_disable) {
+        return;
+    }
+    trace ("sldb_load\n");
     int conf_hvsc_enable = conf_get_int ("hvsc_enable", 0);
     if (sldb_loaded || !conf_hvsc_enable) {
+        sldb_disable = 1;
         return;
     }
     const char *conf_hvsc_path = conf_get_str ("hvsc_path", NULL);
     if (!conf_hvsc_path) {
+        sldb_disable = 1;
         return;
     }
     sldb_loaded = 1;
     const char *fname = conf_hvsc_path;
     FILE *fp = fopen (fname, "r");
     if (!fp) {
-        fprintf (stderr, "sid: failed to open file %s\n", fname);
+        trace ("sid: failed to open file %s\n", fname);
+        sldb_disable = 1;
         return;
     }
     char str[1024];
@@ -160,12 +170,12 @@ static void sldb_load()
     }
     while (fgets (str, 1024, fp) == str) {
         if (sldb->sldb_size >= SLDB_MAX_SONGS) {
-            printf ("sldb loader ran out of memory.\n");
+            trace ("sldb loader ran out of memory.\n");
             break;
         }
         line++;
         if (str[0] == ';') {
-//            printf ("reading songlength for %s", str);
+//            trace ("reading songlength for %s", str);
             continue; // comment
         }
         // read/validate md5
@@ -176,7 +186,7 @@ static void sldb_load()
         while (*p && sz < 16) {
             byte[0] = tolower (*p);
             if (!((byte[0] >= '0' && byte[0] <= '9') || (byte[0] >= 'a' && byte[0] <= 'f'))) {
-                printf ("invalid byte 0 in md5: %c\n", byte[0]);
+                trace ("invalid byte 0 in md5: %c\n", byte[0]);
                 break;
             }
             p++;
@@ -185,7 +195,7 @@ static void sldb_load()
             }
             byte[1] = tolower (*p);
             if (!((byte[1] >= '0' && byte[1] <= '9') || (byte[1] >= 'a' && byte[1] <= 'f'))) {
-                printf ("invalid byte 1 in md5: %c\n", byte[1]);
+                trace ("invalid byte 1 in md5: %c\n", byte[1]);
                 break;
             }
             byte[2] = 0;
@@ -207,15 +217,15 @@ static void sldb_load()
             sz++;
         }
         if (sz < 16) {
-            printf ("bad md5 (sz=%d, line=%d)\n", sz, line);
+            trace ("bad md5 (sz=%d, line=%d)\n", sz, line);
             continue; // bad song md5
         }
 //        else {
-//            printf ("digest: ");
+//            trace ("digest: ");
 //            for (int j = 0; j < 16; j++) {
-//                printf ("%02x", (int)digest[j]);
+//                trace ("%02x", (int)digest[j]);
 //            }
-//            printf ("\n");
+//            trace ("\n");
 //            exit (0);
 //        }
         memcpy (sldb->sldb_digests[sldb->sldb_size], digest, 16);
@@ -260,11 +270,11 @@ static void sldb_load()
                 // second
                 char second[3];
                 strncpy (second, colon+1, 3);
-                //printf ("subsong %d, time %s:%s\n", subsong, minute, second);
+                //trace ("subsong %d, time %s:%s\n", subsong, minute, second);
                 time = atoi (minute) * 60 + atoi (second);
             }
             if (sldb->sldb_poolmark >= SLDB_POOL_SIZE) {
-                printf ("sldb ran out of memory\n");
+                trace ("sldb ran out of memory\n");
                 goto fail;
             }
             
@@ -293,14 +303,15 @@ static void sldb_load()
     }
 
 fail:
+    sldb_disable = 1;
     fclose (fp);
-    fprintf (stderr, "HVSC sldb loaded %d songs, %d subsongs total\n", sldb->sldb_size, sldb->sldb_poolmark);
+    trace ("HVSC sldb loaded %d songs, %d subsongs total\n", sldb->sldb_size, sldb->sldb_poolmark);
 }
 
 static int
 sldb_find (const uint8_t *digest) {
     if (!sldb) {
-        fprintf (stderr, "sldb not loaded\n");
+        trace ("sldb not loaded\n");
         return -1;
     }
     for (int i = 0; i < sldb->sldb_size; i++) {
@@ -401,7 +412,7 @@ csid_seek (float time) {
         int n = min (samples, 4096) * plugin.info.channels;
         int done = sidplay->play (buffer, n);
         if (done < n) {
-            printf ("sid seek failure\n");
+            trace ("sid seek failure\n");
             return -1;
         }
         samples -= done;
@@ -419,7 +430,7 @@ convstr (const char* str) {
     const char *enc = "iso8859-1";
     iconv_t cd = iconv_open ("utf8", enc);
     if (!cd) {
-        printf ("unknown encoding: %s\n", enc);
+        trace ("unknown encoding: %s\n", enc);
         return NULL;
     }
     else {
@@ -547,11 +558,11 @@ csid_insert (DB_playItem_t *after, const char *fname) {
                     length = sldb->sldb_lengths[song][s];
                 }
                 //        if (song < 0) {
-                //            printf ("song %s not found in db, md5: ", fname);
+                //            trace ("song %s not found in db, md5: ", fname);
                 //            for (int j = 0; j < 16; j++) {
-                //                printf ("%02x", (int)sig[j]);
+                //                trace ("%02x", (int)sig[j]);
                 //            }
-                //            printf ("\n");
+                //            trace ("\n");
                 //        }
             }
             deadbeef->pl_set_item_duration (it, length);

@@ -608,7 +608,7 @@ pl_insert_file (playItem_t *after, const char *fname, int *pabort, int (*cb)(pla
             it->decoder = NULL;
             it->fname = strdup (fname);
             it->filetype = "content";
-            pl_set_item_duration (it, -1);
+            it->_duration = -1;
             pl_add_meta (it, "title", NULL);
             return pl_insert_item (after, it);
         }
@@ -823,6 +823,7 @@ pl_insert_item (playItem_t *after, playItem_t *it) {
             playlist_tail[PL_MAIN] = it;
         }
     }
+    it->in_playlist = 1;
     pl_count++;
 
     // shuffle
@@ -1398,7 +1399,8 @@ pl_load (const char *fname) {
         if (fread (&d, 1, 4, fp) != 4) {
             goto load_fail;
         }
-        pl_set_item_duration (it, d);
+        it->_duration = d;
+        pl_totaltime += d;
         // get const filetype string from decoder
         uint8_t ft;
         if (fread (&ft, 1, 1, fp) != 1) {
@@ -1548,7 +1550,8 @@ pl_delete_all_meta (playItem_t *it) {
 
 void
 pl_set_item_duration (playItem_t *it, float duration) {
-    if (pl_get_idx_of (it) != -1) {
+//    if (pl_get_idx_of (it) != -1) {
+    if (it->in_playlist) {
         if (it->_duration > 0) {
             pl_totaltime -= it->_duration;
         }

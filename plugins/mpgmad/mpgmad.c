@@ -183,6 +183,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
             break; // eof
         }
         if (sync != 0xff) {
+            trace ("[1]frame %d didn't seek to frame end\n", nframe);
             continue; // not an mpeg frame
         }
         else {
@@ -191,6 +192,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
                 break; // eof
             }
             if ((sync >> 5) != 7) {
+                trace ("[2]frame %d didn't seek to frame end\n", nframe);
                 continue;
             }
         }
@@ -211,7 +213,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
         // sync bits
         int usync = hdr & 0xffe00000;
         if (usync != 0xffe00000) {
-            printf ("fatal error: mp3 header parser is broken\n");
+            fprintf (stderr, "fatal error: mp3 header parser is broken\n");
         }
 
         // mpeg version
@@ -219,6 +221,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
         int ver = (hdr & (3<<19)) >> 19;
         ver = vertbl[ver];
         if (ver < 0) {
+            trace ("frame %d bad mpeg version %d\n", nframe, (hdr & (3<<19)) >> 19);
             continue; // invalid frame
         }
 
@@ -227,16 +230,17 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
         int layer = (hdr & (3<<17)) >> 17;
         layer = ltbl[layer];
         if (layer < 0) {
+            trace ("frame %d bad layer %d\n", nframe, (hdr & (3<<17)) >> 17);
             continue; // invalid frame
         }
 
         // bitrate
-        static int brtable[5][16] = {
+        static const int brtable[5][16] = {
             { 0, 32, 64, 96, 128, 160, 192, 224, 256, 288, 320, 352, 384, 416, 448, -1 },
-            { 0, 32, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320, 384, -1 },
-            { 0, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320, -1 },
-            { 0, 32, 48, 56, 64, 80, 96, 112, 128, 144, 160, 176, 192, 224, 256, -1 },
-            { 0, 8, 16, 24, 32, 40, 48, 56, 64, 80, 96, 112, 128, 144, 160, -1 }
+            { 0, 32, 48, 56,  64,  80,  96, 112, 128, 160, 192, 224, 256, 320, 384, -1 },
+            { 0, 32, 40, 48,  56,  64,  80,  96, 112, 128, 160, 192, 224, 256, 320, -1 },
+            { 0, 32, 48, 56,  64,  80,  96, 112, 128, 144, 160, 176, 192, 224, 256, -1 },
+            { 0,  8, 16, 24,  32,  40,  48,  56,  64,  80,  96, 112, 128, 144, 160, -1 }
         };
         int bitrate = (hdr & (0x0f<<12)) >> 12;
         int idx = 0;
@@ -248,11 +252,12 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
         }
         bitrate = brtable[idx][bitrate];
         if (bitrate <= 0) {
+            trace ("frame %d bad bitrate %d\n", nframe, (hdr & (0x0f<<12)) >> 12);
             continue; // invalid frame
         }
 
         // samplerate
-        static int srtable[3][4] = {
+        static const int srtable[3][4] = {
             {44100, 48000, 32000, -1},
             {22050, 24000, 16000, -1},
             {11025, 12000, 8000, -1},
@@ -260,6 +265,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
         int samplerate = (hdr & (0x03<<10))>>10;
         samplerate = srtable[ver-1][samplerate];
         if (samplerate < 0) {
+            trace ("frame %d bad samplerate %d\n", nframe, (hdr & (0x03<<10))>>10);
             continue; // invalid frame
         }
 
@@ -273,16 +279,13 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
         // check if channel/bitrate combination is valid for layer2
         if (layer == 2) {
             if ((bitrate <= 56 || bitrate == 80) && nchannels != 1) {
+                trace ("[1]frame %d channel/bitrate combination is bad\n", nframe);
                 continue; // bad frame
             }
             if (bitrate >= 224 && nchannels == 1) {
+                trace ("[2]frame %d channel/bitrate combination is bad\n", nframe);
                 continue; // bad frame
             }
-        }
-
-        // check if emphasis is valid
-        if ((hdr & 3) == 2) {
-            continue; // 10 is reserved
         }
 
         // packetlength
@@ -312,6 +315,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
             packetlength = samples_per_frame / 8 * bitrate / samplerate + padding;
         }
         else {
+            trace ("frame %d samplerate or bitrate is invalid\n", nframe);
             continue;
         }
 
@@ -325,9 +329,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
             buffer->frameduration = dur;
             buffer->channels = nchannels;
             buffer->bitspersample = 16;
-            if (packetlength != 144) {
-            trace ("frame %d(@%d) mpeg v%d layer %d bitrate %d samplerate %d packetlength %d framedur %f channels %d\n", nframe, pos, ver, layer, bitrate, samplerate, packetlength, dur, nchannels);
-            }
+            //trace ("frame %d(@%d) mpeg v%d layer %d bitrate %d samplerate %d packetlength %d framedur %f channels %d\n", nframe, pos, ver, layer, bitrate, samplerate, packetlength, dur, nchannels);
         }
         // try to read xing/info tag (only on initial scans)
         if (sample <= 0 && !got_xing_header)
@@ -501,9 +503,9 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
     if (nframe == 0) {
         return -1;
     }
-    trace ("nframes=%d, packetlength=%d\n", nframe, packetlength);
     buffer->totalsamples = scansamples;
-    buffer->duration = buffer->totalsamples / buffer->samplerate;
+//    buffer->duration = buffer->totalsamples / buffer->samplerate;
+    trace ("nframes=%d, totalsamples=%d, samplerate=%d, dur=%f\n", nframe, scansamples, buffer->samplerate, buffer->duration);
     return 0;
 }
 

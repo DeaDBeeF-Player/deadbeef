@@ -565,53 +565,63 @@ junk_read_ape (playItem_t *it, DB_FILE *fp) {
         }
         key[255] = 0;
         // read value
-        char value[itemsize+1];
-        if (deadbeef->fread (value, 1, itemsize, fp) != itemsize) {
-            return -1;
+        if (itemsize <= 1024)
+        {
+            char value[itemsize+1];
+            if (deadbeef->fread (value, 1, itemsize, fp) != itemsize) {
+                return -1;
+            }
+            value[itemsize] = 0;
+            if (!u8_valid (value, itemsize, NULL)) {
+                strcpy (value, "<bad encoding>");
+            }
+            // add metainfo only if it's textual
+            int valuetype = ((itemflags & (0x3<<1)) >> 1);
+            if (valuetype == 0) {
+                if (!strcasecmp (key, "artist")) {
+                    pl_add_meta (it, "artist", value);
+                }
+                else if (!strcasecmp (key, "title")) {
+                    pl_add_meta (it, "title", value);
+                }
+                else if (!strcasecmp (key, "album")) {
+                    pl_add_meta (it, "album", value);
+                }
+                else if (!strcasecmp (key, "track")) {
+                    pl_add_meta (it, "track", value);
+                }
+                else if (!strcasecmp (key, "year")) {
+                    pl_add_meta (it, "year", value);
+                }
+                else if (!strcasecmp (key, "genre")) {
+                    pl_add_meta (it, "genre", value);
+                }
+                else if (!strcasecmp (key, "comment")) {
+                    pl_add_meta (it, "genre", value);
+                }
+                else if (!strncasecmp (key, "replaygain_album_gain", 21)) {
+                    it->replaygain_album_gain = atof (value);
+                    trace ("album_gain=%s\n", value);
+                }
+                else if (!strncasecmp (key, "replaygain_album_peak", 21)) {
+                    it->replaygain_album_peak = atof (value);
+                    trace ("album_peak=%s\n", value);
+                }
+                else if (!strncasecmp (key, "replaygain_track_gain", 21)) {
+                    it->replaygain_track_gain = atof (value);
+                    trace ("track_gain=%s\n", value);
+                }
+                else if (!strncasecmp (key, "replaygain_track_peak", 21)) {
+                    it->replaygain_track_peak = atof (value);
+                    trace ("track_peak=%s\n", value);
+                }
+            }
         }
-        value[itemsize] = 0;
-        if (!u8_valid (value, itemsize, NULL)) {
-            strcpy (value, "<bad encoding>");
-        }
-        // add metainfo only if it's textual
-        int valuetype = ((itemflags & (0x3<<1)) >> 1);
-        if (valuetype == 0) {
-            if (!strcasecmp (key, "artist")) {
-                pl_add_meta (it, "artist", value);
-            }
-            else if (!strcasecmp (key, "title")) {
-                pl_add_meta (it, "title", value);
-            }
-            else if (!strcasecmp (key, "album")) {
-                pl_add_meta (it, "album", value);
-            }
-            else if (!strcasecmp (key, "track")) {
-                pl_add_meta (it, "track", value);
-            }
-            else if (!strcasecmp (key, "year")) {
-                pl_add_meta (it, "year", value);
-            }
-            else if (!strcasecmp (key, "genre")) {
-                pl_add_meta (it, "genre", value);
-            }
-            else if (!strcasecmp (key, "comment")) {
-                pl_add_meta (it, "genre", value);
-            }
-            else if (!strncasecmp (key, "replaygain_album_gain", 21)) {
-                it->replaygain_album_gain = atof (value);
-                trace ("album_gain=%s\n", value);
-            }
-            else if (!strncasecmp (key, "replaygain_album_peak", 21)) {
-                it->replaygain_album_peak = atof (value);
-                trace ("album_peak=%s\n", value);
-            }
-            else if (!strncasecmp (key, "replaygain_track_gain", 21)) {
-                it->replaygain_track_gain = atof (value);
-                trace ("track_gain=%s\n", value);
-            }
-            else if (!strncasecmp (key, "replaygain_track_peak", 21)) {
-                it->replaygain_track_peak = atof (value);
-                trace ("track_peak=%s\n", value);
+        else {
+            // try to skip
+            if (deadbeef->fseek (fp, SEEK_CUR, itemsize)) {
+                fprintf (stderr, "junklib: corrupted APEv2 tag\n");
+                return -1;
             }
         }
     }
