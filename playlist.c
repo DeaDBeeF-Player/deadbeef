@@ -1658,3 +1658,14 @@ float
 pl_get_totaltime (void) {
     return pl_totaltime;
 }
+
+playItem_t *
+pl_getcurrent (void) {
+    return playlist_current_ptr;
+}
+
+void
+pl_set_selected (playItem_t *it, int sel) {
+    it->selected = sel;
+}
+

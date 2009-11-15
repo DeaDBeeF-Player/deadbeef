@@ -177,4 +177,10 @@ pl_reset_cursor (void);
 float
 pl_get_totaltime (void);
 
+playItem_t *
+pl_getcurrent (void);
+
+void
+pl_set_selected (playItem_t *it, int sel);
+
 #endif // __PLAYLIST_H

@@ -51,11 +51,12 @@
 extern GtkWidget *mainwin;
 extern gtkplaylist_t main_playlist;
 extern gtkplaylist_t search_playlist;
+extern DB_functions_t *deadbeef; // defined in gtkui.c
 
 gboolean
 playlist_tooltip_handler (GtkWidget *widget, gint x, gint y, gboolean keyboard_mode, GtkTooltip *tooltip, gpointer unused)
 {
-    playItem_t *item = gtkpl_get_for_idx (&main_playlist, main_playlist.scrollpos + y / rowheight);
+    DB_playItem_t *item = deadbeef->pl_get_for_idx (main_playlist.scrollpos + y / rowheight);
     if (item && item->fname) {
         gtk_tooltip_set_text (tooltip, item->fname);
         return TRUE;
@@ -72,13 +73,13 @@ main_playlist_init (GtkWidget *widget) {
     main_playlist.header = lookup_widget (mainwin, "header");
     main_playlist.scrollbar = lookup_widget (mainwin, "playscroll");
     main_playlist.hscrollbar = lookup_widget (mainwin, "playhscroll");
-    main_playlist.pcurr = &playlist_current_ptr;
+//    main_playlist.pcurr = &playlist_current_ptr;
     main_playlist.pcount = &pl_count;
     main_playlist.iterator = PL_MAIN;
     main_playlist.multisel = 1;
     main_playlist.scrollpos = 0;
     main_playlist.hscrollpos = 0;
-    main_playlist.row = -1;
+//    main_playlist.row = -1;
     main_playlist.clicktime = -1;
     main_playlist.nvisiblerows = 0;
 
@@ -135,7 +136,7 @@ search_playlist_init (GtkWidget *widget) {
     search_playlist.iterator = PL_SEARCH;
     search_playlist.scrollpos = 0;
     search_playlist.hscrollpos = 0;
-    search_playlist.row = -1;
+//    search_playlist.row = -1;
     search_playlist.clicktime = -1;
     search_playlist.nvisiblerows = 0;
 
@@ -444,11 +445,12 @@ on_remove1_activate                    (GtkMenuItem     *menuitem,
 {
     gtkplaylist_t *ps = &main_playlist;
     GtkWidget *widget = ps->playlist;
-    ps->row = pl_delete_selected ();
-    if (ps->row != -1) {
-        playItem_t *it = pl_get_for_idx (ps->row);
+    int row = deadbeef->pl_delete_selected ();
+    deadbeef->pl_set_cursor (row);
+    if (row != -1) {
+        DB_playItem_t *it = deadbeef->pl_get_for_idx (row);
         if (it) {
-            it->selected = 1;
+            deadbeef->pl_set_selected (it, 1);
         }
     }
     gtkpl_setup_scrollbar (ps);

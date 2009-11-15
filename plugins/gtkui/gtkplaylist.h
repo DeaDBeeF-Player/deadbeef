@@ -73,7 +73,7 @@ typedef struct {
     GdkPixmap *backbuf_header;
     const char *title; // unique id, used for config writing, etc
     // parameters
-    DB_playItem_t **pcurr; // pointer to current item
+//    DB_playItem_t **pcurr; // pointer to current item
     int *pcount; // pointer to count of items in list
     int iterator; // index into next array of DB_playItem_t struct
     int lastpos[2]; // last mouse position (for playlist widget)

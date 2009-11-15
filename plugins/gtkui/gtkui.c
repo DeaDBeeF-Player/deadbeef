@@ -25,12 +25,13 @@
 #include "interface.h"
 #include "callbacks.h"
 #include "support.h"
+#include "session.h"
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
 
 static DB_gui_t plugin;
-static DB_functions_t *deadbeef;
+DB_functions_t *deadbeef;
 
 // main widgets
 GtkWidget *mainwin;
@@ -74,7 +75,7 @@ update_songinfo (void) {
     float duration = deadbeef->pl_get_item_duration (track);
 
     if (deadbeef->playback_isstopped ()) {
-        snprintf (sbtext_new, sizeof (sbtext_new), "Stopped | %d tracks | %s total playtime", pl_getcount (), totaltime_str);
+        snprintf (sbtext_new, sizeof (sbtext_new), "Stopped | %d tracks | %s total playtime", deadbeef->pl_getcount (), totaltime_str);
         songpos = 0;
     }
     else if (track->decoder) {
@@ -108,7 +109,7 @@ update_songinfo (void) {
         }
 #endif
         const char *spaused = deadbeef->playback_ispaused () ? "Paused | " : "";
-        snprintf (sbtext_new, sizeof (sbtext_new), "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime", spaused, track->filetype ? track->filetype:"-", sbitrate, samplerate, bitspersample, mode, minpos, secpos, t, pl_getcount (), totaltime_str);
+        snprintf (sbtext_new, sizeof (sbtext_new), "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime", spaused, track->filetype ? track->filetype:"-", sbitrate, samplerate, bitspersample, mode, minpos, secpos, t, deadbeef->pl_getcount (), totaltime_str);
     }
 
     if (strcmp (sbtext_new, sb_text)) {
@@ -239,6 +240,7 @@ guiplug_shutdown (void) {
     GDK_THREADS_LEAVE();
 }
 
+#if 0
 void
 guiplug_start_current_track (void) {
     gtkpl_playsong (&main_playlist);
@@ -248,6 +250,7 @@ guiplug_start_current_track (void) {
         GDK_THREADS_LEAVE();
     }
 }
+#endif
 
 void
 guiplug_start_track (int idx) {
@@ -319,7 +322,7 @@ static int
 gtkui_on_trackinfochanged (DB_event_track_t *ev, uintptr_t data) {
     GDK_THREADS_ENTER();
     gtkpl_redraw_pl_row (&main_playlist, ev->index, ev->track);
-    if (ev->track == playlist_current_ptr) {
+    if (ev->track == deadbeef->pl_getcurrent ()) {
         gtkpl_current_track_changed (ev->track);
     }
     GDK_THREADS_LEAVE();
@@ -328,7 +331,11 @@ gtkui_on_trackinfochanged (DB_event_track_t *ev, uintptr_t data) {
 static int
 gtkui_on_paused (DB_event_state_t *ev, uintptr_t data) {
     GDK_THREADS_ENTER();
-    gtkpl_redraw_pl_row (&main_playlist, pl_get_idx_of (playlist_current_ptr), playlist_current_ptr);
+    DB_playItem_t *curr = deadbeef->pl_getcurrent ();
+    if (curr) {
+        int idx = deadbeef->pl_get_idx_of (curr);
+        gtkpl_redraw_pl_row (&main_playlist, idx, curr);
+    }
     GDK_THREADS_LEAVE();
 }
 
@@ -359,7 +366,7 @@ gtkui_start (void) {
     gdk_threads_init ();
     gdk_threads_enter ();
     gtk_set_locale ();
-    gtk_init (&argc, &argv);
+    gtk_init (0, NULL);
 
     // system tray icon
     traymenu = create_traymenu ();
@@ -390,11 +397,11 @@ gtkui_start (void) {
     const char *orderwidgets[3] = { "order_linear", "order_shuffle", "order_random" };
     const char *loopingwidgets[3] = { "loop_all", "loop_disable", "loop_single" };
     const char *w;
-    w = orderwidgets[conf_get_int ("playback.order", 0)];
+    w = orderwidgets[deadbeef->conf_get_int ("playback.order", 0)];
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, w)), TRUE);
-    w = loopingwidgets[conf_get_int ("playback.loop", 0)];
+    w = loopingwidgets[deadbeef->conf_get_int ("playback.loop", 0)];
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, w)), TRUE);
-    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "scroll_follows_playback")), conf_get_int ("playlist.scroll.followplayback", 0) ? TRUE : FALSE);
+    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "scroll_follows_playback")), deadbeef->conf_get_int ("playlist.scroll.followplayback", 0) ? TRUE : FALSE);
 
     searchwin = create_searchwin ();
     gtk_window_set_transient_for (GTK_WINDOW (searchwin), GTK_WINDOW (mainwin));

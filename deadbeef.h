@@ -241,7 +241,13 @@ typedef struct {
     void (*pl_item_copy) (DB_playItem_t *out, DB_playItem_t *in);
     DB_playItem_t *(*pl_insert_item) (DB_playItem_t *after, DB_playItem_t *it);
     int (*pl_get_idx_of) (DB_playItem_t *it);
+    DB_playItem_t * (*pl_get_for_idx) (int);
     float (*pl_get_totaltime) (void);
+    int (*pl_getcount) (void);
+    DB_playItem_t *(*pl_getcurrent) (void);
+    int (*pl_delete_selected) (void);
+    void (*pl_set_cursor) (int cursor);
+    void (*pl_set_selected) (DB_playItem_t *it, int sel);
     // metainfo
     void (*pl_add_meta) (DB_playItem_t *it, const char *key, const char *value);
     const char *(*pl_find_meta) (DB_playItem_t *song, const char *meta);
