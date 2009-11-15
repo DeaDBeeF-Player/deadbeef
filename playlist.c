@@ -762,14 +762,19 @@ pl_getselcount (void) {
 }
 
 playItem_t *
-pl_get_for_idx (int idx) {
-    playItem_t *it = playlist_head[PL_MAIN];
+pl_get_for_idx_and_iter (int idx, int iter) {
+    playItem_t *it = playlist_head[iter];
     while (idx--) {
         if (!it)
             return NULL;
-        it = it->next[PL_MAIN];
+        it = it->next[iter];
     }
     return it;
+}
+
+playItem_t *
+pl_get_for_idx (int idx) {
+    return pl_get_for_idx_and_iter (idx, PL_MAIN);
 }
 
 int
@@ -1680,11 +1685,26 @@ pl_get_first (int iter) {
 }
 
 playItem_t *
-pl_get_next (DB_playItem_t *it, int iter) {
+pl_get_last (int iter) {
+    return playlist_tail[iter];
+}
+
+playItem_t *
+pl_get_next (playItem_t *it, int iter) {
     return it ? it->next[iter] : NULL;
 }
 
 playItem_t *
-pl_get_prev (DB_playItem_t *it, int iter) {
+pl_get_prev (playItem_t *it, int iter) {
     return it ? it->prev[iter] : NULL;
+}
+
+int
+pl_get_cursor (int iter) {
+    return playlist_current_row[iter];
+}
+
+void
+pl_set_cursor (int iter, int cursor) {
+    playlist_current_row[iter] = cursor;
 }

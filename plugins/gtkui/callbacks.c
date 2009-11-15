@@ -32,8 +32,6 @@
 #include "interface.h"
 #include "support.h"
 
-#include "common.h"
-
 #include "gtkplaylist.h"
 #include "search.h"
 #include "progress.h"
@@ -445,7 +443,7 @@ on_remove1_activate                    (GtkMenuItem     *menuitem,
     gtkplaylist_t *ps = &main_playlist;
     GtkWidget *widget = ps->playlist;
     int row = deadbeef->pl_delete_selected ();
-    deadbeef->pl_set_cursor (row);
+    deadbeef->pl_set_cursor (PL_MAIN, row);
     if (row != -1) {
         DB_playItem_t *it = deadbeef->pl_get_for_idx (row);
         if (it) {

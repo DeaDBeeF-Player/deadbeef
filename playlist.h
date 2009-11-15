@@ -103,6 +103,9 @@ pl_getselcount (void);
 playItem_t *
 pl_get_for_idx (int idx);
 
+playItem_t *
+pl_get_for_idx_and_iter (int idx, int iter);
+
 int
 pl_get_idx_of (playItem_t *it);
 
@@ -188,9 +191,18 @@ playItem_t *
 pl_get_first (int iter);
 
 playItem_t *
-pl_get_next (DB_playItem_t *it, int iter);
+pl_get_last (int iter);
 
 playItem_t *
-pl_get_prev (DB_playItem_t *it, int iter);
+pl_get_next (playItem_t *it, int iter);
+
+playItem_t *
+pl_get_prev (playItem_t *it, int iter);
+
+int
+pl_get_cursor (int iter);
+
+void
+pl_set_cursor (int iter, int cursor);
 
 #endif // __PLAYLIST_H

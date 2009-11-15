@@ -29,12 +29,24 @@
 #include "interface.h"
 #include "support.h"
 
-#include "common.h"
 #include "search.h"
 #include "gtkplaylist.h"
-#include "messagepump.h"
 #include "utf8.h"
 #include "deadbeef.h"
+
+#define min(x,y) ((x)<(y)?(x):(y))
+#define max(x,y) ((x)>(y)?(x):(y))
+
+#define PL_HEAD(iter) (deadbeef->pl_get_first(iter))
+#define PL_TAIL(iter) (deadbeef->pl_get_last(iter))
+#define PL_NEXT(it, iter) (deadbeef->pl_get_next(it, iter))
+#define PL_PREV(it, iter) (deadbeef->pl_get_prev(it, iter))
+#define SELECTED(it) (deadbeef->pl_is_selected(it))
+#define SELECT(it, sel) (deadbeef->pl_set_selected(it,sel))
+
+extern DB_functions_t *deadbeef; // defined in gtkui.c
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 extern GtkWidget *searchwin;
 struct playItem_s *search_current = NULL;
@@ -58,6 +70,7 @@ on_searchentry_changed                 (GtkEditable     *editable,
     // walk playlist starting with playlist_head, and populate list starting
     // with search_head
 
+#if 0 // FIXME: port to plugin api
     const gchar *text = gtk_entry_get_text (GTK_ENTRY (editable));
 
     playlist_head[PL_SEARCH] = NULL;
@@ -90,6 +103,7 @@ on_searchentry_changed                 (GtkEditable     *editable,
     //memset (ps->fmtcache, 0, sizeof (int16_t) * 3 * pl_ncolumns * ps->nvisiblerows);
     gtkpl_draw_playlist (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
     gtkpl_expose (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
+#endif
 }
 
 void
@@ -165,9 +179,10 @@ on_searchwin_key_press_event           (GtkWidget       *widget,
         extern gtkplaylist_t search_playlist;
         gtkplaylist_t *ps = &search_playlist;
         if (search_count > 0) {
-            playItem_t *it = gtkpl_get_for_idx (ps, max (ps->row, 0));
+            int row = deadbeef->pl_get_cursor (ps->iterator);
+            DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (max (row, 0), ps->iterator);
             if (it) {
-                messagepump_push (M_PLAYSONGNUM, 0, pl_get_idx_of (it), 0);
+                deadbeef->sendmessage (M_PLAYSONGNUM, 0, deadbeef->pl_get_idx_of (it), 0);
             }
         }
     }

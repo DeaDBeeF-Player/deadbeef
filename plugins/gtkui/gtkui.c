@@ -266,7 +266,7 @@ guiplug_start_random (void) {
 }
 
 void
-guiplug_add_dir (const char *dir) {
+guiplug_add_dir (char *dir) {
     // long time processing
     //                float t1 = (float)clock () / CLOCKS_PER_SEC;
     gtkpl_add_dir (&main_playlist, dir);

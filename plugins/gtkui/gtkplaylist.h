@@ -162,7 +162,7 @@ void
 gtkpl_header_draw (gtkplaylist_t *ps);
 
 void
-gtkpl_add_dir (gtkplaylist_t *ps, const char *folder);
+gtkpl_add_dir (gtkplaylist_t *ps, char *folder);
 
 void
 gtkpl_add_dirs (gtkplaylist_t *ps, GSList *lst);

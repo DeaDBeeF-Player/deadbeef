@@ -227,6 +227,7 @@ typedef struct {
     DB_playItem_t *(*streamer_get_streaming_track) (void);
     float (*streamer_get_playpos) (void);
     void (*streamer_seek) (float time);
+    int (*streamer_ok_to_read) (int len);
     // process control
     const char *(*get_config_dir) (void);
     void (*quit) (void);
@@ -247,15 +248,19 @@ typedef struct {
     void (*pl_item_free) (DB_playItem_t *it);
     void (*pl_item_copy) (DB_playItem_t *out, DB_playItem_t *in);
     int (*pl_add_file) (const char *fname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
+    int (*pl_add_dir) (const char *dirname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
     DB_playItem_t *(*pl_insert_item) (DB_playItem_t *after, DB_playItem_t *it);
+    DB_playItem_t *(*pl_insert_dir) (DB_playItem_t *after, const char *dirname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
+    DB_playItem_t *(*pl_insert_file) (DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
     int (*pl_get_idx_of) (DB_playItem_t *it);
-    DB_playItem_t * (*pl_get_for_idx) (int);
+    DB_playItem_t * (*pl_get_for_idx) (int idx);
+    DB_playItem_t * (*pl_get_for_idx_and_iter) (int idx, int iter);
     float (*pl_get_totaltime) (void);
     int (*pl_getcount) (void);
     DB_playItem_t *(*pl_getcurrent) (void);
     int (*pl_delete_selected) (void);
-    void (*pl_set_cursor) (int cursor);
-    int (*pl_get_cursor) (void);
+    void (*pl_set_cursor) (int iter, int cursor);
+    int (*pl_get_cursor) (int iter);
     void (*pl_set_selected) (DB_playItem_t *it, int sel);
     int (*pl_is_selected) (DB_playItem_t *it);
     void (*pl_free) (void);
@@ -265,8 +270,11 @@ typedef struct {
     void (*pl_crop_selected) (void);
     int (*pl_getselcount) (void);
     DB_playItem_t *(*pl_get_first) (int iter);
+    DB_playItem_t *(*pl_get_last) (int iter);
     DB_playItem_t *(*pl_get_next) (DB_playItem_t *it, int iter);
     DB_playItem_t *(*pl_get_prev) (DB_playItem_t *it, int iter);
+    int (*pl_format_title) (DB_playItem_t *it, char *s, int size, const char *fmt);
+    void (*pl_format_item_display_name) (DB_playItem_t *it, char *str, int len);
     // metainfo
     void (*pl_add_meta) (DB_playItem_t *it, const char *key, const char *value);
     const char *(*pl_find_meta) (DB_playItem_t *song, const char *meta);
@@ -308,6 +316,7 @@ typedef struct {
     void (*conf_set_str) (const char *key, const char *val);
     void (*conf_set_int) (const char *key, int val);
     DB_conf_item_t * (*conf_find) (const char *group, DB_conf_item_t *prev);
+    void (*conf_remove_items) (const char *key);
     // plugin communication
     struct DB_decoder_s **(*plug_get_decoder_list) (void);
     struct DB_plugin_s **(*plug_get_list) (void);
