@@ -360,8 +360,8 @@ gtkui_on_volumechanged (DB_event_t *ev, uintptr_t data) {
     volumebar_notify_changed ();
 }
 
-static int
-gtkui_start (void) {
+void
+gtkui_thread (uintptr_t ctx) {
     // let's start some gtk
     g_thread_init (NULL);
     add_pixmap_directory (PREFIX "/share/deadbeef/pixmaps");
@@ -415,6 +415,12 @@ gtkui_start (void) {
     progress_init ();
     gtk_widget_show (mainwin);
 
+    gtk_main ();
+    gdk_threads_leave ();
+}
+
+static int
+gtkui_start (void) {
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_ACTIVATE, DB_CALLBACK (gtkui_on_activate), 0);
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_SONGCHANGED, DB_CALLBACK (gtkui_on_songchanged), 0);
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_TRACKINFOCHANGED, DB_CALLBACK (gtkui_on_trackinfochanged), 0);
@@ -422,13 +428,15 @@ gtkui_start (void) {
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_PLAYLISTCHANGED, DB_CALLBACK (gtkui_on_playlistchanged), 0);
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_FRAMEUPDATE, DB_CALLBACK (gtkui_on_frameupdate), 0);
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_VOLUMECHANGED, DB_CALLBACK (gtkui_on_volumechanged), 0);
-    gtk_main ();
+    // gtk must be running in separate thread
+    deadbeef->thread_start (gtkui_thread, 0);
 
     return 0;
 }
 
 static int
 gtkui_stop (void) {
+    // FIXME: tell gtk thread to terminate
     deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_ACTIVATE, DB_CALLBACK (gtkui_on_activate), 0);
     deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_SONGCHANGED, DB_CALLBACK (gtkui_on_songchanged), 0);
     deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_TRACKINFOCHANGED, DB_CALLBACK (gtkui_on_trackinfochanged), 0);
@@ -438,7 +446,6 @@ gtkui_stop (void) {
     deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_VOLUMECHANGED, DB_CALLBACK (gtkui_on_volumechanged), 0);
     gtkpl_free (&main_playlist);
     gtkpl_free (&search_playlist);
-    gdk_threads_leave ();
     return 0;
 }
 
