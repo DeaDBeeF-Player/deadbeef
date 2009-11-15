@@ -74,7 +74,7 @@ update_songinfo (void) {
     float duration = deadbeef->pl_get_item_duration (track);
 
     if (deadbeef->playback_isstopped ()) {
-        snprintf (sbtext_new, sizeof (sbtext_new), "Stopped | %s total playtime", totaltime_str);
+        snprintf (sbtext_new, sizeof (sbtext_new), "Stopped | %d tracks | %s total playtime", pl_getcount (), totaltime_str);
         songpos = 0;
     }
     else if (track->decoder) {
@@ -108,7 +108,7 @@ update_songinfo (void) {
         }
 #endif
         const char *spaused = deadbeef->playback_ispaused () ? "Paused | " : "";
-        snprintf (sbtext_new, sizeof (sbtext_new), "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d songs | %s total playtime", spaused, track->filetype ? track->filetype:"-", sbitrate, samplerate, bitspersample, mode, minpos, secpos, t, pl_getcount (), totaltime_str);
+        snprintf (sbtext_new, sizeof (sbtext_new), "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime", spaused, track->filetype ? track->filetype:"-", sbitrate, samplerate, bitspersample, mode, minpos, secpos, t, pl_getcount (), totaltime_str);
     }
 
     if (strcmp (sbtext_new, sb_text)) {
