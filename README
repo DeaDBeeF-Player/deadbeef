@@ -12,5 +12,5 @@ optional dependencies
     libsndfile: for sndfile plugin
     libcdio: for cd audio plugin
 
-if you want to build from git - install autotools, and run ./autogen.sh before compiling
+if you want to build from git - install autotools, and run autoreconf
 

@@ -19,7 +19,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 Note that other included libraries and plugins may have separate licensing terms.
 
-Global hotkeys plugin
+
+Global hotkeys plugin, CD Audio plugin
 Copyright © Viktor Semykin <thesame.ml@gmail.com>
 
 
