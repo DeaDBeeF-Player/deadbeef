@@ -324,6 +324,13 @@ sldb_find (const uint8_t *digest) {
 
 extern "C" int
 csid_init (DB_playItem_t *it) {
+    // libsidplay crashes if file doesn't exist
+    // so i have to check it here
+    FILE *fp = fopen (it->fname, "rb");
+    if (!fp ){
+        return -1;
+    }
+    fclose (fp);
     sidplay = new sidplay2;
     resid = new ReSIDBuilder ("wtf");
     resid->create (sidplay->info ().maxsids);
