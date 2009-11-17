@@ -1,18 +1,18 @@
 # Maintainer: Alexey Yakovenko <waker@users.sourceforge.net>
 
 pkgname=deadbeef
-pkgver=0.2.3.2
+pkgver=0.3.0
 pkgrel=1
 pkgdesc="mp3/ogg/flac/ape/sid/mod/nsf music player based on GTK2"
 arch=(i686 x86_64)
 url="http://deadbeef.sourceforge.net"
 license=('GPL2')
-makedepends=('gtk2', 'libsamplerate', 'libvorbis', 'libmad', 'flac', 'curl', 'alsa-lib', 'wavpack', 'libsndfile')
+makedepends=('gtk2', 'libsamplerate', 'libvorbis', 'libmad', 'flac', 'curl', 'alsa-lib', 'wavpack', 'libsndfile', 'libcdio')
 depends=('gtk2' 'libsamplerate' 'alsa-lib')
-optdepends=('libvorbis: ogg vorbis playback', 'libmad: mp1/2/3 playback', 'flac: flac playback', 'curl: lastfm scrobbler', 'wavpack: wv playback', 'libsndfile: wav playback')
+optdepends=('libvorbis: ogg vorbis playback', 'libmad: mp1/2/3 playback', 'flac: flac playback', 'curl: lastfm scrobbler, shoutcast, icecast, podcast support', 'wavpack: wv playback', 'libsndfile: wav playback', "libcdio: audio cd playback")
 makedepends=('pkgconfig')
 source=(http://downloads.sourceforge.net/project/$pkgname/$pkgname-$pkgver.tar.gz)
-md5sums=('b0401f725c3dbc5b7eefe2b7218a564f')
+md5sums=('aaa980d292e5b348c907f69e5554d149')
 
 build() {
     cd $srcdir/$pkgname-$pkgver
