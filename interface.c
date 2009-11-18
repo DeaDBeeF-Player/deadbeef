@@ -99,6 +99,7 @@ create_mainwin (void)
   GtkWidget *image6;
   GtkWidget *volumebar;
   GtkWidget *seekbar;
+  GtkWidget *frame1;
   GtkWidget *table1;
   GtkWidget *_;
   GtkWidget *vbox3;
@@ -448,16 +449,19 @@ create_mainwin (void)
   gtk_widget_set_size_request (seekbar, 200, -1);
   gtk_widget_set_events (seekbar, GDK_EXPOSURE_MASK | GDK_POINTER_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK);
 
+  frame1 = gtk_frame_new (NULL);
+  gtk_widget_show (frame1);
+  gtk_box_pack_start (GTK_BOX (vbox1), frame1, TRUE, TRUE, 0);
+
   table1 = gtk_table_new (2, 2, FALSE);
   gtk_widget_show (table1);
-  gtk_box_pack_start (GTK_BOX (vbox1), table1, TRUE, TRUE, 0);
+  gtk_container_add (GTK_CONTAINER (frame1), table1);
 
   _ = gtk_hbox_new (FALSE, 0);
   gtk_widget_show (_);
   gtk_table_attach (GTK_TABLE (table1), _, 0, 1, 0, 1,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (_), 3);
 
   vbox3 = gtk_vbox_new (FALSE, 0);
   gtk_widget_show (vbox3);
@@ -764,6 +768,7 @@ create_mainwin (void)
   GLADE_HOOKUP_OBJECT (mainwin, image6, "image6");
   GLADE_HOOKUP_OBJECT (mainwin, volumebar, "volumebar");
   GLADE_HOOKUP_OBJECT (mainwin, seekbar, "seekbar");
+  GLADE_HOOKUP_OBJECT (mainwin, frame1, "frame1");
   GLADE_HOOKUP_OBJECT (mainwin, table1, "table1");
   GLADE_HOOKUP_OBJECT (mainwin, _, "_");
   GLADE_HOOKUP_OBJECT (mainwin, vbox3, "vbox3");
