@@ -1397,10 +1397,11 @@ gtkpl_header_draw (gtkplaylist_t *ps) {
     int x = -ps->hscrollpos;
     int w = 100;
     int h = widget->allocation.height;
-    const char *detail = "toolbar";
+    const char *detail = "button";
 
     // fill background
-    gtk_paint_box (widget->style, ps->backbuf_header, GTK_STATE_NORMAL, GTK_SHADOW_OUT, NULL, NULL, detail, 0, 0, widget->allocation.width, widget->allocation.height);
+    //gdk_draw_rectangle (ps->backbuf_header, widget->style->bg_gc[0], TRUE, -10, -10, widget->allocation.width+20, widget->allocation.height+20);
+    gtk_paint_box (widget->style, ps->backbuf_header, GTK_STATE_NORMAL, GTK_SHADOW_OUT, NULL, NULL, detail, -10, -10, widget->allocation.width+20, widget->allocation.height+20);
     draw_begin ((uintptr_t)ps->backbuf_header);
     x = -ps->hscrollpos;
     gtkpl_column_t *c;
@@ -1424,7 +1425,7 @@ gtkpl_header_draw (gtkplaylist_t *ps) {
                 continue;
             }
             if (w > 0) {
-                gtk_paint_vline (widget->style, ps->backbuf_header, GTK_STATE_NORMAL, NULL, NULL, NULL, 0, h, xx+w - 2);
+                gtk_paint_vline (widget->style, ps->backbuf_header, GTK_STATE_NORMAL, NULL, NULL, NULL, 2, h-4, xx+w - 2);
                 GdkColor *gdkfg = &widget->style->fg[0];
                 float fg[3] = {(float)gdkfg->red/0xffff, (float)gdkfg->green/0xffff, (float)gdkfg->blue/0xffff};
                 draw_set_fg_color (fg);
