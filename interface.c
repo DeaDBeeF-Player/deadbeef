@@ -452,6 +452,7 @@ create_mainwin (void)
   frame1 = gtk_frame_new (NULL);
   gtk_widget_show (frame1);
   gtk_box_pack_start (GTK_BOX (vbox1), frame1, TRUE, TRUE, 0);
+  gtk_container_set_border_width (GTK_CONTAINER (frame1), 1);
 
   table1 = gtk_table_new (2, 2, FALSE);
   gtk_widget_show (table1);
@@ -789,6 +790,7 @@ create_searchwin (void)
   GtkWidget *searchwin;
   GtkWidget *vbox4;
   GtkWidget *searchentry;
+  GtkWidget *frame2;
   GtkWidget *table2;
   GtkWidget *searchscroll;
   GtkWidget *vbox5;
@@ -815,9 +817,13 @@ create_searchwin (void)
   gtk_entry_set_invisible_char (GTK_ENTRY (searchentry), 8226);
   gtk_entry_set_activates_default (GTK_ENTRY (searchentry), TRUE);
 
+  frame2 = gtk_frame_new (NULL);
+  gtk_widget_show (frame2);
+  gtk_box_pack_start (GTK_BOX (vbox4), frame2, TRUE, TRUE, 0);
+
   table2 = gtk_table_new (2, 2, FALSE);
   gtk_widget_show (table2);
-  gtk_box_pack_start (GTK_BOX (vbox4), table2, TRUE, TRUE, 0);
+  gtk_container_add (GTK_CONTAINER (frame2), table2);
 
   searchscroll = gtk_vscrollbar_new (GTK_ADJUSTMENT (gtk_adjustment_new (0, 0, 1, 1, 0, 0)));
   gtk_widget_show (searchscroll);
@@ -905,6 +911,7 @@ create_searchwin (void)
   GLADE_HOOKUP_OBJECT_NO_REF (searchwin, searchwin, "searchwin");
   GLADE_HOOKUP_OBJECT (searchwin, vbox4, "vbox4");
   GLADE_HOOKUP_OBJECT (searchwin, searchentry, "searchentry");
+  GLADE_HOOKUP_OBJECT (searchwin, frame2, "frame2");
   GLADE_HOOKUP_OBJECT (searchwin, table2, "table2");
   GLADE_HOOKUP_OBJECT (searchwin, searchscroll, "searchscroll");
   GLADE_HOOKUP_OBJECT (searchwin, vbox5, "vbox5");
