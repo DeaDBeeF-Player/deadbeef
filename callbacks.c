@@ -960,6 +960,7 @@ seekbar_draw (GtkWidget *widget) {
         clearlooks_rounded_rectangle (cr, 2, widget->allocation.height/2-4, widget->allocation.width-4, 8, 4, 0xff);
         theme_set_cairo_source_rgb (cr, COLO_SEEKBAR_FRONT);
         cairo_stroke (cr);
+        cairo_destroy (cr);
         return;
     }
     float pos = 0;
