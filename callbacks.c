@@ -1266,8 +1266,20 @@ on_find_activate                       (GtkMenuItem     *menuitem,
 }
 
 void
-show_info_window (const char *fname, const char *title) {
-    GtkWidget *widget = create_helpwindow ();
+on_info_window_delete (GtkWidget *widget, GtkTextDirection previous_direction, GtkWidget **pwindow) {
+    *pwindow = NULL;
+    gtk_widget_hide (widget);
+    gtk_widget_destroy (widget);
+}
+
+static void
+show_info_window (const char *fname, const char *title, GtkWidget **pwindow) {
+    if (*pwindow) {
+        return;
+    }
+    GtkWidget *widget = *pwindow = create_helpwindow ();
+    g_object_set_data (G_OBJECT (widget), "pointer", pwindow);
+    g_signal_connect (widget, "delete_event", G_CALLBACK (on_info_window_delete), pwindow);
     gtk_window_set_title (GTK_WINDOW (widget), title);
     gtk_window_set_transient_for (GTK_WINDOW (widget), GTK_WINDOW (mainwin));
     GtkWidget *txt = lookup_widget (widget, "helptext");
@@ -1299,18 +1311,22 @@ show_info_window (const char *fname, const char *title) {
     gtk_widget_show (widget);
 }
 
+static GtkWidget *helpwindow;
+
 void
 on_help1_activate                      (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    show_info_window (PREFIX "/share/doc/deadbeef/help.txt", "Help");
+    show_info_window (PREFIX "/share/doc/deadbeef/help.txt", "Help", &helpwindow);
 }
+
+static GtkWidget *aboutwindow;
 
 void
 on_about1_activate                     (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    show_info_window (PREFIX "/share/doc/deadbeef/about.txt", "About DeaDBeeF " VERSION);
+    show_info_window (PREFIX "/share/doc/deadbeef/about.txt", "About DeaDBeeF " VERSION, &aboutwindow);
 }
 
 
@@ -1340,6 +1356,10 @@ on_helpwindow_key_press_event          (GtkWidget       *widget,
                                         gpointer         user_data)
 {
     if (event->keyval == GDK_Escape) {
+        GtkWidget **pwindow = (GtkWidget **)g_object_get_data (G_OBJECT (widget), "pointer");
+        if (pwindow) {
+            *pwindow = NULL;
+        }
         gtk_widget_hide (widget);
         gtk_widget_destroy (widget);
     }
