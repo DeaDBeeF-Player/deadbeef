@@ -396,7 +396,7 @@ plug_load_all (void) {
             if (namelist) {
                 free (namelist);
             }
-            return;	// not a dir or no read access
+            break;
         }
         else
         {
@@ -498,6 +498,7 @@ plug_load_all (void) {
             g_vfs_plugins[numvfs++] = (DB_vfs_t *)plug->plugin;
         }
     }
+//    fprintf (stderr, "numplugins: %d, numdecoders: %d, numvfs: %d\n", numplugins, numdecoders, numvfs);
     g_plugins[numplugins] = NULL;
     g_decoder_plugins[numdecoders] = NULL;
     g_vfs_plugins[numvfs] = NULL;
