@@ -73,7 +73,7 @@ http_content_header_handler (void *ptr, size_t size, size_t nmemb, void *stream)
 
 static size_t
 http_curl_write (void *ptr, size_t size, size_t nmemb, void *stream) {
-    trace ("http_curl_write %d bytes\n", size * nmemb);
+//    trace ("http_curl_write %d bytes\n", size * nmemb);
     int avail = size * nmemb;
     HTTP_FILE *fp = (HTTP_FILE *)stream;
     if (fp->status == STATUS_ABORTED) {
@@ -296,7 +296,7 @@ http_curl_write_abort (void *ptr, size_t size, size_t nmemb, void *stream) {
 
 static int
 http_curl_control (void *stream, double dltotal, double dlnow, double ultotal, double ulnow) {
-    trace ("http_curl_control\n");
+//    trace ("http_curl_control\n");
     assert (stream);
     HTTP_FILE *fp = (HTTP_FILE *)stream;
     if (fp->status == STATUS_ABORTED) {
