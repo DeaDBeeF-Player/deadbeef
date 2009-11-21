@@ -1405,7 +1405,6 @@ pl_load (const char *fname) {
             goto load_fail;
         }
         it->_duration = d;
-        pl_totaltime += d;
         // get const filetype string from decoder
         uint8_t ft;
         if (fread (&ft, 1, 1, fp) != 1) {
