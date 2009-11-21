@@ -428,82 +428,117 @@ plug_load_all (void) {
     mutex = mutex_create ();
     const char *dirname = LIBDIR "/deadbeef";
     struct dirent **namelist = NULL;
-    int n = scandir (dirname, &namelist, NULL, alphasort);
-    if (n < 0)
-    {
-        if (namelist) {
-            free (namelist);
+
+    char *xdg_local_home = getenv ("XDG_LOCAL_HOME");
+    char xdg_plugin_dir[1024];
+
+    if (xdg_local_home) {
+        strcpy (xdg_plugin_dir, xdg_local_home);
+    } else {
+        char *homedir = getenv ("HOME");
+
+        if (!homedir) {
+            fprintf (stderr, "plug_load_all: warning: unable to find home directory\n");
+            xdg_plugin_dir[0] = 0;
         }
-        return;	// not a dir or no read access
+        else {
+            int written = snprintf (xdg_plugin_dir, sizeof (xdg_plugin_dir), "%s/.local/lib/deadbeef", homedir);
+            if (written > sizeof (xdg_plugin_dir)) {
+                fprintf (stderr, "warning: XDG_LOCAL_HOME value is too long: %s. Ignoring.", xdg_local_home);
+                xdg_plugin_dir[0] = 0;
+            }
+        }
     }
-    else
-    {
-        int i;
-        for (i = 0; i < n; i++)
+
+    const char *plugins_dirs[] = { dirname, xdg_plugin_dir, NULL };
+
+    int k = 0, n;
+
+    while (plugins_dirs[k]) {
+        const char *plugdir = plugins_dirs[k++];
+        if (!(*plugdir)) {
+            continue;
+        }
+        fprintf (stderr, "loading plugins from %s\n", plugdir);
+        namelist = NULL;
+        n = scandir (plugdir, &namelist, NULL, alphasort);
+        if (n < 0)
         {
-            // no hidden files
-            if (namelist[i]->d_name[0] != '.')
+            if (namelist) {
+                free (namelist);
+            }
+            return;	// not a dir or no read access
+        }
+        else
+        {
+            int i;
+            for (i = 0; i < n; i++)
             {
-                int l = strlen (namelist[i]->d_name);
-                if (l < 3) {
-                    continue;
-                }
-                if (strcasecmp (&namelist[i]->d_name[l-3], ".so")) {
-                    continue;
-                }
-                char d_name[256];
-                memcpy (d_name, namelist[i]->d_name, l+1);
-                // no blacklisted
-                const uint8_t *p = conf_blacklist_plugins;
-                while (*p) {
-                    const uint8_t *e = p;
-                    while (*e && *e > 0x20) {
-                        e++;
+                // no hidden files
+                while (namelist[i]->d_name[0] != '.')
+                {
+                    int l = strlen (namelist[i]->d_name);
+                    if (l < 3) {
+                        break;
                     }
-                    if (l-3 == e-p) {
-                        if (!strncmp (p, d_name, e-p)) {
-                            p = NULL;
-                            break;
+                    if (strcasecmp (&namelist[i]->d_name[l-3], ".so")) {
+                        break;
+                    }
+                    char d_name[256];
+                    memcpy (d_name, namelist[i]->d_name, l+1);
+                    // no blacklisted
+                    const uint8_t *p = conf_blacklist_plugins;
+                    while (*p) {
+                        const uint8_t *e = p;
+                        while (*e && *e > 0x20) {
+                            e++;
+                        }
+                        if (l-3 == e-p) {
+                            if (!strncmp (p, d_name, e-p)) {
+                                p = NULL;
+                                break;
+                            }
+                        }
+                        p = e;
+                        while (*p && *p <= 0x20) {
+                            p++;
                         }
                     }
-                    p = e;
-                    while (*p && *p <= 0x20) {
-                        p++;
+                    if (!p) {
+                        fprintf (stderr, "plugin %s is blacklisted in config file\n", d_name);
+                        break;
                     }
-                }
-                if (!p) {
-                    fprintf (stderr, "plugin %s is blacklisted in config file\n", d_name);
-                    continue;
-                }
-                char fullname[1024];
-                strcpy (fullname, dirname);
-                strncat (fullname, "/", 1024);
-                strncat (fullname, d_name, 1024);
-                printf ("loading plugin %s\n", d_name);
-                void *handle = dlopen (fullname, RTLD_NOW);
-                if (!handle) {
-                    fprintf (stderr, "dlopen error: %s\n", dlerror ());
-                    continue;
-                }
-                d_name[l-3] = 0;
-                printf ("module name is %s\n", d_name);
-                strcat (d_name, "_load");
-                DB_plugin_t *(*plug_load)(DB_functions_t *api) = dlsym (handle, d_name);
-                if (!plug_load) {
-                    fprintf (stderr, "dlsym error: %s\n", dlerror ());
-                    dlclose (handle);
-                    continue;
-                }
-                if (plug_init_plugin (plug_load, handle) < 0) {
+                    char fullname[1024];
+                    strcpy (fullname, plugdir);
+                    strncat (fullname, "/", 1024);
+                    strncat (fullname, d_name, 1024);
+                    printf ("loading plugin %s\n", d_name);
+                    void *handle = dlopen (fullname, RTLD_NOW);
+                    if (!handle) {
+                        fprintf (stderr, "dlopen error: %s\n", dlerror ());
+                        break;
+                    }
                     d_name[l-3] = 0;
-                    fprintf (stderr, "plugin %s is incompatible with current version of deadbeef, please upgrade the plugin\n", d_name);
-                    dlclose (handle);
-                    continue;
+                    printf ("module name is %s\n", d_name);
+                    strcat (d_name, "_load");
+                    DB_plugin_t *(*plug_load)(DB_functions_t *api) = dlsym (handle, d_name);
+                    if (!plug_load) {
+                        fprintf (stderr, "dlsym error: %s\n", dlerror ());
+                        dlclose (handle);
+                        break;
+                    }
+                    if (plug_init_plugin (plug_load, handle) < 0) {
+                        d_name[l-3] = 0;
+                        fprintf (stderr, "plugin %s is incompatible with current version of deadbeef, please upgrade the plugin\n", d_name);
+                        dlclose (handle);
+                        break;
+                    }
+                    break;
                 }
+                free (namelist[i]);
             }
-            free (namelist[i]);
+            free (namelist);
         }
-        free (namelist);
     }
 // load all compiled-in modules
 #define PLUG(n) extern DB_plugin_t * n##_load (DB_functions_t *api);

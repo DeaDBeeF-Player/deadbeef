@@ -119,6 +119,12 @@ http_curl_write (void *ptr, size_t size, size_t nmemb, void *stream) {
             fp->gotheader = 1;
         }
     }
+
+    deadbeef->mutex_lock (fp->mutex);
+    if (fp->status == STATUS_INITIAL && fp->gotheader) {
+        fp->status = STATUS_READING;
+    }
+    deadbeef->mutex_unlock (fp->mutex);
     while (avail > 0) {
         deadbeef->mutex_lock (fp->mutex);
         if (fp->status == STATUS_SEEK) {
@@ -290,7 +296,7 @@ http_curl_write_abort (void *ptr, size_t size, size_t nmemb, void *stream) {
 
 static int
 http_curl_control (void *stream, double dltotal, double dlnow, double ultotal, double ulnow) {
-    trace ("http_curl_control\n");
+//    trace ("http_curl_control\n");
     assert (stream);
     HTTP_FILE *fp = (HTTP_FILE *)stream;
     if (fp->status == STATUS_ABORTED) {
@@ -328,7 +334,7 @@ http_thread_func (uintptr_t ctx) {
     }
 #endif
 #endif
-    fp->status = STATUS_STARTING;
+//    fp->status = STATUS_STARTING;
 
     trace ("vfs_curl: started loading data\n");
     for (;;) {
@@ -382,9 +388,6 @@ http_thread_func (uintptr_t ctx) {
 #endif
             curl_easy_setopt (curl, CURLOPT_PROXYTYPE, curlproxytype);
         }
-        deadbeef->mutex_lock (fp->mutex);
-        fp->status = STATUS_READING;
-        deadbeef->mutex_unlock (fp->mutex);
         status = curl_easy_perform (curl);
         trace ("vfs_curl: curl_easy_perform status=%d\n", status);
         if (status != 0) {
