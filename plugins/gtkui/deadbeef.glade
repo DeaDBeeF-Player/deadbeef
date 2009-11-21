@@ -503,9 +503,10 @@
 		  <accelerator key="v" modifiers="0" signal="activate"/>
 
 		  <child>
-		    <widget class="GtkImage" id="image7">
+		    <widget class="GtkImage" id="image128">
 		      <property name="visible">True</property>
-		      <property name="pixbuf">stop_24.png</property>
+		      <property name="stock">gtk-media-stop</property>
+		      <property name="icon_size">4</property>
 		      <property name="xalign">0.5</property>
 		      <property name="yalign">0.5</property>
 		      <property name="xpad">0</property>
@@ -532,7 +533,8 @@
 		  <child>
 		    <widget class="GtkImage" id="image2">
 		      <property name="visible">True</property>
-		      <property name="pixbuf">play_24.png</property>
+		      <property name="stock">gtk-media-play</property>
+		      <property name="icon_size">4</property>
 		      <property name="xalign">0.5</property>
 		      <property name="yalign">0.5</property>
 		      <property name="xpad">0</property>
@@ -559,7 +561,8 @@
 		  <child>
 		    <widget class="GtkImage" id="image3">
 		      <property name="visible">True</property>
-		      <property name="pixbuf">pause_24.png</property>
+		      <property name="stock">gtk-media-pause</property>
+		      <property name="icon_size">4</property>
 		      <property name="xalign">0.5</property>
 		      <property name="yalign">0.5</property>
 		      <property name="xpad">0</property>
@@ -585,7 +588,8 @@
 		  <child>
 		    <widget class="GtkImage" id="image4">
 		      <property name="visible">True</property>
-		      <property name="pixbuf">prev_24.png</property>
+		      <property name="stock">gtk-media-previous</property>
+		      <property name="icon_size">4</property>
 		      <property name="xalign">0.5</property>
 		      <property name="yalign">0.5</property>
 		      <property name="xpad">0</property>
@@ -611,33 +615,8 @@
 		  <child>
 		    <widget class="GtkImage" id="image5">
 		      <property name="visible">True</property>
-		      <property name="pixbuf">next_24.png</property>
-		      <property name="xalign">0.5</property>
-		      <property name="yalign">0.5</property>
-		      <property name="xpad">0</property>
-		      <property name="ypad">0</property>
-		    </widget>
-		  </child>
-		</widget>
-		<packing>
-		  <property name="padding">0</property>
-		  <property name="expand">False</property>
-		  <property name="fill">False</property>
-		</packing>
-	      </child>
-
-	      <child>
-		<widget class="GtkButton" id="playrand">
-		  <property name="visible">True</property>
-		  <property name="relief">GTK_RELIEF_NONE</property>
-		  <property name="focus_on_click">True</property>
-		  <signal name="clicked" handler="on_playrand_clicked" last_modification_time="Sun, 05 Jul 2009 10:49:16 GMT"/>
-		  <accelerator key="n" modifiers="0" signal="activate"/>
-
-		  <child>
-		    <widget class="GtkImage" id="image6">
-		      <property name="visible">True</property>
-		      <property name="pixbuf">random_24.png</property>
+		      <property name="stock">gtk-media-next</property>
+		      <property name="icon_size">4</property>
 		      <property name="xalign">0.5</property>
 		      <property name="yalign">0.5</property>
 		      <property name="xpad">0</property>
@@ -654,6 +633,24 @@
 	    </widget>
 	    <packing>
 	      <property name="padding">0</property>
+	      <property name="expand">False</property>
+	      <property name="fill">True</property>
+	    </packing>
+	  </child>
+
+	  <child>
+	    <widget class="GtkDrawingArea" id="seekbar">
+	      <property name="width_request">200</property>
+	      <property name="visible">True</property>
+	      <property name="events">GDK_EXPOSURE_MASK | GDK_POINTER_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+	      <signal name="button_press_event" handler="on_seekbar_button_press_event" last_modification_time="Tue, 11 Aug 2009 17:47:59 GMT"/>
+	      <signal name="button_release_event" handler="on_seekbar_button_release_event" last_modification_time="Tue, 11 Aug 2009 17:48:02 GMT"/>
+	      <signal name="configure_event" handler="on_seekbar_configure_event" last_modification_time="Tue, 11 Aug 2009 17:48:06 GMT"/>
+	      <signal name="expose_event" handler="on_seekbar_expose_event" last_modification_time="Tue, 11 Aug 2009 17:48:11 GMT"/>
+	      <signal name="motion_notify_event" handler="on_seekbar_motion_notify_event" last_modification_time="Tue, 11 Aug 2009 17:48:18 GMT"/>
+	    </widget>
+	    <packing>
+	      <property name="padding">2</property>
 	      <property name="expand">True</property>
 	      <property name="fill">True</property>
 	    </packing>
@@ -670,24 +667,6 @@
 	      <signal name="expose_event" handler="on_volumebar_expose_event" last_modification_time="Tue, 11 Aug 2009 18:58:00 GMT"/>
 	      <signal name="motion_notify_event" handler="on_volumebar_motion_notify_event" last_modification_time="Tue, 11 Aug 2009 18:58:05 GMT"/>
 	      <signal name="scroll_event" handler="on_volumebar_scroll_event" last_modification_time="Tue, 18 Aug 2009 18:44:31 GMT"/>
-	    </widget>
-	    <packing>
-	      <property name="padding">2</property>
-	      <property name="expand">False</property>
-	      <property name="fill">True</property>
-	    </packing>
-	  </child>
-
-	  <child>
-	    <widget class="GtkDrawingArea" id="seekbar">
-	      <property name="width_request">200</property>
-	      <property name="visible">True</property>
-	      <property name="events">GDK_EXPOSURE_MASK | GDK_POINTER_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-	      <signal name="button_press_event" handler="on_seekbar_button_press_event" last_modification_time="Tue, 11 Aug 2009 17:47:59 GMT"/>
-	      <signal name="button_release_event" handler="on_seekbar_button_release_event" last_modification_time="Tue, 11 Aug 2009 17:48:02 GMT"/>
-	      <signal name="configure_event" handler="on_seekbar_configure_event" last_modification_time="Tue, 11 Aug 2009 17:48:06 GMT"/>
-	      <signal name="expose_event" handler="on_seekbar_expose_event" last_modification_time="Tue, 11 Aug 2009 17:48:11 GMT"/>
-	      <signal name="motion_notify_event" handler="on_seekbar_motion_notify_event" last_modification_time="Tue, 11 Aug 2009 17:48:18 GMT"/>
 	    </widget>
 	    <packing>
 	      <property name="padding">2</property>
