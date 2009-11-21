@@ -355,9 +355,8 @@ plug_load_all (void) {
 #endif
     const char *conf_blacklist_plugins = conf_get_str ("blacklist_plugins", "");
     mutex = mutex_create ();
-    struct dirent **namelist;
-
     const char *dirname = LIBDIR "/deadbeef";
+    struct dirent **namelist = NULL;
 
     char *xdg_local_home = getenv ("XDG_LOCAL_HOME");
     char xdg_plugin_dir[1024];
@@ -368,13 +367,14 @@ plug_load_all (void) {
         char *homedir = getenv ("HOME");
 
         if (!homedir) {
-            fprintf (stderr, "warning: unable to find home directory\n");
-            xdg_plugin_dir[0] = '\0';
-        } else {
-            if (snprintf (xdg_plugin_dir, sizeof (xdg_plugin_dir),
-                          "%s/.local/lib/deadbeef", homedir) > sizeof (xdg_plugin_dir)) {
+            fprintf (stderr, "plug_load_all: warning: unable to find home directory\n");
+            xdg_plugin_dir[0] = 0;
+        }
+        else {
+            int written = snprintf (xdg_plugin_dir, sizeof (xdg_plugin_dir), "%s/.local/lib/deadbeef", homedir);
+            if (written > sizeof (xdg_plugin_dir)) {
                 fprintf (stderr, "warning: XDG_LOCAL_HOME value is too long: %s. Ignoring.", xdg_local_home);
-                xdg_plugin_dir[0] = '\0';
+                xdg_plugin_dir[0] = 0;
             }
         }
     }
@@ -384,8 +384,13 @@ plug_load_all (void) {
     int k = 0, n;
 
     while (plugins_dirs[k]) {
+        const char *plugdir = plugins_dirs[k++];
+        if (!(*plugdir)) {
+            continue;
+        }
+        fprintf (stderr, "loading plugins from %s\n", plugdir);
         namelist = NULL;
-        n = scandir (plugins_dirs[k], &namelist, NULL, alphasort);
+        n = scandir (plugdir, &namelist, NULL, alphasort);
         if (n < 0)
         {
             if (namelist) {
@@ -399,14 +404,14 @@ plug_load_all (void) {
             for (i = 0; i < n; i++)
             {
                 // no hidden files
-                if (namelist[i]->d_name[0] != '.')
+                while (namelist[i]->d_name[0] != '.')
                 {
                     int l = strlen (namelist[i]->d_name);
                     if (l < 3) {
-                        continue;
+                        break;
                     }
                     if (strcasecmp (&namelist[i]->d_name[l-3], ".so")) {
-                        continue;
+                        break;
                     }
                     char d_name[256];
                     memcpy (d_name, namelist[i]->d_name, l+1);
@@ -430,17 +435,17 @@ plug_load_all (void) {
                     }
                     if (!p) {
                         fprintf (stderr, "plugin %s is blacklisted in config file\n", d_name);
-                        continue;
+                        break;
                     }
                     char fullname[1024];
-                    strcpy (fullname, plugins_dirs[k]);
+                    strcpy (fullname, plugdir);
                     strncat (fullname, "/", 1024);
                     strncat (fullname, d_name, 1024);
                     printf ("loading plugin %s\n", d_name);
                     void *handle = dlopen (fullname, RTLD_NOW);
                     if (!handle) {
                         fprintf (stderr, "dlopen error: %s\n", dlerror ());
-                        continue;
+                        break;
                     }
                     d_name[l-3] = 0;
                     printf ("module name is %s\n", d_name);
@@ -449,20 +454,20 @@ plug_load_all (void) {
                     if (!plug_load) {
                         fprintf (stderr, "dlsym error: %s\n", dlerror ());
                         dlclose (handle);
-                        continue;
+                        break;
                     }
                     if (plug_init_plugin (plug_load, handle) < 0) {
                         d_name[l-3] = 0;
                         fprintf (stderr, "plugin %s is incompatible with current version of deadbeef, please upgrade the plugin\n", d_name);
                         dlclose (handle);
-                        continue;
+                        break;
                     }
+                    break;
                 }
                 free (namelist[i]);
             }
             free (namelist);
         }
-        ++k;
     }
 // load all compiled-in modules
 #define PLUG(n) extern DB_plugin_t * n##_load (DB_functions_t *api);
