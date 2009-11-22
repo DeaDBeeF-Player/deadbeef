@@ -1459,6 +1459,7 @@ pl_load (const char *fname) {
                 "comment",
                 "track",
                 "band",
+                "cuesheet",
                 NULL
             };
 

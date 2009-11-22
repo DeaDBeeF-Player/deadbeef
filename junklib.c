@@ -599,6 +599,9 @@ junk_read_ape (playItem_t *it, DB_FILE *fp) {
                 else if (!strcasecmp (key, "comment")) {
                     pl_add_meta (it, "genre", value);
                 }
+                else if (!strcasecmp (key, "cuesheet")) {
+                    pl_add_meta (it, "cuesheet", value);
+                }
                 else if (!strncasecmp (key, "replaygain_album_gain", 21)) {
                     it->replaygain_album_gain = atof (value);
                     trace ("album_gain=%s\n", value);
