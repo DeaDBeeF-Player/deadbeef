@@ -73,7 +73,7 @@ http_content_header_handler (void *ptr, size_t size, size_t nmemb, void *stream)
 
 static size_t
 http_curl_write (void *ptr, size_t size, size_t nmemb, void *stream) {
-    trace ("http_curl_write %d bytes\n", size * nmemb);
+//    trace ("http_curl_write %d bytes\n", size * nmemb);
     int avail = size * nmemb;
     HTTP_FILE *fp = (HTTP_FILE *)stream;
     if (fp->status == STATUS_ABORTED) {
@@ -164,7 +164,7 @@ http_curl_write (void *ptr, size_t size, size_t nmemb, void *stream) {
         usleep (3000);
     }
 
-    trace ("returning %d\n", nmemb * size - avail);
+//    trace ("returning %d\n", nmemb * size - avail);
     return nmemb * size - avail;
 }
 
@@ -296,9 +296,9 @@ http_curl_write_abort (void *ptr, size_t size, size_t nmemb, void *stream) {
 
 static int
 http_curl_control (void *stream, double dltotal, double dlnow, double ultotal, double ulnow) {
+//    trace ("http_curl_control\n");
     assert (stream);
     HTTP_FILE *fp = (HTTP_FILE *)stream;
-    trace ("http_curl_control (status=%d)\n", fp->status);
     if (fp->status == STATUS_ABORTED) {
         trace ("vfs_curl STATUS_ABORTED in progress callback\n");
         return -1;
@@ -351,8 +351,6 @@ http_thread_func (uintptr_t ctx) {
         curl_easy_setopt (curl, CURLOPT_PROGRESSFUNCTION, http_curl_control);
         curl_easy_setopt (curl, CURLOPT_NOPROGRESS, 0);
         curl_easy_setopt (curl, CURLOPT_PROGRESSDATA, ctx);
-        curl_easy_setopt (curl, CURLOPT_FTP_RESPONSE_TIMEOUT, 20);
-        curl_easy_setopt (curl, CURLOPT_TIMEOUT, 20);
         // enable up to 10 redirects
         curl_easy_setopt (curl, CURLOPT_FOLLOWLOCATION, 1);
         curl_easy_setopt (curl, CURLOPT_MAXREDIRS, 10);
@@ -470,10 +468,8 @@ http_read (void *ptr, size_t size, size_t nmemb, DB_FILE *stream) {
     }
     while (fp->status != STATUS_FINISHED && sz > 0)
     {
-//        trace ("http_read[1] status=%d\n", fp->status);
         // wait until data is available
         while ((fp->remaining == 0 || fp->skipbytes > 0) && fp->status != STATUS_FINISHED) {
-//            trace ("http_read[2] status=%d\n", fp->status);
             deadbeef->mutex_lock (fp->mutex);
             int skip = min (fp->remaining, fp->skipbytes);
             if (skip > 0) {
