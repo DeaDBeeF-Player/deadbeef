@@ -1669,13 +1669,14 @@ ffap_insert (DB_playItem_t *after, const char *fname) {
     }
     int apeerr = deadbeef->junk_read_ape (it, fp);
 
+    deadbeef->fclose (fp);
+
     // embedded cue
     const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
     if (cuesheet) {
         DB_playItem_t *last = deadbeef->pl_insert_cue_from_buffer (after, fname, cuesheet, strlen (cuesheet), &plugin, plugin.filetypes[0], ape_ctx.totalsamples, ape_ctx.samplerate);
         if (last) {
             deadbeef->pl_item_free (it);
-            deadbeef->fclose (fp);
             ape_free_ctx (&ape_ctx);
             return last;
         }
@@ -1684,7 +1685,6 @@ ffap_insert (DB_playItem_t *after, const char *fname) {
     deadbeef->pl_add_meta (it, "title", NULL);
     after = deadbeef->pl_insert_item (after, it);
 
-    deadbeef->fclose (fp);
     ape_free_ctx (&ape_ctx);
     return after;
 }
