@@ -625,7 +625,16 @@ main (int argc, char *argv[]) {
             if (len >= size) {
                 break;
             }
-            memcpy (p, argv[i], len+1);
+            char resolved[PATH_MAX];
+            // need to resolve path here, because remote doesn't know current
+            // path of this process
+            if (argv[i][0] != '-' && realpath (argv[i], resolved)) {
+                len = strlen (resolved);
+                memcpy (p, resolved, len+1);
+            }
+            else {
+                memcpy (p, argv[i], len+1);
+            }
             p += len;
             size -= len;
         }
