@@ -38,8 +38,8 @@
 
 #define ENABLE_DEBUG 0
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
@@ -1645,7 +1645,7 @@ ffap_insert (DB_playItem_t *after, const char *fname) {
     }
 
     float duration = ape_ctx.totalsamples / (float)ape_ctx.samplerate;
-    DB_playItem_t *it;
+    DB_playItem_t *it = NULL;
     it  = deadbeef->pl_insert_cue (after, fname, &plugin, "APE", ape_ctx.totalsamples, ape_ctx.samplerate);
     if (it) {
         deadbeef->fclose (fp);
