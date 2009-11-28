@@ -1,3 +1,16 @@
+version 0.3.1
+	improved header widget drawing and gtkengines compatibility
+	fixed vfs_curl to fetch content size properly again
+	fixed rare memory leak bug in seekbar drawing
+	fixed total playtime display
+	changed buttons to use stock icons
+	implemented reading of embedded cuesheets from ape and wavpack files
+	fixed bug in filename resolving when starting from commandline
+	added possibility to open multiple files from filemanagers
+	fixed random locking/hanging in alsa module
+	loading plugins from $XDG_CONFIG_HOME/.local/lib/deadbeef/ (by Alexey A. Smirnov <alexey.smirnov@gmx.com>)
+	middle click on tray icon toggles pause on current track (by Alex Dedul <rotmer@gmail.com>)
+
 version 0.3.0
 	vfs plugins - for implementing http/ftp streaming, etc
 	improved mpeg (libmad) plugin - eats less memory, works faster
