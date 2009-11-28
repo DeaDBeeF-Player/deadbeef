@@ -534,7 +534,7 @@ junk_read_ape (playItem_t *it, DB_FILE *fp) {
     uint32_t numitems = extract_i32_le (&header[16]);
     uint32_t flags = extract_i32_le (&header[20]);
 
-    //trace ("APEv%d, size=%d, items=%d, flags=%x\n", version, size, numitems, flags);
+    trace ("APEv%d, size=%d, items=%d, flags=%x\n", version, size, numitems, flags);
     // now seek to beginning of the tag (exluding header)
     if (deadbeef->fseek (fp, -size, SEEK_CUR) == -1) {
         trace ("failed to seek to tag start (-%d)\n", size);
@@ -564,11 +564,13 @@ junk_read_ape (playItem_t *it, DB_FILE *fp) {
             keysize++;
         }
         key[255] = 0;
+        trace ("item %d, size %d, flags %08x, keysize %d, key %s\n", i, itemsize, itemflags, keysize, key);
         // read value
-        if (itemsize <= 1024)
+        if (itemsize <= 100000) // just a sanity check
         {
-            char value[itemsize+1];
+            char *value = malloc (itemsize+1);
             if (deadbeef->fread (value, 1, itemsize, fp) != itemsize) {
+                free (value);
                 return -1;
             }
             value[itemsize] = 0;
@@ -619,10 +621,11 @@ junk_read_ape (playItem_t *it, DB_FILE *fp) {
                     trace ("track_peak=%s\n", value);
                 }
             }
+            free (value);
         }
         else {
             // try to skip
-            if (deadbeef->fseek (fp, SEEK_CUR, itemsize)) {
+            if (0 != deadbeef->fseek (fp, SEEK_CUR, itemsize)) {
                 fprintf (stderr, "junklib: corrupted APEv2 tag\n");
                 return -1;
             }
