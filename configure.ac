@@ -176,6 +176,7 @@ echo
 
 AC_OUTPUT([
 Makefile
+pixmaps/Makefile
 icons/Makefile
 gme/Game_Music_Emu-0.5.2/Makefile
 gme/Game_Music_Emu-0.5.2/gme/Makefile
