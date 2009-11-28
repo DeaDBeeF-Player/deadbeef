@@ -420,6 +420,8 @@ palsa_thread (uintptr_t context) {
         }
 
         /* deliver the data */
+        // FIXME: under some conditions, frames_to_deliver may become huge
+        // like 20M. this case is not handled here.
         char buf[frames_to_deliver*4];
         palsa_callback (buf, frames_to_deliver*4);
         if ((err = snd_pcm_writei (audio, buf, frames_to_deliver)) < 0) {
@@ -428,7 +430,7 @@ palsa_thread (uintptr_t context) {
             snd_pcm_start (audio);
         }
         mutex_unlock (mutex);
-//        usleep (1000); // removing this causes deadlock on exit
+        usleep (1000); // this must be here to prevent mutex deadlock
     }
 }
 
