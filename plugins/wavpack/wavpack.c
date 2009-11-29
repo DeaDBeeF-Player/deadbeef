@@ -243,6 +243,17 @@ wv_insert (DB_playItem_t *after, const char *fname) {
         trace ("wv: id3v1 tag found\n");
     }
     deadbeef->fclose (fp);
+
+    // embedded cue
+    const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
+    if (cuesheet) {
+        DB_playItem_t *last = deadbeef->pl_insert_cue_from_buffer (after, fname, cuesheet, strlen (cuesheet), &plugin, plugin.filetypes[0], totalsamples, samplerate);
+        if (last) {
+            deadbeef->pl_item_free (it);
+            return last;
+        }
+    }
+
     deadbeef->pl_add_meta (it, "title", NULL);
     after = deadbeef->pl_insert_item (after, it);
 
