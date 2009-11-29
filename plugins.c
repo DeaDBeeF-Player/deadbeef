@@ -359,7 +359,7 @@ plug_trigger_event_trackchange (int from, int to) {
 void
 plug_trigger_event_trackinfochanged (int trk) {
     DB_event_track_t event;
-    event.ev.event = DB_EV_SONGCHANGED;
+    event.ev.event = DB_EV_TRACKINFOCHANGED;
     event.index = trk;
     event.track = DB_PLAYITEM (pl_get_for_idx (trk));
     plug_event_call (DB_EVENT (&event));
