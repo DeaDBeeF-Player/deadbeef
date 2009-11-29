@@ -205,7 +205,7 @@ on_trayicon_button_press_event (GtkWidget       *widget,
         }
     }
     else if (event->button == 2) {
-        messagepump_push (M_PAUSESONG, 0, 0, 0);
+        deadbeef->sendmessage (M_PAUSESONG, 0, 0, 0);
     }
     return FALSE;
 }
