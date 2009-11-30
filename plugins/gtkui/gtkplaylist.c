@@ -1192,70 +1192,12 @@ gtkpl_track_dragdrop (gtkplaylist_t *ps, int y) {
 
 void
 gtkpl_handle_drag_drop (gtkplaylist_t *ps, int drop_y, uint32_t *d, int length) {
-#if 0 // FIXME: port to plugin api
     int drop_row = drop_y / rowheight + ps->scrollpos;
     DB_playItem_t *drop_before = deadbeef->pl_get_for_idx_and_iter (drop_row, ps->iterator);
     while (drop_before && SELECTED (drop_before)) {
         drop_before = PL_NEXT(drop_before, ps->iterator);
     }
-    // unlink items from playlist, and link together
-    DB_playItem_t *head = NULL;
-    DB_playItem_t *tail = NULL;
-    int processed = 0;
-    int idx = 0;
-    DB_playItem_t *next = NULL;
-    for (DB_playItem_t *it = PL_HEAD (ps->iterator); it && processed < length; it = next, idx++) {
-        next = PL_NEXT(it, ps->iterator);
-        if (idx == d[processed]) {
-            if (PL_PREV (it, ps->iterator)) {
-                deadbeef->pl_set_next (PL_PREV(it, ps->iterator), PL_NEXT(it, ps->iterator), ps->iterator);
-                // <orig> it->prev[ps->iterator]->next[ps->iterator] = it->next[ps->iterator];
-            }
-            else {
-                playlist_head[ps->iterator] = it->next[ps->iterator];
-            }
-            if (it->next[ps->iterator]) {
-                it->next[ps->iterator]->prev[ps->iterator] = it->prev[ps->iterator];
-            }
-            else {
-                playlist_tail[ps->iterator] = it->prev[ps->iterator];
-            }
-            if (tail) {
-                tail->next[ps->iterator] = it;
-                it->prev[ps->iterator] = tail;
-                tail = it;
-            }
-            else {
-                head = tail = it;
-                it->prev[ps->iterator] = it->next[ps->iterator] = NULL;
-            }
-            processed++;
-        }
-    }
-    // find insertion point
-    playItem_t *drop_after = NULL;
-    if (drop_before) {
-        drop_after = drop_before->prev[ps->iterator];
-    }
-    else {
-        drop_after = playlist_tail[ps->iterator];
-    }
-    // insert in between
-    head->prev[ps->iterator] = drop_after;
-    if (drop_after) {
-        drop_after->next[ps->iterator] = head;
-    }
-    else {
-        playlist_head[ps->iterator] = head;
-    }
-    tail->next[ps->iterator] = drop_before;
-    if (drop_before) {
-        drop_before->prev[ps->iterator] = tail;
-    }
-    else {
-        playlist_tail[ps->iterator] = tail;
-    }
-#endif
+    deadbeef->pl_move_items (ps->iterator, drop_before, d, length);
 }
 
 void

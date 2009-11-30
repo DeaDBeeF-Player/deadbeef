@@ -205,4 +205,7 @@ pl_get_cursor (int iter);
 void
 pl_set_cursor (int iter, int cursor);
 
+void
+pl_move_items (int iter, playItem_t *drop_before, uint32_t *indexes, int count);
+
 #endif // __PLAYLIST_H

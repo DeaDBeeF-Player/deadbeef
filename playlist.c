@@ -1708,3 +1708,66 @@ void
 pl_set_cursor (int iter, int cursor) {
     playlist_current_row[iter] = cursor;
 }
+
+// this function must move items in playlist
+// list of items is indexes[count]
+// drop_before is insertion point
+void
+pl_move_items (int iter, playItem_t *drop_before, uint32_t *indexes, int count) {
+    // unlink items from playlist, and link together
+    playItem_t *head = NULL;
+    playItem_t *tail = NULL;
+    int processed = 0;
+    int idx = 0;
+    playItem_t *next = NULL;
+    for (playItem_t *it = playlist_head[iter]; it && processed < count; it = next, idx++) {
+        next = it->next[iter];
+        if (idx == indexes[processed]) {
+            if (it->prev[iter]) {
+                it->prev[iter]->next[iter] = it->next[iter];
+            }
+            else {
+                playlist_head[iter] = it->next[iter];
+            }
+            if (it->next[iter]) {
+                it->next[iter]->prev[iter] = it->prev[iter];
+            }
+            else {
+                playlist_tail[iter] = it->prev[iter];
+            }
+            if (tail) {
+                tail->next[iter] = it;
+                it->prev[iter] = tail;
+                tail = it;
+            }
+            else {
+                head = tail = it;
+                it->prev[iter] = it->next[iter] = NULL;
+            }
+            processed++;
+        }
+    }
+    // find insertion point
+    playItem_t *drop_after = NULL;
+    if (drop_before) {
+        drop_after = drop_before->prev[iter];
+    }
+    else {
+        drop_after = playlist_tail[iter];
+    }
+    // insert in between
+    head->prev[iter] = drop_after;
+    if (drop_after) {
+        drop_after->next[iter] = head;
+    }
+    else {
+        playlist_head[iter] = head;
+    }
+    tail->next[iter] = drop_before;
+    if (drop_before) {
+        drop_before->prev[iter] = tail;
+    }
+    else {
+        playlist_tail[iter] = tail;
+    }
+}

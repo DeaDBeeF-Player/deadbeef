@@ -275,6 +275,13 @@ typedef struct {
     DB_playItem_t *(*pl_get_prev) (DB_playItem_t *it, int iter);
     int (*pl_format_title) (DB_playItem_t *it, char *s, int size, const char *fmt);
     void (*pl_format_item_display_name) (DB_playItem_t *it, char *str, int len);
+//    void (*pl_set_next) (DB_playItem_t *it, DB_playItem_t *next, int iter);
+//    void (*pl_set_prev) (DB_playItem_t *it, DB_playItem_t *prev, int iter);
+//    void (*pl_set_head) (DB_playItem_t *it, int iter);
+//    void (*pl_set_tail) (DB_playItem_t *it, int iter);
+//    DB_playItem_t* (*pl_get_head) (void);
+//    DB_playItem_t* (*pl_get_tail) (void);
+    void (*pl_move_items) (int iter, DB_playItem_t *drop_before, uint32_t *indexes, int count);
     // metainfo
     void (*pl_add_meta) (DB_playItem_t *it, const char *key, const char *value);
     const char *(*pl_find_meta) (DB_playItem_t *song, const char *meta);
