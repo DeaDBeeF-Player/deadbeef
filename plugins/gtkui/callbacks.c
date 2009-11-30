@@ -138,7 +138,6 @@ search_playlist_init (GtkWidget *widget) {
     search_playlist.clicktime = -1;
     search_playlist.nvisiblerows = 0;
 
-// FIXME: port to new columns
     // create default set of columns
     DB_conf_item_t *col = deadbeef->conf_find ("search.column.", NULL);
     if (!col) {
@@ -264,29 +263,6 @@ set_file_filter (GtkWidget *dlg, const char *name) {
     gtk_file_filter_set_name (flt, name);
 
     gtk_file_filter_add_custom (flt, GTK_FILE_FILTER_FILENAME, file_filter_func, NULL, NULL);
-#if 0
-    DB_decoder_t **codecs = plug_get_decoder_list ();
-    for (int i = 0; codecs[i]; i++) {
-        if (codecs[i]->exts && codecs[i]->insert) {
-            const char **exts = codecs[i]->exts;
-            if (exts) {
-                for (int e = 0; exts[e]; e++) {
-                    char filter[20];
-                    snprintf (filter, 20, "*.%s", exts[e]);
-                    gtk_file_filter_add_pattern (flt, filter);
-                    char *p;
-                    for (p = filter; *p; p++) {
-                        *p = toupper (*p);
-                    }
-                    gtk_file_filter_add_pattern (flt, filter);
-                }
-            }
-        }
-    }
-    gtk_file_filter_add_pattern (flt, "*.pls");
-    gtk_file_filter_add_pattern (flt, "*.m3u");
-#endif
-
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
     gtk_file_chooser_set_filter (GTK_FILE_CHOOSER (dlg), flt);
     flt = gtk_file_filter_new ();
