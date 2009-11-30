@@ -298,7 +298,7 @@ insert_single_track (CdIo_t* cdio, DB_playItem_t *after, const char* file, int t
 }
 
 static void
-cddb_thread (uintptr_t items_i)
+cddb_thread (void *items_i)
 {
     struct cddb_thread_params *params = (struct cddb_thread_params*)items_i;
     DB_playItem_t **items = params->items;
@@ -398,7 +398,7 @@ cda_insert (DB_playItem_t *after, const char *fname) {
             p->items[i] = res;
         }
         trace ("cdda: querying freedb...\n");
-        deadbeef->thread_start (cddb_thread, (uintptr_t)p); //will destroy cdio
+        deadbeef->thread_start (cddb_thread, p); //will destroy cdio
     }
     else
     {

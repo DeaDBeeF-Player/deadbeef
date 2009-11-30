@@ -21,7 +21,7 @@
 #include "threading.h"
 
 intptr_t
-thread_start (void (*fn)(uintptr_t ctx), uintptr_t ctx) {
+thread_start (void (*fn)(void *ctx), void *ctx) {
     pthread_t tid;
     pthread_attr_t attr;
     int s = pthread_attr_init (&attr);

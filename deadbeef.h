@@ -228,7 +228,7 @@ typedef struct {
     const char *(*get_config_dir) (void);
     void (*quit) (void);
     // threading
-    intptr_t (*thread_start) (void (*fn)(uintptr_t ctx), uintptr_t ctx);
+    intptr_t (*thread_start) (void (*fn)(void *ctx), void *ctx);
     int (*thread_join) (intptr_t tid);
     uintptr_t (*mutex_create) (void);
     void (*mutex_free) (uintptr_t mtx);

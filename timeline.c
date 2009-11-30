@@ -68,7 +68,7 @@ timeline_stop (timeline_t *tl, int wait) {
 }
 
 void
-timeline_thread_func (uintptr_t ctx) {
+timeline_thread_func (void *ctx) {
     printf ("timeline thread started\n");
     timeline_t *tl = (timeline_t *)ctx;
 
@@ -113,7 +113,7 @@ timeline_start (timeline_t *tl) {
     tl->stop = 0;
     tl->destroy = 0;
     if (!tl->tid) {
-        tl->tid = thread_start (timeline_thread_func, (uintptr_t)tl);
+        tl->tid = thread_start (timeline_thread_func, tl);
     }
     else {
         printf ("reusing existing thread\n");

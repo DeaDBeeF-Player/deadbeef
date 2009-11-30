@@ -307,7 +307,7 @@ http_curl_control (void *stream, double dltotal, double dlnow, double ultotal, d
 }
 
 static void
-http_thread_func (uintptr_t ctx) {
+http_thread_func (void *ctx) {
     HTTP_FILE *fp = (HTTP_FILE *)ctx;
     CURL *curl;
     curl = curl_easy_init ();
@@ -413,7 +413,7 @@ http_thread_func (uintptr_t ctx) {
 static void
 http_start_streamer (HTTP_FILE *fp) {
     fp->mutex = deadbeef->mutex_create ();
-    fp->tid = deadbeef->thread_start (http_thread_func, (uintptr_t)fp);
+    fp->tid = deadbeef->thread_start (http_thread_func, fp);
 }
 
 static DB_FILE *

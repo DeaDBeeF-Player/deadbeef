@@ -266,7 +266,7 @@ cleanup() {
 }
 
 static void
-hotkeys_event_loop( uintptr_t unused ) {
+hotkeys_event_loop( void *unused ) {
     int i;
 
     while (!finished) {
