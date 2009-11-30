@@ -248,14 +248,6 @@ player_thread (uintptr_t ctx) {
                 }
                 break;
             case M_TERMINATE:
-            // FIXME: should signal main thread about termination
-            // or will that be new main thread?
-#if 0
-                // <placeholder>
-                // tell gui plugin to shut down
-                // FIXME: cleanup properly on main thread
-                guiplug_shutdown ();
-#endif 
                 return;
             case M_SONGCHANGED:
                 plug_trigger_event_trackchange (p1, p2);
@@ -294,29 +286,6 @@ player_thread (uintptr_t ctx) {
             case M_PLAYRANDOM:
                 p_stop ();
                 pl_randomsong ();
-                break;
-            case M_ADDDIR:
-                // <placeholder>
-                // * let guiplug know that addition is in progress
-                // * call it back on every file
-                // * let guiplug know that addition is done
-                // guiplug_add_dir ((char *)ctx);
-                break;
-            case M_ADDDIRS:
-                // <placeholder>
-                // same as above, but for many folders
-                // guiplug_add_dirs ((GSList *)ctx);
-                break;
-            case M_ADDFILES:
-                // <placeholder>
-                // same as above but for many files
-                // guiplug_add_files ((GSList *)ctx);
-                break;
-            case M_OPENFILES:
-                p_stop ();
-                // <placeholder>
-                // open many files and start 1st of them
-                // guiplug_open_files ((GSList *)ctx);
                 break;
             case M_FMDRAGDROP:
                 // <placeholder>

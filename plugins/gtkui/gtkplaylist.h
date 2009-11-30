@@ -86,6 +86,9 @@ typedef struct {
     gtkpl_column_t *columns;
 } gtkplaylist_t;
 
+extern gtkplaylist_t main_playlist;
+extern gtkplaylist_t search_playlist;
+
 #define GTKPL_PROLOGUE \
     gtkplaylist_t *ps = (gtkplaylist_t *)gtk_object_get_data (GTK_OBJECT (widget), "ps"); assert (ps); 
 

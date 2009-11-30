@@ -36,6 +36,7 @@
 #include "search.h"
 #include "progress.h"
 #include "session.h"
+#include "gtkui.h"
 
 extern GtkWidget *mainwin;
 extern gtkplaylist_t main_playlist;
@@ -295,7 +296,7 @@ on_open_activate                       (GtkMenuItem     *menuitem,
         GSList *lst = gtk_file_chooser_get_filenames (GTK_FILE_CHOOSER (dlg));
         gtk_widget_destroy (dlg);
         if (lst) {
-            deadbeef->sendmessage (M_OPENFILES, (uintptr_t)lst, 0, 0);
+            gtkui_open_files (lst);
         }
     }
     else {
@@ -328,7 +329,7 @@ on_add_files_activate                  (GtkMenuItem     *menuitem,
         GSList *lst = gtk_file_chooser_get_filenames (GTK_FILE_CHOOSER (dlg));
         gtk_widget_destroy (dlg);
         if (lst) {
-            deadbeef->sendmessage (M_ADDFILES, (uintptr_t)lst, 0, 0);
+            gtkui_add_files (lst);
         }
     }
     else {
@@ -360,7 +361,7 @@ on_add_folders_activate                (GtkMenuItem     *menuitem,
         GSList *lst = gtk_file_chooser_get_filenames (GTK_FILE_CHOOSER (dlg));
         gtk_widget_destroy (dlg);
         if (lst) {
-            deadbeef->sendmessage (M_ADDDIRS, (uintptr_t)lst, 0, 0);
+            gtkui_add_dirs (lst);
         }
     }
     else {

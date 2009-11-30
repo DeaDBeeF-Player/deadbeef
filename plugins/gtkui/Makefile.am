@@ -1,13 +1,14 @@
 if HAVE_GTK
 gtkuidir = $(libdir)/$(PACKAGE)
 pkglib_LTLIBRARIES = gtkui.la
-gtkui_la_SOURCES = gtkui.c\
+gtkui_la_SOURCES = gtkui.c gtkui.h\
 				   callbacks.c interface.c support.c callbacks.h interface.h support.h\
 				   gtkplaylist.c gtkplaylist.h\
 				   drawing.h gdkdrawing.c\
 				   progress.c progress.h\
 				   search.c search.h\
-				   gtksession.c
+				   gtksession.c\
+				   fileman.c
 
 gtkui_la_LDFLAGS = -module
 

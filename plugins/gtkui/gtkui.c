@@ -271,38 +271,9 @@ guiplug_start_random (void) {
 }
 
 void
-guiplug_add_dir (char *dir) {
-    // long time processing
-    //                float t1 = (float)clock () / CLOCKS_PER_SEC;
-    gtkpl_add_dir (&main_playlist, dir);
-    //                float t2 = (float)clock () / CLOCKS_PER_SEC;
-    //                printf ("time: %f\n", t2-t1);
-}
-
-void
-guiplug_add_dirs (GSList *dirs) {
-    // long time processing
-    //                float t1 = (float)clock () / CLOCKS_PER_SEC;
-    gtkpl_add_dirs (&main_playlist, dirs);
-    //                float t2 = (float)clock () / CLOCKS_PER_SEC;
-    //                printf ("time: %f\n", t2-t1);
-}
-
-void
-guiplug_add_files (GSList *files) {
-    gtkpl_add_files (&main_playlist, files);
-}
-
-void
 guiplug_open_files (GSList *files) {
     gtkpl_add_files (&main_playlist, files);
     //gtkpl_playsong (&main_playlist);
-}
-
-void
-guiplug_refresh_playlist (void) {
-    // <deprecated>
-    assert (0);
 }
 
 void
