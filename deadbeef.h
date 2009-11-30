@@ -282,6 +282,7 @@ typedef struct {
 //    DB_playItem_t* (*pl_get_head) (void);
 //    DB_playItem_t* (*pl_get_tail) (void);
     void (*pl_move_items) (int iter, DB_playItem_t *drop_before, uint32_t *indexes, int count);
+    int (*pl_process_search) (const char *text);
     // metainfo
     void (*pl_add_meta) (DB_playItem_t *it, const char *key, const char *value);
     const char *(*pl_find_meta) (DB_playItem_t *song, const char *meta);

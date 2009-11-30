@@ -31,7 +31,6 @@
 
 #include "search.h"
 #include "gtkplaylist.h"
-#include "utf8.h"
 #include "deadbeef.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
@@ -70,32 +69,8 @@ on_searchentry_changed                 (GtkEditable     *editable,
     // walk playlist starting with playlist_head, and populate list starting
     // with search_head
 
-#if 0 // FIXME: port to plugin api
     const gchar *text = gtk_entry_get_text (GTK_ENTRY (editable));
-
-    playlist_head[PL_SEARCH] = NULL;
-    playlist_tail[PL_SEARCH] = NULL;
-    search_count = 0;
-    if (*text) {
-        for (playItem_t *it = playlist_head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
-            for (metaInfo_t *m = it->meta; m; m = m->next) {
-//                if (strcasestr (m->value, text)) {
-                if (utfcasestr (m->value, text)) {
-                    // add to list
-                    it->next[PL_SEARCH] = NULL;
-                    if (playlist_tail[PL_SEARCH]) {
-                        playlist_tail[PL_SEARCH]->next[PL_SEARCH] = it;
-                        playlist_tail[PL_SEARCH] = it;
-                    }
-                    else {
-                        playlist_head[PL_SEARCH] = playlist_tail[PL_SEARCH] = it;
-                    }
-                    search_count++;
-                    break;
-                }
-            }
-        }
-    }
+    search_count = deadbeef->pl_process_search (text);
 
     extern gtkplaylist_t search_playlist;
     gtkplaylist_t *ps = &search_playlist;
@@ -103,7 +78,6 @@ on_searchentry_changed                 (GtkEditable     *editable,
     //memset (ps->fmtcache, 0, sizeof (int16_t) * 3 * pl_ncolumns * ps->nvisiblerows);
     gtkpl_draw_playlist (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
     gtkpl_expose (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
-#endif
 }
 
 void

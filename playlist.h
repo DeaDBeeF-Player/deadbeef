@@ -208,4 +208,7 @@ pl_set_cursor (int iter, int cursor);
 void
 pl_move_items (int iter, playItem_t *drop_before, uint32_t *indexes, int count);
 
+int
+pl_process_search (const char *text);
+
 #endif // __PLAYLIST_H

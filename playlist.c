@@ -35,6 +35,7 @@
 #include "junklib.h"
 #include "vfs.h"
 #include "conf.h"
+#include "utf8.h"
 
 // 1.0->1.1 changelog:
 //    added sample-accurate seek positions for sub-tracks
@@ -1770,4 +1771,32 @@ pl_move_items (int iter, playItem_t *drop_before, uint32_t *indexes, int count) 
     else {
         playlist_tail[iter] = tail;
     }
+}
+
+int
+pl_process_search (const char *text) {
+    playlist_head[PL_SEARCH] = NULL;
+    playlist_tail[PL_SEARCH] = NULL;
+    int search_count = 0;
+    if (*text) {
+        for (playItem_t *it = playlist_head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
+            for (metaInfo_t *m = it->meta; m; m = m->next) {
+//                if (strcasestr (m->value, text)) {
+                if (utfcasestr (m->value, text)) {
+                    // add to list
+                    it->next[PL_SEARCH] = NULL;
+                    if (playlist_tail[PL_SEARCH]) {
+                        playlist_tail[PL_SEARCH]->next[PL_SEARCH] = it;
+                        playlist_tail[PL_SEARCH] = it;
+                    }
+                    else {
+                        playlist_head[PL_SEARCH] = playlist_tail[PL_SEARCH] = it;
+                    }
+                    search_count++;
+                    break;
+                }
+            }
+        }
+    }
+    return search_count;
 }
