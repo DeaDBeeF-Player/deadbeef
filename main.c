@@ -287,12 +287,6 @@ player_thread (uintptr_t ctx) {
                 p_stop ();
                 pl_randomsong ();
                 break;
-            case M_FMDRAGDROP:
-                // <placeholder>
-                // handle drag-n-drop from filemanager
-                // that should be handled internally in ui plugin
-                // guiplug_add_fm_dropped_files ((char *)ctx, p1, p2)
-                break;
             case M_PLAYLISTREFRESH:
                 plug_trigger_event_playlistchanged ();
                 break;

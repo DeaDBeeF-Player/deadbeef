@@ -1,5 +1,6 @@
 #include "../../deadbeef.h"
 #include <gtk/gtk.h>
+#include <stdlib.h>
 #include "gtkui.h"
 #include "gtkplaylist.h"
 
@@ -36,4 +37,30 @@ void
 gtkui_open_files (struct _GSList *lst) {
     deadbeef->pl_free ();
     deadbeef->thread_start (open_files_worker, lst);
+}
+
+struct fmdrop_data {
+    char *mem;
+    int length;
+    int drop_y;
+};
+
+static void
+fmdrop_worker (void *ctx) {
+    struct fmdrop_data *data = (struct fmdrop_data *)ctx;
+    gtkpl_add_fm_dropped_files (&main_playlist, data->mem, data->length, data->drop_y);
+    free (data);
+}
+
+void
+gtkui_receive_fm_drop (char *mem, int length, int drop_y) {
+    struct fmdrop_data *data = malloc (sizeof (struct fmdrop_data));
+    if (!data) {
+        fprintf (stderr, "gtkui_receive_fm_drop: malloc failed\n");
+        return;
+    }
+    data->mem = mem;
+    data->length = length;
+    data->drop_y = drop_y;
+    deadbeef->thread_start (fmdrop_worker, data);
 }

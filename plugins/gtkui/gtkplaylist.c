@@ -1191,16 +1191,6 @@ gtkpl_track_dragdrop (gtkplaylist_t *ps, int y) {
 }
 
 void
-gtkpl_handle_drag_drop (gtkplaylist_t *ps, int drop_y, uint32_t *d, int length) {
-    int drop_row = drop_y / rowheight + ps->scrollpos;
-    DB_playItem_t *drop_before = deadbeef->pl_get_for_idx_and_iter (drop_row, ps->iterator);
-    while (drop_before && SELECTED (drop_before)) {
-        drop_before = PL_NEXT(drop_before, ps->iterator);
-    }
-    deadbeef->pl_move_items (ps->iterator, drop_before, d, length);
-}
-
-void
 on_playlist_drag_end                   (GtkWidget       *widget,
                                         GdkDragContext  *drag_context,
                                         gpointer         user_data)
@@ -1321,16 +1311,6 @@ gtkpl_add_fm_dropped_files (gtkplaylist_t *ps, char *ptr, int length, int drop_y
     progress_hide ();
     playlist_refresh ();
     GDK_THREADS_LEAVE();
-}
-
-void
-gtkpl_handle_fm_drag_drop (gtkplaylist_t *ps, int drop_y, void *ptr, int length) {
-    // this happens when dropped from file manager
-    char *mem = malloc (length+1);
-    memcpy (mem, ptr, length);
-    mem[length] = 0;
-    // we don't pass control structure, but there's only one drag-drop view currently
-    deadbeef->sendmessage (M_FMDRAGDROP, (uintptr_t)mem, length, drop_y);
 }
 
 void

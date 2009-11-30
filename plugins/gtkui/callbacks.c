@@ -38,6 +38,9 @@
 #include "session.h"
 #include "gtkui.h"
 
+#define SELECTED(it) (deadbeef->pl_is_selected(it))
+#define PL_NEXT(it, iter) (deadbeef->pl_get_next(it, iter))
+
 extern GtkWidget *mainwin;
 extern gtkplaylist_t main_playlist;
 extern gtkplaylist_t search_playlist;
@@ -611,14 +614,22 @@ on_playlist_drag_data_received         (GtkWidget       *widget,
     GTKPL_PROLOGUE;
     gchar *ptr=(char*)data->data;
     if (target_type == 0) { // uris
-        fprintf (stderr, "calling gtkpl_handle_fm_drag_drop\n");
-//        if (!strncmp(ptr,"file:///",8)) {
-            gtkpl_handle_fm_drag_drop (ps, y, ptr, data->length);
-//        }
+        // this happens when dropped from file manager
+        char *mem = malloc (data->length+1);
+        memcpy (mem, ptr, data->length);
+        mem[data->length] = 0;
+        // we don't pass control structure, but there's only one drag-drop view currently
+        gtkui_receive_fm_drop (mem, data->length, y);
     }
     else if (target_type == 1) {
         uint32_t *d= (uint32_t *)ptr;
-        gtkpl_handle_drag_drop (ps, y, d, data->length/4);
+        int length = data->length/4;
+        int drop_row = y / rowheight + ps->scrollpos;
+        DB_playItem_t *drop_before = deadbeef->pl_get_for_idx_and_iter (drop_row, ps->iterator);
+        while (drop_before && SELECTED (drop_before)) {
+            drop_before = PL_NEXT(drop_before, ps->iterator);
+        }
+        deadbeef->pl_move_items (ps->iterator, drop_before, d, length);
     }
     gtk_drag_finish (drag_context, TRUE, FALSE, time);
 }

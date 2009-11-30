@@ -150,15 +150,6 @@ void
 gtkpl_track_dragdrop (gtkplaylist_t *ps, int y);
 
 void
-gtkpl_handle_drag_drop (gtkplaylist_t *ps, int drop_y, uint32_t *d, int length);
-
-void
-gtkpl_handle_fm_drag_drop (gtkplaylist_t *ps, int drop_y, void *ptr, int length);
-
-void
-gtkpl_add_fm_dropped_files (gtkplaylist_t *ps, char *ptr, int length, int drop_y);
-
-void
 gtkpl_select_single (gtkplaylist_t *ps, int sel);
 
 void

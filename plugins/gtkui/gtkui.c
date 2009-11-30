@@ -245,41 +245,6 @@ guiplug_shutdown (void) {
     GDK_THREADS_LEAVE();
 }
 
-#if 0
-void
-guiplug_start_current_track (void) {
-    gtkpl_playsong (&main_playlist);
-    if (playlist_current_ptr) {
-        GDK_THREADS_ENTER();
-        gtkpl_redraw_pl_row (&main_playlist, pl_get_idx_of (playlist_current_ptr), playlist_current_ptr);
-        GDK_THREADS_LEAVE();
-    }
-}
-#endif
-
-void
-guiplug_start_track (int idx) {
-    GDK_THREADS_ENTER();
-    gtkpl_playsongnum (idx);
-    GDK_THREADS_LEAVE();
-}
-
-void
-guiplug_start_random (void) {
-    // <deprecated>
-    assert (0);
-}
-
-void
-guiplug_open_files (GSList *files) {
-    gtkpl_add_files (&main_playlist, files);
-    //gtkpl_playsong (&main_playlist);
-}
-
-void
-guiplug_add_fm_dropped_files (char *files, int p1, int p2) {
-    gtkpl_add_fm_dropped_files (&main_playlist, files, p1, p2);
-}
 
 static int
 gtkui_on_activate (DB_event_t *ev, uintptr_t data) {
@@ -335,7 +300,7 @@ gtkui_on_volumechanged (DB_event_t *ev, uintptr_t data) {
 }
 
 void
-gtkui_thread (uintptr_t ctx) {
+gtkui_thread (void *ctx) {
     // let's start some gtk
     g_thread_init (NULL);
     add_pixmap_directory (PREFIX "/share/deadbeef/pixmaps");
@@ -403,7 +368,7 @@ gtkui_start (void) {
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_FRAMEUPDATE, DB_CALLBACK (gtkui_on_frameupdate), 0);
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_VOLUMECHANGED, DB_CALLBACK (gtkui_on_volumechanged), 0);
     // gtk must be running in separate thread
-    deadbeef->thread_start (gtkui_thread, 0);
+    deadbeef->thread_start (gtkui_thread, NULL);
 
     return 0;
 }
