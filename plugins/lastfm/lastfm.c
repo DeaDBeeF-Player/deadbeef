@@ -625,7 +625,7 @@ lfm_send_submissions (void) {
 }
 
 static void
-lfm_thread (uintptr_t ctx) {
+lfm_thread (void *ctx) {
     //trace ("lfm_thread started\n");
     for (;;) {
         deadbeef->cond_wait (lfm_cond, lfm_mutex);
@@ -751,7 +751,7 @@ lastfm_start (void) {
     lfm_stopthread = 0;
     lfm_mutex = deadbeef->mutex_create ();
     lfm_cond = deadbeef->cond_create ();
-    lfm_tid = deadbeef->thread_start (lfm_thread, 0);
+    lfm_tid = deadbeef->thread_start (lfm_thread, NULL);
     // subscribe to frameupdate event
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_SONGSTARTED, DB_CALLBACK (lastfm_songstarted), 0);
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_SONGFINISHED, DB_CALLBACK (lastfm_songfinished), 0);
