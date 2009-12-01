@@ -49,6 +49,7 @@
 #define PL_PREV(it, iter) (deadbeef->pl_get_prev(it, iter))
 #define SELECTED(it) (deadbeef->pl_is_selected(it))
 #define SELECT(it, sel) (deadbeef->pl_set_selected(it,sel))
+#define VSELECT(it, sel) {deadbeef->pl_set_selected(it,sel);gtk_pl_redraw_item_everywhere (it);}
 
 extern DB_functions_t *deadbeef; // defined in gtkui.c
 
@@ -550,13 +551,11 @@ gtkpl_select_single (gtkplaylist_t *ps, int sel) {
     for (; it; it = PL_NEXT (it, ps->iterator), idx++) {
         if (idx == sel) {
             if (!SELECTED (it)) {
-                SELECT (it, 1);
-                gtkpl_redraw_pl_row (ps, idx, it);
+                VSELECT (it, 1);
             }
         }
         else if (SELECTED (it)) {
-            SELECT (it, 0);
-            gtkpl_redraw_pl_row (ps, idx, it);
+            VSELECT (it, 0);
         }
     }
 }
@@ -667,8 +666,7 @@ gtkpl_mouse1_pressed (gtkplaylist_t *ps, int state, int ex, int ey, double time)
         if (y != -1) {
             DB_playItem_t *it = gtkpl_get_for_idx (ps, y);
             if (it) {
-                SELECT (it, 1 - SELECTED (it));
-                gtkpl_redraw_pl_row (ps, y, it);
+                VSELECT (it, 1 - SELECTED (it));
             }
         }
     }
@@ -680,14 +678,12 @@ gtkpl_mouse1_pressed (gtkplaylist_t *ps, int state, int ex, int ey, double time)
         for (DB_playItem_t *it = PL_HEAD (ps->iterator); it; it = PL_NEXT (it, ps->iterator), idx++) {
             if (idx >= start && idx <= end) {
                 if (!SELECTED (it)) {
-                    SELECT (it, 1);
-                    gtkpl_redraw_pl_row (ps, idx, it);
+                    VSELECT (it, 1);
                 }
             }
             else {
                 if (SELECTED (it)) {
-                    SELECT (it, 0);
-                    gtkpl_redraw_pl_row (ps, idx, it);
+                    VSELECT (it, 0);
                 }
             }
         }
@@ -823,13 +819,11 @@ gtkpl_mousemove (gtkplaylist_t *ps, GdkEventMotion *event) {
             for (DB_playItem_t *it = PL_HEAD(ps->iterator); it; it = PL_NEXT(it, ps->iterator), idx++) {
                 if (idx >= start && idx <= end) {
                     if (!SELECTED (it)) {
-                        SELECT (it, 1);
-                        gtkpl_redraw_pl_row (ps, idx, it);
+                        VSELECT (it, 1);
                     }
                 }
                 else if (SELECTED (it)) {
-                    SELECT (it, 0);
-                    gtkpl_redraw_pl_row (ps, idx, it);
+                    VSELECT (it, 0);
                 }
             }
         }
@@ -1051,27 +1045,11 @@ gtkpl_keypress (gtkplaylist_t *ps, int keyval, int state) {
             int idx=0;
             for (DB_playItem_t *it = PL_HEAD (ps->iterator); it; it = PL_NEXT(it,ps->iterator), idx++) {
                 if (idx >= start && idx <= end) {
-                    SELECT (it, 1);
-                    if (idx >= minvis && idx <= maxvis) {
-                        if (newscroll == ps->scrollpos) {
-                            gtkpl_redraw_pl_row (ps, idx, it);
-                        }
-                        else {
-                            gtkpl_redraw_pl_row_novis (ps, idx, it);
-                        }
-                    }
+                    VSELECT (it, 1);
                 }
                 else if (SELECTED (it))
                 {
-                    SELECT (it, 0);
-                    if (idx >= minvis && idx <= maxvis) {
-                        if (newscroll == ps->scrollpos) {
-                            gtkpl_redraw_pl_row (ps, idx, it);
-                        }
-                        else {
-                            gtkpl_redraw_pl_row_novis (ps, idx, it);
-                        }
-                    }
+                    VSELECT (it, 0);
                 }
             }
         }
@@ -1086,27 +1064,11 @@ gtkpl_keypress (gtkplaylist_t *ps, int keyval, int state) {
             for (DB_playItem_t *it = PL_HEAD (ps->iterator); it; it = PL_NEXT(it, ps->iterator), idx++) {
                 if (idx == deadbeef->pl_get_cursor (ps->iterator)) {
                     if (!SELECTED (it)) {
-                        SELECT (it, 1);
-                        if (idx >= minvis && idx <= maxvis) {
-                            if (newscroll == ps->scrollpos) {
-                                gtkpl_redraw_pl_row (ps, idx, it);
-                            }
-                            else {
-                                gtkpl_redraw_pl_row_novis (ps, idx, it);
-                            }
-                        }
+                        VSELECT (it, 1);
                     }
                 }
                 else if (SELECTED (it)) {
-                    SELECT (it, 0);
-                    if (idx >= minvis && idx <= maxvis) {
-                        if (newscroll == ps->scrollpos) {
-                            gtkpl_redraw_pl_row (ps, idx, it);
-                        }
-                        else {
-                            gtkpl_redraw_pl_row_novis (ps, idx, it);
-                        }
-                    }
+                    VSELECT (it, 0);
                 }
             }
         }
@@ -1932,4 +1894,22 @@ gtkpl_songchanged_wrapper (int from, int to) {
     // update playlist view
     gtkpl_songchanged (&main_playlist, from, to);
     GDK_THREADS_LEAVE ();
+}
+
+void
+gtk_pl_redraw_item_everywhere (DB_playItem_t *it) {
+    gtkplaylist_t *pl = &search_playlist;
+    int idx = gtkpl_get_idx_of (pl, it);
+    int minvis = pl->scrollpos;
+    int maxvis = pl->scrollpos + pl->nvisiblerows-1;
+    if (idx >= minvis && idx <= maxvis) {
+        gtkpl_redraw_pl_row (pl, idx, it);
+    }
+    pl = &main_playlist;
+    idx = gtkpl_get_idx_of (pl, it);
+    minvis = pl->scrollpos;
+    maxvis = pl->scrollpos + pl->nvisiblerows-1;
+    if (idx >= minvis && idx <= maxvis) {
+        gtkpl_redraw_pl_row (pl, idx, it);
+    }
 }

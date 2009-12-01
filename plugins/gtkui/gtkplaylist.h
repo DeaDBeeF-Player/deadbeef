@@ -247,4 +247,7 @@ gtkpl_songchanged_wrapper (int from, int to);
 void
 gtkpl_current_track_changed (DB_playItem_t *it);
 
+void
+gtk_pl_redraw_item_everywhere (DB_playItem_t *it);
+
 #endif // __GTKPLAYLIST_H
