@@ -1253,14 +1253,6 @@ gtkpl_add_file_info_cb (DB_playItem_t *it, void *data) {
     GDK_THREADS_ENTER();
     progress_settext (it->fname);
     GDK_THREADS_LEAVE();
-#if 0
-        GtkEntry *e = (GtkEntry *)data;
-        GDK_THREADS_ENTER();
-        gtk_entry_set_text (GTK_ENTRY (e), it->fname);
-        GDK_THREADS_LEAVE();
-        usleep (100);
-        countdown = 10;
-#endif
     return 0;
 }
 
@@ -1322,7 +1314,6 @@ gtkpl_header_draw (gtkplaylist_t *ps) {
     const char *detail = "button";
 
     // fill background
-    //gdk_draw_rectangle (ps->backbuf_header, widget->style->bg_gc[0], TRUE, -10, -10, widget->allocation.width+20, widget->allocation.height+20);
     gtk_paint_box (widget->style, ps->backbuf_header, GTK_STATE_NORMAL, GTK_SHADOW_OUT, NULL, NULL, detail, -10, -10, widget->allocation.width+20, widget->allocation.height+20);
     gdk_draw_line (ps->backbuf_header, widget->style->mid_gc[GTK_STATE_NORMAL], 0, widget->allocation.height-1, widget->allocation.width, widget->allocation.height-1);
     draw_begin ((uintptr_t)ps->backbuf_header);
@@ -1591,6 +1582,10 @@ on_header_button_press_event           (GtkWidget       *widget,
             x += w;
         }
     }
+    else if (event->button == 3) {
+        GtkWidget *menu = create_headermenu ();
+        gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, widget, 0, gtk_get_current_event_time());
+    }
     prev_header_x = -1;
     last_header_motion_ev = -1;
     return FALSE;
@@ -1627,11 +1622,6 @@ on_header_button_release_event         (GtkWidget       *widget,
             gtkpl_column_rewrite_config (ps);
         }
     }
-// NOTE: disabled for 0.3.0 release
-//    else if (event->button == 3) {
-//        GtkWidget *menu = create_headermenu ();
-//        gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, widget, 0, gtk_get_current_event_time());
-//    }
     return FALSE;
 }
 
