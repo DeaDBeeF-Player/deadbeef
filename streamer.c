@@ -36,8 +36,8 @@
 #include "volume.h"
 #include "vfs.h"
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 static intptr_t streamer_tid;
 static int src_quality;
@@ -303,7 +303,8 @@ streamer_thread (uintptr_t ctx) {
                 p_pause ();
             }
         }
-        else if (nextsong == -2) {
+        else if (nextsong == -2 && bytes_until_next_song == 0) {
+            bytes_until_next_song = -1;
             trace ("nextsong=-2\n");
             nextsong = -1;
             p_stop ();
