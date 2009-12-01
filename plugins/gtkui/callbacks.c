@@ -80,7 +80,7 @@ main_playlist_init (GtkWidget *widget) {
 //    main_playlist.pcount = &pl_count;
     main_playlist.get_count = main_get_count;
     main_playlist.iterator = PL_MAIN;
-    main_playlist.multisel = 1;
+//    main_playlist.multisel = 1;
     main_playlist.scrollpos = 0;
     main_playlist.hscrollpos = 0;
 //    main_playlist.row = -1;
@@ -134,7 +134,7 @@ search_playlist_init (GtkWidget *widget) {
 //    main_playlist.pcurr = &search_current;
 //    search_playlist.pcount = &search_count;
     search_playlist.get_count = search_get_count;
-    search_playlist.multisel = 0;
+//    search_playlist.multisel = 0;
     search_playlist.iterator = PL_SEARCH;
     search_playlist.scrollpos = 0;
     search_playlist.hscrollpos = 0;

@@ -76,7 +76,6 @@ typedef struct {
     int (*get_count)(void); // function pointer to get number of tracks
     int iterator; // index into next array of DB_playItem_t struct
     int lastpos[2]; // last mouse position (for playlist widget)
-    int multisel; // if it uses multiple selection
     // current state
     int scrollpos;
     int hscrollpos;

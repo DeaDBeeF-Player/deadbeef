@@ -1780,6 +1780,7 @@ pl_process_search (const char *text) {
     int search_count = 0;
     if (*text) {
         for (playItem_t *it = playlist_head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
+            it->selected = 0;
             for (metaInfo_t *m = it->meta; m; m = m->next) {
 //                if (strcasestr (m->value, text)) {
                 if (utfcasestr (m->value, text)) {
@@ -1792,6 +1793,7 @@ pl_process_search (const char *text) {
                     else {
                         playlist_head[PL_SEARCH] = playlist_tail[PL_SEARCH] = it;
                     }
+                    it->selected = 1;
                     search_count++;
                     break;
                 }

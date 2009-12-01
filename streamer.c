@@ -132,7 +132,8 @@ streamer_set_current (playItem_t *it) {
     }
     trace ("from=%d, to=%d\n", from, to);
     trace ("sending songchanged\n");
-    messagepump_push (M_SONGCHANGED, 0, from, to);
+//    printf ("songchanged[2] %d->%d\n", from, to);
+//    messagepump_push (M_SONGCHANGED, 0, from, to);
     trace ("streamer_set_current %p, buns=%d\n", it);
     if(str_streaming_song.decoder) {
         str_streaming_song.decoder->free ();
@@ -262,7 +263,7 @@ static int
 streamer_read_async (char *bytes, int size);
 
 void
-streamer_thread (uintptr_t ctx) {
+streamer_thread (void *ctx) {
     prctl (PR_SET_NAME, "deadbeef-stream", 0, 0, 0, 0);
     codecleft = 0;
 
@@ -316,7 +317,6 @@ streamer_thread (uintptr_t ctx) {
                 trace ("sending songfinished to plugins [1]\n");
                 plug_trigger_event (DB_EV_SONGFINISHED, 0);
             }
-//            messagepump_push (M_SONGCHANGED, 0, pl_get_idx_of (orig_playing_song), -1);
             streamer_set_current (NULL);
             pl_item_free (&str_playing_song);
             orig_playing_song = NULL;
@@ -332,7 +332,6 @@ streamer_thread (uintptr_t ctx) {
                 // means last song was deleted during final drain
                 nextsong = -1;
                 p_stop ();
-//                messagepump_push (M_SONGCHANGED, 0, pl_get_idx_of (playlist_current_ptr), -1);
                 streamer_set_current (NULL);
                 continue;
             }
@@ -463,7 +462,7 @@ streamer_init (void) {
     if (!src) {
         return -1;
     }
-    streamer_tid = thread_start (streamer_thread, 0);
+    streamer_tid = thread_start (streamer_thread, NULL);
     return 0;
 }
 

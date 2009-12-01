@@ -332,7 +332,7 @@ gtkpl_draw_pl_row_back (gtkplaylist_t *ps, int row, DB_playItem_t *it) {
 	int width, height;
 	draw_get_canvas_size ((uintptr_t)ps->backbuf, &width, &height);
 	w = width;
-	if (it && ((SELECTED (it) && ps->multisel) || (row == deadbeef->pl_get_cursor (ps->iterator) && !ps->multisel))) {
+	if (it && SELECTED (it)) {
         if (row % 2) {
             theme_set_fg_color (COLO_PLAYLIST_SEL_EVEN);
         }
@@ -364,7 +364,7 @@ gtkpl_draw_pl_row (gtkplaylist_t *ps, int row, DB_playItem_t *it) {
     }
 	int width, height;
 	draw_get_canvas_size ((uintptr_t)ps->backbuf, &width, &height);
-	if (it && ((SELECTED (it) && ps->multisel) || (row == deadbeef->pl_get_cursor (ps->iterator) && !ps->multisel))) {
+	if (it && SELECTED (it)) {
         if (row % 2) {
             theme_set_bg_color (COLO_PLAYLIST_SEL_EVEN);
         }
@@ -544,9 +544,6 @@ gtkpl_expose_header (gtkplaylist_t *ps, int x, int y, int w, int h) {
 
 void
 gtkpl_select_single (gtkplaylist_t *ps, int sel) {
-    if (!ps->multisel) {
-        return;
-    }
     int idx=0;
     GtkWidget *widget = ps->playlist;
     DB_playItem_t *it = PL_HEAD (ps->iterator);
@@ -613,7 +610,7 @@ gtkpl_mouse1_pressed (gtkplaylist_t *ps, int state, int ex, int ey, double time)
         // doubleclick - play this item
         if (deadbeef->pl_get_cursor (ps->iterator) != -1) {
             DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (deadbeef->pl_get_cursor (ps->iterator), ps->iterator);
-            SELECT (it, 1);
+//            SELECT (it, 1);
             int r = deadbeef->pl_get_idx_of (it);
             int prev = deadbeef->pl_get_cursor (ps->iterator);
             if (prev != r) {
@@ -644,66 +641,59 @@ gtkpl_mouse1_pressed (gtkplaylist_t *ps, int state, int ex, int ey, double time)
     deadbeef->pl_set_cursor (ps->iterator, y);
     shift_sel_anchor = deadbeef->pl_get_cursor (ps->iterator);
     // handle multiple selection
-    if (ps->multisel) {
-        if (!(state & (GDK_CONTROL_MASK|GDK_SHIFT_MASK)))
-        {
-            DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (sel, ps->iterator);
-            if (!it || !SELECTED (it)) {
-                // reset selection, and set it to single item
-                gtkpl_select_single (ps, sel);
-                areaselect = 1;
-                areaselect_x = ex;
-                areaselect_y = ey;
-                areaselect_dx = -1;
-                areaselect_dy = -1;
-                shift_sel_anchor = deadbeef->pl_get_cursor (ps->iterator);
-            }
-            else {
-                dragwait = 1;
-                gtkpl_redraw_pl_row (ps, prev, gtkpl_get_for_idx (ps, prev));
-                if (deadbeef->pl_get_cursor (ps->iterator) != prev) {
-                    gtkpl_redraw_pl_row (ps, deadbeef->pl_get_cursor (ps->iterator), gtkpl_get_for_idx (ps, deadbeef->pl_get_cursor (ps->iterator)));
-                }
-            }
+    if (!(state & (GDK_CONTROL_MASK|GDK_SHIFT_MASK)))
+    {
+        DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (sel, ps->iterator);
+        if (!it || !SELECTED (it)) {
+            // reset selection, and set it to single item
+            gtkpl_select_single (ps, sel);
+            areaselect = 1;
+            areaselect_x = ex;
+            areaselect_y = ey;
+            areaselect_dx = -1;
+            areaselect_dy = -1;
+            shift_sel_anchor = deadbeef->pl_get_cursor (ps->iterator);
         }
-        else if (state & GDK_CONTROL_MASK) {
-            // toggle selection
-            if (y != -1) {
-                DB_playItem_t *it = gtkpl_get_for_idx (ps, y);
-                if (it) {
-                    SELECT (it, 1 - SELECTED (it));
-                    gtkpl_redraw_pl_row (ps, y, it);
-                }
+        else {
+            dragwait = 1;
+            gtkpl_redraw_pl_row (ps, prev, gtkpl_get_for_idx (ps, prev));
+            if (deadbeef->pl_get_cursor (ps->iterator) != prev) {
+                gtkpl_redraw_pl_row (ps, deadbeef->pl_get_cursor (ps->iterator), gtkpl_get_for_idx (ps, deadbeef->pl_get_cursor (ps->iterator)));
             }
-        }
-        else if (state & GDK_SHIFT_MASK) {
-            // select range
-            int start = min (prev, deadbeef->pl_get_cursor (ps->iterator));
-            int end = max (prev, deadbeef->pl_get_cursor (ps->iterator));
-            int idx = 0;
-            for (DB_playItem_t *it = PL_HEAD (ps->iterator); it; it = PL_NEXT (it, ps->iterator), idx++) {
-                if (idx >= start && idx <= end) {
-                    if (!SELECTED (it)) {
-                        SELECT (it, 1);
-                        gtkpl_redraw_pl_row (ps, idx, it);
-                    }
-                }
-                else {
-                    if (SELECTED (it)) {
-                        SELECT (it, 0);
-                        gtkpl_redraw_pl_row (ps, idx, it);
-                    }
-                }
-            }
-        }
-        if (deadbeef->pl_get_cursor (ps->iterator) != -1 && sel == -1) {
-            gtkpl_redraw_pl_row (ps, deadbeef->pl_get_cursor (ps->iterator), gtkpl_get_for_idx (ps, deadbeef->pl_get_cursor (ps->iterator)));
         }
     }
-    else {
-        if (deadbeef->pl_get_cursor (ps->iterator) != -1) {
-            gtkpl_redraw_pl_row (ps, deadbeef->pl_get_cursor (ps->iterator), gtkpl_get_for_idx (ps, deadbeef->pl_get_cursor (ps->iterator)));
+    else if (state & GDK_CONTROL_MASK) {
+        // toggle selection
+        if (y != -1) {
+            DB_playItem_t *it = gtkpl_get_for_idx (ps, y);
+            if (it) {
+                SELECT (it, 1 - SELECTED (it));
+                gtkpl_redraw_pl_row (ps, y, it);
+            }
         }
+    }
+    else if (state & GDK_SHIFT_MASK) {
+        // select range
+        int start = min (prev, deadbeef->pl_get_cursor (ps->iterator));
+        int end = max (prev, deadbeef->pl_get_cursor (ps->iterator));
+        int idx = 0;
+        for (DB_playItem_t *it = PL_HEAD (ps->iterator); it; it = PL_NEXT (it, ps->iterator), idx++) {
+            if (idx >= start && idx <= end) {
+                if (!SELECTED (it)) {
+                    SELECT (it, 1);
+                    gtkpl_redraw_pl_row (ps, idx, it);
+                }
+            }
+            else {
+                if (SELECTED (it)) {
+                    SELECT (it, 0);
+                    gtkpl_redraw_pl_row (ps, idx, it);
+                }
+            }
+        }
+    }
+    if (deadbeef->pl_get_cursor (ps->iterator) != -1 && sel == -1) {
+        gtkpl_redraw_pl_row (ps, deadbeef->pl_get_cursor (ps->iterator), gtkpl_get_for_idx (ps, deadbeef->pl_get_cursor (ps->iterator)));
     }
     if (prev != -1 && prev != deadbeef->pl_get_cursor (ps->iterator)) {
         gtkpl_redraw_pl_row (ps, prev, gtkpl_get_for_idx (ps, prev));
@@ -943,20 +933,6 @@ gtkpl_hscroll (gtkplaylist_t *ps, int newscroll) {
         gtkpl_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
         draw_drawable (widget->window, widget->style->black_gc, ps->backbuf, 0, 0, 0, 0, widget->allocation.width, widget->allocation.height);
     }
-}
-
-void
-gtkpl_randomsong (void) {
-// <deprecated>
-//    p_stop ();
-//    pl_randomsong ();
-}
-
-void
-gtkpl_playsongnum (int idx) {
-// <deprecated>
-//    p_stop ();
-//    streamer_set_nextsong (idx, 1);
 }
 
 void
