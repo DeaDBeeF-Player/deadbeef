@@ -776,6 +776,11 @@ lastfm_stop (void) {
     return 0;
 }
 
+static const char settings_dlg[] =
+    "property \"Username\" entry lastfm.login;\n"
+    "property \"Password\" password lastfm.password;"
+;
+
 // define plugin interface
 static DB_misc_t plugin = {
     DB_PLUGIN_SET_API_VERSION
@@ -788,5 +793,6 @@ static DB_misc_t plugin = {
     .plugin.email = "waker@users.sourceforge.net",
     .plugin.website = "http://deadbeef.sf.net",
     .plugin.start = lastfm_start,
-    .plugin.stop = lastfm_stop
+    .plugin.stop = lastfm_stop,
+    .plugin.configdialog = settings_dlg
 };

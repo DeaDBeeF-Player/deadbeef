@@ -2012,11 +2012,13 @@ SOCKS5_HOSTNAME</property>
 
       <child>
 	<widget class="GtkHPaned" id="hpaned1">
+	  <property name="border_width">3</property>
 	  <property name="visible">True</property>
 	  <property name="can_focus">True</property>
 
 	  <child>
 	    <widget class="GtkScrolledWindow" id="scrolledwindow2">
+	      <property name="border_width">3</property>
 	      <property name="width_request">280</property>
 	      <property name="visible">True</property>
 	      <property name="can_focus">True</property>
@@ -2048,9 +2050,10 @@ SOCKS5_HOSTNAME</property>
 
 	  <child>
 	    <widget class="GtkTable" id="table5">
+	      <property name="border_width">3</property>
 	      <property name="width_request">400</property>
 	      <property name="visible">True</property>
-	      <property name="n_rows">4</property>
+	      <property name="n_rows">5</property>
 	      <property name="n_columns">2</property>
 	      <property name="homogeneous">False</property>
 	      <property name="row_spacing">0</property>
@@ -2248,6 +2251,27 @@ SOCKS5_HOSTNAME</property>
 		  <property name="right_attach">2</property>
 		  <property name="top_attach">3</property>
 		  <property name="bottom_attach">4</property>
+		  <property name="y_options"></property>
+		</packing>
+	      </child>
+
+	      <child>
+		<widget class="GtkButton" id="configure_plugin">
+		  <property name="visible">True</property>
+		  <property name="can_focus">True</property>
+		  <property name="label" translatable="yes">Configure</property>
+		  <property name="use_underline">True</property>
+		  <property name="relief">GTK_RELIEF_NORMAL</property>
+		  <property name="focus_on_click">True</property>
+		  <signal name="clicked" handler="on_configure_plugin_clicked" last_modification_time="Tue, 01 Dec 2009 16:54:36 GMT"/>
+		</widget>
+		<packing>
+		  <property name="left_attach">0</property>
+		  <property name="right_attach">2</property>
+		  <property name="top_attach">4</property>
+		  <property name="bottom_attach">5</property>
+		  <property name="y_padding">3</property>
+		  <property name="x_options"></property>
 		  <property name="y_options"></property>
 		</packing>
 	      </child>

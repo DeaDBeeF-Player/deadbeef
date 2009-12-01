@@ -692,3 +692,7 @@ on_addlocation_ok_clicked              (GtkButton       *button,
 void
 on_addlocation_entry_activate          (GtkEntry        *entry,
                                         gpointer         user_data);
+
+void
+on_configure_plugin_clicked            (GtkButton       *button,
+                                        gpointer         user_data);

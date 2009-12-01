@@ -1190,6 +1190,7 @@ create_prefwin (void)
   GtkWidget *pref_plugin_author;
   GtkWidget *pref_plugin_email;
   GtkWidget *pref_plugin_website;
+  GtkWidget *configure_plugin;
   GtkWidget *label3;
 
   prefwin = gtk_window_new (GTK_WINDOW_TOPLEVEL);
@@ -1393,11 +1394,13 @@ create_prefwin (void)
   hpaned1 = gtk_hpaned_new ();
   gtk_widget_show (hpaned1);
   gtk_container_add (GTK_CONTAINER (notebook2), hpaned1);
+  gtk_container_set_border_width (GTK_CONTAINER (hpaned1), 3);
 
   scrolledwindow2 = gtk_scrolled_window_new (NULL, NULL);
   gtk_widget_show (scrolledwindow2);
   gtk_paned_pack1 (GTK_PANED (hpaned1), scrolledwindow2, FALSE, TRUE);
   gtk_widget_set_size_request (scrolledwindow2, 280, -1);
+  gtk_container_set_border_width (GTK_CONTAINER (scrolledwindow2), 3);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow2), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow2), GTK_SHADOW_IN);
 
@@ -1405,10 +1408,11 @@ create_prefwin (void)
   gtk_widget_show (pref_pluginlist);
   gtk_container_add (GTK_CONTAINER (scrolledwindow2), pref_pluginlist);
 
-  table5 = gtk_table_new (4, 2, FALSE);
+  table5 = gtk_table_new (5, 2, FALSE);
   gtk_widget_show (table5);
   gtk_paned_pack2 (GTK_PANED (hpaned1), table5, TRUE, TRUE);
   gtk_widget_set_size_request (table5, 400, -1);
+  gtk_container_set_border_width (GTK_CONTAINER (table5), 3);
 
   label11 = gtk_label_new ("Description");
   gtk_widget_show (label11);
@@ -1470,6 +1474,12 @@ create_prefwin (void)
   gtk_editable_set_editable (GTK_EDITABLE (pref_plugin_website), FALSE);
   gtk_entry_set_invisible_char (GTK_ENTRY (pref_plugin_website), 9679);
 
+  configure_plugin = gtk_button_new_with_mnemonic ("Configure");
+  gtk_widget_show (configure_plugin);
+  gtk_table_attach (GTK_TABLE (table5), configure_plugin, 0, 2, 4, 5,
+                    (GtkAttachOptions) (0),
+                    (GtkAttachOptions) (0), 0, 3);
+
   label3 = gtk_label_new ("Plugins");
   gtk_widget_show (label3);
   gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook2), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook2), 3), label3);
@@ -1512,6 +1522,9 @@ create_prefwin (void)
                     NULL);
   g_signal_connect ((gpointer) pref_pluginlist, "cursor_changed",
                     G_CALLBACK (on_pref_pluginlist_cursor_changed),
+                    NULL);
+  g_signal_connect ((gpointer) configure_plugin, "clicked",
+                    G_CALLBACK (on_configure_plugin_clicked),
                     NULL);
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
@@ -1557,6 +1570,7 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, pref_plugin_author, "pref_plugin_author");
   GLADE_HOOKUP_OBJECT (prefwin, pref_plugin_email, "pref_plugin_email");
   GLADE_HOOKUP_OBJECT (prefwin, pref_plugin_website, "pref_plugin_website");
+  GLADE_HOOKUP_OBJECT (prefwin, configure_plugin, "configure_plugin");
   GLADE_HOOKUP_OBJECT (prefwin, label3, "label3");
 
   return prefwin;

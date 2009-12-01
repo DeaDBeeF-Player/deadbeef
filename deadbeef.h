@@ -362,6 +362,9 @@ typedef struct DB_plugin_s {
     // cmdline is 0-separated list of strings, guaranteed to have 0 at the end
     // cmdline_size is number of bytes pointed by cmdline
     int (*exec_cmdline) (const char *cmdline, int cmdline_size);
+    // plugin configuration dialog is constructed from this data
+    // can be NULL
+    const char *configdialog;
 } DB_plugin_t;
 
 typedef struct {
