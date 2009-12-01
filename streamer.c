@@ -310,6 +310,7 @@ streamer_thread (void *ctx) {
             }
         }
         else if (nextsong == -2 && bytes_until_next_song == 0) {
+            int from = orig_playing_song ? pl_get_idx_of (orig_playing_song) : -1;
             bytes_until_next_song = -1;
             trace ("nextsong=-2\n");
             nextsong = -1;
@@ -321,6 +322,7 @@ streamer_thread (void *ctx) {
             streamer_set_current (NULL);
             pl_item_free (&str_playing_song);
             orig_playing_song = NULL;
+            messagepump_push (M_SONGCHANGED, 0, from, -1);
             continue;
         }
         else if (p_isstopped ()) {
