@@ -78,7 +78,7 @@ exec_command_line (const char *cmdline, int len, int filter) {
                 printf ("   --pause            Pause playback\n");
                 printf ("   --next             Next song in playlist\n");
                 printf ("   --prev             Previous song in playlist\n");
-                printf ("   --random           Previous song in playlist\n");
+                printf ("   --random           Random song in playlist\n");
                 printf ("   --queue            Append file(s) to existing playlist\n");
                 return 1;
             }
