@@ -1868,9 +1868,14 @@ set_tray_tooltip (const char *text) {
 void
 gtkpl_current_track_changed (DB_playItem_t *it) {
     char str[600];
-    char dname[512];
-    deadbeef->pl_format_item_display_name (it, dname, 512);
-    snprintf (str, 600, "DeaDBeeF - %s", dname);
+    if (it) {
+        char dname[512];
+        deadbeef->pl_format_item_display_name (it, dname, 512);
+        snprintf (str, sizeof (str), "DeaDBeeF - %s", dname);
+    }
+    else {
+        strcpy (str, "DeaDBeeF");
+    }
     gtk_window_set_title (GTK_WINDOW (mainwin), str);
     set_tray_tooltip (str);
 }

@@ -777,8 +777,8 @@ lastfm_stop (void) {
 }
 
 static const char settings_dlg[] =
-    "property \"Username\" entry lastfm.login;\n"
-    "property \"Password\" password lastfm.password;"
+    "property Username entry lastfm.login \"\";\n"
+    "property Password password lastfm.password \"\";"
 ;
 
 // define plugin interface

@@ -52,6 +52,11 @@ extern "C" {
 static const char *exts[] = { "sid",NULL };
 const char *filetypes[] = { "SID", NULL };
 
+static const char settings_dlg[] =
+    "property \"Enable HVSC\" checkbox hvsc_enable 0;\n"
+    "property \"HVSC path\" file hvsc_path \"\";\n"
+;
+
 // define plugin interface
 static DB_decoder_t plugin = {
     { // plugin
@@ -70,6 +75,7 @@ static DB_decoder_t plugin = {
         /* .plugin.start = */NULL,
         /* .plugin.stop = */csid_stop,
         /* .plugin.exec_cmdline = */NULL,
+        /* .plugin.configdialog = */settings_dlg,
     },
     { // info
         /* .info.bps = */0,

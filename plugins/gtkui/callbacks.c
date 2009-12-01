@@ -1795,6 +1795,42 @@ on_prop_entry_changed(GtkEditable *editable, gpointer user_data) {
 }
 
 void
+on_prop_checkbox_clicked (GtkButton *button, gpointer user_data) {
+    const char *key = g_object_get_data (G_OBJECT (button), "key");
+    if (key) {
+        deadbeef->conf_set_int (key, gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button)));
+    }
+}
+
+void
+on_prop_browse_file (GtkButton *button, gpointer user_data) {
+    GtkWidget *dlg = gtk_file_chooser_dialog_new ("Open file...", GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
+
+    gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dlg), FALSE);
+    // restore folder
+    gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dlg), deadbeef->conf_get_str ("filechooser.lastdir", ""));
+    int response = gtk_dialog_run (GTK_DIALOG (dlg));
+    // store folder
+    gchar *folder = gtk_file_chooser_get_current_folder_uri (GTK_FILE_CHOOSER (dlg));
+    if (folder) {
+        deadbeef->conf_set_str ("filechooser.lastdir", folder);
+        g_free (folder);
+    }
+    if (response == GTK_RESPONSE_OK) {
+        gchar *file = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dlg));
+        gtk_widget_destroy (dlg);
+        if (file) {
+            GtkWidget *entry = GTK_WIDGET (user_data);
+            gtk_entry_set_text (GTK_ENTRY (entry), file);
+            g_free (file);
+        }
+    }
+    else {
+        gtk_widget_destroy (dlg);
+    }
+}
+
+void
 plugin_configure (GtkWidget *parentwin, DB_plugin_t *p) {
     // create window
     GtkWidget *win = gtk_window_new (GTK_WINDOW_TOPLEVEL);
@@ -1834,6 +1870,11 @@ plugin_configure (GtkWidget *parentwin, DB_plugin_t *p) {
         if (!script) {
             break;
         }
+        char def[MAX_TOKEN];
+        script = gettoken_warn_eof (script, def);
+        if (!script) {
+            break;
+        }
         script = gettoken_warn_eof (script, token);
         if (!script) {
             break;
@@ -1848,22 +1889,46 @@ plugin_configure (GtkWidget *parentwin, DB_plugin_t *p) {
         gtk_table_resize (GTK_TABLE (tbl), nrows, 2);
         GtkWidget *label;
         GtkWidget *prop;
+        GtkWidget *cont = NULL;
         label = gtk_label_new (labeltext);
         if (!strcmp (type, "entry") || !strcmp (type, "password")) {
             prop = gtk_entry_new ();
-            gtk_entry_set_text (GTK_ENTRY (prop), deadbeef->conf_get_str (key, ""));
+            gtk_entry_set_text (GTK_ENTRY (prop), deadbeef->conf_get_str (key, def));
             g_signal_connect ((gpointer) prop, "changed",
                     G_CALLBACK (on_prop_entry_changed),
                     NULL);
         }
+        else if (!strcmp (type, "checkbox")) {
+            prop = gtk_check_button_new ();
+            int val = deadbeef->conf_get_int (key, atoi (def));
+            gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (prop), val);
+            g_signal_connect ((gpointer) prop, "clicked",
+                    G_CALLBACK (on_prop_checkbox_clicked),
+                    NULL);
+        }
+        else if (!strcmp (type, "file")) {
+            cont = gtk_hbox_new (FALSE, FALSE);
+            prop = gtk_entry_new ();
+            g_signal_connect ((gpointer) prop, "changed",
+                    G_CALLBACK (on_prop_entry_changed),
+                    NULL);
+            gtk_entry_set_text (GTK_ENTRY (prop), deadbeef->conf_get_str (key, def));
+            gtk_box_pack_start (GTK_BOX (cont), prop, TRUE, TRUE, 0);
+            GtkWidget *btn = gtk_button_new_with_label ("…");
+            gtk_box_pack_start (GTK_BOX (cont), btn, FALSE, FALSE, 0);
+            g_signal_connect (G_OBJECT (btn), "clicked", G_CALLBACK (on_prop_browse_file), prop);
+        }
         if (!strcmp (type, "password")) {
             gtk_entry_set_visibility (GTK_ENTRY (prop), FALSE);
+        }
+        if (!cont) {
+            cont = prop;
         }
         if (label && prop) {
             char *keydup = strdup (key);
             g_object_set_data_full (G_OBJECT (prop), "key", keydup, (GDestroyNotify)free);
             gtk_table_attach (GTK_TABLE (tbl), label, 0, 1, nrows-1, nrows, (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions)0, 0, 0);
-            gtk_table_attach (GTK_TABLE (tbl), prop, 1, 2, nrows-1, nrows, (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions)0, 0, 0);
+            gtk_table_attach (GTK_TABLE (tbl), cont, 1, 2, nrows-1, nrows, (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions)0, 0, 0);
         }
     }
 
