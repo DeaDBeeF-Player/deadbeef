@@ -309,7 +309,7 @@ streamer_thread (void *ctx) {
                 p_pause ();
             }
         }
-        else if (nextsong == -2 && bytes_until_next_song == 0) {
+        else if (nextsong == -2 && (nextsong_pstate==0 || bytes_until_next_song == 0)) {
             int from = orig_playing_song ? pl_get_idx_of (orig_playing_song) : -1;
             bytes_until_next_song = -1;
             trace ("nextsong=-2\n");
