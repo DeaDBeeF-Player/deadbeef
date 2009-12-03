@@ -228,15 +228,6 @@ guiplug_showwindow (void) {
     GDK_THREADS_LEAVE();
 }
 
-#if 0
-void
-guiplug_play_current_song (void) {
-    GDK_THREADS_ENTER();
-    gtkpl_playsong (&main_playlist);
-    GDK_THREADS_LEAVE();
-}
-#endif
-
 void
 guiplug_shutdown (void) {
     GDK_THREADS_ENTER();
@@ -375,7 +366,9 @@ gtkui_start (void) {
 
 static int
 gtkui_stop (void) {
-    // FIXME: tell gtk thread to terminate
+    GDK_THREADS_ENTER();
+    gtk_main_quit ();
+    GDK_THREADS_LEAVE();
     deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_ACTIVATE, DB_CALLBACK (gtkui_on_activate), 0);
     deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_SONGCHANGED, DB_CALLBACK (gtkui_on_songchanged), 0);
     deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_TRACKINFOCHANGED, DB_CALLBACK (gtkui_on_trackinfochanged), 0);
