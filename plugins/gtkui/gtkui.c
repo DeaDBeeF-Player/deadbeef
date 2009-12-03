@@ -137,7 +137,7 @@ update_songinfo (void) {
             // translate volume to seekbar pixels
             songpos /= duration;
             songpos *= widget->allocation.width;
-            if ((int)(songpos*2) != (int)(last_songpos*2)) {
+            if (songpos != last_songpos) {
                 GDK_THREADS_ENTER();
                 seekbar_draw (widget);
                 seekbar_expose (widget, 0, 0, widget->allocation.width, widget->allocation.height);
