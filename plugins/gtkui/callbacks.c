@@ -1909,6 +1909,7 @@ plugin_configure (GtkWidget *parentwin, DB_plugin_t *p) {
         else if (!strcmp (type, "file")) {
             cont = gtk_hbox_new (FALSE, FALSE);
             prop = gtk_entry_new ();
+            gtk_editable_set_editable (GTK_EDITABLE (prop), FALSE);
             g_signal_connect ((gpointer) prop, "changed",
                     G_CALLBACK (on_prop_entry_changed),
                     NULL);
@@ -1927,7 +1928,8 @@ plugin_configure (GtkWidget *parentwin, DB_plugin_t *p) {
         if (label && prop) {
             char *keydup = strdup (key);
             g_object_set_data_full (G_OBJECT (prop), "key", keydup, (GDestroyNotify)free);
-            gtk_table_attach (GTK_TABLE (tbl), label, 0, 1, nrows-1, nrows, (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions)0, 0, 0);
+            gtk_table_attach (GTK_TABLE (tbl), label, 0, 1, nrows-1, nrows, (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions)0, 0, 0);
+            gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
             gtk_table_attach (GTK_TABLE (tbl), cont, 1, 2, nrows-1, nrows, (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions)0, 0, 0);
         }
     }
