@@ -425,6 +425,7 @@ main (int argc, char *argv[]) {
     server_start ();
 
     conf_load ();
+    volume_set_db (conf_get_float ("playback.volume", 0));
     plug_load_all ();
     pl_load (defpl);
     plug_trigger_event_playlistchanged ();
@@ -435,7 +436,6 @@ main (int argc, char *argv[]) {
 //    p_init ();
 //    thread_start (player_thread, 0);
 
-    volume_set_db (conf_get_float ("playback.volume", 0));
     if (argc > 1) {
         int res = exec_command_line (cmdline, size, 0);
         if (res == -1) {
