@@ -427,6 +427,7 @@ main (int argc, char *argv[]) {
     conf_load ();
     plug_load_all ();
     pl_load (defpl);
+    plug_trigger_event_playlistchanged ();
     session_load (sessfile);
     messagepump_init ();
     codec_init_locking ();
