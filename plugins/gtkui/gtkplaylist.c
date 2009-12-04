@@ -1252,7 +1252,7 @@ gtkpl_header_draw (gtkplaylist_t *ps) {
     const char *detail = "button";
 
     // fill background
-    gtk_paint_box (widget->style, ps->backbuf_header, GTK_STATE_NORMAL, GTK_SHADOW_OUT, NULL, NULL, detail, -10, -10, widget->allocation.width+20, widget->allocation.height+20);
+    gtk_paint_box (widget->style, ps->backbuf_header, GTK_STATE_NORMAL, GTK_SHADOW_OUT, NULL, widget, detail, -10, -10, widget->allocation.width+20, widget->allocation.height+20);
     gdk_draw_line (ps->backbuf_header, widget->style->mid_gc[GTK_STATE_NORMAL], 0, widget->allocation.height-1, widget->allocation.width, widget->allocation.height-1);
     draw_begin ((uintptr_t)ps->backbuf_header);
     x = -ps->hscrollpos;
