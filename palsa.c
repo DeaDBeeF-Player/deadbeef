@@ -49,7 +49,7 @@ static void
 palsa_callback (char *stream, int len);
 
 static void
-palsa_thread (uintptr_t context);
+palsa_thread (void *context);
 
 static int
 palsa_set_hw_params (int samplerate) {
@@ -219,7 +219,7 @@ palsa_init (void) {
     snd_pcm_start (audio);
 
     alsa_terminate = 0;
-    alsa_tid = thread_start (palsa_thread, 0);
+    alsa_tid = thread_start (palsa_thread, NULL);
 
     return 0;
 
@@ -372,7 +372,7 @@ palsa_get_rate (void) {
 }
 
 static void
-palsa_thread (uintptr_t context) {
+palsa_thread (void *context) {
     prctl (PR_SET_NAME, "deadbeef-alsa", 0, 0, 0, 0);
     int err;
     for (;;) {
