@@ -1283,6 +1283,7 @@ gtkpl_header_draw (gtkplaylist_t *ps) {
                     GdkColor *gdkfg = &widget->style->fg[GTK_STATE_SELECTED];
                     float fg[3] = {(float)gdkfg->red/0xffff, (float)gdkfg->green/0xffff, (float)gdkfg->blue/0xffff};
                     draw_set_fg_color (fg);
+                    draw_text (x + 5, h/2-draw_get_font_size()/2, c->width-10, 0, c->title);
                 }
                 break;
             }
