@@ -3,7 +3,7 @@ AC_INIT
 AC_CONFIG_HEADER(config.h)
 
 PACKAGE="deadbeef"
-VERSION="0.3.1"
+VERSION="guiplug-snap"
 
 AM_INIT_AUTOMAKE($PACKAGE,$VERSION)
 
