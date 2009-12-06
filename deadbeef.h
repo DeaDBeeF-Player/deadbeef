@@ -284,7 +284,7 @@ typedef struct {
     void (*pl_delete_all_meta) (DB_playItem_t *it);
     void (*pl_set_item_duration) (DB_playItem_t *it, float duration);
     float (*pl_get_item_duration) (DB_playItem_t *it);
-    void (*pl_sort) (int id, const char *format, int ascending);
+    void (*pl_sort) (int iter, int id, const char *format, int ascending);
     // cuesheet support
     DB_playItem_t *(*pl_insert_cue_from_buffer) (DB_playItem_t *after, const char *fname, const uint8_t *buffer, int buffersize, struct DB_decoder_s *decoder, const char *ftype, int numsamples, int samplerate);
     DB_playItem_t * (*pl_insert_cue) (DB_playItem_t *after, const char *filename, struct DB_decoder_s *decoder, const char *ftype, int numsamples, int samplerate);

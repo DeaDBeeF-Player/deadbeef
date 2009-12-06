@@ -1530,7 +1530,7 @@ on_header_button_release_event         (GtkWidget       *widget,
                     else if (c->sort_order == 2) {
                         c->sort_order = 1;
                     }
-                    deadbeef->pl_sort (c->id, c->format, c->sort_order-1);
+                    deadbeef->pl_sort (ps == &main_playlist ? PL_MAIN : PL_SEARCH, c->id, c->format, c->sort_order-1);
                     sorted = 1;
                 }
                 else {

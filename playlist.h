@@ -212,6 +212,6 @@ int
 pl_process_search (const char *text);
 
 void
-pl_sort (int id, const char *format, int ascending);
+pl_sort (int iter, int id, const char *format, int ascending);
 
 #endif // __PLAYLIST_H

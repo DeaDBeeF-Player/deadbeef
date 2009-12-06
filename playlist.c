@@ -1717,16 +1717,14 @@ pl_format_title (playItem_t *it, char *s, int size, int id, const char *fmt) {
 }
 
 void
-pl_sort (int id, const char *format, int ascending) {
+pl_sort (int iter, int id, const char *format, int ascending) {
     int sorted = 0;
-    int iter = 0;
     do {
-//        printf ("iter: %d\n", iter);
         sorted = 1;
         playItem_t *it;
         playItem_t *next = NULL;
-        for (it = playlist_head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
-            playItem_t *next = it->next[PL_MAIN];
+        for (it = playlist_head[iter]; it; it = it->next[iter]) {
+            playItem_t *next = it->next[iter];
             if (!next) {
                 break;
             }
@@ -1741,33 +1739,30 @@ pl_sort (int id, const char *format, int ascending) {
 //                printf ("%p %p swapping %s and %s\n", it, next, meta1, meta2);
                 sorted = 0;
                 // swap them
-                if (it->prev[PL_MAIN]) {
-                    it->prev[PL_MAIN]->next[PL_MAIN] = next;
+                if (it->prev[iter]) {
+                    it->prev[iter]->next[iter] = next;
 //                    printf ("it->prev->next = it->next\n");
                 }
                 else {
-                    playlist_head[PL_MAIN] = next;
-                    next->prev[PL_MAIN] = NULL;
+                    playlist_head[iter] = next;
+                    next->prev[iter] = NULL;
 //                    printf ("head = it->next\n");
                 }
-                if (next->next[PL_MAIN]) {
-                    next->next[PL_MAIN]->prev[PL_MAIN] = it;
+                if (next->next[iter]) {
+                    next->next[iter]->prev[iter] = it;
 //                    printf ("it->next->next->prev = it\n");
                 }
                 else {
-                    playlist_tail[PL_MAIN] = it;
-                    it->next[PL_MAIN] = NULL;
+                    playlist_tail[iter] = it;
+                    it->next[iter] = NULL;
 //                    printf ("tail = it\n");
                 }
-                playItem_t *it_prev = it->prev[PL_MAIN];
-                it->next[PL_MAIN] = next->next[PL_MAIN];
-                it->prev[PL_MAIN] = next;
-                next->next[PL_MAIN] = it;
-                next->prev[PL_MAIN] = it_prev;
+                playItem_t *it_prev = it->prev[iter];
+                it->next[iter] = next->next[iter];
+                it->prev[iter] = next;
+                next->next[iter] = it;
+                next->prev[iter] = it_prev;
                 it = next;
-//                if (iter >= 10) {
-//                    exit (0);
-//                }
             }
 #if 0
             else {
@@ -1778,10 +1773,10 @@ pl_sort (int id, const char *format, int ascending) {
             // print list
             int k = 0;
             playItem_t *p = NULL;
-            for (playItem_t *i = playlist_head[PL_MAIN]; i; p = i, i = i->next[PL_MAIN], k++) {
+            for (playItem_t *i = playlist_head[iter]; i; p = i, i = i->next[iter], k++) {
                 printf ("%p ", i);
-                if (i->prev[PL_MAIN] != p) {
-                    printf ("\n\033[0;33mbroken link, i=%p, i->prev=%p, prev=%p\033[37;0m\n", i, i->prev[PL_MAIN], p);
+                if (i->prev[iter] != p) {
+                    printf ("\n\033[0;33mbroken link, i=%p, i->prev=%p, prev=%p\033[37;0m\n", i, i->prev[iter], p);
                 }
                 if (k > 20) {
                     printf ("\033[0;31mlist corrupted\033[37;0m\n");
@@ -1791,9 +1786,7 @@ pl_sort (int id, const char *format, int ascending) {
             printf ("\n");
 #endif
         }
-        iter++;
     } while (!sorted);
-//    printf ("sorted in %d iterations\n", iter);
 }
 
 void
