@@ -47,7 +47,6 @@ static uintptr_t lfm_mutex;
 static uintptr_t lfm_cond;
 static int lfm_stopthread;
 static intptr_t lfm_tid;
-static int lfm_abort;
 
 DB_plugin_t *
 lastfm_load (DB_functions_t *api) {
@@ -68,6 +67,10 @@ static DB_playItem_t *lfm_subm_queue[LFM_SUBMISSION_QUEUE_SIZE];
 static size_t
 lastfm_curl_res (void *ptr, size_t size, size_t nmemb, void *stream)
 {
+    if (lfm_stopthread) {
+        trace ("lfm: lastfm_curl_res: aborting current request\n");
+        return 0;
+    }
     int len = size * nmemb;
     if (lfm_reply_sz + len >= MAX_REPLY) {
         trace ("reply is too large. stopping.\n");
@@ -85,7 +88,7 @@ lastfm_curl_res (void *ptr, size_t size, size_t nmemb, void *stream)
 static int
 lfm_curl_control (void *stream, double dltotal, double dlnow, double ultotal, double ulnow) {
     trace ("lfm_curl_control\n");
-    if (lfm_abort) {
+    if (lfm_stopthread) {
         trace ("lfm: aborting current request\n");
         return -1;
     }
@@ -100,7 +103,6 @@ curl_req_send (const char *req, const char *post) {
         trace ("lastfm: failed to init curl\n");
         return -1;
     }
-    curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1);
     curl_easy_setopt(curl, CURLOPT_URL, req);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, lastfm_curl_res);
     memset(lfm_err, 0, sizeof(lfm_err));
@@ -552,7 +554,7 @@ lfm_send_submissions (void) {
     char *r = req;
     int len = sizeof (req);
     int res;
-//    deadbeef->mutex_lock (lfm_mutex);
+    deadbeef->mutex_lock (lfm_mutex);
     for (i = 0; i < LFM_SUBMISSION_QUEUE_SIZE; i++) {
         if (lfm_subm_queue[i]) {
             res = lfm_format_uri (idx, lfm_subm_queue[i], r, len);
@@ -565,7 +567,7 @@ lfm_send_submissions (void) {
             idx++;
         }
     }
-//    deadbeef->mutex_unlock (lfm_mutex);
+    deadbeef->mutex_unlock (lfm_mutex);
     if (!idx) {
         return;
     }
@@ -598,14 +600,14 @@ lfm_send_submissions (void) {
             }
             else {
                 trace ("submission successful, response:\n%s\n", lfm_reply);
-//                deadbeef->mutex_lock (lfm_mutex);
+                deadbeef->mutex_lock (lfm_mutex);
                 for (i = 0; i < LFM_SUBMISSION_QUEUE_SIZE; i++) {
                     if (lfm_subm_queue[i]) {
                         deadbeef->pl_item_free (lfm_subm_queue[i]);
                         lfm_subm_queue[i] = NULL;
                     }
                 }
-//                deadbeef->mutex_unlock (lfm_mutex);
+                deadbeef->mutex_unlock (lfm_mutex);
             }
         }
         curl_req_cleanup ();
@@ -613,14 +615,14 @@ lfm_send_submissions (void) {
     }
 #else
     trace ("submission successful (NOSEND=1):\n");
-//    deadbeef->mutex_lock (lfm_mutex);
+    deadbeef->mutex_lock (lfm_mutex);
     for (i = 0; i < LFM_SUBMISSION_QUEUE_SIZE; i++) {
         if (lfm_subm_queue[i]) {
             deadbeef->pl_item_free (lfm_subm_queue[i]);
             lfm_subm_queue[i] = NULL;
         }
     }
-//    deadbeef->mutex_unlock (lfm_mutex);
+    deadbeef->mutex_unlock (lfm_mutex);
 #endif
 }
 
@@ -628,28 +630,27 @@ static void
 lfm_thread (void *ctx) {
     //trace ("lfm_thread started\n");
     for (;;) {
-        trace ("lfm wating for cond...\n");
-        deadbeef->cond_wait (lfm_cond, lfm_mutex);
-        trace ("cond signalled!\n");
         if (lfm_stopthread) {
             deadbeef->mutex_unlock (lfm_mutex);
-            deadbeef->cond_signal (lfm_cond);
             trace ("lfm_thread end\n");
             return;
         }
+        trace ("lfm wating for cond...\n");
+        deadbeef->cond_wait (lfm_cond, lfm_mutex);
+        if (lfm_stopthread) {
+            deadbeef->mutex_unlock (lfm_mutex);
+            trace ("lfm_thread end[2]\n");
+            return;
+        }
+        trace ("cond signalled!\n");
+        deadbeef->mutex_unlock (lfm_mutex);
 
         trace ("lfm sending nowplaying...\n");
         // try to send nowplaying
         if (lfm_nowplaying[0]) {
             lfm_send_nowplaying ();
         }
-//        if (lfm_stopthread) {
-//            trace ("lfm_stopthread after lfm_send_nowplaying\n");
-//            return;
-//        }
-
         lfm_send_submissions ();
-        deadbeef->mutex_unlock (lfm_mutex);
     }
 }
 
@@ -748,7 +749,6 @@ lastfm_start (void) {
     lfm_mutex = 0;
     lfm_cond = 9;
     lfm_tid = 0;
-    lfm_abort = 0;
     strcpy (lfm_user, deadbeef->conf_get_str ("lastfm.login", ""));
     strcpy (lfm_pass, deadbeef->conf_get_str ("lastfm.password", ""));
     if (!lfm_user[0] || !lfm_pass[0]) {
@@ -769,14 +769,9 @@ static int
 lastfm_stop (void) {
     trace ("lastfm_stop\n");
     if (lfm_mutex) {
-        trace ("lfm_stop locking mutex\n");
-        lfm_abort = 1;
-        deadbeef->mutex_lock (lfm_mutex);
         lfm_stopthread = 1;
         deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_SONGSTARTED, DB_CALLBACK (lastfm_songstarted), 0);
         deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_SONGFINISHED, DB_CALLBACK (lastfm_songfinished), 0);
-        trace ("lfm_stop unlocking mutex\n");
-        deadbeef->mutex_unlock (lfm_mutex);
 
         trace ("lfm_stop signalling cond\n");
         deadbeef->cond_signal (lfm_cond);

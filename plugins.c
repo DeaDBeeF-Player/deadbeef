@@ -314,6 +314,7 @@ plug_quit (void) {
 void
 plug_event_call (DB_event_t *ev) {
     ev->time = time (NULL);
+//    printf ("plug_event_call enter %d\n", ev->event);
     mutex_lock (mutex);
     for (int i = 0; i < MAX_HANDLERS; i++) {
         if (handlers[ev->event][i].plugin && !handlers[ev->event][i].plugin->inactive) {
@@ -321,6 +322,7 @@ plug_event_call (DB_event_t *ev) {
         }
     }
     mutex_unlock (mutex);
+//    printf ("plug_event_call leave %d\n", ev->event);
 }
 
 void
