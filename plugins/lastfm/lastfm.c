@@ -598,7 +598,7 @@ lfm_send_submissions (void) {
             }
             else {
                 trace ("submission successful, response:\n%s\n", lfm_reply);
-                deadbeef->mutex_lock (lfm_mutex);
+//                deadbeef->mutex_lock (lfm_mutex);
                 for (i = 0; i < LFM_SUBMISSION_QUEUE_SIZE; i++) {
                     if (lfm_subm_queue[i]) {
                         deadbeef->pl_item_free (lfm_subm_queue[i]);
