@@ -380,6 +380,7 @@ streamer_thread (void *ctx) {
             seekpos = -1;
 
             if (orig_playing_song != orig_streaming_song) {
+                trace ("streamer already switched to next track\n");
                 // restart playing from new position
                 if(str_streaming_song.decoder) {
                     str_streaming_song.decoder->free ();
@@ -388,6 +389,14 @@ streamer_thread (void *ctx) {
                 orig_streaming_song = orig_playing_song;
                 pl_item_copy (&str_streaming_song, orig_streaming_song);
                 bytes_until_next_song = -1;
+                int ret = str_streaming_song.decoder->init (DB_PLAYITEM (orig_streaming_song));
+                if (ret < 0) {
+                    trace ("failed to restart prev track on seek, trying to jump to next track\n");
+                    pl_nextsong (0);
+                    trace ("pl_nextsong switched to track %d\n", nextsong);
+                    usleep (50000);
+                    continue;
+                }
             }
 
             streamer_buffering = 1;

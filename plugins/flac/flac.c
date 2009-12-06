@@ -146,9 +146,11 @@ cflac_init_error_callback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecode
 
 static int
 cflac_init (DB_playItem_t *it) {
+    trace ("cflac_init %s\n", it->fname);
     memset (&flac_callbacks, 0, sizeof (flac_callbacks));
     flac_callbacks.file = deadbeef->fopen (it->fname);
     if (!flac_callbacks.file) {
+        trace ("cflac_init failed to open file\n");
         return -1;
     }
     int skip = deadbeef->junk_get_leading_size (flac_callbacks.file);
@@ -158,10 +160,12 @@ cflac_init (DB_playItem_t *it) {
     char sign[4];
     if (deadbeef->fread (sign, 1, 4, flac_callbacks.file) != 4) {
         plugin.free ();
+        trace ("cflac_init failed to read signature\n");
         return -1;
     }
     if (strncmp (sign, "fLaC", 4)) {
         plugin.free ();
+        trace ("cflac_init bad signature\n");
         return -1;
     }
     deadbeef->fseek (flac_callbacks.file, -4, SEEK_CUR);
@@ -176,11 +180,13 @@ cflac_init (DB_playItem_t *it) {
     status = FLAC__stream_decoder_init_stream (decoder, flac_read_cb, flac_seek_cb, flac_tell_cb, flac_lenght_cb, flac_eof_cb, cflac_write_callback, cflac_metadata_callback, cflac_error_callback, &flac_callbacks);
     if (status != FLAC__STREAM_DECODER_INIT_STATUS_OK) {
         plugin.free ();
+        trace ("cflac_init bad decoder status\n");
         return -1;
     }
     //plugin.info.samplerate = -1;
     if (!FLAC__stream_decoder_process_until_end_of_metadata (decoder)) {
         plugin.free ();
+        trace ("cflac_init metadata failed\n");
         return -1;
     }
     plugin.info.samplerate = flac_callbacks.samplerate;
@@ -189,6 +195,7 @@ cflac_init (DB_playItem_t *it) {
     plugin.info.readpos = 0;
     if (plugin.info.samplerate == -1) { // not a FLAC stream
         plugin.free ();
+        trace ("cflac_init not a flac stream\n");
         return -1;
     }
     buffer = malloc (BUFFERSIZE);
@@ -197,6 +204,7 @@ cflac_init (DB_playItem_t *it) {
         endsample = it->endsample;
         if (plugin.seek_sample (0) < 0) {
             plugin.free ();
+            trace ("cflac_init failed to seek to sample 0\n");
             return -1;
         }
         trace ("flac(cue): startsample=%d, endsample=%d, totalsamples=%d, currentsample=%d\n", startsample, endsample, flac_callbacks.totalsamples, currentsample);
