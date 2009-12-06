@@ -170,7 +170,7 @@ pl_get_item_duration (playItem_t *it);
 // returns number of characters printed, not including trailing 0
 // [a]rtist, [t]itle, al[b]um, [l]ength, track[n]umber
 int
-pl_format_title (playItem_t *it, char *s, int size, const char *fmt);
+pl_format_title (playItem_t *it, char *s, int size, int id, const char *fmt);
 
 void
 pl_reset_cursor (void);
@@ -210,5 +210,8 @@ pl_move_items (int iter, playItem_t *drop_before, uint32_t *indexes, int count);
 
 int
 pl_process_search (const char *text);
+
+void
+pl_sort (int id, const char *format, int ascending);
 
 #endif // __PLAYLIST_H

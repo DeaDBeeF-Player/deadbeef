@@ -268,7 +268,7 @@ typedef struct {
     DB_playItem_t *(*pl_get_last) (int iter);
     DB_playItem_t *(*pl_get_next) (DB_playItem_t *it, int iter);
     DB_playItem_t *(*pl_get_prev) (DB_playItem_t *it, int iter);
-    int (*pl_format_title) (DB_playItem_t *it, char *s, int size, const char *fmt);
+    int (*pl_format_title) (DB_playItem_t *it, char *s, int size, int id, const char *fmt);
     void (*pl_format_item_display_name) (DB_playItem_t *it, char *str, int len);
 //    void (*pl_set_next) (DB_playItem_t *it, DB_playItem_t *next, int iter);
 //    void (*pl_set_prev) (DB_playItem_t *it, DB_playItem_t *prev, int iter);
@@ -284,6 +284,7 @@ typedef struct {
     void (*pl_delete_all_meta) (DB_playItem_t *it);
     void (*pl_set_item_duration) (DB_playItem_t *it, float duration);
     float (*pl_get_item_duration) (DB_playItem_t *it);
+    void (*pl_sort) (int id, const char *format, int ascending);
     // cuesheet support
     DB_playItem_t *(*pl_insert_cue_from_buffer) (DB_playItem_t *after, const char *fname, const uint8_t *buffer, int buffersize, struct DB_decoder_s *decoder, const char *ftype, int numsamples, int samplerate);
     DB_playItem_t * (*pl_insert_cue) (DB_playItem_t *after, const char *filename, struct DB_decoder_s *decoder, const char *ftype, int numsamples, int samplerate);

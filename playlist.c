@@ -1577,7 +1577,75 @@ pl_get_item_duration (playItem_t *it) {
 }
 
 int
-pl_format_title (playItem_t *it, char *s, int size, const char *fmt) {
+pl_format_title (playItem_t *it, char *s, int size, int id, const char *fmt) {
+    if (id != -1) {
+        char dur[50];
+        //pl_format_title (it, dur, sizeof (dur), "%l");
+        //char dur[50];
+        if (it->_duration >= 0) {
+            int hourdur = it->_duration / (60 * 60);
+            int mindur = (it->_duration - hourdur * 60 * 60) / 60;
+            int secdur = it->_duration - hourdur*60*60 - mindur * 60;
+
+            if (hourdur) {
+                snprintf (dur, sizeof (dur), "%d:%02d:%02d", hourdur, mindur, secdur);
+            }
+            else {
+                snprintf (dur, sizeof (dur), "%d:%02d", mindur, secdur);
+            }
+        }
+        else {
+            strcpy (dur, "-:--");
+        }
+
+        const char *artist = pl_find_meta (it, "artist");
+        if (!artist) {
+            artist = "?";
+        }
+        const char *album = pl_find_meta (it, "album");
+        if (!album) {
+            album = "?";
+        }
+        const char *track = pl_find_meta (it, "track");
+        if (!track) {
+            track = "";
+        }
+        const char *title = pl_find_meta (it, "title");
+        if (!title) {
+            title = "?";
+        }
+        char artistalbum[1024];
+        snprintf (artistalbum, sizeof (artistalbum), "%s - %s", artist, album);
+        const char *text = NULL;
+        switch (id) {
+        case DB_COLUMN_ARTIST_ALBUM: 
+            text = artistalbum;
+            break;
+        case DB_COLUMN_ARTIST:
+            text = artist;
+            break;
+        case DB_COLUMN_ALBUM:
+            text = album;
+            break;
+        case DB_COLUMN_TITLE:
+            text = title;
+            break;
+        case DB_COLUMN_DURATION:
+            text = dur;
+            break;
+        case DB_COLUMN_TRACK:
+            text = track;
+            break;
+        }
+        if (text) {
+            strncpy (s, text, size);
+            return strlen (s);
+        }
+        else {
+            s[0] = 0;
+        }
+        return 0;
+    }
     int n = size-1;
     while (*fmt && n) {
         if (*fmt != '%') {
@@ -1649,7 +1717,83 @@ pl_format_title (playItem_t *it, char *s, int size, const char *fmt) {
 }
 
 void
-pl_sort (const char *meta) {
+pl_sort (int id, const char *format, int ascending) {
+    int sorted = 0;
+    int iter = 0;
+    do {
+//        printf ("iter: %d\n", iter);
+        sorted = 1;
+        playItem_t *it;
+        playItem_t *next = NULL;
+        for (it = playlist_head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
+            playItem_t *next = it->next[PL_MAIN];
+            if (!next) {
+                break;
+            }
+            char title1[1024];
+            char title2[1024];
+            pl_format_title (it, title1, sizeof (title1), id, format);
+            pl_format_title (next, title2, sizeof (title2), id, format);
+//            const char *meta1 = pl_find_meta (it, meta);
+//            const char *meta2 = pl_find_meta (next, meta);
+            int cmp = ascending ? strcmp (title1, title2) < 0 : strcmp (title1, title2) > 0;
+            if (cmp) {
+//                printf ("%p %p swapping %s and %s\n", it, next, meta1, meta2);
+                sorted = 0;
+                // swap them
+                if (it->prev[PL_MAIN]) {
+                    it->prev[PL_MAIN]->next[PL_MAIN] = next;
+//                    printf ("it->prev->next = it->next\n");
+                }
+                else {
+                    playlist_head[PL_MAIN] = next;
+                    next->prev[PL_MAIN] = NULL;
+//                    printf ("head = it->next\n");
+                }
+                if (next->next[PL_MAIN]) {
+                    next->next[PL_MAIN]->prev[PL_MAIN] = it;
+//                    printf ("it->next->next->prev = it\n");
+                }
+                else {
+                    playlist_tail[PL_MAIN] = it;
+                    it->next[PL_MAIN] = NULL;
+//                    printf ("tail = it\n");
+                }
+                playItem_t *it_prev = it->prev[PL_MAIN];
+                it->next[PL_MAIN] = next->next[PL_MAIN];
+                it->prev[PL_MAIN] = next;
+                next->next[PL_MAIN] = it;
+                next->prev[PL_MAIN] = it_prev;
+                it = next;
+//                if (iter >= 10) {
+//                    exit (0);
+//                }
+            }
+#if 0
+            else {
+                printf ("%p %p NOT swapping %s and %s\n", it, next, meta1, meta2);
+            }
+#endif
+#if 0
+            // print list
+            int k = 0;
+            playItem_t *p = NULL;
+            for (playItem_t *i = playlist_head[PL_MAIN]; i; p = i, i = i->next[PL_MAIN], k++) {
+                printf ("%p ", i);
+                if (i->prev[PL_MAIN] != p) {
+                    printf ("\n\033[0;33mbroken link, i=%p, i->prev=%p, prev=%p\033[37;0m\n", i, i->prev[PL_MAIN], p);
+                }
+                if (k > 20) {
+                    printf ("\033[0;31mlist corrupted\033[37;0m\n");
+                    return;
+                }
+            }
+            printf ("\n");
+#endif
+        }
+        iter++;
+    } while (!sorted);
+//    printf ("sorted in %d iterations\n", iter);
 }
 
 void

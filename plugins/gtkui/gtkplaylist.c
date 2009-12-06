@@ -383,28 +383,6 @@ gtkpl_draw_pl_row (gtkplaylist_t *ps, int row, DB_playItem_t *it) {
         }
         theme_set_fg_color (COLO_PLAYLIST_TEXT);
     }
-    // draw as columns
-    char dur[50];
-    deadbeef->pl_format_title (it, dur, sizeof (dur), "%l");
-
-    const char *artist = deadbeef->pl_find_meta (it, "artist");
-    if (!artist) {
-        artist = "?";
-    }
-    const char *album = deadbeef->pl_find_meta (it, "album");
-    if (!album) {
-        album = "?";
-    }
-    const char *track = deadbeef->pl_find_meta (it, "track");
-    if (!track) {
-        track = "";
-    }
-    const char *title = deadbeef->pl_find_meta (it, "title");
-    if (!title) {
-        title = "?";
-    }
-    char artistalbum[1024];
-    deadbeef->pl_format_title (it, artistalbum, sizeof (artistalbum), "%a - %b");
     int x = -ps->hscrollpos;
     gtkpl_column_t *c;
     for (c = ps->columns; c; c = c->next) {
@@ -424,34 +402,9 @@ gtkpl_draw_pl_row (gtkplaylist_t *ps, int row, DB_playItem_t *it) {
             draw_pixbuf ((uintptr_t)ps->backbuf, pixbuf, x + c->width/2 - 8 - ps->hscrollpos, (row - ps->scrollpos) * rowheight + rowheight/2 - 8, 0, 0, 16, 16);
         }
         else {
-            char fmt_text[1024];
-            const char *text = NULL;
-            if (c->id != -1) {
-                switch (c->id) {
-                case DB_COLUMN_ARTIST_ALBUM: 
-                    text = artistalbum;
-                    break;
-                case DB_COLUMN_ARTIST:
-                    text = artist;
-                    break;
-                case DB_COLUMN_ALBUM:
-                    text = album;
-                    break;
-                case DB_COLUMN_TITLE:
-                    text = title;
-                    break;
-                case DB_COLUMN_DURATION:
-                    text = dur;
-                    break;
-                case DB_COLUMN_TRACK:
-                    text = track;
-                    break;
-                }
-            }
-            else if (c->format) {
-                deadbeef->pl_format_title (it, fmt_text, sizeof (fmt_text), c->format);
-                text = fmt_text;
-            }
+            char text[1024];
+            deadbeef->pl_format_title (it, text, sizeof (text), c->id, c->format);
+
             if (text) {
                 if (c->align_right) {
                     draw_text_with_colors (x+5, row * rowheight - ps->scrollpos * rowheight + rowheight/2 - draw_get_font_size ()/2 - 2, c->width-10, 1, text);
@@ -1276,12 +1229,24 @@ gtkpl_header_draw (gtkplaylist_t *ps) {
             if (xx >= widget->allocation.width) {
                 continue;
             }
+            int arrow_sz = 10;
             if (w > 0) {
                 gtk_paint_vline (widget->style, ps->backbuf_header, GTK_STATE_NORMAL, NULL, NULL, NULL, 2, h-4, xx+w - 2);
                 GdkColor *gdkfg = &widget->style->fg[0];
                 float fg[3] = {(float)gdkfg->red/0xffff, (float)gdkfg->green/0xffff, (float)gdkfg->blue/0xffff};
                 draw_set_fg_color (fg);
-                draw_text (xx + 5, h/2-draw_get_font_size()/2, c->width-10, 0, c->title);
+                int w = c->width-10;
+                if (c->sort_order) {
+                    w -= arrow_sz;
+                    if (w < 0) {
+                        w = 0;
+                    }
+                }
+                draw_text (xx + 5, h/2-draw_get_font_size()/2, w, 0, c->title);
+            }
+            if (c->sort_order != 0) {
+                int dir = c->sort_order == 1 ? GTK_ARROW_DOWN : GTK_ARROW_UP;
+                gtk_paint_arrow (widget->style, ps->backbuf_header, GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, widget, NULL, dir, TRUE, xx + c->width-arrow_sz-5, widget->allocation.height/2-arrow_sz/2, arrow_sz, arrow_sz);
             }
         }
         else {
@@ -1318,7 +1283,6 @@ gtkpl_header_draw (gtkplaylist_t *ps) {
                     GdkColor *gdkfg = &widget->style->fg[GTK_STATE_SELECTED];
                     float fg[3] = {(float)gdkfg->red/0xffff, (float)gdkfg->green/0xffff, (float)gdkfg->blue/0xffff};
                     draw_set_fg_color (fg);
-                    draw_text (x + 5, h/2-draw_get_font_size()/2, c->width-10, 0, c->title);
                 }
                 break;
             }
@@ -1367,8 +1331,9 @@ on_header_realize                      (GtkWidget       *widget,
     cursor_drag = gdk_cursor_new (GDK_FLEUR);
 }
 
-float last_header_motion_ev = -1;
-int prev_header_x = -1;
+static float last_header_motion_ev = -1;
+static int prev_header_x = -1;
+static int header_prepare = 0;
 
 gboolean
 on_header_motion_notify_event          (GtkWidget       *widget,
@@ -1376,7 +1341,12 @@ on_header_motion_notify_event          (GtkWidget       *widget,
                                         gpointer         user_data)
 {
     GTKPL_PROLOGUE;
-    if (header_dragging >= 0) {
+    if ((event->state & GDK_BUTTON1_MASK) && header_prepare) {
+        if (gtk_drag_check_threshold (widget, event->x, prev_header_x, 0, 0)) {
+            header_prepare = 0;
+        }
+    }
+    if (!header_prepare && header_dragging >= 0) {
         gdk_window_set_cursor (widget->window, cursor_drag);
         gtkpl_column_t *c;
         int i;
@@ -1512,9 +1482,12 @@ on_header_button_press_event           (GtkWidget       *widget,
                 break;
             }
             else if (event->x > x + 2 && event->x < x + w - 2) {
+                // prepare to drag or sort
                 header_dragpt[0] = event->x - x;
+                header_prepare = 1;
                 header_dragging = i;
                 header_sizing = -1;
+                prev_header_x = event->x;
                 break;
             }
             x += w;
@@ -1536,28 +1509,63 @@ on_header_button_release_event         (GtkWidget       *widget,
 {
     GTKPL_PROLOGUE;
     if (event->button == 1) {
-        header_sizing = -1;
-        int x = 0;
-        gtkpl_column_t *c;
-        for (c = ps->columns; c; c = c->next) {
-            int w = c->width;
-            if (event->x >= x + w - 2 && event->x <= x + w) {
-                gdk_window_set_cursor (widget->window, cursor_sz);
-                break;
-            }
-            else {
-                gdk_window_set_cursor (widget->window, NULL);
-            }
-            x += w;
-        }
-        if (header_dragging >= 0) {
+        if (header_prepare) {
+            header_sizing = -1;
             header_dragging = -1;
-            gtkpl_setup_hscrollbar (ps);
+            header_prepare = 0;
+            // sort
+            gtkpl_column_t *c;
+            int i = 0;
+            int x = -ps->hscrollpos;
+            int sorted = 0;
+            for (c = ps->columns; c; c = c->next, i++) {
+                int w = c->width;
+                if (event->x > x + 2 && event->x < x + w - 2) {
+                    if (!c->sort_order) {
+                        c->sort_order = 1;
+                    }
+                    else if (c->sort_order == 1) {
+                        c->sort_order = 2;
+                    }
+                    else if (c->sort_order == 2) {
+                        c->sort_order = 1;
+                    }
+                    deadbeef->pl_sort (c->id, c->format, c->sort_order-1);
+                    sorted = 1;
+                }
+                else {
+                    c->sort_order = 0;
+                }
+                x += w;
+            }
+            playlist_refresh ();
             gtkpl_header_draw (ps);
             gtkpl_expose_header (ps, 0, 0, ps->header->allocation.width, ps->header->allocation.height);
-            gtkpl_draw_playlist (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
-            gtkpl_expose (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
-            gtkpl_column_rewrite_config (ps);
+        }
+        else {
+            header_sizing = -1;
+            int x = 0;
+            gtkpl_column_t *c;
+            for (c = ps->columns; c; c = c->next) {
+                int w = c->width;
+                if (event->x >= x + w - 2 && event->x <= x + w) {
+                    gdk_window_set_cursor (widget->window, cursor_sz);
+                    break;
+                }
+                else {
+                    gdk_window_set_cursor (widget->window, NULL);
+                }
+                x += w;
+            }
+            if (header_dragging >= 0) {
+                header_dragging = -1;
+                gtkpl_setup_hscrollbar (ps);
+                gtkpl_header_draw (ps);
+                gtkpl_expose_header (ps, 0, 0, ps->header->allocation.width, ps->header->allocation.height);
+                gtkpl_draw_playlist (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
+                gtkpl_expose (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
+                gtkpl_column_rewrite_config (ps);
+            }
         }
     }
     return FALSE;
