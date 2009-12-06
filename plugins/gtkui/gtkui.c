@@ -48,8 +48,8 @@ static int sb_context_id = -1;
 static char sb_text[512];
 static float last_songpos = -1;
 
-static void
-update_songinfo (void) {
+static gboolean
+update_songinfo (gpointer ctx) {
     char sbtext_new[512] = "-";
     float songpos = last_songpos;
 
@@ -146,6 +146,7 @@ update_songinfo (void) {
             }
         }
     }
+    return FALSE;
 }
 
 gboolean
@@ -281,7 +282,7 @@ gtkui_on_playlistchanged (DB_event_t *ev, uintptr_t data) {
 
 static int
 gtkui_on_frameupdate (DB_event_t *ev, uintptr_t data) {
-    update_songinfo ();
+    g_idle_add (update_songinfo, NULL);
 }
 
 static int
