@@ -250,4 +250,7 @@ gtkpl_current_track_changed (DB_playItem_t *it);
 void
 gtk_pl_redraw_item_everywhere (DB_playItem_t *it);
 
+void
+gtkpl_set_cursor (int iter, int cursor);
+
 #endif // __GTKPLAYLIST_H

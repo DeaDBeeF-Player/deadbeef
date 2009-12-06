@@ -1918,3 +1918,21 @@ gtk_pl_redraw_item_everywhere (DB_playItem_t *it) {
         gtkpl_redraw_pl_row (pl, idx, it);
     }
 }
+
+void
+gtkpl_set_cursor (int iter, int cursor) {
+    gtkplaylist_t *pl = &main_playlist;
+    int minvis = pl->scrollpos;
+    int maxvis = pl->scrollpos + pl->nvisiblerows-1;
+    int prev = deadbeef->pl_get_cursor (PL_MAIN);
+    deadbeef->pl_set_cursor (PL_MAIN, 0);
+    DB_playItem_t *it;
+    if (prev >= minvis && prev <= maxvis) {
+        it = deadbeef->pl_get_for_idx_and_iter (prev, PL_MAIN);
+        gtkpl_redraw_pl_row (pl, prev, it);
+    }
+    if (0 >= minvis && 0 <= maxvis) {
+        it = deadbeef->pl_get_for_idx_and_iter (0, PL_MAIN);
+        gtkpl_redraw_pl_row (pl, 0, it);
+    }
+}

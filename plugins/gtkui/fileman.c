@@ -30,6 +30,7 @@ static void
 open_files_worker (void *data) {
     GSList *lst = (GSList *)data;
     gtkpl_add_files (&main_playlist, lst);
+    gtkpl_set_cursor (PL_MAIN, 0);
     deadbeef->sendmessage (M_PLAYSONG, 0, 0, 0);
 }
 
