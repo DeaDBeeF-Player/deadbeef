@@ -125,39 +125,18 @@ pl_get_value_from_cue (const char *p, int sz, char *out) {
 
 static float
 pl_cue_parse_time (const char *p) {
-    char tmp[3] = {0};
-    const char *next = p;
-    int s;
-    while (*next && *next != ':') {
-        next++;
-    }
-    if ((next - p) != 2) {
+    int len = strnlen(p, 9);
+    // should be in 'mm:ss:ff' format, so only len = 8 is acceptable
+    if (len != 8) {
         return -1;
     }
-    strncpy (tmp, p, 2);
-    tmp[next-p] = 0;
-    float mins = atoi (tmp);
-    next++;
-    p = next;
-    while (*next && *next != ':') {
-        next++;
-    }
-    if ((next - p) != 2) {
+    if (p[2] != ':' || p[5] != ':') {
         return -1;
     }
-    strncpy (tmp, p, 2);
-    float sec = atoi (tmp);
-    next++;
-    p = next;
-    while (*next && *next != ':') {
-        next++;
-    }
-    if ((next - p) != 2) {
-        return -1;
-    }
-    strncpy (tmp, p, 2);
-    float frm = atoi (tmp);
-    return mins * 60 + sec + frm / 75.f;
+    int mins = atoi (p);
+    int sec = atoi (p + 3);
+    int frm = atoi (p + 5);
+    return mins * 60.f + sec + frm / 75.f;
 }
 
 static playItem_t *
