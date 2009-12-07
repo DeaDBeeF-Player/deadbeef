@@ -728,7 +728,6 @@ gtkpl_scroll_playlist_cb (gpointer data) {
         playlist_scroll_active = 0;
         return FALSE;
     }
-    GDK_THREADS_ENTER ();
     gtk_range_set_value (GTK_RANGE (ps->scrollbar), sc);
     if (playlist_scroll_mode == 0) {
         GdkEventMotion ev;
@@ -738,7 +737,6 @@ gtkpl_scroll_playlist_cb (gpointer data) {
     else if (playlist_scroll_mode == 1) {
         gtkpl_track_dragdrop (ps, playlist_scroll_pointer_y);
     }
-    GDK_THREADS_LEAVE ();
     scroll_sleep_time -= 0.1;
     if (scroll_sleep_time < 0.05) {
         scroll_sleep_time = 0.05;
@@ -1136,22 +1134,38 @@ strcopy_special (char *dest, const char *src, int len) {
     *dest = 0;
 }
 
+static gboolean
+set_progress_text_idle (gpointer data) {
+    const char *text = (const char *)data;
+    progress_settext (text);
+    return FALSE;
+}
+
 int
 gtkpl_add_file_info_cb (DB_playItem_t *it, void *data) {
     if (progress_is_aborted ()) {
         return -1;
     }
-    GDK_THREADS_ENTER();
-    progress_settext (it->fname);
-    GDK_THREADS_LEAVE();
+    g_idle_add (set_progress_text_idle, it->fname);
     return 0;
+}
+
+static gboolean
+progress_show_idle (gpointer data) {
+    progress_show ();
+    return FALSE;
+}
+
+static gboolean
+progress_hide_idle (gpointer data) {
+    progress_hide ();
+    playlist_refresh ();
+    return FALSE;
 }
 
 void
 gtkpl_add_fm_dropped_files (gtkplaylist_t *ps, char *ptr, int length, int drop_y) {
-    GDK_THREADS_ENTER();
-    progress_show ();
-    GDK_THREADS_LEAVE();
+    g_idle_add (progress_show_idle, NULL);
 
     int drop_row = drop_y / rowheight + ps->scrollpos;
     DB_playItem_t *drop_before = deadbeef->pl_get_for_idx_and_iter (drop_row, ps->iterator);
@@ -1190,10 +1204,7 @@ gtkpl_add_fm_dropped_files (gtkplaylist_t *ps, char *ptr, int length, int drop_y
     }
     free (ptr);
 
-    GDK_THREADS_ENTER();
-    progress_hide ();
-    playlist_refresh ();
-    GDK_THREADS_LEAVE();
+    g_idle_add (progress_hide_idle, NULL);
 }
 
 void
@@ -1574,15 +1585,10 @@ on_header_button_release_event         (GtkWidget       *widget,
 
 void
 gtkpl_add_dir (gtkplaylist_t *ps, char *folder) {
-    GDK_THREADS_ENTER();
-    progress_show ();
-    GDK_THREADS_LEAVE();
+    g_idle_add (progress_show_idle, NULL);
     deadbeef->pl_add_dir (folder, gtkpl_add_file_info_cb, NULL);
     g_free (folder);
-    GDK_THREADS_ENTER();
-    progress_hide ();
-    playlist_refresh ();
-    GDK_THREADS_LEAVE();
+    g_idle_add (progress_hide_idle, NULL);
 }
 
 static void
@@ -1593,15 +1599,10 @@ gtkpl_adddir_cb (gpointer data, gpointer userdata) {
 
 void
 gtkpl_add_dirs (gtkplaylist_t *ps, GSList *lst) {
-    GDK_THREADS_ENTER();
-    progress_show ();
-    GDK_THREADS_LEAVE();
+    g_idle_add (progress_show_idle, NULL);
     g_slist_foreach(lst, gtkpl_adddir_cb, NULL);
     g_slist_free (lst);
-    GDK_THREADS_ENTER();
-    progress_hide ();
-    playlist_refresh ();
-    GDK_THREADS_LEAVE();
+    g_idle_add (progress_hide_idle, NULL);
 }
 
 static void
@@ -1612,15 +1613,10 @@ gtkpl_addfile_cb (gpointer data, gpointer userdata) {
 
 void
 gtkpl_add_files (gtkplaylist_t *ps, GSList *lst) {
-    GDK_THREADS_ENTER();
-    progress_show ();
-    GDK_THREADS_LEAVE();
+    g_idle_add (progress_show_idle, NULL);
     g_slist_foreach(lst, gtkpl_addfile_cb, NULL);
     g_slist_free (lst);
-    GDK_THREADS_ENTER();
-    progress_hide ();
-    playlist_refresh ();
-    GDK_THREADS_LEAVE();
+    g_idle_add (progress_hide_idle, NULL);
 }
 
 int
@@ -1889,9 +1885,17 @@ gtkpl_current_track_changed (DB_playItem_t *it) {
     set_tray_tooltip (str);
 }
 
-void
-gtkpl_songchanged_wrapper (int from, int to) {
-    GDK_THREADS_ENTER ();
+struct fromto_t {
+    int from;
+    int to;
+};
+
+static gboolean
+update_win_title_idle (gpointer data) {
+    struct fromto_t *ft = (struct fromto_t *)data;
+    int from = ft->from;
+    int to = ft->to;
+    free (ft);
     // update window title
     if (from >= 0 || to >= 0) {
         if (to >= 0) {
@@ -1907,7 +1911,15 @@ gtkpl_songchanged_wrapper (int from, int to) {
     }
     // update playlist view
     gtkpl_songchanged (&main_playlist, from, to);
-    GDK_THREADS_LEAVE ();
+    return FALSE;
+}
+
+void
+gtkpl_songchanged_wrapper (int from, int to) {
+    struct fromto_t *ft = malloc (sizeof (struct fromto_t));
+    ft->from = from;
+    ft->to = to;
+    g_idle_add (update_win_title_idle, ft);
 }
 
 void
