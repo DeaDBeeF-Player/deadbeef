@@ -526,6 +526,7 @@ on_trayicon_activate (GtkWidget       *widget,
     }
     else {
         gtk_widget_show (mainwin);
+        session_restore_window_attrs ((uintptr_t)mainwin);
         gtk_window_present (GTK_WINDOW (mainwin));
     }
     return FALSE;
@@ -543,6 +544,7 @@ on_trayicon_button_press_event (GtkWidget       *widget,
         }
         else {
             gtk_widget_show (mainwin);
+            session_restore_window_attrs ((uintptr_t)mainwin);
             gtk_window_present (GTK_WINDOW (mainwin));
         }
     }
