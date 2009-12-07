@@ -1440,14 +1440,14 @@ gtkpl_header_draw (gtkplaylist_t *ps) {
                 }
                 // draw empty slot
                 if (x < widget->allocation.width) {
-                    gtk_paint_box (widget->style, ps->backbuf_header, GTK_STATE_ACTIVE, GTK_SHADOW_ETCHED_IN, NULL, NULL, "button", x, 0, w, h);
+                    gtk_paint_box (widget->style, ps->backbuf_header, GTK_STATE_ACTIVE, GTK_SHADOW_ETCHED_IN, NULL, widget, "button", x, 0, w, h);
                 }
                 x = c->movepos;
                 if (x >= widget->allocation.width) {
                     break;
                 }
                 if (w > 0) {
-                    gtk_paint_box (widget->style, ps->backbuf_header, GTK_STATE_SELECTED, GTK_SHADOW_OUT, NULL, NULL, "button", x, 0, w, h);
+                    gtk_paint_box (widget->style, ps->backbuf_header, GTK_STATE_SELECTED, GTK_SHADOW_OUT, NULL, widget, "button", x, 0, w, h);
                     GdkColor *gdkfg = &widget->style->fg[GTK_STATE_SELECTED];
                     float fg[3] = {(float)gdkfg->red/0xffff, (float)gdkfg->green/0xffff, (float)gdkfg->blue/0xffff};
                     draw_set_fg_color (fg);
