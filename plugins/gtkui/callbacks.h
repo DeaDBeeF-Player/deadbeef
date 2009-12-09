@@ -696,3 +696,8 @@ on_addlocation_entry_activate          (GtkEntry        *entry,
 void
 on_configure_plugin_clicked            (GtkButton       *button,
                                         gpointer         user_data);
+
+gboolean
+on_mainwin_window_state_event          (GtkWidget       *widget,
+                                        GdkEventWindowState *event,
+                                        gpointer         user_data);

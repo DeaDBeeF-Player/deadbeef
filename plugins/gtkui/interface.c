@@ -489,6 +489,9 @@ create_mainwin (void)
   g_signal_connect ((gpointer) mainwin, "configure_event",
                     G_CALLBACK (on_mainwin_configure_event),
                     NULL);
+  g_signal_connect ((gpointer) mainwin, "window_state_event",
+                    G_CALLBACK (on_mainwin_window_state_event),
+                    NULL);
   g_signal_connect ((gpointer) open, "activate",
                     G_CALLBACK (on_open_activate),
                     NULL);

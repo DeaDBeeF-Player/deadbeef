@@ -192,6 +192,9 @@ on_trayicon_activate (GtkWidget       *widget,
         gtk_widget_show (mainwin);
         gtk_window_move (mainwin, x, y);
         gtk_window_resize (mainwin, w, h);
+        if (deadbeef->conf_get_int ("mainwin.geometry.maximized", 0)) {
+            gtk_window_maximize (GTK_WINDOW (mainwin));
+        }
         gtk_window_present (GTK_WINDOW (mainwin));
     }
     return FALSE;
@@ -216,6 +219,9 @@ on_trayicon_button_press_event (GtkWidget       *widget,
             int h = deadbeef->conf_get_int ("mainwin.geometry.h", 300);
             gtk_window_move (GTK_WINDOW (mainwin), x, y);
             gtk_window_resize (GTK_WINDOW (mainwin), w, h);
+            if (deadbeef->conf_get_int ("mainwin.geometry.maximized", 0)) {
+                gtk_window_maximize (GTK_WINDOW (mainwin));
+            }
             gtk_window_present (GTK_WINDOW (mainwin));
         }
     }
@@ -347,6 +353,9 @@ gtkui_thread (void *ctx) {
         int h = deadbeef->conf_get_int ("mainwin.geometry.h", 300);
         gtk_window_move (GTK_WINDOW (mainwin), x, y);
         gtk_window_resize (GTK_WINDOW (mainwin), w, h);
+        if (deadbeef->conf_get_int ("mainwin.geometry.maximized", 0)) {
+            gtk_window_maximize (GTK_WINDOW (mainwin));
+        }
     }
     // order and looping
     const char *orderwidgets[3] = { "order_linear", "order_shuffle", "order_random" };
