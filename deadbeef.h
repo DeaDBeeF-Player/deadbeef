@@ -148,7 +148,7 @@ enum {
 };
 
 // preset columns, working using IDs
-enum {
+enum pl_column_t {
     DB_COLUMN_PLAYING = 1,
     DB_COLUMN_ARTIST_ALBUM = 2,
     DB_COLUMN_ARTIST = 3,
@@ -268,6 +268,20 @@ typedef struct {
     DB_playItem_t *(*pl_get_last) (int iter);
     DB_playItem_t *(*pl_get_next) (DB_playItem_t *it, int iter);
     DB_playItem_t *(*pl_get_prev) (DB_playItem_t *it, int iter);
+    /*
+       this function formats line for display in playlist
+       @it pointer to playlist item
+       @s output buffer
+       @size size of output buffer
+       @id one of IDs defined in pl_column_id_t enum, can be -1
+       @fmt format string, used if id is -1
+       format is printf-alike. specification:
+       %a artist
+       %t title
+       %n track
+       %l length (duration)
+       more to come
+    */
     int (*pl_format_title) (DB_playItem_t *it, char *s, int size, int id, const char *fmt);
     void (*pl_format_item_display_name) (DB_playItem_t *it, char *str, int len);
 //    void (*pl_set_next) (DB_playItem_t *it, DB_playItem_t *next, int iter);
