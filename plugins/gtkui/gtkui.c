@@ -25,7 +25,6 @@
 #include "interface.h"
 #include "callbacks.h"
 #include "support.h"
-#include "session.h"
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
@@ -175,6 +174,7 @@ on_trayicon_scroll_event               (GtkWidget       *widget,
 }
 
 #if GTK_MINOR_VERSION<=14
+
 gboolean
 on_trayicon_activate (GtkWidget       *widget,
                                         GdkEvent  *event,
@@ -184,13 +184,20 @@ on_trayicon_activate (GtkWidget       *widget,
         gtk_widget_hide (mainwin);
     }
     else {
+        int x = deadbeef->conf_get_int ("mainwin.geometry.x", 40);
+        int y = deadbeef->conf_get_int ("mainwin.geometry.y", 40);
+        int w = deadbeef->conf_get_int ("mainwin.geometry.w", 500);
+        int h = deadbeef->conf_get_int ("mainwin.geometry.h", 300);
+        printf ("restore: %d %d %d %d\n", x, y, w, h);
         gtk_widget_show (mainwin);
-        session_restore_window_attrs ((uintptr_t)mainwin);
+        gtk_window_move (mainwin, x, y);
+        gtk_window_resize (mainwin, w, h);
         gtk_window_present (GTK_WINDOW (mainwin));
     }
     return FALSE;
 }
-#endif
+
+#else
 
 gboolean
 on_trayicon_button_press_event (GtkWidget       *widget,
@@ -203,7 +210,12 @@ on_trayicon_button_press_event (GtkWidget       *widget,
         }
         else {
             gtk_widget_show (mainwin);
-            session_restore_window_attrs ((uintptr_t)mainwin);
+            int x = deadbeef->conf_get_int ("mainwin.geometry.x", 40);
+            int y = deadbeef->conf_get_int ("mainwin.geometry.y", 40);
+            int w = deadbeef->conf_get_int ("mainwin.geometry.w", 500);
+            int h = deadbeef->conf_get_int ("mainwin.geometry.h", 300);
+            gtk_window_move (GTK_WINDOW (mainwin), x, y);
+            gtk_window_resize (GTK_WINDOW (mainwin), w, h);
             gtk_window_present (GTK_WINDOW (mainwin));
         }
     }
@@ -212,6 +224,7 @@ on_trayicon_button_press_event (GtkWidget       *widget,
     }
     return FALSE;
 }
+#endif
 
 gboolean
 on_trayicon_popup_menu (GtkWidget       *widget,
@@ -327,7 +340,14 @@ gtkui_thread (void *ctx) {
         gtk_window_set_icon (GTK_WINDOW (mainwin), mainwin_icon_pixbuf);
         gdk_pixbuf_unref (mainwin_icon_pixbuf);
     }
-    session_restore_window_attrs ((uintptr_t)mainwin);
+    {
+        int x = deadbeef->conf_get_int ("mainwin.geometry.x", 40);
+        int y = deadbeef->conf_get_int ("mainwin.geometry.y", 40);
+        int w = deadbeef->conf_get_int ("mainwin.geometry.w", 500);
+        int h = deadbeef->conf_get_int ("mainwin.geometry.h", 300);
+        gtk_window_move (GTK_WINDOW (mainwin), x, y);
+        gtk_window_resize (GTK_WINDOW (mainwin), w, h);
+    }
     // order and looping
     const char *orderwidgets[3] = { "order_linear", "order_shuffle", "order_random" };
     const char *loopingwidgets[3] = { "loop_all", "loop_disable", "loop_single" };

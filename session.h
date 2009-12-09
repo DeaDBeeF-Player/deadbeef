@@ -27,11 +27,4 @@ session_save (const char *fname);
 int
 session_load (const char *fname);
 
-void
-session_capture_window_attrs (uintptr_t window);
-
-void
-session_restore_window_attrs (uintptr_t window);
-
-
 #endif // __SESSION_H

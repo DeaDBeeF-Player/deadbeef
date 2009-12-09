@@ -1175,7 +1175,16 @@ on_mainwin_configure_event             (GtkWidget       *widget,
                                         GdkEventConfigure *event,
                                         gpointer         user_data)
 {
-    session_capture_window_attrs ((uintptr_t)widget);
+    if (GTK_WIDGET_VISIBLE (mainwin)) {
+        int x, y;
+        int w, h;
+        gtk_window_get_position (GTK_WINDOW (mainwin), &x, &y);
+        gtk_window_get_size (GTK_WINDOW (mainwin), &w, &h);
+        deadbeef->conf_set_int ("mainwin.geometry.x", x);
+        deadbeef->conf_set_int ("mainwin.geometry.y", y);
+        deadbeef->conf_set_int ("mainwin.geometry.w", w);
+        deadbeef->conf_set_int ("mainwin.geometry.h", h);
+    }
     return FALSE;
 }
 
