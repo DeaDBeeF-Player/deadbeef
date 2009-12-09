@@ -422,6 +422,13 @@ cda_stop (void) {
 static const char *exts[] = { "cda", "nrg", NULL };
 static const char *filetypes[] = { "cdda", NULL };
 
+static const char settings_dlg[] =
+    "property \"Use CDDB/FreeDB\" checkbox cdda.freedb.enable 1;\n"
+    "property \"CDDB url (e.g. 'freedb.org')\" entry cdda.freedb.host freedb.org;\n"
+    "property \"CDDB port number (e.g. '888')\" entry cdda.freedb.port 888;\n"
+    "property \"Prefer CDDB protocol over HTTP\" checkbox cdda.protocol 1;"
+;
+
 // define plugin interface
 static DB_decoder_t plugin = {
     DB_PLUGIN_SET_API_VERSION
@@ -435,6 +442,7 @@ static DB_decoder_t plugin = {
     .plugin.website = "http://deadbeef.sf.net",
     .plugin.start = cda_start,
     .plugin.stop = cda_stop,
+    .plugin.configdialog = settings_dlg,
     .init = cda_init,
     .free = cda_free,
     .read_int16 = cda_read_int16,
