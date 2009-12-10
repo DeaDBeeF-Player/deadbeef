@@ -373,6 +373,9 @@ main (int argc, char *argv[]) {
             // path of this process
             if (argv[i][0] != '-' && realpath (argv[i], resolved)) {
                 len = strlen (resolved);
+                if (len >= size) {
+                    break;
+                }
                 memcpy (p, resolved, len+1);
             }
             else {
