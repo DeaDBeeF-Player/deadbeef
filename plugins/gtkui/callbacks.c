@@ -1349,7 +1349,6 @@ on_plugin_active_toggled (GtkCellRendererToggle *cell_renderer, gchar *path, Gtk
         if (indices) {
             DB_plugin_t **plugins = deadbeef->plug_get_list ();
             DB_plugin_t *plug = plugins[*indices];
-            printf ("plugin %d active\n", *indices);
             gboolean state;
             GtkTreeIter iter;
             gtk_tree_model_get_iter (model, &iter, p);
