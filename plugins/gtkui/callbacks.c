@@ -788,7 +788,6 @@ save_playlist_as (void) {
 
         if (fname) {
             int res = deadbeef->pl_save (fname);
-            printf ("save as res: %d\n", res);
             if (res >= 0 && strlen (fname) < 1024) {
                 strcpy (last_playlist_save_name, fname);
             }
@@ -809,7 +808,6 @@ on_playlist_save_activate              (GtkMenuItem     *menuitem,
     }
     else {
         int res = deadbeef->pl_save (last_playlist_save_name);
-        printf ("save res: %d\n", res);
     }
 }
 
@@ -1189,7 +1187,6 @@ on_mainwin_configure_event             (GtkWidget       *widget,
         deadbeef->conf_set_int ("mainwin.geometry.y", y);
         deadbeef->conf_set_int ("mainwin.geometry.w", w);
         deadbeef->conf_set_int ("mainwin.geometry.h", h);
-        printf ("save %d %d %d %d\n", x, y, w, h);
     }
     return FALSE;
 }
@@ -1344,6 +1341,28 @@ gtk_enum_sound_callback (const char *name, const char *desc, void *userdata) {
 }
 
 void
+on_plugin_active_toggled (GtkCellRendererToggle *cell_renderer, gchar *path, GtkTreeModel *model) {
+    GtkTreePath *p = gtk_tree_path_new_from_string (path);
+    if (p) {
+        int *indices = gtk_tree_path_get_indices (p);
+        //gtk_tree_path_free (p); // wtf?? gtk crashes on this
+        if (indices) {
+            DB_plugin_t **plugins = deadbeef->plug_get_list ();
+            DB_plugin_t *plug = plugins[*indices];
+            printf ("plugin %d active\n", *indices);
+            gboolean state;
+            GtkTreeIter iter;
+            gtk_tree_model_get_iter (model, &iter, p);
+            gtk_tree_model_get (model, &iter, 0, &state, -1);
+            if (!deadbeef->plug_activate (plug, !state)) {
+                gtk_list_store_set (GTK_LIST_STORE (model), &iter, 0, !state, -1);
+            }
+        }
+        g_free (indices);
+    }
+}
+
+void
 on_preferences_activate                (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
@@ -1409,16 +1428,22 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
 
     // list of plugins
     GtkTreeView *tree = GTK_TREE_VIEW (lookup_widget (w, "pref_pluginlist"));
-    GtkListStore *store = gtk_list_store_new (1, G_TYPE_STRING);//GTK_LIST_STORE (gtk_tree_view_get_model (tree));
-    GtkCellRenderer *rend = gtk_cell_renderer_text_new ();
-    GtkTreeViewColumn *col = gtk_tree_view_column_new_with_attributes ("Title", rend, "text", 0, NULL);
-    gtk_tree_view_append_column (tree, col);
+    GtkListStore *store = gtk_list_store_new (3, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_BOOLEAN);
+    GtkCellRenderer *rend_toggle = gtk_cell_renderer_toggle_new ();
+    GtkCellRenderer *rend_text = gtk_cell_renderer_text_new ();
+    g_signal_connect ((gpointer)rend_toggle, "toggled",
+            G_CALLBACK (on_plugin_active_toggled),
+            store);
+    GtkTreeViewColumn *col1 = gtk_tree_view_column_new_with_attributes ("Active", rend_toggle, "active", 0, "activatable", 2, NULL);
+    GtkTreeViewColumn *col2 = gtk_tree_view_column_new_with_attributes ("Title", rend_text, "text", 1, NULL);
+    gtk_tree_view_append_column (tree, col1);
+    gtk_tree_view_append_column (tree, col2);
     DB_plugin_t **plugins = deadbeef->plug_get_list ();
     int i;
     for (i = 0; plugins[i]; i++) {
         GtkTreeIter it;
         gtk_list_store_append (store, &it);
-        gtk_list_store_set (store, &it, 0, plugins[i]->name, -1);
+        gtk_list_store_set (store, &it, 0, plugins[i]->inactive ? FALSE : TRUE, 1, plugins[i]->name, 2, plugins[i]->nostop ? FALSE : TRUE, -1);
     }
     gtk_tree_view_set_model (tree, GTK_TREE_MODEL (store));
 
@@ -1485,13 +1510,6 @@ on_pref_close_send_to_tray_clicked     (GtkButton       *button,
     deadbeef->sendmessage (M_CONFIGCHANGED, 0, 0, 0);
 }
 
-
-void
-on_pref_plugin_configure_activate      (GtkButton       *button,
-                                        gpointer         user_data)
-{
-}
-
 void
 on_pref_pluginlist_cursor_changed      (GtkTreeView     *treeview,
                                         gpointer         user_data)
@@ -1506,6 +1524,7 @@ on_pref_pluginlist_cursor_changed      (GtkTreeView     *treeview,
     int *indices = gtk_tree_path_get_indices (path);
     DB_plugin_t **plugins = deadbeef->plug_get_list ();
     DB_plugin_t *p = plugins[*indices];
+    g_free (indices);
     assert (p);
     GtkWidget *w = prefwin;//GTK_WIDGET (gtk_widget_get_parent_window (GTK_WIDGET (treeview)));
     assert (w);

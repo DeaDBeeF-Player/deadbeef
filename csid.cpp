@@ -67,6 +67,7 @@ static DB_decoder_t plugin = {
         /* .plugin.version_major = */0,
         /* .plugin.version_minor = */1,
         /* .inactive = */0,
+        /* .plugin.nostop = */0,
         /* .plugin.name = */"SID decoder",
         /* .plugin.descr = */"SID player based on libsidplay2",
         /* .plugin.author = */"Alexey Yakovenko",

@@ -424,6 +424,7 @@ static DB_gui_t plugin = {
     DB_PLUGIN_SET_API_VERSION
     .plugin.version_major = 0,
     .plugin.version_minor = 1,
+    .plugin.nostop = 1,
     .plugin.type = DB_PLUGIN_MISC,
     .plugin.name = "Standard GTK2 user interface",
     .plugin.descr = "",

@@ -412,11 +412,13 @@ cda_insert (DB_playItem_t *after, const char *fname) {
 static int
 cda_start (void) {
     mutex = deadbeef->mutex_create ();
+    return 0;
 }
 
 static int
 cda_stop (void) {
     deadbeef->mutex_free (mutex);
+    return 0;
 }
 
 static const char *exts[] = { "cda", "nrg", NULL };

@@ -338,6 +338,7 @@ typedef struct {
     // plugin communication
     struct DB_decoder_s **(*plug_get_decoder_list) (void);
     struct DB_plugin_s **(*plug_get_list) (void);
+    int (*plug_activate) (struct DB_plugin_s *p, int activate);
     // exporting plugin conf options for gui
     // all exported options are grouped by plugin, and will be available to user
     // from gui
@@ -361,6 +362,8 @@ typedef struct DB_plugin_s {
     int16_t version_minor;
     // may be deactivated on failures after load
     int inactive;
+    // prevent plugin from being dynamically stopped
+    int nostop;
     // any of those can be left NULL
     // though it's much better to fill them with something useful
     const char *name;

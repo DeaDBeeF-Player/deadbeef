@@ -103,10 +103,7 @@ plug_volume_set_amp (float amp);
 const char *
 plug_get_config_dir (void);
 
-void
-plug_gui_lock (void);
-
-void
-plug_gui_unlock (void);
+int
+plug_activate (DB_plugin_t *plug, int activate);
 
 #endif // __PLUGINS_H

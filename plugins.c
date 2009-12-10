@@ -166,6 +166,7 @@ static DB_functions_t deadbeef_api = {
     // plugin communication
     .plug_get_decoder_list = plug_get_decoder_list,
     .plug_get_list = plug_get_list,
+    .plug_activate = plug_activate,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;
@@ -608,4 +609,44 @@ plug_get_vfs_list (void) {
 struct DB_plugin_s **
 plug_get_list (void) {
     return g_plugins;
+}
+
+int
+plug_activate (DB_plugin_t *plug, int activate) {
+    if (plug->inactive && !activate) {
+        return -1;
+    }
+    if (!plug->inactive && activate) {
+        return -1;
+    }
+    if (activate) {
+        if (plug->start) {
+            if (!plug->start ()) {
+                plug->inactive = 0;
+            }
+            else {
+                fprintf (stderr, "failed to start plugin %s\n", plug->name);
+                return -1;
+            }
+            return 0;
+        }
+        else {
+            return -1;
+        }
+    }
+    else {
+        if (plug->stop) {
+            if (!plug->stop ()) {
+                plug->inactive = 1;
+            }
+            else {
+                fprintf (stderr, "failed to stop plugin %s\n", plug->name);
+                return -1;
+            }
+            return 0;
+        }
+        else {
+            return -1;
+        }
+    }
 }
