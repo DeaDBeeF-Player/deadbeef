@@ -219,7 +219,6 @@ typedef struct {
     float (*playback_get_pos) (void); // [0..100]
     void (*playback_set_pos) (float pos); // [0..100]
     void (*playback_update_bitrate) (float bitrate);
-    void (*playback_enum_soundcards) (void (*callback)(const char *name, const char *desc, void*), void *userdata);
     // streamer access
     // FIXME: needs to be thread-safe
     DB_playItem_t *(*streamer_get_playing_track) (void);
@@ -343,6 +342,7 @@ typedef struct {
     void (*conf_remove_items) (const char *key);
     // plugin communication
     struct DB_decoder_s **(*plug_get_decoder_list) (void);
+    struct DB_output_s **(*plug_get_output_list) (void);
     struct DB_plugin_s **(*plug_get_list) (void);
     int (*plug_activate) (struct DB_plugin_s *p, int activate);
     // exporting plugin conf options for gui

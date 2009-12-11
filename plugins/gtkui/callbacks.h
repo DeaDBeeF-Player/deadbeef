@@ -701,3 +701,7 @@ gboolean
 on_mainwin_window_state_event          (GtkWidget       *widget,
                                         GdkEventWindowState *event,
                                         gpointer         user_data);
+
+void
+on_pref_output_plugin_changed          (GtkComboBox     *combobox,
+                                        gpointer         user_data);

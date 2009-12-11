@@ -91,6 +91,9 @@ plug_get_list (void);
 struct DB_decoder_s **
 plug_get_decoder_list (void);
 
+struct DB_output_s **
+plug_get_output_list (void);
+
 struct DB_vfs_s **
 plug_get_vfs_list (void);
 
@@ -108,5 +111,11 @@ plug_activate (DB_plugin_t *plug, int activate);
 
 DB_output_t *
 plug_get_output (void);
+
+void
+plug_reinit_sound (void);
+
+int
+plug_select_output (void);
 
 #endif // __PLUGINS_H

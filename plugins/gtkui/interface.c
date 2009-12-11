@@ -1154,18 +1154,20 @@ create_prefwin (void)
   GtkWidget *prefwin;
   GtkWidget *notebook2;
   GtkWidget *table3;
-  GtkWidget *label4;
-  GtkWidget *label5;
-  GtkWidget *label6;
-  GtkWidget *label8;
-  GtkWidget *label9;
   GtkWidget *label15;
+  GtkWidget *label9;
+  GtkWidget *label8;
+  GtkWidget *label6;
+  GtkWidget *label5;
+  GtkWidget *label4;
+  GtkWidget *label23;
+  GtkWidget *pref_soundcard;
   GtkWidget *pref_alsa_resampling;
   GtkWidget *pref_replaygain_scale;
   GtkWidget *pref_alsa_freewhenstopped;
-  GtkWidget *pref_soundcard;
   GtkWidget *pref_src_quality;
   GtkWidget *pref_replaygain_mode;
+  GtkWidget *pref_output_plugin;
   GtkWidget *Sound;
   GtkWidget *table4;
   GtkWidget *label7;
@@ -1205,81 +1207,88 @@ create_prefwin (void)
   gtk_widget_show (notebook2);
   gtk_container_add (GTK_CONTAINER (prefwin), notebook2);
 
-  table3 = gtk_table_new (6, 2, FALSE);
+  table3 = gtk_table_new (7, 2, FALSE);
   gtk_widget_show (table3);
   gtk_container_add (GTK_CONTAINER (notebook2), table3);
   gtk_container_set_border_width (GTK_CONTAINER (table3), 3);
   gtk_table_set_col_spacings (GTK_TABLE (table3), 3);
 
-  label4 = gtk_label_new ("Output device");
-  gtk_widget_show (label4);
-  gtk_table_attach (GTK_TABLE (table3), label4, 0, 1, 0, 1,
-                    (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
-  gtk_misc_set_alignment (GTK_MISC (label4), 0, 0.5);
-
-  label5 = gtk_label_new ("Software ALSA resampling");
-  gtk_widget_show (label5);
-  gtk_table_attach (GTK_TABLE (table3), label5, 0, 1, 1, 2,
-                    (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
-  gtk_misc_set_alignment (GTK_MISC (label5), 0, 0.5);
-
-  label6 = gtk_label_new ("SRC quality (libsamplerate)");
-  gtk_widget_show (label6);
-  gtk_table_attach (GTK_TABLE (table3), label6, 0, 1, 2, 3,
-                    (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
-  gtk_misc_set_alignment (GTK_MISC (label6), 0, 0.5);
-
-  label8 = gtk_label_new ("Replaygain mode");
-  gtk_widget_show (label8);
-  gtk_table_attach (GTK_TABLE (table3), label8, 0, 1, 3, 4,
-                    (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
-  gtk_misc_set_alignment (GTK_MISC (label8), 0, 0.5);
-
-  label9 = gtk_label_new ("Replaygain peak scale");
-  gtk_widget_show (label9);
-  gtk_table_attach (GTK_TABLE (table3), label9, 0, 1, 4, 5,
-                    (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
-  gtk_misc_set_alignment (GTK_MISC (label9), 0, 0.5);
-
   label15 = gtk_label_new ("Release ALSA while stopped");
   gtk_widget_show (label15);
-  gtk_table_attach (GTK_TABLE (table3), label15, 0, 1, 5, 6,
+  gtk_table_attach (GTK_TABLE (table3), label15, 0, 1, 6, 7,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
   gtk_misc_set_alignment (GTK_MISC (label15), 0, 0.5);
 
+  label9 = gtk_label_new ("Replaygain peak scale");
+  gtk_widget_show (label9);
+  gtk_table_attach (GTK_TABLE (table3), label9, 0, 1, 5, 6,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
+  gtk_misc_set_alignment (GTK_MISC (label9), 0, 0.5);
+
+  label8 = gtk_label_new ("Replaygain mode");
+  gtk_widget_show (label8);
+  gtk_table_attach (GTK_TABLE (table3), label8, 0, 1, 4, 5,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
+  gtk_misc_set_alignment (GTK_MISC (label8), 0, 0.5);
+
+  label6 = gtk_label_new ("SRC quality (libsamplerate)");
+  gtk_widget_show (label6);
+  gtk_table_attach (GTK_TABLE (table3), label6, 0, 1, 3, 4,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
+  gtk_misc_set_alignment (GTK_MISC (label6), 0, 0.5);
+
+  label5 = gtk_label_new ("Software ALSA resampling");
+  gtk_widget_show (label5);
+  gtk_table_attach (GTK_TABLE (table3), label5, 0, 1, 2, 3,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
+  gtk_misc_set_alignment (GTK_MISC (label5), 0, 0.5);
+
+  label4 = gtk_label_new ("Output device");
+  gtk_widget_show (label4);
+  gtk_table_attach (GTK_TABLE (table3), label4, 0, 1, 1, 2,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
+  gtk_misc_set_alignment (GTK_MISC (label4), 0, 0.5);
+
+  label23 = gtk_label_new ("Output plugin");
+  gtk_widget_show (label23);
+  gtk_table_attach (GTK_TABLE (table3), label23, 0, 1, 0, 1,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
+  gtk_misc_set_alignment (GTK_MISC (label23), 0, 0.5);
+
+  pref_soundcard = gtk_combo_box_new_text ();
+  gtk_widget_show (pref_soundcard);
+  gtk_table_attach (GTK_TABLE (table3), pref_soundcard, 1, 2, 1, 2,
+                    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+                    (GtkAttachOptions) (GTK_FILL), 0, 0);
+
   pref_alsa_resampling = gtk_check_button_new_with_mnemonic ("");
   gtk_widget_show (pref_alsa_resampling);
-  gtk_table_attach (GTK_TABLE (table3), pref_alsa_resampling, 1, 2, 1, 2,
+  gtk_table_attach (GTK_TABLE (table3), pref_alsa_resampling, 1, 2, 2, 3,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
 
   pref_replaygain_scale = gtk_check_button_new_with_mnemonic ("");
   gtk_widget_show (pref_replaygain_scale);
-  gtk_table_attach (GTK_TABLE (table3), pref_replaygain_scale, 1, 2, 4, 5,
+  gtk_table_attach (GTK_TABLE (table3), pref_replaygain_scale, 1, 2, 5, 6,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
 
   pref_alsa_freewhenstopped = gtk_check_button_new_with_mnemonic ("");
   gtk_widget_show (pref_alsa_freewhenstopped);
-  gtk_table_attach (GTK_TABLE (table3), pref_alsa_freewhenstopped, 1, 2, 5, 6,
+  gtk_table_attach (GTK_TABLE (table3), pref_alsa_freewhenstopped, 1, 2, 6, 7,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
 
-  pref_soundcard = gtk_combo_box_new_text ();
-  gtk_widget_show (pref_soundcard);
-  gtk_table_attach (GTK_TABLE (table3), pref_soundcard, 1, 2, 0, 1,
-                    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-                    (GtkAttachOptions) (GTK_FILL), 0, 0);
-
   pref_src_quality = gtk_combo_box_new_text ();
   gtk_widget_show (pref_src_quality);
-  gtk_table_attach (GTK_TABLE (table3), pref_src_quality, 1, 2, 2, 3,
+  gtk_table_attach (GTK_TABLE (table3), pref_src_quality, 1, 2, 3, 4,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (GTK_FILL), 0, 0);
   gtk_combo_box_append_text (GTK_COMBO_BOX (pref_src_quality), "sinc_best_quality");
@@ -1290,12 +1299,18 @@ create_prefwin (void)
 
   pref_replaygain_mode = gtk_combo_box_new_text ();
   gtk_widget_show (pref_replaygain_mode);
-  gtk_table_attach (GTK_TABLE (table3), pref_replaygain_mode, 1, 2, 3, 4,
+  gtk_table_attach (GTK_TABLE (table3), pref_replaygain_mode, 1, 2, 4, 5,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (GTK_FILL), 0, 0);
   gtk_combo_box_append_text (GTK_COMBO_BOX (pref_replaygain_mode), "Disable");
   gtk_combo_box_append_text (GTK_COMBO_BOX (pref_replaygain_mode), "Track");
   gtk_combo_box_append_text (GTK_COMBO_BOX (pref_replaygain_mode), "Album");
+
+  pref_output_plugin = gtk_combo_box_new_text ();
+  gtk_widget_show (pref_output_plugin);
+  gtk_table_attach (GTK_TABLE (table3), pref_output_plugin, 1, 2, 0, 1,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (GTK_FILL), 0, 0);
 
   Sound = gtk_label_new ("Sound");
   gtk_widget_show (Sound);
@@ -1490,6 +1505,9 @@ create_prefwin (void)
   g_signal_connect ((gpointer) prefwin, "key_press_event",
                     G_CALLBACK (on_prefwin_key_press_event),
                     NULL);
+  g_signal_connect ((gpointer) pref_soundcard, "changed",
+                    G_CALLBACK (on_pref_soundcard_changed),
+                    NULL);
   g_signal_connect ((gpointer) pref_alsa_resampling, "clicked",
                     G_CALLBACK (on_pref_alsa_resampling_clicked),
                     NULL);
@@ -1499,14 +1517,14 @@ create_prefwin (void)
   g_signal_connect ((gpointer) pref_alsa_freewhenstopped, "clicked",
                     G_CALLBACK (on_pref_alsa_freewhenstopped_clicked),
                     NULL);
-  g_signal_connect ((gpointer) pref_soundcard, "changed",
-                    G_CALLBACK (on_pref_soundcard_changed),
-                    NULL);
   g_signal_connect ((gpointer) pref_src_quality, "changed",
                     G_CALLBACK (on_pref_src_quality_changed),
                     NULL);
   g_signal_connect ((gpointer) pref_replaygain_mode, "changed",
                     G_CALLBACK (on_pref_replaygain_mode_changed),
+                    NULL);
+  g_signal_connect ((gpointer) pref_output_plugin, "changed",
+                    G_CALLBACK (on_pref_output_plugin_changed),
                     NULL);
   g_signal_connect ((gpointer) pref_close_send_to_tray, "clicked",
                     G_CALLBACK (on_pref_close_send_to_tray_clicked),
@@ -1534,18 +1552,20 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT_NO_REF (prefwin, prefwin, "prefwin");
   GLADE_HOOKUP_OBJECT (prefwin, notebook2, "notebook2");
   GLADE_HOOKUP_OBJECT (prefwin, table3, "table3");
-  GLADE_HOOKUP_OBJECT (prefwin, label4, "label4");
-  GLADE_HOOKUP_OBJECT (prefwin, label5, "label5");
-  GLADE_HOOKUP_OBJECT (prefwin, label6, "label6");
-  GLADE_HOOKUP_OBJECT (prefwin, label8, "label8");
-  GLADE_HOOKUP_OBJECT (prefwin, label9, "label9");
   GLADE_HOOKUP_OBJECT (prefwin, label15, "label15");
+  GLADE_HOOKUP_OBJECT (prefwin, label9, "label9");
+  GLADE_HOOKUP_OBJECT (prefwin, label8, "label8");
+  GLADE_HOOKUP_OBJECT (prefwin, label6, "label6");
+  GLADE_HOOKUP_OBJECT (prefwin, label5, "label5");
+  GLADE_HOOKUP_OBJECT (prefwin, label4, "label4");
+  GLADE_HOOKUP_OBJECT (prefwin, label23, "label23");
+  GLADE_HOOKUP_OBJECT (prefwin, pref_soundcard, "pref_soundcard");
   GLADE_HOOKUP_OBJECT (prefwin, pref_alsa_resampling, "pref_alsa_resampling");
   GLADE_HOOKUP_OBJECT (prefwin, pref_replaygain_scale, "pref_replaygain_scale");
   GLADE_HOOKUP_OBJECT (prefwin, pref_alsa_freewhenstopped, "pref_alsa_freewhenstopped");
-  GLADE_HOOKUP_OBJECT (prefwin, pref_soundcard, "pref_soundcard");
   GLADE_HOOKUP_OBJECT (prefwin, pref_src_quality, "pref_src_quality");
   GLADE_HOOKUP_OBJECT (prefwin, pref_replaygain_mode, "pref_replaygain_mode");
+  GLADE_HOOKUP_OBJECT (prefwin, pref_output_plugin, "pref_output_plugin");
   GLADE_HOOKUP_OBJECT (prefwin, Sound, "Sound");
   GLADE_HOOKUP_OBJECT (prefwin, table4, "table4");
   GLADE_HOOKUP_OBJECT (prefwin, label7, "label7");

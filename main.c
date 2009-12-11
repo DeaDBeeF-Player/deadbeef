@@ -234,16 +234,7 @@ player_thread (uintptr_t ctx) {
         while (messagepump_pop(&msg, &ctx, &p1, &p2) != -1) {
             switch (msg) {
             case M_REINIT_SOUND:
-                {
-                    int state = p_get_state ();
-
-                    p_free ();
-                    p_init ();
-
-                    if (state != OUTPUT_STATE_PAUSED && state != OUTPUT_STATE_STOPPED) {
-                        p_play ();
-                    }
-                }
+                plug_reinit_sound ();
                 break;
             case M_TERMINATE:
                 return;

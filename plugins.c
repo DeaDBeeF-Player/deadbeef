@@ -163,6 +163,7 @@ static DB_functions_t deadbeef_api = {
     .conf_remove_items = conf_remove_items,
     // plugin communication
     .plug_get_decoder_list = plug_get_decoder_list,
+    .plug_get_output_list = plug_get_output_list,
     .plug_get_list = plug_get_list,
     .plug_activate = plug_activate,
 };
@@ -592,23 +593,7 @@ plug_load_all (void) {
     g_output_plugins[numoutput] = NULL;
 
     // select output plugin
-    const char *outplugname = conf_get_str ("output_plugin", "alsa");
-    for (int i = 0; g_output_plugins[i]; i++) {
-        DB_output_t *p = g_output_plugins[i];
-        if (!strcmp (p->plugin.name, outplugname)) {
-            fprintf (stderr, "selected output plugin: %s\n", outplugname);
-            output_plugin = p;
-            break;
-        }
-    }
-    if (!output_plugin) {
-        output_plugin = g_output_plugins[0];
-    }
-    if (output_plugin) {
-        fprintf (stderr, "selected output plugin: %s\n", output_plugin->plugin.name);
-        conf_set_str ("output_plugin", output_plugin->plugin.name);
-    }
-    else {
+    if (plug_select_output () < 0) {
         fprintf (stderr, "failed to find output plugin!\n");
         exit (-1);
     }
@@ -619,7 +604,9 @@ plug_unload_all (void) {
     while (plugins) {
         plugin_t *next = plugins->next;
         if (plugins->plugin->stop) {
+            fprintf (stderr, "stopping %s...", plugins->plugin->name);
             plugins->plugin->stop ();
+            fprintf (stderr, " [OK]\n");
         }
         if (plugins->handle) {
             dlclose (plugins->handle);
@@ -627,11 +614,17 @@ plug_unload_all (void) {
         plugins = next;
     }
     mutex_free (mutex);
+    fprintf (stderr, "all plugins had been unloaded\n");
 }
 
 struct DB_decoder_s **
 plug_get_decoder_list (void) {
     return g_decoder_plugins;
+}
+
+struct DB_output_s **
+plug_get_output_list (void) {
+    return g_output_plugins;
 }
 
 struct DB_vfs_s **
@@ -687,4 +680,47 @@ plug_activate (DB_plugin_t *plug, int activate) {
 DB_output_t *
 plug_get_output (void) {
     return output_plugin;
+}
+
+int
+plug_select_output (void) {
+    const char *outplugname = conf_get_str ("output_plugin", "ALSA output plugin");
+    for (int i = 0; g_output_plugins[i]; i++) {
+        DB_output_t *p = g_output_plugins[i];
+        if (!strcmp (p->plugin.name, outplugname)) {
+            fprintf (stderr, "selected output plugin: %s\n", outplugname);
+            output_plugin = p;
+            break;
+        }
+    }
+    if (!output_plugin) {
+        output_plugin = g_output_plugins[0];
+        if (output_plugin) {
+            fprintf (stderr, "selected output plugin: %s\n", output_plugin->plugin.name);
+            conf_set_str ("output_plugin", output_plugin->plugin.name);
+        }
+    }
+    if (!output_plugin) {
+        return -1;
+    }
+    return 0;
+}
+
+void
+plug_reinit_sound (void) {
+    int state = p_get_state ();
+
+    p_free ();
+
+    DB_output_t *prev = plug_get_output ();
+    if (plug_select_output () < 0) {
+        const char *outplugname = conf_get_str ("output_plugin", "ALSA output plugin");
+        fprintf (stderr, "failed to select output plugin %s\nreverted to %s\n", outplugname, prev->plugin.name);
+        output_plugin = prev;
+    }
+    p_init ();
+
+    if (state != OUTPUT_STATE_PAUSED && state != OUTPUT_STATE_STOPPED) {
+        p_play ();
+    }
 }
