@@ -100,7 +100,7 @@ cdumb_init (DB_playItem_t *it) {
 
     plugin.info.bps = 16;
     plugin.info.channels = 2;
-    plugin.info.samplerate = deadbeef->playback_get_samplerate ();
+    plugin.info.samplerate = deadbeef->get_output ()->samplerate ();
     plugin.info.readpos = 0;
 
     if (cdumb_startrenderer () < 0) {

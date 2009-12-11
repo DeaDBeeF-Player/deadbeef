@@ -100,6 +100,13 @@ enum {
     DB_PLUGIN_VFS     = 5,
 };
 
+// output plugin states
+enum output_state_t {
+    OUTPUT_STATE_STOPPED = 0,
+    OUTPUT_STATE_PLAYING = 1,
+    OUTPUT_STATE_PAUSED = 2,
+};
+
 typedef struct {
     int event;
     time_t time;
@@ -202,6 +209,7 @@ typedef struct {
     void (*md5) (uint8_t sig[16], const char *in, int len);
     void (*md5_to_str) (char *str, const uint8_t sig[16]);
     // playback control
+    struct DB_output_s* (*get_output) (void);
     void (*playback_next) (void);
     void (*playback_prev) (void);
     void (*playback_pause) (void);
@@ -210,12 +218,8 @@ typedef struct {
     void (*playback_random) (void);
     float (*playback_get_pos) (void); // [0..100]
     void (*playback_set_pos) (float pos); // [0..100]
-    int (*playback_get_samplerate) (void); // output samplerate
     void (*playback_update_bitrate) (float bitrate);
     void (*playback_enum_soundcards) (void (*callback)(const char *name, const char *desc, void*), void *userdata);
-    // playback status
-    int (*playback_isstopped) (void);
-    int (*playback_ispaused) (void);
     // streamer access
     // FIXME: needs to be thread-safe
     DB_playItem_t *(*streamer_get_playing_track) (void);
@@ -223,6 +227,8 @@ typedef struct {
     float (*streamer_get_playpos) (void);
     void (*streamer_seek) (float time);
     int (*streamer_ok_to_read) (int len);
+    void (*streamer_reset) (int full);
+    int (*streamer_read) (char *bytes, int size);
     // process control
     const char *(*get_config_dir) (void);
     void (*quit) (void);
@@ -438,21 +444,21 @@ typedef struct DB_decoder_s {
 } DB_decoder_t;
 
 // output plugin
-typedef struct {
+typedef struct DB_output_s {
     DB_plugin_t plugin;
     // init is called once at plugin activation
-    int (*init) (void (*callback)(char *stream, int len));
+    int (*init) (void);
     // free is called if output plugin was changed to another, or unload is about to happen
     int (*free) (void);
     // reconfigure output to another samplerate, if supported
     int (*change_rate) (int rate);
     // play, stop, pause, unpause are called by deadbeef in response to user
     // events, or as part of streaming process
-    // state must be 0 for stopped, 1 for playing and 2 for paused
     int (*play) (void);
     int (*stop) (void);
     int (*pause) (void);
     int (*unpause) (void);
+    // one of output_state_t enum values
     int (*state) (void);
     // following functions must return output sampling rate, bits per sample and number
     // of channels
@@ -460,7 +466,9 @@ typedef struct {
     int (*bitspersample) (void);
     int (*channels) (void);
     // must return 0 for little endian output, or 1 for big endian
-    int (*endianess) (void);
+    int (*endianness) (void);
+    // soundcard enumeration (can be NULL)
+    void (*enum_soundcards) (void (*callback)(const char *name, const char *desc, void*), void *userdata);
 } DB_output_t;
 
 // dsp plugin

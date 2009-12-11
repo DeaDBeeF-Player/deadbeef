@@ -51,6 +51,7 @@ static DB_functions_t deadbeef_api = {
     .ev_unsubscribe = plug_ev_unsubscribe,
     .md5 = plug_md5,
     .md5_to_str = plug_md5_to_str,
+    .get_output = plug_get_output,
     .playback_next = plug_playback_next,
     .playback_prev = plug_playback_prev,
     .playback_pause = plug_playback_pause,
@@ -59,18 +60,15 @@ static DB_functions_t deadbeef_api = {
     .playback_random = plug_playback_random,
     .playback_get_pos = plug_playback_get_pos,
     .playback_set_pos = plug_playback_set_pos,
-    .playback_get_samplerate = p_get_rate,
     .playback_update_bitrate = streamer_update_bitrate,
-    .playback_enum_soundcards = palsa_enum_soundcards,
-    // playback status
-    .playback_isstopped = p_isstopped,
-    .playback_ispaused = p_ispaused,
     // streamer access
     .streamer_get_playing_track = (DB_playItem_t *(*) (void))streamer_get_playing_track,
     .streamer_get_streaming_track = (DB_playItem_t *(*) (void))streamer_get_streaming_track,
     .streamer_get_playpos = streamer_get_playpos,
     .streamer_seek = streamer_set_seek,
     .streamer_ok_to_read = streamer_ok_to_read,
+    .streamer_reset = streamer_reset,
+    .streamer_read = streamer_read,
     // process control
     .get_config_dir = plug_get_config_dir,
     .quit = plug_quit,
@@ -196,6 +194,10 @@ DB_decoder_t *g_decoder_plugins[MAX_DECODER_PLUGINS+1];
 
 #define MAX_VFS_PLUGINS 10
 DB_vfs_t *g_vfs_plugins[MAX_VFS_PLUGINS+1];
+
+#define MAX_OUTPUT_PLUGINS 10
+DB_output_t *g_output_plugins[MAX_OUTPUT_PLUGINS+1];
+DB_output_t *output_plugin = NULL;
 
 void
 plug_md5 (uint8_t sig[16], const char *in, int len) {
@@ -558,6 +560,7 @@ plug_load_all (void) {
     int numplugins = 0;
     int numdecoders = 0;
     int numvfs = 0;
+    int numoutput = 0;
     for (plugin_t *plug = plugins; plug; plug = plug->next) {
         g_plugins[numplugins++] = plug->plugin;
         if (plug->plugin->type == DB_PLUGIN_DECODER) {
@@ -574,11 +577,41 @@ plug_load_all (void) {
             }
             g_vfs_plugins[numvfs++] = (DB_vfs_t *)plug->plugin;
         }
+        else if (plug->plugin->type == DB_PLUGIN_OUTPUT) {
+            fprintf (stderr, "found output plugin %s\n", plug->plugin->name);
+            if (numvfs >= MAX_OUTPUT_PLUGINS) {
+                break;
+            }
+            g_output_plugins[numoutput++] = (DB_output_t *)plug->plugin;
+        }
     }
 //    fprintf (stderr, "numplugins: %d, numdecoders: %d, numvfs: %d\n", numplugins, numdecoders, numvfs);
     g_plugins[numplugins] = NULL;
     g_decoder_plugins[numdecoders] = NULL;
     g_vfs_plugins[numvfs] = NULL;
+    g_output_plugins[numoutput] = NULL;
+
+    // select output plugin
+    const char *outplugname = conf_get_str ("output_plugin", "alsa");
+    for (int i = 0; g_output_plugins[i]; i++) {
+        DB_output_t *p = g_output_plugins[i];
+        if (!strcmp (p->plugin.name, outplugname)) {
+            fprintf (stderr, "selected output plugin: %s\n", outplugname);
+            output_plugin = p;
+            break;
+        }
+    }
+    if (!output_plugin) {
+        output_plugin = g_output_plugins[0];
+    }
+    if (output_plugin) {
+        fprintf (stderr, "selected output plugin: %s\n", output_plugin->plugin.name);
+        conf_set_str ("output_plugin", output_plugin->plugin.name);
+    }
+    else {
+        fprintf (stderr, "failed to find output plugin!\n");
+        exit (-1);
+    }
 }
 
 void
@@ -649,4 +682,9 @@ plug_activate (DB_plugin_t *plug, int activate) {
             return -1;
         }
     }
+}
+
+DB_output_t *
+plug_get_output (void) {
+    return output_plugin;
 }

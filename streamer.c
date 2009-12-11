@@ -369,7 +369,7 @@ streamer_thread (void *ctx) {
             avg_bitrate = -1;
             // change samplerate
             if (prevtrack_samplerate != str_playing_song.decoder->info.samplerate) {
-                palsa_change_rate (str_playing_song.decoder->info.samplerate);
+                plug_get_output ()->change_rate (str_playing_song.decoder->info.samplerate);
                 prevtrack_samplerate = str_playing_song.decoder->info.samplerate;
             }
         }

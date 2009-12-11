@@ -106,4 +106,7 @@ plug_get_config_dir (void);
 int
 plug_activate (DB_plugin_t *plug, int activate);
 
+DB_output_t *
+plug_get_output (void);
+
 #endif // __PLUGINS_H

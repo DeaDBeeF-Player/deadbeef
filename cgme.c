@@ -32,7 +32,8 @@ static float duration; // of current song
 
 static int
 cgme_init (DB_playItem_t *it) {
-    if (gme_open_file (it->fname, &emu, deadbeef->playback_get_samplerate ())) {
+    int samplerate = deadbeef->get_output ()->samplerate ();
+    if (gme_open_file (it->fname, &emu, samplerate)) {
         return -1;
     }
     gme_mute_voices (emu, cgme_voicemask);
@@ -41,7 +42,7 @@ cgme_init (DB_playItem_t *it) {
     gme_track_info (emu, &inf, it->tracknum);
     plugin.info.bps = 16;
     plugin.info.channels = 2;
-    plugin.info.samplerate = deadbeef->playback_get_samplerate ();
+    plugin.info.samplerate = samplerate;
     duration = deadbeef->pl_get_item_duration (it);
     reallength = inf.length; 
     nzerosamples = 0;

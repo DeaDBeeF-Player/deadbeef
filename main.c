@@ -235,15 +235,13 @@ player_thread (uintptr_t ctx) {
             switch (msg) {
             case M_REINIT_SOUND:
                 {
-                    int play = 0;
-                    if (!palsa_ispaused () && !palsa_isstopped ()) {
-                        play = 1;
-                    }
-                
-                    palsa_free ();
-                    palsa_init ();
-                    if (play) {
-                        palsa_play ();
+                    int state = p_get_state ();
+
+                    p_free ();
+                    p_init ();
+
+                    if (state != OUTPUT_STATE_PAUSED && state != OUTPUT_STATE_STOPPED) {
+                        p_play ();
                     }
                 }
                 break;
@@ -274,7 +272,7 @@ player_thread (uintptr_t ctx) {
                 pl_prevsong ();
                 break;
             case M_PAUSESONG:
-                if (p_ispaused ()) {
+                if (p_get_state () == OUTPUT_STATE_PAUSED) {
                     p_unpause ();
                     plug_trigger_event_paused (0);
                 }
@@ -291,7 +289,7 @@ player_thread (uintptr_t ctx) {
                 plug_trigger_event_playlistchanged ();
                 break;
             case M_CONFIGCHANGED:
-                palsa_configchanged ();
+                //plug_get_output ()->configchanged ();
                 streamer_configchanged ();
                 plug_trigger_event (DB_EV_CONFIGCHANGED, 0);
                 break;

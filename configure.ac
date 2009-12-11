@@ -39,8 +39,11 @@ test "x$prefix" = xNONE && prefix=$ac_default_prefix
 CFLAGS="$CFLAGS -D_GNU_SOURCE -DLIBDIR=\\\"$libdir\\\" -DPREFIX=\\\"$prefix\\\""
 CPPFLAGS="$CFLAGS"
 
-PKG_CHECK_MODULES(DEPS, samplerate alsa)
+PKG_CHECK_MODULES(DEPS, samplerate)
 PKG_CHECK_MODULES(GTKUI_DEPS, gtk+-2.0 >= 2.12 gthread-2.0 glib-2.0, HAVE_GTK=1)
+PKG_CHECK_MODULES(ALSA_DEPS, alsa, HAVE_ALSA=1)
+AC_CHECK_LIB([pthread], [main])
+AC_CHECK_LIB([dl], [main])
 
 AX_CHECK_COMPILER_FLAGS(-msse2, SIMD_FLAGS="$SIMD_FLAGS -msse2";HAVE_SSE2=1, [])
 if test ${HAVE_SSE2}; then
@@ -153,6 +156,13 @@ if test ${HAVE_GTK}; then
     AC_SUBST(GTKUI_DIR)
 fi
 
+AM_CONDITIONAL(HAVE_ALSA, test $HAVE_ALSA)
+if test ${HAVE_ALSA}; then
+    ALSA_DIR="plugins/alsa"
+    AC_SUBST(ALSA_DEPS_CFLAGS)
+    AC_SUBST(ALSA_DEPS_LIBS)
+    AC_SUBST(ALSA_DIR)
+fi
 
 dnl print summary
 echo
@@ -170,6 +180,7 @@ AC_DEFUN([PRINT_PLUGIN_INFO],
 )
 
 PRINT_PLUGIN_INFO([stdio],[Standard IO plugin],[true])
+PRINT_PLUGIN_INFO([alsa],[alsa output],[test $HAVE_ALSA])
 PRINT_PLUGIN_INFO([sid],[SID player based on libsidplay2],[true])
 PRINT_PLUGIN_INFO([gme],[chiptune music player based on GME],[true])
 PRINT_PLUGIN_INFO([dumb],[module player based on DUMB library],[true])
@@ -194,6 +205,7 @@ gme/Game_Music_Emu-0.5.2/Makefile
 gme/Game_Music_Emu-0.5.2/gme/Makefile
 sid/sidplay-libs-2.1.0/Makefile
 dumb/Makefile
+plugins/alsa/Makefile
 plugins/hotkeys/Makefile
 plugins/lastfm/Makefile
 plugins/ffap/Makefile

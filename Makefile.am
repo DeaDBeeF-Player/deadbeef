@@ -9,6 +9,7 @@ SUBDIRS = gme/Game_Music_Emu-0.5.2\
 		  icons\
 		  plugins/hotkeys\
 		  plugins/ffap\
+		  ${ALSA_DIR}\
 		  ${LFM_DIR}\
           ${MPGMAD_DIR}\
           ${VORBIS_DIR}\
@@ -34,7 +35,7 @@ deadbeef_SOURCES =\
 	messagepump.c messagepump.h\
 	conf.c  conf.h\
 	cgme.c cdumb.c csid.cpp\
-	palsa.c palsa.h playback.h\
+	playback.h\
 	threading_pthread.c threading.h\
 	md5/md5.c md5/md5.h md5/md5_loc.h\
 	volume.c volume.h\

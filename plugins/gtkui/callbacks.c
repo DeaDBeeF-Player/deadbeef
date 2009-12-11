@@ -975,7 +975,7 @@ on_seekbar_button_press_event          (GtkWidget       *widget,
                                         GdkEventButton  *event,
                                         gpointer         user_data)
 {
-    if (deadbeef->playback_isstopped ()) {
+    if (deadbeef->get_output ()->state () == OUTPUT_STATE_STOPPED) {
         return FALSE;
     }
     seekbar_moving = 1;

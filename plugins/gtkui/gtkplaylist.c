@@ -387,7 +387,7 @@ gtkpl_draw_pl_row (gtkplaylist_t *ps, int row, DB_playItem_t *it) {
     gtkpl_column_t *c;
     for (c = ps->columns; c; c = c->next) {
         if (it == deadbeef->pl_getcurrent () && c->id == DB_COLUMN_PLAYING/* && !p_isstopped ()*/) {
-            int paused = deadbeef->playback_ispaused ();
+            int paused = deadbeef->get_output ()->state () == OUTPUT_STATE_PAUSED;
             int buffering = !deadbeef->streamer_ok_to_read (-1);
             uintptr_t pixbuf;
             if (paused) {

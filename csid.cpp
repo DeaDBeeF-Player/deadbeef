@@ -343,7 +343,7 @@ csid_init (DB_playItem_t *it) {
     resid->create (sidplay->info ().maxsids);
 //    resid->create (1);
     resid->filter (true);
-    resid->sampling (deadbeef->playback_get_samplerate ());
+    resid->sampling (deadbeef->get_output ()->samplerate ());
     duration = deadbeef->pl_get_item_duration (it);
     tune = new SidTune (it->fname);
 
@@ -351,7 +351,7 @@ csid_init (DB_playItem_t *it) {
     plugin.info.channels = tune->isStereo () ? 2 : 1;
     sid2_config_t conf;
     conf = sidplay->config ();
-    conf.frequency = deadbeef->playback_get_samplerate ();
+    conf.frequency = deadbeef->get_output ()->samplerate ();
     conf.precision = 16;
     conf.playback = plugin.info.channels == 2 ? sid2_stereo : sid2_mono;
     conf.sidEmulation = resid;
