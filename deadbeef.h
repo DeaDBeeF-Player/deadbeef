@@ -444,6 +444,8 @@ typedef struct {
     int (*init) (void (*callback)(char *stream, int len));
     // free is called if output plugin was changed to another, or unload is about to happen
     int (*free) (void);
+    // reconfigure output to another samplerate, if supported
+    int (*change_rate) (int rate);
     // play, stop, pause, unpause are called by deadbeef in response to user
     // events, or as part of streaming process
     // state must be 0 for stopped, 1 for playing and 2 for paused
