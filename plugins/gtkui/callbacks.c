@@ -1470,8 +1470,11 @@ on_pref_soundcard_changed              (GtkComboBox     *combobox,
 {
     int active = gtk_combo_box_get_active (combobox);
     if (active >= 0 && active < num_alsa_devices) {
-        deadbeef->conf_set_str ("alsa_soundcard", alsa_device_names[active]);
-        deadbeef->sendmessage (M_CONFIGCHANGED, 0, 0, 0);
+        const char *soundcard = deadbeef->conf_get_str ("alsa_soundcard", "default");
+        if (strcmp (soundcard, alsa_device_names[active])) {
+            deadbeef->conf_set_str ("alsa_soundcard", alsa_device_names[active]);
+            deadbeef->sendmessage (M_CONFIGCHANGED, 0, 0, 0);
+        }
     }
 }
 
@@ -1485,6 +1488,7 @@ on_pref_output_plugin_changed          (GtkComboBox     *combobox,
     DB_output_t **out_plugs = deadbeef->plug_get_output_list ();
     DB_output_t *prev = NULL;
     DB_output_t *new = NULL;
+
     for (int i = 0; out_plugs[i]; i++) {
         if (!strcmp (out_plugs[i]->plugin.name, outplugname)) {
             prev = out_plugs[i];
@@ -1493,12 +1497,15 @@ on_pref_output_plugin_changed          (GtkComboBox     *combobox,
             new = out_plugs[i];
         }
     }
+
     if (!new) {
         fprintf (stderr, "failed to find output plugin selected in preferences window\n");
     }
     else {
-        deadbeef->conf_set_str ("output_plugin", new->plugin.name);
-        deadbeef->sendmessage (M_REINIT_SOUND, 0, 0, 0);
+        if (prev != new) {
+            deadbeef->conf_set_str ("output_plugin", new->plugin.name);
+            deadbeef->sendmessage (M_REINIT_SOUND, 0, 0, 0);
+        }
     }
 }
 
