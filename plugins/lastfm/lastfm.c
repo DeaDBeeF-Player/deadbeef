@@ -514,6 +514,7 @@ lfm_send_nowplaying (void) {
     snprintf (s, sizeof (s), "s=%s&", lfm_sess);
     int l = strlen (lfm_nowplaying);
     strcpy (lfm_nowplaying+l, s);
+    trace ("content:\n%s\n", lfm_nowplaying);
 #if !LFM_NOSEND
     for (int attempts = 2; attempts > 0; attempts--) {
         int status = curl_req_send (lfm_nowplaying_url, lfm_nowplaying);
