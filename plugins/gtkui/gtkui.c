@@ -366,6 +366,25 @@ gtkui_thread (void *ctx) {
     w = loopingwidgets[deadbeef->conf_get_int ("playback.loop", 0)];
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, w)), TRUE);
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "scroll_follows_playback")), deadbeef->conf_get_int ("playlist.scroll.followplayback", 0) ? TRUE : FALSE);
+    // visibility of statusbar and headers
+    GtkWidget *header_mi = lookup_widget (mainwin, "view_headers");
+    GtkWidget *sb_mi = lookup_widget (mainwin, "view_status_bar");
+    GtkWidget *header = lookup_widget (mainwin, "header");
+    GtkWidget *sb = lookup_widget (mainwin, "statusbar");
+    if (deadbeef->conf_get_int ("gtkui.headers.visible", 1)) {
+        gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (header_mi), TRUE);
+    }
+    else {
+        gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (header_mi), FALSE);
+        gtk_widget_hide (header);
+    }
+    if (deadbeef->conf_get_int ("gtkui.statusbar.visible", 1)) {
+        gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (sb_mi), TRUE);
+    }
+    else {
+        gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (sb_mi), FALSE);
+        gtk_widget_hide (sb);
+    }
 
     searchwin = create_searchwin ();
     gtk_window_set_transient_for (GTK_WINDOW (searchwin), GTK_WINDOW (mainwin));

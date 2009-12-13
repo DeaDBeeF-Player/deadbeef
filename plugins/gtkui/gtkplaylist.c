@@ -938,6 +938,10 @@ gtkpl_keypress (gtkplaylist_t *ps, int keyval, int state) {
             newscroll = deadbeef->pl_get_cursor (ps->iterator) - widget->allocation.height / rowheight + 1;
         }
     }
+    else if (keyval == GDK_n) {
+        // button for that one is not in toolbar anymore, so handle it manually
+        deadbeef->sendmessage (M_PLAYRANDOM, 0, 0, 0);
+    }
 #if 0
     else if (keyval == GDK_r) {
         extern int replaygain;

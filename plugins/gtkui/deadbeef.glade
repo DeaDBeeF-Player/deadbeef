@@ -57,7 +57,7 @@
 		      <accelerator key="O" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image120">
+			<widget class="GtkImage" id="image227">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-open</property>
 			  <property name="icon_size">1</property>
@@ -84,7 +84,7 @@
 		      <signal name="activate" handler="on_add_files_activate" last_modification_time="Sat, 04 Jul 2009 13:04:01 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image121">
+			<widget class="GtkImage" id="image228">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-add</property>
 			  <property name="icon_size">1</property>
@@ -105,7 +105,7 @@
 		      <signal name="activate" handler="on_add_folders_activate" last_modification_time="Sun, 06 Sep 2009 17:51:40 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image122">
+			<widget class="GtkImage" id="image229">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-add</property>
 			  <property name="icon_size">1</property>
@@ -126,7 +126,7 @@
 		      <signal name="activate" handler="on_add_audio_cd_activate" last_modification_time="Sat, 10 Oct 2009 15:29:22 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image123">
+			<widget class="GtkImage" id="image230">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-add</property>
 			  <property name="icon_size">1</property>
@@ -163,7 +163,7 @@
 		      <accelerator key="Q" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image124">
+			<widget class="GtkImage" id="image231">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-quit</property>
 			  <property name="icon_size">1</property>
@@ -183,7 +183,7 @@
 	  <child>
 	    <widget class="GtkMenuItem" id="edit1">
 	      <property name="visible">True</property>
-	      <property name="label" translatable="yes">Edit</property>
+	      <property name="label" translatable="yes">_Edit</property>
 	      <property name="use_underline">True</property>
 
 	      <child>
@@ -197,7 +197,7 @@
 		      <signal name="activate" handler="on_clear1_activate" last_modification_time="Sun, 06 Sep 2009 18:30:03 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image125">
+			<widget class="GtkImage" id="image232">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-clear</property>
 			  <property name="icon_size">1</property>
@@ -238,7 +238,7 @@
 			      <accelerator key="Delete" modifiers="0" signal="activate"/>
 
 			      <child internal-child="image">
-				<widget class="GtkImage" id="image126">
+				<widget class="GtkImage" id="image233">
 				  <property name="visible">True</property>
 				  <property name="stock">gtk-remove</property>
 				  <property name="icon_size">1</property>
@@ -294,9 +294,42 @@
 	  </child>
 
 	  <child>
+	    <widget class="GtkMenuItem" id="view1">
+	      <property name="visible">True</property>
+	      <property name="label" translatable="yes">_View</property>
+	      <property name="use_underline">True</property>
+
+	      <child>
+		<widget class="GtkMenu" id="view1_menu">
+
+		  <child>
+		    <widget class="GtkCheckMenuItem" id="view_status_bar">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">Status bar</property>
+		      <property name="use_underline">True</property>
+		      <property name="active">False</property>
+		      <signal name="activate" handler="on_toggle_status_bar_activate" last_modification_time="Sun, 13 Dec 2009 17:23:50 GMT"/>
+		    </widget>
+		  </child>
+
+		  <child>
+		    <widget class="GtkCheckMenuItem" id="view_headers">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">Column headers</property>
+		      <property name="use_underline">True</property>
+		      <property name="active">False</property>
+		      <signal name="activate" handler="on_toggle_column_headers_activate" last_modification_time="Sun, 13 Dec 2009 17:24:47 GMT"/>
+		    </widget>
+		  </child>
+		</widget>
+	      </child>
+	    </widget>
+	  </child>
+
+	  <child>
 	    <widget class="GtkMenuItem" id="playlist1">
 	      <property name="visible">True</property>
-	      <property name="label" translatable="yes">Playlist</property>
+	      <property name="label" translatable="yes">_Playlist</property>
 	      <property name="use_underline">True</property>
 
 	      <child>
@@ -459,7 +492,7 @@
 		      <signal name="activate" handler="on_help1_activate" last_modification_time="Tue, 08 Sep 2009 17:32:06 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image127">
+			<widget class="GtkImage" id="image234">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-help</property>
 			  <property name="icon_size">1</property>

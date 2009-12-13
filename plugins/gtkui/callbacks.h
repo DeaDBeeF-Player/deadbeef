@@ -705,3 +705,15 @@ on_mainwin_window_state_event          (GtkWidget       *widget,
 void
 on_pref_output_plugin_changed          (GtkComboBox     *combobox,
                                         gpointer         user_data);
+
+void
+on_toggle_status_bar_activate          (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_toggle_menu_activate                (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_toggle_column_headers_activate      (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);

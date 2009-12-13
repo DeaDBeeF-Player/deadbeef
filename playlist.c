@@ -638,7 +638,7 @@ pl_insert_file (playItem_t *after, const char *fname, int *pabort, int (*cb)(pla
             }
         }
     }
-    fprintf (stderr, "no decoder found for %s\n", fname);
+    trace ("no decoder found for %s\n", fname);
     return NULL;
 }
 

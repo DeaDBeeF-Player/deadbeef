@@ -2069,3 +2069,38 @@ on_mainwin_window_state_event          (GtkWidget       *widget,
     return FALSE;
 }
 
+
+void
+on_toggle_status_bar_activate          (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    GtkWidget *sb = lookup_widget (mainwin, "statusbar");
+    if (sb) {
+        if (!gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (menuitem))) {
+            deadbeef->conf_set_int ("gtkui.statusbar.visible", 0);
+            gtk_widget_hide (sb);
+        }
+        else {
+            deadbeef->conf_set_int ("gtkui.statusbar.visible", 1);
+            gtk_widget_show (sb);
+        }
+    }
+}
+
+void
+on_toggle_column_headers_activate      (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    GtkWidget *header = lookup_widget (mainwin, "header");
+    if (header) {
+        if (!gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (menuitem))) {
+            deadbeef->conf_set_int ("gtkui.headers.visible", 0);
+            gtk_widget_hide (header);
+        }
+        else {
+            deadbeef->conf_set_int ("gtkui.headers.visible", 1);
+            gtk_widget_show (header);
+        }
+    }
+}
+
