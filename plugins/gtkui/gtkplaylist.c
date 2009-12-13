@@ -1347,7 +1347,7 @@ on_header_realize                      (GtkWidget       *widget,
     cursor_drag = gdk_cursor_new (GDK_FLEUR);
 }
 
-static float last_header_motion_ev = -1;
+static float last_header_motion_ev = -1; //is it subject to remove?
 static int prev_header_x = -1;
 static int header_prepare = 0;
 
@@ -1357,8 +1357,21 @@ on_header_motion_notify_event          (GtkWidget       *widget,
                                         gpointer         user_data)
 {
     GTKPL_PROLOGUE;
-    if ((event->state & GDK_BUTTON1_MASK) && header_prepare) {
-        if (gtk_drag_check_threshold (widget, event->x, prev_header_x, 0, 0)) {
+    int ev_x, ev_y;
+    GdkModifierType ev_state;
+
+    if (event->is_hint)
+        gdk_window_get_pointer (event->window, &ev_x, &ev_y, &ev_state);
+    else
+    {
+        ev_x = event->x;
+        ev_y = event->y;
+        ev_state = event->state;
+    }
+
+
+    if ((ev_state & GDK_BUTTON1_MASK) && header_prepare) {
+        if (gtk_drag_check_threshold (widget, ev_x, prev_header_x, 0, 0)) {
             header_prepare = 0;
         }
     }
@@ -1367,7 +1380,7 @@ on_header_motion_notify_event          (GtkWidget       *widget,
         gtkpl_column_t *c;
         int i;
         for (i = 0, c = ps->columns; i < header_dragging && c; c = c->next, i++);
-        c->movepos = event->x - header_dragpt[0];
+        c->movepos = ev_x - header_dragpt[0];
 
         // find closest column to the left
         int inspos = -1;
@@ -1433,7 +1446,7 @@ on_header_motion_notify_event          (GtkWidget       *widget,
     }
     else if (header_sizing >= 0) {
         last_header_motion_ev = event->time;
-        prev_header_x = event->x;
+        prev_header_x = ev_x;
         gdk_window_set_cursor (widget->window, cursor_sz);
         // get column start pos
         int x = -ps->hscrollpos;
@@ -1443,7 +1456,7 @@ on_header_motion_notify_event          (GtkWidget       *widget,
             x += c->width;
         }
 
-        int newx = event->x > x + MIN_COLUMN_WIDTH ? event->x : x + MIN_COLUMN_WIDTH;
+        int newx = ev_x > x + MIN_COLUMN_WIDTH ? ev_x : x + MIN_COLUMN_WIDTH;
         c->width = newx - x;
         gtkpl_setup_hscrollbar (ps);
         gtkpl_header_draw (ps);
@@ -1458,7 +1471,7 @@ on_header_motion_notify_event          (GtkWidget       *widget,
         for (c = ps->columns; c; c = c->next) {
             int w = c->width;
             if (w > 0) { // ignore collapsed columns (hack for search window)
-                if (event->x >= x + w - 2 && event->x <= x + w) {
+                if (ev_x >= x + w - 2 && ev_x <= x + w) {
                     gdk_window_set_cursor (widget->window, cursor_sz);
                     break;
                 }

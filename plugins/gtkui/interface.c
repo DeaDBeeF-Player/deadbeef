@@ -476,7 +476,7 @@ create_mainwin (void)
   gtk_widget_show (header);
   gtk_box_pack_start (GTK_BOX (vbox3), header, FALSE, TRUE, 0);
   gtk_widget_set_size_request (header, -1, 24);
-  gtk_widget_set_events (header, GDK_POINTER_MOTION_MASK | GDK_BUTTON_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK);
+  gtk_widget_set_events (header, GDK_POINTER_MOTION_MASK | GDK_BUTTON_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK);
 
   playlist = gtk_drawing_area_new ();
   gtk_widget_show (playlist);
