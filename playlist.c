@@ -207,12 +207,7 @@ pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, c
     it->decoder = decoder;
     it->fname = strdup (fname);
     it->tracknum = atoi (track);
-    float t = 0;
-    if (index01[0]) {
-        t = f_index01;
-    }
-    it->startsample = t * samplerate;
-
+    it->startsample = index01[0] ? f_index01 * samplerate : 0;
     it->endsample = -1; // will be filled by next read, or by decoder
     it->filetype = ftype;
     after = pl_insert_item (after, it);
