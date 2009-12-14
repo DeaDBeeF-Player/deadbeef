@@ -2111,7 +2111,7 @@ SOCKS5_HOSTNAME</property>
 		  <property name="visible">True</property>
 		  <property name="can_focus">True</property>
 		  <property name="headers_visible">True</property>
-		  <property name="rules_hint">False</property>
+		  <property name="rules_hint">True</property>
 		  <property name="reorderable">False</property>
 		  <property name="enable_search">True</property>
 		  <property name="fixed_height_mode">False</property>

@@ -327,6 +327,13 @@ gtkpl_redraw_pl_row (gtkplaylist_t *ps, int row, DB_playItem_t *it) {
 void
 gtkpl_draw_pl_row_back (gtkplaylist_t *ps, int row, DB_playItem_t *it) {
 	// draw background
+	GtkWidget *treeview = lookup_widget (mainwin, "playlist_tree");
+	GtkWidget *widget = ps->playlist;
+    gtk_paint_flat_box (treeview->style, ps->backbuf, (it && SELECTED(it)) ? GTK_STATE_SELECTED : GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, treeview, (row & 1) ? "cell_even_ruled" : "cell_odd_ruled", 0, row * rowheight - ps->scrollpos * rowheight, widget->allocation.width, rowheight);
+	if (row == deadbeef->pl_get_cursor (ps->iterator)) {
+        gtk_paint_focus (treeview->style, ps->backbuf, (it && SELECTED(it)) ? GTK_STATE_SELECTED : GTK_STATE_NORMAL, NULL, treeview, "treeview", 0, row * rowheight - ps->scrollpos * rowheight, widget->allocation.width, rowheight);
+    }
+#if 0
 	float w;
 	int start, end;
 	int startx, endx;
@@ -355,6 +362,7 @@ gtkpl_draw_pl_row_back (gtkplaylist_t *ps, int row, DB_playItem_t *it) {
         theme_set_fg_color (COLO_PLAYLIST_CURSOR);
         draw_rect (0, row * rowheight - ps->scrollpos * rowheight, width, rowheight-1, 0);
     }
+#endif
 }
 
 void
@@ -407,10 +415,10 @@ gtkpl_draw_pl_row (gtkplaylist_t *ps, int row, DB_playItem_t *it) {
 
             if (text) {
                 if (c->align_right) {
-                    draw_text_with_colors (x+5, row * rowheight - ps->scrollpos * rowheight + rowheight/2 - draw_get_font_size ()/2 - 2, c->width-10, 1, text);
+                    draw_text (x+5, row * rowheight - ps->scrollpos * rowheight + rowheight/2 - draw_get_font_size ()/2 - 2, c->width-10, 1, text);
                 }
                 else {
-                    draw_text_with_colors (x + 5, row * rowheight - ps->scrollpos * rowheight + rowheight/2 - draw_get_font_size ()/2 - 2, c->width-10, 0, text);
+                    draw_text (x + 5, row * rowheight - ps->scrollpos * rowheight + rowheight/2 - draw_get_font_size ()/2 - 2, c->width-10, 0, text);
                 }
             }
         }
