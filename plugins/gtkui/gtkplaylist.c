@@ -1965,6 +1965,31 @@ gtk_pl_redraw_item_everywhere (DB_playItem_t *it) {
     }
 }
 
+struct set_cursor_t {
+    int iter;
+    int cursor;
+    int prev;
+    int minvis;
+    int maxvis;
+    gtkplaylist_t *pl;
+};
+
+static gboolean
+gtkpl_set_cursor_cb (gpointer data) {
+    struct set_cursor_t *sc = (struct set_cursor_t *)data;
+    DB_playItem_t *it;
+    if (sc->prev >= sc->minvis && sc->prev <= sc->maxvis) {
+        it = deadbeef->pl_get_for_idx_and_iter (sc->prev, PL_MAIN);
+        gtkpl_redraw_pl_row (sc->pl, sc->prev, it);
+    }
+    if (0 >= sc->minvis && 0 <= sc->maxvis) {
+        it = deadbeef->pl_get_for_idx_and_iter (0, PL_MAIN);
+        gtkpl_redraw_pl_row (sc->pl, 0, it);
+    }
+    free (data);
+    return FALSE;
+}
+
 void
 gtkpl_set_cursor (int iter, int cursor) {
     gtkplaylist_t *pl = &main_playlist;
@@ -1972,13 +1997,12 @@ gtkpl_set_cursor (int iter, int cursor) {
     int maxvis = pl->scrollpos + pl->nvisiblerows-1;
     int prev = deadbeef->pl_get_cursor (PL_MAIN);
     deadbeef->pl_set_cursor (PL_MAIN, 0);
-    DB_playItem_t *it;
-    if (prev >= minvis && prev <= maxvis) {
-        it = deadbeef->pl_get_for_idx_and_iter (prev, PL_MAIN);
-        gtkpl_redraw_pl_row (pl, prev, it);
-    }
-    if (0 >= minvis && 0 <= maxvis) {
-        it = deadbeef->pl_get_for_idx_and_iter (0, PL_MAIN);
-        gtkpl_redraw_pl_row (pl, 0, it);
-    }
+    struct set_cursor_t *data = malloc (sizeof (struct set_cursor_t));
+    data->prev = prev;
+    data->iter = iter;
+    data->cursor = cursor;
+    data->minvis = minvis;
+    data->maxvis = maxvis;
+    data->pl = pl;
+    g_idle_add (gtkpl_set_cursor_cb, data);
 }
