@@ -548,6 +548,7 @@ palsa_configchanged (DB_event_t *ev, uintptr_t data) {
             || strcmp (alsa_soundcard, conf_alsa_soundcard)) {
         deadbeef->sendmessage (M_REINIT_SOUND, 0, 0, 0);
     }
+    return 0;
 }
 
 // derived from alsa-utils/aplay.c
