@@ -179,7 +179,8 @@ AC_DEFUN([PRINT_PLUGIN_INFO],
 )
 
 PRINT_PLUGIN_INFO([stdio],[Standard IO plugin],[true])
-PRINT_PLUGIN_INFO([alsa],[alsa output],[test $HAVE_ALSA])
+PRINT_PLUGIN_INFO([nullout],[NULL output],[true])
+PRINT_PLUGIN_INFO([alsa],[ALSA output],[test $HAVE_ALSA])
 PRINT_PLUGIN_INFO([sid],[SID player based on libsidplay2],[true])
 PRINT_PLUGIN_INFO([gme],[chiptune music player based on GME],[true])
 PRINT_PLUGIN_INFO([dumb],[module player based on DUMB library],[true])
@@ -216,6 +217,7 @@ plugins/sndfile/Makefile
 plugins/vfs_curl/Makefile
 plugins/cdda/Makefile
 plugins/gtkui/Makefile
+plugins/nullout/Makefile
 deadbeef.desktop
 ])
 

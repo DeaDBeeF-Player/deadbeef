@@ -9,6 +9,7 @@ SUBDIRS = gme/Game_Music_Emu-0.5.2\
 		  icons\
 		  plugins/hotkeys\
 		  plugins/ffap\
+		  plugins/nullout\
 		  ${ALSA_DIR}\
 		  ${LFM_DIR}\
           ${MPGMAD_DIR}\
