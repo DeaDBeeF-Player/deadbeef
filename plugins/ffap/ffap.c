@@ -41,6 +41,9 @@
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
+#define likely(x)       __builtin_expect((x),1)
+#define unlikely(x)     __builtin_expect((x),0)
+
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
 
@@ -914,7 +917,14 @@ static inline int ape_decode_value(APEContext * ctx, APERice *rice)
             overflow |= range_decode_bits(ctx, 16);
         }
 
-        base = range_decode_culfreq(ctx, pivot);
+//        base = range_decode_culfreq(ctx, pivot);
+        range_dec_normalize(ctx);
+        ctx->rc.help = ctx->rc.range / pivot;
+        if (unlikely (ctx->rc.help == 0)) {
+            ctx->error = 1;
+            return 0;
+        }
+        base = ctx->rc.low / ctx->rc.help;
         range_decode_update(ctx, 1, base);
 
         x = base + overflow * pivot;

@@ -19,6 +19,7 @@
 #include <unistd.h>
 #include <sys/prctl.h>
 #include <stdio.h>
+#include <string.h>
 #include "deadbeef.h"
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
@@ -97,10 +98,8 @@ pnull_change_rate (int rate) {
 
 int
 pnull_free (void) {
-    trace ("pnull_free\n");
     if (!null_terminate) {
         null_terminate = 1;
-        deadbeef->thread_join (null_tid);
         null_tid = 0;
         state = OUTPUT_STATE_STOPPED;
         null_terminate = 0;
@@ -110,6 +109,9 @@ pnull_free (void) {
 
 int
 pnull_play (void) {
+    if (!null_tid) {
+        pnull_init ();
+    }
     state = OUTPUT_STATE_PLAYING;
     return 0;
 }
@@ -188,10 +190,8 @@ pnull_thread (void *context) {
             continue;
         }
         
-
         char buf[4096];
         pnull_callback (buf, 1024);
-        usleep (1000); // this must be here to prevent mutex deadlock
     }
 }
 

@@ -447,6 +447,7 @@ streamer_thread (void *ctx) {
         alloc_time -= ms;
         if (alloc_time > 0) {
             usleep (alloc_time * 1000);
+//            usleep (1000);
         }
 //        trace ("fill: %d/%d\n", streambuffer_fill, STREAM_BUFFER_SIZE);
     }
