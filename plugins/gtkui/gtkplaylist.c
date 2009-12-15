@@ -68,6 +68,8 @@ extern GtkWidget *mainwin;
 extern GtkStatusIcon *trayicon;
 extern gtkplaylist_t main_playlist;
 
+static GtkWidget *theme_treeview;
+
 // orange on dark color scheme
 float colo_dark_orange[COLO_COUNT][3] = {
     { 0x7f/255.f, 0x7f/255.f, 0x7f/255.f }, // cursor
@@ -208,6 +210,11 @@ gtkpl_init (void) {
     buffering16_pixbuf = draw_load_pixbuf ("buffering_16.png");
     rowheight = draw_get_font_size () + 12;
     memcpy (colo_current, colo_white_blue, sizeof (colo_current));
+    theme_treeview = gtk_tree_view_new ();
+    gtk_widget_show (theme_treeview);
+    GtkWidget *vbox1 = lookup_widget (mainwin, "vbox1");
+    gtk_box_pack_start (GTK_BOX (vbox1), theme_treeview, FALSE, FALSE, 0);
+    gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (theme_treeview), TRUE);
 }
 
 void
@@ -327,42 +334,15 @@ gtkpl_redraw_pl_row (gtkplaylist_t *ps, int row, DB_playItem_t *it) {
 void
 gtkpl_draw_pl_row_back (gtkplaylist_t *ps, int row, DB_playItem_t *it) {
 	// draw background
-	GtkWidget *treeview = lookup_widget (mainwin, "playlist_tree");
+	GtkWidget *treeview = theme_treeview;
+	if (treeview->style->depth == -1) {
+        return; // drawing was called too early
+    }
 	GtkWidget *widget = ps->playlist;
     gtk_paint_flat_box (treeview->style, ps->backbuf, (it && SELECTED(it)) ? GTK_STATE_SELECTED : GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, treeview, (row & 1) ? "cell_even_ruled" : "cell_odd_ruled", 0, row * rowheight - ps->scrollpos * rowheight, widget->allocation.width, rowheight);
 	if (row == deadbeef->pl_get_cursor (ps->iterator)) {
         gtk_paint_focus (treeview->style, ps->backbuf, (it && SELECTED(it)) ? GTK_STATE_SELECTED : GTK_STATE_NORMAL, NULL, treeview, "treeview", 0, row * rowheight - ps->scrollpos * rowheight, widget->allocation.width, rowheight);
     }
-#if 0
-	float w;
-	int start, end;
-	int startx, endx;
-	int width, height;
-	draw_get_canvas_size ((uintptr_t)ps->backbuf, &width, &height);
-	w = width;
-	if (it && SELECTED (it)) {
-        if (row % 2) {
-            theme_set_fg_color (COLO_PLAYLIST_SEL_EVEN);
-        }
-        else {
-            theme_set_fg_color (COLO_PLAYLIST_SEL_ODD);
-        }
-        draw_rect (0, row * rowheight - ps->scrollpos * rowheight, width, rowheight, 1);
-    }
-    else {
-        if (row % 2) {
-            theme_set_fg_color (COLO_PLAYLIST_EVEN);
-        }
-        else {
-            theme_set_fg_color (COLO_PLAYLIST_ODD);
-        }
-        draw_rect (0, row * rowheight - ps->scrollpos * rowheight, width, rowheight, 1);
-    }
-	if (row == deadbeef->pl_get_cursor (ps->iterator)) {
-        theme_set_fg_color (COLO_PLAYLIST_CURSOR);
-        draw_rect (0, row * rowheight - ps->scrollpos * rowheight, width, rowheight-1, 0);
-    }
-#endif
 }
 
 void
@@ -374,22 +354,14 @@ gtkpl_draw_pl_row (gtkplaylist_t *ps, int row, DB_playItem_t *it) {
 	int width, height;
 	draw_get_canvas_size ((uintptr_t)ps->backbuf, &width, &height);
 	if (it && SELECTED (it)) {
-        if (row % 2) {
-            theme_set_bg_color (COLO_PLAYLIST_SEL_EVEN);
-        }
-        else {
-            theme_set_bg_color (COLO_PLAYLIST_SEL_ODD);
-        }
-        theme_set_fg_color (COLO_PLAYLIST_SEL_TEXT);
+        GdkColor *clr = &theme_treeview->style->fg[GTK_STATE_SELECTED];
+        float rgb[3] = { clr->red/65535.f, clr->green/65535.f, clr->blue/65535.f };
+        draw_set_fg_color (rgb);
     }
     else {
-        if (row % 2) {
-            theme_set_bg_color (COLO_PLAYLIST_EVEN);
-        }
-        else {
-            theme_set_bg_color (COLO_PLAYLIST_ODD);
-        }
-        theme_set_fg_color (COLO_PLAYLIST_TEXT);
+        GdkColor *clr = &theme_treeview->style->fg[GTK_STATE_NORMAL];
+        float rgb[3] = { clr->red/65535.f, clr->green/65535.f, clr->blue/65535.f };
+        draw_set_fg_color (rgb);
     }
     int x = -ps->hscrollpos;
     gtkpl_column_t *c;

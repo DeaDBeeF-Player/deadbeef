@@ -336,9 +336,9 @@ gtkui_thread (void *ctx) {
 #endif
     g_signal_connect ((gpointer)trayicon, "popup_menu", G_CALLBACK (on_trayicon_popup_menu), NULL);
 
+    mainwin = create_mainwin ();
     gtkpl_init ();
 
-    mainwin = create_mainwin ();
     GdkPixbuf *mainwin_icon_pixbuf;
     mainwin_icon_pixbuf = create_pixbuf ("play_24.png");
     if (mainwin_icon_pixbuf)

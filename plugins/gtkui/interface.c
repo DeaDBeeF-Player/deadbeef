@@ -499,11 +499,6 @@ create_mainwin (void)
   gtk_widget_show (statusbar);
   gtk_box_pack_start (GTK_BOX (vbox1), statusbar, FALSE, FALSE, 0);
 
-  GtkWidget *treeview = gtk_tree_view_new ();
-  gtk_widget_show (treeview);
-  gtk_box_pack_start (GTK_BOX (vbox1), treeview, FALSE, FALSE, 0);
-  gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (treeview), TRUE);
-
   g_signal_connect ((gpointer) mainwin, "key_press_event",
                     G_CALLBACK (on_mainwin_key_press_event),
                     NULL);
@@ -792,7 +787,6 @@ create_mainwin (void)
   GLADE_HOOKUP_OBJECT (mainwin, vbox3, "vbox3");
   GLADE_HOOKUP_OBJECT (mainwin, header, "header");
   GLADE_HOOKUP_OBJECT (mainwin, playlist, "playlist");
-  GLADE_HOOKUP_OBJECT (mainwin, treeview, "playlist_tree");
   GLADE_HOOKUP_OBJECT (mainwin, playscroll, "playscroll");
   GLADE_HOOKUP_OBJECT (mainwin, playhscroll, "playhscroll");
   GLADE_HOOKUP_OBJECT (mainwin, statusbar, "statusbar");
