@@ -599,12 +599,10 @@ pl_insert_file (playItem_t *after, const char *fname, int *pabort, int (*cb)(pla
             const char **exts = decoders[i]->exts;
             for (int e = 0; exts[e]; e++) {
                 if (!strcasecmp (exts[e], eol)) {
-                    playItem_t *inserted = NULL;
-                    if ((inserted = (playItem_t *)decoders[i]->insert (DB_PLAYITEM (after), fname)) != NULL) {
-                        if (cb) {
-                            if (cb (inserted, user_data) < 0) {
-                                *pabort = 1;
-                            }
+                    playItem_t *inserted = (playItem_t *)decoders[i]->insert (DB_PLAYITEM (after), fname);
+                    if (inserted != NULL) {
+                        if (cb && cb (inserted, user_data) < 0) {
+                            *pabort = 1;
                         }
                         return inserted;
                     }
