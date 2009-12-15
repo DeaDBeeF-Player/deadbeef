@@ -69,6 +69,7 @@ typedef struct {
     GtkWidget *header;
     GtkWidget *scrollbar;
     GtkWidget *hscrollbar;
+    int totalwidth; // width of playlist, including invisible part
     GdkPixmap *backbuf;
     GdkPixmap *backbuf_header;
     const char *title; // unique id, used for config writing, etc

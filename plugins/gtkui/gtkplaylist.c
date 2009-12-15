@@ -286,6 +286,10 @@ gtkpl_setup_hscrollbar (gtkplaylist_t *ps) {
     for (c = ps->columns; c; c = c->next) {
         size += c->width;
     }
+    ps->totalwidth = size;
+    if (ps->totalwidth < ps->playlist->allocation.width) {
+        ps->totalwidth = ps->playlist->allocation.width;
+    }
     if (w >= size) {
         size = 0;
     }
@@ -338,10 +342,12 @@ gtkpl_draw_pl_row_back (gtkplaylist_t *ps, int row, DB_playItem_t *it) {
 	if (treeview->style->depth == -1) {
         return; // drawing was called too early
     }
+    int x = -ps->hscrollpos;
+    int w = ps->totalwidth;
 	GtkWidget *widget = ps->playlist;
-    gtk_paint_flat_box (treeview->style, ps->backbuf, (it && SELECTED(it)) ? GTK_STATE_SELECTED : GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, treeview, (row & 1) ? "cell_even_ruled" : "cell_odd_ruled", 0, row * rowheight - ps->scrollpos * rowheight, widget->allocation.width, rowheight);
+    gtk_paint_flat_box (treeview->style, ps->backbuf, (it && SELECTED(it)) ? GTK_STATE_SELECTED : GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, treeview, (row & 1) ? "cell_even_ruled" : "cell_odd_ruled", x, row * rowheight - ps->scrollpos * rowheight, w, rowheight);
 	if (row == deadbeef->pl_get_cursor (ps->iterator)) {
-        gtk_paint_focus (treeview->style, ps->backbuf, (it && SELECTED(it)) ? GTK_STATE_SELECTED : GTK_STATE_NORMAL, NULL, treeview, "treeview", 0, row * rowheight - ps->scrollpos * rowheight, widget->allocation.width, rowheight);
+        gtk_paint_focus (treeview->style, ps->backbuf, (it && SELECTED(it)) ? GTK_STATE_SELECTED : GTK_STATE_NORMAL, NULL, treeview, "treeview", x, row * rowheight - ps->scrollpos * rowheight, w, rowheight);
     }
 }
 
