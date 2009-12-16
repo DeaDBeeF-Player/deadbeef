@@ -642,10 +642,8 @@ pl_insert_dir (playItem_t *after, const char *dirname, int *pabort, int (*cb)(pl
             // no hidden files
             if (namelist[i]->d_name[0] != '.')
             {
-                char fullname[1024];
-                strcpy (fullname, dirname);
-                strncat (fullname, "/", 1024);
-                strncat (fullname, namelist[i]->d_name, 1024);
+                char fullname[PATH_MAX];
+                snprintf (fullname, sizeof (fullname), "%s/%s", dirname, namelist[i]->d_name);
                 playItem_t *inserted = pl_insert_dir (after, fullname, pabort, cb, user_data);
                 if (!inserted) {
                     inserted = pl_insert_file (after, fullname, pabort, cb, user_data);
