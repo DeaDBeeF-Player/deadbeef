@@ -5,7 +5,7 @@ pkglib_LTLIBRARIES = vorbis.la
 vorbis_la_SOURCES = vorbis.c
 vorbis_la_LDFLAGS = -module
 
-vorbis_la_LIBADD = $(LDADD) $(VORBIS_LIBS)
+vorbis_la_LIBADD = $(LDADD) $(VORBIS_LIBS) -lc
 AM_CFLAGS = $(CFLAGS) -std=c99
 endif
 endif
