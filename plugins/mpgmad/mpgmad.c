@@ -657,11 +657,12 @@ static int
 cmp3_decode_cut (int framesize) {
     if (buffer.duration >= 0) {
         if (buffer.currentsample + buffer.readsize / (framesize * buffer.channels) > buffer.endsample) {
-            buffer.readsize = (buffer.endsample - buffer.currentsample + 1) * framesize * buffer.channels;
+            int sz = (buffer.endsample - buffer.currentsample + 1) * framesize * buffer.channels;
             trace ("size truncated to %d bytes, cursample=%d, endsample=%d, totalsamples=%d\n", buffer.readsize, buffer.currentsample, buffer.endsample, buffer.totalsamples);
-            if (buffer.readsize <= 0) {
+            if (sz <= 0) {
                 return 1;
             }
+            buffer.readsize = sz;
         }
     }
     return 0;
@@ -818,6 +819,7 @@ cmp3_decode_int16 (void) {
 static int
 cmp3_decode_float32 (void) {
     if (cmp3_decode_cut (8)) {
+        trace ("read request ignored (end of track passed)\n");
         return 0;
     }
     int eof = 0;
@@ -850,6 +852,8 @@ cmp3_read_int16 (char *bytes, int size) {
     buffer.readsize = size;
     buffer.out = bytes;
     cmp3_decode_int16 ();
+    buffer.currentsample += (size - buffer.readsize) / 4;
+    plugin.info.readpos = (float)(buffer.currentsample - buffer.startsample) / buffer.samplerate;
     return size - buffer.readsize;
 }
 
@@ -858,6 +862,8 @@ cmp3_read_float32 (char *bytes, int size) {
     buffer.readsize = size;
     buffer.out = bytes;
     cmp3_decode_float32 ();
+    buffer.currentsample += (size - buffer.readsize) / 8;
+    plugin.info.readpos = (float)(buffer.currentsample - buffer.startsample) / buffer.samplerate;
     return size - buffer.readsize;
 }
 
