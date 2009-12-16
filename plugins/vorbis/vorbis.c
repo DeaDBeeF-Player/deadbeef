@@ -19,6 +19,7 @@
 #include <vorbis/vorbisfile.h>
 #include <string.h>
 #include <stdlib.h>
+#include <assert.h>
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
 #endif
@@ -48,7 +49,9 @@ cvorbis_free (void);
 
 static size_t
 cvorbis_fread (void *ptr, size_t size, size_t nmemb, void *datasource) {
-    return deadbeef->fread (ptr, size, nmemb, datasource);
+    size_t ret = deadbeef->fread (ptr, size, nmemb, datasource);
+    trace ("cvorbis_fread %d %d %d\n", size, nmemb, ret);
+    return ret;
 }
 
 static int
@@ -153,7 +156,7 @@ cvorbis_init (DB_playItem_t *it) {
             plugin.free ();
             return -1;
         }
-        deadbeef->pl_set_item_duration (it, ov_time_total (&vorbis_file, -1));
+//        deadbeef->pl_set_item_duration (it, ov_time_total (&vorbis_file, -1));
     }
     vi = ov_info (&vorbis_file, -1);
     if (!vi) { // not a vorbis stream
@@ -210,7 +213,7 @@ cvorbis_read (char *bytes, int size) {
     if (!file->vfs->streaming) {
         if (currentsample + size / (2 * plugin.info.channels) > endsample) {
             size = (endsample - currentsample + 1) * 2 * plugin.info.channels;
-//            trace ("size truncated to %d bytes, cursample=%d, endsample=%d, totalsamples=%d\n", size, currentsample, endsample, ov_pcm_total (&vorbis_file, -1));
+            trace ("size truncated to %d bytes, cursample=%d, endsample=%d, totalsamples=%d\n", size, currentsample, endsample, ov_pcm_total (&vorbis_file, -1));
             if (size <= 0) {
                 return 0;
             }
@@ -232,6 +235,7 @@ cvorbis_read (char *bytes, int size) {
     }
 //    trace ("cvorbis_read %d bytes[2]\n", size);
     int initsize = size;
+    long ret;
     for (;;)
     {
         // read ogg
@@ -239,7 +243,7 @@ cvorbis_read (char *bytes, int size) {
 #if WORDS_BIGENDIAN
         endianess = 1;
 #endif
-        long ret=ov_read (&vorbis_file, bytes, size, endianess, 2, 1, &cur_bit_stream);
+        ret=ov_read (&vorbis_file, bytes, size, endianess, 2, 1, &cur_bit_stream);
         if (ret <= 0)
         {
             if (ret < 0) {
@@ -275,23 +279,32 @@ cvorbis_read (char *bytes, int size) {
         }
     }
     plugin.info.readpos = (float)(ov_pcm_tell(&vorbis_file)-startsample)/vi->rate;
-//    trace ("cvorbis_read got %d bytes\n", initsize-size);
+    trace ("cvorbis_read got %d bytes, readpos %f, currentsample %d, ret %d\n", initsize-size, plugin.info.readpos, currentsample, ret);
     return initsize - size;
 }
 
 static int
 cvorbis_seek_sample (int sample) {
-    if (!file) {
+    if (sample < 0) {
+        trace ("vorbis: negative seek sample - ignored, but it is a bug!\n");
         return -1;
     }
+    if (!file) {
+        trace ("vorbis: file is NULL on seek\n");
+        return -1;
+    }
+    trace ("vorbis: seek to sample %d\n");
     sample += startsample;
     int res = ov_pcm_seek (&vorbis_file, sample);
-    if (res != 0 && res != OV_ENOSEEK)
+    if (res != 0 && res != OV_ENOSEEK) {
+        trace ("vorbis: error %x seeking to sample %d\n", sample);
         return -1;
+    }
     int tell = ov_pcm_tell (&vorbis_file);
     if (tell != sample) {
         trace ("oggvorbis: failed to do sample-accurate seek (%d->%d)\n", sample, tell);
     }
+    trace ("vorbis: seek successful\n")
     currentsample = sample;
     plugin.info.readpos = (float)(ov_pcm_tell(&vorbis_file) - startsample)/vi->rate;
     return 0;
