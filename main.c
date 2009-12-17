@@ -455,5 +455,6 @@ main (int argc, char *argv[]) {
     pl_free ();
     conf_free ();
     plug_unload_all ();
+    fprintf (stderr, "hej-hej!\n");
     return 0;
 }

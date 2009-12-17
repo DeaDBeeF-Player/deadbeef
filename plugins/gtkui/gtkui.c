@@ -32,6 +32,8 @@
 static DB_gui_t plugin;
 DB_functions_t *deadbeef;
 
+static intptr_t gtk_tid;
+
 // main widgets
 GtkWidget *mainwin;
 GtkWidget *searchwin;
@@ -115,7 +117,6 @@ update_songinfo (gpointer ctx) {
         strcpy (sb_text, sbtext_new);
 
         // form statusline
-        GDK_THREADS_ENTER();
         // FIXME: don't update if window is not visible
         GtkStatusbar *sb = GTK_STATUSBAR (lookup_widget (mainwin, "statusbar"));
         if (sb_context_id == -1) {
@@ -124,8 +125,6 @@ update_songinfo (gpointer ctx) {
 
         gtk_statusbar_pop (sb, sb_context_id);
         gtk_statusbar_push (sb, sb_context_id, sb_text);
-
-        GDK_THREADS_LEAVE();
     }
 
     if (songpos != last_songpos) {
@@ -137,10 +136,8 @@ update_songinfo (gpointer ctx) {
             songpos /= duration;
             songpos *= widget->allocation.width;
             if (songpos != last_songpos) {
-                GDK_THREADS_ENTER();
                 seekbar_draw (widget);
                 seekbar_expose (widget, 0, 0, widget->allocation.width, widget->allocation.height);
-                GDK_THREADS_LEAVE();
                 last_songpos = songpos;
             }
         }
@@ -410,16 +407,20 @@ gtkui_start (void) {
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_FRAMEUPDATE, DB_CALLBACK (gtkui_on_frameupdate), 0);
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_VOLUMECHANGED, DB_CALLBACK (gtkui_on_volumechanged), 0);
     // gtk must be running in separate thread
-    deadbeef->thread_start (gtkui_thread, NULL);
+    gtk_tid = deadbeef->thread_start (gtkui_thread, NULL);
 
     return 0;
 }
 
+static gboolean
+quit_gtk_cb (gpointer *nothing) {
+    gtk_main_quit ();
+}
+
 static int
 gtkui_stop (void) {
-    GDK_THREADS_ENTER();
-    gtk_main_quit ();
-    GDK_THREADS_LEAVE();
+    g_idle_add (quit_gtk_cb, NULL);
+    deadbeef->thread_join (gtk_tid);
     deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_ACTIVATE, DB_CALLBACK (gtkui_on_activate), 0);
     deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_SONGCHANGED, DB_CALLBACK (gtkui_on_songchanged), 0);
     deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_TRACKINFOCHANGED, DB_CALLBACK (gtkui_on_trackinfochanged), 0);
