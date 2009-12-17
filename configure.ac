@@ -41,7 +41,7 @@ CPPFLAGS="$CFLAGS"
 
 PKG_CHECK_MODULES(DEPS, gtk+-2.0 >= 2.12 gthread-2.0 glib-2.0 samplerate alsa)
 
-AX_CHECK_COMPILER_FLAGS(-msse2, SIMD_FLAGS="$SIMD_FLAGS -msse2";HAVE_SSE2=1, [])
+AX_CHECK_COMPILER_FLAGS(-msse2, HAVE_SSE2=1, [])
 if test ${HAVE_SSE2}; then
     AC_DEFINE(HAVE_SSE2,1,[Support SSE2 instructions])
 fi
