@@ -1854,8 +1854,10 @@ int mm_support(void)
         : "cc"
         );
 
-    if (a == c)
+    if (a == c) {
+        trace ("ffap: cpuid is not supported\n");
         return 0; /* CPUID not supported */
+    }
 #endif
 
     cpuid(0, max_std_level, ebx, ecx, edx);
@@ -1866,7 +1868,7 @@ int mm_support(void)
             rval |= FF_MM_MMX;
         if (std_caps & (1<<25))
             rval |= FF_MM_MMX2
-#ifdef HAVE_SSE
+#ifdef HAVE_SSE2
                   | FF_MM_SSE;
         if (std_caps & (1<<26))
             rval |= FF_MM_SSE2;
@@ -1904,18 +1906,22 @@ DB_plugin_t *
 ffap_load (DB_functions_t *api) {
     // detect sse2
 #ifdef HAVE_SSE2
+    trace ("ffap: was compiled with sse2 support\n");
     int mm_flags = mm_support ();
     if (mm_flags & FF_MM_SSE2) {
+        trace ("ffap: sse2 support detected\n");
         scalarproduct_int16 = scalarproduct_int16_sse2;
         add_int16 = add_int16_sse2;
         sub_int16 = sub_int16_sse2;
     }
     else {
+        trace ("ffap: sse2 is not supported by CPU\n");
         scalarproduct_int16 = scalarproduct_int16_c;
         add_int16 = add_int16_c;
         sub_int16 = sub_int16_c;
     }
 #else
+    trace ("ffap: sse2 support was not compiled in\n");
     scalarproduct_int16 = scalarproduct_int16_c;
     add_int16 = add_int16_c;
     sub_int16 = sub_int16_c;
