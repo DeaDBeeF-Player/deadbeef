@@ -19,6 +19,7 @@
 #include "../../deadbeef.h"
 #include <gtk/gtk.h>
 #include <string.h>
+#include <stdlib.h>
 #include "gtkplaylist.h"
 #include "search.h"
 #include "progress.h"
@@ -239,63 +240,75 @@ on_trayicon_popup_menu (GtkWidget       *widget,
     return FALSE;
 }
 
-void
-guiplug_showwindow (void) {
-    GDK_THREADS_ENTER();
+static gboolean
+activate_cb (gpointer nothing) {
     gtk_widget_show (mainwin);
     gtk_window_present (GTK_WINDOW (mainwin));
-    GDK_THREADS_LEAVE();
+    return FALSE;
 }
-
-void
-guiplug_shutdown (void) {
-    GDK_THREADS_ENTER();
-    gtk_widget_hide (mainwin);
-    gtk_main_quit ();
-    GDK_THREADS_LEAVE();
-}
-
 
 static int
 gtkui_on_activate (DB_event_t *ev, uintptr_t data) {
-    GDK_THREADS_ENTER();
-    gtk_widget_show (mainwin);
-    gtk_window_present (GTK_WINDOW (mainwin));
-    GDK_THREADS_LEAVE();
+    g_idle_add (activate_cb, NULL);
+    return 0;
 }
 
 static int
 gtkui_on_songchanged (DB_event_trackchange_t *ev, uintptr_t data) {
     gtkpl_songchanged_wrapper (ev->from, ev->to);
+    return 0;
+}
+
+struct trackinfo_t {
+    int index;
+    DB_playItem_t *track;
+};
+
+static gboolean
+trackinfochanged_cb (gpointer data) {
+    struct trackinfo_t *ti = (struct trackinfo_t *)data;
+    gtkpl_redraw_pl_row (&main_playlist, ti->index, ti->track);
+    if (ti->track == deadbeef->pl_getcurrent ()) {
+        gtkpl_current_track_changed (ti->track);
+    }
+    free (ti);
+    return FALSE;
 }
 
 static int
 gtkui_on_trackinfochanged (DB_event_track_t *ev, uintptr_t data) {
-    GDK_THREADS_ENTER();
-    gtkpl_redraw_pl_row (&main_playlist, ev->index, ev->track);
-    if (ev->track == deadbeef->pl_getcurrent ()) {
-        gtkpl_current_track_changed (ev->track);
-    }
-    GDK_THREADS_LEAVE();
+    struct trackinfo_t *ti = malloc (sizeof (struct trackinfo_t));
+    ti->index = ev->index;
+    ti->track = ev->track;
+    g_idle_add (trackinfochanged_cb, ti);
+    return 0;
 }
 
-static int
-gtkui_on_paused (DB_event_state_t *ev, uintptr_t data) {
-    GDK_THREADS_ENTER();
+static gboolean
+paused_cb (gpointer nothing) {
     DB_playItem_t *curr = deadbeef->pl_getcurrent ();
     if (curr) {
         int idx = deadbeef->pl_get_idx_of (curr);
         gtkpl_redraw_pl_row (&main_playlist, idx, curr);
     }
-    GDK_THREADS_LEAVE();
+    return FALSE;
+}
+
+static int
+gtkui_on_paused (DB_event_state_t *ev, uintptr_t data) {
+    g_idle_add (paused_cb, NULL);
+}
+
+static gboolean
+playlistchanged_cb (gpointer none) {
+    playlist_refresh ();
+    search_refresh ();
+    return FALSE;
 }
 
 static int
 gtkui_on_playlistchanged (DB_event_t *ev, uintptr_t data) {
-    GDK_THREADS_ENTER();
-    playlist_refresh ();
-    search_refresh ();
-    GDK_THREADS_LEAVE();
+    g_idle_add (playlistchanged_cb, NULL);
 }
 
 static int
@@ -312,10 +325,10 @@ gtkui_on_volumechanged (DB_event_t *ev, uintptr_t data) {
 void
 gtkui_thread (void *ctx) {
     // let's start some gtk
-    g_thread_init (NULL);
+//    g_thread_init (NULL);
     add_pixmap_directory (PREFIX "/share/deadbeef/pixmaps");
-    gdk_threads_init ();
-    gdk_threads_enter ();
+//    gdk_threads_init ();
+//    gdk_threads_enter ();
     gtk_set_locale ();
     gtk_init (0, NULL);
 
@@ -394,7 +407,7 @@ gtkui_thread (void *ctx) {
     gtk_widget_show (mainwin);
 
     gtk_main ();
-    gdk_threads_leave ();
+//    gdk_threads_leave ();
 }
 
 static int
@@ -413,14 +426,14 @@ gtkui_start (void) {
 }
 
 static gboolean
-quit_gtk_cb (gpointer *nothing) {
+quit_gtk_cb (gpointer nothing) {
     gtk_main_quit ();
+    return FALSE;
 }
 
 static int
 gtkui_stop (void) {
-    g_idle_add (quit_gtk_cb, NULL);
-    deadbeef->thread_join (gtk_tid);
+    trace ("unsubscribing events\n");
     deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_ACTIVATE, DB_CALLBACK (gtkui_on_activate), 0);
     deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_SONGCHANGED, DB_CALLBACK (gtkui_on_songchanged), 0);
     deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_TRACKINFOCHANGED, DB_CALLBACK (gtkui_on_trackinfochanged), 0);
@@ -428,8 +441,15 @@ gtkui_stop (void) {
     deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_PLAYLISTCHANGED, DB_CALLBACK (gtkui_on_playlistchanged), 0);
     deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_FRAMEUPDATE, DB_CALLBACK (gtkui_on_frameupdate), 0);
     deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_VOLUMECHANGED, DB_CALLBACK (gtkui_on_volumechanged), 0);
+    trace ("quitting gtk\n");
+    g_idle_add (quit_gtk_cb, NULL);
+    trace ("waiting for gtk thread to finish\n");
+    deadbeef->thread_join (gtk_tid);
+    trace ("gtk thread finished\n");
+    gtk_tid = 0;
     gtkpl_free (&main_playlist);
     gtkpl_free (&search_playlist);
+    trace ("gtkui_stop completed\n");
     return 0;
 }
 
