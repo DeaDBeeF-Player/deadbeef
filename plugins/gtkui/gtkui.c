@@ -325,10 +325,10 @@ gtkui_on_volumechanged (DB_event_t *ev, uintptr_t data) {
 void
 gtkui_thread (void *ctx) {
     // let's start some gtk
-//    g_thread_init (NULL);
+    g_thread_init (NULL);
     add_pixmap_directory (PREFIX "/share/deadbeef/pixmaps");
-//    gdk_threads_init ();
-//    gdk_threads_enter ();
+    gdk_threads_init ();
+    gdk_threads_enter ();
     gtk_set_locale ();
     gtk_init (0, NULL);
 
@@ -407,7 +407,7 @@ gtkui_thread (void *ctx) {
     gtk_widget_show (mainwin);
 
     gtk_main ();
-//    gdk_threads_leave ();
+    gdk_threads_leave ();
 }
 
 static int
