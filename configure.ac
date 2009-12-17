@@ -44,7 +44,7 @@ PKG_CHECK_MODULES(ALSA_DEPS, alsa, HAVE_ALSA=1)
 AC_CHECK_LIB([pthread], [main])
 AC_CHECK_LIB([dl], [main])
 
-AX_CHECK_COMPILER_FLAGS(-msse2, SIMD_FLAGS="$SIMD_FLAGS -msse2";HAVE_SSE2=1, [])
+AX_CHECK_COMPILER_FLAGS(-msse2, HAVE_SSE2=1, [])
 if test ${HAVE_SSE2}; then
     AC_DEFINE(HAVE_SSE2,1,[Support SSE2 instructions])
 fi
