@@ -128,7 +128,15 @@ cgme_insert (DB_playItem_t *after, const char *fname) {
                 // add metadata
                 deadbeef->pl_add_meta (it, "system", inf.system);
                 deadbeef->pl_add_meta (it, "album", inf.game);
-                deadbeef->pl_add_meta (it, "title", inf.song);
+                int tl = sizeof (inf.song);
+                int i;
+                for (i = 0; i < tl && inf.song[i] && inf.song[i] == ' '; i++);
+                if (i == tl || !inf.song[i]) {
+                    deadbeef->pl_add_meta (it, "title", NULL);
+                }
+                else {
+                    deadbeef->pl_add_meta (it, "title", inf.song);
+                }
                 deadbeef->pl_add_meta (it, "artist", inf.author);
                 deadbeef->pl_add_meta (it, "copyright", inf.copyright);
                 deadbeef->pl_add_meta (it, "comment", inf.comment);
