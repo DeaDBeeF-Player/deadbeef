@@ -380,11 +380,13 @@ vorbis_trackdeleted (DB_event_track_t *ev, uintptr_t data) {
 static int
 vorbis_start (void) {
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_TRACKDELETED, DB_CALLBACK (vorbis_trackdeleted), 0);
+    return 0;
 }
 
 static int
 vorbis_stop (void) {
     deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_TRACKDELETED, DB_CALLBACK (vorbis_trackdeleted), 0);
+    return 0;
 }
 
 static const char * exts[] = { "ogg", NULL };
