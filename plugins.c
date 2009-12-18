@@ -517,10 +517,8 @@ plug_load_all (void) {
                         fprintf (stderr, "plugin %s is blacklisted in config file\n", d_name);
                         break;
                     }
-                    char fullname[1024];
-                    strcpy (fullname, plugdir);
-                    strncat (fullname, "/", 1024);
-                    strncat (fullname, d_name, 1024);
+                    char fullname[PATH_MAX];
+                    snprintf (fullname, PATH_MAX, "%s/%s", plugdir, d_name);
                     printf ("loading plugin %s\n", d_name);
                     void *handle = dlopen (fullname, RTLD_NOW);
                     if (!handle) {
