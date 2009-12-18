@@ -108,7 +108,9 @@ vtx_insert (DB_playItem_t *after, const char *fname) {
     deadbeef->pl_set_item_duration (it, (float)totalsamples/hdr->playerFreq);
 
     // add metadata
-    deadbeef->pl_add_meta (it, "title", NULL);
+    deadbeef->pl_add_meta (it, "title", hdr->title);
+    deadbeef->pl_add_meta (it, "artist", hdr->author);
+    deadbeef->pl_add_meta (it, "album", hdr->from);
 
     ayemu_vtx_free (hdr);
     after = deadbeef->pl_insert_item (after, it);
