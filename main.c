@@ -80,6 +80,7 @@ exec_command_line (const char *cmdline, int len, int filter) {
                 printf ("   --prev             Previous song in playlist\n");
                 printf ("   --random           Random song in playlist\n");
                 printf ("   --queue            Append file(s) to existing playlist\n");
+                printf ("   --quit             Quit player\n");
                 return 1;
             }
             else if (!strcmp (parg, "--version")) {
@@ -108,6 +109,9 @@ exec_command_line (const char *cmdline, int len, int filter) {
             }
             else if (!strcmp (parg, "--queue")) {
                 queue = 1;
+            }
+            else if (!strcmp (parg, "--quit")) {
+                messagepump_push (M_TERMINATE, 0, 0, 0);
             }
             else if (parg[0] != '-') {
                 break;
