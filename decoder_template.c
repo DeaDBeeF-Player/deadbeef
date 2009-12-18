@@ -121,7 +121,7 @@ example:
     DB_playItem_t *it = deadbeef->pl_item_alloc ();
     it->decoder = &plugin;
     it->fname = strdup (fname);
-    it->filetype = "OggVorbis";
+    it->filetype = filetypes[0];
     deadbeef->pl_set_item_duration (it, (float)ti.total_num_samples/ti.samplerate);
 
     // add metainfo
