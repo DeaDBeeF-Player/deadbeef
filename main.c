@@ -61,33 +61,71 @@ char sessfile[1024]; // $HOME/.config/deadbeef/session
 //  2 no error, start playback immediately after startup
 //  3 no error, don't start playback immediately after startup
 int
-exec_command_line (const char *cmdline, int len, int filter) {
+exec_command_line (const char *cmdline, int len, int filter, char *sendback, int sbsize) {
+    if (sendback) {
+        sendback[0] = 0;
+    }
     const uint8_t *parg = (const uint8_t *)cmdline;
     const uint8_t *pend = cmdline + len;
     int exitcode = 0;
     int queue = 0;
     while (parg < pend) {
-        if (filter == 1) {
+//        if (filter == 1) {
+// help, version and nowplaying are executed with any filter
             if (!strcmp (parg, "--help") || !strcmp (parg, "-h")) {
-                printf ("Usage: deadbeef [options] [file(s)]\n");
-                printf ("Options:\n");
-                printf ("   --help  or  -h     Print help (this message) and exit\n");
-                printf ("   --version          Print version info and exit\n");
-                printf ("   --play             Start playback\n");
-                printf ("   --stop             Stop playback\n");
-                printf ("   --pause            Pause playback\n");
-                printf ("   --next             Next song in playlist\n");
-                printf ("   --prev             Previous song in playlist\n");
-                printf ("   --random           Random song in playlist\n");
-                printf ("   --queue            Append file(s) to existing playlist\n");
-                printf ("   --quit             Quit player\n");
+                fprintf (stderr, "Usage: deadbeef [options] [file(s)]\n");
+                fprintf (stderr, "Options:\n");
+                fprintf (stderr, "   --help  or  -h     Print help (this message) and exit\n");
+                fprintf (stderr, "   --quit             Quit player\n");
+                fprintf (stderr, "   --version          Print version info and exit\n");
+                fprintf (stderr, "   --play             Start playback\n");
+                fprintf (stderr, "   --stop             Stop playback\n");
+                fprintf (stderr, "   --pause            Pause playback\n");
+                fprintf (stderr, "   --next             Next song in playlist\n");
+                fprintf (stderr, "   --prev             Previous song in playlist\n");
+                fprintf (stderr, "   --random           Random song in playlist\n");
+                fprintf (stderr, "   --queue            Append file(s) to existing playlist\n");
+                fprintf (stderr, "   --nowplaying FMT   Print formatted track name to stdout\n");
+                fprintf (stderr, "                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um, [l]ength, track[n]umber\n");
+                fprintf (stderr, "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n");
                 return 1;
             }
             else if (!strcmp (parg, "--version")) {
-                printf ("DeaDBeeF %s Copyright (C) 2009 Alexey Yakovenko\n", VERSION);
+                fprintf (stderr, "DeaDBeeF %s Copyright (C) 2009 Alexey Yakovenko\n", VERSION);
                 return 1;
             }
-        }
+            else if (!strcmp (parg, "--nowplaying")) {
+                parg += strlen (parg);
+                parg++;
+                if (parg >= pend) {
+                    fprintf (stderr, "--nowplaying expects format argument\n");
+                    return 1;
+                }
+                if (sendback) {
+                    playItem_t *curr = streamer_get_playing_track ();
+                    if (curr && curr->decoder) {
+                        const char np[] = "nowplaying ";
+                        memcpy (sendback, np, sizeof (np)-1);
+                        pl_format_title (curr, sendback+sizeof(np)-1, sbsize-sizeof(np)+1, -1, parg);
+                    }
+                    else {
+                        strcpy (sendback, "nowplaying nothing");
+                    }
+                }
+                else {
+                    char out[2048];
+                    playItem_t *curr = streamer_get_playing_track ();
+                    if (curr && curr->decoder) {
+                        pl_format_title (curr, out, sizeof (out), -1, parg);
+                    }
+                    else {
+                        strcpy (out, "nothing");
+                    }
+                    printf (out);
+                    return 1;
+                }
+            }
+//        }
         else if (filter == 0) {
             if (!strcmp (parg, "--next")) {
                 messagepump_push (M_NEXTSONG, 0, 0, 0);
@@ -201,6 +239,7 @@ server_update (void) {
     }
     else if (s2 != -1) {
         char str[2048];
+        char sendback[1024];
         int size;
         if ((size = recv (s2, str, 2048, 0)) >= 0) {
             if (size == 1 && str[0] == 0) {
@@ -208,13 +247,19 @@ server_update (void) {
                 plug_trigger_event (DB_EV_ACTIVATE, 0);
             }
             else {
-                int res = exec_command_line (str, size, 0);
+                int res = exec_command_line (str, size, 0, sendback, sizeof (sendback));
                 if (res == 2) {
                     streamer_play_current_track ();
                 }
             }
         }
-        send (s2, "", 1, 0);
+        if (sendback[0]) {
+            // send nowplaying back to client
+            send (s2, sendback, strlen (sendback)+1, 0);
+        }
+        else {
+            send (s2, "", 1, 0);
+        }
         close(s2);
     }
     return 0;
@@ -378,9 +423,6 @@ main (int argc, char *argv[]) {
             size -= len;
         }
         size = 2048 - size + 1;
-        if (exec_command_line (cmdline, size, 1) == 1) {
-            return 0; // if it was help request
-        }
     }
     // try to connect to remote player
     int s, t, len;
@@ -406,19 +448,32 @@ main (int argc, char *argv[]) {
             perror ("send");
             exit (-1);
         }
-        char out[1];
-        if (recv(s, out, 1, 0) == -1) {
+        char out[2048];
+        if (recv(s, out, sizeof (out), 0) == -1) {
             fprintf (stderr, "failed to pass args to remote!\n");
             exit (-1);
+        }
+        else {
+            // check if that's nowplaying response
+            const char np[] = "nowplaying ";
+            if (!strncmp (out, np, sizeof (np)-1)) {
+                const char *prn = &out[sizeof (np)-1];
+                printf (prn);
+            }
         }
         close (s);
         exit (0);
     }
     close(s);
 
+    if (exec_command_line (cmdline, size, 1, NULL, 0) == 1) {
+        return 0; // if it was help request
+    }
+
     signal (SIGTERM, sigterm_handler);
     // become a server
     server_start ();
+
 
     conf_load ();
     volume_set_db (conf_get_float ("playback.volume", 0));
@@ -433,7 +488,7 @@ main (int argc, char *argv[]) {
 //    thread_start (player_thread, 0);
 
     if (argc > 1) {
-        int res = exec_command_line (cmdline, size, 0);
+        int res = exec_command_line (cmdline, size, 0, NULL, 0);
         if (res == -1) {
             server_close ();
             return -1;
