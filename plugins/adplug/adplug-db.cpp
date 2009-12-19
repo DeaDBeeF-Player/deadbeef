@@ -24,6 +24,9 @@
 #include "emuopl.h"
 #include "silentopl.h"
 
+#define min(x,y) ((x)<(y)?(x):(y))
+#define max(x,y) ((x)>(y)?(x):(y))
+
 #define trace(...) { fprintf (stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
 
@@ -37,16 +40,38 @@ const char *adplug_exts[] = { "A2M", "ADL", "AMD", "BAM", "CFF", "CMF", "D00", "
 
 const char *adplug_filetypes[] = { "A2M", "ADL", "AMD", "BAM", "CFF", "CMF", "D00", "DFM", "DMO", "DRO", "DTM", "HSC", "HSP", "IMF", "KSM", "LAA", "LDS", "M", "MAD", "MID", "MKJ", "MSC", "MTK", "RAD", "RAW", "RIX", "ROL", "S3M", "SA2", "SAT", "SCI", "SNG", "SNG", "SNG", "XAD", "XMS", "XSM", NULL };
 
+static CEmuopl *opl;
+static CPlayer *decoder;
+static int totalsamples;
+static int currentsample;
+static int subsong;
+static int toadd;
+
 int
 adplug_init (DB_playItem_t *it) {
     // prepare to decode the track
     // return -1 on failure
 
+    int samplerate = deadbeef->get_output ()->samplerate ();
+    int bps = deadbeef->get_output ()->bitspersample ();
+    opl = new CEmuopl (samplerate, bps, deadbeef->get_output ()->channels () == 2);
+    decoder = CAdPlug::factory (it->fname, opl, CAdPlug::players);
+    if (!decoder) {
+        trace ("adplug: failed to open %s\n", it->fname);
+        return NULL;
+    }
+
+    subsong = it->tracknum;
+    decoder->rewind (subsong);
+    totalsamples = decoder->songlength (subsong) * samplerate / 1000;
+    currentsample = 0;
+    toadd = 0;
+
     // fill in mandatory plugin fields
-    //adplug_plugin.info.bps = deadbeef->get_output ()->bitspersample ();
-    //adplug_plugin.info.channels = deadbeef->get_output ()->channels ();
-    //adplug_plugin.info.samplerate = decoder->samplerate;
-    //adplug_plugin.info.readpos = 0;
+    adplug_plugin.info.bps = bps;
+    adplug_plugin.info.channels = deadbeef->get_output ()->channels ();
+    adplug_plugin.info.samplerate = samplerate;
+    adplug_plugin.info.readpos = 0;
 
     return 0;
 }
@@ -54,6 +79,14 @@ adplug_init (DB_playItem_t *it) {
 void
 adplug_free (void) {
     // free everything allocated in _init
+    if (decoder) {
+        delete decoder;
+        decoder = NULL;
+    }
+    if (opl) {
+        delete opl;
+        opl = NULL;
+    }
 }
 
 int
@@ -61,8 +94,36 @@ adplug_read_int16 (char *bytes, int size) {
     // try decode `size' bytes
     // return number of decoded bytes
     // return 0 on EOF
+    bool playing = true;
+    int i;
+    int sampsize = 4;
 
-    //adplug_plugin.info.readpos = (float)currentsample / adplug_plugin.info.samplerate;
+    int initsize = size;
+    if (currentsample + size/4 >= totalsamples) {
+        // clip
+        size = (totalsamples - currentsample) * sampsize;
+    }
+
+    int towrite = size/sampsize;
+    char *sndbufpos = bytes;
+
+
+    while (towrite > 0)
+    {
+      while (toadd < 0)
+      {
+        toadd += adplug_plugin.info.samplerate;
+        playing = decoder->update ();
+//        decoder->time_ms += 1000 / plr.p->getrefresh ();
+      }
+      i = min (towrite, (long) (toadd / decoder->getrefresh () + 4) & ~3);
+      opl->update ((short *) sndbufpos, i);
+      sndbufpos += i * sampsize;
+      towrite -= i;
+      toadd -= (long) (decoder->getrefresh () * i);
+    }
+    currentsample += size/4;
+    adplug_plugin.info.readpos = (float)currentsample / adplug_plugin.info.samplerate;
     return size;
 }
 
@@ -71,9 +132,23 @@ adplug_seek_sample (int sample) {
     // seek to specified sample (frame)
     // return 0 on success
     // return -1 on failure
+
+    if (sample < currentsample) {
+        decoder->rewind (subsong);
+        currentsample = 0;
+    }
+
+    while (currentsample < sample) {
+        decoder->update ();
+        currentsample += 1000/decoder->getrefresh ();
+    }
+    if (currentsample >= totalsamples) {
+        return -1;
+    }
+    toadd = 0;
     
     // update readpos
-    adplug_plugin.info.readpos = (float)sample / adplug_plugin.info.samplerate;
+    adplug_plugin.info.readpos = (float)currentsample / adplug_plugin.info.samplerate;
     return 0;
 }
 
@@ -95,6 +170,11 @@ adplug_get_extension (const char *fname) {
     if (*e == '.') {
         e++;
         // now find ext in list
+        for (int i = 0; adplug_exts[i]; i++) {
+            if (!strcasecmp (e, adplug_exts[i])) {
+                return adplug_filetypes[i];
+            }
+        }
     }
     return "adplug-unknown";
 }
@@ -108,7 +188,6 @@ adplug_insert (DB_playItem_t *after, const char *fname) {
     // return NULL on failure
 
     CSilentopl opl;
-    CPlayers::const_iterator i;
     CPlayer *p = CAdPlug::factory (fname, &opl, CAdPlug::players);
     if (!p) {
         trace ("adplug: failed to open %s\n", fname);
@@ -122,6 +201,7 @@ adplug_insert (DB_playItem_t *after, const char *fname) {
         it->decoder = &adplug_plugin;
         it->fname = strdup (fname);
         it->filetype = adplug_get_extension (fname);
+        it->tracknum = i;
         deadbeef->pl_set_item_duration (it, p->songlength (i)/1000.f);
         // add metainfo
         if (!p->gettitle().empty()) {
