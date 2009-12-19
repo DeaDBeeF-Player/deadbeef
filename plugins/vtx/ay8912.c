@@ -303,9 +303,13 @@ int ayemu_set_stereo(ayemu_ay_t *ay, ayemu_stereo_t stereo_type, int *custom_eq)
 }
 
 
+#if 0
 #define WARN_IF_REGISTER_GREAT_THAN(r,m) \
 if (*(regs + r) > m) \
    fprintf(stderr, "ayemu_set_regs: warning: possible bad register data- R%d > %d\n", r, m)
+#else
+#define WARN_IF_REGISTER_GREAT_THAN(r,m)
+#endif
 
 
 /** Assign values for AY registers.
