@@ -32,6 +32,13 @@ static int
 example_init (DB_playItem_t *it) {
     // prepare to decode the track
     // return -1 on failure
+
+    // fill in mandatory plugin fields
+    plugin.info.bps = deadbeef->get_output ()->bitspersample ();
+    plugin.info.channels = deadbeef->get_output ()->channels ();
+    plugin.info.samplerate = decoder->samplerate;
+    plugin.info.readpos = 0;
+
     return 0;
 }
 
@@ -45,7 +52,9 @@ example_read_int16 (char *bytes, int size) {
     // try decode `size' bytes
     // return number of decoded bytes
     // return 0 on EOF
-    return 0;
+
+    plugin.info.readpos = (float)currentsample / plugin.info.samplerate;
+    return size;
 }
 
 static int
@@ -53,6 +62,10 @@ example_seek_sample (int sample) {
     // seek to specified sample (frame)
     // return 0 on success
     // return -1 on failure
+    
+    // update readpos
+    plugin.info.readpos = (float)sample / plugin.info.samplerate;
+    return 0;
 }
 
 static int
@@ -60,7 +73,7 @@ example_seek (float time) {
     // seek to specified time in seconds
     // return 0 on success
     // return -1 on failure
-    // e.g. return example_seek_sample (time * samplerate);
+    return example_seek_sample (time * plugin.info.samplerate);
     return 0;
 }
 
