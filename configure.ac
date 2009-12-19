@@ -192,6 +192,7 @@ PRINT_PLUGIN_INFO([flac],[flac player],[test $HAVE_FLAC])
 PRINT_PLUGIN_INFO([wavpack],[wavpack player],[test $HAVE_WAVPACK])
 PRINT_PLUGIN_INFO([sndfile],[PCM (wav,aiff,etc) player based on libsndfile],[test $HAVE_SNDFILE])
 PRINT_PLUGIN_INFO([vtx],[vtx file player (ay8910/12 emulation)],[true])
+PRINT_PLUGIN_INFO([adplug],[adplug player (OPL2/OPL3 emulation)],[true])
 PRINT_PLUGIN_INFO([vfs_curl],[http/ftp streaming support],[test $HAVE_CURL])
 dnl PRINT_PLUGIN_INFO([faad2],[aac/mp4 player],[test $HAVE_FAAD && test $HAVE_MP4FF])
 PRINT_PLUGIN_INFO([cdda],[cd audio player],[test $HAVE_CDIO && test $HAVE_CDDB])
@@ -220,6 +221,7 @@ plugins/cdda/Makefile
 plugins/gtkui/Makefile
 plugins/nullout/Makefile
 plugins/vtx/Makefile
+plugins/adplug/Makefile
 deadbeef.desktop
 ])
 

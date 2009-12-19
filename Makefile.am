@@ -1,6 +1,3 @@
-## Process this file with automake to produce Makefile.in
-#ACLOCAL_AMFLAGS = -I m4
-
 SUBDIRS = gme/Game_Music_Emu-0.5.2\
 		  gme/Game_Music_Emu-0.5.2/gme\
 		  sid/sidplay-libs-2.1.0\
@@ -11,6 +8,7 @@ SUBDIRS = gme/Game_Music_Emu-0.5.2\
 		  plugins/ffap\
 		  plugins/nullout\
 		  plugins/vtx\
+		  plugins/adplug\
 		  ${ALSA_DIR}\
 		  ${LFM_DIR}\
           ${MPGMAD_DIR}\
