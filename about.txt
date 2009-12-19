@@ -59,3 +59,7 @@ Copyright © 1998 - 2006 Conifer Software
 
 libsndfile - PCM read/write/conversion library
 Copyright © 1999-2009 Erik de Castro Lopo <erikd@mega-nerd.com>
+
+
+libayemu - AY/YM sound chip emulator and music file loader
+Copyright (C) 2003-2004 Alexander Sashnov <sashnov@ngs.ru>
