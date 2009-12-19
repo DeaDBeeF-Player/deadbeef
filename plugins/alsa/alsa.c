@@ -405,6 +405,9 @@ palsa_unpause (void) {
 
 int
 palsa_get_rate (void) {
+    if (!audio) {
+        palsa_init ();
+    }
     return alsa_rate;
 }
 
