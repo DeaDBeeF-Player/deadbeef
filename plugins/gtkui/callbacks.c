@@ -1911,10 +1911,21 @@ on_prop_browse_file (GtkButton *button, gpointer user_data) {
     }
 }
 
+gboolean
+on_plug_prefwin_key_press_event (GtkWidget *widget, GdkEventKey *event, gpointer user_data) {
+    if (event->keyval == GDK_Escape) {
+        gtk_widget_destroy (widget);
+    }
+    return FALSE;
+}
+
 void
 plugin_configure (GtkWidget *parentwin, DB_plugin_t *p) {
     // create window
     GtkWidget *win = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+//    gtk_widget_set_events (win, GDK_KEY_PRESS_MASK);
+    gtk_widget_set_size_request (win, 300, -1);
+    g_signal_connect ((gpointer) win, "key_press_event", G_CALLBACK (on_plug_prefwin_key_press_event), NULL);
     char title[200];
     snprintf (title, sizeof (title), "Setup %s", p->name);
     gtk_window_set_title (GTK_WINDOW (win), title);
