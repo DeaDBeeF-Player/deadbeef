@@ -1561,8 +1561,8 @@ pl_get_item_duration (playItem_t *it) {
 
 int
 pl_format_item_queue (playItem_t *it, char *s, int size) {
+    *s = 0;
     if (!playqueue_count) {
-        *s = 0;
         return 0;
     }
     int init = 1;
@@ -1592,10 +1592,6 @@ pl_format_item_queue (playItem_t *it, char *s, int size) {
         len = snprintf (s, size, ")");
         s += len;
         size -= len;
-    }
-    else {
-        *s = 0;
-        return 0;
     }
     return initsize-size;
 }
