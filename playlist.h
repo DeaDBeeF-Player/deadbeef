@@ -224,4 +224,7 @@ pl_playqueue_pop (void);
 void
 pl_playqueue_remove (playItem_t *it);
 
+int
+pl_playqueue_test (playItem_t *it);
+
 #endif // __PLAYLIST_H

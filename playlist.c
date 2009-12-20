@@ -1560,11 +1560,42 @@ pl_get_item_duration (playItem_t *it) {
 }
 
 int
+pl_format_item_queue (playItem_t *it, char *s, int size) {
+    int init = 1;
+    int initsize = size;
+    int len;
+    for (int i = 0; i < playqueue_count; i++) {
+        if (size <= 0) {
+            break;
+        }
+        if (playqueue[i] == it) {
+            len;
+            if (init) {
+                init = 0;
+                s[0] = '(';
+                s++;
+                size--;
+                len = snprintf (s, size, "%d", i+1);
+            }
+            else {
+                len = snprintf (s, size, ",%d", i+1);
+            }
+            s += len;
+            size -= len;
+        }
+    }
+    if (size != initsize && size > 0) {
+        len = snprintf (s, size, ")");
+        s += len;
+        size -= len;
+    }
+    return initsize-size;
+}
+
+int
 pl_format_title (playItem_t *it, char *s, int size, int id, const char *fmt) {
     if (id != -1) {
         char dur[50];
-        //pl_format_title (it, dur, sizeof (dur), "%l");
-        //char dur[50];
         if (it->_duration >= 0) {
             int hourdur = it->_duration / (60 * 60);
             int mindur = (it->_duration - hourdur * 60 * 60) / 60;
@@ -1601,6 +1632,8 @@ pl_format_title (playItem_t *it, char *s, int size, int id, const char *fmt) {
         snprintf (artistalbum, sizeof (artistalbum), "%s - %s", artist, album);
         const char *text = NULL;
         switch (id) {
+        case DB_COLUMN_PLAYING:
+            return pl_format_item_queue (it, s, size);
         case DB_COLUMN_ARTIST_ALBUM: 
             text = artistalbum;
             break;
@@ -1968,4 +2001,13 @@ pl_playqueue_remove (playItem_t *it) {
             break;
         }
     }
+}
+int
+pl_playqueue_test (playItem_t *it) {
+    for (int i = 0; i < playqueue_count; i++) {
+        if (playqueue[i] == it) {
+            return i;
+        }
+    }
+    return -1;
 }

@@ -725,3 +725,20 @@ on_stop_after_current1_activate        (GtkMenuItem     *menuitem,
 void
 on_stop_after_current_activate         (GtkMenuItem     *menuitem,
                                         gpointer         user_data);
+
+void
+on_add_to_playback_queue1_activate     (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_remove_from_playback_queue1_activate
+                                        (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_remove2_activate                    (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_properties1_activate                (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);

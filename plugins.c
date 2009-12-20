@@ -128,6 +128,11 @@ static DB_functions_t deadbeef_api = {
     // cuesheet support
     .pl_insert_cue_from_buffer = (DB_playItem_t *(*) (DB_playItem_t *after, const char *fname, const uint8_t *buffer, int buffersize, struct DB_decoder_s *decoder, const char *ftype, int numsamples, int samplerate))pl_insert_cue_from_buffer,
     .pl_insert_cue = (DB_playItem_t *(*)(DB_playItem_t *, const char *, struct DB_decoder_s *, const char *ftype, int numsamples, int samplerate))pl_insert_cue,
+    .pl_playqueue_push = (int (*) (DB_playItem_t *))pl_playqueue_push,
+    .pl_playqueue_clear = pl_playqueue_clear,
+    .pl_playqueue_pop = pl_playqueue_pop,
+    .pl_playqueue_remove = (void (*) (DB_playItem_t *))pl_playqueue_remove,
+    .pl_playqueue_test = (int (*) (DB_playItem_t *))pl_playqueue_test,
     // volume control
     .volume_set_db = plug_volume_set_db,
     .volume_get_db = volume_get_db,

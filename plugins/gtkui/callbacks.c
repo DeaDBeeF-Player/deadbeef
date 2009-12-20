@@ -39,6 +39,8 @@
 #include "gtkui.h"
 
 #define SELECTED(it) (deadbeef->pl_is_selected(it))
+#define SELECT(it, sel) (deadbeef->pl_set_selected(it,sel))
+#define VSELECT(it, sel) {deadbeef->pl_set_selected(it,sel);gtk_pl_redraw_item_everywhere (it);}
 #define PL_NEXT(it, iter) (deadbeef->pl_get_next(it, iter))
 
 extern GtkWidget *mainwin;
@@ -184,6 +186,95 @@ on_playlist_button_press_event         (GtkWidget       *widget,
     GTKPL_PROLOGUE;
     if (event->button == 1) {
         gtkpl_mouse1_pressed (ps, event->state, event->x, event->y, event->time);
+    }
+    else if (event->button == 3) {
+        // get item under cursor
+        int y = event->y / rowheight + ps->scrollpos;
+        if (y < 0 || y >= ps->get_count ()) {
+            y = -1;
+        }
+        DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (y, ps->iterator);
+        if (!it) {
+            // clicked empty space -- deselect everything and show insensitive menu
+            it = deadbeef->pl_get_first (ps->iterator);
+            while (it) {
+                SELECT (it, 0);
+                it = PL_NEXT (it, ps->iterator);
+            }
+            playlist_refresh ();
+            // no menu
+        }
+        else {
+            if (!SELECTED (it)) {
+                // item is unselected -- reset selection and select this
+                DB_playItem_t *it2 = deadbeef->pl_get_first (ps->iterator);
+                while (it2) {
+                    SELECT (it2, 0);
+                    it2 = PL_NEXT (it2, ps->iterator);
+                }
+                SELECT (it, 1);
+                playlist_refresh ();
+            }
+            {
+                int inqueue = deadbeef->pl_playqueue_test (it);
+                GtkWidget *playlist_menu;
+                GtkWidget *add_to_playback_queue1;
+                GtkWidget *remove_from_playback_queue1;
+                GtkWidget *separator9;
+                GtkWidget *remove2;
+                GtkWidget *separator8;
+                GtkWidget *properties1;
+
+                playlist_menu = gtk_menu_new ();
+                add_to_playback_queue1 = gtk_menu_item_new_with_mnemonic ("Add to playback queue");
+                gtk_widget_show (add_to_playback_queue1);
+                gtk_container_add (GTK_CONTAINER (playlist_menu), add_to_playback_queue1);
+                gtk_object_set_data (GTK_OBJECT (add_to_playback_queue1), "ps", ps);
+
+                remove_from_playback_queue1 = gtk_menu_item_new_with_mnemonic ("Remove from playback queue");
+                if (inqueue == -1) {
+                    gtk_widget_set_sensitive (remove_from_playback_queue1, FALSE);
+                }
+                gtk_widget_show (remove_from_playback_queue1);
+                gtk_container_add (GTK_CONTAINER (playlist_menu), remove_from_playback_queue1);
+                gtk_object_set_data (GTK_OBJECT (remove_from_playback_queue1), "ps", ps);
+
+                separator9 = gtk_separator_menu_item_new ();
+                gtk_widget_show (separator9);
+                gtk_container_add (GTK_CONTAINER (playlist_menu), separator9);
+                gtk_widget_set_sensitive (separator9, FALSE);
+
+                remove2 = gtk_menu_item_new_with_mnemonic ("Remove");
+                gtk_widget_show (remove2);
+                gtk_container_add (GTK_CONTAINER (playlist_menu), remove2);
+                gtk_object_set_data (GTK_OBJECT (remove2), "ps", ps);
+
+                separator8 = gtk_separator_menu_item_new ();
+                gtk_widget_show (separator8);
+                gtk_container_add (GTK_CONTAINER (playlist_menu), separator8);
+                gtk_widget_set_sensitive (separator8, FALSE);
+
+                properties1 = gtk_menu_item_new_with_mnemonic ("Properties");
+                gtk_widget_set_sensitive (properties1, FALSE);
+                gtk_widget_show (properties1);
+                gtk_container_add (GTK_CONTAINER (playlist_menu), properties1);
+                gtk_object_set_data (GTK_OBJECT (properties1), "ps", ps);
+
+                g_signal_connect ((gpointer) add_to_playback_queue1, "activate",
+                        G_CALLBACK (on_add_to_playback_queue1_activate),
+                        NULL);
+                g_signal_connect ((gpointer) remove_from_playback_queue1, "activate",
+                        G_CALLBACK (on_remove_from_playback_queue1_activate),
+                        NULL);
+                g_signal_connect ((gpointer) remove2, "activate",
+                        G_CALLBACK (on_remove2_activate),
+                        NULL);
+                g_signal_connect ((gpointer) properties1, "activate",
+                        G_CALLBACK (on_properties1_activate),
+                        NULL);
+                gtk_menu_popup (GTK_MENU (playlist_menu), NULL, NULL, NULL, widget, 0, gtk_get_current_event_time());
+            }
+        }
     }
     return FALSE;
 }
@@ -755,7 +846,6 @@ on_playlist_load_activate              (GtkMenuItem     *menuitem,
         gtk_widget_destroy (dlg);
         if (fname) {
             int res = deadbeef->pl_load (fname);
-            printf ("load result: %d\n", res);
             g_free (fname);
             gtkplaylist_t *ps = &main_playlist;
             gtkpl_setup_scrollbar (ps);
@@ -2120,5 +2210,55 @@ on_stop_after_current_activate         (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     deadbeef->conf_set_int ("playlist.stop_after_current", gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (menuitem)));
+}
+
+
+void
+on_add_to_playback_queue1_activate     (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    GtkWidget *widget = GTK_WIDGET (menuitem);
+    GTKPL_PROLOGUE;
+    DB_playItem_t *it = deadbeef->pl_get_first (ps->iterator);
+    while (it) {
+        if (SELECTED (it)) {
+            deadbeef->pl_playqueue_push (it);
+        }
+        it = PL_NEXT (it, ps->iterator);
+    }
+    playlist_refresh ();
+}
+
+
+void
+on_remove_from_playback_queue1_activate
+                                        (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    GtkWidget *widget = GTK_WIDGET (menuitem);
+    GTKPL_PROLOGUE;
+    DB_playItem_t *it = deadbeef->pl_get_first (ps->iterator);
+    while (it) {
+        if (SELECTED (it)) {
+            deadbeef->pl_playqueue_remove (it);
+        }
+        it = PL_NEXT (it, ps->iterator);
+    }
+    playlist_refresh ();
+}
+
+
+void
+on_remove2_activate                    (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+}
+
+
+void
+on_properties1_activate                (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+
 }
 
