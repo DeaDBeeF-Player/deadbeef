@@ -342,6 +342,7 @@ gtkpl_draw_pl_row_back (gtkplaylist_t *ps, int row, DB_playItem_t *it) {
 	if (treeview->style->depth == -1) {
         return; // drawing was called too early
     }
+    GTK_OBJECT_FLAGS (treeview) |= GTK_HAS_FOCUS;
     int x = -ps->hscrollpos;
     int w = ps->totalwidth;
 	GtkWidget *widget = ps->playlist;
