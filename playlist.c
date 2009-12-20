@@ -56,8 +56,6 @@ int playlist_current_row[PL_MAX_ITERATORS];
 playItem_t *playlist_current_ptr;
 int pl_count = 0;
 float pl_totaltime = 0;
-//static int pl_order = 0; // 0 = linear, 1 = shuffle, 2 = random
-//static int pl_loop_mode = 0; // 0 = loop, 1 = don't loop, 2 = loop single
 
 void
 pl_free (void) {
@@ -885,7 +883,7 @@ pl_prevsong (void) {
     }
     int pl_order = conf_get_int ("playback.order", 0);
     int pl_loop_mode = conf_get_int ("playback.loop", 0);
-    if (pl_order == 1) { // shuffle
+    if (pl_order == PLAYBACK_ORDER_SHUFFLE) { // shuffle
         if (!playlist_current_ptr) {
             return pl_nextsong (1);
         }
@@ -910,7 +908,7 @@ pl_prevsong (void) {
             playItem_t *it = pmax;
             if (!it) {
                 // that means 1st in playlist, take amax
-                if (pl_loop_mode == 0) {
+                if (pl_loop_mode == PLAYBACK_MODE_LOOP_ALL) {
                     if (!amax) {
                         pl_reshuffle (NULL, &amax);
                     }
@@ -926,13 +924,13 @@ pl_prevsong (void) {
             return 0;
         }
     }
-    else if (pl_order == 0) { // linear
+    else if (pl_order == PLAYBACK_ORDER_LINEAR) { // linear
         playItem_t *it = NULL;
         if (playlist_current_ptr) {
             it = playlist_current_ptr->prev[PL_MAIN];
         }
         if (!it) {
-            if (pl_loop_mode == 0) {
+            if (pl_loop_mode == PLAYBACK_MODE_LOOP_ALL) {
                 it = playlist_tail[PL_MAIN];
             }
         }
@@ -943,7 +941,7 @@ pl_prevsong (void) {
         streamer_set_nextsong (r, 1);
         return 0;
     }
-    else if (pl_order == 2) { // random
+    else if (pl_order == PLAYBACK_ORDER_RANDOM) { // random
         pl_randomsong ();
     }
     return -1;
@@ -958,7 +956,7 @@ pl_nextsong (int reason) {
     }
     int pl_order = conf_get_int ("playback.order", 0);
     int pl_loop_mode = conf_get_int ("playback.loop", 0);
-    if (pl_order == 1) { // shuffle
+    if (pl_order == PLAYBACK_ORDER_SHUFFLE) { // shuffle
         if (!curr) {
             // find minimal notplayed
             playItem_t *pmin = NULL; // notplayed minimum
@@ -974,7 +972,7 @@ pl_nextsong (int reason) {
             playItem_t *it = pmin;
             if (!it) {
                 // all songs played, reshuffle and try again
-                if (pl_loop_mode == 0) { // loop
+                if (pl_loop_mode == PLAYBACK_MODE_LOOP_ALL) { // loop
                     pl_reshuffle (&it, NULL);
                 }
             }
@@ -987,7 +985,7 @@ pl_nextsong (int reason) {
         }
         else {
             trace ("pl_next_song: reason=%d, loop=%d\n", reason, pl_loop_mode);
-            if (reason == 0 && pl_loop_mode == 2) { // song finished, loop mode is "loop 1 track"
+            if (reason == 0 && pl_loop_mode == PLAYBACK_MODE_LOOP_SINGLE) { // song finished, loop mode is "loop 1 track"
                 int r = pl_get_idx_of (curr);
                 streamer_set_nextsong (r, 1);
                 return 0;
@@ -1008,7 +1006,7 @@ pl_nextsong (int reason) {
             if (!it) {
                 trace ("all songs played! reshuffle\n");
                 // all songs played, reshuffle and try again
-                if (pl_loop_mode == 0) { // loop
+                if (pl_loop_mode == PLAYBACK_MODE_LOOP_ALL) { // loop
                     pl_reshuffle (&it, NULL);
                 }
             }
@@ -1020,10 +1018,10 @@ pl_nextsong (int reason) {
             return 0;
         }
     }
-    else if (pl_order == 0) { // linear
+    else if (pl_order == PLAYBACK_ORDER_LINEAR) { // linear
         playItem_t *it = NULL;
         if (curr) {
-            if (reason == 0 && pl_loop_mode == 2) { // loop same track
+            if (reason == 0 && pl_loop_mode == PLAYBACK_MODE_LOOP_SINGLE) { // loop same track
                 int r = pl_get_idx_of (curr);
                 streamer_set_nextsong (r, 1);
                 return 0;
@@ -1031,7 +1029,8 @@ pl_nextsong (int reason) {
             it = curr->next[PL_MAIN];
         }
         if (!it) {
-            if (pl_loop_mode == 0) {
+            trace ("pl_nextsong: was last track\n");
+            if (pl_loop_mode == PLAYBACK_MODE_LOOP_ALL) {
                 it = playlist_head[PL_MAIN];
             }
             else {
@@ -1046,8 +1045,8 @@ pl_nextsong (int reason) {
         streamer_set_nextsong (r, 1);
         return 0;
     }
-    else if (pl_order == 2) { // random
-        if (reason == 0 && pl_loop_mode == 2 && curr) {
+    else if (pl_order == PLAYBACK_ORDER_RANDOM) { // random
+        if (reason == 0 && pl_loop_mode == PLAYBACK_MODE_LOOP_SINGLE && curr) {
             int r = pl_get_idx_of (curr);
             streamer_set_nextsong (r, 1);
             return 0;

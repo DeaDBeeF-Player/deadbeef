@@ -107,6 +107,20 @@ enum output_state_t {
     OUTPUT_STATE_PAUSED = 2,
 };
 
+// playback order
+enum playback_order_t {
+    PLAYBACK_ORDER_LINEAR = 0,
+    PLAYBACK_ORDER_SHUFFLE = 1,
+    PLAYBACK_ORDER_RANDOM = 2,
+};
+
+// playback modes
+enum playback_mode_t {
+    PLAYBACK_MODE_LOOP_ALL = 0, // loop playlist
+    PLAYBACK_MODE_NOLOOP = 1, // don't loop
+    PLAYBACK_MODE_LOOP_SINGLE = 2, // loop single track
+};
+
 typedef struct {
     int event;
     time_t time;

@@ -2104,3 +2104,10 @@ on_toggle_column_headers_activate      (GtkMenuItem     *menuitem,
     }
 }
 
+void
+on_stop_after_current_activate         (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_int ("playlist.stop_after_current", gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (menuitem)));
+}
+

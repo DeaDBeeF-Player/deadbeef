@@ -717,3 +717,11 @@ on_toggle_menu_activate                (GtkMenuItem     *menuitem,
 void
 on_toggle_column_headers_activate      (GtkMenuItem     *menuitem,
                                         gpointer         user_data);
+
+void
+on_stop_after_current1_activate        (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_stop_after_current_activate         (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);

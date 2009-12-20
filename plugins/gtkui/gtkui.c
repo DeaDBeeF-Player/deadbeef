@@ -367,15 +367,27 @@ gtkui_thread (void *ctx) {
             gtk_window_maximize (GTK_WINDOW (mainwin));
         }
     }
+
     // order and looping
-    const char *orderwidgets[3] = { "order_linear", "order_shuffle", "order_random" };
-    const char *loopingwidgets[3] = { "loop_all", "loop_disable", "loop_single" };
     const char *w;
-    w = orderwidgets[deadbeef->conf_get_int ("playback.order", 0)];
+
+    // order
+    const char *orderwidgets[3] = { "order_linear", "order_shuffle", "order_random" };
+    w = orderwidgets[deadbeef->conf_get_int ("playback.order", PLAYBACK_ORDER_LINEAR)];
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, w)), TRUE);
-    w = loopingwidgets[deadbeef->conf_get_int ("playback.loop", 0)];
+
+    // looping
+    const char *loopingwidgets[3] = { "loop_all", "loop_disable", "loop_single" };
+    w = loopingwidgets[deadbeef->conf_get_int ("playback.loop", PLAYBACK_MODE_LOOP_ALL)];
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, w)), TRUE);
+
+    // scroll follows playback
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "scroll_follows_playback")), deadbeef->conf_get_int ("playlist.scroll.followplayback", 0) ? TRUE : FALSE);
+
+    // stop after current
+    int stop_after_current = deadbeef->conf_get_int ("playlist.stop_after_current", 0);
+    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "stop_after_current")), stop_after_current ? TRUE : FALSE);
+
     // visibility of statusbar and headers
     GtkWidget *header_mi = lookup_widget (mainwin, "view_headers");
     GtkWidget *sb_mi = lookup_widget (mainwin, "view_status_bar");

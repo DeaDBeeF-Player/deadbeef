@@ -771,7 +771,12 @@ streamer_read_async (char *bytes, int size) {
             if (bytes_until_next_song < 0) {
                 trace ("finished streaming song, queueing next\n");
                 bytes_until_next_song = streambuffer_fill;
-                pl_nextsong (0);
+                if (conf_get_int ("playlist.stop_after_current", 0)) {
+                    streamer_set_nextsong (-2, 1);
+                }
+                else {
+                    pl_nextsong (0);
+                }
             }
             break;
         }

@@ -1917,12 +1917,26 @@ update_win_title_idle (gpointer data) {
     return FALSE;
 }
 
+static gboolean
+redraw_seekbar_cb (gpointer nothing) {
+    void seekbar_draw (GtkWidget *widget);
+    void seekbar_expose (GtkWidget *widget, int x, int y, int w, int h);
+    GtkWidget *widget = lookup_widget (mainwin, "seekbar");
+    seekbar_draw (widget);
+    seekbar_expose (widget, 0, 0, widget->allocation.width, widget->allocation.height);
+    return FALSE;
+}
+
 void
 gtkpl_songchanged_wrapper (int from, int to) {
     struct fromto_t *ft = malloc (sizeof (struct fromto_t));
     ft->from = from;
     ft->to = to;
     g_idle_add (update_win_title_idle, ft);
+    if (ft->to == -1 && ft->from != -1) {
+        // redraw seekbar
+        g_idle_add (redraw_seekbar_cb, NULL);
+    }
 }
 
 void
