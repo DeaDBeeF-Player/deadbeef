@@ -29,7 +29,6 @@
 #include "fprovide.h"
 #include "players.h"
 #include "database.h"
-#include "../../deadbeef.h"
 
 class CAdPlug
 {

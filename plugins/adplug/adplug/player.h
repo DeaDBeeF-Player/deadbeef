@@ -24,7 +24,6 @@
 
 #include <string>
 
-#include "../../../deadbeef.h"
 #include "fprovide.h"
 #include "opl.h"
 #include "database.h"
