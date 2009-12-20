@@ -1561,6 +1561,10 @@ pl_get_item_duration (playItem_t *it) {
 
 int
 pl_format_item_queue (playItem_t *it, char *s, int size) {
+    if (!playqueue_count) {
+        *s = 0;
+        return 0;
+    }
     int init = 1;
     int initsize = size;
     int len;
@@ -1592,65 +1596,77 @@ pl_format_item_queue (playItem_t *it, char *s, int size) {
     return initsize-size;
 }
 
-int
-pl_format_title (playItem_t *it, char *s, int size, int id, const char *fmt) {
-    if (id != -1) {
-        char dur[50];
-        if (it->_duration >= 0) {
-            int hourdur = it->_duration / (60 * 60);
-            int mindur = (it->_duration - hourdur * 60 * 60) / 60;
-            int secdur = it->_duration - hourdur*60*60 - mindur * 60;
+static const char *
+pl_get_meta_cached (playItem_t *it, const char *meta, const char *ret, const char *def) {
+    if (!ret) {
+        ret = pl_find_meta (it, meta);
+        if (!ret) {
+            ret = def;
+        }
+    }
+    return ret;
+}
 
-            if (hourdur) {
-                snprintf (dur, sizeof (dur), "%d:%02d:%02d", hourdur, mindur, secdur);
-            }
-            else {
-                snprintf (dur, sizeof (dur), "%d:%02d", mindur, secdur);
-            }
+static const char *
+pl_format_duration (playItem_t *it, const char *ret, char dur[50]) {
+    if (ret) {
+        return ret;
+    }
+    if (it->_duration >= 0) {
+        int hourdur = it->_duration / (60 * 60);
+        int mindur = (it->_duration - hourdur * 60 * 60) / 60;
+        int secdur = it->_duration - hourdur*60*60 - mindur * 60;
+
+        if (hourdur) {
+            snprintf (dur, sizeof (dur), "%d:%02d:%02d", hourdur, mindur, secdur);
         }
         else {
-            strcpy (dur, "-:--");
+            snprintf (dur, sizeof (dur), "%d:%02d", mindur, secdur);
         }
+    }
+    else {
+        strcpy (dur, "-:--");
+    }
+    return dur;
+}
 
-        const char *artist = pl_find_meta (it, "artist");
-        if (!artist) {
-            artist = "?";
-        }
-        const char *album = pl_find_meta (it, "album");
-        if (!album) {
-            album = "?";
-        }
-        const char *track = pl_find_meta (it, "track");
-        if (!track) {
-            track = "";
-        }
-        const char *title = pl_find_meta (it, "title");
-        if (!title) {
-            title = "?";
-        }
-        char artistalbum[1024];
-        snprintf (artistalbum, sizeof (artistalbum), "%s - %s", artist, album);
+int
+pl_format_title (playItem_t *it, char *s, int size, int id, const char *fmt) {
+    char dur[50];
+    const char *artist = NULL;
+    const char *album = NULL;
+    const char *track = NULL;
+    const char *title = NULL;
+    const char *duration = NULL;
+
+    if (id != -1) {
         const char *text = NULL;
         switch (id) {
         case DB_COLUMN_PLAYING:
             return pl_format_item_queue (it, s, size);
-        case DB_COLUMN_ARTIST_ALBUM: 
-            text = artistalbum;
+        case DB_COLUMN_ARTIST_ALBUM:
+            {
+                char artistalbum[1024];
+                snprintf (artistalbum, sizeof (artistalbum), "%s - %s",
+                artist = pl_get_meta_cached (it, "artist", artist, "?"),
+                album = pl_get_meta_cached (it, "album", album, "?"));
+                text = artistalbum;
+            }
             break;
         case DB_COLUMN_ARTIST:
-            text = artist;
+            text = (artist = pl_get_meta_cached (it, "artist", artist, "?"));
             break;
         case DB_COLUMN_ALBUM:
-            text = album;
+            text = (album = pl_get_meta_cached (it, "album", artist, "?"));
             break;
         case DB_COLUMN_TITLE:
-            text = title;
+            text = (title = pl_get_meta_cached (it, "title", artist, "?"));
             break;
         case DB_COLUMN_DURATION:
-            text = dur;
+            text = (duration = pl_format_duration (it, duration, dur));
             break;
         case DB_COLUMN_TRACK:
-            text = track;
+            text = (track = pl_get_meta_cached (it, "track", track, ""));
             break;
         }
         if (text) {
@@ -1675,35 +1691,19 @@ pl_format_title (playItem_t *it, char *s, int size, int id, const char *fmt) {
                 break;
             }
             else if (*fmt == 'a') {
-                meta = "artist";
+                meta = (artist = pl_get_meta_cached (it, "artist", artist, "?"));
             }
             else if (*fmt == 't') {
-                meta = "title";
+                meta = (title = pl_get_meta_cached (it, "title", title, "?"));
             }
             else if (*fmt == 'b') {
-                meta = "album";
+                meta = (album = pl_get_meta_cached (it, "album", album, "?"));
             }
             else if (*fmt == 'n') {
-                meta = "track";
+                meta = (track = pl_get_meta_cached (it, "track", track, ""));
             }
             else if (*fmt == 'l') {
-                char dur[50];
-                if (it->_duration >= 0) {
-                    int hourdur = it->_duration / (60 * 60);
-                    int mindur = (it->_duration - hourdur * 60 * 60) / 60;
-                    int secdur = it->_duration - hourdur*60*60 - mindur * 60;
-
-                    if (hourdur) {
-                        snprintf (dur, sizeof (dur), "%d:%02d:%02d", hourdur, mindur, secdur);
-                    }
-                    else {
-                        snprintf (dur, sizeof (dur), "%d:%02d", mindur, secdur);
-                    }
-                }
-                else {
-                    strcpy (dur, "-:--");
-                }
-                const char *value = dur;
+                const char *value = (duration = pl_format_duration (it, duration, dur));
                 while (n > 0 && *value) {
                     *s++ = *value++;
                     n--;
