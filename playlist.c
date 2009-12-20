@@ -1593,6 +1593,10 @@ pl_format_item_queue (playItem_t *it, char *s, int size) {
         s += len;
         size -= len;
     }
+    else {
+        *s = 0;
+        return 0;
+    }
     return initsize-size;
 }
 
