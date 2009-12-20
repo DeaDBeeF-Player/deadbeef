@@ -34,7 +34,8 @@ static DB_misc_t plugin;
 static DB_functions_t *deadbeef;
 
 #define LFM_CLIENTID "ddb"
-#define SCROBBLER_URL_V1 "http://post.audioscrobbler.com"
+#define SCROBBLER_URL_LFM "http://post.audioscrobbler.com"
+#define SCROBBLER_URL_LIBRE "http://turtle.libre.fm"
 
 static char lfm_user[100];
 static char lfm_pass[100];
@@ -178,10 +179,11 @@ auth (void) {
     deadbeef->md5 (sig, token, strlen (token));
     deadbeef->md5_to_str (token, sig);
 
+    const char *scrobbler_url = deadbeef->conf_get_str ("lastfm.scrobbler_url", SCROBBLER_URL_LFM);
 #if LFM_TESTMODE
-    snprintf (req, sizeof (req), "%s/?hs=true&p=1.2.1&c=tst&v=1.0&u=%s&t=%d&a=%s", SCROBBLER_URL_V1, lfm_user, timestamp, token);
+    snprintf (req, sizeof (req), "%s/?hs=true&p=1.2.1&c=tst&v=1.0&u=%s&t=%d&a=%s", scrobbler_url, lfm_user, timestamp, token);
 #else
-    snprintf (req, sizeof (req), "%s/?hs=true&p=1.2.1&c=%s&v=%d.%d&u=%s&t=%d&a=%s", SCROBBLER_URL_V1, LFM_CLIENTID, plugin.plugin.version_major, plugin.plugin.version_minor, lfm_user, timestamp, token);
+    snprintf (req, sizeof (req), "%s/?hs=true&p=1.2.1&c=%s&v=%d.%d&u=%s&t=%d&a=%s", scrobbler_url, LFM_CLIENTID, plugin.plugin.version_major, plugin.plugin.version_minor, lfm_user, timestamp, token);
 #endif
     // handshake
     int status = curl_req_send (req, NULL);
@@ -788,6 +790,7 @@ lastfm_stop (void) {
 static const char settings_dlg[] =
     "property Username entry lastfm.login \"\";\n"
     "property Password password lastfm.password \"\";"
+    "property \"Scrobble URL\" entry lastfm.scrobbler_url \""SCROBBLER_URL_LFM"\";"
 ;
 
 // define plugin interface
