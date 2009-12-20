@@ -1928,6 +1928,26 @@ redraw_seekbar_cb (gpointer nothing) {
 }
 
 void
+redraw_queued_tracks (gtkplaylist_t *pl) {
+    DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (pl->scrollpos, pl->iterator);
+    int i = pl->scrollpos;
+    while (it && i < pl->scrollpos + pl->nvisiblerows) {
+        if (deadbeef->pl_playqueue_test (it) != -1) {
+            gtkpl_redraw_pl_row (pl, i, it);
+        }
+        it = PL_NEXT (it, pl->iterator);
+        i++;
+    }
+}
+
+static gboolean
+redraw_queued_tracks_cb (gpointer nothing) {
+    redraw_queued_tracks (&main_playlist);
+    redraw_queued_tracks (&search_playlist);
+    return FALSE;
+}
+
+void
 gtkpl_songchanged_wrapper (int from, int to) {
     struct fromto_t *ft = malloc (sizeof (struct fromto_t));
     ft->from = from;
@@ -1937,6 +1957,7 @@ gtkpl_songchanged_wrapper (int from, int to) {
         // redraw seekbar
         g_idle_add (redraw_seekbar_cb, NULL);
     }
+    g_idle_add (redraw_queued_tracks_cb, NULL);
 }
 
 void
