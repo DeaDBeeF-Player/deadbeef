@@ -910,14 +910,17 @@ streamer_configchanged (void) {
 void
 streamer_play_current_track (void) {
     if (p_ispaused ()) {
+        // unpause currently paused track
         p_unpause ();
         plug_trigger_event_paused (0);
     }
     else if (playlist_current_row[PL_MAIN] != -1) {
+        // play currently selected track
         p_stop ();
         streamer_set_nextsong (playlist_current_row[PL_MAIN], 1);
     }
     else {
+        // restart currently playing track
         p_stop ();
         streamer_set_nextsong (0, 1);
     }

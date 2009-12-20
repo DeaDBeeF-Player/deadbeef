@@ -58,9 +58,6 @@ extern playItem_t *playlist_tail[PL_MAX_ITERATORS]; // tail of linked list
 extern int playlist_current_row[PL_MAX_ITERATORS]; // current row (cursor)
 extern playItem_t *playlist_current_ptr; // pointer to a real current playlist item (or NULL)
 
-extern int pl_count;
-extern float pl_totaltime;
-
 int
 pl_add_dir (const char *dirname, int (*cb)(playItem_t *it, void *data), void *user_data);
 
@@ -213,5 +210,18 @@ pl_process_search (const char *text);
 
 void
 pl_sort (int iter, int id, const char *format, int ascending);
+
+// playqueue support functions
+int
+pl_playqueue_push (playItem_t *it);
+
+void
+pl_playqueue_clear (void);
+
+void
+pl_playqueue_pop (void);
+
+void
+pl_playqueue_remove (playItem_t *it);
 
 #endif // __PLAYLIST_H

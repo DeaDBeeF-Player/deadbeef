@@ -54,8 +54,12 @@ playItem_t *playlist_tail[PL_MAX_ITERATORS];
 int playlist_current_row[PL_MAX_ITERATORS];
 
 playItem_t *playlist_current_ptr;
-int pl_count = 0;
-float pl_totaltime = 0;
+static int pl_count = 0;
+static float pl_totaltime = 0;
+
+#define PLAYQUEUE_SIZE 100
+static playItem_t *playqueue[100];
+static int playqueue_count = 0;
 
 void
 pl_free (void) {
@@ -687,6 +691,7 @@ pl_remove (playItem_t *it) {
     if (playlist_current_ptr == it) {
         playlist_current_ptr = NULL;
     }
+    pl_playqueue_remove (it);
 
     // remove from linear list
     if (it->prev[PL_MAIN]) {
@@ -877,6 +882,7 @@ pl_item_free (playItem_t *it) {
 
 int
 pl_prevsong (void) {
+    pl_playqueue_clear ();
     if (!playlist_head[PL_MAIN]) {
         streamer_set_nextsong (-2, 1);
         return 0;
@@ -949,6 +955,14 @@ pl_prevsong (void) {
 
 int
 pl_nextsong (int reason) {
+    if (playqueue_count > 0) {
+        playItem_t *it = playqueue[0];
+        pl_playqueue_pop ();
+        int r = pl_get_idx_of (it);
+        streamer_set_nextsong (r, 1);
+        return 0;
+    }
+
     playItem_t *curr = streamer_get_streaming_track ();
     if (!playlist_head[PL_MAIN]) {
         streamer_set_nextsong (-2, 1);
@@ -1907,4 +1921,51 @@ pl_process_search (const char *text) {
         }
     }
     return search_count;
+}
+
+int
+pl_playqueue_push (playItem_t *it) {
+    if (playqueue_count == PLAYQUEUE_SIZE) {
+        trace ("playqueue is full\n");
+        return -1;
+    }
+    playqueue[playqueue_count++] = it;
+    return 0;
+}
+
+void
+pl_playqueue_clear (void) {
+    playqueue_count = 0;
+}
+
+void
+pl_playqueue_pop (void) {
+    if (!playqueue_count) {
+        return;
+    }
+    if (playqueue_count == 1) {
+        playqueue_count = 0;
+        return;
+    }
+    memmove (&playqueue[0], &playqueue[1], (playqueue_count-1) * sizeof (playItem_t*));
+    playqueue_count--;
+}
+
+void
+pl_playqueue_remove (playItem_t *it) {
+    for (;;) {
+        int i;
+        for (i = 0; i < playqueue_count; i++) {
+            if (playqueue[i] == it) {
+                if (i < playqueue_count-1) {
+                    memmove (&playqueue[i], &playqueue[i+1], (playqueue_count-i) * sizeof (playItem_t*));
+                }
+                playqueue_count--;
+                break;
+            }
+        }
+        if (i == playqueue_count) {
+            break;
+        }
+    }
 }
