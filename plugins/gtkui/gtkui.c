@@ -320,6 +320,31 @@ static int
 gtkui_on_volumechanged (DB_event_t *ev, uintptr_t data) {
     void volumebar_notify_changed (void); // FIXME: do it properly
     volumebar_notify_changed ();
+    return 0;
+}
+
+static int
+gtkui_on_configchanged (DB_event_t *ev, uintptr_t data) {
+    // order and looping
+    const char *w;
+
+    // order
+    const char *orderwidgets[3] = { "order_linear", "order_shuffle", "order_random" };
+    w = orderwidgets[deadbeef->conf_get_int ("playback.order", PLAYBACK_ORDER_LINEAR)];
+    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, w)), TRUE);
+
+    // looping
+    const char *loopingwidgets[3] = { "loop_all", "loop_disable", "loop_single" };
+    w = loopingwidgets[deadbeef->conf_get_int ("playback.loop", PLAYBACK_MODE_LOOP_ALL)];
+    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, w)), TRUE);
+
+    // scroll follows playback
+    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "scroll_follows_playback")), deadbeef->conf_get_int ("playlist.scroll.followplayback", 0) ? TRUE : FALSE);
+
+    // stop after current
+    int stop_after_current = deadbeef->conf_get_int ("playlist.stop_after_current", 0);
+    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "stop_after_current")), stop_after_current ? TRUE : FALSE);
+    return 0;
 }
 
 void
@@ -368,25 +393,7 @@ gtkui_thread (void *ctx) {
         }
     }
 
-    // order and looping
-    const char *w;
-
-    // order
-    const char *orderwidgets[3] = { "order_linear", "order_shuffle", "order_random" };
-    w = orderwidgets[deadbeef->conf_get_int ("playback.order", PLAYBACK_ORDER_LINEAR)];
-    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, w)), TRUE);
-
-    // looping
-    const char *loopingwidgets[3] = { "loop_all", "loop_disable", "loop_single" };
-    w = loopingwidgets[deadbeef->conf_get_int ("playback.loop", PLAYBACK_MODE_LOOP_ALL)];
-    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, w)), TRUE);
-
-    // scroll follows playback
-    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "scroll_follows_playback")), deadbeef->conf_get_int ("playlist.scroll.followplayback", 0) ? TRUE : FALSE);
-
-    // stop after current
-    int stop_after_current = deadbeef->conf_get_int ("playlist.stop_after_current", 0);
-    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "stop_after_current")), stop_after_current ? TRUE : FALSE);
+    gtkui_on_configchanged (NULL, 0);
 
     // visibility of statusbar and headers
     GtkWidget *header_mi = lookup_widget (mainwin, "view_headers");
@@ -431,6 +438,7 @@ gtkui_start (void) {
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_PLAYLISTCHANGED, DB_CALLBACK (gtkui_on_playlistchanged), 0);
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_FRAMEUPDATE, DB_CALLBACK (gtkui_on_frameupdate), 0);
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_VOLUMECHANGED, DB_CALLBACK (gtkui_on_volumechanged), 0);
+    deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_CONFIGCHANGED, DB_CALLBACK (gtkui_on_configchanged), 0);
     // gtk must be running in separate thread
     gtk_tid = deadbeef->thread_start (gtkui_thread, NULL);
 
@@ -453,6 +461,7 @@ gtkui_stop (void) {
     deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_PLAYLISTCHANGED, DB_CALLBACK (gtkui_on_playlistchanged), 0);
     deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_FRAMEUPDATE, DB_CALLBACK (gtkui_on_frameupdate), 0);
     deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_VOLUMECHANGED, DB_CALLBACK (gtkui_on_volumechanged), 0);
+    deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_CONFIGCHANGED, DB_CALLBACK (gtkui_on_configchanged), 0);
     trace ("quitting gtk\n");
     g_idle_add (quit_gtk_cb, NULL);
     trace ("waiting for gtk thread to finish\n");

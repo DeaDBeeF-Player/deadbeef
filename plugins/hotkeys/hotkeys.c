@@ -37,7 +37,7 @@ typedef struct {
     KeySym keysym;
 } xkey_t;
 
-#define KEY( kname, kcode ) { .name=kname, .keysym=kcode },
+#define KEY(kname, kcode) { .name=kname, .keysym=kcode },
 
 static const xkey_t keys[] = {
     #include "keysyms.inc"
@@ -61,27 +61,27 @@ typedef struct {
 } known_command_t;
 
 static int
-get_keycode( Display *disp, const char* name ) {
+get_keycode (Display *disp, const char* name) {
     static int first_kk, last_kk;
     static KeySym* syms;
     static int ks_per_kk;
     static int first_time = 1;
     int i, j, ks;
 
-    if ( first_time )
+    if (first_time)
     {
-        XDisplayKeycodes( disp, &first_kk, &last_kk );
+        XDisplayKeycodes (disp, &first_kk, &last_kk);
 
-        syms = XGetKeyboardMapping( disp, first_kk, last_kk - first_kk, &ks_per_kk );
+        syms = XGetKeyboardMapping (disp, first_kk, last_kk - first_kk, &ks_per_kk);
         first_time = 0;
     }
 
-    for ( i = 0; i < last_kk-first_kk; i++ )
+    for (i = 0; i < last_kk-first_kk; i++)
     {
-        KeySym sym = *(syms + i*ks_per_kk);
-        for ( ks = 0; ks < sizeof( keys ) / sizeof( xkey_t ); ks++ )
+        KeySym sym = * (syms + i*ks_per_kk);
+        for (ks = 0; ks < sizeof (keys) / sizeof (xkey_t); ks++)
         {
-            if ( (keys[ ks ].keysym == sym) && ( 0 == strcmp(name, keys[ ks ].name) ) )
+            if ( (keys[ ks ].keysym == sym) && (0 == strcmp (name, keys[ ks ].name)))
             {
                 return i+first_kk;
             }
@@ -91,81 +91,92 @@ get_keycode( Display *disp, const char* name ) {
 }
 
 static char*
-trim(char* s)
+trim (char* s)
 {
     char *h, *t;
     
-    for ( h = s; *h == ' ' || *h == '\t'; h++ );
-    for ( t = s + strlen(s); *t == ' ' || *t == '\t'; t-- );
-    *(t+1) = 0;
+    for (h = s; *h == ' ' || *h == '\t'; h++);
+    for (t = s + strlen (s); *t == ' ' || *t == '\t'; t--);
+    * (t+1) = 0;
     return h;
 }
 
 static void
-cmd_seek_fwd() {
-    deadbeef->playback_set_pos( deadbeef->playback_get_pos() + 5 );
+cmd_seek_fwd () {
+    deadbeef->playback_set_pos (deadbeef->playback_get_pos () + 5);
 }
 
 static void
-cmd_seek_back() {
-    deadbeef->playback_set_pos( deadbeef->playback_get_pos() - 5 );
+cmd_seek_back () {
+    deadbeef->playback_set_pos (deadbeef->playback_get_pos () - 5);
 }
 
 static void
-cmd_volume_up() {
-    deadbeef->volume_set_db( deadbeef->volume_get_db() + 2 );
+cmd_volume_up () {
+    deadbeef->volume_set_db (deadbeef->volume_get_db () + 2);
 }
 
 static void
-cmd_volume_down() {
-    deadbeef->volume_set_db( deadbeef->volume_get_db() - 2 );
+cmd_volume_down () {
+    deadbeef->volume_set_db (deadbeef->volume_get_db () - 2);
+}
+
+static void
+cmd_stop_after_current () {
+    int var = deadbeef->conf_get_int ("playlist.stop_after_current", 0);
+    var = 1 - var;
+    deadbeef->conf_set_int ("playlist.stop_after_current", var);
+    deadbeef->sendmessage (M_CONFIGCHANGED, 0, 0, 0);
 }
 
 static command_func_t
-get_command( const char* command )
+get_command (const char* command)
 {
-    if ( 0 == strcasecmp( command, "toggle_pause" ) )
+    if (!strcasecmp (command, "toggle_pause"))
         return deadbeef->playback_pause;
 
-    if ( 0 == strcasecmp( command, "play" ) )
+    else if (!strcasecmp (command, "play"))
         return deadbeef->playback_play;
 
-    if ( 0 == strcasecmp( command, "prev" ) )
+    else if (!strcasecmp (command, "prev"))
         return deadbeef->playback_prev;
 
-    if ( 0 == strcasecmp( command, "next" ) )
+    else if (!strcasecmp (command, "next"))
         return deadbeef->playback_next;
 
-    if ( 0 == strcasecmp( command, "stop" ) )
+    else if (!strcasecmp (command, "stop"))
         return deadbeef->playback_stop;
 
-    if ( 0 == strcasecmp( command, "play_random" ) )
+    else if (!strcasecmp (command, "play_random"))
         return deadbeef->playback_random;
 
-    if ( 0 == strcasecmp( command, "seek_fwd" ) )
+    else if (!strcasecmp (command, "seek_fwd"))
         return cmd_seek_fwd;
 
-    if ( 0 == strcasecmp( command, "seek_back" ) )
+    else if (!strcasecmp (command, "seek_back"))
         return cmd_seek_back;
 
-    if ( 0 == strcasecmp( command, "volume_up" ) )
+    else if (!strcasecmp (command, "volume_up"))
         return cmd_volume_up;
 
-    if ( 0 == strcasecmp( command, "volume_down" ) )
+    else if (!strcasecmp (command, "volume_down"))
         return cmd_volume_down;
+
+    else if (!strcasecmp (command, "toggle_stop_after_current"))
+        return cmd_stop_after_current;
 
     return NULL;
 }
 
 static int
-read_config( Display *disp )
+read_config (Display *disp)
 {
     DB_conf_item_t *item = deadbeef->conf_find ("hotkeys.", NULL);
     while (item) {
 //        fprintf (stderr, "hotkeys: adding %s %s\n", item->key, item->value);
-        if ( command_count == MAX_COMMAND_COUNT )
+        if (command_count == MAX_COMMAND_COUNT)
         {
-            fprintf( stderr, "hotkeys: maximum number (%d) of commands exceeded\n", MAX_COMMAND_COUNT );
+            fprintf (stderr, "hotkeys: maximum number (%d) of commands exceeded\n", MAX_COMMAND_COUNT);
             break;
         }
 
@@ -177,10 +188,10 @@ read_config( Display *disp )
         char param[l+1];
         memcpy (param, item->value, l+1);
         
-        char* colon = strchr( param, ':' );
-        if ( !colon )
+        char* colon = strchr (param, ':');
+        if (!colon)
         {
-            fprintf( stderr, "hotkeys: bad config option %s %s\n", item->key, item->value);
+            fprintf (stderr, "hotkeys: bad config option %s %s\n", item->key, item->value);
             continue;
         }
         char* command = colon+1;
@@ -194,22 +205,22 @@ read_config( Display *disp )
         char* space = param - 1;
         do {
             p = space+1;
-            space = strchr( p, ' ' );
-            if ( space )
+            space = strchr (p, ' ');
+            if (space)
                 *space = 0;
             else
                 done = 1;
 
-            if ( 0 == strcasecmp( p, "Ctrl" ) )
+            if (0 == strcasecmp (p, "Ctrl"))
                 cmd_entry->modifier |= ControlMask;
 
-            else if ( 0 == strcasecmp( p, "Alt" ) )
+            else if (0 == strcasecmp (p, "Alt"))
                 cmd_entry->modifier |= Mod1Mask;
 
-            else if ( 0 == strcasecmp( p, "Shift" ) )
+            else if (0 == strcasecmp (p, "Shift"))
                 cmd_entry->modifier |= ShiftMask;
 
-            else if ( 0 == strcasecmp( p, "Super" ) ) {
+            else if (0 == strcasecmp (p, "Super")) {
                 cmd_entry->modifier |= Mod2Mask;
             }
 
@@ -223,26 +234,26 @@ read_config( Display *disp )
                 }
                 else {
                     // lookup name table
-                    cmd_entry->keycode = get_keycode( disp, p );
+                    cmd_entry->keycode = get_keycode (disp, p);
                 }
-                if ( !cmd_entry->keycode )
+                if (!cmd_entry->keycode)
                 {
-                    fprintf( stderr, "hotkeys: Unknown key: <%s> while parsing %s %s\n", key, item->key, item->value );
+                    fprintf (stderr, "hotkeys: Unknown key: <%s> while parsing %s %s\n", key, item->key, item->value);
                     break;
                 }
             }
-        } while ( !done );
+        } while (!done);
 
         if (done) {
-            if ( cmd_entry->keycode == 0 ) {
-                fprintf( stderr, "hotkeys: Key not found while parsing %s %s\n", item->key, item->value);
+            if (cmd_entry->keycode == 0) {
+                fprintf (stderr, "hotkeys: Key not found while parsing %s %s\n", item->key, item->value);
             }
             else {
                 command = trim (command);
-                cmd_entry->func = get_command( command );
-                if ( !cmd_entry->func )
+                cmd_entry->func = get_command (command);
+                if (!cmd_entry->func)
                 {
-                    fprintf( stderr, "hotkeys: Unknown command <%s> while parsing %s %s\n", command,  item->key, item->value);
+                    fprintf (stderr, "hotkeys: Unknown command <%s> while parsing %s %s\n", command,  item->key, item->value);
                 }
                 else {
                     command_count++;
@@ -260,56 +271,56 @@ hotkeys_load (DB_functions_t *api) {
 }
 
 static void
-cleanup() {
+cleanup () {
     command_count = 0;
-    XCloseDisplay( disp );
+    XCloseDisplay (disp);
 }
 
 static void
-hotkeys_event_loop( void *unused ) {
+hotkeys_event_loop (void *unused) {
     int i;
 
     while (!finished) {
         XEvent event;
-        while ( XPending( disp ) )
+        while (XPending (disp))
         {
-            XNextEvent( disp, &event );
+            XNextEvent (disp, &event);
 
-            if ( event.xkey.type == KeyPress )
+            if (event.xkey.type == KeyPress)
             {
-                for ( i = 0; i < command_count; i++ )
+                for (i = 0; i < command_count; i++)
                     if ( (event.xkey.keycode == commands[ i ].keycode) &&
-                         ((event.xkey.state & commands[ i ].modifier) == commands[ i ].modifier) )
+                         ( (event.xkey.state & commands[ i ].modifier) == commands[ i ].modifier))
                     {
-                        commands[i].func();
+                        commands[i].func ();
                         break;
                     }
             }
         }
-        usleep( 200 * 1000 );
+        usleep (200 * 1000);
     }
 }
 
 static int
 x_err_handler (Display *d, XErrorEvent *evt) {
     char buffer[1024];
-    XGetErrorText(d, evt->error_code, buffer, sizeof (buffer));
-    fprintf( stderr, "hotkeys: xlib error: %s\n", buffer);
+    XGetErrorText (d, evt->error_code, buffer, sizeof (buffer));
+    fprintf (stderr, "hotkeys: xlib error: %s\n", buffer);
 }
 
 static int
 hotkeys_start (void) {
     finished = 0;
     loop_tid = 0;
-    disp = XOpenDisplay( NULL );
-    if ( !disp )
+    disp = XOpenDisplay (NULL);
+    if (!disp)
     {
-        fprintf( stderr, "hotkeys: could not open display\n" );
+        fprintf (stderr, "hotkeys: could not open display\n");
         return -1;
     }
-    XSetErrorHandler( x_err_handler );
+    XSetErrorHandler (x_err_handler);
 
-    read_config( disp );
+    read_config (disp);
     int i;
     // need to grab it here to prevent gdk_x_error from being called while we're
     // doing it on other thread
@@ -318,10 +329,10 @@ hotkeys_start (void) {
     }
     XSync (disp, 0);
     if (command_count > 0) {
-        loop_tid = deadbeef->thread_start( hotkeys_event_loop, 0 );
+        loop_tid = deadbeef->thread_start (hotkeys_event_loop, 0);
     }
     else {
-        cleanup();
+        cleanup ();
     }
 }
 
@@ -329,8 +340,8 @@ static int
 hotkeys_stop (void) {
     if (loop_tid) {
         finished = 1;
-        deadbeef->thread_join( loop_tid );
-        cleanup();
+        deadbeef->thread_join (loop_tid);
+        cleanup ();
     }
 }
 
