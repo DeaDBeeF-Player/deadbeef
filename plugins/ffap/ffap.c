@@ -33,6 +33,7 @@
 #include <string.h>
 #include <limits.h>
 #include <stdlib.h>
+#include <malloc.h>
 #include <assert.h>
 #include "../../deadbeef.h"
 
@@ -635,7 +636,7 @@ ape_free_ctx (APEContext *ape_ctx) {
         ape_ctx->seektable = NULL;
     }
     for (i = 0; i < APE_FILTER_LEVELS; i++) {
-        if (ape_ctx->filterbuf) {
+        if (ape_ctx->filterbuf[i]) {
             free (ape_ctx->filterbuf[i]);
             ape_ctx->filterbuf[i] = NULL;
         }
@@ -696,7 +697,11 @@ ffap_init(DB_playItem_t *it)
     for (i = 0; i < APE_FILTER_LEVELS; i++) {
         if (!ape_filter_orders[ape_ctx.fset][i])
             break;
-        ape_ctx.filterbuf[i] = malloc((ape_filter_orders[ape_ctx.fset][i] * 3 + HISTORY_SIZE) * 4);
+        int err = posix_memalign ((void **)&ape_ctx.filterbuf[i], 16, (ape_filter_orders[ape_ctx.fset][i] * 3 + HISTORY_SIZE) * 4);
+        if (err) {
+            trace ("ffap: out of memory (posix_memalign)\n");
+            return -1;
+        }
     }
 
     plugin.info.bps = ape_ctx.bps;
