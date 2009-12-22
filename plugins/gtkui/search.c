@@ -87,8 +87,11 @@ on_searchentry_changed                 (GtkEditable     *editable,
 
 void
 search_refresh (void) {
-    if (searchwin) {
-        on_searchentry_changed (GTK_EDITABLE (lookup_widget (searchwin, "searchentry")), NULL);
+    if (searchwin && GTK_WIDGET_VISIBLE (searchwin)) {
+        gtkplaylist_t *ps = &search_playlist;
+        gtkpl_draw_playlist (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
+        gtkpl_expose (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
+        //on_searchentry_changed (GTK_EDITABLE (lookup_widget (searchwin, "searchentry")), NULL);
     }
 }
 
