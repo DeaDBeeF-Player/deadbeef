@@ -1698,7 +1698,6 @@ on_prefwin_delete_event                (GtkWidget       *widget,
                                         GdkEvent        *event,
                                         gpointer         user_data)
 {
-    printf ("destroyed\n");
     prefwin = NULL;
     return FALSE;
 }
