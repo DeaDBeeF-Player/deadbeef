@@ -22,8 +22,8 @@
 #include <string.h>
 #include "deadbeef.h"
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 static DB_output_t plugin;
 DB_functions_t *deadbeef;
@@ -80,6 +80,7 @@ pnull_get_endianness (void);
 
 int
 pnull_init (void) {
+    trace ("pnull_init\n");
     state = OUTPUT_STATE_STOPPED;
     null_rate = 44100;
     null_terminate = 0;
@@ -95,8 +96,12 @@ pnull_change_rate (int rate) {
 
 int
 pnull_free (void) {
+    trace ("pnull_free\n");
     if (!null_terminate) {
-        null_terminate = 1;
+        if (null_tid) {
+            null_terminate = 1;
+            deadbeef->thread_join (null_tid);
+        }
         null_tid = 0;
         state = OUTPUT_STATE_STOPPED;
         null_terminate = 0;
