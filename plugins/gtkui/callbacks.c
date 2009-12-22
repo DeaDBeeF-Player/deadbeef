@@ -1452,6 +1452,32 @@ on_plugin_active_toggled (GtkCellRendererToggle *cell_renderer, gchar *path, Gtk
 }
 
 void
+preferences_fill_soundcards (void) {
+    GtkWidget *w = prefwin;
+    if (!prefwin) {
+        return;
+    }
+    const char *s = deadbeef->conf_get_str ("alsa_soundcard", "default");
+    GtkComboBox *combobox = GTK_COMBO_BOX (lookup_widget (w, "pref_soundcard"));
+    GtkTreeModel *mdl = gtk_combo_box_get_model (combobox);
+    gtk_list_store_clear (GTK_LIST_STORE (mdl));
+
+    gtk_combo_box_append_text (combobox, "Default Audio Device");
+    if (!strcmp (s, "default")) {
+        gtk_combo_box_set_active (combobox, 0);
+    }
+    num_alsa_devices = 1;
+    strcpy (alsa_device_names[0], "default");
+    if (deadbeef->get_output ()->enum_soundcards) {
+        deadbeef->get_output ()->enum_soundcards (gtk_enum_sound_callback, combobox);
+        gtk_widget_set_sensitive (GTK_WIDGET (combobox), TRUE);
+    }
+    else {
+        gtk_widget_set_sensitive (GTK_WIDGET (combobox), FALSE);
+    }
+}
+
+void
 on_preferences_activate                (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
@@ -1473,16 +1499,8 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
     }
 
     // soundcard (output device) selection
+    preferences_fill_soundcards ();
 
-    const char *s = deadbeef->conf_get_str ("alsa_soundcard", "default");
-    combobox = GTK_COMBO_BOX (lookup_widget (w, "pref_soundcard"));
-    gtk_combo_box_append_text (combobox, "Default Audio Device");
-    if (!strcmp (s, "default")) {
-        gtk_combo_box_set_active (combobox, 0);
-    }
-    num_alsa_devices = 1;
-    strcpy (alsa_device_names[0], "default");
-    deadbeef->get_output ()->enum_soundcards (gtk_enum_sound_callback, combobox);
 
     // alsa resampling
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "pref_alsa_resampling")), deadbeef->conf_get_int ("alsa.resample", 0));
@@ -1675,6 +1693,15 @@ on_pref_pluginlist_cursor_changed      (GtkTreeView     *treeview,
     gtk_entry_set_text (e, p->website ? p->website : "");
 }
 
+gboolean
+on_prefwin_delete_event                (GtkWidget       *widget,
+                                        GdkEvent        *event,
+                                        gpointer         user_data)
+{
+    printf ("destroyed\n");
+    prefwin = NULL;
+    return FALSE;
+}
 
 
 void
@@ -2261,4 +2288,5 @@ on_properties1_activate                (GtkMenuItem     *menuitem,
 {
 
 }
+
 

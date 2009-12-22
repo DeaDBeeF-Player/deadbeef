@@ -78,9 +78,6 @@ pnull_get_channels (void);
 static int
 pnull_get_endianness (void);
 
-static void
-pnull_enum_soundcards (void (*callback)(const char *name, const char *desc, void*), void *userdata);
-
 int
 pnull_init (void) {
     state = OUTPUT_STATE_STOPPED;
@@ -208,12 +205,6 @@ pnull_callback (char *stream, int len) {
     }
 }
 
-// derived from null-utils/aplay.c
-void
-pnull_enum_soundcards (void (*callback)(const char *name, const char *desc, void *), void *userdata) {
-    callback ("NULL output", "NULL output", userdata);
-}
-
 int
 pnull_get_state (void) {
     return state;
@@ -261,5 +252,4 @@ static DB_output_t plugin = {
     .bitspersample = pnull_get_bps,
     .channels = pnull_get_channels,
     .endianness = pnull_get_endianness,
-    .enum_soundcards = pnull_enum_soundcards,
 };

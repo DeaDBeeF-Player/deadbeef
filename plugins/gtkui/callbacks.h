@@ -742,3 +742,8 @@ on_remove2_activate                    (GtkMenuItem     *menuitem,
 void
 on_properties1_activate                (GtkMenuItem     *menuitem,
                                         gpointer         user_data);
+
+gboolean
+on_prefwin_delete_event                (GtkWidget       *widget,
+                                        GdkEvent        *event,
+                                        gpointer         user_data);

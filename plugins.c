@@ -706,6 +706,7 @@ plug_select_output (void) {
     if (!output_plugin) {
         return -1;
     }
+    plug_trigger_event (DB_EV_OUTPUTCHANGED, 0);
     return 0;
 }
 

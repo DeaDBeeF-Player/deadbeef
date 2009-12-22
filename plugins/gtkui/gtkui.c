@@ -347,6 +347,20 @@ gtkui_on_configchanged (DB_event_t *ev, uintptr_t data) {
     return 0;
 }
 
+static gboolean
+outputchanged_cb (gpointer nothing) {
+    void preferences_fill_soundcards (void);
+    preferences_fill_soundcards ();
+    return FALSE;
+}
+
+static int
+gtkui_on_outputchanged (DB_event_t *ev, uintptr_t nothing) {
+    g_idle_add (outputchanged_cb, NULL);
+    return 0;
+}
+
+
 void
 gtkui_thread (void *ctx) {
     // let's start some gtk
@@ -439,6 +453,7 @@ gtkui_start (void) {
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_FRAMEUPDATE, DB_CALLBACK (gtkui_on_frameupdate), 0);
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_VOLUMECHANGED, DB_CALLBACK (gtkui_on_volumechanged), 0);
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_CONFIGCHANGED, DB_CALLBACK (gtkui_on_configchanged), 0);
+    deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_OUTPUTCHANGED, DB_CALLBACK (gtkui_on_outputchanged), 0);
     // gtk must be running in separate thread
     gtk_tid = deadbeef->thread_start (gtkui_thread, NULL);
 
@@ -462,6 +477,7 @@ gtkui_stop (void) {
     deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_FRAMEUPDATE, DB_CALLBACK (gtkui_on_frameupdate), 0);
     deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_VOLUMECHANGED, DB_CALLBACK (gtkui_on_volumechanged), 0);
     deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_CONFIGCHANGED, DB_CALLBACK (gtkui_on_configchanged), 0);
+    deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_OUTPUTCHANGED, DB_CALLBACK (gtkui_on_outputchanged), 0);
     trace ("quitting gtk\n");
     g_idle_add (quit_gtk_cb, NULL);
     trace ("waiting for gtk thread to finish\n");

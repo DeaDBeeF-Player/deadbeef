@@ -1385,6 +1385,7 @@
   <property name="focus_on_map">True</property>
   <property name="urgency_hint">False</property>
   <signal name="key_press_event" handler="on_prefwin_key_press_event" last_modification_time="Sat, 07 Nov 2009 15:47:40 GMT"/>
+  <signal name="delete_event" handler="on_prefwin_delete_event" last_modification_time="Tue, 22 Dec 2009 20:16:22 GMT"/>
 
   <child>
     <widget class="GtkNotebook" id="notebook2">

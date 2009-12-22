@@ -1547,6 +1547,9 @@ create_prefwin (void)
   g_signal_connect ((gpointer) prefwin, "key_press_event",
                     G_CALLBACK (on_prefwin_key_press_event),
                     NULL);
+  g_signal_connect ((gpointer) prefwin, "delete_event",
+                    G_CALLBACK (on_prefwin_delete_event),
+                    NULL);
   g_signal_connect ((gpointer) pref_soundcard, "changed",
                     G_CALLBACK (on_pref_soundcard_changed),
                     NULL);
