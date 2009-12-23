@@ -369,7 +369,10 @@ gtkui_thread (void *ctx) {
     gdk_threads_init ();
     gdk_threads_enter ();
     gtk_set_locale ();
-    gtk_init (0, NULL);
+    int argc = 1;
+    char **argv = alloca (sizeof (char *));
+    argv[0] = "deadbeef";
+    gtk_init (&argc, (char ***)&argv);
 
     // system tray icon
     traymenu = create_traymenu ();
