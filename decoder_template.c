@@ -140,12 +140,12 @@ example:
     // add metainfo
     if (!strlen (ti.title)) {
         // title is empty, this call will set track title to filename without extension
-        deadbeef->pl_add_meta ("title", NULL);
+        deadbeef->pl_add_meta (it, "title", NULL);
     }
     else {
-        deadbeef->pl_add_meta ("title", ti.title);
+        deadbeef->pl_add_meta (it, "title", ti.title);
     }
-    deadbeef->pl_add_meta ("artist", ti.artist);
+    deadbeef->pl_add_meta (it, "artist", ti.artist);
     // ... etc ...
 
     // free decoder
