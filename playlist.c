@@ -1451,6 +1451,7 @@ pl_load (const char *fname) {
                 "track",
                 "band",
                 "cuesheet",
+                "copyright",
                 NULL
             };
 

@@ -18,7 +18,8 @@ SUBDIRS = gme/Game_Music_Emu-0.5.2\
           ${SNDFILE_DIR}\
           ${VFS_CURL_DIR}\
           ${CDDA_DIR}\
-          ${GTKUI_DIR}
+          ${GTKUI_DIR}\
+          ${FFMPEG_DIR}
 
 dumbpath=@top_srcdir@/dumb
 sidpath=@top_srcdir@/sid/sidplay-libs-2.1.0
