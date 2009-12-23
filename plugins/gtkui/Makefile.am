@@ -7,7 +7,8 @@ gtkui_la_SOURCES = gtkui.c gtkui.h\
 				   drawing.h gdkdrawing.c\
 				   progress.c progress.h\
 				   search.c search.h\
-				   fileman.c
+				   fileman.c\
+				   parser.c parser.h
 
 gtkui_la_LDFLAGS = -module
 

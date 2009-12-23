@@ -39,6 +39,7 @@
 #include "drawing.h"
 #include "session.h"
 #include "deadbeef.h"
+#include "parser.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -1722,122 +1723,47 @@ gtkpl_column_remove (gtkplaylist_t *pl, gtkpl_column_t *c) {
 void
 gtkpl_append_column_from_textdef (gtkplaylist_t *pl, const uint8_t *def) {
     // syntax: "title" "format" id width alignright
-    char title[128];
-    char format[128];
+    char token[MAX_TOKEN];
+    const char *p = def;
+    char title[MAX_TOKEN];
     int id;
+    char fmt[MAX_TOKEN];
     int width;
-    int align_right;
-    // title
-    if (*def != '"') {
+    int align;
+
+    parser_init ();
+
+    p = gettoken_warn_eof (p, token);
+    if (!p) {
         return;
     }
-    def++;
-    if (*def == 0) {
+    strcpy (title, token);
+
+    p = gettoken_warn_eof (p, token);
+    if (!p) {
         return;
     }
-    const uint8_t *e = def;
-    e++;
-    while (*e && *e != '"') {
-        e++;
-    }
-    if (*e == 0) {
+    strcpy (fmt, token);
+
+    p = gettoken_warn_eof (p, token);
+    if (!p) {
         return;
     }
-    memcpy (title, def, e-def);
-    title[e-def] = 0;
-    // skip whitespace
-    def = e;
-    def++;
-    while (*def && *def <= ' ') {
-        def++;
-    }
-    if (*def == 0) {
+    id = atoi (token);
+
+    p = gettoken_warn_eof (p, token);
+    if (!p) {
         return;
     }
-    // format
-    if (*def != '"') {
+    width = atoi (token);
+
+    p = gettoken_warn_eof (p, token);
+    if (!p) {
         return;
     }
-    def++;
-    if (*def == 0) {
-        return;
-    }
-    e = def;
-    while (*e && *e != '"') {
-        e++;
-    }
-    if (*e == 0) {
-        return;
-    }
-    memcpy (format, def, e-def);
-    format[e-def] = 0;
-    // skip whitespace
-    def = e;
-    def++;
-    while (*def && *def <= ' ') {
-        def++;
-    }
-    if (*def == 0) {
-        return;
-    }
-    // id
-    e = def;
-    while (*e && (isdigit (*e) || *e == '-')) {
-        e++;
-    }
-    if (*e == 0) {
-        return;
-    }
-    {
-        char s[e-def+1];
-        memcpy (s, def, e-def);
-        s[e-def] = 0;
-        id = atoi (s);
-    }
-    // skip whitespace
-    def = e;
-    def++;
-    while (*def && *def <= ' ') {
-        def++;
-    }
-    if (*def == 0) {
-        return;
-    }
-    // width
-    e = def;
-    while (*e && isdigit (*e)) {
-        e++;
-    }
-    if (*e == 0) {
-        return;
-    }
-    {
-        char s[e-def+1];
-        memcpy (s, def, e-def);
-        s[e-def] = 0;
-        width = atoi (s);
-    }
-    // skip whitespace
-    def = e;
-    def++;
-    while (*def && *def <= ' ') {
-        def++;
-    }
-    if (*def == 0) {
-        return;
-    }
-    // align_right
-    e = def;
-    while (*e && isdigit (*e)) {
-        e++;
-    }
-    {
-        char s[e-def+1];
-        memcpy (s, def, e-def);
-        s[e-def] = 0;
-        align_right = atoi (s);
-    }
-    gtkpl_column_append (pl, gtkpl_column_alloc (title, width, id, format[0] ? format : NULL, align_right));
+    align = atoi (token);
+
+    gtkpl_column_append (pl, gtkpl_column_alloc (title, width, id, fmt, align));
 }
 
 void
