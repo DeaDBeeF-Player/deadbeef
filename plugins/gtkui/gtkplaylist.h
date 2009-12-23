@@ -254,4 +254,7 @@ gtk_pl_redraw_item_everywhere (DB_playItem_t *it);
 void
 gtkpl_set_cursor (int iter, int cursor);
 
+int 
+gtkpl_get_column_for_click (gtkplaylist_t *pl, int click_x);
+
 #endif // __GTKPLAYLIST_H

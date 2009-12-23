@@ -1476,6 +1476,20 @@ on_header_motion_notify_event          (GtkWidget       *widget,
     return FALSE;
 }
 
+int
+gtkpl_get_column_for_click (gtkplaylist_t *pl, int click_x) {
+    int x = -pl->hscrollpos;
+    int i = 0;
+    gtkpl_column_t *c;
+    for (c = pl->columns; c; c = c->next, i++) {
+        int w = c->width;
+        if (click_x >= x && click_x < x + w) {
+            return i;
+        }
+    }
+    return -1;
+}
+
 gboolean
 on_header_button_press_event           (GtkWidget       *widget,
                                         GdkEventButton  *event,
