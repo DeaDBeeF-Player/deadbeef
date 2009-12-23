@@ -1647,9 +1647,9 @@ pl_format_title (playItem_t *it, char *s, int size, int id, const char *fmt) {
         case DB_COLUMN_ARTIST_ALBUM:
             {
                 char artistalbum[1024];
-                snprintf (artistalbum, sizeof (artistalbum), "%s - %s",
-                artist = pl_get_meta_cached (it, "artist", artist, "?"),
-                album = pl_get_meta_cached (it, "album", album, "?"));
+                artist = pl_get_meta_cached (it, "artist", artist, "?");
+                album = pl_get_meta_cached (it, "album", album, "?");
+                snprintf (artistalbum, sizeof (artistalbum), "%s - %s", artist, album);
                 text = artistalbum;
             }
             break;
@@ -1715,10 +1715,7 @@ pl_format_title (playItem_t *it, char *s, int size, int id, const char *fmt) {
             }
 
             if (meta) {
-                const char *value = pl_find_meta (it, meta);
-                if (!value) {
-                    value = "?";
-                }
+                const char *value = meta;
                 while (n > 0 && *value) {
                     *s++ = *value++;
                     n--;
