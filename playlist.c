@@ -1608,7 +1608,7 @@ pl_get_meta_cached (playItem_t *it, const char *meta, const char *ret, const cha
 }
 
 static const char *
-pl_format_duration (playItem_t *it, const char *ret, char dur[50]) {
+pl_format_duration (playItem_t *it, const char *ret, char *dur, int size) {
     if (ret) {
         return ret;
     }
@@ -1618,10 +1618,10 @@ pl_format_duration (playItem_t *it, const char *ret, char dur[50]) {
         int secdur = it->_duration - hourdur*60*60 - mindur * 60;
 
         if (hourdur) {
-            snprintf (dur, sizeof (dur), "%d:%02d:%02d", hourdur, mindur, secdur);
+            snprintf (dur, size, "%d:%02d:%02d", hourdur, mindur, secdur);
         }
         else {
-            snprintf (dur, sizeof (dur), "%d:%02d", mindur, secdur);
+            snprintf (dur, size, "%d:%02d", mindur, secdur);
         }
     }
     else {
@@ -1663,7 +1663,7 @@ pl_format_title (playItem_t *it, char *s, int size, int id, const char *fmt) {
             text = (title = pl_get_meta_cached (it, "title", artist, "?"));
             break;
         case DB_COLUMN_DURATION:
-            text = (duration = pl_format_duration (it, duration, dur));
+            text = (duration = pl_format_duration (it, duration, dur, sizeof (dur)));
             break;
         case DB_COLUMN_TRACK:
             text = (track = pl_get_meta_cached (it, "track", track, ""));
@@ -1703,7 +1703,7 @@ pl_format_title (playItem_t *it, char *s, int size, int id, const char *fmt) {
                 meta = (track = pl_get_meta_cached (it, "track", track, ""));
             }
             else if (*fmt == 'l') {
-                const char *value = (duration = pl_format_duration (it, duration, dur));
+                const char *value = (duration = pl_format_duration (it, duration, dur, sizeof (dur)));
                 while (n > 0 && *value) {
                     *s++ = *value++;
                     n--;
