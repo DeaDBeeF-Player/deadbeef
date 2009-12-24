@@ -55,7 +55,6 @@ const char *filetypes[] = { "SID", NULL };
 static const char settings_dlg[] =
     "property \"Enable HVSC\" checkbox hvsc_enable 0;\n"
     "property \"HVSC path\" file hvsc_path \"\";\n"
-    "property \"Synth samplerate\" entry sid.samplerate 48000;\n"
 ;
 
 // define plugin interface
