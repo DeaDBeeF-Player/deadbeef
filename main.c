@@ -101,6 +101,7 @@ client_exec_command_line (const char *cmdline, int len) {
 // -1 error, program must exit with error code -1
 //  0 proceed normally as nothing happened
 //  1 no error, but program must exit with error code 0
+//  2 don't load playlist on startup
 //  when executed in remote server -- error code will be ignored
 int
 server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsize) {
@@ -200,14 +201,16 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
             else {
                 pname = parg;
             }
-            if (pl_add_file (pname, NULL, NULL) >= 0) {
-                messagepump_push (M_PLAYLISTREFRESH, 0, 0, 0);
-                if (!queue) {
-                    messagepump_push (M_PLAYSONG, 0, 0, 0);
-                }
+            if (pl_add_file (pname, NULL, NULL) < 0) {
+                fprintf (stderr, "failed to add file %s\n", pname);
             }
             parg += strlen (parg);
             parg++;
+        }
+        messagepump_push (M_PLAYLISTREFRESH, 0, 0, 0);
+        if (!queue) {
+            messagepump_push (M_PLAYSONG, 0, 0, 0);
+            return 2; // don't reload playlist at startup
         }
     }
     return 0;
@@ -503,12 +506,17 @@ main (int argc, char *argv[]) {
     signal (SIGTERM, sigterm_handler);
 
     messagepump_init (); // required to push messages while handling commandline
+    plug_load_all (); // required to add files to playlist from commandline
 
     // execute server commands in local context
+    int noloadpl = 0;
     if (argc > 1) {
         int res = server_exec_command_line (cmdline, size, NULL, 0);
         // some of the server commands ran on 1st instance should terminate it
-        if (res > 0) {
+        if (res == 2) {
+            noloadpl = 1;
+        }
+        else if (res > 0) {
             exit (0);
         }
         else if (res < 0) {
@@ -522,8 +530,9 @@ main (int argc, char *argv[]) {
     // start all subsystems
     conf_load ();
     volume_set_db (conf_get_float ("playback.volume", 0));
-    plug_load_all ();
-    pl_load (defpl);
+    if (!noloadpl) {
+        pl_load (defpl);
+    }
     plug_trigger_event_playlistchanged ();
     session_load (sessfile);
     codec_init_locking ();
