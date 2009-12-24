@@ -472,6 +472,7 @@ ffmpeg_vfs_seek(URLContext *h, int64_t pos, int whence)
 static int
 ffmpeg_vfs_close(URLContext *h)
 {
+    trace ("ffmpeg_vfs_close\n");
     deadbeef->fclose (h->priv_data);
     return 0;
 }
