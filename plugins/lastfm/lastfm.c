@@ -65,6 +65,17 @@ static char lfm_nowplaying[2048]; // packet for nowplaying, or ""
 //static char lfm_subm_queue[LFM_SUBMISSION_QUEUE_SIZE][2048];
 static DB_playItem_t *lfm_subm_queue[LFM_SUBMISSION_QUEUE_SIZE];
 
+static void
+lfm_update_auth (void) {
+    const char *user = deadbeef->conf_get_str ("lastfm.login", "");
+    const char *pass = deadbeef->conf_get_str ("lastfm.password", "");
+    if (strcmp (user, lfm_user) || strcmp (pass, lfm_pass)) {
+        strcpy (lfm_user, user);
+        strcpy (lfm_pass, pass);
+        lfm_sess[0] = 0;
+    }
+}
+
 static size_t
 lastfm_curl_res (void *ptr, size_t size, size_t nmemb, void *stream)
 {
@@ -165,6 +176,7 @@ curl_req_cleanup (void) {
 
 static int
 auth (void) {
+    lfm_update_auth ();
     if (lfm_sess[0]) {
         return 0;
     }
@@ -748,15 +760,10 @@ auth_v2 (void) {
 
 static int
 lastfm_start (void) {
-    // load login/pass
+    lfm_sess[0] = 0;
     lfm_mutex = 0;
     lfm_cond = 9;
     lfm_tid = 0;
-    strcpy (lfm_user, deadbeef->conf_get_str ("lastfm.login", ""));
-    strcpy (lfm_pass, deadbeef->conf_get_str ("lastfm.password", ""));
-    if (!lfm_user[0] || !lfm_pass[0]) {
-        return 0;
-    }
     lfm_stopthread = 0;
     lfm_mutex = deadbeef->mutex_create ();
     lfm_cond = deadbeef->cond_create ();
