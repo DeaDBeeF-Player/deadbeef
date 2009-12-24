@@ -524,14 +524,14 @@ plug_load_all (void) {
                     }
                     char fullname[PATH_MAX];
                     snprintf (fullname, PATH_MAX, "%s/%s", plugdir, d_name);
-                    printf ("loading plugin %s\n", d_name);
+                    fprintf (stderr, "loading plugin %s\n", d_name);
                     void *handle = dlopen (fullname, RTLD_NOW);
                     if (!handle) {
                         fprintf (stderr, "dlopen error: %s\n", dlerror ());
                         break;
                     }
                     d_name[l-3] = 0;
-                    printf ("module name is %s\n", d_name);
+                    fprintf (stderr, "module name is %s\n", d_name);
                     strcat (d_name, "_load");
                     DB_plugin_t *(*plug_load)(DB_functions_t *api) = dlsym (handle, d_name);
                     if (!plug_load) {
