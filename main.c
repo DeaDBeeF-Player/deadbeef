@@ -505,6 +505,7 @@ main (int argc, char *argv[]) {
 
     signal (SIGTERM, sigterm_handler);
 
+    conf_load (); // required by some plugin at startup
     messagepump_init (); // required to push messages while handling commandline
     plug_load_all (); // required to add files to playlist from commandline
 
@@ -528,7 +529,6 @@ main (int argc, char *argv[]) {
     server_start ();
 
     // start all subsystems
-    conf_load ();
     volume_set_db (conf_get_float ("playback.volume", 0));
     if (!noloadpl) {
         pl_load (defpl);
