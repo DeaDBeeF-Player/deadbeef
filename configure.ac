@@ -41,7 +41,7 @@ CPPFLAGS="$CFLAGS"
 PKG_CHECK_MODULES(DEPS, samplerate)
 PKG_CHECK_MODULES(GTKUI_DEPS, gtk+-2.0 >= 2.12 gthread-2.0 glib-2.0, HAVE_GTK=1)
 PKG_CHECK_MODULES(ALSA_DEPS, alsa, HAVE_ALSA=1)
-PKG_CHECK_MODULES(FFMPEG_DEPS, libavcodec libavutil libavformat, HAVE_FFMPEG=1)
+PKG_CHECK_MODULES(FFMPEG_DEPS, libavcodec libavutil libavformat >= 52.0.0, HAVE_FFMPEG=1, HAVE_FFMPEG=0)
 AC_CHECK_LIB([pthread], [main])
 AC_CHECK_LIB([dl], [main])
 
