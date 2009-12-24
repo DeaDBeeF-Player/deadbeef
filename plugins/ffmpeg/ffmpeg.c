@@ -84,6 +84,7 @@ ffmpeg_init (DB_playItem_t *it) {
         return -1;
     }
 
+    stream_id = -1;
     for (i = 0; i < fctx->nb_streams; i++)
     {
         ctx = fctx->streams[i]->codec;
@@ -91,8 +92,10 @@ ffmpeg_init (DB_playItem_t *it) {
         {
             av_find_stream_info(fctx);
             codec = avcodec_find_decoder(ctx->codec_id);
-            if (codec != NULL)
+            if (codec != NULL) {
+                stream_id = i;
                 break;
+            }
         }
     }
 
@@ -102,7 +105,6 @@ ffmpeg_init (DB_playItem_t *it) {
         av_close_input_file(fctx);
         return -1;
     }
-    stream_id = i;
     trace ("ffmpeg can decode %s\n", it->fname);
     trace ("ffmpeg: codec=%s, stream=%d\n", codec->name, i);
 
@@ -141,6 +143,9 @@ ffmpeg_free (void) {
         av_free_packet (&pkt);
         have_packet = 0;
     }
+    left_in_buffer = 0;
+    left_in_packet = 0;
+    stream_id = -1;
 
     if (fctx) {
         av_close_input_file(fctx);
