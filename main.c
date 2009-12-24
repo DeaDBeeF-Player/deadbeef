@@ -55,13 +55,55 @@ char dbconfdir[1024]; // $HOME/.config/deadbeef
 char defpl[1024]; // $HOME/.config/deadbeef/default.dbpl
 char sessfile[1024]; // $HOME/.config/deadbeef/session
 
+// client-side commandline support
 // -1 error, program must exit with error code -1
 //  0 proceed normally as nothing happened
 //  1 no error, but program must exit with error code 0
-//  2 no error, start playback immediately after startup
-//  3 no error, don't start playback immediately after startup
 int
-exec_command_line (const char *cmdline, int len, int filter, char *sendback, int sbsize) {
+client_exec_command_line (const char *cmdline, int len) {
+    const uint8_t *parg = (const uint8_t *)cmdline;
+    const uint8_t *pend = cmdline + len;
+    int exitcode = 0;
+    int queue = 0;
+    while (parg < pend) {
+        //        if (filter == 1) {
+        // help, version and nowplaying are executed with any filter
+        if (!strcmp (parg, "--help") || !strcmp (parg, "-h")) {
+            fprintf (stderr, "Usage: deadbeef [options] [file(s)]\n");
+            fprintf (stderr, "Options:\n");
+            fprintf (stderr, "   --help  or  -h     Print help (this message) and exit\n");
+            fprintf (stderr, "   --quit             Quit player\n");
+            fprintf (stderr, "   --version          Print version info and exit\n");
+            fprintf (stderr, "   --play             Start playback\n");
+            fprintf (stderr, "   --stop             Stop playback\n");
+            fprintf (stderr, "   --pause            Pause playback\n");
+            fprintf (stderr, "   --next             Next song in playlist\n");
+            fprintf (stderr, "   --prev             Previous song in playlist\n");
+            fprintf (stderr, "   --random           Random song in playlist\n");
+            fprintf (stderr, "   --queue            Append file(s) to existing playlist\n");
+            fprintf (stderr, "   --nowplaying FMT   Print formatted track name to stdout\n");
+            fprintf (stderr, "                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um, [l]ength, track[n]umber\n");
+            fprintf (stderr, "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n");
+            return 1;
+        }
+        else if (!strcmp (parg, "--version")) {
+            fprintf (stderr, "DeaDBeeF %s Copyright (C) 2009 Alexey Yakovenko\n", VERSION);
+            return 1;
+        }
+        parg += strlen (parg);
+        parg++;
+    }
+    return 0;
+}
+
+// this function executes server-side commands only
+// must be called only from within server
+// -1 error, program must exit with error code -1
+//  0 proceed normally as nothing happened
+//  1 no error, but program must exit with error code 0
+//  when executed in remote server -- error code will be ignored
+int
+server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsize) {
     if (sendback) {
         sendback[0] = 0;
     }
@@ -70,90 +112,75 @@ exec_command_line (const char *cmdline, int len, int filter, char *sendback, int
     int exitcode = 0;
     int queue = 0;
     while (parg < pend) {
-//        if (filter == 1) {
-// help, version and nowplaying are executed with any filter
-            if (!strcmp (parg, "--help") || !strcmp (parg, "-h")) {
-                fprintf (stderr, "Usage: deadbeef [options] [file(s)]\n");
-                fprintf (stderr, "Options:\n");
-                fprintf (stderr, "   --help  or  -h     Print help (this message) and exit\n");
-                fprintf (stderr, "   --quit             Quit player\n");
-                fprintf (stderr, "   --version          Print version info and exit\n");
-                fprintf (stderr, "   --play             Start playback\n");
-                fprintf (stderr, "   --stop             Stop playback\n");
-                fprintf (stderr, "   --pause            Pause playback\n");
-                fprintf (stderr, "   --next             Next song in playlist\n");
-                fprintf (stderr, "   --prev             Previous song in playlist\n");
-                fprintf (stderr, "   --random           Random song in playlist\n");
-                fprintf (stderr, "   --queue            Append file(s) to existing playlist\n");
-                fprintf (stderr, "   --nowplaying FMT   Print formatted track name to stdout\n");
-                fprintf (stderr, "                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um, [l]ength, track[n]umber\n");
-                fprintf (stderr, "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n");
-                return 1;
-            }
-            else if (!strcmp (parg, "--version")) {
-                fprintf (stderr, "DeaDBeeF %s Copyright (C) 2009 Alexey Yakovenko\n", VERSION);
-                return 1;
-            }
-            else if (!strcmp (parg, "--nowplaying")) {
-                parg += strlen (parg);
-                parg++;
-                if (parg >= pend) {
-                    fprintf (stderr, "--nowplaying expects format argument\n");
-                    return 1;
-                }
+        if (!strcmp (parg, "--nowplaying")) {
+            parg += strlen (parg);
+            parg++;
+            if (parg >= pend) {
                 if (sendback) {
-                    playItem_t *curr = streamer_get_playing_track ();
-                    if (curr && curr->decoder) {
-                        const char np[] = "nowplaying ";
-                        memcpy (sendback, np, sizeof (np)-1);
-                        pl_format_title (curr, sendback+sizeof(np)-1, sbsize-sizeof(np)+1, -1, parg);
-                    }
-                    else {
-                        strcpy (sendback, "nowplaying nothing");
-                    }
+                    snprintf (sendback, sbsize, "error --nowplaying expects format argument\n");
+                    return 0;
                 }
                 else {
-                    char out[2048];
-                    playItem_t *curr = streamer_get_playing_track ();
-                    if (curr && curr->decoder) {
-                        pl_format_title (curr, out, sizeof (out), -1, parg);
-                    }
-                    else {
-                        strcpy (out, "nothing");
-                    }
-                    printf (out);
-                    return 1;
+                    fprintf (stderr, "--nowplaying expects format argument\n");
+                    return -1;
                 }
             }
-//        }
-        else if (filter == 0) {
-            if (!strcmp (parg, "--next")) {
-                messagepump_push (M_NEXTSONG, 0, 0, 0);
+            if (sendback) {
+                playItem_t *curr = streamer_get_playing_track ();
+                if (curr && curr->decoder) {
+                    const char np[] = "nowplaying ";
+                    memcpy (sendback, np, sizeof (np)-1);
+                    pl_format_title (curr, sendback+sizeof(np)-1, sbsize-sizeof(np)+1, -1, parg);
+                }
+                else {
+                    strcpy (sendback, "nowplaying nothing");
+                }
             }
-            else if (!strcmp (parg, "--prev")) {
-                messagepump_push (M_PREVSONG, 0, 0, 0);
+            else {
+                char out[2048];
+                playItem_t *curr = streamer_get_playing_track ();
+                if (curr && curr->decoder) {
+                    pl_format_title (curr, out, sizeof (out), -1, parg);
+                }
+                else {
+                    strcpy (out, "nothing");
+                }
+                printf (out);
+                return 1; // exit
             }
-            else if (!strcmp (parg, "--play")) {
-                messagepump_push (M_PLAYSONG, 0, 0, 0);
-            }
-            else if (!strcmp (parg, "--stop")) {
-                messagepump_push (M_STOPSONG, 0, 0, 0);
-            }
-            else if (!strcmp (parg, "--pause")) {
-                messagepump_push (M_PAUSESONG, 0, 0, 0);
-            }
-            else if (!strcmp (parg, "--random")) {
-                messagepump_push (M_PLAYRANDOM, 0, 0, 0);
-            }
-            else if (!strcmp (parg, "--queue")) {
-                queue = 1;
-            }
-            else if (!strcmp (parg, "--quit")) {
-                messagepump_push (M_TERMINATE, 0, 0, 0);
-            }
-            else if (parg[0] != '-') {
-                break;
-            }
+        }
+        else if (!strcmp (parg, "--next")) {
+            messagepump_push (M_NEXTSONG, 0, 0, 0);
+            return 0;
+        }
+        else if (!strcmp (parg, "--prev")) {
+            messagepump_push (M_PREVSONG, 0, 0, 0);
+            return 0;
+        }
+        else if (!strcmp (parg, "--play")) {
+            messagepump_push (M_PLAYSONG, 0, 0, 0);
+            return 0;
+        }
+        else if (!strcmp (parg, "--stop")) {
+            messagepump_push (M_STOPSONG, 0, 0, 0);
+            return 0;
+        }
+        else if (!strcmp (parg, "--pause")) {
+            messagepump_push (M_PAUSESONG, 0, 0, 0);
+            return 0;
+        }
+        else if (!strcmp (parg, "--random")) {
+            messagepump_push (M_PLAYRANDOM, 0, 0, 0);
+            return 0;
+        }
+        else if (!strcmp (parg, "--queue")) {
+            queue = 1;
+        }
+        else if (!strcmp (parg, "--quit")) {
+            messagepump_push (M_TERMINATE, 0, 0, 0);
+        }
+        else if (parg[0] != '-') {
+            break; // unknown option is filename
         }
         parg += strlen (parg);
         parg++;
@@ -174,22 +201,16 @@ exec_command_line (const char *cmdline, int len, int filter, char *sendback, int
                 pname = parg;
             }
             if (pl_add_file (pname, NULL, NULL) >= 0) {
-                if (queue) {
-                    exitcode = 3;
-                }
-                else {
-                    exitcode = 2;
+                messagepump_push (M_PLAYLISTREFRESH, 0, 0, 0);
+                if (!queue) {
+                    messagepump_push (M_PLAYSONG, 0, 0, 0);
                 }
             }
             parg += strlen (parg);
             parg++;
         }
     }
-    if (exitcode == 2 || exitcode == 3) {
-        // added some files, need to redraw
-        messagepump_push (M_PLAYLISTREFRESH, 0, 0, 0);
-    }
-    return exitcode;
+    return 0;
 }
 
 static struct sockaddr_un srv_local;
@@ -247,10 +268,7 @@ server_update (void) {
                 plug_trigger_event (DB_EV_ACTIVATE, 0);
             }
             else {
-                int res = exec_command_line (str, size, 0, sendback, sizeof (sendback));
-                if (res == 2) {
-                    streamer_play_current_track ();
-                }
+                server_exec_command_line (str, size, sendback, sizeof (sendback));
             }
         }
         if (sendback[0]) {
@@ -424,6 +442,14 @@ main (int argc, char *argv[]) {
         }
         size = 2048 - size + 1;
     }
+    int res = client_exec_command_line (cmdline, size);
+    if (res == 1) {
+        return 0;
+    }
+    else if (res < 0) {
+        return res;
+    }
+
     // try to connect to remote player
     int s, t, len;
     struct sockaddr_un remote;
@@ -456,9 +482,17 @@ main (int argc, char *argv[]) {
         else {
             // check if that's nowplaying response
             const char np[] = "nowplaying ";
+            const char err[] = "error ";
             if (!strncmp (out, np, sizeof (np)-1)) {
                 const char *prn = &out[sizeof (np)-1];
                 printf (prn);
+            }
+            else if (!strncmp (out, err, sizeof (err)-1)) {
+                const char *prn = &out[sizeof (err)-1];
+                fprintf (stderr, prn);
+            }
+            else if (out[0]) {
+                fprintf (stderr, "got unkown response:\n%s\n", out);
             }
         }
         close (s);
@@ -466,38 +500,36 @@ main (int argc, char *argv[]) {
     }
     close(s);
 
-    if (exec_command_line (cmdline, size, 1, NULL, 0) == 1) {
-        return 0; // if it was help request
+    signal (SIGTERM, sigterm_handler);
+
+    messagepump_init (); // required to push messages while handling commandline
+
+    // execute server commands in local context
+    if (argc > 1) {
+        int res = server_exec_command_line (cmdline, size, NULL, 0);
+        // some of the server commands ran on 1st instance should terminate it
+        if (res > 0) {
+            exit (0);
+        }
+        else if (res < 0) {
+            exit (-1);
+        }
     }
 
-    signal (SIGTERM, sigterm_handler);
     // become a server
     server_start ();
 
-
+    // start all subsystems
     conf_load ();
     volume_set_db (conf_get_float ("playback.volume", 0));
     plug_load_all ();
     pl_load (defpl);
     plug_trigger_event_playlistchanged ();
     session_load (sessfile);
-    messagepump_init ();
     codec_init_locking ();
     streamer_init ();
-//    p_init ();
-//    thread_start (player_thread, 0);
 
-    if (argc > 1) {
-        int res = exec_command_line (cmdline, size, 0, NULL, 0);
-        if (res == -1) {
-            server_close ();
-            return -1;
-        }
-        if (res == 2) {
-            messagepump_push (M_PLAYSONG, 0, 0, 0);
-        }
-    }
-
+    // this runs in main thread (blocks right here)
     player_thread (0);
 
     // save config
