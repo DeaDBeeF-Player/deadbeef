@@ -1809,3 +1809,98 @@ create_addlocation (void)
   return addlocation;
 }
 
+GtkWidget*
+create_inputformat (void)
+{
+  GtkWidget *inputformat;
+  GtkWidget *vbox8;
+  GtkWidget *hbox10;
+  GtkWidget *label26;
+  GtkWidget *titleentry;
+  GtkWidget *hbox9;
+  GtkWidget *format;
+  GtkWidget *formatentry;
+  GtkWidget *label25;
+  GtkWidget *hbuttonbox1;
+  GtkWidget *button2;
+  GtkWidget *button3;
+
+  inputformat = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+  gtk_window_set_title (GTK_WINDOW (inputformat), "Column Format");
+  gtk_window_set_position (GTK_WINDOW (inputformat), GTK_WIN_POS_CENTER_ALWAYS);
+  gtk_window_set_modal (GTK_WINDOW (inputformat), TRUE);
+  gtk_window_set_type_hint (GTK_WINDOW (inputformat), GDK_WINDOW_TYPE_HINT_DIALOG);
+
+  vbox8 = gtk_vbox_new (FALSE, 0);
+  gtk_widget_show (vbox8);
+  gtk_container_add (GTK_CONTAINER (inputformat), vbox8);
+
+  hbox10 = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show (hbox10);
+  gtk_box_pack_start (GTK_BOX (vbox8), hbox10, FALSE, FALSE, 0);
+
+  label26 = gtk_label_new ("Title:");
+  gtk_widget_show (label26);
+  gtk_box_pack_start (GTK_BOX (hbox10), label26, FALSE, FALSE, 0);
+
+  titleentry = gtk_entry_new ();
+  gtk_widget_show (titleentry);
+  gtk_box_pack_start (GTK_BOX (hbox10), titleentry, TRUE, TRUE, 0);
+  gtk_entry_set_text (GTK_ENTRY (titleentry), "Custom");
+  gtk_entry_set_invisible_char (GTK_ENTRY (titleentry), 9679);
+
+  hbox9 = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show (hbox9);
+  gtk_box_pack_start (GTK_BOX (vbox8), hbox9, FALSE, FALSE, 0);
+
+  format = gtk_label_new ("Format:");
+  gtk_widget_show (format);
+  gtk_box_pack_start (GTK_BOX (hbox9), format, FALSE, FALSE, 0);
+
+  formatentry = gtk_entry_new ();
+  gtk_widget_show (formatentry);
+  gtk_box_pack_start (GTK_BOX (hbox9), formatentry, TRUE, TRUE, 0);
+  gtk_entry_set_invisible_char (GTK_ENTRY (formatentry), 9679);
+
+  label25 = gtk_label_new ("Format fields:\n%a - artist\n%t - title\n%b - album\n%n - track\n%l - duration");
+  gtk_widget_show (label25);
+  gtk_box_pack_start (GTK_BOX (vbox8), label25, TRUE, TRUE, 0);
+
+  hbuttonbox1 = gtk_hbutton_box_new ();
+  gtk_widget_show (hbuttonbox1);
+  gtk_box_pack_start (GTK_BOX (vbox8), hbuttonbox1, FALSE, FALSE, 0);
+
+  button2 = gtk_button_new_from_stock ("gtk-cancel");
+  gtk_widget_show (button2);
+  gtk_container_add (GTK_CONTAINER (hbuttonbox1), button2);
+  GTK_WIDGET_SET_FLAGS (button2, GTK_CAN_DEFAULT);
+
+  button3 = gtk_button_new_from_stock ("gtk-ok");
+  gtk_widget_show (button3);
+  gtk_container_add (GTK_CONTAINER (hbuttonbox1), button3);
+  GTK_WIDGET_SET_FLAGS (button3, GTK_CAN_DEFAULT);
+
+  g_signal_connect ((gpointer) button2, "clicked",
+                    G_CALLBACK (on_format_cancel_clicked),
+                    NULL);
+  g_signal_connect ((gpointer) button3, "clicked",
+                    G_CALLBACK (on_format_ok_clicked),
+                    NULL);
+
+  /* Store pointers to all widgets, for use by lookup_widget(). */
+  GLADE_HOOKUP_OBJECT_NO_REF (inputformat, inputformat, "inputformat");
+  GLADE_HOOKUP_OBJECT (inputformat, vbox8, "vbox8");
+  GLADE_HOOKUP_OBJECT (inputformat, hbox10, "hbox10");
+  GLADE_HOOKUP_OBJECT (inputformat, label26, "label26");
+  GLADE_HOOKUP_OBJECT (inputformat, titleentry, "titleentry");
+  GLADE_HOOKUP_OBJECT (inputformat, hbox9, "hbox9");
+  GLADE_HOOKUP_OBJECT (inputformat, format, "format");
+  GLADE_HOOKUP_OBJECT (inputformat, formatentry, "formatentry");
+  GLADE_HOOKUP_OBJECT (inputformat, label25, "label25");
+  GLADE_HOOKUP_OBJECT (inputformat, hbuttonbox1, "hbuttonbox1");
+  GLADE_HOOKUP_OBJECT (inputformat, button2, "button2");
+  GLADE_HOOKUP_OBJECT (inputformat, button3, "button3");
+
+  return inputformat;
+}
+

@@ -44,6 +44,8 @@
 #define VSELECT(it, sel) {deadbeef->pl_set_selected(it,sel);gtk_pl_redraw_item_everywhere (it);}
 #define PL_NEXT(it, iter) (deadbeef->pl_get_next(it, iter))
 
+GtkWidget *formatwin = NULL;
+gtkplaylist_t *last_playlist;
 extern GtkWidget *mainwin;
 extern gtkplaylist_t main_playlist;
 extern gtkplaylist_t search_playlist;
@@ -1703,12 +1705,33 @@ on_prefwin_delete_event                (GtkWidget       *widget,
     return FALSE;
 }
 
+void
+pl_add_column (const char *title, int width, int id, const char *format, int align_right)
+{
+    gtkplaylist_t *ps = last_playlist;
+
+    gtkpl_column_append (ps, gtkpl_column_alloc (title, width, id, format, align_right));
+
+    gtkpl_header_draw (ps);
+    gtkpl_expose_header (ps, 0, 0, ps->header->allocation.width, ps->header->allocation.height);
+
+    gtkpl_draw_playlist (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
+    gtkpl_expose (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
+
+    gtkpl_column_rewrite_config (ps);
+}
 
 void
 on_artist_activate                     (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-
+    GtkWidget *parent = GTK_WIDGET (menuitem);
+    do
+    {
+        parent = gtk_widget_get_parent (parent);
+        printf ("parent: %x\n", parent);
+    } while (parent);
+    pl_add_column ("Artist", 100, DB_COLUMN_ARTIST, NULL, 0);
 }
 
 
@@ -1716,7 +1739,7 @@ void
 on_album_activate                      (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-
+    pl_add_column ("Album", 100, DB_COLUMN_ALBUM, NULL, 0);
 }
 
 
@@ -1724,7 +1747,7 @@ void
 on_tracknum_activate                   (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-
+    pl_add_column ("Track №", 50, DB_COLUMN_TRACK, NULL, 0);
 }
 
 
@@ -1732,7 +1755,7 @@ void
 on_duration_activate                   (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-
+    pl_add_column ("Duration", 50, DB_COLUMN_DURATION, NULL, 0);
 }
 
 
@@ -1740,7 +1763,7 @@ void
 on_playing_activate                    (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-
+    pl_add_column ("Playing", 50, DB_COLUMN_PLAYING, NULL, 0);
 }
 
 
@@ -1748,7 +1771,7 @@ void
 on_title_activate                      (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-
+    pl_add_column ("Title", 150, DB_COLUMN_TITLE, NULL, 0);
 }
 
 
@@ -1756,7 +1779,9 @@ void
 on_custom_activate                     (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-
+    if (!formatwin)
+        formatwin = create_inputformat ();
+    gtk_widget_show (formatwin);
 }
 
 
@@ -1764,7 +1789,20 @@ void
 on_remove_column_activate              (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
+    gtkplaylist_t *ps = last_playlist;
 
+    if (!ps->active_column)
+        return;
+
+    gtkpl_column_remove (ps, ps->active_column);
+
+    gtkpl_header_draw (ps);
+    gtkpl_expose_header (ps, 0, 0, ps->header->allocation.width, ps->header->allocation.height);
+
+    gtkpl_draw_playlist (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
+    gtkpl_expose (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
+
+    gtkpl_column_rewrite_config (ps);
 }
 
 
@@ -2211,4 +2249,23 @@ on_properties1_activate                (GtkMenuItem     *menuitem,
 
 }
 
+
+
+void
+on_format_cancel_clicked               (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    gtk_widget_hide (formatwin);
+}
+
+
+void
+on_format_ok_clicked                   (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    const gchar *title = gtk_entry_get_text (GTK_ENTRY (lookup_widget (formatwin, "titleentry")));
+    const gchar *format = gtk_entry_get_text (GTK_ENTRY (lookup_widget (formatwin, "formatentry")));
+    pl_add_column (title, 100, -1, format, 0);
+    gtk_widget_hide (formatwin);
+}
 

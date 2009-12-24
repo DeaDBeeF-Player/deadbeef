@@ -298,6 +298,7 @@ typedef struct {
        format is printf-alike. specification:
        %a artist
        %t title
+       %b album
        %n track
        %l length (duration)
        more to come

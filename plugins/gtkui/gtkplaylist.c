@@ -54,8 +54,8 @@
 
 extern DB_functions_t *deadbeef; // defined in gtkui.c
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 // debug function for gdk_draw_drawable
 static inline void
@@ -68,6 +68,8 @@ draw_drawable (GdkDrawable *window, GdkGC *gc, GdkDrawable *drawable, int x1, in
 extern GtkWidget *mainwin;
 extern GtkStatusIcon *trayicon;
 extern gtkplaylist_t main_playlist;
+
+extern gtkplaylist_t *last_playlist;
 
 static GtkWidget *theme_treeview;
 
@@ -1476,18 +1478,18 @@ on_header_motion_notify_event          (GtkWidget       *widget,
     return FALSE;
 }
 
-int
+gtkpl_column_t*
 gtkpl_get_column_for_click (gtkplaylist_t *pl, int click_x) {
     int x = -pl->hscrollpos;
-    int i = 0;
     gtkpl_column_t *c;
-    for (c = pl->columns; c; c = c->next, i++) {
+    for (c = pl->columns; c; c = c->next) {
         int w = c->width;
         if (click_x >= x && click_x < x + w) {
-            return i;
+            return c;
         }
+        x += w;
     }
-    return -1;
+    return NULL;
 }
 
 gboolean
@@ -1525,8 +1527,10 @@ on_header_button_press_event           (GtkWidget       *widget,
         }
     }
     else if (event->button == 3) {
+        ps->active_column = gtkpl_get_column_for_click (ps, event->x);
         GtkWidget *menu = create_headermenu ();
-        gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, widget, 0, gtk_get_current_event_time());
+        last_playlist = ps;
+        gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, widget, 3, gtk_get_current_event_time());
     }
     prev_header_x = -1;
     last_header_motion_ev = -1;
@@ -1792,16 +1796,13 @@ gtkpl_column_update_config (gtkplaylist_t *pl, gtkpl_column_t *c, int idx) {
 void
 gtkpl_column_rewrite_config (gtkplaylist_t *pl) {
     char key[128];
-    char value[128];
     snprintf (key, sizeof (key), "%s.column.", pl->title);
     deadbeef->conf_remove_items (key);
 
     gtkpl_column_t *c;
     int i = 0;
     for (c = pl->columns; c; c = c->next, i++) {
-        snprintf (key, sizeof (key), "%s.column.%d", pl->title, i);
-        snprintf (value, sizeof (value), "\"%s\" \"%s\" %d %d %d", c->title, c->format ? c->format : "", c->id, c->width, c->align_right);
-        deadbeef->conf_set_str (key, value);
+        gtkpl_column_update_config (pl, c, i);
     }
 }
 

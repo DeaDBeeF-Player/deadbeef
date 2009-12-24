@@ -84,6 +84,7 @@ typedef struct {
     int nvisiblerows;
     int nvisiblefullrows;
     gtkpl_column_t *columns;
+    gtkpl_column_t *active_column;
 } gtkplaylist_t;
 
 extern gtkplaylist_t main_playlist;
@@ -254,7 +255,7 @@ gtk_pl_redraw_item_everywhere (DB_playItem_t *it);
 void
 gtkpl_set_cursor (int iter, int cursor);
 
-int 
+gtkpl_column_t*
 gtkpl_get_column_for_click (gtkplaylist_t *pl, int click_x);
 
 #endif // __GTKPLAYLIST_H
