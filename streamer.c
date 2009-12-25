@@ -420,6 +420,8 @@ streamer_thread (void *ctx) {
                 if (str_playing_song.decoder->seek (pos) >= 0) {
                     playpos = str_playing_song.decoder->info.readpos;
                 }
+                last_bitrate = -1;
+                avg_bitrate = -1;
                 streamer_unlock();
             }
         }
