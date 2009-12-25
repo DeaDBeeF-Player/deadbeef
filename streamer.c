@@ -306,6 +306,8 @@ streamer_thread (void *ctx) {
                 p_stop ();
             }
             else if (pstate == 1) {
+                last_bitrate = -1;
+                avg_bitrate = -1;
                 p_play ();
             }
             else if (pstate == 2) {
@@ -358,6 +360,7 @@ streamer_thread (void *ctx) {
             // copy streaming into playing
             pl_item_copy (&str_playing_song, &str_streaming_song);
             last_bitrate = -1;
+            avg_bitrate = -1;
             orig_playing_song = orig_streaming_song;
             if (orig_playing_song) {
                 orig_playing_song->played = 1;
