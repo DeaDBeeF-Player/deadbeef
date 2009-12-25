@@ -60,7 +60,6 @@ static DB_functions_t deadbeef_api = {
     .playback_random = plug_playback_random,
     .playback_get_pos = plug_playback_get_pos,
     .playback_set_pos = plug_playback_set_pos,
-    .playback_update_bitrate = streamer_update_bitrate,
     // streamer access
     .streamer_get_playing_track = (DB_playItem_t *(*) (void))streamer_get_playing_track,
     .streamer_get_streaming_track = (DB_playItem_t *(*) (void))streamer_get_streaming_track,
@@ -69,6 +68,8 @@ static DB_functions_t deadbeef_api = {
     .streamer_ok_to_read = streamer_ok_to_read,
     .streamer_reset = streamer_reset,
     .streamer_read = streamer_read,
+    .streamer_set_bitrate = streamer_set_bitrate,
+    .streamer_get_apx_bitrate = streamer_get_apx_bitrate,
     // process control
     .get_config_dir = plug_get_config_dir,
     .quit = plug_quit,

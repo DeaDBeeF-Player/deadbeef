@@ -233,7 +233,6 @@ typedef struct {
     void (*playback_random) (void);
     float (*playback_get_pos) (void); // [0..100]
     void (*playback_set_pos) (float pos); // [0..100]
-    void (*playback_update_bitrate) (float bitrate);
     // streamer access
     // FIXME: needs to be thread-safe
     DB_playItem_t *(*streamer_get_playing_track) (void);
@@ -243,6 +242,8 @@ typedef struct {
     int (*streamer_ok_to_read) (int len);
     void (*streamer_reset) (int full);
     int (*streamer_read) (char *bytes, int size);
+    void (*streamer_set_bitrate) (int bitrate);
+    int (*streamer_get_apx_bitrate) (void);
     // process control
     const char *(*get_config_dir) (void);
     void (*quit) (void);

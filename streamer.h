@@ -60,12 +60,6 @@ streamer_ok_to_read (int len);
 float
 streamer_get_playpos (void);
 
-float
-streamer_get_bitrate (void);
-
-void
-streamer_update_bitrate (float bitrate);
-
 int
 streamer_is_buffering (void);
 
@@ -83,5 +77,11 @@ streamer_configchanged (void);
 
 void
 streamer_play_current_track (void);
+
+void
+streamer_set_bitrate (int bitrate);
+
+int
+streamer_get_apx_bitrate (void);
 
 #endif // __STREAMER_H

@@ -78,7 +78,8 @@ static int badsong = -1;
 static float seekpos = -1;
 
 static float playpos = 0; // play position of current song
-static float avg_bitrate = -1; // avg bitrate of current song
+static int avg_bitrate = -1; // avg bitrate of current song
+static int last_bitrate = -1; // last bitrate of current song
 
 static int prevtrack_samplerate = -1;
 
@@ -218,14 +219,16 @@ streamer_get_playpos (void) {
     return playpos;
 }
 
-float
-streamer_get_bitrate (void) {
-    return avg_bitrate;
+void
+streamer_set_bitrate (int bitrate) {
+    if (bytes_until_next_song <= 0) { // prevent next track from resetting current playback bitrate
+        last_bitrate = bitrate;
+    }
 }
 
-void
-streamer_update_bitrate (float bitrate) {
-    avg_bitrate = bitrate;
+int
+streamer_get_apx_bitrate (void) {
+    return avg_bitrate;
 }
 
 void
@@ -354,6 +357,7 @@ streamer_thread (void *ctx) {
             pl_item_free (&str_playing_song);
             // copy streaming into playing
             pl_item_copy (&str_playing_song, &str_streaming_song);
+            last_bitrate = -1;
             orig_playing_song = orig_streaming_song;
             if (orig_playing_song) {
                 orig_playing_song->played = 1;
@@ -366,7 +370,6 @@ streamer_thread (void *ctx) {
             trace ("sending songstarted to plugins\n");
             plug_trigger_event (DB_EV_SONGSTARTED, 0);
             playpos = 0;
-            avg_bitrate = -1;
             // change samplerate
             if (prevtrack_samplerate != str_playing_song.decoder->info.samplerate) {
                 plug_get_output ()->change_rate (str_playing_song.decoder->info.samplerate);
@@ -806,27 +809,6 @@ streamer_read (char *bytes, int size) {
         memcpy (bytes, streambuffer, sz);
         memmove (streambuffer, streambuffer+sz, streambuffer_fill-sz);
         streambuffer_fill -= sz;
-#if 0
-        int cp = sz;
-        int readpos = streambuffer_pos & STREAM_BUFFER_MASK;
-        int part1 = STREAM_BUFFER_SIZE-readpos;
-        part1 = min (part1, cp);
-        if (part1 > 0) {
-            memcpy (bytes, streambuffer+readpos, part1);
-            streambuffer_pos += part1;
-            streambuffer_fill -= part1;
-            cp -= part1;
-            bytes += part1;
-        }
-        if (cp > 0) {
-            memcpy (bytes, streambuffer, cp);
-            streambuffer_pos += cp;
-            streambuffer_fill -= cp;
-            bytes += cp;
-        }
-        assert (streambuffer_fill>=0);
-        streambuffer_pos &= STREAM_BUFFER_MASK;
-#endif
         playpos += (float)sz/p_get_rate ()/4.f;
         str_playing_song.playtime += (float)sz/p_get_rate ()/4.f;
         if (playlist_current_ptr) {
@@ -843,6 +825,32 @@ streamer_read (char *bytes, int size) {
         }
     }
     streamer_unlock ();
+
+    // approximate bitrate
+    if (last_bitrate != -1) {
+        if (avg_bitrate == -1) {
+            avg_bitrate = last_bitrate;
+        }
+        else {
+            if (avg_bitrate < last_bitrate) {
+                avg_bitrate += 5;
+                if (avg_bitrate > last_bitrate) {
+                    avg_bitrate = last_bitrate;
+                }
+            }
+            else if (avg_bitrate > last_bitrate) {
+                avg_bitrate -= 5;
+                if (avg_bitrate < last_bitrate) {
+                    avg_bitrate = last_bitrate;
+                }
+            }
+        }
+//        printf ("apx bitrate: %d (last %d)\n", avg_bitrate, last_bitrate);
+    }
+    else {
+        avg_bitrate = -1;
+    }
+
 #if 0
     struct timeval tm2;
     gettimeofday (&tm2, NULL);
