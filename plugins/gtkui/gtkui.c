@@ -107,7 +107,7 @@ update_songinfo (gpointer ctx) {
 #if 1
         int bitrate = deadbeef->streamer_get_apx_bitrate ();
         if (bitrate > 0) {
-            snprintf (sbitrate, sizeof (sbitrate), " | %d kbps ", bitrate);
+            snprintf (sbitrate, sizeof (sbitrate), "| %d kbps ", bitrate);
         }
 #endif
         const char *spaused = deadbeef->get_output ()->state () == OUTPUT_STATE_PAUSED ? "Paused | " : "";
