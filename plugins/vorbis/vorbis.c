@@ -280,6 +280,7 @@ cvorbis_read (char *bytes, int size) {
     }
     plugin.info.readpos = (float)(ov_pcm_tell(&vorbis_file)-startsample)/vi->rate;
     trace ("cvorbis_read got %d bytes, readpos %f, currentsample %d, ret %d\n", initsize-size, plugin.info.readpos, currentsample, ret);
+    deadbeef->streamer_set_bitrate (ov_bitrate_instant (&vorbis_file)/1000);
     return initsize - size;
 }
 

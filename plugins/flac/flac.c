@@ -48,6 +48,7 @@ typedef struct {
     int channels;
     int totalsamples;
     int bps;
+    int bytesread;
 } cue_cb_data_t;
 
 static cue_cb_data_t flac_callbacks;
@@ -56,6 +57,7 @@ static cue_cb_data_t flac_callbacks;
 FLAC__StreamDecoderReadStatus flac_read_cb (const FLAC__StreamDecoder *decoder, FLAC__byte buffer[], size_t *bytes, void *client_data) {
     cue_cb_data_t *cb = (cue_cb_data_t *)client_data;
     size_t r = deadbeef->fread (buffer, 1, *bytes, cb->file);
+    cb->bytesread += r;
     *bytes = r;
     if (r == 0) {
         return FLAC__STREAM_DECODER_READ_STATUS_END_OF_STREAM;
@@ -91,8 +93,14 @@ FLAC__bool flac_eof_cb (const FLAC__StreamDecoder *decoder, void *client_data) {
 
 static FLAC__StreamDecoderWriteStatus
 cflac_write_callback (const FLAC__StreamDecoder *decoder, const FLAC__Frame *frame, const FLAC__int32 * const inputbuffer[], void *client_data) {
+    cue_cb_data_t *cb = (cue_cb_data_t *)client_data;
     if (frame->header.blocksize == 0) {
         return FLAC__STREAM_DECODER_WRITE_STATUS_ABORT;
+    }
+    int bitrate = cb->bytesread / ((float)frame->header.blocksize / frame->header.sample_rate) * 8;
+    cb->bytesread = 0;
+    if (bitrate > 0) {
+        deadbeef->streamer_set_bitrate (bitrate/1000);
     }
     int readbytes = frame->header.blocksize * plugin.info.channels * plugin.info.bps / 8;
     int bufsize = BUFFERSIZE-remaining;
@@ -242,6 +250,7 @@ cflac_read_int16 (char *bytes, int size) {
         }
     }
     int initsize = size;
+    int nbytes_in = 0;
     do {
         if (remaining) {
             int s = size * 2;
