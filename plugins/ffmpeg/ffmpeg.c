@@ -167,6 +167,9 @@ ffmpeg_read_int16 (char *bytes, int size) {
 
     int initsize = size;
 
+    int encsize = 0;
+    int decsize = 0;
+
     while (size > 0) {
 
         if (left_in_buffer > 0) {
@@ -193,6 +196,8 @@ ffmpeg_read_int16 (char *bytes, int size) {
             if (len <= 0) {
                 break;
             }
+            encsize += len;
+            decsize += out_size;
             left_in_packet -= len;
             left_in_buffer = out_size;
         }
@@ -239,6 +244,17 @@ ffmpeg_read_int16 (char *bytes, int size) {
             //trace ("got packet: size=%d\n", pkt.size);
             have_packet = 1;
             left_in_packet = pkt.size;
+
+            if (pkt.duration > 0) {
+                AVRational *time_base = &fctx->streams[stream_id]->time_base;
+                float sec = (float)pkt.duration * time_base->num / time_base->den;
+                int bitrate = pkt.size/sec;
+                if (bitrate > 0) {
+                    // FIXME: seems like duration translation is wrong
+                    deadbeef->streamer_set_bitrate (bitrate / 100);
+                }
+            }
+
             break;
         }
         if (!have_packet) {
@@ -247,6 +263,25 @@ ffmpeg_read_int16 (char *bytes, int size) {
     }
 
     plugin.info.readpos = (float)currentsample / plugin.info.samplerate;
+
+#if 0
+    if (encsize && decsize) {
+        printf ("enc=%d, dec=%d\n", encsize, decsize);
+
+        int nsamples = decsize / (plugin.info.bps / 8) / plugin.info.channels;
+        int bitrate = -1;
+
+        if (nsamples) {
+            float sec = (float)nsamples / plugin.info.samplerate;
+            bitrate = encsize / sec;
+        }
+
+        if (bitrate > 0) {
+            deadbeef->streamer_set_bitrate (bitrate / 1000);
+        }
+    }
+#endif
+
     return initsize-size;
 }
 
