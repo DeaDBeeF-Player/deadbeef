@@ -240,7 +240,7 @@ pl_insert_cue_from_buffer (playItem_t *after, const char *fname, const uint8_t *
         }
         // skip linebreak(s)
         while (p - buffer < buffersize && *p < 0x20) {
-            *p++;
+            p++;
         }
         if (p-buffer > 2048) { // huge string, ignore
             buffer = p;
