@@ -127,17 +127,21 @@ pl_get_value_from_cue (const char *p, int sz, char *out) {
 
 static float
 pl_cue_parse_time (const char *p) {
-    int len = strnlen(p, 9);
-    // should be in 'mm:ss:ff' format, so only len = 8 is acceptable
-    if (len != 8) {
+    char *endptr;
+    long mins = strtol(p, &endptr, 10);
+    if (endptr - p < 2 || *endptr != ':') {
         return -1;
     }
-    if (p[2] != ':' || p[5] != ':') {
+    p = endptr + 1;
+    long sec = strtol(p, &endptr, 10);
+    if (endptr - p != 2 || *endptr != ':') {
         return -1;
     }
-    int mins = atoi (p);
-    int sec = atoi (p + 3);
-    int frm = atoi (p + 5);
+    p = endptr + 1;
+    long frm = strtol(p, &endptr, 10);
+    if (endptr - p != 2 || *endptr != '\0') {
+        return -1;
+    }
     return mins * 60.f + sec + frm / 75.f;
 }
 
