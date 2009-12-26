@@ -549,6 +549,7 @@ main (int argc, char *argv[]) {
     server_close ();
 
     // stop streaming before unloading plugins
+    p_stop ();
     streamer_free ();
 
     // plugins might still hood references to playitems,
