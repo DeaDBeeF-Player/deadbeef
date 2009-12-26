@@ -107,6 +107,9 @@ streamer_get_playing_track (void) {
 // playlist must call that whenever item was removed
 void
 streamer_song_removed_notify (playItem_t *it) {
+    if (!mutex) {
+        return; // streamer is not running
+    }
     plug_trigger_event (DB_EV_TRACKDELETED, (uintptr_t)it);
     if (it == orig_playing_song) {
         orig_playing_song = NULL;
@@ -492,7 +495,9 @@ streamer_free (void) {
     streaming_terminate = 1;
     thread_join (streamer_tid);
     mutex_free (decodemutex);
+    decodemutex = 0;
     mutex_free (mutex);
+    mutex = 0;
 }
 
 void

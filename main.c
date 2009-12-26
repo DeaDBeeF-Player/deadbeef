@@ -544,17 +544,24 @@ main (int argc, char *argv[]) {
     // save config
     pl_save (defpl);
     conf_save ();
+
     // stop receiving messages from outside
     server_close ();
-    // at this point we can simply do exit(0), but let's clean up for debugging
-    messagepump_free ();
-    p_free ();
+
+    // stop streaming before unloading plugins
     streamer_free ();
+
+    // plugins might still hood references to playitems,
+    // and query configuration in background
+    // so unload everything 1st before final cleanup
+    plug_unload_all ();
+
+    // at this point we can simply do exit(0), but let's clean up for debugging
     codec_free_locking ();
     session_save (sessfile);
     pl_free ();
     conf_free ();
-    plug_unload_all ();
+    messagepump_free ();
     fprintf (stderr, "hej-hej!\n");
     return 0;
 }
