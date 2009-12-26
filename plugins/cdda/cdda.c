@@ -15,6 +15,9 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+/* screwed/maintained by Alexey Yakovenko <waker@users.sourceforge.net> */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -44,11 +47,13 @@ static unsigned int tail_len;
 static int current_sector;
 static unsigned int current_sample = 0;
 static uintptr_t mutex;
+static intptr_t cddb_tid;
 
-static int use_cddb = 1;
-static char server[1024] = "freedb.org";
-static int port = 888;
-static int proto_cddb = 1;
+#define DEFAULT_SERVER "freedb.org"
+#define DEFAULT_PORT 888
+#define DEFAULT_USE_CDDB 1
+#define DEFAULT_PROTOCOL 1
+
 
 struct cddb_thread_params
 {
@@ -69,15 +74,6 @@ trim (char* s)
     for ( h = s; *h == ' ' || *h == '\t'; h++ );
     for ( t = s + strlen(s); *t == ' ' || *t == '\t'; *t = 0, t-- );
     return h;
-}
-
-static int
-read_config ()
-{
-    use_cddb = deadbeef->conf_get_int ("cdda.freedb.enable", 1);
-    strncpy (server, deadbeef->conf_get_str ("cdda.freedb.host", "freedb.org"), sizeof (server)-1);
-    port = deadbeef->conf_get_int ("cdda.freedb.port", 888);
-    proto_cddb = deadbeef->conf_get_int ("cdda.protocol", 1); // 1 is cddb, 0 is http
 }
 
 static int
@@ -239,10 +235,10 @@ resolve_disc (CdIo_t *cdio)
 
     conn = cddb_new();
 
-    cddb_set_server_name (conn, server);
-    cddb_set_server_port (conn, port);
+    cddb_set_server_name (conn, deadbeef->conf_get_str ("cdda.freedb.host", DEFAULT_SERVER));
+    cddb_set_server_port (conn, deadbeef->conf_get_int ("cdda.freedb.port", DEFAULT_PORT));
 
-    if (!proto_cddb)
+    if (!deadbeef->conf_get_int ("cdda.protocol", DEFAULT_PROTOCOL))
     {
         cddb_http_enable (conn);
         if (deadbeef->conf_get_int ("network.proxy", 0))
@@ -346,6 +342,7 @@ cddb_thread (void *items_i)
     cddb_disc_destroy (disc);
     deadbeef->mutex_unlock (mutex);
     free (params);
+    cddb_tid = 0;
 }
 
 static DB_playItem_t *
@@ -398,7 +395,12 @@ cda_insert (DB_playItem_t *after, const char *fname) {
             p->items[i] = res;
         }
         trace ("cdda: querying freedb...\n");
-        deadbeef->thread_start (cddb_thread, p); //will destroy cdio
+        if (deadbeef->conf_get_int ("cdda.freedb.enable", DEFAULT_USE_CDDB)) {
+            if (cddb_tid) {
+                deadbeef->thread_join (cddb_tid);
+            }
+            cddb_tid = deadbeef->thread_start (cddb_thread, p); //will destroy cdio
+        }
     }
     else
     {
@@ -417,6 +419,10 @@ cda_start (void) {
 
 static int
 cda_stop (void) {
+    if (cddb_tid) {
+        fprintf (stderr, "cdda: waiting cddb query to end\n");
+        deadbeef->thread_join (cddb_tid);
+    }
     deadbeef->mutex_free (mutex);
     return 0;
 }
@@ -439,8 +445,8 @@ static DB_decoder_t plugin = {
     .plugin.type = DB_PLUGIN_DECODER,
     .plugin.name = "Audio CD player",
     .plugin.descr = "using libcdio, includes .nrg image support",
-    .plugin.author = "Viktor Semykin",
-    .plugin.email = "thesame.ml@gmail.com",
+    .plugin.author = "Viktor Semykin, Alexey Yakovenko",
+    .plugin.email = "thesame.ml@gmail.com, waker@users.sourceforge.net",
     .plugin.website = "http://deadbeef.sf.net",
     .plugin.start = cda_start,
     .plugin.stop = cda_stop,
@@ -459,7 +465,7 @@ static DB_decoder_t plugin = {
 DB_plugin_t *
 cdda_load (DB_functions_t *api) {
     deadbeef = api;
-    read_config();
+//    read_config();
     return DB_PLUGIN (&plugin);
 }
 
