@@ -97,7 +97,11 @@ cflac_write_callback (const FLAC__StreamDecoder *decoder, const FLAC__Frame *fra
     if (frame->header.blocksize == 0) {
         return FLAC__STREAM_DECODER_WRITE_STATUS_ABORT;
     }
-    int bitrate = cb->bytesread / ((float)frame->header.blocksize / frame->header.sample_rate) * 8;
+    int bitrate = -1;
+    float sec = ((float)frame->header.blocksize / frame->header.sample_rate);
+    if (cb->bytesread != 0 && sec != 0) {
+        bitrate = cb->bytesread / sec * 8;
+    }
     cb->bytesread = 0;
     if (bitrate > 0) {
         deadbeef->streamer_set_bitrate (bitrate/1000);
