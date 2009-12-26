@@ -58,7 +58,7 @@ static int stream_id;
 static int left_in_packet;
 static int have_packet;
 
-static char buffer[AVCODEC_MAX_AUDIO_FRAME_SIZE];
+static char *buffer; // must be AVCODEC_MAX_AUDIO_FRAME_SIZE
 static int left_in_buffer;
 
 static int
@@ -128,6 +128,11 @@ ffmpeg_init (DB_playItem_t *it) {
     memset (&pkt, 0, sizeof (pkt));
     have_packet = 0;
 
+    buffer = malloc (AVCODEC_MAX_AUDIO_FRAME_SIZE);
+    if (!buffer) {
+        fprintf (stderr, "ffmpeg: failed to allocate buffer memory\n");
+        return -1;
+    }
     // fill in mandatory plugin fields
     plugin.info.readpos = 0;
     plugin.info.bps = bps;
@@ -138,6 +143,10 @@ ffmpeg_init (DB_playItem_t *it) {
 
 static void
 ffmpeg_free (void) {
+    if (buffer) {
+        free (buffer);
+        buffer = NULL;
+    }
     // free everything allocated in _init and _read_int16
     if (have_packet) {
         av_free_packet (&pkt);
