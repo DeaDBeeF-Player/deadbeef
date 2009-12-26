@@ -57,7 +57,7 @@
 		      <accelerator key="O" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image269">
+			<widget class="GtkImage" id="image276">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-open</property>
 			  <property name="icon_size">1</property>
@@ -84,7 +84,7 @@
 		      <signal name="activate" handler="on_add_files_activate" last_modification_time="Sat, 04 Jul 2009 13:04:01 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image270">
+			<widget class="GtkImage" id="image277">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-add</property>
 			  <property name="icon_size">1</property>
@@ -105,7 +105,7 @@
 		      <signal name="activate" handler="on_add_folders_activate" last_modification_time="Sun, 06 Sep 2009 17:51:40 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image271">
+			<widget class="GtkImage" id="image278">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-add</property>
 			  <property name="icon_size">1</property>
@@ -126,7 +126,7 @@
 		      <signal name="activate" handler="on_add_audio_cd_activate" last_modification_time="Sat, 10 Oct 2009 15:29:22 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image272">
+			<widget class="GtkImage" id="image279">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-add</property>
 			  <property name="icon_size">1</property>
@@ -196,7 +196,7 @@
 		      <accelerator key="Q" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image273">
+			<widget class="GtkImage" id="image280">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-quit</property>
 			  <property name="icon_size">1</property>
@@ -230,7 +230,7 @@
 		      <signal name="activate" handler="on_clear1_activate" last_modification_time="Sun, 06 Sep 2009 18:30:03 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image274">
+			<widget class="GtkImage" id="image281">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-clear</property>
 			  <property name="icon_size">1</property>
@@ -271,7 +271,7 @@
 			      <accelerator key="Delete" modifiers="0" signal="activate"/>
 
 			      <child internal-child="image">
-				<widget class="GtkImage" id="image275">
+				<widget class="GtkImage" id="image282">
 				  <property name="visible">True</property>
 				  <property name="stock">gtk-remove</property>
 				  <property name="icon_size">1</property>
@@ -469,6 +469,15 @@
 		  </child>
 
 		  <child>
+		    <widget class="GtkMenuItem" id="cursor_follows_playback">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">Cursor follows playback</property>
+		      <property name="use_underline">True</property>
+		      <signal name="activate" handler="on_cursor_follows_playback_activate" last_modification_time="Sat, 26 Dec 2009 16:48:26 GMT"/>
+		    </widget>
+		  </child>
+
+		  <child>
 		    <widget class="GtkCheckMenuItem" id="stop_after_current">
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">Stop after current</property>
@@ -509,7 +518,7 @@
 		      <signal name="activate" handler="on_help1_activate" last_modification_time="Tue, 08 Sep 2009 17:32:06 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image276">
+			<widget class="GtkImage" id="image283">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-help</property>
 			  <property name="icon_size">1</property>

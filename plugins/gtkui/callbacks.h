@@ -755,3 +755,7 @@ on_format_cancel_clicked               (GtkButton       *button,
 void
 on_format_ok_clicked                   (GtkButton       *button,
                                         gpointer         user_data);
+
+void
+on_cursor_follows_playback_activate    (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);

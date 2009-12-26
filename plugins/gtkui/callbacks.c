@@ -2269,3 +2269,11 @@ on_format_ok_clicked                   (GtkButton       *button,
     gtk_widget_hide (formatwin);
 }
 
+
+void
+on_cursor_follows_playback_activate    (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_int ("playlist.scroll.cursorfollowplayback", gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (menuitem)));
+}
+

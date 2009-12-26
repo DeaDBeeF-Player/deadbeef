@@ -879,6 +879,10 @@ gtkpl_songchanged (gtkplaylist_t *ps, int from, int to) {
                 gtk_range_set_value (GTK_RANGE (ps->scrollbar), to - ps->nvisiblerows/2);
             }
         }
+        if (deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 1)) {
+            printf ("Moving cursor to %d\n", to);
+            gtkpl_set_cursor (PL_MAIN, to);
+        }
     }
 
     if (from >= 0) {
@@ -1951,7 +1955,7 @@ gtkpl_set_cursor (int iter, int cursor) {
     int minvis = pl->scrollpos;
     int maxvis = pl->scrollpos + pl->nvisiblerows-1;
     int prev = deadbeef->pl_get_cursor (PL_MAIN);
-    deadbeef->pl_set_cursor (PL_MAIN, 0);
+    deadbeef->pl_set_cursor (PL_MAIN, cursor);
     struct set_cursor_t *data = malloc (sizeof (struct set_cursor_t));
     data->prev = prev;
     data->iter = iter;
