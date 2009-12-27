@@ -47,8 +47,6 @@ static const char *filetypes[] = { "M4A", "MusePack", "WMA", "Shorten", "atrac3"
 
 #define FF_PROTOCOL_NAME "deadbeef"
 
-static int currentsample;
-
 static AVCodec *codec;
 static AVCodecContext *ctx;
 static AVFormatContext *fctx;
@@ -60,6 +58,10 @@ static int have_packet;
 
 static char *buffer; // must be AVCODEC_MAX_AUDIO_FRAME_SIZE
 static int left_in_buffer;
+
+static int startsample;
+static int endsample;
+static int currentsample;
 
 static int
 ffmpeg_init (DB_playItem_t *it) {
@@ -116,10 +118,10 @@ ffmpeg_init (DB_playItem_t *it) {
 
     int bps = av_get_bits_per_sample_format (ctx->sample_fmt);
     int samplerate = ctx->sample_rate;
-    float duration = (float)fctx->duration / AV_TIME_BASE;
+    float duration = fctx->duration / (float)AV_TIME_BASE;
     trace ("ffmpeg: bits per sample is %d\n", bps);
     trace ("ffmpeg: samplerate is %d\n", samplerate);
-    trace ("ffmpeg: duration is %f\n", duration);
+    trace ("ffmpeg: duration is %lld/%fsec\n", fctx->duration, duration);
 
     int totalsamples = fctx->duration * samplerate / AV_TIME_BASE;
     left_in_packet = 0;
@@ -133,11 +135,25 @@ ffmpeg_init (DB_playItem_t *it) {
         fprintf (stderr, "ffmpeg: failed to allocate buffer memory\n");
         return -1;
     }
+
+
     // fill in mandatory plugin fields
     plugin.info.readpos = 0;
     plugin.info.bps = bps;
     plugin.info.channels = ctx->channels;
     plugin.info.samplerate = samplerate;
+
+    // subtrack info
+    currentsample = 0;
+    if (it->endsample > 0) {
+        startsample = it->startsample;
+        endsample = it->endsample;
+        plugin.seek_sample (0);
+    }
+    else {
+        startsample = 0;
+        endsample = totalsamples - 1;
+    }
     return 0;
 }
 
@@ -173,6 +189,13 @@ ffmpeg_read_int16 (char *bytes, int size) {
     // try decode `size' bytes
     // return number of decoded bytes
     // return 0 on EOF
+
+    if (currentsample + size / (2 * plugin.info.channels) > endsample) {
+        size = (endsample - currentsample + 1) * 2 * plugin.info.channels;
+        if (size <= 0) {
+            return 0;
+        }
+    }
 
     int initsize = size;
 
@@ -271,25 +294,8 @@ ffmpeg_read_int16 (char *bytes, int size) {
         }
     }
 
+    currentsample += (initsize-size) / (2 * plugin.info.channels);
     plugin.info.readpos = (float)currentsample / plugin.info.samplerate;
-
-#if 0
-    if (encsize && decsize) {
-        printf ("enc=%d, dec=%d\n", encsize, decsize);
-
-        int nsamples = decsize / (plugin.info.bps / 8) / plugin.info.channels;
-        int bitrate = -1;
-
-        if (nsamples) {
-            float sec = (float)nsamples / plugin.info.samplerate;
-            bitrate = encsize / sec;
-        }
-
-        if (bitrate > 0) {
-            deadbeef->streamer_set_bitrate (bitrate / 1000);
-        }
-    }
-#endif
 
     return initsize-size;
 }
@@ -303,15 +309,19 @@ ffmpeg_seek_sample (int sample) {
         av_free_packet (&pkt);
         have_packet = 0;
     }
+    sample += startsample;
+    int64_t tm = (int64_t)sample/ plugin.info.samplerate * AV_TIME_BASE;
+    trace ("ffmpeg: seek to sample: %d, t: %d\n", sample, (int)tm);
     left_in_packet = 0;
     left_in_buffer = 0;
-    if (av_seek_frame(fctx, -1, (int64_t)sample/ plugin.info.samplerate * AV_TIME_BASE , AVSEEK_FLAG_ANY) < 0) {
+    if (av_seek_frame(fctx, -1, tm, AVSEEK_FLAG_ANY) < 0) {
         trace ("ffmpeg: seek error\n");
         return -1;
     }
     
     // update readpos
-    plugin.info.readpos = (float)sample / plugin.info.samplerate;
+    currentsample = sample;
+    plugin.info.readpos = (float)(sample-startsample) / plugin.info.samplerate;
     return 0;
 }
 
@@ -352,17 +362,18 @@ ffmpeg_insert (DB_playItem_t *after, const char *fname) {
         return NULL;
     }
 
+    av_find_stream_info(fctx);
     for (i = 0; i < fctx->nb_streams; i++)
     {
         ctx = fctx->streams[i]->codec;
         if (ctx->codec_type == CODEC_TYPE_AUDIO)
         {
-            av_find_stream_info(fctx);
             codec = avcodec_find_decoder(ctx->codec_id);
             if (codec != NULL)
                 break;
         }
     }
+//    AVStream *stream = fctx->streams[i];
 
     if (codec == NULL)
     {
@@ -379,31 +390,18 @@ ffmpeg_insert (DB_playItem_t *after, const char *fname) {
         return NULL;
     }
 
-
     int bps = av_get_bits_per_sample_format (ctx->sample_fmt);
     int samplerate = ctx->sample_rate;
-    float duration = (float)fctx->duration / AV_TIME_BASE;
+    float duration = fctx->duration / (float)AV_TIME_BASE;
+//    float duration = stream->duration * stream->time_base.num / (float)stream->time_base.den;
     trace ("ffmpeg: bits per sample is %d\n", bps);
     trace ("ffmpeg: samplerate is %d\n", samplerate);
     trace ("ffmpeg: duration is %f\n", duration);
 
     int totalsamples = fctx->duration * samplerate / AV_TIME_BASE;
 
-// FIXME: uncomment that when startsample/endsample are correctly handled
-#if 0
-    // embedded cuesheet not found, try external one
-    DB_playItem_t *cue = deadbeef->pl_insert_cue (after, fname, &plugin, plugin.filetypes[0], totalsamples, samplerate);
-    if (cue) {
-        // cuesheet loaded
-        av_close_input_file(fctx);
-        return cue;
-    }
-#endif
-    DB_playItem_t *it = deadbeef->pl_item_alloc ();
-    it->decoder = &plugin;
-    it->fname = strdup (fname);
-
     // find filetype
+    const char *filetype;
     const char *ext = fname + strlen(fname) - 1;
     while (ext > fname && *ext != '.') {
         ext--;
@@ -413,26 +411,38 @@ ffmpeg_insert (DB_playItem_t *after, const char *fname) {
     }
 
     if (!strcasecmp (ext, "m4a")) {
-        it->filetype = filetypes[FT_M4A];
+        filetype = filetypes[FT_M4A];
     }
     else if (!strcasecmp (ext, "mpc") || !strcasecmp (ext, "mp+") || !strcasecmp (ext, "mpp")) {
-        it->filetype = filetypes[FT_MUSEPACK];
+        filetype = filetypes[FT_MUSEPACK];
     }
     else if (!strcasecmp (ext, "wma")) {
-        it->filetype = filetypes[FT_WMA];
+        filetype = filetypes[FT_WMA];
     }
     else if (!strcasecmp (ext, "shn")) {
-        it->filetype = filetypes[FT_SHORTEN];
+        filetype = filetypes[FT_SHORTEN];
     }
     else if (!strcasecmp (ext, "aa3") || !strcasecmp (ext, "oma") || !strcasecmp (ext, "ac3")) {
-        it->filetype = filetypes[FT_ATRAC3];
+        filetype = filetypes[FT_ATRAC3];
     }
     else if (!strcasecmp (ext, "vqf")) {
-        it->filetype = filetypes[FT_VQF];
+        filetype = filetypes[FT_VQF];
     }
     else {
-        it->filetype = filetypes[FT_UNKNOWN];
+        filetype = filetypes[FT_UNKNOWN];
     }
+
+    // external cuesheet
+    DB_playItem_t *cue = deadbeef->pl_insert_cue (after, fname, &plugin, filetype, totalsamples, samplerate);
+    if (cue) {
+        // cuesheet loaded
+        av_close_input_file(fctx);
+        return cue;
+    }
+    DB_playItem_t *it = deadbeef->pl_item_alloc ();
+    it->decoder = &plugin;
+    it->fname = strdup (fname);
+    it->filetype = filetype;
 
     deadbeef->pl_set_item_duration (it, duration);
 
