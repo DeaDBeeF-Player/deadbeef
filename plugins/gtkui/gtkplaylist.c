@@ -1844,7 +1844,7 @@ gtkpl_songchanged_wrapper (int from, int to) {
     ft->from = from;
     ft->to = to;
     g_idle_add (update_win_title_idle, ft);
-    if (ft->to == -1 && ft->from != -1) {
+    if (ft->to == -1) {
         // redraw seekbar
         g_idle_add (redraw_seekbar_cb, NULL);
     }

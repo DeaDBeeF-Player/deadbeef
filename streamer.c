@@ -133,11 +133,9 @@ streamer_set_current (playItem_t *it) {
     to = it ? pl_get_idx_of (it) : -1;
     if (!orig_playing_song || p_isstopped ()) {
         playlist_current_ptr = it;
+        //trace ("from=%d, to=%d\n", from, to);
+        //messagepump_push (M_SONGCHANGED, 0, from, to);
     }
-    trace ("from=%d, to=%d\n", from, to);
-    trace ("sending songchanged\n");
-//    printf ("songchanged[2] %d->%d\n", from, to);
-//    messagepump_push (M_SONGCHANGED, 0, from, to);
     trace ("streamer_set_current %p, buns=%d\n", it);
     if(str_streaming_song.decoder) {
         str_streaming_song.decoder->free ();
@@ -291,6 +289,16 @@ streamer_thread (void *ctx) {
                 continue;
             }
             playItem_t *try = pl_get_for_idx (sng);
+            if (!try) { // track is not in playlist
+                trace ("track #%d is not in playlist; stopping playback\n", sng);
+                p_stop ();
+                pl_item_free (&str_playing_song);
+                pl_item_free (&str_streaming_song);
+                orig_playing_song = NULL;
+                orig_streaming_song = NULL;
+                messagepump_push (M_SONGCHANGED, 0, -1, -1);
+                continue;
+            }
             int ret = streamer_set_current (try);
             if (ret < 0) {
                 trace ("failed to play track %s, skipping...\n", try->fname);

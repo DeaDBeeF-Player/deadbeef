@@ -27,8 +27,8 @@
 #include "callbacks.h"
 #include "support.h"
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 static DB_gui_t plugin;
 DB_functions_t *deadbeef;
@@ -186,7 +186,6 @@ on_trayicon_activate (GtkWidget       *widget,
         int y = deadbeef->conf_get_int ("mainwin.geometry.y", 40);
         int w = deadbeef->conf_get_int ("mainwin.geometry.w", 500);
         int h = deadbeef->conf_get_int ("mainwin.geometry.h", 300);
-        printf ("restore: %d %d %d %d\n", x, y, w, h);
         gtk_widget_show (mainwin);
         gtk_window_move (mainwin, x, y);
         gtk_window_resize (mainwin, w, h);
