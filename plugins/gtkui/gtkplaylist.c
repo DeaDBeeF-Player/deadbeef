@@ -351,7 +351,11 @@ gtkpl_draw_pl_row_back (gtkplaylist_t *ps, int row, DB_playItem_t *it) {
 	GtkWidget *widget = ps->playlist;
     gtk_paint_flat_box (treeview->style, ps->backbuf, (it && SELECTED(it)) ? GTK_STATE_SELECTED : GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, treeview, (row & 1) ? "cell_even_ruled" : "cell_odd_ruled", x, row * rowheight - ps->scrollpos * rowheight, w, rowheight);
 	if (row == deadbeef->pl_get_cursor (ps->iterator)) {
-        gtk_paint_focus (treeview->style, ps->backbuf, (it && SELECTED(it)) ? GTK_STATE_SELECTED : GTK_STATE_NORMAL, NULL, treeview, "treeview", x, row * rowheight - ps->scrollpos * rowheight, w, rowheight);
+        // not all gtk engines/themes render focus rectangle in treeviews
+        // but we want it anyway
+        gdk_draw_rectangle (ps->backbuf, treeview->style->fg_gc[GTK_STATE_NORMAL], FALSE, x, row * rowheight - ps->scrollpos * rowheight, w-1, rowheight-1);
+        // gtkstyle focus drawing, for reference
+//        gtk_paint_focus (treeview->style, ps->backbuf, (it && SELECTED(it)) ? GTK_STATE_SELECTED : GTK_STATE_NORMAL, NULL, treeview, "treeview", x, row * rowheight - ps->scrollpos * rowheight, w, rowheight);
     }
 }
 
