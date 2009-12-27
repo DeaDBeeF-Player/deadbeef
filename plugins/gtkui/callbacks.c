@@ -611,7 +611,14 @@ on_mainwin_key_press_event             (GtkWidget       *widget,
                                         GdkEventKey     *event,
                                         gpointer         user_data)
 {
-    gtkpl_keypress (&main_playlist, event->keyval, event->state);
+
+    if (event->keyval == GDK_n) {
+        // button for that one is not in toolbar anymore, so handle it manually
+        deadbeef->sendmessage (M_PLAYRANDOM, 0, 0, 0);
+    }
+    else {
+        gtkpl_keypress (&main_playlist, event->keyval, event->state);
+    }
     return FALSE;
 }
 

@@ -891,11 +891,7 @@ gtkpl_keypress (gtkplaylist_t *ps, int keyval, int state) {
     GtkWidget *range = ps->scrollbar;
     int prev = deadbeef->pl_get_cursor (ps->iterator);
     int newscroll = ps->scrollpos;
-    if (keyval == GDK_n) {
-        // button for that one is not in toolbar anymore, so handle it manually
-        deadbeef->sendmessage (M_PLAYRANDOM, 0, 0, 0);
-    }
-    else if (keyval == GDK_Down) {
+    if (keyval == GDK_Down) {
         int cursor = deadbeef->pl_get_cursor (ps->iterator);
         if (cursor < ps->get_count () - 1) {
             gtkpl_set_cursor (ps->iterator, cursor+1);

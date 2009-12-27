@@ -168,6 +168,9 @@ on_searchwin_key_press_event           (GtkWidget       *widget,
             }
         }
     }
+    else {
+        gtkpl_keypress (&search_playlist, event->keyval, event->state);
+    }
     return FALSE;
 }
 
