@@ -880,7 +880,6 @@ gtkpl_songchanged (gtkplaylist_t *ps, int from, int to) {
             }
         }
         if (deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 1)) {
-            printf ("Moving cursor to %d\n", to);
             gtkpl_set_cursor (PL_MAIN, to);
         }
     }
@@ -899,89 +898,52 @@ gtkpl_keypress (gtkplaylist_t *ps, int keyval, int state) {
     GtkWidget *range = ps->scrollbar;
     int prev = deadbeef->pl_get_cursor (ps->iterator);
     int newscroll = ps->scrollpos;
-// C-f is now handled by gtk
-//    if ((keyval == GDK_F || keyval == GDK_f) && (state & GDK_CONTROL_MASK)) {
-//        search_start ();       
-//    }
-//    else
-//    if ((keyval == GDK_A || keyval == GDK_a) && (state & GDK_CONTROL_MASK)) {
-//        // select all
-//        pl_select_all ();
-//        gtkpl_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
-//        draw_drawable (widget->window, widget->style->black_gc, ps->backbuf, 0, 0, 0, 0, widget->allocation.width, widget->allocation.height);
-//        return;
-//    }
-//    else if ((keyval == GDK_P || keyval == GDK_p) && (state & GDK_CONTROL_MASK)) {
-//        deadbeef->sendmessage (M_PAUSESONG, 0, 0, 0);
-//    }
-//    else
-//    if (keyval == GDK_Return && deadbeef->pl_get_cursor (ps->iterator) != -1) {
-//        deadbeef->sendmessage (M_PLAYSONGNUM, 0, deadbeef->pl_get_cursor (ps->iterator), 0);
-//        return;
-//    }
-//    else
-//    if (keyval == GDK_Delete) {
-//        pl_delete_selected ();
-//        playlist_refresh ();
-//        return;
-//    }
-//    else
-    if (keyval == GDK_Down && deadbeef->pl_get_cursor (ps->iterator) < ps->get_count () - 1) {
-        deadbeef->pl_set_cursor (ps->iterator, deadbeef->pl_get_cursor (ps->iterator) + 1);
-        if (deadbeef->pl_get_cursor (ps->iterator) > ps->scrollpos + widget->allocation.height / rowheight - 1) {
-            newscroll = deadbeef->pl_get_cursor (ps->iterator) - widget->allocation.height / rowheight + 1;
-        }
-    }
-    else if (keyval == GDK_n) {
+    if (keyval == GDK_n) {
         // button for that one is not in toolbar anymore, so handle it manually
         deadbeef->sendmessage (M_PLAYRANDOM, 0, 0, 0);
     }
-#if 0
-    else if (keyval == GDK_r) {
-        extern int replaygain;
-        replaygain = 1-replaygain;
-        fprintf (stderr, "replaygain=%d\n", replaygain);
-    }
-    else if (keyval == GDK_t) {
-        extern int replaygain_scale;
-        replaygain_scale = 1-replaygain_scale;
-        fprintf (stderr, "replaygain_scale=%d\n", replaygain_scale);
-    }
-#endif
-    else if (keyval == GDK_Up && deadbeef->pl_get_cursor (ps->iterator) > 0) {
-        deadbeef->pl_set_cursor (ps->iterator, deadbeef->pl_get_cursor (ps->iterator) - 1);
-        if (deadbeef->pl_get_cursor (ps->iterator) < ps->scrollpos) {
-            newscroll = deadbeef->pl_get_cursor (ps->iterator);
+    else if (keyval == GDK_Down) {
+        int cursor = deadbeef->pl_get_cursor (ps->iterator);
+        if (cursor < ps->get_count () - 1) {
+            gtkpl_set_cursor (ps->iterator, cursor+1);
         }
     }
-    else if (keyval == GDK_Page_Down && deadbeef->pl_get_cursor (ps->iterator) < ps->get_count () - 1) {
-        deadbeef->pl_set_cursor (ps->iterator, deadbeef->pl_get_cursor (ps->iterator) + 10);
-        if (deadbeef->pl_get_cursor (ps->iterator) >= ps->get_count ()) {
-            deadbeef->pl_set_cursor (ps->iterator, ps->get_count () - 1);
-        }
-        if (deadbeef->pl_get_cursor (ps->iterator) > ps->scrollpos + widget->allocation.height / rowheight - 1) {
-            newscroll = deadbeef->pl_get_cursor (ps->iterator) - widget->allocation.height / rowheight + 1;
+    else if (keyval == GDK_Up) {
+        int cursor = deadbeef->pl_get_cursor (ps->iterator);
+        if (cursor > 0) {
+            gtkpl_set_cursor (ps->iterator, cursor-1);
         }
     }
-    else if (keyval == GDK_Page_Up && deadbeef->pl_get_cursor (ps->iterator) > 0) {
-        deadbeef->pl_set_cursor (ps->iterator, deadbeef->pl_get_cursor (ps->iterator) - 10);
-        if (deadbeef->pl_get_cursor (ps->iterator) < 0) {
-            deadbeef->pl_set_cursor (ps->iterator, 0);
-        }
-        if (deadbeef->pl_get_cursor (ps->iterator) < ps->scrollpos) {
-            newscroll = deadbeef->pl_get_cursor (ps->iterator);
-        }
-    }
-    else if (keyval == GDK_End && deadbeef->pl_get_cursor (ps->iterator) != ps->get_count () - 1) {
-        deadbeef->pl_set_cursor (ps->iterator, ps->get_count () - 1);
-        if (deadbeef->pl_get_cursor (ps->iterator) > ps->scrollpos + widget->allocation.height / rowheight - 1) {
-            newscroll = deadbeef->pl_get_cursor (ps->iterator) - widget->allocation.height / rowheight + 1;
+    else if (keyval == GDK_Page_Down) {
+        int cursor = deadbeef->pl_get_cursor (ps->iterator);
+        if (cursor < ps->get_count () - 1) {
+            cursor += 10;
+            if (cursor >= ps->get_count ()) {
+                cursor = ps->get_count () - 1;
+            }
+            gtkpl_set_cursor (ps->iterator, cursor);
         }
     }
-    else if (keyval == GDK_Home && deadbeef->pl_get_cursor (ps->iterator) != 0) {
-        deadbeef->pl_set_cursor (ps->iterator, 0);
-        if (deadbeef->pl_get_cursor (ps->iterator) < ps->scrollpos) {
-            newscroll = deadbeef->pl_get_cursor (ps->iterator);
+    else if (keyval == GDK_Page_Up) {
+        int cursor = deadbeef->pl_get_cursor (ps->iterator);
+        if (cursor > 0) {
+            cursor -= 10;
+            if (cursor < 0) {
+                cursor = 0;
+            }
+            gtkpl_set_cursor (ps->iterator, cursor);
+        }
+    }
+    else if (keyval == GDK_End) {
+        int cursor = deadbeef->pl_get_cursor (ps->iterator);
+        if (cursor != ps->get_count () - 1) {
+            gtkpl_set_cursor (ps->iterator, ps->get_count () - 1);
+        }
+    }
+    else if (keyval == GDK_Home) {
+        int cursor = deadbeef->pl_get_cursor (ps->iterator);
+        if (cursor != 0) {
+            gtkpl_set_cursor (ps->iterator, 0);
         }
     }
     if (state & GDK_SHIFT_MASK) {
@@ -1928,40 +1890,53 @@ struct set_cursor_t {
     int iter;
     int cursor;
     int prev;
-    int minvis;
-    int maxvis;
     gtkplaylist_t *pl;
 };
 
 static gboolean
 gtkpl_set_cursor_cb (gpointer data) {
     struct set_cursor_t *sc = (struct set_cursor_t *)data;
+    deadbeef->pl_set_cursor (sc->iter, sc->cursor);
+    gtkpl_select_single (sc->pl, sc->cursor);
     DB_playItem_t *it;
-    if (sc->prev >= sc->minvis && sc->prev <= sc->maxvis) {
-        it = deadbeef->pl_get_for_idx_and_iter (sc->prev, PL_MAIN);
+    int minvis = sc->pl->scrollpos;
+    int maxvis = sc->pl->scrollpos + sc->pl->nvisiblerows-1;
+    if (sc->prev >= minvis && sc->prev <= maxvis) {
+        it = deadbeef->pl_get_for_idx_and_iter (sc->prev, sc->iter);
         gtkpl_redraw_pl_row (sc->pl, sc->prev, it);
     }
-    if (0 >= sc->minvis && 0 <= sc->maxvis) {
-        it = deadbeef->pl_get_for_idx_and_iter (0, PL_MAIN);
-        gtkpl_redraw_pl_row (sc->pl, 0, it);
+    if (sc->cursor >= minvis && sc->cursor <= maxvis) {
+        it = deadbeef->pl_get_for_idx_and_iter (sc->cursor, sc->iter);
+        gtkpl_redraw_pl_row (sc->pl, sc->cursor, it);
     }
+
+    int newscroll = sc->pl->scrollpos;
+    if (sc->cursor < sc->pl->scrollpos) {
+        newscroll = sc->cursor;
+    }
+    else if (sc->cursor >= sc->pl->scrollpos + sc->pl->nvisiblefullrows) {
+        newscroll = sc->cursor - sc->pl->nvisiblefullrows + 1;
+        if (newscroll < 0) {
+            newscroll = 0;
+        }
+    }
+    if (sc->pl->scrollpos != newscroll) {
+        GtkWidget *range = sc->pl->scrollbar;
+        gtk_range_set_value (GTK_RANGE (range), newscroll);
+    }
+
     free (data);
     return FALSE;
 }
 
 void
 gtkpl_set_cursor (int iter, int cursor) {
-    gtkplaylist_t *pl = &main_playlist;
-    int minvis = pl->scrollpos;
-    int maxvis = pl->scrollpos + pl->nvisiblerows-1;
-    int prev = deadbeef->pl_get_cursor (PL_MAIN);
-    deadbeef->pl_set_cursor (PL_MAIN, cursor);
+    gtkplaylist_t *pl = (iter == PL_MAIN) ? &main_playlist : &search_playlist;
+    int prev = deadbeef->pl_get_cursor (iter);
     struct set_cursor_t *data = malloc (sizeof (struct set_cursor_t));
     data->prev = prev;
     data->iter = iter;
     data->cursor = cursor;
-    data->minvis = minvis;
-    data->maxvis = maxvis;
     data->pl = pl;
     g_idle_add (gtkpl_set_cursor_cb, data);
 }
