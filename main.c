@@ -548,8 +548,9 @@ main (int argc, char *argv[]) {
     // stop receiving messages from outside
     server_close ();
 
-    // stop streaming before unloading plugins
+    // stop streaming and playback before unloading plugins
     p_stop ();
+    p_free ();
     streamer_free ();
 
     // plugins might still hood references to playitems,

@@ -284,7 +284,6 @@ gtkpl_setup_hscrollbar (gtkplaylist_t *ps) {
     GtkWidget *playlist = ps->playlist;
     int w = playlist->allocation.width;
     int size = 0;
-    int i;
     gtkpl_column_t *c;
     for (c = ps->columns; c; c = c->next) {
         size += c->width;
@@ -348,7 +347,6 @@ gtkpl_draw_pl_row_back (gtkplaylist_t *ps, int row, DB_playItem_t *it) {
     GTK_OBJECT_FLAGS (treeview) |= GTK_HAS_FOCUS;
     int x = -ps->hscrollpos;
     int w = ps->totalwidth;
-	GtkWidget *widget = ps->playlist;
     gtk_paint_flat_box (treeview->style, ps->backbuf, (it && SELECTED(it)) ? GTK_STATE_SELECTED : GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, treeview, (row & 1) ? "cell_even_ruled" : "cell_odd_ruled", x, row * rowheight - ps->scrollpos * rowheight, w, rowheight);
 	if (row == deadbeef->pl_get_cursor (ps->iterator)) {
         // not all gtk engines/themes render focus rectangle in treeviews
@@ -399,13 +397,11 @@ gtkpl_draw_pl_row (gtkplaylist_t *ps, int row, DB_playItem_t *it) {
             char text[1024];
             deadbeef->pl_format_title (it, text, sizeof (text), c->id, c->format);
 
-            if (text) {
-                if (c->align_right) {
-                    draw_text (x+5, row * rowheight - ps->scrollpos * rowheight + rowheight/2 - draw_get_font_size ()/2 - 2, c->width-10, 1, text);
-                }
-                else {
-                    draw_text (x + 5, row * rowheight - ps->scrollpos * rowheight + rowheight/2 - draw_get_font_size ()/2 - 2, c->width-10, 0, text);
-                }
+            if (c->align_right) {
+                draw_text (x+5, row * rowheight - ps->scrollpos * rowheight + rowheight/2 - draw_get_font_size ()/2 - 2, c->width-10, 1, text);
+            }
+            else {
+                draw_text (x + 5, row * rowheight - ps->scrollpos * rowheight + rowheight/2 - draw_get_font_size ()/2 - 2, c->width-10, 0, text);
             }
         }
         x += c->width;
@@ -415,7 +411,6 @@ gtkpl_draw_pl_row (gtkplaylist_t *ps, int row, DB_playItem_t *it) {
 
 void
 gtkpl_draw_playlist (gtkplaylist_t *ps, int x, int y, int w, int h) {
-    GtkWidget *widget = ps->playlist;
     if (!ps->backbuf) {
         return;
     }
@@ -493,7 +488,6 @@ gtkpl_expose_header (gtkplaylist_t *ps, int x, int y, int w, int h) {
 void
 gtkpl_select_single (gtkplaylist_t *ps, int sel) {
     int idx=0;
-    GtkWidget *widget = ps->playlist;
     DB_playItem_t *it = PL_HEAD (ps->iterator);
     for (; it; it = PL_NEXT (it, ps->iterator), idx++) {
         if (idx == sel) {
@@ -540,7 +534,6 @@ gtkpl_mouse1_pressed (gtkplaylist_t *ps, int state, int ex, int ey, double time)
     if (cnt == 0) {
         return;
     }
-    GtkWidget *widget = ps->playlist;
     // remember mouse coords for doubleclick detection
     ps->lastpos[0] = ex;
     ps->lastpos[1] = ey;
@@ -754,7 +747,6 @@ gtkpl_mousemove (gtkplaylist_t *ps, GdkEventMotion *event) {
         }
     }
     else if (areaselect) {
-        GtkWidget *widget = ps->playlist;
         int y = event->y/rowheight + ps->scrollpos;
         //if (y != shift_sel_anchor)
         {
@@ -817,7 +809,6 @@ gtkpl_handle_scroll_event (gtkplaylist_t *ps, int direction) {
         return;
     }
     // pass event to scrollbar
-    GtkAdjustment* adj = gtk_range_get_adjustment (GTK_RANGE (range));
     int newscroll = gtk_range_get_value (GTK_RANGE (range));
     if (direction == GDK_SCROLL_UP) {
         newscroll -= 2;
@@ -877,7 +868,6 @@ gtkpl_hscroll (gtkplaylist_t *ps, int newscroll) {
 void
 gtkpl_songchanged (gtkplaylist_t *ps, int from, int to) {
     if (!dragwait && to != -1) {
-        GtkWidget *widget = ps->playlist;
         if (deadbeef->conf_get_int ("playlist.scroll.followplayback", 0)) {
             if (to < ps->scrollpos || to >= ps->scrollpos + ps->nvisiblefullrows) {
                 gtk_range_set_value (GTK_RANGE (ps->scrollbar), to - ps->nvisiblerows/2);
@@ -898,7 +888,6 @@ gtkpl_songchanged (gtkplaylist_t *ps, int from, int to) {
 
 void
 gtkpl_keypress (gtkplaylist_t *ps, int keyval, int state) {
-    GtkWidget *widget = ps->playlist;
     GtkWidget *range = ps->scrollbar;
     int prev = deadbeef->pl_get_cursor (ps->iterator);
     int newscroll = ps->scrollpos;
@@ -953,8 +942,6 @@ gtkpl_keypress (gtkplaylist_t *ps, int keyval, int state) {
     if (state & GDK_SHIFT_MASK) {
         // select all between shift_sel_anchor and deadbeef->pl_get_cursor (ps->iterator)
         if (prev != deadbeef->pl_get_cursor (ps->iterator)) {
-            int minvis = ps->scrollpos;
-            int maxvis = ps->scrollpos + ps->nvisiblerows-1;
             int start = min (deadbeef->pl_get_cursor (ps->iterator), shift_sel_anchor);
             int end = max (deadbeef->pl_get_cursor (ps->iterator), shift_sel_anchor);
             int idx=0;
@@ -972,8 +959,6 @@ gtkpl_keypress (gtkplaylist_t *ps, int keyval, int state) {
     else {
         // reset selection, set new single cursor/selection
         if (prev != deadbeef->pl_get_cursor (ps->iterator)) {
-            int minvis = ps->scrollpos;
-            int maxvis = ps->scrollpos + ps->nvisiblerows-1;
             shift_sel_anchor = deadbeef->pl_get_cursor (ps->iterator);
             int idx=0;
             for (DB_playItem_t *it = PL_HEAD (ps->iterator); it; it = PL_NEXT(it, ps->iterator), idx++) {
@@ -1359,8 +1344,6 @@ on_header_motion_notify_event          (GtkWidget       *widget,
             x += cc->width;
         }
         if (inspos >= 0 && inspos != header_dragging) {
-            int c1 = inspos;
-            int c2 = header_dragging;
             // remove c from list
             if (c == ps->columns) {
                 ps->columns = c->next;

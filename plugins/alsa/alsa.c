@@ -165,7 +165,7 @@ palsa_set_hw_params (int samplerate) {
         trace ("Unable to get buffer size for playback: %s\n", snd_strerror(err));
         goto error;
     }
-    trace ("alsa buffer size: %d frames\n", size);
+    trace ("alsa buffer size: %d frames\n", (int)size);
     bufsize = size;
 
     if ((err = snd_pcm_hw_params (audio, hw_params)) < 0) {
@@ -227,7 +227,7 @@ palsa_init (void) {
                 snd_strerror (err));
         goto open_error;
     }
-    trace ("alsa period size: %d frames\n", av);
+    trace ("alsa period size: %d frames\n", (int)av);
 
     if ((err = snd_pcm_sw_params_set_start_threshold (audio, sw_params, 0U)) < 0) {
         trace ("cannot set start mode (%s)\n",
@@ -299,6 +299,7 @@ palsa_free (void) {
     trace ("palsa_free\n");
     if (audio && !alsa_terminate) {
         alsa_terminate = 1;
+        printf ("waiting for alsa thread to finish\n");
         deadbeef->thread_join (alsa_tid);
         alsa_tid = 0;
         snd_pcm_close(audio);

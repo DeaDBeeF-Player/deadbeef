@@ -165,7 +165,7 @@ pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, c
     }
     *p = 0;
     // check that indexes have valid timestamps
-    float f_index00 = index00[0] ? pl_cue_parse_time (index00) : 0;
+    //float f_index00 = index00[0] ? pl_cue_parse_time (index00) : 0;
     float f_index01 = index01[0] ? pl_cue_parse_time (index01) : 0;
     float f_pregap = pregap[0] ? pl_cue_parse_time (pregap) : 0;
     if (*prev) {
@@ -457,7 +457,6 @@ pl_insert_pls (playItem_t *after, const char *fname, int *pabort, int (*cb)(play
     char url[1024] = "";
     char title[1024] = "";
     char length[20] = "";
-    int nfile = 1;
     while (p < end) {
         if (p >= end) {
             break;
@@ -769,19 +768,6 @@ pl_get_idx_of (playItem_t *it) {
     return idx;
 }
 
-int
-pl_append_item (playItem_t *it) {
-    if (!playlist_tail[PL_MAIN]) {
-        playlist_tail[PL_MAIN] = playlist_head[PL_MAIN] = it;
-    }
-    else {
-        playlist_tail[PL_MAIN]->next[PL_MAIN] = it;
-        it->prev[PL_MAIN] = playlist_tail[PL_MAIN];
-        playlist_tail[PL_MAIN] = it;
-    }
-    pl_count++;
-}
-
 playItem_t *
 pl_insert_item (playItem_t *after, playItem_t *it) {
     if (!after) {
@@ -903,7 +889,6 @@ pl_prevsong (void) {
             int rating = playlist_current_ptr->shufflerating;
             playItem_t *pmax = NULL; // played maximum
             playItem_t *amax = NULL; // absolute maximum
-            playItem_t *i = NULL;
             for (playItem_t *i = playlist_head[PL_MAIN]; i; i = i->next[PL_MAIN]) {
                 if (i != playlist_current_ptr && i->played && (!amax || i->shufflerating > amax->shufflerating)) {
                     amax = i;
@@ -978,7 +963,6 @@ pl_nextsong (int reason) {
         if (!curr) {
             // find minimal notplayed
             playItem_t *pmin = NULL; // notplayed minimum
-            playItem_t *i = NULL;
             for (playItem_t *i = playlist_head[PL_MAIN]; i; i = i->next[PL_MAIN]) {
                 if (i->played) {
                     continue;
@@ -1011,7 +995,6 @@ pl_nextsong (int reason) {
             // find minimal notplayed above current
             int rating = curr->shufflerating;
             playItem_t *pmin = NULL; // notplayed minimum
-            playItem_t *i = NULL;
             for (playItem_t *i = playlist_head[PL_MAIN]; i; i = i->next[PL_MAIN]) {
                 if (i->played || i->shufflerating < rating) {
                     continue;
@@ -1098,7 +1081,6 @@ pl_add_meta (playItem_t *it, const char *key, const char *value) {
     char str[256];
     if (!value || !*value) {
         if (!strcasecmp (key, "title")) {
-            int len = 256;
             // cut filename without path and extension
             const char *pext = it->fname + strlen (it->fname) - 1;
             while (pext >= it->fname && *pext != '.') {
@@ -1578,7 +1560,6 @@ pl_format_item_queue (playItem_t *it, char *s, int size) {
             break;
         }
         if (playqueue[i] == it) {
-            len;
             if (init) {
                 init = 0;
                 s[0] = '(';
@@ -1740,7 +1721,6 @@ pl_sort (int iter, int id, const char *format, int ascending) {
     do {
         sorted = 1;
         playItem_t *it;
-        playItem_t *next = NULL;
         for (it = playlist_head[iter]; it; it = it->next[iter]) {
             playItem_t *next = it->next[iter];
             if (!next) {
@@ -1782,27 +1762,6 @@ pl_sort (int iter, int id, const char *format, int ascending) {
                 next->prev[iter] = it_prev;
                 it = next;
             }
-#if 0
-            else {
-                printf ("%p %p NOT swapping %s and %s\n", it, next, meta1, meta2);
-            }
-#endif
-#if 0
-            // print list
-            int k = 0;
-            playItem_t *p = NULL;
-            for (playItem_t *i = playlist_head[iter]; i; p = i, i = i->next[iter], k++) {
-                printf ("%p ", i);
-                if (i->prev[iter] != p) {
-                    printf ("\n\033[0;33mbroken link, i=%p, i->prev=%p, prev=%p\033[37;0m\n", i, i->prev[iter], p);
-                }
-                if (k > 20) {
-                    printf ("\033[0;31mlist corrupted\033[37;0m\n");
-                    return;
-                }
-            }
-            printf ("\n");
-#endif
         }
     } while (!sorted);
 }

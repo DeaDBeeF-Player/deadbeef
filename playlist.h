@@ -74,9 +74,6 @@ playItem_t *
 pl_insert_item (playItem_t *after, playItem_t *it);
 
 int
-pl_append_item (playItem_t *it);
-
-int
 pl_remove (playItem_t *i);
 
 playItem_t *

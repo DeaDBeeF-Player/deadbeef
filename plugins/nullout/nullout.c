@@ -55,12 +55,6 @@ static int
 pnull_stop (void);
 
 static int
-pnull_isstopped (void);
-
-static int
-pnull_ispaused (void);
-
-static int
 pnull_pause (void);
 
 static int
@@ -126,17 +120,6 @@ pnull_stop (void) {
 }
 
 int
-pnull_isstopped (void) {
-    return (state == OUTPUT_STATE_STOPPED);
-}
-
-int
-pnull_ispaused (void) {
-    // return pause state
-    return (state == OUTPUT_STATE_PAUSED);
-}
-
-int
 pnull_pause (void) {
     if (state == OUTPUT_STATE_STOPPED) {
         return -1;
@@ -182,7 +165,6 @@ pnull_get_endianness (void) {
 static void
 pnull_thread (void *context) {
     prctl (PR_SET_NAME, "deadbeef-null", 0, 0, 0, 0);
-    int err;
     for (;;) {
         if (null_terminate) {
             break;

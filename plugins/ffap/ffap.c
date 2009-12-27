@@ -609,9 +609,9 @@ static int ape_read_packet(DB_FILE *fp, APEContext *ape_ctx)
 //    packet_sizeleft -= 8;
 
 // update bitrate
-    float sec = (float)nblocks / ape->samplerate;
     int bitrate = -1;
-    if (sec != 0 && ape->frames[ape->currentframe].size != 0) {
+    if (nblocks != 0 && ape->frames[ape->currentframe].size != 0) {
+        float sec = (float)nblocks / ape->samplerate;
         bitrate = ape->frames[ape->currentframe].size / sec * 8;
     }
     if (bitrate > 0) {
@@ -1664,7 +1664,7 @@ ffap_insert (DB_playItem_t *after, const char *fname) {
     it->filetype = "APE";
     deadbeef->pl_set_item_duration (it, duration);
  
-    int v2err = deadbeef->junk_read_id3v2 (it, fp);
+    /*int v2err = */deadbeef->junk_read_id3v2 (it, fp);
     int v1err = deadbeef->junk_read_id3v1 (it, fp);
     if (v1err >= 0) {
         deadbeef->fseek (fp, -128, SEEK_END);
@@ -1672,7 +1672,7 @@ ffap_insert (DB_playItem_t *after, const char *fname) {
     else {
         deadbeef->fseek (fp, 0, SEEK_END);
     }
-    int apeerr = deadbeef->junk_read_ape (it, fp);
+    /*int apeerr = */deadbeef->junk_read_ape (it, fp);
 
     deadbeef->fclose (fp);
 

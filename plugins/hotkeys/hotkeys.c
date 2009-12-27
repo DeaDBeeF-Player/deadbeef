@@ -33,7 +33,7 @@ static intptr_t loop_tid;
 #define MAX_COMMAND_COUNT 256
 
 typedef struct {
-    char *name;
+    const char *name;
     KeySym keysym;
 } xkey_t;
 
@@ -66,7 +66,7 @@ get_keycode (Display *disp, const char* name) {
     static KeySym* syms;
     static int ks_per_kk;
     static int first_time = 1;
-    int i, j, ks;
+    int i, ks;
 
     if (first_time)
     {
@@ -197,7 +197,6 @@ read_config (Display *disp)
         char* command = colon+1;
         *colon = 0;
 
-        int modifier = 0;
         char* key = NULL;
 
         int done = 0;

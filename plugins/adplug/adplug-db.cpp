@@ -124,7 +124,7 @@ adplug_read_int16 (char *bytes, int size) {
     }
     currentsample += size/4;
     adplug_plugin.info.readpos = (float)currentsample / adplug_plugin.info.samplerate;
-    return size;
+    return initsize-size;
 }
 
 int
