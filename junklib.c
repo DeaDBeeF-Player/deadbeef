@@ -270,9 +270,13 @@ convstr_id3v2_2to3 (const unsigned char* str, int sz) {
     if (*str == 1) {
         if (str[1] == 0xff && str[2] == 0xfe) {
             enc = "UCS-2LE";
+            str += 2;
+            sz -= 2;
         }
         else if (str[2] == 0xff && str[1] == 0xfe) {
             enc = "UCS-2BE";
+            str += 2;
+            sz -= 2;
         }
         else {
             trace ("invalid ucs-2 signature %x %x\n", (int)str[1], (int)str[2]);

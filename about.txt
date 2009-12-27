@@ -59,3 +59,11 @@ Copyright © 1998 - 2006 Conifer Software
 
 libsndfile - PCM read/write/conversion library
 Copyright © 1999-2009 Erik de Castro Lopo <erikd@mega-nerd.com>
+
+
+libayemu - AY/YM sound chip emulator and music file loader
+Copyright © 2003-2004 Alexander Sashnov <sashnov@ngs.ru>
+
+
+adplug - Replayer for many OPL2/OPL3 audio file formats.
+Copyright © 1999 - 2006 Simon Peter <dn.tlp@gmx.net>, et al.

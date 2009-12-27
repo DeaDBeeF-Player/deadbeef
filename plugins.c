@@ -22,7 +22,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <gtk/gtk.h>
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
 #endif
@@ -30,7 +29,6 @@
 #include "md5/md5.h"
 #include "messagepump.h"
 #include "threading.h"
-#include "progress.h"
 #include "playlist.h"
 #include "volume.h"
 #include "streamer.h"
@@ -53,6 +51,7 @@ static DB_functions_t deadbeef_api = {
     .ev_unsubscribe = plug_ev_unsubscribe,
     .md5 = plug_md5,
     .md5_to_str = plug_md5_to_str,
+    .get_output = plug_get_output,
     .playback_next = plug_playback_next,
     .playback_prev = plug_playback_prev,
     .playback_pause = plug_playback_pause,
@@ -61,8 +60,17 @@ static DB_functions_t deadbeef_api = {
     .playback_random = plug_playback_random,
     .playback_get_pos = plug_playback_get_pos,
     .playback_set_pos = plug_playback_set_pos,
-    .playback_get_samplerate = p_get_rate,
-    .playback_update_bitrate = streamer_update_bitrate,
+    // streamer access
+    .streamer_get_playing_track = (DB_playItem_t *(*) (void))streamer_get_playing_track,
+    .streamer_get_streaming_track = (DB_playItem_t *(*) (void))streamer_get_streaming_track,
+    .streamer_get_playpos = streamer_get_playpos,
+    .streamer_seek = streamer_set_seek,
+    .streamer_ok_to_read = streamer_ok_to_read,
+    .streamer_reset = streamer_reset,
+    .streamer_read = streamer_read,
+    .streamer_set_bitrate = streamer_set_bitrate,
+    .streamer_get_apx_bitrate = streamer_get_apx_bitrate,
+    // process control
     .get_config_dir = plug_get_config_dir,
     .quit = plug_quit,
     // threading
@@ -81,10 +89,39 @@ static DB_functions_t deadbeef_api = {
     .pl_item_alloc = (DB_playItem_t* (*)(void))pl_item_alloc,
     .pl_item_free = (void (*)(DB_playItem_t *))pl_item_free,
     .pl_item_copy = (void (*)(DB_playItem_t *, DB_playItem_t *))pl_item_copy,
+    .pl_add_file = (int (*) (const char *, int (*cb)(DB_playItem_t *it, void *data), void *))pl_add_file,
+    .pl_add_dir = (int (*) (const char *dirname, int (*cb)(DB_playItem_t *it, void *data), void *user_data))pl_add_dir,
     .pl_insert_item = (DB_playItem_t *(*) (DB_playItem_t *after, DB_playItem_t *it))pl_insert_item,
+    .pl_insert_dir = (DB_playItem_t *(*) (DB_playItem_t *after, const char *dirname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data))pl_insert_dir,
+    .pl_insert_file = (DB_playItem_t *(*) (DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data))pl_insert_file,
     .pl_get_idx_of = (int (*) (DB_playItem_t *it))pl_get_idx_of,
+    .pl_get_for_idx = (DB_playItem_t * (*)(int))pl_get_for_idx,
+    .pl_get_for_idx_and_iter = (DB_playItem_t * (*) (int idx, int iter))pl_get_for_idx_and_iter,
     .pl_set_item_duration = (void (*) (DB_playItem_t *it, float duration))pl_set_item_duration,
     .pl_get_item_duration = (float (*) (DB_playItem_t *it))pl_get_item_duration,
+    .pl_sort = pl_sort,
+    .pl_get_totaltime = pl_get_totaltime,
+    .pl_getcount = pl_getcount,
+    .pl_getcurrent = (DB_playItem_t *(*)(void))pl_getcurrent,
+    .pl_delete_selected = pl_delete_selected,
+    .pl_set_cursor = pl_set_cursor,
+    .pl_get_cursor = pl_get_cursor,
+    .pl_set_selected = (void (*) (DB_playItem_t *, int))pl_set_selected,
+    .pl_is_selected = (int (*) (DB_playItem_t *))pl_is_selected,
+    .pl_free = pl_free,
+    .pl_load = pl_load,
+    .pl_save = pl_save,
+    .pl_select_all = pl_select_all,
+    .pl_crop_selected = pl_crop_selected,
+    .pl_getselcount = pl_getselcount,
+    .pl_get_first = (DB_playItem_t *(*) (int))pl_get_first,
+    .pl_get_last = (DB_playItem_t *(*) (int))pl_get_last,
+    .pl_get_next = (DB_playItem_t *(*) (DB_playItem_t *, int))pl_get_next,
+    .pl_get_prev = (DB_playItem_t *(*) (DB_playItem_t *, int))pl_get_prev,
+    .pl_format_title = (int (*) (DB_playItem_t *it, char *s, int size, int id, const char *fmt))pl_format_title,
+    .pl_format_item_display_name = (void (*) (DB_playItem_t *it, char *str, int len))pl_format_item_display_name,
+    .pl_move_items = (void (*) (int iter, DB_playItem_t *drop_before, uint32_t *indexes, int count))pl_move_items,
+    .pl_process_search = pl_process_search,
     // metainfo
     .pl_add_meta = (void (*) (DB_playItem_t *, const char *, const char *))pl_add_meta,
     .pl_find_meta = (const char *(*) (DB_playItem_t *, const char *))pl_find_meta,
@@ -92,11 +129,17 @@ static DB_functions_t deadbeef_api = {
     // cuesheet support
     .pl_insert_cue_from_buffer = (DB_playItem_t *(*) (DB_playItem_t *after, const char *fname, const uint8_t *buffer, int buffersize, struct DB_decoder_s *decoder, const char *ftype, int numsamples, int samplerate))pl_insert_cue_from_buffer,
     .pl_insert_cue = (DB_playItem_t *(*)(DB_playItem_t *, const char *, struct DB_decoder_s *, const char *ftype, int numsamples, int samplerate))pl_insert_cue,
+    .pl_playqueue_push = (int (*) (DB_playItem_t *))pl_playqueue_push,
+    .pl_playqueue_clear = pl_playqueue_clear,
+    .pl_playqueue_pop = pl_playqueue_pop,
+    .pl_playqueue_remove = (void (*) (DB_playItem_t *))pl_playqueue_remove,
+    .pl_playqueue_test = (int (*) (DB_playItem_t *))pl_playqueue_test,
     // volume control
     .volume_set_db = plug_volume_set_db,
     .volume_get_db = volume_get_db,
     .volume_set_amp = plug_volume_set_amp,
     .volume_get_amp = volume_get_amp,
+    .volume_get_min_db = volume_get_min_db,
     // junk reading
     .junk_read_id3v1 = (int (*)(DB_playItem_t *it, DB_FILE *fp))junk_read_id3v1,
     .junk_read_id3v2 = (int (*)(DB_playItem_t *it, DB_FILE *fp))junk_read_id3v2,
@@ -121,9 +164,14 @@ static DB_functions_t deadbeef_api = {
     .conf_get_float = conf_get_float,
     .conf_get_int = conf_get_int,
     .conf_set_str = conf_set_str,
+    .conf_set_int = conf_set_int,
     .conf_find = conf_find,
-    .gui_lock = plug_gui_lock,
-    .gui_unlock = plug_gui_unlock,
+    .conf_remove_items = conf_remove_items,
+    // plugin communication
+    .plug_get_decoder_list = plug_get_decoder_list,
+    .plug_get_output_list = plug_get_output_list,
+    .plug_get_list = plug_get_list,
+    .plug_activate = plug_activate,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;
@@ -134,18 +182,15 @@ plug_get_config_dir (void) {
 }
 
 void
-volumebar_notify_changed (void);
-
-void
 plug_volume_set_db (float db) {
     volume_set_db (db);
-    volumebar_notify_changed ();
+    plug_trigger_event_volumechanged ();
 }
 
 void
 plug_volume_set_amp (float amp) {
     volume_set_amp (amp);
-    volumebar_notify_changed ();
+    plug_trigger_event_volumechanged ();
 }
 
 #define MAX_PLUGINS 100
@@ -157,15 +202,9 @@ DB_decoder_t *g_decoder_plugins[MAX_DECODER_PLUGINS+1];
 #define MAX_VFS_PLUGINS 10
 DB_vfs_t *g_vfs_plugins[MAX_VFS_PLUGINS+1];
 
-void
-plug_gui_lock (void) {
-    gdk_threads_enter ();
-}
-
-void
-plug_gui_unlock (void) {
-    gdk_threads_leave ();
-}
+#define MAX_OUTPUT_PLUGINS 10
+DB_output_t *g_output_plugins[MAX_OUTPUT_PLUGINS+1];
+DB_output_t *output_plugin = NULL;
 
 void
 plug_md5 (uint8_t sig[16], const char *in, int len) {
@@ -277,43 +316,90 @@ plug_playback_set_pos (float pos) {
 
 void 
 plug_quit (void) {
-    progress_abort ();
+    // FIXME progress_abort ();
     messagepump_push (M_TERMINATE, 0, 0, 0);
 }
 
 /////// non-api functions (plugin support)
 void
-plug_trigger_event (int ev, uintptr_t param) {
+plug_event_call (DB_event_t *ev) {
+    ev->time = time (NULL);
+//    printf ("plug_event_call enter %d\n", ev->event);
     mutex_lock (mutex);
+    for (int i = 0; i < MAX_HANDLERS; i++) {
+        if (handlers[ev->event][i].plugin && !handlers[ev->event][i].plugin->inactive) {
+            handlers[ev->event][i].callback (ev, handlers[ev->event][i].data);
+        }
+    }
+    mutex_unlock (mutex);
+//    printf ("plug_event_call leave %d\n", ev->event);
+}
+
+void
+plug_trigger_event (int ev, uintptr_t param) {
     DB_event_t *event;
     switch (ev) {
     case DB_EV_SONGSTARTED:
     case DB_EV_SONGFINISHED:
         {
-        DB_event_song_t *pev = malloc (sizeof (DB_event_song_t));
-        pev->song = DB_PLAYITEM (&str_playing_song);
+        DB_event_track_t *pev = alloca (sizeof (DB_event_track_t));
+        pev->index = -1;
+        pev->track = DB_PLAYITEM (&str_playing_song);
         event = DB_EVENT (pev);
         }
         break;
     case DB_EV_TRACKDELETED:
         {
-            DB_event_song_t *pev = malloc (sizeof (DB_event_song_t));
-            pev->song = DB_PLAYITEM (param);
+            DB_event_track_t *pev = alloca (sizeof (DB_event_track_t));
+            pev->index = -1; // FIXME
+            pev->track = DB_PLAYITEM (param);
             event = DB_EVENT (pev);
         }
         break;
     default:
-        event = malloc (sizeof (DB_event_t));
+        event = alloca (sizeof (DB_event_t));
     }
     event->event = ev;
-    event->time = (double)clock () / CLOCKS_PER_SEC;
-    for (int i = 0; i < MAX_HANDLERS; i++) {
-        if (handlers[ev][i].plugin && !handlers[ev][i].plugin->inactive) {
-            handlers[ev][i].callback (event, handlers[ev][i].data);
-        }
-    }
-    free (event);
-    mutex_unlock (mutex);
+    plug_event_call (event);
+}
+
+void
+plug_trigger_event_trackchange (int from, int to) {
+    DB_event_trackchange_t event;
+    event.ev.event = DB_EV_SONGCHANGED;
+    event.from = from;
+    event.to = to;
+    plug_event_call (DB_EVENT (&event));
+}
+void
+plug_trigger_event_trackinfochanged (int trk) {
+    DB_event_track_t event;
+    event.ev.event = DB_EV_TRACKINFOCHANGED;
+    event.index = trk;
+    event.track = DB_PLAYITEM (pl_get_for_idx (trk));
+    plug_event_call (DB_EVENT (&event));
+}
+
+void
+plug_trigger_event_paused (int paused) {
+    DB_event_state_t event;
+    event.ev.event = DB_EV_PAUSED;
+    event.state = paused;
+    plug_event_call (DB_EVENT (&event));
+}
+
+void
+plug_trigger_event_playlistchanged (void) {
+    DB_event_t event;
+    event.event = DB_EV_PLAYLISTCHANGED;
+    plug_event_call (DB_EVENT (&event));
+}
+
+void
+plug_trigger_event_volumechanged (void) {
+    DB_event_t event;
+    event.event = DB_EV_VOLUMECHANGED;
+    plug_event_call (DB_EVENT (&event));
 }
 
 int
@@ -437,18 +523,16 @@ plug_load_all (void) {
                         fprintf (stderr, "plugin %s is blacklisted in config file\n", d_name);
                         break;
                     }
-                    char fullname[1024];
-                    strcpy (fullname, plugdir);
-                    strncat (fullname, "/", 1024);
-                    strncat (fullname, d_name, 1024);
-                    printf ("loading plugin %s\n", d_name);
+                    char fullname[PATH_MAX];
+                    snprintf (fullname, PATH_MAX, "%s/%s", plugdir, d_name);
+                    fprintf (stderr, "loading plugin %s\n", d_name);
                     void *handle = dlopen (fullname, RTLD_NOW);
                     if (!handle) {
                         fprintf (stderr, "dlopen error: %s\n", dlerror ());
                         break;
                     }
                     d_name[l-3] = 0;
-                    printf ("module name is %s\n", d_name);
+                    fprintf (stderr, "module name is %s\n", d_name);
                     strcat (d_name, "_load");
                     DB_plugin_t *(*plug_load)(DB_functions_t *api) = dlsym (handle, d_name);
                     if (!plug_load) {
@@ -481,6 +565,7 @@ plug_load_all (void) {
     int numplugins = 0;
     int numdecoders = 0;
     int numvfs = 0;
+    int numoutput = 0;
     for (plugin_t *plug = plugins; plug; plug = plug->next) {
         g_plugins[numplugins++] = plug->plugin;
         if (plug->plugin->type == DB_PLUGIN_DECODER) {
@@ -497,11 +582,25 @@ plug_load_all (void) {
             }
             g_vfs_plugins[numvfs++] = (DB_vfs_t *)plug->plugin;
         }
+        else if (plug->plugin->type == DB_PLUGIN_OUTPUT) {
+            fprintf (stderr, "found output plugin %s\n", plug->plugin->name);
+            if (numvfs >= MAX_OUTPUT_PLUGINS) {
+                break;
+            }
+            g_output_plugins[numoutput++] = (DB_output_t *)plug->plugin;
+        }
     }
 //    fprintf (stderr, "numplugins: %d, numdecoders: %d, numvfs: %d\n", numplugins, numdecoders, numvfs);
     g_plugins[numplugins] = NULL;
     g_decoder_plugins[numdecoders] = NULL;
     g_vfs_plugins[numvfs] = NULL;
+    g_output_plugins[numoutput] = NULL;
+
+    // select output plugin
+    if (plug_select_output () < 0) {
+        fprintf (stderr, "failed to find output plugin!\n");
+        exit (-1);
+    }
 }
 
 void
@@ -509,7 +608,9 @@ plug_unload_all (void) {
     while (plugins) {
         plugin_t *next = plugins->next;
         if (plugins->plugin->stop) {
+            fprintf (stderr, "stopping %s...", plugins->plugin->name);
             plugins->plugin->stop ();
+            fprintf (stderr, " [OK]\n");
         }
         if (plugins->handle) {
             dlclose (plugins->handle);
@@ -517,11 +618,17 @@ plug_unload_all (void) {
         plugins = next;
     }
     mutex_free (mutex);
+    fprintf (stderr, "all plugins had been unloaded\n");
 }
 
 struct DB_decoder_s **
 plug_get_decoder_list (void) {
     return g_decoder_plugins;
+}
+
+struct DB_output_s **
+plug_get_output_list (void) {
+    return g_output_plugins;
 }
 
 struct DB_vfs_s **
@@ -532,4 +639,93 @@ plug_get_vfs_list (void) {
 struct DB_plugin_s **
 plug_get_list (void) {
     return g_plugins;
+}
+
+int
+plug_activate (DB_plugin_t *plug, int activate) {
+    if (plug->inactive && !activate) {
+        return -1;
+    }
+    if (!plug->inactive && activate) {
+        return -1;
+    }
+    if (activate) {
+        if (plug->start) {
+            if (!plug->start ()) {
+                plug->inactive = 0;
+            }
+            else {
+                fprintf (stderr, "failed to start plugin %s\n", plug->name);
+                return -1;
+            }
+            return 0;
+        }
+        else {
+            return -1;
+        }
+    }
+    else {
+        if (plug->stop) {
+            if (!plug->stop ()) {
+                plug->inactive = 1;
+            }
+            else {
+                fprintf (stderr, "failed to stop plugin %s\n", plug->name);
+                return -1;
+            }
+            return 0;
+        }
+        else {
+            return -1;
+        }
+    }
+}
+
+DB_output_t *
+plug_get_output (void) {
+    return output_plugin;
+}
+
+int
+plug_select_output (void) {
+    const char *outplugname = conf_get_str ("output_plugin", "ALSA output plugin");
+    for (int i = 0; g_output_plugins[i]; i++) {
+        DB_output_t *p = g_output_plugins[i];
+        if (!strcmp (p->plugin.name, outplugname)) {
+            fprintf (stderr, "selected output plugin: %s\n", outplugname);
+            output_plugin = p;
+            break;
+        }
+    }
+    if (!output_plugin) {
+        output_plugin = g_output_plugins[0];
+        if (output_plugin) {
+            fprintf (stderr, "selected output plugin: %s\n", output_plugin->plugin.name);
+            conf_set_str ("output_plugin", output_plugin->plugin.name);
+        }
+    }
+    if (!output_plugin) {
+        return -1;
+    }
+    plug_trigger_event (DB_EV_OUTPUTCHANGED, 0);
+    return 0;
+}
+
+void
+plug_reinit_sound (void) {
+    int state = p_get_state ();
+
+    p_free ();
+
+    DB_output_t *prev = plug_get_output ();
+    if (plug_select_output () < 0) {
+        const char *outplugname = conf_get_str ("output_plugin", "ALSA output plugin");
+        fprintf (stderr, "failed to select output plugin %s\nreverted to %s\n", outplugname, prev->plugin.name);
+        output_plugin = prev;
+    }
+    p_init ();
+
+    if (state != OUTPUT_STATE_PAUSED && state != OUTPUT_STATE_STOPPED) {
+        p_play ();
+    }
 }

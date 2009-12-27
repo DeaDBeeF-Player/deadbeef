@@ -35,6 +35,7 @@
 #include "junklib.h"
 #include "vfs.h"
 #include "conf.h"
+#include "utf8.h"
 
 // 1.0->1.1 changelog:
 //    added sample-accurate seek positions for sub-tracks
@@ -50,11 +51,15 @@
 
 playItem_t *playlist_head[PL_MAX_ITERATORS];
 playItem_t *playlist_tail[PL_MAX_ITERATORS];
+int playlist_current_row[PL_MAX_ITERATORS];
+
 playItem_t *playlist_current_ptr;
-int pl_count = 0;
-float pl_totaltime = 0;
-//static int pl_order = 0; // 0 = linear, 1 = shuffle, 2 = random
-//static int pl_loop_mode = 0; // 0 = loop, 1 = don't loop, 2 = loop single
+static int pl_count = 0;
+static float pl_totaltime = 0;
+
+#define PLAYQUEUE_SIZE 100
+static playItem_t *playqueue[100];
+static int playqueue_count = 0;
 
 void
 pl_free (void) {
@@ -122,39 +127,22 @@ pl_get_value_from_cue (const char *p, int sz, char *out) {
 
 static float
 pl_cue_parse_time (const char *p) {
-    char tmp[3] = {0};
-    const char *next = p;
-    int s;
-    while (*next && *next != ':') {
-        next++;
-    }
-    if ((next - p) != 2) {
+    char *endptr;
+    long mins = strtol(p, &endptr, 10);
+    if (endptr - p < 2 || *endptr != ':') {
         return -1;
     }
-    strncpy (tmp, p, 2);
-    tmp[next-p] = 0;
-    float mins = atoi (tmp);
-    next++;
-    p = next;
-    while (*next && *next != ':') {
-        next++;
-    }
-    if ((next - p) != 2) {
+    p = endptr + 1;
+    long sec = strtol(p, &endptr, 10);
+    if (endptr - p != 2 || *endptr != ':') {
         return -1;
     }
-    strncpy (tmp, p, 2);
-    float sec = atoi (tmp);
-    next++;
-    p = next;
-    while (*next && *next != ':') {
-        next++;
-    }
-    if ((next - p) != 2) {
+    p = endptr + 1;
+    long frm = strtol(p, &endptr, 10);
+    if (endptr - p != 2 || *endptr != '\0') {
         return -1;
     }
-    strncpy (tmp, p, 2);
-    float frm = atoi (tmp);
-    return mins * 60 + sec + frm / 75.f;
+    return mins * 60.f + sec + frm / 75.f;
 }
 
 static playItem_t *
@@ -177,7 +165,7 @@ pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, c
     }
     *p = 0;
     // check that indexes have valid timestamps
-    float f_index00 = index00[0] ? pl_cue_parse_time (index00) : 0;
+    //float f_index00 = index00[0] ? pl_cue_parse_time (index00) : 0;
     float f_index01 = index01[0] ? pl_cue_parse_time (index01) : 0;
     float f_pregap = pregap[0] ? pl_cue_parse_time (pregap) : 0;
     if (*prev) {
@@ -225,12 +213,7 @@ pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, c
     it->decoder = decoder;
     it->fname = strdup (fname);
     it->tracknum = atoi (track);
-    float t = 0;
-    if (index01[0]) {
-        t = f_index01;
-    }
-    it->startsample = t * samplerate;
-
+    it->startsample = index01[0] ? f_index01 * samplerate : 0;
     it->endsample = -1; // will be filled by next read, or by decoder
     it->filetype = ftype;
     after = pl_insert_item (after, it);
@@ -261,7 +244,7 @@ pl_insert_cue_from_buffer (playItem_t *after, const char *fname, const uint8_t *
         }
         // skip linebreak(s)
         while (p - buffer < buffersize && *p < 0x20) {
-            *p++;
+            p++;
         }
         if (p-buffer > 2048) { // huge string, ignore
             buffer = p;
@@ -474,7 +457,6 @@ pl_insert_pls (playItem_t *after, const char *fname, int *pabort, int (*cb)(play
     char url[1024] = "";
     char title[1024] = "";
     char length[20] = "";
-    int nfile = 1;
     while (p < end) {
         if (p >= end) {
             break;
@@ -622,12 +604,10 @@ pl_insert_file (playItem_t *after, const char *fname, int *pabort, int (*cb)(pla
             const char **exts = decoders[i]->exts;
             for (int e = 0; exts[e]; e++) {
                 if (!strcasecmp (exts[e], eol)) {
-                    playItem_t *inserted = NULL;
-                    if ((inserted = (playItem_t *)decoders[i]->insert (DB_PLAYITEM (after), fname)) != NULL) {
-                        if (cb) {
-                            if (cb (inserted, user_data) < 0) {
-                                *pabort = 1;
-                            }
+                    playItem_t *inserted = (playItem_t *)decoders[i]->insert (DB_PLAYITEM (after), fname);
+                    if (inserted != NULL) {
+                        if (cb && cb (inserted, user_data) < 0) {
+                            *pabort = 1;
                         }
                         return inserted;
                     }
@@ -635,7 +615,7 @@ pl_insert_file (playItem_t *after, const char *fname, int *pabort, int (*cb)(pla
             }
         }
     }
-    fprintf (stderr, "no decoder found for %s\n", fname);
+    trace ("no decoder found for %s\n", fname);
     return NULL;
 }
 
@@ -667,10 +647,8 @@ pl_insert_dir (playItem_t *after, const char *dirname, int *pabort, int (*cb)(pl
             // no hidden files
             if (namelist[i]->d_name[0] != '.')
             {
-                char fullname[1024];
-                strcpy (fullname, dirname);
-                strncat (fullname, "/", 1024);
-                strncat (fullname, namelist[i]->d_name, 1024);
+                char fullname[PATH_MAX];
+                snprintf (fullname, sizeof (fullname), "%s/%s", dirname, namelist[i]->d_name);
                 playItem_t *inserted = pl_insert_dir (after, fullname, pabort, cb, user_data);
                 if (!inserted) {
                     inserted = pl_insert_file (after, fullname, pabort, cb, user_data);
@@ -716,6 +694,7 @@ pl_remove (playItem_t *it) {
     if (playlist_current_ptr == it) {
         playlist_current_ptr = NULL;
     }
+    pl_playqueue_remove (it);
 
     // remove from linear list
     if (it->prev[PL_MAIN]) {
@@ -760,14 +739,19 @@ pl_getselcount (void) {
 }
 
 playItem_t *
-pl_get_for_idx (int idx) {
-    playItem_t *it = playlist_head[PL_MAIN];
+pl_get_for_idx_and_iter (int idx, int iter) {
+    playItem_t *it = playlist_head[iter];
     while (idx--) {
         if (!it)
             return NULL;
-        it = it->next[PL_MAIN];
+        it = it->next[iter];
     }
     return it;
+}
+
+playItem_t *
+pl_get_for_idx (int idx) {
+    return pl_get_for_idx_and_iter (idx, PL_MAIN);
 }
 
 int
@@ -782,19 +766,6 @@ pl_get_idx_of (playItem_t *it) {
         return -1;
     }
     return idx;
-}
-
-int
-pl_append_item (playItem_t *it) {
-    if (!playlist_tail[PL_MAIN]) {
-        playlist_tail[PL_MAIN] = playlist_head[PL_MAIN] = it;
-    }
-    else {
-        playlist_tail[PL_MAIN]->next[PL_MAIN] = it;
-        it->prev[PL_MAIN] = playlist_tail[PL_MAIN];
-        playlist_tail[PL_MAIN] = it;
-    }
-    pl_count++;
 }
 
 playItem_t *
@@ -901,13 +872,14 @@ pl_item_free (playItem_t *it) {
 
 int
 pl_prevsong (void) {
+    pl_playqueue_clear ();
     if (!playlist_head[PL_MAIN]) {
         streamer_set_nextsong (-2, 1);
         return 0;
     }
     int pl_order = conf_get_int ("playback.order", 0);
     int pl_loop_mode = conf_get_int ("playback.loop", 0);
-    if (pl_order == 1) { // shuffle
+    if (pl_order == PLAYBACK_ORDER_SHUFFLE) { // shuffle
         if (!playlist_current_ptr) {
             return pl_nextsong (1);
         }
@@ -917,7 +889,6 @@ pl_prevsong (void) {
             int rating = playlist_current_ptr->shufflerating;
             playItem_t *pmax = NULL; // played maximum
             playItem_t *amax = NULL; // absolute maximum
-            playItem_t *i = NULL;
             for (playItem_t *i = playlist_head[PL_MAIN]; i; i = i->next[PL_MAIN]) {
                 if (i != playlist_current_ptr && i->played && (!amax || i->shufflerating > amax->shufflerating)) {
                     amax = i;
@@ -932,7 +903,7 @@ pl_prevsong (void) {
             playItem_t *it = pmax;
             if (!it) {
                 // that means 1st in playlist, take amax
-                if (pl_loop_mode == 0) {
+                if (pl_loop_mode == PLAYBACK_MODE_LOOP_ALL) {
                     if (!amax) {
                         pl_reshuffle (NULL, &amax);
                     }
@@ -948,13 +919,13 @@ pl_prevsong (void) {
             return 0;
         }
     }
-    else if (pl_order == 0) { // linear
+    else if (pl_order == PLAYBACK_ORDER_LINEAR) { // linear
         playItem_t *it = NULL;
         if (playlist_current_ptr) {
             it = playlist_current_ptr->prev[PL_MAIN];
         }
         if (!it) {
-            if (pl_loop_mode == 0) {
+            if (pl_loop_mode == PLAYBACK_MODE_LOOP_ALL) {
                 it = playlist_tail[PL_MAIN];
             }
         }
@@ -965,7 +936,7 @@ pl_prevsong (void) {
         streamer_set_nextsong (r, 1);
         return 0;
     }
-    else if (pl_order == 2) { // random
+    else if (pl_order == PLAYBACK_ORDER_RANDOM) { // random
         pl_randomsong ();
     }
     return -1;
@@ -973,6 +944,14 @@ pl_prevsong (void) {
 
 int
 pl_nextsong (int reason) {
+    if (playqueue_count > 0) {
+        playItem_t *it = playqueue[0];
+        pl_playqueue_pop ();
+        int r = pl_get_idx_of (it);
+        streamer_set_nextsong (r, 1);
+        return 0;
+    }
+
     playItem_t *curr = streamer_get_streaming_track ();
     if (!playlist_head[PL_MAIN]) {
         streamer_set_nextsong (-2, 1);
@@ -980,11 +959,10 @@ pl_nextsong (int reason) {
     }
     int pl_order = conf_get_int ("playback.order", 0);
     int pl_loop_mode = conf_get_int ("playback.loop", 0);
-    if (pl_order == 1) { // shuffle
+    if (pl_order == PLAYBACK_ORDER_SHUFFLE) { // shuffle
         if (!curr) {
             // find minimal notplayed
             playItem_t *pmin = NULL; // notplayed minimum
-            playItem_t *i = NULL;
             for (playItem_t *i = playlist_head[PL_MAIN]; i; i = i->next[PL_MAIN]) {
                 if (i->played) {
                     continue;
@@ -996,7 +974,7 @@ pl_nextsong (int reason) {
             playItem_t *it = pmin;
             if (!it) {
                 // all songs played, reshuffle and try again
-                if (pl_loop_mode == 0) { // loop
+                if (pl_loop_mode == PLAYBACK_MODE_LOOP_ALL) { // loop
                     pl_reshuffle (&it, NULL);
                 }
             }
@@ -1009,7 +987,7 @@ pl_nextsong (int reason) {
         }
         else {
             trace ("pl_next_song: reason=%d, loop=%d\n", reason, pl_loop_mode);
-            if (reason == 0 && pl_loop_mode == 2) { // song finished, loop mode is "loop 1 track"
+            if (reason == 0 && pl_loop_mode == PLAYBACK_MODE_LOOP_SINGLE) { // song finished, loop mode is "loop 1 track"
                 int r = pl_get_idx_of (curr);
                 streamer_set_nextsong (r, 1);
                 return 0;
@@ -1017,7 +995,6 @@ pl_nextsong (int reason) {
             // find minimal notplayed above current
             int rating = curr->shufflerating;
             playItem_t *pmin = NULL; // notplayed minimum
-            playItem_t *i = NULL;
             for (playItem_t *i = playlist_head[PL_MAIN]; i; i = i->next[PL_MAIN]) {
                 if (i->played || i->shufflerating < rating) {
                     continue;
@@ -1030,7 +1007,7 @@ pl_nextsong (int reason) {
             if (!it) {
                 trace ("all songs played! reshuffle\n");
                 // all songs played, reshuffle and try again
-                if (pl_loop_mode == 0) { // loop
+                if (pl_loop_mode == PLAYBACK_MODE_LOOP_ALL) { // loop
                     pl_reshuffle (&it, NULL);
                 }
             }
@@ -1042,10 +1019,10 @@ pl_nextsong (int reason) {
             return 0;
         }
     }
-    else if (pl_order == 0) { // linear
+    else if (pl_order == PLAYBACK_ORDER_LINEAR) { // linear
         playItem_t *it = NULL;
         if (curr) {
-            if (reason == 0 && pl_loop_mode == 2) { // loop same track
+            if (reason == 0 && pl_loop_mode == PLAYBACK_MODE_LOOP_SINGLE) { // loop same track
                 int r = pl_get_idx_of (curr);
                 streamer_set_nextsong (r, 1);
                 return 0;
@@ -1053,7 +1030,8 @@ pl_nextsong (int reason) {
             it = curr->next[PL_MAIN];
         }
         if (!it) {
-            if (pl_loop_mode == 0) {
+            trace ("pl_nextsong: was last track\n");
+            if (pl_loop_mode == PLAYBACK_MODE_LOOP_ALL) {
                 it = playlist_head[PL_MAIN];
             }
             else {
@@ -1068,8 +1046,8 @@ pl_nextsong (int reason) {
         streamer_set_nextsong (r, 1);
         return 0;
     }
-    else if (pl_order == 2) { // random
-        if (reason == 0 && pl_loop_mode == 2 && curr) {
+    else if (pl_order == PLAYBACK_ORDER_RANDOM) { // random
+        if (reason == 0 && pl_loop_mode == PLAYBACK_MODE_LOOP_SINGLE && curr) {
             int r = pl_get_idx_of (curr);
             streamer_set_nextsong (r, 1);
             return 0;
@@ -1103,7 +1081,6 @@ pl_add_meta (playItem_t *it, const char *key, const char *value) {
     char str[256];
     if (!value || !*value) {
         if (!strcasecmp (key, "title")) {
-            int len = 256;
             // cut filename without path and extension
             const char *pext = it->fname + strlen (it->fname) - 1;
             while (pext >= it->fname && *pext != '.') {
@@ -1460,6 +1437,7 @@ pl_load (const char *fname) {
                 "track",
                 "band",
                 "cuesheet",
+                "copyright",
                 NULL
             };
 
@@ -1569,7 +1547,123 @@ pl_get_item_duration (playItem_t *it) {
 }
 
 int
-pl_format_title (playItem_t *it, char *s, int size, const char *fmt) {
+pl_format_item_queue (playItem_t *it, char *s, int size) {
+    *s = 0;
+    if (!playqueue_count) {
+        return 0;
+    }
+    int init = 1;
+    int initsize = size;
+    int len;
+    for (int i = 0; i < playqueue_count; i++) {
+        if (size <= 0) {
+            break;
+        }
+        if (playqueue[i] == it) {
+            if (init) {
+                init = 0;
+                s[0] = '(';
+                s++;
+                size--;
+                len = snprintf (s, size, "%d", i+1);
+            }
+            else {
+                len = snprintf (s, size, ",%d", i+1);
+            }
+            s += len;
+            size -= len;
+        }
+    }
+    if (size != initsize && size > 0) {
+        len = snprintf (s, size, ")");
+        s += len;
+        size -= len;
+    }
+    return initsize-size;
+}
+
+static const char *
+pl_get_meta_cached (playItem_t *it, const char *meta, const char *ret, const char *def) {
+    if (!ret) {
+        ret = pl_find_meta (it, meta);
+        if (!ret) {
+            ret = def;
+        }
+    }
+    return ret;
+}
+
+static const char *
+pl_format_duration (playItem_t *it, const char *ret, char *dur, int size) {
+    if (ret) {
+        return ret;
+    }
+    if (it->_duration >= 0) {
+        int hourdur = it->_duration / (60 * 60);
+        int mindur = (it->_duration - hourdur * 60 * 60) / 60;
+        int secdur = it->_duration - hourdur*60*60 - mindur * 60;
+
+        if (hourdur) {
+            snprintf (dur, size, "%d:%02d:%02d", hourdur, mindur, secdur);
+        }
+        else {
+            snprintf (dur, size, "%d:%02d", mindur, secdur);
+        }
+    }
+    else {
+        strcpy (dur, "-:--");
+    }
+    return dur;
+}
+
+int
+pl_format_title (playItem_t *it, char *s, int size, int id, const char *fmt) {
+    char dur[50];
+    const char *artist = NULL;
+    const char *album = NULL;
+    const char *track = NULL;
+    const char *title = NULL;
+    const char *duration = NULL;
+
+    if (id != -1) {
+        const char *text = NULL;
+        switch (id) {
+        case DB_COLUMN_PLAYING:
+            return pl_format_item_queue (it, s, size);
+        case DB_COLUMN_ARTIST_ALBUM:
+            {
+                char artistalbum[1024];
+                artist = pl_get_meta_cached (it, "artist", artist, "?");
+                album = pl_get_meta_cached (it, "album", album, "?");
+                snprintf (artistalbum, sizeof (artistalbum), "%s - %s", artist, album);
+                text = artistalbum;
+            }
+            break;
+        case DB_COLUMN_ARTIST:
+            text = (artist = pl_get_meta_cached (it, "artist", artist, "?"));
+            break;
+        case DB_COLUMN_ALBUM:
+            text = (album = pl_get_meta_cached (it, "album", artist, "?"));
+            break;
+        case DB_COLUMN_TITLE:
+            text = (title = pl_get_meta_cached (it, "title", artist, "?"));
+            break;
+        case DB_COLUMN_DURATION:
+            text = (duration = pl_format_duration (it, duration, dur, sizeof (dur)));
+            break;
+        case DB_COLUMN_TRACK:
+            text = (track = pl_get_meta_cached (it, "track", track, ""));
+            break;
+        }
+        if (text) {
+            strncpy (s, text, size);
+            return strlen (s);
+        }
+        else {
+            s[0] = 0;
+        }
+        return 0;
+    }
     int n = size-1;
     while (*fmt && n) {
         if (*fmt != '%') {
@@ -1583,35 +1677,19 @@ pl_format_title (playItem_t *it, char *s, int size, const char *fmt) {
                 break;
             }
             else if (*fmt == 'a') {
-                meta = "artist";
+                meta = (artist = pl_get_meta_cached (it, "artist", artist, "?"));
             }
             else if (*fmt == 't') {
-                meta = "title";
+                meta = (title = pl_get_meta_cached (it, "title", title, "?"));
             }
             else if (*fmt == 'b') {
-                meta = "album";
+                meta = (album = pl_get_meta_cached (it, "album", album, "?"));
             }
             else if (*fmt == 'n') {
-                meta = "track";
+                meta = (track = pl_get_meta_cached (it, "track", track, ""));
             }
             else if (*fmt == 'l') {
-                char dur[50];
-                if (it->_duration >= 0) {
-                    int hourdur = it->_duration / (60 * 60);
-                    int mindur = (it->_duration - hourdur * 60 * 60) / 60;
-                    int secdur = it->_duration - hourdur*60*60 - mindur * 60;
-
-                    if (hourdur) {
-                        snprintf (dur, sizeof (dur), "%d:%02d:%02d", hourdur, mindur, secdur);
-                    }
-                    else {
-                        snprintf (dur, sizeof (dur), "%d:%02d", mindur, secdur);
-                    }
-                }
-                else {
-                    strcpy (dur, "-:--");
-                }
-                const char *value = dur;
+                const char *value = (duration = pl_format_duration (it, duration, dur, sizeof (dur)));
                 while (n > 0 && *value) {
                     *s++ = *value++;
                     n--;
@@ -1623,10 +1701,7 @@ pl_format_title (playItem_t *it, char *s, int size, const char *fmt) {
             }
 
             if (meta) {
-                const char *value = pl_find_meta (it, meta);
-                if (!value) {
-                    value = "?";
-                }
+                const char *value = meta;
                 while (n > 0 && *value) {
                     *s++ = *value++;
                     n--;
@@ -1641,6 +1716,259 @@ pl_format_title (playItem_t *it, char *s, int size, const char *fmt) {
 }
 
 void
-pl_sort (const char *meta) {
+pl_sort (int iter, int id, const char *format, int ascending) {
+    int sorted = 0;
+    do {
+        sorted = 1;
+        playItem_t *it;
+        for (it = playlist_head[iter]; it; it = it->next[iter]) {
+            playItem_t *next = it->next[iter];
+            if (!next) {
+                break;
+            }
+            char title1[1024];
+            char title2[1024];
+            pl_format_title (it, title1, sizeof (title1), id, format);
+            pl_format_title (next, title2, sizeof (title2), id, format);
+//            const char *meta1 = pl_find_meta (it, meta);
+//            const char *meta2 = pl_find_meta (next, meta);
+            int cmp = ascending ? strcmp (title1, title2) < 0 : strcmp (title1, title2) > 0;
+            if (cmp) {
+//                printf ("%p %p swapping %s and %s\n", it, next, meta1, meta2);
+                sorted = 0;
+                // swap them
+                if (it->prev[iter]) {
+                    it->prev[iter]->next[iter] = next;
+//                    printf ("it->prev->next = it->next\n");
+                }
+                else {
+                    playlist_head[iter] = next;
+                    next->prev[iter] = NULL;
+//                    printf ("head = it->next\n");
+                }
+                if (next->next[iter]) {
+                    next->next[iter]->prev[iter] = it;
+//                    printf ("it->next->next->prev = it\n");
+                }
+                else {
+                    playlist_tail[iter] = it;
+                    it->next[iter] = NULL;
+//                    printf ("tail = it\n");
+                }
+                playItem_t *it_prev = it->prev[iter];
+                it->next[iter] = next->next[iter];
+                it->prev[iter] = next;
+                next->next[iter] = it;
+                next->prev[iter] = it_prev;
+                it = next;
+            }
+        }
+    } while (!sorted);
 }
 
+void
+pl_reset_cursor (void) {
+    int i;
+    for (i = 0; i < PL_MAX_ITERATORS; i++) {
+        playlist_current_row[i] = -1;
+    }
+}
+
+float
+pl_get_totaltime (void) {
+    return pl_totaltime;
+}
+
+playItem_t *
+pl_getcurrent (void) {
+    return playlist_current_ptr;
+}
+
+void
+pl_set_selected (playItem_t *it, int sel) {
+    it->selected = sel;
+}
+
+int
+pl_is_selected (playItem_t *it) {
+    return it->selected;
+}
+
+playItem_t *
+pl_get_first (int iter) {
+    return playlist_head[iter];
+}
+
+playItem_t *
+pl_get_last (int iter) {
+    return playlist_tail[iter];
+}
+
+playItem_t *
+pl_get_next (playItem_t *it, int iter) {
+    return it ? it->next[iter] : NULL;
+}
+
+playItem_t *
+pl_get_prev (playItem_t *it, int iter) {
+    return it ? it->prev[iter] : NULL;
+}
+
+int
+pl_get_cursor (int iter) {
+    return playlist_current_row[iter];
+}
+
+void
+pl_set_cursor (int iter, int cursor) {
+    playlist_current_row[iter] = cursor;
+}
+
+// this function must move items in playlist
+// list of items is indexes[count]
+// drop_before is insertion point
+void
+pl_move_items (int iter, playItem_t *drop_before, uint32_t *indexes, int count) {
+    // unlink items from playlist, and link together
+    playItem_t *head = NULL;
+    playItem_t *tail = NULL;
+    int processed = 0;
+    int idx = 0;
+    playItem_t *next = NULL;
+    for (playItem_t *it = playlist_head[iter]; it && processed < count; it = next, idx++) {
+        next = it->next[iter];
+        if (idx == indexes[processed]) {
+            if (it->prev[iter]) {
+                it->prev[iter]->next[iter] = it->next[iter];
+            }
+            else {
+                playlist_head[iter] = it->next[iter];
+            }
+            if (it->next[iter]) {
+                it->next[iter]->prev[iter] = it->prev[iter];
+            }
+            else {
+                playlist_tail[iter] = it->prev[iter];
+            }
+            if (tail) {
+                tail->next[iter] = it;
+                it->prev[iter] = tail;
+                tail = it;
+            }
+            else {
+                head = tail = it;
+                it->prev[iter] = it->next[iter] = NULL;
+            }
+            processed++;
+        }
+    }
+    // find insertion point
+    playItem_t *drop_after = NULL;
+    if (drop_before) {
+        drop_after = drop_before->prev[iter];
+    }
+    else {
+        drop_after = playlist_tail[iter];
+    }
+    // insert in between
+    head->prev[iter] = drop_after;
+    if (drop_after) {
+        drop_after->next[iter] = head;
+    }
+    else {
+        playlist_head[iter] = head;
+    }
+    tail->next[iter] = drop_before;
+    if (drop_before) {
+        drop_before->prev[iter] = tail;
+    }
+    else {
+        playlist_tail[iter] = tail;
+    }
+}
+
+int
+pl_process_search (const char *text) {
+    playlist_head[PL_SEARCH] = NULL;
+    playlist_tail[PL_SEARCH] = NULL;
+    int search_count = 0;
+    if (*text) {
+        for (playItem_t *it = playlist_head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
+            it->selected = 0;
+            for (metaInfo_t *m = it->meta; m; m = m->next) {
+//                if (strcasestr (m->value, text)) {
+                if (utfcasestr (m->value, text)) {
+                    // add to list
+                    it->next[PL_SEARCH] = NULL;
+                    if (playlist_tail[PL_SEARCH]) {
+                        playlist_tail[PL_SEARCH]->next[PL_SEARCH] = it;
+                        playlist_tail[PL_SEARCH] = it;
+                    }
+                    else {
+                        playlist_head[PL_SEARCH] = playlist_tail[PL_SEARCH] = it;
+                    }
+                    it->selected = 1;
+                    search_count++;
+                    break;
+                }
+            }
+        }
+    }
+    return search_count;
+}
+
+int
+pl_playqueue_push (playItem_t *it) {
+    if (playqueue_count == PLAYQUEUE_SIZE) {
+        trace ("playqueue is full\n");
+        return -1;
+    }
+    playqueue[playqueue_count++] = it;
+    return 0;
+}
+
+void
+pl_playqueue_clear (void) {
+    playqueue_count = 0;
+}
+
+void
+pl_playqueue_pop (void) {
+    if (!playqueue_count) {
+        return;
+    }
+    if (playqueue_count == 1) {
+        playqueue_count = 0;
+        return;
+    }
+    memmove (&playqueue[0], &playqueue[1], (playqueue_count-1) * sizeof (playItem_t*));
+    playqueue_count--;
+}
+
+void
+pl_playqueue_remove (playItem_t *it) {
+    for (;;) {
+        int i;
+        for (i = 0; i < playqueue_count; i++) {
+            if (playqueue[i] == it) {
+                if (i < playqueue_count-1) {
+                    memmove (&playqueue[i], &playqueue[i+1], (playqueue_count-i) * sizeof (playItem_t*));
+                }
+                playqueue_count--;
+                break;
+            }
+        }
+        if (i == playqueue_count) {
+            break;
+        }
+    }
+}
+int
+pl_playqueue_test (playItem_t *it) {
+    for (int i = 0; i < playqueue_count; i++) {
+        if (playqueue[i] == it) {
+            return i;
+        }
+    }
+    return -1;
+}

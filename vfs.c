@@ -21,8 +21,8 @@
 #include "vfs.h"
 #include "plugins.h"
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 DB_FILE *
 vfs_fopen (const char *fname) {

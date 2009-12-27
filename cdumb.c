@@ -100,7 +100,7 @@ cdumb_init (DB_playItem_t *it) {
 
     plugin.info.bps = 16;
     plugin.info.channels = 2;
-    plugin.info.samplerate = deadbeef->playback_get_samplerate ();
+    plugin.info.samplerate = deadbeef->get_output ()->samplerate ();
     plugin.info.readpos = 0;
 
     if (cdumb_startrenderer () < 0) {
@@ -775,7 +775,15 @@ cdumb_insert (DB_playItem_t *after, const char *fname) {
     it->fname = strdup (fname);
     DUMB_IT_SIGDATA * itsd = duh_get_it_sigdata(duh);
     if (itsd->name[0])     {
-        deadbeef->pl_add_meta (it, "title", convstr ((char*)&itsd->name, sizeof(itsd->name)));
+        int tl = sizeof(itsd->name);
+        int i;
+        for (i = 0; i < tl && itsd->name[i] && itsd->name[i] == ' '; i++);
+        if (i == tl || !itsd->name[i]) {
+            deadbeef->pl_add_meta (it, "title", NULL);
+        }
+        else {
+            deadbeef->pl_add_meta (it, "title", convstr ((char*)&itsd->name, sizeof(itsd->name)));
+        }
     }
     else {
         deadbeef->pl_add_meta (it, "title", NULL);

@@ -792,7 +792,7 @@ cmp3_stream_frame (void) {
         // synthesize single frame
         mad_synth_frame(&synth,&frame);
         buffer.decode_remaining = synth.pcm.length;
-        deadbeef->playback_update_bitrate (frame.header.bitrate/1000);
+        deadbeef->streamer_set_bitrate (frame.header.bitrate/1000);
         break;
     }
     return eof;

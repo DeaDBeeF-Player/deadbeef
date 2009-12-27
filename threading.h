@@ -21,7 +21,7 @@
 #include <stdint.h>
 
 intptr_t
-thread_start (void (*fn)(uintptr_t ctx), uintptr_t ctx);
+thread_start (void (*fn)(void *ctx), void *ctx);
 
 int
 thread_join (intptr_t tid);

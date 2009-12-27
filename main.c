@@ -15,12 +15,12 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include <gtk/gtk.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
+#include <limits.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/types.h>
@@ -33,19 +33,13 @@
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
 #endif
-#include "interface.h"
-#include "callbacks.h"
-#include "support.h"
 #include "playlist.h"
 #include "playback.h"
 #include "unistd.h"
 #include "threading.h"
 #include "messagepump.h"
-#include "gtkplaylist.h"
 #include "codec.h"
 #include "streamer.h"
-#include "search.h"
-#include "progress.h"
 #include "conf.h"
 #include "volume.h"
 #include "session.h"
@@ -61,173 +55,133 @@ char dbconfdir[1024]; // $HOME/.config/deadbeef
 char defpl[1024]; // $HOME/.config/deadbeef/default.dbpl
 char sessfile[1024]; // $HOME/.config/deadbeef/session
 
-// main widgets
-GtkWidget *mainwin;
-GtkWidget *searchwin;
-GtkStatusIcon *trayicon;
-GtkWidget *traymenu;
-
-// playlist configuration structures
-gtkplaylist_t main_playlist;
-gtkplaylist_t search_playlist;
-
-// update status bar and window title
-static int sb_context_id = -1;
-static char sb_text[512];
-static float last_songpos = -1;
-
-void
-update_songinfo (void) {
-    char sbtext_new[512] = "-";
-    float songpos = last_songpos;
-
-    int daystotal = (int)pl_totaltime / (3600*24);
-    int hourtotal = ((int)pl_totaltime / 3600) % 24;
-    int mintotal = ((int)pl_totaltime/60) % 60;
-    int sectotal = ((int)pl_totaltime) % 60;
-
-    char totaltime_str[512] = "";
-    if (daystotal == 0)
-        snprintf (totaltime_str, sizeof (totaltime_str), "%d:%02d:%02d", hourtotal, mintotal, sectotal);
-
-    else if (daystotal == 1)
-        snprintf (totaltime_str, sizeof (totaltime_str), "1 day %d:%02d:%02d", hourtotal, mintotal, sectotal);
-
-    else
-        snprintf (totaltime_str, sizeof (totaltime_str), "%d days %d:%02d:%02d", daystotal, hourtotal, mintotal, sectotal);
-
-    if (p_isstopped ()) {
-        snprintf (sbtext_new, sizeof (sbtext_new), "Stopped | %d tracks | %s total playtime", pl_getcount (), totaltime_str);
-        songpos = 0;
-    }
-    else if (str_playing_song.decoder) {
-//        codec_lock ();
-        DB_decoder_t *c = str_playing_song.decoder;
-        float playpos = streamer_get_playpos ();
-        int minpos = playpos / 60;
-        int secpos = playpos - minpos * 60;
-        int mindur = str_playing_song._duration / 60;
-        int secdur = str_playing_song._duration - mindur * 60;
-
-        const char *mode = c->info.channels == 1 ? "Mono" : "Stereo";
-        int samplerate = c->info.samplerate;
-        int bitspersample = c->info.bps;
-        songpos = playpos;
-//        codec_unlock ();
-
-        char t[100];
-        if (str_playing_song._duration >= 0) {
-            snprintf (t, sizeof (t), "%d:%02d", mindur, secdur);
-        }
-        else {
-            strcpy (t, "-:--");
-        }
-
-        char sbitrate[20] = "";
-#if 0 // NOTE: do not enable that for stable branch yet
-        int bitrate = streamer_get_bitrate ();
-        if (bitrate > 0) {
-            snprintf (sbitrate, sizeof (sbitrate), "%d kbps ", bitrate);
-        }
-#endif
-        const char *spaused = p_ispaused () ? "Paused | " : "";
-        snprintf (sbtext_new, sizeof (sbtext_new), "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime", spaused, str_playing_song.filetype ? str_playing_song.filetype:"-", sbitrate, samplerate, bitspersample, mode, minpos, secpos, t, pl_getcount (), totaltime_str);
-    }
-
-    if (strcmp (sbtext_new, sb_text)) {
-        strcpy (sb_text, sbtext_new);
-
-        // form statusline
-        GDK_THREADS_ENTER();
-        // FIXME: don't update if window is not visible
-        GtkStatusbar *sb = GTK_STATUSBAR (lookup_widget (mainwin, "statusbar"));
-        if (sb_context_id == -1) {
-            sb_context_id = gtk_statusbar_get_context_id (sb, "msg");
-        }
-
-        gtk_statusbar_pop (sb, sb_context_id);
-        gtk_statusbar_push (sb, sb_context_id, sb_text);
-
-        GDK_THREADS_LEAVE();
-    }
-
-    if (songpos != last_songpos) {
-        void seekbar_draw (GtkWidget *widget);
-        void seekbar_expose (GtkWidget *widget, int x, int y, int w, int h);
-        if (mainwin) {
-            GtkWidget *widget = lookup_widget (mainwin, "seekbar");
-            // translate volume to seekbar pixels
-            songpos /= str_playing_song._duration;
-            songpos *= widget->allocation.width;
-            if ((int)(songpos*2) != (int)(last_songpos*2)) {
-                GDK_THREADS_ENTER();
-                seekbar_draw (widget);
-                seekbar_expose (widget, 0, 0, widget->allocation.width, widget->allocation.height);
-                GDK_THREADS_LEAVE();
-                last_songpos = songpos;
-            }
-        }
-    }
-}
-
-
+// client-side commandline support
 // -1 error, program must exit with error code -1
 //  0 proceed normally as nothing happened
 //  1 no error, but program must exit with error code 0
-//  2 no error, start playback immediately after startup
-//  3 no error, don't start playback immediately after startup
 int
-exec_command_line (const char *cmdline, int len, int filter) {
+client_exec_command_line (const char *cmdline, int len) {
     const uint8_t *parg = (const uint8_t *)cmdline;
     const uint8_t *pend = cmdline + len;
     int exitcode = 0;
     int queue = 0;
     while (parg < pend) {
-        if (filter == 1) {
-            if (!strcmp (parg, "--help") || !strcmp (parg, "-h")) {
-                printf ("Usage: deadbeef [options] [file(s)]\n");
-                printf ("Options:\n");
-                printf ("   --help  or  -h     Print help (this message) and exit\n");
-                printf ("   --version          Print version info and exit\n");
-                printf ("   --play             Start playback\n");
-                printf ("   --stop             Stop playback\n");
-                printf ("   --pause            Pause playback\n");
-                printf ("   --next             Next song in playlist\n");
-                printf ("   --prev             Previous song in playlist\n");
-                printf ("   --random           Random song in playlist\n");
-                printf ("   --queue            Append file(s) to existing playlist\n");
-                return 1;
+        //        if (filter == 1) {
+        // help, version and nowplaying are executed with any filter
+        if (!strcmp (parg, "--help") || !strcmp (parg, "-h")) {
+            fprintf (stderr, "Usage: deadbeef [options] [file(s)]\n");
+            fprintf (stderr, "Options:\n");
+            fprintf (stderr, "   --help  or  -h     Print help (this message) and exit\n");
+            fprintf (stderr, "   --quit             Quit player\n");
+            fprintf (stderr, "   --version          Print version info and exit\n");
+            fprintf (stderr, "   --play             Start playback\n");
+            fprintf (stderr, "   --stop             Stop playback\n");
+            fprintf (stderr, "   --pause            Pause playback\n");
+            fprintf (stderr, "   --next             Next song in playlist\n");
+            fprintf (stderr, "   --prev             Previous song in playlist\n");
+            fprintf (stderr, "   --random           Random song in playlist\n");
+            fprintf (stderr, "   --queue            Append file(s) to existing playlist\n");
+            fprintf (stderr, "   --nowplaying FMT   Print formatted track name to stdout\n");
+            fprintf (stderr, "                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um, [l]ength, track[n]umber\n");
+            fprintf (stderr, "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n");
+            return 1;
+        }
+        else if (!strcmp (parg, "--version")) {
+            fprintf (stderr, "DeaDBeeF %s Copyright (C) 2009 Alexey Yakovenko\n", VERSION);
+            return 1;
+        }
+        parg += strlen (parg);
+        parg++;
+    }
+    return 0;
+}
+
+// this function executes server-side commands only
+// must be called only from within server
+// -1 error, program must exit with error code -1
+//  0 proceed normally as nothing happened
+//  1 no error, but program must exit with error code 0
+//  2 don't load playlist on startup
+//  when executed in remote server -- error code will be ignored
+int
+server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsize) {
+    if (sendback) {
+        sendback[0] = 0;
+    }
+    const uint8_t *parg = (const uint8_t *)cmdline;
+    const uint8_t *pend = cmdline + len;
+    int exitcode = 0;
+    int queue = 0;
+    while (parg < pend) {
+        if (!strcmp (parg, "--nowplaying")) {
+            parg += strlen (parg);
+            parg++;
+            if (parg >= pend) {
+                if (sendback) {
+                    snprintf (sendback, sbsize, "error --nowplaying expects format argument\n");
+                    return 0;
+                }
+                else {
+                    fprintf (stderr, "--nowplaying expects format argument\n");
+                    return -1;
+                }
             }
-            else if (!strcmp (parg, "--version")) {
-                printf ("DeaDBeeF %s Copyright (C) 2009 Alexey Yakovenko\n", VERSION);
-                return 1;
+            if (sendback) {
+                playItem_t *curr = streamer_get_playing_track ();
+                if (curr && curr->decoder) {
+                    const char np[] = "nowplaying ";
+                    memcpy (sendback, np, sizeof (np)-1);
+                    pl_format_title (curr, sendback+sizeof(np)-1, sbsize-sizeof(np)+1, -1, parg);
+                }
+                else {
+                    strcpy (sendback, "nowplaying nothing");
+                }
+            }
+            else {
+                char out[2048];
+                playItem_t *curr = streamer_get_playing_track ();
+                if (curr && curr->decoder) {
+                    pl_format_title (curr, out, sizeof (out), -1, parg);
+                }
+                else {
+                    strcpy (out, "nothing");
+                }
+                printf (out);
+                return 1; // exit
             }
         }
-        else if (filter == 0) {
-            if (!strcmp (parg, "--next")) {
-                messagepump_push (M_NEXTSONG, 0, 0, 0);
-            }
-            else if (!strcmp (parg, "--prev")) {
-                messagepump_push (M_PREVSONG, 0, 0, 0);
-            }
-            else if (!strcmp (parg, "--play")) {
-                messagepump_push (M_PLAYSONG, 0, 0, 0);
-            }
-            else if (!strcmp (parg, "--stop")) {
-                messagepump_push (M_STOPSONG, 0, 0, 0);
-            }
-            else if (!strcmp (parg, "--pause")) {
-                messagepump_push (M_PAUSESONG, 0, 0, 0);
-            }
-            else if (!strcmp (parg, "--random")) {
-                messagepump_push (M_PLAYRANDOM, 0, 0, 0);
-            }
-            else if (!strcmp (parg, "--queue")) {
-                queue = 1;
-            }
-            else if (parg[0] != '-') {
-                break;
-            }
+        else if (!strcmp (parg, "--next")) {
+            messagepump_push (M_NEXTSONG, 0, 0, 0);
+            return 0;
+        }
+        else if (!strcmp (parg, "--prev")) {
+            messagepump_push (M_PREVSONG, 0, 0, 0);
+            return 0;
+        }
+        else if (!strcmp (parg, "--play")) {
+            messagepump_push (M_PLAYSONG, 0, 0, 0);
+            return 0;
+        }
+        else if (!strcmp (parg, "--stop")) {
+            messagepump_push (M_STOPSONG, 0, 0, 0);
+            return 0;
+        }
+        else if (!strcmp (parg, "--pause")) {
+            messagepump_push (M_PAUSESONG, 0, 0, 0);
+            return 0;
+        }
+        else if (!strcmp (parg, "--random")) {
+            messagepump_push (M_PLAYRANDOM, 0, 0, 0);
+            return 0;
+        }
+        else if (!strcmp (parg, "--queue")) {
+            queue = 1;
+        }
+        else if (!strcmp (parg, "--quit")) {
+            messagepump_push (M_TERMINATE, 0, 0, 0);
+        }
+        else if (parg[0] != '-') {
+            break; // unknown option is filename
         }
         parg += strlen (parg);
         parg++;
@@ -236,7 +190,7 @@ exec_command_line (const char *cmdline, int len, int filter) {
         // add files
         if (!queue) {
             pl_free ();
-            main_playlist.row = -1;
+            pl_reset_cursor ();
         }
         while (parg < pend) {
             char resolved[PATH_MAX];
@@ -247,23 +201,19 @@ exec_command_line (const char *cmdline, int len, int filter) {
             else {
                 pname = parg;
             }
-            if (pl_add_file (pname, NULL, NULL) >= 0) {
-                if (queue) {
-                    exitcode = 3;
-                }
-                else {
-                    exitcode = 2;
-                }
+            if (pl_add_file (pname, NULL, NULL) < 0) {
+                fprintf (stderr, "failed to add file %s\n", pname);
             }
             parg += strlen (parg);
             parg++;
         }
-    }
-    if (exitcode == 2 || exitcode == 3) {
-        // added some files, need to redraw
         messagepump_push (M_PLAYLISTREFRESH, 0, 0, 0);
+        if (!queue) {
+            messagepump_push (M_PLAYSONG, 0, 0, 0);
+            return 2; // don't reload playlist at startup
+        }
     }
-    return exitcode;
+    return 0;
 }
 
 static struct sockaddr_un srv_local;
@@ -313,24 +263,24 @@ server_update (void) {
     }
     else if (s2 != -1) {
         char str[2048];
+        char sendback[1024];
         int size;
         if ((size = recv (s2, str, 2048, 0)) >= 0) {
             if (size == 1 && str[0] == 0) {
-                GDK_THREADS_ENTER();
-                gtk_widget_show (mainwin);
-                gtk_window_present (GTK_WINDOW (mainwin));
-                GDK_THREADS_LEAVE();
+                // FIXME: that should be called right after activation of gui plugin
+                plug_trigger_event (DB_EV_ACTIVATE, 0);
             }
             else {
-                int res = exec_command_line (str, size, 0);
-                if (res == 2) {
-                    GDK_THREADS_ENTER();
-                    gtkpl_playsong (&main_playlist);
-                    GDK_THREADS_LEAVE();
-                }
+                server_exec_command_line (str, size, sendback, sizeof (sendback));
             }
         }
-        send (s2, "", 1, 0);
+        if (sendback[0]) {
+            // send nowplaying back to client
+            send (s2, sendback, strlen (sendback)+1, 0);
+        }
+        else {
+            send (s2, "", 1, 0);
+        }
         close(s2);
     }
     return 0;
@@ -347,7 +297,6 @@ player_thread (uintptr_t ctx) {
                 messagepump_push (M_TERMINATE, 0, 0, 0);
             }
         }
-        plug_trigger_event (DB_EV_FRAMEUPDATE, 0);
         uint32_t msg;
         uintptr_t ctx;
         uint32_t p1;
@@ -355,213 +304,61 @@ player_thread (uintptr_t ctx) {
         while (messagepump_pop(&msg, &ctx, &p1, &p2) != -1) {
             switch (msg) {
             case M_REINIT_SOUND:
-                {
-                    int play = 0;
-                    if (!palsa_ispaused () && !palsa_isstopped ()) {
-                        play = 1;
-                    }
-                
-                    palsa_free ();
-                    palsa_init ();
-                    if (play) {
-                        palsa_play ();
-                    }
-                }
+                plug_reinit_sound ();
                 break;
             case M_TERMINATE:
-                GDK_THREADS_ENTER();
-                gtk_widget_hide (mainwin);
-                gtk_main_quit ();
-                GDK_THREADS_LEAVE();
                 return;
             case M_SONGCHANGED:
-                {
-                    int from = p1;
-                    int to = p2;
-                    gtkpl_songchanged_wrapper (from, to);
-                    plug_trigger_event (DB_EV_SONGCHANGED, 0);
-                }
+                plug_trigger_event_trackchange (p1, p2);
                 break;
             case M_PLAYSONG:
-                gtkpl_playsong (&main_playlist);
-                if (playlist_current_ptr) {
-                    GDK_THREADS_ENTER();
-                    gtkpl_redraw_pl_row (&main_playlist, pl_get_idx_of (playlist_current_ptr), playlist_current_ptr);
-                    GDK_THREADS_LEAVE();
-                }
+                streamer_play_current_track ();
                 break;
             case M_TRACKCHANGED:
-                {
-                    playItem_t *it = pl_get_for_idx (p1);
-                    if (it) {
-                        GDK_THREADS_ENTER();
-                        gtkpl_redraw_pl_row (&main_playlist, p1, it);
-                        if (it == playlist_current_ptr) {
-                            gtkpl_current_track_changed (it);
-                        }
-                        GDK_THREADS_LEAVE();
-                    }
-                }
+                plug_trigger_event_trackinfochanged (p1);
                 break;
             case M_PLAYSONGNUM:
-                GDK_THREADS_ENTER();
-                gtkpl_playsongnum (p1);
-                GDK_THREADS_LEAVE();
+                p_stop ();
+                streamer_set_nextsong (p1, 1);
                 break;
             case M_STOPSONG:
-                //p_stop ();
                 streamer_set_nextsong (-2, 0);
                 break;
             case M_NEXTSONG:
-                GDK_THREADS_ENTER();
                 p_stop ();
                 pl_nextsong (1);
-                GDK_THREADS_LEAVE();
                 break;
             case M_PREVSONG:
-                GDK_THREADS_ENTER();
                 p_stop ();
                 pl_prevsong ();
-                GDK_THREADS_LEAVE();
                 break;
             case M_PAUSESONG:
-                if (p_ispaused ()) {
+                if (p_get_state () == OUTPUT_STATE_PAUSED) {
                     p_unpause ();
+                    plug_trigger_event_paused (0);
                 }
                 else {
                     p_pause ();
+                    plug_trigger_event_paused (1);
                 }
-
-                GDK_THREADS_ENTER();
-                if (playlist_current_ptr) {
-                    gtkpl_redraw_pl_row (&main_playlist, pl_get_idx_of (playlist_current_ptr), playlist_current_ptr);
-                }
-                GDK_THREADS_LEAVE();
                 break;
             case M_PLAYRANDOM:
-                GDK_THREADS_ENTER();
-                gtkpl_randomsong ();
-                GDK_THREADS_LEAVE();
-                break;
-            case M_ADDDIR:
-                {
-                // long time processing
-//                float t1 = (float)clock () / CLOCKS_PER_SEC;
-                gtkpl_add_dir (&main_playlist, (char *)ctx);
-//                float t2 = (float)clock () / CLOCKS_PER_SEC;
-//                printf ("time: %f\n", t2-t1);
-                }
-                break;
-            case M_ADDDIRS:
-                {
-                // long time processing
-//                float t1 = (float)clock () / CLOCKS_PER_SEC;
-                gtkpl_add_dirs (&main_playlist, (GSList *)ctx);
-//                float t2 = (float)clock () / CLOCKS_PER_SEC;
-//                printf ("time: %f\n", t2-t1);
-                }
-                break;
-            case M_ADDFILES:
-                gtkpl_add_files (&main_playlist, (GSList *)ctx);
-                break;
-            case M_OPENFILES:
                 p_stop ();
-                gtkpl_add_files (&main_playlist, (GSList *)ctx);
-                gtkpl_playsong (&main_playlist);
-                break;
-            case M_FMDRAGDROP:
-                gtkpl_add_fm_dropped_files (&main_playlist, (char *)ctx, p1, p2);
+                pl_randomsong ();
                 break;
             case M_PLAYLISTREFRESH:
-                GDK_THREADS_ENTER();
-                playlist_refresh ();
-                search_refresh ();
-                GDK_THREADS_LEAVE();
+                plug_trigger_event_playlistchanged ();
                 break;
             case M_CONFIGCHANGED:
-                palsa_configchanged ();
+                //plug_get_output ()->configchanged ();
                 streamer_configchanged ();
                 plug_trigger_event (DB_EV_CONFIGCHANGED, 0);
                 break;
             }
         }
         usleep(50000);
-        update_songinfo ();
+        plug_trigger_event (DB_EV_FRAMEUPDATE, 0);
     }
-}
-
-gboolean
-on_trayicon_scroll_event               (GtkWidget       *widget,
-                                        GdkEventScroll  *event,
-                                        gpointer         user_data)
-{
-    float vol = volume_get_db ();
-    if (event->direction == GDK_SCROLL_UP || event->direction == GDK_SCROLL_RIGHT) {
-        vol += 1;
-    }
-    else if (event->direction == GDK_SCROLL_DOWN || event->direction == GDK_SCROLL_LEFT) {
-        vol -= 1;
-    }
-    if (vol > 0) {
-        vol = 0;
-    }
-    else if (vol < -60) {
-        vol = -60;
-    }
-    volume_set_db (vol);
-    GtkWidget *volumebar = lookup_widget (mainwin, "volumebar");
-    volumebar_draw (volumebar);
-    volumebar_expose (volumebar, 0, 0, volumebar->allocation.width, volumebar->allocation.height);
-    return FALSE;
-}
-
-#if GTK_MINOR_VERSION<=14
-gboolean
-on_trayicon_activate (GtkWidget       *widget,
-                                        GdkEvent  *event,
-                                        gpointer         user_data)
-{
-    if (GTK_WIDGET_VISIBLE (mainwin)) {
-        gtk_widget_hide (mainwin);
-    }
-    else {
-        gtk_widget_show (mainwin);
-        session_restore_window_attrs ((uintptr_t)mainwin);
-        gtk_window_present (GTK_WINDOW (mainwin));
-    }
-    return FALSE;
-}
-#endif
-
-gboolean
-on_trayicon_button_press_event (GtkWidget       *widget,
-                                        GdkEventButton  *event,
-                                        gpointer         user_data)
-{
-    if (event->button == 1) {
-        if (GTK_WIDGET_VISIBLE (mainwin)) {
-            gtk_widget_hide (mainwin);
-        }
-        else {
-            gtk_widget_show (mainwin);
-            session_restore_window_attrs ((uintptr_t)mainwin);
-            gtk_window_present (GTK_WINDOW (mainwin));
-        }
-    }
-    else if (event->button == 2) {
-        messagepump_push (M_PAUSESONG, 0, 0, 0);
-    }
-    return FALSE;
-}
-
-gboolean
-on_trayicon_popup_menu (GtkWidget       *widget,
-        guint button,
-        guint time,
-                                        gpointer         user_data)
-{
-    gtk_menu_popup (GTK_MENU (traymenu), NULL, NULL, gtk_status_icon_position_menu, trayicon, button, time);
-    return FALSE;
 }
 
 void
@@ -635,6 +432,9 @@ main (int argc, char *argv[]) {
             // path of this process
             if (argv[i][0] != '-' && realpath (argv[i], resolved)) {
                 len = strlen (resolved);
+                if (len >= size) {
+                    break;
+                }
                 memcpy (p, resolved, len+1);
             }
             else {
@@ -644,10 +444,15 @@ main (int argc, char *argv[]) {
             size -= len;
         }
         size = 2048 - size + 1;
-        if (exec_command_line (cmdline, size, 1) == 1) {
-            return 0; // if it was help request
-        }
     }
+    int res = client_exec_command_line (cmdline, size);
+    if (res == 1) {
+        return 0;
+    }
+    else if (res < 0) {
+        return res;
+    }
+
     // try to connect to remote player
     int s, t, len;
     struct sockaddr_un remote;
@@ -672,10 +477,26 @@ main (int argc, char *argv[]) {
             perror ("send");
             exit (-1);
         }
-        char out[1];
-        if (recv(s, out, 1, 0) == -1) {
+        char out[2048];
+        if (recv(s, out, sizeof (out), 0) == -1) {
             fprintf (stderr, "failed to pass args to remote!\n");
             exit (-1);
+        }
+        else {
+            // check if that's nowplaying response
+            const char np[] = "nowplaying ";
+            const char err[] = "error ";
+            if (!strncmp (out, np, sizeof (np)-1)) {
+                const char *prn = &out[sizeof (np)-1];
+                printf (prn);
+            }
+            else if (!strncmp (out, err, sizeof (err)-1)) {
+                const char *prn = &out[sizeof (err)-1];
+                fprintf (stderr, prn);
+            }
+            else if (out[0]) {
+                fprintf (stderr, "got unkown response:\n%s\n", out);
+            }
         }
         close (s);
         exit (0);
@@ -683,100 +504,66 @@ main (int argc, char *argv[]) {
     close(s);
 
     signal (SIGTERM, sigterm_handler);
+
+    conf_load (); // required by some plugin at startup
+    messagepump_init (); // required to push messages while handling commandline
+    plug_load_all (); // required to add files to playlist from commandline
+
+    // execute server commands in local context
+    int noloadpl = 0;
+    if (argc > 1) {
+        int res = server_exec_command_line (cmdline, size, NULL, 0);
+        // some of the server commands ran on 1st instance should terminate it
+        if (res == 2) {
+            noloadpl = 1;
+        }
+        else if (res > 0) {
+            exit (0);
+        }
+        else if (res < 0) {
+            exit (-1);
+        }
+    }
+
     // become a server
     server_start ();
 
-    conf_load ();
-    plug_load_all ();
-    pl_load (defpl);
+    // start all subsystems
+    volume_set_db (conf_get_float ("playback.volume", 0));
+    if (!noloadpl) {
+        pl_load (defpl);
+    }
+    plug_trigger_event_playlistchanged ();
     session_load (sessfile);
-    messagepump_init ();
     codec_init_locking ();
     streamer_init ();
-//    p_init ();
-    thread_start (player_thread, 0);
 
-    g_thread_init (NULL);
-    add_pixmap_directory (PREFIX "/share/deadbeef/pixmaps");
-    gdk_threads_init ();
-    gdk_threads_enter ();
-    gtk_set_locale ();
-    gtk_init (&argc, &argv);
+    // this runs in main thread (blocks right here)
+    player_thread (0);
 
-    // system tray icon
-    traymenu = create_traymenu ();
-    GdkPixbuf *trayicon_pixbuf = create_pixbuf ("play_24.png");
-    trayicon = gtk_status_icon_new_from_pixbuf (trayicon_pixbuf);
-    set_tray_tooltip ("DeaDBeeF");
-    //gtk_status_icon_set_title (GTK_STATUS_ICON (trayicon), "DeaDBeeF");
-#if GTK_MINOR_VERSION <= 14
-    g_signal_connect ((gpointer)trayicon, "activate", G_CALLBACK (on_trayicon_activate), NULL);
-#else
-    g_signal_connect ((gpointer)trayicon, "scroll_event", G_CALLBACK (on_trayicon_scroll_event), NULL);
-    g_signal_connect ((gpointer)trayicon, "button_press_event", G_CALLBACK (on_trayicon_button_press_event), NULL);
-#endif
-    g_signal_connect ((gpointer)trayicon, "popup_menu", G_CALLBACK (on_trayicon_popup_menu), NULL);
-
-    gtkpl_init ();
-
-    mainwin = create_mainwin ();
-    GdkPixbuf *mainwin_icon_pixbuf;
-    mainwin_icon_pixbuf = create_pixbuf ("play_24.png");
-    if (mainwin_icon_pixbuf)
-    {
-        gtk_window_set_icon (GTK_WINDOW (mainwin), mainwin_icon_pixbuf);
-        gdk_pixbuf_unref (mainwin_icon_pixbuf);
-    }
-    session_restore_window_attrs ((uintptr_t)mainwin);
-    volume_set_db (conf_get_float ("playback.volume", 0));
-    // order and looping
-    const char *orderwidgets[3] = { "order_linear", "order_shuffle", "order_random" };
-    const char *loopingwidgets[3] = { "loop_all", "loop_disable", "loop_single" };
-    const char *w;
-    w = orderwidgets[conf_get_int ("playback.order", 0)];
-    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, w)), TRUE);
-    w = loopingwidgets[conf_get_int ("playback.loop", 0)];
-    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, w)), TRUE);
-    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "scroll_follows_playback")), conf_get_int ("playlist.scroll.followplayback", 0) ? TRUE : FALSE);
-
-    searchwin = create_searchwin ();
-    gtk_window_set_transient_for (GTK_WINDOW (searchwin), GTK_WINDOW (mainwin));
-    extern void main_playlist_init (GtkWidget *widget);
-    main_playlist_init (lookup_widget (mainwin, "playlist"));
-    extern void search_playlist_init (GtkWidget *widget);
-    search_playlist_init (lookup_widget (searchwin, "searchlist"));
-
-    progress_init ();
-
-    if (argc > 1) {
-        int res = exec_command_line (cmdline, size, 0);
-        if (res == -1) {
-            server_close ();
-            return -1;
-        }
-        if (res == 2) {
-            messagepump_push (M_PLAYSONG, 0, 0, 0);
-        }
-    }
-
-    gtk_widget_show (mainwin);
-    gtk_main ();
     // save config
     pl_save (defpl);
     conf_save ();
+
     // stop receiving messages from outside
     server_close ();
-    // at this point we can simply do exit(0), but let's clean up for debugging
-    gtkpl_free (&main_playlist);
-    gtkpl_free (&search_playlist);
-    gdk_threads_leave ();
-    messagepump_free ();
+
+    // stop streaming and playback before unloading plugins
+    p_stop ();
     p_free ();
     streamer_free ();
+
+    // plugins might still hood references to playitems,
+    // and query configuration in background
+    // so unload everything 1st before final cleanup
+    plug_unload_all ();
+
+    // at this point we can simply do exit(0), but let's clean up for debugging
     codec_free_locking ();
     session_save (sessfile);
     pl_free ();
     conf_free ();
-    plug_unload_all ();
+    messagepump_free ();
+    fprintf (stderr, "hej-hej!\n");
     return 0;
 }

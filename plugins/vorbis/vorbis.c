@@ -280,6 +280,7 @@ cvorbis_read (char *bytes, int size) {
     }
     plugin.info.readpos = (float)(ov_pcm_tell(&vorbis_file)-startsample)/vi->rate;
     trace ("cvorbis_read got %d bytes, readpos %f, currentsample %d, ret %d\n", initsize-size, plugin.info.readpos, currentsample, ret);
+    deadbeef->streamer_set_bitrate (ov_bitrate_instant (&vorbis_file)/1000);
     return initsize - size;
 }
 
@@ -370,8 +371,8 @@ cvorbis_insert (DB_playItem_t *after, const char *fname) {
 }
 
 static int
-vorbis_trackdeleted (DB_event_song_t *ev, uintptr_t data) {
-    if (ev->song == ptrack) {
+vorbis_trackdeleted (DB_event_track_t *ev, uintptr_t data) {
+    if (ev->track == ptrack) {
         ptrack = NULL;
     }
     return 0;
@@ -380,11 +381,13 @@ vorbis_trackdeleted (DB_event_song_t *ev, uintptr_t data) {
 static int
 vorbis_start (void) {
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_TRACKDELETED, DB_CALLBACK (vorbis_trackdeleted), 0);
+    return 0;
 }
 
 static int
 vorbis_stop (void) {
     deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_TRACKDELETED, DB_CALLBACK (vorbis_trackdeleted), 0);
+    return 0;
 }
 
 static const char * exts[] = { "ogg", NULL };

@@ -1,6 +1,3 @@
-## Process this file with automake to produce Makefile.in
-#ACLOCAL_AMFLAGS = -I m4
-
 SUBDIRS = gme/Game_Music_Emu-0.5.2\
 		  gme/Game_Music_Emu-0.5.2/gme\
 		  sid/sidplay-libs-2.1.0\
@@ -9,6 +6,10 @@ SUBDIRS = gme/Game_Music_Emu-0.5.2\
 		  icons\
 		  plugins/hotkeys\
 		  plugins/ffap\
+		  plugins/nullout\
+		  plugins/vtx\
+		  plugins/adplug\
+		  ${ALSA_DIR}\
 		  ${LFM_DIR}\
           ${MPGMAD_DIR}\
           ${VORBIS_DIR}\
@@ -16,7 +17,9 @@ SUBDIRS = gme/Game_Music_Emu-0.5.2\
           ${WAVPACK_DIR}\
           ${SNDFILE_DIR}\
           ${VFS_CURL_DIR}\
-          ${CDDA_DIR}
+          ${CDDA_DIR}\
+          ${GTKUI_DIR}\
+          ${FFMPEG_DIR}
 
 dumbpath=@top_srcdir@/dumb
 sidpath=@top_srcdir@/sid/sidplay-libs-2.1.0
@@ -27,21 +30,17 @@ bin_PROGRAMS = deadbeef
 deadbeef_SOURCES =\
 	main.c common.h deadbeef.h\
 	plugins.c plugins.h moduleconf.h\
-	callbacks.c interface.c support.c callbacks.h interface.h support.h\
-	playlist.c playlist.h gtkplaylist.c gtkplaylist.h\
+	playlist.c playlist.h \
 	streamer.c streamer.h\
-	progress.c  progress.h\
 	codec.c codec.h\
 	messagepump.c messagepump.h\
 	conf.c  conf.h\
-	search.c search.h\
 	cgme.c cdumb.c csid.cpp\
-	palsa.c palsa.h playback.h\
+	playback.h\
 	threading_pthread.c threading.h\
 	md5/md5.c md5/md5.h md5/md5_loc.h\
 	volume.c volume.h\
-	drawing.h gdkdrawing.c\
-	session.h session.c gtksession.c\
+	session.h session.c \
 	junklib.h junklib.c utf8.c utf8.h\
 	optmath.h\
 	vfs.c vfs.h vfs_stdio.c\

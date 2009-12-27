@@ -18,27 +18,16 @@
 #ifndef __PLAYBACK_H
 #define __PLAYBACK_H
 
-#if USE_SDL
-#include "psdl.h"
-#define p_init psdl_init
-#define p_free psdl_free
-#define p_play psdl_play
-#define p_stop psdl_stop
-#define p_ispaused psdl_ispaused
-#define p_pause psdl_pause
-#define p_unpause psdl_unpause
-#define p_get_rate psdl_get_rate
-#else
-#include "palsa.h"
-#define p_init palsa_init
-#define p_free palsa_free
-#define p_play palsa_play
-#define p_stop palsa_stop
-#define p_ispaused palsa_ispaused
-#define p_pause palsa_pause
-#define p_unpause palsa_unpause
-#define p_get_rate palsa_get_rate
-#define p_isstopped palsa_isstopped
-#endif
+#define p_init plug_get_output ()->init
+#define p_free plug_get_output ()->free
+#define p_play plug_get_output ()->play
+#define p_stop plug_get_output ()->stop
+#define p_pause plug_get_output ()->pause
+#define p_unpause plug_get_output ()->unpause
+#define p_get_rate plug_get_output ()->samplerate
+#define p_get_state plug_get_output ()->state
+
+#define p_isstopped() (plug_get_output ()->state () == OUTPUT_STATE_STOPPED)
+#define p_ispaused() (plug_get_output ()->state () == OUTPUT_STATE_PAUSED)
 
 #endif // __PLAYBACK_H

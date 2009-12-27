@@ -42,11 +42,12 @@
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
+#define likely(x)       __builtin_expect((x),1)
+#define unlikely(x)     __builtin_expect((x),0)
+
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
 
-//static float timestart;
-//static float timeend;
 static int startsample;
 static int endsample;
 
@@ -256,7 +257,7 @@ typedef struct APEContext {
     const uint8_t *ptr;                      ///< current position in frame data
     const uint8_t *last_ptr;
 
-    uint8_t packet_data[PACKET_BUFFER_SIZE];
+    uint8_t *packet_data; // must be PACKET_BUFFER_SIZE
     int packet_remaining; // number of bytes in packet_data
     int packet_sizeleft; // number of bytes left unread for current ape frame
     int samplestoskip;
@@ -603,14 +604,19 @@ static int ape_read_packet(DB_FILE *fp, APEContext *ape_ctx)
     else
         nblocks = ape->blocksperframe;
 
-//    if (PACKET_MAX_SIZE < ape->frames[ape->currentframe].size + extra_size) {
-//        return -1;
-//    }
-//    packet_sizeleft = ape->frames[ape->currentframe].size + extra_size;
-
     AV_WL32(ape->packet_data    , nblocks);
     AV_WL32(ape->packet_data + 4, ape->frames[ape->currentframe].skip);
 //    packet_sizeleft -= 8;
+
+// update bitrate
+    int bitrate = -1;
+    if (nblocks != 0 && ape->frames[ape->currentframe].size != 0) {
+        float sec = (float)nblocks / ape->samplerate;
+        bitrate = ape->frames[ape->currentframe].size / sec * 8;
+    }
+    if (bitrate > 0) {
+        deadbeef->streamer_set_bitrate (bitrate/1000);
+    }
 
     int sz = PACKET_BUFFER_SIZE-8;
     sz = min (sz, ape->frames[ape->currentframe].size);
@@ -627,6 +633,10 @@ static int ape_read_packet(DB_FILE *fp, APEContext *ape_ctx)
 static void
 ape_free_ctx (APEContext *ape_ctx) {
     int i;
+    if (ape_ctx->packet_data) {
+        free (ape_ctx->packet_data);
+        ape_ctx->packet_data = NULL;
+    }
     if (ape_ctx->frames) {
         free (ape_ctx->frames);
         ape_ctx->frames = NULL;
@@ -648,21 +658,6 @@ ffap_free (void)
 {
     ape_free_ctx (&ape_ctx);
 }
-
-#if 0
-static int ape_read_seek(AVFormatContext *s, int stream_index, int64_t timestamp, int flags)
-{
-    AVStream *st = s->streams[stream_index];
-    APEContext *ape = s->priv_data;
-    int index = av_index_search_timestamp(st, timestamp, flags);
-
-    if (index < 0)
-        return -1;
-
-    ape->currentframe = index;
-    return 0;
-}
-#endif
 
 static DB_FILE *fp;
 
@@ -711,16 +706,18 @@ ffap_init(DB_playItem_t *it)
     if (it->endsample > 0) {
         startsample = it->startsample;
         endsample = it->endsample;
-//        timestart = it->timestart;
-//        timeend = it->timeend;
         plugin.seek_sample (0);
         //trace ("start: %d/%f, end: %d/%f\n", startsample, timestart, endsample, timeend);
     }
     else {
-        //timestart = 0;
-        //timeend = it->duration;
         startsample = 0;
         endsample = ape_ctx.totalsamples-1;
+    }
+
+    ape_ctx.packet_data = malloc (PACKET_BUFFER_SIZE);
+    if (!ape_ctx.packet_data) {
+        fprintf (stderr, "ffap: failed to allocate memory for packet data\n");
+        return -1;
     }
     return 0;
 }
@@ -919,7 +916,14 @@ static inline int ape_decode_value(APEContext * ctx, APERice *rice)
             overflow |= range_decode_bits(ctx, 16);
         }
 
-        base = range_decode_culfreq(ctx, pivot);
+//        base = range_decode_culfreq(ctx, pivot);
+        range_dec_normalize(ctx);
+        ctx->rc.help = ctx->rc.range / pivot;
+        if (unlikely (ctx->rc.help == 0)) {
+            ctx->error = 1;
+            return 0;
+        }
+        base = ctx->rc.low / ctx->rc.help;
         range_decode_update(ctx, 1, base);
 
         x = base + overflow * pivot;
@@ -1507,8 +1511,6 @@ ape_decode_frame(APEContext *s, void *data, int *data_size)
     }
 
     if (s->packet_remaining < PACKET_BUFFER_SIZE) {
-//        assert (packet_sizeleft >= 0 && packet_remaining >= 0);
-//        if (packet_sizeleft == 0 && packet_remaining == 0) {
         if (s->samples == 0) {
             if (s->currentframe == s->totalframes) {
                 return -1;
@@ -1527,6 +1529,7 @@ ape_decode_frame(APEContext *s, void *data, int *data_size)
             s->ptr = s->last_ptr = s->packet_data;
 
             nblocks = s->samples = bytestream_get_be32(&s->ptr);
+
             //fprintf (stderr, "s->samples=%d (1)\n", s->samples);
             n = bytestream_get_be32(&s->ptr);
             if(n < 0 || n > 3){
@@ -1536,6 +1539,7 @@ ape_decode_frame(APEContext *s, void *data, int *data_size)
             s->ptr += n;
 
             s->currentframeblocks = nblocks;
+
             //buf += 4;
             if (s->samples <= 0) {
                 *data_size = 0;
@@ -1555,10 +1559,6 @@ ape_decode_frame(APEContext *s, void *data, int *data_size)
             sz = sz&~3;
             uint8_t *p = s->packet_data + s->packet_remaining;
             int r = deadbeef->fread (p, 1, sz, fp);
-            //if (r != s) {
-            //    fprintf (stderr, "unexpected eof while reading ape frame\n");
-            //    return -1;
-            //}
             bswap_buf((uint32_t*)p, (const uint32_t*)p, r >> 2);
             s->packet_sizeleft -= r;
             s->packet_remaining += r;
@@ -1664,7 +1664,7 @@ ffap_insert (DB_playItem_t *after, const char *fname) {
     it->filetype = "APE";
     deadbeef->pl_set_item_duration (it, duration);
  
-    int v2err = deadbeef->junk_read_id3v2 (it, fp);
+    /*int v2err = */deadbeef->junk_read_id3v2 (it, fp);
     int v1err = deadbeef->junk_read_id3v1 (it, fp);
     if (v1err >= 0) {
         deadbeef->fseek (fp, -128, SEEK_END);
@@ -1672,7 +1672,7 @@ ffap_insert (DB_playItem_t *after, const char *fname) {
     else {
         deadbeef->fseek (fp, 0, SEEK_END);
     }
-    int apeerr = deadbeef->junk_read_ape (it, fp);
+    /*int apeerr = */deadbeef->junk_read_ape (it, fp);
 
     deadbeef->fclose (fp);
 
@@ -1779,7 +1779,7 @@ static DB_decoder_t plugin = {
     .plugin.version_minor = 1,
     .plugin.type = DB_PLUGIN_DECODER,
     .plugin.name = "Monkey's Audio (APE) decoder",
-    .plugin.descr = "Derived from ffmpeg code by Benjamin Zores and rockbox code by Dave Chapman",
+    .plugin.descr = "APE player based on code from libavc and rockbox",
     .plugin.author = "Alexey Yakovenko",
     .plugin.email = "waker@users.sourceforge.net",
     .plugin.website = "http://deadbeef.sf.net",

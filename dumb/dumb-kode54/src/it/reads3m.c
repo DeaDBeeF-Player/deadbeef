@@ -61,7 +61,7 @@ static int it_s3m_read_sample_header(IT_SAMPLE *sample, long *offset, unsigned c
 		sample->name[28] = 0;
 		dumbfile_skip(f, 4);
 		sample->flags &= ~IT_SAMPLE_EXISTS;
-		return dumbfile_error(f);
+		return -1; // return error so that another plugin could pick that file up
 	}
 
 	*offset = dumbfile_getc(f) << 20;
@@ -730,12 +730,15 @@ static DUMB_IT_SIGDATA *it_s3m_load_sigdata(DUMBFILE *f, int * cwtv)
 				break;
 
 			case S3M_COMPONENT_SAMPLE:
-				if (it_s3m_read_sample_header(&sigdata->sample[component[n].n], &offset, &sample_pack[component[n].n], *cwtv, f)) {
+                {
+                int err = it_s3m_read_sample_header(&sigdata->sample[component[n].n], &offset, &sample_pack[component[n].n], *cwtv, f);
+				if (err) {
 					free(buffer);
 					free(component);
 					_dumb_it_unload_sigdata(sigdata);
 					return NULL;
 				}
+                }
 
 				if (sigdata->sample[component[n].n].flags & IT_SAMPLE_EXISTS) {
 					short *sample;

@@ -38,6 +38,21 @@ void
 plug_trigger_event (int ev, uintptr_t param);
 
 void
+plug_trigger_event_trackchange (int from, int to);
+
+void
+plug_trigger_event_trackinfochanged (int trk);
+
+void
+plug_trigger_event_paused (int paused);
+
+void
+plug_trigger_event_playlistchanged (void);
+
+void
+plug_trigger_event_volumechanged (void);
+
+void
 plug_md5 (uint8_t sig[16], const char *in, int len);
 
 void
@@ -76,6 +91,9 @@ plug_get_list (void);
 struct DB_decoder_s **
 plug_get_decoder_list (void);
 
+struct DB_output_s **
+plug_get_output_list (void);
+
 struct DB_vfs_s **
 plug_get_vfs_list (void);
 
@@ -88,10 +106,16 @@ plug_volume_set_amp (float amp);
 const char *
 plug_get_config_dir (void);
 
-void
-plug_gui_lock (void);
+int
+plug_activate (DB_plugin_t *plug, int activate);
+
+DB_output_t *
+plug_get_output (void);
 
 void
-plug_gui_unlock (void);
+plug_reinit_sound (void);
+
+int
+plug_select_output (void);
 
 #endif // __PLUGINS_H

@@ -3,7 +3,7 @@ AC_INIT
 AC_CONFIG_HEADER(config.h)
 
 PACKAGE="deadbeef"
-VERSION="0.3.1"
+VERSION="guiplug-snap"
 
 AM_INIT_AUTOMAKE($PACKAGE,$VERSION)
 
@@ -12,7 +12,6 @@ AC_PROG_CXX
 AC_STDC_HEADERS
 AC_PROG_INSTALL
 AC_PROG_LIBTOOL
-LT_INIT
 AC_CONFIG_MACRO_DIR([m4])
 AC_C_BIGENDIAN
 
@@ -39,7 +38,12 @@ test "x$prefix" = xNONE && prefix=$ac_default_prefix
 CFLAGS="$CFLAGS -D_GNU_SOURCE -DLIBDIR=\\\"$libdir\\\" -DPREFIX=\\\"$prefix\\\""
 CPPFLAGS="$CFLAGS"
 
-PKG_CHECK_MODULES(DEPS, gtk+-2.0 >= 2.12 gthread-2.0 glib-2.0 samplerate alsa)
+PKG_CHECK_MODULES(DEPS, samplerate)
+PKG_CHECK_MODULES(GTKUI_DEPS, gtk+-2.0 >= 2.12 gthread-2.0 glib-2.0, HAVE_GTK=1, NO_GTK=1)
+PKG_CHECK_MODULES(ALSA_DEPS, alsa, HAVE_ALSA=1, NO_ALSA=1)
+PKG_CHECK_MODULES(FFMPEG_DEPS, libavcodec libavutil libavformat >= 52.0.0, HAVE_FFMPEG=1, NO_FFMPEG=1)
+AC_CHECK_LIB([pthread], [main])
+AC_CHECK_LIB([dl], [main])
 
 AX_CHECK_COMPILER_FLAGS(-msse2, HAVE_SSE2=1, [])
 if test ${HAVE_SSE2}; then
@@ -143,6 +147,31 @@ if test ${HAVE_CDIO} && test ${HAVE_CDDB}; then
     AC_SUBST(CDDA_DIR)
 fi
 
+dnl gtkui plugin
+AM_CONDITIONAL(HAVE_GTK, test $HAVE_GTK)
+if test ${HAVE_GTK}; then
+    GTKUI_DIR="plugins/gtkui"
+    AC_SUBST(GTKUI_DEPS_CFLAGS)
+    AC_SUBST(GTKUI_DEPS_LIBS)
+    AC_SUBST(GTKUI_DIR)
+fi
+
+AM_CONDITIONAL(HAVE_ALSA, test $HAVE_ALSA)
+if test ${HAVE_ALSA}; then
+    ALSA_DIR="plugins/alsa"
+    AC_SUBST(ALSA_DEPS_CFLAGS)
+    AC_SUBST(ALSA_DEPS_LIBS)
+    AC_SUBST(ALSA_DIR)
+fi
+
+AM_CONDITIONAL(HAVE_FFMPEG, test $HAVE_FFMPEG)
+if test ${HAVE_FFMPEG}; then
+    FFMPEG_DIR="plugins/ffmpeg"
+    AC_SUBST(FFMPEG_DEPS_CFLAGS)
+    AC_SUBST(FFMPEG_DEPS_LIBS)
+    AC_SUBST(FFMPEG_DIR)
+fi
+
 dnl print summary
 echo
 echo "plugin summary:"
@@ -159,6 +188,8 @@ AC_DEFUN([PRINT_PLUGIN_INFO],
 )
 
 PRINT_PLUGIN_INFO([stdio],[Standard IO plugin],[true])
+PRINT_PLUGIN_INFO([nullout],[NULL output],[true])
+PRINT_PLUGIN_INFO([alsa],[ALSA output],[test $HAVE_ALSA])
 PRINT_PLUGIN_INFO([sid],[SID player based on libsidplay2],[true])
 PRINT_PLUGIN_INFO([gme],[chiptune music player based on GME],[true])
 PRINT_PLUGIN_INFO([dumb],[module player based on DUMB library],[true])
@@ -169,9 +200,13 @@ PRINT_PLUGIN_INFO([vorbis],[ogg vorbis player],[test $HAVE_VORBISFILE && test $H
 PRINT_PLUGIN_INFO([flac],[flac player],[test $HAVE_FLAC])
 PRINT_PLUGIN_INFO([wavpack],[wavpack player],[test $HAVE_WAVPACK])
 PRINT_PLUGIN_INFO([sndfile],[PCM (wav,aiff,etc) player based on libsndfile],[test $HAVE_SNDFILE])
+PRINT_PLUGIN_INFO([vtx],[vtx file player (ay8910/12 emulation)],[true])
+PRINT_PLUGIN_INFO([adplug],[adplug player (OPL2/OPL3 emulation)],[true])
 PRINT_PLUGIN_INFO([vfs_curl],[http/ftp streaming support],[test $HAVE_CURL])
 dnl PRINT_PLUGIN_INFO([faad2],[aac/mp4 player],[test $HAVE_FAAD && test $HAVE_MP4FF])
 PRINT_PLUGIN_INFO([cdda],[cd audio player],[test $HAVE_CDIO && test $HAVE_CDDB])
+PRINT_PLUGIN_INFO([gtkui],[GTK user interface],[test $HAVE_GTK])
+PRINT_PLUGIN_INFO([ffmpeg],[ffmpeg codecs],[test $HAVE_FFMPEG])
 echo
 
 AC_OUTPUT([
@@ -182,6 +217,7 @@ gme/Game_Music_Emu-0.5.2/Makefile
 gme/Game_Music_Emu-0.5.2/gme/Makefile
 sid/sidplay-libs-2.1.0/Makefile
 dumb/Makefile
+plugins/alsa/Makefile
 plugins/hotkeys/Makefile
 plugins/lastfm/Makefile
 plugins/ffap/Makefile
@@ -192,6 +228,11 @@ plugins/wavpack/Makefile
 plugins/sndfile/Makefile
 plugins/vfs_curl/Makefile
 plugins/cdda/Makefile
+plugins/gtkui/Makefile
+plugins/nullout/Makefile
+plugins/vtx/Makefile
+plugins/adplug/Makefile
+plugins/ffmpeg/Makefile
 deadbeef.desktop
 ])
 

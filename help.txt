@@ -27,7 +27,7 @@ hotkeys.key8 XF86AudioLowerVolume: volume_down
 
 full list of actions:
 
-toggle_pause, play, prev, next, stop, play_random, seek_fwd, seek_back, volume_up, volume_down
+toggle_pause, play, prev, next, stop, play_random, seek_fwd, seek_back, volume_up, volume_down, toggle_stop_after_current
 
 LAST.FM PLUGIN CONFIGURATION
 

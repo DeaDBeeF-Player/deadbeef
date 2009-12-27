@@ -28,8 +28,6 @@ typedef struct metaInfo_s {
 } metaInfo_t;
 
 #define PL_MAX_ITERATORS 2
-#define PL_MAIN 0
-#define PL_SEARCH 1
 
 typedef struct playItem_s {
     char *fname; // full pathname
@@ -57,10 +55,8 @@ typedef struct playItem_s {
 
 extern playItem_t *playlist_head[PL_MAX_ITERATORS]; // head of linked list
 extern playItem_t *playlist_tail[PL_MAX_ITERATORS]; // tail of linked list
+extern int playlist_current_row[PL_MAX_ITERATORS]; // current row (cursor)
 extern playItem_t *playlist_current_ptr; // pointer to a real current playlist item (or NULL)
-
-extern int pl_count;
-extern float pl_totaltime;
 
 int
 pl_add_dir (const char *dirname, int (*cb)(playItem_t *it, void *data), void *user_data);
@@ -76,9 +72,6 @@ pl_insert_file (playItem_t *after, const char *fname, int *pabort, int (*cb)(pla
 
 playItem_t *
 pl_insert_item (playItem_t *after, playItem_t *it);
-
-int
-pl_append_item (playItem_t *it);
 
 int
 pl_remove (playItem_t *i);
@@ -103,6 +96,9 @@ pl_getselcount (void);
 
 playItem_t *
 pl_get_for_idx (int idx);
+
+playItem_t *
+pl_get_for_idx_and_iter (int idx, int iter);
 
 int
 pl_get_idx_of (playItem_t *it);
@@ -168,6 +164,64 @@ pl_get_item_duration (playItem_t *it);
 // returns number of characters printed, not including trailing 0
 // [a]rtist, [t]itle, al[b]um, [l]ength, track[n]umber
 int
-pl_format_title (playItem_t *it, char *s, int size, const char *fmt);
+pl_format_title (playItem_t *it, char *s, int size, int id, const char *fmt);
+
+void
+pl_reset_cursor (void);
+
+float
+pl_get_totaltime (void);
+
+playItem_t *
+pl_getcurrent (void);
+
+void
+pl_set_selected (playItem_t *it, int sel);
+
+int
+pl_is_selected (playItem_t *it);
+
+playItem_t *
+pl_get_first (int iter);
+
+playItem_t *
+pl_get_last (int iter);
+
+playItem_t *
+pl_get_next (playItem_t *it, int iter);
+
+playItem_t *
+pl_get_prev (playItem_t *it, int iter);
+
+int
+pl_get_cursor (int iter);
+
+void
+pl_set_cursor (int iter, int cursor);
+
+void
+pl_move_items (int iter, playItem_t *drop_before, uint32_t *indexes, int count);
+
+int
+pl_process_search (const char *text);
+
+void
+pl_sort (int iter, int id, const char *format, int ascending);
+
+// playqueue support functions
+int
+pl_playqueue_push (playItem_t *it);
+
+void
+pl_playqueue_clear (void);
+
+void
+pl_playqueue_pop (void);
+
+void
+pl_playqueue_remove (playItem_t *it);
+
+int
+pl_playqueue_test (playItem_t *it);
 
 #endif // __PLAYLIST_H

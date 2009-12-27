@@ -160,6 +160,9 @@ wv_read_int16 (char *bytes, int size) {
         n--;
     }
     plugin.info.readpos = (float)(WavpackGetSampleIndex (wvctx.ctx)-wvctx.startsample)/WavpackGetSampleRate (wvctx.ctx);
+
+    deadbeef->streamer_set_bitrate (WavpackGetInstantBitrate (wvctx.ctx) / 1000);
+
     return size;
 }
 
@@ -188,6 +191,7 @@ wv_read_float32 (char *bytes, int size) {
         n--;
     }
     plugin.info.readpos = (float)(WavpackGetSampleIndex (wvctx.ctx)-wvctx.startsample)/WavpackGetSampleRate (wvctx.ctx);
+    deadbeef->streamer_set_bitrate (WavpackGetInstantBitrate (wvctx.ctx) / 1000);
     return size;
 }
 

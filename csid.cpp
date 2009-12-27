@@ -52,6 +52,11 @@ extern "C" {
 static const char *exts[] = { "sid",NULL };
 const char *filetypes[] = { "SID", NULL };
 
+static const char settings_dlg[] =
+    "property \"Enable HVSC\" checkbox hvsc_enable 0;\n"
+    "property \"HVSC path\" file hvsc_path \"\";\n"
+;
+
 // define plugin interface
 static DB_decoder_t plugin = {
     { // plugin
@@ -62,6 +67,7 @@ static DB_decoder_t plugin = {
         /* .plugin.version_major = */0,
         /* .plugin.version_minor = */1,
         /* .inactive = */0,
+        /* .plugin.nostop = */0,
         /* .plugin.name = */"SID decoder",
         /* .plugin.descr = */"SID player based on libsidplay2",
         /* .plugin.author = */"Alexey Yakovenko",
@@ -70,6 +76,7 @@ static DB_decoder_t plugin = {
         /* .plugin.start = */NULL,
         /* .plugin.stop = */csid_stop,
         /* .plugin.exec_cmdline = */NULL,
+        /* .plugin.configdialog = */settings_dlg,
     },
     { // info
         /* .info.bps = */0,
@@ -336,7 +343,7 @@ csid_init (DB_playItem_t *it) {
     resid->create (sidplay->info ().maxsids);
 //    resid->create (1);
     resid->filter (true);
-    resid->sampling (deadbeef->playback_get_samplerate ());
+    resid->sampling (deadbeef->get_output ()->samplerate ());
     duration = deadbeef->pl_get_item_duration (it);
     tune = new SidTune (it->fname);
 
@@ -344,7 +351,7 @@ csid_init (DB_playItem_t *it) {
     plugin.info.channels = tune->isStereo () ? 2 : 1;
     sid2_config_t conf;
     conf = sidplay->config ();
-    conf.frequency = deadbeef->playback_get_samplerate ();
+    conf.frequency = deadbeef->get_output ()->samplerate ();
     conf.precision = 16;
     conf.playback = plugin.info.channels == 2 ? sid2_stereo : sid2_mono;
     conf.sidEmulation = resid;

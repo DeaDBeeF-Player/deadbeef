@@ -57,6 +57,8 @@ typedef struct {
     char *content_name;
     char *content_genre;
     uint8_t status;
+//    int icy_metaint;
+//    int wait_meta;
     // flags (bitfields to save some space)
     unsigned seektoend : 1; // indicates that next tell must return length
     unsigned gotheader : 1; // tells that all headers (including ICY) were processed (to start reading body)
@@ -137,10 +139,30 @@ http_curl_write (void *ptr, size_t size, size_t nmemb, void *stream) {
             deadbeef->mutex_unlock (fp->mutex);
             break;
         }
+#if 0
+        if (fp->wait_meta == 0) {
+            char sz;
+            memcpy (&sz, ptr, 1);
+            printf ("reading %d bytes of metadata, seekpos:%d!\n", (int)sz*4, fp->pos);
+            ptr += 16 * sz;
+            avail -= 16 * sz + 1;
+            printf ("avail=%d!\n", avail);
+            fp->wait_meta = fp->icy_metaint;
+        }
+#endif
         int sz = BUFFER_SIZE/2 - fp->remaining; // number of bytes free in buffer
                                                 // don't allow to fill more than half -- used for seeking backwards
+
         if (sz > 5000) { // wait until there are at least 5k bytes free
             int cp = min (avail, sz);
+#if 0
+            if (fp->wait_meta - cp <= 0) {
+                printf ("cp=%d->%d\n", cp, fp->wait_meta);
+                cp = fp->wait_meta;
+            }
+            fp->wait_meta -= cp;
+#endif
+
             int writepos = (fp->pos + fp->remaining) & BUFFER_MASK;
             // copy 1st portion (before end of buffer
             int part1 = BUFFER_SIZE - writepos;
@@ -252,8 +274,6 @@ http_content_header_handler (void *ptr, size_t size, size_t nmemb, void *stream)
     assert (stream);
     HTTP_FILE *fp = (HTTP_FILE *)stream;
     const uint8_t c_type_str[] ="Content-Type:"; 
-    const uint8_t icy_name_str[] ="icy-name:"; 
-    const uint8_t icy_genre_str[] ="icy-genre:"; 
     const uint8_t *p = ptr;
     const uint8_t *end = p + size*nmemb;
     uint8_t key[256];
@@ -282,6 +302,11 @@ http_content_header_handler (void *ptr, size_t size, size_t nmemb, void *stream)
             }
             fp->content_genre = strdup (value);
         }
+//        else if (!strcasecmp (key, "icy-metaint")) {
+//            //printf ("icy-metaint: %d\n", atoi (value));
+//            fp->icy_metaint = atoi (value);
+//            fp->wait_meta = fp->icy_metaint; 
+//        }
     }
     if (!fp->icyheader) {
         fp->gotsomeheader = 1;
@@ -307,7 +332,7 @@ http_curl_control (void *stream, double dltotal, double dlnow, double ultotal, d
 }
 
 static void
-http_thread_func (uintptr_t ctx) {
+http_thread_func (void *ctx) {
     HTTP_FILE *fp = (HTTP_FILE *)ctx;
     CURL *curl;
     curl = curl_easy_init ();
@@ -338,6 +363,7 @@ http_thread_func (uintptr_t ctx) {
 
     trace ("vfs_curl: started loading data\n");
     for (;;) {
+//        struct curl_slist *headers = NULL;
         curl_easy_reset (curl);
         curl_easy_setopt (curl, CURLOPT_URL, fp->url);
         curl_easy_setopt (curl, CURLOPT_NOPROGRESS, 1);
@@ -354,6 +380,8 @@ http_thread_func (uintptr_t ctx) {
         // enable up to 10 redirects
         curl_easy_setopt (curl, CURLOPT_FOLLOWLOCATION, 1);
         curl_easy_setopt (curl, CURLOPT_MAXREDIRS, 10);
+//        headers = curl_slist_append (headers, "Icy-Metadata:1");
+//        curl_easy_setopt (curl, CURLOPT_HTTPHEADER, headers);
         if (fp->pos > 0) {
             curl_easy_setopt (curl, CURLOPT_RESUME_FROM, fp->pos);
         }
@@ -401,6 +429,7 @@ http_thread_func (uintptr_t ctx) {
         fp->status = STATUS_INITIAL;
         trace ("seeking to %d\n", fp->pos);
         deadbeef->mutex_unlock (fp->mutex);
+//        curl_slist_free_all (headers);
     }
     curl_easy_cleanup (curl);
 
@@ -413,7 +442,7 @@ http_thread_func (uintptr_t ctx) {
 static void
 http_start_streamer (HTTP_FILE *fp) {
     fp->mutex = deadbeef->mutex_create ();
-    fp->tid = deadbeef->thread_start (http_thread_func, (uintptr_t)fp);
+    fp->tid = deadbeef->thread_start (http_thread_func, fp);
 }
 
 static DB_FILE *
