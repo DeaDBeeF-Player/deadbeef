@@ -900,6 +900,12 @@ create_searchwin (void)
   g_signal_connect ((gpointer) searchwin, "delete_event",
                     G_CALLBACK (gtk_widget_hide_on_delete),
                     NULL);
+  g_signal_connect ((gpointer) searchwin, "configure_event",
+                    G_CALLBACK (on_searchwin_configure_event),
+                    NULL);
+  g_signal_connect ((gpointer) searchwin, "window_state_event",
+                    G_CALLBACK (on_searchwin_window_state_event),
+                    NULL);
   g_signal_connect ((gpointer) searchentry, "changed",
                     G_CALLBACK (on_searchentry_changed),
                     NULL);

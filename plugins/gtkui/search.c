@@ -52,6 +52,23 @@ struct playItem_s *search_current = NULL;
 int search_count = 0;
 
 void
+search_restore_attrs (void) {
+    int x = deadbeef->conf_get_int ("searchwin.geometry.x", -1);
+    int y = deadbeef->conf_get_int ("searchwin.geometry.y", -1);
+    int w = deadbeef->conf_get_int ("searchwin.geometry.w", 500);
+    int h = deadbeef->conf_get_int ("searchwin.geometry.h", 300);
+    gtk_widget_show (searchwin);
+    if (x != -1 && y != -1) {
+        gtk_window_move (GTK_WINDOW (searchwin), x, y);
+        gtk_window_resize (GTK_WINDOW (searchwin), w, h);
+        if (deadbeef->conf_get_int ("searchwin.geometry.maximized", 0)) {
+            gtk_window_maximize (GTK_WINDOW (searchwin));
+        }
+        gtk_window_present (GTK_WINDOW (searchwin));
+    }
+}
+
+void
 search_start (void) {
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (searchwin, "searchentry")), "");
     gtk_widget_show (searchwin);
@@ -187,6 +204,61 @@ on_searchlist_configure_event          (GtkWidget       *widget,
 {
     GTKPL_PROLOGUE;
     gtkpl_configure (ps);
+    return FALSE;
+}
+
+gboolean
+on_searchwin_configure_event           (GtkWidget       *widget,
+                                        GdkEventConfigure *event,
+                                        gpointer         user_data)
+{
+#if GTK_CHECK_VERSION(2,2,0)
+	GdkWindowState window_state = gdk_window_get_state (GDK_WINDOW (widget->window));
+#else
+	GdkWindowState window_state = gdk_window_get_state (G_OBJECT (widget));
+#endif
+    if (!(window_state & GDK_WINDOW_STATE_MAXIMIZED) && GTK_WIDGET_VISIBLE (widget)) {
+        int x, y;
+        int w, h;
+        gtk_window_get_position (GTK_WINDOW (widget), &x, &y);
+        gtk_window_get_size (GTK_WINDOW (widget), &w, &h);
+        deadbeef->conf_set_int ("searchwin.geometry.x", x);
+        deadbeef->conf_set_int ("searchwin.geometry.y", y);
+        deadbeef->conf_set_int ("searchwin.geometry.w", w);
+        deadbeef->conf_set_int ("searchwin.geometry.h", h);
+    }
+    return FALSE;
+}
+
+gboolean
+on_searchwin_window_state_event        (GtkWidget       *widget,
+                                        GdkEventWindowState *event,
+                                        gpointer         user_data)
+{
+    if (!GTK_WIDGET_VISIBLE (widget)) {
+        return FALSE;
+    }
+    // based on pidgin maximization handler
+#if GTK_CHECK_VERSION(2,2,0)
+    if (event->changed_mask & GDK_WINDOW_STATE_MAXIMIZED) {
+        if (event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED) {
+            deadbeef->conf_set_int ("searchwin.geometry.maximized", 1);
+        }
+        else {
+            deadbeef->conf_set_int ("searchwin.geometry.maximized", 0);
+        }
+    }
+#else
+	GdkWindowState new_window_state = gdk_window_get_state(G_OBJECT(widget));
+
+    if ()
+	if (new_window_state & GDK_WINDOW_STATE_MAXIMIZED) {
+        deadbeef->conf_set_int ("searchwin.geometry.maximized", 1);
+    }
+	else {
+        deadbeef->conf_set_int ("searchwin.geometry.maximized", 0);
+    }
+#endif
     return FALSE;
 }
 

@@ -28,4 +28,7 @@ search_start (void);
 void
 search_refresh (void);
 
+void
+search_restore_attrs (void);
+
 #endif // __SEARCH_H

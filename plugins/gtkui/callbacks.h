@@ -759,3 +759,13 @@ on_format_ok_clicked                   (GtkButton       *button,
 void
 on_cursor_follows_playback_activate    (GtkMenuItem     *menuitem,
                                         gpointer         user_data);
+
+gboolean
+on_searchwin_configure_event           (GtkWidget       *widget,
+                                        GdkEventConfigure *event,
+                                        gpointer         user_data);
+
+gboolean
+on_searchwin_window_state_event        (GtkWidget       *widget,
+                                        GdkEventWindowState *event,
+                                        gpointer         user_data);

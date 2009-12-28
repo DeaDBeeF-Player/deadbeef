@@ -914,6 +914,8 @@
   <property name="urgency_hint">False</property>
   <signal name="key_press_event" handler="on_searchwin_key_press_event" last_modification_time="Sat, 08 Aug 2009 18:19:17 GMT"/>
   <signal name="delete_event" handler="gtk_widget_hide_on_delete" last_modification_time="Sat, 08 Aug 2009 23:03:33 GMT"/>
+  <signal name="configure_event" handler="on_searchwin_configure_event" last_modification_time="Mon, 28 Dec 2009 19:24:44 GMT"/>
+  <signal name="window_state_event" handler="on_searchwin_window_state_event" last_modification_time="Mon, 28 Dec 2009 19:26:50 GMT"/>
 
   <child>
     <widget class="GtkVBox" id="vbox4">

@@ -1262,15 +1262,15 @@ on_mainwin_configure_event             (GtkWidget       *widget,
                                         gpointer         user_data)
 {
 #if GTK_CHECK_VERSION(2,2,0)
-	GdkWindowState window_state = gdk_window_get_state (GDK_WINDOW (mainwin->window));
+	GdkWindowState window_state = gdk_window_get_state (GDK_WINDOW (widget->window));
 #else
-	GdkWindowState window_state = gdk_window_get_state (G_OBJECT (mainwin));
+	GdkWindowState window_state = gdk_window_get_state (G_OBJECT (widget));
 #endif
-    if (!(window_state & GDK_WINDOW_STATE_MAXIMIZED) && GTK_WIDGET_VISIBLE (mainwin)) {
+    if (!(window_state & GDK_WINDOW_STATE_MAXIMIZED) && GTK_WIDGET_VISIBLE (widget)) {
         int x, y;
         int w, h;
-        gtk_window_get_position (GTK_WINDOW (mainwin), &x, &y);
-        gtk_window_get_size (GTK_WINDOW (mainwin), &w, &h);
+        gtk_window_get_position (GTK_WINDOW (widget), &x, &y);
+        gtk_window_get_size (GTK_WINDOW (widget), &w, &h);
         deadbeef->conf_set_int ("mainwin.geometry.x", x);
         deadbeef->conf_set_int ("mainwin.geometry.y", y);
         deadbeef->conf_set_int ("mainwin.geometry.w", w);
@@ -1293,6 +1293,7 @@ on_find_activate                       (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     search_start ();       
+    search_restore_attrs ();
 }
 
 void
@@ -2271,4 +2272,5 @@ on_cursor_follows_playback_activate    (GtkMenuItem     *menuitem,
 {
     deadbeef->conf_set_int ("playlist.scroll.cursorfollowplayback", gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (menuitem)));
 }
+
 
