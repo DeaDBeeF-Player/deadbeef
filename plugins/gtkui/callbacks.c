@@ -1563,9 +1563,10 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
 
     // list of plugins
     GtkTreeView *tree = GTK_TREE_VIEW (lookup_widget (w, "pref_pluginlist"));
-    GtkListStore *store = gtk_list_store_new (3, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_BOOLEAN);
     GtkCellRenderer *rend_toggle = gtk_cell_renderer_toggle_new ();
     GtkCellRenderer *rend_text = gtk_cell_renderer_text_new ();
+#if 0
+    GtkListStore *store = gtk_list_store_new (3, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_BOOLEAN);
     g_signal_connect ((gpointer)rend_toggle, "toggled",
             G_CALLBACK (on_plugin_active_toggled),
             store);
@@ -1580,6 +1581,18 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
         gtk_list_store_append (store, &it);
         gtk_list_store_set (store, &it, 0, plugins[i]->inactive ? FALSE : TRUE, 1, plugins[i]->name, 2, plugins[i]->nostop ? FALSE : TRUE, -1);
     }
+#else
+    GtkListStore *store = gtk_list_store_new (1, G_TYPE_STRING);
+    GtkTreeViewColumn *col2 = gtk_tree_view_column_new_with_attributes ("Title", rend_text, "text", 0, NULL);
+    gtk_tree_view_append_column (tree, col2);
+    DB_plugin_t **plugins = deadbeef->plug_get_list ();
+    int i;
+    for (i = 0; plugins[i]; i++) {
+        GtkTreeIter it;
+        gtk_list_store_append (store, &it);
+        gtk_list_store_set (store, &it, 0, plugins[i]->name, -1);
+    }
+#endif
     gtk_tree_view_set_model (tree, GTK_TREE_MODEL (store));
 
     gtk_widget_show (w);
