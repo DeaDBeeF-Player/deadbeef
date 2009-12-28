@@ -1897,6 +1897,7 @@ void
 pl_search_reset (void) {
     while (playlist_head[PL_SEARCH]) {
         playItem_t *next = playlist_head[PL_SEARCH]->next[PL_SEARCH];
+        playlist_head[PL_SEARCH]->selected = 0;
         playlist_head[PL_SEARCH]->next[PL_SEARCH] = NULL;
         playlist_head[PL_SEARCH]->prev[PL_SEARCH] = NULL;
         playlist_head[PL_SEARCH] = next;
@@ -1908,11 +1909,11 @@ pl_search_reset (void) {
 void
 pl_search_process (const char *text) {
     pl_search_reset ();
-    if (*text) {
-        for (playItem_t *it = playlist_head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
-            it->selected = 0;
+    for (playItem_t *it = playlist_head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
+        it->selected = 0;
+        if (*text) {
             for (metaInfo_t *m = it->meta; m; m = m->next) {
-//                if (strcasestr (m->value, text)) {
+                //                if (strcasestr (m->value, text)) {
                 if (utfcasestr (m->value, text)) {
                     // add to list
                     it->next[PL_SEARCH] = NULL;
@@ -1928,8 +1929,8 @@ pl_search_process (const char *text) {
                     break;
                 }
             }
+            }
         }
-    }
 }
 
 int
