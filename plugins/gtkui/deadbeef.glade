@@ -2622,7 +2622,7 @@ SOCKS5_HOSTNAME</property>
   <property name="visible">True</property>
   <property name="title" translatable="yes">Column Format</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
-  <property name="window_position">GTK_WIN_POS_CENTER_ALWAYS</property>
+  <property name="window_position">GTK_WIN_POS_NONE</property>
   <property name="modal">True</property>
   <property name="resizable">True</property>
   <property name="destroy_with_parent">False</property>
@@ -2636,6 +2636,7 @@ SOCKS5_HOSTNAME</property>
 
   <child>
     <widget class="GtkVBox" id="vbox8">
+      <property name="border_width">4</property>
       <property name="visible">True</property>
       <property name="homogeneous">False</property>
       <property name="spacing">0</property>
@@ -2678,10 +2679,10 @@ SOCKS5_HOSTNAME</property>
 	      <property name="editable">True</property>
 	      <property name="visibility">True</property>
 	      <property name="max_length">0</property>
-	      <property name="text" translatable="yes">Custom</property>
+	      <property name="text" translatable="yes">Enter new column title here</property>
 	      <property name="has_frame">True</property>
 	      <property name="invisible_char">●</property>
-	      <property name="activates_default">False</property>
+	      <property name="activates_default">True</property>
 	    </widget>
 	    <packing>
 	      <property name="padding">0</property>
@@ -2757,18 +2758,20 @@ SOCKS5_HOSTNAME</property>
       <child>
 	<widget class="GtkLabel" id="label25">
 	  <property name="visible">True</property>
+	  <property name="can_focus">True</property>
 	  <property name="label" translatable="yes">Format fields:
-%a - artist
-%t - title
-%b - album
-%n - track
-%l - duration</property>
+ %a - artist
+ %t - title
+ %b - album
+ %n - track
+ %l - duration
+Example: %a - %t [%l]</property>
 	  <property name="use_underline">False</property>
-	  <property name="use_markup">False</property>
+	  <property name="use_markup">True</property>
 	  <property name="justify">GTK_JUSTIFY_LEFT</property>
 	  <property name="wrap">False</property>
-	  <property name="selectable">False</property>
-	  <property name="xalign">0.5</property>
+	  <property name="selectable">True</property>
+	  <property name="xalign">0.10000000149</property>
 	  <property name="yalign">0.5</property>
 	  <property name="xpad">0</property>
 	  <property name="ypad">0</property>

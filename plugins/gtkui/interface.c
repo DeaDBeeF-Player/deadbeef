@@ -1843,13 +1843,13 @@ create_inputformat (void)
 
   inputformat = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_window_set_title (GTK_WINDOW (inputformat), "Column Format");
-  gtk_window_set_position (GTK_WINDOW (inputformat), GTK_WIN_POS_CENTER_ALWAYS);
   gtk_window_set_modal (GTK_WINDOW (inputformat), TRUE);
   gtk_window_set_type_hint (GTK_WINDOW (inputformat), GDK_WINDOW_TYPE_HINT_DIALOG);
 
   vbox8 = gtk_vbox_new (FALSE, 0);
   gtk_widget_show (vbox8);
   gtk_container_add (GTK_CONTAINER (inputformat), vbox8);
+  gtk_container_set_border_width (GTK_CONTAINER (vbox8), 4);
 
   hbox10 = gtk_hbox_new (FALSE, 0);
   gtk_widget_show (hbox10);
@@ -1862,8 +1862,9 @@ create_inputformat (void)
   titleentry = gtk_entry_new ();
   gtk_widget_show (titleentry);
   gtk_box_pack_start (GTK_BOX (hbox10), titleentry, TRUE, TRUE, 0);
-  gtk_entry_set_text (GTK_ENTRY (titleentry), "Custom");
+  gtk_entry_set_text (GTK_ENTRY (titleentry), "Enter new column title here");
   gtk_entry_set_invisible_char (GTK_ENTRY (titleentry), 9679);
+  gtk_entry_set_activates_default (GTK_ENTRY (titleentry), TRUE);
 
   hbox9 = gtk_hbox_new (FALSE, 0);
   gtk_widget_show (hbox9);
@@ -1878,9 +1879,13 @@ create_inputformat (void)
   gtk_box_pack_start (GTK_BOX (hbox9), formatentry, TRUE, TRUE, 0);
   gtk_entry_set_invisible_char (GTK_ENTRY (formatentry), 9679);
 
-  label25 = gtk_label_new ("Format fields:\n%a - artist\n%t - title\n%b - album\n%n - track\n%l - duration");
+  label25 = gtk_label_new ("Format fields:\n %a - artist\n %t - title\n %b - album\n %n - track\n %l - duration\nExample: %a - %t [%l]");
   gtk_widget_show (label25);
   gtk_box_pack_start (GTK_BOX (vbox8), label25, TRUE, TRUE, 0);
+  GTK_WIDGET_SET_FLAGS (label25, GTK_CAN_FOCUS);
+  gtk_label_set_use_markup (GTK_LABEL (label25), TRUE);
+  gtk_label_set_selectable (GTK_LABEL (label25), TRUE);
+  gtk_misc_set_alignment (GTK_MISC (label25), 0.1, 0.5);
 
   hbuttonbox1 = gtk_hbutton_box_new ();
   gtk_widget_show (hbuttonbox1);
