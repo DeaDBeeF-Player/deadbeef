@@ -20,16 +20,35 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 Note that other included libraries and plugins may have separate licensing terms.
 
 
-Global hotkeys plugin, CD Audio plugin
-Copyright © Viktor Semykin <thesame.ml@gmail.com>
+Contributors:
+
+    Viktor Semykin <thesame.ml@gmail.com>
+        global hotkeys plugin, CD Audio plugin, lots of patches and suggestions
+    
+    Stas Akimushkin <uncle.lag@gmail.com>
+        icons
+
+    Alexey A. Smirnov <alexey.smirnov@gmx.com>
+    Igor Murzov <igor@gplsoft.org>
+    tonn <tonn.post@gmail.com>
+    Kryksyh <druid@foobar2000.ru>
+    Derreck <sarumyanxxl@users.sourceforge.net>
+    Alex Dedul <rotmer@gmail.com>
+    Igor Rudchenko <igor@thinkpads.net>
 
 
-Buttons artwork
-Copyright © Stas Akimushkin <uncle.lag@gmail.com>
+    and all the other great people hanging at deadbeef-ru@cjr and #deadbeef-player
 
 
-Debian packages, initial deadbeef.desktop file by
-Alexey A. Smirnov <alexey.smirnov@gmx.com>
+Greetz to:
+
+    Bram Moolenaar for the greatest text editor
+    kb (Tammo Hinrichs) for making me interested in sound coding 10 years ago
+    Paniq (Leonard Ritter) for the great music to listen
+    Jan Marguc for explaining me a lot about synthesizers
+
+
+Bundled libraries:
 
 
 DUMB - Dynamic Universal Music Bibliotheque, Version 0.9.3
@@ -51,14 +70,7 @@ Copyright © Simon White and other authors.
 
 ffap - monkey's audio decoder based on apedec code from ffmpeg
 Copyright © 2007 Benjamin Zores <ben@geexbox.org>
-
-
-wavpack - Hybrid Lossless Wavefile Compressor
-Copyright © 1998 - 2006 Conifer Software
-
-
-libsndfile - PCM read/write/conversion library
-Copyright © 1999-2009 Erik de Castro Lopo <erikd@mega-nerd.com>
+based upon libdemac from Dave Chapman
 
 
 libayemu - AY/YM sound chip emulator and music file loader
