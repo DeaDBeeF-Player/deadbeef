@@ -74,6 +74,10 @@ on_searchentry_changed                 (GtkEditable     *editable,
 
     extern gtkplaylist_t search_playlist;
     gtkplaylist_t *ps = &search_playlist;
+    int row = deadbeef->pl_get_cursor (ps->iterator);
+    if (row >= ps->get_count ()) {
+        deadbeef->pl_set_cursor (ps->iterator, ps->get_count () - 1);
+    }
     gtkpl_setup_scrollbar (ps);
     //memset (ps->fmtcache, 0, sizeof (int16_t) * 3 * pl_ncolumns * ps->nvisiblerows);
     gtkpl_draw_playlist (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);

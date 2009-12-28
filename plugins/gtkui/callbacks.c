@@ -517,6 +517,9 @@ on_remove1_activate                    (GtkMenuItem     *menuitem,
     gtkplaylist_t *ps = &main_playlist;
     GtkWidget *widget = ps->playlist;
     int row = deadbeef->pl_delete_selected ();
+    if (row >= ps->get_count ()) {
+        row = ps->get_count ()-1;
+    }
     deadbeef->pl_set_cursor (PL_MAIN, row);
     if (row != -1) {
         DB_playItem_t *it = deadbeef->pl_get_for_idx (row);
