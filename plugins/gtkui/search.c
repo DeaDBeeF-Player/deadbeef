@@ -49,7 +49,6 @@ extern DB_functions_t *deadbeef; // defined in gtkui.c
 
 extern GtkWidget *searchwin;
 struct playItem_s *search_current = NULL;
-int search_count = 0;
 
 void
 search_restore_attrs (void) {
@@ -181,7 +180,7 @@ on_searchwin_key_press_event           (GtkWidget       *widget,
     else if (event->keyval == GDK_Return) {
         extern gtkplaylist_t search_playlist;
         gtkplaylist_t *ps = &search_playlist;
-        if (search_count > 0) {
+        if (deadbeef->pl_getcount (ps->iterator) > 0) {
             int row = deadbeef->pl_get_cursor (ps->iterator);
             DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (max (row, 0), ps->iterator);
             if (it) {
