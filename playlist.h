@@ -89,7 +89,7 @@ void
 pl_free (void);
 
 int
-pl_getcount (void);
+pl_getcount (int iter);
 
 int
 pl_getselcount (void);
@@ -202,8 +202,11 @@ pl_set_cursor (int iter, int cursor);
 void
 pl_move_items (int iter, playItem_t *drop_before, uint32_t *indexes, int count);
 
-int
-pl_process_search (const char *text);
+void
+pl_search_reset (void);
+
+void
+pl_search_process (const char *text);
 
 void
 pl_sort (int iter, int id, const char *format, int ascending);

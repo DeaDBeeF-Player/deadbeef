@@ -887,6 +887,16 @@ gtkpl_songchanged (gtkplaylist_t *ps, int from, int to) {
 }
 
 void
+main_refresh (void) {
+    if (mainwin && GTK_WIDGET_VISIBLE (mainwin)) {
+        gtkplaylist_t *ps = &main_playlist;
+        gtkpl_setup_scrollbar (ps);
+        gtkpl_draw_playlist (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
+        gtkpl_expose (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
+    }
+}
+
+void
 gtkpl_keypress (gtkplaylist_t *ps, int keyval, int state) {
     GtkWidget *range = ps->scrollbar;
     int prev = deadbeef->pl_get_cursor (ps->iterator);
@@ -934,6 +944,22 @@ gtkpl_keypress (gtkplaylist_t *ps, int keyval, int state) {
         if (cursor != 0) {
             gtkpl_set_cursor (ps->iterator, 0);
         }
+    }
+    else if (keyval == GDK_Delete) {
+        GtkWidget *widget = ps->playlist;
+        int row = deadbeef->pl_delete_selected ();
+        if (row >= ps->get_count ()) {
+            row = ps->get_count ()-1;
+        }
+        deadbeef->pl_set_cursor (ps->iterator, row);
+        if (row != -1) {
+            DB_playItem_t *it = deadbeef->pl_get_for_idx (row);
+            if (it) {
+                deadbeef->pl_set_selected (it, 1);
+            }
+        }
+        main_refresh ();
+        search_refresh ();
     }
     if (state & GDK_SHIFT_MASK) {
         // select all between shift_sel_anchor and deadbeef->pl_get_cursor (ps->iterator)

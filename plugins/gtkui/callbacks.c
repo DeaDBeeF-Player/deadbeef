@@ -64,12 +64,12 @@ playlist_tooltip_handler (GtkWidget *widget, gint x, gint y, gboolean keyboard_m
 
 static int
 main_get_count (void) {
-    return deadbeef->pl_getcount ();
+    return deadbeef->pl_getcount (PL_MAIN);
 }
 
 static int
 search_get_count (void) {
-    return search_count;
+    return deadbeef->pl_getcount (PL_SEARCH);
 }
 
 void
@@ -514,23 +514,8 @@ void
 on_remove1_activate                    (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    gtkplaylist_t *ps = &main_playlist;
-    GtkWidget *widget = ps->playlist;
-    int row = deadbeef->pl_delete_selected ();
-    if (row >= ps->get_count ()) {
-        row = ps->get_count ()-1;
-    }
-    deadbeef->pl_set_cursor (PL_MAIN, row);
-    if (row != -1) {
-        DB_playItem_t *it = deadbeef->pl_get_for_idx (row);
-        if (it) {
-            deadbeef->pl_set_selected (it, 1);
-        }
-    }
-    gtkpl_setup_scrollbar (ps);
-    gtkpl_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
-    gtkpl_expose (ps, 0, 0, widget->allocation.width, widget->allocation.height);
-    search_refresh ();
+    // does nothing here -- required for hotkey hint in the menu
+    // job is done in keypress handlers
 }
 
 

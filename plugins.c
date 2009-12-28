@@ -121,7 +121,8 @@ static DB_functions_t deadbeef_api = {
     .pl_format_title = (int (*) (DB_playItem_t *it, char *s, int size, int id, const char *fmt))pl_format_title,
     .pl_format_item_display_name = (void (*) (DB_playItem_t *it, char *str, int len))pl_format_item_display_name,
     .pl_move_items = (void (*) (int iter, DB_playItem_t *drop_before, uint32_t *indexes, int count))pl_move_items,
-    .pl_process_search = pl_process_search,
+    .pl_search_reset = pl_search_reset,
+    .pl_search_process = pl_search_process,
     // metainfo
     .pl_add_meta = (void (*) (DB_playItem_t *, const char *, const char *))pl_add_meta,
     .pl_find_meta = (const char *(*) (DB_playItem_t *, const char *))pl_find_meta,

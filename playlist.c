@@ -54,7 +54,7 @@ playItem_t *playlist_tail[PL_MAX_ITERATORS];
 int playlist_current_row[PL_MAX_ITERATORS];
 
 playItem_t *playlist_current_ptr;
-static int pl_count = 0;
+static int pl_count[2];
 static float pl_totaltime = 0;
 
 #define PLAYQUEUE_SIZE 100
@@ -690,25 +690,30 @@ pl_remove (playItem_t *it) {
     if (!it)
         return -1;
     streamer_song_removed_notify (it);
-    pl_count--;
     if (playlist_current_ptr == it) {
         playlist_current_ptr = NULL;
     }
     pl_playqueue_remove (it);
 
-    // remove from linear list
-    if (it->prev[PL_MAIN]) {
-        it->prev[PL_MAIN]->next[PL_MAIN] = it->next[PL_MAIN];
+    // remove from both lists list
+    for (int iter = PL_MAIN; iter <= PL_SEARCH; iter++) {
+        if (it->prev[iter] || it->next[iter] || playlist_head[iter] == it || playlist_tail[iter] == it) {
+            pl_count[iter]--;
+        }
+        if (it->prev[iter]) {
+            it->prev[iter]->next[iter] = it->next[iter];
+        }
+        else {
+            playlist_head[iter] = it->next[iter];
+        }
+        if (it->next[iter]) {
+            it->next[iter]->prev[iter] = it->prev[iter];
+        }
+        else {
+            playlist_tail[iter] = it->prev[iter];
+        }
     }
-    else {
-        playlist_head[PL_MAIN] = it->next[PL_MAIN];
-    }
-    if (it->next[PL_MAIN]) {
-        it->next[PL_MAIN]->prev[PL_MAIN] = it->prev[PL_MAIN];
-    }
-    else {
-        playlist_tail[PL_MAIN] = it->prev[PL_MAIN];
-    }
+
     // totaltime
     if (it->_duration > 0) {
         pl_totaltime -= it->_duration;
@@ -722,8 +727,8 @@ pl_remove (playItem_t *it) {
 }
 
 int
-pl_getcount (void) {
-    return pl_count;
+pl_getcount (int iter) {
+    return pl_count[iter];
 }
 
 int
@@ -793,7 +798,7 @@ pl_insert_item (playItem_t *after, playItem_t *it) {
         }
     }
     it->in_playlist = 1;
-    pl_count++;
+    pl_count[PL_MAIN]++;
 
     // shuffle
     it->shufflerating = rand ();
@@ -1059,10 +1064,11 @@ pl_nextsong (int reason) {
 
 int
 pl_randomsong (void) {
-    if (!pl_getcount ()) {
+    int cnt = pl_getcount (PL_MAIN);
+    if (!cnt) {
         return -1;
     }
-    int r = (float)rand ()/RAND_MAX * pl_getcount ();
+    int r = (float)rand () / RAND_MAX * cnt;
     streamer_set_nextsong (r, 1);
     return 0;
 }
@@ -1179,7 +1185,7 @@ pl_save (const char *fname) {
     if (fwrite (&minorver, 1, 1, fp) != 1) {
         goto save_fail;
     }
-    uint32_t cnt = pl_count;
+    uint32_t cnt = pl_count[PL_MAIN];
     if (fwrite (&cnt, 1, 4, fp) != 4) {
         goto save_fail;
     }
@@ -1887,11 +1893,21 @@ pl_move_items (int iter, playItem_t *drop_before, uint32_t *indexes, int count) 
     }
 }
 
-int
-pl_process_search (const char *text) {
-    playlist_head[PL_SEARCH] = NULL;
+void
+pl_search_reset (void) {
+    while (playlist_head[PL_SEARCH]) {
+        playItem_t *next = playlist_head[PL_SEARCH]->next[PL_SEARCH];
+        playlist_head[PL_SEARCH]->next[PL_SEARCH] = NULL;
+        playlist_head[PL_SEARCH]->prev[PL_SEARCH] = NULL;
+        playlist_head[PL_SEARCH] = next;
+    }
     playlist_tail[PL_SEARCH] = NULL;
-    int search_count = 0;
+    pl_count[PL_SEARCH] = 0;
+}
+
+void
+pl_search_process (const char *text) {
+    pl_search_reset ();
     if (*text) {
         for (playItem_t *it = playlist_head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
             it->selected = 0;
@@ -1908,13 +1924,12 @@ pl_process_search (const char *text) {
                         playlist_head[PL_SEARCH] = playlist_tail[PL_SEARCH] = it;
                     }
                     it->selected = 1;
-                    search_count++;
+                    pl_count[PL_SEARCH]++;
                     break;
                 }
             }
         }
     }
-    return search_count;
 }
 
 int

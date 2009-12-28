@@ -70,7 +70,7 @@ on_searchentry_changed                 (GtkEditable     *editable,
     // with search_head
 
     const gchar *text = gtk_entry_get_text (GTK_ENTRY (editable));
-    search_count = deadbeef->pl_process_search (text);
+    deadbeef->pl_search_process (text);
 
     extern gtkplaylist_t search_playlist;
     gtkplaylist_t *ps = &search_playlist;
@@ -93,9 +93,9 @@ void
 search_refresh (void) {
     if (searchwin && GTK_WIDGET_VISIBLE (searchwin)) {
         gtkplaylist_t *ps = &search_playlist;
+        gtkpl_setup_scrollbar (ps);
         gtkpl_draw_playlist (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
         gtkpl_expose (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
-        //on_searchentry_changed (GTK_EDITABLE (lookup_widget (searchwin, "searchentry")), NULL);
     }
 }
 
@@ -189,5 +189,4 @@ on_searchlist_configure_event          (GtkWidget       *widget,
     gtkpl_configure (ps);
     return FALSE;
 }
-
 

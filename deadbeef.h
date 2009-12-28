@@ -272,7 +272,7 @@ typedef struct {
     DB_playItem_t * (*pl_get_for_idx) (int idx);
     DB_playItem_t * (*pl_get_for_idx_and_iter) (int idx, int iter);
     float (*pl_get_totaltime) (void);
-    int (*pl_getcount) (void);
+    int (*pl_getcount) (int iter);
     DB_playItem_t *(*pl_getcurrent) (void);
     int (*pl_delete_selected) (void);
     void (*pl_set_cursor) (int iter, int cursor);
@@ -313,7 +313,8 @@ typedef struct {
 //    DB_playItem_t* (*pl_get_head) (void);
 //    DB_playItem_t* (*pl_get_tail) (void);
     void (*pl_move_items) (int iter, DB_playItem_t *drop_before, uint32_t *indexes, int count);
-    int (*pl_process_search) (const char *text);
+    void (*pl_search_reset) (void);
+    void (*pl_search_process) (const char *text);
     // metainfo
     void (*pl_add_meta) (DB_playItem_t *it, const char *key, const char *value);
     const char *(*pl_find_meta) (DB_playItem_t *song, const char *meta);
