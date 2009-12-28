@@ -1583,6 +1583,7 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
     gtk_tree_view_set_model (tree, GTK_TREE_MODEL (store));
 
     gtk_widget_show (w);
+    gtk_widget_set_sensitive (lookup_widget (prefwin, "configure_plugin"), FALSE);
 }
 
 
@@ -1705,6 +1706,8 @@ on_pref_pluginlist_cursor_changed      (GtkTreeView     *treeview,
     gtk_entry_set_text (e, p->email ? p->email : "");
     e = GTK_ENTRY (lookup_widget (w, "pref_plugin_website"));
     gtk_entry_set_text (e, p->website ? p->website : "");
+
+    gtk_widget_set_sensitive (lookup_widget (prefwin, "configure_plugin"), p->configdialog ? TRUE : FALSE);
 }
 
 gboolean
