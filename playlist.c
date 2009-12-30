@@ -66,6 +66,12 @@ pl_free (void) {
     while (playlist_head[PL_MAIN]) {
         pl_remove (playlist_head[PL_MAIN]);
     }
+    if (playlist_current_row[PL_MAIN] >= pl_count[PL_MAIN]) {
+        playlist_current_row[PL_MAIN] = pl_count[PL_MAIN]-1;
+    }
+    if (playlist_current_row[PL_SEARCH] >= pl_count[PL_SEARCH]) {
+        playlist_current_row[PL_SEARCH] = pl_count[PL_SEARCH]-1;
+    }
 }
 
 static const uint8_t *
@@ -1914,7 +1920,8 @@ pl_search_process (const char *text) {
         if (*text) {
             for (metaInfo_t *m = it->meta; m; m = m->next) {
                 //                if (strcasestr (m->value, text)) {
-                if (utfcasestr (m->value, text)) {
+                if (strcasecmp (m->key, "cuesheet") && utfcasestr (m->value, text)) {
+                    //fprintf (stderr, "%s -> %s match (%s.%s)\n", text, m->value, it->fname, m->key);
                     // add to list
                     it->next[PL_SEARCH] = NULL;
                     if (playlist_tail[PL_SEARCH]) {
