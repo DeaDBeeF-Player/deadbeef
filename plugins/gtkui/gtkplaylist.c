@@ -900,50 +900,42 @@ void
 gtkpl_keypress (gtkplaylist_t *ps, int keyval, int state) {
     GtkWidget *range = ps->scrollbar;
     int prev = deadbeef->pl_get_cursor (ps->iterator);
-    int newscroll = ps->scrollpos;
+    int cursor = prev;
     if (keyval == GDK_Down) {
-        int cursor = deadbeef->pl_get_cursor (ps->iterator);
+        cursor = deadbeef->pl_get_cursor (ps->iterator);
         if (cursor < ps->get_count () - 1) {
-            gtkpl_set_cursor (ps->iterator, cursor+1);
+            cursor++;
         }
     }
     else if (keyval == GDK_Up) {
-        int cursor = deadbeef->pl_get_cursor (ps->iterator);
+        cursor = deadbeef->pl_get_cursor (ps->iterator);
         if (cursor > 0) {
-            gtkpl_set_cursor (ps->iterator, cursor-1);
+            cursor--;
         }
     }
     else if (keyval == GDK_Page_Down) {
-        int cursor = deadbeef->pl_get_cursor (ps->iterator);
+        cursor = deadbeef->pl_get_cursor (ps->iterator);
         if (cursor < ps->get_count () - 1) {
             cursor += 10;
             if (cursor >= ps->get_count ()) {
                 cursor = ps->get_count () - 1;
             }
-            gtkpl_set_cursor (ps->iterator, cursor);
         }
     }
     else if (keyval == GDK_Page_Up) {
-        int cursor = deadbeef->pl_get_cursor (ps->iterator);
+        cursor = deadbeef->pl_get_cursor (ps->iterator);
         if (cursor > 0) {
             cursor -= 10;
             if (cursor < 0) {
                 cursor = 0;
             }
-            gtkpl_set_cursor (ps->iterator, cursor);
         }
     }
     else if (keyval == GDK_End) {
-        int cursor = deadbeef->pl_get_cursor (ps->iterator);
-        if (cursor != ps->get_count () - 1) {
-            gtkpl_set_cursor (ps->iterator, ps->get_count () - 1);
-        }
+        cursor = ps->get_count () - 1;
     }
     else if (keyval == GDK_Home) {
-        int cursor = deadbeef->pl_get_cursor (ps->iterator);
-        if (cursor != 0) {
-            gtkpl_set_cursor (ps->iterator, 0);
-        }
+        cursor = 0;
     }
     else if (keyval == GDK_Delete) {
         GtkWidget *widget = ps->playlist;
@@ -961,11 +953,30 @@ gtkpl_keypress (gtkplaylist_t *ps, int keyval, int state) {
         main_refresh ();
         search_refresh ();
     }
+    else {
+        return;
+    }
     if (state & GDK_SHIFT_MASK) {
-        // select all between shift_sel_anchor and deadbeef->pl_get_cursor (ps->iterator)
-        if (prev != deadbeef->pl_get_cursor (ps->iterator)) {
-            int start = min (deadbeef->pl_get_cursor (ps->iterator), shift_sel_anchor);
-            int end = max (deadbeef->pl_get_cursor (ps->iterator), shift_sel_anchor);
+        if (cursor != prev) {
+            int newscroll = ps->scrollpos;
+            if (cursor < ps->scrollpos) {
+                newscroll = cursor;
+            }
+            else if (cursor >= ps->scrollpos + ps->nvisiblefullrows) {
+                newscroll = cursor - ps->nvisiblefullrows + 1;
+                if (newscroll < 0) {
+                    newscroll = 0;
+                }
+            }
+            if (ps->scrollpos != newscroll) {
+                GtkWidget *range = ps->scrollbar;
+                gtk_range_set_value (GTK_RANGE (range), newscroll);
+            }
+
+            deadbeef->pl_set_cursor (ps->iterator, cursor);
+            // select all between shift_sel_anchor and deadbeef->pl_get_cursor (ps->iterator)
+            int start = min (cursor, shift_sel_anchor);
+            int end = max (cursor, shift_sel_anchor);
             int idx=0;
             for (DB_playItem_t *it = PL_HEAD (ps->iterator); it; it = PL_NEXT(it,ps->iterator), idx++) {
                 if (idx >= start && idx <= end) {
@@ -979,12 +990,14 @@ gtkpl_keypress (gtkplaylist_t *ps, int keyval, int state) {
         }
     }
     else {
-        // reset selection, set new single cursor/selection
+        shift_sel_anchor = cursor;
+        gtkpl_set_cursor (ps->iterator, cursor);
+#if 0
+        // reset selection, set new single cursor and selection
         if (prev != deadbeef->pl_get_cursor (ps->iterator)) {
-            shift_sel_anchor = deadbeef->pl_get_cursor (ps->iterator);
             int idx=0;
             for (DB_playItem_t *it = PL_HEAD (ps->iterator); it; it = PL_NEXT(it, ps->iterator), idx++) {
-                if (idx == deadbeef->pl_get_cursor (ps->iterator)) {
+                if (idx == cursor) {
                     if (!SELECTED (it)) {
                         VSELECT (it, 1);
                     }
@@ -994,10 +1007,13 @@ gtkpl_keypress (gtkplaylist_t *ps, int keyval, int state) {
                 }
             }
         }
+#endif
     }
+#if 0
     if (newscroll != ps->scrollpos) {
         gtk_range_set_value (GTK_RANGE (range), newscroll);
     }
+#endif
 }
 
 static int drag_motion_y = -1;
