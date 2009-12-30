@@ -1772,10 +1772,10 @@ pl_sort (int iter, int id, const char *format, int ascending) {
                     snprintf (title2, sizeof (title2), "%03d", atoi (t));
                 }
             }
-            pl_format_title (it, title1, sizeof (title1), id, format);
-            pl_format_title (next, title2, sizeof (title2), id, format);
-//            const char *meta1 = pl_find_meta (it, meta);
-//            const char *meta2 = pl_find_meta (next, meta);
+            else {
+                pl_format_title (it, title1, sizeof (title1), id, format);
+                pl_format_title (next, title2, sizeof (title2), id, format);
+            }
             int cmp = ascending ? strcmp (title1, title2) < 0 : strcmp (title1, title2) > 0;
             if (cmp) {
 //                printf ("%p %p swapping %s and %s\n", it, next, meta1, meta2);
