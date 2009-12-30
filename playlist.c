@@ -550,7 +550,7 @@ pl_insert_pls (playItem_t *after, const char *fname, int *pabort, int (*cb)(play
 
 playItem_t *
 pl_insert_file (playItem_t *after, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
-    if (!fname) {
+    if (!fname || !(*fname)) {
         return NULL;
     }
 
@@ -580,7 +580,7 @@ pl_insert_file (playItem_t *after, const char *fname, int *pabort, int (*cb)(pla
     if (strncasecmp (fname, "file://", 7)) {
         const char *p = fname;
         int detect_on_access = 1;
-        for (p = fname; *p; p++) {
+        for (; *p; p++) {
             if (!strncmp (p, "://", 3)) {
                 break;
             }
@@ -589,7 +589,7 @@ pl_insert_file (playItem_t *after, const char *fname, int *pabort, int (*cb)(pla
                 break;
             }
         }
-        if (detect_on_access && *fname != ':') {
+        if (detect_on_access && *p == ':') {
             playItem_t *it = pl_item_alloc ();
             it->decoder = NULL;
             it->fname = strdup (fname);
