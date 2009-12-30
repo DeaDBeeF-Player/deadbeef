@@ -1634,6 +1634,7 @@ pl_format_duration (playItem_t *it, const char *ret, char *dur, int size) {
 int
 pl_format_title (playItem_t *it, char *s, int size, int id, const char *fmt) {
     char dur[50];
+    char ftrk[50];
     const char *artist = NULL;
     const char *album = NULL;
     const char *track = NULL;
@@ -1667,7 +1668,18 @@ pl_format_title (playItem_t *it, char *s, int size, int id, const char *fmt) {
             text = (duration = pl_format_duration (it, duration, dur, sizeof (dur)));
             break;
         case DB_COLUMN_TRACK:
-            text = (track = pl_get_meta_cached (it, "track", track, ""));
+            track = pl_get_meta_cached (it, "track", track, "");
+            text = track;
+#if 0 // kept for tracing purposes
+            if (isdigit (track[0])) {
+                snprintf (ftrk, sizeof (ftrk), "%03d (%s)", atoi (track), track);
+                text = ftrk;
+            }
+            else {
+                snprintf (ftrk, sizeof (ftrk), "-1 (%s)", track);
+                text = ftrk;
+            }
+#endif
             break;
         }
         if (text) {
@@ -1743,6 +1755,23 @@ pl_sort (int iter, int id, const char *format, int ascending) {
             }
             char title1[1024];
             char title2[1024];
+            if (id == DB_COLUMN_TRACK) {
+                const char *t;
+                t = pl_find_meta (it, "track");
+                if (!t || !isdigit (*t)) {
+                    strcpy (title1, "-1");
+                }
+                else {
+                    snprintf (title1, sizeof (title1), "%03d", atoi (t));
+                }
+                t = pl_find_meta (next, "track");
+                if (!t || !isdigit (*t)) {
+                    strcpy (title2, "-1");
+                }
+                else {
+                    snprintf (title2, sizeof (title2), "%03d", atoi (t));
+                }
+            }
             pl_format_title (it, title1, sizeof (title1), id, format);
             pl_format_title (next, title2, sizeof (title2), id, format);
 //            const char *meta1 = pl_find_meta (it, meta);
