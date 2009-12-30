@@ -1467,17 +1467,20 @@ pl_load (const char *fname) {
                 goto load_fail;
             }
             if (!l || l >= 1024) {
-                goto load_fail;
+                // skip
+                fseek (fp, l, SEEK_CUR);
             }
-            if (fread (value, 1, l, fp) != l) {
-                goto load_fail;
-            }
-            value[l] = 0;
-            //printf ("%s=%s\n", key, value);
-            for (int n = 0; valid_keys[n]; n++) {
-                if (!strcmp (valid_keys[n], key)) {
-                    pl_add_meta (it, valid_keys[n], value);
-                    break;
+            else {
+                if (fread (value, 1, l, fp) != l) {
+                    goto load_fail;
+                }
+                value[l] = 0;
+                //printf ("%s=%s\n", key, value);
+                for (int n = 0; valid_keys[n]; n++) {
+                    if (!strcmp (valid_keys[n], key)) {
+                        pl_add_meta (it, valid_keys[n], value);
+                        break;
+                    }
                 }
             }
         }
@@ -1486,7 +1489,7 @@ pl_load (const char *fname) {
     fclose (fp);
     return 0;
 load_fail:
-    trace ("playlist load fail!\n");
+    fprintf (stderr, "playlist load fail (%s)!\n", fname);
     fclose (fp);
     if (it) {
         pl_item_free (it);
