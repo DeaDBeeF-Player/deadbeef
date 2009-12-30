@@ -188,10 +188,15 @@ on_searchwin_key_press_event           (GtkWidget       *widget,
             }
         }
     }
-    else {
-        gtkpl_keypress (&search_playlist, event->keyval, event->state);
+    else if (event->keyval != GDK_Delete && event->keyval != GDK_Home && event->keyval != GDK_End){
+        if (!gtkpl_keypress (&search_playlist, event->keyval, event->state)) {
+            return FALSE;
+        }
     }
-    return FALSE;
+    else {
+        return FALSE;
+    }
+    return TRUE;
 }
 
 

@@ -144,7 +144,8 @@ gtkpl_hscroll (gtkplaylist_t *ps, int newscroll);
 void
 gtkpl_handle_scroll_event (gtkplaylist_t *ps, int direction);
 
-void
+// returns 1 if keypress was handled, 0 otherwise
+int
 gtkpl_keypress (gtkplaylist_t *ps, int keyval, int state);
 
 void

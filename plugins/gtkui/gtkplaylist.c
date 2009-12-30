@@ -896,7 +896,7 @@ main_refresh (void) {
     }
 }
 
-void
+int
 gtkpl_keypress (gtkplaylist_t *ps, int keyval, int state) {
     GtkWidget *range = ps->scrollbar;
     int prev = deadbeef->pl_get_cursor (ps->iterator);
@@ -954,7 +954,7 @@ gtkpl_keypress (gtkplaylist_t *ps, int keyval, int state) {
         search_refresh ();
     }
     else {
-        return;
+        return 0 ;
     }
     if (state & GDK_SHIFT_MASK) {
         if (cursor != prev) {
@@ -992,28 +992,8 @@ gtkpl_keypress (gtkplaylist_t *ps, int keyval, int state) {
     else {
         shift_sel_anchor = cursor;
         gtkpl_set_cursor (ps->iterator, cursor);
-#if 0
-        // reset selection, set new single cursor and selection
-        if (prev != deadbeef->pl_get_cursor (ps->iterator)) {
-            int idx=0;
-            for (DB_playItem_t *it = PL_HEAD (ps->iterator); it; it = PL_NEXT(it, ps->iterator), idx++) {
-                if (idx == cursor) {
-                    if (!SELECTED (it)) {
-                        VSELECT (it, 1);
-                    }
-                }
-                else if (SELECTED (it)) {
-                    VSELECT (it, 0);
-                }
-            }
-        }
-#endif
     }
-#if 0
-    if (newscroll != ps->scrollpos) {
-        gtk_range_set_value (GTK_RANGE (range), newscroll);
-    }
-#endif
+    return 1;
 }
 
 static int drag_motion_y = -1;
