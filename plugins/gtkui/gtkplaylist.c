@@ -938,17 +938,9 @@ gtkpl_keypress (gtkplaylist_t *ps, int keyval, int state) {
         cursor = 0;
     }
     else if (keyval == GDK_Delete) {
-        GtkWidget *widget = ps->playlist;
-        int row = deadbeef->pl_delete_selected ();
-        if (row >= ps->get_count ()) {
-            row = ps->get_count ()-1;
-        }
-        deadbeef->pl_set_cursor (ps->iterator, row);
-        if (row != -1) {
-            DB_playItem_t *it = deadbeef->pl_get_for_idx (row);
-            if (it) {
-                deadbeef->pl_set_selected (it, 1);
-            }
+        cursor = deadbeef->pl_delete_selected ();
+        if (cursor >= ps->get_count ()) {
+            cursor = ps->get_count ()-1;
         }
         main_refresh ();
         search_refresh ();
