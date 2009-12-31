@@ -1,5 +1,17 @@
 help file for deadbeef player
 
+USEFUL HOTKEYS
+
+you can navigate playlist with arrow keys
+page up, page down, home, end also work
+use shift key to select multiple tracks
+playback is controlled winamp-style:
+z, x, c, v, b, n keys function as
+previous, play, pause, stop, next, random
+also notice hotkey hints in the menus
+it is not (yet?) possible to remap keys
+also see GLOBAL HOTKEYS section below
+
 CONFIGURATION
 
 since 0.3.0 release, all configuration is stored in single file:
@@ -7,7 +19,7 @@ $HOME/.config/deadbeef/config
 
 most stuff can be configured through edit->preferences dialog
 
-HOTKEYS PLUGIN CONFIGURATION
+GLOBAL HOTKEYS
 
 it's not yet in GUI configuration window, so here we go..
 
