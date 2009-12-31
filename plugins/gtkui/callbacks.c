@@ -2365,6 +2365,7 @@ on_properties1_activate                (GtkMenuItem     *menuitem,
     g_object_unref (buffer);
 
     gtk_widget_show (widget);
+    gtk_window_present (GTK_WINDOW (widget));
 }
 
 gboolean
