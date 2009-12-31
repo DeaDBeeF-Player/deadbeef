@@ -1890,7 +1890,7 @@ create_inputformat (void)
   gtk_box_pack_start (GTK_BOX (hbox9), formatentry, TRUE, TRUE, 0);
   gtk_entry_set_invisible_char (GTK_ENTRY (formatentry), 9679);
 
-  label25 = gtk_label_new ("Format fields:\n %a - artist\n %t - title\n %b - album\n %n - track\n %l - duration\nExample: %a - %t [%l]");
+  label25 = gtk_label_new ("Format fields:\n %a - artist\n %t - title\n %b - album\n %n - track\n %l - duration\n %y - year\n %g - genre\n %c - comment\n %r - copyright\nExample: %a - %t [%l]");
   gtk_widget_show (label25);
   gtk_box_pack_start (GTK_BOX (vbox8), label25, TRUE, TRUE, 0);
   GTK_WIDGET_SET_FLAGS (label25, GTK_CAN_FOCUS);

@@ -302,6 +302,10 @@ typedef struct {
        %b album
        %n track
        %l length (duration)
+       %y year
+       %g genre
+       %c comment
+       %r copyright
        more to come
     */
     int (*pl_format_title) (DB_playItem_t *it, char *s, int size, int id, const char *fmt);

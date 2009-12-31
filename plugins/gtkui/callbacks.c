@@ -2362,6 +2362,7 @@ on_properties1_activate                (GtkMenuItem     *menuitem,
     }
     GtkTextBuffer *buffer = gtk_text_buffer_new (NULL);
     gtk_text_buffer_set_text (buffer, meta, strlen (meta));
+    gtk_text_view_set_buffer (GTK_TEXT_VIEW (w), buffer);
     g_object_unref (buffer);
 
     gtk_widget_show (widget);

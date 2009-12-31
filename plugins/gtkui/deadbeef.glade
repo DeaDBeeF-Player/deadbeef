@@ -2766,6 +2766,10 @@ SOCKS5_HOSTNAME</property>
  %b - album
  %n - track
  %l - duration
+ %y - year
+ %g - genre
+ %c - comment
+ %r - copyright
 Example: %a - %t [%l]</property>
 	  <property name="use_underline">False</property>
 	  <property name="use_markup">True</property>
