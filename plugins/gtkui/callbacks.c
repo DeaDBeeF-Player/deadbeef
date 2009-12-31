@@ -2367,6 +2367,17 @@ on_properties1_activate                (GtkMenuItem     *menuitem,
     gtk_widget_show (widget);
 }
 
+gboolean
+on_trackproperties_key_press_event     (GtkWidget       *widget,
+                                        GdkEventKey     *event,
+                                        gpointer         user_data)
+{
+    if (event->keyval == GDK_Escape) {
+        gtk_widget_destroy (widget);
+    }
+    return FALSE;
+}
+
 
 
 void

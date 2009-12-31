@@ -1182,6 +1182,8 @@ create_helpwindow (void)
   gtk_window_set_title (GTK_WINDOW (helpwindow), "Help");
   gtk_window_set_modal (GTK_WINDOW (helpwindow), TRUE);
   gtk_window_set_destroy_with_parent (GTK_WINDOW (helpwindow), TRUE);
+  gtk_window_set_skip_taskbar_hint (GTK_WINDOW (helpwindow), TRUE);
+  gtk_window_set_skip_pager_hint (GTK_WINDOW (helpwindow), TRUE);
 
   scrolledwindow1 = gtk_scrolled_window_new (NULL, NULL);
   gtk_widget_show (scrolledwindow1);
@@ -1262,6 +1264,8 @@ create_prefwin (void)
   gtk_widget_set_size_request (prefwin, 642, 372);
   gtk_window_set_title (GTK_WINDOW (prefwin), "Preferences");
   gtk_window_set_modal (GTK_WINDOW (prefwin), TRUE);
+  gtk_window_set_skip_taskbar_hint (GTK_WINDOW (prefwin), TRUE);
+  gtk_window_set_skip_pager_hint (GTK_WINDOW (prefwin), TRUE);
 
   notebook2 = gtk_notebook_new ();
   gtk_widget_show (notebook2);
@@ -1781,6 +1785,8 @@ create_addlocation (void)
   gtk_window_set_title (GTK_WINDOW (addlocation), "Add Location");
   gtk_window_set_modal (GTK_WINDOW (addlocation), TRUE);
   gtk_window_set_destroy_with_parent (GTK_WINDOW (addlocation), TRUE);
+  gtk_window_set_skip_taskbar_hint (GTK_WINDOW (addlocation), TRUE);
+  gtk_window_set_skip_pager_hint (GTK_WINDOW (addlocation), TRUE);
 
   vbox7 = gtk_vbox_new (FALSE, 0);
   gtk_widget_show (vbox7);
@@ -1847,6 +1853,8 @@ create_inputformat (void)
   inputformat = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_window_set_title (GTK_WINDOW (inputformat), "Column Format");
   gtk_window_set_modal (GTK_WINDOW (inputformat), TRUE);
+  gtk_window_set_skip_taskbar_hint (GTK_WINDOW (inputformat), TRUE);
+  gtk_window_set_skip_pager_hint (GTK_WINDOW (inputformat), TRUE);
   gtk_window_set_type_hint (GTK_WINDOW (inputformat), GDK_WINDOW_TYPE_HINT_DIALOG);
 
   vbox8 = gtk_vbox_new (FALSE, 0);
@@ -1954,7 +1962,9 @@ create_trackproperties (void)
 
   trackproperties = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_window_set_title (GTK_WINDOW (trackproperties), "Track Properties");
-  gtk_window_set_modal (GTK_WINDOW (trackproperties), TRUE);
+  gtk_window_set_destroy_with_parent (GTK_WINDOW (trackproperties), TRUE);
+  gtk_window_set_skip_taskbar_hint (GTK_WINDOW (trackproperties), TRUE);
+  gtk_window_set_skip_pager_hint (GTK_WINDOW (trackproperties), TRUE);
 
   table7 = gtk_table_new (7, 2, FALSE);
   gtk_widget_show (table7);
@@ -2088,7 +2098,7 @@ create_trackproperties (void)
   gtk_widget_show (scrolledwindow4);
   gtk_table_attach (GTK_TABLE (table7), scrolledwindow4, 1, 2, 6, 7,
                     (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
+                    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow4), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow4), GTK_SHADOW_IN);
 
@@ -2096,6 +2106,10 @@ create_trackproperties (void)
   gtk_widget_show (comment);
   gtk_container_add (GTK_CONTAINER (scrolledwindow4), comment);
   gtk_text_view_set_editable (GTK_TEXT_VIEW (comment), FALSE);
+
+  g_signal_connect ((gpointer) trackproperties, "key_press_event",
+                    G_CALLBACK (on_trackproperties_key_press_event),
+                    NULL);
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (trackproperties, trackproperties, "trackproperties");

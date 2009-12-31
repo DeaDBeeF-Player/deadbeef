@@ -769,3 +769,8 @@ gboolean
 on_searchwin_window_state_event        (GtkWidget       *widget,
                                         GdkEventWindowState *event,
                                         gpointer         user_data);
+
+gboolean
+on_trackproperties_key_press_event     (GtkWidget       *widget,
+                                        GdkEventKey     *event,
+                                        gpointer         user_data);
