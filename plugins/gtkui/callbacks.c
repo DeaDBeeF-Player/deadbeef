@@ -199,6 +199,7 @@ on_playlist_button_press_event         (GtkWidget       *widget,
         DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (y, ps->iterator);
         if (!it) {
             // clicked empty space -- deselect everything and show insensitive menu
+            deadbeef->pl_set_cursor (ps->iterator, -1);
             it = deadbeef->pl_get_first (ps->iterator);
             while (it) {
                 SELECT (it, 0);
@@ -212,10 +213,20 @@ on_playlist_button_press_event         (GtkWidget       *widget,
                 // item is unselected -- reset selection and select this
                 DB_playItem_t *it2 = deadbeef->pl_get_first (ps->iterator);
                 while (it2) {
-                    SELECT (it2, 0);
+                    if (SELECTED (it2) && it2 != it) {
+                        SELECT (it2, 0);
+                    }
+                    else if (it2 == it) {
+                        deadbeef->pl_set_cursor (ps->iterator, y);
+                        SELECT (it2, 1);
+                    }
                     it2 = PL_NEXT (it2, ps->iterator);
                 }
-                SELECT (it, 1);
+                playlist_refresh ();
+            }
+            else {
+                // something is selected; move cursor but keep selection
+                deadbeef->pl_set_cursor (ps->iterator, y);
                 playlist_refresh ();
             }
             {
@@ -2281,7 +2292,72 @@ void
 on_properties1_activate                (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
+    GtkWidget *widget = GTK_WIDGET (menuitem);
+    GTKPL_PROLOGUE;
+    GtkWidget *w;
+    const char *meta;
+    DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (deadbeef->pl_get_cursor (ps->iterator), ps->iterator);
+    if (!it) {
+        fprintf (stderr, "attempt to view properties of non-existing item\n");
+        return;
+    }
+    widget = create_trackproperties ();
+    gtk_window_set_transient_for (GTK_WINDOW (widget), GTK_WINDOW (mainwin));
+    // fill in metadata
+    // location
+    w = lookup_widget (widget, "location");
+    gtk_entry_set_text (GTK_ENTRY (w), it->fname);
+    // title
+    w = lookup_widget (widget, "title");
+    meta = deadbeef->pl_find_meta (it, "title");
+    if (!meta) {
+        meta = "";
+    }
+    gtk_entry_set_text (GTK_ENTRY (w), meta);
+    // artist
+    w = lookup_widget (widget, "artist");
+    meta = deadbeef->pl_find_meta (it, "artist");
+    if (!meta) {
+        meta = "";
+    }
+    gtk_entry_set_text (GTK_ENTRY (w), meta);
+    // album
+    w = lookup_widget (widget, "album");
+    meta = deadbeef->pl_find_meta (it, "album");
+    if (!meta) {
+        meta = "";
+    }
+    gtk_entry_set_text (GTK_ENTRY (w), meta);
+    // genre
+    w = lookup_widget (widget, "genre");
+    meta = deadbeef->pl_find_meta (it, "genre");
+    if (!meta) {
+        meta = "";
+    }
+    gtk_entry_set_text (GTK_ENTRY (w), meta);
+    // year
+    w = lookup_widget (widget, "year");
+    meta = deadbeef->pl_find_meta (it, "year");
+    if (!meta) {
+        meta = "";
+    }
+    gtk_entry_set_text (GTK_ENTRY (w), meta);
+    // track
+    w = lookup_widget (widget, "track");
+    meta = deadbeef->pl_find_meta (it, "track");
+    if (!meta) {
+        meta = "";
+    }
+    gtk_entry_set_text (GTK_ENTRY (w), meta);
+    // comment
+    w = lookup_widget (widget, "comment");
+    meta = deadbeef->pl_find_meta (it, "comment");
+    if (!meta) {
+        meta = "";
+    }
+    gtk_entry_set_text (GTK_ENTRY (w), meta);
 
+    gtk_widget_show (widget);
 }
 
 
