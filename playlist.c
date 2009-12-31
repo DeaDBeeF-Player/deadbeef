@@ -1640,6 +1640,10 @@ pl_format_title (playItem_t *it, char *s, int size, int id, const char *fmt) {
     const char *track = NULL;
     const char *title = NULL;
     const char *duration = NULL;
+    const char *year = NULL;
+    const char *genre = NULL;
+    const char *comment = NULL;
+    const char *copyright = NULL;
 
     if (id != -1) {
         const char *text = NULL;
@@ -1714,6 +1718,18 @@ pl_format_title (playItem_t *it, char *s, int size, int id, const char *fmt) {
             }
             else if (*fmt == 'n') {
                 meta = (track = pl_get_meta_cached (it, "track", track, ""));
+            }
+            else if (*fmt == 'y') {
+                meta = (year = pl_get_meta_cached (it, "year", year, ""));
+            }
+            else if (*fmt == 'g') {
+                meta = (genre = pl_get_meta_cached (it, "genre", genre, ""));
+            }
+            else if (*fmt == 'c') {
+                meta = (comment = pl_get_meta_cached (it, "comment", comment, ""));
+            }
+            else if (*fmt == 'r') {
+                meta = (copyright = pl_get_meta_cached (it, "copyright", copyright, ""));
             }
             else if (*fmt == 'l') {
                 const char *value = (duration = pl_format_duration (it, duration, dur, sizeof (dur)));
