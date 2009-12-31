@@ -416,7 +416,13 @@ cflac_init_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__Str
                     deadbeef->pl_add_meta (it, "track", s + 12);
                 }
                 else if (!strncasecmp (s, "DATE=", 5)) {
-                    deadbeef->pl_add_meta (it, "date", s + 5);
+                    deadbeef->pl_add_meta (it, "year", s + 5);
+                }
+                else if (!strncasecmp (s, "GENRE=", 6)) {
+                    deadbeef->pl_add_meta (it, "genre", s + 6);
+                }
+                else if (!strncasecmp (s, "COMMENT=", 8)) {
+                    deadbeef->pl_add_meta (it, "comment", s + 8);
                 }
                 else if (!strncasecmp (s, "replaygain_album_gain=", 22)) {
                     it->replaygain_album_gain = atof (s + 22);
