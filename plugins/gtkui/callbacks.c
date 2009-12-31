@@ -2360,7 +2360,9 @@ on_properties1_activate                (GtkMenuItem     *menuitem,
     if (!meta) {
         meta = "";
     }
-    gtk_entry_set_text (GTK_ENTRY (w), meta);
+    GtkTextBuffer *buffer = gtk_text_buffer_new (NULL);
+    gtk_text_buffer_set_text (buffer, meta, strlen (meta));
+    g_object_unref (buffer);
 
     gtk_widget_show (widget);
 }
