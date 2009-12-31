@@ -524,8 +524,13 @@ void
 on_remove1_activate                    (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    // does nothing here -- required for hotkey hint in the menu
-    // job is done in keypress handlers
+    int cursor = deadbeef->pl_delete_selected ();
+    if (cursor >= main_playlist.get_count ()) {
+        cursor = main_playlist.get_count ()-1;
+    }
+    gtkpl_set_cursor (main_playlist.iterator, cursor);
+    main_refresh ();
+    search_refresh ();
 }
 
 
