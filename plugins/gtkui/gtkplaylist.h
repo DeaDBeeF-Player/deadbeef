@@ -259,4 +259,7 @@ gtkpl_set_cursor (int iter, int cursor);
 gtkpl_column_t*
 gtkpl_get_column_for_click (gtkplaylist_t *pl, int click_x);
 
+void
+main_refresh (void);
+
 #endif // __GTKPLAYLIST_H

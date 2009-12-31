@@ -258,7 +258,6 @@ on_playlist_button_press_event         (GtkWidget       *widget,
                 gtk_widget_set_sensitive (separator8, FALSE);
 
                 properties1 = gtk_menu_item_new_with_mnemonic ("Properties");
-                gtk_widget_set_sensitive (properties1, FALSE);
                 gtk_widget_show (properties1);
                 gtk_container_add (GTK_CONTAINER (playlist_menu), properties1);
                 gtk_object_set_data (GTK_OBJECT (properties1), "ps", ps);
@@ -2266,6 +2265,15 @@ void
 on_remove2_activate                    (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
+    GtkWidget *widget = GTK_WIDGET (menuitem);
+    GTKPL_PROLOGUE;
+    int cursor = deadbeef->pl_delete_selected ();
+    if (cursor >= ps->get_count ()) {
+        cursor = ps->get_count ()-1;
+    }
+    main_refresh ();
+    search_refresh ();
+    gtkpl_set_cursor (ps->iterator, cursor);
 }
 
 
