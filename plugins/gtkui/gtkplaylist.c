@@ -214,6 +214,7 @@ gtkpl_init (void) {
     rowheight = draw_get_font_size () + 12;
     memcpy (colo_current, colo_white_blue, sizeof (colo_current));
     theme_treeview = gtk_tree_view_new ();
+    GTK_WIDGET_UNSET_FLAGS (theme_treeview, GTK_CAN_FOCUS);
     gtk_widget_show (theme_treeview);
     GtkWidget *vbox1 = lookup_widget (mainwin, "vbox1");
     gtk_box_pack_start (GTK_BOX (vbox1), theme_treeview, FALSE, FALSE, 0);
@@ -911,6 +912,9 @@ gtkpl_keypress (gtkplaylist_t *ps, int keyval, int state) {
         cursor = deadbeef->pl_get_cursor (ps->iterator);
         if (cursor > 0) {
             cursor--;
+        }
+        else if (cursor < 0 && ps->get_count () > 0) {
+            cursor = 0;
         }
     }
     else if (keyval == GDK_Page_Down) {
