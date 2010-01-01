@@ -98,6 +98,9 @@ update_vorbis_comments (DB_playItem_t *it, vorbis_comment *vc) {
             else if (!strncasecmp (vc->user_comments[i], "genre=", 6)) {
                 deadbeef->pl_add_meta (it, "genre", vc->user_comments[i] + 6);
             }
+            else if (!strncasecmp (vc->user_comments[i], "copyright=", 10)) {
+                deadbeef->pl_add_meta (it, "copyright", vc->user_comments[i] + 10);
+            }
             else if (!strncasecmp (vc->user_comments[i], "replaygain_album_gain=", 22)) {
                 it->replaygain_album_gain = atof (vc->user_comments[i] + 22);
             }
