@@ -90,7 +90,13 @@ update_vorbis_comments (DB_playItem_t *it, vorbis_comment *vc) {
                 deadbeef->pl_add_meta (it, "track", vc->user_comments[i] + 12);
             }
             else if (!strncasecmp (vc->user_comments[i], "date=", 5)) {
-                deadbeef->pl_add_meta (it, "date", vc->user_comments[i] + 5);
+                deadbeef->pl_add_meta (it, "year", vc->user_comments[i] + 5);
+            }
+            else if (!strncasecmp (vc->user_comments[i], "comment=", 8)) {
+                deadbeef->pl_add_meta (it, "comment", vc->user_comments[i] + 8);
+            }
+            else if (!strncasecmp (vc->user_comments[i], "genre=", 6)) {
+                deadbeef->pl_add_meta (it, "genre", vc->user_comments[i] + 6);
             }
             else if (!strncasecmp (vc->user_comments[i], "replaygain_album_gain=", 22)) {
                 it->replaygain_album_gain = atof (vc->user_comments[i] + 22);
@@ -131,9 +137,9 @@ cvorbis_init (DB_playItem_t *it) {
             .tell_func = NULL
         };
 
-        int err;
         trace ("calling ov_open_callbacks\n");
-        if (err = ov_open_callbacks (file, &vorbis_file, NULL, 0, ovcb) != 0) {
+        int err = ov_open_callbacks (file, &vorbis_file, NULL, 0, ovcb);
+        if (err != 0) {
             trace ("ov_open_callbacks returned %d\n", err);
             plugin.free ();
             return -1;
@@ -150,8 +156,8 @@ cvorbis_init (DB_playItem_t *it) {
         };
 
         trace ("calling ov_open_callbacks\n");
-        int err;
-        if (err = ov_open_callbacks (file, &vorbis_file, NULL, 0, ovcb) != 0) {
+        int err = ov_open_callbacks (file, &vorbis_file, NULL, 0, ovcb);
+        if (err != 0) {
             trace ("ov_open_callbacks returned %d\n", err);
             plugin.free ();
             return -1;
@@ -342,7 +348,11 @@ cvorbis_insert (DB_playItem_t *after, const char *fname) {
     };
     OggVorbis_File vorbis_file;
     vorbis_info *vi;
-    ov_open_callbacks (fp, &vorbis_file, NULL, 0, ovcb);
+    int err = ov_open_callbacks (fp, &vorbis_file, NULL, 0, ovcb);
+    if (err != 0) {
+        trace ("ov_open_callbacks returned %d\n", err);
+        return NULL;
+    }
     vi = ov_info (&vorbis_file, -1);
     if (!vi) { // not a vorbis stream
         trace ("vorbis: failed to ov_open %s\n", fname);
