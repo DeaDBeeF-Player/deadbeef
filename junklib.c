@@ -603,7 +603,10 @@ junk_read_ape (playItem_t *it, DB_FILE *fp) {
                     pl_add_meta (it, "genre", value);
                 }
                 else if (!strcasecmp (key, "comment")) {
-                    pl_add_meta (it, "genre", value);
+                    pl_add_meta (it, "comment", value);
+                }
+                else if (!strcasecmp (key, "copyright")) {
+                    pl_add_meta (it, "copyright", value);
                 }
                 else if (!strcasecmp (key, "cuesheet")) {
                     pl_add_meta (it, "cuesheet", value);
