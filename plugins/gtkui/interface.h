@@ -10,5 +10,5 @@ GtkWidget* create_helpwindow (void);
 GtkWidget* create_prefwin (void);
 GtkWidget* create_headermenu (void);
 GtkWidget* create_addlocation (void);
-GtkWidget* create_inputformat (void);
 GtkWidget* create_trackproperties (void);
+GtkWidget* create_editcolumndlg (void);

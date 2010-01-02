@@ -774,3 +774,11 @@ gboolean
 on_trackproperties_key_press_event     (GtkWidget       *widget,
                                         GdkEventKey     *event,
                                         gpointer         user_data);
+
+void
+on_add_column_activate                 (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_edit_column_activate                (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);

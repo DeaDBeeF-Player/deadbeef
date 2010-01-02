@@ -224,6 +224,9 @@ void
 gtkpl_column_append (gtkplaylist_t *pl, gtkpl_column_t *c);
 
 void
+gtkpl_column_insert_before (gtkplaylist_t *pl, gtkpl_column_t *before, gtkpl_column_t *c);
+
+void
 gtkpl_column_remove (gtkplaylist_t *pl, gtkpl_column_t *c);
 
 void

@@ -177,7 +177,8 @@ enum pl_column_t {
     DB_COLUMN_ALBUM = 4,
     DB_COLUMN_TITLE = 5,
     DB_COLUMN_DURATION = 6,
-    DB_COLUMN_TRACK = 7
+    DB_COLUMN_TRACK = 7,
+    DB_COLUMN_ID_MAX = 7
 };
 
 // message ids for communicating with player

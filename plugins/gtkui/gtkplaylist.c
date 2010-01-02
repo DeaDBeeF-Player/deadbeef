@@ -1465,6 +1465,7 @@ on_header_button_press_event           (GtkWidget       *widget,
                                         gpointer         user_data)
 {
     GTKPL_PROLOGUE;
+    ps->active_column = gtkpl_get_column_for_click (ps, event->x);
     if (event->button == 1) {
         // start sizing/dragging
         header_dragging = -1;
@@ -1494,7 +1495,6 @@ on_header_button_press_event           (GtkWidget       *widget,
         }
     }
     else if (event->button == 3) {
-        ps->active_column = gtkpl_get_column_for_click (ps, event->x);
         GtkWidget *menu = create_headermenu ();
         last_playlist = ps;
         gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, widget, 3, gtk_get_current_event_time());
@@ -1673,6 +1673,33 @@ gtkpl_column_append (gtkplaylist_t *pl, gtkpl_column_t *c) {
         pl->columns = c;
     }
     gtkpl_column_update_config (pl, c, idx);
+}
+
+void
+gtkpl_column_insert_before (gtkplaylist_t *pl, gtkpl_column_t *before, gtkpl_column_t *c) {
+    if (pl->columns) {
+        gtkpl_column_t *prev = NULL;
+        gtkpl_column_t *next = pl->columns;
+        while (next) {
+            if (next == before) {
+                break;
+            }
+            prev = next;
+            next = next->next;
+        }
+        c->next = next;
+        if (prev) {
+            prev->next = c;
+        }
+        else {
+            pl->columns = c;
+        }
+        gtkpl_column_rewrite_config (pl);
+    }
+    else {
+        pl->columns = c;
+        gtkpl_column_update_config (pl, c, 0);
+    }
 }
 
 void
