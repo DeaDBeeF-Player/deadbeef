@@ -1752,6 +1752,7 @@ on_add_column_activate                 (GtkMenuItem     *menuitem,
 {
     gtkplaylist_t *ps = last_playlist;
     GtkWidget *dlg = create_editcolumndlg ();
+    gtk_window_set_title (GTK_WINDOW (dlg), "Add column");
     gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "id")), 0);
     gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "align")), 0);
     gint response = gtk_dialog_run (GTK_DIALOG (dlg));
@@ -1782,6 +1783,7 @@ on_edit_column_activate                (GtkMenuItem     *menuitem,
     if (!ps->active_column)
         return;
     GtkWidget *dlg = create_editcolumndlg ();
+    gtk_window_set_title (GTK_WINDOW (dlg), "Edit column");
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (dlg, "title")), ps->active_column->title);
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (dlg, "format")), ps->active_column->format);
     if (ps->active_column->id == -1) {
