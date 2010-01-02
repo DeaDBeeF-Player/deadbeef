@@ -724,6 +724,7 @@ static const char *convstr (const char* str, int sz) {
     const char *enc = "iso8859-1";
     int latin = 0;
     int rus = 0;
+#if 0
     for (int i = 0; i < sz; i++) {
         if ((str[i] >= 'A' && str[i] <= 'Z')
                 || str[i] >= 'a' && str[i] <= 'z') {
@@ -737,6 +738,7 @@ static const char *convstr (const char* str, int sz) {
         // might be russian
         enc = "cp1251";
     }
+#endif
     cd = iconv_open ("utf8", enc);
     if (!cd) {
         // printf ("unknown encoding: %s\n", enc);
