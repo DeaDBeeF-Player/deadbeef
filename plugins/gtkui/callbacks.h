@@ -782,3 +782,8 @@ on_add_column_activate                 (GtkMenuItem     *menuitem,
 void
 on_edit_column_activate                (GtkMenuItem     *menuitem,
                                         gpointer         user_data);
+
+gboolean
+on_trackproperties_delete_event        (GtkWidget       *widget,
+                                        GdkEvent        *event,
+                                        gpointer         user_data);

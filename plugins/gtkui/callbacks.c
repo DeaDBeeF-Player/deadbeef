@@ -49,6 +49,7 @@ extern GtkWidget *mainwin;
 extern gtkplaylist_t main_playlist;
 extern gtkplaylist_t search_playlist;
 extern DB_functions_t *deadbeef; // defined in gtkui.c
+GtkWidget *trackproperties;
 
 gboolean
 playlist_tooltip_handler (GtkWidget *widget, gint x, gint y, gboolean keyboard_mode, GtkTooltip *tooltip, gpointer unused)
@@ -2301,8 +2302,11 @@ on_properties1_activate                (GtkMenuItem     *menuitem,
         fprintf (stderr, "attempt to view properties of non-existing item\n");
         return;
     }
-    widget = create_trackproperties ();
-    gtk_window_set_transient_for (GTK_WINDOW (widget), GTK_WINDOW (mainwin));
+    if (!trackproperties) {
+        trackproperties = create_trackproperties ();
+        gtk_window_set_transient_for (GTK_WINDOW (trackproperties), GTK_WINDOW (mainwin));
+    }
+    widget = trackproperties;
     // fill in metadata
     // location
     w = lookup_widget (widget, "location");
@@ -2386,4 +2390,14 @@ on_cursor_follows_playback_activate    (GtkMenuItem     *menuitem,
 }
 
 
+
+
+gboolean
+on_trackproperties_delete_event        (GtkWidget       *widget,
+                                        GdkEvent        *event,
+                                        gpointer         user_data)
+{
+    trackproperties = NULL;
+    return FALSE;
+}
 

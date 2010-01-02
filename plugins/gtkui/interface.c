@@ -1946,6 +1946,9 @@ create_trackproperties (void)
   g_signal_connect ((gpointer) trackproperties, "key_press_event",
                     G_CALLBACK (on_trackproperties_key_press_event),
                     NULL);
+  g_signal_connect ((gpointer) trackproperties, "delete_event",
+                    G_CALLBACK (on_trackproperties_delete_event),
+                    NULL);
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (trackproperties, trackproperties, "trackproperties");

@@ -2572,6 +2572,7 @@ SOCKS5_HOSTNAME</property>
   <property name="focus_on_map">True</property>
   <property name="urgency_hint">False</property>
   <signal name="key_press_event" handler="on_trackproperties_key_press_event" last_modification_time="Thu, 31 Dec 2009 13:46:40 GMT"/>
+  <signal name="delete_event" handler="on_trackproperties_delete_event" last_modification_time="Sat, 02 Jan 2010 21:38:32 GMT"/>
 
   <child>
     <widget class="GtkTable" id="table7">
