@@ -809,6 +809,8 @@ streamer_read_async (char *bytes, int size) {
                 trace ("finished streaming song, queueing next\n");
                 bytes_until_next_song = streambuffer_fill;
                 if (conf_get_int ("playlist.stop_after_current", 0)) {
+                    conf_set_int ("playlist.stop_after_current", 0);
+                    plug_trigger_event (DB_EV_CONFIGCHANGED, 0);
                     streamer_set_nextsong (-2, 1);
                 }
                 else {
