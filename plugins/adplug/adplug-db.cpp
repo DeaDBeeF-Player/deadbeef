@@ -27,8 +27,8 @@
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
-#define trace(...) { fprintf (stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf (stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 extern "C" {
 
@@ -73,6 +73,8 @@ adplug_init (DB_playItem_t *it) {
     adplug_plugin.info.samplerate = samplerate;
     adplug_plugin.info.readpos = 0;
 
+//    trace ("adplug_init ok (duration=%f, totalsamples=%d)\n", deadbeef->pl_get_item_duration (it), totalsamples);
+
     return 0;
 }
 
@@ -98,11 +100,15 @@ adplug_read_int16 (char *bytes, int size) {
     int i;
     int sampsize = 4;
 
-    int initsize = size;
     if (currentsample + size/4 >= totalsamples) {
         // clip
         size = (totalsamples - currentsample) * sampsize;
+        trace ("adplug: clipped to %d\n", size);
+        if (size <= 0) {
+            return 0;
+        }
     }
+    int initsize = size;
 
     int towrite = size/sampsize;
     char *sndbufpos = bytes;
@@ -119,6 +125,8 @@ adplug_read_int16 (char *bytes, int size) {
       i = min (towrite, (long) (toadd / decoder->getrefresh () + 4) & ~3);
       opl->update ((short *) sndbufpos, i);
       sndbufpos += i * sampsize;
+      size -= i * sampsize;
+      currentsample += i;
       towrite -= i;
       toadd -= (long) (decoder->getrefresh () * i);
     }
@@ -132,23 +140,29 @@ adplug_seek_sample (int sample) {
     // seek to specified sample (frame)
     // return 0 on success
     // return -1 on failure
-
-    if (sample < currentsample) {
-        decoder->rewind (subsong);
-        currentsample = 0;
+    if (sample >= totalsamples) {
+        trace ("adplug: seek outside bounds (%d of %d)\n", sample, totalsamples);
+        return -1;
     }
+
+    decoder->rewind (subsong);
+    currentsample = 0;
 
     while (currentsample < sample) {
         decoder->update ();
-        currentsample += 1000/decoder->getrefresh ();
+        int framesize = adplug_plugin.info.samplerate / decoder->getrefresh ();
+        currentsample += framesize;
     }
+
     if (currentsample >= totalsamples) {
         return -1;
     }
+
     toadd = 0;
+    trace ("adplug: new position after seek: %d of %d\n", currentsample, totalsamples);
     
-    // update readpos
     adplug_plugin.info.readpos = (float)currentsample / adplug_plugin.info.samplerate;
+
     return 0;
 }
 
