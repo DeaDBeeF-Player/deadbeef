@@ -1729,7 +1729,10 @@ gtkpl_column_remove (gtkplaylist_t *pl, gtkpl_column_t *c) {
         }
         cc = cc->next;
     }
-    assert (cc && "gtkpl: attempted to remove column that is not in list");
+
+    if (!cc) {
+        trace ("gtkpl: attempted to remove column that is not in list\n");
+    }
 }
 
 void

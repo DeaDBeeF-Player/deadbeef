@@ -1765,6 +1765,7 @@ on_add_column_activate                 (GtkMenuItem     *menuitem,
             id = -1;
         }
         gtkpl_column_insert_before (ps, ps->active_column, gtkpl_column_alloc (title, 100, id, format, align));
+        gtkpl_setup_hscrollbar (ps);
         gtkpl_header_draw (ps);
         gtkpl_expose_header (ps, 0, 0, ps->header->allocation.width, ps->header->allocation.height);
 
@@ -1831,6 +1832,7 @@ on_remove_column_activate              (GtkMenuItem     *menuitem,
 
     gtkpl_column_remove (ps, ps->active_column);
 
+    gtkpl_setup_hscrollbar (ps);
     gtkpl_header_draw (ps);
     gtkpl_expose_header (ps, 0, 0, ps->header->allocation.width, ps->header->allocation.height);
 

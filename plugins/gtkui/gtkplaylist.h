@@ -112,6 +112,9 @@ void
 gtkpl_setup_scrollbar (gtkplaylist_t *ps);
 
 void
+gtkpl_setup_hscrollbar (gtkplaylist_t *ps);
+
+void
 gtkpl_draw_pl_row_back (gtkplaylist_t *ps, int row, DB_playItem_t *it);
 
 void
