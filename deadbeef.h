@@ -346,6 +346,7 @@ typedef struct {
     int (*junk_read_id3v2) (DB_playItem_t *it, DB_FILE *fp);
     int (*junk_read_ape) (DB_playItem_t *it, DB_FILE *fp);
     int (*junk_get_leading_size) (DB_FILE *fp);
+    void (*junk_copy) (DB_playItem_t *from, DB_playItem_t *first, DB_playItem_t *last);
     // vfs
     DB_FILE* (*fopen) (const char *fname);
     void (*fclose) (DB_FILE *f);
