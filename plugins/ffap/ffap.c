@@ -1651,13 +1651,6 @@ ffap_insert (DB_playItem_t *after, const char *fname) {
 
     float duration = ape_ctx.totalsamples / (float)ape_ctx.samplerate;
     DB_playItem_t *it = NULL;
-    it  = deadbeef->pl_insert_cue (after, fname, &plugin, "APE", ape_ctx.totalsamples, ape_ctx.samplerate);
-    if (it) {
-        deadbeef->fclose (fp);
-        ape_free_ctx (&ape_ctx);
-        return it;
-    }
-
     it = deadbeef->pl_item_alloc ();
     it->decoder = &plugin;
     it->fname = strdup (fname);
@@ -1675,22 +1668,27 @@ ffap_insert (DB_playItem_t *after, const char *fname) {
     /*int apeerr = */deadbeef->junk_read_ape (it, fp);
 
     deadbeef->fclose (fp);
+    ape_free_ctx (&ape_ctx);
+
+    DB_playItem_t *cue  = deadbeef->pl_insert_cue (after, it, ape_ctx.totalsamples, ape_ctx.samplerate);
+    if (cue) {
+        deadbeef->pl_item_free (it);
+        return cue;
+    }
 
     // embedded cue
     const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
     if (cuesheet) {
-        DB_playItem_t *last = deadbeef->pl_insert_cue_from_buffer (after, fname, cuesheet, strlen (cuesheet), &plugin, plugin.filetypes[0], ape_ctx.totalsamples, ape_ctx.samplerate);
-        if (last) {
+        cue = deadbeef->pl_insert_cue_from_buffer (after, it, cuesheet, strlen (cuesheet), ape_ctx.totalsamples, ape_ctx.samplerate);
+        if (cue) {
             deadbeef->pl_item_free (it);
-            ape_free_ctx (&ape_ctx);
-            return last;
+            return cue;
         }
     }
 
     deadbeef->pl_add_meta (it, "title", NULL);
     after = deadbeef->pl_insert_item (after, it);
 
-    ape_free_ctx (&ape_ctx);
     return after;
 }
 

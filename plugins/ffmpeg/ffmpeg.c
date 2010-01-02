@@ -432,13 +432,6 @@ ffmpeg_insert (DB_playItem_t *after, const char *fname) {
         filetype = filetypes[FT_UNKNOWN];
     }
 
-    // external cuesheet
-    DB_playItem_t *cue = deadbeef->pl_insert_cue (after, fname, &plugin, filetype, totalsamples, samplerate);
-    if (cue) {
-        // cuesheet loaded
-        av_close_input_file(fctx);
-        return cue;
-    }
     DB_playItem_t *it = deadbeef->pl_item_alloc ();
     it->decoder = &plugin;
     it->fname = strdup (fname);
@@ -474,6 +467,12 @@ ffmpeg_insert (DB_playItem_t *after, const char *fname) {
     // free decoder
     av_close_input_file(fctx);
 
+    // external cuesheet
+    DB_playItem_t *cue = deadbeef->pl_insert_cue (after, it, totalsamples, samplerate);
+    if (cue) {
+        deadbeef->pl_item_free (it);
+        return cue;
+    }
     // now the track is ready, insert into playlist
     after = deadbeef->pl_insert_item (after, it);
     return after;

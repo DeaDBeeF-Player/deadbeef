@@ -104,10 +104,10 @@ int
 pl_get_idx_of (playItem_t *it);
 
 playItem_t *
-pl_insert_cue_from_buffer (playItem_t *after, const char *fname, const uint8_t *buffer, int buffersize, struct DB_decoder_s *decoder, const char *ftype, int numsamples, int samplerate);
+pl_insert_cue_from_buffer (playItem_t *after, playItem_t *origin, const uint8_t *buffer, int buffersize, int numsamples, int samplerate);
 
 playItem_t *
-pl_insert_cue (playItem_t *after, const char *cuename, struct DB_decoder_s *decoder, const char *ftype, int numsamples, int samplerate);
+pl_insert_cue (playItem_t *after, playItem_t *origin, int numsamples, int samplerate);
 
 //int
 //pl_set_current (playItem_t *it);

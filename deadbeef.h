@@ -333,8 +333,8 @@ typedef struct {
     void (*pl_playqueue_remove) (DB_playItem_t *it);
     int (*pl_playqueue_test) (DB_playItem_t *it);
     // cuesheet support
-    DB_playItem_t *(*pl_insert_cue_from_buffer) (DB_playItem_t *after, const char *fname, const uint8_t *buffer, int buffersize, struct DB_decoder_s *decoder, const char *ftype, int numsamples, int samplerate);
-    DB_playItem_t * (*pl_insert_cue) (DB_playItem_t *after, const char *filename, struct DB_decoder_s *decoder, const char *ftype, int numsamples, int samplerate);
+    DB_playItem_t *(*pl_insert_cue_from_buffer) (DB_playItem_t *after, DB_playItem_t *origin, const uint8_t *buffer, int buffersize, int numsamples, int samplerate);
+    DB_playItem_t * (*pl_insert_cue) (DB_playItem_t *after, DB_playItem_t *origin, int numsamples, int samplerate);
     // volume control
     void (*volume_set_db) (float dB);
     float (*volume_get_db) (void);

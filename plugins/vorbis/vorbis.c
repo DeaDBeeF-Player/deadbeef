@@ -101,6 +101,9 @@ update_vorbis_comments (DB_playItem_t *it, vorbis_comment *vc) {
             else if (!strncasecmp (vc->user_comments[i], "copyright=", 10)) {
                 deadbeef->pl_add_meta (it, "copyright", vc->user_comments[i] + 10);
             }
+            else if (!strncasecmp (vc->user_comments[i], "cuesheet=", 9)) {
+                deadbeef->pl_add_meta (it, "cuesheet", vc->user_comments[i] + 9);
+            }
             else if (!strncasecmp (vc->user_comments[i], "replaygain_album_gain=", 22)) {
                 it->replaygain_album_gain = atof (vc->user_comments[i] + 22);
             }
@@ -363,11 +366,6 @@ cvorbis_insert (DB_playItem_t *after, const char *fname) {
     }
     float duration = ov_time_total (&vorbis_file, -1);
     int totalsamples = ov_pcm_total (&vorbis_file, -1);
-    DB_playItem_t *cue_after = deadbeef->pl_insert_cue (after, fname, &plugin, "OggVorbis", totalsamples, vi->rate);
-    if (cue_after) {
-        ov_clear (&vorbis_file);
-        return cue_after;
-    }
 
     DB_playItem_t *it = deadbeef->pl_item_alloc ();
     it->decoder = &plugin;
@@ -378,7 +376,25 @@ cvorbis_insert (DB_playItem_t *after, const char *fname) {
     // metainfo
     vorbis_comment *vc = ov_comment (&vorbis_file, -1);
     update_vorbis_comments (it, vc);
+    int samplerate = vi->rate;
     ov_clear (&vorbis_file);
+
+    DB_playItem_t *cue = deadbeef->pl_insert_cue (after, it, totalsamples, samplerate);
+    if (cue) {
+        deadbeef->pl_item_free (it);
+        return cue;
+    }
+
+    // embedded cue
+    const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
+    if (cuesheet) {
+        cue = deadbeef->pl_insert_cue_from_buffer (after, it, cuesheet, strlen (cuesheet), totalsamples, samplerate);
+        if (cue) {
+            deadbeef->pl_item_free (it);
+            return cue;
+        }
+    }
+
     after = deadbeef->pl_insert_item (after, it);
     return after;
 }

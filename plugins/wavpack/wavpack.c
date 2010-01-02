@@ -224,11 +224,6 @@ wv_insert (DB_playItem_t *after, const char *fname) {
     int samplerate = WavpackGetSampleRate (ctx);
     WavpackCloseFile (ctx);
     float duration = (float)totalsamples / samplerate;
-    DB_playItem_t *cue_after = deadbeef->pl_insert_cue (after, fname, &plugin, "wv", totalsamples, samplerate);
-    if (cue_after) {
-        deadbeef->fclose (fp);
-        return cue_after;
-    }
 
     DB_playItem_t *it = deadbeef->pl_item_alloc ();
     it->decoder = &plugin;
@@ -248,10 +243,15 @@ wv_insert (DB_playItem_t *after, const char *fname) {
     }
     deadbeef->fclose (fp);
 
+    DB_playItem_t *cue_after = deadbeef->pl_insert_cue (after, it, totalsamples, samplerate);
+    if (cue_after) {
+        return cue_after;
+    }
+
     // embedded cue
     const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
     if (cuesheet) {
-        DB_playItem_t *last = deadbeef->pl_insert_cue_from_buffer (after, fname, cuesheet, strlen (cuesheet), &plugin, plugin.filetypes[0], totalsamples, samplerate);
+        DB_playItem_t *last = deadbeef->pl_insert_cue_from_buffer (after, it, cuesheet, strlen (cuesheet), totalsamples, samplerate);
         if (last) {
             deadbeef->pl_item_free (it);
             return last;

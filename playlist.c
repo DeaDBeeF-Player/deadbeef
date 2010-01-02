@@ -232,7 +232,8 @@ pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, c
 }
 
 playItem_t *
-pl_insert_cue_from_buffer (playItem_t *after, const char *fname, const uint8_t *buffer, int buffersize, struct DB_decoder_s *decoder, const char *ftype, int numsamples, int samplerate) {
+pl_insert_cue_from_buffer (playItem_t *after, playItem_t *origin, const uint8_t *buffer, int buffersize, int numsamples, int samplerate) {
+    playItem_t *ins = after;
     trace ("pl_insert_cue_from_buffer numsamples=%d, samplerate=%d\n", numsamples, samplerate);
     char performer[256] = "";
     char albumtitle[256] = "";
@@ -279,7 +280,7 @@ pl_insert_cue_from_buffer (playItem_t *after, const char *fname, const uint8_t *
         }
         else if (!strncmp (p, "TRACK ", 6)) {
             // add previous track
-            after = pl_process_cue_track (after, fname, &prev, track, index00, index01, pregap, title, performer, albumtitle, decoder, ftype, samplerate);
+            after = pl_process_cue_track (after, origin->fname, &prev, track, index00, index01, pregap, title, performer, albumtitle, origin->decoder, origin->filetype, samplerate);
             track[0] = 0;
             title[0] = 0;
             pregap[0] = 0;
@@ -305,21 +306,24 @@ pl_insert_cue_from_buffer (playItem_t *after, const char *fname, const uint8_t *
 //            fprintf (stderr, "got unknown line:\n%s\n", p);
         }
     }
-    after = pl_process_cue_track (after, fname, &prev, track, index00, index01, pregap, title, performer, albumtitle, decoder, ftype, samplerate);
+    after = pl_process_cue_track (after, origin->fname, &prev, track, index00, index01, pregap, title, performer, albumtitle, origin->decoder, origin->filetype, samplerate);
     if (after) {
         trace ("last track endsample: %d\n", numsamples-1);
         after->endsample = numsamples-1;
         pl_set_item_duration (after, (float)(after->endsample - after->startsample + 1) / samplerate);
     }
+    // copy metadata from embedded tags
+    playItem_t *first = ins ? ins->next[PL_MAIN] : playlist_head[PL_MAIN];
+    junk_copy (origin, first, after);
     return after;
 }
 
 playItem_t *
-pl_insert_cue (playItem_t *after, const char *fname, struct DB_decoder_s *decoder, const char *ftype, int numsamples, int samplerate) {
+pl_insert_cue (playItem_t *after, playItem_t *origin, int numsamples, int samplerate) {
     trace ("pl_insert_cue numsamples=%d, samplerate=%d\n", numsamples, samplerate);
-    int len = strlen (fname);
+    int len = strlen (origin->fname);
     char cuename[len+5];
-    strcpy (cuename, fname);
+    strcpy (cuename, origin->fname);
     strcpy (cuename+len, ".cue");
     FILE *fp = fopen (cuename, "rb");
     if (!fp) {
@@ -346,7 +350,7 @@ pl_insert_cue (playItem_t *after, const char *fname, struct DB_decoder_s *decode
         return NULL;
     }
     fclose (fp);
-    return pl_insert_cue_from_buffer (after, fname, buf, sz, decoder, ftype, numsamples, samplerate);
+    return pl_insert_cue_from_buffer (after, origin, buf, sz, numsamples, samplerate);
 }
 
 playItem_t *

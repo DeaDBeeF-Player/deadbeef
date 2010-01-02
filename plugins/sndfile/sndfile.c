@@ -204,11 +204,6 @@ sndfile_insert (DB_playItem_t *after, const char *fname) {
     deadbeef->fclose (sfctx.file);
 
     float duration = (float)totalsamples / samplerate;
-    DB_playItem_t *cue_after = deadbeef->pl_insert_cue (after, fname, &plugin, "sndfile", totalsamples, samplerate);
-    if (cue_after) {
-        return cue_after;
-    }
-
     DB_playItem_t *it = deadbeef->pl_item_alloc ();
     it->decoder = &plugin;
     it->fname = strdup (fname);
@@ -216,6 +211,11 @@ sndfile_insert (DB_playItem_t *after, const char *fname) {
     deadbeef->pl_set_item_duration (it, duration);
 
     trace ("sndfile: totalsamples=%d, samplerate=%d, duration=%f\n", totalsamples, samplerate, duration);
+
+    DB_playItem_t *cue_after = deadbeef->pl_insert_cue (after, it, totalsamples, samplerate);
+    if (cue_after) {
+        return cue_after;
+    }
 
     deadbeef->pl_add_meta (it, "title", NULL);
     after = deadbeef->pl_insert_item (after, it);

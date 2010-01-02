@@ -350,6 +350,7 @@ cflac_init_write_callback (const FLAC__StreamDecoder *decoder, const FLAC__Frame
     return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;
 }
 
+#if 0
 static void
 cflac_init_cue_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMetadata *metadata, void *client_data) {
     if (cflac_init_stop_decoding) {
@@ -364,22 +365,8 @@ cflac_init_cue_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC_
         //cb->duration = metadata->data.stream_info.total_samples / (float)metadata->data.stream_info.sample_rate;
         cb->totalsamples = metadata->data.stream_info.total_samples;
     }
-    else if (metadata->type == FLAC__METADATA_TYPE_VORBIS_COMMENT) {
-        trace ("flac: cflac_init_cue_metadata_callback: got FLAC__METADATA_TYPE_VORBIS_COMMENT\n");
-        const FLAC__StreamMetadata_VorbisComment *vc = &metadata->data.vorbis_comment;
-        for (int i = 0; i < vc->num_comments; i++) {
-            const FLAC__StreamMetadata_VorbisComment_Entry *c = &vc->comments[i];
-            if (c->length > 0) {
-                char s[c->length+1];
-                s[c->length] = 0;
-                memcpy (s, c->entry, c->length);
-                if (!strncasecmp (s, "cuesheet=", 9)) {
-                    cb->last = deadbeef->pl_insert_cue_from_buffer (cb->after, cb->fname, s+9, c->length-9, &plugin, "FLAC", cb->totalsamples, cb->samplerate);
-                }
-            }
-        }
-    }
 }
+#endif
 
 static void
 cflac_init_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMetadata *metadata, void *client_data) {
@@ -391,6 +378,9 @@ cflac_init_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__Str
     DB_playItem_t *it = cb->it;
     //it->tracknum = 0;
     if (metadata->type == FLAC__METADATA_TYPE_STREAMINFO) {
+        cb->samplerate = metadata->data.stream_info.sample_rate;
+        cb->channels = metadata->data.stream_info.channels;
+        cb->totalsamples = metadata->data.stream_info.total_samples;
         deadbeef->pl_set_item_duration (it, metadata->data.stream_info.total_samples / (float)metadata->data.stream_info.sample_rate);
     }
     else if (metadata->type == FLAC__METADATA_TYPE_VORBIS_COMMENT) {
@@ -424,6 +414,10 @@ cflac_init_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__Str
                 else if (!strncasecmp (s, "COMMENT=", 8)) {
                     deadbeef->pl_add_meta (it, "comment", s + 8);
                 }
+                if (!strncasecmp (s, "CUESHEET=", 9)) {
+                    deadbeef->pl_add_meta (it, "cuesheet", s + 9);
+//                    cb->last = deadbeef->pl_insert_cue_from_buffer (cb->after, cb->fname, s+9, c->length-9, &plugin, "FLAC", cb->totalsamples, cb->samplerate);
+                }
                 else if (!strncasecmp (s, "replaygain_album_gain=", 22)) {
                     it->replaygain_album_gain = atof (s + 22);
                 }
@@ -444,14 +438,7 @@ cflac_init_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__Str
         if (!title_added) {
             deadbeef->pl_add_meta (it, "title", NULL);
         }
-
-//    pl_add_meta (it, "artist", performer);
-//    pl_add_meta (it, "album", albumtitle);
-//    pl_add_meta (it, "track", track);
-//    pl_add_meta (it, "title", title);
     }
-//    int *psr = (int *)client_data;
-//    *psr = metadata->data.stream_info.sample_rate;
 }
 
 static DB_playItem_t *
@@ -484,15 +471,17 @@ cflac_insert (DB_playItem_t *after, const char *fname) {
     }
     deadbeef->fseek (cb.file, -4, SEEK_CUR);
     cflac_init_stop_decoding = 0;
-    //try embedded cue, and calculate duration
+
+    // open decoder for metadata reading
     FLAC__StreamDecoderInitStatus status;
     decoder = FLAC__stream_decoder_new();
     if (!decoder) {
         trace ("flac: failed to create decoder\n");
         goto cflac_insert_fail;
     }
-    FLAC__stream_decoder_set_md5_checking(decoder, 0);
 
+#if 0
+    FLAC__stream_decoder_set_md5_checking(decoder, 0);
     // try embedded cue
     FLAC__stream_decoder_set_metadata_respond_all (decoder);
     status = FLAC__stream_decoder_init_stream (decoder, flac_read_cb, flac_seek_cb, flac_tell_cb, flac_lenght_cb, flac_eof_cb, cflac_init_write_callback, cflac_init_cue_metadata_callback, cflac_init_error_callback, &cb);
@@ -507,35 +496,11 @@ cflac_insert (DB_playItem_t *after, const char *fname) {
 
     FLAC__stream_decoder_delete(decoder);
     decoder = NULL;
-    if (cb.last != after) {
-        trace ("flac: loaded embedded cuesheet\n");
-        // that means embedded cue is loaded
-        if (cb.file) {
-            deadbeef->fclose (cb.file);
-        }
-        return cb.last;
-    }
+#endif
 
-    // try external cue
-    DB_playItem_t *cue_after = deadbeef->pl_insert_cue (after, fname, &plugin, "FLAC", cb.totalsamples, cb.samplerate);
-    if (cue_after) {
-        if (cb.file) {
-            deadbeef->fclose (cb.file);
-        }
-        trace ("flac: loaded external cuesheet\n");
-        return cue_after;
-    }
-    decoder = FLAC__stream_decoder_new();
-    if (!decoder) {
-        if (cb.file) {
-            deadbeef->fclose (cb.file);
-        }
-        goto cflac_insert_fail;
-    }
+    // read all metadata
     FLAC__stream_decoder_set_md5_checking(decoder, 0);
-    // try single FLAC file without cue
     FLAC__stream_decoder_set_metadata_respond_all (decoder);
-    int samplerate = -1;
     it = deadbeef->pl_item_alloc ();
     it->decoder = &plugin;
     it->fname = strdup (fname);
@@ -559,6 +524,33 @@ cflac_insert (DB_playItem_t *after, const char *fname) {
     FLAC__stream_decoder_delete(decoder);
     decoder = NULL;
     it->filetype = "FLAC";
+
+    // try embedded cue
+    const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
+    if (cuesheet) {
+        DB_playItem_t *last = deadbeef->pl_insert_cue_from_buffer (after, it, cuesheet, strlen (cuesheet), cb.totalsamples, cb.samplerate);
+        if (last) {
+            deadbeef->pl_item_free (it);
+            return last;
+        }
+    }
+
+    // try external cue
+    DB_playItem_t *cue_after = deadbeef->pl_insert_cue (after, it, cb.totalsamples, cb.samplerate);
+    if (cue_after) {
+        if (cb.file) {
+            deadbeef->fclose (cb.file);
+        }
+        trace ("flac: loaded external cuesheet\n");
+        return cue_after;
+    }
+    decoder = FLAC__stream_decoder_new();
+    if (!decoder) {
+        if (cb.file) {
+            deadbeef->fclose (cb.file);
+        }
+        goto cflac_insert_fail;
+    }
     after = deadbeef->pl_insert_item (after, it);
     if (cb.file) {
         deadbeef->fclose (cb.file);
