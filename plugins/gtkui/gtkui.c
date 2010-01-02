@@ -186,7 +186,6 @@ on_trayicon_activate (GtkWidget       *widget,
         int y = deadbeef->conf_get_int ("mainwin.geometry.y", 40);
         int w = deadbeef->conf_get_int ("mainwin.geometry.w", 500);
         int h = deadbeef->conf_get_int ("mainwin.geometry.h", 300);
-        gtk_widget_show (mainwin);
         gtk_window_move (mainwin, x, y);
         gtk_window_resize (mainwin, w, h);
         if (deadbeef->conf_get_int ("mainwin.geometry.maximized", 0)) {
@@ -209,7 +208,6 @@ on_trayicon_button_press_event (GtkWidget       *widget,
             gtk_widget_hide (mainwin);
         }
         else {
-            gtk_widget_show (mainwin);
             int x = deadbeef->conf_get_int ("mainwin.geometry.x", 40);
             int y = deadbeef->conf_get_int ("mainwin.geometry.y", 40);
             int w = deadbeef->conf_get_int ("mainwin.geometry.w", 500);
