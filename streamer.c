@@ -131,6 +131,9 @@ streamer_set_current (playItem_t *it) {
     streamer_buffering = 1;
     from = orig_playing_song ? pl_get_idx_of (orig_playing_song) : -1;
     to = it ? pl_get_idx_of (it) : -1;
+    if (to != -1) {
+        messagepump_push (M_TRACKCHANGED, 0, to, 0);
+    }
     if (!orig_playing_song || p_isstopped ()) {
         playlist_current_ptr = it;
         //trace ("from=%d, to=%d\n", from, to);
@@ -203,6 +206,10 @@ streamer_set_current (playItem_t *it) {
         streamer_reset (0); // reset SRC
     }
     else {
+        streamer_buffering = 0;
+        if (to != -1) {
+            messagepump_push (M_TRACKCHANGED, 0, to, 0);
+        }
         trace ("no decoder in playitem!\n");
         orig_streaming_song = NULL;
         return -1;
@@ -406,8 +413,17 @@ streamer_thread (void *ctx) {
                 orig_streaming_song = orig_playing_song;
                 pl_item_copy (&str_streaming_song, orig_streaming_song);
                 bytes_until_next_song = -1;
+                streamer_buffering = 1;
+                int trk = pl_get_idx_of (orig_streaming_song);
+                if (trk != -1) {
+                    messagepump_push (M_TRACKCHANGED, 0, trk, 0);
+                }
                 int ret = str_streaming_song.decoder->init (DB_PLAYITEM (orig_streaming_song));
                 if (ret < 0) {
+                    streamer_buffering = 0;
+                    if (trk != -1) {
+                        messagepump_push (M_TRACKCHANGED, 0, trk, 0);
+                    }
                     trace ("failed to restart prev track on seek, trying to jump to next track\n");
                     pl_nextsong (0);
                     trace ("pl_nextsong switched to track %d\n", nextsong);
