@@ -2038,6 +2038,7 @@ pl_playqueue_remove (playItem_t *it) {
         }
     }
 }
+
 int
 pl_playqueue_test (playItem_t *it) {
     for (int i = 0; i < playqueue_count; i++) {
@@ -2046,4 +2047,12 @@ pl_playqueue_test (playItem_t *it) {
         }
     }
     return -1;
+}
+
+playItem_t *
+pl_playqueue_getnext (void) {
+    if (playqueue_count > 0) {
+        return playqueue[0];
+    }
+    return NULL;
 }

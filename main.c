@@ -320,6 +320,7 @@ player_thread (uintptr_t ctx) {
                 break;
             case M_PLAYSONGNUM:
                 p_stop ();
+                pl_playqueue_clear ();
                 streamer_set_nextsong (p1, 1);
                 break;
             case M_STOPSONG:

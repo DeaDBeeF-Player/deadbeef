@@ -943,7 +943,18 @@ streamer_play_current_track (void) {
     else if (playlist_current_row[PL_MAIN] != -1) {
         // play currently selected track
         p_stop ();
-        streamer_set_nextsong (playlist_current_row[PL_MAIN], 1);
+        // get next song in queue
+        int idx = -1;
+        playItem_t *next = pl_playqueue_getnext ();
+        if (next) {
+            idx = pl_get_idx_of (next);
+            pl_playqueue_pop ();
+        }
+        else {
+            idx = playlist_current_row[PL_MAIN];
+        }
+
+        streamer_set_nextsong (idx, 1);
     }
     else {
         // restart currently playing track
