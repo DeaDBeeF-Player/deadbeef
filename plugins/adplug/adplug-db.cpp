@@ -221,13 +221,15 @@ adplug_insert (DB_playItem_t *after, const char *fname) {
         if (!p->gettitle().empty()) {
             deadbeef->pl_add_meta (it, "title", p->gettitle().c_str());
         }
-        else if (!p->getdesc().empty()) {
-            deadbeef->pl_add_meta (it, "title", p->getdesc().c_str());
-        }
         else {
             deadbeef->pl_add_meta (it, "title", NULL);
         }
-        deadbeef->pl_add_meta (it, "artist", p->getauthor().c_str());
+        if (!p->getdesc().empty()) {
+            deadbeef->pl_add_meta (it, "comment", p->getdesc().c_str());
+        }
+        if (!p->getauthor().empty()) {
+            deadbeef->pl_add_meta (it, "artist", p->getauthor().c_str());
+        }
         // insert
         after = deadbeef->pl_insert_item (after, it);
     }
