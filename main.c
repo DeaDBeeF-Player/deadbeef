@@ -63,8 +63,6 @@ int
 client_exec_command_line (const char *cmdline, int len) {
     const uint8_t *parg = (const uint8_t *)cmdline;
     const uint8_t *pend = cmdline + len;
-    int exitcode = 0;
-    int queue = 0;
     while (parg < pend) {
         //        if (filter == 1) {
         // help, version and nowplaying are executed with any filter
@@ -111,7 +109,6 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
     }
     const uint8_t *parg = (const uint8_t *)cmdline;
     const uint8_t *pend = cmdline + len;
-    int exitcode = 0;
     int queue = 0;
     while (parg < pend) {
         if (!strcmp (parg, "--nowplaying")) {
@@ -288,8 +285,7 @@ server_update (void) {
 }
 
 void
-player_thread (uintptr_t ctx) {
-    prctl (PR_SET_NAME, "deadbeef-player", 0, 0, 0, 0);
+player_mainloop (void) {
     for (;;) {
         static int srvupd_count = 0;
         if (--srvupd_count <= 0) {
@@ -447,7 +443,8 @@ main (int argc, char *argv[]) {
         }
         size = 2048 - size + 1;
     }
-    int res = client_exec_command_line (cmdline, size);
+    int res;
+    res = client_exec_command_line (cmdline, size);
     if (res == 1) {
         return 0;
     }
@@ -456,9 +453,8 @@ main (int argc, char *argv[]) {
     }
 
     // try to connect to remote player
-    int s, t, len;
+    int s, len;
     struct sockaddr_un remote;
-    char str[100];
 
     if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
         perror("socket");
@@ -514,7 +510,7 @@ main (int argc, char *argv[]) {
     // execute server commands in local context
     int noloadpl = 0;
     if (argc > 1) {
-        int res = server_exec_command_line (cmdline, size, NULL, 0);
+        res = server_exec_command_line (cmdline, size, NULL, 0);
         // some of the server commands ran on 1st instance should terminate it
         if (res == 2) {
             noloadpl = 1;
@@ -541,7 +537,7 @@ main (int argc, char *argv[]) {
     streamer_init ();
 
     // this runs in main thread (blocks right here)
-    player_thread (0);
+    player_mainloop ();
 
     // save config
     pl_save (defpl);
