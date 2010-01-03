@@ -38,6 +38,9 @@ test "x$prefix" = xNONE && prefix=$ac_default_prefix
 CFLAGS="$CFLAGS -D_GNU_SOURCE -DLIBDIR=\\\"$libdir\\\" -DPREFIX=\\\"$prefix\\\""
 CPPFLAGS="$CFLAGS"
 
+INSANE_CFLAGS="-Wformat -Wcomment -Wchar-subscripts -Wformat-security -Wunused-function -Wunused-variable -Wunused-value -Wuninitialized -Wfloat-equal -Wundef -Wshadow -Wtype-limits -Wbad-function-cast -Wcast-qual -Wwrite-strings"
+AC_SUBST(INSANE_CFLAGS)
+
 PKG_CHECK_MODULES(DEPS, samplerate)
 PKG_CHECK_MODULES(GTKUI_DEPS, gtk+-2.0 >= 2.12 gthread-2.0 glib-2.0, HAVE_GTK=1, NO_GTK=1)
 PKG_CHECK_MODULES(ALSA_DEPS, alsa, HAVE_ALSA=1, NO_ALSA=1)
@@ -49,7 +52,6 @@ AX_CHECK_COMPILER_FLAGS(-msse2, HAVE_SSE2=1, [])
 if test ${HAVE_SSE2}; then
     AC_DEFINE(HAVE_SSE2,1,[Support SSE2 instructions])
 fi
-AC_SUBST(SIMD_FLAGS)
 
 dnl curl lib
 AC_CHECK_LIB([curl], [main], [HAVE_CURL=1])

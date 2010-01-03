@@ -51,7 +51,7 @@ sdk_HEADERS = deadbeef.h
 
 deadbeef_LDADD = $(LDADD) $(DEPS_LIBS) gme/Game_Music_Emu-0.5.2/gme/libgme.a sid/sidplay-libs-2.1.0/libsidplay2.a dumb/libdumb.a -lstdc++
 
-AM_CFLAGS = $(DEPS_CFLAGS) $(SIMD_FLAGS) -I$(gmepath) -std=c99
+AM_CFLAGS = $(DEPS_CFLAGS) $(INSANE_CFLAGS) -I$(gmepath) -std=c99
 AM_CPPFLAGS = $(DEPS_CFLAGS) -I$(sidpath)/libsidplay/include -I$(sidpath)/builders/resid-builder/include
 
 docsdir = $(datadir)/doc/$(PACKAGE)
@@ -62,25 +62,3 @@ desktopdir = $(datadir)/applications
 desktop_DATA = deadbeef.desktop
 
 EXTRA_DIST = $(docs_DATA) $(desktop_DATA)
-
-#install-data-local:
-#	@$(NORMAL_INSTALL)
-#	if test -d $(srcdir)/pixmaps; then \
-#	  $(mkinstalldirs) $(DESTDIR)$(pkgdatadir)/pixmaps; \
-#	  for pixmap in $(srcdir)/pixmaps/*; do \
-#	    if test -f $$pixmap; then \
-#	      $(INSTALL_DATA) $$pixmap $(DESTDIR)$(pkgdatadir)/pixmaps; \
-#	    fi \
-#	  done \
-#	fi
-#
-#dist-hook:
-#	if test -d pixmaps; then \
-#	  mkdir $(distdir)/pixmaps; \
-#	  for pixmap in pixmaps/*; do \
-#	    if test -f $$pixmap; then \
-#	      cp -p $$pixmap $(distdir)/pixmaps; \
-#	    fi \
-#	  done \
-#	fi
-#
