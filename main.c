@@ -81,7 +81,8 @@ client_exec_command_line (const char *cmdline, int len) {
             fprintf (stderr, "   --queue            Append file(s) to existing playlist\n");
             fprintf (stderr, "   --nowplaying FMT   Print formatted track name to stdout\n");
             fprintf (stderr, "                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
-                             "                      [l]ength, track[n]umber, [y]ear, [c]omment, copy[r]ight\n");
+                             "                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
+                             "                      copy[r]ight, [e]lapsed\n");
             fprintf (stderr, "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n");
             return 1;
         }

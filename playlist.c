@@ -1601,6 +1601,25 @@ pl_format_item_queue (playItem_t *it, char *s, int size) {
     return initsize-size;
 }
 
+static void
+pl_format_time (float t, char *dur, int size) {
+    if (t >= 0) {
+        int hourdur = t / (60 * 60);
+        int mindur = (t - hourdur * 60 * 60) / 60;
+        int secdur = t - hourdur*60*60 - mindur * 60;
+
+        if (hourdur) {
+            snprintf (dur, size, "%d:%02d:%02d", hourdur, mindur, secdur);
+        }
+        else {
+            snprintf (dur, size, "%d:%02d", mindur, secdur);
+        }
+    }
+    else {
+        strcpy (dur, "-:--");
+    }
+}
+
 static const char *
 pl_get_meta_cached (playItem_t *it, const char *meta, const char *ret, const char *def) {
     if (!ret) {
@@ -1617,32 +1636,30 @@ pl_format_duration (playItem_t *it, const char *ret, char *dur, int size) {
     if (ret) {
         return ret;
     }
-    if (it->_duration >= 0) {
-        int hourdur = it->_duration / (60 * 60);
-        int mindur = (it->_duration - hourdur * 60 * 60) / 60;
-        int secdur = it->_duration - hourdur*60*60 - mindur * 60;
-
-        if (hourdur) {
-            snprintf (dur, size, "%d:%02d:%02d", hourdur, mindur, secdur);
-        }
-        else {
-            snprintf (dur, size, "%d:%02d", mindur, secdur);
-        }
-    }
-    else {
-        strcpy (dur, "-:--");
-    }
+    pl_format_time (it->_duration, dur, size);
     return dur;
+}
+
+static const char *
+pl_format_elapsed (const char *ret, char *elapsed, int size) {
+    if (ret) {
+        return ret;
+    }
+    float playpos = streamer_get_playpos ();
+    pl_format_time (playpos, elapsed, size);
+    return elapsed;
 }
 
 int
 pl_format_title (playItem_t *it, char *s, int size, int id, const char *fmt) {
     char dur[50];
+    char elp[50];
     const char *artist = NULL;
     const char *album = NULL;
     const char *track = NULL;
     const char *title = NULL;
     const char *duration = NULL;
+    const char *elapsed = NULL;
     const char *year = NULL;
     const char *genre = NULL;
     const char *comment = NULL;
@@ -1737,6 +1754,14 @@ pl_format_title (playItem_t *it, char *s, int size, int id, const char *fmt) {
             }
             else if (*fmt == 'l') {
                 const char *value = (duration = pl_format_duration (it, duration, dur, sizeof (dur)));
+                while (n > 0 && *value) {
+                    *s++ = *value++;
+                    n--;
+                }
+            }
+            else if (*fmt == 'e') {
+                // what a hack..
+                const char *value = (elapsed = pl_format_elapsed (elapsed, elp, sizeof (elp)));
                 while (n > 0 && *value) {
                     *s++ = *value++;
                     n--;
