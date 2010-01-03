@@ -151,33 +151,28 @@ streamer_set_current (playItem_t *it) {
     if (!it->decoder && it->filetype && !strcmp (it->filetype, "content")) {
         // try to get content-type
         DB_FILE *fp = streamer_file = vfs_fopen (it->fname);
-        const char *ext = NULL;
+        const char *plug = NULL;
         if (fp) {
             const char *ct = vfs_get_content_type (fp);
             if (ct) {
                 fprintf (stderr, "got content-type: %s\n", ct);
                 if (!strcmp (ct, "audio/mpeg")) {
-                    ext = "mp3";
+                    plug = "stdmpg";
                 }
                 else if (!strcmp (ct, "application/ogg")) {
-                    ext = "ogg";
+                    plug = "stdogg";
                 }
             }
             streamer_file = NULL;
             vfs_fclose (fp);
         }
-        if (ext) {
+        if (plug) {
             DB_decoder_t **decoders = plug_get_decoder_list ();
             // match by decoder
             for (int i = 0; decoders[i]; i++) {
-                if (decoders[i]->exts) {
-                    const char **exts = decoders[i]->exts;
-                    for (int e = 0; exts[e]; e++) {
-                        if (!strcasecmp (exts[e], ext)) {
-                            it->decoder = decoders[i];
-                            it->filetype = decoders[i]->filetypes[0];
-                        }
-                    }
+                if (!strcmp (decoders[i]->id, plug)) {
+                    it->decoder = decoders[i];
+                    it->filetype = decoders[i]->filetypes[0];
                 }
             }
         }
