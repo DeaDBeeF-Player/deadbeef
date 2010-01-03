@@ -69,6 +69,9 @@ FLAC__StreamDecoderReadStatus flac_read_cb (const FLAC__StreamDecoder *decoder, 
 FLAC__StreamDecoderSeekStatus flac_seek_cb (const FLAC__StreamDecoder *decoder, FLAC__uint64 absolute_byte_offset, void *client_data) {
     cue_cb_data_t *cb = (cue_cb_data_t *)client_data;
     int r = deadbeef->fseek (cb->file, absolute_byte_offset, SEEK_SET);
+    if (r) {
+        return FLAC__STREAM_DECODER_READ_STATUS_END_OF_STREAM;
+    }
     return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;
 }
 
@@ -100,7 +103,7 @@ cflac_write_callback (const FLAC__StreamDecoder *decoder, const FLAC__Frame *fra
     }
     int bitrate = -1;
     float sec = ((float)frame->header.blocksize / frame->header.sample_rate);
-    if (cb->bytesread != 0 && sec != 0) {
+    if (cb->bytesread != 0 && sec > 0) {
         bitrate = cb->bytesread / sec * 8;
     }
     cb->bytesread = 0;
@@ -293,7 +296,6 @@ cflac_read_int16 (char *bytes, int size) {
         }
     }
     int initsize = size;
-    int nbytes_in = 0;
     do {
         if (remaining) {
             int s = size * 2;

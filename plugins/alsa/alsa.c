@@ -61,12 +61,6 @@ static int
 palsa_stop (void);
 
 static int
-palsa_isstopped (void);
-
-static int
-palsa_ispaused (void);
-
-static int
 palsa_pause (void);
 
 static int
@@ -373,17 +367,6 @@ palsa_stop (void) {
 }
 
 int
-palsa_isstopped (void) {
-    return (state == 0);
-}
-
-int
-palsa_ispaused (void) {
-    // return pause state
-    return (state == 2);
-}
-
-int
 palsa_pause (void) {
     if (state == 0 || !audio) {
         return -1;
@@ -559,7 +542,7 @@ palsa_configchanged (DB_event_t *ev, uintptr_t data) {
 void
 palsa_enum_soundcards (void (*callback)(const char *name, const char *desc, void *), void *userdata) {
     void **hints, **n;
-    char *name, *descr, *descr1, *io;
+    char *name, *descr, *io;
     const char *filter = "Output";
     if (snd_device_name_hint(-1, "pcm", &hints) < 0)
         return;

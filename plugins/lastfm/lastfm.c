@@ -57,7 +57,7 @@ lastfm_load (DB_functions_t *api) {
 
 #define MAX_REPLY 4096
 static char lfm_reply[MAX_REPLY];
-static char lfm_reply_sz;
+static int lfm_reply_sz;
 static char lfm_err[CURL_ERROR_SIZE];
 
 static char lfm_nowplaying[2048]; // packet for nowplaying, or ""

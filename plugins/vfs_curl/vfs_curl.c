@@ -273,7 +273,6 @@ http_content_header_handler (void *ptr, size_t size, size_t nmemb, void *stream)
     trace ("http_content_header_handler\n");
     assert (stream);
     HTTP_FILE *fp = (HTTP_FILE *)stream;
-    const uint8_t c_type_str[] ="Content-Type:"; 
     const uint8_t *p = ptr;
     const uint8_t *end = p + size*nmemb;
     uint8_t key[256];
@@ -314,10 +313,10 @@ http_content_header_handler (void *ptr, size_t size, size_t nmemb, void *stream)
     return size * nmemb;
 }
 
-static size_t
-http_curl_write_abort (void *ptr, size_t size, size_t nmemb, void *stream) {
-    return 0;
-}
+//static size_t
+//http_curl_write_abort (void *ptr, size_t size, size_t nmemb, void *stream) {
+//    return 0;
+//}
 
 static int
 http_curl_control (void *stream, double dltotal, double dlnow, double ultotal, double ulnow) {
@@ -679,6 +678,7 @@ http_get_content_name (DB_FILE *stream) {
     return fp->content_name;
 }
 
+#if 0
 static const char *
 http_get_content_genre (DB_FILE *stream) {
     trace ("http_get_content_genre\n");
@@ -699,6 +699,7 @@ http_get_content_genre (DB_FILE *stream) {
     }
     return fp->content_genre;
 }
+#endif
 
 static void
 http_stop (DB_FILE *stream) {

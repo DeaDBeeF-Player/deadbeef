@@ -1078,7 +1078,7 @@ pl_randomsong (void) {
     if (!cnt) {
         return -1;
     }
-    int r = (float)rand () / RAND_MAX * cnt;
+    int r = rand () / (float)RAND_MAX * cnt;
     streamer_set_nextsong (r, 1);
     return 0;
 }
@@ -1638,7 +1638,6 @@ pl_format_duration (playItem_t *it, const char *ret, char *dur, int size) {
 int
 pl_format_title (playItem_t *it, char *s, int size, int id, const char *fmt) {
     char dur[50];
-    char ftrk[50];
     const char *artist = NULL;
     const char *album = NULL;
     const char *track = NULL;
@@ -1679,6 +1678,7 @@ pl_format_title (playItem_t *it, char *s, int size, int id, const char *fmt) {
             track = pl_get_meta_cached (it, "track", track, "");
             text = track;
 #if 0 // kept for tracing purposes
+            char ftrk[50];
             if (isdigit (track[0])) {
                 snprintf (ftrk, sizeof (ftrk), "%03d (%s)", atoi (track), track);
                 text = ftrk;

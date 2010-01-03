@@ -464,7 +464,7 @@ on_add_folders_activate                (GtkMenuItem     *menuitem,
     }
     if (response == GTK_RESPONSE_OK)
     {
-        gchar *folder = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dlg));
+        //gchar *folder = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dlg));
         GSList *lst = gtk_file_chooser_get_filenames (GTK_FILE_CHOOSER (dlg));
         gtk_widget_destroy (dlg);
         if (lst) {
@@ -858,7 +858,7 @@ on_playlist_load_activate              (GtkMenuItem     *menuitem,
         gchar *fname = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dlg));
         gtk_widget_destroy (dlg);
         if (fname) {
-            int res = deadbeef->pl_load (fname);
+            /*int res = */deadbeef->pl_load (fname);
             g_free (fname);
             gtkplaylist_t *ps = &main_playlist;
             gtkpl_setup_scrollbar (ps);
@@ -925,7 +925,7 @@ on_playlist_save_activate              (GtkMenuItem     *menuitem,
         save_playlist_as ();
     }
     else {
-        int res = deadbeef->pl_save (last_playlist_save_name);
+        /*int res = */deadbeef->pl_save (last_playlist_save_name);
     }
 }
 
@@ -1578,9 +1578,9 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
 
     // list of plugins
     GtkTreeView *tree = GTK_TREE_VIEW (lookup_widget (w, "pref_pluginlist"));
-    GtkCellRenderer *rend_toggle = gtk_cell_renderer_toggle_new ();
     GtkCellRenderer *rend_text = gtk_cell_renderer_text_new ();
 #if 0
+    GtkCellRenderer *rend_toggle = gtk_cell_renderer_toggle_new ();
     GtkListStore *store = gtk_list_store_new (3, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_BOOLEAN);
     g_signal_connect ((gpointer)rend_toggle, "toggled",
             G_CALLBACK (on_plugin_active_toggled),
@@ -2095,7 +2095,7 @@ plugin_configure (GtkWidget *parentwin, DB_plugin_t *p) {
         nrows++;
         gtk_table_resize (GTK_TABLE (tbl), nrows, 2);
         GtkWidget *label;
-        GtkWidget *prop;
+        GtkWidget *prop = NULL;
         GtkWidget *cont = NULL;
         label = gtk_label_new (labeltext);
         if (!strcmp (type, "entry") || !strcmp (type, "password")) {

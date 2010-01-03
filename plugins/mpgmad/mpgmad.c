@@ -178,7 +178,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
     for (;;) {
         uint32_t hdr;
         uint8_t sync;
-        size_t pos = deadbeef->ftell (buffer->file);
+        //size_t pos = deadbeef->ftell (buffer->file);
         if (deadbeef->fread (&sync, 1, 1, buffer->file) != 1) {
             break; // eof
         }
@@ -399,11 +399,13 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
                     deadbeef->fread (&lpf, 1, 1, buffer->file);
                     //3 floats: replay gain
                     deadbeef->fread (buf, 1, 4, buffer->file);
-                    float rg_peaksignalamp = extract_f32 (buf);
+                    // float rg_peaksignalamp = extract_f32 (buf);
                     deadbeef->fread (buf, 1, 2, buffer->file);
-                    uint16_t rg_radio = extract_i16 (buf);
+                    // uint16_t rg_radio = extract_i16 (buf);
+
                     deadbeef->fread (buf, 1, 2, buffer->file);
-                    uint16_t rg_audiophile = extract_i16 (buf);
+                    // uint16_t rg_audiophile = extract_i16 (buf);
+
                     // skip
                     deadbeef->fseek (buffer->file, 2, SEEK_CUR);
                     deadbeef->fread (buf, 1, 3, buffer->file);
@@ -418,7 +420,8 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
                     deadbeef->fseek (buffer->file, 2, SEEK_CUR);
                     // musiclen
                     deadbeef->fread (buf, 1, 4, buffer->file);
-                    uint32_t musiclen = extract_i32 (buf);
+//                    uint32_t musiclen = extract_i32 (buf);
+
                     trace ("lpf: %d, peaksignalamp: %f, radiogain: %d, audiophile: %d, startdelay: %d, enddelay: %d, mp3gain: %d, musiclen: %d\n", lpf, rg_peaksignalamp, rg_radio, rg_audiophile, startdelay, enddelay, mp3gain, musiclen);
                     // skip crc
                     //deadbeef->fseek (buffer->file, 4, SEEK_CUR);
@@ -732,7 +735,7 @@ cmp3_stream_frame (void) {
             }
             int size = READBUFFER - buffer.remaining;
             int bytesread = 0;
-            char *bytes = buffer.input + buffer.remaining;
+            uint8_t *bytes = buffer.input + buffer.remaining;
             bytesread = deadbeef->fread (bytes, 1, size, buffer.file);
             if (!bytesread) {
                 // add guard
@@ -977,7 +980,7 @@ cmp3_insert (DB_playItem_t *after, const char *fname) {
         return NULL;
     }
 
-    const char *ftype;
+    const char *ftype = NULL;
     if (buffer.version == 1) {
         switch (buffer.layer) {
         case 1:
@@ -1022,9 +1025,9 @@ cmp3_insert (DB_playItem_t *after, const char *fname) {
     it->fname = strdup (fname);
 
     deadbeef->rewind (fp);
-    int apeerr = deadbeef->junk_read_ape (it, fp);
-    int v2err = deadbeef->junk_read_id3v2 (it, fp);
-    int v1err = deadbeef->junk_read_id3v1 (it, fp);
+    /*int apeerr = */deadbeef->junk_read_ape (it, fp);
+    /*int v2err = */deadbeef->junk_read_id3v2 (it, fp);
+    /*int v1err = */deadbeef->junk_read_id3v1 (it, fp);
     deadbeef->pl_add_meta (it, "title", NULL);
     deadbeef->pl_set_item_duration (it, buffer.duration);
     it->filetype = ftype;

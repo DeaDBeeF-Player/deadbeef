@@ -35,7 +35,6 @@ conf_load (void) {
         return -1;
     }
     int line = 0;
-    DB_conf_item_t *tail = NULL;
     while (fgets (str, 1024, fp) != NULL) {
         line++;
         if (str[0] == '#' || str[0] <= 0x20) {

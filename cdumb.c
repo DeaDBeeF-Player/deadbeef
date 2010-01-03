@@ -193,7 +193,7 @@ static DUH * open_module(const char *fname, const char *ext, int *start_order, i
 	*is_it = 0;
 	*is_dos = 1;
 
-    char ptr[2000];
+    uint8_t ptr[2000];
     DB_FILE *fp = deadbeef->fopen (fname);
     if (!fp) {
         return NULL;
@@ -722,9 +722,9 @@ static const char *convstr (const char* str, int sz) {
     }
 
     const char *enc = "iso8859-1";
+#if 0
     int latin = 0;
     int rus = 0;
-#if 0
     for (int i = 0; i < sz; i++) {
         if ((str[i] >= 'A' && str[i] <= 'Z')
                 || str[i] >= 'a' && str[i] <= 'z') {
@@ -750,7 +750,7 @@ static const char *convstr (const char* str, int sz) {
         char *pin = (char*)str;
         char *pout = out;
         memset (out, 0, sizeof (out));
-        size_t res = iconv (cd, &pin, &inbytesleft, &pout, &outbytesleft);
+        /*size_t res = */iconv (cd, &pin, &inbytesleft, &pout, &outbytesleft);
         iconv_close (cd);
     }
     return out;

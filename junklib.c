@@ -301,7 +301,7 @@ convstr_id3v2_2to3 (const unsigned char* str, int sz) {
         char *pin = (char*)str;
         char *pout = out;
         memset (out, 0, sizeof (out));
-        size_t res = iconv (cd, &pin, &inbytesleft, &pout, &outbytesleft);
+        /*size_t res = */iconv (cd, &pin, &inbytesleft, &pout, &outbytesleft);
         iconv_close (cd);
         ret = out;
     }
@@ -355,7 +355,7 @@ convstr_id3v2_4 (const unsigned char* str, int sz) {
         char *pin = (char*)str;
         char *pout = out;
         memset (out, 0, sizeof (out));
-        size_t res = iconv (cd, &pin, &inbytesleft, &pout, &outbytesleft);
+        /*size_t res = */iconv (cd, &pin, &inbytesleft, &pout, &outbytesleft);
         iconv_close (cd);
         ret = out;
     }
@@ -408,7 +408,7 @@ convstr_id3v1 (const char* str, int sz) {
         char *pin = (char*)str;
         char *pout = out;
         memset (out, 0, sizeof (out));
-        size_t res = iconv (cd, &pin, &inbytesleft, &pout, &outbytesleft);
+        /*size_t res = */iconv (cd, &pin, &inbytesleft, &pout, &outbytesleft);
         iconv_close (cd);
     }
     return out;
@@ -447,7 +447,7 @@ junk_read_id3v1 (playItem_t *it, DB_FILE *fp) {
     char comment[31];
     uint8_t genreid;
     uint8_t tracknum;
-    const char *genre;
+    const char *genre = NULL;
     memset (title, 0, 31);
     memset (artist, 0, 31);
     memset (album, 0, 31);

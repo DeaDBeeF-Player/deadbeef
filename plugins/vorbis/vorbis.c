@@ -57,7 +57,7 @@ cvorbis_fread (void *ptr, size_t size, size_t nmemb, void *datasource) {
 static int
 cvorbis_fseek (void *datasource, ogg_int64_t offset, int whence) {
     DB_FILE *f = (DB_FILE *)datasource;
-    return deadbeef->fseek (datasource, offset, whence);
+    return deadbeef->fseek (f, offset, whence);
 }
 
 static int

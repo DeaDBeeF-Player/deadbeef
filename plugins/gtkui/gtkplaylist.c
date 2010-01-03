@@ -898,7 +898,6 @@ main_refresh (void) {
 
 int
 gtkpl_keypress (gtkplaylist_t *ps, int keyval, int state) {
-    GtkWidget *range = ps->scrollbar;
     int prev = deadbeef->pl_get_cursor (ps->iterator);
     int cursor = prev;
     if (keyval == GDK_Down) {

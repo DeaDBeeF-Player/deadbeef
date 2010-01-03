@@ -66,16 +66,6 @@ min (int a, int b) {
     return a < b ? a : b;
 }
 
-static char*
-trim (char* s)
-{
-    char *h, *t;
-    
-    for ( h = s; *h == ' ' || *h == '\t'; h++ );
-    for ( t = s + strlen(s); *t == ' ' || *t == '\t'; *t = 0, t-- );
-    return h;
-}
-
 static int
 cda_init (DB_playItem_t *it) {
 //    trace ("CDA: initing %s\n", it->fname);
@@ -122,7 +112,6 @@ cda_init (DB_playItem_t *it) {
 
 int
 cda_read_int16 (char *bytes, int size) {
-    int initsize = size;
     int extrasize = 0;
     
     if (tail_len > 0)
@@ -298,7 +287,6 @@ cddb_thread (void *items_i)
 {
     struct cddb_thread_params *params = (struct cddb_thread_params*)items_i;
     DB_playItem_t **items = params->items;
-    DB_playItem_t *item;
 
     trace ("calling resolve_disc\n");
     deadbeef->mutex_lock (mutex);
@@ -349,10 +337,8 @@ static DB_playItem_t *
 cda_insert (DB_playItem_t *after, const char *fname) {
 //    trace ("CDA insert: %s\n", fname);
 
-    int all = 0;
     int track_nr;
     DB_playItem_t *res;
-    CdIo_t *cdio; //we need its local inst
 
     const char* shortname = strrchr (fname, '/');
     if (shortname) {

@@ -184,6 +184,7 @@ static const char * exts[]=
 	"ay","gbs","gym","hes","kss","nsf","nsfe","sap","spc","vgm","vgz",NULL
 };
 
+#if 0
 static int
 cgme_numvoices (void) {
     if (!emu) {
@@ -200,6 +201,7 @@ cgme_mutevoice (int voice, int mute) {
         gme_mute_voices (emu, cgme_voicemask);
     }
 }
+#endif
 
 // define plugin interface
 static DB_decoder_t plugin = {

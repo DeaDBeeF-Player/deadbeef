@@ -690,7 +690,6 @@ streamer_read_async (char *bytes, int size) {
             int samplerate = decoder->info.samplerate;
             if (decoder->info.samplerate == p_get_rate ()) {
                 // samplerate match
-                int i;
                 if (decoder->info.channels == 2) {
                     bytesread = decoder->read_int16 (bytes, size);
                     apply_replay_gain_int16 (&str_streaming_song, bytes, size);
@@ -704,7 +703,7 @@ streamer_read_async (char *bytes, int size) {
                     codec_unlock ();
                 }
             }
-            else if (src_is_valid_ratio ((double)p_get_rate ()/samplerate)) {
+            else if (src_is_valid_ratio (p_get_rate ()/(double)samplerate)) {
                 // read and do SRC
                 int nsamples = size/4;
                 nsamples = nsamples * samplerate / p_get_rate () * 2;
@@ -730,7 +729,6 @@ streamer_read_async (char *bytes, int size) {
                 codec_unlock ();
                 // recalculate nsamples according to how many bytes we've got
                 if (nbytes != 0) {
-                    int i;
                     if (!decoder->read_float32) {
                         nsamples = bytesread / (samplesize * nchannels) + codecleft;
                         // convert to float
@@ -770,7 +768,7 @@ streamer_read_async (char *bytes, int size) {
                 srcdata.data_out = g_srcbuffer;
                 srcdata.input_frames = nsamples;
                 srcdata.output_frames = size/4;
-                srcdata.src_ratio = (double)p_get_rate ()/samplerate;
+                srcdata.src_ratio = p_get_rate ()/(double)samplerate;
                 srcdata.end_of_input = 0;
     //            src_set_ratio (src, srcdata.src_ratio);
                 src_process (src, &srcdata);
@@ -787,7 +785,7 @@ streamer_read_async (char *bytes, int size) {
                 memmove (g_fbuffer, &g_fbuffer[srcdata.input_frames_used*2], codecleft * 8);
             }
             else {
-                fprintf (stderr, "invalid ratio! %d / %d = %f", p_get_rate (), samplerate, (float)p_get_rate ()/samplerate);
+                fprintf (stderr, "invalid ratio! %d / %d = %f", p_get_rate (), samplerate, p_get_rate ()/(float)samplerate);
             }
         }
         else {

@@ -113,7 +113,7 @@ sndfile_init (DB_playItem_t *it) {
     }
     // hack bitrate
     float sec = (float)(sfctx.endsample-sfctx.startsample) / inf.samplerate;
-    if (sec != 0) {
+    if (sec > 0) {
         sfctx.bitrate = fsize / sec * 8 / 1000;
     }
     else {

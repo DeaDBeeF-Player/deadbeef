@@ -35,7 +35,8 @@ esac
 
 test "x$prefix" = xNONE && prefix=$ac_default_prefix
 
-INSANE_CFLAGS="-Wcomment -Wchar-subscripts -Wunused-function -Wunused-variable -Wunused-value -Wuninitialized -Wfloat-equal -Wundef -Wtype-limits -Wbad-function-cast -Wcast-qual -Wwrite-strings"
+INSANE_CFLAGS="-Wcomment -Wchar-subscripts -Wunused-function -Wunused-value -Wuninitialized -Wtype-limits -Wbad-function-cast"
+
 CFLAGS="$CFLAGS $INSANE_CFLAGS -D_GNU_SOURCE -DLIBDIR=\\\"$libdir\\\" -DPREFIX=\\\"$prefix\\\""
 
 PKG_CHECK_MODULES(DEPS, samplerate)
