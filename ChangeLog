@@ -1,3 +1,38 @@
+version 0.3.2
+	all GTK+ UI code is now in plugin
+	numerous memory and cpu optimizations
+	fully editable/scriptable columns with sorting
+	native look and feel of playlist widget
+	selection is synchronous between main window and search window
+	plugins got GUI configuration
+	much smoother seekbar
+	compatible with more GTK theme engines
+	improved restore window geometry after minimizing to system tray
+	flexible nowplaying querying support via command line
+	ALSA code moved to plugin
+	new "nullout" output plugin - good for testing, and as basis for new plugins
+	added template .c file (with comments) for making new decoder plugins
+	updated id3v2 and apev2 parsers to support more metadata types
+	id3v2.2 parser now supports unsynchronization
+	metadata viewer accessible from context menu
+	flac plugin now plays "oga" files (flac in ogg container)
+	ffmpeg plugin, adds formats: m4a (aac,alac), mpc/mp+/mpp, wma, shn, oma, ac3, vqf
+	vtx plugin using libayemu
+	adplug plugin (includes support for adlib S3Ms)
+	fixed cuesheet support in mp3 and ogg plugins
+	fixed building for i686 architectures w/o sse2 support
+	fixed sse2 code issues in ape plugin
+	added support for custom scrobbler url to last.fm plugin (e.g. libre.fm)
+	added Play Queue funtionality to playlist (context menu)
+	fixed lots of bugs in command line processing
+	improved main menu in GTK UI
+	added average/approximate bitrate display to statusbar
+	new "cursor follows playback" feature
+	new "stop after current track" feature
+	keyboard navigation in search window
+	search window geometry is now saved and restored between sessions
+	.dbpl extension is auto-added when saving playlist
+		
 version 0.3.1
 	improved header widget drawing and gtkengines compatibility
 	fixed vfs_curl to fetch content size properly again
