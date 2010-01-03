@@ -5,5 +5,5 @@ flac_la_SOURCES = flac.c
 flac_la_LDFLAGS = -module
 
 flac_la_LIBADD = $(LDADD) $(FLAC_LIBS)
-AM_CFLAGS = $(CFLAGS) $(INSANE_CFLAGS) -std=c99
+AM_CFLAGS = $(CFLAGS) -std=c99
 endif

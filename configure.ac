@@ -35,11 +35,8 @@ esac
 
 test "x$prefix" = xNONE && prefix=$ac_default_prefix
 
-CFLAGS="$CFLAGS -D_GNU_SOURCE -DLIBDIR=\\\"$libdir\\\" -DPREFIX=\\\"$prefix\\\""
-CPPFLAGS="$CFLAGS"
-
-INSANE_CFLAGS="-Wformat -Wcomment -Wchar-subscripts -Wformat-security -Wunused-function -Wunused-variable -Wunused-value -Wuninitialized -Wfloat-equal -Wundef -Wshadow -Wtype-limits -Wbad-function-cast -Wcast-qual -Wwrite-strings"
-AC_SUBST(INSANE_CFLAGS)
+INSANE_CFLAGS="-Wcomment -Wchar-subscripts -Wunused-function -Wunused-variable -Wunused-value -Wuninitialized -Wfloat-equal -Wundef -Wtype-limits -Wbad-function-cast -Wcast-qual -Wwrite-strings"
+CFLAGS="$CFLAGS $INSANE_CFLAGS -D_GNU_SOURCE -DLIBDIR=\\\"$libdir\\\" -DPREFIX=\\\"$prefix\\\""
 
 PKG_CHECK_MODULES(DEPS, samplerate)
 PKG_CHECK_MODULES(GTKUI_DEPS, gtk+-2.0 >= 2.12 gthread-2.0 glib-2.0, HAVE_GTK=1, NO_GTK=1)
