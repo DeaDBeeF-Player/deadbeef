@@ -548,9 +548,8 @@ gtkpl_mouse1_pressed (gtkplaylist_t *ps, int state, int ex, int ey, double time)
             && fabs(ps->lastpos[0] - ex) < 3
             && fabs(ps->lastpos[1] - ey) < 3) {
         // doubleclick - play this item
-        if (deadbeef->pl_get_cursor (ps->iterator) != -1) {
+        if (y != -1 && deadbeef->pl_get_cursor (ps->iterator) != -1) {
             DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (deadbeef->pl_get_cursor (ps->iterator), ps->iterator);
-//            SELECT (it, 1);
             int r = deadbeef->pl_get_idx_of (it);
             int prev = deadbeef->pl_get_cursor (ps->iterator);
             if (prev != r) {
