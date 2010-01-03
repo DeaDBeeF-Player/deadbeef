@@ -1,6 +1,6 @@
 /*
     DeaDBeeF - ultimate music player for GNU/Linux systems with X11
-    Copyright (C) 2009  Alexey Yakovenko
+    Copyright (C) 2009-2010 Alexey Yakovenko <waker@users.sourceforge.net>
     This plugin is based on code from demac and libdemac (C) Dave Chapman 2007
 
     This program is free software; you can redistribute it and/or
