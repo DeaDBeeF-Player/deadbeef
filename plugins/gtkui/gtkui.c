@@ -20,6 +20,7 @@
 #include <gtk/gtk.h>
 #include <string.h>
 #include <stdlib.h>
+#include <math.h>
 #include "gtkplaylist.h"
 #include "search.h"
 #include "progress.h"
@@ -128,19 +129,17 @@ update_songinfo (gpointer ctx) {
         gtk_statusbar_push (sb, sb_context_id, sb_text);
     }
 
-    if (songpos != last_songpos) {
-        void seekbar_draw (GtkWidget *widget);
-        void seekbar_expose (GtkWidget *widget, int x, int y, int w, int h);
-        if (mainwin) {
-            GtkWidget *widget = lookup_widget (mainwin, "seekbar");
-            // translate volume to seekbar pixels
-            songpos /= duration;
-            songpos *= widget->allocation.width;
-            if (songpos != last_songpos) {
-                seekbar_draw (widget);
-                seekbar_expose (widget, 0, 0, widget->allocation.width, widget->allocation.height);
-                last_songpos = songpos;
-            }
+    void seekbar_draw (GtkWidget *widget);
+    void seekbar_expose (GtkWidget *widget, int x, int y, int w, int h);
+    if (mainwin) {
+        GtkWidget *widget = lookup_widget (mainwin, "seekbar");
+        // translate volume to seekbar pixels
+        songpos /= duration;
+        songpos *= widget->allocation.width;
+        if (fabs (songpos - last_songpos) > 0.01) {
+            seekbar_draw (widget);
+            seekbar_expose (widget, 0, 0, widget->allocation.width, widget->allocation.height);
+            last_songpos = songpos;
         }
     }
     return FALSE;
@@ -171,14 +170,10 @@ on_trayicon_scroll_event               (GtkWidget       *widget,
     return FALSE;
 }
 
-#if GTK_MINOR_VERSION<=14
-
-gboolean
-on_trayicon_activate (GtkWidget       *widget,
-                                        GdkEvent  *event,
-                                        gpointer         user_data)
-{
-    if (GTK_WIDGET_VISIBLE (mainwin)) {
+void
+mainwin_toggle_visible (void) {
+    int iconified = gdk_window_get_state(mainwin->window) & GDK_WINDOW_STATE_ICONIFIED;
+    if (GTK_WIDGET_VISIBLE (mainwin) && !iconified) {
         gtk_widget_hide (mainwin);
     }
     else {
@@ -186,13 +181,28 @@ on_trayicon_activate (GtkWidget       *widget,
         int y = deadbeef->conf_get_int ("mainwin.geometry.y", 40);
         int w = deadbeef->conf_get_int ("mainwin.geometry.w", 500);
         int h = deadbeef->conf_get_int ("mainwin.geometry.h", 300);
-        gtk_window_move (mainwin, x, y);
-        gtk_window_resize (mainwin, w, h);
+        gtk_window_move (GTK_WINDOW (mainwin), x, y);
+        gtk_window_resize (GTK_WINDOW (mainwin), w, h);
         if (deadbeef->conf_get_int ("mainwin.geometry.maximized", 0)) {
             gtk_window_maximize (GTK_WINDOW (mainwin));
         }
-        gtk_window_present (GTK_WINDOW (mainwin));
+        if (iconified) {
+            gtk_window_deiconify (GTK_WINDOW(mainwin));
+        }
+        else {
+            gtk_window_present (GTK_WINDOW (mainwin));
+        }
     }
+}
+
+#if GTK_MINOR_VERSION<=14
+
+gboolean
+on_trayicon_activate (GtkWidget       *widget,
+                                        GdkEvent  *event,
+                                        gpointer         user_data)
+{
+    mainwin_toggle_visible ();
     return FALSE;
 }
 
@@ -204,21 +214,7 @@ on_trayicon_button_press_event (GtkWidget       *widget,
                                         gpointer         user_data)
 {
     if (event->button == 1) {
-        if (GTK_WIDGET_VISIBLE (mainwin)) {
-            gtk_widget_hide (mainwin);
-        }
-        else {
-            int x = deadbeef->conf_get_int ("mainwin.geometry.x", 40);
-            int y = deadbeef->conf_get_int ("mainwin.geometry.y", 40);
-            int w = deadbeef->conf_get_int ("mainwin.geometry.w", 500);
-            int h = deadbeef->conf_get_int ("mainwin.geometry.h", 300);
-            gtk_window_move (GTK_WINDOW (mainwin), x, y);
-            gtk_window_resize (GTK_WINDOW (mainwin), w, h);
-            if (deadbeef->conf_get_int ("mainwin.geometry.maximized", 0)) {
-                gtk_window_maximize (GTK_WINDOW (mainwin));
-            }
-            gtk_window_present (GTK_WINDOW (mainwin));
-        }
+        mainwin_toggle_visible ();
     }
     else if (event->button == 2) {
         deadbeef->sendmessage (M_PAUSESONG, 0, 0, 0);
@@ -370,7 +366,7 @@ gtkui_thread (void *ctx) {
     gdk_threads_enter ();
     gtk_set_locale ();
     int argc = 1;
-    char **argv = alloca (sizeof (char *));
+    const char **argv = alloca (sizeof (char *));
     argv[0] = "deadbeef";
     gtk_init (&argc, (char ***)&argv);
 
