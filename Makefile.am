@@ -9,7 +9,7 @@ SUBDIRS = gme/Game_Music_Emu-0.5.2\
 		  plugins/nullout\
 		  plugins/vtx\
 		  plugins/adplug\
-		  ${NOTIFICATION_DIR}\
+		  plugins/notification\
 		  ${ALSA_DIR}\
 		  ${LFM_DIR}\
           ${MPGMAD_DIR}\
