@@ -177,6 +177,8 @@ error:
 int
 palsa_init (void) {
     int err;
+    alsa_tid = 0;
+    mutex = 0;
 
     // get and cache conf variables
     strcpy (conf_alsa_soundcard, deadbeef->conf_get_str ("alsa_soundcard", "default"));
@@ -294,11 +296,16 @@ palsa_free (void) {
     if (audio && !alsa_terminate) {
         alsa_terminate = 1;
         printf ("waiting for alsa thread to finish\n");
-        deadbeef->thread_join (alsa_tid);
-        alsa_tid = 0;
+        if (alsa_tid) {
+            deadbeef->thread_join (alsa_tid);
+            alsa_tid = 0;
+        }
         snd_pcm_close(audio);
         audio = NULL;
-        deadbeef->mutex_free (mutex);
+        if (mutex) {
+            deadbeef->mutex_free (mutex);
+            mutex = 0;
+        }
         state = 0;
         alsa_terminate = 0;
     }
