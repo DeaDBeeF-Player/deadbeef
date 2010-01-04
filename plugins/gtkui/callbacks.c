@@ -2395,6 +2395,7 @@ on_trackproperties_key_press_event     (GtkWidget       *widget,
                                         gpointer         user_data)
 {
     if (event->keyval == GDK_Escape) {
+        trackproperties = NULL;
         gtk_widget_destroy (widget);
     }
     return FALSE;
