@@ -152,7 +152,7 @@ pl_cue_parse_time (const char *p) {
 }
 
 static playItem_t *
-pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, char *track, char *index00, char *index01, char *pregap, char *title, char *performer, char *albumtitle, struct DB_decoder_s *decoder, const char *ftype, int samplerate) {
+pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, char *track, char *index00, char *index01, char *pregap, char *title, char *performer, char *albumtitle, char *genre, char *date, struct DB_decoder_s *decoder, const char *ftype, int samplerate) {
     if (!track[0]) {
         return after;
     }
@@ -223,10 +223,24 @@ pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, c
     it->endsample = -1; // will be filled by next read, or by decoder
     it->filetype = ftype;
     after = pl_insert_item (after, it);
-    pl_add_meta (it, "artist", performer);
-    pl_add_meta (it, "album", albumtitle);
-    pl_add_meta (it, "track", track);
-    pl_add_meta (it, "title", title);
+    if (performer[0]) {
+        pl_add_meta (it, "artist", performer);
+    }
+    if (albumtitle[0]) {
+        pl_add_meta (it, "album", albumtitle);
+    }
+    if (track[0]) {
+        pl_add_meta (it, "track", track);
+    }
+    if (title[0]) {
+        pl_add_meta (it, "title", title);
+    }
+    if (genre[0]) {
+        pl_add_meta (it, "genre", genre);
+    }
+    if (date[0]) {
+        pl_add_meta (it, "year", date);
+    }
     *prev = it;
     return it;
 }
@@ -237,6 +251,8 @@ pl_insert_cue_from_buffer (playItem_t *after, playItem_t *origin, const uint8_t 
     trace ("pl_insert_cue_from_buffer numsamples=%d, samplerate=%d\n", numsamples, samplerate);
     char performer[256] = "";
     char albumtitle[256] = "";
+    char genre[256] = "";
+    char date[256] = "";
     char track[256] = "";
     char title[256] = "";
     char pregap[256] = "";
@@ -278,9 +294,15 @@ pl_insert_cue_from_buffer (playItem_t *after, playItem_t *origin, const uint8_t 
 //                printf ("got title: %s\n", title);
             }
         }
+        else if (!strncmp (p, "REM GENRE ", 10)) {
+            pl_get_qvalue_from_cue (p + 10, sizeof (genre), genre);
+        }
+        else if (!strncmp (p, "REM DATE ", 9)) {
+            pl_get_value_from_cue (p + 9, sizeof (date), date);
+        }
         else if (!strncmp (p, "TRACK ", 6)) {
             // add previous track
-            after = pl_process_cue_track (after, origin->fname, &prev, track, index00, index01, pregap, title, performer, albumtitle, origin->decoder, origin->filetype, samplerate);
+            after = pl_process_cue_track (after, origin->fname, &prev, track, index00, index01, pregap, title, performer, albumtitle, genre, date, origin->decoder, origin->filetype, samplerate);
             track[0] = 0;
             title[0] = 0;
             pregap[0] = 0;
@@ -306,7 +328,7 @@ pl_insert_cue_from_buffer (playItem_t *after, playItem_t *origin, const uint8_t 
 //            fprintf (stderr, "got unknown line:\n%s\n", p);
         }
     }
-    after = pl_process_cue_track (after, origin->fname, &prev, track, index00, index01, pregap, title, performer, albumtitle, origin->decoder, origin->filetype, samplerate);
+    after = pl_process_cue_track (after, origin->fname, &prev, track, index00, index01, pregap, title, performer, albumtitle, genre, date, origin->decoder, origin->filetype, samplerate);
     if (after) {
         trace ("last track endsample: %d\n", numsamples-1);
         after->endsample = numsamples-1;
