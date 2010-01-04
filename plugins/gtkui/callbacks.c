@@ -39,6 +39,9 @@
 #include "gtkui.h"
 #include "parser.h"
 
+#define trace(...) { fprintf (stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
+
 #define SELECTED(it) (deadbeef->pl_is_selected(it))
 #define SELECT(it, sel) (deadbeef->pl_set_selected(it,sel))
 #define VSELECT(it, sel) {deadbeef->pl_set_selected(it,sel);gtk_pl_redraw_item_everywhere (it);}
@@ -1843,6 +1846,24 @@ on_remove_column_activate              (GtkMenuItem     *menuitem,
     gtkpl_column_rewrite_config (ps);
 }
 
+void
+on_column_id_changed                   (GtkComboBox     *combobox,
+                                        gpointer         user_data)
+{
+    GtkWidget *toplevel = gtk_widget_get_toplevel (GTK_WIDGET (combobox));
+    if (!toplevel) {
+        trace ("failed to get toplevel widget for column id combobox\n");
+        return;
+    }
+    int act = gtk_combo_box_get_active (combobox) + 1;
+    GtkWidget *fmt = lookup_widget (toplevel, "format");
+    if (!fmt) {
+        trace ("failed to get column format widget\n");
+        return;
+    }
+    gtk_widget_set_sensitive (fmt, act > DB_COLUMN_ID_MAX ? FALSE : TRUE);
+}
+
 
 void
 on_pref_alsa_freewhenstopped_clicked   (GtkButton       *button,
@@ -2400,4 +2421,5 @@ on_trackproperties_delete_event        (GtkWidget       *widget,
     trackproperties = NULL;
     return FALSE;
 }
+
 

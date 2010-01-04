@@ -2099,6 +2099,10 @@ create_editcolumndlg (void)
   gtk_dialog_add_action_widget (GTK_DIALOG (editcolumndlg), okbutton1, GTK_RESPONSE_OK);
   GTK_WIDGET_SET_FLAGS (okbutton1, GTK_CAN_DEFAULT);
 
+  g_signal_connect ((gpointer) id, "changed",
+                    G_CALLBACK (on_column_id_changed),
+                    NULL);
+
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (editcolumndlg, editcolumndlg, "editcolumndlg");
   GLADE_HOOKUP_OBJECT_NO_REF (editcolumndlg, dialog_vbox1, "dialog_vbox1");

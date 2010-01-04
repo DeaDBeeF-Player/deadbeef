@@ -3177,6 +3177,7 @@ Track
 Custom</property>
 	      <property name="add_tearoffs">False</property>
 	      <property name="focus_on_click">True</property>
+	      <signal name="changed" handler="on_column_id_changed" last_modification_time="Mon, 04 Jan 2010 17:31:44 GMT"/>
 	    </widget>
 	    <packing>
 	      <property name="left_attach">1</property>
