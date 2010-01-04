@@ -22,6 +22,7 @@ version 0.3.2
 	fixed cuesheet support in mp3 and ogg plugins
 	fixed building for i686 architectures w/o sse2 support
 	fixed sse2 code issues in ape plugin
+	ported 24-bit ape support from rockbox
 	added support for custom scrobbler url to last.fm plugin (e.g. libre.fm)
 	added Play Queue funtionality to playlist (context menu)
 	fixed lots of bugs in command line processing
