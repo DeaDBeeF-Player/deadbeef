@@ -54,7 +54,7 @@ deadbeef_LDADD = $(LDADD) $(DEPS_LIBS) gme/Game_Music_Emu-0.5.2/gme/libgme.a sid
 AM_CFLAGS = $(DEPS_CFLAGS) -I$(gmepath) -std=c99
 AM_CPPFLAGS = $(DEPS_CFLAGS) -I$(sidpath)/libsidplay/include -I$(sidpath)/builders/resid-builder/include
 
-docsdir = $(datadir)/doc/$(PACKAGE)
+docsdir = $(docdir)
 
 docs_DATA = README COPYING help.txt about.txt
 

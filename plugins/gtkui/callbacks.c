@@ -1381,7 +1381,7 @@ void
 on_help1_activate                      (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    show_info_window (PREFIX "/share/doc/deadbeef/help.txt", "Help", &helpwindow);
+    show_info_window (DOCDIR "/help.txt", "Help", &helpwindow);
 }
 
 static GtkWidget *aboutwindow;
@@ -1390,7 +1390,7 @@ void
 on_about1_activate                     (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    show_info_window (PREFIX "/share/doc/deadbeef/about.txt", "About DeaDBeeF " VERSION, &aboutwindow);
+    show_info_window (DOCDIR "/about.txt", "About DeaDBeeF " VERSION, &aboutwindow);
 }
 
 
