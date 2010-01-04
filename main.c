@@ -67,27 +67,27 @@ client_exec_command_line (const char *cmdline, int len) {
         //        if (filter == 1) {
         // help, version and nowplaying are executed with any filter
         if (!strcmp (parg, "--help") || !strcmp (parg, "-h")) {
-            fprintf (stderr, "Usage: deadbeef [options] [file(s)]\n");
-            fprintf (stderr, "Options:\n");
-            fprintf (stderr, "   --help  or  -h     Print help (this message) and exit\n");
-            fprintf (stderr, "   --quit             Quit player\n");
-            fprintf (stderr, "   --version          Print version info and exit\n");
-            fprintf (stderr, "   --play             Start playback\n");
-            fprintf (stderr, "   --stop             Stop playback\n");
-            fprintf (stderr, "   --pause            Pause playback\n");
-            fprintf (stderr, "   --next             Next song in playlist\n");
-            fprintf (stderr, "   --prev             Previous song in playlist\n");
-            fprintf (stderr, "   --random           Random song in playlist\n");
-            fprintf (stderr, "   --queue            Append file(s) to existing playlist\n");
-            fprintf (stderr, "   --nowplaying FMT   Print formatted track name to stdout\n");
-            fprintf (stderr, "                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
+            fprintf (stdout, "Usage: deadbeef [options] [file(s)]\n");
+            fprintf (stdout, "Options:\n");
+            fprintf (stdout, "   --help  or  -h     Print help (this message) and exit\n");
+            fprintf (stdout, "   --quit             Quit player\n");
+            fprintf (stdout, "   --version          Print version info and exit\n");
+            fprintf (stdout, "   --play             Start playback\n");
+            fprintf (stdout, "   --stop             Stop playback\n");
+            fprintf (stdout, "   --pause            Pause playback\n");
+            fprintf (stdout, "   --next             Next song in playlist\n");
+            fprintf (stdout, "   --prev             Previous song in playlist\n");
+            fprintf (stdout, "   --random           Random song in playlist\n");
+            fprintf (stdout, "   --queue            Append file(s) to existing playlist\n");
+            fprintf (stdout, "   --nowplaying FMT   Print formatted track name to stdout\n");
+            fprintf (stdout, "                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
                              "                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
                              "                      copy[r]ight, [e]lapsed\n");
-            fprintf (stderr, "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n");
+            fprintf (stdout, "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n");
             return 1;
         }
         else if (!strcmp (parg, "--version")) {
-            fprintf (stderr, "DeaDBeeF %s Copyright (C) 2009 Alexey Yakovenko\n", VERSION);
+            fprintf (stdout, "DeaDBeeF " VERSION " Copyright © 2009-2010 Alexey Yakovenko\n");
             return 1;
         }
         parg += strlen (parg);
