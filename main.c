@@ -487,11 +487,11 @@ main (int argc, char *argv[]) {
             const char err[] = "error ";
             if (!strncmp (out, np, sizeof (np)-1)) {
                 const char *prn = &out[sizeof (np)-1];
-                printf (prn);
+                puts (prn);
             }
             else if (!strncmp (out, err, sizeof (err)-1)) {
                 const char *prn = &out[sizeof (err)-1];
-                fprintf (stderr, prn);
+                fputs (prn, stderr);
             }
             else if (out[0]) {
                 fprintf (stderr, "got unkown response:\n%s\n", out);
