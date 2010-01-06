@@ -21,6 +21,7 @@
 #include <unistd.h>
 #include <sys/prctl.h>
 #include "deadbeef.h"
+#include "../../config.h"
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
@@ -475,7 +476,7 @@ palsa_thread (void *context) {
         char buf[frames_to_deliver*4];
         palsa_callback (buf, frames_to_deliver*4);
         if ((err = snd_pcm_writei (audio, buf, frames_to_deliver)) < 0) {
-            trace ("write %d frames failed (%s)\n", frames_to_deliver, snd_strerror (err));
+            trace ("write %d frames failed (%s)\n", (int)frames_to_deliver, snd_strerror (err));
             snd_pcm_prepare (audio);
             snd_pcm_start (audio);
         }
