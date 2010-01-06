@@ -544,6 +544,7 @@ pl_insert_pls (playItem_t *after, const char *fname, int *pabort, int (*cb)(play
             break;
         }
         p += 6;
+        // skip =
         while (p < end && *p != '=') {
             p++;
         }
@@ -558,18 +559,21 @@ pl_insert_pls (playItem_t *after, const char *fname, int *pabort, int (*cb)(play
         n = e-p;
         n = min (n, sizeof (length)-1);
         memcpy (length, p, n);
-        length[n] = 0;
-        trace ("length: %s\n", length);
         // add track
         playItem_t *it = pl_insert_file (after, url, pabort, cb, user_data);
         if (it) {
             after = it;
             pl_set_item_duration (it, atoi (length));
+            pl_delete_all_meta (it);
             pl_add_meta (it, "title", title);
         }
         if (pabort && *pabort) {
             return after;
         }
+        while (e < end && *e < 0x20) {
+            e++;
+        }
+        p = e;
     }
     return after;
 }
