@@ -56,7 +56,7 @@ AM_CPPFLAGS = $(DEPS_CFLAGS) -I$(sidpath)/libsidplay/include -I$(sidpath)/builde
 
 docsdir = $(docdir)
 
-docs_DATA = README COPYING help.txt about.txt
+docs_DATA = README COPYING help.txt about.txt ChangeLog lgpl-2.1.txt
 
 desktopdir = $(datadir)/applications
 desktop_DATA = deadbeef.desktop
