@@ -20,7 +20,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "../../deadbeef.h"
-#include "adplug.h"
+#include "adplug/adplug.h"
 #include "emuopl.h"
 #include "silentopl.h"
 

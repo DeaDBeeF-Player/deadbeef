@@ -20,7 +20,7 @@
 #include <sys/prctl.h>
 #include <stdio.h>
 #include <string.h>
-#include "deadbeef.h"
+#include "../../deadbeef.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
