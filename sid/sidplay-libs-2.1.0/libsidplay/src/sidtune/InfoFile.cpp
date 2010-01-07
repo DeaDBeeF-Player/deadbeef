@@ -25,7 +25,7 @@
 #endif
 #include <iostream>
 #include <iomanip>
-#include <strstream>
+#include <sstream>
 #include <ctype.h>
 #include <string.h>
 
@@ -134,9 +134,12 @@ bool SidTune::SID_fileSupport(const void* dataBuffer, uint_least32_t dataBufLen,
                 restLen = sidBufLen - (uint_least32_t)(pParseBuf - (char*)sidBuffer);
             }
             // Create whitespace eating (!) input string stream.
-            std::istrstream parseStream((char *) pParseBuf, restLen );
+
+            std::string s (pParseBuf, restLen);
+
+            std::istringstream parseStream (s);
             // A second one just for copying.
-            std::istrstream parseCopyStream((char *) pParseBuf, restLen );
+            std::istringstream parseCopyStream (s);
             if ( !parseStream || !parseCopyStream )
             {
                 break;

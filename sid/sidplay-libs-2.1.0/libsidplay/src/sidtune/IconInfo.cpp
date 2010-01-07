@@ -37,7 +37,7 @@
 #   include <new>
 #endif
 #include <string.h>
-#include <strstream>
+#include <sstream>
 
 // Amiga Workbench specific structures.
 
@@ -359,8 +359,8 @@ bool SidTune::INFO_fileSupport(const void* dataBuffer, uint_least32_t dataLength
         // Now check all possible keywords.
         if ( SidTuneTools::myStrNcaseCmp(cmpBuf,_sidtune_keyword_address) == 0 )
         {
-            std::istrstream addrIn(cmpBuf + strlen(_sidtune_keyword_address),
-                              toolLen - strlen(_sidtune_keyword_address));
+            std::string s (cmpBuf + strlen(_sidtune_keyword_address),                                          toolLen - strlen(_sidtune_keyword_address));
+            std::istringstream addrIn(s);
             info.loadAddr = (uint_least16_t)SidTuneTools::readHex( addrIn );
             info.initAddr = (uint_least16_t)SidTuneTools::readHex( addrIn );
             info.playAddr = (uint_least16_t)SidTuneTools::readHex( addrIn );
@@ -372,8 +372,8 @@ bool SidTune::INFO_fileSupport(const void* dataBuffer, uint_least32_t dataLength
         }
         else if ( SidTuneTools::myStrNcaseCmp(cmpBuf,_sidtune_keyword_songs) == 0 )
         {
-            std::istrstream numIn( cmpBuf + strlen(_sidtune_keyword_songs),
-                              toolLen - strlen(_sidtune_keyword_songs) );
+            std::string s ( cmpBuf + strlen(_sidtune_keyword_songs),                                          toolLen - strlen(_sidtune_keyword_songs));
+            std::istringstream numIn(s);
             if ( !numIn )
             {
                 return false;
@@ -384,8 +384,8 @@ bool SidTune::INFO_fileSupport(const void* dataBuffer, uint_least32_t dataLength
         }
         else if ( SidTuneTools::myStrNcaseCmp(cmpBuf,_sidtune_keyword_speed) == 0 )
         {
-            std::istrstream speedIn( cmpBuf + strlen(_sidtune_keyword_speed),
-                                toolLen - strlen(_sidtune_keyword_speed) );
+            std::string s (cmpBuf + strlen(_sidtune_keyword_speed),                                            toolLen - strlen(_sidtune_keyword_speed));
+            std::istringstream speedIn (s);
             if ( !speedIn )
             {
                 return false;

@@ -20,6 +20,11 @@
 #ifndef __SIDDEFS_H__
 #define __SIDDEFS_H__
 
+#ifdef VERSION
+#undef VERSION
+#endif
+#define VERSION "2.1.0"
+
 // Define bool, true, and false for C++ compilers that lack these keywords.
 #define RESID_HAVE_BOOL 1
 

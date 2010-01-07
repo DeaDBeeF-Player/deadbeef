@@ -1,6 +1,7 @@
 #include "internal/riff.h"
 
 #include <stdlib.h>
+#include <string.h>
 
 struct riff * riff_parse( unsigned char * ptr, unsigned size, unsigned proper )
 {

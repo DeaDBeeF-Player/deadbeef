@@ -1,5 +1,12 @@
+adplugpath=@top_srcdir@/plugins/adplug
+
 adlibdir = $(libdir)/$(PACKAGE)
 pkglib_LTLIBRARIES = adplug.la
+
+AM_CFLAGS = $(CFLAGS) -std=c99 -I$(adplugpath)/adplug -I$(adplugpath)/libbinio
+
+AM_CPPFLAGS = $(CXXFLAGS) -Dstricmp=strcasecmp -DVERSION=\"2.1\" -I$(adplugpath)/adplug -I$(adplugpath)/libbinio
+
 adplug_la_SOURCES = adplug-db.cpp\
 				   plugin.c\
 				   adplug/adplug.cpp\
@@ -56,6 +63,62 @@ adplug_la_SOURCES = adplug-db.cpp\
 				   adplug/msc.cpp\
 				   adplug/rix.cpp\
 				   adplug/adl.cpp\
+				   adplug/a2m.h\
+				   adplug/adl.h\
+				   adplug/adlibemu.h\
+				   adplug/adplug.h\
+				   adplug/adtrack.h\
+				   adplug/amd.h\
+				   adplug/analopl.h\
+				   adplug/bam.h\
+				   adplug/bmf.h\
+				   adplug/cff.h\
+				   adplug/d00.h\
+				   adplug/database.h\
+				   adplug/debug.h\
+				   adplug/dfm.h\
+				   adplug/diskopl.h\
+				   adplug/dmo.h\
+				   adplug/dro.h\
+				   adplug/dtm.h\
+				   adplug/emuopl.h\
+				   adplug/flash.h\
+				   adplug/fmc.h\
+				   adplug/fmopl.h\
+				   adplug/fprovide.h\
+				   adplug/hsc.h\
+				   adplug/hsp.h\
+				   adplug/hybrid.h\
+				   adplug/hyp.h\
+				   adplug/imf.h\
+				   adplug/kemuopl.h\
+				   adplug/ksm.h\
+				   adplug/lds.h\
+				   adplug/mad.h\
+				   adplug/mid.h\
+				   adplug/mididata.h\
+				   adplug/mkj.h\
+				   adplug/msc.h\
+				   adplug/mtk.h\
+				   adplug/opl.h\
+				   adplug/player.h\
+				   adplug/players.h\
+				   adplug/protrack.h\
+				   adplug/psi.h\
+				   adplug/rad.h\
+				   adplug/rat.h\
+				   adplug/raw.h\
+				   adplug/realopl.h\
+				   adplug/rix.h\
+				   adplug/rol.h\
+				   adplug/s3m.h\
+				   adplug/sa2.h\
+				   adplug/silentopl.h\
+				   adplug/sng.h\
+				   adplug/temuopl.h\
+				   adplug/u6m.h\
+				   adplug/xad.h\
+				   adplug/xsm.h\
 				   libbinio/binfile.h\
 				   libbinio/binio.h\
 				   libbinio/binstr.h\
@@ -67,5 +130,4 @@ adplug_la_SOURCES = adplug-db.cpp\
 
 adplug_la_LDFLAGS = -module
 
-AM_CXXFLAGS = $(CFLAGS) -Dstricmp=strcasecmp -DVERSION=\"2.1\" -I adplug -I libbinio
-AM_CFLAGS = $(CFLAGS) -std=c99
+
