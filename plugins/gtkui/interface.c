@@ -389,11 +389,11 @@ create_mainwin (void)
   gtk_container_add (GTK_CONTAINER (menuitem4_menu), separator10);
   gtk_widget_set_sensitive (separator10, FALSE);
 
-  gpl1 = gtk_menu_item_new_with_mnemonic ("_GPL");
+  gpl1 = gtk_menu_item_new_with_mnemonic ("_GPLv2");
   gtk_widget_show (gpl1);
   gtk_container_add (GTK_CONTAINER (menuitem4_menu), gpl1);
 
-  lgpl1 = gtk_menu_item_new_with_mnemonic ("_LGPL");
+  lgpl1 = gtk_menu_item_new_with_mnemonic ("_LGPLv2.1");
   gtk_widget_show (lgpl1);
   gtk_container_add (GTK_CONTAINER (menuitem4_menu), lgpl1);
 

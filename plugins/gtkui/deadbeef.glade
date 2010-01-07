@@ -540,7 +540,7 @@
 		  <child>
 		    <widget class="GtkMenuItem" id="gpl1">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">_GPL</property>
+		      <property name="label" translatable="yes">_GPLv2</property>
 		      <property name="use_underline">True</property>
 		      <signal name="activate" handler="on_gpl1_activate" last_modification_time="Wed, 06 Jan 2010 20:30:20 GMT"/>
 		    </widget>
@@ -549,7 +549,7 @@
 		  <child>
 		    <widget class="GtkMenuItem" id="lgpl1">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">_LGPL</property>
+		      <property name="label" translatable="yes">_LGPLv2.1</property>
 		      <property name="use_underline">True</property>
 		      <signal name="activate" handler="on_lgpl1_activate" last_modification_time="Wed, 06 Jan 2010 20:30:20 GMT"/>
 		    </widget>

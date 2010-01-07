@@ -1408,7 +1408,7 @@ void
 on_gpl1_activate                       (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    show_info_window (DOCDIR "/COPYING", "GNU GENERAL PUBLIC LICENSE Version 2", &gplwindow);
+    show_info_window (DOCDIR "/COPYING.GPLv2", "GNU GENERAL PUBLIC LICENSE Version 2", &gplwindow);
 }
 
 static GtkWidget *lgplwindow;
@@ -1417,7 +1417,7 @@ void
 on_lgpl1_activate                      (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    show_info_window (DOCDIR "/lgpl-2.1.txt", "GNU LESSER GENERAL PUBLIC LICENSE Version 2.1", &lgplwindow);
+    show_info_window (DOCDIR "/COPYING.LGPLv2.1", "GNU LESSER GENERAL PUBLIC LICENSE Version 2.1", &lgplwindow);
 }
 
 
