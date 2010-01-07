@@ -87,12 +87,12 @@ ffmpeg_init (DB_playItem_t *it) {
     }
 
     stream_id = -1;
+    av_find_stream_info(fctx);
     for (i = 0; i < fctx->nb_streams; i++)
     {
         ctx = fctx->streams[i]->codec;
         if (ctx->codec_type == CODEC_TYPE_AUDIO)
         {
-            av_find_stream_info(fctx);
             codec = avcodec_find_decoder(ctx->codec_id);
             if (codec != NULL) {
                 stream_id = i;
@@ -130,12 +130,11 @@ ffmpeg_init (DB_playItem_t *it) {
     memset (&pkt, 0, sizeof (pkt));
     have_packet = 0;
 
-    buffer = malloc (AVCODEC_MAX_AUDIO_FRAME_SIZE);
-    if (!buffer) {
+    int err = posix_memalign ((void **)&buffer, 16, AVCODEC_MAX_AUDIO_FRAME_SIZE);
+    if (err) {
         fprintf (stderr, "ffmpeg: failed to allocate buffer memory\n");
         return -1;
     }
-
 
     // fill in mandatory plugin fields
     plugin.info.readpos = 0;
@@ -218,13 +217,13 @@ ffmpeg_read_int16 (char *bytes, int size) {
         while (left_in_packet > 0 && size > 0) {
             int out_size = AVCODEC_MAX_AUDIO_FRAME_SIZE;
             int len;
-            //trace ("in: out_size=%d(%d), size=%d\n", out_size, AVCODEC_MAX_AUDIO_FRAME_SIZE, size);
+//            trace ("in: out_size=%d(%d), size=%d\n", out_size, AVCODEC_MAX_AUDIO_FRAME_SIZE, size);
 #if (LIBAVCODEC_VERSION_MAJOR <= 52) && (LIBAVCODEC_VERSION_MINOR <= 25)
             len = avcodec_decode_audio2(ctx, (int16_t *)buffer, &out_size, pkt.data, pkt.size);
 #else
             len = avcodec_decode_audio3(ctx, (int16_t *)buffer, &out_size, &pkt);
 #endif
-            //trace ("out: out_size=%d, len=%d\n", out_size, len);
+//            trace ("out: out_size=%d, len=%d\n", out_size, len);
             if (len <= 0) {
                 break;
             }
@@ -268,12 +267,12 @@ ffmpeg_read_int16 (char *bytes, int size) {
             if (ret == -1) {
                 break;
             }
-            //trace ("idx:%d, stream:%d\n", pkt.stream_index, stream_id);
+//            trace ("idx:%d, stream:%d\n", pkt.stream_index, stream_id);
             if (pkt.stream_index != stream_id) {
                 av_free_packet (&pkt);
                 continue;
             }
-            //trace ("got packet: size=%d\n", pkt.size);
+//            trace ("got packet: size=%d\n", pkt.size);
             have_packet = 1;
             left_in_packet = pkt.size;
 
@@ -550,6 +549,7 @@ ffmpeg_start (void) {
     av_register_protocol (&vfswrapper);
     return 0;
 }
+
 static int
 ffmpeg_stop (void) {
     // undo everything done in _start here
