@@ -35,7 +35,7 @@
 #include "gtkplaylist.h"
 #include "search.h"
 #include "progress.h"
-#include "../session.h"
+#include "../../session.h"
 #include "gtkui.h"
 #include "parser.h"
 
