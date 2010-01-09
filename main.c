@@ -145,7 +145,7 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
                 else {
                     strcpy (out, "nothing");
                 }
-                printf (out);
+                fwrite (out, 1, strlen (out), stdout);
                 return 1; // exit
             }
         }
@@ -408,6 +408,7 @@ main (int argc, char *argv[]) {
     mkdir (dbconfdir, 0755);
 
     char cmdline[2048];
+    cmdline[0] = 0;
     int size = 0;
     if (argc > 1) {
         size = 2048;
@@ -487,11 +488,11 @@ main (int argc, char *argv[]) {
             const char err[] = "error ";
             if (!strncmp (out, np, sizeof (np)-1)) {
                 const char *prn = &out[sizeof (np)-1];
-                puts (prn);
+                fwrite (prn, 1, strlen (prn), stdout);
             }
             else if (!strncmp (out, err, sizeof (err)-1)) {
                 const char *prn = &out[sizeof (err)-1];
-                fputs (prn, stderr);
+                fwrite (prn, 1, strlen (prn), stderr);
             }
             else if (out[0]) {
                 fprintf (stderr, "got unkown response:\n%s\n", out);
@@ -501,6 +502,14 @@ main (int argc, char *argv[]) {
         exit (0);
     }
     close(s);
+
+    // hack: report nowplaying
+    if (!strcmp (cmdline, "--nowplaying")) {
+        char nothing[] = "nothing";
+        fwrite (nothing, 1, sizeof (nothing)-1, stdout);
+        return 0;
+    }
+
 
     signal (SIGTERM, sigterm_handler);
 
