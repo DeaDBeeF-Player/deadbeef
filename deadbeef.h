@@ -166,6 +166,7 @@ enum {
     DB_EV_PLAYLISTCHANGED = 9, // playlist contents were changed
     DB_EV_VOLUMECHANGED = 10, // volume was changed
     DB_EV_OUTPUTCHANGED = 11, // sound output plugin changed
+    DB_EV_ABORTREAD = 12, // tells plugins to stop reading operations, e.g. long-time http requests
     DB_EV_MAX
 };
 

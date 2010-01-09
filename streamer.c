@@ -36,8 +36,8 @@
 #include "volume.h"
 #include "vfs.h"
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 static intptr_t streamer_tid;
 static int src_quality;
@@ -237,6 +237,7 @@ streamer_get_apx_bitrate (void) {
 void
 streamer_set_nextsong (int song, int pstate) {
     trace ("streamer_set_nextsong %d %d\n", song, pstate);
+    plug_trigger_event (DB_EV_ABORTREAD, 0);
     nextsong = song;
     nextsong_pstate = pstate;
     if (p_isstopped ()) {
