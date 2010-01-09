@@ -35,7 +35,7 @@
 #include "sng.h"
 #include "adtrack.h"
 #include "bam.h"
-#include "cmf.h"
+//#include "cmf.h"
 #include "d00.h"
 #include "dfm.h"
 #include "hsp.h"
@@ -80,13 +80,13 @@ const CPlayerDesc CAdPlug::allplayers[] = {
   CPlayerDesc(CadtrackLoader::factory, "Adlib Tracker", ".sng\0"),
   CPlayerDesc(CamdLoader::factory, "AMUSIC", ".amd\0"),
   CPlayerDesc(CbamPlayer::factory, "Bob's Adlib Music", ".bam\0"),
-  CPlayerDesc(CcmfPlayer::factory, "Creative Music File", ".cmf\0"),
+//  CPlayerDesc(CcmfPlayer::factory, "Creative Music File", ".cmf\0"),
   CPlayerDesc(Cd00Player::factory, "Packed EdLib", ".d00\0"),
   CPlayerDesc(CdfmLoader::factory, "Digital-FM", ".dfm\0"),
   CPlayerDesc(ChspLoader::factory, "HSC Packed", ".hsp\0"),
   CPlayerDesc(CksmPlayer::factory, "Ken Silverman Music", ".ksm\0"),
   CPlayerDesc(CmadLoader::factory, "Mlat Adlib Tracker", ".mad\0"),
-  CPlayerDesc(CmidPlayer::factory, "MIDI", ".mid\0.sci\0.laa\0"),
+  CPlayerDesc(CmidPlayer::factory, "MIDI", ".mid\0.sci\0.laa\0.cmf\0"),
   CPlayerDesc(CmkjPlayer::factory, "MKJamz", ".mkj\0"),
   CPlayerDesc(CcffLoader::factory, "Boomtracker", ".cff\0"),
   CPlayerDesc(CdmoLoader::factory, "TwinTeam", ".dmo\0"),

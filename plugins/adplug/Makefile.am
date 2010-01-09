@@ -5,7 +5,8 @@ pkglib_LTLIBRARIES = adplug.la
 
 AM_CFLAGS = $(CFLAGS) -std=c99 -I$(adplugpath)/adplug -I$(adplugpath)/libbinio
 
-AM_CPPFLAGS = $(CXXFLAGS) -Dstricmp=strcasecmp -DVERSION=\"2.1\" -I$(adplugpath)/adplug -I$(adplugpath)/libbinio
+#AM_CPPFLAGS = $(CXXFLAGS) -Dstricmp=strcasecmp -DVERSION=\"2.1\" -I$(adplugpath)/adplug -I$(adplugpath)/libbinio -O0
+AM_CPPFLAGS = -Dstricmp=strcasecmp -DVERSION=\"2.1\" -I$(adplugpath)/adplug -I$(adplugpath)/libbinio -O0
 
 adplug_la_SOURCES = adplug-db.cpp\
 				   plugin.c\
@@ -37,8 +38,6 @@ adplug_la_SOURCES = adplug-db.cpp\
 				   adplug/bmf.h\
 				   adplug/cff.cpp\
 				   adplug/cff.h\
-				   adplug/cmf.cpp\
-				   adplug/cmf.h\
 				   adplug/d00.cpp\
 				   adplug/d00.h\
 				   adplug/database.cpp\
