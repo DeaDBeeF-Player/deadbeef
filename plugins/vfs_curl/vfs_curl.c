@@ -646,7 +646,6 @@ http_get_content_name (DB_FILE *stream) {
     return fp->content_name;
 }
 
-#if 0
 static const char *
 http_get_content_genre (DB_FILE *stream) {
     trace ("http_get_content_genre\n");
@@ -662,12 +661,11 @@ http_get_content_genre (DB_FILE *stream) {
         http_start_streamer (fp);
     }
     trace ("http_get_content_genre waiting for response...\n");
-    while (fp->status != STATUS_FINISHED && fp->status != STATUS_ABORTED && !fp->gotheader) {
+    while (fp->status != STATUS_FINISHED && fp->status != STATUS_ABORTED && !fp->gotheader && !vfs_curl_abort) {
         usleep (3000);
     }
     return fp->content_genre;
 }
-#endif
 
 static int
 vfs_curl_on_abort (DB_event_t *ev, uintptr_t data) {
@@ -721,7 +719,7 @@ static DB_vfs_t plugin = {
     .getlength = http_getlength,
     .get_content_type = http_get_content_type,
     .get_content_name = http_get_content_name,
-    .get_content_genre = http_get_content_type,
+    .get_content_genre = http_get_content_genre,
     .scheme_names = scheme_names,
     .streaming = 1
 };
