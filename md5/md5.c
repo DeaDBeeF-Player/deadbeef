@@ -52,8 +52,6 @@
 #include "md5.h"
 #include "md5_loc.h"
 
-/* static	char	*rcs_id =
-
 /* version id for the library */
 /* static char *version_id = "$MD5Version: 1.0.0 November-19-1997 $"; */
 
