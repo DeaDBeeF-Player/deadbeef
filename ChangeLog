@@ -18,7 +18,7 @@ version 0.3.2
 	flac plugin now plays "oga" files (flac in ogg container)
 	ffmpeg plugin, adds formats: m4a (aac,alac), mpc/mp+/mpp, wma, shn, oma, ac3, vqf
 	vtx plugin using libayemu
-	adplug plugin (includes support for adlib S3Ms)
+	adplug plugin - cmf, rol, hsc, etc (including adlib S3Ms)
 	fixed cuesheet support in mp3 and ogg plugins
 	fixed building for i686 architectures w/o sse2 support
 	fixed sse2 code issues in ape plugin
@@ -33,6 +33,7 @@ version 0.3.2
 	keyboard navigation in search window
 	search window geometry is now saved and restored between sessions
 	.dbpl extension is auto-added when saving playlist
+	better handling of http streams
 		
 version 0.3.1
 	improved header widget drawing and gtkengines compatibility
