@@ -360,11 +360,22 @@ player_mainloop (void) {
     }
 }
 
+static int sigterm_handled = 0;
+
+void
+atexit_handler (void) {
+    if (!sigterm_handled) {
+        fprintf (stderr, "handling atexit.\n");
+        pl_save (defpl);
+        conf_save ();
+    }
+}
+
 void
 sigterm_handler (int sig) {
-    fprintf (stderr, "got sigterm, saving...\n");
-    pl_save (defpl);
-    conf_save ();
+    fprintf (stderr, "got sigterm.\n");
+    atexit_handler ();
+    sigterm_handled = 1;
     fprintf (stderr, "bye.\n");
     exit (0);
 }
@@ -517,6 +528,8 @@ main (int argc, char *argv[]) {
     messagepump_init (); // required to push messages while handling commandline
     plug_load_all (); // required to add files to playlist from commandline
 
+    //atexit (atexit_handler); // doesn't help on X11 server shutdown anyway
+
     // execute server commands in local context
     int noloadpl = 0;
     if (argc > 1) {
@@ -572,6 +585,7 @@ main (int argc, char *argv[]) {
     pl_free ();
     conf_free ();
     messagepump_free ();
+    sigterm_handled = 1;
     fprintf (stderr, "hej-hej!\n");
     return 0;
 }
