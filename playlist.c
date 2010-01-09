@@ -53,7 +53,6 @@ playItem_t *playlist_head[PL_MAX_ITERATORS];
 playItem_t *playlist_tail[PL_MAX_ITERATORS];
 int playlist_current_row[PL_MAX_ITERATORS];
 
-playItem_t *playlist_current_ptr;
 static int pl_count[2];
 static float pl_totaltime = 0;
 
@@ -726,9 +725,6 @@ pl_remove (playItem_t *it) {
     if (!it)
         return -1;
     streamer_song_removed_notify (it);
-    if (playlist_current_ptr == it) {
-        playlist_current_ptr = NULL;
-    }
     pl_playqueue_remove (it);
 
     // remove from both lists list
@@ -909,204 +905,6 @@ pl_item_free (playItem_t *it) {
         }
         memset (it, 0, sizeof (playItem_t));
     }
-}
-
-int
-pl_prevsong (void) {
-    pl_playqueue_clear ();
-    if (!playlist_head[PL_MAIN]) {
-        streamer_set_nextsong (-2, 1);
-        return 0;
-    }
-    int pl_order = conf_get_int ("playback.order", 0);
-    int pl_loop_mode = conf_get_int ("playback.loop", 0);
-    if (pl_order == PLAYBACK_ORDER_SHUFFLE) { // shuffle
-        if (!playlist_current_ptr) {
-            return pl_nextsong (1);
-        }
-        else {
-            playlist_current_ptr->played = 0;
-            // find already played song with maximum shuffle rating below prev song
-            int rating = playlist_current_ptr->shufflerating;
-            playItem_t *pmax = NULL; // played maximum
-            playItem_t *amax = NULL; // absolute maximum
-            for (playItem_t *i = playlist_head[PL_MAIN]; i; i = i->next[PL_MAIN]) {
-                if (i != playlist_current_ptr && i->played && (!amax || i->shufflerating > amax->shufflerating)) {
-                    amax = i;
-                }
-                if (i == playlist_current_ptr || i->shufflerating > rating || !i->played) {
-                    continue;
-                }
-                if (!pmax || i->shufflerating > pmax->shufflerating) {
-                    pmax = i;
-                }
-            }
-            playItem_t *it = pmax;
-            if (!it) {
-                // that means 1st in playlist, take amax
-                if (pl_loop_mode == PLAYBACK_MODE_LOOP_ALL) {
-                    if (!amax) {
-                        pl_reshuffle (NULL, &amax);
-                    }
-                    it = amax;
-                }
-            }
-
-            if (!it) {
-                return -1;
-            }
-            int r = pl_get_idx_of (it);
-            streamer_set_nextsong (r, 1);
-            return 0;
-        }
-    }
-    else if (pl_order == PLAYBACK_ORDER_LINEAR) { // linear
-        playItem_t *it = NULL;
-        if (playlist_current_ptr) {
-            it = playlist_current_ptr->prev[PL_MAIN];
-        }
-        if (!it) {
-            if (pl_loop_mode == PLAYBACK_MODE_LOOP_ALL) {
-                it = playlist_tail[PL_MAIN];
-            }
-        }
-        if (!it) {
-            return -1;
-        }
-        int r = pl_get_idx_of (it);
-        streamer_set_nextsong (r, 1);
-        return 0;
-    }
-    else if (pl_order == PLAYBACK_ORDER_RANDOM) { // random
-        pl_randomsong ();
-    }
-    return -1;
-}
-
-int
-pl_nextsong (int reason) {
-    if (playqueue_count > 0) {
-        playItem_t *it = playqueue[0];
-        pl_playqueue_pop ();
-        int r = pl_get_idx_of (it);
-        streamer_set_nextsong (r, 1);
-        return 0;
-    }
-
-    playItem_t *curr = streamer_get_streaming_track ();
-    if (!playlist_head[PL_MAIN]) {
-        streamer_set_nextsong (-2, 1);
-        return 0;
-    }
-    int pl_order = conf_get_int ("playback.order", 0);
-    int pl_loop_mode = conf_get_int ("playback.loop", 0);
-    if (pl_order == PLAYBACK_ORDER_SHUFFLE) { // shuffle
-        if (!curr) {
-            // find minimal notplayed
-            playItem_t *pmin = NULL; // notplayed minimum
-            for (playItem_t *i = playlist_head[PL_MAIN]; i; i = i->next[PL_MAIN]) {
-                if (i->played) {
-                    continue;
-                }
-                if (!pmin || i->shufflerating < pmin->shufflerating) {
-                    pmin = i;
-                }
-            }
-            playItem_t *it = pmin;
-            if (!it) {
-                // all songs played, reshuffle and try again
-                if (pl_loop_mode == PLAYBACK_MODE_LOOP_ALL) { // loop
-                    pl_reshuffle (&it, NULL);
-                }
-            }
-            if (!it) {
-                return -1;
-            }
-            int r = pl_get_idx_of (it);
-            streamer_set_nextsong (r, 1);
-            return 0;
-        }
-        else {
-            trace ("pl_next_song: reason=%d, loop=%d\n", reason, pl_loop_mode);
-            if (reason == 0 && pl_loop_mode == PLAYBACK_MODE_LOOP_SINGLE) { // song finished, loop mode is "loop 1 track"
-                int r = pl_get_idx_of (curr);
-                streamer_set_nextsong (r, 1);
-                return 0;
-            }
-            // find minimal notplayed above current
-            int rating = curr->shufflerating;
-            playItem_t *pmin = NULL; // notplayed minimum
-            for (playItem_t *i = playlist_head[PL_MAIN]; i; i = i->next[PL_MAIN]) {
-                if (i->played || i->shufflerating < rating) {
-                    continue;
-                }
-                if (!pmin || i->shufflerating < pmin->shufflerating) {
-                    pmin = i;
-                }
-            }
-            playItem_t *it = pmin;
-            if (!it) {
-                trace ("all songs played! reshuffle\n");
-                // all songs played, reshuffle and try again
-                if (pl_loop_mode == PLAYBACK_MODE_LOOP_ALL) { // loop
-                    pl_reshuffle (&it, NULL);
-                }
-            }
-            if (!it) {
-                return -1;
-            }
-            int r = pl_get_idx_of (it);
-            streamer_set_nextsong (r, 1);
-            return 0;
-        }
-    }
-    else if (pl_order == PLAYBACK_ORDER_LINEAR) { // linear
-        playItem_t *it = NULL;
-        if (curr) {
-            if (reason == 0 && pl_loop_mode == PLAYBACK_MODE_LOOP_SINGLE) { // loop same track
-                int r = pl_get_idx_of (curr);
-                streamer_set_nextsong (r, 1);
-                return 0;
-            }
-            it = curr->next[PL_MAIN];
-        }
-        if (!it) {
-            trace ("pl_nextsong: was last track\n");
-            if (pl_loop_mode == PLAYBACK_MODE_LOOP_ALL) {
-                it = playlist_head[PL_MAIN];
-            }
-            else {
-                streamer_set_nextsong (-2, 1);
-                return 0;
-            }
-        }
-        if (!it) {
-            return -1;
-        }
-        int r = pl_get_idx_of (it);
-        streamer_set_nextsong (r, 1);
-        return 0;
-    }
-    else if (pl_order == PLAYBACK_ORDER_RANDOM) { // random
-        if (reason == 0 && pl_loop_mode == PLAYBACK_MODE_LOOP_SINGLE && curr) {
-            int r = pl_get_idx_of (curr);
-            streamer_set_nextsong (r, 1);
-            return 0;
-        }
-        return pl_randomsong ();
-    }
-    return -1;
-}
-
-int
-pl_randomsong (void) {
-    int cnt = pl_getcount (PL_MAIN);
-    if (!cnt) {
-        return -1;
-    }
-    int r = rand () / (float)RAND_MAX * cnt;
-    streamer_set_nextsong (r, 1);
-    return 0;
 }
 
 void
@@ -1894,11 +1692,6 @@ pl_get_totaltime (void) {
     return pl_totaltime;
 }
 
-playItem_t *
-pl_getcurrent (void) {
-    return playlist_current_ptr;
-}
-
 void
 pl_set_selected (playItem_t *it, int sel) {
     it->selected = sel;
@@ -2106,4 +1899,9 @@ pl_playqueue_getnext (void) {
         return playqueue[0];
     }
     return NULL;
+}
+
+int
+pl_playqueue_getcount (void) {
+    return playqueue_count;
 }

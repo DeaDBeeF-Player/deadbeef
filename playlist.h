@@ -53,10 +53,16 @@ typedef struct playItem_s {
     unsigned in_playlist : 1; // 1 if item is in playlist
 } playItem_t;
 
+typedef struct {
+    playItem_t *playlist_head[PL_MAX_ITERATORS]; // head of linked list
+    playItem_t *playlist_tail[PL_MAX_ITERATORS]; // tail of linked list
+    int playlist_current_row[PL_MAX_ITERATORS]; // current row (cursor)
+    playItem_t *playlist_current_ptr; // pointer to a real current playlist item (or NULL)
+} playlist_t;
+
 extern playItem_t *playlist_head[PL_MAX_ITERATORS]; // head of linked list
 extern playItem_t *playlist_tail[PL_MAX_ITERATORS]; // tail of linked list
 extern int playlist_current_row[PL_MAX_ITERATORS]; // current row (cursor)
-extern playItem_t *playlist_current_ptr; // pointer to a real current playlist item (or NULL)
 
 int
 pl_add_dir (const char *dirname, int (*cb)(playItem_t *it, void *data), void *user_data);
@@ -109,20 +115,6 @@ pl_insert_cue_from_buffer (playItem_t *after, playItem_t *origin, const uint8_t 
 playItem_t *
 pl_insert_cue (playItem_t *after, playItem_t *origin, int numsamples, int samplerate);
 
-//int
-//pl_set_current (playItem_t *it);
-
-// returns -1 if theres no next song, or playlist finished
-// reason 0 means "song finished", 1 means "user clicked next"
-int
-pl_nextsong (int reason);
-
-int
-pl_prevsong (void);
-
-int
-pl_randomsong (void);
-
 void
 pl_add_meta (playItem_t *it, const char *key, const char *value);
 
@@ -171,9 +163,6 @@ pl_reset_cursor (void);
 
 float
 pl_get_totaltime (void);
-
-playItem_t *
-pl_getcurrent (void);
 
 void
 pl_set_selected (playItem_t *it, int sel);
@@ -229,5 +218,8 @@ pl_playqueue_test (playItem_t *it);
 
 playItem_t *
 pl_playqueue_getnext (void);
+
+int
+pl_playqueue_getcount (void);
 
 #endif // __PLAYLIST_H

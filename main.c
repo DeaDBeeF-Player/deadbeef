@@ -325,11 +325,11 @@ player_mainloop (void) {
                 break;
             case M_NEXTSONG:
                 p_stop ();
-                pl_nextsong (1);
+                streamer_move_nextsong (1);
                 break;
             case M_PREVSONG:
                 p_stop ();
-                pl_prevsong ();
+                streamer_move_prevsong ();
                 break;
             case M_PAUSESONG:
                 if (p_get_state () == OUTPUT_STATE_PAUSED) {
@@ -343,7 +343,7 @@ player_mainloop (void) {
                 break;
             case M_PLAYRANDOM:
                 p_stop ();
-                pl_randomsong ();
+                streamer_move_randomsong ();
                 break;
             case M_PLAYLISTREFRESH:
                 plug_trigger_event_playlistchanged ();

@@ -84,4 +84,18 @@ streamer_set_bitrate (int bitrate);
 int
 streamer_get_apx_bitrate (void);
 
+// returns -1 if theres no next song, or playlist finished
+// reason 0 means "song finished", 1 means "user clicked next"
+int
+streamer_move_nextsong (int reason);
+
+int
+streamer_move_prevsong (void);
+
+int
+streamer_move_randomsong (void);
+
+playItem_t *
+streamer_get_current (void);
+
 #endif // __STREAMER_H
