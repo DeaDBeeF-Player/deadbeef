@@ -24,8 +24,8 @@
 #include <curl/curlver.h>
 #include "../../deadbeef.h"
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -131,6 +131,9 @@ http_curl_write (void *ptr, size_t size, size_t nmemb, void *stream) {
     }
     deadbeef->mutex_unlock (fp->mutex);
     while (avail > 0) {
+        if (vfs_curl_abort) {
+            break;
+        }
         deadbeef->mutex_lock (fp->mutex);
         if (fp->status == STATUS_SEEK) {
             trace ("vfs_curl seek request, aborting current request\n");
@@ -314,7 +317,6 @@ http_curl_control (void *stream, double dltotal, double dlnow, double ultotal, d
 
 static void
 http_thread_func (void *ctx) {
-    vfs_curl_count++;
     HTTP_FILE *fp = (HTTP_FILE *)ctx;
     CURL *curl;
     curl = curl_easy_init ();
@@ -378,7 +380,9 @@ http_thread_func (void *ctx) {
 #endif
             curl_easy_setopt (curl, CURLOPT_PROXYTYPE, curlproxytype);
         }
+        vfs_curl_count++;
         status = curl_easy_perform (curl);
+        vfs_curl_count--;
         trace ("vfs_curl: curl_easy_perform status=%d\n", status);
         if (status != 0) {
             trace ("curl error:\n%s\n", http_err);
@@ -399,7 +403,6 @@ http_thread_func (void *ctx) {
     fp->status = STATUS_FINISHED;
     deadbeef->mutex_unlock (fp->mutex);
     fp->tid = 0;
-    vfs_curl_count--;
 }
 
 static void
@@ -462,6 +465,7 @@ http_read (void *ptr, size_t size, size_t nmemb, DB_FILE *stream) {
     {
         // wait until data is available
         while ((fp->remaining == 0 || fp->skipbytes > 0) && fp->status != STATUS_FINISHED && !vfs_curl_abort) {
+            trace ("vfs_curl: readwait..\n");
             deadbeef->mutex_lock (fp->mutex);
             int skip = min (fp->remaining, fp->skipbytes);
             if (skip > 0) {
@@ -665,24 +669,18 @@ http_get_content_genre (DB_FILE *stream) {
 }
 #endif
 
-static void
-http_stop (DB_FILE *stream) {
-    trace ("http_stop\n");
-    assert (stream);
-    HTTP_FILE *fp = (HTTP_FILE *)stream;
-    fp->status = STATUS_ABORTED;
-}
-
 static int
 vfs_curl_on_abort (DB_event_t *ev, uintptr_t data) {
-    trace ("vfs_curl: got abort signal!\n");
+    trace ("vfs_curl: got abort signal (vfs_curl_count=%d)!\n", vfs_curl_count);
     if (vfs_curl_count > 0) {
         vfs_curl_abort = 1;
         while (vfs_curl_count > 0) {
+            trace ("vfs_curl: (vfs_curl_count=%d)!\n", vfs_curl_count);
             usleep (20000);
         }
         vfs_curl_abort = 0;
     }
+    trace ("vfs_curl: abort handler done!\n");
     return 0;
 }
 
@@ -724,7 +722,6 @@ static DB_vfs_t plugin = {
     .get_content_type = http_get_content_type,
     .get_content_name = http_get_content_name,
     .get_content_genre = http_get_content_type,
-    .stop = http_stop,
     .scheme_names = scheme_names,
     .streaming = 1
 };

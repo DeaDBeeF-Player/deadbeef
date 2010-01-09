@@ -516,7 +516,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
 static int
 cmp3_init (DB_playItem_t *it) {
     memset (&buffer, 0, sizeof (buffer));
-    buffer.file = plugin.info.file = deadbeef->fopen (it->fname);
+    buffer.file = deadbeef->fopen (it->fname);
     if (!buffer.file) {
         return -1;
     }
@@ -840,7 +840,6 @@ cmp3_decode_float32 (void) {
 
 static void
 cmp3_free (void) {
-    plugin.info.file = NULL;
     if (buffer.file) {
         deadbeef->fclose (buffer.file);
         buffer.file = NULL;

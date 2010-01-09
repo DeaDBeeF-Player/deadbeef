@@ -423,7 +423,6 @@ typedef struct DB_plugin_s {
 } DB_plugin_t;
 
 typedef struct {
-    DB_FILE *file;
     int bps;
     int channels;
     int samplerate;
@@ -531,7 +530,6 @@ typedef struct DB_vfs_s {
     int64_t (*tell) (DB_FILE *stream);
     void (*rewind) (DB_FILE *stream);
     int64_t (*getlength)(DB_FILE *stream);
-    void (*stop)(DB_FILE *stream);
     const char * (*get_content_type) (DB_FILE *stream);
     const char * (*get_content_name) (DB_FILE *stream);
     const char * (*get_content_genre) (DB_FILE *stream);
