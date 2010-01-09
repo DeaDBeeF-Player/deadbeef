@@ -54,7 +54,9 @@ adplug_init (DB_playItem_t *it) {
 
     int samplerate = deadbeef->get_output ()->samplerate ();
     int bps = deadbeef->get_output ()->bitspersample ();
-    opl = new CEmuopl (samplerate, bps, deadbeef->get_output ()->channels () == 2);
+    int channels = 2;
+    opl = new CEmuopl (samplerate, true, channels == 2);
+//    opl->settype (Copl::TYPE_OPL2);
     decoder = CAdPlug::factory (it->fname, opl, CAdPlug::players);
     if (!decoder) {
         trace ("adplug: failed to open %s\n", it->fname);
@@ -69,7 +71,7 @@ adplug_init (DB_playItem_t *it) {
 
     // fill in mandatory plugin fields
     adplug_plugin.info.bps = bps;
-    adplug_plugin.info.channels = deadbeef->get_output ()->channels ();
+    adplug_plugin.info.channels = channels;
     adplug_plugin.info.samplerate = samplerate;
     adplug_plugin.info.readpos = 0;
 
@@ -98,7 +100,7 @@ adplug_read_int16 (char *bytes, int size) {
     // return 0 on EOF
     bool playing = true;
     int i;
-    int sampsize = 4;
+    int sampsize = (adplug_plugin.info.bps >> 3) * adplug_plugin.info.channels;
 
     if (currentsample + size/4 >= totalsamples) {
         // clip
