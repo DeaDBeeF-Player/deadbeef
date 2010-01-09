@@ -29,7 +29,7 @@
   comment : there are bug in original replayer's adlib_init(): wrong frequency registers.
 */
 
-#include <string.h>
+#include <cstring>
 #include "rat.h"
 #include "debug.h"
 

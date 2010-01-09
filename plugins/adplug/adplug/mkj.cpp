@@ -19,8 +19,8 @@
  * mkj.cpp - MKJamz Player, by Simon Peter <dn.tlp@gmx.net>
  */
 
+#include <cstring>
 #include <assert.h>
-#include <string.h>
 
 #include "mkj.h"
 #include "debug.h"

@@ -22,7 +22,7 @@
   NOTE: Panning (Ex) effect is ignored.
 */
 
-#include <string.h>
+#include <cstring>
 #include "dtm.h"
 
 /* -------- Public Methods -------------------------------- */

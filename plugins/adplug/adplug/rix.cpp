@@ -20,7 +20,7 @@
  *                                             BSPAL <BSPAL.ys168.com>
  */
 
-#include <string.h>
+#include <cstring>
 #include "rix.h"
 #include "debug.h"
 

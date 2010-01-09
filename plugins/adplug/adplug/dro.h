@@ -40,7 +40,7 @@ class CdroPlayer: public CPlayer
 
   std::string gettype()
     {
-      return std::string("DOSBox Raw OPL");
+      return std::string("DOSBox Raw OPL v0.1");
     }
 
  protected:

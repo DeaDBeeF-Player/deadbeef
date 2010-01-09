@@ -25,7 +25,7 @@
  * Protracker-like format, this is most certainly the player you want to use.
  */
 
-#include <string.h>
+#include <cstring>
 #include "protrack.h"
 #include "debug.h"
 
@@ -72,7 +72,7 @@ bool CmodPlayer::update()
   for(chan = 0; chan < nchans; chan++) {
     oplchan = set_opl_chip(chan);
 
-    if(arplist && arpcmd && inst[channel[chan].inst].arpstart)	// special arpeggio
+    if(arplist && arpcmd && inst[channel[chan].inst].arpstart) {	// special arpeggio
       if(channel[chan].arpspdcnt)
 	channel[chan].arpspdcnt--;
       else
@@ -107,6 +107,7 @@ bool CmodPlayer::update()
 	    channel[chan].arppos++;
 	  channel[chan].arpspdcnt = inst[channel[chan].inst].arpspeed - 1;
 	}
+    }
 
     info1 = channel[chan].info1;
     info2 = channel[chan].info2;
@@ -631,8 +632,8 @@ void CmodPlayer::setvolume_alt(unsigned char chan)
   unsigned char ivol2 = inst[channel[chan].inst].data[9] & 63;
   unsigned char ivol1 = inst[channel[chan].inst].data[10] & 63;
 
-  opl->write(0x40 + op_table[oplchan], (((63 - channel[chan].vol2 & 63) + ivol2) >> 1) + (inst[channel[chan].inst].data[9] & 192));
-  opl->write(0x43 + op_table[oplchan], (((63 - channel[chan].vol1 & 63) + ivol1) >> 1) + (inst[channel[chan].inst].data[10] & 192));
+  opl->write(0x40 + op_table[oplchan], (((63 - (channel[chan].vol2 & 63)) + ivol2) >> 1) + (inst[channel[chan].inst].data[9] & 192));
+  opl->write(0x43 + op_table[oplchan], (((63 - (channel[chan].vol1 & 63)) + ivol1) >> 1) + (inst[channel[chan].inst].data[10] & 192));
 }
 
 void CmodPlayer::setfreq(unsigned char chan)
@@ -679,13 +680,14 @@ void CmodPlayer::playnote(unsigned char chan)
 
 void CmodPlayer::setnote(unsigned char chan, int note)
 {
-  if(note > 96)
+  if(note > 96) {
     if(note == 127) {	// key off
       channel[chan].key = 0;
       setfreq(chan);
       return;
     } else
       note = 96;
+  }
 
   if(note < 13)
     channel[chan].freq = notetable[note - 1];
@@ -701,23 +703,25 @@ void CmodPlayer::setnote(unsigned char chan, int note)
 void CmodPlayer::slide_down(unsigned char chan, int amount)
 {
   channel[chan].freq -= amount;
-  if(channel[chan].freq <= 342)
+  if(channel[chan].freq <= 342) {
     if(channel[chan].oct) {
       channel[chan].oct--;
       channel[chan].freq <<= 1;
     } else
       channel[chan].freq = 342;
+  }
 }
 
 void CmodPlayer::slide_up(unsigned char chan, int amount)
 {
   channel[chan].freq += amount;
-  if(channel[chan].freq >= 686)
+  if(channel[chan].freq >= 686) {
     if(channel[chan].oct < 7) {
       channel[chan].oct++;
       channel[chan].freq >>= 1;
     } else
       channel[chan].freq = 686;
+  }
 }
 
 void CmodPlayer::tone_portamento(unsigned char chan, unsigned char info)
@@ -799,11 +803,12 @@ void CmodPlayer::vol_up_alt(unsigned char chan, int amount)
     channel[chan].vol1 += amount;
   else
     channel[chan].vol1 = 63;
-  if(inst[channel[chan].inst].data[0] & 1)
+  if(inst[channel[chan].inst].data[0] & 1) {
     if(channel[chan].vol2 + amount < 63)
       channel[chan].vol2 += amount;
     else
       channel[chan].vol2 = 63;
+  }
 }
 
 void CmodPlayer::vol_down_alt(unsigned char chan, int amount)
@@ -812,9 +817,10 @@ void CmodPlayer::vol_down_alt(unsigned char chan, int amount)
     channel[chan].vol1 -= amount;
   else
     channel[chan].vol1 = 0;
-  if(inst[channel[chan].inst].data[0] & 1)
+  if(inst[channel[chan].inst].data[0] & 1) {
     if(channel[chan].vol2 - amount > 0)
       channel[chan].vol2 -= amount;
     else
       channel[chan].vol2 = 0;
+  }
 }

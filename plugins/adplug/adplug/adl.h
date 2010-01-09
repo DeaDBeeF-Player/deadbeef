@@ -1,6 +1,20 @@
 /*
  * Adplug - Replayer for many OPL2/OPL3 audio file formats.
- * Copyright (C) 1999 - 2006 Simon Peter, <dn.tlp@gmx.net>, et al.
+ * Copyright (C) 1999 - 2007 Simon Peter, <dn.tlp@gmx.net>, et al.
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  * 
  * adl.h - ADL player adaption by Simon Peter <dn.tlp@gmx.net>
  */
@@ -24,7 +38,7 @@ class CadlPlayer: public CPlayer
 
   bool load(const std::string &filename, const CFileProvider &fp);
   bool update();
-  void rewind(int subsong);
+  void rewind(int subsong = -1);
 
   // refresh rate is fixed at 72Hz
   float getrefresh()
@@ -33,6 +47,7 @@ class CadlPlayer: public CPlayer
     }
 
   unsigned int getsubsongs();
+  unsigned int getsubsong() { return cursubsong; }
   std::string gettype() { return std::string("Westwood ADL"); }
 
  private:

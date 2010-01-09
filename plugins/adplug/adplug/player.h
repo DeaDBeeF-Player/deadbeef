@@ -37,7 +37,7 @@ public:
 /***** Operational methods *****/
 	void seek(unsigned long ms);
 
-	virtual bool load(const std::string &fn,	// loads file
+	virtual bool load(const std::string &filename,	// loads file
 			  const CFileProvider &fp = CProvider_Filesystem()) = 0;
 	virtual bool update() = 0;			// executes replay code for 1 tick
 	virtual void rewind(int subsong = -1) = 0;	// rewinds to specified subsong
@@ -48,29 +48,31 @@ public:
 
 	virtual std::string gettype() = 0;	// returns file type
 	virtual std::string gettitle()		// returns song title
-	{ return std::string(); }
+	  { return std::string(); }
 	virtual std::string getauthor()		// returns song author name
-	{ return std::string(); }
+	  { return std::string(); }
 	virtual std::string getdesc()		// returns song description
-	{ return std::string(); }
+	  { return std::string(); }
 	virtual unsigned int getpatterns()	// returns number of patterns
-	{ return 0; }
+	  { return 0; }
 	virtual unsigned int getpattern()	// returns currently playing pattern
-	{ return 0; }
+	  { return 0; }
 	virtual unsigned int getorders()	// returns size of orderlist
-	{ return 0; }
+	  { return 0; }
 	virtual unsigned int getorder()		// returns currently playing song position
-	{ return 0; }
+	  { return 0; }
 	virtual unsigned int getrow()		// returns currently playing row
-	{ return 0; }
+	  { return 0; }
 	virtual unsigned int getspeed()		// returns current song speed
-	{ return 0; }
+	  { return 0; }
 	virtual unsigned int getsubsongs()	// returns number of subsongs
-	{ return 1; }
+	  { return 1; }
+	virtual unsigned int getsubsong()	// returns current subsong
+	  { return 0; }
 	virtual unsigned int getinstruments()	// returns number of instruments
-	{ return 0; }
+	  { return 0; }
 	virtual std::string getinstrument(unsigned int n)	// returns n-th instrument name
-	{ return std::string(); }
+	  { return std::string(); }
 
 protected:
 	Copl		*opl;	// our OPL chip

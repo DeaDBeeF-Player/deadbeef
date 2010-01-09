@@ -1,6 +1,6 @@
 /*
  * Adplug - Replayer for many OPL2/OPL3 audio file formats.
- * Copyright (C) 1999 - 2007 Simon Peter, <dn.tlp@gmx.net>, et al.
+ * Copyright (C) 1999 - 2008 Simon Peter, <dn.tlp@gmx.net>, et al.
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,8 +20,9 @@
  *           SAdT Loader by Mamiya <mamiya@users.sourceforge.net>
  */
 
-#include <string.h>
+#include <cstring>
 #include <stdio.h>
+#include <string.h>
 
 #include "sa2.h"
 #include "debug.h"

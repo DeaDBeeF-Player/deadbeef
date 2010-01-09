@@ -22,7 +22,7 @@
  * some volumes are dropped out
  */
 
-#include <string.h>
+#include <cstring>
 #include "rad.h"
 
 CPlayer *CradLoader::factory(Copl *newopl)

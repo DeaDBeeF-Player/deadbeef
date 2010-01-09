@@ -1,6 +1,6 @@
 /*
  * Adplug - Replayer for many OPL2/OPL3 audio file formats.
- * Copyright (C) 1999 - 2006 Simon Peter <dn.tlp@gmx.net>, et al.
+ * Copyright (C) 1999 - 2008 Simon Peter <dn.tlp@gmx.net>, et al.
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,9 +19,9 @@
  * adplug.cpp - CAdPlug utility class, by Simon Peter <dn.tlp@gmx.net>
  */
 
+#include <cstring>
 #include <string>
 #include <binfile.h>
-#include <string.h>
 
 #include "adplug.h"
 #include "debug.h"
@@ -35,6 +35,7 @@
 #include "sng.h"
 #include "adtrack.h"
 #include "bam.h"
+#include "cmf.h"
 #include "d00.h"
 #include "dfm.h"
 #include "hsp.h"
@@ -62,9 +63,11 @@
 #include "rol.h"
 #include "xsm.h"
 #include "dro.h"
+#include "dro2.h"
 #include "msc.h"
 #include "rix.h"
 #include "adl.h"
+#include "jbm.h"
 
 /***** CAdPlug *****/
 
@@ -77,12 +80,13 @@ const CPlayerDesc CAdPlug::allplayers[] = {
   CPlayerDesc(CadtrackLoader::factory, "Adlib Tracker", ".sng\0"),
   CPlayerDesc(CamdLoader::factory, "AMUSIC", ".amd\0"),
   CPlayerDesc(CbamPlayer::factory, "Bob's Adlib Music", ".bam\0"),
+  CPlayerDesc(CcmfPlayer::factory, "Creative Music File", ".cmf\0"),
   CPlayerDesc(Cd00Player::factory, "Packed EdLib", ".d00\0"),
   CPlayerDesc(CdfmLoader::factory, "Digital-FM", ".dfm\0"),
   CPlayerDesc(ChspLoader::factory, "HSC Packed", ".hsp\0"),
   CPlayerDesc(CksmPlayer::factory, "Ken Silverman Music", ".ksm\0"),
   CPlayerDesc(CmadLoader::factory, "Mlat Adlib Tracker", ".mad\0"),
-  CPlayerDesc(CmidPlayer::factory, "MIDI", ".mid\0.cmf\0.sci\0.laa\0"),
+  CPlayerDesc(CmidPlayer::factory, "MIDI", ".mid\0.sci\0.laa\0"),
   CPlayerDesc(CmkjPlayer::factory, "MKJamz", ".mkj\0"),
   CPlayerDesc(CcffLoader::factory, "Boomtracker", ".cff\0"),
   CPlayerDesc(CdmoLoader::factory, "TwinTeam", ".dmo\0"),
@@ -103,10 +107,12 @@ const CPlayerDesc CAdPlug::allplayers[] = {
   CPlayerDesc(Cu6mPlayer::factory, "Ultima 6 Music", ".m\0"),
   CPlayerDesc(CrolPlayer::factory, "Adlib Visual Composer", ".rol\0"),
   CPlayerDesc(CxsmPlayer::factory, "eXtra Simple Music", ".xsm\0"),
-  CPlayerDesc(CdroPlayer::factory, "DOSBox Raw OPL", ".dro\0"),
+  CPlayerDesc(CdroPlayer::factory, "DOSBox Raw OPL v0.1", ".dro\0"),
+  CPlayerDesc(Cdro2Player::factory, "DOSBox Raw OPL v2.0", ".dro\0"),
   CPlayerDesc(CmscPlayer::factory, "Adlib MSC Player", ".msc\0"),
   CPlayerDesc(CrixPlayer::factory, "Softstar RIX OPL Music", ".rix\0"),
   CPlayerDesc(CadlPlayer::factory, "Westwood ADL", ".adl\0"),
+  CPlayerDesc(CjbmPlayer::factory, "JBM Adlib Music", ".jbm\0"),
   CPlayerDesc()
 };
 
@@ -124,39 +130,41 @@ const CPlayers &CAdPlug::init_players(const CPlayerDesc pd[])
 const CPlayers CAdPlug::players = CAdPlug::init_players(CAdPlug::allplayers);
 CAdPlugDatabase *CAdPlug::database = 0;
 
-CPlayer *CAdPlug::factory(const char *fn, Copl *opl, const CPlayers &pl,
+CPlayer *CAdPlug::factory(const std::string &fn, Copl *opl, const CPlayers &pl,
 			  const CFileProvider &fp)
 {
   CPlayer			*p;
   CPlayers::const_iterator	i;
   unsigned int			j;
 
-  AdPlug_LogWrite("*** CAdPlug::factory(\"%s\",opl,fp) ***\n", fn);
+  AdPlug_LogWrite("*** CAdPlug::factory(\"%s\",opl,fp) ***\n", fn.c_str());
 
   // Try a direct hit by file extension
   for(i = pl.begin(); i != pl.end(); i++)
     for(j = 0; (*i)->get_extension(j); j++)
       if(fp.extension(fn, (*i)->get_extension(j))) {
 	AdPlug_LogWrite("Trying direct hit: %s\n", (*i)->filetype.c_str());
-	if((p = (*i)->factory(opl)))
+	if((p = (*i)->factory(opl))) {
 	  if(p->load(fn, fp)) {
 	    AdPlug_LogWrite("got it!\n");
 	    AdPlug_LogWrite("--- CAdPlug::factory ---\n");
 	    return p;
 	  } else
 	    delete p;
+	}
       }
 
   // Try all players, one by one
   for(i = pl.begin(); i != pl.end(); i++) {
     AdPlug_LogWrite("Trying: %s\n", (*i)->filetype.c_str());
-    if((p = (*i)->factory(opl)))
+    if((p = (*i)->factory(opl))) {
       if(p->load(fn, fp)) {
         AdPlug_LogWrite("got it!\n");
         AdPlug_LogWrite("--- CAdPlug::factory ---\n");
 	return p;
       } else
 	delete p;
+    }
   }
 
   // Unknown file

@@ -32,7 +32,7 @@ public:
     {
     }
 
-  virtual binistream *open(std::string filename) const = 0;
+  virtual binistream *open(std::string) const = 0;
   virtual void close(binistream *) const = 0;
 
   static bool extension(const std::string &filename,

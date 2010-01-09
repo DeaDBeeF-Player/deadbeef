@@ -1,6 +1,6 @@
 /*
   AdPlug - Replayer for many OPL2/OPL3 audio file formats.
-  Copyright (C) 1999 - 2006 Simon Peter <dn.tlp@gmx.net>, et al.
+  Copyright (C) 1999 - 2008 Simon Peter <dn.tlp@gmx.net>, et al.
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -24,6 +24,7 @@
   slides use previous effect data instead of current.
 */
 
+#include <cstring>
 #include <stdlib.h>
 #include <string.h>
 

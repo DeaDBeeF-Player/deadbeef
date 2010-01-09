@@ -1,6 +1,6 @@
 /*
  * Adplug - Replayer for many OPL2/OPL3 audio file formats.
- * Copyright (C) 1999 - 2006 Simon Peter, <dn.tlp@gmx.net>, et al.
+ * Copyright (C) 1999 - 2008 Simon Peter, <dn.tlp@gmx.net>, et al.
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -62,6 +62,11 @@
  * 10/15/2005: Changes by Simon Peter
  *	Added rhythm mode support for CMF format.
  *
+ * 09/13/2008: Changes by Adam Nielsen (malvineous@shikadi.net)
+ *      Fixed a couple of CMF rhythm mode bugs
+ *      Disabled note velocity for CMF files
+ *      Added support for nonstandard CMF AM+VIB controller (for VGFM CMFs)
+ *
  * Other acknowledgements:
  *  Allegro - for the midi instruments and the midi volume table
  *  SCUMM Revisited - for getting the .LAA / .MIDs out of those
@@ -105,9 +110,6 @@ void CmidPlayer::midiprintf(const char *format, ...)
 
 // AdLib standard operator table
 const unsigned char CmidPlayer::adlib_opadd[] = {0x00  ,0x01 ,0x02  ,0x08  ,0x09  ,0x0A  ,0x10 ,0x11  ,0x12};
-
-// dunno
-const int CmidPlayer::ops[] = {0x20,0x20,0x40,0x40,0x60,0x60,0x80,0x80,0xe0,0xe0,0xc0};
 
 // map CMF drum channels 12 - 15 to corresponding AdLib drum operators
 // bass drum (channel 11) not mapped, cause it's handled like a normal instrument
@@ -300,12 +302,13 @@ bool CmidPlayer::load(const std::string &filename, const CFileProvider &fp)
             if (s[1]=='T' && s[2]=='M' && s[3]=='F') good=FILE_CMF;
             break;
         case 0x84:
-            if (s[1]==0x00 && load_sierra_ins(filename, fp))
-                if (s[2]==0xf0)
-                    good=FILE_ADVSIERRA;
-                    else
-                    good=FILE_SIERRA;
-            break;
+	  if (s[1]==0x00 && load_sierra_ins(filename, fp)) {
+	    if (s[2]==0xf0)
+	      good=FILE_ADVSIERRA;
+	    else
+	      good=FILE_SIERRA;
+	  }
+	  break;
         default:
             if (s[4]=='A' && s[5]=='D') good=FILE_OLDLUCAS;
             break;
@@ -346,30 +349,24 @@ void CmidPlayer::midi_fm_instrument(int voice, unsigned char *inst)
     midi_write_adlib(0x20+adlib_opadd[voice],inst[0]);
     midi_write_adlib(0x23+adlib_opadd[voice],inst[1]);
 
-    if ((adlib_style&LUCAS_STYLE)!=0)
-        {
+    if (adlib_style & LUCAS_STYLE) {
         midi_write_adlib(0x43+adlib_opadd[voice],0x3f);
         if ((inst[10] & 1)==0)
             midi_write_adlib(0x40+adlib_opadd[voice],inst[2]);
-            else
-            midi_write_adlib(0x40+adlib_opadd[voice],0x3f);
-        }
         else
-        {
-        if ((adlib_style&SIERRA_STYLE)!=0)
-            {
-            midi_write_adlib(0x40+adlib_opadd[voice],inst[2]);
+            midi_write_adlib(0x40+adlib_opadd[voice],0x3f);
+
+    } else if ((adlib_style & SIERRA_STYLE) || (adlib_style & CMF_STYLE)) {
+        midi_write_adlib(0x40+adlib_opadd[voice],inst[2]);
+        midi_write_adlib(0x43+adlib_opadd[voice],inst[3]);
+
+    } else {
+        midi_write_adlib(0x40+adlib_opadd[voice],inst[2]);
+        if ((inst[10] & 1)==0)
             midi_write_adlib(0x43+adlib_opadd[voice],inst[3]);
-            }
-            else
-            {
-            midi_write_adlib(0x40+adlib_opadd[voice],inst[2]);
-            if ((inst[10] & 1)==0)
-                midi_write_adlib(0x43+adlib_opadd[voice],inst[3]);
-                else
-                midi_write_adlib(0x43+adlib_opadd[voice],0);
-            }
-        }
+        else
+            midi_write_adlib(0x43+adlib_opadd[voice],0);
+    }
 
     midi_write_adlib(0x60+adlib_opadd[voice],inst[4]);
     midi_write_adlib(0x63+adlib_opadd[voice],inst[5]);
@@ -390,7 +387,8 @@ void CmidPlayer::midi_fm_percussion(int ch, unsigned char *inst)
   midi_write_adlib(0x60 + opadd, inst[4]);
   midi_write_adlib(0x80 + opadd, inst[6]);
   midi_write_adlib(0xe0 + opadd, inst[8]);
-  midi_write_adlib(0xc0 + opadd, inst[10]);
+  if (opadd < 0x13) // only output this for the modulator, not the carrier, as it affects the entire channel
+      midi_write_adlib(0xc0 + percussion_map[ch - 11], inst[10]);
 }
 
 void CmidPlayer::midi_fm_volume(int voice, int volume)
@@ -429,7 +427,7 @@ void CmidPlayer::midi_fm_playnote(int voice, int note, int volume)
     midi_fm_volume(voice,volume);
     midi_write_adlib(0xa0+voice,(unsigned char)(freq&0xff));
 
-	c=((freq&0x300) >> 8)+(oct<<2) + (adlib_mode == ADLIB_MELODIC || voice < 6 ? (1<<5) : 0);
+	c=((freq&0x300) >> 8)+((oct&7)<<2) + (adlib_mode == ADLIB_MELODIC || voice < 6 ? (1<<5) : 0);
     midi_write_adlib(0xb0+voice,(unsigned char)c);
 }
 
@@ -541,58 +539,62 @@ bool CmidPlayer::update()
 		  } else
 		    on = percussion_map[c - 11];
 
-                 if (vel!=0 && ch[c].inum>=0 && ch[c].inum<128)
-                    {
-                    if (adlib_mode == ADLIB_MELODIC || c < 12)
+                  if (vel!=0 && ch[c].inum>=0 && ch[c].inum<128) {
+                    if (adlib_mode == ADLIB_MELODIC || c < 12) // 11 == bass drum, handled like a normal instrument, on == channel 6 thanks to percussion_map[] above
 		      midi_fm_instrument(on,ch[c].ins);
 		    else
  		      midi_fm_percussion(c, ch[c].ins);
 
-                    if ((adlib_style&MIDI_STYLE)!=0)
-                        {
+                    if (adlib_style & MIDI_STYLE) {
                         nv=((ch[c].vol*vel)/128);
-                        if ((adlib_style&LUCAS_STYLE)!=0)
-                            nv*=2;
+                        if ((adlib_style&LUCAS_STYLE)!=0) nv*=2;
                         if (nv>127) nv=127;
                         nv=my_midi_fm_vol_table[nv];
                         if ((adlib_style&LUCAS_STYLE)!=0)
                             nv=(int)((float)sqrt((float)nv)*11);
-                        }
-                        else
-                        {
+                    } else if (adlib_style & CMF_STYLE) {
+                        // CMF doesn't support note velocity (even though some files have them!)
+                        nv = 127;
+                    } else {
                         nv=vel;
-                        }
+                    }
 
-		    midi_fm_playnote(on,note+ch[c].nshift,nv*2);
+		    midi_fm_playnote(on,note+ch[c].nshift,nv*2); // sets freq in rhythm mode
                     chp[on][0]=c;
                     chp[on][1]=note;
                     chp[on][2]=0;
 
 		    if(adlib_mode == ADLIB_RYTHM && c >= 11) {
+		      // Still need to turn off the perc instrument before playing it again,
+		      // as not all songs send a noteoff.
 		      midi_write_adlib(0xbd, adlib_data[0xbd] & ~(0x10 >> (c - 11)));
+		      // Play the perc instrument
 		      midi_write_adlib(0xbd, adlib_data[0xbd] | (0x10 >> (c - 11)));
 		    }
 
-                    }
-                    else
-                    {
-                    if (vel==0)  //same code as end note
-                        {
-                        for (i=0; i<9; i++)
-                            if (chp[i][0]==c && chp[i][1]==note)
-                                {
-                               // midi_fm_volume(i,0);  // really end the note
-                                midi_fm_endnote(i);
-                                chp[i][0]=-1;
+                  } else {
+                    if (vel==0) { //same code as end note
+		        if (adlib_mode == ADLIB_RYTHM && c >= 11) {
+		            // Turn off the percussion instrument
+		            midi_write_adlib(0xbd, adlib_data[0xbd] & ~(0x10 >> (c - 11)));
+                            //midi_fm_endnote(percussion_map[c]);
+                            chp[percussion_map[c - 11]][0]=-1;
+                        } else {
+                            for (i=0; i<9; i++) {
+                                if (chp[i][0]==c && chp[i][1]==note) {
+                                    // midi_fm_volume(i,0);  // really end the note
+                                    midi_fm_endnote(i);
+                                    chp[i][0]=-1;
                                 }
+                            }
                         }
-                        else
-                        {        // i forget what this is for.
+                    } else {
+                        // i forget what this is for.
                         chp[on][0]=-1;
                         chp[on][2]=0;
-                        }
                     }
-                midiprintf(" [%d:%d:%d:%d]\n",c,ch[c].inum,note,vel);
+                  }
+                  midiprintf(" [%d:%d:%d:%d]\n",c,ch[c].inum,note,vel);
                 }
                 else
                 midiprintf ("off");
@@ -616,8 +618,25 @@ midi_fm_playnote(i,note+cnote[c],my_midi_fm_vol_table[(cvols[c]*vel)/128]*2);
                         ch[c].vol=vel;
                         midiprintf("vol");
                         break;
+                    case 0x63:
+                        if (adlib_style & CMF_STYLE) {
+                            // Custom extension to allow CMF files to switch the
+                            // AM+VIB depth on and off (officially this is on,
+                            // and there's no way to switch it off.)  Controller
+                            // values:
+                            //   0 == AM+VIB off
+                            //   1 == VIB on
+                            //   2 == AM on
+                            //   3 == AM+VIB on
+                            midi_write_adlib(0xbd, (adlib_data[0xbd] & ~0xC0) | (vel << 6));
+                            midiprintf(" AM+VIB depth change - AM %s, VIB %s\n",
+                                (adlib_data[0xbd] & 0x80) ? "on" : "off",
+                                (adlib_data[0xbd] & 0x40) ? "on" : "off"
+                            );
+                        }
+                        break;
                     case 0x67:
-                        midiprintf ("\n\nhere:%d\n\n",vel);
+                        midiprintf("Rhythm mode: %d\n", vel);
                         if ((adlib_style&CMF_STYLE)!=0) {
 			  adlib_mode=vel;
 			  if(adlib_mode == ADLIB_RYTHM)
@@ -811,11 +830,12 @@ fwait=1.0f/(((float)iwait/(float)deltas)*((float)msqtr/(float)1000000));
 
     midiprintf ("\n");
     for (i=0; i<16; i++)
-        if (track[i].on)
-            if (track[i].pos < track[i].tend)
-                midiprintf ("<%d>",track[i].iwait);
-                else
-                midiprintf("stop");
+      if (track[i].on) {
+	if (track[i].pos < track[i].tend)
+	  midiprintf ("<%d>",track[i].iwait);
+	else
+	  midiprintf("stop");
+      }
 
     /*
     if (ret==0 && type==FILE_ADVSIERRA)
