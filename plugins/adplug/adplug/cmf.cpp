@@ -281,14 +281,18 @@ bool CcmfPlayer::update()
 						break;
 					}
 					case 0xF1: // MIDI Time Code Quarter Frame
-						this->data[this->iPlayPointer++]; // message data (ignored)
+                        this->iPlayPointer++;
+						//this->data[this->iPlayPointer++]; // message data (ignored)
 						break;
 					case 0xF2: // Song position pointer
-						this->data[this->iPlayPointer++]; // message data (ignored)
-						this->data[this->iPlayPointer++];
+                        this->iPlayPointer++;
+                        this->iPlayPointer++;
+//						this->data[this->iPlayPointer++]; // message data (ignored)
+//						this->data[this->iPlayPointer++];
 						break;
 					case 0xF3: // Song select
-						this->data[this->iPlayPointer++]; // message data (ignored)
+                        this->iPlayPointer++;
+//						this->data[this->iPlayPointer++]; // message data (ignored)
 						AdPlug_LogWrite("CMF: MIDI Song Select is not implemented.\n");
 						break;
 					case 0xF6: // Tune request

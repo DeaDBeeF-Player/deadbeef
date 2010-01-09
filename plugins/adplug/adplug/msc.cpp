@@ -211,7 +211,7 @@ bool CmscPlayer::decode_octet(u8 * output)
   blk = msc_data [block_num];
   while (1) {
     u8 	octet;		// decoded octet
-    u8	len_corr;	// length correction
+    u8	len_corr = 0;	// length correction
 		
     // advance to next block if necessary
     if (block_pos >= blk.mb_length && dec_len == 0) {
