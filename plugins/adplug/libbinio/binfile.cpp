@@ -44,7 +44,7 @@ void binfbase::close()
 
 void binfbase::seek(long pos, Offset offs)
 {
-  int error;
+  int error = 0;
 
   if(f == NULL) { err |= NotOpen; return; }
 
@@ -151,7 +151,7 @@ binofstream::~binofstream()
 
 void binofstream::open(const char *filename, const Mode mode)
 {
-  char *modestr = "wb";
+  const char *modestr = "wb";
 
   // Check if append mode is desired
   if(mode & Append) modestr = "ab";
@@ -209,16 +209,16 @@ binfstream::~binfstream()
 
 void binfstream::open(const char *filename, const Mode mode)
 {
-  char	*modestr = "w+b";	// Create & at beginning
+  const char	*modestr = "w+b";	// Create & at beginning
   int	ferror = 0;
 
   // Apply desired mode
   if(mode & NoCreate) {
     if(!(mode & Append))
-      modestr[0] = 'r';	// NoCreate & at beginning
+      modestr = "r+b";	// NoCreate & at beginning
   } else
     if(mode & Append)	// Create & append
-      modestr[0] = 'a';
+      modestr = "a+b";
 
   f = fopen(filename, modestr);
 
