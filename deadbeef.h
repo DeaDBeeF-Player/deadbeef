@@ -376,15 +376,6 @@ typedef struct {
     struct DB_output_s **(*plug_get_output_list) (void);
     struct DB_plugin_s **(*plug_get_list) (void);
     int (*plug_activate) (struct DB_plugin_s *p, int activate);
-    // exporting plugin conf options for gui
-    // all exported options are grouped by plugin, and will be available to user
-    // from gui
-//    void (*export_plugin_option_string) (DB_plugin_t *plugin, const char *key);
-//    void (*export_plugin_option_path) (DB_plugin_t *plugin, const char *key);
-//    void (*export_plugin_option_check) (DB_plugin_t *plugin, const char *key);
-//    void (*export_plugin_option_radio) (DB_plugin_t *plugin, const char *key);
-//    void (*export_plugin_option_combo) (DB_plugin_t *plugin, const char *key);
-//    void (*export_plugin_option_comboentry) (DB_plugin_t *plugin, const char *key);
 } DB_functions_t;
 
 // base plugin interface
