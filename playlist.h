@@ -54,7 +54,7 @@ typedef struct playItem_s {
 } playItem_t;
 
 typedef struct playlist_s{
-    char *fname;
+    char *title;
     playItem_t *head[PL_MAX_ITERATORS]; // head of linked list
     playItem_t *tail[PL_MAX_ITERATORS]; // tail of linked list
     int current_row[PL_MAX_ITERATORS]; // current row (cursor)
@@ -66,16 +66,22 @@ int
 plt_get_count (void);
 
 void
-plt_add (int before);
+plt_add (int before, const char *title);
 
 void
 plt_remove (int plt);
 
 void
-plt_set_curr (playlist_t *ptr);
+plt_free (void);
+
+void
+plt_set_curr (int plt);
+
+int
+plt_get_curr (void);
 
 playlist_t *
-plt_get_curr (void);
+plt_get_curr_ptr (void);
 
 // playlist access functions
 int

@@ -56,12 +56,111 @@ static float pl_totaltime = 0;
 static playItem_t *playqueue[100];
 static int playqueue_count = 0;
 
-static playlist_t dummy_playlist;
-static playlist_t *playlist = &dummy_playlist;
+static int playlists_count = 0;
+static playlist_t *playlists_head = NULL;
+static playlist_t *playlist = NULL; // current playlist
+
+int
+plt_get_count (void) {
+    return playlists_count;
+}
+
+void
+plt_add (int before, const char *title) {
+    playlist_t *plt = malloc (sizeof (playlist_t));
+    memset (plt, 0, sizeof (playlist_t));
+    plt->title = strdup (title);
+
+    playlist_t *p = NULL;
+    
+    if (before > 0) {
+        p = playlists_head;
+        int i;
+        for (i = 0; p && i < before; i++) {
+            p = p->next;
+        }
+    }
+
+    if (!p) {
+        plt->next = playlists_head;
+        playlists_head = plt;
+    }
+    else {
+        playlist_t *next = p->next;
+        p->next = plt;
+        plt->next = next;
+    }
+    if (!playlist) {
+        playlist = plt;
+    }
+    playlists_count++;
+}
+
+void
+plt_remove (int plt) {
+    int i;
+    playlist_t *prev = NULL;
+    playlist_t *p = playlists_head;
+    for (i = 0; p && i < plt; i++) {
+        prev = p;
+        p = p->next;
+    }
+    if (i != plt) {
+        trace ("plt_remove %d failed\n", i);
+    }
+    if (p) {
+        if (!prev) {
+            playlists_head = p->next;
+        }
+        else {
+            prev->next = p->next;
+        }
+    }
+    if (p == playlist) {
+        playlist = NULL;
+    }
+    free (p->title);
+    free (p);
+    playlists_count--;
+}
+
+void
+plt_set_curr (int plt) {
+    int i;
+    playlist_t *p = playlists_head;
+    for (i = 0; p && i <= plt; i++) {
+        p = p->next;
+    }
+    if (i != plt) {
+        trace ("plt_set_curr %d failed\n", i);
+        return;
+    }
+    playlist = p;
+}
+
+int
+plt_get_curr (void) {
+    int i;
+    playlist_t *p = playlists_head;
+    for (i = 0; p && i < playlists_count; i++) {
+        if (p == playlist) {
+            return i;
+        }
+        p = p->next;
+    }
+    return -1;
+}
 
 playlist_t *
-plt_get_curr (void) {
+plt_get_curr_ptr (void) {
     return playlist;
+}
+
+void
+plt_free (void) {
+    while (playlists_head) {
+        plt_remove (0);
+    }
 }
 
 void

@@ -531,6 +531,8 @@ main (int argc, char *argv[]) {
 
     atexit (atexit_handler); // helps to save in simple cases, like xkill
 
+    plt_add (0, "Default");
+
     // execute server commands in local context
     int noloadpl = 0;
     if (argc > 1) {
@@ -586,6 +588,7 @@ main (int argc, char *argv[]) {
     pl_free ();
     conf_free ();
     messagepump_free ();
+    plt_free ();
     sigterm_handled = 1;
     fprintf (stderr, "hej-hej!\n");
     return 0;

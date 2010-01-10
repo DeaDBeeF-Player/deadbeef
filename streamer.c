@@ -928,7 +928,7 @@ streamer_configchanged (void) {
 
 void
 streamer_play_current_track (void) {
-    playlist_t *plt = plt_get_curr ();
+    playlist_t *plt = plt_get_curr_ptr ();
     if (p_ispaused ()) {
         // unpause currently paused track
         p_unpause ();
@@ -959,7 +959,7 @@ streamer_play_current_track (void) {
 
 int
 streamer_move_prevsong (void) {
-    playlist_t *plt = plt_get_curr ();
+    playlist_t *plt = plt_get_curr_ptr ();
     pl_playqueue_clear ();
     if (!plt->head[PL_MAIN]) {
         streamer_set_nextsong (-2, 1);
@@ -1032,7 +1032,7 @@ streamer_move_prevsong (void) {
 
 int
 streamer_move_nextsong (int reason) {
-    playlist_t *plt = plt_get_curr ();
+    playlist_t *plt = plt_get_curr_ptr ();
     playItem_t *it = pl_playqueue_getnext ();
     if (it) {
         pl_playqueue_pop ();
