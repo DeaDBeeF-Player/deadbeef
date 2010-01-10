@@ -36,8 +36,8 @@
 #include "volume.h"
 #include "vfs.h"
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 static intptr_t streamer_tid;
 static int src_quality;
@@ -133,11 +133,12 @@ streamer_set_current (playItem_t *it) {
     if (to != -1) {
         messagepump_push (M_TRACKCHANGED, 0, to, 0);
     }
+#if 0
+    // this breaks redraw
     if (!orig_playing_song || p_isstopped ()) {
         orig_playing_song = it;
-        //trace ("from=%d, to=%d\n", from, to);
-        //messagepump_push (M_SONGCHANGED, 0, from, to);
     }
+#endif
     trace ("streamer_set_current %p, buns=%d\n", it);
     if(str_streaming_song.decoder) {
         str_streaming_song.decoder->free ();
@@ -241,9 +242,6 @@ streamer_set_nextsong (int song, int pstate) {
         // no sense to wait until end of previous song, reset buffer
         bytes_until_next_song = 0;
         playpos = 0;
-        // try to interrupt file operation
-        streamer_lock ();
-        streamer_unlock ();
     }
 }
 
