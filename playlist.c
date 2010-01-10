@@ -49,10 +49,6 @@
 
 #define min(x,y) ((x)<(y)?(x):(y))
 
-playItem_t *playlist_head[PL_MAX_ITERATORS];
-playItem_t *playlist_tail[PL_MAX_ITERATORS];
-int playlist_current_row[PL_MAX_ITERATORS];
-
 static int pl_count[2];
 static float pl_totaltime = 0;
 
@@ -60,16 +56,24 @@ static float pl_totaltime = 0;
 static playItem_t *playqueue[100];
 static int playqueue_count = 0;
 
+static playlist_t dummy_playlist;
+static playlist_t *playlist = &dummy_playlist;
+
+playlist_t *
+plt_get_curr (void) {
+    return playlist;
+}
+
 void
 pl_free (void) {
-    while (playlist_head[PL_MAIN]) {
-        pl_remove (playlist_head[PL_MAIN]);
+    while (playlist->head[PL_MAIN]) {
+        pl_remove (playlist->head[PL_MAIN]);
     }
-    if (playlist_current_row[PL_MAIN] >= pl_count[PL_MAIN]) {
-        playlist_current_row[PL_MAIN] = pl_count[PL_MAIN]-1;
+    if (playlist->current_row[PL_MAIN] >= pl_count[PL_MAIN]) {
+        playlist->current_row[PL_MAIN] = pl_count[PL_MAIN]-1;
     }
-    if (playlist_current_row[PL_SEARCH] >= pl_count[PL_SEARCH]) {
-        playlist_current_row[PL_SEARCH] = pl_count[PL_SEARCH]-1;
+    if (playlist->current_row[PL_SEARCH] >= pl_count[PL_SEARCH]) {
+        playlist->current_row[PL_SEARCH] = pl_count[PL_SEARCH]-1;
     }
 }
 
@@ -334,7 +338,7 @@ pl_insert_cue_from_buffer (playItem_t *after, playItem_t *origin, const uint8_t 
         pl_set_item_duration (after, (float)(after->endsample - after->startsample + 1) / samplerate);
     }
     // copy metadata from embedded tags
-    playItem_t *first = ins ? ins->next[PL_MAIN] : playlist_head[PL_MAIN];
+    playItem_t *first = ins ? ins->next[PL_MAIN] : playlist->head[PL_MAIN];
     junk_copy (origin, first, after);
     return after;
 }
@@ -705,7 +709,7 @@ pl_insert_dir (playItem_t *after, const char *dirname, int *pabort, int (*cb)(pl
 int
 pl_add_file (const char *fname, int (*cb)(playItem_t *it, void *data), void *user_data) {
     int abort = 0;
-    if (pl_insert_file (playlist_tail[PL_MAIN], fname, &abort, cb, user_data)) {
+    if (pl_insert_file (playlist->tail[PL_MAIN], fname, &abort, cb, user_data)) {
         return 0;
     }
     return -1;
@@ -714,7 +718,7 @@ pl_add_file (const char *fname, int (*cb)(playItem_t *it, void *data), void *use
 int
 pl_add_dir (const char *dirname, int (*cb)(playItem_t *it, void *data), void *user_data) {
     int abort = 0;
-    if (pl_insert_dir (playlist_tail[PL_MAIN], dirname, &abort, cb, user_data)) {
+    if (pl_insert_dir (playlist->tail[PL_MAIN], dirname, &abort, cb, user_data)) {
         return 0;
     }
     return -1;
@@ -729,20 +733,20 @@ pl_remove (playItem_t *it) {
 
     // remove from both lists list
     for (int iter = PL_MAIN; iter <= PL_SEARCH; iter++) {
-        if (it->prev[iter] || it->next[iter] || playlist_head[iter] == it || playlist_tail[iter] == it) {
+        if (it->prev[iter] || it->next[iter] || playlist->head[iter] == it || playlist->tail[iter] == it) {
             pl_count[iter]--;
         }
         if (it->prev[iter]) {
             it->prev[iter]->next[iter] = it->next[iter];
         }
         else {
-            playlist_head[iter] = it->next[iter];
+            playlist->head[iter] = it->next[iter];
         }
         if (it->next[iter]) {
             it->next[iter]->prev[iter] = it->prev[iter];
         }
         else {
-            playlist_tail[iter] = it->prev[iter];
+            playlist->tail[iter] = it->prev[iter];
         }
     }
 
@@ -767,7 +771,7 @@ int
 pl_getselcount (void) {
     // FIXME: slow!
     int cnt = 0;
-    for (playItem_t *it = playlist_head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
+    for (playItem_t *it = playlist->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
         if (it->selected) {
             cnt++;
         }
@@ -777,7 +781,7 @@ pl_getselcount (void) {
 
 playItem_t *
 pl_get_for_idx_and_iter (int idx, int iter) {
-    playItem_t *it = playlist_head[iter];
+    playItem_t *it = playlist->head[iter];
     while (idx--) {
         if (!it)
             return NULL;
@@ -793,7 +797,7 @@ pl_get_for_idx (int idx) {
 
 int
 pl_get_idx_of (playItem_t *it) {
-    playItem_t *c = playlist_head[PL_MAIN];
+    playItem_t *c = playlist->head[PL_MAIN];
     int idx = 0;
     while (c && c != it) {
         c = c->next[PL_MAIN];
@@ -808,15 +812,15 @@ pl_get_idx_of (playItem_t *it) {
 playItem_t *
 pl_insert_item (playItem_t *after, playItem_t *it) {
     if (!after) {
-        it->next[PL_MAIN] = playlist_head[PL_MAIN];
+        it->next[PL_MAIN] = playlist->head[PL_MAIN];
         it->prev[PL_MAIN] = NULL;
-        if (playlist_head[PL_MAIN]) {
-            playlist_head[PL_MAIN]->prev[PL_MAIN] = it;
+        if (playlist->head[PL_MAIN]) {
+            playlist->head[PL_MAIN]->prev[PL_MAIN] = it;
         }
         else {
-            playlist_tail[PL_MAIN] = it;
+            playlist->tail[PL_MAIN] = it;
         }
-        playlist_head[PL_MAIN] = it;
+        playlist->head[PL_MAIN] = it;
     }
     else {
         it->prev[PL_MAIN] = after;
@@ -825,8 +829,8 @@ pl_insert_item (playItem_t *after, playItem_t *it) {
             after->next[PL_MAIN]->prev[PL_MAIN] = it;
         }
         after->next[PL_MAIN] = it;
-        if (after == playlist_tail[PL_MAIN]) {
-            playlist_tail[PL_MAIN] = it;
+        if (after == playlist->tail[PL_MAIN]) {
+            playlist->tail[PL_MAIN] = it;
         }
     }
     it->in_playlist = 1;
@@ -978,7 +982,7 @@ pl_delete_selected (void) {
     int i = 0;
     int ret = -1;
     playItem_t *next = NULL;
-    for (playItem_t *it = playlist_head[PL_MAIN]; it; it = next, i++) {
+    for (playItem_t *it = playlist->head[PL_MAIN]; it; it = next, i++) {
         next = it->next[PL_MAIN];
         if (it->selected) {
             if (ret == -1) {
@@ -993,7 +997,7 @@ pl_delete_selected (void) {
 void
 pl_crop_selected (void) {
     playItem_t *next = NULL;
-    for (playItem_t *it = playlist_head[PL_MAIN]; it; it = next) {
+    for (playItem_t *it = playlist->head[PL_MAIN]; it; it = next) {
         next = it->next[PL_MAIN];
         if (!it->selected) {
             pl_remove (it);
@@ -1023,7 +1027,7 @@ pl_save (const char *fname) {
     if (fwrite (&cnt, 1, 4, fp) != 4) {
         goto save_fail;
     }
-    for (playItem_t *it = playlist_head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
+    for (playItem_t *it = playlist->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
         uint16_t l;
         uint8_t ll;
         l = strlen (it->fname);
@@ -1312,7 +1316,7 @@ pl_load (const char *fname) {
                 }
             }
         }
-        pl_insert_item (playlist_tail[PL_MAIN], it);
+        pl_insert_item (playlist->tail[PL_MAIN], it);
     }
     fclose (fp);
     return 0;
@@ -1328,7 +1332,7 @@ load_fail:
 
 void
 pl_select_all (void) {
-    for (playItem_t *it = playlist_head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
+    for (playItem_t *it = playlist->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
         it->selected = 1;
     }
 }
@@ -1338,7 +1342,7 @@ void
 pl_reshuffle (playItem_t **ppmin, playItem_t **ppmax) {
     playItem_t *pmin = NULL;
     playItem_t *pmax = NULL;
-    for (playItem_t *it = playlist_head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
+    for (playItem_t *it = playlist->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
         it->shufflerating = rand ();
         if (!pmin || it->shufflerating < pmin->shufflerating) {
             pmin = it;
@@ -1617,7 +1621,7 @@ pl_sort (int iter, int id, const char *format, int ascending) {
     do {
         sorted = 1;
         playItem_t *it;
-        for (it = playlist_head[iter]; it; it = it->next[iter]) {
+        for (it = playlist->head[iter]; it; it = it->next[iter]) {
             playItem_t *next = it->next[iter];
             if (!next) {
                 break;
@@ -1655,7 +1659,7 @@ pl_sort (int iter, int id, const char *format, int ascending) {
 //                    printf ("it->prev->next = it->next\n");
                 }
                 else {
-                    playlist_head[iter] = next;
+                    playlist->head[iter] = next;
                     next->prev[iter] = NULL;
 //                    printf ("head = it->next\n");
                 }
@@ -1664,7 +1668,7 @@ pl_sort (int iter, int id, const char *format, int ascending) {
 //                    printf ("it->next->next->prev = it\n");
                 }
                 else {
-                    playlist_tail[iter] = it;
+                    playlist->tail[iter] = it;
                     it->next[iter] = NULL;
 //                    printf ("tail = it\n");
                 }
@@ -1683,7 +1687,7 @@ void
 pl_reset_cursor (void) {
     int i;
     for (i = 0; i < PL_MAX_ITERATORS; i++) {
-        playlist_current_row[i] = -1;
+        playlist->current_row[i] = -1;
     }
 }
 
@@ -1704,12 +1708,12 @@ pl_is_selected (playItem_t *it) {
 
 playItem_t *
 pl_get_first (int iter) {
-    return playlist_head[iter];
+    return playlist->head[iter];
 }
 
 playItem_t *
 pl_get_last (int iter) {
-    return playlist_tail[iter];
+    return playlist->tail[iter];
 }
 
 playItem_t *
@@ -1724,12 +1728,12 @@ pl_get_prev (playItem_t *it, int iter) {
 
 int
 pl_get_cursor (int iter) {
-    return playlist_current_row[iter];
+    return playlist->current_row[iter];
 }
 
 void
 pl_set_cursor (int iter, int cursor) {
-    playlist_current_row[iter] = cursor;
+    playlist->current_row[iter] = cursor;
 }
 
 // this function must move items in playlist
@@ -1743,20 +1747,20 @@ pl_move_items (int iter, playItem_t *drop_before, uint32_t *indexes, int count) 
     int processed = 0;
     int idx = 0;
     playItem_t *next = NULL;
-    for (playItem_t *it = playlist_head[iter]; it && processed < count; it = next, idx++) {
+    for (playItem_t *it = playlist->head[iter]; it && processed < count; it = next, idx++) {
         next = it->next[iter];
         if (idx == indexes[processed]) {
             if (it->prev[iter]) {
                 it->prev[iter]->next[iter] = it->next[iter];
             }
             else {
-                playlist_head[iter] = it->next[iter];
+                playlist->head[iter] = it->next[iter];
             }
             if (it->next[iter]) {
                 it->next[iter]->prev[iter] = it->prev[iter];
             }
             else {
-                playlist_tail[iter] = it->prev[iter];
+                playlist->tail[iter] = it->prev[iter];
             }
             if (tail) {
                 tail->next[iter] = it;
@@ -1776,7 +1780,7 @@ pl_move_items (int iter, playItem_t *drop_before, uint32_t *indexes, int count) 
         drop_after = drop_before->prev[iter];
     }
     else {
-        drop_after = playlist_tail[iter];
+        drop_after = playlist->tail[iter];
     }
     // insert in between
     head->prev[iter] = drop_after;
@@ -1784,34 +1788,34 @@ pl_move_items (int iter, playItem_t *drop_before, uint32_t *indexes, int count) 
         drop_after->next[iter] = head;
     }
     else {
-        playlist_head[iter] = head;
+        playlist->head[iter] = head;
     }
     tail->next[iter] = drop_before;
     if (drop_before) {
         drop_before->prev[iter] = tail;
     }
     else {
-        playlist_tail[iter] = tail;
+        playlist->tail[iter] = tail;
     }
 }
 
 void
 pl_search_reset (void) {
-    while (playlist_head[PL_SEARCH]) {
-        playItem_t *next = playlist_head[PL_SEARCH]->next[PL_SEARCH];
-        playlist_head[PL_SEARCH]->selected = 0;
-        playlist_head[PL_SEARCH]->next[PL_SEARCH] = NULL;
-        playlist_head[PL_SEARCH]->prev[PL_SEARCH] = NULL;
-        playlist_head[PL_SEARCH] = next;
+    while (playlist->head[PL_SEARCH]) {
+        playItem_t *next = playlist->head[PL_SEARCH]->next[PL_SEARCH];
+        playlist->head[PL_SEARCH]->selected = 0;
+        playlist->head[PL_SEARCH]->next[PL_SEARCH] = NULL;
+        playlist->head[PL_SEARCH]->prev[PL_SEARCH] = NULL;
+        playlist->head[PL_SEARCH] = next;
     }
-    playlist_tail[PL_SEARCH] = NULL;
+    playlist->tail[PL_SEARCH] = NULL;
     pl_count[PL_SEARCH] = 0;
 }
 
 void
 pl_search_process (const char *text) {
     pl_search_reset ();
-    for (playItem_t *it = playlist_head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
+    for (playItem_t *it = playlist->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
         it->selected = 0;
         if (*text) {
             for (metaInfo_t *m = it->meta; m; m = m->next) {
@@ -1820,12 +1824,12 @@ pl_search_process (const char *text) {
                     //fprintf (stderr, "%s -> %s match (%s.%s)\n", text, m->value, it->fname, m->key);
                     // add to list
                     it->next[PL_SEARCH] = NULL;
-                    if (playlist_tail[PL_SEARCH]) {
-                        playlist_tail[PL_SEARCH]->next[PL_SEARCH] = it;
-                        playlist_tail[PL_SEARCH] = it;
+                    if (playlist->tail[PL_SEARCH]) {
+                        playlist->tail[PL_SEARCH]->next[PL_SEARCH] = it;
+                        playlist->tail[PL_SEARCH] = it;
                     }
                     else {
-                        playlist_head[PL_SEARCH] = playlist_tail[PL_SEARCH] = it;
+                        playlist->head[PL_SEARCH] = playlist->tail[PL_SEARCH] = it;
                     }
                     it->selected = 1;
                     pl_count[PL_SEARCH]++;

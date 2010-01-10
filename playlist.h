@@ -53,17 +53,31 @@ typedef struct playItem_s {
     unsigned in_playlist : 1; // 1 if item is in playlist
 } playItem_t;
 
-typedef struct {
-    playItem_t *playlist_head[PL_MAX_ITERATORS]; // head of linked list
-    playItem_t *playlist_tail[PL_MAX_ITERATORS]; // tail of linked list
-    int playlist_current_row[PL_MAX_ITERATORS]; // current row (cursor)
-    playItem_t *playlist_current_ptr; // pointer to a real current playlist item (or NULL)
+typedef struct playlist_s{
+    char *fname;
+    playItem_t *head[PL_MAX_ITERATORS]; // head of linked list
+    playItem_t *tail[PL_MAX_ITERATORS]; // tail of linked list
+    int current_row[PL_MAX_ITERATORS]; // current row (cursor)
+    struct playlist_s *next;
 } playlist_t;
 
-extern playItem_t *playlist_head[PL_MAX_ITERATORS]; // head of linked list
-extern playItem_t *playlist_tail[PL_MAX_ITERATORS]; // tail of linked list
-extern int playlist_current_row[PL_MAX_ITERATORS]; // current row (cursor)
+// playlist management functions
+int
+plt_get_count (void);
 
+void
+plt_add (int before);
+
+void
+plt_remove (int plt);
+
+void
+plt_set_curr (playlist_t *ptr);
+
+playlist_t *
+plt_get_curr (void);
+
+// playlist access functions
 int
 pl_add_dir (const char *dirname, int (*cb)(playItem_t *it, void *data), void *user_data);
 

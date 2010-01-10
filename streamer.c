@@ -928,12 +928,13 @@ streamer_configchanged (void) {
 
 void
 streamer_play_current_track (void) {
+    playlist_t *plt = plt_get_curr ();
     if (p_ispaused ()) {
         // unpause currently paused track
         p_unpause ();
         plug_trigger_event_paused (0);
     }
-    else if (playlist_current_row[PL_MAIN] != -1) {
+    else if (plt->current_row[PL_MAIN] != -1) {
         // play currently selected track
         p_stop ();
         // get next song in queue
@@ -944,7 +945,7 @@ streamer_play_current_track (void) {
             pl_playqueue_pop ();
         }
         else {
-            idx = playlist_current_row[PL_MAIN];
+            idx = plt->current_row[PL_MAIN];
         }
 
         streamer_set_nextsong (idx, 1);
@@ -958,8 +959,9 @@ streamer_play_current_track (void) {
 
 int
 streamer_move_prevsong (void) {
+    playlist_t *plt = plt_get_curr ();
     pl_playqueue_clear ();
-    if (!playlist_head[PL_MAIN]) {
+    if (!plt->head[PL_MAIN]) {
         streamer_set_nextsong (-2, 1);
         return 0;
     }
@@ -975,7 +977,7 @@ streamer_move_prevsong (void) {
             int rating = orig_playing_song->shufflerating;
             playItem_t *pmax = NULL; // played maximum
             playItem_t *amax = NULL; // absolute maximum
-            for (playItem_t *i = playlist_head[PL_MAIN]; i; i = i->next[PL_MAIN]) {
+            for (playItem_t *i = plt->head[PL_MAIN]; i; i = i->next[PL_MAIN]) {
                 if (i != orig_playing_song && i->played && (!amax || i->shufflerating > amax->shufflerating)) {
                     amax = i;
                 }
@@ -1012,7 +1014,7 @@ streamer_move_prevsong (void) {
         }
         if (!it) {
             if (pl_loop_mode == PLAYBACK_MODE_LOOP_ALL) {
-                it = playlist_tail[PL_MAIN];
+                it = plt->tail[PL_MAIN];
             }
         }
         if (!it) {
@@ -1030,6 +1032,7 @@ streamer_move_prevsong (void) {
 
 int
 streamer_move_nextsong (int reason) {
+    playlist_t *plt = plt_get_curr ();
     playItem_t *it = pl_playqueue_getnext ();
     if (it) {
         pl_playqueue_pop ();
@@ -1039,7 +1042,7 @@ streamer_move_nextsong (int reason) {
     }
 
     playItem_t *curr = streamer_get_streaming_track ();
-    if (!playlist_head[PL_MAIN]) {
+    if (!plt->head[PL_MAIN]) {
         streamer_set_nextsong (-2, 1);
         return 0;
     }
@@ -1049,7 +1052,7 @@ streamer_move_nextsong (int reason) {
         if (!curr) {
             // find minimal notplayed
             playItem_t *pmin = NULL; // notplayed minimum
-            for (playItem_t *i = playlist_head[PL_MAIN]; i; i = i->next[PL_MAIN]) {
+            for (playItem_t *i = plt->head[PL_MAIN]; i; i = i->next[PL_MAIN]) {
                 if (i->played) {
                     continue;
                 }
@@ -1081,7 +1084,7 @@ streamer_move_nextsong (int reason) {
             // find minimal notplayed above current
             int rating = curr->shufflerating;
             playItem_t *pmin = NULL; // notplayed minimum
-            for (playItem_t *i = playlist_head[PL_MAIN]; i; i = i->next[PL_MAIN]) {
+            for (playItem_t *i = plt->head[PL_MAIN]; i; i = i->next[PL_MAIN]) {
                 if (i->played || i->shufflerating < rating) {
                     continue;
                 }
@@ -1118,7 +1121,7 @@ streamer_move_nextsong (int reason) {
         if (!it) {
             trace ("streamer_move_nextsong: was last track\n");
             if (pl_loop_mode == PLAYBACK_MODE_LOOP_ALL) {
-                it = playlist_head[PL_MAIN];
+                it = plt->head[PL_MAIN];
             }
             else {
                 streamer_set_nextsong (-2, 1);
