@@ -268,7 +268,7 @@ insert_single_track (CdIo_t* cdio, DB_playItem_t *after, const char* file, int t
     sector_count = cdio_get_track_sec_count (cdio, track_nr);
 
     DB_playItem_t *it = deadbeef->pl_item_alloc ();
-    it->decoder = &plugin;
+    it->decoder_id = deadbeef->plug_get_decoder_id (plugin.id);
     it->fname = strdup (tmp);
     it->filetype = "cdda";
     deadbeef->pl_set_item_duration (it, (float)sector_count / 75.0);

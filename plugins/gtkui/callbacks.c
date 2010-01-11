@@ -1005,7 +1005,8 @@ seekbar_draw (GtkWidget *widget) {
         return;
     }
     DB_playItem_t *trk = deadbeef->streamer_get_playing_track ();
-    if (!trk->decoder || deadbeef->pl_get_item_duration (trk) < 0) {
+    DB_decoder_t *dec = deadbeef->streamer_get_current_decoder ();
+    if (!dec || deadbeef->pl_get_item_duration (trk) < 0) {
         clearlooks_rounded_rectangle (cr, 2, widget->allocation.height/2-4, widget->allocation.width-4, 8, 4, 0xff);
         theme_set_cairo_source_rgb (cr, COLO_SEEKBAR_FRONT);
         cairo_stroke (cr);
@@ -1024,7 +1025,7 @@ seekbar_draw (GtkWidget *widget) {
         pos = x;
     }
     else {
-        if (trk->decoder && deadbeef->pl_get_item_duration (trk) > 0) {
+        if (dec && deadbeef->pl_get_item_duration (trk) > 0) {
             pos = deadbeef->streamer_get_playpos () / deadbeef->pl_get_item_duration (trk);
             pos *= widget->allocation.width;
         }

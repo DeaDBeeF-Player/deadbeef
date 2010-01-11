@@ -576,7 +576,7 @@ cflac_insert (DB_playItem_t *after, const char *fname) {
     FLAC__stream_decoder_set_md5_checking(decoder, 0);
     FLAC__stream_decoder_set_metadata_respond_all (decoder);
     it = deadbeef->pl_item_alloc ();
-    it->decoder = &plugin;
+    it->decoder_id = deadbeef->plug_get_decoder_id (plugin.id);
     it->fname = strdup (fname);
     cb.it = it;
     if (skip > 0) {

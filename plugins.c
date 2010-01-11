@@ -70,6 +70,7 @@ static DB_functions_t deadbeef_api = {
     .streamer_read = streamer_read,
     .streamer_set_bitrate = streamer_set_bitrate,
     .streamer_get_apx_bitrate = streamer_get_apx_bitrate,
+    .streamer_get_current_decoder = streamer_get_current_decoder,
     // process control
     .get_config_dir = plug_get_config_dir,
     .quit = plug_quit,
@@ -173,6 +174,8 @@ static DB_functions_t deadbeef_api = {
     .plug_get_output_list = plug_get_output_list,
     .plug_get_list = plug_get_list,
     .plug_activate = plug_activate,
+    .plug_get_decoder_id = plug_get_decoder_id,
+    .plug_remove_decoder_id = plug_remove_decoder_id,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;
@@ -203,7 +206,6 @@ DB_decoder_t *g_decoder_plugins[MAX_DECODER_PLUGINS+1];
 #define MAX_VFS_PLUGINS 10
 DB_vfs_t *g_vfs_plugins[MAX_VFS_PLUGINS+1];
 
-#define MAX_OUTPUT_PLUGINS 10
 DB_output_t *g_output_plugins[MAX_OUTPUT_PLUGINS+1];
 DB_output_t *output_plugin = NULL;
 
@@ -729,4 +731,60 @@ plug_reinit_sound (void) {
     if (state != OUTPUT_STATE_PAUSED && state != OUTPUT_STATE_STOPPED) {
         p_play ();
     }
+}
+
+// list of all unique decoder ids used in current session
+static char *decoder_ids[MAX_OUTPUT_PLUGINS];
+
+const char *
+plug_get_decoder_id (const char *id) {
+    int i;
+    char **lastnull = NULL;
+    for (i = 0; i < MAX_OUTPUT_PLUGINS; i++) {
+        if (decoder_ids[i] && !strcmp (id, decoder_ids[i])) {
+            return decoder_ids[i];
+        }
+        else if (!lastnull && !decoder_ids[i]) {
+            lastnull = &decoder_ids[i];
+        }
+    }
+    if (!lastnull) {
+        return NULL;
+    }
+    char *newid = strdup (id);
+    *lastnull = newid;
+    return newid;
+}
+
+void
+plug_remove_decoder_id (const char *id) {
+    int i;
+    for (i = 0; i < MAX_OUTPUT_PLUGINS; i++) {
+        if (decoder_ids[i] && !strcmp (decoder_ids[i], id)) {
+            free (decoder_ids[i]);
+            decoder_ids[i] = NULL;
+        }
+    }
+}
+
+void
+plug_free_decoder_ids (void) {
+    int i;
+    for (i = 0; i < MAX_OUTPUT_PLUGINS; i++) {
+        if (decoder_ids[i]) {
+            free (decoder_ids[i]);
+            decoder_ids[i] = NULL;
+        }
+    }
+}
+
+DB_decoder_t *
+plug_get_decoder_for_id (const char *id) {
+    DB_decoder_t **plugins = plug_get_decoder_list ();
+    for (int c = 0; plugins[c]; c++) {
+        if (!strcmp (id, plugins[c]->id)) {
+            return plugins[c];
+        }
+    }
+    return NULL;
 }

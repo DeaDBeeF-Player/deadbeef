@@ -127,7 +127,8 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
             }
             if (sendback) {
                 playItem_t *curr = streamer_get_playing_track ();
-                if (curr && curr->decoder) {
+                DB_decoder_t *dec = streamer_get_current_decoder ();
+                if (curr && dec) {
                     const char np[] = "nowplaying ";
                     memcpy (sendback, np, sizeof (np)-1);
                     pl_format_title (curr, sendback+sizeof(np)-1, sbsize-sizeof(np)+1, -1, parg);
@@ -139,7 +140,8 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
             else {
                 char out[2048];
                 playItem_t *curr = streamer_get_playing_track ();
-                if (curr && curr->decoder) {
+                DB_decoder_t *dec = streamer_get_current_decoder ();
+                if (curr && dec) {
                     pl_format_title (curr, out, sizeof (out), -1, parg);
                 }
                 else {
@@ -589,6 +591,7 @@ main (int argc, char *argv[]) {
     conf_free ();
     messagepump_free ();
     plt_free ();
+    plug_free_decoder_ids ();
     sigterm_handled = 1;
     fprintf (stderr, "hej-hej!\n");
     return 0;

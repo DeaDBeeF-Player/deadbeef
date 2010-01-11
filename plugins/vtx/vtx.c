@@ -242,7 +242,7 @@ vtx_insert (DB_playItem_t *after, const char *fname) {
 
     DB_playItem_t *it = deadbeef->pl_item_alloc ();
 
-    it->decoder = &plugin;
+    it->decoder_id = deadbeef->plug_get_decoder_id (plugin.id);
     it->fname = strdup (fname);
     it->filetype = filetypes[0];
 

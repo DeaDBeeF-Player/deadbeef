@@ -114,7 +114,7 @@ cgme_insert (DB_playItem_t *after, const char *fname) {
             const char *ret = gme_track_info (emu, &inf, i);
             if (!ret) {
                 DB_playItem_t *it = deadbeef->pl_item_alloc ();
-                it->decoder = &plugin;
+                it->decoder_id = deadbeef->plug_get_decoder_id (plugin.id);
                 it->fname = strdup (fname);
                 char str[1024];
                 if (inf.song[0]) {

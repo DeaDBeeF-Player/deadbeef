@@ -1682,7 +1682,7 @@ ffap_insert (DB_playItem_t *after, const char *fname) {
     float duration = ape_ctx.totalsamples / (float)ape_ctx.samplerate;
     DB_playItem_t *it = NULL;
     it = deadbeef->pl_item_alloc ();
-    it->decoder = &plugin;
+    it->decoder_id = deadbeef->plug_get_decoder_id (plugin.id);
     it->fname = strdup (fname);
     it->filetype = "APE";
     deadbeef->pl_set_item_duration (it, duration);

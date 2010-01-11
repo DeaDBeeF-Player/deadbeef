@@ -214,7 +214,7 @@ adplug_insert (DB_playItem_t *after, const char *fname) {
     for (int i = 0; i < subsongs; i++) {
         // prepare track for addition
         DB_playItem_t *it = deadbeef->pl_item_alloc ();
-        it->decoder = &adplug_plugin;
+        it->decoder_id = deadbeef->plug_get_decoder_id (adplug_plugin.id);
         it->fname = strdup (fname);
         it->filetype = adplug_get_extension (fname);
         it->tracknum = i;

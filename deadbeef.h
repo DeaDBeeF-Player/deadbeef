@@ -65,6 +65,8 @@ extern "C" {
     .plugin.api_vmajor = DB_API_VERSION_MAJOR,\
     .plugin.api_vminor = DB_API_VERSION_MINOR,
 
+#define MAX_OUTPUT_PLUGINS 30
+
 ////////////////////////////
 // playlist structures
 
@@ -77,7 +79,8 @@ extern "C" {
 // these are "public" fields, available to plugins
 typedef struct {
     char *fname; // full pathname
-    struct DB_decoder_s *decoder; // codec to use with this file
+//    struct DB_decoder_s *decoder; // codec to use with this file
+    const char *decoder_id;
     int tracknum; // used for stuff like sid, nsf, cue (will be ignored by most codecs)
     int startsample; // start sample of track, or -1 for auto
     int endsample; // end sample of track, or -1 for auto
@@ -246,6 +249,7 @@ typedef struct {
     int (*streamer_read) (char *bytes, int size);
     void (*streamer_set_bitrate) (int bitrate);
     int (*streamer_get_apx_bitrate) (void);
+    struct DB_decoder_s *(*streamer_get_current_decoder) (void);
     // process control
     const char *(*get_config_dir) (void);
     void (*quit) (void);
@@ -376,6 +380,8 @@ typedef struct {
     struct DB_output_s **(*plug_get_output_list) (void);
     struct DB_plugin_s **(*plug_get_list) (void);
     int (*plug_activate) (struct DB_plugin_s *p, int activate);
+    const char * (*plug_get_decoder_id) (const char *id);
+    void (*plug_remove_decoder_id) (const char *id);
 } DB_functions_t;
 
 // base plugin interface

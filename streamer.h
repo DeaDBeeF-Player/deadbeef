@@ -98,4 +98,7 @@ streamer_move_randomsong (void);
 playItem_t *
 streamer_get_current (void);
 
+struct DB_decoder_s *
+streamer_get_current_decoder (void);
+
 #endif // __STREAMER_H

@@ -337,7 +337,7 @@ cvorbis_insert (DB_playItem_t *after, const char *fname) {
     }
     if (fp->vfs->streaming) {
         DB_playItem_t *it = deadbeef->pl_item_alloc ();
-        it->decoder = &plugin;
+        it->decoder_id = deadbeef->plug_get_decoder_id (plugin.id);
         it->fname = strdup (fname);
         it->filetype = "OggVorbis";
         deadbeef->pl_set_item_duration (it, -1);
@@ -367,7 +367,7 @@ cvorbis_insert (DB_playItem_t *after, const char *fname) {
     int totalsamples = ov_pcm_total (&vorbis_file, -1);
 
     DB_playItem_t *it = deadbeef->pl_item_alloc ();
-    it->decoder = &plugin;
+    it->decoder_id = deadbeef->plug_get_decoder_id (plugin.id);
     it->fname = strdup (fname);
     it->filetype = "OggVorbis";
     deadbeef->pl_set_item_duration (it, duration);

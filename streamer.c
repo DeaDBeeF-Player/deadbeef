@@ -82,11 +82,14 @@ static int last_bitrate = -1; // last bitrate of current song
 
 static int prevtrack_samplerate = -1;
 
+// copies of current playing and streaming tracks
 playItem_t str_playing_song;
 playItem_t str_streaming_song;
 // remember pointers to original instances of playitems
 static playItem_t *orig_playing_song;
 static playItem_t *orig_streaming_song;
+// current decoder
+static DB_decoder_t *str_current_decoder;
 
 static int streamer_buffering;
 
@@ -140,15 +143,17 @@ streamer_set_current (playItem_t *it) {
     }
 #endif
     trace ("streamer_set_current %p, buns=%d\n", it);
-    if(str_streaming_song.decoder) {
-        str_streaming_song.decoder->free ();
+    if(str_current_decoder) {
+        str_current_decoder->free ();
+        str_current_decoder = NULL;
         pl_item_free (&str_streaming_song);
     }
     orig_streaming_song = it;
     if (!it) {
         goto success;
     }
-    if (!it->decoder && it->filetype && !strcmp (it->filetype, "content")) {
+    DB_decoder_t *dec = NULL;
+    if (!it->decoder_id && it->filetype && !strcmp (it->filetype, "content")) {
         // try to get content-type
         DB_FILE *fp = streamer_file = vfs_fopen (it->fname);
         const char *plug = NULL;
@@ -167,24 +172,26 @@ streamer_set_current (playItem_t *it) {
             vfs_fclose (fp);
         }
         if (plug) {
-            DB_decoder_t **decoders = plug_get_decoder_list ();
-            // match by decoder
-            for (int i = 0; decoders[i]; i++) {
-                if (!strcmp (decoders[i]->id, plug)) {
-                    it->decoder = decoders[i];
-                    it->filetype = decoders[i]->filetypes[0];
-                }
+            dec = plug_get_decoder_for_id (plug);
+            if (dec) {
+                it->decoder_id = plug_get_decoder_id (plug);
+                it->filetype = dec->filetypes[0];
             }
         }
     }
-    if (it->decoder) {
+    else if (it->decoder_id) {
+        dec = plug_get_decoder_for_id (it->decoder_id);
+    }
+    if (dec) {
+        str_current_decoder = dec;
         streamer_lock ();
         streamer_unlock ();
-        int ret = it->decoder->init (DB_PLAYITEM (it));
+        int ret = str_current_decoder->init (DB_PLAYITEM (it));
         streamer_lock ();
         streamer_unlock ();
         pl_item_copy (&str_streaming_song, it);
         if (ret < 0) {
+            str_current_decoder = NULL;
             trace ("decoder->init returned %d\n", ret);
             trace ("orig_playing_song = %p\n", orig_playing_song);
             if (orig_playing_song == it) {
@@ -194,7 +201,7 @@ streamer_set_current (playItem_t *it) {
             return ret;
         }
         else {
-            trace ("bps=%d, channels=%d, samplerate=%d\n", it->decoder->info.bps, it->decoder->info.channels, it->decoder->info.samplerate);
+            trace ("bps=%d, channels=%d, samplerate=%d\n", dec->info.bps, dec->info.channels, dec->info.samplerate);
         }
         streamer_reset (0); // reset SRC
     }
@@ -318,7 +325,7 @@ streamer_thread (void *ctx) {
             trace ("nextsong=-2\n");
             nextsong = -1;
             p_stop ();
-            if (str_playing_song.decoder) {
+            if (str_current_decoder) {
                 trace ("sending songfinished to plugins [1]\n");
                 plug_trigger_event (DB_EV_SONGFINISHED, 0);
             }
@@ -349,7 +356,7 @@ streamer_thread (void *ctx) {
             messagepump_push (M_SONGCHANGED, 0, from, to);
             bytes_until_next_song = -1;
             // plugin will get pointer to str_playing_song
-            if (str_playing_song.decoder) {
+            if (str_current_decoder) {
                 trace ("sending songfinished to plugins [2]\n");
                 plug_trigger_event (DB_EV_SONGFINISHED, 0);
             }
@@ -371,9 +378,9 @@ streamer_thread (void *ctx) {
             plug_trigger_event (DB_EV_SONGSTARTED, 0);
             playpos = 0;
             // change samplerate
-            if (prevtrack_samplerate != str_playing_song.decoder->info.samplerate) {
-                plug_get_output ()->change_rate (str_playing_song.decoder->info.samplerate);
-                prevtrack_samplerate = str_playing_song.decoder->info.samplerate;
+            if (prevtrack_samplerate != str_current_decoder->info.samplerate) {
+                plug_get_output ()->change_rate (str_current_decoder->info.samplerate);
+                prevtrack_samplerate = str_current_decoder->info.samplerate;
             }
         }
 
@@ -385,8 +392,8 @@ streamer_thread (void *ctx) {
             if (orig_playing_song != orig_streaming_song) {
                 trace ("streamer already switched to next track\n");
                 // restart playing from new position
-                if(str_streaming_song.decoder) {
-                    str_streaming_song.decoder->free ();
+                if(str_current_decoder) {
+                    str_current_decoder->free ();
                     pl_item_free (&str_streaming_song);
                 }
                 orig_streaming_song = orig_playing_song;
@@ -397,7 +404,7 @@ streamer_thread (void *ctx) {
                 if (trk != -1) {
                     messagepump_push (M_TRACKCHANGED, 0, trk, 0);
                 }
-                int ret = str_streaming_song.decoder->init (DB_PLAYITEM (orig_streaming_song));
+                int ret = str_current_decoder->init (DB_PLAYITEM (orig_streaming_song));
                 if (ret < 0) {
                     streamer_buffering = 0;
                     if (trk != -1) {
@@ -416,15 +423,15 @@ streamer_thread (void *ctx) {
             if (trk != -1) {
                 messagepump_push (M_TRACKCHANGED, 0, trk, 0);
             }
-            if (str_playing_song.decoder && str_playing_song._duration > 0) {
+            if (str_current_decoder && str_playing_song._duration > 0) {
                 streamer_lock ();
                 streambuffer_fill = 0;
                 streambuffer_pos = 0;
                 codec_lock ();
                 codecleft = 0;
                 codec_unlock ();
-                if (str_playing_song.decoder->seek (pos) >= 0) {
-                    playpos = str_playing_song.decoder->info.readpos;
+                if (str_current_decoder->seek (pos) >= 0) {
+                    playpos = str_current_decoder->info.readpos;
                 }
                 last_bitrate = -1;
                 avg_bitrate = -1;
@@ -467,8 +474,8 @@ streamer_thread (void *ctx) {
     }
 
     // stop streaming song
-    if(str_streaming_song.decoder) {
-        str_streaming_song.decoder->free ();
+    if(str_current_decoder) {
+        str_current_decoder->free ();
     }
     pl_item_free (&str_streaming_song);
     pl_item_free (&str_playing_song);
@@ -663,7 +670,7 @@ streamer_read_async (char *bytes, int size) {
     for (;;) {
         int bytesread = 0;
         codec_lock ();
-        DB_decoder_t *decoder = str_streaming_song.decoder;
+        DB_decoder_t *decoder = str_current_decoder;
         if (!decoder) {
             // means there's nothing left to stream, so just do nothing
             codec_unlock ();
@@ -1162,3 +1169,7 @@ streamer_get_current (void) {
     return orig_playing_song;
 }
 
+struct DB_decoder_s *
+streamer_get_current_decoder (void) {
+    return str_current_decoder;
+}

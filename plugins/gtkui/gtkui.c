@@ -81,38 +81,40 @@ update_songinfo (gpointer ctx) {
         snprintf (sbtext_new, sizeof (sbtext_new), "Stopped | %d tracks | %s total playtime", deadbeef->pl_getcount (PL_MAIN), totaltime_str);
         songpos = 0;
     }
-    else if (track->decoder) {
+    else {
 //        codec_lock ();
-        DB_decoder_t *c = track->decoder;
-        float playpos = deadbeef->streamer_get_playpos ();
-        int minpos = playpos / 60;
-        int secpos = playpos - minpos * 60;
-        int mindur = duration / 60;
-        int secdur = duration - mindur * 60;
+        DB_decoder_t *c = deadbeef->streamer_get_current_decoder ();
+        if (c) {
+            float playpos = deadbeef->streamer_get_playpos ();
+            int minpos = playpos / 60;
+            int secpos = playpos - minpos * 60;
+            int mindur = duration / 60;
+            int secdur = duration - mindur * 60;
 
-        const char *mode = c->info.channels == 1 ? "Mono" : "Stereo";
-        int samplerate = c->info.samplerate;
-        int bitspersample = c->info.bps;
-        songpos = playpos;
-//        codec_unlock ();
+            const char *mode = c->info.channels == 1 ? "Mono" : "Stereo";
+            int samplerate = c->info.samplerate;
+            int bitspersample = c->info.bps;
+            songpos = playpos;
+            //        codec_unlock ();
 
-        char t[100];
-        if (duration >= 0) {
-            snprintf (t, sizeof (t), "%d:%02d", mindur, secdur);
-        }
-        else {
-            strcpy (t, "-:--");
-        }
+            char t[100];
+            if (duration >= 0) {
+                snprintf (t, sizeof (t), "%d:%02d", mindur, secdur);
+            }
+            else {
+                strcpy (t, "-:--");
+            }
 
-        char sbitrate[20] = "";
+            char sbitrate[20] = "";
 #if 1
-        int bitrate = deadbeef->streamer_get_apx_bitrate ();
-        if (bitrate > 0) {
-            snprintf (sbitrate, sizeof (sbitrate), "| %d kbps ", bitrate);
-        }
+            int bitrate = deadbeef->streamer_get_apx_bitrate ();
+            if (bitrate > 0) {
+                snprintf (sbitrate, sizeof (sbitrate), "| %d kbps ", bitrate);
+            }
 #endif
-        const char *spaused = deadbeef->get_output ()->state () == OUTPUT_STATE_PAUSED ? "Paused | " : "";
-        snprintf (sbtext_new, sizeof (sbtext_new), "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime", spaused, track->filetype ? track->filetype:"-", sbitrate, samplerate, bitspersample, mode, minpos, secpos, t, deadbeef->pl_getcount (PL_MAIN), totaltime_str);
+            const char *spaused = deadbeef->get_output ()->state () == OUTPUT_STATE_PAUSED ? "Paused | " : "";
+            snprintf (sbtext_new, sizeof (sbtext_new), "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime", spaused, track->filetype ? track->filetype:"-", sbitrate, samplerate, bitspersample, mode, minpos, secpos, t, deadbeef->pl_getcount (PL_MAIN), totaltime_str);
+        }
     }
 
     if (strcmp (sbtext_new, sb_text)) {

@@ -254,7 +254,7 @@ pl_cue_parse_time (const char *p) {
 }
 
 static playItem_t *
-pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, char *track, char *index00, char *index01, char *pregap, char *title, char *performer, char *albumtitle, char *genre, char *date, struct DB_decoder_s *decoder, const char *ftype, int samplerate) {
+pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, char *track, char *index00, char *index01, char *pregap, char *title, char *performer, char *albumtitle, char *genre, char *date, const char *decoder_id, const char *ftype, int samplerate) {
     if (!track[0]) {
         return after;
     }
@@ -318,7 +318,7 @@ pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, c
     }
     playItem_t *it = malloc (sizeof (playItem_t));
     memset (it, 0, sizeof (playItem_t));
-    it->decoder = decoder;
+    it->decoder_id = plug_get_decoder_id (decoder_id);
     it->fname = strdup (fname);
     it->tracknum = atoi (track);
     it->startsample = index01[0] ? f_index01 * samplerate : 0;
@@ -404,7 +404,7 @@ pl_insert_cue_from_buffer (playItem_t *after, playItem_t *origin, const uint8_t 
         }
         else if (!strncmp (p, "TRACK ", 6)) {
             // add previous track
-            after = pl_process_cue_track (after, origin->fname, &prev, track, index00, index01, pregap, title, performer, albumtitle, genre, date, origin->decoder, origin->filetype, samplerate);
+            after = pl_process_cue_track (after, origin->fname, &prev, track, index00, index01, pregap, title, performer, albumtitle, genre, date, origin->decoder_id, origin->filetype, samplerate);
             track[0] = 0;
             title[0] = 0;
             pregap[0] = 0;
@@ -430,7 +430,7 @@ pl_insert_cue_from_buffer (playItem_t *after, playItem_t *origin, const uint8_t 
 //            fprintf (stderr, "got unknown line:\n%s\n", p);
         }
     }
-    after = pl_process_cue_track (after, origin->fname, &prev, track, index00, index01, pregap, title, performer, albumtitle, genre, date, origin->decoder, origin->filetype, samplerate);
+    after = pl_process_cue_track (after, origin->fname, &prev, track, index00, index01, pregap, title, performer, albumtitle, genre, date, origin->decoder_id, origin->filetype, samplerate);
     if (after) {
         trace ("last track endsample: %d\n", numsamples-1);
         after->endsample = numsamples-1;
@@ -723,7 +723,7 @@ pl_insert_file (playItem_t *after, const char *fname, int *pabort, int (*cb)(pla
         }
         if (detect_on_access && *p == ':') {
             playItem_t *it = pl_item_alloc ();
-            it->decoder = NULL;
+            it->decoder_id = NULL;
             it->fname = strdup (fname);
             it->filetype = "content";
             it->_duration = -1;
@@ -950,7 +950,7 @@ pl_insert_item (playItem_t *after, playItem_t *it) {
 void
 pl_item_copy (playItem_t *out, playItem_t *it) {
     out->fname = strdup (it->fname);
-    out->decoder = it->decoder;
+    out->decoder_id = it->decoder_id;
     out->tracknum = it->tracknum;
     out->startsample = it->startsample;
     out->endsample = it->endsample;
@@ -1136,12 +1136,12 @@ pl_save (const char *fname) {
         if (fwrite (it->fname, 1, l, fp) != l) {
             goto save_fail;
         }
-        if (it->decoder) {
-            ll = strlen (it->decoder->id);
+        if (it->decoder_id) {
+            ll = strlen (it->decoder_id);
             if (fwrite (&ll, 1, 1, fp) != 1) {
                 goto save_fail;
             }
-            if (fwrite (it->decoder->id, 1, ll, fp) != ll) {
+            if (fwrite (it->decoder_id, 1, ll, fp) != ll) {
                 goto save_fail;
             }
         }
@@ -1226,7 +1226,6 @@ save_fail:
 int
 pl_load (const char *fname) {
     pl_free ();
-    DB_decoder_t **decoders = plug_get_decoder_list ();
     uint8_t majorver;
     uint8_t minorver;
     playItem_t *it = NULL;
@@ -1287,17 +1286,13 @@ pl_load (const char *fname) {
                 goto load_fail;
             }
             decoder[ll] = 0;
-            for (int c = 0; decoders[c]; c++) {
-                if (!strcmp (decoder, decoders[c]->id)) {
-                    it->decoder = decoders[c];
-                }
-            }
+            it->decoder_id = plug_get_decoder_id (decoder);
 //            if (!it->decoder) {
 //                goto load_fail;
 //            }
         }
         else {
-            it->decoder = NULL;
+            it->decoder_id = NULL;
         }
         // tracknum
         if (fread (&l, 1, 2, fp) != 2) {
@@ -1332,11 +1327,12 @@ pl_load (const char *fname) {
             if (!strcmp (ftype, "content")) {
                 it->filetype = "content";
             }
-            else {
-                if (it->decoder && it->decoder->filetypes) {
-                    for (int i = 0; it->decoder->filetypes[i]; i++) {
-                        if (!strcasecmp (it->decoder->filetypes[i], ftype)) {
-                            it->filetype = it->decoder->filetypes[i];
+            else if (it->decoder_id) {
+                DB_decoder_t *dec = plug_get_decoder_for_id (it->decoder_id);
+                if (dec && dec->filetypes) {
+                    for (int i = 0; dec->filetypes[i]; i++) {
+                        if (!strcasecmp (dec->filetypes[i], ftype)) {
+                            it->filetype = dec->filetypes[i];
                             break;
                         }
                     }

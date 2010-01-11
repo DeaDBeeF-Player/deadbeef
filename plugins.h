@@ -118,4 +118,16 @@ plug_reinit_sound (void);
 int
 plug_select_output (void);
 
+const char *
+plug_get_decoder_id (const char *id);
+
+void
+plug_remove_decoder_id (const char *id);
+
+void
+plug_free_decoder_ids (void);
+
+DB_decoder_t *
+plug_get_decoder_for_id (const char *id);
+
 #endif // __PLUGINS_H
