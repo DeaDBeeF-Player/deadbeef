@@ -3,7 +3,7 @@ AC_INIT
 AC_CONFIG_HEADER(config.h)
 
 PACKAGE="deadbeef"
-VERSION="0.3.2-dev"
+VERSION="devel"
 
 AM_INIT_AUTOMAKE($PACKAGE,$VERSION)
 
