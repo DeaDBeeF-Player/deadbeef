@@ -67,7 +67,7 @@ extern "C" {
     .plugin.api_vmajor = DB_API_VERSION_MAJOR,\
     .plugin.api_vminor = DB_API_VERSION_MINOR,
 
-#define MAX_OUTPUT_PLUGINS 30
+#define MAX_DECODER_PLUGINS 50
 
 ////////////////////////////
 // playlist structures
@@ -251,7 +251,7 @@ typedef struct {
     int (*streamer_read) (char *bytes, int size);
     void (*streamer_set_bitrate) (int bitrate);
     int (*streamer_get_apx_bitrate) (void);
-    struct DB_decoder_s *(*streamer_get_current_decoder) (void);
+    struct DB_fileinfo_s *(*streamer_get_current_decoder) (void);
     // process control
     const char *(*get_config_dir) (void);
     void (*quit) (void);
@@ -421,7 +421,8 @@ typedef struct DB_plugin_s {
     const char *configdialog;
 } DB_plugin_t;
 
-typedef struct {
+typedef struct DB_fileinfo_s {
+    struct DB_decoder_s *plugin;
     int bps;
     int channels;
     int samplerate;
@@ -431,36 +432,36 @@ typedef struct {
 // decoder plugin
 typedef struct DB_decoder_s {
     DB_plugin_t plugin;
-    DB_fileinfo_t info;
+//    DB_fileinfo_t info;
     // init is called to prepare song to be started
-    int (*init) (DB_playItem_t *it);
+    DB_fileinfo_t *(*init) (DB_playItem_t *it);
 
     // free is called after decoding is finished
-    void (*free) (void);
+    void (*free) (DB_fileinfo_t *info);
 
     // read is called by streamer to decode specified number of bytes
     // must return number of bytes that were successfully decoded (sample aligned)
     
     // read_int16 must always output 16 bit signed integer samples
-    int (*read_int16) (char *buffer, int size);
+    int (*read_int16) (DB_fileinfo_t *info, char *buffer, int size);
 
     // read_float32 must always output 32 bit floating point samples
-    int (*read_float32) (char *buffer, int size);
+    int (*read_float32) (DB_fileinfo_t *info, char *buffer, int size);
 
-    int (*seek) (float seconds);
+    int (*seek) (DB_fileinfo_t *info, float seconds);
 
     // perform seeking in samples (if possible)
     // return -1 if failed, or 0 on success
     // if -1 is returned, that will mean that streamer must skip that song
-    int (*seek_sample) (int sample);
+    int (*seek_sample) (DB_fileinfo_t *info, int sample);
 
     // 'insert' is called to insert new item to playlist
     // decoder is responsible to calculate duration, split it into subsongs, load cuesheet, etc
     // after==NULL means "prepend before 1st item in playlist"
     DB_playItem_t * (*insert) (DB_playItem_t *after, const char *fname); 
 
-    int (*numvoices) (void);
-    void (*mutevoice) (int voice, int mute);
+    int (*numvoices) (DB_fileinfo_t *info);
+    void (*mutevoice) (DB_fileinfo_t *info, int voice, int mute);
 
     // NULL terminated array of all supported extensions
     const char **exts;

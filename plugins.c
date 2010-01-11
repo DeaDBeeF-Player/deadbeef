@@ -200,12 +200,12 @@ plug_volume_set_amp (float amp) {
 #define MAX_PLUGINS 100
 DB_plugin_t *g_plugins[MAX_PLUGINS+1];
 
-#define MAX_DECODER_PLUGINS 50
 DB_decoder_t *g_decoder_plugins[MAX_DECODER_PLUGINS+1];
 
 #define MAX_VFS_PLUGINS 10
 DB_vfs_t *g_vfs_plugins[MAX_VFS_PLUGINS+1];
 
+#define MAX_OUTPUT_PLUGINS 10
 DB_output_t *g_output_plugins[MAX_OUTPUT_PLUGINS+1];
 DB_output_t *output_plugin = NULL;
 
@@ -734,13 +734,13 @@ plug_reinit_sound (void) {
 }
 
 // list of all unique decoder ids used in current session
-static char *decoder_ids[MAX_OUTPUT_PLUGINS];
+static char *decoder_ids[MAX_DECODER_PLUGINS];
 
 const char *
 plug_get_decoder_id (const char *id) {
     int i;
     char **lastnull = NULL;
-    for (i = 0; i < MAX_OUTPUT_PLUGINS; i++) {
+    for (i = 0; i < MAX_DECODER_PLUGINS; i++) {
         if (decoder_ids[i] && !strcmp (id, decoder_ids[i])) {
             return decoder_ids[i];
         }
@@ -759,7 +759,7 @@ plug_get_decoder_id (const char *id) {
 void
 plug_remove_decoder_id (const char *id) {
     int i;
-    for (i = 0; i < MAX_OUTPUT_PLUGINS; i++) {
+    for (i = 0; i < MAX_DECODER_PLUGINS; i++) {
         if (decoder_ids[i] && !strcmp (decoder_ids[i], id)) {
             free (decoder_ids[i]);
             decoder_ids[i] = NULL;
@@ -770,7 +770,7 @@ plug_remove_decoder_id (const char *id) {
 void
 plug_free_decoder_ids (void) {
     int i;
-    for (i = 0; i < MAX_OUTPUT_PLUGINS; i++) {
+    for (i = 0; i < MAX_DECODER_PLUGINS; i++) {
         if (decoder_ids[i]) {
             free (decoder_ids[i]);
             decoder_ids[i] = NULL;

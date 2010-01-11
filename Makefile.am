@@ -1,25 +1,34 @@
-SUBDIRS = gme/Game_Music_Emu-0.5.2\
-		  gme/Game_Music_Emu-0.5.2/gme\
-		  sid/sidplay-libs-2.1.0\
-		  dumb\
+SUBDIRS = ${MPGMAD_DIR}\
 		  pixmaps\
 		  icons\
 		  plugins/hotkeys\
-		  plugins/ffap\
 		  plugins/nullout\
-		  plugins/vtx\
-		  plugins/adplug\
 		  ${ALSA_DIR}\
 		  ${LFM_DIR}\
-          ${MPGMAD_DIR}\
-          ${VORBIS_DIR}\
-          ${FLAC_DIR}\
-          ${WAVPACK_DIR}\
-          ${SNDFILE_DIR}\
           ${VFS_CURL_DIR}\
-          ${CDDA_DIR}\
-          ${GTKUI_DIR}\
-          ${FFMPEG_DIR}
+          ${GTKUI_DIR}
+
+#SUBDIRS = gme/Game_Music_Emu-0.5.2\
+#		  sid/sidplay-libs-2.1.0\
+#		  dumb\
+#		  pixmaps\
+#		  icons\
+#		  plugins/hotkeys\
+#		  plugins/ffap\
+#		  plugins/nullout\
+#		  plugins/vtx\
+#		  plugins/adplug\
+#		  ${ALSA_DIR}\
+#		  ${LFM_DIR}\
+#          ${MPGMAD_DIR}\
+#          ${VORBIS_DIR}\
+#          ${FLAC_DIR}\
+#          ${WAVPACK_DIR}\
+#          ${SNDFILE_DIR}\
+#          ${VFS_CURL_DIR}\
+#          ${CDDA_DIR}\
+#          ${GTKUI_DIR}\
+#          ${FFMPEG_DIR}
 
 dumbpath=@top_srcdir@/dumb
 sidpath=@top_srcdir@/sid/sidplay-libs-2.1.0
@@ -35,7 +44,6 @@ deadbeef_SOURCES =\
 	codec.c codec.h\
 	messagepump.c messagepump.h\
 	conf.c  conf.h\
-	cgme.c cdumb.c csid.cpp\
 	playback.h\
 	threading_pthread.c threading.h\
 	md5/md5.c md5/md5.h md5/md5_loc.h\
@@ -45,11 +53,13 @@ deadbeef_SOURCES =\
 	optmath.h\
 	vfs.c vfs.h vfs_stdio.c\
 	timeline.c timeline.h
+#	cgme.c cdumb.c csid.cpp
 
 sdkdir = $(pkgincludedir)
 sdk_HEADERS = deadbeef.h
 
-deadbeef_LDADD = $(LDADD) $(DEPS_LIBS) gme/Game_Music_Emu-0.5.2/gme/libgme.a sid/sidplay-libs-2.1.0/libsidplay2.a dumb/libdumb.a -lstdc++
+#deadbeef_LDADD = $(LDADD) $(DEPS_LIBS) gme/Game_Music_Emu-0.5.2/gme/libgme.a sid/sidplay-libs-2.1.0/libsidplay2.a dumb/libdumb.a -lstdc++
+deadbeef_LDADD = $(LDADD) $(DEPS_LIBS) -lstdc++
 
 AM_CFLAGS = $(DEPS_CFLAGS) -I$(gmepath) -std=c99
 AM_CPPFLAGS = $(DEPS_CFLAGS) -I$(sidpath)/libsidplay/include -I$(sidpath)/builders/resid-builder/include

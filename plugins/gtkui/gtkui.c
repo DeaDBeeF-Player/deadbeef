@@ -83,7 +83,7 @@ update_songinfo (gpointer ctx) {
     }
     else {
 //        codec_lock ();
-        DB_decoder_t *c = deadbeef->streamer_get_current_decoder ();
+        DB_fileinfo_t *c = deadbeef->streamer_get_current_decoder ();
         if (c) {
             float playpos = deadbeef->streamer_get_playpos ();
             int minpos = playpos / 60;
@@ -91,9 +91,9 @@ update_songinfo (gpointer ctx) {
             int mindur = duration / 60;
             int secdur = duration - mindur * 60;
 
-            const char *mode = c->info.channels == 1 ? "Mono" : "Stereo";
-            int samplerate = c->info.samplerate;
-            int bitspersample = c->info.bps;
+            const char *mode = c->channels == 1 ? "Mono" : "Stereo";
+            int samplerate = c->samplerate;
+            int bitspersample = c->bps;
             songpos = playpos;
             //        codec_unlock ();
 
