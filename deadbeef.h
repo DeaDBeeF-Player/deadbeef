@@ -53,6 +53,8 @@ extern "C" {
 // DON'T release plugins without DB_PLUGIN_SET_API_VERSION
 
 // api version history:
+// 0.6 -- devel
+// 0.5 -- deadbeef-0.3.2
 // 0.4 -- deadbeef-0.3.0
 // 0.3 -- deadbeef-0.2.3.2
 // 0.2 -- deadbeef-0.2.3
