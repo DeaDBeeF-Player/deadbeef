@@ -1,13 +1,13 @@
 noinst_LIBRARIES = libsidplay2.a
 
-sidpath=@top_srcdir@/sid/sidplay-libs-2.1.0
+sidpath=@top_srcdir@/plugins/sid/sidplay-libs
 
 EXTRA_DIST = \
 	$(sidpath)/libsidutils/README $(sidpath)/libsidplay/README $(sidpath)/resid/README\
 	$(sidpath)/libsidutils/COPYING $(sidpath)/libsidplay/COPYING $(sidpath)/resid/COPYING\
 	$(sidpath)/libsidutils/AUTHORS $(sidpath)/libsidplay/AUTHORS $(sidpath)/resid/AUTHORS
 
-AM_CPPFLAGS = $(CXXFLAGS) -DHAVEUNIX -DHAVE_STRNCASECMP -DHAVE_STRCASECMP -I$(sidpath)/libsidplay -I$(sidpath)/libsidplay/include -I$(sidpath)/libsidplay/include/sidplay -I$(sidpath)/libsidutils/include/sidplay/utils -I$(sidpath)/builders/resid-builder/include/sidplay/builders -I$(sidpath)/builders/resid-builder/include
+AM_CPPFLAGS = $(INSANE_CXXFLAGS) -DHAVE_UNIX -I$(sidpath)/unix -I$(sidpath)/libsidplay -I$(sidpath)/libsidplay/include -I$(sidpath)/libsidplay/include/sidplay -I$(sidpath)/libsidutils/include/sidplay/utils -I$(sidpath)/builders/resid-builder/include/sidplay/builders -I$(sidpath)/builders/resid-builder/include -fPIC
 
 libsidplay2_a_SOURCES = \
 libsidplay/src/mixer.cpp\
@@ -105,29 +105,3 @@ libsidplay/src/mos6510/cycle_based/sid6510c.i\
 libsidplay/src/kernal.bin\
 libsidplay/src/psiddrv.bin\
 libsidplay/src/poweron.bin
-
-
-#libsidutils/win/VC/config.h
-#libsidutils/src/ini/keys.h
-#libsidutils/src/ini/list.h
-#libsidutils/src/ini/ini.h
-#libsidutils/src/ini/headings.h
-#libsidutils/src/MD5/MD5_Defs.h
-#libsidutils/src/MD5/MD5.h
-#libsidutils/src/smm0.h
-#libsidutils/include/sidplay/utils/SidTuneMod.h
-#libsidutils/include/sidplay/utils/libini.h
-#libsidutils/include/sidplay/utils/SidFilter.h
-#libsidutils/include/sidplay/utils/SidDatabase.h
-#libsidutils/include/sidplay/utils/SidUsage.h
-#libsidutils/include/config.h
-#libsidutils/src/SidDatabase.cpp
-#libsidutils/src/SidFilter.cpp
-#libsidutils/src/SidTuneMod.cpp
-#libsidutils/src/MD5/MD5.cpp
-#libsidutils/src/SidUsage.cpp
-#libsidutils/src/ini/ini.cpp
-#libsidutils/src/ini/headings.i
-#libsidutils/src/ini/list.i
-#libsidutils/src/ini/keys.i
-#libsidutils/src/ini/types.i

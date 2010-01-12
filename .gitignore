@@ -35,3 +35,4 @@ m4
 *.la
 *.lo
 deadbeef.desktop
+.vimrc

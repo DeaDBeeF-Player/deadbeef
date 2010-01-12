@@ -51,6 +51,9 @@ static DB_functions_t deadbeef_api = {
     .ev_unsubscribe = plug_ev_unsubscribe,
     .md5 = plug_md5,
     .md5_to_str = plug_md5_to_str,
+    .md5_init = (void (*)(DB_md5_t *s))md5_init,
+    .md5_append = (void (*)(DB_md5_t *s, const uint8_t *daya, int nbytes))md5_append,
+    .md5_finish = (void (*)(DB_md5_t *s, uint8_t digest[16]))md5_finish,
     .get_output = plug_get_output,
     .playback_next = plug_playback_next,
     .playback_prev = plug_playback_prev,
@@ -211,12 +214,21 @@ DB_output_t *output_plugin = NULL;
 
 void
 plug_md5 (uint8_t sig[16], const char *in, int len) {
-    md5_buffer (in, len, sig);
+    md5_state_t st;
+    md5_init (&st);
+    md5_append (&st, in, len);
+    md5_finish (&st, sig);
 }
 
 void
 plug_md5_to_str (char *str, const uint8_t sig[16]) {
-    md5_sig_to_string ((char *)sig, str, 33);
+    int i = 0;
+    static const char hex[] = "0123456789abcdef";
+    for (i = 0; i < 16; i++) {
+        *str++ = hex[(sig[i]&0xf0)>>4];
+        *str++ = hex[sig[i]&0xf];
+    }
+    *str = 0;
 }
 
 // event handlers

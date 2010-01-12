@@ -216,6 +216,11 @@ typedef struct {
     struct DB_vfs_s *vfs;
 } DB_FILE;
 
+// md5 calc control structure (see md5/md5.h)
+typedef struct DB_md5_s {
+    char data[70];
+} DB_md5_t;
+
 // forward decl for plugin struct
 struct DB_plugin_s;
 
@@ -230,6 +235,9 @@ typedef struct {
     // md5sum calc
     void (*md5) (uint8_t sig[16], const char *in, int len);
     void (*md5_to_str) (char *str, const uint8_t sig[16]);
+    void (*md5_init)(DB_md5_t *s);
+    void (*md5_append)(DB_md5_t *s, const uint8_t *data, int nbytes);
+    void (*md5_finish)(DB_md5_t *s, uint8_t digest[16]);
     // playback control
     struct DB_output_s* (*get_output) (void);
     void (*playback_next) (void);

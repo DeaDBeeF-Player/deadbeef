@@ -38,6 +38,9 @@ test "x$prefix" = xNONE && prefix=$ac_default_prefix
 INSANE_CFLAGS="-Wcomment -Wchar-subscripts -Wunused-function -Wunused-value -Wuninitialized -Wtype-limits -Wbad-function-cast"
 INSANE_CXXFLAGS="-Wcomment -Wchar-subscripts -Wunused-function -Wunused-value -Wuninitialized -Wtype-limits"
 
+AC_SUBST(INSANE_CFLAGS)
+AC_SUBST(INSANE_CXXFLAGS)
+
 CXXFLAGS="$CXXFLAGS $INSANE_CXXFLAGS -D_GNU_SOURCE -DLIBDIR=\\\"$libdir\\\" -DPREFIX=\\\"$prefix\\\" -DDOCDIR=\\\"$docdir\\\""
 CFLAGS="$CFLAGS $INSANE_CFLAGS -D_GNU_SOURCE -DLIBDIR=\\\"$libdir\\\" -DPREFIX=\\\"$prefix\\\" -DDOCDIR=\\\"$docdir\\\""
 
@@ -217,7 +220,7 @@ pixmaps/Makefile
 icons/Makefile
 gme/Game_Music_Emu-0.5.2/Makefile
 gme/Game_Music_Emu-0.5.2/gme/Makefile
-sid/sidplay-libs-2.1.0/Makefile
+plugins/sid/sidplay-libs/Makefile
 dumb/Makefile
 plugins/alsa/Makefile
 plugins/hotkeys/Makefile
@@ -235,6 +238,7 @@ plugins/nullout/Makefile
 plugins/vtx/Makefile
 plugins/adplug/Makefile
 plugins/ffmpeg/Makefile
+plugins/sid/Makefile
 deadbeef.desktop
 ])
 

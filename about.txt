@@ -59,11 +59,6 @@ Game_Music_Emu Version 0.5.2
 Copyright © 2003-2006 Shay Green.
 
 
-Functions to compute MD5 message digest of files or memory blocks
-Written by Ulrich Drepper <drepper@gnu.ai.mit.edu>, 1995.
-Modified by Gray Watson <http://256.com/gray/>, 1997.
-
-
 libsidplay2 - commodore 64 SID emulation library
 Copyright © Simon White and other authors.
 
