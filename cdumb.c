@@ -23,12 +23,18 @@
 #include "dumb/dumb-kode54/include/internal/it.h"
 #include "deadbeef.h"
 
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
+
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
 
-static int dumb_initialized;
-static DUH *duh;
-static DUH_SIGRENDERER *renderer;
+typedef struct {
+    DB_fileinfo_t info;
+    DUH *duh;
+    DUH_SIGRENDERER *renderer;
+} dumb_info_t;
+
 //#define DUMB_RQ_ALIASING
 //#define DUMB_RQ_LINEAR
 //#define DUMB_RQ_CUBIC
@@ -36,55 +42,18 @@ static DUH_SIGRENDERER *renderer;
 extern int dumb_resampling_quality;
 extern int dumb_it_max_to_mix;
 
-static void
-cdumb_free (void);
-
 static int
-cdumb_startrenderer (void);
+cdumb_startrenderer (DB_fileinfo_t *_info);
 
 static DUH*
 open_module(const char *fname, const char *ext, int *start_order, int *is_it, int *is_dos, const char **filetype);
 
-static DUMBFILE_SYSTEM dumb_vfs;
-
-static int
-dumb_vfs_skip (void *f, long n) {
-    return deadbeef->fseek (f, n, SEEK_CUR);
-}
-
-static int
-dumb_vfs_getc (void *f) {
-    uint8_t c;
-    deadbeef->fread (&c, 1, 1, f);
-    return (int)c;
-}
-
-static long
-dumb_vfs_getnc (char *ptr, long n, void *f) {
-    return deadbeef->fread (ptr, 1, n, f);
-}
-
-static void
-dumb_vfs_close (void *f) {
-    deadbeef->fclose (f);
-}
-
-static void
-dumb_register_db_vfs (void) {
-    dumb_vfs.open = (void *(*)(const char *))deadbeef->fopen;
-    dumb_vfs.skip = dumb_vfs_skip;
-    dumb_vfs.getc = dumb_vfs_getc;
-    dumb_vfs.getnc = dumb_vfs_getnc;
-    dumb_vfs.close = dumb_vfs_close;
-    register_dumbfile_system (&dumb_vfs);
-}
-
-static int
+static DB_fileinfo_t *
 cdumb_init (DB_playItem_t *it) {
-    if (!dumb_initialized) {
-        atexit (&dumb_exit);
-    }
-    dumb_register_db_vfs ();
+    trace ("cdumb_init %s\n", it->fname);
+    DB_fileinfo_t *_info = malloc (sizeof (dumb_info_t));
+    dumb_info_t *info = (dumb_info_t *)_info;
+    memset (_info, 0, sizeof (dumb_info_t));
 
     int start_order = 0;
 	int is_dos, is_it;
@@ -94,36 +63,39 @@ cdumb_init (DB_playItem_t *it) {
     }
     ext++;
     const char *ftype;
-    duh = open_module(it->fname, ext, &start_order, &is_it, &is_dos, &ftype);
+    info->duh = open_module(it->fname, ext, &start_order, &is_it, &is_dos, &ftype);
 
-    dumb_it_do_initial_runthrough (duh);
+    dumb_it_do_initial_runthrough (info->duh);
 
-    plugin.info.bps = 16;
-    plugin.info.channels = 2;
-    plugin.info.samplerate = deadbeef->get_output ()->samplerate ();
-    plugin.info.readpos = 0;
+    _info->plugin = &plugin;
+    _info->bps = 16;
+    _info->channels = 2;
+    _info->samplerate = deadbeef->get_output ()->samplerate ();
+    _info->readpos = 0;
 
-    if (cdumb_startrenderer () < 0) {
-        return -1;
+    if (cdumb_startrenderer (_info) < 0) {
+        plugin.free (_info);
+        return NULL;
     }
 
-    return 0;
+    trace ("cdumb_init success (ptr=%p)\n", _info);
+    return _info;
 }
 
 static int
-cdumb_startrenderer (void) {
+cdumb_startrenderer (DB_fileinfo_t *_info) {
+    dumb_info_t *info = (dumb_info_t *)_info;
     // reopen
-    if (renderer) {
-        duh_end_sigrenderer (renderer);
-        renderer = NULL;
+    if (info->renderer) {
+        duh_end_sigrenderer (info->renderer);
+        info->renderer = NULL;
     }
-    renderer = duh_start_sigrenderer (duh, 0, 2, 0);
-    if (!renderer) {
-        cdumb_free ();
+    info->renderer = duh_start_sigrenderer (info->duh, 0, 2, 0);
+    if (!info->renderer) {
         return -1;
     }
 
-    DUMB_IT_SIGRENDERER *itsr = duh_get_it_sigrenderer (renderer);
+    DUMB_IT_SIGRENDERER *itsr = duh_get_it_sigrenderer (info->renderer);
     dumb_it_set_loop_callback (itsr, &dumb_it_callback_terminate, NULL);
     dumb_it_set_resampling_quality (itsr, 2);
     dumb_it_set_xm_speed_zero_callback (itsr, &dumb_it_callback_terminate, NULL);
@@ -132,37 +104,49 @@ cdumb_startrenderer (void) {
 }
 
 static void
-cdumb_free (void) {
-    if (renderer) {
-        duh_end_sigrenderer (renderer);
-        renderer = NULL;
-    }
-    if (duh) {
-        unload_duh (duh);
-        duh = NULL;
+cdumb_free (DB_fileinfo_t *_info) {
+    trace ("cdumb_free %p\n", _info);
+    dumb_info_t *info = (dumb_info_t *)_info;
+    if (info) {
+        if (info->renderer) {
+            duh_end_sigrenderer (info->renderer);
+            info->renderer = NULL;
+        }
+        if (info->duh) {
+            unload_duh (info->duh);
+            info->duh = NULL;
+        }
+        free (info);
     }
 }
 
 static int
-cdumb_read (char *bytes, int size) {
+cdumb_read (DB_fileinfo_t *_info, char *bytes, int size) {
+    trace ("cdumb_read req %d\n", size);
+    dumb_info_t *info = (dumb_info_t *)_info;
     int length = size / 4;
     long ret;
-    ret = duh_render (renderer, 16, 0, 1, 65536.f / plugin.info.samplerate, length, bytes);
-    plugin.info.readpos += ret / (float)plugin.info.samplerate;
+    ret = duh_render (info->renderer, 16, 0, 1, 65536.f / _info->samplerate, length, bytes);
+    _info->readpos += ret / (float)_info->samplerate;
+    trace ("cdumb_read %d\n", ret*4);
     return ret*4;
 }
 
 static int
-cdumb_seek (float time) {
-    if (time < plugin.info.readpos) {
-        cdumb_startrenderer ();
+cdumb_seek (DB_fileinfo_t *_info, float time) {
+    trace ("cdumb_read seek %f\n", time);
+    dumb_info_t *info = (dumb_info_t *)_info;
+    if (time < _info->readpos) {
+        if (cdumb_startrenderer (_info) < 0) {
+            return -1;
+        }       
     }
     else {
-        time -= plugin.info.readpos;
+        time -= _info->readpos;
     }
-    int pos = time * plugin.info.samplerate;
-    duh_sigrenderer_generate_samples (renderer, 0, 65536.0f / plugin.info.samplerate, pos, NULL);
-    plugin.info.readpos = duh_sigrenderer_get_position (renderer) / 65536.f;
+    int pos = time * _info->samplerate;
+    duh_sigrenderer_generate_samples (info->renderer, 0, 65536.0f / _info->samplerate, pos, NULL);
+    _info->readpos = duh_sigrenderer_get_position (info->renderer) / 65536.f;
     return 0;
 }
 
@@ -766,14 +750,13 @@ cdumb_insert (DB_playItem_t *after, const char *fname) {
     int start_order = 0;
     int is_it;
     int is_dos;
-    dumb_register_db_vfs ();
     const char *ftype;
     DUH* duh = open_module(fname, ext, &start_order, &is_it, &is_dos, &ftype);
     if (!duh) {
         return NULL;
     }
     DB_playItem_t *it = deadbeef->pl_item_alloc ();
-    it->decoder_id = deadbeef->plug_get_decoder_id (plugin.id);
+    it->decoder_id = deadbeef->plug_get_decoder_id (plugin.plugin.id);
     it->fname = strdup (fname);
     DUMB_IT_SIGDATA * itsd = duh_get_it_sigdata(duh);
     if (itsd->name[0])     {
@@ -793,11 +776,57 @@ cdumb_insert (DB_playItem_t *after, const char *fname) {
     dumb_it_do_initial_runthrough (duh);
     deadbeef->pl_set_item_duration (it, duh_get_length (duh)/65536.0f);
     it->filetype = ftype;
-//    printf ("duration: %f\n", plugin.info.duration);
+//    printf ("duration: %f\n", _info->duration);
     after = deadbeef->pl_insert_item (after, it);
     unload_duh (duh);
 
     return after;
+}
+
+static DUMBFILE_SYSTEM dumb_vfs;
+
+static int
+dumb_vfs_skip (void *f, long n) {
+    return deadbeef->fseek (f, n, SEEK_CUR);
+}
+
+static int
+dumb_vfs_getc (void *f) {
+    uint8_t c;
+    deadbeef->fread (&c, 1, 1, f);
+    return (int)c;
+}
+
+static long
+dumb_vfs_getnc (char *ptr, long n, void *f) {
+    return deadbeef->fread (ptr, 1, n, f);
+}
+
+static void
+dumb_vfs_close (void *f) {
+    deadbeef->fclose (f);
+}
+
+static void
+dumb_register_db_vfs (void) {
+    dumb_vfs.open = (void *(*)(const char *))deadbeef->fopen;
+    dumb_vfs.skip = dumb_vfs_skip;
+    dumb_vfs.getc = dumb_vfs_getc;
+    dumb_vfs.getnc = dumb_vfs_getnc;
+    dumb_vfs.close = dumb_vfs_close;
+    register_dumbfile_system (&dumb_vfs);
+}
+
+int
+cgme_start (void) {
+    dumb_register_db_vfs ();
+    return 0;
+}
+
+int
+cgme_stop (void) {
+    dumb_exit ();
+    return 0;
 }
 
 static const char *filetypes[] = { "IT", "XM", "S3M", "STM", "669", "PTM", "PSM", "MTM", "RIFF", "ASY", "MOD", NULL };
@@ -808,18 +837,20 @@ static DB_decoder_t plugin = {
     .plugin.version_major = 0,
     .plugin.version_minor = 1,
     .plugin.type = DB_PLUGIN_DECODER,
+    .plugin.id = "stddumb",
     .plugin.name = "DUMB module player",
     .plugin.descr = "module player based on DUMB library",
     .plugin.author = "Alexey Yakovenko",
     .plugin.email = "waker@users.sourceforge.net",
     .plugin.website = "http://deadbeef.sf.net",
+    .plugin.start = cgme_start,
+    .plugin.stop = cgme_stop,
     .init = cdumb_init,
     .free = cdumb_free,
     .read_int16 = cdumb_read,
     .seek = cdumb_seek,
     .insert = cdumb_insert,
     .exts = exts,
-    .id = "stddumb",
     .filetypes = filetypes
 };
 

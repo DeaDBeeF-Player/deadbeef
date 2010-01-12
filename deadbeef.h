@@ -400,13 +400,16 @@ typedef struct DB_plugin_s {
     int inactive;
     // prevent plugin from being dynamically stopped
     int nostop;
+
     // any of those can be left NULL
     // though it's much better to fill them with something useful
-    const char *name;
-    const char *descr;
-    const char *author;
-    const char *email;
-    const char *website;
+    const char *id; // id used for serialization and runtime binding
+    const char *name; // short name
+    const char *descr; // short description
+    const char *author; // author's name
+    const char *email; // author's email
+    const char *website; // author's website
+
     // start is called to start plugin; can be NULL
     int (*start) (void);
     // stop is called to deinit plugin; can be NULL
@@ -468,9 +471,6 @@ typedef struct DB_decoder_s {
 
     // NULL terminated array of all file type names
     const char **filetypes;
-
-    // codec id used for playlist serialization
-    const char *id;
 } DB_decoder_t;
 
 // output plugin

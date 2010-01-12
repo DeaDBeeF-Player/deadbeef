@@ -782,7 +782,7 @@ DB_decoder_t *
 plug_get_decoder_for_id (const char *id) {
     DB_decoder_t **plugins = plug_get_decoder_list ();
     for (int c = 0; plugins[c]; c++) {
-        if (!strcmp (id, plugins[c]->id)) {
+        if (!strcmp (id, plugins[c]->plugin.id)) {
             return plugins[c];
         }
     }

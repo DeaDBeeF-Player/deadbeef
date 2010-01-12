@@ -739,7 +739,7 @@ pl_insert_file (playItem_t *after, const char *fname, int *pabort, int (*cb)(pla
     DB_decoder_t **decoders = plug_get_decoder_list ();
     // match by decoder
     for (int i = 0; decoders[i]; i++) {
-        trace ("matching decoder %d(%s)...\n", i, decoders[i]->id);
+        trace ("matching decoder %d(%s)...\n", i, decoders[i]->plugin.id);
         if (decoders[i]->exts && decoders[i]->insert) {
             const char **exts = decoders[i]->exts;
             for (int e = 0; exts[e]; e++) {

@@ -36,8 +36,8 @@
 #include "volume.h"
 #include "vfs.h"
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 static intptr_t streamer_tid;
 static int src_quality;
@@ -183,11 +183,8 @@ streamer_set_current (playItem_t *it) {
         dec = plug_get_decoder_for_id (it->decoder_id);
     }
     if (dec) {
-        streamer_lock ();
-        streamer_unlock ();
         str_current_decoder = dec->init (DB_PLAYITEM (it));
-        streamer_lock ();
-        streamer_unlock ();
+        trace ("str: acquired decoder ptr %p\n", str_current_decoder);
         pl_item_copy (&str_streaming_song, it);
         if (!str_current_decoder) {
             trace ("decoder->init returned NULL\n");

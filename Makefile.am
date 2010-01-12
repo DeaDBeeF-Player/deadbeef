@@ -1,4 +1,5 @@
 SUBDIRS = ${MPGMAD_DIR}\
+		  gme/Game_Music_Emu-0.5.2\
 		  pixmaps\
 		  icons\
 		  plugins/hotkeys\
@@ -52,14 +53,14 @@ deadbeef_SOURCES =\
 	junklib.h junklib.c utf8.c utf8.h\
 	optmath.h\
 	vfs.c vfs.h vfs_stdio.c\
-	timeline.c timeline.h
+	timeline.c timeline.h\
+	cgme.c cdumb.c
 #	cgme.c cdumb.c csid.cpp
 
 sdkdir = $(pkgincludedir)
 sdk_HEADERS = deadbeef.h
 
-#deadbeef_LDADD = $(LDADD) $(DEPS_LIBS) gme/Game_Music_Emu-0.5.2/gme/libgme.a sid/sidplay-libs-2.1.0/libsidplay2.a dumb/libdumb.a -lstdc++
-deadbeef_LDADD = $(LDADD) $(DEPS_LIBS) -lstdc++
+deadbeef_LDADD = $(LDADD) $(DEPS_LIBS) gme/Game_Music_Emu-0.5.2/gme/libgme.a sid/sidplay-libs-2.1.0/libsidplay2.a dumb/libdumb.a -lstdc++
 
 AM_CFLAGS = $(DEPS_CFLAGS) -I$(gmepath) -std=c99
 AM_CPPFLAGS = $(DEPS_CFLAGS) -I$(sidpath)/libsidplay/include -I$(sidpath)/builders/resid-builder/include

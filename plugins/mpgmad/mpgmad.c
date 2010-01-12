@@ -972,7 +972,7 @@ cmp3_insert (DB_playItem_t *after, const char *fname) {
     }
     if (fp->vfs->streaming) {
         DB_playItem_t *it = deadbeef->pl_item_alloc ();
-        it->decoder_id = deadbeef->plug_get_decoder_id (plugin.id);
+        it->decoder_id = deadbeef->plug_get_decoder_id (plugin.plugin.id);
         it->fname = strdup (fname);
         deadbeef->fclose (fp);
         deadbeef->pl_add_meta (it, "title", NULL);
@@ -1037,7 +1037,7 @@ cmp3_insert (DB_playItem_t *after, const char *fname) {
         }
     }
     DB_playItem_t *it = deadbeef->pl_item_alloc ();
-    it->decoder_id = deadbeef->plug_get_decoder_id (plugin.id);
+    it->decoder_id = deadbeef->plug_get_decoder_id (plugin.plugin.id);
     it->fname = strdup (fname);
 
     deadbeef->rewind (fp);
@@ -1070,6 +1070,7 @@ static DB_decoder_t plugin = {
     .plugin.version_major = 0,
     .plugin.version_minor = 1,
     .plugin.type = DB_PLUGIN_DECODER,
+    .plugin.id = "stdmpg",
     .plugin.name = "MPEG decoder",
     .plugin.descr = "MPEG v1/2 layer1/2/3 decoder based on libmad",
     .plugin.author = "Alexey Yakovenko",
@@ -1083,7 +1084,6 @@ static DB_decoder_t plugin = {
     .seek_sample = cmp3_seek_sample,
     .insert = cmp3_insert,
     .exts = exts,
-    .id = "stdmpg",
     .filetypes = filetypes
 };
 
