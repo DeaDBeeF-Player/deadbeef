@@ -53,13 +53,14 @@ extern "C" {
 // DON'T release plugins without DB_PLUGIN_SET_API_VERSION
 
 // api version history:
+// 0.5 -- deadbeef-0.3.2
 // 0.4 -- deadbeef-0.3.0
 // 0.3 -- deadbeef-0.2.3.2
 // 0.2 -- deadbeef-0.2.3
 // 0.1 -- deadbeef-0.2.0
 
 #define DB_API_VERSION_MAJOR 0
-#define DB_API_VERSION_MINOR 4
+#define DB_API_VERSION_MINOR 5
 
 #define DB_PLUGIN_SET_API_VERSION\
     .plugin.api_vmajor = DB_API_VERSION_MAJOR,\

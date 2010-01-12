@@ -55,6 +55,48 @@
     <p><a href="#download">get it!</a></p>
     <p>Changelog since 0.3.0</p>
     <ul>
+	<li>all GTK+ UI code is now in plugin</li>
+	<li>improved main menu layout in GTK UI</li>
+	<li>numerous memory and cpu optimizations</li>
+	<li>fully editable/scriptable columns with sorting</li>
+	<li>native look and feel of playlist widget</li>
+	<li>selection is synchronized between main window and search window</li>
+	<li>keyboard navigation in search window</li>
+	<li>plugins got basic GUI configuration</li>
+	<li>much smoother seekbar</li>
+	<li>compatible with more GTK theme engines</li>
+	<li>improved restore window geometry after minimizing to system tray</li>
+	<li>search window geometry is now saved and restored between sessions</li>
+	<li>flexible nowplaying querying support via command line</li>
+	<li>ALSA code moved to plugin</li>
+	<li>new "nullout" output plugin - good for testing, and as basis for new plugins</li>
+	<li>added template .c file (with comments) for making new decoder plugins</li>
+	<li>updated id3v2 and apev2 parsers to support more metadata types</li>
+	<li>id3v2.2 parser now supports unsynchronization</li>
+	<li>metadata viewer accessible from context menu</li>
+	<li>flac plugin now plays "oga" files (flac in ogg container)</li>
+	<li>ffmpeg plugin, adds formats: m4a (aac,alac), mpc/mp+/mpp, wma, shn, oma, ac3, vqf</li>
+	<li>vtx plugin using libayemu</li>
+	<li>adplug plugin - cmf, rol, hsc, etc (including adlib S3Ms)</li>
+	<li>fixed cuesheet support in mp3 and ogg plugins</li>
+	<li>fixed sse2 issues on i686 architecture</li>
+	<li>added 24-bit ape support (thanks to Rockbox project)</li>
+	<li>added support for custom scrobbler url to last.fm plugin (e.g. libre.fm)</li>
+	<li>added Play Queue funtionality to playlist (context menu)</li>
+	<li>added average/approximate bitrate display to statusbar</li>
+	<li>new "cursor follows playback" feature</li>
+	<li>new "stop after current track" feature</li>
+	<li>.dbpl extension is auto-added when saving playlist</li>
+	<li>improved robustness in http code (handling connection problems, etc)</li>
+    </ul>
+</div>
+
+<h2>release 0.3.1 is out</h2>
+<div class="post">
+    <p class="date">2009/11/29</p>
+    <p><a href="#download">get it!</a></p>
+    <p>Changelog since 0.3.0</p>
+    <ul>
 	<li>improved header widget drawing and gtkengines compatibility</li>
 	<li>fixed vfs_curl to fetch content size properly again</li>
 	<li>fixed rare memory leak bug in seekbar drawing</li>
@@ -346,9 +388,12 @@ implemented basic session management, window size/position, volume, playmode are
 </pre>
 
 <h1 id="download">Download</h1>
-<h2>Latest version 0.3.1:</h2>
+<h2>Latest version 0.3.2:</h2>
 <p>official Arch Linux PKGBUILD: <a href="http://aur.archlinux.org/packages.php?ID=29497">here</a></p>
 <p>if you have yaourt, you can simply do yaourt -S deadbeef</p>
+<p>source code for version 0.3.2 <a href="http://sourceforge.net/projects/deadbeef/files/deadbeef-0.3.2.tar.gz/download">deadbeef-0.3.2.tar.gz</a></p>
+<p>or <a href="http://sourceforge.net/projects/deadbeef/files/">browse all files</a></p>
+<h2>version 0.3.1:</h2>
 <p>source code for version 0.3.1 <a href="http://sourceforge.net/projects/deadbeef/files/deadbeef-0.3.1.tar.gz/download">deadbeef-0.3.1.tar.gz</a></p>
 <p>or <a href="http://sourceforge.net/projects/deadbeef/files/">browse all files</a></p>
 <p><b>unsupported</b> live gentoo ebuild from <a href="mailto:tonn.post@gmail.com">tonn</a>: <a href="http://sourceforge.net/projects/deadbeef/files/deadbeef-9999.ebuild/download">deadbeef-9999.ebuild</a></p>
