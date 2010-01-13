@@ -60,7 +60,7 @@ adplug_init (DB_playItem_t *it) {
     decoder = CAdPlug::factory (it->fname, opl, CAdPlug::players);
     if (!decoder) {
         trace ("adplug: failed to open %s\n", it->fname);
-        return NULL;
+        return -1;
     }
 
     subsong = it->tracknum;
@@ -75,7 +75,7 @@ adplug_init (DB_playItem_t *it) {
     adplug_plugin.info.samplerate = samplerate;
     adplug_plugin.info.readpos = 0;
 
-//    trace ("adplug_init ok (duration=%f, totalsamples=%d)\n", deadbeef->pl_get_item_duration (it), totalsamples);
+    trace ("adplug_init ok (duration=%f, totalsamples=%d)\n", deadbeef->pl_get_item_duration (it), totalsamples);
 
     return 0;
 }

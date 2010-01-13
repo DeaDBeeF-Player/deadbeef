@@ -140,7 +140,7 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
             else {
                 char out[2048];
                 playItem_t *curr = streamer_get_playing_track ();
-                DB_decoder_t *dec = streamer_get_current_decoder ();
+                DB_fileinfo_t *dec = streamer_get_current_decoder ();
                 if (curr && dec) {
                     pl_format_title (curr, out, sizeof (out), -1, parg);
                 }

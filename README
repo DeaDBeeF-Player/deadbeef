@@ -3,7 +3,7 @@ dependencies for player core - includes support for sid, tracker music and chipt
     libsamplerate
     alsa-lib
 
-optional dependencies
+optional/build dependencies
     libvorbis: for ogg vorbis plugin
     libcurl >= 7.10: for last.fm and vfs_curl (shoutcast/icecast) plugins
     libmad: for mpgmad plugin (mpeg1,2 layers1,2,3)
@@ -11,6 +11,7 @@ optional dependencies
     wavpack: for wavpack plugin
     libsndfile: for sndfile plugin
     libcdio: for cd audio plugin
+    ffmpeg: for ffmpeg plugin
 
 if you want to build from git - install autotools, and run autoreconf
 
