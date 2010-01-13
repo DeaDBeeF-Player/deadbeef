@@ -5,6 +5,7 @@ SUBDIRS = ${MPGMAD_DIR}\
 		  plugins/hotkeys\
 		  plugins/nullout\
 		  plugins/sid\
+		  plugins/ffap\
 		  ${ALSA_DIR}\
 		  ${LFM_DIR}\
           ${VFS_CURL_DIR}\
@@ -16,7 +17,6 @@ SUBDIRS = ${MPGMAD_DIR}\
 #		  pixmaps\
 #		  icons\
 #		  plugins/hotkeys\
-#		  plugins/ffap\
 #		  plugins/nullout\
 #		  plugins/vtx\
 #		  plugins/adplug\

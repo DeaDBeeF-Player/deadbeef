@@ -48,9 +48,6 @@
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
 
-static int startsample;
-static int endsample;
-
 #define PACKET_BUFFER_SIZE 100000
 
 #define min(x,y) ((x)<(y)?(x):(y))
@@ -269,7 +266,14 @@ typedef struct APEContext {
     int error;
 } APEContext;
 
-APEContext ape_ctx;
+typedef struct {
+    DB_fileinfo_t info;
+    int startsample;
+    int endsample;
+    APEContext ape_ctx;
+    DB_FILE *fp;
+} ape_info_t;
+
 
 inline static int
 read_uint16(DB_FILE *fp, uint16_t* x)
@@ -654,68 +658,81 @@ ape_free_ctx (APEContext *ape_ctx) {
 }
 
 static void
-ffap_free (void)
+ffap_free (DB_fileinfo_t *_info)
 {
-    ape_free_ctx (&ape_ctx);
+    ape_info_t *info = (ape_info_t *)_info;
+    ape_free_ctx (&info->ape_ctx);
+    if (info->fp) {
+        deadbeef->fclose (info->fp);
+    }
+    free (info);
 }
 
-static DB_FILE *fp;
-
-static int
+static DB_fileinfo_t *
 ffap_init(DB_playItem_t *it)
 {
-    fp = deadbeef->fopen (it->fname);
-    if (!fp) {
-        return -1;
+    DB_fileinfo_t *_info = malloc (sizeof (ape_info_t));
+    ape_info_t *info = (ape_info_t*)_info;
+    memset (info, 0, sizeof (ape_info_t));
+
+    info->fp = deadbeef->fopen (it->fname);
+    if (!info->fp) {
+        plugin.free (_info);
+        return NULL;
     }
-    memset (&ape_ctx, 0, sizeof (ape_ctx));
-    ape_read_header (fp, &ape_ctx);
+    memset (&info->ape_ctx, 0, sizeof (info->ape_ctx));
+    ape_read_header (info->fp, &info->ape_ctx);
     int i;
 
-    if (ape_ctx.channels > 2) {
+    if (info->ape_ctx.channels > 2) {
         fprintf (stderr, "ape: Only mono and stereo is supported\n");
-        return -1;
+        plugin.free (_info);
+        return NULL;
     }
 
 #if ENABLE_DEBUG
-    fprintf (stderr, "ape: Compression Level: %d - Flags: %d\n", ape_ctx.compressiontype, ape_ctx.formatflags);
+    fprintf (stderr, "ape: Compression Level: %d - Flags: %d\n", info->ape_ctx.compressiontype, info->ape_ctx.formatflags);
 #endif
-    if (ape_ctx.compressiontype % 1000 || ape_ctx.compressiontype > COMPRESSION_LEVEL_INSANE) {
-        fprintf (stderr, "ape: Incorrect compression level %d\n", ape_ctx.compressiontype);
-        return -1;
+    if (info->ape_ctx.compressiontype % 1000 || info->ape_ctx.compressiontype > COMPRESSION_LEVEL_INSANE) {
+        fprintf (stderr, "ape: Incorrect compression level %d\n", info->ape_ctx.compressiontype);
+        plugin.free (_info);
+        return NULL;
     }
-    ape_ctx.fset = ape_ctx.compressiontype / 1000 - 1;
+    info->ape_ctx.fset = info->ape_ctx.compressiontype / 1000 - 1;
     for (i = 0; i < APE_FILTER_LEVELS; i++) {
-        if (!ape_filter_orders[ape_ctx.fset][i])
+        if (!ape_filter_orders[info->ape_ctx.fset][i])
             break;
-        int err = posix_memalign ((void **)&ape_ctx.filterbuf[i], 16, (ape_filter_orders[ape_ctx.fset][i] * 3 + HISTORY_SIZE) * 4);
+        int err = posix_memalign ((void **)&info->ape_ctx.filterbuf[i], 16, (ape_filter_orders[info->ape_ctx.fset][i] * 3 + HISTORY_SIZE) * 4);
         if (err) {
             trace ("ffap: out of memory (posix_memalign)\n");
-            return -1;
+            plugin.free (_info);
+            return NULL;
         }
     }
 
-    plugin.info.bps = ape_ctx.bps;
-    plugin.info.samplerate = ape_ctx.samplerate;
-    plugin.info.channels = ape_ctx.channels;
-    plugin.info.readpos = 0;
+    _info->plugin = &plugin;
+    _info->bps = info->ape_ctx.bps;
+    _info->samplerate = info->ape_ctx.samplerate;
+    _info->channels = info->ape_ctx.channels;
+    _info->readpos = 0;
     if (it->endsample > 0) {
-        startsample = it->startsample;
-        endsample = it->endsample;
-        plugin.seek_sample (0);
+        info->startsample = it->startsample;
+        info->endsample = it->endsample;
+        plugin.seek_sample (_info, 0);
         //trace ("start: %d/%f, end: %d/%f\n", startsample, timestart, endsample, timeend);
     }
     else {
-        startsample = 0;
-        endsample = ape_ctx.totalsamples-1;
+        info->startsample = 0;
+        info->endsample = info->ape_ctx.totalsamples-1;
     }
 
-    ape_ctx.packet_data = malloc (PACKET_BUFFER_SIZE);
-    if (!ape_ctx.packet_data) {
+    info->ape_ctx.packet_data = malloc (PACKET_BUFFER_SIZE);
+    if (!info->ape_ctx.packet_data) {
         fprintf (stderr, "ape: failed to allocate memory for packet data\n");
-        return -1;
+        plugin.free (_info);
+        return NULL;
     }
-    return 0;
+    return _info;
 }
 
 /**
@@ -1525,14 +1542,16 @@ static void ape_unpack_stereo(APEContext * ctx, int count)
 }
 
 static int
-ape_decode_frame(APEContext *s, void *data, int *data_size)
+ape_decode_frame(DB_fileinfo_t *_info, void *data, int *data_size)
 {
+    ape_info_t *info = (ape_info_t*)_info;
+    APEContext *s = &info->ape_ctx;
     int16_t *samples = data;
     int nblocks;
     int i, n;
     int blockstodecode;
     int bytes_used;
-    int samplesize = plugin.info.bps>>3;
+    int samplesize = _info->bps>>3;
 
     /* should not happen but who knows */
     if (BLOCKS_PER_LOOP * samplesize * s->channels > *data_size) {
@@ -1549,7 +1568,7 @@ ape_decode_frame(APEContext *s, void *data, int *data_size)
 //            fprintf (stderr, "start reading packet %d\n", ape_ctx.currentframe);
             assert (s->samples == 0); // all samples from prev packet must have been read
             // start new packet
-            if (ape_read_packet (fp, &ape_ctx) < 0) {
+            if (ape_read_packet (info->fp, s) < 0) {
                 fprintf (stderr, "ape: error reading packet\n");
                 return -1;
             }
@@ -1588,7 +1607,7 @@ ape_decode_frame(APEContext *s, void *data, int *data_size)
             sz = min (sz, s->packet_sizeleft);
             sz = sz&~3;
             uint8_t *p = s->packet_data + s->packet_remaining;
-            int r = deadbeef->fread (p, 1, sz, fp);
+            int r = deadbeef->fread (p, 1, sz, info->fp);
             bswap_buf((uint32_t*)p, (const uint32_t*)p, r >> 2);
             s->packet_sizeleft -= r;
             s->packet_remaining += r;
@@ -1633,9 +1652,9 @@ ape_decode_frame(APEContext *s, void *data, int *data_size)
     i = skip;
 
     for (; i < blockstodecode; i++) {
-        *samples++ = (int16_t)(s->decoded0[i]>>(plugin.info.bps-16));
+        *samples++ = (int16_t)(s->decoded0[i]>>(_info->bps-16));
         if(s->channels == 2) {
-            *samples++ = (int16_t)(s->decoded1[i]>>(plugin.info.bps-16));
+            *samples++ = (int16_t)(s->decoded1[i]>>(_info->bps-16));
         }
     }
     
@@ -1682,7 +1701,7 @@ ffap_insert (DB_playItem_t *after, const char *fname) {
     float duration = ape_ctx.totalsamples / (float)ape_ctx.samplerate;
     DB_playItem_t *it = NULL;
     it = deadbeef->pl_item_alloc ();
-    it->decoder_id = deadbeef->plug_get_decoder_id (plugin.id);
+    it->decoder_id = deadbeef->plug_get_decoder_id (plugin.plugin.id);
     it->fname = strdup (fname);
     it->filetype = "APE";
     deadbeef->pl_set_item_duration (it, duration);
@@ -1723,79 +1742,81 @@ ffap_insert (DB_playItem_t *after, const char *fname) {
 }
 
 static int
-ffap_read_int16 (char *buffer, int size) {
-    if (ape_ctx.currentsample + size / (2 * ape_ctx.channels) > endsample) {
-        size = (endsample - ape_ctx.currentsample + 1) * 2 * ape_ctx.channels;
-        trace ("size truncated to %d bytes, cursample=%d, endsample=%d, totalsamples=%d\n", size, ape_ctx.currentsample, endsample, ape_ctx.totalsamples);
+ffap_read_int16 (DB_fileinfo_t *_info, char *buffer, int size) {
+    ape_info_t *info = (ape_info_t*)_info;
+    if (info->ape_ctx.currentsample + size / (2 * info->ape_ctx.channels) > info->endsample) {
+        size = (info->endsample - info->ape_ctx.currentsample + 1) * 2 * info->ape_ctx.channels;
+        trace ("size truncated to %d bytes, cursample=%d, info->endsample=%d, totalsamples=%d\n", size, info->ape_ctx.currentsample, info->endsample, info->ape_ctx.totalsamples);
         if (size <= 0) {
             return 0;
         }
     }
     int inits = size;
     while (size > 0) {
-        if (ape_ctx.remaining > 0) {
-            int sz = min (size, ape_ctx.remaining);
-            memcpy (buffer, ape_ctx.buffer, sz);
+        if (info->ape_ctx.remaining > 0) {
+            int sz = min (size, info->ape_ctx.remaining);
+            memcpy (buffer, info->ape_ctx.buffer, sz);
             buffer += sz;
             size -= sz;
-            if (ape_ctx.remaining > sz) {
-                memmove (ape_ctx.buffer, ape_ctx.buffer + sz, ape_ctx.remaining-sz);
+            if (info->ape_ctx.remaining > sz) {
+                memmove (info->ape_ctx.buffer, info->ape_ctx.buffer + sz, info->ape_ctx.remaining-sz);
             }
-            ape_ctx.remaining -= sz;
+            info->ape_ctx.remaining -= sz;
             continue;
         }
         int s = BLOCKS_PER_LOOP * 2 * 2 * 2;
-        assert (ape_ctx.remaining <= s/2);
-        s -= ape_ctx.remaining;
-        uint8_t *buf = ape_ctx.buffer + ape_ctx.remaining;
-        int n = ape_decode_frame (&ape_ctx, buf, &s);
+        assert (info->ape_ctx.remaining <= s/2);
+        s -= info->ape_ctx.remaining;
+        uint8_t *buf = info->ape_ctx.buffer + info->ape_ctx.remaining;
+        int n = ape_decode_frame (_info, buf, &s);
         if (n == -1) {
             break;
         }
-        ape_ctx.remaining += s;
+        info->ape_ctx.remaining += s;
 
-        int sz = min (size, ape_ctx.remaining);
-        memcpy (buffer, ape_ctx.buffer, sz);
+        int sz = min (size, info->ape_ctx.remaining);
+        memcpy (buffer, info->ape_ctx.buffer, sz);
         buffer += sz;
         size -= sz;
-        if (ape_ctx.remaining > sz) {
-            memmove (ape_ctx.buffer, ape_ctx.buffer + sz, ape_ctx.remaining-sz);
+        if (info->ape_ctx.remaining > sz) {
+            memmove (info->ape_ctx.buffer, info->ape_ctx.buffer + sz, info->ape_ctx.remaining-sz);
         }
-        ape_ctx.remaining -= sz;
+        info->ape_ctx.remaining -= sz;
     }
-    ape_ctx.currentsample += (inits - size) / (2 * ape_ctx.channels);
-    plugin.info.readpos = (ape_ctx.currentsample-startsample) / (float)plugin.info.samplerate;
+    info->ape_ctx.currentsample += (inits - size) / (2 * info->ape_ctx.channels);
+    _info->readpos = (info->ape_ctx.currentsample-info->startsample) / (float)_info->samplerate;
     return inits - size;
 }
 
 static int
-ffap_seek_sample (int sample) {
-    sample += startsample;
-    trace ("seeking to %d/%d\n", sample, ape_ctx.totalsamples);
+ffap_seek_sample (DB_fileinfo_t *_info, int sample) {
+    ape_info_t *info = (ape_info_t*)_info;
+    sample += info->startsample;
+    trace ("seeking to %d/%d\n", sample, info->ape_ctx.totalsamples);
     uint32_t newsample = sample;
-    if (newsample > ape_ctx.totalsamples) {
+    if (newsample > info->ape_ctx.totalsamples) {
         trace ("eof\n");
         return -1;
     }
-    int nframe = newsample / ape_ctx.blocksperframe;
-    if (nframe >= ape_ctx.totalframes) {
+    int nframe = newsample / info->ape_ctx.blocksperframe;
+    if (nframe >= info->ape_ctx.totalframes) {
         trace ("eof2\n");
         return -1;
     }
-    ape_ctx.currentframe = nframe;
-    ape_ctx.samplestoskip = newsample - nframe * ape_ctx.blocksperframe;
+    info->ape_ctx.currentframe = nframe;
+    info->ape_ctx.samplestoskip = newsample - nframe * info->ape_ctx.blocksperframe;
 
     // reset decoder
-    ape_ctx.packet_remaining = 0;
-    ape_ctx.samples = 0;
-    ape_ctx.currentsample = newsample;
-    plugin.info.readpos = (float)(newsample-startsample)/ape_ctx.samplerate;
+    info->ape_ctx.packet_remaining = 0;
+    info->ape_ctx.samples = 0;
+    info->ape_ctx.currentsample = newsample;
+    _info->readpos = (float)(newsample-info->startsample)/info->ape_ctx.samplerate;
     return 0;
 }
 
 static int
-ffap_seek (float seconds) {
-    return ffap_seek_sample (seconds * plugin.info.samplerate);
+ffap_seek (DB_fileinfo_t *_info, float seconds) {
+    return ffap_seek_sample (_info, seconds * _info->samplerate);
 }
 
 static const char *exts[] = { "ape", NULL };
@@ -1806,6 +1827,7 @@ static DB_decoder_t plugin = {
     .plugin.version_major = 0,
     .plugin.version_minor = 1,
     .plugin.type = DB_PLUGIN_DECODER,
+    .plugin.id = "ffap",
     .plugin.name = "Monkey's Audio (APE) decoder",
     .plugin.descr = "APE player based on code from libavc and rockbox",
     .plugin.author = "Alexey Yakovenko",
@@ -1818,7 +1840,6 @@ static DB_decoder_t plugin = {
     .seek_sample = ffap_seek_sample,
     .insert = ffap_insert,
     .exts = exts,
-    .id = "ffap",
     .filetypes = filetypes
 };
 
