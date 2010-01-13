@@ -62,7 +62,11 @@ sf_vfs_write (const void *ptr, sf_count_t count, void *user_data) {
 static sf_count_t
 sf_vfs_seek (sf_count_t offset, int whence, void *user_data) {
     sndfilectx_t *ctx = user_data;
-    return deadbeef->fseek (ctx->file, offset, whence);
+    int ret = deadbeef->fseek (ctx->file, offset, whence);
+    if (!ret) {
+        return offset;
+    }
+    return -1;
 }
 
 static sf_count_t
@@ -174,7 +178,11 @@ sndfile_read_float32 (char *bytes, int size) {
 
 static int
 sndfile_seek_sample (int sample) {
-    sfctx.currentsample = sf_seek (sfctx.ctx, sample + sfctx.startsample, SEEK_SET);
+    int ret = sf_seek (sfctx.ctx, sample + sfctx.startsample, SEEK_SET);
+    if (ret < 0) {
+        return -1;
+    }
+    sfctx.currentsample = ret;
     plugin.info.readpos = (float)(sfctx.currentsample - sfctx.startsample) / plugin.info.samplerate;
     return 0;
 }
