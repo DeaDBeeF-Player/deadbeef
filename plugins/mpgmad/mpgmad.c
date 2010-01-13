@@ -28,6 +28,9 @@
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
+#define likely(x)       __builtin_expect((x),1)
+#define unlikely(x)     __builtin_expect((x),0)
+
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
 
@@ -659,6 +662,10 @@ MadFixedToFloat (mad_fixed_t Fixed) {
 static int
 cmp3_decode_cut (int framesize) {
     if (buffer.duration >= 0) {
+        if (unlikely (!buffer.channels || buffer.channels > 2)) {
+            trace ("mpgmad: got frame with invalid number of channels (%d)\n", buffer.channels);
+            return 1;
+        }
         if (buffer.currentsample + buffer.readsize / (framesize * buffer.channels) > buffer.endsample) {
             int sz = (buffer.endsample - buffer.currentsample + 1) * framesize * buffer.channels;
             trace ("size truncated to %d bytes, cursample=%d, endsample=%d, totalsamples=%d\n", buffer.readsize, buffer.currentsample, buffer.endsample, buffer.totalsamples);
