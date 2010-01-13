@@ -1825,6 +1825,9 @@ pl_get_prev (playItem_t *it, int iter) {
 
 int
 pl_get_cursor (int iter) {
+    if (!playlist) {
+        return -1; // FIXME: that's a workaround for crashes in plugins
+    }
     return playlist->current_row[iter];
 }
 
