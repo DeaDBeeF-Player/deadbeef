@@ -262,7 +262,7 @@ server_update (void) {
     }
     else if (s2 != -1) {
         char str[2048];
-        char sendback[1024];
+        char sendback[1024] = "";
         int size;
         if ((size = recv (s2, str, 2048, 0)) >= 0) {
             if (size == 1 && str[0] == 0) {
@@ -489,8 +489,9 @@ main (int argc, char *argv[]) {
             perror ("send");
             exit (-1);
         }
-        char out[2048];
-        if (recv(s, out, sizeof (out), 0) == -1) {
+        char out[2048] = "";
+        ssize_t sz = recv(s, out, sizeof (out), 0);
+        if (sz == -1) {
             fprintf (stderr, "failed to pass args to remote!\n");
             exit (-1);
         }
@@ -506,8 +507,8 @@ main (int argc, char *argv[]) {
                 const char *prn = &out[sizeof (err)-1];
                 fwrite (prn, 1, strlen (prn), stderr);
             }
-            else if (out[0]) {
-                fprintf (stderr, "got unkown response:\n%s\n", out);
+            else if (sz > 0 && out[0]) {
+                fprintf (stderr, "got unknown response:\nlength=%d\n%s\n", sz, out);
             }
         }
         close (s);
