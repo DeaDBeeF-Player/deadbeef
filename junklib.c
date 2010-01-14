@@ -478,6 +478,9 @@ junk_read_id3v1 (playItem_t *it, DB_FILE *fp) {
     else if (genreid <= 147) {
         genre = junk_genretbl[genreid];
     }
+    else {
+        genre = "";
+    }
 
     // add meta
 //    trace ("%s - %s - %s - %s - %s - %s\n", title, artist, album, year, comment, genre);
