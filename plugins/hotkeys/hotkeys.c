@@ -220,7 +220,7 @@ read_config (Display *disp)
                 cmd_entry->modifier |= ShiftMask;
 
             else if (0 == strcasecmp (p, "Super")) {
-                cmd_entry->modifier |= Mod2Mask;
+                cmd_entry->modifier |= Mod4Mask;
             }
 
             else {
