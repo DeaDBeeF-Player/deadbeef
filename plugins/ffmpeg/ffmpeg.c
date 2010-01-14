@@ -47,24 +47,31 @@ static const char *filetypes[] = { "M4A", "MusePack", "WMA", "Shorten", "atrac3"
 
 #define FF_PROTOCOL_NAME "deadbeef"
 
-static AVCodec *codec;
-static AVCodecContext *ctx;
-static AVFormatContext *fctx;
-static AVPacket pkt;
-static int stream_id;
+typedef struct {
+    DB_fileinfo_t info;
+    AVCodec *codec;
+    AVCodecContext *ctx;
+    AVFormatContext *fctx;
+    AVPacket pkt;
+    int stream_id;
 
-static int left_in_packet;
-static int have_packet;
+    int left_in_packet;
+    int have_packet;
 
-static char *buffer; // must be AVCODEC_MAX_AUDIO_FRAME_SIZE
-static int left_in_buffer;
+    char *buffer; // must be AVCODEC_MAX_AUDIO_FRAME_SIZE
+    int left_in_buffer;
 
-static int startsample;
-static int endsample;
-static int currentsample;
+    int startsample;
+    int endsample;
+    int currentsample;
+} ffmpeg_info_t;
 
-static int
+static DB_fileinfo_t *
 ffmpeg_init (DB_playItem_t *it) {
+    DB_fileinfo_t *_info = malloc (sizeof (ffmpeg_info_t));
+    ffmpeg_info_t *info = (ffmpeg_info_t*)_info;
+    memset (info, 0, sizeof (ffmpeg_info_t));
+
     // prepare to decode the track
     // return -1 on failure
 
@@ -81,116 +88,114 @@ ffmpeg_init (DB_playItem_t *it) {
     trace ("ffmpeg: uri: %s\n", uri);
 
     // open file
-    if ((ret = av_open_input_file(&fctx, uri, NULL, 0, NULL)) < 0) {
-        trace ("fctx is %p, ret %d/%s", fctx, ret, strerror(-ret));
-        return -1;
+    if ((ret = av_open_input_file(&info->fctx, uri, NULL, 0, NULL)) < 0) {
+        trace ("info->fctx is %p, ret %d/%s", info->fctx, ret, strerror(-ret));
+        plugin.free (_info);
+        return NULL;
     }
 
-    stream_id = -1;
-    av_find_stream_info(fctx);
-    for (i = 0; i < fctx->nb_streams; i++)
+    info->stream_id = -1;
+    av_find_stream_info(info->fctx);
+    for (i = 0; i < info->fctx->nb_streams; i++)
     {
-        ctx = fctx->streams[i]->codec;
-        if (ctx->codec_type == CODEC_TYPE_AUDIO)
+        info->ctx = info->fctx->streams[i]->codec;
+        if (info->ctx->codec_type == CODEC_TYPE_AUDIO)
         {
-            codec = avcodec_find_decoder(ctx->codec_id);
-            if (codec != NULL) {
-                stream_id = i;
+            info->codec = avcodec_find_decoder (info->ctx->codec_id);
+            if (info->codec != NULL) {
+                info->stream_id = i;
                 break;
             }
         }
     }
 
-    if (codec == NULL)
+    if (info->codec == NULL)
     {
         trace ("ffmpeg can't decode %s\n", it->fname);
-        av_close_input_file(fctx);
-        return -1;
+        plugin.free (_info);
+        return NULL;
     }
     trace ("ffmpeg can decode %s\n", it->fname);
-    trace ("ffmpeg: codec=%s, stream=%d\n", codec->name, i);
+    trace ("ffmpeg: codec=%s, stream=%d\n", info->codec->name, i);
 
-    if (avcodec_open (ctx, codec) < 0) {
+    if (avcodec_open (info->ctx, info->codec) < 0) {
         trace ("ffmpeg: avcodec_open failed\n");
-        av_close_input_file(fctx);
-        return -1;
+        plugin.free (_info);
+        return NULL;
     }
 
-    int bps = av_get_bits_per_sample_format (ctx->sample_fmt);
-    int samplerate = ctx->sample_rate;
-    float duration = fctx->duration / (float)AV_TIME_BASE;
+    int bps = av_get_bits_per_sample_format (info->ctx->sample_fmt);
+    int samplerate = info->ctx->sample_rate;
+    float duration = info->fctx->duration / (float)AV_TIME_BASE;
     trace ("ffmpeg: bits per sample is %d\n", bps);
     trace ("ffmpeg: samplerate is %d\n", samplerate);
-    trace ("ffmpeg: duration is %lld/%fsec\n", fctx->duration, duration);
+    trace ("ffmpeg: duration is %lld/%fsec\n", info->fctx->duration, duration);
 
-    int totalsamples = fctx->duration * samplerate / AV_TIME_BASE;
-    left_in_packet = 0;
-    left_in_buffer = 0;
+    int totalsamples = info->fctx->duration * samplerate / AV_TIME_BASE;
+    info->left_in_packet = 0;
+    info->left_in_buffer = 0;
 
-    memset (&pkt, 0, sizeof (pkt));
-    have_packet = 0;
+    memset (&info->pkt, 0, sizeof (info->pkt));
+    info->have_packet = 0;
 
-    int err = posix_memalign ((void **)&buffer, 16, AVCODEC_MAX_AUDIO_FRAME_SIZE);
+    int err = posix_memalign ((void **)&info->buffer, 16, AVCODEC_MAX_AUDIO_FRAME_SIZE);
     if (err) {
         fprintf (stderr, "ffmpeg: failed to allocate buffer memory\n");
-        return -1;
+        plugin.free (_info);
+        return NULL;
     }
 
     // fill in mandatory plugin fields
-    plugin.info.readpos = 0;
-    plugin.info.bps = bps;
-    plugin.info.channels = ctx->channels;
-    plugin.info.samplerate = samplerate;
+    _info->plugin = &plugin;
+    _info->readpos = 0;
+    _info->bps = bps;
+    _info->channels = info->ctx->channels;
+    _info->samplerate = samplerate;
 
     // subtrack info
-    currentsample = 0;
+    info->currentsample = 0;
     if (it->endsample > 0) {
-        startsample = it->startsample;
-        endsample = it->endsample;
-        plugin.seek_sample (0);
+        info->startsample = it->startsample;
+        info->endsample = it->endsample;
+        plugin.seek_sample (_info, 0);
     }
     else {
-        startsample = 0;
-        endsample = totalsamples - 1;
+        info->startsample = 0;
+        info->endsample = totalsamples - 1;
     }
-    return 0;
+    return _info;
 }
 
 static void
-ffmpeg_free (void) {
-    if (buffer) {
-        free (buffer);
-        buffer = NULL;
+ffmpeg_free (DB_fileinfo_t *_info) {
+    ffmpeg_info_t *info = (ffmpeg_info_t*)_info;
+    if (info) {
+        if (info->buffer) {
+            free (info->buffer);
+        }
+        // free everything allocated in _init and _read_int16
+        if (info->have_packet) {
+            av_free_packet (&info->pkt);
+        }
+        if (info->fctx) {
+            av_close_input_file (info->fctx);
+        }
+        if (info->ctx) {
+            avcodec_close (info->ctx);
+        }
+        free (info);
     }
-    // free everything allocated in _init and _read_int16
-    if (have_packet) {
-        av_free_packet (&pkt);
-        have_packet = 0;
-    }
-    left_in_buffer = 0;
-    left_in_packet = 0;
-    stream_id = -1;
-
-    if (fctx) {
-        av_close_input_file(fctx);
-        fctx = NULL;
-    }
-    if (ctx) {
-        avcodec_close (ctx);
-        ctx = NULL;
-    }
-    
-    codec = NULL;
 }
 
 static int
-ffmpeg_read_int16 (char *bytes, int size) {
+ffmpeg_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
+    ffmpeg_info_t *info = (ffmpeg_info_t*)_info;
     // try decode `size' bytes
     // return number of decoded bytes
     // return 0 on EOF
 
-    if (currentsample + size / (2 * plugin.info.channels) > endsample) {
-        size = (endsample - currentsample + 1) * 2 * plugin.info.channels;
+    if (info->currentsample + size / (2 * _info->channels) > info->endsample) {
+        size = (info->endsample - info->currentsample + 1) * 2 * _info->channels;
         if (size <= 0) {
             return 0;
         }
@@ -203,25 +208,25 @@ ffmpeg_read_int16 (char *bytes, int size) {
 
     while (size > 0) {
 
-        if (left_in_buffer > 0) {
-            int sz = min (size, left_in_buffer);
-            memcpy (bytes, buffer, sz);
-            if (sz != left_in_buffer) {
-                memmove (buffer, buffer+sz, left_in_buffer-sz);
+        if (info->left_in_buffer > 0) {
+            int sz = min (size, info->left_in_buffer);
+            memcpy (bytes, info->buffer, sz);
+            if (sz != info->left_in_buffer) {
+                memmove (info->buffer, info->buffer+sz, info->left_in_buffer-sz);
             }
-            left_in_buffer -= sz;
+            info->left_in_buffer -= sz;
             size -= sz;
             bytes += sz;
         }
 
-        while (left_in_packet > 0 && size > 0) {
+        while (info->left_in_packet > 0 && size > 0) {
             int out_size = AVCODEC_MAX_AUDIO_FRAME_SIZE;
             int len;
 //            trace ("in: out_size=%d(%d), size=%d\n", out_size, AVCODEC_MAX_AUDIO_FRAME_SIZE, size);
 #if (LIBAVCODEC_VERSION_MAJOR <= 52) && (LIBAVCODEC_VERSION_MINOR <= 25)
-            len = avcodec_decode_audio2(ctx, (int16_t *)buffer, &out_size, pkt.data, pkt.size);
+            len = avcodec_decode_audio2 (info->ctx, (int16_t *)info->buffer, &out_size, info->pkt.data, info->pkt.size);
 #else
-            len = avcodec_decode_audio3(ctx, (int16_t *)buffer, &out_size, &pkt);
+            len = avcodec_decode_audio3 (info->ctx, (int16_t *)info->buffer, &out_size, &info->pkt);
 #endif
 //            trace ("out: out_size=%d, len=%d\n", out_size, len);
             if (len <= 0) {
@@ -229,22 +234,22 @@ ffmpeg_read_int16 (char *bytes, int size) {
             }
             encsize += len;
             decsize += out_size;
-            left_in_packet -= len;
-            left_in_buffer = out_size;
+            info->left_in_packet -= len;
+            info->left_in_buffer = out_size;
         }
         if (size == 0) {
             break;
         }
 
         // read next packet
-        if (have_packet) {
-            av_free_packet (&pkt);
-            have_packet = 0;
+        if (info->have_packet) {
+            av_free_packet (&info->pkt);
+            info->have_packet = 0;
         }
         int errcount = 0;
         for (;;) {
             int ret;
-            if ((ret = av_read_frame(fctx, &pkt)) < 0) {
+            if ((ret = av_read_frame (info->fctx, &info->pkt)) < 0) {
                 trace ("ffmpeg: error %d\n", ret);
                 if (ret == AVERROR_EOF || ret == -1) {
                     ret = -1;
@@ -268,18 +273,18 @@ ffmpeg_read_int16 (char *bytes, int size) {
                 break;
             }
 //            trace ("idx:%d, stream:%d\n", pkt.stream_index, stream_id);
-            if (pkt.stream_index != stream_id) {
-                av_free_packet (&pkt);
+            if (info->pkt.stream_index != info->stream_id) {
+                av_free_packet (&info->pkt);
                 continue;
             }
 //            trace ("got packet: size=%d\n", pkt.size);
-            have_packet = 1;
-            left_in_packet = pkt.size;
+            info->have_packet = 1;
+            info->left_in_packet = info->pkt.size;
 
-            if (pkt.duration > 0) {
-                AVRational *time_base = &fctx->streams[stream_id]->time_base;
-                float sec = (float)pkt.duration * time_base->num / time_base->den;
-                int bitrate = pkt.size/sec;
+            if (info->pkt.duration > 0) {
+                AVRational *time_base = &info->fctx->streams[info->stream_id]->time_base;
+                float sec = (float)info->pkt.duration * time_base->num / time_base->den;
+                int bitrate = info->pkt.size/sec;
                 if (bitrate > 0) {
                     // FIXME: seems like duration translation is wrong
                     deadbeef->streamer_set_bitrate (bitrate / 100);
@@ -288,48 +293,50 @@ ffmpeg_read_int16 (char *bytes, int size) {
 
             break;
         }
-        if (!have_packet) {
+        if (!info->have_packet) {
             break;
         }
     }
 
-    currentsample += (initsize-size) / (2 * plugin.info.channels);
-    plugin.info.readpos = (float)currentsample / plugin.info.samplerate;
+    info->currentsample += (initsize-size) / (2 * _info->channels);
+    _info->readpos = (float)info->currentsample / _info->samplerate;
 
     return initsize-size;
 }
 
 static int
-ffmpeg_seek_sample (int sample) {
+ffmpeg_seek_sample (DB_fileinfo_t *_info, int sample) {
+    ffmpeg_info_t *info = (ffmpeg_info_t*)_info;
     // seek to specified sample (frame)
     // return 0 on success
     // return -1 on failure
-    if (have_packet) {
-        av_free_packet (&pkt);
-        have_packet = 0;
+    if (info->have_packet) {
+        av_free_packet (&info->pkt);
+        info->have_packet = 0;
     }
-    sample += startsample;
-    int64_t tm = (int64_t)sample/ plugin.info.samplerate * AV_TIME_BASE;
+    sample += info->startsample;
+    int64_t tm = (int64_t)sample/ _info->samplerate * AV_TIME_BASE;
     trace ("ffmpeg: seek to sample: %d, t: %d\n", sample, (int)tm);
-    left_in_packet = 0;
-    left_in_buffer = 0;
-    if (av_seek_frame(fctx, -1, tm, AVSEEK_FLAG_ANY) < 0) {
+    info->left_in_packet = 0;
+    info->left_in_buffer = 0;
+    if (av_seek_frame (info->fctx, -1, tm, AVSEEK_FLAG_ANY) < 0) {
         trace ("ffmpeg: seek error\n");
         return -1;
     }
     
     // update readpos
-    currentsample = sample;
-    plugin.info.readpos = (float)(sample-startsample) / plugin.info.samplerate;
+    info->currentsample = sample;
+    _info->readpos = (float)(sample - info->startsample) / _info->samplerate;
     return 0;
 }
 
 static int
-ffmpeg_seek (float time) {
+ffmpeg_seek (DB_fileinfo_t *_info, float time) {
+    ffmpeg_info_t *info = (ffmpeg_info_t*)_info;
     // seek to specified time in seconds
     // return 0 on success
     // return -1 on failure
-    return ffmpeg_seek_sample (time * plugin.info.samplerate);
+    return ffmpeg_seek_sample (_info, time * _info->samplerate);
 }
 
 static DB_playItem_t *
@@ -432,7 +439,7 @@ ffmpeg_insert (DB_playItem_t *after, const char *fname) {
     }
 
     DB_playItem_t *it = deadbeef->pl_item_alloc ();
-    it->decoder_id = deadbeef->plug_get_decoder_id (plugin.id);
+    it->decoder_id = deadbeef->plug_get_decoder_id (plugin.plugin.id);
     it->fname = strdup (fname);
     it->filetype = filetype;
 
@@ -565,6 +572,7 @@ static DB_decoder_t plugin = {
     .plugin.version_major = 0,
     .plugin.version_minor = 1,
     .plugin.type = DB_PLUGIN_DECODER,
+    .plugin.id = "ffmpeg",
     .plugin.name = "FFMPEG audio player",
     .plugin.descr = "decodes audio formats using FFMPEG libavcodec",
     .plugin.author = "Alexey Yakovenko",
@@ -580,7 +588,6 @@ static DB_decoder_t plugin = {
     .seek_sample = ffmpeg_seek_sample,
     .insert = ffmpeg_insert,
     .exts = exts,
-    .id = "ffmpeg",
     .filetypes = filetypes
 };
 

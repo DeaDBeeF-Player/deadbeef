@@ -11,7 +11,8 @@ SUBDIRS = ${MPGMAD_DIR}\
 		  ${LFM_DIR}\
           ${VFS_CURL_DIR}\
           ${GTKUI_DIR}\
-          ${VORBIS_DIR}
+          ${VORBIS_DIR}\
+          ${FFMPEG_DIR}
 
 #SUBDIRS = gme/Game_Music_Emu-0.5.2\
 #		  sid/sidplay-libs-2.1.0\
