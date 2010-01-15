@@ -38,6 +38,7 @@
 #include <ffmpeg/avcodec.h>
 #include <ffmpeg/avutil.h>
 #include <ffmpeg/avstring.h>
+#define AVERROR_EOF AVERROR(EPIPE)
 
 #endif
 
