@@ -1889,7 +1889,7 @@ on_column_id_changed                   (GtkComboBox     *combobox,
         trace ("failed to get column format widget\n");
         return;
     }
-    gtk_widget_set_sensitive (fmt, act > DB_COLUMN_ID_MAX ? FALSE : TRUE);
+    gtk_widget_set_sensitive (fmt, act > DB_COLUMN_ID_MAX ? TRUE : FALSE);
 }
 
 
