@@ -39,6 +39,7 @@
 #include <ffmpeg/avutil.h>
 #include <ffmpeg/avstring.h>
 #define AVERROR_EOF AVERROR(EPIPE)
+#define av_register_protocol register_protocol
 
 #endif
 
