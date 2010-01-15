@@ -16,11 +16,30 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <alloca.h>
+#include <errno.h>
+
 #include "../../deadbeef.h"
+
+#if !FFMPEG_OLD
+
 #include <libavformat/avformat.h>
 #include <libavcodec/avcodec.h>
 #include <libavutil/avutil.h>
 #include <libavutil/avstring.h>
+
+#else
+
+#include <ffmpeg/avformat.h>
+#include <ffmpeg/avcodec.h>
+#include <ffmpeg/avutil.h>
+#include <ffmpeg/avstring.h>
+
+#endif
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
