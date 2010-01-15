@@ -28,7 +28,6 @@ typedef struct {
     DB_fileinfo_t info;
     Music_Emu *emu;
     int reallength;
-    int nzerosamples;
     uint32_t cgme_voicemask;
     float duration; // of current song
 } gme_info_t;
@@ -56,7 +55,6 @@ cgme_init (DB_playItem_t *it) {
     _info->samplerate = samplerate;
     info->duration = deadbeef->pl_get_item_duration (it);
     info->reallength = inf.length; 
-    info->nzerosamples = 0;
     _info->readpos = 0;
     return _info;
 }
@@ -87,21 +85,8 @@ cgme_read (DB_fileinfo_t *_info, char *bytes, int size) {
     }
     _info->readpos += t;
     if (info->reallength == -1) {
-        // check if whole buffer is zeroes
-        int i;
-        for (i = 0; i < size; i++) {
-            if (bytes[i]) {
-                break;
-            }
-        }
-        if (i == size) {
-            info->nzerosamples += size / 4;
-            if (info->nzerosamples > _info->samplerate * 4) {
-                return 0;
-            }
-        }
-        else {
-            info->nzerosamples = 0;
+        if (gme_track_ended (info->emu)) {
+            return 0;
         }
     }
     return size;
