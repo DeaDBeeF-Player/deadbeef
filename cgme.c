@@ -129,9 +129,9 @@ cgme_insert (DB_playItem_t *after, const char *fname) {
                 deadbeef->pl_add_meta (it, "system", inf.system);
                 deadbeef->pl_add_meta (it, "album", inf.game);
                 int tl = sizeof (inf.song);
-                int i;
-                for (i = 0; i < tl && inf.song[i] && inf.song[i] == ' '; i++);
-                if (i == tl || !inf.song[i]) {
+                int n;
+                for (n = 0; i < tl && inf.song[n] && inf.song[n] == ' '; n++);
+                if (n == tl || !inf.song[n]) {
                     deadbeef->pl_add_meta (it, "title", NULL);
                 }
                 else {
