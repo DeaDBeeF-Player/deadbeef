@@ -29,7 +29,7 @@
  * Following commands are ignored: Gxy, Hxy, Kxy - &xy
  */
 
-#include <string.h>
+#include <cstring>
 #include "a2m.h"
 
 const unsigned int Ca2mLoader::MAXFREQ = 2000,
@@ -65,7 +65,7 @@ bool Ca2mLoader::load(const std::string &filename, const CFileProvider &fp)
   char id[10];
   int i,j,k,t;
   unsigned int l;
-  unsigned char *org, *orgptr, flags = 0, numpats, version;
+  unsigned char *org = 0, *orgptr, flags = 0, numpats, version;
   unsigned long crc, alength;
   unsigned short len[9], *secdata, *secptr;
   const unsigned char convfx[16] = {0,1,2,23,24,3,5,4,6,9,17,13,11,19,7,14};

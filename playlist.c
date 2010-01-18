@@ -152,7 +152,7 @@ pl_cue_parse_time (const char *p) {
 }
 
 static playItem_t *
-pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, char *track, char *index00, char *index01, char *pregap, char *title, char *performer, char *albumtitle, struct DB_decoder_s *decoder, const char *ftype, int samplerate) {
+pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, char *track, char *index00, char *index01, char *pregap, char *title, char *performer, char *albumtitle, char *genre, char *date, struct DB_decoder_s *decoder, const char *ftype, int samplerate) {
     if (!track[0]) {
         return after;
     }
@@ -223,10 +223,24 @@ pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, c
     it->endsample = -1; // will be filled by next read, or by decoder
     it->filetype = ftype;
     after = pl_insert_item (after, it);
-    pl_add_meta (it, "artist", performer);
-    pl_add_meta (it, "album", albumtitle);
-    pl_add_meta (it, "track", track);
-    pl_add_meta (it, "title", title);
+    if (performer[0]) {
+        pl_add_meta (it, "artist", performer);
+    }
+    if (albumtitle[0]) {
+        pl_add_meta (it, "album", albumtitle);
+    }
+    if (track[0]) {
+        pl_add_meta (it, "track", track);
+    }
+    if (title[0]) {
+        pl_add_meta (it, "title", title);
+    }
+    if (genre[0]) {
+        pl_add_meta (it, "genre", genre);
+    }
+    if (date[0]) {
+        pl_add_meta (it, "year", date);
+    }
     *prev = it;
     return it;
 }
@@ -237,6 +251,8 @@ pl_insert_cue_from_buffer (playItem_t *after, playItem_t *origin, const uint8_t 
     trace ("pl_insert_cue_from_buffer numsamples=%d, samplerate=%d\n", numsamples, samplerate);
     char performer[256] = "";
     char albumtitle[256] = "";
+    char genre[256] = "";
+    char date[256] = "";
     char track[256] = "";
     char title[256] = "";
     char pregap[256] = "";
@@ -278,9 +294,15 @@ pl_insert_cue_from_buffer (playItem_t *after, playItem_t *origin, const uint8_t 
 //                printf ("got title: %s\n", title);
             }
         }
+        else if (!strncmp (p, "REM GENRE ", 10)) {
+            pl_get_qvalue_from_cue (p + 10, sizeof (genre), genre);
+        }
+        else if (!strncmp (p, "REM DATE ", 9)) {
+            pl_get_value_from_cue (p + 9, sizeof (date), date);
+        }
         else if (!strncmp (p, "TRACK ", 6)) {
             // add previous track
-            after = pl_process_cue_track (after, origin->fname, &prev, track, index00, index01, pregap, title, performer, albumtitle, origin->decoder, origin->filetype, samplerate);
+            after = pl_process_cue_track (after, origin->fname, &prev, track, index00, index01, pregap, title, performer, albumtitle, genre, date, origin->decoder, origin->filetype, samplerate);
             track[0] = 0;
             title[0] = 0;
             pregap[0] = 0;
@@ -306,7 +328,7 @@ pl_insert_cue_from_buffer (playItem_t *after, playItem_t *origin, const uint8_t 
 //            fprintf (stderr, "got unknown line:\n%s\n", p);
         }
     }
-    after = pl_process_cue_track (after, origin->fname, &prev, track, index00, index01, pregap, title, performer, albumtitle, origin->decoder, origin->filetype, samplerate);
+    after = pl_process_cue_track (after, origin->fname, &prev, track, index00, index01, pregap, title, performer, albumtitle, genre, date, origin->decoder, origin->filetype, samplerate);
     if (after) {
         trace ("last track endsample: %d\n", numsamples-1);
         after->endsample = numsamples-1;
@@ -522,6 +544,7 @@ pl_insert_pls (playItem_t *after, const char *fname, int *pabort, int (*cb)(play
             break;
         }
         p += 6;
+        // skip =
         while (p < end && *p != '=') {
             p++;
         }
@@ -536,18 +559,21 @@ pl_insert_pls (playItem_t *after, const char *fname, int *pabort, int (*cb)(play
         n = e-p;
         n = min (n, sizeof (length)-1);
         memcpy (length, p, n);
-        length[n] = 0;
-        trace ("length: %s\n", length);
         // add track
         playItem_t *it = pl_insert_file (after, url, pabort, cb, user_data);
         if (it) {
             after = it;
             pl_set_item_duration (it, atoi (length));
+            pl_delete_all_meta (it);
             pl_add_meta (it, "title", title);
         }
         if (pabort && *pabort) {
             return after;
         }
+        while (e < end && *e < 0x20) {
+            e++;
+        }
+        p = e;
     }
     return after;
 }
@@ -1601,6 +1627,25 @@ pl_format_item_queue (playItem_t *it, char *s, int size) {
     return initsize-size;
 }
 
+static void
+pl_format_time (float t, char *dur, int size) {
+    if (t >= 0) {
+        int hourdur = t / (60 * 60);
+        int mindur = (t - hourdur * 60 * 60) / 60;
+        int secdur = t - hourdur*60*60 - mindur * 60;
+
+        if (hourdur) {
+            snprintf (dur, size, "%d:%02d:%02d", hourdur, mindur, secdur);
+        }
+        else {
+            snprintf (dur, size, "%d:%02d", mindur, secdur);
+        }
+    }
+    else {
+        strcpy (dur, "-:--");
+    }
+}
+
 static const char *
 pl_get_meta_cached (playItem_t *it, const char *meta, const char *ret, const char *def) {
     if (!ret) {
@@ -1617,32 +1662,30 @@ pl_format_duration (playItem_t *it, const char *ret, char *dur, int size) {
     if (ret) {
         return ret;
     }
-    if (it->_duration >= 0) {
-        int hourdur = it->_duration / (60 * 60);
-        int mindur = (it->_duration - hourdur * 60 * 60) / 60;
-        int secdur = it->_duration - hourdur*60*60 - mindur * 60;
-
-        if (hourdur) {
-            snprintf (dur, size, "%d:%02d:%02d", hourdur, mindur, secdur);
-        }
-        else {
-            snprintf (dur, size, "%d:%02d", mindur, secdur);
-        }
-    }
-    else {
-        strcpy (dur, "-:--");
-    }
+    pl_format_time (it->_duration, dur, size);
     return dur;
+}
+
+static const char *
+pl_format_elapsed (const char *ret, char *elapsed, int size) {
+    if (ret) {
+        return ret;
+    }
+    float playpos = streamer_get_playpos ();
+    pl_format_time (playpos, elapsed, size);
+    return elapsed;
 }
 
 int
 pl_format_title (playItem_t *it, char *s, int size, int id, const char *fmt) {
     char dur[50];
+    char elp[50];
     const char *artist = NULL;
     const char *album = NULL;
     const char *track = NULL;
     const char *title = NULL;
     const char *duration = NULL;
+    const char *elapsed = NULL;
     const char *year = NULL;
     const char *genre = NULL;
     const char *comment = NULL;
@@ -1737,6 +1780,14 @@ pl_format_title (playItem_t *it, char *s, int size, int id, const char *fmt) {
             }
             else if (*fmt == 'l') {
                 const char *value = (duration = pl_format_duration (it, duration, dur, sizeof (dur)));
+                while (n > 0 && *value) {
+                    *s++ = *value++;
+                    n--;
+                }
+            }
+            else if (*fmt == 'e') {
+                // what a hack..
+                const char *value = (elapsed = pl_format_elapsed (elapsed, elp, sizeof (elp)));
                 while (n > 0 && *value) {
                     *s++ = *value++;
                     n--;

@@ -67,26 +67,27 @@ client_exec_command_line (const char *cmdline, int len) {
         //        if (filter == 1) {
         // help, version and nowplaying are executed with any filter
         if (!strcmp (parg, "--help") || !strcmp (parg, "-h")) {
-            fprintf (stderr, "Usage: deadbeef [options] [file(s)]\n");
-            fprintf (stderr, "Options:\n");
-            fprintf (stderr, "   --help  or  -h     Print help (this message) and exit\n");
-            fprintf (stderr, "   --quit             Quit player\n");
-            fprintf (stderr, "   --version          Print version info and exit\n");
-            fprintf (stderr, "   --play             Start playback\n");
-            fprintf (stderr, "   --stop             Stop playback\n");
-            fprintf (stderr, "   --pause            Pause playback\n");
-            fprintf (stderr, "   --next             Next song in playlist\n");
-            fprintf (stderr, "   --prev             Previous song in playlist\n");
-            fprintf (stderr, "   --random           Random song in playlist\n");
-            fprintf (stderr, "   --queue            Append file(s) to existing playlist\n");
-            fprintf (stderr, "   --nowplaying FMT   Print formatted track name to stdout\n");
-            fprintf (stderr, "                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
-                             "                      [l]ength, track[n]umber, [y]ear, [c]omment, copy[r]ight\n");
-            fprintf (stderr, "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n");
+            fprintf (stdout, "Usage: deadbeef [options] [file(s)]\n");
+            fprintf (stdout, "Options:\n");
+            fprintf (stdout, "   --help  or  -h     Print help (this message) and exit\n");
+            fprintf (stdout, "   --quit             Quit player\n");
+            fprintf (stdout, "   --version          Print version info and exit\n");
+            fprintf (stdout, "   --play             Start playback\n");
+            fprintf (stdout, "   --stop             Stop playback\n");
+            fprintf (stdout, "   --pause            Pause playback\n");
+            fprintf (stdout, "   --next             Next song in playlist\n");
+            fprintf (stdout, "   --prev             Previous song in playlist\n");
+            fprintf (stdout, "   --random           Random song in playlist\n");
+            fprintf (stdout, "   --queue            Append file(s) to existing playlist\n");
+            fprintf (stdout, "   --nowplaying FMT   Print formatted track name to stdout\n");
+            fprintf (stdout, "                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
+                             "                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
+                             "                      copy[r]ight, [e]lapsed\n");
+            fprintf (stdout, "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n");
             return 1;
         }
         else if (!strcmp (parg, "--version")) {
-            fprintf (stderr, "DeaDBeeF %s Copyright (C) 2009 Alexey Yakovenko\n", VERSION);
+            fprintf (stdout, "DeaDBeeF " VERSION " Copyright © 2009-2010 Alexey Yakovenko\n");
             return 1;
         }
         parg += strlen (parg);
@@ -144,7 +145,7 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
                 else {
                     strcpy (out, "nothing");
                 }
-                printf (out);
+                fwrite (out, 1, strlen (out), stdout);
                 return 1; // exit
             }
         }
@@ -261,7 +262,7 @@ server_update (void) {
     }
     else if (s2 != -1) {
         char str[2048];
-        char sendback[1024];
+        char sendback[1024] = "";
         int size;
         if ((size = recv (s2, str, 2048, 0)) >= 0) {
             if (size == 1 && str[0] == 0) {
@@ -359,11 +360,23 @@ player_mainloop (void) {
     }
 }
 
+static int sigterm_handled = 0;
+
+void
+atexit_handler (void) {
+    fprintf (stderr, "atexit_handler\n");
+    if (!sigterm_handled) {
+        fprintf (stderr, "handling atexit.\n");
+        pl_save (defpl);
+        conf_save ();
+    }
+}
+
 void
 sigterm_handler (int sig) {
-    fprintf (stderr, "got sigterm, saving...\n");
-    pl_save (defpl);
-    conf_save ();
+    fprintf (stderr, "got sigterm.\n");
+    atexit_handler ();
+    sigterm_handled = 1;
     fprintf (stderr, "bye.\n");
     exit (0);
 }
@@ -407,6 +420,7 @@ main (int argc, char *argv[]) {
     mkdir (dbconfdir, 0755);
 
     char cmdline[2048];
+    cmdline[0] = 0;
     int size = 0;
     if (argc > 1) {
         size = 2048;
@@ -475,8 +489,9 @@ main (int argc, char *argv[]) {
             perror ("send");
             exit (-1);
         }
-        char out[2048];
-        if (recv(s, out, sizeof (out), 0) == -1) {
+        char out[2048] = "";
+        ssize_t sz = recv(s, out, sizeof (out), 0);
+        if (sz == -1) {
             fprintf (stderr, "failed to pass args to remote!\n");
             exit (-1);
         }
@@ -486,14 +501,14 @@ main (int argc, char *argv[]) {
             const char err[] = "error ";
             if (!strncmp (out, np, sizeof (np)-1)) {
                 const char *prn = &out[sizeof (np)-1];
-                printf (prn);
+                fwrite (prn, 1, strlen (prn), stdout);
             }
             else if (!strncmp (out, err, sizeof (err)-1)) {
                 const char *prn = &out[sizeof (err)-1];
-                fprintf (stderr, prn);
+                fwrite (prn, 1, strlen (prn), stderr);
             }
-            else if (out[0]) {
-                fprintf (stderr, "got unkown response:\n%s\n", out);
+            else if (sz > 0 && out[0]) {
+                fprintf (stderr, "got unknown response:\nlength=%d\n%s\n", sz, out);
             }
         }
         close (s);
@@ -501,11 +516,21 @@ main (int argc, char *argv[]) {
     }
     close(s);
 
+    // hack: report nowplaying
+    if (!strcmp (cmdline, "--nowplaying")) {
+        char nothing[] = "nothing";
+        fwrite (nothing, 1, sizeof (nothing)-1, stdout);
+        return 0;
+    }
+
+
     signal (SIGTERM, sigterm_handler);
 
     conf_load (); // required by some plugin at startup
     messagepump_init (); // required to push messages while handling commandline
     plug_load_all (); // required to add files to playlist from commandline
+
+    atexit (atexit_handler); // helps to save in simple cases, like xkill
 
     // execute server commands in local context
     int noloadpl = 0;
@@ -562,6 +587,7 @@ main (int argc, char *argv[]) {
     pl_free ();
     conf_free ();
     messagepump_free ();
+    sigterm_handled = 1;
     fprintf (stderr, "hej-hej!\n");
     return 0;
 }

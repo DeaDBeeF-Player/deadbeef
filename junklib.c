@@ -316,12 +316,7 @@ convstr_id3v2_4 (const unsigned char* str, int sz) {
 
     // hack to add limited cp1251 recoding support
 
-    if (*str == 0) {
-        // iso8859-1
-        trace ("iso8859-1\n");
-        enc = "iso8859-1";
-    }
-    else if (*str == 3) {
+    if (*str == 3) {
         // utf8
         trace ("utf8\n");
         strncpy (out, str+1, 2047);
@@ -337,6 +332,14 @@ convstr_id3v2_4 (const unsigned char* str, int sz) {
         trace ("utf16be\n");
         enc = "UTF-16BE";
     }
+#if 0
+    // NOTE: some dumb taggers put non-iso8859-1 text with enc=0
+    else if (*str == 0) {
+        // iso8859-1
+        trace ("iso8859-1\n");
+        enc = "iso8859-1";
+    }
+#endif
     else {
         if (can_be_russian (&str[1])) {
             enc = "cp1251";
@@ -477,6 +480,9 @@ junk_read_id3v1 (playItem_t *it, DB_FILE *fp) {
     }
     else if (genreid <= 147) {
         genre = junk_genretbl[genreid];
+    }
+    else {
+        genre = "";
     }
 
     // add meta
@@ -811,6 +817,10 @@ junk_read_id3v2 (playItem_t *it, DB_FILE *fp) {
             }
             else if (version_major == 3) {
                 sz = (readptr[3] << 0) | (readptr[2] << 8) | (readptr[1] << 16) | (readptr[0] << 24);
+            }
+            else {
+                trace ("unknown id3v2 version (2.%d.%d)\n", version_major, version_minor);
+                return -1;
             }
             readptr += 4;
             trace ("got frame %s, size %d, pos %d, tagsize %d\n", frameid, sz, readptr-tag, size);

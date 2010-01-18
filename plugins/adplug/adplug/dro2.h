@@ -1,6 +1,6 @@
 /*
  * Adplug - Replayer for many OPL2/OPL3 audio file formats.
- * Copyright (C) 1999 - 2003 Simon Peter, <dn.tlp@gmx.net>, et al.
+ * Copyright (C) 1999 - 2005 Simon Peter, <dn.tlp@gmx.net>, et al.
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,31 +16,45 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * xsm.h - eXtra Simple Music Player, by Simon Peter <dn.tlp@gmx.net>
+ * dro2.h - DOSBox Raw OPL v2.0 player by Adam Nielsen <malvineous@shikadi.net>
  */
 
+#include <stdint.h> // for uintxx_t
 #include "player.h"
 
-class CxsmPlayer: public CPlayer
+class Cdro2Player: public CPlayer
 {
-public:
-  static CPlayer *factory(Copl *newopl) { return new CxsmPlayer(newopl); }
+	protected:
+		uint8_t iCmdDelayS, iCmdDelayL;
+		int iConvTableLen;
+		uint8_t *piConvTable;
 
-  CxsmPlayer(Copl *newopl);
-  ~CxsmPlayer();
+		uint8_t *data;
+		int iLength;
+		int iPos;
+		int iDelay;
 
-  bool load(const std::string &filename, const CFileProvider &fp);
-  bool update();
-  void rewind(int subsong);
-  float getrefresh();
 
-  std::string gettype() { return std::string("eXtra Simple Music"); }
+	public:
+		static CPlayer *factory(Copl *newopl);
 
-private:
-  unsigned short	songlen;
-  char			*music;
-  unsigned int		last, notenum;
-  bool			songend;
+		Cdro2Player(Copl *newopl);
+		~Cdro2Player();
 
-  void play_note(int c, int note, int octv);
+		bool load(const std::string &filename, const CFileProvider &fp);
+		bool update();
+		void rewind(int subsong);
+		float getrefresh();
+
+		std::string gettype()
+		{
+			return std::string("DOSBox Raw OPL v2.0");
+		}
+
+	protected:
+		//unsigned char *data;
+		//unsigned long pos,length;
+		//unsigned long msdone,mstotal;
+		//unsigned short delay;
+		//unsigned char index, opl3_mode;
 };

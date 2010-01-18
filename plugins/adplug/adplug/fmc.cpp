@@ -19,7 +19,7 @@
   fmc.cpp - FMC Loader by Riven the Mage <riven@ok.ru>
 */
 
-#include <string.h>
+#include <cstring>
 #include "fmc.h"
 
 /* -------- Public Methods -------------------------------- */
@@ -115,9 +115,9 @@ bool CfmcLoader::load(const std::string &filename, const CFileProvider &fp)
 	      tracks[t][k].param2 = event.byte2 & 0x0F;
 
 	      // fix effects
-	      if (tracks[t][k].command == 0x0E) // 0x0E (14): Retrig
+	      if (tracks[t][k].command == 0x0E)   // 0x0E (14): Retrig
 		tracks[t][k].param1 = 3;
-	      if (tracks[t][k].command == 0x1A) // 0x1A (26): Volume Slide
+	      if (tracks[t][k].command == 0x1A) { // 0x1A (26): Volume Slide
 		if (tracks[t][k].param1 > tracks[t][k].param2)
 		  {
 		    tracks[t][k].param1 -= tracks[t][k].param2;
@@ -128,6 +128,7 @@ bool CfmcLoader::load(const std::string &filename, const CFileProvider &fp)
 		    tracks[t][k].param2 -= tracks[t][k].param1;
 		    tracks[t][k].param1 = 0;
 		  }
+	      }
 	    }
 
 	  t++;

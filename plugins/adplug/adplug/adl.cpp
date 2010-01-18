@@ -44,14 +44,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * $URL: https://svn.sourceforge.net/svnroot/scummvm/scummvm/trunk/engines/kyra/sound_adlib.cpp $
- * $Id: adl.cpp,v 1.9 2006/08/16 00:20:45 dynamite Exp $
+ * $Id: adl.cpp,v 1.11 2008/02/11 20:18:27 dynamite Exp $
  *
  */
 
+#include <cstring>
 #include <inttypes.h>
 #include <stdarg.h>
 #include <assert.h>
-#include <string.h>
 
 #include "adl.h"
 #include "debug.h"
@@ -2378,16 +2378,22 @@ bool CadlPlayer::load(const std::string &filename, const CFileProvider &fp)
 
   // 	_soundFileLoaded = file;
 
-  for(int i = 0; i < 200; i++)
-    if(_trackEntries[i] != 0xff)
+  // find last subsong
+  for(int i = 199; i >= 0; i--)
+    if(_trackEntries[i] != 0xff) {
       numsubsongs = i + 1;
+      break;
+    }
 
   fp.close(f);
+  cursubsong = 2;
+  rewind();
   return true;
 }
 
 void CadlPlayer::rewind(int subsong)
 {
+  if(subsong == -1) subsong = cursubsong;
   opl->init();
   opl->write(1,32);
   playSoundEffect(subsong);

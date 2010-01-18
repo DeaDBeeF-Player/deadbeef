@@ -103,7 +103,7 @@ static int process_pickup(DUMB_RESAMPLER *resampler)
 /* Create stereo destination resampler. */
 #define SUFFIX3 _2
 #define VOLUME_PARAMETERS DUMB_VOLUME_RAMP_INFO * volume_left, DUMB_VOLUME_RAMP_INFO * volume_right
-#define VOLUME_VARIABLES lvol, lvolr, lvold, lvolt, lvolm, rvol, rvolr, rvold, rvolt, rvolm
+#define VOLUME_VARIABLES lvol=0, lvolr=0, lvold=0, lvolt=0, lvolm=0, rvol=0, rvolr=0, rvold=0, rvolt=0, rvolm=0
 #define SET_VOLUME_VARIABLES { \
 	if ( volume_left ) { \
 		lvolr = (int)(volume_left->volume * 16777216.0); \

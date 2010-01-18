@@ -36,9 +36,9 @@ extern DB_decoder_t adplug_plugin;
 static DB_functions_t *deadbeef;
 
 
-const char *adplug_exts[] = { "A2M", "ADL", "AMD", "BAM", "CFF", "CMF", "D00", "DFM", "DMO", "DRO", "DTM", "HSC", "HSP", "IMF", "KSM", "LAA", "LDS", "M", "MAD", "MID", "MKJ", "MSC", "MTK", "RAD", "RAW", "RIX", "ROL", "S3M", "SA2", "SAT", "SCI", "SNG", "SNG", "SNG", "XAD", "XMS", "XSM", NULL };
+const char *adplug_exts[] = { "A2M", "ADL", "AMD", "BAM", "CFF", "CMF", "D00", "DFM", "DMO", "DRO", "DTM", "HSC", "HSP", "IMF", "KSM", "LAA", "LDS", "M", "MAD", "MID", "MKJ", "MSC", "MTK", "RAD", "RAW", "RIX", "ROL", "S3M", "SA2", "SAT", "SCI", "SNG", "SNG", "SNG", "XAD", "XMS", "XSM", "JBM", NULL };
 
-const char *adplug_filetypes[] = { "A2M", "ADL", "AMD", "BAM", "CFF", "CMF", "D00", "DFM", "DMO", "DRO", "DTM", "HSC", "HSP", "IMF", "KSM", "LAA", "LDS", "M", "MAD", "MID", "MKJ", "MSC", "MTK", "RAD", "RAW", "RIX", "ROL", "S3M", "SA2", "SAT", "SCI", "SNG", "SNG", "SNG", "XAD", "XMS", "XSM", NULL };
+const char *adplug_filetypes[] = { "A2M", "ADL", "AMD", "BAM", "CFF", "CMF", "D00", "DFM", "DMO", "DRO", "DTM", "HSC", "HSP", "IMF", "KSM", "LAA", "LDS", "M", "MAD", "MID", "MKJ", "MSC", "MTK", "RAD", "RAW", "RIX", "ROL", "S3M", "SA2", "SAT", "SCI", "SNG", "SNG", "SNG", "XAD", "XMS", "XSM", "JBM", NULL };
 
 static CEmuopl *opl;
 static CPlayer *decoder;
@@ -54,11 +54,13 @@ adplug_init (DB_playItem_t *it) {
 
     int samplerate = deadbeef->get_output ()->samplerate ();
     int bps = deadbeef->get_output ()->bitspersample ();
-    opl = new CEmuopl (samplerate, bps, deadbeef->get_output ()->channels () == 2);
+    int channels = 2;
+    opl = new CEmuopl (samplerate, true, channels == 2);
+//    opl->settype (Copl::TYPE_OPL2);
     decoder = CAdPlug::factory (it->fname, opl, CAdPlug::players);
     if (!decoder) {
         trace ("adplug: failed to open %s\n", it->fname);
-        return NULL;
+        return -1;
     }
 
     subsong = it->tracknum;
@@ -69,11 +71,11 @@ adplug_init (DB_playItem_t *it) {
 
     // fill in mandatory plugin fields
     adplug_plugin.info.bps = bps;
-    adplug_plugin.info.channels = deadbeef->get_output ()->channels ();
+    adplug_plugin.info.channels = channels;
     adplug_plugin.info.samplerate = samplerate;
     adplug_plugin.info.readpos = 0;
 
-//    trace ("adplug_init ok (duration=%f, totalsamples=%d)\n", deadbeef->pl_get_item_duration (it), totalsamples);
+    trace ("adplug_init ok (duration=%f, totalsamples=%d)\n", deadbeef->pl_get_item_duration (it), totalsamples);
 
     return 0;
 }
@@ -98,7 +100,7 @@ adplug_read_int16 (char *bytes, int size) {
     // return 0 on EOF
     bool playing = true;
     int i;
-    int sampsize = 4;
+    int sampsize = (adplug_plugin.info.bps >> 3) * adplug_plugin.info.channels;
 
     if (currentsample + size/4 >= totalsamples) {
         // clip

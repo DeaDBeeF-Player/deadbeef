@@ -99,10 +99,3 @@ vfs_get_content_genre (DB_FILE *stream) {
     }
     return NULL;
 }
-
-void
-vfs_fstop (DB_FILE *stream) {
-    if (stream->vfs->stop) {
-        stream->vfs->stop (stream);
-    }
-}

@@ -1,6 +1,6 @@
 /*
  * Adplug - Replayer for many OPL2/OPL3 audio file formats.
- * Copyright (C) 1999 - 2006 Simon Peter <dn.tlp@gmx.net>, et al.
+ * Copyright (C) 1999 - 2008 Simon Peter <dn.tlp@gmx.net>, et al.
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -105,7 +105,7 @@ bool CimfPlayer::load(const std::string &filename, const CFileProvider &fp)
   }
 
   // read footer, if any
-  if(fsize && (fsize < flsize - 2 - mfsize))
+  if(fsize && (fsize < flsize - 2 - mfsize)) {
     if(f->readInt(1) == 0x1a) {
       // Adam Nielsen's footer format
       track_name = f->readString();
@@ -119,6 +119,7 @@ bool CimfPlayer::load(const std::string &filename, const CFileProvider &fp)
       f->readString(footer, footerlen);
       footer[footerlen] = '\0';	// Make ASCIIZ string
     }
+  }
 
   rate = getrate(filename, fp, f);
   fp.close(f);

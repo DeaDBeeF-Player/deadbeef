@@ -40,7 +40,7 @@
   comment : inaccurate replaying, because constant outport; in original player it can be 380 or 382.
 */
 
-#include <string.h>
+#include <cstring>
 #include "bmf.h"
 #include "debug.h"
 

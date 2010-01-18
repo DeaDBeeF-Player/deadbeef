@@ -57,7 +57,6 @@ static float g_fbuffer[INPUT_BUFFER_SIZE];
 #define SRC_BUFFER_SIZE (INPUT_BUFFER_SIZE*2)
 static float g_srcbuffer[SRC_BUFFER_SIZE];
 static int streaming_terminate;
-static playItem_t *streamer_initializing_item;
 
 // buffer up to 3 seconds at 44100Hz stereo
 #define STREAM_BUFFER_SIZE 0x80000 // slightly more than 3 seconds of 44100 stereo
@@ -179,11 +178,9 @@ streamer_set_current (playItem_t *it) {
     }
     if (it->decoder) {
         streamer_lock ();
-        streamer_initializing_item = it;
         streamer_unlock ();
         int ret = it->decoder->init (DB_PLAYITEM (it));
         streamer_lock ();
-        streamer_initializing_item = NULL;
         streamer_unlock ();
         pl_item_copy (&str_streaming_song, it);
         if (ret < 0) {
@@ -237,6 +234,7 @@ streamer_get_apx_bitrate (void) {
 void
 streamer_set_nextsong (int song, int pstate) {
     trace ("streamer_set_nextsong %d %d\n", song, pstate);
+    plug_trigger_event (DB_EV_ABORTREAD, 0);
     nextsong = song;
     nextsong_pstate = pstate;
     if (p_isstopped ()) {
@@ -245,17 +243,6 @@ streamer_set_nextsong (int song, int pstate) {
         playpos = 0;
         // try to interrupt file operation
         streamer_lock ();
-        if (streamer_file && streamer_file->vfs->streaming) {
-            trace ("interrupting streamer file access...\n");
-            vfs_fstop (streamer_file);
-        }
-        else if (streamer_initializing_item) {
-            playItem_t *it = streamer_initializing_item;
-            if (it->decoder->info.file && it->decoder->info.file->vfs->streaming) {
-                trace ("interrupting plugin stream %p...\n", it->decoder->info.file);
-                vfs_fstop (it->decoder->info.file);
-            }
-        }
         streamer_unlock ();
     }
 }

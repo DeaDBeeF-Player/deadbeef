@@ -3,7 +3,7 @@ AC_INIT
 AC_CONFIG_HEADER(config.h)
 
 PACKAGE="deadbeef"
-VERSION="0.3.2-pre"
+VERSION="0.3.2"
 
 AM_INIT_AUTOMAKE($PACKAGE,$VERSION)
 
@@ -36,13 +36,15 @@ esac
 test "x$prefix" = xNONE && prefix=$ac_default_prefix
 
 INSANE_CFLAGS="-Wcomment -Wchar-subscripts -Wunused-function -Wunused-value -Wuninitialized -Wtype-limits -Wbad-function-cast"
+INSANE_CXXFLAGS="-Wcomment -Wchar-subscripts -Wunused-function -Wunused-value -Wuninitialized -Wtype-limits"
 
-CFLAGS="$CFLAGS $INSANE_CFLAGS -D_GNU_SOURCE -DLIBDIR=\\\"$libdir\\\" -DPREFIX=\\\"$prefix\\\""
+CXXFLAGS="$CXXFLAGS $INSANE_CXXFLAGS -D_GNU_SOURCE -DLIBDIR=\\\"$libdir\\\" -DPREFIX=\\\"$prefix\\\" -DDOCDIR=\\\"$docdir\\\""
+CFLAGS="$CFLAGS $INSANE_CFLAGS -D_GNU_SOURCE -DLIBDIR=\\\"$libdir\\\" -DPREFIX=\\\"$prefix\\\" -DDOCDIR=\\\"$docdir\\\""
 
 PKG_CHECK_MODULES(DEPS, samplerate)
 PKG_CHECK_MODULES(GTKUI_DEPS, gtk+-2.0 >= 2.12 gthread-2.0 glib-2.0, HAVE_GTK=1, NO_GTK=1)
 PKG_CHECK_MODULES(ALSA_DEPS, alsa, HAVE_ALSA=1, NO_ALSA=1)
-PKG_CHECK_MODULES(FFMPEG_DEPS, libavcodec libavutil libavformat >= 52.0.0, HAVE_FFMPEG=1, NO_FFMPEG=1)
+PKG_CHECK_MODULES(FFMPEG_DEPS, libavcodec >= 51.0.0 libavutil libavformat >= 52.0.0, HAVE_FFMPEG=1, NO_FFMPEG=1)
 AC_CHECK_LIB([pthread], [main])
 AC_CHECK_LIB([dl], [main])
 
@@ -166,6 +168,8 @@ fi
 
 AM_CONDITIONAL(HAVE_FFMPEG, test $HAVE_FFMPEG)
 if test ${HAVE_FFMPEG}; then
+    dnl check headers
+    AC_CHECK_HEADER([ffmpeg/avformat.h], FFMPEG_DEPS_CFLAGS="$FFMPEG_DEPS_CFLAGS -D FFMPEG_OLD")
     FFMPEG_DIR="plugins/ffmpeg"
     AC_SUBST(FFMPEG_DEPS_CFLAGS)
     AC_SUBST(FFMPEG_DEPS_LIBS)

@@ -128,7 +128,7 @@ cvorbis_init (DB_playItem_t *it) {
     cur_bit_stream = -1;
     ptrack = it;
 
-    file = plugin.info.file = deadbeef->fopen (it->fname);
+    file = deadbeef->fopen (it->fname);
     if (!file) {
         return -1;
     }
@@ -209,7 +209,6 @@ cvorbis_init (DB_playItem_t *it) {
 
 static void
 cvorbis_free (void) {
-    plugin.info.file = NULL;
     if (file) {
         ptrack = NULL;
         ov_clear (&vorbis_file);

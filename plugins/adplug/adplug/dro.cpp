@@ -1,6 +1,6 @@
 /*
  * Adplug - Replayer for many OPL2/OPL3 audio file formats.
- * Copyright (C) 1999 - 2005 Simon Peter, <dn.tlp@gmx.net>, et al.
+ * Copyright (C) 1999 - 2007 Simon Peter, <dn.tlp@gmx.net>, et al.
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,8 +23,8 @@
  * NOTES: 3-oct-04: the DRO format is not yet finalized. beware.
  */
 
+#include <cstring>
 #include <stdio.h>
-#include <string.h>
 
 #include "dro.h"
 
@@ -59,9 +59,9 @@ bool CdroPlayer::load(const std::string &filename, const CFileProvider &fp)
   // load section
   mstotal = f->readInt(4);	// Total milliseconds in file
   length = f->readInt(4);	// Total data bytes in file
-  f->ignore(1);			// Type of opl data this can contain - ignored
+  f->ignore(4);			// Type of opl data this can contain - ignored
   data = new unsigned char [length];
-  for (i=0;i<length;i++) 
+  for (i=0;i<length;i++)
     data[i]=f->readInt(1);
   fp.close(f);
   rewind(0);

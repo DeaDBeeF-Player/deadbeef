@@ -101,7 +101,7 @@ char* SidTuneTools::fileExtOfPath(char* s)
 
 // Parse input string stream. Read and convert a hexa-decimal number up 
 // to a ``,'' or ``:'' or ``\0'' or end of stream.
-uint_least32_t SidTuneTools::readHex( std::istrstream& hexin )
+uint_least32_t SidTuneTools::readHex( std::istringstream& hexin )
 {
     uint_least32_t hexLong = 0;
     char c;
@@ -130,7 +130,7 @@ uint_least32_t SidTuneTools::readHex( std::istrstream& hexin )
 
 // Parse input string stream. Read and convert a decimal number up 
 // to a ``,'' or ``:'' or ``\0'' or end of stream.
-uint_least32_t SidTuneTools::readDec( std::istrstream& decin )
+uint_least32_t SidTuneTools::readDec( std::istringstream& decin )
 {
     uint_least32_t hexLong = 0;
     char c;
@@ -187,7 +187,7 @@ const char* SidTuneTools::returnNextLine(const char* s)
 }
 
 // Skip any characters in an input string stream up to '='.
-void SidTuneTools::skipToEqu( std::istrstream& parseStream )
+void SidTuneTools::skipToEqu( std::istringstream& parseStream )
 {
     char c;
     do

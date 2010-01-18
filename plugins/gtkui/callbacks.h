@@ -787,3 +787,19 @@ gboolean
 on_trackproperties_delete_event        (GtkWidget       *widget,
                                         GdkEvent        *event,
                                         gpointer         user_data);
+
+void
+on_column_id_changed                   (GtkComboBox     *combobox,
+                                        gpointer         user_data);
+
+void
+on_changelog1_activate                 (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_gpl1_activate                       (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_lgpl1_activate                      (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);

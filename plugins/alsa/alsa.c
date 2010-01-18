@@ -20,7 +20,8 @@
 #include <stdint.h>
 #include <unistd.h>
 #include <sys/prctl.h>
-#include "deadbeef.h"
+#include "../../deadbeef.h"
+#include "../../config.h"
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
@@ -177,6 +178,8 @@ error:
 int
 palsa_init (void) {
     int err;
+    alsa_tid = 0;
+    mutex = 0;
 
     // get and cache conf variables
     strcpy (conf_alsa_soundcard, deadbeef->conf_get_str ("alsa_soundcard", "default"));
@@ -294,11 +297,16 @@ palsa_free (void) {
     if (audio && !alsa_terminate) {
         alsa_terminate = 1;
         printf ("waiting for alsa thread to finish\n");
-        deadbeef->thread_join (alsa_tid);
-        alsa_tid = 0;
+        if (alsa_tid) {
+            deadbeef->thread_join (alsa_tid);
+            alsa_tid = 0;
+        }
         snd_pcm_close(audio);
         audio = NULL;
-        deadbeef->mutex_free (mutex);
+        if (mutex) {
+            deadbeef->mutex_free (mutex);
+            mutex = 0;
+        }
         state = 0;
         alsa_terminate = 0;
     }
@@ -468,7 +476,7 @@ palsa_thread (void *context) {
         char buf[frames_to_deliver*4];
         palsa_callback (buf, frames_to_deliver*4);
         if ((err = snd_pcm_writei (audio, buf, frames_to_deliver)) < 0) {
-            trace ("write %d frames failed (%s)\n", frames_to_deliver, snd_strerror (err));
+            trace ("write %d frames failed (%s)\n", (int)frames_to_deliver, snd_strerror (err));
             snd_pcm_prepare (audio);
             snd_pcm_start (audio);
         }

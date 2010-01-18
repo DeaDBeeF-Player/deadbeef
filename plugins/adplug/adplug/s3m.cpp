@@ -22,7 +22,7 @@
  * Extra Fine Slides (EEx, FEx) & Fine Vibrato (Uxy) are inaccurate
  */
 
-#include <string.h>
+#include <cstring>
 #include "s3m.h"
 
 const char Cs3mPlayer::chnresolv[] =	// S3M -> adlib channel conversion
@@ -164,16 +164,18 @@ bool Cs3mPlayer::update()
       vibrato(realchan,channel[realchan].dualinfo);
     else					// dual command: G00 and Dxy
       tone_portamento(realchan,channel[realchan].dualinfo);
-    case 4: if(info <= 0x0f)			// volume slide down
+    case 4: if(info <= 0x0f) {			// volume slide down
       if(channel[realchan].vol - info >= 0)
 	channel[realchan].vol -= info;
       else
 	channel[realchan].vol = 0;
-      if((info & 0x0f) == 0)			// volume slide up
+      }
+      if((info & 0x0f) == 0) {			// volume slide up
 	if(channel[realchan].vol + (info >> 4) <= 63)
 	  channel[realchan].vol += info >> 4;
 	else
 	  channel[realchan].vol = 63;
+      }
       setvolume(realchan);
       break;
     case 5: if(info == 0xf0 || info <= 0xe0) {	// slide down
@@ -247,7 +249,7 @@ bool Cs3mPlayer::update()
     if(realchan != -1) {	// channel playable?
       // set channel values
       donote = 0;
-      if(pattern[pattnr][row][chan].note < 14)
+      if(pattern[pattnr][row][chan].note < 14) {
 	// tone portamento
 	if(pattern[pattnr][row][chan].command == 7 || pattern[pattnr][row][chan].command == 12) {
 	  channel[realchan].nextfreq = notetable[pattern[pattnr][row][chan].note];
@@ -259,6 +261,7 @@ bool Cs3mPlayer::update()
 	  channel[realchan].key = 1;
 	  donote = 1;
 	}
+      }
       if(pattern[pattnr][row][chan].note == 14) {	// key off (is 14 here, cause note is only first 4 bits)
 	channel[realchan].key = 0;
 	setfreq(realchan);
@@ -284,11 +287,12 @@ bool Cs3mPlayer::update()
 	if(pattern[pattnr][row][chan].command != 7)
 	  donote = 1;
       }
-      if(pattern[pattnr][row][chan].volume != 255)
+      if(pattern[pattnr][row][chan].volume != 255) {
 	if(pattern[pattnr][row][chan].volume < 64)	// set volume
 	  channel[realchan].vol = pattern[pattnr][row][chan].volume;
 	else
 	  channel[realchan].vol = 63;
+      }
       channel[realchan].fx = pattern[pattnr][row][chan].command;	// set command
       if(pattern[pattnr][row][chan].info)			// set infobyte
 	channel[realchan].info = pattern[pattnr][row][chan].info;
@@ -315,16 +319,18 @@ bool Cs3mPlayer::update()
       case 1: speed = info; break;	// set speed
       case 2: if(info <= ord) songend = 1; ord = info; crow = 0; pattbreak = 1; break;	// jump to order
       case 3: if(!pattbreak) { crow = info; ord++; pattbreak = 1; } break;	// pattern break
-      case 4: if(info > 0xf0)		// fine volume down
+      case 4: if(info > 0xf0) {		// fine volume down
 	if(channel[realchan].vol - (info & 0x0f) >= 0)
 	  channel[realchan].vol -= info & 0x0f;
 	else
 	  channel[realchan].vol = 0;
-	if((info & 0x0f) == 0x0f && info >= 0x1f)	// fine volume up
+	}
+	if((info & 0x0f) == 0x0f && info >= 0x1f) {	// fine volume up
 	  if(channel[realchan].vol + ((info & 0xf0) >> 4) <= 63)
 	    channel[realchan].vol += (info & 0xf0) >> 4;
 	  else
 	    channel[realchan].vol = 63;
+	}
 	setvolume(realchan);
 	break;
       case 5: if(info > 0xf0)	{			// fine slide down
@@ -353,7 +359,7 @@ bool Cs3mPlayer::update()
       case 10: channel[realchan].trigger = 0; break;	// arpeggio (set trigger)
       case 19: if(info == 0xb0)				// set loop start
 	loopstart = row;
-	if(info > 0xb0 && info <= 0xbf)			// pattern loop
+	if(info > 0xb0 && info <= 0xbf) {		// pattern loop
 	  if(!loopcnt) {
 	    loopcnt = info & 0x0f;
 	    crow = loopstart;
@@ -363,6 +369,7 @@ bool Cs3mPlayer::update()
 	      crow = loopstart;
 	      pattbreak = 1;
 	    }
+	}
 	if((info & 0xf0) == 0xe0)			// patterndelay
 	  del = speed * (info & 0x0f) - 1;
 	break;
@@ -450,7 +457,7 @@ void Cs3mPlayer::setfreq(unsigned char chan)
 {
   opl->write(0xa0 + chan, channel[chan].freq & 255);
   if(channel[chan].key)
-    opl->write(0xb0 + chan, ((channel[chan].freq & 768) >> 8) + (channel[chan].oct << 2) | 32);
+    opl->write(0xb0 + chan, (((channel[chan].freq & 768) >> 8) + (channel[chan].oct << 2)) | 32);
   else
     opl->write(0xb0 + chan, ((channel[chan].freq & 768) >> 8) + (channel[chan].oct << 2));
 }

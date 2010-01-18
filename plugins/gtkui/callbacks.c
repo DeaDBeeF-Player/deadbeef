@@ -35,9 +35,12 @@
 #include "gtkplaylist.h"
 #include "search.h"
 #include "progress.h"
-#include "session.h"
+#include "../../session.h"
 #include "gtkui.h"
 #include "parser.h"
+
+#define trace(...) { fprintf (stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 #define SELECTED(it) (deadbeef->pl_is_selected(it))
 #define SELECT(it, sel) (deadbeef->pl_set_selected(it,sel))
@@ -1378,7 +1381,7 @@ void
 on_help1_activate                      (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    show_info_window (PREFIX "/share/doc/deadbeef/help.txt", "Help", &helpwindow);
+    show_info_window (DOCDIR "/help.txt", "Help", &helpwindow);
 }
 
 static GtkWidget *aboutwindow;
@@ -1387,7 +1390,34 @@ void
 on_about1_activate                     (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    show_info_window (PREFIX "/share/doc/deadbeef/about.txt", "About DeaDBeeF " VERSION, &aboutwindow);
+    show_info_window (DOCDIR "/about.txt", "About DeaDBeeF " VERSION, &aboutwindow);
+}
+
+static GtkWidget *changelogwindow;
+
+void
+on_changelog1_activate                 (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    show_info_window (DOCDIR "/ChangeLog", "DeaDBeeF " VERSION " ChangeLog", &changelogwindow);
+}
+
+static GtkWidget *gplwindow;
+
+void
+on_gpl1_activate                       (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    show_info_window (DOCDIR "/COPYING.GPLv2", "GNU GENERAL PUBLIC LICENSE Version 2", &gplwindow);
+}
+
+static GtkWidget *lgplwindow;
+
+void
+on_lgpl1_activate                      (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    show_info_window (DOCDIR "/COPYING.LGPLv2.1", "GNU LESSER GENERAL PUBLIC LICENSE Version 2.1", &lgplwindow);
 }
 
 
@@ -1841,6 +1871,24 @@ on_remove_column_activate              (GtkMenuItem     *menuitem,
     gtkpl_expose (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
 
     gtkpl_column_rewrite_config (ps);
+}
+
+void
+on_column_id_changed                   (GtkComboBox     *combobox,
+                                        gpointer         user_data)
+{
+    GtkWidget *toplevel = gtk_widget_get_toplevel (GTK_WIDGET (combobox));
+    if (!toplevel) {
+        trace ("failed to get toplevel widget for column id combobox\n");
+        return;
+    }
+    int act = gtk_combo_box_get_active (combobox) + 1;
+    GtkWidget *fmt = lookup_widget (toplevel, "format");
+    if (!fmt) {
+        trace ("failed to get column format widget\n");
+        return;
+    }
+    gtk_widget_set_sensitive (fmt, act > DB_COLUMN_ID_MAX ? TRUE : FALSE);
 }
 
 
@@ -2374,6 +2422,7 @@ on_trackproperties_key_press_event     (GtkWidget       *widget,
                                         gpointer         user_data)
 {
     if (event->keyval == GDK_Escape) {
+        trackproperties = NULL;
         gtk_widget_destroy (widget);
     }
     return FALSE;
@@ -2400,4 +2449,5 @@ on_trackproperties_delete_event        (GtkWidget       *widget,
     trackproperties = NULL;
     return FALSE;
 }
+
 

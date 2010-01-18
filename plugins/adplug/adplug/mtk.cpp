@@ -19,7 +19,7 @@
  * mtk.cpp - MPU-401 Trakker Loader by Simon Peter (dn.tlp@gmx.net)
  */
 
-#include <string.h>
+#include <cstring>
 #include "mtk.h"
 
 /*** public methods **************************************/

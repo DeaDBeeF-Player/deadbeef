@@ -385,7 +385,7 @@ ape_read_header(DB_FILE *fp, APEContext *ape)
     }
 
     if (ape->fileversion < APE_MIN_VERSION || ape->fileversion > APE_MAX_VERSION) {
-        fprintf (stderr, "Unsupported file version - %d.%02d\n", ape->fileversion / 1000, (ape->fileversion % 1000) / 10);
+        fprintf (stderr, "ape: Unsupported file version - %d.%02d\n", ape->fileversion / 1000, (ape->fileversion % 1000) / 10);
         return -1;
     }
 
@@ -513,7 +513,7 @@ ape_read_header(DB_FILE *fp, APEContext *ape)
     }
 
     if(ape->totalframes > UINT_MAX / sizeof(APEFrame)){
-        fprintf (stderr, "Too many frames: %d\n", ape->totalframes);
+        fprintf (stderr, "ape: Too many frames: %d\n", ape->totalframes);
         return -1;
     }
     ape->frames       = malloc(ape->totalframes * sizeof(APEFrame));
@@ -560,7 +560,7 @@ ape_read_header(DB_FILE *fp, APEContext *ape)
     ape_dumpinfo(ape);
 
 #if ENABLE_DEBUG
-    fprintf (stderr, "Decoding file - v%d.%02d, compression level %d\n", ape->fileversion / 1000, (ape->fileversion % 1000) / 10, ape->compressiontype);
+    fprintf (stderr, "ape: Decoding file - v%d.%02d, compression level %d\n", ape->fileversion / 1000, (ape->fileversion % 1000) / 10, ape->compressiontype);
 #endif
 
     total_blocks = (ape->totalframes == 0) ? 0 : ((ape->totalframes - 1) * ape->blocksperframe) + ape->finalframeblocks;
@@ -672,20 +672,16 @@ ffap_init(DB_playItem_t *it)
     ape_read_header (fp, &ape_ctx);
     int i;
 
-    if (ape_ctx.bps != 16) {
-        fprintf (stderr, "Only 16-bit samples are supported\n");
-        return -1;
-    }
     if (ape_ctx.channels > 2) {
-        fprintf (stderr, "Only mono and stereo is supported\n");
+        fprintf (stderr, "ape: Only mono and stereo is supported\n");
         return -1;
     }
 
 #if ENABLE_DEBUG
-    fprintf (stderr, "Compression Level: %d - Flags: %d\n", ape_ctx.compressiontype, ape_ctx.formatflags);
+    fprintf (stderr, "ape: Compression Level: %d - Flags: %d\n", ape_ctx.compressiontype, ape_ctx.formatflags);
 #endif
     if (ape_ctx.compressiontype % 1000 || ape_ctx.compressiontype > COMPRESSION_LEVEL_INSANE) {
-        fprintf (stderr, "Incorrect compression level %d\n", ape_ctx.compressiontype);
+        fprintf (stderr, "ape: Incorrect compression level %d\n", ape_ctx.compressiontype);
         return -1;
     }
     ape_ctx.fset = ape_ctx.compressiontype / 1000 - 1;
@@ -716,7 +712,7 @@ ffap_init(DB_playItem_t *it)
 
     ape_ctx.packet_data = malloc (PACKET_BUFFER_SIZE);
     if (!ape_ctx.packet_data) {
-        fprintf (stderr, "ffap: failed to allocate memory for packet data\n");
+        fprintf (stderr, "ape: failed to allocate memory for packet data\n");
         return -1;
     }
     return 0;
@@ -856,8 +852,9 @@ static inline int range_get_symbol(APEContext * ctx,
     if(cf > 65492){
         symbol= cf - 65535 + 63;
         range_decode_update(ctx, 1, cf);
-        if(cf > 65535)
+        if(unlikely (cf > 65535)) {
             ctx->error=1;
+        }
         return symbol;
     }
     /* figure out the symbol inefficiently; a binary search would be much better */
@@ -916,15 +913,47 @@ static inline int ape_decode_value(APEContext * ctx, APERice *rice)
             overflow |= range_decode_bits(ctx, 16);
         }
 
-//        base = range_decode_culfreq(ctx, pivot);
-        range_dec_normalize(ctx);
-        ctx->rc.help = ctx->rc.range / pivot;
-        if (unlikely (ctx->rc.help == 0)) {
-            ctx->error = 1;
-            return 0;
+        if (pivot >= 0x10000) {
+            /* Codepath for 24-bit streams */
+            int nbits, lo_bits, base_hi, base_lo;
+
+            /* Count the number of bits in pivot */
+            nbits = 17; /* We know there must be at least 17 bits */
+            while ((pivot >> nbits) > 0) { nbits++; }
+
+            /* base_lo is the low (nbits-16) bits of base
+               base_hi is the high 16 bits of base
+               */
+            lo_bits = (nbits - 16);
+
+            // {{{ unrolled base_hi = range_decode_culfreq(ctx, (pivot >> lo_bits) + 1)
+            range_dec_normalize(ctx);
+            ctx->rc.help = ctx->rc.range / ((pivot >> lo_bits) + 1);
+            if (unlikely (ctx->rc.help == 0)) {
+                ctx->error = 1;
+                return 0;
+            }
+            base_hi = ctx->rc.low / ctx->rc.help;
+            // }}}
+            range_decode_update(ctx, 1, base_hi);
+
+            base_lo = range_decode_culshift(ctx, lo_bits);
+            range_decode_update(ctx, 1, base_lo);
+
+            base = (base_hi << lo_bits) + base_lo;
         }
-        base = ctx->rc.low / ctx->rc.help;
-        range_decode_update(ctx, 1, base);
+        else {
+            // {{{ unrolled base = range_decode_culfreq(ctx, pivot)
+            range_dec_normalize(ctx);
+            ctx->rc.help = ctx->rc.range / pivot;
+            if (unlikely (ctx->rc.help == 0)) {
+                ctx->error = 1;
+                return 0;
+            }
+            base = ctx->rc.low / ctx->rc.help;
+            // }}}
+            range_decode_update(ctx, 1, base);
+        }
 
         x = base + overflow * pivot;
     }
@@ -950,7 +979,7 @@ static void entropy_decode(APEContext * ctx, int blockstodecode, int stereo)
         memset(decoded0, 0, blockstodecode * sizeof(int32_t));
         memset(decoded1, 0, blockstodecode * sizeof(int32_t));
     } else {
-        while (blockstodecode--) {
+        while (likely (blockstodecode--)) {
             *decoded0++ = ape_decode_value(ctx, &ctx->riceY);
             if (stereo)
                 *decoded1++ = ape_decode_value(ctx, &ctx->riceX);
@@ -1448,7 +1477,7 @@ static void ape_unpack_mono(APEContext * ctx, int count)
     if (ctx->frameflags & APE_FRAMECODE_STEREO_SILENCE) {
         entropy_decode(ctx, count, 0);
         /* We are pure silence, so we're done. */
-        fprintf (stderr, "pure silence mono\n");
+        //fprintf (stderr, "pure silence mono\n");
         return;
     }
 
@@ -1475,7 +1504,7 @@ static void ape_unpack_stereo(APEContext * ctx, int count)
 
     if (ctx->frameflags & APE_FRAMECODE_STEREO_SILENCE) {
         /* We are pure silence, so we're done. */
-        fprintf (stderr, "pure silence stereo\n");
+        //fprintf (stderr, "pure silence stereo\n");
         return;
     }
 
@@ -1503,10 +1532,11 @@ ape_decode_frame(APEContext *s, void *data, int *data_size)
     int i, n;
     int blockstodecode;
     int bytes_used;
+    int samplesize = plugin.info.bps>>3;
 
     /* should not happen but who knows */
-    if (BLOCKS_PER_LOOP * 2 * s->channels > *data_size) {
-        fprintf (stderr, "Packet size is too big! (max is %d where you have %d)\n", *data_size, BLOCKS_PER_LOOP * 2 * s->channels);
+    if (BLOCKS_PER_LOOP * samplesize * s->channels > *data_size) {
+        fprintf (stderr, "ape: Packet size is too big! (max is %d where you have %d)\n", *data_size, BLOCKS_PER_LOOP * samplesize * s->channels);
         return -1;
     }
 
@@ -1520,7 +1550,7 @@ ape_decode_frame(APEContext *s, void *data, int *data_size)
             assert (s->samples == 0); // all samples from prev packet must have been read
             // start new packet
             if (ape_read_packet (fp, &ape_ctx) < 0) {
-                fprintf (stderr, "error reading packet\n");
+                fprintf (stderr, "ape: error reading packet\n");
                 return -1;
             }
             bswap_buf((uint32_t*)(s->packet_data), (const uint32_t*)(s->packet_data), s->packet_remaining >> 2);
@@ -1533,7 +1563,7 @@ ape_decode_frame(APEContext *s, void *data, int *data_size)
             //fprintf (stderr, "s->samples=%d (1)\n", s->samples);
             n = bytestream_get_be32(&s->ptr);
             if(n < 0 || n > 3){
-                fprintf (stderr, "Incorrect offset passed\n");
+                fprintf (stderr, "ape: Incorrect offset passed\n");
                 return -1;
             }
             s->ptr += n;
@@ -1572,7 +1602,7 @@ ape_decode_frame(APEContext *s, void *data, int *data_size)
         return 0;
     }
     if (!s->packet_remaining) {
-        fprintf (stderr, "packetbuf is empty!!\n");
+        fprintf (stderr, "ape: packetbuf is empty!!\n");
         *data_size = 0;
         bytes_used = s->packet_remaining;
         goto error;
@@ -1591,10 +1621,10 @@ ape_decode_frame(APEContext *s, void *data, int *data_size)
     if(s->error || s->ptr >= s->data_end){
         s->samples=0;
         if (s->error) {
-            fprintf (stderr, "Error decoding frame, error=%d\n", s->error);
+            fprintf (stderr, "ape: Error decoding frame, error=%d\n", s->error);
         }
         else {
-            fprintf (stderr, "Error decoding frame, ptr > data_end\n");
+            fprintf (stderr, "ape: Error decoding frame, ptr > data_end\n");
         }
         return -1;
     }
@@ -1603,9 +1633,9 @@ ape_decode_frame(APEContext *s, void *data, int *data_size)
     i = skip;
 
     for (; i < blockstodecode; i++) {
-        *samples++ = s->decoded0[i];
+        *samples++ = (int16_t)(s->decoded0[i]>>(plugin.info.bps-16));
         if(s->channels == 2) {
-            *samples++ = s->decoded1[i];
+            *samples++ = (int16_t)(s->decoded1[i]>>(plugin.info.bps-16));
         }
     }
     
@@ -1637,13 +1667,13 @@ ffap_insert (DB_playItem_t *after, const char *fname) {
         return NULL;
     }
     if (ape_read_header (fp, &ape_ctx) < 0) {
-        fprintf (stderr, "failed to read ape header\n");
+        fprintf (stderr, "ape: failed to read ape header\n");
         deadbeef->fclose (fp);
         ape_free_ctx (&ape_ctx);
         return NULL;
     }
     if ((ape_ctx.fileversion < APE_MIN_VERSION) || (ape_ctx.fileversion > APE_MAX_VERSION)) {
-        fprintf(stderr, "unsupported file version - %.2f\n", ape_ctx.fileversion/1000.0);
+        fprintf(stderr, "ape: unsupported file version - %.2f\n", ape_ctx.fileversion/1000.0);
         deadbeef->fclose (fp);
         ape_free_ctx (&ape_ctx);
         return NULL;

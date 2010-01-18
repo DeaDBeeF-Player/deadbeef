@@ -53,13 +53,14 @@ extern "C" {
 // DON'T release plugins without DB_PLUGIN_SET_API_VERSION
 
 // api version history:
+// 0.5 -- deadbeef-0.3.2
 // 0.4 -- deadbeef-0.3.0
 // 0.3 -- deadbeef-0.2.3.2
 // 0.2 -- deadbeef-0.2.3
 // 0.1 -- deadbeef-0.2.0
 
 #define DB_API_VERSION_MAJOR 0
-#define DB_API_VERSION_MINOR 4
+#define DB_API_VERSION_MINOR 5
 
 #define DB_PLUGIN_SET_API_VERSION\
     .plugin.api_vmajor = DB_API_VERSION_MAJOR,\
@@ -166,6 +167,7 @@ enum {
     DB_EV_PLAYLISTCHANGED = 9, // playlist contents were changed
     DB_EV_VOLUMECHANGED = 10, // volume was changed
     DB_EV_OUTPUTCHANGED = 11, // sound output plugin changed
+    DB_EV_ABORTREAD = 12, // tells plugins to stop reading operations, e.g. long-time http requests
     DB_EV_MAX
 };
 
@@ -422,7 +424,6 @@ typedef struct DB_plugin_s {
 } DB_plugin_t;
 
 typedef struct {
-    DB_FILE *file;
     int bps;
     int channels;
     int samplerate;
@@ -530,7 +531,6 @@ typedef struct DB_vfs_s {
     int64_t (*tell) (DB_FILE *stream);
     void (*rewind) (DB_FILE *stream);
     int64_t (*getlength)(DB_FILE *stream);
-    void (*stop)(DB_FILE *stream);
     const char * (*get_content_type) (DB_FILE *stream);
     const char * (*get_content_name) (DB_FILE *stream);
     const char * (*get_content_genre) (DB_FILE *stream);

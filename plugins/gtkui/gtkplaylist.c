@@ -37,8 +37,8 @@
 #include "search.h"
 #include "progress.h"
 #include "drawing.h"
-#include "session.h"
-#include "deadbeef.h"
+#include "../../session.h"
+#include "../../deadbeef.h"
 #include "parser.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))

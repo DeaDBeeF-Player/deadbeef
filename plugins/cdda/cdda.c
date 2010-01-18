@@ -108,6 +108,7 @@ cda_init (DB_playItem_t *it) {
     current_sector = first_sector;
     tail_len = 0;
     current_sample = 0;
+    return 0;
 }
 
 int
