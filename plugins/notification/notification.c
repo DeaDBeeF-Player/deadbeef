@@ -6,24 +6,25 @@
 static DB_misc_t plugin;
 static DB_functions_t *deadbeef;
 
+#define DEFAULT_COMMAND "notify-send '%t' '%a - %b'"
+
+static const char settings_dlg[] =
+    "property Command entry notification.command \"" DEFAULT_COMMAND "\";\n"
+;
+
 static void
-show_notification (const char *summary, const char *body)
+show_notification (DB_playItem_t *track)
 {
     char cmd [1024];
-    if (!summary) summary = "Unknown track";
-    snprintf (cmd, sizeof (cmd), "notify-send '%s' '%s'", summary, body);
+    deadbeef->pl_format_title (track, cmd, sizeof (cmd), -1, deadbeef->conf_get_str ("notification.command", DEFAULT_COMMAND));
+    printf ("Invoking:\n%s\n", cmd);
     system (cmd);
 }
 
 static int
 songchanged (DB_event_trackchange_t *ev, uintptr_t data) {
     DB_playItem_t *track = deadbeef->pl_get_for_idx (ev->to);
-    const char *artist = deadbeef->pl_find_meta (track, "artist");
-    const char *album = deadbeef->pl_find_meta (track, "album");
-    const char *title = deadbeef->pl_find_meta (track, "title");
-    char body [1024];
-    snprintf (body, sizeof (body), "%s - %s", artist, album);
-    show_notification (title, body);
+    show_notification (track);
     return 0;
 }
 
@@ -54,6 +55,7 @@ static DB_misc_t plugin = {
     .plugin.email = "thesame.ml@gmail.com",
     .plugin.website = "http://deadbeef.sf.net",
     .plugin.start = notification_start,
-    .plugin.stop = notification_stop
+    .plugin.stop = notification_stop,
+    .plugin.configdialog = settings_dlg
 };
 
