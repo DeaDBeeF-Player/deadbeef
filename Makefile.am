@@ -15,7 +15,7 @@ SUBDIRS = ${MPGMAD_DIR}\
           ${FFMPEG_DIR}\
           ${FLAC_DIR}\
           ${SNDFILE_DIR}\
-          plugins/oss
+          ${OSS4_DIR}
 
 #SUBDIRS = gme/Game_Music_Emu-0.5.2\
 #		  sid/sidplay-libs-2.1.0\

@@ -179,6 +179,69 @@ if test ${HAVE_FFMPEG}; then
     AC_SUBST(FFMPEG_DIR)
 fi
 
+dnl *** OSS4 output (partly stolen from audacious)
+have_oss4=no
+
+AC_MSG_CHECKING(for OSS4 include dir)
+OSS4_CFLAGS=""
+if test -f "/etc/oss.conf" ; then
+    for i in `cat /etc/oss.conf`; do
+        t=`echo $i | sed -e 's/OSSLIBDIR=//'`
+        if test "x$i" != "x$t" ; then
+            if test -f "$t/include/sys/soundcard.h" -o -f "$i/include/soundcard.h" ; then
+                OSS4_CFLAGS="-I$t/include"
+            fi
+        fi
+    done
+fi
+if test -n "$OSS4_CFLAGS" ; then
+    AC_MSG_RESULT([$OSS4_CFLAGS])
+else
+    AC_MSG_RESULT([not found])
+fi
+CFLAGS_save=$CFLAGS
+CFLAGS="$CFLAGS $OSS4_CFLAGS"
+AC_CHECK_HEADERS(soundcard.h)
+AC_CHECK_HEADERS(sys/soundcard.h)
+AC_CHECK_HEADERS(machine/soundcard.h)
+CFLAGS=$CFLAGS_save
+
+if test "x${ac_cv_header_soundcard_h}" = "xyes" || test "x${ac_cv_header_sys_soundcard_h}" = "xyes" || test "x${ac_cv_header_machine_soundcard_h}" = "xyes"; then
+    have_oss4=yes
+fi
+
+if test "x${have_oss4}" = "xyes"; then
+AC_MSG_CHECKING(whether we need -lossaudio)
+    AC_TRY_LINK([
+    #include <sys/ioctl.h>
+    #ifdef HAVE_SYS_SOUNDCARD_H
+    #include <sys/soundcard.h>
+    #else
+    #include <soundcard.h>
+    #endif
+    ], [
+    int fd, value;
+    ioctl(fd, SOUND_MIXER_READ_VOLUME, &value);
+], AC_MSG_RESULT(no), [
+    OSS4_LIBS="-lossaudio"
+    AC_MSG_RESULT(yes)
+    ])
+fi
+
+if test "x$have_oss4" = "xyes"; then
+    AC_DEFINE(HAVE_OSS4, 1, [Define if the OSS4 output plugin should be built])
+else
+    have_oss4=no
+fi
+
+if test "x$have_oss4" = "xyes"; then
+    OSS4_DIR="plugins/oss"
+    AC_SUBST(OSS4_CFLAGS)
+    AC_SUBST(OSS4_DIR)
+    AC_SUBST(OSS4_LIBS)
+fi
+
+
 dnl print summary
 echo
 echo "plugin summary:"
@@ -214,6 +277,7 @@ dnl PRINT_PLUGIN_INFO([faad2],[aac/mp4 player],[test $HAVE_FAAD && test $HAVE_MP
 PRINT_PLUGIN_INFO([cdda],[cd audio player],[test $HAVE_CDIO && test $HAVE_CDDB])
 PRINT_PLUGIN_INFO([gtkui],[GTK user interface],[test $HAVE_GTK])
 PRINT_PLUGIN_INFO([ffmpeg],[ffmpeg codecs],[test $HAVE_FFMPEG])
+PRINT_PLUGIN_INFO([oss],[oss4 output plugin],[test "x$have_oss"="xyes"])
 echo
 
 AC_OUTPUT([
