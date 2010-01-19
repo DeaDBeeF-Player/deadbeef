@@ -270,7 +270,8 @@ open_error:
 int
 palsa_change_rate (int rate) {
     if (!audio) {
-        return 0;
+        alsa_rate = rate;
+        return alsa_rate;
     }
     if (rate == alsa_rate) {
         trace ("palsa_change_rate: same rate (%d), ignored\n", rate);
