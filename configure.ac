@@ -241,6 +241,7 @@ plugins/vtx/Makefile
 plugins/adplug/Makefile
 plugins/ffmpeg/Makefile
 plugins/sid/Makefile
+plugins/oss/Makefile
 deadbeef.desktop
 ])
 
