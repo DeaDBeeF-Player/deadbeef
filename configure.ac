@@ -237,6 +237,7 @@ plugins/nullout/Makefile
 plugins/vtx/Makefile
 plugins/adplug/Makefile
 plugins/ffmpeg/Makefile
+plugins/oss/Makefile
 deadbeef.desktop
 ])
 
