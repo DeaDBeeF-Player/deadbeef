@@ -22,14 +22,15 @@
 #endif
 #include <stdio.h>
 #include <string.h>
-#include <soundcard.h>
+#include <sys/soundcard.h>
 #include <fcntl.h>
+#include <sys/ioctl.h>
 #include <stdlib.h>
 #include "../../deadbeef.h"
 
-#if OSS_VERSION<0x040000
-#error oss4 plugin: at least oss v4.0 is required to build this plugin
-#endif
+//#if OSS_VERSION<0x040000
+//#error oss4 plugin: at least oss v4.0 is required to build this plugin
+//#endif
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
