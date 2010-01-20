@@ -39,9 +39,10 @@ DB_functions_t *deadbeef;
 
 static intptr_t oss_tid;
 static int oss_terminate;
-static int oss_rate;
+static int oss_rate = 44100;
 static int state;
 static int fd;
+static uintptr_t mutex;
 
 static void
 oss_thread (void *context);
@@ -53,8 +54,8 @@ static int
 oss_init (void) {
     trace ("oss_init\n");
     state = OUTPUT_STATE_STOPPED;
-    oss_rate = 44100;
     oss_terminate = 0;
+    mutex = 0;
 
     // prepare oss for playback
     const char *name = "/dev/dsp";
@@ -102,6 +103,8 @@ oss_init (void) {
 
     trace ("oss: samplerate: %d\n", oss_rate);
 
+    mutex = deadbeef->mutex_create ();
+
     oss_tid = deadbeef->thread_start (oss_thread, NULL);
     return 0;
 }
@@ -116,6 +119,7 @@ oss_change_rate (int rate) {
         trace ("oss_change_rate: same rate (%d), ignored\n", rate);
         return rate;
     }
+    deadbeef->mutex_lock (mutex);
     if (ioctl (fd, SNDCTL_DSP_SPEED, &rate) == -1) {
         trace ("oss: can't switch to %d samplerate\n", rate);
         perror ("SNDCTL_DSP_CHANNELS");
@@ -123,6 +127,7 @@ oss_change_rate (int rate) {
         return -1;
     }
     oss_rate = rate;
+    deadbeef->mutex_unlock (mutex);
     return oss_rate;
 }
 
@@ -139,6 +144,10 @@ oss_free (void) {
         oss_terminate = 0;
         if (fd) {
             close (fd);
+        }
+        if (mutex) {
+            deadbeef->mutex_free (mutex);
+            mutex = 0;
         }
     }
     return 0;
@@ -219,9 +228,13 @@ oss_thread (void *context) {
         
         char buf[1024];
         oss_callback (buf, 1024);
-        if (write (fd, buf, sizeof (buf)) != sizeof (buf)) {
+        deadbeef->mutex_lock (mutex);
+        int res = write (fd, buf, sizeof (buf));
+        deadbeef->mutex_unlock (mutex);
+        if (res != sizeof (buf)) {
             fprintf (stderr, "oss: failed to write buffer\n");
         }
+        usleep (1000); // this must be here to prevent mutex deadlock
     }
 }
 
@@ -232,6 +245,10 @@ oss_callback (char *stream, int len) {
         return;
     }
     int bytesread = deadbeef->streamer_read (stream, len);
+    int16_t ivolume = deadbeef->volume_get_amp () * 1000;
+    for (int i = 0; i < bytesread/2; i++) {
+        ((int16_t*)stream)[i] = (int16_t)(((int32_t)(((int16_t*)stream)[i])) * ivolume / 1000);
+    }
 
     if (bytesread < len) {
         memset (stream + bytesread, 0, len-bytesread);
@@ -266,7 +283,6 @@ static DB_output_t plugin = {
     .plugin.version_minor = 1,
     .plugin.nostop = 0,
     .plugin.type = DB_PLUGIN_OUTPUT,
-    .plugin.id = "oss",
     .plugin.name = "OSS output plugin",
     .plugin.descr = "plays sound via OSS API",
     .plugin.author = "Alexey Yakovenko",
