@@ -17,7 +17,6 @@ show_notification (DB_playItem_t *track)
 {
     char cmd [1024];
     deadbeef->pl_format_title (track, cmd, sizeof (cmd), -1, deadbeef->conf_get_str ("notification.command", DEFAULT_COMMAND));
-    printf ("Invoking:\n%s\n", cmd);
     system (cmd);
 }
 
@@ -31,12 +30,13 @@ songchanged (DB_event_trackchange_t *ev, uintptr_t data) {
 static int
 notification_stop (void) {
     deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_SONGCHANGED, DB_CALLBACK (songchanged), 0);
+    return 0;
 }
 
 static int
 notification_start (void) {
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_SONGCHANGED, DB_CALLBACK (songchanged), 0);
-    return 1;
+    return 0;
 }
 
 DB_plugin_t *
