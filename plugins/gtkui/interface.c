@@ -2083,6 +2083,7 @@ create_editcolumndlg (void)
   gtk_table_attach (GTK_TABLE (table9), id, 1, 2, 1, 2,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (GTK_FILL), 0, 0);
+  gtk_combo_box_append_text (GTK_COMBO_BOX (id), "File number");
   gtk_combo_box_append_text (GTK_COMBO_BOX (id), "Playing");
   gtk_combo_box_append_text (GTK_COMBO_BOX (id), "Artist - Album");
   gtk_combo_box_append_text (GTK_COMBO_BOX (id), "Artist");
@@ -2107,7 +2108,7 @@ create_editcolumndlg (void)
   gtk_entry_set_invisible_char (GTK_ENTRY (format), 9679);
   gtk_entry_set_activates_default (GTK_ENTRY (format), TRUE);
 
-  label25 = gtk_label_new ("Format conversions (start with %):\n  [a]rtist, [t]itle, al[b]um, track[n]umber,\n  [l]ength, [y]ear, [g]enre, [c]omment, copy[r]ight\nExample: %a - %t [%l]");
+  label25 = gtk_label_new ("Format conversions (start with %):\n  [a]rtist, [t]itle, al[b]um, track[n]umber,\n  [l]ength, [y]ear, [g]enre, [c]omment,\n  copy[r]ight, [f]ilename\nExample: %a - %t [%l]");
   gtk_widget_show (label25);
   gtk_table_attach (GTK_TABLE (table9), label25, 0, 2, 4, 5,
                     (GtkAttachOptions) (GTK_FILL),

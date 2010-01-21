@@ -131,7 +131,7 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
                 if (curr && dec) {
                     const char np[] = "nowplaying ";
                     memcpy (sendback, np, sizeof (np)-1);
-                    pl_format_title (curr, sendback+sizeof(np)-1, sbsize-sizeof(np)+1, -1, parg);
+                    pl_format_title (curr, -1, sendback+sizeof(np)-1, sbsize-sizeof(np)+1, -1, parg);
                 }
                 else {
                     strcpy (sendback, "nowplaying nothing");
@@ -142,7 +142,7 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
                 playItem_t *curr = streamer_get_playing_track ();
                 DB_fileinfo_t *dec = streamer_get_current_decoder ();
                 if (curr && dec) {
-                    pl_format_title (curr, out, sizeof (out), -1, parg);
+                    pl_format_title (curr, -1, out, sizeof (out), -1, parg);
                 }
                 else {
                     strcpy (out, "nothing");

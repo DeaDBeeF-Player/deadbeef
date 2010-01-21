@@ -15,6 +15,9 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+#ifdef HAVE_CONFIG_H
+#  include "../../config.h"
+#endif
 #include <stdint.h>
 #include <unistd.h>
 #ifdef __linux__
@@ -22,15 +25,15 @@
 #endif
 #include <stdio.h>
 #include <string.h>
+#if HAVE_SYS_SOUNDCARD_H
 #include <sys/soundcard.h>
+#else
+#include <soundcard.h>
+#endif
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <stdlib.h>
 #include "../../deadbeef.h"
-
-//#if OSS_VERSION<0x040000
-//#error oss4 plugin: at least oss v4.0 is required to build this plugin
-//#endif
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
@@ -44,6 +47,8 @@ static int oss_rate = 44100;
 static int state;
 static int fd;
 static uintptr_t mutex;
+
+#define BLOCKSIZE 4096
 
 static void
 oss_thread (void *context);
@@ -67,6 +72,18 @@ oss_init (void) {
         plugin.free ();
         return -1;
     }
+
+#if OSS_VERSION>=0x040000
+/*
+    int cooked = 1;
+    ioctl (fd, SNDCTL_DSP_COOKEDMODE, &cooked);
+    trace ("oss: cooked_mode=%d\n", cooked);
+
+    int policy = 3;
+    ioctl (fd, SNDCTL_DSP_POLICY, &policy);
+    trace ("oss: policy=%d\n", policy);
+*/
+#endif
 
     int fmt = AFMT_S16_NE;
     if (ioctl (fd, SNDCTL_DSP_SETFMT, &fmt) == -1) {
@@ -157,7 +174,9 @@ oss_free (void) {
 static int
 oss_play (void) {
     if (!oss_tid) {
-        oss_init ();
+        if (oss_init () < 0) {
+            return -1;
+        }
     }
     state = OUTPUT_STATE_PLAYING;
     return 0;
@@ -227,8 +246,8 @@ oss_thread (void *context) {
             continue;
         }
         
-        char buf[1024];
-        oss_callback (buf, 1024);
+        char buf[BLOCKSIZE];
+        oss_callback (buf, sizeof (buf));
         deadbeef->mutex_lock (mutex);
         int res = write (fd, buf, sizeof (buf));
         deadbeef->mutex_unlock (mutex);

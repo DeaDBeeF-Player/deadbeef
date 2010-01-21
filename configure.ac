@@ -35,8 +35,8 @@ esac
 
 test "x$prefix" = xNONE && prefix=$ac_default_prefix
 
-INSANE_CFLAGS="-Wcomment -Wchar-subscripts -Wunused-function -Wunused-value -Wuninitialized -Wtype-limits -Wbad-function-cast"
-INSANE_CXXFLAGS="-Wcomment -Wchar-subscripts -Wunused-function -Wunused-value -Wuninitialized -Wtype-limits"
+dnl INSANE_CFLAGS="-Wcomment -Wchar-subscripts -Wunused-function -Wunused-value -Wuninitialized -Wtype-limits -Wbad-function-cast"
+dnl INSANE_CXXFLAGS="-Wcomment -Wchar-subscripts -Wunused-function -Wunused-value -Wuninitialized -Wtype-limits"
 
 AC_SUBST(INSANE_CFLAGS)
 AC_SUBST(INSANE_CXXFLAGS)
@@ -179,19 +179,19 @@ if test ${HAVE_FFMPEG}; then
     AC_SUBST(FFMPEG_DIR)
 fi
 
-dnl *** OSS4 output (partly stolen from audacious)
-have_oss4=no
+dnl *** OSS output (partly stolen from audacious)
+have_oss=no
 
-AC_MSG_CHECKING(for OSS4 include dir)
-OSS4_CFLAGS=""
+AC_MSG_CHECKING(for OSS include dir)
+OSS_CFLAGS=""
 if test -f "/etc/oss.conf" ; then
     for i in `cat /etc/oss.conf`; do
         t=`echo $i | sed -e 's/OSSLIBDIR=//'`
         if test "x$i" != "x$t" ; then
             if test -f "$t/include/sys/soundcard.h" -o -f "$i/include/soundcard.h" ; then
-                OSS4_CFLAGS="-I$t/include"
-                AC_MSG_RESULT([$OSS4_CFLAGS])
-                have_oss4=yes
+                OSS_CFLAGS="-I$t/include/sys"
+                AC_MSG_RESULT([$OSS_CFLAGS])
+                have_oss=yes
             fi
         fi
     done
@@ -199,11 +199,11 @@ else
     AC_MSG_RESULT([not found])
 fi
 
-if test "x$have_oss4" != "xyes"; then
-    AC_MSG_CHECKING(for /usr/include/sys/soundcard.h)
+if test "x$have_oss" != "xyes"; then
+    AC_MSG_CHECKING(for sys/soundcard.h)
     AC_CHECK_HEADERS(sys/soundcard.h)
     if test "x${ac_cv_header_sys_soundcard_h}" = "xyes" ; then
-        have_oss4=yes
+        have_oss=yes
         AC_MSG_RESULT([found])
     else
         AC_MSG_RESULT([not found])
@@ -211,18 +211,18 @@ if test "x$have_oss4" != "xyes"; then
 fi
 
 
-if test "x$have_oss4" = "xyes"; then
-    OSS4_DIR="plugins/oss"
-    AC_SUBST(OSS4_CFLAGS)
-    AC_SUBST(OSS4_DIR)
+if test "x$have_oss" = "xyes"; then
+    OSS_DIR="plugins/oss"
+    AC_SUBST(OSS_CFLAGS)
+    AC_SUBST(OSS_DIR)
 fi
 
-echo
-echo "have_oss4=$have_oss4"
-echo "OSS4_CFLAGS=$OSS4_CFLAGS"
-echo "OSS4_LIBS=$OSS4_LIBS"
-echo "OSS4_DIR=$OSS4_DIR"
-echo
+dnl echo
+dnl echo "have_oss=$have_oss"
+dnl echo "OSS_CFLAGS=$OSS_CFLAGS"
+dnl echo "OSS_LIBS=$OSS_LIBS"
+dnl echo "OSS_DIR=$OSS_DIR"
+dnl echo
 
 
 dnl print summary
@@ -260,7 +260,8 @@ dnl PRINT_PLUGIN_INFO([faad2],[aac/mp4 player],[test $HAVE_FAAD && test $HAVE_MP
 PRINT_PLUGIN_INFO([cdda],[cd audio player],[test $HAVE_CDIO && test $HAVE_CDDB])
 PRINT_PLUGIN_INFO([gtkui],[GTK user interface],[test $HAVE_GTK])
 PRINT_PLUGIN_INFO([ffmpeg],[ffmpeg codecs],[test $HAVE_FFMPEG])
-PRINT_PLUGIN_INFO([oss],[oss4 output plugin],[test "x$have_oss4" = "xyes"])
+PRINT_PLUGIN_INFO([notification],[Current track notification],[true])
+PRINT_PLUGIN_INFO([oss],[oss output plugin],[test "x$have_oss" = "xyes"])
 echo
 
 AC_OUTPUT([
@@ -288,6 +289,7 @@ plugins/vtx/Makefile
 plugins/adplug/Makefile
 plugins/ffmpeg/Makefile
 plugins/sid/Makefile
+plugins/notification/Makefile
 plugins/oss/Makefile
 deadbeef.desktop
 ])

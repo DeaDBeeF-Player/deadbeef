@@ -1216,7 +1216,7 @@ int pattcmp( const unsigned char * a, const unsigned char * b, size_t l )
 	if ( i < l )
 	{
 		na = strtoul( a + i, &p, 10 );
-		if ( p == a + i ) return 1;
+		if ( (const unsigned char *)p == a + i ) return 1;
 	}
 
 	for ( j = 0; j < l; ++j )
@@ -1227,7 +1227,7 @@ int pattcmp( const unsigned char * a, const unsigned char * b, size_t l )
 	if ( j < l )
 	{
 		nb = strtoul( b + j, &p, 10 );
-		if ( p == b + j ) return -1;
+		if ( (const unsigned char *)p == b + j ) return -1;
 	}
 
 	if ( i < j ) return -1;

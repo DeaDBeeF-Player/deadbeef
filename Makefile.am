@@ -7,6 +7,7 @@ SUBDIRS = ${MPGMAD_DIR}\
 		  plugins/nullout\
 		  plugins/sid\
 		  plugins/ffap\
+		  plugins/notification\
 		  ${ALSA_DIR}\
 		  ${LFM_DIR}\
           ${VFS_CURL_DIR}\
@@ -15,7 +16,7 @@ SUBDIRS = ${MPGMAD_DIR}\
           ${FFMPEG_DIR}\
           ${FLAC_DIR}\
           ${SNDFILE_DIR}\
-          ${OSS4_DIR}
+          ${OSS_DIR}
 
 #SUBDIRS = gme/Game_Music_Emu-0.5.2\
 #		  sid/sidplay-libs-2.1.0\

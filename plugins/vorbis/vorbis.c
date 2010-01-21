@@ -434,7 +434,7 @@ vorbis_stop (void) {
     return 0;
 }
 
-static const char * exts[] = { "ogg", NULL };
+static const char * exts[] = { "ogg", "ogx", NULL };
 static const char *filetypes[] = { "OggVorbis", NULL };
 
 // define plugin interface

@@ -53,7 +53,8 @@ extern "C" {
 // DON'T release plugins without DB_PLUGIN_SET_API_VERSION
 
 // api version history:
-// 0.6 -- devel
+// 0.7 -- devel
+// 0.6 -- deadbeef-0.3.3
 // 0.5 -- deadbeef-0.3.2
 // 0.4 -- deadbeef-0.3.0
 // 0.3 -- deadbeef-0.2.3.2
@@ -61,7 +62,7 @@ extern "C" {
 // 0.1 -- deadbeef-0.2.0
 
 #define DB_API_VERSION_MAJOR 0
-#define DB_API_VERSION_MINOR 6
+#define DB_API_VERSION_MINOR 7
 
 #define DB_PLUGIN_SET_API_VERSION\
     .plugin.api_vmajor = DB_API_VERSION_MAJOR,\
@@ -177,6 +178,7 @@ enum {
 
 // preset columns, working using IDs
 enum pl_column_t {
+    DB_COLUMN_FILENUMBER = 0,
     DB_COLUMN_PLAYING = 1,
     DB_COLUMN_ARTIST_ALBUM = 2,
     DB_COLUMN_ARTIST = 3,
@@ -184,7 +186,7 @@ enum pl_column_t {
     DB_COLUMN_TITLE = 5,
     DB_COLUMN_DURATION = 6,
     DB_COLUMN_TRACK = 7,
-    DB_COLUMN_ID_MAX = 7
+    DB_COLUMN_ID_MAX
 };
 
 // message ids for communicating with player
@@ -308,6 +310,7 @@ typedef struct {
     /*
        this function formats line for display in playlist
        @it pointer to playlist item
+       @idx number of that item in playlist (or -1)
        @s output buffer
        @size size of output buffer
        @id one of IDs defined in pl_column_id_t enum, can be -1
@@ -324,7 +327,7 @@ typedef struct {
        %r copyright
        more to come
     */
-    int (*pl_format_title) (DB_playItem_t *it, char *s, int size, int id, const char *fmt);
+    int (*pl_format_title) (DB_playItem_t *it, int idx, char *s, int size, int id, const char *fmt);
     void (*pl_format_item_display_name) (DB_playItem_t *it, char *str, int len);
 //    void (*pl_set_next) (DB_playItem_t *it, DB_playItem_t *next, int iter);
 //    void (*pl_set_prev) (DB_playItem_t *it, DB_playItem_t *prev, int iter);

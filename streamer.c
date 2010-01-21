@@ -308,7 +308,10 @@ streamer_thread (void *ctx) {
             else if (pstate == 1) {
                 last_bitrate = -1;
                 avg_bitrate = -1;
-                p_play ();
+                if (p_play () < 0) {
+                    fprintf (stderr, "streamer: failed to start playback; output plugin doesn't work\n");
+                    streamer_set_nextsong (-2, 0);
+                }
             }
             else if (pstate == 2) {
                 p_pause ();

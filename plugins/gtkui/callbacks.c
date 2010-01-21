@@ -1791,9 +1791,9 @@ on_add_column_activate                 (GtkMenuItem     *menuitem,
     if (response == GTK_RESPONSE_OK) {
         const gchar *title = gtk_entry_get_text (GTK_ENTRY (lookup_widget (dlg, "title")));
         const gchar *format = gtk_entry_get_text (GTK_ENTRY (lookup_widget (dlg, "format")));
-        int id = gtk_combo_box_get_active (GTK_COMBO_BOX (lookup_widget (dlg, "id"))) + 1;
+        int id = gtk_combo_box_get_active (GTK_COMBO_BOX (lookup_widget (dlg, "id")));
         int align = gtk_combo_box_get_active (GTK_COMBO_BOX (lookup_widget (dlg, "align")));
-        if (id > DB_COLUMN_ID_MAX) {
+        if (id >= DB_COLUMN_ID_MAX) {
             id = -1;
         }
         gtkpl_column_insert_before (ps, ps->active_column, gtkpl_column_alloc (title, 100, id, format, align));
@@ -1883,13 +1883,13 @@ on_column_id_changed                   (GtkComboBox     *combobox,
         trace ("failed to get toplevel widget for column id combobox\n");
         return;
     }
-    int act = gtk_combo_box_get_active (combobox) + 1;
+    int act = gtk_combo_box_get_active (combobox);
     GtkWidget *fmt = lookup_widget (toplevel, "format");
     if (!fmt) {
         trace ("failed to get column format widget\n");
         return;
     }
-    gtk_widget_set_sensitive (fmt, act > DB_COLUMN_ID_MAX ? TRUE : FALSE);
+    gtk_widget_set_sensitive (fmt, act >= DB_COLUMN_ID_MAX ? TRUE : FALSE);
 }
 
 

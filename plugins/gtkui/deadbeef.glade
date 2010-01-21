@@ -3218,7 +3218,8 @@ SOCKS5_HOSTNAME</property>
 	  <child>
 	    <widget class="GtkComboBox" id="id">
 	      <property name="visible">True</property>
-	      <property name="items" translatable="yes">Playing
+	      <property name="items" translatable="yes">File number
+Playing
 Artist - Album
 Artist
 Album
@@ -3295,7 +3296,8 @@ Custom</property>
 	      <property name="can_focus">True</property>
 	      <property name="label" translatable="yes">Format conversions (start with %):
   [a]rtist, [t]itle, al[b]um, track[n]umber,
-  [l]ength, [y]ear, [g]enre, [c]omment, copy[r]ight
+  [l]ength, [y]ear, [g]enre, [c]omment,
+  copy[r]ight, [f]ilename
 Example: %a - %t [%l]</property>
 	      <property name="use_underline">False</property>
 	      <property name="use_markup">True</property>
