@@ -396,7 +396,7 @@ gtkpl_draw_pl_row (gtkplaylist_t *ps, int row, DB_playItem_t *it) {
         }
         else {
             char text[1024];
-            deadbeef->pl_format_title (it, text, sizeof (text), c->id, c->format);
+            deadbeef->pl_format_title (it, row, text, sizeof (text), c->id, c->format);
 
             if (c->align_right) {
                 draw_text (x+5, row * rowheight - ps->scrollpos * rowheight + rowheight/2 - draw_get_font_size ()/2 - 2, c->width-10, 1, text);

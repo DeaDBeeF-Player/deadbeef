@@ -3218,7 +3218,8 @@ SOCKS5_HOSTNAME</property>
 	  <child>
 	    <widget class="GtkComboBox" id="id">
 	      <property name="visible">True</property>
-	      <property name="items" translatable="yes">Playing
+	      <property name="items" translatable="yes">File number
+Playing
 Artist - Album
 Artist
 Album

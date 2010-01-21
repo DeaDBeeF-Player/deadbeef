@@ -2083,6 +2083,7 @@ create_editcolumndlg (void)
   gtk_table_attach (GTK_TABLE (table9), id, 1, 2, 1, 2,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (GTK_FILL), 0, 0);
+  gtk_combo_box_append_text (GTK_COMBO_BOX (id), "File number");
   gtk_combo_box_append_text (GTK_COMBO_BOX (id), "Playing");
   gtk_combo_box_append_text (GTK_COMBO_BOX (id), "Artist - Album");
   gtk_combo_box_append_text (GTK_COMBO_BOX (id), "Artist");

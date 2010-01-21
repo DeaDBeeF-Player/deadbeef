@@ -1677,9 +1677,10 @@ pl_format_elapsed (const char *ret, char *elapsed, int size) {
 }
 
 int
-pl_format_title (playItem_t *it, char *s, int size, int id, const char *fmt) {
+pl_format_title (playItem_t *it, int idx, char *s, int size, int id, const char *fmt) {
     char dur[50];
     char elp[50];
+    char fno[50];
     const char *artist = NULL;
     const char *album = NULL;
     const char *track = NULL;
@@ -1694,6 +1695,13 @@ pl_format_title (playItem_t *it, char *s, int size, int id, const char *fmt) {
     if (id != -1) {
         const char *text = NULL;
         switch (id) {
+        case DB_COLUMN_FILENUMBER:
+            if (idx == -1) {
+                idx = pl_get_idx_of (it);
+            }
+            snprintf (fno, sizeof (fno), "%d", idx+1);
+            text = fno;
+            break;
         case DB_COLUMN_PLAYING:
             return pl_format_item_queue (it, s, size);
         case DB_COLUMN_ARTIST_ALBUM:
@@ -1815,6 +1823,9 @@ pl_format_title (playItem_t *it, char *s, int size, int id, const char *fmt) {
 
 void
 pl_sort (int iter, int id, const char *format, int ascending) {
+    if (id == DB_COLUMN_FILENUMBER) {
+        return;
+    }
     int sorted = 0;
     do {
         sorted = 1;
@@ -1844,8 +1855,8 @@ pl_sort (int iter, int id, const char *format, int ascending) {
                 }
             }
             else {
-                pl_format_title (it, title1, sizeof (title1), id, format);
-                pl_format_title (next, title2, sizeof (title2), id, format);
+                pl_format_title (it, -1, title1, sizeof (title1), id, format);
+                pl_format_title (next, -1, title2, sizeof (title2), id, format);
             }
             int cmp = ascending ? strcmp (title1, title2) < 0 : strcmp (title1, title2) > 0;
             if (cmp) {

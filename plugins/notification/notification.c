@@ -16,7 +16,7 @@ static void
 show_notification (DB_playItem_t *track)
 {
     char cmd [1024];
-    deadbeef->pl_format_title (track, cmd, sizeof (cmd), -1, deadbeef->conf_get_str ("notification.command", DEFAULT_COMMAND));
+    deadbeef->pl_format_title (track, -1, cmd, sizeof (cmd), -1, deadbeef->conf_get_str ("notification.command", DEFAULT_COMMAND));
     //system (cmd);
 }
 
