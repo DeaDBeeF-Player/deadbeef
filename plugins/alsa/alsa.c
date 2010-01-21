@@ -473,6 +473,14 @@ palsa_thread (void *context) {
         /* deliver the data */
         // FIXME: under some conditions, frames_to_deliver may become huge
         // like 20M. this case is not handled here.
+        if (frames_to_deliver < 1024) {
+            trace ("alsa: frames_to_deliver clipped from %d to 1024\n", frames_to_deliver);
+            frames_to_deliver = 1024;
+        }
+        else if (frames_to_deliver > 2048) {
+            trace ("alsa: frames_to_deliver clipped from %d to 2048\n", frames_to_deliver);
+            frames_to_deliver = 2048;
+        }
         char buf[frames_to_deliver*4];
         palsa_callback (buf, frames_to_deliver*4);
         if ((err = snd_pcm_writei (audio, buf, frames_to_deliver)) < 0) {
