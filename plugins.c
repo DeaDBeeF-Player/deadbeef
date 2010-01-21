@@ -21,7 +21,12 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <alloca.h>
 #include <string.h>
+#ifndef __linux__
+#define _POSIX_C_SOURCE
+#endif
+#include <limits.h>
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
 #endif
@@ -37,6 +42,10 @@
 #include "conf.h"
 #include "junklib.h"
 #include "vfs.h"
+
+#ifndef PATH_MAX
+#define PATH_MAX    1024    /* max # of characters in a path name */
+#endif
 
 //#define DISABLE_VERSIONCHECK 1
 
