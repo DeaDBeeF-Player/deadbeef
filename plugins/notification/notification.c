@@ -17,13 +17,15 @@ show_notification (DB_playItem_t *track)
 {
     char cmd [1024];
     deadbeef->pl_format_title (track, cmd, sizeof (cmd), -1, deadbeef->conf_get_str ("notification.command", DEFAULT_COMMAND));
-    system (cmd);
+    //system (cmd);
 }
 
 static int
 songchanged (DB_event_trackchange_t *ev, uintptr_t data) {
     DB_playItem_t *track = deadbeef->pl_get_for_idx (ev->to);
-    show_notification (track);
+    if (track) {
+        show_notification (track);
+    }
     return 0;
 }
 
