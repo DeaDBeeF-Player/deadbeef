@@ -47,7 +47,8 @@ static int oss_rate = 44100;
 static int state;
 static int fd;
 static uintptr_t mutex;
-static int blksize;
+
+#define BLOCKSIZE 4096
 
 static void
 oss_thread (void *context);
@@ -120,14 +121,6 @@ oss_init (void) {
 
     trace ("oss: samplerate: %d\n", oss_rate);
 
-//    audio_buf_info bi;
-//    ioctl (fd, SNDCTL_DSP_GETOSPACE, &bi);
-//    trace ("oss: bi.bytes=%d, bi.fragsize=%d, bi.fragstotal=%d\n", bi.bytes, bi.fragsize, bi.fragstotal);
-//    blksize = bi.fragsize;
-
-    ioctl (fd, SNDCTL_DSP_GETBLKSIZE, &blksize);
-    trace ("oss: blksize: %d\n", blksize);
-
     mutex = deadbeef->mutex_create ();
 
     oss_tid = deadbeef->thread_start (oss_thread, NULL);
@@ -181,7 +174,9 @@ oss_free (void) {
 static int
 oss_play (void) {
     if (!oss_tid) {
-        oss_init ();
+        if (oss_init () < 0) {
+            return -1;
+        }
     }
     state = OUTPUT_STATE_PLAYING;
     return 0;
@@ -251,7 +246,7 @@ oss_thread (void *context) {
             continue;
         }
         
-        char buf[blksize];
+        char buf[BLOCKSIZE];
         oss_callback (buf, sizeof (buf));
         deadbeef->mutex_lock (mutex);
         int res = write (fd, buf, sizeof (buf));
