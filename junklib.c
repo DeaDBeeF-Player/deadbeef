@@ -298,7 +298,11 @@ convstr_id3v2_2to3 (const unsigned char* str, int sz) {
     else {
         size_t inbytesleft = sz;
         size_t outbytesleft = 2047;
+#ifdef __linux__
         char *pin = (char*)str;
+#else
+        const char *pin = str;
+#endif
         char *pout = out;
         memset (out, 0, sizeof (out));
         /*size_t res = */iconv (cd, &pin, &inbytesleft, &pout, &outbytesleft);
@@ -355,7 +359,11 @@ convstr_id3v2_4 (const unsigned char* str, int sz) {
     else {
         size_t inbytesleft = sz;
         size_t outbytesleft = 2047;
+#ifdef __linux__
         char *pin = (char*)str;
+#else
+        const char *pin = str;
+#endif
         char *pout = out;
         memset (out, 0, sizeof (out));
         /*size_t res = */iconv (cd, &pin, &inbytesleft, &pout, &outbytesleft);
@@ -385,7 +393,11 @@ convstr_id3v1 (const char* str, int sz) {
     cd = iconv_open ("utf8", "utf8");
     size_t inbytesleft = sz;
     size_t outbytesleft = 2047;
-    char *pin = (char*)str;
+#ifdef __linux__
+        char *pin = (char*)str;
+#else
+        const char *pin = str;
+#endif
     char *pout = out;
     memset (out, 0, sizeof (out));
     size_t res = iconv (cd, &pin, &inbytesleft, &pout, &outbytesleft);
@@ -408,7 +420,11 @@ convstr_id3v1 (const char* str, int sz) {
     else {
         size_t inbytesleft = sz;
         size_t outbytesleft = 2047;
+#ifdef __linux__
         char *pin = (char*)str;
+#else
+        const char *pin = str;
+#endif
         char *pout = out;
         memset (out, 0, sizeof (out));
         /*size_t res = */iconv (cd, &pin, &inbytesleft, &pout, &outbytesleft);
@@ -1287,7 +1303,11 @@ junk_recode (const char *in, int inlen, char *out, int outlen, const char *cs) {
     else {
         size_t inbytesleft = inlen;
         size_t outbytesleft = outlen;
+#ifdef __linux__
         char *pin = (char*)in;
+#else
+        const char *pin = in;
+#endif
         char *pout = out;
         memset (out, 0, outlen);
         size_t res = iconv (cd, &pin, &inbytesleft, &pout, &outbytesleft);

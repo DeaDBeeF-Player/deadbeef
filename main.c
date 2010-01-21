@@ -20,7 +20,14 @@
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
+#ifdef __linux__
+#include <sys/prctl.h>
+#endif
+#ifndef __linux__
+#define _POSIX_C_SOURCE
+#endif
 #include <limits.h>
+#include <errno.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/types.h>
@@ -28,7 +35,6 @@
 #include <sys/un.h>
 #include <sys/fcntl.h>
 #include <sys/errno.h>
-#include <sys/prctl.h>
 #include <signal.h>
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
@@ -44,6 +50,10 @@
 #include "volume.h"
 #include "session.h"
 #include "plugins.h"
+
+#ifndef PATH_MAX
+#define PATH_MAX    1024    /* max # of characters in a path name */
+#endif
 
 #ifndef PREFIX
 #error PREFIX must be defined

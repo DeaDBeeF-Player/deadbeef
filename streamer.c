@@ -21,7 +21,9 @@
 #include <assert.h>
 #include <unistd.h>
 #include <samplerate.h>
+#ifdef __linux__
 #include <sys/prctl.h>
+#endif
 #include <sys/time.h>
 #include "threading.h"
 #include "codec.h"
@@ -257,7 +259,9 @@ streamer_read_async (char *bytes, int size);
 
 void
 streamer_thread (void *ctx) {
+#ifdef __linux__
     prctl (PR_SET_NAME, "deadbeef-stream", 0, 0, 0, 0);
+#endif
     codecleft = 0;
 
     while (!streaming_terminate) {
