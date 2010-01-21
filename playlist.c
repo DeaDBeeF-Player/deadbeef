@@ -1691,6 +1691,7 @@ pl_format_title (playItem_t *it, int idx, char *s, int size, int id, const char 
     const char *genre = NULL;
     const char *comment = NULL;
     const char *copyright = NULL;
+    const char *filename = NULL;
 
     if (id != -1) {
         const char *text = NULL;
@@ -1800,6 +1801,16 @@ pl_format_title (playItem_t *it, int idx, char *s, int size, int id, const char 
                     *s++ = *value++;
                     n--;
                 }
+            }
+            else if (*fmt == 'f') {
+                filename = it->fname + strlen (it->fname) - 1;
+                while (filename > it->fname && (*filename) != '/') {
+                    filename--;
+                }
+                if (*filename == '/') {
+                    filename++;
+                }
+                meta = filename;
             }
             else {
                 *s++ = *fmt;
