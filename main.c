@@ -394,7 +394,9 @@ sigterm_handler (int sig) {
 int
 main (int argc, char *argv[]) {
     srand (time (NULL));
+#ifdef __linux__
     prctl (PR_SET_NAME, "deadbeef-main", 0, 0, 0, 0);
+#endif
     char *homedir = getenv ("HOME");
     if (!homedir) {
         fprintf (stderr, "unable to find home directory. stopping.\n");

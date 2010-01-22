@@ -21,7 +21,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <alloca.h>
+//#include <alloca.h>
 #include <string.h>
 #ifndef __linux__
 #define _POSIX_C_SOURCE

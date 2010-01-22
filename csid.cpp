@@ -450,7 +450,11 @@ convstr (const char* str) {
     else {
         size_t inbytesleft = sz;
         size_t outbytesleft = 2047;
+#ifdef __linux__
         char *pin = (char*)str;
+#else
+        const char *pin = str;
+#endif
         char *pout = out;
         memset (out, 0, sizeof (out));
         size_t res = iconv (cd, &pin, &inbytesleft, &pout, &outbytesleft);

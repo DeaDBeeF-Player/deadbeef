@@ -33,7 +33,7 @@
 #include <string.h>
 #include <limits.h>
 #include <stdlib.h>
-#include <alloca.h>
+//#include <alloca.h>
 #include <assert.h>
 #include "../../deadbeef.h"
 

@@ -23,6 +23,13 @@
 #include "playlist.h"
 #include "utf8.h"
 #include "plugins.h"
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+#if HAVE_LIBICONV
+#define iconv_open libiconv_open
+#define iconv_close libiconv_close
+#endif
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)

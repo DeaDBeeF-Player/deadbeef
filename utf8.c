@@ -23,7 +23,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
-#include <alloca.h>
+//#include <alloca.h>
 #include "ctype.h"
 #include "utf8.h"
 

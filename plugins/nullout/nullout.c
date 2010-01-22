@@ -17,7 +17,9 @@
 */
 #include <stdint.h>
 #include <unistd.h>
+#ifdef __linux__
 #include <sys/prctl.h>
+#endif
 #include <stdio.h>
 #include <string.h>
 #include "../../deadbeef.h"
@@ -164,7 +166,9 @@ pnull_get_endianness (void) {
 
 static void
 pnull_thread (void *context) {
+#ifdef __linux__
     prctl (PR_SET_NAME, "deadbeef-null", 0, 0, 0, 0);
+#endif
     for (;;) {
         if (null_terminate) {
             break;

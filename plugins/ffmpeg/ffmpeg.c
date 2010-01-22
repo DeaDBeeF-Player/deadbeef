@@ -20,7 +20,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <alloca.h>
+//#include <alloca.h>
 #include <errno.h>
 
 #include "../../deadbeef.h"
@@ -39,7 +39,10 @@
 #include <ffmpeg/avutil.h>
 #include <ffmpeg/avstring.h>
 #define AVERROR_EOF AVERROR(EPIPE)
+
+#if LIBAVFORMAT_VERSION_MAJOR < 53
 #define av_register_protocol register_protocol
+#endif
 
 #endif
 
