@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <limits.h>
+#include <stdint.h>
 
 #undef BLARGG_COMMON_H
 // allow blargg_config.h to #include blargg_common.h
