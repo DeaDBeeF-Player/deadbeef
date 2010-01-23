@@ -20,6 +20,7 @@
 #include <string.h>
 #include <wavpack/wavpack.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "../../deadbeef.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
@@ -32,13 +33,12 @@ static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
 
 typedef struct {
+    DB_fileinfo_t info;
     DB_FILE *file;
     WavpackContext *ctx;
     int startsample;
     int endsample;
 } wvctx_t;
-
-static wvctx_t wvctx;
 
 int32_t wv_read_bytes(void *id, void *data, int32_t bcount) {
     trace ("wv_read_bytes\n");
@@ -91,64 +91,72 @@ static WavpackStreamReader wsr = {
     .write_bytes = wv_write_bytes
 };
 
-static int
+static DB_fileinfo_t *
 wv_init (DB_playItem_t *it) {
-    memset (&wvctx, 0, sizeof (wvctx));
+    DB_fileinfo_t *_info = malloc (sizeof (wvctx_t));
+    wvctx_t *info = (wvctx_t *)_info;
+    memset (info, 0, sizeof (wvctx_t));
 
-    wvctx.file = deadbeef->fopen (it->fname);
-    if (!wvctx.file) {
-        return -1;
+    info->file = deadbeef->fopen (it->fname);
+    if (!info->file) {
+        plugin.free (_info);
+        return NULL;
     }
-    wvctx.ctx = WavpackOpenFileInputEx (&wsr, wvctx.file, NULL, NULL, OPEN_2CH_MAX/*|OPEN_WVC*/, 0);
-    if (!wvctx.ctx) {
-        plugin.free ();
-        return -1;
+    info->ctx = WavpackOpenFileInputEx (&wsr, info->file, NULL, NULL, OPEN_2CH_MAX/*|OPEN_WVC*/, 0);
+    if (!info->ctx) {
+        plugin.free (_info);
+        return NULL;
     }
-    plugin.info.bps = WavpackGetBitsPerSample (wvctx.ctx);
-    plugin.info.channels = WavpackGetNumChannels (wvctx.ctx);
-    plugin.info.samplerate = WavpackGetSampleRate (wvctx.ctx);
-    plugin.info.readpos = 0;
+    _info->plugin = &plugin;
+    _info->bps = WavpackGetBitsPerSample (info->ctx);
+    _info->channels = WavpackGetNumChannels (info->ctx);
+    _info->samplerate = WavpackGetSampleRate (info->ctx);
+    _info->readpos = 0;
     if (it->endsample > 0) {
-        wvctx.startsample = it->startsample;
-        wvctx.endsample = it->endsample;
-        if (plugin.seek_sample (0) < 0) {
-            plugin.free ();
-            return -1;
+        info->startsample = it->startsample;
+        info->endsample = it->endsample;
+        if (plugin.seek_sample (_info, 0) < 0) {
+            plugin.free (_info);
+            return NULL;
         }
     }
     else {
-        wvctx.startsample = 0;
-        wvctx.endsample = WavpackGetNumSamples (wvctx.ctx)-1;
+        info->startsample = 0;
+        info->endsample = WavpackGetNumSamples (info->ctx)-1;
     }
-    return 0;
+    return _info;
 }
 
 static void
-wv_free (void) {
-    if (wvctx.file) {
-        deadbeef->fclose (wvctx.file);
-        wvctx.file = NULL;
+wv_free (DB_fileinfo_t *_info) {
+    if (_info) {
+        wvctx_t *info = (wvctx_t *)_info;
+        if (info->file) {
+            deadbeef->fclose (info->file);
+            info->file = NULL;
+        }
+        if (info->ctx) {
+            WavpackCloseFile (info->ctx);
+            info->ctx = NULL;
+        }
+        free (_info);
     }
-    if (wvctx.ctx) {
-        WavpackCloseFile (wvctx.ctx);
-        wvctx.ctx = NULL;
-    }
-    memset (&wvctx, 0, sizeof (wvctx));
 }
 
 static int
-wv_read_int16 (char *bytes, int size) {
-    int currentsample = WavpackGetSampleIndex (wvctx.ctx);
-    if (size / (2 * plugin.info.channels) + currentsample > wvctx.endsample) {
-        size = (wvctx.endsample - currentsample + 1) * 2 * plugin.info.channels;
-        trace ("wv: size truncated to %d bytes, cursample=%d, endsample=%d\n", size, currentsample, wvctx.endsample);
+wv_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
+    wvctx_t *info = (wvctx_t *)_info;
+    int currentsample = WavpackGetSampleIndex (info->ctx);
+    if (size / (2 * _info->channels) + currentsample > info->endsample) {
+        size = (info->endsample - currentsample + 1) * 2 * _info->channels;
+        trace ("wv: size truncated to %d bytes, cursample=%d, endsample=%d\n", size, currentsample, info->endsample);
         if (size <= 0) {
             return 0;
         }
     }
     int32_t buffer[size/2];
-    int nchannels = WavpackGetNumChannels (wvctx.ctx);
-    int n = WavpackUnpackSamples (wvctx.ctx, buffer, size/(2*nchannels));
+    int nchannels = WavpackGetNumChannels (info->ctx);
+    int n = WavpackUnpackSamples (info->ctx, buffer, size/(2*nchannels));
     size = n * 2 * nchannels;
     // convert to int16
     int32_t *p = buffer;
@@ -159,52 +167,55 @@ wv_read_int16 (char *bytes, int size) {
         p++;
         n--;
     }
-    plugin.info.readpos = (float)(WavpackGetSampleIndex (wvctx.ctx)-wvctx.startsample)/WavpackGetSampleRate (wvctx.ctx);
+    _info->readpos = (float)(WavpackGetSampleIndex (info->ctx)-info->startsample)/WavpackGetSampleRate (info->ctx);
 
-    deadbeef->streamer_set_bitrate (WavpackGetInstantBitrate (wvctx.ctx) / 1000);
+    deadbeef->streamer_set_bitrate (WavpackGetInstantBitrate (info->ctx) / 1000);
 
     return size;
 }
 
 static int
-wv_read_float32 (char *bytes, int size) {
-    int currentsample = WavpackGetSampleIndex (wvctx.ctx);
-    if (size / (4 * plugin.info.channels) + currentsample > wvctx.endsample) {
-        size = (wvctx.endsample - currentsample + 1) * 4 * plugin.info.channels;
-        trace ("wv: size truncated to %d bytes, cursample=%d, endsample=%d\n", size, currentsample, wvctx.endsample);
+wv_read_float32 (DB_fileinfo_t *_info, char *bytes, int size) {
+    wvctx_t *info = (wvctx_t *)_info;
+    int currentsample = WavpackGetSampleIndex (info->ctx);
+    if (size / (4 * _info->channels) + currentsample > info->endsample) {
+        size = (info->endsample - currentsample + 1) * 4 * _info->channels;
+        trace ("wv: size truncated to %d bytes, cursample=%d, endsample=%d\n", size, currentsample, info->endsample);
         if (size <= 0) {
             return 0;
         }
     }
     int32_t buffer[size/4];
-    int nchannels = WavpackGetNumChannels (wvctx.ctx);
-    int n = WavpackUnpackSamples (wvctx.ctx, buffer, size/(4*nchannels));
+    int nchannels = WavpackGetNumChannels (info->ctx);
+    int n = WavpackUnpackSamples (info->ctx, buffer, size/(4*nchannels));
     size = n * 4 * nchannels;
     // convert to int16
     int32_t *p = buffer;
     n *= nchannels;
-    float mul = 1.f/ ((1 << (plugin.info.bps-1))-1);
+    float mul = 1.f/ ((1 << (_info->bps-1))-1);
     while (n > 0) {
         *((float *)bytes) = (*p) * mul;
         bytes += sizeof (float);
         p++;
         n--;
     }
-    plugin.info.readpos = (float)(WavpackGetSampleIndex (wvctx.ctx)-wvctx.startsample)/WavpackGetSampleRate (wvctx.ctx);
-    deadbeef->streamer_set_bitrate (WavpackGetInstantBitrate (wvctx.ctx) / 1000);
+    _info->readpos = (float)(WavpackGetSampleIndex (info->ctx)-info->startsample)/WavpackGetSampleRate (info->ctx);
+    deadbeef->streamer_set_bitrate (WavpackGetInstantBitrate (info->ctx) / 1000);
     return size;
 }
 
 static int
-wv_seek_sample (int sample) {
-    WavpackSeekSample (wvctx.ctx, sample + wvctx.startsample);
-    plugin.info.readpos = (float)(WavpackGetSampleIndex (wvctx.ctx) - wvctx.startsample) / WavpackGetSampleRate (wvctx.ctx);
+wv_seek_sample (DB_fileinfo_t *_info, int sample) {
+    wvctx_t *info = (wvctx_t *)_info;
+    WavpackSeekSample (info->ctx, sample + info->startsample);
+    _info->readpos = (float)(WavpackGetSampleIndex (info->ctx) - info->startsample) / WavpackGetSampleRate (info->ctx);
     return 0;
 }
 
 static int
-wv_seek (float sec) {
-    return wv_seek_sample (sec * WavpackGetSampleRate (wvctx.ctx));
+wv_seek (DB_fileinfo_t *_info, float sec) {
+    wvctx_t *info = (wvctx_t *)_info;
+    return wv_seek_sample (_info, sec * WavpackGetSampleRate (info->ctx));
 }
 
 static DB_playItem_t *
@@ -226,7 +237,7 @@ wv_insert (DB_playItem_t *after, const char *fname) {
     float duration = (float)totalsamples / samplerate;
 
     DB_playItem_t *it = deadbeef->pl_item_alloc ();
-    it->decoder_id = deadbeef->plug_get_decoder_id (plugin.id);
+    it->decoder_id = deadbeef->plug_get_decoder_id (plugin.plugin.id);
     it->fname = strdup (fname);
     it->filetype = "wv";
     deadbeef->pl_set_item_duration (it, duration);
@@ -273,6 +284,7 @@ static DB_decoder_t plugin = {
     .plugin.version_major = 0,
     .plugin.version_minor = 1,
     .plugin.type = DB_PLUGIN_DECODER,
+    .plugin.id = "wv",
     .plugin.name = "WavPack decoder",
     .plugin.descr = ".wv player using libwavpack",
     .plugin.author = "Alexey Yakovenko",
@@ -286,7 +298,6 @@ static DB_decoder_t plugin = {
     .seek_sample = wv_seek_sample,
     .insert = wv_insert,
     .exts = exts,
-    .id = "wv",
     .filetypes = filetypes
 };
 
