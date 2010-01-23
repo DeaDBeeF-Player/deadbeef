@@ -33,22 +33,26 @@ static DB_functions_t *deadbeef;
 static const char * exts[] = { "vtx", NULL };
 static const char *filetypes[] = { "VTX", NULL };
 
-static ayemu_vtx_t *decoder;
-static ayemu_ay_t ay;
-
 #define AY_FRAME_SIZE 14
 
-static char regs[AY_FRAME_SIZE];
-static int vtx_pos;
-static int left;
-static int rate;
-static int currentsample;
-static int16_t soundbuffer[];
+typedef struct {
+    DB_fileinfo_t info;
+    ayemu_vtx_t *decoder;
+    ayemu_ay_t ay;
+    char regs[AY_FRAME_SIZE];
+    int vtx_pos;
+    int left;
+    int rate;
+    int currentsample;
+} vtx_info_t;
 
-static int
+static DB_fileinfo_t *
 vtx_init (DB_playItem_t *it) {
     // prepare to decode the track
     // return -1 on failure
+    DB_fileinfo_t *_info = malloc (sizeof (vtx_info_t));
+    vtx_info_t *info = (vtx_info_t *)_info;
+    memset (info, 0, sizeof (vtx_info_t));
     
     size_t sz = 0;
     char *buf = NULL;
@@ -56,64 +60,73 @@ vtx_init (DB_playItem_t *it) {
     DB_FILE *fp = deadbeef->fopen (it->fname);
     if (!fp) {
         trace ("vtx: failed to open file %s\n", it->fname);
-        return -1;
+        plugin.free (_info);
+        return NULL;
     }
 
     sz = deadbeef->fgetlength (fp);
     if (sz <= 0) {
         trace ("vtx: bad file size\n");
-        return -1;
+        plugin.free (_info);
+        return NULL;
     }
 
     buf = malloc (sz);
     if (!buf) {
         trace ("vtx: out of memory\n");
-        return -1;
+        plugin.free (_info);
+        return NULL;
     }
     if (deadbeef->fread (buf, 1, sz, fp) != sz) {
         trace ("vtx: read failed\n");
         free (buf);
-        return -1;
+        plugin.free (_info);
+        return NULL;
     }
 
-    decoder = ayemu_vtx_load (buf, sz);
-    if (!decoder) {
+    info->decoder = ayemu_vtx_load (buf, sz);
+    if (!info->decoder) {
         trace ("vtx: ayemu_vtx_load failed\n");
         free (buf);
-        return -1;
+        plugin.free (_info);
+        return NULL;
     }
-    trace ("vtx: data=%p, size=%d\n", decoder->regdata, decoder->regdata_size);
+    trace ("vtx: data=%p, size=%d\n", info->decoder->regdata, info->decoder->regdata_size);
 
     free (buf);
 
-    ayemu_init (&ay);
-    ayemu_set_chip_type (&ay, decoder->chiptype, NULL);
-    ayemu_set_chip_freq(&ay, decoder->chipFreq);
-    ayemu_set_stereo (&ay, decoder->stereo, NULL);
+    ayemu_init (&info->ay);
+    ayemu_set_chip_type (&info->ay, info->decoder->chiptype, NULL);
+    ayemu_set_chip_freq (&info->ay, info->decoder->chipFreq);
+    ayemu_set_stereo (&info->ay, info->decoder->stereo, NULL);
 
-    int samplerate = deadbeef->get_output ()->samplerate ();
+    int samplerate = deadbeef->conf_get_int ("synth.samplerate", 48000);
 
-    ayemu_set_sound_format (&ay, samplerate, deadbeef->get_output ()->channels (), deadbeef->get_output ()->bitspersample ());
+    ayemu_set_sound_format (&info->ay, samplerate, deadbeef->get_output ()->channels (), deadbeef->get_output ()->bitspersample ());
 
-    left = 0;
-    rate = deadbeef->get_output ()->channels () * deadbeef->get_output ()->bitspersample () / 8;
-    vtx_pos = 0;
-    memset (regs, 0, sizeof (regs));
-    plugin.info.bps = deadbeef->get_output ()->bitspersample ();
-    plugin.info.channels = deadbeef->get_output ()->channels ();
-    plugin.info.samplerate = samplerate;
-    plugin.info.readpos = 0;
-    return 0;
+    info->left = 0;
+    info->rate = deadbeef->get_output ()->channels () * deadbeef->get_output ()->bitspersample () / 8;
+    info->vtx_pos = 0;
+    _info->plugin = &plugin;
+    _info->bps = deadbeef->get_output ()->bitspersample ();
+    _info->channels = deadbeef->get_output ()->channels ();
+    _info->samplerate = samplerate;
+    _info->readpos = 0;
+    return _info;
 }
 
 static void
-vtx_free (void) {
+vtx_free (DB_fileinfo_t *_info) {
     // free everything allocated in _init
-    if (decoder) {
-        ayemu_vtx_free (decoder);
-        decoder = NULL;
+    vtx_info_t *info = (vtx_info_t *)_info;
+    if (_info) {
+        if (info->decoder) {
+            ayemu_vtx_free (info->decoder);
+            info->decoder = NULL;
+        }
+        ayemu_reset (&info->ay);
+        free (_info);
     }
-    ayemu_reset (&ay);
 }
 
 /** Get next 14-bytes frame of AY register data.
@@ -121,93 +134,93 @@ vtx_free (void) {
  * Return value: 1 on success, 0 on eof
  */
 static int
-ayemu_vtx_get_next_frame (ayemu_vtx_t *vtx, char *regs)
+ayemu_vtx_get_next_frame (vtx_info_t *info)
 {
-    int numframes = vtx->regdata_size / AY_FRAME_SIZE;
-    if (vtx_pos++ >= numframes) {
+    int numframes = info->decoder->regdata_size / AY_FRAME_SIZE;
+    if (info->vtx_pos++ >= numframes) {
         return 0;
     }
-    else {
-        int n;
-        char *p = vtx->regdata + vtx_pos;
-        for(n = 0 ; n < AY_FRAME_SIZE ; n++, p += numframes) {
-            regs[n] = *p;
-        }
-        return 1;
+    int n;
+    char *p = info->decoder->regdata + info->vtx_pos;
+    for(n = 0 ; n < AY_FRAME_SIZE ; n++, p += numframes) {
+        info->regs[n] = *p;
     }
+    return 1;
 }
 
 static int
-vtx_read_int16 (char *bytes, int size) {
+vtx_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
     // try decode `size' bytes
     // return number of decoded bytes
     // return 0 on EOF
+    vtx_info_t *info = (vtx_info_t *)_info;
     int initsize = size;
     int donow = 0;
 
     while (size > 0) {
-        if (left > 0) {
-            donow = (size > left) ? left : size;
-            left -= donow;
-            bytes = ayemu_gen_sound (&ay, (char *)bytes, donow);
+        if (info->left > 0) {
+            donow = (size > info->left) ? info->left : size;
+            info->left -= donow;
+            bytes = ayemu_gen_sound (&info->ay, (char *)bytes, donow);
             size -= donow;
         }
         else {
-            if ((ayemu_vtx_get_next_frame (decoder, regs) == 0)) {
+            if ((ayemu_vtx_get_next_frame (info) == 0)) {
                 break; // eof
             }
             else {
                 // number of samples it current frame
-                left = plugin.info.samplerate / decoder->playerFreq;
+                info->left = _info->samplerate / info->decoder->playerFreq;
                 // mul by rate to get number of bytes;
-                left *= rate;
-                ayemu_set_regs (&ay, regs);
+                info->left *= info->rate;
+                ayemu_set_regs (&info->ay, info->regs);
                 donow = 0;
             }
         }
     }
-    currentsample += (initsize - size) / 4;
-    plugin.info.readpos = (float)currentsample / plugin.info.samplerate;
+    info->currentsample += (initsize - size) / 4;
+    _info->readpos = (float)info->currentsample / _info->samplerate;
     return initsize - size;
 }
 
 static int
-vtx_seek_sample (int sample) {
+vtx_seek_sample (DB_fileinfo_t *_info, int sample) {
     // seek to specified sample (frame)
     // return 0 on success
     // return -1 on failure
+    vtx_info_t *info = (vtx_info_t *)_info;
 
     // get frame
-    int num_frames = decoder->regdata_size / AY_FRAME_SIZE;
-    int samples_per_frame = plugin.info.samplerate / decoder->playerFreq;
+    int num_frames = info->decoder->regdata_size / AY_FRAME_SIZE;
+    int samples_per_frame = _info->samplerate / info->decoder->playerFreq;
 
     // start of frame
-    vtx_pos = sample / samples_per_frame;
-    if (vtx_pos >= num_frames) {
+    info->vtx_pos = sample / samples_per_frame;
+    if (info->vtx_pos >= num_frames) {
         return -1; // eof
     }
     // copy register data
     int n;
-    char *p = decoder->regdata + vtx_pos;
+    char *p = info->decoder->regdata + info->vtx_pos;
     for(n = 0 ; n < AY_FRAME_SIZE ; n++, p += num_frames) {
-        regs[n] = *p;
+        info->regs[n] = *p;
     }
     // set number of bytes left in frame
-    left = plugin.info.samplerate / decoder->playerFreq - (sample % samples_per_frame);
+    info->left = _info->samplerate / info->decoder->playerFreq - (sample % samples_per_frame);
     // mul by rate to get number of bytes
-    left *= rate;
-    currentsample = sample;
-    plugin.info.readpos = (float)currentsample / plugin.info.samplerate;
+    info->left *= info->rate;
+    info->currentsample = sample;
+    _info->readpos = (float)info->currentsample / _info->samplerate;
 
     return 0;
 }
 
 static int
-vtx_seek (float time) {
+vtx_seek (DB_fileinfo_t *_info, float time) {
     // seek to specified time in seconds
     // return 0 on success
     // return -1 on failure
-    return vtx_seek_sample (time * plugin.info.samplerate);
+    return vtx_seek_sample (_info, time * _info->samplerate);
 }
 
 static DB_playItem_t *
@@ -242,7 +255,7 @@ vtx_insert (DB_playItem_t *after, const char *fname) {
 
     DB_playItem_t *it = deadbeef->pl_item_alloc ();
 
-    it->decoder_id = deadbeef->plug_get_decoder_id (plugin.id);
+    it->decoder_id = deadbeef->plug_get_decoder_id (plugin.plugin.id);
     it->fname = strdup (fname);
     it->filetype = filetypes[0];
 
@@ -282,6 +295,7 @@ static DB_decoder_t plugin = {
     .plugin.version_major = 0,
     .plugin.version_minor = 1,
     .plugin.type = DB_PLUGIN_DECODER,
+    .plugin.id = "vtx",
     .plugin.name = "VTX decoder",
     .plugin.descr = "AY8910/12 chip emulator and vtx file player",
     .plugin.author = "Alexey Yakovenko",
@@ -297,7 +311,6 @@ static DB_decoder_t plugin = {
     .seek_sample = vtx_seek_sample,
     .insert = vtx_insert,
     .exts = exts,
-    .id = "vtx",
     .filetypes = filetypes
 };
 

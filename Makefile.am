@@ -17,6 +17,7 @@ SUBDIRS = ${MPGMAD_DIR}\
           ${FLAC_DIR}\
           ${SNDFILE_DIR}\
           ${WAVPACK_DIR}\
+		  plugins/vtx\
           ${OSS_DIR}
 
 #SUBDIRS = gme/Game_Music_Emu-0.5.2\
