@@ -19,6 +19,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include "../../deadbeef.h"
 #include "adplug.h"
 #include "emuopl.h"
@@ -40,71 +41,83 @@ const char *adplug_exts[] = { "A2M", "ADL", "AMD", "BAM", "CFF", "CMF", "D00", "
 
 const char *adplug_filetypes[] = { "A2M", "ADL", "AMD", "BAM", "CFF", "CMF", "D00", "DFM", "DMO", "DRO", "DTM", "HSC", "HSP", "IMF", "KSM", "LAA", "LDS", "M", "MAD", "MID", "MKJ", "MSC", "MTK", "RAD", "RAW", "RIX", "ROL", "S3M", "SA2", "SAT", "SCI", "SNG", "SNG", "SNG", "XAD", "XMS", "XSM", "JBM", NULL };
 
-static CEmuopl *opl;
-static CPlayer *decoder;
-static int totalsamples;
-static int currentsample;
-static int subsong;
-static int toadd;
 
-int
+typedef struct {
+    DB_fileinfo_t info;
+    CEmuopl *opl;
+    CPlayer *decoder;
+    int totalsamples;
+    int currentsample;
+    int subsong;
+    int toadd;
+} adplug_info_t;
+
+DB_fileinfo_t *
 adplug_init (DB_playItem_t *it) {
     // prepare to decode the track
     // return -1 on failure
 
+    adplug_info_t *info = (adplug_info_t *)malloc (sizeof (adplug_info_t));
+    DB_fileinfo_t *_info = (DB_fileinfo_t *)info;
+    memset (info, 0, sizeof (adplug_info_t));
+
     int samplerate = deadbeef->conf_get_int ("synth.samplerate", 48000);
     int bps = deadbeef->get_output ()->bitspersample ();
     int channels = 2;
-    opl = new CEmuopl (samplerate, true, channels == 2);
+    info->opl = new CEmuopl (samplerate, true, channels == 2);
 //    opl->settype (Copl::TYPE_OPL2);
-    decoder = CAdPlug::factory (it->fname, opl, CAdPlug::players);
-    if (!decoder) {
+    info->decoder = CAdPlug::factory (it->fname, info->opl, CAdPlug::players);
+    if (!info->decoder) {
         trace ("adplug: failed to open %s\n", it->fname);
-        return -1;
+        adplug_plugin.free (_info);
+        return NULL;
     }
 
-    subsong = it->tracknum;
-    decoder->rewind (subsong);
-    totalsamples = decoder->songlength (subsong) * samplerate / 1000;
-    currentsample = 0;
-    toadd = 0;
+    info->subsong = it->tracknum;
+    info->decoder->rewind (info->subsong);
+    info->totalsamples = info->decoder->songlength (info->subsong) * samplerate / 1000;
+    info->currentsample = 0;
+    info->toadd = 0;
 
     // fill in mandatory plugin fields
-    adplug_plugin.info.bps = bps;
-    adplug_plugin.info.channels = channels;
-    adplug_plugin.info.samplerate = samplerate;
-    adplug_plugin.info.readpos = 0;
+    _info->bps = bps;
+    _info->channels = channels;
+    _info->samplerate = samplerate;
+    _info->readpos = 0;
 
     trace ("adplug_init ok (duration=%f, totalsamples=%d)\n", deadbeef->pl_get_item_duration (it), totalsamples);
 
-    return 0;
+    return _info;
 }
 
 void
-adplug_free (void) {
+adplug_free (DB_fileinfo_t *_info) {
     // free everything allocated in _init
-    if (decoder) {
-        delete decoder;
-        decoder = NULL;
-    }
-    if (opl) {
-        delete opl;
-        opl = NULL;
+    if (_info) {
+        adplug_info_t *info = (adplug_info_t *)_info;
+        if (info->decoder) {
+            delete info->decoder;
+        }
+        if (info->opl) {
+            delete info->opl;
+        }
+        free (info);
     }
 }
 
 int
-adplug_read_int16 (char *bytes, int size) {
+adplug_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
     // try decode `size' bytes
     // return number of decoded bytes
     // return 0 on EOF
+    adplug_info_t *info = (adplug_info_t *)_info;
     bool playing = true;
     int i;
-    int sampsize = (adplug_plugin.info.bps >> 3) * adplug_plugin.info.channels;
+    int sampsize = (_info->bps >> 3) * _info->channels;
 
-    if (currentsample + size/4 >= totalsamples) {
+    if (info->currentsample + size/4 >= info->totalsamples) {
         // clip
-        size = (totalsamples - currentsample) * sampsize;
+        size = (info->totalsamples - info->currentsample) * sampsize;
         trace ("adplug: clipped to %d\n", size);
         if (size <= 0) {
             return 0;
@@ -118,63 +131,63 @@ adplug_read_int16 (char *bytes, int size) {
 
     while (towrite > 0)
     {
-      while (toadd < 0)
+      while (info->toadd < 0)
       {
-        toadd += adplug_plugin.info.samplerate;
-        playing = decoder->update ();
+        info->toadd += _info->samplerate;
+        playing = info->decoder->update ();
 //        decoder->time_ms += 1000 / plr.p->getrefresh ();
       }
-      i = min (towrite, (long) (toadd / decoder->getrefresh () + 4) & ~3);
-      opl->update ((short *) sndbufpos, i);
+      i = min (towrite, (long) (info->toadd / info->decoder->getrefresh () + 4) & ~3);
+      info->opl->update ((short *) sndbufpos, i);
       sndbufpos += i * sampsize;
       size -= i * sampsize;
-      currentsample += i;
+      info->currentsample += i;
       towrite -= i;
-      toadd -= (long) (decoder->getrefresh () * i);
+      info->toadd -= (long) (info->decoder->getrefresh () * i);
     }
-    currentsample += size/4;
-    adplug_plugin.info.readpos = (float)currentsample / adplug_plugin.info.samplerate;
+    info->currentsample += size/4;
+    _info->readpos = (float)info->currentsample / _info->samplerate;
     return initsize-size;
 }
 
 int
-adplug_seek_sample (int sample) {
+adplug_seek_sample (DB_fileinfo_t *_info, int sample) {
     // seek to specified sample (frame)
     // return 0 on success
     // return -1 on failure
-    if (sample >= totalsamples) {
-        trace ("adplug: seek outside bounds (%d of %d)\n", sample, totalsamples);
+    adplug_info_t *info = (adplug_info_t *)_info;
+    if (sample >= info->totalsamples) {
+        trace ("adplug: seek outside bounds (%d of %d)\n", sample, info->totalsamples);
         return -1;
     }
 
-    decoder->rewind (subsong);
-    currentsample = 0;
+    info->decoder->rewind (info->subsong);
+    info->currentsample = 0;
 
-    while (currentsample < sample) {
-        decoder->update ();
-        int framesize = adplug_plugin.info.samplerate / decoder->getrefresh ();
-        currentsample += framesize;
+    while (info->currentsample < sample) {
+        info->decoder->update ();
+        int framesize = _info->samplerate / info->decoder->getrefresh ();
+        info->currentsample += framesize;
     }
 
-    if (currentsample >= totalsamples) {
+    if (info->currentsample >= info->totalsamples) {
         return -1;
     }
 
-    toadd = 0;
-    trace ("adplug: new position after seek: %d of %d\n", currentsample, totalsamples);
+    info->toadd = 0;
+    trace ("adplug: new position after seek: %d of %d\n", info->currentsample, info->totalsamples);
     
-    adplug_plugin.info.readpos = (float)currentsample / adplug_plugin.info.samplerate;
+    _info->readpos = (float)info->currentsample / _info->samplerate;
 
     return 0;
 }
 
 int
-adplug_seek (float time) {
+adplug_seek (DB_fileinfo_t *_info, float time) {
     // seek to specified time in seconds
     // return 0 on success
     // return -1 on failure
-    return adplug_seek_sample (time * adplug_plugin.info.samplerate);
-    return 0;
+    return adplug_seek_sample (_info, time * _info->samplerate);
 }
 
 static const char *
@@ -214,7 +227,7 @@ adplug_insert (DB_playItem_t *after, const char *fname) {
     for (int i = 0; i < subsongs; i++) {
         // prepare track for addition
         DB_playItem_t *it = deadbeef->pl_item_alloc ();
-        it->decoder_id = deadbeef->plug_get_decoder_id (adplug_plugin.id);
+        it->decoder_id = deadbeef->plug_get_decoder_id (adplug_plugin.plugin.id);
         it->fname = strdup (fname);
         it->filetype = adplug_get_extension (fname);
         it->tracknum = i;

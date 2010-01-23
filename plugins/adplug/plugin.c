@@ -25,16 +25,16 @@
 extern const char *adplug_exts[];
 extern const char *adplug_filetypes[];
 
-int
+DB_fileinfo_t *
 adplug_init (DB_playItem_t *it);
 void
-adplug_free (void);
+adplug_free (DB_fileinfo_t *);
 int
-adplug_read_int16 (char *bytes, int size);
+adplug_read_int16 (DB_fileinfo_t *, char *bytes, int size);
 int
-adplug_seek_sample (int sample);
+adplug_seek_sample (DB_fileinfo_t *, int sample);
 int
-adplug_seek (float time);
+adplug_seek (DB_fileinfo_t *, float time);
 DB_playItem_t *
 adplug_insert (DB_playItem_t *after, const char *fname);
 int
@@ -48,6 +48,7 @@ DB_decoder_t adplug_plugin = {
     .plugin.version_major = 0,
     .plugin.version_minor = 1,
     .plugin.type = DB_PLUGIN_DECODER,
+    .plugin.id = "adplug",
     .plugin.name = "Adplug player",
     .plugin.descr = "Adplug player (ADLIB OPL2/OPL3 emulator)",
     .plugin.author = "Alexey Yakovenko",
@@ -62,7 +63,6 @@ DB_decoder_t adplug_plugin = {
     .seek_sample = adplug_seek_sample,
     .insert = adplug_insert,
     .exts = adplug_exts,
-    .id = "adplug",
     .filetypes = adplug_filetypes
 };
 
