@@ -26,6 +26,10 @@
 #include <unistd.h>
 #include <assert.h>
 #include <time.h>
+#ifndef __linux__
+#define _POSIX_C_SOURCE
+#endif
+#include <limits.h>
 #include "playlist.h"
 #include "codec.h"
 #include "streamer.h"

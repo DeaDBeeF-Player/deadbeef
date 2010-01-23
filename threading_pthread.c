@@ -58,7 +58,7 @@ uintptr_t
 mutex_create (void) {
     pthread_mutex_t *mtx = malloc (sizeof (pthread_mutex_t));
     if (pthread_mutex_init (mtx, NULL)) {
-        printf ("pthread_mutex_init failed!\n");
+        fprintf (stderr, "pthread_mutex_init failed!\n");
     }
     return (uintptr_t)mtx;
 }
@@ -75,17 +75,21 @@ mutex_free (uintptr_t _mtx) {
 int
 mutex_lock (uintptr_t _mtx) {
     pthread_mutex_t *mtx = (pthread_mutex_t *)_mtx;
-    if (pthread_mutex_lock (mtx)) {
-        printf ("pthread_mutex_lock failed\n");
+    int err = pthread_mutex_lock (mtx);
+    if (err < 0) {
+        fprintf (stderr, "pthread_mutex_lock failed (error %d)\n", err);
     }
+    return err;
 }
 
 int
 mutex_unlock (uintptr_t _mtx) {
     pthread_mutex_t *mtx = (pthread_mutex_t *)_mtx;
-    if (pthread_mutex_unlock (mtx)) {
-        printf ("pthread_mutex_unlock failed\n");
-    };
+    int err = pthread_mutex_unlock (mtx);
+    if (err < 0) {
+        printf ("pthread_mutex_unlock failed (error %d)\n", err);
+    }
+    return err;
 }
 
 uintptr_t

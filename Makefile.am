@@ -67,7 +67,7 @@ deadbeef_SOURCES =\
 sdkdir = $(pkgincludedir)
 sdk_HEADERS = deadbeef.h
 
-deadbeef_LDADD = $(LDADD) $(DEPS_LIBS) gme/Game_Music_Emu-0.5.2/gme/libgme.a dumb/libdumb.a -lstdc++
+deadbeef_LDADD = $(LDADD) $(DEPS_LIBS) gme/Game_Music_Emu-0.5.2/gme/libgme.a dumb/libdumb.a -lstdc++ -lm
 
 AM_CFLAGS = $(DEPS_CFLAGS) -I$(gmepath) -std=c99
 AM_CPPFLAGS = $(DEPS_CFLAGS)

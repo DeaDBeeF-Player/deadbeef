@@ -21,7 +21,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <alloca.h>
+//#include <alloca.h>
 #include <string.h>
 #ifndef __linux__
 #define _POSIX_C_SOURCE
@@ -42,6 +42,9 @@
 #include "conf.h"
 #include "junklib.h"
 #include "vfs.h"
+
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 #ifndef PATH_MAX
 #define PATH_MAX    1024    /* max # of characters in a path name */
@@ -347,6 +350,9 @@ plug_quit (void) {
 /////// non-api functions (plugin support)
 void
 plug_event_call (DB_event_t *ev) {
+    if (!mutex) {
+        trace ("plug: event passed before plugin initialization\n");
+    }
     ev->time = time (NULL);
 //    printf ("plug_event_call enter %d\n", ev->event);
     mutex_lock (mutex);
@@ -464,6 +470,7 @@ plug_load_all (void) {
     fprintf (stderr, "\033[0;31mDISABLE_VERSIONCHECK=1! do not distribute!\033[0;m\n");
 #endif
     const char *conf_blacklist_plugins = conf_get_str ("blacklist_plugins", "");
+    trace ("plug: mutex_create\n");
     mutex = mutex_create ();
     const char *dirname = LIBDIR "/deadbeef";
     struct dirent **namelist = NULL;

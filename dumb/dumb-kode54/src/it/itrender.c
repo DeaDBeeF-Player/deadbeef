@@ -3537,6 +3537,9 @@ static void process_playing(DUMB_IT_SIGRENDERER *sigrenderer, IT_PLAYING *playin
 }
 
 //static float log2(float x) {return (float)log(x)/(float)log(2.0f);}
+#ifndef __linux__
+static inline float log2(float x) {return (float)log(x)/(float)log(2.0f);}
+#endif
 
 static int delta_to_note(float delta, int base)
 {

@@ -29,6 +29,9 @@
 static DB_output_t plugin;
 DB_functions_t *deadbeef;
 
+#define BUFFER_MIN 1024
+#define BUFFER_MAX 4096
+
 static snd_pcm_t *audio;
 static int bufsize = -1;
 static int alsa_terminate;
@@ -474,13 +477,13 @@ palsa_thread (void *context) {
         /* deliver the data */
         // FIXME: under some conditions, frames_to_deliver may become huge
         // like 20M. this case is not handled here.
-        if (frames_to_deliver < 1024) {
-            trace ("alsa: frames_to_deliver clipped from %d to 1024\n", frames_to_deliver);
-            frames_to_deliver = 1024;
+        if (frames_to_deliver < BUFFER_MIN) {
+            trace ("alsa: frames_to_deliver clipped from %d to %d\n", frames_to_deliver, BUFFER_MIN);
+            frames_to_deliver = BUFFER_MIN;
         }
-        else if (frames_to_deliver > 2048) {
-            trace ("alsa: frames_to_deliver clipped from %d to 2048\n", frames_to_deliver);
-            frames_to_deliver = 2048;
+        else if (frames_to_deliver > BUFFER_MAX) {
+            trace ("alsa: frames_to_deliver clipped from %d to %d\n", frames_to_deliver, BUFFER_MAX);
+            frames_to_deliver = BUFFER_MAX;
         }
         char buf[frames_to_deliver*4];
         palsa_callback (buf, frames_to_deliver*4);

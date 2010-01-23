@@ -694,7 +694,11 @@ static const char *convstr (const char* str, int sz) {
     cd = iconv_open ("utf8", "utf8");
     size_t inbytesleft = sz;
     size_t outbytesleft = 2047;
-    char *pin = (char*)str;
+#ifdef __linux__
+        char *pin = (char*)str;
+#else
+        const char *pin = str;
+#endif
     char *pout = out;
     memset (out, 0, sizeof (out));
     size_t res = iconv (cd, &pin, &inbytesleft, &pout, &outbytesleft);
