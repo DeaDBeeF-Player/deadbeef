@@ -478,11 +478,11 @@ palsa_thread (void *context) {
         // FIXME: under some conditions, frames_to_deliver may become huge
         // like 20M. this case is not handled here.
         if (frames_to_deliver < BUFFER_MIN) {
-            trace ("alsa: frames_to_deliver clipped from %d to %d\n", frames_to_deliver, BUFFER_MIN);
+            //trace ("alsa: frames_to_deliver clipped from %d to %d\n", frames_to_deliver, BUFFER_MIN);
             frames_to_deliver = BUFFER_MIN;
         }
         else if (frames_to_deliver > BUFFER_MAX) {
-            trace ("alsa: frames_to_deliver clipped from %d to %d\n", frames_to_deliver, BUFFER_MAX);
+            //trace ("alsa: frames_to_deliver clipped from %d to %d\n", frames_to_deliver, BUFFER_MAX);
             frames_to_deliver = BUFFER_MAX;
         }
         char buf[frames_to_deliver*4];
