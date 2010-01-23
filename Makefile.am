@@ -19,7 +19,6 @@ SUBDIRS = ${MPGMAD_DIR}\
           ${WAVPACK_DIR}\
 		  plugins/vtx\
 		  plugins/adplug\
-		  plugins/adplug\
           ${CDDA_DIR}\
           ${OSS_DIR}
 
