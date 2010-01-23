@@ -70,7 +70,7 @@ cdumb_init (DB_playItem_t *it) {
     _info->plugin = &plugin;
     _info->bps = 16;
     _info->channels = 2;
-    _info->samplerate = deadbeef->get_output ()->samplerate ();
+    _info->samplerate = deadbeef->conf_get_int ("synth.samplerate", 48000);
     _info->readpos = 0;
 
     if (cdumb_startrenderer (_info) < 0) {

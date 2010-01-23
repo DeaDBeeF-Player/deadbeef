@@ -37,7 +37,7 @@ cgme_init (DB_playItem_t *it) {
     DB_fileinfo_t *_info = malloc (sizeof (gme_info_t));
     gme_info_t *info = (gme_info_t*)_info;
     memset (_info, 0, sizeof (gme_info_t));
-    int samplerate = deadbeef->get_output ()->samplerate ();
+    int samplerate = deadbeef->conf_get_int ("synth.samplerate", 48000);
     if (gme_open_file (it->fname, &info->emu, samplerate)) {
         plugin.free (_info);
         return NULL;

@@ -52,7 +52,7 @@ adplug_init (DB_playItem_t *it) {
     // prepare to decode the track
     // return -1 on failure
 
-    int samplerate = deadbeef->get_output ()->samplerate ();
+    int samplerate = deadbeef->conf_get_int ("synth.samplerate", 48000);
     int bps = deadbeef->get_output ()->bitspersample ();
     int channels = 2;
     opl = new CEmuopl (samplerate, true, channels == 2);

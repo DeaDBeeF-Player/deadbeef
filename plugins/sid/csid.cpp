@@ -291,7 +291,7 @@ csid_init (DB_playItem_t *it) {
 //    resid->create (1);
     info->resid->filter (true);
 
-    int samplerate = deadbeef->get_output ()->samplerate ();
+    int samplerate = deadbeef->conf_get_int ("synth.samplerate", 48000);
     int bps = deadbeef->get_output ()->bitspersample ();
 
     info->resid->sampling (samplerate);
