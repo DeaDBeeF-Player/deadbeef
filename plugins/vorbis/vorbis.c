@@ -44,7 +44,7 @@ typedef struct {
     int endsample;
     int currentsample;
     int last_comment_update;
-    DB_playItem_t *ptrack; // FIXME: addref that
+    DB_playItem_t *ptrack;
 } ogg_info_t;
 
 static size_t
@@ -130,8 +130,7 @@ cvorbis_init (DB_playItem_t *it) {
     info->vi = NULL;
     info->cur_bit_stream = -1;
     info->ptrack = it;
-    // FIXME: add reference to that one
-    // deadbeef->pl_item_ref (it);
+    deadbeef->pl_item_ref (it);
 
     info->file = deadbeef->fopen (it->fname);
     if (!info->file) {
@@ -218,11 +217,9 @@ cvorbis_free (DB_fileinfo_t *_info) {
     ogg_info_t *info = (ogg_info_t *)_info;
     if (info) {
         if (info->file) {
-            info->ptrack = NULL;
-            // FIXME: unref that
-            // if (info->ptrack) {
-            //     deadbeef->pl_item_unref (info->ptrack);
-            // }
+            if (info->ptrack) {
+                deadbeef->pl_item_unref (info->ptrack);
+            }
             ov_clear (&info->vorbis_file);
             //fclose (file); //-- ov_clear closes it
         }
