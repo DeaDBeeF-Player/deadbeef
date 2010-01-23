@@ -32,6 +32,11 @@
 #define trace(...) { fprintf (stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
 
+#define DEFAULT_SERVER "freedb.org"
+#define DEFAULT_PORT 888
+#define DEFAULT_USE_CDDB 1
+#define DEFAULT_PROTOCOL 1
+
 #define SECTORSIZE CDIO_CD_FRAMESIZE_RAW //2352
 #define SAMPLESIZE 4 //bytes
 #define BUFSIZE (CDIO_CD_FRAMESIZE_RAW * 2)
@@ -39,22 +44,19 @@
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
 
-static CdIo_t* cdio = NULL;
-static lsn_t first_sector;
-static unsigned int sector_count;
-static uint8_t tail [SECTORSIZE];
-static unsigned int tail_len;
-static int current_sector;
-static unsigned int current_sample = 0;
+typedef struct {
+    DB_fileinfo_t info;
+    CdIo_t* cdio;
+    lsn_t first_sector;
+    unsigned int sector_count;
+    uint8_t tail [SECTORSIZE];
+    unsigned int tail_len;
+    int current_sector;
+    unsigned int current_sample;
+} cdda_info_t;
+
 static uintptr_t mutex;
 static intptr_t cddb_tid;
-
-#define DEFAULT_SERVER "freedb.org"
-#define DEFAULT_PORT 888
-#define DEFAULT_USE_CDDB 1
-#define DEFAULT_PROTOCOL 1
-
-
 struct cddb_thread_params
 {
     DB_playItem_t *items[100];
@@ -66,9 +68,13 @@ min (int a, int b) {
     return a < b ? a : b;
 }
 
-static int
+static DB_fileinfo_t *
 cda_init (DB_playItem_t *it) {
-//    trace ("CDA: initing %s\n", it->fname);
+    DB_fileinfo_t *_info = malloc (sizeof (cdda_info_t));
+    cdda_info_t *info = (cdda_info_t *)_info;
+    memset (info, 0, sizeof (cdda_info_t));
+
+    trace ("cdda: init %s\n", it->fname);
 
     size_t l = strlen (it->fname);
     char location[l+1];
@@ -79,125 +85,133 @@ cda_init (DB_playItem_t *it) {
         *nr = 0; nr++;
     }
     else {
-        trace ("malformed cdaudio track filename\n");
-        return -1;
+        trace ("cdda: bad name: %s\n", it->fname);
+        plugin.free (_info);
+        return NULL;
     }
     int track_nr = atoi (nr);
     char *fname = (*location) ? location : NULL; //NULL if empty string; means pysical CD drive
 
-    cdio = cdio_open (fname, DRIVER_UNKNOWN);
-    if  (!cdio)
+    info->cdio = cdio_open (fname, DRIVER_UNKNOWN);
+    if  (!info->cdio)
     {
-        trace ("Could not open CD\n");
-        return -1;
+        trace ("cdda: Could not open CD\n");
+        plugin.free (_info);
+        return NULL;
     }
 
-    if (TRACK_FORMAT_AUDIO != cdio_get_track_format (cdio, track_nr))
+    if (TRACK_FORMAT_AUDIO != cdio_get_track_format (info->cdio, track_nr))
     {
-        trace ("Not an audio track (%d)\n", track_nr);
-        return -1;
+        trace ("cdda: Not an audio track (%d)\n", track_nr);
+        plugin.free (_info);
+        return NULL;
     }
 
-    plugin.info.bps = 16,
-    plugin.info.channels = 2,
-    plugin.info.samplerate = 44100,
-    plugin.info.readpos = 0;
+    _info->plugin = &plugin;
+    _info->bps = 16,
+    _info->channels = 2,
+    _info->samplerate = 44100,
+    _info->readpos = 0;
 
-    first_sector = cdio_get_track_lsn (cdio, track_nr);
-    sector_count = cdio_get_track_sec_count (cdio, track_nr);
-    current_sector = first_sector;
-    tail_len = 0;
-    current_sample = 0;
-    return 0;
+    info->first_sector = cdio_get_track_lsn (info->cdio, track_nr);
+    info->sector_count = cdio_get_track_sec_count (info->cdio, track_nr);
+    info->current_sector = info->first_sector;
+    info->tail_len = 0;
+    info->current_sample = 0;
+    return _info;
 }
 
 int
-cda_read_int16 (char *bytes, int size) {
+cda_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
+    cdda_info_t *info = (cdda_info_t *)_info;
     int extrasize = 0;
     
-    if (tail_len > 0)
+    if (info->tail_len > 0)
     {
-        if (tail_len >= size)
+        if (info->tail_len >= size)
         {
 //            trace ("Easy case\n");
-            memcpy (bytes, tail, size);
-            tail_len -= size;
-            memmove (tail, tail+size, tail_len);
+            memcpy (bytes, info->tail, size);
+            info->tail_len -= size;
+            memmove (info->tail, info->tail+size, info->tail_len);
             return size;
         }
 //        trace ("Prepending with tail of %d bytes\n", tail_len);
-        extrasize = tail_len;
-        memcpy (bytes, tail, tail_len);
-        bytes += tail_len;
-        size -= tail_len;
-        tail_len = 0;
+        extrasize = info->tail_len;
+        memcpy (bytes, info->tail, info->tail_len);
+        bytes += info->tail_len;
+        size -= info->tail_len;
+        info->tail_len = 0;
     }
 
     int sectors_to_read = size / SECTORSIZE + 1;
     int end = 0;
     
-    if (current_sector + sectors_to_read > first_sector + sector_count) //we reached end of track
+    if (info->current_sector + sectors_to_read > info->first_sector + info->sector_count) // reached end of track
     {
         end = 1;
-        sectors_to_read = first_sector + sector_count - current_sector;
-//        trace ("We reached end of track\n");
+        sectors_to_read = info->first_sector + info->sector_count - info->current_sector;
+//        trace ("cdda: reached end of track\n");
     }
 
     int bufsize = sectors_to_read * SECTORSIZE;
 
-    tail_len = end ? 0 : bufsize - size;
+    info->tail_len = end ? 0 : bufsize - size;
 
     char *buf = alloca (bufsize);
 
-    driver_return_code_t ret = cdio_read_audio_sectors (cdio, buf, current_sector, sectors_to_read);
+    driver_return_code_t ret = cdio_read_audio_sectors (info->cdio, buf, info->current_sector, sectors_to_read);
     if (ret != DRIVER_OP_SUCCESS)
         return 0;
-    current_sector += sectors_to_read;
+    info->current_sector += sectors_to_read;
 
     int retsize = end ? bufsize : size;
 
     memcpy (bytes, buf, retsize);
     if (!end)
-        memcpy (tail, buf+retsize, tail_len);
+        memcpy (info->tail, buf+retsize, info->tail_len);
 
     retsize += extrasize;
 //    trace ("requested: %d; tail_len: %d; size: %d; sectors_to_read: %d; return: %d\n", initsize, tail_len, size, sectors_to_read, retsize);
-    current_sample += retsize / SAMPLESIZE;
-    plugin.info.readpos = current_sample / 44100;
+    info->current_sample += retsize / SAMPLESIZE;
+    _info->readpos = (float)info->current_sample / _info->samplerate;
     return retsize;
 }
 
 static void
-cda_free ()
+cda_free (DB_fileinfo_t *_info)
 {
-    if (cdio)
-    {
-        cdio_destroy (cdio);
-        cdio = NULL;
+    if (_info) {
+        cdda_info_t *info = (cdda_info_t *)_info;
+        if (info->cdio) {
+            cdio_destroy (info->cdio);
+        }
+        free (_info);
     }
 }
 
 static int
-cda_seek_sample (int sample)
+cda_seek_sample (DB_fileinfo_t *_info, int sample)
 {
-    int sector = sample / (SECTORSIZE / SAMPLESIZE) + first_sector;
+    cdda_info_t *info = (cdda_info_t *)_info;
+    int sector = sample / (SECTORSIZE / SAMPLESIZE) + info->first_sector;
     int offset = (sample % (SECTORSIZE / SAMPLESIZE)) * SAMPLESIZE; //in bytes
     char buf [SECTORSIZE];
 
-    driver_return_code_t ret = cdio_read_audio_sector (cdio, buf, sector);
+    driver_return_code_t ret = cdio_read_audio_sector (info->cdio, buf, sector);
     if (ret != DRIVER_OP_SUCCESS)
         return -1;
-    memcpy (tail, buf + offset, SECTORSIZE - offset );
-    current_sector = sector;
-    current_sample = sample;
-    plugin.info.readpos = current_sample / 44100;
+    memcpy (info->tail, buf + offset, SECTORSIZE - offset);
+    info->current_sector = sector;
+    info->current_sample = sample;
+    _info->readpos = (float)info->current_sample / _info->samplerate;
     return 0;
 }
 
 static int
-cda_seek (float sec)
+cda_seek (DB_fileinfo_t *_info, float sec)
 {
-    return cda_seek_sample (sec * 44100);
+    return cda_seek_sample (_info, sec * _info->samplerate);
 }
 
 cddb_disc_t*
@@ -219,8 +233,6 @@ resolve_disc (CdIo_t *cdio)
         cddb_track_set_frame_offset (track, offset);
         cddb_disc_add_track (disc, track);
     }
-    cdio_destroy (cdio);
-
     cddb_conn_t *conn = NULL;
 
     conn = cddb_new();
@@ -265,10 +277,10 @@ insert_single_track (CdIo_t* cdio, DB_playItem_t *after, const char* file, int t
         return NULL;
     }
 
-    sector_count = cdio_get_track_sec_count (cdio, track_nr);
+    int sector_count = cdio_get_track_sec_count (cdio, track_nr);
 
     DB_playItem_t *it = deadbeef->pl_item_alloc ();
-    it->decoder_id = deadbeef->plug_get_decoder_id (plugin.id);
+    it->decoder_id = deadbeef->plug_get_decoder_id (plugin.plugin.id);
     it->fname = strdup (tmp);
     it->filetype = "cdda";
     deadbeef->pl_set_item_duration (it, (float)sector_count / 75.0);
@@ -296,6 +308,9 @@ cddb_thread (void *items_i)
     if (!disc)
     {
         trace ("disc not resolved\n");
+        if (params->cdio) {
+            cdio_destroy (params->cdio);
+        }
         free (params);
         return;
     }
@@ -330,6 +345,9 @@ cddb_thread (void *items_i)
     }
     cddb_disc_destroy (disc);
     deadbeef->mutex_unlock (mutex);
+    if (params->cdio) {
+        cdio_destroy (params->cdio);
+    }
     free (params);
     cddb_tid = 0;
 }
@@ -337,7 +355,7 @@ cddb_thread (void *items_i)
 static DB_playItem_t *
 cda_insert (DB_playItem_t *after, const char *fname) {
 //    trace ("CDA insert: %s\n", fname);
-
+    CdIo_t* cdio = NULL;
     int track_nr;
     DB_playItem_t *res;
 
@@ -430,6 +448,7 @@ static DB_decoder_t plugin = {
     .plugin.version_major = 0,
     .plugin.version_minor = 1,
     .plugin.type = DB_PLUGIN_DECODER,
+    .plugin.id = "cda",
     .plugin.name = "Audio CD player",
     .plugin.descr = "using libcdio, includes .nrg image support",
     .plugin.author = "Viktor Semykin, Alexey Yakovenko",
@@ -445,14 +464,12 @@ static DB_decoder_t plugin = {
     .seek_sample = cda_seek_sample,
     .insert = cda_insert,
     .exts = exts,
-    .id = "cda",
     .filetypes = filetypes,
 };
 
 DB_plugin_t *
 cdda_load (DB_functions_t *api) {
     deadbeef = api;
-//    read_config();
     return DB_PLUGIN (&plugin);
 }
 
