@@ -618,7 +618,7 @@ lfm_send_submissions (void) {
                 deadbeef->mutex_lock (lfm_mutex);
                 for (i = 0; i < LFM_SUBMISSION_QUEUE_SIZE; i++) {
                     if (lfm_subm_queue[i]) {
-                        deadbeef->pl_item_free (lfm_subm_queue[i]);
+                        deadbeef->pl_item_unref (lfm_subm_queue[i]);
                         lfm_subm_queue[i] = NULL;
                     }
                 }
@@ -633,7 +633,7 @@ lfm_send_submissions (void) {
     deadbeef->mutex_lock (lfm_mutex);
     for (i = 0; i < LFM_SUBMISSION_QUEUE_SIZE; i++) {
         if (lfm_subm_queue[i]) {
-            deadbeef->pl_item_free (lfm_subm_queue[i]);
+            deadbeef->pl_item_unref (lfm_subm_queue[i]);
             lfm_subm_queue[i] = NULL;
         }
     }

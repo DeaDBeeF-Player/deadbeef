@@ -394,7 +394,7 @@ cvorbis_insert (DB_playItem_t *after, const char *fname) {
 
     DB_playItem_t *cue = deadbeef->pl_insert_cue (after, it, totalsamples, samplerate);
     if (cue) {
-        deadbeef->pl_item_free (it);
+        deadbeef->pl_item_unref (it);
         return cue;
     }
 
@@ -403,7 +403,7 @@ cvorbis_insert (DB_playItem_t *after, const char *fname) {
     if (cuesheet) {
         cue = deadbeef->pl_insert_cue_from_buffer (after, it, cuesheet, strlen (cuesheet), totalsamples, samplerate);
         if (cue) {
-            deadbeef->pl_item_free (it);
+            deadbeef->pl_item_unref (it);
             return cue;
         }
     }

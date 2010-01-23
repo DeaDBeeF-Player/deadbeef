@@ -103,7 +103,8 @@ static DB_functions_t deadbeef_api = {
     .cond_broadcast = cond_broadcast,
     // playlist access
     .pl_item_alloc = (DB_playItem_t* (*)(void))pl_item_alloc,
-    .pl_item_free = (void (*)(DB_playItem_t *))pl_item_free,
+    .pl_item_ref = (void (*)(DB_playItem_t *))pl_item_ref,
+    .pl_item_unref = (void (*)(DB_playItem_t *))pl_item_unref,
     .pl_item_copy = (void (*)(DB_playItem_t *, DB_playItem_t *))pl_item_copy,
     .pl_add_file = (int (*) (const char *, int (*cb)(DB_playItem_t *it, void *data), void *))pl_add_file,
     .pl_add_dir = (int (*) (const char *dirname, int (*cb)(DB_playItem_t *it, void *data), void *user_data))pl_add_dir,

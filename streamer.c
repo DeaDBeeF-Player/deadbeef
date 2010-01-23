@@ -148,7 +148,7 @@ streamer_set_current (playItem_t *it) {
     if(str_current_decoder) {
         str_current_decoder->plugin->free (str_current_decoder);
         str_current_decoder = NULL;
-        pl_item_free (&str_streaming_song);
+        pl_item_unref (&str_streaming_song);
     }
     orig_streaming_song = it;
     if (!it) {
@@ -285,8 +285,8 @@ streamer_thread (void *ctx) {
             if (!try) { // track is not in playlist
                 trace ("track #%d is not in playlist; stopping playback\n", sng);
                 p_stop ();
-                pl_item_free (&str_playing_song);
-                pl_item_free (&str_streaming_song);
+                pl_item_unref (&str_playing_song);
+                pl_item_unref (&str_streaming_song);
                 orig_playing_song = NULL;
                 orig_streaming_song = NULL;
                 messagepump_push (M_SONGCHANGED, 0, -1, -1);
@@ -332,7 +332,7 @@ streamer_thread (void *ctx) {
                 plug_trigger_event (DB_EV_SONGFINISHED, 0);
             }
             streamer_set_current (NULL);
-            pl_item_free (&str_playing_song);
+            pl_item_unref (&str_playing_song);
             orig_playing_song = NULL;
             messagepump_push (M_SONGCHANGED, 0, from, -1);
             continue;
@@ -363,7 +363,7 @@ streamer_thread (void *ctx) {
                 plug_trigger_event (DB_EV_SONGFINISHED, 0);
             }
             // free old copy of playing
-            pl_item_free (&str_playing_song);
+            pl_item_unref (&str_playing_song);
             // copy streaming into playing
             pl_item_copy (&str_playing_song, &str_streaming_song);
             last_bitrate = -1;
@@ -397,7 +397,7 @@ streamer_thread (void *ctx) {
                 if(str_current_decoder) {
                     str_current_decoder->plugin->free (str_current_decoder);
                     str_current_decoder = NULL;
-                    pl_item_free (&str_streaming_song);
+                    pl_item_unref (&str_streaming_song);
                 }
                 orig_streaming_song = orig_playing_song;
                 pl_item_copy (&str_streaming_song, orig_streaming_song);
@@ -484,8 +484,8 @@ streamer_thread (void *ctx) {
         str_current_decoder->plugin->free (str_current_decoder);
         str_current_decoder = NULL;
     }
-    pl_item_free (&str_streaming_song);
-    pl_item_free (&str_playing_song);
+    pl_item_unref (&str_streaming_song);
+    pl_item_unref (&str_playing_song);
     if (src) {
         src_delete (src);
         src = NULL;

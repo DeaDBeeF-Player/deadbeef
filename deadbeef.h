@@ -279,7 +279,8 @@ typedef struct {
     int (*cond_broadcast) (uintptr_t cond);
     // playlist access
     DB_playItem_t * (*pl_item_alloc) (void);
-    void (*pl_item_free) (DB_playItem_t *it);
+    void (*pl_item_ref) (DB_playItem_t *it);
+    void (*pl_item_unref) (DB_playItem_t *it);
     void (*pl_item_copy) (DB_playItem_t *out, DB_playItem_t *in);
     int (*pl_add_file) (const char *fname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
     int (*pl_add_dir) (const char *dirname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);

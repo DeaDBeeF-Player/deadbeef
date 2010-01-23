@@ -64,6 +64,9 @@ static int playlists_count = 0;
 static playlist_t *playlists_head = NULL;
 static playlist_t *playlist = NULL; // current playlist
 
+static void
+pl_item_free (playItem_t *it);
+
 int
 plt_get_count (void) {
     return playlists_count;
@@ -320,8 +323,7 @@ pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, c
         *prev = NULL;
         return after;
     }
-    playItem_t *it = malloc (sizeof (playItem_t));
-    memset (it, 0, sizeof (playItem_t));
+    playItem_t *it = pl_item_alloc ();
     it->decoder_id = plug_get_decoder_id (decoder_id);
     it->fname = strdup (fname);
     it->tracknum = atoi (track);
@@ -862,8 +864,8 @@ pl_remove (playItem_t *it) {
             pl_totaltime = 0;
         }
     }
-    pl_item_free (it);
-    free (it);
+    pl_item_unref (it);
+    //free (it);
     return 0;
 }
 
@@ -972,6 +974,7 @@ pl_item_copy (playItem_t *out, playItem_t *it) {
     out->prev[PL_MAIN] = it->prev[PL_MAIN];
     out->next[PL_SEARCH] = it->next[PL_SEARCH];
     out->prev[PL_SEARCH] = it->prev[PL_SEARCH];
+    out->_refc = 1;
     // copy metainfo
     metaInfo_t *prev = NULL;
     metaInfo_t *meta = it->meta;
@@ -997,10 +1000,16 @@ pl_item_alloc (void) {
     memset (it, 0, sizeof (playItem_t));
     it->replaygain_album_peak = 1;
     it->replaygain_track_peak = 1;
+    it->_refc = 1;
     return it;
 }
 
 void
+pl_item_ref (playItem_t *it) {
+    it->_refc++;
+}
+
+static void
 pl_item_free (playItem_t *it) {
     if (it) {
         if (it->fname) {
@@ -1013,6 +1022,17 @@ pl_item_free (playItem_t *it) {
             free (m);
         }
         memset (it, 0, sizeof (playItem_t));
+    }
+}
+
+void
+pl_item_unref (playItem_t *it) {
+    it->_refc--;
+    if (it->_refc < 0) {
+        fprintf (stderr, "playlist: bad refcount on item %p\n", it);
+    }
+    if (it->_refc <= 0) {
+        pl_item_free (it);
     }
 }
 
@@ -1263,11 +1283,10 @@ pl_load (const char *fname) {
         goto load_fail;
     }
     for (uint32_t i = 0; i < cnt; i++) {
-        it = malloc (sizeof (playItem_t));
+        it = pl_item_alloc ();
         if (!it) {
             goto load_fail;
         }
-        memset (it, 0, sizeof (playItem_t));
         uint16_t l;
         // fname
         if (fread (&l, 1, 2, fp) != 2) {
@@ -1425,7 +1444,7 @@ load_fail:
     fprintf (stderr, "playlist load fail (%s)!\n", fname);
     fclose (fp);
     if (it) {
-        pl_item_free (it);
+        pl_item_unref (it);
     }
     pl_free ();
     return -1;

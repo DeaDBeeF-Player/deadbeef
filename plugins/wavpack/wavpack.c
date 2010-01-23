@@ -264,7 +264,7 @@ wv_insert (DB_playItem_t *after, const char *fname) {
     if (cuesheet) {
         DB_playItem_t *last = deadbeef->pl_insert_cue_from_buffer (after, it, cuesheet, strlen (cuesheet), totalsamples, samplerate);
         if (last) {
-            deadbeef->pl_item_free (it);
+            deadbeef->pl_item_unref (it);
             return last;
         }
     }

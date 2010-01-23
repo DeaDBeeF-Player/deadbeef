@@ -46,6 +46,7 @@ typedef struct playItem_s {
     float replaygain_track_peak;
     // private area, must not be visible to plugins
     float _duration; // in seconds
+    int _refc;
     struct playItem_s *next[PL_MAX_ITERATORS]; // next item in linked list
     struct playItem_s *prev[PL_MAX_ITERATORS]; // prev item in linked list
     struct metaInfo_s *meta; // linked list storing metainfo
@@ -107,7 +108,13 @@ playItem_t *
 pl_item_alloc (void);
 
 void
-pl_item_free (playItem_t *it);
+pl_item_ref (playItem_t *it);
+
+void
+pl_item_unref (playItem_t *it);
+
+//void
+//pl_item_free (playItem_t *it);
 
 void
 pl_item_copy (playItem_t *out, playItem_t *it);

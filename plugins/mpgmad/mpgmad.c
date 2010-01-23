@@ -1059,7 +1059,7 @@ cmp3_insert (DB_playItem_t *after, const char *fname) {
     // FIXME! bad numsamples passed to cue
     DB_playItem_t *cue_after = deadbeef->pl_insert_cue (after, it, buffer.duration*buffer.samplerate, buffer.samplerate);
     if (cue_after) {
-        deadbeef->pl_item_free (it);
+        deadbeef->pl_item_unref (it);
         return cue_after;
     }
 
