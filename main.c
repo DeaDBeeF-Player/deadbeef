@@ -19,6 +19,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stddef.h>
 #include <time.h>
 #ifdef __linux__
 #include <sys/prctl.h>
@@ -249,7 +250,8 @@ server_start (void) {
 //    snprintf (srv_local.sun_path, sizeof (srv_local.sun_path), "%s/socket", dbconfdir);
 //    unlink(srv_local.sun_path);
     memcpy (srv_local.sun_path, server_id, sizeof (server_id));
-    int len = sizeof (srv_local);
+    //int len = sizeof (srv_local);
+    int len = offsetof(struct sockaddr_un, sun_path) + sizeof (server_id);
     if (bind(srv_socket, (struct sockaddr *)&srv_local, len) < 0) {
         perror ("bind");
         return -1;
@@ -502,7 +504,8 @@ main (int argc, char *argv[]) {
     memcpy (remote.sun_path, server_id, sizeof (server_id));
 //    snprintf (remote.sun_path, 108, "%s/socket", dbconfdir);
 //    len = strlen(remote.sun_path) + sizeof(remote.sun_family);
-    len = sizeof (remote);
+    //len = sizeof (remote);
+    len = offsetof(struct sockaddr_un, sun_path) + sizeof (server_id);
     if (connect(s, (struct sockaddr *)&remote, len) == 0) {
         if (argc <= 1) {
             cmdline[0] = 0;
