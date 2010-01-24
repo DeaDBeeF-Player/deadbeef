@@ -60,6 +60,10 @@
 #error PREFIX must be defined
 #endif
 
+#ifdef __linux__
+#define USE_ABSTRACT_NAME 1
+#endif
+
 // some common global variables
 char confdir[1024]; // $HOME/.config
 char dbconfdir[1024]; // $HOME/.config/deadbeef
@@ -231,7 +235,10 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
 static struct sockaddr_un srv_local;
 static struct sockaddr_un srv_remote;
 static unsigned srv_socket;
+
+#if USE_ABSTRACT_NAME
 static char server_id[] = "\0deadbeefplayer";
+#endif
 
 int
 server_start (void) {
@@ -249,8 +256,18 @@ server_start (void) {
     }
     memset (&srv_local, 0, sizeof (srv_local));
     srv_local.sun_family = AF_UNIX;
+
+#if USE_ABSTRACT_NAME
     memcpy (srv_local.sun_path, server_id, sizeof (server_id));
-    int len = offsetof(struct sockaddr_un, sun_path) + sizeof (server_id);
+    int len = offsetof(struct sockaddr_un, sun_path) + sizeof (server_id)-1;
+#else
+    snprintf (srv_local.sun_path, sizeof (srv_local.sun_path), "%s/socket", dbconfdir);
+    if (unlink(srv_local.sun_path) < 0) {
+        perror ("INFO: unlink socket");
+    }
+    int len = offsetof(struct sockaddr_un, sun_path) + strlen (srv_local.sun_path);
+#endif
+
     if (bind(srv_socket, (struct sockaddr *)&srv_local, len) < 0) {
         perror ("bind");
         return -1;
@@ -500,11 +517,13 @@ main (int argc, char *argv[]) {
 
     memset (&remote, 0, sizeof (remote));
     remote.sun_family = AF_UNIX;
+#if USE_ABSTRACT_NAME
     memcpy (remote.sun_path, server_id, sizeof (server_id));
-//    snprintf (remote.sun_path, 108, "%s/socket", dbconfdir);
-//    len = strlen(remote.sun_path) + sizeof(remote.sun_family);
-    //len = sizeof (remote);
-    len = offsetof(struct sockaddr_un, sun_path) + sizeof (server_id);
+    len = offsetof(struct sockaddr_un, sun_path) + sizeof (server_id)-1;
+#else
+    snprintf (remote.sun_path, sizeof (remote.sun_path), "%s/socket", dbconfdir);
+    len = offsetof(struct sockaddr_un, sun_path) + strlen (remote.sun_path);
+#endif
     if (connect(s, (struct sockaddr *)&remote, len) == 0) {
         if (argc <= 1) {
             cmdline[0] = 0;
@@ -540,6 +559,9 @@ main (int argc, char *argv[]) {
         }
         close (s);
         exit (0);
+    }
+    else {
+        perror ("INFO: failed to connect to existing session:");
     }
     close(s);
 
