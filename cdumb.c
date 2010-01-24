@@ -18,6 +18,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#define LIBICONV_PLUG
 #include <iconv.h>
 #include "dumb/dumb-kode54/include/dumb.h"
 #include "dumb/dumb-kode54/include/internal/it.h"
@@ -691,7 +692,11 @@ static const char *convstr (const char* str, int sz) {
 
     // check for utf8 (hack)
     iconv_t cd;
-    cd = iconv_open ("utf8", "utf8");
+    cd = iconv_open ("utf-8", "utf-8");
+    if (cd == (iconv_t)-1) {
+        trace ("iconv doesn't support utf8\n");
+        return str;
+    }
     size_t inbytesleft = sz;
     size_t outbytesleft = 2047;
 #ifdef __linux__
@@ -727,10 +732,10 @@ static const char *convstr (const char* str, int sz) {
         enc = "cp1251";
     }
 #endif
-    cd = iconv_open ("utf8", enc);
-    if (!cd) {
-        // printf ("unknown encoding: %s\n", enc);
-        return NULL;
+    cd = iconv_open ("utf-8", enc);
+    if (cd == (iconv_t)-1) {
+        trace ("iconv can't recode from %s to utf8\n", enc);
+        return str;
     }
     else {
         size_t inbytesleft = sz;

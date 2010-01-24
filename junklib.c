@@ -16,20 +16,19 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "junklib.h"
-#include <iconv.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#define LIBICONV_PLUG
+#include <iconv.h>
 #include "playlist.h"
 #include "utf8.h"
 #include "plugins.h"
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
-#if HAVE_LIBICONV
-#define iconv_open libiconv_open
-#define iconv_close libiconv_close
-#endif
+
+#define UTF8 "utf-8"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -297,10 +296,10 @@ convstr_id3v2_2to3 (const unsigned char* str, int sz) {
     }
     str++;
     sz--;
-    iconv_t cd = iconv_open ("utf8", enc);
+    iconv_t cd = iconv_open (UTF8, enc);
     if (cd == (iconv_t)-1) {
         trace ("iconv can't recoode from %s to utf8", enc);
-        return NULL;
+        return strdup ("-");
     }
     else {
         size_t inbytesleft = sz;
@@ -359,10 +358,10 @@ convstr_id3v2_4 (const unsigned char* str, int sz) {
     }
     str++;
     sz--;
-    iconv_t cd = iconv_open ("utf8", enc);
+    iconv_t cd = iconv_open (UTF8, enc);
     if (cd == (iconv_t)-1) {
-        trace ("unknown encoding: %s\n", enc);
-        return NULL;
+        trace ("iconv can't recode from %s to utf8\n", enc);
+        return strdup ("-");
     }
     else {
         size_t inbytesleft = sz;
@@ -398,9 +397,10 @@ convstr_id3v1 (const char* str, int sz) {
 
     // check for utf8 (hack)
     iconv_t cd;
-    cd = iconv_open ("utf8", "utf8");
+    cd = iconv_open (UTF8, UTF8);
     if (cd == (iconv_t)-1) {
         trace ("iconv doesn't support utf8\n");
+        return str;
     }
     size_t inbytesleft = sz;
     size_t outbytesleft = 2047;
@@ -423,10 +423,10 @@ convstr_id3v1 (const char* str, int sz) {
     if (can_be_russian (str)) {
         enc = "cp1251";
     }
-    cd = iconv_open ("utf8", enc);
+    cd = iconv_open (UTF8, enc);
     if (cd == (iconv_t)-1) {
         trace ("iconv can't recode from %s to utf8\n", enc);
-        return NULL;
+        return str;
     }
     else {
         size_t inbytesleft = sz;
@@ -1307,9 +1307,10 @@ junk_detect_charset (const char *s) {
 
 void
 junk_recode (const char *in, int inlen, char *out, int outlen, const char *cs) {
-    iconv_t cd = iconv_open ("utf8", cs);
+    iconv_t cd = iconv_open (UTF8, cs);
     if (cd == (iconv_t)-1) {
         trace ("iconv can't recode from %s to utf8\n", cs);
+        memcpy (out, in, min(inlen, outlen));
         return;
     }
     else {

@@ -18,6 +18,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#define LIBICONV_PLUG
 #include <iconv.h>
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
@@ -398,9 +399,9 @@ convstr (const char* str) {
     int sz = strlen (str);
     static char out[2048];
     const char *enc = "iso8859-1";
-    iconv_t cd = iconv_open ("utf8", enc);
-    if (!cd) {
-        trace ("unknown encoding: %s\n", enc);
+    iconv_t cd = iconv_open ("utf-8", enc);
+    if (cd == (iconv_t)-1) {
+        trace ("can't convert from %s to utf8\n", enc);
         return NULL;
     }
     else {
