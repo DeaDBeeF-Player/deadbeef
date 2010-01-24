@@ -228,22 +228,32 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
 static struct sockaddr_un srv_local;
 static struct sockaddr_un srv_remote;
 static unsigned srv_socket;
+static char server_id[] = "\0deadbeefplayer";
 
 int
 server_start (void) {
+    fprintf (stderr, "server_start\n");
     srv_socket = socket (AF_UNIX, SOCK_STREAM, 0);
     int flags;
     flags = fcntl (srv_socket, F_GETFL,0);
     if (flags == -1) {
-        fprintf (stderr, "server_start failed, flags == -1\n");
+        perror ("fcntl F_GETFL");
         return -1;
     }
-    fcntl(srv_socket, F_SETFL, flags | O_NONBLOCK);
-    srv_local.sun_family = AF_UNIX;  /* local is declared before socket() ^ */
-    snprintf (srv_local.sun_path, 108, "%s/socket", dbconfdir);
-    unlink(srv_local.sun_path);
-    int len = strlen(srv_local.sun_path) + sizeof(srv_local.sun_family);
-    bind(srv_socket, (struct sockaddr *)&srv_local, len);
+    if (fcntl(srv_socket, F_SETFL, flags | O_NONBLOCK) < 0) {
+        perror ("fcntl F_SETFL");
+        return -1;
+    }
+    memset (&srv_local, 0, sizeof (srv_local));
+    srv_local.sun_family = AF_UNIX;
+//    snprintf (srv_local.sun_path, sizeof (srv_local.sun_path), "%s/socket", dbconfdir);
+//    unlink(srv_local.sun_path);
+    memcpy (srv_local.sun_path, server_id, sizeof (server_id));
+    int len = sizeof (srv_local);
+    if (bind(srv_socket, (struct sockaddr *)&srv_local, len) < 0) {
+        perror ("bind");
+        return -1;
+    }
 
     if (listen(srv_socket, 5) == -1) {
         perror("listen");
@@ -487,9 +497,12 @@ main (int argc, char *argv[]) {
         exit(1);
     }
 
+    memset (&remote, 0, sizeof (remote));
     remote.sun_family = AF_UNIX;
-    snprintf (remote.sun_path, 108, "%s/socket", dbconfdir);
-    len = strlen(remote.sun_path) + sizeof(remote.sun_family);
+    memcpy (remote.sun_path, server_id, sizeof (server_id));
+//    snprintf (remote.sun_path, 108, "%s/socket", dbconfdir);
+//    len = strlen(remote.sun_path) + sizeof(remote.sun_family);
+    len = sizeof (remote);
     if (connect(s, (struct sockaddr *)&remote, len) == 0) {
         if (argc <= 1) {
             cmdline[0] = 0;
@@ -536,13 +549,9 @@ main (int argc, char *argv[]) {
     }
 
 
-    signal (SIGTERM, sigterm_handler);
-
     conf_load (); // required by some plugin at startup
     messagepump_init (); // required to push messages while handling commandline
     plug_load_all (); // required to add files to playlist from commandline
-
-    atexit (atexit_handler); // helps to save in simple cases, like xkill
 
     // execute server commands in local context
     int noloadpl = 0;
@@ -561,7 +570,11 @@ main (int argc, char *argv[]) {
     }
 
     // become a server
-    server_start ();
+    if (server_start () < 0) {
+        exit (-1);
+    }
+    signal (SIGTERM, sigterm_handler);
+    atexit (atexit_handler); // helps to save in simple cases, like xkill
 
     // start all subsystems
     volume_set_db (conf_get_float ("playback.volume", 0));
