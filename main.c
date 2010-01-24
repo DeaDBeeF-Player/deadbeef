@@ -247,10 +247,7 @@ server_start (void) {
     }
     memset (&srv_local, 0, sizeof (srv_local));
     srv_local.sun_family = AF_UNIX;
-//    snprintf (srv_local.sun_path, sizeof (srv_local.sun_path), "%s/socket", dbconfdir);
-//    unlink(srv_local.sun_path);
     memcpy (srv_local.sun_path, server_id, sizeof (server_id));
-    //int len = sizeof (srv_local);
     int len = offsetof(struct sockaddr_un, sun_path) + sizeof (server_id);
     if (bind(srv_socket, (struct sockaddr *)&srv_local, len) < 0) {
         perror ("bind");
