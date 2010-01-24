@@ -298,8 +298,8 @@ convstr_id3v2_2to3 (const unsigned char* str, int sz) {
     str++;
     sz--;
     iconv_t cd = iconv_open ("utf8", enc);
-    if (!cd) {
-        trace ("unknown encoding: %s\n", enc);
+    if (cd == (iconv_t)-1) {
+        trace ("iconv can't recoode from %s to utf8", enc);
         return NULL;
     }
     else {
@@ -312,6 +312,7 @@ convstr_id3v2_2to3 (const unsigned char* str, int sz) {
 #endif
         char *pout = out;
         memset (out, 0, sizeof (out));
+        printf ("%p %s %d %d\n", cd, pin, inbytesleft, outbytesleft);
         /*size_t res = */iconv (cd, &pin, &inbytesleft, &pout, &outbytesleft);
         iconv_close (cd);
         ret = out;
@@ -359,7 +360,7 @@ convstr_id3v2_4 (const unsigned char* str, int sz) {
     str++;
     sz--;
     iconv_t cd = iconv_open ("utf8", enc);
-    if (!cd) {
+    if (cd == (iconv_t)-1) {
         trace ("unknown encoding: %s\n", enc);
         return NULL;
     }
@@ -398,6 +399,9 @@ convstr_id3v1 (const char* str, int sz) {
     // check for utf8 (hack)
     iconv_t cd;
     cd = iconv_open ("utf8", "utf8");
+    if (cd == (iconv_t)-1) {
+        trace ("iconv doesn't support utf8\n");
+    }
     size_t inbytesleft = sz;
     size_t outbytesleft = 2047;
 #ifdef __linux__
@@ -420,8 +424,8 @@ convstr_id3v1 (const char* str, int sz) {
         enc = "cp1251";
     }
     cd = iconv_open ("utf8", enc);
-    if (!cd) {
-        // trace ("unknown encoding: %s\n", enc);
+    if (cd == (iconv_t)-1) {
+        trace ("iconv can't recode from %s to utf8\n", enc);
         return NULL;
     }
     else {
@@ -1304,7 +1308,8 @@ junk_detect_charset (const char *s) {
 void
 junk_recode (const char *in, int inlen, char *out, int outlen, const char *cs) {
     iconv_t cd = iconv_open ("utf8", cs);
-    if (!cd) {
+    if (cd == (iconv_t)-1) {
+        trace ("iconv can't recode from %s to utf8\n", cs);
         return;
     }
     else {
