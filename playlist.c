@@ -614,6 +614,8 @@ pl_insert_file (playItem_t *after, const char *fname, int *pabort, int (*cb)(pla
     if (strncasecmp (fname, "file://", 7)) {
         const char *p = fname;
         int detect_on_access = 1;
+
+        // check if it's URI
         for (; *p; p++) {
             if (!strncmp (p, "://", 3)) {
                 break;
@@ -623,7 +625,18 @@ pl_insert_file (playItem_t *after, const char *fname, int *pabort, int (*cb)(pla
                 break;
             }
         }
+
         if (detect_on_access && *p == ':') {
+            // check for wrong chars like CR/LF, TAB, etc
+            // they are not allowed and might lead to corrupt display in GUI
+            int32_t i = 0;
+            while (fname[i]) {
+                uint32_t c = u8_nextchar (fname, &i);
+                if (c < 0x20) {
+                    return NULL;
+                }
+            }
+            
             playItem_t *it = pl_item_alloc ();
             it->decoder = NULL;
             it->fname = strdup (fname);
