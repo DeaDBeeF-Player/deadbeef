@@ -409,7 +409,6 @@ streamer_thread (void *ctx) {
                 }
                 int ret = str_streaming_song.decoder->init (DB_PLAYITEM (orig_streaming_song));
                 if (ret < 0) {
-                    streamer_buffering = 0;
                     if (trk != -1) {
                         messagepump_push (M_TRACKCHANGED, 0, trk, 0);
                     }
@@ -462,6 +461,15 @@ streamer_thread (void *ctx) {
             streamer_lock ();
             memcpy (streambuffer+streambuffer_fill, buf, sz);
             streambuffer_fill += bytesread;
+            if (streambuffer_fill > 128000 && streamer_buffering) {
+                streamer_buffering = 0;
+                if (orig_streaming_song) {
+                    int trk = pl_get_idx_of (orig_streaming_song);
+                    if (trk != -1) {
+                        messagepump_push (M_TRACKCHANGED, 0, trk, 0);
+                    }
+                }
+            }
         }
         streamer_unlock ();
         struct timeval tm2;
@@ -892,15 +900,6 @@ streamer_get_fill (void) {
 int
 streamer_ok_to_read (int len) {
     if (len >= 0 && (bytes_until_next_song > 0 || streambuffer_fill >= (len*2))) {
-        if (streamer_buffering) {
-            streamer_buffering = 0;
-            if (orig_streaming_song) {
-                int trk = pl_get_idx_of (orig_streaming_song);
-                if (trk != -1) {
-                    messagepump_push (M_TRACKCHANGED, 0, trk, 0);
-                }
-            }
-        }
         return 1;
     }
     else {

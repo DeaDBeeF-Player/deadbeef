@@ -48,7 +48,7 @@ static int state;
 static int fd;
 static uintptr_t mutex;
 
-#define BLOCKSIZE 4096
+#define BLOCKSIZE 8192
 
 static void
 oss_thread (void *context);
@@ -241,7 +241,7 @@ oss_thread (void *context) {
         if (oss_terminate) {
             break;
         }
-        if (state != OUTPUT_STATE_PLAYING) {
+        if (state != OUTPUT_STATE_PLAYING || !deadbeef->streamer_ok_to_read (-1)) {
             usleep (10000);
             continue;
         }
@@ -252,6 +252,7 @@ oss_thread (void *context) {
         int res = write (fd, buf, sizeof (buf));
         deadbeef->mutex_unlock (mutex);
         if (res != sizeof (buf)) {
+            perror ("oss write");
             fprintf (stderr, "oss: failed to write buffer\n");
         }
         usleep (1000); // this must be here to prevent mutex deadlock
@@ -260,10 +261,6 @@ oss_thread (void *context) {
 
 static void
 oss_callback (char *stream, int len) {
-    if (!deadbeef->streamer_ok_to_read (len)) {
-        memset (stream, 0, len);
-        return;
-    }
     int bytesread = deadbeef->streamer_read (stream, len);
     int16_t ivolume = deadbeef->volume_get_amp () * 1000;
     for (int i = 0; i < bytesread/2; i++) {
