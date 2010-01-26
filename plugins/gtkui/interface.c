@@ -1271,7 +1271,7 @@ create_prefwin (void)
   GtkWidget *label4;
   GtkWidget *label23;
   GtkWidget *pref_soundcard;
-  GtkWidget *pref_alsa_resampling;
+  GtkWidget *pref_dynsamplerate;
   GtkWidget *pref_replaygain_scale;
   GtkWidget *pref_alsa_freewhenstopped;
   GtkWidget *pref_src_quality;
@@ -1353,7 +1353,7 @@ create_prefwin (void)
                     (GtkAttachOptions) (0), 0, 0);
   gtk_misc_set_alignment (GTK_MISC (label6), 0, 0.5);
 
-  label5 = gtk_label_new ("Software ALSA resampling");
+  label5 = gtk_label_new ("Allow dynamic samplerate switching");
   gtk_widget_show (label5);
   gtk_table_attach (GTK_TABLE (table3), label5, 0, 1, 2, 3,
                     (GtkAttachOptions) (GTK_FILL),
@@ -1380,9 +1380,9 @@ create_prefwin (void)
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (GTK_FILL), 0, 0);
 
-  pref_alsa_resampling = gtk_check_button_new_with_mnemonic ("");
-  gtk_widget_show (pref_alsa_resampling);
-  gtk_table_attach (GTK_TABLE (table3), pref_alsa_resampling, 1, 2, 2, 3,
+  pref_dynsamplerate = gtk_check_button_new_with_mnemonic ("(WARNING: turning this on this might break gapless playback)");
+  gtk_widget_show (pref_dynsamplerate);
+  gtk_table_attach (GTK_TABLE (table3), pref_dynsamplerate, 1, 2, 2, 3,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
 
@@ -1624,8 +1624,8 @@ create_prefwin (void)
   g_signal_connect ((gpointer) pref_soundcard, "changed",
                     G_CALLBACK (on_pref_soundcard_changed),
                     NULL);
-  g_signal_connect ((gpointer) pref_alsa_resampling, "clicked",
-                    G_CALLBACK (on_pref_alsa_resampling_clicked),
+  g_signal_connect ((gpointer) pref_dynsamplerate, "clicked",
+                    G_CALLBACK (on_pref_dynsamplerate_clicked),
                     NULL);
   g_signal_connect ((gpointer) pref_replaygain_scale, "clicked",
                     G_CALLBACK (on_pref_replaygain_scale_clicked),
@@ -1676,7 +1676,7 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, label4, "label4");
   GLADE_HOOKUP_OBJECT (prefwin, label23, "label23");
   GLADE_HOOKUP_OBJECT (prefwin, pref_soundcard, "pref_soundcard");
-  GLADE_HOOKUP_OBJECT (prefwin, pref_alsa_resampling, "pref_alsa_resampling");
+  GLADE_HOOKUP_OBJECT (prefwin, pref_dynsamplerate, "pref_dynsamplerate");
   GLADE_HOOKUP_OBJECT (prefwin, pref_replaygain_scale, "pref_replaygain_scale");
   GLADE_HOOKUP_OBJECT (prefwin, pref_alsa_freewhenstopped, "pref_alsa_freewhenstopped");
   GLADE_HOOKUP_OBJECT (prefwin, pref_src_quality, "pref_src_quality");

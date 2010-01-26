@@ -1562,7 +1562,7 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
 
 
     // alsa resampling
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "pref_alsa_resampling")), deadbeef->conf_get_int ("alsa.resample", 0));
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "pref_dynsamplerate")), deadbeef->conf_get_int ("playback.dynsamplerate", 0));
 
     // alsa freeonstop
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "pref_alsa_freewhenstopped")), deadbeef->conf_get_int ("alsa.freeonstop", 0));
@@ -1691,11 +1691,11 @@ on_pref_output_plugin_changed          (GtkComboBox     *combobox,
 }
 
 void
-on_pref_alsa_resampling_clicked        (GtkButton       *button,
+on_pref_dynsamplerate_clicked        (GtkButton       *button,
                                         gpointer         user_data)
 {
     int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button));
-    deadbeef->conf_set_int ("alsa.resample", active);
+    deadbeef->conf_set_int ("playback.dynsamplerate", active);
     deadbeef->sendmessage (M_CONFIGCHANGED, 0, 0, 0);
 }
 
@@ -2035,6 +2035,7 @@ on_prop_entry_changed(GtkEditable *editable, gpointer user_data) {
     const char *key = g_object_get_data (G_OBJECT (editable), "key");
     if (key) {
         deadbeef->conf_set_str (key, gtk_entry_get_text (GTK_ENTRY (editable)));
+        deadbeef->sendmessage (M_CONFIGCHANGED, 0, 0, 0);
     }
 }
 
@@ -2043,6 +2044,7 @@ on_prop_checkbox_clicked (GtkButton *button, gpointer user_data) {
     const char *key = g_object_get_data (G_OBJECT (button), "key");
     if (key) {
         deadbeef->conf_set_int (key, gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button)));
+        deadbeef->sendmessage (M_CONFIGCHANGED, 0, 0, 0);
     }
 }
 
@@ -2059,6 +2061,7 @@ on_prop_browse_file (GtkButton *button, gpointer user_data) {
     if (folder) {
         deadbeef->conf_set_str ("filechooser.lastdir", folder);
         g_free (folder);
+        deadbeef->sendmessage (M_CONFIGCHANGED, 0, 0, 0);
     }
     if (response == GTK_RESPONSE_OK) {
         gchar *file = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dlg));
@@ -2449,5 +2452,6 @@ on_trackproperties_delete_event        (GtkWidget       *widget,
     trackproperties = NULL;
     return FALSE;
 }
+
 
 

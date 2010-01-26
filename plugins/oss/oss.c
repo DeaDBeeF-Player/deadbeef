@@ -130,11 +130,10 @@ oss_init (void) {
 static int
 oss_change_rate (int rate) {
     if (!fd) {
-        oss_rate = rate;
         return oss_rate;
     }
     if (rate == oss_rate) {
-        trace ("oss_change_rate: same rate (%d), ignored\n", rate);
+        trace ("oss_change_rate: ignored\n", rate);
         return rate;
     }
     deadbeef->mutex_lock (mutex);

@@ -34,6 +34,7 @@ DB_functions_t *deadbeef;
 static snd_pcm_t *audio;
 //static int bufsize = -1;
 static int alsa_terminate;
+static int requested_rate = -1;
 static int alsa_rate = 44100;
 static int state; // one of output_state_t
 static uintptr_t mutex;
@@ -232,6 +233,10 @@ palsa_init (void) {
 
     mutex = deadbeef->mutex_create ();
 
+    if (requested_rate != -1) {
+        alsa_rate = requested_rate;
+    }
+
     if (palsa_set_hw_params (alsa_rate) < 0) {
         goto open_error;
     }
@@ -308,26 +313,25 @@ open_error:
 
 int
 palsa_change_rate (int rate) {
-    return 0;
+    trace ("palsa_change_rate: %d\n", rate);
+    requested_rate = rate;
     if (!audio) {
-        return 0;
+        return alsa_rate;
     }
     if (rate == alsa_rate) {
-        trace ("palsa_change_rate: same rate (%d), ignored\n", rate);
+        trace ("palsa_change_rate: ignored\n", rate);
         return rate;
     }
-    trace ("trying to change samplerate to: %d\n", rate);
-    deadbeef->mutex_lock (mutex);
+    state = OUTPUT_STATE_STOPPED;
     snd_pcm_drop (audio);
+    deadbeef->mutex_lock (mutex);
     int ret = palsa_set_hw_params (rate);
-    if (state != OUTPUT_STATE_STOPPED) {
-        snd_pcm_start (audio);
-    }
     deadbeef->mutex_unlock (mutex);
     if (ret < 0) {
-        return -1;
+        trace ("palsa_change_rate: impossible to set samplerate to %d\n", rate);
+        return alsa_rate;
     }
-    trace ("chosen samplerate: %d Hz\n", alsa_rate);
+    trace ("chosen samplerate: %d\n", alsa_rate);
     return alsa_rate;
 }
 
@@ -386,9 +390,8 @@ palsa_play (void) {
         }
         else {
             if ((err = snd_pcm_prepare (audio)) < 0) {
-                perror ("snd_pcm_prepare");
-                trace ("cannot prepare audio interface for use (%s)\n",
-                        snd_strerror (err));
+                trace ("cannot prepare audio interface for use (%d, %s)\n",
+                        err, snd_strerror (err));
                 return -1;
             }
         }
@@ -499,20 +502,22 @@ palsa_thread (void *context) {
         
         deadbeef->mutex_lock (mutex);
         if ((err = snd_pcm_wait (audio, 1000)) < 0) {
-            perror ("snd_pcm_wait");
             if (err == -ESTRPIPE) {
-                perror ("snd_pcm_writei");
-                trace ("alsa: trying to recover from suspend...\n");
+                trace ("alsa: trying to recover from suspend... (error=%d, %s)\n", err,  snd_strerror (err));
                 deadbeef->sendmessage (M_REINIT_SOUND, 0, 0, 0);
                 deadbeef->mutex_unlock (mutex);
                 break;
             }
-            else {
+            else if (err == -EPIPE) {
                 // this pretty frequent condition, no spam here
-                perror ("snd_pcm_wait");
-//                    trace ("alsa: trying to recover from xrun...\n");
+//                trace ("alsa: snd_pcm_wait error=%d, %s\n", err, snd_strerror (err));
                 snd_pcm_prepare (audio);
                 snd_pcm_start (audio);
+                deadbeef->mutex_unlock (mutex);
+                continue;
+            }
+            else {
+                trace ("alsa: snd_pcm_wait error=%d, %s\n", err, snd_strerror (err));
                 deadbeef->mutex_unlock (mutex);
                 continue;
             }
@@ -583,6 +588,7 @@ palsa_callback (char *stream, int len) {
 
 static int
 palsa_configchanged (DB_event_t *ev, uintptr_t data) {
+    trace ("alsa: config option changed, restarting\n");
     int alsa_resample = deadbeef->conf_get_int ("alsa.resample", 0);
     const char *alsa_soundcard = deadbeef->conf_get_str ("alsa_soundcard", "default");
     if (alsa_resample != conf_alsa_resample
@@ -644,6 +650,10 @@ alsa_load (DB_functions_t *api) {
     return DB_PLUGIN (&plugin);
 }
 
+static const char settings_dlg[] =
+    "property \"Enable software resampling\" checkbox alsa.resample 0;\n"
+;
+
 // define plugin interface
 static DB_output_t plugin = {
     DB_PLUGIN_SET_API_VERSION
@@ -658,6 +668,7 @@ static DB_output_t plugin = {
     .plugin.website = "http://deadbeef.sf.net",
     .plugin.start = alsa_start,
     .plugin.stop = alsa_stop,
+    .plugin.configdialog = settings_dlg,
     .init = palsa_init,
     .free = palsa_free,
     .change_rate = palsa_change_rate,

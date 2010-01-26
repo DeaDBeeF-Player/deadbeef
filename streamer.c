@@ -38,8 +38,8 @@
 #include "volume.h"
 #include "vfs.h"
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 static intptr_t streamer_tid;
 static int src_quality;
@@ -81,8 +81,6 @@ static float seekpos = -1;
 static float playpos = 0; // play position of current song
 static int avg_bitrate = -1; // avg bitrate of current song
 static int last_bitrate = -1; // last bitrate of current song
-
-static int prevtrack_samplerate = -1;
 
 playItem_t str_playing_song;
 playItem_t str_streaming_song;
@@ -312,9 +310,11 @@ streamer_thread (void *ctx) {
             else if (pstate == 1) {
                 last_bitrate = -1;
                 avg_bitrate = -1;
-                if (p_play () < 0) {
-                    fprintf (stderr, "streamer: failed to start playback; output plugin doesn't work\n");
-                    streamer_set_nextsong (-2, 0);
+                if (p_state () != OUTPUT_STATE_PLAYING) {
+                    if (p_play () < 0) {
+                        fprintf (stderr, "streamer: failed to start playback; output plugin doesn't work\n");
+                        streamer_set_nextsong (-2, 0);
+                    }
                 }
             }
             else if (pstate == 2) {
@@ -377,13 +377,37 @@ streamer_thread (void *ctx) {
             playlist_current_ptr = orig_playing_song;
             // that is needed for playlist drawing
             // plugin will get pointer to new str_playing_song
-            trace ("sending songstarted to plugins\n");
+            trace ("sending songstarted to plugins\ncurrent playtrack: %s\n", str_playing_song.fname);
             plug_trigger_event (DB_EV_SONGSTARTED, 0);
             playpos = 0;
-            // change samplerate
-            if (prevtrack_samplerate != str_playing_song.decoder->info.samplerate) {
-                plug_get_output ()->change_rate (str_playing_song.decoder->info.samplerate);
-                prevtrack_samplerate = str_playing_song.decoder->info.samplerate;
+
+            // try to switch samplerate to the closest supported by output plugin
+            if (conf_get_int ("playback.dynsamplerate", 0)) {
+
+                // don't switch if unchanged
+                int prevtrack_samplerate = p_get_rate ();
+                if (prevtrack_samplerate != str_playing_song.decoder->info.samplerate) {
+                    int newrate = plug_get_output ()->change_rate (str_playing_song.decoder->info.samplerate);
+                    if (newrate != prevtrack_samplerate) {
+                        // restart streaming of current track
+                        trace ("streamer: output samplerate changed from %d to %d; restarting track\n", prevtrack_samplerate, newrate);
+                        str_streaming_song.decoder->free ();
+                        str_streaming_song.decoder->init (DB_PLAYITEM (orig_streaming_song));
+                        bytes_until_next_song = -1;
+                        streamer_buffering = 1;
+                        streamer_reset (1);
+                        prevtrack_samplerate = str_playing_song.decoder->info.samplerate;
+                    }
+                }
+
+                // output plugin may stop playback before switching samplerate
+                if (p_state () != OUTPUT_STATE_PLAYING) {
+                    if (p_play () < 0) {
+                        fprintf (stderr, "streamer: failed to start playback after samplerate change; output plugin doesn't work\n");
+                        streamer_set_nextsong (-2, 0);
+                        continue;
+                    }
+                }
             }
         }
 

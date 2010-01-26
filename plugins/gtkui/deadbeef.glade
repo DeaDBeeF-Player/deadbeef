@@ -1591,7 +1591,7 @@
 	  <child>
 	    <widget class="GtkLabel" id="label5">
 	      <property name="visible">True</property>
-	      <property name="label" translatable="yes">Software ALSA resampling</property>
+	      <property name="label" translatable="yes">Allow dynamic samplerate switching</property>
 	      <property name="use_underline">False</property>
 	      <property name="use_markup">False</property>
 	      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -1689,17 +1689,17 @@
 	  </child>
 
 	  <child>
-	    <widget class="GtkCheckButton" id="pref_alsa_resampling">
+	    <widget class="GtkCheckButton" id="pref_dynsamplerate">
 	      <property name="visible">True</property>
 	      <property name="can_focus">True</property>
-	      <property name="label" translatable="yes"></property>
+	      <property name="label" translatable="yes">(WARNING: turning this on this might break gapless playback)</property>
 	      <property name="use_underline">True</property>
 	      <property name="relief">GTK_RELIEF_NORMAL</property>
 	      <property name="focus_on_click">True</property>
 	      <property name="active">False</property>
 	      <property name="inconsistent">False</property>
 	      <property name="draw_indicator">True</property>
-	      <signal name="clicked" handler="on_pref_alsa_resampling_clicked" last_modification_time="Sat, 24 Oct 2009 16:50:34 GMT"/>
+	      <signal name="clicked" handler="on_pref_dynsamplerate_clicked" last_modification_time="Tue, 26 Jan 2010 19:46:12 GMT"/>
 	    </widget>
 	    <packing>
 	      <property name="left_attach">1</property>
