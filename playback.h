@@ -27,7 +27,8 @@
 #define p_get_rate plug_get_output ()->samplerate
 #define p_get_state plug_get_output ()->state
 
-#define p_isstopped() (plug_get_output ()->state () == OUTPUT_STATE_STOPPED)
-#define p_ispaused() (plug_get_output ()->state () == OUTPUT_STATE_PAUSED)
+#define p_state() (plug_get_output ()->state ())
+#define p_isstopped() (p_state () == OUTPUT_STATE_STOPPED)
+#define p_ispaused() (p_state () == OUTPUT_STATE_PAUSED)
 
 #endif // __PLAYBACK_H

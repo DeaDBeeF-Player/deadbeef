@@ -1252,7 +1252,7 @@ typedef int64_t x86_reg;
 #    define REGSP   esp
 typedef int32_t x86_reg;
 #else
-#warning unknown arch
+#warning unknown arch, SIMD optimizations will be disabled
 typedef int x86_reg;
 #endif
 
@@ -1843,7 +1843,7 @@ static DB_decoder_t plugin = {
     .filetypes = filetypes
 };
 
-#ifdef HAVE_SSE2
+#if HAVE_SSE2 && !ARCH_UNKNOWN
 
 #define FF_MM_MMX      0x0001 ///< standard MMX
 #define FF_MM_3DNOW    0x0004 ///< AMD 3DNOW
@@ -1949,7 +1949,7 @@ int mm_support(void)
 DB_plugin_t *
 ffap_load (DB_functions_t *api) {
     // detect sse2
-#ifdef HAVE_SSE2
+#if HAVE_SSE2 && !ARCH_UNKNOWN
     trace ("ffap: was compiled with sse2 support\n");
     int mm_flags = mm_support ();
     if (mm_flags & FF_MM_SSE2) {

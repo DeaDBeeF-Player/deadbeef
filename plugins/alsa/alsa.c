@@ -26,25 +26,50 @@
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
 
+#define min(x,y) ((x)<(y)?(x):(y))
+
 static DB_output_t plugin;
 DB_functions_t *deadbeef;
 
-#define BUFFER_MIN 1024
-#define BUFFER_MAX 4096
-
 static snd_pcm_t *audio;
-static int bufsize = -1;
+//static int bufsize = -1;
 static int alsa_terminate;
+static int requested_rate = -1;
 static int alsa_rate = 44100;
-static int state; // 0 = stopped, 1 = playing, 2 = pause
+static int state; // one of output_state_t
 static uintptr_t mutex;
 static intptr_t alsa_tid;
+
+static snd_pcm_uframes_t buffer_size;
+static snd_pcm_uframes_t period_size;
 
 static int conf_alsa_resample = 0;
 static char conf_alsa_soundcard[100] = "default";
 
+//static snd_async_handler_t *pcm_callback;
+
 static void
 palsa_callback (char *stream, int len);
+
+#if 0
+static void
+alsa_callback (snd_async_handler_t *pcm_callback) {
+    snd_pcm_t *pcm_handle = snd_async_handler_get_pcm(pcm_callback);
+    snd_pcm_sframes_t avail;
+    int err;
+    printf ("alsa_callback\n");
+
+    avail = snd_pcm_avail_update(pcm_handle);
+    while (avail >= period_size) {
+        char buf[avail * 4];
+        palsa_callback (buf, avail * 4);
+        if ((err = snd_pcm_writei (pcm_handle, buf, period_size)) < 0) {
+            perror ("snd_pcm_writei");
+        }
+        avail = snd_pcm_avail_update(pcm_handle);
+    }
+}
+#endif
 
 static void
 palsa_thread (void *context);
@@ -151,20 +176,27 @@ palsa_set_hw_params (int samplerate) {
     snd_pcm_hw_params_get_channels (hw_params, &nchan);
     trace ("alsa channels: %d\n", nchan);
 
-    unsigned int buffer_time = 500000;
-    int dir;
-    if ((err = snd_pcm_hw_params_set_buffer_time_near (audio, hw_params, &buffer_time, &dir)) < 0) {
-        trace ("Unable to set buffer time %i for playback: %s\n", buffer_time, snd_strerror(err));
-        goto error;
-    }
-    trace ("alsa buffer time: %d ms\n", buffer_time);
-    snd_pcm_uframes_t size;
-    if ((err = snd_pcm_hw_params_get_buffer_size (hw_params, &size)) < 0) {
-        trace ("Unable to get buffer size for playback: %s\n", snd_strerror(err));
-        goto error;
-    }
-    trace ("alsa buffer size: %d frames\n", (int)size);
-    bufsize = size;
+    buffer_size = 1024;
+    period_size = 64;
+    snd_pcm_hw_params_set_buffer_size_near (audio, hw_params, &buffer_size);
+    snd_pcm_hw_params_set_period_size_near (audio, hw_params, &period_size, NULL);
+    trace ("alsa buffer size: %d frames\n", buffer_size);
+    trace ("alsa period size: %d frames\n", period_size);
+
+//    unsigned int buffer_time = 100000;
+//    int dir;
+//    if ((err = snd_pcm_hw_params_set_buffer_time_min (audio, hw_params, &buffer_time, &dir)) < 0) {
+//        trace ("Unable to set buffer time %i for playback: %s\n", buffer_time, snd_strerror(err));
+//        goto error;
+//    }
+//    trace ("alsa buffer time: %d usec\n", buffer_time);
+//    snd_pcm_uframes_t size;
+//    if ((err = snd_pcm_hw_params_get_buffer_size (hw_params, &size)) < 0) {
+//        trace ("Unable to get buffer size for playback: %s\n", snd_strerror(err));
+//        goto error;
+//    }
+//    trace ("alsa buffer size: %d frames\n", (int)size);
+//    bufsize = size;
 
     if ((err = snd_pcm_hw_params (audio, hw_params)) < 0) {
         trace ("cannot set parameters (%s)\n",
@@ -191,7 +223,7 @@ palsa_init (void) {
     trace ("alsa.resample: %d\n", conf_alsa_resample);
 
     snd_pcm_sw_params_t *sw_params = NULL;
-    state = 0;
+    state = OUTPUT_STATE_STOPPED;
     //const char *conf_alsa_soundcard = conf_get_str ("alsa_soundcard", "default");
     if ((err = snd_pcm_open (&audio, conf_alsa_soundcard, SND_PCM_STREAM_PLAYBACK, 0))) {
         trace ("could not open audio device (%s)\n",
@@ -200,6 +232,10 @@ palsa_init (void) {
     }
 
     mutex = deadbeef->mutex_create ();
+
+    if (requested_rate != -1) {
+        alsa_rate = requested_rate;
+    }
 
     if (palsa_set_hw_params (alsa_rate) < 0) {
         goto open_error;
@@ -216,24 +252,29 @@ palsa_init (void) {
         goto open_error;
     }
 
-    if ((err = snd_pcm_sw_params_set_avail_min (audio, sw_params, bufsize/2)) < 0) {
+    snd_pcm_sw_params_set_start_threshold (audio, sw_params, buffer_size - period_size);
+
+    if ((err = snd_pcm_sw_params_set_avail_min (audio, sw_params, period_size)) < 0) {
         trace ("cannot set minimum available count (%s)\n",
                 snd_strerror (err));
         goto open_error;
     }
+
     snd_pcm_uframes_t av;
     if ((err = snd_pcm_sw_params_get_avail_min (sw_params, &av)) < 0) {
         trace ("snd_pcm_sw_params_get_avail_min failed (%s)\n",
                 snd_strerror (err));
         goto open_error;
     }
-    trace ("alsa period size: %d frames\n", (int)av);
+    trace ("alsa avail_min: %d frames\n", (int)av);
 
-    if ((err = snd_pcm_sw_params_set_start_threshold (audio, sw_params, 0U)) < 0) {
-        trace ("cannot set start mode (%s)\n",
-                snd_strerror (err));
-        goto open_error;
-    }
+
+//    if ((err = snd_pcm_sw_params_set_start_threshold (audio, sw_params, 0U)) < 0) {
+//        trace ("cannot set start mode (%s)\n",
+//                snd_strerror (err));
+//        goto open_error;
+//    }
+
     if ((err = snd_pcm_sw_params (audio, sw_params)) < 0) {
         trace ("cannot set software parameters (%s)\n",
                 snd_strerror (err));
@@ -272,26 +313,25 @@ open_error:
 
 int
 palsa_change_rate (int rate) {
+    trace ("palsa_change_rate: %d\n", rate);
+    requested_rate = rate;
     if (!audio) {
-        alsa_rate = rate;
         return alsa_rate;
     }
     if (rate == alsa_rate) {
-        trace ("palsa_change_rate: same rate (%d), ignored\n", rate);
+        trace ("palsa_change_rate: ignored\n", rate);
         return rate;
     }
-    trace ("trying to change samplerate to: %d\n", rate);
-    deadbeef->mutex_lock (mutex);
+    state = OUTPUT_STATE_STOPPED;
     snd_pcm_drop (audio);
+    deadbeef->mutex_lock (mutex);
     int ret = palsa_set_hw_params (rate);
-    if (state != 0) {
-        snd_pcm_start (audio);
-    }
     deadbeef->mutex_unlock (mutex);
     if (ret < 0) {
-        return -1;
+        trace ("palsa_change_rate: impossible to set samplerate to %d\n", rate);
+        return alsa_rate;
     }
-    trace ("chosen samplerate: %d Hz\n", alsa_rate);
+    trace ("chosen samplerate: %d\n", alsa_rate);
     return alsa_rate;
 }
 
@@ -299,7 +339,10 @@ int
 palsa_free (void) {
     trace ("palsa_free\n");
     if (audio && !alsa_terminate) {
+        palsa_stop ();
+        deadbeef->mutex_lock (mutex);
         alsa_terminate = 1;
+        deadbeef->mutex_unlock (mutex);
         printf ("waiting for alsa thread to finish\n");
         if (alsa_tid) {
             deadbeef->thread_join (alsa_tid);
@@ -311,7 +354,7 @@ palsa_free (void) {
             deadbeef->mutex_free (mutex);
             mutex = 0;
         }
-        state = 0;
+        state = OUTPUT_STATE_STOPPED;
         alsa_terminate = 0;
     }
     return 0;
@@ -322,7 +365,7 @@ palsa_hw_pause (int pause) {
     if (!audio) {
         return;
     }
-    if (state == 0) {
+    if (state == OUTPUT_STATE_STOPPED) {
         return;
     }
     if (pause == 1) {
@@ -337,24 +380,32 @@ palsa_hw_pause (int pause) {
 int
 palsa_play (void) {
     int err;
-    if (state == 0) {
+    trace ("palsa_play\n");
+    if (state == OUTPUT_STATE_STOPPED) {
         if (!audio) {
             if (palsa_init () < 0) {
-                state = 0;
+                state = OUTPUT_STATE_STOPPED;
                 return -1;
             }
         }
         else {
             if ((err = snd_pcm_prepare (audio)) < 0) {
-                trace ("cannot prepare audio interface for use (%s)\n",
-                        snd_strerror (err));
+                trace ("cannot prepare audio interface for use (%d, %s)\n",
+                        err, snd_strerror (err));
                 return -1;
             }
         }
     }
-    if (state != 1) {
-        state = 1;
+    if (state != OUTPUT_STATE_PLAYING) {
+        deadbeef->mutex_lock (mutex);
+//        trace ("alsa: installing async handler\n");
+//        if (snd_async_add_pcm_handler (&pcm_callback, audio, alsa_callback, NULL) < 0) {
+//            perror ("snd_async_add_pcm_handler");
+//        }
+//        trace ("pcm_callback=%p\n", pcm_callback);
         snd_pcm_start (audio);
+        deadbeef->mutex_unlock (mutex);
+        state = OUTPUT_STATE_PLAYING;
     }
     return 0;
 }
@@ -365,13 +416,19 @@ palsa_stop (void) {
     if (!audio) {
         return 0;
     }
-    state = 0;
+    state = OUTPUT_STATE_STOPPED;
     if (deadbeef->conf_get_int ("alsa.freeonstop", 0))  {
         palsa_free ();
     }
     else {
         deadbeef->mutex_lock (mutex);
         snd_pcm_drop (audio);
+#if 0
+        if (pcm_callback) {
+            snd_async_del_handler (pcm_callback);
+            pcm_callback = NULL;
+        }
+#endif
         deadbeef->mutex_unlock (mutex);
     }
     deadbeef->streamer_reset (1);
@@ -380,21 +437,25 @@ palsa_stop (void) {
 
 int
 palsa_pause (void) {
-    if (state == 0 || !audio) {
+    if (state == OUTPUT_STATE_STOPPED || !audio) {
         return -1;
     }
     // set pause state
+    deadbeef->mutex_lock (mutex);
     palsa_hw_pause (1);
-    state = 2;
+    deadbeef->mutex_unlock (mutex);
+    state = OUTPUT_STATE_PAUSED;
     return 0;
 }
 
 int
 palsa_unpause (void) {
     // unset pause state
-    if (state == 2) {
-        state = 1;
+    if (state == OUTPUT_STATE_PAUSED) {
+        state = OUTPUT_STATE_PLAYING;
+        deadbeef->mutex_lock (mutex);
         palsa_hw_pause (0);
+        deadbeef->mutex_unlock (mutex);
     }
     return 0;
 }
@@ -434,75 +495,53 @@ palsa_thread (void *context) {
         if (alsa_terminate) {
             break;
         }
-        if (state != 1) {
+        if (state != OUTPUT_STATE_PLAYING || !deadbeef->streamer_ok_to_read (-1)) {
             usleep (10000);
             continue;
         }
         
         deadbeef->mutex_lock (mutex);
-        /* wait till the interface is ready for data, or 1 second
-           has elapsed.
-         */
-        if ((err = snd_pcm_wait (audio, 500)) < 0 && state == 1) {
+        if ((err = snd_pcm_wait (audio, 1000)) < 0) {
             if (err == -ESTRPIPE) {
-                trace ("alsa: trying to recover from suspend...\n");
+                trace ("alsa: trying to recover from suspend... (error=%d, %s)\n", err,  snd_strerror (err));
                 deadbeef->sendmessage (M_REINIT_SOUND, 0, 0, 0);
                 deadbeef->mutex_unlock (mutex);
                 break;
             }
-            else {
-                trace ("alsa: trying to recover from xrun...\n");
+            else if (err == -EPIPE) {
+                // this pretty frequent condition, no spam here
+//                trace ("alsa: snd_pcm_wait error=%d, %s\n", err, snd_strerror (err));
                 snd_pcm_prepare (audio);
+                snd_pcm_start (audio);
                 deadbeef->mutex_unlock (mutex);
                 continue;
             }
-        }	           
-
+            else {
+                trace ("alsa: snd_pcm_wait error=%d, %s\n", err, snd_strerror (err));
+                deadbeef->mutex_unlock (mutex);
+                continue;
+            }
+        }
         /* find out how much space is available for playback data */
-
-        snd_pcm_sframes_t frames_to_deliver;
-        if ((frames_to_deliver = snd_pcm_avail_update (audio)) < 0) {
-            if (frames_to_deliver == -EPIPE) {
-                deadbeef->mutex_unlock (mutex);
-                trace ("an xrun occured\n");
-                continue;
-            } else {
-                deadbeef->mutex_unlock (mutex);
-                trace ("unknown ALSA avail update return value (%d)\n", 
-                        (int)frames_to_deliver);
-                continue;
+        int written = 0;
+        snd_pcm_sframes_t frames_to_deliver = snd_pcm_avail_update (audio);
+        while (frames_to_deliver >= period_size) {
+            char buf[period_size * 4];
+            palsa_callback (buf, period_size * 4);
+            if ((err = snd_pcm_writei (audio, buf, period_size)) < 0) {
+                break;
             }
+            written += period_size;
+            frames_to_deliver = snd_pcm_avail_update (audio);
         }
-
-        /* deliver the data */
-        // FIXME: under some conditions, frames_to_deliver may become huge
-        // like 20M. this case is not handled here.
-        if (frames_to_deliver < BUFFER_MIN) {
-            //trace ("alsa: frames_to_deliver clipped from %d to %d\n", frames_to_deliver, BUFFER_MIN);
-            frames_to_deliver = BUFFER_MIN;
-        }
-        else if (frames_to_deliver > BUFFER_MAX) {
-            //trace ("alsa: frames_to_deliver clipped from %d to %d\n", frames_to_deliver, BUFFER_MAX);
-            frames_to_deliver = BUFFER_MAX;
-        }
-        char buf[frames_to_deliver*4];
-        palsa_callback (buf, frames_to_deliver*4);
-        if ((err = snd_pcm_writei (audio, buf, frames_to_deliver)) < 0) {
-            trace ("write %d frames failed (%s)\n", (int)frames_to_deliver, snd_strerror (err));
-            snd_pcm_prepare (audio);
-            snd_pcm_start (audio);
-        }
+//        trace ("wrote %d frames\n", written);
         deadbeef->mutex_unlock (mutex);
-        usleep (1000); // this must be here to prevent mutex deadlock
+//        usleep (1000); // this must be here to prevent mutex deadlock
     }
 }
 
 static void
 palsa_callback (char *stream, int len) {
-    if (!deadbeef->streamer_ok_to_read (len)) {
-        memset (stream, 0, len);
-        return;
-    }
     int bytesread = deadbeef->streamer_read (stream, len);
 
 // FIXME: move volume control to streamer_read for copy optimization
@@ -549,6 +588,7 @@ palsa_callback (char *stream, int len) {
 
 static int
 palsa_configchanged (DB_event_t *ev, uintptr_t data) {
+    trace ("alsa: config option changed, restarting\n");
     int alsa_resample = deadbeef->conf_get_int ("alsa.resample", 0);
     const char *alsa_soundcard = deadbeef->conf_get_str ("alsa_soundcard", "default");
     if (alsa_resample != conf_alsa_resample
@@ -610,6 +650,10 @@ alsa_load (DB_functions_t *api) {
     return DB_PLUGIN (&plugin);
 }
 
+static const char settings_dlg[] =
+    "property \"Enable software resampling\" checkbox alsa.resample 0;\n"
+;
+
 // define plugin interface
 static DB_output_t plugin = {
     DB_PLUGIN_SET_API_VERSION
@@ -624,6 +668,7 @@ static DB_output_t plugin = {
     .plugin.website = "http://deadbeef.sf.net",
     .plugin.start = alsa_start,
     .plugin.stop = alsa_stop,
+    .plugin.configdialog = settings_dlg,
     .init = palsa_init,
     .free = palsa_free,
     .change_rate = palsa_change_rate,

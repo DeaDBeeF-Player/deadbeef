@@ -755,10 +755,17 @@ plug_reinit_sound (void) {
         fprintf (stderr, "failed to select output plugin %s\nreverted to %s\n", outplugname, prev->plugin.name);
         output_plugin = prev;
     }
-    p_init ();
+    streamer_reset (1);
+    if (p_init () < 0) {
+        streamer_set_nextsong (-2, 0);
+        return;
+    }
 
     if (state != OUTPUT_STATE_PAUSED && state != OUTPUT_STATE_STOPPED) {
-        p_play ();
+        if (p_play () < 0) {
+            fprintf (stderr, "failed to reinit sound output\n");
+            streamer_set_nextsong (-2, 0);
+        }
     }
 }
 

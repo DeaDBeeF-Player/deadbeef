@@ -38,8 +38,8 @@
 #include "volume.h"
 #include "vfs.h"
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 static intptr_t streamer_tid;
 static int src_quality;
@@ -81,8 +81,6 @@ static float seekpos = -1;
 static float playpos = 0; // play position of current song
 static int avg_bitrate = -1; // avg bitrate of current song
 static int last_bitrate = -1; // last bitrate of current song
-
-static int prevtrack_samplerate = -1;
 
 // copies of current playing and streaming tracks
 playItem_t str_playing_song;
@@ -312,9 +310,11 @@ streamer_thread (void *ctx) {
             else if (pstate == 1) {
                 last_bitrate = -1;
                 avg_bitrate = -1;
-                if (p_play () < 0) {
-                    fprintf (stderr, "streamer: failed to start playback; output plugin doesn't work\n");
-                    streamer_set_nextsong (-2, 0);
+                if (p_state () != OUTPUT_STATE_PLAYING) {
+                    if (p_play () < 0) {
+                        fprintf (stderr, "streamer: failed to start playback; output plugin doesn't work\n");
+                        streamer_set_nextsong (-2, 0);
+                    }
                 }
             }
             else if (pstate == 2) {
@@ -376,13 +376,36 @@ streamer_thread (void *ctx) {
             }
             // that is needed for playlist drawing
             // plugin will get pointer to new str_playing_song
-            trace ("sending songstarted to plugins\n");
+            trace ("sending songstarted to plugins\ncurrent playtrack: %s\n", str_playing_song.fname);
             plug_trigger_event (DB_EV_SONGSTARTED, 0);
             playpos = 0;
-            // change samplerate
-            if (prevtrack_samplerate != str_current_decoder->samplerate) {
-                plug_get_output ()->change_rate (str_current_decoder->samplerate);
-                prevtrack_samplerate = str_current_decoder->samplerate;
+
+            // try to switch samplerate to the closest supported by output plugin
+            if (conf_get_int ("playback.dynsamplerate", 0)) {
+
+                // don't switch if unchanged
+                int prevtrack_samplerate = p_get_rate ();
+                if (prevtrack_samplerate != str_current_decoder->samplerate) {
+                    int newrate = plug_get_output ()->change_rate (str_current_decoder->samplerate);
+                    if (newrate != prevtrack_samplerate) {
+                        // restart streaming of current track
+                        trace ("streamer: output samplerate changed from %d to %d; restarting track\n", prevtrack_samplerate, newrate);
+                        str_current_decoder->plugin->seek (str_current_decoder, 0);
+                        bytes_until_next_song = -1;
+                        streamer_buffering = 1;
+                        streamer_reset (1);
+                        prevtrack_samplerate = str_current_decoder->samplerate;
+                    }
+                }
+
+                // output plugin may stop playback before switching samplerate
+                if (p_state () != OUTPUT_STATE_PLAYING) {
+                    if (p_play () < 0) {
+                        fprintf (stderr, "streamer: failed to start playback after samplerate change; output plugin doesn't work\n");
+                        streamer_set_nextsong (-2, 0);
+                        continue;
+                    }
+                }
             }
         }
 
@@ -465,6 +488,15 @@ streamer_thread (void *ctx) {
             streamer_lock ();
             memcpy (streambuffer+streambuffer_fill, buf, sz);
             streambuffer_fill += bytesread;
+            if (streambuffer_fill > 128000 && streamer_buffering) {
+                streamer_buffering = 0;
+                if (orig_streaming_song) {
+                    int trk = pl_get_idx_of (orig_streaming_song);
+                    if (trk != -1) {
+                        messagepump_push (M_TRACKCHANGED, 0, trk, 0);
+                    }
+                }
+            }
         }
         streamer_unlock ();
         struct timeval tm2;
@@ -898,15 +930,6 @@ streamer_get_fill (void) {
 int
 streamer_ok_to_read (int len) {
     if (len >= 0 && (bytes_until_next_song > 0 || streambuffer_fill >= (len*2))) {
-        if (streamer_buffering) {
-            streamer_buffering = 0;
-            if (orig_streaming_song) {
-                int trk = pl_get_idx_of (orig_streaming_song);
-                if (trk != -1) {
-                    messagepump_push (M_TRACKCHANGED, 0, trk, 0);
-                }
-            }
-        }
         return 1;
     }
     else {
