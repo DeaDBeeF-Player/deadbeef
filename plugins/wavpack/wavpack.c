@@ -154,7 +154,7 @@ wv_read_int16 (char *bytes, int size) {
     int32_t *p = buffer;
     n *= nchannels;
     while (n > 0) {
-        *((int16_t *)bytes) = (int16_t)((*p) >> (_info->bps-16));
+        *((int16_t *)bytes) = (int16_t)((*p) >> (plugin.info.bps-16));
         bytes += sizeof (int16_t);
         p++;
         n--;
