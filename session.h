@@ -22,9 +22,6 @@
 #include <stdint.h>
 
 int
-session_save (const char *fname);
-
-int
 session_load (const char *fname);
 
 #endif // __SESSION_H

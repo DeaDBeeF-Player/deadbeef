@@ -118,56 +118,6 @@ read_i32_be (uint32_t *pval, FILE *fp) {
 }
 
 int
-session_save (const char *fname) {
-    unlink (fname);
-#if 0
-    FILE *fp = fopen (fname, "w+b");
-    if (!fp) {
-        fprintf (stderr, "failed to save session, file %s could not be opened\n");
-        return -1;
-    }
-    // magic
-    if (fwrite (sessfile_magic, 1, 4, fp) != 4) {
-        goto session_save_fail;
-    }
-    uint8_t version = SESS_CURRENT_VER;
-    if (fwrite (&version, 1, 1, fp) != 1) {
-        goto session_save_fail;
-    }
-    uint16_t l = strlen (session_dir);
-    if (write_i16_be (l, fp) != 2) {
-        goto session_save_fail;
-    }
-    if (fwrite (session_dir, 1, l, fp) != l) {
-        goto session_save_fail;
-    }
-    if (write_i32_be (*((uint32_t*)&session_volume), fp) != 4) {
-        goto session_save_fail;
-    }
-    if (fwrite (&session_playlist_order, 1, 1, fp) != 1) {
-        goto session_save_fail;
-    }
-    if (fwrite (&session_playlist_looping, 1, 1, fp) != 1) {
-        goto session_save_fail;
-    }
-    if (fwrite (&session_scroll_follows_playback, 1, 1, fp) != 1) {
-        goto session_save_fail;
-    }
-    for (int k = 0; k < 5; k++) {
-        if (write_i32_be (session_win_attrs[k], fp) != 4) {
-            goto session_save_fail;
-        }
-    }
-    fclose (fp);
-    return 0;
-session_save_fail:
-    fprintf (stderr, "failed to save session, seems to be a disk error\n");
-    fclose (fp);
-    return -1;
-#endif
-}
-
-int
 session_load (const char *fname) {
     char session_dir[2048];
     float session_volume;

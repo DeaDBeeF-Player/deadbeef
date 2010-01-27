@@ -68,7 +68,6 @@
 char confdir[1024]; // $HOME/.config
 char dbconfdir[1024]; // $HOME/.config/deadbeef
 char defpl[1024]; // $HOME/.config/deadbeef/default.dbpl
-char sessfile[1024]; // $HOME/.config/deadbeef/session
 
 // client-side commandline support
 // -1 error, program must exit with error code -1
@@ -448,10 +447,6 @@ main (int argc, char *argv[]) {
         fprintf (stderr, "fatal: out of memory while configuring\n");
         return -1;
     }
-    if (snprintf (sessfile, sizeof (sessfile), "%s/deadbeef/session", confdir) > sizeof (sessfile)) {
-        fprintf (stderr, "fatal: out of memory while configuring\n");
-        return -1;
-    }
     mkdir (confdir, 0755);
     if (snprintf (dbconfdir, sizeof (dbconfdir), "%s/deadbeef", confdir) > sizeof (dbconfdir)) {
         fprintf (stderr, "fatal: out of memory while configuring\n");
@@ -608,7 +603,15 @@ main (int argc, char *argv[]) {
         pl_load (defpl);
     }
     plug_trigger_event_playlistchanged ();
-    session_load (sessfile);
+
+// this is old code left for backwards compatibility
+    {
+        char sessfile[1024]; // $HOME/.config/deadbeef/session
+        if (snprintf (sessfile, sizeof (sessfile), "%s/deadbeef/session", confdir) < sizeof (sessfile)) {
+            session_load (sessfile);
+        }
+    }
+
     codec_init_locking ();
     streamer_init ();
 
@@ -618,6 +621,12 @@ main (int argc, char *argv[]) {
     // save config
     pl_save (defpl);
     conf_save ();
+    {
+        char sessfile[1024]; // $HOME/.config/deadbeef/session
+        if (snprintf (sessfile, sizeof (sessfile), "%s/deadbeef/session", confdir) < sizeof (sessfile)) {
+            unlink (sessfile);
+        }
+    }
 
     // stop receiving messages from outside
     server_close ();
@@ -634,7 +643,6 @@ main (int argc, char *argv[]) {
 
     // at this point we can simply do exit(0), but let's clean up for debugging
     codec_free_locking ();
-    session_save (sessfile);
     pl_free ();
     conf_free ();
     messagepump_free ();
