@@ -722,7 +722,7 @@ streamer_read_async (char *bytes, int size) {
         if (str_current_decoder->samplerate != -1) {
             int nchannels = str_current_decoder->channels;
             int samplerate = str_current_decoder->samplerate;
-            if (str_current_decoder->samplerate == p_get_rate ()) {
+            if (str_current_decoder->samplerate == p_get_rate () && decoder->read_int16) {
                 // samplerate match
                 if (str_current_decoder->channels == 2) {
                     bytesread = decoder->read_int16 (str_current_decoder, bytes, size);
