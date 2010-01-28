@@ -1819,16 +1819,16 @@ on_edit_column_activate                (GtkMenuItem     *menuitem,
         gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "id")), DB_COLUMN_ID_MAX);
     }
     else {
-        gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "id")), ps->active_column->id-1);
+        gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "id")), ps->active_column->id);
     }
     gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "align")), ps->active_column->align_right);
     gint response = gtk_dialog_run (GTK_DIALOG (dlg));
     if (response == GTK_RESPONSE_OK) {
         const gchar *title = gtk_entry_get_text (GTK_ENTRY (lookup_widget (dlg, "title")));
         const gchar *format = gtk_entry_get_text (GTK_ENTRY (lookup_widget (dlg, "format")));
-        int id = gtk_combo_box_get_active (GTK_COMBO_BOX (lookup_widget (dlg, "id"))) + 1;
+        int id = gtk_combo_box_get_active (GTK_COMBO_BOX (lookup_widget (dlg, "id")));
         int align = gtk_combo_box_get_active (GTK_COMBO_BOX (lookup_widget (dlg, "align")));
-        if (id > DB_COLUMN_ID_MAX) {
+        if (id >= DB_COLUMN_ID_MAX) {
             id = -1;
         }
         free (ps->active_column->title);
