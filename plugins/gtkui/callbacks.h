@@ -807,3 +807,7 @@ on_lgpl1_activate                      (GtkMenuItem     *menuitem,
 void
 on_pref_dynsamplerate_clicked          (GtkButton       *button,
                                         gpointer         user_data);
+
+void
+on_pref_close_clicked                  (GtkButton       *button,
+                                        gpointer         user_data);

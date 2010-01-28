@@ -18,6 +18,8 @@
 #include <stdio.h>
 #include <pthread.h>
 #include <stdlib.h>
+#include <errno.h>
+#include <string.h>
 #include "threading.h"
 
 intptr_t
@@ -25,20 +27,21 @@ thread_start (void (*fn)(void *ctx), void *ctx) {
     pthread_t tid;
     pthread_attr_t attr;
     int s = pthread_attr_init (&attr);
-    if (s) {
-        fprintf (stderr, "pthread_attr_init failed\n");
-        return -1;
+    if (s != 0) {
+        fprintf (stderr, "pthread_attr_init failed: %s\n", strerror (s));
+        return 0;
     }
 
-    if (pthread_create (&tid, &attr, (void *(*)(void *))fn, (void*)ctx)) {
-        fprintf (stderr, "pthread_create failed\n");
-        return -1;
+    s = pthread_create (&tid, &attr, (void *(*)(void *))fn, (void*)ctx);
+    if (s != 0) {
+        fprintf (stderr, "pthread_create failed: %s\n", strerror (s));
+        return 0;
     }
     s = pthread_attr_destroy (&attr);
-    if (s) {
-        fprintf (stderr, "pthread_attr_destroy failed\n");
+    if (s != 0) {
+        fprintf (stderr, "pthread_attr_destroy failed: %s\n", strerror (s));
         pthread_cancel (tid);
-        return -1;
+        return 0;
     }
     return tid;
 }
@@ -48,7 +51,7 @@ thread_join (intptr_t tid) {
     void *retval;
     int s = pthread_join ((pthread_t)tid, &retval);
     if (s) {
-        fprintf (stderr, "pthread_join failed\n");
+        fprintf (stderr, "pthread_join failed: %s\n", strerror (s));
         return -1;
     }
     return 0;
@@ -57,8 +60,10 @@ thread_join (intptr_t tid) {
 uintptr_t
 mutex_create (void) {
     pthread_mutex_t *mtx = malloc (sizeof (pthread_mutex_t));
-    if (pthread_mutex_init (mtx, NULL)) {
-        fprintf (stderr, "pthread_mutex_init failed!\n");
+    int err = pthread_mutex_init (mtx, NULL);
+    if (err != 0) {
+        fprintf (stderr, "pthread_mutex_init failed: %s\n", strerror (err));
+        return 0;
     }
     return (uintptr_t)mtx;
 }
@@ -76,8 +81,8 @@ int
 mutex_lock (uintptr_t _mtx) {
     pthread_mutex_t *mtx = (pthread_mutex_t *)_mtx;
     int err = pthread_mutex_lock (mtx);
-    if (err < 0) {
-        fprintf (stderr, "pthread_mutex_lock failed (error %d)\n", err);
+    if (err != 0) {
+        fprintf (stderr, "pthread_mutex_lock failed: %s\n", strerror (err));
     }
     return err;
 }
@@ -86,8 +91,8 @@ int
 mutex_unlock (uintptr_t _mtx) {
     pthread_mutex_t *mtx = (pthread_mutex_t *)_mtx;
     int err = pthread_mutex_unlock (mtx);
-    if (err < 0) {
-        printf ("pthread_mutex_unlock failed (error %d)\n", err);
+    if (err != 0) {
+        fprintf (stderr, "pthread_mutex_unlock failed: %s\n", strerror (err));
     }
     return err;
 }
@@ -95,7 +100,11 @@ mutex_unlock (uintptr_t _mtx) {
 uintptr_t
 cond_create (void) {
     pthread_cond_t *cond = malloc (sizeof (pthread_cond_t));
-    pthread_cond_init (cond, NULL);
+    int err = pthread_cond_init (cond, NULL);
+    if (err != 0) {
+        fprintf (stderr, "pthread_cond_init failed: %s\n", strerror (err));
+        return 0;
+    }
     return (uintptr_t)cond;
 }
 
@@ -112,17 +121,29 @@ int
 cond_wait (uintptr_t c, uintptr_t m) {
     pthread_cond_t *cond = (pthread_cond_t *)c;
     pthread_mutex_t *mutex = (pthread_mutex_t *)m;
-    return pthread_cond_wait (cond, mutex);
+    int err = pthread_cond_wait (cond, mutex);
+    if (err != 0) {
+        fprintf (stderr, "pthread_cond_wait failed: %s\n", strerror (err));
+    }
+    return err;
 }
 
 int
 cond_signal (uintptr_t c) {
     pthread_cond_t *cond = (pthread_cond_t *)c;
-    return pthread_cond_signal (cond);
+    int err = pthread_cond_signal (cond);
+    if (err != 0) {
+        fprintf (stderr, "pthread_cond_signal failed: %s\n", strerror (err));
+    }
+    return err;
 }
 
 int
 cond_broadcast (uintptr_t c) {
     pthread_cond_t *cond = (pthread_cond_t *)c;
-    return pthread_cond_broadcast (cond);
+    int err = pthread_cond_broadcast (cond);
+    if (err != 0) {
+        fprintf (stderr, "pthread_cond_broadcast failed: %s\n", strerror (err));
+    }
+    return err;
 }

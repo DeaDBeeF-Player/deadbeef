@@ -339,7 +339,6 @@ int
 palsa_free (void) {
     trace ("palsa_free\n");
     if (audio && !alsa_terminate) {
-        palsa_stop ();
         deadbeef->mutex_lock (mutex);
         alsa_terminate = 1;
         deadbeef->mutex_unlock (mutex);
@@ -417,21 +416,19 @@ palsa_stop (void) {
         return 0;
     }
     state = OUTPUT_STATE_STOPPED;
+    deadbeef->mutex_lock (mutex);
+    snd_pcm_drop (audio);
+#if 0
+    if (pcm_callback) {
+        snd_async_del_handler (pcm_callback);
+        pcm_callback = NULL;
+    }
+#endif
+    deadbeef->mutex_unlock (mutex);
+    deadbeef->streamer_reset (1);
     if (deadbeef->conf_get_int ("alsa.freeonstop", 0))  {
         palsa_free ();
     }
-    else {
-        deadbeef->mutex_lock (mutex);
-        snd_pcm_drop (audio);
-#if 0
-        if (pcm_callback) {
-            snd_async_del_handler (pcm_callback);
-            pcm_callback = NULL;
-        }
-#endif
-        deadbeef->mutex_unlock (mutex);
-    }
-    deadbeef->streamer_reset (1);
     return 0;
 }
 
@@ -651,7 +648,8 @@ alsa_load (DB_functions_t *api) {
 }
 
 static const char settings_dlg[] =
-    "property \"Enable software resampling\" checkbox alsa.resample 0;\n"
+    "property \"Use ALSA resampling\" checkbox alsa.resample 0;\n"
+    "property \"Release device while stopped\" checkbox alsa.freeonstop 0;\n"
 ;
 
 // define plugin interface
