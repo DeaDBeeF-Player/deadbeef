@@ -1280,7 +1280,6 @@ create_prefwin (void)
   GtkWidget *label8;
   GtkWidget *pref_replaygain_mode;
   GtkWidget *pref_replaygain_scale;
-  GtkWidget *pref_alsa_freewhenstopped;
   GtkWidget *label39;
   GtkWidget *vbox9;
   GtkWidget *pref_close_send_to_tray;
@@ -1423,10 +1422,6 @@ create_prefwin (void)
   pref_replaygain_scale = gtk_check_button_new_with_mnemonic ("Replaygain peak scale");
   gtk_widget_show (pref_replaygain_scale);
   gtk_box_pack_start (GTK_BOX (vbox8), pref_replaygain_scale, FALSE, FALSE, 0);
-
-  pref_alsa_freewhenstopped = gtk_check_button_new_with_mnemonic ("Release ALSA while stopped");
-  gtk_widget_show (pref_alsa_freewhenstopped);
-  gtk_box_pack_start (GTK_BOX (vbox8), pref_alsa_freewhenstopped, FALSE, FALSE, 0);
 
   label39 = gtk_label_new ("Sound (adv.)");
   gtk_widget_show (label39);
@@ -1654,9 +1649,6 @@ create_prefwin (void)
   g_signal_connect ((gpointer) pref_replaygain_scale, "clicked",
                     G_CALLBACK (on_pref_replaygain_scale_clicked),
                     NULL);
-  g_signal_connect ((gpointer) pref_alsa_freewhenstopped, "clicked",
-                    G_CALLBACK (on_pref_alsa_freewhenstopped_clicked),
-                    NULL);
   g_signal_connect ((gpointer) pref_close_send_to_tray, "clicked",
                     G_CALLBACK (on_pref_close_send_to_tray_clicked),
                     NULL);
@@ -1703,7 +1695,6 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, label8, "label8");
   GLADE_HOOKUP_OBJECT (prefwin, pref_replaygain_mode, "pref_replaygain_mode");
   GLADE_HOOKUP_OBJECT (prefwin, pref_replaygain_scale, "pref_replaygain_scale");
-  GLADE_HOOKUP_OBJECT (prefwin, pref_alsa_freewhenstopped, "pref_alsa_freewhenstopped");
   GLADE_HOOKUP_OBJECT (prefwin, label39, "label39");
   GLADE_HOOKUP_OBJECT (prefwin, vbox9, "vbox9");
   GLADE_HOOKUP_OBJECT (prefwin, pref_close_send_to_tray, "pref_close_send_to_tray");

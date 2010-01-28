@@ -648,7 +648,8 @@ alsa_load (DB_functions_t *api) {
 }
 
 static const char settings_dlg[] =
-    "property \"Enable software resampling\" checkbox alsa.resample 0;\n"
+    "property \"Use ALSA resampling\" checkbox alsa.resample 0;\n"
+    "property \"Release device while stopped\" checkbox alsa.freeonstop 0;\n"
 ;
 
 // define plugin interface
