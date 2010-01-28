@@ -485,17 +485,17 @@ streamer_thread (void *ctx) {
             streamer_lock ();
             memcpy (streambuffer+streambuffer_fill, buf, sz);
             streambuffer_fill += bytesread;
-            if (streambuffer_fill > 128000 && streamer_buffering) {
-                streamer_buffering = 0;
-                if (orig_streaming_song) {
-                    int trk = pl_get_idx_of (orig_streaming_song);
-                    if (trk != -1) {
-                        messagepump_push (M_TRACKCHANGED, 0, trk, 0);
-                    }
+        }
+        streamer_unlock ();
+        if (streambuffer_fill > 128000 && streamer_buffering || !orig_streaming_song) {
+            streamer_buffering = 0;
+            if (orig_streaming_song) {
+                int trk = pl_get_idx_of (orig_streaming_song);
+                if (trk != -1) {
+                    messagepump_push (M_TRACKCHANGED, 0, trk, 0);
                 }
             }
         }
-        streamer_unlock ();
         struct timeval tm2;
         gettimeofday (&tm2, NULL);
 
