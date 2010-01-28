@@ -80,6 +80,7 @@ adplug_init (DB_playItem_t *it) {
     info->toadd = 0;
 
     // fill in mandatory plugin fields
+    _info->plugin = &adplug_plugin;
     _info->bps = bps;
     _info->channels = channels;
     _info->samplerate = samplerate;
