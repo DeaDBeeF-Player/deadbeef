@@ -1968,6 +1968,14 @@ on_prefwin_key_press_event             (GtkWidget       *widget,
     return FALSE;
 }
 
+void
+on_pref_close_clicked                  (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    gtk_widget_hide (prefwin);
+    gtk_widget_destroy (prefwin);
+}
+
 
 static GtkWidget *addlocation_window;
 
@@ -2089,6 +2097,7 @@ void
 plugin_configure (GtkWidget *parentwin, DB_plugin_t *p) {
     // create window
     GtkWidget *win = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+    gtk_container_set_border_width (GTK_CONTAINER(win), 12);
 //    gtk_widget_set_events (win, GDK_KEY_PRESS_MASK);
     gtk_widget_set_size_request (win, 300, -1);
     g_signal_connect ((gpointer) win, "key_press_event", G_CALLBACK (on_plug_prefwin_key_press_event), NULL);
@@ -2097,11 +2106,15 @@ plugin_configure (GtkWidget *parentwin, DB_plugin_t *p) {
     gtk_window_set_title (GTK_WINDOW (win), title);
     gtk_window_set_modal (GTK_WINDOW (win), TRUE);
     gtk_window_set_transient_for (GTK_WINDOW (win), GTK_WINDOW (parentwin));
-    GtkWidget *tbl;
-    tbl = gtk_table_new (1, 2, FALSE);
-    gtk_container_set_border_width (GTK_CONTAINER (tbl), 3);
-    gtk_table_set_col_spacings (GTK_TABLE (tbl), 3);
-    gtk_container_add (GTK_CONTAINER (win), tbl);
+    GtkWidget *vbox;
+    vbox = gtk_vbox_new (FALSE, 8);
+    gtk_widget_show (vbox);
+    gtk_container_add (GTK_CONTAINER (win), vbox);
+//    GtkWidget *tbl;
+//    tbl = gtk_table_new (1, 2, FALSE);
+//    gtk_container_set_border_width (GTK_CONTAINER (tbl), 3);
+//    gtk_table_set_col_spacings (GTK_TABLE (tbl), 3);
+//    gtk_container_add (GTK_CONTAINER (win), tbl);
 
     int nrows = 0;
     // parse script
@@ -2144,12 +2157,11 @@ plugin_configure (GtkWidget *parentwin, DB_plugin_t *p) {
 
         // add to dialog
         nrows++;
-        gtk_table_resize (GTK_TABLE (tbl), nrows, 2);
-        GtkWidget *label;
+        //gtk_table_resize (GTK_TABLE (tbl), nrows, 2);
+        GtkWidget *label = NULL;
         GtkWidget *prop = NULL;
-        GtkWidget *cont = NULL;
-        label = gtk_label_new (labeltext);
         if (!strcmp (type, "entry") || !strcmp (type, "password")) {
+            label = gtk_label_new (labeltext);
             prop = gtk_entry_new ();
             gtk_entry_set_text (GTK_ENTRY (prop), deadbeef->conf_get_str (key, def));
             g_signal_connect ((gpointer) prop, "changed",
@@ -2157,7 +2169,7 @@ plugin_configure (GtkWidget *parentwin, DB_plugin_t *p) {
                     NULL);
         }
         else if (!strcmp (type, "checkbox")) {
-            prop = gtk_check_button_new ();
+            prop = gtk_check_button_new_with_label (labeltext);
             int val = deadbeef->conf_get_int (key, atoi (def));
             gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (prop), val);
             g_signal_connect ((gpointer) prop, "clicked",
@@ -2165,7 +2177,9 @@ plugin_configure (GtkWidget *parentwin, DB_plugin_t *p) {
                     NULL);
         }
         else if (!strcmp (type, "file")) {
-            cont = gtk_hbox_new (FALSE, FALSE);
+            GtkWidget *cont = NULL;
+            label = gtk_label_new (labeltext);
+            cont = gtk_hbox_new (FALSE, 2);
             prop = gtk_entry_new ();
             gtk_editable_set_editable (GTK_EDITABLE (prop), FALSE);
             g_signal_connect ((gpointer) prop, "changed",
@@ -2176,19 +2190,26 @@ plugin_configure (GtkWidget *parentwin, DB_plugin_t *p) {
             GtkWidget *btn = gtk_button_new_with_label ("…");
             gtk_box_pack_start (GTK_BOX (cont), btn, FALSE, FALSE, 0);
             g_signal_connect (G_OBJECT (btn), "clicked", G_CALLBACK (on_prop_browse_file), prop);
+            prop = cont;
         }
         if (!strcmp (type, "password")) {
             gtk_entry_set_visibility (GTK_ENTRY (prop), FALSE);
         }
-        if (!cont) {
-            cont = prop;
-        }
         if (label && prop) {
+            GtkWidget *hbox = NULL;
+            hbox = gtk_hbox_new (FALSE, 8);
+            gtk_widget_show (hbox);
+            gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
+            gtk_box_pack_start (GTK_BOX (hbox), prop, TRUE, TRUE, 0);
+            prop = hbox;
+        }
+        if (prop) {
             char *keydup = strdup (key);
             g_object_set_data_full (G_OBJECT (prop), "key", keydup, (GDestroyNotify)free);
-            gtk_table_attach (GTK_TABLE (tbl), label, 0, 1, nrows-1, nrows, (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions)0, 0, 0);
-            gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
-            gtk_table_attach (GTK_TABLE (tbl), cont, 1, 2, nrows-1, nrows, (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions)0, 0, 0);
+            gtk_box_pack_start (GTK_BOX (vbox), prop, FALSE, FALSE, 0);
+//            gtk_table_attach (GTK_TABLE (tbl), label, 0, 1, nrows-1, nrows, (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions)0, 0, 0);
+//            gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
+//            gtk_table_attach (GTK_TABLE (tbl), cont, 1, 2, nrows-1, nrows, (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions)0, 0, 0);
         }
     }
 
@@ -2452,6 +2473,7 @@ on_trackproperties_delete_event        (GtkWidget       *widget,
     trackproperties = NULL;
     return FALSE;
 }
+
 
 
 
