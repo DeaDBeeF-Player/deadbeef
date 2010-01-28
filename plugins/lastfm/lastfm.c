@@ -23,8 +23,8 @@
 #include <curl/curl.h>
 #include "../../deadbeef.h"
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 #define LFM_TESTMODE 0
 #define LFM_IGNORE_RULES 0
@@ -179,6 +179,9 @@ auth (void) {
     lfm_update_auth ();
     if (lfm_sess[0]) {
         return 0;
+    }
+    if (!lfm_user[0] || !lfm_pass[0]) {
+        return -1;
     }
     char req[4096];
     time_t timestamp = time(NULL);
