@@ -1564,9 +1564,6 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
     // alsa resampling
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "pref_dynsamplerate")), deadbeef->conf_get_int ("playback.dynsamplerate", 0));
 
-    // alsa freeonstop
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "pref_alsa_freewhenstopped")), deadbeef->conf_get_int ("alsa.freeonstop", 0));
-
     // src_quality
     combobox = GTK_COMBO_BOX (lookup_widget (w, "pref_src_quality"));
     gtk_combo_box_set_active (combobox, deadbeef->conf_get_int ("src_quality", 2));
@@ -1891,14 +1888,6 @@ on_column_id_changed                   (GtkComboBox     *combobox,
     gtk_widget_set_sensitive (fmt, act >= DB_COLUMN_ID_MAX ? TRUE : FALSE);
 }
 
-
-void
-on_pref_alsa_freewhenstopped_clicked   (GtkButton       *button,
-                                        gpointer         user_data)
-{
-    int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button));
-    deadbeef->conf_set_int ("alsa.freeonstop", active);
-}
 
 void
 on_pref_network_proxyaddress_changed   (GtkEditable     *editable,
