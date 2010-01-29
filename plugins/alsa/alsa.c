@@ -176,8 +176,10 @@ palsa_set_hw_params (int samplerate) {
     snd_pcm_hw_params_get_channels (hw_params, &nchan);
     trace ("alsa channels: %d\n", nchan);
 
-    buffer_size = 1024;
-    period_size = 512;
+    buffer_size = deadbeef->conf_get_int ("alsa.buffer", 1024);
+    period_size = deadbeef->conf_get_int ("alsa.period", 512);
+    trace ("trying buffer size: %d frames\n", buffer_size);
+    trace ("trying period size: %d frames\n", period_size);
     snd_pcm_hw_params_set_buffer_size_near (audio, hw_params, &buffer_size);
     snd_pcm_hw_params_set_period_size_near (audio, hw_params, &period_size, NULL);
     trace ("alsa buffer size: %d frames\n", buffer_size);
@@ -572,8 +574,13 @@ static int
 palsa_configchanged (DB_event_t *ev, uintptr_t data) {
     int alsa_resample = deadbeef->conf_get_int ("alsa.resample", 0);
     const char *alsa_soundcard = deadbeef->conf_get_str ("alsa_soundcard", "default");
-    if (alsa_resample != conf_alsa_resample
-            || strcmp (alsa_soundcard, conf_alsa_soundcard)) {
+    int buffer = deadbeef->conf_get_int ("alsa.buffer", 1024);
+    int period = deadbeef->conf_get_int ("alsa.period", 512);
+    if (audio &&
+            (alsa_resample != conf_alsa_resample
+            || strcmp (alsa_soundcard, conf_alsa_soundcard)
+            || buffer != buffer_size
+            || period != period_size)) {
         trace ("alsa: config option changed, restarting\n");
         deadbeef->sendmessage (M_REINIT_SOUND, 0, 0, 0);
     }
@@ -635,6 +642,8 @@ alsa_load (DB_functions_t *api) {
 static const char settings_dlg[] =
     "property \"Use ALSA resampling\" checkbox alsa.resample 0;\n"
     "property \"Release device while stopped\" checkbox alsa.freeonstop 0;\n"
+    "property \"Preferred buffer size\" entry alsa.buffer 1024;\n"
+    "property \"Preferred period size\" entry alsa.period 512;\n"
 ;
 
 // define plugin interface
