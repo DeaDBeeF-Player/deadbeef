@@ -32,7 +32,6 @@ static DB_output_t plugin;
 DB_functions_t *deadbeef;
 
 static snd_pcm_t *audio;
-//static int bufsize = -1;
 static int alsa_terminate;
 static int requested_rate = -1;
 static int alsa_rate = 44100;
@@ -42,6 +41,9 @@ static intptr_t alsa_tid;
 
 static snd_pcm_uframes_t buffer_size;
 static snd_pcm_uframes_t period_size;
+
+static snd_pcm_uframes_t req_buffer_size;
+static snd_pcm_uframes_t req_period_size;
 
 static int conf_alsa_resample = 0;
 static char conf_alsa_soundcard[100] = "default";
@@ -176,27 +178,14 @@ palsa_set_hw_params (int samplerate) {
     snd_pcm_hw_params_get_channels (hw_params, &nchan);
     trace ("alsa channels: %d\n", nchan);
 
-    buffer_size = 1024;
-    period_size = 64;
+    req_buffer_size = deadbeef->conf_get_int ("alsa.buffer", 1024);
+    req_period_size = deadbeef->conf_get_int ("alsa.period", 512);
+    trace ("trying buffer size: %d frames\n", req_buffer_size);
+    trace ("trying period size: %d frames\n", req_period_size);
     snd_pcm_hw_params_set_buffer_size_near (audio, hw_params, &buffer_size);
     snd_pcm_hw_params_set_period_size_near (audio, hw_params, &period_size, NULL);
     trace ("alsa buffer size: %d frames\n", buffer_size);
     trace ("alsa period size: %d frames\n", period_size);
-
-//    unsigned int buffer_time = 100000;
-//    int dir;
-//    if ((err = snd_pcm_hw_params_set_buffer_time_min (audio, hw_params, &buffer_time, &dir)) < 0) {
-//        trace ("Unable to set buffer time %i for playback: %s\n", buffer_time, snd_strerror(err));
-//        goto error;
-//    }
-//    trace ("alsa buffer time: %d usec\n", buffer_time);
-//    snd_pcm_uframes_t size;
-//    if ((err = snd_pcm_hw_params_get_buffer_size (hw_params, &size)) < 0) {
-//        trace ("Unable to get buffer size for playback: %s\n", snd_strerror(err));
-//        goto error;
-//    }
-//    trace ("alsa buffer size: %d frames\n", (int)size);
-//    bufsize = size;
 
     if ((err = snd_pcm_hw_params (audio, hw_params)) < 0) {
         trace ("cannot set parameters (%s)\n",
@@ -585,18 +574,23 @@ palsa_callback (char *stream, int len) {
 
 static int
 palsa_configchanged (DB_event_t *ev, uintptr_t data) {
-    trace ("alsa: config option changed, restarting\n");
     int alsa_resample = deadbeef->conf_get_int ("alsa.resample", 0);
     const char *alsa_soundcard = deadbeef->conf_get_str ("alsa_soundcard", "default");
-    if (alsa_resample != conf_alsa_resample
-            || strcmp (alsa_soundcard, conf_alsa_soundcard)) {
+    int buffer = deadbeef->conf_get_int ("alsa.buffer", 1024);
+    int period = deadbeef->conf_get_int ("alsa.period", 512);
+    if (audio &&
+            (alsa_resample != conf_alsa_resample
+            || strcmp (alsa_soundcard, conf_alsa_soundcard)
+            || buffer != req_buffer_size
+            || period != req_period_size)) {
+        trace ("alsa: config option changed, restarting\n");
         deadbeef->sendmessage (M_REINIT_SOUND, 0, 0, 0);
     }
     return 0;
 }
 
 // derived from alsa-utils/aplay.c
-void
+static void
 palsa_enum_soundcards (void (*callback)(const char *name, const char *desc, void *), void *userdata) {
     void **hints, **n;
     char *name, *descr, *io;
@@ -624,18 +618,18 @@ palsa_enum_soundcards (void (*callback)(const char *name, const char *desc, void
     snd_device_name_free_hint(hints);
 }
 
-int
+static int
 palsa_get_state (void) {
     return state;
 }
 
-int
+static int
 alsa_start (void) {
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_CONFIGCHANGED, DB_CALLBACK (palsa_configchanged), 0);
     return 0;
 }
 
-int
+static int
 alsa_stop (void) {
     deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_CONFIGCHANGED, DB_CALLBACK (palsa_configchanged), 0);
     return 0;
@@ -650,6 +644,8 @@ alsa_load (DB_functions_t *api) {
 static const char settings_dlg[] =
     "property \"Use ALSA resampling\" checkbox alsa.resample 0;\n"
     "property \"Release device while stopped\" checkbox alsa.freeonstop 0;\n"
+    "property \"Preferred buffer size\" entry alsa.buffer 1024;\n"
+    "property \"Preferred period size\" entry alsa.period 512;\n"
 ;
 
 // define plugin interface

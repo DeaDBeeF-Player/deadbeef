@@ -180,6 +180,11 @@ cvorbis_init (DB_playItem_t *it) {
         plugin.free (_info);
         return NULL;
     }
+    if (info->vi->rate <= 0) {
+        trace ("vorbis: bad samplerate\n");
+        plugin.free (_info);
+        return NULL;
+    }
     _info->plugin = &plugin;
     _info->bps = 16;
     //_info->dataSize = ov_pcm_total (&vorbis_file, -1) * vi->channels * 2;

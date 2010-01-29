@@ -21,6 +21,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
+#include "gtkui.h"
 #include "gtkplaylist.h"
 #include "search.h"
 #include "progress.h"
@@ -347,7 +348,6 @@ gtkui_on_configchanged (DB_event_t *ev, uintptr_t data) {
 
 static gboolean
 outputchanged_cb (gpointer nothing) {
-    void preferences_fill_soundcards (void);
     preferences_fill_soundcards ();
     return FALSE;
 }

@@ -1513,12 +1513,11 @@ on_plugin_active_toggled (GtkCellRendererToggle *cell_renderer, gchar *path, Gtk
 
 void
 preferences_fill_soundcards (void) {
-    GtkWidget *w = prefwin;
     if (!prefwin) {
         return;
     }
     const char *s = deadbeef->conf_get_str ("alsa_soundcard", "default");
-    GtkComboBox *combobox = GTK_COMBO_BOX (lookup_widget (w, "pref_soundcard"));
+    GtkComboBox *combobox = GTK_COMBO_BOX (lookup_widget (prefwin, "pref_soundcard"));
     GtkTreeModel *mdl = gtk_combo_box_get_model (combobox);
     gtk_list_store_clear (GTK_LIST_STORE (mdl));
 
@@ -1541,10 +1540,13 @@ void
 on_preferences_activate                (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
+    if (prefwin) {
+        return;
+    }
     GtkWidget *w = prefwin = create_prefwin ();
     gtk_window_set_transient_for (GTK_WINDOW (w), GTK_WINDOW (mainwin));
 
-    GtkComboBox *combobox = NULL;;
+    GtkComboBox *combobox = NULL;
 
     // output plugin selection
     const char *outplugname = deadbeef->conf_get_str ("output_plugin", "ALSA output plugin");
@@ -1561,6 +1563,13 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
     // soundcard (output device) selection
     preferences_fill_soundcards ();
 
+    g_signal_connect ((gpointer) combobox, "changed",
+            G_CALLBACK (on_pref_output_plugin_changed),
+            NULL);
+    GtkWidget *pref_soundcard = lookup_widget (prefwin, "pref_soundcard");
+    g_signal_connect ((gpointer) pref_soundcard, "changed",
+            G_CALLBACK (on_pref_soundcard_changed),
+            NULL);
 
     // alsa resampling
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "pref_dynsamplerate")), deadbeef->conf_get_int ("playback.dynsamplerate", 0));
@@ -1638,8 +1647,11 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
 #endif
     gtk_tree_view_set_model (tree, GTK_TREE_MODEL (store));
 
-    gtk_widget_show (w);
     gtk_widget_set_sensitive (lookup_widget (prefwin, "configure_plugin"), FALSE);
+//    gtk_widget_show (w);
+    gtk_dialog_run (GTK_DIALOG (prefwin));
+    gtk_widget_destroy (prefwin);
+    prefwin = NULL;
 }
 
 
@@ -2025,186 +2037,6 @@ on_addlocation_key_press_event         (GtkWidget       *widget,
         add_location_destroy ();
     }
     return FALSE;
-}
-
-
-void
-on_prop_entry_changed(GtkEditable *editable, gpointer user_data) {
-    const char *key = g_object_get_data (G_OBJECT (editable), "key");
-    if (key) {
-        deadbeef->conf_set_str (key, gtk_entry_get_text (GTK_ENTRY (editable)));
-        deadbeef->sendmessage (M_CONFIGCHANGED, 0, 0, 0);
-    }
-}
-
-void
-on_prop_checkbox_clicked (GtkButton *button, gpointer user_data) {
-    const char *key = g_object_get_data (G_OBJECT (button), "key");
-    if (key) {
-        deadbeef->conf_set_int (key, gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button)));
-        deadbeef->sendmessage (M_CONFIGCHANGED, 0, 0, 0);
-    }
-}
-
-void
-on_prop_browse_file (GtkButton *button, gpointer user_data) {
-    GtkWidget *dlg = gtk_file_chooser_dialog_new ("Open file...", GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
-
-    gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dlg), FALSE);
-    // restore folder
-    gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dlg), deadbeef->conf_get_str ("filechooser.lastdir", ""));
-    int response = gtk_dialog_run (GTK_DIALOG (dlg));
-    // store folder
-    gchar *folder = gtk_file_chooser_get_current_folder_uri (GTK_FILE_CHOOSER (dlg));
-    if (folder) {
-        deadbeef->conf_set_str ("filechooser.lastdir", folder);
-        g_free (folder);
-        deadbeef->sendmessage (M_CONFIGCHANGED, 0, 0, 0);
-    }
-    if (response == GTK_RESPONSE_OK) {
-        gchar *file = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dlg));
-        gtk_widget_destroy (dlg);
-        if (file) {
-            GtkWidget *entry = GTK_WIDGET (user_data);
-            gtk_entry_set_text (GTK_ENTRY (entry), file);
-            g_free (file);
-        }
-    }
-    else {
-        gtk_widget_destroy (dlg);
-    }
-}
-
-gboolean
-on_plug_prefwin_key_press_event (GtkWidget *widget, GdkEventKey *event, gpointer user_data) {
-    if (event->keyval == GDK_Escape) {
-        gtk_widget_destroy (widget);
-    }
-    return FALSE;
-}
-
-void
-plugin_configure (GtkWidget *parentwin, DB_plugin_t *p) {
-    // create window
-    GtkWidget *win = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-    gtk_container_set_border_width (GTK_CONTAINER(win), 12);
-//    gtk_widget_set_events (win, GDK_KEY_PRESS_MASK);
-    gtk_widget_set_size_request (win, 300, -1);
-    g_signal_connect ((gpointer) win, "key_press_event", G_CALLBACK (on_plug_prefwin_key_press_event), NULL);
-    char title[200];
-    snprintf (title, sizeof (title), "Setup %s", p->name);
-    gtk_window_set_title (GTK_WINDOW (win), title);
-    gtk_window_set_modal (GTK_WINDOW (win), TRUE);
-    gtk_window_set_transient_for (GTK_WINDOW (win), GTK_WINDOW (parentwin));
-    GtkWidget *vbox;
-    vbox = gtk_vbox_new (FALSE, 8);
-    gtk_widget_show (vbox);
-    gtk_container_add (GTK_CONTAINER (win), vbox);
-//    GtkWidget *tbl;
-//    tbl = gtk_table_new (1, 2, FALSE);
-//    gtk_container_set_border_width (GTK_CONTAINER (tbl), 3);
-//    gtk_table_set_col_spacings (GTK_TABLE (tbl), 3);
-//    gtk_container_add (GTK_CONTAINER (win), tbl);
-
-    int nrows = 0;
-    // parse script
-    char token[MAX_TOKEN];
-    const char *script = p->configdialog;
-    parser_line = 1;
-    while (script = gettoken (script, token)) {
-        if (strcmp (token, "property")) {
-            fprintf (stderr, "invalid token while loading plugin %s config dialog: %s at line %d\n", p->name, token, parser_line);
-            break;
-        }
-        char labeltext[MAX_TOKEN];
-        script = gettoken_warn_eof (script, labeltext);
-        if (!script) {
-            break;
-        }
-        char type[MAX_TOKEN];
-        script = gettoken_warn_eof (script, type);
-        if (!script) {
-            break;
-        }
-        char key[MAX_TOKEN];
-        script = gettoken_warn_eof (script, key);
-        if (!script) {
-            break;
-        }
-        char def[MAX_TOKEN];
-        script = gettoken_warn_eof (script, def);
-        if (!script) {
-            break;
-        }
-        script = gettoken_warn_eof (script, token);
-        if (!script) {
-            break;
-        }
-        if (strcmp (token, ";")) {
-            fprintf (stderr, "expected `;' while loading plugin %s config dialog: %s at line %d\n", p->name, token, parser_line);
-            break;
-        }
-
-        // add to dialog
-        nrows++;
-        //gtk_table_resize (GTK_TABLE (tbl), nrows, 2);
-        GtkWidget *label = NULL;
-        GtkWidget *prop = NULL;
-        if (!strcmp (type, "entry") || !strcmp (type, "password")) {
-            label = gtk_label_new (labeltext);
-            prop = gtk_entry_new ();
-            gtk_entry_set_text (GTK_ENTRY (prop), deadbeef->conf_get_str (key, def));
-            g_signal_connect ((gpointer) prop, "changed",
-                    G_CALLBACK (on_prop_entry_changed),
-                    NULL);
-        }
-        else if (!strcmp (type, "checkbox")) {
-            prop = gtk_check_button_new_with_label (labeltext);
-            int val = deadbeef->conf_get_int (key, atoi (def));
-            gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (prop), val);
-            g_signal_connect ((gpointer) prop, "clicked",
-                    G_CALLBACK (on_prop_checkbox_clicked),
-                    NULL);
-        }
-        else if (!strcmp (type, "file")) {
-            GtkWidget *cont = NULL;
-            label = gtk_label_new (labeltext);
-            cont = gtk_hbox_new (FALSE, 2);
-            prop = gtk_entry_new ();
-            gtk_editable_set_editable (GTK_EDITABLE (prop), FALSE);
-            g_signal_connect ((gpointer) prop, "changed",
-                    G_CALLBACK (on_prop_entry_changed),
-                    NULL);
-            gtk_entry_set_text (GTK_ENTRY (prop), deadbeef->conf_get_str (key, def));
-            gtk_box_pack_start (GTK_BOX (cont), prop, TRUE, TRUE, 0);
-            GtkWidget *btn = gtk_button_new_with_label ("…");
-            gtk_box_pack_start (GTK_BOX (cont), btn, FALSE, FALSE, 0);
-            g_signal_connect (G_OBJECT (btn), "clicked", G_CALLBACK (on_prop_browse_file), prop);
-            prop = cont;
-        }
-        if (!strcmp (type, "password")) {
-            gtk_entry_set_visibility (GTK_ENTRY (prop), FALSE);
-        }
-        if (label && prop) {
-            GtkWidget *hbox = NULL;
-            hbox = gtk_hbox_new (FALSE, 8);
-            gtk_widget_show (hbox);
-            gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
-            gtk_box_pack_start (GTK_BOX (hbox), prop, TRUE, TRUE, 0);
-            prop = hbox;
-        }
-        if (prop) {
-            char *keydup = strdup (key);
-            g_object_set_data_full (G_OBJECT (prop), "key", keydup, (GDestroyNotify)free);
-            gtk_box_pack_start (GTK_BOX (vbox), prop, FALSE, FALSE, 0);
-//            gtk_table_attach (GTK_TABLE (tbl), label, 0, 1, nrows-1, nrows, (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions)0, 0, 0);
-//            gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
-//            gtk_table_attach (GTK_TABLE (tbl), cont, 1, 2, nrows-1, nrows, (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions)0, 0, 0);
-        }
-    }
-
-
-    gtk_widget_show_all (win);
 }
 
 void

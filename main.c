@@ -61,7 +61,7 @@
 #endif
 
 #ifdef __linux__
-#define USE_ABSTRACT_NAME 1
+#define USE_ABSTRACT_NAME 0
 #endif
 
 // some common global variables
