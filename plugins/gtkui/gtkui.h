@@ -42,4 +42,7 @@ gtkui_receive_fm_drop (char *mem, int length, int drop_y);
 void
 plugin_configure (GtkWidget *parentwin, DB_plugin_t *p);
 
+void
+preferences_fill_soundcards (void);
+
 #endif

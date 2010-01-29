@@ -1512,12 +1512,11 @@ on_plugin_active_toggled (GtkCellRendererToggle *cell_renderer, gchar *path, Gtk
 
 void
 preferences_fill_soundcards (void) {
-    GtkWidget *w = prefwin;
     if (!prefwin) {
         return;
     }
     const char *s = deadbeef->conf_get_str ("alsa_soundcard", "default");
-    GtkComboBox *combobox = GTK_COMBO_BOX (lookup_widget (w, "pref_soundcard"));
+    GtkComboBox *combobox = GTK_COMBO_BOX (lookup_widget (prefwin, "pref_soundcard"));
     GtkTreeModel *mdl = gtk_combo_box_get_model (combobox);
     gtk_list_store_clear (GTK_LIST_STORE (mdl));
 
@@ -1540,10 +1539,13 @@ void
 on_preferences_activate                (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
+    if (prefwin) {
+        return;
+    }
     GtkWidget *w = prefwin = create_prefwin ();
     gtk_window_set_transient_for (GTK_WINDOW (w), GTK_WINDOW (mainwin));
 
-    GtkComboBox *combobox = NULL;;
+    GtkComboBox *combobox = NULL;
 
     // output plugin selection
     const char *outplugname = deadbeef->conf_get_str ("output_plugin", "ALSA output plugin");
@@ -1644,8 +1646,11 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
 #endif
     gtk_tree_view_set_model (tree, GTK_TREE_MODEL (store));
 
-    gtk_widget_show (w);
     gtk_widget_set_sensitive (lookup_widget (prefwin, "configure_plugin"), FALSE);
+//    gtk_widget_show (w);
+    gtk_dialog_run (GTK_DIALOG (prefwin));
+    gtk_widget_destroy (prefwin);
+    prefwin = NULL;
 }
 
 
