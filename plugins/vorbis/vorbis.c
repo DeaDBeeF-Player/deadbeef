@@ -176,6 +176,11 @@ cvorbis_init (DB_playItem_t *it) {
         trace ("not a vorbis stream\n");
         return -1;
     }
+    if (vi->rate <= 0) {
+        cvorbis_free ();
+        trace ("vorbis: bad samplerate\n");
+        return -1;
+    }
     plugin.info.bps = 16;
     //plugin.info.dataSize = ov_pcm_total (&vorbis_file, -1) * vi->channels * 2;
     plugin.info.channels = vi->channels;
