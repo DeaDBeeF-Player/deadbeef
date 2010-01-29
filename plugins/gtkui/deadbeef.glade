@@ -1515,7 +1515,6 @@
 		      <property name="visible">True</property>
 		      <property name="add_tearoffs">False</property>
 		      <property name="focus_on_click">True</property>
-		      <signal name="changed" handler="on_pref_output_plugin_changed" last_modification_time="Fri, 11 Dec 2009 21:05:28 GMT"/>
 		    </widget>
 		    <packing>
 		      <property name="padding">0</property>
@@ -1567,7 +1566,6 @@
 		      <property name="visible">True</property>
 		      <property name="add_tearoffs">False</property>
 		      <property name="focus_on_click">True</property>
-		      <signal name="changed" handler="on_pref_soundcard_changed" last_modification_time="Sat, 07 Nov 2009 14:12:28 GMT"/>
 		    </widget>
 		    <packing>
 		      <property name="padding">0</property>

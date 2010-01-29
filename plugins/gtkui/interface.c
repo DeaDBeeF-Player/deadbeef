@@ -1631,12 +1631,6 @@ create_prefwin (void)
   g_signal_connect ((gpointer) prefwin, "delete_event",
                     G_CALLBACK (on_prefwin_delete_event),
                     NULL);
-  g_signal_connect ((gpointer) pref_output_plugin, "changed",
-                    G_CALLBACK (on_pref_output_plugin_changed),
-                    NULL);
-  g_signal_connect ((gpointer) pref_soundcard, "changed",
-                    G_CALLBACK (on_pref_soundcard_changed),
-                    NULL);
   g_signal_connect ((gpointer) pref_dynsamplerate, "clicked",
                     G_CALLBACK (on_pref_dynsamplerate_clicked),
                     NULL);

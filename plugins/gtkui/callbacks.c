@@ -1560,6 +1560,13 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
     // soundcard (output device) selection
     preferences_fill_soundcards ();
 
+    g_signal_connect ((gpointer) combobox, "changed",
+            G_CALLBACK (on_pref_output_plugin_changed),
+            NULL);
+    GtkWidget *pref_soundcard = lookup_widget (prefwin, "pref_soundcard");
+    g_signal_connect ((gpointer) pref_soundcard, "changed",
+            G_CALLBACK (on_pref_soundcard_changed),
+            NULL);
 
     // alsa resampling
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "pref_dynsamplerate")), deadbeef->conf_get_int ("playback.dynsamplerate", 0));

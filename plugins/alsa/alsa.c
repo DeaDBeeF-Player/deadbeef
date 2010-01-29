@@ -570,11 +570,11 @@ palsa_callback (char *stream, int len) {
 
 static int
 palsa_configchanged (DB_event_t *ev, uintptr_t data) {
-    trace ("alsa: config option changed, restarting\n");
     int alsa_resample = deadbeef->conf_get_int ("alsa.resample", 0);
     const char *alsa_soundcard = deadbeef->conf_get_str ("alsa_soundcard", "default");
     if (alsa_resample != conf_alsa_resample
             || strcmp (alsa_soundcard, conf_alsa_soundcard)) {
+        trace ("alsa: config option changed, restarting\n");
         deadbeef->sendmessage (M_REINIT_SOUND, 0, 0, 0);
     }
     return 0;
