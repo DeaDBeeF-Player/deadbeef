@@ -1165,16 +1165,16 @@ create_addprogress (void)
   GtkWidget *button1;
 
   addprogress = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+  gtk_container_set_border_width (GTK_CONTAINER (addprogress), 12);
   gtk_window_set_title (GTK_WINDOW (addprogress), "Adding files...");
   gtk_window_set_position (GTK_WINDOW (addprogress), GTK_WIN_POS_CENTER_ON_PARENT);
   gtk_window_set_modal (GTK_WINDOW (addprogress), TRUE);
   gtk_window_set_skip_taskbar_hint (GTK_WINDOW (addprogress), TRUE);
   gtk_window_set_skip_pager_hint (GTK_WINDOW (addprogress), TRUE);
 
-  vbox6 = gtk_vbox_new (FALSE, 0);
+  vbox6 = gtk_vbox_new (FALSE, 8);
   gtk_widget_show (vbox6);
   gtk_container_add (GTK_CONTAINER (addprogress), vbox6);
-  gtk_container_set_border_width (GTK_CONTAINER (vbox6), 4);
 
   progresstitle = gtk_entry_new ();
   gtk_widget_show (progresstitle);
@@ -1793,16 +1793,16 @@ create_addlocation (void)
   GtkWidget *addlocation_ok;
 
   addlocation = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+  gtk_container_set_border_width (GTK_CONTAINER (addlocation), 12);
   gtk_window_set_title (GTK_WINDOW (addlocation), "Add Location");
   gtk_window_set_modal (GTK_WINDOW (addlocation), TRUE);
   gtk_window_set_destroy_with_parent (GTK_WINDOW (addlocation), TRUE);
   gtk_window_set_skip_taskbar_hint (GTK_WINDOW (addlocation), TRUE);
   gtk_window_set_skip_pager_hint (GTK_WINDOW (addlocation), TRUE);
 
-  vbox7 = gtk_vbox_new (FALSE, 0);
+  vbox7 = gtk_vbox_new (FALSE, 8);
   gtk_widget_show (vbox7);
   gtk_container_add (GTK_CONTAINER (addlocation), vbox7);
-  gtk_container_set_border_width (GTK_CONTAINER (vbox7), 4);
 
   addlocation_entry = gtk_entry_new ();
   gtk_widget_show (addlocation_entry);
@@ -1849,23 +1849,29 @@ GtkWidget*
 create_trackproperties (void)
 {
   GtkWidget *trackproperties;
-  GtkWidget *table7;
+  GtkWidget *vbox13;
+  GtkWidget *hbox23;
   GtkWidget *label27;
   GtkWidget *location;
+  GtkWidget *hbox24;
   GtkWidget *label28;
-  GtkWidget *label29;
-  GtkWidget *label30;
   GtkWidget *title;
+  GtkWidget *hbox25;
+  GtkWidget *label29;
   GtkWidget *artist;
+  GtkWidget *hbox26;
+  GtkWidget *label30;
   GtkWidget *album;
+  GtkWidget *hbox27;
   GtkWidget *label35;
   GtkWidget *genre;
-  GtkWidget *label36;
   GtkWidget *table8;
   GtkWidget *label31;
   GtkWidget *label33;
   GtkWidget *year;
   GtkWidget *track;
+  GtkWidget *hbox28;
+  GtkWidget *label36;
   GtkWidget *scrolledwindow4;
   GtkWidget *comment;
 
@@ -1875,103 +1881,93 @@ create_trackproperties (void)
   gtk_window_set_skip_taskbar_hint (GTK_WINDOW (trackproperties), TRUE);
   gtk_window_set_skip_pager_hint (GTK_WINDOW (trackproperties), TRUE);
 
-  table7 = gtk_table_new (7, 2, FALSE);
-  gtk_widget_show (table7);
-  gtk_container_add (GTK_CONTAINER (trackproperties), table7);
-  gtk_container_set_border_width (GTK_CONTAINER (table7), 3);
-  gtk_table_set_row_spacings (GTK_TABLE (table7), 4);
-  gtk_table_set_col_spacings (GTK_TABLE (table7), 4);
+  vbox13 = gtk_vbox_new (FALSE, 8);
+  gtk_widget_show (vbox13);
+  gtk_container_add (GTK_CONTAINER (trackproperties), vbox13);
+  gtk_container_set_border_width (GTK_CONTAINER (vbox13), 12);
 
-  label27 = gtk_label_new ("Location");
+  hbox23 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox23);
+  gtk_box_pack_start (GTK_BOX (vbox13), hbox23, FALSE, FALSE, 0);
+
+  label27 = gtk_label_new ("Location:");
   gtk_widget_show (label27);
-  gtk_table_attach (GTK_TABLE (table7), label27, 0, 1, 0, 1,
-                    (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
+  gtk_box_pack_start (GTK_BOX (hbox23), label27, FALSE, FALSE, 0);
   gtk_misc_set_alignment (GTK_MISC (label27), 0, 0.5);
 
   location = gtk_entry_new ();
   gtk_widget_show (location);
-  gtk_table_attach (GTK_TABLE (table7), location, 1, 2, 0, 1,
-                    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
+  gtk_box_pack_start (GTK_BOX (hbox23), location, TRUE, TRUE, 0);
   gtk_editable_set_editable (GTK_EDITABLE (location), FALSE);
   gtk_entry_set_invisible_char (GTK_ENTRY (location), 8226);
 
-  label28 = gtk_label_new ("Title");
+  hbox24 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox24);
+  gtk_box_pack_start (GTK_BOX (vbox13), hbox24, FALSE, FALSE, 0);
+
+  label28 = gtk_label_new ("Title:");
   gtk_widget_show (label28);
-  gtk_table_attach (GTK_TABLE (table7), label28, 0, 1, 1, 2,
-                    (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
+  gtk_box_pack_start (GTK_BOX (hbox24), label28, FALSE, FALSE, 0);
   gtk_misc_set_alignment (GTK_MISC (label28), 0, 0.5);
-
-  label29 = gtk_label_new ("Artist");
-  gtk_widget_show (label29);
-  gtk_table_attach (GTK_TABLE (table7), label29, 0, 1, 2, 3,
-                    (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
-  gtk_misc_set_alignment (GTK_MISC (label29), 0, 0.5);
-
-  label30 = gtk_label_new ("Album");
-  gtk_widget_show (label30);
-  gtk_table_attach (GTK_TABLE (table7), label30, 0, 1, 3, 4,
-                    (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
-  gtk_misc_set_alignment (GTK_MISC (label30), 0, 0.5);
 
   title = gtk_entry_new ();
   gtk_widget_show (title);
-  gtk_table_attach (GTK_TABLE (table7), title, 1, 2, 1, 2,
-                    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
+  gtk_box_pack_start (GTK_BOX (hbox24), title, TRUE, TRUE, 0);
   gtk_editable_set_editable (GTK_EDITABLE (title), FALSE);
   gtk_entry_set_invisible_char (GTK_ENTRY (title), 8226);
 
+  hbox25 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox25);
+  gtk_box_pack_start (GTK_BOX (vbox13), hbox25, FALSE, FALSE, 0);
+
+  label29 = gtk_label_new ("Artist:");
+  gtk_widget_show (label29);
+  gtk_box_pack_start (GTK_BOX (hbox25), label29, FALSE, FALSE, 0);
+  gtk_misc_set_alignment (GTK_MISC (label29), 0, 0.5);
+
   artist = gtk_entry_new ();
   gtk_widget_show (artist);
-  gtk_table_attach (GTK_TABLE (table7), artist, 1, 2, 2, 3,
-                    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
+  gtk_box_pack_start (GTK_BOX (hbox25), artist, TRUE, TRUE, 0);
   gtk_editable_set_editable (GTK_EDITABLE (artist), FALSE);
   gtk_entry_set_invisible_char (GTK_ENTRY (artist), 8226);
 
+  hbox26 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox26);
+  gtk_box_pack_start (GTK_BOX (vbox13), hbox26, FALSE, FALSE, 0);
+
+  label30 = gtk_label_new ("Album:");
+  gtk_widget_show (label30);
+  gtk_box_pack_start (GTK_BOX (hbox26), label30, FALSE, FALSE, 0);
+  gtk_misc_set_alignment (GTK_MISC (label30), 0, 0.5);
+
   album = gtk_entry_new ();
   gtk_widget_show (album);
-  gtk_table_attach (GTK_TABLE (table7), album, 1, 2, 3, 4,
-                    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
+  gtk_box_pack_start (GTK_BOX (hbox26), album, TRUE, TRUE, 0);
   gtk_editable_set_editable (GTK_EDITABLE (album), FALSE);
   gtk_entry_set_invisible_char (GTK_ENTRY (album), 8226);
 
-  label35 = gtk_label_new ("Genre");
+  hbox27 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox27);
+  gtk_box_pack_start (GTK_BOX (vbox13), hbox27, FALSE, FALSE, 0);
+
+  label35 = gtk_label_new ("Genre:");
   gtk_widget_show (label35);
-  gtk_table_attach (GTK_TABLE (table7), label35, 0, 1, 4, 5,
-                    (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
+  gtk_box_pack_start (GTK_BOX (hbox27), label35, FALSE, FALSE, 0);
   gtk_misc_set_alignment (GTK_MISC (label35), 0, 0.5);
 
   genre = gtk_entry_new ();
   gtk_widget_show (genre);
-  gtk_table_attach (GTK_TABLE (table7), genre, 1, 2, 4, 5,
-                    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
+  gtk_box_pack_start (GTK_BOX (hbox27), genre, TRUE, TRUE, 0);
   gtk_editable_set_editable (GTK_EDITABLE (genre), FALSE);
   gtk_entry_set_invisible_char (GTK_ENTRY (genre), 8226);
 
-  label36 = gtk_label_new ("Comment");
-  gtk_widget_show (label36);
-  gtk_table_attach (GTK_TABLE (table7), label36, 0, 1, 6, 7,
-                    (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
-  gtk_misc_set_alignment (GTK_MISC (label36), 0, 0.5);
-
   table8 = gtk_table_new (2, 2, FALSE);
   gtk_widget_show (table8);
-  gtk_table_attach (GTK_TABLE (table7), table8, 0, 2, 5, 6,
-                    (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (GTK_FILL), 0, 0);
-  gtk_table_set_col_spacings (GTK_TABLE (table8), 3);
+  gtk_box_pack_start (GTK_BOX (vbox13), table8, FALSE, FALSE, 0);
+  gtk_table_set_row_spacings (GTK_TABLE (table8), 8);
+  gtk_table_set_col_spacings (GTK_TABLE (table8), 8);
 
-  label31 = gtk_label_new ("Year");
+  label31 = gtk_label_new ("Year:");
   gtk_widget_show (label31);
   gtk_table_attach (GTK_TABLE (table8), label31, 0, 1, 0, 1,
                     (GtkAttachOptions) (GTK_FILL),
@@ -1979,7 +1975,7 @@ create_trackproperties (void)
   gtk_label_set_line_wrap (GTK_LABEL (label31), TRUE);
   gtk_misc_set_alignment (GTK_MISC (label31), 0, 0.5);
 
-  label33 = gtk_label_new ("Track");
+  label33 = gtk_label_new ("Track:");
   gtk_widget_show (label33);
   gtk_table_attach (GTK_TABLE (table8), label33, 1, 2, 0, 1,
                     (GtkAttachOptions) (GTK_FILL),
@@ -2003,11 +1999,18 @@ create_trackproperties (void)
   gtk_editable_set_editable (GTK_EDITABLE (track), FALSE);
   gtk_entry_set_invisible_char (GTK_ENTRY (track), 8226);
 
+  hbox28 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox28);
+  gtk_box_pack_start (GTK_BOX (vbox13), hbox28, TRUE, TRUE, 0);
+
+  label36 = gtk_label_new ("Comment:");
+  gtk_widget_show (label36);
+  gtk_box_pack_start (GTK_BOX (hbox28), label36, FALSE, FALSE, 0);
+  gtk_misc_set_alignment (GTK_MISC (label36), 0, 0.5);
+
   scrolledwindow4 = gtk_scrolled_window_new (NULL, NULL);
   gtk_widget_show (scrolledwindow4);
-  gtk_table_attach (GTK_TABLE (table7), scrolledwindow4, 1, 2, 6, 7,
-                    (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
+  gtk_box_pack_start (GTK_BOX (hbox28), scrolledwindow4, TRUE, TRUE, 0);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow4), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow4), GTK_SHADOW_IN);
 
@@ -2025,23 +2028,29 @@ create_trackproperties (void)
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (trackproperties, trackproperties, "trackproperties");
-  GLADE_HOOKUP_OBJECT (trackproperties, table7, "table7");
+  GLADE_HOOKUP_OBJECT (trackproperties, vbox13, "vbox13");
+  GLADE_HOOKUP_OBJECT (trackproperties, hbox23, "hbox23");
   GLADE_HOOKUP_OBJECT (trackproperties, label27, "label27");
   GLADE_HOOKUP_OBJECT (trackproperties, location, "location");
+  GLADE_HOOKUP_OBJECT (trackproperties, hbox24, "hbox24");
   GLADE_HOOKUP_OBJECT (trackproperties, label28, "label28");
-  GLADE_HOOKUP_OBJECT (trackproperties, label29, "label29");
-  GLADE_HOOKUP_OBJECT (trackproperties, label30, "label30");
   GLADE_HOOKUP_OBJECT (trackproperties, title, "title");
+  GLADE_HOOKUP_OBJECT (trackproperties, hbox25, "hbox25");
+  GLADE_HOOKUP_OBJECT (trackproperties, label29, "label29");
   GLADE_HOOKUP_OBJECT (trackproperties, artist, "artist");
+  GLADE_HOOKUP_OBJECT (trackproperties, hbox26, "hbox26");
+  GLADE_HOOKUP_OBJECT (trackproperties, label30, "label30");
   GLADE_HOOKUP_OBJECT (trackproperties, album, "album");
+  GLADE_HOOKUP_OBJECT (trackproperties, hbox27, "hbox27");
   GLADE_HOOKUP_OBJECT (trackproperties, label35, "label35");
   GLADE_HOOKUP_OBJECT (trackproperties, genre, "genre");
-  GLADE_HOOKUP_OBJECT (trackproperties, label36, "label36");
   GLADE_HOOKUP_OBJECT (trackproperties, table8, "table8");
   GLADE_HOOKUP_OBJECT (trackproperties, label31, "label31");
   GLADE_HOOKUP_OBJECT (trackproperties, label33, "label33");
   GLADE_HOOKUP_OBJECT (trackproperties, year, "year");
   GLADE_HOOKUP_OBJECT (trackproperties, track, "track");
+  GLADE_HOOKUP_OBJECT (trackproperties, hbox28, "hbox28");
+  GLADE_HOOKUP_OBJECT (trackproperties, label36, "label36");
   GLADE_HOOKUP_OBJECT (trackproperties, scrolledwindow4, "scrolledwindow4");
   GLADE_HOOKUP_OBJECT (trackproperties, comment, "comment");
 
@@ -2053,21 +2062,26 @@ create_editcolumndlg (void)
 {
   GtkWidget *editcolumndlg;
   GtkWidget *dialog_vbox1;
-  GtkWidget *table9;
+  GtkWidget *vbox14;
+  GtkWidget *hbox29;
   GtkWidget *label26;
   GtkWidget *title;
+  GtkWidget *hbox30;
   GtkWidget *label37;
   GtkWidget *id;
+  GtkWidget *hbox31;
   GtkWidget *fmtlabel;
   GtkWidget *format;
-  GtkWidget *label25;
+  GtkWidget *hbox32;
   GtkWidget *label38;
   GtkWidget *align;
+  GtkWidget *label25;
   GtkWidget *dialog_action_area1;
   GtkWidget *cancelbutton1;
   GtkWidget *okbutton1;
 
   editcolumndlg = gtk_dialog_new ();
+  gtk_container_set_border_width (GTK_CONTAINER (editcolumndlg), 12);
   gtk_window_set_title (GTK_WINDOW (editcolumndlg), "dialog1");
   gtk_window_set_modal (GTK_WINDOW (editcolumndlg), TRUE);
   gtk_window_set_type_hint (GTK_WINDOW (editcolumndlg), GDK_WINDOW_TYPE_HINT_DIALOG);
@@ -2075,40 +2089,38 @@ create_editcolumndlg (void)
   dialog_vbox1 = GTK_DIALOG (editcolumndlg)->vbox;
   gtk_widget_show (dialog_vbox1);
 
-  table9 = gtk_table_new (5, 2, FALSE);
-  gtk_widget_show (table9);
-  gtk_box_pack_start (GTK_BOX (dialog_vbox1), table9, TRUE, TRUE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (table9), 3);
-  gtk_table_set_col_spacings (GTK_TABLE (table9), 3);
+  vbox14 = gtk_vbox_new (FALSE, 8);
+  gtk_widget_show (vbox14);
+  gtk_box_pack_start (GTK_BOX (dialog_vbox1), vbox14, TRUE, TRUE, 0);
 
-  label26 = gtk_label_new ("Title");
+  hbox29 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox29);
+  gtk_box_pack_start (GTK_BOX (vbox14), hbox29, FALSE, FALSE, 0);
+
+  label26 = gtk_label_new ("Title:");
   gtk_widget_show (label26);
-  gtk_table_attach (GTK_TABLE (table9), label26, 0, 1, 0, 1,
-                    (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
+  gtk_box_pack_start (GTK_BOX (hbox29), label26, FALSE, FALSE, 0);
   gtk_misc_set_alignment (GTK_MISC (label26), 0, 0.5);
 
   title = gtk_entry_new ();
   gtk_widget_show (title);
-  gtk_table_attach (GTK_TABLE (table9), title, 1, 2, 0, 1,
-                    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
+  gtk_box_pack_start (GTK_BOX (hbox29), title, TRUE, TRUE, 0);
   gtk_entry_set_text (GTK_ENTRY (title), "Enter new column title here");
   gtk_entry_set_invisible_char (GTK_ENTRY (title), 9679);
   gtk_entry_set_activates_default (GTK_ENTRY (title), TRUE);
 
-  label37 = gtk_label_new ("Type");
+  hbox30 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox30);
+  gtk_box_pack_start (GTK_BOX (vbox14), hbox30, FALSE, FALSE, 0);
+
+  label37 = gtk_label_new ("Type:");
   gtk_widget_show (label37);
-  gtk_table_attach (GTK_TABLE (table9), label37, 0, 1, 1, 2,
-                    (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
+  gtk_box_pack_start (GTK_BOX (hbox30), label37, FALSE, FALSE, 0);
   gtk_misc_set_alignment (GTK_MISC (label37), 0, 0.5);
 
   id = gtk_combo_box_new_text ();
   gtk_widget_show (id);
-  gtk_table_attach (GTK_TABLE (table9), id, 1, 2, 1, 2,
-                    (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (GTK_FILL), 0, 0);
+  gtk_box_pack_start (GTK_BOX (hbox30), id, TRUE, TRUE, 0);
   gtk_combo_box_append_text (GTK_COMBO_BOX (id), "File number");
   gtk_combo_box_append_text (GTK_COMBO_BOX (id), "Playing");
   gtk_combo_box_append_text (GTK_COMBO_BOX (id), "Artist - Album");
@@ -2119,45 +2131,43 @@ create_editcolumndlg (void)
   gtk_combo_box_append_text (GTK_COMBO_BOX (id), "Track");
   gtk_combo_box_append_text (GTK_COMBO_BOX (id), "Custom");
 
-  fmtlabel = gtk_label_new ("Format");
+  hbox31 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox31);
+  gtk_box_pack_start (GTK_BOX (vbox14), hbox31, FALSE, FALSE, 0);
+
+  fmtlabel = gtk_label_new ("Format:");
   gtk_widget_show (fmtlabel);
-  gtk_table_attach (GTK_TABLE (table9), fmtlabel, 0, 1, 2, 3,
-                    (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
+  gtk_box_pack_start (GTK_BOX (hbox31), fmtlabel, FALSE, FALSE, 0);
   gtk_misc_set_alignment (GTK_MISC (fmtlabel), 0, 0.5);
 
   format = gtk_entry_new ();
   gtk_widget_show (format);
-  gtk_table_attach (GTK_TABLE (table9), format, 1, 2, 2, 3,
-                    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
+  gtk_box_pack_start (GTK_BOX (hbox31), format, TRUE, TRUE, 0);
   gtk_entry_set_invisible_char (GTK_ENTRY (format), 9679);
   gtk_entry_set_activates_default (GTK_ENTRY (format), TRUE);
 
-  label25 = gtk_label_new ("Format conversions (start with %):\n  [a]rtist, [t]itle, al[b]um, track[n]umber,\n  [l]ength, [y]ear, [g]enre, [c]omment,\n  copy[r]ight, [f]ilename\nExample: %a - %t [%l]");
-  gtk_widget_show (label25);
-  gtk_table_attach (GTK_TABLE (table9), label25, 0, 2, 4, 5,
-                    (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
-  GTK_WIDGET_SET_FLAGS (label25, GTK_CAN_FOCUS);
-  gtk_label_set_use_markup (GTK_LABEL (label25), TRUE);
-  gtk_label_set_selectable (GTK_LABEL (label25), TRUE);
-  gtk_misc_set_alignment (GTK_MISC (label25), 0.1, 0.5);
+  hbox32 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox32);
+  gtk_box_pack_start (GTK_BOX (vbox14), hbox32, FALSE, FALSE, 0);
 
-  label38 = gtk_label_new ("Alignment");
+  label38 = gtk_label_new ("Alignment:");
   gtk_widget_show (label38);
-  gtk_table_attach (GTK_TABLE (table9), label38, 0, 1, 3, 4,
-                    (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
+  gtk_box_pack_start (GTK_BOX (hbox32), label38, FALSE, FALSE, 0);
   gtk_misc_set_alignment (GTK_MISC (label38), 0, 0.5);
 
   align = gtk_combo_box_new_text ();
   gtk_widget_show (align);
-  gtk_table_attach (GTK_TABLE (table9), align, 1, 2, 3, 4,
-                    (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (GTK_FILL), 0, 0);
+  gtk_box_pack_start (GTK_BOX (hbox32), align, TRUE, TRUE, 0);
   gtk_combo_box_append_text (GTK_COMBO_BOX (align), "Left");
   gtk_combo_box_append_text (GTK_COMBO_BOX (align), "Right");
+
+  label25 = gtk_label_new ("Format conversions (start with %):\n  [a]rtist, [t]itle, al[b]um, track[n]umber,\n  [l]ength, [y]ear, [g]enre, [c]omment,\n  copy[r]ight, [f]ilename\nExample: %a - %t [%l]");
+  gtk_widget_show (label25);
+  gtk_box_pack_start (GTK_BOX (vbox14), label25, TRUE, TRUE, 0);
+  GTK_WIDGET_SET_FLAGS (label25, GTK_CAN_FOCUS);
+  gtk_label_set_use_markup (GTK_LABEL (label25), TRUE);
+  gtk_label_set_selectable (GTK_LABEL (label25), TRUE);
+  gtk_misc_set_alignment (GTK_MISC (label25), 0.1, 0.5);
 
   dialog_action_area1 = GTK_DIALOG (editcolumndlg)->action_area;
   gtk_widget_show (dialog_action_area1);
@@ -2180,16 +2190,20 @@ create_editcolumndlg (void)
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (editcolumndlg, editcolumndlg, "editcolumndlg");
   GLADE_HOOKUP_OBJECT_NO_REF (editcolumndlg, dialog_vbox1, "dialog_vbox1");
-  GLADE_HOOKUP_OBJECT (editcolumndlg, table9, "table9");
+  GLADE_HOOKUP_OBJECT (editcolumndlg, vbox14, "vbox14");
+  GLADE_HOOKUP_OBJECT (editcolumndlg, hbox29, "hbox29");
   GLADE_HOOKUP_OBJECT (editcolumndlg, label26, "label26");
   GLADE_HOOKUP_OBJECT (editcolumndlg, title, "title");
+  GLADE_HOOKUP_OBJECT (editcolumndlg, hbox30, "hbox30");
   GLADE_HOOKUP_OBJECT (editcolumndlg, label37, "label37");
   GLADE_HOOKUP_OBJECT (editcolumndlg, id, "id");
+  GLADE_HOOKUP_OBJECT (editcolumndlg, hbox31, "hbox31");
   GLADE_HOOKUP_OBJECT (editcolumndlg, fmtlabel, "fmtlabel");
   GLADE_HOOKUP_OBJECT (editcolumndlg, format, "format");
-  GLADE_HOOKUP_OBJECT (editcolumndlg, label25, "label25");
+  GLADE_HOOKUP_OBJECT (editcolumndlg, hbox32, "hbox32");
   GLADE_HOOKUP_OBJECT (editcolumndlg, label38, "label38");
   GLADE_HOOKUP_OBJECT (editcolumndlg, align, "align");
+  GLADE_HOOKUP_OBJECT (editcolumndlg, label25, "label25");
   GLADE_HOOKUP_OBJECT_NO_REF (editcolumndlg, dialog_action_area1, "dialog_action_area1");
   GLADE_HOOKUP_OBJECT (editcolumndlg, cancelbutton1, "cancelbutton1");
   GLADE_HOOKUP_OBJECT (editcolumndlg, okbutton1, "okbutton1");
