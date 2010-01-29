@@ -177,11 +177,7 @@ streamer_set_current (playItem_t *it) {
         }
     }
     if (it->decoder) {
-        streamer_lock ();
-        streamer_unlock ();
         int ret = it->decoder->init (DB_PLAYITEM (it));
-        streamer_lock ();
-        streamer_unlock ();
         pl_item_copy (&str_streaming_song, it);
         if (ret < 0) {
             trace ("decoder->init returned %d\n", ret);
