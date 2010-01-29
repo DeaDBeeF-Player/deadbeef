@@ -177,26 +177,11 @@ palsa_set_hw_params (int samplerate) {
     trace ("alsa channels: %d\n", nchan);
 
     buffer_size = 1024;
-    period_size = 64;
+    period_size = 512;
     snd_pcm_hw_params_set_buffer_size_near (audio, hw_params, &buffer_size);
     snd_pcm_hw_params_set_period_size_near (audio, hw_params, &period_size, NULL);
     trace ("alsa buffer size: %d frames\n", buffer_size);
     trace ("alsa period size: %d frames\n", period_size);
-
-//    unsigned int buffer_time = 100000;
-//    int dir;
-//    if ((err = snd_pcm_hw_params_set_buffer_time_min (audio, hw_params, &buffer_time, &dir)) < 0) {
-//        trace ("Unable to set buffer time %i for playback: %s\n", buffer_time, snd_strerror(err));
-//        goto error;
-//    }
-//    trace ("alsa buffer time: %d usec\n", buffer_time);
-//    snd_pcm_uframes_t size;
-//    if ((err = snd_pcm_hw_params_get_buffer_size (hw_params, &size)) < 0) {
-//        trace ("Unable to get buffer size for playback: %s\n", snd_strerror(err));
-//        goto error;
-//    }
-//    trace ("alsa buffer size: %d frames\n", (int)size);
-//    bufsize = size;
 
     if ((err = snd_pcm_hw_params (audio, hw_params)) < 0) {
         trace ("cannot set parameters (%s)\n",
