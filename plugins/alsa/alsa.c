@@ -590,7 +590,7 @@ palsa_configchanged (DB_event_t *ev, uintptr_t data) {
 }
 
 // derived from alsa-utils/aplay.c
-void
+static void
 palsa_enum_soundcards (void (*callback)(const char *name, const char *desc, void *), void *userdata) {
     void **hints, **n;
     char *name, *descr, *io;
@@ -618,18 +618,18 @@ palsa_enum_soundcards (void (*callback)(const char *name, const char *desc, void
     snd_device_name_free_hint(hints);
 }
 
-int
+static int
 palsa_get_state (void) {
     return state;
 }
 
-int
+static int
 alsa_start (void) {
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_CONFIGCHANGED, DB_CALLBACK (palsa_configchanged), 0);
     return 0;
 }
 
-int
+static int
 alsa_stop (void) {
     deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_CONFIGCHANGED, DB_CALLBACK (palsa_configchanged), 0);
     return 0;
