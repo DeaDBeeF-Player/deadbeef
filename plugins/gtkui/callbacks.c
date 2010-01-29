@@ -2186,29 +2186,30 @@ plugin_configure (GtkWidget *parentwin, DB_plugin_t *p) {
             GtkWidget *btn = gtk_button_new_with_label ("…");
             gtk_box_pack_start (GTK_BOX (cont), btn, FALSE, FALSE, 0);
             g_signal_connect (G_OBJECT (btn), "clicked", G_CALLBACK (on_prop_browse_file), prop);
-            prop = cont;
         }
         if (!strcmp (type, "password")) {
             gtk_entry_set_visibility (GTK_ENTRY (prop), FALSE);
         }
+        GtkWidget *cont = NULL;
         if (label && prop) {
             GtkWidget *hbox = NULL;
             hbox = gtk_hbox_new (FALSE, 8);
             gtk_widget_show (hbox);
             gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
             gtk_box_pack_start (GTK_BOX (hbox), prop, TRUE, TRUE, 0);
-            prop = hbox;
+            cont = hbox;
+        }
+        else {
+            cont = prop;
         }
         if (prop) {
             char *keydup = strdup (key);
             g_object_set_data_full (G_OBJECT (prop), "key", keydup, (GDestroyNotify)free);
-            gtk_box_pack_start (GTK_BOX (vbox), prop, FALSE, FALSE, 0);
-//            gtk_table_attach (GTK_TABLE (tbl), label, 0, 1, nrows-1, nrows, (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions)0, 0, 0);
-//            gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
-//            gtk_table_attach (GTK_TABLE (tbl), cont, 1, 2, nrows-1, nrows, (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions)0, 0, 0);
+        }
+        if (cont) {
+            gtk_box_pack_start (GTK_BOX (vbox), cont, FALSE, FALSE, 0);
         }
     }
-
 
     gtk_widget_show_all (win);
 }
