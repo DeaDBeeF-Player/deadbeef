@@ -32,7 +32,6 @@ static DB_output_t plugin;
 DB_functions_t *deadbeef;
 
 static snd_pcm_t *audio;
-//static int bufsize = -1;
 static int alsa_terminate;
 static int requested_rate = -1;
 static int alsa_rate = 44100;
@@ -42,6 +41,9 @@ static intptr_t alsa_tid;
 
 static snd_pcm_uframes_t buffer_size;
 static snd_pcm_uframes_t period_size;
+
+static snd_pcm_uframes_t req_buffer_size;
+static snd_pcm_uframes_t req_period_size;
 
 static int conf_alsa_resample = 0;
 static char conf_alsa_soundcard[100] = "default";
@@ -176,10 +178,10 @@ palsa_set_hw_params (int samplerate) {
     snd_pcm_hw_params_get_channels (hw_params, &nchan);
     trace ("alsa channels: %d\n", nchan);
 
-    buffer_size = deadbeef->conf_get_int ("alsa.buffer", 1024);
-    period_size = deadbeef->conf_get_int ("alsa.period", 512);
-    trace ("trying buffer size: %d frames\n", buffer_size);
-    trace ("trying period size: %d frames\n", period_size);
+    req_buffer_size = deadbeef->conf_get_int ("alsa.buffer", 1024);
+    req_period_size = deadbeef->conf_get_int ("alsa.period", 512);
+    trace ("trying buffer size: %d frames\n", req_buffer_size);
+    trace ("trying period size: %d frames\n", req_period_size);
     snd_pcm_hw_params_set_buffer_size_near (audio, hw_params, &buffer_size);
     snd_pcm_hw_params_set_period_size_near (audio, hw_params, &period_size, NULL);
     trace ("alsa buffer size: %d frames\n", buffer_size);
@@ -579,8 +581,8 @@ palsa_configchanged (DB_event_t *ev, uintptr_t data) {
     if (audio &&
             (alsa_resample != conf_alsa_resample
             || strcmp (alsa_soundcard, conf_alsa_soundcard)
-            || buffer != buffer_size
-            || period != period_size)) {
+            || buffer != req_buffer_size
+            || period != req_period_size)) {
         trace ("alsa: config option changed, restarting\n");
         deadbeef->sendmessage (M_REINIT_SOUND, 0, 0, 0);
     }
