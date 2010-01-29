@@ -8,6 +8,7 @@ gtkui_la_SOURCES = gtkui.c gtkui.h\
 				   progress.c progress.h\
 				   search.c search.h\
 				   fileman.c\
+				   pluginconf.c\
 				   parser.c parser.h
 
 gtkui_la_LDFLAGS = -module
