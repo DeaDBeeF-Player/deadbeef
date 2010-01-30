@@ -35,6 +35,8 @@ static DB_functions_t *deadbeef;
 #define BUFFER_SIZE (0x10000)
 #define BUFFER_MASK 0xffff
 
+#define TIMEOUT 10 // in seconds
+
 #define STATUS_INITIAL  0
 #define STATUS_STARTING 1
 #define STATUS_READING  2
@@ -56,6 +58,8 @@ typedef struct {
     char *content_type;
     char *content_name;
     char *content_genre;
+    CURL *curl;
+    struct timeval last_read_time;
     uint8_t status;
 //    int icy_metaint;
 //    int wait_meta;
@@ -81,6 +85,7 @@ http_curl_write (void *ptr, size_t size, size_t nmemb, void *stream) {
 //    trace ("http_curl_write %d bytes\n", size * nmemb);
     int avail = size * nmemb;
     HTTP_FILE *fp = (HTTP_FILE *)stream;
+    gettimeofday (&fp->last_read_time, NULL);
     if (fp->status == STATUS_ABORTED) {
         trace ("vfs_curl STATUS_ABORTED at start of packet\n");
         return 0;
@@ -302,7 +307,19 @@ http_content_header_handler (void *ptr, size_t size, size_t nmemb, void *stream)
 static int
 http_curl_control (void *stream, double dltotal, double dlnow, double ultotal, double ulnow) {
     HTTP_FILE *fp = (HTTP_FILE *)stream;
-    trace ("http_curl_control, status = %d\n", fp ? fp->status : -1);
+
+    struct timeval tm;
+    gettimeofday (&tm, NULL);
+    float sec = tm.tv_sec - fp->last_read_time.tv_sec;
+    long response;
+    CURLcode code = curl_easy_getinfo (fp->curl, CURLINFO_RESPONSE_CODE, &response);
+    trace ("http_curl_control: status = %d, response = %d, interval: %f seconds\n", fp ? fp->status : -1, response, sec);
+    if (fp->status == STATUS_READING && sec > TIMEOUT) {
+        trace ("http_curl_control: timed out, restarting read\n");
+        memcpy (&fp->last_read_time, &tm, sizeof (struct timeval));
+        fp->remaining = 0;
+        fp->status = STATUS_SEEK;
+    }
     assert (stream);
     if (fp->status == STATUS_ABORTED) {
         trace ("vfs_curl STATUS_ABORTED in progress callback\n");
@@ -322,6 +339,7 @@ http_thread_func (void *ctx) {
     curl = curl_easy_init ();
     fp->length = -1;
     fp->status = STATUS_INITIAL;
+    fp->curl = curl;
 
     int status;
 
@@ -392,11 +410,35 @@ http_thread_func (void *ctx) {
             deadbeef->mutex_unlock (fp->mutex);
             break;
         }
-        fp->status = STATUS_INITIAL;
-        trace ("seeking to %d\n", fp->pos);
+        else {
+            fp->skipbytes = 0;
+            fp->status = STATUS_INITIAL;
+            trace ("seeking to %d\n", fp->pos);
+            if (fp->length < 0) {
+                // icy -- need full restart
+                fp->pos = 0;
+                if (fp->content_type) {
+                    free (fp->content_type);
+                    fp->content_type = NULL;
+                }
+                if (fp->content_name) {
+                    free (fp->content_name);
+                    fp->content_name = NULL;
+                }
+                if (fp->content_genre) {
+                    free (fp->content_genre);
+                    fp->content_genre = NULL;
+                }
+                fp->seektoend = 0;
+                fp->gotheader = 0;
+                fp->icyheader = 0;
+                fp->gotsomeheader = 0;
+            }
+        }
         deadbeef->mutex_unlock (fp->mutex);
 //        curl_slist_free_all (headers);
     }
+    fp->curl = NULL;
     curl_easy_cleanup (curl);
 
     deadbeef->mutex_lock (fp->mutex);
@@ -465,8 +507,22 @@ http_read (void *ptr, size_t size, size_t nmemb, DB_FILE *stream) {
     {
         // wait until data is available
         while ((fp->remaining == 0 || fp->skipbytes > 0) && fp->status != STATUS_FINISHED && !vfs_curl_abort) {
-            trace ("vfs_curl: readwait..\n");
+//            trace ("vfs_curl: readwait..\n");
             deadbeef->mutex_lock (fp->mutex);
+            if (fp->status == STATUS_READING) {
+                struct timeval tm;
+                gettimeofday (&tm, NULL);
+                float sec = tm.tv_sec - fp->last_read_time.tv_sec;
+                if (sec > TIMEOUT) {
+                    trace ("http_read: timed out, restarting read\n");
+                    memcpy (&fp->last_read_time, &tm, sizeof (struct timeval));
+                    fp->remaining = 0;
+                    fp->status = STATUS_SEEK;
+                    deadbeef->mutex_unlock (fp->mutex);
+                    deadbeef->streamer_reset (1);
+                    continue;
+                }
+            }
             int skip = min (fp->remaining, fp->skipbytes);
             if (skip > 0) {
 //                trace ("skipping %d bytes\n");
