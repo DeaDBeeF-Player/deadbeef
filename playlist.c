@@ -494,90 +494,111 @@ pl_insert_pls (playItem_t *after, const char *fname, int *pabort, int (*cb)(play
     char title[1024] = "";
     char length[20] = "";
     while (p < end) {
+        p = pl_str_skipspaces (p, end);
         if (p >= end) {
             break;
         }
         if (end-p < 6) {
             break;
         }
-        if (strncasecmp (p, "file", 4)) {
-            break;
-        }
-        p += 4;
-        while (p < end && *p != '=') {
+        const uint8_t *e;
+        int n;
+        if (!strncasecmp (p, "file", 4)) {
+            if (url[0]) {
+                // add track
+                playItem_t *it = pl_insert_file (after, url, pabort, cb, user_data);
+                if (it) {
+                    after = it;
+                    pl_set_item_duration (it, atoi (length));
+                    if (title[0]) {
+                        pl_delete_all_meta (it);
+                        pl_add_meta (it, "title", title);
+                    }
+                }
+                if (pabort && *pabort) {
+                    return after;
+                }
+                url[0] = 0;
+                title[0] = 0;
+                length[0] = 0;
+            }
+            p += 4;
+            while (p < end && *p != '=') {
+                p++;
+            }
             p++;
+            if (p >= end) {
+                break;
+            }
+            e = p;
+            while (e < end && *e >= 0x20) {
+                e++;
+            }
+            n = e-p;
+            n = min (n, sizeof (url)-1);
+            memcpy (url, p, n);
+            url[n] = 0;
+            trace ("url: %s\n", url);
+            p = ++e;
         }
-        p++;
-        if (p >= end) {
-            break;
-        }
-        const uint8_t *e = p;
-        while (e < end && *e >= 0x20) {
-            e++;
-        }
-        int n = e-p;
-        n = min (n, sizeof (url)-1);
-        memcpy (url, p, n);
-        url[n] = 0;
-        trace ("url: %s\n", url);
-        p = ++e;
-        p = pl_str_skipspaces (p, end);
-        if (strncasecmp (p, "title", 5)) {
-            break;
-        }
-        p += 5;
-        while (p < end && *p != '=') {
+        else if (!strncasecmp (p, "title", 5)) {
+            p += 5;
+            while (p < end && *p != '=') {
+                p++;
+            }
             p++;
+            if (p >= end) {
+                break;
+            }
+            e = p;
+            while (e < end && *e >= 0x20) {
+                e++;
+            }
+            n = e-p;
+            n = min (n, sizeof (title)-1);
+            memcpy (title, p, n);
+            title[n] = 0;
+            trace ("title: %s\n", title);
+            p = ++e;
         }
-        p++;
-        if (p >= end) {
-            break;
-        }
-        e = p;
-        while (e < end && *e >= 0x20) {
-            e++;
-        }
-        n = e-p;
-        n = min (n, sizeof (title)-1);
-        memcpy (title, p, n);
-        title[n] = 0;
-        trace ("title: %s\n", title);
-        p = ++e;
-        p = pl_str_skipspaces (p, end);
-        if (strncasecmp (p, "length", 6)) {
-            break;
-        }
-        p += 6;
-        // skip =
-        while (p < end && *p != '=') {
+        else if (!strncasecmp (p, "length", 6)) {
+            p += 6;
+            // skip =
+            while (p < end && *p != '=') {
+                p++;
+            }
             p++;
-        }
-        p++;
-        if (p >= end) {
+            if (p >= end) {
+                break;
+            }
+            e = p;
+            while (e < end && *e >= 0x20) {
+                e++;
+            }
+            n = e-p;
+            n = min (n, sizeof (length)-1);
+            memcpy (length, p, n);
             break;
         }
-        e = p;
-        while (e < end && *e >= 0x20) {
-            e++;
-        }
-        n = e-p;
-        n = min (n, sizeof (length)-1);
-        memcpy (length, p, n);
-        // add track
-        playItem_t *it = pl_insert_file (after, url, pabort, cb, user_data);
-        if (it) {
-            after = it;
-            pl_set_item_duration (it, atoi (length));
-            pl_delete_all_meta (it);
-            pl_add_meta (it, "title", title);
-        }
-        if (pabort && *pabort) {
-            return after;
+        else {
+            trace ("invalid entry in pls file: %s\n", p);
+            break;
         }
         while (e < end && *e < 0x20) {
             e++;
         }
         p = e;
+    }
+    if (url[0]) {
+        playItem_t *it = pl_insert_file (after, url, pabort, cb, user_data);
+        if (it) {
+            after = it;
+            pl_set_item_duration (it, atoi (length));
+            if (title[0]) {
+                pl_delete_all_meta (it);
+                pl_add_meta (it, "title", title);
+            }
+        }
     }
     return after;
 }
