@@ -27,7 +27,7 @@ static DUMBFILE_SYSTEM *the_dfs = NULL;
 
 
 
-void register_dumbfile_system(const DUMBFILE_SYSTEM *dfs)
+void register_dumbfile_system(DUMBFILE_SYSTEM *dfs)
 {
 	ASSERT(dfs);
 	ASSERT(dfs->open);

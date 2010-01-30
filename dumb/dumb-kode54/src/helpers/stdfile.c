@@ -58,7 +58,7 @@ static void dumb_stdfile_close(void *f)
 
 
 
-static const DUMBFILE_SYSTEM stdfile_dfs = {
+static DUMBFILE_SYSTEM stdfile_dfs = {
 	&dumb_stdfile_open,
 	&dumb_stdfile_skip,
 	&dumb_stdfile_getc,
@@ -75,7 +75,7 @@ void dumb_register_stdfiles(void)
 
 
 
-static const DUMBFILE_SYSTEM stdfile_dfs_leave_open = {
+static DUMBFILE_SYSTEM stdfile_dfs_leave_open = {
 	NULL,
 	&dumb_stdfile_skip,
 	&dumb_stdfile_getc,
