@@ -354,6 +354,8 @@ typedef struct {
     int (*junk_read_ape) (DB_playItem_t *it, DB_FILE *fp);
     int (*junk_get_leading_size) (DB_FILE *fp);
     void (*junk_copy) (DB_playItem_t *from, DB_playItem_t *first, DB_playItem_t *last);
+    const char * (*junk_detect_charset) (const char *s);
+    void (*junk_recode) (const char *in, int inlen, char *out, int outlen, const char *cs);
     // vfs
     DB_FILE* (*fopen) (const char *fname);
     void (*fclose) (DB_FILE *f);

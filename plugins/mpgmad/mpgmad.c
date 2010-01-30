@@ -839,8 +839,17 @@ cmp3_stream_frame (void) {
                 buffer.last_comment_update = buffer.currentsample;
                 const char *vfs_tit = deadbeef->fget_content_name (buffer.file);
                 if (vfs_tit) {
-                    deadbeef->pl_replace_meta (buffer.it, "title", vfs_tit);
-                    deadbeef->sendmessage (M_TRACKCHANGED, 0, idx, 0);
+                    const char *cs = deadbeef->junk_detect_charset (vfs_tit);
+                    if (cs) {
+                        char out[1024];
+                        deadbeef->junk_recode (vfs_tit, strlen (vfs_tit), out, sizeof (out), cs);
+                        deadbeef->pl_replace_meta (buffer.it, "title", out);
+                        deadbeef->sendmessage (M_TRACKCHANGED, 0, idx, 0);
+                    }
+                    else {
+                        deadbeef->pl_replace_meta (buffer.it, "title", vfs_tit);
+                        deadbeef->sendmessage (M_TRACKCHANGED, 0, idx, 0);
+                    }
                 }
             }
         }

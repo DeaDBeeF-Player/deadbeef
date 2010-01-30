@@ -160,6 +160,8 @@ static DB_functions_t deadbeef_api = {
     .junk_read_ape = (int (*)(DB_playItem_t *it, DB_FILE *fp))junk_read_ape,
     .junk_get_leading_size = junk_get_leading_size,
     .junk_copy = (void (*)(DB_playItem_t *from, DB_playItem_t *first, DB_playItem_t *last))junk_copy,
+    .junk_detect_charset = junk_detect_charset,
+    .junk_recode = junk_recode,
     // vfs
     .fopen = vfs_fopen,
     .fclose = vfs_fclose,
