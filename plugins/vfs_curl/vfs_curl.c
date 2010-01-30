@@ -24,8 +24,8 @@
 #include <curl/curlver.h>
 #include "../../deadbeef.h"
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -138,11 +138,11 @@ http_parse_shoutcast_meta (HTTP_FILE *fp, const char *meta, int size) {
             trace ("extracting streamtitle\n");
             meta += sizeof (strtitle)-1;
             const char *substr_end = meta;
-            while (substr_end < e && *substr_end != '\'') {
+            while (substr_end < e-1 && (*substr_end != '\'' || *(substr_end+1) != ';')) {
                 substr_end++;
             }
             if (substr_end >= e) {
-                break; // end of string not found
+                return -1; // end of string not found
             }
             int s = substr_end - meta;
             s = min (sizeof (title)-1, s);
@@ -153,6 +153,7 @@ http_parse_shoutcast_meta (HTTP_FILE *fp, const char *meta, int size) {
                 free (fp->content_name);
             }
             fp->content_name = strdup (title);
+            return 0;
         }
         while (meta < e && *meta != ';') {
             meta++;
@@ -161,6 +162,7 @@ http_parse_shoutcast_meta (HTTP_FILE *fp, const char *meta, int size) {
             meta++;
         }
     }
+    return -1;
 }
 
 static size_t
@@ -227,7 +229,10 @@ http_curl_write (void *ptr, size_t size, size_t nmemb, void *stream) {
             uint32_t sz = (uint32_t)(*((uint8_t *)ptr)) * 16;
             ptr ++;
             if (sz > 0) {
-                http_parse_shoutcast_meta (fp, ptr, sz);
+                if (http_parse_shoutcast_meta (fp, ptr, sz) < 0) {
+                    trace ("vfs_curl: got invalid icy metadata block\n");
+                    return 0;
+                }
             }
             avail -= sz + 1;
             fp->wait_meta = fp->icy_metaint;
