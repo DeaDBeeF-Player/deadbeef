@@ -87,6 +87,7 @@ typedef struct {
     int avg_samplerate;
     int avg_samples_per_frame;
     int nframes;
+    int last_comment_update;
 } buffer_t;
 
 static buffer_t buffer;
@@ -830,6 +831,21 @@ cmp3_stream_frame (void) {
         deadbeef->streamer_set_bitrate (frame.header.bitrate/1000);
         break;
     }
+
+    if (!eof) {
+        if (buffer.file->vfs->streaming && buffer.currentsample - buffer.last_comment_update > 5 * plugin.info.samplerate) {
+            int idx = deadbeef->pl_get_idx_of (buffer.it);
+            if (idx >= 0) {
+                buffer.last_comment_update = buffer.currentsample;
+                const char *vfs_tit = deadbeef->fget_content_name (buffer.file);
+                if (vfs_tit) {
+                    deadbeef->pl_replace_meta (buffer.it, "title", vfs_tit);
+                    deadbeef->sendmessage (M_TRACKCHANGED, 0, idx, 0);
+                }
+            }
+        }
+    }
+
     return eof;
 }
 

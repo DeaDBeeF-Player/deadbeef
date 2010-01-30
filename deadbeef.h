@@ -329,6 +329,7 @@ typedef struct {
     void (*pl_add_meta) (DB_playItem_t *it, const char *key, const char *value);
     const char *(*pl_find_meta) (DB_playItem_t *song, const char *meta);
     void (*pl_delete_all_meta) (DB_playItem_t *it);
+    void (*pl_replace_meta) (DB_playItem_t *it, const char *key, const char *value);
     void (*pl_set_item_duration) (DB_playItem_t *it, float duration);
     float (*pl_get_item_duration) (DB_playItem_t *it);
     void (*pl_sort) (int iter, int id, const char *format, int ascending);

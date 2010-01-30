@@ -1189,6 +1189,26 @@ pl_add_meta (playItem_t *it, const char *key, const char *value) {
 }
 
 void
+pl_replace_meta (playItem_t *it, const char *key, const char *value) {
+    // check if it's already set
+    metaInfo_t *m = it->meta;
+    while (m) {
+        if (!strcasecmp (key, m->key)) {
+            break;;
+        }
+        m = m->next;
+    }
+    if (m) {
+        free (m->value);
+        m->value = strdup (value);
+        return;
+    }
+    else {
+        pl_add_meta (it, key, value);
+    }
+}
+
+void
 pl_format_item_display_name (playItem_t *it, char *str, int len) {
     const char *artist = pl_find_meta (it, "artist");
     const char *title = pl_find_meta (it, "title");
