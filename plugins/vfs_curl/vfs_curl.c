@@ -240,6 +240,11 @@ http_curl_write (void *ptr, size_t size, size_t nmemb, void *stream) {
         }
     }
 
+    if (avail < 0) {
+        trace ("vfs_curl: something bad happened in metadata parser. can't continue streaming.\n");
+        return 0;
+    }
+
     if (avail) {
         trace ("http_curl_write_wrapper [2] %d\n", avail);
         size_t res = http_curl_write_wrapper (fp, ptr, avail);
