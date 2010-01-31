@@ -231,6 +231,8 @@ http_curl_write (void *ptr, size_t size, size_t nmemb, void *stream) {
             if (sz > 0) {
                 if (http_parse_shoutcast_meta (fp, ptr, sz) < 0) {
                     trace ("vfs_curl: got invalid icy metadata block\n");
+                    fp->remaining = 0;
+                    fp->status = STATUS_SEEK;
                     return 0;
                 }
             }
@@ -492,6 +494,8 @@ http_thread_func (void *ctx) {
                 fp->gotheader = 0;
                 fp->icyheader = 0;
                 fp->gotsomeheader = 0;
+                fp->wait_meta = 0;
+                fp->icy_metaint = 0;
             }
         }
         deadbeef->mutex_unlock (fp->mutex);
