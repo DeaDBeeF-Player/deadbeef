@@ -709,10 +709,13 @@ streamer_read_async (char *bytes, int size) {
         }
         if (decoder->info.samplerate != -1) {
             int nchannels = decoder->info.channels;
+            if (nchannels > 2) {
+                nchannels = 2;
+            }
             int samplerate = decoder->info.samplerate;
             if (decoder->info.samplerate == p_get_rate ()) {
                 // samplerate match
-                if (decoder->info.channels == 2) {
+                if (nchannels == 2) {
                     bytesread = decoder->read_int16 (bytes, size);
                     apply_replay_gain_int16 (&str_streaming_song, bytes, size);
                     codec_unlock ();
