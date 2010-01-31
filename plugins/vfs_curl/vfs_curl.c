@@ -24,8 +24,8 @@
 #include <curl/curlver.h>
 #include "../../deadbeef.h"
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -34,6 +34,8 @@ static DB_functions_t *deadbeef;
 
 #define BUFFER_SIZE (0x10000)
 #define BUFFER_MASK 0xffff
+
+#define TIMEOUT 10 // in seconds
 
 #define STATUS_INITIAL  0
 #define STATUS_STARTING 1
@@ -56,9 +58,11 @@ typedef struct {
     char *content_type;
     char *content_name;
     char *content_genre;
+    CURL *curl;
+    struct timeval last_read_time;
     uint8_t status;
-//    int icy_metaint;
-//    int wait_meta;
+    int icy_metaint;
+    int wait_meta;
     // flags (bitfields to save some space)
     unsigned seektoend : 1; // indicates that next tell must return length
     unsigned gotheader : 1; // tells that all headers (including ICY) were processed (to start reading body)
@@ -77,10 +81,96 @@ static size_t
 http_content_header_handler (void *ptr, size_t size, size_t nmemb, void *stream);
 
 static size_t
+http_curl_write_wrapper (HTTP_FILE *fp, void *ptr, size_t size) {
+    size_t avail = size;
+    while (avail > 0) {
+        if (vfs_curl_abort) {
+            break;
+        }
+        deadbeef->mutex_lock (fp->mutex);
+        if (fp->status == STATUS_SEEK) {
+            trace ("vfs_curl seek request, aborting current request\n");
+            deadbeef->mutex_unlock (fp->mutex);
+            return 0;
+        }
+        if (fp->status == STATUS_ABORTED) {
+            trace ("vfs_curl STATUS_ABORTED in the middle of packet\n");
+            deadbeef->mutex_unlock (fp->mutex);
+            break;
+        }
+        int sz = BUFFER_SIZE/2 - fp->remaining; // number of bytes free in buffer
+                                                // don't allow to fill more than half -- used for seeking backwards
+
+        if (sz > 5000) { // wait until there are at least 5k bytes free
+            int cp = min (avail, sz);
+            int writepos = (fp->pos + fp->remaining) & BUFFER_MASK;
+            // copy 1st portion (before end of buffer
+            int part1 = BUFFER_SIZE - writepos;
+            // may not be more than total
+            part1 = min (part1, cp);
+            memcpy (fp->buffer+writepos, ptr, part1);
+            ptr += part1;
+            avail -= part1;
+            fp->remaining += part1;
+            cp -= part1;
+            if (cp > 0) {
+                memcpy (fp->buffer, ptr, cp);
+                ptr += cp;
+                avail -= cp;
+                fp->remaining += cp;
+            }
+        }
+        deadbeef->mutex_unlock (fp->mutex);
+        usleep (3000);
+    }
+    return size - avail;
+}
+
+int
+http_parse_shoutcast_meta (HTTP_FILE *fp, const char *meta, int size) {
+    trace ("reading %d bytes of metadata\n", size);
+    trace ("%s\n", meta);
+    const char *e = meta + size;
+    const char strtitle[] = "StreamTitle='";
+    char title[256] = "";
+    while (meta < e) {
+        if (!memcmp (meta, strtitle, sizeof (strtitle)-1)) {
+            trace ("extracting streamtitle\n");
+            meta += sizeof (strtitle)-1;
+            const char *substr_end = meta;
+            while (substr_end < e-1 && (*substr_end != '\'' || *(substr_end+1) != ';')) {
+                substr_end++;
+            }
+            if (substr_end >= e) {
+                return -1; // end of string not found
+            }
+            int s = substr_end - meta;
+            s = min (sizeof (title)-1, s);
+            memcpy (title, meta, s);
+            title[s] = 0;
+            trace ("got stream title: %s\n", title);
+            if (fp->content_name) {
+                free (fp->content_name);
+            }
+            fp->content_name = strdup (title);
+            return 0;
+        }
+        while (meta < e && *meta != ';') {
+            meta++;
+        }
+        if (meta < e) {
+            meta++;
+        }
+    }
+    return -1;
+}
+
+static size_t
 http_curl_write (void *ptr, size_t size, size_t nmemb, void *stream) {
-//    trace ("http_curl_write %d bytes\n", size * nmemb);
     int avail = size * nmemb;
     HTTP_FILE *fp = (HTTP_FILE *)stream;
+    trace ("http_curl_write %d bytes, wait_meta=%d\n", size * nmemb, fp->wait_meta);
+    gettimeofday (&fp->last_read_time, NULL);
     if (fp->status == STATUS_ABORTED) {
         trace ("vfs_curl STATUS_ABORTED at start of packet\n");
         return 0;
@@ -100,28 +190,24 @@ http_curl_write (void *ptr, size_t size, size_t nmemb, void *stream) {
                 fp->gotheader = 1;
             }
             else {
-                trace ("parsing icy headers:\n%s\n", ptr);
+//                trace ("parsing icy headers:\n%s\n", ptr);
                 fp->nheaderpackets++;
-                http_content_header_handler (ptr, size, nmemb, stream);
-                if (fp->gotheader) {
-                    fp->gotheader = 0; // don't reset icy header
-                }
-                uint8_t *p = ptr;
-                int i;
-                for (i = 0; i < avail-3; i++) {
-                    const char end[4] = { 0x0d, 0x0a, 0x0d, 0x0a };
-                    if (!memcmp (p, end, 4)) {
-                        trace ("icy headers end\n");
-                        fp->gotheader = 1;
-                        break;
+                avail = http_content_header_handler (ptr, size, nmemb, stream);
+                if (avail == size * nmemb) {
+                    if (fp->gotheader) {
+                        fp->gotheader = 0; // don't reset icy header
                     }
-                    p++;
                 }
-                avail = 0;
+                else {
+                    fp->gotheader = 1;
+                }
             }
         }
         else {
             fp->gotheader = 1;
+        }
+        if (!avail) {
+            return nmemb*size;
         }
     }
 
@@ -130,69 +216,43 @@ http_curl_write (void *ptr, size_t size, size_t nmemb, void *stream) {
         fp->status = STATUS_READING;
     }
     deadbeef->mutex_unlock (fp->mutex);
-    while (avail > 0) {
-        if (vfs_curl_abort) {
-            break;
-        }
-        deadbeef->mutex_lock (fp->mutex);
-        if (fp->status == STATUS_SEEK) {
-            trace ("vfs_curl seek request, aborting current request\n");
-            deadbeef->mutex_unlock (fp->mutex);
-            return 0;
-        }
-        if (fp->status == STATUS_ABORTED) {
-            trace ("vfs_curl STATUS_ABORTED in the middle of packet\n");
-            deadbeef->mutex_unlock (fp->mutex);
-            break;
-        }
-#if 0
-        if (fp->wait_meta == 0) {
-            char sz;
-            memcpy (&sz, ptr, 1);
-            printf ("reading %d bytes of metadata, seekpos:%d!\n", (int)sz*4, fp->pos);
-            ptr += 16 * sz;
-            avail -= 16 * sz + 1;
-            printf ("avail=%d!\n", avail);
+
+    if (fp->icy_metaint > 0) {
+        while (fp->wait_meta < avail) {
+            trace ("http_curl_write_wrapper [1] %d\n", fp->wait_meta);
+            size_t res1 = http_curl_write_wrapper (fp, ptr, fp->wait_meta);
+            if (res1 != fp->wait_meta) {
+                return 0;
+            }
+            avail -= res1;
+            ptr += res1;
+            uint32_t sz = (uint32_t)(*((uint8_t *)ptr)) * 16;
+            ptr ++;
+            if (sz > 0) {
+                if (http_parse_shoutcast_meta (fp, ptr, sz) < 0) {
+                    trace ("vfs_curl: got invalid icy metadata block\n");
+                    fp->remaining = 0;
+                    fp->status = STATUS_SEEK;
+                    return 0;
+                }
+            }
+            avail -= sz + 1;
             fp->wait_meta = fp->icy_metaint;
+            trace ("avail: %d\n", avail);
         }
-#endif
-        int sz = BUFFER_SIZE/2 - fp->remaining; // number of bytes free in buffer
-                                                // don't allow to fill more than half -- used for seeking backwards
-
-        if (sz > 5000) { // wait until there are at least 5k bytes free
-            int cp = min (avail, sz);
-#if 0
-            if (fp->wait_meta - cp <= 0) {
-                printf ("cp=%d->%d\n", cp, fp->wait_meta);
-                cp = fp->wait_meta;
-            }
-            fp->wait_meta -= cp;
-#endif
-
-            int writepos = (fp->pos + fp->remaining) & BUFFER_MASK;
-            // copy 1st portion (before end of buffer
-            int part1 = BUFFER_SIZE - writepos;
-            // may not be more than total
-            part1 = min (part1, cp);
-            //trace ("part1=%d\n", part1);
-//            trace ("writepos=%d, remaining=%d, avail=%d, free=%d, writing=%d, part1=%d, part2=%d\n", writepos, fp->remaining, avail, sz, cp, part1, cp-part1);
-            memcpy (fp->buffer+writepos, ptr, part1);
-            ptr += part1;
-            avail -= part1;
-            fp->remaining += part1;
-            cp -= part1;
-            if (cp > 0) {
-                memcpy (fp->buffer, ptr, cp);
-                ptr += cp;
-                avail -= cp;
-                fp->remaining += cp;
-            }
-        }
-        deadbeef->mutex_unlock (fp->mutex);
-        usleep (3000);
     }
 
-//    trace ("returning %d\n", nmemb * size - avail);
+    if (avail < 0) {
+        trace ("vfs_curl: something bad happened in metadata parser. can't continue streaming.\n");
+        return 0;
+    }
+
+    if (avail) {
+        trace ("http_curl_write_wrapper [2] %d\n", avail);
+        size_t res = http_curl_write_wrapper (fp, ptr, avail);
+        avail -= res;
+        fp->wait_meta -= res;
+    }
     return nmemb * size - avail;
 }
 
@@ -247,10 +307,6 @@ parse_header (const uint8_t *p, const uint8_t *e, uint8_t *key, int keysize, uin
     memcpy (value, p, sz);
     value[sz] = 0;
 
-    // skip linebreaks
-    while (v < e && (*v == 0x0d || *v == 0x0a)) {
-        v++;
-    }
     return v;
 }
 
@@ -264,6 +320,16 @@ http_content_header_handler (void *ptr, size_t size, size_t nmemb, void *stream)
     uint8_t key[256];
     uint8_t value[256];
     while (p < end) {
+        if (p < end - 4) {
+            if (!memcmp (p, "\r\n\r\n", 4)) {
+                p += 4;
+                return size * nmemb - (size_t)(p-(const uint8_t *)ptr);
+            }
+        }
+        // skip linebreaks
+        while (p < end && (*p == 0x0d || *p == 0x0a)) {
+            p++;
+        }
         p = parse_header (p, end, key, sizeof (key), value, sizeof (value));
         trace ("%skey=%s value=%s\n", fp->icyheader ? "[icy] " : "", key, value);
         if (!strcasecmp (key, "Content-Type")) {
@@ -287,11 +353,11 @@ http_content_header_handler (void *ptr, size_t size, size_t nmemb, void *stream)
             }
             fp->content_genre = strdup (value);
         }
-//        else if (!strcasecmp (key, "icy-metaint")) {
-//            //printf ("icy-metaint: %d\n", atoi (value));
-//            fp->icy_metaint = atoi (value);
-//            fp->wait_meta = fp->icy_metaint; 
-//        }
+        else if (!strcasecmp (key, "icy-metaint")) {
+            //printf ("icy-metaint: %d\n", atoi (value));
+            fp->icy_metaint = atoi (value);
+            fp->wait_meta = fp->icy_metaint; 
+        }
     }
     if (!fp->icyheader) {
         fp->gotsomeheader = 1;
@@ -302,7 +368,19 @@ http_content_header_handler (void *ptr, size_t size, size_t nmemb, void *stream)
 static int
 http_curl_control (void *stream, double dltotal, double dlnow, double ultotal, double ulnow) {
     HTTP_FILE *fp = (HTTP_FILE *)stream;
-    trace ("http_curl_control, status = %d\n", fp ? fp->status : -1);
+
+    struct timeval tm;
+    gettimeofday (&tm, NULL);
+    float sec = tm.tv_sec - fp->last_read_time.tv_sec;
+    long response;
+    CURLcode code = curl_easy_getinfo (fp->curl, CURLINFO_RESPONSE_CODE, &response);
+    trace ("http_curl_control: status = %d, response = %d, interval: %f seconds\n", fp ? fp->status : -1, response, sec);
+    if (fp->status == STATUS_READING && sec > TIMEOUT) {
+        trace ("http_curl_control: timed out, restarting read\n");
+        memcpy (&fp->last_read_time, &tm, sizeof (struct timeval));
+        fp->remaining = 0;
+        fp->status = STATUS_SEEK;
+    }
     assert (stream);
     if (fp->status == STATUS_ABORTED) {
         trace ("vfs_curl STATUS_ABORTED in progress callback\n");
@@ -322,12 +400,13 @@ http_thread_func (void *ctx) {
     curl = curl_easy_init ();
     fp->length = -1;
     fp->status = STATUS_INITIAL;
+    fp->curl = curl;
 
     int status;
 
     trace ("vfs_curl: started loading data\n");
     for (;;) {
-//        struct curl_slist *headers = NULL;
+        struct curl_slist *headers = NULL;
         curl_easy_reset (curl);
         curl_easy_setopt (curl, CURLOPT_URL, fp->url);
         curl_easy_setopt (curl, CURLOPT_NOPROGRESS, 1);
@@ -344,8 +423,8 @@ http_thread_func (void *ctx) {
         // enable up to 10 redirects
         curl_easy_setopt (curl, CURLOPT_FOLLOWLOCATION, 1);
         curl_easy_setopt (curl, CURLOPT_MAXREDIRS, 10);
-//        headers = curl_slist_append (headers, "Icy-Metadata:1");
-//        curl_easy_setopt (curl, CURLOPT_HTTPHEADER, headers);
+        headers = curl_slist_append (headers, "Icy-Metadata:1");
+        curl_easy_setopt (curl, CURLOPT_HTTPHEADER, headers);
         if (fp->pos > 0) {
             curl_easy_setopt (curl, CURLOPT_RESUME_FROM, fp->pos);
         }
@@ -392,11 +471,37 @@ http_thread_func (void *ctx) {
             deadbeef->mutex_unlock (fp->mutex);
             break;
         }
-        fp->status = STATUS_INITIAL;
-        trace ("seeking to %d\n", fp->pos);
+        else {
+            fp->skipbytes = 0;
+            fp->status = STATUS_INITIAL;
+            trace ("seeking to %d\n", fp->pos);
+            if (fp->length < 0) {
+                // icy -- need full restart
+                fp->pos = 0;
+                if (fp->content_type) {
+                    free (fp->content_type);
+                    fp->content_type = NULL;
+                }
+                if (fp->content_name) {
+                    free (fp->content_name);
+                    fp->content_name = NULL;
+                }
+                if (fp->content_genre) {
+                    free (fp->content_genre);
+                    fp->content_genre = NULL;
+                }
+                fp->seektoend = 0;
+                fp->gotheader = 0;
+                fp->icyheader = 0;
+                fp->gotsomeheader = 0;
+                fp->wait_meta = 0;
+                fp->icy_metaint = 0;
+            }
+        }
         deadbeef->mutex_unlock (fp->mutex);
-//        curl_slist_free_all (headers);
+        curl_slist_free_all (headers);
     }
+    fp->curl = NULL;
     curl_easy_cleanup (curl);
 
     deadbeef->mutex_lock (fp->mutex);
@@ -465,8 +570,22 @@ http_read (void *ptr, size_t size, size_t nmemb, DB_FILE *stream) {
     {
         // wait until data is available
         while ((fp->remaining == 0 || fp->skipbytes > 0) && fp->status != STATUS_FINISHED && !vfs_curl_abort) {
-            trace ("vfs_curl: readwait..\n");
+//            trace ("vfs_curl: readwait..\n");
             deadbeef->mutex_lock (fp->mutex);
+            if (fp->status == STATUS_READING) {
+                struct timeval tm;
+                gettimeofday (&tm, NULL);
+                float sec = tm.tv_sec - fp->last_read_time.tv_sec;
+                if (sec > TIMEOUT) {
+                    trace ("http_read: timed out, restarting read\n");
+                    memcpy (&fp->last_read_time, &tm, sizeof (struct timeval));
+                    fp->remaining = 0;
+                    fp->status = STATUS_SEEK;
+                    deadbeef->mutex_unlock (fp->mutex);
+                    deadbeef->streamer_reset (1);
+                    continue;
+                }
+            }
             int skip = min (fp->remaining, fp->skipbytes);
             if (skip > 0) {
 //                trace ("skipping %d bytes\n");
@@ -634,6 +753,7 @@ http_get_content_name (DB_FILE *stream) {
         return NULL;
     }
     if (fp->gotheader) {
+        trace ("returning %s\n", fp->content_name);
         return fp->content_name;
     }
     if (!fp->tid) {

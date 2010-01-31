@@ -112,20 +112,21 @@ cflac_write_callback (const FLAC__StreamDecoder *decoder, const FLAC__Frame *fra
     if (bitrate > 0) {
         deadbeef->streamer_set_bitrate (bitrate/1000);
     }
-    int readbytes = frame->header.blocksize * _info->channels * _info->bps / 8;
     int bufsize = BUFFERSIZE - info->remaining;
     int bufsamples = bufsize / (_info->channels * _info->bps / 8);
     int nsamples = min (bufsamples, frame->header.blocksize);
     char *bufptr = &info->buffer[info->remaining];
     float mul = 1.f/ ((1 << (_info->bps-1))-1);
 
+    int channels = _info->channels;
+    if (channels > 2) {
+        channels = 2;
+    }
+    int readbytes = frame->header.blocksize * channels * _info->bps / 8;
+
     for (int i = 0; i < nsamples; i++) {
-        int32_t sample = inputbuffer[0][i];
-        *((float*)bufptr) = sample * mul;
-        bufptr += sizeof (float);
-        info->remaining += sizeof (float);
-        if (_info->channels > 1) {
-            int32_t sample = inputbuffer[1][i];
+        for (int c = 0; c < channels; c++) {
+            int32_t sample = inputbuffer[c][i];
             *((float*)bufptr) = sample * mul;
             bufptr += sizeof (float);
             info->remaining += sizeof (float);
@@ -311,25 +312,39 @@ cflac_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
             return 0;
         }
     }
+    int n_output_channels = _info->channels;
+    if (n_output_channels > 2) {
+        n_output_channels = 2;
+    }
     int initsize = size;
     do {
         if (info->remaining) {
-            int s = size * 2;
-            int sz = min (info->remaining, s);
+            int n_input_frames = info->remaining / sizeof (float) / n_output_channels;
+            int n_output_frames = size / n_output_channels / sizeof (int16_t);
+            int n = min (n_input_frames, n_output_frames);
+
+            trace ("flac: [1] if=%d, of=%d, n=%d, rem=%d, size=%d\n", n_input_frames, n_output_frames, n, remaining, size);
             // convert from float to int16
             float *in = (float *)info->buffer;
-            for (int i = 0; i < sz/4; i++) {
+            for (int i = 0; i < n; i++) {
                 *((int16_t *)bytes) = (int16_t)((*in) * 0x7fff);
-                size -= 2;
-                bytes += 2;
-                in++;
+                size -= sizeof (int16_t);
+                bytes += sizeof (int16_t);
+                if (n_output_channels == 2) {
+                    *((int16_t *)bytes) = (int16_t)((*(in+1)) * 0x7fff);
+                    size -= sizeof (int16_t);
+                    bytes += sizeof (int16_t);
+                }
+                in += n_output_channels;
             }
+            int sz = n * sizeof (float) * n_output_channels;
             if (sz < info->remaining) {
-                memmove (info->buffer, &info->buffer[sz], info->remaining-sz);
+                memmove (info->buffer, &info->buffer[sz], info->remaining - sz);
             }
             info->remaining -= sz;
-            info->currentsample += sz / (4 * _info->channels);
-            _info->readpos += (float)sz / (_info->channels * _info->samplerate * sizeof (float));
+            info->currentsample += n;
+            _info->readpos += (float)n / _info->samplerate;
+            trace ("flac: [2] if=%d, of=%d, n=%d, rem=%d, size=%d\n", n_input_frames, n_output_frames, n, info->remaining, size);
         }
         if (!size) {
             break;
@@ -361,19 +376,36 @@ cflac_read_float32 (DB_fileinfo_t *_info, char *bytes, int size) {
             return 0;
         }
     }
+    int n_output_channels = _info->channels;
+    if (n_output_channels > 2) {
+        n_output_channels = 2;
+    }
     int initsize = size;
     do {
         if (info->remaining) {
-            int sz = min (info->remaining, size);
-            memcpy (bytes, info->buffer, sz);
-            size -= sz;
-            bytes += sz;
+            int n_input_frames = info->remaining / sizeof (float) / n_output_channels;
+            int n_output_frames = size / n_output_channels / sizeof (float);
+            int n = min (n_input_frames, n_output_frames);
+
+            float *in = (float *)info->buffer;
+            for (int i = 0; i < n; i++) {
+                *((float *)bytes) = *in;
+                size -= sizeof (float);
+                bytes += sizeof (float);
+                if (n_output_channels == 2) {
+                    *((float *)bytes) = *(in+1);
+                    size -= sizeof (float);
+                    bytes += sizeof (float);
+                }
+                in += n_output_channels;
+            }
+            int sz = n * sizeof (float) * n_output_channels;
             if (sz < info->remaining) {
                 memmove (info->buffer, &info->buffer[sz], info->remaining-sz);
             }
             info->remaining -= sz;
-            info->currentsample += sz / (4 * _info->channels);
-            _info->readpos += (float)sz / (_info->channels * _info->samplerate * sizeof (int32_t));
+            info->currentsample += n;
+            _info->readpos += (float)n / _info->samplerate;
         }
         if (!size) {
             break;
@@ -451,6 +483,7 @@ cflac_init_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__Str
     DB_playItem_t *it = info->it;
     //it->tracknum = 0;
     if (metadata->type == FLAC__METADATA_TYPE_STREAMINFO) {
+        trace ("flac: samplerate=%d, channels=%d\n", metadata->data.stream_info.sample_rate, metadata->data.stream_info.channels);
         _info->samplerate = metadata->data.stream_info.sample_rate;
         _info->channels = metadata->data.stream_info.channels;
         info->totalsamples = metadata->data.stream_info.total_samples;

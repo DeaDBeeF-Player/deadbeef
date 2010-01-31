@@ -343,6 +343,7 @@ typedef struct {
     void (*pl_add_meta) (DB_playItem_t *it, const char *key, const char *value);
     const char *(*pl_find_meta) (DB_playItem_t *song, const char *meta);
     void (*pl_delete_all_meta) (DB_playItem_t *it);
+    void (*pl_replace_meta) (DB_playItem_t *it, const char *key, const char *value);
     void (*pl_set_item_duration) (DB_playItem_t *it, float duration);
     float (*pl_get_item_duration) (DB_playItem_t *it);
     void (*pl_sort) (int iter, int id, const char *format, int ascending);
@@ -367,6 +368,8 @@ typedef struct {
     int (*junk_read_ape) (DB_playItem_t *it, DB_FILE *fp);
     int (*junk_get_leading_size) (DB_FILE *fp);
     void (*junk_copy) (DB_playItem_t *from, DB_playItem_t *first, DB_playItem_t *last);
+    const char * (*junk_detect_charset) (const char *s);
+    void (*junk_recode) (const char *in, int inlen, char *out, int outlen, const char *cs);
     // vfs
     DB_FILE* (*fopen) (const char *fname);
     void (*fclose) (DB_FILE *f);

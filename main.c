@@ -45,7 +45,6 @@
 #include "unistd.h"
 #include "threading.h"
 #include "messagepump.h"
-#include "codec.h"
 #include "streamer.h"
 #include "conf.h"
 #include "volume.h"
@@ -603,7 +602,6 @@ main (int argc, char *argv[]) {
         pl_load (defpl);
     }
     plug_trigger_event_playlistchanged ();
-
 // this is old code left for backwards compatibility
     {
         char sessfile[1024]; // $HOME/.config/deadbeef/session
@@ -612,7 +610,6 @@ main (int argc, char *argv[]) {
         }
     }
 
-    codec_init_locking ();
     streamer_init ();
 
     // this runs in main thread (blocks right here)
@@ -642,7 +639,6 @@ main (int argc, char *argv[]) {
     plug_unload_all ();
 
     // at this point we can simply do exit(0), but let's clean up for debugging
-    codec_free_locking ();
     pl_free ();
     conf_free ();
     messagepump_free ();

@@ -165,7 +165,7 @@ DUMBFILE_SYSTEM;
 
 typedef struct DUMBFILE DUMBFILE;
 
-void register_dumbfile_system(const DUMBFILE_SYSTEM *dfs);
+void register_dumbfile_system(DUMBFILE_SYSTEM *dfs);
 
 DUMBFILE *dumbfile_open(const char *filename);
 DUMBFILE *dumbfile_open_ex(void *file, DUMBFILE_SYSTEM *dfs);

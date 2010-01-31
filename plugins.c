@@ -143,6 +143,7 @@ static DB_functions_t deadbeef_api = {
     // metainfo
     .pl_add_meta = (void (*) (DB_playItem_t *, const char *, const char *))pl_add_meta,
     .pl_find_meta = (const char *(*) (DB_playItem_t *, const char *))pl_find_meta,
+    .pl_replace_meta = (void (*) (DB_playItem_t *, const char *, const char *))pl_replace_meta,
     .pl_delete_all_meta = (void (*) (DB_playItem_t *it))pl_delete_all_meta,
     // cuesheet support
     .pl_insert_cue_from_buffer = (DB_playItem_t *(*) (DB_playItem_t *after, DB_playItem_t *origin, const uint8_t *buffer, int buffersize, int numsamples, int samplerate))pl_insert_cue_from_buffer,
@@ -164,6 +165,8 @@ static DB_functions_t deadbeef_api = {
     .junk_read_ape = (int (*)(DB_playItem_t *it, DB_FILE *fp))junk_read_ape,
     .junk_get_leading_size = junk_get_leading_size,
     .junk_copy = (void (*)(DB_playItem_t *from, DB_playItem_t *first, DB_playItem_t *last))junk_copy,
+    .junk_detect_charset = junk_detect_charset,
+    .junk_recode = junk_recode,
     // vfs
     .fopen = vfs_fopen,
     .fclose = vfs_fclose,
