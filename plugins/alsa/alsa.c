@@ -180,14 +180,14 @@ palsa_set_hw_params (int samplerate) {
 
     req_buffer_size = deadbeef->conf_get_int ("alsa.buffer", 1024);
     req_period_size = deadbeef->conf_get_int ("alsa.period", 512);
-    trace ("trying buffer size: %d frames\n", req_buffer_size);
-    trace ("trying period size: %d frames\n", req_period_size);
-    snd_pcm_hw_params_set_buffer_size_near (audio, hw_params, &req_buffer_size);
-    snd_pcm_hw_params_set_period_size_near (audio, hw_params, &req_period_size, NULL);
-    trace ("alsa buffer size: %d frames\n", req_buffer_size);
-    trace ("alsa period size: %d frames\n", req_period_size);
     buffer_size = req_buffer_size;
     period_size = req_period_size;
+    trace ("trying buffer size: %d frames\n", buffer_size);
+    trace ("trying period size: %d frames\n", period_size);
+    snd_pcm_hw_params_set_buffer_size_near (audio, hw_params, &buffer_size);
+    snd_pcm_hw_params_set_period_size_near (audio, hw_params, &period_size, NULL);
+    trace ("alsa buffer size: %d frames\n", buffer_size);
+    trace ("alsa period size: %d frames\n", period_size);
 
     if ((err = snd_pcm_hw_params (audio, hw_params)) < 0) {
         trace ("cannot set parameters (%s)\n",
