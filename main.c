@@ -45,7 +45,6 @@
 #include "unistd.h"
 #include "threading.h"
 #include "messagepump.h"
-#include "codec.h"
 #include "streamer.h"
 #include "conf.h"
 #include "volume.h"
@@ -605,7 +604,6 @@ main (int argc, char *argv[]) {
     }
     plug_trigger_event_playlistchanged ();
     session_load (sessfile);
-    codec_init_locking ();
     streamer_init ();
 
     // this runs in main thread (blocks right here)
@@ -629,7 +627,6 @@ main (int argc, char *argv[]) {
     plug_unload_all ();
 
     // at this point we can simply do exit(0), but let's clean up for debugging
-    codec_free_locking ();
     session_save (sessfile);
     pl_free ();
     conf_free ();

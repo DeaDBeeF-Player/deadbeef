@@ -26,7 +26,6 @@
 #endif
 #include <sys/time.h>
 #include "threading.h"
-#include "codec.h"
 #include "playlist.h"
 #include "common.h"
 #include "streamer.h"
@@ -38,26 +37,24 @@
 #include "volume.h"
 #include "vfs.h"
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 static intptr_t streamer_tid;
 static int src_quality;
 static SRC_STATE *src;
 static SRC_DATA srcdata;
-static int codecleft;
+static int src_remaining; // number of input samples in SRC buffer
 
 static int conf_replaygain_mode = 0;
 static int conf_replaygain_scale = 1;
-// that's buffer for resampling.
-// our worst case is 192KHz downsampling to 22050Hz with 2048 sample output buffer
-#define INPUT_BUFFER_SIZE (2048*192000/22050*8)
-static char g_readbuffer[INPUT_BUFFER_SIZE];
-// fbuffer contains readbuffer converted to floating point, to pass to SRC
-static float g_fbuffer[INPUT_BUFFER_SIZE];
-// output SRC buffer - can't really exceed INPUT_BUFFER_SIZE
-#define SRC_BUFFER_SIZE (INPUT_BUFFER_SIZE*2)
-static float g_srcbuffer[SRC_BUFFER_SIZE];
+
+#define SRC_BUFFER 16000
+static int src_in_remaining = 0;
+//static int16_t g_src_in_buffer[SRC_BUFFER*2];
+static float g_src_in_fbuffer[SRC_BUFFER*2];
+static float g_src_out_fbuffer[SRC_BUFFER*2];
+
 static int streaming_terminate;
 
 // buffer up to 3 seconds at 44100Hz stereo
@@ -256,7 +253,7 @@ streamer_thread (void *ctx) {
 #ifdef __linux__
     prctl (PR_SET_NAME, "deadbeef-stream", 0, 0, 0, 0);
 #endif
-    codecleft = 0;
+    src_remaining = 0;
 
     while (!streaming_terminate) {
         struct timeval tm1;
@@ -266,9 +263,7 @@ streamer_thread (void *ctx) {
             int sng = nextsong;
             int pstate = nextsong_pstate;
             nextsong = -1;
-            codec_lock ();
-            codecleft = 0;
-            codec_unlock ();
+            src_remaining = 0;
             if (badsong == sng) {
                 trace ("looped to bad file. stopping...\n");
                 streamer_set_nextsong (-2, 1);
@@ -449,9 +444,7 @@ streamer_thread (void *ctx) {
                 streamer_lock ();
                 streambuffer_fill = 0;
                 streambuffer_pos = 0;
-                codec_lock ();
-                codecleft = 0;
-                codec_unlock ();
+                src_remaining = 0;
                 if (str_playing_song.decoder->seek (pos) >= 0) {
                     playpos = str_playing_song.decoder->info.readpos;
                 }
@@ -543,7 +536,7 @@ streamer_free (void) {
 
 void
 streamer_reset (int full) { // must be called when current song changes by external reasons
-    codecleft = 0;
+    src_remaining = 0;
     if (full) {
         streambuffer_pos = 0;
         streambuffer_fill = 0;
@@ -694,17 +687,177 @@ float32_to_int16 (float *in, int16_t *out, int nsamples) {
     fpu_restore (ctl);
 }
 
+/*
+
+   src algorithm
+
+   initsize = size;
+   while (size > 0) {
+        need_frames = SRC_BUFFER - src_remaining
+        read_samples (need_frames)
+        src_process (output_frames)
+        convert_to_int16 (bytes, size)
+        // handle errors
+    }
+    return initsize-size;
+
+*/
+
+static int
+streamer_read_data_for_src (int16_t *buffer, int frames) {
+    DB_decoder_t *decoder = str_streaming_song.decoder;
+    int channels = decoder->info.channels;
+    if (channels > 2) {
+        channels = 2;
+    }
+    int bytesread = decoder->read_int16 ((uint8_t*)buffer, frames * sizeof (int16_t) * channels);
+    if (channels == 1) {
+        // convert to stereo
+        int n = frames-1;
+        while (n >= 0) {
+            buffer[n*2+0] = buffer[n];
+            buffer[n*2+1] = buffer[n];
+        }
+    }
+    return bytesread / (sizeof (int16_t) * channels);
+}
+
+static int
+streamer_read_data_for_src_float (float *buffer, int frames) {
+    DB_decoder_t *decoder = str_streaming_song.decoder;
+    int channels = decoder->info.channels;
+    if (channels > 2) {
+        channels = 2;
+    }
+    if (decoder->read_float32) {
+//        trace ("call read_float32 (%d frames -> %d bytes)\n", frames, frames * sizeof (float) * channels);
+        int bytesread = decoder->read_float32 ((uint8_t*)buffer, frames * sizeof (float) * channels);
+//        trace ("got %d bytes -> %d frames\n", bytesread, bytesread / (sizeof (float) * channels));
+        if (channels == 1) {
+            // convert to stereo
+            int n = frames-1;
+            while (n >= 0) {
+                buffer[n*2+0] = buffer[n];
+                buffer[n*2+1] = buffer[n];
+            }
+            bytesread *= 2;
+        }
+        return bytesread / (sizeof (float) * channels);
+    }
+//    trace ("read_float32 not impl\n");
+    int16_t intbuffer[frames*2];
+    int res = streamer_read_data_for_src (intbuffer, frames);
+    for (int i = 0; i < res; i++) {
+        buffer[i*2+0] = intbuffer[i*2+0]/(float)0x7fff;
+        buffer[i*2+1] = intbuffer[i*2+1]/(float)0x7fff;
+    }
+    return res;
+}
+
+static int
+streamer_decode_src_libsamplerate (uint8_t *bytes, int size) {
+    int initsize = size;
+    int16_t *out = (int16_t *)bytes;
+    DB_decoder_t *decoder = str_streaming_song.decoder;
+    int samplerate = decoder->info.samplerate;
+    float ratio = (float)p_get_rate ()/samplerate;
+    while (size > 0) {
+        int n_output_frames = size / sizeof (int16_t) / 2;
+        int n_input_frames = n_output_frames * samplerate / p_get_rate () + 100;
+        // read data from decoder
+        if (n_input_frames > SRC_BUFFER - src_remaining ) {
+            n_input_frames = SRC_BUFFER - src_remaining;
+        }
+        int nread = streamer_read_data_for_src_float (&g_src_in_fbuffer[src_remaining*2], n_input_frames);
+        src_remaining += nread;
+        // resample
+
+        srcdata.data_in = g_src_in_fbuffer;
+        srcdata.data_out = g_src_out_fbuffer;
+        srcdata.input_frames = src_remaining;
+        srcdata.output_frames = size/4;
+        srcdata.src_ratio = ratio;
+//        trace ("SRC from %d to %d\n", samplerate, p_get_rate ());
+        srcdata.end_of_input = (nread == n_input_frames) ? 0 : 1;
+        src_process (src, &srcdata);
+        // convert back to s16 format
+//        trace ("out frames: %d\n", srcdata.output_frames_gen);
+        int genbytes = srcdata.output_frames_gen * 4;
+        int bytesread = min(size, genbytes);
+//        trace ("bytesread: %d\n", bytesread);
+        float32_to_int16 ((float*)g_src_out_fbuffer, (int16_t*)bytes, bytesread>>1);
+        size -= bytesread;
+//        trace ("size: %d\n", size);
+        bytes += bytesread;
+        // calculate how many unused input samples left
+        src_remaining -= srcdata.input_frames_used;
+
+        // copy spare samples for next update
+        if (src_remaining > 0) {
+            memmove (g_src_in_fbuffer, &g_src_in_fbuffer[srcdata.input_frames_used*2], src_remaining * sizeof (float) * 2);
+        }
+
+        if (nread != n_input_frames) {
+            trace ("nread=%d, n_input_frames=%d, mismatch!\n", nread, n_input_frames);
+            break;
+        }
+    }
+    return initsize-size;
+}
+
+#if 0
+static int
+streamer_decode_src (uint8_t *bytes, int size) {
+    int initsize = size;
+    int16_t *out = (int16_t *)bytes;
+    DB_decoder_t *decoder = str_streaming_song.decoder;
+    int samplerate = decoder->info.samplerate;
+    float ratio = (float)samplerate / p_get_rate ();
+    while (size > 0) {
+        int n_output_frames = size / sizeof (int16_t) / 2;
+        int n_input_frames = n_output_frames * samplerate / p_get_rate () + 100;
+        // read data from decoder
+        if (n_input_frames > SRC_BUFFER - src_remaining ) {
+            n_input_frames = SRC_BUFFER - src_remaining;
+        }
+        int nread = streamer_read_data_for_src (&g_src_in_buffer[src_remaining*2], n_input_frames);
+        src_remaining += nread;
+        // resample
+        float idx = 0;
+        int i = 0;
+        while (i < n_output_frames && idx < src_remaining) {
+            int k = (int)idx;
+            out[0] = g_src_in_buffer[k*2+0];
+            out[1] = g_src_in_buffer[k*2+1];
+            i++;
+            idx += ratio;
+            out += 2;
+        }
+        size -= i*4;
+        src_remaining -= idx;
+        if (src_remaining < 0) {
+            src_remaining = 0;
+        }
+        else if (src_remaining > 0) {
+            memmove (g_src_in_buffer, &g_src_in_buffer[(SRC_BUFFER-src_remaining)*2], src_remaining*2*sizeof (int16_t));
+        }
+        if (nread != n_input_frames) {
+            break;
+        }
+    }
+    return initsize-size;
+}
+#endif
+
 // returns number of bytes been read
 static int
 streamer_read_async (char *bytes, int size) {
     int initsize = size;
     for (;;) {
         int bytesread = 0;
-        codec_lock ();
         DB_decoder_t *decoder = str_streaming_song.decoder;
         if (!decoder) {
             // means there's nothing left to stream, so just do nothing
-            codec_unlock ();
             break;
         }
         if (decoder->info.samplerate != -1) {
@@ -713,108 +866,28 @@ streamer_read_async (char *bytes, int size) {
                 nchannels = 2;
             }
             int samplerate = decoder->info.samplerate;
-            if (decoder->info.samplerate == p_get_rate ()) {
+            if (decoder->info.samplerate == p_get_rate (), 0) {
                 // samplerate match
                 if (nchannels == 2) {
                     bytesread = decoder->read_int16 (bytes, size);
                     apply_replay_gain_int16 (&str_streaming_song, bytes, size);
-                    codec_unlock ();
                 }
                 else {
-                    bytesread = decoder->read_int16 (g_readbuffer, size>>1);
-                    apply_replay_gain_int16 (&str_streaming_song, g_readbuffer, size>>1);
-                    mono_int16_to_stereo_int16 ((int16_t*)g_readbuffer, (int16_t*)bytes, size>>2);
+                    uint8_t buffer[size>>1];
+                    bytesread = decoder->read_int16 (buffer, size>>1);
+                    apply_replay_gain_int16 (&str_streaming_song, buffer, size>>1);
+                    mono_int16_to_stereo_int16 ((int16_t*)buffer, (int16_t*)bytes, size>>2);
                     bytesread *= 2;
-                    codec_unlock ();
                 }
             }
             else if (src_is_valid_ratio (p_get_rate ()/(double)samplerate)) {
-                // read and do SRC
-                int nsamples = size/4;
-                nsamples = nsamples * samplerate / p_get_rate () * 2;
-                // read data at source samplerate (with some room for SRC)
-                int nbytes = (nsamples - codecleft) * 2 * nchannels;
-                int samplesize = 2;
-                if (nbytes <= 0) {
-                    nbytes = 0;
-                }
-                else {
-                    if (!decoder->read_float32) {
-                        if (nbytes > INPUT_BUFFER_SIZE) {
-                            trace ("input buffer overflow\n");
-                            nbytes = INPUT_BUFFER_SIZE;
-                        }
-                        bytesread = decoder->read_int16 (g_readbuffer, nbytes);
-                        apply_replay_gain_int16 (&str_streaming_song, g_readbuffer, nbytes);
-                    }
-                    else {
-                        samplesize = 4;
-                    }
-                }
-                codec_unlock ();
-                // recalculate nsamples according to how many bytes we've got
-                if (nbytes != 0) {
-                    if (!decoder->read_float32) {
-                        nsamples = bytesread / (samplesize * nchannels) + codecleft;
-                        // convert to float
-                        float *fbuffer = g_fbuffer + codecleft*2;
-                        int n = nsamples - codecleft;
-                        if (nchannels == 2) {
-                            n <<= 1;
-                            int16_to_float32 ((int16_t*)g_readbuffer, fbuffer, n);
-                        }
-                        else if (nchannels == 1) { // convert mono to stereo
-                            mono_int16_to_stereo_float32 ((int16_t*)g_readbuffer, fbuffer, n);
-                        }
-                    }
-                    else {
-                        float *fbuffer = g_fbuffer + codecleft*2;
-                        if (nchannels == 1) {
-                            codec_lock ();
-                            bytesread = decoder->read_float32 (g_readbuffer, nbytes*2);
-                            codec_unlock ();
-                            apply_replay_gain_float32 (&str_streaming_song, g_readbuffer, nbytes*2);
-                            nsamples = bytesread / (samplesize * nchannels) + codecleft;
-                            mono_float32_to_stereo_float32 ((float *)g_readbuffer, fbuffer, nsamples-codecleft);
-                        }
-                        else {
-                            codec_lock ();
-                            bytesread = decoder->read_float32 ((char *)fbuffer, nbytes*2);
-                            codec_unlock ();
-                            apply_replay_gain_float32 (&str_streaming_song, (char *)fbuffer, nbytes*2);
-                            nsamples = bytesread / (samplesize * nchannels) + codecleft;
-                        }
-                    }
-                }
-                //codec_lock ();
-                // convert samplerate
-                mutex_lock (decodemutex);
-                srcdata.data_in = g_fbuffer;
-                srcdata.data_out = g_srcbuffer;
-                srcdata.input_frames = nsamples;
-                srcdata.output_frames = size/4;
-                srcdata.src_ratio = p_get_rate ()/(double)samplerate;
-                srcdata.end_of_input = 0;
-    //            src_set_ratio (src, srcdata.src_ratio);
-                src_process (src, &srcdata);
-                //codec_unlock ();
-                // convert back to s16 format
-                nbytes = size;
-                int genbytes = srcdata.output_frames_gen * 4;
-                bytesread = min(size, genbytes);
-                float32_to_int16 ((float*)g_srcbuffer, (int16_t*)bytes, bytesread>>1);
-                // calculate how many unused input samples left
-                codecleft = nsamples - srcdata.input_frames_used;
-                mutex_unlock (decodemutex);
-                // copy spare samples for next update
-                memmove (g_fbuffer, &g_fbuffer[srcdata.input_frames_used*2], codecleft * 8);
+                bytesread = streamer_decode_src_libsamplerate (bytes, size);
             }
             else {
                 fprintf (stderr, "invalid ratio! %d / %d = %f", p_get_rate (), samplerate, p_get_rate ()/(float)samplerate);
             }
         }
         else {
-            codec_unlock ();
         }
         bytes += bytesread;
         size -= bytesread;

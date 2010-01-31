@@ -366,7 +366,7 @@ cflac_read_float32 (char *bytes, int size) {
     do {
         if (remaining) {
             int n_input_frames = remaining / sizeof (float) / n_output_channels;
-            int n_output_frames = size / n_output_channels / sizeof (int16_t);
+            int n_output_frames = size / n_output_channels / sizeof (float);
             int n = min (n_input_frames, n_output_frames);
 
             float *in = (float *)buffer;

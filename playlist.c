@@ -31,7 +31,6 @@
 #endif
 #include <limits.h>
 #include "playlist.h"
-#include "codec.h"
 #include "streamer.h"
 #include "messagepump.h"
 #include "playback.h"
