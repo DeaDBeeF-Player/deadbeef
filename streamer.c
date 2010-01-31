@@ -135,6 +135,9 @@ streamer_set_current (playItem_t *it) {
         //trace ("from=%d, to=%d\n", from, to);
         //messagepump_push (M_SONGCHANGED, 0, from, to);
     }
+    if (from != -1) {
+        messagepump_push (M_TRACKCHANGED, 0, from, 0);
+    }
     trace ("streamer_set_current %p, buns=%d\n", it);
     if(str_streaming_song.decoder) {
         str_streaming_song.decoder->free ();
