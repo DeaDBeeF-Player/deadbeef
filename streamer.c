@@ -124,19 +124,13 @@ streamer_song_removed_notify (playItem_t *it) {
 static int
 streamer_set_current (playItem_t *it) {
     int from, to;
-    streamer_buffering = 1;
     from = orig_playing_song ? pl_get_idx_of (orig_playing_song) : -1;
     to = it ? pl_get_idx_of (it) : -1;
-    if (to != -1) {
-        messagepump_push (M_TRACKCHANGED, 0, to, 0);
-    }
     if (!orig_playing_song || p_isstopped ()) {
+        streamer_buffering = 1;
         playlist_current_ptr = it;
         //trace ("from=%d, to=%d\n", from, to);
         //messagepump_push (M_SONGCHANGED, 0, from, to);
-    }
-    if (from != -1) {
-        messagepump_push (M_TRACKCHANGED, 0, from, 0);
     }
     trace ("streamer_set_current %p, buns=%d\n", it);
     if(str_streaming_song.decoder) {
@@ -146,6 +140,12 @@ streamer_set_current (playItem_t *it) {
     orig_streaming_song = it;
     if (!it) {
         goto success;
+    }
+    if (to != -1) {
+        messagepump_push (M_TRACKCHANGED, 0, to, 0);
+    }
+    if (from != -1) {
+        messagepump_push (M_TRACKCHANGED, 0, from, 0);
     }
     if (!it->decoder && it->filetype && !strcmp (it->filetype, "content")) {
         // try to get content-type
