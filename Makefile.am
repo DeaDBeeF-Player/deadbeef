@@ -9,7 +9,6 @@ SUBDIRS = gme/Game_Music_Emu-0.5.2\
 		  plugins/nullout\
 		  plugins/vtx\
 		  plugins/adplug\
-		  plugins/notification\
 		  ${ALSA_DIR}\
 		  ${LFM_DIR}\
           ${MPGMAD_DIR}\
@@ -22,6 +21,7 @@ SUBDIRS = gme/Game_Music_Emu-0.5.2\
           ${GTKUI_DIR}\
           ${FFMPEG_DIR}\
           ${OSS_DIR}
+#          ${NOTIFY_DIR}
 
 dumbpath=@top_srcdir@/dumb
 sidpath=@top_srcdir@/sid/sidplay-libs-2.1.0

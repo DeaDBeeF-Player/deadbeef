@@ -13,6 +13,6 @@ gtkui_la_SOURCES = gtkui.c gtkui.h\
 
 gtkui_la_LDFLAGS = -module
 
-gtkui_la_LIBADD = $(LDADD) $(GTKUI_DEPS_LIBS)
-AM_CFLAGS = -std=c99 $(GTKUI_DEPS_CFLAGS)
+gtkui_la_LIBADD = $(LDADD) $(GTKUI_DEPS_LIBS) $(NOTIFY_DEPS_LIBS)
+AM_CFLAGS = -std=c99 $(GTKUI_DEPS_CFLAGS) $(NOTIFY_DEPS_CFLAGS)
 endif

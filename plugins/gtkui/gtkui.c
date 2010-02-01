@@ -18,6 +18,12 @@
 */
 #include "../../deadbeef.h"
 #include <gtk/gtk.h>
+#ifdef HAVE_CONFIG_H
+#include "../../config.h"
+#endif
+#if HAVE_NOTIFY
+#include <libnotify/notify.h>
+#endif
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
@@ -51,6 +57,11 @@ gtkplaylist_t search_playlist;
 static int sb_context_id = -1;
 static char sb_text[512];
 static float last_songpos = -1;
+
+#if HAVE_NOTIFY
+#define NOTIFY_DEFAULT_FORMAT "%a - %t"
+static NotifyNotification* notification;
+#endif
 
 static gboolean
 update_songinfo (gpointer ctx) {
@@ -250,6 +261,27 @@ gtkui_on_activate (DB_event_t *ev, uintptr_t data) {
 static int
 gtkui_on_songchanged (DB_event_trackchange_t *ev, uintptr_t data) {
     gtkpl_songchanged_wrapper (ev->from, ev->to);
+#if HAVE_NOTIFY
+    if (deadbeef->conf_get_int ("libnotify.enable", 0)) {
+        DB_playItem_t *track = deadbeef->pl_get_for_idx (ev->to);
+        if (track) {
+            char cmd [1024];
+            deadbeef->pl_format_title (track, -1, cmd, sizeof (cmd), -1, deadbeef->conf_get_str ("libnotify.format", NOTIFY_DEFAULT_FORMAT));
+            if (notify_is_initted ()) {
+                if (notification) {
+                    notify_notification_close (notification, NULL);
+                }
+                else {
+                    notification = notify_notification_new ("DeaDBeeF", cmd, NULL, NULL);
+                }
+                if (notification) {
+                    notify_notification_set_timeout (notification, NOTIFY_EXPIRES_DEFAULT);
+                    notify_notification_show (notification, NULL);
+                }
+            }
+        }
+    }
+#endif
     return 0;
 }
 
@@ -365,6 +397,10 @@ gtkui_thread (void *ctx) {
     gdk_threads_init ();
     gdk_threads_enter ();
     gtk_set_locale ();
+#if HAVE_NOTIFY
+    notify_init ("DeaDBeeF");
+#endif
+
     int argc = 1;
     const char **argv = alloca (sizeof (char *));
     argv[0] = "deadbeef";
@@ -439,6 +475,9 @@ gtkui_thread (void *ctx) {
     gtk_widget_show (mainwin);
 
     gtk_main ();
+#if HAVE_NOTIFY
+    notify_uninit ();
+#endif
     gdk_threads_leave ();
 }
 
@@ -495,6 +534,13 @@ gtkui_load (DB_functions_t *api) {
     return DB_PLUGIN (&plugin);
 }
 
+#if HAVE_NOTIFY
+static const char settings_dlg[] =
+    "property \"Enable OSD notifications\" checkbox libnotify.enable 0;\n"
+    "property \"Notification format\" entry libnotify.format \"" NOTIFY_DEFAULT_FORMAT "\";\n"
+;
+#endif
+
 // define plugin interface
 static DB_gui_t plugin = {
     DB_PLUGIN_SET_API_VERSION
@@ -508,5 +554,8 @@ static DB_gui_t plugin = {
     .plugin.email = "waker@users.sourceforge.net",
     .plugin.website = "http://deadbeef.sf.net",
     .plugin.start = gtkui_start,
-    .plugin.stop = gtkui_stop
+    .plugin.stop = gtkui_stop,
+#if HAVE_NOTIFY
+    .plugin.configdialog = settings_dlg,
+#endif
 };
