@@ -375,7 +375,6 @@ palsa_hw_pause (int pause) {
 int
 palsa_play (void) {
     int err;
-    trace ("palsa_play\n");
     if (state == OUTPUT_STATE_STOPPED) {
         if (!audio) {
             if (palsa_init () < 0) {
