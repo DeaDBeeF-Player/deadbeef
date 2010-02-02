@@ -192,10 +192,8 @@ fi
 AM_CONDITIONAL(HAVE_NOTIFY, test $HAVE_NOTIFY)
 if test ${HAVE_NOTIFY}; then
     AC_DEFINE(HAVE_NOTIFY,1,[Use libnotify])
-    NOTIFY_DIR="plugins/notification"
     AC_SUBST(NOTIFY_DEPS_CFLAGS)
     AC_SUBST(NOTIFY_DEPS_LIBS)
-    AC_SUBST(NOTIFY_DIR)
 fi
 
 dnl *** OSS output (partly stolen from audacious)
@@ -307,7 +305,6 @@ plugins/nullout/Makefile
 plugins/vtx/Makefile
 plugins/adplug/Makefile
 plugins/ffmpeg/Makefile
-plugins/notification/Makefile
 plugins/oss/Makefile
 deadbeef.desktop
 ])

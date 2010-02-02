@@ -19,6 +19,10 @@
 #ifndef __GTKUI_H
 #define __GTKUI_H
 
+#if HAVE_NOTIFY
+#define NOTIFY_DEFAULT_FORMAT "%a - %t"
+#endif
+
 extern DB_functions_t *deadbeef;
 
 struct _GSList;

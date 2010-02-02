@@ -58,11 +58,6 @@ static int sb_context_id = -1;
 static char sb_text[512];
 static float last_songpos = -1;
 
-#if HAVE_NOTIFY
-#define NOTIFY_DEFAULT_FORMAT "%a - %t"
-static NotifyNotification* notification;
-#endif
-
 static gboolean
 update_songinfo (gpointer ctx) {
     char sbtext_new[512] = "-";
@@ -261,27 +256,6 @@ gtkui_on_activate (DB_event_t *ev, uintptr_t data) {
 static int
 gtkui_on_songchanged (DB_event_trackchange_t *ev, uintptr_t data) {
     gtkpl_songchanged_wrapper (ev->from, ev->to);
-#if HAVE_NOTIFY
-    if (deadbeef->conf_get_int ("libnotify.enable", 0)) {
-        DB_playItem_t *track = deadbeef->pl_get_for_idx (ev->to);
-        if (track) {
-            char cmd [1024];
-            deadbeef->pl_format_title (track, -1, cmd, sizeof (cmd), -1, deadbeef->conf_get_str ("libnotify.format", NOTIFY_DEFAULT_FORMAT));
-            if (notify_is_initted ()) {
-                if (notification) {
-                    notify_notification_close (notification, NULL);
-                }
-                else {
-                    notification = notify_notification_new ("DeaDBeeF", cmd, NULL, NULL);
-                }
-                if (notification) {
-                    notify_notification_set_timeout (notification, NOTIFY_EXPIRES_DEFAULT);
-                    notify_notification_show (notification, NULL);
-                }
-            }
-        }
-    }
-#endif
     return 0;
 }
 

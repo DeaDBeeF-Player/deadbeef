@@ -16,7 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifdef HAVE_CONFIG_H
-#  include <config.h>
+#  include "../../config.h"
+#endif
+#if HAVE_NOTIFY
+#include <libnotify/notify.h>
 #endif
 
 #include <gtk/gtk.h>
@@ -40,6 +43,7 @@
 #include "../../session.h"
 #include "../../deadbeef.h"
 #include "parser.h"
+#include "gtkui.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -1832,12 +1836,38 @@ struct fromto_t {
     int to;
 };
 
+#if HAVE_NOTIFY
+static NotifyNotification* notification;
+#endif
+
 static gboolean
 update_win_title_idle (gpointer data) {
     struct fromto_t *ft = (struct fromto_t *)data;
     int from = ft->from;
     int to = ft->to;
     free (ft);
+
+    // show notification
+#if HAVE_NOTIFY
+    if (to != -1 && deadbeef->conf_get_int ("libnotify.enable", 0)) {
+        DB_playItem_t *track = deadbeef->pl_get_for_idx (to);
+        if (track) {
+            char cmd [1024];
+            deadbeef->pl_format_title (track, -1, cmd, sizeof (cmd), -1, deadbeef->conf_get_str ("libnotify.format", NOTIFY_DEFAULT_FORMAT));
+            if (notify_is_initted ()) {
+                if (notification) {
+                    notify_notification_close (notification, NULL);
+                }
+                notification = notify_notification_new ("DeaDBeeF", cmd, NULL, NULL);
+                if (notification) {
+                    notify_notification_set_timeout (notification, NOTIFY_EXPIRES_DEFAULT);
+                    notify_notification_show (notification, NULL);
+                }
+            }
+        }
+    }
+#endif
+
     // update window title
     if (from >= 0 || to >= 0) {
         if (to >= 0) {
