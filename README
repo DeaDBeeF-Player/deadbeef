@@ -10,7 +10,7 @@ optional/build dependencies
     libFLAC: for flac plugin
     wavpack: for wavpack plugin
     libsndfile: for sndfile plugin
-    libcdio: for cd audio plugin
+    libcdio + libcddb: for cd audio plugin
     ffmpeg: for ffmpeg plugin
 
 if you want to build from git - install autotools, and run autoreconf
