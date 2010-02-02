@@ -182,6 +182,7 @@ streamer_set_current (playItem_t *it) {
         if (ret < 0) {
             trace ("decoder->init returned %d\n", ret);
             trace ("orig_playing_song = %p\n", orig_playing_song);
+            streamer_buffering = 0;
             if (playlist_current_ptr == it) {
                 playlist_current_ptr = NULL;
                 messagepump_push (M_TRACKCHANGED, 0, to, 0);
@@ -194,12 +195,13 @@ streamer_set_current (playItem_t *it) {
         streamer_reset (0); // reset SRC
     }
     else {
+        trace ("no decoder in playitem!\n");
         streamer_buffering = 0;
-        if (to != -1) {
+        if (playlist_current_ptr == it) {
+            playlist_current_ptr = NULL;
             messagepump_push (M_TRACKCHANGED, 0, to, 0);
         }
-        trace ("no decoder in playitem!\n");
-        orig_streaming_song = NULL;
+        //orig_streaming_song = NULL;
         return -1;
     }
     if (bytes_until_next_song == -1) {
