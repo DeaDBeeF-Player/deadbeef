@@ -353,7 +353,9 @@ gtkpl_draw_pl_row_back (gtkplaylist_t *ps, int row, DB_playItem_t *it) {
     int x = -ps->hscrollpos;
     int w = ps->totalwidth;
     // clear area -- workaround for New Wave theme
-    gdk_draw_rectangle (ps->backbuf, treeview->style->bg_gc[GTK_STATE_NORMAL], TRUE, x, row * rowheight - ps->scrollpos * rowheight, w, rowheight);
+    if (ps->playlist->style->bg_gc[GTK_STATE_NORMAL]) {
+        gdk_draw_rectangle (ps->backbuf, ps->playlist->style->bg_gc[GTK_STATE_NORMAL], TRUE, 0, row * rowheight - ps->scrollpos * rowheight, ps->playlist->allocation.width, rowheight);
+    }
     gtk_paint_flat_box (treeview->style, ps->backbuf, (it && SELECTED(it)) ? GTK_STATE_SELECTED : GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, treeview, (row & 1) ? "cell_even_ruled" : "cell_odd_ruled", x, row * rowheight - ps->scrollpos * rowheight, w, rowheight);
 	if (row == deadbeef->pl_get_cursor (ps->iterator)) {
         // not all gtk engines/themes render focus rectangle in treeviews
