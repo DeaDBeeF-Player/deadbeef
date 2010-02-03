@@ -27,6 +27,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
+#include <sys/time.h>
 #include "gtkui.h"
 #include "gtkplaylist.h"
 #include "search.h"
@@ -57,6 +58,8 @@ gtkplaylist_t search_playlist;
 static int sb_context_id = -1;
 static char sb_text[512];
 static float last_songpos = -1;
+static char sbitrate[20] = "";
+static struct timeval last_br_update;
 
 static gboolean
 update_songinfo (gpointer ctx) {
@@ -111,13 +114,18 @@ update_songinfo (gpointer ctx) {
             strcpy (t, "-:--");
         }
 
-        char sbitrate[20] = "";
-#if 1
-        int bitrate = deadbeef->streamer_get_apx_bitrate ();
-        if (bitrate > 0) {
-            snprintf (sbitrate, sizeof (sbitrate), "| %d kbps ", bitrate);
+        struct timeval tm;
+        gettimeofday (&tm, NULL);
+        if (tm.tv_sec - last_br_update.tv_sec + (tm.tv_usec - last_br_update.tv_usec) / 1000000.0 >= 0.3) {
+            memcpy (&last_br_update, &tm, sizeof (tm));
+            int bitrate = deadbeef->streamer_get_apx_bitrate ();
+            if (bitrate > 0) {
+                snprintf (sbitrate, sizeof (sbitrate), "| %4d kbps ", bitrate);
+            }
+            else {
+                sbitrate[0] = 0;
+            }
         }
-#endif
         const char *spaused = deadbeef->get_output ()->state () == OUTPUT_STATE_PAUSED ? "Paused | " : "";
         snprintf (sbtext_new, sizeof (sbtext_new), "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime", spaused, track->filetype ? track->filetype:"-", sbitrate, samplerate, bitspersample, mode, minpos, secpos, t, deadbeef->pl_getcount (PL_MAIN), totaltime_str);
     }
