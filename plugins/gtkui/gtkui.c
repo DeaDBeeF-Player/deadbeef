@@ -513,7 +513,7 @@ gtkui_load (DB_functions_t *api) {
 }
 
 static const char settings_dlg[] =
-    "property \"Run gtk_init with --sync (debug mode)\" checkbox gtkui.enable 0;\n"
+    "property \"Run gtk_init with --sync (debug mode)\" checkbox gtkui.sync 0;\n"
 #if HAVE_NOTIFY
     "property \"Enable OSD notifications\" checkbox gtkui.notify.enable 0;\n"
     "property \"Notification format\" entry gtkui.notify.format \"" NOTIFY_DEFAULT_FORMAT "\";\n"
