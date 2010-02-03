@@ -375,9 +375,13 @@ gtkui_thread (void *ctx) {
     notify_init ("DeaDBeeF");
 #endif
 
-    int argc = 1;
-    const char **argv = alloca (sizeof (char *));
+    int argc = 2;
+    const char **argv = alloca (sizeof (char *) * argc);
     argv[0] = "deadbeef";
+    argv[1] = "--sync";
+    if (!deadbeef->conf_get_int ("gtkui.sync", 0)) {
+        argc = 1;
+    }
     gtk_init (&argc, (char ***)&argv);
 
     // system tray icon
@@ -508,12 +512,13 @@ gtkui_load (DB_functions_t *api) {
     return DB_PLUGIN (&plugin);
 }
 
-#if HAVE_NOTIFY
 static const char settings_dlg[] =
+    "property \"Run gtk_init with --sync (debug mode)\" checkbox gtkui.enable 0;\n"
+#if HAVE_NOTIFY
     "property \"Enable OSD notifications\" checkbox libnotify.enable 0;\n"
     "property \"Notification format\" entry libnotify.format \"" NOTIFY_DEFAULT_FORMAT "\";\n"
-;
 #endif
+;
 
 // define plugin interface
 static DB_gui_t plugin = {
@@ -529,7 +534,5 @@ static DB_gui_t plugin = {
     .plugin.website = "http://deadbeef.sf.net",
     .plugin.start = gtkui_start,
     .plugin.stop = gtkui_stop,
-#if HAVE_NOTIFY
     .plugin.configdialog = settings_dlg,
-#endif
 };
