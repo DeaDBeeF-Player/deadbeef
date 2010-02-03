@@ -133,10 +133,12 @@ streamer_set_current (playItem_t *it) {
         //messagepump_push (M_SONGCHANGED, 0, from, to);
     }
     trace ("streamer_set_current %p, buns=%d\n", it);
+    mutex_lock (decodemutex);
     if(str_streaming_song.decoder) {
         str_streaming_song.decoder->free ();
         pl_item_free (&str_streaming_song);
     }
+    mutex_unlock (decodemutex);
     orig_streaming_song = it;
     if (!it) {
         goto success;
@@ -177,8 +179,10 @@ streamer_set_current (playItem_t *it) {
         }
     }
     if (it->decoder) {
+        mutex_lock (decodemutex);
         int ret = it->decoder->init (DB_PLAYITEM (it));
         pl_item_copy (&str_streaming_song, it);
+        mutex_unlock (decodemutex);
         if (ret < 0) {
             trace ("decoder->init returned %d\n", ret);
             trace ("orig_playing_song = %p\n", orig_playing_song);
@@ -280,7 +284,11 @@ streamer_thread (void *ctx) {
                 trace ("track #%d is not in playlist; stopping playback\n", sng);
                 p_stop ();
                 pl_item_free (&str_playing_song);
+
+                mutex_lock (decodemutex);
                 pl_item_free (&str_streaming_song);
+                mutex_unlock (decodemutex);
+
                 orig_playing_song = NULL;
                 orig_streaming_song = NULL;
                 messagepump_push (M_SONGCHANGED, 0, -1, -1);
@@ -387,8 +395,10 @@ streamer_thread (void *ctx) {
                     if (newrate != prevtrack_samplerate) {
                         // restart streaming of current track
                         trace ("streamer: output samplerate changed from %d to %d; restarting track\n", prevtrack_samplerate, newrate);
+                        mutex_lock (decodemutex);
                         str_streaming_song.decoder->free ();
                         str_streaming_song.decoder->init (DB_PLAYITEM (orig_streaming_song));
+                        mutex_unlock (decodemutex);
                         bytes_until_next_song = -1;
                         streamer_buffering = 1;
                         streamer_reset (1);
@@ -414,20 +424,29 @@ streamer_thread (void *ctx) {
 
             if (orig_playing_song != orig_streaming_song) {
                 trace ("streamer already switched to next track\n");
+                
                 // restart playing from new position
+                
+                mutex_lock (decodemutex);
                 if(str_streaming_song.decoder) {
                     str_streaming_song.decoder->free ();
                     pl_item_free (&str_streaming_song);
                 }
                 orig_streaming_song = orig_playing_song;
                 pl_item_copy (&str_streaming_song, orig_streaming_song);
+                mutex_unlock (decodemutex);
+
                 bytes_until_next_song = -1;
                 streamer_buffering = 1;
                 int trk = pl_get_idx_of (orig_streaming_song);
                 if (trk != -1) {
                     messagepump_push (M_TRACKCHANGED, 0, trk, 0);
                 }
+
+                mutex_lock (decodemutex);
                 int ret = str_streaming_song.decoder->init (DB_PLAYITEM (orig_streaming_song));
+                mutex_unlock (decodemutex);
+
                 if (ret < 0) {
                     if (trk != -1) {
                         messagepump_push (M_TRACKCHANGED, 0, trk, 0);
@@ -503,10 +522,13 @@ streamer_thread (void *ctx) {
     }
 
     // stop streaming song
+    mutex_lock (decodemutex);
     if(str_streaming_song.decoder) {
         str_streaming_song.decoder->free ();
     }
     pl_item_free (&str_streaming_song);
+    mutex_unlock (decodemutex);
+
     pl_item_free (&str_playing_song);
     if (src) {
         src_delete (src);
@@ -716,6 +738,7 @@ streamer_read_data_for_src (int16_t *buffer, int frames) {
         channels = 2;
     }
     int bytesread = decoder->read_int16 ((uint8_t*)buffer, frames * sizeof (int16_t) * channels);
+    apply_replay_gain_int16 (&str_streaming_song, (uint8_t*)buffer, bytesread);
     if (channels == 1) {
         // convert to stereo
         int n = frames-1;
@@ -735,9 +758,8 @@ streamer_read_data_for_src_float (float *buffer, int frames) {
         channels = 2;
     }
     if (decoder->read_float32) {
-//        trace ("call read_float32 (%d frames -> %d bytes)\n", frames, frames * sizeof (float) * channels);
         int bytesread = decoder->read_float32 ((uint8_t*)buffer, frames * sizeof (float) * channels);
-//        trace ("got %d bytes -> %d frames\n", bytesread, bytesread / (sizeof (float) * channels));
+        apply_replay_gain_float32 (&str_streaming_song, (uint8_t*)buffer, bytesread);
         if (channels == 1) {
             // convert to stereo
             int n = frames-1;
@@ -749,6 +771,7 @@ streamer_read_data_for_src_float (float *buffer, int frames) {
         }
         return bytesread / (sizeof (float) * channels);
     }
+
 //    trace ("read_float32 not impl\n");
     int16_t intbuffer[frames*2];
     int res = streamer_read_data_for_src (intbuffer, frames);
@@ -860,9 +883,11 @@ streamer_read_async (char *bytes, int size) {
     int initsize = size;
     for (;;) {
         int bytesread = 0;
+        mutex_lock (decodemutex);
         DB_decoder_t *decoder = str_streaming_song.decoder;
         if (!decoder) {
             // means there's nothing left to stream, so just do nothing
+            mutex_unlock (decodemutex);
             break;
         }
         if (decoder->info.samplerate != -1) {
@@ -875,12 +900,12 @@ streamer_read_async (char *bytes, int size) {
                 // samplerate match
                 if (nchannels == 2) {
                     bytesread = decoder->read_int16 (bytes, size);
-                    apply_replay_gain_int16 (&str_streaming_song, bytes, size);
+                    apply_replay_gain_int16 (&str_streaming_song, bytes, bytesread);
                 }
                 else {
                     uint8_t buffer[size>>1];
                     bytesread = decoder->read_int16 (buffer, size>>1);
-                    apply_replay_gain_int16 (&str_streaming_song, buffer, size>>1);
+                    apply_replay_gain_int16 (&str_streaming_song, buffer, bytesread);
                     mono_int16_to_stereo_int16 ((int16_t*)buffer, (int16_t*)bytes, size>>2);
                     bytesread *= 2;
                 }
@@ -892,8 +917,7 @@ streamer_read_async (char *bytes, int size) {
                 fprintf (stderr, "invalid ratio! %d / %d = %f", p_get_rate (), samplerate, p_get_rate ()/(float)samplerate);
             }
         }
-        else {
-        }
+        mutex_unlock (decodemutex);
         bytes += bytesread;
         size -= bytesread;
         if (size == 0) {
