@@ -1851,11 +1851,11 @@ update_win_title_idle (gpointer data) {
 
     // show notification
 #if HAVE_NOTIFY
-    if (to != -1 && deadbeef->conf_get_int ("libnotify.enable", 0)) {
+    if (to != -1 && deadbeef->conf_get_int ("gtkui.notify.enable", 0)) {
         DB_playItem_t *track = deadbeef->pl_get_for_idx (to);
         if (track) {
             char cmd [1024];
-            deadbeef->pl_format_title (track, -1, cmd, sizeof (cmd), -1, deadbeef->conf_get_str ("libnotify.format", NOTIFY_DEFAULT_FORMAT));
+            deadbeef->pl_format_title (track, -1, cmd, sizeof (cmd), -1, deadbeef->conf_get_str ("gtkui.notify.format", NOTIFY_DEFAULT_FORMAT));
             if (notify_is_initted ()) {
                 if (notification) {
                     notify_notification_close (notification, NULL);
