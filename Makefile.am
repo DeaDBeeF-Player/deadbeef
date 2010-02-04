@@ -4,11 +4,11 @@ SUBDIRS = gme/Game_Music_Emu-0.5.2\
 		  dumb\
 		  pixmaps\
 		  icons\
-		  plugins/hotkeys\
 		  plugins/ffap\
 		  plugins/nullout\
 		  plugins/vtx\
 		  plugins/adplug\
+		  ${HOTKEYS_DIR}\
 		  ${ALSA_DIR}\
 		  ${LFM_DIR}\
           ${MPGMAD_DIR}\

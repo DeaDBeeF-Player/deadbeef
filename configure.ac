@@ -196,6 +196,12 @@ if test ${HAVE_NOTIFY}; then
     AC_SUBST(NOTIFY_DEPS_LIBS)
 fi
 
+AC_CHECK_HEADER([X11/Xlib.h], HAVE_XLIB_H=yes)
+if test "x$HAVE_XLIB_H" = "xyes"; then
+    HOTKEYS_DIR="plugins/hotkeys"
+    AC_SUBST(HOTKEYS_DIR)
+fi
+
 dnl *** OSS output (partly stolen from audacious)
 have_oss=no
 
@@ -276,6 +282,7 @@ PRINT_PLUGIN_INFO([vfs_curl],[http/ftp streaming support],[test $HAVE_CURL])
 dnl PRINT_PLUGIN_INFO([faad2],[aac/mp4 player],[test $HAVE_FAAD && test $HAVE_MP4FF])
 PRINT_PLUGIN_INFO([cdda],[cd audio player],[test $HAVE_CDIO && test $HAVE_CDDB])
 PRINT_PLUGIN_INFO([gtkui],[GTK user interface],[test $HAVE_GTK])
+PRINT_PLUGIN_INFO([hotkeys],[Global hotkeys support],[test "x$HAVE_XLIB_H" = "xyes"])
 PRINT_PLUGIN_INFO([libnotify],[Current track notification],[test $HAVE_NOTIFY])
 PRINT_PLUGIN_INFO([ffmpeg],[ffmpeg codecs],[test $HAVE_FFMPEG])
 PRINT_PLUGIN_INFO([oss],[oss output plugin],[test "x$have_oss" = "xyes"])
