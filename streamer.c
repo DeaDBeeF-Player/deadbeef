@@ -184,11 +184,12 @@ streamer_set_current (playItem_t *it) {
         pl_item_copy (&str_streaming_song, it);
         mutex_unlock (decodemutex);
         if (ret < 0) {
+            it->played = 1;
             trace ("decoder->init returned %d\n", ret);
             trace ("orig_playing_song = %p\n", orig_playing_song);
             streamer_buffering = 0;
             if (playlist_current_ptr == it) {
-                playlist_current_ptr = NULL;
+//                playlist_current_ptr = NULL;
                 messagepump_push (M_TRACKCHANGED, 0, to, 0);
             }
             return ret;
@@ -200,6 +201,7 @@ streamer_set_current (playItem_t *it) {
     }
     else {
         trace ("no decoder in playitem!\n");
+        it->played = 1;
         streamer_buffering = 0;
         if (playlist_current_ptr == it) {
             playlist_current_ptr = NULL;
@@ -296,7 +298,7 @@ streamer_thread (void *ctx) {
             }
             int ret = streamer_set_current (try);
             if (ret < 0) {
-                trace ("failed to play track %s, skipping...\n", try->fname);
+                trace ("\033[0;31mfailed to play track %s, skipping (current=%p)...\033[37;0m\n", try->fname, orig_streaming_song);
                 // remember bad song number in case of looping
                 if (badsong == -1) {
                     badsong = sng;
