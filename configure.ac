@@ -54,6 +54,9 @@ fi
 
 AC_CHECK_LIB([pthread], [main])
 AC_CHECK_LIB([dl], [main])
+
+AC_CHECK_HEADER([iconv.h],[],[iconv.h not found.])
+
 AC_CHECK_LIB([iconv], [main], [have_iconv=yes], [have_iconv=no])
 if test "x${have_iconv}" = "xyes" ; then
 ICONV_LIB="-liconv"
