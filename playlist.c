@@ -273,8 +273,8 @@ pl_insert_cue_from_buffer (playItem_t *after, playItem_t *origin, const uint8_t 
             p++;
         }
         if (p-buffer > 2048) { // huge string, ignore
-            buffer = p;
             buffersize -= p-buffer;
+            buffer = p;
             continue;
         }
         char str[p-buffer+1];
