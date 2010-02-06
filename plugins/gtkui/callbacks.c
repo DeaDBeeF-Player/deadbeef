@@ -881,6 +881,10 @@ void
 save_playlist_as (void) {
     GtkWidget *dlg = gtk_file_chooser_dialog_new ("Save Playlist As", GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_SAVE, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_SAVE, GTK_RESPONSE_OK, NULL);
 
+    gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER (dlg), TRUE);
+    gtk_file_chooser_set_create_folders (GTK_FILE_CHOOSER (dlg), TRUE);
+    gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER (dlg), "untitled.dbpl");
+
     GtkFileFilter* flt;
     flt = gtk_file_filter_new ();
     gtk_file_filter_set_name (flt, "DeaDBeeF playlist files (*.dbpl)");
@@ -893,6 +897,8 @@ save_playlist_as (void) {
         gtk_widget_destroy (dlg);
 
         if (fname) {
+// the code below cannot be used, because it breaks gtk overwrite confirmation
+#if 0
             // check extension and append .dbpl if none
             size_t sz = strlen (fname);
             char ext[] = ".dbpl";
@@ -908,6 +914,7 @@ save_playlist_as (void) {
                 g_free (fname);
                 fname = n;
             }
+#endif
             int res = deadbeef->pl_save (fname);
             if (res >= 0 && strlen (fname) < 1024) {
                 strcpy (last_playlist_save_name, fname);
