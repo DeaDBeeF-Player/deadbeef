@@ -97,7 +97,7 @@ streamer_get_streaming_track (void) {
 
 playItem_t *
 streamer_get_playing_track (void) {
-    return &str_playing_song;
+    return orig_playing_song ? orig_playing_song : &str_playing_song;
 }
 
 // playlist must call that whenever item was removed
@@ -187,9 +187,9 @@ streamer_set_current (playItem_t *it) {
             it->played = 1;
             trace ("decoder->init returned %d\n", ret);
             trace ("orig_playing_song = %p\n", orig_playing_song);
+            orig_playing_song = NULL;
             streamer_buffering = 0;
             if (playlist_current_ptr == it) {
-//                playlist_current_ptr = NULL;
                 messagepump_push (M_TRACKCHANGED, 0, to, 0);
             }
             return ret;
