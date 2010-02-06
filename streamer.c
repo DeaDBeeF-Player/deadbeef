@@ -480,16 +480,26 @@ streamer_thread (void *ctx) {
             }
         }
 
-        // read ahead at 384K per second
-        // that means 10ms per 4k block, or 40ms per 16k block
-        int alloc_time = 1000 / (96000 * 4 / 4096);
+        // read ahead at 2x speed of output samplerate, in 4k blocks
+        int rate = p_get_rate ();
+        if (!rate) {
+            trace ("str: got 0 output samplerate\n");
+            usleep(20000);
+            continue;
+        }
+        int channels = 2; // FIXME: needs to be queried from output plugin
+        int bytes_in_one_second = rate * sizeof (int16_t) * channels;
+        const int blocksize = 4096;
+        int alloc_time = 1000 / (bytes_in_one_second * 2 / blocksize);
 
         streamer_lock ();
-        if (streambuffer_fill < (STREAM_BUFFER_SIZE-4096)/* && bytes_until_next_song == 0*/) {
+        if (streambuffer_fill < (STREAM_BUFFER_SIZE-blocksize)) {
             int sz = STREAM_BUFFER_SIZE - streambuffer_fill;
-            int minsize = 4096;
+            int minsize = blocksize;
+
+            // speed up buffering when empty
             if (streambuffer_fill < 16384) {
-                minsize = 16384;
+                minsize *= 4;
                 alloc_time *= 4;
             }
             sz = min (minsize, sz);
