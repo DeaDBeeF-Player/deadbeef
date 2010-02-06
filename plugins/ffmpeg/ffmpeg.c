@@ -106,7 +106,7 @@ ffmpeg_init (DB_playItem_t *it) {
 
     // open file
     if ((ret = av_open_input_file(&fctx, uri, NULL, 0, NULL)) < 0) {
-        trace ("fctx is %p, ret %d/%s", fctx, ret, strerror(-ret));
+        trace ("fctx is %p, ret %d/%s\n", fctx, ret, strerror(-ret));
         return -1;
     }
 
