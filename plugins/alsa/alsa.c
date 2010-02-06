@@ -289,8 +289,6 @@ palsa_init (void) {
         goto open_error;
     }
 
-    snd_pcm_start (audio);
-
     alsa_terminate = 0;
     alsa_tid = deadbeef->thread_start (palsa_thread, NULL);
 
@@ -493,6 +491,7 @@ palsa_thread (void *context) {
         }
         
         LOCK;
+#if 0
         if ((err = snd_pcm_wait (audio, 100)) < 0) {
             if (err == -ESTRPIPE) {
                 trace ("alsa: trying to recover from suspend... (error=%d, %s)\n", err,  snd_strerror (err));
@@ -502,7 +501,7 @@ palsa_thread (void *context) {
             }
             else if (err == -EPIPE) {
                 // this pretty frequent condition, no spam here
-//                trace ("alsa: snd_pcm_wait error=%d, %s\n", err, snd_strerror (err));
+                trace ("alsa: snd_pcm_wait error=%d, %s\n", err, snd_strerror (err));
                 snd_pcm_prepare (audio);
                 snd_pcm_start (audio);
                 UNLOCK;
@@ -514,6 +513,7 @@ palsa_thread (void *context) {
                 continue;
             }
         }
+#endif
         /* find out how much space is available for playback data */
         int written = 0;
         snd_pcm_sframes_t frames_to_deliver = snd_pcm_avail_update (audio);
@@ -521,14 +521,24 @@ palsa_thread (void *context) {
             char buf[period_size * 4];
             palsa_callback (buf, period_size * 4);
             if ((err = snd_pcm_writei (audio, buf, period_size)) < 0) {
-                break;
+                if (err == -ESTRPIPE) {
+                    trace ("alsa: trying to recover from suspend... (error=%d, %s)\n", err,  snd_strerror (err));
+                    deadbeef->sendmessage (M_REINIT_SOUND, 0, 0, 0);
+                    UNLOCK;
+                    break;
+                }
+                else {
+                    trace ("alsa: snd_pcm_writei error=%d, %s\n", err, snd_strerror (err));
+                    snd_pcm_prepare (audio);
+                    snd_pcm_start (audio);
+                    continue;
+                }
             }
             written += period_size;
             frames_to_deliver = snd_pcm_avail_update (audio);
         }
-//        trace ("wrote %d frames\n", written);
         UNLOCK;
-//        usleep (1000); // this must be here to prevent mutex deadlock
+        usleep (period_size * 1000000 / alsa_rate / 2);
     }
 }
 
