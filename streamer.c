@@ -747,6 +747,7 @@ streamer_read_data_for_src (int16_t *buffer, int frames) {
         while (n >= 0) {
             buffer[n*2+0] = buffer[n];
             buffer[n*2+1] = buffer[n];
+            n--;
         }
     }
     return bytesread / (sizeof (int16_t) * channels);
@@ -760,18 +761,20 @@ streamer_read_data_for_src_float (float *buffer, int frames) {
         channels = 2;
     }
     if (decoder->read_float32) {
+        {
         int bytesread = decoder->read_float32 ((uint8_t*)buffer, frames * sizeof (float) * channels);
         apply_replay_gain_float32 (&str_streaming_song, (uint8_t*)buffer, bytesread);
         if (channels == 1) {
             // convert to stereo
             int n = frames-1;
             while (n >= 0) {
-                buffer[n*2+0] = buffer[n];
                 buffer[n*2+1] = buffer[n];
+                buffer[n*2+0] = buffer[n];
+                n--;
             }
-            bytesread *= 2;
         }
         return bytesread / (sizeof (float) * channels);
+        }
     }
 
 //    trace ("read_float32 not impl\n");
