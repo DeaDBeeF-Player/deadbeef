@@ -28,10 +28,8 @@
 
 #define min(x,y) ((x)<(y)?(x):(y))
 
-//#define LOCK {deadbeef->mutex_lock (mutex);}
-//#define UNLOCK {deadbeef->mutex_unlock (mutex);}
-#define LOCK
-#define UNLOCK
+#define LOCK {deadbeef->mutex_lock (mutex);}
+#define UNLOCK {deadbeef->mutex_unlock (mutex);}
 
 static DB_output_t plugin;
 DB_functions_t *deadbeef;
@@ -317,8 +315,8 @@ palsa_change_rate (int rate) {
         return rate;
     }
     state = OUTPUT_STATE_STOPPED;
-    snd_pcm_drop (audio);
     LOCK;
+    snd_pcm_drop (audio);
     int ret = palsa_set_hw_params (rate);
     UNLOCK;
     if (ret < 0) {
@@ -489,42 +487,18 @@ palsa_thread (void *context) {
             usleep (10000);
             continue;
         }
-        
         LOCK;
-#if 0
-        if ((err = snd_pcm_wait (audio, 100)) < 0) {
-            if (err == -ESTRPIPE) {
-                trace ("alsa: trying to recover from suspend... (error=%d, %s)\n", err,  snd_strerror (err));
-                deadbeef->sendmessage (M_REINIT_SOUND, 0, 0, 0);
-                UNLOCK;
-                break;
-            }
-            else if (err == -EPIPE) {
-                // this pretty frequent condition, no spam here
-                trace ("alsa: snd_pcm_wait error=%d, %s\n", err, snd_strerror (err));
-                snd_pcm_prepare (audio);
-                snd_pcm_start (audio);
-                UNLOCK;
-                continue;
-            }
-            else {
-                trace ("alsa: snd_pcm_wait error=%d, %s\n", err, snd_strerror (err));
-                UNLOCK;
-                continue;
-            }
-        }
-#endif
         /* find out how much space is available for playback data */
         int written = 0;
         snd_pcm_sframes_t frames_to_deliver = snd_pcm_avail_update (audio);
         while (frames_to_deliver >= period_size) {
             char buf[period_size * 4];
             palsa_callback (buf, period_size * 4);
-            if ((err = snd_pcm_writei (audio, buf, period_size)) < 0) {
+            err = snd_pcm_writei (audio, buf, period_size);
+            if (err < 0) {
                 if (err == -ESTRPIPE) {
                     trace ("alsa: trying to recover from suspend... (error=%d, %s)\n", err,  snd_strerror (err));
                     deadbeef->sendmessage (M_REINIT_SOUND, 0, 0, 0);
-                    UNLOCK;
                     break;
                 }
                 else {
