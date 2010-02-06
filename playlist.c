@@ -1903,30 +1903,25 @@ pl_sort (int iter, int id, const char *format, int ascending) {
             if (!next) {
                 break;
             }
-            char title1[1024];
-            char title2[1024];
-            if (id == DB_COLUMN_TRACK) {
+            int cmp;
+            if (id == DB_COLUMN_DURATION) {
+                cmp = ascending ? next->_duration > it->_duration : it->_duration > next->_duration;
+            }
+            else if (id == DB_COLUMN_TRACK) {
                 const char *t;
                 t = pl_find_meta (it, "track");
-                if (!t || !isdigit (*t)) {
-                    strcpy (title1, "-1");
-                }
-                else {
-                    snprintf (title1, sizeof (title1), "%03d", atoi (t));
-                }
+                int a = t ? atoi (t) : -1;
                 t = pl_find_meta (next, "track");
-                if (!t || !isdigit (*t)) {
-                    strcpy (title2, "-1");
-                }
-                else {
-                    snprintf (title2, sizeof (title2), "%03d", atoi (t));
-                }
+                int b = t ? atoi (t) : -1;
+                cmp = ascending ? b > a : a > b;
             }
             else {
+                char title1[1024];
+                char title2[1024];
                 pl_format_title (it, -1, title1, sizeof (title1), id, format);
                 pl_format_title (next, -1, title2, sizeof (title2), id, format);
+                cmp = ascending ? strcmp (title1, title2) < 0 : strcmp (title1, title2) > 0;
             }
-            int cmp = ascending ? strcmp (title1, title2) < 0 : strcmp (title1, title2) > 0;
             if (cmp) {
 //                printf ("%p %p swapping %s and %s\n", it, next, meta1, meta2);
                 sorted = 0;
