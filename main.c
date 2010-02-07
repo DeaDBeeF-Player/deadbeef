@@ -140,7 +140,7 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
             }
             if (sendback) {
                 playItem_t *curr = streamer_get_playing_track ();
-                DB_fileinfo_t *dec = streamer_get_current_decoder ();
+                DB_fileinfo_t *dec = streamer_get_current_fileinfo ();
                 if (curr && dec) {
                     const char np[] = "nowplaying ";
                     memcpy (sendback, np, sizeof (np)-1);
@@ -153,7 +153,7 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
             else {
                 char out[2048];
                 playItem_t *curr = streamer_get_playing_track ();
-                DB_fileinfo_t *dec = streamer_get_current_decoder ();
+                DB_fileinfo_t *dec = streamer_get_current_fileinfo();
                 if (curr && dec) {
                     pl_format_title (curr, -1, out, sizeof (out), -1, parg);
                 }
@@ -361,11 +361,11 @@ player_mainloop (void) {
                 break;
             case M_NEXTSONG:
                 p_stop ();
-                streamer_move_nextsong (1);
+                streamer_move_to_nextsong (1);
                 break;
             case M_PREVSONG:
                 p_stop ();
-                streamer_move_prevsong ();
+                streamer_move_to_prevsong ();
                 break;
             case M_PAUSESONG:
                 if (p_get_state () == OUTPUT_STATE_PAUSED) {
@@ -379,7 +379,7 @@ player_mainloop (void) {
                 break;
             case M_PLAYRANDOM:
                 p_stop ();
-                streamer_move_randomsong ();
+                streamer_move_to_randomsong ();
                 break;
             case M_PLAYLISTREFRESH:
                 plug_trigger_event_playlistchanged ();
@@ -649,3 +649,4 @@ main (int argc, char *argv[]) {
     fprintf (stderr, "hej-hej!\n");
     return 0;
 }
+

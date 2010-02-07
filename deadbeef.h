@@ -261,7 +261,7 @@ typedef struct {
     int (*streamer_read) (char *bytes, int size);
     void (*streamer_set_bitrate) (int bitrate);
     int (*streamer_get_apx_bitrate) (void);
-    struct DB_fileinfo_s *(*streamer_get_current_decoder) (void);
+    struct DB_fileinfo_s *(*streamer_get_current_fileinfo) (void);
     // process control
     const char *(*get_config_dir) (void);
     void (*quit) (void);

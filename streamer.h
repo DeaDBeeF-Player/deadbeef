@@ -20,9 +20,6 @@
 
 #include "playlist.h"
 
-extern playItem_t str_playing_song;
-extern playItem_t str_streaming_song;
-
 int
 streamer_init (void);
 
@@ -87,18 +84,15 @@ streamer_get_apx_bitrate (void);
 // returns -1 if theres no next song, or playlist finished
 // reason 0 means "song finished", 1 means "user clicked next"
 int
-streamer_move_nextsong (int reason);
+streamer_move_to_nextsong (int reason);
 
 int
-streamer_move_prevsong (void);
+streamer_move_to_prevsong (void);
 
 int
-streamer_move_randomsong (void);
-
-playItem_t *
-streamer_get_current (void);
+streamer_move_to_randomsong (void);
 
 struct DB_fileinfo_s *
-streamer_get_current_decoder (void);
+streamer_get_current_fileinfo (void);
 
 #endif // __STREAMER_H

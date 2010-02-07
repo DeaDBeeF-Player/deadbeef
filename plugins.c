@@ -85,7 +85,7 @@ static DB_functions_t deadbeef_api = {
     .streamer_read = streamer_read,
     .streamer_set_bitrate = streamer_set_bitrate,
     .streamer_get_apx_bitrate = streamer_get_apx_bitrate,
-    .streamer_get_current_decoder = streamer_get_current_decoder,
+    .streamer_get_current_fileinfo = streamer_get_current_fileinfo,
     // process control
     .get_config_dir = plug_get_config_dir,
     .quit = plug_quit,
@@ -119,7 +119,7 @@ static DB_functions_t deadbeef_api = {
     .pl_sort = pl_sort,
     .pl_get_totaltime = pl_get_totaltime,
     .pl_getcount = pl_getcount,
-    .pl_getcurrent = (DB_playItem_t *(*)(void))streamer_get_current,
+    .pl_getcurrent = (DB_playItem_t *(*)(void))streamer_get_playing_track,
     .pl_delete_selected = pl_delete_selected,
     .pl_set_cursor = pl_set_cursor,
     .pl_get_cursor = pl_get_cursor,
@@ -330,18 +330,20 @@ plug_playback_random (void) {
 
 float
 plug_playback_get_pos (void) {
-    if (str_playing_song._duration <= 0) {
+    playItem_t *trk = streamer_get_playing_track ();
+    if (!trk || trk->_duration <= 0) {
         return 0;
     }
-    return streamer_get_playpos () * 100 / str_playing_song._duration;
+    return streamer_get_playpos () * 100 / trk->_duration;
 }
 
 void
 plug_playback_set_pos (float pos) {
-    if (str_playing_song._duration <= 0) {
+    playItem_t *trk = streamer_get_playing_track ();
+    if (!trk || trk->_duration <= 0) {
         return;
     }
-    float t = pos * str_playing_song._duration / 100.f;
+    float t = pos * trk->_duration / 100.f;
     streamer_set_seek (t);
 }
 
@@ -378,7 +380,7 @@ plug_trigger_event (int ev, uintptr_t param) {
         {
         DB_event_track_t *pev = alloca (sizeof (DB_event_track_t));
         pev->index = -1;
-        pev->track = DB_PLAYITEM (&str_playing_song);
+        pev->track = DB_PLAYITEM (streamer_get_playing_track);
         event = DB_EVENT (pev);
         }
         break;

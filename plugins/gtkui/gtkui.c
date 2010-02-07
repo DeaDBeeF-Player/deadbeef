@@ -85,14 +85,14 @@ update_songinfo (gpointer ctx) {
 
 
     DB_playItem_t *track = deadbeef->streamer_get_playing_track ();
-    float duration = deadbeef->pl_get_item_duration (track);
+    float duration = track ? deadbeef->pl_get_item_duration (track) : -1;
 
     if (deadbeef->get_output ()->state () == OUTPUT_STATE_STOPPED) {
         snprintf (sbtext_new, sizeof (sbtext_new), "Stopped | %d tracks | %s total playtime", deadbeef->pl_getcount (PL_MAIN), totaltime_str);
         songpos = 0;
     }
     else {
-        DB_fileinfo_t *c = deadbeef->streamer_get_current_decoder ();
+        DB_fileinfo_t *c = deadbeef->streamer_get_current_fileinfo ();
         if (c) {
             float playpos = deadbeef->streamer_get_playpos ();
             int minpos = playpos / 60;
