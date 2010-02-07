@@ -1,6 +1,7 @@
 Q: I have PulseAudio, and I have playback problems (noise, distortion, wrong speed, no sound, etc)
 
 A: Disable PulseAudio
+A: Try to use OSS as pulseaudio backend
 
 --
 
@@ -12,13 +13,7 @@ A: PulseAudio tricks applications by providing ALSA-plugin that routes sound fro
 
 Q: Is it planned to support PulseAudio natively?
 
-A: No one works on that right now. You can write the output plugin yourself. Send me the patch, I'll include it in the next release.
-
---
-
-Q: I don't like your tone.
-
-A: GTFO!
+A: Yes.
 
 --
 
