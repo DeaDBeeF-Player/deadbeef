@@ -881,7 +881,7 @@ gtkpl_songchanged (gtkplaylist_t *ps, int from, int to) {
                 gtk_range_set_value (GTK_RANGE (ps->scrollbar), to - ps->nvisiblerows/2);
             }
         }
-        if (deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 1)) {
+        if (deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 0)) {
             gtkpl_set_cursor (PL_MAIN, to);
         }
     }
