@@ -3,11 +3,12 @@ SUBDIRS = ${MPGMAD_DIR}\
 		  gme/Game_Music_Emu-0.5.2/gme\
 		  pixmaps\
 		  icons\
-		  plugins/hotkeys\
 		  plugins/nullout\
 		  plugins/sid\
 		  plugins/ffap\
-		  plugins/notification\
+		  plugins/vtx\
+		  plugins/adplug\
+		  ${HOTKEYS_DIR}\
 		  ${ALSA_DIR}\
 		  ${LFM_DIR}\
           ${VFS_CURL_DIR}\
@@ -17,31 +18,8 @@ SUBDIRS = ${MPGMAD_DIR}\
           ${FLAC_DIR}\
           ${SNDFILE_DIR}\
           ${WAVPACK_DIR}\
-		  plugins/vtx\
-		  plugins/adplug\
           ${CDDA_DIR}\
           ${OSS_DIR}
-
-#SUBDIRS = gme/Game_Music_Emu-0.5.2\
-#		  sid/sidplay-libs-2.1.0\
-#		  dumb\
-#		  pixmaps\
-#		  icons\
-#		  plugins/hotkeys\
-#		  plugins/nullout\
-#		  plugins/vtx\
-#		  plugins/adplug\
-#		  ${ALSA_DIR}\
-#		  ${LFM_DIR}\
-#          ${MPGMAD_DIR}\
-#          ${VORBIS_DIR}\
-#          ${FLAC_DIR}\
-#          ${WAVPACK_DIR}\
-#          ${SNDFILE_DIR}\
-#          ${VFS_CURL_DIR}\
-#          ${CDDA_DIR}\
-#          ${GTKUI_DIR}\
-#          ${FFMPEG_DIR}
 
 dumbpath=@top_srcdir@/dumb
 gmepath=@top_srcdir@/gme/Game_Music_Emu-0.5.2

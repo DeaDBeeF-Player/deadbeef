@@ -1,3 +1,23 @@
+version 0.3.3
+	fixed "unknown response" in command line
+	fixed winkey in global hotkeys plugin
+	fixed crash in id3v1 parser
+	fixed crash in mp3 plugin
+	fixed few bugs/problems in ALSA plugin (now works on wider range of soundcards)
+	fixed playback of multichannel FLAC files
+	fixed 24 bit wavpack playback
+	fixed duration calculation and seeking bugs in mp3 plugin
+	added support for older versions of ffmpeg
+	added OSS(3,4) support
+	experimental FreeBSD support
+	experimental OpenSolaris support
+	improved GUI dialogs
+	added new "File Number" column type
+	added new "File Name" custom column conversion
+	added option to disable nowplaying notifications in lastfm plugin
+	added support for icy metadata (title in shoutcast streams)
+	added experimental (optional) support for notifications using libnotify
+
 version 0.3.2
 	all GTK+ UI code is now in plugin
 	improved main menu layout in GTK UI

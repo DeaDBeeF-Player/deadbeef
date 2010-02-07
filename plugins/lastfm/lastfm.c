@@ -23,8 +23,8 @@
 #include <curl/curl.h>
 #include "../../deadbeef.h"
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 #define LFM_TESTMODE 0
 #define LFM_IGNORE_RULES 0

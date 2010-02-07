@@ -18,9 +18,16 @@
 */
 #include "../../deadbeef.h"
 #include <gtk/gtk.h>
+#ifdef HAVE_CONFIG_H
+#include "../../config.h"
+#endif
+#if HAVE_NOTIFY
+#include <libnotify/notify.h>
+#endif
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
+#include <sys/time.h>
 #include "gtkui.h"
 #include "gtkplaylist.h"
 #include "search.h"
@@ -51,6 +58,8 @@ gtkplaylist_t search_playlist;
 static int sb_context_id = -1;
 static char sb_text[512];
 static float last_songpos = -1;
+static char sbitrate[20] = "";
+static struct timeval last_br_update;
 
 static gboolean
 update_songinfo (gpointer ctx) {
@@ -83,7 +92,6 @@ update_songinfo (gpointer ctx) {
         songpos = 0;
     }
     else {
-//        codec_lock ();
         DB_fileinfo_t *c = deadbeef->streamer_get_current_decoder ();
         if (c) {
             float playpos = deadbeef->streamer_get_playpos ();
@@ -106,13 +114,18 @@ update_songinfo (gpointer ctx) {
                 strcpy (t, "-:--");
             }
 
-            char sbitrate[20] = "";
-#if 1
-            int bitrate = deadbeef->streamer_get_apx_bitrate ();
-            if (bitrate > 0) {
-                snprintf (sbitrate, sizeof (sbitrate), "| %d kbps ", bitrate);
+            struct timeval tm;
+            gettimeofday (&tm, NULL);
+            if (tm.tv_sec - last_br_update.tv_sec + (tm.tv_usec - last_br_update.tv_usec) / 1000000.0 >= 0.3) {
+                memcpy (&last_br_update, &tm, sizeof (tm));
+                int bitrate = deadbeef->streamer_get_apx_bitrate ();
+                if (bitrate > 0) {
+                    snprintf (sbitrate, sizeof (sbitrate), "| %4d kbps ", bitrate);
+                }
+                else {
+                    sbitrate[0] = 0;
+                }
             }
-#endif
             const char *spaused = deadbeef->get_output ()->state () == OUTPUT_STATE_PAUSED ? "Paused | " : "";
             snprintf (sbtext_new, sizeof (sbtext_new), "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime", spaused, track->filetype ? track->filetype:"-", sbitrate, samplerate, bitspersample, mode, minpos, secpos, t, deadbeef->pl_getcount (PL_MAIN), totaltime_str);
         }
@@ -367,9 +380,17 @@ gtkui_thread (void *ctx) {
     gdk_threads_init ();
     gdk_threads_enter ();
     gtk_set_locale ();
-    int argc = 1;
-    const char **argv = alloca (sizeof (char *));
+#if HAVE_NOTIFY
+    notify_init ("DeaDBeeF");
+#endif
+
+    int argc = 2;
+    const char **argv = alloca (sizeof (char *) * argc);
     argv[0] = "deadbeef";
+    argv[1] = "--sync";
+    if (!deadbeef->conf_get_int ("gtkui.sync", 0)) {
+        argc = 1;
+    }
     gtk_init (&argc, (char ***)&argv);
 
     // system tray icon
@@ -441,6 +462,9 @@ gtkui_thread (void *ctx) {
     gtk_widget_show (mainwin);
 
     gtk_main ();
+#if HAVE_NOTIFY
+    notify_uninit ();
+#endif
     gdk_threads_leave ();
 }
 
@@ -497,6 +521,14 @@ gtkui_load (DB_functions_t *api) {
     return DB_PLUGIN (&plugin);
 }
 
+static const char settings_dlg[] =
+    "property \"Run gtk_init with --sync (debug mode)\" checkbox gtkui.sync 0;\n"
+#if HAVE_NOTIFY
+    "property \"Enable OSD notifications\" checkbox gtkui.notify.enable 0;\n"
+    "property \"Notification format\" entry gtkui.notify.format \"" NOTIFY_DEFAULT_FORMAT "\";\n"
+#endif
+;
+
 // define plugin interface
 static DB_gui_t plugin = {
     DB_PLUGIN_SET_API_VERSION
@@ -510,5 +542,6 @@ static DB_gui_t plugin = {
     .plugin.email = "waker@users.sourceforge.net",
     .plugin.website = "http://deadbeef.sf.net",
     .plugin.start = gtkui_start,
-    .plugin.stop = gtkui_stop
+    .plugin.stop = gtkui_stop,
+    .plugin.configdialog = settings_dlg,
 };

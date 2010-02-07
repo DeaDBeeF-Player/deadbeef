@@ -113,7 +113,7 @@ ffmpeg_init (DB_playItem_t *it) {
 
     // open file
     if ((ret = av_open_input_file(&info->fctx, uri, NULL, 0, NULL)) < 0) {
-        trace ("info->fctx is %p, ret %d/%s", info->fctx, ret, strerror(-ret));
+        trace ("info->fctx is %p, ret %d/%s\n", info->fctx, ret, strerror(-ret));
         plugin.free (_info);
         return NULL;
     }

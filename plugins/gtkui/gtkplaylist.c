@@ -16,7 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifdef HAVE_CONFIG_H
-#  include <config.h>
+#  include "../../config.h"
+#endif
+#if HAVE_NOTIFY
+#include <libnotify/notify.h>
 #endif
 
 #include <gtk/gtk.h>
@@ -40,6 +43,7 @@
 #include "../../session.h"
 #include "../../deadbeef.h"
 #include "parser.h"
+#include "gtkui.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -349,7 +353,9 @@ gtkpl_draw_pl_row_back (gtkplaylist_t *ps, int row, DB_playItem_t *it) {
     int x = -ps->hscrollpos;
     int w = ps->totalwidth;
     // clear area -- workaround for New Wave theme
-    gdk_draw_rectangle (ps->backbuf, treeview->style->bg_gc[GTK_STATE_NORMAL], TRUE, x, row * rowheight - ps->scrollpos * rowheight, w, rowheight);
+    if (ps->playlist->style->bg_gc[GTK_STATE_NORMAL]) {
+        gdk_draw_rectangle (ps->backbuf, ps->playlist->style->bg_gc[GTK_STATE_NORMAL], TRUE, 0, row * rowheight - ps->scrollpos * rowheight, ps->playlist->allocation.width, rowheight);
+    }
     gtk_paint_flat_box (treeview->style, ps->backbuf, (it && SELECTED(it)) ? GTK_STATE_SELECTED : GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, treeview, (row & 1) ? "cell_even_ruled" : "cell_odd_ruled", x, row * rowheight - ps->scrollpos * rowheight, w, rowheight);
 	if (row == deadbeef->pl_get_cursor (ps->iterator)) {
         // not all gtk engines/themes render focus rectangle in treeviews
@@ -381,7 +387,7 @@ gtkpl_draw_pl_row (gtkplaylist_t *ps, int row, DB_playItem_t *it) {
     int x = -ps->hscrollpos;
     gtkpl_column_t *c;
     for (c = ps->columns; c; c = c->next) {
-        if (it == deadbeef->pl_getcurrent () && c->id == DB_COLUMN_PLAYING) {
+        if (it == deadbeef->streamer_get_playing_track () && c->id == DB_COLUMN_PLAYING) {
             int paused = deadbeef->get_output ()->state () == OUTPUT_STATE_PAUSED;
             int buffering = !deadbeef->streamer_ok_to_read (-1);
             uintptr_t pixbuf;
@@ -875,7 +881,7 @@ gtkpl_songchanged (gtkplaylist_t *ps, int from, int to) {
                 gtk_range_set_value (GTK_RANGE (ps->scrollbar), to - ps->nvisiblerows/2);
             }
         }
-        if (deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 1)) {
+        if (deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 0)) {
             gtkpl_set_cursor (PL_MAIN, to);
         }
     }
@@ -1832,12 +1838,38 @@ struct fromto_t {
     int to;
 };
 
+#if HAVE_NOTIFY
+static NotifyNotification* notification;
+#endif
+
 static gboolean
 update_win_title_idle (gpointer data) {
     struct fromto_t *ft = (struct fromto_t *)data;
     int from = ft->from;
     int to = ft->to;
     free (ft);
+
+    // show notification
+#if HAVE_NOTIFY
+    if (to != -1 && deadbeef->conf_get_int ("gtkui.notify.enable", 0)) {
+        DB_playItem_t *track = deadbeef->pl_get_for_idx (to);
+        if (track) {
+            char cmd [1024];
+            deadbeef->pl_format_title (track, -1, cmd, sizeof (cmd), -1, deadbeef->conf_get_str ("gtkui.notify.format", NOTIFY_DEFAULT_FORMAT));
+            if (notify_is_initted ()) {
+                if (notification) {
+                    notify_notification_close (notification, NULL);
+                }
+                notification = notify_notification_new ("DeaDBeeF", cmd, NULL, NULL);
+                if (notification) {
+                    notify_notification_set_timeout (notification, NOTIFY_EXPIRES_DEFAULT);
+                    notify_notification_show (notification, NULL);
+                }
+            }
+        }
+    }
+#endif
+
     // update window title
     if (from >= 0 || to >= 0) {
         if (to >= 0) {

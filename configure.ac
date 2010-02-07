@@ -48,8 +48,18 @@ PKG_CHECK_MODULES(DEPS, samplerate)
 PKG_CHECK_MODULES(GTKUI_DEPS, gtk+-2.0 >= 2.12 gthread-2.0 glib-2.0, HAVE_GTK=1, NO_GTK=1)
 PKG_CHECK_MODULES(ALSA_DEPS, alsa, HAVE_ALSA=1, NO_ALSA=1)
 PKG_CHECK_MODULES(FFMPEG_DEPS, libavcodec >= 51.0.0 libavutil libavformat >= 52.0.0, HAVE_FFMPEG=1, NO_FFMPEG=1)
+
+AC_ARG_ENABLE(libnotify, [  --enable-libnotify  Enable support for OSD notifications], [libnotify=yes])
+
+if test "x${libnotify}" = "xyes" ; then
+PKG_CHECK_MODULES(NOTIFY_DEPS, libnotify >= 0.4.4, HAVE_NOTIFY=1, NO_NOTIFY=1)
+fi
+
 AC_CHECK_LIB([pthread], [main])
 AC_CHECK_LIB([dl], [main])
+
+AC_CHECK_HEADER([iconv.h],[],[iconv.h not found.])
+
 AC_CHECK_LIB([iconv], [main], [have_iconv=yes], [have_iconv=no])
 if test "x${have_iconv}" = "xyes" ; then
 ICONV_LIB="-liconv"
@@ -185,6 +195,19 @@ if test ${HAVE_FFMPEG}; then
     AC_SUBST(FFMPEG_DIR)
 fi
 
+AM_CONDITIONAL(HAVE_NOTIFY, test $HAVE_NOTIFY)
+if test ${HAVE_NOTIFY}; then
+    AC_DEFINE(HAVE_NOTIFY,1,[Use libnotify])
+    AC_SUBST(NOTIFY_DEPS_CFLAGS)
+    AC_SUBST(NOTIFY_DEPS_LIBS)
+fi
+
+AC_CHECK_HEADER([X11/Xlib.h], HAVE_XLIB_H=yes)
+if test "x$HAVE_XLIB_H" = "xyes"; then
+    HOTKEYS_DIR="plugins/hotkeys"
+    AC_SUBST(HOTKEYS_DIR)
+fi
+
 dnl *** OSS output (partly stolen from audacious)
 have_oss=no
 
@@ -265,8 +288,9 @@ PRINT_PLUGIN_INFO([vfs_curl],[http/ftp streaming support],[test $HAVE_CURL])
 dnl PRINT_PLUGIN_INFO([faad2],[aac/mp4 player],[test $HAVE_FAAD && test $HAVE_MP4FF])
 PRINT_PLUGIN_INFO([cdda],[cd audio player],[test $HAVE_CDIO && test $HAVE_CDDB])
 PRINT_PLUGIN_INFO([gtkui],[GTK user interface],[test $HAVE_GTK])
+PRINT_PLUGIN_INFO([hotkeys],[Global hotkeys support],[test "x$HAVE_XLIB_H" = "xyes"])
+PRINT_PLUGIN_INFO([libnotify],[Current track notification],[test $HAVE_NOTIFY])
 PRINT_PLUGIN_INFO([ffmpeg],[ffmpeg codecs],[test $HAVE_FFMPEG])
-PRINT_PLUGIN_INFO([notification],[Current track notification],[true])
 PRINT_PLUGIN_INFO([oss],[oss output plugin],[test "x$have_oss" = "xyes"])
 echo
 
@@ -295,7 +319,6 @@ plugins/vtx/Makefile
 plugins/adplug/Makefile
 plugins/ffmpeg/Makefile
 plugins/sid/Makefile
-plugins/notification/Makefile
 plugins/oss/Makefile
 deadbeef.desktop
 ])

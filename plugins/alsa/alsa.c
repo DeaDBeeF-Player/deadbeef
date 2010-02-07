@@ -28,6 +28,9 @@
 
 #define min(x,y) ((x)<(y)?(x):(y))
 
+#define LOCK {deadbeef->mutex_lock (mutex);}
+#define UNLOCK {deadbeef->mutex_unlock (mutex);}
+
 static DB_output_t plugin;
 DB_functions_t *deadbeef;
 
@@ -284,8 +287,6 @@ palsa_init (void) {
         goto open_error;
     }
 
-    snd_pcm_start (audio);
-
     alsa_terminate = 0;
     alsa_tid = deadbeef->thread_start (palsa_thread, NULL);
 
@@ -314,10 +315,10 @@ palsa_change_rate (int rate) {
         return rate;
     }
     state = OUTPUT_STATE_STOPPED;
+    LOCK;
     snd_pcm_drop (audio);
-    deadbeef->mutex_lock (mutex);
     int ret = palsa_set_hw_params (rate);
-    deadbeef->mutex_unlock (mutex);
+    UNLOCK;
     if (ret < 0) {
         trace ("palsa_change_rate: impossible to set samplerate to %d\n", rate);
         return alsa_rate;
@@ -330,10 +331,10 @@ int
 palsa_free (void) {
     trace ("palsa_free\n");
     if (audio && !alsa_terminate) {
-        deadbeef->mutex_lock (mutex);
+        LOCK;
         alsa_terminate = 1;
-        deadbeef->mutex_unlock (mutex);
-        printf ("waiting for alsa thread to finish\n");
+        UNLOCK;
+        trace ("waiting for alsa thread to finish\n");
         if (alsa_tid) {
             deadbeef->thread_join (alsa_tid);
             alsa_tid = 0;
@@ -370,7 +371,6 @@ palsa_hw_pause (int pause) {
 int
 palsa_play (void) {
     int err;
-    trace ("palsa_play\n");
     if (state == OUTPUT_STATE_STOPPED) {
         if (!audio) {
             if (palsa_init () < 0) {
@@ -387,14 +387,14 @@ palsa_play (void) {
         }
     }
     if (state != OUTPUT_STATE_PLAYING) {
-        deadbeef->mutex_lock (mutex);
+        LOCK;
 //        trace ("alsa: installing async handler\n");
 //        if (snd_async_add_pcm_handler (&pcm_callback, audio, alsa_callback, NULL) < 0) {
 //            perror ("snd_async_add_pcm_handler");
 //        }
 //        trace ("pcm_callback=%p\n", pcm_callback);
         snd_pcm_start (audio);
-        deadbeef->mutex_unlock (mutex);
+        UNLOCK;
         state = OUTPUT_STATE_PLAYING;
     }
     return 0;
@@ -407,7 +407,7 @@ palsa_stop (void) {
         return 0;
     }
     state = OUTPUT_STATE_STOPPED;
-    deadbeef->mutex_lock (mutex);
+    LOCK;
     snd_pcm_drop (audio);
 #if 0
     if (pcm_callback) {
@@ -415,7 +415,7 @@ palsa_stop (void) {
         pcm_callback = NULL;
     }
 #endif
-    deadbeef->mutex_unlock (mutex);
+    UNLOCK;
     deadbeef->streamer_reset (1);
     if (deadbeef->conf_get_int ("alsa.freeonstop", 0))  {
         palsa_free ();
@@ -429,9 +429,9 @@ palsa_pause (void) {
         return -1;
     }
     // set pause state
-    deadbeef->mutex_lock (mutex);
+    LOCK;
     palsa_hw_pause (1);
-    deadbeef->mutex_unlock (mutex);
+    UNLOCK;
     state = OUTPUT_STATE_PAUSED;
     return 0;
 }
@@ -441,9 +441,9 @@ palsa_unpause (void) {
     // unset pause state
     if (state == OUTPUT_STATE_PAUSED) {
         state = OUTPUT_STATE_PLAYING;
-        deadbeef->mutex_lock (mutex);
+        LOCK;
         palsa_hw_pause (0);
-        deadbeef->mutex_unlock (mutex);
+        UNLOCK;
     }
     return 0;
 }
@@ -487,44 +487,32 @@ palsa_thread (void *context) {
             usleep (10000);
             continue;
         }
-        
-        deadbeef->mutex_lock (mutex);
-        if ((err = snd_pcm_wait (audio, 1000)) < 0) {
-            if (err == -ESTRPIPE) {
-                trace ("alsa: trying to recover from suspend... (error=%d, %s)\n", err,  snd_strerror (err));
-                deadbeef->sendmessage (M_REINIT_SOUND, 0, 0, 0);
-                deadbeef->mutex_unlock (mutex);
-                break;
-            }
-            else if (err == -EPIPE) {
-                // this pretty frequent condition, no spam here
-//                trace ("alsa: snd_pcm_wait error=%d, %s\n", err, snd_strerror (err));
-                snd_pcm_prepare (audio);
-                snd_pcm_start (audio);
-                deadbeef->mutex_unlock (mutex);
-                continue;
-            }
-            else {
-                trace ("alsa: snd_pcm_wait error=%d, %s\n", err, snd_strerror (err));
-                deadbeef->mutex_unlock (mutex);
-                continue;
-            }
-        }
+        LOCK;
         /* find out how much space is available for playback data */
         int written = 0;
         snd_pcm_sframes_t frames_to_deliver = snd_pcm_avail_update (audio);
         while (frames_to_deliver >= period_size) {
             char buf[period_size * 4];
             palsa_callback (buf, period_size * 4);
-            if ((err = snd_pcm_writei (audio, buf, period_size)) < 0) {
-                break;
+            err = snd_pcm_writei (audio, buf, period_size);
+            if (err < 0) {
+                if (err == -ESTRPIPE) {
+                    trace ("alsa: trying to recover from suspend... (error=%d, %s)\n", err,  snd_strerror (err));
+                    deadbeef->sendmessage (M_REINIT_SOUND, 0, 0, 0);
+                    break;
+                }
+                else {
+                    trace ("alsa: snd_pcm_writei error=%d, %s\n", err, snd_strerror (err));
+                    snd_pcm_prepare (audio);
+                    snd_pcm_start (audio);
+                    continue;
+                }
             }
             written += period_size;
             frames_to_deliver = snd_pcm_avail_update (audio);
         }
-//        trace ("wrote %d frames\n", written);
-        deadbeef->mutex_unlock (mutex);
-//        usleep (1000); // this must be here to prevent mutex deadlock
+        UNLOCK;
+        usleep (period_size * 1000000 / alsa_rate / 2);
     }
 }
 
