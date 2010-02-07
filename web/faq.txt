@@ -17,6 +17,12 @@ A: Yes.
 
 --
 
+Q: Occasionally I get following error: "alsa: snd_pcm_writei error=-32, Broken pipe". Is it bad?
+
+A: Ignore it.
+
+--
+
 Q: Is it planned to support multiple playlists and EQ?
 
 A: Yes
