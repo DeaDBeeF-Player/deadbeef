@@ -277,7 +277,15 @@ typedef struct {
     int (*cond_wait) (uintptr_t cond, uintptr_t mutex);
     int (*cond_signal) (uintptr_t cond);
     int (*cond_broadcast) (uintptr_t cond);
-    // playlist access
+    // playlist management
+    int (*plt_get_count) (void);
+    void (*plt_add) (int before, const char *title);
+    void (*plt_remove) (int plt);
+    void (*plt_free) (void);
+    void (*plt_set_curr) (int plt);
+    int (*plt_get_curr) (void);
+    const char * (*plt_get_title) (int plt);
+    // playlist tracks access
     DB_playItem_t * (*pl_item_alloc) (void);
     void (*pl_item_ref) (DB_playItem_t *it);
     void (*pl_item_unref) (DB_playItem_t *it);

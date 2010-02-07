@@ -811,3 +811,28 @@ on_pref_dynsamplerate_clicked          (GtkButton       *button,
 void
 on_pref_close_clicked                  (GtkButton       *button,
                                         gpointer         user_data);
+
+gboolean
+on_tabbar_button_press_event           (GtkWidget       *widget,
+                                        GdkEventButton  *event,
+                                        gpointer         user_data);
+
+gboolean
+on_tabbar_button_release_event         (GtkWidget       *widget,
+                                        GdkEventButton  *event,
+                                        gpointer         user_data);
+
+gboolean
+on_tabbar_configure_event              (GtkWidget       *widget,
+                                        GdkEventConfigure *event,
+                                        gpointer         user_data);
+
+gboolean
+on_tabbar_expose_event                 (GtkWidget       *widget,
+                                        GdkEventExpose  *event,
+                                        gpointer         user_data);
+
+gboolean
+on_tabbar_motion_notify_event          (GtkWidget       *widget,
+                                        GdkEventMotion  *event,
+                                        gpointer         user_data);

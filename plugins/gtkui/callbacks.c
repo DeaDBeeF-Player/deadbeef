@@ -2301,7 +2301,3 @@ on_trackproperties_delete_event        (GtkWidget       *widget,
     trackproperties = NULL;
     return FALSE;
 }
-
-
-
-

@@ -77,28 +77,36 @@ plt_add (int before, const char *title) {
     memset (plt, 0, sizeof (playlist_t));
     plt->title = strdup (title);
 
-    playlist_t *p = NULL;
-    
-    if (before > 0) {
-        p = playlists_head;
-        int i;
-        for (i = 0; p && i < before; i++) {
-            p = p->next;
+    playlist_t *p_before = NULL;
+    playlist_t *p_after = playlists_head;
+
+    for (int i = 0; i < before; i++) {
+        if (i >= before+1) {
+            break;
+        }
+        p_before = p_after;
+        if (p_after) {
+            p_after = p_after->next;
+        }
+        else {
+            p_after = playlists_head;
         }
     }
-
-    if (!p) {
-        plt->next = playlists_head;
-        playlists_head = plt;
+    
+    printf ("p_before %p, p_after %p, plt %p\n", p_before, p_after, plt);
+    if (p_before) {
+        p_before->next = plt;
     }
     else {
-        playlist_t *next = p->next;
-        p->next = plt;
-        plt->next = next;
+        playlists_head = plt;
     }
+    plt->next = p_after;
     if (!playlist) {
         playlist = plt;
     }
+
+    printf ("playlists_head=%p\n", playlists_head);
+
     playlists_count++;
 }
 
@@ -155,6 +163,19 @@ plt_get_curr (void) {
         p = p->next;
     }
     return -1;
+}
+
+const char *
+plt_get_title (int plt) {
+    int i;
+    playlist_t *p = playlists_head;
+    for (i = 0; p && i <= plt; i++) {
+        if (i == plt) {
+            return p->title;
+        }
+        p = p->next;
+    }
+    return NULL;
 }
 
 playlist_t *

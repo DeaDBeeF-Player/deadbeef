@@ -55,7 +55,7 @@ typedef struct playItem_s {
     unsigned in_playlist : 1; // 1 if item is in playlist
 } playItem_t;
 
-typedef struct playlist_s{
+typedef struct playlist_s {
     char *title;
     playItem_t *head[PL_MAX_ITERATORS]; // head of linked list
     playItem_t *tail[PL_MAX_ITERATORS]; // tail of linked list
@@ -81,6 +81,9 @@ plt_set_curr (int plt);
 
 int
 plt_get_curr (void);
+
+const char *
+plt_get_title (int plt);
 
 playlist_t *
 plt_get_curr_ptr (void);

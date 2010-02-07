@@ -101,6 +101,14 @@ static DB_functions_t deadbeef_api = {
     .cond_wait = cond_wait,
     .cond_signal = cond_signal,
     .cond_broadcast = cond_broadcast,
+    // playlist management
+    .plt_get_count = plt_get_count,
+    .plt_add = plt_add,
+    .plt_remove = plt_remove,
+    .plt_free = plt_free,
+    .plt_set_curr = plt_set_curr,
+    .plt_get_curr = plt_get_curr,
+    .plt_get_title = plt_get_title,
     // playlist access
     .pl_item_alloc = (DB_playItem_t* (*)(void))pl_item_alloc,
     .pl_item_ref = (void (*)(DB_playItem_t *))pl_item_ref,

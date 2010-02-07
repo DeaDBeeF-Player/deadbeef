@@ -572,6 +572,7 @@ main (int argc, char *argv[]) {
     messagepump_init (); // required to push messages while handling commandline
     plug_load_all (); // required to add files to playlist from commandline
 
+    plt_add (0, "Test");
     plt_add (0, "Default");
 
     // execute server commands in local context

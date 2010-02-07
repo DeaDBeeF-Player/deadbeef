@@ -142,9 +142,14 @@ draw_text_with_colors (float x, float y, int width, int align, const char *text)
 void
 draw_get_text_extents (const char *text, int len, int *w, int *h) {
     draw_init_font ();
+    pango_layout_set_width (pangolayout, 1000 * PANGO_SCALE);
+    pango_layout_set_alignment (pangolayout, PANGO_ALIGN_LEFT);
     pango_layout_set_text (pangolayout, text, len);
-    PangoRectangle ext;
-    pango_layout_get_pixel_extents (pangolayout, &ext, NULL);
-    *w = ext.width;
-    *h = ext.height;
+    PangoRectangle ink;
+    PangoRectangle log;
+    pango_layout_get_pixel_extents (pangolayout, &ink, &log);
+    *w = ink.width;
+    *h = ink.height;
+    printf ("ink: %d %d %d %d\n", ink.x, ink.y, ink.width, ink.height);
+    printf ("log: %d %d %d %d\n", log.x, log.y, log.width, log.height);
 }

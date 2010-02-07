@@ -794,6 +794,23 @@
       </child>
 
       <child>
+	<widget class="GtkDrawingArea" id="tabbar">
+	  <property name="height_request">24</property>
+	  <property name="visible">True</property>
+	  <signal name="button_press_event" handler="on_tabbar_button_press_event" last_modification_time="Sun, 07 Feb 2010 19:07:32 GMT"/>
+	  <signal name="button_release_event" handler="on_tabbar_button_release_event" last_modification_time="Sun, 07 Feb 2010 19:07:35 GMT"/>
+	  <signal name="configure_event" handler="on_tabbar_configure_event" last_modification_time="Sun, 07 Feb 2010 19:07:41 GMT"/>
+	  <signal name="expose_event" handler="on_tabbar_expose_event" last_modification_time="Sun, 07 Feb 2010 19:07:50 GMT"/>
+	  <signal name="motion_notify_event" handler="on_tabbar_motion_notify_event" last_modification_time="Sun, 07 Feb 2010 19:08:05 GMT"/>
+	</widget>
+	<packing>
+	  <property name="padding">0</property>
+	  <property name="expand">False</property>
+	  <property name="fill">True</property>
+	</packing>
+      </child>
+
+      <child>
 	<widget class="GtkFrame" id="frame1">
 	  <property name="border_width">1</property>
 	  <property name="visible">True</property>
@@ -809,6 +826,24 @@
 	      <property name="homogeneous">False</property>
 	      <property name="row_spacing">0</property>
 	      <property name="column_spacing">0</property>
+
+	      <child>
+		<widget class="GtkVScrollbar" id="playscroll">
+		  <property name="visible">True</property>
+		  <property name="update_policy">GTK_UPDATE_CONTINUOUS</property>
+		  <property name="inverted">False</property>
+		  <property name="adjustment">0 0 1 1 0 0</property>
+		  <signal name="value_changed" handler="on_playscroll_value_changed" last_modification_time="Sat, 04 Jul 2009 01:42:24 GMT"/>
+		</widget>
+		<packing>
+		  <property name="left_attach">1</property>
+		  <property name="right_attach">2</property>
+		  <property name="top_attach">0</property>
+		  <property name="bottom_attach">1</property>
+		  <property name="x_options">fill</property>
+		  <property name="y_options">fill</property>
+		</packing>
+	      </child>
 
 	      <child>
 		<widget class="GtkHBox" id=" ">
@@ -881,24 +916,6 @@
 		  <property name="right_attach">1</property>
 		  <property name="top_attach">0</property>
 		  <property name="bottom_attach">1</property>
-		</packing>
-	      </child>
-
-	      <child>
-		<widget class="GtkVScrollbar" id="playscroll">
-		  <property name="visible">True</property>
-		  <property name="update_policy">GTK_UPDATE_CONTINUOUS</property>
-		  <property name="inverted">False</property>
-		  <property name="adjustment">0 0 1 1 0 0</property>
-		  <signal name="value_changed" handler="on_playscroll_value_changed" last_modification_time="Sat, 04 Jul 2009 01:42:24 GMT"/>
-		</widget>
-		<packing>
-		  <property name="left_attach">1</property>
-		  <property name="right_attach">2</property>
-		  <property name="top_attach">0</property>
-		  <property name="bottom_attach">1</property>
-		  <property name="x_options">fill</property>
-		  <property name="y_options">fill</property>
 		</packing>
 	      </child>
 
