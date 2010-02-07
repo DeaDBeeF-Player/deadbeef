@@ -380,7 +380,7 @@ plug_trigger_event (int ev, uintptr_t param) {
         {
         DB_event_track_t *pev = alloca (sizeof (DB_event_track_t));
         pev->index = -1;
-        pev->track = DB_PLAYITEM (streamer_get_playing_track);
+        pev->track = DB_PLAYITEM (streamer_get_playing_track ());
         event = DB_EVENT (pev);
         }
         break;
