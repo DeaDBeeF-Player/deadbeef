@@ -418,6 +418,7 @@ sigterm_handler (int sig) {
 
 int
 main (int argc, char *argv[]) {
+    fprintf (stderr, "starting deadbeef " VERSION "\n");
     srand (time (NULL));
 #ifdef __linux__
     prctl (PR_SET_NAME, "deadbeef-main", 0, 0, 0, 0);
