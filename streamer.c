@@ -37,8 +37,10 @@
 #include "volume.h"
 #include "vfs.h"
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#pragma GCC optimize("O0")
+
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 static intptr_t streamer_tid;
 static int src_quality;
@@ -111,7 +113,7 @@ streamer_move_to_nextsong (int reason) {
         return 0;
     }
 
-    playItem_t *curr = streamer_get_streaming_track ();
+    playItem_t *curr = playlist_track;
     if (!plt->head[PL_MAIN]) {
         streamer_set_nextsong (-2, 1);
         return 0;
@@ -310,8 +312,8 @@ streamer_song_removed_notify (playItem_t *it) {
     if (it == playing_track) {
         playing_track = NULL;
     }
-    if (it == streaming_track) {
-        streaming_track = NULL;
+    if (it == playlist_track) {
+        playlist_track = NULL;
         // queue new next song for streaming
         if (bytes_until_next_song > 0) {
             streambuffer_fill = bytes_until_next_song;
@@ -334,13 +336,13 @@ streamer_set_current (playItem_t *it) {
     }
     trace ("streamer_set_current %p, buns=%d\n", it);
     mutex_lock (decodemutex);
-    if(fileinfo) {
+    if (fileinfo) {
         fileinfo->plugin->free (fileinfo);
+        fileinfo = NULL;
         pl_item_unref (streaming_track);
         streaming_track = NULL;
     }
     mutex_unlock (decodemutex);
-    streaming_track = it;
     if (!it) {
         goto success;
     }
@@ -389,9 +391,7 @@ streamer_set_current (playItem_t *it) {
 
         if (!dec || !info) {
             it->played = 1;
-            trace ("decoder->init returned %d\n", ret);
-            trace ("playing_track = %p\n", playing_track);
-            playing_track = NULL;
+            trace ("decoder->init returned %p\n", info);
             streamer_buffering = 0;
             if (playlist_track == it) {
                 messagepump_push (M_TRACKCHANGED, 0, to, 0);
@@ -416,7 +416,6 @@ streamer_set_current (playItem_t *it) {
             playlist_track = NULL;
             messagepump_push (M_TRACKCHANGED, 0, to, 0);
         }
-        //streaming_track = NULL;
         return -1;
     }
     if (bytes_until_next_song == -1) {
@@ -507,7 +506,7 @@ streamer_thread (void *ctx) {
             }
             int ret = streamer_set_current (try);
             if (ret < 0) {
-                trace ("\033[0;31mfailed to play track %s, skipping (current=%p)...\033[37;0m\n", try->fname, streaming_track);
+                trace ("\033[0;31mfailed to play track %s, skipping (current=%p/%p)...\033[37;0m\n", try->fname, streaming_track, playlist_track);
                 // remember bad song number in case of looping
                 if (badsong == -1) {
                     badsong = sng;
@@ -584,13 +583,13 @@ streamer_thread (void *ctx) {
             }
             // copy streaming into playing
             playing_track = streaming_track;
-            pl_item_ref (playing_track);
-            last_bitrate = -1;
-            avg_bitrate = -1;
             if (playing_track) {
+                pl_item_ref (playing_track);
                 playing_track->played = 1;
                 playing_track->started_timestamp = time (NULL);
             }
+            last_bitrate = -1;
+            avg_bitrate = -1;
             playlist_track = playing_track;
             // that is needed for playlist drawing
             // plugin will get pointer to new str_playing_song
@@ -659,7 +658,9 @@ streamer_thread (void *ctx) {
                     streaming_track = NULL;
                 }
                 streaming_track = playing_track;
-                pl_item_ref (streaming_track);
+                if (streaming_track) {
+                    pl_item_ref (streaming_track);
+                }
                 mutex_unlock (decodemutex);
 
                 bytes_until_next_song = -1;
@@ -698,7 +699,7 @@ streamer_thread (void *ctx) {
             if (trk != -1) {
                 messagepump_push (M_TRACKCHANGED, 0, trk, 0);
             }
-            if (fileinfo && playing_track->_duration > 0) {
+            if (fileinfo && playing_track && playing_track->_duration > 0) {
                 streamer_lock ();
                 streambuffer_fill = 0;
                 streambuffer_pos = 0;
@@ -1212,6 +1213,9 @@ streamer_read (char *bytes, int size) {
     struct timeval tm1;
     gettimeofday (&tm1, NULL);
 #endif
+    if (!playing_track) {
+        return -1;
+    }
     streamer_lock ();
     int sz = min (size, streambuffer_fill);
     if (sz) {
