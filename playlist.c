@@ -149,7 +149,10 @@ plt_set_curr (int plt) {
         trace ("plt_set_curr %d failed\n", plt);
         return;
     }
-    playlist = p;
+    if (p != playlist) {
+        playlist = p;
+        plug_trigger_event (DB_EV_PLAYLISTSWITCH, 0);
+    }
 }
 
 int

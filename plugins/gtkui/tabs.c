@@ -151,7 +151,7 @@ on_tabbar_button_press_event           (GtkWidget       *widget,
             fw += w;
             if (fw > event->x) {
                 deadbeef->plt_set_curr (idx);
-                tabbar_draw (widget);
+//                tabbar_draw (widget);
                 break;
             }
         }

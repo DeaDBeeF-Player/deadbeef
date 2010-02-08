@@ -444,6 +444,9 @@ gtkpl_draw_playlist (gtkplaylist_t *ps, int x, int y, int w, int h) {
 	it = it_copy;
 	int idx = 0;
 	for (row = row1; row < row2; row++, idx++) {
+        if (!it) {
+            break;
+        }
         gtkpl_draw_pl_row (ps, row, it);
         it = PL_NEXT (it, ps->iterator);
 	}

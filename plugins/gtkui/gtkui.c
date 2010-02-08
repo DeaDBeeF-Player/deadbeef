@@ -320,6 +320,19 @@ gtkui_on_playlistchanged (DB_event_t *ev, uintptr_t data) {
     g_idle_add (playlistchanged_cb, NULL);
 }
 
+static gboolean
+playlistswitch_cb (gpointer none) {
+    playlist_refresh ();
+    search_refresh ();
+    tabbar_draw (lookup_widget (mainwin, "tabbar"));
+    return FALSE;
+}
+
+static int
+gtkui_on_playlistswitch (DB_event_t *ev, uintptr_t data) {
+    g_idle_add (playlistswitch_cb, NULL);
+}
+
 static int
 gtkui_on_frameupdate (DB_event_t *ev, uintptr_t data) {
     g_idle_add (update_songinfo, NULL);
@@ -479,6 +492,7 @@ gtkui_start (void) {
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_VOLUMECHANGED, DB_CALLBACK (gtkui_on_volumechanged), 0);
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_CONFIGCHANGED, DB_CALLBACK (gtkui_on_configchanged), 0);
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_OUTPUTCHANGED, DB_CALLBACK (gtkui_on_outputchanged), 0);
+    deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_PLAYLISTSWITCH, DB_CALLBACK (gtkui_on_playlistswitch), 0);
     // gtk must be running in separate thread
     gtk_tid = deadbeef->thread_start (gtkui_thread, NULL);
 
@@ -503,6 +517,7 @@ gtkui_stop (void) {
     deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_VOLUMECHANGED, DB_CALLBACK (gtkui_on_volumechanged), 0);
     deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_CONFIGCHANGED, DB_CALLBACK (gtkui_on_configchanged), 0);
     deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_OUTPUTCHANGED, DB_CALLBACK (gtkui_on_outputchanged), 0);
+    deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_PLAYLISTSWITCH, DB_CALLBACK (gtkui_on_playlistswitch), 0);
     trace ("quitting gtk\n");
     g_idle_add (quit_gtk_cb, NULL);
     trace ("waiting for gtk thread to finish\n");

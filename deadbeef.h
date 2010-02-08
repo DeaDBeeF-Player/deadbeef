@@ -48,7 +48,7 @@ extern "C" {
 //  ............
 // }
 // this is required for versioning
-// if you don't do it -- no version checking will be done (usefull for
+// if you don't do it -- no version checking will be done (useful for
 // debugging/development)
 // DON'T release plugins without DB_PLUGIN_SET_API_VERSION
 
@@ -173,6 +173,7 @@ enum {
     DB_EV_VOLUMECHANGED = 10, // volume was changed
     DB_EV_OUTPUTCHANGED = 11, // sound output plugin changed
     DB_EV_ABORTREAD = 12, // tells plugins to stop reading operations, e.g. long-time http requests
+    DB_EV_PLAYLISTSWITCH = 13, // playlist switch occured
     DB_EV_MAX
 };
 
