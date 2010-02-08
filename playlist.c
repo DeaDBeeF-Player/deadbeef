@@ -142,11 +142,11 @@ void
 plt_set_curr (int plt) {
     int i;
     playlist_t *p = playlists_head;
-    for (i = 0; p && i <= plt; i++) {
+    for (i = 0; p && i < plt; i++) {
         p = p->next;
     }
     if (i != plt) {
-        trace ("plt_set_curr %d failed\n", i);
+        trace ("plt_set_curr %d failed\n", plt);
         return;
     }
     playlist = p;

@@ -797,6 +797,7 @@
 	<widget class="GtkDrawingArea" id="tabbar">
 	  <property name="height_request">24</property>
 	  <property name="visible">True</property>
+	  <property name="events">GDK_POINTER_MOTION_MASK | GDK_BUTTON_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
 	  <signal name="button_press_event" handler="on_tabbar_button_press_event" last_modification_time="Sun, 07 Feb 2010 19:07:32 GMT"/>
 	  <signal name="button_release_event" handler="on_tabbar_button_release_event" last_modification_time="Sun, 07 Feb 2010 19:07:35 GMT"/>
 	  <signal name="configure_event" handler="on_tabbar_configure_event" last_modification_time="Sun, 07 Feb 2010 19:07:41 GMT"/>

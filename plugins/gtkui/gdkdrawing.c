@@ -150,6 +150,4 @@ draw_get_text_extents (const char *text, int len, int *w, int *h) {
     pango_layout_get_pixel_extents (pangolayout, &ink, &log);
     *w = ink.width;
     *h = ink.height;
-    printf ("ink: %d %d %d %d\n", ink.x, ink.y, ink.width, ink.height);
-    printf ("log: %d %d %d %d\n", log.x, log.y, log.width, log.height);
 }

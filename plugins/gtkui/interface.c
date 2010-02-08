@@ -506,6 +506,7 @@ create_mainwin (void)
   gtk_widget_show (tabbar);
   gtk_box_pack_start (GTK_BOX (vbox1), tabbar, FALSE, TRUE, 0);
   gtk_widget_set_size_request (tabbar, -1, 24);
+  gtk_widget_set_events (tabbar, GDK_POINTER_MOTION_MASK | GDK_BUTTON_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK);
 
   frame1 = gtk_frame_new (NULL);
   gtk_widget_show (frame1);
