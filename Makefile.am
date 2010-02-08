@@ -1,6 +1,7 @@
 SUBDIRS = ${MPGMAD_DIR}\
 		  gme/Game_Music_Emu-0.5.2\
 		  gme/Game_Music_Emu-0.5.2/gme\
+		  dumb\
 		  pixmaps\
 		  icons\
 		  plugins/nullout\
