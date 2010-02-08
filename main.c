@@ -66,7 +66,6 @@
 // some common global variables
 char confdir[1024]; // $HOME/.config
 char dbconfdir[1024]; // $HOME/.config/deadbeef
-char defpl[1024]; // $HOME/.config/deadbeef/default.dbpl
 
 // client-side commandline support
 // -1 error, program must exit with error code -1
@@ -403,7 +402,7 @@ atexit_handler (void) {
     fprintf (stderr, "atexit_handler\n");
     if (!sigterm_handled) {
         fprintf (stderr, "handling atexit.\n");
-        pl_save (defpl);
+        pl_save_all ();
         conf_save ();
     }
 }
@@ -442,10 +441,6 @@ main (int argc, char *argv[]) {
             fprintf (stderr, "fatal: HOME value is too long: %s\n", homedir);
             return -1;
         }
-    }
-    if (snprintf (defpl, sizeof (defpl), "%s/deadbeef/default.dbpl", confdir) > sizeof (defpl)) {
-        fprintf (stderr, "fatal: out of memory while configuring\n");
-        return -1;
     }
     mkdir (confdir, 0755);
     if (snprintf (dbconfdir, sizeof (dbconfdir), "%s/deadbeef", confdir) > sizeof (dbconfdir)) {
@@ -572,13 +567,6 @@ main (int argc, char *argv[]) {
     messagepump_init (); // required to push messages while handling commandline
     plug_load_all (); // required to add files to playlist from commandline
 
-    plt_add (0, "Default");
-    plt_add (1, "Test");
-    plt_add (2, "Test 2");
-    plt_add (3, "Test 3");
-    plt_add (4, "Test 4");
-    plt_add (5, "Test 5");
-
     // execute server commands in local context
     int noloadpl = 0;
     if (argc > 1) {
@@ -605,8 +593,14 @@ main (int argc, char *argv[]) {
     // start all subsystems
     volume_set_db (conf_get_float ("playback.volume", 0));
     if (!noloadpl) {
-        pl_load (defpl);
+        pl_load_all ();
     }
+    //plt_add (plt_get_count (), "Test 1");
+//    plt_add (plt_get_count (), "Test 2");
+//    plt_add (plt_get_count (), "Test 3");
+//    plt_add (plt_get_count (), "Test 4");
+//    plt_add (plt_get_count (), "Test 5");
+
     plug_trigger_event_playlistchanged ();
 // this is old code left for backwards compatibility
     {
@@ -622,7 +616,7 @@ main (int argc, char *argv[]) {
     player_mainloop ();
 
     // save config
-    pl_save (defpl);
+    pl_save_all ();
     conf_save ();
     {
         char sessfile[1024]; // $HOME/.config/deadbeef/session

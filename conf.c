@@ -160,6 +160,9 @@ conf_set_str (const char *key, const char *val) {
         }
         prev = it;
     }
+    if (!val) {
+        return;
+    }
     DB_conf_item_t *it = malloc (sizeof (DB_conf_item_t));
     memset (it, 0, sizeof (DB_conf_item_t));
     it->key = strdup (key);

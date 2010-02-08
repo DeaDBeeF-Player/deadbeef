@@ -39,6 +39,9 @@
 #include "vfs.h"
 #include "conf.h"
 #include "utf8.h"
+#include "common.h"
+
+#pragma GCC optimize("O0")
 
 // 1.0->1.1 changelog:
 //    added sample-accurate seek positions for sub-tracks
@@ -52,9 +55,6 @@
 
 #define min(x,y) ((x)<(y)?(x):(y))
 
-static int pl_count[2];
-static float pl_totaltime = 0;
-
 #define PLAYQUEUE_SIZE 100
 static playItem_t *playqueue[100];
 static int playqueue_count = 0;
@@ -62,6 +62,24 @@ static int playqueue_count = 0;
 static int playlists_count = 0;
 static playlist_t *playlists_head = NULL;
 static playlist_t *playlist = NULL; // current playlist
+static int plt_loading = 0; // disable sending event about playlist switch, config regen, etc
+
+static void
+plt_gen_conf (void) {
+    if (plt_loading) {
+        return;
+    }
+    int cnt = plt_get_count ();
+    int i;
+    conf_remove_items ("playlist.tab.");
+
+    playlist_t *p = playlists_head;
+    for (i = 0; i < cnt; i++, p = p->next) {
+        char s[100];
+        snprintf (s, sizeof (s), "playlist.tab.%d", i);
+        conf_set_str (s, p->title);
+    }
+}
 
 static void
 pl_item_free (playItem_t *it);
@@ -80,7 +98,8 @@ plt_add (int before, const char *title) {
     playlist_t *p_before = NULL;
     playlist_t *p_after = playlists_head;
 
-    for (int i = 0; i < before; i++) {
+    int i;
+    for (i = 0; i < before; i++) {
         if (i >= before+1) {
             break;
         }
@@ -93,7 +112,6 @@ plt_add (int before, const char *title) {
         }
     }
     
-    printf ("p_before %p, p_after %p, plt %p\n", p_before, p_after, plt);
     if (p_before) {
         p_before->next = plt;
     }
@@ -101,13 +119,16 @@ plt_add (int before, const char *title) {
         playlists_head = plt;
     }
     plt->next = p_after;
+    playlists_count++;
+
     if (!playlist) {
         playlist = plt;
+        if (!plt_loading) {
+            plug_trigger_event (DB_EV_PLAYLISTSWITCH, 0);
+        }
     }
 
-    printf ("playlists_head=%p\n", playlists_head);
-
-    playlists_count++;
+    plt_gen_conf ();
 }
 
 void
@@ -136,6 +157,8 @@ plt_remove (int plt) {
     free (p->title);
     free (p);
     playlists_count--;
+
+    plt_gen_conf ();
 }
 
 void
@@ -151,7 +174,9 @@ plt_set_curr (int plt) {
     }
     if (p != playlist) {
         playlist = p;
-        plug_trigger_event (DB_EV_PLAYLISTSWITCH, 0);
+        if (!plt_loading) {
+            plug_trigger_event (DB_EV_PLAYLISTSWITCH, 0);
+        }
     }
 }
 
@@ -198,11 +223,11 @@ pl_free (void) {
     while (playlist->head[PL_MAIN]) {
         pl_remove (playlist->head[PL_MAIN]);
     }
-    if (playlist->current_row[PL_MAIN] >= pl_count[PL_MAIN]) {
-        playlist->current_row[PL_MAIN] = pl_count[PL_MAIN]-1;
+    if (playlist->current_row[PL_MAIN] >= playlist->count[PL_MAIN]) {
+        playlist->current_row[PL_MAIN] = playlist->count[PL_MAIN]-1;
     }
-    if (playlist->current_row[PL_SEARCH] >= pl_count[PL_SEARCH]) {
-        playlist->current_row[PL_SEARCH] = pl_count[PL_SEARCH]-1;
+    if (playlist->current_row[PL_SEARCH] >= playlist->count[PL_SEARCH]) {
+        playlist->current_row[PL_SEARCH] = playlist->count[PL_SEARCH]-1;
     }
 }
 
@@ -898,7 +923,7 @@ pl_remove (playItem_t *it) {
     // remove from both lists list
     for (int iter = PL_MAIN; iter <= PL_SEARCH; iter++) {
         if (it->prev[iter] || it->next[iter] || playlist->head[iter] == it || playlist->tail[iter] == it) {
-            pl_count[iter]--;
+            playlist->count[iter]--;
         }
         if (it->prev[iter]) {
             it->prev[iter]->next[iter] = it->next[iter];
@@ -916,9 +941,9 @@ pl_remove (playItem_t *it) {
 
     // totaltime
     if (it->_duration > 0) {
-        pl_totaltime -= it->_duration;
-        if (pl_totaltime < 0) {
-            pl_totaltime = 0;
+        playlist->totaltime -= it->_duration;
+        if (playlist->totaltime < 0) {
+            playlist->totaltime = 0;
         }
     }
     pl_item_unref (it);
@@ -928,7 +953,7 @@ pl_remove (playItem_t *it) {
 
 int
 pl_getcount (int iter) {
-    return pl_count[iter];
+    return playlist->count[iter];
 }
 
 int
@@ -998,7 +1023,7 @@ pl_insert_item (playItem_t *after, playItem_t *it) {
         }
     }
     it->in_playlist = 1;
-    pl_count[PL_MAIN]++;
+    playlist->count[PL_MAIN]++;
 
     // shuffle
     it->shufflerating = rand ();
@@ -1006,7 +1031,7 @@ pl_insert_item (playItem_t *after, playItem_t *it) {
 
     // totaltime
     if (it->_duration > 0) {
-        pl_totaltime += it->_duration;
+        playlist->totaltime += it->_duration;
     }
 
     return it;
@@ -1225,7 +1250,7 @@ pl_save (const char *fname) {
     if (fwrite (&minorver, 1, 1, fp) != 1) {
         goto save_fail;
     }
-    uint32_t cnt = pl_count[PL_MAIN];
+    uint32_t cnt = playlist->count[PL_MAIN];
     if (fwrite (&cnt, 1, 4, fp) != 4) {
         goto save_fail;
     }
@@ -1324,6 +1349,39 @@ save_fail:
     fclose (fp);
     unlink (fname);
     return -1;
+}
+
+int
+pl_save_all (void) {
+    playlist_t *p = playlists_head;
+    int i;
+    int cnt = plt_get_count ();
+    int curr = plt_get_curr ();
+    int err = 0;
+    // make folder
+    char path[1024];
+    if (snprintf (path, sizeof (path), "%s/playlists", dbconfdir) > sizeof (path)) {
+        fprintf (stderr, "error: failed to make path string for playlists folder\n");
+        return -1;
+    }
+    mkdir (path, 0755);
+
+    plt_loading = 1;
+    for (i = 0; i < cnt; i++, p = p->next) {
+        plt_set_curr (i);
+        if (snprintf (path, sizeof (path), "%s/playlists/%d.dbpl", dbconfdir, i) > sizeof (path)) {
+            fprintf (stderr, "error: failed to make path string for playlists folder\n");
+            err = -1;
+            break;
+        }
+        err = pl_save (path);
+        if (err < 0) {
+            break;
+        }
+    }
+    plt_set_curr (curr);
+    plt_loading = 0;
+    return err;
 }
 
 int
@@ -1527,6 +1585,50 @@ load_fail:
     return -1;
 }
 
+int
+pl_load_all (void) {
+    int i = 0;
+    int err = 0;
+    char path[1024];
+    DB_conf_item_t *it = conf_find ("playlist.tab.", NULL);
+    if (!it) {
+        fprintf (stderr, "INFO: loading legacy default playlist\n");
+        // legacy (0.3.3 and earlier)
+        char defpl[1024]; // $HOME/.config/deadbeef/default.dbpl
+        if (snprintf (defpl, sizeof (defpl), "%s/deadbeef/default.dbpl", confdir) > sizeof (defpl)) {
+            fprintf (stderr, "error: cannot make string with default playlist path\n");
+            return -1;
+        }
+        plt_add (plt_get_count (), "Default");
+        return pl_load (defpl);
+    }
+    plt_loading = 1;
+    while (it) {
+        fprintf (stderr, "INFO: loading playlist %s\n", it->value);
+        if (!err) {
+            plt_add (plt_get_count (), it->value);
+            plt_set_curr (plt_get_count () - 1);
+        }
+        err = 0;
+        if (snprintf (path, sizeof (path), "%s/playlists/%d.dbpl", dbconfdir, i) > sizeof (path)) {
+            fprintf (stderr, "error: failed to make path string for playlist filename\n");
+            err = -1;
+        }
+        else {
+            fprintf (stderr, "INFO: from file %s\n", path);
+            err = pl_load (path);
+        }
+        it = conf_find ("playlist.tab.", it);
+        fprintf (stderr, "conf_find returned %p\n", it);
+        i++;
+    }
+    plt_set_curr (0);
+    plt_loading = 0;
+    plt_gen_conf ();
+    plug_trigger_event (DB_EV_PLAYLISTSWITCH, 0);
+    return err;
+}
+
 void
 pl_select_all (void) {
     for (playItem_t *it = playlist->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
@@ -1573,13 +1675,13 @@ pl_set_item_duration (playItem_t *it, float duration) {
 //    if (pl_get_idx_of (it) != -1) {
     if (it->in_playlist) {
         if (it->_duration > 0) {
-            pl_totaltime -= it->_duration;
+            playlist->totaltime -= it->_duration;
         }
         if (duration > 0) {
-            pl_totaltime += duration;
+            playlist->totaltime += duration;
         }
-        if (pl_totaltime < 0) {
-            pl_totaltime = 0;
+        if (playlist->totaltime < 0) {
+            playlist->totaltime = 0;
         }
     }
     it->_duration = duration;
@@ -1907,7 +2009,7 @@ pl_reset_cursor (void) {
 
 float
 pl_get_totaltime (void) {
-    return pl_totaltime;
+    return playlist->totaltime;
 }
 
 void
@@ -2026,7 +2128,7 @@ pl_search_reset (void) {
         playlist->head[PL_SEARCH] = next;
     }
     playlist->tail[PL_SEARCH] = NULL;
-    pl_count[PL_SEARCH] = 0;
+    playlist->count[PL_SEARCH] = 0;
 }
 
 void
@@ -2049,7 +2151,7 @@ pl_search_process (const char *text) {
                         playlist->head[PL_SEARCH] = playlist->tail[PL_SEARCH] = it;
                     }
                     it->selected = 1;
-                    pl_count[PL_SEARCH]++;
+                    playlist->count[PL_SEARCH]++;
                     break;
                 }
             }

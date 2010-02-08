@@ -24,7 +24,6 @@
 // those are defined in main.c
 extern char confdir[1024]; // $HOME/.config
 extern char dbconfdir[1024]; // $HOME/.config/deadbeef
-extern char defpl[1024]; // $HOME/.config/deadbeef/default.dbpl
 extern char sessfile[1024]; // $HOME/.config/deadbeef/session
 
 #endif // __COMMON_H

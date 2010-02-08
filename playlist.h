@@ -57,6 +57,8 @@ typedef struct playItem_s {
 
 typedef struct playlist_s {
     char *title;
+    int count[2];
+    float totaltime;
     playItem_t *head[PL_MAX_ITERATORS]; // head of linked list
     playItem_t *tail[PL_MAX_ITERATORS]; // tail of linked list
     int current_row[PL_MAX_ITERATORS]; // current row (cursor)
@@ -172,7 +174,13 @@ int
 pl_save (const char *fname);
 
 int
+pl_save_all (void);
+
+int
 pl_load (const char *fname);
+
+int
+pl_load_all (void);
 
 void
 pl_select_all (void);

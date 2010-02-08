@@ -35,6 +35,7 @@
 #include "interface.h"
 #include "callbacks.h"
 #include "support.h"
+#include "tabs.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
