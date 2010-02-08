@@ -48,6 +48,7 @@ PKG_CHECK_MODULES(DEPS, samplerate)
 PKG_CHECK_MODULES(GTKUI_DEPS, gtk+-2.0 >= 2.12 gthread-2.0 glib-2.0, HAVE_GTK=1, NO_GTK=1)
 PKG_CHECK_MODULES(ALSA_DEPS, alsa, HAVE_ALSA=1, NO_ALSA=1)
 PKG_CHECK_MODULES(FFMPEG_DEPS, libavcodec >= 51.0.0 libavutil libavformat >= 52.0.0, HAVE_FFMPEG=1, NO_FFMPEG=1)
+PKG_CHECK_MODULES(PULSE_DEPS, libpulse-simple, HAVE_PULSE=1, NO_PULSE=1)
 
 AC_ARG_ENABLE(libnotify, [  --enable-libnotify  Enable support for OSD notifications], [libnotify=yes])
 
@@ -253,6 +254,13 @@ dnl echo "OSS_LIBS=$OSS_LIBS"
 dnl echo "OSS_DIR=$OSS_DIR"
 dnl echo
 
+AM_CONDITIONAL(HAVE_PULSE, test $HAVE_PULSE)
+if test ${HAVE_PULSE}; then
+    PULSE_DIR="plugins/pulse"
+    AC_SUBST(PULSE_DEPS_CFLAGS)
+    AC_SUBST(PULSE_DEPS_LIBS)
+    AC_SUBST(PULSE_DIR)
+fi
 
 dnl print summary
 echo
@@ -292,6 +300,7 @@ PRINT_PLUGIN_INFO([hotkeys],[Global hotkeys support],[test "x$HAVE_XLIB_H" = "xy
 PRINT_PLUGIN_INFO([libnotify],[Current track notification],[test $HAVE_NOTIFY])
 PRINT_PLUGIN_INFO([ffmpeg],[ffmpeg codecs],[test $HAVE_FFMPEG])
 PRINT_PLUGIN_INFO([oss],[oss output plugin],[test "x$have_oss" = "xyes"])
+PRINT_PLUGIN_INFO([pulse],[PulseAudio output plugin],[test $HAVE_PULSE])
 echo
 
 AC_OUTPUT([
@@ -320,6 +329,7 @@ plugins/adplug/Makefile
 plugins/ffmpeg/Makefile
 plugins/sid/Makefile
 plugins/oss/Makefile
+plugins/pulse/Makefile
 deadbeef.desktop
 ])
 
