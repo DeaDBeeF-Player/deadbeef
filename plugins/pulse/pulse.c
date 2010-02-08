@@ -227,7 +227,9 @@ static void pulse_thread(void *context)
             if (res < 0)
             {
                 fprintf(stderr, "pulse: failed to write buffer\n");
-                pulse_terminate = 1;
+                pulse_tid = 0;
+                pulse_free ();
+                break;
             }
         }
     }
