@@ -210,27 +210,26 @@ static void pulse_thread(void *context)
 
     while (!pulse_terminate)
     {
-        if (state != OUTPUT_STATE_PLAYING)
+        if (state != OUTPUT_STATE_PLAYING || !deadbeef->streamer_ok_to_read (-1))
         {
             usleep(1000);
+            continue;
         }
-        else
+
+        char buf[buffer_size];
+        pulse_callback (buf, sizeof (buf));
+        int error;
+
+        deadbeef->mutex_lock(mutex);
+        int res = pa_simple_write(s, buf, sizeof (buf), &error);
+        deadbeef->mutex_unlock(mutex);
+
+        if (res < 0)
         {
-            char buf[buffer_size];
-            pulse_callback (buf, sizeof (buf));
-            int error;
-
-            deadbeef->mutex_lock(mutex);
-            int res = pa_simple_write(s, buf, sizeof (buf), &error);
-            deadbeef->mutex_unlock(mutex);
-
-            if (res < 0)
-            {
-                fprintf(stderr, "pulse: failed to write buffer\n");
-                pulse_tid = 0;
-                pulse_free ();
-                break;
-            }
+            fprintf(stderr, "pulse: failed to write buffer\n");
+            pulse_tid = 0;
+            pulse_free ();
+            break;
         }
     }
 }
