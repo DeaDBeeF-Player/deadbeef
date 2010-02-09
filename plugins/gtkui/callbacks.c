@@ -1123,11 +1123,13 @@ on_seekbar_button_release_event        (GtkWidget       *widget,
     seekbar_draw (widget);
     seekbar_expose (widget, 0, 0, widget->allocation.width, widget->allocation.height);
     DB_playItem_t *trk = deadbeef->streamer_get_playing_track ();
-    float time = event->x * deadbeef->pl_get_item_duration (trk) / (widget->allocation.width);
-    if (time < 0) {
-        time = 0;
+    if (trk) {
+        float time = event->x * deadbeef->pl_get_item_duration (trk) / (widget->allocation.width);
+        if (time < 0) {
+            time = 0;
+        }
+        deadbeef->streamer_seek (time);
     }
-    deadbeef->streamer_seek (time);
     return FALSE;
 }
 
