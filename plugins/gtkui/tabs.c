@@ -30,6 +30,7 @@
 static int margin_size = 10;
 static int tab_dragging = -1;
 static int tab_movepos;
+static int tab_clicked = -1;
 
 void
 tabbar_draw (GtkWidget *widget) {
@@ -128,33 +129,44 @@ tabbar_draw (GtkWidget *widget) {
     draw_end ();
 }
 
+static int
+get_tab_under_cursor (int x) {
+    int idx;
+    int cnt = deadbeef->plt_get_count ();
+    int fw = 0;
+    int tab_selected = deadbeef->plt_get_curr ();
+    for (idx = 0; idx < cnt; idx++) {
+        const char *title = deadbeef->plt_get_title (idx);
+        int w = 0;
+        int h = 0;
+        draw_get_text_extents (title, strlen (title), &w, &h);
+        w += margin_size + 10;
+        if (tab_selected == idx) {
+            w += margin_size;
+        }
+        fw += w;
+        if (fw > x) {
+            return idx;
+        }
+    }
+    return -1;
+}
+
 gboolean
 on_tabbar_button_press_event           (GtkWidget       *widget,
                                         GdkEventButton  *event,
                                         gpointer         user_data)
 {
+    tab_clicked = get_tab_under_cursor (event->x);
     if (event->button == 1)
     {
-        int idx;
-        int cnt = deadbeef->plt_get_count ();
-        int fw = 0;
-        int tab_selected = deadbeef->plt_get_curr ();
-        for (idx = 0; idx < cnt; idx++) {
-            const char *title = deadbeef->plt_get_title (idx);
-            int w = 0;
-            int h = 0;
-            draw_get_text_extents (title, strlen (title), &w, &h);
-            w += margin_size + 10;
-            if (tab_selected == idx) {
-                w += margin_size;
-            }
-            fw += w;
-            if (fw > event->x) {
-                deadbeef->plt_set_curr (idx);
-//                tabbar_draw (widget);
-                break;
-            }
+        if (tab_clicked != -1) {
+            deadbeef->plt_set_curr (tab_clicked);
         }
+    }
+    else if (event->button == 3) {
+        GtkWidget *menu = create_plmenu ();
+        gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, widget, 0, gtk_get_current_event_time());
     }
     return FALSE;
 }
@@ -196,5 +208,76 @@ on_tabbar_motion_notify_event          (GtkWidget       *widget,
                                         gpointer         user_data)
 {
   return FALSE;
+}
+
+void
+on_rename_playlist1_activate           (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+
+}
+
+
+void
+on_remove_playlist1_activate           (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    if (tab_clicked != -1) {
+        deadbeef->plt_remove (tab_clicked);
+    }
+}
+
+
+void
+on_add_new_playlist1_activate          (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    int cnt = deadbeef->plt_get_count ();
+    int i;
+    int idx = 0;
+    for (;;) {
+        char name[100];
+        if (!idx) {
+            strcpy (name, "New Playlist");
+        }
+        else {
+            snprintf (name, sizeof (name), "New Playlist (%d)", idx);
+        }
+        for (i = 0; i < cnt; i++) {
+            const char *t = deadbeef->plt_get_title (i);
+            if (!strcasecmp (t, name)) {
+                break;
+            }
+        }
+        if (i == cnt) {
+            deadbeef->plt_add (cnt, name);
+            break;
+        }
+        idx++;
+    }
+}
+
+
+void
+on_load_playlist1_activate             (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+
+}
+
+
+void
+on_save_playlist1_activate             (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+
+}
+
+
+void
+on_save_all_playlists1_activate        (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+
 }
 

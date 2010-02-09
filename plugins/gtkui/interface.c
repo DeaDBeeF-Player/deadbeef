@@ -506,7 +506,7 @@ create_mainwin (void)
   gtk_widget_show (tabbar);
   gtk_box_pack_start (GTK_BOX (vbox1), tabbar, FALSE, TRUE, 0);
   gtk_widget_set_size_request (tabbar, -1, 24);
-  gtk_widget_set_events (tabbar, GDK_POINTER_MOTION_MASK | GDK_BUTTON_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK);
+  gtk_widget_set_events (tabbar, GDK_EXPOSURE_MASK | GDK_POINTER_MOTION_MASK | GDK_BUTTON_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK);
 
   frame1 = gtk_frame_new (NULL);
   gtk_widget_show (frame1);
@@ -1621,7 +1621,7 @@ create_editcolumndlg (void)
 
   editcolumndlg = gtk_dialog_new ();
   gtk_container_set_border_width (GTK_CONTAINER (editcolumndlg), 12);
-  gtk_window_set_title (GTK_WINDOW (editcolumndlg), "dialog1");
+  gtk_window_set_title (GTK_WINDOW (editcolumndlg), "editcolumndlg");
   gtk_window_set_modal (GTK_WINDOW (editcolumndlg), TRUE);
   gtk_window_set_type_hint (GTK_WINDOW (editcolumndlg), GDK_WINDOW_TYPE_HINT_DIALOG);
 
@@ -2185,5 +2185,146 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, closebutton1, "closebutton1");
 
   return prefwin;
+}
+
+GtkWidget*
+create_editplaylistdlg (void)
+{
+  GtkWidget *editplaylistdlg;
+  GtkWidget *dialog_vbox3;
+  GtkWidget *vbox15;
+  GtkWidget *hbox33;
+  GtkWidget *label40;
+  GtkWidget *title;
+  GtkWidget *dialog_action_area3;
+  GtkWidget *cancelbutton2;
+  GtkWidget *okbutton2;
+
+  editplaylistdlg = gtk_dialog_new ();
+  gtk_container_set_border_width (GTK_CONTAINER (editplaylistdlg), 12);
+  gtk_window_set_title (GTK_WINDOW (editplaylistdlg), "editplaylistdlg");
+  gtk_window_set_type_hint (GTK_WINDOW (editplaylistdlg), GDK_WINDOW_TYPE_HINT_DIALOG);
+
+  dialog_vbox3 = GTK_DIALOG (editplaylistdlg)->vbox;
+  gtk_widget_show (dialog_vbox3);
+
+  vbox15 = gtk_vbox_new (FALSE, 0);
+  gtk_widget_show (vbox15);
+  gtk_box_pack_start (GTK_BOX (dialog_vbox3), vbox15, TRUE, TRUE, 0);
+
+  hbox33 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox33);
+  gtk_box_pack_start (GTK_BOX (vbox15), hbox33, TRUE, TRUE, 0);
+
+  label40 = gtk_label_new ("Title:");
+  gtk_widget_show (label40);
+  gtk_box_pack_start (GTK_BOX (hbox33), label40, FALSE, FALSE, 0);
+
+  title = gtk_entry_new ();
+  gtk_widget_show (title);
+  gtk_box_pack_start (GTK_BOX (hbox33), title, TRUE, TRUE, 0);
+  gtk_entry_set_invisible_char (GTK_ENTRY (title), 8226);
+
+  dialog_action_area3 = GTK_DIALOG (editplaylistdlg)->action_area;
+  gtk_widget_show (dialog_action_area3);
+  gtk_button_box_set_layout (GTK_BUTTON_BOX (dialog_action_area3), GTK_BUTTONBOX_END);
+
+  cancelbutton2 = gtk_button_new_from_stock ("gtk-cancel");
+  gtk_widget_show (cancelbutton2);
+  gtk_dialog_add_action_widget (GTK_DIALOG (editplaylistdlg), cancelbutton2, GTK_RESPONSE_CANCEL);
+  GTK_WIDGET_SET_FLAGS (cancelbutton2, GTK_CAN_DEFAULT);
+
+  okbutton2 = gtk_button_new_from_stock ("gtk-ok");
+  gtk_widget_show (okbutton2);
+  gtk_dialog_add_action_widget (GTK_DIALOG (editplaylistdlg), okbutton2, GTK_RESPONSE_OK);
+  GTK_WIDGET_SET_FLAGS (okbutton2, GTK_CAN_DEFAULT);
+
+  /* Store pointers to all widgets, for use by lookup_widget(). */
+  GLADE_HOOKUP_OBJECT_NO_REF (editplaylistdlg, editplaylistdlg, "editplaylistdlg");
+  GLADE_HOOKUP_OBJECT_NO_REF (editplaylistdlg, dialog_vbox3, "dialog_vbox3");
+  GLADE_HOOKUP_OBJECT (editplaylistdlg, vbox15, "vbox15");
+  GLADE_HOOKUP_OBJECT (editplaylistdlg, hbox33, "hbox33");
+  GLADE_HOOKUP_OBJECT (editplaylistdlg, label40, "label40");
+  GLADE_HOOKUP_OBJECT (editplaylistdlg, title, "title");
+  GLADE_HOOKUP_OBJECT_NO_REF (editplaylistdlg, dialog_action_area3, "dialog_action_area3");
+  GLADE_HOOKUP_OBJECT (editplaylistdlg, cancelbutton2, "cancelbutton2");
+  GLADE_HOOKUP_OBJECT (editplaylistdlg, okbutton2, "okbutton2");
+
+  return editplaylistdlg;
+}
+
+GtkWidget*
+create_plmenu (void)
+{
+  GtkWidget *plmenu;
+  GtkWidget *rename_playlist1;
+  GtkWidget *remove_playlist1;
+  GtkWidget *add_new_playlist1;
+  GtkWidget *separator11;
+  GtkWidget *load_playlist1;
+  GtkWidget *save_playlist1;
+  GtkWidget *save_all_playlists1;
+
+  plmenu = gtk_menu_new ();
+
+  rename_playlist1 = gtk_menu_item_new_with_mnemonic ("Rename Playlist");
+  gtk_widget_show (rename_playlist1);
+  gtk_container_add (GTK_CONTAINER (plmenu), rename_playlist1);
+
+  remove_playlist1 = gtk_menu_item_new_with_mnemonic ("Remove Playlist");
+  gtk_widget_show (remove_playlist1);
+  gtk_container_add (GTK_CONTAINER (plmenu), remove_playlist1);
+
+  add_new_playlist1 = gtk_menu_item_new_with_mnemonic ("Add New Playlist");
+  gtk_widget_show (add_new_playlist1);
+  gtk_container_add (GTK_CONTAINER (plmenu), add_new_playlist1);
+
+  separator11 = gtk_separator_menu_item_new ();
+  gtk_widget_show (separator11);
+  gtk_container_add (GTK_CONTAINER (plmenu), separator11);
+  gtk_widget_set_sensitive (separator11, FALSE);
+
+  load_playlist1 = gtk_menu_item_new_with_mnemonic ("Load Playlist");
+  gtk_widget_show (load_playlist1);
+  gtk_container_add (GTK_CONTAINER (plmenu), load_playlist1);
+
+  save_playlist1 = gtk_menu_item_new_with_mnemonic ("Save Playlist");
+  gtk_widget_show (save_playlist1);
+  gtk_container_add (GTK_CONTAINER (plmenu), save_playlist1);
+
+  save_all_playlists1 = gtk_menu_item_new_with_mnemonic ("Save All Playlists");
+  gtk_widget_show (save_all_playlists1);
+  gtk_container_add (GTK_CONTAINER (plmenu), save_all_playlists1);
+
+  g_signal_connect ((gpointer) rename_playlist1, "activate",
+                    G_CALLBACK (on_rename_playlist1_activate),
+                    NULL);
+  g_signal_connect ((gpointer) remove_playlist1, "activate",
+                    G_CALLBACK (on_remove_playlist1_activate),
+                    NULL);
+  g_signal_connect ((gpointer) add_new_playlist1, "activate",
+                    G_CALLBACK (on_add_new_playlist1_activate),
+                    NULL);
+  g_signal_connect ((gpointer) load_playlist1, "activate",
+                    G_CALLBACK (on_load_playlist1_activate),
+                    NULL);
+  g_signal_connect ((gpointer) save_playlist1, "activate",
+                    G_CALLBACK (on_save_playlist1_activate),
+                    NULL);
+  g_signal_connect ((gpointer) save_all_playlists1, "activate",
+                    G_CALLBACK (on_save_all_playlists1_activate),
+                    NULL);
+
+  /* Store pointers to all widgets, for use by lookup_widget(). */
+  GLADE_HOOKUP_OBJECT_NO_REF (plmenu, plmenu, "plmenu");
+  GLADE_HOOKUP_OBJECT (plmenu, rename_playlist1, "rename_playlist1");
+  GLADE_HOOKUP_OBJECT (plmenu, remove_playlist1, "remove_playlist1");
+  GLADE_HOOKUP_OBJECT (plmenu, add_new_playlist1, "add_new_playlist1");
+  GLADE_HOOKUP_OBJECT (plmenu, separator11, "separator11");
+  GLADE_HOOKUP_OBJECT (plmenu, load_playlist1, "load_playlist1");
+  GLADE_HOOKUP_OBJECT (plmenu, save_playlist1, "save_playlist1");
+  GLADE_HOOKUP_OBJECT (plmenu, save_all_playlists1, "save_all_playlists1");
+
+  return plmenu;
 }
 

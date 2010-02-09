@@ -326,6 +326,8 @@ playlistswitch_cb (gpointer none) {
     playlist_refresh ();
     search_refresh ();
     tabbar_draw (lookup_widget (mainwin, "tabbar"));
+    //GtkWidget *widget = lookup_widget (mainwin, "tabbar");
+    //gdk_window_invalidate_rect (widget->window, NULL, FALSE);
     return FALSE;
 }
 

@@ -836,3 +836,27 @@ gboolean
 on_tabbar_motion_notify_event          (GtkWidget       *widget,
                                         GdkEventMotion  *event,
                                         gpointer         user_data);
+
+void
+on_rename_playlist1_activate           (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_remove_playlist1_activate           (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_add_new_playlist1_activate          (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_load_playlist1_activate             (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_save_playlist1_activate             (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_save_all_playlists1_activate        (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);

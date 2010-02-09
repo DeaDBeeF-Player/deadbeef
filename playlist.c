@@ -121,19 +121,30 @@ plt_add (int before, const char *title) {
     plt->next = p_after;
     playlists_count++;
 
+    plt_gen_conf ();
+
     if (!playlist) {
         playlist = plt;
-        if (!plt_loading) {
-            plug_trigger_event (DB_EV_PLAYLISTSWITCH, 0);
-        }
     }
-
-    plt_gen_conf ();
+    if (!plt_loading) {
+        plug_trigger_event (DB_EV_PLAYLISTSWITCH, 0);
+    }
 }
 
 void
 plt_remove (int plt) {
     int i;
+    if (playlists_head && !playlists_head->next) {
+        trace ("warning: deleting last playlist\n");
+        pl_free ();
+        free (playlist->title);
+        playlist->title = strdup ("Default");
+        plt_gen_conf ();
+        if (!plt_loading) {
+            plug_trigger_event (DB_EV_PLAYLISTSWITCH, 0);
+        }
+        return;
+    }
     playlist_t *prev = NULL;
     playlist_t *p = playlists_head;
     for (i = 0; p && i < plt; i++) {
@@ -152,13 +163,16 @@ plt_remove (int plt) {
         }
     }
     if (p == playlist) {
-        playlist = NULL;
+        playlist = prev ? prev : playlists_head;
     }
     free (p->title);
     free (p);
     playlists_count--;
 
     plt_gen_conf ();
+    if (!plt_loading) {
+        plug_trigger_event (DB_EV_PLAYLISTSWITCH, 0);
+    }
 }
 
 void
