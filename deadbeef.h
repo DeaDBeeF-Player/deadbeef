@@ -286,6 +286,7 @@ typedef struct {
     void (*plt_set_curr) (int plt);
     int (*plt_get_curr) (void);
     const char * (*plt_get_title) (int plt);
+    void (*plt_set_title) (int plt, const char *title);
     // playlist tracks access
     DB_playItem_t * (*pl_item_alloc) (void);
     void (*pl_item_ref) (DB_playItem_t *it);

@@ -1322,69 +1322,6 @@ create_headermenu (void)
 }
 
 GtkWidget*
-create_addlocation (void)
-{
-  GtkWidget *addlocation;
-  GtkWidget *vbox7;
-  GtkWidget *addlocation_entry;
-  GtkWidget *hbox8;
-  GtkWidget *label21;
-  GtkWidget *addlocation_ok;
-
-  addlocation = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_container_set_border_width (GTK_CONTAINER (addlocation), 12);
-  gtk_window_set_title (GTK_WINDOW (addlocation), "Add Location");
-  gtk_window_set_modal (GTK_WINDOW (addlocation), TRUE);
-  gtk_window_set_destroy_with_parent (GTK_WINDOW (addlocation), TRUE);
-  gtk_window_set_skip_taskbar_hint (GTK_WINDOW (addlocation), TRUE);
-  gtk_window_set_skip_pager_hint (GTK_WINDOW (addlocation), TRUE);
-
-  vbox7 = gtk_vbox_new (FALSE, 8);
-  gtk_widget_show (vbox7);
-  gtk_container_add (GTK_CONTAINER (addlocation), vbox7);
-
-  addlocation_entry = gtk_entry_new ();
-  gtk_widget_show (addlocation_entry);
-  gtk_box_pack_start (GTK_BOX (vbox7), addlocation_entry, FALSE, FALSE, 0);
-  gtk_widget_set_size_request (addlocation_entry, 346, -1);
-  gtk_entry_set_invisible_char (GTK_ENTRY (addlocation_entry), 8226);
-
-  hbox8 = gtk_hbox_new (FALSE, 0);
-  gtk_widget_show (hbox8);
-  gtk_box_pack_start (GTK_BOX (vbox7), hbox8, FALSE, TRUE, 2);
-
-  label21 = gtk_label_new ("");
-  gtk_widget_show (label21);
-  gtk_box_pack_start (GTK_BOX (hbox8), label21, TRUE, FALSE, 0);
-
-  addlocation_ok = gtk_button_new_with_mnemonic ("OK");
-  gtk_widget_show (addlocation_ok);
-  gtk_box_pack_start (GTK_BOX (hbox8), addlocation_ok, FALSE, FALSE, 0);
-  gtk_widget_set_size_request (addlocation_ok, 83, -1);
-  GTK_WIDGET_UNSET_FLAGS (addlocation_ok, GTK_CAN_FOCUS);
-
-  g_signal_connect ((gpointer) addlocation, "key_press_event",
-                    G_CALLBACK (on_addlocation_key_press_event),
-                    NULL);
-  g_signal_connect ((gpointer) addlocation_entry, "activate",
-                    G_CALLBACK (on_addlocation_entry_activate),
-                    NULL);
-  g_signal_connect ((gpointer) addlocation_ok, "clicked",
-                    G_CALLBACK (on_addlocation_ok_clicked),
-                    NULL);
-
-  /* Store pointers to all widgets, for use by lookup_widget(). */
-  GLADE_HOOKUP_OBJECT_NO_REF (addlocation, addlocation, "addlocation");
-  GLADE_HOOKUP_OBJECT (addlocation, vbox7, "vbox7");
-  GLADE_HOOKUP_OBJECT (addlocation, addlocation_entry, "addlocation_entry");
-  GLADE_HOOKUP_OBJECT (addlocation, hbox8, "hbox8");
-  GLADE_HOOKUP_OBJECT (addlocation, label21, "label21");
-  GLADE_HOOKUP_OBJECT (addlocation, addlocation_ok, "addlocation_ok");
-
-  return addlocation;
-}
-
-GtkWidget*
 create_trackproperties (void)
 {
   GtkWidget *trackproperties;
@@ -2201,7 +2138,7 @@ create_editplaylistdlg (void)
   GtkWidget *okbutton2;
 
   editplaylistdlg = gtk_dialog_new ();
-  gtk_container_set_border_width (GTK_CONTAINER (editplaylistdlg), 12);
+  gtk_container_set_border_width (GTK_CONTAINER (editplaylistdlg), 8);
   gtk_window_set_title (GTK_WINDOW (editplaylistdlg), "editplaylistdlg");
   gtk_window_set_type_hint (GTK_WINDOW (editplaylistdlg), GDK_WINDOW_TYPE_HINT_DIALOG);
 
@@ -2211,6 +2148,7 @@ create_editplaylistdlg (void)
   vbox15 = gtk_vbox_new (FALSE, 0);
   gtk_widget_show (vbox15);
   gtk_box_pack_start (GTK_BOX (dialog_vbox3), vbox15, TRUE, TRUE, 0);
+  gtk_container_set_border_width (GTK_CONTAINER (vbox15), 4);
 
   hbox33 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox33);
@@ -2224,6 +2162,7 @@ create_editplaylistdlg (void)
   gtk_widget_show (title);
   gtk_box_pack_start (GTK_BOX (hbox33), title, TRUE, TRUE, 0);
   gtk_entry_set_invisible_char (GTK_ENTRY (title), 8226);
+  gtk_entry_set_activates_default (GTK_ENTRY (title), TRUE);
 
   dialog_action_area3 = GTK_DIALOG (editplaylistdlg)->action_area;
   gtk_widget_show (dialog_action_area3);
@@ -2326,5 +2265,67 @@ create_plmenu (void)
   GLADE_HOOKUP_OBJECT (plmenu, save_all_playlists1, "save_all_playlists1");
 
   return plmenu;
+}
+
+GtkWidget*
+create_addlocationdlg (void)
+{
+  GtkWidget *addlocationdlg;
+  GtkWidget *dialog_vbox4;
+  GtkWidget *hbox34;
+  GtkWidget *label41;
+  GtkWidget *addlocation_entry;
+  GtkWidget *addlocation_actionarea;
+  GtkWidget *cancelbutton3;
+  GtkWidget *okbutton3;
+
+  addlocationdlg = gtk_dialog_new ();
+  gtk_container_set_border_width (GTK_CONTAINER (addlocationdlg), 8);
+  gtk_window_set_title (GTK_WINDOW (addlocationdlg), "Add location");
+  gtk_window_set_type_hint (GTK_WINDOW (addlocationdlg), GDK_WINDOW_TYPE_HINT_DIALOG);
+
+  dialog_vbox4 = GTK_DIALOG (addlocationdlg)->vbox;
+  gtk_widget_show (dialog_vbox4);
+
+  hbox34 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox34);
+  gtk_box_pack_start (GTK_BOX (dialog_vbox4), hbox34, TRUE, TRUE, 0);
+  gtk_container_set_border_width (GTK_CONTAINER (hbox34), 4);
+
+  label41 = gtk_label_new ("URL:");
+  gtk_widget_show (label41);
+  gtk_box_pack_start (GTK_BOX (hbox34), label41, FALSE, FALSE, 0);
+
+  addlocation_entry = gtk_entry_new ();
+  gtk_widget_show (addlocation_entry);
+  gtk_box_pack_start (GTK_BOX (hbox34), addlocation_entry, TRUE, TRUE, 0);
+  gtk_widget_set_size_request (addlocation_entry, 297, -1);
+  gtk_entry_set_invisible_char (GTK_ENTRY (addlocation_entry), 8226);
+
+  addlocation_actionarea = GTK_DIALOG (addlocationdlg)->action_area;
+  gtk_widget_show (addlocation_actionarea);
+  gtk_button_box_set_layout (GTK_BUTTON_BOX (addlocation_actionarea), GTK_BUTTONBOX_END);
+
+  cancelbutton3 = gtk_button_new_from_stock ("gtk-cancel");
+  gtk_widget_show (cancelbutton3);
+  gtk_dialog_add_action_widget (GTK_DIALOG (addlocationdlg), cancelbutton3, GTK_RESPONSE_CANCEL);
+  GTK_WIDGET_SET_FLAGS (cancelbutton3, GTK_CAN_DEFAULT);
+
+  okbutton3 = gtk_button_new_from_stock ("gtk-ok");
+  gtk_widget_show (okbutton3);
+  gtk_dialog_add_action_widget (GTK_DIALOG (addlocationdlg), okbutton3, GTK_RESPONSE_OK);
+  GTK_WIDGET_SET_FLAGS (okbutton3, GTK_CAN_DEFAULT);
+
+  /* Store pointers to all widgets, for use by lookup_widget(). */
+  GLADE_HOOKUP_OBJECT_NO_REF (addlocationdlg, addlocationdlg, "addlocationdlg");
+  GLADE_HOOKUP_OBJECT_NO_REF (addlocationdlg, dialog_vbox4, "dialog_vbox4");
+  GLADE_HOOKUP_OBJECT (addlocationdlg, hbox34, "hbox34");
+  GLADE_HOOKUP_OBJECT (addlocationdlg, label41, "label41");
+  GLADE_HOOKUP_OBJECT (addlocationdlg, addlocation_entry, "addlocation_entry");
+  GLADE_HOOKUP_OBJECT_NO_REF (addlocationdlg, addlocation_actionarea, "addlocation_actionarea");
+  GLADE_HOOKUP_OBJECT (addlocationdlg, cancelbutton3, "cancelbutton3");
+  GLADE_HOOKUP_OBJECT (addlocationdlg, okbutton3, "okbutton3");
+
+  return addlocationdlg;
 }
 

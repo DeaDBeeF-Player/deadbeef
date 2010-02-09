@@ -87,6 +87,9 @@ plt_get_curr (void);
 const char *
 plt_get_title (int plt);
 
+void
+plt_set_title (int plt, const char *title);
+
 playlist_t *
 plt_get_curr_ptr (void);
 

@@ -214,7 +214,16 @@ void
 on_rename_playlist1_activate           (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-
+    GtkWidget *dlg = create_editplaylistdlg ();
+    int res = gtk_dialog_run (GTK_DIALOG (dlg));
+    if (res == GTK_RESPONSE_OK) {
+        GtkWidget *e = lookup_widget (dlg, "title");
+        const char *text = gtk_entry_get_text (GTK_ENTRY (e));
+        deadbeef->plt_set_title (tab_clicked, text);
+        extern GtkWidget *mainwin;
+        tabbar_draw (lookup_widget (mainwin, "tabbar"));
+    }
+    gtk_widget_destroy (dlg);
 }
 
 

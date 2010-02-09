@@ -134,7 +134,7 @@ plt_add (int before, const char *title) {
 void
 plt_remove (int plt) {
     int i;
-    if (playlists_head && !playlists_head->next) {
+    if (!plt_loading && (playlists_head && !playlists_head->next)) {
         trace ("warning: deleting last playlist\n");
         pl_free ();
         free (playlist->title);
@@ -220,6 +220,20 @@ plt_get_title (int plt) {
     return NULL;
 }
 
+void
+plt_set_title (int plt, const char *title) {
+    int i;
+    playlist_t *p = playlists_head;
+    for (i = 0; p && i <= plt; i++) {
+        if (i == plt) {
+            free (p->title);
+            p->title = strdup (title);
+            return;
+        }
+        p = p->next;
+    }
+}
+
 playlist_t *
 plt_get_curr_ptr (void) {
     return playlist;
@@ -227,9 +241,11 @@ plt_get_curr_ptr (void) {
 
 void
 plt_free (void) {
+    plt_loading = 1;
     while (playlists_head) {
         plt_remove (0);
     }
+    plt_loading = 0;
 }
 
 void
