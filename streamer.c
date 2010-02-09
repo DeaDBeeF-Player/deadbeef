@@ -404,7 +404,8 @@ streamer_set_current (playItem_t *it) {
             mutex_unlock (decodemutex);
             trace ("bps=%d, channels=%d, samplerate=%d\n", info->bps, info->channels, info->samplerate);
         }
-        streamer_reset (0); // reset SRC
+// FIXME: that might break streaming at boundaries between 2 different samplerates
+//        streamer_reset (0); // reset SRC
     }
     else {
         trace ("no decoder in playitem!\n");
@@ -1051,6 +1052,10 @@ streamer_decode_src_libsamplerate (uint8_t *bytes, int size) {
         }
         int nread = streamer_read_data_for_src_float (&g_src_in_fbuffer[src_remaining*2], n_input_frames);
         src_remaining += nread;
+        if (!src_remaining) {
+            trace ("SRC input buffer empty\n");
+            break;
+        }
         // resample
 
         srcdata.data_in = g_src_in_fbuffer;
@@ -1059,7 +1064,7 @@ streamer_decode_src_libsamplerate (uint8_t *bytes, int size) {
         srcdata.output_frames = size/4;
         srcdata.src_ratio = ratio;
 //        trace ("SRC from %d to %d\n", samplerate, p_get_rate ());
-        srcdata.end_of_input = (nread == n_input_frames) ? 0 : 1;
+        srcdata.end_of_input = 0;//(nread == n_input_frames) ? 0 : 1;
         src_process (src, &srcdata);
         // convert back to s16 format
 //        trace ("out frames: %d\n", srcdata.output_frames_gen);
@@ -1078,10 +1083,10 @@ streamer_decode_src_libsamplerate (uint8_t *bytes, int size) {
             memmove (g_src_in_fbuffer, &g_src_in_fbuffer[srcdata.input_frames_used*2], src_remaining * sizeof (float) * 2);
         }
 
-        if (nread != n_input_frames) {
-            trace ("nread=%d, n_input_frames=%d, mismatch!\n", nread, n_input_frames);
-            break;
-        }
+//        if (nread != n_input_frames) {
+//            trace ("nread=%d, n_input_frames=%d, mismatch!\n", nread, n_input_frames);
+//            break;
+//        }
     }
     return initsize-size;
 }
@@ -1177,7 +1182,8 @@ streamer_read_async (char *bytes, int size) {
         }
         else  {
             // that means EOF
-            if (bytes_until_next_song < 0) {
+            if (bytes_until_next_song < 0) // don't start streaming new if already draining
+            {
                 trace ("finished streaming song, queueing next\n");
                 bytes_until_next_song = streambuffer_fill;
                 if (conf_get_int ("playlist.stop_after_current", 0)) {
