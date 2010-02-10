@@ -307,9 +307,6 @@ streamer_song_removed_notify (playItem_t *it) {
         return; // streamer is not running
     }
     plug_trigger_event (DB_EV_TRACKDELETED, (uintptr_t)it);
-    if (it == playing_track) {
-        playing_track = NULL;
-    }
     if (it == playlist_track) {
         playlist_track = NULL;
         // queue new next song for streaming
@@ -1171,7 +1168,10 @@ streamer_read_async (char *bytes, int size) {
                 bytesread = streamer_decode_src_libsamplerate (bytes, size);
             }
             else {
-                fprintf (stderr, "invalid ratio! %d / %d = %f", p_get_rate (), samplerate, p_get_rate ()/(float)samplerate);
+                fprintf (stderr, "error: invalid ratio! %d / %d (this indicates decoder or streamer bug)\n", p_get_rate (), samplerate);
+                fprintf (stderr, "error: file: %s\n", streaming_track ? streaming_track->fname : "(null)");
+                // immediately start streaming next track
+                bytes_until_next_song = -1;
             }
         }
         mutex_unlock (decodemutex);
