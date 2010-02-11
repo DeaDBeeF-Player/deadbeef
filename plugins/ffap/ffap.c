@@ -1726,14 +1726,17 @@ ffap_insert (DB_playItem_t *after, const char *fname) {
     }
 
     // embedded cue
+    deadbeef->pl_lock ();
     const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
     if (cuesheet) {
         cue = deadbeef->pl_insert_cue_from_buffer (after, it, cuesheet, strlen (cuesheet), ape_ctx.totalsamples, ape_ctx.samplerate);
         if (cue) {
             deadbeef->pl_item_unref (it);
+            deadbeef->pl_unlock ();
             return cue;
         }
     }
+    deadbeef->pl_unlock ();
 
     deadbeef->pl_add_meta (it, "title", NULL);
     after = deadbeef->pl_insert_item (after, it);

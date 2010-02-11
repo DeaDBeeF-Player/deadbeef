@@ -36,7 +36,7 @@ open_files_worker (void *data) {
 
 void
 gtkui_open_files (struct _GSList *lst) {
-    deadbeef->pl_free ();
+    deadbeef->pl_clear ();
     deadbeef->thread_start (open_files_worker, lst);
 }
 

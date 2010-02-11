@@ -402,7 +402,7 @@ on_open_activate                       (GtkMenuItem     *menuitem,
     }
     if (response == GTK_RESPONSE_OK)
     {
-        deadbeef->pl_free ();
+        deadbeef->pl_clear ();
         GSList *lst = gtk_file_chooser_get_filenames (GTK_FILE_CHOOSER (dlg));
         gtk_widget_destroy (dlg);
         if (lst) {
@@ -501,7 +501,7 @@ void
 on_clear1_activate                     (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    deadbeef->pl_free ();
+    deadbeef->pl_clear ();
     gtkplaylist_t *ps = &main_playlist;
     GtkWidget *widget = ps->playlist;
     gtkpl_setup_scrollbar (ps);

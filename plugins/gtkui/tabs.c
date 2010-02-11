@@ -51,7 +51,8 @@ tabbar_draw (GtkWidget *widget) {
     int widths[cnt];
     int fullwidth = 0;
     for (idx = 0; idx < cnt; idx++) {
-        const char *title = deadbeef->plt_get_title (idx);
+        char title[100];
+        deadbeef->plt_get_title (idx, title, sizeof (title));
         widths[idx] = 0;
         int h = 0;
         draw_get_text_extents (title, strlen (title), &widths[idx], &h);
@@ -74,7 +75,8 @@ tabbar_draw (GtkWidget *widget) {
             GdkColor *gdkfg = &widget->style->fg[0];
             float fg[3] = {(float)gdkfg->red/0xffff, (float)gdkfg->green/0xffff, (float)gdkfg->blue/0xffff};
             draw_set_fg_color (fg);
-            const char *tab_title = deadbeef->plt_get_title (idx);
+            char tab_title[100];
+            deadbeef->plt_get_title (idx, tab_title, sizeof (tab_title));
             draw_text (x + margin_size + 5, h/2-draw_get_font_size()/2, w - margin_size, 0, tab_title);
         }
         x += margin_size;
@@ -98,7 +100,8 @@ tabbar_draw (GtkWidget *widget) {
         GdkColor *gdkfg = &widget->style->fg[0];
         float fg[3] = {(float)gdkfg->red/0xffff, (float)gdkfg->green/0xffff, (float)gdkfg->blue/0xffff};
         draw_set_fg_color (fg);
-        const char *tab_title = deadbeef->plt_get_title (idx);
+        char tab_title[100];
+        deadbeef->plt_get_title (idx, tab_title, sizeof (tab_title));
         draw_text (x + margin_size + 5, h/2-draw_get_font_size()/2, w - margin_size, 0, tab_title);
     }
     if (need_draw_moving) {
@@ -136,7 +139,8 @@ get_tab_under_cursor (int x) {
     int fw = 0;
     int tab_selected = deadbeef->plt_get_curr ();
     for (idx = 0; idx < cnt; idx++) {
-        const char *title = deadbeef->plt_get_title (idx);
+        char title[100];
+        deadbeef->plt_get_title (idx, title, sizeof (title));
         int w = 0;
         int h = 0;
         draw_get_text_extents (title, strlen (title), &w, &h);
@@ -253,7 +257,8 @@ on_add_new_playlist1_activate          (GtkMenuItem     *menuitem,
             snprintf (name, sizeof (name), "New Playlist (%d)", idx);
         }
         for (i = 0; i < cnt; i++) {
-            const char *t = deadbeef->plt_get_title (i);
+            char t[100];
+            deadbeef->plt_get_title (i, t, sizeof (t));
             if (!strcasecmp (t, name)) {
                 break;
             }

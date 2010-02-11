@@ -40,7 +40,4 @@ junk_detect_charset (const char *s);
 void
 junk_recode (const char *in, int inlen, char *out, int outlen, const char *cs);
 
-void
-junk_copy (struct playItem_s *from, struct playItem_s *first, struct playItem_s *last);
-
 #endif // __JUNKLIB_H

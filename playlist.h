@@ -65,7 +65,38 @@ typedef struct playlist_s {
     struct playlist_s *next;
 } playlist_t;
 
+// global playlist control functions
+int
+pl_init (void);
+
+void
+pl_free (void);
+
+void
+pl_lock (void);
+
+void
+pl_unlock (void);
+
+void
+plt_lock (void);
+
+void
+plt_unlock (void);
+
+void
+pl_global_lock (void);
+
+void
+pl_global_unlock (void);
+
+
 // playlist management functions
+
+// it is highly recommended to access that from inside plt_lock/unlock block
+playlist_t *
+plt_get_curr_ptr (void);
+
 int
 plt_get_count (void);
 
@@ -84,16 +115,16 @@ plt_set_curr (int plt);
 int
 plt_get_curr (void);
 
-const char *
-plt_get_title (int plt);
+int
+plt_get_title (int plt, char *buffer, int bufsize);
 
-void
+int
 plt_set_title (int plt, const char *title);
 
-playlist_t *
-plt_get_curr_ptr (void);
-
 // playlist access functions
+void
+pl_clear (void);
+
 int
 pl_add_dir (const char *dirname, int (*cb)(playItem_t *it, void *data), void *user_data);
 
@@ -127,9 +158,6 @@ pl_item_unref (playItem_t *it);
 void
 pl_item_copy (playItem_t *out, playItem_t *it);
 
-void
-pl_free (void);
-
 int
 pl_getcount (int iter);
 
@@ -154,6 +182,8 @@ pl_insert_cue (playItem_t *after, playItem_t *origin, int numsamples, int sample
 void
 pl_add_meta (playItem_t *it, const char *key, const char *value);
 
+// must be used in explicit pl_lock/unlock block
+// that makes it possible to avoid copying metadata on every access
 const char *
 pl_find_meta (playItem_t *it, const char *key);
 
@@ -266,5 +296,8 @@ pl_playqueue_getnext (void);
 
 int
 pl_playqueue_getcount (void);
+
+void
+pl_items_copy_junk (struct playItem_s *from, struct playItem_s *first, struct playItem_s *last);
 
 #endif // __PLAYLIST_H

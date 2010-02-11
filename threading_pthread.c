@@ -60,11 +60,30 @@ thread_join (intptr_t tid) {
 uintptr_t
 mutex_create (void) {
     pthread_mutex_t *mtx = malloc (sizeof (pthread_mutex_t));
-    int err = pthread_mutex_init (mtx, NULL);
+    pthread_mutexattr_t attr = {0};
+    pthread_mutexattr_init (&attr);
+    pthread_mutexattr_settype (&attr, PTHREAD_MUTEX_NORMAL);
+    int err = pthread_mutex_init (mtx, &attr);
     if (err != 0) {
         fprintf (stderr, "pthread_mutex_init failed: %s\n", strerror (err));
         return 0;
     }
+    pthread_mutexattr_destroy (&attr);
+    return (uintptr_t)mtx;
+}
+
+uintptr_t
+mutex_create_recursive (void) {
+    pthread_mutex_t *mtx = malloc (sizeof (pthread_mutex_t));
+    pthread_mutexattr_t attr = {0};
+    pthread_mutexattr_init (&attr);
+    pthread_mutexattr_settype (&attr, PTHREAD_MUTEX_RECURSIVE);
+    int err = pthread_mutex_init (mtx, &attr);
+    if (err != 0) {
+        fprintf (stderr, "pthread_mutex_init failed: %s\n", strerror (err));
+        return 0;
+    }
+    pthread_mutexattr_destroy (&attr);
     return (uintptr_t)mtx;
 }
 

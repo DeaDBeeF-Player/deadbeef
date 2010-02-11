@@ -26,16 +26,35 @@ thread_start (void (*fn)(void *ctx), void *ctx);
 int
 thread_join (intptr_t tid);
 
-uintptr_t mutex_create (void);
-void mutex_free (uintptr_t mtx);
-int mutex_lock (uintptr_t mtx);
-int mutex_unlock (uintptr_t mtx);
+uintptr_t
+mutex_create (void);
 
-uintptr_t cond_create (void);
-void cond_free (uintptr_t cond);
-int cond_wait (uintptr_t cond, uintptr_t mutex);
-int cond_signal (uintptr_t cond);
-int cond_broadcast (uintptr_t cond);
+uintptr_t
+mutex_create_recursive (void);
+
+void
+mutex_free (uintptr_t mtx);
+
+int
+mutex_lock (uintptr_t mtx);
+
+int
+mutex_unlock (uintptr_t mtx);
+
+uintptr_t
+cond_create (void);
+
+void
+cond_free (uintptr_t cond);
+
+int
+cond_wait (uintptr_t cond, uintptr_t mutex);
+
+int
+cond_signal (uintptr_t cond);
+
+int
+cond_broadcast (uintptr_t cond);
 
 #endif
 

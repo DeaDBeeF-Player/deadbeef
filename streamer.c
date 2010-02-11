@@ -102,18 +102,21 @@ streamer_get_playing_track (void) {
 
 int
 streamer_move_to_nextsong (int reason) {
+    pl_global_lock ();
     playlist_t *plt = plt_get_curr_ptr ();
     playItem_t *it = pl_playqueue_getnext ();
     if (it) {
         pl_playqueue_pop ();
         int r = pl_get_idx_of (it);
         streamer_set_nextsong (r, 1);
+        pl_global_unlock ();
         return 0;
     }
 
     playItem_t *curr = playlist_track;
     if (!plt->head[PL_MAIN]) {
         streamer_set_nextsong (-2, 1);
+        pl_global_unlock ();
         return 0;
     }
     int pl_order = conf_get_int ("playback.order", 0);
@@ -138,10 +141,12 @@ streamer_move_to_nextsong (int reason) {
                 }
             }
             if (!it) {
+                pl_global_unlock ();
                 return -1;
             }
             int r = pl_get_idx_of (it);
             streamer_set_nextsong (r, 1);
+            pl_global_unlock ();
             return 0;
         }
         else {
@@ -149,6 +154,7 @@ streamer_move_to_nextsong (int reason) {
             if (reason == 0 && pl_loop_mode == PLAYBACK_MODE_LOOP_SINGLE) { // song finished, loop mode is "loop 1 track"
                 int r = pl_get_idx_of (curr);
                 streamer_set_nextsong (r, 1);
+                pl_global_unlock ();
                 return 0;
             }
             // find minimal notplayed above current
@@ -171,10 +177,12 @@ streamer_move_to_nextsong (int reason) {
                 }
             }
             if (!it) {
+                pl_global_unlock ();
                 return -1;
             }
             int r = pl_get_idx_of (it);
             streamer_set_nextsong (r, 1);
+            pl_global_unlock ();
             return 0;
         }
     }
@@ -184,6 +192,7 @@ streamer_move_to_nextsong (int reason) {
             if (reason == 0 && pl_loop_mode == PLAYBACK_MODE_LOOP_SINGLE) { // loop same track
                 int r = pl_get_idx_of (curr);
                 streamer_set_nextsong (r, 1);
+                pl_global_unlock ();
                 return 0;
             }
             it = curr->next[PL_MAIN];
@@ -195,24 +204,29 @@ streamer_move_to_nextsong (int reason) {
             }
             else {
                 streamer_set_nextsong (-2, 1);
+                pl_global_unlock ();
                 return 0;
             }
         }
         if (!it) {
+            pl_global_unlock ();
             return -1;
         }
         int r = pl_get_idx_of (it);
         streamer_set_nextsong (r, 1);
+        pl_global_unlock ();
         return 0;
     }
     else if (pl_order == PLAYBACK_ORDER_RANDOM) { // random
         if (reason == 0 && pl_loop_mode == PLAYBACK_MODE_LOOP_SINGLE && curr) {
             int r = pl_get_idx_of (curr);
             streamer_set_nextsong (r, 1);
+            pl_global_unlock ();
             return 0;
         }
         return streamer_move_to_randomsong ();
     }
+    pl_global_unlock ();
     return -1;
 }
 

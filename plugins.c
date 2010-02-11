@@ -111,6 +111,8 @@ static DB_functions_t deadbeef_api = {
     .plt_get_title = plt_get_title,
     .plt_set_title = plt_set_title,
     // playlist access
+    .pl_lock = pl_lock,
+    .pl_unlock = pl_unlock,
     .pl_item_alloc = (DB_playItem_t* (*)(void))pl_item_alloc,
     .pl_item_ref = (void (*)(DB_playItem_t *))pl_item_ref,
     .pl_item_unref = (void (*)(DB_playItem_t *))pl_item_unref,
@@ -126,6 +128,7 @@ static DB_functions_t deadbeef_api = {
     .pl_set_item_duration = (void (*) (DB_playItem_t *it, float duration))pl_set_item_duration,
     .pl_get_item_duration = (float (*) (DB_playItem_t *it))pl_get_item_duration,
     .pl_sort = pl_sort,
+    .pl_items_copy_junk = (void (*)(DB_playItem_t *from, DB_playItem_t *first, DB_playItem_t *last))pl_items_copy_junk,
     .pl_get_totaltime = pl_get_totaltime,
     .pl_getcount = pl_getcount,
     .pl_getcurrent = (DB_playItem_t *(*)(void))streamer_get_playing_track,
@@ -134,7 +137,7 @@ static DB_functions_t deadbeef_api = {
     .pl_get_cursor = pl_get_cursor,
     .pl_set_selected = (void (*) (DB_playItem_t *, int))pl_set_selected,
     .pl_is_selected = (int (*) (DB_playItem_t *))pl_is_selected,
-    .pl_free = pl_free,
+    .pl_clear = pl_clear,
     .pl_load = pl_load,
     .pl_save = pl_save,
     .pl_select_all = pl_select_all,
@@ -157,6 +160,7 @@ static DB_functions_t deadbeef_api = {
     // cuesheet support
     .pl_insert_cue_from_buffer = (DB_playItem_t *(*) (DB_playItem_t *after, DB_playItem_t *origin, const uint8_t *buffer, int buffersize, int numsamples, int samplerate))pl_insert_cue_from_buffer,
     .pl_insert_cue = (DB_playItem_t *(*)(DB_playItem_t *after, DB_playItem_t *origin, int numsamples, int samplerate))pl_insert_cue,
+    // playqueue support
     .pl_playqueue_push = (int (*) (DB_playItem_t *))pl_playqueue_push,
     .pl_playqueue_clear = pl_playqueue_clear,
     .pl_playqueue_pop = pl_playqueue_pop,
@@ -173,7 +177,6 @@ static DB_functions_t deadbeef_api = {
     .junk_read_id3v2 = (int (*)(DB_playItem_t *it, DB_FILE *fp))junk_read_id3v2,
     .junk_read_ape = (int (*)(DB_playItem_t *it, DB_FILE *fp))junk_read_ape,
     .junk_get_leading_size = junk_get_leading_size,
-    .junk_copy = (void (*)(DB_playItem_t *from, DB_playItem_t *first, DB_playItem_t *last))junk_copy,
     .junk_detect_charset = junk_detect_charset,
     .junk_recode = junk_recode,
     // vfs

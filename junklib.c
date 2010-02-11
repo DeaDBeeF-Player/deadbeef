@@ -1328,32 +1328,3 @@ junk_recode (const char *in, int inlen, char *out, int outlen, const char *cs) {
     }
 }
 
-void
-junk_copy (playItem_t *from, playItem_t *first, playItem_t *last) {
-    const char *year = pl_find_meta (from, "year");
-    const char *genre = pl_find_meta (from, "genre");
-    const char *copyright = pl_find_meta (from, "copyright");
-    const char *vendor = pl_find_meta (from, "vendor");
-    const char *comment = pl_find_meta (from, "comment");
-    playItem_t *i;
-    for (i = first; i; i = i->next[PL_MAIN]) {
-        if (year) {
-            pl_add_meta (i, "year", year);
-        }
-        if (genre) {
-            pl_add_meta (i, "genre", genre);
-        }
-        if (copyright) {
-            pl_add_meta (i, "copyright", copyright);
-        }
-        if (vendor) {
-            pl_add_meta (i, "vendor", vendor);
-        }
-        if (comment) {
-            pl_add_meta (i, "comment", comment);
-        }
-        if (i == last) {
-            break;
-        }
-    }
-}

@@ -285,8 +285,11 @@ typedef struct {
     void (*plt_free) (void);
     void (*plt_set_curr) (int plt);
     int (*plt_get_curr) (void);
-    const char * (*plt_get_title) (int plt);
-    void (*plt_set_title) (int plt, const char *title);
+    int (*plt_get_title) (int plt, char *buffer, int bufsize);
+    int (*plt_set_title) (int plt, const char *title);
+    // playlist control
+    void (*pl_lock) (void);
+    void (*pl_unlock) (void);
     // playlist tracks access
     DB_playItem_t * (*pl_item_alloc) (void);
     void (*pl_item_ref) (DB_playItem_t *it);
@@ -308,7 +311,7 @@ typedef struct {
     int (*pl_get_cursor) (int iter);
     void (*pl_set_selected) (DB_playItem_t *it, int sel);
     int (*pl_is_selected) (DB_playItem_t *it);
-    void (*pl_free) (void);
+    void (*pl_clear) (void);
     int (*pl_load) (const char *name);
     int (*pl_save) (const char *name);
     void (*pl_select_all) (void);
@@ -351,12 +354,14 @@ typedef struct {
     void (*pl_search_process) (const char *text);
     // metainfo
     void (*pl_add_meta) (DB_playItem_t *it, const char *key, const char *value);
-    const char *(*pl_find_meta) (DB_playItem_t *song, const char *meta);
+    // must be used from within explicit pl_lock/unlock block
+    const char *(*pl_find_meta) (DB_playItem_t *it, const char *key);
     void (*pl_delete_all_meta) (DB_playItem_t *it);
     void (*pl_replace_meta) (DB_playItem_t *it, const char *key, const char *value);
     void (*pl_set_item_duration) (DB_playItem_t *it, float duration);
     float (*pl_get_item_duration) (DB_playItem_t *it);
     void (*pl_sort) (int iter, int id, const char *format, int ascending);
+    void (*pl_items_copy_junk)(DB_playItem_t *from, DB_playItem_t *first, DB_playItem_t *last);
     // playqueue support
     int (*pl_playqueue_push) (DB_playItem_t *it);
     void (*pl_playqueue_clear) (void);

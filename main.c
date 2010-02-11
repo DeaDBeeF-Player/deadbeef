@@ -563,7 +563,8 @@ main (int argc, char *argv[]) {
     }
 
 
-    conf_load (); // required by some plugin at startup
+    pl_init ();
+    conf_load (); // required by some plugins at startup
     messagepump_init (); // required to push messages while handling commandline
     plug_load_all (); // required to add files to playlist from commandline
 
@@ -639,11 +640,11 @@ main (int argc, char *argv[]) {
     plug_unload_all ();
 
     // at this point we can simply do exit(0), but let's clean up for debugging
-    pl_free ();
     conf_free ();
     messagepump_free ();
     plt_free ();
     plug_free_decoder_ids ();
+    pl_free ();
     sigterm_handled = 1;
     fprintf (stderr, "hej-hej!\n");
     return 0;
