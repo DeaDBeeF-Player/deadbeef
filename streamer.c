@@ -108,6 +108,7 @@ streamer_move_to_nextsong (int reason) {
     if (it) {
         pl_playqueue_pop ();
         int r = pl_get_idx_of (it);
+        pl_item_unref (it);
         streamer_set_nextsong (r, 1);
         pl_global_unlock ();
         return 0;
@@ -232,16 +233,19 @@ streamer_move_to_nextsong (int reason) {
 
 int
 streamer_move_to_prevsong (void) {
+    plt_lock ();
     playlist_t *plt = plt_get_curr_ptr ();
     pl_playqueue_clear ();
     if (!plt->head[PL_MAIN]) {
         streamer_set_nextsong (-2, 1);
+        plt_unlock ();
         return 0;
     }
     int pl_order = conf_get_int ("playback.order", 0);
     int pl_loop_mode = conf_get_int ("playback.loop", 0);
     if (pl_order == PLAYBACK_ORDER_SHUFFLE) { // shuffle
         if (!playlist_track) {
+            plt_unlock ();
             return streamer_move_to_nextsong (1);
         }
         else {
@@ -273,6 +277,7 @@ streamer_move_to_prevsong (void) {
             }
 
             if (!it) {
+                plt_unlock ();
                 return -1;
             }
             int r = pl_get_idx_of (it);
@@ -291,15 +296,18 @@ streamer_move_to_prevsong (void) {
             }
         }
         if (!it) {
+            plt_unlock ();
             return -1;
         }
         int r = pl_get_idx_of (it);
         streamer_set_nextsong (r, 1);
+        plt_unlock ();
         return 0;
     }
     else if (pl_order == PLAYBACK_ORDER_RANDOM) { // random
         streamer_move_to_randomsong ();
     }
+    plt_unlock ();
     return -1;
 }
 
@@ -505,18 +513,25 @@ streamer_thread (void *ctx) {
                 p_stop ();
 
                 mutex_lock (decodemutex);
-                pl_item_unref (playing_track);
-                playing_track = NULL;
-                pl_item_unref (streaming_track);
-                streaming_track = NULL;
+                if (playing_track) {
+                    pl_item_unref (playing_track);
+                    playing_track = NULL;
+                }
+                if (streaming_track) {
+                    pl_item_unref (streaming_track);
+                    streaming_track = NULL;
+                }
                 mutex_unlock (decodemutex);
 
                 messagepump_push (M_SONGCHANGED, 0, -1, -1);
                 continue;
             }
             int ret = streamer_set_current (try);
+
             if (ret < 0) {
                 trace ("\033[0;31mfailed to play track %s, skipping (current=%p/%p)...\033[37;0m\n", try->fname, streaming_track, playlist_track);
+                pl_item_unref (try);
+                try = NULL;
                 // remember bad song number in case of looping
                 if (badsong == -1) {
                     badsong = sng;
@@ -527,6 +542,8 @@ streamer_thread (void *ctx) {
                 usleep (50000);
                 continue;
             }
+            pl_item_unref (try);
+            try = NULL;
             badsong = -1;
             if (pstate == 0) {
                 p_stop ();
@@ -556,8 +573,10 @@ streamer_thread (void *ctx) {
                 plug_trigger_event (DB_EV_SONGFINISHED, 0);
             }
             streamer_set_current (NULL);
-            pl_item_unref (playing_track);
-            playing_track = NULL;
+            if (playing_track) {
+                pl_item_unref (playing_track);
+                playing_track = NULL;
+            }
             messagepump_push (M_SONGCHANGED, 0, from, -1);
             continue;
         }

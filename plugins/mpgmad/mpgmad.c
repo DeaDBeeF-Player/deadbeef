@@ -556,6 +556,7 @@ cmp3_init (DB_playItem_t *it) {
     if (!info->buffer.file) {
         return NULL;
     }
+    deadbeef->pl_item_ref (it);
     info->buffer.it = it;
     info->info.readpos = 0;
     if (!info->buffer.file->vfs->streaming) {
@@ -907,6 +908,9 @@ static void
 cmp3_free (DB_fileinfo_t *_info) {
     mpgmad_info_t *info = (mpgmad_info_t *)_info;
     if (info->buffer.file) {
+        if (info->buffer.it) {
+            deadbeef->pl_item_unref (info->buffer.it);
+        }
         deadbeef->fclose (info->buffer.file);
         info->buffer.file = NULL;
         mad_synth_finish (&info->synth);

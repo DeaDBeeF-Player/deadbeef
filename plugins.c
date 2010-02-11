@@ -426,6 +426,9 @@ plug_trigger_event_trackinfochanged (int trk) {
     event.index = trk;
     event.track = DB_PLAYITEM (pl_get_for_idx (trk));
     plug_event_call (DB_EVENT (&event));
+    if (event.track) {
+        pl_item_unref ((playItem_t *)event.track);
+    }
 }
 
 void

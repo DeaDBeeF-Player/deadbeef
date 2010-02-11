@@ -640,9 +640,10 @@ main (int argc, char *argv[]) {
     plug_unload_all ();
 
     // at this point we can simply do exit(0), but let's clean up for debugging
+
+    plt_free (); // plt_free may access conf_*
     conf_free ();
     messagepump_free ();
-    plt_free ();
     plug_free_decoder_ids ();
     pl_free ();
     sigterm_handled = 1;

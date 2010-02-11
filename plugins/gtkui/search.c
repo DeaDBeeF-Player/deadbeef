@@ -36,12 +36,12 @@
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
-#define PL_HEAD(iter) (deadbeef->pl_get_first(iter))
-#define PL_TAIL(iter) (deadbeef->pl_get_last(iter))
-#define PL_NEXT(it, iter) (deadbeef->pl_get_next(it, iter))
-#define PL_PREV(it, iter) (deadbeef->pl_get_prev(it, iter))
-#define SELECTED(it) (deadbeef->pl_is_selected(it))
-#define SELECT(it, sel) (deadbeef->pl_set_selected(it,sel))
+//#define PL_HEAD(iter) (deadbeef->pl_get_first(iter))
+//#define PL_TAIL(iter) (deadbeef->pl_get_last(iter))
+//#define PL_NEXT(it, iter) (deadbeef->pl_get_next(it, iter))
+//#define PL_PREV(it, iter) (deadbeef->pl_get_prev(it, iter))
+//#define SELECTED(it) (deadbeef->pl_is_selected(it))
+//#define SELECT(it, sel) (deadbeef->pl_set_selected(it,sel))
 
 extern DB_functions_t *deadbeef; // defined in gtkui.c
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }

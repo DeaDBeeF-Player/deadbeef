@@ -44,6 +44,9 @@
 
 #pragma GCC optimize("O0")
 
+#define DISABLE_LOCKING 1
+
+// file format revision history
 // 1.0->1.1 changelog:
 //    added sample-accurate seek positions for sub-tracks
 #define PLAYLIST_MAJOR_VER 1
@@ -65,8 +68,10 @@ static playlist_t *playlists_head = NULL;
 static playlist_t *playlist = NULL; // current playlist
 static int plt_loading = 0; // disable sending event about playlist switch, config regen, etc
 
+#if !DISABLE_LOCKING
 static uintptr_t mutex;
 static uintptr_t mutex_plt;
+#endif
 
 #define LOCK {pl_lock();}
 #define UNLOCK {pl_unlock();}
@@ -79,12 +84,15 @@ static uintptr_t mutex_plt;
 
 int
 pl_init (void) {
+#if !DISABLE_LOCKING
     mutex = mutex_create_recursive ();
     mutex_plt = mutex_create_recursive ();
+#endif
 }
 
 void
 pl_free (void) {
+#if !DISABLE_LOCKING
     if (mutex) {
         mutex_free (mutex);
         mutex = 0;
@@ -93,26 +101,35 @@ pl_free (void) {
         mutex_free (mutex_plt);
         mutex_plt = 0;
     }
+#endif
 }
 
 void
 plt_lock (void) {
+#if !DISABLE_LOCKING
     mutex_lock (mutex_plt);
+#endif
 }
 
 void
 plt_unlock (void) {
+#if !DISABLE_LOCKING
     mutex_unlock (mutex_plt);
+#endif
 }
 
 void
 pl_lock (void) {
+#if !DISABLE_LOCKING
     mutex_lock (mutex);
+#endif
 }
 
 void
 pl_unlock (void) {
+#if !DISABLE_LOCKING
     mutex_unlock (mutex);
+#endif
 }
 
 void
@@ -327,11 +344,6 @@ plt_set_title (int plt, const char *title) {
     PLT_UNLOCK;
     return -1;
 }
-
-//playlist_t *
-//plt_get_curr_ptr (void) {
-//    return playlist;
-//}
 
 void
 plt_free (void) {
@@ -1263,6 +1275,7 @@ void
 pl_item_ref (playItem_t *it) {
     LOCK;
     it->_refc++;
+    printf ("+it %p: refc=%d: %s\n", it, it->_refc, it->fname);
     UNLOCK;
 }
 
@@ -1288,6 +1301,7 @@ void
 pl_item_unref (playItem_t *it) {
     LOCK;
     it->_refc--;
+    printf ("-it %p: refc=%d: %s\n", it, it->_refc, it->fname);
     if (it->_refc < 0) {
         fprintf (stderr, "\033[0;31mplaylist: bad refcount on item %p\033[37;0m\n", it);
     }
@@ -1773,6 +1787,7 @@ pl_load (const char *fname) {
         }
         pl_insert_item (playlist->tail[PL_MAIN], it);
         pl_item_unref (it);
+        trace ("last playlist item refc: %d\n", it->_refc);
         it = NULL;
     }
     GLOBAL_UNLOCK;
@@ -2261,22 +2276,38 @@ pl_is_selected (playItem_t *it) {
 
 playItem_t *
 pl_get_first (int iter) {
-    return playlist->head[iter];
+    playItem_t *p = playlist->head[iter];
+    if (p) {
+        pl_item_ref (p);
+    }
+    return p;
 }
 
 playItem_t *
 pl_get_last (int iter) {
-    return playlist->tail[iter];
+    playItem_t *p = playlist->tail[iter];
+    if (p) {
+        pl_item_ref (p);
+    }
+    return p;
 }
 
 playItem_t *
 pl_get_next (playItem_t *it, int iter) {
-    return it ? it->next[iter] : NULL;
+    playItem_t *next = it ? it->next[iter] : NULL;
+    if (next) {
+        pl_item_ref (next);
+    }
+    return next;
 }
 
 playItem_t *
 pl_get_prev (playItem_t *it, int iter) {
-    return it ? it->prev[iter] : NULL;
+    playItem_t *prev = it ? it->prev[iter] : NULL;
+    if (prev) {
+        pl_item_ref (prev);
+    }
+    return prev;
 }
 
 int
@@ -2477,6 +2508,7 @@ pl_playqueue_getnext (void) {
     LOCK;
     if (playqueue_count > 0) {
         playItem_t *val = playqueue[0];
+        pl_item_ref (val);
         UNLOCK;
         return val;
     }

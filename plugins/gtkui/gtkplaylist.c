@@ -48,14 +48,6 @@
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
-#define PL_HEAD(iter) (deadbeef->pl_get_first(iter))
-#define PL_TAIL(iter) (deadbeef->pl_get_last(iter))
-#define PL_NEXT(it, iter) (deadbeef->pl_get_next(it, iter))
-#define PL_PREV(it, iter) (deadbeef->pl_get_prev(it, iter))
-#define SELECTED(it) (deadbeef->pl_is_selected(it))
-#define SELECT(it, sel) (deadbeef->pl_set_selected(it,sel))
-#define VSELECT(it, sel) {deadbeef->pl_set_selected(it,sel);gtk_pl_redraw_item_everywhere (it);}
-
 extern DB_functions_t *deadbeef; // defined in gtkui.c
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
@@ -435,12 +427,17 @@ gtkpl_draw_playlist (gtkplaylist_t *ps, int x, int y, int w, int h) {
 	// draw background
 	DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (ps->scrollpos, ps->iterator);
 	DB_playItem_t *it_copy = it;
+	if (it_copy) {
+        REF (it_copy);
+    }
 	for (row = row1; row < row2_full; row++) {
 		gtkpl_draw_pl_row_back (ps, row, it);
-		if (it) {
+        if (it) {
+            UNREF (it);
             it = PL_NEXT (it, ps->iterator);
         }
 	}
+    UNREF (it);
 	it = it_copy;
 	int idx = 0;
 	for (row = row1; row < row2; row++, idx++) {
@@ -448,8 +445,11 @@ gtkpl_draw_playlist (gtkplaylist_t *ps, int x, int y, int w, int h) {
             break;
         }
         gtkpl_draw_pl_row (ps, row, it);
-        it = PL_NEXT (it, ps->iterator);
+        DB_playItem_t *next = PL_NEXT (it, ps->iterator);
+        UNREF (it);
+        it = next;
 	}
+    UNREF (it);
 
     draw_end ();
 }
@@ -501,7 +501,7 @@ void
 gtkpl_select_single (gtkplaylist_t *ps, int sel) {
     int idx=0;
     DB_playItem_t *it = PL_HEAD (ps->iterator);
-    for (; it; it = PL_NEXT (it, ps->iterator), idx++) {
+    for (; it; idx++) {
         if (idx == sel) {
             if (!SELECTED (it)) {
                 VSELECT (it, 1);
@@ -510,7 +510,11 @@ gtkpl_select_single (gtkplaylist_t *ps, int sel) {
         else if (SELECTED (it)) {
             VSELECT (it, 0);
         }
+        DB_playItem_t *next = PL_NEXT (it, ps->iterator);
+        UNREF (it);
+        it = next;
     }
+    UNREF (it);
 }
 
 // {{{ expected behaviour for mouse1 without modifiers:
@@ -566,12 +570,15 @@ gtkpl_mouse1_pressed (gtkplaylist_t *ps, int state, int ex, int ey, double time)
             if (prev != r) {
                 deadbeef->pl_set_cursor (ps->iterator, r);
                 if (prev != -1) {
-                    gtkpl_redraw_pl_row (&main_playlist, prev, deadbeef->pl_get_for_idx (prev));
+                    DB_playItem_t *prev_it = deadbeef->pl_get_for_idx (prev);
+                    gtkpl_redraw_pl_row (&main_playlist, prev, prev_it);
+                    UNREF (prev_it);
                 }
                 if (r != -1) {
                     gtkpl_redraw_pl_row (&main_playlist, r, it);
                 }
             }
+            UNREF (it);
             deadbeef->sendmessage (M_PLAYSONGNUM, 0, r, 0);
             return;
         }
@@ -606,11 +613,16 @@ gtkpl_mouse1_pressed (gtkplaylist_t *ps, int state, int ex, int ey, double time)
         }
         else {
             dragwait = 1;
-            gtkpl_redraw_pl_row (ps, prev, gtkpl_get_for_idx (ps, prev));
+            DB_playItem_t *item = gtkpl_get_for_idx (ps, prev);
+            gtkpl_redraw_pl_row (ps, prev, item);
+            UNREF (item);
             if (deadbeef->pl_get_cursor (ps->iterator) != prev) {
-                gtkpl_redraw_pl_row (ps, deadbeef->pl_get_cursor (ps->iterator), gtkpl_get_for_idx (ps, deadbeef->pl_get_cursor (ps->iterator)));
+                DB_playItem_t *item = gtkpl_get_for_idx (ps, deadbeef->pl_get_cursor (ps->iterator));
+                gtkpl_redraw_pl_row (ps, deadbeef->pl_get_cursor (ps->iterator), item);
+                UNREF (item);
             }
         }
+        UNREF (it);
     }
     else if (state & GDK_CONTROL_MASK) {
         // toggle selection
@@ -618,6 +630,7 @@ gtkpl_mouse1_pressed (gtkplaylist_t *ps, int state, int ex, int ey, double time)
             DB_playItem_t *it = gtkpl_get_for_idx (ps, y);
             if (it) {
                 VSELECT (it, 1 - SELECTED (it));
+                UNREF (it);
             }
         }
     }
@@ -626,7 +639,7 @@ gtkpl_mouse1_pressed (gtkplaylist_t *ps, int state, int ex, int ey, double time)
         int start = min (prev, deadbeef->pl_get_cursor (ps->iterator));
         int end = max (prev, deadbeef->pl_get_cursor (ps->iterator));
         int idx = 0;
-        for (DB_playItem_t *it = PL_HEAD (ps->iterator); it; it = PL_NEXT (it, ps->iterator), idx++) {
+        for (DB_playItem_t *it = PL_HEAD (ps->iterator); it; idx++) {
             if (idx >= start && idx <= end) {
                 if (!SELECTED (it)) {
                     VSELECT (it, 1);
@@ -637,13 +650,19 @@ gtkpl_mouse1_pressed (gtkplaylist_t *ps, int state, int ex, int ey, double time)
                     VSELECT (it, 0);
                 }
             }
+            DB_playItem_t *next = PL_NEXT (it, ps->iterator);
+            UNREF (it);
         }
     }
     if (deadbeef->pl_get_cursor (ps->iterator) != -1 && sel == -1) {
-        gtkpl_redraw_pl_row (ps, deadbeef->pl_get_cursor (ps->iterator), gtkpl_get_for_idx (ps, deadbeef->pl_get_cursor (ps->iterator)));
+        DB_playItem_t *it = gtkpl_get_for_idx (ps, deadbeef->pl_get_cursor (ps->iterator));
+        gtkpl_redraw_pl_row (ps, deadbeef->pl_get_cursor (ps->iterator), it);
+        UNREF (it);
     }
     if (prev != -1 && prev != deadbeef->pl_get_cursor (ps->iterator)) {
-        gtkpl_redraw_pl_row (ps, prev, gtkpl_get_for_idx (ps, prev));
+        DB_playItem_t *it = gtkpl_get_for_idx (ps, prev);
+        gtkpl_redraw_pl_row (ps, prev, it);
+        UNREF (it);
     }
 
 }
@@ -764,7 +783,8 @@ gtkpl_mousemove (gtkplaylist_t *ps, GdkEventMotion *event) {
             int start = min (y, shift_sel_anchor);
             int end = max (y, shift_sel_anchor);
             int idx=0;
-            for (DB_playItem_t *it = PL_HEAD(ps->iterator); it; it = PL_NEXT(it, ps->iterator), idx++) {
+            DB_playItem_t *it;
+            for (it = PL_HEAD(ps->iterator); it; idx++) {
                 if (idx >= start && idx <= end) {
                     if (!SELECTED (it)) {
                         VSELECT (it, 1);
@@ -773,7 +793,11 @@ gtkpl_mousemove (gtkplaylist_t *ps, GdkEventMotion *event) {
                 else if (SELECTED (it)) {
                     VSELECT (it, 0);
                 }
+                DB_playItem_t *next = PL_NEXT(it, ps->iterator);
+                UNREF (it);
+                it = next;
             }
+            UNREF (it);
         }
 
         if (event->y < 10) {
@@ -844,7 +868,9 @@ gtkpl_scroll (gtkplaylist_t *ps, int newscroll) {
                 int start = ps->nvisiblerows-d-1;
                 start = max (0, ps->nvisiblerows-d-1);
                 for (i = start; i <= ps->nvisiblerows; i++) {
-                    gtkpl_redraw_pl_row_novis (ps, i+ps->scrollpos, gtkpl_get_for_idx (ps, i+ps->scrollpos));
+                    DB_playItem_t *it = gtkpl_get_for_idx (ps, i+ps->scrollpos);
+                    gtkpl_redraw_pl_row_novis (ps, i+ps->scrollpos, it);
+                    UNREF (it);
                 }
             }
             else {
@@ -852,7 +878,9 @@ gtkpl_scroll (gtkplaylist_t *ps, int newscroll) {
                 ps->scrollpos = newscroll;
                 int i;
                 for (i = 0; i <= d+1; i++) {
-                    gtkpl_redraw_pl_row_novis (ps, i+ps->scrollpos, gtkpl_get_for_idx (ps, i+ps->scrollpos));
+                    DB_playItem_t *it = gtkpl_get_for_idx (ps, i+ps->scrollpos);
+                    gtkpl_redraw_pl_row_novis (ps, i+ps->scrollpos, it);
+                    UNREF (it);
                 }
             }
         }
@@ -890,10 +918,14 @@ gtkpl_songchanged (gtkplaylist_t *ps, int from, int to) {
     }
 
     if (from >= 0) {
-        gtkpl_redraw_pl_row (ps, from, gtkpl_get_for_idx (ps, from));
+        DB_playItem_t *it = gtkpl_get_for_idx (ps, from);
+        gtkpl_redraw_pl_row (ps, from, it);
+        UNREF (it);
     }
     if (to >= 0) {
-        gtkpl_redraw_pl_row (ps, to, gtkpl_get_for_idx (ps, to));
+        DB_playItem_t *it = gtkpl_get_for_idx (ps, to);
+        gtkpl_redraw_pl_row (ps, to, it);
+        UNREF (it);
     }
 }
 
@@ -983,7 +1015,8 @@ gtkpl_keypress (gtkplaylist_t *ps, int keyval, int state) {
             int start = min (cursor, shift_sel_anchor);
             int end = max (cursor, shift_sel_anchor);
             int idx=0;
-            for (DB_playItem_t *it = PL_HEAD (ps->iterator); it; it = PL_NEXT(it,ps->iterator), idx++) {
+            DB_playItem_t *it;
+            for (it = PL_HEAD (ps->iterator); it; idx++) {
                 if (idx >= start && idx <= end) {
                     VSELECT (it, 1);
                 }
@@ -991,7 +1024,11 @@ gtkpl_keypress (gtkplaylist_t *ps, int keyval, int state) {
                 {
                     VSELECT (it, 0);
                 }
+                DB_playItem_t *next = PL_NEXT(it,ps->iterator);
+                UNREF (it);
+                it = next;
             }
+            UNREF (it);
         }
     }
     else {
@@ -1144,6 +1181,8 @@ gtkpl_add_fm_dropped_files (gtkplaylist_t *ps, char *ptr, int length, int drop_y
     DB_playItem_t *after = NULL;
     if (drop_before) {
         after = PL_PREV (drop_before, ps->iterator);
+        UNREF (drop_before);
+        drop_before = NULL;
     }
     else {
         after = PL_TAIL (ps->iterator);
@@ -1165,6 +1204,9 @@ gtkpl_add_fm_dropped_files (gtkplaylist_t *ps, char *ptr, int length, int drop_y
                 inserted = deadbeef->pl_insert_file (after, fname, &abort, gtkpl_add_file_info_cb, NULL);
             }
             if (inserted) {
+                if (after) {
+                    UNREF (after);
+                }
                 after = inserted;
             }
         }
@@ -1176,6 +1218,9 @@ gtkpl_add_fm_dropped_files (gtkplaylist_t *ps, char *ptr, int length, int drop_y
     }
     free (ptr);
 
+    if (after) {
+        UNREF (after);
+    }
     g_idle_add (progress_hide_idle, NULL);
 }
 
@@ -1623,12 +1668,15 @@ gtkpl_get_idx_of (gtkplaylist_t *ps, DB_playItem_t *it) {
     DB_playItem_t *c = PL_HEAD(ps->iterator);
     int idx = 0;
     while (c && c != it) {
-        c = PL_NEXT(c, ps->iterator);;
+        DB_playItem_t *next = PL_NEXT(c, ps->iterator); 
+        UNREF (c);
+        c = next;
         idx++;
     }
     if (!c) {
         return -1;
     }
+    UNREF (c);
     return idx;
 }
 
@@ -1636,9 +1684,12 @@ DB_playItem_t *
 gtkpl_get_for_idx (gtkplaylist_t *ps, int idx) {
     DB_playItem_t *it = PL_HEAD(ps->iterator);
     while (idx--) {
-        if (!it)
+        if (!it) {
             return NULL;
-        it = PL_NEXT(it, ps->iterator);
+        }
+        DB_playItem_t *next = PL_NEXT(it, ps->iterator);
+        UNREF (it);
+        it = next;
     }
     return it;
 }
@@ -1869,6 +1920,7 @@ update_win_title_idle (gpointer data) {
                     notify_notification_show (notification, NULL);
                 }
             }
+            UNREF (track);
         }
     }
 #endif
@@ -1879,6 +1931,7 @@ update_win_title_idle (gpointer data) {
             DB_playItem_t *it = deadbeef->pl_get_for_idx (to);
             if (it) { // it might have been deleted after event was sent
                 gtkpl_current_track_changed (it);
+                UNREF (it);
             }
         }
         else {
@@ -1909,9 +1962,12 @@ redraw_queued_tracks (gtkplaylist_t *pl) {
         if (deadbeef->pl_playqueue_test (it) != -1) {
             gtkpl_redraw_pl_row (pl, i, it);
         }
-        it = PL_NEXT (it, pl->iterator);
+        DB_playItem_t *next = PL_NEXT (it, pl->iterator);
+        UNREF (it);
+        it = next;
         i++;
     }
+    UNREF (it);
 }
 
 static gboolean
@@ -1970,10 +2026,12 @@ gtkpl_set_cursor_cb (gpointer data) {
     if (sc->prev >= minvis && sc->prev <= maxvis) {
         it = deadbeef->pl_get_for_idx_and_iter (sc->prev, sc->iter);
         gtkpl_redraw_pl_row (sc->pl, sc->prev, it);
+        UNREF (it);
     }
     if (sc->cursor >= minvis && sc->cursor <= maxvis) {
         it = deadbeef->pl_get_for_idx_and_iter (sc->cursor, sc->iter);
         gtkpl_redraw_pl_row (sc->pl, sc->cursor, it);
+        UNREF (it);
     }
 
     int newscroll = sc->pl->scrollpos;
