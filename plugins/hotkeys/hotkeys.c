@@ -61,20 +61,8 @@ typedef struct {
 } known_command_t;
 
 static int
-get_keycode (Display *disp, const char* name) {
-    static int first_kk, last_kk;
-    static KeySym* syms;
-    static int ks_per_kk;
-    static int first_time = 1;
+get_keycode (Display *disp, const char* name, KeySym *syms, int first_kk, int last_kk, int ks_per_kk) {
     int i, ks;
-
-    if (first_time)
-    {
-        XDisplayKeycodes (disp, &first_kk, &last_kk);
-
-        syms = XGetKeyboardMapping (disp, first_kk, last_kk - first_kk, &ks_per_kk);
-        first_time = 0;
-    }
 
     for (i = 0; i < last_kk-first_kk; i++)
     {
@@ -171,6 +159,13 @@ get_command (const char* command)
 static int
 read_config (Display *disp)
 {
+    int ks_per_kk;
+    int first_kk, last_kk;
+    KeySym* syms;
+
+    XDisplayKeycodes (disp, &first_kk, &last_kk);
+    syms = XGetKeyboardMapping (disp, first_kk, last_kk - first_kk, &ks_per_kk);
+
     DB_conf_item_t *item = deadbeef->conf_find ("hotkeys.", NULL);
     while (item) {
 //        fprintf (stderr, "hotkeys: adding %s %s\n", item->key, item->value);
@@ -233,7 +228,7 @@ read_config (Display *disp)
                 }
                 else {
                     // lookup name table
-                    cmd_entry->keycode = get_keycode (disp, p);
+                    cmd_entry->keycode = get_keycode (disp, p, syms, first_kk, last_kk, ks_per_kk);
                 }
                 if (!cmd_entry->keycode)
                 {
@@ -261,6 +256,7 @@ read_config (Display *disp)
         }
         item = deadbeef->conf_find ("hotkeys.", item);
     }
+    XFree (syms);
 }
 
 DB_plugin_t *
