@@ -338,13 +338,16 @@ plt_set_title (int plt, const char *title) {
         if (i == plt) {
             free (p->title);
             p->title = strdup (title);
-            PLT_UNLOCK;
-            return 0;
+            break;
         }
         p = p->next;
     }
     PLT_UNLOCK;
-    return -1;
+    plt_gen_conf ();
+    if (!plt_loading) {
+        plug_trigger_event (DB_EV_PLAYLISTSWITCH, 0);
+    }
+    return i == plt ? 0 : -1;
 }
 
 void
