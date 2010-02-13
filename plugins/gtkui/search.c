@@ -48,7 +48,8 @@ extern DB_functions_t *deadbeef; // defined in gtkui.c
 #define trace(fmt,...)
 
 extern GtkWidget *searchwin;
-struct playItem_s *search_current = NULL;
+extern GtkWidget *mainwin;
+//struct playItem_s *search_current = NULL;
 
 void
 search_restore_attrs (void) {
@@ -88,30 +89,22 @@ on_searchentry_changed                 (GtkEditable     *editable,
     const gchar *text = gtk_entry_get_text (GTK_ENTRY (editable));
     deadbeef->pl_search_process (text);
 
-    extern gtkplaylist_t search_playlist;
-    gtkplaylist_t *ps = &search_playlist;
-    int row = deadbeef->pl_get_cursor (ps->iterator);
-    if (row >= ps->get_count ()) {
-        deadbeef->pl_set_cursor (ps->iterator, ps->get_count () - 1);
+    int row = deadbeef->pl_get_cursor (PL_SEARCH);
+    if (row >= deadbeef->pl_getcount (PL_SEARCH)) {
+        deadbeef->pl_set_cursor (PL_SEARCH, deadbeef->pl_getcount (PL_SEARCH) - 1);
     }
-    gtkpl_setup_scrollbar (ps);
-    //memset (ps->fmtcache, 0, sizeof (int16_t) * 3 * pl_ncolumns * ps->nvisiblerows);
-    gtkpl_draw_playlist (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
-    gtkpl_expose (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
+
+    search_refresh ();
 
     // redraw main playlist to be in sync selection-wise
-    ps = &main_playlist;
-    gtkpl_draw_playlist (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
-    gtkpl_expose (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
+    ddb_listview_refresh (DDB_LISTVIEW (lookup_widget (mainwin, "playlist")), DDB_REFRESH_LIST | DDB_EXPOSE_LIST);
 }
 
 void
 search_refresh (void) {
     if (searchwin && GTK_WIDGET_VISIBLE (searchwin)) {
-        gtkplaylist_t *ps = &search_playlist;
-        gtkpl_setup_scrollbar (ps);
-        gtkpl_draw_playlist (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
-        gtkpl_expose (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
+        GtkWidget *pl = lookup_widget (mainwin, "searchlist");
+        ddb_listview_refresh (DDB_LISTVIEW (pl), DDB_REFRESH_VSCROLL | DDB_REFRESH_LIST | DDB_EXPOSE_LIST);
     }
 }
 
@@ -178,18 +171,17 @@ on_searchwin_key_press_event           (GtkWidget       *widget,
         gtk_widget_hide (widget);
     }
     else if (event->keyval == GDK_Return) {
-        extern gtkplaylist_t search_playlist;
-        gtkplaylist_t *ps = &search_playlist;
-        if (deadbeef->pl_getcount (ps->iterator) > 0) {
-            int row = deadbeef->pl_get_cursor (ps->iterator);
-            DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (max (row, 0), ps->iterator);
+        if (deadbeef->pl_getcount (PL_SEARCH) > 0) {
+            int row = deadbeef->pl_get_cursor (PL_SEARCH);
+            DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (max (row, 0), PL_SEARCH);
             if (it) {
                 deadbeef->sendmessage (M_PLAYSONGNUM, 0, deadbeef->pl_get_idx_of (it), 0);
             }
         }
     }
     else if (event->keyval != GDK_Delete && event->keyval != GDK_Home && event->keyval != GDK_End){
-        if (!gtkpl_keypress (&search_playlist, event->keyval, event->state)) {
+        GtkWidget *pl = lookup_widget (mainwin, "searchlist");
+        if (!gtkpl_keypress (DDB_LISTVIEW (pl), event->keyval, event->state)) {
             return FALSE;
         }
     }
@@ -206,8 +198,9 @@ on_searchlist_configure_event          (GtkWidget       *widget,
                                         GdkEventConfigure *event,
                                         gpointer         user_data)
 {
-    GTKPL_PROLOGUE;
-    gtkpl_configure (ps);
+// KILLME
+//    GTKPL_PROLOGUE;
+//    gtkpl_configure (ps);
     return FALSE;
 }
 

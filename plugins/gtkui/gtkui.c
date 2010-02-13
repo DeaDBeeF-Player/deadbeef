@@ -36,6 +36,7 @@
 #include "callbacks.h"
 #include "support.h"
 #include "tabs.h"
+#include "parser.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -52,8 +53,8 @@ GtkStatusIcon *trayicon;
 GtkWidget *traymenu;
 
 // playlist configuration structures
-gtkplaylist_t main_playlist;
-gtkplaylist_t search_playlist;
+//DdbListview main_playlist;
+//DdbListview search_playlist;
 
 // update status bar and window title
 static int sb_context_id = -1;
@@ -273,12 +274,29 @@ struct trackinfo_t {
     DB_playItem_t *track;
 };
 
+static void
+current_track_changed (DB_playItem_t *it) {
+    char str[600];
+    if (it) {
+        char dname[512];
+        deadbeef->pl_format_item_display_name (it, dname, 512);
+        snprintf (str, sizeof (str), "DeaDBeeF - %s", dname);
+    }
+    else {
+        strcpy (str, "DeaDBeeF");
+    }
+    gtk_window_set_title (GTK_WINDOW (mainwin), str);
+    set_tray_tooltip (str);
+}
+
 static gboolean
 trackinfochanged_cb (gpointer data) {
     struct trackinfo_t *ti = (struct trackinfo_t *)data;
-    gtkpl_redraw_pl_row (&main_playlist, ti->index, ti->track);
+    GtkWidget *playlist = lookup_widget (mainwin, "playlist");
+//    gtkpl_redraw_pl_row (&main_playlist, ti->index, ti->track);
+    ddb_listview_draw_row (DDB_LISTVIEW (playlist), ti->index, (DdbListviewIter)ti->track);
     if (ti->track == deadbeef->pl_getcurrent ()) {
-        gtkpl_current_track_changed (ti->track);
+        current_track_changed (ti->track);
     }
     free (ti);
     return FALSE;
@@ -298,7 +316,9 @@ paused_cb (gpointer nothing) {
     DB_playItem_t *curr = deadbeef->pl_getcurrent ();
     if (curr) {
         int idx = deadbeef->pl_get_idx_of (curr);
-        gtkpl_redraw_pl_row (&main_playlist, idx, curr);
+        GtkWidget *playlist = lookup_widget (mainwin, "playlist");
+        //gtkpl_redraw_pl_row (&main_playlist, idx, curr);
+        ddb_listview_draw_row (DDB_LISTVIEW (playlist), idx, (DdbListviewIter)curr);
     }
     return FALSE;
 }
@@ -386,6 +406,550 @@ gtkui_on_outputchanged (DB_event_t *ev, uintptr_t nothing) {
     return 0;
 }
 
+/////// column management code
+
+typedef struct gtkpl_column_s {
+    char *title;
+    int id; // id is faster than format, set to -1 to use format
+    char *format;
+    int width;
+    int movepos; // valid only while `moving' is 1
+    struct gtkpl_column_s *next;
+    unsigned align_right : 1;
+    unsigned sort_order : 2; // 0=none, 1=asc, 2=desc
+} gtkpl_column_t;
+
+static gtkpl_column_t *main_columns = NULL;
+static gtkpl_column_t *search_columns = NULL;
+
+gtkpl_column_t * 
+gtkpl_column_alloc (const char *title, int width, int id, const char *format, int align_right) {
+    gtkpl_column_t * c = malloc (sizeof (gtkpl_column_t));
+    memset (c, 0, sizeof (gtkpl_column_t));
+    c->title = strdup (title);
+    c->id = id;
+    c->format = format ? strdup (format) : NULL;
+    c->width = width;
+    c->align_right = align_right;
+    return c;
+}
+
+void
+gtkpl_column_append (gtkpl_column_t **head, gtkpl_column_t * c) {
+    int idx = 0;
+    gtkpl_column_t * columns = *head;
+    if (columns) {
+        idx++;
+        gtkpl_column_t * tail = *head;
+        while (tail->next) {
+            tail = tail->next;
+            idx++;
+        }
+        tail->next = c;
+    }
+    else {
+        *head = c;
+    }
+//    gtkpl_column_update_config (pl, c, idx);
+}
+
+void
+gtkpl_column_insert_before (gtkpl_column_t **head, gtkpl_column_t * before, gtkpl_column_t * c) {
+    if (*head) {
+        gtkpl_column_t * prev = NULL;
+        gtkpl_column_t * next = *head;
+        while (next) {
+            if (next == before) {
+                break;
+            }
+            prev = next;
+            next = next->next;
+        }
+        c->next = next;
+        if (prev) {
+            prev->next = c;
+        }
+        else {
+            *head  = c;
+        }
+//        gtkpl_column_rewrite_config (pl);
+    }
+    else {
+        *head = c;
+ //       gtkpl_column_update_config (pl, c, 0);
+    }
+}
+
+void
+gtkpl_column_free (gtkpl_column_t * c) {
+    if (c->title) {
+        free (c->title);
+    }
+    if (c->format) {
+        free (c->format);
+    }
+    free (c);
+}
+
+void
+gtkpl_column_remove (gtkpl_column_t **head, gtkpl_column_t * c) {
+    if (*head == c) {
+        *head = (*head)->next;
+        gtkpl_column_free (c);
+        return;
+    }
+    gtkpl_column_t * cc = *head;
+    while (cc) {
+        if (cc->next == c) {
+            cc->next = cc->next->next;
+            gtkpl_column_free (c);
+            return;
+        }
+        cc = cc->next;
+    }
+
+    if (!cc) {
+        trace ("gtkpl: attempted to remove column that is not in list\n");
+    }
+}
+
+void
+gtkpl_append_column_from_textdef (gtkpl_column_t **head, const uint8_t *def) {
+    // syntax: "title" "format" id width alignright
+    char token[MAX_TOKEN];
+    const char *p = def;
+    char title[MAX_TOKEN];
+    int id;
+    char fmt[MAX_TOKEN];
+    int width;
+    int align;
+
+    parser_init ();
+
+    p = gettoken_warn_eof (p, token);
+    if (!p) {
+        return;
+    }
+    strcpy (title, token);
+
+    p = gettoken_warn_eof (p, token);
+    if (!p) {
+        return;
+    }
+    strcpy (fmt, token);
+
+    p = gettoken_warn_eof (p, token);
+    if (!p) {
+        return;
+    }
+    id = atoi (token);
+
+    p = gettoken_warn_eof (p, token);
+    if (!p) {
+        return;
+    }
+    width = atoi (token);
+
+    p = gettoken_warn_eof (p, token);
+    if (!p) {
+        return;
+    }
+    align = atoi (token);
+
+    gtkpl_column_append (head, gtkpl_column_alloc (title, width, id, fmt, align));
+}
+
+void
+gtkpl_column_update_config (const char *title, gtkpl_column_t * c, int idx) {
+    char key[128];
+    char value[128];
+    snprintf (key, sizeof (key), "%s.column.%d", title, idx);
+    snprintf (value, sizeof (value), "\"%s\" \"%s\" %d %d %d", c->title, c->format ? c->format : "", c->id, c->width, c->align_right);
+    deadbeef->conf_set_str (key, value);
+}
+
+void
+gtkpl_column_rewrite_config (gtkpl_column_t *head, const char *title) {
+    char key[128];
+    snprintf (key, sizeof (key), "%s.column.", title);
+    deadbeef->conf_remove_items (key);
+
+    gtkpl_column_t * c;
+    int i = 0;
+    for (c = head; c; c = c->next, i++) {
+        gtkpl_column_update_config (title, c, i);
+    }
+}
+
+/////// end of column management code
+
+static int
+main_get_count (void) {
+    return deadbeef->pl_getcount (PL_MAIN);
+}
+
+static int
+main_get_cursor (void) {
+    return deadbeef->pl_get_cursor (PL_MAIN);
+}
+static DdbListviewIter main_head (void) {
+    return (DdbListviewIter)deadbeef->pl_get_first (PL_MAIN);
+}
+
+static DdbListviewIter main_tail (void) {
+    return (DdbListviewIter)deadbeef->pl_get_last(PL_MAIN);
+}
+
+static DdbListviewIter main_next (DdbListviewIter it) {
+    return (DdbListviewIter)deadbeef->pl_get_next(it, PL_MAIN);
+}
+
+static DdbListviewIter main_prev (DdbListviewIter it) {
+    return (DdbListviewIter)deadbeef->pl_get_prev(it, PL_MAIN);
+}
+
+static DdbListviewIter main_get_for_idx (int idx) {
+    return deadbeef->pl_get_for_idx_and_iter (idx, PL_MAIN);
+}
+
+static int main_get_idx (DdbListviewIter it) {
+    DB_playItem_t *c = deadbeef->pl_get_first (PL_MAIN);
+    int idx = 0;
+    while (c && c != it) {
+        DB_playItem_t *next = deadbeef->pl_get_next (c, PL_MAIN); 
+        deadbeef->pl_item_unref (c);
+        c = next;
+        idx++;
+    }
+    if (!c) {
+        return -1;
+    }
+    deadbeef->pl_item_unref (c);
+    return idx;
+}
+
+static int main_col_count (void) {
+    int cnt = 0;
+    for (gtkpl_column_t *c = main_columns; c; c = c->next, cnt++);
+    return cnt;
+}
+
+DdbListviewColIter main_col_first (void) {
+    return (DdbListviewColIter)main_columns;
+}
+DdbListviewColIter main_col_next (DdbListviewColIter c) {
+    return (DdbListviewColIter)((gtkpl_column_t *)c)->next;
+}
+
+static const char *main_col_get_title (DdbListviewColIter c) {
+    return ((gtkpl_column_t *)c)->title;
+}
+
+int main_col_get_width (DdbListviewColIter c) {
+    return ((gtkpl_column_t *)c)->width;
+}
+
+int main_col_get_justify (DdbListviewColIter c) {
+    return ((gtkpl_column_t *)c)->align_right;
+}
+
+int main_col_get_sort (DdbListviewColIter c) {
+    return ((gtkpl_column_t *)c)->sort_order;
+}
+
+gboolean
+playlist_tooltip_handler (GtkWidget *widget, gint x, gint y, gboolean keyboard_mode, GtkTooltip *tooltip, gpointer unused)
+{
+    GtkWidget *pl = lookup_widget (mainwin, "playlist");
+    DB_playItem_t *item = (DB_playItem_t *)ddb_listview_get_iter_from_coord (DDB_LISTVIEW (pl), 0, y);
+    if (item && item->fname) {
+        gtk_tooltip_set_text (tooltip, item->fname);
+        return TRUE;
+    }
+    return FALSE;
+}
+
+void main_col_sort (DdbListviewColIter c) {
+}
+
+void
+columns_free (gtkpl_column_t **head) {
+    while (*head) {
+        DdbListviewColIter next = (*head)->next;
+        gtkpl_column_free (*head);
+        *head = next;
+    }
+}
+
+void
+on_add_column_activate                 (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+}
+
+
+void
+on_edit_column_activate                (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+}
+
+
+void
+on_remove_column_activate              (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+}
+
+void
+add_column_dlg (DdbListview *listview, const char *title, gtkpl_column_t **head, gtkpl_column_t *active_column) {
+    GtkWidget *dlg = create_editcolumndlg ();
+    gtk_window_set_title (GTK_WINDOW (dlg), "Add column");
+    gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "id")), 0);
+    gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "align")), 0);
+    gint response = gtk_dialog_run (GTK_DIALOG (dlg));
+    if (response == GTK_RESPONSE_OK) {
+        const gchar *title = gtk_entry_get_text (GTK_ENTRY (lookup_widget (dlg, "title")));
+        const gchar *format = gtk_entry_get_text (GTK_ENTRY (lookup_widget (dlg, "format")));
+        int id = gtk_combo_box_get_active (GTK_COMBO_BOX (lookup_widget (dlg, "id")));
+        int align = gtk_combo_box_get_active (GTK_COMBO_BOX (lookup_widget (dlg, "align")));
+        if (id >= DB_COLUMN_ID_MAX) {
+            id = -1;
+        }
+        gtkpl_column_insert_before (head, active_column, gtkpl_column_alloc (title, 100, id, format, align));
+        gtkpl_column_rewrite_config (*head, title);
+        ddb_listview_refresh (listview, DDB_REFRESH_COLUMNS | DDB_REFRESH_LIST | DDB_REFRESH_HSCROLL | DDB_EXPOSE_LIST | DDB_EXPOSE_COLUMNS);
+    }
+    gtk_widget_destroy (dlg);
+}
+
+void
+edit_column_dlg (DdbListview *listview, const char *title, gtkpl_column_t **head, gtkpl_column_t *active_column) {
+    if (!active_column)
+        return;
+    GtkWidget *dlg = create_editcolumndlg ();
+    gtk_window_set_title (GTK_WINDOW (dlg), "Edit column");
+    gtk_entry_set_text (GTK_ENTRY (lookup_widget (dlg, "title")), active_column->title);
+    gtk_entry_set_text (GTK_ENTRY (lookup_widget (dlg, "format")), active_column->format);
+    if (active_column->id == -1) {
+        gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "id")), DB_COLUMN_ID_MAX);
+    }
+    else {
+        gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "id")), active_column->id);
+    }
+    gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "align")), active_column->align_right);
+    gint response = gtk_dialog_run (GTK_DIALOG (dlg));
+    if (response == GTK_RESPONSE_OK) {
+        const gchar *title = gtk_entry_get_text (GTK_ENTRY (lookup_widget (dlg, "title")));
+        const gchar *format = gtk_entry_get_text (GTK_ENTRY (lookup_widget (dlg, "format")));
+        int id = gtk_combo_box_get_active (GTK_COMBO_BOX (lookup_widget (dlg, "id")));
+        int align = gtk_combo_box_get_active (GTK_COMBO_BOX (lookup_widget (dlg, "align")));
+        if (id >= DB_COLUMN_ID_MAX) {
+            id = -1;
+        }
+        free (active_column->title);
+        free (active_column->format);
+        active_column->title = strdup (title);
+        active_column->format = strdup (format);
+        active_column->id = id;
+        active_column->align_right = align;
+        gtkpl_column_rewrite_config (*head, title);
+
+        ddb_listview_refresh (listview, DDB_REFRESH_COLUMNS | DDB_REFRESH_LIST | DDB_EXPOSE_LIST | DDB_EXPOSE_COLUMNS);
+    }
+    gtk_widget_destroy (dlg);
+}
+
+void
+remove_column_dlg (DdbListview *listview, const char *title, gtkpl_column_t **head, gtkpl_column_t *active_column) {
+    if (!active_column)
+        return;
+
+    gtkpl_column_remove (head, active_column);
+    gtkpl_column_rewrite_config (*head, title);
+
+    ddb_listview_refresh (listview, DDB_REFRESH_COLUMNS | DDB_REFRESH_LIST | DDB_REFRESH_HSCROLL | DDB_EXPOSE_LIST | DDB_EXPOSE_COLUMNS);
+}
+
+void main_add_column (DdbListviewColIter c) {
+    add_column_dlg (DDB_LISTVIEW(lookup_widget(mainwin,"playlist")), "playlist", &main_columns, (gtkpl_column_t*)c);
+}
+
+void main_edit_column (DdbListviewColIter c) {
+    edit_column_dlg (DDB_LISTVIEW(lookup_widget(mainwin,"playlist")), "playlist", &main_columns, (gtkpl_column_t*)c);
+}
+
+void main_remove_column (DdbListviewColIter c) {
+    remove_column_dlg (DDB_LISTVIEW(lookup_widget(mainwin,"playlist")), "playlist", &main_columns, (gtkpl_column_t*)c);
+}
+
+void handle_playlist_doubleclick (int list_idx, DB_playItem_t *it, int idx) {
+#if 0
+    int r = deadbeef->pl_get_idx_of (it);
+    int prev = deadbeef->pl_get_cursor (list_idx);
+    if (prev != r) {
+        deadbeef->pl_set_cursor (list_idx, r);
+        if (prev != -1) {
+            DB_playItem_t *prev_it = deadbeef->pl_get_for_idx (prev);
+            gtkpl_redraw_pl_row (&main_playlist, prev, prev_it);
+            UNREF (prev_it);
+        }
+        if (r != -1) {
+            gtkpl_redraw_pl_row (&main_playlist, r, it);
+        }
+    }
+    UNREF (it);
+#endif
+    deadbeef->sendmessage (M_PLAYSONGNUM, 0, idx, 0);
+}
+
+void main_handle_doubleclick (DdbListview *listview, DdbListviewIter *iter, int idx) {
+    handle_playlist_doubleclick (PL_MAIN, (DB_playItem_t *)iter, idx);
+}
+
+DdbListviewBinding main_binding = {
+    // rows
+    .count = main_get_count,
+
+    .cursor = main_get_cursor,
+
+    .head = main_head,
+    .tail = main_tail,
+    .next = main_next,
+    .prev = main_prev,
+
+    .get_for_idx = main_get_for_idx,
+    .get_idx = main_get_idx,
+
+    //void (*draw_column_data) (GdkWindow *window, DdbListviewIter iter, int idx, int column, int x, int y);
+
+    // columns
+    .col_count = main_col_count,
+    .col_first = main_col_first,
+    .col_next = main_col_next,
+    .col_get_title = main_col_get_title,
+    .col_get_width = main_col_get_width,
+    .col_get_justify = main_col_get_justify,
+    .col_get_sort = main_col_get_sort,
+    .col_sort = main_col_sort,
+
+    // callbacks
+    .edit_column = main_edit_column,
+    .add_column = main_add_column,
+    .remove_column = main_remove_column,
+    .handle_doubleclick = main_handle_doubleclick,
+};
+
+void
+main_playlist_init (GtkWidget *widget) {
+    DdbListview *playlist = DDB_LISTVIEW(widget);
+    main_binding.ref = (void (*) (DdbListviewIter))deadbeef->pl_item_ref;
+    main_binding.unref = (void (*) (DdbListviewIter))deadbeef->pl_item_unref;
+    main_binding.is_selected = (int (*) (DdbListviewIter))deadbeef->pl_is_selected;
+    ddb_listview_set_binding (playlist, &main_binding);
+
+#if 0
+    // init playlist control structure, and put it into widget user-data
+    memset (&main_playlist, 0, sizeof (main_playlist));
+    main_playlist.title = "playlist";
+    main_playlist.playlist = widget;
+    main_playlist.header = lookup_widget (mainwin, "header");
+    main_playlist.scrollbar = lookup_widget (mainwin, "playscroll");
+    main_playlist.hscrollbar = lookup_widget (mainwin, "playhscroll");
+//    main_playlist.pcurr = &playlist_current_ptr;
+//    main_playlist.pcount = &pl_count;
+    main_playlist.get_count = main_get_count;
+    main_playlist.iterator = PL_MAIN;
+//    main_playlist.multisel = 1;
+    main_playlist.scrollpos = 0;
+    main_playlist.hscrollpos = 0;
+//    main_playlist.row = -1;
+    main_playlist.clicktime = -1;
+    main_playlist.nvisiblerows = 0;
+#endif
+
+    DB_conf_item_t *col = deadbeef->conf_find ("playlist.column.", NULL);
+    if (!col) {
+        // create default set of columns
+        gtkpl_column_append (&main_columns, gtkpl_column_alloc ("Playing", 50, DB_COLUMN_PLAYING, NULL, 0));
+        gtkpl_column_append (&main_columns, gtkpl_column_alloc ("Artist / Album", 150, DB_COLUMN_ARTIST_ALBUM, NULL, 0));
+        gtkpl_column_append (&main_columns, gtkpl_column_alloc ("Track №", 50, DB_COLUMN_TRACK, NULL, 1));
+        gtkpl_column_append (&main_columns, gtkpl_column_alloc ("Title / Track Artist", 150, DB_COLUMN_TITLE, NULL, 0));
+        gtkpl_column_append (&main_columns, gtkpl_column_alloc ("Duration", 50, DB_COLUMN_DURATION, NULL, 0));
+    }
+    else {
+        while (col) {
+            gtkpl_append_column_from_textdef (&main_columns, col->value);
+            col = deadbeef->conf_find ("playlist.column.", col);
+        }
+    }
+
+//    gtk_object_set_data (GTK_OBJECT (main_playlist.playlist), "ps", &main_playlist);
+//    gtk_object_set_data (GTK_OBJECT (main_playlist.header), "ps", &main_playlist);
+//    gtk_object_set_data (GTK_OBJECT (main_playlist.scrollbar), "ps", &main_playlist);
+//    gtk_object_set_data (GTK_OBJECT (main_playlist.hscrollbar), "ps", &main_playlist);
+
+    // FIXME: filepath should be in properties dialog, while tooltip should be
+    // used to show text that doesn't fit in column width
+    if (deadbeef->conf_get_int ("playlist.showpathtooltip", 0)) {
+        GValue value = {0, };
+        g_value_init (&value, G_TYPE_BOOLEAN);
+        g_value_set_boolean (&value, TRUE);
+        g_object_set_property (G_OBJECT (widget), "has-tooltip", &value);
+        g_signal_connect (G_OBJECT (widget), "query-tooltip", G_CALLBACK (playlist_tooltip_handler), NULL);
+    }
+}
+
+static int
+search_get_count (void) {
+    return deadbeef->pl_getcount (PL_SEARCH);
+}
+
+void
+search_playlist_init (GtkWidget *widget) {
+#if 0
+    extern GtkWidget *searchwin;
+    // init playlist control structure, and put it into widget user-data
+    memset (&search_playlist, 0, sizeof (search_playlist));
+    search_playlist.title = "search";
+    search_playlist.playlist = widget;
+    search_playlist.header = lookup_widget (searchwin, "searchheader");
+    search_playlist.scrollbar = lookup_widget (searchwin, "searchscroll");
+    search_playlist.hscrollbar = lookup_widget (searchwin, "searchhscroll");
+    assert (search_playlist.header);
+    assert (search_playlist.scrollbar);
+//    main_playlist.pcurr = &search_current;
+//    search_playlist.pcount = &search_count;
+    search_playlist.get_count = search_get_count;
+//    search_playlist.multisel = 0;
+    search_playlist.iterator = PL_SEARCH;
+    search_playlist.scrollpos = 0;
+    search_playlist.hscrollpos = 0;
+//    search_playlist.row = -1;
+    search_playlist.clicktime = -1;
+    search_playlist.nvisiblerows = 0;
+
+    // create default set of columns
+    DB_conf_item_t *col = deadbeef->conf_find ("search.column.", NULL);
+    if (!col) {
+        gtkpl_column_append (&search_playlist, gtkpl_column_alloc ("Artist / Album", 150, DB_COLUMN_ARTIST_ALBUM, NULL, 0));
+        gtkpl_column_append (&search_playlist, gtkpl_column_alloc ("Track №", 50, DB_COLUMN_TRACK, NULL, 1));
+        gtkpl_column_append (&search_playlist, gtkpl_column_alloc ("Title / Track Artist", 150, DB_COLUMN_TITLE, NULL, 0));
+        gtkpl_column_append (&search_playlist, gtkpl_column_alloc ("Duration", 50, DB_COLUMN_DURATION, NULL, 0));
+    }
+    else {
+        while (col) {
+            gtkpl_append_column_from_textdef (&search_playlist, col->value);
+            col = deadbeef->conf_find ("search.column.", col);
+        }
+    }
+    gtk_object_set_data (GTK_OBJECT (search_playlist.playlist), "ps", &search_playlist);
+    gtk_object_set_data (GTK_OBJECT (search_playlist.header), "ps", &search_playlist);
+    gtk_object_set_data (GTK_OBJECT (search_playlist.scrollbar), "ps", &search_playlist);
+    gtk_object_set_data (GTK_OBJECT (search_playlist.hscrollbar), "ps", &search_playlist);
+#endif
+}
+
 
 void
 gtkui_thread (void *ctx) {
@@ -468,9 +1032,7 @@ gtkui_thread (void *ctx) {
 
     searchwin = create_searchwin ();
     gtk_window_set_transient_for (GTK_WINDOW (searchwin), GTK_WINDOW (mainwin));
-    extern void main_playlist_init (GtkWidget *widget);
     main_playlist_init (lookup_widget (mainwin, "playlist"));
-    extern void search_playlist_init (GtkWidget *widget);
     search_playlist_init (lookup_widget (searchwin, "searchlist"));
 
     progress_init ();
@@ -526,8 +1088,8 @@ gtkui_stop (void) {
     deadbeef->thread_join (gtk_tid);
     trace ("gtk thread finished\n");
     gtk_tid = 0;
-    gtkpl_free (&main_playlist);
-    gtkpl_free (&search_playlist);
+    columns_free (&main_columns);
+    columns_free (&search_columns);
     trace ("gtkui_stop completed\n");
     return 0;
 }

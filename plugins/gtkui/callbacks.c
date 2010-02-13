@@ -47,285 +47,10 @@
 #define VSELECT(it, sel) {deadbeef->pl_set_selected(it,sel);gtk_pl_redraw_item_everywhere (it);}
 #define PL_NEXT(it, iter) (deadbeef->pl_get_next(it, iter))
 
-gtkplaylist_t *last_playlist;
+DdbListview *last_playlist;
 extern GtkWidget *mainwin;
-extern gtkplaylist_t main_playlist;
-extern gtkplaylist_t search_playlist;
 extern DB_functions_t *deadbeef; // defined in gtkui.c
 GtkWidget *trackproperties;
-
-gboolean
-playlist_tooltip_handler (GtkWidget *widget, gint x, gint y, gboolean keyboard_mode, GtkTooltip *tooltip, gpointer unused)
-{
-    DB_playItem_t *item = deadbeef->pl_get_for_idx (main_playlist.scrollpos + y / rowheight);
-    if (item && item->fname) {
-        gtk_tooltip_set_text (tooltip, item->fname);
-        return TRUE;
-    }
-    return FALSE;
-}
-
-static int
-main_get_count (void) {
-    return deadbeef->pl_getcount (PL_MAIN);
-}
-
-static int
-search_get_count (void) {
-    return deadbeef->pl_getcount (PL_SEARCH);
-}
-
-void
-main_playlist_init (GtkWidget *widget) {
-    // init playlist control structure, and put it into widget user-data
-    memset (&main_playlist, 0, sizeof (main_playlist));
-    main_playlist.title = "playlist";
-    main_playlist.playlist = widget;
-    main_playlist.header = lookup_widget (mainwin, "header");
-    main_playlist.scrollbar = lookup_widget (mainwin, "playscroll");
-    main_playlist.hscrollbar = lookup_widget (mainwin, "playhscroll");
-//    main_playlist.pcurr = &playlist_current_ptr;
-//    main_playlist.pcount = &pl_count;
-    main_playlist.get_count = main_get_count;
-    main_playlist.iterator = PL_MAIN;
-//    main_playlist.multisel = 1;
-    main_playlist.scrollpos = 0;
-    main_playlist.hscrollpos = 0;
-//    main_playlist.row = -1;
-    main_playlist.clicktime = -1;
-    main_playlist.nvisiblerows = 0;
-
-    DB_conf_item_t *col = deadbeef->conf_find ("playlist.column.", NULL);
-    if (!col) {
-        // create default set of columns
-        gtkpl_column_append (&main_playlist, gtkpl_column_alloc ("Playing", 50, DB_COLUMN_PLAYING, NULL, 0));
-        gtkpl_column_append (&main_playlist, gtkpl_column_alloc ("Artist / Album", 150, DB_COLUMN_ARTIST_ALBUM, NULL, 0));
-        gtkpl_column_append (&main_playlist, gtkpl_column_alloc ("Track №", 50, DB_COLUMN_TRACK, NULL, 1));
-        gtkpl_column_append (&main_playlist, gtkpl_column_alloc ("Title / Track Artist", 150, DB_COLUMN_TITLE, NULL, 0));
-        gtkpl_column_append (&main_playlist, gtkpl_column_alloc ("Duration", 50, DB_COLUMN_DURATION, NULL, 0));
-    }
-    else {
-        while (col) {
-            gtkpl_append_column_from_textdef (&main_playlist, col->value);
-            col = deadbeef->conf_find ("playlist.column.", col);
-        }
-    }
-
-    gtk_object_set_data (GTK_OBJECT (main_playlist.playlist), "ps", &main_playlist);
-    gtk_object_set_data (GTK_OBJECT (main_playlist.header), "ps", &main_playlist);
-    gtk_object_set_data (GTK_OBJECT (main_playlist.scrollbar), "ps", &main_playlist);
-    gtk_object_set_data (GTK_OBJECT (main_playlist.hscrollbar), "ps", &main_playlist);
-
-    // FIXME: filepath should be in properties dialog, while tooltip should be
-    // used to show text that doesn't fit in column width
-    if (deadbeef->conf_get_int ("playlist.showpathtooltip", 0)) {
-        GValue value = {0, };
-        g_value_init (&value, G_TYPE_BOOLEAN);
-        g_value_set_boolean (&value, TRUE);
-        g_object_set_property (G_OBJECT (widget), "has-tooltip", &value);
-        g_signal_connect (G_OBJECT (widget), "query-tooltip", G_CALLBACK (playlist_tooltip_handler), NULL);
-    }
-}
-
-void
-search_playlist_init (GtkWidget *widget) {
-    extern GtkWidget *searchwin;
-    // init playlist control structure, and put it into widget user-data
-    memset (&search_playlist, 0, sizeof (search_playlist));
-    search_playlist.title = "search";
-    search_playlist.playlist = widget;
-    search_playlist.header = lookup_widget (searchwin, "searchheader");
-    search_playlist.scrollbar = lookup_widget (searchwin, "searchscroll");
-    search_playlist.hscrollbar = lookup_widget (searchwin, "searchhscroll");
-    assert (search_playlist.header);
-    assert (search_playlist.scrollbar);
-//    main_playlist.pcurr = &search_current;
-//    search_playlist.pcount = &search_count;
-    search_playlist.get_count = search_get_count;
-//    search_playlist.multisel = 0;
-    search_playlist.iterator = PL_SEARCH;
-    search_playlist.scrollpos = 0;
-    search_playlist.hscrollpos = 0;
-//    search_playlist.row = -1;
-    search_playlist.clicktime = -1;
-    search_playlist.nvisiblerows = 0;
-
-    // create default set of columns
-    DB_conf_item_t *col = deadbeef->conf_find ("search.column.", NULL);
-    if (!col) {
-        gtkpl_column_append (&search_playlist, gtkpl_column_alloc ("Artist / Album", 150, DB_COLUMN_ARTIST_ALBUM, NULL, 0));
-        gtkpl_column_append (&search_playlist, gtkpl_column_alloc ("Track №", 50, DB_COLUMN_TRACK, NULL, 1));
-        gtkpl_column_append (&search_playlist, gtkpl_column_alloc ("Title / Track Artist", 150, DB_COLUMN_TITLE, NULL, 0));
-        gtkpl_column_append (&search_playlist, gtkpl_column_alloc ("Duration", 50, DB_COLUMN_DURATION, NULL, 0));
-    }
-    else {
-        while (col) {
-            gtkpl_append_column_from_textdef (&search_playlist, col->value);
-            col = deadbeef->conf_find ("search.column.", col);
-        }
-    }
-    gtk_object_set_data (GTK_OBJECT (search_playlist.playlist), "ps", &search_playlist);
-    gtk_object_set_data (GTK_OBJECT (search_playlist.header), "ps", &search_playlist);
-    gtk_object_set_data (GTK_OBJECT (search_playlist.scrollbar), "ps", &search_playlist);
-    gtk_object_set_data (GTK_OBJECT (search_playlist.hscrollbar), "ps", &search_playlist);
-}
-
-// redraw
-gboolean
-on_playlist_expose_event               (GtkWidget       *widget,
-        GdkEventExpose  *event,
-        gpointer         user_data)
-{
-    GTKPL_PROLOGUE;
-    // draw visible area of playlist
-    gtkpl_expose (ps, event->area.x, event->area.y, event->area.width, event->area.height);
-
-    return FALSE;
-}
-
-
-gboolean
-on_playlist_button_press_event         (GtkWidget       *widget,
-                                        GdkEventButton  *event,
-                                        gpointer         user_data)
-{
-    GTKPL_PROLOGUE;
-    if (event->button == 1) {
-        gtkpl_mouse1_pressed (ps, event->state, event->x, event->y, event->time);
-    }
-    else if (event->button == 3) {
-        // get item under cursor
-        int y = event->y / rowheight + ps->scrollpos;
-        if (y < 0 || y >= ps->get_count ()) {
-            y = -1;
-        }
-        DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (y, ps->iterator);
-        if (!it) {
-            // clicked empty space -- deselect everything and show insensitive menu
-            deadbeef->pl_set_cursor (ps->iterator, -1);
-            it = deadbeef->pl_get_first (ps->iterator);
-            while (it) {
-                SELECT (it, 0);
-                it = PL_NEXT (it, ps->iterator);
-            }
-            playlist_refresh ();
-            // no menu
-        }
-        else {
-            if (!SELECTED (it)) {
-                // item is unselected -- reset selection and select this
-                DB_playItem_t *it2 = deadbeef->pl_get_first (ps->iterator);
-                while (it2) {
-                    if (SELECTED (it2) && it2 != it) {
-                        SELECT (it2, 0);
-                    }
-                    else if (it2 == it) {
-                        deadbeef->pl_set_cursor (ps->iterator, y);
-                        SELECT (it2, 1);
-                    }
-                    it2 = PL_NEXT (it2, ps->iterator);
-                }
-                playlist_refresh ();
-            }
-            else {
-                // something is selected; move cursor but keep selection
-                deadbeef->pl_set_cursor (ps->iterator, y);
-                playlist_refresh ();
-            }
-            {
-                int inqueue = deadbeef->pl_playqueue_test (it);
-                GtkWidget *playlist_menu;
-                GtkWidget *add_to_playback_queue1;
-                GtkWidget *remove_from_playback_queue1;
-                GtkWidget *separator9;
-                GtkWidget *remove2;
-                GtkWidget *separator8;
-                GtkWidget *properties1;
-
-                playlist_menu = gtk_menu_new ();
-                add_to_playback_queue1 = gtk_menu_item_new_with_mnemonic ("Add to playback queue");
-                gtk_widget_show (add_to_playback_queue1);
-                gtk_container_add (GTK_CONTAINER (playlist_menu), add_to_playback_queue1);
-                gtk_object_set_data (GTK_OBJECT (add_to_playback_queue1), "ps", ps);
-
-                remove_from_playback_queue1 = gtk_menu_item_new_with_mnemonic ("Remove from playback queue");
-                if (inqueue == -1) {
-                    gtk_widget_set_sensitive (remove_from_playback_queue1, FALSE);
-                }
-                gtk_widget_show (remove_from_playback_queue1);
-                gtk_container_add (GTK_CONTAINER (playlist_menu), remove_from_playback_queue1);
-                gtk_object_set_data (GTK_OBJECT (remove_from_playback_queue1), "ps", ps);
-
-                separator9 = gtk_separator_menu_item_new ();
-                gtk_widget_show (separator9);
-                gtk_container_add (GTK_CONTAINER (playlist_menu), separator9);
-                gtk_widget_set_sensitive (separator9, FALSE);
-
-                remove2 = gtk_menu_item_new_with_mnemonic ("Remove");
-                gtk_widget_show (remove2);
-                gtk_container_add (GTK_CONTAINER (playlist_menu), remove2);
-                gtk_object_set_data (GTK_OBJECT (remove2), "ps", ps);
-
-                separator8 = gtk_separator_menu_item_new ();
-                gtk_widget_show (separator8);
-                gtk_container_add (GTK_CONTAINER (playlist_menu), separator8);
-                gtk_widget_set_sensitive (separator8, FALSE);
-
-                properties1 = gtk_menu_item_new_with_mnemonic ("Properties");
-                gtk_widget_show (properties1);
-                gtk_container_add (GTK_CONTAINER (playlist_menu), properties1);
-                gtk_object_set_data (GTK_OBJECT (properties1), "ps", ps);
-
-                g_signal_connect ((gpointer) add_to_playback_queue1, "activate",
-                        G_CALLBACK (on_add_to_playback_queue1_activate),
-                        NULL);
-                g_signal_connect ((gpointer) remove_from_playback_queue1, "activate",
-                        G_CALLBACK (on_remove_from_playback_queue1_activate),
-                        NULL);
-                g_signal_connect ((gpointer) remove2, "activate",
-                        G_CALLBACK (on_remove2_activate),
-                        NULL);
-                g_signal_connect ((gpointer) properties1, "activate",
-                        G_CALLBACK (on_properties1_activate),
-                        NULL);
-                gtk_menu_popup (GTK_MENU (playlist_menu), NULL, NULL, NULL, widget, 0, gtk_get_current_event_time());
-            }
-        }
-    }
-    return FALSE;
-}
-
-gboolean
-on_playlist_button_release_event       (GtkWidget       *widget,
-                                        GdkEventButton  *event,
-                                        gpointer         user_data)
-{
-    GTKPL_PROLOGUE;
-    if (event->button == 1) {
-        gtkpl_mouse1_released (ps, event->state, event->x, event->y, event->time);
-    }
-    return FALSE;
-}
-
-gboolean
-on_playlist_motion_notify_event        (GtkWidget       *widget,
-                                        GdkEventMotion  *event,
-                                        gpointer         user_data)
-{
-    GTKPL_PROLOGUE;
-    gtkpl_mousemove (ps, event);
-    return FALSE;
-}
-
-
-void
-on_playscroll_value_changed            (GtkRange        *widget,
-                                        gpointer         user_data)
-{
-    GTKPL_PROLOGUE;
-    int newscroll = gtk_range_get_value (GTK_RANGE (widget));
-    gtkpl_scroll (ps, newscroll);
-}
 
 static gboolean
 file_filter_func (const GtkFileFilterInfo *filter_info, gpointer data) {
@@ -502,11 +227,7 @@ on_clear1_activate                     (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     deadbeef->pl_clear ();
-    gtkplaylist_t *ps = &main_playlist;
-    GtkWidget *widget = ps->playlist;
-    gtkpl_setup_scrollbar (ps);
-    gtkpl_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
-    gtkpl_expose (ps, 0, 0, widget->allocation.width, widget->allocation.height);
+    main_refresh ();
     search_refresh ();
 }
 
@@ -516,10 +237,8 @@ on_select_all1_activate                (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     deadbeef->pl_select_all ();
-    gtkplaylist_t *ps = &main_playlist;
-    GtkWidget *widget = ps->playlist;
-    gtkpl_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
-    gdk_draw_drawable (widget->window, widget->style->black_gc, ps->backbuf, 0, 0, 0, 0, widget->allocation.width, widget->allocation.height);
+    DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
+    ddb_listview_refresh (pl, DDB_REFRESH_LIST | DDB_EXPOSE_LIST);
 }
 
 
@@ -528,10 +247,11 @@ on_remove1_activate                    (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     int cursor = deadbeef->pl_delete_selected ();
-    if (cursor >= main_playlist.get_count ()) {
-        cursor = main_playlist.get_count ()-1;
-    }
-    gtkpl_set_cursor (main_playlist.iterator, cursor);
+//    if (cursor >= deadbeef->pl_getcount (PL_MAIN)) {
+//        cursor = deadbeef->pl_getcount (PL_MAIN)-1;
+//    }
+    //gtkpl_set_cursor (main_playlist.iterator, cursor);
+
     main_refresh ();
     search_refresh ();
 }
@@ -541,27 +261,13 @@ void
 on_crop1_activate                      (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    gtkplaylist_t *ps = &main_playlist;
-    GtkWidget *widget = ps->playlist;
+    DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
     deadbeef->pl_crop_selected ();
-    gtkpl_setup_scrollbar (ps);
-    gtkpl_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
-    gtkpl_expose (ps, 0, 0, widget->allocation.width, widget->allocation.height);
+    main_refresh ();
     search_refresh ();
 }
 
 
-
-gboolean
-on_playlist_scroll_event               (GtkWidget       *widget,
-                                        GdkEvent        *event,
-                                        gpointer         user_data)
-{
-    GTKPL_PROLOGUE;
-	GdkEventScroll *ev = (GdkEventScroll*)event;
-    gtkpl_handle_scroll_event (ps, ev->direction);
-    return FALSE;
-}
 
 
 void
@@ -623,152 +329,11 @@ on_mainwin_key_press_event             (GtkWidget       *widget,
         deadbeef->sendmessage (M_PLAYRANDOM, 0, 0, 0);
     }
     else {
-        gtkpl_keypress (&main_playlist, event->keyval, event->state);
+        gtkpl_keypress (DDB_LISTVIEW (lookup_widget (mainwin, "playlist")), event->keyval, event->state);
     }
     return FALSE;
 }
 
-
-void
-on_playlist_drag_begin                 (GtkWidget       *widget,
-                                        GdkDragContext  *drag_context,
-                                        gpointer         user_data)
-{
-}
-
-gboolean
-on_playlist_drag_motion                (GtkWidget       *widget,
-                                        GdkDragContext  *drag_context,
-                                        gint             x,
-                                        gint             y,
-                                        guint            time,
-                                        gpointer         user_data)
-{
-    GTKPL_PROLOGUE;
-    gtkpl_track_dragdrop (ps, y);
-    return FALSE;
-}
-
-
-gboolean
-on_playlist_drag_drop                  (GtkWidget       *widget,
-                                        GdkDragContext  *drag_context,
-                                        gint             x,
-                                        gint             y,
-                                        guint            time,
-                                        gpointer         user_data)
-{
-#if 0
-    if (drag_context->targets) {
-        GdkAtom target_type = GDK_POINTER_TO_ATOM (g_list_nth_data (drag_context->targets, TARGET_SAMEWIDGET));
-        if (!target_type) {
-            return FALSE;
-        }
-        gtk_drag_get_data (widget, drag_context, target_type, time);
-        return TRUE;
-    }
-#endif
-    return FALSE;
-}
-
-
-void
-on_playlist_drag_data_get              (GtkWidget       *widget,
-                                        GdkDragContext  *drag_context,
-                                        GtkSelectionData *selection_data,
-                                        guint            target_type,
-                                        guint            time,
-                                        gpointer         user_data)
-{
-    switch (target_type) {
-    case TARGET_SAMEWIDGET:
-        {
-            // format as "STRING" consisting of array of pointers
-            int nsel = deadbeef->pl_getselcount ();
-            if (!nsel) {
-                break; // something wrong happened
-            }
-            uint32_t *ptr = malloc (nsel * sizeof (uint32_t));
-            int idx = 0;
-            int i = 0;
-            DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
-            for (; it; it = deadbeef->pl_get_next (it, PL_MAIN), idx++) {
-                if (deadbeef->pl_is_selected (it)) {
-                    ptr[i] = idx;
-                    i++;
-                }
-            }
-            gtk_selection_data_set (selection_data, selection_data->target, sizeof (uint32_t) * 8, (gchar *)ptr, nsel * sizeof (uint32_t));
-            free (ptr);
-        }
-        break;
-    default:
-        g_assert_not_reached ();
-    }
-}
-
-
-void
-on_playlist_drag_data_received         (GtkWidget       *widget,
-                                        GdkDragContext  *drag_context,
-                                        gint             x,
-                                        gint             y,
-                                        GtkSelectionData *data,
-                                        guint            target_type,
-                                        guint            time,
-                                        gpointer         user_data)
-{
-    GTKPL_PROLOGUE;
-    gchar *ptr=(char*)data->data;
-    if (target_type == 0) { // uris
-        // this happens when dropped from file manager
-        char *mem = malloc (data->length+1);
-        memcpy (mem, ptr, data->length);
-        mem[data->length] = 0;
-        // we don't pass control structure, but there's only one drag-drop view currently
-        gtkui_receive_fm_drop (mem, data->length, y);
-    }
-    else if (target_type == 1) {
-        uint32_t *d= (uint32_t *)ptr;
-        int length = data->length/4;
-        int drop_row = y / rowheight + ps->scrollpos;
-        DB_playItem_t *drop_before = deadbeef->pl_get_for_idx_and_iter (drop_row, ps->iterator);
-        while (drop_before && SELECTED (drop_before)) {
-            drop_before = PL_NEXT(drop_before, ps->iterator);
-        }
-        deadbeef->pl_move_items (ps->iterator, drop_before, d, length);
-    }
-    gtk_drag_finish (drag_context, TRUE, FALSE, time);
-}
-
-
-void
-on_playlist_drag_data_delete           (GtkWidget       *widget,
-                                        GdkDragContext  *drag_context,
-                                        gpointer         user_data)
-{
-}
-
-
-gboolean
-on_playlist_drag_failed                (GtkWidget       *widget,
-                                        GdkDragContext  *arg1,
-                                        GtkDragResult    arg2,
-                                        gpointer         user_data)
-{
-    return TRUE;
-}
-
-
-void
-on_playlist_drag_leave                 (GtkWidget       *widget,
-                                        GdkDragContext  *drag_context,
-                                        guint            time,
-                                        gpointer         user_data)
-{
-    GTKPL_PROLOGUE;
-    gtkpl_track_dragdrop (ps, -1);
-}
 
 void
 on_order_linear_activate               (GtkMenuItem     *menuitem,
@@ -863,10 +428,7 @@ on_playlist_load_activate              (GtkMenuItem     *menuitem,
         if (fname) {
             /*int res = */deadbeef->pl_load (fname);
             g_free (fname);
-            gtkplaylist_t *ps = &main_playlist;
-            gtkpl_setup_scrollbar (ps);
-            gtkpl_draw_playlist (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
-            gtkpl_expose (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
+            main_refresh ();
             search_refresh ();
         }
     }
@@ -1430,23 +992,15 @@ on_lgpl1_activate                      (GtkMenuItem     *menuitem,
 }
 
 
-void
-on_playhscroll_value_changed           (GtkRange        *widget,
-                                        gpointer         user_data)
-{
-    GTKPL_PROLOGUE;
-    int newscroll = gtk_range_get_value (GTK_RANGE (widget));
-    gtkpl_hscroll (ps, newscroll);
-}
-
 
 void
 on_searchhscroll_value_changed         (GtkRange        *widget,
                                         gpointer         user_data)
 {
-    GTKPL_PROLOGUE;
-    int newscroll = gtk_range_get_value (GTK_RANGE (widget));
-    gtkpl_hscroll (ps, newscroll);
+// KILLME
+//    GTKPL_PROLOGUE;
+//    int newscroll = gtk_range_get_value (GTK_RANGE (widget));
+//    gtkpl_hscroll (ps, newscroll);
 }
 
 
@@ -1796,102 +1350,6 @@ on_prefwin_delete_event                (GtkWidget       *widget,
 }
 
 void
-on_add_column_activate                 (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
-    gtkplaylist_t *ps = last_playlist;
-    GtkWidget *dlg = create_editcolumndlg ();
-    gtk_window_set_title (GTK_WINDOW (dlg), "Add column");
-    gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "id")), 0);
-    gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "align")), 0);
-    gint response = gtk_dialog_run (GTK_DIALOG (dlg));
-    if (response == GTK_RESPONSE_OK) {
-        const gchar *title = gtk_entry_get_text (GTK_ENTRY (lookup_widget (dlg, "title")));
-        const gchar *format = gtk_entry_get_text (GTK_ENTRY (lookup_widget (dlg, "format")));
-        int id = gtk_combo_box_get_active (GTK_COMBO_BOX (lookup_widget (dlg, "id")));
-        int align = gtk_combo_box_get_active (GTK_COMBO_BOX (lookup_widget (dlg, "align")));
-        if (id >= DB_COLUMN_ID_MAX) {
-            id = -1;
-        }
-        gtkpl_column_insert_before (ps, ps->active_column, gtkpl_column_alloc (title, 100, id, format, align));
-        gtkpl_setup_hscrollbar (ps);
-        gtkpl_header_draw (ps);
-        gtkpl_expose_header (ps, 0, 0, ps->header->allocation.width, ps->header->allocation.height);
-
-        gtkpl_draw_playlist (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
-        gtkpl_expose (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
-    }
-    gtk_widget_destroy (dlg);
-}
-
-
-void
-on_edit_column_activate                (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
-    gtkplaylist_t *ps = last_playlist;
-    if (!ps->active_column)
-        return;
-    GtkWidget *dlg = create_editcolumndlg ();
-    gtk_window_set_title (GTK_WINDOW (dlg), "Edit column");
-    gtk_entry_set_text (GTK_ENTRY (lookup_widget (dlg, "title")), ps->active_column->title);
-    gtk_entry_set_text (GTK_ENTRY (lookup_widget (dlg, "format")), ps->active_column->format);
-    if (ps->active_column->id == -1) {
-        gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "id")), DB_COLUMN_ID_MAX);
-    }
-    else {
-        gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "id")), ps->active_column->id);
-    }
-    gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "align")), ps->active_column->align_right);
-    gint response = gtk_dialog_run (GTK_DIALOG (dlg));
-    if (response == GTK_RESPONSE_OK) {
-        const gchar *title = gtk_entry_get_text (GTK_ENTRY (lookup_widget (dlg, "title")));
-        const gchar *format = gtk_entry_get_text (GTK_ENTRY (lookup_widget (dlg, "format")));
-        int id = gtk_combo_box_get_active (GTK_COMBO_BOX (lookup_widget (dlg, "id")));
-        int align = gtk_combo_box_get_active (GTK_COMBO_BOX (lookup_widget (dlg, "align")));
-        if (id >= DB_COLUMN_ID_MAX) {
-            id = -1;
-        }
-        free (ps->active_column->title);
-        free (ps->active_column->format);
-        ps->active_column->title = strdup (title);
-        ps->active_column->format = strdup (format);
-        ps->active_column->id = id;
-        ps->active_column->align_right = align;
-        gtkpl_column_rewrite_config (ps);
-
-        gtkpl_header_draw (ps);
-        gtkpl_expose_header (ps, 0, 0, ps->header->allocation.width, ps->header->allocation.height);
-
-        gtkpl_draw_playlist (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
-        gtkpl_expose (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
-    }
-    gtk_widget_destroy (dlg);
-}
-
-
-void
-on_remove_column_activate              (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
-    gtkplaylist_t *ps = last_playlist;
-
-    if (!ps->active_column)
-        return;
-
-    gtkpl_column_remove (ps, ps->active_column);
-
-    gtkpl_setup_hscrollbar (ps);
-    gtkpl_header_draw (ps);
-    gtkpl_expose_header (ps, 0, 0, ps->header->allocation.width, ps->header->allocation.height);
-
-    gtkpl_draw_playlist (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
-    gtkpl_expose (ps, 0, 0, ps->playlist->allocation.width, ps->playlist->allocation.height);
-
-    gtkpl_column_rewrite_config (ps);
-}
-
-void
 on_column_id_changed                   (GtkComboBox     *combobox,
                                         gpointer         user_data)
 {
@@ -2103,16 +1561,17 @@ void
 on_add_to_playback_queue1_activate     (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    GtkWidget *widget = GTK_WIDGET (menuitem);
-    GTKPL_PROLOGUE;
-    DB_playItem_t *it = deadbeef->pl_get_first (ps->iterator);
-    while (it) {
-        if (SELECTED (it)) {
-            deadbeef->pl_playqueue_push (it);
-        }
-        it = PL_NEXT (it, ps->iterator);
-    }
-    playlist_refresh ();
+// FIXME: port
+//    GtkWidget *widget = GTK_WIDGET (menuitem);
+//    GTKPL_PROLOGUE;
+//    DB_playItem_t *it = deadbeef->pl_get_first (ps->iterator);
+//    while (it) {
+//        if (SELECTED (it)) {
+//            deadbeef->pl_playqueue_push (it);
+//        }
+//        it = PL_NEXT (it, ps->iterator);
+//    }
+//    playlist_refresh ();
 }
 
 
@@ -2121,16 +1580,17 @@ on_remove_from_playback_queue1_activate
                                         (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    GtkWidget *widget = GTK_WIDGET (menuitem);
-    GTKPL_PROLOGUE;
-    DB_playItem_t *it = deadbeef->pl_get_first (ps->iterator);
-    while (it) {
-        if (SELECTED (it)) {
-            deadbeef->pl_playqueue_remove (it);
-        }
-        it = PL_NEXT (it, ps->iterator);
-    }
-    playlist_refresh ();
+// FIXME: port
+//    GtkWidget *widget = GTK_WIDGET (menuitem);
+//    GTKPL_PROLOGUE;
+//    DB_playItem_t *it = deadbeef->pl_get_first (ps->iterator);
+//    while (it) {
+//        if (SELECTED (it)) {
+//            deadbeef->pl_playqueue_remove (it);
+//        }
+//        it = PL_NEXT (it, ps->iterator);
+//    }
+//    playlist_refresh ();
 }
 
 
@@ -2139,14 +1599,9 @@ on_remove2_activate                    (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     GtkWidget *widget = GTK_WIDGET (menuitem);
-    GTKPL_PROLOGUE;
     int cursor = deadbeef->pl_delete_selected ();
-    if (cursor >= ps->get_count ()) {
-        cursor = ps->get_count ()-1;
-    }
     main_refresh ();
     search_refresh ();
-    gtkpl_set_cursor (ps->iterator, cursor);
 }
 
 
@@ -2154,8 +1609,9 @@ void
 on_properties1_activate                (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
+// FIXME: port
+#if 0
     GtkWidget *widget = GTK_WIDGET (menuitem);
-    GTKPL_PROLOGUE;
     GtkWidget *w;
     const char *meta;
     DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (deadbeef->pl_get_cursor (ps->iterator), ps->iterator);
@@ -2227,19 +1683,21 @@ on_properties1_activate                (GtkMenuItem     *menuitem,
 
     gtk_widget_show (widget);
     gtk_window_present (GTK_WINDOW (widget));
+#endif
 }
 
-gboolean
-on_trackproperties_key_press_event     (GtkWidget       *widget,
-                                        GdkEventKey     *event,
-                                        gpointer         user_data)
-{
-    if (event->keyval == GDK_Escape) {
-        trackproperties = NULL;
-        gtk_widget_destroy (widget);
-    }
-    return FALSE;
-}
+//gboolean
+//on_trackproperties_key_press_event     (GtkWidget       *widget,
+//                                        GdkEventKey     *event,
+//                                        gpointer         user_data)
+//{
+// KILLME
+//    if (event->keyval == GDK_Escape) {
+//        trackproperties = NULL;
+//        gtk_widget_destroy (widget);
+//    }
+//    return FALSE;
+//}
 
 
 
@@ -2261,5 +1719,13 @@ on_trackproperties_delete_event        (GtkWidget       *widget,
 {
     trackproperties = NULL;
     return FALSE;
+}
+
+
+GtkWidget*
+create_ddb_listview_widget (gchar *widget_name, gchar *string1, gchar *string2,
+                gint int1, gint int2)
+{
+    return ddb_listview_new ();
 }
 

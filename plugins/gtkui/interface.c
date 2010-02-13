@@ -112,13 +112,7 @@ create_mainwin (void)
   GtkWidget *volumebar;
   GtkWidget *tabbar;
   GtkWidget *frame1;
-  GtkWidget *table1;
-  GtkWidget *playscroll;
-  GtkWidget *_;
-  GtkWidget *vbox3;
-  GtkWidget *header;
   GtkWidget *playlist;
-  GtkWidget *playhscroll;
   GtkWidget *statusbar;
   GtkAccelGroup *accel_group;
 
@@ -513,42 +507,11 @@ create_mainwin (void)
   gtk_box_pack_start (GTK_BOX (vbox1), frame1, TRUE, TRUE, 0);
   gtk_container_set_border_width (GTK_CONTAINER (frame1), 1);
 
-  table1 = gtk_table_new (2, 2, FALSE);
-  gtk_widget_show (table1);
-  gtk_container_add (GTK_CONTAINER (frame1), table1);
-
-  playscroll = gtk_vscrollbar_new (GTK_ADJUSTMENT (gtk_adjustment_new (0, 0, 1, 1, 0, 0)));
-  gtk_widget_show (playscroll);
-  gtk_table_attach (GTK_TABLE (table1), playscroll, 1, 2, 0, 1,
-                    (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (GTK_FILL), 0, 0);
-
-  _ = gtk_hbox_new (FALSE, 0);
-  gtk_widget_show (_);
-  gtk_table_attach (GTK_TABLE (table1), _, 0, 1, 0, 1,
-                    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-                    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
-
-  vbox3 = gtk_vbox_new (FALSE, 0);
-  gtk_widget_show (vbox3);
-  gtk_box_pack_start (GTK_BOX (_), vbox3, TRUE, TRUE, 0);
-
-  header = gtk_drawing_area_new ();
-  gtk_widget_show (header);
-  gtk_box_pack_start (GTK_BOX (vbox3), header, FALSE, TRUE, 0);
-  gtk_widget_set_size_request (header, -1, 24);
-  gtk_widget_set_events (header, GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK);
-
-  playlist = gtk_drawing_area_new ();
+  playlist = create_ddb_listview_widget ("playlist", "", "", 0, 0);
   gtk_widget_show (playlist);
-  gtk_box_pack_start (GTK_BOX (vbox3), playlist, TRUE, TRUE, 0);
-  gtk_widget_set_events (playlist, GDK_EXPOSURE_MASK | GDK_POINTER_MOTION_MASK | GDK_BUTTON_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK);
-
-  playhscroll = gtk_hscrollbar_new (GTK_ADJUSTMENT (gtk_adjustment_new (0, 0, 0, 0, 0, 0)));
-  gtk_widget_show (playhscroll);
-  gtk_table_attach (GTK_TABLE (table1), playhscroll, 0, 1, 1, 2,
-                    (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (GTK_FILL), 0, 0);
+  gtk_container_add (GTK_CONTAINER (frame1), playlist);
+  GTK_WIDGET_UNSET_FLAGS (playlist, GTK_CAN_FOCUS);
+  GTK_WIDGET_UNSET_FLAGS (playlist, GTK_CAN_DEFAULT);
 
   statusbar = gtk_statusbar_new ();
   gtk_widget_show (statusbar);
@@ -722,78 +685,6 @@ create_mainwin (void)
   g_signal_connect ((gpointer) tabbar, "motion_notify_event",
                     G_CALLBACK (on_tabbar_motion_notify_event),
                     NULL);
-  g_signal_connect ((gpointer) playscroll, "value_changed",
-                    G_CALLBACK (on_playscroll_value_changed),
-                    NULL);
-  g_signal_connect ((gpointer) header, "expose_event",
-                    G_CALLBACK (on_header_expose_event),
-                    NULL);
-  g_signal_connect ((gpointer) header, "configure_event",
-                    G_CALLBACK (on_header_configure_event),
-                    NULL);
-  g_signal_connect ((gpointer) header, "realize",
-                    G_CALLBACK (on_header_realize),
-                    NULL);
-  g_signal_connect ((gpointer) header, "motion_notify_event",
-                    G_CALLBACK (on_header_motion_notify_event),
-                    NULL);
-  g_signal_connect ((gpointer) header, "button_press_event",
-                    G_CALLBACK (on_header_button_press_event),
-                    NULL);
-  g_signal_connect ((gpointer) header, "button_release_event",
-                    G_CALLBACK (on_header_button_release_event),
-                    NULL);
-  g_signal_connect ((gpointer) playlist, "configure_event",
-                    G_CALLBACK (on_playlist_configure_event),
-                    NULL);
-  g_signal_connect ((gpointer) playlist, "expose_event",
-                    G_CALLBACK (on_playlist_expose_event),
-                    NULL);
-  g_signal_connect ((gpointer) playlist, "realize",
-                    G_CALLBACK (on_playlist_realize),
-                    NULL);
-  g_signal_connect ((gpointer) playlist, "button_press_event",
-                    G_CALLBACK (on_playlist_button_press_event),
-                    NULL);
-  g_signal_connect ((gpointer) playlist, "scroll_event",
-                    G_CALLBACK (on_playlist_scroll_event),
-                    NULL);
-  g_signal_connect ((gpointer) playlist, "drag_begin",
-                    G_CALLBACK (on_playlist_drag_begin),
-                    NULL);
-  g_signal_connect ((gpointer) playlist, "drag_motion",
-                    G_CALLBACK (on_playlist_drag_motion),
-                    NULL);
-  g_signal_connect ((gpointer) playlist, "drag_drop",
-                    G_CALLBACK (on_playlist_drag_drop),
-                    NULL);
-  g_signal_connect ((gpointer) playlist, "drag_data_get",
-                    G_CALLBACK (on_playlist_drag_data_get),
-                    NULL);
-  g_signal_connect ((gpointer) playlist, "drag_end",
-                    G_CALLBACK (on_playlist_drag_end),
-                    NULL);
-  g_signal_connect ((gpointer) playlist, "drag_failed",
-                    G_CALLBACK (on_playlist_drag_failed),
-                    NULL);
-  g_signal_connect ((gpointer) playlist, "drag_leave",
-                    G_CALLBACK (on_playlist_drag_leave),
-                    NULL);
-  g_signal_connect ((gpointer) playlist, "button_release_event",
-                    G_CALLBACK (on_playlist_button_release_event),
-                    NULL);
-  g_signal_connect ((gpointer) playlist, "motion_notify_event",
-                    G_CALLBACK (on_playlist_motion_notify_event),
-                    NULL);
-  g_signal_connect ((gpointer) playlist, "drag_data_received",
-                    G_CALLBACK (on_playlist_drag_data_received),
-                    NULL);
-  g_signal_connect ((gpointer) playlist, "drag_data_delete",
-                    G_CALLBACK (on_playlist_drag_data_delete),
-                    NULL);
-  g_signal_connect ((gpointer) playhscroll, "value_changed",
-                    G_CALLBACK (on_playhscroll_value_changed),
-                    NULL);
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (mainwin, mainwin, "mainwin");
@@ -877,13 +768,7 @@ create_mainwin (void)
   GLADE_HOOKUP_OBJECT (mainwin, volumebar, "volumebar");
   GLADE_HOOKUP_OBJECT (mainwin, tabbar, "tabbar");
   GLADE_HOOKUP_OBJECT (mainwin, frame1, "frame1");
-  GLADE_HOOKUP_OBJECT (mainwin, table1, "table1");
-  GLADE_HOOKUP_OBJECT (mainwin, playscroll, "playscroll");
-  GLADE_HOOKUP_OBJECT (mainwin, _, "_");
-  GLADE_HOOKUP_OBJECT (mainwin, vbox3, "vbox3");
-  GLADE_HOOKUP_OBJECT (mainwin, header, "header");
   GLADE_HOOKUP_OBJECT (mainwin, playlist, "playlist");
-  GLADE_HOOKUP_OBJECT (mainwin, playhscroll, "playhscroll");
   GLADE_HOOKUP_OBJECT (mainwin, statusbar, "statusbar");
 
   gtk_window_add_accel_group (GTK_WINDOW (mainwin), accel_group);
@@ -898,12 +783,7 @@ create_searchwin (void)
   GtkWidget *vbox4;
   GtkWidget *searchentry;
   GtkWidget *frame2;
-  GtkWidget *table2;
-  GtkWidget *searchscroll;
-  GtkWidget *vbox5;
-  GtkWidget *searchheader;
   GtkWidget *searchlist;
-  GtkWidget *searchhscroll;
 
   searchwin = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_widget_set_size_request (searchwin, 600, 150);
@@ -927,39 +807,11 @@ create_searchwin (void)
   gtk_widget_show (frame2);
   gtk_box_pack_start (GTK_BOX (vbox4), frame2, TRUE, TRUE, 0);
 
-  table2 = gtk_table_new (2, 2, FALSE);
-  gtk_widget_show (table2);
-  gtk_container_add (GTK_CONTAINER (frame2), table2);
-
-  searchscroll = gtk_vscrollbar_new (GTK_ADJUSTMENT (gtk_adjustment_new (0, 0, 1, 1, 0, 0)));
-  gtk_widget_show (searchscroll);
-  gtk_table_attach (GTK_TABLE (table2), searchscroll, 1, 2, 0, 1,
-                    (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (GTK_FILL), 0, 0);
-
-  vbox5 = gtk_vbox_new (FALSE, 0);
-  gtk_widget_show (vbox5);
-  gtk_table_attach (GTK_TABLE (table2), vbox5, 0, 1, 0, 1,
-                    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-                    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
-
-  searchheader = gtk_drawing_area_new ();
-  gtk_widget_show (searchheader);
-  gtk_box_pack_start (GTK_BOX (vbox5), searchheader, FALSE, TRUE, 0);
-  gtk_widget_set_size_request (searchheader, -1, 24);
-  gtk_widget_set_events (searchheader, GDK_EXPOSURE_MASK | GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK);
-
-  searchlist = gtk_drawing_area_new ();
+  searchlist = create_ddb_listview_widget ("searchlist", "", "", 0, 0);
   gtk_widget_show (searchlist);
-  gtk_box_pack_start (GTK_BOX (vbox5), searchlist, TRUE, TRUE, 0);
-  GTK_WIDGET_SET_FLAGS (searchlist, GTK_CAN_DEFAULT);
-  gtk_widget_set_events (searchlist, GDK_EXPOSURE_MASK | GDK_POINTER_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK);
-
-  searchhscroll = gtk_hscrollbar_new (GTK_ADJUSTMENT (gtk_adjustment_new (0, 0, 0, 0, 0, 0)));
-  gtk_widget_show (searchhscroll);
-  gtk_table_attach (GTK_TABLE (table2), searchhscroll, 0, 1, 1, 2,
-                    (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (GTK_FILL), 0, 0);
+  gtk_container_add (GTK_CONTAINER (frame2), searchlist);
+  GTK_WIDGET_UNSET_FLAGS (searchlist, GTK_CAN_FOCUS);
+  GTK_WIDGET_UNSET_FLAGS (searchlist, GTK_CAN_DEFAULT);
 
   g_signal_connect ((gpointer) searchwin, "key_press_event",
                     G_CALLBACK (on_searchwin_key_press_event),
@@ -976,62 +828,14 @@ create_searchwin (void)
   g_signal_connect ((gpointer) searchentry, "changed",
                     G_CALLBACK (on_searchentry_changed),
                     NULL);
-  g_signal_connect ((gpointer) searchscroll, "value_changed",
-                    G_CALLBACK (on_playscroll_value_changed),
-                    NULL);
-  g_signal_connect ((gpointer) searchheader, "button_press_event",
-                    G_CALLBACK (on_header_button_press_event),
-                    NULL);
-  g_signal_connect ((gpointer) searchheader, "button_release_event",
-                    G_CALLBACK (on_header_button_release_event),
-                    NULL);
-  g_signal_connect ((gpointer) searchheader, "configure_event",
-                    G_CALLBACK (on_header_configure_event),
-                    NULL);
-  g_signal_connect ((gpointer) searchheader, "expose_event",
-                    G_CALLBACK (on_header_expose_event),
-                    NULL);
-  g_signal_connect ((gpointer) searchheader, "motion_notify_event",
-                    G_CALLBACK (on_header_motion_notify_event),
-                    NULL);
-  g_signal_connect ((gpointer) searchlist, "button_press_event",
-                    G_CALLBACK (on_playlist_button_press_event),
-                    NULL);
-  g_signal_connect ((gpointer) searchlist, "configure_event",
-                    G_CALLBACK (on_searchlist_configure_event),
-                    NULL);
-  g_signal_connect ((gpointer) searchlist, "expose_event",
-                    G_CALLBACK (on_playlist_expose_event),
-                    NULL);
-  g_signal_connect ((gpointer) searchlist, "scroll_event",
-                    G_CALLBACK (on_playlist_scroll_event),
-                    NULL);
-  g_signal_connect ((gpointer) searchlist, "realize",
-                    G_CALLBACK (on_searchlist_realize),
-                    NULL);
-  g_signal_connect ((gpointer) searchlist, "button_release_event",
-                    G_CALLBACK (on_playlist_button_release_event),
-                    NULL);
-  g_signal_connect ((gpointer) searchlist, "motion_notify_event",
-                    G_CALLBACK (on_playlist_motion_notify_event),
-                    NULL);
-  g_signal_connect ((gpointer) searchhscroll, "value_changed",
-                    G_CALLBACK (on_searchhscroll_value_changed),
-                    NULL);
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (searchwin, searchwin, "searchwin");
   GLADE_HOOKUP_OBJECT (searchwin, vbox4, "vbox4");
   GLADE_HOOKUP_OBJECT (searchwin, searchentry, "searchentry");
   GLADE_HOOKUP_OBJECT (searchwin, frame2, "frame2");
-  GLADE_HOOKUP_OBJECT (searchwin, table2, "table2");
-  GLADE_HOOKUP_OBJECT (searchwin, searchscroll, "searchscroll");
-  GLADE_HOOKUP_OBJECT (searchwin, vbox5, "vbox5");
-  GLADE_HOOKUP_OBJECT (searchwin, searchheader, "searchheader");
   GLADE_HOOKUP_OBJECT (searchwin, searchlist, "searchlist");
-  GLADE_HOOKUP_OBJECT (searchwin, searchhscroll, "searchhscroll");
 
-  gtk_widget_grab_default (searchlist);
   return searchwin;
 }
 
@@ -1278,47 +1082,6 @@ create_helpwindow (void)
   GLADE_HOOKUP_OBJECT (helpwindow, helptext, "helptext");
 
   return helpwindow;
-}
-
-GtkWidget*
-create_headermenu (void)
-{
-  GtkWidget *headermenu;
-  GtkWidget *add_column;
-  GtkWidget *edit_column;
-  GtkWidget *remove_column;
-
-  headermenu = gtk_menu_new ();
-
-  add_column = gtk_menu_item_new_with_mnemonic ("Add column");
-  gtk_widget_show (add_column);
-  gtk_container_add (GTK_CONTAINER (headermenu), add_column);
-
-  edit_column = gtk_menu_item_new_with_mnemonic ("Edit column");
-  gtk_widget_show (edit_column);
-  gtk_container_add (GTK_CONTAINER (headermenu), edit_column);
-
-  remove_column = gtk_menu_item_new_with_mnemonic ("Remove column");
-  gtk_widget_show (remove_column);
-  gtk_container_add (GTK_CONTAINER (headermenu), remove_column);
-
-  g_signal_connect ((gpointer) add_column, "activate",
-                    G_CALLBACK (on_add_column_activate),
-                    NULL);
-  g_signal_connect ((gpointer) edit_column, "activate",
-                    G_CALLBACK (on_edit_column_activate),
-                    NULL);
-  g_signal_connect ((gpointer) remove_column, "activate",
-                    G_CALLBACK (on_remove_column_activate),
-                    NULL);
-
-  /* Store pointers to all widgets, for use by lookup_widget(). */
-  GLADE_HOOKUP_OBJECT_NO_REF (headermenu, headermenu, "headermenu");
-  GLADE_HOOKUP_OBJECT (headermenu, add_column, "add_column");
-  GLADE_HOOKUP_OBJECT (headermenu, edit_column, "edit_column");
-  GLADE_HOOKUP_OBJECT (headermenu, remove_column, "remove_column");
-
-  return headermenu;
 }
 
 GtkWidget*

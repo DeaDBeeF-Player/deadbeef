@@ -7,7 +7,7 @@
 static void
 add_dirs_worker (void *data) {
     GSList *lst = (GSList *)data;
-    gtkpl_add_dirs (&main_playlist, lst);
+    gtkpl_add_dirs (lst);
 }
 
 void
@@ -18,7 +18,7 @@ gtkui_add_dirs (GSList *lst) {
 static void
 add_files_worker (void *data) {
     GSList *lst = (GSList *)data;
-    gtkpl_add_files (&main_playlist, lst);
+    gtkpl_add_files (lst);
 }
 
 void
@@ -29,7 +29,7 @@ gtkui_add_files (struct _GSList *lst) {
 static void
 open_files_worker (void *data) {
     GSList *lst = (GSList *)data;
-    gtkpl_add_files (&main_playlist, lst);
+    gtkpl_add_files (lst);
     gtkpl_set_cursor (PL_MAIN, 0);
     deadbeef->sendmessage (M_PLAYSONG, 0, 0, 0);
 }
@@ -49,7 +49,7 @@ struct fmdrop_data {
 static void
 fmdrop_worker (void *ctx) {
     struct fmdrop_data *data = (struct fmdrop_data *)ctx;
-    gtkpl_add_fm_dropped_files (&main_playlist, data->mem, data->length, data->drop_y);
+    gtkpl_add_fm_dropped_files (data->mem, data->length, data->drop_y);
     free (data);
 }
 

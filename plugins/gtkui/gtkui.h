@@ -19,16 +19,6 @@
 #ifndef __GTKUI_H
 #define __GTKUI_H
 
-#define PL_HEAD(iter) (deadbeef->pl_get_first(iter))
-#define PL_TAIL(iter) (deadbeef->pl_get_last(iter))
-#define PL_NEXT(it, iter) (deadbeef->pl_get_next(it, iter))
-#define PL_PREV(it, iter) (deadbeef->pl_get_prev(it, iter))
-#define SELECTED(it) (deadbeef->pl_is_selected(it))
-#define SELECT(it, sel) (deadbeef->pl_set_selected(it,sel))
-#define VSELECT(it, sel) {deadbeef->pl_set_selected(it,sel);gtk_pl_redraw_item_everywhere (it);}
-#define REF(it) {if (it) deadbeef->pl_item_ref (it);}
-#define UNREF(it) {if (it) deadbeef->pl_item_unref (it);}
-
 #if HAVE_NOTIFY
 #define NOTIFY_DEFAULT_FORMAT "%a - %t"
 #endif

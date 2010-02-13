@@ -46,36 +46,83 @@ enum {
     COLO_COUNT
 };
 
-//#define pl_ncolumns 5
-//#define pl_colname_max 100
+G_BEGIN_DECLS
 
-typedef struct gtkpl_column_s {
-    char *title;
-    int id; // id is faster than format, set to -1 to use format
-    char *format;
-    int width;
-    int movepos; // valid only while `moving' is 1
-    struct gtkpl_column_s *next;
-    unsigned align_right : 1;
-    unsigned sort_order : 2; // 0=none, 1=asc, 2=desc
-} gtkpl_column_t;
+#define DDB_TYPE_LISTVIEW (ddb_listview_get_type ())
+#define DDB_LISTVIEW(obj) (G_TYPE_CHECK_INSTANCE_CAST((obj), DDB_TYPE_LISTVIEW, DdbListview))
+#define DDB_LISTVIEW_CLASS(obj) (G_TYPE_CHECK_CLASS_CAST((obj), DDB_TYPE_LISTVIEW, DdbListviewClass))
+#define DDB_IS_LISTVIEW(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), DDB_TYPE_LISTVIEW))
+#define DDB_IS_LISTVIEW_CLASS(obj) (G_TYPE_CHECK_CLASS_TYPE ((obj), DDB_TYPE_LISTVIEW))
+#define DDB_LISTVIEW_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), DDB_TYPE_LISTVIEW, DdbListviewClass))
+
+typedef struct _DdbListview DdbListview;
+typedef struct _DdbListviewClass DdbListviewClass;
+
+typedef void * DdbListviewIter;
+typedef void * DdbListviewColIter;
+
+typedef struct {
+    // rows
+    int (*count) (void);
+
+    int (*cursor) (void);
+    void (*set_cursor) (int cursor);
+
+    DdbListviewIter (*head) (void);
+    DdbListviewIter (*tail) (void);
+    DdbListviewIter (*next) (DdbListviewIter);
+    DdbListviewIter (*prev) (DdbListviewIter);
+
+    DdbListviewIter (*get_for_idx) (int idx);
+    int (*get_idx) (DdbListviewIter);
+
+    void (*ref) (DdbListviewIter);
+    void (*unref) (DdbListviewIter);
+
+    int (*is_selected) (DdbListviewIter);
+    void (*select) (DdbListviewIter, int sel);
+
+    // columns
+    int (*col_count) (void);
+    DdbListviewColIter (*col_first) (void);
+    DdbListviewColIter (*col_next) (DdbListviewColIter);
+    const char *(*col_get_title) (DdbListviewColIter);
+    int (*col_get_width) (DdbListviewColIter);
+    int (*col_get_justify) (DdbListviewColIter);
+    int (*col_get_sort) (DdbListviewColIter);
+    void (*col_sort) (DdbListviewColIter);
+
+    // callbacks
+    void (*draw_column_data) (GdkDrawable *drawable, DdbListviewIter iter, int idx, DdbListviewColIter column, int x, int y, int width, int height);
+    void (*edit_column) (DdbListviewColIter);
+    void (*add_column) (DdbListviewColIter);
+    void (*remove_column) (DdbListviewColIter);
+    void (*list_context_menu) (DdbListview *listview, DdbListviewIter *iter, int idx);
+    void (*handle_doubleclick) (DdbListview *listview, DdbListviewIter *iter, int idx);
+} DdbListviewBinding;
 
 // structure of this kind must be set as user data for playlist, header and scrollbar widgets
 // pointer to this structure must be passed too all functions that
 // implement playlist functionality (like this pointer)
-typedef struct {
+struct _DdbListview {
+    GtkTable parent;
+
+    // interaction with client
+    DdbListviewBinding *binding;
+
     // cached gtk/gdk object pointers
     GtkWidget *playlist;
     GtkWidget *header;
     GtkWidget *scrollbar;
     GtkWidget *hscrollbar;
-    int totalwidth; // width of playlist, including invisible part
+
+    int totalwidth; // width of listview, including invisible (scrollable) part
     GdkPixmap *backbuf;
     GdkPixmap *backbuf_header;
     const char *title; // unique id, used for config writing, etc
-    // parameters
-    int (*get_count)(void); // function pointer to get number of tracks
-    int iterator; // index into next array of DB_playItem_t struct
+//    // parameters
+//    int (*get_count)(void); // function pointer to get number of tracks
+//    int iterator; // index into next array of DB_playItem_t struct
     int lastpos[2]; // last mouse position (for playlist widget)
     // current state
     int scrollpos;
@@ -83,15 +130,43 @@ typedef struct {
     double clicktime; // for doubleclick detection
     int nvisiblerows;
     int nvisiblefullrows;
-    gtkpl_column_t *columns;
-    gtkpl_column_t *active_column;
-} gtkplaylist_t;
 
-extern gtkplaylist_t main_playlist;
-extern gtkplaylist_t search_playlist;
+//    gtkpl_column_t *columns;
+//    gtkpl_column_t *active_column; // required for column editing
+};
 
-#define GTKPL_PROLOGUE \
-    gtkplaylist_t *ps = (gtkplaylist_t *)gtk_object_get_data (GTK_OBJECT (widget), "ps"); assert (ps); 
+struct _DdbListviewClass {
+  GtkTableClass parent_class;
+};
+
+GtkType ddb_listview_get_type(void);
+GtkWidget * ddb_listview_new();
+
+void ddb_listview_set_binding (DdbListview *listview, DdbListviewBinding *binding);
+void ddb_listview_draw_row (DdbListview *listview, int idx, DdbListviewIter iter); // same as gtkpl_redraw_pl_row
+int ddb_listview_get_vscroll_pos (DdbListview *listview);
+int ddb_listview_get_hscroll_pos (DdbListview *listview);
+DdbListviewIter ddb_listview_get_iter_from_coord (DdbListview *listview, int x, int y);
+
+enum {
+    DDB_REFRESH_COLUMNS = 1,
+    DDB_REFRESH_HSCROLL = 2,
+    DDB_REFRESH_VSCROLL = 4,
+    DDB_REFRESH_LIST    = 8,
+    DDB_EXPOSE_COLUMNS  = 16,
+    DDB_EXPOSE_LIST     = 32,
+};
+
+void ddb_listview_refresh (DdbListview *listview, uint32_t flags);
+
+G_END_DECLS
+
+//extern DdbListview main_playlist;
+//extern DdbListview search_playlist;
+
+//#define GTKPL_PROLOGUE \
+//    DdbListview *ps = (DdbListview *)gtk_object_get_data (GTK_OBJECT (widget), "ps"); assert (ps); 
+
 
 extern int rowheight;
 
@@ -100,96 +175,96 @@ void
 gtkpl_init (void);
 
 void
-gtkpl_free (gtkplaylist_t *pl);
+gtkpl_free (DdbListview *pl);
 
 void
-gtkpl_redraw_pl_row (gtkplaylist_t *ps, int row, DB_playItem_t *it);
+gtkpl_redraw_pl_row (DdbListview *ps, int row, DdbListviewIter it);
 
 void
-gtkpl_redraw_pl_row_novis (gtkplaylist_t *ps, int row, DB_playItem_t *it);
+gtkpl_redraw_pl_row_novis (DdbListview *ps, int row, DdbListviewIter it);
 
 void
-gtkpl_setup_scrollbar (gtkplaylist_t *ps);
+gtkpl_setup_scrollbar (DdbListview *ps);
 
 void
-gtkpl_setup_hscrollbar (gtkplaylist_t *ps);
+gtkpl_setup_hscrollbar (DdbListview *ps);
 
 void
-gtkpl_draw_pl_row_back (gtkplaylist_t *ps, int row, DB_playItem_t *it);
+gtkpl_draw_pl_row_back (DdbListview *ps, int row, DdbListviewIter it);
 
 void
-gtkpl_draw_pl_row (gtkplaylist_t *ps, int row, DB_playItem_t *it);
+gtkpl_draw_pl_row (DdbListview *ps, int row, DdbListviewIter it);
 
 void
-gtkpl_draw_playlist (gtkplaylist_t *ps, int x, int y, int w, int h);
+gtkpl_draw_playlist (DdbListview *ps, int x, int y, int w, int h);
 
 void
-gtkpl_reconf (gtkplaylist_t *ps);
+gtkpl_reconf (DdbListview *ps);
 
 void
-gtkpl_expose (gtkplaylist_t *ps, int x, int y, int w, int h);
+gtkpl_expose (DdbListview *ps, int x, int y, int w, int h);
 
 void
-gtkpl_mouse1_pressed (gtkplaylist_t *ps, int state, int ex, int ey, double time);
+gtkpl_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, double time);
 
 void
-gtkpl_mouse1_released (gtkplaylist_t *ps, int state, int ex, int ey, double time);
+gtkpl_mouse1_released (DdbListview *ps, int state, int ex, int ey, double time);
 
 void
-gtkpl_mousemove (gtkplaylist_t *ps, GdkEventMotion *event);
+gtkpl_mousemove (DdbListview *ps, GdkEventMotion *event);
 
 void
-gtkpl_scroll (gtkplaylist_t *ps, int newscroll);
+gtkpl_scroll (DdbListview *ps, int newscroll);
 
 void
-gtkpl_hscroll (gtkplaylist_t *ps, int newscroll);
+gtkpl_hscroll (DdbListview *ps, int newscroll);
 
 void
-gtkpl_handle_scroll_event (gtkplaylist_t *ps, int direction);
+gtkpl_handle_scroll_event (DdbListview *ps, int direction);
 
 // returns 1 if keypress was handled, 0 otherwise
 int
-gtkpl_keypress (gtkplaylist_t *ps, int keyval, int state);
+gtkpl_keypress (DdbListview *ps, int keyval, int state);
 
 void
-gtkpl_track_dragdrop (gtkplaylist_t *ps, int y);
+gtkpl_track_dragdrop (DdbListview *ps, int y);
 
 void
-gtkpl_select_single (gtkplaylist_t *ps, int sel);
+gtkpl_select_single (DdbListview *ps, int sel);
 
 void
-gtkpl_header_draw (gtkplaylist_t *ps);
+gtkpl_header_draw (DdbListview *ps);
 
 void
-gtkpl_add_dir (gtkplaylist_t *ps, char *folder);
+gtkpl_add_dir (DdbListview *ps, char *folder);
 
 void
-gtkpl_add_dirs (gtkplaylist_t *ps, GSList *lst);
+gtkpl_add_dirs (GSList *lst);
 
 void
-gtkpl_add_files (gtkplaylist_t *ps, GSList *lst);
+gtkpl_add_files (GSList *lst);
 
 void
-gtkpl_configure (gtkplaylist_t *ps);
+gtkpl_configure (DdbListview *ps);
 
 int
-gtkpl_get_idx_of (gtkplaylist_t *ps, DB_playItem_t *it);
+gtkpl_get_idx_of (DdbListview *ps, DdbListviewIter it);
 
-DB_playItem_t *
-gtkpl_get_for_idx (gtkplaylist_t *ps, int idx);
+DdbListviewIter 
+gtkpl_get_for_idx (DdbListview *ps, int idx);
 
 //// this functions take value from passed playlist, that's why it's here
 //void
-//gtkpl_playsong (gtkplaylist_t *ps);
+//gtkpl_playsong (DdbListview *ps);
 
 void
-gtkpl_songchanged (gtkplaylist_t *ps, int from, int to);
+gtkpl_songchanged (DdbListview *ps, int from, int to);
 
 // these functions operate on global playlist level,
-// no need to pass gtkplaylist_t ptr to them
+// no need to pass DdbListview ptr to them
 
 void
-gtkpl_add_fm_dropped_files (gtkplaylist_t *ps, char *ptr, int length, int drop_y);
+gtkpl_add_fm_dropped_files (char *ptr, int length, int drop_y);
 
 // these functions should not belong here
 void
@@ -219,33 +294,8 @@ theme_set_cairo_source_rgb (cairo_t *cr, int col);
 void
 playlist_refresh (void);
 
-// column utilities
-gtkpl_column_t *
-gtkpl_column_alloc (const char *title, int width, int id, const char *format, int align_right);
-
 void
-gtkpl_column_append (gtkplaylist_t *pl, gtkpl_column_t *c);
-
-void
-gtkpl_column_insert_before (gtkplaylist_t *pl, gtkpl_column_t *before, gtkpl_column_t *c);
-
-void
-gtkpl_column_remove (gtkplaylist_t *pl, gtkpl_column_t *c);
-
-void
-gtkpl_column_free (gtkpl_column_t *c);
-
-void
-gtkpl_append_column_from_textdef (gtkplaylist_t *pl, const uint8_t *def);
-
-void
-gtkpl_column_update_config (gtkplaylist_t *pl, gtkpl_column_t *c, int idx);
-
-void
-gtkpl_column_rewrite_config (gtkplaylist_t *pl);
-
-void
-gtkpl_expose_header (gtkplaylist_t *ps, int x, int y, int w, int h);
+gtkpl_expose_header (DdbListview *ps, int x, int y, int w, int h);
 
 void
 set_tray_tooltip (const char *text);
@@ -254,16 +304,13 @@ void
 gtkpl_songchanged_wrapper (int from, int to);
 
 void
-gtkpl_current_track_changed (DB_playItem_t *it);
+gtkpl_current_track_changed (DdbListviewIter it);
 
 void
-gtk_pl_redraw_item_everywhere (DB_playItem_t *it);
+gtk_pl_redraw_item_everywhere (DdbListviewIter it);
 
 void
 gtkpl_set_cursor (int iter, int cursor);
-
-gtkpl_column_t*
-gtkpl_get_column_for_click (gtkplaylist_t *pl, int click_x);
 
 void
 main_refresh (void);

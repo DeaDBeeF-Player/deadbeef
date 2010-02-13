@@ -1428,6 +1428,12 @@ pl_delete_selected (void) {
             pl_remove (it);
         }
     }
+    if (playlist->current_row[PL_MAIN] >= playlist->count[PL_MAIN]) {
+        playlist->current_row[PL_MAIN] == playlist->count[PL_MAIN] - 1;
+    }
+    if (playlist->current_row[PL_SEARCH] >= playlist->count[PL_SEARCH]) {
+        playlist->current_row[PL_SEARCH] == playlist->count[PL_SEARCH] - 1;
+    }
     GLOBAL_UNLOCK;
     return ret;
 }
