@@ -234,9 +234,7 @@ plt_remove (int plt) {
         playlist->title = strdup ("Default");
         PLT_UNLOCK;
         plt_gen_conf ();
-        if (!plt_loading) {
-            plug_trigger_event (DB_EV_PLAYLISTSWITCH, 0);
-        }
+        plug_trigger_event (DB_EV_PLAYLISTSWITCH, 0);
         return;
     }
     playlist_t *prev = NULL;
@@ -256,6 +254,10 @@ plt_remove (int plt) {
             prev->next = p->next;
         }
     }
+    playlist_t *old = playlist;
+    playlist = p;
+    pl_clear ();
+    playlist = old;
     if (p == playlist) {
         playlist = prev ? prev : playlists_head;
     }
@@ -347,6 +349,7 @@ plt_set_title (int plt, const char *title) {
 
 void
 plt_free (void) {
+    trace ("plt_free\n");
     PLT_LOCK;
     plt_loading = 1;
     while (playlists_head) {
