@@ -619,6 +619,8 @@ main (int argc, char *argv[]) {
     // save config
     pl_save_all ();
     conf_save ();
+
+    // delete legacy session file
     {
         char sessfile[1024]; // $HOME/.config/deadbeef/session
         if (snprintf (sessfile, sizeof (sessfile), "%s/deadbeef/session", confdir) < sizeof (sessfile)) {
@@ -640,7 +642,6 @@ main (int argc, char *argv[]) {
     plug_unload_all ();
 
     // at this point we can simply do exit(0), but let's clean up for debugging
-
     plt_free (); // plt_free may access conf_*
     conf_free ();
     messagepump_free ();
