@@ -64,6 +64,7 @@ typedef void * DdbListviewColIter;
 typedef struct {
     // rows
     int (*count) (void);
+    int (*sel_count) (void);
 
     int (*cursor) (void);
     void (*set_cursor) (int cursor);
@@ -82,6 +83,9 @@ typedef struct {
     int (*is_selected) (DdbListviewIter);
     void (*select) (DdbListviewIter, int sel);
 
+    // drag-n-drop
+    void (*drag_n_drop) (DdbListviewIter before, uint32_t *indices, int length);
+
     // columns
     int (*col_count) (void);
     DdbListviewColIter (*col_first) (void);
@@ -90,15 +94,21 @@ typedef struct {
     int (*col_get_width) (DdbListviewColIter);
     int (*col_get_justify) (DdbListviewColIter);
     int (*col_get_sort) (DdbListviewColIter);
+    void (*col_move) (DdbListviewColIter which, int inspos);
     void (*col_sort) (DdbListviewColIter);
+
+    void (*col_set_width) (DdbListviewColIter c, int width);
+    void (*col_set_sort) (DdbListviewColIter c, int sort);
 
     // callbacks
     void (*draw_column_data) (GdkDrawable *drawable, DdbListviewIter iter, int idx, DdbListviewColIter column, int x, int y, int width, int height);
-    void (*edit_column) (DdbListviewColIter);
-    void (*add_column) (DdbListviewColIter);
-    void (*remove_column) (DdbListviewColIter);
-    void (*list_context_menu) (DdbListview *listview, DdbListviewIter *iter, int idx);
-    void (*handle_doubleclick) (DdbListview *listview, DdbListviewIter *iter, int idx);
+//    void (*edit_column) (DdbListviewColIter);
+//    void (*add_column) (DdbListviewColIter);
+//    void (*remove_column) (DdbListviewColIter);
+    void (*list_context_menu) (DdbListview *listview, DdbListviewIter iter, int idx);
+    void (*header_context_menu) (DdbListview *listview, DdbListviewColIter c);
+    void (*handle_doubleclick) (DdbListview *listview, DdbListviewIter iter, int idx);
+    void (*selection_changed) (DdbListviewIter it, int idx);
 } DdbListviewBinding;
 
 // structure of this kind must be set as user data for playlist, header and scrollbar widgets
@@ -130,8 +140,36 @@ struct _DdbListview {
     double clicktime; // for doubleclick detection
     int nvisiblerows;
     int nvisiblefullrows;
+    int rowheight;
 
     int col_movepos;
+
+    int drag_motion_y;
+
+    // scrolling
+    int scroll_mode; // 0=select, 1=dragndrop
+    int scroll_pointer_y;
+    int scroll_direction;
+    int scroll_active;
+    struct timeval tm_prevscroll;
+    float scroll_sleep_time;
+
+    // selection
+    int areaselect;
+    int areaselect_x;
+    int areaselect_y;
+    int areaselect_dx;
+    int areaselect_dy;
+    int dragwait;
+    int shift_sel_anchor;
+
+    // header
+    int header_dragging;
+    int header_sizing;
+    int header_dragpt[2];
+    float last_header_motion_ev; //is it subject to remove?
+    int prev_header_x;
+    int header_prepare;
 
 //    gtkpl_column_t *columns;
 //    gtkpl_column_t *active_column; // required for column editing
@@ -145,7 +183,7 @@ GtkType ddb_listview_get_type(void);
 GtkWidget * ddb_listview_new();
 
 void ddb_listview_set_binding (DdbListview *listview, DdbListviewBinding *binding);
-void ddb_listview_draw_row (DdbListview *listview, int idx, DdbListviewIter iter); // same as gtkpl_redraw_pl_row
+void ddb_listview_draw_row (DdbListview *listview, int idx, DdbListviewIter iter);
 int ddb_listview_get_vscroll_pos (DdbListview *listview);
 int ddb_listview_get_hscroll_pos (DdbListview *listview);
 DdbListviewIter ddb_listview_get_iter_from_coord (DdbListview *listview, int x, int y);
@@ -246,9 +284,6 @@ gtkpl_add_dirs (GSList *lst);
 void
 gtkpl_add_files (GSList *lst);
 
-void
-gtkpl_configure (DdbListview *ps);
-
 int
 gtkpl_get_idx_of (DdbListview *ps, DdbListviewIter it);
 
@@ -308,8 +343,8 @@ gtkpl_songchanged_wrapper (int from, int to);
 void
 gtkpl_current_track_changed (DdbListviewIter it);
 
-void
-gtk_pl_redraw_item_everywhere (DdbListviewIter it);
+//void
+//gtk_pl_redraw_item_everywhere (DdbListviewIter it);
 
 void
 gtkpl_set_cursor (DdbListview *pl, int cursor);

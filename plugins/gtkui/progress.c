@@ -38,6 +38,11 @@ progress_init (void) {
 }
 
 void
+progress_settext (const char *text) {
+    gtk_entry_set_text (GTK_ENTRY (progressitem), text);
+}
+
+void
 progress_show (void) {
     extern GtkWidget *mainwin;
     progress_aborted = 0;
@@ -50,11 +55,6 @@ progress_show (void) {
 void
 progress_hide (void) {
     gtk_widget_hide (progressdlg);
-}
-
-void
-progress_settext (const char *text) {
-    gtk_entry_set_text (GTK_ENTRY (progressitem), text);
 }
 
 void
