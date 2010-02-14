@@ -131,6 +131,8 @@ struct _DdbListview {
     int nvisiblerows;
     int nvisiblefullrows;
 
+    int col_movepos;
+
 //    gtkpl_column_t *columns;
 //    gtkpl_column_t *active_column; // required for column editing
 };
@@ -310,7 +312,7 @@ void
 gtk_pl_redraw_item_everywhere (DdbListviewIter it);
 
 void
-gtkpl_set_cursor (int iter, int cursor);
+gtkpl_set_cursor (DdbListview *pl, int cursor);
 
 void
 main_refresh (void);

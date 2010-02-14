@@ -413,7 +413,7 @@ typedef struct gtkpl_column_s {
     int id; // id is faster than format, set to -1 to use format
     char *format;
     int width;
-    int movepos; // valid only while `moving' is 1
+//    int movepos; // valid only while `moving' is 1
     struct gtkpl_column_s *next;
     unsigned align_right : 1;
     unsigned sort_order : 2; // 0=none, 1=asc, 2=desc

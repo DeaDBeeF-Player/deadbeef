@@ -1601,7 +1601,7 @@ gtkpl_keypress (DdbListview *ps, int keyval, int state) {
     }
     else {
         shift_sel_anchor = cursor;
-        gtkpl_set_cursor (ps->iterator, cursor);
+        gtkpl_set_cursor (ps, cursor);
     }
     return 1;
 }
@@ -1661,12 +1661,14 @@ on_playlist_drag_end                   (GtkWidget       *widget,
                                         GdkDragContext  *drag_context,
                                         gpointer         user_data)
 {
-    GTKPL_PROLOGUE;
+    // FIXME: port
+#if 0
     // invalidate entire cache - slow, but rare
     gtkpl_draw_playlist (ps, 0, 0, widget->allocation.width, widget->allocation.height);
     gtkpl_expose (ps, 0, 0, widget->allocation.width, widget->allocation.height);
     playlist_scroll_direction = 0;
     playlist_scroll_pointer_y = -1;
+#endif
 }
 
 void
@@ -1720,10 +1722,13 @@ set_progress_text_idle (gpointer data) {
 
 int
 gtkpl_add_file_info_cb (DdbListviewIter it, void *data) {
+// FIXME: port
+#if 0
     if (progress_is_aborted ()) {
         return -1;
     }
     g_idle_add (set_progress_text_idle, it->fname);
+#endif
     return 0;
 }
 
@@ -1742,6 +1747,8 @@ progress_hide_idle (gpointer data) {
 
 void
 gtkpl_add_fm_dropped_files (char *ptr, int length, int drop_y) {
+    // FIXME: port
+#if 0
     DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
     g_idle_add (progress_show_idle, NULL);
 
@@ -1794,6 +1801,7 @@ gtkpl_add_fm_dropped_files (char *ptr, int length, int drop_y) {
         UNREF (after);
     }
     g_idle_add (progress_hide_idle, NULL);
+#endif
 }
 
 void
@@ -1812,8 +1820,8 @@ gtkpl_header_draw (DdbListview *ps) {
     DdbListviewColIter c;
     int need_draw_moving = 0;
     int idx = 0;
-    for (c = ps->columns; c; c = c->next, idx++) {
-        w = c->width;
+    for (c = ps->binding->col_first (); c; c = ps->binding->col_next (c), idx++) {
+        w = ps->binding->col_get_width (c);
         int xx = x;
 #if 0
         if (colhdr_anim.anim_active) {
@@ -1830,23 +1838,24 @@ gtkpl_header_draw (DdbListview *ps) {
                 continue;
             }
             int arrow_sz = 10;
+            int sort = ps->binding->col_get_sort (c);
             if (w > 0) {
                 gtk_paint_vline (widget->style, ps->backbuf_header, GTK_STATE_NORMAL, NULL, NULL, NULL, 2, h-4, xx+w - 2);
                 GdkColor *gdkfg = &widget->style->fg[0];
                 float fg[3] = {(float)gdkfg->red/0xffff, (float)gdkfg->green/0xffff, (float)gdkfg->blue/0xffff};
                 draw_set_fg_color (fg);
-                int w = c->width-10;
-                if (c->sort_order) {
-                    w -= arrow_sz;
-                    if (w < 0) {
-                        w = 0;
+                int ww = w-10;
+                if (sort) {
+                    ww -= arrow_sz;
+                    if (ww < 0) {
+                        ww = 0;
                     }
                 }
-                draw_text (xx + 5, h/2-draw_get_font_size()/2, w, 0, c->title);
+                draw_text (xx + 5, h/2-draw_get_font_size()/2, ww, 0, ps->binding->col_get_title (c));
             }
-            if (c->sort_order != 0) {
-                int dir = c->sort_order == 1 ? GTK_ARROW_DOWN : GTK_ARROW_UP;
-                gtk_paint_arrow (widget->style, ps->backbuf_header, GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, widget, NULL, dir, TRUE, xx + c->width-arrow_sz-5, widget->allocation.height/2-arrow_sz/2, arrow_sz, arrow_sz);
+            if (sort) {
+                int dir = sort == 1 ? GTK_ARROW_DOWN : GTK_ARROW_UP;
+                gtk_paint_arrow (widget->style, ps->backbuf_header, GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, widget, NULL, dir, TRUE, xx + w-arrow_sz-5, widget->allocation.height/2-arrow_sz/2, arrow_sz, arrow_sz);
             }
         }
         else {
@@ -1857,8 +1866,8 @@ gtkpl_header_draw (DdbListview *ps) {
     if (need_draw_moving) {
         x = -ps->hscrollpos;
         idx = 0;
-        for (c = ps->columns; c; c = c->next, idx++) {
-            w = c->width;
+        for (c = ps->binding->col_first (); c; c = ps->binding->col_next (c), idx++) {
+            w = ps->binding->col_get_width (c);
             if (idx == header_dragging) {
 #if 0
                 if (colhdr_anim.anim_active) {
@@ -1874,7 +1883,7 @@ gtkpl_header_draw (DdbListview *ps) {
                 if (x < widget->allocation.width) {
                     gtk_paint_box (widget->style, ps->backbuf_header, GTK_STATE_ACTIVE, GTK_SHADOW_ETCHED_IN, NULL, widget, "button", x, 0, w, h);
                 }
-                x = c->movepos;
+                x = ps->col_movepos;
                 if (x >= widget->allocation.width) {
                     break;
                 }
@@ -1883,7 +1892,7 @@ gtkpl_header_draw (DdbListview *ps) {
                     GdkColor *gdkfg = &widget->style->fg[GTK_STATE_SELECTED];
                     float fg[3] = {(float)gdkfg->red/0xffff, (float)gdkfg->green/0xffff, (float)gdkfg->blue/0xffff};
                     draw_set_fg_color (fg);
-                    draw_text (x + 5, h/2-draw_get_font_size()/2, c->width-10, 0, c->title);
+                    draw_text (x + 5, h/2-draw_get_font_size()/2, ps->binding->col_get_width (c)-10, 0, ps->binding->col_get_title (c));
                 }
                 break;
             }
@@ -1898,9 +1907,12 @@ on_header_expose_event                 (GtkWidget       *widget,
                                         GdkEventExpose  *event,
                                         gpointer         user_data)
 {
+// FIXME: port
+#if 0
     GTKPL_PROLOGUE;
     gtkpl_header_draw (ps);
     gtkpl_expose_header (ps, event->area.x, event->area.y, event->area.width, event->area.height);
+#endif
     return FALSE;
 }
 
@@ -1910,6 +1922,8 @@ on_header_configure_event              (GtkWidget       *widget,
                                         GdkEventConfigure *event,
                                         gpointer         user_data)
 {
+// FIXME: port
+#if 0
     GTKPL_PROLOGUE;
     if (ps->backbuf_header) {
         g_object_unref (ps->backbuf_header);
@@ -1917,6 +1931,7 @@ on_header_configure_event              (GtkWidget       *widget,
     }
     ps->backbuf_header = gdk_pixmap_new (widget->window, widget->allocation.width, widget->allocation.height, -1);
     gtkpl_header_draw (ps);
+#endif
     return FALSE;
 }
 
@@ -1941,6 +1956,8 @@ on_header_motion_notify_event          (GtkWidget       *widget,
                                         GdkEventMotion  *event,
                                         gpointer         user_data)
 {
+// FIXME: port
+#if 0
     GTKPL_PROLOGUE;
     int ev_x, ev_y;
     GdkModifierType ev_state;
@@ -2068,15 +2085,16 @@ on_header_motion_notify_event          (GtkWidget       *widget,
             x += w;
         }
     }
+#endif
     return FALSE;
 }
 
-gtkpl_column_t*
+DdbListviewColIter
 gtkpl_get_column_for_click (DdbListview *pl, int click_x) {
     int x = -pl->hscrollpos;
     DdbListviewColIter c;
-    for (c = pl->columns; c; c = c->next) {
-        int w = c->width;
+    for (c = pl->binding->col_first (); c; c = pl->binding->col_next (c)) {
+        int w = pl->binding->col_get_width (c);
         if (click_x >= x && click_x < x + w) {
             return c;
         }
@@ -2090,6 +2108,8 @@ on_header_button_press_event           (GtkWidget       *widget,
                                         GdkEventButton  *event,
                                         gpointer         user_data)
 {
+// FIXME: port
+#if 0
     GTKPL_PROLOGUE;
     ps->active_column = gtkpl_get_column_for_click (ps, event->x);
     if (event->button == 1) {
@@ -2127,6 +2147,7 @@ on_header_button_press_event           (GtkWidget       *widget,
     }
     prev_header_x = -1;
     last_header_motion_ev = -1;
+#endif
     return FALSE;
 }
 
@@ -2135,6 +2156,8 @@ on_header_button_release_event         (GtkWidget       *widget,
                                         GdkEventButton  *event,
                                         gpointer         user_data)
 {
+// FIXME: port
+#if 0
     GTKPL_PROLOGUE;
     if (event->button == 1) {
         if (header_prepare) {
@@ -2196,6 +2219,7 @@ on_header_button_release_event         (GtkWidget       *widget,
             }
         }
     }
+#endif
     return FALSE;
 }
 
@@ -2408,7 +2432,6 @@ gtk_pl_redraw_item_everywhere (DdbListviewIter it) {
 }
 
 struct set_cursor_t {
-    int iter;
     int cursor;
     int prev;
     DdbListview *pl;
@@ -2417,18 +2440,18 @@ struct set_cursor_t {
 static gboolean
 gtkpl_set_cursor_cb (gpointer data) {
     struct set_cursor_t *sc = (struct set_cursor_t *)data;
-    deadbeef->pl_set_cursor (sc->iter, sc->cursor);
+    sc->pl->binding->set_cursor (sc->cursor);
     gtkpl_select_single (sc->pl, sc->cursor);
     DdbListviewIter it;
     int minvis = sc->pl->scrollpos;
     int maxvis = sc->pl->scrollpos + sc->pl->nvisiblerows-1;
     if (sc->prev >= minvis && sc->prev <= maxvis) {
-        it = deadbeef->pl_get_for_idx_and_iter (sc->prev, sc->iter);
+        it = sc->pl->binding->get_for_idx (sc->prev);
         gtkpl_redraw_pl_row (sc->pl, sc->prev, it);
         UNREF (it);
     }
     if (sc->cursor >= minvis && sc->cursor <= maxvis) {
-        it = deadbeef->pl_get_for_idx_and_iter (sc->cursor, sc->iter);
+        it = sc->pl->binding->get_for_idx (sc->cursor);
         gtkpl_redraw_pl_row (sc->pl, sc->cursor, it);
         UNREF (it);
     }
@@ -2453,12 +2476,10 @@ gtkpl_set_cursor_cb (gpointer data) {
 }
 
 void
-gtkpl_set_cursor (int iter, int cursor) {
-    DdbListview *pl = (iter == PL_MAIN) ? &main_playlist : &search_playlist;
-    int prev = deadbeef->pl_get_cursor (iter);
+gtkpl_set_cursor (DdbListview *pl, int cursor) {
+    int prev = pl->binding->cursor ();
     struct set_cursor_t *data = malloc (sizeof (struct set_cursor_t));
     data->prev = prev;
-    data->iter = iter;
     data->cursor = cursor;
     data->pl = pl;
     g_idle_add (gtkpl_set_cursor_cb, data);
