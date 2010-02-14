@@ -29,7 +29,7 @@
 #include <math.h>
 #include <sys/time.h>
 #include "gtkui.h"
-#include "gtkplaylist.h"
+#include "ddblistview.h"
 #include "search.h"
 #include "progress.h"
 #include "interface.h"
@@ -115,7 +115,6 @@ gtkpl_init (void) {
     play16_pixbuf = draw_load_pixbuf ("play_16.png");
     pause16_pixbuf = draw_load_pixbuf ("pause_16.png");
     buffering16_pixbuf = draw_load_pixbuf ("buffering_16.png");
-    rowheight = draw_get_font_size () + 12;
     memcpy (colo_current, colo_white_blue, sizeof (colo_current));
     theme_treeview = gtk_tree_view_new ();
     GTK_WIDGET_UNSET_FLAGS (theme_treeview, GTK_CAN_FOCUS);
@@ -355,28 +354,27 @@ gtkui_on_activate (DB_event_t *ev, uintptr_t data) {
 }
 
 void
-redraw_queued_tracks (DdbListview *pl) {
-// FIXME: port
-#if 0
-    DdbListviewIter it = deadbeef->pl_get_for_idx_and_iter (pl->scrollpos, pl->iterator);
-    int i = pl->scrollpos;
+redraw_queued_tracks (DdbListview *pl, int list) {
+    DdbListviewIter it = deadbeef->pl_get_for_idx_and_iter (pl->scrollpos, list);
+    int i = ddb_listview_get_vscroll_pos (pl);
     while (it && i < pl->scrollpos + pl->nvisiblerows) {
         if (deadbeef->pl_playqueue_test (it) != -1) {
-            gtkpl_redraw_pl_row (pl, i, it);
+            ddb_listview_draw_row (pl, i, it);
         }
-        DdbListviewIter next = PL_NEXT (it, pl->iterator);
-        UNREF (it);
+        DdbListviewIter next = deadbeef->pl_get_next (it, list);
+        deadbeef->pl_item_unref (it);
         it = next;
         i++;
     }
-    UNREF (it);
-#endif
+    if (it) {
+        deadbeef->pl_item_unref (it);
+    }
 }
 
 static gboolean
 redraw_queued_tracks_cb (gpointer nothing) {
-    redraw_queued_tracks (DDB_LISTVIEW (lookup_widget (mainwin, "playlist")));
-    redraw_queued_tracks (DDB_LISTVIEW (lookup_widget (searchwin, "searchlist")));
+    redraw_queued_tracks (DDB_LISTVIEW (lookup_widget (mainwin, "playlist")), PL_MAIN);
+    redraw_queued_tracks (DDB_LISTVIEW (lookup_widget (searchwin, "searchlist")), PL_SEARCH);
     return FALSE;
 }
 
@@ -397,6 +395,15 @@ static int
 gtkui_on_songchanged (DB_event_trackchange_t *ev, uintptr_t data) {
     gtkpl_songchanged_wrapper (ev->from, ev->to);
     return 0;
+}
+
+void
+set_tray_tooltip (const char *text) {
+#if (GTK_MINOR_VERSION < 16)
+        gtk_status_icon_set_tooltip (trayicon, text);
+#else
+        gtk_status_icon_set_tooltip_text (trayicon, text);
+#endif
 }
 
 struct trackinfo_t {
@@ -456,6 +463,13 @@ paused_cb (gpointer nothing) {
 static int
 gtkui_on_paused (DB_event_state_t *ev, uintptr_t data) {
     g_idle_add (paused_cb, NULL);
+}
+
+void
+playlist_refresh (void) {
+    DdbListview *ps = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
+    ddb_listview_refresh (ps, DDB_REFRESH_LIST | DDB_REFRESH_VSCROLL | DDB_EXPOSE_LIST);
+    search_refresh ();
 }
 
 static gboolean
@@ -1072,6 +1086,115 @@ main_header_context_menu (DdbListview *ps, DdbListviewColIter c) {
     gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, ps, 3, gtk_get_current_event_time());
 }
 
+void
+main_refresh (void) {
+    if (mainwin && GTK_WIDGET_VISIBLE (mainwin)) {
+        DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
+        ddb_listview_refresh (pl, DDB_REFRESH_VSCROLL | DDB_REFRESH_LIST | DDB_EXPOSE_LIST);
+    }
+}
+
+// FIXME: wrong place for these functions
+void
+on_clear1_activate                     (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    deadbeef->pl_clear ();
+    main_refresh ();
+    search_refresh ();
+}
+
+void
+on_remove1_activate                    (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    int cursor = deadbeef->pl_delete_selected ();
+    main_refresh ();
+    search_refresh ();
+}
+
+
+void
+on_crop1_activate                      (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
+    deadbeef->pl_crop_selected ();
+    main_refresh ();
+    search_refresh ();
+}
+
+void
+on_remove2_activate                    (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    GtkWidget *widget = GTK_WIDGET (menuitem);
+    int cursor = deadbeef->pl_delete_selected ();
+    main_refresh ();
+    search_refresh ();
+}
+
+void
+on_playlist_load_activate              (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    GtkWidget *dlg = gtk_file_chooser_dialog_new ("Load Playlist", GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
+
+    GtkFileFilter* flt;
+    flt = gtk_file_filter_new ();
+    gtk_file_filter_set_name (flt, "DeaDBeeF playlist files (*.dbpl)");
+    gtk_file_filter_add_pattern (flt, "*.dbpl");
+    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
+
+    if (gtk_dialog_run (GTK_DIALOG (dlg)) == GTK_RESPONSE_OK)
+    {
+        gchar *fname = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dlg));
+        gtk_widget_destroy (dlg);
+        if (fname) {
+            /*int res = */deadbeef->pl_load (fname);
+            g_free (fname);
+            main_refresh ();
+            search_refresh ();
+        }
+    }
+    else {
+        gtk_widget_destroy (dlg);
+    }
+}
+
+void
+main_delete_selected (void) {
+    deadbeef->pl_delete_selected ();
+    main_refresh ();
+    search_refresh ();
+}
+
+void
+on_add_audio_cd_activate               (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    deadbeef->pl_add_file ("all.cda", NULL, NULL);
+    playlist_refresh ();
+}
+
+void
+on_add_location_activate               (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    GtkWidget *dlg= create_addlocationdlg ();
+    int res = gtk_dialog_run (GTK_DIALOG (dlg));
+    if (res == GTK_RESPONSE_OK) {
+        GtkEntry *entry = GTK_ENTRY (lookup_widget (dlg, "addlocation_entry"));
+        if (entry) {
+            const char *text = gtk_entry_get_text (entry);
+            if (text) {
+                deadbeef->pl_add_file (text, NULL, NULL);
+                playlist_refresh ();
+            }
+        }
+    }
+    gtk_widget_destroy (dlg);
+}
 DdbListviewBinding main_binding = {
     // rows
     .count = main_get_count,
@@ -1112,6 +1235,7 @@ DdbListviewBinding main_binding = {
     .handle_doubleclick = main_handle_doubleclick,
     .selection_changed = main_selection_changed,
     .header_context_menu = main_header_context_menu,
+    .delete_selected = main_delete_selected,
 };
 
 void
@@ -1252,14 +1376,6 @@ gtkpl_songchanged (DdbListview *ps, int from, int to) {
 #endif
 }
 
-void
-main_refresh (void) {
-    if (mainwin && GTK_WIDGET_VISIBLE (mainwin)) {
-        DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
-        ddb_listview_refresh (pl, DDB_REFRESH_VSCROLL | DDB_REFRESH_LIST | DDB_EXPOSE_LIST);
-    }
-}
-
 #if HAVE_NOTIFY
 static NotifyNotification* notification;
 #endif
@@ -1298,7 +1414,7 @@ update_win_title_idle (gpointer data) {
         if (to >= 0) {
             DB_playItem_t *it = deadbeef->pl_get_for_idx (to);
             if (it) { // it might have been deleted after event was sent
-                gtkpl_current_track_changed (it);
+                current_track_changed (it);
                 deadbeef->pl_item_unref (it);
             }
         }
@@ -1320,15 +1436,6 @@ redraw_seekbar_cb (gpointer nothing) {
     seekbar_draw (widget);
     seekbar_expose (widget, 0, 0, widget->allocation.width, widget->allocation.height);
     return FALSE;
-}
-
-void
-set_tray_tooltip (const char *text) {
-#if (GTK_MINOR_VERSION < 16)
-        gtk_status_icon_set_tooltip (trayicon, text);
-#else
-        gtk_status_icon_set_tooltip_text (trayicon, text);
-#endif
 }
 
 void

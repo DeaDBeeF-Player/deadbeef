@@ -3,7 +3,73 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include "gtkui.h"
-#include "gtkplaylist.h"
+#include "ddblistview.h"
+#include "progress.h"
+
+static gboolean
+progress_show_idle (gpointer data) {
+    progress_show ();
+    return FALSE;
+}
+
+static gboolean
+set_progress_text_idle (gpointer data) {
+    const char *text = (const char *)data;
+    progress_settext (text);
+    return FALSE;
+}
+
+int
+gtkpl_add_file_info_cb (DB_playItem_t *it, void *data) {
+    if (progress_is_aborted ()) {
+        return -1;
+    }
+    g_idle_add (set_progress_text_idle, it->fname);
+    return 0;
+}
+
+static gboolean
+progress_hide_idle (gpointer data) {
+    progress_hide ();
+    playlist_refresh ();
+    return FALSE;
+}
+
+void
+gtkpl_add_dir (DdbListview *ps, char *folder) {
+    g_idle_add (progress_show_idle, NULL);
+    deadbeef->pl_add_dir (folder, gtkpl_add_file_info_cb, NULL);
+    g_free (folder);
+    g_idle_add (progress_hide_idle, NULL);
+}
+
+static void
+gtkpl_adddir_cb (gpointer data, gpointer userdata) {
+    deadbeef->pl_add_dir (data, gtkpl_add_file_info_cb, userdata);
+    g_free (data);
+}
+
+void
+gtkpl_add_dirs (GSList *lst) {
+    g_idle_add (progress_show_idle, NULL);
+    g_slist_foreach(lst, gtkpl_adddir_cb, NULL);
+    g_slist_free (lst);
+    g_idle_add (progress_hide_idle, NULL);
+}
+
+static void
+gtkpl_addfile_cb (gpointer data, gpointer userdata) {
+    deadbeef->pl_add_file (data, gtkpl_add_file_info_cb, userdata);
+    g_free (data);
+}
+
+void
+gtkpl_add_files (GSList *lst) {
+    g_idle_add (progress_show_idle, NULL);
+    g_slist_foreach(lst, gtkpl_addfile_cb, NULL);
+    g_slist_free (lst);
+    g_idle_add (progress_hide_idle, NULL);
+}
 
 static void
 add_dirs_worker (void *data) {
@@ -81,38 +147,6 @@ strcopy_special (char *dest, const char *src, int len) {
         }
     }
     *dest = 0;
-}
-
-static gboolean
-set_progress_text_idle (gpointer data) {
-    const char *text = (const char *)data;
-    progress_settext (text);
-    return FALSE;
-}
-
-int
-gtkpl_add_file_info_cb (DdbListviewIter it, void *data) {
-// FIXME: port
-#if 0
-    if (progress_is_aborted ()) {
-        return -1;
-    }
-    g_idle_add (set_progress_text_idle, it->fname);
-#endif
-    return 0;
-}
-
-static gboolean
-progress_show_idle (gpointer data) {
-    progress_show ();
-    return FALSE;
-}
-
-static gboolean
-progress_hide_idle (gpointer data) {
-    progress_hide ();
-    playlist_refresh ();
-    return FALSE;
 }
 
 void

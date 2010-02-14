@@ -32,7 +32,7 @@
 #include "interface.h"
 #include "support.h"
 
-#include "gtkplaylist.h"
+#include "ddblistview.h"
 #include "search.h"
 #include "progress.h"
 #include "../../session.h"
@@ -222,15 +222,6 @@ on_quit_activate                      (GtkMenuItem     *menuitem,
 }
 
 
-void
-on_clear1_activate                     (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
-    deadbeef->pl_clear ();
-    main_refresh ();
-    search_refresh ();
-}
-
 
 void
 on_select_all1_activate                (GtkMenuItem     *menuitem,
@@ -241,31 +232,6 @@ on_select_all1_activate                (GtkMenuItem     *menuitem,
     ddb_listview_refresh (pl, DDB_REFRESH_LIST | DDB_EXPOSE_LIST);
 }
 
-
-void
-on_remove1_activate                    (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
-    int cursor = deadbeef->pl_delete_selected ();
-//    if (cursor >= deadbeef->pl_getcount (PL_MAIN)) {
-//        cursor = deadbeef->pl_getcount (PL_MAIN)-1;
-//    }
-    //gtkpl_set_cursor (main_playlist.iterator, cursor);
-
-    main_refresh ();
-    search_refresh ();
-}
-
-
-void
-on_crop1_activate                      (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
-    DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
-    deadbeef->pl_crop_selected ();
-    main_refresh ();
-    search_refresh ();
-}
 
 
 
@@ -329,7 +295,7 @@ on_mainwin_key_press_event             (GtkWidget       *widget,
         deadbeef->sendmessage (M_PLAYRANDOM, 0, 0, 0);
     }
     else {
-        gtkpl_keypress (DDB_LISTVIEW (lookup_widget (mainwin, "playlist")), event->keyval, event->state);
+        ddb_listview_handle_keypress (DDB_LISTVIEW (lookup_widget (mainwin, "playlist")), event->keyval, event->state);
     }
     return FALSE;
 }
@@ -408,34 +374,6 @@ on_searchlist_realize                  (GtkWidget       *widget,
 
 
 
-
-void
-on_playlist_load_activate              (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
-    GtkWidget *dlg = gtk_file_chooser_dialog_new ("Load Playlist", GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
-
-    GtkFileFilter* flt;
-    flt = gtk_file_filter_new ();
-    gtk_file_filter_set_name (flt, "DeaDBeeF playlist files (*.dbpl)");
-    gtk_file_filter_add_pattern (flt, "*.dbpl");
-    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
-
-    if (gtk_dialog_run (GTK_DIALOG (dlg)) == GTK_RESPONSE_OK)
-    {
-        gchar *fname = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dlg));
-        gtk_widget_destroy (dlg);
-        if (fname) {
-            /*int res = */deadbeef->pl_load (fname);
-            g_free (fname);
-            main_refresh ();
-            search_refresh ();
-        }
-    }
-    else {
-        gtk_widget_destroy (dlg);
-    }
-}
 
 char last_playlist_save_name[1024] = "";
 
@@ -1020,15 +958,6 @@ on_helpwindow_key_press_event          (GtkWidget       *widget,
     return FALSE;
 }
 
-
-void
-on_add_audio_cd_activate               (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
-    deadbeef->pl_add_file ("all.cda", NULL, NULL);
-    playlist_refresh ();
-}
-
 static GtkWidget *prefwin;
 
 static char alsa_device_names[100][64];
@@ -1446,25 +1375,6 @@ on_pref_close_clicked                  (GtkButton       *button,
 
 
 void
-on_add_location_activate               (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
-    GtkWidget *dlg= create_addlocationdlg ();
-    int res = gtk_dialog_run (GTK_DIALOG (dlg));
-    if (res == GTK_RESPONSE_OK) {
-        GtkEntry *entry = GTK_ENTRY (lookup_widget (dlg, "addlocation_entry"));
-        if (entry) {
-            const char *text = gtk_entry_get_text (entry);
-            if (text) {
-                deadbeef->pl_add_file (text, NULL, NULL);
-                playlist_refresh ();
-            }
-        }
-    }
-    gtk_widget_destroy (dlg);
-}
-
-void
 on_configure_plugin_clicked            (GtkButton       *button,
                                         gpointer         user_data)
 {
@@ -1594,16 +1504,6 @@ on_remove_from_playback_queue1_activate
 }
 
 
-void
-on_remove2_activate                    (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
-    GtkWidget *widget = GTK_WIDGET (menuitem);
-    int cursor = deadbeef->pl_delete_selected ();
-    main_refresh ();
-    search_refresh ();
-}
-
 
 void
 on_properties1_activate                (GtkMenuItem     *menuitem,
@@ -1686,18 +1586,17 @@ on_properties1_activate                (GtkMenuItem     *menuitem,
 #endif
 }
 
-//gboolean
-//on_trackproperties_key_press_event     (GtkWidget       *widget,
-//                                        GdkEventKey     *event,
-//                                        gpointer         user_data)
-//{
-// KILLME
-//    if (event->keyval == GDK_Escape) {
-//        trackproperties = NULL;
-//        gtk_widget_destroy (widget);
-//    }
-//    return FALSE;
-//}
+gboolean
+on_trackproperties_key_press_event     (GtkWidget       *widget,
+                                        GdkEventKey     *event,
+                                        gpointer         user_data)
+{
+    if (event->keyval == GDK_Escape) {
+        trackproperties = NULL;
+        gtk_widget_destroy (widget);
+    }
+    return FALSE;
+}
 
 
 

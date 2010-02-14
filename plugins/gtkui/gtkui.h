@@ -49,4 +49,30 @@ plugin_configure (GtkWidget *parentwin, DB_plugin_t *p);
 void
 preferences_fill_soundcards (void);
 
+// color scheme constants
+enum {
+    COLO_PLAYLIST_CURSOR,
+    COLO_PLAYLIST_ODD,
+    COLO_PLAYLIST_EVEN,
+    COLO_PLAYLIST_SEL_ODD,
+    COLO_PLAYLIST_SEL_EVEN,
+    COLO_PLAYLIST_TEXT,
+    COLO_PLAYLIST_SEL_TEXT,
+    COLO_SEEKBAR_BACK,
+    COLO_SEEKBAR_FRONT,
+    COLO_VOLUMEBAR_BACK,
+    COLO_VOLUMEBAR_FRONT,
+    COLO_DRAGDROP_MARKER,
+    COLO_COUNT
+};
+
+void
+theme_set_cairo_source_rgb (cairo_t *cr, int col);
+
+void
+theme_set_fg_color (int col);
+
+void
+theme_set_bg_color (int col);
+
 #endif

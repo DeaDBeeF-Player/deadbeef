@@ -30,7 +30,7 @@
 #include "support.h"
 
 #include "search.h"
-#include "gtkplaylist.h"
+#include "ddblistview.h"
 #include "../../deadbeef.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))

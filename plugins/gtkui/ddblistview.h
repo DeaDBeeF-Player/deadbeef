@@ -15,8 +15,8 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef __GTKPLAYLIST_H
-#define __GTKPLAYLIST_H
+#ifndef __DDBLISTVIEW_H
+#define __DDBLISTVIEW_H
 
 #include <gtk/gtk.h>
 #include <stdint.h>
@@ -27,23 +27,6 @@
 enum {
     TARGET_URILIST,
     TARGET_SAMEWIDGET,
-};
-
-// color scheme constants
-enum {
-    COLO_PLAYLIST_CURSOR,
-    COLO_PLAYLIST_ODD,
-    COLO_PLAYLIST_EVEN,
-    COLO_PLAYLIST_SEL_ODD,
-    COLO_PLAYLIST_SEL_EVEN,
-    COLO_PLAYLIST_TEXT,
-    COLO_PLAYLIST_SEL_TEXT,
-    COLO_SEEKBAR_BACK,
-    COLO_SEEKBAR_FRONT,
-    COLO_VOLUMEBAR_BACK,
-    COLO_VOLUMEBAR_FRONT,
-    COLO_DRAGDROP_MARKER,
-    COLO_COUNT
 };
 
 G_BEGIN_DECLS
@@ -102,18 +85,13 @@ typedef struct {
 
     // callbacks
     void (*draw_column_data) (GdkDrawable *drawable, DdbListviewIter iter, int idx, DdbListviewColIter column, int x, int y, int width, int height);
-//    void (*edit_column) (DdbListviewColIter);
-//    void (*add_column) (DdbListviewColIter);
-//    void (*remove_column) (DdbListviewColIter);
     void (*list_context_menu) (DdbListview *listview, DdbListviewIter iter, int idx);
     void (*header_context_menu) (DdbListview *listview, DdbListviewColIter c);
     void (*handle_doubleclick) (DdbListview *listview, DdbListviewIter iter, int idx);
     void (*selection_changed) (DdbListviewIter it, int idx);
+    void (*delete_selected) (void);
 } DdbListviewBinding;
 
-// structure of this kind must be set as user data for playlist, header and scrollbar widgets
-// pointer to this structure must be passed too all functions that
-// implement playlist functionality (like this pointer)
 struct _DdbListview {
     GtkTable parent;
 
@@ -121,7 +99,7 @@ struct _DdbListview {
     DdbListviewBinding *binding;
 
     // cached gtk/gdk object pointers
-    GtkWidget *playlist;
+    GtkWidget *list;
     GtkWidget *header;
     GtkWidget *scrollbar;
     GtkWidget *hscrollbar;
@@ -133,7 +111,7 @@ struct _DdbListview {
 //    // parameters
 //    int (*get_count)(void); // function pointer to get number of tracks
 //    int iterator; // index into next array of DB_playItem_t struct
-    int lastpos[2]; // last mouse position (for playlist widget)
+    int lastpos[2]; // last mouse position (for list widget)
     // current state
     int scrollpos;
     int hscrollpos;
@@ -182,11 +160,18 @@ struct _DdbListviewClass {
 GtkType ddb_listview_get_type(void);
 GtkWidget * ddb_listview_new();
 
-void ddb_listview_set_binding (DdbListview *listview, DdbListviewBinding *binding);
-void ddb_listview_draw_row (DdbListview *listview, int idx, DdbListviewIter iter);
-int ddb_listview_get_vscroll_pos (DdbListview *listview);
-int ddb_listview_get_hscroll_pos (DdbListview *listview);
-DdbListviewIter ddb_listview_get_iter_from_coord (DdbListview *listview, int x, int y);
+void
+ddb_listview_set_binding (DdbListview *listview, DdbListviewBinding *binding);
+void
+ddb_listview_draw_row (DdbListview *listview, int idx, DdbListviewIter iter);
+int
+ddb_listview_get_vscroll_pos (DdbListview *listview);
+int
+ddb_listview_get_hscroll_pos (DdbListview *listview);
+DdbListviewIter
+ddb_listview_get_iter_from_coord (DdbListview *listview, int x, int y);
+int
+ddb_listview_handle_keypress (DdbListview *ps, int keyval, int state);
 
 enum {
     DDB_REFRESH_COLUMNS = 1,
@@ -201,6 +186,7 @@ void ddb_listview_refresh (DdbListview *listview, uint32_t flags);
 
 G_END_DECLS
 
+#if 0
 //extern DdbListview main_playlist;
 //extern DdbListview search_playlist;
 
@@ -279,16 +265,13 @@ void
 gtkpl_add_dir (DdbListview *ps, char *folder);
 
 void
-gtkpl_add_dirs (GSList *lst);
-
-void
 gtkpl_add_files (GSList *lst);
 
-int
-gtkpl_get_idx_of (DdbListview *ps, DdbListviewIter it);
-
-DdbListviewIter 
-gtkpl_get_for_idx (DdbListview *ps, int idx);
+//int
+//gtkpl_get_idx_of (DdbListview *ps, DdbListviewIter it);
+//
+//DdbListviewIter 
+//gtkpl_get_for_idx (DdbListview *ps, int idx);
 
 //// this functions take value from passed playlist, that's why it's here
 //void
@@ -351,5 +334,6 @@ gtkpl_set_cursor (DdbListview *pl, int cursor);
 
 void
 main_refresh (void);
+#endif
 
-#endif // __GTKPLAYLIST_H
+#endif // __DDBLISTVIEW_H

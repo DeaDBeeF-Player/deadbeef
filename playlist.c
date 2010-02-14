@@ -52,8 +52,8 @@
 #define PLAYLIST_MAJOR_VER 1
 #define PLAYLIST_MINOR_VER 1
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 #define SKIP_BLANK_CUE_TRACKS 1
 
@@ -1281,7 +1281,7 @@ void
 pl_item_ref (playItem_t *it) {
     LOCK;
     it->_refc++;
-    printf ("+it %p: refc=%d: %s\n", it, it->_refc, it->fname);
+    trace ("+it %p: refc=%d: %s\n", it, it->_refc, it->fname);
     UNLOCK;
 }
 
@@ -1307,9 +1307,9 @@ void
 pl_item_unref (playItem_t *it) {
     LOCK;
     it->_refc--;
-    printf ("-it %p: refc=%d: %s\n", it, it->_refc, it->fname);
+    trace ("-it %p: refc=%d: %s\n", it, it->_refc, it->fname);
     if (it->_refc < 0) {
-        fprintf (stderr, "\033[0;31mplaylist: bad refcount on item %p\033[37;0m\n", it);
+        trace ("\033[0;31mplaylist: bad refcount on item %p\033[37;0m\n", it);
     }
     if (it->_refc <= 0) {
         pl_item_free (it);
