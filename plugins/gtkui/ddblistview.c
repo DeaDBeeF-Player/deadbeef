@@ -1624,7 +1624,6 @@ ddb_listview_header_expose_event                 (GtkWidget       *widget,
                                         gpointer         user_data)
 {
     DdbListview *ps = DDB_LISTVIEW (gtk_object_get_data (GTK_OBJECT (widget), "owner"));
-    ddb_listview_header_render (ps); // FIXME
     ddb_listview_header_expose (ps, event->area.x, event->area.y, event->area.width, event->area.height);
     return FALSE;
 }
@@ -1881,57 +1880,6 @@ ddb_listview_header_button_release_event         (GtkWidget       *widget,
     }
     return FALSE;
 }
-
-// FIXME: port (maybe)
-#if 0
-int
-gtkpl_get_idx_of (DdbListview *ps, DdbListviewIter it) {
-    DdbListviewIter c = ps->binding->head ();
-    int idx = 0;
-    while (c && c != it) {
-        DdbListviewIter next = PL_NEXT(c); 
-        UNREF (c);
-        c = next;
-        idx++;
-    }
-    if (!c) {
-        return -1;
-    }
-    UNREF (c);
-    return idx;
-}
-
-DdbListviewIter 
-gtkpl_get_for_idx (DdbListview *ps, int idx) {
-    DdbListviewIter it = ps->binding->head ();
-    while (idx--) {
-        if (!it) {
-            return NULL;
-        }
-        DdbListviewIter next = PL_NEXT(it);
-        UNREF (it);
-        it = next;
-    }
-    return it;
-}
-void
-gtk_pl_redraw_item_everywhere (DdbListviewIter it) {
-    DdbListview *pl = &search_playlist;
-    int idx = gtkpl_get_idx_of (pl, it);
-    int minvis = pl->scrollpos;
-    int maxvis = pl->scrollpos + pl->nvisiblerows-1;
-    if (idx >= minvis && idx <= maxvis) {
-        ddb_listview_draw_row (pl, idx, it);
-    }
-    pl = &main_playlist;
-    idx = gtkpl_get_idx_of (pl, it);
-    minvis = pl->scrollpos;
-    maxvis = pl->scrollpos + pl->nvisiblerows-1;
-    if (idx >= minvis && idx <= maxvis) {
-        ddb_listview_draw_row (pl, idx, it);
-    }
-}
-#endif
 
 struct set_cursor_t {
     int cursor;
