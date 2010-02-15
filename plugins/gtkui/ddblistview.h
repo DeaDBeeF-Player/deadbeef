@@ -63,8 +63,8 @@ typedef struct {
     void (*ref) (DdbListviewIter);
     void (*unref) (DdbListviewIter);
 
-    int (*is_selected) (DdbListviewIter);
     void (*select) (DdbListviewIter, int sel);
+    int (*is_selected) (DdbListviewIter);
 
     // drag-n-drop
     void (*drag_n_drop) (DdbListviewIter before, uint32_t *indices, int length);
@@ -172,6 +172,8 @@ DdbListviewIter
 ddb_listview_get_iter_from_coord (DdbListview *listview, int x, int y);
 int
 ddb_listview_handle_keypress (DdbListview *ps, int keyval, int state);
+void
+ddb_listview_set_cursor (DdbListview *pl, int cursor);
 
 enum {
     DDB_REFRESH_COLUMNS = 1,

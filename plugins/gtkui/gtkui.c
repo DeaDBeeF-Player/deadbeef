@@ -741,6 +741,12 @@ static int
 main_get_cursor (void) {
     return deadbeef->pl_get_cursor (PL_MAIN);
 }
+
+static void
+main_set_cursor (int cursor) {
+    return deadbeef->pl_set_cursor (PL_MAIN, cursor);
+}
+
 static DdbListviewIter main_head (void) {
     return (DdbListviewIter)deadbeef->pl_get_first (PL_MAIN);
 }
@@ -1170,6 +1176,16 @@ main_delete_selected (void) {
 }
 
 void
+main_select (DdbListviewIter it, int sel) {
+    deadbeef->pl_set_selected ((DB_playItem_t *)it, sel);
+}
+
+int
+main_is_selected (DdbListviewIter it) {
+    return deadbeef->pl_is_selected ((DB_playItem_t *)it);
+}
+
+void
 on_add_audio_cd_activate               (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
@@ -1201,6 +1217,7 @@ DdbListviewBinding main_binding = {
     .sel_count = main_get_sel_count,
 
     .cursor = main_get_cursor,
+    .set_cursor = main_set_cursor,
 
     .head = main_head,
     .tail = main_tail,
@@ -1209,6 +1226,9 @@ DdbListviewBinding main_binding = {
 
     .get_for_idx = main_get_for_idx,
     .get_idx = main_get_idx,
+
+    .is_selected = main_is_selected,
+    .select = main_select,
 
     .drag_n_drop = main_drag_n_drop,
 
@@ -1229,9 +1249,6 @@ DdbListviewBinding main_binding = {
     .col_set_sort = main_col_set_sort,
 
     // callbacks
-//    .edit_column = main_edit_column,
-//    .add_column = main_add_column,
-//    .remove_column = main_remove_column,
     .handle_doubleclick = main_handle_doubleclick,
     .selection_changed = main_selection_changed,
     .header_context_menu = main_header_context_menu,

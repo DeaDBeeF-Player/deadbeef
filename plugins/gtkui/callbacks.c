@@ -349,31 +349,10 @@ on_loop_disable_activate               (GtkMenuItem     *menuitem,
 }
 
 void
-on_playlist_realize                    (GtkWidget       *widget,
-        gpointer         user_data)
-{
-    GtkTargetEntry entry = {
-        .target = "STRING",
-        .flags = GTK_TARGET_SAME_WIDGET/* | GTK_TARGET_OTHER_APP*/,
-        TARGET_SAMEWIDGET
-    };
-    // setup drag-drop source
-//    gtk_drag_source_set (widget, GDK_BUTTON1_MASK, &entry, 1, GDK_ACTION_MOVE);
-    // setup drag-drop target
-    gtk_drag_dest_set (widget, GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_DROP, &entry, 1, GDK_ACTION_COPY | GDK_ACTION_MOVE);
-    gtk_drag_dest_add_uri_targets (widget);
-//    gtk_drag_dest_set_track_motion (widget, TRUE);
-}
-
-void
 on_searchlist_realize                  (GtkWidget       *widget,
                                         gpointer         user_data)
 {
 }
-
-
-
-
 
 char last_playlist_save_name[1024] = "";
 

@@ -5,6 +5,7 @@
 #include "gtkui.h"
 #include "ddblistview.h"
 #include "progress.h"
+#include "support.h"
 
 static gboolean
 progress_show_idle (gpointer data) {
@@ -31,7 +32,7 @@ gtkpl_add_file_info_cb (DB_playItem_t *it, void *data) {
 static gboolean
 progress_hide_idle (gpointer data) {
     progress_hide ();
-    playlist_refresh ();
+    //playlist_refresh ();
     return FALSE;
 }
 
@@ -97,7 +98,9 @@ static void
 open_files_worker (void *data) {
     GSList *lst = (GSList *)data;
     gtkpl_add_files (lst);
-    gtkpl_set_cursor (PL_MAIN, 0);
+    extern GtkWidget *mainwin;
+    DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
+    ddb_listview_set_cursor (pl, 0);
     deadbeef->sendmessage (M_PLAYSONG, 0, 0, 0);
 }
 

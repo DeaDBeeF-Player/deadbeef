@@ -103,7 +103,7 @@ ddb_listview_list_setup_hscroll (DdbListview *ps);
 void
 ddb_listview_list_set_hscroll (DdbListview *ps, int newscroll);
 void
-ddb_listview_list_set_cursor (DdbListview *pl, int cursor);
+ddb_listview_set_cursor (DdbListview *pl, int cursor);
 
 ////// header functions ////
 void
@@ -449,6 +449,23 @@ ddb_listview_refresh (DdbListview *listview, uint32_t flags) {
     }
 }
 
+void
+ddb_listview_list_realize                    (GtkWidget       *widget,
+        gpointer         user_data)
+{
+    GtkTargetEntry entry = {
+        .target = "STRING",
+        .flags = GTK_TARGET_SAME_WIDGET/* | GTK_TARGET_OTHER_APP*/,
+        TARGET_SAMEWIDGET
+    };
+    // setup drag-drop source
+//    gtk_drag_source_set (widget, GDK_BUTTON1_MASK, &entry, 1, GDK_ACTION_MOVE);
+    // setup drag-drop target
+    gtk_drag_dest_set (widget, GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_DROP, &entry, 1, GDK_ACTION_COPY | GDK_ACTION_MOVE);
+    gtk_drag_dest_add_uri_targets (widget);
+//    gtk_drag_dest_set_track_motion (widget, TRUE);
+}
+
 gboolean
 ddb_listview_list_configure_event            (GtkWidget       *widget,
         GdkEventConfigure *event,
@@ -609,7 +626,7 @@ void
 ddb_listview_hscroll_value_changed           (GtkRange        *widget,
                                         gpointer         user_data)
 {
-    DdbListview *pl = DDB_LISTVIEW (widget);
+    DdbListview *pl = DDB_LISTVIEW (gtk_object_get_data (GTK_OBJECT (widget), "owner"));
     int newscroll = gtk_range_get_value (GTK_RANGE (widget));
     ddb_listview_list_set_hscroll (pl, newscroll);
 }
@@ -622,7 +639,8 @@ ddb_listview_list_drag_motion                (GtkWidget       *widget,
                                         guint            time,
                                         gpointer         user_data)
 {
-    ddb_listview_list_track_dragdrop (DDB_LISTVIEW (widget), y);
+    DdbListview *pl = DDB_LISTVIEW (gtk_object_get_data (GTK_OBJECT (widget), "owner"));
+    ddb_listview_list_track_dragdrop (pl, y);
     return FALSE;
 }
 
@@ -738,7 +756,8 @@ ddb_listview_list_drag_leave                 (GtkWidget       *widget,
                                         guint            time,
                                         gpointer         user_data)
 {
-    ddb_listview_list_track_dragdrop (DDB_LISTVIEW (widget), -1);
+    DdbListview *pl = DDB_LISTVIEW (gtk_object_get_data (GTK_OBJECT (widget), "owner"));
+    ddb_listview_list_track_dragdrop (pl, -1);
 }
 
 // debug function for gdk_draw_drawable
@@ -746,6 +765,16 @@ static inline void
 draw_drawable (GdkDrawable *window, GdkGC *gc, GdkDrawable *drawable, int x1, int y1, int x2, int y2, int w, int h) {
 //    printf ("dd: %p %p %p %d %d %d %d %d %d\n", window, gc, drawable, x1, y1, x2, y2, w, h);
     gdk_draw_drawable (window, gc, drawable, x1, y1, x2, y2, w, h);
+}
+
+int
+ddb_listview_get_vscroll_pos (DdbListview *listview) {
+    return listview->scrollpos;
+}
+
+int
+ddb_listview_get_hscroll_pos (DdbListview *listview) {
+    return listview->hscrollpos;
 }
 
 #define MIN_COLUMN_WIDTH 16
@@ -984,11 +1013,13 @@ ddb_listview_select_single (DdbListview *ps, int sel) {
         if (idx == sel) {
             if (!ps->binding->is_selected (it)) {
                 ps->binding->select (it, 1);
+                ddb_listview_draw_row (ps, idx, it);
                 ps->binding->selection_changed (it, idx);
             }
         }
         else if (ps->binding->is_selected (it)) {
             ps->binding->select (it, 0);
+            ddb_listview_draw_row (ps, idx, it);
             ps->binding->selection_changed (it, idx);
         }
         DdbListviewIter next = PL_NEXT (it);
@@ -1097,6 +1128,7 @@ ddb_listview_list_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, do
             DdbListviewIter it = ps->binding->get_for_idx (y);
             if (it) {
                 ps->binding->select (it, 1 - ps->binding->is_selected (it));
+                ddb_listview_draw_row (ps, y, it);
                 ps->binding->selection_changed (it, y);
                 UNREF (it);
             }
@@ -1112,17 +1144,20 @@ ddb_listview_list_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, do
             if (idx >= start && idx <= end) {
                 if (!ps->binding->is_selected (it)) {
                     ps->binding->select (it, 1);
+                    ddb_listview_draw_row (ps, idx, it);
                     ps->binding->selection_changed (it, idx);
                 }
             }
             else {
                 if (ps->binding->is_selected (it)) {
                     ps->binding->select (it, 0);
+                    ddb_listview_draw_row (ps, idx, it);
                     ps->binding->selection_changed (it, idx);
                 }
             }
             DdbListviewIter next = PL_NEXT (it);
             UNREF (it);
+            it = next;
         }
     }
     cursor = ps->binding->cursor ();
@@ -1260,11 +1295,13 @@ ddb_listview_list_mousemove (DdbListview *ps, GdkEventMotion *event) {
                 if (idx >= start && idx <= end) {
                     if (!ps->binding->is_selected (it)) {
                         ps->binding->select (it, 1);
+                        ddb_listview_draw_row (ps, idx, it);
                         ps->binding->selection_changed (it, idx);
                     }
                 }
                 else if (ps->binding->is_selected (it)) {
                     ps->binding->select (it, 0);
+                    ddb_listview_draw_row (ps, idx, it);
                     ps->binding->selection_changed (it, idx);
                 }
                 DdbListviewIter next = PL_NEXT(it);
@@ -1393,11 +1430,13 @@ ddb_listview_handle_keypress (DdbListview *ps, int keyval, int state) {
             for (it = ps->binding->head (); it; idx++) {
                 if (idx >= start && idx <= end) {
                     ps->binding->select (it, 1);
+                    ddb_listview_draw_row (ps, idx, it);
                     ps->binding->selection_changed (it, idx);
                 }
                 else if (ps->binding->is_selected (it))
                 {
                     ps->binding->select (it, 0);
+                    ddb_listview_draw_row (ps, idx, it);
                     ps->binding->selection_changed (it, idx);
                 }
                 DdbListviewIter next = PL_NEXT(it);
@@ -1409,7 +1448,7 @@ ddb_listview_handle_keypress (DdbListview *ps, int keyval, int state) {
     }
     else {
         ps->shift_sel_anchor = cursor;
-        ddb_listview_list_set_cursor (ps, cursor);
+        ddb_listview_set_cursor (ps, cursor);
     }
     return 1;
 }
@@ -1893,7 +1932,7 @@ struct set_cursor_t {
 };
 
 static gboolean
-ddb_listview_list_set_cursor_cb (gpointer data) {
+ddb_listview_set_cursor_cb (gpointer data) {
     struct set_cursor_t *sc = (struct set_cursor_t *)data;
     sc->pl->binding->set_cursor (sc->cursor);
     ddb_listview_select_single (sc->pl, sc->cursor);
@@ -1932,13 +1971,13 @@ ddb_listview_list_set_cursor_cb (gpointer data) {
 }
 
 void
-ddb_listview_list_set_cursor (DdbListview *pl, int cursor) {
+ddb_listview_set_cursor (DdbListview *pl, int cursor) {
     int prev = pl->binding->cursor ();
     struct set_cursor_t *data = malloc (sizeof (struct set_cursor_t));
     data->prev = prev;
     data->cursor = cursor;
     data->pl = pl;
-    g_idle_add (ddb_listview_list_set_cursor_cb, data);
+    g_idle_add (ddb_listview_set_cursor_cb, data);
 }
 
 gboolean
@@ -1946,7 +1985,7 @@ ddb_listview_list_button_press_event         (GtkWidget       *widget,
                                         GdkEventButton  *event,
                                         gpointer         user_data)
 {
-    DdbListview *ps = DDB_LISTVIEW (widget);
+    DdbListview *ps = DDB_LISTVIEW (gtk_object_get_data (GTK_OBJECT (widget), "owner"));
     if (event->button == 1) {
         ddb_listview_list_mouse1_pressed (ps, event->state, event->x, event->y, event->time);
     }
@@ -2065,7 +2104,7 @@ ddb_listview_list_button_release_event       (GtkWidget       *widget,
                                         GdkEventButton  *event,
                                         gpointer         user_data)
 {
-    DdbListview *ps = DDB_LISTVIEW (widget);
+    DdbListview *ps = DDB_LISTVIEW (gtk_object_get_data (GTK_OBJECT (widget), "owner"));
     if (event->button == 1) {
         ddb_listview_list_mouse1_released (ps, event->state, event->x, event->y, event->time);
     }
@@ -2077,7 +2116,7 @@ ddb_listview_motion_notify_event        (GtkWidget       *widget,
                                         GdkEventMotion  *event,
                                         gpointer         user_data)
 {
-    DdbListview *ps = DDB_LISTVIEW (widget);
+    DdbListview *ps = DDB_LISTVIEW (gtk_object_get_data (GTK_OBJECT (widget), "owner"));
     ddb_listview_list_mousemove (ps, event);
     return FALSE;
 }

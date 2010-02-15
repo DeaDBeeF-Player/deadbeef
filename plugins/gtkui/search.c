@@ -181,7 +181,7 @@ on_searchwin_key_press_event           (GtkWidget       *widget,
     }
     else if (event->keyval != GDK_Delete && event->keyval != GDK_Home && event->keyval != GDK_End){
         GtkWidget *pl = lookup_widget (mainwin, "searchlist");
-        if (!gtkpl_keypress (DDB_LISTVIEW (pl), event->keyval, event->state)) {
+        if (!ddb_listview_handle_keypress (DDB_LISTVIEW (pl), event->keyval, event->state)) {
             return FALSE;
         }
     }
