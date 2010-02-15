@@ -42,8 +42,6 @@
 #include "common.h"
 #include "threading.h"
 
-#pragma GCC optimize("O0")
-
 #define DISABLE_LOCKING 1
 
 // file format revision history

@@ -723,7 +723,11 @@ ddb_listview_list_drag_data_received         (GtkWidget       *widget,
         memcpy (mem, ptr, data->length);
         mem[data->length] = 0;
         // we don't pass control structure, but there's only one drag-drop view currently
-        ps->binding->external_drag_n_drop (mem, data->length, y);
+        DdbListviewIter it = ps->binding->get_for_idx (y / ps->rowheight + ps->scrollpos);
+        ps->binding->external_drag_n_drop (it, mem, data->length);
+        if (it) {
+            ps->binding->unref (it);
+        }
     }
     else if (target_type == 1) {
         uint32_t *d= (uint32_t *)ptr;

@@ -32,7 +32,7 @@ gtkpl_add_file_info_cb (DB_playItem_t *it, void *data) {
 static gboolean
 progress_hide_idle (gpointer data) {
     progress_hide ();
-    //playlist_refresh ();
+    playlist_refresh ();
     return FALSE;
 }
 
@@ -153,25 +153,16 @@ strcopy_special (char *dest, const char *src, int len) {
 }
 
 void
-gtkpl_add_fm_dropped_files (char *ptr, int length, int drop_y) {
-    // FIXME: port
-#if 0
+gtkpl_add_fm_dropped_files (DB_playItem_t *drop_before, char *ptr, int length) {
     DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
     g_idle_add (progress_show_idle, NULL);
 
-//    int drop_row = drop_y / rowheight + ddb_get_vscroll_pos (pl);
-    DdbListviewIter iter = ddb_listview_get_iter_from_coord (0, drop_y);
-    drop_before = ((DdbListviewIter )iter);
-    int drop_row = deadbeef->pl_get_idx_of (drop_before);
-//    DdbListviewIter drop_before = deadbeef->pl_get_for_idx_and_iter (drop_row, PL_MAIN);
     DdbListviewIter after = NULL;
     if (drop_before) {
-        after = PL_PREV (drop_before, PL_MAIN);
-        UNREF (drop_before);
-        drop_before = NULL;
+        after = deadbeef->pl_get_prev (drop_before, PL_MAIN);
     }
     else {
-        after = PL_TAIL (ps->iterator);
+        after = deadbeef->pl_get_last (PL_MAIN);
     }
     const uint8_t *p = (const uint8_t*)ptr;
     while (*p) {
@@ -191,7 +182,7 @@ gtkpl_add_fm_dropped_files (char *ptr, int length, int drop_y) {
             }
             if (inserted) {
                 if (after) {
-                    UNREF (after);
+                    deadbeef->pl_item_unref (after);
                 }
                 after = inserted;
             }
@@ -205,27 +196,29 @@ gtkpl_add_fm_dropped_files (char *ptr, int length, int drop_y) {
     free (ptr);
 
     if (after) {
-        UNREF (after);
+        deadbeef->pl_item_unref (after);
     }
     g_idle_add (progress_hide_idle, NULL);
-#endif
 }
 
 struct fmdrop_data {
     char *mem;
     int length;
-    int drop_y;
+    DB_playItem_t *drop_before;
 };
 
 static void
 fmdrop_worker (void *ctx) {
     struct fmdrop_data *data = (struct fmdrop_data *)ctx;
-    gtkpl_add_fm_dropped_files (data->mem, data->length, data->drop_y);
+    gtkpl_add_fm_dropped_files (data->drop_before, data->mem, data->length);
+    if (data->drop_before) {
+        deadbeef->pl_item_unref (data->drop_before);
+    }
     free (data);
 }
 
 void
-gtkui_receive_fm_drop (char *mem, int length, int drop_y) {
+gtkui_receive_fm_drop (DB_playItem_t *before, char *mem, int length) {
     struct fmdrop_data *data = malloc (sizeof (struct fmdrop_data));
     if (!data) {
         fprintf (stderr, "gtkui_receive_fm_drop: malloc failed\n");
@@ -233,6 +226,10 @@ gtkui_receive_fm_drop (char *mem, int length, int drop_y) {
     }
     data->mem = mem;
     data->length = length;
-    data->drop_y = drop_y;
+    if (before) {
+        deadbeef->pl_item_ref (before);
+    }
+    data->drop_before = before;
+    // since it happens in separate thread, we need to addref
     deadbeef->thread_start (fmdrop_worker, data);
 }

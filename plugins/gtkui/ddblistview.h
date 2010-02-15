@@ -66,7 +66,7 @@ typedef struct {
 
     // drag-n-drop
     void (*drag_n_drop) (DdbListviewIter before, uint32_t *indices, int length);
-    void (*external_drag_n_drop) (char *mem, int length, int row);
+    void (*external_drag_n_drop) (DdbListviewIter before, char *mem, int length);
 
     // columns
     int (*col_count) (void);

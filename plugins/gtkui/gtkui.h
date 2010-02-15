@@ -43,7 +43,7 @@ void
 gtkui_open_files (struct _GSList *lst);
 
 void
-gtkui_receive_fm_drop (char *mem, int length, int drop_y);
+gtkui_receive_fm_drop (DB_playItem_t *before, char *mem, int length);
 
 // plugin configuration dialogs
 
@@ -78,5 +78,11 @@ theme_set_fg_color (int col);
 
 void
 theme_set_bg_color (int col);
+
+void
+playlist_refresh (void);
+
+void
+search_refresh (void);
 
 #endif

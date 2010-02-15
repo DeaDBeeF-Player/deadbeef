@@ -311,7 +311,6 @@ convstr_id3v2_2to3 (const unsigned char* str, int sz) {
 #endif
         char *pout = out;
         memset (out, 0, sizeof (out));
-        printf ("%p %s %d %d\n", cd, pin, inbytesleft, outbytesleft);
         /*size_t res = */iconv (cd, &pin, &inbytesleft, &pout, &outbytesleft);
         iconv_close (cd);
         ret = out;

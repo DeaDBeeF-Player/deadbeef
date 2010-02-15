@@ -37,8 +37,8 @@
 #include "volume.h"
 #include "vfs.h"
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 static intptr_t streamer_tid;
 static int src_quality;

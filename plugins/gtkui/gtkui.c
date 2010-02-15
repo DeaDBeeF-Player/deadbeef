@@ -480,7 +480,6 @@ playlist_refresh (void) {
 static gboolean
 playlistchanged_cb (gpointer none) {
     playlist_refresh ();
-    search_refresh ();
     return FALSE;
 }
 
@@ -792,8 +791,8 @@ void main_drag_n_drop (DdbListviewIter before, uint32_t *indices, int length) {
     deadbeef->pl_move_items (PL_MAIN, (DB_playItem_t *)before, indices, length);
 }
 
-void main_external_drag_n_drop (char *mem, int length, int row) {
-    gtkui_receive_fm_drop (mem, length, row);
+void main_external_drag_n_drop (DdbListviewIter before, char *mem, int length) {
+    gtkui_receive_fm_drop ((DB_playItem_t *)before, mem, length);
 }
 
 static int main_col_count (void) {
