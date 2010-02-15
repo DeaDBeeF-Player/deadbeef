@@ -48,9 +48,7 @@
 #define PL_NEXT(it, iter) (deadbeef->pl_get_next(it, iter))
 
 DdbListview *last_playlist;
-extern GtkWidget *mainwin;
 extern DB_functions_t *deadbeef; // defined in gtkui.c
-GtkWidget *trackproperties;
 
 static gboolean
 file_filter_func (const GtkFileFilterInfo *filter_info, gpointer data) {
@@ -1445,160 +1443,12 @@ on_stop_after_current_activate         (GtkMenuItem     *menuitem,
     deadbeef->conf_set_int ("playlist.stop_after_current", gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (menuitem)));
 }
 
-
-void
-on_add_to_playback_queue1_activate     (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
-// FIXME: port
-//    GtkWidget *widget = GTK_WIDGET (menuitem);
-//    GTKPL_PROLOGUE;
-//    DB_playItem_t *it = deadbeef->pl_get_first (ps->iterator);
-//    while (it) {
-//        if (SELECTED (it)) {
-//            deadbeef->pl_playqueue_push (it);
-//        }
-//        it = PL_NEXT (it, ps->iterator);
-//    }
-//    playlist_refresh ();
-}
-
-
-void
-on_remove_from_playback_queue1_activate
-                                        (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
-// FIXME: port
-//    GtkWidget *widget = GTK_WIDGET (menuitem);
-//    GTKPL_PROLOGUE;
-//    DB_playItem_t *it = deadbeef->pl_get_first (ps->iterator);
-//    while (it) {
-//        if (SELECTED (it)) {
-//            deadbeef->pl_playqueue_remove (it);
-//        }
-//        it = PL_NEXT (it, ps->iterator);
-//    }
-//    playlist_refresh ();
-}
-
-
-
-void
-on_properties1_activate                (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
-// FIXME: port
-#if 0
-    GtkWidget *widget = GTK_WIDGET (menuitem);
-    GtkWidget *w;
-    const char *meta;
-    DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (deadbeef->pl_get_cursor (ps->iterator), ps->iterator);
-    if (!it) {
-        fprintf (stderr, "attempt to view properties of non-existing item\n");
-        return;
-    }
-    if (!trackproperties) {
-        trackproperties = create_trackproperties ();
-        gtk_window_set_transient_for (GTK_WINDOW (trackproperties), GTK_WINDOW (mainwin));
-    }
-    widget = trackproperties;
-    // fill in metadata
-    // location
-    w = lookup_widget (widget, "location");
-    gtk_entry_set_text (GTK_ENTRY (w), it->fname);
-    // title
-    w = lookup_widget (widget, "title");
-    meta = deadbeef->pl_find_meta (it, "title");
-    if (!meta) {
-        meta = "";
-    }
-    gtk_entry_set_text (GTK_ENTRY (w), meta);
-    // artist
-    w = lookup_widget (widget, "artist");
-    meta = deadbeef->pl_find_meta (it, "artist");
-    if (!meta) {
-        meta = "";
-    }
-    gtk_entry_set_text (GTK_ENTRY (w), meta);
-    // album
-    w = lookup_widget (widget, "album");
-    meta = deadbeef->pl_find_meta (it, "album");
-    if (!meta) {
-        meta = "";
-    }
-    gtk_entry_set_text (GTK_ENTRY (w), meta);
-    // genre
-    w = lookup_widget (widget, "genre");
-    meta = deadbeef->pl_find_meta (it, "genre");
-    if (!meta) {
-        meta = "";
-    }
-    gtk_entry_set_text (GTK_ENTRY (w), meta);
-    // year
-    w = lookup_widget (widget, "year");
-    meta = deadbeef->pl_find_meta (it, "year");
-    if (!meta) {
-        meta = "";
-    }
-    gtk_entry_set_text (GTK_ENTRY (w), meta);
-    // track
-    w = lookup_widget (widget, "track");
-    meta = deadbeef->pl_find_meta (it, "track");
-    if (!meta) {
-        meta = "";
-    }
-    gtk_entry_set_text (GTK_ENTRY (w), meta);
-    // comment
-    w = lookup_widget (widget, "comment");
-    meta = deadbeef->pl_find_meta (it, "comment");
-    if (!meta) {
-        meta = "";
-    }
-    GtkTextBuffer *buffer = gtk_text_buffer_new (NULL);
-    gtk_text_buffer_set_text (buffer, meta, strlen (meta));
-    gtk_text_view_set_buffer (GTK_TEXT_VIEW (w), buffer);
-    g_object_unref (buffer);
-
-    gtk_widget_show (widget);
-    gtk_window_present (GTK_WINDOW (widget));
-#endif
-}
-
-gboolean
-on_trackproperties_key_press_event     (GtkWidget       *widget,
-                                        GdkEventKey     *event,
-                                        gpointer         user_data)
-{
-    if (event->keyval == GDK_Escape) {
-        trackproperties = NULL;
-        gtk_widget_destroy (widget);
-    }
-    return FALSE;
-}
-
-
-
-
 void
 on_cursor_follows_playback_activate    (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     deadbeef->conf_set_int ("playlist.scroll.cursorfollowplayback", gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (menuitem)));
 }
-
-
-
-
-gboolean
-on_trackproperties_delete_event        (GtkWidget       *widget,
-                                        GdkEvent        *event,
-                                        gpointer         user_data)
-{
-    trackproperties = NULL;
-    return FALSE;
-}
-
 
 GtkWidget*
 create_ddb_listview_widget (gchar *widget_name, gchar *string1, gchar *string2,

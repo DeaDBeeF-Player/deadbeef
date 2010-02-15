@@ -20,8 +20,6 @@
 
 #include <gtk/gtk.h>
 #include <stdint.h>
-#include <assert.h>
-#include "../../deadbeef.h"
 
 // drag and drop targets
 enum {
@@ -68,6 +66,7 @@ typedef struct {
 
     // drag-n-drop
     void (*drag_n_drop) (DdbListviewIter before, uint32_t *indices, int length);
+    void (*external_drag_n_drop) (char *mem, int length, int row);
 
     // columns
     int (*col_count) (void);
@@ -191,155 +190,5 @@ enum {
 void ddb_listview_refresh (DdbListview *listview, uint32_t flags);
 
 G_END_DECLS
-
-#if 0
-//extern DdbListview main_playlist;
-//extern DdbListview search_playlist;
-
-//#define GTKPL_PROLOGUE \
-//    DdbListview *ps = (DdbListview *)gtk_object_get_data (GTK_OBJECT (widget), "ps"); assert (ps); 
-
-
-extern int rowheight;
-
-// that must be called before gtk_init
-void
-gtkpl_init (void);
-
-void
-gtkpl_free (DdbListview *pl);
-
-void
-gtkpl_redraw_pl_row (DdbListview *ps, int row, DdbListviewIter it);
-
-void
-gtkpl_redraw_pl_row_novis (DdbListview *ps, int row, DdbListviewIter it);
-
-void
-gtkpl_setup_scrollbar (DdbListview *ps);
-
-void
-gtkpl_setup_hscrollbar (DdbListview *ps);
-
-void
-gtkpl_draw_pl_row_back (DdbListview *ps, int row, DdbListviewIter it);
-
-void
-gtkpl_draw_pl_row (DdbListview *ps, int row, DdbListviewIter it);
-
-void
-gtkpl_draw_playlist (DdbListview *ps, int x, int y, int w, int h);
-
-void
-gtkpl_reconf (DdbListview *ps);
-
-void
-gtkpl_expose (DdbListview *ps, int x, int y, int w, int h);
-
-void
-gtkpl_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, double time);
-
-void
-gtkpl_mouse1_released (DdbListview *ps, int state, int ex, int ey, double time);
-
-void
-gtkpl_mousemove (DdbListview *ps, GdkEventMotion *event);
-
-void
-gtkpl_scroll (DdbListview *ps, int newscroll);
-
-void
-gtkpl_hscroll (DdbListview *ps, int newscroll);
-
-void
-gtkpl_handle_scroll_event (DdbListview *ps, int direction);
-
-// returns 1 if keypress was handled, 0 otherwise
-int
-gtkpl_keypress (DdbListview *ps, int keyval, int state);
-
-void
-gtkpl_track_dragdrop (DdbListview *ps, int y);
-
-void
-gtkpl_select_single (DdbListview *ps, int sel);
-
-void
-gtkpl_header_draw (DdbListview *ps);
-
-void
-gtkpl_add_dir (DdbListview *ps, char *folder);
-
-void
-gtkpl_add_files (GSList *lst);
-
-//int
-//gtkpl_get_idx_of (DdbListview *ps, DdbListviewIter it);
-//
-//DdbListviewIter 
-//gtkpl_get_for_idx (DdbListview *ps, int idx);
-
-//// this functions take value from passed playlist, that's why it's here
-//void
-//gtkpl_playsong (DdbListview *ps);
-
-void
-gtkpl_songchanged (DdbListview *ps, int from, int to);
-
-// these functions operate on global playlist level,
-// no need to pass DdbListview ptr to them
-
-void
-gtkpl_add_fm_dropped_files (char *ptr, int length, int drop_y);
-
-// these functions should not belong here
-void
-gtkpl_prevsong (void);
-
-void
-gtkpl_nextsong (void);
-
-void
-gtkpl_randomsong (void);
-
-void
-gtkpl_pausesong (void);
-
-void
-gtkpl_playsongnum (int idx);
-
-void
-theme_set_fg_color (int col);
-
-void
-theme_set_bg_color (int col);
-
-void
-theme_set_cairo_source_rgb (cairo_t *cr, int col);
-
-void
-playlist_refresh (void);
-
-void
-gtkpl_expose_header (DdbListview *ps, int x, int y, int w, int h);
-
-void
-set_tray_tooltip (const char *text);
-
-void
-gtkpl_songchanged_wrapper (int from, int to);
-
-void
-gtkpl_current_track_changed (DdbListviewIter it);
-
-//void
-//gtk_pl_redraw_item_everywhere (DdbListviewIter it);
-
-void
-gtkpl_set_cursor (DdbListview *pl, int cursor);
-
-void
-main_refresh (void);
-#endif
 
 #endif // __DDBLISTVIEW_H

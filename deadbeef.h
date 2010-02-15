@@ -80,7 +80,7 @@ extern "C" {
 
 // playlist item
 // these are "public" fields, available to plugins
-typedef struct {
+typedef struct DB_playItem_s {
     char *fname; // full pathname
 //    struct DB_decoder_s *decoder; // codec to use with this file
     const char *decoder_id;

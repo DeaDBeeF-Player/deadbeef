@@ -34,15 +34,15 @@
 #include <assert.h>
 #include <sys/time.h>
 #include "ddblistview.h"
-#include "callbacks.h"
-#include "interface.h"
-#include "support.h"
-#include "search.h"
-#include "progress.h"
 #include "drawing.h"
-#include "../../session.h"
-#include "parser.h"
-#include "gtkui.h"
+//#include "callbacks.h"
+//#include "interface.h"
+//#include "support.h"
+//#include "search.h"
+//#include "progress.h"
+//#include "../../session.h"
+//#include "parser.h"
+//#include "gtkui.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -723,7 +723,7 @@ ddb_listview_list_drag_data_received         (GtkWidget       *widget,
         memcpy (mem, ptr, data->length);
         mem[data->length] = 0;
         // we don't pass control structure, but there's only one drag-drop view currently
-        gtkui_receive_fm_drop (mem, data->length, y);
+        ps->binding->external_drag_n_drop (mem, data->length, y);
     }
     else if (target_type == 1) {
         uint32_t *d= (uint32_t *)ptr;
@@ -1468,7 +1468,11 @@ ddb_listview_list_track_dragdrop (DdbListview *ps, int y) {
     draw_begin ((uintptr_t)widget->window);
     ps->drag_motion_y = y / ps->rowheight;
 
-    theme_set_fg_color (COLO_DRAGDROP_MARKER);
+    //theme_set_fg_color (COLO_DRAGDROP_MARKER);
+    GtkStyle *style = gtk_widget_get_style (GTK_WIDGET (ps));
+    float clr[3] = { style->fg[GTK_STATE_NORMAL].red, style->fg[GTK_STATE_NORMAL].green, style->fg[GTK_STATE_NORMAL].blue };
+    draw_set_fg_color (clr);
+
     draw_rect (0, ps->drag_motion_y * ps->rowheight-1, widget->allocation.width, 3, 1);
     draw_rect (0, ps->drag_motion_y * ps->rowheight-3, 3, 7, 1);
     draw_rect (widget->allocation.width-3, ps->drag_motion_y * ps->rowheight-3, 3, 7, 1);
@@ -2036,64 +2040,7 @@ ddb_listview_list_button_press_event         (GtkWidget       *widget,
                 ps->binding->set_cursor (y);
                 ddb_listview_draw_row (ps, y, it);
             }
-            {
-                int inqueue = deadbeef->pl_playqueue_test (it);
-                GtkWidget *playlist_menu;
-                GtkWidget *add_to_playback_queue1;
-                GtkWidget *remove_from_playback_queue1;
-                GtkWidget *separator9;
-                GtkWidget *remove2;
-                GtkWidget *separator8;
-                GtkWidget *properties1;
-
-                playlist_menu = gtk_menu_new ();
-                add_to_playback_queue1 = gtk_menu_item_new_with_mnemonic ("Add to playback queue");
-                gtk_widget_show (add_to_playback_queue1);
-                gtk_container_add (GTK_CONTAINER (playlist_menu), add_to_playback_queue1);
-                gtk_object_set_data (GTK_OBJECT (add_to_playback_queue1), "ps", ps);
-
-                remove_from_playback_queue1 = gtk_menu_item_new_with_mnemonic ("Remove from playback queue");
-                if (inqueue == -1) {
-                    gtk_widget_set_sensitive (remove_from_playback_queue1, FALSE);
-                }
-                gtk_widget_show (remove_from_playback_queue1);
-                gtk_container_add (GTK_CONTAINER (playlist_menu), remove_from_playback_queue1);
-                gtk_object_set_data (GTK_OBJECT (remove_from_playback_queue1), "ps", ps);
-
-                separator9 = gtk_separator_menu_item_new ();
-                gtk_widget_show (separator9);
-                gtk_container_add (GTK_CONTAINER (playlist_menu), separator9);
-                gtk_widget_set_sensitive (separator9, FALSE);
-
-                remove2 = gtk_menu_item_new_with_mnemonic ("Remove");
-                gtk_widget_show (remove2);
-                gtk_container_add (GTK_CONTAINER (playlist_menu), remove2);
-                gtk_object_set_data (GTK_OBJECT (remove2), "ps", ps);
-
-                separator8 = gtk_separator_menu_item_new ();
-                gtk_widget_show (separator8);
-                gtk_container_add (GTK_CONTAINER (playlist_menu), separator8);
-                gtk_widget_set_sensitive (separator8, FALSE);
-
-                properties1 = gtk_menu_item_new_with_mnemonic ("Properties");
-                gtk_widget_show (properties1);
-                gtk_container_add (GTK_CONTAINER (playlist_menu), properties1);
-                gtk_object_set_data (GTK_OBJECT (properties1), "ps", ps);
-
-                g_signal_connect ((gpointer) add_to_playback_queue1, "activate",
-                        G_CALLBACK (on_add_to_playback_queue1_activate),
-                        NULL);
-                g_signal_connect ((gpointer) remove_from_playback_queue1, "activate",
-                        G_CALLBACK (on_remove_from_playback_queue1_activate),
-                        NULL);
-                g_signal_connect ((gpointer) remove2, "activate",
-                        G_CALLBACK (on_remove2_activate),
-                        NULL);
-                g_signal_connect ((gpointer) properties1, "activate",
-                        G_CALLBACK (on_properties1_activate),
-                        NULL);
-                gtk_menu_popup (GTK_MENU (playlist_menu), NULL, NULL, NULL, widget, 0, gtk_get_current_event_time());
-            }
+            ps->binding->list_context_menu (ps, it, y);
         }
     }
     return FALSE;

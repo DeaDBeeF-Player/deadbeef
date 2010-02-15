@@ -38,6 +38,7 @@
 #include "tabs.h"
 #include "parser.h"
 #include "drawing.h"
+#include "trkproperties.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -791,6 +792,10 @@ void main_drag_n_drop (DdbListviewIter before, uint32_t *indices, int length) {
     deadbeef->pl_move_items (PL_MAIN, (DB_playItem_t *)before, indices, length);
 }
 
+void main_external_drag_n_drop (char *mem, int length, int row) {
+    gtkui_receive_fm_drop (mem, length, row);
+}
+
 static int main_col_count (void) {
     int cnt = 0;
     for (gtkpl_column_t *c = main_columns; c; c = c->next, cnt++);
@@ -1076,6 +1081,113 @@ main_header_context_menu (DdbListview *ps, DdbListviewColIter c) {
 }
 
 void
+main_add_to_playback_queue_activate     (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    DdbListview *ps = DDB_LISTVIEW (gtk_object_get_data (GTK_OBJECT (menuitem), "ps"));
+    DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
+    while (it) {
+        if (deadbeef->pl_is_selected (it)) {
+            deadbeef->pl_playqueue_push (it);
+        }
+        DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+        deadbeef->pl_item_unref (it);
+        it = next;
+    }
+    playlist_refresh ();
+}
+
+void
+main_remove_from_playback_queue_activate
+                                        (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    DdbListview *ps = DDB_LISTVIEW (gtk_object_get_data (GTK_OBJECT (menuitem), "ps"));
+    DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
+    while (it) {
+        if (deadbeef->pl_is_selected (it)) {
+            deadbeef->pl_playqueue_remove (it);
+        }
+        DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+        deadbeef->pl_item_unref (it);
+        it = next;
+    }
+    playlist_refresh ();
+}
+
+void
+main_properties_activate                (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (deadbeef->pl_get_cursor (PL_MAIN), PL_MAIN);
+    if (!it) {
+        fprintf (stderr, "attempt to view properties of non-existing item\n");
+        return;
+    }
+    show_track_properties_dlg (it);
+}
+
+void
+main_list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
+    int inqueue = deadbeef->pl_playqueue_test (it);
+    GtkWidget *playlist_menu;
+    GtkWidget *add_to_playback_queue1;
+    GtkWidget *remove_from_playback_queue1;
+    GtkWidget *separator9;
+    GtkWidget *remove2;
+    GtkWidget *separator8;
+    GtkWidget *properties1;
+
+    playlist_menu = gtk_menu_new ();
+    add_to_playback_queue1 = gtk_menu_item_new_with_mnemonic ("Add to playback queue");
+    gtk_widget_show (add_to_playback_queue1);
+    gtk_container_add (GTK_CONTAINER (playlist_menu), add_to_playback_queue1);
+    gtk_object_set_data (GTK_OBJECT (add_to_playback_queue1), "ps", listview);
+
+    remove_from_playback_queue1 = gtk_menu_item_new_with_mnemonic ("Remove from playback queue");
+    if (inqueue == -1) {
+        gtk_widget_set_sensitive (remove_from_playback_queue1, FALSE);
+    }
+    gtk_widget_show (remove_from_playback_queue1);
+    gtk_container_add (GTK_CONTAINER (playlist_menu), remove_from_playback_queue1);
+    gtk_object_set_data (GTK_OBJECT (remove_from_playback_queue1), "ps", listview);
+
+    separator9 = gtk_separator_menu_item_new ();
+    gtk_widget_show (separator9);
+    gtk_container_add (GTK_CONTAINER (playlist_menu), separator9);
+    gtk_widget_set_sensitive (separator9, FALSE);
+
+    remove2 = gtk_menu_item_new_with_mnemonic ("Remove");
+    gtk_widget_show (remove2);
+    gtk_container_add (GTK_CONTAINER (playlist_menu), remove2);
+    gtk_object_set_data (GTK_OBJECT (remove2), "ps", listview);
+
+    separator8 = gtk_separator_menu_item_new ();
+    gtk_widget_show (separator8);
+    gtk_container_add (GTK_CONTAINER (playlist_menu), separator8);
+    gtk_widget_set_sensitive (separator8, FALSE);
+
+    properties1 = gtk_menu_item_new_with_mnemonic ("Properties");
+    gtk_widget_show (properties1);
+    gtk_container_add (GTK_CONTAINER (playlist_menu), properties1);
+    gtk_object_set_data (GTK_OBJECT (properties1), "ps", listview);
+
+    g_signal_connect ((gpointer) add_to_playback_queue1, "activate",
+            G_CALLBACK (main_add_to_playback_queue_activate),
+            NULL);
+    g_signal_connect ((gpointer) remove_from_playback_queue1, "activate",
+            G_CALLBACK (main_remove_from_playback_queue_activate),
+            NULL);
+    g_signal_connect ((gpointer) remove2, "activate",
+            G_CALLBACK (on_remove2_activate),
+            NULL);
+    g_signal_connect ((gpointer) properties1, "activate",
+            G_CALLBACK (main_properties_activate),
+            NULL);
+    gtk_menu_popup (GTK_MENU (playlist_menu), NULL, NULL, NULL, listview, 0, gtk_get_current_event_time());
+}
+
+void
 main_refresh (void) {
     if (mainwin && GTK_WIDGET_VISIBLE (mainwin)) {
         DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
@@ -1214,6 +1326,7 @@ DdbListviewBinding main_binding = {
     .select = main_select,
 
     .drag_n_drop = main_drag_n_drop,
+    .external_drag_n_drop = main_external_drag_n_drop,
 
     .draw_column_data = main_draw_column_data,
 
@@ -1235,6 +1348,7 @@ DdbListviewBinding main_binding = {
     .handle_doubleclick = main_handle_doubleclick,
     .selection_changed = main_selection_changed,
     .header_context_menu = main_header_context_menu,
+    .list_context_menu = main_list_context_menu,
     .delete_selected = main_delete_selected,
 };
 

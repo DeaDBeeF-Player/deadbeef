@@ -23,7 +23,11 @@
 #define NOTIFY_DEFAULT_FORMAT "%a - %t"
 #endif
 
+#include "../../deadbeef.h"
+
 extern DB_functions_t *deadbeef;
+extern GtkWidget *mainwin;
+extern GtkWidget *searchwin;
 
 struct _GSList;
 
