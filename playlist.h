@@ -53,6 +53,7 @@ typedef struct playItem_s {
     unsigned selected : 1;
     unsigned played : 1; // mark as played in shuffle mode
     unsigned in_playlist : 1; // 1 if item is in playlist
+    unsigned is_group_title : 1; // 1 if this is a group title
 } playItem_t;
 
 typedef struct playlist_s {
@@ -244,6 +245,12 @@ pl_set_selected (playItem_t *it, int sel);
 
 int
 pl_is_selected (playItem_t *it);
+
+int
+pl_is_group_title (playItem_t *it);
+
+void
+pl_group_by (const char *fmt);
 
 playItem_t *
 pl_get_first (int iter);

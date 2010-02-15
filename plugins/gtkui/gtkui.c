@@ -1003,6 +1003,14 @@ void main_selection_changed (DdbListviewIter it, int idx) {
 
 void main_draw_column_data (GdkDrawable *drawable, DdbListviewIter it, int idx, DdbListviewColIter column, int x, int y, int width, int height) {
     gtkpl_column_t *c = (gtkpl_column_t *)column;
+    if (deadbeef->pl_is_group_title ((DB_playItem_t *)it)) {
+        if (c == main_columns) {
+            float clr[] = {0, 0.1, 0.5};
+            draw_set_fg_color (clr);
+            draw_text (x + 5, y + height/2 - draw_get_font_size ()/2 - 2, 1000, 0, ((DB_playItem_t *)it)->fname);
+        }
+        return;
+    }
     if (it == deadbeef->streamer_get_playing_track () && c->id == DB_COLUMN_PLAYING) {
         int paused = deadbeef->get_output ()->state () == OUTPUT_STATE_PAUSED;
         int buffering = !deadbeef->streamer_ok_to_read (-1);
@@ -1031,6 +1039,32 @@ void main_draw_column_data (GdkDrawable *drawable, DdbListviewIter it, int idx, 
     }
 }
 
+#if 0
+void
+on_group_by_none_activate              (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    deadbeef->plt_group_by (NULL);
+    main_refresh ();
+}
+
+void
+on_group_by_artist_date_album_activate (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    deadbeef->plt_group_by ("%a - [%y] %b");
+    main_refresh ();
+}
+
+void
+on_group_by_artist_activate            (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    deadbeef->plt_group_by ("%a");
+    main_refresh ();
+}
+#endif
+
 GtkWidget*
 create_headermenu (void)
 {
@@ -1038,6 +1072,12 @@ create_headermenu (void)
   GtkWidget *add_column;
   GtkWidget *edit_column;
   GtkWidget *remove_column;
+  GtkWidget *separator;
+  GtkWidget *group_by;
+  GtkWidget *group_by_menu;
+  GtkWidget *none;
+  GtkWidget *artist_date_album;
+  GtkWidget *artist;
 
   headermenu = gtk_menu_new ();
 
@@ -1053,6 +1093,32 @@ create_headermenu (void)
   gtk_widget_show (remove_column);
   gtk_container_add (GTK_CONTAINER (headermenu), remove_column);
 
+#if 0
+  separator = gtk_separator_menu_item_new ();
+  gtk_widget_show (separator);
+  gtk_container_add (GTK_CONTAINER (headermenu), separator);
+  gtk_widget_set_sensitive (separator, FALSE);
+
+  group_by = gtk_menu_item_new_with_mnemonic ("Group by");
+  gtk_widget_show (group_by);
+  gtk_container_add (GTK_CONTAINER (headermenu), group_by);
+
+  group_by_menu = gtk_menu_new ();
+  gtk_menu_item_set_submenu (GTK_MENU_ITEM (group_by), group_by_menu);
+
+  none = gtk_menu_item_new_with_mnemonic ("None");
+  gtk_widget_show (none);
+  gtk_container_add (GTK_CONTAINER (group_by_menu), none);
+
+  artist_date_album = gtk_menu_item_new_with_mnemonic ("Artist/Date/Album");
+  gtk_widget_show (artist_date_album);
+  gtk_container_add (GTK_CONTAINER (group_by_menu), artist_date_album);
+
+  artist = gtk_menu_item_new_with_mnemonic ("Artist");
+  gtk_widget_show (artist);
+  gtk_container_add (GTK_CONTAINER (group_by_menu), artist);
+#endif
+
   g_signal_connect ((gpointer) add_column, "activate",
                     G_CALLBACK (on_add_column_activate),
                     NULL);
@@ -1063,14 +1129,23 @@ create_headermenu (void)
                     G_CALLBACK (on_remove_column_activate),
                     NULL);
 
-  /* Store pointers to all widgets, for use by lookup_widget(). */
-//  GLADE_HOOKUP_OBJECT_NO_REF (headermenu, headermenu, "headermenu");
-//  GLADE_HOOKUP_OBJECT (headermenu, add_column, "add_column");
-//  GLADE_HOOKUP_OBJECT (headermenu, edit_column, "edit_column");
-//  GLADE_HOOKUP_OBJECT (headermenu, remove_column, "remove_column");
+#if 0
+  g_signal_connect ((gpointer) remove_column, "activate",
+                    G_CALLBACK (on_group_by_none_activate),
+                    NULL);
+
+  g_signal_connect ((gpointer) remove_column, "activate",
+                    G_CALLBACK (on_group_by_artist_date_album_activate),
+                    NULL);
+
+  g_signal_connect ((gpointer) remove_column, "activate",
+                    G_CALLBACK (on_group_by_artist_activate),
+                    NULL);
+#endif
 
   return headermenu;
 }
+
 void
 main_header_context_menu (DdbListview *ps, DdbListviewColIter c) {
     GtkWidget *menu = create_headermenu ();

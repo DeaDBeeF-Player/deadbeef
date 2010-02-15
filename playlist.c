@@ -2562,3 +2562,42 @@ pl_items_copy_junk (playItem_t *from, playItem_t *first, playItem_t *last) {
     }
     UNLOCK;
 }
+
+void
+pl_group_by (const char *fmt) {
+    // remove all groupings
+    playItem_t *it;
+    it = playlist->head[PL_MAIN];
+    while (it) {
+        playItem_t *next = it->next[PL_MAIN];
+        if (it->is_group_title) {
+            pl_remove (it);
+        }
+        it = next;
+    }
+
+    // insert new
+    if (fmt) {
+        it = playlist->head[PL_MAIN];
+        char str[1024] = "--";
+        char curr[1024];
+        int idx = 0;
+        while (it) {
+            pl_format_title (it, -1, curr, sizeof (curr), -1, fmt);
+            if (strcmp (str, curr)) {
+                strcpy (str, curr);
+                playItem_t *grp = pl_item_alloc ();
+                grp->fname = strdup (str);
+                grp->is_group_title = 1;
+                it = pl_insert_item (it->prev[PL_MAIN], grp);
+                pl_item_unref (it);
+            }
+            it = it->next[PL_MAIN];
+        }
+    }
+}
+
+int
+pl_is_group_title (playItem_t *it) {
+    return it->is_group_title;
+}

@@ -82,13 +82,12 @@ extern "C" {
 // these are "public" fields, available to plugins
 typedef struct DB_playItem_s {
     char *fname; // full pathname
-//    struct DB_decoder_s *decoder; // codec to use with this file
     const char *decoder_id;
     int tracknum; // used for stuff like sid, nsf, cue (will be ignored by most codecs)
     int startsample; // start sample of track, or -1 for auto
     int endsample; // end sample of track, or -1 for auto
     int shufflerating; // sort order for shuffle mode
-    float playtime; // total playtime
+    float playtime; // actual playback time of this track in seconds
     time_t started_timestamp; // result of calling time(NULL)
     const char *filetype; // e.g. MP3 or OGG
     float replaygain_album_gain;
@@ -311,6 +310,7 @@ typedef struct {
     int (*pl_get_cursor) (int iter);
     void (*pl_set_selected) (DB_playItem_t *it, int sel);
     int (*pl_is_selected) (DB_playItem_t *it);
+    int (*pl_is_group_title) (DB_playItem_t *it);
     void (*pl_clear) (void);
     int (*pl_load) (const char *name);
     int (*pl_save) (const char *name);
