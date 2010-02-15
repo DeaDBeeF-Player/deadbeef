@@ -174,6 +174,10 @@ int
 ddb_listview_handle_keypress (DdbListview *ps, int keyval, int state);
 void
 ddb_listview_set_cursor (DdbListview *pl, int cursor);
+void
+ddb_listview_scroll_to (DdbListview *listview, int pos);
+int
+ddb_listview_is_scrolling (DdbListview *listview);
 
 enum {
     DDB_REFRESH_COLUMNS = 1,

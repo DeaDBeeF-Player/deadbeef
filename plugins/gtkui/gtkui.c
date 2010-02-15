@@ -155,6 +155,10 @@ static struct timeval last_br_update;
 
 static gboolean
 update_songinfo (gpointer ctx) {
+    int iconified = gdk_window_get_state(mainwin->window) & GDK_WINDOW_STATE_ICONIFIED;
+    if (!GTK_WIDGET_VISIBLE (mainwin) || iconified) {
+        return FALSE;
+    }
     char sbtext_new[512] = "-";
     float songpos = last_songpos;
 
@@ -984,29 +988,8 @@ on_remove_column_activate              (GtkMenuItem     *menuitem,
     ddb_listview_refresh (last_playlist, DDB_REFRESH_COLUMNS | DDB_REFRESH_LIST | DDB_REFRESH_HSCROLL | DDB_EXPOSE_LIST | DDB_EXPOSE_COLUMNS);
 }
 
-void handle_playlist_doubleclick (int list_idx, DB_playItem_t *it, int idx) {
-// FIXME: port (maybe)
-#if 0
-    int r = deadbeef->pl_get_idx_of (it);
-    int prev = deadbeef->pl_get_cursor (list_idx);
-    if (prev != r) {
-        deadbeef->pl_set_cursor (list_idx, r);
-        if (prev != -1) {
-            DB_playItem_t *prev_it = deadbeef->pl_get_for_idx (prev);
-            gtkpl_redraw_pl_row (&main_playlist, prev, prev_it);
-            UNREF (prev_it);
-        }
-        if (r != -1) {
-            gtkpl_redraw_pl_row (&main_playlist, r, it);
-        }
-    }
-    UNREF (it);
-#endif
-    deadbeef->sendmessage (M_PLAYSONGNUM, 0, idx, 0);
-}
-
 void main_handle_doubleclick (DdbListview *listview, DdbListviewIter iter, int idx) {
-    handle_playlist_doubleclick (PL_MAIN, (DB_playItem_t *)iter, idx);
+    deadbeef->sendmessage (M_PLAYSONGNUM, 0, idx, 0);
 }
 
 void main_selection_changed (DdbListviewIter it, int idx) {
@@ -1299,11 +1282,6 @@ main_playlist_init (GtkWidget *widget) {
         }
     }
 
-//    gtk_object_set_data (GTK_OBJECT (main_playlist.playlist), "ps", &main_playlist);
-//    gtk_object_set_data (GTK_OBJECT (main_playlist.header), "ps", &main_playlist);
-//    gtk_object_set_data (GTK_OBJECT (main_playlist.scrollbar), "ps", &main_playlist);
-//    gtk_object_set_data (GTK_OBJECT (main_playlist.hscrollbar), "ps", &main_playlist);
-
     // FIXME: filepath should be in properties dialog, while tooltip should be
     // used to show text that doesn't fit in column width
     if (deadbeef->conf_get_int ("playlist.showpathtooltip", 0)) {
@@ -1365,32 +1343,27 @@ search_playlist_init (GtkWidget *widget) {
 #endif
 }
 
-void
-gtkpl_songchanged (DdbListview *ps, int from, int to) {
-// FIXME: port
-#if 0
-    if (!dragwait && to != -1) {
+static void
+songchanged (DdbListview *ps, int from, int to) {
+    if (!ddb_listview_is_scrolling (ps) && to != -1) {
         if (deadbeef->conf_get_int ("playlist.scroll.followplayback", 0)) {
-            if (to < ps->scrollpos || to >= ps->scrollpos + ps->nvisiblefullrows) {
-                gtk_range_set_value (GTK_RANGE (ps->scrollbar), to - ps->nvisiblerows/2);
-            }
+            ddb_listview_scroll_to (ps, to);
         }
         if (deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 0)) {
-            gtkpl_set_cursor (PL_MAIN, to);
+            ddb_listview_set_cursor (ps, to);
         }
     }
 
     if (from >= 0) {
-        DB_playItem_t *it = gtkpl_get_for_idx (ps, from);
-        gtkpl_redraw_pl_row (ps, from, it);
+        DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (from, PL_MAIN);
+        ddb_listview_draw_row (ps, from, it);
         deadbeef->pl_item_unref (it);
     }
     if (to >= 0) {
-        DB_playItem_t *it = gtkpl_get_for_idx (ps, to);
-        gtkpl_redraw_pl_row (ps, to, it);
+        DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (to, PL_MAIN);
+        ddb_listview_draw_row (ps, to, it);
         deadbeef->pl_item_unref (it);
     }
-#endif
 }
 
 #if HAVE_NOTIFY
@@ -1441,7 +1414,7 @@ update_win_title_idle (gpointer data) {
         }
     }
     // update playlist view
-    gtkpl_songchanged (DDB_LISTVIEW (lookup_widget (mainwin, "playlist")), from, to);
+    songchanged (DDB_LISTVIEW (lookup_widget (mainwin, "playlist")), from, to);
     return FALSE;
 }
 

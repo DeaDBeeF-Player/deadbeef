@@ -2131,3 +2131,13 @@ ddb_listview_get_iter_from_coord (DdbListview *listview, int x, int y) {
     return listview->binding->get_for_idx ((y + listview->scrollpos)/listview->rowheight);
 }
 
+void
+ddb_listview_scroll_to (DdbListview *listview, int pos) {
+    if (pos < listview->scrollpos || pos >= listview->scrollpos + listview->nvisiblefullrows) {
+        gtk_range_set_value (GTK_RANGE (listview->scrollbar), pos - listview->nvisiblerows/2);
+    }
+}
+int
+ddb_listview_is_scrolling (DdbListview *listview) {
+    return listview->dragwait;
+}
