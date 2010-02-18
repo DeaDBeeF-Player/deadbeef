@@ -110,7 +110,7 @@ create_mainwin (void)
   GtkWidget *image5;
   GtkWidget *seekbar;
   GtkWidget *volumebar;
-  GtkWidget *tabbar;
+  GtkWidget *tabstrip;
   GtkWidget *frame1;
   GtkWidget *playlist;
   GtkWidget *statusbar;
@@ -496,11 +496,12 @@ create_mainwin (void)
   gtk_widget_set_size_request (volumebar, 70, -1);
   gtk_widget_set_events (volumebar, GDK_EXPOSURE_MASK | GDK_POINTER_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK);
 
-  tabbar = gtk_drawing_area_new ();
-  gtk_widget_show (tabbar);
-  gtk_box_pack_start (GTK_BOX (vbox1), tabbar, FALSE, TRUE, 0);
-  gtk_widget_set_size_request (tabbar, -1, 24);
-  gtk_widget_set_events (tabbar, GDK_EXPOSURE_MASK | GDK_POINTER_MOTION_MASK | GDK_BUTTON_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK);
+  tabstrip = create_tabstrip_widget ("tabstrip", "", "", 0, 0);
+  gtk_widget_show (tabstrip);
+  gtk_box_pack_start (GTK_BOX (vbox1), tabstrip, FALSE, TRUE, 0);
+  gtk_widget_set_size_request (tabstrip, -1, 24);
+  GTK_WIDGET_UNSET_FLAGS (tabstrip, GTK_CAN_FOCUS);
+  GTK_WIDGET_UNSET_FLAGS (tabstrip, GTK_CAN_DEFAULT);
 
   frame1 = gtk_frame_new (NULL);
   gtk_widget_show (frame1);
@@ -670,21 +671,6 @@ create_mainwin (void)
   g_signal_connect ((gpointer) volumebar, "scroll_event",
                     G_CALLBACK (on_volumebar_scroll_event),
                     NULL);
-  g_signal_connect ((gpointer) tabbar, "button_press_event",
-                    G_CALLBACK (on_tabbar_button_press_event),
-                    NULL);
-  g_signal_connect ((gpointer) tabbar, "button_release_event",
-                    G_CALLBACK (on_tabbar_button_release_event),
-                    NULL);
-  g_signal_connect ((gpointer) tabbar, "configure_event",
-                    G_CALLBACK (on_tabbar_configure_event),
-                    NULL);
-  g_signal_connect ((gpointer) tabbar, "expose_event",
-                    G_CALLBACK (on_tabbar_expose_event),
-                    NULL);
-  g_signal_connect ((gpointer) tabbar, "motion_notify_event",
-                    G_CALLBACK (on_tabbar_motion_notify_event),
-                    NULL);
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (mainwin, mainwin, "mainwin");
@@ -766,7 +752,7 @@ create_mainwin (void)
   GLADE_HOOKUP_OBJECT (mainwin, image5, "image5");
   GLADE_HOOKUP_OBJECT (mainwin, seekbar, "seekbar");
   GLADE_HOOKUP_OBJECT (mainwin, volumebar, "volumebar");
-  GLADE_HOOKUP_OBJECT (mainwin, tabbar, "tabbar");
+  GLADE_HOOKUP_OBJECT (mainwin, tabstrip, "tabstrip");
   GLADE_HOOKUP_OBJECT (mainwin, frame1, "frame1");
   GLADE_HOOKUP_OBJECT (mainwin, playlist, "playlist");
   GLADE_HOOKUP_OBJECT (mainwin, statusbar, "statusbar");

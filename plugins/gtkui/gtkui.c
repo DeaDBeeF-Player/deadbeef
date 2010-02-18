@@ -35,7 +35,6 @@
 #include "interface.h"
 #include "callbacks.h"
 #include "support.h"
-#include "tabs.h"
 #include "parser.h"
 #include "drawing.h"
 #include "trkproperties.h"
@@ -490,11 +489,10 @@ gtkui_on_playlistchanged (DB_event_t *ev, uintptr_t data) {
 
 static gboolean
 playlistswitch_cb (gpointer none) {
+    GtkWidget *tabstrip = lookup_widget (mainwin, "tabstrip");
+    gdk_window_invalidate_rect (tabstrip->window, NULL, FALSE);
     playlist_refresh ();
     search_refresh ();
-    tabbar_draw (lookup_widget (mainwin, "tabbar"));
-    //GtkWidget *widget = lookup_widget (mainwin, "tabbar");
-    //gdk_window_invalidate_rect (widget->window, NULL, FALSE);
     return FALSE;
 }
 

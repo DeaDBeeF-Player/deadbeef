@@ -709,3 +709,7 @@ GtkWidget*
 create_ddb_listview_widget (gchar *widget_name, gchar *string1, gchar *string2,
                 gint int1, gint int2);
 
+
+GtkWidget*
+create_tabstrip_widget (gchar *widget_name, gchar *string1, gchar *string2,
+                gint int1, gint int2);

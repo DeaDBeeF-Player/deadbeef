@@ -16,16 +16,133 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
-#include "../../deadbeef.h"
-#include <gtk/gtk.h>
-#ifdef HAVE_CONFIG_H
-#include "../../config.h"
-#endif
 #include <string.h>
+#include "ddbtabstrip.h"
+#include "drawing.h"
 #include "gtkui.h"
 #include "interface.h"
 #include "support.h"
-#include "drawing.h"
+
+G_DEFINE_TYPE (DdbTabStrip, ddb_tabstrip, GTK_TYPE_WIDGET);
+
+static void
+ddb_tabstrip_send_configure (DdbTabStrip *darea)
+{
+  GtkWidget *widget;
+  GdkEvent *event = gdk_event_new (GDK_CONFIGURE);
+
+  widget = GTK_WIDGET (darea);
+
+  event->configure.window = g_object_ref (widget->window);
+  event->configure.send_event = TRUE;
+  event->configure.x = widget->allocation.x;
+  event->configure.y = widget->allocation.y;
+  event->configure.width = widget->allocation.width;
+  event->configure.height = widget->allocation.height;
+  
+  gtk_widget_event (widget, event);
+  gdk_event_free (event);
+}
+
+static void
+ddb_tabstrip_realize (GtkWidget *widget) {
+  DdbTabStrip *darea = DDB_TABSTRIP (widget);
+  GdkWindowAttr attributes;
+  gint attributes_mask;
+
+  if (GTK_WIDGET_NO_WINDOW (widget))
+    {
+      GTK_WIDGET_CLASS (ddb_tabstrip_parent_class)->realize (widget);
+    }
+  else
+    {
+      GTK_WIDGET_SET_FLAGS (widget, GTK_REALIZED);
+
+      attributes.window_type = GDK_WINDOW_CHILD;
+      attributes.x = widget->allocation.x;
+      attributes.y = widget->allocation.y;
+      attributes.width = widget->allocation.width;
+      attributes.height = widget->allocation.height;
+      attributes.wclass = GDK_INPUT_OUTPUT;
+      attributes.visual = gtk_widget_get_visual (widget);
+      attributes.colormap = gtk_widget_get_colormap (widget);
+      attributes.event_mask = gtk_widget_get_events (widget);
+      attributes.event_mask |= GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK;
+
+      attributes_mask = GDK_WA_X | GDK_WA_Y | GDK_WA_VISUAL | GDK_WA_COLORMAP;
+
+      widget->window = gdk_window_new (gtk_widget_get_parent_window (widget),
+                                       &attributes, attributes_mask);
+      gdk_window_set_user_data (widget->window, darea);
+
+      widget->style = gtk_style_attach (widget->style, widget->window);
+      gtk_style_set_background (widget->style, widget->window, GTK_STATE_NORMAL);
+    }
+
+  ddb_tabstrip_send_configure (DDB_TABSTRIP (widget));
+}
+
+static void
+ddb_tabstrip_size_allocate (GtkWidget     *widget,
+				GtkAllocation *allocation)
+{
+  g_return_if_fail (DDB_IS_TABSTRIP (widget));
+  g_return_if_fail (allocation != NULL);
+
+  widget->allocation = *allocation;
+
+  if (GTK_WIDGET_REALIZED (widget))
+    {
+      if (!GTK_WIDGET_NO_WINDOW (widget))
+        gdk_window_move_resize (widget->window,
+                                allocation->x, allocation->y,
+                                allocation->width, allocation->height);
+
+      ddb_tabstrip_send_configure (DDB_TABSTRIP (widget));
+    }
+}
+
+gboolean
+on_tabstrip_button_press_event           (GtkWidget       *widget,
+                                        GdkEventButton  *event);
+
+gboolean
+on_tabstrip_button_release_event         (GtkWidget       *widget,
+                                        GdkEventButton  *event);
+
+gboolean
+on_tabstrip_configure_event              (GtkWidget       *widget,
+                                        GdkEventConfigure *event);
+
+gboolean
+on_tabstrip_expose_event                 (GtkWidget       *widget,
+                                        GdkEventExpose  *event);
+
+gboolean
+on_tabstrip_motion_notify_event          (GtkWidget       *widget,
+                                        GdkEventMotion  *event);
+
+static void
+ddb_tabstrip_class_init(DdbTabStripClass *class)
+{
+  GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (class);
+  widget_class->realize = ddb_tabstrip_realize;
+  widget_class->size_allocate = ddb_tabstrip_size_allocate;
+  widget_class->expose_event = on_tabstrip_expose_event;
+  widget_class->button_press_event = on_tabstrip_button_press_event;
+  widget_class->button_release_event = on_tabstrip_button_release_event;
+  widget_class->configure_event = on_tabstrip_configure_event;
+  widget_class->motion_notify_event = on_tabstrip_motion_notify_event;
+}
+
+GtkWidget * ddb_tabstrip_new() {
+    return g_object_new (DDB_TYPE_TABSTRIP, NULL);
+}
+
+static void
+ddb_tabstrip_init(DdbTabStrip *tabstrip)
+{
+}
 
 static int margin_size = 10;
 static int tab_dragging = -1;
@@ -33,7 +150,7 @@ static int tab_movepos;
 static int tab_clicked = -1;
 
 void
-tabbar_draw (GtkWidget *widget) {
+tabstrip_draw (GtkWidget *widget) {
     GdkDrawable *backbuf = widget->window;
     int hscrollpos = 0;
     int x = -hscrollpos;
@@ -102,7 +219,7 @@ tabbar_draw (GtkWidget *widget) {
         draw_set_fg_color (fg);
         char tab_title[100];
         deadbeef->plt_get_title (idx, tab_title, sizeof (tab_title));
-        draw_text (x + margin_size + 5, h/2-draw_get_font_size()/2, w - margin_size, 0, tab_title);
+        draw_text (x + margin_size + 5, h/2-draw_get_font_size()/2-1, w - margin_size, 0, tab_title);
     }
     if (need_draw_moving) {
         x = -hscrollpos;
@@ -157,9 +274,8 @@ get_tab_under_cursor (int x) {
 }
 
 gboolean
-on_tabbar_button_press_event           (GtkWidget       *widget,
-                                        GdkEventButton  *event,
-                                        gpointer         user_data)
+on_tabstrip_button_press_event           (GtkWidget       *widget,
+                                        GdkEventButton  *event)
 {
     tab_clicked = get_tab_under_cursor (event->x);
     if (event->button == 1)
@@ -177,9 +293,8 @@ on_tabbar_button_press_event           (GtkWidget       *widget,
 
 
 gboolean
-on_tabbar_button_release_event         (GtkWidget       *widget,
-                                        GdkEventButton  *event,
-                                        gpointer         user_data)
+on_tabstrip_button_release_event         (GtkWidget       *widget,
+                                        GdkEventButton  *event)
 {
 
   return FALSE;
@@ -187,9 +302,8 @@ on_tabbar_button_release_event         (GtkWidget       *widget,
 
 
 gboolean
-on_tabbar_configure_event              (GtkWidget       *widget,
-                                        GdkEventConfigure *event,
-                                        gpointer         user_data)
+on_tabstrip_configure_event              (GtkWidget       *widget,
+                                        GdkEventConfigure *event)
 {
 
   return FALSE;
@@ -197,19 +311,17 @@ on_tabbar_configure_event              (GtkWidget       *widget,
 
 
 gboolean
-on_tabbar_expose_event                 (GtkWidget       *widget,
-                                        GdkEventExpose  *event,
-                                        gpointer         user_data)
+on_tabstrip_expose_event                 (GtkWidget       *widget,
+                                        GdkEventExpose  *event)
 {
-    tabbar_draw (widget);
+    tabstrip_draw (widget);
     return FALSE;
 }
 
 
 gboolean
-on_tabbar_motion_notify_event          (GtkWidget       *widget,
-                                        GdkEventMotion  *event,
-                                        gpointer         user_data)
+on_tabstrip_motion_notify_event          (GtkWidget       *widget,
+                                        GdkEventMotion  *event)
 {
   return FALSE;
 }
@@ -225,7 +337,7 @@ on_rename_playlist1_activate           (GtkMenuItem     *menuitem,
         const char *text = gtk_entry_get_text (GTK_ENTRY (e));
         deadbeef->plt_set_title (tab_clicked, text);
         extern GtkWidget *mainwin;
-        tabbar_draw (lookup_widget (mainwin, "tabbar"));
+        tabstrip_draw (lookup_widget (mainwin, "tabstrip"));
     }
     gtk_widget_destroy (dlg);
 }

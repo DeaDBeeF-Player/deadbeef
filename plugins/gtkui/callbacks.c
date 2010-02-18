@@ -33,6 +33,7 @@
 #include "support.h"
 
 #include "ddblistview.h"
+#include "ddbtabstrip.h"
 #include "search.h"
 #include "progress.h"
 #include "../../session.h"
@@ -1455,5 +1456,13 @@ create_ddb_listview_widget (gchar *widget_name, gchar *string1, gchar *string2,
                 gint int1, gint int2)
 {
     return ddb_listview_new ();
+}
+
+
+GtkWidget*
+create_tabstrip_widget (gchar *widget_name, gchar *string1, gchar *string2,
+                gint int1, gint int2)
+{
+    return ddb_tabstrip_new ();
 }
 
