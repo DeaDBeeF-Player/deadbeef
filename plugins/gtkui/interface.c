@@ -490,11 +490,12 @@ create_mainwin (void)
   gtk_widget_set_size_request (seekbar, 200, -1);
   gtk_widget_set_events (seekbar, GDK_EXPOSURE_MASK | GDK_POINTER_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK);
 
-  volumebar = gtk_drawing_area_new ();
+  volumebar = create_volumebar_widget ("volumebar", "", "", 0, 0);
   gtk_widget_show (volumebar);
   gtk_box_pack_start (GTK_BOX (hbox2), volumebar, FALSE, TRUE, 2);
   gtk_widget_set_size_request (volumebar, 70, -1);
-  gtk_widget_set_events (volumebar, GDK_EXPOSURE_MASK | GDK_POINTER_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK);
+  GTK_WIDGET_UNSET_FLAGS (volumebar, GTK_CAN_FOCUS);
+  GTK_WIDGET_UNSET_FLAGS (volumebar, GTK_CAN_DEFAULT);
 
   tabstrip = create_tabstrip_widget ("tabstrip", "", "", 0, 0);
   gtk_widget_show (tabstrip);
@@ -652,24 +653,6 @@ create_mainwin (void)
                     NULL);
   g_signal_connect ((gpointer) seekbar, "motion_notify_event",
                     G_CALLBACK (on_seekbar_motion_notify_event),
-                    NULL);
-  g_signal_connect ((gpointer) volumebar, "button_press_event",
-                    G_CALLBACK (on_volumebar_button_press_event),
-                    NULL);
-  g_signal_connect ((gpointer) volumebar, "button_release_event",
-                    G_CALLBACK (on_volumebar_button_release_event),
-                    NULL);
-  g_signal_connect ((gpointer) volumebar, "configure_event",
-                    G_CALLBACK (on_volumebar_configure_event),
-                    NULL);
-  g_signal_connect ((gpointer) volumebar, "expose_event",
-                    G_CALLBACK (on_volumebar_expose_event),
-                    NULL);
-  g_signal_connect ((gpointer) volumebar, "motion_notify_event",
-                    G_CALLBACK (on_volumebar_motion_notify_event),
-                    NULL);
-  g_signal_connect ((gpointer) volumebar, "scroll_event",
-                    G_CALLBACK (on_volumebar_scroll_event),
                     NULL);
 
   /* Store pointers to all widgets, for use by lookup_widget(). */

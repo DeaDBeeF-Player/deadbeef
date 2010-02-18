@@ -34,6 +34,7 @@
 
 #include "ddblistview.h"
 #include "ddbtabstrip.h"
+#include "ddbvolumebar.h"
 #include "search.h"
 #include "progress.h"
 #include "../../session.h"
@@ -611,125 +612,6 @@ on_seekbar_button_release_event        (GtkWidget       *widget,
     return FALSE;
 }
 
-
-
-static GdkPixmap *volumebar_backbuf;
-
-void
-volumebar_draw (GtkWidget *widget) {
-    if (!widget) {
-        return;
-    }
-    gdk_draw_rectangle (volumebar_backbuf, widget->style->bg_gc[0], TRUE, 0, 0, widget->allocation.width, widget->allocation.height);
-	cairo_t *cr;
-	cr = gdk_cairo_create (volumebar_backbuf);
-	if (!cr) {
-        return;
-    }
-    float range = -deadbeef->volume_get_min_db ();
-    int n = widget->allocation.width / 4;
-    float vol = (range + deadbeef->volume_get_db ()) / range * n;
-    float h = 16;
-    for (int i = 0; i < n; i++) {
-        float iy = (float)i + 3;
-        if (i <= vol) {
-            theme_set_cairo_source_rgb (cr, COLO_VOLUMEBAR_FRONT);
-        }
-        else {
-            theme_set_cairo_source_rgb (cr, COLO_VOLUMEBAR_BACK);
-        }
-        cairo_rectangle (cr, i * 4, (widget->allocation.height/2-h/2) + h - 1 - (h* i / n), 3, h * iy / n);
-        cairo_fill (cr);
-    }
-
-    cairo_destroy (cr);
-}
-
-void
-volumebar_expose (GtkWidget *widget, int x, int y, int w, int h) {
-	gdk_draw_drawable (widget->window, widget->style->black_gc, volumebar_backbuf, x, y, x, y, w, h);
-}
-
-gboolean
-on_volumebar_configure_event           (GtkWidget       *widget,
-                                        GdkEventConfigure *event,
-                                        gpointer         user_data)
-{
-    if (volumebar_backbuf) {
-        g_object_unref (volumebar_backbuf);
-        volumebar_backbuf = NULL;
-    }
-    volumebar_backbuf = gdk_pixmap_new (widget->window, widget->allocation.width, widget->allocation.height, -1);
-    volumebar_draw (widget);
-    return FALSE;
-}
-
-gboolean
-on_volumebar_expose_event              (GtkWidget       *widget,
-                                        GdkEventExpose  *event,
-                                        gpointer         user_data)
-{
-    volumebar_expose (widget, event->area.x, event->area.y, event->area.width, event->area.height);
-    return FALSE;
-}
-
-
-gboolean
-on_volumebar_motion_notify_event       (GtkWidget       *widget,
-                                        GdkEventMotion  *event,
-                                        gpointer         user_data)
-{
-    if (event->state & GDK_BUTTON1_MASK) {
-        float range = -deadbeef->volume_get_min_db ();
-        float volume = event->x / widget->allocation.width * range - range;
-        if (volume > 0) {
-            volume = 0;
-        }
-        if (volume < -range) {
-            volume = -range;
-        }
-        deadbeef->volume_set_db (volume);
-        volumebar_draw (widget);
-        volumebar_expose (widget, 0, 0, widget->allocation.width, widget->allocation.height);
-    }
-    return FALSE;
-}
-
-gboolean
-on_volumebar_button_press_event        (GtkWidget       *widget,
-                                        GdkEventButton  *event,
-                                        gpointer         user_data)
-{
-    float range = -deadbeef->volume_get_min_db ();
-    float volume = event->x / widget->allocation.width * range - range;
-    if (volume < -range) {
-        volume = -range;
-    }
-    if (volume > 0) {
-        volume = 0;
-    }
-    deadbeef->volume_set_db (volume);
-    volumebar_draw (widget);
-    volumebar_expose (widget, 0, 0, widget->allocation.width, widget->allocation.height);
-    return FALSE;
-}
-
-
-gboolean
-on_volumebar_button_release_event      (GtkWidget       *widget,
-                                        GdkEventButton  *event,
-                                        gpointer         user_data)
-{
-  return FALSE;
-}
-
-void
-volumebar_notify_changed (void) {
-    GtkWidget *widget = lookup_widget (mainwin, "volumebar");
-    volumebar_draw (widget);
-    volumebar_expose (widget, 0, 0, widget->allocation.width, widget->allocation.height);
-}
-
 gboolean
 on_mainwin_delete_event                (GtkWidget       *widget,
                                         GdkEvent        *event,
@@ -744,37 +626,6 @@ on_mainwin_delete_event                (GtkWidget       *widget,
     }
     return TRUE;
 }
-
-
-
-
-gboolean
-on_volumebar_scroll_event              (GtkWidget       *widget,
-                                        GdkEventScroll        *event,
-                                        gpointer         user_data)
-{
-    float range = -deadbeef->volume_get_min_db ();
-    float vol = deadbeef->volume_get_db ();
-    if (event->direction == GDK_SCROLL_UP || event->direction == GDK_SCROLL_RIGHT) {
-        vol += 1;
-    }
-    else if (event->direction == GDK_SCROLL_DOWN || event->direction == GDK_SCROLL_LEFT) {
-        vol -= 1;
-    }
-    if (vol > 0) {
-        vol = 0;
-    }
-    else if (vol < -range) {
-        vol = -range;
-    }
-    deadbeef->volume_set_db (vol);
-    GtkWidget *volumebar = lookup_widget (mainwin, "volumebar");
-    volumebar_draw (volumebar);
-    volumebar_expose (volumebar, 0, 0, volumebar->allocation.width, volumebar->allocation.height);
-    return FALSE;
-}
-
-
 
 gboolean
 on_mainwin_configure_event             (GtkWidget       *widget,
@@ -1464,5 +1315,13 @@ create_tabstrip_widget (gchar *widget_name, gchar *string1, gchar *string2,
                 gint int1, gint int2)
 {
     return ddb_tabstrip_new ();
+}
+
+
+GtkWidget*
+create_volumebar_widget (gchar *widget_name, gchar *string1, gchar *string2,
+                gint int1, gint int2)
+{
+    return ddb_volumebar_new ();
 }
 

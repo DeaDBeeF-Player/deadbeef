@@ -276,8 +276,7 @@ on_trayicon_scroll_event               (GtkWidget       *widget,
     }
     deadbeef->volume_set_db (vol);
     GtkWidget *volumebar = lookup_widget (mainwin, "volumebar");
-    volumebar_draw (volumebar);
-    volumebar_expose (volumebar, 0, 0, volumebar->allocation.width, volumebar->allocation.height);
+    gdk_window_invalidate_rect (volumebar->window, NULL, FALSE);
     return FALSE;
 }
 
@@ -508,8 +507,8 @@ gtkui_on_frameupdate (DB_event_t *ev, uintptr_t data) {
 
 static int
 gtkui_on_volumechanged (DB_event_t *ev, uintptr_t data) {
-    void volumebar_notify_changed (void); // FIXME: do it properly
-    volumebar_notify_changed ();
+    GtkWidget *volumebar = lookup_widget (mainwin, "volumebar");
+    gdk_window_invalidate_rect (volumebar->window, NULL, FALSE);
     return 0;
 }
 

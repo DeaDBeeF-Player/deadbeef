@@ -11,6 +11,7 @@ gtkui_la_SOURCES = gtkui.c gtkui.h\
 				   pluginconf.c\
 				   parser.c parser.h\
 				   ddbtabstrip.c ddbtabstrip.h\
+				   ddbvolumebar.c ddbvolumebar.h\
 				   trkproperties.c trkproperties.h
 
 gtkui_la_LDFLAGS = -module
