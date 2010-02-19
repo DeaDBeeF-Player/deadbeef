@@ -19,6 +19,7 @@
 #define __DDBLISTVIEW_H
 
 #include <gtk/gtk.h>
+#include <sys/time.h>
 #include <stdint.h>
 
 // drag and drop targets

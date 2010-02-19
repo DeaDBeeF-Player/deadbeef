@@ -23,6 +23,7 @@
 #define NOTIFY_DEFAULT_FORMAT "%a - %t"
 #endif
 
+#include <gtk/gtk.h>
 #include "../../deadbeef.h"
 
 extern DB_functions_t *deadbeef;

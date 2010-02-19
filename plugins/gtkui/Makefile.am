@@ -4,6 +4,7 @@ pkglib_LTLIBRARIES = gtkui.la
 gtkui_la_SOURCES = gtkui.c gtkui.h\
 				   callbacks.c interface.c support.c callbacks.h interface.h support.h\
 				   ddblistview.c ddblistview.h\
+				   mainplaylist.c\
 				   drawing.h gdkdrawing.c\
 				   progress.c progress.h\
 				   search.c search.h\
