@@ -480,7 +480,6 @@ ffmpeg_insert (DB_playItem_t *after, const char *fname) {
     }
     deadbeef->pl_add_meta (it, "artist", fctx->author);
     deadbeef->pl_add_meta (it, "album", fctx->album);
-    deadbeef->pl_add_meta (it, "year", fctx->album);
     deadbeef->pl_add_meta (it, "copyright", fctx->copyright);
     deadbeef->pl_add_meta (it, "comment", fctx->comment);
     deadbeef->pl_add_meta (it, "genre", fctx->genre);
