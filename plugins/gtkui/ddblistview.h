@@ -41,7 +41,7 @@ typedef struct _DdbListview DdbListview;
 typedef struct _DdbListviewClass DdbListviewClass;
 
 typedef void * DdbListviewIter;
-typedef void * DdbListviewColIter;
+//typedef void * DdbListviewColIter;
 
 typedef struct {
     // rows
@@ -69,28 +69,19 @@ typedef struct {
     void (*drag_n_drop) (DdbListviewIter before, uint32_t *indices, int length);
     void (*external_drag_n_drop) (DdbListviewIter before, char *mem, int length);
 
-    // columns
-    int (*col_count) (void);
-    DdbListviewColIter (*col_first) (void);
-    DdbListviewColIter (*col_next) (DdbListviewColIter);
-    const char *(*col_get_title) (DdbListviewColIter);
-    int (*col_get_width) (DdbListviewColIter);
-    int (*col_get_justify) (DdbListviewColIter);
-    int (*col_get_sort) (DdbListviewColIter);
-    void (*col_move) (DdbListviewColIter which, int inspos);
-    void (*col_sort) (DdbListviewColIter);
-
-    void (*col_set_width) (DdbListviewColIter c, int width);
-    void (*col_set_sort) (DdbListviewColIter c, int sort);
-
     // callbacks
-    void (*draw_column_data) (GdkDrawable *drawable, DdbListviewIter iter, int idx, DdbListviewColIter column, int x, int y, int width, int height);
+    void (*draw_column_data) (DdbListview *listview, GdkDrawable *drawable, DdbListviewIter iter, int idx, int column, int x, int y, int width, int height);
     void (*list_context_menu) (DdbListview *listview, DdbListviewIter iter, int idx);
-    void (*header_context_menu) (DdbListview *listview, DdbListviewColIter c);
+    void (*header_context_menu) (DdbListview *listview, int col);
     void (*handle_doubleclick) (DdbListview *listview, DdbListviewIter iter, int idx);
     void (*selection_changed) (DdbListviewIter it, int idx);
     void (*delete_selected) (void);
+    void (*col_changed) (int col, void *user_data);
+    void (*col_sort) (int col, int sort_order, void *user_data);
+    void (*col_deleted) (int col, void *user_data);
 } DdbListviewBinding;
+
+struct _DdbListviewColumn;
 
 struct _DdbListview {
     GtkTable parent;
@@ -108,9 +99,6 @@ struct _DdbListview {
     GdkPixmap *backbuf;
     GdkPixmap *backbuf_header;
     const char *title; // unique id, used for config writing, etc
-//    // parameters
-//    int (*get_count)(void); // function pointer to get number of tracks
-//    int iterator; // index into next array of DB_playItem_t struct
     int lastpos[2]; // last mouse position (for list widget)
     // current state
     int scrollpos;
@@ -149,8 +137,8 @@ struct _DdbListview {
     int prev_header_x;
     int header_prepare;
 
-//    gtkpl_column_t *columns;
-//    gtkpl_column_t *active_column; // required for column editing
+    struct _DdbListviewColumn *columns;
+    struct _DdbListviewColumn *active_column;
 };
 
 struct _DdbListviewClass {
@@ -158,6 +146,7 @@ struct _DdbListviewClass {
 };
 
 GtkType ddb_listview_get_type(void);
+
 GtkWidget * ddb_listview_new();
 
 void
@@ -178,6 +167,16 @@ void
 ddb_listview_scroll_to (DdbListview *listview, int pos);
 int
 ddb_listview_is_scrolling (DdbListview *listview);
+void
+ddb_listview_column_append (DdbListview *listview, const char *title, int width, int align_right, void *user_data);
+void
+ddb_listview_column_insert (DdbListview *listview, int before, const char *title, int width, int align_right, void *user_data);
+void
+ddb_listview_column_remove (DdbListview *listview, int idx);
+int
+ddb_listview_column_get_info (DdbListview *listview, int col, const char **title, int *width, int *align_right, void **user_data);
+int
+ddb_listview_column_set_info (DdbListview *listview, int col, const char *title, int width, int align_right, void *user_data);
 
 enum {
     DDB_REFRESH_COLUMNS = 1,

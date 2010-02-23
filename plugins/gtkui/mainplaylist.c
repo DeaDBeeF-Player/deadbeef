@@ -27,189 +27,14 @@
 #include "drawing.h"
 #include "trkproperties.h"
 
+#pragma GCC optimize("O0")
+
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
 static uintptr_t play16_pixbuf;
 static uintptr_t pause16_pixbuf;
 static uintptr_t buffering16_pixbuf;
-
-/////// column management code
-
-typedef struct gtkpl_column_s {
-    char *title;
-    int id; // id is faster than format, set to -1 to use format
-    char *format;
-    int width;
-//    int movepos; // valid only while `moving' is 1
-    struct gtkpl_column_s *next;
-    unsigned align_right : 1;
-    unsigned sort_order : 2; // 0=none, 1=asc, 2=desc
-} gtkpl_column_t;
-
-static gtkpl_column_t *main_columns = NULL;
-static gtkpl_column_t *search_columns = NULL;
-
-gtkpl_column_t * 
-gtkpl_column_alloc (const char *title, int width, int id, const char *format, int align_right) {
-    gtkpl_column_t * c = malloc (sizeof (gtkpl_column_t));
-    memset (c, 0, sizeof (gtkpl_column_t));
-    c->title = strdup (title);
-    c->id = id;
-    c->format = format ? strdup (format) : NULL;
-    c->width = width;
-    c->align_right = align_right;
-    return c;
-}
-
-void
-gtkpl_column_append (gtkpl_column_t **head, gtkpl_column_t * c) {
-    int idx = 0;
-    gtkpl_column_t * columns = *head;
-    if (columns) {
-        idx++;
-        gtkpl_column_t * tail = *head;
-        while (tail->next) {
-            tail = tail->next;
-            idx++;
-        }
-        tail->next = c;
-    }
-    else {
-        *head = c;
-    }
-//    gtkpl_column_update_config (pl, c, idx);
-}
-
-void
-gtkpl_column_insert_before (gtkpl_column_t **head, gtkpl_column_t * before, gtkpl_column_t * c) {
-    if (*head) {
-        gtkpl_column_t * prev = NULL;
-        gtkpl_column_t * next = *head;
-        while (next) {
-            if (next == before) {
-                break;
-            }
-            prev = next;
-            next = next->next;
-        }
-        c->next = next;
-        if (prev) {
-            prev->next = c;
-        }
-        else {
-            *head  = c;
-        }
-//        gtkpl_column_rewrite_config (pl);
-    }
-    else {
-        *head = c;
- //       gtkpl_column_update_config (pl, c, 0);
-    }
-}
-
-void
-gtkpl_column_free (gtkpl_column_t * c) {
-    if (c->title) {
-        free (c->title);
-    }
-    if (c->format) {
-        free (c->format);
-    }
-    free (c);
-}
-
-void
-gtkpl_column_remove (gtkpl_column_t **head, gtkpl_column_t * c) {
-    if (*head == c) {
-        *head = (*head)->next;
-        gtkpl_column_free (c);
-        return;
-    }
-    gtkpl_column_t * cc = *head;
-    while (cc) {
-        if (cc->next == c) {
-            cc->next = cc->next->next;
-            gtkpl_column_free (c);
-            return;
-        }
-        cc = cc->next;
-    }
-
-    if (!cc) {
-        trace ("gtkpl: attempted to remove column that is not in list\n");
-    }
-}
-
-void
-gtkpl_append_column_from_textdef (gtkpl_column_t **head, const uint8_t *def) {
-    // syntax: "title" "format" id width alignright
-    char token[MAX_TOKEN];
-    const char *p = def;
-    char title[MAX_TOKEN];
-    int id;
-    char fmt[MAX_TOKEN];
-    int width;
-    int align;
-
-    parser_init ();
-
-    p = gettoken_warn_eof (p, token);
-    if (!p) {
-        return;
-    }
-    strcpy (title, token);
-
-    p = gettoken_warn_eof (p, token);
-    if (!p) {
-        return;
-    }
-    strcpy (fmt, token);
-
-    p = gettoken_warn_eof (p, token);
-    if (!p) {
-        return;
-    }
-    id = atoi (token);
-
-    p = gettoken_warn_eof (p, token);
-    if (!p) {
-        return;
-    }
-    width = atoi (token);
-
-    p = gettoken_warn_eof (p, token);
-    if (!p) {
-        return;
-    }
-    align = atoi (token);
-
-    gtkpl_column_append (head, gtkpl_column_alloc (title, width, id, fmt, align));
-}
-
-void
-gtkpl_column_update_config (const char *title, gtkpl_column_t * c, int idx) {
-    char key[128];
-    char value[128];
-    snprintf (key, sizeof (key), "%s.column.%d", title, idx);
-    snprintf (value, sizeof (value), "\"%s\" \"%s\" %d %d %d", c->title, c->format ? c->format : "", c->id, c->width, c->align_right);
-    deadbeef->conf_set_str (key, value);
-}
-
-void
-gtkpl_column_rewrite_config (gtkpl_column_t *head, const char *title) {
-    char key[128];
-    snprintf (key, sizeof (key), "%s.column.", title);
-    deadbeef->conf_remove_items (key);
-
-    gtkpl_column_t * c;
-    int i = 0;
-    for (c = head; c; c = c->next, i++) {
-        gtkpl_column_update_config (title, c, i);
-    }
-}
-
-/////// end of column management code
 
 static int
 main_get_count (void) {
@@ -275,35 +100,6 @@ void main_external_drag_n_drop (DdbListviewIter before, char *mem, int length) {
     gtkui_receive_fm_drop ((DB_playItem_t *)before, mem, length);
 }
 
-static int main_col_count (void) {
-    int cnt = 0;
-    for (gtkpl_column_t *c = main_columns; c; c = c->next, cnt++);
-    return cnt;
-}
-
-DdbListviewColIter main_col_first (void) {
-    return (DdbListviewColIter)main_columns;
-}
-DdbListviewColIter main_col_next (DdbListviewColIter c) {
-    return (DdbListviewColIter)((gtkpl_column_t *)c)->next;
-}
-
-static const char *main_col_get_title (DdbListviewColIter c) {
-    return ((gtkpl_column_t *)c)->title;
-}
-
-int main_col_get_width (DdbListviewColIter c) {
-    return ((gtkpl_column_t *)c)->width;
-}
-
-int main_col_get_justify (DdbListviewColIter c) {
-    return ((gtkpl_column_t *)c)->align_right;
-}
-
-int main_col_get_sort (DdbListviewColIter c) {
-    return ((gtkpl_column_t *)c)->sort_order;
-}
-
 gboolean
 playlist_tooltip_handler (GtkWidget *widget, gint x, gint y, gboolean keyboard_mode, GtkTooltip *tooltip, gpointer unused)
 {
@@ -316,84 +112,95 @@ playlist_tooltip_handler (GtkWidget *widget, gint x, gint y, gboolean keyboard_m
     return FALSE;
 }
 
-void main_col_sort (DdbListviewColIter col) {
-    gtkpl_column_t *c = (gtkpl_column_t *)col;
-    deadbeef->pl_sort (PL_MAIN, c->id, c->format, c->sort_order-1);
-}
+// columns
 
-void main_col_move (DdbListviewColIter which, int inspos) {
-    // remove c from list
-    gtkpl_column_t *c = (gtkpl_column_t *)which;
-    if (c == main_columns) {
-        main_columns = c->next;
-    }
-    else {
-        gtkpl_column_t *cc;
-        for (cc = main_columns; cc; cc = cc->next) {
-            if (cc->next == c) {
-                cc->next = c->next;
-                break;
-            }
-        }
-    }
-    c->next = NULL;
-    // reinsert c at position inspos update header_dragging to new idx
-    if (inspos == 0) {
-        c->next = main_columns;
-        main_columns = c;
-    }
-    else {
-        int idx = 0;
-        gtkpl_column_t *prev = NULL;
-        gtkpl_column_t *cc = NULL;
-        for (cc = main_columns; cc; cc = cc->next, idx++, prev = cc) {
-            if (idx+1 == inspos) {
-                gtkpl_column_t *next = cc->next;
-                cc->next = c;
-                c->next = next;
-                break;
-            }
-        }
-    }
-    gtkpl_column_rewrite_config (main_columns, "playlist");
-}
+typedef struct {
+    int id;
+    char *format;
+} col_info_t;
 
-void main_col_set_width (DdbListviewColIter c, int width) {
-    int idx = 0;
-    ((gtkpl_column_t *)c)->width = width;
-    gtkpl_column_t *cc;
-    for (cc = main_columns; cc != c; cc = cc->next, idx++);
-    if (cc == main_columns) {
-        gtkpl_column_update_config ("playlist", (gtkpl_column_t *)c, idx);
-    }
-    else {
-        trace ("error: main_col_set_width fail\n");
-    }
-}
-void main_col_set_sort (DdbListviewColIter c, int sort) {
-    int idx = 0;
-    ((gtkpl_column_t *)c)->sort_order = sort;
-    gtkpl_column_t *cc;
-    for (cc = main_columns; cc != c; cc = cc->next, idx++);
-    if (cc == main_columns) {
-        gtkpl_column_update_config ("playlist", (gtkpl_column_t *)c, idx);
-    }
-    else {
-        trace ("error: main_col_set_sort fail\n");
-    }
-}
 void
-columns_free (gtkpl_column_t **head) {
-    while (*head) {
-        DdbListviewColIter next = (*head)->next;
-        gtkpl_column_free (*head);
-        *head = next;
-    }
+main_col_sort (int col, int sort_order, void *user_data) {
+    col_info_t *c = (col_info_t*)user_data;
+    deadbeef->pl_sort (PL_MAIN, c->id, c->format, sort_order-1);
 }
 
 static DdbListview *last_playlist;
-static gtkpl_column_t *active_column;
+static int active_column;
 
+void
+append_column_from_textdef (DdbListview *listview, const uint8_t *def) {
+    // syntax: "title" "format" id width alignright
+    char token[MAX_TOKEN];
+    const char *p = def;
+    char title[MAX_TOKEN];
+    int id;
+    char fmt[MAX_TOKEN];
+    int width;
+    int align;
+
+    parser_init ();
+
+    p = gettoken_warn_eof (p, token);
+    if (!p) {
+        return;
+    }
+    strcpy (title, token);
+
+    p = gettoken_warn_eof (p, token);
+    if (!p) {
+        return;
+    }
+    strcpy (fmt, token);
+
+    p = gettoken_warn_eof (p, token);
+    if (!p) {
+        return;
+    }
+    id = atoi (token);
+
+    p = gettoken_warn_eof (p, token);
+    if (!p) {
+        return;
+    }
+    width = atoi (token);
+
+    p = gettoken_warn_eof (p, token);
+    if (!p) {
+        return;
+    }
+    align = atoi (token);
+
+    col_info_t *inf = malloc (sizeof (col_info_t));
+    memset (inf, 0, sizeof (col_info_t));
+    inf->format = strdup (fmt);
+    inf->id = id;
+    ddb_listview_column_append (listview, title, width, align, inf);
+}
+
+#if 0
+void
+gtkpl_column_update_config (const char *title, gtkpl_column_t * c, int idx) {
+    char key[128];
+    char value[128];
+    snprintf (key, sizeof (key), "%s.column.%d", title, idx);
+    snprintf (value, sizeof (value), "\"%s\" \"%s\" %d %d %d", c->title, c->format ? c->format : "", c->id, c->width, c->align_right);
+    deadbeef->conf_set_str (key, value);
+}
+
+void
+gtkpl_column_rewrite_config (gtkpl_column_t *head, const char *title) {
+    char key[128];
+    snprintf (key, sizeof (key), "%s.column.", title);
+    deadbeef->conf_remove_items (key);
+
+    gtkpl_column_t * c;
+    int i = 0;
+    for (c = head; c; c = c->next, i++) {
+        gtkpl_column_update_config (title, c, i);
+    }
+}
+#endif
 void
 on_add_column_activate                 (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
@@ -411,8 +218,11 @@ on_add_column_activate                 (GtkMenuItem     *menuitem,
         if (id >= DB_COLUMN_ID_MAX) {
             id = -1;
         }
-        gtkpl_column_insert_before (&main_columns, active_column, gtkpl_column_alloc (title, 100, id, format, align));
-        gtkpl_column_rewrite_config (main_columns, title);
+        col_info_t *inf = malloc (sizeof (col_info_t));
+        memset (inf, 0, sizeof (col_info_t));
+        inf->format = strdup (format);
+        inf->id = id;
+        ddb_listview_column_insert (last_playlist, active_column, title, 100, align, inf);
         ddb_listview_refresh (last_playlist, DDB_REFRESH_COLUMNS | DDB_REFRESH_LIST | DDB_REFRESH_HSCROLL | DDB_EXPOSE_LIST | DDB_EXPOSE_COLUMNS);
     }
     gtk_widget_destroy (dlg);
@@ -427,15 +237,26 @@ on_edit_column_activate                (GtkMenuItem     *menuitem,
         return;
     GtkWidget *dlg = create_editcolumndlg ();
     gtk_window_set_title (GTK_WINDOW (dlg), "Edit column");
-    gtk_entry_set_text (GTK_ENTRY (lookup_widget (dlg, "title")), active_column->title);
-    gtk_entry_set_text (GTK_ENTRY (lookup_widget (dlg, "format")), active_column->format);
-    if (active_column->id == -1) {
+
+    const char *title;
+    int width;
+    int align_right;
+    col_info_t *inf;
+    int res = ddb_listview_column_get_info (last_playlist, active_column, &title, &width, &align_right, (void **)&inf);
+    if (res == -1) {
+        trace ("attempted to edit non-existing column\n");
+        return;
+    }
+
+    gtk_entry_set_text (GTK_ENTRY (lookup_widget (dlg, "title")), title);
+    gtk_entry_set_text (GTK_ENTRY (lookup_widget (dlg, "format")), inf->format);
+    if (inf->id == -1) {
         gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "id")), DB_COLUMN_ID_MAX);
     }
     else {
-        gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "id")), active_column->id);
+        gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "id")), inf->id);
     }
-    gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "align")), active_column->align_right);
+    gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "align")), align_right);
     gint response = gtk_dialog_run (GTK_DIALOG (dlg));
     if (response == GTK_RESPONSE_OK) {
         const gchar *title = gtk_entry_get_text (GTK_ENTRY (lookup_widget (dlg, "title")));
@@ -445,13 +266,10 @@ on_edit_column_activate                (GtkMenuItem     *menuitem,
         if (id >= DB_COLUMN_ID_MAX) {
             id = -1;
         }
-        free (active_column->title);
-        free (active_column->format);
-        active_column->title = strdup (title);
-        active_column->format = strdup (format);
-        active_column->id = id;
-        active_column->align_right = align;
-        gtkpl_column_rewrite_config (main_columns, title);
+        free (inf->format);
+        inf->format = strdup (format);
+        inf->id = id;
+        ddb_listview_column_set_info (last_playlist, active_column, title, width, align, inf);
 
         ddb_listview_refresh (last_playlist, DDB_REFRESH_COLUMNS | DDB_REFRESH_LIST | DDB_EXPOSE_LIST | DDB_EXPOSE_COLUMNS);
     }
@@ -466,9 +284,7 @@ on_remove_column_activate              (GtkMenuItem     *menuitem,
     if (!active_column)
         return;
 
-    gtkpl_column_remove (&main_columns, active_column);
-    gtkpl_column_rewrite_config (main_columns, "playlist");
-
+    ddb_listview_column_remove (last_playlist, active_column);
     ddb_listview_refresh (last_playlist, DDB_REFRESH_COLUMNS | DDB_REFRESH_LIST | DDB_REFRESH_HSCROLL | DDB_EXPOSE_LIST | DDB_EXPOSE_COLUMNS);
 }
 
@@ -481,17 +297,24 @@ void main_selection_changed (DdbListviewIter it, int idx) {
     ddb_listview_draw_row (search, idx, it);
 }
 
-void main_draw_column_data (GdkDrawable *drawable, DdbListviewIter it, int idx, DdbListviewColIter column, int x, int y, int width, int height) {
-    gtkpl_column_t *c = (gtkpl_column_t *)column;
+void main_draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbListviewIter it, int idx, int column, int x, int y, int width, int height) {
     if (deadbeef->pl_is_group_title ((DB_playItem_t *)it)) {
-        if (c == main_columns) {
+        if (column == 0) {
             float clr[] = {0, 0.1, 0.5};
             draw_set_fg_color (clr);
             draw_text (x + 5, y + height/2 - draw_get_font_size ()/2 - 2, 1000, 0, ((DB_playItem_t *)it)->fname);
         }
         return;
     }
-    if (it == deadbeef->streamer_get_playing_track () && c->id == DB_COLUMN_PLAYING) {
+    const char *ctitle;
+    int cwidth;
+    int calign_right;
+    col_info_t *cinf;
+    int res = ddb_listview_column_get_info (listview, column, &ctitle, &cwidth, &calign_right, (void **)&cinf);
+    if (res == -1) {
+        return;
+    }
+    if (it == deadbeef->streamer_get_playing_track () && cinf->id == DB_COLUMN_PLAYING) {
         int paused = deadbeef->get_output ()->state () == OUTPUT_STATE_PAUSED;
         int buffering = !deadbeef->streamer_ok_to_read (-1);
         uintptr_t pixbuf;
@@ -504,17 +327,17 @@ void main_draw_column_data (GdkDrawable *drawable, DdbListviewIter it, int idx, 
         else {
             pixbuf = buffering16_pixbuf;
         }
-        draw_pixbuf ((uintptr_t)drawable, pixbuf, x + c->width/2 - 8, y + height/2 - 8, 0, 0, 16, 16);
+        draw_pixbuf ((uintptr_t)drawable, pixbuf, x + cwidth/2 - 8, y + height/2 - 8, 0, 0, 16, 16);
     }
     else {
         char text[1024];
-        deadbeef->pl_format_title (it, idx, text, sizeof (text), c->id, c->format);
+        deadbeef->pl_format_title (it, idx, text, sizeof (text), cinf->id, cinf->format);
 
-        if (c->align_right) {
-            draw_text (x+5, y + height/2 - draw_get_font_size ()/2 - 2, c->width-10, 1, text);
+        if (calign_right) {
+            draw_text (x+5, y + height/2 - draw_get_font_size ()/2 - 2, cwidth-10, 1, text);
         }
         else {
-            draw_text (x + 5, y + height/2 - draw_get_font_size ()/2 - 2, c->width-10, 0, text);
+            draw_text (x + 5, y + height/2 - draw_get_font_size ()/2 - 2, cwidth-10, 0, text);
         }
     }
 }
@@ -627,10 +450,10 @@ create_headermenu (void)
 }
 
 void
-main_header_context_menu (DdbListview *ps, DdbListviewColIter c) {
+main_header_context_menu (DdbListview *ps, int column) {
     GtkWidget *menu = create_headermenu ();
     last_playlist = ps;
-    active_column = c;
+    active_column = column;
     gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, ps, 3, gtk_get_current_event_time());
 }
 
@@ -823,6 +646,8 @@ DdbListviewBinding main_binding = {
     .draw_column_data = main_draw_column_data,
 
     // columns
+    .col_sort = main_col_sort,
+#if 0
     .col_count = main_col_count,
     .col_first = main_col_first,
     .col_next = main_col_next,
@@ -830,11 +655,10 @@ DdbListviewBinding main_binding = {
     .col_get_width = main_col_get_width,
     .col_get_justify = main_col_get_justify,
     .col_get_sort = main_col_get_sort,
-    .col_sort = main_col_sort,
     .col_move = main_col_move,
-
     .col_set_width = main_col_set_width,
     .col_set_sort = main_col_set_sort,
+#endif
 
     // callbacks
     .handle_doubleclick = main_handle_doubleclick,
@@ -843,6 +667,18 @@ DdbListviewBinding main_binding = {
     .list_context_menu = main_list_context_menu,
     .delete_selected = main_delete_selected,
 };
+
+void
+add_column_helper (DdbListview *listview, const char *title, int width, int id, const char *format, int align_right) {
+    if (!format) {
+        format = "";
+    }
+    col_info_t *inf = malloc (sizeof (col_info_t));
+    memset (inf, 0, sizeof (col_info_t));
+    inf->id = id;
+    inf->format = strdup (format);
+    ddb_listview_column_append (listview, title, width, align_right, inf);
+}
 
 void
 main_playlist_init (GtkWidget *widget) {
@@ -857,16 +693,17 @@ main_playlist_init (GtkWidget *widget) {
 
     DB_conf_item_t *col = deadbeef->conf_find ("playlist.column.", NULL);
     if (!col) {
+        DdbListview *listview = playlist;
         // create default set of columns
-        gtkpl_column_append (&main_columns, gtkpl_column_alloc ("Playing", 50, DB_COLUMN_PLAYING, NULL, 0));
-        gtkpl_column_append (&main_columns, gtkpl_column_alloc ("Artist / Album", 150, DB_COLUMN_ARTIST_ALBUM, NULL, 0));
-        gtkpl_column_append (&main_columns, gtkpl_column_alloc ("Track №", 50, DB_COLUMN_TRACK, NULL, 1));
-        gtkpl_column_append (&main_columns, gtkpl_column_alloc ("Title / Track Artist", 150, DB_COLUMN_TITLE, NULL, 0));
-        gtkpl_column_append (&main_columns, gtkpl_column_alloc ("Duration", 50, DB_COLUMN_DURATION, NULL, 0));
+        add_column_helper (listview, "Playing", 50, DB_COLUMN_PLAYING, NULL, 0);
+        add_column_helper (listview, "Artist / Album", 150, DB_COLUMN_ARTIST_ALBUM, NULL, 0);
+        add_column_helper (listview, "Track №", 50, DB_COLUMN_TRACK, NULL, 1);
+        add_column_helper (listview, "Title / Track Artist", 150, DB_COLUMN_TITLE, NULL, 0);
+        add_column_helper (listview, "Duration", 50, DB_COLUMN_DURATION, NULL, 0);
     }
     else {
         while (col) {
-            gtkpl_append_column_from_textdef (&main_columns, col->value);
+            append_column_from_textdef (playlist, col->value);
             col = deadbeef->conf_find ("playlist.column.", col);
         }
     }
@@ -884,7 +721,6 @@ main_playlist_init (GtkWidget *widget) {
 
 void
 main_playlist_free (void) {
-    columns_free (&main_columns);
 }
 
 void
