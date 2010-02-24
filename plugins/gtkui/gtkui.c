@@ -352,6 +352,7 @@ gtkui_on_activate (DB_event_t *ev, uintptr_t data) {
 
 void
 redraw_queued_tracks (DdbListview *pl, int list) {
+#if 0 // FIXME: port
     DdbListviewIter it = deadbeef->pl_get_for_idx_and_iter (pl->scrollpos, list);
     int i = ddb_listview_get_vscroll_pos (pl);
     while (it && i < pl->scrollpos + pl->nvisiblerows) {
@@ -366,6 +367,7 @@ redraw_queued_tracks (DdbListview *pl, int list) {
     if (it) {
         deadbeef->pl_item_unref (it);
     }
+#endif
 }
 
 static gboolean

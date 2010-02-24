@@ -53,7 +53,6 @@ typedef struct playItem_s {
     unsigned selected : 1;
     unsigned played : 1; // mark as played in shuffle mode
     unsigned in_playlist : 1; // 1 if item is in playlist
-    unsigned is_group_title : 1; // 1 if this is a group title
 } playItem_t;
 
 typedef struct playlist_s {
@@ -142,7 +141,7 @@ playItem_t *
 pl_insert_item (playItem_t *after, playItem_t *it);
 
 int
-pl_remove (playItem_t *i);
+pl_remove_item (playItem_t *i);
 
 playItem_t *
 pl_item_alloc (void);
@@ -152,9 +151,6 @@ pl_item_ref (playItem_t *it);
 
 void
 pl_item_unref (playItem_t *it);
-
-//void
-//pl_item_free (playItem_t *it);
 
 void
 pl_item_copy (playItem_t *out, playItem_t *it);
@@ -245,12 +241,6 @@ pl_set_selected (playItem_t *it, int sel);
 
 int
 pl_is_selected (playItem_t *it);
-
-int
-pl_is_group_title (playItem_t *it);
-
-void
-pl_group_by (const char *fmt);
 
 playItem_t *
 pl_get_first (int iter);

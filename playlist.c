@@ -364,14 +364,10 @@ void
 pl_clear (void) {
     LOCK;
     while (playlist->head[PL_MAIN]) {
-        pl_remove (playlist->head[PL_MAIN]);
+        pl_remove_item (playlist->head[PL_MAIN]);
     }
-    if (playlist->current_row[PL_MAIN] >= playlist->count[PL_MAIN]) {
-        playlist->current_row[PL_MAIN] = playlist->count[PL_MAIN]-1;
-    }
-    if (playlist->current_row[PL_SEARCH] >= playlist->count[PL_SEARCH]) {
-        playlist->current_row[PL_SEARCH] = playlist->count[PL_SEARCH]-1;
-    }
+    playlist->current_row[PL_MAIN] = -1;
+    playlist->current_row[PL_SEARCH] = -1;
     UNLOCK;
 }
 
@@ -1085,7 +1081,7 @@ pl_add_dir (const char *dirname, int (*cb)(playItem_t *it, void *data), void *us
 }
 
 int
-pl_remove (playItem_t *it) {
+pl_remove_item (playItem_t *it) {
     if (!it)
         return -1;
     streamer_song_removed_notify (it);
@@ -1209,6 +1205,7 @@ pl_insert_item (playItem_t *after, playItem_t *it) {
         }
     }
     it->in_playlist = 1;
+
     playlist->count[PL_MAIN]++;
 
     // shuffle
@@ -1423,7 +1420,7 @@ pl_delete_selected (void) {
             if (ret == -1) {
                 ret = i;
             }
-            pl_remove (it);
+            pl_remove_item (it);
         }
     }
     if (playlist->current_row[PL_MAIN] >= playlist->count[PL_MAIN]) {
@@ -1443,7 +1440,7 @@ pl_crop_selected (void) {
     for (playItem_t *it = playlist->head[PL_MAIN]; it; it = next) {
         next = it->next[PL_MAIN];
         if (!it->selected) {
-            pl_remove (it);
+            pl_remove_item (it);
         }
     }
     GLOBAL_UNLOCK;
@@ -2563,41 +2560,3 @@ pl_items_copy_junk (playItem_t *from, playItem_t *first, playItem_t *last) {
     UNLOCK;
 }
 
-void
-pl_group_by (const char *fmt) {
-    // remove all groupings
-    playItem_t *it;
-    it = playlist->head[PL_MAIN];
-    while (it) {
-        playItem_t *next = it->next[PL_MAIN];
-        if (it->is_group_title) {
-            pl_remove (it);
-        }
-        it = next;
-    }
-
-    // insert new
-    if (fmt) {
-        it = playlist->head[PL_MAIN];
-        char str[1024] = "--";
-        char curr[1024];
-        int idx = 0;
-        while (it) {
-            pl_format_title (it, -1, curr, sizeof (curr), -1, fmt);
-            if (strcmp (str, curr)) {
-                strcpy (str, curr);
-                playItem_t *grp = pl_item_alloc ();
-                grp->fname = strdup (str);
-                grp->is_group_title = 1;
-                it = pl_insert_item (it->prev[PL_MAIN], grp);
-                pl_item_unref (it);
-            }
-            it = it->next[PL_MAIN];
-        }
-    }
-}
-
-int
-pl_is_group_title (playItem_t *it) {
-    return it->is_group_title;
-}

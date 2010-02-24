@@ -310,7 +310,6 @@ typedef struct {
     int (*pl_get_cursor) (int iter);
     void (*pl_set_selected) (DB_playItem_t *it, int sel);
     int (*pl_is_selected) (DB_playItem_t *it);
-    int (*pl_is_group_title) (DB_playItem_t *it);
     void (*pl_clear) (void);
     int (*pl_load) (const char *name);
     int (*pl_save) (const char *name);

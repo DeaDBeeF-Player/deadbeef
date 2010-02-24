@@ -65,12 +65,15 @@ typedef struct {
     void (*select) (DdbListviewIter, int sel);
     int (*is_selected) (DdbListviewIter);
 
+    void (*get_group) (DdbListviewIter it, char *str, int size);
+
     // drag-n-drop
     void (*drag_n_drop) (DdbListviewIter before, uint32_t *indices, int length);
     void (*external_drag_n_drop) (DdbListviewIter before, char *mem, int length);
 
     // callbacks
-    void (*draw_column_data) (DdbListview *listview, GdkDrawable *drawable, DdbListviewIter iter, int idx, int column, int x, int y, int width, int height);
+    void (*draw_group_title) (DdbListview *listview, GdkDrawable *drawable, DdbListviewIter iter, int x, int y, int width, int height);
+    void (*draw_column_data) (DdbListview *listview, GdkDrawable *drawable, DdbListviewIter iter, int column, int x, int y, int width, int height);
     void (*list_context_menu) (DdbListview *listview, DdbListviewIter iter, int idx);
     void (*header_context_menu) (DdbListview *listview, int col);
     void (*handle_doubleclick) (DdbListview *listview, DdbListviewIter iter, int idx);
@@ -82,6 +85,7 @@ typedef struct {
 } DdbListviewBinding;
 
 struct _DdbListviewColumn;
+struct _DdbListviewGroup;
 
 struct _DdbListview {
     GtkTable parent;
@@ -104,8 +108,8 @@ struct _DdbListview {
     int scrollpos;
     int hscrollpos;
     double clicktime; // for doubleclick detection
-    int nvisiblerows;
-    int nvisiblefullrows;
+//    int nvisiblerows;
+//    int nvisiblefullrows;
     int rowheight;
 
     int col_movepos;
@@ -138,7 +142,8 @@ struct _DdbListview {
     int header_prepare;
 
     struct _DdbListviewColumn *columns;
-    struct _DdbListviewColumn *active_column;
+    struct _DdbListviewGroup *groups;
+    int fullheight;
 };
 
 struct _DdbListviewClass {
@@ -177,6 +182,8 @@ int
 ddb_listview_column_get_info (DdbListview *listview, int col, const char **title, int *width, int *align_right, void **user_data);
 int
 ddb_listview_column_set_info (DdbListview *listview, int col, const char *title, int width, int align_right, void *user_data);
+void
+ddb_listview_build_groups (DdbListview *listview);
 
 enum {
     DDB_REFRESH_COLUMNS = 1,

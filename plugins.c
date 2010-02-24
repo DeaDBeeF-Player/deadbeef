@@ -137,7 +137,6 @@ static DB_functions_t deadbeef_api = {
     .pl_get_cursor = pl_get_cursor,
     .pl_set_selected = (void (*) (DB_playItem_t *, int))pl_set_selected,
     .pl_is_selected = (int (*) (DB_playItem_t *))pl_is_selected,
-    .pl_is_group_title = (int (*) (DB_playItem_t *))pl_is_group_title,
     .pl_clear = pl_clear,
     .pl_load = pl_load,
     .pl_save = pl_save,

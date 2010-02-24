@@ -297,15 +297,7 @@ void main_selection_changed (DdbListviewIter it, int idx) {
     ddb_listview_draw_row (search, idx, it);
 }
 
-void main_draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbListviewIter it, int idx, int column, int x, int y, int width, int height) {
-    if (deadbeef->pl_is_group_title ((DB_playItem_t *)it)) {
-        if (column == 0) {
-            float clr[] = {0, 0.1, 0.5};
-            draw_set_fg_color (clr);
-            draw_text (x + 5, y + height/2 - draw_get_font_size ()/2 - 2, 1000, 0, ((DB_playItem_t *)it)->fname);
-        }
-        return;
-    }
+void main_draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbListviewIter it, int column, int x, int y, int width, int height) {
     const char *ctitle;
     int cwidth;
     int calign_right;
@@ -331,7 +323,7 @@ void main_draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbLis
     }
     else {
         char text[1024];
-        deadbeef->pl_format_title (it, idx, text, sizeof (text), cinf->id, cinf->format);
+        deadbeef->pl_format_title (it, -1, text, sizeof (text), cinf->id, cinf->format);
 
         if (calign_right) {
             draw_text (x+5, y + height/2 - draw_get_font_size ()/2 - 2, cwidth-10, 1, text);
@@ -340,6 +332,14 @@ void main_draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbLis
             draw_text (x + 5, y + height/2 - draw_get_font_size ()/2 - 2, cwidth-10, 0, text);
         }
     }
+}
+
+void main_draw_group_title (DdbListview *listview, GdkDrawable *drawable, DdbListviewIter it, int x, int y, int width, int height) {
+    char str[1024];
+    deadbeef->pl_format_title ((DB_playItem_t *)it, -1, str, sizeof (str), -1, "%a - [%y] %b");
+    float clr[] = {0, 0.1, 0.5};
+    draw_set_fg_color (clr);
+    draw_text (x + 5, y + height/2 - draw_get_font_size ()/2 - 2, width-10, 0, str);
 }
 
 #if 0
@@ -621,6 +621,11 @@ main_is_selected (DdbListviewIter it) {
     return deadbeef->pl_is_selected ((DB_playItem_t *)it);
 }
 
+void
+main_get_group (DdbListviewIter it, char *str, int size) {
+    deadbeef->pl_format_title ((DB_playItem_t *)it, -1, str, size, -1, "%a - [%y] %b");
+}
+
 DdbListviewBinding main_binding = {
     // rows
     .count = main_get_count,
@@ -640,10 +645,13 @@ DdbListviewBinding main_binding = {
     .is_selected = main_is_selected,
     .select = main_select,
 
+    .get_group = main_get_group,
+
     .drag_n_drop = main_drag_n_drop,
     .external_drag_n_drop = main_external_drag_n_drop,
 
     .draw_column_data = main_draw_column_data,
+    .draw_group_title = main_draw_group_title,
 
     // columns
     .col_sort = main_col_sort,
