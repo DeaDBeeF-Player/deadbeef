@@ -48,7 +48,8 @@
 #define max(x,y) ((x)>(y)?(x):(y))
 
 #define GROUP_TITLE_HEIGHT 30
-#define SCROLL_STEP 10
+#define SCROLL_STEP 20
+#define AUTOSCROLL_UPDATE_FREQ 0.01f
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
@@ -663,10 +664,10 @@ ddb_listview_vscroll_event               (GtkWidget       *widget,
     // pass event to scrollbar
     int newscroll = gtk_range_get_value (GTK_RANGE (range));
     if (ev->direction == GDK_SCROLL_UP) {
-        newscroll -= 2;
+        newscroll -= SCROLL_STEP;
     }
     else if (ev->direction == GDK_SCROLL_DOWN) {
-        newscroll += 2;
+        newscroll += SCROLL_STEP;
     }
     gtk_range_set_value (GTK_RANGE (range), newscroll);
 
@@ -678,7 +679,7 @@ ddb_listview_vscroll_value_changed            (GtkRange        *widget,
                                         gpointer         user_data)
 {
     DdbListview *ps = DDB_LISTVIEW (gtk_object_get_data (GTK_OBJECT (widget), "owner"));
-    int newscroll = gtk_range_get_value (GTK_RANGE (widget)) * SCROLL_STEP;
+    int newscroll = gtk_range_get_value (GTK_RANGE (widget));
     if (newscroll != ps->scrollpos) {
         GtkWidget *widget = ps->list;
         int di = newscroll - ps->scrollpos;
@@ -960,39 +961,12 @@ ddb_listview_list_setup_vscroll (DdbListview *ps) {
         ps->scrollpos = 0;
     }
     else {
-        int h = list->allocation.height / SCROLL_STEP + (list->allocation.height % SCROLL_STEP);
-        int vheight = ps->fullheight / SCROLL_STEP + (ps->fullheight % SCROLL_STEP);
-        GtkAdjustment *adj = (GtkAdjustment*)gtk_adjustment_new (gtk_range_get_value (GTK_RANGE (scroll)), 0, vheight, 1, h, h);
+        int h = list->allocation.height;
+        int vheight = ps->fullheight;;
+        GtkAdjustment *adj = (GtkAdjustment*)gtk_adjustment_new (gtk_range_get_value (GTK_RANGE (scroll)), 0, vheight, SCROLL_STEP, h/2, h);
         gtk_range_set_adjustment (GTK_RANGE (scroll), adj);
         gtk_widget_show (scroll);
     }
-
-#if 0
-    int h = list->allocation.height / ps->rowheight;
-    int cnt = ps->binding->count ();
-    int size = cnt;
-    if (h >= size) {
-        size = 0;
-    }
-    GtkWidget *scroll = ps->scrollbar;
-    int row = ps->binding->cursor ();
-    if (row >= cnt) {
-        row = cnt - 1;
-    }
-    if (ps->scrollpos > cnt-ps->nvisiblerows+1) {
-        int n = cnt - ps->nvisiblerows + 1;
-        ps->scrollpos = max (0, n);
-        gtk_range_set_value (GTK_RANGE (scroll), ps->scrollpos);
-    }
-    if (size == 0) {
-        gtk_widget_hide (scroll);
-    }
-    else {
-        GtkAdjustment *adj = (GtkAdjustment*)gtk_adjustment_new (gtk_range_get_value (GTK_RANGE (scroll)), 0, size, 1, h, h);
-        gtk_range_set_adjustment (GTK_RANGE (scroll), adj);
-        gtk_widget_show (scroll);
-    }
-#endif
 }
 
 void
@@ -1089,12 +1063,10 @@ ddb_listview_list_render_row_background (DdbListview *ps, DdbListviewIter it, in
         return; // drawing was called too early
     }
     GTK_OBJECT_FLAGS (treeview) |= GTK_HAS_FOCUS;
-    // clear area -- workaround for New Wave theme
-#if 0
-    if (ps->list->style->bg_gc[GTK_STATE_NORMAL]) {
-        gdk_draw_rectangle (ps->backbuf, ps->list->style->bg_gc[GTK_STATE_NORMAL], TRUE, x, y, w, h);
+    if (it && ps->binding->is_selected(it)) {
+        // draw background for selection -- workaround for New Wave theme (translucency)
+        gtk_paint_flat_box (treeview->style, ps->backbuf, GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, treeview, even ? "cell_even_ruled" : "cell_odd_ruled", x, y, w, h);
     }
-#endif
     gtk_paint_flat_box (treeview->style, ps->backbuf, (it && ps->binding->is_selected(it)) ? GTK_STATE_SELECTED : GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, treeview, even ? "cell_even_ruled" : "cell_odd_ruled", x, y, w, h);
 	if (cursor) {
         // not all gtk engines/themes render focus rectangle in treeviews
@@ -1252,9 +1224,7 @@ ddb_listview_list_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, do
     // handle multiple selection
     if (!(state & (GDK_CONTROL_MASK|GDK_SHIFT_MASK)))
     {
-        printf ("single click without modifiers, sel=%d, grp=%p\n", sel, grp);
         if (sel == -1 && grp) {
-            printf ("select group\n");
             DdbListviewIter it;
             int idx = 0;
             int cnt = -1;
@@ -1283,7 +1253,6 @@ ddb_listview_list_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, do
             }
         }
         else {
-            printf ("select single item\n");
             DdbListviewIter it = ps->binding->get_for_idx (sel);
             if (!it || !ps->binding->is_selected (it)) {
                 // reset selection, and set it to single item
@@ -1324,7 +1293,20 @@ ddb_listview_list_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, do
     }
     else if (state & GDK_SHIFT_MASK) {
         // select range
-        int cursor = ps->binding->cursor ();
+        int cursor = sel;//ps->binding->cursor ();
+        if (cursor == -1) {
+            // find group
+            DdbListviewGroup *g = ps->groups;
+            int idx = 0;
+            while (g) {
+                if (g == grp) {
+                    cursor = idx - 1;
+                    break;
+                }
+                idx += g->num_items;
+                g = g->next;
+            }
+        }
         int start = min (prev, cursor);
         int end = max (prev, cursor);
         int idx = 0;
@@ -1420,7 +1402,8 @@ ddb_listview_list_scroll_cb (gpointer data) {
     ps->scroll_active = 1;
     struct timeval tm;
     gettimeofday (&tm, NULL);
-    if (tm.tv_sec - ps->tm_prevscroll.tv_sec + (tm.tv_usec - ps->tm_prevscroll.tv_usec) / 1000000.0 < ps->scroll_sleep_time) {
+    float dt = tm.tv_sec - ps->tm_prevscroll.tv_sec + (tm.tv_usec - ps->tm_prevscroll.tv_usec) / 1000000.0;
+    if (dt < ps->scroll_sleep_time) {
         return TRUE;
     }
     memcpy (&ps->tm_prevscroll, &tm, sizeof (tm));
@@ -1432,12 +1415,8 @@ ddb_listview_list_scroll_cb (gpointer data) {
         ps->scroll_active = 0;
         return FALSE;
     }
-    int sc = ps->scrollpos + ps->scroll_direction;
+    int sc = ps->scrollpos + (ps->scroll_direction * 100 * dt);
     if (sc < 0) {
-        ps->scroll_active = 0;
-        return FALSE;
-    }
-    if (sc >= ps->binding->count ()) {
         ps->scroll_active = 0;
         return FALSE;
     }
@@ -1450,9 +1429,17 @@ ddb_listview_list_scroll_cb (gpointer data) {
     else if (ps->scroll_mode == 1) {
         ddb_listview_list_track_dragdrop (ps, ps->scroll_pointer_y);
     }
-    ps->scroll_sleep_time -= 0.1;
-    if (ps->scroll_sleep_time < 0.05) {
-        ps->scroll_sleep_time = 0.05;
+    if (ps->scroll_direction < 0) {
+        ps->scroll_direction -= (10 * dt);
+        if (ps->scroll_direction < -30) {
+            ps->scroll_direction = -30;
+        }
+    }
+    else {
+        ps->scroll_direction += (10 * dt);
+        if (ps->scroll_direction > 30) {
+            ps->scroll_direction = 30;
+        }
     }
     return TRUE;
 }
@@ -1479,16 +1466,26 @@ ddb_listview_list_mousemove (DdbListview *ps, GdkEventMotion *event) {
         if (ddb_listview_list_pickpoint_y (ps, event->y + ps->scrollpos, &grp, &grp_index, &sel) == -1) {
             return; // nothing was hit
         }
-        if (sel == -1 && grp) {
-            // select everything marked + picked group
-        }
-        else
         {
             // select range of items
             int y = sel;
+            int idx = 0;
+            if (y == -1) {
+                // find group
+                DdbListviewGroup *g = ps->groups;
+                while (g) {
+                    if (g == grp) {
+                        y = idx - 1;
+                        break;
+                    }
+                    idx += g->num_items;
+                    g = g->next;
+                }
+            }
             int start = min (y, ps->shift_sel_anchor);
             int end = max (y, ps->shift_sel_anchor);
-            int idx=0;
+
+            idx=0;
             DdbListviewIter it;
             for (it = ps->binding->head (); it; idx++) {
                 if (idx >= start && idx <= end) {
@@ -1513,10 +1510,10 @@ ddb_listview_list_mousemove (DdbListview *ps, GdkEventMotion *event) {
         if (event->y < 10) {
             ps->scroll_mode = 0;
             ps->scroll_pointer_y = event->y;
-            ps->scroll_direction = -1;
             // start scrolling up
             if (!ps->scroll_active) {
-                ps->scroll_sleep_time = 0.2;
+                ps->scroll_direction = -1;
+                ps->scroll_sleep_time = AUTOSCROLL_UPDATE_FREQ;
                 gettimeofday (&ps->tm_prevscroll, NULL);
                 g_idle_add (ddb_listview_list_scroll_cb, ps);
             }
@@ -1524,10 +1521,10 @@ ddb_listview_list_mousemove (DdbListview *ps, GdkEventMotion *event) {
         else if (event->y > ps->list->allocation.height-10) {
             ps->scroll_mode = 0;
             ps->scroll_pointer_y = event->y;
-            ps->scroll_direction = 1;
             // start scrolling up
             if (!ps->scroll_active) {
-                ps->scroll_sleep_time = 0.2;
+                ps->scroll_direction = 1;
+                ps->scroll_sleep_time = AUTOSCROLL_UPDATE_FREQ;
                 gettimeofday (&ps->tm_prevscroll, NULL);
                 g_idle_add (ddb_listview_list_scroll_cb, ps);
             }
@@ -1558,13 +1555,11 @@ ddb_listview_handle_keypress (DdbListview *ps, int keyval, int state) {
     int prev = ps->binding->cursor ();
     int cursor = prev;
     if (keyval == GDK_Down) {
-//        cursor = deadbeef->pl_get_cursor (ps->iterator);
         if (cursor < ps->binding->count () - 1) {
             cursor++;
         }
     }
     else if (keyval == GDK_Up) {
-//        cursor = deadbeef->pl_get_cursor (ps->iterator);
         if (cursor > 0) {
             cursor--;
         }
@@ -1573,7 +1568,6 @@ ddb_listview_handle_keypress (DdbListview *ps, int keyval, int state) {
         }
     }
     else if (keyval == GDK_Page_Down) {
-//        cursor = deadbeef->pl_get_cursor (ps->iterator);
         if (cursor < ps->binding->count () - 1) {
             cursor += 10;
             if (cursor >= ps->binding->count ()) {
@@ -1582,7 +1576,6 @@ ddb_listview_handle_keypress (DdbListview *ps, int keyval, int state) {
         }
     }
     else if (keyval == GDK_Page_Up) {
-//        cursor = deadbeef->pl_get_cursor (ps->iterator);
         if (cursor > 0) {
             cursor -= 10;
             if (cursor < 0) {
@@ -1678,11 +1671,11 @@ ddb_listview_list_track_dragdrop (DdbListview *ps, int y) {
     draw_end ();
     if (y < 10) {
         ps->scroll_pointer_y = y;
-        ps->scroll_direction = -1;
         ps->scroll_mode = 1;
         // start scrolling up
         if (!ps->scroll_active) {
-            ps->scroll_sleep_time = 0.2;
+            ps->scroll_direction = -1;
+            ps->scroll_sleep_time = AUTOSCROLL_UPDATE_FREQ;
             gettimeofday (&ps->tm_prevscroll, NULL);
             g_idle_add (ddb_listview_list_scroll_cb, ps);
         }
@@ -1693,7 +1686,8 @@ ddb_listview_list_track_dragdrop (DdbListview *ps, int y) {
         ps->scroll_direction = 1;
         // start scrolling up
         if (!ps->scroll_active) {
-            ps->scroll_sleep_time = 0.2;
+            ps->scroll_direction = -1;
+            ps->scroll_sleep_time = AUTOSCROLL_UPDATE_FREQ;
             gettimeofday (&ps->tm_prevscroll, NULL);
             g_idle_add (ddb_listview_list_scroll_cb, ps);
         }
@@ -2087,31 +2081,33 @@ struct set_cursor_t {
 
 static gboolean
 ddb_listview_set_cursor_cb (gpointer data) {
-#if 0 // FIXME: port
     struct set_cursor_t *sc = (struct set_cursor_t *)data;
     sc->pl->binding->set_cursor (sc->cursor);
     ddb_listview_select_single (sc->pl, sc->cursor);
     DdbListviewIter it;
-    int minvis = sc->pl->scrollpos;
-    int maxvis = sc->pl->scrollpos + sc->pl->nvisiblerows-1;
+//    int minvis = sc->pl->scrollpos;
+//    int maxvis = sc->pl->scrollpos + sc->pl->nvisiblerows-1;
     DdbListview *ps = sc->pl;
-    if (sc->prev >= minvis && sc->prev <= maxvis) {
+//    if (sc->prev >= minvis && sc->prev <= maxvis)
+    {
         it = sc->pl->binding->get_for_idx (sc->prev);
         ddb_listview_draw_row (sc->pl, sc->prev, it);
         UNREF (it);
     }
-    if (sc->cursor >= minvis && sc->cursor <= maxvis) {
+//    if (sc->cursor >= minvis && sc->cursor <= maxvis)
+    {
         it = sc->pl->binding->get_for_idx (sc->cursor);
         ddb_listview_draw_row (sc->pl, sc->cursor, it);
         UNREF (it);
     }
 
+    int cursor_scroll = ddb_listview_get_row_pos (sc->pl, sc->cursor);
     int newscroll = sc->pl->scrollpos;
-    if (sc->cursor < sc->pl->scrollpos) {
-        newscroll = sc->cursor;
+    if (cursor_scroll < sc->pl->scrollpos) {
+        newscroll = cursor_scroll;
     }
-    else if (sc->cursor >= sc->pl->scrollpos + sc->pl->nvisiblefullrows) {
-        newscroll = sc->cursor - sc->pl->nvisiblefullrows + 1;
+    else if (cursor_scroll >= sc->pl->scrollpos + sc->pl->list->allocation.height) {
+        newscroll = cursor_scroll - sc->pl->list->allocation.height + 1;
         if (newscroll < 0) {
             newscroll = 0;
         }
@@ -2122,7 +2118,6 @@ ddb_listview_set_cursor_cb (gpointer data) {
     }
 
     free (data);
-#endif
     return FALSE;
 }
 
@@ -2232,11 +2227,10 @@ ddb_listview_get_iter_from_coord (DdbListview *listview, int x, int y) {
 
 void
 ddb_listview_scroll_to (DdbListview *listview, int pos) {
-#if 0 // FIXME: port
-    if (pos < listview->scrollpos || pos >= listview->scrollpos + listview->nvisiblefullrows) {
-        gtk_range_set_value (GTK_RANGE (listview->scrollbar), pos - listview->nvisiblerows/2);
+    pos = ddb_listview_get_row_pos (listview, pos);
+    if (pos < listview->scrollpos || pos >= listview->scrollpos + listview->list->allocation.height) {
+        gtk_range_set_value (GTK_RANGE (listview->scrollbar), pos - listview->list->allocation.height/2);
     }
-#endif
 }
 int
 ddb_listview_is_scrolling (DdbListview *listview) {

@@ -119,7 +119,7 @@ struct _DdbListview {
     // scrolling
     int scroll_mode; // 0=select, 1=dragndrop
     int scroll_pointer_y;
-    int scroll_direction;
+    float scroll_direction;
     int scroll_active;
     struct timeval tm_prevscroll;
     float scroll_sleep_time;
