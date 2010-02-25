@@ -705,7 +705,9 @@ pl_insert_m3u (playItem_t *after, const char *fname, int *pabort, int (*cb)(play
     const uint8_t *p = buffer;
     const uint8_t *end = buffer+sz;
     LOCK;
-    pl_item_ref (after);
+    if (after) {
+        pl_item_ref (after);
+    }
     while (p < end) {
         p = pl_str_skipspaces (p, end);
         if (p >= end) {
