@@ -48,7 +48,7 @@
 #define max(x,y) ((x)>(y)?(x):(y))
 
 #define GROUP_TITLE_HEIGHT 30
-#define SCROLL_STEP 5
+#define SCROLL_STEP 10
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
@@ -542,15 +542,17 @@ ddb_listview_get_row_pos (DdbListview *listview, int row_idx) {
     }
 }
 
+// input: absolute y coord in list (not in window)
 // returns -1 if nothing was hit, otherwise returns pointer to a group, and item idx
 // item idx may be set to -1 if group title was hit
 static int
 ddb_listview_list_pickpoint_y (DdbListview *listview, int y, DdbListviewGroup **group, int *group_idx, int *global_idx) {
     int idx = 0;
     int grp_y = 0;
+    int gidx = 0;
     DdbListviewGroup *grp = listview->groups;
     while (grp) {
-        int h = grp_y + GROUP_TITLE_HEIGHT + grp->num_items * listview->rowheight;
+        int h = GROUP_TITLE_HEIGHT + grp->num_items * listview->rowheight;
         if (y >= grp_y && y < grp_y + h) {
             *group = grp;
             y -= grp_y;
@@ -562,14 +564,13 @@ ddb_listview_list_pickpoint_y (DdbListview *listview, int y, DdbListviewGroup **
                 *group_idx = (y - GROUP_TITLE_HEIGHT) / listview->rowheight;
                 *global_idx = idx + *group_idx;
             }
-            printf ("pickpoint returns %d/%d\n", *group_idx, *global_idx);
             return 0;
         }
         grp_y += GROUP_TITLE_HEIGHT + grp->num_items * listview->rowheight;
         idx += grp->num_items;
         grp = grp->next;
+        gidx++;
     }
-    printf ("pickpoint returns -1\n");
     return -1;
 }
 
@@ -584,14 +585,8 @@ ddb_listview_list_render (DdbListview *listview, int x, int y, int w, int h) {
     int grp_y = 0;
     while (grp && grp_y + GROUP_TITLE_HEIGHT + grp->num_items * listview->rowheight < y + listview->scrollpos) {
         grp_y += GROUP_TITLE_HEIGHT + grp->num_items * listview->rowheight;
-        idx += grp->num_items;
+        idx += grp->num_items + 1;
         grp = grp->next;
-    }
-    if (!grp) {
-        return;
-    }
-    if (listview->list->style->bg_gc[GTK_STATE_NORMAL]) {
-        gdk_draw_rectangle (listview->backbuf, listview->list->style->bg_gc[GTK_STATE_NORMAL], TRUE, x, y, w, h);
     }
     draw_begin ((uintptr_t)listview->backbuf);
 
@@ -600,23 +595,32 @@ ddb_listview_list_render (DdbListview *listview, int x, int y, int w, int h) {
         DdbListviewIter it = grp->head;
         listview->binding->ref (it);
         int grpheight = GROUP_TITLE_HEIGHT + grp->num_items * listview->rowheight;
-        printf ("group: %d items, height=%d\n", grp->num_items, grpheight);
         if (grp_y + GROUP_TITLE_HEIGHT >= y + listview->scrollpos && grp_y < y + h + listview->scrollpos) {
+            ddb_listview_list_render_row_background (listview, NULL, idx & 1, 0, -listview->hscrollpos, grp_y - listview->scrollpos, listview->totalwidth, GROUP_TITLE_HEIGHT);
             listview->binding->draw_group_title (listview, listview->backbuf, it, -listview->hscrollpos, grp_y - listview->scrollpos, listview->totalwidth, GROUP_TITLE_HEIGHT);
         }
         for (int i = 0; i < grp->num_items; i++) {
             if (grp_y + GROUP_TITLE_HEIGHT + (i+1) * listview->rowheight >= y + listview->scrollpos && grp_y + GROUP_TITLE_HEIGHT + i * listview->rowheight< y + h + listview->scrollpos) {
-                printf ("draw: %d %d | %d,%d - %d x %d\n", (idx + i) & 1, idx == listview->binding->cursor () ? 1 : 0, -listview->hscrollpos, grp_y + i * listview->rowheight - listview->scrollpos, listview->totalwidth, listview->rowheight);
-                ddb_listview_list_render_row_background (listview, it, i & 1, idx == listview->binding->cursor () ? 1 : 0, -listview->hscrollpos, grp_y + GROUP_TITLE_HEIGHT + i * listview->rowheight - listview->scrollpos, listview->totalwidth, listview->rowheight);
-                ddb_listview_list_render_row_foreground (listview, it, i & 1, idx == listview->binding->cursor () ? 1 : 0, -listview->hscrollpos, grp_y + GROUP_TITLE_HEIGHT + i * listview->rowheight - listview->scrollpos, listview->totalwidth, listview->rowheight);
+                gdk_draw_rectangle (listview->backbuf, listview->list->style->bg_gc[GTK_STATE_NORMAL], TRUE, -listview->hscrollpos, grp_y + GROUP_TITLE_HEIGHT + i * listview->rowheight - listview->scrollpos, listview->totalwidth, listview->rowheight);
+                ddb_listview_list_render_row_background (listview, it, (idx + 1 + i) & 1, (idx+i) == listview->binding->cursor () ? 1 : 0, -listview->hscrollpos, grp_y + GROUP_TITLE_HEIGHT + i * listview->rowheight - listview->scrollpos, listview->totalwidth, listview->rowheight);
+                ddb_listview_list_render_row_foreground (listview, it, (idx + 1 + i) & 1, (idx+i) == listview->binding->cursor () ? 1 : 0, -listview->hscrollpos, grp_y + GROUP_TITLE_HEIGHT + i * listview->rowheight - listview->scrollpos, listview->totalwidth, listview->rowheight);
             }
             DdbListviewIter next = listview->binding->next (it);
             listview->binding->unref (it);
             it = next;
         }
-        idx += grp->num_items;
+        idx += grp->num_items + 1;
         grp_y += grpheight;
         grp = grp->next;
+    }
+    if (grp_y < y + h + listview->scrollpos) {
+        int hh = y + h - (grp_y - listview->scrollpos);
+//        gdk_draw_rectangle (listview->backbuf, listview->list->style->bg_gc[GTK_STATE_NORMAL], TRUE, x, grp_y - listview->scrollpos, w, hh);
+        GtkWidget *treeview = theme_treeview;
+        if (treeview->style->depth == -1) {
+            return; // drawing was called too early
+        }
+        gtk_paint_flat_box (treeview->style, listview->backbuf, GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, treeview, "cell_even_ruled", x, grp_y - listview->scrollpos, w, hh);
     }
     draw_end ();
 }
@@ -677,34 +681,30 @@ ddb_listview_vscroll_value_changed            (GtkRange        *widget,
     int newscroll = gtk_range_get_value (GTK_RANGE (widget)) * SCROLL_STEP;
     if (newscroll != ps->scrollpos) {
         GtkWidget *widget = ps->list;
-        int di = (newscroll - ps->scrollpos) * SCROLL_STEP;
+        int di = newscroll - ps->scrollpos;
         int d = abs (di);
         int height = ps->list->allocation.height;
         if (d < height) {
             if (di > 0) {
+                // scroll down
+                // copy scrolled part of buffer
                 draw_drawable (ps->backbuf, widget->style->black_gc, ps->backbuf, 0, d, 0, 0, widget->allocation.width, widget->allocation.height-d);
-                int i;
-                ps->scrollpos = newscroll;
+                // redraw other part
                 int start = height-d-1;
-                start = max (0, height-d-1);
-                for (i = start; i <= height; i++) {
-                    DdbListviewIter it = ps->binding->get_for_idx (i + ps->scrollpos);
-                    ddb_listview_list_render_row (ps, i+ps->scrollpos, it, 0);
-                    UNREF (it);
-                }
+                ps->scrollpos = newscroll;
+                ddb_listview_list_render (ps, 0, start, ps->list->allocation.width, height);
             }
             else {
+                // scroll up
+                // copy scrolled part of buffer
                 draw_drawable (ps->backbuf, widget->style->black_gc, ps->backbuf, 0, 0, 0, d, widget->allocation.width, widget->allocation.height);
+                // redraw other part
                 ps->scrollpos = newscroll;
-                int i;
-                for (i = 0; i <= d+1; i++) {
-                    DdbListviewIter it = ps->binding->get_for_idx (i+ps->scrollpos);
-                    ddb_listview_list_render_row (ps, i+ps->scrollpos, it, 0);
-                    UNREF (it);
-                }
+                ddb_listview_list_render (ps, 0, 0, ps->list->allocation.width, d+1);
             }
         }
         else {
+            // scrolled more than view height, redraw everything
             ps->scrollpos = newscroll;
             ddb_listview_list_render (ps, 0, 0, widget->allocation.width, widget->allocation.height);
         }
@@ -1030,25 +1030,26 @@ ddb_listview_list_setup_hscroll (DdbListview *ps) {
 // returns -1 if row not found
 int
 ddb_listview_list_get_drawinfo (DdbListview *listview, int row, int *even, int *cursor, int *x, int *y, int *w, int *h) {
-    printf ("get_di: %d\n", row);
     DdbListviewGroup *grp = listview->groups;
     int idx = 0;
+    int idx2 = 0;
     *y = -listview->scrollpos;
     while (grp) {
         int grpheight = GROUP_TITLE_HEIGHT + grp->num_items * listview->rowheight;
         if (idx <= row && idx + grp->num_items > row) {
             // found
-            *even = (row - idx) & 1;
-            *cursor = row == listview->binding->cursor ();
+            int idx_in_group = row - idx;
+            *even = (idx2 + 1 + idx_in_group) & 1;
+            *cursor = (row == listview->binding->cursor ()) ? 1 : 0;
             *x = -listview->hscrollpos;
             *y += GROUP_TITLE_HEIGHT + (row - idx) * listview->rowheight;
             *w = listview->totalwidth;
             *h = listview->rowheight;
-            printf ("-- %d %d %d %d\n", *x, *y, *w, *h);
             return 0;
         }
         *y += grpheight;
         idx += grp->num_items;
+        idx2 += grp->num_items + 1;
         grp = grp->next;
     }
     return -1;
@@ -1062,7 +1063,6 @@ ddb_listview_list_render_row (DdbListview *listview, int row, DdbListviewIter it
     if (ddb_listview_list_get_drawinfo (listview, row, &even, &cursor, &x, &y, &w, &h) == -1) {
         return;
     }
-    printf ("rendering row @ %d\n", y);
 
     draw_begin ((uintptr_t)listview->backbuf);
     ddb_listview_list_render_row_background (listview, it, even, cursor, x, y, w, h);
@@ -1210,15 +1210,12 @@ ddb_listview_list_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, do
     ps->lastpos[0] = ex;
     ps->lastpos[1] = ey;
     // select item
-//    int y = ey + ps->scrollpos;
     DdbListviewGroup *grp;
     int grp_index;
     int sel;
     if (ddb_listview_list_pickpoint_y (ps, ey + ps->scrollpos, &grp, &grp_index, &sel) == -1) {
         return;
     }
-
-    printf ("pickpoint: %p %d %d\n", grp, grp_index, sel);
 
     int cursor = ps->binding->cursor ();
     if (time - ps->clicktime < 0.5
@@ -1286,6 +1283,7 @@ ddb_listview_list_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, do
             }
         }
         else {
+            printf ("select single item\n");
             DdbListviewIter it = ps->binding->get_for_idx (sel);
             if (!it || !ps->binding->is_selected (it)) {
                 // reset selection, and set it to single item
@@ -1368,8 +1366,10 @@ void
 ddb_listview_list_mouse1_released (DdbListview *ps, int state, int ex, int ey, double time) {
     if (ps->dragwait) {
         ps->dragwait = 0;
+#if 0 // FIXME: port
         int y = ey/ps->rowheight + ps->scrollpos;
         ddb_listview_select_single (ps, y);
+#endif
     }
     else if (ps->areaselect) {
         ps->scroll_direction = 0;
@@ -1473,9 +1473,19 @@ ddb_listview_list_mousemove (DdbListview *ps, GdkEventMotion *event) {
         }
     }
     else if (ps->areaselect) {
-        int y = event->y/ps->rowheight + ps->scrollpos;
-        //if (y != shift_sel_anchor)
+        DdbListviewGroup *grp;
+        int grp_index;
+        int sel;
+        if (ddb_listview_list_pickpoint_y (ps, event->y + ps->scrollpos, &grp, &grp_index, &sel) == -1) {
+            return; // nothing was hit
+        }
+        if (sel == -1 && grp) {
+            // select everything marked + picked group
+        }
+        else
         {
+            // select range of items
+            int y = sel;
             int start = min (y, ps->shift_sel_anchor);
             int end = max (y, ps->shift_sel_anchor);
             int idx=0;
