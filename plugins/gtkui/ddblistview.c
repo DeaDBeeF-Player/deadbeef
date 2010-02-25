@@ -54,13 +54,8 @@
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
 
-//#define PL_HEAD(iter) (deadbeef->pl_get_first(iter))
-//#define PL_TAIL(iter) (deadbeef->pl_get_last(iter))
 #define PL_NEXT(it) (ps->binding->next (it))
 #define PL_PREV(it) (ps->binding->prev (it))
-//#define ps->binding->is_selected(it) (deadbeef->pl_is_selected(it))
-//#define ps->binding->select(it, sel) (deadbeef->pl_set_selected(it,sel))
-//#define Vps->binding->select(it, sel) {deadbeef->pl_set_selected(it,sel);gtk_pl_redraw_item_everywhere (it);}
 #define REF(it) {if (it) ps->binding->ref (it);}
 #define UNREF(it) {if (it) ps->binding->unref(it);}
 
@@ -806,8 +801,6 @@ ddb_listview_list_drag_data_received         (GtkWidget       *widget,
                                         guint            time,
                                         gpointer         user_data)
 {
-// FIXME: port
-#if 0
     DdbListview *ps = DDB_LISTVIEW (gtk_object_get_data (GTK_OBJECT (widget), "owner"));
     gchar *ptr=(char*)data->data;
     if (target_type == 0) { // uris
@@ -816,7 +809,16 @@ ddb_listview_list_drag_data_received         (GtkWidget       *widget,
         memcpy (mem, ptr, data->length);
         mem[data->length] = 0;
         // we don't pass control structure, but there's only one drag-drop view currently
-        DdbListviewIter it = ps->binding->get_for_idx (y / ps->rowheight + ps->scrollpos);
+        DdbListviewGroup *grp;
+        int grp_index;
+        int sel;
+        DdbListviewIter it = NULL;
+        if (ddb_listview_list_pickpoint_y (ps, y + ps->scrollpos, &grp, &grp_index, &sel) != -1) {
+            if (sel == -1) {
+                sel = ps->binding->get_idx (grp->head);
+            }
+            it = ps->binding->get_for_idx (sel);
+        }
         ps->binding->external_drag_n_drop (it, mem, data->length);
         if (it) {
             ps->binding->unref (it);
@@ -825,8 +827,17 @@ ddb_listview_list_drag_data_received         (GtkWidget       *widget,
     else if (target_type == 1) {
         uint32_t *d= (uint32_t *)ptr;
         int length = data->length/4;
-        int drop_row = y / ps->rowheight + ps->scrollpos;
-        DdbListviewIter drop_before = ps->binding->get_for_idx (drop_row);
+        DdbListviewIter drop_before = NULL;
+        DdbListviewGroup *grp;
+        int grp_index;
+        int sel;
+        if (ddb_listview_list_pickpoint_y (ps, y + ps->scrollpos, &grp, &grp_index, &sel) != -1) {
+            if (sel == -1) {
+                sel = ps->binding->get_idx (grp->head);
+            }
+            drop_before = ps->binding->get_for_idx (sel);
+        }
+        // find last selected
         while (drop_before && ps->binding->is_selected (drop_before)) {
             DdbListviewIter next = PL_NEXT(drop_before);
             UNREF (drop_before);
@@ -835,7 +846,6 @@ ddb_listview_list_drag_data_received         (GtkWidget       *widget,
         ps->binding->drag_n_drop (drop_before, d, length);
     }
     gtk_drag_finish (drag_context, TRUE, FALSE, time);
-#endif
 }
 
 gboolean
@@ -1420,6 +1430,7 @@ ddb_listview_list_scroll_cb (gpointer data) {
         ps->scroll_active = 0;
         return FALSE;
     }
+//    trace ("scroll to %d speed %f\n", sc, ps->scroll_direction);
     gtk_range_set_value (GTK_RANGE (ps->scrollbar), sc);
     if (ps->scroll_mode == 0) {
         GdkEventMotion ev;
@@ -1651,23 +1662,42 @@ ddb_listview_list_track_dragdrop (DdbListview *ps, int y) {
     GtkWidget *widget = ps->list;
     if (ps->drag_motion_y != -1) {
         // erase previous track
-        draw_drawable (widget->window, widget->style->black_gc, ps->backbuf, 0, ps->drag_motion_y * ps->rowheight-3, 0, ps->drag_motion_y * ps->rowheight-3, widget->allocation.width, 7);
+        draw_drawable (widget->window, widget->style->black_gc, ps->backbuf, 0, ps->drag_motion_y-3, 0, ps->drag_motion_y-3, widget->allocation.width, 7);
 
     }
     if (y == -1) {
         ps->drag_motion_y = -1;
         return;
     }
-    draw_begin ((uintptr_t)widget->window);
-    ps->drag_motion_y = y / ps->rowheight;
+    DdbListviewGroup *grp;
+    int grp_index;
+    int sel;
+    if (ddb_listview_list_pickpoint_y (ps, y + ps->scrollpos, &grp, &grp_index, &sel) == -1) {
+        printf ("track: out of bounds\n");
+        if (ps->binding->count () == 0) {
+            ps->drag_motion_y = 0;
+        }
+        else {
+            ps->drag_motion_y = ddb_listview_get_row_pos (ps, ps->binding->count ()-1) - ps->scrollpos + ps->rowheight;
+        }
+    }
+    else {
+        printf ("sel=%d\n", sel);
+        if (sel == -1) {
+            sel = ps->binding->get_idx (grp->head);
+            printf ("new sel=%d\n", sel);
+        }
+        ps->drag_motion_y = ddb_listview_get_row_pos (ps, sel) - ps->scrollpos;
+    }
 
+    draw_begin ((uintptr_t)widget->window);
     GtkStyle *style = gtk_widget_get_style (GTK_WIDGET (ps));
     float clr[3] = { style->fg[GTK_STATE_NORMAL].red, style->fg[GTK_STATE_NORMAL].green, style->fg[GTK_STATE_NORMAL].blue };
     draw_set_fg_color (clr);
 
-    draw_rect (0, ps->drag_motion_y * ps->rowheight-1, widget->allocation.width, 3, 1);
-    draw_rect (0, ps->drag_motion_y * ps->rowheight-3, 3, 7, 1);
-    draw_rect (widget->allocation.width-3, ps->drag_motion_y * ps->rowheight-3, 3, 7, 1);
+    draw_rect (0, ps->drag_motion_y-1, widget->allocation.width, 3, 1);
+    draw_rect (0, ps->drag_motion_y-3, 3, 7, 1);
+    draw_rect (widget->allocation.width-3, ps->drag_motion_y-3, 3, 7, 1);
     draw_end ();
     if (y < 10) {
         ps->scroll_pointer_y = y;
@@ -1683,10 +1713,9 @@ ddb_listview_list_track_dragdrop (DdbListview *ps, int y) {
     else if (y > ps->list->allocation.height-10) {
         ps->scroll_mode = 1;
         ps->scroll_pointer_y = y;
-        ps->scroll_direction = 1;
         // start scrolling up
         if (!ps->scroll_active) {
-            ps->scroll_direction = -1;
+            ps->scroll_direction = 1;
             ps->scroll_sleep_time = AUTOSCROLL_UPDATE_FREQ;
             gettimeofday (&ps->tm_prevscroll, NULL);
             g_idle_add (ddb_listview_list_scroll_cb, ps);
