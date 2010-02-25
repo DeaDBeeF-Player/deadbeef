@@ -47,7 +47,8 @@
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
-#define GROUP_TITLE_HEIGHT 30
+#define DEFAULT_GROUP_TITLE_HEIGHT 30
+int GROUP_TITLE_HEIGHT = 0;
 #define SCROLL_STEP 20
 #define AUTOSCROLL_UPDATE_FREQ 0.01f
 
@@ -1673,7 +1674,6 @@ ddb_listview_list_track_dragdrop (DdbListview *ps, int y) {
     int grp_index;
     int sel;
     if (ddb_listview_list_pickpoint_y (ps, y + ps->scrollpos, &grp, &grp_index, &sel) == -1) {
-        printf ("track: out of bounds\n");
         if (ps->binding->count () == 0) {
             ps->drag_motion_y = 0;
         }
@@ -1682,10 +1682,8 @@ ddb_listview_list_track_dragdrop (DdbListview *ps, int y) {
         }
     }
     else {
-        printf ("sel=%d\n", sel);
         if (sel == -1) {
             sel = ps->binding->get_idx (grp->head);
-            printf ("new sel=%d\n", sel);
         }
         ps->drag_motion_y = ddb_listview_get_row_pos (ps, sel) - ps->scrollpos;
     }
@@ -2465,9 +2463,22 @@ ddb_listview_build_groups (DdbListview *listview) {
     char str[1024];
     char curr[1024];
 
+    GROUP_TITLE_HEIGHT = DEFAULT_GROUP_TITLE_HEIGHT;
     DdbListviewIter it = listview->binding->head ();
     while (it) {
-        listview->binding->get_group (it, curr, sizeof (curr));
+        int res = listview->binding->get_group (it, curr, sizeof (curr));
+        if (res == -1) {
+            grp = malloc (sizeof (DdbListviewGroup));
+            listview->groups = grp;
+            memset (grp, 0, sizeof (DdbListviewGroup));
+            grp->head = it;
+            listview->binding->ref (it);
+            grp->num_items = listview->binding->count ();
+            listview->fullheight = grp->num_items * listview->rowheight;
+            GROUP_TITLE_HEIGHT = 0;
+            listview->fullheight += GROUP_TITLE_HEIGHT;
+            return;
+        }
         if (!grp || strcmp (str, curr)) {
             strcpy (str, curr);
             DdbListviewGroup *newgroup = malloc (sizeof (DdbListviewGroup));

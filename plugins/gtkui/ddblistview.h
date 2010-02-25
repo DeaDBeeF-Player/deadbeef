@@ -65,7 +65,7 @@ typedef struct {
     void (*select) (DdbListviewIter, int sel);
     int (*is_selected) (DdbListviewIter);
 
-    void (*get_group) (DdbListviewIter it, char *str, int size);
+    int (*get_group) (DdbListviewIter it, char *str, int size);
 
     // drag-n-drop
     void (*drag_n_drop) (DdbListviewIter before, uint32_t *indices, int length);

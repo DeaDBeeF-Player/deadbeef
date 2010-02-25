@@ -334,20 +334,23 @@ void main_draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbLis
     }
 }
 
+static const char *group_by_str = NULL;
+
 void main_draw_group_title (DdbListview *listview, GdkDrawable *drawable, DdbListviewIter it, int x, int y, int width, int height) {
-    char str[1024];
-    deadbeef->pl_format_title ((DB_playItem_t *)it, -1, str, sizeof (str), -1, "%a - [%y] %b");
-    float clr[] = {0, 0.1, 0.5};
-    draw_set_fg_color (clr);
-    draw_text (x + 5, y + height/2 - draw_get_font_size ()/2 - 2, width-10, 0, str);
+    if (group_by_str) {
+        char str[1024];
+        deadbeef->pl_format_title ((DB_playItem_t *)it, -1, str, sizeof (str), -1, group_by_str);
+        float clr[] = {0, 0.1, 0.5};
+        draw_set_fg_color (clr);
+        draw_text (x + 5, y + height/2 - draw_get_font_size ()/2 - 2, width-10, 0, str);
+    }
 }
 
-#if 0
 void
 on_group_by_none_activate              (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    deadbeef->plt_group_by (NULL);
+    group_by_str = NULL;
     main_refresh ();
 }
 
@@ -355,7 +358,7 @@ void
 on_group_by_artist_date_album_activate (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    deadbeef->plt_group_by ("%a - [%y] %b");
+    group_by_str = "%a - [%y] %b";
     main_refresh ();
 }
 
@@ -363,10 +366,9 @@ void
 on_group_by_artist_activate            (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    deadbeef->plt_group_by ("%a");
+    group_by_str = "%a";
     main_refresh ();
 }
-#endif
 
 GtkWidget*
 create_headermenu (void)
@@ -396,7 +398,6 @@ create_headermenu (void)
   gtk_widget_show (remove_column);
   gtk_container_add (GTK_CONTAINER (headermenu), remove_column);
 
-#if 0
   separator = gtk_separator_menu_item_new ();
   gtk_widget_show (separator);
   gtk_container_add (GTK_CONTAINER (headermenu), separator);
@@ -420,7 +421,6 @@ create_headermenu (void)
   artist = gtk_menu_item_new_with_mnemonic ("Artist");
   gtk_widget_show (artist);
   gtk_container_add (GTK_CONTAINER (group_by_menu), artist);
-#endif
 
   g_signal_connect ((gpointer) add_column, "activate",
                     G_CALLBACK (on_add_column_activate),
@@ -432,19 +432,17 @@ create_headermenu (void)
                     G_CALLBACK (on_remove_column_activate),
                     NULL);
 
-#if 0
-  g_signal_connect ((gpointer) remove_column, "activate",
+  g_signal_connect ((gpointer) none, "activate",
                     G_CALLBACK (on_group_by_none_activate),
                     NULL);
 
-  g_signal_connect ((gpointer) remove_column, "activate",
+  g_signal_connect ((gpointer) artist_date_album, "activate",
                     G_CALLBACK (on_group_by_artist_date_album_activate),
                     NULL);
 
-  g_signal_connect ((gpointer) remove_column, "activate",
+  g_signal_connect ((gpointer) artist, "activate",
                     G_CALLBACK (on_group_by_artist_activate),
                     NULL);
-#endif
 
   return headermenu;
 }
@@ -621,9 +619,13 @@ main_is_selected (DdbListviewIter it) {
     return deadbeef->pl_is_selected ((DB_playItem_t *)it);
 }
 
-void
+int
 main_get_group (DdbListviewIter it, char *str, int size) {
-    deadbeef->pl_format_title ((DB_playItem_t *)it, -1, str, size, -1, "%a - [%y] %b");
+    if (!group_by_str) {
+        return -1;
+    }
+    deadbeef->pl_format_title ((DB_playItem_t *)it, -1, str, size, -1, group_by_str);
+    return 0;
 }
 
 DdbListviewBinding main_binding = {
