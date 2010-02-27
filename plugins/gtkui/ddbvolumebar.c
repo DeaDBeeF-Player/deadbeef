@@ -169,10 +169,10 @@ volumebar_draw (GtkWidget *widget) {
         _y += (h - _h);
         int _w = 3;
         if (i <= vol) {
-            gdk_draw_rectangle (volumebar_backbuf, widget->style->bg_gc[GTK_STATE_SELECTED], TRUE, _x, _y, _w, _h);
+            gdk_draw_rectangle (volumebar_backbuf, widget->style->dark_gc[GTK_STATE_SELECTED], TRUE, _x, _y, _w, _h);
         }
         else {
-            gdk_draw_rectangle (volumebar_backbuf, widget->style->dark_gc[GTK_STATE_SELECTED], TRUE, _x, _y, _w, _h);
+            gdk_draw_rectangle (volumebar_backbuf, widget->style->dark_gc[GTK_STATE_NORMAL], TRUE, _x, _y, _w, _h);
         }
     }
 }
