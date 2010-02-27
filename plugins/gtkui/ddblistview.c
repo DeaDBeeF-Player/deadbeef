@@ -133,7 +133,7 @@ ddb_listview_header_expose (DdbListview *ps, int x, int y, int w, int h);
 void
 ddb_listview_column_move (DdbListview *listview, DdbListviewColumn *which, int inspos);
 void
-ddb_listview_column_free (DdbListviewColumn *c);
+ddb_listview_column_free (DdbListview *listview, DdbListviewColumn *c);
 
 
 // signal handlers
@@ -448,8 +448,7 @@ ddb_listview_destroy(GtkObject *object)
   listview = DDB_LISTVIEW(object);
   while (listview->columns) {
       DdbListviewColumn *next = listview->columns->next;
-      listview->binding->col_deleted (0, listview->columns->user_data);
-      ddb_listview_column_free (listview->columns);
+      ddb_listview_column_free (listview, listview->columns);
       listview->columns = next;
   }
 
@@ -2148,12 +2147,6 @@ ddb_listview_list_button_press_event         (GtkWidget       *widget,
             it = ps->binding->get_for_idx (sel);
         }
         int y = sel;
-#if 0
-        if (y < 0 || y >= ps->binding->count ()) {
-            y = -1;
-        }
-        DdbListviewIter it = ps->binding->get_for_idx (y);
-#endif
         if (!it) {
             // clicked empty space -- deselect everything and show insensitive menu
             ps->binding->set_cursor (-1);
@@ -2273,6 +2266,17 @@ ddb_listview_column_alloc (const char *title, int width, int align_right, void *
     return c;
 }
 
+int
+ddb_listview_column_get_count (DdbListview *listview) {
+    int cnt = 0;
+    DdbListviewColumn *c = listview->columns;
+    while (c) {
+        cnt++;
+        c = c->next;
+    }
+    return cnt;
+}
+
 void
 ddb_listview_column_append (DdbListview *listview, const char *title, int width, int align_right, void *user_data) {
     DdbListviewColumn* c = ddb_listview_column_alloc (title, width, align_right, user_data);
@@ -2290,6 +2294,7 @@ ddb_listview_column_append (DdbListview *listview, const char *title, int width,
     else {
         listview->columns = c;
     }
+    listview->binding->columns_changed (listview);
 }
 
 void
@@ -2318,13 +2323,15 @@ ddb_listview_column_insert (DdbListview *listview, int before, const char *title
     else {
         listview->columns = c;
     }
+    listview->binding->columns_changed (listview);
 }
 
 void
-ddb_listview_column_free (DdbListviewColumn * c) {
+ddb_listview_column_free (DdbListview *listview, DdbListviewColumn * c) {
     if (c->title) {
         free (c->title);
     }
+    listview->binding->col_free_user_data (c->user_data);
     free (c);
 }
 
@@ -2334,9 +2341,8 @@ ddb_listview_column_remove (DdbListview *listview, int idx) {
     if (idx == 0) {
         c = listview->columns;
         assert (c);
-        listview->binding->col_deleted (0, c->user_data);
         listview->columns = c->next;
-        ddb_listview_column_free (c);
+        ddb_listview_column_free (listview, c);
         return;
     }
     c = listview->columns;
@@ -2344,9 +2350,8 @@ ddb_listview_column_remove (DdbListview *listview, int idx) {
     while (c) {
         if (i+1 == idx) {
             assert (c->next);
-            listview->binding->col_deleted (idx, c->next->user_data);
             DdbListviewColumn *next = c->next->next;
-            ddb_listview_column_free (c->next);
+            ddb_listview_column_free (listview, c->next);
             c->next = next;
             return;
         }
@@ -2357,6 +2362,7 @@ ddb_listview_column_remove (DdbListview *listview, int idx) {
     if (!c) {
         trace ("ddblv: attempted to remove column that is not in list\n");
     }
+    listview->binding->columns_changed (listview);
 }
 
 void
@@ -2394,6 +2400,7 @@ ddb_listview_column_move (DdbListview *listview, DdbListviewColumn *which, int i
             }
         }
     }
+    listview->binding->columns_changed (listview);
 }
 
 int

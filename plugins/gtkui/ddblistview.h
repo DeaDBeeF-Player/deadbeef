@@ -79,9 +79,9 @@ typedef struct {
     void (*handle_doubleclick) (DdbListview *listview, DdbListviewIter iter, int idx);
     void (*selection_changed) (DdbListviewIter it, int idx);
     void (*delete_selected) (void);
-    void (*col_changed) (int col, void *user_data);
+    void (*columns_changed) (DdbListview *listview);
     void (*col_sort) (int col, int sort_order, void *user_data);
-    void (*col_deleted) (int col, void *user_data);
+    void (*col_free_user_data) (void *user_data);
 } DdbListviewBinding;
 
 struct _DdbListviewColumn;
@@ -172,6 +172,8 @@ void
 ddb_listview_scroll_to (DdbListview *listview, int pos);
 int
 ddb_listview_is_scrolling (DdbListview *listview);
+int
+ddb_listview_column_get_count (DdbListview *listview);
 void
 ddb_listview_column_append (DdbListview *listview, const char *title, int width, int align_right, void *user_data);
 void

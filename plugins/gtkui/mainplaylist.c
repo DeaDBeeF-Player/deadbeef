@@ -178,29 +178,6 @@ append_column_from_textdef (DdbListview *listview, const uint8_t *def) {
     ddb_listview_column_append (listview, title, width, align, inf);
 }
 
-#if 0
-void
-gtkpl_column_update_config (const char *title, gtkpl_column_t * c, int idx) {
-    char key[128];
-    char value[128];
-    snprintf (key, sizeof (key), "%s.column.%d", title, idx);
-    snprintf (value, sizeof (value), "\"%s\" \"%s\" %d %d %d", c->title, c->format ? c->format : "", c->id, c->width, c->align_right);
-    deadbeef->conf_set_str (key, value);
-}
-
-void
-gtkpl_column_rewrite_config (gtkpl_column_t *head, const char *title) {
-    char key[128];
-    snprintf (key, sizeof (key), "%s.column.", title);
-    deadbeef->conf_remove_items (key);
-
-    gtkpl_column_t * c;
-    int i = 0;
-    for (c = head; c; c = c->next, i++) {
-        gtkpl_column_update_config (title, c, i);
-    }
-}
-#endif
 void
 on_add_column_activate                 (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
@@ -628,6 +605,41 @@ main_get_group (DdbListviewIter it, char *str, int size) {
     return 0;
 }
 
+void
+write_column_config (const char *name, int idx, const char *title, int width, int align_right, int id, const char *format) {
+    char key[128];
+    char value[128];
+    snprintf (key, sizeof (key), "%s.column.%d", name, idx);
+    snprintf (value, sizeof (value), "\"%s\" \"%s\" %d %d %d", title, format ? format : "", id, width, align_right);
+    deadbeef->conf_set_str (key, value);
+}
+
+void
+rewrite_column_config (DdbListview *listview, const char *name) {
+    char key[128];
+    snprintf (key, sizeof (key), "%s.column.", name);
+    deadbeef->conf_remove_items (key);
+
+    int cnt = ddb_listview_column_get_count (listview);
+    for (int i = 0; i < cnt; i++) {
+        const char *title;
+        int width;
+        int align_right;
+        col_info_t *info;
+        ddb_listview_column_get_info (listview, i, &title, &width, &align_right, (void **)&info);
+        write_column_config (name, i, title, width, align_right, info->id, info->format);
+    }
+}
+
+int lock_column_config = 0;
+
+void
+main_columns_changed (DdbListview *listview) {
+    if (!lock_column_config) {
+        rewrite_column_config (listview, "playlist");
+    }
+}
+
 DdbListviewBinding main_binding = {
     // rows
     .count = main_get_count,
@@ -657,18 +669,7 @@ DdbListviewBinding main_binding = {
 
     // columns
     .col_sort = main_col_sort,
-#if 0
-    .col_count = main_col_count,
-    .col_first = main_col_first,
-    .col_next = main_col_next,
-    .col_get_title = main_col_get_title,
-    .col_get_width = main_col_get_width,
-    .col_get_justify = main_col_get_justify,
-    .col_get_sort = main_col_get_sort,
-    .col_move = main_col_move,
-    .col_set_width = main_col_set_width,
-    .col_set_sort = main_col_set_sort,
-#endif
+    .columns_changed = main_columns_changed,
 
     // callbacks
     .handle_doubleclick = main_handle_doubleclick,
@@ -700,7 +701,7 @@ main_playlist_init (GtkWidget *widget) {
     main_binding.unref = (void (*) (DdbListviewIter))deadbeef->pl_item_unref;
     main_binding.is_selected = (int (*) (DdbListviewIter))deadbeef->pl_is_selected;
     ddb_listview_set_binding (playlist, &main_binding);
-
+    lock_column_config = 1;
     DB_conf_item_t *col = deadbeef->conf_find ("playlist.column.", NULL);
     if (!col) {
         DdbListview *listview = playlist;
@@ -717,6 +718,7 @@ main_playlist_init (GtkWidget *widget) {
             col = deadbeef->conf_find ("playlist.column.", col);
         }
     }
+    lock_column_config = 0;
 
     // FIXME: filepath should be in properties dialog, while tooltip should be
     // used to show text that doesn't fit in column width
