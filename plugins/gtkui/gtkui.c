@@ -352,22 +352,16 @@ gtkui_on_activate (DB_event_t *ev, uintptr_t data) {
 
 void
 redraw_queued_tracks (DdbListview *pl, int list) {
-#if 0 // FIXME: port
-    DdbListviewIter it = deadbeef->pl_get_for_idx_and_iter (pl->scrollpos, list);
-    int i = ddb_listview_get_vscroll_pos (pl);
-    while (it && i < pl->scrollpos + pl->nvisiblerows) {
+    DB_playItem_t *it;
+    int idx = 0;
+    for (it = deadbeef->pl_get_first (PL_MAIN); it; idx++) {
         if (deadbeef->pl_playqueue_test (it) != -1) {
-            ddb_listview_draw_row (pl, i, it);
+            ddb_listview_draw_row (pl, idx, (DdbListviewIter)it);
         }
-        DdbListviewIter next = deadbeef->pl_get_next (it, list);
+        DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
         deadbeef->pl_item_unref (it);
         it = next;
-        i++;
     }
-    if (it) {
-        deadbeef->pl_item_unref (it);
-    }
-#endif
 }
 
 static gboolean
@@ -873,8 +867,6 @@ gtkui_stop (void) {
     trace ("gtk thread finished\n");
     gtk_tid = 0;
     main_playlist_free ();
-// FIXME: port
-//    columns_free (&search_columns);
     trace ("gtkui_stop completed\n");
     return 0;
 }

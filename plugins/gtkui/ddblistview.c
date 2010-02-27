@@ -1327,7 +1327,7 @@ void
 ddb_listview_list_mouse1_released (DdbListview *ps, int state, int ex, int ey, double time) {
     if (ps->dragwait) {
         ps->dragwait = 0;
-#if 0 // FIXME: port
+#if 0
         int y = ey/ps->rowheight + ps->scrollpos;
         ddb_listview_select_single (ps, y);
 #endif
