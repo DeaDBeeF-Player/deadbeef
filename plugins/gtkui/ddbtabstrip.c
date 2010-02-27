@@ -240,11 +240,11 @@ tabstrip_draw (GtkWidget *widget) {
         if (idx != tab_selected) {
 //            gtk_paint_box (widget->style, widget->window, idx == tab_selected ? GTK_STATE_PRELIGHT : GTK_STATE_NORMAL, GTK_SHADOW_OUT, &area, widget, "button", x, idx == tab_selected ? 0 : 1, w+margin_size, 32);
             ddb_tabstrip_draw_tab (widget, idx == tab_selected, x, y, w, h);
-            GdkColor *gdkfg = &widget->style->fg[0];
-            float fg[3] = {(float)gdkfg->red/0xffff, (float)gdkfg->green/0xffff, (float)gdkfg->blue/0xffff};
-            draw_set_fg_color (fg);
             char tab_title[100];
             deadbeef->plt_get_title (idx, tab_title, sizeof (tab_title));
+            GdkColor *color = &widget->style->text[GTK_STATE_NORMAL];
+            float fg[3] = {(float)color->red/0xffff, (float)color->green/0xffff, (float)color->blue/0xffff};
+            draw_set_fg_color (fg);
             draw_text (x + text_left_padding, y + h/2 - draw_get_font_size()/2 + text_vert_offset, w, 0, tab_title);
         }
         x += w - tab_overlap_size;
@@ -268,11 +268,11 @@ tabstrip_draw (GtkWidget *widget) {
         area.height = 24;
 //        gtk_paint_box (widget->style, widget->window, GTK_STATE_PRELIGHT, GTK_SHADOW_OUT, &area, widget, "button", x, idx == tab_selected ? 0 : 1, w, 32);
         ddb_tabstrip_draw_tab (widget, 1, x, y, w, h);
-        GdkColor *gdkfg = &widget->style->fg[0];
-        float fg[3] = {(float)gdkfg->red/0xffff, (float)gdkfg->green/0xffff, (float)gdkfg->blue/0xffff};
-        draw_set_fg_color (fg);
         char tab_title[100];
         deadbeef->plt_get_title (idx, tab_title, sizeof (tab_title));
+        GdkColor *color = &widget->style->text[GTK_STATE_NORMAL];
+        float fg[3] = {(float)color->red/0xffff, (float)color->green/0xffff, (float)color->blue/0xffff};
+        draw_set_fg_color (fg);
         draw_text (x + text_left_padding, y + h/2 - draw_get_font_size()/2 + text_vert_offset, w, 0, tab_title);
     }
     if (need_draw_moving) {
