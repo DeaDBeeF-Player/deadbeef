@@ -649,14 +649,6 @@ ddb_listview_vscroll_event               (GtkWidget       *widget,
 	GdkEventScroll *ev = (GdkEventScroll*)event;
     GtkWidget *range = ps->scrollbar;;
     GtkWidget *list = ps->list;
-    int h = list->allocation.height / ps->rowheight;
-    int size = ps->binding->count ();
-    if (h >= size) {
-        size = 0;
-    }
-    if (size == 0) {
-        return FALSE;
-    }
     // pass event to scrollbar
     int newscroll = gtk_range_get_value (GTK_RANGE (range));
     if (ev->direction == GDK_SCROLL_UP) {
@@ -1083,30 +1075,6 @@ ddb_listview_list_render_row_background (DdbListview *ps, DdbListviewIter it, in
         // not all gtk engines/themes render focus rectangle in treeviews
         // but we want it anyway
         gdk_draw_rectangle (ps->backbuf, treeview->style->fg_gc[GTK_STATE_NORMAL], FALSE, x, y, w-1, h-1);
-    }
-}
-
-void
-ddb_listview_list_render_row_background_old (DdbListview *ps, int row, DdbListviewIter it) {
-	// draw background
-	GtkWidget *treeview = theme_treeview;
-	if (treeview->style->depth == -1) {
-        return; // drawing was called too early
-    }
-    GTK_OBJECT_FLAGS (treeview) |= GTK_HAS_FOCUS;
-    int x = -ps->hscrollpos;
-    int w = ps->totalwidth;
-    // clear area -- workaround for New Wave theme
-    if (ps->list->style->bg_gc[GTK_STATE_NORMAL]) {
-        gdk_draw_rectangle (ps->backbuf, ps->list->style->bg_gc[GTK_STATE_NORMAL], TRUE, 0, row * ps->rowheight - ps->scrollpos * ps->rowheight, ps->list->allocation.width, ps->rowheight);
-    }
-    gtk_paint_flat_box (treeview->style, ps->backbuf, (it && ps->binding->is_selected(it)) ? GTK_STATE_SELECTED : GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, treeview, (row & 1) ? "cell_even_ruled" : "cell_odd_ruled", x, row * ps->rowheight - ps->scrollpos * ps->rowheight, w, ps->rowheight);
-	if (row == ps->binding->cursor ()) {
-        // not all gtk engines/themes render focus rectangle in treeviews
-        // but we want it anyway
-        gdk_draw_rectangle (ps->backbuf, treeview->style->fg_gc[GTK_STATE_NORMAL], FALSE, x, row * ps->rowheight - ps->scrollpos * ps->rowheight, w-1, ps->rowheight-1);
-        // gtkstyle focus drawing, for reference
-//        gtk_paint_focus (treeview->style, ps->backbuf, (it && ps->binding->is_selected(it)) ? GTK_STATE_SELECTED : GTK_STATE_NORMAL, NULL, treeview, "treeview", x, row * ps->rowheight - ps->scrollpos * ps->rowheight, w, ps->rowheight);
     }
 }
 
@@ -2169,11 +2137,23 @@ ddb_listview_list_button_press_event         (GtkWidget       *widget,
     }
     else if (event->button == 3) {
         // get item under cursor
-        int y = event->y / ps->rowheight + ps->scrollpos;
+        DdbListviewGroup *grp;
+        int grp_index;
+        int sel;
+        DdbListviewIter it = NULL;
+        if (ddb_listview_list_pickpoint_y (ps, event->y + ps->scrollpos, &grp, &grp_index, &sel) != -1) {
+            if (sel == -1) {
+                sel = ps->binding->get_idx (grp->head);
+            }
+            it = ps->binding->get_for_idx (sel);
+        }
+        int y = sel;
+#if 0
         if (y < 0 || y >= ps->binding->count ()) {
             y = -1;
         }
         DdbListviewIter it = ps->binding->get_for_idx (y);
+#endif
         if (!it) {
             // clicked empty space -- deselect everything and show insensitive menu
             ps->binding->set_cursor (-1);
@@ -2193,6 +2173,7 @@ ddb_listview_list_button_press_event         (GtkWidget       *widget,
                 // item is unselected -- reset selection and select this
                 DdbListviewIter it2 = ps->binding->head ();
                 int idx = 0;
+                ps->binding->set_cursor (y);
                 while (it2) {
                     if (ps->binding->is_selected (it2) && it2 != it) {
                         ps->binding->select (it2, 0);
@@ -2200,7 +2181,6 @@ ddb_listview_list_button_press_event         (GtkWidget       *widget,
                         ps->binding->selection_changed (it2, idx);
                     }
                     else if (it2 == it) {
-                        ps->binding->set_cursor (y);
                         ps->binding->select (it2, 1);
                         ddb_listview_draw_row (ps, idx, it2);
                         ps->binding->selection_changed (it2, idx);
@@ -2249,7 +2229,17 @@ ddb_listview_set_binding (DdbListview *listview, DdbListviewBinding *binding) {
 
 DdbListviewIter
 ddb_listview_get_iter_from_coord (DdbListview *listview, int x, int y) {
-    return listview->binding->get_for_idx ((y + listview->scrollpos)/listview->rowheight);
+    DdbListviewGroup *grp;
+    int grp_index;
+    int sel;
+    DdbListviewIter it = NULL;
+    if (ddb_listview_list_pickpoint_y (listview, y + listview->scrollpos, &grp, &grp_index, &sel) != -1) {
+        if (sel == -1) {
+            sel = listview->binding->get_idx (grp->head);
+        }
+        it = listview->binding->get_for_idx (sel);
+    }
+    return it;
 }
 
 void
