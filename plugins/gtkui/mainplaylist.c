@@ -36,6 +36,9 @@ static uintptr_t play16_pixbuf;
 static uintptr_t pause16_pixbuf;
 static uintptr_t buffering16_pixbuf;
 
+// HACK!!
+extern GtkWidget *theme_treeview;
+
 static int
 main_get_count (void) {
     return deadbeef->pl_getcount (PL_MAIN);
@@ -301,6 +304,15 @@ void main_draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbLis
     else {
         char text[1024];
         deadbeef->pl_format_title (it, -1, text, sizeof (text), cinf->id, cinf->format);
+        GdkColor *color = NULL;
+        if (deadbeef->pl_is_selected (it)) {
+            color = &theme_treeview->style->text[GTK_STATE_SELECTED];
+        }
+        else {
+            color = &theme_treeview->style->text[GTK_STATE_NORMAL];
+        }
+        float fg[3] = {(float)color->red/0xffff, (float)color->green/0xffff, (float)color->blue/0xffff};
+        draw_set_fg_color (fg);
 
         if (calign_right) {
             draw_text (x+5, y + height/2 - draw_get_font_size ()/2 - 2, cwidth-10, 1, text);
