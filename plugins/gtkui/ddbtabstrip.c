@@ -184,9 +184,22 @@ ddb_tabstrip_draw_tab (GtkWidget *widget, int selected, int x, int y, int w, int
         { x + w-2, y + h - 2 },
     };
     //gdk_draw_rectangle (widget->window, widget->style->black_gc, FALSE, x-1, y-1, w+2, h+2);
-    gdk_draw_polygon (widget->window, selected ? widget->style->bg_gc[GTK_STATE_NORMAL] : widget->style->mid_gc[GTK_STATE_NORMAL], TRUE, points_filled, 4);
-    gdk_draw_lines (widget->window, selected ? widget->style->dark_gc[GTK_STATE_NORMAL] : widget->style->dark_gc[GTK_STATE_NORMAL], points_frame1, 9);
-    gdk_draw_lines (widget->window, selected ? widget->style->light_gc[GTK_STATE_NORMAL] : widget->style->bg_gc[GTK_STATE_NORMAL], points_frame2, 7);
+    GdkGC *bg;
+    GdkGC *outer_frame;
+    GdkGC *inner_frame;
+    if (selected) {
+        bg = widget->style->bg_gc[GTK_STATE_NORMAL];
+        outer_frame = widget->style->dark_gc[GTK_STATE_NORMAL];
+        inner_frame = widget->style->light_gc[GTK_STATE_NORMAL];
+    }
+    else {
+        bg = widget->style->mid_gc[GTK_STATE_NORMAL];
+        outer_frame = widget->style->dark_gc[GTK_STATE_NORMAL];
+        inner_frame = widget->style->mid_gc[GTK_STATE_NORMAL];
+    }
+    gdk_draw_polygon (widget->window, bg, TRUE, points_filled, 4);
+    gdk_draw_lines (widget->window, outer_frame, points_frame1, 9);
+    gdk_draw_lines (widget->window, inner_frame, points_frame2, 7);
 }
 
 void

@@ -149,13 +149,33 @@ ddb_volumebar_init(DdbVolumeBar *volumebar)
 {
 }
 
+#define DRAW_DEBUG 0
+
 void
 volumebar_draw (GtkWidget *widget) {
     if (!widget) {
         return;
     }
+#if DRAW_DEBUG
+    gdk_draw_rectangle (widget->window, widget->style->bg_gc[0], TRUE, 0, 0, widget->allocation.width, widget->allocation.height);
+    GdkGC **gc[] = {
+        widget->style->fg_gc,
+        widget->style->bg_gc,
+        widget->style->light_gc,
+        widget->style->dark_gc,
+        widget->style->mid_gc,
+        widget->style->text_gc,
+        widget->style->base_gc,
+        widget->style->text_aa_gc
+    };
+    for (int i = 0; i < 8; i++) {
+        for (int state = 0; state < 5; state++) {
+            gdk_draw_rectangle (widget->window, gc[i][state], TRUE, i * 8, state * 5, 8, 5);
+        }
+    }
+#else
     GdkDrawable *volumebar_backbuf = GDK_DRAWABLE (widget->window);
-    gdk_draw_rectangle (volumebar_backbuf, widget->style->bg_gc[0], TRUE, 0, 0, widget->allocation.width, widget->allocation.height);
+    gdk_draw_rectangle (volumebar_backbuf, widget->style->bg_gc[GTK_STATE_NORMAL], TRUE, 0, 0, widget->allocation.width, widget->allocation.height);
     float range = -deadbeef->volume_get_min_db ();
     int n = widget->allocation.width / 4;
     float vol = (range + deadbeef->volume_get_db ()) / range * n;
@@ -164,17 +184,17 @@ volumebar_draw (GtkWidget *widget) {
         float iy = (float)i + 3;
         int _x = i * 4;
         int _h = h * iy / n;
-//        float _y = (widget->allocation.height/2-h/2) + h - 1 - (h* iy / n);
         int _y = widget->allocation.height/2-h/2;
         _y += (h - _h);
         int _w = 3;
         if (i <= vol) {
-            gdk_draw_rectangle (volumebar_backbuf, widget->style->dark_gc[GTK_STATE_SELECTED], TRUE, _x, _y, _w, _h);
+            gdk_draw_rectangle (volumebar_backbuf, widget->style->base_gc[GTK_STATE_SELECTED], TRUE, _x, _y, _w, _h);
         }
         else {
-            gdk_draw_rectangle (volumebar_backbuf, widget->style->dark_gc[GTK_STATE_NORMAL], TRUE, _x, _y, _w, _h);
+            gdk_draw_rectangle (volumebar_backbuf, widget->style->fg_gc[GTK_STATE_NORMAL], TRUE, _x, _y, _w, _h);
         }
     }
+#endif
 }
 
 gboolean

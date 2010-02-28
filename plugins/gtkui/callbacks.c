@@ -493,7 +493,9 @@ seekbar_draw (GtkWidget *widget) {
     DB_fileinfo_t *dec = deadbeef->streamer_get_current_fileinfo ();
     if (!dec || !trk || deadbeef->pl_get_item_duration (trk) < 0) {
         clearlooks_rounded_rectangle (cr, 2, widget->allocation.height/2-4, widget->allocation.width-4, 8, 4, 0xff);
-        theme_set_cairo_source_rgb (cr, COLO_SEEKBAR_FRONT);
+        // empty seekbar, just a frame
+        GdkColor *clr = &widget->style->base[GTK_STATE_SELECTED];
+        cairo_set_source_rgb (cr, clr->red/65535.f, clr->green/65535.f, clr->blue/65535.f );
         cairo_stroke (cr);
         cairo_destroy (cr);
         return;
@@ -517,7 +519,8 @@ seekbar_draw (GtkWidget *widget) {
     }
     // left
     if (pos > 0) {
-        theme_set_cairo_source_rgb (cr, COLO_SEEKBAR_FRONT);
+        GdkColor *clr = &widget->style->base[GTK_STATE_SELECTED];
+        cairo_set_source_rgb (cr, clr->red/65535.f, clr->green/65535.f, clr->blue/65535.f );
         cairo_rectangle (cr, 0, widget->allocation.height/2-4, pos, 8);
         cairo_clip (cr);
         clearlooks_rounded_rectangle (cr, 0, widget->allocation.height/2-4, widget->allocation.width, 8, 4, 0xff);
@@ -526,7 +529,8 @@ seekbar_draw (GtkWidget *widget) {
     }
 
     // right
-    theme_set_cairo_source_rgb (cr, COLO_SEEKBAR_BACK);
+    GdkColor *clr = &widget->style->fg[GTK_STATE_NORMAL];
+    cairo_set_source_rgb (cr, clr->red/65535.f, clr->green/65535.f, clr->blue/65535.f );
     cairo_rectangle (cr, pos, widget->allocation.height/2-4, widget->allocation.width-pos, 8);
     cairo_clip (cr);
     clearlooks_rounded_rectangle (cr, 0, widget->allocation.height/2-4, widget->allocation.width, 8, 4, 0xff);
