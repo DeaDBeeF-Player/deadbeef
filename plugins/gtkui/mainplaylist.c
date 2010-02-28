@@ -26,8 +26,7 @@
 #include "support.h"
 #include "drawing.h"
 #include "trkproperties.h"
-
-#pragma GCC optimize("O0")
+#include "coverart.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -295,12 +294,15 @@ void main_draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbLis
             int h = cwidth - group_y;
             h = min (height, h);
             gdk_draw_rectangle (drawable, GTK_WIDGET (listview)->style->white_gc, TRUE, x, y, width, h);
-            GdkPixbuf *pixbuf = gdk_pixbuf_scale_simple ((GdkPixbuf *)play16_pixbuf, width, width, GDK_INTERP_BILINEAR);
-            gdk_draw_pixbuf (drawable, GTK_WIDGET (listview)->style->white_gc, pixbuf, 0, group_y, x, y, width, h, GDK_RGB_DITHER_NONE, 0, 0);
-            g_object_unref (pixbuf);
+//            GdkPixbuf *pixbuf = gdk_pixbuf_scale_simple ((GdkPixbuf *)play16_pixbuf, width, width, GDK_INTERP_BILINEAR);
+            if (it) {
+                GdkPixbuf *pixbuf = get_cover_art (it, width);
+                gdk_draw_pixbuf (drawable, GTK_WIDGET (listview)->style->white_gc, pixbuf, 0, group_y, x, y, width, h, GDK_RGB_DITHER_NONE, 0, 0);
+                g_object_unref (pixbuf);
+            }
         }
     }
-    else if (it == deadbeef->streamer_get_playing_track () && cinf->id == DB_COLUMN_PLAYING) {
+    else if (it && it == deadbeef->streamer_get_playing_track () && cinf->id == DB_COLUMN_PLAYING) {
         int paused = deadbeef->get_output ()->state () == OUTPUT_STATE_PAUSED;
         int buffering = !deadbeef->streamer_ok_to_read (-1);
         uintptr_t pixbuf;

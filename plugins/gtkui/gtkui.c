@@ -39,6 +39,7 @@
 #include "parser.h"
 #include "drawing.h"
 #include "trkproperties.h"
+#include "../artwork/artwork.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -47,6 +48,9 @@ static DB_gui_t plugin;
 DB_functions_t *deadbeef;
 
 static intptr_t gtk_tid;
+
+// cover art loading plugin
+DB_artwork_plugin_t *coverart_plugin = NULL;
 
 // main widgets
 GtkWidget *mainwin;
@@ -825,6 +829,17 @@ gtkui_thread (void *ctx) {
 
 static int
 gtkui_start (void) {
+    // find coverart plugin
+    DB_plugin_t **plugins = deadbeef->plug_get_list ();
+    for (int i = 0; plugins[i]; i++) {
+        DB_plugin_t *p = plugins[i];
+        if (p->id && !strcmp (p->id, "cover_loader")) {
+            fprintf (stderr, "gtkui: found cover-art loader plugin\n");
+            coverart_plugin = (DB_artwork_plugin_t *)p;
+            break;
+        }
+    }
+
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_ACTIVATE, DB_CALLBACK (gtkui_on_activate), 0);
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_SONGCHANGED, DB_CALLBACK (gtkui_on_songchanged), 0);
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_TRACKINFOCHANGED, DB_CALLBACK (gtkui_on_trackinfochanged), 0);

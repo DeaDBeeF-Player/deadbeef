@@ -330,6 +330,7 @@ plugins/ffmpeg/Makefile
 plugins/sid/Makefile
 plugins/oss/Makefile
 plugins/pulse/Makefile
+plugins/artwork/Makefile
 deadbeef.desktop
 ])
 
