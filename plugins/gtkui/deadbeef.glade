@@ -1916,6 +1916,7 @@ Album
 Title
 Length
 Track
+Album Art
 Custom</property>
 		  <property name="add_tearoffs">False</property>
 		  <property name="focus_on_click">True</property>
@@ -2767,7 +2768,6 @@ SOCKS5_HOSTNAME</property>
 	      <property name="border_width">12</property>
 	      <property name="visible">True</property>
 	      <property name="can_focus">True</property>
-	      <property name="position">0</property>
 
 	      <child>
 		<widget class="GtkScrolledWindow" id="scrolledwindow2">

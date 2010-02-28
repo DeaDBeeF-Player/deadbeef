@@ -32,6 +32,8 @@
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
+#define min(x,y) ((x)<(y)?(x):(y))
+
 static uintptr_t play16_pixbuf;
 static uintptr_t pause16_pixbuf;
 static uintptr_t buffering16_pixbuf;
@@ -178,7 +180,7 @@ append_column_from_textdef (DdbListview *listview, const uint8_t *def) {
     memset (inf, 0, sizeof (col_info_t));
     inf->format = strdup (fmt);
     inf->id = id;
-    ddb_listview_column_append (listview, title, width, align, inf);
+    ddb_listview_column_append (listview, title, width, align, id == DB_COLUMN_ALBUM_ART ? width : 0, inf);
 }
 
 void
@@ -202,7 +204,7 @@ on_add_column_activate                 (GtkMenuItem     *menuitem,
         memset (inf, 0, sizeof (col_info_t));
         inf->format = strdup (format);
         inf->id = id;
-        ddb_listview_column_insert (last_playlist, active_column, title, 100, align, inf);
+        ddb_listview_column_insert (last_playlist, active_column, title, 100, align, id == DB_COLUMN_ALBUM_ART ? 100 : 0, inf);
         ddb_listview_refresh (last_playlist, DDB_REFRESH_COLUMNS | DDB_REFRESH_LIST | DDB_REFRESH_HSCROLL | DDB_EXPOSE_LIST | DDB_EXPOSE_COLUMNS);
     }
     gtk_widget_destroy (dlg);
@@ -222,7 +224,8 @@ on_edit_column_activate                (GtkMenuItem     *menuitem,
     int width;
     int align_right;
     col_info_t *inf;
-    int res = ddb_listview_column_get_info (last_playlist, active_column, &title, &width, &align_right, (void **)&inf);
+    int minheight;
+    int res = ddb_listview_column_get_info (last_playlist, active_column, &title, &width, &align_right, &minheight, (void **)&inf);
     if (res == -1) {
         trace ("attempted to edit non-existing column\n");
         return;
@@ -249,7 +252,7 @@ on_edit_column_activate                (GtkMenuItem     *menuitem,
         free (inf->format);
         inf->format = strdup (format);
         inf->id = id;
-        ddb_listview_column_set_info (last_playlist, active_column, title, width, align, inf);
+        ddb_listview_column_set_info (last_playlist, active_column, title, width, align, id == DB_COLUMN_ALBUM_ART ? width : 0, inf);
 
         ddb_listview_refresh (last_playlist, DDB_REFRESH_COLUMNS | DDB_REFRESH_LIST | DDB_EXPOSE_LIST | DDB_EXPOSE_COLUMNS);
     }
@@ -277,16 +280,27 @@ void main_selection_changed (DdbListviewIter it, int idx) {
     ddb_listview_draw_row (search, idx, it);
 }
 
-void main_draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbListviewIter it, int column, int x, int y, int width, int height) {
+void main_draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbListviewIter it, int column, int group_y, int x, int y, int width, int height) {
     const char *ctitle;
     int cwidth;
     int calign_right;
     col_info_t *cinf;
-    int res = ddb_listview_column_get_info (listview, column, &ctitle, &cwidth, &calign_right, (void **)&cinf);
+    int minheight;
+    int res = ddb_listview_column_get_info (listview, column, &ctitle, &cwidth, &calign_right, &minheight, (void **)&cinf);
     if (res == -1) {
         return;
     }
-    if (it == deadbeef->streamer_get_playing_track () && cinf->id == DB_COLUMN_PLAYING) {
+    if (cinf->id == DB_COLUMN_ALBUM_ART) {
+        if (group_y < cwidth) {
+            int h = cwidth - group_y;
+            h = min (height, h);
+            gdk_draw_rectangle (drawable, GTK_WIDGET (listview)->style->white_gc, TRUE, x, y, width, h);
+            GdkPixbuf *pixbuf = gdk_pixbuf_scale_simple ((GdkPixbuf *)play16_pixbuf, width, width, GDK_INTERP_BILINEAR);
+            gdk_draw_pixbuf (drawable, GTK_WIDGET (listview)->style->white_gc, pixbuf, 0, group_y, x, y, width, h, GDK_RGB_DITHER_NONE, 0, 0);
+            g_object_unref (pixbuf);
+        }
+    }
+    else if (it == deadbeef->streamer_get_playing_track () && cinf->id == DB_COLUMN_PLAYING) {
         int paused = deadbeef->get_output ()->state () == OUTPUT_STATE_PAUSED;
         int buffering = !deadbeef->streamer_ok_to_read (-1);
         uintptr_t pixbuf;
@@ -301,7 +315,7 @@ void main_draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbLis
         }
         draw_pixbuf ((uintptr_t)drawable, pixbuf, x + cwidth/2 - 8, y + height/2 - 8, 0, 0, 16, 16);
     }
-    else {
+    else if (it) {
         char text[1024];
         deadbeef->pl_format_title (it, -1, text, sizeof (text), cinf->id, cinf->format);
         GdkColor *color = NULL;
@@ -638,7 +652,8 @@ rewrite_column_config (DdbListview *listview, const char *name) {
         int width;
         int align_right;
         col_info_t *info;
-        ddb_listview_column_get_info (listview, i, &title, &width, &align_right, (void **)&info);
+        int minheight;
+        ddb_listview_column_get_info (listview, i, &title, &width, &align_right, &minheight, (void **)&info);
         write_column_config (name, i, title, width, align_right, info->id, info->format);
     }
 }
@@ -649,6 +664,12 @@ void
 main_columns_changed (DdbListview *listview) {
     if (!lock_column_config) {
         rewrite_column_config (listview, "playlist");
+    }
+}
+
+void main_col_free_user_data (void *data) {
+    if (data) {
+        free (data);
     }
 }
 
@@ -682,6 +703,7 @@ DdbListviewBinding main_binding = {
     // columns
     .col_sort = main_col_sort,
     .columns_changed = main_columns_changed,
+    .col_free_user_data = main_col_free_user_data,
 
     // callbacks
     .handle_doubleclick = main_handle_doubleclick,
@@ -700,7 +722,7 @@ add_column_helper (DdbListview *listview, const char *title, int width, int id, 
     memset (inf, 0, sizeof (col_info_t));
     inf->id = id;
     inf->format = strdup (format);
-    ddb_listview_column_append (listview, title, width, align_right, inf);
+    ddb_listview_column_append (listview, title, width, align_right, id == DB_COLUMN_ALBUM_ART ? width : 0, inf);
 }
 
 void

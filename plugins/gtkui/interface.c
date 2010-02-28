@@ -1337,6 +1337,7 @@ create_editcolumndlg (void)
   gtk_combo_box_append_text (GTK_COMBO_BOX (id), "Title");
   gtk_combo_box_append_text (GTK_COMBO_BOX (id), "Length");
   gtk_combo_box_append_text (GTK_COMBO_BOX (id), "Track");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (id), "Album Art");
   gtk_combo_box_append_text (GTK_COMBO_BOX (id), "Custom");
 
   hbox31 = gtk_hbox_new (FALSE, 8);
@@ -1659,7 +1660,6 @@ create_prefwin (void)
   gtk_widget_show (hpaned1);
   gtk_container_add (GTK_CONTAINER (notebook2), hpaned1);
   gtk_container_set_border_width (GTK_CONTAINER (hpaned1), 12);
-  gtk_paned_set_position (GTK_PANED (hpaned1), 0);
 
   scrolledwindow2 = gtk_scrolled_window_new (NULL, NULL);
   gtk_widget_show (scrolledwindow2);

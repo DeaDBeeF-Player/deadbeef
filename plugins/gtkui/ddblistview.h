@@ -73,7 +73,7 @@ typedef struct {
 
     // callbacks
     void (*draw_group_title) (DdbListview *listview, GdkDrawable *drawable, DdbListviewIter iter, int x, int y, int width, int height);
-    void (*draw_column_data) (DdbListview *listview, GdkDrawable *drawable, DdbListviewIter iter, int column, int x, int y, int width, int height);
+    void (*draw_column_data) (DdbListview *listview, GdkDrawable *drawable, DdbListviewIter iter, int column, int group_y, int x, int y, int width, int height);
     void (*list_context_menu) (DdbListview *listview, DdbListviewIter iter, int idx);
     void (*header_context_menu) (DdbListview *listview, int col);
     void (*handle_doubleclick) (DdbListview *listview, DdbListviewIter iter, int idx);
@@ -175,15 +175,15 @@ ddb_listview_is_scrolling (DdbListview *listview);
 int
 ddb_listview_column_get_count (DdbListview *listview);
 void
-ddb_listview_column_append (DdbListview *listview, const char *title, int width, int align_right, void *user_data);
+ddb_listview_column_append (DdbListview *listview, const char *title, int width, int align_right, int minheight, void *user_data);
 void
-ddb_listview_column_insert (DdbListview *listview, int before, const char *title, int width, int align_right, void *user_data);
+ddb_listview_column_insert (DdbListview *listview, int before, const char *title, int width, int align_right, int minheight, void *user_data);
 void
 ddb_listview_column_remove (DdbListview *listview, int idx);
 int
-ddb_listview_column_get_info (DdbListview *listview, int col, const char **title, int *width, int *align_right, void **user_data);
+ddb_listview_column_get_info (DdbListview *listview, int col, const char **title, int *width, int *align_right, int *minheight, void **user_data);
 int
-ddb_listview_column_set_info (DdbListview *listview, int col, const char *title, int width, int align_right, void *user_data);
+ddb_listview_column_set_info (DdbListview *listview, int col, const char *title, int width, int align_right, int minheight, void *user_data);
 void
 ddb_listview_build_groups (DdbListview *listview);
 

@@ -68,6 +68,7 @@ G_DEFINE_TYPE (DdbListview, ddb_listview, GTK_TYPE_TABLE);
 struct _DdbListviewColumn {
     char *title;
     int width;
+    int minheight;
     struct _DdbListviewColumn *next;
     void *user_data;
     unsigned align_right : 1;
@@ -105,7 +106,7 @@ ddb_listview_list_expose (DdbListview *ps, int x, int y, int w, int h);
 void
 ddb_listview_list_render_row_background (DdbListview *ps, DdbListviewIter it, int even, int cursor, int x, int y, int w, int h);
 void
-ddb_listview_list_render_row_foreground (DdbListview *ps, DdbListviewIter it, int even, int cursor, int x, int y, int w, int h);
+ddb_listview_list_render_row_foreground (DdbListview *ps, DdbListviewIter it, int even, int cursor, int group_y, int x, int y, int w, int h);
 void
 ddb_listview_list_render_row (DdbListview *ps, int row, DdbListviewIter it, int expose);
 void
@@ -607,7 +608,7 @@ ddb_listview_list_render (DdbListview *listview, int x, int y, int w, int h) {
             if (grp_y + GROUP_TITLE_HEIGHT + (i+1) * listview->rowheight >= y + listview->scrollpos && grp_y + GROUP_TITLE_HEIGHT + i * listview->rowheight< y + h + listview->scrollpos) {
                 gdk_draw_rectangle (listview->backbuf, listview->list->style->bg_gc[GTK_STATE_NORMAL], TRUE, -listview->hscrollpos, grp_y + GROUP_TITLE_HEIGHT + i * listview->rowheight - listview->scrollpos, listview->totalwidth, listview->rowheight);
                 ddb_listview_list_render_row_background (listview, it, (idx + 1 + i) & 1, (idx+i) == listview->binding->cursor () ? 1 : 0, -listview->hscrollpos, grp_y + GROUP_TITLE_HEIGHT + i * listview->rowheight - listview->scrollpos, listview->totalwidth, listview->rowheight);
-                ddb_listview_list_render_row_foreground (listview, it, (idx + 1 + i) & 1, (idx+i) == listview->binding->cursor () ? 1 : 0, -listview->hscrollpos, grp_y + GROUP_TITLE_HEIGHT + i * listview->rowheight - listview->scrollpos, listview->totalwidth, listview->rowheight);
+                ddb_listview_list_render_row_foreground (listview, it, (idx + 1 + i) & 1, (idx+i) == listview->binding->cursor () ? 1 : 0, i * listview->rowheight, -listview->hscrollpos, grp_y + GROUP_TITLE_HEIGHT + i * listview->rowheight - listview->scrollpos, listview->totalwidth, listview->rowheight);
             }
             DdbListviewIter next = listview->binding->next (it);
             listview->binding->unref (it);
@@ -618,6 +619,7 @@ ddb_listview_list_render (DdbListview *listview, int x, int y, int w, int h) {
         int filler = grpheight - (GROUP_TITLE_HEIGHT + listview->rowheight * grp->num_items);
         if (filler > 0) {
             gtk_paint_flat_box (treeview->style, listview->backbuf, GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, treeview, "cell_even_ruled", x, grp_y - listview->scrollpos + GROUP_TITLE_HEIGHT + listview->rowheight * grp->num_items, w, filler);
+            ddb_listview_list_render_row_foreground (listview, NULL, 0, 0, grp->num_items * listview->rowheight, -listview->hscrollpos, grp_y - listview->scrollpos + GROUP_TITLE_HEIGHT + listview->rowheight * grp->num_items, listview->totalwidth, filler);
         }
 
         grp_y += grpheight;
@@ -1015,7 +1017,7 @@ ddb_listview_list_setup_hscroll (DdbListview *ps) {
 
 // returns -1 if row not found
 int
-ddb_listview_list_get_drawinfo (DdbListview *listview, int row, int *even, int *cursor, int *x, int *y, int *w, int *h) {
+ddb_listview_list_get_drawinfo (DdbListview *listview, int row, int *even, int *cursor, int *group_y, int *x, int *y, int *w, int *h) {
     DdbListviewGroup *grp = listview->groups;
     int idx = 0;
     int idx2 = 0;
@@ -1027,6 +1029,7 @@ ddb_listview_list_get_drawinfo (DdbListview *listview, int row, int *even, int *
             int idx_in_group = row - idx;
             *even = (idx2 + 1 + idx_in_group) & 1;
             *cursor = (row == listview->binding->cursor ()) ? 1 : 0;
+            *group_y = idx_in_group * listview->rowheight;
             *x = -listview->hscrollpos;
             *y += GROUP_TITLE_HEIGHT + (row - idx) * listview->rowheight;
             *w = listview->totalwidth;
@@ -1046,14 +1049,15 @@ ddb_listview_list_render_row (DdbListview *listview, int row, DdbListviewIter it
     int even;
     int cursor;
     int x, y, w, h;
-    if (ddb_listview_list_get_drawinfo (listview, row, &even, &cursor, &x, &y, &w, &h) == -1) {
+    int group_y;
+    if (ddb_listview_list_get_drawinfo (listview, row, &even, &cursor, &group_y, &x, &y, &w, &h) == -1) {
         return;
     }
 
     draw_begin ((uintptr_t)listview->backbuf);
     ddb_listview_list_render_row_background (listview, it, even, cursor, x, y, w, h);
 	if (it) {
-        ddb_listview_list_render_row_foreground (listview, it, even, cursor, x, y, w, h);
+        ddb_listview_list_render_row_foreground (listview, it, even, cursor, group_y, x, y, w, h);
     }
     draw_end ();
     if (expose) {
@@ -1088,7 +1092,7 @@ ddb_listview_list_render_row_background (DdbListview *ps, DdbListviewIter it, in
 }
 
 void
-ddb_listview_list_render_row_foreground (DdbListview *ps, DdbListviewIter it, int even, int cursor, int x, int y, int w, int h) {
+ddb_listview_list_render_row_foreground (DdbListview *ps, DdbListviewIter it, int even, int cursor, int group_y, int x, int y, int w, int h) {
 	int width, height;
 	draw_get_canvas_size ((uintptr_t)ps->backbuf, &width, &height);
 	if (it && ps->binding->is_selected (it)) {
@@ -1105,7 +1109,7 @@ ddb_listview_list_render_row_foreground (DdbListview *ps, DdbListviewIter it, in
     int cidx = 0;
     for (c = ps->columns; c; c = c->next, cidx++) {
         int cw = c->width;
-        ps->binding->draw_column_data (ps, ps->backbuf, it, cidx, x, y, cw, h);
+        ps->binding->draw_column_data (ps, ps->backbuf, it, cidx, group_y, x, y, cw, h);
         x += cw;
     }
 }
@@ -1926,6 +1930,9 @@ ddb_listview_header_motion_notify_event          (GtkWidget       *widget,
 
         int newx = ev_x > x + MIN_COLUMN_WIDTH ? ev_x : x + MIN_COLUMN_WIDTH;
         c->width = newx-x;
+        if (c->minheight) {
+            ddb_listview_build_groups (ps);
+        }
         ddb_listview_list_setup_hscroll (ps);
         ddb_listview_header_render (ps);
         ddb_listview_header_expose (ps, 0, 0, ps->header->allocation.width, ps->header->allocation.height);
@@ -2257,21 +2264,16 @@ ddb_listview_is_scrolling (DdbListview *listview) {
     return listview->dragwait;
 }
 
-// columns
-void
-ddb_listview_column_insert (DdbListview *listview, int before, const char *title, int width, int align_right, void *user_data);
-void
-ddb_listview_column_remove (DdbListview *listview, int idx);
-
 /////// column management code
 
 DdbListviewColumn * 
-ddb_listview_column_alloc (const char *title, int width, int align_right, void *user_data) {
+ddb_listview_column_alloc (const char *title, int width, int align_right, int minheight, void *user_data) {
     DdbListviewColumn * c = malloc (sizeof (DdbListviewColumn));
     memset (c, 0, sizeof (DdbListviewColumn));
     c->title = strdup (title);
     c->width = width;
     c->align_right = align_right;
+    c->minheight = minheight;
     c->user_data = user_data;
     return c;
 }
@@ -2288,8 +2290,8 @@ ddb_listview_column_get_count (DdbListview *listview) {
 }
 
 void
-ddb_listview_column_append (DdbListview *listview, const char *title, int width, int align_right, void *user_data) {
-    DdbListviewColumn* c = ddb_listview_column_alloc (title, width, align_right, user_data);
+ddb_listview_column_append (DdbListview *listview, const char *title, int width, int align_right, int minheight, void *user_data) {
+    DdbListviewColumn* c = ddb_listview_column_alloc (title, width, align_right, minheight, user_data);
     int idx = 0;
     DdbListviewColumn * columns = listview->columns;
     if (columns) {
@@ -2308,8 +2310,8 @@ ddb_listview_column_append (DdbListview *listview, const char *title, int width,
 }
 
 void
-ddb_listview_column_insert (DdbListview *listview, int before, const char *title, int width, int align_right, void *user_data) {
-    DdbListviewColumn *c = ddb_listview_column_alloc (title, width, align_right, user_data);
+ddb_listview_column_insert (DdbListview *listview, int before, const char *title, int width, int align_right, int minheight, void *user_data) {
+    DdbListviewColumn *c = ddb_listview_column_alloc (title, width, align_right, minheight ,user_data);
     if (listview->columns) {
         DdbListviewColumn * prev = NULL;
         DdbListviewColumn * next = listview->columns;
@@ -2363,16 +2365,16 @@ ddb_listview_column_remove (DdbListview *listview, int idx) {
             DdbListviewColumn *next = c->next->next;
             ddb_listview_column_free (listview, c->next);
             c->next = next;
+            listview->binding->columns_changed (listview);
             return;
         }
         c = c->next;
-        idx++;
+        i++;
     }
 
     if (!c) {
         trace ("ddblv: attempted to remove column that is not in list\n");
     }
-    listview->binding->columns_changed (listview);
 }
 
 void
@@ -2414,7 +2416,7 @@ ddb_listview_column_move (DdbListview *listview, DdbListviewColumn *which, int i
 }
 
 int
-ddb_listview_column_get_info (DdbListview *listview, int col, const char **title, int *width, int *align_right, void **user_data) {
+ddb_listview_column_get_info (DdbListview *listview, int col, const char **title, int *width, int *align_right, int *minheight, void **user_data) {
     DdbListviewColumn *c;
     int idx = 0;
     for (c = listview->columns; c; c = c->next, idx++) {
@@ -2422,6 +2424,7 @@ ddb_listview_column_get_info (DdbListview *listview, int col, const char **title
             *title = c->title;
             *width = c->width;
             *align_right = c->align_right;
+            *minheight = c->minheight;
             *user_data = c->user_data;
             return 0;
         }
@@ -2430,7 +2433,7 @@ ddb_listview_column_get_info (DdbListview *listview, int col, const char **title
 }
 
 int
-ddb_listview_column_set_info (DdbListview *listview, int col, const char *title, int width, int align_right, void *user_data) {
+ddb_listview_column_set_info (DdbListview *listview, int col, const char *title, int width, int align_right, int minheight, void *user_data) {
     DdbListviewColumn *c;
     int idx = 0;
     for (c = listview->columns; c; c = c->next, idx++) {
@@ -2439,6 +2442,7 @@ ddb_listview_column_set_info (DdbListview *listview, int col, const char *title,
             c->title = strdup (title);
             c->width = width;
             c->align_right = align_right;
+            c->minheight = minheight;
             c->user_data = user_data;
             return 0;
         }
@@ -2470,6 +2474,14 @@ ddb_listview_build_groups (DdbListview *listview) {
     char str[1024];
     char curr[1024];
 
+    int min_height= 0;
+    DdbListviewColumn *c;
+    for (c = listview->columns; c; c = c->next) {
+        if (c->minheight && c->width > min_height) {
+            min_height = c->width;
+        }
+    }
+
     GROUP_TITLE_HEIGHT = DEFAULT_GROUP_TITLE_HEIGHT;
     DdbListviewIter it = listview->binding->head ();
     while (it) {
@@ -2483,8 +2495,8 @@ ddb_listview_build_groups (DdbListview *listview) {
             grp->num_items = listview->binding->count ();
             GROUP_TITLE_HEIGHT = 0;
             grp->height = GROUP_TITLE_HEIGHT + grp->num_items * listview->rowheight;
-//            if (grp->height < 100) {
-//                grp->height = 100;
+//            if (grp->height < min_height) {
+//                grp->height = min_height;
 //            }
             listview->fullheight = grp->height;
             listview->fullheight += GROUP_TITLE_HEIGHT;
@@ -2494,9 +2506,9 @@ ddb_listview_build_groups (DdbListview *listview) {
             strcpy (str, curr);
             DdbListviewGroup *newgroup = malloc (sizeof (DdbListviewGroup));
             if (grp) {
-//                if (grp->height < 100) {
-//                    grp->height = 100;
-//                }
+                if (grp->height - GROUP_TITLE_HEIGHT < min_height) {
+                    grp->height = min_height + GROUP_TITLE_HEIGHT;
+                }
                 listview->fullheight += grp->height;
                 grp->next = newgroup;
             }
