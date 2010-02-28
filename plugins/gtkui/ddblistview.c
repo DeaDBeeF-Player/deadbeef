@@ -78,7 +78,7 @@ typedef struct _DdbListviewColumn DdbListviewColumn;
 struct _DdbListviewGroup {
     DdbListviewIter head;
     uint16_t num_items;
-    uint8_t _padding;
+    uint16_t height;
     struct _DdbListviewGroup *next;
 };
 typedef struct _DdbListviewGroup DdbListviewGroup;
@@ -532,7 +532,7 @@ ddb_listview_get_row_pos (DdbListview *listview, int row_idx) {
         if (idx + grp->num_items > row_idx) {
             return y + GROUP_TITLE_HEIGHT + (row_idx - idx) * listview->rowheight;
         }
-        y += GROUP_TITLE_HEIGHT + grp->num_items * listview->rowheight;
+        y += grp->height;
         idx += grp->num_items;
         grp = grp->next;
     }
@@ -548,11 +548,15 @@ ddb_listview_list_pickpoint_y (DdbListview *listview, int y, DdbListviewGroup **
     int gidx = 0;
     DdbListviewGroup *grp = listview->groups;
     while (grp) {
-        int h = GROUP_TITLE_HEIGHT + grp->num_items * listview->rowheight;
+        int h = grp->height;
         if (y >= grp_y && y < grp_y + h) {
             *group = grp;
             y -= grp_y;
             if (y < GROUP_TITLE_HEIGHT) {
+                *group_idx = -1;
+                *global_idx = -1;
+            }
+            else if (y >= grp->height) {
                 *group_idx = -1;
                 *global_idx = -1;
             }
@@ -562,7 +566,7 @@ ddb_listview_list_pickpoint_y (DdbListview *listview, int y, DdbListviewGroup **
             }
             return 0;
         }
-        grp_y += GROUP_TITLE_HEIGHT + grp->num_items * listview->rowheight;
+        grp_y += grp->height;
         idx += grp->num_items;
         grp = grp->next;
         gidx++;
@@ -575,12 +579,16 @@ ddb_listview_list_render (DdbListview *listview, int x, int y, int w, int h) {
     if (!listview->backbuf) {
         return;
     }
+    GtkWidget *treeview = theme_treeview;
+    if (treeview->style->depth == -1) {
+        return; // drawing was called too early
+    }
     int idx = 0;
     // find 1st group
     DdbListviewGroup *grp = listview->groups;
     int grp_y = 0;
-    while (grp && grp_y + GROUP_TITLE_HEIGHT + grp->num_items * listview->rowheight < y + listview->scrollpos) {
-        grp_y += GROUP_TITLE_HEIGHT + grp->num_items * listview->rowheight;
+    while (grp && grp_y + grp->height < y + listview->scrollpos) {
+        grp_y += grp->height;
         idx += grp->num_items + 1;
         grp = grp->next;
     }
@@ -590,7 +598,7 @@ ddb_listview_list_render (DdbListview *listview, int x, int y, int w, int h) {
         // render title
         DdbListviewIter it = grp->head;
         listview->binding->ref (it);
-        int grpheight = GROUP_TITLE_HEIGHT + grp->num_items * listview->rowheight;
+        int grpheight = grp->height;
         if (grp_y + GROUP_TITLE_HEIGHT >= y + listview->scrollpos && grp_y < y + h + listview->scrollpos) {
             ddb_listview_list_render_row_background (listview, NULL, idx & 1, 0, -listview->hscrollpos, grp_y - listview->scrollpos, listview->totalwidth, GROUP_TITLE_HEIGHT);
             listview->binding->draw_group_title (listview, listview->backbuf, it, -listview->hscrollpos, grp_y - listview->scrollpos, listview->totalwidth, GROUP_TITLE_HEIGHT);
@@ -606,16 +614,18 @@ ddb_listview_list_render (DdbListview *listview, int x, int y, int w, int h) {
             it = next;
         }
         idx += grp->num_items + 1;
+
+        int filler = grpheight - (GROUP_TITLE_HEIGHT + listview->rowheight * grp->num_items);
+        if (filler > 0) {
+            gtk_paint_flat_box (treeview->style, listview->backbuf, GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, treeview, "cell_even_ruled", x, grp_y - listview->scrollpos + GROUP_TITLE_HEIGHT + listview->rowheight * grp->num_items, w, filler);
+        }
+
         grp_y += grpheight;
         grp = grp->next;
     }
     if (grp_y < y + h + listview->scrollpos) {
         int hh = y + h - (grp_y - listview->scrollpos);
 //        gdk_draw_rectangle (listview->backbuf, listview->list->style->bg_gc[GTK_STATE_NORMAL], TRUE, x, grp_y - listview->scrollpos, w, hh);
-        GtkWidget *treeview = theme_treeview;
-        if (treeview->style->depth == -1) {
-            return; // drawing was called too early
-        }
         gtk_paint_flat_box (treeview->style, listview->backbuf, GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, treeview, "cell_even_ruled", x, grp_y - listview->scrollpos, w, hh);
     }
     draw_end ();
@@ -1011,7 +1021,7 @@ ddb_listview_list_get_drawinfo (DdbListview *listview, int row, int *even, int *
     int idx2 = 0;
     *y = -listview->scrollpos;
     while (grp) {
-        int grpheight = GROUP_TITLE_HEIGHT + grp->num_items * listview->rowheight;
+        int grpheight = grp->height;
         if (idx <= row && idx + grp->num_items > row) {
             // found
             int idx_in_group = row - idx;
@@ -2471,8 +2481,12 @@ ddb_listview_build_groups (DdbListview *listview) {
             grp->head = it;
             listview->binding->ref (it);
             grp->num_items = listview->binding->count ();
-            listview->fullheight = grp->num_items * listview->rowheight;
             GROUP_TITLE_HEIGHT = 0;
+            grp->height = GROUP_TITLE_HEIGHT + grp->num_items * listview->rowheight;
+//            if (grp->height < 100) {
+//                grp->height = 100;
+//            }
+            listview->fullheight = grp->height;
             listview->fullheight += GROUP_TITLE_HEIGHT;
             return;
         }
@@ -2480,6 +2494,10 @@ ddb_listview_build_groups (DdbListview *listview) {
             strcpy (str, curr);
             DdbListviewGroup *newgroup = malloc (sizeof (DdbListviewGroup));
             if (grp) {
+//                if (grp->height < 100) {
+//                    grp->height = 100;
+//                }
+                listview->fullheight += grp->height;
                 grp->next = newgroup;
             }
             else {
@@ -2490,10 +2508,10 @@ ddb_listview_build_groups (DdbListview *listview) {
             grp->head = it;
             listview->binding->ref (it);
             grp->num_items = 0;
-            listview->fullheight += GROUP_TITLE_HEIGHT;
+            grp->height = GROUP_TITLE_HEIGHT;
         }
+        grp->height += listview->rowheight;
         grp->num_items++;
-        listview->fullheight += listview->rowheight;
         DdbListviewIter next = listview->binding->next (it);
         listview->binding->unref (it);
         it = next;
