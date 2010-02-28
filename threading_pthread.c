@@ -58,7 +58,7 @@ thread_join (intptr_t tid) {
 }
 
 uintptr_t
-mutex_create (void) {
+mutex_create_nonrecursive (void) {
     pthread_mutex_t *mtx = malloc (sizeof (pthread_mutex_t));
     pthread_mutexattr_t attr = {0};
     pthread_mutexattr_init (&attr);
@@ -73,7 +73,7 @@ mutex_create (void) {
 }
 
 uintptr_t
-mutex_create_recursive (void) {
+mutex_create (void) {
     pthread_mutex_t *mtx = malloc (sizeof (pthread_mutex_t));
     pthread_mutexattr_t attr = {0};
     pthread_mutexattr_init (&attr);

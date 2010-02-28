@@ -93,6 +93,7 @@ static DB_functions_t deadbeef_api = {
     .thread_start = thread_start,
     .thread_join = thread_join,
     .mutex_create = mutex_create,
+    .mutex_create_nonrecursive = mutex_create_nonrecursive,
     .mutex_free = mutex_free,
     .mutex_lock = mutex_lock,
     .mutex_unlock = mutex_unlock,

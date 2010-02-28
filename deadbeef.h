@@ -270,6 +270,7 @@ typedef struct {
     intptr_t (*thread_start) (void (*fn)(void *ctx), void *ctx);
     int (*thread_join) (intptr_t tid);
     uintptr_t (*mutex_create) (void);
+    uintptr_t (*mutex_create_nonrecursive) (void);
     void (*mutex_free) (uintptr_t mtx);
     int (*mutex_lock) (uintptr_t mtx);
     int (*mutex_unlock) (uintptr_t mtx);

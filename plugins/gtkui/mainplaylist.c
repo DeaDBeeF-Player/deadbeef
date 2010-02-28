@@ -279,7 +279,7 @@ void main_selection_changed (DdbListviewIter it, int idx) {
     ddb_listview_draw_row (search, idx, it);
 }
 
-void main_draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbListviewIter it, int column, int group_y, int x, int y, int width, int height) {
+void main_draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbListviewIter it, DdbListviewIter group_it, int column, int group_y, int x, int y, int width, int height) {
     const char *ctitle;
     int cwidth;
     int calign_right;
@@ -291,14 +291,25 @@ void main_draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbLis
     }
     if (cinf->id == DB_COLUMN_ALBUM_ART) {
         if (group_y < cwidth) {
-            int h = cwidth - group_y;
-            h = min (height, h);
-            gdk_draw_rectangle (drawable, GTK_WIDGET (listview)->style->white_gc, TRUE, x, y, width, h);
-//            GdkPixbuf *pixbuf = gdk_pixbuf_scale_simple ((GdkPixbuf *)play16_pixbuf, width, width, GDK_INTERP_BILINEAR);
-            if (it) {
-                GdkPixbuf *pixbuf = get_cover_art (it, width);
-                gdk_draw_pixbuf (drawable, GTK_WIDGET (listview)->style->white_gc, pixbuf, 0, group_y, x, y, width, h, GDK_RGB_DITHER_NONE, 0, 0);
-                g_object_unref (pixbuf);
+            if (group_it) {
+                int h = cwidth - group_y;
+                h = min (height, h);
+                gdk_draw_rectangle (drawable, GTK_WIDGET (listview)->style->white_gc, TRUE, x, y, width, h);
+                GdkPixbuf *pixbuf = get_cover_art (group_it, width);
+                if (pixbuf) {
+                    int pw = gdk_pixbuf_get_width (pixbuf);
+                    int ph = gdk_pixbuf_get_height (pixbuf);
+                    if (group_y < ph) {
+                        pw = min (width, pw);
+                        if (group_y + h >= ph) {
+                            ph = ph - group_y;
+                        }
+                        else {
+                            ph = h;
+                        }
+                        gdk_draw_pixbuf (drawable, GTK_WIDGET (listview)->style->white_gc, pixbuf, 0, group_y, x, y, pw, ph, GDK_RGB_DITHER_NONE, 0, 0);
+                    }
+                }
             }
         }
     }

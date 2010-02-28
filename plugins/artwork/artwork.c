@@ -5,16 +5,84 @@
 #include <curl/curl.h>
 #include <errno.h>
 #include <dirent.h>
+#include <unistd.h>
 #include "../../deadbeef.h"
 #include "artwork.h"
 #include "lastfm.h"
 #include "albumartorg.h"
 
+#define min(x,y) ((x)<(y)?(x):(y))
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(...)
 
+#define DEFAULT_COVER_PATH (PREFIX "/share/deadbeef/pixmaps/blank_cd.jpg")
+
 static DB_artwork_plugin_t plugin;
 DB_functions_t *deadbeef;
+
+
+typedef struct cover_query_s {
+    char *artist;
+    char *album;
+    artwork_callback callback;
+    struct cover_query_s *next;
+} cover_query_t;
+
+cover_query_t *queue;
+cover_query_t *queue_tail;
+uintptr_t mutex;
+int terminate;
+intptr_t tid;
+
+void
+queue_add (const char *artist, const char *album, artwork_callback callback) {
+    if (!artist) {
+        artist = "";
+    }
+    if (!album) {
+        album = "";
+    }
+    printf ("queue_add %s %s\n", album, artist);
+    deadbeef->mutex_lock (mutex);
+
+    for (cover_query_t *q = queue; q; q = q->next) {
+        if (!strcasecmp (artist, q->artist) || !strcasecmp (album, q->album)) {
+            deadbeef->mutex_unlock (mutex);
+            return; // already in queue
+        }
+    }
+
+    cover_query_t *q = malloc (sizeof (cover_query_t));
+    memset (q, 0, sizeof (cover_query_t));
+    q->artist = strdup (artist);
+    q->album = strdup (album);
+    q->callback = callback;
+    if (queue_tail) {
+        queue_tail->next = q;
+        queue_tail = q;
+    }
+    else {
+        queue = queue_tail = q;
+    }
+    deadbeef->mutex_unlock (mutex);
+    printf ("queue_added %s %s\n", album, artist);
+}
+
+void
+queue_pop (void) {
+    printf ("queue_pop\n");
+    deadbeef->mutex_lock (mutex);
+    cover_query_t *next = queue ? queue->next : NULL;
+    free (queue->artist);
+    free (queue->album);
+    free (queue);
+    queue = next;
+    if (!queue) {
+        queue_tail = NULL;
+    }
+    deadbeef->mutex_unlock (mutex);
+    printf ("queue_popped\n");
+}
 
 int
 fetch_to_stream (const char *url, FILE *stream)
@@ -47,8 +115,9 @@ fetch_to_file (const char *url, const char *filename)
         return 0;
     }
     ret = fetch_to_stream (url, stream);
-    if (ret != 0)
-        printf ("Failed to fetch %s\n", url);
+    if (ret != 0) {
+//        printf ("Failed to fetch %s\n", url);
+    }
     fclose (stream);
     if (0 == ret)
     {
@@ -99,34 +168,90 @@ check_dir (const char *dir, mode_t mode)
     return 1;
 }
 
-typedef struct
-{
-    const char *artist;
-    const char *album;
-    artwork_callback callback;
-} fetcher_thread_param_t;
+#define BUFFER_SIZE 4096
+
+static int
+copy_file (const char *in, const char *out) {
+    char *buf = malloc (BUFFER_SIZE);
+    if (!buf) {
+        fprintf (stderr, "artwork: failed to alloc %d bytes\n", BUFFER_SIZE);
+        return -1;
+    }
+    FILE *fin = fopen (in, "rb");
+    if (!fin) {
+        fprintf (stderr, "artwork: failed to open file %s\n", in);
+        return -1;
+    }
+    FILE *fout = fopen (out, "w+b");
+    if (!fout) {
+        fclose (fin);
+        fprintf (stderr, "artwork: failed to open file %s\n", out);
+        return -1;
+    }
+
+    fseek (fin, 0, SEEK_END);
+    size_t sz = ftell (fin);
+    rewind (fin);
+
+    while (sz > 0) {
+        int rs = min (sz, BUFFER_SIZE);
+        if (fread (buf, rs, 1, fin) != 1) {
+            fprintf (stderr, "artwork: failed to read file %s\n", in);
+            break;
+        }
+        if (fwrite (buf, rs, 1, fout) != 1) {
+            fprintf (stderr, "artwork: failed to write file %s\n", out);
+            break;
+        }
+        sz -= rs;
+    }
+    free (buf);
+    fclose (fin);
+    fclose (fout);
+    if (sz > 0) {
+        unlink (out);
+    }
+    return 0;
+}
 
 static void
-fetcher_thread (fetcher_thread_param_t *param)
+fetcher_thread (void *none)
 {
-    char path [1024];
+    while (!terminate) {
+        if (!queue) {
+            usleep (100000);
+            continue;
+        }
+        cover_query_t *param = queue;
 
-    snprintf (path, sizeof (path), "%s/artcache/%s", deadbeef->get_config_dir (), param->artist);
-    if (!check_dir (path, 0755))
-        goto finalize;
+        printf ("fetching cover for %s %s\n", param->album, param->artist);
 
-    snprintf (path, sizeof (path), "%s/artcache/%s/%s.jpg", deadbeef->get_config_dir (), param->artist, param->album);
+        char path [1024];
+        snprintf (path, sizeof (path), "%s/artcache/%s", deadbeef->get_config_dir (), param->artist);
+        if (!check_dir (path, 0755)) {
+            queue_pop ();
+            printf ("failed to create folder for %s %s\n", param->album, param->artist);
+            continue;
+        }
 
-    if (!fetch_from_lastfm (param->artist, param->album, path))
-        if (!fetch_from_albumart_org (param->artist, param->album, path))
-            goto finalize;
+        snprintf (path, sizeof (path), "%s/artcache/%s/%s.jpg", deadbeef->get_config_dir (), param->artist, param->album);
 
-    if (param->callback)
-        param->callback (param->artist, param->album);
+        if (!fetch_from_lastfm (param->artist, param->album, path)) {
+            if (!fetch_from_albumart_org (param->artist, param->album, path)) {
+                printf ("art not found for %s %s\n", param->album, param->artist);
+                queue_pop ();
+                copy_file (DEFAULT_COVER_PATH, path);
+                continue;
+            }
+        }
 
-finalize:
-    free (param);
-    return;
+        printf ("downloaded art for %s %s\n", param->album, param->artist);
+        if (param->callback) {
+            param->callback (param->artist, param->album);
+        }
+        queue_pop ();
+    }
+    tid = 0;
 }
 
 static int
@@ -177,27 +302,22 @@ get_album_art (DB_playItem_t *track, artwork_callback callback)
     if (!artist || !*artist || !album || !*album)
     {
         //give up
-        return PREFIX "/share/deadbeef/pixmaps/blank_cd.jpg";
+        return strdup (DEFAULT_COVER_PATH);
     }
 
     snprintf (path, sizeof (path), "%s/artcache/%s/%s.jpg", deadbeef->get_config_dir (), artist, album);
+//    printf ("looking for %s in cache\n", path);
 
     struct stat stat_buf;
     if (0 == stat (path, &stat_buf))
     {
         char *res = strdup (path);
-//        printf ("Found in cache: %s\n", res);
+//        printf ("found %s in cache\n", path);
         return res;
     }
 
-    /* Downloading from internet */
-    trace ("Downloading: %s %s\n", artist, album);
-    fetcher_thread_param_t *param = malloc (sizeof (fetcher_thread_param_t));
-    param->artist = artist;
-    param->album = album;
-    param->callback = callback;
-    deadbeef->thread_start ((void (*)(void *))fetcher_thread, param);
-    return PREFIX "/share/deadbeef/pixmaps/blank_cd.jpg";
+    queue_add (artist, album, callback);
+    return strdup (DEFAULT_COVER_PATH);
 }
 
 DB_plugin_t *
@@ -209,11 +329,22 @@ artwork_load (DB_functions_t *api) {
 static int
 artwork_plugin_start (void)
 {
+    terminate = 0;
+    mutex = deadbeef->mutex_create ();
+    tid = deadbeef->thread_start (fetcher_thread, NULL);
 }
 
 static int
 artwork_plugin_stop (void)
 {
+    if (tid) {
+        terminate = 1;
+        deadbeef->thread_join (tid);
+    }
+    if (mutex) {
+        deadbeef->mutex_free (mutex);
+        mutex = 0;
+    }
 }
 
 // define plugin interface

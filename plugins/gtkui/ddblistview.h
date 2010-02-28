@@ -73,7 +73,7 @@ typedef struct {
 
     // callbacks
     void (*draw_group_title) (DdbListview *listview, GdkDrawable *drawable, DdbListviewIter iter, int x, int y, int width, int height);
-    void (*draw_column_data) (DdbListview *listview, GdkDrawable *drawable, DdbListviewIter iter, int column, int group_y, int x, int y, int width, int height);
+    void (*draw_column_data) (DdbListview *listview, GdkDrawable *drawable, DdbListviewIter iter, DdbListviewIter group_iter, int column, int group_y, int x, int y, int width, int height);
     void (*list_context_menu) (DdbListview *listview, DdbListviewIter iter, int idx);
     void (*header_context_menu) (DdbListview *listview, int col);
     void (*handle_doubleclick) (DdbListview *listview, DdbListviewIter iter, int idx);
