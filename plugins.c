@@ -476,11 +476,6 @@ plug_init_plugin (DB_plugin_t* (*loadfunc)(DB_functions_t *), void *handle) {
     plug->plugin = plugin_api;
     plug->handle = handle;
     plug->next = plugins;
-    if (plug->plugin->start) {
-        if (plug->plugin->start () < 0) {
-            plug->plugin->inactive = 1;
-        }
-    }
     plugins = plug;
     return 0;
 }
@@ -613,12 +608,13 @@ plug_load_all (void) {
 #include "moduleconf.h"
 #undef PLUG
 
+    plugin_t *plug;
     // categorize plugins
     int numplugins = 0;
     int numdecoders = 0;
     int numvfs = 0;
     int numoutput = 0;
-    for (plugin_t *plug = plugins; plug; plug = plug->next) {
+    for (plug = plugins; plug; plug = plug->next) {
         g_plugins[numplugins++] = plug->plugin;
         if (plug->plugin->type == DB_PLUGIN_DECODER) {
             fprintf (stderr, "found decoder plugin %s\n", plug->plugin->name);
@@ -642,6 +638,15 @@ plug_load_all (void) {
             g_output_plugins[numoutput++] = (DB_output_t *)plug->plugin;
         }
     }
+    // start plugins
+    for (plug = plugins; plug; plug = plug->next) {
+        if (plug->plugin->start) {
+            if (plug->plugin->start () < 0) {
+                plug->plugin->inactive = 1;
+            }
+        }
+    }
+
 //    fprintf (stderr, "numplugins: %d, numdecoders: %d, numvfs: %d\n", numplugins, numdecoders, numvfs);
     g_plugins[numplugins] = NULL;
     g_decoder_plugins[numdecoders] = NULL;
