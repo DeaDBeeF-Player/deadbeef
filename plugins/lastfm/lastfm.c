@@ -768,7 +768,7 @@ lastfm_start (void) {
     lfm_cond = 9;
     lfm_tid = 0;
     lfm_stopthread = 0;
-    lfm_mutex = deadbeef->mutex_create ();
+    lfm_mutex = deadbeef->mutex_create_nonrecursive ();
     lfm_cond = deadbeef->cond_create ();
     lfm_tid = deadbeef->thread_start (lfm_thread, NULL);
     // subscribe to frameupdate event
