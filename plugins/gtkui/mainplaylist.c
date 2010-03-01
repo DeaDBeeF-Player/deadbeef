@@ -350,10 +350,10 @@ void main_draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbLis
     }
 }
 
-static const char *group_by_str = NULL;
+static const char *group_by_str = "";
 
 void main_draw_group_title (DdbListview *listview, GdkDrawable *drawable, DdbListviewIter it, int x, int y, int width, int height) {
-    if (group_by_str) {
+    if (group_by_str && group_by_str[0]) {
         char str[1024];
         deadbeef->pl_format_title ((DB_playItem_t *)it, -1, str, sizeof (str), -1, group_by_str);
         float clr[] = {0, 0.1, 0.5};
@@ -366,7 +366,8 @@ void
 on_group_by_none_activate              (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    group_by_str = NULL;
+    group_by_str = "";
+    deadbeef->conf_set_str ("playlist.group_by", group_by_str);
     main_refresh ();
 }
 
@@ -375,6 +376,7 @@ on_group_by_artist_date_album_activate (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     group_by_str = "%a - [%y] %b";
+    deadbeef->conf_set_str ("playlist.group_by", group_by_str);
     main_refresh ();
 }
 
@@ -383,6 +385,7 @@ on_group_by_artist_activate            (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     group_by_str = "%a";
+    deadbeef->conf_set_str ("playlist.group_by", group_by_str);
     main_refresh ();
 }
 
@@ -776,6 +779,7 @@ main_playlist_init (GtkWidget *widget) {
         g_object_set_property (G_OBJECT (widget), "has-tooltip", &value);
         g_signal_connect (G_OBJECT (widget), "query-tooltip", G_CALLBACK (playlist_tooltip_handler), NULL);
     }
+    group_by_str = deadbeef->conf_get_str ("playlist.group_by", "");
 }
 
 void
