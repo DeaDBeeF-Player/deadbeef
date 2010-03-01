@@ -32,5 +32,11 @@
 GdkPixbuf *
 get_cover_art (DB_playItem_t *it, int width);
 
+void
+cover_art_init (void);
+
+void
+cover_art_free (void);
+
 #endif
 

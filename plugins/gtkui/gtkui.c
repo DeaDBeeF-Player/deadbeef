@@ -40,6 +40,7 @@
 #include "drawing.h"
 #include "trkproperties.h"
 #include "../artwork/artwork.h"
+#include "coverart.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -818,9 +819,11 @@ gtkui_thread (void *ctx) {
     search_playlist_init (lookup_widget (searchwin, "searchlist"));
 
     progress_init ();
+    cover_art_init ();
     gtk_widget_show (mainwin);
 
     gtk_main ();
+    cover_art_free ();
 #if HAVE_NOTIFY
     notify_uninit ();
 #endif
