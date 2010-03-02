@@ -92,6 +92,13 @@ queue_pop (void) {
     deadbeef->mutex_unlock (mutex);
 }
 
+gboolean
+redraw_playlist_cb (gpointer dt) {
+    void main_refresh (void);
+    main_refresh ();
+    return FALSE;
+}
+
 void
 loading_thread (void *none) {
     while (!terminate) {
@@ -149,12 +156,21 @@ loading_thread (void *none) {
         gettimeofday (&cache[cache_min].tm, NULL);
         cache[cache_min].width = queue->width;
         queue_pop ();
+        g_idle_add (redraw_playlist_cb, NULL);
     }
     tid = 0;
 }
 
 void
-cover_avail_callback (const char *artist, const char *album) {
+cover_avail_callback (const char *fname, const char *artist, const char *album, void *user_data) {
+    // means requested image is now in disk cache
+    // load it into main memory
+    GdkPixbuf *pb = get_cover_art (fname, artist, album, (intptr_t)user_data);
+    if (pb) {
+        // already in cache, redraw
+        void main_refresh (void);
+        main_refresh ();
+    }
 }
 
 static GdkPixbuf *
@@ -185,17 +201,36 @@ get_pixbuf (const char *fname, int width) {
 }
 
 GdkPixbuf *
-get_cover_art (DB_playItem_t *it, int width) {
+get_cover_art (const char *fname, const char *artist, const char *album, int width) {
     if (!coverart_plugin) {
         return NULL;
     }
-    char *fname = coverart_plugin->get_album_art (it, cover_avail_callback);
+    char *image_fname = coverart_plugin->get_album_art (fname, artist, album, cover_avail_callback, (void *)(intptr_t)width);
     if (fname) {
-        GdkPixbuf *pb = get_pixbuf (fname, width);
-        free (fname);
+        GdkPixbuf *pb = get_pixbuf (image_fname, width);
+        free (image_fname);
         return pb;
     }
     return NULL;
+}
+
+void
+reset_cover_art_cache (void) {
+    deadbeef->mutex_lock (mutex);
+    if (queue) {
+        load_query_t *q = queue->next;
+        while (q) {
+            load_query_t *next = q->next;
+            if (q->fname) {
+                free (q->fname);
+            }
+            free (q);
+            q = next;
+        }
+        queue->next = NULL;
+        tail = queue;
+    }
+    deadbeef->mutex_unlock (mutex);
 }
 
 void
@@ -217,3 +252,4 @@ cover_art_free (void) {
     }
     deadbeef->mutex_free (mutex);
 }
+

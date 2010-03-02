@@ -30,7 +30,10 @@
 //
 // if cover art loader plugin is not available -- NULL will be returned
 GdkPixbuf *
-get_cover_art (DB_playItem_t *it, int width);
+get_cover_art (const char *fname, const char *artist, const char *album, int width);
+
+void
+reset_cover_art_cache (void);
 
 void
 cover_art_init (void);

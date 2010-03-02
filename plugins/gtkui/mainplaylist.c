@@ -308,7 +308,9 @@ void main_draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbLis
                 int h = cwidth - group_y;
                 h = min (height, art_h);
 //                gdk_draw_rectangle (drawable, GTK_WIDGET (listview)->style->white_gc, TRUE, x, y, width, h);
-                GdkPixbuf *pixbuf = get_cover_art (group_it, art_width);
+                const char *album = deadbeef->pl_find_meta (group_it, "album");
+                const char *artist = deadbeef->pl_find_meta (group_it, "artist");
+                GdkPixbuf *pixbuf = get_cover_art (((DB_playItem_t *)group_it)->fname, artist, album, art_width);
                 if (pixbuf) {
                     int pw = gdk_pixbuf_get_width (pixbuf);
                     int ph = gdk_pixbuf_get_height (pixbuf);
@@ -696,6 +698,22 @@ main_columns_changed (DdbListview *listview) {
     }
 }
 
+void
+main_column_size_changed (DdbListview *listview, int col) {
+    const char *title;
+    int width;
+    int align_right;
+    col_info_t *inf;
+    int minheight;
+    int res = ddb_listview_column_get_info (listview, col, &title, &width, &align_right, &minheight, (void **)&inf);
+    if (res == -1) {
+        return;
+    }
+    if (inf->id == DB_COLUMN_ALBUM_ART) {
+        reset_cover_art_cache ();
+    }
+}
+
 void main_col_free_user_data (void *data) {
     if (data) {
         free (data);
@@ -732,6 +750,7 @@ DdbListviewBinding main_binding = {
     // columns
     .col_sort = main_col_sort,
     .columns_changed = main_columns_changed,
+    .column_size_changed = main_column_size_changed,
     .col_free_user_data = main_col_free_user_data,
 
     // callbacks

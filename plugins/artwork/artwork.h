@@ -3,7 +3,7 @@
 
 #include "../../deadbeef.h"
 
-typedef void (*artwork_callback) (const char *artist, const char *album);
+typedef void (*artwork_callback) (const char *fname, const char *artist, const char *album, void *user_data);
 
 char*
 fetch (const char *url);
@@ -17,7 +17,7 @@ fetch_to_stream (const char *url, FILE *stream);
 typedef struct {
     DB_misc_t plugin;
     // returns filename of cached image, or NULL
-    char* (*get_album_art) (DB_playItem_t *track, artwork_callback callback);
+    char* (*get_album_art) (const char *fname, const char *artist, const char *album, artwork_callback callback, void *user_data);
 } DB_artwork_plugin_t;
 
 #endif /*__ARTWORK_H*/

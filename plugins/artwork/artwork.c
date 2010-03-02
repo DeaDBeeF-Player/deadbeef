@@ -26,6 +26,7 @@ typedef struct cover_query_s {
     char *artist;
     char *album;
     artwork_callback callback;
+    void *user_data;
     struct cover_query_s *next;
 } cover_query_t;
 
@@ -72,7 +73,7 @@ make_cache_path (char *path, int size, const char *album, const char *artist) {
 }
 
 void
-queue_add (const char *fname, const char *artist, const char *album, artwork_callback callback) {
+queue_add (const char *fname, const char *artist, const char *album, artwork_callback callback, void *user_data) {
     if (!artist) {
         artist = "";
     }
@@ -94,6 +95,7 @@ queue_add (const char *fname, const char *artist, const char *album, artwork_cal
     q->artist = strdup (artist);
     q->album = strdup (album);
     q->callback = callback;
+    q->user_data = user_data;
     if (queue_tail) {
         queue_tail->next = q;
         queue_tail = q;
@@ -306,7 +308,7 @@ fetcher_thread (void *none)
                     free (files [i]);
                 }
                 if (param->callback) {
-                    param->callback (param->artist, param->album);
+                    param->callback (param->fname, param->artist, param->album, param->user_data);
                 }
                 queue_pop ();
                 continue;
@@ -327,7 +329,7 @@ fetcher_thread (void *none)
 
         trace ("downloaded art for %s %s\n", param->album, param->artist);
         if (param->callback) {
-            param->callback (param->artist, param->album);
+            param->callback (param->fname, param->artist, param->album, param->user_data);
         }
         queue_pop ();
     }
@@ -335,12 +337,9 @@ fetcher_thread (void *none)
 }
 
 char*
-get_album_art (DB_playItem_t *track, artwork_callback callback)
+get_album_art (const char *fname, const char *artist, const char *album, artwork_callback callback, void *user_data)
 {
     char path [1024];
-
-    const char *album = deadbeef->pl_find_meta (track, "album");
-    const char *artist = deadbeef->pl_find_meta (track, "artist");
 
     if (!album) {
         album = "";
@@ -364,7 +363,7 @@ get_album_art (DB_playItem_t *track, artwork_callback callback)
         return strdup (path);
     }
 
-    queue_add (track->fname, artist, album, callback);
+    queue_add (fname, artist, album, callback, user_data);
     return strdup (DEFAULT_COVER_PATH);
 }
 

@@ -1955,6 +1955,7 @@ ddb_listview_header_motion_notify_event          (GtkWidget       *widget,
         ddb_listview_header_expose (ps, 0, 0, ps->header->allocation.width, ps->header->allocation.height);
         ddb_listview_list_render (ps, 0, 0, ps->list->allocation.width, ps->list->allocation.height);
         ddb_listview_list_expose (ps, 0, 0, ps->list->allocation.width, ps->list->allocation.height);
+        ps->binding->column_size_changed (ps, ps->header_sizing);
     }
     else {
         int x = -ps->hscrollpos;
@@ -2097,6 +2098,7 @@ ddb_listview_header_button_release_event         (GtkWidget       *widget,
                 ddb_listview_refresh (ps, DDB_REFRESH_LIST | DDB_REFRESH_COLUMNS | DDB_EXPOSE_LIST | DDB_EXPOSE_COLUMNS | DDB_REFRESH_HSCROLL);
             }
         }
+        ps->binding->columns_changed (ps);
     }
     return FALSE;
 }

@@ -80,6 +80,7 @@ typedef struct {
     void (*selection_changed) (DdbListviewIter it, int idx);
     void (*delete_selected) (void);
     void (*columns_changed) (DdbListview *listview);
+    void (*column_size_changed) (DdbListview *listview, int col);
     void (*col_sort) (int col, int sort_order, void *user_data);
     void (*col_free_user_data) (void *user_data);
 } DdbListviewBinding;
