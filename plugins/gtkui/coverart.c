@@ -106,7 +106,7 @@ loading_thread (void *none) {
                 break;
             }
             if (cache[cache_min].pixbuf && cache[i].pixbuf) {
-                if (cache[cache_min].tm.tv_sec < cache[i].tm.tv_sec) {
+                if (cache[cache_min].tm.tv_sec > cache[i].tm.tv_sec) {
                     cache_min = i;
                 }
             }
@@ -161,14 +161,25 @@ static GdkPixbuf *
 get_pixbuf (const char *fname, int width) {
     int requested_width = width;
     // find in cache
+    deadbeef->mutex_lock (mutex);
     for (int i = 0; i < CACHE_SIZE; i++) {
         if (cache[i].pixbuf) {
             if (!strcmp (fname, cache[i].fname) && cache[i].width == width) {
                 gettimeofday (&cache[i].tm, NULL);
+                deadbeef->mutex_unlock (mutex);
                 return cache[i].pixbuf;
             }
         }
     }
+#if 0
+    printf ("cache miss: %s/%d\n", fname, width);
+    for (int i = 0; i < CACHE_SIZE; i++) {
+        if (cache[i].pixbuf) {
+            printf ("    cache line %d: %s/%d\n", i, cache[i].fname, cache[i].width);
+        }
+    }
+#endif
+    deadbeef->mutex_unlock (mutex);
     queue_add (fname, width);
     return NULL;
 }

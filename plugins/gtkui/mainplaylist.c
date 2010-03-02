@@ -290,24 +290,37 @@ void main_draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbLis
         return;
     }
     if (cinf->id == DB_COLUMN_ALBUM_ART) {
-        if (group_y < cwidth) {
+        gtk_paint_flat_box (theme_treeview->style, drawable, GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, theme_treeview, "cell_even_ruled", x, y, width, height);
+        int art_width = width - 10;
+        int art_y = y;
+        int art_h = height;
+        int sy;
+        if (group_y < 5) {
+            art_y = y - group_y + 5;
+            art_h = height - (art_y - y);
+            sy = group_y;
+        }
+        else {
+            sy = group_y - 5;
+        }
+        if (art_width > 0 && group_y < art_width - 10) {
             if (group_it) {
                 int h = cwidth - group_y;
-                h = min (height, h);
-                gdk_draw_rectangle (drawable, GTK_WIDGET (listview)->style->white_gc, TRUE, x, y, width, h);
-                GdkPixbuf *pixbuf = get_cover_art (group_it, width);
+                h = min (height, art_h);
+//                gdk_draw_rectangle (drawable, GTK_WIDGET (listview)->style->white_gc, TRUE, x, y, width, h);
+                GdkPixbuf *pixbuf = get_cover_art (group_it, art_width);
                 if (pixbuf) {
                     int pw = gdk_pixbuf_get_width (pixbuf);
                     int ph = gdk_pixbuf_get_height (pixbuf);
                     if (group_y < ph) {
-                        pw = min (width, pw);
+                        pw = min (art_width, pw);
                         if (group_y + h >= ph) {
                             ph = ph - group_y;
                         }
                         else {
                             ph = h;
                         }
-                        gdk_draw_pixbuf (drawable, GTK_WIDGET (listview)->style->white_gc, pixbuf, 0, group_y, x, y, pw, ph, GDK_RGB_DITHER_NONE, 0, 0);
+                        gdk_draw_pixbuf (drawable, GTK_WIDGET (listview)->style->white_gc, pixbuf, 0, sy, x + 5, art_y, pw, ph, GDK_RGB_DITHER_NONE, 0, 0);
                     }
                 }
             }
