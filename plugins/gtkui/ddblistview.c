@@ -1357,10 +1357,26 @@ void
 ddb_listview_list_mouse1_released (DdbListview *ps, int state, int ex, int ey, double time) {
     if (ps->dragwait) {
         ps->dragwait = 0;
-#if 0
-        int y = ey/ps->rowheight + ps->scrollpos;
-        ddb_listview_select_single (ps, y);
-#endif
+        DdbListviewGroup *grp;
+        int grp_index;
+        int sel;
+        if (!ddb_listview_list_pickpoint_y (ps, ey + ps->scrollpos, &grp, &grp_index, &sel)) {
+            ddb_listview_select_single (ps, sel);
+        }
+        else {
+            ps->binding->set_cursor (-1);
+            DdbListviewIter it = ps->binding->head ();
+            int idx = 0;
+            while (it) {
+                if (ps->binding->is_selected (it)) {
+                    ps->binding->select (it, 0);
+                    ddb_listview_draw_row (ps, idx, it);
+                    ps->binding->selection_changed (it, idx);
+                    it = PL_NEXT (it);
+                }
+                idx++;
+            }
+        }
     }
     else if (ps->areaselect) {
         ps->scroll_direction = 0;
