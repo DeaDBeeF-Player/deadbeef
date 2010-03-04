@@ -12,8 +12,8 @@
 #include "albumartorg.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(...)
 
 #define DEFAULT_COVER_PATH (PREFIX "/share/deadbeef/pixmaps/blank_cd.jpg")
 
@@ -30,11 +30,12 @@ typedef struct cover_query_s {
     struct cover_query_s *next;
 } cover_query_t;
 
-cover_query_t *queue;
-cover_query_t *queue_tail;
-uintptr_t mutex;
-int terminate;
-intptr_t tid;
+static cover_query_t *queue;
+static cover_query_t *queue_tail;
+static uintptr_t mutex;
+static uintptr_t cond;
+static int terminate;
+static intptr_t tid;
 
 void
 make_cache_dir_path (char *path, int size, const char *album, const char *artist) {
@@ -104,6 +105,7 @@ queue_add (const char *fname, const char *artist, const char *album, artwork_cal
         queue = queue_tail = q;
     }
     deadbeef->mutex_unlock (mutex);
+    deadbeef->cond_signal (cond);
 }
 
 void
@@ -148,7 +150,7 @@ fetch_to_file (const char *url, const char *filename)
     FILE *stream = fopen (temp, "wb");
     if (!stream)
     {
-        trace (stderr, "Could not open %s for writing\n", temp);
+        trace ("Could not open %s for writing\n", temp);
         return 0;
     }
     ret = fetch_to_stream (url, stream);
@@ -267,71 +269,84 @@ filter_jpg (const struct dirent *f)
 static void
 fetcher_thread (void *none)
 {
-    while (!terminate) {
-        if (!queue) {
-            usleep (100000);
-            continue;
-        }
-        cover_query_t *param = queue;
-        char path [1024];
-        struct dirent **files;
-        int files_count;
+    for (;;) {
+        trace ("artwork: waiting for signal\n");
+        deadbeef->cond_wait (cond, mutex);
+        trace ("artwork: cond signalled\n");
+        deadbeef->mutex_unlock (mutex);
+        while (!terminate && queue) {
+            cover_query_t *param = queue;
+            char path [1024];
+            struct dirent **files;
+            int files_count;
 
-        make_cache_dir_path (path, sizeof (path), param->album, param->artist);
-        trace ("cache folder: %s\n", path);
-        if (!check_dir (path, 0755)) {
-            queue_pop ();
-            trace ("failed to create folder for %s %s\n", param->album, param->artist);
-            continue;
-        }
-
-        trace ("fetching cover for %s %s\n", param->album, param->artist);
-        /* Searching in track directory */
-        strncpy (path, param->fname, sizeof (path));
-        char *slash = strrchr (path, '/');
-        if (slash) {
-            *slash = 0; // assuming at least one slash exist
-        }
-        trace ("scanning directory: %s\n", path);
-        files_count = scandir (path, &files, filter_jpg, alphasort);
-
-        if (files_count > 0) {
-            trace ("found cover for %s - %s in local folder\n", param->artist, param->album);
-            if (check_dir (path, 0755)) {
-                strcat (path, "/");
-                strcat (path, files[0]->d_name);
-                char cache_path[1024];
-                make_cache_path (cache_path, sizeof (cache_path), param->album, param->artist);
-                copy_file (path, cache_path);
-                int i;
-                for (i = 0; i < files_count; i++) {
-                    free (files [i]);
-                }
-                if (param->callback) {
-                    param->callback (param->fname, param->artist, param->album, param->user_data);
-                }
+            make_cache_dir_path (path, sizeof (path), param->album, param->artist);
+            trace ("cache folder: %s\n", path);
+            if (!check_dir (path, 0755)) {
                 queue_pop ();
+                trace ("failed to create folder for %s %s\n", param->album, param->artist);
                 continue;
             }
-        }
+
+            trace ("fetching cover for %s %s\n", param->album, param->artist);
+            /* Searching in track directory */
+            strncpy (path, param->fname, sizeof (path));
+            char *slash = strrchr (path, '/');
+            if (slash) {
+                *slash = 0; // assuming at least one slash exist
+            }
+            trace ("scanning directory: %s\n", path);
+            files_count = scandir (path, &files, filter_jpg, alphasort);
+
+            if (files_count > 0) {
+                trace ("found cover for %s - %s in local folder\n", param->artist, param->album);
+                if (check_dir (path, 0755)) {
+                    strcat (path, "/");
+                    strcat (path, files[0]->d_name);
+                    char cache_path[1024];
+                    make_cache_path (cache_path, sizeof (cache_path), param->album, param->artist);
+                    copy_file (path, cache_path);
+                    int i;
+                    for (i = 0; i < files_count; i++) {
+                        free (files [i]);
+                    }
+                    if (param->callback) {
+                        param->callback (param->fname, param->artist, param->album, param->user_data);
+                    }
+                    queue_pop ();
+                    continue;
+                }
+            }
 
 
-        make_cache_path (path, sizeof (path), param->album, param->artist);
+            make_cache_path (path, sizeof (path), param->album, param->artist);
 
-        if (!fetch_from_lastfm (param->artist, param->album, path)) {
-            if (!fetch_from_albumart_org (param->artist, param->album, path)) {
+            if (fetch_from_lastfm (param->artist, param->album, path)) {
+                trace ("art found on last.fm for %s %s\n", param->album, param->artist);
+            }
+            /*else if (fetch_from_albumart_org (param->artist, param->album, path)) {
+                trace ("art found on albumart.org for %s %s\n", param->album, param->artist);
+            }*/
+            else {
                 trace ("art not found for %s %s\n", param->album, param->artist);
+                if (!copy_file (DEFAULT_COVER_PATH, path)) {
+                    if (param->callback) {
+                        param->callback (param->fname, param->artist, param->album, param->user_data);
+                    }
+                }
                 queue_pop ();
-                copy_file (DEFAULT_COVER_PATH, path);
                 continue;
             }
-        }
 
-        trace ("downloaded art for %s %s\n", param->album, param->artist);
-        if (param->callback) {
-            param->callback (param->fname, param->artist, param->album, param->user_data);
+            trace ("downloaded art for %s %s\n", param->album, param->artist);
+            if (param->callback) {
+                param->callback (param->fname, param->artist, param->album, param->user_data);
+            }
+            queue_pop ();
         }
-        queue_pop ();
+        if (terminate) {
+            break;
+        }
     }
     tid = 0;
 }
@@ -347,7 +362,7 @@ get_album_art (const char *fname, const char *artist, const char *album, artwork
     if (!artist) {
         artist = "";
     }
-    trace ("looking for %s - %s\n", artist, album);
+//    trace ("looking for %s - %s\n", artist, album);
 
     /* Searching in cache */
     if (!*artist || !*album)
@@ -359,7 +374,7 @@ get_album_art (const char *fname, const char *artist, const char *album, artwork
     make_cache_path (path, sizeof (path), album, artist);
     struct stat stat_buf;
     if (0 == stat (path, &stat_buf)) {
-        trace ("found %s in cache\n", path);
+//        trace ("found %s in cache\n", path);
         return strdup (path);
     }
 
@@ -378,6 +393,8 @@ artwork_plugin_start (void)
 {
     terminate = 0;
     mutex = deadbeef->mutex_create ();
+    mutex = deadbeef->mutex_create_nonrecursive ();
+    cond = deadbeef->cond_create ();
     tid = deadbeef->thread_start (fetcher_thread, NULL);
 }
 
@@ -386,6 +403,7 @@ artwork_plugin_stop (void)
 {
     if (tid) {
         terminate = 1;
+        deadbeef->cond_signal (cond);
         deadbeef->thread_join (tid);
     }
     while (queue) {
@@ -394,6 +412,9 @@ artwork_plugin_stop (void)
     if (mutex) {
         deadbeef->mutex_free (mutex);
         mutex = 0;
+    }
+    if (cond) {
+        deadbeef->cond_free (cond);
     }
 }
 
