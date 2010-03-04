@@ -1580,17 +1580,25 @@ int
 ddb_listview_handle_keypress (DdbListview *ps, int keyval, int state) {
     int prev = ps->binding->cursor ();
     int cursor = prev;
+    GtkWidget *range = ps->scrollbar;
+    GtkAdjustment *adj = gtk_range_get_adjustment (GTK_RANGE (range));
     if (keyval == GDK_Down) {
         if (cursor < ps->binding->count () - 1) {
             cursor++;
+        }
+        else {
+            gtk_range_set_value (GTK_RANGE (range), adj->upper);
         }
     }
     else if (keyval == GDK_Up) {
         if (cursor > 0) {
             cursor--;
         }
-        else if (cursor < 0 && ps->binding->count () > 0) {
-            cursor = 0;
+        else {
+            gtk_range_set_value (GTK_RANGE (range), adj->lower);
+            if (cursor < 0 && ps->binding->count () > 0) {
+                cursor = 0;
+            }
         }
     }
     else if (keyval == GDK_Page_Down) {
@@ -1600,27 +1608,39 @@ ddb_listview_handle_keypress (DdbListview *ps, int keyval, int state) {
                 cursor = ps->binding->count () - 1;
             }
         }
+        else {
+            gtk_range_set_value (GTK_RANGE (range), adj->upper);
+        }
     }
     else if (keyval == GDK_Page_Up) {
         if (cursor > 0) {
             cursor -= 10;
             if (cursor < 0) {
+                gtk_range_set_value (GTK_RANGE (range), adj->lower);
                 cursor = 0;
             }
+        }
+        else {
+            if (cursor < 0 && ps->binding->count () > 0) {
+                cursor = 0;
+            }
+            gtk_range_set_value (GTK_RANGE (range), adj->lower);
         }
     }
     else if (keyval == GDK_End) {
         cursor = ps->binding->count () - 1;
+        gtk_range_set_value (GTK_RANGE (range), adj->upper);
     }
     else if (keyval == GDK_Home) {
         cursor = 0;
+        gtk_range_set_value (GTK_RANGE (range), adj->lower);
     }
     else if (keyval == GDK_Delete) {
         ps->binding->delete_selected ();
         cursor = ps->binding->cursor ();
     }
     else {
-        return 0 ;
+        return 0;
     }
     if (state & GDK_SHIFT_MASK) {
         if (cursor != prev) {
@@ -2129,31 +2149,25 @@ static gboolean
 ddb_listview_set_cursor_cb (gpointer data) {
     struct set_cursor_t *sc = (struct set_cursor_t *)data;
     sc->pl->binding->set_cursor (sc->cursor);
-    ddb_listview_select_single (sc->pl, sc->cursor);
     DdbListviewIter it;
-//    int minvis = sc->pl->scrollpos;
-//    int maxvis = sc->pl->scrollpos + sc->pl->nvisiblerows-1;
     DdbListview *ps = sc->pl;
-//    if (sc->prev >= minvis && sc->prev <= maxvis)
-    {
-        it = sc->pl->binding->get_for_idx (sc->prev);
-        ddb_listview_draw_row (sc->pl, sc->prev, it);
-        UNREF (it);
-    }
-//    if (sc->cursor >= minvis && sc->cursor <= maxvis)
-    {
-        it = sc->pl->binding->get_for_idx (sc->cursor);
-        ddb_listview_draw_row (sc->pl, sc->cursor, it);
-        UNREF (it);
-    }
 
+#if 0
+    it = sc->pl->binding->get_for_idx (sc->prev);
+    ddb_listview_draw_row (sc->pl, sc->prev, it);
+    UNREF (it);
+
+    it = sc->pl->binding->get_for_idx (sc->cursor);
+    ddb_listview_draw_row (sc->pl, sc->cursor, it);
+    UNREF (it);
+#endif
     int cursor_scroll = ddb_listview_get_row_pos (sc->pl, sc->cursor);
     int newscroll = sc->pl->scrollpos;
     if (cursor_scroll < sc->pl->scrollpos) {
         newscroll = cursor_scroll;
     }
-    else if (cursor_scroll >= sc->pl->scrollpos + sc->pl->list->allocation.height) {
-        newscroll = cursor_scroll - sc->pl->list->allocation.height + 1;
+    else if (cursor_scroll + sc->pl->rowheight >= sc->pl->scrollpos + sc->pl->list->allocation.height) {
+        newscroll = cursor_scroll + sc->pl->rowheight - sc->pl->list->allocation.height + 1;
         if (newscroll < 0) {
             newscroll = 0;
         }
@@ -2162,6 +2176,8 @@ ddb_listview_set_cursor_cb (gpointer data) {
         GtkWidget *range = sc->pl->scrollbar;
         gtk_range_set_value (GTK_RANGE (range), newscroll);
     }
+
+    ddb_listview_select_single (sc->pl, sc->cursor);
 
     free (data);
     return FALSE;

@@ -655,7 +655,7 @@ main_is_selected (DdbListviewIter it) {
 
 int
 main_get_group (DdbListviewIter it, char *str, int size) {
-    if (!group_by_str) {
+    if (!group_by_str || !group_by_str[0]) {
         return -1;
     }
     deadbeef->pl_format_title ((DB_playItem_t *)it, -1, str, size, -1, group_by_str);
