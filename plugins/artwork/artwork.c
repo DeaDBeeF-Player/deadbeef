@@ -348,7 +348,6 @@ fetcher_thread (void *none)
             break;
         }
     }
-    tid = 0;
 }
 
 char*
@@ -405,6 +404,7 @@ artwork_plugin_stop (void)
         terminate = 1;
         deadbeef->cond_signal (cond);
         deadbeef->thread_join (tid);
+        tid = 0;
     }
     while (queue) {
         queue_pop ();

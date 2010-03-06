@@ -165,7 +165,6 @@ loading_thread (void *none) {
             break;
         }
     }
-    tid = 0;
 }
 
 void
@@ -255,6 +254,7 @@ cover_art_free (void) {
         terminate = 1;
         deadbeef->cond_signal (cond);
         deadbeef->thread_join (tid);
+        tid = 0;
     }
     while (queue) {
         queue_pop ();
