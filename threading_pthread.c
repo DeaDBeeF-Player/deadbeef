@@ -90,8 +90,6 @@ mutex_create (void) {
 void
 mutex_free (uintptr_t _mtx) {
     pthread_mutex_t *mtx = (pthread_mutex_t *)_mtx;
-    mutex_lock (_mtx);
-    mutex_unlock (_mtx);
     pthread_mutex_destroy (mtx);
     free (mtx);
 }

@@ -2409,6 +2409,7 @@ ddb_listview_column_remove (DdbListview *listview, int idx) {
         assert (c);
         listview->columns = c->next;
         ddb_listview_column_free (listview, c);
+        listview->binding->columns_changed (listview);
         return;
     }
     c = listview->columns;

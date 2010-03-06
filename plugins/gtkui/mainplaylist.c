@@ -214,7 +214,7 @@ void
 on_edit_column_activate                (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    if (!active_column)
+    if (active_column == -1)
         return;
     GtkWidget *dlg = create_editcolumndlg ();
     gtk_window_set_title (GTK_WINDOW (dlg), "Edit column");
@@ -263,7 +263,7 @@ void
 on_remove_column_activate              (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    if (!active_column)
+    if (active_column == -1)
         return;
 
     ddb_listview_column_remove (last_playlist, active_column);
@@ -303,7 +303,7 @@ void main_draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbLis
         else {
             sy = group_y - 5;
         }
-        if (art_width > 0 && group_y < art_width - 10) {
+        if (art_width > 0) {
             if (group_it) {
                 int h = cwidth - group_y;
                 h = min (height, art_h);
@@ -314,7 +314,7 @@ void main_draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbLis
                 if (pixbuf) {
                     int pw = gdk_pixbuf_get_width (pixbuf);
                     int ph = gdk_pixbuf_get_height (pixbuf);
-                    if (group_y < ph) {
+                    if (sy < ph) {
                         pw = min (art_width, pw);
                         if (group_y + h >= ph) {
                             ph = ph - group_y;

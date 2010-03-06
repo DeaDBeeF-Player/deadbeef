@@ -49,6 +49,7 @@ typedef struct load_query_s {
 static cached_pixbuf_t cache[CACHE_SIZE];
 static int terminate = 0;
 static uintptr_t mutex;
+static uintptr_t cond;
 static uintptr_t tid;
 load_query_t *queue;
 load_query_t *tail;
@@ -75,6 +76,7 @@ queue_add (const char *fname, int width) {
         queue = tail = q;
     }
     deadbeef->mutex_unlock (mutex);
+    deadbeef->cond_signal (cond);
 }
 
 static void
@@ -101,62 +103,67 @@ redraw_playlist_cb (gpointer dt) {
 
 void
 loading_thread (void *none) {
-    while (!terminate) {
-        if (!queue) {
-            usleep (300000);
-            continue;
-        }
-        int cache_min = 0;
-        for (int i = 0; i < CACHE_SIZE; i++) {
-            if (!cache[i].pixbuf) {
-                cache_min = i;
-                break;
-            }
-            if (cache[cache_min].pixbuf && cache[i].pixbuf) {
-                if (cache[cache_min].tm.tv_sec > cache[i].tm.tv_sec) {
+    for (;;) {
+        trace ("covercache: waiting for signal\n");
+        deadbeef->cond_wait (cond, mutex);
+        trace ("covercache: signal received\n");
+        deadbeef->mutex_unlock (mutex);
+        while (!terminate && queue) {
+            int cache_min = 0;
+            for (int i = 0; i < CACHE_SIZE; i++) {
+                if (!cache[i].pixbuf) {
                     cache_min = i;
+                    break;
+                }
+                if (cache[cache_min].pixbuf && cache[i].pixbuf) {
+                    if (cache[cache_min].tm.tv_sec > cache[i].tm.tv_sec) {
+                        cache_min = i;
+                    }
                 }
             }
-        }
-        trace ("loading image %s\n", queue->fname);
+            trace ("loading image %s\n", queue->fname);
 
-        GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file (queue->fname, NULL);
-        if (!pixbuf) {
-            trace ("GDK failed to load pixbuf from file %s\n", queue->fname);
-        }
+            GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file (queue->fname, NULL);
+            if (!pixbuf) {
+                trace ("GDK failed to load pixbuf from file %s\n", queue->fname);
+            }
 
-        int w, h;
-        w = gdk_pixbuf_get_width (pixbuf);
-        h = gdk_pixbuf_get_height (pixbuf);
-        int width = queue->width;
-        if (w != width) {
-            int height;
-            if (w > h) {
-                height = width * h / w;
+            int w, h;
+            w = gdk_pixbuf_get_width (pixbuf);
+            h = gdk_pixbuf_get_height (pixbuf);
+            int width = queue->width;
+            if (w != width) {
+                int height;
+                if (w > h) {
+                    height = width * h / w;
+                }
+                else if (h > w) {
+                    height = width;
+                    width = height * w / h;
+                }
+                else {
+                    height = width;
+                }
+                GdkPixbuf *scaled = gdk_pixbuf_scale_simple (pixbuf, width, height, GDK_INTERP_BILINEAR);
+                g_object_unref (pixbuf);
+                pixbuf = scaled;
             }
-            else if (h > w) {
-                height = width;
-                width = height * w / h;
+            if (cache[cache_min].pixbuf) {
+                g_object_unref (cache[cache_min].pixbuf);
             }
-            else {
-                height = width;
+            if (cache[cache_min].fname) {
+                free (cache[cache_min].fname);
             }
-            GdkPixbuf *scaled = gdk_pixbuf_scale_simple (pixbuf, width, height, GDK_INTERP_BILINEAR);
-            g_object_unref (pixbuf);
-            pixbuf = scaled;
+            cache[cache_min].pixbuf = pixbuf;
+            cache[cache_min].fname = strdup (queue->fname);
+            gettimeofday (&cache[cache_min].tm, NULL);
+            cache[cache_min].width = queue->width;
+            queue_pop ();
+            g_idle_add (redraw_playlist_cb, NULL);
         }
-        if (cache[cache_min].pixbuf) {
-            g_object_unref (cache[cache_min].pixbuf);
+        if (terminate) {
+            break;
         }
-        if (cache[cache_min].fname) {
-            free (cache[cache_min].fname);
-        }
-        cache[cache_min].pixbuf = pixbuf;
-        cache[cache_min].fname = strdup (queue->fname);
-        gettimeofday (&cache[cache_min].tm, NULL);
-        cache[cache_min].width = queue->width;
-        queue_pop ();
-        g_idle_add (redraw_playlist_cb, NULL);
     }
     tid = 0;
 }
@@ -236,20 +243,23 @@ reset_cover_art_cache (void) {
 void
 cover_art_init (void) {
     terminate = 0;
-    mutex = deadbeef->mutex_create ();
+    mutex = deadbeef->mutex_create_nonrecursive ();
+    cond = deadbeef->cond_create ();
     tid = deadbeef->thread_start (loading_thread, NULL);
 }
 
 void
 cover_art_free (void) {
     trace ("terminating cover art loader thread\n");
-    terminate = 1;
     if (tid) {
+        terminate = 1;
+        deadbeef->cond_signal (cond);
         deadbeef->thread_join (tid);
     }
     while (queue) {
         queue_pop ();
     }
+    deadbeef->mutex_free (cond);
     deadbeef->mutex_free (mutex);
 }
 
