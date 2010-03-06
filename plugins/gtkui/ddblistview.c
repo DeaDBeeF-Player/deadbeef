@@ -317,6 +317,8 @@ ddb_listview_init(DdbListview *listview)
     listview->columns = NULL;
     listview->groups = NULL;
 
+    listview->block_redraw_on_scroll = 0;
+
     GtkWidget *hbox;
     GtkWidget *vbox;
 
@@ -662,10 +664,10 @@ ddb_listview_list_expose_event               (GtkWidget       *widget,
 }
 
 void
-ddb_listview_list_expose (DdbListview *ps, int x, int y, int w, int h) {
-    GtkWidget *widget = ps->list;
+ddb_listview_list_expose (DdbListview *listview, int x, int y, int w, int h) {
+    GtkWidget *widget = listview->list;
     if (widget->window) {
-        draw_drawable (widget->window, widget->style->black_gc, ps->backbuf, x, y, x, y, w, h);
+        draw_drawable (widget->window, widget->style->black_gc, listview->backbuf, x, y, x, y, w, h);
     }
 }
 
@@ -697,6 +699,10 @@ ddb_listview_vscroll_value_changed            (GtkRange        *widget,
 {
     DdbListview *ps = DDB_LISTVIEW (gtk_object_get_data (GTK_OBJECT (widget), "owner"));
     int newscroll = gtk_range_get_value (GTK_RANGE (widget));
+    if (ps->block_redraw_on_scroll) {
+        ps->scrollpos = newscroll; 
+        return;
+    }
     if (newscroll != ps->scrollpos) {
         GtkWidget *widget = ps->list;
         int di = newscroll - ps->scrollpos;
@@ -996,7 +1002,11 @@ ddb_listview_list_setup_vscroll (DdbListview *ps) {
         int h = list->allocation.height;
         int vheight = ps->fullheight;;
         GtkAdjustment *adj = (GtkAdjustment*)gtk_adjustment_new (gtk_range_get_value (GTK_RANGE (scroll)), 0, vheight, SCROLL_STEP, h/2, h);
+        if (ps->scrollpos >= vheight) {
+            ps->scrollpos = vheight-1;
+        }
         gtk_range_set_adjustment (GTK_RANGE (scroll), adj);
+        gtk_range_set_value (GTK_RANGE (scroll), ps->scrollpos);
         gtk_widget_show (scroll);
     }
 }
@@ -1569,6 +1579,10 @@ ddb_listview_list_mousemove (DdbListview *ps, GdkEventMotion *event) {
 
 void
 ddb_listview_list_set_hscroll (DdbListview *ps, int newscroll) {
+    if (ps->block_redraw_on_scroll) {
+        ps->hscrollpos = newscroll; 
+        return;
+    }
     if (newscroll != ps->hscrollpos) {
         ps->hscrollpos = newscroll;
         GtkWidget *widget = ps->list;
@@ -1989,7 +2003,10 @@ ddb_listview_header_motion_notify_event          (GtkWidget       *widget,
         if (c->minheight) {
             ddb_listview_build_groups (ps);
         }
+        ps->block_redraw_on_scroll = 1;
+        ddb_listview_list_setup_vscroll (ps);
         ddb_listview_list_setup_hscroll (ps);
+        ps->block_redraw_on_scroll = 0;
         ddb_listview_header_render (ps);
         ddb_listview_header_expose (ps, 0, 0, ps->header->allocation.width, ps->header->allocation.height);
         ddb_listview_list_render (ps, 0, 0, ps->list->allocation.width, ps->list->allocation.height);
