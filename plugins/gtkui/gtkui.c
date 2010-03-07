@@ -785,6 +785,8 @@ gtkui_thread (void *ctx) {
     playlist_refresh ();
 
     gtk_main ();
+    gtk_widget_destroy (mainwin);
+    gtk_widget_destroy (searchwin);
     cover_art_free ();
 #if HAVE_NOTIFY
     notify_uninit ();

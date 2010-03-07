@@ -673,6 +673,7 @@ plug_unload_all (void) {
         if (plugins->handle) {
             dlclose (plugins->handle);
         }
+        free (plugins);
         plugins = next;
     }
     mutex_free (mutex);

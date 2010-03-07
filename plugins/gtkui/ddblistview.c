@@ -268,8 +268,9 @@ ddb_listview_motion_notify_event        (GtkWidget       *widget,
 static void
 ddb_listview_class_init(DdbListviewClass *class)
 {
-  GtkTableClass *widget_class;
-  widget_class = (GtkTableClass *) class;
+  GtkTableClass *widget_class = (GtkTableClass *) class;
+  GtkObjectClass *object_class = (GtkObjectClass *) class;
+  object_class->destroy = ddb_listview_destroy;
 }
 
 static void
@@ -449,8 +450,8 @@ ddb_listview_destroy(GtkObject *object)
 
   class = gtk_type_class(gtk_widget_get_type());
 
-  if (GTK_OBJECT_CLASS(class)->destroy) {
-     (* GTK_OBJECT_CLASS(class)->destroy) (object);
+  if (GTK_OBJECT_CLASS (ddb_listview_parent_class)) {
+      GTK_OBJECT_CLASS (ddb_listview_parent_class)->destroy (object);
   }
 }
 
