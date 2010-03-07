@@ -18,6 +18,8 @@
 #ifndef __SEARCH_H
 #define __SEARCH_H
 
+#include "ddblistview.h"
+
 extern struct playItem_s *search_current;
 extern int search_count;
 
@@ -30,5 +32,11 @@ search_refresh (void);
 
 void
 search_restore_attrs (void);
+
+int
+search_get_idx (DdbListviewIter it);
+
+void
+search_playlist_init (GtkWidget *widget);
 
 #endif // __SEARCH_H

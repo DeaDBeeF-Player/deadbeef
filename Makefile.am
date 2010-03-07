@@ -22,7 +22,7 @@ SUBDIRS = ${MPGMAD_DIR}\
           ${CDDA_DIR}\
           ${OSS_DIR}\
           ${PULSE_DIR}\
-          plugins/artwork
+          ${ARTWORK_DIR}
 
 dumbpath=@top_srcdir@/dumb
 gmepath=@top_srcdir@/gme/Game_Music_Emu-0.5.2

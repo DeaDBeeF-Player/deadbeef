@@ -35,7 +35,7 @@ esac
 
 test "x$prefix" = xNONE && prefix=$ac_default_prefix
 
-dnl INSANE_CFLAGS="-Wcomment -Wchar-subscripts -Wunused-function -Wunused-value -Wuninitialized -Wtype-limits -Wbad-function-cast"
+INSANE_CFLAGS="-Wcomment -Wchar-subscripts -Wunused-function -Wunused-value -Wuninitialized -Wtype-limits -Wbad-function-cast"
 dnl INSANE_CXXFLAGS="-Wcomment -Wchar-subscripts -Wunused-function -Wunused-value -Wuninitialized -Wtype-limits"
 
 AC_SUBST(INSANE_CFLAGS)
@@ -262,6 +262,12 @@ if test ${HAVE_PULSE}; then
     AC_SUBST(PULSE_DIR)
 fi
 
+if test ${HAVE_CURL}; then
+    HAVE_ARTWORK=1
+    ARTWORK_DIR="plugins/artwork"
+    AC_SUBST(ARTWORK_DIR)
+fi
+
 dnl print summary
 echo
 echo "plugin summary:"
@@ -301,6 +307,7 @@ PRINT_PLUGIN_INFO([libnotify],[Current track notification],[test $HAVE_NOTIFY])
 PRINT_PLUGIN_INFO([ffmpeg],[ffmpeg codecs],[test $HAVE_FFMPEG])
 PRINT_PLUGIN_INFO([oss],[oss output plugin],[test "x$have_oss" = "xyes"])
 PRINT_PLUGIN_INFO([pulse],[PulseAudio output plugin],[test $HAVE_PULSE])
+PRINT_PLUGIN_INFO([artwork],[Cover art plugin],[test $HAVE_ARTWORK])
 echo
 
 AC_OUTPUT([

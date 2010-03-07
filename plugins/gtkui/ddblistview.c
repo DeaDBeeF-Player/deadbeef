@@ -35,20 +35,13 @@
 #include <sys/time.h>
 #include "ddblistview.h"
 #include "drawing.h"
-//#include "callbacks.h"
-//#include "interface.h"
-//#include "support.h"
-//#include "search.h"
-//#include "progress.h"
-//#include "../../session.h"
-//#include "parser.h"
-//#include "gtkui.h"
+
+#pragma GCC optimize("O0")
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
 #define DEFAULT_GROUP_TITLE_HEIGHT 30
-int GROUP_TITLE_HEIGHT = 0;
 #define SCROLL_STEP 20
 #define AUTOSCROLL_UPDATE_FREQ 0.01f
 
@@ -86,12 +79,10 @@ typedef struct _DdbListviewGroup DdbListviewGroup;
 
 static void ddb_listview_class_init(DdbListviewClass *klass);
 static void ddb_listview_init(DdbListview *listview);
-static void ddb_listview_size_request(GtkWidget *widget,
-        GtkRequisition *requisition);
-static void ddb_listview_size_allocate(GtkWidget *widget,
-        GtkAllocation *allocation);
-static void ddb_listview_realize(GtkWidget *widget);
-static void ddb_listview_paint(GtkWidget *widget);
+//static void ddb_listview_size_request(GtkWidget *widget, GtkRequisition *requisition);
+//static void ddb_listview_size_allocate(GtkWidget *widget, GtkAllocation *allocation);
+//static void ddb_listview_realize(GtkWidget *widget);
+//static void ddb_listview_paint(GtkWidget *widget);
 static void ddb_listview_destroy(GtkObject *object);
 
 // fwd decls
@@ -318,6 +309,7 @@ ddb_listview_init(DdbListview *listview)
     listview->groups = NULL;
 
     listview->block_redraw_on_scroll = 0;
+    listview->grouptitle_height = DEFAULT_GROUP_TITLE_HEIGHT;
 
     GtkWidget *hbox;
     GtkWidget *vbox;
@@ -533,7 +525,7 @@ ddb_listview_get_row_pos (DdbListview *listview, int row_idx) {
     DdbListviewGroup *grp = listview->groups;
     while (grp) {
         if (idx + grp->num_items > row_idx) {
-            return y + GROUP_TITLE_HEIGHT + (row_idx - idx) * listview->rowheight;
+            return y + listview->grouptitle_height + (row_idx - idx) * listview->rowheight;
         }
         y += grp->height;
         idx += grp->num_items;
@@ -555,7 +547,7 @@ ddb_listview_list_pickpoint_y (DdbListview *listview, int y, DdbListviewGroup **
         if (y >= grp_y && y < grp_y + h) {
             *group = grp;
             y -= grp_y;
-            if (y < GROUP_TITLE_HEIGHT) {
+            if (y < listview->grouptitle_height) {
                 *group_idx = -1;
                 *global_idx = -1;
             }
@@ -564,7 +556,7 @@ ddb_listview_list_pickpoint_y (DdbListview *listview, int y, DdbListviewGroup **
                 *global_idx = -1;
             }
             else {
-                *group_idx = (y - GROUP_TITLE_HEIGHT) / listview->rowheight;
+                *group_idx = (y - listview->grouptitle_height) / listview->rowheight;
                 *global_idx = idx + *group_idx;
             }
             return 0;
@@ -608,23 +600,25 @@ ddb_listview_list_render (DdbListview *listview, int x, int y, int w, int h) {
         if (grp_y >= y + h + listview->scrollpos) {
             break;
         }
-        if (grp_y + GROUP_TITLE_HEIGHT >= y + listview->scrollpos && grp_y < y + h + listview->scrollpos) {
-            ddb_listview_list_render_row_background (listview, NULL, idx & 1, 0, -listview->hscrollpos, grp_y - listview->scrollpos, listview->totalwidth, GROUP_TITLE_HEIGHT);
-            listview->binding->draw_group_title (listview, listview->backbuf, it, -listview->hscrollpos, grp_y - listview->scrollpos, listview->totalwidth, GROUP_TITLE_HEIGHT);
+        if (grp_y + listview->grouptitle_height >= y + listview->scrollpos && grp_y < y + h + listview->scrollpos) {
+            ddb_listview_list_render_row_background (listview, NULL, idx & 1, 0, -listview->hscrollpos, grp_y - listview->scrollpos, listview->totalwidth, listview->grouptitle_height);
+            if (listview->binding->draw_group_title && listview->grouptitle_height > 0) {
+                listview->binding->draw_group_title (listview, listview->backbuf, it, -listview->hscrollpos, grp_y - listview->scrollpos, listview->totalwidth, listview->grouptitle_height);
+            }
         }
         for (int i = 0; i < grp->num_items; i++) {
             ii++;
-//            if (grp_y + GROUP_TITLE_HEIGHT + (i+1) * listview->rowheight >= y + h + listview->scrollpos) {
+//            if (grp_y + listview->grouptitle_height + (i+1) * listview->rowheight >= y + h + listview->scrollpos) {
 //                break;
 //            }
-            if (grp_y + GROUP_TITLE_HEIGHT + i * listview->rowheight >= y + h + listview->scrollpos) {
+            if (grp_y + listview->grouptitle_height + i * listview->rowheight >= y + h + listview->scrollpos) {
                 break;
             }
-            if (grp_y + GROUP_TITLE_HEIGHT + (i+1) * listview->rowheight >= y + listview->scrollpos
-                    && grp_y + GROUP_TITLE_HEIGHT + i * listview->rowheight < y + h + listview->scrollpos) {
-                gdk_draw_rectangle (listview->backbuf, listview->list->style->bg_gc[GTK_STATE_NORMAL], TRUE, -listview->hscrollpos, grp_y + GROUP_TITLE_HEIGHT + i * listview->rowheight - listview->scrollpos, listview->totalwidth, listview->rowheight);
-                ddb_listview_list_render_row_background (listview, it, (idx + 1 + i) & 1, (abs_idx+i) == listview->binding->cursor () ? 1 : 0, -listview->hscrollpos, grp_y + GROUP_TITLE_HEIGHT + i * listview->rowheight - listview->scrollpos, listview->totalwidth, listview->rowheight);
-                ddb_listview_list_render_row_foreground (listview, it, grp->head, (idx + 1 + i) & 1, (idx+i) == listview->binding->cursor () ? 1 : 0, i * listview->rowheight, -listview->hscrollpos, grp_y + GROUP_TITLE_HEIGHT + i * listview->rowheight - listview->scrollpos, listview->totalwidth, listview->rowheight);
+            if (grp_y + listview->grouptitle_height + (i+1) * listview->rowheight >= y + listview->scrollpos
+                    && grp_y + listview->grouptitle_height + i * listview->rowheight < y + h + listview->scrollpos) {
+                gdk_draw_rectangle (listview->backbuf, listview->list->style->bg_gc[GTK_STATE_NORMAL], TRUE, -listview->hscrollpos, grp_y + listview->grouptitle_height + i * listview->rowheight - listview->scrollpos, listview->totalwidth, listview->rowheight);
+                ddb_listview_list_render_row_background (listview, it, (idx + 1 + i) & 1, (abs_idx+i) == listview->binding->cursor () ? 1 : 0, -listview->hscrollpos, grp_y + listview->grouptitle_height + i * listview->rowheight - listview->scrollpos, listview->totalwidth, listview->rowheight);
+                ddb_listview_list_render_row_foreground (listview, it, grp->head, (idx + 1 + i) & 1, (idx+i) == listview->binding->cursor () ? 1 : 0, i * listview->rowheight, -listview->hscrollpos, grp_y + listview->grouptitle_height + i * listview->rowheight - listview->scrollpos, listview->totalwidth, listview->rowheight);
             }
             DdbListviewIter next = listview->binding->next (it);
             listview->binding->unref (it);
@@ -636,10 +630,10 @@ ddb_listview_list_render (DdbListview *listview, int x, int y, int w, int h) {
         idx += grp->num_items + 1;
         abs_idx += grp->num_items;
 
-        int filler = grpheight - (GROUP_TITLE_HEIGHT + listview->rowheight * grp->num_items);
+        int filler = grpheight - (listview->grouptitle_height + listview->rowheight * grp->num_items);
         if (filler > 0) {
-            gtk_paint_flat_box (treeview->style, listview->backbuf, GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, treeview, "cell_even_ruled", x, grp_y - listview->scrollpos + GROUP_TITLE_HEIGHT + listview->rowheight * grp->num_items, w, filler);
-            ddb_listview_list_render_row_foreground (listview, NULL, grp->head, 0, 0, grp->num_items * listview->rowheight, -listview->hscrollpos, grp_y - listview->scrollpos + GROUP_TITLE_HEIGHT + listview->rowheight * grp->num_items, listview->totalwidth, filler);
+            gtk_paint_flat_box (treeview->style, listview->backbuf, GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, treeview, "cell_even_ruled", x, grp_y - listview->scrollpos + listview->grouptitle_height + listview->rowheight * grp->num_items, w, filler);
+            ddb_listview_list_render_row_foreground (listview, NULL, grp->head, 0, 0, grp->num_items * listview->rowheight, -listview->hscrollpos, grp_y - listview->scrollpos + listview->grouptitle_height + listview->rowheight * grp->num_items, listview->totalwidth, filler);
         }
 
         grp_y += grpheight;
@@ -1060,7 +1054,7 @@ ddb_listview_list_get_drawinfo (DdbListview *listview, int row, DdbListviewGroup
             *cursor = (row == listview->binding->cursor ()) ? 1 : 0;
             *group_y = idx_in_group * listview->rowheight;
             *x = -listview->hscrollpos;
-            *y += GROUP_TITLE_HEIGHT + (row - idx) * listview->rowheight;
+            *y += listview->grouptitle_height + (row - idx) * listview->rowheight;
             *w = listview->totalwidth;
             *h = listview->rowheight;
             return 0;
@@ -1139,7 +1133,7 @@ ddb_listview_list_render_row_foreground (DdbListview *ps, DdbListviewIter it, Dd
     int cidx = 0;
     for (c = ps->columns; c; c = c->next, cidx++) {
         int cw = c->width;
-        ps->binding->draw_column_data (ps, ps->backbuf, it, GROUP_TITLE_HEIGHT > 0 ? group_it : NULL, cidx, group_y, x, y, cw, h);
+        ps->binding->draw_column_data (ps, ps->backbuf, it, ps->grouptitle_height > 0 ? group_it : NULL, cidx, group_y, x, y, cw, h);
         x += cw;
     }
 }
@@ -2554,7 +2548,7 @@ ddb_listview_build_groups (DdbListview *listview) {
         }
     }
 
-    GROUP_TITLE_HEIGHT = DEFAULT_GROUP_TITLE_HEIGHT;
+    listview->grouptitle_height = DEFAULT_GROUP_TITLE_HEIGHT;
     DdbListviewIter it = listview->binding->head ();
     while (it) {
         int res = listview->binding->get_group (it, curr, sizeof (curr));
@@ -2565,21 +2559,21 @@ ddb_listview_build_groups (DdbListview *listview) {
             grp->head = it;
             listview->binding->ref (it);
             grp->num_items = listview->binding->count ();
-            GROUP_TITLE_HEIGHT = 0;
-            grp->height = GROUP_TITLE_HEIGHT + grp->num_items * listview->rowheight;
+            listview->grouptitle_height = 0;
+            grp->height = listview->grouptitle_height + grp->num_items * listview->rowheight;
 //            if (grp->height < min_height) {
 //                grp->height = min_height;
 //            }
             listview->fullheight = grp->height;
-            listview->fullheight += GROUP_TITLE_HEIGHT;
+            listview->fullheight += listview->grouptitle_height;
             return;
         }
         if (!grp || strcmp (str, curr)) {
             strcpy (str, curr);
             DdbListviewGroup *newgroup = malloc (sizeof (DdbListviewGroup));
             if (grp) {
-                if (grp->height - GROUP_TITLE_HEIGHT < min_height) {
-                    grp->height = min_height + GROUP_TITLE_HEIGHT;
+                if (grp->height - listview->grouptitle_height < min_height) {
+                    grp->height = min_height + listview->grouptitle_height;
                 }
                 listview->fullheight += grp->height;
                 grp->next = newgroup;
@@ -2592,7 +2586,7 @@ ddb_listview_build_groups (DdbListview *listview) {
             grp->head = it;
             listview->binding->ref (it);
             grp->num_items = 0;
-            grp->height = GROUP_TITLE_HEIGHT;
+            grp->height = listview->grouptitle_height;
         }
         grp->height += listview->rowheight;
         grp->num_items++;
@@ -2601,8 +2595,8 @@ ddb_listview_build_groups (DdbListview *listview) {
         it = next;
     }
     if (grp) {
-        if (grp->height - GROUP_TITLE_HEIGHT < min_height) {
-            grp->height = min_height + GROUP_TITLE_HEIGHT;
+        if (grp->height - listview->grouptitle_height < min_height) {
+            grp->height = min_height + listview->grouptitle_height;
         }
         listview->fullheight += grp->height;
     }

@@ -146,6 +146,7 @@ struct _DdbListview {
     struct _DdbListviewGroup *groups;
     int fullheight;
     int block_redraw_on_scroll;
+    int grouptitle_height;
 };
 
 struct _DdbListviewClass {

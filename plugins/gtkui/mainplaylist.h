@@ -28,4 +28,7 @@ main_playlist_free (void);
 void
 main_refresh (void);
 
+int
+main_get_idx (DdbListviewIter it);
+
 #endif

@@ -14,7 +14,8 @@ gtkui_la_SOURCES = gtkui.c gtkui.h\
 				   ddbtabstrip.c ddbtabstrip.h\
 				   ddbvolumebar.c ddbvolumebar.h\
 				   trkproperties.c trkproperties.h\
-				   coverart.c coverart.h
+				   coverart.c coverart.h\
+				   plcommon.c plcommon.h
 
 gtkui_la_LDFLAGS = -module
 
