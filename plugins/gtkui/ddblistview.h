@@ -83,6 +83,7 @@ typedef struct {
     void (*column_size_changed) (DdbListview *listview, int col);
     void (*col_sort) (int col, int sort_order, void *user_data);
     void (*col_free_user_data) (void *user_data);
+    void (*vscroll_changed) (int pos);
 } DdbListviewBinding;
 
 struct _DdbListviewColumn;
@@ -172,7 +173,9 @@ ddb_listview_handle_keypress (DdbListview *ps, int keyval, int state);
 void
 ddb_listview_set_cursor (DdbListview *pl, int cursor);
 void
-ddb_listview_scroll_to (DdbListview *listview, int pos);
+ddb_listview_scroll_to (DdbListview *listview, int rowpos);
+void
+ddb_listview_set_vscroll (DdbListview *listview, gboolean scroll);
 int
 ddb_listview_is_scrolling (DdbListview *listview);
 int

@@ -202,6 +202,14 @@ void main_col_free_user_data (void *data) {
     }
 }
 
+void
+main_vscroll_changed (int pos) {
+    int curr = deadbeef->plt_get_curr ();
+    char conf[100];
+    snprintf (conf, sizeof (conf), "playlist.scroll.%d", curr);
+    deadbeef->conf_set_int (conf, pos);
+}
+
 DdbListviewBinding main_binding = {
     // rows
     .count = main_get_count,
@@ -241,6 +249,7 @@ DdbListviewBinding main_binding = {
     .header_context_menu = header_context_menu,
     .list_context_menu = list_context_menu,
     .delete_selected = main_delete_selected,
+    .vscroll_changed = main_vscroll_changed,
 };
 
 void
@@ -248,15 +257,16 @@ main_playlist_init (GtkWidget *widget) {
     play16_pixbuf = draw_load_pixbuf ("play_16.png");
     pause16_pixbuf = draw_load_pixbuf ("pause_16.png");
     buffering16_pixbuf = draw_load_pixbuf ("buffering_16.png");
-    DdbListview *playlist = DDB_LISTVIEW(widget);
+
+    // make listview widget and bind it to data
+    DdbListview *listview = DDB_LISTVIEW(widget);
     main_binding.ref = (void (*) (DdbListviewIter))deadbeef->pl_item_ref;
     main_binding.unref = (void (*) (DdbListviewIter))deadbeef->pl_item_unref;
     main_binding.is_selected = (int (*) (DdbListviewIter))deadbeef->pl_is_selected;
-    ddb_listview_set_binding (playlist, &main_binding);
+    ddb_listview_set_binding (listview, &main_binding);
     lock_column_config = 1;
-    DB_conf_item_t *col = deadbeef->conf_find ("playlist.column.", NULL);
+    DB_conf_item_t *col = deadbeef->conf_find ("listview.column.", NULL);
     if (!col) {
-        DdbListview *listview = playlist;
         // create default set of columns
         add_column_helper (listview, "Playing", 50, DB_COLUMN_PLAYING, NULL, 0);
         add_column_helper (listview, "Artist / Album", 150, DB_COLUMN_ARTIST_ALBUM, NULL, 0);
@@ -266,22 +276,22 @@ main_playlist_init (GtkWidget *widget) {
     }
     else {
         while (col) {
-            append_column_from_textdef (playlist, col->value);
-            col = deadbeef->conf_find ("playlist.column.", col);
+            append_column_from_textdef (listview, col->value);
+            col = deadbeef->conf_find ("listview.column.", col);
         }
     }
     lock_column_config = 0;
 
     // FIXME: filepath should be in properties dialog, while tooltip should be
     // used to show text that doesn't fit in column width
-    if (deadbeef->conf_get_int ("playlist.showpathtooltip", 0)) {
+    if (deadbeef->conf_get_int ("listview.showpathtooltip", 0)) {
         GValue value = {0, };
         g_value_init (&value, G_TYPE_BOOLEAN);
         g_value_set_boolean (&value, TRUE);
         g_object_set_property (G_OBJECT (widget), "has-tooltip", &value);
         g_signal_connect (G_OBJECT (widget), "query-tooltip", G_CALLBACK (playlist_tooltip_handler), NULL);
     }
-    group_by_str = deadbeef->conf_get_str ("playlist.group_by", "");
+    group_by_str = deadbeef->conf_get_str ("listview.group_by", "");
 }
 
 void

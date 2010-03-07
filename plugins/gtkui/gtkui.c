@@ -482,8 +482,15 @@ gtkui_on_playlistchanged (DB_event_t *ev, uintptr_t data) {
 static gboolean
 playlistswitch_cb (gpointer none) {
     GtkWidget *tabstrip = lookup_widget (mainwin, "tabstrip");
+    int curr = deadbeef->plt_get_curr ();
+    char conf[100];
+    snprintf (conf, sizeof (conf), "playlist.scroll.%d", curr);
+    int scroll = deadbeef->conf_get_int (conf, 0);
+    printf ("scroll=%d\n", scroll);
     gdk_window_invalidate_rect (tabstrip->window, NULL, FALSE);
+    DdbListview *listview = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
     playlist_refresh ();
+    ddb_listview_set_vscroll (listview, scroll);
     search_refresh ();
     return FALSE;
 }
@@ -764,8 +771,17 @@ gtkui_thread (void *ctx) {
 
     searchwin = create_searchwin ();
     gtk_window_set_transient_for (GTK_WINDOW (searchwin), GTK_WINDOW (mainwin));
-    main_playlist_init (lookup_widget (mainwin, "playlist"));
-    search_playlist_init (lookup_widget (searchwin, "searchlist"));
+
+    // get saved scrollpos before creating listview, to avoid reset
+    int curr = deadbeef->plt_get_curr ();
+    char conf[100];
+    snprintf (conf, sizeof (conf), "playlist.scroll.%d", curr);
+    int scroll = deadbeef->conf_get_int (conf, 0);
+
+    DdbListview *main_playlist = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
+    main_playlist_init (GTK_WIDGET (main_playlist));
+    DdbListview *search_playlist = DDB_LISTVIEW (lookup_widget (searchwin, "searchlist"));
+    search_playlist_init (GTK_WIDGET (search_playlist));
 
     progress_init ();
     cover_art_init ();
@@ -783,6 +799,8 @@ gtkui_thread (void *ctx) {
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_PLAYLISTSWITCH, DB_CALLBACK (gtkui_on_playlistswitch), 0);
 
     playlist_refresh ();
+
+    ddb_listview_set_vscroll (main_playlist, scroll);
 
     gtk_main ();
     gtk_widget_destroy (mainwin);
