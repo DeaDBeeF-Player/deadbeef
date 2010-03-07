@@ -279,6 +279,8 @@ void main_selection_changed (DdbListviewIter it, int idx) {
     ddb_listview_draw_row (search, idx, it);
 }
 
+#define ART_PADDING 10
+
 void main_draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbListviewIter it, DdbListviewIter group_it, int column, int group_y, int x, int y, int width, int height) {
     const char *ctitle;
     int cwidth;
@@ -291,17 +293,17 @@ void main_draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbLis
     }
     if (cinf->id == DB_COLUMN_ALBUM_ART) {
         gtk_paint_flat_box (theme_treeview->style, drawable, GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, theme_treeview, "cell_even_ruled", x, y, width, height);
-        int art_width = width - 10;
-        int art_y = y;
+        int art_width = width - ART_PADDING * 2;
+        int art_y = y; // dest y
         int art_h = height;
-        int sy;
-        if (group_y < 5) {
-            art_y = y - group_y + 5;
+        int sy; // source y
+        if (group_y < ART_PADDING) {
+            art_y = y - group_y + ART_PADDING;
             art_h = height - (art_y - y);
             sy = group_y;
         }
         else {
-            sy = group_y - 5;
+            sy = group_y - ART_PADDING;
         }
         if (art_width > 0) {
             if (group_it) {
@@ -314,15 +316,13 @@ void main_draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbLis
                 if (pixbuf) {
                     int pw = gdk_pixbuf_get_width (pixbuf);
                     int ph = gdk_pixbuf_get_height (pixbuf);
-                    if (sy < ph) {
+                    if (sy < ph)
+                    {
                         pw = min (art_width, pw);
-                        if (group_y + h >= ph) {
-                            ph = ph - group_y;
-                        }
-                        else {
-                            ph = h;
-                        }
-                        gdk_draw_pixbuf (drawable, GTK_WIDGET (listview)->style->white_gc, pixbuf, 0, sy, x + 5, art_y, pw, ph, GDK_RGB_DITHER_NONE, 0, 0);
+                        ph -= sy;
+                        ph = min (ph, h);
+                        gdk_draw_pixbuf (drawable, GTK_WIDGET (listview)->style->white_gc, pixbuf, 0, sy, x + ART_PADDING, art_y, pw, ph, GDK_RGB_DITHER_NONE, 0, 0);
+//                        gdk_draw_rectangle (drawable, GTK_WIDGET (listview)->style->black_gc, FALSE, x + ART_PADDING, art_y, pw, ph);
                     }
                 }
             }
