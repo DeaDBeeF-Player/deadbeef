@@ -103,7 +103,7 @@ ddb_listview_list_render_row (DdbListview *ps, int row, DdbListviewIter it, int 
 void
 ddb_listview_list_track_dragdrop (DdbListview *ps, int y);
 void
-ddb_listview_list_mousemove (DdbListview *ps, GdkEventMotion *event);
+ddb_listview_list_mousemove (DdbListview *ps, GdkEventMotion *event, int x, int y);
 void
 ddb_listview_list_setup_vscroll (DdbListview *ps);
 void
@@ -1460,9 +1460,7 @@ ddb_listview_list_scroll_cb (gpointer data) {
 //    trace ("scroll to %d speed %f\n", sc, ps->scroll_direction);
     gtk_range_set_value (GTK_RANGE (ps->scrollbar), sc);
     if (ps->scroll_mode == 0) {
-        GdkEventMotion ev;
-        ev.y = ps->scroll_pointer_y;
-        ddb_listview_list_mousemove (ps, &ev);
+        ddb_listview_list_mousemove (ps, NULL, 0, ps->scroll_pointer_y);
     }
     else if (ps->scroll_mode == 1) {
         ddb_listview_list_track_dragdrop (ps, ps->scroll_pointer_y);
@@ -1483,10 +1481,10 @@ ddb_listview_list_scroll_cb (gpointer data) {
 }
 
 void
-ddb_listview_list_mousemove (DdbListview *ps, GdkEventMotion *event) {
+ddb_listview_list_mousemove (DdbListview *ps, GdkEventMotion *ev, int ex, int ey) {
     if (ps->dragwait) {
         GtkWidget *widget = ps->list;
-        if (gtk_drag_check_threshold (widget, ps->lastpos[0], event->x, ps->lastpos[1], event->y)) {
+        if (gtk_drag_check_threshold (widget, ps->lastpos[0], ex, ps->lastpos[1], ey)) {
             ps->dragwait = 0;
             GtkTargetEntry entry = {
                 .target = "STRING",
@@ -1494,14 +1492,14 @@ ddb_listview_list_mousemove (DdbListview *ps, GdkEventMotion *event) {
                 .info = TARGET_SAMEWIDGET
             };
             GtkTargetList *lst = gtk_target_list_new (&entry, 1);
-            gtk_drag_begin (widget, lst, GDK_ACTION_MOVE, TARGET_SAMEWIDGET, (GdkEvent *)event);
+            gtk_drag_begin (widget, lst, GDK_ACTION_MOVE, TARGET_SAMEWIDGET, (GdkEvent *)ev);
         }
     }
     else if (ps->areaselect) {
         DdbListviewGroup *grp;
         int grp_index;
         int sel;
-        if (ddb_listview_list_pickpoint_y (ps, event->y + ps->scrollpos, &grp, &grp_index, &sel) == -1) {
+        if (ddb_listview_list_pickpoint_y (ps, ey + ps->scrollpos, &grp, &grp_index, &sel) == -1) {
             return; // nothing was hit
         }
         {
@@ -1545,9 +1543,9 @@ ddb_listview_list_mousemove (DdbListview *ps, GdkEventMotion *event) {
             UNREF (it);
         }
 
-        if (event->y < 10) {
+        if (ey < 10) {
             ps->scroll_mode = 0;
-            ps->scroll_pointer_y = event->y;
+            ps->scroll_pointer_y = ey;
             // start scrolling up
             if (!ps->scroll_active) {
                 ps->scroll_direction = -1;
@@ -1556,9 +1554,9 @@ ddb_listview_list_mousemove (DdbListview *ps, GdkEventMotion *event) {
                 g_idle_add (ddb_listview_list_scroll_cb, ps);
             }
         }
-        else if (event->y > ps->list->allocation.height-10) {
+        else if (ey > ps->list->allocation.height-10) {
             ps->scroll_mode = 0;
-            ps->scroll_pointer_y = event->y;
+            ps->scroll_pointer_y = ey;
             // start scrolling up
             if (!ps->scroll_active) {
                 ps->scroll_direction = 1;
@@ -1931,6 +1929,7 @@ ddb_listview_header_motion_notify_event          (GtkWidget       *widget,
     int ev_x, ev_y;
     GdkModifierType ev_state;
 
+#if 0
     if (event->is_hint)
         gdk_window_get_pointer (event->window, &ev_x, &ev_y, &ev_state);
     else
@@ -1939,7 +1938,11 @@ ddb_listview_header_motion_notify_event          (GtkWidget       *widget,
         ev_y = event->y;
         ev_state = event->state;
     }
-
+#endif
+    ev_x = event->x;
+    ev_y = event->y;
+    ev_state = event->state;
+    gdk_event_request_motions (event);
 
     if ((ev_state & GDK_BUTTON1_MASK) && ps->header_prepare) {
         if (gtk_drag_check_threshold (widget, ev_x, ps->prev_header_x, 0, 0)) {
@@ -2297,8 +2300,11 @@ ddb_listview_motion_notify_event        (GtkWidget       *widget,
                                         GdkEventMotion  *event,
                                         gpointer         user_data)
 {
+    int x = event->x;
+    int y = event->y;
+    gdk_event_request_motions (event);
     DdbListview *ps = DDB_LISTVIEW (gtk_object_get_data (GTK_OBJECT (widget), "owner"));
-    ddb_listview_list_mousemove (ps, event);
+    ddb_listview_list_mousemove (ps, event, x, y);
     return FALSE;
 }
 
