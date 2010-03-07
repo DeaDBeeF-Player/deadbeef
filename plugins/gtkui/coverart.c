@@ -126,27 +126,36 @@ loading_thread (void *none) {
             GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file (queue->fname, NULL);
             if (!pixbuf) {
                 trace ("GDK failed to load pixbuf from file %s\n", queue->fname);
+                // make default empty image
+                pixbuf = gdk_pixbuf_new (GDK_COLORSPACE_RGB, FALSE, 8, 2, 2);
             }
-
-            int w, h;
-            w = gdk_pixbuf_get_width (pixbuf);
-            h = gdk_pixbuf_get_height (pixbuf);
-            int width = queue->width;
-            if (w != width) {
-                int height;
-                if (w > h) {
-                    height = width * h / w;
+            else {
+                int w, h;
+                w = gdk_pixbuf_get_width (pixbuf);
+                h = gdk_pixbuf_get_height (pixbuf);
+                int width = queue->width;
+                if (w != width) {
+                    int height;
+                    if (w > h) {
+                        height = width * h / w;
+                    }
+                    else if (h > w) {
+                        height = width;
+                        width = height * w / h;
+                    }
+                    else {
+                        height = width;
+                    }
+                    if (width < 5 || height < 5) {
+                        trace ("will not scale to %dx%d\n", width, height);
+                        queue_pop ();
+                        continue;
+                    }
+                    trace ("scaling %dx%d -> %dx%d\n", w, h, width, height);
+                    GdkPixbuf *scaled = gdk_pixbuf_scale_simple (pixbuf, width, height, GDK_INTERP_BILINEAR);
+                    g_object_unref (pixbuf);
+                    pixbuf = scaled;
                 }
-                else if (h > w) {
-                    height = width;
-                    width = height * w / h;
-                }
-                else {
-                    height = width;
-                }
-                GdkPixbuf *scaled = gdk_pixbuf_scale_simple (pixbuf, width, height, GDK_INTERP_BILINEAR);
-                g_object_unref (pixbuf);
-                pixbuf = scaled;
             }
             if (cache[cache_min].pixbuf) {
                 g_object_unref (cache[cache_min].pixbuf);

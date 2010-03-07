@@ -318,15 +318,14 @@ fetcher_thread (void *none)
                 }
             }
 
-
             make_cache_path (path, sizeof (path), param->album, param->artist);
 
             if (fetch_from_lastfm (param->artist, param->album, path)) {
                 trace ("art found on last.fm for %s %s\n", param->album, param->artist);
             }
-            /*else if (fetch_from_albumart_org (param->artist, param->album, path)) {
+            else if (fetch_from_albumart_org (param->artist, param->album, path)) {
                 trace ("art found on albumart.org for %s %s\n", param->album, param->artist);
-            }*/
+            }
             else {
                 trace ("art not found for %s %s\n", param->album, param->artist);
                 if (!copy_file (DEFAULT_COVER_PATH, path)) {
