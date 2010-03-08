@@ -38,6 +38,12 @@ typedef void * DdbTabStripColIter;
 
 struct _DdbTabStrip {
     GtkWidget parent;
+    int hscrollpos;
+    int dragging;
+    int prepare;
+    int dragpt[2];
+    int prev_x;
+    int movepos;
 };
 
 struct _DdbTabStripClass {

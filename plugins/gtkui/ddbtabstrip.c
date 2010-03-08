@@ -142,11 +142,15 @@ GtkWidget * ddb_tabstrip_new() {
 static void
 ddb_tabstrip_init(DdbTabStrip *tabstrip)
 {
+    tabstrip->hscrollpos = 0;
+    tabstrip->dragging = -1;
+    tabstrip->prepare = 0;
+    tabstrip->dragpt[0] = 0;
+    tabstrip->dragpt[1] = 0;
+    tabstrip->prev_x = 0;
+    tabstrip->movepos = 0;
 }
 
-//static int margin_size = 10;
-static int tab_dragging = -1;
-static int tab_movepos;
 static int tab_clicked = -1;
 static int text_left_padding = 4;
 static int text_right_padding = 0; // calculated from widget height
@@ -202,11 +206,25 @@ ddb_tabstrip_draw_tab (GtkWidget *widget, int selected, int x, int y, int w, int
     gdk_draw_lines (widget->window, inner_frame, points_frame2, 7);
 }
 
+int
+ddb_tabstrip_get_tab_width (DdbTabStrip *ts, int tab) {
+    int width;
+    char title[100];
+    deadbeef->plt_get_title (tab, title, sizeof (title));
+    int h = 0;
+    draw_get_text_extents (title, strlen (title), &width, &h);
+    width += text_left_padding + text_right_padding;
+    if (width < min_tab_size) {
+        width = min_tab_size;
+    }
+    return width;
+}
+
 void
 tabstrip_draw (GtkWidget *widget) {
+    DdbTabStrip *ts = DDB_TABSTRIP (widget);
     GdkDrawable *backbuf = widget->window;
-    int hscrollpos = 0;
-    int x = -hscrollpos;
+    int x = -ts->hscrollpos;
     int w = 0;
     int h = draw_get_font_size ();
     gtk_widget_set_size_request (widget, -1, h + 9 + 4);
@@ -241,7 +259,7 @@ tabstrip_draw (GtkWidget *widget) {
     }
     fullwidth += tab_overlap_size;
 
-    x = -hscrollpos + tabs_left_margin;
+    x = -ts->hscrollpos + tabs_left_margin;
 
     for (idx = 0; idx < cnt; idx++) {
         w = widths[idx];
@@ -265,13 +283,13 @@ tabstrip_draw (GtkWidget *widget) {
     gdk_draw_line (backbuf, widget->style->dark_gc[GTK_STATE_NORMAL], 0, widget->allocation.height-2, widget->allocation.width, widget->allocation.height-2);
     gdk_draw_line (backbuf, widget->style->light_gc[GTK_STATE_NORMAL], 0, widget->allocation.height-1, widget->allocation.width, widget->allocation.height-1);
     // calc position for drawin selected tab
-    x = -hscrollpos;
+    x = -ts->hscrollpos;
     for (idx = 0; idx < tab_selected; idx++) {
         x += widths[idx] - tab_overlap_size;
     }
     x += tabs_left_margin;
     // draw selected
-    {
+    if (ts->dragging < 0 || tab_selected != ts->dragging) {
         idx = tab_selected;
         w = widths[tab_selected];
         GdkRectangle area;
@@ -288,29 +306,37 @@ tabstrip_draw (GtkWidget *widget) {
         draw_set_fg_color (fg);
         draw_text (x + text_left_padding, y + h/2 - draw_get_font_size()/2 + text_vert_offset, w, 0, tab_title);
     }
+    else {
+        need_draw_moving = 1;
+    }
     if (need_draw_moving) {
-        x = -hscrollpos;
+        x = -ts->hscrollpos;
         for (idx = 0; idx < 10; idx++) {
             w = widths[idx];
-            if (idx == tab_dragging) {
+            if (idx == ts->dragging) {
+#if 0
                 // draw empty slot
                 if (x < widget->allocation.width) {
                     gtk_paint_box (widget->style, backbuf, GTK_STATE_ACTIVE, GTK_SHADOW_ETCHED_IN, NULL, widget, "button", x, 0, w, h);
                 }
-                x = tab_movepos;
+#endif
+                x += ts->movepos;
                 if (x >= widget->allocation.width) {
                     break;
                 }
                 if (w > 0) {
-                    gtk_paint_box (widget->style, backbuf, GTK_STATE_SELECTED, GTK_SHADOW_OUT, NULL, widget, "button", x, 0, w, h);
-                    GdkColor *gdkfg = &widget->style->fg[GTK_STATE_SELECTED];
-                    float fg[3] = {(float)gdkfg->red/0xffff, (float)gdkfg->green/0xffff, (float)gdkfg->blue/0xffff};
+//                    gtk_paint_box (widget->style, backbuf, GTK_STATE_SELECTED, GTK_SHADOW_OUT, NULL, widget, "button", x, 0, w, h);
+                    ddb_tabstrip_draw_tab (widget, 1, x, y, w, h);
+                    char tab_title[100];
+                    deadbeef->plt_get_title (idx, tab_title, sizeof (tab_title));
+                    GdkColor *color = &widget->style->text[GTK_STATE_NORMAL];
+                    float fg[3] = {(float)color->red/0xffff, (float)color->green/0xffff, (float)color->blue/0xffff};
                     draw_set_fg_color (fg);
-                    //draw_text (x + 5, h/2-draw_get_font_size()/2, tab_width-10, 0, tab_title);
+                    draw_text (x + text_left_padding, y + h/2 - draw_get_font_size()/2 + text_vert_offset, w, 0, tab_title);
                 }
                 break;
             }
-            x += w;
+            x += w - tab_overlap_size;
         }
     }
     draw_end ();
@@ -345,12 +371,18 @@ gboolean
 on_tabstrip_button_press_event           (GtkWidget       *widget,
                                         GdkEventButton  *event)
 {
+    DdbTabStrip *ts = DDB_TABSTRIP (widget);
     tab_clicked = get_tab_under_cursor (event->x);
     if (event->button == 1)
     {
         if (tab_clicked != -1) {
             deadbeef->plt_set_curr (tab_clicked);
         }
+        ts->dragpt[0] = event->x - ts->hscrollpos;
+        ts->dragpt[1] = event->y;
+        ts->prepare = 1;
+        ts->dragging = tab_clicked;
+        ts->prev_x = event->x;
     }
     else if (event->button == 3) {
         GtkWidget *menu = create_plmenu ();
@@ -364,8 +396,15 @@ gboolean
 on_tabstrip_button_release_event         (GtkWidget       *widget,
                                         GdkEventButton  *event)
 {
-
-  return FALSE;
+    DdbTabStrip *ts = DDB_TABSTRIP (widget);
+    if (event->button == 1) {
+        if (ts->prepare || ts->dragging >= 0) {
+            ts->dragging = -1;
+            ts->prepare = 0;
+            tabstrip_draw (widget);
+        }
+    }
+    return FALSE;
 }
 
 
@@ -391,7 +430,47 @@ gboolean
 on_tabstrip_motion_notify_event          (GtkWidget       *widget,
                                         GdkEventMotion  *event)
 {
-  return FALSE;
+    DdbTabStrip *ts = DDB_TABSTRIP (widget);
+    int ev_x, ev_y;
+    GdkModifierType ev_state;
+    ev_x = event->x;
+    ev_y = event->y;
+    ev_state = event->state;
+    gdk_event_request_motions (event);
+    if ((ev_state & GDK_BUTTON1_MASK) && ts->prepare) {
+        if (gtk_drag_check_threshold (widget, ev_x, ts->prev_x, 0, 0)) {
+            ts->prepare = 0;
+        }
+    }
+    if (!ts->prepare && ts->dragging >= 0) {
+//        gdk_window_set_cursor (widget->window, cursor_drag);
+        ts->movepos = ev_x - ts->dragpt[0];
+        int drag_width = ddb_tabstrip_get_tab_width (ts, ts->dragging);
+
+        // find closest tab to the left
+        int inspos = -1;
+        int x = 0;
+        int idx = 0;
+        int x1 = -1, x2 = -1;
+        int cnt = deadbeef->plt_get_count ();
+        for (idx = 0; idx < ts->dragging; idx++) {
+            int width = ddb_tabstrip_get_tab_width (ts, idx);
+            if (x < ts->movepos && x + width > ts->movepos) {
+                inspos = idx;
+                x1 = x;
+            }
+            else if (idx == ts->dragging) {
+                x2 = x;
+            }
+            x += drag_width;
+        }
+        if (inspos >= 0 && inspos != ts->dragging) {
+            //ddb_tabstrip_tab_move (ps, c, inspos);
+            //ts->dragging = inspos;
+        }
+        tabstrip_draw (widget);
+    }
+    return FALSE;
 }
 
 void
