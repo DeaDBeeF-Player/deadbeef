@@ -33,9 +33,9 @@
 #define trace(fmt,...)
 
 extern GtkWidget *theme_treeview;
-extern uintptr_t play16_pixbuf;
-extern uintptr_t pause16_pixbuf;
-extern uintptr_t buffering16_pixbuf;
+extern GdkPixbuf *play16_pixbuf;
+extern GdkPixbuf *pause16_pixbuf;
+extern GdkPixbuf *buffering16_pixbuf;
 
 void
 write_column_config (const char *name, int idx, const char *title, int width, int align_right, int id, const char *format) {
@@ -116,7 +116,7 @@ void draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbListview
     else if (it && it == deadbeef->streamer_get_playing_track () && cinf->id == DB_COLUMN_PLAYING) {
         int paused = deadbeef->get_output ()->state () == OUTPUT_STATE_PAUSED;
         int buffering = !deadbeef->streamer_ok_to_read (-1);
-        uintptr_t pixbuf;
+        GdkPixbuf *pixbuf;
         if (paused) {
             pixbuf = pause16_pixbuf;
         }
@@ -126,7 +126,7 @@ void draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbListview
         else {
             pixbuf = buffering16_pixbuf;
         }
-        draw_pixbuf ((uintptr_t)drawable, pixbuf, x + cwidth/2 - 8, y + height/2 - 8, 0, 0, 16, 16);
+        gdk_pixbuf_render_to_drawable (pixbuf, drawable, GTK_WIDGET (listview)->style->black_gc, 0, 0, x + cwidth/2 - 8, y + height/2 - 8, 16, 16, GDK_RGB_DITHER_NONE, 0, 0);
     }
     else if (it) {
         char text[1024];

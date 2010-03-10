@@ -40,6 +40,7 @@
 #include "../../session.h"
 #include "gtkui.h"
 #include "parser.h"
+#include "drawing.h"
 
 #define trace(...) { fprintf (stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
@@ -489,13 +490,15 @@ seekbar_draw (GtkWidget *widget) {
 	if (!cr) {
         return;
     }
+    GdkColor *clr_selection = gtkui_get_selection_color ();
+    GdkColor *clr_back = gtkui_get_back_color ();
+
     DB_playItem_t *trk = deadbeef->streamer_get_playing_track ();
     DB_fileinfo_t *dec = deadbeef->streamer_get_current_fileinfo ();
     if (!dec || !trk || deadbeef->pl_get_item_duration (trk) < 0) {
         clearlooks_rounded_rectangle (cr, 2, widget->allocation.height/2-4, widget->allocation.width-4, 8, 4, 0xff);
         // empty seekbar, just a frame
-        GdkColor *clr = &widget->style->base[GTK_STATE_SELECTED];
-        cairo_set_source_rgb (cr, clr->red/65535.f, clr->green/65535.f, clr->blue/65535.f );
+        cairo_set_source_rgb (cr, clr_selection->red/65535.f, clr_selection->green/65535.f, clr_selection->blue/65535.f );
         cairo_stroke (cr);
         cairo_destroy (cr);
         return;
@@ -519,8 +522,7 @@ seekbar_draw (GtkWidget *widget) {
     }
     // left
     if (pos > 0) {
-        GdkColor *clr = &widget->style->base[GTK_STATE_SELECTED];
-        cairo_set_source_rgb (cr, clr->red/65535.f, clr->green/65535.f, clr->blue/65535.f );
+        cairo_set_source_rgb (cr, clr_selection->red/65535.f, clr_selection->green/65535.f, clr_selection->blue/65535.f );
         cairo_rectangle (cr, 0, widget->allocation.height/2-4, pos, 8);
         cairo_clip (cr);
         clearlooks_rounded_rectangle (cr, 0, widget->allocation.height/2-4, widget->allocation.width, 8, 4, 0xff);
@@ -529,8 +531,7 @@ seekbar_draw (GtkWidget *widget) {
     }
 
     // right
-    GdkColor *clr = &widget->style->fg[GTK_STATE_NORMAL];
-    cairo_set_source_rgb (cr, clr->red/65535.f, clr->green/65535.f, clr->blue/65535.f );
+    cairo_set_source_rgb (cr, clr_back->red/65535.f, clr_back->green/65535.f, clr_back->blue/65535.f );
     cairo_rectangle (cr, pos, widget->allocation.height/2-4, widget->allocation.width-pos, 8);
     cairo_clip (cr);
     clearlooks_rounded_rectangle (cr, 0, widget->allocation.height/2-4, widget->allocation.width, 8, 4, 0xff);
@@ -791,326 +792,6 @@ on_helpwindow_key_press_event          (GtkWidget       *widget,
     return FALSE;
 }
 
-static GtkWidget *prefwin;
-
-static char alsa_device_names[100][64];
-static int num_alsa_devices;
-
-static void
-gtk_enum_sound_callback (const char *name, const char *desc, void *userdata) {
-    if (num_alsa_devices >= 100) {
-        fprintf (stderr, "wtf!! more than 100 alsa devices??\n");
-        return;
-    }
-    GtkComboBox *combobox = GTK_COMBO_BOX (userdata);
-    gtk_combo_box_append_text (combobox, desc);
-
-    if (!strcmp (deadbeef->conf_get_str ("alsa_soundcard", "default"), name)) {
-        gtk_combo_box_set_active (combobox, num_alsa_devices);
-    }
-
-    strncpy (alsa_device_names[num_alsa_devices], name, 63);
-    alsa_device_names[num_alsa_devices][63] = 0;
-    num_alsa_devices++;
-}
-
-void
-on_plugin_active_toggled (GtkCellRendererToggle *cell_renderer, gchar *path, GtkTreeModel *model) {
-    GtkTreePath *p = gtk_tree_path_new_from_string (path);
-    if (p) {
-        int *indices = gtk_tree_path_get_indices (p);
-        //gtk_tree_path_free (p); // wtf?? gtk crashes on this
-        if (indices) {
-            DB_plugin_t **plugins = deadbeef->plug_get_list ();
-            DB_plugin_t *plug = plugins[*indices];
-            gboolean state;
-            GtkTreeIter iter;
-            gtk_tree_model_get_iter (model, &iter, p);
-            gtk_tree_model_get (model, &iter, 0, &state, -1);
-            if (!deadbeef->plug_activate (plug, !state)) {
-                gtk_list_store_set (GTK_LIST_STORE (model), &iter, 0, !state, -1);
-            }
-        }
-        g_free (indices);
-    }
-}
-
-void
-preferences_fill_soundcards (void) {
-    if (!prefwin) {
-        return;
-    }
-    const char *s = deadbeef->conf_get_str ("alsa_soundcard", "default");
-    GtkComboBox *combobox = GTK_COMBO_BOX (lookup_widget (prefwin, "pref_soundcard"));
-    GtkTreeModel *mdl = gtk_combo_box_get_model (combobox);
-    gtk_list_store_clear (GTK_LIST_STORE (mdl));
-
-    gtk_combo_box_append_text (combobox, "Default Audio Device");
-    if (!strcmp (s, "default")) {
-        gtk_combo_box_set_active (combobox, 0);
-    }
-    num_alsa_devices = 1;
-    strcpy (alsa_device_names[0], "default");
-    if (deadbeef->get_output ()->enum_soundcards) {
-        deadbeef->get_output ()->enum_soundcards (gtk_enum_sound_callback, combobox);
-        gtk_widget_set_sensitive (GTK_WIDGET (combobox), TRUE);
-    }
-    else {
-        gtk_widget_set_sensitive (GTK_WIDGET (combobox), FALSE);
-    }
-}
-
-void
-on_preferences_activate                (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
-    if (prefwin) {
-        return;
-    }
-    GtkWidget *w = prefwin = create_prefwin ();
-    gtk_window_set_transient_for (GTK_WINDOW (w), GTK_WINDOW (mainwin));
-
-    GtkComboBox *combobox = NULL;
-
-    // output plugin selection
-    const char *outplugname = deadbeef->conf_get_str ("output_plugin", "ALSA output plugin");
-    combobox = GTK_COMBO_BOX (lookup_widget (w, "pref_output_plugin"));
-
-    DB_output_t **out_plugs = deadbeef->plug_get_output_list ();
-    for (int i = 0; out_plugs[i]; i++) {
-        gtk_combo_box_append_text (combobox, out_plugs[i]->plugin.name);
-        if (!strcmp (outplugname, out_plugs[i]->plugin.name)) {
-            gtk_combo_box_set_active (combobox, i);
-        }
-    }
-
-    // soundcard (output device) selection
-    preferences_fill_soundcards ();
-
-    g_signal_connect ((gpointer) combobox, "changed",
-            G_CALLBACK (on_pref_output_plugin_changed),
-            NULL);
-    GtkWidget *pref_soundcard = lookup_widget (prefwin, "pref_soundcard");
-    g_signal_connect ((gpointer) pref_soundcard, "changed",
-            G_CALLBACK (on_pref_soundcard_changed),
-            NULL);
-
-    // alsa resampling
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "pref_dynsamplerate")), deadbeef->conf_get_int ("playback.dynsamplerate", 0));
-
-    // src_quality
-    combobox = GTK_COMBO_BOX (lookup_widget (w, "pref_src_quality"));
-    gtk_combo_box_set_active (combobox, deadbeef->conf_get_int ("src_quality", 2));
-
-    // replaygain_mode
-    combobox = GTK_COMBO_BOX (lookup_widget (w, "pref_replaygain_mode"));
-    gtk_combo_box_set_active (combobox, deadbeef->conf_get_int ("replaygain_mode", 0));
-
-    // replaygain_scale
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "pref_replaygain_scale")), deadbeef->conf_get_int ("replaygain_scale", 1));
-
-    // close_send_to_tray
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "pref_close_send_to_tray")), deadbeef->conf_get_int ("close_send_to_tray", 0));
-
-    // network
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "pref_network_enableproxy")), deadbeef->conf_get_int ("network.proxy", 0));
-    gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "pref_network_proxyaddress")), deadbeef->conf_get_str ("network.proxy.address", ""));
-    gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "pref_network_proxyport")), deadbeef->conf_get_str ("network.proxy.port", "8080"));
-    combobox = GTK_COMBO_BOX (lookup_widget (w, "pref_network_proxytype"));
-    const char *type = deadbeef->conf_get_str ("network.proxy.type", "HTTP");
-    if (!strcasecmp (type, "HTTP")) {
-        gtk_combo_box_set_active (combobox, 0);
-    }
-    else if (!strcasecmp (type, "HTTP_1_0")) {
-        gtk_combo_box_set_active (combobox, 1);
-    }
-    else if (!strcasecmp (type, "SOCKS4")) {
-        gtk_combo_box_set_active (combobox, 2);
-    }
-    else if (!strcasecmp (type, "SOCKS5")) {
-        gtk_combo_box_set_active (combobox, 3);
-    }
-    else if (!strcasecmp (type, "SOCKS4A")) {
-        gtk_combo_box_set_active (combobox, 4);
-    }
-    else if (!strcasecmp (type, "SOCKS5_HOSTNAME")) {
-        gtk_combo_box_set_active (combobox, 5);
-    }
-
-    // list of plugins
-    GtkTreeView *tree = GTK_TREE_VIEW (lookup_widget (w, "pref_pluginlist"));
-    GtkCellRenderer *rend_text = gtk_cell_renderer_text_new ();
-#if 0
-    GtkCellRenderer *rend_toggle = gtk_cell_renderer_toggle_new ();
-    GtkListStore *store = gtk_list_store_new (3, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_BOOLEAN);
-    g_signal_connect ((gpointer)rend_toggle, "toggled",
-            G_CALLBACK (on_plugin_active_toggled),
-            store);
-    GtkTreeViewColumn *col1 = gtk_tree_view_column_new_with_attributes ("Active", rend_toggle, "active", 0, "activatable", 2, NULL);
-    GtkTreeViewColumn *col2 = gtk_tree_view_column_new_with_attributes ("Title", rend_text, "text", 1, NULL);
-    gtk_tree_view_append_column (tree, col1);
-    gtk_tree_view_append_column (tree, col2);
-    DB_plugin_t **plugins = deadbeef->plug_get_list ();
-    int i;
-    for (i = 0; plugins[i]; i++) {
-        GtkTreeIter it;
-        gtk_list_store_append (store, &it);
-        gtk_list_store_set (store, &it, 0, plugins[i]->inactive ? FALSE : TRUE, 1, plugins[i]->name, 2, plugins[i]->nostop ? FALSE : TRUE, -1);
-    }
-#else
-    GtkListStore *store = gtk_list_store_new (1, G_TYPE_STRING);
-    GtkTreeViewColumn *col2 = gtk_tree_view_column_new_with_attributes ("Title", rend_text, "text", 0, NULL);
-    gtk_tree_view_append_column (tree, col2);
-    DB_plugin_t **plugins = deadbeef->plug_get_list ();
-    int i;
-    for (i = 0; plugins[i]; i++) {
-        GtkTreeIter it;
-        gtk_list_store_append (store, &it);
-        gtk_list_store_set (store, &it, 0, plugins[i]->name, -1);
-    }
-#endif
-    gtk_tree_view_set_model (tree, GTK_TREE_MODEL (store));
-
-    gtk_widget_set_sensitive (lookup_widget (prefwin, "configure_plugin"), FALSE);
-//    gtk_widget_show (w);
-    gtk_dialog_run (GTK_DIALOG (prefwin));
-    gtk_widget_destroy (prefwin);
-    prefwin = NULL;
-}
-
-
-void
-on_pref_soundcard_changed              (GtkComboBox     *combobox,
-                                        gpointer         user_data)
-{
-    int active = gtk_combo_box_get_active (combobox);
-    if (active >= 0 && active < num_alsa_devices) {
-        const char *soundcard = deadbeef->conf_get_str ("alsa_soundcard", "default");
-        if (strcmp (soundcard, alsa_device_names[active])) {
-            deadbeef->conf_set_str ("alsa_soundcard", alsa_device_names[active]);
-            deadbeef->sendmessage (M_CONFIGCHANGED, 0, 0, 0);
-        }
-    }
-}
-
-void
-on_pref_output_plugin_changed          (GtkComboBox     *combobox,
-                                        gpointer         user_data)
-{
-    const char *outplugname = deadbeef->conf_get_str ("output_plugin", "ALSA output plugin");
-    int active = gtk_combo_box_get_active (combobox);
-
-    DB_output_t **out_plugs = deadbeef->plug_get_output_list ();
-    DB_output_t *prev = NULL;
-    DB_output_t *new = NULL;
-
-    for (int i = 0; out_plugs[i]; i++) {
-        if (!strcmp (out_plugs[i]->plugin.name, outplugname)) {
-            prev = out_plugs[i];
-        }
-        if (i == active) {
-            new = out_plugs[i];
-        }
-    }
-
-    if (!new) {
-        fprintf (stderr, "failed to find output plugin selected in preferences window\n");
-    }
-    else {
-        if (prev != new) {
-            deadbeef->conf_set_str ("output_plugin", new->plugin.name);
-            deadbeef->sendmessage (M_REINIT_SOUND, 0, 0, 0);
-        }
-    }
-}
-
-void
-on_pref_dynsamplerate_clicked        (GtkButton       *button,
-                                        gpointer         user_data)
-{
-    int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button));
-    deadbeef->conf_set_int ("playback.dynsamplerate", active);
-    deadbeef->sendmessage (M_CONFIGCHANGED, 0, 0, 0);
-}
-
-
-void
-on_pref_src_quality_changed            (GtkComboBox     *combobox,
-                                        gpointer         user_data)
-{
-    int active = gtk_combo_box_get_active (combobox);
-    deadbeef->conf_set_int ("src_quality", active == -1 ? 2 : active);
-    deadbeef->sendmessage (M_CONFIGCHANGED, 0, 0, 0);
-}
-
-
-void
-on_pref_replaygain_mode_changed        (GtkComboBox     *combobox,
-                                        gpointer         user_data)
-{
-    int active = gtk_combo_box_get_active (combobox);
-    deadbeef->conf_set_int ("replaygain_mode", active == -1 ? 0 : active);
-    deadbeef->sendmessage (M_CONFIGCHANGED, 0, 0, 0);
-}
-
-void
-on_pref_replaygain_scale_clicked       (GtkButton       *button,
-                                        gpointer         user_data)
-{
-    int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button));
-    deadbeef->conf_set_int ("replaygain_scale", active);
-    deadbeef->sendmessage (M_CONFIGCHANGED, 0, 0, 0);
-}
-
-
-void
-on_pref_close_send_to_tray_clicked     (GtkButton       *button,
-                                        gpointer         user_data)
-{
-    int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button));
-    deadbeef->conf_set_int ("close_send_to_tray", active);
-    deadbeef->sendmessage (M_CONFIGCHANGED, 0, 0, 0);
-}
-
-void
-on_pref_pluginlist_cursor_changed      (GtkTreeView     *treeview,
-                                        gpointer         user_data)
-{
-    GtkTreePath *path;
-    GtkTreeViewColumn *col;
-    gtk_tree_view_get_cursor (treeview, &path, &col);
-    if (!path || !col) {
-        // reset
-        return;
-    }
-    int *indices = gtk_tree_path_get_indices (path);
-    DB_plugin_t **plugins = deadbeef->plug_get_list ();
-    DB_plugin_t *p = plugins[*indices];
-    g_free (indices);
-    assert (p);
-    GtkWidget *w = prefwin;//GTK_WIDGET (gtk_widget_get_parent_window (GTK_WIDGET (treeview)));
-    assert (w);
-    GtkEntry *e = GTK_ENTRY (lookup_widget (w, "pref_plugin_descr"));
-    gtk_entry_set_text (e, p->descr ? p->descr : "");
-    e = GTK_ENTRY (lookup_widget (w, "pref_plugin_author"));
-    gtk_entry_set_text (e, p->author ? p->author : "");
-    e = GTK_ENTRY (lookup_widget (w, "pref_plugin_email"));
-    gtk_entry_set_text (e, p->email ? p->email : "");
-    e = GTK_ENTRY (lookup_widget (w, "pref_plugin_website"));
-    gtk_entry_set_text (e, p->website ? p->website : "");
-
-    gtk_widget_set_sensitive (lookup_widget (prefwin, "configure_plugin"), p->configdialog ? TRUE : FALSE);
-}
-
-gboolean
-on_prefwin_delete_event                (GtkWidget       *widget,
-                                        GdkEvent        *event,
-                                        gpointer         user_data)
-{
-    prefwin = NULL;
-    return FALSE;
-}
-
 void
 on_column_id_changed                   (GtkComboBox     *combobox,
                                         gpointer         user_data)
@@ -1197,37 +878,6 @@ on_prefwin_key_press_event             (GtkWidget       *widget,
     }
     return FALSE;
 }
-
-void
-on_pref_close_clicked                  (GtkButton       *button,
-                                        gpointer         user_data)
-{
-    gtk_widget_hide (prefwin);
-    gtk_widget_destroy (prefwin);
-}
-
-
-void
-on_configure_plugin_clicked            (GtkButton       *button,
-                                        gpointer         user_data)
-{
-    GtkWidget *w = prefwin;
-    GtkTreeView *treeview = GTK_TREE_VIEW (lookup_widget (w, "pref_pluginlist"));
-    GtkTreePath *path;
-    GtkTreeViewColumn *col;
-    gtk_tree_view_get_cursor (treeview, &path, &col);
-    if (!path || !col) {
-        // reset
-        return;
-    }
-    int *indices = gtk_tree_path_get_indices (path);
-    DB_plugin_t **plugins = deadbeef->plug_get_list ();
-    DB_plugin_t *p = plugins[*indices];
-    if (p->configdialog) {
-        plugin_configure (prefwin, p);
-    }
-}
-
 
 gboolean
 on_mainwin_window_state_event          (GtkWidget       *widget,
@@ -1327,5 +977,14 @@ create_volumebar_widget (gchar *widget_name, gchar *string1, gchar *string2,
                 gint int1, gint int2)
 {
     return ddb_volumebar_new ();
+}
+
+
+
+void
+on_mainwin_realize                     (GtkWidget       *widget,
+                                        gpointer         user_data)
+{
+    gtkui_init_theme_colors ();
 }
 

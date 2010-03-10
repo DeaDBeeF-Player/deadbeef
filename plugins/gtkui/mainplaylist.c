@@ -35,9 +35,9 @@
 
 #define min(x,y) ((x)<(y)?(x):(y))
 
-uintptr_t play16_pixbuf;
-uintptr_t pause16_pixbuf;
-uintptr_t buffering16_pixbuf;
+GdkPixbuf *play16_pixbuf;
+GdkPixbuf *pause16_pixbuf;
+GdkPixbuf *buffering16_pixbuf;
 
 // HACK!!
 extern GtkWidget *theme_treeview;
@@ -254,9 +254,9 @@ DdbListviewBinding main_binding = {
 
 void
 main_playlist_init (GtkWidget *widget) {
-    play16_pixbuf = draw_load_pixbuf ("play_16.png");
-    pause16_pixbuf = draw_load_pixbuf ("pause_16.png");
-    buffering16_pixbuf = draw_load_pixbuf ("buffering_16.png");
+    play16_pixbuf = create_pixbuf ("play_16.png");
+    pause16_pixbuf = create_pixbuf ("pause_16.png");
+    buffering16_pixbuf = create_pixbuf ("buffering_16.png");
 
     // make listview widget and bind it to data
     DdbListview *listview = DDB_LISTVIEW(widget);

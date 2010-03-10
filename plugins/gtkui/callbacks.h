@@ -717,3 +717,31 @@ create_tabstrip_widget (gchar *widget_name, gchar *string1, gchar *string2,
 GtkWidget*
 create_volumebar_widget (gchar *widget_name, gchar *string1, gchar *string2,
                 gint int1, gint int2);
+
+void
+on_color_light_color_set               (GtkColorButton  *colorbutton,
+                                        gpointer         user_data);
+
+void
+on_color_mid_color_set                 (GtkColorButton  *colorbutton,
+                                        gpointer         user_data);
+
+void
+on_color_dark_color_set                (GtkColorButton  *colorbutton,
+                                        gpointer         user_data);
+
+void
+on_color_selection_color_set           (GtkColorButton  *colorbutton,
+                                        gpointer         user_data);
+
+void
+on_color_back_color_set                (GtkColorButton  *colorbutton,
+                                        gpointer         user_data);
+
+void
+on_override_gtk_colors_toggled         (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);
+
+void
+on_mainwin_realize                     (GtkWidget       *widget,
+                                        gpointer         user_data);

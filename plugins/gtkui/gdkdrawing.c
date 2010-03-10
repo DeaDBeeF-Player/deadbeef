@@ -21,9 +21,11 @@
 #endif
 
 #include <gtk/gtk.h>
-#include <gdk/gdkkeysyms.h>
+//#include <gdk/gdkkeysyms.h>
+#include <string.h>
 #include "drawing.h"
 #include "support.h"
+#include "gtkui.h"
 
 static GdkDrawable *drawable;
 static GdkGC *gc;
@@ -56,11 +58,6 @@ draw_end (void) {
 void
 draw_copy (uintptr_t dest_canvas, uintptr_t src_canvas, int dx, int dy, int sx, int sy, int w, int h) {
     gdk_draw_drawable (GDK_DRAWABLE (dest_canvas), gc, GDK_DRAWABLE (src_canvas), dx, dy, sx, sy, w, h);
-}
-
-uintptr_t
-draw_load_pixbuf (const char *fname) {
-    return (uintptr_t)create_pixbuf (fname);
 }
 
 void
@@ -118,7 +115,7 @@ draw_get_font_size (void) {
     float dpi = gdk_screen_get_resolution (screen);
     GtkStyle *style = gtk_widget_get_default_style ();
     PangoFontDescription *desc = style->font_desc;
-    return (float)pango_font_description_get_size (desc) / PANGO_SCALE * dpi / 72;
+    return (float)(pango_font_description_get_size (desc) / PANGO_SCALE * dpi / 72);
 }
 
 void
@@ -150,4 +147,74 @@ draw_get_text_extents (const char *text, int len, int *w, int *h) {
     pango_layout_get_pixel_extents (pangolayout, &ink, &log);
     *w = ink.width;
     *h = ink.height;
+}
+
+static GdkColor gtkui_back_color;
+static GdkColor gtkui_selection_color;
+static GdkColor gtkui_dark_color;
+static GdkColor gtkui_mid_color;
+static GdkColor gtkui_light_color;
+
+void
+gtkui_init_theme_colors (void) {
+    int override = deadbeef->conf_get_int ("gtkui.override_theme_colors", 0);
+
+    extern GtkWidget *mainwin;
+    GtkStyle *style = mainwin->style;
+    char color_text[100];
+    const char *clr;
+
+    if (!override) {
+        memcpy (&gtkui_selection_color, &style->base[GTK_STATE_SELECTED], sizeof (GdkColor));
+        memcpy (&gtkui_back_color, &style->fg[GTK_STATE_NORMAL], sizeof (GdkColor));
+        memcpy (&gtkui_dark_color, &style->dark[GTK_STATE_NORMAL], sizeof (GdkColor));
+        memcpy (&gtkui_mid_color, &style->mid[GTK_STATE_NORMAL], sizeof (GdkColor));
+        memcpy (&gtkui_light_color, &style->light[GTK_STATE_NORMAL], sizeof (GdkColor));
+    }
+    else {
+        snprintf (color_text, sizeof (color_text), "%d %d %d", style->base[GTK_STATE_SELECTED].red, style->base[GTK_STATE_SELECTED].green, style->base[GTK_STATE_SELECTED].blue);
+        clr = deadbeef->conf_get_str ("gtkui.color.selection", color_text);
+        sscanf (clr, "%d %d %d", &gtkui_selection_color.red, &gtkui_selection_color.green, &gtkui_selection_color.blue);
+
+        snprintf (color_text, sizeof (color_text), "%d %d %d", style->fg[GTK_STATE_NORMAL].red, style->fg[GTK_STATE_NORMAL].green, style->fg[GTK_STATE_NORMAL].blue);
+        clr = deadbeef->conf_get_str ("gtkui.color.back", color_text);
+        sscanf (clr, "%d %d %d", &gtkui_back_color.red, &gtkui_back_color.green, &gtkui_back_color.blue);
+
+        snprintf (color_text, sizeof (color_text), "%d %d %d", style->dark[GTK_STATE_NORMAL].red, style->dark[GTK_STATE_NORMAL].green, style->dark[GTK_STATE_NORMAL].blue);
+        clr = deadbeef->conf_get_str ("gtkui.color.dark", color_text);
+        sscanf (clr, "%d %d %d", &gtkui_dark_color.red, &gtkui_dark_color.green, &gtkui_dark_color.blue);
+
+        snprintf (color_text, sizeof (color_text), "%d %d %d", style->mid[GTK_STATE_NORMAL].red, style->mid[GTK_STATE_NORMAL].green, style->mid[GTK_STATE_NORMAL].blue);
+        clr = deadbeef->conf_get_str ("gtkui.color.mid", color_text);
+        sscanf (clr, "%d %d %d", &gtkui_mid_color.red, &gtkui_mid_color.green, &gtkui_mid_color.blue);
+
+        snprintf (color_text, sizeof (color_text), "%d %d %d", style->light[GTK_STATE_NORMAL].red, style->light[GTK_STATE_NORMAL].green, style->light[GTK_STATE_NORMAL].blue);
+        clr = deadbeef->conf_get_str ("gtkui.color.light", color_text);
+        sscanf (clr, "%d %d %d", &gtkui_light_color.red, &gtkui_light_color.green, &gtkui_light_color.blue);
+    }
+}
+
+GdkColor *
+gtkui_get_back_color (void) {
+    return &gtkui_back_color;
+}
+
+GdkColor *
+gtkui_get_selection_color (void) {
+    return &gtkui_selection_color;
+}
+
+GdkColor *
+gtkui_get_dark_color (void) {
+    return &gtkui_dark_color;
+}
+
+GdkColor *
+gtkui_get_mid_color (void) {
+    return &gtkui_mid_color;
+}
+
+GdkColor *
+gtkui_get_light_color (void) {
+    return &gtkui_light_color;
 }

@@ -531,6 +531,9 @@ create_mainwin (void)
   g_signal_connect ((gpointer) mainwin, "window_state_event",
                     G_CALLBACK (on_mainwin_window_state_event),
                     NULL);
+  g_signal_connect ((gpointer) mainwin, "realize",
+                    G_CALLBACK (on_mainwin_realize),
+                    NULL);
   g_signal_connect ((gpointer) open, "activate",
                     G_CALLBACK (on_open_activate),
                     NULL);
@@ -1446,6 +1449,20 @@ create_prefwin (void)
   GtkWidget *label39;
   GtkWidget *vbox9;
   GtkWidget *pref_close_send_to_tray;
+  GtkWidget *frame3;
+  GtkWidget *alignment1;
+  GtkWidget *colors_table;
+  GtkWidget *color_light;
+  GtkWidget *color_mid;
+  GtkWidget *color_dark;
+  GtkWidget *color_selection;
+  GtkWidget *label43;
+  GtkWidget *label44;
+  GtkWidget *label45;
+  GtkWidget *label46;
+  GtkWidget *color_back;
+  GtkWidget *label47;
+  GtkWidget *override_theme_colors;
   GtkWidget *label2;
   GtkWidget *vbox11;
   GtkWidget *pref_network_enableproxy;
@@ -1591,6 +1608,91 @@ create_prefwin (void)
   pref_close_send_to_tray = gtk_check_button_new_with_mnemonic ("Close minimizes to tray");
   gtk_widget_show (pref_close_send_to_tray);
   gtk_box_pack_start (GTK_BOX (vbox9), pref_close_send_to_tray, FALSE, FALSE, 0);
+
+  frame3 = gtk_frame_new (NULL);
+  gtk_widget_show (frame3);
+  gtk_box_pack_start (GTK_BOX (vbox9), frame3, FALSE, TRUE, 0);
+  gtk_frame_set_shadow_type (GTK_FRAME (frame3), GTK_SHADOW_IN);
+
+  alignment1 = gtk_alignment_new (0.5, 0.5, 1, 1);
+  gtk_widget_show (alignment1);
+  gtk_container_add (GTK_CONTAINER (frame3), alignment1);
+  gtk_alignment_set_padding (GTK_ALIGNMENT (alignment1), 0, 0, 12, 0);
+
+  colors_table = gtk_table_new (2, 5, FALSE);
+  gtk_widget_show (colors_table);
+  gtk_container_add (GTK_CONTAINER (alignment1), colors_table);
+  gtk_container_set_border_width (GTK_CONTAINER (colors_table), 12);
+  gtk_table_set_row_spacings (GTK_TABLE (colors_table), 8);
+
+  color_light = gtk_color_button_new ();
+  gtk_widget_show (color_light);
+  gtk_table_attach (GTK_TABLE (colors_table), color_light, 3, 4, 1, 2,
+                    (GtkAttachOptions) (GTK_EXPAND),
+                    (GtkAttachOptions) (0), 0, 0);
+
+  color_mid = gtk_color_button_new ();
+  gtk_widget_show (color_mid);
+  gtk_table_attach (GTK_TABLE (colors_table), color_mid, 2, 3, 1, 2,
+                    (GtkAttachOptions) (GTK_EXPAND),
+                    (GtkAttachOptions) (0), 0, 0);
+
+  color_dark = gtk_color_button_new ();
+  gtk_widget_show (color_dark);
+  gtk_table_attach (GTK_TABLE (colors_table), color_dark, 1, 2, 1, 2,
+                    (GtkAttachOptions) (GTK_EXPAND),
+                    (GtkAttachOptions) (0), 0, 0);
+
+  color_selection = gtk_color_button_new ();
+  gtk_widget_show (color_selection);
+  gtk_table_attach (GTK_TABLE (colors_table), color_selection, 0, 1, 1, 2,
+                    (GtkAttachOptions) (GTK_EXPAND),
+                    (GtkAttachOptions) (0), 0, 0);
+
+  label43 = gtk_label_new ("Selection");
+  gtk_widget_show (label43);
+  gtk_table_attach (GTK_TABLE (colors_table), label43, 0, 1, 0, 1,
+                    (GtkAttachOptions) (GTK_EXPAND),
+                    (GtkAttachOptions) (0), 0, 0);
+  gtk_misc_set_alignment (GTK_MISC (label43), 0, 0.5);
+
+  label44 = gtk_label_new ("Dark");
+  gtk_widget_show (label44);
+  gtk_table_attach (GTK_TABLE (colors_table), label44, 1, 2, 0, 1,
+                    (GtkAttachOptions) (GTK_EXPAND),
+                    (GtkAttachOptions) (0), 0, 0);
+  gtk_misc_set_alignment (GTK_MISC (label44), 0, 0.5);
+
+  label45 = gtk_label_new ("Middle");
+  gtk_widget_show (label45);
+  gtk_table_attach (GTK_TABLE (colors_table), label45, 2, 3, 0, 1,
+                    (GtkAttachOptions) (GTK_EXPAND),
+                    (GtkAttachOptions) (0), 0, 0);
+  gtk_misc_set_alignment (GTK_MISC (label45), 0, 0.5);
+
+  label46 = gtk_label_new ("Light");
+  gtk_widget_show (label46);
+  gtk_table_attach (GTK_TABLE (colors_table), label46, 3, 4, 0, 1,
+                    (GtkAttachOptions) (GTK_EXPAND),
+                    (GtkAttachOptions) (0), 0, 0);
+  gtk_misc_set_alignment (GTK_MISC (label46), 0, 0.5);
+
+  color_back = gtk_color_button_new ();
+  gtk_widget_show (color_back);
+  gtk_table_attach (GTK_TABLE (colors_table), color_back, 4, 5, 1, 2,
+                    (GtkAttachOptions) (GTK_EXPAND),
+                    (GtkAttachOptions) (0), 0, 0);
+
+  label47 = gtk_label_new ("Background");
+  gtk_widget_show (label47);
+  gtk_table_attach (GTK_TABLE (colors_table), label47, 4, 5, 0, 1,
+                    (GtkAttachOptions) (GTK_EXPAND),
+                    (GtkAttachOptions) (0), 0, 0);
+  gtk_misc_set_alignment (GTK_MISC (label47), 0, 0.5);
+
+  override_theme_colors = gtk_check_button_new_with_mnemonic ("Override GTK+ theme colors in custom widgets");
+  gtk_widget_show (override_theme_colors);
+  gtk_frame_set_label_widget (GTK_FRAME (frame3), override_theme_colors);
 
   label2 = gtk_label_new ("GUI");
   gtk_widget_show (label2);
@@ -1775,6 +1877,24 @@ create_prefwin (void)
   g_signal_connect ((gpointer) pref_close_send_to_tray, "clicked",
                     G_CALLBACK (on_pref_close_send_to_tray_clicked),
                     NULL);
+  g_signal_connect ((gpointer) color_light, "color_set",
+                    G_CALLBACK (on_color_light_color_set),
+                    NULL);
+  g_signal_connect ((gpointer) color_mid, "color_set",
+                    G_CALLBACK (on_color_mid_color_set),
+                    NULL);
+  g_signal_connect ((gpointer) color_dark, "color_set",
+                    G_CALLBACK (on_color_dark_color_set),
+                    NULL);
+  g_signal_connect ((gpointer) color_selection, "color_set",
+                    G_CALLBACK (on_color_selection_color_set),
+                    NULL);
+  g_signal_connect ((gpointer) color_back, "color_set",
+                    G_CALLBACK (on_color_back_color_set),
+                    NULL);
+  g_signal_connect ((gpointer) override_theme_colors, "toggled",
+                    G_CALLBACK (on_override_gtk_colors_toggled),
+                    NULL);
   g_signal_connect ((gpointer) pref_network_enableproxy, "clicked",
                     G_CALLBACK (on_pref_network_enableproxy_clicked),
                     NULL);
@@ -1818,6 +1938,20 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, label39, "label39");
   GLADE_HOOKUP_OBJECT (prefwin, vbox9, "vbox9");
   GLADE_HOOKUP_OBJECT (prefwin, pref_close_send_to_tray, "pref_close_send_to_tray");
+  GLADE_HOOKUP_OBJECT (prefwin, frame3, "frame3");
+  GLADE_HOOKUP_OBJECT (prefwin, alignment1, "alignment1");
+  GLADE_HOOKUP_OBJECT (prefwin, colors_table, "colors_table");
+  GLADE_HOOKUP_OBJECT (prefwin, color_light, "color_light");
+  GLADE_HOOKUP_OBJECT (prefwin, color_mid, "color_mid");
+  GLADE_HOOKUP_OBJECT (prefwin, color_dark, "color_dark");
+  GLADE_HOOKUP_OBJECT (prefwin, color_selection, "color_selection");
+  GLADE_HOOKUP_OBJECT (prefwin, label43, "label43");
+  GLADE_HOOKUP_OBJECT (prefwin, label44, "label44");
+  GLADE_HOOKUP_OBJECT (prefwin, label45, "label45");
+  GLADE_HOOKUP_OBJECT (prefwin, label46, "label46");
+  GLADE_HOOKUP_OBJECT (prefwin, color_back, "color_back");
+  GLADE_HOOKUP_OBJECT (prefwin, label47, "label47");
+  GLADE_HOOKUP_OBJECT (prefwin, override_theme_colors, "override_theme_colors");
   GLADE_HOOKUP_OBJECT (prefwin, label2, "label2");
   GLADE_HOOKUP_OBJECT (prefwin, vbox11, "vbox11");
   GLADE_HOOKUP_OBJECT (prefwin, pref_network_enableproxy, "pref_network_enableproxy");

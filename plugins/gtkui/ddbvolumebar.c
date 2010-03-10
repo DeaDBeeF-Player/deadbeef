@@ -180,6 +180,13 @@ volumebar_draw (GtkWidget *widget) {
     int n = widget->allocation.width / 4;
     float vol = (range + deadbeef->volume_get_db ()) / range * n;
     float h = 17;
+
+    GdkGC *back_gc = gdk_gc_new (widget->window);
+    gdk_gc_set_rgb_fg_color (back_gc, gtkui_get_back_color ());
+
+    GdkGC *front_gc = gdk_gc_new (widget->window);
+    gdk_gc_set_rgb_fg_color (front_gc, gtkui_get_selection_color ());
+
     for (int i = 0; i < n; i++) {
         float iy = (float)i + 3;
         int _x = i * 4;
@@ -188,12 +195,14 @@ volumebar_draw (GtkWidget *widget) {
         _y += (h - _h);
         int _w = 3;
         if (i <= vol) {
-            gdk_draw_rectangle (volumebar_backbuf, widget->style->base_gc[GTK_STATE_SELECTED], TRUE, _x, _y, _w, _h);
+            gdk_draw_rectangle (volumebar_backbuf, front_gc, TRUE, _x, _y, _w, _h);
         }
         else {
-            gdk_draw_rectangle (volumebar_backbuf, widget->style->fg_gc[GTK_STATE_NORMAL], TRUE, _x, _y, _w, _h);
+            gdk_draw_rectangle (volumebar_backbuf, back_gc, TRUE, _x, _y, _w, _h);
         }
     }
+    g_object_unref (back_gc);
+    g_object_unref (front_gc);
 #endif
 }
 

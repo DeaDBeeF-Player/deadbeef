@@ -35,9 +35,6 @@ draw_begin (uintptr_t canvas);
 void
 draw_end (void);
 
-uintptr_t
-draw_load_pixbuf (const char *fname);
-
 void
 draw_get_canvas_size (uintptr_t canvas, int *w, int *h);
 
@@ -70,5 +67,23 @@ draw_text_with_colors (float x, float y, int width, int align, const char *text)
 
 void
 draw_get_text_extents (const char *text, int len, int *w, int *h);
+
+GdkColor *
+gtkui_get_back_color (void);
+
+GdkColor *
+gtkui_get_selection_color (void);
+
+GdkColor *
+gtkui_get_dark_color (void);
+
+GdkColor *
+gtkui_get_mid_color (void);
+
+GdkColor *
+gtkui_get_light_color (void);
+
+void
+gtkui_init_theme_colors (void);
 
 #endif // __DRAWING_H
