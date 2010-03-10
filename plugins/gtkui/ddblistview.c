@@ -694,7 +694,6 @@ ddb_listview_vscroll_value_changed            (GtkRange        *widget,
 {
     DdbListview *ps = DDB_LISTVIEW (gtk_object_get_data (GTK_OBJECT (widget), "owner"));
     int newscroll = gtk_range_get_value (GTK_RANGE (widget));
-    printf ("vscroll_value_changed %d\n", newscroll);
     if (ps->binding->vscroll_changed) {
         ps->binding->vscroll_changed (newscroll);
     }
@@ -2619,6 +2618,5 @@ ddb_listview_build_groups (DdbListview *listview) {
 }
 void
 ddb_listview_set_vscroll (DdbListview *listview, gboolean scroll) {
-    printf ("set_vscroll %d\n", scroll);
     gtk_range_set_value (GTK_RANGE (listview->scrollbar), scroll);
 }

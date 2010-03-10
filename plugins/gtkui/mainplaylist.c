@@ -291,7 +291,7 @@ main_playlist_init (GtkWidget *widget) {
         g_object_set_property (G_OBJECT (widget), "has-tooltip", &value);
         g_signal_connect (G_OBJECT (widget), "query-tooltip", G_CALLBACK (playlist_tooltip_handler), NULL);
     }
-    group_by_str = deadbeef->conf_get_str ("listview.group_by", "");
+    group_by_str = deadbeef->conf_get_str ("playlist.group_by", "");
 }
 
 void
