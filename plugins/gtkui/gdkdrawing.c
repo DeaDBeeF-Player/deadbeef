@@ -154,6 +154,10 @@ static GdkColor gtkui_selection_color;
 static GdkColor gtkui_dark_color;
 static GdkColor gtkui_mid_color;
 static GdkColor gtkui_light_color;
+static GdkColor gtkui_even_row_color;
+static GdkColor gtkui_odd_row_color;
+static GdkColor gtkui_text_color;
+static GdkColor gtkui_selected_text_color;
 
 void
 gtkui_init_theme_colors (void) {
@@ -170,6 +174,10 @@ gtkui_init_theme_colors (void) {
         memcpy (&gtkui_dark_color, &style->dark[GTK_STATE_NORMAL], sizeof (GdkColor));
         memcpy (&gtkui_mid_color, &style->mid[GTK_STATE_NORMAL], sizeof (GdkColor));
         memcpy (&gtkui_light_color, &style->light[GTK_STATE_NORMAL], sizeof (GdkColor));
+        memcpy (&gtkui_even_row_color, &style->light[GTK_STATE_NORMAL], sizeof (GdkColor));
+        memcpy (&gtkui_odd_row_color, &style->mid[GTK_STATE_NORMAL], sizeof (GdkColor));
+        memcpy (&gtkui_text_color, &style->fg[GTK_STATE_NORMAL], sizeof (GdkColor));
+        memcpy (&gtkui_selected_text_color, &style->fg[GTK_STATE_SELECTED], sizeof (GdkColor));
     }
     else {
         snprintf (color_text, sizeof (color_text), "%d %d %d", style->base[GTK_STATE_SELECTED].red, style->base[GTK_STATE_SELECTED].green, style->base[GTK_STATE_SELECTED].blue);
@@ -191,6 +199,22 @@ gtkui_init_theme_colors (void) {
         snprintf (color_text, sizeof (color_text), "%d %d %d", style->light[GTK_STATE_NORMAL].red, style->light[GTK_STATE_NORMAL].green, style->light[GTK_STATE_NORMAL].blue);
         clr = deadbeef->conf_get_str ("gtkui.color.light", color_text);
         sscanf (clr, "%d %d %d", &gtkui_light_color.red, &gtkui_light_color.green, &gtkui_light_color.blue);
+
+        snprintf (color_text, sizeof (color_text), "%d %d %d", style->light[GTK_STATE_NORMAL].red, style->light[GTK_STATE_NORMAL].green, style->light[GTK_STATE_NORMAL].blue);
+        clr = deadbeef->conf_get_str ("gtkui.color.even_row", color_text);
+        sscanf (clr, "%d %d %d", &gtkui_even_row_color.red, &gtkui_even_row_color.green, &gtkui_even_row_color.blue);
+
+        snprintf (color_text, sizeof (color_text), "%d %d %d", style->mid[GTK_STATE_NORMAL].red, style->mid[GTK_STATE_NORMAL].green, style->mid[GTK_STATE_NORMAL].blue);
+        clr = deadbeef->conf_get_str ("gtkui.color.odd_row", color_text);
+        sscanf (clr, "%d %d %d", &gtkui_odd_row_color.red, &gtkui_odd_row_color.green, &gtkui_odd_row_color.blue);
+
+        snprintf (color_text, sizeof (color_text), "%d %d %d", style->fg[GTK_STATE_NORMAL].red, style->fg[GTK_STATE_NORMAL].green, style->fg[GTK_STATE_NORMAL].blue);
+        clr = deadbeef->conf_get_str ("gtkui.color.text", color_text);
+        sscanf (clr, "%d %d %d", &gtkui_text_color.red, &gtkui_text_color.green, &gtkui_text_color.blue);
+
+        snprintf (color_text, sizeof (color_text), "%d %d %d", style->fg[GTK_STATE_SELECTED].red, style->fg[GTK_STATE_SELECTED].green, style->fg[GTK_STATE_SELECTED].blue);
+        clr = deadbeef->conf_get_str ("gtkui.color.selected_text", color_text);
+        sscanf (clr, "%d %d %d", &gtkui_selected_text_color.red, &gtkui_selected_text_color.green, &gtkui_selected_text_color.blue);
     }
 }
 
@@ -217,4 +241,24 @@ gtkui_get_mid_color (void) {
 GdkColor *
 gtkui_get_light_color (void) {
     return &gtkui_light_color;
+}
+
+GdkColor *
+gtkui_get_even_row_color (void) {
+    return &gtkui_even_row_color;
+}
+
+GdkColor *
+gtkui_get_odd_row_color (void) {
+    return &gtkui_odd_row_color;
+}
+
+GdkColor *
+gtkui_get_text_color (void) {
+    return &gtkui_text_color;
+}
+
+GdkColor *
+gtkui_get_selected_text_color (void) {
+    return &gtkui_selected_text_color;
 }

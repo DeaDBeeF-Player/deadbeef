@@ -83,6 +83,18 @@ gtkui_get_mid_color (void);
 GdkColor *
 gtkui_get_light_color (void);
 
+GdkColor *
+gtkui_get_even_row_color (void);
+
+GdkColor *
+gtkui_get_odd_row_color (void);
+
+GdkColor *
+gtkui_get_text_color (void);
+
+GdkColor *
+gtkui_get_selected_text_color (void);
+
 void
 gtkui_init_theme_colors (void);
 

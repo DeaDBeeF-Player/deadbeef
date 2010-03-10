@@ -60,62 +60,15 @@ GtkWidget *searchwin;
 GtkStatusIcon *trayicon;
 GtkWidget *traymenu;
 
-// orange on dark color scheme
-float colo_dark_orange[COLO_COUNT][3] = {
-    { 0x7f/255.f, 0x7f/255.f, 0x7f/255.f }, // cursor
-    { 0x1d/255.f, 0x1f/255.f, 0x1b/255.f }, // odd
-    { 0x21/255.f, 0x23/255.f, 0x1f/255.f }, // even
-    { 0xaf/255.f, 0xa7/255.f, 0x9e/255.f }, // sel odd
-    { 0xa7/255.f, 0x9f/255.f, 0x96/255.f }, // sel even
-    { 0xf4/255.f, 0x7e/255.f, 0x46/255.f }, // text
-    { 0,          0,          0          }, // sel text
-    { 0x1d/255.f, 0x1f/255.f, 0x1b/255.f }, // seekbar back
-    { 0xf4/255.f, 0x7e/255.f, 0x46/255.f }, // seekbar front
-    { 0x1d/255.f, 0x1f/255.f, 0x1b/255.f }, // volumebar back
-    { 0xf4/255.f, 0x7e/255.f, 0x46/255.f }, // volumebar front
-    { 0xf4/255.f, 0x7e/255.f, 0x46/255.f }, // dragdrop marker
-};
-
-float colo_white_blue[COLO_COUNT][3] = {
-    { 0x7f/255.f, 0x7f/255.f, 0x7f/255.f }, // cursor
-    { 1,          1,          1          }, // odd
-    { 0xea/255.f, 0xeb/255.f, 0xec/255.f }, // even
-    { 0x24/255.f, 0x89/255.f, 0xb8/255.f }, // sel odd
-    { 0x20/255.f, 0x85/255.f, 0xb4/255.f }, // sel even
-    { 0,          0,          0          }, // text
-    { 1,          1,          1          }, // sel text
-    { 0x1d/255.f, 0x1f/255.f, 0x1b/255.f }, // seekbar back
-    { 0x24/255.f, 0x89/255.f, 0xb8/255.f }, // seekbar front
-    { 0x1d/255.f, 0x1f/255.f, 0x1b/255.f }, // volumebar back
-    { 0x24/255.f, 0x89/255.f, 0xb8/255.f }, // volumebar front
-    { 0x09/255.f, 0x22/255.f, 0x3a/255.f }, // dragdrop marker
-};
-
-// current color scheme
-float colo_current[COLO_COUNT][3];
-
-void
-theme_set_cairo_source_rgb (cairo_t *cr, int col) {
-    cairo_set_source_rgb (cr, colo_current[col][0], colo_current[col][1], colo_current[col][2]);
-}
-
-void
-theme_set_fg_color (int col) {
-    draw_set_fg_color (colo_current[col]);
-}
-
-void
-theme_set_bg_color (int col) {
-    draw_set_bg_color (colo_current[col]);
-}
+// playlist theming
+GtkWidget *theme_treeview;
+int disable_listview_theming = 0;
 
 // that must be called before gtk_init
-GtkWidget *theme_treeview;
 void
 gtkpl_init (void) {
     //memcpy (colo_current, colo_system_gtk, sizeof (colo_current));
     //memcpy (colo_current, colo_dark_orange, sizeof (colo_current));
-    memcpy (colo_current, colo_white_blue, sizeof (colo_current));
     theme_treeview = gtk_tree_view_new ();
     GTK_WIDGET_UNSET_FLAGS (theme_treeview, GTK_CAN_FOCUS);
     gtk_widget_show (theme_treeview);
@@ -540,7 +493,14 @@ gtkui_on_configchanged (DB_event_t *ev, uintptr_t data) {
 
     // theme colors
     gtkui_init_theme_colors ();
+
+    disable_listview_theming = deadbeef->conf_get_int ("gtkui.disable_playlist_theming", 0);
     return 0;
+}
+
+int
+gtkui_listview_theming_disabled (void) {
+    return disable_listview_theming;
 }
 
 static gboolean

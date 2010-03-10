@@ -86,5 +86,7 @@ playlist_refresh (void);
 void
 search_refresh (void);
 
+int
+gtkui_listview_theming_disabled (void);
 
 #endif

@@ -745,3 +745,23 @@ on_override_gtk_colors_toggled         (GtkToggleButton *togglebutton,
 void
 on_mainwin_realize                     (GtkWidget       *widget,
                                         gpointer         user_data);
+
+void
+on_color_even_row_color_set            (GtkColorButton  *colorbutton,
+                                        gpointer         user_data);
+
+void
+on_color_odd_row_color_set             (GtkColorButton  *colorbutton,
+                                        gpointer         user_data);
+
+void
+on_color_text_color_set                (GtkColorButton  *colorbutton,
+                                        gpointer         user_data);
+
+void
+on_color_selected_text_color_set       (GtkColorButton  *colorbutton,
+                                        gpointer         user_data);
+
+void
+on_disable_playlist_theming_toggled    (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);

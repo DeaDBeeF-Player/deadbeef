@@ -35,6 +35,7 @@
 #include <sys/time.h>
 #include "ddblistview.h"
 #include "drawing.h"
+#include "gtkui.h"
 
 #pragma GCC optimize("O0")
 
@@ -1107,15 +1108,27 @@ void
 ddb_listview_list_render_row_background (DdbListview *ps, DdbListviewIter it, int even, int cursor, int x, int y, int w, int h) {
 	// draw background
 	GtkWidget *treeview = theme_treeview;
-	if (treeview->style->depth == -1) {
-        return; // drawing was called too early
+	int theming = !gtkui_listview_theming_disabled ();
+
+	if (theming) {
+        if (treeview->style->depth == -1) {
+            return; // drawing was called too early
+        }
+        GTK_OBJECT_FLAGS (treeview) |= GTK_HAS_FOCUS;
     }
-    GTK_OBJECT_FLAGS (treeview) |= GTK_HAS_FOCUS;
     if (it && ps->binding->is_selected(it)) {
-        // draw background for selection -- workaround for New Wave theme (translucency)
-        gtk_paint_flat_box (treeview->style, ps->backbuf, GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, treeview, even ? "cell_even_ruled" : "cell_odd_ruled", x, y, w, h);
+        if (theming) {
+            // draw background for selection -- workaround for New Wave theme (translucency)
+            gtk_paint_flat_box (treeview->style, ps->backbuf, GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, treeview, even ? "cell_even_ruled" : "cell_odd_ruled", x, y, w, h);
+        }
     }
-    gtk_paint_flat_box (treeview->style, ps->backbuf, (it && ps->binding->is_selected(it)) ? GTK_STATE_SELECTED : GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, treeview, even ? "cell_even_ruled" : "cell_odd_ruled", x, y, w, h);
+    if (theming) {
+        gtk_paint_flat_box (treeview->style, ps->backbuf, (it && ps->binding->is_selected(it)) ? GTK_STATE_SELECTED : GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, treeview, even ? "cell_even_ruled" : "cell_odd_ruled", x, y, w, h);
+    }
+//    else {
+//        GdkColor *clr_
+//        gtk_draw_rectangle (ps->backbuf, gc);
+//    }
 	if (cursor) {
         // not all gtk engines/themes render focus rectangle in treeviews
         // but we want it anyway
