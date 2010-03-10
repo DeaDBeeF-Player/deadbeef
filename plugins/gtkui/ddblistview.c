@@ -829,6 +829,10 @@ ddb_listview_list_drag_data_received         (GtkWidget       *widget,
                                         gpointer         user_data)
 {
     DdbListview *ps = DDB_LISTVIEW (gtk_object_get_data (GTK_OBJECT (widget), "owner"));
+    if (!ps->binding->external_drag_n_drop || !ps->binding->drag_n_drop) {
+        gtk_drag_finish (drag_context, TRUE, FALSE, time);
+        return;
+    }
     gchar *ptr=(char*)data->data;
     if (target_type == 0) { // uris
         // this happens when dropped from file manager
@@ -2237,6 +2241,7 @@ ddb_listview_list_button_press_event         (GtkWidget       *widget,
             it = ps->binding->get_for_idx (sel);
         }
         int y = sel;
+        DdbListviewIter clicked_it = it;
         if (!it) {
             // clicked empty space -- deselect everything and show insensitive menu
             ps->binding->set_cursor (-1);
@@ -2277,7 +2282,7 @@ ddb_listview_list_button_press_event         (GtkWidget       *widget,
                 ps->binding->set_cursor (y);
                 ddb_listview_draw_row (ps, y, it);
             }
-            ps->binding->list_context_menu (ps, it, y);
+            ps->binding->list_context_menu (ps, clicked_it, y);
         }
     }
     return FALSE;

@@ -381,7 +381,7 @@ void search_handle_doubleclick (DdbListview *listview, DdbListviewIter iter, int
 }
 
 void search_selection_changed (DdbListviewIter it, int idx) {
-    DdbListview *main = DDB_LISTVIEW (lookup_widget (searchwin, "playlist"));
+    DdbListview *main = DDB_LISTVIEW (lookup_widget (searchwin, "searchlist"));
     ddb_listview_draw_row (main, main_get_idx ((DB_playItem_t *)it), it);
 }
 

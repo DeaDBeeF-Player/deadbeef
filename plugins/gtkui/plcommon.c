@@ -185,11 +185,13 @@ main_remove_from_playback_queue_activate
     playlist_refresh ();
 }
 
+int clicked_idx = -1;
+
 void
 main_properties_activate                (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (deadbeef->pl_get_cursor (PL_MAIN), PL_MAIN);
+    DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (clicked_idx, PL_MAIN);
     if (!it) {
         fprintf (stderr, "attempt to view properties of non-existing item\n");
         return;
@@ -238,6 +240,7 @@ on_remove2_activate                    (GtkMenuItem     *menuitem,
 
 void
 list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
+    clicked_idx = deadbeef->pl_get_idx_of (it);
     int inqueue = deadbeef->pl_playqueue_test (it);
     GtkWidget *playlist_menu;
     GtkWidget *add_to_playback_queue1;
