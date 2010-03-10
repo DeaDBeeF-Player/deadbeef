@@ -552,8 +552,8 @@ ddb_listview_list_pickpoint_y (DdbListview *listview, int y, DdbListviewGroup **
                 *group_idx = -1;
                 *global_idx = -1;
             }
-            else if (y >= grp->height) {
-                *group_idx = -1;
+            else if (y >= listview->grouptitle_height + grp->num_items * listview->rowheight) {
+                *group_idx = (y - listview->grouptitle_height) / listview->rowheight;
                 *global_idx = -1;
             }
             else {
@@ -1212,6 +1212,7 @@ ddb_listview_list_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, do
     if (ddb_listview_list_pickpoint_y (ps, ey + ps->scrollpos, &grp, &grp_index, &sel) == -1) {
         return;
     }
+    printf ("grp=%p, grp_idx=%d, sel=%d\n", grp, grp_index, sel);
 
     int cursor = ps->binding->cursor ();
     if (time - ps->clicktime < 0.5
