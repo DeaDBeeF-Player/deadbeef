@@ -1243,6 +1243,8 @@ ddb_listview_list_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, do
     int prev = cursor;
     if (sel != -1) {
         ps->binding->set_cursor (sel);
+        DdbListviewIter it = ps->binding->get_for_idx (sel);
+        ddb_listview_draw_row (ps, sel, it);
         ps->shift_sel_anchor = ps->binding->cursor ();
     }
     // handle multiple selection
@@ -1278,7 +1280,7 @@ ddb_listview_list_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, do
         }
         else {
             DdbListviewIter it = ps->binding->get_for_idx (sel);
-            if (!it || !ps->binding->is_selected (it)) {
+            if (!it || !ps->binding->is_selected (it) || !ps->binding->drag_n_drop) {
                 // reset selection, and set it to single item
                 ddb_listview_select_single (ps, sel);
                 ps->areaselect = 1;
