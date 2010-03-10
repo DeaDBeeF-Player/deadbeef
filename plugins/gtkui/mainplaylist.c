@@ -265,7 +265,7 @@ main_playlist_init (GtkWidget *widget) {
     main_binding.is_selected = (int (*) (DdbListviewIter))deadbeef->pl_is_selected;
     ddb_listview_set_binding (listview, &main_binding);
     lock_column_config = 1;
-    DB_conf_item_t *col = deadbeef->conf_find ("listview.column.", NULL);
+    DB_conf_item_t *col = deadbeef->conf_find ("playlist.column.", NULL);
     if (!col) {
         // create default set of columns
         add_column_helper (listview, "Playing", 50, DB_COLUMN_PLAYING, NULL, 0);
@@ -277,7 +277,7 @@ main_playlist_init (GtkWidget *widget) {
     else {
         while (col) {
             append_column_from_textdef (listview, col->value);
-            col = deadbeef->conf_find ("listview.column.", col);
+            col = deadbeef->conf_find ("playlist.column.", col);
         }
     }
     lock_column_config = 0;
