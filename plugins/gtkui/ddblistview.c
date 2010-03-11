@@ -1320,7 +1320,10 @@ ddb_listview_list_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, do
     if (sel != -1) {
         ps->binding->set_cursor (sel);
         DdbListviewIter it = ps->binding->get_for_idx (sel);
-        ddb_listview_draw_row (ps, sel, it);
+        if (it) {
+            ddb_listview_draw_row (ps, sel, it);
+            UNREF (it);
+        }
         ps->shift_sel_anchor = ps->binding->cursor ();
     }
     // handle multiple selection
@@ -1606,9 +1609,17 @@ ddb_listview_list_mousemove (DdbListview *ps, GdkEventMotion *ev, int ex, int ey
         }
         if (sel != -1 && sel != prev) {
             if (prev != -1) {
-                ddb_listview_draw_row (ps, prev, ps->binding->get_for_idx (prev));
+                DdbListviewIter it = ps->binding->get_for_idx (prev);
+                if (it) {
+                    ddb_listview_draw_row (ps, prev, it);
+                    UNREF (it);
+                }
             }
-            ddb_listview_draw_row (ps, sel, ps->binding->get_for_idx (sel));
+            DdbListviewIter it = ps->binding->get_for_idx (sel);
+            if (it) {
+                ddb_listview_draw_row (ps, sel, it);
+                UNREF (it);
+            }
         }
 
         if (ey < 10) {
@@ -2242,15 +2253,6 @@ ddb_listview_set_cursor_cb (gpointer data) {
     DdbListviewIter it;
     DdbListview *ps = sc->pl;
 
-#if 0
-    it = sc->pl->binding->get_for_idx (sc->prev);
-    ddb_listview_draw_row (sc->pl, sc->prev, it);
-    UNREF (it);
-
-    it = sc->pl->binding->get_for_idx (sc->cursor);
-    ddb_listview_draw_row (sc->pl, sc->cursor, it);
-    UNREF (it);
-#endif
     int cursor_scroll = ddb_listview_get_row_pos (sc->pl, sc->cursor);
     int newscroll = sc->pl->scrollpos;
     if (cursor_scroll < sc->pl->scrollpos) {
@@ -2324,6 +2326,9 @@ ddb_listview_list_button_press_event         (GtkWidget       *widget,
         if (prev != -1 && prev != cursor) {
             DdbListviewIter it = ps->binding->get_for_idx (prev);
             ddb_listview_draw_row (ps, prev, it);
+            UNREF (it);
+        }
+        if (it) {
             UNREF (it);
         }
     }
