@@ -103,6 +103,8 @@ void
 ddb_listview_list_render_row (DdbListview *ps, int row, DdbListviewIter it, int expose);
 void
 ddb_listview_list_track_dragdrop (DdbListview *ps, int y);
+int
+ddb_listview_dragdrop_get_row_from_coord (DdbListview *listview, int y);
 void
 ddb_listview_list_mousemove (DdbListview *ps, GdkEventMotion *event, int x, int y);
 void
@@ -533,6 +535,7 @@ ddb_listview_get_row_pos (DdbListview *listview, int row_idx) {
         idx += grp->num_items;
         grp = grp->next;
     }
+    return y;
 }
 
 // input: absolute y coord in list (not in window)
@@ -833,6 +836,16 @@ ddb_listview_list_drag_data_received         (GtkWidget       *widget,
         gtk_drag_finish (drag_context, TRUE, FALSE, time);
         return;
     }
+    int sel = ddb_listview_dragdrop_get_row_from_coord (ps, y);
+    DdbListviewIter it = NULL;
+    if (sel == -1) {
+        if (ps->binding->count () != 0) {
+            sel = ps->binding->count () - 1;
+        }
+    }
+    if (sel != -1) {
+        it = ps->binding->get_for_idx (sel);
+    }
     gchar *ptr=(char*)data->data;
     if (target_type == 0) { // uris
         // this happens when dropped from file manager
@@ -840,34 +853,15 @@ ddb_listview_list_drag_data_received         (GtkWidget       *widget,
         memcpy (mem, ptr, data->length);
         mem[data->length] = 0;
         // we don't pass control structure, but there's only one drag-drop view currently
-        DdbListviewGroup *grp;
-        int grp_index;
-        int sel;
-        DdbListviewIter it = NULL;
-        if (ddb_listview_list_pickpoint_y (ps, y + ps->scrollpos, &grp, &grp_index, &sel) != -1) {
-            if (sel == -1) {
-                sel = ps->binding->get_idx (grp->head);
-            }
-            it = ps->binding->get_for_idx (sel);
-        }
         ps->binding->external_drag_n_drop (it, mem, data->length);
         if (it) {
-            ps->binding->unref (it);
+            UNREF (it);
         }
     }
     else if (target_type == 1) {
         uint32_t *d= (uint32_t *)ptr;
         int length = data->length/4;
-        DdbListviewIter drop_before = NULL;
-        DdbListviewGroup *grp;
-        int grp_index;
-        int sel;
-        if (ddb_listview_list_pickpoint_y (ps, y + ps->scrollpos, &grp, &grp_index, &sel) != -1) {
-            if (sel == -1) {
-                sel = ps->binding->get_idx (grp->head);
-            }
-            drop_before = ps->binding->get_for_idx (sel);
-        }
+        DdbListviewIter drop_before = it;
         // find last selected
         while (drop_before && ps->binding->is_selected (drop_before)) {
             DdbListviewIter next = PL_NEXT(drop_before);
@@ -1290,7 +1284,6 @@ ddb_listview_list_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, do
     if (ddb_listview_list_pickpoint_y (ps, ey + ps->scrollpos, &grp, &grp_index, &sel) == -1) {
         return;
     }
-    printf ("grp=%p, grp_idx=%d, sel=%d\n", grp, grp_index, sel);
 
     int cursor = ps->binding->cursor ();
     if (time - ps->clicktime < 0.5
@@ -1785,6 +1778,36 @@ ddb_listview_handle_keypress (DdbListview *ps, int keyval, int state) {
     return 1;
 }
 
+int
+ddb_listview_dragdrop_get_row_from_coord (DdbListview *listview, int y) {
+    if (y == -1) {
+        return -1;
+    }
+    DdbListviewGroup *grp;
+    int grp_index;
+    int sel;
+    if (ddb_listview_list_pickpoint_y (listview, y + listview->scrollpos, &grp, &grp_index, &sel) == -1) {
+        return -1;
+    }
+    else {
+        if (sel == -1) {
+            if (grp_index == -1) {
+                sel = listview->binding->get_idx (grp->head);
+            }
+            else {
+                sel = listview->binding->get_idx (grp->head) + grp->num_items;
+            }
+        }
+    }
+    if (sel != -1) {
+        int it_y = ddb_listview_get_row_pos (listview, sel) - listview->scrollpos;
+        if (y > it_y + listview->rowheight/2 && y < it_y + listview->rowheight) {
+            sel++;
+        }
+    }
+    return sel;
+}
+
 void
 ddb_listview_list_track_dragdrop (DdbListview *ps, int y) {
     GtkWidget *widget = ps->list;
@@ -1793,14 +1816,8 @@ ddb_listview_list_track_dragdrop (DdbListview *ps, int y) {
         draw_drawable (widget->window, widget->style->black_gc, ps->backbuf, 0, ps->drag_motion_y-3, 0, ps->drag_motion_y-3, widget->allocation.width, 7);
 
     }
-    if (y == -1) {
-        ps->drag_motion_y = -1;
-        return;
-    }
-    DdbListviewGroup *grp;
-    int grp_index;
-    int sel;
-    if (ddb_listview_list_pickpoint_y (ps, y + ps->scrollpos, &grp, &grp_index, &sel) == -1) {
+    int sel = ddb_listview_dragdrop_get_row_from_coord (ps, y);
+    if (sel == -1) {
         if (ps->binding->count () == 0) {
             ps->drag_motion_y = 0;
         }
@@ -1809,9 +1826,6 @@ ddb_listview_list_track_dragdrop (DdbListview *ps, int y) {
         }
     }
     else {
-        if (sel == -1) {
-            sel = ps->binding->get_idx (grp->head);
-        }
         ps->drag_motion_y = ddb_listview_get_row_pos (ps, sel) - ps->scrollpos;
     }
 
@@ -2302,7 +2316,6 @@ ddb_listview_list_button_press_event         (GtkWidget       *widget,
         DdbListviewIter it = NULL;
         int prev = ps->binding->cursor ();
         if (ddb_listview_list_pickpoint_y (ps, event->y + ps->scrollpos, &grp, &grp_index, &sel) != -1) {
-            printf ("grp=%p, grp_idx=%d, sel=%d\n", grp, grp_index, sel);
             if (sel != -1) {
                 ps->binding->set_cursor (sel);
             }
