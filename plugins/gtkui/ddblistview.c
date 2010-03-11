@@ -1190,6 +1190,83 @@ ddb_listview_select_single (DdbListview *ps, int sel) {
     UNREF (it);
 }
 
+void
+ddb_listview_click_selection (DdbListview *ps, int ex, int ey, int prev_cursor, DdbListviewGroup *grp, int grp_index, int sel, int dnd) {
+    if (sel == -1 && (!grp || grp_index >= grp->num_items)) {
+        // clicked empty space, deselect everything
+        DdbListviewIter it;
+        int idx = 0;
+        for (it = ps->binding->head (); it; idx++) {
+            if (ps->binding->is_selected (it)) {
+                ps->binding->select (it, 0);
+                ddb_listview_draw_row (ps, idx, it);
+                ps->binding->selection_changed (it, idx);
+            }
+            DdbListviewIter next = ps->binding->next (it);
+            ps->binding->unref (it);
+            it = next;
+        }
+    }
+    else if (sel == -1 && grp) {
+        // clicked group title, select group
+        DdbListviewIter it;
+        int idx = 0;
+        int cnt = -1;
+        for (it = ps->binding->head (); it; idx++) {
+            if (it == grp->head) {
+                cnt = grp->num_items;
+            }
+            if (cnt > 0) {
+                if (!ps->binding->is_selected (it)) {
+                    ps->binding->select (it, 1);
+                    ddb_listview_draw_row (ps, idx, it);
+                    ps->binding->selection_changed (it, idx);
+                }
+                cnt--;
+            }
+            else {
+                if (ps->binding->is_selected (it)) {
+                    ps->binding->select (it, 0);
+                    ddb_listview_draw_row (ps, idx, it);
+                    ps->binding->selection_changed (it, idx);
+                }
+            }
+            DdbListviewIter next = ps->binding->next (it);
+            ps->binding->unref (it);
+            it = next;
+        }
+    }
+    else {
+        // clicked specific item - select, or start drag-n-drop
+        DdbListviewIter it = ps->binding->get_for_idx (sel);
+        if (!it || !ps->binding->is_selected (it) || !ps->binding->drag_n_drop) {
+            // reset selection, and set it to single item
+            ddb_listview_select_single (ps, sel);
+            if (dnd) {
+                ps->areaselect = 1;
+                ps->areaselect_x = ex;
+                ps->areaselect_y = ey;
+                ps->areaselect_dx = -1;
+                ps->areaselect_dy = -1;
+                ps->shift_sel_anchor = ps->binding->cursor ();
+            }
+        }
+        else if (dnd) {
+            ps->dragwait = 1;
+            DdbListviewIter item = ps->binding->get_for_idx (prev_cursor);
+            ddb_listview_draw_row (ps, prev_cursor, item);
+            UNREF (item);
+            int cursor = ps->binding->cursor ();
+            if (cursor != prev_cursor) {
+                DdbListviewIter item = ps->binding->get_for_idx (prev_cursor);
+                ddb_listview_draw_row (ps, cursor, item);
+                UNREF (item);
+            }
+        }
+        UNREF (it);
+    }
+}
+
 // {{{ expected behaviour for mouse1 without modifiers:
 //   {{{ [+] if clicked unselected item:
 //       unselect all
@@ -1261,77 +1338,7 @@ ddb_listview_list_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, do
     // handle multiple selection
     if (!(state & (GDK_CONTROL_MASK|GDK_SHIFT_MASK)))
     {
-        if (sel == -1 && (!grp || grp_index >= grp->num_items)) {
-            // clicked empty space, deselect everything
-            DdbListviewIter it;
-            int idx = 0;
-            for (it = ps->binding->head (); it; idx++) {
-                if (ps->binding->is_selected (it)) {
-                    ps->binding->select (it, 0);
-                    ddb_listview_draw_row (ps, idx, it);
-                    ps->binding->selection_changed (it, idx);
-                }
-                DdbListviewIter next = ps->binding->next (it);
-                ps->binding->unref (it);
-                it = next;
-            }
-        }
-        else if (sel == -1 && grp) {
-            // clicked group title, select group
-            DdbListviewIter it;
-            int idx = 0;
-            int cnt = -1;
-            for (it = ps->binding->head (); it; idx++) {
-                if (it == grp->head) {
-                    cnt = grp->num_items;
-                }
-                if (cnt > 0) {
-                    if (!ps->binding->is_selected (it)) {
-                        ps->binding->select (it, 1);
-                        ddb_listview_draw_row (ps, idx, it);
-                        ps->binding->selection_changed (it, idx);
-                    }
-                    cnt--;
-                }
-                else {
-                    if (ps->binding->is_selected (it)) {
-                        ps->binding->select (it, 0);
-                        ddb_listview_draw_row (ps, idx, it);
-                        ps->binding->selection_changed (it, idx);
-                    }
-                }
-                DdbListviewIter next = ps->binding->next (it);
-                ps->binding->unref (it);
-                it = next;
-            }
-        }
-        else {
-            // clicked specific item - select, or start drag-n-drop
-            DdbListviewIter it = ps->binding->get_for_idx (sel);
-            if (!it || !ps->binding->is_selected (it) || !ps->binding->drag_n_drop) {
-                // reset selection, and set it to single item
-                ddb_listview_select_single (ps, sel);
-                ps->areaselect = 1;
-                ps->areaselect_x = ex;
-                ps->areaselect_y = ey;
-                ps->areaselect_dx = -1;
-                ps->areaselect_dy = -1;
-                ps->shift_sel_anchor = ps->binding->cursor ();
-            }
-            else {
-                ps->dragwait = 1;
-                DdbListviewIter item = ps->binding->get_for_idx (prev);
-                ddb_listview_draw_row (ps, prev, item);
-                UNREF (item);
-                int cursor = ps->binding->cursor ();
-                if (cursor != prev) {
-                    DdbListviewIter item = ps->binding->get_for_idx (cursor);
-                    ddb_listview_draw_row (ps, cursor, item);
-                    UNREF (item);
-                }
-            }
-            UNREF (it);
-        }
+        ddb_listview_click_selection (ps, ex, ey, prev, grp, grp_index, sel, 1);
     }
     else if (state & GDK_CONTROL_MASK) {
         // toggle selection
@@ -1395,7 +1402,6 @@ ddb_listview_list_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, do
         ddb_listview_draw_row (ps, prev, it);
         UNREF (it);
     }
-
 }
 
 void
@@ -2263,55 +2269,33 @@ ddb_listview_list_button_press_event         (GtkWidget       *widget,
         int grp_index;
         int sel;
         DdbListviewIter it = NULL;
+        int prev = ps->binding->cursor ();
         if (ddb_listview_list_pickpoint_y (ps, event->y + ps->scrollpos, &grp, &grp_index, &sel) != -1) {
-            if (sel == -1) {
+            printf ("grp=%p, grp_idx=%d, sel=%d\n", grp, grp_index, sel);
+            if (sel != -1) {
+                ps->binding->set_cursor (sel);
+            }
+            ddb_listview_click_selection (ps, event->x, event->y, prev, grp, grp_index, sel, 0);
+            if (sel == -1 && grp_index < grp->num_items) {
                 sel = ps->binding->get_idx (grp->head);
             }
-            it = ps->binding->get_for_idx (sel);
+            if (sel != -1) {
+                it = ps->binding->get_for_idx (sel);
+            }
         }
-        int y = sel;
-        DdbListviewIter clicked_it = it;
-        if (!it) {
-            // clicked empty space -- deselect everything and show insensitive menu
-            ps->binding->set_cursor (-1);
-            it = ps->binding->head ();
-            int idx = 0;
-            while (it) {
-                ps->binding->select (it, 0);
-                ddb_listview_draw_row (ps, idx, it);
-                ps->binding->selection_changed (it, idx);
-                it = PL_NEXT (it);
-                idx++;
-            }
-            // no menu
+        if (it) {
+            ps->binding->list_context_menu (ps, it, sel);
         }
-        else {
-            if (!ps->binding->is_selected (it)) {
-                // item is unselected -- reset selection and select this
-                DdbListviewIter it2 = ps->binding->head ();
-                int idx = 0;
-                ps->binding->set_cursor (y);
-                while (it2) {
-                    if (ps->binding->is_selected (it2) && it2 != it) {
-                        ps->binding->select (it2, 0);
-                        ddb_listview_draw_row (ps, idx, it2);
-                        ps->binding->selection_changed (it2, idx);
-                    }
-                    else if (it2 == it) {
-                        ps->binding->select (it2, 1);
-                        ddb_listview_draw_row (ps, idx, it2);
-                        ps->binding->selection_changed (it2, idx);
-                    }
-                    it2 = PL_NEXT (it2);
-                    idx++;
-                }
-            }
-            else {
-                // something is selected; move cursor but keep selection
-                ps->binding->set_cursor (y);
-                ddb_listview_draw_row (ps, y, it);
-            }
-            ps->binding->list_context_menu (ps, clicked_it, y);
+        int cursor = ps->binding->cursor ();
+        if (cursor != -1 && sel != -1) {
+            DdbListviewIter it = ps->binding->get_for_idx (cursor);
+            ddb_listview_draw_row (ps, cursor, it);
+            UNREF (it);
+        }
+        if (prev != -1 && prev != cursor) {
+            DdbListviewIter it = ps->binding->get_for_idx (prev);
+            ddb_listview_draw_row (ps, prev, it);
+            UNREF (it);
         }
     }
     return FALSE;
