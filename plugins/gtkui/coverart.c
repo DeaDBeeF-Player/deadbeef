@@ -25,6 +25,8 @@
 #include "../artwork/artwork.h"
 #include "gtkui.h"
 
+#pragma GCC optimize("O0")
+
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(...)
 
@@ -110,6 +112,7 @@ loading_thread (void *none) {
         deadbeef->mutex_unlock (mutex);
         while (!terminate && queue) {
             int cache_min = 0;
+            deadbeef->mutex_lock (mutex);
             for (int i = 0; i < CACHE_SIZE; i++) {
                 if (!cache[i].pixbuf) {
                     cache_min = i;
@@ -120,6 +123,22 @@ loading_thread (void *none) {
                         cache_min = i;
                     }
                 }
+            }
+            if (cache_min != -1) {
+                if (cache[cache_min].pixbuf) {
+                    g_object_unref (cache[cache_min].pixbuf);
+                    cache[cache_min].pixbuf = NULL;
+                }
+                if (cache[cache_min].fname) {
+                    free (cache[cache_min].fname);
+                    cache[cache_min].fname = NULL;
+                }
+            }
+            deadbeef->mutex_unlock (mutex);
+            if (cache_min == -1) {
+                trace ("coverart pixbuf cache overflow, waiting...\n");
+                usleep (500000);
+                continue;
             }
             trace ("loading image %s\n", queue->fname);
 
@@ -157,16 +176,14 @@ loading_thread (void *none) {
                     pixbuf = scaled;
                 }
             }
-            if (cache[cache_min].pixbuf) {
-                g_object_unref (cache[cache_min].pixbuf);
+            if (cache_min != -1) {
+                deadbeef->mutex_lock (mutex);
+                cache[cache_min].pixbuf = pixbuf;
+                cache[cache_min].fname = strdup (queue->fname);
+                gettimeofday (&cache[cache_min].tm, NULL);
+                cache[cache_min].width = queue->width;
+                deadbeef->mutex_unlock (mutex);
             }
-            if (cache[cache_min].fname) {
-                free (cache[cache_min].fname);
-            }
-            cache[cache_min].pixbuf = pixbuf;
-            cache[cache_min].fname = strdup (queue->fname);
-            gettimeofday (&cache[cache_min].tm, NULL);
-            cache[cache_min].width = queue->width;
             queue_pop ();
             g_idle_add (redraw_playlist_cb, NULL);
         }
@@ -197,6 +214,7 @@ get_pixbuf (const char *fname, int width) {
         if (cache[i].pixbuf) {
             if (!strcmp (fname, cache[i].fname) && cache[i].width == width) {
                 gettimeofday (&cache[i].tm, NULL);
+                g_object_ref (cache[i].pixbuf);
                 deadbeef->mutex_unlock (mutex);
                 return cache[i].pixbuf;
             }

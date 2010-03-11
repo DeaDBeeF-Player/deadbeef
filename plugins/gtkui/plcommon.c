@@ -110,6 +110,7 @@ void draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbListview
                         gdk_draw_pixbuf (drawable, GTK_WIDGET (listview)->style->white_gc, pixbuf, 0, sy, x + ART_PADDING_HORZ, art_y, pw, ph, GDK_RGB_DITHER_NONE, 0, 0);
 //                        gdk_draw_rectangle (drawable, GTK_WIDGET (listview)->style->black_gc, FALSE, x + ART_PADDING_HORZ, art_y, pw, ph);
                     }
+                    g_object_unref (pixbuf);
                 }
             }
         }
