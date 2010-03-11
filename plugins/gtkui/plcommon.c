@@ -64,7 +64,8 @@ rewrite_column_config (DdbListview *listview, const char *name) {
     }
 }
 
-#define ART_PADDING 10
+#define ART_PADDING_HORZ 8
+#define ART_PADDING_VERT 0
 
 void draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbListviewIter it, DdbListviewIter group_it, int column, int group_y, int x, int y, int width, int height) {
     const char *ctitle;
@@ -78,17 +79,17 @@ void draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbListview
     }
     if (cinf->id == DB_COLUMN_ALBUM_ART) {
         gtk_paint_flat_box (theme_treeview->style, drawable, GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, theme_treeview, "cell_even_ruled", x, y, width, height);
-        int art_width = width - ART_PADDING * 2;
+        int art_width = width - ART_PADDING_HORZ * 2;
         int art_y = y; // dest y
         int art_h = height;
         int sy; // source y
-        if (group_y < ART_PADDING) {
-            art_y = y - group_y + ART_PADDING;
+        if (group_y < ART_PADDING_VERT) {
+            art_y = y - group_y + ART_PADDING_VERT;
             art_h = height - (art_y - y);
             sy = group_y;
         }
         else {
-            sy = group_y - ART_PADDING;
+            sy = group_y - ART_PADDING_VERT;
         }
         if (art_width > 0) {
             if (group_it) {
@@ -106,8 +107,8 @@ void draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbListview
                         pw = min (art_width, pw);
                         ph -= sy;
                         ph = min (ph, h);
-                        gdk_draw_pixbuf (drawable, GTK_WIDGET (listview)->style->white_gc, pixbuf, 0, sy, x + ART_PADDING, art_y, pw, ph, GDK_RGB_DITHER_NONE, 0, 0);
-//                        gdk_draw_rectangle (drawable, GTK_WIDGET (listview)->style->black_gc, FALSE, x + ART_PADDING, art_y, pw, ph);
+                        gdk_draw_pixbuf (drawable, GTK_WIDGET (listview)->style->white_gc, pixbuf, 0, sy, x + ART_PADDING_HORZ, art_y, pw, ph, GDK_RGB_DITHER_NONE, 0, 0);
+//                        gdk_draw_rectangle (drawable, GTK_WIDGET (listview)->style->black_gc, FALSE, x + ART_PADDING_HORZ, art_y, pw, ph);
                     }
                 }
             }
