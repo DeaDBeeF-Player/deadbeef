@@ -292,10 +292,10 @@ ddb_listview_init(DdbListview *listview)
     listview->scroll_sleep_time = 0;
 
     listview->areaselect = 0;
-    listview->areaselect_x = -1;
+//    listview->areaselect_x = -1;
     listview->areaselect_y = -1;
-    listview->areaselect_dx = -1;
-    listview->areaselect_dy = -1;
+//    listview->areaselect_dx = -1;
+//    listview->areaselect_dy = -1;
     listview->dragwait = 0;
     listview->shift_sel_anchor = -1;
 
@@ -1244,10 +1244,10 @@ ddb_listview_click_selection (DdbListview *ps, int ex, int ey, int prev_cursor, 
             ddb_listview_select_single (ps, sel);
             if (dnd) {
                 ps->areaselect = 1;
-                ps->areaselect_x = ex;
-                ps->areaselect_y = ey;
-                ps->areaselect_dx = -1;
-                ps->areaselect_dy = -1;
+//                ps->areaselect_x = ex;
+                ps->areaselect_y = ey + ps->scrollpos;
+//                ps->areaselect_dx = -1;
+//                ps->areaselect_dy = -1;
                 ps->shift_sel_anchor = ps->binding->cursor ();
             }
         }
@@ -1539,7 +1539,42 @@ ddb_listview_list_mousemove (DdbListview *ps, GdkEventMotion *ev, int ex, int ey
         int grp_index;
         int sel;
         if (ddb_listview_list_pickpoint_y (ps, ey + ps->scrollpos, &grp, &grp_index, &sel) == -1) {
-            return; // nothing was hit
+            // past playlist bounds -> set to last track
+            sel = ps->binding->count () - 1;
+        }
+        else if (sel == -1) {
+            if (grp_index == -1) {
+                if (ps->areaselect_y < ey + ps->scrollpos) {
+                    // below anchor, take last track in prev group
+                    sel = ps->binding->get_idx (grp->head) - 1;
+                }
+                else if (ps->areaselect_y > ey + ps->scrollpos) {
+                    // above, select 1st track in group
+                        sel = ps->binding->get_idx (grp->head);
+                }
+                else {
+                    sel = ps->shift_sel_anchor;
+                }
+            }
+            else {
+                if (ps->areaselect_y < ey + ps->scrollpos) {
+                    // below anchor, take last track in group
+                    sel = ps->binding->get_idx (grp->head) + grp->num_items - 1;
+                }
+                else if (ps->areaselect_y > ey + ps->scrollpos) {
+                    // above, select 1st track in next group
+                    if (grp->next) {
+                        sel = ps->binding->get_idx (grp->next->head);
+                    }
+                }
+                else {
+                    sel = ps->shift_sel_anchor;
+                }
+            }
+        }
+        int prev = ps->binding->cursor ();
+        if (sel != -1) {
+            ps->binding->set_cursor (sel);
         }
         {
             // select range of items
@@ -1581,6 +1616,12 @@ ddb_listview_list_mousemove (DdbListview *ps, GdkEventMotion *ev, int ex, int ey
             }
             UNREF (it);
         }
+        if (sel != -1 && sel != prev) {
+            if (prev != -1) {
+                ddb_listview_draw_row (ps, prev, ps->binding->get_for_idx (prev));
+            }
+            ddb_listview_draw_row (ps, sel, ps->binding->get_for_idx (sel));
+        }
 
         if (ey < 10) {
             ps->scroll_mode = 0;
@@ -1596,7 +1637,7 @@ ddb_listview_list_mousemove (DdbListview *ps, GdkEventMotion *ev, int ex, int ey
         else if (ey > ps->list->allocation.height-10) {
             ps->scroll_mode = 0;
             ps->scroll_pointer_y = ey;
-            // start scrolling up
+            // start scrolling down
             if (!ps->scroll_active) {
                 ps->scroll_direction = 1;
                 ps->scroll_sleep_time = AUTOSCROLL_UPDATE_FREQ;

@@ -110,8 +110,6 @@ struct _DdbListview {
     int scrollpos;
     int hscrollpos;
     double clicktime; // for doubleclick detection
-//    int nvisiblerows;
-//    int nvisiblefullrows;
     int rowheight;
 
     int col_movepos;
@@ -127,11 +125,8 @@ struct _DdbListview {
     float scroll_sleep_time;
 
     // selection
-    int areaselect;
-    int areaselect_x;
-    int areaselect_y;
-    int areaselect_dx;
-    int areaselect_dy;
+    int areaselect; // boolean, whether area selection is active (1), or not (0)
+    int areaselect_y; // pixel-coordinate of anchor click relative to playlist origin
     int dragwait;
     int shift_sel_anchor;
 
