@@ -440,7 +440,6 @@ playlistswitch_cb (gpointer none) {
     char conf[100];
     snprintf (conf, sizeof (conf), "playlist.scroll.%d", curr);
     int scroll = deadbeef->conf_get_int (conf, 0);
-    printf ("scroll=%d\n", scroll);
     gdk_window_invalidate_rect (tabstrip->window, NULL, FALSE);
     DdbListview *listview = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
     playlist_refresh ();

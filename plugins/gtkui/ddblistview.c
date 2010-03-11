@@ -991,21 +991,23 @@ void
 ddb_listview_list_setup_vscroll (DdbListview *ps) {
     GtkWidget *list = ps->list;
     GtkWidget *scroll = ps->scrollbar;
+    int vheight = ps->fullheight;;
     if (ps->fullheight <= ps->list->allocation.height) {
         gtk_widget_hide (scroll);
         ps->scrollpos = 0;
+        ddb_listview_list_render (ps, 0, 0, list->allocation.width, list->allocation.height);
+        ddb_listview_list_expose (ps, 0, 0, list->allocation.width, list->allocation.height);
     }
     else {
-        int h = list->allocation.height;
-        int vheight = ps->fullheight;;
-        GtkAdjustment *adj = (GtkAdjustment*)gtk_adjustment_new (gtk_range_get_value (GTK_RANGE (scroll)), 0, vheight, SCROLL_STEP, h/2, h);
+        gtk_widget_show (scroll);
         if (ps->scrollpos >= vheight) {
             ps->scrollpos = vheight-1;
         }
-        gtk_range_set_adjustment (GTK_RANGE (scroll), adj);
-        gtk_range_set_value (GTK_RANGE (scroll), ps->scrollpos);
-        gtk_widget_show (scroll);
     }
+    int h = list->allocation.height;
+    GtkAdjustment *adj = (GtkAdjustment*)gtk_adjustment_new (gtk_range_get_value (GTK_RANGE (scroll)), 0, vheight, SCROLL_STEP, h/2, h);
+    gtk_range_set_adjustment (GTK_RANGE (scroll), adj);
+    gtk_range_set_value (GTK_RANGE (scroll), ps->scrollpos);
 }
 
 void
