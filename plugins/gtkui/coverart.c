@@ -199,9 +199,9 @@ cover_avail_callback (const char *fname, const char *artist, const char *album, 
     // load it into main memory
     GdkPixbuf *pb = get_cover_art (fname, artist, album, (intptr_t)user_data);
     if (pb) {
+        g_object_unref (pb);
         // already in cache, redraw
-        void main_refresh (void);
-        main_refresh ();
+        g_idle_add (redraw_playlist_cb, NULL);
     }
 }
 
