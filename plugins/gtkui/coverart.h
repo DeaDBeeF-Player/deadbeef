@@ -33,7 +33,7 @@ GdkPixbuf *
 get_cover_art (const char *fname, const char *artist, const char *album, int width);
 
 void
-reset_cover_art_cache (void);
+coverart_reset_queue (void);
 
 void
 cover_art_init (void);

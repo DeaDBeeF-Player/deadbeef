@@ -248,7 +248,7 @@ get_cover_art (const char *fname, const char *artist, const char *album, int wid
 }
 
 void
-reset_cover_art_cache (void) {
+coverart_reset_queue (void) {
     deadbeef->mutex_lock (mutex);
     if (queue) {
         load_query_t *q = queue->next;
@@ -264,6 +264,9 @@ reset_cover_art_cache (void) {
         tail = queue;
     }
     deadbeef->mutex_unlock (mutex);
+    if (coverart_plugin) {
+        coverart_plugin->reset (1);
+    }
 }
 
 void
@@ -280,7 +283,7 @@ cover_art_free (void) {
 
     if (coverart_plugin) {
         trace ("resetting artwork plugin...\n");
-        coverart_plugin->reset ();
+        coverart_plugin->reset (0);
     }
     
     if (tid) {

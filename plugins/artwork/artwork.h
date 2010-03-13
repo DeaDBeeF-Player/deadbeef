@@ -19,7 +19,8 @@ typedef struct {
     // returns filename of cached image, or NULL
     char* (*get_album_art) (const char *fname, const char *artist, const char *album, artwork_callback callback, void *user_data);
     // this has to be called to clear queue on exit, before caller terminates
-    void (*reset) (void);
+    // `fast=1' means "don't wait, just flush queue"
+    void (*reset) (int fast);
 } DB_artwork_plugin_t;
 
 #endif /*__ARTWORK_H*/

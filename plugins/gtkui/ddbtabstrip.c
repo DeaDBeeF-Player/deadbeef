@@ -310,7 +310,7 @@ tabstrip_draw (GtkWidget *widget) {
         need_draw_moving = 1;
     }
     if (need_draw_moving) {
-        x = -ts->hscrollpos;
+        x = -ts->hscrollpos + tabs_left_margin;
         for (idx = 0; idx < 10; idx++) {
             w = widths[idx];
             if (idx == ts->dragging) {

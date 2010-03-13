@@ -397,15 +397,29 @@ artwork_load (DB_functions_t *api) {
 }
 
 void
-artwork_reset (void) {
-    trace ("artwork: reset\n");
-    clear_queue = 1;
-    deadbeef->mutex_lock (mutex);
-    deadbeef->mutex_unlock (mutex);
-    deadbeef->cond_signal (cond);
-    trace ("artwork: waiting for clear to complete\n");
-    while (clear_queue) {
-        usleep (100000);
+artwork_reset (int fast) {
+    if (fast) {
+        deadbeef->mutex_lock (mutex);
+        while (queue && queue->next) {
+            cover_query_t *next = queue->next->next;
+            free (queue->next->fname);
+            free (queue->next->artist);
+            free (queue->next->album);
+            queue->next = next;
+            if (next == NULL) {
+                queue_tail = queue;
+            }
+        }
+        deadbeef->mutex_unlock (mutex);
+    }
+    else {
+        trace ("artwork: reset\n");
+        clear_queue = 1;
+        deadbeef->cond_signal (cond);
+        trace ("artwork: waiting for clear to complete\n");
+        while (clear_queue) {
+            usleep (100000);
+        }
     }
 }
 

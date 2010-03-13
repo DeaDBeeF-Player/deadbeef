@@ -192,7 +192,7 @@ main_column_size_changed (DdbListview *listview, int col) {
         return;
     }
     if (inf->id == DB_COLUMN_ALBUM_ART) {
-        reset_cover_art_cache ();
+        coverart_reset_queue ();
     }
 }
 
@@ -204,6 +204,7 @@ void main_col_free_user_data (void *data) {
 
 void
 main_vscroll_changed (int pos) {
+    coverart_reset_queue ();
     int curr = deadbeef->plt_get_curr ();
     char conf[100];
     snprintf (conf, sizeof (conf), "playlist.scroll.%d", curr);
