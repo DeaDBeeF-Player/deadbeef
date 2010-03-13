@@ -58,3 +58,16 @@ A: That's normal. Consider switching to wavpack or flac.
 Q: I have 50 ideas about what features must be added to the player!!!111oneone. Can i become idea-generator of the project, so that I tell, and developers do what I ask for?
 
 A: No
+
+--
+
+Q: How do I make GDB backtrace after crash or hang?
+
+A: Ensure that you have unstripped binary. Most packages are stripped. So you'll have to build yourself in most cases, if you haven't done so already.
+Simply doing "./configure && make && sudo make install" is sufficient, but it's better to add export CFLAGS="-O0 -g".
+1. install GDB
+2. run "gdb deadbeef", and execute "r" command in GDB shell
+3. reproduce a crash, or press ctrl+c in GDB after hang occurs
+4. execute "thread 1" command, followed by "bt" command in GDB
+5. repeat for at least 5 threads: tread 2<enter> bt<enter>, and so on
+6. now, you can copy the output starting after 1st "bt" command into email/pastebin/textfile, etc.
