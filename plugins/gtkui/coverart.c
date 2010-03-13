@@ -276,9 +276,16 @@ cover_art_init (void) {
 
 void
 cover_art_free (void) {
-    trace ("terminating cover art loader thread\n");
+    trace ("terminating cover art loader...\n");
+
+    if (coverart_plugin) {
+        trace ("resetting artwork plugin...\n");
+        coverart_plugin->reset ();
+    }
+    
     if (tid) {
         terminate = 1;
+        trace ("sending terminate signal to art loader thread...\n");
         deadbeef->cond_signal (cond);
         deadbeef->thread_join (tid);
         tid = 0;

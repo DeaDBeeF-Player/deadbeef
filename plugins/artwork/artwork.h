@@ -18,6 +18,8 @@ typedef struct {
     DB_misc_t plugin;
     // returns filename of cached image, or NULL
     char* (*get_album_art) (const char *fname, const char *artist, const char *album, artwork_callback callback, void *user_data);
+    // this has to be called to clear queue on exit, before caller terminates
+    void (*reset) (void);
 } DB_artwork_plugin_t;
 
 #endif /*__ARTWORK_H*/

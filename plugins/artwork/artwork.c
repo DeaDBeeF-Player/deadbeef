@@ -34,7 +34,8 @@ static cover_query_t *queue;
 static cover_query_t *queue_tail;
 static uintptr_t mutex;
 static uintptr_t cond;
-static int terminate;
+static volatile int terminate;
+static volatile int clear_queue;
 static intptr_t tid;
 
 void
@@ -274,7 +275,7 @@ fetcher_thread (void *none)
         deadbeef->cond_wait (cond, mutex);
         trace ("artwork: cond signalled\n");
         deadbeef->mutex_unlock (mutex);
-        while (!terminate && queue) {
+        while (!terminate && queue && !clear_queue) {
             cover_query_t *param = queue;
             char path [1024];
             struct dirent **files;
@@ -343,6 +344,15 @@ fetcher_thread (void *none)
             }
             queue_pop ();
         }
+        if (clear_queue) {
+            trace ("artwork: received queue clear request\n");
+            while (queue) {
+                queue_pop ();
+            }
+            clear_queue = 0;
+            trace ("artwork: queue clear done\n");
+            continue;
+        }
         if (terminate) {
             break;
         }
@@ -384,6 +394,19 @@ DB_plugin_t *
 artwork_load (DB_functions_t *api) {
     deadbeef = api;
     return DB_PLUGIN (&plugin);
+}
+
+void
+artwork_reset (void) {
+    trace ("artwork: reset\n");
+    clear_queue = 1;
+    deadbeef->mutex_lock (mutex);
+    deadbeef->mutex_unlock (mutex);
+    deadbeef->cond_signal (cond);
+    trace ("artwork: waiting for clear to complete\n");
+    while (clear_queue) {
+        usleep (100000);
+    }
 }
 
 static int
@@ -431,4 +454,5 @@ static DB_artwork_plugin_t plugin = {
     .plugin.plugin.start = artwork_plugin_start,
     .plugin.plugin.stop = artwork_plugin_stop,
     .get_album_art = get_album_art,
+    .reset = artwork_reset,
 };

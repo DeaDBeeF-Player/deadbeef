@@ -766,9 +766,9 @@ gtkui_thread (void *ctx) {
     ddb_listview_set_vscroll (main_playlist, scroll);
 
     gtk_main ();
+    cover_art_free ();
     gtk_widget_destroy (mainwin);
     gtk_widget_destroy (searchwin);
-    cover_art_free ();
 #if HAVE_NOTIFY
     notify_uninit ();
 #endif
