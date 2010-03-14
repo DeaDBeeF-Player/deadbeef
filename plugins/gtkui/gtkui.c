@@ -42,6 +42,7 @@
 #include "../artwork/artwork.h"
 #include "coverart.h"
 #include "plcommon.h"
+#include "ddbtabstrip.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -441,7 +442,8 @@ playlistswitch_cb (gpointer none) {
     char conf[100];
     snprintf (conf, sizeof (conf), "playlist.scroll.%d", curr);
     int scroll = deadbeef->conf_get_int (conf, 0);
-    gdk_window_invalidate_rect (tabstrip->window, NULL, FALSE);
+//    gdk_window_invalidate_rect (tabstrip->window, NULL, FALSE);
+    ddb_tabstrip_refresh (DDB_TABSTRIP (tabstrip));
     DdbListview *listview = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
     playlist_refresh ();
     ddb_listview_set_vscroll (listview, scroll);

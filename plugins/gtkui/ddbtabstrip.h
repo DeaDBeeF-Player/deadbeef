@@ -53,6 +53,7 @@ struct _DdbTabStripClass {
 
 GType ddb_tabstrip_get_type(void) G_GNUC_CONST;
 GtkWidget * ddb_tabstrip_new(void);
+void ddb_tabstrip_refresh (DdbTabStrip *ts);
 
 G_END_DECLS
 

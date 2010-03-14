@@ -315,7 +315,7 @@ tabstrip_render (DdbTabStrip *ts) {
     }
     x += tabs_left_margin;
     // draw selected
-    if (ts->dragging < 0 || tab_selected != ts->dragging) {
+    if (ts->dragging < 0 || ts->prepare || tab_selected != ts->dragging) {
         idx = tab_selected;
         w = widths[tab_selected];
         GdkRectangle area;
@@ -527,9 +527,6 @@ on_rename_playlist1_activate           (GtkMenuItem     *menuitem,
         const char *text = gtk_entry_get_text (GTK_ENTRY (e));
         deadbeef->plt_set_title (tab_clicked, text);
         extern GtkWidget *mainwin;
-        DdbTabStrip *ts = DDB_TABSTRIP (lookup_widget (mainwin, "tabstrip"));
-        tabstrip_render (ts);
-        tabstrip_expose (ts, 0, 0, GTK_WIDGET (ts)->allocation.width, GTK_WIDGET (ts)->allocation.height);
     }
     gtk_widget_destroy (dlg);
 }
@@ -569,6 +566,9 @@ on_add_new_playlist1_activate          (GtkMenuItem     *menuitem,
         }
         if (i == cnt) {
             deadbeef->plt_add (cnt, name);
+            DdbTabStrip *ts = DDB_TABSTRIP (lookup_widget (mainwin, "tabstrip"));
+            tabstrip_render (ts);
+            tabstrip_expose (ts, 0, 0, GTK_WIDGET (ts)->allocation.width, GTK_WIDGET (ts)->allocation.height);
             break;
         }
         idx++;
@@ -599,3 +599,8 @@ on_save_all_playlists1_activate        (GtkMenuItem     *menuitem,
 
 }
 
+void
+ddb_tabstrip_refresh (DdbTabStrip *ts) {
+    tabstrip_render (ts);
+    tabstrip_expose (ts, 0, 0, GTK_WIDGET (ts)->allocation.width, GTK_WIDGET (ts)->allocation.height);
+}
