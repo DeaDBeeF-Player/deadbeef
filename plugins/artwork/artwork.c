@@ -162,8 +162,10 @@ fetch_to_file (const char *url, const char *filename)
     if (0 == ret)
     {
         ret = (0 == rename (temp, filename));
-        if (!ret)
+        if (!ret) {
             trace ("Could not move %s to %s: %d\n", temp, filename, errno);
+            unlink (temp);
+        }
     }
     return ret;
 }
@@ -305,8 +307,15 @@ fetcher_thread (void *none)
                     strcat (path, "/");
                     strcat (path, files[0]->d_name);
                     char cache_path[1024];
+                    char tmp_path[1024];
                     make_cache_path (cache_path, sizeof (cache_path), param->album, param->artist);
-                    copy_file (path, cache_path);
+                    snprintf (tmp_path, sizeof (tmp_path), "%s.part", cache_path);
+                    copy_file (path, tmp_path);
+                    int err = rename (tmp_path, cache_path);
+                    if (err != 0) {
+                        trace ("Failed not move %s to %s: %s\n", tmp_path, cache_path, strerror (err));
+                        unlink (tmp_path);
+                    }
                     int i;
                     for (i = 0; i < files_count; i++) {
                         free (files [i]);
