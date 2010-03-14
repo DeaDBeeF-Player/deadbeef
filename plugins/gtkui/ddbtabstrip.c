@@ -320,7 +320,7 @@ tabstrip_draw (GtkWidget *widget) {
                     gtk_paint_box (widget->style, backbuf, GTK_STATE_ACTIVE, GTK_SHADOW_ETCHED_IN, NULL, widget, "button", x, 0, w, h);
                 }
 #endif
-                x += ts->movepos;
+                x = ts->movepos;
                 if (x >= widget->allocation.width) {
                     break;
                 }
@@ -378,7 +378,14 @@ on_tabstrip_button_press_event           (GtkWidget       *widget,
         if (tab_clicked != -1) {
             deadbeef->plt_set_curr (tab_clicked);
         }
-        ts->dragpt[0] = event->x - ts->hscrollpos;
+
+        int x = -ts->hscrollpos + tabs_left_margin;
+        int idx;
+        for (idx = 0; idx < tab_clicked; idx++) {
+            int width = ddb_tabstrip_get_tab_width (ts, idx);
+            x += width - tab_overlap_size;
+        }
+        ts->dragpt[0] = event->x - x;
         ts->dragpt[1] = event->y;
         ts->prepare = 1;
         ts->dragging = tab_clicked;
@@ -425,7 +432,6 @@ on_tabstrip_expose_event                 (GtkWidget       *widget,
     return FALSE;
 }
 
-
 gboolean
 on_tabstrip_motion_notify_event          (GtkWidget       *widget,
                                         GdkEventMotion  *event)
@@ -445,28 +451,23 @@ on_tabstrip_motion_notify_event          (GtkWidget       *widget,
     if (!ts->prepare && ts->dragging >= 0) {
 //        gdk_window_set_cursor (widget->window, cursor_drag);
         ts->movepos = ev_x - ts->dragpt[0];
-        int drag_width = ddb_tabstrip_get_tab_width (ts, ts->dragging);
 
         // find closest tab to the left
+        int idx;
+        int x = -ts->hscrollpos + tabs_left_margin;
         int inspos = -1;
-        int x = 0;
-        int idx = 0;
-        int x1 = -1, x2 = -1;
         int cnt = deadbeef->plt_get_count ();
-        for (idx = 0; idx < ts->dragging; idx++) {
+        for (idx = 0; idx < cnt; idx++) {
             int width = ddb_tabstrip_get_tab_width (ts, idx);
-            if (x < ts->movepos && x + width > ts->movepos) {
+            if (idx != ts->dragging && x <= ts->movepos && x + width/2 - tab_overlap_size  > ts->movepos) {
                 inspos = idx;
-                x1 = x;
+                break;
             }
-            else if (idx == ts->dragging) {
-                x2 = x;
-            }
-            x += drag_width;
+            x += width - tab_overlap_size;
         }
         if (inspos >= 0 && inspos != ts->dragging) {
-            //ddb_tabstrip_tab_move (ps, c, inspos);
-            //ts->dragging = inspos;
+            deadbeef->plt_move (ts->dragging, inspos);
+            ts->dragging = inspos;
         }
         tabstrip_draw (widget);
     }

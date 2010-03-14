@@ -112,6 +112,7 @@ static DB_functions_t deadbeef_api = {
     .plt_get_curr = plt_get_curr,
     .plt_get_title = plt_get_title,
     .plt_set_title = plt_set_title,
+    .plt_move = plt_move,
     // playlist access
     .pl_lock = pl_lock,
     .pl_unlock = pl_unlock,

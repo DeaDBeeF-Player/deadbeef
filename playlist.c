@@ -361,6 +361,59 @@ plt_free (void) {
 }
 
 void
+plt_move (int from, int before) {
+    if (from == before) {
+        return;
+    }
+    int i;
+    PLT_LOCK;
+    playlist_t *p = playlists_head;
+
+    playlist_t *pfrom = NULL;
+    playlist_t *prev = NULL;
+    playlist_t *ins = NULL;
+
+    for (i = 0; p && i <= from; i++) {
+        if (i == from) {
+            pfrom = p;
+            if (prev) {
+                prev->next = p->next;
+            }
+            else {
+                playlists_head = p->next;
+            }
+            break;
+        }
+        prev = p;
+        p = p->next;
+    }
+//    if (before > from) {
+//        before--;
+//    }
+
+    if (before == 0) {
+        pfrom->next = playlists_head;
+        playlists_head = pfrom;
+    }
+    else {
+        p = playlists_head;
+        for (i = 0; p && i < before; i++) {
+            if (i == before-1) {
+                playlist_t *next = p->next;
+                p->next = pfrom;
+                pfrom->next = next;
+                break;
+            }
+            prev = p;
+            p = p->next;
+        }
+    }
+
+    PLT_UNLOCK;
+    plt_gen_conf ();
+}
+
+void
 pl_clear (void) {
     LOCK;
     while (playlist->head[PL_MAIN]) {
@@ -1426,10 +1479,10 @@ pl_delete_selected (void) {
         }
     }
     if (playlist->current_row[PL_MAIN] >= playlist->count[PL_MAIN]) {
-        playlist->current_row[PL_MAIN] == playlist->count[PL_MAIN] - 1;
+        playlist->current_row[PL_MAIN] = playlist->count[PL_MAIN] - 1;
     }
     if (playlist->current_row[PL_SEARCH] >= playlist->count[PL_SEARCH]) {
-        playlist->current_row[PL_SEARCH] == playlist->count[PL_SEARCH] - 1;
+        playlist->current_row[PL_SEARCH] = playlist->count[PL_SEARCH] - 1;
     }
     GLOBAL_UNLOCK;
     return ret;

@@ -289,6 +289,7 @@ typedef struct {
     int (*plt_get_curr) (void);
     int (*plt_get_title) (int plt, char *buffer, int bufsize);
     int (*plt_set_title) (int plt, const char *title);
+    void (*plt_move) (int from, int before);
     // playlist control
     void (*pl_lock) (void);
     void (*pl_unlock) (void);

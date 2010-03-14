@@ -121,6 +121,9 @@ plt_get_title (int plt, char *buffer, int bufsize);
 int
 plt_set_title (int plt, const char *title);
 
+void
+plt_move (int from, int before);
+
 // playlist access functions
 void
 pl_clear (void);
