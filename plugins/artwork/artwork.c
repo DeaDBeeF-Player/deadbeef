@@ -391,6 +391,18 @@ get_album_art (const char *fname, const char *artist, const char *album, artwork
     make_cache_path (path, sizeof (path), album, artist);
     struct stat stat_buf;
     if (0 == stat (path, &stat_buf)) {
+        int cache_period = deadbeef->conf_get_int ("artwork.cache.period", 48);
+        // invalidate cache every 2 days
+        if (cache_period > 0) {
+            time_t tm = time (NULL);
+            if (tm - stat_buf.st_mtime > cache_period * 60 * 60) {
+                trace ("reloading cached file %s\n", path);
+                unlink (path);
+                queue_add (fname, artist, album, callback, user_data);
+                return strdup (DEFAULT_COVER_PATH);
+            }
+        }
+
 //        trace ("found %s in cache\n", path);
         return strdup (path);
     }
@@ -463,6 +475,9 @@ artwork_plugin_stop (void)
     }
 }
 
+static const char settings_dlg[] =
+    "property \"Cache update period (hr)\" entry artwork.cache.period 48;\n"
+;
 // define plugin interface
 static DB_artwork_plugin_t plugin = {
     .plugin.plugin.api_vmajor = DB_API_VERSION_MAJOR,
@@ -471,11 +486,12 @@ static DB_artwork_plugin_t plugin = {
     .plugin.plugin.id = "cover_loader",
     .plugin.plugin.name = "Album Artwork",
     .plugin.plugin.descr = "Loads album artwork either from local directories or from internet",
-    .plugin.plugin.author = "Viktor Semykin",
-    .plugin.plugin.email = "thesame.ml@gmail.com",
+    .plugin.plugin.author = "Viktor Semykin, Alexey Yakovenko",
+    .plugin.plugin.email = "thesame.ml@gmail.com, waker@users.sourceforge.net",
     .plugin.plugin.website = "http://deadbeef.sf.net",
     .plugin.plugin.start = artwork_plugin_start,
     .plugin.plugin.stop = artwork_plugin_stop,
+    .plugin.plugin.configdialog = settings_dlg,
     .get_album_art = get_album_art,
     .reset = artwork_reset,
 };
