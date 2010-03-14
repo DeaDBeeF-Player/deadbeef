@@ -15,7 +15,7 @@
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(...)
 
-#define DEFAULT_COVER_PATH (PREFIX "/share/deadbeef/pixmaps/blank_cd.jpg")
+#define DEFAULT_COVER_PATH (PREFIX "/share/deadbeef/pixmaps/noartwork.jpg")
 
 static DB_artwork_plugin_t plugin;
 DB_functions_t *deadbeef;

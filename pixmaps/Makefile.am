@@ -10,7 +10,7 @@ play_24.png\
 prev_24.png\
 random_24.png\
 stop_24.png\
-blank_cd.jpg
+noartwork.jpg
 
 EXTRA_DIST = $(pixmaps_DATA)
 
