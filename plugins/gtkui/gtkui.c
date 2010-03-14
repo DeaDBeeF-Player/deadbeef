@@ -62,19 +62,22 @@ GtkWidget *traymenu;
 
 // playlist theming
 GtkWidget *theme_treeview;
+GtkWidget *theme_button;
 int disable_listview_theming = 0;
 
 // that must be called before gtk_init
 void
 gtkpl_init (void) {
-    //memcpy (colo_current, colo_system_gtk, sizeof (colo_current));
-    //memcpy (colo_current, colo_dark_orange, sizeof (colo_current));
     theme_treeview = gtk_tree_view_new ();
     GTK_WIDGET_UNSET_FLAGS (theme_treeview, GTK_CAN_FOCUS);
     gtk_widget_show (theme_treeview);
     GtkWidget *vbox1 = lookup_widget (mainwin, "vbox1");
     gtk_box_pack_start (GTK_BOX (vbox1), theme_treeview, FALSE, FALSE, 0);
     gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (theme_treeview), TRUE);
+
+    theme_button = gtk_button_new ();
+    gtk_widget_show (theme_button);
+    gtk_box_pack_start (GTK_BOX (vbox1), theme_button, FALSE, FALSE, 0);
 }
 
 void

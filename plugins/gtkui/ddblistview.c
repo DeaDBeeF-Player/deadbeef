@@ -56,6 +56,7 @@
 
 // HACK!!
 extern GtkWidget *theme_treeview;
+extern GtkWidget *theme_button;
 
 G_DEFINE_TYPE (DdbListview, ddb_listview, GTK_TYPE_TABLE);
 
@@ -1888,7 +1889,8 @@ ddb_listview_header_render (DdbListview *ps) {
     const char *detail = "button";
 
     // fill background
-    gtk_paint_box (widget->style, ps->backbuf_header, GTK_STATE_NORMAL, GTK_SHADOW_OUT, NULL, widget, detail, -10, -10, widget->allocation.width+20, widget->allocation.height+20);
+    //gdk_draw_rectangle (widget->window, widget->style->base_gc[GTK_STATE_NORMAL], TRUE, 0, 0,  widget->allocation.width, widget->allocation.height);
+    gtk_paint_box (theme_button->style, ps->backbuf_header, GTK_STATE_NORMAL, GTK_SHADOW_OUT, NULL, widget, detail, -10, -10, widget->allocation.width+20, widget->allocation.height+20);
     gdk_draw_line (ps->backbuf_header, widget->style->mid_gc[GTK_STATE_NORMAL], 0, widget->allocation.height-1, widget->allocation.width, widget->allocation.height-1);
     draw_begin ((uintptr_t)ps->backbuf_header);
     x = -ps->hscrollpos;
@@ -1916,7 +1918,7 @@ ddb_listview_header_render (DdbListview *ps) {
             int sort = c->sort_order;
             if (w > 0) {
                 gtk_paint_vline (widget->style, ps->backbuf_header, GTK_STATE_NORMAL, NULL, NULL, NULL, 2, h-4, xx+w - 2);
-                GdkColor *gdkfg = &widget->style->fg[0];
+                GdkColor *gdkfg = &theme_button->style->fg[0];
                 float fg[3] = {(float)gdkfg->red/0xffff, (float)gdkfg->green/0xffff, (float)gdkfg->blue/0xffff};
                 draw_set_fg_color (fg);
                 int ww = w-10;
@@ -1956,15 +1958,15 @@ ddb_listview_header_render (DdbListview *ps) {
 #endif
                 // draw empty slot
                 if (x < widget->allocation.width) {
-                    gtk_paint_box (widget->style, ps->backbuf_header, GTK_STATE_ACTIVE, GTK_SHADOW_ETCHED_IN, NULL, widget, "button", x, 0, w, h);
+                    gtk_paint_box (theme_button->style, ps->backbuf_header, GTK_STATE_ACTIVE, GTK_SHADOW_ETCHED_IN, NULL, widget, "button", x, 0, w, h);
                 }
                 x = ps->col_movepos;
                 if (x >= widget->allocation.width) {
                     break;
                 }
                 if (w > 0) {
-                    gtk_paint_box (widget->style, ps->backbuf_header, GTK_STATE_SELECTED, GTK_SHADOW_OUT, NULL, widget, "button", x, 0, w, h);
-                    GdkColor *gdkfg = &widget->style->fg[GTK_STATE_SELECTED];
+                    gtk_paint_box (theme_button->style, ps->backbuf_header, GTK_STATE_SELECTED, GTK_SHADOW_OUT, NULL, widget, "button", x, 0, w, h);
+                    GdkColor *gdkfg = &theme_button->style->fg[GTK_STATE_SELECTED];
                     float fg[3] = {(float)gdkfg->red/0xffff, (float)gdkfg->green/0xffff, (float)gdkfg->blue/0xffff};
                     draw_set_fg_color (fg);
                     draw_text (x + 5, h/2-draw_get_font_size()/2, c->width-10, 0, c->title);
