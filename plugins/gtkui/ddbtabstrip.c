@@ -123,9 +123,32 @@ on_tabstrip_motion_notify_event          (GtkWidget       *widget,
                                         GdkEventMotion  *event);
 
 static void
+ddb_tabstrip_destroy(GtkObject *object)
+{
+  DdbTabStrip *tabstrip;
+  DdbTabStripClass *class;
+
+  g_return_if_fail(object != NULL);
+  g_return_if_fail(DDB_IS_TABSTRIP(object));
+
+  tabstrip = DDB_TABSTRIP (object);
+  class = gtk_type_class(gtk_widget_get_type());
+
+  if (tabstrip->backbuf) {
+      g_object_unref (tabstrip->backbuf);
+      tabstrip->backbuf = NULL;
+  }
+
+  if (GTK_OBJECT_CLASS (ddb_tabstrip_parent_class)) {
+      GTK_OBJECT_CLASS (ddb_tabstrip_parent_class)->destroy (object);
+  }
+}
+
+static void
 ddb_tabstrip_class_init(DdbTabStripClass *class)
 {
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (class);
+  GtkObjectClass *object_class = (GtkObjectClass *) class;
   widget_class->realize = ddb_tabstrip_realize;
   widget_class->size_allocate = ddb_tabstrip_size_allocate;
   widget_class->expose_event = on_tabstrip_expose_event;
@@ -133,6 +156,7 @@ ddb_tabstrip_class_init(DdbTabStripClass *class)
   widget_class->button_release_event = on_tabstrip_button_release_event;
   widget_class->configure_event = on_tabstrip_configure_event;
   widget_class->motion_notify_event = on_tabstrip_motion_notify_event;
+  object_class->destroy = ddb_tabstrip_destroy;
 }
 
 GtkWidget * ddb_tabstrip_new() {
@@ -149,6 +173,8 @@ ddb_tabstrip_init(DdbTabStrip *tabstrip)
     tabstrip->dragpt[1] = 0;
     tabstrip->prev_x = 0;
     tabstrip->movepos = 0;
+    tabstrip->backbuf = NULL;
+    gtk_widget_set_double_buffered (GTK_WIDGET (tabstrip), FALSE);
 }
 
 static int tab_clicked = -1;
@@ -160,7 +186,7 @@ static int tabs_left_margin = 4;
 static int min_tab_size = 80;
 
 void
-ddb_tabstrip_draw_tab (GtkWidget *widget, int selected, int x, int y, int w, int h) {
+ddb_tabstrip_draw_tab (GtkWidget *widget, GdkDrawable *drawable, int selected, int x, int y, int w, int h) {
     GdkPoint points_filled[] = {
         { x+2, y + h },
         { x+2, y + 2 },
@@ -201,9 +227,9 @@ ddb_tabstrip_draw_tab (GtkWidget *widget, int selected, int x, int y, int w, int
         outer_frame = widget->style->dark_gc[GTK_STATE_NORMAL];
         inner_frame = widget->style->mid_gc[GTK_STATE_NORMAL];
     }
-    gdk_draw_polygon (widget->window, bg, TRUE, points_filled, 4);
-    gdk_draw_lines (widget->window, outer_frame, points_frame1, 9);
-    gdk_draw_lines (widget->window, inner_frame, points_frame2, 7);
+    gdk_draw_polygon (drawable, bg, TRUE, points_filled, 4);
+    gdk_draw_lines (drawable, outer_frame, points_frame1, 9);
+    gdk_draw_lines (drawable, inner_frame, points_frame2, 7);
 }
 
 int
@@ -221,9 +247,9 @@ ddb_tabstrip_get_tab_width (DdbTabStrip *ts, int tab) {
 }
 
 void
-tabstrip_draw (GtkWidget *widget) {
-    DdbTabStrip *ts = DDB_TABSTRIP (widget);
-    GdkDrawable *backbuf = widget->window;
+tabstrip_render (DdbTabStrip *ts) {
+    GtkWidget *widget = GTK_WIDGET (ts);
+    GdkDrawable *backbuf = ts->backbuf;
     int x = -ts->hscrollpos;
     int w = 0;
     int h = draw_get_font_size ();
@@ -270,7 +296,7 @@ tabstrip_draw (GtkWidget *widget) {
         area.height = 24;
         if (idx != tab_selected) {
 //            gtk_paint_box (widget->style, widget->window, idx == tab_selected ? GTK_STATE_PRELIGHT : GTK_STATE_NORMAL, GTK_SHADOW_OUT, &area, widget, "button", x, idx == tab_selected ? 0 : 1, w+margin_size, 32);
-            ddb_tabstrip_draw_tab (widget, idx == tab_selected, x, y, w, h);
+            ddb_tabstrip_draw_tab (widget, backbuf, idx == tab_selected, x, y, w, h);
             char tab_title[100];
             deadbeef->plt_get_title (idx, tab_title, sizeof (tab_title));
             GdkColor *color = &widget->style->text[GTK_STATE_NORMAL];
@@ -298,7 +324,7 @@ tabstrip_draw (GtkWidget *widget) {
         area.width = w;
         area.height = 24;
 //        gtk_paint_box (widget->style, widget->window, GTK_STATE_PRELIGHT, GTK_SHADOW_OUT, &area, widget, "button", x, idx == tab_selected ? 0 : 1, w, 32);
-        ddb_tabstrip_draw_tab (widget, 1, x, y, w, h);
+        ddb_tabstrip_draw_tab (widget, backbuf, 1, x, y, w, h);
         char tab_title[100];
         deadbeef->plt_get_title (idx, tab_title, sizeof (tab_title));
         GdkColor *color = &widget->style->text[GTK_STATE_NORMAL];
@@ -326,7 +352,7 @@ tabstrip_draw (GtkWidget *widget) {
                 }
                 if (w > 0) {
 //                    gtk_paint_box (widget->style, backbuf, GTK_STATE_SELECTED, GTK_SHADOW_OUT, NULL, widget, "button", x, 0, w, h);
-                    ddb_tabstrip_draw_tab (widget, 1, x, y, w, h);
+                    ddb_tabstrip_draw_tab (widget, backbuf, 1, x, y, w, h);
                     char tab_title[100];
                     deadbeef->plt_get_title (idx, tab_title, sizeof (tab_title));
                     GdkColor *color = &widget->style->text[GTK_STATE_NORMAL];
@@ -340,6 +366,11 @@ tabstrip_draw (GtkWidget *widget) {
         }
     }
     draw_end ();
+}
+
+void
+tabstrip_expose (DdbTabStrip *ts, int x, int y, int w, int h) {
+    gdk_draw_drawable (GTK_WIDGET (ts)->window, GTK_WIDGET (ts)->style->black_gc, ts->backbuf, x, y, x, y, w, h);
 }
 
 static int
@@ -408,7 +439,8 @@ on_tabstrip_button_release_event         (GtkWidget       *widget,
         if (ts->prepare || ts->dragging >= 0) {
             ts->dragging = -1;
             ts->prepare = 0;
-            tabstrip_draw (widget);
+            tabstrip_render (ts);
+            tabstrip_expose (ts, 0, 0, widget->allocation.width, widget->allocation.height);
         }
     }
     return FALSE;
@@ -419,8 +451,14 @@ gboolean
 on_tabstrip_configure_event              (GtkWidget       *widget,
                                         GdkEventConfigure *event)
 {
-
-  return FALSE;
+    DdbTabStrip *ts = DDB_TABSTRIP (widget);
+    if (ts->backbuf) {
+        g_object_unref (ts->backbuf);
+        ts->backbuf = NULL;
+    }
+    ts->backbuf = gdk_pixmap_new (widget->window, widget->allocation.width, widget->allocation.height, -1);
+    tabstrip_render (ts);
+    return FALSE;
 }
 
 
@@ -428,7 +466,7 @@ gboolean
 on_tabstrip_expose_event                 (GtkWidget       *widget,
                                         GdkEventExpose  *event)
 {
-    tabstrip_draw (widget);
+    tabstrip_expose (DDB_TABSTRIP (widget), event->area.x, event->area.y, event->area.width, event->area.height);
     return FALSE;
 }
 
@@ -469,7 +507,8 @@ on_tabstrip_motion_notify_event          (GtkWidget       *widget,
             deadbeef->plt_move (ts->dragging, inspos);
             ts->dragging = inspos;
         }
-        tabstrip_draw (widget);
+        tabstrip_render (ts);
+        tabstrip_expose (ts, 0, 0, widget->allocation.width, widget->allocation.height);
     }
     return FALSE;
 }
@@ -488,7 +527,9 @@ on_rename_playlist1_activate           (GtkMenuItem     *menuitem,
         const char *text = gtk_entry_get_text (GTK_ENTRY (e));
         deadbeef->plt_set_title (tab_clicked, text);
         extern GtkWidget *mainwin;
-        tabstrip_draw (lookup_widget (mainwin, "tabstrip"));
+        DdbTabStrip *ts = DDB_TABSTRIP (lookup_widget (mainwin, "tabstrip"));
+        tabstrip_render (ts);
+        tabstrip_expose (ts, 0, 0, GTK_WIDGET (ts)->allocation.width, GTK_WIDGET (ts)->allocation.height);
     }
     gtk_widget_destroy (dlg);
 }
