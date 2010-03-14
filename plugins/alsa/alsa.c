@@ -31,6 +31,11 @@
 #define LOCK {deadbeef->mutex_lock (mutex);}
 #define UNLOCK {deadbeef->mutex_unlock (mutex);}
 
+#define DEFAULT_BUFFER_SIZE 8192
+#define DEFAULT_PERIOD_SIZE 1024
+#define DEFAULT_BUFFER_SIZE_STR "8192"
+#define DEFAULT_PERIOD_SIZE_STR "1024"
+
 static DB_output_t plugin;
 DB_functions_t *deadbeef;
 
@@ -181,8 +186,8 @@ palsa_set_hw_params (int samplerate) {
     snd_pcm_hw_params_get_channels (hw_params, &nchan);
     trace ("alsa channels: %d\n", nchan);
 
-    req_buffer_size = deadbeef->conf_get_int ("alsa.buffer", 1024);
-    req_period_size = deadbeef->conf_get_int ("alsa.period", 512);
+    req_buffer_size = deadbeef->conf_get_int ("alsa.buffer", DEFAULT_BUFFER_SIZE);
+    req_period_size = deadbeef->conf_get_int ("alsa.period", DEFAULT_PERIOD_SIZE);
     buffer_size = req_buffer_size;
     period_size = req_period_size;
     trace ("trying buffer size: %d frames\n", buffer_size);
@@ -566,8 +571,8 @@ static int
 palsa_configchanged (DB_event_t *ev, uintptr_t data) {
     int alsa_resample = deadbeef->conf_get_int ("alsa.resample", 0);
     const char *alsa_soundcard = deadbeef->conf_get_str ("alsa_soundcard", "default");
-    int buffer = deadbeef->conf_get_int ("alsa.buffer", 1024);
-    int period = deadbeef->conf_get_int ("alsa.period", 512);
+    int buffer = deadbeef->conf_get_int ("alsa.buffer", DEFAULT_BUFFER_SIZE);
+    int period = deadbeef->conf_get_int ("alsa.period", DEFAULT_PERIOD_SIZE);
     if (audio &&
             (alsa_resample != conf_alsa_resample
             || strcmp (alsa_soundcard, conf_alsa_soundcard)
@@ -634,8 +639,8 @@ alsa_load (DB_functions_t *api) {
 static const char settings_dlg[] =
     "property \"Use ALSA resampling\" checkbox alsa.resample 0;\n"
     "property \"Release device while stopped\" checkbox alsa.freeonstop 0;\n"
-    "property \"Preferred buffer size\" entry alsa.buffer 1024;\n"
-    "property \"Preferred period size\" entry alsa.period 512;\n"
+    "property \"Preferred buffer size\" entry alsa.buffer " DEFAULT_BUFFER_SIZE_STR ";\n"
+    "property \"Preferred period size\" entry alsa.period " DEFAULT_PERIOD_SIZE_STR ";\n"
 ;
 
 // define plugin interface
