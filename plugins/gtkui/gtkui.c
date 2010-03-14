@@ -88,7 +88,6 @@ gtkpl_free (DdbListview *pl) {
         colhdr_anim.timeline = 0;
     }
 #endif
-//    g_object_unref (theme_treeview);
 }
 
 
@@ -125,16 +124,15 @@ update_songinfo (gpointer ctx) {
     int sectotal = ((int)pl_totaltime) % 60;
 
     char totaltime_str[512] = "";
-    if (daystotal == 0)
+    if (daystotal == 0) {
         snprintf (totaltime_str, sizeof (totaltime_str), "%d:%02d:%02d", hourtotal, mintotal, sectotal);
-
-    else if (daystotal == 1)
+    }
+    else if (daystotal == 1) {
         snprintf (totaltime_str, sizeof (totaltime_str), "1 day %d:%02d:%02d", hourtotal, mintotal, sectotal);
-
-    else
+    }
+    else {
         snprintf (totaltime_str, sizeof (totaltime_str), "%d days %d:%02d:%02d", daystotal, hourtotal, mintotal, sectotal);
-
-
+    }
 
     DB_playItem_t *track = deadbeef->streamer_get_playing_track ();
     DB_fileinfo_t *c = deadbeef->streamer_get_current_fileinfo ();

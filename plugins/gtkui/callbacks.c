@@ -494,8 +494,7 @@ seekbar_draw (GtkWidget *widget) {
     GdkColor *clr_back = gtkui_get_back_color ();
 
     DB_playItem_t *trk = deadbeef->streamer_get_playing_track ();
-    DB_fileinfo_t *dec = deadbeef->streamer_get_current_fileinfo ();
-    if (!dec || !trk || deadbeef->pl_get_item_duration (trk) < 0) {
+    if (!trk || deadbeef->pl_get_item_duration (trk) < 0) {
         clearlooks_rounded_rectangle (cr, 2, widget->allocation.height/2-4, widget->allocation.width-4, 8, 4, 0xff);
         // empty seekbar, just a frame
         cairo_set_source_rgb (cr, clr_selection->red/65535.f, clr_selection->green/65535.f, clr_selection->blue/65535.f );
@@ -515,7 +514,7 @@ seekbar_draw (GtkWidget *widget) {
         pos = x;
     }
     else {
-        if (dec && deadbeef->pl_get_item_duration (trk) > 0) {
+        if (deadbeef->pl_get_item_duration (trk) > 0) {
             pos = deadbeef->streamer_get_playpos () / deadbeef->pl_get_item_duration (trk);
             pos *= widget->allocation.width;
         }
