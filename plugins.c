@@ -91,6 +91,7 @@ static DB_functions_t deadbeef_api = {
     .quit = plug_quit,
     // threading
     .thread_start = thread_start,
+    .thread_start_low_priority = thread_start_low_priority,
     .thread_join = thread_join,
     .mutex_create = mutex_create,
     .mutex_create_nonrecursive = mutex_create_nonrecursive,

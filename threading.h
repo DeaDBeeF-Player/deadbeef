@@ -23,6 +23,9 @@
 intptr_t
 thread_start (void (*fn)(void *ctx), void *ctx);
 
+intptr_t
+thread_start_low_priority (void (*fn)(void *ctx), void *ctx);
+
 int
 thread_join (intptr_t tid);
 

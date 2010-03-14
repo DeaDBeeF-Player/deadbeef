@@ -274,7 +274,7 @@ cover_art_init (void) {
     terminate = 0;
     mutex = deadbeef->mutex_create_nonrecursive ();
     cond = deadbeef->cond_create ();
-    tid = deadbeef->thread_start (loading_thread, NULL);
+    tid = deadbeef->thread_start_low_priority (loading_thread, NULL);
 }
 
 void

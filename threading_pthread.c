@@ -46,6 +46,44 @@ thread_start (void (*fn)(void *ctx), void *ctx) {
     return tid;
 }
 
+intptr_t
+thread_start_low_priority (void (*fn)(void *ctx), void *ctx) {
+    pthread_t tid;
+    pthread_attr_t attr;
+    int s = pthread_attr_init (&attr);
+    if (s != 0) {
+        fprintf (stderr, "pthread_attr_init failed: %s\n", strerror (s));
+        return 0;
+    }
+    int policy;
+    s = pthread_attr_getschedpolicy (&attr, &policy);
+    if (s != 0) {
+        fprintf (stderr, "pthread_attr_getschedpolicy failed: %s\n", strerror (s));
+        return 0;
+    }
+    int minprio = sched_get_priority_min (policy);
+
+    s = pthread_create (&tid, &attr, (void *(*)(void *))fn, (void*)ctx);
+    if (s != 0) {
+        fprintf (stderr, "pthread_create failed: %s\n", strerror (s));
+        return 0;
+    }
+    s = pthread_setschedprio (tid, minprio);
+    if (s != 0) {
+        fprintf (stderr, "pthread_setschedprio failed: %s\n", strerror (s));
+        pthread_cancel (tid);
+        return 0;
+    }
+
+    s = pthread_attr_destroy (&attr);
+    if (s != 0) {
+        fprintf (stderr, "pthread_attr_destroy failed: %s\n", strerror (s));
+        pthread_cancel (tid);
+        return 0;
+    }
+    return tid;
+}
+
 int
 thread_join (intptr_t tid) {
     void *retval;

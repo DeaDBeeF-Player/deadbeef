@@ -268,6 +268,7 @@ typedef struct {
     void (*quit) (void);
     // threading
     intptr_t (*thread_start) (void (*fn)(void *ctx), void *ctx);
+    intptr_t (*thread_start_low_priority) (void (*fn)(void *ctx), void *ctx);
     int (*thread_join) (intptr_t tid);
     uintptr_t (*mutex_create) (void);
     uintptr_t (*mutex_create_nonrecursive) (void);
