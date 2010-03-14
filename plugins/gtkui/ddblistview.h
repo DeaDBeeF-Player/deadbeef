@@ -143,6 +143,9 @@ struct _DdbListview {
     int fullheight;
     int block_redraw_on_scroll;
     int grouptitle_height;
+
+    GdkCursor *cursor_sz;
+    GdkCursor *cursor_drag;
 };
 
 struct _DdbListviewClass {
