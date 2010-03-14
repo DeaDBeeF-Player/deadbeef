@@ -463,6 +463,14 @@ ddb_listview_destroy(GtkObject *object)
       gdk_cursor_destroy (listview->cursor_drag);
       listview->cursor_drag = NULL;
   }
+  if (listview->backbuf) {
+      g_object_unref (listview->backbuf);
+      listview->backbuf = NULL;
+  }
+  if (listview->backbuf_header) {
+      g_object_unref (listview->backbuf_header);
+      listview->backbuf_header = NULL;
+  }
 
   class = gtk_type_class(gtk_widget_get_type());
 
