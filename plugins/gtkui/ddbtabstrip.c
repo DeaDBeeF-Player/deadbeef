@@ -504,7 +504,17 @@ on_tabstrip_motion_notify_event          (GtkWidget       *widget,
             x += width - tab_overlap_size;
         }
         if (inspos >= 0 && inspos != ts->dragging) {
+            char str1[100];
+            char str2[100];
+            int pos1;
+            int pos2;
+            snprintf (str1, sizeof (str1), "playlist.scroll.%d", ts->dragging);
+            pos1 = deadbeef->conf_get_int (str1, 0);
+            snprintf (str2, sizeof (str2), "playlist.scroll.%d", inspos);
+            pos2 = deadbeef->conf_get_int (str2, 0);
             deadbeef->plt_move (ts->dragging, inspos);
+            deadbeef->conf_set_int (str1, pos2);
+            deadbeef->conf_set_int (str2, pos1);
             ts->dragging = inspos;
         }
         tabstrip_render (ts);
