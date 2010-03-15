@@ -100,7 +100,7 @@ plt_get_curr_ptr (void);
 int
 plt_get_count (void);
 
-void
+int
 plt_add (int before, const char *title);
 
 void

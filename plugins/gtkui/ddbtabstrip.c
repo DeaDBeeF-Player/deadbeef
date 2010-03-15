@@ -408,6 +408,7 @@ on_tabstrip_button_press_event           (GtkWidget       *widget,
     {
         if (tab_clicked != -1) {
             deadbeef->plt_set_curr (tab_clicked);
+            deadbeef->conf_set_int ("playlist.current", tab_clicked);
         }
 
         int x = -ts->hscrollpos + tabs_left_margin;
@@ -516,6 +517,7 @@ on_tabstrip_motion_notify_event          (GtkWidget       *widget,
             deadbeef->conf_set_int (str1, pos2);
             deadbeef->conf_set_int (str2, pos1);
             ts->dragging = inspos;
+            deadbeef->conf_set_int ("playlist.current", ts->dragging);
         }
         tabstrip_render (ts);
         tabstrip_expose (ts, 0, 0, widget->allocation.width, widget->allocation.height);
@@ -575,7 +577,9 @@ on_add_new_playlist1_activate          (GtkMenuItem     *menuitem,
             }
         }
         if (i == cnt) {
-            deadbeef->plt_add (cnt, name);
+            int playlist = deadbeef->plt_add (cnt, name);
+            deadbeef->plt_set_curr (playlist);
+            deadbeef->conf_set_int ("playlist.current", playlist);
             DdbTabStrip *ts = DDB_TABSTRIP (lookup_widget (mainwin, "tabstrip"));
             tabstrip_render (ts);
             tabstrip_expose (ts, 0, 0, GTK_WIDGET (ts)->allocation.width, GTK_WIDGET (ts)->allocation.height);

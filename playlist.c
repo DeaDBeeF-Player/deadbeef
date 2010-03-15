@@ -175,7 +175,7 @@ plt_get_count (void) {
     return playlists_count;
 }
 
-void
+int
 plt_add (int before, const char *title) {
     trace ("plt_add\n");
     playlist_t *plt = malloc (sizeof (playlist_t));
@@ -220,6 +220,7 @@ plt_add (int before, const char *title) {
     if (!plt_loading) {
         plug_trigger_event (DB_EV_PLAYLISTSWITCH, 0);
     }
+    return playlists_count-1;
 }
 
 void

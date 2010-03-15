@@ -596,11 +596,7 @@ main (int argc, char *argv[]) {
     if (!noloadpl) {
         pl_load_all ();
     }
-    //plt_add (plt_get_count (), "Test 1");
-//    plt_add (plt_get_count (), "Test 2");
-//    plt_add (plt_get_count (), "Test 3");
-//    plt_add (plt_get_count (), "Test 4");
-//    plt_add (plt_get_count (), "Test 5");
+    plt_set_curr (conf_get_int ("playlist.current", 0));
 
     plug_trigger_event_playlistchanged ();
 // this is old code left for backwards compatibility

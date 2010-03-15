@@ -282,7 +282,7 @@ typedef struct {
     int (*cond_broadcast) (uintptr_t cond);
     // playlist management
     int (*plt_get_count) (void);
-    void (*plt_add) (int before, const char *title);
+    int (*plt_add) (int before, const char *title);
     void (*plt_remove) (int plt);
     void (*plt_free) (void);
     void (*plt_set_curr) (int plt);
