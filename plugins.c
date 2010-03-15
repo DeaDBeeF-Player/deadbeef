@@ -86,6 +86,7 @@ static DB_functions_t deadbeef_api = {
     .streamer_set_bitrate = streamer_set_bitrate,
     .streamer_get_apx_bitrate = streamer_get_apx_bitrate,
     .streamer_get_current_fileinfo = streamer_get_current_fileinfo,
+    .streamer_get_current_playlist = streamer_get_current_playlist,
     // process control
     .get_config_dir = plug_get_config_dir,
     .quit = plug_quit,

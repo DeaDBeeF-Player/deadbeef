@@ -571,6 +571,12 @@ on_add_location_activate               (GtkMenuItem     *menuitem,
 
 static void
 songchanged (DdbListview *ps, int from, int to) {
+    int str_plt = deadbeef->streamer_get_current_playlist ();
+    int plt = deadbeef->plt_get_curr ();
+    if (plt != str_plt) {
+        // have nothing to do here -- active playlist is not the one with playing song
+        return;
+    }
     if (!ddb_listview_is_scrolling (ps) && to != -1) {
         if (deadbeef->conf_get_int ("playlist.scroll.followplayback", 0)) {
             ddb_listview_scroll_to (ps, to);
@@ -582,13 +588,17 @@ songchanged (DdbListview *ps, int from, int to) {
 
     if (from >= 0) {
         DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (from, PL_MAIN);
-        ddb_listview_draw_row (ps, from, it);
-        deadbeef->pl_item_unref (it);
+        if (it) {
+            ddb_listview_draw_row (ps, from, it);
+            deadbeef->pl_item_unref (it);
+        }
     }
     if (to >= 0) {
         DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (to, PL_MAIN);
-        ddb_listview_draw_row (ps, to, it);
-        deadbeef->pl_item_unref (it);
+        if (it) {
+            ddb_listview_draw_row (ps, to, it);
+            deadbeef->pl_item_unref (it);
+        }
     }
 }
 
@@ -606,7 +616,7 @@ update_win_title_idle (gpointer data) {
     // show notification
 #if HAVE_NOTIFY
     if (to != -1 && deadbeef->conf_get_int ("gtkui.notify.enable", 0)) {
-        DB_playItem_t *track = deadbeef->pl_get_for_idx (to);
+        DB_playItem_t *track = deadbeef->streamer_get_playing_track ();//deadbeef->pl_get_for_idx (to);
         if (track) {
             char cmd [1024];
             deadbeef->pl_format_title (track, -1, cmd, sizeof (cmd), -1, deadbeef->conf_get_str ("gtkui.notify.format", NOTIFY_DEFAULT_FORMAT));
@@ -628,7 +638,7 @@ update_win_title_idle (gpointer data) {
     // update window title
     if (from >= 0 || to >= 0) {
         if (to >= 0) {
-            DB_playItem_t *it = deadbeef->pl_get_for_idx (to);
+            DB_playItem_t *it = deadbeef->streamer_get_playing_track ();;
             if (it) { // it might have been deleted after event was sent
                 current_track_changed (it);
                 deadbeef->pl_item_unref (it);

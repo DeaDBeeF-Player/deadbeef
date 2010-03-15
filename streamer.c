@@ -79,6 +79,7 @@ static float playpos = 0; // play position of current song
 static int avg_bitrate = -1; // avg bitrate of current song
 static int last_bitrate = -1; // last bitrate of current song
 
+static playlist_t *streamer_playlist;
 static playItem_t *playing_track;
 static playItem_t *streaming_track;
 static playItem_t *playlist_track;
@@ -92,22 +93,69 @@ static DB_FILE *streamer_file;
 
 playItem_t *
 streamer_get_streaming_track (void) {
+    pl_item_ref (streaming_track);
     return streaming_track;
 }
 
 playItem_t *
 streamer_get_playing_track (void) {
-    return playing_track ? playing_track : playlist_track;
+    playItem_t *it = playing_track ? playing_track : playlist_track;
+    if (it) {
+        pl_item_ref (it);
+    }
+    return it;
 }
+
+int
+str_get_idx_of (playItem_t *it) {
+    plt_lock ();
+    if (!streamer_playlist) {
+        streamer_playlist = plt_get_curr_ptr ();
+    }
+    playItem_t *c = streamer_playlist->head[PL_MAIN];
+    int idx = 0;
+    while (c && c != it) {
+        c = c->next[PL_MAIN];
+        idx++;
+    }
+    if (!c) {
+        return -1;
+    }
+    plt_unlock ();
+    return idx;
+}
+
+playItem_t *
+str_get_for_idx (int idx) {
+    plt_lock ();
+    if (!streamer_playlist) {
+        streamer_playlist = plt_get_curr_ptr ();
+    }
+    playItem_t *it = streamer_playlist->head[PL_MAIN];
+    while (idx--) {
+        if (!it)
+            return NULL;
+        it = it->next[PL_MAIN];
+    }
+    if (it) {
+        pl_item_ref (it);
+    }
+    plt_unlock ();
+    return it;
+}
+
 
 int
 streamer_move_to_nextsong (int reason) {
     pl_global_lock ();
-    playlist_t *plt = plt_get_curr_ptr ();
+    if (!streamer_playlist) {
+        streamer_playlist = plt_get_curr_ptr ();
+    }
+    playlist_t *plt = streamer_playlist;
     playItem_t *it = pl_playqueue_getnext ();
     if (it) {
         pl_playqueue_pop ();
-        int r = pl_get_idx_of (it);
+        int r = str_get_idx_of (it);
         pl_item_unref (it);
         streamer_set_nextsong (r, 1);
         pl_global_unlock ();
@@ -145,7 +193,7 @@ streamer_move_to_nextsong (int reason) {
                 pl_global_unlock ();
                 return -1;
             }
-            int r = pl_get_idx_of (it);
+            int r = str_get_idx_of (it);
             streamer_set_nextsong (r, 1);
             pl_global_unlock ();
             return 0;
@@ -153,7 +201,7 @@ streamer_move_to_nextsong (int reason) {
         else {
             trace ("pl_next_song: reason=%d, loop=%d\n", reason, pl_loop_mode);
             if (reason == 0 && pl_loop_mode == PLAYBACK_MODE_LOOP_SINGLE) { // song finished, loop mode is "loop 1 track"
-                int r = pl_get_idx_of (curr);
+                int r = str_get_idx_of (curr);
                 streamer_set_nextsong (r, 1);
                 pl_global_unlock ();
                 return 0;
@@ -181,7 +229,7 @@ streamer_move_to_nextsong (int reason) {
                 pl_global_unlock ();
                 return -1;
             }
-            int r = pl_get_idx_of (it);
+            int r = str_get_idx_of (it);
             streamer_set_nextsong (r, 1);
             pl_global_unlock ();
             return 0;
@@ -191,7 +239,7 @@ streamer_move_to_nextsong (int reason) {
         playItem_t *it = NULL;
         if (curr) {
             if (reason == 0 && pl_loop_mode == PLAYBACK_MODE_LOOP_SINGLE) { // loop same track
-                int r = pl_get_idx_of (curr);
+                int r = str_get_idx_of (curr);
                 streamer_set_nextsong (r, 1);
                 pl_global_unlock ();
                 return 0;
@@ -213,14 +261,14 @@ streamer_move_to_nextsong (int reason) {
             pl_global_unlock ();
             return -1;
         }
-        int r = pl_get_idx_of (it);
+        int r = str_get_idx_of (it);
         streamer_set_nextsong (r, 1);
         pl_global_unlock ();
         return 0;
     }
     else if (pl_order == PLAYBACK_ORDER_RANDOM) { // random
         if (reason == 0 && pl_loop_mode == PLAYBACK_MODE_LOOP_SINGLE && curr) {
-            int r = pl_get_idx_of (curr);
+            int r = str_get_idx_of (curr);
             streamer_set_nextsong (r, 1);
             pl_global_unlock ();
             return 0;
@@ -234,7 +282,10 @@ streamer_move_to_nextsong (int reason) {
 int
 streamer_move_to_prevsong (void) {
     plt_lock ();
-    playlist_t *plt = plt_get_curr_ptr ();
+    if (!streamer_playlist) {
+        streamer_playlist = plt_get_curr_ptr ();
+    }
+    playlist_t *plt = streamer_playlist;
     pl_playqueue_clear ();
     if (!plt->head[PL_MAIN]) {
         streamer_set_nextsong (-2, 1);
@@ -280,7 +331,7 @@ streamer_move_to_prevsong (void) {
                 plt_unlock ();
                 return -1;
             }
-            int r = pl_get_idx_of (it);
+            int r = str_get_idx_of (it);
             streamer_set_nextsong (r, 1);
             return 0;
         }
@@ -299,7 +350,7 @@ streamer_move_to_prevsong (void) {
             plt_unlock ();
             return -1;
         }
-        int r = pl_get_idx_of (it);
+        int r = str_get_idx_of (it);
         streamer_set_nextsong (r, 1);
         plt_unlock ();
         return 0;
@@ -343,8 +394,8 @@ streamer_song_removed_notify (playItem_t *it) {
 static int
 streamer_set_current (playItem_t *it) {
     int from, to;
-    from = playing_track ? pl_get_idx_of (playing_track) : -1;
-    to = it ? pl_get_idx_of (it) : -1;
+    from = playing_track ? str_get_idx_of (playing_track) : -1;
+    to = it ? str_get_idx_of (it) : -1;
     if (!playing_track || p_isstopped ()) {
         streamer_buffering = 1;
         playlist_track = it;
@@ -468,6 +519,9 @@ streamer_set_nextsong (int song, int pstate) {
     nextsong = song;
     nextsong_pstate = pstate;
     if (p_isstopped ()) {
+        if (pstate == 1) { // means user initiated this
+            streamer_playlist = plt_get_curr_ptr ();
+        }
         // no sense to wait until end of previous song, reset buffer
         bytes_until_next_song = 0;
         playpos = 0;
@@ -507,7 +561,7 @@ streamer_thread (void *ctx) {
                 badsong = -1;
                 continue;
             }
-            playItem_t *try = pl_get_for_idx (sng);
+            playItem_t *try = str_get_for_idx (sng);
             if (!try) { // track is not in playlist
                 trace ("track #%d is not in playlist; stopping playback\n", sng);
                 p_stop ();
@@ -563,7 +617,7 @@ streamer_thread (void *ctx) {
             }
         }
         else if (nextsong == -2 && (nextsong_pstate==0 || bytes_until_next_song == 0)) {
-            int from = playing_track ? pl_get_idx_of (playing_track) : -1;
+            int from = playing_track ? str_get_idx_of (playing_track) : -1;
             bytes_until_next_song = -1;
             trace ("nextsong=-2\n");
             nextsong = -1;
@@ -594,8 +648,8 @@ streamer_thread (void *ctx) {
                 continue;
             }
             trace ("bytes_until_next_song=0, starting playback of new song\n");
-            int from = playing_track ? pl_get_idx_of (playing_track) : -1;
-            int to = streaming_track ? pl_get_idx_of (streaming_track) : -1;
+            int from = playing_track ? str_get_idx_of (playing_track) : -1;
+            int to = streaming_track ? str_get_idx_of (streaming_track) : -1;
             trace ("from=%d, to=%d\n", from, to);
             trace ("sending songchanged\n");
             messagepump_push (M_SONGCHANGED, 0, from, to);
@@ -694,7 +748,7 @@ streamer_thread (void *ctx) {
 
                 bytes_until_next_song = -1;
                 streamer_buffering = 1;
-                int trk = pl_get_idx_of (streaming_track);
+                int trk = str_get_idx_of (streaming_track);
                 if (trk != -1) {
                     messagepump_push (M_TRACKCHANGED, 0, trk, 0);
                 }
@@ -724,7 +778,7 @@ streamer_thread (void *ctx) {
             }
 
             streamer_buffering = 1;
-            int trk = pl_get_idx_of (streaming_track);
+            int trk = str_get_idx_of (streaming_track);
             if (trk != -1) {
                 messagepump_push (M_TRACKCHANGED, 0, trk, 0);
             }
@@ -777,7 +831,7 @@ streamer_thread (void *ctx) {
         if (streambuffer_fill > 128000 && streamer_buffering || !streaming_track) {
             streamer_buffering = 0;
             if (streaming_track) {
-                int trk = pl_get_idx_of (streaming_track);
+                int trk = str_get_idx_of (streaming_track);
                 if (trk != -1) {
                     messagepump_push (M_TRACKCHANGED, 0, trk, 0);
                 }
@@ -1365,13 +1419,13 @@ streamer_play_current_track (void) {
         plug_trigger_event_paused (0);
     }
     else if (plt->current_row[PL_MAIN] != -1) {
-        // play currently selected track
+        // play currently selected track in current playlist
         p_stop ();
         // get next song in queue
         int idx = -1;
         playItem_t *next = pl_playqueue_getnext ();
         if (next) {
-            idx = pl_get_idx_of (next);
+            idx = str_get_idx_of (next);
             pl_playqueue_pop ();
         }
         else {
@@ -1379,6 +1433,7 @@ streamer_play_current_track (void) {
         }
 
         streamer_set_nextsong (idx, 1);
+        streamer_playlist = plt;
     }
     else {
         // restart currently playing track
@@ -1390,4 +1445,19 @@ streamer_play_current_track (void) {
 struct DB_fileinfo_s *
 streamer_get_current_fileinfo (void) {
     return fileinfo;
+}
+
+int
+streamer_get_current_playlist (void) {
+    if (!streamer_playlist) {
+        streamer_playlist = plt_get_curr_ptr ();
+    }
+    return plt_get_idx_of (streamer_playlist);
+}
+
+void
+streamer_notify_playlist_deleted (playlist_t *plt) {
+    if (plt == streamer_playlist) {
+        streamer_playlist = NULL;
+    }
 }

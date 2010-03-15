@@ -227,6 +227,16 @@ void
 plt_remove (int plt) {
     int i;
     PLT_LOCK;
+
+    // find playlist and notify streamer
+    playlist_t *p = playlists_head;
+    playlist_t *prev = NULL;
+    for (i = 0; p && i < plt; i++) {
+        prev = p;
+        p = p->next;
+    }
+    streamer_notify_playlist_deleted (p);
+
     if (!plt_loading && (playlists_head && !playlists_head->next)) {
         trace ("warning: deleting last playlist\n");
         pl_clear ();
@@ -236,12 +246,6 @@ plt_remove (int plt) {
         plt_gen_conf ();
         plug_trigger_event (DB_EV_PLAYLISTSWITCH, 0);
         return;
-    }
-    playlist_t *prev = NULL;
-    playlist_t *p = playlists_head;
-    for (i = 0; p && i < plt; i++) {
-        prev = p;
-        p = p->next;
     }
     if (i != plt) {
         trace ("plt_remove %d failed\n", i);
@@ -301,6 +305,22 @@ plt_get_curr (void) {
     playlist_t *p = playlists_head;
     for (i = 0; p && i < playlists_count; i++) {
         if (p == playlist) {
+            PLT_UNLOCK;
+            return i;
+        }
+        p = p->next;
+    }
+    PLT_UNLOCK;
+    return -1;
+}
+
+int
+plt_get_idx_of (playlist_t *plt) {
+    int i;
+    PLT_LOCK;
+    playlist_t *p = playlists_head;
+    for (i = 0; p && i < playlists_count; i++) {
+        if (p == plt) {
             PLT_UNLOCK;
             return i;
         }
@@ -1961,7 +1981,7 @@ pl_delete_all_meta (playItem_t *it) {
     while (it->meta) {
         metaInfo_t *m = it->meta;
         it->meta = m->next;
-        free (m->value);
+        metacache_remove_string (m->value);
         free (m);
     }
     it->meta = NULL;

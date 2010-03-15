@@ -23,7 +23,7 @@
 
 typedef struct metaInfo_s {
     const char *key;
-    char *value;
+    const char *value;
     struct metaInfo_s *next;
 } metaInfo_t;
 
@@ -114,6 +114,9 @@ plt_set_curr (int plt);
 
 int
 plt_get_curr (void);
+
+int
+plt_get_idx_of (playlist_t *plt);
 
 int
 plt_get_title (int plt, char *buffer, int bufsize);

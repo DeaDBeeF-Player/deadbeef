@@ -95,4 +95,10 @@ streamer_move_to_randomsong (void);
 struct DB_fileinfo_s *
 streamer_get_current_fileinfo (void);
 
+int
+streamer_get_current_playlist (void);
+
+void
+streamer_notify_playlist_deleted (playlist_t *plt);
+
 #endif // __STREAMER_H
