@@ -41,6 +41,7 @@
 #include "utf8.h"
 #include "common.h"
 #include "threading.h"
+#include "metacache.h"
 
 #define DISABLE_LOCKING 1
 
@@ -1345,7 +1346,7 @@ pl_item_free (playItem_t *it) {
         while (it->meta) {
             metaInfo_t *m = it->meta;
             it->meta = m->next;
-            free (m->value);
+            metacache_remove_string (m->value);//free (m->value);
             free (m);
         }
         free (it);
@@ -1407,7 +1408,7 @@ pl_add_meta (playItem_t *it, const char *key, const char *value) {
     }
     m = malloc (sizeof (metaInfo_t));
     m->key = key;
-    m->value = strdup (value);
+    m->value = metacache_add_string (value);//strdup (value);
     m->next = it->meta;
     it->meta = m;
     UNLOCK;
@@ -1425,8 +1426,8 @@ pl_replace_meta (playItem_t *it, const char *key, const char *value) {
         m = m->next;
     }
     if (m) {
-        free (m->value);
-        m->value = strdup (value);
+        metacache_remove_string (m->value);//free (m->value);
+        m->value = metacache_add_string (value);//strdup (value);
         UNLOCK;
         return;
     }
