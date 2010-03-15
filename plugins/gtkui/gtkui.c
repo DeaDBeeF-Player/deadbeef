@@ -76,9 +76,7 @@ gtkpl_init (void) {
     gtk_box_pack_start (GTK_BOX (vbox1), theme_treeview, FALSE, FALSE, 0);
     gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (theme_treeview), TRUE);
 
-    theme_button = gtk_button_new ();
-    gtk_widget_show (theme_button);
-    gtk_box_pack_start (GTK_BOX (vbox1), theme_button, FALSE, FALSE, 0);
+    theme_button = lookup_widget (mainwin, "stopbtn");
 }
 
 void
