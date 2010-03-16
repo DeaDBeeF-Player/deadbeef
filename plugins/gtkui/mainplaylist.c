@@ -140,9 +140,13 @@ void main_draw_group_title (DdbListview *listview, GdkDrawable *drawable, DdbLis
     if (group_by_str && group_by_str[0]) {
         char str[1024];
         deadbeef->pl_format_title ((DB_playItem_t *)it, -1, str, sizeof (str), -1, group_by_str);
-        float clr[] = {0, 0.1, 0.5};
-        draw_set_fg_color (clr);
+        GdkColor *clr = &theme_treeview->style->fg[GTK_STATE_NORMAL];
+        float rgb[] = {clr->red/65535.f, clr->green/65535.f, clr->blue/65535.f};
+        draw_set_fg_color (rgb);
+        int ew, eh;
         draw_text (x + 5, y + height/2 - draw_get_font_size ()/2 - 2, width-10, 0, str);
+        draw_get_text_extents (str, -1, &ew, &eh);
+        gdk_draw_line (drawable, theme_treeview->style->fg_gc[GTK_STATE_NORMAL], x + 5 + ew + 3, y+height/2, x + width, y+height/2);
     }
 }
 void
