@@ -128,6 +128,7 @@ plugin_configure (GtkWidget *parentwin, DB_plugin_t *p) {
     char title[200];
     snprintf (title, sizeof (title), "Setup %s", p->name);
     GtkWidget *win = gtk_dialog_new_with_buttons (title, GTK_WINDOW (parentwin), GTK_DIALOG_MODAL, GTK_STOCK_APPLY, GTK_RESPONSE_APPLY, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
+    gtk_dialog_set_default_response (GTK_DIALOG (win), GTK_RESPONSE_OK);
     gtk_window_set_type_hint (GTK_WINDOW (win), GDK_WINDOW_TYPE_HINT_DIALOG);
     gtk_container_set_border_width (GTK_CONTAINER(win), 12);
 
@@ -188,6 +189,7 @@ plugin_configure (GtkWidget *parentwin, DB_plugin_t *p) {
             label = gtk_label_new (labeltext);
             gtk_widget_show (label);
             prop = gtk_entry_new ();
+            gtk_entry_set_activates_default (GTK_ENTRY (prop), TRUE);
             g_signal_connect (G_OBJECT (prop), "changed", G_CALLBACK (prop_changed), win);
             gtk_widget_show (prop);
             gtk_entry_set_text (GTK_ENTRY (prop), deadbeef->conf_get_str (key, def));
@@ -205,6 +207,7 @@ plugin_configure (GtkWidget *parentwin, DB_plugin_t *p) {
             cont = gtk_hbox_new (FALSE, 2);
             gtk_widget_show (cont);
             prop = gtk_entry_new ();
+            gtk_entry_set_activates_default (GTK_ENTRY (prop), TRUE);
             g_signal_connect (G_OBJECT (prop), "changed", G_CALLBACK (prop_changed), win);
             gtk_widget_show (prop);
             gtk_editable_set_editable (GTK_EDITABLE (prop), FALSE);

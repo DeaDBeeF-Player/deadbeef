@@ -530,6 +530,8 @@ on_rename_playlist1_activate           (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     GtkWidget *dlg = create_editplaylistdlg ();
+    gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
+    gtk_window_set_title (GTK_WINDOW (dlg), "Edit playlist");
     GtkWidget *e = lookup_widget (dlg, "title");
     char t[100];
     deadbeef->plt_get_title (tab_clicked, t, sizeof (t));

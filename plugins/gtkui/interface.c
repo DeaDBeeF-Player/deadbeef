@@ -2134,6 +2134,7 @@ create_editplaylistdlg (void)
   editplaylistdlg = gtk_dialog_new ();
   gtk_container_set_border_width (GTK_CONTAINER (editplaylistdlg), 8);
   gtk_window_set_title (GTK_WINDOW (editplaylistdlg), "editplaylistdlg");
+  gtk_window_set_destroy_with_parent (GTK_WINDOW (editplaylistdlg), TRUE);
   gtk_window_set_type_hint (GTK_WINDOW (editplaylistdlg), GDK_WINDOW_TYPE_HINT_DIALOG);
 
   dialog_vbox3 = GTK_DIALOG (editplaylistdlg)->vbox;
@@ -2295,6 +2296,7 @@ create_addlocationdlg (void)
   gtk_box_pack_start (GTK_BOX (hbox34), addlocation_entry, TRUE, TRUE, 0);
   gtk_widget_set_size_request (addlocation_entry, 297, -1);
   gtk_entry_set_invisible_char (GTK_ENTRY (addlocation_entry), 8226);
+  gtk_entry_set_activates_default (GTK_ENTRY (addlocation_entry), TRUE);
 
   addlocation_actionarea = GTK_DIALOG (addlocationdlg)->action_area;
   gtk_widget_show (addlocation_actionarea);

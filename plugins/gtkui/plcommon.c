@@ -388,6 +388,7 @@ on_add_column_activate                 (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     GtkWidget *dlg = create_editcolumndlg ();
+    gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
     gtk_window_set_title (GTK_WINDOW (dlg), "Add column");
     gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "id")), 0);
     gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "align")), 0);
@@ -418,6 +419,7 @@ on_edit_column_activate                (GtkMenuItem     *menuitem,
     if (active_column == -1)
         return;
     GtkWidget *dlg = create_editcolumndlg ();
+    gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
     gtk_window_set_title (GTK_WINDOW (dlg), "Edit column");
 
     const char *title;

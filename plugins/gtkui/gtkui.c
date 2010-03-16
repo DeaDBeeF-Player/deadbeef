@@ -554,7 +554,8 @@ void
 on_add_location_activate               (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    GtkWidget *dlg= create_addlocationdlg ();
+    GtkWidget *dlg = create_addlocationdlg ();
+    gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
     int res = gtk_dialog_run (GTK_DIALOG (dlg));
     if (res == GTK_RESPONSE_OK) {
         GtkEntry *entry = GTK_ENTRY (lookup_widget (dlg, "addlocation_entry"));

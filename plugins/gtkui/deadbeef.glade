@@ -3695,7 +3695,7 @@ SOCKS5_HOSTNAME</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
   <property name="modal">False</property>
   <property name="resizable">True</property>
-  <property name="destroy_with_parent">False</property>
+  <property name="destroy_with_parent">True</property>
   <property name="decorated">True</property>
   <property name="skip_taskbar_hint">False</property>
   <property name="skip_pager_hint">False</property>
@@ -3993,7 +3993,7 @@ SOCKS5_HOSTNAME</property>
 	      <property name="text" translatable="yes"></property>
 	      <property name="has_frame">True</property>
 	      <property name="invisible_char">•</property>
-	      <property name="activates_default">False</property>
+	      <property name="activates_default">True</property>
 	    </widget>
 	    <packing>
 	      <property name="padding">0</property>
