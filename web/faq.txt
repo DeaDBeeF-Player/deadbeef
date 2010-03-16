@@ -69,5 +69,5 @@ Simply doing "./configure && make && sudo make install" is sufficient, but it's 
 2. run "gdb deadbeef", and execute "r" command in GDB shell
 3. reproduce a crash, or press ctrl+c in GDB after hang occurs
 4. execute "thread 1" command, followed by "bt" command in GDB
-5. repeat for at least 5 threads: tread 2<enter> bt<enter>, and so on
+5. repeat for at least 5 threads: thread 2<enter> bt<enter>, and so on
 6. now, you can copy the output starting after 1st "bt" command into email/pastebin/textfile, etc.
