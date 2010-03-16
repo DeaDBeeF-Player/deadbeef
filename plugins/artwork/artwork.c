@@ -451,7 +451,7 @@ artwork_plugin_start (void)
     mutex = deadbeef->mutex_create ();
     mutex = deadbeef->mutex_create_nonrecursive ();
     cond = deadbeef->cond_create ();
-    tid = deadbeef->thread_start (fetcher_thread, NULL);
+    tid = deadbeef->thread_start_low_priority (fetcher_thread, NULL);
 }
 
 static int
