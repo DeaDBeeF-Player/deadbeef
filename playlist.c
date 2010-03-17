@@ -997,6 +997,7 @@ pl_insert_pls (playItem_t *after, const char *fname, int *pabort, int (*cb)(play
 
 playItem_t *
 pl_insert_file (playItem_t *after, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
+    trace ("count: %d\n", playlist->count[PL_MAIN]);
     trace ("pl_insert_file %s\n", fname);
     if (!fname || !(*fname)) {
         return NULL;
@@ -1077,6 +1078,7 @@ pl_insert_file (playItem_t *after, const char *fname, int *pabort, int (*cb)(pla
                         if (cb && cb (inserted, user_data) < 0) {
                             *pabort = 1;
                         }
+                        pl_item_ref (inserted);
                         return inserted;
                     }
                 }
@@ -1353,7 +1355,7 @@ void
 pl_item_ref (playItem_t *it) {
     LOCK;
     it->_refc++;
-    trace ("+it %p: refc=%d: %s\n", it, it->_refc, it->fname);
+//    trace ("+it %p: refc=%d: %s\n", it, it->_refc, it->fname);
     UNLOCK;
 }
 
@@ -1379,7 +1381,7 @@ void
 pl_item_unref (playItem_t *it) {
     LOCK;
     it->_refc--;
-    trace ("-it %p: refc=%d: %s\n", it, it->_refc, it->fname);
+//    trace ("-it %p: refc=%d: %s\n", it, it->_refc, it->fname);
     if (it->_refc < 0) {
         trace ("\033[0;31mplaylist: bad refcount on item %p\033[37;0m\n", it);
     }
