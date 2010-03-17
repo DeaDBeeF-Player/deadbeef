@@ -75,6 +75,13 @@ show_track_properties_dlg (DB_playItem_t *it) {
         meta = "";
     }
     gtk_entry_set_text (GTK_ENTRY (w), meta);
+    // band
+    w = lookup_widget (widget, "band");
+    meta = deadbeef->pl_find_meta (it, "band");
+    if (!meta) {
+        meta = "";
+    }
+    gtk_entry_set_text (GTK_ENTRY (w), meta);
     // album
     w = lookup_widget (widget, "album");
     meta = deadbeef->pl_find_meta (it, "album");

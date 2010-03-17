@@ -1070,6 +1070,9 @@ create_trackproperties (void)
   GtkWidget *hbox25;
   GtkWidget *label29;
   GtkWidget *artist;
+  GtkWidget *hbox35;
+  GtkWidget *label63;
+  GtkWidget *band;
   GtkWidget *hbox26;
   GtkWidget *label30;
   GtkWidget *album;
@@ -1131,7 +1134,7 @@ create_trackproperties (void)
   gtk_widget_show (hbox25);
   gtk_box_pack_start (GTK_BOX (vbox13), hbox25, FALSE, FALSE, 0);
 
-  label29 = gtk_label_new ("Artist:");
+  label29 = gtk_label_new ("Track Artist:");
   gtk_widget_show (label29);
   gtk_box_pack_start (GTK_BOX (hbox25), label29, FALSE, FALSE, 0);
   gtk_misc_set_alignment (GTK_MISC (label29), 0, 0.5);
@@ -1141,6 +1144,21 @@ create_trackproperties (void)
   gtk_box_pack_start (GTK_BOX (hbox25), artist, TRUE, TRUE, 0);
   gtk_editable_set_editable (GTK_EDITABLE (artist), FALSE);
   gtk_entry_set_invisible_char (GTK_ENTRY (artist), 8226);
+
+  hbox35 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox35);
+  gtk_box_pack_start (GTK_BOX (vbox13), hbox35, TRUE, TRUE, 0);
+
+  label63 = gtk_label_new ("Band/Album Artist:");
+  gtk_widget_show (label63);
+  gtk_box_pack_start (GTK_BOX (hbox35), label63, FALSE, FALSE, 0);
+  gtk_misc_set_alignment (GTK_MISC (label63), 0, 0.5);
+
+  band = gtk_entry_new ();
+  gtk_widget_show (band);
+  gtk_box_pack_start (GTK_BOX (hbox35), band, TRUE, TRUE, 0);
+  gtk_editable_set_editable (GTK_EDITABLE (band), FALSE);
+  gtk_entry_set_invisible_char (GTK_ENTRY (band), 8226);
 
   hbox26 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox26);
@@ -1249,6 +1267,9 @@ create_trackproperties (void)
   GLADE_HOOKUP_OBJECT (trackproperties, hbox25, "hbox25");
   GLADE_HOOKUP_OBJECT (trackproperties, label29, "label29");
   GLADE_HOOKUP_OBJECT (trackproperties, artist, "artist");
+  GLADE_HOOKUP_OBJECT (trackproperties, hbox35, "hbox35");
+  GLADE_HOOKUP_OBJECT (trackproperties, label63, "label63");
+  GLADE_HOOKUP_OBJECT (trackproperties, band, "band");
   GLADE_HOOKUP_OBJECT (trackproperties, hbox26, "hbox26");
   GLADE_HOOKUP_OBJECT (trackproperties, label30, "label30");
   GLADE_HOOKUP_OBJECT (trackproperties, album, "album");
