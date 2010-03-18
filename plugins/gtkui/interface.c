@@ -1600,10 +1600,10 @@ create_prefwin (void)
   GtkWidget *label3;
   GtkWidget *vbox17;
   GtkWidget *scrolledwindow6;
-  GtkWidget *treeview1;
+  GtkWidget *hotkeystree;
   GtkWidget *hbuttonbox3;
-  GtkWidget *button4;
-  GtkWidget *button5;
+  GtkWidget *addhotkey;
+  GtkWidget *removehotkey;
   GtkWidget *label66;
   GtkWidget *dialog_action_area2;
   GtkWidget *closebutton1;
@@ -2060,25 +2060,25 @@ create_prefwin (void)
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow6), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow6), GTK_SHADOW_IN);
 
-  treeview1 = gtk_tree_view_new ();
-  gtk_widget_show (treeview1);
-  gtk_container_add (GTK_CONTAINER (scrolledwindow6), treeview1);
-  gtk_tree_view_set_enable_search (GTK_TREE_VIEW (treeview1), FALSE);
+  hotkeystree = gtk_tree_view_new ();
+  gtk_widget_show (hotkeystree);
+  gtk_container_add (GTK_CONTAINER (scrolledwindow6), hotkeystree);
+  gtk_tree_view_set_enable_search (GTK_TREE_VIEW (hotkeystree), FALSE);
 
   hbuttonbox3 = gtk_hbutton_box_new ();
   gtk_widget_show (hbuttonbox3);
   gtk_box_pack_start (GTK_BOX (vbox17), hbuttonbox3, FALSE, FALSE, 0);
   gtk_button_box_set_layout (GTK_BUTTON_BOX (hbuttonbox3), GTK_BUTTONBOX_END);
 
-  button4 = gtk_button_new_with_mnemonic ("Add");
-  gtk_widget_show (button4);
-  gtk_container_add (GTK_CONTAINER (hbuttonbox3), button4);
-  GTK_WIDGET_SET_FLAGS (button4, GTK_CAN_DEFAULT);
+  addhotkey = gtk_button_new_with_mnemonic ("Add");
+  gtk_widget_show (addhotkey);
+  gtk_container_add (GTK_CONTAINER (hbuttonbox3), addhotkey);
+  GTK_WIDGET_SET_FLAGS (addhotkey, GTK_CAN_DEFAULT);
 
-  button5 = gtk_button_new_with_mnemonic ("Remove");
-  gtk_widget_show (button5);
-  gtk_container_add (GTK_CONTAINER (hbuttonbox3), button5);
-  GTK_WIDGET_SET_FLAGS (button5, GTK_CAN_DEFAULT);
+  removehotkey = gtk_button_new_with_mnemonic ("Remove");
+  gtk_widget_show (removehotkey);
+  gtk_container_add (GTK_CONTAINER (hbuttonbox3), removehotkey);
+  GTK_WIDGET_SET_FLAGS (removehotkey, GTK_CAN_DEFAULT);
 
   label66 = gtk_label_new ("Global Hotkeys");
   gtk_widget_show (label66);
@@ -2246,10 +2246,10 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, label3, "label3");
   GLADE_HOOKUP_OBJECT (prefwin, vbox17, "vbox17");
   GLADE_HOOKUP_OBJECT (prefwin, scrolledwindow6, "scrolledwindow6");
-  GLADE_HOOKUP_OBJECT (prefwin, treeview1, "treeview1");
+  GLADE_HOOKUP_OBJECT (prefwin, hotkeystree, "hotkeystree");
   GLADE_HOOKUP_OBJECT (prefwin, hbuttonbox3, "hbuttonbox3");
-  GLADE_HOOKUP_OBJECT (prefwin, button4, "button4");
-  GLADE_HOOKUP_OBJECT (prefwin, button5, "button5");
+  GLADE_HOOKUP_OBJECT (prefwin, addhotkey, "addhotkey");
+  GLADE_HOOKUP_OBJECT (prefwin, removehotkey, "removehotkey");
   GLADE_HOOKUP_OBJECT (prefwin, label66, "label66");
   GLADE_HOOKUP_OBJECT_NO_REF (prefwin, dialog_action_area2, "dialog_action_area2");
   GLADE_HOOKUP_OBJECT (prefwin, closebutton1, "closebutton1");

@@ -3906,7 +3906,7 @@ SOCKS5_HOSTNAME</property>
 		  <property name="window_placement">GTK_CORNER_TOP_LEFT</property>
 
 		  <child>
-		    <widget class="GtkTreeView" id="treeview1">
+		    <widget class="GtkTreeView" id="hotkeystree">
 		      <property name="visible">True</property>
 		      <property name="can_focus">True</property>
 		      <property name="headers_visible">True</property>
@@ -3933,7 +3933,7 @@ SOCKS5_HOSTNAME</property>
 		  <property name="spacing">0</property>
 
 		  <child>
-		    <widget class="GtkButton" id="button4">
+		    <widget class="GtkButton" id="addhotkey">
 		      <property name="visible">True</property>
 		      <property name="can_default">True</property>
 		      <property name="can_focus">True</property>
@@ -3945,7 +3945,7 @@ SOCKS5_HOSTNAME</property>
 		  </child>
 
 		  <child>
-		    <widget class="GtkButton" id="button5">
+		    <widget class="GtkButton" id="removehotkey">
 		      <property name="visible">True</property>
 		      <property name="can_default">True</property>
 		      <property name="can_focus">True</property>

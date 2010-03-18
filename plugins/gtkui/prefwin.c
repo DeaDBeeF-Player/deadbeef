@@ -95,6 +95,44 @@ preferences_fill_soundcards (void) {
 }
 
 void
+on_hk_slot_edited (GtkCellRendererText *renderer, gchar *path, gchar *new_text, gpointer user_data) {
+    GtkListStore *store = GTK_LIST_STORE (user_data);
+    GtkTreePath *treepath = gtk_tree_path_new_from_string (path);
+    GtkTreeIter iter;
+    gtk_tree_model_get_iter (GTK_TREE_MODEL (store), &iter, treepath);
+    gtk_tree_path_free (treepath);
+    gtk_list_store_set (store, &iter, 0, new_text, -1);
+}
+
+void
+on_hk_binding_edited (GtkCellRendererAccel *accel, gchar *path, guint accel_key, GdkModifierType accel_mods, guint hardware_keycode, gpointer user_data) {
+    GtkListStore *store = GTK_LIST_STORE (user_data);
+    GtkTreePath *treepath = gtk_tree_path_new_from_string (path);
+    GtkTreeIter iter;
+    gtk_tree_model_get_iter (GTK_TREE_MODEL (store), &iter, treepath);
+    gtk_tree_path_free (treepath);
+
+    // build value
+    char new_value[1000] = "";
+    if (accel_mods & GDK_SHIFT_MASK) {
+        strcat (new_value, "Shift ");
+    }
+    if (accel_mods & GDK_CONTROL_MASK) {
+        strcat (new_value, "Ctrl ");
+    }
+    if (accel_mods & GDK_MOD4_MASK) {
+        strcat (new_value, "Super ");
+    }
+    if (accel_mods & GDK_META_MASK) {
+        strcat (new_value, "Alt ");
+    }
+    char key[2] = {accel_key, 0};
+    strcat (new_value, key);
+
+    gtk_list_store_set (store, &iter, 1, new_value, -1);
+}
+
+void
 on_preferences_activate                (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
@@ -231,6 +269,82 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
 
     gtk_widget_set_sensitive (lookup_widget (prefwin, "configure_plugin"), FALSE);
 //    gtk_widget_show (w);
+
+    // hotkeys
+    GtkTreeView *hktree = GTK_TREE_VIEW (lookup_widget (prefwin, "hotkeystree"));
+    GtkListStore *hkstore = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_STRING);
+    GtkCellRenderer *rend_hk_slot = gtk_cell_renderer_combo_new ();
+
+    // model for hotkey slots
+    const char *slots[] = {
+        "Toggle pause",
+        "Play",
+        "Prev",
+        "Next",
+        "Random",
+        "Seek forward",
+        "Seek backward",
+        "Volume up",
+        "Volume down",
+        "Toggle stop after current",
+        NULL
+    };
+    GtkListStore *slots_store = gtk_list_store_new (1, G_TYPE_STRING);
+    for (int i = 0; slots[i]; i++) {
+        GtkTreeIter iter;
+        gtk_list_store_append (slots_store, &iter);
+        gtk_list_store_set (slots_store, &iter, 0, slots[i], -1);
+    }
+    g_object_set (G_OBJECT (rend_hk_slot), "mode", GTK_CELL_RENDERER_MODE_EDITABLE, NULL);
+    g_object_set (G_OBJECT (rend_hk_slot), "has-entry", FALSE, NULL);
+    g_object_set (G_OBJECT (rend_hk_slot), "text-column", 0, NULL);
+    g_object_set (G_OBJECT (rend_hk_slot), "model", slots_store, NULL);
+    g_object_set (G_OBJECT (rend_hk_slot), "editable", TRUE, NULL);
+
+    g_signal_connect ((gpointer)rend_hk_slot, "edited",
+            G_CALLBACK (on_hk_slot_edited),
+            hkstore);
+
+    GtkCellRenderer *rend_hk_binding = gtk_cell_renderer_accel_new ();
+    g_object_set (G_OBJECT (rend_hk_binding), "editable", TRUE, NULL);
+
+    g_signal_connect ((gpointer)rend_hk_binding, "accel-edited",
+            G_CALLBACK (on_hk_binding_edited),
+            hkstore);
+
+
+    GtkTreeViewColumn *hk_col1 = gtk_tree_view_column_new_with_attributes ("Slot", rend_hk_slot, "text", 0, NULL);
+    GtkTreeViewColumn *hk_col2 = gtk_tree_view_column_new_with_attributes ("Key combination", rend_hk_binding, "text", 1, NULL);
+    gtk_tree_view_append_column (hktree, hk_col1);
+    gtk_tree_view_append_column (hktree, hk_col2);
+
+    // fetch hotkeys from config
+    DB_conf_item_t *item = deadbeef->conf_find ("hotkeys.", NULL);
+    while (item) {
+        size_t l = strlen (item->value);
+        char param[l+1];
+        memcpy (param, item->value, l+1);
+        
+        char* colon = strchr (param, ':');
+        if (!colon)
+        {
+            fprintf (stderr, "hotkeys: bad config option %s %s\n", item->key, item->value);
+            continue;
+        }
+        char* command = colon+1;
+        *colon = 0;
+        while (*command && ((uint8_t)*command) <= 0x20) {
+            command++;
+        }
+        if (*command) {
+            GtkTreeIter iter;
+            gtk_list_store_append (hkstore, &iter);
+            gtk_list_store_set (hkstore, &iter, 0, command, 1, param, -1);
+            item = deadbeef->conf_find ("hotkeys.", item);
+        }
+    }
+    gtk_tree_view_set_model (hktree, GTK_TREE_MODEL (hkstore));
+
     gtk_dialog_run (GTK_DIALOG (prefwin));
     gtk_widget_destroy (prefwin);
     prefwin = NULL;
