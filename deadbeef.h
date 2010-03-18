@@ -96,6 +96,12 @@ typedef struct DB_playItem_s {
     float replaygain_track_peak;
 } DB_playItem_t;
 
+typedef struct DB_metaInfo_s {
+    const char *key;
+    const char *value;
+    struct DB_metaInfo_s *next;
+} DB_metaInfo_t;
+
 // plugin types
 enum {
     DB_PLUGIN_DECODER = 1,
@@ -360,12 +366,14 @@ typedef struct {
     void (*pl_add_meta) (DB_playItem_t *it, const char *key, const char *value);
     // must be used from within explicit pl_lock/unlock block
     const char *(*pl_find_meta) (DB_playItem_t *it, const char *key);
-    void (*pl_delete_all_meta) (DB_playItem_t *it);
     void (*pl_replace_meta) (DB_playItem_t *it, const char *key, const char *value);
+    void (*pl_delete_all_meta) (DB_playItem_t *it);
+    DB_metaInfo_t * (*pl_get_metadata) (DB_playItem_t *it);
     void (*pl_set_item_duration) (DB_playItem_t *it, float duration);
     float (*pl_get_item_duration) (DB_playItem_t *it);
     void (*pl_sort) (int iter, int id, const char *format, int ascending);
     void (*pl_items_copy_junk)(DB_playItem_t *from, DB_playItem_t *first, DB_playItem_t *last);
+
     // playqueue support
     int (*pl_playqueue_push) (DB_playItem_t *it);
     void (*pl_playqueue_clear) (void);

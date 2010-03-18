@@ -25,7 +25,9 @@
 #include "../../deadbeef.h"
 #include "gtkui.h"
 
-GtkWidget *trackproperties;
+#pragma GCC optimize("O0")
+
+static GtkWidget *trackproperties;
 
 gboolean
 on_trackproperties_delete_event        (GtkWidget       *widget,
@@ -46,6 +48,16 @@ on_trackproperties_key_press_event     (GtkWidget       *widget,
         gtk_widget_destroy (widget);
     }
     return FALSE;
+}
+
+void
+on_metadata_edited (GtkCellRendererText *renderer, gchar *path, gchar *new_text, gpointer user_data) {
+    GtkListStore *store = GTK_LIST_STORE (user_data);
+    GtkTreePath *treepath = gtk_tree_path_new_from_string (path);
+    GtkTreeIter iter;
+    gtk_tree_model_get_iter (GTK_TREE_MODEL (store), &iter, treepath);
+    gtk_tree_path_free (treepath);
+    gtk_list_store_set (store, &iter, 1, new_text, -1);
 }
 
 void
@@ -120,6 +132,51 @@ show_track_properties_dlg (DB_playItem_t *it) {
     gtk_text_buffer_set_text (buffer, meta, strlen (meta));
     gtk_text_view_set_buffer (GTK_TEXT_VIEW (w), buffer);
     g_object_unref (buffer);
+
+    // full metadata
+    const char *types[] = {
+        "artist", "Artist",
+        "band", "Band / Album Artist",
+        "title", "Track Title",
+        "track", "Track Number",
+        "album", "Album",
+        "genre", "Genre",
+        "year", "Date",
+        "performer", "Performer",
+        "composer", "Composer",
+        "numtracks", "Total Tracks",
+        "disc", "Disc Number",
+        "comment", "Comment",
+        NULL
+    };
+
+    GtkTreeView *tree = GTK_TREE_VIEW (lookup_widget (widget, "metalist"));
+    GtkListStore *store = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_STRING);
+    GtkCellRenderer *rend_text = gtk_cell_renderer_text_new ();
+    GtkCellRenderer *rend_text2 = gtk_cell_renderer_text_new ();
+    g_object_set (G_OBJECT (rend_text2), "editable", TRUE, NULL);
+    g_signal_connect ((gpointer)rend_text2, "edited",
+            G_CALLBACK (on_metadata_edited),
+            store);
+    GtkTreeViewColumn *col1 = gtk_tree_view_column_new_with_attributes ("Key", rend_text, "text", 0, NULL);
+    GtkTreeViewColumn *col2 = gtk_tree_view_column_new_with_attributes ("Value", rend_text2, "text", 1, NULL);
+    gtk_tree_view_append_column (tree, col1);
+    gtk_tree_view_append_column (tree, col2);
+
+    deadbeef->pl_lock ();
+    int i = 0;
+    while (types[i]) {
+        GtkTreeIter iter;
+        gtk_list_store_append (store, &iter);
+        const char *value = deadbeef->pl_find_meta (it, types[i]);
+        if (!value) {
+            value = "";
+        }
+        gtk_list_store_set (store, &iter, 0, types[i+1], 1, value, -1);
+        gtk_tree_view_set_model (tree, GTK_TREE_MODEL (store));
+        i += 2;
+    }
+    deadbeef->pl_unlock ();
 
     gtk_widget_show (widget);
     gtk_window_present (GTK_WINDOW (widget));

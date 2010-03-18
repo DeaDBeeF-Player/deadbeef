@@ -1060,6 +1060,7 @@ GtkWidget*
 create_trackproperties (void)
 {
   GtkWidget *trackproperties;
+  GtkWidget *notebook3;
   GtkWidget *vbox13;
   GtkWidget *hbox23;
   GtkWidget *label27;
@@ -1088,6 +1089,15 @@ create_trackproperties (void)
   GtkWidget *label36;
   GtkWidget *scrolledwindow4;
   GtkWidget *comment;
+  GtkWidget *hbuttonbox2;
+  GtkWidget *button3;
+  GtkWidget *label65;
+  GtkWidget *vbox16;
+  GtkWidget *scrolledwindow5;
+  GtkWidget *metalist;
+  GtkWidget *hbuttonbox1;
+  GtkWidget *button2;
+  GtkWidget *label64;
 
   trackproperties = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_window_set_title (GTK_WINDOW (trackproperties), "Track Properties");
@@ -1095,9 +1105,13 @@ create_trackproperties (void)
   gtk_window_set_skip_taskbar_hint (GTK_WINDOW (trackproperties), TRUE);
   gtk_window_set_skip_pager_hint (GTK_WINDOW (trackproperties), TRUE);
 
+  notebook3 = gtk_notebook_new ();
+  gtk_widget_show (notebook3);
+  gtk_container_add (GTK_CONTAINER (trackproperties), notebook3);
+
   vbox13 = gtk_vbox_new (FALSE, 8);
   gtk_widget_show (vbox13);
-  gtk_container_add (GTK_CONTAINER (trackproperties), vbox13);
+  gtk_container_add (GTK_CONTAINER (notebook3), vbox13);
   gtk_container_set_border_width (GTK_CONTAINER (vbox13), 12);
 
   hbox23 = gtk_hbox_new (FALSE, 8);
@@ -1248,6 +1262,50 @@ create_trackproperties (void)
   gtk_container_add (GTK_CONTAINER (scrolledwindow4), comment);
   gtk_text_view_set_editable (GTK_TEXT_VIEW (comment), FALSE);
 
+  hbuttonbox2 = gtk_hbutton_box_new ();
+  gtk_widget_show (hbuttonbox2);
+  gtk_box_pack_start (GTK_BOX (vbox13), hbuttonbox2, TRUE, TRUE, 0);
+  gtk_button_box_set_layout (GTK_BUTTON_BOX (hbuttonbox2), GTK_BUTTONBOX_END);
+
+  button3 = gtk_button_new_with_mnemonic ("Write");
+  gtk_widget_show (button3);
+  gtk_container_add (GTK_CONTAINER (hbuttonbox2), button3);
+  GTK_WIDGET_SET_FLAGS (button3, GTK_CAN_DEFAULT);
+
+  label65 = gtk_label_new ("Summary");
+  gtk_widget_show (label65);
+  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook3), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook3), 0), label65);
+
+  vbox16 = gtk_vbox_new (FALSE, 8);
+  gtk_widget_show (vbox16);
+  gtk_container_add (GTK_CONTAINER (notebook3), vbox16);
+  gtk_container_set_border_width (GTK_CONTAINER (vbox16), 12);
+
+  scrolledwindow5 = gtk_scrolled_window_new (NULL, NULL);
+  gtk_widget_show (scrolledwindow5);
+  gtk_box_pack_start (GTK_BOX (vbox16), scrolledwindow5, TRUE, TRUE, 0);
+  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow5), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+  gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow5), GTK_SHADOW_IN);
+
+  metalist = gtk_tree_view_new ();
+  gtk_widget_show (metalist);
+  gtk_container_add (GTK_CONTAINER (scrolledwindow5), metalist);
+  gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (metalist), TRUE);
+
+  hbuttonbox1 = gtk_hbutton_box_new ();
+  gtk_widget_show (hbuttonbox1);
+  gtk_box_pack_start (GTK_BOX (vbox16), hbuttonbox1, FALSE, FALSE, 0);
+  gtk_button_box_set_layout (GTK_BUTTON_BOX (hbuttonbox1), GTK_BUTTONBOX_END);
+
+  button2 = gtk_button_new_with_mnemonic ("Write");
+  gtk_widget_show (button2);
+  gtk_container_add (GTK_CONTAINER (hbuttonbox1), button2);
+  GTK_WIDGET_SET_FLAGS (button2, GTK_CAN_DEFAULT);
+
+  label64 = gtk_label_new ("Full");
+  gtk_widget_show (label64);
+  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook3), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook3), 1), label64);
+
   g_signal_connect ((gpointer) trackproperties, "key_press_event",
                     G_CALLBACK (on_trackproperties_key_press_event),
                     NULL);
@@ -1257,6 +1315,7 @@ create_trackproperties (void)
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (trackproperties, trackproperties, "trackproperties");
+  GLADE_HOOKUP_OBJECT (trackproperties, notebook3, "notebook3");
   GLADE_HOOKUP_OBJECT (trackproperties, vbox13, "vbox13");
   GLADE_HOOKUP_OBJECT (trackproperties, hbox23, "hbox23");
   GLADE_HOOKUP_OBJECT (trackproperties, label27, "label27");
@@ -1285,6 +1344,15 @@ create_trackproperties (void)
   GLADE_HOOKUP_OBJECT (trackproperties, label36, "label36");
   GLADE_HOOKUP_OBJECT (trackproperties, scrolledwindow4, "scrolledwindow4");
   GLADE_HOOKUP_OBJECT (trackproperties, comment, "comment");
+  GLADE_HOOKUP_OBJECT (trackproperties, hbuttonbox2, "hbuttonbox2");
+  GLADE_HOOKUP_OBJECT (trackproperties, button3, "button3");
+  GLADE_HOOKUP_OBJECT (trackproperties, label65, "label65");
+  GLADE_HOOKUP_OBJECT (trackproperties, vbox16, "vbox16");
+  GLADE_HOOKUP_OBJECT (trackproperties, scrolledwindow5, "scrolledwindow5");
+  GLADE_HOOKUP_OBJECT (trackproperties, metalist, "metalist");
+  GLADE_HOOKUP_OBJECT (trackproperties, hbuttonbox1, "hbuttonbox1");
+  GLADE_HOOKUP_OBJECT (trackproperties, button2, "button2");
+  GLADE_HOOKUP_OBJECT (trackproperties, label64, "label64");
 
   return trackproperties;
 }
@@ -1530,6 +1598,13 @@ create_prefwin (void)
   GtkWidget *hbox20;
   GtkWidget *configure_plugin;
   GtkWidget *label3;
+  GtkWidget *vbox17;
+  GtkWidget *scrolledwindow6;
+  GtkWidget *treeview1;
+  GtkWidget *hbuttonbox3;
+  GtkWidget *button4;
+  GtkWidget *button5;
+  GtkWidget *label66;
   GtkWidget *dialog_action_area2;
   GtkWidget *closebutton1;
 
@@ -1972,6 +2047,42 @@ create_prefwin (void)
   label3 = gtk_label_new ("Plugins");
   gtk_widget_show (label3);
   gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook2), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook2), 4), label3);
+  gtk_misc_set_alignment (GTK_MISC (label3), 0.48, 0.5);
+
+  vbox17 = gtk_vbox_new (FALSE, 8);
+  gtk_widget_show (vbox17);
+  gtk_container_add (GTK_CONTAINER (notebook2), vbox17);
+  gtk_container_set_border_width (GTK_CONTAINER (vbox17), 12);
+
+  scrolledwindow6 = gtk_scrolled_window_new (NULL, NULL);
+  gtk_widget_show (scrolledwindow6);
+  gtk_box_pack_start (GTK_BOX (vbox17), scrolledwindow6, TRUE, TRUE, 0);
+  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow6), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+  gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow6), GTK_SHADOW_IN);
+
+  treeview1 = gtk_tree_view_new ();
+  gtk_widget_show (treeview1);
+  gtk_container_add (GTK_CONTAINER (scrolledwindow6), treeview1);
+  gtk_tree_view_set_enable_search (GTK_TREE_VIEW (treeview1), FALSE);
+
+  hbuttonbox3 = gtk_hbutton_box_new ();
+  gtk_widget_show (hbuttonbox3);
+  gtk_box_pack_start (GTK_BOX (vbox17), hbuttonbox3, FALSE, FALSE, 0);
+  gtk_button_box_set_layout (GTK_BUTTON_BOX (hbuttonbox3), GTK_BUTTONBOX_END);
+
+  button4 = gtk_button_new_with_mnemonic ("Add");
+  gtk_widget_show (button4);
+  gtk_container_add (GTK_CONTAINER (hbuttonbox3), button4);
+  GTK_WIDGET_SET_FLAGS (button4, GTK_CAN_DEFAULT);
+
+  button5 = gtk_button_new_with_mnemonic ("Remove");
+  gtk_widget_show (button5);
+  gtk_container_add (GTK_CONTAINER (hbuttonbox3), button5);
+  GTK_WIDGET_SET_FLAGS (button5, GTK_CAN_DEFAULT);
+
+  label66 = gtk_label_new ("Global Hotkeys");
+  gtk_widget_show (label66);
+  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook2), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook2), 5), label66);
 
   dialog_action_area2 = GTK_DIALOG (prefwin)->action_area;
   gtk_widget_show (dialog_action_area2);
@@ -2133,6 +2244,13 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, hbox20, "hbox20");
   GLADE_HOOKUP_OBJECT (prefwin, configure_plugin, "configure_plugin");
   GLADE_HOOKUP_OBJECT (prefwin, label3, "label3");
+  GLADE_HOOKUP_OBJECT (prefwin, vbox17, "vbox17");
+  GLADE_HOOKUP_OBJECT (prefwin, scrolledwindow6, "scrolledwindow6");
+  GLADE_HOOKUP_OBJECT (prefwin, treeview1, "treeview1");
+  GLADE_HOOKUP_OBJECT (prefwin, hbuttonbox3, "hbuttonbox3");
+  GLADE_HOOKUP_OBJECT (prefwin, button4, "button4");
+  GLADE_HOOKUP_OBJECT (prefwin, button5, "button5");
+  GLADE_HOOKUP_OBJECT (prefwin, label66, "label66");
   GLADE_HOOKUP_OBJECT_NO_REF (prefwin, dialog_action_area2, "dialog_action_area2");
   GLADE_HOOKUP_OBJECT (prefwin, closebutton1, "closebutton1");
 

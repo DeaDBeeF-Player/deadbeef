@@ -21,12 +21,6 @@
 #include <stdint.h>
 #include <time.h>
 
-typedef struct metaInfo_s {
-    const char *key;
-    const char *value;
-    struct metaInfo_s *next;
-} metaInfo_t;
-
 #define PL_MAX_ITERATORS 2
 
 typedef struct playItem_s {
@@ -49,7 +43,7 @@ typedef struct playItem_s {
     int _refc;
     struct playItem_s *next[PL_MAX_ITERATORS]; // next item in linked list
     struct playItem_s *prev[PL_MAX_ITERATORS]; // prev item in linked list
-    struct metaInfo_s *meta; // linked list storing metainfo
+    struct DB_metaInfo_s *meta; // linked list storing metainfo
     unsigned selected : 1;
     unsigned played : 1; // mark as played in shuffle mode
     unsigned in_playlist : 1; // 1 if item is in playlist
@@ -302,5 +296,8 @@ pl_playqueue_getcount (void);
 
 void
 pl_items_copy_junk (struct playItem_s *from, struct playItem_s *first, struct playItem_s *last);
+
+struct DB_metaInfo_s *
+pl_get_metadata (playItem_t *it);
 
 #endif // __PLAYLIST_H

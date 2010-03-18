@@ -161,6 +161,7 @@ static DB_functions_t deadbeef_api = {
     .pl_find_meta = (const char *(*) (DB_playItem_t *, const char *))pl_find_meta,
     .pl_replace_meta = (void (*) (DB_playItem_t *, const char *, const char *))pl_replace_meta,
     .pl_delete_all_meta = (void (*) (DB_playItem_t *it))pl_delete_all_meta,
+    .pl_get_metadata = (DB_metaInfo_t *(*)(DB_playItem_t *it))pl_get_metadata,
     // cuesheet support
     .pl_insert_cue_from_buffer = (DB_playItem_t *(*) (DB_playItem_t *after, DB_playItem_t *origin, const uint8_t *buffer, int buffersize, int numsamples, int samplerate))pl_insert_cue_from_buffer,
     .pl_insert_cue = (DB_playItem_t *(*)(DB_playItem_t *after, DB_playItem_t *origin, int numsamples, int samplerate))pl_insert_cue,

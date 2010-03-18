@@ -1322,10 +1322,10 @@ pl_item_copy (playItem_t *out, playItem_t *it) {
     out->prev[PL_SEARCH] = it->prev[PL_SEARCH];
     out->_refc = 1;
     // copy metainfo
-    metaInfo_t *prev = NULL;
-    metaInfo_t *meta = it->meta;
+    DB_metaInfo_t *prev = NULL;
+    DB_metaInfo_t *meta = it->meta;
     while (meta) {
-        metaInfo_t *m = malloc (sizeof (metaInfo_t));
+        DB_metaInfo_t *m = malloc (sizeof (DB_metaInfo_t));
         m->key = meta->key;
         m->value = strdup (meta->value);
         m->next = NULL;
@@ -1367,7 +1367,7 @@ pl_item_free (playItem_t *it) {
             free (it->fname);
         }
         while (it->meta) {
-            metaInfo_t *m = it->meta;
+            DB_metaInfo_t *m = it->meta;
             it->meta = m->next;
             metacache_remove_string (m->value);//free (m->value);
             free (m);
@@ -1395,7 +1395,7 @@ void
 pl_add_meta (playItem_t *it, const char *key, const char *value) {
     LOCK;
     // check if it's already set
-    metaInfo_t *m = it->meta;
+    DB_metaInfo_t *m = it->meta;
     while (m) {
         if (!strcasecmp (key, m->key)) {
             // duplicate key
@@ -1429,7 +1429,7 @@ pl_add_meta (playItem_t *it, const char *key, const char *value) {
             return;
         }
     }
-    m = malloc (sizeof (metaInfo_t));
+    m = malloc (sizeof (DB_metaInfo_t));
     m->key = key;
     m->value = metacache_add_string (value);//strdup (value);
     m->next = it->meta;
@@ -1441,7 +1441,7 @@ void
 pl_replace_meta (playItem_t *it, const char *key, const char *value) {
     LOCK;
     // check if it's already set
-    metaInfo_t *m = it->meta;
+    DB_metaInfo_t *m = it->meta;
     while (m) {
         if (!strcasecmp (key, m->key)) {
             break;;
@@ -1477,7 +1477,7 @@ pl_format_item_display_name (playItem_t *it, char *str, int len) {
 
 const char *
 pl_find_meta (playItem_t *it, const char *key) {
-    metaInfo_t *m = it->meta;
+    DB_metaInfo_t *m = it->meta;
     while (m) {
         if (!strcasecmp (key, m->key)) {
             return m->value;
@@ -1485,6 +1485,11 @@ pl_find_meta (playItem_t *it, const char *key) {
         m = m->next;
     }
     return NULL;
+}
+
+DB_metaInfo_t *
+pl_get_metadata (playItem_t *it) {
+    return it->meta;
 }
 
 int
@@ -1609,7 +1614,7 @@ pl_save (const char *fname) {
         }
 
         int16_t nm = 0;
-        metaInfo_t *m;
+        DB_metaInfo_t *m;
         for (m = it->meta; m; m = m->next) {
             nm++;
         }
@@ -1981,7 +1986,7 @@ void
 pl_delete_all_meta (playItem_t *it) {
     LOCK;
     while (it->meta) {
-        metaInfo_t *m = it->meta;
+        DB_metaInfo_t *m = it->meta;
         it->meta = m->next;
         metacache_remove_string (m->value);
         free (m);
@@ -2498,7 +2503,7 @@ pl_search_process (const char *text) {
     for (playItem_t *it = playlist->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
         it->selected = 0;
         if (*text) {
-            for (metaInfo_t *m = it->meta; m; m = m->next) {
+            for (DB_metaInfo_t *m = it->meta; m; m = m->next) {
                 if (strcasecmp (m->key, "cuesheet") && utfcasestr (m->value, text)) {
                     //fprintf (stderr, "%s -> %s match (%s.%s)\n", text, m->value, it->fname, m->key);
                     // add to list
