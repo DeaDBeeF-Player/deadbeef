@@ -22,13 +22,15 @@
 #include <X11/Xlib.h>
 #include <ctype.h>
 
+#include "hotkeys.h"
 #include "../../deadbeef.h"
 
-static DB_misc_t plugin;
+static DB_hotkeys_plugin_t plugin;
 static DB_functions_t *deadbeef;
 static int finished;
 static Display *disp;
 static intptr_t loop_tid;
+static int need_reset = 0;
 
 #define MAX_COMMAND_COUNT 256
 
@@ -67,7 +69,7 @@ get_keycode (Display *disp, const char* name, KeySym *syms, int first_kk, int la
     for (i = 0; i < last_kk-first_kk; i++)
     {
         KeySym sym = * (syms + i*ks_per_kk);
-        for (ks = 0; ks < sizeof (keys) / sizeof (xkey_t); ks++)
+        for (ks = 0; keys[ks].name; ks++)
         {
             if ( (keys[ ks ].keysym == sym) && (0 == strcmp (name, keys[ ks ].name)))
             {
@@ -257,6 +259,12 @@ read_config (Display *disp)
         item = deadbeef->conf_find ("hotkeys.", item);
     }
     XFree (syms);
+    int i;
+    // need to grab it here to prevent gdk_x_error from being called while we're
+    // doing it on other thread
+    for (i = 0; i < command_count; i++) {
+        XGrabKey (disp, commands[i].keycode, commands[i].modifier, DefaultRootWindow (disp), False, GrabModeAsync, GrabModeAsync);
+    }
 }
 
 DB_plugin_t *
@@ -271,11 +279,29 @@ cleanup () {
     XCloseDisplay (disp);
 }
 
+static int
+x_err_handler (Display *d, XErrorEvent *evt) {
+    char buffer[1024];
+    XGetErrorText (d, evt->error_code, buffer, sizeof (buffer));
+    fprintf (stderr, "hotkeys: xlib error: %s\n", buffer);
+}
+
 static void
 hotkeys_event_loop (void *unused) {
     int i;
 
     while (!finished) {
+        if (need_reset) {
+            XSetErrorHandler (x_err_handler);
+            for (int i = 0; i < command_count; i++) {
+                XUngrabKey (disp, commands[i].keycode, commands[i].modifier, DefaultRootWindow (disp));
+            }
+            memset (commands, 0, sizeof (commands));
+            command_count = 0;
+            read_config (disp);
+            need_reset = 0;
+        }
+
         XEvent event;
         while (XPending (disp))
         {
@@ -297,13 +323,6 @@ hotkeys_event_loop (void *unused) {
 }
 
 static int
-x_err_handler (Display *d, XErrorEvent *evt) {
-    char buffer[1024];
-    XGetErrorText (d, evt->error_code, buffer, sizeof (buffer));
-    fprintf (stderr, "hotkeys: xlib error: %s\n", buffer);
-}
-
-static int
 hotkeys_start (void) {
     finished = 0;
     loop_tid = 0;
@@ -316,12 +335,6 @@ hotkeys_start (void) {
     XSetErrorHandler (x_err_handler);
 
     read_config (disp);
-    int i;
-    // need to grab it here to prevent gdk_x_error from being called while we're
-    // doing it on other thread
-    for (i = 0; i < command_count; i++) {
-        XGrabKey (disp, commands[i].keycode, commands[i].modifier, DefaultRootWindow (disp), False, GrabModeAsync, GrabModeAsync);
-    }
     XSync (disp, 0);
     if (command_count > 0) {
         loop_tid = deadbeef->thread_start (hotkeys_event_loop, 0);
@@ -340,16 +353,35 @@ hotkeys_stop (void) {
     }
 }
 
+const char *
+hotkeys_get_name_for_keycode (int keycode) {
+    for (int i = 0; keys[i].name; i++) {
+        if (keycode == keys[i].keysym) {
+            return keys[i].name;
+        }
+    }
+    return NULL;
+}
+
+void
+hotkeys_reset (void) {
+    need_reset = 1;
+}
+
 // define plugin interface
-static DB_misc_t plugin = {
-    DB_PLUGIN_SET_API_VERSION
-    .plugin.type = DB_PLUGIN_MISC,
-    .plugin.name = "Global hotkeys support",
-    .plugin.descr = "Allows to control player with global hotkeys",
-    .plugin.author = "Viktor Semykin",
-    .plugin.email = "thesame.ml@gmail.com",
-    .plugin.website = "http://deadbeef.sf.net",
-    .plugin.start = hotkeys_start,
-    .plugin.stop = hotkeys_stop
+static DB_hotkeys_plugin_t plugin = {
+    .misc.plugin.api_vmajor = DB_API_VERSION_MAJOR,
+    .misc.plugin.api_vminor = DB_API_VERSION_MINOR,
+    .misc.plugin.type = DB_PLUGIN_MISC,
+    .misc.plugin.id = "hotkeys",
+    .misc.plugin.name = "Global hotkeys support",
+    .misc.plugin.descr = "Allows to control player with global hotkeys",
+    .misc.plugin.author = "Viktor Semykin",
+    .misc.plugin.email = "thesame.ml@gmail.com",
+    .misc.plugin.website = "http://deadbeef.sf.net",
+    .misc.plugin.start = hotkeys_start,
+    .misc.plugin.stop = hotkeys_stop,
+    .get_name_for_keycode = hotkeys_get_name_for_keycode,
+    .reset = hotkeys_reset,
 };
 

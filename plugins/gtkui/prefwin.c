@@ -24,6 +24,9 @@
 #include "interface.h"
 #include "callbacks.h"
 #include "drawing.h"
+#include "../hotkeys/hotkeys.h"
+
+#pragma GCC optimize("O0")
 
 static GtkWidget *prefwin;
 
@@ -96,6 +99,9 @@ preferences_fill_soundcards (void) {
 
 void
 on_hk_slot_edited (GtkCellRendererText *renderer, gchar *path, gchar *new_text, gpointer user_data) {
+    if (!new_text || !new_text[0]) {
+        return;
+    }
     GtkListStore *store = GTK_LIST_STORE (user_data);
     GtkTreePath *treepath = gtk_tree_path_new_from_string (path);
     GtkTreeIter iter;
@@ -120,16 +126,87 @@ on_hk_binding_edited (GtkCellRendererAccel *accel, gchar *path, guint accel_key,
     if (accel_mods & GDK_CONTROL_MASK) {
         strcat (new_value, "Ctrl ");
     }
-    if (accel_mods & GDK_MOD4_MASK) {
+    if (accel_mods & GDK_SUPER_MASK) {
         strcat (new_value, "Super ");
     }
-    if (accel_mods & GDK_META_MASK) {
+    if (accel_mods & GDK_MOD1_MASK) {
         strcat (new_value, "Alt ");
     }
-    char key[2] = {accel_key, 0};
-    strcat (new_value, key);
 
-    gtk_list_store_set (store, &iter, 1, new_value, -1);
+    // find key name from hotkeys plugin
+    DB_plugin_t **plugs = deadbeef->plug_get_list ();
+    int i;
+    for (i = 0; plugs[i]; i++) {
+        if (plugs[i]->id && !strcmp (plugs[i]->id, "hotkeys")) {
+            const char *name = ((DB_hotkeys_plugin_t *)plugs[i])->get_name_for_keycode (accel_key);
+            strcat (new_value, name);
+            gtk_list_store_set (store, &iter, 1, new_value, -1);
+            break;
+        }
+    }
+//    if (!plugs[i]) {
+//        return;
+//    }
+}
+
+void
+on_addhotkey_clicked                     (GtkButton *button, gpointer user_data) {
+    GtkListStore *store = GTK_LIST_STORE (user_data);
+    GtkTreeIter iter;
+    gtk_list_store_append (store, &iter);
+    gtk_list_store_set (store, &iter, 0, "toggle_pause", 1, "", -1);
+}
+
+void
+on_removehotkey_clicked                     (GtkButton *button, gpointer user_data) {
+    GtkTreeView *tree = GTK_TREE_VIEW (user_data);
+    GtkTreeModel *model = gtk_tree_view_get_model (tree);
+    if (model) {
+        GtkTreeSelection *sel = gtk_tree_view_get_selection (tree);
+        if (sel) {
+            GtkTreeIter iter;
+            if (gtk_tree_selection_get_selected (sel, NULL, &iter)) {
+                gtk_list_store_remove (GTK_LIST_STORE (model), &iter);
+            }
+        }
+    }
+}
+
+static gboolean
+add_hotkey_to_config (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data) {
+    int *counter = (int *)data;
+    GValue key = {0,}, value = {0,};
+//    g_value_init (&key, G_TYPE_STRING);
+//    g_value_init (&value, G_TYPE_STRING);
+    gtk_tree_model_get_value (model, iter, 0, &key);
+    gtk_tree_model_get_value (model, iter, 1, &value);
+    const char *skey = g_value_get_string (&key);
+    const char *svalue = g_value_get_string (&value);
+
+    char conf_name[100];
+    char conf_value[100];
+    snprintf (conf_name, sizeof (conf_name), "hotkeys.key%d", *counter);
+    (*counter)++;
+    snprintf (conf_value, sizeof (conf_value), "%s: %s", svalue, skey);
+    deadbeef->conf_set_str (conf_name, conf_value);
+}
+
+void
+on_applyhotkeys_clicked                     (GtkButton *button, gpointer user_data) {
+    DB_plugin_t **plugs = deadbeef->plug_get_list ();
+    int i;
+    for (i = 0; plugs[i]; i++) {
+        if (plugs[i]->id && !strcmp (plugs[i]->id, "hotkeys")) {
+            // rebuild config
+            deadbeef->conf_remove_items ("hotkeys.key");
+            int counter = 1;
+            GtkTreeModel *model = GTK_TREE_MODEL (user_data);
+            gtk_tree_model_foreach (model, add_hotkey_to_config, &counter);
+
+            ((DB_hotkeys_plugin_t *)plugs[i])->reset ();
+            break;
+        }
+    }
 }
 
 void
@@ -277,16 +354,17 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
 
     // model for hotkey slots
     const char *slots[] = {
-        "Toggle pause",
-        "Play",
-        "Prev",
-        "Next",
-        "Random",
-        "Seek forward",
-        "Seek backward",
-        "Volume up",
-        "Volume down",
-        "Toggle stop after current",
+        "toggle_pause",
+        "play",
+        "prev",
+        "next",
+        "stop",
+        "play_random",
+        "seek_fwd",
+        "seek_back",
+        "volume_up",
+        "volume_down",
+        "toggle_stop_after_current",
         NULL
     };
     GtkListStore *slots_store = gtk_list_store_new (1, G_TYPE_STRING);
@@ -344,6 +422,10 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
         }
     }
     gtk_tree_view_set_model (hktree, GTK_TREE_MODEL (hkstore));
+
+    g_signal_connect ((gpointer)lookup_widget (prefwin, "addhotkey"), "clicked", G_CALLBACK (on_addhotkey_clicked), hkstore);
+    g_signal_connect ((gpointer)lookup_widget (prefwin, "removehotkey"), "clicked", G_CALLBACK (on_removehotkey_clicked), hktree);
+    g_signal_connect ((gpointer)lookup_widget (prefwin, "applyhotkeys"), "clicked", G_CALLBACK (on_applyhotkeys_clicked), hkstore);
 
     gtk_dialog_run (GTK_DIALOG (prefwin));
     gtk_widget_destroy (prefwin);

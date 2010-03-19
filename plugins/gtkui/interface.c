@@ -1604,6 +1604,7 @@ create_prefwin (void)
   GtkWidget *hbuttonbox3;
   GtkWidget *addhotkey;
   GtkWidget *removehotkey;
+  GtkWidget *applyhotkeys;
   GtkWidget *label66;
   GtkWidget *dialog_action_area2;
   GtkWidget *closebutton1;
@@ -2080,6 +2081,11 @@ create_prefwin (void)
   gtk_container_add (GTK_CONTAINER (hbuttonbox3), removehotkey);
   GTK_WIDGET_SET_FLAGS (removehotkey, GTK_CAN_DEFAULT);
 
+  applyhotkeys = gtk_button_new_with_mnemonic ("Apply");
+  gtk_widget_show (applyhotkeys);
+  gtk_container_add (GTK_CONTAINER (hbuttonbox3), applyhotkeys);
+  GTK_WIDGET_SET_FLAGS (applyhotkeys, GTK_CAN_DEFAULT);
+
   label66 = gtk_label_new ("Global Hotkeys");
   gtk_widget_show (label66);
   gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook2), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook2), 5), label66);
@@ -2250,6 +2256,7 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, hbuttonbox3, "hbuttonbox3");
   GLADE_HOOKUP_OBJECT (prefwin, addhotkey, "addhotkey");
   GLADE_HOOKUP_OBJECT (prefwin, removehotkey, "removehotkey");
+  GLADE_HOOKUP_OBJECT (prefwin, applyhotkeys, "applyhotkeys");
   GLADE_HOOKUP_OBJECT (prefwin, label66, "label66");
   GLADE_HOOKUP_OBJECT_NO_REF (prefwin, dialog_action_area2, "dialog_action_area2");
   GLADE_HOOKUP_OBJECT (prefwin, closebutton1, "closebutton1");

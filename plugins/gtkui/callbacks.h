@@ -765,3 +765,7 @@ on_color_selected_text_color_set       (GtkColorButton  *colorbutton,
 void
 on_disable_playlist_theming_toggled    (GtkToggleButton *togglebutton,
                                         gpointer         user_data);
+
+void
+on_addhotkey_activate                  (GtkButton       *button,
+                                        gpointer         user_data);

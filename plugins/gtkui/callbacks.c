@@ -987,3 +987,4 @@ on_mainwin_realize                     (GtkWidget       *widget,
     gtkui_init_theme_colors ();
 }
 
+
