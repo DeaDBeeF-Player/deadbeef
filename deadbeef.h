@@ -417,6 +417,7 @@ typedef struct {
     int (*conf_get_int) (const char *key, int def);
     void (*conf_set_str) (const char *key, const char *val);
     void (*conf_set_int) (const char *key, int val);
+    void (*conf_set_float) (const char *key, float val);
     DB_conf_item_t * (*conf_find) (const char *group, DB_conf_item_t *prev);
     void (*conf_remove_items) (const char *key);
     // plugin communication

@@ -26,4 +26,7 @@ eq_window_show (void);
 void
 eq_window_hide (void);
 
+void
+eq_window_destroy (void);
+
 #endif

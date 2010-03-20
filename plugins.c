@@ -203,6 +203,7 @@ static DB_functions_t deadbeef_api = {
     .conf_get_int = conf_get_int,
     .conf_set_str = conf_set_str,
     .conf_set_int = conf_set_int,
+    .conf_set_float = conf_set_float,
     .conf_find = conf_find,
     .conf_remove_items = conf_remove_items,
     // plugin communication

@@ -16,6 +16,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
+#include <stdio.h>
 #include "../../deadbeef.h"
 #include "supereq.h"
 
@@ -41,6 +42,13 @@ static uintptr_t mutex = 0;
 
 int
 supereq_plugin_start (void) {
+    // load bands from config
+    for (int i = 0; i < 18; i++) {
+        char key[100];
+        snprintf (key, sizeof (key), "eq.band%d", i);
+        lbands[i] = rbands[i] = deadbeef->conf_get_float (key, 1);
+    }
+
     equ_init (14);
     paramsroot = paramlist_alloc ();
     last_srate = 44100;
@@ -113,6 +121,9 @@ supereq_set_band (int band, float value) {
     lbands[band] = rbands[band] = value;
     deadbeef->mutex_unlock (mutex);
     params_changed = 1;
+    char key[100];
+    snprintf (key, sizeof (key), "eq.band%d", band);
+    deadbeef->conf_set_float (key, value);
 }
 
 static DB_supereq_dsp_t plugin = {

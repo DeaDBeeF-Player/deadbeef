@@ -24,6 +24,7 @@
 #include "../supereq/supereq.h"
 
 static GtkWidget *eqwin;
+static GtkWidget *sliders[18];
 
 float
 db_to_amp (float dB) {
@@ -60,33 +61,12 @@ eq_init_widgets (GtkWidget *container) {
     gtk_widget_show (hbox);
     gtk_container_add (GTK_CONTAINER (container), hbox);
 
-    DB_supereq_dsp_t *eq = NULL;
-    DB_dsp_t **plugs = deadbeef->plug_get_dsp_list ();
-    // find eq plugin
-    for (i = 0; plugs[i]; i++) {
-        if (plugs[i]->plugin.id && !strcmp (plugs[i]->plugin.id, "supereq")) {
-            eq = (DB_supereq_dsp_t *)plugs[i];
-            break;
-        }
-    }
-
     for (i = 0; i < 18; i++) {
-        GtkWidget *scale = gtk_vscale_new_with_range (-20, 20, 1);
+        GtkWidget *scale = sliders[i] = gtk_vscale_new_with_range (-20, 20, 1);
         gtk_scale_set_value_pos (GTK_SCALE (scale), GTK_POS_BOTTOM);
         gtk_scale_set_draw_value (GTK_SCALE (scale), TRUE);
         gtk_range_set_inverted (GTK_RANGE (scale), TRUE);
         gtk_range_set_update_policy (GTK_RANGE (scale), GTK_UPDATE_DELAYED);
-        if (eq) {
-            float val = eq->get_band (i);
-            val = amp_to_db (val);
-            if (val < -20) {
-                val = -20;
-            }
-            if (val > 20) {
-                val = 20;
-            }
-            gtk_range_set_value (GTK_RANGE (scale), val);
-        }
         g_signal_connect (scale, "value_changed", G_CALLBACK (eq_value_changed), (gpointer)(intptr_t)i);
         gtk_widget_show (scale);
         gtk_box_pack_start (GTK_BOX (hbox), scale, FALSE, FALSE, 0);
@@ -102,6 +82,31 @@ eq_window_show (void) {
         GtkWidget *cont = lookup_widget (mainwin, "vbox1");
         gtk_box_pack_start (GTK_BOX (cont), eqwin, FALSE, FALSE, 0);
     }
+    int i;
+    DB_supereq_dsp_t *eq = NULL;
+    DB_dsp_t **plugs = deadbeef->plug_get_dsp_list ();
+    // find eq plugin
+    for (i = 0; plugs[i]; i++) {
+        if (plugs[i]->plugin.id && !strcmp (plugs[i]->plugin.id, "supereq")) {
+            eq = (DB_supereq_dsp_t *)plugs[i];
+            break;
+        }
+    }
+
+    for (i = 0; i < 18; i++) {
+        GtkWidget *scale = sliders[i];
+        if (eq) {
+            float val = eq->get_band (i);
+            val = amp_to_db (val);
+            if (val < -20) {
+                val = -20;
+            }
+            if (val > 20) {
+                val = 20;
+            }
+            gtk_range_set_value (GTK_RANGE (scale), val);
+        }
+    }
     gtk_widget_show (eqwin);
 }
 
@@ -110,4 +115,11 @@ eq_window_hide (void) {
     if (eqwin) {
         gtk_widget_hide (eqwin);
     }
+}
+
+void
+eq_window_destroy (void) {
+    gtk_widget_destroy (eqwin);
+    eqwin = NULL;
+    memset (sliders, 0, sizeof (sliders));
 }
