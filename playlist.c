@@ -281,14 +281,16 @@ plt_set_curr (int plt) {
     int i;
     PLT_LOCK;
     playlist_t *p = playlists_head;
-    for (i = 0; p && i < plt; i++) {
+    for (i = 0; p && p->next && i < plt; i++) {
         p = p->next;
     }
+#if 0
     if (i != plt) {
         PLT_UNLOCK;
         trace ("plt_set_curr %d failed\n", plt);
         return;
     }
+#endif
     if (p != playlist) {
         playlist = p;
         if (!plt_loading) {

@@ -552,6 +552,8 @@ on_remove_playlist1_activate           (GtkMenuItem     *menuitem,
 {
     if (tab_clicked != -1) {
         deadbeef->plt_remove (tab_clicked);
+        int playlist = deadbeef->plt_get_curr ();
+        deadbeef->conf_set_int ("playlist.current", playlist);
     }
 }
 
