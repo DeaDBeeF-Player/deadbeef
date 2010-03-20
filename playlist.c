@@ -1329,7 +1329,7 @@ pl_item_copy (playItem_t *out, playItem_t *it) {
     while (meta) {
         DB_metaInfo_t *m = malloc (sizeof (DB_metaInfo_t));
         m->key = meta->key;
-        m->value = strdup (meta->value);
+        m->value = metacache_add_string (meta->value); //strdup (meta->value);
         m->next = NULL;
         if (prev) {
             prev->next = m;
@@ -1446,7 +1446,7 @@ pl_replace_meta (playItem_t *it, const char *key, const char *value) {
     DB_metaInfo_t *m = it->meta;
     while (m) {
         if (!strcasecmp (key, m->key)) {
-            break;;
+            break;
         }
         m = m->next;
     }
