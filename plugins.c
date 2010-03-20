@@ -208,6 +208,7 @@ static DB_functions_t deadbeef_api = {
     // plugin communication
     .plug_get_decoder_list = plug_get_decoder_list,
     .plug_get_output_list = plug_get_output_list,
+    .plug_get_dsp_list = plug_get_dsp_list,
     .plug_get_list = plug_get_list,
     .plug_activate = plug_activate,
     .plug_get_decoder_id = plug_get_decoder_id,
@@ -240,6 +241,9 @@ DB_decoder_t *g_decoder_plugins[MAX_DECODER_PLUGINS+1];
 
 #define MAX_VFS_PLUGINS 10
 DB_vfs_t *g_vfs_plugins[MAX_VFS_PLUGINS+1];
+
+#define MAX_DSP_PLUGINS 10
+DB_dsp_t *g_dsp_plugins[MAX_DSP_PLUGINS+1];
 
 #define MAX_OUTPUT_PLUGINS 10
 DB_output_t *g_output_plugins[MAX_OUTPUT_PLUGINS+1];
@@ -619,6 +623,7 @@ plug_load_all (void) {
     int numdecoders = 0;
     int numvfs = 0;
     int numoutput = 0;
+    int numdsp = 0;
     for (plug = plugins; plug; plug = plug->next) {
         g_plugins[numplugins++] = plug->plugin;
         if (plug->plugin->type == DB_PLUGIN_DECODER) {
@@ -637,10 +642,17 @@ plug_load_all (void) {
         }
         else if (plug->plugin->type == DB_PLUGIN_OUTPUT) {
             fprintf (stderr, "found output plugin %s\n", plug->plugin->name);
-            if (numvfs >= MAX_OUTPUT_PLUGINS) {
+            if (numoutput >= MAX_OUTPUT_PLUGINS) {
                 break;
             }
             g_output_plugins[numoutput++] = (DB_output_t *)plug->plugin;
+        }
+        else if (plug->plugin->type == DB_PLUGIN_DSP) {
+            fprintf (stderr, "found dsp plugin %s\n", plug->plugin->name);
+            if (numdsp >= MAX_DSP_PLUGINS) {
+                break;
+            }
+            g_dsp_plugins[numdsp++] = (DB_dsp_t *)plug->plugin;
         }
     }
     // start plugins
@@ -697,6 +709,11 @@ plug_get_output_list (void) {
 struct DB_vfs_s **
 plug_get_vfs_list (void) {
     return g_vfs_plugins;
+}
+
+struct DB_dsp_s **
+plug_get_dsp_list (void) {
+    return g_dsp_plugins;
 }
 
 struct DB_plugin_s **

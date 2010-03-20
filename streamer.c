@@ -1261,6 +1261,12 @@ streamer_read_async (char *bytes, int size) {
                 bytes_until_next_song = -1;
             }
         }
+        // apply dsp
+        DB_dsp_t **dsp = deadbeef->plug_get_dsp_list ();
+        int srate = p_get_rate ();
+        for (int i = 0; dsp[i]; i++) {
+            dsp[i]->process_int16 ((int16_t *)bytes, bytesread/4, 2, 16, srate);
+        }
         mutex_unlock (decodemutex);
         bytes += bytesread;
         size -= bytesread;

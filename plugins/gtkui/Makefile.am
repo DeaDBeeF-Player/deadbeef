@@ -16,7 +16,8 @@ gtkui_la_SOURCES = gtkui.c gtkui.h\
 				   trkproperties.c trkproperties.h\
 				   coverart.c coverart.h\
 				   plcommon.c plcommon.h\
-				   prefwin.c
+				   prefwin.c\
+				   eq.c eq.h
 
 gtkui_la_LDFLAGS = -module
 

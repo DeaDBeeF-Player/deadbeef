@@ -41,6 +41,7 @@
 #include "gtkui.h"
 #include "parser.h"
 #include "drawing.h"
+#include "eq.h"
 
 #define trace(...) { fprintf (stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
@@ -987,4 +988,35 @@ on_mainwin_realize                     (GtkWidget       *widget,
     gtkui_init_theme_colors ();
 }
 
+
+
+void
+on_toggle_tabs                         (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    GtkWidget *ts = lookup_widget (mainwin, "tabstrip");
+    if (!gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (menuitem))) {
+        deadbeef->conf_set_int ("gtkui.tabs.visible", 0);
+        gtk_widget_hide (ts);
+    }
+    else {
+        deadbeef->conf_set_int ("gtkui.tabs.visible", 1);
+        gtk_widget_show (ts);
+    }
+}
+
+
+void
+on_toggle_eq                           (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    if (!gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (menuitem))) {
+        deadbeef->conf_set_int ("gtkui.eq.visible", 0);
+        eq_window_hide ();
+    }
+    else {
+        deadbeef->conf_set_int ("gtkui.eq.visible", 1);
+        eq_window_show ();
+    }
+}
 

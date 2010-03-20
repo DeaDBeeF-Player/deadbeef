@@ -338,6 +338,7 @@ plugins/sid/Makefile
 plugins/oss/Makefile
 plugins/pulse/Makefile
 plugins/artwork/Makefile
+plugins/supereq/Makefile
 deadbeef.desktop
 ])
 

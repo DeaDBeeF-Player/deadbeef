@@ -43,6 +43,7 @@
 #include "coverart.h"
 #include "plcommon.h"
 #include "ddbtabstrip.h"
+#include "eq.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -727,8 +728,11 @@ gtkui_thread (void *ctx) {
     // visibility of statusbar and headers
     GtkWidget *header_mi = lookup_widget (mainwin, "view_headers");
     GtkWidget *sb_mi = lookup_widget (mainwin, "view_status_bar");
+    GtkWidget *ts_mi = lookup_widget (mainwin, "view_tabs");
+    GtkWidget *eq_mi = lookup_widget (mainwin, "view_eq");
     GtkWidget *header = lookup_widget (mainwin, "header");
     GtkWidget *sb = lookup_widget (mainwin, "statusbar");
+    GtkWidget *ts = lookup_widget (mainwin, "tabstrip");
     if (deadbeef->conf_get_int ("gtkui.headers.visible", 1)) {
         gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (header_mi), TRUE);
     }
@@ -742,6 +746,20 @@ gtkui_thread (void *ctx) {
     else {
         gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (sb_mi), FALSE);
         gtk_widget_hide (sb);
+    }
+    if (deadbeef->conf_get_int ("gtkui.tabs.visible", 1)) {
+        gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (ts_mi), TRUE);
+    }
+    else {
+        gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (ts_mi), FALSE);
+        gtk_widget_hide (ts);
+    }
+    if (deadbeef->conf_get_int ("gtkui.eq.visible", 0)) {
+        gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (eq_mi), TRUE);
+        eq_window_show ();
+    }
+    else {
+        gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (eq_mi), FALSE);
     }
 
     searchwin = create_searchwin ();

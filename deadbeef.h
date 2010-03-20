@@ -422,6 +422,7 @@ typedef struct {
     // plugin communication
     struct DB_decoder_s **(*plug_get_decoder_list) (void);
     struct DB_output_s **(*plug_get_output_list) (void);
+    struct DB_dsp_s **(*plug_get_dsp_list) (void);
     struct DB_plugin_s **(*plug_get_list) (void);
     int (*plug_activate) (struct DB_plugin_s *p, int activate);
     const char * (*plug_get_decoder_id) (const char *id);
@@ -544,12 +545,12 @@ typedef struct DB_output_s {
 } DB_output_t;
 
 // dsp plugin
-typedef struct {
+typedef struct DB_dsp_s {
     DB_plugin_t plugin;
     // process gets called before SRC
     // stereo samples are stored in interleaved format
     // stereo sample is counted as 1 sample
-    void (*process) (float *samples, int channels, int nsamples);
+    int (*process_int16) (int16_t *samples, int nsamples, int nch, int bps, int srate);
 } DB_dsp_t;
 
 // misc plugin

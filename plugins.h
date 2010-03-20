@@ -97,6 +97,9 @@ plug_get_output_list (void);
 struct DB_vfs_s **
 plug_get_vfs_list (void);
 
+struct DB_dsp_s **
+plug_get_dsp_list (void);
+
 void
 plug_volume_set_db (float db);
 

@@ -769,3 +769,11 @@ on_disable_playlist_theming_toggled    (GtkToggleButton *togglebutton,
 void
 on_addhotkey_activate                  (GtkButton       *button,
                                         gpointer         user_data);
+
+void
+on_toggle_tabs                         (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_toggle_eq                           (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
