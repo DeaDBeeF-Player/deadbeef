@@ -17,6 +17,7 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 #include <stdio.h>
+#include <string.h>
 #include "../../deadbeef.h"
 #include "supereq.h"
 
@@ -75,8 +76,18 @@ supereq_plugin_stop (void) {
 void
 supereq_regen_table_thread (void *param) {
     void *params = paramlist_alloc ();
+
     deadbeef->mutex_lock (mutex);
-    equ_makeTable (lbands, rbands, params, last_srate);
+    float lbands_copy[18];
+    float rbands_copy[18];
+    float srate = last_srate;
+    memcpy (lbands_copy, lbands, sizeof (lbands));
+    memcpy (rbands_copy, rbands, sizeof (rbands));
+    deadbeef->mutex_unlock (mutex);
+
+    equ_makeTable (lbands_copy, rbands_copy, params, srate);
+
+    deadbeef->mutex_lock (mutex);
     paramlist_free (paramsroot);
     paramsroot = params;
     deadbeef->mutex_unlock (mutex);
