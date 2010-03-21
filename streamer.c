@@ -52,8 +52,8 @@ static int conf_replaygain_scale = 1;
 #define SRC_BUFFER 16000
 static int src_in_remaining = 0;
 //static int16_t g_src_in_buffer[SRC_BUFFER*2];
-static float g_src_in_fbuffer[SRC_BUFFER*2];
-static float g_src_out_fbuffer[SRC_BUFFER*2];
+static __attribute__((__aligned__(16))) float g_src_in_fbuffer[SRC_BUFFER*2];
+static __attribute__((__aligned__(16))) float g_src_out_fbuffer[SRC_BUFFER*2];
 
 static int streaming_terminate;
 
@@ -69,6 +69,7 @@ static int bytes_until_next_song = 0;
 static char streambuffer[STREAM_BUFFER_SIZE];
 static uintptr_t mutex;
 static uintptr_t decodemutex;
+static uintptr_t srcmutex;
 static int nextsong = -1;
 static int nextsong_pstate = -1;
 static int badsong = -1;
@@ -90,6 +91,26 @@ static int streamer_buffering;
 
 // to allow interruption of stall file requests
 static DB_FILE *streamer_file;
+
+void
+streamer_lock (void) {
+    mutex_lock (mutex);
+}
+
+void
+streamer_unlock (void) {
+    mutex_unlock (mutex);
+}
+
+void
+src_lock (void) {
+    mutex_lock (srcmutex);
+}
+
+void
+src_unlock (void) {
+    mutex_unlock (srcmutex);
+}
 
 playItem_t *
 streamer_get_streaming_track (void) {
@@ -534,9 +555,6 @@ streamer_set_nextsong (int song, int pstate) {
         // no sense to wait until end of previous song, reset buffer
         bytes_until_next_song = 0;
         playpos = 0;
-        // try to interrupt file operation
-        streamer_lock ();
-        streamer_unlock ();
     }
 }
 
@@ -835,6 +853,7 @@ streamer_thread (void *ctx) {
             streamer_lock ();
             memcpy (streambuffer+streambuffer_fill, buf, sz);
             streambuffer_fill += bytesread;
+//            if (streamer_buffering) trace ("fill: %d, read: %d, size=%d, blocksize=%d\n", streambuffer_fill, bytesread, STREAM_BUFFER_SIZE, blocksize);
         }
         streamer_unlock ();
         if (streambuffer_fill > 128000 && streamer_buffering || !streaming_track) {
@@ -884,6 +903,7 @@ int
 streamer_init (void) {
     mutex = mutex_create ();
     decodemutex = mutex_create ();
+    srcmutex = mutex_create ();
     src_quality = conf_get_int ("src_quality", 2);
     src = src_new (src_quality, 2, NULL);
     conf_replaygain_mode = conf_get_int ("replaygain_mode", 0);
@@ -903,16 +923,21 @@ streamer_free (void) {
     decodemutex = 0;
     mutex_free (mutex);
     mutex = 0;
+    mutex_free (srcmutex);
+    srcmutex = 0;
 }
 
 void
 streamer_reset (int full) { // must be called when current song changes by external reasons
-    src_remaining = 0;
+    src_lock ();
     if (full) {
         streambuffer_pos = 0;
         streambuffer_fill = 0;
     }
+//    trace ("\033[0;31msrc_reset\033[37;0m\n");
+    src_remaining = 0;
     src_reset (src);
+    src_unlock ();
 }
 
 int replaygain = 1;
@@ -1139,6 +1164,7 @@ streamer_decode_src_libsamplerate (uint8_t *bytes, int size) {
     }
     float ratio = p_get_rate ()/(float)samplerate;
     while (size > 0) {
+        //if (streamer_buffering) trace ("src: initsize=%d, size=%d, ratio=%f, src_remaining=%d\n", initsize, size, ratio, src_remaining);
         int n_output_frames = size / sizeof (int16_t) / 2;
         int n_input_frames = n_output_frames * samplerate / p_get_rate () + 100;
         // read data from decoder
@@ -1160,7 +1186,22 @@ streamer_decode_src_libsamplerate (uint8_t *bytes, int size) {
         srcdata.src_ratio = ratio;
 //        trace ("SRC from %d to %d\n", samplerate, p_get_rate ());
         srcdata.end_of_input = 0;//(nread == n_input_frames) ? 0 : 1;
-        src_process (src, &srcdata);
+        //if (streamer_buffering)
+//        trace ("src_in: input_frames=%d, output_frames=%d\n", srcdata.input_frames, srcdata.output_frames);
+        src_lock ();
+        src_set_ratio (src, ratio);
+        int src_err = src_process (src, &srcdata);
+        src_unlock ();
+        if (src_err) {
+            const char *err = src_strerror (src_err) ;
+            fprintf (stderr, "src_process error %s\n", err);
+            exit (-1);
+        }
+//        if (streamer_buffering)
+//        trace ("src_out: input_frames_used=%d, output_frames_gen=%d\n", srcdata.input_frames_used, srcdata.output_frames_gen);
+//        if (src_remaining == SRC_BUFFER && !srcdata.output_frames_gen) {
+//            assert (0);
+//        }
         // convert back to s16 format
 //        trace ("out frames: %d\n", srcdata.output_frames_gen);
         int genbytes = srcdata.output_frames_gen * 4;
@@ -1304,17 +1345,6 @@ streamer_read_async (char *bytes, int size) {
     }
     return initsize - size;
 }
-
-void
-streamer_lock (void) {
-    mutex_lock (mutex);
-}
-
-void
-streamer_unlock (void) {
-    mutex_unlock (mutex);
-}
-
 int
 streamer_read (char *bytes, int size) {
 #if 0
@@ -1414,7 +1444,7 @@ streamer_configchanged (void) {
     conf_replaygain_scale = conf_get_int ("replaygain_scale", 1);
     int q = conf_get_int ("src_quality", 2);
     if (q != src_quality && q >= SRC_SINC_BEST_QUALITY && q <= SRC_LINEAR) {
-        mutex_lock (decodemutex);
+        src_lock ();
         fprintf (stderr, "changing src_quality from %d to %d\n", src_quality, q);
         src_quality = q;
         if (src) {
@@ -1423,7 +1453,7 @@ streamer_configchanged (void) {
         }
         memset (&srcdata, 0, sizeof (srcdata));
         src = src_new (src_quality, 2, NULL);
-        mutex_unlock (decodemutex);
+        src_unlock ();
     }
 }
 
