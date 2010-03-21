@@ -189,6 +189,7 @@ add_hotkey_to_config (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter,
     (*counter)++;
     snprintf (conf_value, sizeof (conf_value), "%s: %s", svalue, skey);
     deadbeef->conf_set_str (conf_name, conf_value);
+    return FALSE;
 }
 
 void
