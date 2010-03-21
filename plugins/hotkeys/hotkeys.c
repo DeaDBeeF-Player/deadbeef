@@ -194,8 +194,6 @@ read_config (Display *disp)
         char* command = colon+1;
         *colon = 0;
 
-        char* key = NULL;
-
         int done = 0;
         char* p;
         char* space = param - 1;
@@ -234,7 +232,7 @@ read_config (Display *disp)
                 }
                 if (!cmd_entry->keycode)
                 {
-                    fprintf (stderr, "hotkeys: Unknown key: <%s> while parsing %s %s\n", key, item->key, item->value);
+                    fprintf (stderr, "hotkeys: got 0 from get_keycode while adding hotkey: %s %s\n", item->key, item->value);
                     break;
                 }
             }
