@@ -118,8 +118,11 @@ static int pulse_free(void)
 
     pulse_tid = 0;
     state = OUTPUT_STATE_STOPPED;
-    pa_simple_free(s);
-    s = NULL;
+    if (s != NULL)
+    {
+        pa_simple_free(s);
+        s = NULL;
+    }
 
     return 0;
 }
