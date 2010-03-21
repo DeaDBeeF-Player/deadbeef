@@ -25,7 +25,6 @@
 
 typedef struct playItem_s {
     char *fname; // full pathname
-//    struct DB_decoder_s *decoder; // codec to use with this file
     const char *decoder_id;
     int tracknum; // used for stuff like sid, nsf, cue (will be ignored by most codecs)
     int startsample;

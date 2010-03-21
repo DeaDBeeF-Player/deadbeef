@@ -77,6 +77,7 @@ void draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbListview
     if (res == -1) {
         return;
     }
+    DB_playItem_t *playing_track = deadbeef->streamer_get_playing_track ();
     if (cinf->id == DB_COLUMN_ALBUM_ART) {
         gtk_paint_flat_box (theme_treeview->style, drawable, GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, theme_treeview, "cell_even_ruled", x, y, width, height);
         int art_width = width - ART_PADDING_HORZ * 2;
@@ -115,7 +116,7 @@ void draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbListview
             }
         }
     }
-    else if (it && it == deadbeef->streamer_get_playing_track () && cinf->id == DB_COLUMN_PLAYING) {
+    else if (it && it == playing_track && cinf->id == DB_COLUMN_PLAYING) {
         int paused = deadbeef->get_output ()->state () == OUTPUT_STATE_PAUSED;
         int buffering = !deadbeef->streamer_ok_to_read (-1);
         GdkPixbuf *pixbuf;
@@ -149,6 +150,9 @@ void draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbListview
         else {
             draw_text (x + 5, y + height/2 - draw_get_font_size ()/2 - 2, cwidth-10, 0, text);
         }
+    }
+    if (playing_track) {
+        deadbeef->pl_item_unref (playing_track);
     }
 }
 

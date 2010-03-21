@@ -99,7 +99,7 @@ streamer_get_streaming_track (void) {
 
 playItem_t *
 streamer_get_playing_track (void) {
-    playItem_t *it = playing_track ? playing_track : playlist_track;
+    playItem_t *it = playing_track;// ? playing_track : playlist_track;
     if (it) {
         pl_item_ref (it);
     }
@@ -402,6 +402,13 @@ streamer_set_current (playItem_t *it) {
         //trace ("from=%d, to=%d\n", from, to);
         //messagepump_push (M_SONGCHANGED, 0, from, to);
     }
+    if (playing_track) {
+        pl_item_unref (playing_track);
+    }
+    playing_track = it;
+    if (playing_track) {
+        pl_item_ref (playing_track);
+    }
     trace ("streamer_set_current %p, buns=%d\n", it);
     mutex_lock (decodemutex);
     if (fileinfo) {
@@ -415,6 +422,7 @@ streamer_set_current (playItem_t *it) {
         goto success;
     }
     if (to != -1) {
+        trace ("draw before init: %d->%d, playing_track=%p, playlist_track=%p\n", from, to, playing_track, playlist_track);
         messagepump_push (M_TRACKCHANGED, 0, to, 0);
     }
     if (from != -1) {
@@ -462,6 +470,7 @@ streamer_set_current (playItem_t *it) {
             trace ("decoder->init returned %p\n", info);
             streamer_buffering = 0;
             if (playlist_track == it) {
+                trace ("redraw track %d; playing_track=%p; playlist_track=%p\n", to, playing_track, playlist_track);
                 messagepump_push (M_TRACKCHANGED, 0, to, 0);
             }
             return -1;
@@ -1003,6 +1012,7 @@ mono_int16_to_stereo_int16 (int16_t *in, int16_t *out, int nsamples) {
     }
 }
 
+#if 0
 static void
 int16_to_float32 (int16_t *in, float *out, int nsamples) {
     while (nsamples > 0) {
@@ -1030,6 +1040,7 @@ mono_float32_to_stereo_float32 (float *in, float *out, int nsamples) {
         nsamples--;
     }
 }
+#endif
 
 static void
 float32_to_int16 (float *in, int16_t *out, int nsamples) {
@@ -1126,7 +1137,7 @@ streamer_decode_src_libsamplerate (uint8_t *bytes, int size) {
     if (!samplerate) {
         return 0;
     }
-    float ratio = (float)p_get_rate ()/samplerate;
+    float ratio = p_get_rate ()/(float)samplerate;
     while (size > 0) {
         int n_output_frames = size / sizeof (int16_t) / 2;
         int n_input_frames = n_output_frames * samplerate / p_get_rate () + 100;
