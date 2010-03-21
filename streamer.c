@@ -423,13 +423,15 @@ streamer_set_current (playItem_t *it) {
         //trace ("from=%d, to=%d\n", from, to);
         //messagepump_push (M_SONGCHANGED, 0, from, to);
     }
-    if (playing_track) {
-        pl_item_unref (playing_track);
-    }
-    playing_track = it;
-    if (playing_track) {
-        pl_item_ref (playing_track);
-    }
+
+// code below breaks seekbar drawing during transition between tracks
+//    if (playing_track) {
+//        pl_item_unref (playing_track);
+//    }
+//    playing_track = it;
+//    if (playing_track) {
+//        pl_item_ref (playing_track);
+//    }
     trace ("streamer_set_current %p, buns=%d\n", it);
     mutex_lock (decodemutex);
     if (fileinfo) {
