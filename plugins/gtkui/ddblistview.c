@@ -1934,7 +1934,7 @@ ddb_listview_header_render (DdbListview *ps) {
             int arrow_sz = 10;
             int sort = c->sort_order;
             if (w > 0) {
-                gtk_paint_vline (widget->style, ps->backbuf_header, GTK_STATE_NORMAL, NULL, NULL, NULL, 2, h-4, xx+w - 2);
+                gtk_paint_vline (widget->style, ps->backbuf_header, GTK_STATE_NORMAL, NULL, widget, NULL, 2, h-4, xx+w - 2);
                 GdkColor *gdkfg = &theme_button->style->fg[0];
                 float fg[3] = {(float)gdkfg->red/0xffff, (float)gdkfg->green/0xffff, (float)gdkfg->blue/0xffff};
                 draw_set_fg_color (fg);
