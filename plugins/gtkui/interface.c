@@ -1701,7 +1701,7 @@ create_prefwin (void)
   gtk_combo_box_append_text (GTK_COMBO_BOX (pref_src_quality), "sinc_best_quality");
   gtk_combo_box_append_text (GTK_COMBO_BOX (pref_src_quality), "sinc_medium_quality");
   gtk_combo_box_append_text (GTK_COMBO_BOX (pref_src_quality), "sinc_fastest");
-  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_src_quality), "sinc_zero_order_hold");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_src_quality), "zero_order_hold");
   gtk_combo_box_append_text (GTK_COMBO_BOX (pref_src_quality), "linear");
 
   hbox10 = gtk_hbox_new (FALSE, 8);

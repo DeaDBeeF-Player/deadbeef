@@ -2585,7 +2585,7 @@ Example: %a - %t [%l]</property>
 		      <property name="items" translatable="yes">sinc_best_quality
 sinc_medium_quality
 sinc_fastest
-sinc_zero_order_hold
+zero_order_hold
 linear</property>
 		      <property name="add_tearoffs">False</property>
 		      <property name="focus_on_click">True</property>
