@@ -73,8 +73,8 @@ typedef struct _DdbListviewColumn DdbListviewColumn;
 
 struct _DdbListviewGroup {
     DdbListviewIter head;
-    uint16_t num_items;
-    uint16_t height;
+    uint32_t height;
+    uint32_t num_items;
     struct _DdbListviewGroup *next;
 };
 typedef struct _DdbListviewGroup DdbListviewGroup;
@@ -1009,7 +1009,7 @@ void
 ddb_listview_list_setup_vscroll (DdbListview *ps) {
     GtkWidget *list = ps->list;
     GtkWidget *scroll = ps->scrollbar;
-    int vheight = ps->fullheight;;
+    int vheight = ps->fullheight;
     if (ps->fullheight <= ps->list->allocation.height) {
         gtk_widget_hide (scroll);
         ps->scrollpos = 0;
