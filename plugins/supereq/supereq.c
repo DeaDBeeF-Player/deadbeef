@@ -137,6 +137,13 @@ supereq_set_band (int band, float value) {
     deadbeef->conf_set_float (key, value);
 }
 
+void
+supereq_reset (void) {
+    deadbeef->mutex_lock (mutex);
+    equ_clearbuf(last_bps,last_srate);
+    deadbeef->mutex_unlock (mutex);
+}
+
 static DB_supereq_dsp_t plugin = {
     .dsp.plugin.api_vmajor = DB_API_VERSION_MAJOR,
     .dsp.plugin.api_vminor = DB_API_VERSION_MINOR,
@@ -151,6 +158,7 @@ static DB_supereq_dsp_t plugin = {
     .dsp.plugin.stop = supereq_plugin_stop,
 //  .dsp.plugin.configdialog = settings_dlg,
     .dsp.process_int16 = supereq_process_int16,
+    .dsp.reset = supereq_reset,
     .get_band = supereq_get_band,
     .set_band = supereq_set_band,
 };

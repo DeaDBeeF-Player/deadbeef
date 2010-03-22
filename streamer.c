@@ -813,9 +813,12 @@ streamer_thread (void *ctx) {
             }
             if (fileinfo && playing_track && playing_track->_duration > 0) {
                 streamer_lock ();
+                streamer_reset (1);
+#if 0
                 streambuffer_fill = 0;
                 streambuffer_pos = 0;
                 src_remaining = 0;
+#endif
                 if (fileinfo->plugin->seek (fileinfo, pos) >= 0) {
                     playpos = fileinfo->readpos;
                 }
@@ -936,9 +939,14 @@ streamer_reset (int full) { // must be called when current song changes by exter
         streambuffer_pos = 0;
         streambuffer_fill = 0;
     }
-//    trace ("\033[0;31msrc_reset\033[37;0m\n");
     src_remaining = 0;
     src_reset (src);
+    // reset dsp
+    DB_dsp_t **dsp = deadbeef->plug_get_dsp_list ();
+    int srate = p_get_rate ();
+    for (int i = 0; dsp[i]; i++) {
+        dsp[i]->reset ();
+    }
     src_unlock ();
 }
 

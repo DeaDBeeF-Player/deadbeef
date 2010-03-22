@@ -552,6 +552,7 @@ typedef struct DB_dsp_s {
     // stereo samples are stored in interleaved format
     // stereo sample is counted as 1 sample
     int (*process_int16) (int16_t *samples, int nsamples, int nch, int bps, int srate);
+    void (*reset) (void);
 } DB_dsp_t;
 
 // misc plugin
