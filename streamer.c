@@ -437,8 +437,10 @@ streamer_set_current (playItem_t *it) {
     if (fileinfo) {
         fileinfo->plugin->free (fileinfo);
         fileinfo = NULL;
-        pl_item_unref (streaming_track);
-        streaming_track = NULL;
+        if (streaming_track) {
+            pl_item_unref (streaming_track);
+            streaming_track = NULL;
+        }
     }
     mutex_unlock (decodemutex);
     if (!it) {
