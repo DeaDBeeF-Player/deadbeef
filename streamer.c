@@ -808,6 +808,7 @@ streamer_thread (void *ctx) {
                 }
             }
 
+            bytes_until_next_song = -1;
             streamer_buffering = 1;
             int trk = str_get_idx_of (streaming_track);
             if (trk != -1) {
@@ -863,7 +864,7 @@ streamer_thread (void *ctx) {
 //            if (streamer_buffering) trace ("fill: %d, read: %d, size=%d, blocksize=%d\n", streambuffer_fill, bytesread, STREAM_BUFFER_SIZE, blocksize);
         }
         streamer_unlock ();
-        if (streambuffer_fill > 128000 && streamer_buffering || !streaming_track) {
+        if ((streambuffer_fill > 128000 && streamer_buffering) || !streaming_track) {
             streamer_buffering = 0;
             if (streaming_track) {
                 int trk = str_get_idx_of (streaming_track);
