@@ -22,6 +22,7 @@
 #include "gtkui.h"
 #include "support.h"
 #include "../supereq/supereq.h"
+#include "graphic.h"
 
 static GtkWidget *eqwin;
 static GtkWidget *sliders[18];
@@ -74,8 +75,29 @@ eq_init_widgets (GtkWidget *container) {
 }
 
 void
+graphic_value_changed (gpointer inst, double *values, gint count)
+{
+    DB_supereq_dsp_t *eq = NULL;
+    DB_dsp_t **plugs = deadbeef->plug_get_dsp_list ();
+
+    for (int i = 0; plugs[i]; i++)
+    {
+        if (plugs[i]->plugin.id && !strcmp (plugs[i]->plugin.id, "supereq"))
+        {
+            eq = (DB_supereq_dsp_t *)plugs[i];
+            for (int ii = 0; ii < count; ii++)
+            {
+                double val = db_to_amp (values[ii]);
+                eq->set_band (ii, val);
+            }
+            break;
+        }
+    }
+}
+
+void
 eq_window_show (void) {
-    if (!eqwin) {
+/*    if (!eqwin) {
         eqwin = gtk_hbox_new (FALSE, 0);
         gtk_widget_set_size_request (eqwin, -1, 200);
         eq_init_widgets (eqwin);
@@ -106,6 +128,15 @@ eq_window_show (void) {
             }
             gtk_range_set_value (GTK_RANGE (scale), val);
         }
+    }
+    gtk_widget_show (eqwin);*/
+
+    if (!eqwin) {
+        eqwin = deadbeef_graphic_new();
+        g_signal_connect (eqwin, "on_changed", G_CALLBACK (graphic_value_changed), 0);
+        gtk_widget_set_size_request (eqwin, -1, 200);
+        GtkWidget *cont = lookup_widget (mainwin, "vbox1");
+        gtk_box_pack_start (GTK_BOX (cont), eqwin, FALSE, FALSE, 0);
     }
     gtk_widget_show (eqwin);
 }

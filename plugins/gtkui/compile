@@ -1,0 +1,9 @@
+#!/bin/sh
+
+#gcc g.c ddb-equalizer.c -g -O0 `pkg-config --libs --cflags gtk+-2.0 gdk-2.0`
+
+valac -C -H graphic.h graphic.vala --pkg=gtk+-2.0 #&&
+#    gcc -shared graphic.c -o graphic.so `pkg-config --libs --cflags gtk+-2.0 gdk-2.0`
+#valac graphic.vala --pkg=gtk+-2.0
+#gcc *.c `pkg-config --libs --cflags gtk+-2.0`
+
