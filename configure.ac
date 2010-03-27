@@ -308,6 +308,7 @@ PRINT_PLUGIN_INFO([ffmpeg],[ffmpeg codecs],[test $HAVE_FFMPEG])
 PRINT_PLUGIN_INFO([oss],[oss output plugin],[test "x$have_oss" = "xyes"])
 PRINT_PLUGIN_INFO([pulse],[PulseAudio output plugin],[test $HAVE_PULSE])
 PRINT_PLUGIN_INFO([artwork],[Cover art plugin],[test $HAVE_ARTWORK])
+PRINT_PLUGIN_INFO([supereq],[Equalizer based on Super EQ library by Naoki Shibata],[true])
 echo
 
 AC_OUTPUT([
