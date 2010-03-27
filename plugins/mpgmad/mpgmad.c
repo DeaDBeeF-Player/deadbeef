@@ -396,8 +396,12 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
                     }
                     uint32_t nframes = extract_i32 (buf);
                     buffer->duration = (float)nframes * (float)samples_per_frame / (float)samplerate;
+                    trace ("xing totalsamples: %d, nframes: %d, samples_per_frame: %d\n", nframes*samples_per_frame, nframes, samples_per_frame);
+                    if (nframes <= 0 || samples_per_frame <= 0) {
+                        trace ("bad xing header\n");
+                        continue;
+                    }
                     buffer->totalsamples = nframes * samples_per_frame;
-                    trace ("xing totalsamples: %d\n", buffer->totalsamples);
                     buffer->samplerate = samplerate;
                 }
                 if (flags & BYTES_FLAG) {
@@ -451,10 +455,10 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
                     //deadbeef->fseek (buffer->file, 4, SEEK_CUR);
                     buffer->startdelay = startdelay;
                     buffer->enddelay = enddelay;
+                    trace ("lame totalsamples: %d\n", buffer->totalsamples);
                 }
                 if (sample <= 0 && (flags&FRAMES_FLAG)) {
                     buffer->totalsamples -= buffer->enddelay;
-                    trace ("lame totalsamples: %d\n", buffer->totalsamples);
                     deadbeef->fseek (buffer->file, framepos+packetlength-4, SEEK_SET);
                     return 0;
                 }
@@ -986,7 +990,7 @@ cmp3_seek_sample (DB_fileinfo_t *_info, int sample) {
             trace ("seek failed!\n");
             return -1;
         }
-        trace ("seek is impossible (avg_samples_per_frame=%d, avg_packetlength=%d)!\n", buffer.avg_samples_per_frame, buffer.avg_packetlength);
+        trace ("seek is impossible (avg_samples_per_frame=%d, avg_packetlength=%d)!\n", info->buffer.avg_samples_per_frame, info->buffer.avg_packetlength);
         return 0;
     }
 
