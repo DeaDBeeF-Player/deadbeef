@@ -11,7 +11,7 @@
 #include <pango/pango.h>
 #include <float.h>
 #include <math.h>
-#include <stdio.h>
+#include <cairo.h>
 #include <gobject/gvaluecollector.h>
 
 
@@ -42,6 +42,7 @@ typedef struct _DeadbeefGraphicPointClass DeadbeefGraphicPointClass;
 typedef struct _DeadbeefGraphicPointPrivate DeadbeefGraphicPointPrivate;
 #define _deadbeef_graphic_point_unref0(var) ((var == NULL) ? NULL : (var = (deadbeef_graphic_point_unref (var), NULL)))
 #define _g_free0(var) (var = (g_free (var), NULL))
+#define _cairo_destroy0(var) ((var == NULL) ? NULL : (var = (cairo_destroy (var), NULL)))
 typedef struct _DeadbeefGraphicParamSpecPoint DeadbeefGraphicParamSpecPoint;
 
 struct _DeadbeefGraphic {
@@ -65,6 +66,8 @@ struct _DeadbeefGraphicPrivate {
 	gint values_length1;
 	gint values_size;
 	gint mouse_y;
+	gboolean snap;
+	gboolean aa_mode;
 	GdkCursor* moving_cursor;
 	GdkCursor* pointer_cursor;
 };
@@ -87,6 +90,8 @@ struct _DeadbeefGraphicParamSpecPoint {
 };
 
 
+extern gint btn_size;
+gint btn_size = 7;
 extern DeadbeefGraphic* deadbeef_graphic_inst;
 DeadbeefGraphic* deadbeef_graphic_inst = NULL;
 static gpointer deadbeef_graphic_point_parent_class = NULL;
@@ -111,13 +116,16 @@ static void _g_list_free_deadbeef_graphic_point_unref (GList* self);
 static void deadbeef_graphic_recalc_values (DeadbeefGraphic* self);
 DeadbeefGraphic* deadbeef_graphic_new (void);
 DeadbeefGraphic* deadbeef_graphic_construct (GType object_type);
+static DeadbeefGraphicPoint* deadbeef_graphic_point_new (void);
+static DeadbeefGraphicPoint* deadbeef_graphic_point_construct (GType object_type);
+static void deadbeef_graphic_toggle_snap (DeadbeefGraphic* self);
 static void deadbeef_graphic_abs_to_screen (DeadbeefGraphic* self, double x, double y, GdkPoint* result);
 static double deadbeef_graphic_cubic (DeadbeefGraphic* self, double y0, double y1, double y2, double y3, double mu);
 static inline double deadbeef_graphic_scale (DeadbeefGraphic* self, double val);
 static gboolean deadbeef_graphic_real_expose_event (GtkWidget* base, GdkEventExpose* event);
 static gboolean deadbeef_graphic_get_point_at (DeadbeefGraphic* self, double x, double y);
-static DeadbeefGraphicPoint* deadbeef_graphic_point_new (void);
-static DeadbeefGraphicPoint* deadbeef_graphic_point_construct (GType object_type);
+static void deadbeef_graphic_snap_move (DeadbeefGraphic* self, double x, double y);
+static void deadbeef_graphic_handle_curve_click (DeadbeefGraphic* self, GdkEventButton* event);
 static gboolean deadbeef_graphic_real_button_press_event (GtkWidget* base, GdkEventButton* event);
 static gboolean deadbeef_graphic_real_button_release_event (GtkWidget* base, GdkEventButton* event);
 static gboolean deadbeef_graphic_real_leave_notify_event (GtkWidget* base, GdkEventCrossing* event);
@@ -158,6 +166,67 @@ DeadbeefGraphic* deadbeef_graphic_new (void) {
 }
 
 
+static gpointer _deadbeef_graphic_point_ref0 (gpointer self) {
+	return self ? deadbeef_graphic_point_ref (self) : NULL;
+}
+
+
+static void deadbeef_graphic_toggle_snap (DeadbeefGraphic* self) {
+	g_return_if_fail (self != NULL);
+	if (self->priv->snap) {
+		self->priv->snap = FALSE;
+	} else {
+		double step;
+		step = 1.0 / ((double) (bands + 1));
+		if (g_list_length (self->priv->points) > 0) {
+			GList* iter;
+			iter = NULL;
+			{
+				gboolean _tmp0_;
+				iter = self->priv->points->next;
+				_tmp0_ = TRUE;
+				while (TRUE) {
+					if (!_tmp0_) {
+						iter = iter->next;
+					}
+					_tmp0_ = FALSE;
+					if (!(iter != NULL)) {
+						break;
+					}
+					self->priv->points = g_list_remove_link (self->priv->points, iter->prev);
+				}
+			}
+			self->priv->points = g_list_remove_link (self->priv->points, self->priv->points);
+		}
+		{
+			gint i;
+			i = 0;
+			{
+				gboolean _tmp1_;
+				_tmp1_ = TRUE;
+				while (TRUE) {
+					DeadbeefGraphicPoint* point;
+					if (!_tmp1_) {
+						i++;
+					}
+					_tmp1_ = FALSE;
+					if (!(i < bands)) {
+						break;
+					}
+					point = deadbeef_graphic_point_new ();
+					point->x = (((double) i) + 1) * step;
+					point->y = self->priv->values[i];
+					self->priv->points = g_list_prepend (self->priv->points, _deadbeef_graphic_point_ref0 (point));
+					_deadbeef_graphic_point_unref0 (point);
+				}
+			}
+		}
+		self->priv->points = g_list_reverse (self->priv->points);
+		self->priv->snap = TRUE;
+	}
+}
+
+
 static void deadbeef_graphic_abs_to_screen (DeadbeefGraphic* self, double x, double y, GdkPoint* result) {
 	GdkPoint _tmp0_ = {0};
 	g_return_if_fail (self != NULL);
@@ -181,11 +250,6 @@ static double deadbeef_graphic_cubic (DeadbeefGraphic* self, double y0, double y
 	a3 = y1;
 	result = ((((a0 * mu) * mu2) + (a1 * mu2)) + (a2 * mu)) + a3;
 	return result;
-}
-
-
-static gpointer _deadbeef_graphic_point_ref0 (gpointer self) {
-	return self ? deadbeef_graphic_point_ref (self) : NULL;
 }
 
 
@@ -235,6 +299,7 @@ static gboolean deadbeef_graphic_real_expose_event (GtkWidget* base, GdkEventExp
 	gint xs_size;
 	gint xs_length1;
 	double* xs;
+	cairo_t* cairo;
 	gint prev_x;
 	gint prev_y;
 	self = (DeadbeefGraphic*) base;
@@ -265,7 +330,7 @@ static gboolean deadbeef_graphic_real_expose_event (GtkWidget* base, GdkEventExp
 	d = _g_object_ref0 ((GdkDrawable*) gtk_widget_get_window ((GtkWidget*) self));
 	gc = _g_object_ref0 (GDK_DRAWABLE_GET_CLASS (d)->create_gc (d, (_tmp6_ = (memset (&_tmp5_, 0, sizeof (GdkGCValues)), _tmp5_), &_tmp6_), 0));
 	gdk_gc_set_rgb_fg_color (gc, &self->priv->fore_dark_color);
-	step = ((double) (width - margin_left)) / ((double) (bands - 1));
+	step = ((double) (width - margin_left)) / ((double) (bands + 1));
 	{
 		gboolean _tmp7_;
 		i = 0;
@@ -278,7 +343,7 @@ static gboolean deadbeef_graphic_real_expose_event (GtkWidget* base, GdkEventExp
 			if (!(i < bands)) {
 				break;
 			}
-			gdk_draw_line (d, gc, ((gint) (i * step)) + margin_left, 0, ((gint) (i * step)) + margin_left, height - margin_bottom);
+			gdk_draw_line (d, gc, ((gint) ((i + 1) * step)) + margin_left, 0, ((gint) ((i + 1) * step)) + margin_left, height - margin_bottom);
 		}
 	}
 	vstep = ((double) (height - margin_bottom)) / 4;
@@ -317,7 +382,7 @@ static gboolean deadbeef_graphic_real_expose_event (GtkWidget* base, GdkEventExp
 				break;
 			}
 			pango_layout_set_text (l, freqs[i], (gint) g_utf8_strlen (freqs[i], -1));
-			gdk_draw_layout (d, gc, ((gint) ((i * step) - 5)) + margin_left, (height - margin_bottom) + 2, l);
+			gdk_draw_layout (d, gc, ((gint) (((i + 1) * step) - 5)) + margin_left, (height - margin_bottom) + 2, l);
 		}
 	}
 	pango_layout_set_width (l, margin_left - 1);
@@ -342,6 +407,7 @@ static gboolean deadbeef_graphic_real_expose_event (GtkWidget* base, GdkEventExp
 	gdk_draw_layout (d, gc, margin_left - 1, 1, l);
 	pango_layout_set_text (l, "0db", 4);
 	gdk_draw_layout (d, gc, margin_left - 1, ((height - margin_bottom) / 2) - 3, l);
+	gdk_draw_rectangle (d, gc, self->priv->snap, 1, height - (btn_size + 2), btn_size, btn_size);
 	gdk_draw_rectangle (d, gc, FALSE, margin_left, 0, (width - margin_left) - 1, (height - margin_bottom) - 1);
 	gdk_gc_set_line_attributes (gc, 2, GDK_LINE_SOLID, GDK_CAP_NOT_LAST, GDK_JOIN_MITER);
 	gdk_gc_set_clip_rectangle (gc, (_tmp12_ = (_tmp11_.x = margin_left + 1, _tmp11_.y = 1, _tmp11_.width = (width - margin_left) - 2, _tmp11_.height = (height - margin_bottom) - 2, _tmp11_), &_tmp12_));
@@ -378,7 +444,7 @@ static gboolean deadbeef_graphic_real_expose_event (GtkWidget* base, GdkEventExp
 						if (!(j < count)) {
 							break;
 						}
-						gdk_draw_rectangle (d, gc, TRUE, (((gint) (i * step)) + margin_left) - (bar_w / 2), ((height - margin_bottom) - (j * 6)) - 6, bar_w, 4);
+						gdk_draw_rectangle (d, gc, TRUE, (((gint) ((i + 1) * step)) + margin_left) - (bar_w / 2), ((height - margin_bottom) - (j * 6)) - 6, bar_w, 4);
 					}
 				}
 			}
@@ -407,29 +473,44 @@ static gboolean deadbeef_graphic_real_expose_event (GtkWidget* base, GdkEventExp
 			}
 		}
 	}
+	cairo = NULL;
+	if (self->priv->aa_mode) {
+		cairo_t* _tmp18_;
+		cairo = (_tmp18_ = gdk_cairo_create (d), _cairo_destroy0 (cairo), _tmp18_);
+	}
 	prev_x = 0;
 	prev_y = 0;
+	if (pcount > 0) {
+		GdkPoint _tmp19_ = {0};
+		gp = (deadbeef_graphic_abs_to_screen (self, xs[0], ys[0], &_tmp19_), _tmp19_);
+		if (self->priv->aa_mode) {
+			cairo_move_to (cairo, (double) margin_left, (double) gp.y);
+		} else {
+			gdk_draw_line (d, gc, margin_left, gp.y, gp.x, gp.y);
+		}
+		prev_x = gp.x;
+		prev_y = gp.y;
+	}
 	if (pcount >= 2) {
 		{
-			gboolean _tmp18_;
+			gboolean _tmp20_;
 			i = 0;
-			_tmp18_ = TRUE;
+			_tmp20_ = TRUE;
 			while (TRUE) {
 				gint pts;
-				if (!_tmp18_) {
+				if (!_tmp20_) {
 					i++;
 				}
-				_tmp18_ = FALSE;
+				_tmp20_ = FALSE;
 				if (!(i < (pcount - 1))) {
 					break;
 				}
-				fprintf (stdout, "%d\n", (gint) ((xs[i + 1] - xs[i]) * width));
 				if (((gint) ((xs[i + 1] - xs[i]) * width)) <= 5) {
-					GdkPoint _tmp19_ = {0};
+					GdkPoint _tmp21_ = {0};
 					GdkPoint gp2;
-					GdkPoint _tmp20_ = {0};
-					gp2 = (deadbeef_graphic_abs_to_screen (self, xs[i], ys[i], &_tmp19_), _tmp19_);
-					gp = (deadbeef_graphic_abs_to_screen (self, xs[i + 1], ys[i + 1], &_tmp20_), _tmp20_);
+					GdkPoint _tmp22_ = {0};
+					gp2 = (deadbeef_graphic_abs_to_screen (self, xs[i], ys[i], &_tmp21_), _tmp21_);
+					gp = (deadbeef_graphic_abs_to_screen (self, xs[i + 1], ys[i + 1], &_tmp22_), _tmp22_);
 					gdk_draw_line (d, gc, gp2.x, gp2.y, gp.x, gp.y);
 					prev_x = gp2.x;
 					prev_y = gp2.y;
@@ -441,25 +522,25 @@ static gboolean deadbeef_graphic_real_expose_event (GtkWidget* base, GdkEventExp
 					gint ii;
 					ii = 0;
 					{
-						gboolean _tmp21_;
-						_tmp21_ = TRUE;
+						gboolean _tmp23_;
+						_tmp23_ = TRUE;
 						while (TRUE) {
 							double y = 0.0;
-							gboolean _tmp22_ = FALSE;
-							GdkPoint _tmp23_ = {0};
-							if (!_tmp21_) {
+							gboolean _tmp24_ = FALSE;
+							GdkPoint _tmp25_ = {0};
+							if (!_tmp23_) {
 								ii++;
 							}
-							_tmp21_ = FALSE;
+							_tmp23_ = FALSE;
 							if (!(ii <= pts)) {
 								break;
 							}
 							if (i == 0) {
-								_tmp22_ = i == (pcount - 2);
+								_tmp24_ = i == (pcount - 2);
 							} else {
-								_tmp22_ = FALSE;
+								_tmp24_ = FALSE;
 							}
-							if (_tmp22_) {
+							if (_tmp24_) {
 								y = deadbeef_graphic_cubic (self, ys[0], ys[0], ys[1], ys[1], ((double) ii) / ((double) pts));
 							} else {
 								if (i == 0) {
@@ -478,14 +559,16 @@ static gboolean deadbeef_graphic_real_expose_event (GtkWidget* base, GdkEventExp
 							if (y > 1) {
 								y = (double) 1;
 							}
-							gp = (deadbeef_graphic_abs_to_screen (self, (ii * step) + xs[i], y, &_tmp23_), _tmp23_);
+							gp = (deadbeef_graphic_abs_to_screen (self, (ii * step) + xs[i], y, &_tmp25_), _tmp25_);
 							if (gp.y < 2) {
 								gp.y = 2;
 							}
 							if (gp.y > ((height - margin_bottom) - 2)) {
 								gp.y = (height - margin_bottom) - 2;
 							}
-							if (prev_x != 0) {
+							if (self->priv->aa_mode) {
+								cairo_line_to (cairo, (double) gp.x, (double) gp.y);
+							} else {
 								gdk_draw_line (d, gc, prev_x, prev_y, gp.x, gp.y);
 							}
 							prev_x = gp.x;
@@ -497,12 +580,17 @@ static gboolean deadbeef_graphic_real_expose_event (GtkWidget* base, GdkEventExp
 		}
 	}
 	if (pcount > 0) {
-		GdkPoint _tmp24_ = {0};
-		GdkPoint _tmp25_ = {0};
-		gp = (deadbeef_graphic_abs_to_screen (self, xs[0], ys[0], &_tmp24_), _tmp24_);
-		gdk_draw_line (d, gc, margin_left, gp.y, gp.x, gp.y);
-		gp = (deadbeef_graphic_abs_to_screen (self, xs[pcount - 1], ys[pcount - 1], &_tmp25_), _tmp25_);
-		gdk_draw_line (d, gc, gp.x, gp.y, width - 1, gp.y);
+		GdkPoint _tmp26_ = {0};
+		gp = (deadbeef_graphic_abs_to_screen (self, xs[pcount - 1], ys[pcount - 1], &_tmp26_), _tmp26_);
+		if (self->priv->aa_mode) {
+			cairo_line_to (cairo, (double) (width - 1), (double) gp.y);
+		} else {
+			gdk_draw_line (d, gc, gp.x, gp.y, width - 1, gp.y);
+		}
+	}
+	if (self->priv->aa_mode) {
+		cairo_set_source_rgb (cairo, ((double) self->priv->fore_bright_color.red) / ((double) 0xffff), ((double) self->priv->fore_bright_color.green) / ((double) 0xffff), ((double) self->priv->fore_bright_color.blue) / ((double) 0xffff));
+		cairo_stroke (cairo);
 	}
 	if (pcount == 0) {
 		gdk_draw_line (d, gc, margin_left, (height - margin_bottom) / 2, width - 1, (height - margin_bottom) / 2);
@@ -518,6 +606,7 @@ static gboolean deadbeef_graphic_real_expose_event (GtkWidget* base, GdkEventExp
 	_pango_font_description_free0 (fd);
 	ys = (g_free (ys), NULL);
 	xs = (g_free (xs), NULL);
+	_cairo_destroy0 (cairo);
 	return result;
 }
 
@@ -662,7 +751,7 @@ static void deadbeef_graphic_recalc_values (DeadbeefGraphic* self) {
 					if (!(i < bands)) {
 						break;
 					}
-					x = ((double) i) / ((double) (bands - 1));
+					x = ((double) (i + 1)) / ((double) (bands + 1));
 					y = (double) 0;
 					if (xs[pi] > x) {
 						self->priv->values[i] = ys[pi];
@@ -732,80 +821,113 @@ static void deadbeef_graphic_recalc_values (DeadbeefGraphic* self) {
 }
 
 
-static gboolean deadbeef_graphic_real_button_press_event (GtkWidget* base, GdkEventButton* event) {
-	DeadbeefGraphic * self;
-	gboolean result;
+static void deadbeef_graphic_snap_move (DeadbeefGraphic* self, double x, double y) {
+	double step;
+	gint idx;
+	g_return_if_fail (self != NULL);
+	step = 1.0 / ((double) (bands + 1));
+	idx = (gint) ((x - (step / 2)) / step);
+	if (idx < bands) {
+		self->priv->current_point = g_list_nth (self->priv->points, (guint) idx);
+		((DeadbeefGraphicPoint*) self->priv->current_point->data)->y = y;
+	}
+}
+
+
+static void deadbeef_graphic_handle_curve_click (DeadbeefGraphic* self, GdkEventButton* event) {
 	double x;
 	double y;
-	self = (DeadbeefGraphic*) base;
+	g_return_if_fail (self != NULL);
 	x = ((double) ((*event).x - margin_left)) / ((double) (((GtkWidget*) self)->allocation.width - margin_left));
 	y = (*event).y / ((double) (((GtkWidget*) self)->allocation.height - margin_bottom));
 	if ((*event).button == 1) {
-		if (!deadbeef_graphic_get_point_at (self, x, y)) {
-			DeadbeefGraphicPoint* point;
-			point = deadbeef_graphic_point_new ();
-			if (self->priv->points == NULL) {
-				GList* _tmp0_;
-				self->priv->points = (_tmp0_ = NULL, __g_list_free_deadbeef_graphic_point_unref0 (self->priv->points), _tmp0_);
-				self->priv->points = g_list_append (self->priv->points, _deadbeef_graphic_point_ref0 (point));
-				self->priv->current_point = self->priv->points;
-			} else {
-				if (((DeadbeefGraphicPoint*) self->priv->points->data)->x > x) {
-					self->priv->points = g_list_prepend (self->priv->points, _deadbeef_graphic_point_ref0 (point));
+		if (self->priv->snap) {
+			deadbeef_graphic_snap_move (self, x, y);
+		} else {
+			if (!deadbeef_graphic_get_point_at (self, x, y)) {
+				DeadbeefGraphicPoint* point;
+				point = deadbeef_graphic_point_new ();
+				if (self->priv->points == NULL) {
+					self->priv->points = g_list_append (self->priv->points, _deadbeef_graphic_point_ref0 (point));
 					self->priv->current_point = self->priv->points;
 				} else {
-					gboolean found;
-					found = FALSE;
-					{
-						GList* i;
-						i = self->priv->points;
+					if (((DeadbeefGraphicPoint*) self->priv->points->data)->x > x) {
+						self->priv->points = g_list_prepend (self->priv->points, _deadbeef_graphic_point_ref0 (point));
+						self->priv->current_point = self->priv->points;
+					} else {
+						gboolean found;
+						found = FALSE;
 						{
-							gboolean _tmp1_;
-							_tmp1_ = TRUE;
-							while (TRUE) {
-								gboolean _tmp2_ = FALSE;
-								if (!_tmp1_) {
-									i = i->next;
-								}
-								_tmp1_ = FALSE;
-								if (!(i->next != NULL)) {
-									break;
-								}
-								if (((DeadbeefGraphicPoint*) i->data)->x < x) {
-									_tmp2_ = ((DeadbeefGraphicPoint*) i->next->data)->x > x;
-								} else {
-									_tmp2_ = FALSE;
-								}
-								if (_tmp2_) {
-									self->priv->points = g_list_insert_before (self->priv->points, i->next, _deadbeef_graphic_point_ref0 (point));
-									self->priv->current_point = i->next;
-									found = TRUE;
-									break;
+							GList* i;
+							i = self->priv->points;
+							{
+								gboolean _tmp0_;
+								_tmp0_ = TRUE;
+								while (TRUE) {
+									gboolean _tmp1_ = FALSE;
+									if (!_tmp0_) {
+										i = i->next;
+									}
+									_tmp0_ = FALSE;
+									if (!(i->next != NULL)) {
+										break;
+									}
+									if (((DeadbeefGraphicPoint*) i->data)->x < x) {
+										_tmp1_ = ((DeadbeefGraphicPoint*) i->next->data)->x > x;
+									} else {
+										_tmp1_ = FALSE;
+									}
+									if (_tmp1_) {
+										self->priv->points = g_list_insert_before (self->priv->points, i->next, _deadbeef_graphic_point_ref0 (point));
+										self->priv->current_point = i->next;
+										found = TRUE;
+										break;
+									}
 								}
 							}
 						}
-					}
-					if (!found) {
-						self->priv->points = g_list_append (self->priv->points, _deadbeef_graphic_point_ref0 (point));
-						self->priv->current_point = g_list_last (self->priv->points);
+						if (!found) {
+							self->priv->points = g_list_append (self->priv->points, _deadbeef_graphic_point_ref0 (point));
+							self->priv->current_point = g_list_last (self->priv->points);
+						}
 					}
 				}
+				_deadbeef_graphic_point_unref0 (point);
 			}
-			_deadbeef_graphic_point_unref0 (point);
+			((DeadbeefGraphicPoint*) self->priv->current_point->data)->x = x;
+			((DeadbeefGraphicPoint*) self->priv->current_point->data)->y = y;
 		}
-		((DeadbeefGraphicPoint*) self->priv->current_point->data)->x = x;
-		((DeadbeefGraphicPoint*) self->priv->current_point->data)->y = y;
 		deadbeef_graphic_recalc_values (self);
 		gdk_window_set_cursor (gtk_widget_get_window ((GtkWidget*) self), self->priv->moving_cursor);
 		gtk_widget_queue_draw ((GtkWidget*) self);
 	} else {
 		if ((*event).button == 3) {
+			if (self->priv->snap) {
+				return;
+			}
 			if (deadbeef_graphic_get_point_at (self, x, y)) {
 				self->priv->points = g_list_remove (self->priv->points, (DeadbeefGraphicPoint*) self->priv->current_point->data);
 				deadbeef_graphic_recalc_values (self);
 				gtk_widget_queue_draw ((GtkWidget*) self);
 			}
+			gtk_widget_queue_draw ((GtkWidget*) self);
 		}
+	}
+}
+
+
+static gboolean deadbeef_graphic_real_button_press_event (GtkWidget* base, GdkEventButton* event) {
+	DeadbeefGraphic * self;
+	gboolean result;
+	gboolean _tmp0_ = FALSE;
+	self = (DeadbeefGraphic*) base;
+	if ((*event).x > margin_left) {
+		_tmp0_ = (*event).y < (((GtkWidget*) self)->allocation.height - margin_bottom);
+	} else {
+		_tmp0_ = FALSE;
+	}
+	if (_tmp0_) {
+		deadbeef_graphic_handle_curve_click (self, event);
 	}
 	result = FALSE;
 	return result;
@@ -815,7 +937,16 @@ static gboolean deadbeef_graphic_real_button_press_event (GtkWidget* base, GdkEv
 static gboolean deadbeef_graphic_real_button_release_event (GtkWidget* base, GdkEventButton* event) {
 	DeadbeefGraphic * self;
 	gboolean result;
+	gboolean _tmp0_ = FALSE;
 	self = (DeadbeefGraphic*) base;
+	if ((*event).x < btn_size) {
+		_tmp0_ = (*event).y > (((GtkWidget*) self)->allocation.height - btn_size);
+	} else {
+		_tmp0_ = FALSE;
+	}
+	if (_tmp0_) {
+		deadbeef_graphic_toggle_snap (self);
+	}
 	gdk_window_set_cursor (gtk_widget_get_window ((GtkWidget*) self), self->priv->pointer_cursor);
 	result = FALSE;
 	return result;
@@ -838,41 +969,55 @@ static gboolean deadbeef_graphic_real_motion_notify_event (GtkWidget* base, GdkE
 	gboolean result;
 	double x;
 	double y;
+	gboolean _tmp0_ = FALSE;
 	self = (DeadbeefGraphic*) base;
 	x = ((double) ((*event).x - margin_left)) / ((double) (((GtkWidget*) self)->allocation.width - margin_left));
 	y = (*event).y / ((double) (((GtkWidget*) self)->allocation.height - margin_bottom));
+	if ((*event).x <= margin_left) {
+		_tmp0_ = TRUE;
+	} else {
+		_tmp0_ = (*event).y >= (((GtkWidget*) self)->allocation.height - margin_bottom);
+	}
+	if (_tmp0_) {
+		result = FALSE;
+		return result;
+	}
 	if (0 != ((*event).state & GDK_BUTTON1_MASK)) {
-		gboolean _tmp0_ = FALSE;
-		gboolean _tmp1_ = FALSE;
-		((DeadbeefGraphicPoint*) self->priv->current_point->data)->x = x;
-		if (self->priv->current_point->prev != NULL) {
-			_tmp0_ = ((DeadbeefGraphicPoint*) self->priv->current_point->prev->data)->x > ((DeadbeefGraphicPoint*) self->priv->current_point->data)->x;
+		if (self->priv->snap) {
+			deadbeef_graphic_snap_move (self, x, y);
 		} else {
-			_tmp0_ = FALSE;
-		}
-		if (_tmp0_) {
-			((DeadbeefGraphicPoint*) self->priv->current_point->data)->x = ((DeadbeefGraphicPoint*) self->priv->current_point->prev->data)->x;
-		}
-		if (self->priv->current_point->next != NULL) {
-			_tmp1_ = ((DeadbeefGraphicPoint*) self->priv->current_point->next->data)->x < ((DeadbeefGraphicPoint*) self->priv->current_point->data)->x;
-		} else {
-			_tmp1_ = FALSE;
-		}
-		if (_tmp1_) {
-			((DeadbeefGraphicPoint*) self->priv->current_point->data)->x = ((DeadbeefGraphicPoint*) self->priv->current_point->next->data)->x;
-		}
-		((DeadbeefGraphicPoint*) self->priv->current_point->data)->y = y;
-		if (((DeadbeefGraphicPoint*) self->priv->current_point->data)->x > 1) {
-			((DeadbeefGraphicPoint*) self->priv->current_point->data)->x = (double) 1;
-		}
-		if (((DeadbeefGraphicPoint*) self->priv->current_point->data)->x < 0) {
-			((DeadbeefGraphicPoint*) self->priv->current_point->data)->x = (double) 0;
-		}
-		if (((DeadbeefGraphicPoint*) self->priv->current_point->data)->y > 1) {
-			((DeadbeefGraphicPoint*) self->priv->current_point->data)->y = (double) 1;
-		}
-		if (((DeadbeefGraphicPoint*) self->priv->current_point->data)->y < 0) {
-			((DeadbeefGraphicPoint*) self->priv->current_point->data)->y = (double) 0;
+			gboolean _tmp1_ = FALSE;
+			gboolean _tmp2_ = FALSE;
+			((DeadbeefGraphicPoint*) self->priv->current_point->data)->x = x;
+			if (self->priv->current_point->prev != NULL) {
+				_tmp1_ = ((DeadbeefGraphicPoint*) self->priv->current_point->prev->data)->x > ((DeadbeefGraphicPoint*) self->priv->current_point->data)->x;
+			} else {
+				_tmp1_ = FALSE;
+			}
+			if (_tmp1_) {
+				((DeadbeefGraphicPoint*) self->priv->current_point->data)->x = ((DeadbeefGraphicPoint*) self->priv->current_point->prev->data)->x;
+			}
+			if (self->priv->current_point->next != NULL) {
+				_tmp2_ = ((DeadbeefGraphicPoint*) self->priv->current_point->next->data)->x < ((DeadbeefGraphicPoint*) self->priv->current_point->data)->x;
+			} else {
+				_tmp2_ = FALSE;
+			}
+			if (_tmp2_) {
+				((DeadbeefGraphicPoint*) self->priv->current_point->data)->x = ((DeadbeefGraphicPoint*) self->priv->current_point->next->data)->x;
+			}
+			((DeadbeefGraphicPoint*) self->priv->current_point->data)->y = y;
+			if (((DeadbeefGraphicPoint*) self->priv->current_point->data)->x > 1) {
+				((DeadbeefGraphicPoint*) self->priv->current_point->data)->x = (double) 1;
+			}
+			if (((DeadbeefGraphicPoint*) self->priv->current_point->data)->x < 0) {
+				((DeadbeefGraphicPoint*) self->priv->current_point->data)->x = (double) 0;
+			}
+			if (((DeadbeefGraphicPoint*) self->priv->current_point->data)->y > 1) {
+				((DeadbeefGraphicPoint*) self->priv->current_point->data)->y = (double) 1;
+			}
+			if (((DeadbeefGraphicPoint*) self->priv->current_point->data)->y < 0) {
+				((DeadbeefGraphicPoint*) self->priv->current_point->data)->y = (double) 0;
+			}
 		}
 		deadbeef_graphic_recalc_values (self);
 		self->priv->mouse_y = (gint) (*event).y;
@@ -1069,6 +1214,8 @@ static void deadbeef_graphic_instance_init (DeadbeefGraphic * self) {
 	self->priv->values = g_new0 (double, bands);
 	self->priv->values_length1 = bands;
 	self->priv->values_size = self->priv->values_length1;
+	self->priv->snap = FALSE;
+	self->priv->aa_mode = TRUE;
 	self->priv->moving_cursor = gdk_cursor_new (GDK_FLEUR);
 	self->priv->pointer_cursor = gdk_cursor_new (GDK_LEFT_PTR);
 }

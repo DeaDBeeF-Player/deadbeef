@@ -2,6 +2,7 @@ static const int spot_size = 3;
 static const int margin_left = 20;
 static const int margin_bottom = 10;
 static const int bands = 18;
+static int btn_size = 7;
 
 const string[] freqs = {
     "32","80","110","160","220","315","450","630","900",
@@ -19,7 +20,7 @@ namespace Deadbeef {
             public double y;
         }
 
-        private List <Point> points = null;
+        private List <Point> points = new List <Point> ();
         private unowned List <Point> current_point = null;
 
         private Gdk.Color back_color = Gdk.Color() {red = 0, green = 0, blue = 0};
@@ -31,6 +32,9 @@ namespace Deadbeef {
 
         private double[] values = new double [bands];
         private int mouse_y;
+        
+        private bool snap = false;
+        private bool aa_mode = true;
 
         Gdk.Cursor moving_cursor = new Gdk.Cursor (Gdk.CursorType.FLEUR);
         Gdk.Cursor pointer_cursor = new Gdk.Cursor (Gdk.CursorType.LEFT_PTR);
@@ -49,7 +53,36 @@ namespace Deadbeef {
             pango_ctx.set_font_description (font_desc);
             recalc_values();
         }
+        
+        private void
+        toggle_snap ()
+        {
+            if (snap)
+                snap = false;
+            else
+            {
+                double step = 1.0 / (double)(bands+1);
 
+                if (points.length() > 0)
+                {
+                    unowned List <Point> iter;
+                    for (iter = points.next; iter != null; iter = iter.next)
+                        points.remove_link (iter.prev);
+                    points.remove_link (points);
+                }
+
+                for (int i = 0; i < bands; i++)
+                {
+                    Point point = new Point ();
+                    point.x = ((double)i+1)*step;
+                    point.y = values[i];
+                    points.prepend (point);
+                }
+                points.reverse ();
+                snap = true;
+            }
+        }
+        
         private Gdk.Point
         abs_to_screen (double x, double y)
         {
@@ -96,11 +129,11 @@ namespace Deadbeef {
 
             gc.set_rgb_fg_color (fore_dark_color);
             //drawing grid:
-            double step = (double)(width - margin_left) / (double)(bands-1);
+            double step = (double)(width - margin_left) / (double)(bands+1);
             for (i = 0; i < bands; i++)
             {
                 //does anyone know why this method is static?
-                Gdk.draw_line (d, gc, (int)(i*step)+margin_left, 0, (int)(i*step)+margin_left, height - margin_bottom);
+                Gdk.draw_line (d, gc, (int)((i+1)*step)+margin_left, 0, (int)((i+1)*step)+margin_left, height - margin_bottom);
             }
 
             double vstep = (double)(height-margin_bottom) / 4;
@@ -119,7 +152,7 @@ namespace Deadbeef {
             for (i = 0; i < bands; i++)
             {
                 l.set_text (freqs[i], (int)freqs[i].len());
-                Gdk.draw_layout (d, gc, (int)(i*step-5)+margin_left, height-margin_bottom+2, l);
+                Gdk.draw_layout (d, gc, (int)((i+1)*step-5)+margin_left, height-margin_bottom+2, l);
             }
             
             //drawing db's:
@@ -143,6 +176,9 @@ namespace Deadbeef {
             l.set_text ("0db", 4);
             Gdk.draw_layout (d, gc, margin_left-1, (height-margin_bottom)/2-3, l);
 
+            //drawing dropdown button:
+            d.draw_rectangle (gc, snap, 1, height-(btn_size+2), btn_size, btn_size);
+
             d.draw_rectangle (gc, false, margin_left, 0, width-margin_left-1, height-margin_bottom-1);
             gc.set_line_attributes (2, Gdk.LineStyle.SOLID, Gdk.CapStyle.NOT_LAST, Gdk.JoinStyle.MITER);
 
@@ -163,7 +199,7 @@ namespace Deadbeef {
                     d.draw_rectangle (
                         gc,
                         true,
-                        (int)(i*step)+margin_left - bar_w/2,
+                        (int)((i+1)*step)+margin_left - bar_w/2,
                         height-margin_bottom-j*6 - 6,
                         bar_w,
                         4);
@@ -185,14 +221,32 @@ namespace Deadbeef {
                 i++;
             }
 
+            Cairo.Context cairo = null;
+
+            if (aa_mode)
+            {
+                cairo = Gdk.cairo_create (d);
+            }
+
             int prev_x = 0;
             int prev_y = 0;
+
+            if (pcount > 0)
+            {
+                gp = abs_to_screen (xs[0], ys[0]);
+                if (aa_mode)
+                    cairo.move_to (margin_left, gp.y);
+                else
+                    Gdk.draw_line (d, gc, margin_left, gp.y, gp.x, gp.y);
+                prev_x = gp.x;
+                prev_y = gp.y;
+            }
 
             if (pcount >= 2)
             {
                 for (i = 0; i < pcount-1; i++)
                 {
-                    stdout.printf ("%d\n", (int)((xs[i+1]-xs[i])*width));
+                    //stdout.printf ("%d\n", (int)((xs[i+1]-xs[i])*width));
                     if ((int)((xs[i+1]-xs[i])*width) <= 5)
                     {
                         Gdk.Point gp2 = abs_to_screen (xs[i], ys[i]);
@@ -230,7 +284,9 @@ namespace Deadbeef {
                         if (gp.y > height-margin_bottom-2) gp.y = height-margin_bottom-2;
 
                         //Gdk.draw_point (d, gc, gp.x, gp.y);
-                        if (prev_x != 0)
+                        if (aa_mode)
+                            cairo.line_to (gp.x, gp.y);
+                        else
                             Gdk.draw_line (d, gc, prev_x, prev_y, gp.x, gp.y);
                         prev_x = gp.x;
                         prev_y = gp.y;
@@ -239,11 +295,23 @@ namespace Deadbeef {
             }
             if (pcount > 0)
             {
-                gp = abs_to_screen (xs[0], ys[0]);
-                Gdk.draw_line (d, gc, margin_left, gp.y, gp.x, gp.y);
+//                gp = abs_to_screen (xs[0], ys[0]);
+//                cairo.move_to (margin_left, gp.y);
+//                Gdk.draw_line (d, gc, margin_left, gp.y, gp.x, gp.y);
 
                 gp = abs_to_screen (xs[pcount-1], ys[pcount-1]);
-                Gdk.draw_line (d, gc, gp.x, gp.y, width-1, gp.y);
+                if (aa_mode)
+                    cairo.line_to (width-1, gp.y);
+                else
+                    Gdk.draw_line (d, gc, gp.x, gp.y, width-1, gp.y);
+            }
+            if (aa_mode)
+            {
+                cairo.set_source_rgb (
+                    (double)fore_bright_color.red / (double)0xffff,
+                    (double)fore_bright_color.green / (double)0xffff,
+                    (double)fore_bright_color.blue / (double)0xffff);
+                cairo.stroke();
             }
             if (pcount == 0)
             {
@@ -253,10 +321,11 @@ namespace Deadbeef {
             //drawing mouse coordinates:
             gc.set_line_attributes (1, Gdk.LineStyle.ON_OFF_DASH, Gdk.CapStyle.NOT_LAST, Gdk.JoinStyle.MITER);
             Gdk.draw_line (d, gc, 0, mouse_y, width, mouse_y);
+            
             return false;
         }
-
-        //FIXME: structure copying overhead. It can be done by out parameters
+        
+        //FIXME: I'm not sure returning value thru instance property is good
         private bool
         get_point_at (double x, double y)
         {
@@ -317,7 +386,7 @@ namespace Deadbeef {
                 int pi = 0;
                 for (i = 0; i < bands; i++)
                 {
-                    double x = (double)i/(double)(bands-1);
+                    double x = (double)(i+1)/(double)(bands+1);
                     double y = 0;
 
                     if (xs[pi] > x) //before first point
@@ -361,53 +430,68 @@ namespace Deadbeef {
             on_changed (scaled_values);
         }
 
-        /* Mouse button got pressed over widget */
-        public override bool
-        button_press_event (Gdk.EventButton event)
+        private void
+        snap_move (double x, double y)
+        {
+            double step = 1.0 / (double)(bands+1);
+            int idx = (int)((x-step/2)/step);
+            if (idx < bands)
+            {
+                current_point = points.nth (idx);
+                current_point.data.y = y;
+            }
+        }
+
+        private void
+        handle_curve_click (Gdk.EventButton event)
         {
             double x = (double)(event.x - margin_left) / (double)(allocation.width - margin_left);
             double y = event.y / (double)(allocation.height - margin_bottom);
-
+            
             if (event.button == 1)
             {
                 /* Handling left button: moving points */
-                if (!get_point_at (x, y))
+                if (snap)
+                    snap_move (x, y);
+                else
                 {
-                    var point = new Point();
-                    if (points == null)
+                    if (!get_point_at (x, y))
                     {
-                        points = new List <Point> ();
-                        points.append (point);
-                        current_point = points;
-                    }
-                    else if (points.data.x > x)
-                    {
-                        points.prepend (point);
-                        current_point = points;
-                    }
-                    else
-                    {
-                        var found = false;
-                        for (unowned List <Point> i = points; i.next != null; i = i.next)
-                            if (i.data.x < x && i.next.data.x > x)
-                            {
-                                points.insert_before (i.next, point);
-                                current_point = i.next;
-                                found = true;
-                                break;
-                            }
-                        if (!found)
+                        var point = new Point();
+                        if (points == null)
                         {
                             points.append (point);
-                            current_point = points.last();
+                            current_point = points;
                         }
-                    }
+                        else if (points.data.x > x)
+                        {
+                            points.prepend (point);
+                            current_point = points;
+                        }
+                        else
+                        {
+                            var found = false;
+                            for (unowned List <Point> i = points; i.next != null; i = i.next)
+                                if (i.data.x < x && i.next.data.x > x)
+                                {
+                                    points.insert_before (i.next, point);
+                                    current_point = i.next;
+                                    found = true;
+                                    break;
+                                }
+                            if (!found)
+                            {
+                                points.append (point);
+                                current_point = points.last();
+                            }
+                        }
 
-                    //points.append (point);
-                    //current_point = point;
+                        //points.append (point);
+                        //current_point = point;
+                    }
+                    current_point.data.x = x;
+                    current_point.data.y = y;
                 }
-                current_point.data.x = x;
-                current_point.data.y = y;
                 recalc_values();
                 get_window().set_cursor (moving_cursor);
                 queue_draw ();
@@ -415,12 +499,26 @@ namespace Deadbeef {
             else if (event.button == 3)
             {
                 /* Handling right button: removing points */
+                if (snap)
+                    return;
                 if (get_point_at (x, y))
                 {
                     points.remove (current_point.data);
                     recalc_values();
                     queue_draw ();
                 }
+                queue_draw();
+            }
+        }
+
+        /* Mouse button got pressed over widget */
+        public override bool
+        button_press_event (Gdk.EventButton event)
+        {
+            if (event.x > margin_left &&
+                event.y < allocation.height-margin_bottom)
+            {
+                handle_curve_click (event);
             }
             return false;
         }
@@ -428,6 +526,12 @@ namespace Deadbeef {
         /* Mouse button got released */
         public override bool button_release_event (Gdk.EventButton event)
         {
+            if (event.x < btn_size &&
+                event.y > allocation.height-btn_size
+                )
+            {
+                toggle_snap ();
+            }
             get_window().set_cursor (pointer_cursor);
             return false;
         }
@@ -450,26 +554,35 @@ namespace Deadbeef {
             //if (points == null)
                 //return false;
 
+            if (event.x <= margin_left ||
+                event.y >= allocation.height-margin_bottom)
+                return false;
+
             if (0 != (event.state & Gdk.ModifierType.BUTTON1_MASK))
             {
-                current_point.data.x = x;
+                if (snap)
+                    snap_move (x, y);
+                else
+                {
+                    current_point.data.x = x;
 
-                if ((current_point.prev != null) &&
-                    current_point.prev.data.x > current_point.data.x)
-                    current_point.data.x = current_point.prev.data.x;
+                    if ((current_point.prev != null) &&
+                        current_point.prev.data.x > current_point.data.x)
+                        current_point.data.x = current_point.prev.data.x;
 
 
-                if ((current_point.next != null) &&
-                    current_point.next.data.x < current_point.data.x)
-                    current_point.data.x = current_point.next.data.x;
+                    if ((current_point.next != null) &&
+                        current_point.next.data.x < current_point.data.x)
+                        current_point.data.x = current_point.next.data.x;
 
-                current_point.data.y = y;
+                    current_point.data.y = y;
 
-                if (current_point.data.x > 1) current_point.data.x = 1;
-                if (current_point.data.x < 0) current_point.data.x = 0;
+                    if (current_point.data.x > 1) current_point.data.x = 1;
+                    if (current_point.data.x < 0) current_point.data.x = 0;
 
-                if (current_point.data.y > 1) current_point.data.y = 1;
-                if (current_point.data.y < 0) current_point.data.y = 0;
+                    if (current_point.data.y > 1) current_point.data.y = 1;
+                    if (current_point.data.y < 0) current_point.data.y = 0;
+                }
 
                 recalc_values();
                 mouse_y = (int)event.y;
