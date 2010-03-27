@@ -147,6 +147,7 @@ show_track_properties_dlg (DB_playItem_t *it) {
         "numtracks", "Total Tracks",
         "disc", "Disc Number",
         "comment", "Comment",
+        "vendor", "Encoded by",
         NULL
     };
 

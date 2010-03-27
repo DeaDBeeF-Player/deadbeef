@@ -827,6 +827,10 @@ junk_read_id3v2 (playItem_t *it, DB_FILE *fp) {
     char *comment = NULL;
     char *copyright = NULL;
     char *genre = NULL;
+    char *performer = NULL;
+    char *composer = NULL;
+    char *numtracks = NULL;
+    char *disc = NULL;
     int err = 0;
     while (readptr - tag <= size - 4) {
         if (version_major == 3 || version_major == 4) {
@@ -952,7 +956,25 @@ junk_read_id3v2 (playItem_t *it, DB_FILE *fp) {
                 }
                 char str[sz+2];
                 id3v2_string_read (version_major, &str[0], sz, unsync, readptr);
+
                 track = convstr (str, sz);
+
+                char *slash = strchr (track, '/');
+                if (slash) {
+                    // split into track/number
+                    *slash = 0;
+                    slash++;
+                    numtracks = strdup (slash);
+                }
+            }
+            else if (!strcmp (frameid, "TPOS")) {
+                if (sz > 1000) {
+                    err = 1;
+                    break; // too large
+                }
+                char str[sz+2];
+                id3v2_string_read (version_major, &str[0], sz, unsync, readptr);
+                disc = convstr (str, sz);
             }
             else if (!strcmp (frameid, "TIT2")) {
                 trace ("parsing TIT2...\n");
@@ -1032,6 +1054,36 @@ junk_read_id3v2 (playItem_t *it, DB_FILE *fp) {
                 str[0] = enc;
                 comment = convstr (str, s+1);
                 trace ("COMM text: %s\n", comment);
+            }
+            else if (!strcmp (frameid, "TENC")) {
+                if (sz > 1000) {
+                    err = 1;
+                    break; // too large
+                }
+                char str[sz+2];
+                id3v2_string_read (version_major, &str[0], sz, unsync, readptr);
+                vendor = convstr (str, sz);
+                trace ("TENC: %s\n", vendor);
+            }
+            else if (!strcmp (frameid, "TPE3")) {
+                if (sz > 1000) {
+                    err = 1;
+                    break; // too large
+                }
+                char str[sz+2];
+                id3v2_string_read (version_major, &str[0], sz, unsync, readptr);
+                performer = convstr (str, sz);
+                trace ("TPE3: %s\n", performer);
+            }
+            else if (!strcmp (frameid, "TCOM")) {
+                if (sz > 1000) {
+                    err = 1;
+                    break; // too large
+                }
+                char str[sz+2];
+                id3v2_string_read (version_major, &str[0], sz, unsync, readptr);
+                composer = convstr (str, sz);
+                trace ("TCOM: %s\n", composer);
             }
             else if (!strcmp (frameid, "TXXX")) {
                 if (sz < 2) {
@@ -1234,9 +1286,21 @@ junk_read_id3v2 (playItem_t *it, DB_FILE *fp) {
             pl_add_meta (it, "band", band);
             free (band);
         }
+        if (performer) {
+            pl_add_meta (it, "performer", performer);
+            free (performer);
+        }
+        if (composer) {
+            pl_add_meta (it, "composer", composer);
+            free (composer);
+        }
         if (track) {
             pl_add_meta (it, "track", track);
             free (track);
+        }
+        if (numtracks) {
+            pl_add_meta (it, "numtracks", numtracks);
+            free (numtracks);
         }
         if (title) {
             pl_add_meta (it, "title", title);
@@ -1279,6 +1343,10 @@ junk_read_id3v2 (playItem_t *it, DB_FILE *fp) {
         if (comment) {
             pl_add_meta (it, "comment", comment);
             free (comment);
+        }
+        if (disc) {
+            pl_add_meta (it, "disc", disc);
+            free (disc);
         }
         if (!title) {
             pl_add_meta (it, "title", NULL);
