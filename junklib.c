@@ -634,6 +634,9 @@ junk_read_ape (playItem_t *it, DB_FILE *fp) {
                 else if (!strcasecmp (key, "genre")) {
                     pl_add_meta (it, "genre", value);
                 }
+                else if (!strcasecmp (key, "composer")) {
+                    pl_add_meta (it, "composer", value);
+                }
                 else if (!strcasecmp (key, "comment")) {
                     pl_add_meta (it, "comment", value);
                 }

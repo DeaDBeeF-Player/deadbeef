@@ -520,7 +520,25 @@ cflac_init_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__Str
                 else if (!strncasecmp (s, "COMMENT=", 8)) {
                     deadbeef->pl_add_meta (it, "comment", s + 8);
                 }
-                if (!strncasecmp (s, "CUESHEET=", 9)) {
+                else if (!strncasecmp (s, "PERFORMER=", 10)) {
+                    deadbeef->pl_add_meta (it, "performer", s + 10);
+                }
+                else if (!strncasecmp (s, "ENSEMBLE=", 9)) {
+                    deadbeef->pl_add_meta (it, "band", s + 9);
+                }
+                else if (!strncasecmp (s, "COMPOSER=", 9)) {
+                    deadbeef->pl_add_meta (it, "composer", s + 9);
+                }
+                else if (!strncasecmp (s, "ENCODED-BY=", 11)) {
+                    deadbeef->pl_add_meta (it, "vendor", s + 11);
+                }
+                else if (!strncasecmp (s, "DISCNUMBER=", 11)) {
+                    deadbeef->pl_add_meta (it, "disc", s + 11);
+                }
+                else if (!strncasecmp (s, "COPYRIGHT=", 10)) {
+                    deadbeef->pl_add_meta (it, "copyright", s + 10);
+                }
+                else if (!strncasecmp (s, "CUESHEET=", 9)) {
                     deadbeef->pl_add_meta (it, "cuesheet", s + 9);
 //                    info->last = deadbeef->pl_insert_cue_from_buffer (info->after, info->fname, s+9, c->length-9, &plugin, "FLAC", info->totalsamples, info->samplerate);
                 }

@@ -92,8 +92,23 @@ update_vorbis_comments (DB_playItem_t *it, vorbis_comment *vc) {
             else if (!strncasecmp (vc->user_comments[i], "date=", 5)) {
                 deadbeef->pl_add_meta (it, "year", vc->user_comments[i] + 5);
             }
-            else if (!strncasecmp (vc->user_comments[i], "comment=", 8)) {
+            else if (!strncasecmp (vc->user_comments[i], "COMMENT=", 8)) {
                 deadbeef->pl_add_meta (it, "comment", vc->user_comments[i] + 8);
+            }
+            else if (!strncasecmp (vc->user_comments[i], "PERFORMER=", 10)) {
+                deadbeef->pl_add_meta (it, "performer", vc->user_comments[i] + 10);
+            }
+            else if (!strncasecmp (vc->user_comments[i], "ENSEMBLE=", 9)) {
+                deadbeef->pl_add_meta (it, "band", vc->user_comments[i] + 9);
+            }
+            else if (!strncasecmp (vc->user_comments[i], "COMPOSER=", 9)) {
+                deadbeef->pl_add_meta (it, "composer", vc->user_comments[i] + 9);
+            }
+            else if (!strncasecmp (vc->user_comments[i], "ENCODED-BY=", 11)) {
+                deadbeef->pl_add_meta (it, "vendor", vc->user_comments[i] + 11);
+            }
+            else if (!strncasecmp (vc->user_comments[i], "DISCNUMBER=", 11)) {
+                deadbeef->pl_add_meta (it, "disc", vc->user_comments[i] + 11);
             }
             else if (!strncasecmp (vc->user_comments[i], "genre=", 6)) {
                 deadbeef->pl_add_meta (it, "genre", vc->user_comments[i] + 6);
