@@ -1199,6 +1199,39 @@ junk_read_id3v2 (playItem_t *it, DB_FILE *fp) {
                 str[sz] = 0;
                 band = convstr (str, sz);
             }
+            else if (!strcmp (frameid, "TP3")) {
+                if (sz > 1000) {
+                    readptr += sz;
+                    continue;
+                }
+                char str[sz+2];
+                //memcpy (str, readptr, sz);
+                id3v2_string_read (version_major, &str[0], sz, unsync, readptr);
+                str[sz] = 0;
+                performer = convstr (str, sz);
+            }
+            else if (!strcmp (frameid, "TCM")) {
+                if (sz > 1000) {
+                    readptr += sz;
+                    continue;
+                }
+                char str[sz+2];
+                //memcpy (str, readptr, sz);
+                id3v2_string_read (version_major, &str[0], sz, unsync, readptr);
+                str[sz] = 0;
+                composer = convstr (str, sz);
+            }
+            else if (!strcmp (frameid, "TPA")) {
+                if (sz > 1000) {
+                    readptr += sz;
+                    continue;
+                }
+                char str[sz+2];
+                //memcpy (str, readptr, sz);
+                id3v2_string_read (version_major, &str[0], sz, unsync, readptr);
+                str[sz] = 0;
+                disc = convstr (str, sz);
+            }
             else if (!strcmp (frameid, "TRK")) {
                 if (sz > 1000) {
                     readptr += sz;
@@ -1209,6 +1242,13 @@ junk_read_id3v2 (playItem_t *it, DB_FILE *fp) {
                 id3v2_string_read (version_major, &str[0], sz, unsync, readptr);
                 str[sz] = 0;
                 track = convstr (str, sz);
+                char *slash = strchr (track, '/');
+                if (slash) {
+                    // split into track/number
+                    *slash = 0;
+                    slash++;
+                    numtracks = strdup (slash);
+                }
             }
             else if (!strcmp (frameid, "TYE")) {
                 if (sz > 1000) {
