@@ -1371,6 +1371,7 @@ pl_item_free (playItem_t *it) {
         while (it->meta) {
             DB_metaInfo_t *m = it->meta;
             it->meta = m->next;
+            metacache_remove_string (m->key);//free (m->key);
             metacache_remove_string (m->value);//free (m->value);
             free (m);
         }
@@ -1432,8 +1433,8 @@ pl_add_meta (playItem_t *it, const char *key, const char *value) {
         }
     }
     m = malloc (sizeof (DB_metaInfo_t));
-    m->key = key;
-    m->value = metacache_add_string (value);//strdup (value);
+    m->key = metacache_add_string (key); //key;
+    m->value = metacache_add_string (value); //strdup (value);
     m->next = it->meta;
     it->meta = m;
     UNLOCK;
@@ -1832,6 +1833,7 @@ pl_load (const char *fname) {
         for (int i = 0; i < nm; i++) {
             char key[1024];
             char value[1024];
+#if 0
             const char *valid_keys[] = {
                 "title",
                 "artist",
@@ -1846,6 +1848,7 @@ pl_load (const char *fname) {
                 "copyright",
                 NULL
             };
+#endif
 
             if (fread (&l, 1, 2, fp) != 2) {
                 goto load_fail;
@@ -1870,12 +1873,15 @@ pl_load (const char *fname) {
                 }
                 value[l] = 0;
                 //printf ("%s=%s\n", key, value);
+                pl_add_meta (it, key, value);
+#if 0
                 for (int n = 0; valid_keys[n]; n++) {
                     if (!strcmp (valid_keys[n], key)) {
                         pl_add_meta (it, valid_keys[n], value);
                         break;
                     }
                 }
+#endif
             }
         }
         pl_insert_item (playlist->tail[PL_MAIN], it);
@@ -1990,6 +1996,7 @@ pl_delete_all_meta (playItem_t *it) {
     while (it->meta) {
         DB_metaInfo_t *m = it->meta;
         it->meta = m->next;
+        metacache_remove_string (m->key);
         metacache_remove_string (m->value);
         free (m);
     }
