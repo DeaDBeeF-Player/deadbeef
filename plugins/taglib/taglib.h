@@ -21,23 +21,39 @@
 
 typedef void * DB_taglib_file_t;
 
+enum {
+    DB_TAG_ID3V1,
+    DB_TAG_ID3V2,
+    DB_TAG_APEV2,
+} DB_tag_type_t;
+
 typedef struct DB_taglib_s {
     DB_misc_t misc;
+    
     DB_taglib_file_t (*open) (const char *fname);
+
+    void (*set_mp3_tag_types) (DB_taglib_file_t file, uint32_t tag_types);
+
     int (*write) (DB_taglib_file_t file);
+
     void (*close) (DB_taglib_file_t file);
-    void (*set_artist) (DB_taglib_file_t file);
-    void (*set_album_artist) (DB_taglib_file_t file);
-    void (*set_title) (DB_taglib_file_t file);
-    void (*set_track_number) (DB_taglib_file_t file);
-    void (*set_album) (DB_taglib_file_t file);
-    void (*set_genre) (DB_taglib_file_t file);
-    void (*set_date) (DB_taglib_file_t file);
-    void (*set_performer) (DB_taglib_file_t file);
-    void (*set_composer) (DB_taglib_file_t file);
-    void (*set_total_tracks) (DB_taglib_file_t file);
-    void (*set_disc_number) (DB_taglib_file_t file);
-    void (*set_comment) (DB_taglib_file_t file);
+
+    void (*set_artist) (DB_taglib_file_t file, const char *txt);
+    void (*set_band) (DB_taglib_file_t file, const char *txt);
+    void (*set_title) (DB_taglib_file_t file, const char *txt);
+    void (*set_track_number) (DB_taglib_file_t file, const char *txt);
+    void (*set_album) (DB_taglib_file_t file, const char *txt);
+    void (*set_genre) (DB_taglib_file_t file, const char *txt);
+    void (*set_year) (DB_taglib_file_t file, const char *txt);
+    void (*set_performer) (DB_taglib_file_t file, const char *txt);
+    void (*set_composer) (DB_taglib_file_t file, const char *txt);
+    void (*set_total_tracks) (DB_taglib_file_t file, const char *txt);
+    void (*set_disc_number) (DB_taglib_file_t file, const char *txt);
+    void (*set_comment) (DB_taglib_file_t file, const char *txt);
+    void (*set_vendor) (DB_taglib_file_t file, const char *txt);
+    void (*set_copyright) (DB_taglib_file_t file, const char *txt);
+    void (*set_cuesheet) (DB_taglib_file_t file, const char *txt);
+    void (*set_replaygain) (DB_taglib_file_t file, const char *txt);
 } DB_taglib_t;
 
 #endif
