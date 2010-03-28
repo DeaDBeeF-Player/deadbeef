@@ -198,7 +198,11 @@ void
 on_write_tags_clicked                  (GtkButton       *button,
                                         gpointer         user_data)
 {
-    return;
+    fprintf (stderr, "on_write_tags_clicked\n");
+    if (!deadbeef->conf_get_int ("enable_tag_writing", 0)) {
+        fprintf (stderr, "tag writing disabled\n");
+        return;
+    }
     DB_id3v2_tag_t tag;
     memset (&tag, 0, sizeof (tag));
     DB_FILE *fp = deadbeef->fopen (track->fname);
@@ -207,10 +211,24 @@ on_write_tags_clicked                  (GtkButton       *button,
             fprintf (stderr, "failed to read tags from %s\n", track->fname);
             goto error;
         }
+        fprintf (stderr, "writing id3v2.%d.%d\n", tag.version[0], tag.version[1]);
+        if (tag.version[0] == 3) {
+            // remove frames
+            deadbeef->junk_id3v2_remove_frames (&tag, "TPE1");
+            deadbeef->junk_id3v2_remove_frames (&tag, "TIT2");
+
+            // add frames
+            deadbeef->junk_id3v2_add_text_frame_23 (&tag, "TPE1", "test title");
+            deadbeef->junk_id3v2_add_text_frame_23 (&tag, "TIT2", "название на русском");
+        }
+
         if (deadbeef->junk_write_id3v2 (track->fname, &tag) < 0) {
             fprintf (stderr, "failed to write tags to %s\n", track->fname);
             goto error;
         }
+    }
+    else {
+        fprintf (stderr, "failed to open %s\n", track->fname);
     }
 error:
     if (fp) {

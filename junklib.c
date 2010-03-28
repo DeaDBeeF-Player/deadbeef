@@ -22,6 +22,7 @@
 #define LIBICONV_PLUG
 #include <iconv.h>
 #include <limits.h>
+#include <errno.h>
 #include "playlist.h"
 #include "utf8.h"
 #include "plugins.h"
@@ -759,6 +760,149 @@ junk_get_leading_size (DB_FILE *fp) {
 }
 
 int
+junk_iconv (const char *in, int inlen, char *out, int outlen, const char *cs_in, const char *cs_out) {
+    iconv_t cd = iconv_open (cs_out, cs_in);
+    if (cd == (iconv_t)-1) {
+        return -1;
+    }
+#ifdef __linux__
+    char *pin = (char*)in;
+#else
+    const char *pin = value;
+#endif
+
+    size_t inbytesleft = inlen;
+    size_t outbytesleft = outlen;
+
+    char *pout = out;
+    memset (out, 0, outbytesleft);
+
+    size_t res = iconv (cd, &pin, &inbytesleft, &pout, &outbytesleft);
+    int err = errno;
+    iconv_close (cd);
+
+    trace ("iconv -f %s -t %s '%s': returned %d, inbytes %d/%d, outbytes %d/%d, errno=%d\n", cs_in, cs_out, in, res, inlen, inbytesleft, outlen, outbytesleft, err);
+    if (res == -1) {
+        return -1;
+    }
+    return pout - out;
+}
+
+int
+junk_id3v2_unsync (uint8_t *out, int len, int maxlen) {
+    uint8_t buf [maxlen];
+    uint8_t *p = buf;
+    int res = -1;
+    for (int i = 0; i < len; i++) {
+        *p++ = out[i];
+        if (i < len - 1 && out[i] == 0xff && (out[i+1] & 0xe0) == 0xe0) {
+            *p++ = 0;
+            res = 0;
+        }
+    }
+    if (!res) {
+        res = p-buf;
+        memcpy (out, buf, res);
+    }
+    return res;
+}
+
+int
+junk_id3v2_remove_frames (DB_id3v2_tag_t *tag, const char *frame_id) {
+    DB_id3v2_frame_t *prev = NULL;
+    for (DB_id3v2_frame_t *f = tag->frames; f; ) {
+        DB_id3v2_frame_t *next = f->next;
+        if (!strcmp (f->id, frame_id)) {
+            if (prev) {
+                prev->next = f->next;
+            }
+            else {
+                tag->frames = f->next;
+            }
+            free (f);
+        }
+        else {
+            prev = f;
+        }
+        f = next;
+    }
+    return 0;
+}
+
+int
+junk_id3v2_add_text_frame_23 (DB_id3v2_tag_t *tag, const char *frame_id, const char *value) {
+    // convert utf8 into ucs2_le
+    size_t inlen = strlen (value);
+    size_t outlen = inlen * 3;
+    uint8_t out[outlen];
+
+    trace ("junklib: setting text frame '%s' = '%s'\n", frame_id, value);
+
+    int unsync = 0;
+    if (tag->flags & (1<<7)) {
+        unsync = 1;
+    }
+
+    int encoding = 0;
+
+    int res;
+    res = junk_iconv (value, inlen, out, outlen, UTF8, "ISO-8859-1");
+    if (res == -1) {
+        res = junk_iconv (value, inlen, out+2, outlen-2, UTF8, "UCS-2LE");
+        if (res == -1) {
+            return -1;
+        }
+        out[0] = 0xff;
+        out[1] = 0xfe;
+        outlen = res + 2;
+        trace ("successfully converted to ucs-2le (size=%d, bom: %x %x)\n", res, out[0], out[1]);
+        encoding = 1;
+    }
+    else {
+        trace ("successfully converted to iso8859-1 (size=%d)\n", res);
+        outlen = res;
+    }
+
+    // add unsync bytes
+    if (unsync) {
+        trace ("adding unsynchronization\n");
+        res = junk_id3v2_unsync (out, res, outlen);
+        if (res >= 0) {
+            trace ("unsync successful\n");
+            outlen = res;
+        }
+        else {
+            trace ("unsync not needed\n");
+        }
+    }
+
+    // make a frame
+    int size = outlen + 1 + encoding + 1;
+    trace ("calculated frame size = %d\n", size);
+    DB_id3v2_frame_t *f = malloc (size + sizeof (DB_id3v2_frame_t));
+    memset (f, 0, sizeof (DB_id3v2_frame_t));
+    strcpy (f->id, frame_id);
+    f->size = size;
+    f->data[0] = encoding;
+    memcpy (&f->data[1], out, outlen);
+    f->data[outlen+1] = 0;
+    if (encoding == 1) {
+        f->data[outlen+2] = 0;
+    }
+    // append to tag
+    DB_id3v2_frame_t *tail;
+    for (tail = tag->frames; tail && tail->next; tail = tail->next);
+    if (tail) {
+        tail->next = f;
+    }
+    else {
+        tag->frames = f;
+    }
+
+    return 0;
+}
+
+int
 junk_write_id3v2 (const char *fname, DB_id3v2_tag_t *tag) {
 /*
 steps:
@@ -798,10 +942,6 @@ steps:
         fprintf (stderr, "junk_write_id3v2: failed to write tag version\n");
         goto error;
     }
-    if (fwrite (&tag->flags, 1, 1, out) != 1) {
-        fprintf (stderr, "junk_write_id3v2: failed to write tag flags\n");
-        goto error;
-    }
     uint8_t flags = tag->flags;
     flags &= ~(1<<6); // we don't (yet?) write ext header
     flags &= ~(1<<4); // we don't write footer
@@ -810,62 +950,35 @@ steps:
         fprintf (stderr, "junk_write_id3v2: failed to write tag flags\n");
         goto error;
     }
-    uint8_t tagsize[4];
-
     // run through list of frames, and calculate size
     uint32_t sz = 0;
     int frm = 0;
     for (DB_id3v2_frame_t *f = tag->frames; f; f = f->next) {
-        printf ("frame %d: %s, size %d\n", frm++, f->id, f->size);
-        sz += 3;
+        // each tag has 10 bytes header
         if (tag->version[0] > 2) {
-            sz++;
+            sz += 10;
+        }
+        else {
+            sz += 6;
         }
         sz += f->size;
     }
 
-    tagsize[0] |= (sz >> 21) & 0x7f;
-    tagsize[1] |= (sz >> 14) & 0x7f;
-    tagsize[2] |= (sz >> 7) & 0x7f;
-    tagsize[3] |= sz & 0x7f;
+    trace ("calculated tag size: %d bytes\n", sz);
+    uint8_t tagsize[4];
+    tagsize[0] = (sz >> 21) & 0x7f;
+    tagsize[1] = (sz >> 14) & 0x7f;
+    tagsize[2] = (sz >> 7) & 0x7f;
+    tagsize[3] = sz & 0x7f;
     if (fwrite (tagsize, 1, 4, out) != 4) {
         fprintf (stderr, "junk_write_id3v2: failed to write tag size\n");
         goto error;
     }
-#if 0
-    int extheader = tag->flags & (1<<6);
-    if (extheader) {
-        uint8_t extsize[4];
-        extsize[0] = (tag->ext_size >> 24) & 0xff;
-        extsize[1] = (tag->ext_size >> 16) & 0xff;
-        extsize[2] = (tag->ext_size >> 8) & 0xff;
-        extsize[3] = tag->ext_size & 0xff;
-        if (fwrite (extsize, 1, 4, out) != 4) {
-            fprintf (stderr, "junk_write_id3v2: failed to write ext header size\n");
-            goto error;
-        }
-        uint8_t extflags[2];
-        uint16_t ext_flags = tag->ext_flags &~ 0x8000;
-        extflags[0] = (tag->ext_flags >> 8) & 0xff;
-        extflags[1] = tag->ext_flags & 0xff;
-        if (fwrite (extflags, 1, 2, out) != 2) {
-            fprintf (stderr, "junk_write_id3v2: failed to write ext header flags\n");
-            goto error;
-        }
-        uint8_t extpad[4];
-        extpad[0] = (tag->ext_pad >> 24) & 0xff;
-        extpad[1] = (tag->ext_pad >> 16) & 0xff;
-        extpad[2] = (tag->ext_pad >> 8) & 0xff;
-        extpad[3] = tag->ext_pad & 0xff;
-        if (fwrite (extpad, 1, 4, out) != 4) {
-            fprintf (stderr, "junk_write_id3v2: failed to write ext padding\n");
-            goto error;
-        }
-    }
-#endif
 
+    trace ("writing frames\n");
     // write frames
     for (DB_id3v2_frame_t *f = tag->frames; f; f = f->next) {
+        trace ("writing frame %s size %d\n", f->id, f->size);
         int id_size = 3;
         uint8_t frame_size[4];
         if (tag->version[0] > 2) {
@@ -889,6 +1002,10 @@ steps:
         }
         if (fwrite (frame_size, 1, 4, out) != 4) {
             fprintf (stderr, "junk_write_id3v2: failed to write frame size, id %s, size %d\n", f->id, f->size);
+            goto error;
+        }
+        if (fwrite (f->flags, 1, 2, out) != 2) {
+            fprintf (stderr, "junk_write_id3v2: failed to write frame header flags, id %s, size %s\n", f->id, f->size);
             goto error;
         }
         if (fwrite (f->data, 1, f->size, out) != f->size) {
@@ -1091,6 +1208,9 @@ junk_read_id3v2_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
 //                err = 1;
                 break; // frame must be at least 1 byte long
             }
+            uint8_t flags1 = readptr[0];
+            uint8_t flags2 = readptr[1];
+            readptr += 2;
             if (tag_store) {
                 DB_id3v2_frame_t *frm = malloc (sizeof (DB_id3v2_frame_t) + sz);
                 if (!frm) {
@@ -1108,10 +1228,10 @@ junk_read_id3v2_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                 strcpy (frm->id, frameid);
                 memcpy (frm->data, readptr, sz);
                 frm->size = sz;
+
+                frm->flags[0] = flags1;
+                frm->flags[1] = flags2;
             }
-            uint8_t flags1 = readptr[0];
-            uint8_t flags2 = readptr[1];
-            readptr += 2;
             if (version_major == 4) {
                 if (flags1 & 0x8f) {
                     // unknown flags

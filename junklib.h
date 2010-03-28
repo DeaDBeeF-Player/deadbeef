@@ -30,6 +30,12 @@ int
 junk_read_id3v2_full (struct playItem_s *it, DB_id3v2_tag_t *tag, DB_FILE *fp);
 
 int
+junk_id3v2_add_text_frame_23 (DB_id3v2_tag_t *tag, const char *frame_id, const char *value);
+
+int
+junk_id3v2_remove_frames (DB_id3v2_tag_t *tag, const char *frame_id);
+
+int
 junk_write_id3v2 (const char *fname, DB_id3v2_tag_t *tag);
 
 void
