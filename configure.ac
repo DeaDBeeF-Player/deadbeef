@@ -49,7 +49,6 @@ PKG_CHECK_MODULES(GTKUI_DEPS, gtk+-2.0 >= 2.12 gthread-2.0 glib-2.0, HAVE_GTK=1,
 PKG_CHECK_MODULES(ALSA_DEPS, alsa, HAVE_ALSA=1, NO_ALSA=1)
 PKG_CHECK_MODULES(FFMPEG_DEPS, libavcodec >= 51.0.0 libavutil libavformat >= 52.0.0, HAVE_FFMPEG=1, NO_FFMPEG=1)
 PKG_CHECK_MODULES(PULSE_DEPS, libpulse-simple, HAVE_PULSE=1, NO_PULSE=1)
-PKG_CHECK_MODULES(TAGLIB_DEPS, taglib, HAVE_TAGLIB=yes, HAVE_TAGLIB=no)
 
 AC_ARG_ENABLE(libnotify, [  --enable-libnotify  Enable support for OSD notifications], [libnotify=yes])
 
@@ -269,13 +268,6 @@ if test ${HAVE_CURL}; then
     AC_SUBST(ARTWORK_DIR)
 fi
 
-if test "x$HAVE_TAGLIB" = "xyes" ; then
-    TAGLIB_DIR="plugins/taglib"
-    AC_SUBST(TAGLIB_DIR)
-    AC_SUBST(TAGLIB_DEPS_CFLAGS)
-    AC_SUBST(TAGLIB_DEPS_LIBS)
-fi
-
 dnl print summary
 echo
 echo "plugin summary:"
@@ -317,7 +309,6 @@ PRINT_PLUGIN_INFO([oss],[oss output plugin],[test "x$have_oss" = "xyes"])
 PRINT_PLUGIN_INFO([pulse],[PulseAudio output plugin],[test $HAVE_PULSE])
 PRINT_PLUGIN_INFO([artwork],[Cover art plugin],[test $HAVE_ARTWORK])
 PRINT_PLUGIN_INFO([supereq],[Equalizer based on Super EQ library by Naoki Shibata],[true])
-PRINT_PLUGIN_INFO([taglib],[Tag writer plugin based on taglib],[test "x$HAVE_TAGLIB" = "xyes"])
 echo
 
 AC_OUTPUT([
@@ -349,7 +340,6 @@ plugins/oss/Makefile
 plugins/pulse/Makefile
 plugins/artwork/Makefile
 plugins/supereq/Makefile
-plugins/taglib/Makefile
 deadbeef.desktop
 ])
 

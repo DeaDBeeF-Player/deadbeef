@@ -23,8 +23,7 @@ SUBDIRS = ${MPGMAD_DIR}\
           ${OSS_DIR}\
           ${PULSE_DIR}\
           ${ARTWORK_DIR}\
-          plugins/supereq\
-          ${TAGLIB_DIR}
+          plugins/supereq
 
 dumbpath=@top_srcdir@/dumb
 gmepath=@top_srcdir@/gme/Game_Music_Emu-0.5.2
