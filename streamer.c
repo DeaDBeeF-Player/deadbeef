@@ -1141,7 +1141,6 @@ streamer_read_data_for_src_float (float *buffer, int frames) {
         channels = 2;
     }
     if (fileinfo->plugin->read_float32) {
-        {
         int bytesread = fileinfo->plugin->read_float32 (fileinfo, (uint8_t*)buffer, frames * sizeof (float) * channels);
         apply_replay_gain_float32 (streaming_track, (uint8_t*)buffer, bytesread);
         if (channels == 1) {
@@ -1154,7 +1153,6 @@ streamer_read_data_for_src_float (float *buffer, int frames) {
             }
         }
         return bytesread / (sizeof (float) * channels);
-        }
     }
 
 //    trace ("read_float32 not impl\n");
