@@ -25,9 +25,8 @@
 #include "../../deadbeef.h"
 #include "gtkui.h"
 
-#pragma GCC optimize("O0")
-
 static GtkWidget *trackproperties;
+static DB_playItem_t *track;
 
 gboolean
 on_trackproperties_delete_event        (GtkWidget       *widget,
@@ -35,6 +34,10 @@ on_trackproperties_delete_event        (GtkWidget       *widget,
                                         gpointer         user_data)
 {
     trackproperties = NULL;
+    if (track) {
+        deadbeef->pl_item_unref (track);
+        track = NULL;
+    }
     return FALSE;
 }
 
@@ -45,6 +48,10 @@ on_trackproperties_key_press_event     (GtkWidget       *widget,
 {
     if (event->keyval == GDK_Escape) {
         trackproperties = NULL;
+        if (track) {
+            deadbeef->pl_item_unref (track);
+            track = NULL;
+        }
         gtk_widget_destroy (widget);
     }
     return FALSE;
@@ -62,6 +69,10 @@ on_metadata_edited (GtkCellRendererText *renderer, gchar *path, gchar *new_text,
 
 void
 show_track_properties_dlg (DB_playItem_t *it) {
+    if (it) {
+        deadbeef->pl_item_ref (it);
+    }
+    track = it;
     if (!trackproperties) {
         trackproperties = create_trackproperties ();
         gtk_window_set_transient_for (GTK_WINDOW (trackproperties), GTK_WINDOW (mainwin));
@@ -181,5 +192,30 @@ show_track_properties_dlg (DB_playItem_t *it) {
 
     gtk_widget_show (widget);
     gtk_window_present (GTK_WINDOW (widget));
+}
+
+void
+on_write_tags_clicked                  (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    return;
+    DB_id3v2_tag_t tag;
+    memset (&tag, 0, sizeof (tag));
+    DB_FILE *fp = deadbeef->fopen (track->fname);
+    if (fp) {
+        if (deadbeef->junk_read_id3v2_full (NULL, &tag, fp) < 0) {
+            fprintf (stderr, "failed to read tags from %s\n", track->fname);
+            goto error;
+        }
+        if (deadbeef->junk_write_id3v2 (track->fname, &tag) < 0) {
+            fprintf (stderr, "failed to write tags to %s\n", track->fname);
+            goto error;
+        }
+    }
+error:
+    if (fp) {
+        deadbeef->fclose (fp);
+    }
+    deadbeef->junk_free_id3v2 (&tag);
 }
 

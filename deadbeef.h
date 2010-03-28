@@ -29,6 +29,7 @@
 
 #include <stdint.h>
 #include <time.h>
+#include <stdio.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -101,6 +102,21 @@ typedef struct DB_metaInfo_s {
     const char *value;
     struct DB_metaInfo_s *next;
 } DB_metaInfo_t;
+
+// FIXME: that needs to be in separate plugin
+typedef struct DB_id3v2_frame_s {
+    struct DB_id3v2_frame_s *next;
+    char id[5];
+    uint32_t size;
+    uint8_t data[0];
+} DB_id3v2_frame_t;
+
+typedef struct DB_id3v2_tag_s {
+    uint8_t version[2];
+    uint8_t flags;
+    uint32_t size;
+    DB_id3v2_frame_t *frames;
+} DB_id3v2_tag_t;
 
 // plugin types
 enum {
@@ -389,11 +405,15 @@ typedef struct {
     void (*volume_set_amp) (float amp);
     float (*volume_get_amp) (void);
     float (*volume_get_min_db) (void);
-    // junk reading
+    // junk reading/writing
     int (*junk_read_id3v1) (DB_playItem_t *it, DB_FILE *fp);
     int (*junk_read_id3v2) (DB_playItem_t *it, DB_FILE *fp);
+    int (*junk_read_id3v2_full) (DB_playItem_t *it, DB_id3v2_tag_t *tag, DB_FILE *fp);
+    void (*junk_free_id3v2) (DB_id3v2_tag_t *tag);
+    int (*junk_write_id3v2) (const char *fname, DB_id3v2_tag_t *tag);
     int (*junk_read_ape) (DB_playItem_t *it, DB_FILE *fp);
     int (*junk_get_leading_size) (DB_FILE *fp);
+    int (*junk_get_leading_size_stdio) (FILE *fp);
     void (*junk_copy) (DB_playItem_t *from, DB_playItem_t *first, DB_playItem_t *last);
     const char * (*junk_detect_charset) (const char *s);
     void (*junk_recode) (const char *in, int inlen, char *out, int outlen, const char *cs);

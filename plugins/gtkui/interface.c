@@ -1114,7 +1114,7 @@ create_trackproperties (void)
   GtkWidget *scrolledwindow5;
   GtkWidget *metalist;
   GtkWidget *hbuttonbox1;
-  GtkWidget *button2;
+  GtkWidget *write_tags;
   GtkWidget *label64;
 
   trackproperties = gtk_window_new (GTK_WINDOW_TOPLEVEL);
@@ -1315,10 +1315,10 @@ create_trackproperties (void)
   gtk_box_pack_start (GTK_BOX (vbox16), hbuttonbox1, FALSE, FALSE, 0);
   gtk_button_box_set_layout (GTK_BUTTON_BOX (hbuttonbox1), GTK_BUTTONBOX_END);
 
-  button2 = gtk_button_new_with_mnemonic ("Write");
-  gtk_widget_show (button2);
-  gtk_container_add (GTK_CONTAINER (hbuttonbox1), button2);
-  GTK_WIDGET_SET_FLAGS (button2, GTK_CAN_DEFAULT);
+  write_tags = gtk_button_new_with_mnemonic ("Write");
+  gtk_widget_show (write_tags);
+  gtk_container_add (GTK_CONTAINER (hbuttonbox1), write_tags);
+  GTK_WIDGET_SET_FLAGS (write_tags, GTK_CAN_DEFAULT);
 
   label64 = gtk_label_new ("Full");
   gtk_widget_show (label64);
@@ -1329,6 +1329,9 @@ create_trackproperties (void)
                     NULL);
   g_signal_connect ((gpointer) trackproperties, "delete_event",
                     G_CALLBACK (on_trackproperties_delete_event),
+                    NULL);
+  g_signal_connect ((gpointer) write_tags, "clicked",
+                    G_CALLBACK (on_write_tags_clicked),
                     NULL);
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
@@ -1369,7 +1372,7 @@ create_trackproperties (void)
   GLADE_HOOKUP_OBJECT (trackproperties, scrolledwindow5, "scrolledwindow5");
   GLADE_HOOKUP_OBJECT (trackproperties, metalist, "metalist");
   GLADE_HOOKUP_OBJECT (trackproperties, hbuttonbox1, "hbuttonbox1");
-  GLADE_HOOKUP_OBJECT (trackproperties, button2, "button2");
+  GLADE_HOOKUP_OBJECT (trackproperties, write_tags, "write_tags");
   GLADE_HOOKUP_OBJECT (trackproperties, label64, "label64");
 
   return trackproperties;

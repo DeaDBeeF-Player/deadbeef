@@ -21,6 +21,7 @@
 #include <string.h>
 #define LIBICONV_PLUG
 #include <iconv.h>
+#include <limits.h>
 #include "playlist.h"
 #include "utf8.h"
 #include "plugins.h"
@@ -28,10 +29,12 @@
 #include "config.h"
 #endif
 
+#pragma GCC optimize("O0")
+
 #define UTF8 "utf-8"
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -704,29 +707,21 @@ id3v2_string_read (int version, uint8_t *out, int sz, int unsync, const uint8_t 
 }
 
 int
-junk_get_leading_size (DB_FILE *fp) {
+junk_get_leading_size_stdio (FILE *fp) {
     uint8_t header[10];
-    int pos = deadbeef->ftell (fp);
-    if (deadbeef->fread (header, 1, 10, fp) != 10) {
-        deadbeef->fseek (fp, pos, SEEK_SET);
+    int pos = ftell (fp);
+    if (fread (header, 1, 10, fp) != 10) {
+        fseek (fp, pos, SEEK_SET);
         return -1; // too short
     }
-    deadbeef->fseek (fp, pos, SEEK_SET);
+    fseek (fp, pos, SEEK_SET);
     if (strncmp (header, "ID3", 3)) {
         return -1; // no tag
     }
-//    uint8_t version_major = header[3];
-//    uint8_t version_minor = header[4];
-//    if (version_major > 4 || version_major < 2) {
-//        return -1; // unsupported
-//    }
     uint8_t flags = header[5];
     if (flags & 15) {
         return -1; // unsupported
     }
-//    int unsync = (flags & (1<<7)) ? 1 : 0;
-//    int extheader = (flags & (1<<6)) ? 1 : 0;
-//    int expindicator = (flags & (1<<5)) ? 1 : 0;
     int footerpresent = (flags & (1<<4)) ? 1 : 0;
     // check for bad size
     if ((header[9] & 0x80) || (header[8] & 0x80) || (header[7] & 0x80) || (header[6] & 0x80)) {
@@ -738,9 +733,231 @@ junk_get_leading_size (DB_FILE *fp) {
 }
 
 int
-junk_read_id3v2 (playItem_t *it, DB_FILE *fp) {
+junk_get_leading_size (DB_FILE *fp) {
+    uint8_t header[10];
+    int pos = deadbeef->ftell (fp);
+    if (deadbeef->fread (header, 1, 10, fp) != 10) {
+        deadbeef->fseek (fp, pos, SEEK_SET);
+        return -1; // too short
+    }
+    deadbeef->fseek (fp, pos, SEEK_SET);
+    if (strncmp (header, "ID3", 3)) {
+        return -1; // no tag
+    }
+    uint8_t flags = header[5];
+    if (flags & 15) {
+        return -1; // unsupported
+    }
+    int footerpresent = (flags & (1<<4)) ? 1 : 0;
+    // check for bad size
+    if ((header[9] & 0x80) || (header[8] & 0x80) || (header[7] & 0x80) || (header[6] & 0x80)) {
+        return -1; // bad header
+    }
+    uint32_t size = (header[9] << 0) | (header[8] << 7) | (header[7] << 14) | (header[6] << 21);
+    //trace ("junklib: leading junk size %d\n", size);
+    return size + 10 + 10 * footerpresent;
+}
+
+int
+junk_write_id3v2 (const char *fname, DB_id3v2_tag_t *tag) {
+/*
+steps:
+1. write tag to a new file
+2. open source file, and skip id3v2 tag
+3. copy remaining part of source file into new file
+4. move new file in place of original file
+*/
+    FILE *out = NULL;
+    FILE *fp = NULL;
+    char *buffer = NULL;
+    int err = -1;
+
+    char tmppath[PATH_MAX];
+    snprintf (tmppath, sizeof (tmppath), "%s.temp.mp3", fname);
+    fprintf (stderr, "going to write tags to %s\n", tmppath);
+
+//    int fd = mkstemp ("ddb-id3v2");
+//    if (!fd) {
+//        fprintf (stderr, "junk_write_id3v2: failed to open temp file\n");
+//        return -1;
+//    }
+//    out = fdopen (fd, "w+b");
+    out = fopen (tmppath, "w+b");
+    if (!out) {
+        fprintf (stderr, "junk_write_id3v2: failed to fdopen temp file\n");
+        goto error;
+    }
+
+    // write tag header
+    if (fwrite ("ID3", 1, 3, out) != 3) {
+        fprintf (stderr, "junk_write_id3v2: failed to write ID3 signature\n");
+        goto error;
+    }
+
+    if (fwrite (tag->version, 1, 2, out) != 2) {
+        fprintf (stderr, "junk_write_id3v2: failed to write tag version\n");
+        goto error;
+    }
+    if (fwrite (&tag->flags, 1, 1, out) != 1) {
+        fprintf (stderr, "junk_write_id3v2: failed to write tag flags\n");
+        goto error;
+    }
+    uint8_t flags = tag->flags;
+    flags &= ~(1<<6); // we don't (yet?) write ext header
+    flags &= ~(1<<4); // we don't write footer
+
+    if (fwrite (&flags, 1, 1, out) != 1) {
+        fprintf (stderr, "junk_write_id3v2: failed to write tag flags\n");
+        goto error;
+    }
+    uint8_t tagsize[4];
+
+    // run through list of frames, and calculate size
+    uint32_t sz = 0;
+    int frm = 0;
+    for (DB_id3v2_frame_t *f = tag->frames; f; f = f->next) {
+        printf ("frame %d: %s, size %d\n", frm++, f->id, f->size);
+        sz += 3;
+        if (tag->version[0] > 2) {
+            sz++;
+        }
+        sz += f->size;
+    }
+
+    tagsize[0] |= (sz >> 21) & 0x7f;
+    tagsize[1] |= (sz >> 14) & 0x7f;
+    tagsize[2] |= (sz >> 7) & 0x7f;
+    tagsize[3] |= sz & 0x7f;
+    if (fwrite (tagsize, 1, 4, out) != 4) {
+        fprintf (stderr, "junk_write_id3v2: failed to write tag size\n");
+        goto error;
+    }
+#if 0
+    int extheader = tag->flags & (1<<6);
+    if (extheader) {
+        uint8_t extsize[4];
+        extsize[0] = (tag->ext_size >> 24) & 0xff;
+        extsize[1] = (tag->ext_size >> 16) & 0xff;
+        extsize[2] = (tag->ext_size >> 8) & 0xff;
+        extsize[3] = tag->ext_size & 0xff;
+        if (fwrite (extsize, 1, 4, out) != 4) {
+            fprintf (stderr, "junk_write_id3v2: failed to write ext header size\n");
+            goto error;
+        }
+        uint8_t extflags[2];
+        uint16_t ext_flags = tag->ext_flags &~ 0x8000;
+        extflags[0] = (tag->ext_flags >> 8) & 0xff;
+        extflags[1] = tag->ext_flags & 0xff;
+        if (fwrite (extflags, 1, 2, out) != 2) {
+            fprintf (stderr, "junk_write_id3v2: failed to write ext header flags\n");
+            goto error;
+        }
+        uint8_t extpad[4];
+        extpad[0] = (tag->ext_pad >> 24) & 0xff;
+        extpad[1] = (tag->ext_pad >> 16) & 0xff;
+        extpad[2] = (tag->ext_pad >> 8) & 0xff;
+        extpad[3] = tag->ext_pad & 0xff;
+        if (fwrite (extpad, 1, 4, out) != 4) {
+            fprintf (stderr, "junk_write_id3v2: failed to write ext padding\n");
+            goto error;
+        }
+    }
+#endif
+
+    // write frames
+    for (DB_id3v2_frame_t *f = tag->frames; f; f = f->next) {
+        int id_size = 3;
+        uint8_t frame_size[4];
+        if (tag->version[0] > 2) {
+            id_size = 4;
+        }
+        if (tag->version[0] == 3) {
+            frame_size[0] = (f->size >> 24) & 0xff;
+            frame_size[1] = (f->size >> 16) & 0xff;
+            frame_size[2] = (f->size >> 8) & 0xff;
+            frame_size[3] = f->size & 0xff;
+        }
+        else if (tag->version[0] == 4) {
+            frame_size[0] = (f->size >> 21) & 0x7f;
+            frame_size[1] = (f->size >> 14) & 0x7f;
+            frame_size[2] = (f->size >> 7) & 0x7f;
+            frame_size[3] = f->size & 0x7f;
+        }
+        if (fwrite (f->id, 1, 4, out) != 4) {
+            fprintf (stderr, "junk_write_id3v2: failed to write frame id %s\n", f->id);
+            goto error;
+        }
+        if (fwrite (frame_size, 1, 4, out) != 4) {
+            fprintf (stderr, "junk_write_id3v2: failed to write frame size, id %s, size %d\n", f->id, f->size);
+            goto error;
+        }
+        if (fwrite (f->data, 1, f->size, out) != f->size) {
+            fprintf (stderr, "junk_write_id3v2: failed to write frame data, id %s, size %s\n", f->id, f->size);
+            goto error;
+        }
+        sz += f->size;
+    }
+
+    // skip id3v2 tag
+    fp = fopen (fname, "rb");
+    if (!fp) {
+        fprintf (stderr, "junk_write_id3v2: failed to open source file %s\n", fname);
+        goto error;
+    }
+    int skip= junk_get_leading_size_stdio (fp);
+    if (skip > 0) {
+        fseek (fp, skip, SEEK_SET);
+    }
+    else {
+        rewind (fp);
+    }
+
+    buffer = malloc (8192);
+    int rb = 0;
+    for (;;) {
+        rb = fread (buffer, 1, 8192, fp);
+        if (rb < 0) {
+            fprintf (stderr, "junk_write_id3v2: error reading input data\n");
+            goto error;
+        }
+        if (fwrite (buffer, 1, rb, out) != rb) {
+            fprintf (stderr, "junk_write_id3v2: error writing output file\n");
+            goto error;
+        }
+        if (rb == 0) {
+            break; // eof
+        }
+    }
+
+    err = 0;
+
+error:
+    if (out) {
+        fclose (out);
+    }
+    if (fp) {
+        fclose (fp);
+    }
+    if (buffer) {
+        free (buffer);
+    }
+    return err;
+}
+
+void
+junk_free_id3v2 (DB_id3v2_tag_t *tag) {
+    while (tag->frames) {
+        DB_id3v2_frame_t *next = tag->frames->next;
+        free (tag->frames);
+        tag->frames = next;
+    }
+}
+
+int
+junk_read_id3v2_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
+    DB_id3v2_frame_t *tail = NULL;
     int title_added = 0;
-    if (!it || !fp) {
+    if (!fp) {
         trace ("bad call to junk_read_id3v2!\n");
         return -1;
     }
@@ -755,11 +972,12 @@ junk_read_id3v2 (playItem_t *it, DB_FILE *fp) {
     uint8_t version_major = header[3];
     uint8_t version_minor = header[4];
     if (version_major > 4 || version_major < 2) {
-//        trace ("id3v2.%d.%d is unsupported\n", version_major, version_minor);
+        trace ("id3v2.%d.%d is unsupported\n", version_major, version_minor);
         return -1; // unsupported
     }
     uint8_t flags = header[5];
     if (flags & 15) {
+        trace ("unrecognized flags: one of low 15 bits is set, value=0x%x\n", (int)flags);
         return -1; // unsupported
     }
     int unsync = (flags & (1<<7)) ? 1 : 0;
@@ -768,6 +986,7 @@ junk_read_id3v2 (playItem_t *it, DB_FILE *fp) {
     int footerpresent = (flags & (1<<4)) ? 1 : 0;
     // check for bad size
     if ((header[9] & 0x80) || (header[8] & 0x80) || (header[7] & 0x80) || (header[6] & 0x80)) {
+        trace ("bad header size\n");
         return -1; // bad header
     }
     uint32_t size = (header[9] << 0) | (header[8] << 7) | (header[7] << 14) | (header[6] << 21);
@@ -777,41 +996,47 @@ junk_read_id3v2 (playItem_t *it, DB_FILE *fp) {
 //        it->startoffset = startoffset;
 //    }
 
-//    trace ("tag size: %d\n", size);
-
-
-    // try to read full tag if size is small enough
-    if (size > 1000000) {
-        return -1;
+    trace ("tag size: %d\n", size);
+    if (tag_store) {
+        tag_store->version[0] = version_major;
+        tag_store->version[1] = version_minor;
+        tag_store->flags = flags;
+        tag_store->size = size;
     }
-    uint8_t tag[size];
+
+    uint8_t *tag = malloc (size);
+    if (!tag) {
+        fprintf (stderr, "junklib: out of memory while reading id3v2, tried to alloc %d bytes\n", size);
+    }
     if (deadbeef->fread (tag, 1, size, fp) != size) {
-        return -1; // bad size
+        goto error; // bad size
     }
     uint8_t *readptr = tag;
     int crcpresent = 0;
     trace ("version: 2.%d.%d, unsync: %d, extheader: %d, experimental: %d\n", version_major, version_minor, unsync, extheader, expindicator);
     
     if (extheader) {
-        if (size < 6) {
-            return -1; // bad size
-        }
         uint32_t sz = (readptr[3] << 0) | (header[2] << 8) | (header[1] << 16) | (header[0] << 24);
-        readptr += 4;
+        //if (size < 6) {
+        //    goto error; // bad size
+        //}
+        readptr += sz;
         if (size < sz) {
             return -1; // bad size
         }
+#if 0
         uint16_t extflags = (readptr[1] << 0) | (readptr[0] << 8);
         readptr += 2;
         uint32_t pad = (readptr[3] << 0) | (header[2] << 8) | (header[1] << 16) | (header[0] << 24);
         readptr += 4;
-        if (extflags & 0x80000000) {
+        if (extflags & 0x8000) {
             crcpresent = 1;
         }
         if (crcpresent && sz != 10) {
             return -1; // bad header
         }
         readptr += 4; // skip crc
+#endif
     }
     char * (*convstr)(const unsigned char *, int);
     if (version_major == 3) {
@@ -865,6 +1090,24 @@ junk_read_id3v2 (playItem_t *it, DB_FILE *fp) {
             if (sz < 1) {
 //                err = 1;
                 break; // frame must be at least 1 byte long
+            }
+            if (tag_store) {
+                DB_id3v2_frame_t *frm = malloc (sizeof (DB_id3v2_frame_t) + sz);
+                if (!frm) {
+                    fprintf (stderr, "junklib: failed to alloc %d bytes for id3v2 frame %s\n", sizeof (DB_id3v2_frame_t) + sz, frameid);
+                    goto error;
+                }
+                memset (frm, 0, sizeof (DB_id3v2_frame_t));
+                if (tail) {
+                    tail->next = frm;
+                }
+                tail = frm;
+                if (!tag_store->frames) {
+                    tag_store->frames = frm;
+                }
+                strcpy (frm->id, frameid);
+                memcpy (frm->data, readptr, sz);
+                frm->size = sz;
             }
             uint8_t flags1 = readptr[0];
             uint8_t flags2 = readptr[1];
@@ -961,13 +1204,14 @@ junk_read_id3v2 (playItem_t *it, DB_FILE *fp) {
                 id3v2_string_read (version_major, &str[0], sz, unsync, readptr);
 
                 track = convstr (str, sz);
-
-                char *slash = strchr (track, '/');
-                if (slash) {
-                    // split into track/number
-                    *slash = 0;
-                    slash++;
-                    numtracks = strdup (slash);
+                if (track) {
+                    char *slash = strchr (track, '/');
+                    if (slash) {
+                        // split into track/number
+                        *slash = 0;
+                        slash++;
+                        numtracks = strdup (slash);
+                    }
                 }
             }
             else if (!strcmp (frameid, "TPOS")) {
@@ -1150,6 +1394,23 @@ junk_read_id3v2 (playItem_t *it, DB_FILE *fp) {
             if (sz < 1) {
                 break; // frame must be at least 1 byte long
             }
+            if (tag_store) {
+                DB_id3v2_frame_t *frm = malloc (sizeof (DB_id3v2_frame_t) + sz);
+                if (!frm) {
+                    fprintf (stderr, "junklib: failed to alloc %d bytes for id3v2.2 frame %s\n", sizeof (DB_id3v2_frame_t) + sz, frameid);
+                    goto error;
+                }
+                if (tail) {
+                    tail->next = frm;
+                }
+                tail = frm;
+                if (!tag_store->frames) {
+                    tag_store->frames = frm;
+                }
+                strcpy (frm->id, frameid);
+                memcpy (frm->data, readptr, sz);
+                frm->size = sz;
+            }
 //            trace ("found id3v2.2 frame: %s, size=%d\n", frameid, sz);
             if (!strcmp (frameid, "TEN")) {
                 char str[sz+2];
@@ -1245,12 +1506,14 @@ junk_read_id3v2 (playItem_t *it, DB_FILE *fp) {
                 id3v2_string_read (version_major, &str[0], sz, unsync, readptr);
                 str[sz] = 0;
                 track = convstr (str, sz);
-                char *slash = strchr (track, '/');
-                if (slash) {
-                    // split into track/number
-                    *slash = 0;
-                    slash++;
-                    numtracks = strdup (slash);
+                if (track) {
+                    char *slash = strchr (track, '/');
+                    if (slash) {
+                        // split into track/number
+                        *slash = 0;
+                        slash++;
+                        numtracks = strdup (slash);
+                    }
                 }
             }
             else if (!strcmp (frameid, "TYE")) {
@@ -1316,7 +1579,7 @@ junk_read_id3v2 (playItem_t *it, DB_FILE *fp) {
             trace ("id3v2.%d (unsupported!)\n", version_minor);
         }
     }
-    if (!err) {
+    if (!err && it) {
         if (artist) {
             pl_add_meta (it, "artist", artist);
             free (artist);
@@ -1396,10 +1659,29 @@ junk_read_id3v2 (playItem_t *it, DB_FILE *fp) {
         }
         return 0;
     }
-    else {
+    else if (err) {
         trace ("error parsing id3v2\n");
     }
+
+    return 0;
+
+error:
+    if (tag) {
+        free (tag);
+    }
+    if (tag_store) {
+        while (tag_store->frames) {
+            DB_id3v2_frame_t *next = tag_store->frames->next;
+            free (tag_store->frames);
+            tag_store->frames = next;
+        }
+    }
     return -1;
+}
+
+int
+junk_read_id3v2 (playItem_t *it, DB_FILE *fp) {
+    return junk_read_id3v2_full (it, NULL, fp);
 }
 
 const char *

@@ -180,8 +180,12 @@ static DB_functions_t deadbeef_api = {
     // junk reading
     .junk_read_id3v1 = (int (*)(DB_playItem_t *it, DB_FILE *fp))junk_read_id3v1,
     .junk_read_id3v2 = (int (*)(DB_playItem_t *it, DB_FILE *fp))junk_read_id3v2,
+    .junk_read_id3v2_full = (int (*)(DB_playItem_t *, DB_id3v2_tag_t *tag, DB_FILE *fp))junk_read_id3v2_full,
+    .junk_free_id3v2 = junk_free_id3v2,
+    .junk_write_id3v2 = junk_write_id3v2,
     .junk_read_ape = (int (*)(DB_playItem_t *it, DB_FILE *fp))junk_read_ape,
     .junk_get_leading_size = junk_get_leading_size,
+    .junk_get_leading_size_stdio = junk_get_leading_size_stdio,
     .junk_detect_charset = junk_detect_charset,
     .junk_recode = junk_recode,
     // vfs
