@@ -2258,6 +2258,9 @@ pl_format_title (playItem_t *it, int idx, char *s, int size, int id, const char 
                 }
                 meta = filename;
             }
+            else if (*fmt == 'T') {
+                meta = pl_find_meta (it, "tags");
+            }
             else {
                 *s++ = *fmt;
                 n--;

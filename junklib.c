@@ -529,6 +529,13 @@ junk_read_id3v1 (playItem_t *it, DB_FILE *fp) {
         pl_add_meta (it, "track", s);
     }
 
+    char new_tags[100] = "";
+    const char *tags = pl_find_meta (it, "tags");
+    if (tags) {
+        strcpy (new_tags, tags);
+    }
+    strcat (new_tags, "ID3v1 ");
+    pl_replace_meta (it, "tags", new_tags);
 // FIXME: that should be accounted for
 //    if (it->endoffset < 128) {
 //        it->endoffset = 128;
@@ -575,6 +582,13 @@ junk_read_ape (playItem_t *it, DB_FILE *fp) {
     uint32_t flags = extract_i32_le (&header[20]);
 
     trace ("APEv%d, size=%d, items=%d, flags=%x\n", version, size, numitems, flags);
+    char new_tags[100] = "";
+    const char *tags = pl_find_meta (it, "tags");
+    if (tags) {
+        strcpy (new_tags, tags);
+    }
+    strcat (new_tags, "APEv2 ");
+    pl_replace_meta (it, "tags", new_tags);
     // now seek to beginning of the tag (exluding header)
     if (deadbeef->fseek (fp, -size, SEEK_CUR) == -1) {
         trace ("failed to seek to tag start (-%d)\n", size);
@@ -747,11 +761,13 @@ junk_get_leading_size (DB_FILE *fp) {
     }
     uint8_t flags = header[5];
     if (flags & 15) {
+        trace ("unsupported flags in id3v2\n");
         return -1; // unsupported
     }
     int footerpresent = (flags & (1<<4)) ? 1 : 0;
     // check for bad size
     if ((header[9] & 0x80) || (header[8] & 0x80) || (header[7] & 0x80) || (header[6] & 0x80)) {
+        trace ("bad header in id3v2\n");
         return -1; // bad header
     }
     uint32_t size = (header[9] << 0) | (header[8] << 7) | (header[7] << 14) | (header[6] << 21);
@@ -829,7 +845,7 @@ junk_id3v2_remove_frames (DB_id3v2_tag_t *tag, const char *frame_id) {
     return 0;
 }
 
-int
+DB_id3v2_frame_t *
 junk_id3v2_add_text_frame_23 (DB_id3v2_tag_t *tag, const char *frame_id, const char *value) {
     // convert utf8 into ucs2_le
     size_t inlen = strlen (value);
@@ -850,7 +866,7 @@ junk_id3v2_add_text_frame_23 (DB_id3v2_tag_t *tag, const char *frame_id, const c
     if (res == -1) {
         res = junk_iconv (value, inlen, out+2, outlen-2, UTF8, "UCS-2LE");
         if (res == -1) {
-            return -1;
+            return NULL;
         }
         out[0] = 0xff;
         out[1] = 0xfe;
@@ -899,6 +915,173 @@ junk_id3v2_add_text_frame_23 (DB_id3v2_tag_t *tag, const char *frame_id, const c
         tag->frames = f;
     }
 
+    return f;
+}
+
+
+// TODO: remove all unsync bytes during conversion, where appropriate
+// TODO: some non-Txxx frames might still need charset conversion
+// TODO: 2.4 TDTG frame (tagging time) should not be converted, but might be useful to create it
+int
+junk_id3v2_convert_24_to_23 (DB_id3v2_tag_t *tag24, DB_id3v2_tag_t *tag23) {
+    DB_id3v2_frame_t *f24;
+    DB_id3v2_frame_t *tail = NULL;
+
+    const char *copy_frames[] = {
+        "AENC", "APIC",
+        "COMM", "COMR", "ENCR",
+        "ETCO", "GEOB", "GRID",
+        "MCDI", "MLLT", "OWNE", "PRIV",
+        "POPM", "POSS", "RBUF",
+        "RVRB",
+        "SYLT", "SYTC",
+        "UFID", "USER", "USLT",
+        NULL
+    };
+
+    // NOTE: 2.4 ASPI, EQU2, RVA2, SEEK, SIGN are discarded for 2.3
+    // NOTE: 2.4 PCNT is discarded because it is useless
+    // NOTE: all Wxxx frames are copy_frames, handled as special case
+
+
+    const char *conversible_frames[] = {
+        "LINK", // -> LINK
+        "TDRC", // -> TDAT with conversion from ID3v2-strct timestamp to DDMM format
+        "TDRL", // -> TORY with conversion from ID3v2-strct timestamp to year
+        "TIPL", // -> IPLS with conversion to non-text format
+        NULL
+    };
+
+    const char *text_frames[] = {
+        "TALB", "TBPM", "TCOM", "TCON", "TCOP", "TDLY", "TENC", "TEXT", "TFLT", "TIT1", "TIT2", "TIT3", "TKEY", "TLAN", "TLEN", "TMED", "TOAL", "TOFN", "TOLY", "TOPE", "TOWN", "TPE1", "TPE2", "TPE3", "TPE4", "TPOS", "TPUB", "TRCK", "TRSN", "TRSO", "TSRC", "TSSE", "TXXX", NULL
+    };
+
+    // NOTE: 2.4 TMCL (musician credits list) is discarded for 2.3
+    // NOTE: 2.4 TMOO (mood) is discarded for 2.3
+    // NOTE: 2.4 TPRO (produced notice) is discarded for 2.3
+    // NOTE: 2.4 TSOA (album sort order) is discarded for 2.3
+    // NOTE: 2.4 TSOP (performer sort order) is discarded for 2.3
+    // NOTE: 2.4 TSOT (title sort order) is discarded for 2.3
+    // NOTE: 2.4 TSST (set subtitle) is discarded for 2.3
+
+    for (f24 = tag24->frames; f24; f24 = f24->next) {
+        DB_id3v2_frame_t *f23 = NULL;
+        // we are altering the tag, so check for tag alter preservation
+        if (tag24->flags & (1<<6)) {
+            continue; // discard the tag
+        }
+
+        int simplecopy = 0; // means format is the same in 2.3 and 2.4
+        int text = 0; // means this is a text frame
+
+        int i;
+
+        if (f24->id[0] == 'W') { // covers all W000..WZZZ tags
+            simplecopy = 1;
+        }
+
+        if (!simplecopy) {
+            for (i = 0; copy_frames[i]; i++) {
+                if (!strcmp (f24->id, copy_frames[i])) {
+                    simplecopy = 1;
+                    break;
+                }
+            }
+        }
+
+        if (!simplecopy) {
+            // check if this is a text frame
+            for (i = 0; text_frames[i]; i++) {
+                if (!strcmp (f24->id, text_frames[i])) {
+                    text = 1;
+                    break;
+                }
+            }
+        }
+
+        if (!simplecopy && !text) {
+            continue; // unknown frame
+        }
+
+        // convert flags
+        uint8_t flags[2];
+        // 1st byte (status flags) is the same, but shifted by 1 bit to the left
+        flags[0] = f24->flags[0] << 1;
+        
+        // 2nd byte (format flags) is quite different
+        // 2.4 format is %0h00kmnp (grouping, compression, encryption, unsync)
+        // 2.3 format is %ijk00000 (compression, encryption, grouping)
+        flags[1] = 0;
+        if (f24->flags[1] & (1 << 6)) {
+            flags[1] |= (1 << 4);
+        }
+        if (f24->flags[1] & (1 << 3)) {
+            flags[1] |= (1 << 7);
+        }
+        if (f24->flags[1] & (1 << 2)) {
+            flags[1] |= (1 << 6);
+        }
+        if (f24->flags[1] & (1 << 1)) {
+            flags[1] |= (1 << 5);
+        }
+        if (f24->flags[1] & 1) {
+            // 2.3 doesn't support per-frame unsyncronyzation
+            // let's ignore it
+        }
+
+        if (simplecopy) {
+            f23 = malloc (sizeof (DB_id3v2_frame_t) + f24->size);
+            memset (f23, 0, sizeof (DB_id3v2_frame_t) + f24->size);
+            strcpy (f23->id, f24->id);
+            f23->size = f24->size;
+            memcpy (f23->data, f24->data, f24->size);
+            f23->flags[0] = flags[0];
+            f23->flags[1] = flags[1];
+        }
+        else if (text) {
+            // decode text into utf8
+            char str[f24->size+2];
+
+            int unsync = 0;
+            if (tag24->flags & (1<<7)) {
+                unsync = 1;
+            }
+            if (f24->flags[1] & 1) {
+                unsync = 1;
+            }
+            id3v2_string_read (4, str, f24->size, unsync, f24->data);
+            char *decoded = convstr_id3v2_4 (str, f24->size);
+            if (!decoded) {
+                trace ("junk_id3v2_convert_24_to_23: failed to decode text frame %s\n", f24->id);
+                continue; // failed, discard it
+            }
+
+            // encode for 2.3
+            f23 = junk_id3v2_add_text_frame_23 (tag23, f24->id, decoded);
+            if (f23) {
+                tail = f23;
+                f23 = NULL;
+            }
+            free (decoded);
+        }
+        if (f23) {
+            if (tail) {
+                tail->next = f23;
+            }
+            else {
+                tag23->frames = f23;
+            }
+            tail = f23;
+        }
+    }
+
+    // convert tag header
+    tag23->version[0] = 3;
+    tag23->version[1] = 0;
+    tag23->flags = tag24->flags;
+    tag23->flags &= ~(1<<4); // no footer (unsupported in 2.3)
+    tag23->flags &= ~(1<<7); // no unsync
+
     return 0;
 }
 
@@ -911,6 +1094,11 @@ steps:
 3. copy remaining part of source file into new file
 4. move new file in place of original file
 */
+    if (tag->version[0] < 3) {
+        fprintf (stderr, "junk_write_id3v2: writing id3v2.2 is not supported\n");
+        return -1;
+    }
+
     FILE *out = NULL;
     FILE *fp = NULL;
     char *buffer = NULL;
@@ -920,12 +1108,6 @@ steps:
     snprintf (tmppath, sizeof (tmppath), "%s.temp.mp3", fname);
     fprintf (stderr, "going to write tags to %s\n", tmppath);
 
-//    int fd = mkstemp ("ddb-id3v2");
-//    if (!fd) {
-//        fprintf (stderr, "junk_write_id3v2: failed to open temp file\n");
-//        return -1;
-//    }
-//    out = fdopen (fd, "w+b");
     out = fopen (tmppath, "w+b");
     if (!out) {
         fprintf (stderr, "junk_write_id3v2: failed to fdopen temp file\n");
@@ -1071,6 +1253,25 @@ junk_free_id3v2 (DB_id3v2_tag_t *tag) {
 }
 
 int
+junklib_id3v2_sync_frame (uint8_t *data, int size) {
+    char *writeptr = data;
+    int skipnext = 0;
+    int written = 0;
+    while (size > 0) {
+        *writeptr = *data;
+        if (data[0] == 0xff && size >= 2 && data[1] == 0) {
+            data++;
+            size--;
+        }
+        writeptr++;
+        data++;
+        size--;
+        written++;
+    }
+    return written;
+}
+
+int
 junk_read_id3v2_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
     DB_id3v2_frame_t *tail = NULL;
     int title_added = 0;
@@ -1118,7 +1319,8 @@ junk_read_id3v2_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
         tag_store->version[0] = version_major;
         tag_store->version[1] = version_minor;
         tag_store->flags = flags;
-        tag_store->size = size;
+        // remove unsync flag
+        tag_store->flags &= ~ (1<<7);
     }
 
     uint8_t *tag = malloc (size);
@@ -1227,7 +1429,14 @@ junk_read_id3v2_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                 }
                 strcpy (frm->id, frameid);
                 memcpy (frm->data, readptr, sz);
-                frm->size = sz;
+                if (unsync) {
+                    frm->size = junklib_id3v2_sync_frame (frm->data, sz);
+                    trace ("frame %s size change %d -> %d after sync\n", frameid, sz, frm->size);
+                }
+                else
+                {
+                    frm->size = sz;
+                }
 
                 frm->flags[0] = flags1;
                 frm->flags[1] = flags2;
@@ -1774,6 +1983,21 @@ junk_read_id3v2_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
             pl_add_meta (it, "disc", disc);
             free (disc);
         }
+        char new_tags[100] = "";
+        const char *tags = pl_find_meta (it, "tags");
+        if (tags) {
+            strcpy (new_tags, tags);
+        }
+        if (version_major == 2) {
+            strcat (new_tags, "ID3v2.2 ");
+        }
+        else if (version_major == 3) {
+            strcat (new_tags, "ID3v2.3 ");
+        }
+        else if (version_major == 4) {
+            strcat (new_tags, "ID3v2.4 ");
+        }
+        pl_replace_meta (it, "tags", new_tags);
         if (!title) {
             pl_add_meta (it, "title", NULL);
         }

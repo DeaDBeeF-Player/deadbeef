@@ -30,6 +30,9 @@ int
 junk_read_id3v2_full (struct playItem_s *it, DB_id3v2_tag_t *tag, DB_FILE *fp);
 
 int
+junk_id3v2_convert_24_to_23 (DB_id3v2_tag_t *tag24, DB_id3v2_tag_t *tag23);
+
+DB_id3v2_frame_t *
 junk_id3v2_add_text_frame_23 (DB_id3v2_tag_t *tag, const char *frame_id, const char *value);
 
 int

@@ -22,8 +22,8 @@
 #include <stdlib.h>
 #include "../../deadbeef.h"
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -370,6 +370,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
             const char info[] = "Info";
             char magic[4];
             if (deadbeef->fread (magic, 1, 4, buffer->file) != 4) {
+                trace ("cmp3_scan_stream: EOF while checking for Xing header\n");
                 return -1; // EOF
             }
             // add information to skip this frame
@@ -386,12 +387,14 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
                 uint32_t flags;
                 uint8_t buf[4];
                 if (deadbeef->fread (buf, 1, 4, buffer->file) != 4) {
+                    trace ("cmp3_scan_stream: EOF while parsing Xing header\n");
                     return -1; // EOF
                 }
                 flags = extract_i32 (buf);
                 if (flags & FRAMES_FLAG) {
                     // read number of frames
                     if (deadbeef->fread (buf, 1, 4, buffer->file) != 4) {
+                        trace ("cmp3_scan_stream: EOF while parsing Xing header\n");
                         return -1; // EOF
                     }
                     uint32_t nframes = extract_i32 (buf);
@@ -415,6 +418,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
                 }
                 // lame header
                 if (deadbeef->fread (buf, 1, 4, buffer->file) != 4) {
+                    trace ("cmp3_scan_stream: EOF while reading LAME header\n");
                     return -1; // EOF
                 }
 //                trace ("tell=%x, %c%c%c%c\n", deadbeef->ftell(buffer->file), buf[0], buf[1], buf[2], buf[3]);
@@ -504,6 +508,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
 
         if (sample == 0) {
             if (fsize <= 0) {
+                trace ("cmp3_scan_stream: negative file size\n");
                 return -1;
             }
             // calculating apx duration based on 1st 100 frames
@@ -540,6 +545,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
         }
     }
     if (nframe == 0) {
+        trace ("cmp3_scan_stream: couldn't find mpeg frames in file\n");
         return -1;
     }
     buffer->totalsamples = scansamples;
@@ -1084,6 +1090,7 @@ cmp3_insert (DB_playItem_t *after, const char *fname) {
     memset (&buffer, 0, sizeof (buffer));
     buffer.file = fp;
     int skip = deadbeef->junk_get_leading_size (buffer.file);
+    trace ("mpgmad: skipping %d bytes (tag)\n", skip);
     if (skip > 0) {
         deadbeef->fseek(buffer.file, skip, SEEK_SET);
     }

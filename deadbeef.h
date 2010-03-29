@@ -115,7 +115,6 @@ typedef struct DB_id3v2_frame_s {
 typedef struct DB_id3v2_tag_s {
     uint8_t version[2];
     uint8_t flags;
-    uint32_t size;
     DB_id3v2_frame_t *frames;
 } DB_id3v2_tag_t;
 
@@ -410,9 +409,10 @@ typedef struct {
     int (*junk_read_id3v1) (DB_playItem_t *it, DB_FILE *fp);
     int (*junk_read_id3v2) (DB_playItem_t *it, DB_FILE *fp);
     int (*junk_read_id3v2_full) (DB_playItem_t *it, DB_id3v2_tag_t *tag, DB_FILE *fp);
+    int (*junk_id3v2_convert_24_to_23) (DB_id3v2_tag_t *tag24, DB_id3v2_tag_t *tag23);
     void (*junk_free_id3v2) (DB_id3v2_tag_t *tag);
     int (*junk_write_id3v2) (const char *fname, DB_id3v2_tag_t *tag);
-    int (*junk_id3v2_add_text_frame_23) (DB_id3v2_tag_t *tag, const char *frame_id, const char *value); 
+    DB_id3v2_frame_t *(*junk_id3v2_add_text_frame_23) (DB_id3v2_tag_t *tag, const char *frame_id, const char *value); 
     int (*junk_id3v2_remove_frames) (DB_id3v2_tag_t *tag, const char *frame_id);
     int (*junk_read_ape) (DB_playItem_t *it, DB_FILE *fp);
     int (*junk_get_leading_size) (DB_FILE *fp);

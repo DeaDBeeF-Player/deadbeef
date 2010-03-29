@@ -181,6 +181,7 @@ static DB_functions_t deadbeef_api = {
     .junk_read_id3v1 = (int (*)(DB_playItem_t *it, DB_FILE *fp))junk_read_id3v1,
     .junk_read_id3v2 = (int (*)(DB_playItem_t *it, DB_FILE *fp))junk_read_id3v2,
     .junk_read_id3v2_full = (int (*)(DB_playItem_t *, DB_id3v2_tag_t *tag, DB_FILE *fp))junk_read_id3v2_full,
+    .junk_id3v2_convert_24_to_23 = junk_id3v2_convert_24_to_23,
     .junk_free_id3v2 = junk_free_id3v2,
     .junk_write_id3v2 = junk_write_id3v2,
     .junk_id3v2_remove_frames = junk_id3v2_remove_frames,

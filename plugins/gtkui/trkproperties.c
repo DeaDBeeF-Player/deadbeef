@@ -212,6 +212,9 @@ on_write_tags_clicked                  (GtkButton       *button,
             goto error;
         }
         fprintf (stderr, "writing id3v2.%d.%d\n", tag.version[0], tag.version[1]);
+
+#if 0
+        // 2.3 editing test
         if (tag.version[0] == 3) {
             // remove frames
             deadbeef->junk_id3v2_remove_frames (&tag, "TPE1");
@@ -220,12 +223,27 @@ on_write_tags_clicked                  (GtkButton       *button,
             // add frames
             deadbeef->junk_id3v2_add_text_frame_23 (&tag, "TPE1", "test title");
             deadbeef->junk_id3v2_add_text_frame_23 (&tag, "TIT2", "название на русском");
+            if (deadbeef->junk_write_id3v2 (track->fname, &tag) < 0) {
+                fprintf (stderr, "failed to write tags to %s\n", track->fname);
+                goto error;
+            }
+        }
+#endif
+        // 2.4 -> 2.3 conversion test
+        if (tag.version[0] == 4) {
+            DB_id3v2_tag_t tag23;
+            memset (&tag23, 0, sizeof (tag23));
+            int res = deadbeef->junk_id3v2_convert_24_to_23 (&tag, &tag23);
+            if (res == -1) {
+                deadbeef->junk_free_id3v2 (&tag23);
+                goto error;
+            }
+            if (deadbeef->junk_write_id3v2 (track->fname, &tag23) < 0) {
+                fprintf (stderr, "failed to write tags to %s\n", track->fname);
+                goto error;
+            }
         }
 
-        if (deadbeef->junk_write_id3v2 (track->fname, &tag) < 0) {
-            fprintf (stderr, "failed to write tags to %s\n", track->fname);
-            goto error;
-        }
     }
     else {
         fprintf (stderr, "failed to open %s\n", track->fname);
