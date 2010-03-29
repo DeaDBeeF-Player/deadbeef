@@ -23,6 +23,7 @@
 #include <iconv.h>
 #include <limits.h>
 #include <errno.h>
+#include <ctype.h>
 #include "playlist.h"
 #include "utf8.h"
 #include "plugins.h"
@@ -999,7 +1000,12 @@ junk_id3v2_convert_24_to_23 (DB_id3v2_tag_t *tag24, DB_id3v2_tag_t *tag23) {
             }
         }
 
+
         if (!simplecopy && !text) {
+            // check if it is conversible
+            if (!strcmp (f24->id, "LINK")) {
+            }
+
             continue; // unknown frame
         }
 
@@ -1599,6 +1605,7 @@ junk_read_id3v2_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                 char str[sz+2];
                 id3v2_string_read (version_major, &str[0], sz, unsync, readptr);
                 genre = convstr (str, sz);
+
                 trace ("TCON: %s\n", genre);
             }
             else if (!strcmp (frameid, "COMM")) {
@@ -1943,23 +1950,53 @@ junk_read_id3v2_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
         }
         if (genre) {
             if (genre[0] == '(') {
-                const char *v1genre = NULL;
                 // find matching parenthesis
                 const char *p = &genre[1];
                 while (*p && *p != ')') {
+                    if (!isdigit (*p)) {
+                        break;
+                    }
                     p++;
                 }
-                if (p > &genre[1]) {
-                    int g = atoi (&genre[1]);
-                    if (g < 148) {
-                        v1genre = junk_genretbl[g];
-                    }
-                }
-                if (v1genre) {
-                    free (genre);
-                    genre = strdup (v1genre);
+                if (*p == ')' && p[1] == 0) {
+                    memmove (genre, genre+1, p-genre-1);
                 }
             }
+            // check if it is numeric
+            if (genre) {
+                const char *p = genre;
+                while (*p) {
+                    if (!isdigit (*p)) {
+                        break;
+                    }
+                    p++;
+                }
+                if (*p == 0) {
+                    int genre_id = atoi (genre);
+                    if (genre_id >= 0) {
+                        const char *genre_str = NULL;
+                        if (genre_id <= 147) {
+                            genre_str = junk_genretbl[genre_id];
+                        }
+                        else if (genre_id == 0xff) {
+                            genre_str = "None";
+                        }
+                        if (genre_str) {
+                            free (genre);
+                            genre = strdup (genre_str);
+                        }
+                    }
+                }
+                else if (!strcmp (genre, "CR")) {
+                    free (genre);
+                    genre = strdup ("Cover");
+                }
+                else if (!strcmp (genre, "RX")) {
+                    free (genre);
+                    genre = strdup ("Remix");
+                }
+            }
+
             pl_add_meta (it, "genre", genre);
             free (genre);
         }
