@@ -920,7 +920,7 @@ junk_id3v2_add_text_frame_23 (DB_id3v2_tag_t *tag, const char *frame_id, const c
 }
 
 
-// TODO: remove all unsync bytes during conversion, where appropriate
+// [+] TODO: remove all unsync bytes during conversion, where appropriate
 // TODO: some non-Txxx frames might still need charset conversion
 // TODO: 2.4 TDTG frame (tagging time) should not be converted, but might be useful to create it
 int
@@ -932,7 +932,7 @@ junk_id3v2_convert_24_to_23 (DB_id3v2_tag_t *tag24, DB_id3v2_tag_t *tag23) {
         "AENC", "APIC",
         "COMM", "COMR", "ENCR",
         "ETCO", "GEOB", "GRID",
-        "MCDI", "MLLT", "OWNE", "PRIV",
+        "LINK", "MCDI", "MLLT", "OWNE", "PRIV",
         "POPM", "POSS", "RBUF",
         "RVRB",
         "SYLT", "SYTC",
@@ -945,16 +945,12 @@ junk_id3v2_convert_24_to_23 (DB_id3v2_tag_t *tag24, DB_id3v2_tag_t *tag23) {
     // NOTE: all Wxxx frames are copy_frames, handled as special case
 
 
-    const char *conversible_frames[] = {
-        "LINK", // -> LINK
-        "TDRC", // -> TDAT with conversion from ID3v2-strct timestamp to DDMM format
-        "TDRL", // -> TORY with conversion from ID3v2-strct timestamp to year
-        "TIPL", // -> IPLS with conversion to non-text format
-        NULL
-    };
+    // "TDRC" TDAT with conversion from ID3v2-strct timestamp to DDMM format
+    // "TDOR" TORY with conversion from ID3v2-strct timestamp to year
+    // TODO: "TIPL" IPLS with conversion to non-text format
 
     const char *text_frames[] = {
-        "TALB", "TBPM", "TCOM", "TCON", "TCOP", "TDLY", "TENC", "TEXT", "TFLT", "TIT1", "TIT2", "TIT3", "TKEY", "TLAN", "TLEN", "TMED", "TOAL", "TOFN", "TOLY", "TOPE", "TOWN", "TPE1", "TPE2", "TPE3", "TPE4", "TPOS", "TPUB", "TRCK", "TRSN", "TRSO", "TSRC", "TSSE", "TXXX", NULL
+        "TALB", "TBPM", "TCOM", "TCON", "TCOP", "TDLY", "TENC", "TEXT", "TFLT", "TIT1", "TIT2", "TIT3", "TKEY", "TLAN", "TLEN", "TMED", "TOAL", "TOFN", "TOLY", "TOPE", "TOWN", "TPE1", "TPE2", "TPE3", "TPE4", "TPOS", "TPUB", "TRCK", "TRSN", "TRSO", "TSRC", "TSSE", "TXXX", "TDRC", NULL
     };
 
     // NOTE: 2.4 TMCL (musician credits list) is discarded for 2.3
@@ -1002,10 +998,6 @@ junk_id3v2_convert_24_to_23 (DB_id3v2_tag_t *tag24, DB_id3v2_tag_t *tag23) {
 
 
         if (!simplecopy && !text) {
-            // check if it is conversible
-            if (!strcmp (f24->id, "LINK")) {
-            }
-
             continue; // unknown frame
         }
 
@@ -1061,12 +1053,56 @@ junk_id3v2_convert_24_to_23 (DB_id3v2_tag_t *tag24, DB_id3v2_tag_t *tag23) {
                 trace ("junk_id3v2_convert_24_to_23: failed to decode text frame %s\n", f24->id);
                 continue; // failed, discard it
             }
-
-            // encode for 2.3
-            f23 = junk_id3v2_add_text_frame_23 (tag23, f24->id, decoded);
-            if (f23) {
-                tail = f23;
-                f23 = NULL;
+            if (!strcmp (f24->id, "TDRC")) {
+                trace ("junk_id3v2_convert_24_to_23: TDRC text: %s\n", decoded);
+                int year, month, day;
+                int c = sscanf (decoded, "%4d-%2d-%2d", &year, &month, &day);
+                if (c >= 1) {
+                    char s[5];
+                    snprintf (s, sizeof (s), "%04d", year);
+                    f23 = junk_id3v2_add_text_frame_23 (tag23, "TYER", s);
+                    if (f23) {
+                        tail = f23;
+                        f23 = NULL;
+                    }
+                }
+                if (c == 3) {
+                    char s[5];
+                    snprintf (s, sizeof (s), "%02d%02d", month, day);
+                    f23 = junk_id3v2_add_text_frame_23 (tag23, "TDAT", s);
+                    if (f23) {
+                        tail = f23;
+                        f23 = NULL;
+                    }
+                }
+                else {
+                    trace ("junk_id3v2_add_text_frame_23: 2.4 TDRC doesn't have month/day info; discarded\n");
+                }
+            }
+            else if (!strcmp (f24->id, "TDOR")) {
+                trace ("junk_id3v2_convert_24_to_23: TDOR text: %s\n", decoded);
+                int year;
+                int c = sscanf (decoded, "%4d", &year);
+                if (c == 1) {
+                    char s[5];
+                    snprintf (s, sizeof (s), "%04d", &year);
+                    f23 = junk_id3v2_add_text_frame_23 (tag23, "TORY", s);
+                    if (f23) {
+                        tail = f23;
+                        f23 = NULL;
+                    }
+                }
+                else {
+                    trace ("junk_id3v2_add_text_frame_23: 2.4 TDOR doesn't have month/day info; discarded\n");
+                }
+            }
+            else {
+                // encode for 2.3
+                f23 = junk_id3v2_add_text_frame_23 (tag23, f24->id, decoded);
+                if (f23) {
+                    tail = f23;
+                    f23 = NULL;
+                }
             }
             free (decoded);
         }
@@ -1578,7 +1614,16 @@ junk_read_id3v2_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                 id3v2_string_read (version_major, &str[0], sz, unsync, readptr);
                 album = convstr (str, sz);
             }
-            else if (!strcmp (frameid, "TYER")) {
+            else if (version_major == 3 && !strcmp (frameid, "TYER")) { // this frame is 2.3-only
+                if (sz > 1000) {
+                    err = 1;
+                    break; // too large
+                }
+                char str[sz+2];
+                id3v2_string_read (version_major, &str[0], sz, unsync, readptr);
+                year = convstr (str, sz);
+            }
+            else if (version_major == 4 && !strcmp (frameid, "TDRC")) { // this frame is 2.3-only
                 if (sz > 1000) {
                     err = 1;
                     break; // too large
