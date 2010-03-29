@@ -777,3 +777,7 @@ on_toggle_tabs                         (GtkMenuItem     *menuitem,
 void
 on_toggle_eq                           (GtkMenuItem     *menuitem,
                                         gpointer         user_data);
+
+void
+on_write_tags_clicked                  (GtkButton       *button,
+                                        gpointer         user_data);
