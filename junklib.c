@@ -2047,11 +2047,6 @@ junk_read_id3v2_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                 trace ("COMM language is: %s\n", lang);
                 char *descr = readptr+4;
                 trace ("COMM descr: %s\n", descr);
-                if (!strcmp (descr, "iTunNORM")) {
-                    // ignore itunes normalization metadata
-                    readptr += sz;
-                    continue;
-                }
                 int dlen = strlen(descr)+1;
                 int s = sz - 4 - dlen;
                 char str[s + 3];
