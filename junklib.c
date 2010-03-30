@@ -919,7 +919,37 @@ junk_id3v2_add_text_frame_23 (DB_id3v2_tag_t *tag, const char *frame_id, const c
     return f;
 }
 
+DB_id3v2_frame_t *
+junk_id3v2_add_text_frame_24 (DB_id3v2_tag_t *tag, const char *frame_id, const char *value) {
+    trace ("junklib: setting 2.4 text frame '%s' = '%s'\n", frame_id, value);
 
+    // make a frame
+    int outlen = strlen (value);
+    int size = outlen + 1 + 1;
+    trace ("calculated frame size = %d\n", size);
+    DB_id3v2_frame_t *f = malloc (size + sizeof (DB_id3v2_frame_t));
+    memset (f, 0, sizeof (DB_id3v2_frame_t));
+    strcpy (f->id, frame_id);
+    // flags are all zero
+    f->size = size;
+    f->data[0] = 3; // encoding=utf8
+    memcpy (&f->data[1], value, outlen);
+    f->data[outlen+1] = 0;
+//    if (encoding == 1) { // we don't write ucs2
+//        f->data[outlen+2] = 0;
+//    }
+    // append to tag
+    DB_id3v2_frame_t *tail;
+    for (tail = tag->frames; tail && tail->next; tail = tail->next);
+    if (tail) {
+        tail->next = f;
+    }
+    else {
+        tag->frames = f;
+    }
+
+    return f;
+}
 // [+] TODO: remove all unsync bytes during conversion, where appropriate
 // TODO: some non-Txxx frames might still need charset conversion
 // TODO: 2.4 TDTG frame (tagging time) should not be converted, but might be useful to create it
@@ -965,7 +995,7 @@ junk_id3v2_convert_24_to_23 (DB_id3v2_tag_t *tag24, DB_id3v2_tag_t *tag23) {
         DB_id3v2_frame_t *f23 = NULL;
         // we are altering the tag, so check for tag alter preservation
         if (tag24->flags & (1<<6)) {
-            continue; // discard the tag
+            continue; // discard the frame
         }
 
         int simplecopy = 0; // means format is the same in 2.3 and 2.4
@@ -1123,6 +1153,196 @@ junk_id3v2_convert_24_to_23 (DB_id3v2_tag_t *tag24, DB_id3v2_tag_t *tag23) {
     tag23->flags = tag24->flags;
     tag23->flags &= ~(1<<4); // no footer (unsupported in 2.3)
     tag23->flags &= ~(1<<7); // no unsync
+
+    return 0;
+}
+
+int
+junk_id3v2_convert_23_to_24 (DB_id3v2_tag_t *tag23, DB_id3v2_tag_t *tag24) {
+    DB_id3v2_frame_t *f23;
+    DB_id3v2_frame_t *tail = NULL;
+
+    const char *copy_frames[] = {
+        "AENC", "APIC",
+        "COMM", "COMR", "ENCR",
+        "ETCO", "GEOB", "GRID",
+        "LINK", "MCDI", "MLLT", "OWNE", "PRIV",
+        "POPM", "POSS", "RBUF",
+        "RVRB",
+        "SYLT", "SYTC",
+        "UFID", "USER", "USLT",
+        NULL
+    };
+
+    // NOTE: all Wxxx frames are copy_frames, handled as special case
+
+    // "TDRC" TDAT with conversion from ID3v2-strct timestamp to DDMM format
+    // "TDOR" TORY with conversion from ID3v2-strct timestamp to year
+    // TODO: "TIPL" IPLS with conversion to non-text format
+
+    const char *text_frames[] = {
+        "TALB", "TBPM", "TCOM", "TCON", "TCOP", "TDLY", "TENC", "TEXT", "TFLT", "TIT1", "TIT2", "TIT3", "TKEY", "TLAN", "TLEN", "TMED", "TOAL", "TOFN", "TOLY", "TOPE", "TOWN", "TPE1", "TPE2", "TPE3", "TPE4", "TPOS", "TPUB", "TRCK", "TRSN", "TRSO", "TSRC", "TSSE", "TXXX", "TDRC", NULL
+    };
+
+    for (f23 = tag23->frames; f23; f23 = f23->next) {
+        // we are altering the tag, so check for tag alter preservation
+        if (tag23->flags & (1<<7)) {
+            continue; // discard the frame
+        }
+
+        int simplecopy = 0; // means format is the same in 2.3 and 2.4
+        int text = 0; // means this is a text frame
+
+        int i;
+
+        if (f23->id[0] == 'W') { // covers all W000..WZZZ tags
+            simplecopy = 1;
+        }
+
+        if (!simplecopy) {
+            for (i = 0; copy_frames[i]; i++) {
+                if (!strcmp (f23->id, copy_frames[i])) {
+                    simplecopy = 1;
+                    break;
+                }
+            }
+        }
+
+        if (!simplecopy) {
+            // check if this is a text frame
+            for (i = 0; text_frames[i]; i++) {
+                if (!strcmp (f23->id, text_frames[i])) {
+                    text = 1;
+                    break;
+                }
+            }
+        }
+
+
+        if (!simplecopy && !text) {
+            continue; // unknown frame
+        }
+
+        // convert flags
+        uint8_t flags[2];
+        // 1st byte (status flags) is the same, but shifted by 1 bit to the
+        // right
+        flags[0] = f23->flags[0] >> 1;
+        
+        // 2nd byte (format flags) is quite different
+        // 2.4 format is %0h00kmnp (grouping, compression, encryption, unsync)
+        // 2.3 format is %ijk00000 (compression, encryption, grouping)
+        flags[1] = 0;
+        if (f23->flags[1] & (1 << 4)) {
+            flags[1] |= (1 << 6);
+        }
+        if (f23->flags[1] & (1 << 7)) {
+            flags[1] |= (1 << 3);
+        }
+        if (f23->flags[1] & (1 << 6)) {
+            flags[1] |= (1 << 2);
+        }
+        if (f23->flags[1] & (1 << 5)) {
+            flags[1] |= (1 << 1);
+        }
+
+        DB_id3v2_frame_t *f24 = NULL;
+        if (simplecopy) {
+            f24 = malloc (sizeof (DB_id3v2_frame_t) + f23->size);
+            memset (f24, 0, sizeof (DB_id3v2_frame_t) + f23->size);
+            strcpy (f24->id, f23->id);
+            f24->size = f23->size;
+            memcpy (f24->data, f23->data, f23->size);
+            f24->flags[0] = flags[0];
+            f24->flags[1] = flags[1];
+        }
+        else if (text) {
+            // decode text into utf8
+            char str[f23->size+2];
+
+            int unsync = 0;
+            if (tag23->flags & (1<<7)) {
+                unsync = 1;
+            }
+            if (f23->flags[1] & 1) {
+                unsync = 1;
+            }
+            id3v2_string_read (4, str, f23->size, unsync, f23->data);
+            char *decoded = convstr_id3v2_4 (str, f23->size);
+            if (!decoded) {
+                trace ("junk_id3v2_convert_23_to_24: failed to decode text frame %s\n", f23->id);
+                continue; // failed, discard it
+            }
+            if (!strcmp (f23->id, "TDRC")) {
+                trace ("junk_id3v2_convert_23_to_24: TDRC text: %s\n", decoded);
+                int year, month, day;
+                int c = sscanf (decoded, "%4d-%2d-%2d", &year, &month, &day);
+                if (c >= 1) {
+                    char s[5];
+                    snprintf (s, sizeof (s), "%04d", year);
+                    f24 = junk_id3v2_add_text_frame_24 (tag24, "TYER", s);
+                    if (f24) {
+                        tail = f24;
+                        f24 = NULL;
+                    }
+                }
+                if (c == 3) {
+                    char s[5];
+                    snprintf (s, sizeof (s), "%02d%02d", month, day);
+                    f24 = junk_id3v2_add_text_frame_24 (tag24, "TDAT", s);
+                    if (f24) {
+                        tail = f24;
+                        f24 = NULL;
+                    }
+                }
+                else {
+                    trace ("junk_id3v2_add_text_frame_24: 2.4 TDRC doesn't have month/day info; discarded\n");
+                }
+            }
+            else if (!strcmp (f23->id, "TORY")) {
+                trace ("junk_id3v2_convert_23_to_24: TDOR text: %s\n", decoded);
+                int year;
+                int c = sscanf (decoded, "%4d", &year);
+                if (c == 1) {
+                    char s[5];
+                    snprintf (s, sizeof (s), "%04d", &year);
+// FIXME                    f24 = junk_id3v2_add_text_frame_24 (tag24, "TDOR", s);
+                    if (f24) {
+                        tail = f24;
+                        f24 = NULL;
+                    }
+                }
+                else {
+                    trace ("junk_id3v2_add_text_frame_24: 2.4 TDOR doesn't have month/day info; discarded\n");
+                }
+            }
+            else {
+                // encode for 2.3
+                f24 = junk_id3v2_add_text_frame_24 (tag24, f23->id, decoded);
+                if (f24) {
+                    tail = f24;
+                    f24 = NULL;
+                }
+            }
+            free (decoded);
+        }
+        if (f24) {
+            if (tail) {
+                tail->next = f24;
+            }
+            else {
+                tag24->frames = f24;
+            }
+            tail = f24;
+        }
+    }
+
+    // convert tag header
+    tag24->version[0] = 4;
+    tag24->version[1] = 0;
+    tag24->flags = tag23->flags;
+    tag24->flags &= ~(1<<4); // no footer (unsupported in 2.3)
+    tag24->flags &= ~(1<<7); // no unsync
 
     return 0;
 }
