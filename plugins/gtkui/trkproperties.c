@@ -260,6 +260,21 @@ on_write_tags_clicked                  (GtkButton       *button,
             }
             deadbeef->junk_free_id3v2 (&tag24);
         }
+        else if (tag.version[0] == 2) {
+            DB_id3v2_tag_t tag24;
+            memset (&tag24, 0, sizeof (tag24));
+            int res = deadbeef->junk_id3v2_convert_22_to_24 (&tag, &tag24);
+            if (res == -1) {
+                deadbeef->junk_free_id3v2 (&tag24);
+                goto error;
+            }
+            if (deadbeef->junk_write_id3v2 (track->fname, &tag24) < 0) {
+                fprintf (stderr, "failed to write 2.4 tag to %s\n", track->fname);
+                deadbeef->junk_free_id3v2 (&tag24);
+                goto error;
+            }
+            deadbeef->junk_free_id3v2 (&tag24);
+        }
 
     }
     else {

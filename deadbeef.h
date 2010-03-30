@@ -411,6 +411,7 @@ typedef struct {
     int (*junk_read_id3v2_full) (DB_playItem_t *it, DB_id3v2_tag_t *tag, DB_FILE *fp);
     int (*junk_id3v2_convert_24_to_23) (DB_id3v2_tag_t *tag24, DB_id3v2_tag_t *tag23);
     int (*junk_id3v2_convert_23_to_24) (DB_id3v2_tag_t *tag23, DB_id3v2_tag_t *tag24);
+    int (*junk_id3v2_convert_22_to_24) (DB_id3v2_tag_t *tag22, DB_id3v2_tag_t *tag24);
     void (*junk_free_id3v2) (DB_id3v2_tag_t *tag);
     int (*junk_write_id3v2) (const char *fname, DB_id3v2_tag_t *tag);
     DB_id3v2_frame_t *(*junk_id3v2_add_text_frame_23) (DB_id3v2_tag_t *tag, const char *frame_id, const char *value); 

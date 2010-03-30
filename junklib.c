@@ -853,7 +853,7 @@ junk_id3v2_add_text_frame_23 (DB_id3v2_tag_t *tag, const char *frame_id, const c
     size_t outlen = inlen * 3;
     uint8_t out[outlen];
 
-    trace ("junklib: setting text frame '%s' = '%s'\n", frame_id, value);
+    trace ("junklib: setting 2.3 text frame '%s' = '%s'\n", frame_id, value);
 
     int unsync = 0;
     if (tag->flags & (1<<7)) {
@@ -1268,7 +1268,7 @@ junk_id3v2_convert_23_to_24 (DB_id3v2_tag_t *tag23, DB_id3v2_tag_t *tag24) {
                 unsync = 1;
             }
             id3v2_string_read (4, str, f23->size, unsync, f23->data);
-            char *decoded = convstr_id3v2_4 (str, f23->size);
+            char *decoded = convstr_id3v2_2to3 (str, f23->size);
             if (!decoded) {
                 trace ("junk_id3v2_convert_23_to_24: failed to decode text frame %s\n", f23->id);
                 continue; // failed, discard it
@@ -1341,6 +1341,163 @@ junk_id3v2_convert_23_to_24 (DB_id3v2_tag_t *tag23, DB_id3v2_tag_t *tag24) {
     tag24->version[0] = 4;
     tag24->version[1] = 0;
     tag24->flags = tag23->flags;
+    tag24->flags &= ~(1<<4); // no footer (unsupported in 2.3)
+    tag24->flags &= ~(1<<7); // no unsync
+
+    return 0;
+}
+
+int
+junk_id3v2_convert_22_to_24 (DB_id3v2_tag_t *tag22, DB_id3v2_tag_t *tag24) {
+    DB_id3v2_frame_t *f22;
+    DB_id3v2_frame_t *tail = NULL;
+
+    const char *copy_frames[] = {
+        "BUF", "COM", "CRA", "ETC", "GEO", "IPL", "MCI", "MLL", "POP", "REV", "SLT", "STC", "UFI", "ULT",
+        NULL
+    };
+
+    const char *copy_frames_24[] = {
+        "RBUF", "COMM", "AENC", "ETCO", "GEOB", "TIPL", "MCDI", "MLLT", "POPM", "RVRB", "SYLT", "SYTC", "UFID", "USLT",
+        NULL
+    };
+
+    // NOTE: BUF is discarded (no match in 2.4)
+    // NOTE: CNT is discarded (useless)
+    // NOTE: CRM is discarded (no match in 2.4)
+    // NOTE: EQU is discarded (difficult to convert to EQU2)
+    // NOTE: LNK is discarded (maybe later)
+    // NOTE: PIC is discarded (needs conversion from custom image-format field to mime-type)
+    // NOTE: RVA is discarded (subjective, and difficult to convert to RVA2)
+
+    const char *text_frames[] = {
+        "TAL", "TBP", "TCM", "TCO", "TCR", "TDY", "TEN", "TFT", "TKE", "TLA", "TLE", "TMT", "TOA", "TOF", "TOL", "TOT", "TP1", "TP2", "TP3", "TP4", "TPA", "TPB", "TRC", "TRK", "TSS", "TT1", "TT2", "TT3", "TXT", "TXX", NULL
+    };
+
+    const char *text_frames_24[] = {
+        "TALB", "TBPM", "TCOM", "TCON", "TCOP", "TDLY", "TENC", "TFLT", "TKEY", "TLAN", "TLEN", "TMED", "TOPE", "TOFN", "TOLY", "TOAL", "TPE1", "TPE2", "TPE3", "TPE4", "TPOS", "TPUB", "TSRC", "TRCK", "TSSE", "TIT1", "TIT2", "TIT3", "TEXT", "TXXX",
+        NULL
+    };
+
+    // FIXME: TYE+TDA+TIM should be translated into TDRC
+    // FIXME: TOR should be translated into TDOR
+    // NOTE: TRD is discarded (no match in 2.4)
+    // NOTE: TSI is discarded (no match in 2.4)
+
+    for (f22 = tag22->frames; f22; f22 = f22->next) {
+        int simplecopy = -1; // means format is the same in 2.2 and 2.4
+        int text = -1; // means this is a text frame
+
+        int i;
+
+        if (f22->id[0] == 'W') { // covers all W00..WZZ tags
+            simplecopy = 0;
+        }
+
+        if (simplecopy == -1) {
+            for (i = 0; copy_frames[i]; i++) {
+                if (!strcmp (f22->id, copy_frames[i])) {
+                    simplecopy = i;
+                    break;
+                }
+            }
+        }
+
+        if (simplecopy == -1) {
+            // check if this is a text frame
+            for (i = 0; text_frames[i]; i++) {
+                if (!strcmp (f22->id, text_frames[i])) {
+                    text = i;
+                    break;
+                }
+            }
+        }
+
+
+        if (simplecopy == -1 && text == -1) {
+            continue; // unknown frame
+        }
+
+        // convert flags
+        uint8_t flags[2];
+        // 1st byte (status flags) is the same, but shifted by 1 bit to the
+        // right
+        flags[0] = f22->flags[0] >> 1;
+        
+        // 2nd byte (format flags) is quite different
+        // 2.4 format is %0h00kmnp (grouping, compression, encryption, unsync)
+        // 2.3 format is %ijk00000 (compression, encryption, grouping)
+        flags[1] = 0;
+        if (f22->flags[1] & (1 << 4)) {
+            flags[1] |= (1 << 6);
+        }
+        if (f22->flags[1] & (1 << 7)) {
+            flags[1] |= (1 << 3);
+        }
+        if (f22->flags[1] & (1 << 6)) {
+            flags[1] |= (1 << 2);
+        }
+        if (f22->flags[1] & (1 << 5)) {
+            flags[1] |= (1 << 1);
+        }
+
+        DB_id3v2_frame_t *f24 = NULL;
+        if (simplecopy != -1) {
+            f24 = malloc (sizeof (DB_id3v2_frame_t) + f22->size);
+            memset (f24, 0, sizeof (DB_id3v2_frame_t) + f22->size);
+            if (f22->id[0] == 'W') { // duplicate last letter of W00-WZZ frames
+                strcpy (f24->id, f22->id);
+                f24->id[3] = f24->id[2];
+                f24->id[4] = 0;
+            }
+            else {
+                strcpy (f24->id, copy_frames_24[simplecopy]);
+            }
+            f24->size = f22->size;
+            memcpy (f24->data, f22->data, f22->size);
+            f24->flags[0] = flags[0];
+            f24->flags[1] = flags[1];
+        }
+        else if (text != -1) {
+            // decode text into utf8
+            char str[f22->size+2];
+
+            int unsync = 0;
+            if (tag22->flags & (1<<7)) {
+                unsync = 1;
+            }
+            if (f22->flags[1] & 1) {
+                unsync = 1;
+            }
+            id3v2_string_read (4, str, f22->size, unsync, f22->data);
+            char *decoded = convstr_id3v2_2to3 (str, f22->size);
+            if (!decoded) {
+                trace ("junk_id3v2_convert_23_to_24: failed to decode text frame %s\n", f22->id);
+                continue; // failed, discard it
+            }
+            // encode for 2.4
+            f24 = junk_id3v2_add_text_frame_24 (tag24, text_frames_24[text], decoded);
+            if (f24) {
+                tail = f24;
+                f24 = NULL;
+            }
+            free (decoded);
+        }
+        if (f24) {
+            if (tail) {
+                tail->next = f24;
+            }
+            else {
+                tag24->frames = f24;
+            }
+            tail = f24;
+        }
+    }
+
+    // convert tag header
+    tag24->version[0] = 4;
+    tag24->version[1] = 0;
+    tag24->flags = tag22->flags;
     tag24->flags &= ~(1<<4); // no footer (unsupported in 2.3)
     tag24->flags &= ~(1<<7); // no unsync
 
@@ -1900,8 +2057,22 @@ junk_read_id3v2_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                 char str[s + 3];
                 id3v2_string_read (version_major, &str[1], s, unsync, descr+dlen);
                 str[0] = enc;
-                comment = convstr (str, s+1);
-                trace ("COMM text: %s\n", comment);
+                char *text = convstr (str, s+1);
+
+                int len = (comment ? (strlen (comment) + 1) : 0) + strlen (descr) + strlen (text) + 3;
+                char *newcomment = malloc (len);
+                
+                if (comment) {
+                    snprintf (newcomment, len, "%s\n%s: %s", comment, descr, text);
+                }
+                else {
+                    snprintf (newcomment, len, "%s: %s", descr, text);
+                }
+                if (comment) {
+                    free (comment);
+                }
+                comment = newcomment;
+                trace ("COMM text: %s\n", text);
             }
             else if (!strcmp (frameid, "TENC")) {
                 if (sz > 1000) {
@@ -2001,6 +2172,7 @@ junk_read_id3v2_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                     fprintf (stderr, "junklib: failed to alloc %d bytes for id3v2.2 frame %s\n", sizeof (DB_id3v2_frame_t) + sz, frameid);
                     goto error;
                 }
+                memset (frm, 0, sizeof (DB_id3v2_frame_t));
                 if (tail) {
                     tail->next = frm;
                 }
@@ -2171,8 +2343,22 @@ junk_read_id3v2_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                 char str[s + 3];
                 id3v2_string_read (version_major, &str[1], s, unsync, descr+dlen);
                 str[0] = enc;
-                comment = convstr (str, s+1);
-                trace ("COM text: %s\n", comment);
+                char *text = convstr (str, s+1);
+
+                int len = (comment ? (strlen (comment) + 1) : 0) + strlen (descr) + strlen (text) + 3;
+                char *newcomment = malloc (len);
+                
+                if (comment) {
+                    snprintf (newcomment, len, "%s\n%s: %s", comment, descr, text);
+                }
+                else {
+                    snprintf (newcomment, len, "%s: %s", descr, text);
+                }
+                if (comment) {
+                    free (comment);
+                }
+                comment = newcomment;
+                trace ("COM text: %s\n", text);
             }
             readptr += sz;
         }
