@@ -180,6 +180,7 @@ static DB_functions_t deadbeef_api = {
     .volume_get_min_db = volume_get_min_db,
     // junk reading
     .junk_id3v1_read = (int (*)(DB_playItem_t *it, DB_FILE *fp))junk_id3v1_read,
+    .junk_id3v1_find = junk_id3v1_find,
     .junk_id3v2_read = (int (*)(DB_playItem_t *it, DB_FILE *fp))junk_id3v2_read,
     .junk_id3v2_read_full = (int (*)(DB_playItem_t *, DB_id3v2_tag_t *tag, DB_FILE *fp))junk_id3v2_read_full,
     .junk_id3v2_convert_24_to_23 = junk_id3v2_convert_24_to_23,
@@ -191,6 +192,7 @@ static DB_functions_t deadbeef_api = {
     .junk_id3v2_add_text_frame_23 = junk_id3v2_add_text_frame_23,
     .junk_id3v2_add_text_frame_24 = junk_id3v2_add_text_frame_24,
     .junk_apev2_read = (int (*)(DB_playItem_t *it, DB_FILE *fp))junk_apev2_read,
+    .junk_apev2_find = junk_apev2_find,
     .junk_get_leading_size = junk_get_leading_size,
     .junk_get_leading_size_stdio = junk_get_leading_size_stdio,
     .junk_detect_charset = junk_detect_charset,

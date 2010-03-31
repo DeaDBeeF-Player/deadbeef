@@ -20,6 +20,8 @@
 #include <mad.h>
 #include <assert.h>
 #include <stdlib.h>
+#include <limits.h>
+#include <unistd.h>
 #include "../../deadbeef.h"
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
@@ -1168,6 +1170,11 @@ cmp3_insert (DB_playItem_t *after, const char *fname) {
 
 int
 cmp3_write_metadata (DB_playItem_t *it) {
+    int err = -1;
+    char *buffer = NULL;
+    DB_FILE *fp = NULL;
+    FILE *out = NULL;
+
     // get options
     int strip_id3v2 = deadbeef->conf_get_int ("mp3.strip_id3v2", 0);
     int strip_id3v1 = deadbeef->conf_get_int ("mp3.strip_id3v2", 0);
@@ -1176,7 +1183,190 @@ cmp3_write_metadata (DB_playItem_t *it) {
     int write_id3v1 = deadbeef->conf_get_int ("mp3.write_id3v1", 0);
     int write_apev2 = deadbeef->conf_get_int ("mp3.write_apev2", 1);
     int id3v2_version = deadbeef->conf_get_int ("mp3.id3v2_version", 3);
+    if (id3v2_version != 3 && id3v2_version != 4) {
+        id3v2_version = 3;
+    }
     const char *id3v1_encoding = deadbeef->conf_get_str ("mp3.id3v1_encoding", "iso8859-1");
+
+    // find the beginning and the end of audio data
+    fp = deadbeef->fopen (it->fname);
+    if (!fp) {
+        return -1;
+    }
+
+    int id3v2_end = deadbeef->junk_get_leading_size (fp);
+    if (id3v2_end == -1) {
+        id3v2_end = 0;
+    }
+
+    int32_t apev2_size;
+    uint32_t flags, numitems;
+    int apev2_start = deadbeef->junk_apev2_find (fp, &apev2_size, &flags, &numitems);
+    if (apev2_start == -1) {
+        apev2_start = 0;
+    }
+
+    int id3v1_start = deadbeef->junk_id3v1_find (fp);
+    if (id3v1_start == -1) {
+        id3v1_start = 0;
+    }
+
+    int header = id3v2_end;
+    int footer = min (id3v1_start, apev2_start);
+
+    // mapping between ddb metadata names and id3v2/apev2 names
+    const char *md[] = {
+        "artist", "TPE1", "Artist",
+        "band", "TPE2", NULL,
+        "disc", "TPOS", "Media",
+        "title", "TIT2", "Title",
+        "album", "TALB", "Album",
+        "copyright", "TCOP", "Copyright",
+        "genre", "TCON", "Genre",
+        "vendor", "TENC", NULL,
+        "performer", "TPE3", NULL,
+        "composer", "TCOM", "Composer",
+        NULL
+    };
+    // "TRCK" -- special case
+    // "TYER"/"TDRC" -- special case
+
+    // open output file
+    out = NULL;
+    char tmppath[PATH_MAX];
+    snprintf (tmppath, sizeof (tmppath), "%s.temp.mp3", it->fname);
+
+    out = fopen (tmppath, "w+b");
+    trace ("will write tags into %s\n", tmppath);
+    if (!out) {
+        fprintf (stderr, "cmp3_write_metadata: failed to open temp file %s\n", tmppath);
+        goto error;
+    }
+
+    DB_id3v2_tag_t id3v2;
+    DB_apev2_tag_t apev2;
+
+    memset (&id3v2, 0, sizeof (id3v2));
+    memset (&apev2, 0, sizeof (id3v2));
+
+    if (!strip_id3v2 && !write_id3v2) {
+        id3v2_end = 0;
+    }
+    else if (write_id3v2) {
+        if (!id3v2_end || deadbeef->junk_id3v2_read_full (NULL, &id3v2, fp) != 0) {
+            trace ("failed to read id3v2 from file %s\n", it->fname);
+            deadbeef->junk_id3v2_free (&id3v2);
+            memset (&id3v2, 0, sizeof (id3v2));
+            id3v2.version[0] = id3v2_version;
+        }
+        // convert to required version
+        while (id3v2.version[0] != id3v2_version) {
+            DB_id3v2_tag_t converted;
+            memset (&converted, 0, sizeof (converted));
+            if (id3v2.version[0] == 2) {
+                if (deadbeef->junk_id3v2_convert_22_to_24 (&id3v2, &converted) != 0) {
+                    goto error;
+                }
+                deadbeef->junk_id3v2_free (&id3v2);
+                memcpy (&id3v2, &converted, sizeof (DB_id3v2_tag_t));
+                continue;
+            }
+            else if (id3v2.version[0] == 3) {
+                if (deadbeef->junk_id3v2_convert_23_to_24 (&id3v2, &converted) != 0) {
+                    goto error;
+                }
+                deadbeef->junk_id3v2_free (&id3v2);
+                memcpy (&id3v2, &converted, sizeof (DB_id3v2_tag_t));
+                continue;
+            }
+            else if (id3v2.version[0] == 4) {
+                if (deadbeef->junk_id3v2_convert_24_to_23 (&id3v2, &converted) != 0) {
+                    goto error;
+                }
+                deadbeef->junk_id3v2_free (&id3v2);
+                memcpy (&id3v2, &converted, sizeof (DB_id3v2_tag_t));
+                continue;
+            }
+        }
+
+        DB_id3v2_frame_t *(*add_frame) (DB_id3v2_tag_t *tag, const char *frame_id, const char *value);
+        if (id3v2_version == 3) {
+            add_frame = deadbeef->junk_id3v2_add_text_frame_23;
+        }
+        else {
+            add_frame = deadbeef->junk_id3v2_add_text_frame_24;
+        }
+
+        // add all known frames
+        for (int i = 0; md[i]; i += 3) {
+            if (md[i+1]) {
+                const char *val = deadbeef->pl_find_meta (it, md[i]);
+                if (val) {
+                    add_frame (&id3v2, md[i+1], val);
+                }
+            }
+        }
+        const char *track = deadbeef->pl_find_meta (it, "track");
+        const char *totaltracks = deadbeef->pl_find_meta (it, "numtracks");
+        if (track && totaltracks) {
+            char s[100];
+            snprintf (s, sizeof (s), "%s/%s", track, totaltracks);
+            add_frame (&id3v2, "TRCK", s);
+        }
+        else if (track) {
+            add_frame (&id3v2, "TRCK", track);
+        }
+
+        // write tag
+        if (deadbeef->junk_id3v2_write (out, &id3v2) != 0) {
+            trace ("cmp3_write_metadata: failed to write id3v2 tag to %s\n", it->fname)
+            goto error;
+        }
+    }
+
+    // now write audio data
+    buffer = malloc (8192);
+    deadbeef->fseek (fp, header, SEEK_SET);
+    int writesize = deadbeef->fgetlength (fp);
+    if (footer > 0) {
+        writesize -= (writesize - footer);
+    }
+    writesize -= header;
+    trace ("writesize: %d\n", writesize);
+
+    while (writesize > 0) {
+        int rb = min (8192, writesize);
+        rb = deadbeef->fread (buffer, 1, rb, fp);
+        if (rb < 0) {
+            fprintf (stderr, "junk_write_id3v2: error reading input data\n");
+            goto error;
+        }
+        if (fwrite (buffer, 1, rb, out) != rb) {
+            fprintf (stderr, "junk_write_id3v2: error writing output file\n");
+            goto error;
+        }
+        trace ("written %d bytes\n", rb);
+        if (rb == 0) {
+            break; // eof
+        }
+        writesize -= rb;
+    }
+
+    // TODO: apev2 and id3v1
+
+    err = 0;
+error:
+    if (fp) {
+        deadbeef->fclose (fp);
+    }
+    if (out) {
+        fclose (out);
+    }
+    if (buffer) {
+        free (buffer);
+    }
+//    unlink (tmppath);
+    return err;
 }
 
 static const char *exts[] = {

@@ -27,6 +27,9 @@ int
 junk_id3v1_read (struct playItem_s *it, DB_FILE *fp);
 
 int
+junk_id3v1_find (DB_FILE *fp);
+
+int
 junk_id3v2_read_full (struct playItem_s *it, DB_id3v2_tag_t *tag, DB_FILE *fp);
 
 int
@@ -64,6 +67,9 @@ junk_apev2_read_full (struct playItem_s *it, DB_apev2_tag_t *tag_store, DB_FILE 
 
 int
 junk_apev2_read (struct playItem_s *it, DB_FILE *fp);
+
+int
+junk_apev2_find (DB_FILE *fp, int32_t *psize, uint32_t *pflags, uint32_t *pnumitems);
 
 DB_apev2_frame_t *
 junk_apev2_add_text_frame (DB_apev2_tag_t *tag, const char *frame_id, const char *value);

@@ -573,21 +573,36 @@ junk_id3v1_read (playItem_t *it, DB_FILE *fp) {
 }
 
 int
-junk_apev2_find (FILE *fp, int32_t *psize, uint32_t *pflags, uint32_t *pnumitems) {
+junk_id3v1_find (DB_FILE *fp) {
+    uint8_t buffer[3];
+    if (deadbeef->fseek (fp, -128, SEEK_END) == -1) {
+        return -1;
+    }
+    if (deadbeef->fread (buffer, 1, 3, fp) != 3) {
+        return -1;
+    }
+    if (memcmp (buffer, "TAG", 3)) {
+        return -1; // no tag
+    }
+    return 128;
+}
+
+int
+junk_apev2_find (DB_FILE *fp, int32_t *psize, uint32_t *pflags, uint32_t *pnumitems) {
     uint8_t header[32];
-    if (fseek (fp, -32, SEEK_END) == -1) {
+    if (deadbeef->fseek (fp, -32, SEEK_END) == -1) {
         return -1; // something bad happened
     }
 
-    if (fread (header, 1, 32, fp) != 32) {
+    if (deadbeef->fread (header, 1, 32, fp) != 32) {
         return -1; // something bad happened
     }
     if (strncmp (header, "APETAGEX", 8)) {
         // try to skip 128 bytes backwards (id3v1)
-        if (fseek (fp, -128-32, SEEK_END) == -1) {
+        if (deadbeef->fseek (fp, -128-32, SEEK_END) == -1) {
             return -1; // something bad happened
         }
-        if (fread (header, 1, 32, fp) != 32) {
+        if (deadbeef->fread (header, 1, 32, fp) != 32) {
             return -1; // something bad happened
         }
         if (strncmp (header, "APETAGEX", 8)) {
@@ -602,30 +617,35 @@ junk_apev2_find (FILE *fp, int32_t *psize, uint32_t *pflags, uint32_t *pnumitems
 
     trace ("APEv%d, size=%d, items=%d, flags=%x\n", version, size, numitems, flags);
 
-    // seek to beginning of the tag
-    if (fseek (fp, -size, SEEK_CUR) == -1) {
+    // size contains footer, but not header, so add header size
+    if (flags & (1<<31)) {
+        size += 32;
+    }
+
+    // seek to beginning of the tag/header
+    if (deadbeef->fseek (fp, -size, SEEK_CUR) == -1) {
         trace ("failed to seek to tag start (-%d)\n", size);
         return -1;
     }
-    *psize = size-32;
+    *psize = size;
     *pflags = flags;
     *pnumitems = numitems;
-    return ftell (fp);
+    return deadbeef->ftell (fp);
 }
 
 int
-junk_find_id3v1 (FILE *fp) {
-    if (fseek (fp, -128, SEEK_END) == -1) {
+junk_find_id3v1 (DB_FILE *fp) {
+    if (deadbeef->fseek (fp, -128, SEEK_END) == -1) {
         return -1;
     }
     char buffer[3];
-    if (fread (buffer, 1, 3, fp) != 3) {
+    if (deadbeef->fread (buffer, 1, 3, fp) != 3) {
         return -1;
     }
     if (memcmp (buffer, "TAG", 3)) {
         return -1; // no tag
     }
-    return ftell (fp) - 3;
+    return deadbeef->ftell (fp) - 3;
 }
 
 int
@@ -751,6 +771,13 @@ junk_apev2_read_full (playItem_t *it, DB_apev2_tag_t *tag_store, DB_FILE *fp) {
                     pl_add_meta (it, "album", value);
                 }
                 else if (!strcasecmp (key, "track")) {
+                    char *slash = strchr (value, '/');
+                    if (slash) {
+                        // split into track/number
+                        *slash = 0;
+                        slash++;
+                        pl_add_meta (it, "numtracks", slash);
+                    }
                     pl_add_meta (it, "track", value);
                 }
                 else if (!strcasecmp (key, "year")) {
@@ -2140,7 +2167,6 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
     char *genre = NULL;
     char *performer = NULL;
     char *composer = NULL;
-    char *numtracks = NULL;
     char *disc = NULL;
     int err = 0;
     while (readptr - tag <= size - 4) {
@@ -2592,21 +2618,15 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
             free (composer);
         }
         if (track) {
-            if (!numtracks) {
-                char *slash = strchr (track, '/');
-                if (slash) {
-                    // split into track/number
-                    *slash = 0;
-                    slash++;
-                    numtracks = strdup (slash);
-                }
+            char *slash = strchr (track, '/');
+            if (slash) {
+                // split into track/number
+                *slash = 0;
+                slash++;
+                pl_add_meta (it, "numtracks", slash);
             }
             pl_add_meta (it, "track", track);
             free (track);
-        }
-        if (numtracks) {
-            pl_add_meta (it, "numtracks", numtracks);
-            free (numtracks);
         }
         if (title) {
             pl_add_meta (it, "title", title);
