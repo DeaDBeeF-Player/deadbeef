@@ -158,6 +158,7 @@ static DB_functions_t deadbeef_api = {
     .pl_search_process = pl_search_process,
     // metainfo
     .pl_add_meta = (void (*) (DB_playItem_t *, const char *, const char *))pl_add_meta,
+    .pl_append_meta = (void (*) (DB_playItem_t *, const char *, const char *))pl_append_meta,
     .pl_find_meta = (const char *(*) (DB_playItem_t *, const char *))pl_find_meta,
     .pl_replace_meta = (void (*) (DB_playItem_t *, const char *, const char *))pl_replace_meta,
     .pl_delete_all_meta = (void (*) (DB_playItem_t *it))pl_delete_all_meta,

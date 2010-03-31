@@ -380,6 +380,7 @@ typedef struct {
     void (*pl_search_process) (const char *text);
     // metainfo
     void (*pl_add_meta) (DB_playItem_t *it, const char *key, const char *value);
+    void (*pl_append_meta) (DB_playItem_t *it, const char *key, const char *value);
     // must be used from within explicit pl_lock/unlock block
     const char *(*pl_find_meta) (DB_playItem_t *it, const char *key);
     void (*pl_replace_meta) (DB_playItem_t *it, const char *key, const char *value);

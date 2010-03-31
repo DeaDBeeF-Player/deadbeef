@@ -178,6 +178,9 @@ pl_insert_cue (playItem_t *after, playItem_t *origin, int numsamples, int sample
 void
 pl_add_meta (playItem_t *it, const char *key, const char *value);
 
+void
+pl_append_meta (playItem_t *it, const char *key, const char *value);
+
 // must be used in explicit pl_lock/unlock block
 // that makes it possible to avoid copying metadata on every access
 const char *

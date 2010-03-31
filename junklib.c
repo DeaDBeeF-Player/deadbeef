@@ -33,6 +33,8 @@
 
 #pragma GCC optimize("O0")
 
+#define MAX_TEXT_FRAME_SIZE 1024
+
 #define UTF8 "utf-8"
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
@@ -256,21 +258,29 @@ static int
 can_be_russian (const signed char *str) {
     int latin = 0;
     int rus = 0;
+    int rus_in_row = 0;
+    int max_rus_row = 0;
     for (; *str; str++) {
         if ((*str >= 'A' && *str <= 'Z')
                 || *str >= 'a' && *str <= 'z') {
+            if (rus_in_row > max_rus_row) {
+                max_rus_row = rus_in_row;
+            }
+            rus_in_row = 0;
             latin++;
         }
         else if (*str < 0) {
+            rus_in_row++;
             rus++;
         }
     }
-    if (rus > latin/2) {
+    if (rus > latin/2 || (max_rus_row > 4)) {
         return 1;
     }
     return 0;
 }
 
+#if 0
 static char *
 convstr_id3v2_2to3 (const unsigned char* str, int sz) {
     static char out[2048];
@@ -322,16 +332,17 @@ convstr_id3v2_2to3 (const unsigned char* str, int sz) {
     }
     return strdup (ret);
 }
+#endif
 
 static char *
-convstr_id3v2_4 (const unsigned char* str, int sz) {
+convstr_id3v2 (int version, const unsigned char* str, int sz) {
     static char out[2048];
     const char *enc = "iso8859-1";
     char *ret = out;
 
     // hack to add limited cp1251 recoding support
 
-    if (*str == 3) {
+    if (version == 4 && *str == 3) {
         // utf8
         trace ("utf8\n");
         strncpy (out, str+1, 2047);
@@ -339,13 +350,31 @@ convstr_id3v2_4 (const unsigned char* str, int sz) {
         out[min (sz, 2047)] = 0;
         return strdup (out);
     }
-    else if (*str == 1) {
-        trace ("utf16\n");
-        enc = "UTF-16";
-    }
-    else if (*str == 2) {
+    else if (version == 4 && *str == 2) {
         trace ("utf16be\n");
         enc = "UTF-16BE";
+    }
+    else if (*str == 1) {
+        if (version < 4) {
+            if (str[1] == 0xff && str[2] == 0xfe) {
+                enc = "UCS-2LE";
+                str += 2;
+                sz -= 2;
+            }
+            else if (str[2] == 0xff && str[1] == 0xfe) {
+                enc = "UCS-2BE";
+                str += 2;
+                sz -= 2;
+            }
+            else {
+                trace ("invalid ucs-2 signature %x %x\n", (int)str[1], (int)str[2]);
+                return NULL;
+            }
+        }
+        else {
+            trace ("utf16\n");
+            enc = "UTF-16";
+        }
     }
 #if 0
     // NOTE: some dumb taggers put non-iso8859-1 text with enc=0
@@ -530,13 +559,7 @@ junk_read_id3v1 (playItem_t *it, DB_FILE *fp) {
         pl_add_meta (it, "track", s);
     }
 
-    char new_tags[100] = "";
-    const char *tags = pl_find_meta (it, "tags");
-    if (tags) {
-        strcpy (new_tags, tags);
-    }
-    strcat (new_tags, "ID3v1 ");
-    pl_replace_meta (it, "tags", new_tags);
+    pl_append_meta (it, "tags", "ID3v1");
 // FIXME: that should be accounted for
 //    if (it->endoffset < 128) {
 //        it->endoffset = 128;
@@ -583,13 +606,8 @@ junk_read_ape (playItem_t *it, DB_FILE *fp) {
     uint32_t flags = extract_i32_le (&header[20]);
 
     trace ("APEv%d, size=%d, items=%d, flags=%x\n", version, size, numitems, flags);
-    char new_tags[100] = "";
-    const char *tags = pl_find_meta (it, "tags");
-    if (tags) {
-        strcpy (new_tags, tags);
-    }
-    strcat (new_tags, "APEv2 ");
-    pl_replace_meta (it, "tags", new_tags);
+    pl_append_meta (it, "tags", "APEv2");
+
     // now seek to beginning of the tag (exluding header)
     if (deadbeef->fseek (fp, -size, SEEK_CUR) == -1) {
         trace ("failed to seek to tag start (-%d)\n", size);
@@ -950,6 +968,7 @@ junk_id3v2_add_text_frame_24 (DB_id3v2_tag_t *tag, const char *frame_id, const c
 
     return f;
 }
+
 // [+] TODO: remove all unsync bytes during conversion, where appropriate
 // TODO: some non-Txxx frames might still need charset conversion
 // TODO: 2.4 TDTG frame (tagging time) should not be converted, but might be useful to create it
@@ -1078,7 +1097,7 @@ junk_id3v2_convert_24_to_23 (DB_id3v2_tag_t *tag24, DB_id3v2_tag_t *tag23) {
                 unsync = 1;
             }
             id3v2_string_read (4, str, f24->size, unsync, f24->data);
-            char *decoded = convstr_id3v2_4 (str, f24->size);
+            char *decoded = convstr_id3v2 (4, str, f24->size);
             if (!decoded) {
                 trace ("junk_id3v2_convert_24_to_23: failed to decode text frame %s\n", f24->id);
                 continue; // failed, discard it
@@ -1268,7 +1287,7 @@ junk_id3v2_convert_23_to_24 (DB_id3v2_tag_t *tag23, DB_id3v2_tag_t *tag24) {
                 unsync = 1;
             }
             id3v2_string_read (4, str, f23->size, unsync, f23->data);
-            char *decoded = convstr_id3v2_2to3 (str, f23->size);
+            char *decoded = convstr_id3v2 (3, str, f23->size);
             if (!decoded) {
                 trace ("junk_id3v2_convert_23_to_24: failed to decode text frame %s\n", f23->id);
                 continue; // failed, discard it
@@ -1470,7 +1489,7 @@ junk_id3v2_convert_22_to_24 (DB_id3v2_tag_t *tag22, DB_id3v2_tag_t *tag24) {
                 unsync = 1;
             }
             id3v2_string_read (4, str, f22->size, unsync, f22->data);
-            char *decoded = convstr_id3v2_2to3 (str, f22->size);
+            char *decoded = convstr_id3v2 (2, str, f22->size);
             if (!decoded) {
                 trace ("junk_id3v2_convert_23_to_24: failed to decode text frame %s\n", f22->id);
                 continue; // failed, discard it
@@ -1690,6 +1709,18 @@ junklib_id3v2_sync_frame (uint8_t *data, int size) {
     return written;
 }
 
+char *
+junk_append_meta (const char *old, const char *new) {
+    int sz = strlen (old) + strlen (new) + 2;
+    char *appended = malloc (sz);
+    if (!appended) {
+        trace ("junk_append_meta: failed to allocate %d bytes\n");
+        return NULL;
+    }
+    snprintf (appended, sz, "%s\n%s", old, new);
+    return appended;
+}
+
 int
 junk_read_id3v2_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
     DB_id3v2_frame_t *tail = NULL;
@@ -1775,13 +1806,6 @@ junk_read_id3v2_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
         }
         readptr += 4; // skip crc
 #endif
-    }
-    char * (*convstr)(const unsigned char *, int);
-    if (version_major == 3) {
-        convstr = convstr_id3v2_2to3;
-    }
-    else {
-        convstr = convstr_id3v2_4;
     }
     char *artist = NULL;
     char *album = NULL;
@@ -1925,112 +1949,39 @@ junk_read_id3v2_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                     sz--;
                 }
             }
-            if (!strcmp (frameid, "TPE1")) {
-                if (sz > 1000) {
-                    err = 1;
-                    break; // too large
-                }
-                char str[sz+2];
-                id3v2_string_read (version_major, &str[0], sz, unsync, readptr);
-                artist = convstr (str, sz);
-            }
-            else if (!strcmp (frameid, "TPE2")) {
-                if (sz > 1000) {
-                    err = 1;
-                    break; // too large
-                }
-                char str[sz+2];
-                id3v2_string_read (version_major, &str[0], sz, unsync, readptr);
-                band = convstr (str, sz);
-            }
-            else if (!strcmp (frameid, "TRCK")) {
-                if (sz > 1000) {
-                    err = 1;
-                    break; // too large
-                }
-                char str[sz+2];
-                id3v2_string_read (version_major, &str[0], sz, unsync, readptr);
 
-                track = convstr (str, sz);
-                if (track) {
-                    char *slash = strchr (track, '/');
-                    if (slash) {
-                        // split into track/number
-                        *slash = 0;
-                        slash++;
-                        numtracks = strdup (slash);
+            // parse basic 2.3/2.4 text frames
+            const char *text_frames[] = { "TPE1", "TPE2", "TPOS", "TIT2", "TALB", "TCOP", "TCON", "TENC", "TPE3", "TCOM", "TRCK", "TYER", "TDRC", NULL };
+            char **text_holders[] = { &artist, &band, &disc, &title, &album, &copyright, &genre, &vendor, &performer, &composer, &track, version_major == 3 ? &year : NULL,  version_major == 4 ? &year : NULL, };
+            int f = 0;
+            for (f = 0; text_frames[f]; f++) {
+                if (!strcmp (frameid, text_frames[f])) {
+                    if (sz > MAX_TEXT_FRAME_SIZE) {
+                        trace ("frame %s is too big, discard\n", frameid);
+                        break;
                     }
+                    char str[sz + 2];
+                    id3v2_string_read (version_major, str, sz, unsync, readptr);
+                    char *text = convstr_id3v2 (version_major, str, sz);
+                    if (text && text_holders[f]) {
+                        if (*text_holders[f]) {
+                            // append
+                            char *new = junk_append_meta (*text_holders[f], text);
+                            if (new) {
+                                free (*text_holders[f]);
+                                *text_holders[f] = new;
+                            }
+                            free (text);
+                        }
+                        else {
+                            *text_holders[f] = text;
+                        }
+                    }
+                    break;
                 }
             }
-            else if (!strcmp (frameid, "TPOS")) {
-                if (sz > 1000) {
-                    err = 1;
-                    break; // too large
-                }
-                char str[sz+2];
-                id3v2_string_read (version_major, &str[0], sz, unsync, readptr);
-                disc = convstr (str, sz);
-            }
-            else if (!strcmp (frameid, "TIT2")) {
-                trace ("parsing TIT2...\n");
-                if (sz > 1000) {
-                    err = 1;
-                    break; // too large
-                }
-                trace ("parsing TIT2....\n");
-                char str[sz+2];
-                id3v2_string_read (version_major, &str[0], sz, unsync, readptr);
-                title = convstr (str, sz);
-            }
-            else if (!strcmp (frameid, "TALB")) {
-                if (sz > 1000) {
-                    err = 1;
-                    break; // too large
-                }
-                char str[sz+2];
-                id3v2_string_read (version_major, &str[0], sz, unsync, readptr);
-                album = convstr (str, sz);
-            }
-            else if (version_major == 3 && !strcmp (frameid, "TYER")) { // this frame is 2.3-only
-                if (sz > 1000) {
-                    err = 1;
-                    break; // too large
-                }
-                char str[sz+2];
-                id3v2_string_read (version_major, &str[0], sz, unsync, readptr);
-                year = convstr (str, sz);
-            }
-            else if (version_major == 4 && !strcmp (frameid, "TDRC")) { // this frame is 2.3-only
-                if (sz > 1000) {
-                    err = 1;
-                    break; // too large
-                }
-                char str[sz+2];
-                id3v2_string_read (version_major, &str[0], sz, unsync, readptr);
-                year = convstr (str, sz);
-            }
-            else if (!strcmp (frameid, "TCOP")) {
-                if (sz > 1000) {
-                    err = 1;
-                    break; // too large
-                }
-                char str[sz+2];
-                id3v2_string_read (version_major, &str[0], sz, unsync, readptr);
-                copyright = convstr (str, sz);
-                trace ("TCOP: %s\n", copyright);
-            }
-            else if (!strcmp (frameid, "TCON")) {
-                if (sz > 1000) {
-                    err = 1;
-                    break; // too large
-                }
-                char str[sz+2];
-                id3v2_string_read (version_major, &str[0], sz, unsync, readptr);
-                genre = convstr (str, sz);
 
-                trace ("TCON: %s\n", genre);
-            }
-            else if (!strcmp (frameid, "COMM")) {
+            if (!strcmp (frameid, "COMM")) {
                 if (sz < 4) {
                     trace ("COMM frame is too short, skipped\n");
                     readptr += sz; // bad tag
@@ -2052,7 +2003,7 @@ junk_read_id3v2_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                 char str[s + 3];
                 id3v2_string_read (version_major, &str[1], s, unsync, descr+dlen);
                 str[0] = enc;
-                char *text = convstr (str, s+1);
+                char *text = convstr_id3v2 (version_major, str, s+1);
 
                 int len = (comment ? (strlen (comment) + 1) : 0) + strlen (descr) + strlen (text) + 3;
                 char *newcomment = malloc (len);
@@ -2068,36 +2019,6 @@ junk_read_id3v2_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                 }
                 comment = newcomment;
                 trace ("COMM text: %s\n", text);
-            }
-            else if (!strcmp (frameid, "TENC")) {
-                if (sz > 1000) {
-                    err = 1;
-                    break; // too large
-                }
-                char str[sz+2];
-                id3v2_string_read (version_major, &str[0], sz, unsync, readptr);
-                vendor = convstr (str, sz);
-                trace ("TENC: %s\n", vendor);
-            }
-            else if (!strcmp (frameid, "TPE3")) {
-                if (sz > 1000) {
-                    err = 1;
-                    break; // too large
-                }
-                char str[sz+2];
-                id3v2_string_read (version_major, &str[0], sz, unsync, readptr);
-                performer = convstr (str, sz);
-                trace ("TPE3: %s\n", performer);
-            }
-            else if (!strcmp (frameid, "TCOM")) {
-                if (sz > 1000) {
-                    err = 1;
-                    break; // too large
-                }
-                char str[sz+2];
-                id3v2_string_read (version_major, &str[0], sz, unsync, readptr);
-                composer = convstr (str, sz);
-                trace ("TCOM: %s\n", composer);
             }
             else if (!strcmp (frameid, "TXXX")) {
                 if (sz < 2) {
@@ -2180,144 +2101,40 @@ junk_read_id3v2_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                 frm->size = sz;
             }
 //            trace ("found id3v2.2 frame: %s, size=%d\n", frameid, sz);
-            if (!strcmp (frameid, "TEN")) {
-                char str[sz+2];
-                //memcpy (str, readptr, sz);
-                id3v2_string_read (version_major, &str[0], sz, unsync, readptr);
-                str[sz] = 0;
-                vendor = convstr (str, sz);
-            }
-            else if (!strcmp (frameid, "TT2")) {
-                if (sz > 1000) {
-                    readptr += sz;
-                    continue;
-                }
-                char str[sz+2];
-                //memcpy (str, readptr, sz);
-                id3v2_string_read (version_major, &str[0], sz, unsync, readptr);
-                str[sz] = 0;
-                title = convstr (str, sz);
-            }
-            else if (!strcmp (frameid, "TAL")) {
-                if (sz > 1000) {
-                    readptr += sz;
-                    continue;
-                }
-                char str[sz+2];
-                //memcpy (str, readptr, sz);
-                id3v2_string_read (version_major, &str[0], sz, unsync, readptr);
-                str[sz] = 0;
-                album = convstr (str, sz);
-            }
-            else if (!strcmp (frameid, "TP1")) {
-                if (sz > 1000) {
-                    readptr += sz;
-                    continue;
-                }
-                char str[sz+2];
-                //memcpy (str, readptr, sz);
-                id3v2_string_read (version_major, &str[0], sz, unsync, readptr);
-                str[sz] = 0;
-                artist = convstr (str, sz);
-            }
-            else if (!strcmp (frameid, "TP2")) {
-                if (sz > 1000) {
-                    readptr += sz;
-                    continue;
-                }
-                char str[sz+2];
-                //memcpy (str, readptr, sz);
-                id3v2_string_read (version_major, &str[0], sz, unsync, readptr);
-                str[sz] = 0;
-                band = convstr (str, sz);
-            }
-            else if (!strcmp (frameid, "TP3")) {
-                if (sz > 1000) {
-                    readptr += sz;
-                    continue;
-                }
-                char str[sz+2];
-                //memcpy (str, readptr, sz);
-                id3v2_string_read (version_major, &str[0], sz, unsync, readptr);
-                str[sz] = 0;
-                performer = convstr (str, sz);
-            }
-            else if (!strcmp (frameid, "TCM")) {
-                if (sz > 1000) {
-                    readptr += sz;
-                    continue;
-                }
-                char str[sz+2];
-                //memcpy (str, readptr, sz);
-                id3v2_string_read (version_major, &str[0], sz, unsync, readptr);
-                str[sz] = 0;
-                composer = convstr (str, sz);
-            }
-            else if (!strcmp (frameid, "TPA")) {
-                if (sz > 1000) {
-                    readptr += sz;
-                    continue;
-                }
-                char str[sz+2];
-                //memcpy (str, readptr, sz);
-                id3v2_string_read (version_major, &str[0], sz, unsync, readptr);
-                str[sz] = 0;
-                disc = convstr (str, sz);
-            }
-            else if (!strcmp (frameid, "TRK")) {
-                if (sz > 1000) {
-                    readptr += sz;
-                    continue;
-                }
-                char str[sz+2];
-                //memcpy (str, readptr, sz);
-                id3v2_string_read (version_major, &str[0], sz, unsync, readptr);
-                str[sz] = 0;
-                track = convstr (str, sz);
-                if (track) {
-                    char *slash = strchr (track, '/');
-                    if (slash) {
-                        // split into track/number
-                        *slash = 0;
-                        slash++;
-                        numtracks = strdup (slash);
+
+            // parse basic 2.2 text frames
+            const char *text_frames[] = { "TEN", "TT2", "TAL", "TP1", "TP2", "TP3", "TCM", "TPA", "TRK", "TYE", "TCR", "TCO", NULL };
+            char **text_holders[] = { &vendor, &title, &album, &artist, &band, &performer, &composer, &disc, &track, &year, &copyright, &genre,  };
+            int f = 0;
+            for (f = 0; text_frames[f]; f++) {
+                if (!strcmp (frameid, text_frames[f])) {
+                    if (sz > MAX_TEXT_FRAME_SIZE) {
+                        trace ("frame %s is too big, discard\n", frameid);
+                        break;
                     }
+                    char str[sz + 2];
+                    id3v2_string_read (version_major, str, sz, unsync, readptr);
+                    str[sz] = 0;
+                    char *text = convstr_id3v2 (version_major, str, sz);
+                    if (text && text_holders[f]) {
+                        if (*text_holders[f]) {
+                            // append
+                            char *new = junk_append_meta (*text_holders[f], text);
+                            if (new) {
+                                free (*text_holders[f]);
+                                *text_holders[f] = new;
+                            }
+                            free (text);
+                        }
+                        else {
+                            *text_holders[f] = text;
+                        }
+                    }
+                    break;
                 }
             }
-            else if (!strcmp (frameid, "TYE")) {
-                if (sz > 1000) {
-                    readptr += sz;
-                    continue;
-                }
-                char str[sz+2];
-                //memcpy (str, readptr, sz);
-                id3v2_string_read (version_major, &str[0], sz, unsync, readptr);
-                str[sz] = 0;
-                year = convstr (str, sz);
-            }
-            else if (!strcmp (frameid, "TCR")) {
-                if (sz > 1000) {
-                    readptr += sz;
-                    continue;
-                }
-                char str[sz+2];
-                //memcpy (str, readptr, sz);
-                id3v2_string_read (version_major, &str[0], sz, unsync, readptr);
-                str[sz] = 0;
-                copyright = convstr (str, sz);
-            }
-            else if (!strcmp (frameid, "TCO")) {
-                if (sz > 1000) {
-                    readptr += sz;
-                    continue;
-                }
-                char str[sz+2];
-                //memcpy (str, readptr, sz);
-                id3v2_string_read (version_major, &str[0], sz, unsync, readptr);
-                str[sz] = 0;
-                genre = convstr (str, sz);
-            }
-            else if (!strcmp (frameid, "COM")) {
+
+            if (!strcmp (frameid, "COM")) {
                 if (sz > 1000) {
                     readptr += sz;
                     continue;
@@ -2338,7 +2155,7 @@ junk_read_id3v2_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                 char str[s + 3];
                 id3v2_string_read (version_major, &str[1], s, unsync, descr+dlen);
                 str[0] = enc;
-                char *text = convstr (str, s+1);
+                char *text = convstr_id3v2 (version_major, str, s+1);
 
                 int len = (comment ? (strlen (comment) + 1) : 0) + strlen (descr) + strlen (text) + 3;
                 char *newcomment = malloc (len);
@@ -2354,6 +2171,50 @@ junk_read_id3v2_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                 }
                 comment = newcomment;
                 trace ("COM text: %s\n", text);
+            }
+            else if (!strcmp (frameid, "TXX")) {
+                if (sz < 2) {
+                    trace ("TXX frame is too short, skipped\n");
+                    readptr += sz; // bad tag
+                    continue;
+                }
+                uint8_t *p = readptr;
+                uint8_t encoding = *p;
+                p++;
+                uint8_t *desc = p;
+                int desc_sz = 0;
+                while (*p && p - readptr < sz) {
+                    p++;
+                    desc_sz++;
+                }
+                p++;
+                if (p - readptr >= sz) {
+                    trace ("bad TXXX frame, skipped\n");
+                    readptr += sz; // bad tag
+                    continue;
+                }
+                char desc_s[desc_sz+2];
+                id3v2_string_read (version_major, desc_s, desc_sz, unsync, desc);
+                //trace ("desc=%s\n", desc_s);
+                char value_s[readptr+sz-p+2];
+                id3v2_string_read (version_major, value_s, readptr+sz-p, unsync, p);
+                //trace ("value=%s\n", value_s);
+                if (!strcasecmp (desc_s, "replaygain_album_gain")) {
+                    it->replaygain_album_gain = atof (value_s);
+                    trace ("%s=%s (%f)\n", desc_s, value_s, it->replaygain_album_gain);
+                }
+                else if (!strcasecmp (desc_s, "replaygain_album_peak")) {
+                    it->replaygain_album_peak = atof (value_s);
+                    trace ("%s=%s (%f)\n", desc_s, value_s, it->replaygain_album_peak);
+                }
+                else if (!strcasecmp (desc_s, "replaygain_track_gain")) {
+                    it->replaygain_track_gain = atof (value_s);
+                    trace ("%s=%s (%f)\n", desc_s, value_s, it->replaygain_track_gain);
+                }
+                else if (!strcasecmp (desc_s, "replaygain_track_peak")) {
+                    it->replaygain_track_peak = atof (value_s);
+                    trace ("%s=%s (%f)\n", desc_s, value_s, it->replaygain_track_peak);
+                }
             }
             readptr += sz;
         }
@@ -2383,6 +2244,15 @@ junk_read_id3v2_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
             free (composer);
         }
         if (track) {
+            if (!numtracks) {
+                char *slash = strchr (track, '/');
+                if (slash) {
+                    // split into track/number
+                    *slash = 0;
+                    slash++;
+                    numtracks = strdup (slash);
+                }
+            }
             pl_add_meta (it, "track", track);
             free (track);
         }
@@ -2466,21 +2336,17 @@ junk_read_id3v2_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
             pl_add_meta (it, "disc", disc);
             free (disc);
         }
-        char new_tags[100] = "";
-        const char *tags = pl_find_meta (it, "tags");
-        if (tags) {
-            strcpy (new_tags, tags);
-        }
+
         if (version_major == 2) {
-            strcat (new_tags, "ID3v2.2 ");
+            pl_append_meta (it, "tags", "ID3v2.2");
         }
         else if (version_major == 3) {
-            strcat (new_tags, "ID3v2.3 ");
+            pl_append_meta (it, "tags", "ID3v2.3");
         }
         else if (version_major == 4) {
-            strcat (new_tags, "ID3v2.4 ");
+            pl_append_meta (it, "tags", "ID3v2.4");
         }
-        pl_replace_meta (it, "tags", new_tags);
+
         if (!title) {
             pl_add_meta (it, "title", NULL);
         }
