@@ -73,6 +73,7 @@ show_track_properties_dlg (DB_playItem_t *it) {
         deadbeef->pl_item_ref (it);
     }
     track = it;
+
     if (!trackproperties) {
         trackproperties = create_trackproperties ();
         gtk_window_set_transient_for (GTK_WINDOW (trackproperties), GTK_WINDOW (mainwin));
@@ -190,6 +191,25 @@ show_track_properties_dlg (DB_playItem_t *it) {
     }
     deadbeef->pl_unlock ();
 
+    // get decoder plugin by id
+    DB_decoder_t *dec = NULL;
+    if (it->decoder_id) {
+        DB_decoder_t **decoders = deadbeef->plug_get_decoder_list ();
+        for (int i = 0; decoders[i]; i++) {
+            if (!strcmp (decoders[i]->plugin.id, it->decoder_id)) {
+                dec = decoders[i];
+                break;
+            }
+        }
+    }
+
+    if (dec && dec->write_metadata && deadbeef->conf_get_int ("enable_tag_writing", 0)) {
+        gtk_widget_set_sensitive (lookup_widget (widget, "write_tags"), TRUE);
+    }
+    else {
+        gtk_widget_set_sensitive (lookup_widget (widget, "write_tags"), FALSE);
+    }
+
     gtk_widget_show (widget);
     gtk_window_present (GTK_WINDOW (widget));
 }
@@ -203,6 +223,22 @@ on_write_tags_clicked                  (GtkButton       *button,
         fprintf (stderr, "tag writing disabled\n");
         return;
     }
+    if (!track || !track->decoder_id) {
+        return;
+    }
+    // find decoder
+    DB_decoder_t *dec = NULL;
+    DB_decoder_t **decoders = deadbeef->plug_get_decoder_list ();
+    for (int i = 0; decoders[i]; i++) {
+        if (!strcmp (decoders[i]->plugin.id, track->decoder_id)) {
+            dec = decoders[i];
+            if (dec->write_metadata) {
+                dec->write_metadata (track);
+            }
+            break;
+        }
+    }
+#if 0
     DB_id3v2_tag_t tag;
     memset (&tag, 0, sizeof (tag));
     DB_FILE *fp = deadbeef->fopen (track->fname);
@@ -285,5 +321,6 @@ error:
         deadbeef->fclose (fp);
     }
     deadbeef->junk_free_id3v2 (&tag);
+#endif
 }
 

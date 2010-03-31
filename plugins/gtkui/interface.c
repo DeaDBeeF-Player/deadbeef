@@ -1079,6 +1079,13 @@ create_trackproperties (void)
 {
   GtkWidget *trackproperties;
   GtkWidget *notebook3;
+  GtkWidget *vbox16;
+  GtkWidget *scrolledwindow5;
+  GtkWidget *metalist;
+  GtkWidget *hbuttonbox1;
+  GtkWidget *write_tags;
+  GtkWidget *button4;
+  GtkWidget *label64;
   GtkWidget *vbox13;
   GtkWidget *hbox23;
   GtkWidget *label27;
@@ -1110,12 +1117,6 @@ create_trackproperties (void)
   GtkWidget *hbuttonbox2;
   GtkWidget *button3;
   GtkWidget *label65;
-  GtkWidget *vbox16;
-  GtkWidget *scrolledwindow5;
-  GtkWidget *metalist;
-  GtkWidget *hbuttonbox1;
-  GtkWidget *write_tags;
-  GtkWidget *label64;
 
   trackproperties = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_window_set_title (GTK_WINDOW (trackproperties), "Track Properties");
@@ -1126,6 +1127,41 @@ create_trackproperties (void)
   notebook3 = gtk_notebook_new ();
   gtk_widget_show (notebook3);
   gtk_container_add (GTK_CONTAINER (trackproperties), notebook3);
+
+  vbox16 = gtk_vbox_new (FALSE, 8);
+  gtk_widget_show (vbox16);
+  gtk_container_add (GTK_CONTAINER (notebook3), vbox16);
+  gtk_container_set_border_width (GTK_CONTAINER (vbox16), 12);
+
+  scrolledwindow5 = gtk_scrolled_window_new (NULL, NULL);
+  gtk_widget_show (scrolledwindow5);
+  gtk_box_pack_start (GTK_BOX (vbox16), scrolledwindow5, TRUE, TRUE, 0);
+  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow5), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+  gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow5), GTK_SHADOW_IN);
+
+  metalist = gtk_tree_view_new ();
+  gtk_widget_show (metalist);
+  gtk_container_add (GTK_CONTAINER (scrolledwindow5), metalist);
+  gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (metalist), TRUE);
+
+  hbuttonbox1 = gtk_hbutton_box_new ();
+  gtk_widget_show (hbuttonbox1);
+  gtk_box_pack_start (GTK_BOX (vbox16), hbuttonbox1, FALSE, FALSE, 0);
+  gtk_button_box_set_layout (GTK_BUTTON_BOX (hbuttonbox1), GTK_BUTTONBOX_END);
+
+  write_tags = gtk_button_new_with_mnemonic ("Write");
+  gtk_widget_show (write_tags);
+  gtk_container_add (GTK_CONTAINER (hbuttonbox1), write_tags);
+  GTK_WIDGET_SET_FLAGS (write_tags, GTK_CAN_DEFAULT);
+
+  button4 = gtk_button_new_with_mnemonic ("Close");
+  gtk_widget_show (button4);
+  gtk_container_add (GTK_CONTAINER (hbuttonbox1), button4);
+  GTK_WIDGET_SET_FLAGS (button4, GTK_CAN_DEFAULT);
+
+  label64 = gtk_label_new ("Full");
+  gtk_widget_show (label64);
+  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook3), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook3), 0), label64);
 
   vbox13 = gtk_vbox_new (FALSE, 8);
   gtk_widget_show (vbox13);
@@ -1285,44 +1321,14 @@ create_trackproperties (void)
   gtk_box_pack_start (GTK_BOX (vbox13), hbuttonbox2, TRUE, TRUE, 0);
   gtk_button_box_set_layout (GTK_BUTTON_BOX (hbuttonbox2), GTK_BUTTONBOX_END);
 
-  button3 = gtk_button_new_with_mnemonic ("Write");
+  button3 = gtk_button_new_with_mnemonic ("Close");
   gtk_widget_show (button3);
   gtk_container_add (GTK_CONTAINER (hbuttonbox2), button3);
   GTK_WIDGET_SET_FLAGS (button3, GTK_CAN_DEFAULT);
 
   label65 = gtk_label_new ("Summary");
   gtk_widget_show (label65);
-  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook3), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook3), 0), label65);
-
-  vbox16 = gtk_vbox_new (FALSE, 8);
-  gtk_widget_show (vbox16);
-  gtk_container_add (GTK_CONTAINER (notebook3), vbox16);
-  gtk_container_set_border_width (GTK_CONTAINER (vbox16), 12);
-
-  scrolledwindow5 = gtk_scrolled_window_new (NULL, NULL);
-  gtk_widget_show (scrolledwindow5);
-  gtk_box_pack_start (GTK_BOX (vbox16), scrolledwindow5, TRUE, TRUE, 0);
-  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow5), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-  gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow5), GTK_SHADOW_IN);
-
-  metalist = gtk_tree_view_new ();
-  gtk_widget_show (metalist);
-  gtk_container_add (GTK_CONTAINER (scrolledwindow5), metalist);
-  gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (metalist), TRUE);
-
-  hbuttonbox1 = gtk_hbutton_box_new ();
-  gtk_widget_show (hbuttonbox1);
-  gtk_box_pack_start (GTK_BOX (vbox16), hbuttonbox1, FALSE, FALSE, 0);
-  gtk_button_box_set_layout (GTK_BUTTON_BOX (hbuttonbox1), GTK_BUTTONBOX_END);
-
-  write_tags = gtk_button_new_with_mnemonic ("Write");
-  gtk_widget_show (write_tags);
-  gtk_container_add (GTK_CONTAINER (hbuttonbox1), write_tags);
-  GTK_WIDGET_SET_FLAGS (write_tags, GTK_CAN_DEFAULT);
-
-  label64 = gtk_label_new ("Full");
-  gtk_widget_show (label64);
-  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook3), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook3), 1), label64);
+  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook3), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook3), 1), label65);
 
   g_signal_connect ((gpointer) trackproperties, "key_press_event",
                     G_CALLBACK (on_trackproperties_key_press_event),
@@ -1337,6 +1343,13 @@ create_trackproperties (void)
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (trackproperties, trackproperties, "trackproperties");
   GLADE_HOOKUP_OBJECT (trackproperties, notebook3, "notebook3");
+  GLADE_HOOKUP_OBJECT (trackproperties, vbox16, "vbox16");
+  GLADE_HOOKUP_OBJECT (trackproperties, scrolledwindow5, "scrolledwindow5");
+  GLADE_HOOKUP_OBJECT (trackproperties, metalist, "metalist");
+  GLADE_HOOKUP_OBJECT (trackproperties, hbuttonbox1, "hbuttonbox1");
+  GLADE_HOOKUP_OBJECT (trackproperties, write_tags, "write_tags");
+  GLADE_HOOKUP_OBJECT (trackproperties, button4, "button4");
+  GLADE_HOOKUP_OBJECT (trackproperties, label64, "label64");
   GLADE_HOOKUP_OBJECT (trackproperties, vbox13, "vbox13");
   GLADE_HOOKUP_OBJECT (trackproperties, hbox23, "hbox23");
   GLADE_HOOKUP_OBJECT (trackproperties, label27, "label27");
@@ -1368,12 +1381,6 @@ create_trackproperties (void)
   GLADE_HOOKUP_OBJECT (trackproperties, hbuttonbox2, "hbuttonbox2");
   GLADE_HOOKUP_OBJECT (trackproperties, button3, "button3");
   GLADE_HOOKUP_OBJECT (trackproperties, label65, "label65");
-  GLADE_HOOKUP_OBJECT (trackproperties, vbox16, "vbox16");
-  GLADE_HOOKUP_OBJECT (trackproperties, scrolledwindow5, "scrolledwindow5");
-  GLADE_HOOKUP_OBJECT (trackproperties, metalist, "metalist");
-  GLADE_HOOKUP_OBJECT (trackproperties, hbuttonbox1, "hbuttonbox1");
-  GLADE_HOOKUP_OBJECT (trackproperties, write_tags, "write_tags");
-  GLADE_HOOKUP_OBJECT (trackproperties, label64, "label64");
 
   return trackproperties;
 }
@@ -2115,7 +2122,7 @@ create_prefwin (void)
   gtk_widget_show (hbox39);
   gtk_box_pack_start (GTK_BOX (vbox19), hbox39, TRUE, TRUE, 0);
 
-  label71 = gtk_label_new ("ID3v1 character encoding (default is ISO-8859-1)");
+  label71 = gtk_label_new ("ID3v1 character encoding (default is iso8859-1)");
   gtk_widget_show (label71);
   gtk_box_pack_start (GTK_BOX (hbox39), label71, FALSE, FALSE, 0);
 
@@ -2341,6 +2348,42 @@ create_prefwin (void)
                     NULL);
   g_signal_connect ((gpointer) pref_network_proxytype, "changed",
                     G_CALLBACK (on_pref_network_proxytype_changed),
+                    NULL);
+  g_signal_connect ((gpointer) write_id3v2, "toggled",
+                    G_CALLBACK (on_write_id3v2_toggled),
+                    NULL);
+  g_signal_connect ((gpointer) write_id3v1, "toggled",
+                    G_CALLBACK (on_write_id3v1_toggled),
+                    NULL);
+  g_signal_connect ((gpointer) write_apev2, "toggled",
+                    G_CALLBACK (on_write_apev2_toggled),
+                    NULL);
+  g_signal_connect ((gpointer) strip_id3v2, "toggled",
+                    G_CALLBACK (on_strip_id3v2_toggled),
+                    NULL);
+  g_signal_connect ((gpointer) strip_id3v1, "toggled",
+                    G_CALLBACK (on_strip_id3v1_toggled),
+                    NULL);
+  g_signal_connect ((gpointer) strip_apev2, "toggled",
+                    G_CALLBACK (on_strip_apev2_toggled),
+                    NULL);
+  g_signal_connect ((gpointer) id3v2_version, "changed",
+                    G_CALLBACK (on_id3v2_version_changed),
+                    NULL);
+  g_signal_connect ((gpointer) id3v1_encoding, "changed",
+                    G_CALLBACK (on_id3v1_encoding_changed),
+                    NULL);
+  g_signal_connect ((gpointer) ape_write_id3v2, "toggled",
+                    G_CALLBACK (on_ape_write_id3v2_toggled),
+                    NULL);
+  g_signal_connect ((gpointer) ape_write_apev2, "toggled",
+                    G_CALLBACK (on_ape_write_apev2_toggled),
+                    NULL);
+  g_signal_connect ((gpointer) ape_strip_id3v2, "toggled",
+                    G_CALLBACK (on_ape_strip_id3v2_toggled),
+                    NULL);
+  g_signal_connect ((gpointer) ape_strip_apev2, "toggled",
+                    G_CALLBACK (on_ape_strip_apev2_toggled),
                     NULL);
   g_signal_connect ((gpointer) pref_pluginlist, "cursor_changed",
                     G_CALLBACK (on_pref_pluginlist_cursor_changed),

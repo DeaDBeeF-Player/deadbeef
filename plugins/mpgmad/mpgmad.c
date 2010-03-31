@@ -1166,6 +1166,19 @@ cmp3_insert (DB_playItem_t *after, const char *fname) {
     return after;
 }
 
+int
+cmp3_write_metadata (DB_playItem_t *it) {
+    // get options
+    int strip_id3v2 = deadbeef->conf_get_int ("mp3.strip_id3v2", 0);
+    int strip_id3v1 = deadbeef->conf_get_int ("mp3.strip_id3v2", 0);
+    int strip_apev2 = deadbeef->conf_get_int ("mp3.strip_apev2", 0);
+    int write_id3v2 = deadbeef->conf_get_int ("mp3.write_id3v2", 1);
+    int write_id3v1 = deadbeef->conf_get_int ("mp3.write_id3v1", 0);
+    int write_apev2 = deadbeef->conf_get_int ("mp3.write_apev2", 1);
+    int id3v2_version = deadbeef->conf_get_int ("mp3.id3v2_version", 3);
+    const char *id3v1_encoding = deadbeef->conf_get_str ("mp3.id3v1_encoding", "iso8859-1");
+}
+
 static const char *exts[] = {
 	"mp1", "mp2", "mp3", NULL
 };
@@ -1189,6 +1202,7 @@ static DB_decoder_t plugin = {
     .seek = cmp3_seek,
     .seek_sample = cmp3_seek_sample,
     .insert = cmp3_insert,
+    .write_metadata = cmp3_write_metadata,
     .exts = exts,
     .filetypes = filetypes
 };

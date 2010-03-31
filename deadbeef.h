@@ -505,7 +505,6 @@ typedef struct DB_fileinfo_s {
 // decoder plugin
 typedef struct DB_decoder_s {
     DB_plugin_t plugin;
-//    DB_fileinfo_t info;
     // init is called to prepare song to be started
     DB_fileinfo_t *(*init) (DB_playItem_t *it);
 
@@ -535,6 +534,8 @@ typedef struct DB_decoder_s {
 
     int (*numvoices) (DB_fileinfo_t *info);
     void (*mutevoice) (DB_fileinfo_t *info, int voice, int mute);
+
+    int (*write_metadata) (DB_playItem_t *it);
 
     // NULL terminated array of all supported extensions
     const char **exts;
