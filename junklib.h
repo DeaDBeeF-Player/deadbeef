@@ -24,10 +24,10 @@
 struct playItem_s;
 
 int
-junk_read_id3v1 (struct playItem_s *it, DB_FILE *fp);
+junk_id3v1_read (struct playItem_s *it, DB_FILE *fp);
 
 int
-junk_read_id3v2_full (struct playItem_s *it, DB_id3v2_tag_t *tag, DB_FILE *fp);
+junk_id3v2_read_full (struct playItem_s *it, DB_id3v2_tag_t *tag, DB_FILE *fp);
 
 int
 junk_id3v2_convert_24_to_23 (DB_id3v2_tag_t *tag24, DB_id3v2_tag_t *tag23);
@@ -37,6 +37,9 @@ junk_id3v2_convert_23_to_24 (DB_id3v2_tag_t *tag23, DB_id3v2_tag_t *tag24);
 
 int
 junk_id3v2_convert_22_to_24 (DB_id3v2_tag_t *tag22, DB_id3v2_tag_t *tag24);
+
+int
+junk_id3v2_convert_apev2_to_24 (DB_apev2_tag_t *ape, DB_id3v2_tag_t *tag24);
 
 DB_id3v2_frame_t *
 junk_id3v2_add_text_frame_23 (DB_id3v2_tag_t *tag, const char *frame_id, const char *value);
@@ -48,16 +51,28 @@ int
 junk_id3v2_remove_frames (DB_id3v2_tag_t *tag, const char *frame_id);
 
 int
-junk_write_id3v2 (const char *fname, DB_id3v2_tag_t *tag);
+junk_id3v2_write (FILE *file, DB_id3v2_tag_t *tag);
 
 void
-junk_free_id3v2 (DB_id3v2_tag_t *tag);
+junk_id3v2_free (DB_id3v2_tag_t *tag);
 
 int
-junk_read_id3v2 (struct playItem_s *it, DB_FILE *fp);
+junk_id3v2_read (struct playItem_s *it, DB_FILE *fp);
 
 int
-junk_read_ape (struct playItem_s *it, DB_FILE *fp);
+junk_apev2_read_full (struct playItem_s *it, DB_apev2_tag_t *tag_store, DB_FILE *fp);
+
+int
+junk_apev2_read (struct playItem_s *it, DB_FILE *fp);
+
+DB_apev2_frame_t *
+junk_apev2_add_text_frame (DB_apev2_tag_t *tag, const char *frame_id, const char *value);
+
+void
+junk_apev2_free (DB_apev2_tag_t *tag);
+
+int
+junk_apev2_write (FILE *fp, DB_apev2_tag_t *tag, int write_header, int write_footer);
 
 int
 junk_get_leading_size_stdio (FILE *fp);

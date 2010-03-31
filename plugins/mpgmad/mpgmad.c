@@ -598,7 +598,7 @@ cmp3_init (DB_playItem_t *it) {
         const char *genre = deadbeef->fget_content_genre (info->buffer.file);
         if (len > 0) {
             deadbeef->pl_delete_all_meta (it);
-            int v2err = deadbeef->junk_read_id3v2 (it, info->buffer.file);
+            int v2err = deadbeef->junk_id3v2_read (it, info->buffer.file);
             deadbeef->pl_add_meta (it, "title", NULL);
             if (v2err != 0) {
                 deadbeef->fseek (info->buffer.file, 0, SEEK_SET);
@@ -1147,9 +1147,9 @@ cmp3_insert (DB_playItem_t *after, const char *fname) {
     it->fname = strdup (fname);
 
     deadbeef->rewind (fp);
-    /*int apeerr = */deadbeef->junk_read_ape (it, fp);
-    /*int v2err = */deadbeef->junk_read_id3v2 (it, fp);
-    /*int v1err = */deadbeef->junk_read_id3v1 (it, fp);
+    /*int apeerr = */deadbeef->junk_apev2_read (it, fp);
+    /*int v2err = */deadbeef->junk_id3v2_read (it, fp);
+    /*int v1err = */deadbeef->junk_id3v1_read (it, fp);
     deadbeef->pl_add_meta (it, "title", NULL);
     deadbeef->pl_set_item_duration (it, buffer.duration);
     it->filetype = ftype;
