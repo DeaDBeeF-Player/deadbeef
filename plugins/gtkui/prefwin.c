@@ -176,8 +176,6 @@ static gboolean
 add_hotkey_to_config (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data) {
     int *counter = (int *)data;
     GValue key = {0,}, value = {0,};
-//    g_value_init (&key, G_TYPE_STRING);
-//    g_value_init (&value, G_TYPE_STRING);
     gtk_tree_model_get_value (model, iter, 0, &key);
     gtk_tree_model_get_value (model, iter, 1, &value);
     const char *skey = g_value_get_string (&key);

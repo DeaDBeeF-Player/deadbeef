@@ -1080,45 +1080,18 @@ create_trackproperties (void)
   GtkWidget *trackproperties;
   GtkWidget *notebook3;
   GtkWidget *vbox16;
+  GtkWidget *hbox23;
+  GtkWidget *label27;
+  GtkWidget *location;
   GtkWidget *scrolledwindow5;
   GtkWidget *metalist;
   GtkWidget *hbuttonbox1;
   GtkWidget *write_tags;
-  GtkWidget *button4;
+  GtkWidget *closebtn;
   GtkWidget *label64;
-  GtkWidget *vbox13;
-  GtkWidget *hbox23;
-  GtkWidget *label27;
-  GtkWidget *location;
-  GtkWidget *hbox24;
-  GtkWidget *label28;
-  GtkWidget *title;
-  GtkWidget *hbox25;
-  GtkWidget *label29;
-  GtkWidget *artist;
-  GtkWidget *hbox35;
-  GtkWidget *label63;
-  GtkWidget *band;
-  GtkWidget *hbox26;
-  GtkWidget *label30;
-  GtkWidget *album;
-  GtkWidget *hbox27;
-  GtkWidget *label35;
-  GtkWidget *genre;
-  GtkWidget *table8;
-  GtkWidget *label31;
-  GtkWidget *label33;
-  GtkWidget *year;
-  GtkWidget *track;
-  GtkWidget *hbox28;
-  GtkWidget *label36;
-  GtkWidget *scrolledwindow4;
-  GtkWidget *comment;
-  GtkWidget *hbuttonbox2;
-  GtkWidget *button3;
-  GtkWidget *label65;
 
   trackproperties = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+  gtk_widget_set_size_request (trackproperties, 400, 400);
   gtk_window_set_title (GTK_WINDOW (trackproperties), "Track Properties");
   gtk_window_set_destroy_with_parent (GTK_WINDOW (trackproperties), TRUE);
   gtk_window_set_skip_taskbar_hint (GTK_WINDOW (trackproperties), TRUE);
@@ -1132,6 +1105,21 @@ create_trackproperties (void)
   gtk_widget_show (vbox16);
   gtk_container_add (GTK_CONTAINER (notebook3), vbox16);
   gtk_container_set_border_width (GTK_CONTAINER (vbox16), 12);
+
+  hbox23 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox23);
+  gtk_box_pack_start (GTK_BOX (vbox16), hbox23, FALSE, TRUE, 0);
+
+  label27 = gtk_label_new ("Location:");
+  gtk_widget_show (label27);
+  gtk_box_pack_start (GTK_BOX (hbox23), label27, FALSE, FALSE, 0);
+  gtk_misc_set_alignment (GTK_MISC (label27), 0, 0.5);
+
+  location = gtk_entry_new ();
+  gtk_widget_show (location);
+  gtk_box_pack_start (GTK_BOX (hbox23), location, TRUE, TRUE, 0);
+  gtk_editable_set_editable (GTK_EDITABLE (location), FALSE);
+  gtk_entry_set_invisible_char (GTK_ENTRY (location), 8226);
 
   scrolledwindow5 = gtk_scrolled_window_new (NULL, NULL);
   gtk_widget_show (scrolledwindow5);
@@ -1154,181 +1142,14 @@ create_trackproperties (void)
   gtk_container_add (GTK_CONTAINER (hbuttonbox1), write_tags);
   GTK_WIDGET_SET_FLAGS (write_tags, GTK_CAN_DEFAULT);
 
-  button4 = gtk_button_new_with_mnemonic ("Close");
-  gtk_widget_show (button4);
-  gtk_container_add (GTK_CONTAINER (hbuttonbox1), button4);
-  GTK_WIDGET_SET_FLAGS (button4, GTK_CAN_DEFAULT);
+  closebtn = gtk_button_new_with_mnemonic ("Close");
+  gtk_widget_show (closebtn);
+  gtk_container_add (GTK_CONTAINER (hbuttonbox1), closebtn);
+  GTK_WIDGET_SET_FLAGS (closebtn, GTK_CAN_DEFAULT);
 
-  label64 = gtk_label_new ("Full");
+  label64 = gtk_label_new ("Metadata");
   gtk_widget_show (label64);
   gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook3), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook3), 0), label64);
-
-  vbox13 = gtk_vbox_new (FALSE, 8);
-  gtk_widget_show (vbox13);
-  gtk_container_add (GTK_CONTAINER (notebook3), vbox13);
-  gtk_container_set_border_width (GTK_CONTAINER (vbox13), 12);
-
-  hbox23 = gtk_hbox_new (FALSE, 8);
-  gtk_widget_show (hbox23);
-  gtk_box_pack_start (GTK_BOX (vbox13), hbox23, FALSE, FALSE, 0);
-
-  label27 = gtk_label_new ("Location:");
-  gtk_widget_show (label27);
-  gtk_box_pack_start (GTK_BOX (hbox23), label27, FALSE, FALSE, 0);
-  gtk_misc_set_alignment (GTK_MISC (label27), 0, 0.5);
-
-  location = gtk_entry_new ();
-  gtk_widget_show (location);
-  gtk_box_pack_start (GTK_BOX (hbox23), location, TRUE, TRUE, 0);
-  gtk_editable_set_editable (GTK_EDITABLE (location), FALSE);
-  gtk_entry_set_invisible_char (GTK_ENTRY (location), 8226);
-
-  hbox24 = gtk_hbox_new (FALSE, 8);
-  gtk_widget_show (hbox24);
-  gtk_box_pack_start (GTK_BOX (vbox13), hbox24, FALSE, FALSE, 0);
-
-  label28 = gtk_label_new ("Title:");
-  gtk_widget_show (label28);
-  gtk_box_pack_start (GTK_BOX (hbox24), label28, FALSE, FALSE, 0);
-  gtk_misc_set_alignment (GTK_MISC (label28), 0, 0.5);
-
-  title = gtk_entry_new ();
-  gtk_widget_show (title);
-  gtk_box_pack_start (GTK_BOX (hbox24), title, TRUE, TRUE, 0);
-  gtk_editable_set_editable (GTK_EDITABLE (title), FALSE);
-  gtk_entry_set_invisible_char (GTK_ENTRY (title), 8226);
-
-  hbox25 = gtk_hbox_new (FALSE, 8);
-  gtk_widget_show (hbox25);
-  gtk_box_pack_start (GTK_BOX (vbox13), hbox25, FALSE, FALSE, 0);
-
-  label29 = gtk_label_new ("Track Artist:");
-  gtk_widget_show (label29);
-  gtk_box_pack_start (GTK_BOX (hbox25), label29, FALSE, FALSE, 0);
-  gtk_misc_set_alignment (GTK_MISC (label29), 0, 0.5);
-
-  artist = gtk_entry_new ();
-  gtk_widget_show (artist);
-  gtk_box_pack_start (GTK_BOX (hbox25), artist, TRUE, TRUE, 0);
-  gtk_editable_set_editable (GTK_EDITABLE (artist), FALSE);
-  gtk_entry_set_invisible_char (GTK_ENTRY (artist), 8226);
-
-  hbox35 = gtk_hbox_new (FALSE, 8);
-  gtk_widget_show (hbox35);
-  gtk_box_pack_start (GTK_BOX (vbox13), hbox35, TRUE, TRUE, 0);
-
-  label63 = gtk_label_new ("Band/Album Artist:");
-  gtk_widget_show (label63);
-  gtk_box_pack_start (GTK_BOX (hbox35), label63, FALSE, FALSE, 0);
-  gtk_misc_set_alignment (GTK_MISC (label63), 0, 0.5);
-
-  band = gtk_entry_new ();
-  gtk_widget_show (band);
-  gtk_box_pack_start (GTK_BOX (hbox35), band, TRUE, TRUE, 0);
-  gtk_editable_set_editable (GTK_EDITABLE (band), FALSE);
-  gtk_entry_set_invisible_char (GTK_ENTRY (band), 8226);
-
-  hbox26 = gtk_hbox_new (FALSE, 8);
-  gtk_widget_show (hbox26);
-  gtk_box_pack_start (GTK_BOX (vbox13), hbox26, FALSE, FALSE, 0);
-
-  label30 = gtk_label_new ("Album:");
-  gtk_widget_show (label30);
-  gtk_box_pack_start (GTK_BOX (hbox26), label30, FALSE, FALSE, 0);
-  gtk_misc_set_alignment (GTK_MISC (label30), 0, 0.5);
-
-  album = gtk_entry_new ();
-  gtk_widget_show (album);
-  gtk_box_pack_start (GTK_BOX (hbox26), album, TRUE, TRUE, 0);
-  gtk_editable_set_editable (GTK_EDITABLE (album), FALSE);
-  gtk_entry_set_invisible_char (GTK_ENTRY (album), 8226);
-
-  hbox27 = gtk_hbox_new (FALSE, 8);
-  gtk_widget_show (hbox27);
-  gtk_box_pack_start (GTK_BOX (vbox13), hbox27, FALSE, FALSE, 0);
-
-  label35 = gtk_label_new ("Genre:");
-  gtk_widget_show (label35);
-  gtk_box_pack_start (GTK_BOX (hbox27), label35, FALSE, FALSE, 0);
-  gtk_misc_set_alignment (GTK_MISC (label35), 0, 0.5);
-
-  genre = gtk_entry_new ();
-  gtk_widget_show (genre);
-  gtk_box_pack_start (GTK_BOX (hbox27), genre, TRUE, TRUE, 0);
-  gtk_editable_set_editable (GTK_EDITABLE (genre), FALSE);
-  gtk_entry_set_invisible_char (GTK_ENTRY (genre), 8226);
-
-  table8 = gtk_table_new (2, 2, FALSE);
-  gtk_widget_show (table8);
-  gtk_box_pack_start (GTK_BOX (vbox13), table8, FALSE, FALSE, 0);
-  gtk_table_set_row_spacings (GTK_TABLE (table8), 8);
-  gtk_table_set_col_spacings (GTK_TABLE (table8), 8);
-
-  label31 = gtk_label_new ("Year:");
-  gtk_widget_show (label31);
-  gtk_table_attach (GTK_TABLE (table8), label31, 0, 1, 0, 1,
-                    (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
-  gtk_label_set_line_wrap (GTK_LABEL (label31), TRUE);
-  gtk_misc_set_alignment (GTK_MISC (label31), 0, 0.5);
-
-  label33 = gtk_label_new ("Track:");
-  gtk_widget_show (label33);
-  gtk_table_attach (GTK_TABLE (table8), label33, 1, 2, 0, 1,
-                    (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
-  gtk_label_set_use_markup (GTK_LABEL (label33), TRUE);
-  gtk_misc_set_alignment (GTK_MISC (label33), 0, 0.5);
-
-  year = gtk_entry_new ();
-  gtk_widget_show (year);
-  gtk_table_attach (GTK_TABLE (table8), year, 0, 1, 1, 2,
-                    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
-  gtk_editable_set_editable (GTK_EDITABLE (year), FALSE);
-  gtk_entry_set_invisible_char (GTK_ENTRY (year), 8226);
-
-  track = gtk_entry_new ();
-  gtk_widget_show (track);
-  gtk_table_attach (GTK_TABLE (table8), track, 1, 2, 1, 2,
-                    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
-  gtk_editable_set_editable (GTK_EDITABLE (track), FALSE);
-  gtk_entry_set_invisible_char (GTK_ENTRY (track), 8226);
-
-  hbox28 = gtk_hbox_new (FALSE, 8);
-  gtk_widget_show (hbox28);
-  gtk_box_pack_start (GTK_BOX (vbox13), hbox28, TRUE, TRUE, 0);
-
-  label36 = gtk_label_new ("Comment:");
-  gtk_widget_show (label36);
-  gtk_box_pack_start (GTK_BOX (hbox28), label36, FALSE, FALSE, 0);
-  gtk_misc_set_alignment (GTK_MISC (label36), 0, 0.5);
-
-  scrolledwindow4 = gtk_scrolled_window_new (NULL, NULL);
-  gtk_widget_show (scrolledwindow4);
-  gtk_box_pack_start (GTK_BOX (hbox28), scrolledwindow4, TRUE, TRUE, 0);
-  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow4), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-  gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow4), GTK_SHADOW_IN);
-
-  comment = gtk_text_view_new ();
-  gtk_widget_show (comment);
-  gtk_container_add (GTK_CONTAINER (scrolledwindow4), comment);
-  gtk_text_view_set_editable (GTK_TEXT_VIEW (comment), FALSE);
-
-  hbuttonbox2 = gtk_hbutton_box_new ();
-  gtk_widget_show (hbuttonbox2);
-  gtk_box_pack_start (GTK_BOX (vbox13), hbuttonbox2, TRUE, TRUE, 0);
-  gtk_button_box_set_layout (GTK_BUTTON_BOX (hbuttonbox2), GTK_BUTTONBOX_END);
-
-  button3 = gtk_button_new_with_mnemonic ("Close");
-  gtk_widget_show (button3);
-  gtk_container_add (GTK_CONTAINER (hbuttonbox2), button3);
-  GTK_WIDGET_SET_FLAGS (button3, GTK_CAN_DEFAULT);
-
-  label65 = gtk_label_new ("Summary");
-  gtk_widget_show (label65);
-  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook3), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook3), 1), label65);
 
   g_signal_connect ((gpointer) trackproperties, "key_press_event",
                     G_CALLBACK (on_trackproperties_key_press_event),
@@ -1339,48 +1160,23 @@ create_trackproperties (void)
   g_signal_connect ((gpointer) write_tags, "clicked",
                     G_CALLBACK (on_write_tags_clicked),
                     NULL);
+  g_signal_connect ((gpointer) closebtn, "clicked",
+                    G_CALLBACK (on_closebtn_clicked),
+                    NULL);
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (trackproperties, trackproperties, "trackproperties");
   GLADE_HOOKUP_OBJECT (trackproperties, notebook3, "notebook3");
   GLADE_HOOKUP_OBJECT (trackproperties, vbox16, "vbox16");
+  GLADE_HOOKUP_OBJECT (trackproperties, hbox23, "hbox23");
+  GLADE_HOOKUP_OBJECT (trackproperties, label27, "label27");
+  GLADE_HOOKUP_OBJECT (trackproperties, location, "location");
   GLADE_HOOKUP_OBJECT (trackproperties, scrolledwindow5, "scrolledwindow5");
   GLADE_HOOKUP_OBJECT (trackproperties, metalist, "metalist");
   GLADE_HOOKUP_OBJECT (trackproperties, hbuttonbox1, "hbuttonbox1");
   GLADE_HOOKUP_OBJECT (trackproperties, write_tags, "write_tags");
-  GLADE_HOOKUP_OBJECT (trackproperties, button4, "button4");
+  GLADE_HOOKUP_OBJECT (trackproperties, closebtn, "closebtn");
   GLADE_HOOKUP_OBJECT (trackproperties, label64, "label64");
-  GLADE_HOOKUP_OBJECT (trackproperties, vbox13, "vbox13");
-  GLADE_HOOKUP_OBJECT (trackproperties, hbox23, "hbox23");
-  GLADE_HOOKUP_OBJECT (trackproperties, label27, "label27");
-  GLADE_HOOKUP_OBJECT (trackproperties, location, "location");
-  GLADE_HOOKUP_OBJECT (trackproperties, hbox24, "hbox24");
-  GLADE_HOOKUP_OBJECT (trackproperties, label28, "label28");
-  GLADE_HOOKUP_OBJECT (trackproperties, title, "title");
-  GLADE_HOOKUP_OBJECT (trackproperties, hbox25, "hbox25");
-  GLADE_HOOKUP_OBJECT (trackproperties, label29, "label29");
-  GLADE_HOOKUP_OBJECT (trackproperties, artist, "artist");
-  GLADE_HOOKUP_OBJECT (trackproperties, hbox35, "hbox35");
-  GLADE_HOOKUP_OBJECT (trackproperties, label63, "label63");
-  GLADE_HOOKUP_OBJECT (trackproperties, band, "band");
-  GLADE_HOOKUP_OBJECT (trackproperties, hbox26, "hbox26");
-  GLADE_HOOKUP_OBJECT (trackproperties, label30, "label30");
-  GLADE_HOOKUP_OBJECT (trackproperties, album, "album");
-  GLADE_HOOKUP_OBJECT (trackproperties, hbox27, "hbox27");
-  GLADE_HOOKUP_OBJECT (trackproperties, label35, "label35");
-  GLADE_HOOKUP_OBJECT (trackproperties, genre, "genre");
-  GLADE_HOOKUP_OBJECT (trackproperties, table8, "table8");
-  GLADE_HOOKUP_OBJECT (trackproperties, label31, "label31");
-  GLADE_HOOKUP_OBJECT (trackproperties, label33, "label33");
-  GLADE_HOOKUP_OBJECT (trackproperties, year, "year");
-  GLADE_HOOKUP_OBJECT (trackproperties, track, "track");
-  GLADE_HOOKUP_OBJECT (trackproperties, hbox28, "hbox28");
-  GLADE_HOOKUP_OBJECT (trackproperties, label36, "label36");
-  GLADE_HOOKUP_OBJECT (trackproperties, scrolledwindow4, "scrolledwindow4");
-  GLADE_HOOKUP_OBJECT (trackproperties, comment, "comment");
-  GLADE_HOOKUP_OBJECT (trackproperties, hbuttonbox2, "hbuttonbox2");
-  GLADE_HOOKUP_OBJECT (trackproperties, button3, "button3");
-  GLADE_HOOKUP_OBJECT (trackproperties, label65, "label65");
 
   return trackproperties;
 }

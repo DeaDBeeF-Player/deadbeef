@@ -829,3 +829,7 @@ on_ape_strip_id3v2_toggled             (GtkToggleButton *togglebutton,
 void
 on_ape_strip_apev2_toggled             (GtkToggleButton *togglebutton,
                                         gpointer         user_data);
+
+void
+on_closebtn_clicked                    (GtkButton       *button,
+                                        gpointer         user_data);
