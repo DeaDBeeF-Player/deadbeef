@@ -795,7 +795,7 @@ ddb_listview_list_drag_drop                  (GtkWidget       *widget,
         if (!target_type) {
             return FALSE;
         }
-        gtk_drag_get_data (widget, drag_context, target_type, time);
+//        gtk_drag_get_data (widget, drag_context, target_type, time);
         return TRUE;
     }
     return FALSE;
@@ -891,6 +891,7 @@ ddb_listview_list_drag_data_received         (GtkWidget       *widget,
         }
         ps->binding->drag_n_drop (drop_before, d, length);
     }
+    printf ("gtk_drag_finish\n");
     gtk_drag_finish (drag_context, TRUE, FALSE, time);
 }
 
