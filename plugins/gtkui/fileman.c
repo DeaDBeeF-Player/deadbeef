@@ -152,11 +152,20 @@ strcopy_special (char *dest, const char *src, int len) {
     *dest = 0;
 }
 
+static gboolean
+set_dnd_cursor_idle (gpointer data) {
+    DdbListview *listview = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
+    int cursor = deadbeef->pl_get_idx_of (DB_PLAYITEM (data));
+    ddb_listview_set_cursor (listview, cursor);
+    return FALSE;
+}
+
 void
 gtkpl_add_fm_dropped_files (DB_playItem_t *drop_before, char *ptr, int length) {
     DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
     g_idle_add (progress_show_idle, NULL);
 
+    DdbListviewIter first = NULL;
     DdbListviewIter after = NULL;
     if (drop_before) {
         after = deadbeef->pl_get_prev (drop_before, PL_MAIN);
@@ -181,6 +190,9 @@ gtkpl_add_fm_dropped_files (DB_playItem_t *drop_before, char *ptr, int length) {
                 inserted = deadbeef->pl_insert_file (after, fname, &abort, gtkpl_add_file_info_cb, NULL);
             }
             if (inserted) {
+                if (!first) {
+                    first = inserted;
+                }
                 if (after) {
                     deadbeef->pl_item_unref (after);
                 }
@@ -199,6 +211,7 @@ gtkpl_add_fm_dropped_files (DB_playItem_t *drop_before, char *ptr, int length) {
         deadbeef->pl_item_unref (after);
     }
     g_idle_add (progress_hide_idle, NULL);
+    g_idle_add (set_dnd_cursor_idle, first);
 }
 
 struct fmdrop_data {

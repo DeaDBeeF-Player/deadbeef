@@ -795,7 +795,7 @@ ddb_listview_list_drag_drop                  (GtkWidget       *widget,
         if (!target_type) {
             return FALSE;
         }
-        gtk_drag_get_data (widget, drag_context, target_type, time);
+//        gtk_drag_get_data (widget, drag_context, target_type, time);
         return TRUE;
     }
     return FALSE;
@@ -858,10 +858,11 @@ ddb_listview_list_drag_data_received         (GtkWidget       *widget,
         return;
     }
     int sel = ddb_listview_dragdrop_get_row_from_coord (ps, y);
+    printf ("sel=%d\n", sel);
     DdbListviewIter it = NULL;
     if (sel == -1) {
         if (ps->binding->count () != 0) {
-            sel = ps->binding->count () - 1;
+            sel = ps->binding->count ();
         }
     }
     if (sel != -1) {
@@ -891,6 +892,7 @@ ddb_listview_list_drag_data_received         (GtkWidget       *widget,
         }
         ps->binding->drag_n_drop (drop_before, d, length);
     }
+    printf ("gtk_drag_finish\n");
     gtk_drag_finish (drag_context, TRUE, FALSE, time);
 }
 
@@ -2285,7 +2287,25 @@ struct set_cursor_t {
 static gboolean
 ddb_listview_set_cursor_cb (gpointer data) {
     struct set_cursor_t *sc = (struct set_cursor_t *)data;
+
+    DdbListviewIter prev_it = sc->pl->binding->get_for_idx (sc->prev);
     sc->pl->binding->set_cursor (sc->cursor);
+    int prev_selected = 0;
+
+    if (prev_it) {
+        prev_selected = sc->pl->binding->is_selected (prev_it);
+    }
+
+    ddb_listview_select_single (sc->pl, sc->cursor);
+
+    if (prev_it && !prev_selected) {
+        ddb_listview_draw_row (sc->pl, sc->prev, prev_it);
+    }
+
+    if (prev_it) {
+        sc->pl->binding->unref (prev_it);
+    }
+
     DdbListviewIter it;
     DdbListview *ps = sc->pl;
 
@@ -2304,8 +2324,6 @@ ddb_listview_set_cursor_cb (gpointer data) {
         GtkWidget *range = sc->pl->scrollbar;
         gtk_range_set_value (GTK_RANGE (range), newscroll);
     }
-
-    ddb_listview_select_single (sc->pl, sc->cursor);
 
     free (data);
     return FALSE;
