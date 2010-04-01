@@ -858,10 +858,11 @@ ddb_listview_list_drag_data_received         (GtkWidget       *widget,
         return;
     }
     int sel = ddb_listview_dragdrop_get_row_from_coord (ps, y);
+    printf ("sel=%d\n", sel);
     DdbListviewIter it = NULL;
     if (sel == -1) {
         if (ps->binding->count () != 0) {
-            sel = ps->binding->count () - 1;
+            sel = ps->binding->count ();
         }
     }
     if (sel != -1) {
