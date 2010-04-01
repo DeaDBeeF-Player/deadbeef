@@ -30,6 +30,12 @@ int
 junk_id3v1_find (DB_FILE *fp);
 
 int
+junk_id3v1_write (FILE *fp, struct playItem_s *it);
+
+int
+junk_id3v2_find (DB_FILE *fp, int *psize);
+
+int
 junk_id3v2_read_full (struct playItem_s *it, DB_id3v2_tag_t *tag, DB_FILE *fp);
 
 int
@@ -73,6 +79,9 @@ junk_apev2_find (DB_FILE *fp, int32_t *psize, uint32_t *pflags, uint32_t *pnumit
 
 DB_apev2_frame_t *
 junk_apev2_add_text_frame (DB_apev2_tag_t *tag, const char *frame_id, const char *value);
+
+int
+junk_apev2_remove_frames (DB_apev2_tag_t *tag, const char *frame_id);
 
 void
 junk_apev2_free (DB_apev2_tag_t *tag);

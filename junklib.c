@@ -105,6 +105,37 @@ extract_f32 (unsigned char *buf) {
     *x |= buf[3];
     return f;
 }
+
+int
+junk_iconv (const char *in, int inlen, char *out, int outlen, const char *cs_in, const char *cs_out) {
+    iconv_t cd = iconv_open (cs_out, cs_in);
+    if (cd == (iconv_t)-1) {
+        return -1;
+    }
+#ifdef __linux__
+    char *pin = (char*)in;
+#else
+    const char *pin = value;
+#endif
+
+    size_t inbytesleft = inlen;
+    size_t outbytesleft = outlen;
+
+    char *pout = out;
+    memset (out, 0, outbytesleft);
+
+    size_t res = iconv (cd, &pin, &inbytesleft, &pout, &outbytesleft);
+    int err = errno;
+    iconv_close (cd);
+
+    trace ("iconv -f %s -t %s '%s': returned %d, inbytes %d/%d, outbytes %d/%d, errno=%d\n", cs_in, cs_out, in, res, inlen, inbytesleft, outlen, outbytesleft, err);
+    if (res == -1) {
+        return -1;
+    }
+    return pout - out;
+}
+
+
 static const char *junk_genretbl[] = {
     "Blues",
     "Classic Rock",
@@ -254,6 +285,7 @@ static const char *junk_genretbl[] = {
     "Anime",
     "JPop",
     "SynthPop",
+    NULL
 };
 
 static int
@@ -573,6 +605,98 @@ junk_id3v1_read (playItem_t *it, DB_FILE *fp) {
 }
 
 int
+junk_id3v1_write (FILE *fp, playItem_t *it) {
+    char title[30] = "";
+    char artist[30] = "";
+    char album[30] = "";
+    char year[4] = "";
+    char comment[28] = "";
+    uint8_t genreid = 0xff;
+    uint8_t tracknum = 0;
+
+    const char *meta;
+
+#define conv(name, store) {\
+    memset (store, 0x20, sizeof (store));\
+    meta = pl_find_meta (it, name);\
+    if (meta) {\
+        char temp[1000];\
+        int l = junk_iconv (meta, strlen (meta), temp, sizeof (temp), UTF8, "ASCII");\
+        if (l == -1) {\
+            memset (store, 0, sizeof (store));\
+        }\
+        else {\
+            strncpy (store, temp, sizeof (store));\
+        }\
+    }\
+}
+
+    conv ("title", title);
+    conv ("artist", artist);
+    conv ("album", album);
+    conv ("year", year);
+    conv ("comment", comment);
+
+#undef conv
+
+    // tracknum
+    meta = pl_find_meta (it, "track");
+    if (meta) {
+        tracknum = atoi (meta);
+    }
+
+    // find genre
+    meta = pl_find_meta (it, "genre");
+    if (meta) {
+        for (int i = 0; junk_genretbl[i]; i++) {
+            if (!strcasecmp (meta, junk_genretbl[i])) {
+                genreid = i;
+                break;
+            }
+        }
+    }
+
+    if (fwrite ("TAG", 1, 3, fp) != 3) {
+        trace ("junk_id3v1_write: failed to write signature\n");
+        return -1;
+    }
+    if (fwrite (title, 1, sizeof (title), fp) != sizeof (title)) {
+        trace ("junk_id3v1_write: failed to write title\n");
+        return -1;
+    }
+    if (fwrite (artist, 1, sizeof (artist), fp) != sizeof (artist)) {
+        trace ("junk_id3v1_write: failed to write artist\n");
+        return -1;
+    }
+    if (fwrite (album, 1, sizeof (album), fp) != sizeof (album)) {
+        trace ("junk_id3v1_write: failed to write album\n");
+        return -1;
+    }
+    if (fwrite (year, 1, sizeof (year), fp) != sizeof (year)) {
+        trace ("junk_id3v1_write: failed to write year\n");
+        return -1;
+    }
+    if (fwrite (comment, 1, sizeof (comment), fp) != sizeof (comment)) {
+        trace ("junk_id3v1_write: failed to write comment\n");
+        return -1;
+    }
+    uint8_t zero = 0;
+    if (fwrite (&zero, 1, 1, fp) != 1) {
+        trace ("junk_id3v1_write: failed to write id3v1.1 marker\n");
+        return -1;
+    }
+    if (fwrite (&tracknum, 1, 1, fp) != 1) {
+        trace ("junk_id3v1_write: failed to write track\n");
+        return -1;
+    }
+    if (fwrite (&genreid, 1, 1, fp) != 1) {
+        trace ("junk_id3v1_write: failed to write genre\n");
+        return -1;
+    }
+    return 0;
+}
+
+int
 junk_id3v1_find (DB_FILE *fp) {
     uint8_t buffer[3];
     if (deadbeef->fseek (fp, -128, SEEK_END) == -1) {
@@ -584,7 +708,7 @@ junk_id3v1_find (DB_FILE *fp) {
     if (memcmp (buffer, "TAG", 3)) {
         return -1; // no tag
     }
-    return 128;
+    return deadbeef->ftell (fp) - 3;
 }
 
 int
@@ -861,6 +985,40 @@ id3v2_string_read (int version, uint8_t *out, int sz, int unsync, const uint8_t 
 }
 
 int
+junk_id3v2_find (DB_FILE *fp, int *psize) {
+    if (deadbeef->fseek (fp, 0, SEEK_SET) == -1) {
+        trace ("junk_id3v2_find: seek error\n");
+        return -1;
+    }
+    uint8_t header[10];
+    int pos = deadbeef->ftell (fp);
+    if (pos == -1) {
+        trace ("junk_id3v2_find: ftell error\n");
+        return -1;
+    }
+    if (deadbeef->fread (header, 1, 10, fp) != 10) {
+        trace ("junk_id3v2_find: read error\n");
+        return -1; // too short
+    }
+    if (strncmp (header, "ID3", 3)) {
+        return -1; // no tag
+    }
+    uint8_t flags = header[5];
+    if (flags & 15) {
+        return -1; // unsupported
+    }
+    int footerpresent = (flags & (1<<4)) ? 1 : 0;
+    // check for bad size
+    if ((header[9] & 0x80) || (header[8] & 0x80) || (header[7] & 0x80) || (header[6] & 0x80)) {
+        return -1; // bad header
+    }
+    uint32_t size = (header[9] << 0) | (header[8] << 7) | (header[7] << 14) | (header[6] << 21);
+    //trace ("junklib: leading junk size %d\n", size);
+    *psize = size + 10 + 10 * footerpresent;
+    return pos;
+}
+
+int
 junk_get_leading_size_stdio (FILE *fp) {
     uint8_t header[10];
     int pos = ftell (fp);
@@ -913,36 +1071,6 @@ junk_get_leading_size (DB_FILE *fp) {
     //trace ("junklib: leading junk size %d\n", size);
     return size + 10 + 10 * footerpresent;
 }
-
-int
-junk_iconv (const char *in, int inlen, char *out, int outlen, const char *cs_in, const char *cs_out) {
-    iconv_t cd = iconv_open (cs_out, cs_in);
-    if (cd == (iconv_t)-1) {
-        return -1;
-    }
-#ifdef __linux__
-    char *pin = (char*)in;
-#else
-    const char *pin = value;
-#endif
-
-    size_t inbytesleft = inlen;
-    size_t outbytesleft = outlen;
-
-    char *pout = out;
-    memset (out, 0, outbytesleft);
-
-    size_t res = iconv (cd, &pin, &inbytesleft, &pout, &outbytesleft);
-    int err = errno;
-    iconv_close (cd);
-
-    trace ("iconv -f %s -t %s '%s': returned %d, inbytes %d/%d, outbytes %d/%d, errno=%d\n", cs_in, cs_out, in, res, inlen, inbytesleft, outlen, outbytesleft, err);
-    if (res == -1) {
-        return -1;
-    }
-    return pout - out;
-}
-
 int
 junk_id3v2_unsync (uint8_t *out, int len, int maxlen) {
     uint8_t buf [maxlen];
@@ -1655,6 +1783,28 @@ junk_id3v2_convert_22_to_24 (DB_id3v2_tag_t *tag22, DB_id3v2_tag_t *tag24) {
     return 0;
 }
 
+int
+junk_apev2_remove_frames (DB_apev2_tag_t *tag, const char *frame_id) {
+    DB_apev2_frame_t *prev = NULL;
+    for (DB_apev2_frame_t *f = tag->frames; f; ) {
+        DB_apev2_frame_t *next = f->next;
+        if (!strcmp (f->key, frame_id)) {
+            if (prev) {
+                prev->next = f->next;
+            }
+            else {
+                tag->frames = f->next;
+            }
+            free (f);
+        }
+        else {
+            prev = f;
+        }
+        f = next;
+    }
+    return 0;
+}
+
 DB_apev2_frame_t *
 junk_apev2_add_text_frame (DB_apev2_tag_t *tag, const char *frame_id, const char *value) {
     DB_apev2_frame_t *tail = tag->frames;
@@ -1771,6 +1921,9 @@ junk_apev2_write (FILE *fp, DB_apev2_tag_t *tag, int write_header, int write_foo
         numframes++;
         f = f->next;
     }
+    size += 32;
+
+    trace ("junk_apev2_write: writing apev2 tag, size=%d, numframes=%d\n", size, numframes);
 
 
     if (write_header) {
@@ -1822,6 +1975,7 @@ junk_apev2_write (FILE *fp, DB_apev2_tag_t *tag, int write_header, int write_foo
             trace ("junk_apev2_write_i32_le: failed to write apev2 item value\n");
             goto error;
         }
+        f = f->next;
     }
 
     if (write_footer) {

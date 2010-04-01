@@ -2205,6 +2205,11 @@ pl_format_title (playItem_t *it, int idx, char *s, int size, int id, const char 
         if (text) {
             strncpy (s, text, size);
             UNLOCK;
+            for (ss = s; *ss; ss++) {
+                if (*ss == '\n') {
+                    *ss = ';';
+                }
+            }
             return strlen (s);
         }
         else {

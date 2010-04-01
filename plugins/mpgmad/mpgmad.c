@@ -342,9 +342,11 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
         }
 
         valid_frames++;
+#if 0
         if (nframe < 1000) {
-        trace ("frame %d bitrate %d\n", nframe, bitrate);
+            trace ("frame %d bitrate %d\n", nframe, bitrate);
         }
+#endif
         if (sample != 0 || nframe == 0)
         {
             buffer->version = ver;
@@ -964,7 +966,7 @@ cmp3_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
 static int
 cmp3_read_float32 (DB_fileinfo_t *_info, char *bytes, int size) {
     mpgmad_info_t *info = (mpgmad_info_t *)_info;
-    trace ("cmp3_read_float32 readsize=%d, nchannels=%d\n", size, _info->channels);
+//    trace ("cmp3_read_float32 readsize=%d, nchannels=%d\n", size, _info->channels);
     info->buffer.readsize = size;
     info->buffer.out = bytes;
     cmp3_decode_float32 (info);
@@ -1194,9 +1196,11 @@ cmp3_write_metadata (DB_playItem_t *it) {
         return -1;
     }
 
-    int id3v2_end = deadbeef->junk_get_leading_size (fp);
-    if (id3v2_end == -1) {
-        id3v2_end = 0;
+    int fsize = deadbeef->fgetlength (fp);
+    int id3v2_size = 0;
+    int id3v2_start = deadbeef->junk_id3v2_find (fp, &id3v2_size);
+    if (id3v2_start == -1) {
+        id3v2_size = -1;
     }
 
     int32_t apev2_size;
@@ -1206,13 +1210,24 @@ cmp3_write_metadata (DB_playItem_t *it) {
         apev2_start = 0;
     }
 
+    if (!strip_apev2 && !write_apev2) {
+        apev2_start = 0;
+    }
+
     int id3v1_start = deadbeef->junk_id3v1_find (fp);
     if (id3v1_start == -1) {
         id3v1_start = 0;
     }
 
-    int header = id3v2_end;
-    int footer = min (id3v1_start, apev2_start);
+    int header = id3v2_start + id3v2_size;
+    int footer = fsize;
+
+    if (id3v1_start > 0) {
+        footer = id3v1_start;
+    }
+    if (apev2_start > 0) {
+        footer = min (footer, apev2_start);
+    }
 
     // mapping between ddb metadata names and id3v2/apev2 names
     const char *md[] = {
@@ -1226,6 +1241,10 @@ cmp3_write_metadata (DB_playItem_t *it) {
         "vendor", "TENC", NULL,
         "performer", "TPE3", NULL,
         "composer", "TCOM", "Composer",
+        "year", NULL, "Year",
+        "comment", NULL, "Comment",
+        "copyright", NULL, "Copyright",
+        "cuesheet", NULL, "Cuesheet",
         NULL
     };
     // "TRCK" -- special case
@@ -1249,12 +1268,30 @@ cmp3_write_metadata (DB_playItem_t *it) {
     memset (&id3v2, 0, sizeof (id3v2));
     memset (&apev2, 0, sizeof (id3v2));
 
-    if (!strip_id3v2 && !write_id3v2) {
-        id3v2_end = 0;
+    if (!strip_id3v2 && !write_id3v2 && id3v2_size > 0) {
+        if (deadbeef->fseek (fp, id3v2_start, SEEK_SET) == -1) {
+            trace ("cmp3_write_metadata: failed to seek to original id3v2 tag position in %s\n", it->fname);
+            goto error;
+        }
+        uint8_t *buf = malloc (id3v2_size);
+        if (!buf) {
+            trace ("cmp3_write_metadata: failed to alloc %d bytes for id3v2 tag\n", id3v2_size);
+            goto error;
+        }
+        if (deadbeef->fread (buf, 1, id3v2_size, fp) != id3v2_size) {
+            trace ("cmp3_write_metadata: failed to read original id3v2 tag from %s\n", it->fname);
+            free (buf);
+            goto error;
+        }
+        if (fwrite (buf, 1, id3v2_size, out) != id3v2_size) {
+            trace ("cmp3_write_metadata: failed to copy original id3v2 tag from %s to temp file\n", it->fname);
+            free (buf);
+            goto error;
+        }
+        free (buf);
     }
     else if (write_id3v2) {
-        if (!id3v2_end || deadbeef->junk_id3v2_read_full (NULL, &id3v2, fp) != 0) {
-            trace ("failed to read id3v2 from file %s\n", it->fname);
+        if (id3v2_size <= 0 || strip_id3v2 || deadbeef->junk_id3v2_read_full (NULL, &id3v2, fp) != 0) {
             deadbeef->junk_id3v2_free (&id3v2);
             memset (&id3v2, 0, sizeof (id3v2));
             id3v2.version[0] = id3v2_version;
@@ -1297,24 +1334,43 @@ cmp3_write_metadata (DB_playItem_t *it) {
             add_frame = deadbeef->junk_id3v2_add_text_frame_24;
         }
 
-        // add all known frames
+        // add all basic frames
         for (int i = 0; md[i]; i += 3) {
             if (md[i+1]) {
                 const char *val = deadbeef->pl_find_meta (it, md[i]);
                 if (val) {
+                    deadbeef->junk_id3v2_remove_frames (&id3v2, md[i+1]);
                     add_frame (&id3v2, md[i+1], val);
                 }
             }
         }
+
+        // add tracknumber/totaltracks
         const char *track = deadbeef->pl_find_meta (it, "track");
         const char *totaltracks = deadbeef->pl_find_meta (it, "numtracks");
         if (track && totaltracks) {
             char s[100];
             snprintf (s, sizeof (s), "%s/%s", track, totaltracks);
+            deadbeef->junk_id3v2_remove_frames (&id3v2, "TRCK");
             add_frame (&id3v2, "TRCK", s);
         }
         else if (track) {
+            deadbeef->junk_id3v2_remove_frames (&id3v2, "TRCK");
             add_frame (&id3v2, "TRCK", track);
+        }
+
+        // add year/date
+        const char *year = deadbeef->pl_find_meta (it, "year");
+        if (year) {
+            // FIXME: format check
+            if (id3v2.version[0] == 3) {
+                deadbeef->junk_id3v2_remove_frames (&id3v2, "TYER");
+                add_frame (&id3v2, "TYER", year);
+            }
+            else {
+                deadbeef->junk_id3v2_remove_frames (&id3v2, "TDRC");
+                add_frame (&id3v2, "TDRC", year);
+            }
         }
 
         // write tag
@@ -1327,12 +1383,12 @@ cmp3_write_metadata (DB_playItem_t *it) {
     // now write audio data
     buffer = malloc (8192);
     deadbeef->fseek (fp, header, SEEK_SET);
-    int writesize = deadbeef->fgetlength (fp);
+    int writesize = fsize;
     if (footer > 0) {
-        writesize -= (writesize - footer);
+        writesize -= (fsize - footer);
     }
     writesize -= header;
-    trace ("writesize: %d\n", writesize);
+    trace ("writesize: %d, id3v1_start: %d, apev2_start: %d, footer: %d\n", writesize, id3v1_start, apev2_start, footer);
 
     while (writesize > 0) {
         int rb = min (8192, writesize);
@@ -1345,14 +1401,92 @@ cmp3_write_metadata (DB_playItem_t *it) {
             fprintf (stderr, "junk_write_id3v2: error writing output file\n");
             goto error;
         }
-        trace ("written %d bytes\n", rb);
         if (rb == 0) {
             break; // eof
         }
         writesize -= rb;
     }
 
-    // TODO: apev2 and id3v1
+    if (!write_apev2 && !strip_apev2 && apev2_start != 0) {
+        if (deadbeef->fseek (fp, apev2_start, SEEK_SET) == -1) {
+            trace ("cmp3_write_metadata: failed to seek to original apev2 tag position in %s\n", it->fname);
+            goto error;
+        }
+        uint8_t *buf = malloc (apev2_size);
+        if (!buf) {
+            trace ("cmp3_write_metadata: failed to alloc %d bytes for apev2 tag\n", apev2_size);
+            goto error;
+        }
+        if (deadbeef->fread (buf, 1, apev2_size, fp) != apev2_size) {
+            trace ("cmp3_write_metadata: failed to read original apev2 tag from %s\n", it->fname);
+            free (buf);
+            goto error;
+        }
+        if (fwrite (buf, 1, apev2_size, out) != apev2_size) {
+            trace ("cmp3_write_metadata: failed to copy original apev2 tag from %s to temp file\n", it->fname);
+            free (buf);
+            goto error;
+        }
+        free (buf);
+    }
+    else if (write_apev2) {
+        if (!strip_apev2 || deadbeef->junk_apev2_read_full (NULL, &apev2, fp) != 0) {
+            deadbeef->junk_apev2_free (&apev2);
+            memset (&apev2, 0, sizeof (apev2));
+        }
+        // add all basic frames
+        for (int i = 0; md[i]; i += 3) {
+            if (md[i+2]) {
+                const char *val = deadbeef->pl_find_meta (it, md[i]);
+                if (val) {
+                    deadbeef->junk_apev2_remove_frames (&apev2, md[i+2]);
+                    deadbeef->junk_apev2_add_text_frame (&apev2, md[i+2], val);
+                }
+            }
+        }
+
+        // add tracknumber/totaltracks
+        const char *track = deadbeef->pl_find_meta (it, "track");
+        const char *totaltracks = deadbeef->pl_find_meta (it, "numtracks");
+        if (track && totaltracks) {
+            char s[100];
+            snprintf (s, sizeof (s), "%s/%s", track, totaltracks);
+            deadbeef->junk_apev2_remove_frames (&apev2, "Track");
+            deadbeef->junk_apev2_add_text_frame (&apev2, "Track", s);
+        }
+        else if (track) {
+            deadbeef->junk_apev2_remove_frames (&apev2, "Track");
+            deadbeef->junk_apev2_add_text_frame (&apev2, "Track", track);
+        }
+
+        // write tag
+        if (deadbeef->junk_apev2_write (out, &apev2, 0, 1) != 0) {
+            trace ("cmp3_write_metadata: failed to write apev2 tag to %s\n", it->fname)
+            goto error;
+        }
+    }
+
+    if (!write_id3v1 && !strip_id3v1 && id3v1_start != 0) {
+        if (deadbeef->fseek (fp, id3v1_start, SEEK_SET) == -1) {
+            trace ("cmp3_write_metadata: failed to seek to original id3v1 tag position in %s\n", it->fname);
+            goto error;
+        }
+        char buf[128];
+        if (deadbeef->fread (buf, 1, 128, fp) != 128) {
+            trace ("cmp3_write_metadata: failed to read original id3v1 tag from %s\n", it->fname);
+            goto error;
+        }
+        if (fwrite (buf, 1, 128, out) != 128) {
+            trace ("cmp3_write_metadata: failed to copy id3v1 tag from %s to temp file\n", it->fname);
+            goto error;
+        }
+    }
+    else if (write_id3v1) {
+        if (deadbeef->junk_id3v1_write (out, it) != 0) {
+            trace ("cmp3_write_metadata: failed to write id3v1 tag to %s\n", it->fname)
+            goto error;
+        }
+    }
 
     err = 0;
 error:
