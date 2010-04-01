@@ -369,39 +369,39 @@ convstr_id3v2_2to3 (const unsigned char* str, int sz) {
 #endif
 
 static char *
-convstr_id3v2 (int version, const unsigned char* str, int sz) {
+convstr_id3v2 (int version, uint8_t encoding, const unsigned char* str, int sz) {
     static char out[2048];
     const char *enc = "iso8859-1";
     char *ret = out;
 
     // hack to add limited cp1251 recoding support
 
-    if (version == 4 && *str == 3) {
+    if (version == 4 && encoding == 3) {
         // utf8
         trace ("utf8\n");
-        strncpy (out, str+1, 2047);
+        strncpy (out, str, 2047);
         sz--;
         out[min (sz, 2047)] = 0;
         return strdup (out);
     }
-    else if (version == 4 && *str == 2) {
+    else if (version == 4 && encoding == 2) {
         trace ("utf16be\n");
         enc = "UTF-16BE";
     }
-    else if (*str == 1) {
+    else if (encoding == 1) {
         if (version < 4) {
-            if (str[1] == 0xff && str[2] == 0xfe) {
+            if (str[0] == 0xff && str[1] == 0xfe) {
                 enc = "UCS-2LE";
                 str += 2;
                 sz -= 2;
             }
-            else if (str[2] == 0xff && str[1] == 0xfe) {
+            else if (str[1] == 0xff && str[0] == 0xfe) {
                 enc = "UCS-2BE";
                 str += 2;
                 sz -= 2;
             }
             else {
-                trace ("invalid ucs-2 signature %x %x\n", (int)str[1], (int)str[2]);
+                trace ("invalid ucs-2 signature %x %x\n", (int)str[0], (int)str[1]);
                 return NULL;
             }
         }
@@ -419,12 +419,10 @@ convstr_id3v2 (int version, const unsigned char* str, int sz) {
     }
 #endif
     else {
-        if (can_be_russian (&str[1])) {
+        if (can_be_russian (str)) {
             enc = "cp1251";
         }
     }
-    str++;
-    sz--;
     iconv_t cd = iconv_open (UTF8, enc);
     if (cd == (iconv_t)-1) {
         trace ("iconv can't recode from %s to utf8\n", enc);
@@ -954,32 +952,6 @@ junk_apev2_read (playItem_t *it, DB_FILE *fp) {
     return junk_apev2_read_full (it, NULL, fp);
 }
 
-static void
-id3v2_string_read (int version, uint8_t *out, int sz, int unsync, const uint8_t *pread) {
-    if (!unsync) {
-        memcpy (out, pread, sz);
-        out[sz] = 0;
-        out[sz+1] = 0;
-        return;
-    }
-    uint8_t prev = 0;
-    while (sz > 0) {
-        if (prev == 0xff && !(*pread)) {
-//            trace ("found unsync 0x00 byte\n");
-            prev = 0;
-            pread++;
-            continue;
-        }
-        prev = *out = *pread;
-//        trace ("%02x ", prev);
-        pread++;
-        out++;
-        sz--;
-    }
-//    trace ("\n");
-    *out++ = 0;
-}
-
 int
 junk_id3v2_find (DB_FILE *fp, int *psize) {
     if (deadbeef->fseek (fp, 0, SEEK_SET) == -1) {
@@ -1123,11 +1095,6 @@ junk_id3v2_add_text_frame_23 (DB_id3v2_tag_t *tag, const char *frame_id, const c
 
     trace ("junklib: setting 2.3 text frame '%s' = '%s'\n", frame_id, value);
 
-    int unsync = 0;
-    if (tag->flags & (1<<7)) {
-        unsync = 1;
-    }
-
     int encoding = 0;
 
     int res;
@@ -1146,19 +1113,6 @@ junk_id3v2_add_text_frame_23 (DB_id3v2_tag_t *tag, const char *frame_id, const c
     else {
         trace ("successfully converted to iso8859-1 (size=%d)\n", res);
         outlen = res;
-    }
-
-    // add unsync bytes
-    if (unsync) {
-        trace ("adding unsynchronization\n");
-        res = junk_id3v2_unsync (out, res, outlen);
-        if (res >= 0) {
-            trace ("unsync successful\n");
-            outlen = res;
-        }
-        else {
-            trace ("unsync not needed\n");
-        }
     }
 
     // make a frame
@@ -1372,18 +1326,7 @@ junk_id3v2_convert_24_to_23 (DB_id3v2_tag_t *tag24, DB_id3v2_tag_t *tag23) {
             f23->flags[1] = flags[1];
         }
         else if (text) {
-            // decode text into utf8
-            char str[f24->size+2];
-
-            int unsync = 0;
-            if (tag24->flags & (1<<7)) {
-                unsync = 1;
-            }
-            if (f24->flags[1] & 1) {
-                unsync = 1;
-            }
-            id3v2_string_read (4, str, f24->size, unsync, f24->data);
-            char *decoded = convstr_id3v2 (4, str, f24->size);
+            char *decoded = convstr_id3v2 (4, f24->data[0], f24->data+1, f24->size-1);
             if (!decoded) {
                 trace ("junk_id3v2_convert_24_to_23: failed to decode text frame %s\n", f24->id);
                 continue; // failed, discard it
@@ -1567,17 +1510,7 @@ junk_id3v2_convert_23_to_24 (DB_id3v2_tag_t *tag23, DB_id3v2_tag_t *tag24) {
         }
         else if (text) {
             // decode text into utf8
-            char str[f23->size+2];
-
-            int unsync = 0;
-            if (tag23->flags & (1<<7)) {
-                unsync = 1;
-            }
-            if (f23->flags[1] & 1) {
-                unsync = 1;
-            }
-            id3v2_string_read (4, str, f23->size, unsync, f23->data);
-            char *decoded = convstr_id3v2 (3, str, f23->size);
+            char *decoded = convstr_id3v2 (3, f23->data[0], f23->data+1, f23->size-1);
             if (!decoded) {
                 trace ("junk_id3v2_convert_23_to_24: failed to decode text frame %s\n", f23->id);
                 continue; // failed, discard it
@@ -1756,13 +1689,6 @@ junk_id3v2_convert_22_to_24 (DB_id3v2_tag_t *tag22, DB_id3v2_tag_t *tag24) {
         if (f22->flags[1] & (1 << 5)) {
             flags[1] |= (1 << 1);
         }
-        int unsync = 0;
-        if (tag22->flags & (1<<7)) {
-            unsync = 1;
-        }
-        if (f22->flags[1] & 1) {
-            unsync = 1;
-        }
 
         DB_id3v2_frame_t *f24 = NULL;
         if (simplecopy != -1) {
@@ -1783,9 +1709,7 @@ junk_id3v2_convert_22_to_24 (DB_id3v2_tag_t *tag22, DB_id3v2_tag_t *tag24) {
         }
         else if (text != -1) {
             // decode text into utf8
-            char str[f22->size+2];
-            id3v2_string_read (4, str, f22->size, unsync, f22->data);
-            char *decoded = convstr_id3v2 (2, str, f22->size);
+            char *decoded = convstr_id3v2 (2, f22->data[0], f22->data+1, f22->size-1);
             if (!decoded) {
                 trace ("junk_id3v2_convert_23_to_24: failed to decode text frame %s\n", f22->id);
                 continue; // failed, discard it
@@ -1799,27 +1723,21 @@ junk_id3v2_convert_22_to_24 (DB_id3v2_tag_t *tag22, DB_id3v2_tag_t *tag24) {
             free (decoded);
         }
         else if (!strcmp (f22->id, "TYE")) {
-            char str[f22->size+2];
-            id3v2_string_read (4, str, f22->size, unsync, f22->data);
-            char *decoded = convstr_id3v2 (2, str, f22->size);
+            char *decoded = convstr_id3v2 (2, f22->data[0], f22->data+1, f22->size-1);
             if (!decoded) {
                 year = atoi (decoded);
                 free (decoded);
             }
         }
         else if (!strcmp (f22->id, "TDA")) {
-            char str[f22->size+2];
-            id3v2_string_read (4, str, f22->size, unsync, f22->data);
-            char *decoded = convstr_id3v2 (2, str, f22->size);
+            char *decoded = convstr_id3v2 (2, f22->data[0], f22->data+1, f22->size-1);
             if (!decoded) {
                 sscanf (decoded, "%02d02d", &month, &day);
                 free (decoded);
             }
         }
         else if (!strcmp (f22->id, "TIM")) {
-            char str[f22->size+2];
-            id3v2_string_read (4, str, f22->size, unsync, f22->data);
-            char *decoded = convstr_id3v2 (2, str, f22->size);
+            char *decoded = convstr_id3v2 (2, f22->data[0], f22->data+1, f22->size-1);
             if (!decoded) {
                 sscanf (decoded, "%02d02d", &hour, &minute);
                 free (decoded);
@@ -2132,19 +2050,6 @@ junk_id3v2_write (FILE *out, DB_id3v2_tag_t *tag) {
     char *buffer = NULL;
     int err = -1;
 
-#if 0
-    FILE *out = NULL;
-    char tmppath[PATH_MAX];
-    snprintf (tmppath, sizeof (tmppath), "%s.temp.mp3", fname);
-    fprintf (stderr, "going to write tags to %s\n", tmppath);
-
-    out = fopen (tmppath, "w+b");
-    if (!out) {
-        fprintf (stderr, "junk_write_id3v2: failed to fdopen temp file\n");
-        goto error;
-    }
-#endif
-
     // write tag header
     if (fwrite ("ID3", 1, 3, out) != 3) {
         fprintf (stderr, "junk_write_id3v2: failed to write ID3 signature\n");
@@ -2235,53 +2140,6 @@ error:
         free (buffer);
     }
     return err;
-#if 0
-
-    // skip id3v2 tag
-    fp = fopen (fname, "rb");
-    if (!fp) {
-        fprintf (stderr, "junk_write_id3v2: failed to open source file %s\n", fname);
-        goto error;
-    }
-    int skip= junk_get_leading_size_stdio (fp);
-    if (skip > 0) {
-        fseek (fp, skip, SEEK_SET);
-    }
-    else {
-        rewind (fp);
-    }
-
-    buffer = malloc (8192);
-    int rb = 0;
-    for (;;) {
-        rb = fread (buffer, 1, 8192, fp);
-        if (rb < 0) {
-            fprintf (stderr, "junk_write_id3v2: error reading input data\n");
-            goto error;
-        }
-        if (fwrite (buffer, 1, rb, out) != rb) {
-            fprintf (stderr, "junk_write_id3v2: error writing output file\n");
-            goto error;
-        }
-        if (rb == 0) {
-            break; // eof
-        }
-    }
-
-    err = 0;
-
-error:
-    if (out) {
-        fclose (out);
-    }
-    if (fp) {
-        fclose (fp);
-    }
-    if (buffer) {
-        free (buffer);
-    }
-    return err;
-#endif
 }
 
 void
@@ -2331,6 +2189,93 @@ junk_append_meta (const char *old, const char *new) {
     }
     snprintf (appended, sz, "%s\n%s", old, new);
     return appended;
+}
+
+int
+junk_load_comm_frame (int version_major, playItem_t *it, uint8_t *readptr, int synched_size, char **pcomment) {
+    char *comment = *pcomment;
+    uint8_t enc = readptr[0];
+    char lang[4] = {readptr[1], readptr[2], readptr[3], 0};
+    trace ("COMM enc is: %d\n", (int)enc);
+    trace ("COMM language is: %s\n", lang);
+
+    uint8_t *pdescr = readptr+4;
+    // find value field
+    uint8_t *pvalue = pdescr;
+    if ((enc == 3 && version_major == 4) || enc == 0) {
+        while (pvalue - pdescr < synched_size-4 && *pvalue) {
+            pvalue++;
+        }
+        if (pvalue - pdescr >= synched_size-4) {
+            pvalue = NULL;
+        }
+        else {
+            pvalue++;
+        }
+    }
+    else {
+        // unicode, find 0x00 0x00 0xXX
+        while (pvalue - pdescr + 2 < synched_size-4 && (pvalue[0] || pvalue[1] || !pvalue[2])) {
+            trace ("byte: %X\n", *pvalue);
+            pvalue++;
+        }
+        if (pvalue - pdescr + 2 >= synched_size-4) {
+            trace ("out of bounds: size=%d, framesize=%d\n", pvalue - pdescr + 1, synched_size-4);
+            pvalue = NULL;
+        }
+        else {
+            pvalue += 2;
+        }
+    }
+
+    if (!pvalue) {
+        trace ("failed to parse COMM frame\n");
+        return -1;
+    }
+
+    trace ("COMM descr length: %d\n", pvalue-pdescr);
+    char *descr = convstr_id3v2 (version_major, enc, pdescr, pvalue - pdescr);
+    trace ("COMM descr: %s\n", descr);
+    if (!descr) {
+        trace ("failed to decode COMM descr\n");
+        return -1;
+    }
+
+    int valsize = synched_size - 4 - (pvalue - pdescr);
+    trace ("valsize=%d\n", valsize);
+    char *text = convstr_id3v2 (version_major, enc, pvalue, valsize);
+    trace ("COMM text: %s\n", text);
+    if (!text) {
+        trace ("failed to decode COMM text\n");
+        return -1;
+    }
+
+    int len = (comment ? (strlen (comment) + 1) : 0) + strlen (descr) + strlen (text) + 3;
+    char *newcomment = malloc (len);
+
+    if (*descr) {
+        if (comment) {
+            snprintf (newcomment, len, "%s\n%s: %s", comment, descr, text);
+        }
+        else {
+            snprintf (newcomment, len, "%s: %s", descr, text);
+        }
+    }
+    else {
+        if (comment) {
+            snprintf (newcomment, len, "%s\n%s", comment, text);
+        }
+        else {
+            snprintf (newcomment, len, "%s", text);
+        }
+    }
+    if (comment) {
+        free (comment);
+    }
+    comment = newcomment;
+    trace ("COMM combined: %s\n", comment);
+    *pcomment = comment;
+    return 0;
 }
 
 int
@@ -2463,6 +2408,11 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
             uint8_t flags2 = readptr[1];
             readptr += 2;
 
+            int synched_size = sz;
+            if (unsync) {
+                synched_size = junklib_id3v2_sync_frame (readptr, sz);
+            }
+
             if (sz > MAX_ID3V2_FRAME_SIZE) {
                 trace ("junk_id3v2_read_full: frame %s size is too big, discarded\n", frameid);
                 readptr += sz;
@@ -2484,14 +2434,7 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                 }
                 strcpy (frm->id, frameid);
                 memcpy (frm->data, readptr, sz);
-                if (unsync) {
-                    frm->size = junklib_id3v2_sync_frame (frm->data, sz);
-                    trace ("frame %s size change %d -> %d after sync\n", frameid, sz, frm->size);
-                }
-                else
-                {
-                    frm->size = sz;
-                }
+                frm->size = synched_size;
 
                 frm->flags[0] = flags1;
                 frm->flags[1] = flags2;
@@ -2568,13 +2511,11 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
             int f = 0;
             for (f = 0; text_frames[f]; f++) {
                 if (!strcmp (frameid, text_frames[f])) {
-                    if (sz > MAX_TEXT_FRAME_SIZE) {
+                    if (synched_size > MAX_TEXT_FRAME_SIZE) {
                         trace ("frame %s is too big, discard\n", frameid);
                         break;
                     }
-                    char str[sz + 2];
-                    id3v2_string_read (version_major, str, sz, unsync, readptr);
-                    char *text = convstr_id3v2 (version_major, str, sz);
+                    char *text = convstr_id3v2 (version_major, readptr[0], readptr+1, synched_size-1);
                     if (text && text_holders[f]) {
                         if (*text_holders[f]) {
                             // append
@@ -2599,54 +2540,8 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                     readptr += sz; // bad tag
                     continue;
                 }
-                uint8_t enc = readptr[0];
-                char lang[4] = {readptr[1], readptr[2], readptr[3], 0};
-///                if (strcmp (lang, "eng")) {
-///                    trace ("non-english comment, skip\n");
-///                    readptr += sz;
-///                    continue;
-///                }
-                trace ("COMM enc is: %d\n", (int)enc);
-                trace ("COMM language is: %s\n", lang);
-                char *descr = readptr+4;
-                trace ("COMM descr: %s\n", descr);
-                int dlen = strlen(descr)+1;
-                int s = sz - 4 - dlen;
-                char str[s + 3];
-                id3v2_string_read (version_major, &str[1], s, unsync, descr+dlen);
-                str[0] = enc;
-                char *text = convstr_id3v2 (version_major, str, s+1);
-                trace ("COMM text: %s\n", text);
-                if (!*text) {
-                    trace ("junk_id3v2_read_full: bad COMM frame, discarded\n");
-                    readptr += sz;
-                    continue;
-                }
 
-                int len = (comment ? (strlen (comment) + 1) : 0) + strlen (descr) + strlen (text) + 3;
-                char *newcomment = malloc (len);
-                
-                if (*descr) {
-                    if (comment) {
-                        snprintf (newcomment, len, "%s\n%s: %s", comment, descr, text);
-                    }
-                    else {
-                        snprintf (newcomment, len, "%s: %s", descr, text);
-                    }
-                }
-                else {
-                    if (comment) {
-                        snprintf (newcomment, len, "%s\n%s", comment, text);
-                    }
-                    else {
-                        snprintf (newcomment, len, "%s", text);
-                    }
-                }
-                if (comment) {
-                    free (comment);
-                }
-                comment = newcomment;
-                trace ("COMM combined: %s\n", comment);
+                /*int res = */junk_load_comm_frame (version_major, it, readptr, synched_size, &comment);
             }
             else if (it && !strcmp (frameid, "TXXX")) {
                 if (sz < 2) {
@@ -2669,11 +2564,9 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                     readptr += sz; // bad tag
                     continue;
                 }
-                char desc_s[desc_sz+2];
-                id3v2_string_read (version_major, desc_s, desc_sz, unsync, desc);
-                //trace ("desc=%s\n", desc_s);
-                char value_s[readptr+sz-p+2];
-                id3v2_string_read (version_major, value_s, readptr+sz-p, unsync, p);
+                // FIXME: decode properly using frame encoding
+                char *desc_s = desc;
+                char *value_s = p;
                 //trace ("value=%s\n", value_s);
                 if (!strcasecmp (desc_s, "replaygain_album_gain")) {
                     it->replaygain_album_gain = atof (value_s);
@@ -2715,6 +2608,11 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                 readptr += sz;
                 continue;
             }
+            int synched_size = sz;
+            if (unsync) {
+                synched_size = junklib_id3v2_sync_frame (readptr, sz);
+            }
+
             if (tag_store) {
                 DB_id3v2_frame_t *frm = malloc (sizeof (DB_id3v2_frame_t) + sz);
                 if (!frm) {
@@ -2730,7 +2628,7 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                     tag_store->frames = frm;
                 }
                 strcpy (frm->id, frameid);
-                memcpy (frm->data, readptr, sz);
+                memcpy (frm->data, readptr, synched_size);
                 frm->size = sz;
             }
 //            trace ("found id3v2.2 frame: %s, size=%d\n", frameid, sz);
@@ -2741,14 +2639,11 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
             int f = 0;
             for (f = 0; text_frames[f]; f++) {
                 if (!strcmp (frameid, text_frames[f])) {
-                    if (sz > MAX_TEXT_FRAME_SIZE) {
+                    if (synched_size > MAX_TEXT_FRAME_SIZE) {
                         trace ("frame %s is too big, discard\n", frameid);
                         break;
                     }
-                    char str[sz + 2];
-                    id3v2_string_read (version_major, str, sz, unsync, readptr);
-                    str[sz] = 0;
-                    char *text = convstr_id3v2 (version_major, str, sz);
+                    char *text = convstr_id3v2 (version_major, readptr[0], readptr+1, synched_size-1);
                     if (text && text_holders[f]) {
                         if (*text_holders[f]) {
                             // append
@@ -2768,6 +2663,8 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
             }
 
             if (!strcmp (frameid, "COM")) {
+                /*int res = */junk_load_comm_frame (version_major, it, readptr, synched_size, &comment);
+#if 0
                 if (sz > 1000) {
                     readptr += sz;
                     continue;
@@ -2804,9 +2701,10 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                 }
                 comment = newcomment;
                 trace ("COM text: %s\n", text);
+#endif
             }
             else if (it && !strcmp (frameid, "TXX")) {
-                if (sz < 2) {
+                if (synched_size < 2) {
                     trace ("TXX frame is too short, skipped\n");
                     readptr += sz; // bad tag
                     continue;
@@ -2816,22 +2714,18 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                 p++;
                 uint8_t *desc = p;
                 int desc_sz = 0;
-                while (*p && p - readptr < sz) {
+                while (*p && p - readptr < synched_size) {
                     p++;
                     desc_sz++;
                 }
                 p++;
-                if (p - readptr >= sz) {
+                if (p - readptr >= synched_size) {
                     trace ("bad TXXX frame, skipped\n");
                     readptr += sz; // bad tag
                     continue;
                 }
-                char desc_s[desc_sz+2];
-                id3v2_string_read (version_major, desc_s, desc_sz, unsync, desc);
-                //trace ("desc=%s\n", desc_s);
-                char value_s[readptr+sz-p+2];
-                id3v2_string_read (version_major, value_s, readptr+sz-p, unsync, p);
-                //trace ("value=%s\n", value_s);
+                uint8_t *desc_s = desc;
+                uint8_t *value_s = p;
                 if (!strcasecmp (desc_s, "replaygain_album_gain")) {
                     it->replaygain_album_gain = atof (value_s);
                     trace ("%s=%s (%f)\n", desc_s, value_s, it->replaygain_album_gain);
