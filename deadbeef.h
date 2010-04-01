@@ -118,6 +118,20 @@ typedef struct DB_id3v2_tag_s {
     DB_id3v2_frame_t *frames;
 } DB_id3v2_tag_t;
 
+typedef struct DB_apev2_frame_s {
+    struct DB_apev2_frame_s *next;
+    uint32_t flags;
+    char key[256];
+    uint32_t size; // size of data
+    uint8_t data[0];
+} DB_apev2_frame_t;
+
+typedef struct DB_apev2_tag_s {
+    uint32_t version;
+    uint32_t flags;
+    DB_apev2_frame_t *frames;
+} DB_apev2_tag_t;
+
 // plugin types
 enum {
     DB_PLUGIN_DECODER = 1,
@@ -380,6 +394,7 @@ typedef struct {
     void (*pl_search_process) (const char *text);
     // metainfo
     void (*pl_add_meta) (DB_playItem_t *it, const char *key, const char *value);
+    void (*pl_append_meta) (DB_playItem_t *it, const char *key, const char *value);
     // must be used from within explicit pl_lock/unlock block
     const char *(*pl_find_meta) (DB_playItem_t *it, const char *key);
     void (*pl_replace_meta) (DB_playItem_t *it, const char *key, const char *value);
@@ -406,18 +421,27 @@ typedef struct {
     float (*volume_get_amp) (void);
     float (*volume_get_min_db) (void);
     // junk reading/writing
-    int (*junk_read_id3v1) (DB_playItem_t *it, DB_FILE *fp);
-    int (*junk_read_id3v2) (DB_playItem_t *it, DB_FILE *fp);
-    int (*junk_read_id3v2_full) (DB_playItem_t *it, DB_id3v2_tag_t *tag, DB_FILE *fp);
+    int (*junk_id3v1_read) (DB_playItem_t *it, DB_FILE *fp);
+    int (*junk_id3v1_find) (DB_FILE *fp);
+    int (*junk_id3v1_write) (FILE *fp, DB_playItem_t *it);
+    int (*junk_id3v2_find) (DB_FILE *fp, int *psize);
+    int (*junk_id3v2_read) (DB_playItem_t *it, DB_FILE *fp);
+    int (*junk_id3v2_read_full) (DB_playItem_t *it, DB_id3v2_tag_t *tag, DB_FILE *fp);
     int (*junk_id3v2_convert_24_to_23) (DB_id3v2_tag_t *tag24, DB_id3v2_tag_t *tag23);
     int (*junk_id3v2_convert_23_to_24) (DB_id3v2_tag_t *tag23, DB_id3v2_tag_t *tag24);
     int (*junk_id3v2_convert_22_to_24) (DB_id3v2_tag_t *tag22, DB_id3v2_tag_t *tag24);
-    void (*junk_free_id3v2) (DB_id3v2_tag_t *tag);
-    int (*junk_write_id3v2) (const char *fname, DB_id3v2_tag_t *tag);
+    void (*junk_id3v2_free) (DB_id3v2_tag_t *tag);
+    int (*junk_id3v2_write) (FILE *file, DB_id3v2_tag_t *tag);
     DB_id3v2_frame_t *(*junk_id3v2_add_text_frame_23) (DB_id3v2_tag_t *tag, const char *frame_id, const char *value); 
     DB_id3v2_frame_t *(*junk_id3v2_add_text_frame_24) (DB_id3v2_tag_t *tag, const char *frame_id, const char *value); 
     int (*junk_id3v2_remove_frames) (DB_id3v2_tag_t *tag, const char *frame_id);
-    int (*junk_read_ape) (DB_playItem_t *it, DB_FILE *fp);
+    int (*junk_apev2_read) (DB_playItem_t *it, DB_FILE *fp);
+    int (*junk_apev2_read_full) (DB_playItem_t *it, DB_apev2_tag_t *tag_store, DB_FILE *fp);
+    int (*junk_apev2_find) (DB_FILE *fp, int32_t *psize, uint32_t *pflags, uint32_t *pnumitems);
+    int (*junk_apev2_remove_frames) (DB_apev2_tag_t *tag, const char *frame_id);
+    DB_apev2_frame_t * (*junk_apev2_add_text_frame) (DB_apev2_tag_t *tag, const char *frame_id, const char *value);
+    void (*junk_apev2_free) (DB_apev2_tag_t *tag);
+    int (*junk_apev2_write) (FILE *fp, DB_apev2_tag_t *tag, int write_header, int write_footer);
     int (*junk_get_leading_size) (DB_FILE *fp);
     int (*junk_get_leading_size_stdio) (FILE *fp);
     void (*junk_copy) (DB_playItem_t *from, DB_playItem_t *first, DB_playItem_t *last);
@@ -505,7 +529,6 @@ typedef struct DB_fileinfo_s {
 // decoder plugin
 typedef struct DB_decoder_s {
     DB_plugin_t plugin;
-//    DB_fileinfo_t info;
     // init is called to prepare song to be started
     DB_fileinfo_t *(*init) (DB_playItem_t *it);
 
@@ -535,6 +558,9 @@ typedef struct DB_decoder_s {
 
     int (*numvoices) (DB_fileinfo_t *info);
     void (*mutevoice) (DB_fileinfo_t *info, int voice, int mute);
+
+    int (*read_metadata) (DB_playItem_t *it);
+    int (*write_metadata) (DB_playItem_t *it);
 
     // NULL terminated array of all supported extensions
     const char **exts;

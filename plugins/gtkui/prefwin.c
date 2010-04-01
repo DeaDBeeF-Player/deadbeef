@@ -176,8 +176,6 @@ static gboolean
 add_hotkey_to_config (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data) {
     int *counter = (int *)data;
     GValue key = {0,}, value = {0,};
-//    g_value_init (&key, G_TYPE_STRING);
-//    g_value_init (&value, G_TYPE_STRING);
     gtk_tree_model_get_value (model, iter, 0, &key);
     gtk_tree_model_get_value (model, iter, 1, &value);
     const char *skey = g_value_get_string (&key);
@@ -427,6 +425,32 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
     g_signal_connect ((gpointer)lookup_widget (prefwin, "addhotkey"), "clicked", G_CALLBACK (on_addhotkey_clicked), hkstore);
     g_signal_connect ((gpointer)lookup_widget (prefwin, "removehotkey"), "clicked", G_CALLBACK (on_removehotkey_clicked), hktree);
     g_signal_connect ((gpointer)lookup_widget (prefwin, "applyhotkeys"), "clicked", G_CALLBACK (on_applyhotkeys_clicked), hkstore);
+
+    // tag writer
+    int strip_id3v2 = deadbeef->conf_get_int ("mp3.strip_id3v2", 0);
+    int strip_id3v1 = deadbeef->conf_get_int ("mp3.strip_id3v1", 0);
+    int strip_apev2 = deadbeef->conf_get_int ("mp3.strip_apev2", 0);
+    int write_id3v2 = deadbeef->conf_get_int ("mp3.write_id3v2", 1);
+    int write_id3v1 = deadbeef->conf_get_int ("mp3.write_id3v1", 0);
+    int write_apev2 = deadbeef->conf_get_int ("mp3.write_apev2", 1);
+    int id3v2_version = deadbeef->conf_get_int ("mp3.id3v2_version", 3);
+    const char *id3v1_encoding = deadbeef->conf_get_str ("mp3.id3v1_encoding", "iso8859-1");
+    int ape_strip_id3v2 = deadbeef->conf_get_int ("ape.strip_id3v2", 0);
+    int ape_strip_apev2 = deadbeef->conf_get_int ("ape.strip_apev2", 0);
+    int ape_write_id3v2 = deadbeef->conf_get_int ("ape.write_id3v2", 0);
+    int ape_write_apev2 = deadbeef->conf_get_int ("ape.write_apev2", 1);
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (prefwin, "strip_id3v2")), strip_id3v2);
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (prefwin, "strip_id3v1")), strip_id3v1);
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (prefwin, "strip_apev2")), strip_apev2);
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (prefwin, "write_id3v2")), write_id3v2);
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (prefwin, "write_id3v1")), write_id3v1);
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (prefwin, "write_apev2")), write_apev2);
+    gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (prefwin, "id3v2_version")), id3v2_version != 4 ? 0 : 1);
+    gtk_entry_set_text (GTK_ENTRY (lookup_widget (prefwin, "id3v1_encoding")), id3v1_encoding);
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (prefwin, "ape_strip_id3v2")), ape_strip_id3v2);
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (prefwin, "ape_strip_apev2")), ape_strip_apev2);
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (prefwin, "ape_write_apev2")), ape_write_apev2);
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (prefwin, "ape_write_id3v2")), ape_write_id3v2);
 
     gtk_dialog_run (GTK_DIALOG (prefwin));
     gtk_widget_destroy (prefwin);
@@ -731,3 +755,104 @@ on_disable_playlist_theming_toggled    (GtkToggleButton *togglebutton,
     gtk_widget_set_sensitive (lookup_widget (prefwin, "listview_colors_table"), active);
     deadbeef->sendmessage (M_CONFIGCHANGED, 0, 0, 0);
 }
+
+void
+on_write_id3v2_toggled                 (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_int ("mp3.write_id3v2", gtk_toggle_button_get_active (togglebutton));
+}
+
+
+void
+on_write_id3v1_toggled                 (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_int ("mp3.write_id3v1", gtk_toggle_button_get_active (togglebutton));
+}
+
+
+void
+on_write_apev2_toggled                 (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_int ("mp3.write_apev2", gtk_toggle_button_get_active (togglebutton));
+}
+
+
+void
+on_strip_id3v2_toggled                 (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_int ("mp3.strip_id3v2", gtk_toggle_button_get_active (togglebutton));
+}
+
+
+void
+on_strip_id3v1_toggled                 (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_int ("mp3.strip_id3v1", gtk_toggle_button_get_active (togglebutton));
+}
+
+
+void
+on_strip_apev2_toggled                 (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_int ("mp3.strip_apev2", gtk_toggle_button_get_active (togglebutton));
+}
+
+
+void
+on_id3v2_version_changed               (GtkComboBox     *combobox,
+                                        gpointer         user_data)
+{
+    int version = 3;
+    int active = gtk_combo_box_get_active (combobox);
+    if (active == 1) {
+        version = 4;
+    }
+    deadbeef->conf_set_int ("mp3.id3v2_version", version);
+}
+
+
+void
+on_id3v1_encoding_changed              (GtkEditable     *editable,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_str ("mp3.id3v1_encoding", gtk_entry_get_text (GTK_ENTRY (editable)));
+}
+
+
+void
+on_ape_write_id3v2_toggled             (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_int ("ape.write_id3v2", gtk_toggle_button_get_active (togglebutton));
+}
+
+
+void
+on_ape_write_apev2_toggled             (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_int ("ape.write_apev2", gtk_toggle_button_get_active (togglebutton));
+}
+
+
+void
+on_ape_strip_id3v2_toggled             (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_int ("ape.strip_id3v2", gtk_toggle_button_get_active (togglebutton));
+}
+
+
+void
+on_ape_strip_apev2_toggled             (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_int ("ape.strip_apev2", gtk_toggle_button_get_active (togglebutton));
+}
+

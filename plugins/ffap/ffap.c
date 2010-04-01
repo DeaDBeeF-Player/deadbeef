@@ -1706,15 +1706,15 @@ ffap_insert (DB_playItem_t *after, const char *fname) {
     it->filetype = "APE";
     deadbeef->pl_set_item_duration (it, duration);
  
-    /*int v2err = */deadbeef->junk_read_id3v2 (it, fp);
-    int v1err = deadbeef->junk_read_id3v1 (it, fp);
+    /*int v2err = */deadbeef->junk_id3v2_read (it, fp);
+    int v1err = deadbeef->junk_id3v1_read (it, fp);
     if (v1err >= 0) {
         deadbeef->fseek (fp, -128, SEEK_END);
     }
     else {
         deadbeef->fseek (fp, 0, SEEK_END);
     }
-    /*int apeerr = */deadbeef->junk_read_ape (it, fp);
+    /*int apeerr = */deadbeef->junk_apev2_read (it, fp);
 
     deadbeef->fclose (fp);
     ape_free_ctx (&ape_ctx);

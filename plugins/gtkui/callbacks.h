@@ -781,3 +781,55 @@ on_toggle_eq                           (GtkMenuItem     *menuitem,
 void
 on_write_tags_clicked                  (GtkButton       *button,
                                         gpointer         user_data);
+
+void
+on_write_id3v2_toggled                 (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);
+
+void
+on_write_id3v1_toggled                 (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);
+
+void
+on_write_apev2_toggled                 (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);
+
+void
+on_strip_id3v2_toggled                 (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);
+
+void
+on_strip_id3v1_toggled                 (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);
+
+void
+on_strip_apev2_toggled                 (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);
+
+void
+on_id3v2_version_changed               (GtkComboBox     *combobox,
+                                        gpointer         user_data);
+
+void
+on_id3v1_encoding_changed              (GtkEditable     *editable,
+                                        gpointer         user_data);
+
+void
+on_ape_write_id3v2_toggled             (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);
+
+void
+on_ape_write_apev2_toggled             (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);
+
+void
+on_ape_strip_id3v2_toggled             (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);
+
+void
+on_ape_strip_apev2_toggled             (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);
+
+void
+on_closebtn_clicked                    (GtkButton       *button,
+                                        gpointer         user_data);

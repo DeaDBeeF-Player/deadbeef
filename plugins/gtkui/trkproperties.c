@@ -58,6 +58,20 @@ on_trackproperties_key_press_event     (GtkWidget       *widget,
 }
 
 void
+on_closebtn_clicked                    (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    if (trackproperties) {
+        if (track) {
+            deadbeef->pl_item_unref (track);
+            track = NULL;
+        }
+        gtk_widget_destroy (trackproperties);
+        trackproperties = NULL;
+    }
+}
+
+void
 on_metadata_edited (GtkCellRendererText *renderer, gchar *path, gchar *new_text, gpointer user_data) {
     GtkListStore *store = GTK_LIST_STORE (user_data);
     GtkTreePath *treepath = gtk_tree_path_new_from_string (path);
@@ -67,12 +81,31 @@ on_metadata_edited (GtkCellRendererText *renderer, gchar *path, gchar *new_text,
     gtk_list_store_set (store, &iter, 1, new_text, -1);
 }
 
+// full metadata
+static const char *types[] = {
+    "artist", "Artist",
+    "band", "Band / Album Artist",
+    "title", "Track Title",
+    "track", "Track Number",
+    "album", "Album",
+    "genre", "Genre",
+    "year", "Date",
+    "performer", "Performer",
+    "composer", "Composer",
+    "numtracks", "Total Tracks",
+    "disc", "Disc Number",
+    "comment", "Comment",
+    "vendor", "Encoded by",
+    NULL
+};
+
 void
 show_track_properties_dlg (DB_playItem_t *it) {
     if (it) {
         deadbeef->pl_item_ref (it);
     }
     track = it;
+
     if (!trackproperties) {
         trackproperties = create_trackproperties ();
         gtk_window_set_transient_for (GTK_WINDOW (trackproperties), GTK_WINDOW (mainwin));
@@ -80,87 +113,9 @@ show_track_properties_dlg (DB_playItem_t *it) {
     GtkWidget *widget = trackproperties;
     GtkWidget *w;
     const char *meta;
-    // fill in metadata
     // location
     w = lookup_widget (widget, "location");
     gtk_entry_set_text (GTK_ENTRY (w), it->fname);
-    // title
-    w = lookup_widget (widget, "title");
-    meta = deadbeef->pl_find_meta (it, "title");
-    if (!meta) {
-        meta = "";
-    }
-    gtk_entry_set_text (GTK_ENTRY (w), meta);
-    // artist
-    w = lookup_widget (widget, "artist");
-    meta = deadbeef->pl_find_meta (it, "artist");
-    if (!meta) {
-        meta = "";
-    }
-    gtk_entry_set_text (GTK_ENTRY (w), meta);
-    // band
-    w = lookup_widget (widget, "band");
-    meta = deadbeef->pl_find_meta (it, "band");
-    if (!meta) {
-        meta = "";
-    }
-    gtk_entry_set_text (GTK_ENTRY (w), meta);
-    // album
-    w = lookup_widget (widget, "album");
-    meta = deadbeef->pl_find_meta (it, "album");
-    if (!meta) {
-        meta = "";
-    }
-    gtk_entry_set_text (GTK_ENTRY (w), meta);
-    // genre
-    w = lookup_widget (widget, "genre");
-    meta = deadbeef->pl_find_meta (it, "genre");
-    if (!meta) {
-        meta = "";
-    }
-    gtk_entry_set_text (GTK_ENTRY (w), meta);
-    // year
-    w = lookup_widget (widget, "year");
-    meta = deadbeef->pl_find_meta (it, "year");
-    if (!meta) {
-        meta = "";
-    }
-    gtk_entry_set_text (GTK_ENTRY (w), meta);
-    // track
-    w = lookup_widget (widget, "track");
-    meta = deadbeef->pl_find_meta (it, "track");
-    if (!meta) {
-        meta = "";
-    }
-    gtk_entry_set_text (GTK_ENTRY (w), meta);
-    // comment
-    w = lookup_widget (widget, "comment");
-    meta = deadbeef->pl_find_meta (it, "comment");
-    if (!meta) {
-        meta = "";
-    }
-    GtkTextBuffer *buffer = gtk_text_buffer_new (NULL);
-    gtk_text_buffer_set_text (buffer, meta, strlen (meta));
-    gtk_text_view_set_buffer (GTK_TEXT_VIEW (w), buffer);
-    g_object_unref (buffer);
-
-    // full metadata
-    const char *types[] = {
-        "artist", "Artist",
-        "band", "Band / Album Artist",
-        "title", "Track Title",
-        "track", "Track Number",
-        "album", "Album",
-        "genre", "Genre",
-        "year", "Date",
-        "performer", "Performer",
-        "composer", "Composer",
-        "numtracks", "Total Tracks",
-        "disc", "Disc Number",
-        "comment", "Comment",
-        "vendor", "Encoded by",
-        NULL
-    };
 
     GtkTreeView *tree = GTK_TREE_VIEW (lookup_widget (widget, "metalist"));
     GtkListStore *store = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_STRING);
@@ -190,8 +145,46 @@ show_track_properties_dlg (DB_playItem_t *it) {
     }
     deadbeef->pl_unlock ();
 
+    // get decoder plugin by id
+    DB_decoder_t *dec = NULL;
+    if (it->decoder_id) {
+        DB_decoder_t **decoders = deadbeef->plug_get_decoder_list ();
+        for (int i = 0; decoders[i]; i++) {
+            if (!strcmp (decoders[i]->plugin.id, it->decoder_id)) {
+                dec = decoders[i];
+                break;
+            }
+        }
+    }
+
+    if (dec && dec->write_metadata && deadbeef->conf_get_int ("enable_tag_writing", 0)) {
+        gtk_widget_set_sensitive (lookup_widget (widget, "write_tags"), TRUE);
+    }
+    else {
+        gtk_widget_set_sensitive (lookup_widget (widget, "write_tags"), FALSE);
+    }
+
     gtk_widget_show (widget);
     gtk_window_present (GTK_WINDOW (widget));
+}
+
+static gboolean
+set_metadata_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data) {
+    GValue key = {0,}, value = {0,};
+    gtk_tree_model_get_value (model, iter, 0, &key);
+    gtk_tree_model_get_value (model, iter, 1, &value);
+    const char *skey = g_value_get_string (&key);
+    const char *svalue = g_value_get_string (&value);
+
+
+    for (int i = 0; types[i]; i += 2) {
+        if (!strcmp (skey, types[i+1])) {
+            printf ("setting %s = %s\n", types[i], svalue);
+            deadbeef->pl_replace_meta (DB_PLAYITEM (data), types[i], svalue);
+        }
+    }
+
+    return FALSE;
 }
 
 void
@@ -203,6 +196,26 @@ on_write_tags_clicked                  (GtkButton       *button,
         fprintf (stderr, "tag writing disabled\n");
         return;
     }
+    if (!track || !track->decoder_id) {
+        return;
+    }
+    // find decoder
+    DB_decoder_t *dec = NULL;
+    DB_decoder_t **decoders = deadbeef->plug_get_decoder_list ();
+    for (int i = 0; decoders[i]; i++) {
+        if (!strcmp (decoders[i]->plugin.id, track->decoder_id)) {
+            dec = decoders[i];
+            if (dec->write_metadata) {
+                // put all metainfo into track
+                GtkTreeView *tree = GTK_TREE_VIEW (lookup_widget (trackproperties, "metalist"));
+                GtkTreeModel *model = GTK_TREE_MODEL (gtk_tree_view_get_model (tree));
+                gtk_tree_model_foreach (model, set_metadata_cb, track);
+                dec->write_metadata (track);
+            }
+            break;
+        }
+    }
+#if 0
     DB_id3v2_tag_t tag;
     memset (&tag, 0, sizeof (tag));
     DB_FILE *fp = deadbeef->fopen (track->fname);
@@ -285,5 +298,5 @@ error:
         deadbeef->fclose (fp);
     }
     deadbeef->junk_free_id3v2 (&tag);
+#endif
 }
-

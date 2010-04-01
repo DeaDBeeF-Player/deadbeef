@@ -1441,6 +1441,20 @@ pl_add_meta (playItem_t *it, const char *key, const char *value) {
 }
 
 void
+pl_append_meta (playItem_t *it, const char *key, const char *value) {
+    const char *old = pl_find_meta (it, key);
+    if (!old) {
+        pl_add_meta (it, key, value);
+    }
+    else {
+        int sz = strlen (old) + strlen (value) + 2;
+        char str[sz];
+        snprintf (str, sz, "%s\n%s", old, value);
+        pl_replace_meta (it, key, str);
+    }
+}
+
+void
 pl_replace_meta (playItem_t *it, const char *key, const char *value) {
     LOCK;
     // check if it's already set
@@ -2135,6 +2149,8 @@ pl_format_title (playItem_t *it, int idx, char *s, int size, int id, const char 
     const char *copyright = NULL;
     const char *filename = NULL;
 
+    char *ss = s;
+
     LOCK;
     if (id != -1) {
         const char *text = NULL;
@@ -2189,6 +2205,11 @@ pl_format_title (playItem_t *it, int idx, char *s, int size, int id, const char 
         if (text) {
             strncpy (s, text, size);
             UNLOCK;
+            for (ss = s; *ss; ss++) {
+                if (*ss == '\n') {
+                    *ss = ';';
+                }
+            }
             return strlen (s);
         }
         else {
@@ -2279,6 +2300,15 @@ pl_format_title (playItem_t *it, int idx, char *s, int size, int id, const char 
     *s = 0;
 
     UNLOCK;
+
+    // replace all \n with ;
+    while (*ss) {
+        if (*ss == '\n') {
+            *ss = ';';
+        }
+        ss++;
+    }
+
     return size - n - 1;
 }
 

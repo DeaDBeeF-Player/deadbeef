@@ -244,11 +244,11 @@ wv_insert (DB_playItem_t *after, const char *fname) {
 
     trace ("wv: totalsamples=%d, samplerate=%d, duration=%f\n", totalsamples, samplerate, duration);
 
-    int apeerr = deadbeef->junk_read_ape (it, fp);
+    int apeerr = deadbeef->junk_apev2_read (it, fp);
     if (!apeerr) {
         trace ("wv: ape tag found\n");
     }
-    int v1err = deadbeef->junk_read_id3v1 (it, fp);
+    int v1err = deadbeef->junk_id3v1_read (it, fp);
     if (!v1err) {
         trace ("wv: id3v1 tag found\n");
     }
