@@ -1281,7 +1281,7 @@ cmp3_write_metadata (DB_playItem_t *it) {
     DB_apev2_tag_t apev2;
 
     memset (&id3v2, 0, sizeof (id3v2));
-    memset (&apev2, 0, sizeof (id3v2));
+    memset (&apev2, 0, sizeof (apev2));
 
     if (!strip_id3v2 && !write_id3v2 && id3v2_size > 0) {
         if (deadbeef->fseek (fp, id3v2_start, SEEK_SET) == -1) {
