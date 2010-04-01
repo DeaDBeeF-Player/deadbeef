@@ -2370,11 +2370,6 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
         return -1; // bad header
     }
     uint32_t size = (header[9] << 0) | (header[8] << 7) | (header[7] << 14) | (header[6] << 21);
-    // FIXME: that should be accounted for
-//    int startoffset = size + 10 + 10 * footerpresent;
-//    if (startoffset > it->startoffset) {
-//        it->startoffset = startoffset;
-//    }
 
     trace ("tag size: %d\n", size);
     if (tag_store) {

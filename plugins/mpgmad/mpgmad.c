@@ -1171,6 +1171,21 @@ cmp3_insert (DB_playItem_t *after, const char *fname) {
 }
 
 int
+cmp3_read_metadata (DB_playItem_t *it) {
+    DB_FILE *fp = deadbeef->fopen (it->fname);
+    if (!fp) {
+        return -1;
+    }
+    deadbeef->pl_delete_all_meta (it);
+    /*int apeerr = */deadbeef->junk_apev2_read (it, fp);
+    /*int v2err = */deadbeef->junk_id3v2_read (it, fp);
+    /*int v1err = */deadbeef->junk_id3v1_read (it, fp);
+    deadbeef->pl_add_meta (it, "title", NULL);
+    deadbeef->fclose (fp);
+    return 0;
+}
+
+int
 cmp3_write_metadata (DB_playItem_t *it) {
     int err = -1;
     char *buffer = NULL;
@@ -1526,6 +1541,7 @@ static DB_decoder_t plugin = {
     .seek = cmp3_seek,
     .seek_sample = cmp3_seek_sample,
     .insert = cmp3_insert,
+    .read_metadata = cmp3_read_metadata,
     .write_metadata = cmp3_write_metadata,
     .exts = exts,
     .filetypes = filetypes
