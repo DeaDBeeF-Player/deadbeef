@@ -1050,10 +1050,12 @@ junk_get_leading_size (DB_FILE *fp) {
     int pos = deadbeef->ftell (fp);
     if (deadbeef->fread (header, 1, 10, fp) != 10) {
         deadbeef->fseek (fp, pos, SEEK_SET);
+        trace ("junk_get_leading_size: file is too short\n");
         return -1; // too short
     }
     deadbeef->fseek (fp, pos, SEEK_SET);
     if (strncmp (header, "ID3", 3)) {
+        trace ("junk_get_leading_size: no id3v2 found\n");
         return -1; // no tag
     }
     uint8_t flags = header[5];
@@ -1071,6 +1073,7 @@ junk_get_leading_size (DB_FILE *fp) {
     //trace ("junklib: leading junk size %d\n", size);
     return size + 10 + 10 * footerpresent;
 }
+
 int
 junk_id3v2_unsync (uint8_t *out, int len, int maxlen) {
     uint8_t buf [maxlen];
@@ -2543,7 +2546,7 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                 comment = newcomment;
                 trace ("COMM combined: %s\n", comment);
             }
-            else if (!strcmp (frameid, "TXXX")) {
+            else if (it && !strcmp (frameid, "TXXX")) {
                 if (sz < 2) {
                     trace ("TXXX frame is too short, skipped\n");
                     readptr += sz; // bad tag
@@ -2700,7 +2703,7 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                 comment = newcomment;
                 trace ("COM text: %s\n", text);
             }
-            else if (!strcmp (frameid, "TXX")) {
+            else if (it && !strcmp (frameid, "TXX")) {
                 if (sz < 2) {
                     trace ("TXX frame is too short, skipped\n");
                     readptr += sz; // bad tag

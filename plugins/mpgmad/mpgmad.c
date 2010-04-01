@@ -1094,8 +1094,8 @@ cmp3_insert (DB_playItem_t *after, const char *fname) {
     memset (&buffer, 0, sizeof (buffer));
     buffer.file = fp;
     int skip = deadbeef->junk_get_leading_size (buffer.file);
-    trace ("mpgmad: skipping %d bytes (tag)\n", skip);
     if (skip > 0) {
+        trace ("mpgmad: skipping %d bytes (tag)\n", skip);
         deadbeef->fseek(buffer.file, skip, SEEK_SET);
     }
     // calc approx. mp3 duration 

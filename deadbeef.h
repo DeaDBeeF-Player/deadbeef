@@ -559,6 +559,7 @@ typedef struct DB_decoder_s {
     int (*numvoices) (DB_fileinfo_t *info);
     void (*mutevoice) (DB_fileinfo_t *info, int voice, int mute);
 
+    int (*read_metadata) (DB_playItem_t *it);
     int (*write_metadata) (DB_playItem_t *it);
 
     // NULL terminated array of all supported extensions
