@@ -681,6 +681,10 @@ ffap_init(DB_playItem_t *it)
         return NULL;
     }
     memset (&info->ape_ctx, 0, sizeof (info->ape_ctx));
+    int skip = deadbeef->junk_get_leading_size (info->fp);
+    if (skip > 0) {
+        deadbeef->fseek (info->fp, skip, SEEK_SET);
+    }
     ape_read_header (info->fp, &info->ape_ctx);
     int i;
 
@@ -1684,6 +1688,10 @@ ffap_insert (DB_playItem_t *after, const char *fname) {
     DB_FILE *fp = deadbeef->fopen (fname);
     if (!fp) {
         return NULL;
+    }
+    int skip = deadbeef->junk_get_leading_size (fp);
+    if (skip > 0) {
+        deadbeef->fseek (fp, skip, SEEK_SET);
     }
     if (ape_read_header (fp, &ape_ctx) < 0) {
         fprintf (stderr, "ape: failed to read ape header\n");
