@@ -765,6 +765,7 @@ pl_insert_cue (playItem_t *after, playItem_t *origin, int numsamples, int sample
 
 playItem_t *
 pl_insert_m3u (playItem_t *after, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
+    trace ("enter pl_insert_m3u\n");
     // skip all empty lines and comments
     DB_FILE *fp = vfs_fopen (fname);
     if (!fp) {
@@ -789,9 +790,6 @@ pl_insert_m3u (playItem_t *after, const char *fname, int *pabort, int (*cb)(play
     const uint8_t *p = buffer;
     const uint8_t *end = buffer+sz;
     LOCK;
-    if (after) {
-        pl_item_ref (after);
-    }
     while (p < end) {
         p = pl_str_skipspaces (p, end);
         if (p >= end) {
@@ -814,11 +812,8 @@ pl_insert_m3u (playItem_t *after, const char *fname, int *pabort, int (*cb)(play
         uint8_t nm[n+1];
         memcpy (nm, p, n);
         nm[n] = 0;
-        trace ("adding file %s\n", nm);
+        trace ("pl_insert_m3u: adding file %s\n", nm);
         playItem_t *it = pl_insert_file (after, nm, pabort, cb, user_data);
-        if (after) {
-            pl_item_unref (after);
-        }
         if (it) {
             after = it;
         }
@@ -832,6 +827,7 @@ pl_insert_m3u (playItem_t *after, const char *fname, int *pabort, int (*cb)(play
         }
     }
     UNLOCK;
+    trace ("leave pl_insert_m3u\n");
     return after;
 }
 
