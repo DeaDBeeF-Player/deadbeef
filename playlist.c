@@ -883,7 +883,6 @@ pl_insert_pls (playItem_t *after, const char *fname, int *pabort, int (*cb)(play
     char title[1024] = "";
     char length[20] = "";
     LOCK;
-    pl_item_ref (after);
     while (p < end) {
         p = pl_str_skipspaces (p, end);
         if (p >= end) {
@@ -907,9 +906,6 @@ pl_insert_pls (playItem_t *after, const char *fname, int *pabort, int (*cb)(play
                     }
                 }
                 if (pabort && *pabort) {
-                    if (after) {
-                        pl_item_ref (after);
-                    }
                     UNLOCK;
                     return after;
                 }
@@ -987,9 +983,6 @@ pl_insert_pls (playItem_t *after, const char *fname, int *pabort, int (*cb)(play
     if (url[0]) {
         playItem_t *it = pl_insert_file (after, url, pabort, cb, user_data);
         if (it) {
-            if (after) {
-                pl_item_unref (after);
-            }
             after = it;
             pl_set_item_duration (it, atoi (length));
             if (title[0]) {
