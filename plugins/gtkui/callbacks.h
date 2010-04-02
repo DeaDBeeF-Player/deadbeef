@@ -841,3 +841,11 @@ on_deselect_all1_activate              (GtkMenuItem     *menuitem,
 void
 on_invert_selection1_activate          (GtkMenuItem     *menuitem,
                                         gpointer         user_data);
+
+void
+on_mmb_delete_playlist_clicked         (GtkButton       *button,
+                                        gpointer         user_data);
+
+void
+on_mmb_delete_playlist_toggled         (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);

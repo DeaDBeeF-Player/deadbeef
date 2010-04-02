@@ -2238,6 +2238,26 @@ Album</property>
 	      </child>
 
 	      <child>
+		<widget class="GtkCheckButton" id="mmb_delete_playlist">
+		  <property name="visible">True</property>
+		  <property name="can_focus">True</property>
+		  <property name="label" translatable="yes">Middle mouse button closes playlist</property>
+		  <property name="use_underline">True</property>
+		  <property name="relief">GTK_RELIEF_NORMAL</property>
+		  <property name="focus_on_click">True</property>
+		  <property name="active">False</property>
+		  <property name="inconsistent">False</property>
+		  <property name="draw_indicator">True</property>
+		  <signal name="toggled" handler="on_mmb_delete_playlist_toggled" last_modification_time="Fri, 02 Apr 2010 18:02:53 GMT"/>
+		</widget>
+		<packing>
+		  <property name="padding">0</property>
+		  <property name="expand">False</property>
+		  <property name="fill">False</property>
+		</packing>
+	      </child>
+
+	      <child>
 		<widget class="GtkFrame" id="frame3">
 		  <property name="visible">True</property>
 		  <property name="label_xalign">0</property>

@@ -1380,6 +1380,7 @@ create_prefwin (void)
   GtkWidget *label39;
   GtkWidget *vbox9;
   GtkWidget *pref_close_send_to_tray;
+  GtkWidget *mmb_delete_playlist;
   GtkWidget *frame3;
   GtkWidget *alignment1;
   GtkWidget *colors_table;
@@ -1591,6 +1592,10 @@ create_prefwin (void)
   pref_close_send_to_tray = gtk_check_button_new_with_mnemonic ("Close minimizes to tray");
   gtk_widget_show (pref_close_send_to_tray);
   gtk_box_pack_start (GTK_BOX (vbox9), pref_close_send_to_tray, FALSE, FALSE, 0);
+
+  mmb_delete_playlist = gtk_check_button_new_with_mnemonic ("Middle mouse button closes playlist");
+  gtk_widget_show (mmb_delete_playlist);
+  gtk_box_pack_start (GTK_BOX (vbox9), mmb_delete_playlist, FALSE, FALSE, 0);
 
   frame3 = gtk_frame_new (NULL);
   gtk_widget_show (frame3);
@@ -2118,6 +2123,9 @@ create_prefwin (void)
   g_signal_connect ((gpointer) pref_close_send_to_tray, "clicked",
                     G_CALLBACK (on_pref_close_send_to_tray_clicked),
                     NULL);
+  g_signal_connect ((gpointer) mmb_delete_playlist, "toggled",
+                    G_CALLBACK (on_mmb_delete_playlist_toggled),
+                    NULL);
   g_signal_connect ((gpointer) color_light, "color_set",
                     G_CALLBACK (on_color_light_color_set),
                     NULL);
@@ -2230,6 +2238,7 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, label39, "label39");
   GLADE_HOOKUP_OBJECT (prefwin, vbox9, "vbox9");
   GLADE_HOOKUP_OBJECT (prefwin, pref_close_send_to_tray, "pref_close_send_to_tray");
+  GLADE_HOOKUP_OBJECT (prefwin, mmb_delete_playlist, "mmb_delete_playlist");
   GLADE_HOOKUP_OBJECT (prefwin, frame3, "frame3");
   GLADE_HOOKUP_OBJECT (prefwin, alignment1, "alignment1");
   GLADE_HOOKUP_OBJECT (prefwin, colors_table, "colors_table");
