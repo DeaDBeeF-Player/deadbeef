@@ -2376,10 +2376,14 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
         //if (size < 6) {
         //    goto error; // bad size
         //}
-        readptr += sz;
+
+        uint32_t padding = (readptr[9] << 0) | (header[8] << 8) | (header[7] << 16) | (header[6] << 24);
+        size -= padding;
+
         if (size < sz) {
             return -1; // bad size
         }
+        readptr += sz;
 #if 0
         uint16_t extflags = (readptr[1] << 0) | (readptr[0] << 8);
         readptr += 2;
@@ -2564,6 +2568,9 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                         else {
                             *text_holders[f] = text;
                         }
+                    }
+                    if (text) {
+                        trace ("%s = %s\n", frameid, text);
                     }
                     break;
                 }
