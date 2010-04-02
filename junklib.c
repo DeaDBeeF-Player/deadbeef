@@ -31,6 +31,8 @@
 #include "config.h"
 #endif
 
+#pragma GCC optimize("O0")
+
 #define MAX_TEXT_FRAME_SIZE 1024
 #define MAX_APEV2_FRAME_SIZE 100000
 #define MAX_ID3V2_FRAME_SIZE 100000
@@ -2372,31 +2374,12 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
     trace ("version: 2.%d.%d, unsync: %d, extheader: %d, experimental: %d\n", version_major, version_minor, unsync, extheader, expindicator);
     
     if (extheader) {
-        uint32_t sz = (readptr[3] << 0) | (header[2] << 8) | (header[1] << 16) | (header[0] << 24);
-        //if (size < 6) {
-        //    goto error; // bad size
-        //}
-
-        uint32_t padding = (readptr[9] << 0) | (header[8] << 8) | (header[7] << 16) | (header[6] << 24);
-        size -= padding;
-
+        uint32_t sz = (readptr[3] << 0) | (readptr[2] << 7) | (readptr[1] << 14) | (readptr[0] << 21);
         if (size < sz) {
+            trace ("error: size of ext header (%d) is greater than tag size\n", sz);
             return -1; // bad size
         }
         readptr += sz;
-#if 0
-        uint16_t extflags = (readptr[1] << 0) | (readptr[0] << 8);
-        readptr += 2;
-        uint32_t pad = (readptr[3] << 0) | (header[2] << 8) | (header[1] << 16) | (header[0] << 24);
-        readptr += 4;
-        if (extflags & 0x8000) {
-            crcpresent = 1;
-        }
-        if (crcpresent && sz != 10) {
-            return -1; // bad header
-        }
-        readptr += 4; // skip crc
-#endif
     }
     char *artist = NULL;
     char *album = NULL;
@@ -2412,7 +2395,7 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
     char *composer = NULL;
     char *disc = NULL;
     int err = 0;
-    while (readptr - tag <= size - 4) {
+    while (readptr - tag <= size - 4 && *readptr) {
         if (version_major == 3 || version_major == 4) {
             char frameid[5];
             memcpy (frameid, readptr, 4);
