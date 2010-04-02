@@ -28,6 +28,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <sys/time.h>
+#include <unistd.h>
 #include "gtkui.h"
 #include "ddblistview.h"
 #include "mainplaylist.h"
@@ -666,6 +667,8 @@ redraw_seekbar_cb (gpointer nothing) {
     return FALSE;
 }
 
+static int gtk_initialized = 0;
+
 void
 gtkui_thread (void *ctx) {
     // let's start some gtk
@@ -765,11 +768,13 @@ gtkui_thread (void *ctx) {
     searchwin = create_searchwin ();
     gtk_window_set_transient_for (GTK_WINDOW (searchwin), GTK_WINDOW (mainwin));
 
+#if 0
     // get saved scrollpos before creating listview, to avoid reset
     int curr = deadbeef->plt_get_curr ();
     char conf[100];
     snprintf (conf, sizeof (conf), "playlist.scroll.%d", curr);
     int scroll = deadbeef->conf_get_int (conf, 0);
+#endif
 
     DdbListview *main_playlist = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
     main_playlist_init (GTK_WIDGET (main_playlist));
@@ -791,10 +796,9 @@ gtkui_thread (void *ctx) {
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_OUTPUTCHANGED, DB_CALLBACK (gtkui_on_outputchanged), 0);
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_PLAYLISTSWITCH, DB_CALLBACK (gtkui_on_playlistswitch), 0);
 
-    playlist_refresh ();
-
-    ddb_listview_set_vscroll (main_playlist, scroll);
-
+//    playlist_refresh ();
+//    ddb_listview_set_vscroll (main_playlist, scroll);
+    gtk_initialized = 1;
     gtk_main ();
     cover_art_free ();
     eq_window_destroy ();
@@ -820,7 +824,12 @@ gtkui_start (void) {
     }
 
     // gtk must be running in separate thread
+    gtk_initialized = 0;
     gtk_tid = deadbeef->thread_start (gtkui_thread, NULL);
+    // wait until gtk finishes initializing
+    while (!gtk_initialized) {
+        usleep (10000);
+    }
 
     return 0;
 }
