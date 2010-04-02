@@ -37,10 +37,10 @@
 #include <assert.h>
 #include "../../deadbeef.h"
 
-#define ENABLE_DEBUG 0
+#define ENABLE_DEBUG 1
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 #define likely(x)       __builtin_expect((x),1)
 #define unlikely(x)     __builtin_expect((x),0)
@@ -264,6 +264,7 @@ typedef struct APEContext {
     int remaining;
 
     int error;
+    int skip_header;
 } APEContext;
 
 typedef struct {
@@ -598,7 +599,7 @@ static int ape_read_packet(DB_FILE *fp, APEContext *ape_ctx)
     if (ape->currentframe > ape->totalframes)
         return -1;
 //    fprintf (stderr, "seeking to %d\n", ape->frames[ape->currentframe].pos);
-    if (deadbeef->fseek (fp, ape->frames[ape->currentframe].pos, SEEK_SET) != 0) {
+    if (deadbeef->fseek (fp, ape->frames[ape->currentframe].pos + ape_ctx->skip_header, SEEK_SET) != 0) {
         return -1;
     }
 
@@ -684,6 +685,7 @@ ffap_init(DB_playItem_t *it)
     int skip = deadbeef->junk_get_leading_size (info->fp);
     if (skip > 0) {
         deadbeef->fseek (info->fp, skip, SEEK_SET);
+        info->ape_ctx.skip_header = skip;
     }
     ape_read_header (info->fp, &info->ape_ctx);
     int i;

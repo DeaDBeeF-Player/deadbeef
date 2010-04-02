@@ -2447,16 +2447,21 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
             uint8_t flags2 = readptr[1];
             readptr += 2;
 
-            int synched_size = sz;
-            if (unsync) {
-                synched_size = junklib_id3v2_sync_frame (readptr, sz);
-            }
-
-            if (sz > MAX_ID3V2_FRAME_SIZE) {
+            if (sz > MAX_ID3V2_FRAME_SIZE || readptr-tag + sz >= size) {
                 trace ("junk_id3v2_read_full: frame %s size is too big, discarded\n", frameid);
                 readptr += sz;
                 continue;
             }
+            int synched_size = sz;
+            if (unsync) {
+                synched_size = junklib_id3v2_sync_frame (readptr, sz);
+                trace ("size: %d/%d\n", synched_size, sz);
+
+                if (synched_size != sz) {
+                    sz = sz + (sz-synched_size);
+                }
+            }
+
             if (tag_store) {
                 DB_id3v2_frame_t *frm = malloc (sizeof (DB_id3v2_frame_t) + sz);
                 if (!frm) {
@@ -2548,8 +2553,12 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
             const char *text_frames[] = { "TPE1", "TPE2", "TPOS", "TIT2", "TALB", "TCOP", "TCON", "TENC", "TPE3", "TCOM", "TRCK", "TYER", "TDRC", NULL };
             char **text_holders[] = { &artist, &band, &disc, &title, &album, &copyright, &genre, &vendor, &performer, &composer, &track, version_major == 3 ? &year : NULL,  version_major == 4 ? &year : NULL, };
             int f = 0;
+
+            int added = 0;
+
             for (f = 0; text_frames[f]; f++) {
                 if (!strcmp (frameid, text_frames[f])) {
+                    added = 1;
                     if (synched_size > MAX_TEXT_FRAME_SIZE) {
                         trace ("frame %s is too big, discard\n", frameid);
                         break;
@@ -2574,6 +2583,11 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                     }
                     break;
                 }
+            }
+
+            if (added) {
+                readptr += sz;
+                continue;
             }
 
             if (!strcmp (frameid, "COMM")) {
