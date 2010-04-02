@@ -1693,66 +1693,70 @@ ddb_listview_handle_keypress (DdbListview *ps, int keyval, int state) {
     int cursor = prev;
     GtkWidget *range = ps->scrollbar;
     GtkAdjustment *adj = gtk_range_get_adjustment (GTK_RANGE (range));
-    if (keyval == GDK_Down) {
-        if (cursor < ps->binding->count () - 1) {
-            cursor++;
-        }
-        else {
-            gtk_range_set_value (GTK_RANGE (range), adj->upper);
-        }
-    }
-    else if (keyval == GDK_Up) {
-        if (cursor > 0) {
-            cursor--;
-        }
-        else {
-            gtk_range_set_value (GTK_RANGE (range), adj->lower);
-            if (cursor < 0 && ps->binding->count () > 0) {
-                cursor = 0;
+
+    if (!(state & (GDK_CONTROL_MASK|GDK_MOD1_MASK))) {
+        if (keyval == GDK_Down) {
+            if (cursor < ps->binding->count () - 1) {
+                cursor++;
+            }
+            else {
+                gtk_range_set_value (GTK_RANGE (range), adj->upper);
             }
         }
-    }
-    else if (keyval == GDK_Page_Down) {
-        if (cursor < ps->binding->count () - 1) {
-            cursor += 10;
-            if (cursor >= ps->binding->count ()) {
-                cursor = ps->binding->count () - 1;
+        else if (keyval == GDK_Up) {
+            if (cursor > 0) {
+                cursor--;
             }
-        }
-        else {
-            gtk_range_set_value (GTK_RANGE (range), adj->upper);
-        }
-    }
-    else if (keyval == GDK_Page_Up) {
-        if (cursor > 0) {
-            cursor -= 10;
-            if (cursor < 0) {
+            else {
                 gtk_range_set_value (GTK_RANGE (range), adj->lower);
-                cursor = 0;
+                if (cursor < 0 && ps->binding->count () > 0) {
+                    cursor = 0;
+                }
             }
         }
-        else {
-            if (cursor < 0 && ps->binding->count () > 0) {
-                cursor = 0;
+        else if (keyval == GDK_Page_Down) {
+            if (cursor < ps->binding->count () - 1) {
+                cursor += 10;
+                if (cursor >= ps->binding->count ()) {
+                    cursor = ps->binding->count () - 1;
+                }
             }
+            else {
+                gtk_range_set_value (GTK_RANGE (range), adj->upper);
+            }
+        }
+        else if (keyval == GDK_Page_Up) {
+            if (cursor > 0) {
+                cursor -= 10;
+                if (cursor < 0) {
+                    gtk_range_set_value (GTK_RANGE (range), adj->lower);
+                    cursor = 0;
+                }
+            }
+            else {
+                if (cursor < 0 && ps->binding->count () > 0) {
+                    cursor = 0;
+                }
+                gtk_range_set_value (GTK_RANGE (range), adj->lower);
+            }
+        }
+        else if (keyval == GDK_End) {
+            cursor = ps->binding->count () - 1;
+            gtk_range_set_value (GTK_RANGE (range), adj->upper);
+        }
+        else if (keyval == GDK_Home) {
+            cursor = 0;
             gtk_range_set_value (GTK_RANGE (range), adj->lower);
         }
+        else if (keyval == GDK_Delete) {
+            ps->binding->delete_selected ();
+            cursor = ps->binding->cursor ();
+        }
+        else {
+            return 0;
+        }
     }
-    else if (keyval == GDK_End) {
-        cursor = ps->binding->count () - 1;
-        gtk_range_set_value (GTK_RANGE (range), adj->upper);
-    }
-    else if (keyval == GDK_Home) {
-        cursor = 0;
-        gtk_range_set_value (GTK_RANGE (range), adj->lower);
-    }
-    else if (keyval == GDK_Delete) {
-        ps->binding->delete_selected ();
-        cursor = ps->binding->cursor ();
-    }
-    else {
-        return 0;
-    }
+
     if (state & GDK_SHIFT_MASK) {
         if (cursor != prev) {
             int newscroll = ps->scrollpos;

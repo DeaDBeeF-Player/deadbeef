@@ -667,6 +667,34 @@ redraw_seekbar_cb (gpointer nothing) {
     return FALSE;
 }
 
+int
+gtkui_add_new_playlist (void) {
+    int cnt = deadbeef->plt_get_count ();
+    int i;
+    int idx = 0;
+    for (;;) {
+        char name[100];
+        if (!idx) {
+            strcpy (name, "New Playlist");
+        }
+        else {
+            snprintf (name, sizeof (name), "New Playlist (%d)", idx);
+        }
+        for (i = 0; i < cnt; i++) {
+            char t[100];
+            deadbeef->plt_get_title (i, t, sizeof (t));
+            if (!strcasecmp (t, name)) {
+                break;
+            }
+        }
+        if (i == cnt) {
+            return deadbeef->plt_add (cnt, name);
+        }
+        idx++;
+    }
+    return -1;
+}
+
 static int gtk_initialized = 0;
 
 void

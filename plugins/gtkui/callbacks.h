@@ -849,3 +849,7 @@ on_mmb_delete_playlist_clicked         (GtkButton       *button,
 void
 on_mmb_delete_playlist_toggled         (GtkToggleButton *togglebutton,
                                         gpointer         user_data);
+
+void
+on_new_playlist1_activate              (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);

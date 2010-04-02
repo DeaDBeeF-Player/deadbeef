@@ -566,39 +566,17 @@ on_remove_playlist1_activate           (GtkMenuItem     *menuitem,
     }
 }
 
-
 void
 on_add_new_playlist1_activate          (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    int cnt = deadbeef->plt_get_count ();
-    int i;
-    int idx = 0;
-    for (;;) {
-        char name[100];
-        if (!idx) {
-            strcpy (name, "New Playlist");
-        }
-        else {
-            snprintf (name, sizeof (name), "New Playlist (%d)", idx);
-        }
-        for (i = 0; i < cnt; i++) {
-            char t[100];
-            deadbeef->plt_get_title (i, t, sizeof (t));
-            if (!strcasecmp (t, name)) {
-                break;
-            }
-        }
-        if (i == cnt) {
-            int playlist = deadbeef->plt_add (cnt, name);
-            deadbeef->plt_set_curr (playlist);
-            deadbeef->conf_set_int ("playlist.current", playlist);
-            DdbTabStrip *ts = DDB_TABSTRIP (lookup_widget (mainwin, "tabstrip"));
-            tabstrip_render (ts);
-            tabstrip_expose (ts, 0, 0, GTK_WIDGET (ts)->allocation.width, GTK_WIDGET (ts)->allocation.height);
-            break;
-        }
-        idx++;
+    int playlist = gtkui_add_new_playlist ();
+    if (playlist != -1) {
+        deadbeef->plt_set_curr (playlist);
+        deadbeef->conf_set_int ("playlist.current", playlist);
+        DdbTabStrip *ts = DDB_TABSTRIP (lookup_widget (mainwin, "tabstrip"));
+        tabstrip_render (ts);
+        tabstrip_expose (ts, 0, 0, GTK_WIDGET (ts)->allocation.width, GTK_WIDGET (ts)->allocation.height);
     }
 }
 
