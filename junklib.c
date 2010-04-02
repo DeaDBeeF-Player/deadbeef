@@ -31,8 +31,6 @@
 #include "config.h"
 #endif
 
-#pragma GCC optimize("O0")
-
 #define MAX_TEXT_FRAME_SIZE 1024
 #define MAX_APEV2_FRAME_SIZE 100000
 #define MAX_ID3V2_FRAME_SIZE 100000
@@ -380,7 +378,6 @@ convstr_id3v2 (int version, uint8_t encoding, const unsigned char* str, int sz) 
         // utf8
         trace ("utf8\n");
         strncpy (out, str, 2047);
-        sz--;
         out[min (sz, 2047)] = 0;
         return strdup (out);
     }
@@ -2279,6 +2276,44 @@ junk_load_comm_frame (int version_major, playItem_t *it, uint8_t *readptr, int s
 }
 
 int
+junk_id3v2_load_txx (int version_major, playItem_t *it, uint8_t *readptr, int synched_size) {
+    uint8_t *p = readptr;
+    uint8_t encoding = *p;
+    p++;
+    uint8_t *desc = p;
+    int desc_sz = 0;
+    while (*p && p - readptr < synched_size) {
+        p++;
+        desc_sz++;
+    }
+    p++;
+    if (p - readptr >= synched_size) {
+        trace ("bad TXXX frame, skipped\n");
+        return -1;
+    }
+    // FIXME: decode properly using frame encoding
+    char *desc_s = desc;
+    char *value_s = p;
+    //trace ("value=%s\n", value_s);
+    if (!strcasecmp (desc_s, "replaygain_album_gain")) {
+        it->replaygain_album_gain = atof (value_s);
+        trace ("%s=%s (%f)\n", desc_s, value_s, it->replaygain_album_gain);
+    }
+    else if (!strcasecmp (desc_s, "replaygain_album_peak")) {
+        it->replaygain_album_peak = atof (value_s);
+        trace ("%s=%s (%f)\n", desc_s, value_s, it->replaygain_album_peak);
+    }
+    else if (!strcasecmp (desc_s, "replaygain_track_gain")) {
+        it->replaygain_track_gain = atof (value_s);
+        trace ("%s=%s (%f)\n", desc_s, value_s, it->replaygain_track_gain);
+    }
+    else if (!strcasecmp (desc_s, "replaygain_track_peak")) {
+        it->replaygain_track_peak = atof (value_s);
+        trace ("%s=%s (%f)\n", desc_s, value_s, it->replaygain_track_peak);
+    }
+}
+
+int
 junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
     DB_id3v2_frame_t *tail = NULL;
     int title_added = 0;
@@ -2544,46 +2579,12 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                 /*int res = */junk_load_comm_frame (version_major, it, readptr, synched_size, &comment);
             }
             else if (it && !strcmp (frameid, "TXXX")) {
-                if (sz < 2) {
+                if (synched_size < 2) {
                     trace ("TXXX frame is too short, skipped\n");
                     readptr += sz; // bad tag
                     continue;
                 }
-                uint8_t *p = readptr;
-                uint8_t encoding = *p;
-                p++;
-                uint8_t *desc = p;
-                int desc_sz = 0;
-                while (*p && p - readptr < sz) {
-                    p++;
-                    desc_sz++;
-                }
-                p++;
-                if (p - readptr >= sz) {
-                    trace ("bad TXXX frame, skipped\n");
-                    readptr += sz; // bad tag
-                    continue;
-                }
-                // FIXME: decode properly using frame encoding
-                char *desc_s = desc;
-                char *value_s = p;
-                //trace ("value=%s\n", value_s);
-                if (!strcasecmp (desc_s, "replaygain_album_gain")) {
-                    it->replaygain_album_gain = atof (value_s);
-                    trace ("%s=%s (%f)\n", desc_s, value_s, it->replaygain_album_gain);
-                }
-                else if (!strcasecmp (desc_s, "replaygain_album_peak")) {
-                    it->replaygain_album_peak = atof (value_s);
-                    trace ("%s=%s (%f)\n", desc_s, value_s, it->replaygain_album_peak);
-                }
-                else if (!strcasecmp (desc_s, "replaygain_track_gain")) {
-                    it->replaygain_track_gain = atof (value_s);
-                    trace ("%s=%s (%f)\n", desc_s, value_s, it->replaygain_track_gain);
-                }
-                else if (!strcasecmp (desc_s, "replaygain_track_peak")) {
-                    it->replaygain_track_peak = atof (value_s);
-                    trace ("%s=%s (%f)\n", desc_s, value_s, it->replaygain_track_peak);
-                }
+                int res = junk_id3v2_load_txx (version_major, it, readptr, synched_size);
             }
             readptr += sz;
         }
@@ -2663,45 +2664,11 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
             }
 
             if (!strcmp (frameid, "COM")) {
+                if (synched_size < 6) {
+                    readptr += sz;
+                    continue;
+                }
                 /*int res = */junk_load_comm_frame (version_major, it, readptr, synched_size, &comment);
-#if 0
-                if (sz > 1000) {
-                    readptr += sz;
-                    continue;
-                }
-                uint8_t enc = readptr[0];
-                char lang[4] = {readptr[1], readptr[2], readptr[3], 0};
-                if (strcmp (lang, "eng")) {
-                    trace ("non-english comment, skip\n");
-                    readptr += sz;
-                    continue;
-                }
-                trace ("COM enc is: %d\n", (int)enc);
-                trace ("COM language is: %s\n", lang);
-                char *descr = readptr+4;
-                trace ("COM descr: %s\n", descr);
-                int dlen = strlen(descr)+1;
-                int s = sz - 4 - dlen;
-                char str[s + 3];
-                id3v2_string_read (version_major, &str[1], s, unsync, descr+dlen);
-                str[0] = enc;
-                char *text = convstr_id3v2 (version_major, str, s+1);
-
-                int len = (comment ? (strlen (comment) + 1) : 0) + strlen (descr) + strlen (text) + 3;
-                char *newcomment = malloc (len);
-                
-                if (comment) {
-                    snprintf (newcomment, len, "%s\n%s: %s", comment, descr, text);
-                }
-                else {
-                    snprintf (newcomment, len, "%s: %s", descr, text);
-                }
-                if (comment) {
-                    free (comment);
-                }
-                comment = newcomment;
-                trace ("COM text: %s\n", text);
-#endif
             }
             else if (it && !strcmp (frameid, "TXX")) {
                 if (synched_size < 2) {
@@ -2709,39 +2676,7 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                     readptr += sz; // bad tag
                     continue;
                 }
-                uint8_t *p = readptr;
-                uint8_t encoding = *p;
-                p++;
-                uint8_t *desc = p;
-                int desc_sz = 0;
-                while (*p && p - readptr < synched_size) {
-                    p++;
-                    desc_sz++;
-                }
-                p++;
-                if (p - readptr >= synched_size) {
-                    trace ("bad TXXX frame, skipped\n");
-                    readptr += sz; // bad tag
-                    continue;
-                }
-                uint8_t *desc_s = desc;
-                uint8_t *value_s = p;
-                if (!strcasecmp (desc_s, "replaygain_album_gain")) {
-                    it->replaygain_album_gain = atof (value_s);
-                    trace ("%s=%s (%f)\n", desc_s, value_s, it->replaygain_album_gain);
-                }
-                else if (!strcasecmp (desc_s, "replaygain_album_peak")) {
-                    it->replaygain_album_peak = atof (value_s);
-                    trace ("%s=%s (%f)\n", desc_s, value_s, it->replaygain_album_peak);
-                }
-                else if (!strcasecmp (desc_s, "replaygain_track_gain")) {
-                    it->replaygain_track_gain = atof (value_s);
-                    trace ("%s=%s (%f)\n", desc_s, value_s, it->replaygain_track_gain);
-                }
-                else if (!strcasecmp (desc_s, "replaygain_track_peak")) {
-                    it->replaygain_track_peak = atof (value_s);
-                    trace ("%s=%s (%f)\n", desc_s, value_s, it->replaygain_track_peak);
-                }
+                int res = junk_id3v2_load_txx (version_major, it, readptr, synched_size);
             }
             readptr += sz;
         }
