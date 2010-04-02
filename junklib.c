@@ -31,16 +31,14 @@
 #include "config.h"
 #endif
 
-#pragma GCC optimize("O0")
-
 #define MAX_TEXT_FRAME_SIZE 1024
 #define MAX_APEV2_FRAME_SIZE 100000
 #define MAX_ID3V2_FRAME_SIZE 100000
 
 #define UTF8 "utf-8"
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))

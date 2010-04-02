@@ -24,8 +24,8 @@
 #include <unistd.h>
 #include "../../deadbeef.h"
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -1088,6 +1088,7 @@ cmp3_insert (DB_playItem_t *after, const char *fname) {
         deadbeef->pl_set_item_duration (it, -1);
         it->filetype = NULL;//filetypes[0];
         after = deadbeef->pl_insert_item (after, it);
+        deadbeef->pl_item_unref (it);
         return after;
     }
     buffer_t buffer;
@@ -1167,6 +1168,7 @@ cmp3_insert (DB_playItem_t *after, const char *fname) {
     }
 
     after = deadbeef->pl_insert_item (after, it);
+    deadbeef->pl_item_unref (it);
     return after;
 }
 

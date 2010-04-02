@@ -240,6 +240,7 @@ sndfile_insert (DB_playItem_t *after, const char *fname) {
 
     deadbeef->pl_add_meta (it, "title", NULL);
     after = deadbeef->pl_insert_item (after, it);
+    deadbeef->pl_item_unref (it);
 
     return after;
 }

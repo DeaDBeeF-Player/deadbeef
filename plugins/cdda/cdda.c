@@ -342,6 +342,7 @@ cddb_thread (void *items_i)
         snprintf (tmp, sizeof (tmp), "%02d", trk);
         deadbeef->pl_add_meta (items[i], "track", tmp);
         deadbeef->sendmessage (M_TRACKCHANGED, 0, idx, 0);
+        deadbeef->pl_item_unref (items[i]);
     }
     cddb_disc_destroy (disc);
     deadbeef->mutex_unlock (mutex);
@@ -394,13 +395,23 @@ cda_insert (DB_playItem_t *after, const char *fname) {
         struct cddb_thread_params *p = malloc (sizeof (struct cddb_thread_params));
         memset (p, 0, sizeof (struct cddb_thread_params));
         p->cdio = cdio;
+
+        int enable_cddb = deadbeef->conf_get_int ("cdda.freedb.enable", DEFAULT_USE_CDDB);
+
         for (i = 0; i < tracks; i++)
         {
             res = insert_single_track (cdio, res, is_image ? fname : NULL, i+first_track);
-            p->items[i] = res;
+            if (res) {
+                if (enable_cddb) {
+                    p->items[i] = res;
+                }
+                else {
+                    deadbeef->pl_item_unref (res);
+                }
+            }
         }
         trace ("cdda: querying freedb...\n");
-        if (deadbeef->conf_get_int ("cdda.freedb.enable", DEFAULT_USE_CDDB)) {
+        if (enable_cddb) {
             if (cddb_tid) {
                 deadbeef->thread_join (cddb_tid);
             }
@@ -411,6 +422,9 @@ cda_insert (DB_playItem_t *after, const char *fname) {
     {
         track_nr = atoi (shortname);
         res = insert_single_track (cdio, after, NULL, track_nr);
+        if (res) {
+            deadbeef->pl_item_unref (res);
+        }
         cdio_destroy (cdio);
     }
     return res;

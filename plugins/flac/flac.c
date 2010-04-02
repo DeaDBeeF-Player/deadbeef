@@ -704,6 +704,7 @@ cflac_insert (DB_playItem_t *after, const char *fname) {
         goto cflac_insert_fail;
     }
     after = deadbeef->pl_insert_item (after, it);
+    deadbeef->pl_item_unref (it);
     if (info.file) {
         deadbeef->fclose (info.file);
     }

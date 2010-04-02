@@ -163,6 +163,7 @@ cgme_insert (DB_playItem_t *after, const char *fname) {
                     }
                 }
                 after = deadbeef->pl_insert_item (after, it);
+                deadbeef->pl_item_unref (it);
             }
             else {
                 printf ("gme error: %s\n", ret);

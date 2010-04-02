@@ -51,7 +51,7 @@
 
 #define PL_NEXT(it) (ps->binding->next (it))
 #define PL_PREV(it) (ps->binding->prev (it))
-#define REF(it) {if (it) ps->binding->ref (it);}
+//#define REF(it) {if (it) ps->binding->ref (it);}
 #define UNREF(it) {if (it) ps->binding->unref(it);}
 
 // HACK!!
@@ -88,6 +88,8 @@ static void ddb_listview_init(DdbListview *listview);
 static void ddb_listview_destroy(GtkObject *object);
 
 // fwd decls
+void
+ddb_listview_free_groups (DdbListview *listview);
 static inline void
 draw_drawable (GdkDrawable *window, GdkGC *gc, GdkDrawable *drawable, int x1, int y1, int x2, int y2, int w, int h);
 
@@ -449,6 +451,9 @@ ddb_listview_destroy(GtkObject *object)
   g_return_if_fail(DDB_IS_LISTVIEW(object));
 
   listview = DDB_LISTVIEW(object);
+
+  ddb_listview_free_groups (listview);
+
   while (listview->columns) {
       DdbListviewColumn *next = listview->columns->next;
       ddb_listview_column_free (listview, listview->columns);
@@ -621,11 +626,11 @@ ddb_listview_list_render (DdbListview *listview, int x, int y, int w, int h) {
     while (grp && grp_y < y + h + listview->scrollpos) {
         // render title
         DdbListviewIter it = grp->head;
-        listview->binding->ref (it);
         int grpheight = grp->height;
         if (grp_y >= y + h + listview->scrollpos) {
             break;
         }
+        listview->binding->ref (it);
         if (grp_y + listview->grouptitle_height >= y + listview->scrollpos && grp_y < y + h + listview->scrollpos) {
             ddb_listview_list_render_row_background (listview, NULL, idx & 1, 0, -listview->hscrollpos, grp_y - listview->scrollpos, listview->totalwidth, listview->grouptitle_height);
             if (listview->binding->draw_group_title && listview->grouptitle_height > 0) {
@@ -858,7 +863,6 @@ ddb_listview_list_drag_data_received         (GtkWidget       *widget,
         return;
     }
     int sel = ddb_listview_dragdrop_get_row_from_coord (ps, y);
-    printf ("sel=%d\n", sel);
     DdbListviewIter it = NULL;
     if (sel == -1) {
         if (ps->binding->count () != 0) {
@@ -892,7 +896,6 @@ ddb_listview_list_drag_data_received         (GtkWidget       *widget,
         }
         ps->binding->drag_n_drop (drop_before, d, length);
     }
-    printf ("gtk_drag_finish\n");
     gtk_drag_finish (drag_context, TRUE, FALSE, time);
 }
 
@@ -2673,7 +2676,6 @@ ddb_listview_build_groups (DdbListview *listview) {
             listview->groups = grp;
             memset (grp, 0, sizeof (DdbListviewGroup));
             grp->head = it;
-            listview->binding->ref (it);
             grp->num_items = listview->binding->count ();
             listview->grouptitle_height = 0;
             grp->height = listview->grouptitle_height + grp->num_items * listview->rowheight;

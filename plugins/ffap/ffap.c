@@ -37,10 +37,10 @@
 #include <assert.h>
 #include "../../deadbeef.h"
 
-#define ENABLE_DEBUG 1
+#define ENABLE_DEBUG 0
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 #define likely(x)       __builtin_expect((x),1)
 #define unlikely(x)     __builtin_expect((x),0)
@@ -1750,6 +1750,7 @@ ffap_insert (DB_playItem_t *after, const char *fname) {
 
     deadbeef->pl_add_meta (it, "title", NULL);
     after = deadbeef->pl_insert_item (after, it);
+    deadbeef->pl_item_unref (it);
 
     return after;
 }
