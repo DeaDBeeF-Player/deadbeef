@@ -191,6 +191,32 @@ main_remove_from_playback_queue_activate
     playlist_refresh ();
 }
 
+void
+main_reload_metadata_activate
+                                        (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    DdbListview *ps = DDB_LISTVIEW (gtk_object_get_data (GTK_OBJECT (menuitem), "ps"));
+    DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
+    while (it) {
+        if (deadbeef->pl_is_selected (it) && it->decoder_id) {
+            DB_decoder_t **decoders = deadbeef->plug_get_decoder_list ();
+            for (int i = 0; decoders[i]; i++) {
+                if (!strcmp (decoders[i]->plugin.id, it->decoder_id)) {
+                    if (decoders[i]->read_metadata) {
+                        decoders[i]->read_metadata (it);
+                    }
+                    break;
+                }
+            }
+        }
+        DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+        deadbeef->pl_item_unref (it);
+        it = next;
+    }
+    playlist_refresh ();
+}
+
 int clicked_idx = -1;
 
 void
@@ -255,6 +281,7 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
     GtkWidget *remove2;
     GtkWidget *separator8;
     GtkWidget *properties1;
+    GtkWidget *reload_metadata;
 
     playlist_menu = gtk_menu_new ();
     add_to_playback_queue1 = gtk_menu_item_new_with_mnemonic ("Add to playback queue");
@@ -269,6 +296,12 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
     gtk_widget_show (remove_from_playback_queue1);
     gtk_container_add (GTK_CONTAINER (playlist_menu), remove_from_playback_queue1);
     gtk_object_set_data (GTK_OBJECT (remove_from_playback_queue1), "ps", listview);
+
+    reload_metadata = gtk_menu_item_new_with_mnemonic ("Reload metadata");
+    gtk_widget_show (reload_metadata);
+    gtk_container_add (GTK_CONTAINER (playlist_menu), reload_metadata);
+    gtk_object_set_data (GTK_OBJECT (reload_metadata), "ps", listview);
+
 
     separator9 = gtk_separator_menu_item_new ();
     gtk_widget_show (separator9);
@@ -295,6 +328,9 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
             NULL);
     g_signal_connect ((gpointer) remove_from_playback_queue1, "activate",
             G_CALLBACK (main_remove_from_playback_queue_activate),
+            NULL);
+    g_signal_connect ((gpointer) reload_metadata, "activate",
+            G_CALLBACK (main_reload_metadata_activate),
             NULL);
     g_signal_connect ((gpointer) remove2, "activate",
             G_CALLBACK (on_remove2_activate),

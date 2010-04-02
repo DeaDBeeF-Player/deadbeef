@@ -833,3 +833,11 @@ on_ape_strip_apev2_toggled             (GtkToggleButton *togglebutton,
 void
 on_closebtn_clicked                    (GtkButton       *button,
                                         gpointer         user_data);
+
+void
+on_deselect_all1_activate              (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_invert_selection1_activate          (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);

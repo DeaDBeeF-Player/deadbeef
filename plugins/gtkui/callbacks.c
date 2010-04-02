@@ -1021,3 +1021,46 @@ on_toggle_eq                           (GtkMenuItem     *menuitem,
 }
 
 
+
+void
+on_deselect_all1_activate              (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    deadbeef->pl_lock ();
+    DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
+    while (it) {
+        if (deadbeef->pl_is_selected (it)) {
+            deadbeef->pl_set_selected (it, 0);
+        }
+        DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+        deadbeef->pl_item_unref (it);
+        it = next;
+    }
+    deadbeef->pl_unlock ();
+    DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
+    ddb_listview_refresh (pl, DDB_REFRESH_LIST | DDB_EXPOSE_LIST);
+}
+
+
+void
+on_invert_selection1_activate          (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    deadbeef->pl_lock ();
+    DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
+    while (it) {
+        if (deadbeef->pl_is_selected (it)) {
+            deadbeef->pl_set_selected (it, 0);
+        }
+        else {
+            deadbeef->pl_set_selected (it, 1);
+        }
+        DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+        deadbeef->pl_item_unref (it);
+        it = next;
+    }
+    deadbeef->pl_unlock ();
+    DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
+    ddb_listview_refresh (pl, DDB_REFRESH_LIST | DDB_EXPOSE_LIST);
+}
+
