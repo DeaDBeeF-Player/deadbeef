@@ -374,7 +374,13 @@ float
 plug_playback_get_pos (void) {
     playItem_t *trk = streamer_get_playing_track ();
     if (!trk || trk->_duration <= 0) {
+        if (trk) {
+            pl_item_unref (trk);
+        }
         return 0;
+    }
+    if (trk) {
+        pl_item_unref (trk);
     }
     return streamer_get_playpos () * 100 / trk->_duration;
 }
@@ -383,9 +389,15 @@ void
 plug_playback_set_pos (float pos) {
     playItem_t *trk = streamer_get_playing_track ();
     if (!trk || trk->_duration <= 0) {
+        if (trk) {
+            pl_item_unref (trk);
+        }
         return;
     }
     float t = pos * trk->_duration / 100.f;
+    if (trk) {
+        pl_item_unref (trk);
+    }
     streamer_set_seek (t);
 }
 
@@ -416,13 +428,14 @@ plug_event_call (DB_event_t *ev) {
 void
 plug_trigger_event (int ev, uintptr_t param) {
     DB_event_t *event;
+    playItem_t *pltrack = streamer_get_playing_track ();
     switch (ev) {
     case DB_EV_SONGSTARTED:
     case DB_EV_SONGFINISHED:
         {
         DB_event_track_t *pev = alloca (sizeof (DB_event_track_t));
         pev->index = -1;
-        pev->track = DB_PLAYITEM (streamer_get_playing_track ());
+        pev->track = DB_PLAYITEM (pltrack);
         event = DB_EVENT (pev);
         }
         break;
@@ -439,6 +452,9 @@ plug_trigger_event (int ev, uintptr_t param) {
     }
     event->event = ev;
     plug_event_call (event);
+    if (pltrack) {
+        pl_item_unref (pltrack);
+    }
 }
 
 void

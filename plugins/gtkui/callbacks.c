@@ -496,6 +496,9 @@ seekbar_draw (GtkWidget *widget) {
 
     DB_playItem_t *trk = deadbeef->streamer_get_playing_track ();
     if (!trk || deadbeef->pl_get_item_duration (trk) < 0) {
+        if (trk) {
+            deadbeef->pl_item_unref (trk);
+        }
         clearlooks_rounded_rectangle (cr, 2, widget->allocation.height/2-4, widget->allocation.width-4, 8, 4, 0xff);
         // empty seekbar, just a frame
         cairo_set_source_rgb (cr, clr_selection->red/65535.f, clr_selection->green/65535.f, clr_selection->blue/65535.f );
@@ -539,6 +542,9 @@ seekbar_draw (GtkWidget *widget) {
     cairo_reset_clip (cr);
 
     cairo_destroy (cr);
+    if (trk) {
+        deadbeef->pl_item_unref (trk);
+    }
 }
 
 void
@@ -613,6 +619,7 @@ on_seekbar_button_release_event        (GtkWidget       *widget,
             time = 0;
         }
         deadbeef->streamer_seek (time);
+        deadbeef->pl_item_unref (trk);
     }
     return FALSE;
 }

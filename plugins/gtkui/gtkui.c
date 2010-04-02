@@ -136,7 +136,7 @@ update_songinfo (gpointer ctx) {
     }
 
     DB_playItem_t *track = deadbeef->streamer_get_playing_track ();
-    DB_fileinfo_t *c = deadbeef->streamer_get_current_fileinfo ();
+    DB_fileinfo_t *c = deadbeef->streamer_get_current_fileinfo (); // FIXME: might crash streamer
 
     float duration = track ? deadbeef->pl_get_item_duration (track) : -1;
 
@@ -207,6 +207,9 @@ update_songinfo (gpointer ctx) {
             seekbar_expose (widget, 0, 0, widget->allocation.width, widget->allocation.height);
             last_songpos = songpos;
         }
+    }
+    if (track) {
+        deadbeef->pl_item_unref (track);
     }
     return FALSE;
 }
