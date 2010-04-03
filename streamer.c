@@ -114,7 +114,9 @@ src_unlock (void) {
 
 playItem_t *
 streamer_get_streaming_track (void) {
-    pl_item_ref (streaming_track);
+    if (streaming_track) {
+        pl_item_ref (streaming_track);
+    }
     return streaming_track;
 }
 
@@ -140,6 +142,7 @@ str_get_idx_of (playItem_t *it) {
         idx++;
     }
     if (!c) {
+        plt_unlock ();
         return -1;
     }
     plt_unlock ();
@@ -154,8 +157,10 @@ str_get_for_idx (int idx) {
     }
     playItem_t *it = streamer_playlist->head[PL_MAIN];
     while (idx--) {
-        if (!it)
+        if (!it) {
+            plt_unlock ();
             return NULL;
+        }
         it = it->next[PL_MAIN];
     }
     if (it) {
@@ -354,6 +359,7 @@ streamer_move_to_prevsong (void) {
             }
             int r = str_get_idx_of (it);
             streamer_set_nextsong (r, 1);
+            plt_unlock ();
             return 0;
         }
     }
@@ -418,20 +424,21 @@ streamer_set_current (playItem_t *it) {
     from = playing_track ? str_get_idx_of (playing_track) : -1;
     to = it ? str_get_idx_of (it) : -1;
     if (!playing_track || p_isstopped ()) {
+        trace ("buffering = on\n");
         streamer_buffering = 1;
         playlist_track = it;
         //trace ("from=%d, to=%d\n", from, to);
         //messagepump_push (M_SONGCHANGED, 0, from, to);
+        if (playing_track) {
+            pl_item_unref (playing_track);
+        }
+        playing_track = it;
+        if (playing_track) {
+            pl_item_ref (playing_track);
+        }
     }
 
 // code below breaks seekbar drawing during transition between tracks
-//    if (playing_track) {
-//        pl_item_unref (playing_track);
-//    }
-//    playing_track = it;
-//    if (playing_track) {
-//        pl_item_ref (playing_track);
-//    }
     trace ("streamer_set_current %p, buns=%d\n", it);
     mutex_lock (decodemutex);
     if (fileinfo) {

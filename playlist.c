@@ -43,7 +43,8 @@
 #include "threading.h"
 #include "metacache.h"
 
-#define DISABLE_LOCKING 1
+#define DISABLE_LOCKING 0
+#define DEBUG_LOCKING 0
 
 // file format revision history
 // 1.0->1.1 changelog:
@@ -51,8 +52,8 @@
 #define PLAYLIST_MAJOR_VER 1
 #define PLAYLIST_MINOR_VER 1
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 #define SKIP_BLANK_CUE_TRACKS 1
 
@@ -84,8 +85,8 @@ static uintptr_t mutex_plt;
 int
 pl_init (void) {
 #if !DISABLE_LOCKING
-    mutex = mutex_create_recursive ();
-    mutex_plt = mutex_create_recursive ();
+    mutex = mutex_create ();
+    mutex_plt = mutex_create ();
 #endif
 }
 
@@ -103,10 +104,17 @@ pl_free (void) {
 #endif
 }
 
+#if DEBUG_LOCKING
+int plt_lock_cnt = 0;
+#endif
 void
 plt_lock (void) {
 #if !DISABLE_LOCKING
     mutex_lock (mutex_plt);
+#if DEBUG_LOCKING
+    plt_lock_cnt++;
+    printf ("cnt: %d\n", plt_lock_cnt);
+#endif
 #endif
 }
 
@@ -114,13 +122,24 @@ void
 plt_unlock (void) {
 #if !DISABLE_LOCKING
     mutex_unlock (mutex_plt);
+#if DEBUG_LOCKING
+    plt_lock_cnt--;
+    printf ("cnt: %d\n", plt_lock_cnt);
+#endif
 #endif
 }
 
+#if DEBUG_LOCKING
+int pl_lock_cnt = 0;
+#endif
 void
 pl_lock (void) {
 #if !DISABLE_LOCKING
     mutex_lock (mutex);
+#if DEBUG_LOCKING
+    pl_lock_cnt++;
+    printf ("pcnt: %d\n", pl_lock_cnt);
+#endif
 #endif
 }
 
@@ -128,6 +147,10 @@ void
 pl_unlock (void) {
 #if !DISABLE_LOCKING
     mutex_unlock (mutex);
+#if DEBUG_LOCKING
+    pl_lock_cnt--;
+    printf ("pcnt: %d\n", pl_lock_cnt);
+#endif
 #endif
 }
 
@@ -1226,8 +1249,10 @@ pl_get_for_idx_and_iter (int idx, int iter) {
     LOCK;
     playItem_t *it = playlist->head[iter];
     while (idx--) {
-        if (!it)
+        if (!it) {
+            UNLOCK;
             return NULL;
+        }
         it = it->next[iter];
     }
     if (it) {
