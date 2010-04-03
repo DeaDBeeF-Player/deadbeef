@@ -769,16 +769,8 @@ gtkui_thread (void *ctx) {
     GtkWidget *sb_mi = lookup_widget (mainwin, "view_status_bar");
     GtkWidget *ts_mi = lookup_widget (mainwin, "view_tabs");
     GtkWidget *eq_mi = lookup_widget (mainwin, "view_eq");
-    GtkWidget *header = lookup_widget (mainwin, "header");
     GtkWidget *sb = lookup_widget (mainwin, "statusbar");
     GtkWidget *ts = lookup_widget (mainwin, "tabstrip");
-    if (deadbeef->conf_get_int ("gtkui.headers.visible", 1)) {
-        gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (header_mi), TRUE);
-    }
-    else {
-        gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (header_mi), FALSE);
-        gtk_widget_hide (header);
-    }
     if (deadbeef->conf_get_int ("gtkui.statusbar.visible", 1)) {
         gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (sb_mi), TRUE);
     }
@@ -814,6 +806,16 @@ gtkui_thread (void *ctx) {
 
     DdbListview *main_playlist = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
     main_playlist_init (GTK_WIDGET (main_playlist));
+
+    if (deadbeef->conf_get_int ("gtkui.headers.visible", 1)) {
+        gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (header_mi), TRUE);
+        ddb_listview_show_header (main_playlist, 1);
+    }
+    else {
+        gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (header_mi), FALSE);
+        ddb_listview_show_header (main_playlist, 0);
+    }
+
     DdbListview *search_playlist = DDB_LISTVIEW (lookup_widget (searchwin, "searchlist"));
     search_playlist_init (GTK_WIDGET (search_playlist));
 

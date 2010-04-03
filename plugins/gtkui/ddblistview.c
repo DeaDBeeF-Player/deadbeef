@@ -2729,3 +2729,9 @@ void
 ddb_listview_set_vscroll (DdbListview *listview, gboolean scroll) {
     gtk_range_set_value (GTK_RANGE (listview->scrollbar), scroll);
 }
+
+void
+ddb_listview_show_header (DdbListview *listview, int show) {
+    show ? gtk_widget_show (listview->header) : gtk_widget_hide (listview->header);
+}
+
