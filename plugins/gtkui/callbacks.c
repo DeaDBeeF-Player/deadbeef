@@ -292,7 +292,7 @@ on_mainwin_key_press_event             (GtkWidget       *widget,
                                         gpointer         user_data)
 {
 
-    if (event->keyval == GDK_n) {
+    if (event->keyval == GDK_n && !(event->state&(GDK_SHIFT_MASK|GDK_CONTROL_MASK|GDK_MOD1_MASK))) {
         // button for that one is not in toolbar anymore, so handle it manually
         deadbeef->sendmessage (M_PLAYRANDOM, 0, 0, 0);
     }
@@ -496,6 +496,9 @@ seekbar_draw (GtkWidget *widget) {
 
     DB_playItem_t *trk = deadbeef->streamer_get_playing_track ();
     if (!trk || deadbeef->pl_get_item_duration (trk) < 0) {
+        if (trk) {
+            deadbeef->pl_item_unref (trk);
+        }
         clearlooks_rounded_rectangle (cr, 2, widget->allocation.height/2-4, widget->allocation.width-4, 8, 4, 0xff);
         // empty seekbar, just a frame
         cairo_set_source_rgb (cr, clr_selection->red/65535.f, clr_selection->green/65535.f, clr_selection->blue/65535.f );
@@ -539,6 +542,9 @@ seekbar_draw (GtkWidget *widget) {
     cairo_reset_clip (cr);
 
     cairo_destroy (cr);
+    if (trk) {
+        deadbeef->pl_item_unref (trk);
+    }
 }
 
 void
@@ -613,6 +619,7 @@ on_seekbar_button_release_event        (GtkWidget       *widget,
             time = 0;
         }
         deadbeef->streamer_seek (time);
+        deadbeef->pl_item_unref (trk);
     }
     return FALSE;
 }
@@ -929,15 +936,15 @@ void
 on_toggle_column_headers_activate      (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    GtkWidget *header = lookup_widget (mainwin, "header");
-    if (header) {
+    GtkWidget *playlist = lookup_widget (mainwin, "playlist");
+    if (playlist) {
         if (!gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (menuitem))) {
             deadbeef->conf_set_int ("gtkui.headers.visible", 0);
-            gtk_widget_hide (header);
+            ddb_listview_show_header (DDB_LISTVIEW (playlist), 0);
         }
         else {
             deadbeef->conf_set_int ("gtkui.headers.visible", 1);
-            gtk_widget_show (header);
+            ddb_listview_show_header (DDB_LISTVIEW (playlist), 1);
         }
     }
 }
@@ -1020,4 +1027,59 @@ on_toggle_eq                           (GtkMenuItem     *menuitem,
     }
 }
 
+
+
+void
+on_deselect_all1_activate              (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    deadbeef->pl_lock ();
+    DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
+    while (it) {
+        if (deadbeef->pl_is_selected (it)) {
+            deadbeef->pl_set_selected (it, 0);
+        }
+        DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+        deadbeef->pl_item_unref (it);
+        it = next;
+    }
+    deadbeef->pl_unlock ();
+    DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
+    ddb_listview_refresh (pl, DDB_REFRESH_LIST | DDB_EXPOSE_LIST);
+}
+
+
+void
+on_invert_selection1_activate          (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    deadbeef->pl_lock ();
+    DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
+    while (it) {
+        if (deadbeef->pl_is_selected (it)) {
+            deadbeef->pl_set_selected (it, 0);
+        }
+        else {
+            deadbeef->pl_set_selected (it, 1);
+        }
+        DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+        deadbeef->pl_item_unref (it);
+        it = next;
+    }
+    deadbeef->pl_unlock ();
+    DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
+    ddb_listview_refresh (pl, DDB_REFRESH_LIST | DDB_EXPOSE_LIST);
+}
+
+
+void
+on_new_playlist1_activate              (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    int pl = gtkui_add_new_playlist ();
+    if (pl != -1) {
+        deadbeef->plt_set_curr (pl);
+        deadbeef->conf_set_int ("playlist.current", pl);
+    }
+}
 

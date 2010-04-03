@@ -89,4 +89,7 @@ search_refresh (void);
 int
 gtkui_listview_theming_disabled (void);
 
+int
+gtkui_add_new_playlist (void);
+
 #endif

@@ -209,6 +209,20 @@ adplug_get_extension (const char *fname) {
     return "adplug-unknown";
 }
 
+static void
+adplug_add_meta (DB_playItem_t *it, const char *key, const char *value) {
+    if (!value) {
+        return;
+    }
+    const char *charset = deadbeef->junk_detect_charset (value);
+    if (charset) {
+        int l = strlen (value);
+        char str[1024];
+        deadbeef->junk_recode (value, l, str, sizeof (str), charset);
+        deadbeef->pl_add_meta (it, key, str);
+    }
+}
+
 DB_playItem_t *
 adplug_insert (DB_playItem_t *after, const char *fname) {
     // read information from the track
@@ -235,19 +249,20 @@ adplug_insert (DB_playItem_t *after, const char *fname) {
         deadbeef->pl_set_item_duration (it, p->songlength (i)/1000.f);
         // add metainfo
         if (!p->gettitle().empty()) {
-            deadbeef->pl_add_meta (it, "title", p->gettitle().c_str());
+            adplug_add_meta (it, "title", p->gettitle().c_str());
         }
         else {
-            deadbeef->pl_add_meta (it, "title", NULL);
+            adplug_add_meta (it, "title", NULL);
         }
         if (!p->getdesc().empty()) {
-            deadbeef->pl_add_meta (it, "comment", p->getdesc().c_str());
+            adplug_add_meta (it, "comment", p->getdesc().c_str());
         }
         if (!p->getauthor().empty()) {
-            deadbeef->pl_add_meta (it, "artist", p->getauthor().c_str());
+            adplug_add_meta (it, "artist", p->getauthor().c_str());
         }
         // insert
         after = deadbeef->pl_insert_item (after, it);
+        deadbeef->pl_item_unref (it);
     }
 
     // free decoder

@@ -260,6 +260,9 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
     // close_send_to_tray
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "pref_close_send_to_tray")), deadbeef->conf_get_int ("close_send_to_tray", 0));
 
+    // mmb_delete_playlist
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "mmb_delete_playlist")), deadbeef->conf_get_int ("gtkui.mmb_delete_playlist", 0));
+
     // override colors
     int override = deadbeef->conf_get_int ("gtkui.override_theme_colors", 0);
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (prefwin, "override_theme_colors")), override);
@@ -854,5 +857,12 @@ on_ape_strip_apev2_toggled             (GtkToggleButton *togglebutton,
                                         gpointer         user_data)
 {
     deadbeef->conf_set_int ("ape.strip_apev2", gtk_toggle_button_get_active (togglebutton));
+}
+
+void
+on_mmb_delete_playlist_toggled         (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_int ("gtkui.mmb_delete_playlist", gtk_toggle_button_get_active (togglebutton));
 }
 

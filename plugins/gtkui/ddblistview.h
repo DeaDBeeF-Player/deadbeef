@@ -190,6 +190,8 @@ int
 ddb_listview_column_set_info (DdbListview *listview, int col, const char *title, int width, int align_right, int minheight, void *user_data);
 void
 ddb_listview_build_groups (DdbListview *listview);
+void
+ddb_listview_show_header (DdbListview *listview, int show);
 
 enum {
     DDB_REFRESH_COLUMNS = 1,

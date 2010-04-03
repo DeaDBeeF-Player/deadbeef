@@ -545,6 +545,7 @@ csid_insert (DB_playItem_t *after, const char *fname) {
             it->filetype = "SID";
 
             after = deadbeef->pl_insert_item (after, it);
+            deadbeef->pl_item_unref (it);
         }
     }
     delete tune;

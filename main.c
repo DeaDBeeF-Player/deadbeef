@@ -148,6 +148,9 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
                 else {
                     strcpy (sendback, "nowplaying nothing");
                 }
+                if (curr) {
+                    pl_item_unref (curr);
+                }
             }
             else {
                 char out[2048];
@@ -158,6 +161,9 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
                 }
                 else {
                     strcpy (out, "nothing");
+                }
+                if (curr) {
+                    pl_item_unref (curr);
                 }
                 fwrite (out, 1, strlen (out), stdout);
                 return 1; // exit

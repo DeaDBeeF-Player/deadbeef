@@ -207,9 +207,6 @@ gtkpl_add_fm_dropped_files (DB_playItem_t *drop_before, char *ptr, int length) {
     }
     free (ptr);
 
-    if (after) {
-        deadbeef->pl_item_unref (after);
-    }
     g_idle_add (progress_hide_idle, NULL);
     g_idle_add (set_dnd_cursor_idle, first);
 }

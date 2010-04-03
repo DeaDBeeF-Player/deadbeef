@@ -58,7 +58,7 @@
 		      <accelerator key="O" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image344">
+			<widget class="GtkImage" id="image368">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-open</property>
 			  <property name="icon_size">1</property>
@@ -85,7 +85,7 @@
 		      <signal name="activate" handler="on_add_files_activate" last_modification_time="Sat, 04 Jul 2009 13:04:01 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image345">
+			<widget class="GtkImage" id="image369">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-add</property>
 			  <property name="icon_size">1</property>
@@ -106,7 +106,7 @@
 		      <signal name="activate" handler="on_add_folders_activate" last_modification_time="Sun, 06 Sep 2009 17:51:40 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image346">
+			<widget class="GtkImage" id="image370">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-add</property>
 			  <property name="icon_size">1</property>
@@ -127,7 +127,7 @@
 		      <signal name="activate" handler="on_add_audio_cd_activate" last_modification_time="Sat, 10 Oct 2009 15:29:22 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image347">
+			<widget class="GtkImage" id="image371">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-add</property>
 			  <property name="icon_size">1</property>
@@ -152,6 +152,16 @@
 		  <child>
 		    <widget class="GtkSeparatorMenuItem" id="separatormenuitem1">
 		      <property name="visible">True</property>
+		    </widget>
+		  </child>
+
+		  <child>
+		    <widget class="GtkMenuItem" id="new_playlist1">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">New playlist</property>
+		      <property name="use_underline">True</property>
+		      <signal name="activate" handler="on_new_playlist1_activate" last_modification_time="Fri, 02 Apr 2010 18:06:51 GMT"/>
+		      <accelerator key="n" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 		    </widget>
 		  </child>
 
@@ -197,7 +207,7 @@
 		      <accelerator key="Q" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image348">
+			<widget class="GtkImage" id="image372">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-quit</property>
 			  <property name="icon_size">1</property>
@@ -231,7 +241,7 @@
 		      <signal name="activate" handler="on_clear1_activate" last_modification_time="Sun, 06 Sep 2009 18:30:03 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image349">
+			<widget class="GtkImage" id="image373">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-clear</property>
 			  <property name="icon_size">1</property>
@@ -255,6 +265,24 @@
 		  </child>
 
 		  <child>
+		    <widget class="GtkMenuItem" id="deselect_all1">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">Deselect all</property>
+		      <property name="use_underline">True</property>
+		      <signal name="activate" handler="on_deselect_all1_activate" last_modification_time="Fri, 02 Apr 2010 11:30:31 GMT"/>
+		    </widget>
+		  </child>
+
+		  <child>
+		    <widget class="GtkMenuItem" id="invert_selection1">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">Invert selection</property>
+		      <property name="use_underline">True</property>
+		      <signal name="activate" handler="on_invert_selection1_activate" last_modification_time="Fri, 02 Apr 2010 11:30:31 GMT"/>
+		    </widget>
+		  </child>
+
+		  <child>
 		    <widget class="GtkMenuItem" id="selection1">
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">Selection</property>
@@ -271,7 +299,7 @@
 			      <signal name="activate" handler="on_remove1_activate" last_modification_time="Sun, 06 Sep 2009 18:30:03 GMT"/>
 
 			      <child internal-child="image">
-				<widget class="GtkImage" id="image350">
+				<widget class="GtkImage" id="image374">
 				  <property name="visible">True</property>
 				  <property name="stock">gtk-remove</property>
 				  <property name="icon_size">1</property>
@@ -530,7 +558,7 @@
 		      <signal name="activate" handler="on_help1_activate" last_modification_time="Tue, 08 Sep 2009 17:32:06 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image351">
+			<widget class="GtkImage" id="image375">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-help</property>
 			  <property name="icon_size">1</property>
@@ -590,7 +618,7 @@
 		      <signal name="activate" handler="on_about1_activate" last_modification_time="Sat, 04 Jul 2009 12:57:58 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image352">
+			<widget class="GtkImage" id="image376">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-about</property>
 			  <property name="icon_size">1</property>
@@ -2211,6 +2239,26 @@ Album</property>
 		  <property name="inconsistent">False</property>
 		  <property name="draw_indicator">True</property>
 		  <signal name="clicked" handler="on_pref_close_send_to_tray_clicked" last_modification_time="Sat, 10 Oct 2009 18:52:15 GMT"/>
+		</widget>
+		<packing>
+		  <property name="padding">0</property>
+		  <property name="expand">False</property>
+		  <property name="fill">False</property>
+		</packing>
+	      </child>
+
+	      <child>
+		<widget class="GtkCheckButton" id="mmb_delete_playlist">
+		  <property name="visible">True</property>
+		  <property name="can_focus">True</property>
+		  <property name="label" translatable="yes">Middle mouse button closes playlist</property>
+		  <property name="use_underline">True</property>
+		  <property name="relief">GTK_RELIEF_NORMAL</property>
+		  <property name="focus_on_click">True</property>
+		  <property name="active">False</property>
+		  <property name="inconsistent">False</property>
+		  <property name="draw_indicator">True</property>
+		  <signal name="toggled" handler="on_mmb_delete_playlist_toggled" last_modification_time="Fri, 02 Apr 2010 18:02:53 GMT"/>
 		</widget>
 		<packing>
 		  <property name="padding">0</property>

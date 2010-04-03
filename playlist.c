@@ -51,8 +51,8 @@
 #define PLAYLIST_MAJOR_VER 1
 #define PLAYLIST_MINOR_VER 1
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 #define SKIP_BLANK_CUE_TRACKS 1
 
@@ -378,6 +378,13 @@ plt_free (void) {
     PLT_LOCK;
     plt_loading = 1;
     while (playlists_head) {
+
+        for (playItem_t *it = playlists_head->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
+            if (it->_refc > 1) {
+                fprintf (stderr, "\033[0;31mWARNING: playitem %p %s has refc=%d at delete time\033[37;0m\n", it, it->fname, it->_refc);
+            }
+        }
+
         plt_remove (0);
     }
     plt_loading = 0;
@@ -595,7 +602,6 @@ pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, c
     it->startsample = index01[0] ? f_index01 * samplerate : 0;
     it->endsample = -1; // will be filled by next read, or by decoder
     it->filetype = ftype;
-    after = pl_insert_item (after, it);
     if (performer[0]) {
         pl_add_meta (it, "artist", performer);
     }
@@ -614,6 +620,7 @@ pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, c
     if (date[0]) {
         pl_add_meta (it, "year", date);
     }
+    after = pl_insert_item (after, it);
     pl_item_unref (it);
     *prev = it;
     return it;
@@ -758,6 +765,7 @@ pl_insert_cue (playItem_t *after, playItem_t *origin, int numsamples, int sample
 
 playItem_t *
 pl_insert_m3u (playItem_t *after, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
+    trace ("enter pl_insert_m3u\n");
     // skip all empty lines and comments
     DB_FILE *fp = vfs_fopen (fname);
     if (!fp) {
@@ -782,9 +790,6 @@ pl_insert_m3u (playItem_t *after, const char *fname, int *pabort, int (*cb)(play
     const uint8_t *p = buffer;
     const uint8_t *end = buffer+sz;
     LOCK;
-    if (after) {
-        pl_item_ref (after);
-    }
     while (p < end) {
         p = pl_str_skipspaces (p, end);
         if (p >= end) {
@@ -807,10 +812,9 @@ pl_insert_m3u (playItem_t *after, const char *fname, int *pabort, int (*cb)(play
         uint8_t nm[n+1];
         memcpy (nm, p, n);
         nm[n] = 0;
-        trace ("adding file %s\n", nm);
+        trace ("pl_insert_m3u: adding file %s\n", nm);
         playItem_t *it = pl_insert_file (after, nm, pabort, cb, user_data);
         if (it) {
-            pl_item_unref (after);
             after = it;
         }
         if (pabort && *pabort) {
@@ -823,6 +827,7 @@ pl_insert_m3u (playItem_t *after, const char *fname, int *pabort, int (*cb)(play
         }
     }
     UNLOCK;
+    trace ("leave pl_insert_m3u\n");
     return after;
 }
 
@@ -878,7 +883,6 @@ pl_insert_pls (playItem_t *after, const char *fname, int *pabort, int (*cb)(play
     char title[1024] = "";
     char length[20] = "";
     LOCK;
-    pl_item_ref (after);
     while (p < end) {
         p = pl_str_skipspaces (p, end);
         if (p >= end) {
@@ -902,9 +906,6 @@ pl_insert_pls (playItem_t *after, const char *fname, int *pabort, int (*cb)(play
                     }
                 }
                 if (pabort && *pabort) {
-                    if (after) {
-                        pl_item_ref (after);
-                    }
                     UNLOCK;
                     return after;
                 }
@@ -982,9 +983,6 @@ pl_insert_pls (playItem_t *after, const char *fname, int *pabort, int (*cb)(play
     if (url[0]) {
         playItem_t *it = pl_insert_file (after, url, pabort, cb, user_data);
         if (it) {
-            if (after) {
-                pl_item_unref (after);
-            }
             after = it;
             pl_set_item_duration (it, atoi (length));
             if (title[0]) {
@@ -1060,7 +1058,9 @@ pl_insert_file (playItem_t *after, const char *fname, int *pabort, int (*cb)(pla
             it->filetype = "content";
             it->_duration = -1;
             pl_add_meta (it, "title", NULL);
-            return pl_insert_item (after, it);
+            after = pl_insert_item (after, it);
+            pl_item_unref (it);
+            return after;
         }
     }
     else {
@@ -1080,7 +1080,6 @@ pl_insert_file (playItem_t *after, const char *fname, int *pabort, int (*cb)(pla
                         if (cb && cb (inserted, user_data) < 0) {
                             *pabort = 1;
                         }
-                        pl_item_ref (inserted);
                         return inserted;
                     }
                 }
@@ -1144,7 +1143,7 @@ pl_add_file (const char *fname, int (*cb)(playItem_t *it, void *data), void *use
     int abort = 0;
     playItem_t *it = pl_insert_file (playlist->tail[PL_MAIN], fname, &abort, cb, user_data);
     if (it) {
-        pl_item_unref (it);
+        // pl_insert_file doesn't hold reference, don't unref here
         return 0;
     }
     return -1;
@@ -1155,7 +1154,7 @@ pl_add_dir (const char *dirname, int (*cb)(playItem_t *it, void *data), void *us
     int abort = 0;
     playItem_t *it = pl_insert_dir (playlist->tail[PL_MAIN], dirname, &abort, cb, user_data);
     if (it) {
-        pl_item_unref (it);
+        // pl_insert_file doesn't hold reference, don't unref here
         return 0;
     }
     return -1;
@@ -1357,7 +1356,7 @@ void
 pl_item_ref (playItem_t *it) {
     LOCK;
     it->_refc++;
-//    trace ("+it %p: refc=%d: %s\n", it, it->_refc, it->fname);
+    //trace ("\033[0;34m+it %p: refc=%d: %s\033[37;0m\n", it, it->_refc, it->fname);
     UNLOCK;
 }
 
@@ -1384,11 +1383,12 @@ void
 pl_item_unref (playItem_t *it) {
     LOCK;
     it->_refc--;
-//    trace ("-it %p: refc=%d: %s\n", it, it->_refc, it->fname);
+    //trace ("\033[0;31m-it %p: refc=%d: %s\033[37;0m\n", it, it->_refc, it->fname);
     if (it->_refc < 0) {
         trace ("\033[0;31mplaylist: bad refcount on item %p\033[37;0m\n", it);
     }
     if (it->_refc <= 0) {
+        //printf ("\033[0;31mdeleted %s\033[37;0m\n", it->fname);
         pl_item_free (it);
     }
     UNLOCK;

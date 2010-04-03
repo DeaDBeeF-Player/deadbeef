@@ -264,6 +264,7 @@ typedef struct APEContext {
     int remaining;
 
     int error;
+    int skip_header;
 } APEContext;
 
 typedef struct {
@@ -598,7 +599,7 @@ static int ape_read_packet(DB_FILE *fp, APEContext *ape_ctx)
     if (ape->currentframe > ape->totalframes)
         return -1;
 //    fprintf (stderr, "seeking to %d\n", ape->frames[ape->currentframe].pos);
-    if (deadbeef->fseek (fp, ape->frames[ape->currentframe].pos, SEEK_SET) != 0) {
+    if (deadbeef->fseek (fp, ape->frames[ape->currentframe].pos + ape_ctx->skip_header, SEEK_SET) != 0) {
         return -1;
     }
 
@@ -681,6 +682,11 @@ ffap_init(DB_playItem_t *it)
         return NULL;
     }
     memset (&info->ape_ctx, 0, sizeof (info->ape_ctx));
+    int skip = deadbeef->junk_get_leading_size (info->fp);
+    if (skip > 0) {
+        deadbeef->fseek (info->fp, skip, SEEK_SET);
+        info->ape_ctx.skip_header = skip;
+    }
     ape_read_header (info->fp, &info->ape_ctx);
     int i;
 
@@ -1685,6 +1691,10 @@ ffap_insert (DB_playItem_t *after, const char *fname) {
     if (!fp) {
         return NULL;
     }
+    int skip = deadbeef->junk_get_leading_size (fp);
+    if (skip > 0) {
+        deadbeef->fseek (fp, skip, SEEK_SET);
+    }
     if (ape_read_header (fp, &ape_ctx) < 0) {
         fprintf (stderr, "ape: failed to read ape header\n");
         deadbeef->fclose (fp);
@@ -1740,6 +1750,7 @@ ffap_insert (DB_playItem_t *after, const char *fname) {
 
     deadbeef->pl_add_meta (it, "title", NULL);
     after = deadbeef->pl_insert_item (after, it);
+    deadbeef->pl_item_unref (it);
 
     return after;
 }
