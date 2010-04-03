@@ -1732,7 +1732,7 @@ create_prefwin (void)
                     (GtkAttachOptions) (0), 0, 0);
   gtk_misc_set_alignment (GTK_MISC (label76), 0, 0.5);
 
-  label74 = gtk_label_new ("Tabstrip colors");
+  label74 = gtk_label_new ("Tab strip colors");
   gtk_widget_show (label74);
   gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook4), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook4), 1), label74);
 
