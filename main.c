@@ -208,7 +208,7 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
     if (parg < pend) {
         // add files
         if (!queue) {
-            pl_free ();
+            pl_clear ();
             pl_reset_cursor ();
         }
         while (parg < pend) {
