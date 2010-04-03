@@ -135,7 +135,6 @@ static DB_functions_t deadbeef_api = {
     .pl_items_copy_junk = (void (*)(DB_playItem_t *from, DB_playItem_t *first, DB_playItem_t *last))pl_items_copy_junk,
     .pl_get_totaltime = pl_get_totaltime,
     .pl_getcount = pl_getcount,
-    .pl_getcurrent = (DB_playItem_t *(*)(void))streamer_get_playing_track,
     .pl_delete_selected = pl_delete_selected,
     .pl_set_cursor = pl_set_cursor,
     .pl_get_cursor = pl_get_cursor,
@@ -428,13 +427,14 @@ plug_event_call (DB_event_t *ev) {
 void
 plug_trigger_event (int ev, uintptr_t param) {
     DB_event_t *event;
-    playItem_t *pltrack = streamer_get_playing_track ();
+    playItem_t *pltrack = NULL;
     switch (ev) {
     case DB_EV_SONGSTARTED:
     case DB_EV_SONGFINISHED:
         {
         DB_event_track_t *pev = alloca (sizeof (DB_event_track_t));
         pev->index = -1;
+        pltrack = streamer_get_playing_track ();
         pev->track = DB_PLAYITEM (pltrack);
         event = DB_EVENT (pev);
         }
@@ -470,10 +470,11 @@ plug_trigger_event_trackinfochanged (int trk) {
     DB_event_track_t event;
     event.ev.event = DB_EV_TRACKINFOCHANGED;
     event.index = trk;
-    event.track = DB_PLAYITEM (pl_get_for_idx (trk));
+    playItem_t *track = pl_get_for_idx (trk);
+    event.track = DB_PLAYITEM (track);
     plug_event_call (DB_EVENT (&event));
-    if (event.track) {
-        pl_item_unref ((playItem_t *)event.track);
+    if (track) {
+        pl_item_unref (track);
     }
 }
 

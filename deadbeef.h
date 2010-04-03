@@ -345,7 +345,6 @@ typedef struct {
     DB_playItem_t * (*pl_get_for_idx_and_iter) (int idx, int iter);
     float (*pl_get_totaltime) (void);
     int (*pl_getcount) (int iter);
-    DB_playItem_t *(*pl_getcurrent) (void);
     int (*pl_delete_selected) (void);
     void (*pl_set_cursor) (int iter, int cursor);
     int (*pl_get_cursor) (int iter);

@@ -37,8 +37,8 @@
 #include "volume.h"
 #include "vfs.h"
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 static intptr_t streamer_tid;
 static int src_quality;
@@ -503,6 +503,9 @@ streamer_set_current (playItem_t *it) {
         else {
             mutex_lock (decodemutex);
             fileinfo = info;
+            if (streaming_track) {
+                pl_item_unref (streaming_track);
+            }
             streaming_track = it;
             pl_item_ref (streaming_track);
             mutex_unlock (decodemutex);
@@ -928,6 +931,19 @@ streamer_free (void) {
     streaming_terminate = 1;
     thread_join (streamer_tid);
     mutex_free (decodemutex);
+
+    if (streaming_track) {
+        pl_item_unref (streaming_track);
+        streaming_track = NULL;
+    }
+    if (playing_track) {
+        pl_item_unref (playing_track);
+        playing_track = NULL;
+    }
+    if (playlist_track) {
+        playlist_track = NULL;
+    }
+
     decodemutex = 0;
     mutex_free (mutex);
     mutex = 0;

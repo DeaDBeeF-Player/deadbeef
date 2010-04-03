@@ -388,8 +388,12 @@ trackinfochanged_cb (gpointer data) {
     struct trackinfo_t *ti = (struct trackinfo_t *)data;
     GtkWidget *playlist = lookup_widget (mainwin, "playlist");
     ddb_listview_draw_row (DDB_LISTVIEW (playlist), ti->index, (DdbListviewIter)ti->track);
-    if (ti->track == deadbeef->pl_getcurrent ()) {
+    DB_playItem_t *curr = deadbeef->streamer_get_playing_track ();
+    if (ti->track == curr) {
         current_track_changed (ti->track);
+    }
+    if (curr) {
+        deadbeef->pl_item_unref (curr);
     }
     free (ti);
     return FALSE;
@@ -406,11 +410,12 @@ gtkui_on_trackinfochanged (DB_event_track_t *ev, uintptr_t data) {
 
 static gboolean
 paused_cb (gpointer nothing) {
-    DB_playItem_t *curr = deadbeef->pl_getcurrent ();
+    DB_playItem_t *curr = deadbeef->streamer_get_playing_track ();
     if (curr) {
         int idx = deadbeef->pl_get_idx_of (curr);
         GtkWidget *playlist = lookup_widget (mainwin, "playlist");
         ddb_listview_draw_row (DDB_LISTVIEW (playlist), idx, (DdbListviewIter)curr);
+        deadbeef->pl_item_unref (curr);
     }
     return FALSE;
 }
