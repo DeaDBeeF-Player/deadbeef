@@ -164,6 +164,7 @@ void draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbListview
         float fg[3] = {(float)color->red/0xffff, (float)color->green/0xffff, (float)color->blue/0xffff};
         draw_set_fg_color (fg);
 
+        draw_init_font (GTK_WIDGET (listview)->style);
         if (calign_right) {
             draw_text (x+5, y + height/2 - draw_get_font_size ()/2 - 2, cwidth-10, 1, text);
         }

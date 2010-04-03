@@ -43,11 +43,6 @@ draw_begin (uintptr_t canvas) {
 
 void
 draw_end (void) {
-//    if (pango_ready) {
-//        g_object_unref (pangolayout);
-//        g_object_unref (pangoctx);
-//        pango_ready = 0;
-//    }
     drawable = NULL;
     if (gc) {
         g_object_unref (gc);
@@ -96,14 +91,26 @@ draw_rect (float x, float y, float w, float h, int fill) {
     gdk_draw_rectangle (drawable, gc, fill, x, y, w, h);
 }
 
-static inline void
-draw_init_font (void) {
-    if (!pango_ready) {
+static GtkStyle *font_style = NULL;
+
+void
+draw_init_font (GtkStyle *new_font_style) {
+    if (!pango_ready || (new_font_style && font_style != new_font_style)) {
+        if (pangoctx) {
+            g_object_unref (pangoctx);
+            pangoctx = NULL;
+        }
+        if (pangolayout) {
+            g_object_unref (pangolayout);
+            pangolayout = NULL;
+        }
+
+        font_style = new_font_style ? new_font_style : gtk_widget_get_default_style ();
+
         pangoctx = gdk_pango_context_get ();
         pangolayout = pango_layout_new (pangoctx);
         pango_layout_set_ellipsize (pangolayout, PANGO_ELLIPSIZE_END);
-        GtkStyle *style = gtk_widget_get_default_style ();
-        PangoFontDescription *desc = style->font_desc;
+        PangoFontDescription *desc = font_style->font_desc;
         pango_layout_set_font_description (pangolayout, desc);
         pango_ready = 1;
     }
@@ -111,16 +118,16 @@ draw_init_font (void) {
 
 float
 draw_get_font_size (void) {
+    draw_init_font (NULL);
     GdkScreen *screen = gdk_screen_get_default ();
     float dpi = gdk_screen_get_resolution (screen);
-    GtkStyle *style = gtk_widget_get_default_style ();
-    PangoFontDescription *desc = style->font_desc;
+    PangoFontDescription *desc = font_style->font_desc;
     return (float)(pango_font_description_get_size (desc) / PANGO_SCALE * dpi / 72);
 }
 
 void
 draw_text (float x, float y, int width, int align, const char *text) {
-    draw_init_font ();
+    draw_init_font (NULL);
     pango_layout_set_width (pangolayout, width*PANGO_SCALE);
     pango_layout_set_alignment (pangolayout, align ? PANGO_ALIGN_RIGHT : PANGO_ALIGN_LEFT);
     pango_layout_set_text (pangolayout, text, -1);
@@ -129,7 +136,7 @@ draw_text (float x, float y, int width, int align, const char *text) {
 
 void
 draw_text_with_colors (float x, float y, int width, int align, const char *text) {
-    draw_init_font ();
+    draw_init_font (NULL);
     pango_layout_set_width (pangolayout, width*PANGO_SCALE);
     pango_layout_set_alignment (pangolayout, align ? PANGO_ALIGN_RIGHT : PANGO_ALIGN_LEFT);
     pango_layout_set_text (pangolayout, text, -1);
@@ -138,7 +145,7 @@ draw_text_with_colors (float x, float y, int width, int align, const char *text)
 
 void
 draw_get_text_extents (const char *text, int len, int *w, int *h) {
-    draw_init_font ();
+    draw_init_font (NULL);
     pango_layout_set_width (pangolayout, 1000 * PANGO_SCALE);
     pango_layout_set_alignment (pangolayout, PANGO_ALIGN_LEFT);
     pango_layout_set_text (pangolayout, text, len);

@@ -534,6 +534,14 @@ ddb_listview_list_configure_event            (GtkWidget       *widget,
         gpointer         user_data)
 {
     DdbListview *ps = DDB_LISTVIEW (gtk_object_get_data (GTK_OBJECT (widget), "owner"));
+
+    draw_init_font (widget->style);
+    int height = draw_get_font_size () + 12;
+    if (height != ps->rowheight) {
+        ps->rowheight = height;
+        ddb_listview_build_groups (ps);
+    }
+
     ddb_listview_list_setup_vscroll (ps);
     ddb_listview_list_setup_hscroll (ps);
     widget = ps->list;
@@ -2040,6 +2048,11 @@ ddb_listview_header_configure_event              (GtkWidget       *widget,
                                         gpointer         user_data)
 {
     DdbListview *ps = DDB_LISTVIEW (gtk_object_get_data (GTK_OBJECT (widget), "owner"));
+    draw_init_font (widget->style);
+    int height = draw_get_font_size () + 12;
+    if (height != widget->allocation.height) {
+        gtk_widget_set_size_request (widget, -1, height);
+    }
     if (ps->backbuf_header) {
         g_object_unref (ps->backbuf_header);
         ps->backbuf_header = NULL;

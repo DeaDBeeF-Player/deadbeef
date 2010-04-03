@@ -262,7 +262,7 @@ tabstrip_render (DdbTabStrip *ts) {
     int x = -ts->hscrollpos;
     int w = 0;
     int h = draw_get_font_size ();
-    gtk_widget_set_size_request (widget, -1, h + 9 + 4);
+//    gtk_widget_set_size_request (widget, -1, h + 9 + 4);
     h = widget->allocation.height;
     tab_overlap_size = (h-4)/2;
     text_right_padding = h - 3;
@@ -475,6 +475,11 @@ gboolean
 on_tabstrip_configure_event              (GtkWidget       *widget,
                                         GdkEventConfigure *event)
 {
+    draw_init_font (widget->style);
+    int height = draw_get_font_size () + 13;
+    if (height != widget->allocation.height) {
+        gtk_widget_set_size_request (widget, -1, height);
+    }
     DdbTabStrip *ts = DDB_TABSTRIP (widget);
     if (ts->backbuf) {
         g_object_unref (ts->backbuf);

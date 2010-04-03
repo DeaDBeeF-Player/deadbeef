@@ -60,6 +60,9 @@ float
 draw_get_font_size (void);
 
 void
+draw_init_font (GtkStyle *style);
+
+void
 draw_text (float x, float y, int width, int align, const char *text);
 
 void
