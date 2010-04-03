@@ -853,3 +853,63 @@ on_mmb_delete_playlist_toggled         (GtkToggleButton *togglebutton,
 void
 on_new_playlist1_activate              (GtkMenuItem     *menuitem,
                                         gpointer         user_data);
+
+void
+on_override_bar_colors_toggled         (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);
+
+void
+on_bar_foreground_color_set            (GtkColorButton  *colorbutton,
+                                        gpointer         user_data);
+
+void
+on_bar_background_color_set            (GtkColorButton  *colorbutton,
+                                        gpointer         user_data);
+
+void
+on_tabstrip_mid_color_set              (GtkColorButton  *colorbutton,
+                                        gpointer         user_data);
+
+void
+on_tabstrip_light_color_set            (GtkColorButton  *colorbutton,
+                                        gpointer         user_data);
+
+void
+on_tabstrip_dark_color_set             (GtkColorButton  *colorbutton,
+                                        gpointer         user_data);
+
+void
+on_tabstrip_base_color_set             (GtkColorButton  *colorbutton,
+                                        gpointer         user_data);
+
+void
+on_override_tabstrip_colors_toggled    (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);
+
+void
+on_override_listview_colors_toggled    (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);
+
+void
+on_listview_even_row_color_set         (GtkColorButton  *colorbutton,
+                                        gpointer         user_data);
+
+void
+on_listview_odd_row_color_set          (GtkColorButton  *colorbutton,
+                                        gpointer         user_data);
+
+void
+on_listview_selected_row_color_set     (GtkColorButton  *colorbutton,
+                                        gpointer         user_data);
+
+void
+on_listview_text_color_set             (GtkColorButton  *colorbutton,
+                                        gpointer         user_data);
+
+void
+on_listview_selected_text_color_set    (GtkColorButton  *colorbutton,
+                                        gpointer         user_data);
+
+void
+on_listview_cursor_color_set           (GtkColorButton  *colorbutton,
+                                        gpointer         user_data);

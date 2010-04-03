@@ -214,22 +214,31 @@ ddb_tabstrip_draw_tab (GtkWidget *widget, GdkDrawable *drawable, int selected, i
         { x + w-2, y + h - 2 },
     };
     //gdk_draw_rectangle (widget->window, widget->style->black_gc, FALSE, x-1, y-1, w+2, h+2);
-    GdkGC *bg;
-    GdkGC *outer_frame;
-    GdkGC *inner_frame;
+    GdkGC *bg = gdk_gc_new (drawable);
+    GdkGC *outer_frame = gdk_gc_new (drawable);
+    GdkGC *inner_frame = gdk_gc_new (drawable);
     if (selected) {
-        bg = widget->style->bg_gc[GTK_STATE_NORMAL];
-        outer_frame = widget->style->dark_gc[GTK_STATE_NORMAL];
-        inner_frame = widget->style->light_gc[GTK_STATE_NORMAL];
+        gdk_gc_set_rgb_fg_color (bg, gtkui_get_tabstrip_base_color ());//&widget->style->bg[GTK_STATE_NORMAL]); // FIXME: need base color
+        gdk_gc_set_rgb_fg_color (outer_frame, gtkui_get_tabstrip_dark_color ());
+        gdk_gc_set_rgb_fg_color (inner_frame, gtkui_get_tabstrip_light_color ());
+//        bg = widget->style->bg_gc[GTK_STATE_NORMAL];
+//        outer_frame = widget->style->dark_gc[GTK_STATE_NORMAL];
+//        inner_frame = widget->style->light_gc[GTK_STATE_NORMAL];
     }
     else {
-        bg = widget->style->mid_gc[GTK_STATE_NORMAL];
-        outer_frame = widget->style->dark_gc[GTK_STATE_NORMAL];
-        inner_frame = widget->style->mid_gc[GTK_STATE_NORMAL];
+        gdk_gc_set_rgb_fg_color (bg, gtkui_get_tabstrip_mid_color ());
+        gdk_gc_set_rgb_fg_color (outer_frame, gtkui_get_tabstrip_dark_color ());
+        gdk_gc_set_rgb_fg_color (inner_frame, gtkui_get_tabstrip_mid_color ());
+//        bg = widget->style->mid_gc[GTK_STATE_NORMAL];
+//        outer_frame = widget->style->dark_gc[GTK_STATE_NORMAL];
+//        inner_frame = widget->style->mid_gc[GTK_STATE_NORMAL];
     }
     gdk_draw_polygon (drawable, bg, TRUE, points_filled, 4);
     gdk_draw_lines (drawable, outer_frame, points_frame1, 9);
     gdk_draw_lines (drawable, inner_frame, points_frame2, 7);
+    g_object_unref (bg);
+    g_object_unref (outer_frame);
+    g_object_unref (inner_frame);
 }
 
 int
@@ -262,9 +271,13 @@ tabstrip_render (DdbTabStrip *ts) {
     int cnt = deadbeef->plt_get_count ();
     int tab_selected = deadbeef->plt_get_curr ();
 
+    GdkGC *gc = gdk_gc_new (backbuf);
+
     // fill background
-    gdk_draw_rectangle (backbuf, widget->style->mid_gc[GTK_STATE_NORMAL], TRUE, 0, 0, widget->allocation.width, widget->allocation.height);
-    gdk_draw_line (backbuf, widget->style->dark_gc[GTK_STATE_NORMAL], 0, 0, widget->allocation.width, 0);
+    gdk_gc_set_rgb_fg_color (gc, gtkui_get_tabstrip_mid_color ());
+    gdk_draw_rectangle (backbuf, gc, TRUE, 0, 0, widget->allocation.width, widget->allocation.height);
+    gdk_gc_set_rgb_fg_color (gc, gtkui_get_tabstrip_dark_color ());
+    gdk_draw_line (backbuf, gc, 0, 0, widget->allocation.width, 0);
     int y = 4;
     h = widget->allocation.height - 4;
     draw_begin ((uintptr_t)backbuf);
@@ -366,6 +379,7 @@ tabstrip_render (DdbTabStrip *ts) {
         }
     }
     draw_end ();
+    g_object_unref (gc);
 }
 
 void

@@ -182,10 +182,10 @@ volumebar_draw (GtkWidget *widget) {
     float h = 17;
 
     GdkGC *back_gc = gdk_gc_new (widget->window);
-    gdk_gc_set_rgb_fg_color (back_gc, gtkui_get_back_color ());
+    gdk_gc_set_rgb_fg_color (back_gc, gtkui_get_bar_background_color ());
 
     GdkGC *front_gc = gdk_gc_new (widget->window);
-    gdk_gc_set_rgb_fg_color (front_gc, gtkui_get_selection_color ());
+    gdk_gc_set_rgb_fg_color (front_gc, gtkui_get_bar_foreground_color ());
 
     for (int i = 0; i < n; i++) {
         float iy = (float)i + 3;

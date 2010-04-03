@@ -1393,34 +1393,43 @@ create_prefwin (void)
   GtkWidget *vbox9;
   GtkWidget *pref_close_send_to_tray;
   GtkWidget *mmb_delete_playlist;
-  GtkWidget *frame3;
-  GtkWidget *alignment1;
-  GtkWidget *colors_table;
-  GtkWidget *color_light;
-  GtkWidget *color_mid;
-  GtkWidget *color_dark;
-  GtkWidget *color_selection;
+  GtkWidget *notebook4;
+  GtkWidget *vbox21;
+  GtkWidget *override_bar_colors;
+  GtkWidget *bar_colors_group;
   GtkWidget *label43;
-  GtkWidget *label44;
+  GtkWidget *label47;
+  GtkWidget *bar_foreground;
+  GtkWidget *bar_background;
+  GtkWidget *label73;
+  GtkWidget *vbox22;
+  GtkWidget *override_tabstrip_colors;
+  GtkWidget *tabstrip_colors_group;
   GtkWidget *label45;
   GtkWidget *label46;
-  GtkWidget *color_back;
-  GtkWidget *label47;
-  GtkWidget *override_theme_colors;
-  GtkWidget *frame4;
-  GtkWidget *alignment2;
-  GtkWidget *listview_colors_table;
+  GtkWidget *label44;
+  GtkWidget *tabstrip_mid;
+  GtkWidget *tabstrip_light;
+  GtkWidget *tabstrip_dark;
+  GtkWidget *tabstrip_base;
+  GtkWidget *label76;
+  GtkWidget *label74;
+  GtkWidget *vbox23;
+  GtkWidget *override_listview_colors;
+  GtkWidget *listview_colors_group;
   GtkWidget *label58;
   GtkWidget *label59;
-  GtkWidget *label60;
+  GtkWidget *listview_even_row;
+  GtkWidget *listview_odd_row;
+  GtkWidget *label77;
+  GtkWidget *label78;
+  GtkWidget *listview_selected_row;
+  GtkWidget *listview_text;
   GtkWidget *label61;
+  GtkWidget *listview_selected_text;
   GtkWidget *label62;
-  GtkWidget *color_even_row;
-  GtkWidget *color_odd_row;
-  GtkWidget *color_text;
-  GtkWidget *color_selected_text;
-  GtkWidget *color_cursor;
-  GtkWidget *disable_playlist_theming;
+  GtkWidget *listview_cursor;
+  GtkWidget *label75;
   GtkWidget *label2;
   GtkWidget *vbox11;
   GtkWidget *pref_network_enableproxy;
@@ -1609,175 +1618,219 @@ create_prefwin (void)
   gtk_widget_show (mmb_delete_playlist);
   gtk_box_pack_start (GTK_BOX (vbox9), mmb_delete_playlist, FALSE, FALSE, 0);
 
-  frame3 = gtk_frame_new (NULL);
-  gtk_widget_show (frame3);
-  gtk_box_pack_start (GTK_BOX (vbox9), frame3, FALSE, TRUE, 0);
-  gtk_frame_set_shadow_type (GTK_FRAME (frame3), GTK_SHADOW_IN);
+  notebook4 = gtk_notebook_new ();
+  gtk_widget_show (notebook4);
+  gtk_box_pack_start (GTK_BOX (vbox9), notebook4, TRUE, TRUE, 0);
 
-  alignment1 = gtk_alignment_new (0.5, 0.5, 1, 1);
-  gtk_widget_show (alignment1);
-  gtk_container_add (GTK_CONTAINER (frame3), alignment1);
-  gtk_alignment_set_padding (GTK_ALIGNMENT (alignment1), 0, 0, 12, 0);
+  vbox21 = gtk_vbox_new (FALSE, 8);
+  gtk_widget_show (vbox21);
+  gtk_container_add (GTK_CONTAINER (notebook4), vbox21);
+  gtk_container_set_border_width (GTK_CONTAINER (vbox21), 12);
 
-  colors_table = gtk_table_new (2, 5, TRUE);
-  gtk_widget_show (colors_table);
-  gtk_container_add (GTK_CONTAINER (alignment1), colors_table);
-  gtk_container_set_border_width (GTK_CONTAINER (colors_table), 12);
-  gtk_table_set_col_spacings (GTK_TABLE (colors_table), 8);
+  override_bar_colors = gtk_check_button_new_with_mnemonic ("Override");
+  gtk_widget_show (override_bar_colors);
+  gtk_box_pack_start (GTK_BOX (vbox21), override_bar_colors, FALSE, FALSE, 0);
 
-  color_light = gtk_color_button_new ();
-  gtk_widget_show (color_light);
-  gtk_table_attach (GTK_TABLE (colors_table), color_light, 3, 4, 1, 2,
-                    (GtkAttachOptions) (GTK_EXPAND),
-                    (GtkAttachOptions) (0), 0, 0);
+  bar_colors_group = gtk_table_new (2, 2, TRUE);
+  gtk_widget_show (bar_colors_group);
+  gtk_box_pack_start (GTK_BOX (vbox21), bar_colors_group, TRUE, TRUE, 0);
+  gtk_table_set_col_spacings (GTK_TABLE (bar_colors_group), 8);
 
-  color_mid = gtk_color_button_new ();
-  gtk_widget_show (color_mid);
-  gtk_table_attach (GTK_TABLE (colors_table), color_mid, 2, 3, 1, 2,
-                    (GtkAttachOptions) (GTK_EXPAND),
-                    (GtkAttachOptions) (0), 0, 0);
-
-  color_dark = gtk_color_button_new ();
-  gtk_widget_show (color_dark);
-  gtk_table_attach (GTK_TABLE (colors_table), color_dark, 1, 2, 1, 2,
-                    (GtkAttachOptions) (GTK_EXPAND),
-                    (GtkAttachOptions) (0), 0, 0);
-
-  color_selection = gtk_color_button_new ();
-  gtk_widget_show (color_selection);
-  gtk_table_attach (GTK_TABLE (colors_table), color_selection, 0, 1, 1, 2,
-                    (GtkAttachOptions) (GTK_EXPAND),
-                    (GtkAttachOptions) (0), 0, 0);
-
-  label43 = gtk_label_new ("Selection");
+  label43 = gtk_label_new ("Foreground");
   gtk_widget_show (label43);
-  gtk_table_attach (GTK_TABLE (colors_table), label43, 0, 1, 0, 1,
+  gtk_table_attach (GTK_TABLE (bar_colors_group), label43, 0, 1, 0, 1,
                     (GtkAttachOptions) (GTK_EXPAND),
                     (GtkAttachOptions) (0), 0, 0);
   gtk_misc_set_alignment (GTK_MISC (label43), 0, 0.5);
 
-  label44 = gtk_label_new ("Dark");
-  gtk_widget_show (label44);
-  gtk_table_attach (GTK_TABLE (colors_table), label44, 1, 2, 0, 1,
+  label47 = gtk_label_new ("Background");
+  gtk_widget_show (label47);
+  gtk_table_attach (GTK_TABLE (bar_colors_group), label47, 1, 2, 0, 1,
                     (GtkAttachOptions) (GTK_EXPAND),
                     (GtkAttachOptions) (0), 0, 0);
-  gtk_misc_set_alignment (GTK_MISC (label44), 0, 0.5);
+  gtk_misc_set_alignment (GTK_MISC (label47), 0, 0.5);
+
+  bar_foreground = gtk_color_button_new ();
+  gtk_widget_show (bar_foreground);
+  gtk_table_attach (GTK_TABLE (bar_colors_group), bar_foreground, 0, 1, 1, 2,
+                    (GtkAttachOptions) (GTK_EXPAND),
+                    (GtkAttachOptions) (0), 0, 0);
+
+  bar_background = gtk_color_button_new ();
+  gtk_widget_show (bar_background);
+  gtk_table_attach (GTK_TABLE (bar_colors_group), bar_background, 1, 2, 1, 2,
+                    (GtkAttachOptions) (GTK_EXPAND),
+                    (GtkAttachOptions) (0), 0, 0);
+
+  label73 = gtk_label_new ("Seekbar/Volumebar colors");
+  gtk_widget_show (label73);
+  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook4), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook4), 0), label73);
+
+  vbox22 = gtk_vbox_new (FALSE, 8);
+  gtk_widget_show (vbox22);
+  gtk_container_add (GTK_CONTAINER (notebook4), vbox22);
+  gtk_container_set_border_width (GTK_CONTAINER (vbox22), 12);
+
+  override_tabstrip_colors = gtk_check_button_new_with_mnemonic ("Override");
+  gtk_widget_show (override_tabstrip_colors);
+  gtk_box_pack_start (GTK_BOX (vbox22), override_tabstrip_colors, FALSE, FALSE, 0);
+
+  tabstrip_colors_group = gtk_table_new (2, 4, TRUE);
+  gtk_widget_show (tabstrip_colors_group);
+  gtk_box_pack_start (GTK_BOX (vbox22), tabstrip_colors_group, TRUE, TRUE, 0);
+  gtk_table_set_col_spacings (GTK_TABLE (tabstrip_colors_group), 8);
 
   label45 = gtk_label_new ("Middle");
   gtk_widget_show (label45);
-  gtk_table_attach (GTK_TABLE (colors_table), label45, 2, 3, 0, 1,
+  gtk_table_attach (GTK_TABLE (tabstrip_colors_group), label45, 0, 1, 0, 1,
                     (GtkAttachOptions) (GTK_EXPAND),
                     (GtkAttachOptions) (0), 0, 0);
   gtk_misc_set_alignment (GTK_MISC (label45), 0, 0.5);
 
   label46 = gtk_label_new ("Light");
   gtk_widget_show (label46);
-  gtk_table_attach (GTK_TABLE (colors_table), label46, 3, 4, 0, 1,
+  gtk_table_attach (GTK_TABLE (tabstrip_colors_group), label46, 1, 2, 0, 1,
                     (GtkAttachOptions) (GTK_EXPAND),
                     (GtkAttachOptions) (0), 0, 0);
   gtk_misc_set_alignment (GTK_MISC (label46), 0, 0.5);
 
-  color_back = gtk_color_button_new ();
-  gtk_widget_show (color_back);
-  gtk_table_attach (GTK_TABLE (colors_table), color_back, 4, 5, 1, 2,
+  label44 = gtk_label_new ("Dark");
+  gtk_widget_show (label44);
+  gtk_table_attach (GTK_TABLE (tabstrip_colors_group), label44, 2, 3, 0, 1,
+                    (GtkAttachOptions) (GTK_EXPAND),
+                    (GtkAttachOptions) (0), 0, 0);
+  gtk_misc_set_alignment (GTK_MISC (label44), 0, 0.5);
+
+  tabstrip_mid = gtk_color_button_new ();
+  gtk_widget_show (tabstrip_mid);
+  gtk_table_attach (GTK_TABLE (tabstrip_colors_group), tabstrip_mid, 0, 1, 1, 2,
                     (GtkAttachOptions) (GTK_EXPAND),
                     (GtkAttachOptions) (0), 0, 0);
 
-  label47 = gtk_label_new ("Inactive background");
-  gtk_widget_show (label47);
-  gtk_table_attach (GTK_TABLE (colors_table), label47, 4, 5, 0, 1,
+  tabstrip_light = gtk_color_button_new ();
+  gtk_widget_show (tabstrip_light);
+  gtk_table_attach (GTK_TABLE (tabstrip_colors_group), tabstrip_light, 1, 2, 1, 2,
                     (GtkAttachOptions) (GTK_EXPAND),
                     (GtkAttachOptions) (0), 0, 0);
-  gtk_misc_set_alignment (GTK_MISC (label47), 0, 0.5);
 
-  override_theme_colors = gtk_check_button_new_with_mnemonic ("Override GTK+ theme colors in volume control and seek bar widgets");
-  gtk_widget_show (override_theme_colors);
-  gtk_frame_set_label_widget (GTK_FRAME (frame3), override_theme_colors);
+  tabstrip_dark = gtk_color_button_new ();
+  gtk_widget_show (tabstrip_dark);
+  gtk_table_attach (GTK_TABLE (tabstrip_colors_group), tabstrip_dark, 2, 3, 1, 2,
+                    (GtkAttachOptions) (GTK_EXPAND),
+                    (GtkAttachOptions) (0), 0, 0);
 
-  frame4 = gtk_frame_new (NULL);
-  gtk_widget_show (frame4);
-  gtk_box_pack_start (GTK_BOX (vbox9), frame4, FALSE, TRUE, 0);
-  gtk_frame_set_shadow_type (GTK_FRAME (frame4), GTK_SHADOW_IN);
+  tabstrip_base = gtk_color_button_new ();
+  gtk_widget_show (tabstrip_base);
+  gtk_table_attach (GTK_TABLE (tabstrip_colors_group), tabstrip_base, 3, 4, 1, 2,
+                    (GtkAttachOptions) (GTK_EXPAND),
+                    (GtkAttachOptions) (0), 0, 0);
 
-  alignment2 = gtk_alignment_new (0.5, 0.5, 1, 1);
-  gtk_widget_show (alignment2);
-  gtk_container_add (GTK_CONTAINER (frame4), alignment2);
-  gtk_alignment_set_padding (GTK_ALIGNMENT (alignment2), 0, 0, 12, 0);
+  label76 = gtk_label_new ("Base");
+  gtk_widget_show (label76);
+  gtk_table_attach (GTK_TABLE (tabstrip_colors_group), label76, 3, 4, 0, 1,
+                    (GtkAttachOptions) (GTK_EXPAND),
+                    (GtkAttachOptions) (0), 0, 0);
+  gtk_misc_set_alignment (GTK_MISC (label76), 0, 0.5);
 
-  listview_colors_table = gtk_table_new (2, 5, TRUE);
-  gtk_widget_show (listview_colors_table);
-  gtk_container_add (GTK_CONTAINER (alignment2), listview_colors_table);
-  gtk_container_set_border_width (GTK_CONTAINER (listview_colors_table), 12);
-  gtk_table_set_col_spacings (GTK_TABLE (listview_colors_table), 8);
+  label74 = gtk_label_new ("Tabstrip colors");
+  gtk_widget_show (label74);
+  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook4), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook4), 1), label74);
+
+  vbox23 = gtk_vbox_new (FALSE, 8);
+  gtk_widget_show (vbox23);
+  gtk_container_add (GTK_CONTAINER (notebook4), vbox23);
+  gtk_container_set_border_width (GTK_CONTAINER (vbox23), 12);
+
+  override_listview_colors = gtk_check_button_new_with_mnemonic ("Override (looses GTK treeview theming, but speeds up rendering)");
+  gtk_widget_show (override_listview_colors);
+  gtk_box_pack_start (GTK_BOX (vbox23), override_listview_colors, FALSE, FALSE, 0);
+
+  listview_colors_group = gtk_table_new (2, 6, TRUE);
+  gtk_widget_show (listview_colors_group);
+  gtk_box_pack_start (GTK_BOX (vbox23), listview_colors_group, TRUE, TRUE, 0);
+  gtk_table_set_col_spacings (GTK_TABLE (listview_colors_group), 8);
 
   label58 = gtk_label_new ("Even row");
   gtk_widget_show (label58);
-  gtk_table_attach (GTK_TABLE (listview_colors_table), label58, 0, 1, 0, 1,
+  gtk_table_attach (GTK_TABLE (listview_colors_group), label58, 0, 1, 0, 1,
                     (GtkAttachOptions) (GTK_EXPAND),
                     (GtkAttachOptions) (0), 0, 0);
   gtk_misc_set_alignment (GTK_MISC (label58), 0, 0.5);
 
   label59 = gtk_label_new ("Odd row");
   gtk_widget_show (label59);
-  gtk_table_attach (GTK_TABLE (listview_colors_table), label59, 1, 2, 0, 1,
+  gtk_table_attach (GTK_TABLE (listview_colors_group), label59, 1, 2, 0, 1,
                     (GtkAttachOptions) (GTK_EXPAND),
                     (GtkAttachOptions) (0), 0, 0);
   gtk_misc_set_alignment (GTK_MISC (label59), 0, 0.5);
 
-  label60 = gtk_label_new ("Text");
-  gtk_widget_show (label60);
-  gtk_table_attach (GTK_TABLE (listview_colors_table), label60, 2, 3, 0, 1,
+  listview_even_row = gtk_color_button_new ();
+  gtk_widget_show (listview_even_row);
+  gtk_table_attach (GTK_TABLE (listview_colors_group), listview_even_row, 0, 1, 1, 2,
                     (GtkAttachOptions) (GTK_EXPAND),
                     (GtkAttachOptions) (0), 0, 0);
-  gtk_misc_set_alignment (GTK_MISC (label60), 0, 0.5);
+
+  listview_odd_row = gtk_color_button_new ();
+  gtk_widget_show (listview_odd_row);
+  gtk_table_attach (GTK_TABLE (listview_colors_group), listview_odd_row, 1, 2, 1, 2,
+                    (GtkAttachOptions) (GTK_EXPAND),
+                    (GtkAttachOptions) (0), 0, 0);
+
+  label77 = gtk_label_new ("Text");
+  gtk_widget_show (label77);
+  gtk_table_attach (GTK_TABLE (listview_colors_group), label77, 3, 4, 0, 1,
+                    (GtkAttachOptions) (GTK_EXPAND),
+                    (GtkAttachOptions) (0), 0, 0);
+  gtk_misc_set_alignment (GTK_MISC (label77), 0, 0.5);
+
+  label78 = gtk_label_new ("Selected row");
+  gtk_widget_show (label78);
+  gtk_table_attach (GTK_TABLE (listview_colors_group), label78, 2, 3, 0, 1,
+                    (GtkAttachOptions) (GTK_EXPAND),
+                    (GtkAttachOptions) (0), 0, 0);
+  gtk_misc_set_alignment (GTK_MISC (label78), 0, 0.5);
+
+  listview_selected_row = gtk_color_button_new ();
+  gtk_widget_show (listview_selected_row);
+  gtk_table_attach (GTK_TABLE (listview_colors_group), listview_selected_row, 2, 3, 1, 2,
+                    (GtkAttachOptions) (GTK_EXPAND),
+                    (GtkAttachOptions) (0), 0, 0);
+
+  listview_text = gtk_color_button_new ();
+  gtk_widget_show (listview_text);
+  gtk_table_attach (GTK_TABLE (listview_colors_group), listview_text, 3, 4, 1, 2,
+                    (GtkAttachOptions) (GTK_EXPAND),
+                    (GtkAttachOptions) (0), 0, 0);
 
   label61 = gtk_label_new ("Selected text");
   gtk_widget_show (label61);
-  gtk_table_attach (GTK_TABLE (listview_colors_table), label61, 3, 4, 0, 1,
+  gtk_table_attach (GTK_TABLE (listview_colors_group), label61, 4, 5, 0, 1,
                     (GtkAttachOptions) (GTK_EXPAND),
                     (GtkAttachOptions) (0), 0, 0);
   gtk_misc_set_alignment (GTK_MISC (label61), 0, 0.5);
 
+  listview_selected_text = gtk_color_button_new ();
+  gtk_widget_show (listview_selected_text);
+  gtk_table_attach (GTK_TABLE (listview_colors_group), listview_selected_text, 4, 5, 1, 2,
+                    (GtkAttachOptions) (GTK_EXPAND),
+                    (GtkAttachOptions) (0), 0, 0);
+
   label62 = gtk_label_new ("Cursor");
   gtk_widget_show (label62);
-  gtk_table_attach (GTK_TABLE (listview_colors_table), label62, 4, 5, 0, 1,
+  gtk_table_attach (GTK_TABLE (listview_colors_group), label62, 5, 6, 0, 1,
                     (GtkAttachOptions) (GTK_EXPAND),
                     (GtkAttachOptions) (0), 0, 0);
   gtk_misc_set_alignment (GTK_MISC (label62), 0, 0.5);
 
-  color_even_row = gtk_color_button_new ();
-  gtk_widget_show (color_even_row);
-  gtk_table_attach (GTK_TABLE (listview_colors_table), color_even_row, 0, 1, 1, 2,
+  listview_cursor = gtk_color_button_new ();
+  gtk_widget_show (listview_cursor);
+  gtk_table_attach (GTK_TABLE (listview_colors_group), listview_cursor, 5, 6, 1, 2,
                     (GtkAttachOptions) (GTK_EXPAND),
                     (GtkAttachOptions) (0), 0, 0);
 
-  color_odd_row = gtk_color_button_new ();
-  gtk_widget_show (color_odd_row);
-  gtk_table_attach (GTK_TABLE (listview_colors_table), color_odd_row, 1, 2, 1, 2,
-                    (GtkAttachOptions) (GTK_EXPAND),
-                    (GtkAttachOptions) (0), 0, 0);
-
-  color_text = gtk_color_button_new ();
-  gtk_widget_show (color_text);
-  gtk_table_attach (GTK_TABLE (listview_colors_table), color_text, 2, 3, 1, 2,
-                    (GtkAttachOptions) (GTK_EXPAND),
-                    (GtkAttachOptions) (0), 0, 0);
-
-  color_selected_text = gtk_color_button_new ();
-  gtk_widget_show (color_selected_text);
-  gtk_table_attach (GTK_TABLE (listview_colors_table), color_selected_text, 3, 4, 1, 2,
-                    (GtkAttachOptions) (GTK_EXPAND),
-                    (GtkAttachOptions) (0), 0, 0);
-
-  color_cursor = gtk_color_button_new ();
-  gtk_widget_show (color_cursor);
-  gtk_table_attach (GTK_TABLE (listview_colors_table), color_cursor, 4, 5, 1, 2,
-                    (GtkAttachOptions) (GTK_EXPAND),
-                    (GtkAttachOptions) (0), 0, 0);
-
-  disable_playlist_theming = gtk_check_button_new_with_mnemonic ("Disable playlist theming (speeds up rendering)");
-  gtk_widget_show (disable_playlist_theming);
-  gtk_frame_set_label_widget (GTK_FRAME (frame4), disable_playlist_theming);
+  label75 = gtk_label_new ("Playlist colors");
+  gtk_widget_show (label75);
+  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook4), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook4), 2), label75);
 
   label2 = gtk_label_new ("GUI");
   gtk_widget_show (label2);
@@ -2138,38 +2191,50 @@ create_prefwin (void)
   g_signal_connect ((gpointer) mmb_delete_playlist, "toggled",
                     G_CALLBACK (on_mmb_delete_playlist_toggled),
                     NULL);
-  g_signal_connect ((gpointer) color_light, "color_set",
-                    G_CALLBACK (on_color_light_color_set),
+  g_signal_connect ((gpointer) override_bar_colors, "toggled",
+                    G_CALLBACK (on_override_bar_colors_toggled),
                     NULL);
-  g_signal_connect ((gpointer) color_mid, "color_set",
-                    G_CALLBACK (on_color_mid_color_set),
+  g_signal_connect ((gpointer) bar_foreground, "color_set",
+                    G_CALLBACK (on_bar_foreground_color_set),
                     NULL);
-  g_signal_connect ((gpointer) color_dark, "color_set",
-                    G_CALLBACK (on_color_dark_color_set),
+  g_signal_connect ((gpointer) bar_background, "color_set",
+                    G_CALLBACK (on_bar_background_color_set),
                     NULL);
-  g_signal_connect ((gpointer) color_selection, "color_set",
-                    G_CALLBACK (on_color_selection_color_set),
+  g_signal_connect ((gpointer) override_tabstrip_colors, "toggled",
+                    G_CALLBACK (on_override_tabstrip_colors_toggled),
                     NULL);
-  g_signal_connect ((gpointer) color_back, "color_set",
-                    G_CALLBACK (on_color_back_color_set),
+  g_signal_connect ((gpointer) tabstrip_mid, "color_set",
+                    G_CALLBACK (on_tabstrip_mid_color_set),
                     NULL);
-  g_signal_connect ((gpointer) override_theme_colors, "toggled",
-                    G_CALLBACK (on_override_gtk_colors_toggled),
+  g_signal_connect ((gpointer) tabstrip_light, "color_set",
+                    G_CALLBACK (on_tabstrip_light_color_set),
                     NULL);
-  g_signal_connect ((gpointer) color_even_row, "color_set",
-                    G_CALLBACK (on_color_even_row_color_set),
+  g_signal_connect ((gpointer) tabstrip_dark, "color_set",
+                    G_CALLBACK (on_tabstrip_dark_color_set),
                     NULL);
-  g_signal_connect ((gpointer) color_odd_row, "color_set",
-                    G_CALLBACK (on_color_odd_row_color_set),
+  g_signal_connect ((gpointer) tabstrip_base, "color_set",
+                    G_CALLBACK (on_tabstrip_base_color_set),
                     NULL);
-  g_signal_connect ((gpointer) color_text, "color_set",
-                    G_CALLBACK (on_color_text_color_set),
+  g_signal_connect ((gpointer) override_listview_colors, "toggled",
+                    G_CALLBACK (on_override_listview_colors_toggled),
                     NULL);
-  g_signal_connect ((gpointer) color_selected_text, "color_set",
-                    G_CALLBACK (on_color_selected_text_color_set),
+  g_signal_connect ((gpointer) listview_even_row, "color_set",
+                    G_CALLBACK (on_listview_even_row_color_set),
                     NULL);
-  g_signal_connect ((gpointer) disable_playlist_theming, "toggled",
-                    G_CALLBACK (on_disable_playlist_theming_toggled),
+  g_signal_connect ((gpointer) listview_odd_row, "color_set",
+                    G_CALLBACK (on_listview_odd_row_color_set),
+                    NULL);
+  g_signal_connect ((gpointer) listview_selected_row, "color_set",
+                    G_CALLBACK (on_listview_selected_row_color_set),
+                    NULL);
+  g_signal_connect ((gpointer) listview_text, "color_set",
+                    G_CALLBACK (on_listview_text_color_set),
+                    NULL);
+  g_signal_connect ((gpointer) listview_selected_text, "color_set",
+                    G_CALLBACK (on_listview_selected_text_color_set),
+                    NULL);
+  g_signal_connect ((gpointer) listview_cursor, "color_set",
+                    G_CALLBACK (on_listview_cursor_color_set),
                     NULL);
   g_signal_connect ((gpointer) pref_network_enableproxy, "clicked",
                     G_CALLBACK (on_pref_network_enableproxy_clicked),
@@ -2251,34 +2316,43 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, vbox9, "vbox9");
   GLADE_HOOKUP_OBJECT (prefwin, pref_close_send_to_tray, "pref_close_send_to_tray");
   GLADE_HOOKUP_OBJECT (prefwin, mmb_delete_playlist, "mmb_delete_playlist");
-  GLADE_HOOKUP_OBJECT (prefwin, frame3, "frame3");
-  GLADE_HOOKUP_OBJECT (prefwin, alignment1, "alignment1");
-  GLADE_HOOKUP_OBJECT (prefwin, colors_table, "colors_table");
-  GLADE_HOOKUP_OBJECT (prefwin, color_light, "color_light");
-  GLADE_HOOKUP_OBJECT (prefwin, color_mid, "color_mid");
-  GLADE_HOOKUP_OBJECT (prefwin, color_dark, "color_dark");
-  GLADE_HOOKUP_OBJECT (prefwin, color_selection, "color_selection");
+  GLADE_HOOKUP_OBJECT (prefwin, notebook4, "notebook4");
+  GLADE_HOOKUP_OBJECT (prefwin, vbox21, "vbox21");
+  GLADE_HOOKUP_OBJECT (prefwin, override_bar_colors, "override_bar_colors");
+  GLADE_HOOKUP_OBJECT (prefwin, bar_colors_group, "bar_colors_group");
   GLADE_HOOKUP_OBJECT (prefwin, label43, "label43");
-  GLADE_HOOKUP_OBJECT (prefwin, label44, "label44");
+  GLADE_HOOKUP_OBJECT (prefwin, label47, "label47");
+  GLADE_HOOKUP_OBJECT (prefwin, bar_foreground, "bar_foreground");
+  GLADE_HOOKUP_OBJECT (prefwin, bar_background, "bar_background");
+  GLADE_HOOKUP_OBJECT (prefwin, label73, "label73");
+  GLADE_HOOKUP_OBJECT (prefwin, vbox22, "vbox22");
+  GLADE_HOOKUP_OBJECT (prefwin, override_tabstrip_colors, "override_tabstrip_colors");
+  GLADE_HOOKUP_OBJECT (prefwin, tabstrip_colors_group, "tabstrip_colors_group");
   GLADE_HOOKUP_OBJECT (prefwin, label45, "label45");
   GLADE_HOOKUP_OBJECT (prefwin, label46, "label46");
-  GLADE_HOOKUP_OBJECT (prefwin, color_back, "color_back");
-  GLADE_HOOKUP_OBJECT (prefwin, label47, "label47");
-  GLADE_HOOKUP_OBJECT (prefwin, override_theme_colors, "override_theme_colors");
-  GLADE_HOOKUP_OBJECT (prefwin, frame4, "frame4");
-  GLADE_HOOKUP_OBJECT (prefwin, alignment2, "alignment2");
-  GLADE_HOOKUP_OBJECT (prefwin, listview_colors_table, "listview_colors_table");
+  GLADE_HOOKUP_OBJECT (prefwin, label44, "label44");
+  GLADE_HOOKUP_OBJECT (prefwin, tabstrip_mid, "tabstrip_mid");
+  GLADE_HOOKUP_OBJECT (prefwin, tabstrip_light, "tabstrip_light");
+  GLADE_HOOKUP_OBJECT (prefwin, tabstrip_dark, "tabstrip_dark");
+  GLADE_HOOKUP_OBJECT (prefwin, tabstrip_base, "tabstrip_base");
+  GLADE_HOOKUP_OBJECT (prefwin, label76, "label76");
+  GLADE_HOOKUP_OBJECT (prefwin, label74, "label74");
+  GLADE_HOOKUP_OBJECT (prefwin, vbox23, "vbox23");
+  GLADE_HOOKUP_OBJECT (prefwin, override_listview_colors, "override_listview_colors");
+  GLADE_HOOKUP_OBJECT (prefwin, listview_colors_group, "listview_colors_group");
   GLADE_HOOKUP_OBJECT (prefwin, label58, "label58");
   GLADE_HOOKUP_OBJECT (prefwin, label59, "label59");
-  GLADE_HOOKUP_OBJECT (prefwin, label60, "label60");
+  GLADE_HOOKUP_OBJECT (prefwin, listview_even_row, "listview_even_row");
+  GLADE_HOOKUP_OBJECT (prefwin, listview_odd_row, "listview_odd_row");
+  GLADE_HOOKUP_OBJECT (prefwin, label77, "label77");
+  GLADE_HOOKUP_OBJECT (prefwin, label78, "label78");
+  GLADE_HOOKUP_OBJECT (prefwin, listview_selected_row, "listview_selected_row");
+  GLADE_HOOKUP_OBJECT (prefwin, listview_text, "listview_text");
   GLADE_HOOKUP_OBJECT (prefwin, label61, "label61");
+  GLADE_HOOKUP_OBJECT (prefwin, listview_selected_text, "listview_selected_text");
   GLADE_HOOKUP_OBJECT (prefwin, label62, "label62");
-  GLADE_HOOKUP_OBJECT (prefwin, color_even_row, "color_even_row");
-  GLADE_HOOKUP_OBJECT (prefwin, color_odd_row, "color_odd_row");
-  GLADE_HOOKUP_OBJECT (prefwin, color_text, "color_text");
-  GLADE_HOOKUP_OBJECT (prefwin, color_selected_text, "color_selected_text");
-  GLADE_HOOKUP_OBJECT (prefwin, color_cursor, "color_cursor");
-  GLADE_HOOKUP_OBJECT (prefwin, disable_playlist_theming, "disable_playlist_theming");
+  GLADE_HOOKUP_OBJECT (prefwin, listview_cursor, "listview_cursor");
+  GLADE_HOOKUP_OBJECT (prefwin, label75, "label75");
   GLADE_HOOKUP_OBJECT (prefwin, label2, "label2");
   GLADE_HOOKUP_OBJECT (prefwin, vbox11, "vbox11");
   GLADE_HOOKUP_OBJECT (prefwin, pref_network_enableproxy, "pref_network_enableproxy");

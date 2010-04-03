@@ -1127,7 +1127,7 @@ void
 ddb_listview_list_render_row_background (DdbListview *ps, DdbListviewIter it, int even, int cursor, int x, int y, int w, int h) {
 	// draw background
 	GtkWidget *treeview = theme_treeview;
-	int theming = !gtkui_listview_theming_disabled ();
+	int theming = !gtkui_override_listview_colors ();
 
 	if (theming) {
         if (treeview->style->depth == -1) {
@@ -1135,23 +1135,39 @@ ddb_listview_list_render_row_background (DdbListview *ps, DdbListviewIter it, in
         }
         GTK_OBJECT_FLAGS (treeview) |= GTK_HAS_FOCUS;
     }
-    if (it && ps->binding->is_selected(it)) {
+    int sel = it && ps->binding->is_selected (it);
+    if (theming || !sel) {
         if (theming) {
             // draw background for selection -- workaround for New Wave theme (translucency)
             gtk_paint_flat_box (treeview->style, ps->backbuf, GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, treeview, even ? "cell_even_ruled" : "cell_odd_ruled", x, y, w, h);
         }
+        else {
+            GdkGC *gc = gdk_gc_new (ps->backbuf);
+            gdk_gc_set_rgb_fg_color (gc, even ? gtkui_get_listview_even_row_color () : gtkui_get_listview_odd_row_color ());
+            gdk_draw_rectangle (ps->backbuf, gc, TRUE, x, y, w, h);
+            g_object_unref (gc);
+        }
     }
-    if (theming) {
-        gtk_paint_flat_box (treeview->style, ps->backbuf, (it && ps->binding->is_selected(it)) ? GTK_STATE_SELECTED : GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, treeview, even ? "cell_even_ruled" : "cell_odd_ruled", x, y, w, h);
+
+    if (sel) {
+        if (theming) {
+            gtk_paint_flat_box (treeview->style, ps->backbuf, GTK_STATE_SELECTED, GTK_SHADOW_NONE, NULL, treeview, even ? "cell_even_ruled" : "cell_odd_ruled", x, y, w, h);
+        }
+        else {
+            GdkGC *gc = gdk_gc_new (ps->backbuf);
+            gdk_gc_set_rgb_fg_color (gc, gtkui_get_listview_selection_color ());
+            gdk_draw_rectangle (ps->backbuf, gc, TRUE, x, y, w, h);
+            g_object_unref (gc);
+        }
     }
-//    else {
-//        GdkColor *clr_
-//        gtk_draw_rectangle (ps->backbuf, gc);
-//    }
 	if (cursor) {
         // not all gtk engines/themes render focus rectangle in treeviews
         // but we want it anyway
-        gdk_draw_rectangle (ps->backbuf, treeview->style->fg_gc[GTK_STATE_NORMAL], FALSE, x, y, w-1, h-1);
+        //treeview->style->fg_gc[GTK_STATE_NORMAL]
+        GdkGC *gc = gdk_gc_new (ps->backbuf);
+        gdk_gc_set_rgb_fg_color (gc, gtkui_get_listview_cursor_color ());
+        gdk_draw_rectangle (ps->backbuf, gc, FALSE, x, y, w-1, h-1);
+        g_object_unref (gc);
     }
 }
 

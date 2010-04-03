@@ -78,8 +78,18 @@ void draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbListview
         return;
     }
     DB_playItem_t *playing_track = deadbeef->streamer_get_playing_track ();
+	int theming = !gtkui_override_listview_colors ();
+
     if (cinf->id == DB_COLUMN_ALBUM_ART) {
-        gtk_paint_flat_box (theme_treeview->style, drawable, GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, theme_treeview, "cell_even_ruled", x, y, width, height);
+        if (theming) {
+            gtk_paint_flat_box (theme_treeview->style, drawable, GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, theme_treeview, "cell_even_ruled", x, y, width, height);
+        }
+        else {
+            GdkGC *gc = gdk_gc_new (drawable);
+            gdk_gc_set_rgb_fg_color (gc, gtkui_get_listview_even_row_color ());
+            gdk_draw_rectangle (drawable, gc, TRUE, x, y, width, height);
+            g_object_unref (gc);
+        }
         int art_width = width - ART_PADDING_HORZ * 2;
         int art_y = y; // dest y
         int art_h = height;
@@ -135,11 +145,21 @@ void draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbListview
         char text[1024];
         deadbeef->pl_format_title (it, -1, text, sizeof (text), cinf->id, cinf->format);
         GdkColor *color = NULL;
-        if (deadbeef->pl_is_selected (it)) {
-            color = &theme_treeview->style->text[GTK_STATE_SELECTED];
+        if (theming) {
+            if (deadbeef->pl_is_selected (it)) {
+                color = &theme_treeview->style->text[GTK_STATE_SELECTED];
+            }
+            else {
+                color = &theme_treeview->style->text[GTK_STATE_NORMAL];
+            }
         }
         else {
-            color = &theme_treeview->style->text[GTK_STATE_NORMAL];
+            if (deadbeef->pl_is_selected (it)) {
+                color = gtkui_get_listview_selected_text_color ();
+            }
+            else {
+                color = gtkui_get_listview_text_color ();
+            }
         }
         float fg[3] = {(float)color->red/0xffff, (float)color->green/0xffff, (float)color->blue/0xffff};
         draw_set_fg_color (fg);

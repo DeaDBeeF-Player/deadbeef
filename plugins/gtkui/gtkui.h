@@ -87,9 +87,15 @@ void
 search_refresh (void);
 
 int
-gtkui_listview_theming_disabled (void);
-
-int
 gtkui_add_new_playlist (void);
+
+void
+seekbar_redraw (void);
+
+void
+volumebar_redraw (void);
+
+void
+tabstrip_redraw (void);
 
 #endif
