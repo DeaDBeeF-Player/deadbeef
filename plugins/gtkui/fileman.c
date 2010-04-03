@@ -197,6 +197,7 @@ gtkpl_add_fm_dropped_files (DB_playItem_t *drop_before, char *ptr, int length) {
                     deadbeef->pl_item_unref (after);
                 }
                 after = inserted;
+                deadbeef->pl_item_ref (after);
             }
         }
         p = pe;
@@ -204,6 +205,9 @@ gtkpl_add_fm_dropped_files (DB_playItem_t *drop_before, char *ptr, int length) {
         while (*p && *p <= ' ') {
             p++;
         }
+    }
+    if (after) {
+        deadbeef->pl_item_unref (after);
     }
     free (ptr);
 
