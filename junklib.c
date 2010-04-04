@@ -2545,7 +2545,7 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                         break;
                     }
                     char *text = convstr_id3v2 (version_major, readptr[0], readptr+1, synched_size-1);
-                    if (text && text_holders[f]) {
+                    if (text && *text && text_holders[f]) {
                         if (*text_holders[f]) {
                             // append
                             char *new = junk_append_meta (*text_holders[f], text);
@@ -2647,7 +2647,7 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                         break;
                     }
                     char *text = convstr_id3v2 (version_major, readptr[0], readptr+1, synched_size-1);
-                    if (text && text_holders[f]) {
+                    if (text && *text && text_holders[f]) {
                         if (*text_holders[f]) {
                             // append
                             char *new = junk_append_meta (*text_holders[f], text);
