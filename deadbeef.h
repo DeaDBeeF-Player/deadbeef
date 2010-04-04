@@ -319,6 +319,8 @@ typedef struct {
     int (*cond_broadcast) (uintptr_t cond);
     // playlist management
     int (*plt_get_count) (void);
+    DB_playItem_t * (*plt_get_head) (int plt);
+    int (*plt_get_sel_count) (int plt);
     int (*plt_add) (int before, const char *title);
     void (*plt_remove) (int plt);
     void (*plt_free) (void);
@@ -330,6 +332,8 @@ typedef struct {
     // playlist control
     void (*pl_lock) (void);
     void (*pl_unlock) (void);
+    void (*plt_lock) (void);
+    void (*plt_unlock) (void);
     // playlist tracks access
     DB_playItem_t * (*pl_item_alloc) (void);
     void (*pl_item_ref) (DB_playItem_t *it);
@@ -389,6 +393,7 @@ typedef struct {
 //    DB_playItem_t* (*pl_get_head) (void);
 //    DB_playItem_t* (*pl_get_tail) (void);
     void (*pl_move_items) (int iter, DB_playItem_t *drop_before, uint32_t *indexes, int count);
+    void (*pl_copy_items) (int iter, int plt_from, DB_playItem_t *before, uint32_t *indices, int cnt);
     void (*pl_search_reset) (void);
     void (*pl_search_process) (const char *text);
     // metainfo

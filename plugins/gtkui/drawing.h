@@ -60,6 +60,9 @@ float
 draw_get_font_size (void);
 
 void
+draw_init_font (GtkStyle *style);
+
+void
 draw_text (float x, float y, int width, int align, const char *text);
 
 void
@@ -68,34 +71,53 @@ draw_text_with_colors (float x, float y, int width, int align, const char *text)
 void
 draw_get_text_extents (const char *text, int len, int *w, int *h);
 
-GdkColor *
-gtkui_get_back_color (void);
 
 GdkColor *
-gtkui_get_selection_color (void);
+gtkui_get_bar_foreground_color (void);
 
 GdkColor *
-gtkui_get_dark_color (void);
+gtkui_get_bar_background_color (void);
 
 GdkColor *
-gtkui_get_mid_color (void);
+gtkui_get_tabstrip_dark_color (void);
 
 GdkColor *
-gtkui_get_light_color (void);
+gtkui_get_tabstrip_mid_color (void);
 
 GdkColor *
-gtkui_get_even_row_color (void);
+gtkui_get_tabstrip_light_color (void);
 
 GdkColor *
-gtkui_get_odd_row_color (void);
+gtkui_get_tabstrip_base_color (void);
 
 GdkColor *
-gtkui_get_text_color (void);
+gtkui_get_listview_even_row_color (void);
 
 GdkColor *
-gtkui_get_selected_text_color (void);
+gtkui_get_listview_odd_row_color (void);
+
+GdkColor *
+gtkui_get_listview_selection_color (void);
+
+GdkColor *
+gtkui_get_listview_text_color (void);
+
+GdkColor *
+gtkui_get_listview_selected_text_color (void);
+
+GdkColor *
+gtkui_get_listview_cursor_color (void);
 
 void
 gtkui_init_theme_colors (void);
+
+int
+gtkui_override_listview_colors (void);
+
+int
+gtkui_override_bar_colors (void);
+
+int
+gtkui_override_tabstrip_colors (void);
 
 #endif // __DRAWING_H

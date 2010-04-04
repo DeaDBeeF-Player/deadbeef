@@ -491,8 +491,8 @@ seekbar_draw (GtkWidget *widget) {
 	if (!cr) {
         return;
     }
-    GdkColor *clr_selection = gtkui_get_selection_color ();
-    GdkColor *clr_back = gtkui_get_back_color ();
+    GdkColor *clr_selection = gtkui_get_bar_foreground_color ();
+    GdkColor *clr_back = gtkui_get_bar_background_color ();
 
     DB_playItem_t *trk = deadbeef->streamer_get_playing_track ();
     if (!trk || deadbeef->pl_get_item_duration (trk) < 0) {
@@ -622,6 +622,13 @@ on_seekbar_button_release_event        (GtkWidget       *widget,
         deadbeef->pl_item_unref (trk);
     }
     return FALSE;
+}
+
+void
+seekbar_redraw (void) {
+    GtkWidget *widget = lookup_widget (mainwin, "seekbar");
+    seekbar_draw (widget);
+    seekbar_expose (widget, 0, 0, widget->allocation.width, widget->allocation.height);
 }
 
 gboolean

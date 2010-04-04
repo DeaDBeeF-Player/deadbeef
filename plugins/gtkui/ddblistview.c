@@ -534,6 +534,14 @@ ddb_listview_list_configure_event            (GtkWidget       *widget,
         gpointer         user_data)
 {
     DdbListview *ps = DDB_LISTVIEW (gtk_object_get_data (GTK_OBJECT (widget), "owner"));
+
+    draw_init_font (widget->style);
+    int height = draw_get_font_size () + 12;
+    if (height != ps->rowheight) {
+        ps->rowheight = height;
+        ddb_listview_build_groups (ps);
+    }
+
     ddb_listview_list_setup_vscroll (ps);
     ddb_listview_list_setup_hscroll (ps);
     widget = ps->list;
@@ -820,14 +828,15 @@ ddb_listview_list_drag_data_get              (GtkWidget       *widget,
     case TARGET_SAMEWIDGET:
         {
             // format as "STRING" consisting of array of pointers
-            int nsel = ps->binding->sel_count ();
+            int nsel = deadbeef->plt_get_sel_count (ps->drag_source_playlist);
             if (!nsel) {
                 break; // something wrong happened
             }
-            uint32_t *ptr = malloc (nsel * sizeof (uint32_t));
+            uint32_t *ptr = malloc ((nsel+1) * sizeof (uint32_t));
+            *ptr = ps->drag_source_playlist;
             int idx = 0;
-            int i = 0;
-            DdbListviewIter it = ps->binding->head ();
+            int i = 1;
+            DdbListviewIter it = deadbeef->plt_get_head (ps->drag_source_playlist);
             for (; it; idx++) {
                 if (ps->binding->is_selected (it)) {
                     ptr[i] = idx;
@@ -837,7 +846,7 @@ ddb_listview_list_drag_data_get              (GtkWidget       *widget,
                 ps->binding->unref (it);
                 it = next;
             }
-            gtk_selection_data_set (selection_data, selection_data->target, sizeof (uint32_t) * 8, (gchar *)ptr, nsel * sizeof (uint32_t));
+            gtk_selection_data_set (selection_data, selection_data->target, sizeof (uint32_t) * 8, (gchar *)ptr, (nsel+1) * sizeof (uint32_t));
             free (ptr);
         }
         break;
@@ -886,7 +895,9 @@ ddb_listview_list_drag_data_received         (GtkWidget       *widget,
     }
     else if (target_type == 1) {
         uint32_t *d= (uint32_t *)ptr;
-        int length = data->length/4;
+        int plt = *d;
+        d++;
+        int length = (data->length/4)-1;
         DdbListviewIter drop_before = it;
         // find last selected
         while (drop_before && ps->binding->is_selected (drop_before)) {
@@ -894,7 +905,10 @@ ddb_listview_list_drag_data_received         (GtkWidget       *widget,
             UNREF (drop_before);
             drop_before = next;
         }
-        ps->binding->drag_n_drop (drop_before, d, length);
+        ps->binding->drag_n_drop (drop_before, plt, d, length);
+        if (drop_before) {
+            UNREF (drop_before);
+        }
     }
     gtk_drag_finish (drag_context, TRUE, FALSE, time);
 }
@@ -1127,7 +1141,7 @@ void
 ddb_listview_list_render_row_background (DdbListview *ps, DdbListviewIter it, int even, int cursor, int x, int y, int w, int h) {
 	// draw background
 	GtkWidget *treeview = theme_treeview;
-	int theming = !gtkui_listview_theming_disabled ();
+	int theming = !gtkui_override_listview_colors ();
 
 	if (theming) {
         if (treeview->style->depth == -1) {
@@ -1135,23 +1149,39 @@ ddb_listview_list_render_row_background (DdbListview *ps, DdbListviewIter it, in
         }
         GTK_OBJECT_FLAGS (treeview) |= GTK_HAS_FOCUS;
     }
-    if (it && ps->binding->is_selected(it)) {
+    int sel = it && ps->binding->is_selected (it);
+    if (theming || !sel) {
         if (theming) {
             // draw background for selection -- workaround for New Wave theme (translucency)
             gtk_paint_flat_box (treeview->style, ps->backbuf, GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, treeview, even ? "cell_even_ruled" : "cell_odd_ruled", x, y, w, h);
         }
+        else {
+            GdkGC *gc = gdk_gc_new (ps->backbuf);
+            gdk_gc_set_rgb_fg_color (gc, even ? gtkui_get_listview_even_row_color () : gtkui_get_listview_odd_row_color ());
+            gdk_draw_rectangle (ps->backbuf, gc, TRUE, x, y, w, h);
+            g_object_unref (gc);
+        }
     }
-    if (theming) {
-        gtk_paint_flat_box (treeview->style, ps->backbuf, (it && ps->binding->is_selected(it)) ? GTK_STATE_SELECTED : GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, treeview, even ? "cell_even_ruled" : "cell_odd_ruled", x, y, w, h);
+
+    if (sel) {
+        if (theming) {
+            gtk_paint_flat_box (treeview->style, ps->backbuf, GTK_STATE_SELECTED, GTK_SHADOW_NONE, NULL, treeview, even ? "cell_even_ruled" : "cell_odd_ruled", x, y, w, h);
+        }
+        else {
+            GdkGC *gc = gdk_gc_new (ps->backbuf);
+            gdk_gc_set_rgb_fg_color (gc, gtkui_get_listview_selection_color ());
+            gdk_draw_rectangle (ps->backbuf, gc, TRUE, x, y, w, h);
+            g_object_unref (gc);
+        }
     }
-//    else {
-//        GdkColor *clr_
-//        gtk_draw_rectangle (ps->backbuf, gc);
-//    }
 	if (cursor) {
         // not all gtk engines/themes render focus rectangle in treeviews
         // but we want it anyway
-        gdk_draw_rectangle (ps->backbuf, treeview->style->fg_gc[GTK_STATE_NORMAL], FALSE, x, y, w-1, h-1);
+        //treeview->style->fg_gc[GTK_STATE_NORMAL]
+        GdkGC *gc = gdk_gc_new (ps->backbuf);
+        gdk_gc_set_rgb_fg_color (gc, gtkui_get_listview_cursor_color ());
+        gdk_draw_rectangle (ps->backbuf, gc, FALSE, x, y, w-1, h-1);
+        g_object_unref (gc);
     }
 }
 
@@ -1534,6 +1564,7 @@ ddb_listview_list_mousemove (DdbListview *ps, GdkEventMotion *ev, int ex, int ey
         GtkWidget *widget = ps->list;
         if (gtk_drag_check_threshold (widget, ps->lastpos[0], ex, ps->lastpos[1], ey)) {
             ps->dragwait = 0;
+            ps->drag_source_playlist = deadbeef->plt_get_curr ();
             GtkTargetEntry entry = {
                 .target = "STRING",
                 .flags = GTK_TARGET_SAME_WIDGET,
@@ -2024,6 +2055,11 @@ ddb_listview_header_configure_event              (GtkWidget       *widget,
                                         gpointer         user_data)
 {
     DdbListview *ps = DDB_LISTVIEW (gtk_object_get_data (GTK_OBJECT (widget), "owner"));
+    draw_init_font (widget->style);
+    int height = draw_get_font_size () + 12;
+    if (height != widget->allocation.height) {
+        gtk_widget_set_size_request (widget, -1, height);
+    }
     if (ps->backbuf_header) {
         g_object_unref (ps->backbuf_header);
         ps->backbuf_header = NULL;

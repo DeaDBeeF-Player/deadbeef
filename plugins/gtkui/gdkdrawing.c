@@ -43,11 +43,6 @@ draw_begin (uintptr_t canvas) {
 
 void
 draw_end (void) {
-//    if (pango_ready) {
-//        g_object_unref (pangolayout);
-//        g_object_unref (pangoctx);
-//        pango_ready = 0;
-//    }
     drawable = NULL;
     if (gc) {
         g_object_unref (gc);
@@ -96,14 +91,26 @@ draw_rect (float x, float y, float w, float h, int fill) {
     gdk_draw_rectangle (drawable, gc, fill, x, y, w, h);
 }
 
-static inline void
-draw_init_font (void) {
-    if (!pango_ready) {
+static GtkStyle *font_style = NULL;
+
+void
+draw_init_font (GtkStyle *new_font_style) {
+    if (!pango_ready || (new_font_style && font_style != new_font_style)) {
+        if (pangoctx) {
+            g_object_unref (pangoctx);
+            pangoctx = NULL;
+        }
+        if (pangolayout) {
+            g_object_unref (pangolayout);
+            pangolayout = NULL;
+        }
+
+        font_style = new_font_style ? new_font_style : gtk_widget_get_default_style ();
+
         pangoctx = gdk_pango_context_get ();
         pangolayout = pango_layout_new (pangoctx);
         pango_layout_set_ellipsize (pangolayout, PANGO_ELLIPSIZE_END);
-        GtkStyle *style = gtk_widget_get_default_style ();
-        PangoFontDescription *desc = style->font_desc;
+        PangoFontDescription *desc = font_style->font_desc;
         pango_layout_set_font_description (pangolayout, desc);
         pango_ready = 1;
     }
@@ -111,16 +118,16 @@ draw_init_font (void) {
 
 float
 draw_get_font_size (void) {
+    draw_init_font (NULL);
     GdkScreen *screen = gdk_screen_get_default ();
     float dpi = gdk_screen_get_resolution (screen);
-    GtkStyle *style = gtk_widget_get_default_style ();
-    PangoFontDescription *desc = style->font_desc;
+    PangoFontDescription *desc = font_style->font_desc;
     return (float)(pango_font_description_get_size (desc) / PANGO_SCALE * dpi / 72);
 }
 
 void
 draw_text (float x, float y, int width, int align, const char *text) {
-    draw_init_font ();
+    draw_init_font (NULL);
     pango_layout_set_width (pangolayout, width*PANGO_SCALE);
     pango_layout_set_alignment (pangolayout, align ? PANGO_ALIGN_RIGHT : PANGO_ALIGN_LEFT);
     pango_layout_set_text (pangolayout, text, -1);
@@ -129,7 +136,7 @@ draw_text (float x, float y, int width, int align, const char *text) {
 
 void
 draw_text_with_colors (float x, float y, int width, int align, const char *text) {
-    draw_init_font ();
+    draw_init_font (NULL);
     pango_layout_set_width (pangolayout, width*PANGO_SCALE);
     pango_layout_set_alignment (pangolayout, align ? PANGO_ALIGN_RIGHT : PANGO_ALIGN_LEFT);
     pango_layout_set_text (pangolayout, text, -1);
@@ -138,7 +145,7 @@ draw_text_with_colors (float x, float y, int width, int align, const char *text)
 
 void
 draw_get_text_extents (const char *text, int len, int *w, int *h) {
-    draw_init_font ();
+    draw_init_font (NULL);
     pango_layout_set_width (pangolayout, 1000 * PANGO_SCALE);
     pango_layout_set_alignment (pangolayout, PANGO_ALIGN_LEFT);
     pango_layout_set_text (pangolayout, text, len);
@@ -149,116 +156,181 @@ draw_get_text_extents (const char *text, int len, int *w, int *h) {
     *h = ink.height;
 }
 
-static GdkColor gtkui_back_color;
-static GdkColor gtkui_selection_color;
-static GdkColor gtkui_dark_color;
-static GdkColor gtkui_mid_color;
-static GdkColor gtkui_light_color;
-static GdkColor gtkui_even_row_color;
-static GdkColor gtkui_odd_row_color;
-static GdkColor gtkui_text_color;
-static GdkColor gtkui_selected_text_color;
+static GdkColor gtkui_bar_foreground_color;
+static GdkColor gtkui_bar_background_color;
+
+static GdkColor gtkui_tabstrip_dark_color;
+static GdkColor gtkui_tabstrip_mid_color;
+static GdkColor gtkui_tabstrip_light_color;
+static GdkColor gtkui_tabstrip_base_color;
+
+static GdkColor gtkui_listview_even_row_color;
+static GdkColor gtkui_listview_odd_row_color;
+static GdkColor gtkui_listview_selection_color;
+static GdkColor gtkui_listview_text_color;
+static GdkColor gtkui_listview_selected_text_color;
+static GdkColor gtkui_listview_cursor_color;
+
+static int override_listview_colors = 0;
+static int override_bar_colors = 0;
+static int override_tabstrip_colors = 0;
+
+int
+gtkui_override_listview_colors (void) {
+    return override_listview_colors;
+}
+
+int
+gtkui_override_bar_colors (void) {
+    return override_bar_colors;
+}
+
+int
+gtkui_override_tabstrip_colors (void) {
+    return override_tabstrip_colors;
+}
 
 void
 gtkui_init_theme_colors (void) {
-    int override = deadbeef->conf_get_int ("gtkui.override_theme_colors", 0);
+    override_listview_colors= deadbeef->conf_get_int ("gtkui.override_listview_colors", 0);
+    override_bar_colors = deadbeef->conf_get_int ("gtkui.override_bar_colors", 0);
+    override_tabstrip_colors = deadbeef->conf_get_int ("gtkui.override_tabstrip_colors", 0);
 
     extern GtkWidget *mainwin;
     GtkStyle *style = mainwin->style;
     char color_text[100];
     const char *clr;
 
-    if (!override) {
-        memcpy (&gtkui_selection_color, &style->base[GTK_STATE_SELECTED], sizeof (GdkColor));
-        memcpy (&gtkui_back_color, &style->fg[GTK_STATE_NORMAL], sizeof (GdkColor));
-        memcpy (&gtkui_dark_color, &style->dark[GTK_STATE_NORMAL], sizeof (GdkColor));
-        memcpy (&gtkui_mid_color, &style->mid[GTK_STATE_NORMAL], sizeof (GdkColor));
-        memcpy (&gtkui_light_color, &style->light[GTK_STATE_NORMAL], sizeof (GdkColor));
-        memcpy (&gtkui_even_row_color, &style->light[GTK_STATE_NORMAL], sizeof (GdkColor));
-        memcpy (&gtkui_odd_row_color, &style->mid[GTK_STATE_NORMAL], sizeof (GdkColor));
-        memcpy (&gtkui_text_color, &style->fg[GTK_STATE_NORMAL], sizeof (GdkColor));
-        memcpy (&gtkui_selected_text_color, &style->fg[GTK_STATE_SELECTED], sizeof (GdkColor));
+    if (!override_bar_colors) {
+        memcpy (&gtkui_bar_foreground_color, &style->base[GTK_STATE_SELECTED], sizeof (GdkColor));
+        memcpy (&gtkui_bar_background_color, &style->fg[GTK_STATE_NORMAL], sizeof (GdkColor));
     }
     else {
         snprintf (color_text, sizeof (color_text), "%d %d %d", style->base[GTK_STATE_SELECTED].red, style->base[GTK_STATE_SELECTED].green, style->base[GTK_STATE_SELECTED].blue);
-        clr = deadbeef->conf_get_str ("gtkui.color.selection", color_text);
-        sscanf (clr, "%d %d %d", &gtkui_selection_color.red, &gtkui_selection_color.green, &gtkui_selection_color.blue);
+        clr = deadbeef->conf_get_str ("gtkui.color.bar_foreground", color_text);
+        sscanf (clr, "%d %d %d", &gtkui_bar_foreground_color.red, &gtkui_bar_foreground_color.green, &gtkui_bar_foreground_color.blue);
 
         snprintf (color_text, sizeof (color_text), "%d %d %d", style->fg[GTK_STATE_NORMAL].red, style->fg[GTK_STATE_NORMAL].green, style->fg[GTK_STATE_NORMAL].blue);
-        clr = deadbeef->conf_get_str ("gtkui.color.back", color_text);
-        sscanf (clr, "%d %d %d", &gtkui_back_color.red, &gtkui_back_color.green, &gtkui_back_color.blue);
+        clr = deadbeef->conf_get_str ("gtkui.color.bar_background", color_text);
+        sscanf (clr, "%d %d %d", &gtkui_bar_background_color.red, &gtkui_bar_background_color.green, &gtkui_bar_background_color.blue);
 
+    }
+
+    if (!override_tabstrip_colors) {
+        memcpy (&gtkui_tabstrip_dark_color, &style->dark[GTK_STATE_NORMAL], sizeof (GdkColor));
+        memcpy (&gtkui_tabstrip_mid_color, &style->mid[GTK_STATE_NORMAL], sizeof (GdkColor));
+        memcpy (&gtkui_tabstrip_light_color, &style->light[GTK_STATE_NORMAL], sizeof (GdkColor));
+        memcpy (&gtkui_tabstrip_base_color, &style->bg[GTK_STATE_NORMAL], sizeof (GdkColor));
+    }
+    else {
         snprintf (color_text, sizeof (color_text), "%d %d %d", style->dark[GTK_STATE_NORMAL].red, style->dark[GTK_STATE_NORMAL].green, style->dark[GTK_STATE_NORMAL].blue);
-        clr = deadbeef->conf_get_str ("gtkui.color.dark", color_text);
-        sscanf (clr, "%d %d %d", &gtkui_dark_color.red, &gtkui_dark_color.green, &gtkui_dark_color.blue);
+        clr = deadbeef->conf_get_str ("gtkui.color.tabstrip_dark", color_text);
+        sscanf (clr, "%d %d %d", &gtkui_tabstrip_dark_color.red, &gtkui_tabstrip_dark_color.green, &gtkui_tabstrip_dark_color.blue);
 
         snprintf (color_text, sizeof (color_text), "%d %d %d", style->mid[GTK_STATE_NORMAL].red, style->mid[GTK_STATE_NORMAL].green, style->mid[GTK_STATE_NORMAL].blue);
-        clr = deadbeef->conf_get_str ("gtkui.color.mid", color_text);
-        sscanf (clr, "%d %d %d", &gtkui_mid_color.red, &gtkui_mid_color.green, &gtkui_mid_color.blue);
+        clr = deadbeef->conf_get_str ("gtkui.color.tabstrip_mid", color_text);
+        sscanf (clr, "%d %d %d", &gtkui_tabstrip_mid_color.red, &gtkui_tabstrip_mid_color.green, &gtkui_tabstrip_mid_color.blue);
 
         snprintf (color_text, sizeof (color_text), "%d %d %d", style->light[GTK_STATE_NORMAL].red, style->light[GTK_STATE_NORMAL].green, style->light[GTK_STATE_NORMAL].blue);
-        clr = deadbeef->conf_get_str ("gtkui.color.light", color_text);
-        sscanf (clr, "%d %d %d", &gtkui_light_color.red, &gtkui_light_color.green, &gtkui_light_color.blue);
+        clr = deadbeef->conf_get_str ("gtkui.color.tabstrip_light", color_text);
+        sscanf (clr, "%d %d %d", &gtkui_tabstrip_light_color.red, &gtkui_tabstrip_light_color.green, &gtkui_tabstrip_light_color.blue);
 
+        snprintf (color_text, sizeof (color_text), "%d %d %d", style->bg[GTK_STATE_NORMAL].red, style->bg[GTK_STATE_NORMAL].green, style->bg[GTK_STATE_NORMAL].blue);
+        clr = deadbeef->conf_get_str ("gtkui.color.tabstrip_base", color_text);
+        sscanf (clr, "%d %d %d", &gtkui_tabstrip_base_color.red, &gtkui_tabstrip_base_color.green, &gtkui_tabstrip_base_color.blue);
+    }
+
+    if (!override_listview_colors) {
+        memcpy (&gtkui_listview_even_row_color, &style->light[GTK_STATE_NORMAL], sizeof (GdkColor));
+        memcpy (&gtkui_listview_odd_row_color, &style->mid[GTK_STATE_NORMAL], sizeof (GdkColor));
+        memcpy (&gtkui_listview_selection_color, &style->bg[GTK_STATE_SELECTED], sizeof (GdkColor));
+        memcpy (&gtkui_listview_text_color, &style->fg[GTK_STATE_NORMAL], sizeof (GdkColor));
+        memcpy (&gtkui_listview_selected_text_color, &style->fg[GTK_STATE_SELECTED], sizeof (GdkColor));
+        memcpy (&gtkui_listview_cursor_color, &style->fg[GTK_STATE_NORMAL], sizeof (GdkColor));
+    }
+    else {
         snprintf (color_text, sizeof (color_text), "%d %d %d", style->light[GTK_STATE_NORMAL].red, style->light[GTK_STATE_NORMAL].green, style->light[GTK_STATE_NORMAL].blue);
-        clr = deadbeef->conf_get_str ("gtkui.color.even_row", color_text);
-        sscanf (clr, "%d %d %d", &gtkui_even_row_color.red, &gtkui_even_row_color.green, &gtkui_even_row_color.blue);
+        clr = deadbeef->conf_get_str ("gtkui.color.listview_even_row", color_text);
+        sscanf (clr, "%d %d %d", &gtkui_listview_even_row_color.red, &gtkui_listview_even_row_color.green, &gtkui_listview_even_row_color.blue);
 
         snprintf (color_text, sizeof (color_text), "%d %d %d", style->mid[GTK_STATE_NORMAL].red, style->mid[GTK_STATE_NORMAL].green, style->mid[GTK_STATE_NORMAL].blue);
-        clr = deadbeef->conf_get_str ("gtkui.color.odd_row", color_text);
-        sscanf (clr, "%d %d %d", &gtkui_odd_row_color.red, &gtkui_odd_row_color.green, &gtkui_odd_row_color.blue);
+        clr = deadbeef->conf_get_str ("gtkui.color.listview_odd_row", color_text);
+        sscanf (clr, "%d %d %d", &gtkui_listview_odd_row_color.red, &gtkui_listview_odd_row_color.green, &gtkui_listview_odd_row_color.blue);
+
+        snprintf (color_text, sizeof (color_text), "%d %d %d", style->mid[GTK_STATE_NORMAL].red, style->mid[GTK_STATE_NORMAL].green, style->mid[GTK_STATE_NORMAL].blue);
+        clr = deadbeef->conf_get_str ("gtkui.color.listview_selection", color_text);
+        sscanf (clr, "%d %d %d", &gtkui_listview_selection_color.red, &gtkui_listview_selection_color.green, &gtkui_listview_selection_color.blue);
 
         snprintf (color_text, sizeof (color_text), "%d %d %d", style->fg[GTK_STATE_NORMAL].red, style->fg[GTK_STATE_NORMAL].green, style->fg[GTK_STATE_NORMAL].blue);
-        clr = deadbeef->conf_get_str ("gtkui.color.text", color_text);
-        sscanf (clr, "%d %d %d", &gtkui_text_color.red, &gtkui_text_color.green, &gtkui_text_color.blue);
+        clr = deadbeef->conf_get_str ("gtkui.color.listview_text", color_text);
+        sscanf (clr, "%d %d %d", &gtkui_listview_text_color.red, &gtkui_listview_text_color.green, &gtkui_listview_text_color.blue);
 
         snprintf (color_text, sizeof (color_text), "%d %d %d", style->fg[GTK_STATE_SELECTED].red, style->fg[GTK_STATE_SELECTED].green, style->fg[GTK_STATE_SELECTED].blue);
-        clr = deadbeef->conf_get_str ("gtkui.color.selected_text", color_text);
-        sscanf (clr, "%d %d %d", &gtkui_selected_text_color.red, &gtkui_selected_text_color.green, &gtkui_selected_text_color.blue);
+        clr = deadbeef->conf_get_str ("gtkui.color.listview_selected_text", color_text);
+        sscanf (clr, "%d %d %d", &gtkui_listview_selected_text_color.red, &gtkui_listview_selected_text_color.green, &gtkui_listview_selected_text_color.blue);
+
+        snprintf (color_text, sizeof (color_text), "%d %d %d", style->fg[GTK_STATE_SELECTED].red, style->fg[GTK_STATE_SELECTED].green, style->fg[GTK_STATE_SELECTED].blue);
+        clr = deadbeef->conf_get_str ("gtkui.color.listview_cursor", color_text);
+        sscanf (clr, "%d %d %d", &gtkui_listview_cursor_color.red, &gtkui_listview_cursor_color.green, &gtkui_listview_cursor_color.blue);
     }
 }
 
 GdkColor *
-gtkui_get_back_color (void) {
-    return &gtkui_back_color;
+gtkui_get_bar_foreground_color (void) {
+    return &gtkui_bar_foreground_color;
 }
 
 GdkColor *
-gtkui_get_selection_color (void) {
-    return &gtkui_selection_color;
+gtkui_get_bar_background_color (void) {
+    return &gtkui_bar_background_color;
 }
 
 GdkColor *
-gtkui_get_dark_color (void) {
-    return &gtkui_dark_color;
+gtkui_get_tabstrip_dark_color (void) {
+    return &gtkui_tabstrip_dark_color;
 }
 
 GdkColor *
-gtkui_get_mid_color (void) {
-    return &gtkui_mid_color;
+gtkui_get_tabstrip_mid_color (void) {
+    return &gtkui_tabstrip_mid_color;
 }
 
 GdkColor *
-gtkui_get_light_color (void) {
-    return &gtkui_light_color;
+gtkui_get_tabstrip_light_color (void) {
+    return &gtkui_tabstrip_light_color;
 }
 
 GdkColor *
-gtkui_get_even_row_color (void) {
-    return &gtkui_even_row_color;
+gtkui_get_tabstrip_base_color (void) {
+    return &gtkui_tabstrip_base_color;
 }
 
 GdkColor *
-gtkui_get_odd_row_color (void) {
-    return &gtkui_odd_row_color;
+gtkui_get_listview_even_row_color (void) {
+    return &gtkui_listview_even_row_color;
 }
 
 GdkColor *
-gtkui_get_text_color (void) {
-    return &gtkui_text_color;
+gtkui_get_listview_odd_row_color (void) {
+    return &gtkui_listview_odd_row_color;
 }
 
 GdkColor *
-gtkui_get_selected_text_color (void) {
-    return &gtkui_selected_text_color;
+gtkui_get_listview_selection_color (void) {
+    return &gtkui_listview_selection_color;
+}
+
+GdkColor *
+gtkui_get_listview_text_color (void) {
+    return &gtkui_listview_text_color;
+}
+
+GdkColor *
+gtkui_get_listview_selected_text_color (void) {
+    return &gtkui_listview_selected_text_color;
+}
+
+GdkColor *
+gtkui_get_listview_cursor_color (void) {
+    return &gtkui_listview_cursor_color;
 }

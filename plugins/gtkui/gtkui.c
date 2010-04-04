@@ -66,7 +66,6 @@ GtkWidget *traymenu;
 // playlist theming
 GtkWidget *theme_treeview;
 GtkWidget *theme_button;
-int disable_listview_theming = 0;
 
 // that must be called before gtk_init
 void
@@ -233,8 +232,7 @@ on_trayicon_scroll_event               (GtkWidget       *widget,
         vol = -60;
     }
     deadbeef->volume_set_db (vol);
-    GtkWidget *volumebar = lookup_widget (mainwin, "volumebar");
-    gdk_window_invalidate_rect (volumebar->window, NULL, FALSE);
+    volumebar_redraw ();
     return FALSE;
 }
 
@@ -501,16 +499,7 @@ gtkui_on_configchanged (DB_event_t *ev, uintptr_t data) {
     int stop_after_current = deadbeef->conf_get_int ("playlist.stop_after_current", 0);
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "stop_after_current")), stop_after_current ? TRUE : FALSE);
 
-    // theme colors
-    gtkui_init_theme_colors ();
-
-    disable_listview_theming = deadbeef->conf_get_int ("gtkui.disable_playlist_theming", 0);
     return 0;
-}
-
-int
-gtkui_listview_theming_disabled (void) {
-    return disable_listview_theming;
 }
 
 static gboolean
@@ -667,11 +656,7 @@ update_win_title_idle (gpointer data) {
 
 static gboolean
 redraw_seekbar_cb (gpointer nothing) {
-    void seekbar_draw (GtkWidget *widget);
-    void seekbar_expose (GtkWidget *widget, int x, int y, int w, int h);
-    GtkWidget *widget = lookup_widget (mainwin, "seekbar");
-    seekbar_draw (widget);
-    seekbar_expose (widget, 0, 0, widget->allocation.width, widget->allocation.height);
+    seekbar_redraw ();
     return FALSE;
 }
 
@@ -701,6 +686,18 @@ gtkui_add_new_playlist (void) {
         idx++;
     }
     return -1;
+}
+
+void
+volumebar_redraw (void) {
+    GtkWidget *volumebar = lookup_widget (mainwin, "volumebar");
+    gdk_window_invalidate_rect (volumebar->window, NULL, FALSE);
+}
+
+void
+tabstrip_redraw (void) {
+    GtkWidget *ts = lookup_widget (mainwin, "tabstrip");
+    ddb_tabstrip_refresh (DDB_TABSTRIP (ts));
 }
 
 static int gtk_initialized = 0;
@@ -763,6 +760,7 @@ gtkui_thread (void *ctx) {
     }
 
     gtkui_on_configchanged (NULL, 0);
+    gtkui_init_theme_colors ();
 
     // visibility of statusbar and headers
     GtkWidget *header_mi = lookup_widget (mainwin, "view_headers");

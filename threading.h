@@ -35,9 +35,6 @@ mutex_create (void);
 uintptr_t
 mutex_create_nonrecursive (void);
 
-uintptr_t
-mutex_create_recursive (void);
-
 void
 mutex_free (uintptr_t mtx);
 

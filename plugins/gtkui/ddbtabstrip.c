@@ -16,6 +16,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
+#include <gtk/gtk.h>
 #include <string.h>
 #include "ddbtabstrip.h"
 #include "drawing.h"
@@ -28,58 +29,65 @@ G_DEFINE_TYPE (DdbTabStrip, ddb_tabstrip, GTK_TYPE_WIDGET);
 static void
 ddb_tabstrip_send_configure (DdbTabStrip *darea)
 {
-  GtkWidget *widget;
-  GdkEvent *event = gdk_event_new (GDK_CONFIGURE);
+    GtkWidget *widget;
+    GdkEvent *event = gdk_event_new (GDK_CONFIGURE);
 
-  widget = GTK_WIDGET (darea);
+    widget = GTK_WIDGET (darea);
 
-  event->configure.window = g_object_ref (widget->window);
-  event->configure.send_event = TRUE;
-  event->configure.x = widget->allocation.x;
-  event->configure.y = widget->allocation.y;
-  event->configure.width = widget->allocation.width;
-  event->configure.height = widget->allocation.height;
-  
-  gtk_widget_event (widget, event);
-  gdk_event_free (event);
+    event->configure.window = g_object_ref (widget->window);
+    event->configure.send_event = TRUE;
+    event->configure.x = widget->allocation.x;
+    event->configure.y = widget->allocation.y;
+    event->configure.width = widget->allocation.width;
+    event->configure.height = widget->allocation.height;
+
+    gtk_widget_event (widget, event);
+    gdk_event_free (event);
 }
 
 static void
 ddb_tabstrip_realize (GtkWidget *widget) {
-  DdbTabStrip *darea = DDB_TABSTRIP (widget);
-  GdkWindowAttr attributes;
-  gint attributes_mask;
+    DdbTabStrip *darea = DDB_TABSTRIP (widget);
+    GdkWindowAttr attributes;
+    gint attributes_mask;
 
-  if (GTK_WIDGET_NO_WINDOW (widget))
+    if (GTK_WIDGET_NO_WINDOW (widget))
     {
-      GTK_WIDGET_CLASS (ddb_tabstrip_parent_class)->realize (widget);
+        GTK_WIDGET_CLASS (ddb_tabstrip_parent_class)->realize (widget);
     }
-  else
+    else
     {
-      GTK_WIDGET_SET_FLAGS (widget, GTK_REALIZED);
+        GTK_WIDGET_SET_FLAGS (widget, GTK_REALIZED);
 
-      attributes.window_type = GDK_WINDOW_CHILD;
-      attributes.x = widget->allocation.x;
-      attributes.y = widget->allocation.y;
-      attributes.width = widget->allocation.width;
-      attributes.height = widget->allocation.height;
-      attributes.wclass = GDK_INPUT_OUTPUT;
-      attributes.visual = gtk_widget_get_visual (widget);
-      attributes.colormap = gtk_widget_get_colormap (widget);
-      attributes.event_mask = gtk_widget_get_events (widget);
-      attributes.event_mask |= GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK;
+        attributes.window_type = GDK_WINDOW_CHILD;
+        attributes.x = widget->allocation.x;
+        attributes.y = widget->allocation.y;
+        attributes.width = widget->allocation.width;
+        attributes.height = widget->allocation.height;
+        attributes.wclass = GDK_INPUT_OUTPUT;
+        attributes.visual = gtk_widget_get_visual (widget);
+        attributes.colormap = gtk_widget_get_colormap (widget);
+        attributes.event_mask = gtk_widget_get_events (widget);
+        attributes.event_mask |= GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK;
 
-      attributes_mask = GDK_WA_X | GDK_WA_Y | GDK_WA_VISUAL | GDK_WA_COLORMAP;
+        attributes_mask = GDK_WA_X | GDK_WA_Y | GDK_WA_VISUAL | GDK_WA_COLORMAP;
 
-      widget->window = gdk_window_new (gtk_widget_get_parent_window (widget),
-                                       &attributes, attributes_mask);
-      gdk_window_set_user_data (widget->window, darea);
+        widget->window = gdk_window_new (gtk_widget_get_parent_window (widget),
+                &attributes, attributes_mask);
+        gdk_window_set_user_data (widget->window, darea);
 
-      widget->style = gtk_style_attach (widget->style, widget->window);
-      gtk_style_set_background (widget->style, widget->window, GTK_STATE_NORMAL);
+        widget->style = gtk_style_attach (widget->style, widget->window);
+        gtk_style_set_background (widget->style, widget->window, GTK_STATE_NORMAL);
     }
 
-  ddb_tabstrip_send_configure (DDB_TABSTRIP (widget));
+    ddb_tabstrip_send_configure (DDB_TABSTRIP (widget));
+    GtkTargetEntry entry = {
+        .target = "STRING",
+        .flags = GTK_TARGET_SAME_WIDGET | GTK_TARGET_OTHER_APP,
+        0
+    };
+    gtk_drag_dest_set (widget, GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_DROP, &entry, 1, GDK_ACTION_COPY);
+    gtk_drag_dest_set_track_motion (widget, TRUE);
 }
 
 static void
@@ -122,6 +130,13 @@ gboolean
 on_tabstrip_motion_notify_event          (GtkWidget       *widget,
                                         GdkEventMotion  *event);
 
+gboolean
+on_tabstrip_drag_motion_event          (GtkWidget       *widget,
+                                        GdkDragContext  *drag_context,
+                                        gint             x,
+                                        gint             y,
+                                        guint            time);
+
 static void
 ddb_tabstrip_destroy(GtkObject *object)
 {
@@ -156,6 +171,7 @@ ddb_tabstrip_class_init(DdbTabStripClass *class)
   widget_class->button_release_event = on_tabstrip_button_release_event;
   widget_class->configure_event = on_tabstrip_configure_event;
   widget_class->motion_notify_event = on_tabstrip_motion_notify_event;
+  widget_class->drag_motion = on_tabstrip_drag_motion_event;
   object_class->destroy = ddb_tabstrip_destroy;
 }
 
@@ -214,22 +230,31 @@ ddb_tabstrip_draw_tab (GtkWidget *widget, GdkDrawable *drawable, int selected, i
         { x + w-2, y + h - 2 },
     };
     //gdk_draw_rectangle (widget->window, widget->style->black_gc, FALSE, x-1, y-1, w+2, h+2);
-    GdkGC *bg;
-    GdkGC *outer_frame;
-    GdkGC *inner_frame;
+    GdkGC *bg = gdk_gc_new (drawable);
+    GdkGC *outer_frame = gdk_gc_new (drawable);
+    GdkGC *inner_frame = gdk_gc_new (drawable);
     if (selected) {
-        bg = widget->style->bg_gc[GTK_STATE_NORMAL];
-        outer_frame = widget->style->dark_gc[GTK_STATE_NORMAL];
-        inner_frame = widget->style->light_gc[GTK_STATE_NORMAL];
+        gdk_gc_set_rgb_fg_color (bg, gtkui_get_tabstrip_base_color ());//&widget->style->bg[GTK_STATE_NORMAL]); // FIXME: need base color
+        gdk_gc_set_rgb_fg_color (outer_frame, gtkui_get_tabstrip_dark_color ());
+        gdk_gc_set_rgb_fg_color (inner_frame, gtkui_get_tabstrip_light_color ());
+//        bg = widget->style->bg_gc[GTK_STATE_NORMAL];
+//        outer_frame = widget->style->dark_gc[GTK_STATE_NORMAL];
+//        inner_frame = widget->style->light_gc[GTK_STATE_NORMAL];
     }
     else {
-        bg = widget->style->mid_gc[GTK_STATE_NORMAL];
-        outer_frame = widget->style->dark_gc[GTK_STATE_NORMAL];
-        inner_frame = widget->style->mid_gc[GTK_STATE_NORMAL];
+        gdk_gc_set_rgb_fg_color (bg, gtkui_get_tabstrip_mid_color ());
+        gdk_gc_set_rgb_fg_color (outer_frame, gtkui_get_tabstrip_dark_color ());
+        gdk_gc_set_rgb_fg_color (inner_frame, gtkui_get_tabstrip_mid_color ());
+//        bg = widget->style->mid_gc[GTK_STATE_NORMAL];
+//        outer_frame = widget->style->dark_gc[GTK_STATE_NORMAL];
+//        inner_frame = widget->style->mid_gc[GTK_STATE_NORMAL];
     }
     gdk_draw_polygon (drawable, bg, TRUE, points_filled, 4);
     gdk_draw_lines (drawable, outer_frame, points_frame1, 9);
     gdk_draw_lines (drawable, inner_frame, points_frame2, 7);
+    g_object_unref (bg);
+    g_object_unref (outer_frame);
+    g_object_unref (inner_frame);
 }
 
 int
@@ -253,7 +278,7 @@ tabstrip_render (DdbTabStrip *ts) {
     int x = -ts->hscrollpos;
     int w = 0;
     int h = draw_get_font_size ();
-    gtk_widget_set_size_request (widget, -1, h + 9 + 4);
+//    gtk_widget_set_size_request (widget, -1, h + 9 + 4);
     h = widget->allocation.height;
     tab_overlap_size = (h-4)/2;
     text_right_padding = h - 3;
@@ -262,9 +287,13 @@ tabstrip_render (DdbTabStrip *ts) {
     int cnt = deadbeef->plt_get_count ();
     int tab_selected = deadbeef->plt_get_curr ();
 
+    GdkGC *gc = gdk_gc_new (backbuf);
+
     // fill background
-    gdk_draw_rectangle (backbuf, widget->style->mid_gc[GTK_STATE_NORMAL], TRUE, 0, 0, widget->allocation.width, widget->allocation.height);
-    gdk_draw_line (backbuf, widget->style->dark_gc[GTK_STATE_NORMAL], 0, 0, widget->allocation.width, 0);
+    gdk_gc_set_rgb_fg_color (gc, gtkui_get_tabstrip_mid_color ());
+    gdk_draw_rectangle (backbuf, gc, TRUE, 0, 0, widget->allocation.width, widget->allocation.height);
+    gdk_gc_set_rgb_fg_color (gc, gtkui_get_tabstrip_dark_color ());
+    gdk_draw_line (backbuf, gc, 0, 0, widget->allocation.width, 0);
     int y = 4;
     h = widget->allocation.height - 4;
     draw_begin ((uintptr_t)backbuf);
@@ -366,6 +395,7 @@ tabstrip_render (DdbTabStrip *ts) {
         }
     }
     draw_end ();
+    g_object_unref (gc);
 }
 
 void
@@ -461,6 +491,11 @@ gboolean
 on_tabstrip_configure_event              (GtkWidget       *widget,
                                         GdkEventConfigure *event)
 {
+    draw_init_font (widget->style);
+    int height = draw_get_font_size () + 13;
+    if (height != widget->allocation.height) {
+        gtk_widget_set_size_request (widget, -1, height);
+    }
     DdbTabStrip *ts = DDB_TABSTRIP (widget);
     if (ts->backbuf) {
         g_object_unref (ts->backbuf);
@@ -530,6 +565,21 @@ on_tabstrip_motion_notify_event          (GtkWidget       *widget,
         }
         tabstrip_render (ts);
         tabstrip_expose (ts, 0, 0, widget->allocation.width, widget->allocation.height);
+    }
+    return FALSE;
+}
+
+gboolean
+on_tabstrip_drag_motion_event          (GtkWidget       *widget,
+                                        GdkDragContext  *drag_context,
+                                        gint             x,
+                                        gint             y,
+                                        guint            time)
+{
+    int tab = get_tab_under_cursor (x);
+    if (tab != -1) {
+        deadbeef->plt_set_curr (tab);
+        deadbeef->conf_set_int ("playlist.current", tab);
     }
     return FALSE;
 }

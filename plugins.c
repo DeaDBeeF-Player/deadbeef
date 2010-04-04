@@ -106,6 +106,8 @@ static DB_functions_t deadbeef_api = {
     .cond_broadcast = cond_broadcast,
     // playlist management
     .plt_get_count = plt_get_count,
+    .plt_get_head = (DB_playItem_t * (*) (int plt))plt_get_head,
+    .plt_get_sel_count = plt_get_sel_count,
     .plt_add = plt_add,
     .plt_remove = plt_remove,
     .plt_free = plt_free,
@@ -117,6 +119,8 @@ static DB_functions_t deadbeef_api = {
     // playlist access
     .pl_lock = pl_lock,
     .pl_unlock = pl_unlock,
+    .plt_lock = plt_lock,
+    .plt_unlock = plt_unlock,
     .pl_item_alloc = (DB_playItem_t* (*)(void))pl_item_alloc,
     .pl_item_ref = (void (*)(DB_playItem_t *))pl_item_ref,
     .pl_item_unref = (void (*)(DB_playItem_t *))pl_item_unref,
@@ -153,6 +157,7 @@ static DB_functions_t deadbeef_api = {
     .pl_format_title = (int (*) (DB_playItem_t *it, int idx, char *s, int size, int id, const char *fmt))pl_format_title,
     .pl_format_item_display_name = (void (*) (DB_playItem_t *it, char *str, int len))pl_format_item_display_name,
     .pl_move_items = (void (*) (int iter, DB_playItem_t *drop_before, uint32_t *indexes, int count))pl_move_items,
+    .pl_copy_items = (void (*) (int iter, int plt_from, DB_playItem_t *before, uint32_t *indices, int cnt))pl_copy_items,
     .pl_search_reset = pl_search_reset,
     .pl_search_process = pl_search_process,
     // metainfo

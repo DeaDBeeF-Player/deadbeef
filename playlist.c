@@ -43,7 +43,8 @@
 #include "threading.h"
 #include "metacache.h"
 
-#define DISABLE_LOCKING 1
+#define DISABLE_LOCKING 0
+#define DEBUG_LOCKING 0
 
 // file format revision history
 // 1.0->1.1 changelog:
@@ -51,8 +52,8 @@
 #define PLAYLIST_MAJOR_VER 1
 #define PLAYLIST_MINOR_VER 1
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 #define SKIP_BLANK_CUE_TRACKS 1
 
@@ -84,8 +85,8 @@ static uintptr_t mutex_plt;
 int
 pl_init (void) {
 #if !DISABLE_LOCKING
-    mutex = mutex_create_recursive ();
-    mutex_plt = mutex_create_recursive ();
+    mutex = mutex_create ();
+    mutex_plt = mutex_create ();
 #endif
 }
 
@@ -103,10 +104,17 @@ pl_free (void) {
 #endif
 }
 
+#if DEBUG_LOCKING
+int plt_lock_cnt = 0;
+#endif
 void
 plt_lock (void) {
 #if !DISABLE_LOCKING
     mutex_lock (mutex_plt);
+#if DEBUG_LOCKING
+    plt_lock_cnt++;
+    printf ("cnt: %d\n", plt_lock_cnt);
+#endif
 #endif
 }
 
@@ -114,13 +122,24 @@ void
 plt_unlock (void) {
 #if !DISABLE_LOCKING
     mutex_unlock (mutex_plt);
+#if DEBUG_LOCKING
+    plt_lock_cnt--;
+    printf ("cnt: %d\n", plt_lock_cnt);
+#endif
 #endif
 }
 
+#if DEBUG_LOCKING
+int pl_lock_cnt = 0;
+#endif
 void
 pl_lock (void) {
 #if !DISABLE_LOCKING
     mutex_lock (mutex);
+#if DEBUG_LOCKING
+    pl_lock_cnt++;
+    printf ("pcnt: %d\n", pl_lock_cnt);
+#endif
 #endif
 }
 
@@ -128,6 +147,10 @@ void
 pl_unlock (void) {
 #if !DISABLE_LOCKING
     mutex_unlock (mutex);
+#if DEBUG_LOCKING
+    pl_lock_cnt--;
+    printf ("pcnt: %d\n", pl_lock_cnt);
+#endif
 #endif
 }
 
@@ -173,6 +196,39 @@ plt_get_curr_ptr (void) {
 int
 plt_get_count (void) {
     return playlists_count;
+}
+
+playItem_t *
+plt_get_head (int plt) {
+    playlist_t *p = playlists_head;
+    for (int i = 0; p && i <= plt; i++, p = p->next) {
+        if (i == plt) {
+            if (p->head[PL_MAIN]) {
+                pl_item_ref (p->head[PL_MAIN]);
+            }
+            return p->head[PL_MAIN];
+        }
+    }
+    return NULL;
+}
+
+int
+plt_get_sel_count (int plt) {
+    playlist_t *p = playlists_head;
+    for (int i = 0; p && i <= plt; i++, p = p->next) {
+        if (i == plt) {
+            int cnt = 0;
+            LOCK;
+            for (playItem_t *it = p->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
+                if (it->selected) {
+                    cnt++;
+                }
+            }
+            UNLOCK;
+            return cnt;
+        }
+    }
+    return 0;
 }
 
 int
@@ -1226,8 +1282,10 @@ pl_get_for_idx_and_iter (int idx, int iter) {
     LOCK;
     playItem_t *it = playlist->head[iter];
     while (idx--) {
-        if (!it)
+        if (!it) {
+            UNLOCK;
             return NULL;
+        }
         it = it->next[iter];
     }
     if (it) {
@@ -2521,6 +2579,44 @@ pl_move_items (int iter, playItem_t *drop_before, uint32_t *indexes, int count) 
         playlist->tail[iter] = tail;
     }
     GLOBAL_UNLOCK;
+}
+
+void
+pl_copy_items (int iter, int plt_from, playItem_t *before, uint32_t *indices, int cnt) {
+    pl_lock ();
+    playlist_t *from = playlists_head;
+    playlist_t *to = plt_get_curr_ptr ();
+
+    int i;
+    for (i = 0; i < plt_from; i++) {
+        from = from->next;
+    }
+
+    if (!from || !to) {
+        pl_unlock ();
+        return;
+    }
+
+    for (i = 0; i < cnt; i++) {
+        playItem_t *it = from->head[iter];
+        int idx = 0;
+        while (it && idx < indices[i]) {
+            it = it->next[iter];
+            idx++;
+        }
+        if (!it) {
+            trace ("pl_copy_items: warning: item %d not found in source playlist\n", indices[i]);
+            continue;
+        }
+        playItem_t *it_new = pl_item_alloc ();
+        pl_item_copy (it_new, it);
+
+        playItem_t *after = before ? before->prev[iter] : to->tail[iter];
+        pl_insert_item (after, it_new);
+        pl_item_unref (it_new);
+
+    }
+    pl_unlock ();
 }
 
 void
