@@ -722,13 +722,18 @@ plug_load_all (void) {
 
 void
 plug_unload_all (void) {
+    fprintf (stderr, "plug_unload_all\n");
+    plugin_t *p;
+    for (p = plugins; p; p = p->next) {
+        if (p->plugin->stop) {
+            fprintf (stderr, "stopping %s...\n", p->plugin->name);
+            fflush (stderr);
+            p->plugin->stop ();
+        }
+    }
+    fprintf (stderr, "stopped all plugins\n");
     while (plugins) {
         plugin_t *next = plugins->next;
-        if (plugins->plugin->stop) {
-            fprintf (stderr, "stopping %s...", plugins->plugin->name);
-            plugins->plugin->stop ();
-            fprintf (stderr, " [OK]\n");
-        }
         if (plugins->handle) {
             dlclose (plugins->handle);
         }

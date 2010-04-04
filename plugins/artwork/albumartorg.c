@@ -44,6 +44,7 @@ fetch_from_albumart_org (const char *artist, const char *album, const char *dest
     }
     const char searchstr[] = "http://ecx.images-amazon.com/images/I/";
     char buffer[10000];
+    memset (buffer, 0, sizeof (buffer));
     char *img = NULL;
     int size = deadbeef->fread (buffer, 1, sizeof (buffer), fp);
     if (size > 0) {

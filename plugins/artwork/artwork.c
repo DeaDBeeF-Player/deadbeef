@@ -11,14 +11,14 @@
 #include "albumartorg.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(...)
+
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(...)
 
 #define DEFAULT_COVER_PATH (PREFIX "/share/deadbeef/pixmaps/noartwork.jpg")
 
 static DB_artwork_plugin_t plugin;
 DB_functions_t *deadbeef;
-
 
 typedef struct cover_query_s {
     char *fname;
@@ -535,6 +535,7 @@ static int
 artwork_plugin_stop (void)
 {
     if (tid) {
+        printf ("terminate artwork plugin\n");
         terminate = 1;
         deadbeef->cond_signal (cond);
         deadbeef->thread_join (tid);

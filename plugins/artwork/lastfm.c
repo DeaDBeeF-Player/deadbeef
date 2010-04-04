@@ -32,6 +32,7 @@ fetch_from_lastfm (const char *artist, const char *album, const char *dest)
 
     const char searchstr[] = "<image size=\"extralarge\">";
     char buffer[1000];
+    memset (buffer, 0, sizeof (buffer));
     char *img = NULL;
     int size = deadbeef->fread (buffer, 1, sizeof (buffer), fp);
     if (size > 0) {
