@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
-#include <curl/curl.h>
 #include <errno.h>
 #include <dirent.h>
 #include <unistd.h>
@@ -122,63 +121,6 @@ queue_pop (void) {
         queue_tail = NULL;
     }
     deadbeef->mutex_unlock (mutex);
-}
-
-int
-fetch_to_stream (const char *url, FILE *stream)
-{
-    CURL *curl = curl_easy_init();
-    curl_easy_setopt (curl, CURLOPT_URL, url);
-    curl_easy_setopt (curl, CURLOPT_WRITEDATA, stream);
-    curl_easy_setopt (curl, CURLOPT_FOLLOWLOCATION, 1);
-    CURLcode ret = curl_easy_perform (curl);
-    curl_easy_cleanup (curl);
-    return ret;
-}
-
-int
-fetch_to_file (const char *url, const char *filename)
-{
-    /**
-     * Downloading files directly to its locations can cause
-     * cachehits of semi-downloaded files. That's why I use
-     * temporary files
-     */
-    char temp [1024];
-    int ret;
-    snprintf (temp, sizeof (temp), "%s.part", filename);
-
-    FILE *stream = fopen (temp, "wb");
-    if (!stream)
-    {
-        trace ("Could not open %s for writing\n", temp);
-        return 0;
-    }
-    ret = fetch_to_stream (url, stream);
-    if (ret != 0) {
-        trace ("Failed to fetch %s\n", url);
-    }
-    fclose (stream);
-    if (0 == ret)
-    {
-        ret = (0 == rename (temp, filename));
-        if (!ret) {
-            trace ("Could not move %s to %s: %d\n", temp, filename, errno);
-            unlink (temp);
-        }
-    }
-    return ret;
-}
-
-char*
-fetch (const char *url)
-{
-    char *data;
-    size_t size;
-    FILE *stream = open_memstream (&data, &size);
-    fetch_to_stream (url, stream);
-    fclose (stream);
-    return data;
 }
 
 static int
@@ -462,10 +404,10 @@ fetcher_thread (void *none)
 
             make_cache_path (path, sizeof (path), param->album, param->artist);
 
-            if (deadbeef->conf_get_int ("artwork.enable_lastfm", 0) && fetch_from_lastfm (param->artist, param->album, path)) {
+            if (deadbeef->conf_get_int ("artwork.enable_lastfm", 0) && !fetch_from_lastfm (param->artist, param->album, path)) {
                 trace ("art found on last.fm for %s %s\n", param->album, param->artist);
             }
-            else if (deadbeef->conf_get_int ("artwork.enable_albumartorg", 0) && fetch_from_albumart_org (param->artist, param->album, path)) {
+            else if (deadbeef->conf_get_int ("artwork.enable_albumartorg", 0) && !fetch_from_albumart_org (param->artist, param->album, path)) {
                 trace ("art found on albumart.org for %s %s\n", param->album, param->artist);
             }
             else {
@@ -503,7 +445,7 @@ fetcher_thread (void *none)
 char*
 get_album_art (const char *fname, const char *artist, const char *album, artwork_callback callback, void *user_data)
 {
-    trace ("get_album_art: %s (%s - %s)\n", fname, artist, album);
+//    trace ("get_album_art: %s (%s - %s)\n", fname, artist, album);
     char path [1024];
 
     if (!album) {

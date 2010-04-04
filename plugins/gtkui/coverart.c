@@ -25,10 +25,10 @@
 #include "../artwork/artwork.h"
 #include "gtkui.h"
 
-#pragma GCC optimize("O0")
+#define DEFAULT_COVER_PATH (PREFIX "/share/deadbeef/pixmaps/noartwork.jpg")
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(...)
 
 extern DB_artwork_plugin_t *coverart_plugin;
 
@@ -145,6 +145,9 @@ loading_thread (void *none) {
             GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file (queue->fname, NULL);
             if (!pixbuf) {
                 trace ("GDK failed to load pixbuf from file %s\n", queue->fname);
+                pixbuf = gdk_pixbuf_new_from_file (DEFAULT_COVER_PATH, NULL);
+            }
+            if (!pixbuf) {
                 // make default empty image
                 pixbuf = gdk_pixbuf_new (GDK_COLORSPACE_RGB, FALSE, 8, 2, 2);
             }

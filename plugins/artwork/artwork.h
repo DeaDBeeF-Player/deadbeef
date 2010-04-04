@@ -5,15 +5,6 @@
 
 typedef void (*artwork_callback) (const char *fname, const char *artist, const char *album, void *user_data);
 
-char*
-fetch (const char *url);
-
-int
-fetch_to_file (const char *url, const char *filename);
-
-int
-fetch_to_stream (const char *url, FILE *stream);
-
 typedef struct {
     DB_misc_t plugin;
     // returns filename of cached image, or NULL
