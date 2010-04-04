@@ -198,6 +198,39 @@ plt_get_count (void) {
     return playlists_count;
 }
 
+playItem_t *
+plt_get_head (int plt) {
+    playlist_t *p = playlists_head;
+    for (int i = 0; p && i <= plt; i++, p = p->next) {
+        if (i == plt) {
+            if (p->head[PL_MAIN]) {
+                pl_item_ref (p->head[PL_MAIN]);
+            }
+            return p->head[PL_MAIN];
+        }
+    }
+    return NULL;
+}
+
+int
+plt_get_sel_count (int plt) {
+    playlist_t *p = playlists_head;
+    for (int i = 0; p && i <= plt; i++, p = p->next) {
+        if (i == plt) {
+            int cnt = 0;
+            LOCK;
+            for (playItem_t *it = p->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
+                if (it->selected) {
+                    cnt++;
+                }
+            }
+            UNLOCK;
+            return cnt;
+        }
+    }
+    return 0;
+}
+
 int
 plt_add (int before, const char *title) {
     trace ("plt_add\n");
@@ -2546,6 +2579,44 @@ pl_move_items (int iter, playItem_t *drop_before, uint32_t *indexes, int count) 
         playlist->tail[iter] = tail;
     }
     GLOBAL_UNLOCK;
+}
+
+void
+pl_copy_items (int iter, int plt_from, playItem_t *before, uint32_t *indices, int cnt) {
+    pl_lock ();
+    playlist_t *from = playlists_head;
+    playlist_t *to = plt_get_curr_ptr ();
+
+    int i;
+    for (i = 0; i < plt_from; i++) {
+        from = from->next;
+    }
+
+    if (!from || !to) {
+        pl_unlock ();
+        return;
+    }
+
+    for (i = 0; i < cnt; i++) {
+        playItem_t *it = from->head[iter];
+        int idx = 0;
+        while (it && idx < indices[i]) {
+            it = it->next[iter];
+            idx++;
+        }
+        if (!it) {
+            trace ("pl_copy_items: warning: item %d not found in source playlist\n", indices[i]);
+            continue;
+        }
+        playItem_t *it_new = pl_item_alloc ();
+        pl_item_copy (it_new, it);
+
+        playItem_t *after = before ? before->prev[iter] : to->tail[iter];
+        pl_insert_item (after, it_new);
+        pl_item_unref (it_new);
+
+    }
+    pl_unlock ();
 }
 
 void

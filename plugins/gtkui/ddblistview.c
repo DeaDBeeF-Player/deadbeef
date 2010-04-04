@@ -828,14 +828,15 @@ ddb_listview_list_drag_data_get              (GtkWidget       *widget,
     case TARGET_SAMEWIDGET:
         {
             // format as "STRING" consisting of array of pointers
-            int nsel = ps->binding->sel_count ();
+            int nsel = deadbeef->plt_get_sel_count (ps->drag_source_playlist);
             if (!nsel) {
                 break; // something wrong happened
             }
-            uint32_t *ptr = malloc (nsel * sizeof (uint32_t));
+            uint32_t *ptr = malloc ((nsel+1) * sizeof (uint32_t));
+            *ptr = ps->drag_source_playlist;
             int idx = 0;
-            int i = 0;
-            DdbListviewIter it = ps->binding->head ();
+            int i = 1;
+            DdbListviewIter it = deadbeef->plt_get_head (ps->drag_source_playlist);
             for (; it; idx++) {
                 if (ps->binding->is_selected (it)) {
                     ptr[i] = idx;
@@ -845,7 +846,7 @@ ddb_listview_list_drag_data_get              (GtkWidget       *widget,
                 ps->binding->unref (it);
                 it = next;
             }
-            gtk_selection_data_set (selection_data, selection_data->target, sizeof (uint32_t) * 8, (gchar *)ptr, nsel * sizeof (uint32_t));
+            gtk_selection_data_set (selection_data, selection_data->target, sizeof (uint32_t) * 8, (gchar *)ptr, (nsel+1) * sizeof (uint32_t));
             free (ptr);
         }
         break;
@@ -894,7 +895,9 @@ ddb_listview_list_drag_data_received         (GtkWidget       *widget,
     }
     else if (target_type == 1) {
         uint32_t *d= (uint32_t *)ptr;
-        int length = data->length/4;
+        int plt = *d;
+        d++;
+        int length = (data->length/4)-1;
         DdbListviewIter drop_before = it;
         // find last selected
         while (drop_before && ps->binding->is_selected (drop_before)) {
@@ -902,7 +905,7 @@ ddb_listview_list_drag_data_received         (GtkWidget       *widget,
             UNREF (drop_before);
             drop_before = next;
         }
-        ps->binding->drag_n_drop (drop_before, d, length);
+        ps->binding->drag_n_drop (drop_before, plt, d, length);
         if (drop_before) {
             UNREF (drop_before);
         }
@@ -1561,6 +1564,7 @@ ddb_listview_list_mousemove (DdbListview *ps, GdkEventMotion *ev, int ex, int ey
         GtkWidget *widget = ps->list;
         if (gtk_drag_check_threshold (widget, ps->lastpos[0], ex, ps->lastpos[1], ey)) {
             ps->dragwait = 0;
+            ps->drag_source_playlist = deadbeef->plt_get_curr ();
             GtkTargetEntry entry = {
                 .target = "STRING",
                 .flags = GTK_TARGET_SAME_WIDGET,

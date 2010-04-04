@@ -68,7 +68,7 @@ typedef struct {
     int (*get_group) (DdbListviewIter it, char *str, int size);
 
     // drag-n-drop
-    void (*drag_n_drop) (DdbListviewIter before, uint32_t *indices, int length);
+    void (*drag_n_drop) (DdbListviewIter before, int playlist, uint32_t *indices, int length);
     void (*external_drag_n_drop) (DdbListviewIter before, char *mem, int length);
 
     // callbacks
@@ -128,6 +128,7 @@ struct _DdbListview {
     int areaselect; // boolean, whether area selection is active (1), or not (0)
     int areaselect_y; // pixel-coordinate of anchor click relative to playlist origin
     int dragwait;
+    int drag_source_playlist;
     int shift_sel_anchor;
 
     // header

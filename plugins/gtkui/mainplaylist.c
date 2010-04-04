@@ -98,8 +98,16 @@ int main_get_idx (DdbListviewIter it) {
     return idx;
 }
 
-void main_drag_n_drop (DdbListviewIter before, uint32_t *indices, int length) {
-    deadbeef->pl_move_items (PL_MAIN, (DB_playItem_t *)before, indices, length);
+void main_drag_n_drop (DdbListviewIter before, int playlist, uint32_t *indices, int length) {
+    deadbeef->plt_lock ();
+    int curr = deadbeef->plt_get_curr ();
+    if (playlist == curr) {
+        deadbeef->pl_move_items (PL_MAIN, (DB_playItem_t *)before, indices, length);
+    }
+    else {
+        deadbeef->pl_copy_items (PL_MAIN, playlist, (DB_playItem_t *)before, indices, length);
+    }
+    deadbeef->plt_unlock ();
 }
 
 void main_external_drag_n_drop (DdbListviewIter before, char *mem, int length) {
