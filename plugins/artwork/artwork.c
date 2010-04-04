@@ -355,11 +355,22 @@ fetcher_thread (void *none)
                                     uint8_t *end = f->data + f->size;
                                     int enc = *data;
                                     data++; // enc
-                                    data = id3v2_skip_str (enc, data, end); // mime-type
-                                    if (!data) {
+                                    // mime-type must always be ASCII - hence enc is 0 here
+                                    uint8_t *mime_end = id3v2_skip_str (0, data, end);
+                                    if (!mime_end) {
                                         trace ("artwork: corrupted id3v2 APIC frame\n");
                                         continue;
                                     }
+                                    if (strcasecmp (data, "image/jpeg") && strcasecmp (data, "image/png")) {
+                                        trace ("artwork: unsupported mime type: %s\n", data);
+                                        continue;
+                                    }
+                                    if (*mime_end != 3) {
+                                        trace ("artwork: picture type=%d, skipped: %s\n", *mime_end);
+                                        continue;
+                                    }
+                                    trace ("artwork: mime-type=%s, picture type: %d\n", data, *mime_end);
+                                    data = mime_end;
                                     data++; // picture type
                                     data = id3v2_skip_str (enc, data, end); // description
                                     if (!data) {

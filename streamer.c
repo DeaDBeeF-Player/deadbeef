@@ -299,6 +299,7 @@ streamer_move_to_nextsong (int reason) {
             pl_global_unlock ();
             return 0;
         }
+        pl_global_unlock ();
         return streamer_move_to_randomsong ();
     }
     pl_global_unlock ();
