@@ -109,6 +109,9 @@ void draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbListview
 //                gdk_draw_rectangle (drawable, GTK_WIDGET (listview)->style->white_gc, TRUE, x, y, width, h);
                 const char *album = deadbeef->pl_find_meta (group_it, "album");
                 const char *artist = deadbeef->pl_find_meta (group_it, "artist");
+                if (!album || !*album) {
+                    album = deadbeef->pl_find_meta (group_it, "title");
+                }
                 GdkPixbuf *pixbuf = get_cover_art (((DB_playItem_t *)group_it)->fname, artist, album, art_width);
                 if (pixbuf) {
                     int pw = gdk_pixbuf_get_width (pixbuf);
