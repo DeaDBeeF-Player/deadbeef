@@ -903,6 +903,9 @@ ddb_listview_list_drag_data_received         (GtkWidget       *widget,
             drop_before = next;
         }
         ps->binding->drag_n_drop (drop_before, d, length);
+        if (drop_before) {
+            UNREF (drop_before);
+        }
     }
     gtk_drag_finish (drag_context, TRUE, FALSE, time);
 }
