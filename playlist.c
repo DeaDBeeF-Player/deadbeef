@@ -779,6 +779,7 @@ pl_insert_cue_from_buffer (playItem_t *after, playItem_t *origin, const uint8_t 
     }
     // copy metadata from embedded tags
     playItem_t *first = ins ? ins->next[PL_MAIN] : playlist->head[PL_MAIN];
+    pl_append_meta (origin, "tags", "cuesheet");
     pl_items_copy_junk (origin, first, after);
     UNLOCK;
     return after;
@@ -2758,6 +2759,7 @@ pl_items_copy_junk (playItem_t *from, playItem_t *first, playItem_t *last) {
     const char *copyright = pl_find_meta (from, "copyright");
     const char *vendor = pl_find_meta (from, "vendor");
     const char *comment = pl_find_meta (from, "comment");
+    const char *tags = pl_find_meta (from, "tags");
     playItem_t *i;
     for (i = first; i; i = i->next[PL_MAIN]) {
         if (year) {
@@ -2774,6 +2776,9 @@ pl_items_copy_junk (playItem_t *from, playItem_t *first, playItem_t *last) {
         }
         if (comment) {
             pl_add_meta (i, "comment", comment);
+        }
+        if (tags) {
+            pl_add_meta (i, "tags", tags);
         }
         if (i == last) {
             break;
