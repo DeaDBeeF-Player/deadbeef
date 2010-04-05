@@ -113,7 +113,7 @@ junk_iconv (const char *in, int inlen, char *out, int outlen, const char *cs_in,
 #ifdef __linux__
     char *pin = (char*)in;
 #else
-    const char *pin = value;
+    const char *pin = in;
 #endif
 
     size_t inbytesleft = inlen;
