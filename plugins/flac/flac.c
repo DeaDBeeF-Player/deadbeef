@@ -566,6 +566,7 @@ cflac_init_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__Str
         if (!title_added) {
             deadbeef->pl_add_meta (it, "title", NULL);
         }
+        deadbeef->pl_add_meta (it, "tags", "VorbisComments");
     }
 }
 
@@ -726,7 +727,6 @@ cflac_insert_fail:
     return NULL;
 }
 
-
 static const char *metainfo[] = {
     "ARTIST", "artist",
     "TITLE", "title",
@@ -790,6 +790,8 @@ cflac_read_metadata (DB_playItem_t *it) {
 
     FLAC__metadata_iterator_delete (iter);
     err = 0;
+    deadbeef->pl_add_meta (it, "title", NULL);
+    deadbeef->pl_add_meta (it, "tags", "VorbisComments");
 error:
     if (chain) {
         FLAC__metadata_chain_delete (chain);
