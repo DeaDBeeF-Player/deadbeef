@@ -208,6 +208,7 @@ static DB_functions_t deadbeef_api = {
     .junk_get_leading_size_stdio = junk_get_leading_size_stdio,
     .junk_detect_charset = junk_detect_charset,
     .junk_recode = junk_recode,
+    .junk_iconv = junk_iconv,
     // vfs
     .fopen = vfs_fopen,
     .fclose = vfs_fclose,

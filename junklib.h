@@ -98,7 +98,10 @@ junk_get_leading_size (DB_FILE *fp);
 const char *
 junk_detect_charset (const char *s);
 
-void
+int
+junk_iconv (const char *in, int inlen, char *out, int outlen, const char *cs_in, const char *cs_out);
+
+int
 junk_recode (const char *in, int inlen, char *out, int outlen, const char *cs);
 
 #endif // __JUNKLIB_H

@@ -450,7 +450,8 @@ typedef struct {
     int (*junk_get_leading_size_stdio) (FILE *fp);
     void (*junk_copy) (DB_playItem_t *from, DB_playItem_t *first, DB_playItem_t *last);
     const char * (*junk_detect_charset) (const char *s);
-    void (*junk_recode) (const char *in, int inlen, char *out, int outlen, const char *cs);
+    int (*junk_recode) (const char *in, int inlen, char *out, int outlen, const char *cs);
+    int (*junk_iconv) (const char *in, int inlen, char *out, int outlen, const char *cs_in, const char *cs_out);
     // vfs
     DB_FILE* (*fopen) (const char *fname);
     void (*fclose) (DB_FILE *f);

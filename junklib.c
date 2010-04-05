@@ -37,8 +37,8 @@
 
 #define UTF8 "utf-8"
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -312,67 +312,10 @@ can_be_russian (const signed char *str) {
     return 0;
 }
 
-#if 0
-static char *
-convstr_id3v2_2to3 (const unsigned char* str, int sz) {
-    static char out[2048];
-    const char *enc = "iso8859-1";
-    char *ret = out;
-
-    // hack to add limited cp1251 recoding support
-    if (*str == 1) {
-        if (str[1] == 0xff && str[2] == 0xfe) {
-            enc = "UCS-2LE";
-            str += 2;
-            sz -= 2;
-        }
-        else if (str[2] == 0xff && str[1] == 0xfe) {
-            enc = "UCS-2BE";
-            str += 2;
-            sz -= 2;
-        }
-        else {
-            trace ("invalid ucs-2 signature %x %x\n", (int)str[1], (int)str[2]);
-            return NULL;
-        }
-    }
-    else {
-        if (can_be_russian (&str[1])) {
-            enc = "cp1251";
-        }
-    }
-    str++;
-    sz--;
-    iconv_t cd = iconv_open (UTF8, enc);
-    if (cd == (iconv_t)-1) {
-        trace ("iconv can't recoode from %s to utf8", enc);
-        return strdup ("-");
-    }
-    else {
-        size_t inbytesleft = sz;
-        size_t outbytesleft = 2047;
-#ifdef __linux__
-        char *pin = (char*)str;
-#else
-        const char *pin = str;
-#endif
-        char *pout = out;
-        memset (out, 0, sizeof (out));
-        /*size_t res = */iconv (cd, &pin, &inbytesleft, &pout, &outbytesleft);
-        iconv_close (cd);
-        ret = out;
-    }
-    return strdup (ret);
-}
-#endif
-
 static char *
 convstr_id3v2 (int version, uint8_t encoding, const unsigned char* str, int sz) {
     static char out[2048];
     const char *enc = "iso8859-1";
-    char *ret = out;
-
-    // hack to add limited cp1251 recoding support
 
     if (version == 4 && encoding == 3) {
         // utf8
@@ -415,32 +358,20 @@ convstr_id3v2 (int version, uint8_t encoding, const unsigned char* str, int sz) 
         enc = "iso8859-1";
     }
 #endif
-    else {
+    else if (encoding == 0) {
+        // hack to add limited cp1251 recoding support
         if (can_be_russian (str)) {
             enc = "cp1251";
         }
     }
-    iconv_t cd = iconv_open (UTF8, enc);
-    if (cd == (iconv_t)-1) {
-        trace ("iconv can't recode from %s to utf8\n", enc);
-        return strdup ("-");
-    }
     else {
-        size_t inbytesleft = sz;
-        size_t outbytesleft = 2047;
-#ifdef __linux__
-        char *pin = (char*)str;
-#else
-        const char *pin = str;
-#endif
-        char *pout = out;
-        memset (out, 0, sizeof (out));
-        /*size_t res = */iconv (cd, &pin, &inbytesleft, &pout, &outbytesleft);
-        iconv_close (cd);
-        ret = out;
+        return 0; // invalid encoding
     }
-//    trace ("decoded %s\n", out+3);
-    return strdup (ret);
+    if (junk_iconv (str, sz, out, sizeof (out), enc, UTF8) > 0) {
+        trace ("converted: %s\n", out);
+        return strdup (out);
+    }
+    return NULL;
 }
 
 static const char *
@@ -458,52 +389,18 @@ convstr_id3v1 (const char* str, int sz) {
     }
 
     // check for utf8 (hack)
-    iconv_t cd;
-    cd = iconv_open (UTF8, UTF8);
-    if (cd == (iconv_t)-1) {
-        trace ("iconv doesn't support utf8\n");
-        return str;
-    }
-    size_t inbytesleft = sz;
-    size_t outbytesleft = 2047;
-#ifdef __linux__
-        char *pin = (char*)str;
-#else
-        const char *pin = str;
-#endif
-    char *pout = out;
-    memset (out, 0, sizeof (out));
-    size_t res = iconv (cd, &pin, &inbytesleft, &pout, &outbytesleft);
-    iconv_close (cd);
-    if (res == 0) {
-        strncpy (out, str, 2047);
-        out[min (sz, 2047)] = 0;
+    if (junk_iconv (str, sz, out, sizeof (out), UTF8, UTF8) > 0) {
         return out;
     }
-
     const char *enc = "iso8859-1";
     if (can_be_russian (str)) {
         enc = "cp1251";
     }
-    cd = iconv_open (UTF8, enc);
-    if (cd == (iconv_t)-1) {
-        trace ("iconv can't recode from %s to utf8\n", enc);
-        return str;
+
+    if (junk_iconv (str, sz, out, sizeof (out), enc, UTF8) > 0) {
+        return out;
     }
-    else {
-        size_t inbytesleft = sz;
-        size_t outbytesleft = 2047;
-#ifdef __linux__
-        char *pin = (char*)str;
-#else
-        const char *pin = str;
-#endif
-        char *pout = out;
-        memset (out, 0, sizeof (out));
-        /*size_t res = */iconv (cd, &pin, &inbytesleft, &pout, &outbytesleft);
-        iconv_close (cd);
-    }
-    return out;
+    return NULL;
 }
 
 static void
@@ -2849,26 +2746,8 @@ junk_detect_charset (const char *s) {
     return "iso8859-1";
 }
 
-void
+int
 junk_recode (const char *in, int inlen, char *out, int outlen, const char *cs) {
-    iconv_t cd = iconv_open (UTF8, cs);
-    if (cd == (iconv_t)-1) {
-        trace ("iconv can't recode from %s to utf8\n", cs);
-        memcpy (out, in, min(inlen, outlen));
-        return;
-    }
-    else {
-        size_t inbytesleft = inlen;
-        size_t outbytesleft = outlen;
-#ifdef __linux__
-        char *pin = (char*)in;
-#else
-        const char *pin = in;
-#endif
-        char *pout = out;
-        memset (out, 0, outlen);
-        size_t res = iconv (cd, &pin, &inbytesleft, &pout, &outbytesleft);
-        iconv_close (cd);
-    }
+    return junk_iconv (in, inlen, out, outlen, cs, UTF8);
 }
 
