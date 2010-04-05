@@ -48,6 +48,7 @@ thread_start (void (*fn)(void *ctx), void *ctx) {
 
 intptr_t
 thread_start_low_priority (void (*fn)(void *ctx), void *ctx) {
+#ifdef __linux__
     pthread_t tid;
     pthread_attr_t attr;
     int s = pthread_attr_init (&attr);
@@ -82,6 +83,9 @@ thread_start_low_priority (void (*fn)(void *ctx), void *ctx) {
         return 0;
     }
     return tid;
+#else
+    return thread_start (fn, ctx);
+#endif
 }
 
 int
