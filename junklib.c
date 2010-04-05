@@ -32,6 +32,7 @@
 #endif
 
 #define MAX_TEXT_FRAME_SIZE 1024
+#define MAX_CUESHEET_FRAME_SIZE 10000
 #define MAX_APEV2_FRAME_SIZE 100000
 #define MAX_ID3V2_FRAME_SIZE 100000
 
@@ -779,7 +780,7 @@ junk_apev2_read_full (playItem_t *it, DB_apev2_tag_t *tag_store, DB_FILE *fp) {
 
             int valuetype = ((itemflags >> 1) & 3);
             // add metainfo only if it's textual
-            if (valuetype == 0 && itemsize < MAX_TEXT_FRAME_SIZE) {
+            if (valuetype == 0 && (itemsize < MAX_TEXT_FRAME_SIZE || (!strcasecmp (key, "cuesheet") && itemsize < MAX_CUESHEET_FRAME_SIZE))) {
                 if (!u8_valid (value, itemsize, NULL)) {
                     trace ("junk_read_ape_full: bad encoding in text frame %s\n", key);
                     continue;
