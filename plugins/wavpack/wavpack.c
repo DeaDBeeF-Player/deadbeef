@@ -41,30 +41,30 @@ typedef struct {
 } wvctx_t;
 
 int32_t wv_read_bytes(void *id, void *data, int32_t bcount) {
-    trace ("wv_read_bytes\n");
+//    trace ("wv_read_bytes\n");
     return deadbeef->fread (data, 1, bcount, id);
 }
 
 uint32_t wv_get_pos(void *id) {
-    trace ("wv_get_pos\n");
+//    trace ("wv_get_pos\n");
     return deadbeef->ftell (id);
 }
 
 int wv_set_pos_abs(void *id, uint32_t pos) {
-    trace ("wv_set_pos_abs\n");
+//    trace ("wv_set_pos_abs\n");
     return deadbeef->fseek (id, pos, SEEK_SET);
 }
 int wv_set_pos_rel(void *id, int32_t delta, int mode) {
-    trace ("wv_set_pos_rel\n");
+//    trace ("wv_set_pos_rel\n");
     return deadbeef->fseek (id, delta, SEEK_CUR);
 }
 int wv_push_back_byte(void *id, int c) {
-    trace ("wv_push_back_byte\n");
+//    trace ("wv_push_back_byte\n");
     deadbeef->fseek (id, -1, SEEK_CUR);
     return deadbeef->ftell (id);
 }
 uint32_t wv_get_length(void *id) {
-    trace ("wv_get_length\n");
+//    trace ("wv_get_length\n");
     size_t pos = deadbeef->ftell (id);
     deadbeef->fseek (id, 0, SEEK_END);
     size_t sz = deadbeef->ftell (id);
@@ -72,7 +72,7 @@ uint32_t wv_get_length(void *id) {
     return sz;
 }
 int wv_can_seek(void *id) {
-    trace ("wv_can_seek\n");
+//    trace ("wv_can_seek\n");
     return 1;
 }
 
@@ -233,7 +233,6 @@ wv_insert (DB_playItem_t *after, const char *fname) {
     }
     int totalsamples = WavpackGetNumSamples (ctx);
     int samplerate = WavpackGetSampleRate (ctx);
-    WavpackCloseFile (ctx);
     float duration = (float)totalsamples / samplerate;
 
     DB_playItem_t *it = deadbeef->pl_item_alloc ();
@@ -241,9 +240,84 @@ wv_insert (DB_playItem_t *after, const char *fname) {
     it->fname = strdup (fname);
     it->filetype = "wv";
     deadbeef->pl_set_item_duration (it, duration);
-
     trace ("wv: totalsamples=%d, samplerate=%d, duration=%f\n", totalsamples, samplerate, duration);
 
+#if 0
+    int num = WavpackGetNumTagItems (ctx);
+    trace ("num tag items: %d\n", num);
+
+    for (int i = 0; i < num; i++) {
+        char str[1024];
+        WavpackGetTagItemIndexed (ctx, i, str, sizeof (str));
+        trace ("tag item: %s\n", str);
+    }
+
+#endif
+    int apeerr = deadbeef->junk_apev2_read (it, fp);
+    if (!apeerr) {
+        trace ("wv: ape tag found\n");
+    }
+    int v1err = deadbeef->junk_id3v1_read (it, fp);
+    if (!v1err) {
+        trace ("wv: id3v1 tag found\n");
+    }
+
+#if 0
+    // embedded cue
+    char *emb_cuesheet;
+    int len = WavpackGetTagItem (ctx, "cuesheet", NULL, 0);
+    if (len) {
+        emb_cuesheet = malloc (len);
+        if (emb_cuesheet) {
+            WavpackGetTagItem (ctx, "Cuesheet", emb_cuesheet, len);
+            trace ("got cuesheet\n%s\n", emb_cuesheet);
+            DB_playItem_t *last = deadbeef->pl_insert_cue_from_buffer (after, it, emb_cuesheet, strlen (emb_cuesheet), totalsamples, samplerate);
+            free (emb_cuesheet);
+            if (last) {
+                deadbeef->pl_item_unref (it);
+                deadbeef->fclose (fp);
+                WavpackCloseFile (ctx);
+                return last;
+            }
+            trace ("pl_insert_cue_from_buffer failed!\n");
+        }
+    }
+#endif
+
+    // embedded cue
+    const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
+    if (cuesheet) {
+        trace ("found cuesheet: %s\n", cuesheet);
+        DB_playItem_t *last = deadbeef->pl_insert_cue_from_buffer (after, it, cuesheet, strlen (cuesheet), totalsamples, samplerate);
+        if (last) {
+            deadbeef->fclose (fp);
+            WavpackCloseFile (ctx);
+            deadbeef->pl_item_unref (it);
+            return last;
+        }
+    }
+    // cue file on disc
+    DB_playItem_t *cue_after = deadbeef->pl_insert_cue (after, it, totalsamples, samplerate);
+    if (cue_after) {
+        deadbeef->fclose (fp);
+        WavpackCloseFile (ctx);
+        return cue_after;
+    }
+
+    after = deadbeef->pl_insert_item (after, it);
+    deadbeef->pl_item_unref (it);
+
+    deadbeef->fclose (fp);
+    WavpackCloseFile (ctx);
+    return after;
+}
+
+int
+wv_read_metadata (DB_playItem_t *it) {
+    DB_FILE *fp = deadbeef->fopen (it->fname);
+    if (!fp) {
+        return -1;
+    }
     int apeerr = deadbeef->junk_apev2_read (it, fp);
     if (!apeerr) {
         trace ("wv: ape tag found\n");
@@ -253,27 +327,7 @@ wv_insert (DB_playItem_t *after, const char *fname) {
         trace ("wv: id3v1 tag found\n");
     }
     deadbeef->fclose (fp);
-
-    DB_playItem_t *cue_after = deadbeef->pl_insert_cue (after, it, totalsamples, samplerate);
-    if (cue_after) {
-        return cue_after;
-    }
-
-    // embedded cue
-    const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
-    if (cuesheet) {
-        DB_playItem_t *last = deadbeef->pl_insert_cue_from_buffer (after, it, cuesheet, strlen (cuesheet), totalsamples, samplerate);
-        if (last) {
-            deadbeef->pl_item_unref (it);
-            return last;
-        }
-    }
-
-    deadbeef->pl_add_meta (it, "title", NULL);
-    after = deadbeef->pl_insert_item (after, it);
-    deadbeef->pl_item_unref (it);
-
-    return after;
+    return 0;
 }
 
 static const char * exts[] = { "wv", NULL };
@@ -298,6 +352,7 @@ static DB_decoder_t plugin = {
     .seek = wv_seek,
     .seek_sample = wv_seek_sample,
     .insert = wv_insert,
+    .read_metadata = wv_read_metadata,
     .exts = exts,
     .filetypes = filetypes
 };
