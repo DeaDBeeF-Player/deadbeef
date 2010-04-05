@@ -19,6 +19,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <FLAC/stream_decoder.h>
+#include <FLAC/metadata.h>
 #include "../../deadbeef.h"
 
 static DB_decoder_t plugin;
@@ -511,6 +512,9 @@ cflac_init_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__Str
                 else if (!strncasecmp (s, "TRACKNUMBER=", 12)) {
                     deadbeef->pl_add_meta (it, "track", s + 12);
                 }
+                else if (!strncasecmp (s, "TRACKTOTAL=", 11)) {
+                    deadbeef->pl_add_meta (it, "numtracks", s + 11);
+                }
                 else if (!strncasecmp (s, "DATE=", 5)) {
                     deadbeef->pl_add_meta (it, "year", s + 5);
                 }
@@ -722,6 +726,139 @@ cflac_insert_fail:
     return NULL;
 }
 
+
+static const char *metainfo[] = {
+    "ARTIST", "artist",
+    "TITLE", "title",
+    "ALBUM", "album",
+    "TRACKNUMBER", "track",
+    "DATE", "year",
+    "GENRE", "genre",
+    "COMMENT", "comment",
+    "PERFORMER", "performer",
+    "ENSEMBLE", "band",
+    "COMPOSER", "composer",
+    "ENCODED-BY", "vendor",
+    "DISCNUMBER", "disc",
+    "COPYRIGHT", "copyright",
+    "TRACKTOTAL", "numtracks",
+    NULL
+};
+
+int
+cflac_read_metadata (DB_playItem_t *it) {
+    deadbeef->pl_delete_all_meta (it);
+    int err = -1;
+    FLAC__Metadata_Chain *chain = NULL;
+    FLAC__Metadata_Iterator *iter = NULL;
+
+    chain = FLAC__metadata_chain_new ();
+    if (!chain) {
+        trace ("cflac_read_metadata: FLAC__metadata_chain_new failed\n");
+        return -1;
+    }
+    FLAC__bool res = FLAC__metadata_chain_read (chain, it->fname);
+    if (!res) {
+        trace ("cflac_read_metadata: FLAC__metadata_chain_read failed\n");
+        goto error;
+    }
+    FLAC__metadata_chain_merge_padding (chain);
+
+    iter = FLAC__metadata_iterator_new ();
+    if (!iter) {
+        trace ("cflac_read_metadata: FLAC__metadata_iterator_new failed\n");
+        goto error;
+    }
+    FLAC__metadata_iterator_init (iter, chain);
+    do {
+        FLAC__StreamMetadata *data = FLAC__metadata_iterator_get_block (iter);
+        if (data && data->type == FLAC__METADATA_TYPE_VORBIS_COMMENT) {
+            // delete all crap
+            for (int m = 0; metainfo[m]; m += 2) {
+                int offs = 0;
+                do {
+                    offs = FLAC__metadata_object_vorbiscomment_find_entry_from (data, offs, metainfo[m]);
+                    if (offs != -1) {
+                        FLAC__StreamMetadata_VorbisComment_Entry *comm = &data->data.vorbis_comment.comments[offs];
+                        deadbeef->pl_append_meta (it, metainfo[m+1], comm->entry + strlen (metainfo[m])+1);
+                        offs++;
+                    }
+                } while (offs != -1);
+            }
+        }
+    } while (FLAC__metadata_iterator_next (iter));
+
+    FLAC__metadata_iterator_delete (iter);
+    err = 0;
+error:
+    if (chain) {
+        FLAC__metadata_chain_delete (chain);
+    }
+
+    return err;
+}
+
+int
+cflac_write_metadata (DB_playItem_t *it) {
+    int err = -1;
+    FLAC__Metadata_Chain *chain = NULL;
+    FLAC__Metadata_Iterator *iter = NULL;
+
+    chain = FLAC__metadata_chain_new ();
+    if (!chain) {
+        trace ("cflac_write_metadata: FLAC__metadata_chain_new failed\n");
+        return -1;
+    }
+    FLAC__bool res = FLAC__metadata_chain_read (chain, it->fname);
+    if (!res) {
+        trace ("cflac_write_metadata: FLAC__metadata_chain_read failed\n");
+        goto error;
+    }
+    FLAC__metadata_chain_merge_padding (chain);
+
+    iter = FLAC__metadata_iterator_new ();
+    if (!iter) {
+        trace ("cflac_write_metadata: FLAC__metadata_iterator_new failed\n");
+        goto error;
+    }
+
+    FLAC__metadata_iterator_init (iter, chain);
+    do {
+        FLAC__StreamMetadata *data = FLAC__metadata_iterator_get_block (iter);
+        if (data && data->type == FLAC__METADATA_TYPE_VORBIS_COMMENT) {
+            // delete all crap
+            for (int m = 0; metainfo[m]; m += 2) {
+                const char *val = deadbeef->pl_find_meta (it, metainfo[m+1]);
+                if (val && *val) {
+                    char s[1024];
+                    snprintf (s, sizeof (s), "%s=%s", metainfo[m], val);
+                    FLAC__StreamMetadata_VorbisComment_Entry ent = {
+                        .length = strlen (s),
+                        .entry = (FLAC__byte*)s
+                    };
+                    FLAC__metadata_object_vorbiscomment_replace_comment (data, ent, 1, 1);
+                }
+                else {
+                    FLAC__metadata_object_vorbiscomment_remove_entry_matching (data, metainfo[m]);
+                }
+            }
+        }
+    } while (FLAC__metadata_iterator_next (iter));
+
+    FLAC__metadata_iterator_delete (iter);
+    if (!FLAC__metadata_chain_write (chain, 1, 0)) {
+        trace ("cflac_write_metadata: FLAC__metadata_chain_write failed\n");
+        goto error;
+    }
+    err = 0;
+error:
+    if (chain) {
+        FLAC__metadata_chain_delete (chain);
+    }
+
+    return err;
+}
+
 static const char *exts[] = { "flac", "ogg", "oga", NULL };
 
 static const char *filetypes[] = { "FLAC", "OggFLAC", NULL };
@@ -745,6 +882,8 @@ static DB_decoder_t plugin = {
     .seek = cflac_seek,
     .seek_sample = cflac_seek_sample,
     .insert = cflac_insert,
+    .read_metadata = cflac_read_metadata,
+    .write_metadata = cflac_write_metadata,
     .exts = exts,
     .filetypes = filetypes
 };
