@@ -314,21 +314,31 @@ can_be_russian (const signed char *str) {
 
 static char *
 convstr_id3v2 (int version, uint8_t encoding, const unsigned char* str, int sz) {
-    static char out[2048];
-    const char *enc = "iso8859-1";
+    char out[2048] = "";
+    const char *enc = NULL;
 
-    if (version == 4 && encoding == 3) {
-        // utf8
-        trace ("utf8\n");
-        strncpy (out, str, 2047);
-        out[min (sz, 2047)] = 0;
-        return strdup (out);
-    }
-    else if (version == 4 && encoding == 2) {
+    // detect encoding
+    if (version == 4 && encoding == 2) {
         trace ("utf16be\n");
         enc = "UTF-16BE";
     }
-    else if (encoding == 1) {
+    else if (version == 4 && encoding == 3) {
+        enc = UTF8;
+    }
+    else if (encoding == 0) {
+        // hack to add limited cp1251 recoding support
+        if (can_be_russian (str)) {
+            enc = "cp1251";
+        }
+    }
+    else if (encoding != 1 && !(version == 4 && encoding == 3)){
+        return NULL; // invalid encoding
+    }
+
+    if (encoding == 1) { // detect kind of unicode used
+        if (sz < 2) {
+            return NULL;
+        }
         if (version < 4) {
             if (str[0] == 0xff && str[1] == 0xfe) {
                 enc = "UCS-2LE";
@@ -350,32 +360,34 @@ convstr_id3v2 (int version, uint8_t encoding, const unsigned char* str, int sz) 
             enc = "UTF-16";
         }
     }
-#if 0
-    // NOTE: some dumb taggers put non-iso8859-1 text with enc=0
-    else if (*str == 0) {
-        // iso8859-1
-        trace ("iso8859-1\n");
-        enc = "iso8859-1";
-    }
-#endif
     else if (encoding == 0) {
         // hack to add limited cp1251 recoding support
         if (can_be_russian (str)) {
             enc = "cp1251";
         }
+        else {
+            enc = "iso8859-1";
+        }
+    }
+
+    int converted_sz = 0;
+
+    if ((converted_sz = junk_iconv (str, sz, out, sizeof (out), enc, UTF8)) < 0) {
+        return NULL;
     }
     else {
-        return 0; // invalid encoding
+        for (int n = 0; n < converted_sz; n++) {
+            if (out[n] == 0 && n != converted_sz-1) {
+                out[n] = '\n';
+            }
+        }
     }
-    if (junk_iconv (str, sz, out, sizeof (out), enc, UTF8) > 0) {
-        trace ("converted: %s\n", out);
-        return strdup (out);
-    }
-    return NULL;
+    return strdup (out);
 }
 
 static const char *
 convstr_id3v1 (const char* str, int sz) {
+    trace ("convstr_id3v1\n");
     static char out[2048];
     int i;
     for (i = 0; i < sz; i++) {
@@ -2441,7 +2453,14 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                         trace ("frame %s is too big, discard\n", frameid);
                         break;
                     }
+
                     char *text = convstr_id3v2 (version_major, readptr[0], readptr+1, synched_size-1);
+
+                    // couple of simple tests
+                    //char *text = convstr_id3v2 (4, 3, "текст1\0текст2", strlen ("текст1")*2+2);
+                    //const char ucstext[] = { 0x42, 0x04, 0x35, 0x04, 0x3a, 0x04, 0x41, 0x04, 0x42, 0x04, 0x31, 0x00, 0x00, 0x00, 0x42, 0x04, 0x35, 0x04, 0x3a, 0x04, 0x41, 0x04, 0x42, 0x04, 0x32, 0x00 };
+                    //char *text = convstr_id3v2 (4, 1, ucstext, sizeof (ucstext));
+
                     if (text && *text && text_holders[f]) {
                         if (*text_holders[f]) {
                             // append
