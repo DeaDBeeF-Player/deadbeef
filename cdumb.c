@@ -18,8 +18,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#define LIBICONV_PLUG
-#include <iconv.h>
 #include "dumb/dumb-kode54/include/dumb.h"
 #include "dumb/dumb-kode54/include/internal/it.h"
 #include "deadbeef.h"
@@ -691,62 +689,16 @@ static const char *convstr (const char* str, int sz) {
     }
 
     // check for utf8 (hack)
-    iconv_t cd;
-    cd = iconv_open ("utf-8", "utf-8");
-    if (cd == (iconv_t)-1) {
-        trace ("iconv doesn't support utf8\n");
-        return str;
-    }
-    size_t inbytesleft = sz;
-    size_t outbytesleft = 2047;
-#ifdef __linux__
-        char *pin = (char*)str;
-#else
-        const char *pin = str;
-#endif
-    char *pout = out;
-    memset (out, 0, sizeof (out));
-    size_t res = iconv (cd, &pin, &inbytesleft, &pout, &outbytesleft);
-    iconv_close (cd);
-    if (res == 0) {
-        strncpy (out, str, 2047);
-        out[min (sz, 2047)] = 0;
+    if (deadbeef->junk_iconv (str, sz, out, sizeof (out), "utf-8", "utf-8") >= 0) {
         return out;
     }
 
-    const char *enc = "iso8859-1";
-#if 0
-    int latin = 0;
-    int rus = 0;
-    for (int i = 0; i < sz; i++) {
-        if ((str[i] >= 'A' && str[i] <= 'Z')
-                || str[i] >= 'a' && str[i] <= 'z') {
-            latin++;
-        }
-        else if (str[i] < 0) {
-            rus++;
-        }
+    if (deadbeef->junk_iconv (str, sz, out, sizeof (out), "utf-8", "iso8859-1") >= 0) {
+        return out;
     }
-    if (rus > latin/2) {
-        // might be russian
-        enc = "cp1251";
-    }
-#endif
-    cd = iconv_open ("utf-8", enc);
-    if (cd == (iconv_t)-1) {
-        trace ("iconv can't recode from %s to utf8\n", enc);
-        return str;
-    }
-    else {
-        size_t inbytesleft = sz;
-        size_t outbytesleft = 2047;
-        char *pin = (char*)str;
-        char *pout = out;
-        memset (out, 0, sizeof (out));
-        /*size_t res = */iconv (cd, &pin, &inbytesleft, &pout, &outbytesleft);
-        iconv_close (cd);
-    }
-    return out;
+
+    trace ("cdumb: failed to detect charset\n");
+    return NULL;
 }
 
 static DB_playItem_t *
