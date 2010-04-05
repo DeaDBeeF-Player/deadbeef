@@ -140,6 +140,7 @@ update_vorbis_comments (DB_playItem_t *it, vorbis_comment *vc) {
         }
     }
     deadbeef->pl_add_meta (it, "title", NULL);
+    deadbeef->pl_add_meta (it, "tags", "VorbisComments");
 }
 
 static DB_fileinfo_t *
