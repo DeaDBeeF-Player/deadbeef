@@ -28,12 +28,14 @@
 
 static GtkWidget *trackproperties;
 static DB_playItem_t *track;
+static GtkCellRenderer *rend_text2;
 
 gboolean
 on_trackproperties_delete_event        (GtkWidget       *widget,
                                         GdkEvent        *event,
                                         gpointer         user_data)
 {
+    rend_text2 = NULL;
     trackproperties = NULL;
     if (track) {
         deadbeef->pl_item_unref (track);
@@ -48,11 +50,7 @@ on_trackproperties_key_press_event     (GtkWidget       *widget,
                                         gpointer         user_data)
 {
     if (event->keyval == GDK_Escape) {
-        trackproperties = NULL;
-        if (track) {
-            deadbeef->pl_item_unref (track);
-            track = NULL;
-        }
+        on_trackproperties_delete_event (NULL, NULL, NULL);
         gtk_widget_destroy (widget);
     }
     return FALSE;
@@ -63,12 +61,9 @@ on_closebtn_clicked                    (GtkButton       *button,
                                         gpointer         user_data)
 {
     if (trackproperties) {
-        if (track) {
-            deadbeef->pl_item_unref (track);
-            track = NULL;
-        }
-        gtk_widget_destroy (trackproperties);
-        trackproperties = NULL;
+        GtkWidget *w = trackproperties;
+        on_trackproperties_delete_event (NULL, NULL, NULL);
+        gtk_widget_destroy (w);
     }
 }
 
@@ -106,6 +101,28 @@ show_track_properties_dlg (DB_playItem_t *it) {
         deadbeef->pl_item_ref (it);
     }
     track = it;
+
+
+    int allow_editing = 0;
+
+    if (deadbeef->is_local_file (it->fname)) {
+        // get decoder plugin by id
+        DB_decoder_t *dec = NULL;
+        if (it->decoder_id) {
+            DB_decoder_t **decoders = deadbeef->plug_get_decoder_list ();
+            for (int i = 0; decoders[i]; i++) {
+                if (!strcmp (decoders[i]->plugin.id, it->decoder_id)) {
+                    dec = decoders[i];
+                    break;
+                }
+            }
+        }
+
+        if (dec && dec->write_metadata && deadbeef->conf_get_int ("enable_tag_writing", 0)) {
+            allow_editing = 1;
+        }
+    }
+
     GtkTreeView *tree;
     GtkListStore *store;
     if (!trackproperties) {
@@ -114,8 +131,7 @@ show_track_properties_dlg (DB_playItem_t *it) {
         tree = GTK_TREE_VIEW (lookup_widget (trackproperties, "metalist"));
         store = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_STRING);
         GtkCellRenderer *rend_text = gtk_cell_renderer_text_new ();
-        GtkCellRenderer *rend_text2 = gtk_cell_renderer_text_new ();
-        g_object_set (G_OBJECT (rend_text2), "editable", TRUE, NULL);
+        rend_text2 = gtk_cell_renderer_text_new ();
         g_signal_connect ((gpointer)rend_text2, "edited",
                 G_CALLBACK (on_metadata_edited),
                 store);
@@ -131,13 +147,20 @@ show_track_properties_dlg (DB_playItem_t *it) {
         // remove everything from store
         gtk_list_store_clear (store);
     }
+
+    if (allow_editing) {
+        g_object_set (G_OBJECT (rend_text2), "editable", TRUE, NULL);
+    }
+    else {
+        g_object_set (G_OBJECT (rend_text2), "editable", FALSE, NULL);
+    }
+
     GtkWidget *widget = trackproperties;
     GtkWidget *w;
     const char *meta;
     // location
     w = lookup_widget (widget, "location");
     gtk_entry_set_text (GTK_ENTRY (w), it->fname);
-
 
     deadbeef->pl_lock ();
     int i = 0;
@@ -154,19 +177,7 @@ show_track_properties_dlg (DB_playItem_t *it) {
     }
     deadbeef->pl_unlock ();
 
-    // get decoder plugin by id
-    DB_decoder_t *dec = NULL;
-    if (it->decoder_id) {
-        DB_decoder_t **decoders = deadbeef->plug_get_decoder_list ();
-        for (int i = 0; decoders[i]; i++) {
-            if (!strcmp (decoders[i]->plugin.id, it->decoder_id)) {
-                dec = decoders[i];
-                break;
-            }
-        }
-    }
-
-    if (dec && dec->write_metadata && deadbeef->conf_get_int ("enable_tag_writing", 0)) {
+    if (allow_editing) {
         gtk_widget_set_sensitive (lookup_widget (widget, "write_tags"), TRUE);
     }
     else {
