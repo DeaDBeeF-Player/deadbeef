@@ -1725,7 +1725,7 @@ ddb_listview_handle_keypress (DdbListview *ps, int keyval, int state) {
     GtkWidget *range = ps->scrollbar;
     GtkAdjustment *adj = gtk_range_get_adjustment (GTK_RANGE (range));
 
-    if (state & (GDK_CONTROL_MASK|GDK_MOD1_MASK)) {
+    if (state & ~(GDK_SHIFT_MASK)) {
         return 0;
     }
 
