@@ -106,10 +106,30 @@ show_track_properties_dlg (DB_playItem_t *it) {
         deadbeef->pl_item_ref (it);
     }
     track = it;
-
+    GtkTreeView *tree;
+    GtkListStore *store;
     if (!trackproperties) {
         trackproperties = create_trackproperties ();
         gtk_window_set_transient_for (GTK_WINDOW (trackproperties), GTK_WINDOW (mainwin));
+        tree = GTK_TREE_VIEW (lookup_widget (trackproperties, "metalist"));
+        store = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_STRING);
+        GtkCellRenderer *rend_text = gtk_cell_renderer_text_new ();
+        GtkCellRenderer *rend_text2 = gtk_cell_renderer_text_new ();
+        g_object_set (G_OBJECT (rend_text2), "editable", TRUE, NULL);
+        g_signal_connect ((gpointer)rend_text2, "edited",
+                G_CALLBACK (on_metadata_edited),
+                store);
+        GtkTreeViewColumn *col1 = gtk_tree_view_column_new_with_attributes ("Key", rend_text, "text", 0, NULL);
+        GtkTreeViewColumn *col2 = gtk_tree_view_column_new_with_attributes ("Value", rend_text2, "text", 1, NULL);
+        gtk_tree_view_append_column (tree, col1);
+        gtk_tree_view_append_column (tree, col2);
+    }
+    else {
+        tree = GTK_TREE_VIEW (lookup_widget (trackproperties, "metalist"));
+        store = GTK_LIST_STORE (gtk_tree_view_get_model (tree));
+
+        // remove everything from store
+        gtk_list_store_clear (store);
     }
     GtkWidget *widget = trackproperties;
     GtkWidget *w;
@@ -118,18 +138,6 @@ show_track_properties_dlg (DB_playItem_t *it) {
     w = lookup_widget (widget, "location");
     gtk_entry_set_text (GTK_ENTRY (w), it->fname);
 
-    GtkTreeView *tree = GTK_TREE_VIEW (lookup_widget (widget, "metalist"));
-    GtkListStore *store = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_STRING);
-    GtkCellRenderer *rend_text = gtk_cell_renderer_text_new ();
-    GtkCellRenderer *rend_text2 = gtk_cell_renderer_text_new ();
-    g_object_set (G_OBJECT (rend_text2), "editable", TRUE, NULL);
-    g_signal_connect ((gpointer)rend_text2, "edited",
-            G_CALLBACK (on_metadata_edited),
-            store);
-    GtkTreeViewColumn *col1 = gtk_tree_view_column_new_with_attributes ("Key", rend_text, "text", 0, NULL);
-    GtkTreeViewColumn *col2 = gtk_tree_view_column_new_with_attributes ("Value", rend_text2, "text", 1, NULL);
-    gtk_tree_view_append_column (tree, col1);
-    gtk_tree_view_append_column (tree, col2);
 
     deadbeef->pl_lock ();
     int i = 0;
