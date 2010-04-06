@@ -328,6 +328,10 @@ redraw_queued_tracks (DdbListview *pl, int list) {
 
 static gboolean
 redraw_queued_tracks_cb (gpointer nothing) {
+    int iconified = gdk_window_get_state(mainwin->window) & GDK_WINDOW_STATE_ICONIFIED;
+    if (!GTK_WIDGET_VISIBLE (mainwin) || iconified) {
+        return FALSE;
+    }
     redraw_queued_tracks (DDB_LISTVIEW (lookup_widget (mainwin, "playlist")), PL_MAIN);
     redraw_queued_tracks (DDB_LISTVIEW (lookup_widget (searchwin, "searchlist")), PL_SEARCH);
     return FALSE;
@@ -656,6 +660,10 @@ update_win_title_idle (gpointer data) {
 
 static gboolean
 redraw_seekbar_cb (gpointer nothing) {
+    int iconified = gdk_window_get_state(mainwin->window) & GDK_WINDOW_STATE_ICONIFIED;
+    if (!GTK_WIDGET_VISIBLE (mainwin) || iconified) {
+        return FALSE;
+    }
     seekbar_redraw ();
     return FALSE;
 }
