@@ -28,7 +28,7 @@
 
 #define LFM_TESTMODE 0
 #define LFM_IGNORE_RULES 0
-#define LFM_NOSEND 0
+#define LFM_NOSEND 1
 
 static DB_misc_t plugin;
 static DB_functions_t *deadbeef;
@@ -465,6 +465,9 @@ lfm_format_uri (int subm, DB_playItem_t *song, char *out, int outl) {
 
 static int
 lastfm_songstarted (DB_event_track_t *ev, uintptr_t data) {
+    if (!deadbeef->conf_get_int ("lastfm.enable", 0)) {
+        return 0;
+    }
     deadbeef->mutex_lock (lfm_mutex);
     if (lfm_format_uri (-1, ev->track, lfm_nowplaying, sizeof (lfm_nowplaying)) < 0) {
         lfm_nowplaying[0] = 0;
@@ -480,7 +483,10 @@ lastfm_songstarted (DB_event_track_t *ev, uintptr_t data) {
 
 static int
 lastfm_songfinished (DB_event_track_t *ev, uintptr_t data) {
-    trace ("lfm songfinished\n");
+    trace ("lfm songfinished %s\n", ev->track->fname);
+    if (!deadbeef->conf_get_int ("lastfm.enable", 0)) {
+        return 0;
+    }
 #if !LFM_IGNORE_RULES
     // check submission rules
     // duration must be >= 30 sec
@@ -663,6 +669,9 @@ lfm_thread (void *ctx) {
         trace ("cond signalled!\n");
         deadbeef->mutex_unlock (lfm_mutex);
 
+        if (!deadbeef->conf_get_int ("lastfm.enable", 0)) {
+            continue;
+        }
         trace ("lfm sending nowplaying...\n");
         // try to send nowplaying
         if (lfm_nowplaying[0] && !deadbeef->conf_get_int ("lastfm.disable_np", 0)) {
@@ -798,10 +807,11 @@ lastfm_stop (void) {
 }
 
 static const char settings_dlg[] =
+    "property \"Enable scrobbler\" checkbox lastfm.enable 0;"
+    "property \"Disable nowplaying\" checkbox lastfm.disable_np 0;"
     "property Username entry lastfm.login \"\";\n"
     "property Password password lastfm.password \"\";"
     "property \"Scrobble URL\" entry lastfm.scrobbler_url \""SCROBBLER_URL_LFM"\";"
-    "property \"Disable nowplaying\" checkbox lastfm.disable_np 0;"
 ;
 
 // define plugin interface
