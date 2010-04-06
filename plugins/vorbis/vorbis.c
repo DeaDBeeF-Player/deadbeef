@@ -85,7 +85,7 @@ static const char *metainfo[] = {
     "PERFORMER", "performer",
     "ENSEMBLE", "band",
     "COMPOSER", "composer",
-    "ENCODED-BY", "vendor",
+    "ENCODER", "vendor",
     "DISCNUMBER", "disc",
     "COPYRIGHT", "copyright",
     "TRACKTOTAL", "numtracks",
@@ -96,7 +96,6 @@ static void
 update_vorbis_comments (DB_playItem_t *it, vorbis_comment *vc) {
     if (vc) {
         deadbeef->pl_delete_all_meta (it);
-        deadbeef->pl_add_meta (it, "vendor", vc->vendor);
         for (int i = 0; i < vc->comments; i++) {
             char *s = vc->user_comments[i];
             int m;
@@ -524,11 +523,12 @@ cvorbis_write_metadata (DB_playItem_t *it) {
         int m;
         for (m = 0; metainfo[m]; m += 2) {
             int l = strlen (metainfo[m]);
-            if (l+1 <= vc->comment_lengths[i] && !strncasecmp (vc->user_comments[i], metainfo[m], vc->comment_lengths[i]) && vc->user_comments[i][l] == '=') {
+            if (vc->comment_lengths[i] > l && !strncasecmp (vc->user_comments[i], metainfo[m], l) && vc->user_comments[i][l] == '=') {
                 break;
             }
         }
         if (!metainfo[m]) {
+            printf ("preserved field: %s\n", vc->user_comments[i]);
             // unknown field
             struct field *f = malloc (sizeof (struct field) + vc->comment_lengths[i]);
             memset (f, 0, sizeof (struct field));
