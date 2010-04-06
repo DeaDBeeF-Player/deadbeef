@@ -33,6 +33,8 @@ struct _DeadbeefGraphicClass {
 
 GType deadbeef_graphic_get_type (void);
 extern DeadbeefGraphic* deadbeef_graphic_inst;
+void deadbeef_graphic_aa_mode_changed (DeadbeefGraphic* self, GtkCheckMenuItem* item);
+void deadbeef_graphic_mode_changed (DeadbeefGraphic* self, GtkCheckMenuItem* item);
 DeadbeefGraphic* deadbeef_graphic_new (void);
 DeadbeefGraphic* deadbeef_graphic_construct (GType object_type);
 

@@ -1,5 +1,5 @@
 static const int spot_size = 3;
-static const int margin_left = 20;
+static const int margin_left = 35;
 static const int margin_bottom = 10;
 static const int bands = 18;
 static int btn_size = 7;
@@ -31,15 +31,24 @@ namespace Deadbeef {
         private Pango.FontDescription font_desc;
 
         private double[] values = new double [bands];
+        private double preamp;
+
         private int mouse_y;
         
         private bool snap = false;
-        private bool aa_mode = true;
+        private bool aa_mode = false;
+
+        private bool curve_hook = false;
+        private bool preamp_hook = false;
+
+        private Gtk.Menu menu = null;
 
         Gdk.Cursor moving_cursor = new Gdk.Cursor (Gdk.CursorType.FLEUR);
+        Gdk.Cursor updown_cursor = new Gdk.Cursor (Gdk.CursorType.DOUBLE_ARROW);
         Gdk.Cursor pointer_cursor = new Gdk.Cursor (Gdk.CursorType.LEFT_PTR);
 
-        public Graphic ()
+        //public Graphic ()
+        construct
         {
             add_events (Gdk.EventMask.BUTTON_PRESS_MASK
                 | Gdk.EventMask.BUTTON_RELEASE_MASK
@@ -52,14 +61,55 @@ namespace Deadbeef {
             pango_ctx = new Pango.Context();
             pango_ctx.set_font_description (font_desc);
             recalc_values();
+            preamp = 0.5;
+
+            menu = new Gtk.Menu ();
+
+            var checkitem = new Gtk.CheckMenuItem.with_label ("Antialiasing");
+            checkitem.show();
+            checkitem.toggled.connect (aa_mode_changed);
+            menu.append (checkitem);
+
+            var mode_item = new Gtk.MenuItem();
+            mode_item.show ();
+            mode_item.label = "mode";
+            menu.append (mode_item);
+
+            var mode_menu = new Gtk.Menu ();
+
+            var group = new GLib.SList <Gtk.RadioMenuItem> ();
+
+            var thesame_item = new Gtk.RadioMenuItem.with_label (group, "thesame");
+            thesame_item.show();
+            mode_menu.append (thesame_item);
+
+            var waker_item = new Gtk.RadioMenuItem.with_label_from_widget (thesame_item, "waker");
+            waker_item.show();
+            waker_item.toggled.connect (mode_changed);
+            mode_menu.append (waker_item);
+
+            mode_item.set_submenu (mode_menu);
         }
-        
-        private void
-        toggle_snap ()
+
+        public void
+        aa_mode_changed (Gtk.CheckMenuItem item)
         {
+            aa_mode = item.active;
+            queue_draw ();
+        }
+
+        public void
+        mode_changed (Gtk.CheckMenuItem item)
+        {
+            set_snap (item.active);
+        }
+
+        private void
+        set_snap (bool new_snap)
+        {
+            snap = new_snap;
+
             if (snap)
-                snap = false;
-            else
             {
                 double step = 1.0 / (double)(bands+1);
 
@@ -79,7 +129,6 @@ namespace Deadbeef {
                     points.prepend (point);
                 }
                 points.reverse ();
-                snap = true;
             }
         }
         
@@ -92,7 +141,14 @@ namespace Deadbeef {
             };
         }
 
-        private double
+        private void
+        abs_to_screen_d (double x, double y, out double sx, out double sy)
+        {
+            sx = (int)(x * (this.allocation.width-margin_left))+margin_left;
+            sy = (int)(y * (this.allocation.height-margin_bottom));
+        }
+
+/*        private double
         cubic (double y0, double y1, double y2, double y3, double mu)
         {
            double a0,a1,a2,a3,mu2;
@@ -104,6 +160,15 @@ namespace Deadbeef {
            a3 = y1;
 
            return (a0*mu*mu2+a1*mu2+a2*mu+a3);
+        }*/
+
+        private double
+        cubic (double y0, double y1, double y2, double y3, double mu)
+        {
+            return 0.5 *((2 * y1) +
+                (-y0 + y2) * mu +
+                (2*y0 - 5*y1 + 4*y2 - y3) * mu*mu +
+                (-y0 + 3*y1- 3*y2 + y3) * mu*mu*mu);
         }
 
         public override bool
@@ -133,13 +198,24 @@ namespace Deadbeef {
             for (i = 0; i < bands; i++)
             {
                 //does anyone know why this method is static?
-                Gdk.draw_line (d, gc, (int)((i+1)*step)+margin_left, 0, (int)((i+1)*step)+margin_left, height - margin_bottom);
+                Gdk.draw_line (d, gc,
+                    (int)((i+1)*step)+margin_left,
+                    0,
+                    (int)((i+1)*step)+margin_left,
+                    height - margin_bottom);
             }
 
-            double vstep = (double)(height-margin_bottom) / 4;
-            for (i=1; i < 4; i++)
-                Gdk.draw_line (d, gc, margin_left, (int)(i*vstep), width, (int)(i*vstep));
-            
+            //double vstep = 1.0 / (double)(height-margin_bottom);
+            double vstep = (double)(height-margin_bottom);
+            for (double di=0; di < 2; di += 0.25)
+            {
+                Gdk.draw_line (d, gc,
+                    margin_left,
+                    (int)((di-preamp)*vstep),
+                    width,
+                    (int)((di-preamp)*vstep));
+            }
+
             gc.set_rgb_fg_color (fore_bright_color);
 
             //drawing freqs:
@@ -166,21 +242,38 @@ namespace Deadbeef {
                 l.set_text (tmp, (int)tmp.len());
                 Gdk.draw_layout (d, gc, margin_left-1, mouse_y-3, l);
             }
+            
+            string tmp = "%.1f".printf (scale (1));
+            l.set_text (tmp, (int)tmp.len());
+            Gdk.draw_layout (d, gc, margin_left-1, height-margin_bottom-6, l);
 
-            l.set_text ("-20db", 5);
-            Gdk.draw_layout (d, gc, margin_left-1, height-margin_bottom-4, l);
-
-            l.set_text ("20db", 4);
+            tmp = "%.1f".printf (scale (0));
+            l.set_text (tmp, (int)tmp.len());
             Gdk.draw_layout (d, gc, margin_left-1, 1, l);
 
             l.set_text ("0db", 4);
-            Gdk.draw_layout (d, gc, margin_left-1, (height-margin_bottom)/2-3, l);
+            Gdk.draw_layout (d, gc, margin_left-1, (int)((1-preamp)*(height-margin_bottom))-3, l);
 
-            //drawing dropdown button:
-            d.draw_rectangle (gc, snap, 1, height-(btn_size+2), btn_size, btn_size);
+            l.set_text ("preamp", 6);
+            l.set_alignment (Pango.Alignment.LEFT);
+            Gdk.draw_layout (d, gc, 1, height-margin_bottom+2, l);
 
             d.draw_rectangle (gc, false, margin_left, 0, width-margin_left-1, height-margin_bottom-1);
             gc.set_line_attributes (2, Gdk.LineStyle.SOLID, Gdk.CapStyle.NOT_LAST, Gdk.JoinStyle.MITER);
+            
+            //draw preamp
+            gc.set_clip_rectangle ({0, (int)(preamp * (height-margin_bottom)), 11, height});
+
+            gc.set_rgb_fg_color (fore_dark_color);
+            int count = (int)((height-margin_bottom) / 6)+1;
+            for (int j = 0; j < count; j++)
+                d.draw_rectangle (
+                    gc,
+                    true,
+                    1,
+                    height-margin_bottom-j*6 - 6,
+                    11,
+                    4);
 
             gc.set_clip_rectangle ({margin_left+1, 1, width-margin_left-2, height-margin_bottom-2});
 
@@ -194,7 +287,12 @@ namespace Deadbeef {
 
             for (i = 0; i < bands; i++)
             {
-                int count = (int)((height-margin_bottom) * (1-values[i]) / 6)+1;
+                gc.set_clip_rectangle ({
+                    (int)((i+1)*step)+margin_left - bar_w/2,
+                    (int)(values[i] * (height-margin_bottom)),
+                    11,
+                    height});
+                count = (int)((height-margin_bottom) * (1-values[i]) / 6)+1;
                 for (int j = 0; j < count; j++)
                     d.draw_rectangle (
                         gc,
@@ -204,6 +302,7 @@ namespace Deadbeef {
                         bar_w,
                         4);
             }
+            gc.set_clip_rectangle ({0, 0, width, height});
 
             //drawing curve:
             gc.set_rgb_fg_color (fore_bright_color);
@@ -221,12 +320,7 @@ namespace Deadbeef {
                 i++;
             }
 
-            Cairo.Context cairo = null;
-
-            if (aa_mode)
-            {
-                cairo = Gdk.cairo_create (d);
-            }
+            Cairo.Context cairo = aa_mode ? Gdk.cairo_create (d) : null;
 
             int prev_x = 0;
             int prev_y = 0;
@@ -256,10 +350,14 @@ namespace Deadbeef {
                         prev_y = gp2.y;
                         continue;
                     }
-                    int pts = (int)((double)((xs[i+1] - xs[i]) * allocation.width) / 5.0);
-                    //step = 5.0;
+                    //int pts = (int)((double)((xs[i+1] - xs[i]) * allocation.width) / 5.0);
+                    //step = (double)(xs[i+1] - xs[i])/(double)pts;
+
+                    double dx = (xs[i+1] - xs[i])*width;
+                    double dy = (ys[i+1] - ys[i])*height;
+                    int pts = (int)(GLib.Math.sqrt (dx*dx + dy*dy) / 5.0);
+                    //stdout.printf ("%f %f %d\n", dx, dy, pts);
                     step = (double)(xs[i+1] - xs[i])/(double)pts;
-                    //stdout.printf ("%d\n", pts);
 
                     for (int ii = 0; ii <= pts; ii++)
                     {
@@ -278,18 +376,27 @@ namespace Deadbeef {
                             y = cubic (ys[i-1], ys[i], ys[i+1], ys[i+2], (double)ii/(double)pts);
                         if (y < 0) y = 0;
                         if (y > 1) y = 1;
-                        gp = abs_to_screen (ii*step+xs[i], y);
 
-                        if (gp.y < 2) gp.y = 2;
-                        if (gp.y > height-margin_bottom-2) gp.y = height-margin_bottom-2;
-
-                        //Gdk.draw_point (d, gc, gp.x, gp.y);
                         if (aa_mode)
-                            cairo.line_to (gp.x, gp.y);
+                        {
+                            double sx, sy;
+                            abs_to_screen_d (ii*step+xs[i], y, out sx, out sy);
+                            cairo.line_to (sx, sy);
+//                            prev_x = gp.x;
+//                            prev_y = gp.y;
+                        }
                         else
-                            Gdk.draw_line (d, gc, prev_x, prev_y, gp.x, gp.y);
-                        prev_x = gp.x;
-                        prev_y = gp.y;
+                        {
+                            gp = abs_to_screen (ii*step+xs[i], y);
+
+                            if (gp.y < 2) gp.y = 2;
+                            if (gp.y > height-margin_bottom-2) gp.y = height-margin_bottom-2;
+
+                            Gdk.draw_point (d, gc, gp.x, gp.y);
+                            //Gdk.draw_line (d, gc, prev_x, prev_y, gp.x, gp.y);
+                            prev_x = gp.x;
+                            prev_y = gp.y;
+                        }
                     }
                 }
             }
@@ -320,7 +427,7 @@ namespace Deadbeef {
 
             //drawing mouse coordinates:
             gc.set_line_attributes (1, Gdk.LineStyle.ON_OFF_DASH, Gdk.CapStyle.NOT_LAST, Gdk.JoinStyle.MITER);
-            Gdk.draw_line (d, gc, 0, mouse_y, width, mouse_y);
+            Gdk.draw_line (d, gc, margin_left+1, mouse_y, width, mouse_y);
             
             return false;
         }
@@ -354,7 +461,7 @@ namespace Deadbeef {
         {
             double k = -40;
             double d = 20;
-            return val * k + d;
+            return (val+preamp-0.5) * k + d;
         }
 
         private void
@@ -485,9 +592,6 @@ namespace Deadbeef {
                                 current_point = points.last();
                             }
                         }
-
-                        //points.append (point);
-                        //current_point = point;
                     }
                     current_point.data.x = x;
                     current_point.data.y = y;
@@ -510,28 +614,52 @@ namespace Deadbeef {
                 queue_draw();
             }
         }
+        
+        private bool
+        in_curve_area (int x, int y)
+        {
+            return
+                x > margin_left &&
+                x < allocation.width-1 &&
+                y > 1 &&
+                y < allocation.height-margin_bottom;
+        }
 
         /* Mouse button got pressed over widget */
         public override bool
         button_press_event (Gdk.EventButton event)
         {
-            if (event.x > margin_left &&
-                event.y < allocation.height-margin_bottom)
+            if (in_curve_area ((int)event.x, (int)event.y))
             {
+                curve_hook = true;
                 handle_curve_click (event);
+                return false;
+            }
+
+            if (event.x <= 11 &&
+                event.y > 1 &&
+                event.y <= allocation.height-margin_bottom &&
+                event.button == 1
+                )
+            {
+                preamp = event.y / (double)(allocation.height - margin_bottom);
+                preamp_hook = true;
+            }
+
+            if (event.button == 3)
+            {
+                //stdout.printf ("");
+                menu.popup (null, null, null, event.button, Gtk.get_current_event_time());
             }
             return false;
         }
 
         /* Mouse button got released */
-        public override bool button_release_event (Gdk.EventButton event)
+        public override bool
+        button_release_event (Gdk.EventButton event)
         {
-            if (event.x < btn_size &&
-                event.y > allocation.height-btn_size
-                )
-            {
-                toggle_snap ();
-            }
+            curve_hook = false;
+            preamp_hook = false;
             get_window().set_cursor (pointer_cursor);
             return false;
         }
@@ -550,15 +678,22 @@ namespace Deadbeef {
         {
             double x = (double)(event.x - margin_left) / (double)(allocation.width - margin_left);
             double y = event.y / (double)(allocation.height - margin_bottom);
-            
-            //if (points == null)
-                //return false;
+            if (y < 0) y = 0;
+            if (y > 1) y = 1;
 
-            if (event.x <= margin_left ||
-                event.y >= allocation.height-margin_bottom)
+            if (preamp_hook)
+            {
+                preamp = y;
+                queue_draw();
                 return false;
+            }
+            
+            if (!in_curve_area ((int)event.x, (int)event.y))
+                mouse_y = -1;
+            else
+                mouse_y = (int)event.y;
 
-            if (0 != (event.state & Gdk.ModifierType.BUTTON1_MASK))
+            if (curve_hook)
             {
                 if (snap)
                     snap_move (x, y);
@@ -579,9 +714,6 @@ namespace Deadbeef {
 
                     if (current_point.data.x > 1) current_point.data.x = 1;
                     if (current_point.data.x < 0) current_point.data.x = 0;
-
-                    if (current_point.data.y > 1) current_point.data.y = 1;
-                    if (current_point.data.y < 0) current_point.data.y = 0;
                 }
 
                 recalc_values();
@@ -594,7 +726,6 @@ namespace Deadbeef {
                     get_window().set_cursor (pointer_cursor);
                 else
                     get_window().set_cursor (moving_cursor);
-                mouse_y = (int)event.y;
                 queue_draw ();
             }
             return false;
@@ -602,21 +733,5 @@ namespace Deadbeef {
 
         public static Graphic inst = null;
 
-/*        public static int
-        main (string[] args)
-        {
-            Gtk.init (ref args);
-            var wnd = new Gtk.Window (Gtk.WindowType.TOPLEVEL);
-            wnd.destroy.connect (Gtk.main_quit);
-
-            var gr = new Graphic ();
-            Graphic.inst = gr;
-            wnd.add (gr);
-            gr.show();
-            wnd.show();
-
-            Gtk.main();
-            return 0;
-        }*/
     }
 }
