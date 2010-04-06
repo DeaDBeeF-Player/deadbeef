@@ -473,6 +473,24 @@ cflac_init_cue_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC_
 }
 #endif
 
+static const char *metainfo[] = {
+    "ARTIST", "artist",
+    "TITLE", "title",
+    "ALBUM", "album",
+    "TRACKNUMBER", "track",
+    "DATE", "year",
+    "GENRE", "genre",
+    "COMMENT", "comment",
+    "PERFORMER", "performer",
+    "ENSEMBLE", "band",
+    "COMPOSER", "composer",
+    "ENCODED-BY", "vendor",
+    "DISCNUMBER", "disc",
+    "COPYRIGHT", "copyright",
+    "TRACKTOTAL", "numtracks",
+    NULL
+};
+
 static void
 cflac_init_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMetadata *metadata, void *client_data) {
     flac_info_t *info = (flac_info_t *)client_data;
@@ -492,80 +510,37 @@ cflac_init_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__Str
     }
     else if (metadata->type == FLAC__METADATA_TYPE_VORBIS_COMMENT) {
         const FLAC__StreamMetadata_VorbisComment *vc = &metadata->data.vorbis_comment;
-        int title_added = 0;
         for (int i = 0; i < vc->num_comments; i++) {
             const FLAC__StreamMetadata_VorbisComment_Entry *c = &vc->comments[i];
             if (c->length > 0) {
-                char s[c->length+1];
-                s[c->length] = 0;
-                memcpy (s, c->entry, c->length);
-                if (!strncasecmp (s, "ARTIST=", 7)) {
-                    deadbeef->pl_add_meta (it, "artist", s + 7);
+                char *s = c->entry;
+                int m;
+                for (m = 0; metainfo[m]; m += 2) {
+                    int l = strlen (metainfo[m]);
+                    if (c->length > l && !strncasecmp (metainfo[m], s, l) && s[l] == '=') {
+                        deadbeef->pl_append_meta (it, metainfo[m+1], s + l + 1);
+                    }
                 }
-                else if (!strncasecmp (s, "TITLE=", 6)) {
-                    deadbeef->pl_add_meta (it, "title", s + 6);
-                    title_added = 1;
-                }
-                else if (!strncasecmp (s, "ALBUM=", 6)) {
-                    deadbeef->pl_add_meta (it, "album", s + 6);
-                }
-                else if (!strncasecmp (s, "TRACKNUMBER=", 12)) {
-                    deadbeef->pl_add_meta (it, "track", s + 12);
-                }
-                else if (!strncasecmp (s, "TRACKTOTAL=", 11)) {
-                    deadbeef->pl_add_meta (it, "numtracks", s + 11);
-                }
-                else if (!strncasecmp (s, "DATE=", 5)) {
-                    deadbeef->pl_add_meta (it, "year", s + 5);
-                }
-                else if (!strncasecmp (s, "GENRE=", 6)) {
-                    deadbeef->pl_add_meta (it, "genre", s + 6);
-                }
-                else if (!strncasecmp (s, "COMMENT=", 8)) {
-                    deadbeef->pl_add_meta (it, "comment", s + 8);
-                }
-                else if (!strncasecmp (s, "PERFORMER=", 10)) {
-                    deadbeef->pl_add_meta (it, "performer", s + 10);
-                }
-                else if (!strncasecmp (s, "ENSEMBLE=", 9)) {
-                    deadbeef->pl_add_meta (it, "band", s + 9);
-                }
-                else if (!strncasecmp (s, "COMPOSER=", 9)) {
-                    deadbeef->pl_add_meta (it, "composer", s + 9);
-                }
-                else if (!strncasecmp (s, "ENCODED-BY=", 11)) {
-                    deadbeef->pl_add_meta (it, "vendor", s + 11);
-                }
-                else if (!strncasecmp (s, "DISCNUMBER=", 11)) {
-                    deadbeef->pl_add_meta (it, "disc", s + 11);
-                }
-                else if (!strncasecmp (s, "COPYRIGHT=", 10)) {
-                    deadbeef->pl_add_meta (it, "copyright", s + 10);
-                }
-                else if (!strncasecmp (s, "CUESHEET=", 9)) {
-                    deadbeef->pl_add_meta (it, "cuesheet", s + 9);
-//                    info->last = deadbeef->pl_insert_cue_from_buffer (info->after, info->fname, s+9, c->length-9, &plugin, "FLAC", info->totalsamples, info->samplerate);
-                }
-                else if (!strncasecmp (s, "replaygain_album_gain=", 22)) {
-                    it->replaygain_album_gain = atof (s + 22);
-                }
-                else if (!strncasecmp (s, "replaygain_album_peak=", 22)) {
-                    it->replaygain_album_peak = atof (s + 22);
-                }
-                else if (!strncasecmp (s, "replaygain_track_gain=", 22)) {
-                    it->replaygain_track_gain = atof (s + 22);
-                }
-                else if (!strncasecmp (s, "replaygain_track_peak=", 22)) {
-                    it->replaygain_track_peak = atof (s + 22);
-                }
-                else {
-                    trace ("found flac meta: %s\n", s);
+                if (!metainfo[m]) {
+                    if (!strncasecmp (s, "CUESHEET=", 9)) {
+                        deadbeef->pl_add_meta (it, "cuesheet", s + 9);
+                    }
+                    else if (!strncasecmp (s, "replaygain_album_gain=", 22)) {
+                        it->replaygain_album_gain = atof (s + 22);
+                    }
+                    else if (!strncasecmp (s, "replaygain_album_peak=", 22)) {
+                        it->replaygain_album_peak = atof (s + 22);
+                    }
+                    else if (!strncasecmp (s, "replaygain_track_gain=", 22)) {
+                        it->replaygain_track_gain = atof (s + 22);
+                    }
+                    else if (!strncasecmp (s, "replaygain_track_peak=", 22)) {
+                        it->replaygain_track_peak = atof (s + 22);
+                    }
                 }
             }
         }
-        if (!title_added) {
-            deadbeef->pl_add_meta (it, "title", NULL);
-        }
+        deadbeef->pl_add_meta (it, "title", NULL);
         deadbeef->pl_add_meta (it, "tags", "VorbisComments");
     }
 }
@@ -726,24 +701,6 @@ cflac_insert_fail:
     }
     return NULL;
 }
-
-static const char *metainfo[] = {
-    "ARTIST", "artist",
-    "TITLE", "title",
-    "ALBUM", "album",
-    "TRACKNUMBER", "track",
-    "DATE", "year",
-    "GENRE", "genre",
-    "COMMENT", "comment",
-    "PERFORMER", "performer",
-    "ENSEMBLE", "band",
-    "COMPOSER", "composer",
-    "ENCODED-BY", "vendor",
-    "DISCNUMBER", "disc",
-    "COPYRIGHT", "copyright",
-    "TRACKTOTAL", "numtracks",
-    NULL
-};
 
 int
 cflac_read_metadata (DB_playItem_t *it) {
