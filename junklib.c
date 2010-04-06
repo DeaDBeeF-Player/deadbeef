@@ -721,6 +721,25 @@ junk_apev2_read_full (playItem_t *it, DB_apev2_tag_t *tag_store, DB_FILE *fp) {
         trace ("failed to seek to tag start (-%d)\n", size);
         return -1;
     }
+
+    // this code ensures that APEv2 frames don't get appended to
+    // existing metainfo, but all APEv2 frames with the same key are
+    // appended
+    const char *metainfo[] = {
+        "artist", "artist", it ? pl_find_meta (it, "artist") : NULL,
+        "album artist", "band", it ? pl_find_meta (it, "band") : NULL,
+        "title", "title", it ? pl_find_meta (it, "title") : NULL,
+        "album", "album", it ? pl_find_meta (it, "album") : NULL,
+        "year", "year", it ? pl_find_meta (it, "year") : NULL,
+        "genre", "genre", it ? pl_find_meta (it, "genre") : NULL,
+        "composer", "composer", it ? pl_find_meta (it, "composer") : NULL,
+//        "performer", "performer", it ? pl_find_meta (it, "performer") : NULL,
+        "comment", "comment", it ? pl_find_meta (it, "comment") : NULL,
+        "copyright", "copyright", it ? pl_find_meta (it, "copyright") : NULL,
+        "totaltracks", "numtracks", it ? pl_find_meta (it, "numtracks") : NULL,
+        NULL
+    };
+
     int i;
     for (i = 0; i < numitems; i++) {
         uint8_t buffer[8];
@@ -778,66 +797,50 @@ junk_apev2_read_full (playItem_t *it, DB_apev2_tag_t *tag_store, DB_FILE *fp) {
                 tail = frm;
             }
 
-            int valuetype = ((itemflags >> 1) & 3);
-            // add metainfo only if it's textual
-            if (valuetype == 0 && (itemsize < MAX_TEXT_FRAME_SIZE || (!strcasecmp (key, "cuesheet") && itemsize < MAX_CUESHEET_FRAME_SIZE))) {
-                if (!u8_valid (value, itemsize, NULL)) {
-                    trace ("junk_read_ape_full: bad encoding in text frame %s\n", key);
-                    continue;
-                }
+            if (it) {
+                int valuetype = ((itemflags >> 1) & 3);
+                // add metainfo only if it's textual
+                if (valuetype == 0 && (itemsize < MAX_TEXT_FRAME_SIZE || (!strcasecmp (key, "cuesheet") && itemsize < MAX_CUESHEET_FRAME_SIZE))) {
+                    printf ("APEv2 %s=%s\n", key, value);
 
-                if (!strcasecmp (key, "artist")) {
-                    pl_add_meta (it, "artist", value);
-                }
-                else if (!strcasecmp (key, "title")) {
-                    pl_add_meta (it, "title", value);
-                }
-                else if (!strcasecmp (key, "album")) {
-                    pl_add_meta (it, "album", value);
-                }
-                else if (!strcasecmp (key, "track")) {
-                    char *slash = strchr (value, '/');
-                    if (slash) {
-                        // split into track/number
-                        *slash = 0;
-                        slash++;
-                        pl_add_meta (it, "numtracks", slash);
+                    if (!u8_valid (value, itemsize, NULL)) {
+                        trace ("junk_read_ape_full: bad encoding in text frame %s\n", key);
+                        continue;
                     }
-                    pl_add_meta (it, "track", value);
-                }
-                else if (!strcasecmp (key, "year")) {
-                    pl_add_meta (it, "year", value);
-                }
-                else if (!strcasecmp (key, "genre")) {
-                    pl_add_meta (it, "genre", value);
-                }
-                else if (!strcasecmp (key, "composer")) {
-                    pl_add_meta (it, "composer", value);
-                }
-                else if (!strcasecmp (key, "comment")) {
-                    pl_add_meta (it, "comment", value);
-                }
-                else if (!strcasecmp (key, "copyright")) {
-                    pl_add_meta (it, "copyright", value);
-                }
-                else if (!strcasecmp (key, "cuesheet")) {
-                    pl_add_meta (it, "cuesheet", value);
-                }
-                else if (!strncasecmp (key, "replaygain_album_gain", 21)) {
-                    it->replaygain_album_gain = atof (value);
-                    trace ("album_gain=%s\n", value);
-                }
-                else if (!strncasecmp (key, "replaygain_album_peak", 21)) {
-                    it->replaygain_album_peak = atof (value);
-                    trace ("album_peak=%s\n", value);
-                }
-                else if (!strncasecmp (key, "replaygain_track_gain", 21)) {
-                    it->replaygain_track_gain = atof (value);
-                    trace ("track_gain=%s\n", value);
-                }
-                else if (!strncasecmp (key, "replaygain_track_peak", 21)) {
-                    it->replaygain_track_peak = atof (value);
-                    trace ("track_peak=%s\n", value);
+
+                    int m;
+                    for (m = 0; metainfo[m]; m+=3) {
+                        if (!metainfo[m+2] && !strcasecmp (key, metainfo[m])) {
+                            printf ("adding %s=%s as %s\n", key, value, metainfo[m+1]);
+                            pl_append_meta (it, metainfo[m+1], value);
+                            break;
+                        }
+                    }
+
+                    if (!metainfo[m]) {
+                        if (!strcasecmp (key, "track")) {
+                            pl_add_meta (it, "track", value);
+                        }
+                        else if (!strcasecmp (key, "cuesheet")) {
+                            pl_add_meta (it, "cuesheet", value);
+                        }
+                        else if (!strncasecmp (key, "replaygain_album_gain", 21)) {
+                            it->replaygain_album_gain = atof (value);
+                            trace ("album_gain=%s\n", value);
+                        }
+                        else if (!strncasecmp (key, "replaygain_album_peak", 21)) {
+                            it->replaygain_album_peak = atof (value);
+                            trace ("album_peak=%s\n", value);
+                        }
+                        else if (!strncasecmp (key, "replaygain_track_gain", 21)) {
+                            it->replaygain_track_gain = atof (value);
+                            trace ("track_gain=%s\n", value);
+                        }
+                        else if (!strncasecmp (key, "replaygain_track_peak", 21)) {
+                            it->replaygain_track_peak = atof (value);
+                            trace ("track_peak=%s\n", value);
+                        }
+                    }
                 }
             }
             free (value);

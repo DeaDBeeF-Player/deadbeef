@@ -2739,34 +2739,16 @@ pl_playqueue_getcount (void) {
 void
 pl_items_copy_junk (playItem_t *from, playItem_t *first, playItem_t *last) {
     LOCK;
-    const char *year = pl_find_meta (from, "year");
-    const char *genre = pl_find_meta (from, "genre");
-    const char *copyright = pl_find_meta (from, "copyright");
-    const char *vendor = pl_find_meta (from, "vendor");
-    const char *comment = pl_find_meta (from, "comment");
-    const char *tags = pl_find_meta (from, "tags");
-    playItem_t *i;
-    for (i = first; i; i = i->next[PL_MAIN]) {
-        if (year) {
-            pl_add_meta (i, "year", year);
-        }
-        if (genre) {
-            pl_add_meta (i, "genre", genre);
-        }
-        if (copyright) {
-            pl_add_meta (i, "copyright", copyright);
-        }
-        if (vendor) {
-            pl_add_meta (i, "vendor", vendor);
-        }
-        if (comment) {
-            pl_add_meta (i, "comment", comment);
-        }
-        if (tags) {
-            pl_add_meta (i, "tags", tags);
-        }
-        if (i == last) {
-            break;
+    const char *metainfo[] = {
+        "year", "genre", "copyright", "vendor", "comment", "tags", "numtracks", "band", "performer", "composer", "disc", NULL
+    };
+    for (int m = 0; metainfo[m]; m++) {
+        const char *data = pl_find_meta (from, metainfo[m]);
+        if (data) {
+            playItem_t *i;
+            for (i = first; i != last; i = i->next[PL_MAIN]) {
+                pl_add_meta (i, metainfo[m], data);
+            }
         }
     }
     UNLOCK;
