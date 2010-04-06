@@ -1536,21 +1536,6 @@ pl_replace_meta (playItem_t *it, const char *key, const char *value) {
     UNLOCK;
 }
 
-void
-pl_format_item_display_name (playItem_t *it, char *str, int len) {
-    LOCK;
-    const char *artist = pl_find_meta (it, "artist");
-    const char *title = pl_find_meta (it, "title");
-    if (!artist) {
-        artist = "Unknown artist";
-    }
-    if (!title) {
-        title = "Unknown title";
-    }
-    snprintf (str, len, "%s - %s", artist, title);
-    UNLOCK;
-}
-
 const char *
 pl_find_meta (playItem_t *it, const char *key) {
     DB_metaInfo_t *m = it->meta;

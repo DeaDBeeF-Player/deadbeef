@@ -196,9 +196,6 @@ void
 pl_replace_meta (playItem_t *it, const char *key, const char *value);
 
 void
-pl_format_item_display_name (playItem_t *it, char *str, int len);
-
-void
 pl_delete_all_meta (playItem_t *it);
 
 // returns index of 1st deleted item
