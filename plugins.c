@@ -147,6 +147,8 @@ static DB_functions_t deadbeef_api = {
     .pl_clear = pl_clear,
     .pl_load = pl_load,
     .pl_save = pl_save,
+    .pl_save_current = pl_save_current,
+    .pl_save_all = pl_save_all,
     .pl_select_all = pl_select_all,
     .pl_crop_selected = pl_crop_selected,
     .pl_getselcount = pl_getselcount,
@@ -155,7 +157,6 @@ static DB_functions_t deadbeef_api = {
     .pl_get_next = (DB_playItem_t *(*) (DB_playItem_t *, int))pl_get_next,
     .pl_get_prev = (DB_playItem_t *(*) (DB_playItem_t *, int))pl_get_prev,
     .pl_format_title = (int (*) (DB_playItem_t *it, int idx, char *s, int size, int id, const char *fmt))pl_format_title,
-    .pl_format_item_display_name = (void (*) (DB_playItem_t *it, char *str, int len))pl_format_item_display_name,
     .pl_move_items = (void (*) (int iter, DB_playItem_t *drop_before, uint32_t *indexes, int count))pl_move_items,
     .pl_copy_items = (void (*) (int iter, int plt_from, DB_playItem_t *before, uint32_t *indices, int cnt))pl_copy_items,
     .pl_search_reset = pl_search_reset,
@@ -208,6 +209,7 @@ static DB_functions_t deadbeef_api = {
     .junk_get_leading_size_stdio = junk_get_leading_size_stdio,
     .junk_detect_charset = junk_detect_charset,
     .junk_recode = junk_recode,
+    .junk_iconv = junk_iconv,
     // vfs
     .fopen = vfs_fopen,
     .fclose = vfs_fclose,
@@ -230,6 +232,7 @@ static DB_functions_t deadbeef_api = {
     .conf_set_float = conf_set_float,
     .conf_find = conf_find,
     .conf_remove_items = conf_remove_items,
+    .conf_save = conf_save,
     // plugin communication
     .plug_get_decoder_list = plug_get_decoder_list,
     .plug_get_output_list = plug_get_output_list,
@@ -238,6 +241,8 @@ static DB_functions_t deadbeef_api = {
     .plug_activate = plug_activate,
     .plug_get_decoder_id = plug_get_decoder_id,
     .plug_remove_decoder_id = plug_remove_decoder_id,
+    // misc utilities
+    .is_local_file = plug_is_local_file,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;
@@ -420,11 +425,17 @@ plug_event_call (DB_event_t *ev) {
     ev->time = time (NULL);
 //    printf ("plug_event_call enter %d\n", ev->event);
     mutex_lock (mutex);
+
     for (int i = 0; i < MAX_HANDLERS; i++) {
         if (handlers[ev->event][i].plugin && !handlers[ev->event][i].plugin->inactive) {
             handlers[ev->event][i].callback (ev, handlers[ev->event][i].data);
         }
     }
+//    if (ev->event == DB_EV_PLAYLISTSWITCH) {
+//        printf ("DB_EV_PLAYLISTSWITCH %d %d\n", plt_get_curr (), conf_get_int ("playlist.current", 0));
+//        pl_save_current ();
+//    }
+
     mutex_unlock (mutex);
 //    printf ("plug_event_call leave %d\n", ev->event);
 }
@@ -722,13 +733,18 @@ plug_load_all (void) {
 
 void
 plug_unload_all (void) {
+    fprintf (stderr, "plug_unload_all\n");
+    plugin_t *p;
+    for (p = plugins; p; p = p->next) {
+        if (p->plugin->stop) {
+            fprintf (stderr, "stopping %s...\n", p->plugin->name);
+            fflush (stderr);
+            p->plugin->stop ();
+        }
+    }
+    fprintf (stderr, "stopped all plugins\n");
     while (plugins) {
         plugin_t *next = plugins->next;
-        if (plugins->plugin->stop) {
-            fprintf (stderr, "stopping %s...", plugins->plugin->name);
-            plugins->plugin->stop ();
-            fprintf (stderr, " [OK]\n");
-        }
         if (plugins->handle) {
             dlclose (plugins->handle);
         }
@@ -914,4 +930,19 @@ plug_get_decoder_for_id (const char *id) {
         }
     }
     return NULL;
+}
+
+int
+plug_is_local_file (const char *fname) {
+    if (!strncasecmp (fname, "file://", 7)) {
+        return 1;
+    }
+
+    for (; *fname; fname++) {
+        if (!strncmp (fname, "://", 3)) {
+            return 0;
+        }
+    }
+
+    return 1;
 }

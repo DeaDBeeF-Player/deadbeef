@@ -76,6 +76,7 @@ static char http_err[CURL_ERROR_SIZE];
 
 static int vfs_curl_abort;
 static int vfs_curl_count;
+static int allow_new_streams;
 
 static size_t
 http_content_header_handler (void *ptr, size_t size, size_t nmemb, void *stream);
@@ -518,6 +519,9 @@ http_start_streamer (HTTP_FILE *fp) {
 
 static DB_FILE *
 http_open (const char *fname) {
+    if (!allow_new_streams) {
+        return NULL;
+    }
     trace ("http_open\n");
     HTTP_FILE *fp = malloc (sizeof (HTTP_FILE));
     memset (fp, 0, sizeof (HTTP_FILE));
@@ -805,12 +809,14 @@ vfs_curl_on_abort (DB_event_t *ev, uintptr_t data) {
 static int
 vfs_curl_start (void) {
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_ABORTREAD, DB_CALLBACK (vfs_curl_on_abort), 0);
+    allow_new_streams = 1;
     return 0;
 }
 
 static int
 vfs_curl_stop (void) {
     deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_ABORTREAD, DB_CALLBACK (vfs_curl_on_abort), 0);
+    allow_new_streams = 0;
     vfs_curl_on_abort (NULL, 0);
     return 0;
 }

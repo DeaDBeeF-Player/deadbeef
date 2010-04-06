@@ -19,7 +19,13 @@
 #include <stdlib.h>
 #include <curl/curl.h>
 #include <string.h>
+#include <unistd.h>
 #include "artwork.h"
+
+extern DB_functions_t *deadbeef;
+
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(...)
 
 int
 fetch_from_albumart_org (const char *artist, const char *album, const char *dest)
@@ -31,24 +37,65 @@ fetch_from_albumart_org (const char *artist, const char *album, const char *dest
     curl_free (artist_url);
     curl_free (album_url);
 
-    char *response = fetch (url);
-//    printf ("%s\n", response);
-    char *img = strstr (response, "http://ecx.images-amazon.com/images/I/");
-    if (!img)
-    {
-        free (response);
-        return 0;
+    DB_FILE *fp = deadbeef->fopen (url);
+    if (!fp) {
+        trace ("fetch_from_albumart_org: failed to open %s\n", url);
+        return -1;
     }
+    const char searchstr[] = "http://ecx.images-amazon.com/images/I/";
+    char buffer[10000];
+    memset (buffer, 0, sizeof (buffer));
+    char *img = NULL;
+    int size = deadbeef->fread (buffer, 1, sizeof (buffer), fp);
+    if (size > 0) {
+        img = strstr (buffer, searchstr);
+    }
+    deadbeef->fclose (fp);
+
+    if (!img) {
+        trace ("fetch_from_albumart_org: image url not found in response from %s (%d bytes)\n", url, size);
+        return -1;
+    }
+
     char *end = strstr (img, "._SL160_");
-    if (!end)
+    if (!end || end == img)
     {
-        free (response);
-        return 0;
+        trace ("fetch_from_albumart_org: bad xml from %s\n", url);
+        return -1;
     }
     strcpy (end, ".jpg");
 
-    int res = fetch_to_file (img, dest);
-    free (response);
-    return res;
+    fp = deadbeef->fopen (img);
+    if (!fp) {
+        trace ("fetch_from_albumart_org: failed to open %s\n", img);
+        return -1;
+    }
+
+    FILE *out = fopen (dest, "w+b");
+    if (!out) {
+        trace ("fetch_from_albumart_org: failed to open %s for writing\n", dest);
+        deadbeef->fclose (fp);
+        return -1;
+    }
+
+    char *writebuffer[4096];
+    int len;
+    int error = 0;
+    while ((len = deadbeef->fread (writebuffer, 1, sizeof (writebuffer), fp)) > 0) {
+        if (fwrite (writebuffer, 1, len, out) != len) {
+            trace ("fetch_from_albumart_org: failed to write to %s\n", dest);
+            error = 1;
+            break;
+        }
+    }
+
+    fclose (out);
+    deadbeef->fclose (fp);
+
+    if (error) {
+        unlink (dest);
+        return -1;
+    }
+    return 0;
 }
 

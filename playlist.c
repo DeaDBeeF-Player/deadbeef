@@ -269,6 +269,14 @@ plt_add (int before, const char *title) {
 
     if (!playlist) {
         playlist = plt;
+        if (!plt_loading) {
+            // need to delete old playlist file if exists
+            char path[PATH_MAX];
+            if (snprintf (path, sizeof (path), "%s/playlists/%d.dbpl", dbconfdir, playlists_count-1) <= sizeof (path)) {
+                unlink (path);
+            }
+            pl_save_current ();
+        }
     }
     PLT_UNLOCK;
 
@@ -351,6 +359,8 @@ plt_set_curr (int plt) {
         playlist = p;
         if (!plt_loading) {
             plug_trigger_event (DB_EV_PLAYLISTSWITCH, 0);
+            conf_set_int ("playlist.current", plt_get_curr ());
+            conf_save ();
         }
     }
     PLT_UNLOCK;
@@ -779,6 +789,7 @@ pl_insert_cue_from_buffer (playItem_t *after, playItem_t *origin, const uint8_t 
     }
     // copy metadata from embedded tags
     playItem_t *first = ins ? ins->next[PL_MAIN] : playlist->head[PL_MAIN];
+    pl_append_meta (origin, "tags", "cuesheet");
     pl_items_copy_junk (origin, first, after);
     UNLOCK;
     return after;
@@ -1535,21 +1546,6 @@ pl_replace_meta (playItem_t *it, const char *key, const char *value) {
     UNLOCK;
 }
 
-void
-pl_format_item_display_name (playItem_t *it, char *str, int len) {
-    LOCK;
-    const char *artist = pl_find_meta (it, "artist");
-    const char *title = pl_find_meta (it, "title");
-    if (!artist) {
-        artist = "Unknown artist";
-    }
-    if (!title) {
-        title = "Unknown title";
-    }
-    snprintf (str, len, "%s - %s", artist, title);
-    UNLOCK;
-}
-
 const char *
 pl_find_meta (playItem_t *it, const char *key) {
     DB_metaInfo_t *m = it->meta;
@@ -1728,8 +1724,34 @@ save_fail:
 }
 
 int
+pl_save_current (void) {
+    char path[PATH_MAX];
+    if (snprintf (path, sizeof (path), "%s/playlists", dbconfdir) > sizeof (path)) {
+        fprintf (stderr, "error: failed to make path string for playlists folder\n");
+        return -1;
+    }
+    // make folder
+    mkdir (path, 0755);
+
+    PLT_LOCK;
+    int curr = plt_get_curr ();
+    int err = 0;
+
+    plt_loading = 1;
+    if (snprintf (path, sizeof (path), "%s/playlists/%d.dbpl", dbconfdir, curr) > sizeof (path)) {
+        fprintf (stderr, "error: failed to make path string for playlist file\n");
+        PLT_UNLOCK;
+        return -1;
+    }
+    err = pl_save (path);
+    plt_loading = 0;
+    PLT_UNLOCK;
+    return err;
+}
+
+int
 pl_save_all (void) {
-    char path[1024];
+    char path[PATH_MAX];
     if (snprintf (path, sizeof (path), "%s/playlists", dbconfdir) > sizeof (path)) {
         fprintf (stderr, "error: failed to make path string for playlists folder\n");
         return -1;
@@ -1748,7 +1770,7 @@ pl_save_all (void) {
     for (i = 0; i < cnt; i++, p = p->next) {
         plt_set_curr (i);
         if (snprintf (path, sizeof (path), "%s/playlists/%d.dbpl", dbconfdir, i) > sizeof (path)) {
-            fprintf (stderr, "error: failed to make path string for playlists folder\n");
+            fprintf (stderr, "error: failed to make path string for playlist file\n");
             err = -1;
             break;
         }
@@ -2226,17 +2248,17 @@ pl_format_title (playItem_t *it, int idx, char *s, int size, int id, const char 
         case DB_COLUMN_ARTIST_ALBUM:
             {
                 char artistalbum[1024];
-                artist = pl_get_meta_cached (it, "artist", artist, "?");
-                album = pl_get_meta_cached (it, "album", album, "?");
+                artist = pl_get_meta_cached (it, "artist", artist, "Unknown artist");
+                album = pl_get_meta_cached (it, "album", album, "Unknown album");
                 snprintf (artistalbum, sizeof (artistalbum), "%s - %s", artist, album);
                 text = artistalbum;
             }
             break;
         case DB_COLUMN_ARTIST:
-            text = (artist = pl_get_meta_cached (it, "artist", artist, "?"));
+            text = (artist = pl_get_meta_cached (it, "artist", artist, "Unknown artist"));
             break;
         case DB_COLUMN_ALBUM:
-            text = (album = pl_get_meta_cached (it, "album", artist, "?"));
+            text = (album = pl_get_meta_cached (it, "album", artist, "Unknown album"));
             break;
         case DB_COLUMN_TITLE:
             text = (title = pl_get_meta_cached (it, "title", artist, "?"));
@@ -2289,13 +2311,13 @@ pl_format_title (playItem_t *it, int idx, char *s, int size, int id, const char 
                 break;
             }
             else if (*fmt == 'a') {
-                meta = (artist = pl_get_meta_cached (it, "artist", artist, "?"));
+                meta = (artist = pl_get_meta_cached (it, "artist", artist, "Unknown artist"));
             }
             else if (*fmt == 't') {
                 meta = (title = pl_get_meta_cached (it, "title", title, "?"));
             }
             else if (*fmt == 'b') {
-                meta = (album = pl_get_meta_cached (it, "album", album, "?"));
+                meta = (album = pl_get_meta_cached (it, "album", album, "Unknown album"));
             }
             else if (*fmt == 'n') {
                 meta = (track = pl_get_meta_cached (it, "track", track, ""));
@@ -2660,7 +2682,7 @@ pl_search_process (const char *text) {
             }
         }
     }
-    GLOBAL_LOCK;
+    GLOBAL_UNLOCK;
 }
 
 int
@@ -2753,30 +2775,16 @@ pl_playqueue_getcount (void) {
 void
 pl_items_copy_junk (playItem_t *from, playItem_t *first, playItem_t *last) {
     LOCK;
-    const char *year = pl_find_meta (from, "year");
-    const char *genre = pl_find_meta (from, "genre");
-    const char *copyright = pl_find_meta (from, "copyright");
-    const char *vendor = pl_find_meta (from, "vendor");
-    const char *comment = pl_find_meta (from, "comment");
-    playItem_t *i;
-    for (i = first; i; i = i->next[PL_MAIN]) {
-        if (year) {
-            pl_add_meta (i, "year", year);
-        }
-        if (genre) {
-            pl_add_meta (i, "genre", genre);
-        }
-        if (copyright) {
-            pl_add_meta (i, "copyright", copyright);
-        }
-        if (vendor) {
-            pl_add_meta (i, "vendor", vendor);
-        }
-        if (comment) {
-            pl_add_meta (i, "comment", comment);
-        }
-        if (i == last) {
-            break;
+    const char *metainfo[] = {
+        "year", "genre", "copyright", "vendor", "comment", "tags", "numtracks", "band", "performer", "composer", "disc", NULL
+    };
+    for (int m = 0; metainfo[m]; m++) {
+        const char *data = pl_find_meta (from, metainfo[m]);
+        if (data) {
+            playItem_t *i;
+            for (i = first; i != last; i = i->next[PL_MAIN]) {
+                pl_add_meta (i, metainfo[m], data);
+            }
         }
     }
     UNLOCK;

@@ -22,6 +22,7 @@
 #include "supereq.h"
 
 static DB_functions_t *deadbeef;
+static DB_supereq_dsp_t plugin;
 
 void *paramlist_alloc (void);
 void paramlist_free (void *);
@@ -30,6 +31,8 @@ int equ_modifySamples(char *buf,int nsamples,int nch,int bps);
 void equ_clearbuf(int bps,int srate);
 void equ_init(int wb);
 void equ_quit(void);
+
+void supereq_reset (void);
 
 static float last_srate = 0;
 static int last_nch = 0, last_bps = 0;
@@ -40,9 +43,24 @@ static void *paramsroot;
 static int params_changed = 0;
 static intptr_t tid = 0;
 static uintptr_t mutex = 0;
+static int enabled = 0;
+
+static int
+supereq_on_configchanged (DB_event_t *ev, uintptr_t data) {
+    int e = deadbeef->conf_get_int ("supereq.enable", 0);
+    if (e != enabled) {
+        if (e) {
+            supereq_reset ();
+        }
+        enabled = e;
+    }
+    
+    return 0;
+}
 
 int
 supereq_plugin_start (void) {
+    enabled = deadbeef->conf_get_int ("supereq.enable", 0);
     // load bands from config
     for (int i = 0; i < 18; i++) {
         char key[100];
@@ -58,11 +76,13 @@ supereq_plugin_start (void) {
     equ_makeTable (lbands, rbands, paramsroot, last_srate);
     equ_clearbuf (last_bps,last_srate);
     mutex = deadbeef->mutex_create ();
+    deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_CONFIGCHANGED, DB_CALLBACK (supereq_on_configchanged), 0);
     return 0;
 }
 
 int
 supereq_plugin_stop (void) {
+    deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_CONFIGCHANGED, DB_CALLBACK (supereq_on_configchanged), 0);
     if (tid) {
         deadbeef->thread_join (tid);
         deadbeef->mutex_free (mutex);
@@ -144,6 +164,25 @@ supereq_reset (void) {
     deadbeef->mutex_unlock (mutex);
 }
 
+void
+supereq_enable (int e) {
+    deadbeef->conf_set_int ("supereq.enable", e);
+
+    if (e && !enabled) {
+        supereq_reset ();
+    }
+    enabled = e;
+}
+
+int
+supereq_enabled (void) {
+    return enabled;
+}
+
+static const char settings_dlg[] =
+    "property \"Enable\" checkbox supereq.enable 0;\n"
+;
+
 static DB_supereq_dsp_t plugin = {
     .dsp.plugin.api_vmajor = DB_API_VERSION_MAJOR,
     .dsp.plugin.api_vminor = DB_API_VERSION_MINOR,
@@ -156,9 +195,11 @@ static DB_supereq_dsp_t plugin = {
     .dsp.plugin.website = "http://deadbeef.sf.net",
     .dsp.plugin.start = supereq_plugin_start,
     .dsp.plugin.stop = supereq_plugin_stop,
-//  .dsp.plugin.configdialog = settings_dlg,
+    .dsp.plugin.configdialog = settings_dlg,
     .dsp.process_int16 = supereq_process_int16,
     .dsp.reset = supereq_reset,
+    .dsp.enable = supereq_enable,
+    .dsp.enabled = supereq_enabled,
     .get_band = supereq_get_band,
     .set_band = supereq_set_band,
 };

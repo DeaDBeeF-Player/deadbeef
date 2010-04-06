@@ -357,6 +357,8 @@ typedef struct {
     void (*pl_clear) (void);
     int (*pl_load) (const char *name);
     int (*pl_save) (const char *name);
+    int (*pl_save_current) (void);
+    int (*pl_save_all) (void);
     void (*pl_select_all) (void);
     void (*pl_crop_selected) (void);
     int (*pl_getselcount) (void);
@@ -450,7 +452,8 @@ typedef struct {
     int (*junk_get_leading_size_stdio) (FILE *fp);
     void (*junk_copy) (DB_playItem_t *from, DB_playItem_t *first, DB_playItem_t *last);
     const char * (*junk_detect_charset) (const char *s);
-    void (*junk_recode) (const char *in, int inlen, char *out, int outlen, const char *cs);
+    int (*junk_recode) (const char *in, int inlen, char *out, int outlen, const char *cs);
+    int (*junk_iconv) (const char *in, int inlen, char *out, int outlen, const char *cs_in, const char *cs_out);
     // vfs
     DB_FILE* (*fopen) (const char *fname);
     void (*fclose) (DB_FILE *f);
@@ -474,6 +477,7 @@ typedef struct {
     void (*conf_set_float) (const char *key, float val);
     DB_conf_item_t * (*conf_find) (const char *group, DB_conf_item_t *prev);
     void (*conf_remove_items) (const char *key);
+    int (*conf_save) (void);
     // plugin communication
     struct DB_decoder_s **(*plug_get_decoder_list) (void);
     struct DB_output_s **(*plug_get_output_list) (void);
@@ -482,6 +486,8 @@ typedef struct {
     int (*plug_activate) (struct DB_plugin_s *p, int activate);
     const char * (*plug_get_decoder_id) (const char *id);
     void (*plug_remove_decoder_id) (const char *id);
+    // misc utilities
+    int (*is_local_file) (const char *fname); // returns 1 for local filename, 0 otherwise
 } DB_functions_t;
 
 // base plugin interface
@@ -609,6 +615,8 @@ typedef struct DB_dsp_s {
     // stereo sample is counted as 1 sample
     int (*process_int16) (int16_t *samples, int nsamples, int nch, int bps, int srate);
     void (*reset) (void);
+    void (*enable) (int e);
+    int (*enabled) (void);
 } DB_dsp_t;
 
 // misc plugin

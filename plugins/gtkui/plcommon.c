@@ -18,6 +18,7 @@
 */
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include "gtkui.h"
 #include "plcommon.h"
 #include "coverart.h"
@@ -295,6 +296,43 @@ on_remove2_activate                    (GtkMenuItem     *menuitem,
 }
 
 void
+on_remove_from_disk_activate                    (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    GtkWidget *widget = GTK_WIDGET (menuitem);
+
+    GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (mainwin), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO, "Delete files from disk");
+    gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dlg), "Files will be lost. Proceed?");
+    gtk_window_set_title (GTK_WINDOW (dlg), "Warning");
+
+    int response = gtk_dialog_run (GTK_DIALOG (dlg));
+    gtk_widget_destroy (dlg);
+    if (response != GTK_RESPONSE_YES) {
+        return;
+    }
+
+    deadbeef->pl_lock ();
+    deadbeef->plt_lock ();
+
+    DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
+    while (it) {
+        if (deadbeef->pl_is_selected (it) && deadbeef->is_local_file (it->fname)) {
+            unlink (it->fname);
+        }
+        DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+        deadbeef->pl_item_unref (it);
+        it = next;
+    }
+
+    int cursor = deadbeef->pl_delete_selected ();
+    deadbeef->plt_unlock ();
+    deadbeef->pl_unlock ();
+
+    main_refresh ();
+    search_refresh ();
+}
+
+void
 list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
     clicked_idx = deadbeef->pl_get_idx_of (it);
     int inqueue = deadbeef->pl_playqueue_test (it);
@@ -303,6 +341,7 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
     GtkWidget *remove_from_playback_queue1;
     GtkWidget *separator9;
     GtkWidget *remove2;
+    GtkWidget *remove_from_disk;
     GtkWidget *separator8;
     GtkWidget *properties1;
     GtkWidget *reload_metadata;
@@ -337,6 +376,11 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
     gtk_container_add (GTK_CONTAINER (playlist_menu), remove2);
     gtk_object_set_data (GTK_OBJECT (remove2), "ps", listview);
 
+    remove_from_disk = gtk_menu_item_new_with_mnemonic ("Remove from disk");
+    gtk_widget_show (remove_from_disk);
+    gtk_container_add (GTK_CONTAINER (playlist_menu), remove_from_disk);
+    gtk_object_set_data (GTK_OBJECT (remove_from_disk), "ps", listview);
+
     separator8 = gtk_separator_menu_item_new ();
     gtk_widget_show (separator8);
     gtk_container_add (GTK_CONTAINER (playlist_menu), separator8);
@@ -358,6 +402,9 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
             NULL);
     g_signal_connect ((gpointer) remove2, "activate",
             G_CALLBACK (on_remove2_activate),
+            NULL);
+    g_signal_connect ((gpointer) remove_from_disk, "activate",
+            G_CALLBACK (on_remove_from_disk_activate),
             NULL);
     g_signal_connect ((gpointer) properties1, "activate",
             G_CALLBACK (main_properties_activate),

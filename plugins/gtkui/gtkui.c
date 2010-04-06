@@ -328,6 +328,10 @@ redraw_queued_tracks (DdbListview *pl, int list) {
 
 static gboolean
 redraw_queued_tracks_cb (gpointer nothing) {
+    int iconified = gdk_window_get_state(mainwin->window) & GDK_WINDOW_STATE_ICONIFIED;
+    if (!GTK_WIDGET_VISIBLE (mainwin) || iconified) {
+        return FALSE;
+    }
     redraw_queued_tracks (DDB_LISTVIEW (lookup_widget (mainwin, "playlist")), PL_MAIN);
     redraw_queued_tracks (DDB_LISTVIEW (lookup_widget (searchwin, "searchlist")), PL_SEARCH);
     return FALSE;
@@ -370,12 +374,10 @@ static void
 current_track_changed (DB_playItem_t *it) {
     char str[600];
     if (it) {
-        char dname[512];
-        deadbeef->pl_format_item_display_name (it, dname, 512);
-        snprintf (str, sizeof (str), "DeaDBeeF - %s", dname);
+        deadbeef->pl_format_title (it, -1, str, sizeof (str), -1, "DeaDBeeF-" VERSION " - %a - %t");
     }
     else {
-        strcpy (str, "DeaDBeeF");
+        strcpy (str, "DeaDBeeF-" VERSION);
     }
     gtk_window_set_title (GTK_WINDOW (mainwin), str);
     set_tray_tooltip (str);
@@ -645,8 +647,8 @@ update_win_title_idle (gpointer data) {
             }
         }
         else {
-            gtk_window_set_title (GTK_WINDOW (mainwin), "DeaDBeeF");
-            set_tray_tooltip ("DeaDBeeF");
+            gtk_window_set_title (GTK_WINDOW (mainwin), "DeaDBeeF-" VERSION);
+            set_tray_tooltip ("DeaDBeeF-" VERSION);
         }
     }
     // update playlist view
@@ -656,6 +658,10 @@ update_win_title_idle (gpointer data) {
 
 static gboolean
 redraw_seekbar_cb (gpointer nothing) {
+    int iconified = gdk_window_get_state(mainwin->window) & GDK_WINDOW_STATE_ICONIFIED;
+    if (!GTK_WIDGET_VISIBLE (mainwin) || iconified) {
+        return FALSE;
+    }
     seekbar_redraw ();
     return FALSE;
 }
@@ -834,6 +840,7 @@ gtkui_thread (void *ctx) {
 
 //    playlist_refresh ();
 //    ddb_listview_set_vscroll (main_playlist, scroll);
+    gtk_window_set_title (GTK_WINDOW (mainwin), "DeaDBeeF-" VERSION);
     gtk_initialized = 1;
     gtk_main ();
     cover_art_free ();

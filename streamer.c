@@ -436,7 +436,11 @@ streamer_set_current (playItem_t *it) {
         playing_track = it;
         if (playing_track) {
             pl_item_ref (playing_track);
+            playing_track->played = 1;
+            trace ("sending songstarted to plugins [2] current playtrack: %s\n", playing_track->fname);
+            plug_trigger_event (DB_EV_SONGSTARTED, 0);
         }
+        bytes_until_next_song = -1;
     }
 
 // code below breaks seekbar drawing during transition between tracks
@@ -532,9 +536,9 @@ streamer_set_current (playItem_t *it) {
         }
         return -1;
     }
-    if (bytes_until_next_song == -1) {
-        bytes_until_next_song = 0;
-    }
+//    if (bytes_until_next_song == -1) {
+//        bytes_until_next_song = 0;
+//    }
 success:
     messagepump_push (M_TRACKCHANGED, 0, to, 0);
     return 0;
@@ -718,7 +722,7 @@ streamer_thread (void *ctx) {
             playlist_track = playing_track;
             // that is needed for playlist drawing
             // plugin will get pointer to new str_playing_song
-            trace ("sending songstarted to plugins\ncurrent playtrack: %s\n", playing_track->fname);
+            trace ("sending songstarted to plugins [1] current playtrack: %s\n", playing_track->fname);
             plug_trigger_event (DB_EV_SONGSTARTED, 0);
             playpos = 0;
 
@@ -972,7 +976,9 @@ streamer_reset (int full) { // must be called when current song changes by exter
     DB_dsp_t **dsp = deadbeef->plug_get_dsp_list ();
     int srate = p_get_rate ();
     for (int i = 0; dsp[i]; i++) {
-        dsp[i]->reset ();
+        if (dsp[i]->enabled ()) {
+            dsp[i]->reset ();
+        }
     }
     src_unlock ();
 }
@@ -1352,7 +1358,9 @@ streamer_read_async (char *bytes, int size) {
         DB_dsp_t **dsp = deadbeef->plug_get_dsp_list ();
         int srate = p_get_rate ();
         for (int i = 0; dsp[i]; i++) {
-            dsp[i]->process_int16 ((int16_t *)bytes, bytesread/4, 2, 16, srate);
+            if (dsp[i]->enabled ()) {
+                dsp[i]->process_int16 ((int16_t *)bytes, bytesread/4, 2, 16, srate);
+            }
         }
         mutex_unlock (decodemutex);
         bytes += bytesread;

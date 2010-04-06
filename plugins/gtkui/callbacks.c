@@ -292,7 +292,7 @@ on_mainwin_key_press_event             (GtkWidget       *widget,
                                         gpointer         user_data)
 {
 
-    if (event->keyval == GDK_n && !(event->state&(GDK_SHIFT_MASK|GDK_CONTROL_MASK|GDK_MOD1_MASK))) {
+    if (event->keyval == GDK_n && !event->state) {
         // button for that one is not in toolbar anymore, so handle it manually
         deadbeef->sendmessage (M_PLAYRANDOM, 0, 0, 0);
     }

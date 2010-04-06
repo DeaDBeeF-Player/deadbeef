@@ -381,7 +381,7 @@ void search_handle_doubleclick (DdbListview *listview, DdbListviewIter iter, int
 }
 
 void search_selection_changed (DdbListviewIter it, int idx) {
-    DdbListview *main = DDB_LISTVIEW (lookup_widget (searchwin, "searchlist"));
+    DdbListview *main = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
     ddb_listview_draw_row (main, main_get_idx ((DB_playItem_t *)it), it);
 }
 
@@ -456,46 +456,5 @@ search_playlist_init (GtkWidget *widget) {
         }
     }
     lock_column_config = 0;
-#if 0
-    extern GtkWidget *searchwin;
-    // init playlist control structure, and put it into widget user-data
-    memset (&search_playlist, 0, sizeof (search_playlist));
-    search_playlist.title = "search";
-    search_playlist.playlist = widget;
-    search_playlist.header = lookup_widget (searchwin, "searchheader");
-    search_playlist.scrollbar = lookup_widget (searchwin, "searchscroll");
-    search_playlist.hscrollbar = lookup_widget (searchwin, "searchhscroll");
-    assert (search_playlist.header);
-    assert (search_playlist.scrollbar);
-//    search_playlist.pcurr = &search_current;
-//    search_playlist.pcount = &search_count;
-    search_playlist.get_count = search_get_count;
-//    search_playlist.multisel = 0;
-    search_playlist.iterator = PL_SEARCH;
-    search_playlist.scrollpos = 0;
-    search_playlist.hscrollpos = 0;
-//    search_playlist.row = -1;
-    search_playlist.clicktime = -1;
-    search_playlist.nvisiblerows = 0;
-
-    // create default set of columns
-    DB_conf_item_t *col = deadbeef->conf_find ("search.column.", NULL);
-    if (!col) {
-        gtkpl_column_append (&search_playlist, gtkpl_column_alloc ("Artist / Album", 150, DB_COLUMN_ARTIST_ALBUM, NULL, 0));
-        gtkpl_column_append (&search_playlist, gtkpl_column_alloc ("Track №", 50, DB_COLUMN_TRACK, NULL, 1));
-        gtkpl_column_append (&search_playlist, gtkpl_column_alloc ("Title / Track Artist", 150, DB_COLUMN_TITLE, NULL, 0));
-        gtkpl_column_append (&search_playlist, gtkpl_column_alloc ("Duration", 50, DB_COLUMN_DURATION, NULL, 0));
-    }
-    else {
-        while (col) {
-            gtkpl_append_column_from_textdef (&search_playlist, col->value);
-            col = deadbeef->conf_find ("search.column.", col);
-        }
-    }
-    gtk_object_set_data (GTK_OBJECT (search_playlist.playlist), "ps", &search_playlist);
-    gtk_object_set_data (GTK_OBJECT (search_playlist.header), "ps", &search_playlist);
-    gtk_object_set_data (GTK_OBJECT (search_playlist.scrollbar), "ps", &search_playlist);
-    gtk_object_set_data (GTK_OBJECT (search_playlist.hscrollbar), "ps", &search_playlist);
-#endif
 }
 

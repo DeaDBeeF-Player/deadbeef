@@ -133,4 +133,7 @@ plug_free_decoder_ids (void);
 DB_decoder_t *
 plug_get_decoder_for_id (const char *id);
 
+int
+plug_is_local_file (const char *fname);
+
 #endif // __PLUGINS_H

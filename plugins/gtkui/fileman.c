@@ -32,7 +32,8 @@ gtkpl_add_file_info_cb (DB_playItem_t *it, void *data) {
 static gboolean
 progress_hide_idle (gpointer data) {
     progress_hide ();
-    playlist_refresh ();
+    deadbeef->sendmessage (M_PLAYLISTREFRESH, 0, 0, 0);
+    //playlist_refresh ();
     return FALSE;
 }
 

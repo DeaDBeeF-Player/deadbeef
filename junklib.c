@@ -32,13 +32,14 @@
 #endif
 
 #define MAX_TEXT_FRAME_SIZE 1024
+#define MAX_CUESHEET_FRAME_SIZE 10000
 #define MAX_APEV2_FRAME_SIZE 100000
 #define MAX_ID3V2_FRAME_SIZE 100000
 
 #define UTF8 "utf-8"
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -113,7 +114,7 @@ junk_iconv (const char *in, int inlen, char *out, int outlen, const char *cs_in,
 #ifdef __linux__
     char *pin = (char*)in;
 #else
-    const char *pin = value;
+    const char *pin = in;
 #endif
 
     size_t inbytesleft = inlen;
@@ -312,80 +313,33 @@ can_be_russian (const signed char *str) {
     return 0;
 }
 
-#if 0
-static char *
-convstr_id3v2_2to3 (const unsigned char* str, int sz) {
-    static char out[2048];
-    const char *enc = "iso8859-1";
-    char *ret = out;
-
-    // hack to add limited cp1251 recoding support
-    if (*str == 1) {
-        if (str[1] == 0xff && str[2] == 0xfe) {
-            enc = "UCS-2LE";
-            str += 2;
-            sz -= 2;
-        }
-        else if (str[2] == 0xff && str[1] == 0xfe) {
-            enc = "UCS-2BE";
-            str += 2;
-            sz -= 2;
-        }
-        else {
-            trace ("invalid ucs-2 signature %x %x\n", (int)str[1], (int)str[2]);
-            return NULL;
-        }
-    }
-    else {
-        if (can_be_russian (&str[1])) {
-            enc = "cp1251";
-        }
-    }
-    str++;
-    sz--;
-    iconv_t cd = iconv_open (UTF8, enc);
-    if (cd == (iconv_t)-1) {
-        trace ("iconv can't recoode from %s to utf8", enc);
-        return strdup ("-");
-    }
-    else {
-        size_t inbytesleft = sz;
-        size_t outbytesleft = 2047;
-#ifdef __linux__
-        char *pin = (char*)str;
-#else
-        const char *pin = str;
-#endif
-        char *pout = out;
-        memset (out, 0, sizeof (out));
-        /*size_t res = */iconv (cd, &pin, &inbytesleft, &pout, &outbytesleft);
-        iconv_close (cd);
-        ret = out;
-    }
-    return strdup (ret);
-}
-#endif
-
 static char *
 convstr_id3v2 (int version, uint8_t encoding, const unsigned char* str, int sz) {
-    static char out[2048];
-    const char *enc = "iso8859-1";
-    char *ret = out;
+    char out[2048] = "";
+    const char *enc = NULL;
 
-    // hack to add limited cp1251 recoding support
-
-    if (version == 4 && encoding == 3) {
-        // utf8
-        trace ("utf8\n");
-        strncpy (out, str, 2047);
-        out[min (sz, 2047)] = 0;
-        return strdup (out);
-    }
-    else if (version == 4 && encoding == 2) {
+    // detect encoding
+    if (version == 4 && encoding == 2) {
         trace ("utf16be\n");
         enc = "UTF-16BE";
     }
-    else if (encoding == 1) {
+    else if (version == 4 && encoding == 3) {
+        enc = UTF8;
+    }
+    else if (encoding == 0) {
+        // hack to add limited cp1251 recoding support
+        if (can_be_russian (str)) {
+            enc = "cp1251";
+        }
+    }
+    else if (encoding != 1 && !(version == 4 && encoding == 3)){
+        return NULL; // invalid encoding
+    }
+
+    if (encoding == 1) { // detect kind of unicode used
+        if (sz < 2) {
+            return NULL;
+        }
         if (version < 4) {
             if (str[0] == 0xff && str[1] == 0xfe) {
                 enc = "UCS-2LE";
@@ -407,44 +361,34 @@ convstr_id3v2 (int version, uint8_t encoding, const unsigned char* str, int sz) 
             enc = "UTF-16";
         }
     }
-#if 0
-    // NOTE: some dumb taggers put non-iso8859-1 text with enc=0
-    else if (*str == 0) {
-        // iso8859-1
-        trace ("iso8859-1\n");
-        enc = "iso8859-1";
-    }
-#endif
-    else {
+    else if (encoding == 0) {
+        // hack to add limited cp1251 recoding support
         if (can_be_russian (str)) {
             enc = "cp1251";
         }
+        else {
+            enc = "iso8859-1";
+        }
     }
-    iconv_t cd = iconv_open (UTF8, enc);
-    if (cd == (iconv_t)-1) {
-        trace ("iconv can't recode from %s to utf8\n", enc);
-        return strdup ("-");
+
+    int converted_sz = 0;
+
+    if ((converted_sz = junk_iconv (str, sz, out, sizeof (out), enc, UTF8)) < 0) {
+        return NULL;
     }
     else {
-        size_t inbytesleft = sz;
-        size_t outbytesleft = 2047;
-#ifdef __linux__
-        char *pin = (char*)str;
-#else
-        const char *pin = str;
-#endif
-        char *pout = out;
-        memset (out, 0, sizeof (out));
-        /*size_t res = */iconv (cd, &pin, &inbytesleft, &pout, &outbytesleft);
-        iconv_close (cd);
-        ret = out;
+        for (int n = 0; n < converted_sz; n++) {
+            if (out[n] == 0 && n != converted_sz-1) {
+                out[n] = '\n';
+            }
+        }
     }
-//    trace ("decoded %s\n", out+3);
-    return strdup (ret);
+    return strdup (out);
 }
 
 static const char *
 convstr_id3v1 (const char* str, int sz) {
+    trace ("convstr_id3v1\n");
     static char out[2048];
     int i;
     for (i = 0; i < sz; i++) {
@@ -458,52 +402,18 @@ convstr_id3v1 (const char* str, int sz) {
     }
 
     // check for utf8 (hack)
-    iconv_t cd;
-    cd = iconv_open (UTF8, UTF8);
-    if (cd == (iconv_t)-1) {
-        trace ("iconv doesn't support utf8\n");
-        return str;
-    }
-    size_t inbytesleft = sz;
-    size_t outbytesleft = 2047;
-#ifdef __linux__
-        char *pin = (char*)str;
-#else
-        const char *pin = str;
-#endif
-    char *pout = out;
-    memset (out, 0, sizeof (out));
-    size_t res = iconv (cd, &pin, &inbytesleft, &pout, &outbytesleft);
-    iconv_close (cd);
-    if (res == 0) {
-        strncpy (out, str, 2047);
-        out[min (sz, 2047)] = 0;
+    if (junk_iconv (str, sz, out, sizeof (out), UTF8, UTF8) > 0) {
         return out;
     }
-
     const char *enc = "iso8859-1";
     if (can_be_russian (str)) {
         enc = "cp1251";
     }
-    cd = iconv_open (UTF8, enc);
-    if (cd == (iconv_t)-1) {
-        trace ("iconv can't recode from %s to utf8\n", enc);
-        return str;
+
+    if (junk_iconv (str, sz, out, sizeof (out), enc, UTF8) > 0) {
+        return out;
     }
-    else {
-        size_t inbytesleft = sz;
-        size_t outbytesleft = 2047;
-#ifdef __linux__
-        char *pin = (char*)str;
-#else
-        const char *pin = str;
-#endif
-        char *pout = out;
-        memset (out, 0, sizeof (out));
-        /*size_t res = */iconv (cd, &pin, &inbytesleft, &pout, &outbytesleft);
-        iconv_close (cd);
-    }
-    return out;
+    return NULL;
 }
 
 static void
@@ -811,6 +721,25 @@ junk_apev2_read_full (playItem_t *it, DB_apev2_tag_t *tag_store, DB_FILE *fp) {
         trace ("failed to seek to tag start (-%d)\n", size);
         return -1;
     }
+
+    // this code ensures that APEv2 frames don't get appended to
+    // existing metainfo, but all APEv2 frames with the same key are
+    // appended
+    const char *metainfo[] = {
+        "artist", "artist", it ? pl_find_meta (it, "artist") : NULL,
+        "album artist", "band", it ? pl_find_meta (it, "band") : NULL,
+        "title", "title", it ? pl_find_meta (it, "title") : NULL,
+        "album", "album", it ? pl_find_meta (it, "album") : NULL,
+        "year", "year", it ? pl_find_meta (it, "year") : NULL,
+        "genre", "genre", it ? pl_find_meta (it, "genre") : NULL,
+        "composer", "composer", it ? pl_find_meta (it, "composer") : NULL,
+//        "performer", "performer", it ? pl_find_meta (it, "performer") : NULL,
+        "comment", "comment", it ? pl_find_meta (it, "comment") : NULL,
+        "copyright", "copyright", it ? pl_find_meta (it, "copyright") : NULL,
+        "totaltracks", "numtracks", it ? pl_find_meta (it, "numtracks") : NULL,
+        NULL
+    };
+
     int i;
     for (i = 0; i < numitems; i++) {
         uint8_t buffer[8];
@@ -868,66 +797,50 @@ junk_apev2_read_full (playItem_t *it, DB_apev2_tag_t *tag_store, DB_FILE *fp) {
                 tail = frm;
             }
 
-            int valuetype = ((itemflags >> 1) & 3);
-            // add metainfo only if it's textual
-            if (valuetype == 0 && itemsize < MAX_TEXT_FRAME_SIZE) {
-                if (!u8_valid (value, itemsize, NULL)) {
-                    trace ("junk_read_ape_full: bad encoding in text frame %s\n", key);
-                    continue;
-                }
+            if (it) {
+                int valuetype = ((itemflags >> 1) & 3);
+                // add metainfo only if it's textual
+                if (valuetype == 0 && (itemsize < MAX_TEXT_FRAME_SIZE || (!strcasecmp (key, "cuesheet") && itemsize < MAX_CUESHEET_FRAME_SIZE))) {
+                    printf ("APEv2 %s=%s\n", key, value);
 
-                if (!strcasecmp (key, "artist")) {
-                    pl_add_meta (it, "artist", value);
-                }
-                else if (!strcasecmp (key, "title")) {
-                    pl_add_meta (it, "title", value);
-                }
-                else if (!strcasecmp (key, "album")) {
-                    pl_add_meta (it, "album", value);
-                }
-                else if (!strcasecmp (key, "track")) {
-                    char *slash = strchr (value, '/');
-                    if (slash) {
-                        // split into track/number
-                        *slash = 0;
-                        slash++;
-                        pl_add_meta (it, "numtracks", slash);
+                    if (!u8_valid (value, itemsize, NULL)) {
+                        trace ("junk_read_ape_full: bad encoding in text frame %s\n", key);
+                        continue;
                     }
-                    pl_add_meta (it, "track", value);
-                }
-                else if (!strcasecmp (key, "year")) {
-                    pl_add_meta (it, "year", value);
-                }
-                else if (!strcasecmp (key, "genre")) {
-                    pl_add_meta (it, "genre", value);
-                }
-                else if (!strcasecmp (key, "composer")) {
-                    pl_add_meta (it, "composer", value);
-                }
-                else if (!strcasecmp (key, "comment")) {
-                    pl_add_meta (it, "comment", value);
-                }
-                else if (!strcasecmp (key, "copyright")) {
-                    pl_add_meta (it, "copyright", value);
-                }
-                else if (!strcasecmp (key, "cuesheet")) {
-                    pl_add_meta (it, "cuesheet", value);
-                }
-                else if (!strncasecmp (key, "replaygain_album_gain", 21)) {
-                    it->replaygain_album_gain = atof (value);
-                    trace ("album_gain=%s\n", value);
-                }
-                else if (!strncasecmp (key, "replaygain_album_peak", 21)) {
-                    it->replaygain_album_peak = atof (value);
-                    trace ("album_peak=%s\n", value);
-                }
-                else if (!strncasecmp (key, "replaygain_track_gain", 21)) {
-                    it->replaygain_track_gain = atof (value);
-                    trace ("track_gain=%s\n", value);
-                }
-                else if (!strncasecmp (key, "replaygain_track_peak", 21)) {
-                    it->replaygain_track_peak = atof (value);
-                    trace ("track_peak=%s\n", value);
+
+                    int m;
+                    for (m = 0; metainfo[m]; m+=3) {
+                        if (!metainfo[m+2] && !strcasecmp (key, metainfo[m])) {
+                            printf ("adding %s=%s as %s\n", key, value, metainfo[m+1]);
+                            pl_append_meta (it, metainfo[m+1], value);
+                            break;
+                        }
+                    }
+
+                    if (!metainfo[m]) {
+                        if (!strcasecmp (key, "track")) {
+                            pl_add_meta (it, "track", value);
+                        }
+                        else if (!strcasecmp (key, "cuesheet")) {
+                            pl_add_meta (it, "cuesheet", value);
+                        }
+                        else if (!strncasecmp (key, "replaygain_album_gain", 21)) {
+                            it->replaygain_album_gain = atof (value);
+                            trace ("album_gain=%s\n", value);
+                        }
+                        else if (!strncasecmp (key, "replaygain_album_peak", 21)) {
+                            it->replaygain_album_peak = atof (value);
+                            trace ("album_peak=%s\n", value);
+                        }
+                        else if (!strncasecmp (key, "replaygain_track_gain", 21)) {
+                            it->replaygain_track_gain = atof (value);
+                            trace ("track_gain=%s\n", value);
+                        }
+                        else if (!strncasecmp (key, "replaygain_track_peak", 21)) {
+                            it->replaygain_track_peak = atof (value);
+                            trace ("track_peak=%s\n", value);
+                        }
+                    }
                 }
             }
             free (value);
@@ -2277,40 +2190,44 @@ junk_load_comm_frame (int version_major, playItem_t *it, uint8_t *readptr, int s
 
 int
 junk_id3v2_load_txx (int version_major, playItem_t *it, uint8_t *readptr, int synched_size) {
-    uint8_t *p = readptr;
-    uint8_t encoding = *p;
-    p++;
-    uint8_t *desc = p;
-    int desc_sz = 0;
-    while (*p && p - readptr < synched_size) {
-        p++;
-        desc_sz++;
-    }
-    p++;
-    if (p - readptr >= synched_size) {
-        trace ("bad TXXX frame, skipped\n");
+    char *txx = convstr_id3v2 (version_major, *readptr, readptr+1, synched_size-1);
+    if (!txx) {
         return -1;
     }
-    // FIXME: decode properly using frame encoding
-    char *desc_s = desc;
-    char *value_s = p;
-    //trace ("value=%s\n", value_s);
-    if (!strcasecmp (desc_s, "replaygain_album_gain")) {
-        it->replaygain_album_gain = atof (value_s);
-        trace ("%s=%s (%f)\n", desc_s, value_s, it->replaygain_album_gain);
+
+    char *val = NULL;
+    if (txx) {
+        char *p;
+        for (p = txx; *p; p++) {
+            if (*p == '\n') {
+                *p = 0;
+                val = p+1;
+                break;
+            }
+        }
     }
-    else if (!strcasecmp (desc_s, "replaygain_album_peak")) {
-        it->replaygain_album_peak = atof (value_s);
-        trace ("%s=%s (%f)\n", desc_s, value_s, it->replaygain_album_peak);
+
+    if (val) {
+        if (!strcasecmp (txx, "replaygain_album_gain")) {
+            it->replaygain_album_gain = atof (val);
+            trace ("%s=%s (%f)\n", txx, val, it->replaygain_album_gain);
+        }
+        else if (!strcasecmp (txx, "replaygain_album_peak")) {
+            it->replaygain_album_peak = atof (val);
+            trace ("%s=%s (%f)\n", txx, val, it->replaygain_album_peak);
+        }
+        else if (!strcasecmp (txx, "replaygain_track_gain")) {
+            it->replaygain_track_gain = atof (val);
+            trace ("%s=%s (%f)\n", txx, val, it->replaygain_track_gain);
+        }
+        else if (!strcasecmp (txx, "replaygain_track_peak")) {
+            it->replaygain_track_peak = atof (val);
+            trace ("%s=%s (%f)\n", txx, val, it->replaygain_track_peak);
+        }
     }
-    else if (!strcasecmp (desc_s, "replaygain_track_gain")) {
-        it->replaygain_track_gain = atof (value_s);
-        trace ("%s=%s (%f)\n", desc_s, value_s, it->replaygain_track_gain);
-    }
-    else if (!strcasecmp (desc_s, "replaygain_track_peak")) {
-        it->replaygain_track_peak = atof (value_s);
-        trace ("%s=%s (%f)\n", desc_s, value_s, it->replaygain_track_peak);
-    }
+    free (txx);
+
+    return 0;
 }
 
 int
@@ -2544,7 +2461,14 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                         trace ("frame %s is too big, discard\n", frameid);
                         break;
                     }
+
                     char *text = convstr_id3v2 (version_major, readptr[0], readptr+1, synched_size-1);
+
+                    // couple of simple tests
+                    //char *text = convstr_id3v2 (4, 3, "текст1\0текст2", strlen ("текст1")*2+2);
+                    //const char ucstext[] = { 0x42, 0x04, 0x35, 0x04, 0x3a, 0x04, 0x41, 0x04, 0x42, 0x04, 0x31, 0x00, 0x00, 0x00, 0x42, 0x04, 0x35, 0x04, 0x3a, 0x04, 0x41, 0x04, 0x42, 0x04, 0x32, 0x00 };
+                    //char *text = convstr_id3v2 (4, 1, ucstext, sizeof (ucstext));
+
                     if (text && *text && text_holders[f]) {
                         if (*text_holders[f]) {
                             // append
@@ -2849,26 +2773,8 @@ junk_detect_charset (const char *s) {
     return "iso8859-1";
 }
 
-void
+int
 junk_recode (const char *in, int inlen, char *out, int outlen, const char *cs) {
-    iconv_t cd = iconv_open (UTF8, cs);
-    if (cd == (iconv_t)-1) {
-        trace ("iconv can't recode from %s to utf8\n", cs);
-        memcpy (out, in, min(inlen, outlen));
-        return;
-    }
-    else {
-        size_t inbytesleft = inlen;
-        size_t outbytesleft = outlen;
-#ifdef __linux__
-        char *pin = (char*)in;
-#else
-        const char *pin = in;
-#endif
-        char *pout = out;
-        memset (out, 0, outlen);
-        size_t res = iconv (cd, &pin, &inbytesleft, &pout, &outbytesleft);
-        iconv_close (cd);
-    }
+    return junk_iconv (in, inlen, out, outlen, cs, UTF8);
 }
 

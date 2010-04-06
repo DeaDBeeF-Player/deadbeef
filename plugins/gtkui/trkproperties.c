@@ -19,6 +19,7 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 #include <string.h>
+#include "ddblistview.h"
 #include "trkproperties.h"
 #include "interface.h"
 #include "support.h"
@@ -27,12 +28,14 @@
 
 static GtkWidget *trackproperties;
 static DB_playItem_t *track;
+static GtkCellRenderer *rend_text2;
 
 gboolean
 on_trackproperties_delete_event        (GtkWidget       *widget,
                                         GdkEvent        *event,
                                         gpointer         user_data)
 {
+    rend_text2 = NULL;
     trackproperties = NULL;
     if (track) {
         deadbeef->pl_item_unref (track);
@@ -47,11 +50,7 @@ on_trackproperties_key_press_event     (GtkWidget       *widget,
                                         gpointer         user_data)
 {
     if (event->keyval == GDK_Escape) {
-        trackproperties = NULL;
-        if (track) {
-            deadbeef->pl_item_unref (track);
-            track = NULL;
-        }
+        on_trackproperties_delete_event (NULL, NULL, NULL);
         gtk_widget_destroy (widget);
     }
     return FALSE;
@@ -62,12 +61,9 @@ on_closebtn_clicked                    (GtkButton       *button,
                                         gpointer         user_data)
 {
     if (trackproperties) {
-        if (track) {
-            deadbeef->pl_item_unref (track);
-            track = NULL;
-        }
-        gtk_widget_destroy (trackproperties);
-        trackproperties = NULL;
+        GtkWidget *w = trackproperties;
+        on_trackproperties_delete_event (NULL, NULL, NULL);
+        gtk_widget_destroy (w);
     }
 }
 
@@ -106,29 +102,65 @@ show_track_properties_dlg (DB_playItem_t *it) {
     }
     track = it;
 
+
+    int allow_editing = 0;
+
+    if (deadbeef->is_local_file (it->fname)) {
+        // get decoder plugin by id
+        DB_decoder_t *dec = NULL;
+        if (it->decoder_id) {
+            DB_decoder_t **decoders = deadbeef->plug_get_decoder_list ();
+            for (int i = 0; decoders[i]; i++) {
+                if (!strcmp (decoders[i]->plugin.id, it->decoder_id)) {
+                    dec = decoders[i];
+                    break;
+                }
+            }
+        }
+
+        if (dec && dec->write_metadata && deadbeef->conf_get_int ("enable_tag_writing", 0)) {
+            allow_editing = 1;
+        }
+    }
+
+    GtkTreeView *tree;
+    GtkListStore *store;
     if (!trackproperties) {
         trackproperties = create_trackproperties ();
         gtk_window_set_transient_for (GTK_WINDOW (trackproperties), GTK_WINDOW (mainwin));
+        tree = GTK_TREE_VIEW (lookup_widget (trackproperties, "metalist"));
+        store = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_STRING);
+        GtkCellRenderer *rend_text = gtk_cell_renderer_text_new ();
+        rend_text2 = gtk_cell_renderer_text_new ();
+        g_signal_connect ((gpointer)rend_text2, "edited",
+                G_CALLBACK (on_metadata_edited),
+                store);
+        GtkTreeViewColumn *col1 = gtk_tree_view_column_new_with_attributes ("Key", rend_text, "text", 0, NULL);
+        GtkTreeViewColumn *col2 = gtk_tree_view_column_new_with_attributes ("Value", rend_text2, "text", 1, NULL);
+        gtk_tree_view_append_column (tree, col1);
+        gtk_tree_view_append_column (tree, col2);
     }
+    else {
+        tree = GTK_TREE_VIEW (lookup_widget (trackproperties, "metalist"));
+        store = GTK_LIST_STORE (gtk_tree_view_get_model (tree));
+
+        // remove everything from store
+        gtk_list_store_clear (store);
+    }
+
+    if (allow_editing) {
+        g_object_set (G_OBJECT (rend_text2), "editable", TRUE, NULL);
+    }
+    else {
+        g_object_set (G_OBJECT (rend_text2), "editable", FALSE, NULL);
+    }
+
     GtkWidget *widget = trackproperties;
     GtkWidget *w;
     const char *meta;
     // location
     w = lookup_widget (widget, "location");
     gtk_entry_set_text (GTK_ENTRY (w), it->fname);
-
-    GtkTreeView *tree = GTK_TREE_VIEW (lookup_widget (widget, "metalist"));
-    GtkListStore *store = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_STRING);
-    GtkCellRenderer *rend_text = gtk_cell_renderer_text_new ();
-    GtkCellRenderer *rend_text2 = gtk_cell_renderer_text_new ();
-    g_object_set (G_OBJECT (rend_text2), "editable", TRUE, NULL);
-    g_signal_connect ((gpointer)rend_text2, "edited",
-            G_CALLBACK (on_metadata_edited),
-            store);
-    GtkTreeViewColumn *col1 = gtk_tree_view_column_new_with_attributes ("Key", rend_text, "text", 0, NULL);
-    GtkTreeViewColumn *col2 = gtk_tree_view_column_new_with_attributes ("Value", rend_text2, "text", 1, NULL);
-    gtk_tree_view_append_column (tree, col1);
-    gtk_tree_view_append_column (tree, col2);
 
     deadbeef->pl_lock ();
     int i = 0;
@@ -145,19 +177,7 @@ show_track_properties_dlg (DB_playItem_t *it) {
     }
     deadbeef->pl_unlock ();
 
-    // get decoder plugin by id
-    DB_decoder_t *dec = NULL;
-    if (it->decoder_id) {
-        DB_decoder_t **decoders = deadbeef->plug_get_decoder_list ();
-        for (int i = 0; decoders[i]; i++) {
-            if (!strcmp (decoders[i]->plugin.id, it->decoder_id)) {
-                dec = decoders[i];
-                break;
-            }
-        }
-    }
-
-    if (dec && dec->write_metadata && deadbeef->conf_get_int ("enable_tag_writing", 0)) {
+    if (allow_editing) {
         gtk_widget_set_sensitive (lookup_widget (widget, "write_tags"), TRUE);
     }
     else {
@@ -211,6 +231,7 @@ on_write_tags_clicked                  (GtkButton       *button,
                 GtkTreeModel *model = GTK_TREE_MODEL (gtk_tree_view_get_model (tree));
                 gtk_tree_model_foreach (model, set_metadata_cb, track);
                 dec->write_metadata (track);
+                ddb_listview_refresh (DDB_LISTVIEW (lookup_widget (mainwin, "playlist")), DDB_REFRESH_LIST);
             }
             break;
         }
