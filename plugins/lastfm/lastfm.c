@@ -28,7 +28,7 @@
 
 #define LFM_TESTMODE 0
 #define LFM_IGNORE_RULES 0
-#define LFM_NOSEND 1
+#define LFM_NOSEND 0
 
 static DB_misc_t plugin;
 static DB_functions_t *deadbeef;
@@ -99,7 +99,6 @@ lastfm_curl_res (void *ptr, size_t size, size_t nmemb, void *stream)
 
 static int
 lfm_curl_control (void *stream, double dltotal, double dlnow, double ultotal, double ulnow) {
-    trace ("lfm_curl_control\n");
     if (lfm_stopthread) {
         trace ("lfm: aborting current request\n");
         return -1;
@@ -465,6 +464,7 @@ lfm_format_uri (int subm, DB_playItem_t *song, char *out, int outl) {
 
 static int
 lastfm_songstarted (DB_event_track_t *ev, uintptr_t data) {
+    trace ("lfm songfinished %s\n", ev->track->fname);
     if (!deadbeef->conf_get_int ("lastfm.enable", 0)) {
         return 0;
     }
@@ -673,11 +673,11 @@ lfm_thread (void *ctx) {
             continue;
         }
         trace ("lfm sending nowplaying...\n");
+        lfm_send_submissions ();
         // try to send nowplaying
         if (lfm_nowplaying[0] && !deadbeef->conf_get_int ("lastfm.disable_np", 0)) {
             lfm_send_nowplaying ();
         }
-        lfm_send_submissions ();
     }
 }
 
