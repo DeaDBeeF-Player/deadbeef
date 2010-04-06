@@ -2212,17 +2212,17 @@ pl_format_title (playItem_t *it, int idx, char *s, int size, int id, const char 
         case DB_COLUMN_ARTIST_ALBUM:
             {
                 char artistalbum[1024];
-                artist = pl_get_meta_cached (it, "artist", artist, "?");
-                album = pl_get_meta_cached (it, "album", album, "?");
+                artist = pl_get_meta_cached (it, "artist", artist, "Unknown artist");
+                album = pl_get_meta_cached (it, "album", album, "Unknown album");
                 snprintf (artistalbum, sizeof (artistalbum), "%s - %s", artist, album);
                 text = artistalbum;
             }
             break;
         case DB_COLUMN_ARTIST:
-            text = (artist = pl_get_meta_cached (it, "artist", artist, "?"));
+            text = (artist = pl_get_meta_cached (it, "artist", artist, "Unknown artist"));
             break;
         case DB_COLUMN_ALBUM:
-            text = (album = pl_get_meta_cached (it, "album", artist, "?"));
+            text = (album = pl_get_meta_cached (it, "album", artist, "Unknown album"));
             break;
         case DB_COLUMN_TITLE:
             text = (title = pl_get_meta_cached (it, "title", artist, "?"));
@@ -2275,13 +2275,13 @@ pl_format_title (playItem_t *it, int idx, char *s, int size, int id, const char 
                 break;
             }
             else if (*fmt == 'a') {
-                meta = (artist = pl_get_meta_cached (it, "artist", artist, "?"));
+                meta = (artist = pl_get_meta_cached (it, "artist", artist, "Unknown artist"));
             }
             else if (*fmt == 't') {
                 meta = (title = pl_get_meta_cached (it, "title", title, "?"));
             }
             else if (*fmt == 'b') {
-                meta = (album = pl_get_meta_cached (it, "album", album, "?"));
+                meta = (album = pl_get_meta_cached (it, "album", album, "Unknown album"));
             }
             else if (*fmt == 'n') {
                 meta = (track = pl_get_meta_cached (it, "track", track, ""));
