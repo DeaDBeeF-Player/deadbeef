@@ -211,20 +211,6 @@ filter_jpg (const struct dirent *f)
     return 0;
 }
 
-static int
-is_local_file (const char *fname) {
-    if (!strncasecmp (fname, "file://", 7)) {
-        return 1;
-    }
-    for (; *fname; fname++) {
-        if (!strncmp (fname, "://", 3)) {
-            return 0;
-        }
-    }
-
-    return 1;
-}
-
 static uint8_t *
 id3v2_skip_str (int enc, uint8_t *ptr, uint8_t *end) {
     if (enc == 0 || enc == 3) {
@@ -276,7 +262,7 @@ fetcher_thread (void *none)
             trace ("fetching cover for %s %s\n", param->album, param->artist);
 
             // try to load embedded from id3v2
-            if (is_local_file (param->fname)) {
+            if (deadbeef->is_local_file (param->fname)) {
                 if (deadbeef->conf_get_int ("artwork.enable_embedded", 1)) {
                     trace ("trying to load artwork from id3v2 tag for %s\n", param->fname);
                     DB_id3v2_tag_t tag;
@@ -461,7 +447,7 @@ get_album_art (const char *fname, const char *artist, const char *album, artwork
         return strdup (DEFAULT_COVER_PATH);
     }
 
-    if (!is_local_file (fname)) {
+    if (!deadbeef->is_local_file (fname)) {
         return strdup (DEFAULT_COVER_PATH);
     }
 

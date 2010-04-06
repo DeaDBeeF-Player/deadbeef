@@ -238,6 +238,8 @@ static DB_functions_t deadbeef_api = {
     .plug_activate = plug_activate,
     .plug_get_decoder_id = plug_get_decoder_id,
     .plug_remove_decoder_id = plug_remove_decoder_id,
+    // misc utilities
+    .is_local_file = plug_is_local_file,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;
@@ -919,4 +921,19 @@ plug_get_decoder_for_id (const char *id) {
         }
     }
     return NULL;
+}
+
+int
+plug_is_local_file (const char *fname) {
+    if (!strncasecmp (fname, "file://", 7)) {
+        return 1;
+    }
+
+    for (; *fname; fname++) {
+        if (!strncmp (fname, "://", 3)) {
+            return 0;
+        }
+    }
+
+    return 1;
 }
