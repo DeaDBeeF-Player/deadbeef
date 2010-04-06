@@ -269,6 +269,14 @@ plt_add (int before, const char *title) {
 
     if (!playlist) {
         playlist = plt;
+        if (!plt_loading) {
+            // need to delete old playlist file if exists
+            char path[PATH_MAX];
+            if (snprintf (path, sizeof (path), "%s/playlists/%d.dbpl", dbconfdir, playlists_count-1) <= sizeof (path)) {
+                unlink (path);
+            }
+            pl_save_current ();
+        }
     }
     PLT_UNLOCK;
 
@@ -351,6 +359,8 @@ plt_set_curr (int plt) {
         playlist = p;
         if (!plt_loading) {
             plug_trigger_event (DB_EV_PLAYLISTSWITCH, 0);
+            conf_set_int ("playlist.current", plt_get_curr ());
+            conf_save ();
         }
     }
     PLT_UNLOCK;
@@ -1714,8 +1724,34 @@ save_fail:
 }
 
 int
+pl_save_current (void) {
+    char path[PATH_MAX];
+    if (snprintf (path, sizeof (path), "%s/playlists", dbconfdir) > sizeof (path)) {
+        fprintf (stderr, "error: failed to make path string for playlists folder\n");
+        return -1;
+    }
+    // make folder
+    mkdir (path, 0755);
+
+    PLT_LOCK;
+    int curr = plt_get_curr ();
+    int err = 0;
+
+    plt_loading = 1;
+    if (snprintf (path, sizeof (path), "%s/playlists/%d.dbpl", dbconfdir, curr) > sizeof (path)) {
+        fprintf (stderr, "error: failed to make path string for playlist file\n");
+        PLT_UNLOCK;
+        return -1;
+    }
+    err = pl_save (path);
+    plt_loading = 0;
+    PLT_UNLOCK;
+    return err;
+}
+
+int
 pl_save_all (void) {
-    char path[1024];
+    char path[PATH_MAX];
     if (snprintf (path, sizeof (path), "%s/playlists", dbconfdir) > sizeof (path)) {
         fprintf (stderr, "error: failed to make path string for playlists folder\n");
         return -1;
@@ -1734,7 +1770,7 @@ pl_save_all (void) {
     for (i = 0; i < cnt; i++, p = p->next) {
         plt_set_curr (i);
         if (snprintf (path, sizeof (path), "%s/playlists/%d.dbpl", dbconfdir, i) > sizeof (path)) {
-            fprintf (stderr, "error: failed to make path string for playlists folder\n");
+            fprintf (stderr, "error: failed to make path string for playlist file\n");
             err = -1;
             break;
         }

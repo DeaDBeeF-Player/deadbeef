@@ -344,6 +344,7 @@ player_mainloop (void) {
             switch (msg) {
             case M_REINIT_SOUND:
                 plug_reinit_sound ();
+                conf_save ();
                 break;
             case M_TERMINATE:
                 return;
@@ -387,10 +388,11 @@ player_mainloop (void) {
                 streamer_move_to_randomsong ();
                 break;
             case M_PLAYLISTREFRESH:
+                pl_save_current ();
                 plug_trigger_event_playlistchanged ();
                 break;
             case M_CONFIGCHANGED:
-                //plug_get_output ()->configchanged ();
+                conf_save ();
                 streamer_configchanged ();
                 plug_trigger_event (DB_EV_CONFIGCHANGED, 0);
                 break;

@@ -357,6 +357,8 @@ typedef struct {
     void (*pl_clear) (void);
     int (*pl_load) (const char *name);
     int (*pl_save) (const char *name);
+    int (*pl_save_current) (void);
+    int (*pl_save_all) (void);
     void (*pl_select_all) (void);
     void (*pl_crop_selected) (void);
     int (*pl_getselcount) (void);
@@ -475,6 +477,7 @@ typedef struct {
     void (*conf_set_float) (const char *key, float val);
     DB_conf_item_t * (*conf_find) (const char *group, DB_conf_item_t *prev);
     void (*conf_remove_items) (const char *key);
+    int (*conf_save) (void);
     // plugin communication
     struct DB_decoder_s **(*plug_get_decoder_list) (void);
     struct DB_output_s **(*plug_get_output_list) (void);

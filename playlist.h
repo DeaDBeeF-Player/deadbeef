@@ -209,6 +209,9 @@ int
 pl_save (const char *fname);
 
 int
+pl_save_current (void);
+
+int
 pl_save_all (void);
 
 int

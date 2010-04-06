@@ -201,6 +201,8 @@ static int tab_overlap_size = 0; // widget_height/2
 static int tabs_left_margin = 4;
 static int min_tab_size = 80;
 
+static int tab_moved = 0;
+
 void
 ddb_tabstrip_draw_tab (GtkWidget *widget, GdkDrawable *drawable, int selected, int x, int y, int w, int h) {
     GdkPoint points_filled[] = {
@@ -452,6 +454,7 @@ on_tabstrip_button_press_event           (GtkWidget       *widget,
         ts->prepare = 1;
         ts->dragging = tab_clicked;
         ts->prev_x = event->x;
+        tab_moved = 0;
     }
     else if (event->button == 3) {
         GtkWidget *menu = create_plmenu ();
@@ -481,6 +484,10 @@ on_tabstrip_button_release_event         (GtkWidget       *widget,
             ts->prepare = 0;
             tabstrip_render (ts);
             tabstrip_expose (ts, 0, 0, widget->allocation.width, widget->allocation.height);
+            if (tab_moved) {
+                deadbeef->pl_save_all ();
+                deadbeef->conf_save ();
+            }
         }
     }
     return FALSE;
@@ -558,6 +565,7 @@ on_tabstrip_motion_notify_event          (GtkWidget       *widget,
             snprintf (str2, sizeof (str2), "playlist.scroll.%d", inspos);
             pos2 = deadbeef->conf_get_int (str2, 0);
             deadbeef->plt_move (ts->dragging, inspos);
+            tab_moved = 1;
             deadbeef->conf_set_int (str1, pos2);
             deadbeef->conf_set_int (str2, pos1);
             ts->dragging = inspos;
