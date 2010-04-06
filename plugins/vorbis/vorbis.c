@@ -74,68 +74,54 @@ cvorbis_ftell (void *datasource) {
     return deadbeef->ftell (datasource);
 }
 
+static const char *metainfo[] = {
+    "ARTIST", "artist",
+    "TITLE", "title",
+    "ALBUM", "album",
+    "TRACKNUMBER", "track",
+    "DATE", "year",
+    "GENRE", "genre",
+    "COMMENT", "comment",
+    "PERFORMER", "performer",
+    "ENSEMBLE", "band",
+    "COMPOSER", "composer",
+    "ENCODED-BY", "vendor",
+    "DISCNUMBER", "disc",
+    "COPYRIGHT", "copyright",
+    "TRACKTOTAL", "numtracks",
+    NULL
+};
+
 static void
 update_vorbis_comments (DB_playItem_t *it, vorbis_comment *vc) {
     if (vc) {
         deadbeef->pl_delete_all_meta (it);
         deadbeef->pl_add_meta (it, "vendor", vc->vendor);
         for (int i = 0; i < vc->comments; i++) {
-            if (!strncasecmp (vc->user_comments[i], "ARTIST=", 7)) {
-                deadbeef->pl_add_meta (it, "artist", vc->user_comments[i] + 7);
+            char *s = vc->user_comments[i];
+            int m;
+            for (m = 0; metainfo[m]; m += 2) {
+                int l = strlen (metainfo[m]);
+                if (vc->comment_lengths[i] > l && !strncasecmp (metainfo[m], s, l) && s[l] == '=') {
+                    deadbeef->pl_append_meta (it, metainfo[m+1], s + l + 1);
+                }
             }
-            else if (!strncasecmp (vc->user_comments[i], "ALBUM=", 6)) {
-                deadbeef->pl_add_meta (it, "album", vc->user_comments[i] + 6);
-            }
-            else if (!strncasecmp (vc->user_comments[i], "TITLE=", 6)) {
-                deadbeef->pl_add_meta (it, "title", vc->user_comments[i] + 6);
-            }
-            else if (!strncasecmp (vc->user_comments[i], "TRACKNUMBER=", 12)) {
-                deadbeef->pl_add_meta (it, "track", vc->user_comments[i] + 12);
-            }
-            else if (!strncasecmp (vc->user_comments[i], "TRACKTOTAL=", 11)) {
-                deadbeef->pl_add_meta (it, "numtracks", vc->user_comments[i] + 11);
-            }
-            else if (!strncasecmp (vc->user_comments[i], "DATE=", 5)) {
-                deadbeef->pl_add_meta (it, "year", vc->user_comments[i] + 5);
-            }
-            else if (!strncasecmp (vc->user_comments[i], "COMMENT=", 8)) {
-                deadbeef->pl_add_meta (it, "comment", vc->user_comments[i] + 8);
-            }
-            else if (!strncasecmp (vc->user_comments[i], "PERFORMER=", 10)) {
-                deadbeef->pl_add_meta (it, "performer", vc->user_comments[i] + 10);
-            }
-            else if (!strncasecmp (vc->user_comments[i], "ENSEMBLE=", 9)) {
-                deadbeef->pl_add_meta (it, "band", vc->user_comments[i] + 9);
-            }
-            else if (!strncasecmp (vc->user_comments[i], "COMPOSER=", 9)) {
-                deadbeef->pl_add_meta (it, "composer", vc->user_comments[i] + 9);
-            }
-            else if (!strncasecmp (vc->user_comments[i], "ENCODED-BY=", 11)) {
-                deadbeef->pl_add_meta (it, "vendor", vc->user_comments[i] + 11);
-            }
-            else if (!strncasecmp (vc->user_comments[i], "DISCNUMBER=", 11)) {
-                deadbeef->pl_add_meta (it, "disc", vc->user_comments[i] + 11);
-            }
-            else if (!strncasecmp (vc->user_comments[i], "genre=", 6)) {
-                deadbeef->pl_add_meta (it, "genre", vc->user_comments[i] + 6);
-            }
-            else if (!strncasecmp (vc->user_comments[i], "copyright=", 10)) {
-                deadbeef->pl_add_meta (it, "copyright", vc->user_comments[i] + 10);
-            }
-            else if (!strncasecmp (vc->user_comments[i], "cuesheet=", 9)) {
-                deadbeef->pl_add_meta (it, "cuesheet", vc->user_comments[i] + 9);
-            }
-            else if (!strncasecmp (vc->user_comments[i], "replaygain_album_gain=", 22)) {
-                it->replaygain_album_gain = atof (vc->user_comments[i] + 22);
-            }
-            else if (!strncasecmp (vc->user_comments[i], "replaygain_album_peak=", 22)) {
-                it->replaygain_album_peak = atof (vc->user_comments[i] + 22);
-            }
-            else if (!strncasecmp (vc->user_comments[i], "replaygain_track_gain=", 22)) {
-                it->replaygain_track_gain = atof (vc->user_comments[i] + 22);
-            }
-            else if (!strncasecmp (vc->user_comments[i], "replaygain_track_peak=", 22)) {
-                it->replaygain_track_peak = atof (vc->user_comments[i] + 22);
+            if (!metainfo[m]) {
+                if (!strncasecmp (s, "cuesheet=", 9)) {
+                    deadbeef->pl_add_meta (it, "cuesheet", s + 9);
+                }
+                else if (!strncasecmp (s, "replaygain_album_gain=", 22)) {
+                    it->replaygain_album_gain = atof (s + 22);
+                }
+                else if (!strncasecmp (s, "replaygain_album_peak=", 22)) {
+                    it->replaygain_album_peak = atof (s + 22);
+                }
+                else if (!strncasecmp (s, "replaygain_track_gain=", 22)) {
+                    it->replaygain_track_gain = atof (s + 22);
+                }
+                else if (!strncasecmp (s, "replaygain_track_peak=", 22)) {
+                    it->replaygain_track_peak = atof (s + 22);
+                }
             }
         }
     }
@@ -447,25 +433,6 @@ static int
 vorbis_stop (void) {
     return 0;
 }
-
-static const char *metainfo[] = {
-    "ARTIST", "artist",
-    "TITLE", "title",
-    "ALBUM", "album",
-    "TRACKNUMBER", "track",
-    "DATE", "year",
-    "GENRE", "genre",
-    "COMMENT", "comment",
-    "PERFORMER", "performer",
-    "ENSEMBLE", "band",
-    "COMPOSER", "composer",
-    "ENCODED-BY", "vendor",
-    "DISCNUMBER", "disc",
-    "COPYRIGHT", "copyright",
-    "TRACKTOTAL", "numtracks",
-    NULL
-};
-
 int
 cvorbis_read_metadata (DB_playItem_t *it) {
     int err = -1;
