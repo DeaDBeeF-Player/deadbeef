@@ -303,6 +303,7 @@ on_remove_from_disk_activate                    (GtkMenuItem     *menuitem,
 
     GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (mainwin), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO, "Delete files from disk");
     gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dlg), "Files will be lost. Proceed?");
+    gtk_window_set_title (GTK_WINDOW (dlg), "Warning");
 
     int response = gtk_dialog_run (GTK_DIALOG (dlg));
     gtk_widget_destroy (dlg);
