@@ -2187,40 +2187,44 @@ junk_load_comm_frame (int version_major, playItem_t *it, uint8_t *readptr, int s
 
 int
 junk_id3v2_load_txx (int version_major, playItem_t *it, uint8_t *readptr, int synched_size) {
-    uint8_t *p = readptr;
-    uint8_t encoding = *p;
-    p++;
-    uint8_t *desc = p;
-    int desc_sz = 0;
-    while (*p && p - readptr < synched_size) {
-        p++;
-        desc_sz++;
-    }
-    p++;
-    if (p - readptr >= synched_size) {
-        trace ("bad TXXX frame, skipped\n");
+    char *txx = convstr_id3v2 (version_major, *readptr, readptr+1, synched_size-1);
+    if (!txx) {
         return -1;
     }
-    // FIXME: decode properly using frame encoding
-    char *desc_s = desc;
-    char *value_s = p;
-    //trace ("value=%s\n", value_s);
-    if (!strcasecmp (desc_s, "replaygain_album_gain")) {
-        it->replaygain_album_gain = atof (value_s);
-        trace ("%s=%s (%f)\n", desc_s, value_s, it->replaygain_album_gain);
+
+    char *val = NULL;
+    if (txx) {
+        char *p;
+        for (p = txx; *p; p++) {
+            if (*p == '\n') {
+                *p = 0;
+                val = p+1;
+                break;
+            }
+        }
     }
-    else if (!strcasecmp (desc_s, "replaygain_album_peak")) {
-        it->replaygain_album_peak = atof (value_s);
-        trace ("%s=%s (%f)\n", desc_s, value_s, it->replaygain_album_peak);
+
+    if (val) {
+        if (!strcasecmp (txx, "replaygain_album_gain")) {
+            it->replaygain_album_gain = atof (val);
+            trace ("%s=%s (%f)\n", txx, val, it->replaygain_album_gain);
+        }
+        else if (!strcasecmp (txx, "replaygain_album_peak")) {
+            it->replaygain_album_peak = atof (val);
+            trace ("%s=%s (%f)\n", txx, val, it->replaygain_album_peak);
+        }
+        else if (!strcasecmp (txx, "replaygain_track_gain")) {
+            it->replaygain_track_gain = atof (val);
+            trace ("%s=%s (%f)\n", txx, val, it->replaygain_track_gain);
+        }
+        else if (!strcasecmp (txx, "replaygain_track_peak")) {
+            it->replaygain_track_peak = atof (val);
+            trace ("%s=%s (%f)\n", txx, val, it->replaygain_track_peak);
+        }
     }
-    else if (!strcasecmp (desc_s, "replaygain_track_gain")) {
-        it->replaygain_track_gain = atof (value_s);
-        trace ("%s=%s (%f)\n", desc_s, value_s, it->replaygain_track_gain);
-    }
-    else if (!strcasecmp (desc_s, "replaygain_track_peak")) {
-        it->replaygain_track_peak = atof (value_s);
-        trace ("%s=%s (%f)\n", desc_s, value_s, it->replaygain_track_peak);
-    }
+    free (txx);
+
+    return 0;
 }
 
 int
