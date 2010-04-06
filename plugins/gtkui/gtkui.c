@@ -374,12 +374,10 @@ static void
 current_track_changed (DB_playItem_t *it) {
     char str[600];
     if (it) {
-        char dname[512];
-        deadbeef->pl_format_item_display_name (it, dname, 512);
-        snprintf (str, sizeof (str), "DeaDBeeF - %s", dname);
+        deadbeef->pl_format_title (it, -1, str, sizeof (str), -1, "DeaDBeeF-" VERSION " - %a - %t");
     }
     else {
-        strcpy (str, "DeaDBeeF");
+        strcpy (str, "DeaDBeeF-" VERSION);
     }
     gtk_window_set_title (GTK_WINDOW (mainwin), str);
     set_tray_tooltip (str);
@@ -649,8 +647,8 @@ update_win_title_idle (gpointer data) {
             }
         }
         else {
-            gtk_window_set_title (GTK_WINDOW (mainwin), "DeaDBeeF");
-            set_tray_tooltip ("DeaDBeeF");
+            gtk_window_set_title (GTK_WINDOW (mainwin), "DeaDBeeF-" VERSION);
+            set_tray_tooltip ("DeaDBeeF-" VERSION);
         }
     }
     // update playlist view
@@ -842,6 +840,7 @@ gtkui_thread (void *ctx) {
 
 //    playlist_refresh ();
 //    ddb_listview_set_vscroll (main_playlist, scroll);
+    gtk_window_set_title (GTK_WINDOW (mainwin), "DeaDBeeF-" VERSION);
     gtk_initialized = 1;
     gtk_main ();
     cover_art_free ();
