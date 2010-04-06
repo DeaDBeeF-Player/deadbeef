@@ -453,6 +453,10 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
     int ape_strip_apev2 = deadbeef->conf_get_int ("ape.strip_apev2", 0);
     int ape_write_id3v2 = deadbeef->conf_get_int ("ape.write_id3v2", 0);
     int ape_write_apev2 = deadbeef->conf_get_int ("ape.write_apev2", 1);
+    int wv_strip_apev2 = deadbeef->conf_get_int ("wv.strip_apev2", 0);
+    int wv_strip_id3v1 = deadbeef->conf_get_int ("wv.strip_id3v1", 0);
+    int wv_write_apev2 = deadbeef->conf_get_int ("wv.write_apev2", 1);
+    int wv_write_id3v1 = deadbeef->conf_get_int ("wv.write_id3v1", 0);
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (prefwin, "strip_id3v2")), strip_id3v2);
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (prefwin, "strip_id3v1")), strip_id3v1);
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (prefwin, "strip_apev2")), strip_apev2);
@@ -465,6 +469,11 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (prefwin, "ape_strip_apev2")), ape_strip_apev2);
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (prefwin, "ape_write_apev2")), ape_write_apev2);
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (prefwin, "ape_write_id3v2")), ape_write_id3v2);
+
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (prefwin, "wv_strip_id3v1")), wv_strip_id3v1);
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (prefwin, "wv_strip_apev2")), wv_strip_apev2);
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (prefwin, "wv_write_apev2")), wv_write_apev2);
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (prefwin, "wv_write_id3v1")), wv_write_id3v1);
 
     gtk_dialog_run (GTK_DIALOG (prefwin));
     gtk_widget_destroy (prefwin);
@@ -563,6 +572,13 @@ on_pref_close_send_to_tray_clicked     (GtkButton       *button,
     int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button));
     deadbeef->conf_set_int ("close_send_to_tray", active);
     deadbeef->sendmessage (M_CONFIGCHANGED, 0, 0, 0);
+}
+
+void
+on_mmb_delete_playlist_toggled         (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_int ("gtkui.mmb_delete_playlist", gtk_toggle_button_get_active (togglebutton));
 }
 
 void
@@ -950,10 +966,34 @@ on_ape_strip_apev2_toggled             (GtkToggleButton *togglebutton,
     deadbeef->conf_set_int ("ape.strip_apev2", gtk_toggle_button_get_active (togglebutton));
 }
 
+
 void
-on_mmb_delete_playlist_toggled         (GtkToggleButton *togglebutton,
+on_wv_write_apev2_toggled              (GtkToggleButton *togglebutton,
                                         gpointer         user_data)
 {
-    deadbeef->conf_set_int ("gtkui.mmb_delete_playlist", gtk_toggle_button_get_active (togglebutton));
+    deadbeef->conf_set_int ("wv.write_apev2", gtk_toggle_button_get_active (togglebutton));
+}
+
+
+void
+on_wv_write_id3v1_toggled              (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_int ("wv.write_id3v1", gtk_toggle_button_get_active (togglebutton));
+}
+
+void
+on_wv_strip_apev2_toggled              (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_int ("wv.strip_apev2", gtk_toggle_button_get_active (togglebutton));
+}
+
+
+void
+on_wv_strip_id3v1_toggled              (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_int ("wv.strip_id3v1", gtk_toggle_button_get_active (togglebutton));
 }
 

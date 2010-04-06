@@ -330,7 +330,31 @@ wv_read_metadata (DB_playItem_t *it) {
     return 0;
 }
 
-static const char * exts[] = { "wv", NULL };
+int
+wv_write_metadata (DB_playItem_t *it) {
+    int strip_apev2 = deadbeef->conf_get_int ("wv.strip_apev2", 0);
+    int strip_id3v1 = deadbeef->conf_get_int ("wv.strip_id3v1", 0);
+    int write_apev2 = deadbeef->conf_get_int ("wv.write_apev2", 1);
+    int write_id3v1 = deadbeef->conf_get_int ("wv.write_id3v1", 0);
+
+    uint32_t junk_flags = 0;
+    if (strip_id3v1) {
+        junk_flags |= JUNK_STRIP_ID3V1;
+    }
+    if (strip_apev2) {
+        junk_flags |= JUNK_STRIP_APEV2;
+    }
+    if (write_id3v1) {
+        junk_flags |= JUNK_WRITE_ID3V1;
+    }
+    if (write_apev2) {
+        junk_flags |= JUNK_WRITE_APEV2;
+    }
+
+    return deadbeef->junk_rewrite_tags (it, junk_flags, 0, NULL);
+}
+
+static const char *exts[] = { "wv", NULL };
 static const char *filetypes[] = { "wv", NULL };
 
 // define plugin interface
@@ -353,6 +377,7 @@ static DB_decoder_t plugin = {
     .seek_sample = wv_seek_sample,
     .insert = wv_insert,
     .read_metadata = wv_read_metadata,
+    .write_metadata = wv_write_metadata,
     .exts = exts,
     .filetypes = filetypes
 };

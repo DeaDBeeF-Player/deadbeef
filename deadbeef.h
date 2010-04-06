@@ -104,6 +104,14 @@ typedef struct DB_metaInfo_s {
 } DB_metaInfo_t;
 
 // FIXME: that needs to be in separate plugin
+
+#define JUNK_STRIP_ID3V2 1
+#define JUNK_STRIP_APEV2 2
+#define JUNK_STRIP_ID3V1 4
+#define JUNK_WRITE_ID3V2 8
+#define JUNK_WRITE_APEV2 16
+#define JUNK_WRITE_ID3V1 32
+
 typedef struct DB_id3v2_frame_s {
     struct DB_id3v2_frame_s *next;
     char id[5];
@@ -454,6 +462,7 @@ typedef struct {
     const char * (*junk_detect_charset) (const char *s);
     int (*junk_recode) (const char *in, int inlen, char *out, int outlen, const char *cs);
     int (*junk_iconv) (const char *in, int inlen, char *out, int outlen, const char *cs_in, const char *cs_out);
+    int (*junk_rewrite_tags) (DB_playItem_t *it, uint32_t flags, int id3v2_version, const char *id3v1_encoding);
     // vfs
     DB_FILE* (*fopen) (const char *fname);
     void (*fclose) (DB_FILE *f);

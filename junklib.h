@@ -104,4 +104,7 @@ junk_iconv (const char *in, int inlen, char *out, int outlen, const char *cs_in,
 int
 junk_recode (const char *in, int inlen, char *out, int outlen, const char *cs);
 
+int
+junk_rewrite_tags (struct playItem_s *it, uint32_t junk_flags, int id3v2_version, const char *id3v1_encoding);
+
 #endif // __JUNKLIB_H

@@ -913,3 +913,19 @@ on_listview_selected_text_color_set    (GtkColorButton  *colorbutton,
 void
 on_listview_cursor_color_set           (GtkColorButton  *colorbutton,
                                         gpointer         user_data);
+
+void
+on_wv_write_apev2_toggled              (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);
+
+void
+on_wv_write_id3v1_toggled              (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);
+
+void
+on_wv_strip_apev2_toggled              (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);
+
+void
+on_wv_strip_id3v1_toggled              (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);

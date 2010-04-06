@@ -210,6 +210,7 @@ static DB_functions_t deadbeef_api = {
     .junk_detect_charset = junk_detect_charset,
     .junk_recode = junk_recode,
     .junk_iconv = junk_iconv,
+    .junk_rewrite_tags = (int (*) (DB_playItem_t *it, uint32_t flags, int id3v2_version, const char *id3v1_encoding))junk_rewrite_tags,
     // vfs
     .fopen = vfs_fopen,
     .fclose = vfs_fclose,
