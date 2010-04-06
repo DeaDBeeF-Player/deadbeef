@@ -976,7 +976,9 @@ streamer_reset (int full) { // must be called when current song changes by exter
     DB_dsp_t **dsp = deadbeef->plug_get_dsp_list ();
     int srate = p_get_rate ();
     for (int i = 0; dsp[i]; i++) {
-        dsp[i]->reset ();
+        if (dsp[i]->enabled ()) {
+            dsp[i]->reset ();
+        }
     }
     src_unlock ();
 }
@@ -1356,7 +1358,9 @@ streamer_read_async (char *bytes, int size) {
         DB_dsp_t **dsp = deadbeef->plug_get_dsp_list ();
         int srate = p_get_rate ();
         for (int i = 0; dsp[i]; i++) {
-            dsp[i]->process_int16 ((int16_t *)bytes, bytesread/4, 2, 16, srate);
+            if (dsp[i]->enabled ()) {
+                dsp[i]->process_int16 ((int16_t *)bytes, bytesread/4, 2, 16, srate);
+            }
         }
         mutex_unlock (decodemutex);
         bytes += bytesread;
