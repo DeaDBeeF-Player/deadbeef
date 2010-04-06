@@ -2646,7 +2646,7 @@ pl_search_process (const char *text) {
             }
         }
     }
-    GLOBAL_LOCK;
+    GLOBAL_UNLOCK;
 }
 
 int
