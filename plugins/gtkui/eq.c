@@ -85,7 +85,7 @@ eq_window_show (void) {
 
         gtk_widget_show (eqwin);
 
-        GtkWidget *cont = lookup_widget (mainwin, "vbox1");
+        GtkWidget *cont = lookup_widget (mainwin, "plugins_bottom_vbox");
         gtk_box_pack_start (GTK_BOX (cont), eqwin, FALSE, FALSE, 0);
     }
     gtk_widget_show (eqwin);

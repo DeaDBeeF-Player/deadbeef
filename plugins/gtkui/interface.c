@@ -118,6 +118,7 @@ create_mainwin (void)
   GtkWidget *tabstrip;
   GtkWidget *frame1;
   GtkWidget *playlist;
+  GtkWidget *plugins_bottom_vbox;
   GtkWidget *statusbar;
   GtkAccelGroup *accel_group;
 
@@ -546,6 +547,10 @@ create_mainwin (void)
   GTK_WIDGET_UNSET_FLAGS (playlist, GTK_CAN_FOCUS);
   GTK_WIDGET_UNSET_FLAGS (playlist, GTK_CAN_DEFAULT);
 
+  plugins_bottom_vbox = gtk_vbox_new (FALSE, 0);
+  gtk_widget_show (plugins_bottom_vbox);
+  gtk_box_pack_start (GTK_BOX (vbox1), plugins_bottom_vbox, FALSE, FALSE, 0);
+
   statusbar = gtk_statusbar_new ();
   gtk_widget_show (statusbar);
   gtk_box_pack_start (GTK_BOX (vbox1), statusbar, FALSE, FALSE, 0);
@@ -792,6 +797,7 @@ create_mainwin (void)
   GLADE_HOOKUP_OBJECT (mainwin, tabstrip, "tabstrip");
   GLADE_HOOKUP_OBJECT (mainwin, frame1, "frame1");
   GLADE_HOOKUP_OBJECT (mainwin, playlist, "playlist");
+  GLADE_HOOKUP_OBJECT (mainwin, plugins_bottom_vbox, "plugins_bottom_vbox");
   GLADE_HOOKUP_OBJECT (mainwin, statusbar, "statusbar");
 
   gtk_window_add_accel_group (GTK_WINDOW (mainwin), accel_group);
