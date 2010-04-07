@@ -321,7 +321,7 @@ lfm_fetch_song_info (DB_playItem_t *song, const char **a, const char **t, const 
 static int
 lfm_uri_encode (char *out, int outl, const char *str) {
     int l = outl;
-    static const char echars[] = " ;/?:@=#&";
+    static const char echars[] = " ;/?:@=#&+";
     //trace ("lfm_uri_encode %p %d %s\n", out, outl, str);
     while (*str) {
         if (outl <= 1) {
