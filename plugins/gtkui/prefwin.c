@@ -210,19 +210,19 @@ on_applyhotkeys_clicked                     (GtkButton *button, gpointer user_da
 
 void
 prefwin_init_theme_colors (void) {
-    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "bar_background")), gtkui_get_bar_background_color ());
-    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "bar_foreground")), gtkui_get_bar_foreground_color ());
-    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "tabstrip_dark")), gtkui_get_tabstrip_dark_color ());
-    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "tabstrip_mid")), gtkui_get_tabstrip_mid_color ());
-    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "tabstrip_light")), gtkui_get_tabstrip_light_color ());
-    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "tabstrip_base")), gtkui_get_tabstrip_base_color ());
-    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "listview_even_row")), gtkui_get_listview_even_row_color ());
-    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "listview_odd_row")), gtkui_get_listview_odd_row_color ());
-    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "listview_selected_row")), gtkui_get_listview_selection_color ());
-    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "listview_text")), gtkui_get_listview_text_color ());
-    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "listview_selected_text")), gtkui_get_listview_selected_text_color ());
-    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "listview_cursor")), gtkui_get_listview_cursor_color ());
-
+    GdkColor clr;
+    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "bar_background")), (gtkui_get_bar_background_color (&clr), &clr));
+    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "bar_foreground")), (gtkui_get_bar_foreground_color (&clr), &clr));
+    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "tabstrip_dark")), (gtkui_get_tabstrip_dark_color (&clr), &clr));
+    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "tabstrip_mid")), (gtkui_get_tabstrip_mid_color (&clr), &clr));
+    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "tabstrip_light")), (gtkui_get_tabstrip_light_color (&clr), &clr));
+    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "tabstrip_base")), (gtkui_get_tabstrip_base_color (&clr), &clr));
+    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "listview_even_row")), (gtkui_get_listview_even_row_color (&clr), &clr));
+    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "listview_odd_row")), (gtkui_get_listview_odd_row_color (&clr), &clr));
+    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "listview_selected_row")), (gtkui_get_listview_selection_color (&clr), &clr));
+    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "listview_text")), (gtkui_get_listview_text_color (&clr), &clr));
+    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "listview_selected_text")), (gtkui_get_listview_selected_text_color (&clr), &clr));
+    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "listview_cursor")), (gtkui_get_listview_cursor_color (&clr), &clr));
 }
 
 void

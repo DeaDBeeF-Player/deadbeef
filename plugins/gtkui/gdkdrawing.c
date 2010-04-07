@@ -275,62 +275,62 @@ gtkui_init_theme_colors (void) {
     }
 }
 
-GdkColor *
-gtkui_get_bar_foreground_color (void) {
-    return &gtkui_bar_foreground_color;
+void
+gtkui_get_bar_foreground_color (GdkColor *clr) {
+    memcpy (clr, &gtkui_bar_foreground_color, sizeof (GdkColor));
 }
 
-GdkColor *
-gtkui_get_bar_background_color (void) {
-    return &gtkui_bar_background_color;
+void
+gtkui_get_bar_background_color (GdkColor *clr) {
+    memcpy (clr, &gtkui_bar_background_color, sizeof (GdkColor));
 }
 
-GdkColor *
-gtkui_get_tabstrip_dark_color (void) {
-    return &gtkui_tabstrip_dark_color;
+void
+gtkui_get_tabstrip_dark_color (GdkColor *clr) {
+    memcpy (clr, &gtkui_tabstrip_dark_color, sizeof (GdkColor));
 }
 
-GdkColor *
-gtkui_get_tabstrip_mid_color (void) {
-    return &gtkui_tabstrip_mid_color;
+void
+gtkui_get_tabstrip_mid_color (GdkColor *clr) {
+    memcpy (clr, &gtkui_tabstrip_mid_color, sizeof (GdkColor));
 }
 
-GdkColor *
-gtkui_get_tabstrip_light_color (void) {
-    return &gtkui_tabstrip_light_color;
+void
+gtkui_get_tabstrip_light_color (GdkColor *clr) {
+    memcpy (clr, &gtkui_tabstrip_light_color, sizeof (GdkColor));
 }
 
-GdkColor *
-gtkui_get_tabstrip_base_color (void) {
-    return &gtkui_tabstrip_base_color;
+void
+gtkui_get_tabstrip_base_color (GdkColor *clr) {
+    memcpy (clr, &gtkui_tabstrip_base_color, sizeof (GdkColor));
 }
 
-GdkColor *
-gtkui_get_listview_even_row_color (void) {
-    return &gtkui_listview_even_row_color;
+void
+gtkui_get_listview_even_row_color (GdkColor *clr) {
+    memcpy (clr, &gtkui_listview_even_row_color, sizeof (GdkColor));
 }
 
-GdkColor *
-gtkui_get_listview_odd_row_color (void) {
-    return &gtkui_listview_odd_row_color;
+void
+gtkui_get_listview_odd_row_color (GdkColor *clr) {
+    memcpy (clr, &gtkui_listview_odd_row_color, sizeof (GdkColor));
 }
 
-GdkColor *
-gtkui_get_listview_selection_color (void) {
-    return &gtkui_listview_selection_color;
+void
+gtkui_get_listview_selection_color (GdkColor *clr) {
+    memcpy (clr, &gtkui_listview_selection_color, sizeof (GdkColor));
 }
 
-GdkColor *
-gtkui_get_listview_text_color (void) {
-    return &gtkui_listview_text_color;
+void
+gtkui_get_listview_text_color (GdkColor *clr) {
+    memcpy (clr, &gtkui_listview_text_color, sizeof (GdkColor));
 }
 
-GdkColor *
-gtkui_get_listview_selected_text_color (void) {
-    return &gtkui_listview_selected_text_color;
+void
+gtkui_get_listview_selected_text_color (GdkColor *clr) {
+    memcpy (clr, &gtkui_listview_selected_text_color, sizeof (GdkColor));
 }
 
-GdkColor *
-gtkui_get_listview_cursor_color (void) {
-    return &gtkui_listview_cursor_color;
+void
+gtkui_get_listview_cursor_color (GdkColor *clr) {
+    memcpy (clr, &gtkui_listview_cursor_color, sizeof (GdkColor));
 }

@@ -1156,8 +1156,9 @@ ddb_listview_list_render_row_background (DdbListview *ps, DdbListviewIter it, in
             gtk_paint_flat_box (treeview->style, ps->backbuf, GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, treeview, even ? "cell_even_ruled" : "cell_odd_ruled", x, y, w, h);
         }
         else {
+            GdkColor clr;
             GdkGC *gc = gdk_gc_new (ps->backbuf);
-            gdk_gc_set_rgb_fg_color (gc, even ? gtkui_get_listview_even_row_color () : gtkui_get_listview_odd_row_color ());
+            gdk_gc_set_rgb_fg_color (gc, even ? (gtkui_get_listview_even_row_color (&clr), &clr) : (gtkui_get_listview_odd_row_color (&clr), &clr));
             gdk_draw_rectangle (ps->backbuf, gc, TRUE, x, y, w, h);
             g_object_unref (gc);
         }
@@ -1168,8 +1169,9 @@ ddb_listview_list_render_row_background (DdbListview *ps, DdbListviewIter it, in
             gtk_paint_flat_box (treeview->style, ps->backbuf, GTK_STATE_SELECTED, GTK_SHADOW_NONE, NULL, treeview, even ? "cell_even_ruled" : "cell_odd_ruled", x, y, w, h);
         }
         else {
+            GdkColor clr;
             GdkGC *gc = gdk_gc_new (ps->backbuf);
-            gdk_gc_set_rgb_fg_color (gc, gtkui_get_listview_selection_color ());
+            gdk_gc_set_rgb_fg_color (gc, (gtkui_get_listview_selection_color (&clr), &clr));
             gdk_draw_rectangle (ps->backbuf, gc, TRUE, x, y, w, h);
             g_object_unref (gc);
         }
@@ -1178,8 +1180,9 @@ ddb_listview_list_render_row_background (DdbListview *ps, DdbListviewIter it, in
         // not all gtk engines/themes render focus rectangle in treeviews
         // but we want it anyway
         //treeview->style->fg_gc[GTK_STATE_NORMAL]
+        GdkColor clr;
         GdkGC *gc = gdk_gc_new (ps->backbuf);
-        gdk_gc_set_rgb_fg_color (gc, gtkui_get_listview_cursor_color ());
+        gdk_gc_set_rgb_fg_color (gc, (gtkui_get_listview_cursor_color (&clr), &clr));
         gdk_draw_rectangle (ps->backbuf, gc, FALSE, x, y, w-1, h-1);
         g_object_unref (gc);
     }

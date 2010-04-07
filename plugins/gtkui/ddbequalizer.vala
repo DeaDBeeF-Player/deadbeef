@@ -1,16 +1,13 @@
 static const int spot_size = 3;
-static const int margin_left = 35;
-static const int margin_bottom = 10;
 static const int bands = 18;
-static int btn_size = 7;
 
 const string[] freqs = {
-    "32","80","110","160","220","315","450","630","900",
-    "1.3k","1.8k","2.5k","3.6k","5k","7k","10k","14k","20k"
+    "55 Hz","77 Hz","110 Hz","156 Hz","220 Hz","311 Hz","440 Hz","622 Hz","880 Hz",
+    "1.2 kHz","1.8 kHz","2.5 kHz","3.5 kHz","5 kHz","7 kHz","10 kHz","14 kHz","20 kHz"
 };
 
-namespace Deadbeef {
-    public class Graphic : Gtk.DrawingArea
+namespace Ddb {
+    public class Equalizer : Gtk.DrawingArea
     {
         public signal void on_changed (double[] values);
 
@@ -23,12 +20,9 @@ namespace Deadbeef {
         private List <Point> points = new List <Point> ();
         private unowned List <Point> current_point = null;
 
-        private Gdk.Color back_color = Gdk.Color() {red = 0, green = 0, blue = 0};
-        private Gdk.Color fore_bright_color = Gdk.Color() {red = 0xffff, green = 0x7e00, blue = 0};
-        private Gdk.Color fore_dark_color = Gdk.Color() {red = 0x7800, green = 0x3b00, blue = 0};
-
-        private Pango.Context pango_ctx;
-        private Pango.FontDescription font_desc;
+//        private Gdk.Color back_color;
+//        private Gdk.Color fore_bright_color;
+//        private Gdk.Color fore_dark_color;
 
         private double[] values = new double [bands];
         private double preamp;
@@ -37,17 +31,20 @@ namespace Deadbeef {
         
         private bool snap = false;
         private bool aa_mode = false;
+        private bool draw_envelope = false;
 
         private bool curve_hook = false;
         private bool preamp_hook = false;
 
         private Gtk.Menu menu = null;
 
+        private int margin_bottom = -1;
+        private int margin_left = -1;
+
         Gdk.Cursor moving_cursor = new Gdk.Cursor (Gdk.CursorType.FLEUR);
-        Gdk.Cursor updown_cursor = new Gdk.Cursor (Gdk.CursorType.DOUBLE_ARROW);
+//        Gdk.Cursor updown_cursor = new Gdk.Cursor (Gdk.CursorType.DOUBLE_ARROW);
         Gdk.Cursor pointer_cursor = new Gdk.Cursor (Gdk.CursorType.LEFT_PTR);
 
-        //public Graphic ()
         construct
         {
             add_events (Gdk.EventMask.BUTTON_PRESS_MASK
@@ -55,13 +52,14 @@ namespace Deadbeef {
                 | Gdk.EventMask.LEAVE_NOTIFY_MASK
                 | Gdk.EventMask.POINTER_MOTION_MASK);
 
-            modify_bg (Gtk.StateType.NORMAL, back_color);
+            modify_bg (Gtk.StateType.NORMAL, get_style ().fg[Gtk.StateType.NORMAL]);
 
-            font_desc = Pango.FontDescription.from_string ("fixed 4");
-            pango_ctx = new Pango.Context();
-            pango_ctx.set_font_description (font_desc);
             recalc_values();
+            margin_bottom = (int)(Pango.units_to_double (get_style ().font_desc.get_size ())* Gdk.Screen.get_default ().get_resolution () / 72 + 4);
+            margin_left = margin_bottom * 4;
             preamp = 0.5;
+
+            set_snap (true);
 
             menu = new Gtk.Menu ();
 
@@ -174,6 +172,9 @@ namespace Deadbeef {
         public override bool
         expose_event (Gdk.EventExpose event)
         {
+            Gdk.Color fore_bright_color = Gtkui.get_bar_foreground_color ();
+            Gdk.Color fore_dark_color = Gtkui.get_bar_foreground_color ();
+
             int width = this.allocation.width;
             int height = this.allocation.height;
 
@@ -222,8 +223,6 @@ namespace Deadbeef {
             Pango.Layout l = create_pango_layout (null);
             var ctx = l.get_context ();
             var fd = ctx.get_font_description ();
-            fd.set_size (4);
-            fd.set_family_static ("fixed");
             ctx.set_font_description (fd);
             for (i = 0; i < bands; i++)
             {
@@ -238,20 +237,23 @@ namespace Deadbeef {
             if ((mouse_y != -1) && (mouse_y < height - margin_bottom))
             {
                 double db = scale((double)(mouse_y-1) / (double)(height - margin_bottom - 2));
-                string tmp = "%.1f".printf (db);
+                string tmp = "%s%.1fdB".printf (db > 0 ? "+" : "", db);
                 l.set_text (tmp, (int)tmp.len());
                 Gdk.draw_layout (d, gc, margin_left-1, mouse_y-3, l);
             }
             
-            string tmp = "%.1f".printf (scale (1));
+            string tmp;
+            double val = scale(1);
+            tmp = "%s%.1fdB".printf (val > 0 ? "+" : "", val);
             l.set_text (tmp, (int)tmp.len());
             Gdk.draw_layout (d, gc, margin_left-1, height-margin_bottom-6, l);
 
-            tmp = "%.1f".printf (scale (0));
+            val = scale(0);
+            tmp = "%s%.1fdB".printf (val > 0 ? "+" : "", val);
             l.set_text (tmp, (int)tmp.len());
             Gdk.draw_layout (d, gc, margin_left-1, 1, l);
 
-            l.set_text ("0db", 4);
+            l.set_text ("0dB", 4);
             Gdk.draw_layout (d, gc, margin_left-1, (int)((1-preamp)*(height-margin_bottom))-3, l);
 
             l.set_text ("preamp", 6);
@@ -304,125 +306,127 @@ namespace Deadbeef {
             }
             gc.set_clip_rectangle ({0, 0, width, height});
 
-            //drawing curve:
-            gc.set_rgb_fg_color (fore_bright_color);
-            Gdk.Point gp;
-            uint pcount = points.length();
-            double[] ys = new double [pcount];
-            double[] xs = new double [pcount];
-            i=0;
-            foreach (var p in this.points)
-            {
-                gp = abs_to_screen (p.x, p.y);
-                d.draw_rectangle (gc, true, gp.x-spot_size, gp.y-spot_size, spot_size*2, spot_size*2);
-                xs[i] = p.x;
-                ys[i] = p.y;
-                i++;
-            }
-
-            Cairo.Context cairo = aa_mode ? Gdk.cairo_create (d) : null;
-
-            int prev_x = 0;
-            int prev_y = 0;
-
-            if (pcount > 0)
-            {
-                gp = abs_to_screen (xs[0], ys[0]);
-                if (aa_mode)
-                    cairo.move_to (margin_left, gp.y);
-                else
-                    Gdk.draw_line (d, gc, margin_left, gp.y, gp.x, gp.y);
-                prev_x = gp.x;
-                prev_y = gp.y;
-            }
-
-            if (pcount >= 2)
-            {
-                for (i = 0; i < pcount-1; i++)
+            if (draw_envelope) {
+                //drawing curve:
+                gc.set_rgb_fg_color (fore_bright_color);
+                Gdk.Point gp;
+                uint pcount = points.length();
+                double[] ys = new double [pcount];
+                double[] xs = new double [pcount];
+                i=0;
+                foreach (var p in this.points)
                 {
-                    //stdout.printf ("%d\n", (int)((xs[i+1]-xs[i])*width));
-                    if ((int)((xs[i+1]-xs[i])*width) <= 5)
+                    gp = abs_to_screen (p.x, p.y);
+                    d.draw_rectangle (gc, true, gp.x-spot_size, gp.y-spot_size, spot_size*2, spot_size*2);
+                    xs[i] = p.x;
+                    ys[i] = p.y;
+                    i++;
+                }
+
+                Cairo.Context cairo = aa_mode ? Gdk.cairo_create (d) : null;
+
+                int prev_x = 0;
+                int prev_y = 0;
+
+                if (pcount > 0)
+                {
+                    gp = abs_to_screen (xs[0], ys[0]);
+                    if (aa_mode)
+                        cairo.move_to (margin_left, gp.y);
+                    else
+                        Gdk.draw_line (d, gc, margin_left, gp.y, gp.x, gp.y);
+                    prev_x = gp.x;
+                    prev_y = gp.y;
+                }
+
+                if (pcount >= 2)
+                {
+                    for (i = 0; i < pcount-1; i++)
                     {
-                        Gdk.Point gp2 = abs_to_screen (xs[i], ys[i]);
-                        gp = abs_to_screen (xs[i+1], ys[i+1]);
-                        Gdk.draw_line (d, gc, gp2.x, gp2.y, gp.x, gp.y);
-                        prev_x = gp2.x;
-                        prev_y = gp2.y;
-                        continue;
-                    }
-                    //int pts = (int)((double)((xs[i+1] - xs[i]) * allocation.width) / 5.0);
-                    //step = (double)(xs[i+1] - xs[i])/(double)pts;
-
-                    double dx = (xs[i+1] - xs[i])*width;
-                    double dy = (ys[i+1] - ys[i])*height;
-                    int pts = (int)(GLib.Math.sqrt (dx*dx + dy*dy) / 5.0);
-                    //stdout.printf ("%f %f %d\n", dx, dy, pts);
-                    step = (double)(xs[i+1] - xs[i])/(double)pts;
-
-                    for (int ii = 0; ii <= pts; ii++)
-                    {
-                        double y;
-
-                        if (i == 0 && i == pcount-2) //case when we have only two points
-                            y = cubic (ys[0], ys[0], ys[1], ys[1], (double)ii/(double)pts);
-
-                        else if (i == 0)
-                            y = cubic (ys[0], ys[0], ys[1], ys[2], (double)ii/(double)pts);
-
-                        else if (i == pcount-2)
-                            y = cubic (ys[i-1], ys[i], ys[i+1], ys[i+1], (double)ii/(double)pts);
-
-                        else
-                            y = cubic (ys[i-1], ys[i], ys[i+1], ys[i+2], (double)ii/(double)pts);
-                        if (y < 0) y = 0;
-                        if (y > 1) y = 1;
-
-                        if (aa_mode)
+                        //stdout.printf ("%d\n", (int)((xs[i+1]-xs[i])*width));
+                        if ((int)((xs[i+1]-xs[i])*width) <= 5)
                         {
-                            double sx, sy;
-                            abs_to_screen_d (ii*step+xs[i], y, out sx, out sy);
-                            cairo.line_to (sx, sy);
-//                            prev_x = gp.x;
-//                            prev_y = gp.y;
+                            Gdk.Point gp2 = abs_to_screen (xs[i], ys[i]);
+                            gp = abs_to_screen (xs[i+1], ys[i+1]);
+                            Gdk.draw_line (d, gc, gp2.x, gp2.y, gp.x, gp.y);
+                            prev_x = gp2.x;
+                            prev_y = gp2.y;
+                            continue;
                         }
-                        else
+                        //int pts = (int)((double)((xs[i+1] - xs[i]) * allocation.width) / 5.0);
+                        //step = (double)(xs[i+1] - xs[i])/(double)pts;
+
+                        double dx = (xs[i+1] - xs[i])*width;
+                        double dy = (ys[i+1] - ys[i])*height;
+                        int pts = (int)(GLib.Math.sqrt (dx*dx + dy*dy) / 5.0);
+                        //stdout.printf ("%f %f %d\n", dx, dy, pts);
+                        step = (double)(xs[i+1] - xs[i])/(double)pts;
+
+                        for (int ii = 0; ii <= pts; ii++)
                         {
-                            gp = abs_to_screen (ii*step+xs[i], y);
+                            double y;
 
-                            if (gp.y < 2) gp.y = 2;
-                            if (gp.y > height-margin_bottom-2) gp.y = height-margin_bottom-2;
+                            if (i == 0 && i == pcount-2) //case when we have only two points
+                                y = cubic (ys[0], ys[0], ys[1], ys[1], (double)ii/(double)pts);
 
-                            Gdk.draw_point (d, gc, gp.x, gp.y);
-                            //Gdk.draw_line (d, gc, prev_x, prev_y, gp.x, gp.y);
-                            prev_x = gp.x;
-                            prev_y = gp.y;
+                            else if (i == 0)
+                                y = cubic (ys[0], ys[0], ys[1], ys[2], (double)ii/(double)pts);
+
+                            else if (i == pcount-2)
+                                y = cubic (ys[i-1], ys[i], ys[i+1], ys[i+1], (double)ii/(double)pts);
+
+                            else
+                                y = cubic (ys[i-1], ys[i], ys[i+1], ys[i+2], (double)ii/(double)pts);
+                            if (y < 0) y = 0;
+                            if (y > 1) y = 1;
+
+                            if (aa_mode)
+                            {
+                                double sx, sy;
+                                abs_to_screen_d (ii*step+xs[i], y, out sx, out sy);
+                                cairo.line_to (sx, sy);
+                                //                            prev_x = gp.x;
+                                //                            prev_y = gp.y;
+                            }
+                            else
+                            {
+                                gp = abs_to_screen (ii*step+xs[i], y);
+
+                                if (gp.y < 2) gp.y = 2;
+                                if (gp.y > height-margin_bottom-2) gp.y = height-margin_bottom-2;
+
+                                Gdk.draw_point (d, gc, gp.x, gp.y);
+                                //Gdk.draw_line (d, gc, prev_x, prev_y, gp.x, gp.y);
+                                prev_x = gp.x;
+                                prev_y = gp.y;
+                            }
                         }
                     }
                 }
-            }
-            if (pcount > 0)
-            {
-//                gp = abs_to_screen (xs[0], ys[0]);
-//                cairo.move_to (margin_left, gp.y);
-//                Gdk.draw_line (d, gc, margin_left, gp.y, gp.x, gp.y);
+                if (pcount > 0)
+                {
+                    //                gp = abs_to_screen (xs[0], ys[0]);
+                    //                cairo.move_to (margin_left, gp.y);
+                    //                Gdk.draw_line (d, gc, margin_left, gp.y, gp.x, gp.y);
 
-                gp = abs_to_screen (xs[pcount-1], ys[pcount-1]);
+                    gp = abs_to_screen (xs[pcount-1], ys[pcount-1]);
+                    if (aa_mode)
+                        cairo.line_to (width-1, gp.y);
+                    else
+                        Gdk.draw_line (d, gc, gp.x, gp.y, width-1, gp.y);
+                }
                 if (aa_mode)
-                    cairo.line_to (width-1, gp.y);
-                else
-                    Gdk.draw_line (d, gc, gp.x, gp.y, width-1, gp.y);
-            }
-            if (aa_mode)
-            {
-                cairo.set_source_rgb (
-                    (double)fore_bright_color.red / (double)0xffff,
-                    (double)fore_bright_color.green / (double)0xffff,
-                    (double)fore_bright_color.blue / (double)0xffff);
-                cairo.stroke();
-            }
-            if (pcount == 0)
-            {
-                Gdk.draw_line (d, gc, margin_left, (height-margin_bottom)/2, width-1, (height-margin_bottom)/2);
+                {
+                    cairo.set_source_rgb (
+                            (double)fore_bright_color.red / (double)0xffff,
+                            (double)fore_bright_color.green / (double)0xffff,
+                            (double)fore_bright_color.blue / (double)0xffff);
+                    cairo.stroke();
+                }
+                if (pcount == 0)
+                {
+                    Gdk.draw_line (d, gc, margin_left, (height-margin_bottom)/2, width-1, (height-margin_bottom)/2);
+                }
             }
 
             //drawing mouse coordinates:
@@ -542,7 +546,7 @@ namespace Deadbeef {
         {
             double step = 1.0 / (double)(bands+1);
             int idx = (int)((x-step/2)/step);
-            if (idx < bands)
+            if (idx < bands && idx >= 0)
             {
                 current_point = points.nth (idx);
                 current_point.data.y = y;
@@ -731,7 +735,7 @@ namespace Deadbeef {
             return false;
         }
 
-        public static Graphic inst = null;
+//        public static Equalizer inst = null;
 
     }
 }

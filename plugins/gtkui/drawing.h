@@ -72,41 +72,41 @@ void
 draw_get_text_extents (const char *text, int len, int *w, int *h);
 
 
-GdkColor *
-gtkui_get_bar_foreground_color (void);
+void
+gtkui_get_bar_foreground_color (GdkColor *clr);
 
-GdkColor *
-gtkui_get_bar_background_color (void);
+void
+gtkui_get_bar_background_color (GdkColor *clr);
 
-GdkColor *
-gtkui_get_tabstrip_dark_color (void);
+void
+gtkui_get_tabstrip_dark_color (GdkColor *clr);
 
-GdkColor *
-gtkui_get_tabstrip_mid_color (void);
+void
+gtkui_get_tabstrip_mid_color (GdkColor *clr);
 
-GdkColor *
-gtkui_get_tabstrip_light_color (void);
+void
+gtkui_get_tabstrip_light_color (GdkColor *clr);
 
-GdkColor *
-gtkui_get_tabstrip_base_color (void);
+void
+gtkui_get_tabstrip_base_color (GdkColor *clr);
 
-GdkColor *
-gtkui_get_listview_even_row_color (void);
+void
+gtkui_get_listview_even_row_color (GdkColor *clr);
 
-GdkColor *
-gtkui_get_listview_odd_row_color (void);
+void
+gtkui_get_listview_odd_row_color (GdkColor *clr);
 
-GdkColor *
-gtkui_get_listview_selection_color (void);
+void
+gtkui_get_listview_selection_color (GdkColor *clr);
 
-GdkColor *
-gtkui_get_listview_text_color (void);
+void
+gtkui_get_listview_text_color (GdkColor *clr);
 
-GdkColor *
-gtkui_get_listview_selected_text_color (void);
+void
+gtkui_get_listview_selected_text_color (GdkColor *clr);
 
-GdkColor *
-gtkui_get_listview_cursor_color (void);
+void
+gtkui_get_listview_cursor_color (GdkColor *clr);
 
 void
 gtkui_init_theme_colors (void);

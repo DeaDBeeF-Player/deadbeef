@@ -1,11 +1,13 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT
+dnl PACKAGE=deadbeef
+dnl VERSION=devel
+AC_INIT([deadbeef], [devel])
+
 AC_CONFIG_HEADER(config.h)
 
-PACKAGE="deadbeef"
-VERSION="devel"
-
-AM_INIT_AUTOMAKE($PACKAGE,$VERSION)
+dnl AM_INIT_AUTOMAKE($PACKAGE,$VERSION)
+AM_INIT_AUTOMAKE([1.11 dist-bzip2])
+AM_MAINTAINER_MODE()
 
 AC_PROG_CC
 AC_PROG_CXX
@@ -14,6 +16,12 @@ AC_PROG_INSTALL
 AC_PROG_LIBTOOL
 AC_CONFIG_MACRO_DIR([m4])
 AC_C_BIGENDIAN
+if test "x$USE_MAINTAINER_MODE" = "xyes" ; then
+    AM_PROG_VALAC([0.7.0])
+    if test "x$VALAC" = "x" ; then
+        AC_MSG_ERROR([Cannot find the "valac" compiler in your PATH])
+    fi
+fi
 
 case "$host" in
   i386-*-* | i486-*-* | i586-*-* | i686-*-* | i86pc-*-*)
@@ -266,6 +274,16 @@ if test ${HAVE_CURL}; then
     HAVE_ARTWORK=1
     ARTWORK_DIR="plugins/artwork"
     AC_SUBST(ARTWORK_DIR)
+fi
+
+echo
+echo "Build Configuration:"
+echo
+echo "* Maintainer Mode:        $USE_MAINTAINER_MODE"
+if test "x$USE_MAINTAINER_MODE" = "xyes" ; then
+echo
+echo "    * Vala:               $VALAC"
+echo
 fi
 
 dnl print summary

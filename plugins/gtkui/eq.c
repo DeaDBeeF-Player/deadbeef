@@ -22,7 +22,7 @@
 #include "gtkui.h"
 #include "support.h"
 #include "../supereq/supereq.h"
-#include "graphic.h"
+#include "ddbequalizer.h"
 
 static GtkWidget *eqwin;
 static GtkWidget *sliders[18];
@@ -132,7 +132,7 @@ eq_window_show (void) {
     gtk_widget_show (eqwin);*/
 
     if (!eqwin) {
-        eqwin = deadbeef_graphic_new();
+        eqwin = GTK_WIDGET (ddb_equalizer_new());
         g_signal_connect (eqwin, "on_changed", G_CALLBACK (graphic_value_changed), 0);
         gtk_widget_set_size_request (eqwin, -1, 200);
         GtkWidget *cont = lookup_widget (mainwin, "vbox1");

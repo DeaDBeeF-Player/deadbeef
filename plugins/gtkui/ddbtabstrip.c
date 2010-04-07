@@ -235,18 +235,19 @@ ddb_tabstrip_draw_tab (GtkWidget *widget, GdkDrawable *drawable, int selected, i
     GdkGC *bg = gdk_gc_new (drawable);
     GdkGC *outer_frame = gdk_gc_new (drawable);
     GdkGC *inner_frame = gdk_gc_new (drawable);
+    GdkColor clr;
     if (selected) {
-        gdk_gc_set_rgb_fg_color (bg, gtkui_get_tabstrip_base_color ());//&widget->style->bg[GTK_STATE_NORMAL]); // FIXME: need base color
-        gdk_gc_set_rgb_fg_color (outer_frame, gtkui_get_tabstrip_dark_color ());
-        gdk_gc_set_rgb_fg_color (inner_frame, gtkui_get_tabstrip_light_color ());
+        gdk_gc_set_rgb_fg_color (bg, (gtkui_get_tabstrip_base_color (&clr), &clr));//&widget->style->bg[GTK_STATE_NORMAL]); // FIXME: need base color
+        gdk_gc_set_rgb_fg_color (outer_frame, (gtkui_get_tabstrip_dark_color (&clr), &clr));
+        gdk_gc_set_rgb_fg_color (inner_frame, (gtkui_get_tabstrip_light_color (&clr), &clr));
 //        bg = widget->style->bg_gc[GTK_STATE_NORMAL];
 //        outer_frame = widget->style->dark_gc[GTK_STATE_NORMAL];
 //        inner_frame = widget->style->light_gc[GTK_STATE_NORMAL];
     }
     else {
-        gdk_gc_set_rgb_fg_color (bg, gtkui_get_tabstrip_mid_color ());
-        gdk_gc_set_rgb_fg_color (outer_frame, gtkui_get_tabstrip_dark_color ());
-        gdk_gc_set_rgb_fg_color (inner_frame, gtkui_get_tabstrip_mid_color ());
+        gdk_gc_set_rgb_fg_color (bg, (gtkui_get_tabstrip_mid_color (&clr), &clr));
+        gdk_gc_set_rgb_fg_color (outer_frame, (gtkui_get_tabstrip_dark_color (&clr), &clr));
+        gdk_gc_set_rgb_fg_color (inner_frame, (gtkui_get_tabstrip_mid_color (&clr), &clr));
 //        bg = widget->style->mid_gc[GTK_STATE_NORMAL];
 //        outer_frame = widget->style->dark_gc[GTK_STATE_NORMAL];
 //        inner_frame = widget->style->mid_gc[GTK_STATE_NORMAL];
@@ -292,9 +293,10 @@ tabstrip_render (DdbTabStrip *ts) {
     GdkGC *gc = gdk_gc_new (backbuf);
 
     // fill background
-    gdk_gc_set_rgb_fg_color (gc, gtkui_get_tabstrip_mid_color ());
+    GdkColor clr;
+    gdk_gc_set_rgb_fg_color (gc, (gtkui_get_tabstrip_mid_color (&clr), &clr));
     gdk_draw_rectangle (backbuf, gc, TRUE, 0, 0, widget->allocation.width, widget->allocation.height);
-    gdk_gc_set_rgb_fg_color (gc, gtkui_get_tabstrip_dark_color ());
+    gdk_gc_set_rgb_fg_color (gc, (gtkui_get_tabstrip_dark_color (&clr), &clr));
     gdk_draw_line (backbuf, gc, 0, 0, widget->allocation.width, 0);
     int y = 4;
     h = widget->allocation.height - 4;

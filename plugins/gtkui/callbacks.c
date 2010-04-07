@@ -491,8 +491,9 @@ seekbar_draw (GtkWidget *widget) {
 	if (!cr) {
         return;
     }
-    GdkColor *clr_selection = gtkui_get_bar_foreground_color ();
-    GdkColor *clr_back = gtkui_get_bar_background_color ();
+    GdkColor clr_selection, clr_back;
+    gtkui_get_bar_foreground_color (&clr_selection);
+    gtkui_get_bar_background_color (&clr_back);
 
     DB_playItem_t *trk = deadbeef->streamer_get_playing_track ();
     if (!trk || deadbeef->pl_get_item_duration (trk) < 0) {
@@ -501,7 +502,7 @@ seekbar_draw (GtkWidget *widget) {
         }
         clearlooks_rounded_rectangle (cr, 2, widget->allocation.height/2-4, widget->allocation.width-4, 8, 4, 0xff);
         // empty seekbar, just a frame
-        cairo_set_source_rgb (cr, clr_selection->red/65535.f, clr_selection->green/65535.f, clr_selection->blue/65535.f );
+        cairo_set_source_rgb (cr, clr_selection.red/65535.f, clr_selection.green/65535.f, clr_selection.blue/65535.f );
         cairo_stroke (cr);
         cairo_destroy (cr);
         return;
@@ -525,7 +526,7 @@ seekbar_draw (GtkWidget *widget) {
     }
     // left
     if (pos > 0) {
-        cairo_set_source_rgb (cr, clr_selection->red/65535.f, clr_selection->green/65535.f, clr_selection->blue/65535.f );
+        cairo_set_source_rgb (cr, clr_selection.red/65535.f, clr_selection.green/65535.f, clr_selection.blue/65535.f );
         cairo_rectangle (cr, 0, widget->allocation.height/2-4, pos, 8);
         cairo_clip (cr);
         clearlooks_rounded_rectangle (cr, 0, widget->allocation.height/2-4, widget->allocation.width, 8, 4, 0xff);
@@ -534,7 +535,7 @@ seekbar_draw (GtkWidget *widget) {
     }
 
     // right
-    cairo_set_source_rgb (cr, clr_back->red/65535.f, clr_back->green/65535.f, clr_back->blue/65535.f );
+    cairo_set_source_rgb (cr, clr_back.red/65535.f, clr_back.green/65535.f, clr_back.blue/65535.f );
     cairo_rectangle (cr, pos, widget->allocation.height/2-4, widget->allocation.width-pos, 8);
     cairo_clip (cr);
     clearlooks_rounded_rectangle (cr, 0, widget->allocation.height/2-4, widget->allocation.width, 8, 4, 0xff);

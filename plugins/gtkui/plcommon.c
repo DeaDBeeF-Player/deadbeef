@@ -87,7 +87,8 @@ void draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbListview
         }
         else {
             GdkGC *gc = gdk_gc_new (drawable);
-            gdk_gc_set_rgb_fg_color (gc, gtkui_get_listview_even_row_color ());
+            GdkColor clr;
+            gdk_gc_set_rgb_fg_color (gc, (gtkui_get_listview_even_row_color (&clr), &clr));
             gdk_draw_rectangle (drawable, gc, TRUE, x, y, width, height);
             g_object_unref (gc);
         }
@@ -158,11 +159,12 @@ void draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbListview
             }
         }
         else {
+            GdkColor clr;
             if (deadbeef->pl_is_selected (it)) {
-                color = gtkui_get_listview_selected_text_color ();
+                color = (gtkui_get_listview_selected_text_color (&clr), &clr);
             }
             else {
-                color = gtkui_get_listview_text_color ();
+                color = (gtkui_get_listview_text_color (&clr), &clr);
             }
         }
         float fg[3] = {(float)color->red/0xffff, (float)color->green/0xffff, (float)color->blue/0xffff};
