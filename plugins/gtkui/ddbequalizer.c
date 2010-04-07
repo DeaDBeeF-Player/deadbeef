@@ -407,6 +407,8 @@ static gboolean ddb_equalizer_real_button_press_event (GtkWidget* base, GdkEvent
 	if (ddb_equalizer_in_curve_area (self, (double) ((gint) (*event).x), (double) ((gint) (*event).y))) {
 		self->priv->curve_hook = TRUE;
 		ddb_equalizer_update_eq_drag (self, (double) ((gint) (*event).x), (double) ((gint) (*event).y));
+		self->priv->mouse_y = (gint) (*event).y;
+		gtk_widget_queue_draw ((GtkWidget*) self);
 		result = FALSE;
 		return result;
 	}
@@ -429,6 +431,8 @@ static gboolean ddb_equalizer_real_button_press_event (GtkWidget* base, GdkEvent
 		self->priv->preamp = (*event).y / ((double) (((GtkWidget*) self)->allocation.height - self->priv->margin_bottom));
 		g_signal_emit_by_name (self, "on-changed");
 		self->priv->preamp_hook = TRUE;
+		self->priv->mouse_y = (gint) (*event).y;
+		gtk_widget_queue_draw ((GtkWidget*) self);
 	}
 	result = FALSE;
 	return result;

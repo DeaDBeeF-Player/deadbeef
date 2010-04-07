@@ -192,12 +192,13 @@ supereq_reset (void) {
 
 void
 supereq_enable (int e) {
-    deadbeef->conf_set_int ("supereq.enable", e);
-
-    if (e && !enabled) {
-        supereq_reset ();
+    if (e != enabled) {
+        deadbeef->conf_set_int ("supereq.enable", e);
+        if (e && !enabled) {
+            supereq_reset ();
+        }
+        enabled = e;
     }
-    enabled = e;
 }
 
 int

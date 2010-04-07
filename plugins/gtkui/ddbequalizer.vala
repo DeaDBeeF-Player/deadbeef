@@ -228,6 +228,8 @@ namespace Ddb {
             {
                 curve_hook = true;
                 update_eq_drag ((int)event.x, (int)event.y);
+                mouse_y = (int)event.y;
+                queue_draw ();
                 return false;
             }
 
@@ -240,6 +242,8 @@ namespace Ddb {
                 preamp = event.y / (double)(allocation.height - margin_bottom);
                 on_changed ();
                 preamp_hook = true;
+                mouse_y = (int)event.y;
+                queue_draw ();
             }
 
             return false;
