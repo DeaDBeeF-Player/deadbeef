@@ -377,24 +377,6 @@ save_playlist_as (void) {
         gtk_widget_destroy (dlg);
 
         if (fname) {
-// the code below cannot be used, because it breaks gtk overwrite confirmation
-#if 0
-            // check extension and append .dbpl if none
-            size_t sz = strlen (fname);
-            char ext[] = ".dbpl";
-            const char *p = fname + sz - 1;
-            while (p > fname && *p != '/' && *p != '.') {
-                p--;
-            }
-            if (*p != '.') {
-                // extension not found
-                char *n = g_malloc (sz + sizeof (ext));
-                memcpy (n, fname, sz);
-                memcpy (n+sz, ext, sizeof (ext));
-                g_free (fname);
-                fname = n;
-            }
-#endif
             int res = deadbeef->pl_save (fname);
             if (res >= 0 && strlen (fname) < 1024) {
                 strcpy (last_playlist_save_name, fname);
