@@ -10,10 +10,8 @@
 #include <float.h>
 #include <math.h>
 #include <gdk/gdk.h>
-#include <gtkui.h>
+#include <drawing.h>
 #include <pango/pango.h>
-#include <cairo.h>
-#include <gobject/gvaluecollector.h>
 
 
 #define DDB_TYPE_EQUALIZER (ddb_equalizer_get_type ())
@@ -26,26 +24,10 @@
 typedef struct _DdbEqualizer DdbEqualizer;
 typedef struct _DdbEqualizerClass DdbEqualizerClass;
 typedef struct _DdbEqualizerPrivate DdbEqualizerPrivate;
-
-#define DDB_EQUALIZER_TYPE_POINT (ddb_equalizer_point_get_type ())
-#define DDB_EQUALIZER_POINT(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), DDB_EQUALIZER_TYPE_POINT, DdbEqualizerPoint))
-#define DDB_EQUALIZER_POINT_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), DDB_EQUALIZER_TYPE_POINT, DdbEqualizerPointClass))
-#define DDB_EQUALIZER_IS_POINT(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), DDB_EQUALIZER_TYPE_POINT))
-#define DDB_EQUALIZER_IS_POINT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), DDB_EQUALIZER_TYPE_POINT))
-#define DDB_EQUALIZER_POINT_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), DDB_EQUALIZER_TYPE_POINT, DdbEqualizerPointClass))
-
-typedef struct _DdbEqualizerPoint DdbEqualizerPoint;
-typedef struct _DdbEqualizerPointClass DdbEqualizerPointClass;
-#define __g_list_free_ddb_equalizer_point_unref0(var) ((var == NULL) ? NULL : (var = (_g_list_free_ddb_equalizer_point_unref (var), NULL)))
-#define _g_object_unref0(var) ((var == NULL) ? NULL : (var = (g_object_unref (var), NULL)))
 #define _gdk_cursor_unref0(var) ((var == NULL) ? NULL : (var = (gdk_cursor_unref (var), NULL)))
-typedef struct _DdbEqualizerPointPrivate DdbEqualizerPointPrivate;
-#define _ddb_equalizer_point_unref0(var) ((var == NULL) ? NULL : (var = (ddb_equalizer_point_unref (var), NULL)))
 #define _g_free0(var) (var = (g_free (var), NULL))
-#define _cairo_destroy0(var) ((var == NULL) ? NULL : (var = (cairo_destroy (var), NULL)))
+#define _g_object_unref0(var) ((var == NULL) ? NULL : (var = (g_object_unref (var), NULL)))
 #define _pango_font_description_free0(var) ((var == NULL) ? NULL : (var = (pango_font_description_free (var), NULL)))
-#define __g_slist_free_g_object_unref0(var) ((var == NULL) ? NULL : (var = (_g_slist_free_g_object_unref (var), NULL)))
-typedef struct _DdbEqualizerParamSpecPoint DdbEqualizerParamSpecPoint;
 
 struct _DdbEqualizer {
 	GtkDrawingArea parent_instance;
@@ -57,100 +39,48 @@ struct _DdbEqualizerClass {
 };
 
 struct _DdbEqualizerPrivate {
-	GList* points;
-	GList* current_point;
 	double* values;
 	gint values_length1;
 	gint _values_size_;
 	double preamp;
 	gint mouse_y;
-	gboolean snap;
 	gboolean aa_mode;
-	gboolean draw_envelope;
 	gboolean curve_hook;
 	gboolean preamp_hook;
-	GtkMenu* menu;
 	gint margin_bottom;
 	gint margin_left;
-	GdkCursor* moving_cursor;
 	GdkCursor* pointer_cursor;
 };
 
-struct _DdbEqualizerPoint {
-	GTypeInstance parent_instance;
-	volatile int ref_count;
-	DdbEqualizerPointPrivate * priv;
-	double x;
-	double y;
-};
 
-struct _DdbEqualizerPointClass {
-	GTypeClass parent_class;
-	void (*finalize) (DdbEqualizerPoint *self);
-};
-
-struct _DdbEqualizerParamSpecPoint {
-	GParamSpec parent_instance;
-};
-
-
-static gpointer ddb_equalizer_point_parent_class = NULL;
 static gpointer ddb_equalizer_parent_class = NULL;
 
-#define spot_size 3
-#define bands 18
 GType ddb_equalizer_get_type (void);
-static gpointer ddb_equalizer_point_ref (gpointer instance);
-static void ddb_equalizer_point_unref (gpointer instance);
-static GParamSpec* ddb_equalizer_param_spec_point (const gchar* name, const gchar* nick, const gchar* blurb, GType object_type, GParamFlags flags) G_GNUC_UNUSED;
-static void ddb_equalizer_value_set_point (GValue* value, gpointer v_object) G_GNUC_UNUSED;
-static void ddb_equalizer_value_take_point (GValue* value, gpointer v_object) G_GNUC_UNUSED;
-static gpointer ddb_equalizer_value_get_point (const GValue* value) G_GNUC_UNUSED;
-static GType ddb_equalizer_point_get_type (void) G_GNUC_UNUSED;
 #define DDB_EQUALIZER_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DDB_TYPE_EQUALIZER, DdbEqualizerPrivate))
 enum  {
 	DDB_EQUALIZER_DUMMY_PROPERTY
 };
-static void _g_list_free_ddb_equalizer_point_unref (GList* self);
+#define DDB_EQUALIZER_bands 18
+#define DDB_EQUALIZER_spot_size 3
 void ddb_equalizer_aa_mode_changed (DdbEqualizer* self, GtkCheckMenuItem* item);
-static void ddb_equalizer_set_snap (DdbEqualizer* self, gboolean new_snap);
-void ddb_equalizer_mode_changed (DdbEqualizer* self, GtkCheckMenuItem* item);
-static DdbEqualizerPoint* ddb_equalizer_point_new (void);
-static DdbEqualizerPoint* ddb_equalizer_point_construct (GType object_type);
-static void ddb_equalizer_abs_to_screen (DdbEqualizer* self, double x, double y, GdkPoint* result);
-static void ddb_equalizer_abs_to_screen_d (DdbEqualizer* self, double x, double y, double* sx, double* sy);
-static double ddb_equalizer_cubic (DdbEqualizer* self, double y0, double y1, double y2, double y3, double mu);
 static inline double ddb_equalizer_scale (DdbEqualizer* self, double val);
 static gboolean ddb_equalizer_real_expose_event (GtkWidget* base, GdkEventExpose* event);
-static gboolean ddb_equalizer_get_point_at (DdbEqualizer* self, double x, double y);
-static void ddb_equalizer_recalc_values (DdbEqualizer* self);
-static void ddb_equalizer_snap_move (DdbEqualizer* self, double x, double y);
-static void ddb_equalizer_handle_curve_click (DdbEqualizer* self, GdkEventButton* event);
-static gboolean ddb_equalizer_in_curve_area (DdbEqualizer* self, gint x, gint y);
+static gboolean ddb_equalizer_in_curve_area (DdbEqualizer* self, double x, double y);
+static void ddb_equalizer_update_eq_drag (DdbEqualizer* self, double x, double y);
 static gboolean ddb_equalizer_real_button_press_event (GtkWidget* base, GdkEventButton* event);
 static gboolean ddb_equalizer_real_button_release_event (GtkWidget* base, GdkEventButton* event);
 static gboolean ddb_equalizer_real_leave_notify_event (GtkWidget* base, GdkEventCrossing* event);
 static gboolean ddb_equalizer_real_motion_notify_event (GtkWidget* base, GdkEventMotion* event);
+void ddb_equalizer_set_band (DdbEqualizer* self, gint band, double v);
+double ddb_equalizer_get_band (DdbEqualizer* self, gint band);
+void ddb_equalizer_set_preamp (DdbEqualizer* self, double v);
+double ddb_equalizer_get_preamp (DdbEqualizer* self);
 DdbEqualizer* ddb_equalizer_new (void);
 DdbEqualizer* ddb_equalizer_construct (GType object_type);
-static void _ddb_equalizer_aa_mode_changed_gtk_check_menu_item_toggled (GtkCheckMenuItem* _sender, gpointer self);
-static void _ddb_equalizer_mode_changed_gtk_check_menu_item_toggled (GtkCheckMenuItem* _sender, gpointer self);
-static void _g_slist_free_g_object_unref (GSList* self);
 static GObject * ddb_equalizer_constructor (GType type, guint n_construct_properties, GObjectConstructParam * construct_properties);
-enum  {
-	DDB_EQUALIZER_POINT_DUMMY_PROPERTY
-};
-static void ddb_equalizer_point_finalize (DdbEqualizerPoint* obj);
 static void ddb_equalizer_finalize (GObject* obj);
 
 const char* freqs[18] = {"55 Hz", "77 Hz", "110 Hz", "156 Hz", "220 Hz", "311 Hz", "440 Hz", "622 Hz", "880 Hz", "1.2 kHz", "1.8 kHz", "2.5 kHz", "3.5 kHz", "5 kHz", "7 kHz", "10 kHz", "14 kHz", "20 kHz"};
-
-static void g_cclosure_user_marshal_VOID__POINTER_INT (GClosure * closure, GValue * return_value, guint n_param_values, const GValue * param_values, gpointer invocation_hint, gpointer marshal_data);
-
-static void _g_list_free_ddb_equalizer_point_unref (GList* self) {
-	g_list_foreach (self, (GFunc) ddb_equalizer_point_unref, NULL);
-	g_list_free (self);
-}
 
 
 void ddb_equalizer_aa_mode_changed (DdbEqualizer* self, GtkCheckMenuItem* item) {
@@ -158,95 +88,6 @@ void ddb_equalizer_aa_mode_changed (DdbEqualizer* self, GtkCheckMenuItem* item) 
 	g_return_if_fail (item != NULL);
 	self->priv->aa_mode = gtk_check_menu_item_get_active (item);
 	gtk_widget_queue_draw ((GtkWidget*) self);
-}
-
-
-void ddb_equalizer_mode_changed (DdbEqualizer* self, GtkCheckMenuItem* item) {
-	g_return_if_fail (self != NULL);
-	g_return_if_fail (item != NULL);
-	ddb_equalizer_set_snap (self, gtk_check_menu_item_get_active (item));
-}
-
-
-static gpointer _ddb_equalizer_point_ref0 (gpointer self) {
-	return self ? ddb_equalizer_point_ref (self) : NULL;
-}
-
-
-static void ddb_equalizer_set_snap (DdbEqualizer* self, gboolean new_snap) {
-	g_return_if_fail (self != NULL);
-	self->priv->snap = new_snap;
-	if (self->priv->snap) {
-		double step;
-		step = 1.0 / ((double) (bands + 1));
-		if (g_list_length (self->priv->points) > 0) {
-			GList* iter;
-			iter = NULL;
-			{
-				gboolean _tmp0_;
-				iter = self->priv->points->next;
-				_tmp0_ = TRUE;
-				while (TRUE) {
-					if (!_tmp0_) {
-						iter = iter->next;
-					}
-					_tmp0_ = FALSE;
-					if (!(iter != NULL)) {
-						break;
-					}
-					self->priv->points = g_list_remove_link (self->priv->points, iter->prev);
-				}
-			}
-			self->priv->points = g_list_remove_link (self->priv->points, self->priv->points);
-		}
-		{
-			gint i;
-			i = 0;
-			{
-				gboolean _tmp1_;
-				_tmp1_ = TRUE;
-				while (TRUE) {
-					DdbEqualizerPoint* point;
-					if (!_tmp1_) {
-						i++;
-					}
-					_tmp1_ = FALSE;
-					if (!(i < bands)) {
-						break;
-					}
-					point = ddb_equalizer_point_new ();
-					point->x = (((double) i) + 1) * step;
-					point->y = self->priv->values[i];
-					self->priv->points = g_list_prepend (self->priv->points, _ddb_equalizer_point_ref0 (point));
-					_ddb_equalizer_point_unref0 (point);
-				}
-			}
-		}
-		self->priv->points = g_list_reverse (self->priv->points);
-	}
-}
-
-
-static void ddb_equalizer_abs_to_screen (DdbEqualizer* self, double x, double y, GdkPoint* result) {
-	GdkPoint _tmp0_ = {0};
-	g_return_if_fail (self != NULL);
-	*result = (memset (&_tmp0_, 0, sizeof (GdkPoint)), _tmp0_.x = ((gint) (x * (((GtkWidget*) self)->allocation.width - self->priv->margin_left))) + self->priv->margin_left, _tmp0_.y = (gint) (y * (((GtkWidget*) self)->allocation.height - self->priv->margin_bottom)), _tmp0_);
-	return;
-}
-
-
-static void ddb_equalizer_abs_to_screen_d (DdbEqualizer* self, double x, double y, double* sx, double* sy) {
-	g_return_if_fail (self != NULL);
-	*sx = (double) (((gint) (x * (((GtkWidget*) self)->allocation.width - self->priv->margin_left))) + self->priv->margin_left);
-	*sy = (double) ((gint) (y * (((GtkWidget*) self)->allocation.height - self->priv->margin_bottom)));
-}
-
-
-static double ddb_equalizer_cubic (DdbEqualizer* self, double y0, double y1, double y2, double y3, double mu) {
-	double result = 0.0;
-	g_return_val_if_fail (self != NULL, 0.0);
-	result = 0.5 * ((((2 * y1) + (((-y0) + y2) * mu)) + ((((((2 * y0) - (5 * y1)) + (4 * y2)) - y3) * mu) * mu)) + (((((((-y0) + (3 * y1)) - (3 * y2)) + y3) * mu) * mu) * mu));
-	return result;
 }
 
 
@@ -260,11 +101,6 @@ static gpointer _pango_font_description_copy0 (gpointer self) {
 }
 
 
-static gpointer _cairo_reference0 (gpointer self) {
-	return self ? cairo_reference (self) : NULL;
-}
-
-
 static gboolean ddb_equalizer_real_expose_event (GtkWidget* base, GdkEventExpose* event) {
 	DdbEqualizer * self;
 	gboolean result = FALSE;
@@ -274,79 +110,50 @@ static gboolean ddb_equalizer_real_expose_event (GtkWidget* base, GdkEventExpose
 	GdkColor fore_dark_color;
 	gint width;
 	gint height;
-	GdkPoint* _tmp3_;
-	gint _gpoints_size_;
-	gint gpoints_length1;
-	gint _tmp2_;
-	GdkPoint* gpoints;
-	GdkPoint _tmp4_ = {0};
-	gint i;
-	GdkPoint _tmp6_ = {0};
 	GdkDrawable* d;
-	GdkGCValues _tmp8_;
-	GdkGCValues _tmp7_ = {0};
+	GdkGCValues _tmp3_;
+	GdkGCValues _tmp2_ = {0};
 	GdkGC* gc;
 	double step;
+	gint i = 0;
 	double vstep;
 	PangoLayout* l;
 	PangoContext* ctx;
 	PangoFontDescription* fd;
-	gboolean _tmp12_ = FALSE;
+	gboolean _tmp7_ = FALSE;
 	char* tmp;
 	double val;
-	const char* _tmp14_;
-	char* _tmp15_;
-	const char* _tmp16_;
-	char* _tmp17_;
-	GdkRectangle _tmp19_;
-	GdkRectangle _tmp18_ = {0};
+	const char* _tmp9_;
+	char* _tmp10_;
+	const char* _tmp11_;
+	char* _tmp12_;
+	GdkRectangle _tmp14_;
+	GdkRectangle _tmp13_ = {0};
 	gint count;
-	GdkRectangle _tmp22_;
-	GdkRectangle _tmp21_ = {0};
+	GdkRectangle _tmp17_;
+	GdkRectangle _tmp16_ = {0};
 	gint bar_w;
-	GdkRectangle _tmp28_;
-	GdkRectangle _tmp27_ = {0};
+	GdkRectangle _tmp23_;
+	GdkRectangle _tmp22_ = {0};
 	self = (DdbEqualizer*) base;
 	fore_bright_color = (gtkui_get_bar_foreground_color (&_tmp0_), _tmp0_);
 	fore_dark_color = (gtkui_get_bar_foreground_color (&_tmp1_), _tmp1_);
 	width = ((GtkWidget*) self)->allocation.width;
 	height = ((GtkWidget*) self)->allocation.height;
-	gpoints = (_tmp3_ = g_new0 (GdkPoint, _tmp2_ = g_list_length (self->priv->points) + 2), gpoints_length1 = _tmp2_, _gpoints_size_ = gpoints_length1, _tmp3_);
-	gpoints[0] = (_tmp4_.x = self->priv->margin_left, _tmp4_.y = (height - self->priv->margin_bottom) / 2, _tmp4_);
-	i = 1;
-	{
-		GList* p_collection;
-		GList* p_it;
-		p_collection = self->priv->points;
-		for (p_it = p_collection; p_it != NULL; p_it = p_it->next) {
-			DdbEqualizerPoint* p;
-			p = _ddb_equalizer_point_ref0 ((DdbEqualizerPoint*) p_it->data);
-			{
-				GdkPoint _tmp5_ = {0};
-				gpoints[i] = (ddb_equalizer_abs_to_screen (self, p->x, p->y, &_tmp5_), _tmp5_);
-				if (gpoints[i].x >= width) {
-					gpoints[i].x = width - 1;
-				}
-				i++;
-				_ddb_equalizer_point_unref0 (p);
-			}
-		}
-	}
-	gpoints[i] = (_tmp6_.x = width - 1, _tmp6_.y = (height - self->priv->margin_bottom) / 2, _tmp6_);
 	d = _g_object_ref0 ((GdkDrawable*) gtk_widget_get_window ((GtkWidget*) self));
-	gc = _g_object_ref0 (GDK_DRAWABLE_GET_CLASS (d)->create_gc (d, (_tmp8_ = (memset (&_tmp7_, 0, sizeof (GdkGCValues)), _tmp7_), &_tmp8_), 0));
+	gc = _g_object_ref0 (GDK_DRAWABLE_GET_CLASS (d)->create_gc (d, (_tmp3_ = (memset (&_tmp2_, 0, sizeof (GdkGCValues)), _tmp2_), &_tmp3_), 0));
 	gdk_gc_set_rgb_fg_color (gc, &fore_dark_color);
-	step = ((double) (width - self->priv->margin_left)) / ((double) (bands + 1));
+	step = ((double) (width - self->priv->margin_left)) / ((double) (DDB_EQUALIZER_bands + 1));
 	{
-		gboolean _tmp9_;
+		gboolean _tmp4_;
 		i = 0;
-		_tmp9_ = TRUE;
+		_tmp4_ = TRUE;
 		while (TRUE) {
-			if (!_tmp9_) {
+			if (!_tmp4_) {
 				i++;
 			}
-			_tmp9_ = FALSE;
-			if (!(i < bands)) {
+			_tmp4_ = FALSE;
+			if (!(i < DDB_EQUALIZER_bands)) {
 				break;
 			}
 			gdk_draw_line (d, gc, ((gint) ((i + 1) * step)) + self->priv->margin_left, 0, ((gint) ((i + 1) * step)) + self->priv->margin_left, height - self->priv->margin_bottom);
@@ -357,13 +164,13 @@ static gboolean ddb_equalizer_real_expose_event (GtkWidget* base, GdkEventExpose
 		double di;
 		di = (double) 0;
 		{
-			gboolean _tmp10_;
-			_tmp10_ = TRUE;
+			gboolean _tmp5_;
+			_tmp5_ = TRUE;
 			while (TRUE) {
-				if (!_tmp10_) {
+				if (!_tmp5_) {
 					di = di + 0.25;
 				}
-				_tmp10_ = FALSE;
+				_tmp5_ = FALSE;
 				if (!(di < 2)) {
 					break;
 				}
@@ -377,15 +184,15 @@ static gboolean ddb_equalizer_real_expose_event (GtkWidget* base, GdkEventExpose
 	fd = _pango_font_description_copy0 (pango_context_get_font_description (ctx));
 	pango_context_set_font_description (ctx, fd);
 	{
-		gboolean _tmp11_;
+		gboolean _tmp6_;
 		i = 0;
-		_tmp11_ = TRUE;
+		_tmp6_ = TRUE;
 		while (TRUE) {
-			if (!_tmp11_) {
+			if (!_tmp6_) {
 				i++;
 			}
-			_tmp11_ = FALSE;
-			if (!(i < bands)) {
+			_tmp6_ = FALSE;
+			if (!(i < DDB_EQUALIZER_bands)) {
 				break;
 			}
 			pango_layout_set_text (l, freqs[i], (gint) g_utf8_strlen (freqs[i], -1));
@@ -395,45 +202,45 @@ static gboolean ddb_equalizer_real_expose_event (GtkWidget* base, GdkEventExpose
 	pango_layout_set_width (l, self->priv->margin_left - 1);
 	pango_layout_set_alignment (l, PANGO_ALIGN_RIGHT);
 	if (self->priv->mouse_y != (-1)) {
-		_tmp12_ = self->priv->mouse_y < (height - self->priv->margin_bottom);
+		_tmp7_ = self->priv->mouse_y < (height - self->priv->margin_bottom);
 	} else {
-		_tmp12_ = FALSE;
+		_tmp7_ = FALSE;
 	}
-	if (_tmp12_) {
+	if (_tmp7_) {
 		double db;
-		const char* _tmp13_;
+		const char* _tmp8_;
 		char* tmp;
 		db = ddb_equalizer_scale (self, ((double) (self->priv->mouse_y - 1)) / ((double) ((height - self->priv->margin_bottom) - 2)));
-		_tmp13_ = NULL;
+		_tmp8_ = NULL;
 		if (db > 0) {
-			_tmp13_ = "+";
+			_tmp8_ = "+";
 		} else {
-			_tmp13_ = "";
+			_tmp8_ = "";
 		}
-		tmp = g_strdup_printf ("%s%.1fdB", _tmp13_, db);
+		tmp = g_strdup_printf ("%s%.1fdB", _tmp8_, db);
 		pango_layout_set_text (l, tmp, (gint) g_utf8_strlen (tmp, -1));
 		gdk_draw_layout (d, gc, self->priv->margin_left - 1, self->priv->mouse_y - 3, l);
 		_g_free0 (tmp);
 	}
 	tmp = NULL;
 	val = ddb_equalizer_scale (self, (double) 1);
-	_tmp14_ = NULL;
+	_tmp9_ = NULL;
 	if (val > 0) {
-		_tmp14_ = "+";
+		_tmp9_ = "+";
 	} else {
-		_tmp14_ = "";
+		_tmp9_ = "";
 	}
-	tmp = (_tmp15_ = g_strdup_printf ("%s%.1fdB", _tmp14_, val), _g_free0 (tmp), _tmp15_);
+	tmp = (_tmp10_ = g_strdup_printf ("%s%.1fdB", _tmp9_, val), _g_free0 (tmp), _tmp10_);
 	pango_layout_set_text (l, tmp, (gint) g_utf8_strlen (tmp, -1));
 	gdk_draw_layout (d, gc, self->priv->margin_left - 1, (height - self->priv->margin_bottom) - 6, l);
 	val = ddb_equalizer_scale (self, (double) 0);
-	_tmp16_ = NULL;
+	_tmp11_ = NULL;
 	if (val > 0) {
-		_tmp16_ = "+";
+		_tmp11_ = "+";
 	} else {
-		_tmp16_ = "";
+		_tmp11_ = "";
 	}
-	tmp = (_tmp17_ = g_strdup_printf ("%s%.1fdB", _tmp16_, val), _g_free0 (tmp), _tmp17_);
+	tmp = (_tmp12_ = g_strdup_printf ("%s%.1fdB", _tmp11_, val), _g_free0 (tmp), _tmp12_);
 	pango_layout_set_text (l, tmp, (gint) g_utf8_strlen (tmp, -1));
 	gdk_draw_layout (d, gc, self->priv->margin_left - 1, 1, l);
 	pango_layout_set_text (l, "0dB", 4);
@@ -443,20 +250,20 @@ static gboolean ddb_equalizer_real_expose_event (GtkWidget* base, GdkEventExpose
 	gdk_draw_layout (d, gc, 1, (height - self->priv->margin_bottom) + 2, l);
 	gdk_draw_rectangle (d, gc, FALSE, self->priv->margin_left, 0, (width - self->priv->margin_left) - 1, (height - self->priv->margin_bottom) - 1);
 	gdk_gc_set_line_attributes (gc, 2, GDK_LINE_SOLID, GDK_CAP_NOT_LAST, GDK_JOIN_MITER);
-	gdk_gc_set_clip_rectangle (gc, (_tmp19_ = (_tmp18_.x = 0, _tmp18_.y = (gint) (self->priv->preamp * (height - self->priv->margin_bottom)), _tmp18_.width = 11, _tmp18_.height = height, _tmp18_), &_tmp19_));
+	gdk_gc_set_clip_rectangle (gc, (_tmp14_ = (_tmp13_.x = 0, _tmp13_.y = (gint) (self->priv->preamp * (height - self->priv->margin_bottom)), _tmp13_.width = 11, _tmp13_.height = height, _tmp13_), &_tmp14_));
 	gdk_gc_set_rgb_fg_color (gc, &fore_dark_color);
 	count = ((gint) ((height - self->priv->margin_bottom) / 6)) + 1;
 	{
 		gint j;
 		j = 0;
 		{
-			gboolean _tmp20_;
-			_tmp20_ = TRUE;
+			gboolean _tmp15_;
+			_tmp15_ = TRUE;
 			while (TRUE) {
-				if (!_tmp20_) {
+				if (!_tmp15_) {
 					j++;
 				}
-				_tmp20_ = FALSE;
+				_tmp15_ = FALSE;
 				if (!(j < count)) {
 					break;
 				}
@@ -464,39 +271,39 @@ static gboolean ddb_equalizer_real_expose_event (GtkWidget* base, GdkEventExpose
 			}
 		}
 	}
-	gdk_gc_set_clip_rectangle (gc, (_tmp22_ = (_tmp21_.x = self->priv->margin_left + 1, _tmp21_.y = 1, _tmp21_.width = (width - self->priv->margin_left) - 2, _tmp21_.height = (height - self->priv->margin_bottom) - 2, _tmp21_), &_tmp22_));
+	gdk_gc_set_clip_rectangle (gc, (_tmp17_ = (_tmp16_.x = self->priv->margin_left + 1, _tmp16_.y = 1, _tmp16_.width = (width - self->priv->margin_left) - 2, _tmp16_.height = (height - self->priv->margin_bottom) - 2, _tmp16_), &_tmp17_));
 	gdk_gc_set_rgb_fg_color (gc, &fore_dark_color);
 	bar_w = 11;
 	if (step < bar_w) {
 		bar_w = ((gint) step) - 1;
 	}
 	{
-		gboolean _tmp23_;
+		gboolean _tmp18_;
 		i = 0;
-		_tmp23_ = TRUE;
+		_tmp18_ = TRUE;
 		while (TRUE) {
-			GdkRectangle _tmp25_;
-			GdkRectangle _tmp24_ = {0};
-			if (!_tmp23_) {
+			GdkRectangle _tmp20_;
+			GdkRectangle _tmp19_ = {0};
+			if (!_tmp18_) {
 				i++;
 			}
-			_tmp23_ = FALSE;
-			if (!(i < bands)) {
+			_tmp18_ = FALSE;
+			if (!(i < DDB_EQUALIZER_bands)) {
 				break;
 			}
-			gdk_gc_set_clip_rectangle (gc, (_tmp25_ = (_tmp24_.x = (((gint) ((i + 1) * step)) + self->priv->margin_left) - (bar_w / 2), _tmp24_.y = (gint) (self->priv->values[i] * (height - self->priv->margin_bottom)), _tmp24_.width = 11, _tmp24_.height = height, _tmp24_), &_tmp25_));
+			gdk_gc_set_clip_rectangle (gc, (_tmp20_ = (_tmp19_.x = (((gint) ((i + 1) * step)) + self->priv->margin_left) - (bar_w / 2), _tmp19_.y = (gint) (self->priv->values[i] * (height - self->priv->margin_bottom)), _tmp19_.width = 11, _tmp19_.height = height, _tmp19_), &_tmp20_));
 			count = ((gint) (((height - self->priv->margin_bottom) * (1 - self->priv->values[i])) / 6)) + 1;
 			{
 				gint j;
 				j = 0;
 				{
-					gboolean _tmp26_;
-					_tmp26_ = TRUE;
+					gboolean _tmp21_;
+					_tmp21_ = TRUE;
 					while (TRUE) {
-						if (!_tmp26_) {
+						if (!_tmp21_) {
 							j++;
 						}
-						_tmp26_ = FALSE;
+						_tmp21_ = FALSE;
 						if (!(j < count)) {
 							break;
 						}
@@ -506,234 +313,16 @@ static gboolean ddb_equalizer_real_expose_event (GtkWidget* base, GdkEventExpose
 			}
 		}
 	}
-	gdk_gc_set_clip_rectangle (gc, (_tmp28_ = (_tmp27_.x = 0, _tmp27_.y = 0, _tmp27_.width = width, _tmp27_.height = height, _tmp27_), &_tmp28_));
-	if (self->priv->draw_envelope) {
-		GdkPoint gp = {0};
-		guint pcount;
-		double* _tmp29_;
-		gint _ys_size_;
-		gint ys_length1;
-		double* ys;
-		double* _tmp30_;
-		gint _xs_size_;
-		gint xs_length1;
-		double* xs;
-		cairo_t* _tmp32_;
-		cairo_t* cairo;
-		gint prev_x;
-		gint prev_y;
-		gdk_gc_set_rgb_fg_color (gc, &fore_bright_color);
-		pcount = g_list_length (self->priv->points);
-		ys = (_tmp29_ = g_new0 (double, pcount), ys_length1 = pcount, _ys_size_ = ys_length1, _tmp29_);
-		xs = (_tmp30_ = g_new0 (double, pcount), xs_length1 = pcount, _xs_size_ = xs_length1, _tmp30_);
-		i = 0;
-		{
-			GList* p_collection;
-			GList* p_it;
-			p_collection = self->priv->points;
-			for (p_it = p_collection; p_it != NULL; p_it = p_it->next) {
-				DdbEqualizerPoint* p;
-				p = _ddb_equalizer_point_ref0 ((DdbEqualizerPoint*) p_it->data);
-				{
-					GdkPoint _tmp31_ = {0};
-					gp = (ddb_equalizer_abs_to_screen (self, p->x, p->y, &_tmp31_), _tmp31_);
-					gdk_draw_rectangle (d, gc, TRUE, gp.x - spot_size, gp.y - spot_size, spot_size * 2, spot_size * 2);
-					xs[i] = p->x;
-					ys[i] = p->y;
-					i++;
-					_ddb_equalizer_point_unref0 (p);
-				}
-			}
-		}
-		_tmp32_ = NULL;
-		if (self->priv->aa_mode) {
-			cairo_t* _tmp33_;
-			_tmp32_ = (_tmp33_ = gdk_cairo_create (d), _cairo_destroy0 (_tmp32_), _tmp33_);
-		} else {
-			cairo_t* _tmp34_;
-			_tmp32_ = (_tmp34_ = NULL, _cairo_destroy0 (_tmp32_), _tmp34_);
-		}
-		cairo = _cairo_reference0 (_tmp32_);
-		prev_x = 0;
-		prev_y = 0;
-		if (pcount > 0) {
-			GdkPoint _tmp35_ = {0};
-			gp = (ddb_equalizer_abs_to_screen (self, xs[0], ys[0], &_tmp35_), _tmp35_);
-			if (self->priv->aa_mode) {
-				cairo_move_to (cairo, (double) self->priv->margin_left, (double) gp.y);
-			} else {
-				gdk_draw_line (d, gc, self->priv->margin_left, gp.y, gp.x, gp.y);
-			}
-			prev_x = gp.x;
-			prev_y = gp.y;
-		}
-		if (pcount >= 2) {
-			{
-				gboolean _tmp36_;
-				i = 0;
-				_tmp36_ = TRUE;
-				while (TRUE) {
-					double dx;
-					double dy;
-					gint pts;
-					if (!_tmp36_) {
-						i++;
-					}
-					_tmp36_ = FALSE;
-					if (!(i < (pcount - 1))) {
-						break;
-					}
-					if (((gint) ((xs[i + 1] - xs[i]) * width)) <= 5) {
-						GdkPoint _tmp37_ = {0};
-						GdkPoint gp2;
-						GdkPoint _tmp38_ = {0};
-						gp2 = (ddb_equalizer_abs_to_screen (self, xs[i], ys[i], &_tmp37_), _tmp37_);
-						gp = (ddb_equalizer_abs_to_screen (self, xs[i + 1], ys[i + 1], &_tmp38_), _tmp38_);
-						gdk_draw_line (d, gc, gp2.x, gp2.y, gp.x, gp.y);
-						prev_x = gp2.x;
-						prev_y = gp2.y;
-						continue;
-					}
-					dx = (xs[i + 1] - xs[i]) * width;
-					dy = (ys[i + 1] - ys[i]) * height;
-					pts = (gint) (sqrt ((dx * dx) + (dy * dy)) / 5.0);
-					step = ((double) (xs[i + 1] - xs[i])) / ((double) pts);
-					{
-						gint ii;
-						ii = 0;
-						{
-							gboolean _tmp39_;
-							_tmp39_ = TRUE;
-							while (TRUE) {
-								double y = 0.0;
-								gboolean _tmp40_ = FALSE;
-								if (!_tmp39_) {
-									ii++;
-								}
-								_tmp39_ = FALSE;
-								if (!(ii <= pts)) {
-									break;
-								}
-								if (i == 0) {
-									_tmp40_ = i == (pcount - 2);
-								} else {
-									_tmp40_ = FALSE;
-								}
-								if (_tmp40_) {
-									y = ddb_equalizer_cubic (self, ys[0], ys[0], ys[1], ys[1], ((double) ii) / ((double) pts));
-								} else {
-									if (i == 0) {
-										y = ddb_equalizer_cubic (self, ys[0], ys[0], ys[1], ys[2], ((double) ii) / ((double) pts));
-									} else {
-										if (i == (pcount - 2)) {
-											y = ddb_equalizer_cubic (self, ys[i - 1], ys[i], ys[i + 1], ys[i + 1], ((double) ii) / ((double) pts));
-										} else {
-											y = ddb_equalizer_cubic (self, ys[i - 1], ys[i], ys[i + 1], ys[i + 2], ((double) ii) / ((double) pts));
-										}
-									}
-								}
-								if (y < 0) {
-									y = (double) 0;
-								}
-								if (y > 1) {
-									y = (double) 1;
-								}
-								if (self->priv->aa_mode) {
-									double sx = 0.0;
-									double sy = 0.0;
-									ddb_equalizer_abs_to_screen_d (self, (ii * step) + xs[i], y, &sx, &sy);
-									cairo_line_to (cairo, sx, sy);
-								} else {
-									GdkPoint _tmp41_ = {0};
-									gp = (ddb_equalizer_abs_to_screen (self, (ii * step) + xs[i], y, &_tmp41_), _tmp41_);
-									if (gp.y < 2) {
-										gp.y = 2;
-									}
-									if (gp.y > ((height - self->priv->margin_bottom) - 2)) {
-										gp.y = (height - self->priv->margin_bottom) - 2;
-									}
-									gdk_draw_point (d, gc, gp.x, gp.y);
-									prev_x = gp.x;
-									prev_y = gp.y;
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		if (pcount > 0) {
-			GdkPoint _tmp42_ = {0};
-			gp = (ddb_equalizer_abs_to_screen (self, xs[pcount - 1], ys[pcount - 1], &_tmp42_), _tmp42_);
-			if (self->priv->aa_mode) {
-				cairo_line_to (cairo, (double) (width - 1), (double) gp.y);
-			} else {
-				gdk_draw_line (d, gc, gp.x, gp.y, width - 1, gp.y);
-			}
-		}
-		if (self->priv->aa_mode) {
-			cairo_set_source_rgb (cairo, ((double) fore_bright_color.red) / ((double) 0xffff), ((double) fore_bright_color.green) / ((double) 0xffff), ((double) fore_bright_color.blue) / ((double) 0xffff));
-			cairo_stroke (cairo);
-		}
-		if (pcount == 0) {
-			gdk_draw_line (d, gc, self->priv->margin_left, (height - self->priv->margin_bottom) / 2, width - 1, (height - self->priv->margin_bottom) / 2);
-		}
-		ys = (g_free (ys), NULL);
-		xs = (g_free (xs), NULL);
-		_cairo_destroy0 (_tmp32_);
-		_cairo_destroy0 (cairo);
-	}
+	gdk_gc_set_clip_rectangle (gc, (_tmp23_ = (_tmp22_.x = 0, _tmp22_.y = 0, _tmp22_.width = width, _tmp22_.height = height, _tmp22_), &_tmp23_));
 	gdk_gc_set_line_attributes (gc, 1, GDK_LINE_ON_OFF_DASH, GDK_CAP_NOT_LAST, GDK_JOIN_MITER);
 	gdk_draw_line (d, gc, self->priv->margin_left + 1, self->priv->mouse_y, width, self->priv->mouse_y);
 	result = FALSE;
-	gpoints = (g_free (gpoints), NULL);
 	_g_object_unref0 (d);
 	_g_object_unref0 (gc);
 	_g_object_unref0 (l);
 	_g_object_unref0 (ctx);
 	_pango_font_description_free0 (fd);
 	_g_free0 (tmp);
-	return result;
-}
-
-
-static gboolean ddb_equalizer_get_point_at (DdbEqualizer* self, double x, double y) {
-	gboolean result = FALSE;
-	gboolean ret;
-	GList* iter;
-	double ss_x;
-	double ss_y;
-	g_return_val_if_fail (self != NULL, FALSE);
-	ret = FALSE;
-	iter = NULL;
-	ss_x = ((double) spot_size) / ((double) ((GtkWidget*) self)->allocation.width);
-	ss_y = ((double) spot_size) / ((double) ((GtkWidget*) self)->allocation.height);
-	{
-		gboolean _tmp0_;
-		iter = self->priv->points;
-		_tmp0_ = TRUE;
-		while (TRUE) {
-			gboolean _tmp1_ = FALSE;
-			if (!_tmp0_) {
-				iter = iter->next;
-			}
-			_tmp0_ = FALSE;
-			if (!(iter != NULL)) {
-				break;
-			}
-			if (fabs (((DdbEqualizerPoint*) iter->data)->x - x) <= ss_x) {
-				_tmp1_ = fabs (((DdbEqualizerPoint*) iter->data)->y - y) <= ss_y;
-			} else {
-				_tmp1_ = FALSE;
-			}
-			if (_tmp1_) {
-				self->priv->current_point = iter;
-				ret = TRUE;
-				break;
-			}
-		}
-	}
-	result = ret;
 	return result;
 }
 
@@ -750,265 +339,7 @@ static inline double ddb_equalizer_scale (DdbEqualizer* self, double val) {
 }
 
 
-static void ddb_equalizer_recalc_values (DdbEqualizer* self) {
-	guint pcount;
-	double* _tmp0_;
-	gint _ys_size_;
-	gint ys_length1;
-	double* ys;
-	double* _tmp1_;
-	gint _xs_size_;
-	gint xs_length1;
-	double* xs;
-	gint i;
-	double* _tmp7_;
-	gint _scaled_values_size_;
-	gint scaled_values_length1;
-	double* scaled_values;
-	g_return_if_fail (self != NULL);
-	pcount = g_list_length (self->priv->points);
-	ys = (_tmp0_ = g_new0 (double, pcount), ys_length1 = pcount, _ys_size_ = ys_length1, _tmp0_);
-	xs = (_tmp1_ = g_new0 (double, pcount), xs_length1 = pcount, _xs_size_ = xs_length1, _tmp1_);
-	i = 0;
-	{
-		GList* p_collection;
-		GList* p_it;
-		p_collection = self->priv->points;
-		for (p_it = p_collection; p_it != NULL; p_it = p_it->next) {
-			DdbEqualizerPoint* p;
-			p = _ddb_equalizer_point_ref0 ((DdbEqualizerPoint*) p_it->data);
-			{
-				xs[i] = p->x;
-				ys[i] = p->y;
-				i++;
-				_ddb_equalizer_point_unref0 (p);
-			}
-		}
-	}
-	if (pcount == 0) {
-		{
-			gboolean _tmp2_;
-			i = 0;
-			_tmp2_ = TRUE;
-			while (TRUE) {
-				if (!_tmp2_) {
-					i++;
-				}
-				_tmp2_ = FALSE;
-				if (!(i < bands)) {
-					break;
-				}
-				self->priv->values[i] = 0.5;
-			}
-		}
-	} else {
-		if (pcount == 1) {
-			{
-				gboolean _tmp3_;
-				i = 0;
-				_tmp3_ = TRUE;
-				while (TRUE) {
-					if (!_tmp3_) {
-						i++;
-					}
-					_tmp3_ = FALSE;
-					if (!(i < bands)) {
-						break;
-					}
-					self->priv->values[i] = ys[0];
-				}
-			}
-		} else {
-			gint pi;
-			pi = 0;
-			{
-				gboolean _tmp4_;
-				i = 0;
-				_tmp4_ = TRUE;
-				while (TRUE) {
-					double x;
-					double y;
-					gboolean _tmp5_ = FALSE;
-					gboolean _tmp6_ = FALSE;
-					if (!_tmp4_) {
-						i++;
-					}
-					_tmp4_ = FALSE;
-					if (!(i < bands)) {
-						break;
-					}
-					x = ((double) (i + 1)) / ((double) (bands + 1));
-					y = (double) 0;
-					if (xs[pi] > x) {
-						self->priv->values[i] = ys[pi];
-						continue;
-					}
-					if (xs[pi + 1] < x) {
-						_tmp5_ = pi < (pcount - 1);
-					} else {
-						_tmp5_ = FALSE;
-					}
-					if (_tmp5_) {
-						pi++;
-					}
-					if (pi == (pcount - 1)) {
-						self->priv->values[i] = ys[pcount - 1];
-						continue;
-					}
-					if (pi == 0) {
-						_tmp6_ = pi == (pcount - 2);
-					} else {
-						_tmp6_ = FALSE;
-					}
-					if (_tmp6_) {
-						y = ddb_equalizer_cubic (self, ys[pi], ys[pi], ys[pi + 1], ys[pi + 1], (x - xs[pi]) / (xs[pi + 1] - xs[pi]));
-					} else {
-						if (pi == 0) {
-							y = ddb_equalizer_cubic (self, ys[pi], ys[pi], ys[pi + 1], ys[pi + 2], (x - xs[pi]) / (xs[pi + 1] - xs[pi]));
-						} else {
-							if (pi == (pcount - 2)) {
-								y = ddb_equalizer_cubic (self, ys[pi - 1], ys[pi], ys[pi + 1], ys[pi + 1], (x - xs[pi]) / (xs[pi + 1] - xs[pi]));
-							} else {
-								y = ddb_equalizer_cubic (self, ys[pi - 1], ys[pi], ys[pi + 1], ys[pi + 2], (x - xs[pi]) / (xs[pi + 1] - xs[pi]));
-							}
-						}
-					}
-					if (y < 0) {
-						y = (double) 0;
-					}
-					if (y > 1) {
-						y = (double) 1;
-					}
-					self->priv->values[i] = y;
-				}
-			}
-		}
-	}
-	scaled_values = (_tmp7_ = g_new0 (double, bands), scaled_values_length1 = bands, _scaled_values_size_ = scaled_values_length1, _tmp7_);
-	{
-		gboolean _tmp8_;
-		i = 0;
-		_tmp8_ = TRUE;
-		while (TRUE) {
-			if (!_tmp8_) {
-				i++;
-			}
-			_tmp8_ = FALSE;
-			if (!(i < bands)) {
-				break;
-			}
-			scaled_values[i] = ddb_equalizer_scale (self, self->priv->values[i]);
-		}
-	}
-	g_signal_emit_by_name (self, "on-changed", scaled_values, scaled_values_length1);
-	ys = (g_free (ys), NULL);
-	xs = (g_free (xs), NULL);
-	scaled_values = (g_free (scaled_values), NULL);
-}
-
-
-static void ddb_equalizer_snap_move (DdbEqualizer* self, double x, double y) {
-	double step;
-	gint idx;
-	gboolean _tmp0_ = FALSE;
-	g_return_if_fail (self != NULL);
-	step = 1.0 / ((double) (bands + 1));
-	idx = (gint) ((x - (step / 2)) / step);
-	if (idx < bands) {
-		_tmp0_ = idx >= 0;
-	} else {
-		_tmp0_ = FALSE;
-	}
-	if (_tmp0_) {
-		self->priv->current_point = g_list_nth (self->priv->points, (guint) idx);
-		((DdbEqualizerPoint*) self->priv->current_point->data)->y = y;
-	}
-}
-
-
-static void ddb_equalizer_handle_curve_click (DdbEqualizer* self, GdkEventButton* event) {
-	double x;
-	double y;
-	g_return_if_fail (self != NULL);
-	x = ((double) ((*event).x - self->priv->margin_left)) / ((double) (((GtkWidget*) self)->allocation.width - self->priv->margin_left));
-	y = (*event).y / ((double) (((GtkWidget*) self)->allocation.height - self->priv->margin_bottom));
-	if ((*event).button == 1) {
-		if (self->priv->snap) {
-			ddb_equalizer_snap_move (self, x, y);
-		} else {
-			if (!ddb_equalizer_get_point_at (self, x, y)) {
-				DdbEqualizerPoint* point;
-				point = ddb_equalizer_point_new ();
-				if (self->priv->points == NULL) {
-					self->priv->points = g_list_append (self->priv->points, _ddb_equalizer_point_ref0 (point));
-					self->priv->current_point = self->priv->points;
-				} else {
-					if (((DdbEqualizerPoint*) self->priv->points->data)->x > x) {
-						self->priv->points = g_list_prepend (self->priv->points, _ddb_equalizer_point_ref0 (point));
-						self->priv->current_point = self->priv->points;
-					} else {
-						gboolean found;
-						found = FALSE;
-						{
-							GList* i;
-							i = self->priv->points;
-							{
-								gboolean _tmp0_;
-								_tmp0_ = TRUE;
-								while (TRUE) {
-									gboolean _tmp1_ = FALSE;
-									if (!_tmp0_) {
-										i = i->next;
-									}
-									_tmp0_ = FALSE;
-									if (!(i->next != NULL)) {
-										break;
-									}
-									if (((DdbEqualizerPoint*) i->data)->x < x) {
-										_tmp1_ = ((DdbEqualizerPoint*) i->next->data)->x > x;
-									} else {
-										_tmp1_ = FALSE;
-									}
-									if (_tmp1_) {
-										self->priv->points = g_list_insert_before (self->priv->points, i->next, _ddb_equalizer_point_ref0 (point));
-										self->priv->current_point = i->next;
-										found = TRUE;
-										break;
-									}
-								}
-							}
-						}
-						if (!found) {
-							self->priv->points = g_list_append (self->priv->points, _ddb_equalizer_point_ref0 (point));
-							self->priv->current_point = g_list_last (self->priv->points);
-						}
-					}
-				}
-				_ddb_equalizer_point_unref0 (point);
-			}
-			((DdbEqualizerPoint*) self->priv->current_point->data)->x = x;
-			((DdbEqualizerPoint*) self->priv->current_point->data)->y = y;
-		}
-		ddb_equalizer_recalc_values (self);
-		gdk_window_set_cursor (gtk_widget_get_window ((GtkWidget*) self), self->priv->moving_cursor);
-		gtk_widget_queue_draw ((GtkWidget*) self);
-	} else {
-		if ((*event).button == 3) {
-			if (self->priv->snap) {
-				return;
-			}
-			if (ddb_equalizer_get_point_at (self, x, y)) {
-				self->priv->points = g_list_remove (self->priv->points, (DdbEqualizerPoint*) self->priv->current_point->data);
-				ddb_equalizer_recalc_values (self);
-				gtk_widget_queue_draw ((GtkWidget*) self);
-			}
-			gtk_widget_queue_draw ((GtkWidget*) self);
-		}
-	}
-}
-
-
-static gboolean ddb_equalizer_in_curve_area (DdbEqualizer* self, gint x, gint y) {
+static gboolean ddb_equalizer_in_curve_area (DdbEqualizer* self, double x, double y) {
 	gboolean result = FALSE;
 	gboolean _tmp0_ = FALSE;
 	gboolean _tmp1_ = FALSE;
@@ -1034,6 +365,38 @@ static gboolean ddb_equalizer_in_curve_area (DdbEqualizer* self, gint x, gint y)
 }
 
 
+static void ddb_equalizer_update_eq_drag (DdbEqualizer* self, double x, double y) {
+	double band_width;
+	gint band;
+	gboolean _tmp0_ = FALSE;
+	g_return_if_fail (self != NULL);
+	band_width = ((double) (((GtkWidget*) self)->allocation.width - self->priv->margin_left)) / ((double) (DDB_EQUALIZER_bands + 1));
+	band = (gint) floor (((x - self->priv->margin_left) / band_width) - 0.5);
+	if (band < 0) {
+		band = 0;
+	}
+	if (band >= DDB_EQUALIZER_bands) {
+		band = band - 1;
+	}
+	if (band >= 0) {
+		_tmp0_ = band < DDB_EQUALIZER_bands;
+	} else {
+		_tmp0_ = FALSE;
+	}
+	if (_tmp0_) {
+		self->priv->values[band] = y / ((double) (((GtkWidget*) self)->allocation.height - self->priv->margin_bottom));
+		if (self->priv->values[band] > 1) {
+			self->priv->values[band] = (double) 1;
+		} else {
+			if (self->priv->values[band] < 0) {
+				self->priv->values[band] = (double) 0;
+			}
+		}
+		g_signal_emit_by_name (self, "on-changed");
+	}
+}
+
+
 static gboolean ddb_equalizer_real_button_press_event (GtkWidget* base, GdkEventButton* event) {
 	DdbEqualizer * self;
 	gboolean result = FALSE;
@@ -1041,9 +404,9 @@ static gboolean ddb_equalizer_real_button_press_event (GtkWidget* base, GdkEvent
 	gboolean _tmp1_ = FALSE;
 	gboolean _tmp2_ = FALSE;
 	self = (DdbEqualizer*) base;
-	if (ddb_equalizer_in_curve_area (self, (gint) (*event).x, (gint) (*event).y)) {
+	if (ddb_equalizer_in_curve_area (self, (double) ((gint) (*event).x), (double) ((gint) (*event).y))) {
 		self->priv->curve_hook = TRUE;
-		ddb_equalizer_handle_curve_click (self, event);
+		ddb_equalizer_update_eq_drag (self, (double) ((gint) (*event).x), (double) ((gint) (*event).y));
 		result = FALSE;
 		return result;
 	}
@@ -1064,10 +427,8 @@ static gboolean ddb_equalizer_real_button_press_event (GtkWidget* base, GdkEvent
 	}
 	if (_tmp0_) {
 		self->priv->preamp = (*event).y / ((double) (((GtkWidget*) self)->allocation.height - self->priv->margin_bottom));
+		g_signal_emit_by_name (self, "on-changed");
 		self->priv->preamp_hook = TRUE;
-	}
-	if ((*event).button == 3) {
-		gtk_menu_popup (self->priv->menu, NULL, NULL, NULL, NULL, (*event).button, gtk_get_current_event_time ());
 	}
 	result = FALSE;
 	return result;
@@ -1100,10 +461,8 @@ static gboolean ddb_equalizer_real_leave_notify_event (GtkWidget* base, GdkEvent
 static gboolean ddb_equalizer_real_motion_notify_event (GtkWidget* base, GdkEventMotion* event) {
 	DdbEqualizer * self;
 	gboolean result = FALSE;
-	double x;
 	double y;
 	self = (DdbEqualizer*) base;
-	x = ((double) ((*event).x - self->priv->margin_left)) / ((double) (((GtkWidget*) self)->allocation.width - self->priv->margin_left));
 	y = (*event).y / ((double) (((GtkWidget*) self)->allocation.height - self->priv->margin_bottom));
 	if (y < 0) {
 		y = (double) 0;
@@ -1113,58 +472,50 @@ static gboolean ddb_equalizer_real_motion_notify_event (GtkWidget* base, GdkEven
 	}
 	if (self->priv->preamp_hook) {
 		self->priv->preamp = y;
+		g_signal_emit_by_name (self, "on-changed");
 		gtk_widget_queue_draw ((GtkWidget*) self);
 		result = FALSE;
 		return result;
 	}
-	if (!ddb_equalizer_in_curve_area (self, (gint) (*event).x, (gint) (*event).y)) {
+	if (!ddb_equalizer_in_curve_area (self, (double) ((gint) (*event).x), (double) ((gint) (*event).y))) {
 		self->priv->mouse_y = -1;
 	} else {
 		self->priv->mouse_y = (gint) (*event).y;
 	}
 	if (self->priv->curve_hook) {
-		if (self->priv->snap) {
-			ddb_equalizer_snap_move (self, x, y);
-		} else {
-			gboolean _tmp0_ = FALSE;
-			gboolean _tmp1_ = FALSE;
-			((DdbEqualizerPoint*) self->priv->current_point->data)->x = x;
-			if (self->priv->current_point->prev != NULL) {
-				_tmp0_ = ((DdbEqualizerPoint*) self->priv->current_point->prev->data)->x > ((DdbEqualizerPoint*) self->priv->current_point->data)->x;
-			} else {
-				_tmp0_ = FALSE;
-			}
-			if (_tmp0_) {
-				((DdbEqualizerPoint*) self->priv->current_point->data)->x = ((DdbEqualizerPoint*) self->priv->current_point->prev->data)->x;
-			}
-			if (self->priv->current_point->next != NULL) {
-				_tmp1_ = ((DdbEqualizerPoint*) self->priv->current_point->next->data)->x < ((DdbEqualizerPoint*) self->priv->current_point->data)->x;
-			} else {
-				_tmp1_ = FALSE;
-			}
-			if (_tmp1_) {
-				((DdbEqualizerPoint*) self->priv->current_point->data)->x = ((DdbEqualizerPoint*) self->priv->current_point->next->data)->x;
-			}
-			((DdbEqualizerPoint*) self->priv->current_point->data)->y = y;
-			if (((DdbEqualizerPoint*) self->priv->current_point->data)->x > 1) {
-				((DdbEqualizerPoint*) self->priv->current_point->data)->x = (double) 1;
-			}
-			if (((DdbEqualizerPoint*) self->priv->current_point->data)->x < 0) {
-				((DdbEqualizerPoint*) self->priv->current_point->data)->x = (double) 0;
-			}
-		}
-		ddb_equalizer_recalc_values (self);
+		ddb_equalizer_update_eq_drag (self, (double) ((gint) (*event).x), (double) ((gint) (*event).y));
 		self->priv->mouse_y = (gint) (*event).y;
-		gtk_widget_queue_draw ((GtkWidget*) self);
-	} else {
-		if (!ddb_equalizer_get_point_at (self, x, y)) {
-			gdk_window_set_cursor (gtk_widget_get_window ((GtkWidget*) self), self->priv->pointer_cursor);
-		} else {
-			gdk_window_set_cursor (gtk_widget_get_window ((GtkWidget*) self), self->priv->moving_cursor);
-		}
-		gtk_widget_queue_draw ((GtkWidget*) self);
 	}
+	gtk_widget_queue_draw ((GtkWidget*) self);
 	result = FALSE;
+	return result;
+}
+
+
+void ddb_equalizer_set_band (DdbEqualizer* self, gint band, double v) {
+	g_return_if_fail (self != NULL);
+	self->priv->values[band] = 1 - ((v + 20.0) / 40.0);
+}
+
+
+double ddb_equalizer_get_band (DdbEqualizer* self, gint band) {
+	double result = 0.0;
+	g_return_val_if_fail (self != NULL, 0.0);
+	result = ((1 - self->priv->values[band]) * 40.0) - 20.0;
+	return result;
+}
+
+
+void ddb_equalizer_set_preamp (DdbEqualizer* self, double v) {
+	g_return_if_fail (self != NULL);
+	self->priv->preamp = 1 - ((v + 20.0) / 40.0);
+}
+
+
+double ddb_equalizer_get_preamp (DdbEqualizer* self) {
+	double result = 0.0;
+	g_return_val_if_fail (self != NULL, 0.0);
+	result = ((1 - self->priv->preamp) * 40.0) - 20.0;
 	return result;
 }
 
@@ -1181,22 +532,6 @@ DdbEqualizer* ddb_equalizer_new (void) {
 }
 
 
-static void _ddb_equalizer_aa_mode_changed_gtk_check_menu_item_toggled (GtkCheckMenuItem* _sender, gpointer self) {
-	ddb_equalizer_aa_mode_changed (self, _sender);
-}
-
-
-static void _ddb_equalizer_mode_changed_gtk_check_menu_item_toggled (GtkCheckMenuItem* _sender, gpointer self) {
-	ddb_equalizer_mode_changed (self, _sender);
-}
-
-
-static void _g_slist_free_g_object_unref (GSList* self) {
-	g_slist_foreach (self, (GFunc) g_object_unref, NULL);
-	g_slist_free (self);
-}
-
-
 static GObject * ddb_equalizer_constructor (GType type, guint n_construct_properties, GObjectConstructParam * construct_properties) {
 	GObject * obj;
 	GObjectClass * parent_class;
@@ -1206,218 +541,12 @@ static GObject * ddb_equalizer_constructor (GType type, guint n_construct_proper
 	self = DDB_EQUALIZER (obj);
 	{
 		GdkColor _tmp0_;
-		GtkMenu* _tmp1_;
-		GtkCheckMenuItem* checkitem;
-		GtkMenuItem* mode_item;
-		GtkMenu* mode_menu;
-		GSList* group;
-		GtkRadioMenuItem* thesame_item;
-		GtkRadioMenuItem* waker_item;
 		gtk_widget_add_events ((GtkWidget*) self, (gint) (((GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK) | GDK_LEAVE_NOTIFY_MASK) | GDK_POINTER_MOTION_MASK));
 		gtk_widget_modify_bg ((GtkWidget*) self, GTK_STATE_NORMAL, (_tmp0_ = gtk_widget_get_style ((GtkWidget*) self)->fg[GTK_STATE_NORMAL], &_tmp0_));
-		ddb_equalizer_recalc_values (self);
 		self->priv->margin_bottom = (gint) (((pango_units_to_double (pango_font_description_get_size (gtk_widget_get_style ((GtkWidget*) self)->font_desc)) * gdk_screen_get_resolution (gdk_screen_get_default ())) / 72) + 4);
 		self->priv->margin_left = self->priv->margin_bottom * 4;
-		self->priv->preamp = 0.5;
-		ddb_equalizer_set_snap (self, TRUE);
-		self->priv->menu = (_tmp1_ = g_object_ref_sink ((GtkMenu*) gtk_menu_new ()), _g_object_unref0 (self->priv->menu), _tmp1_);
-		checkitem = g_object_ref_sink ((GtkCheckMenuItem*) gtk_check_menu_item_new_with_label ("Antialiasing"));
-		gtk_widget_show ((GtkWidget*) checkitem);
-		g_signal_connect_object (checkitem, "toggled", (GCallback) _ddb_equalizer_aa_mode_changed_gtk_check_menu_item_toggled, self, 0);
-		gtk_menu_shell_append ((GtkMenuShell*) self->priv->menu, (GtkWidget*) ((GtkMenuItem*) checkitem));
-		mode_item = g_object_ref_sink ((GtkMenuItem*) gtk_menu_item_new ());
-		gtk_widget_show ((GtkWidget*) mode_item);
-		gtk_menu_item_set_label (mode_item, "mode");
-		gtk_menu_shell_append ((GtkMenuShell*) self->priv->menu, (GtkWidget*) mode_item);
-		mode_menu = g_object_ref_sink ((GtkMenu*) gtk_menu_new ());
-		group = NULL;
-		thesame_item = g_object_ref_sink ((GtkRadioMenuItem*) gtk_radio_menu_item_new_with_label (group, "thesame"));
-		gtk_widget_show ((GtkWidget*) thesame_item);
-		gtk_menu_shell_append ((GtkMenuShell*) mode_menu, (GtkWidget*) ((GtkMenuItem*) thesame_item));
-		waker_item = g_object_ref_sink ((GtkRadioMenuItem*) gtk_radio_menu_item_new_with_label_from_widget (thesame_item, "waker"));
-		gtk_widget_show ((GtkWidget*) waker_item);
-		g_signal_connect_object ((GtkCheckMenuItem*) waker_item, "toggled", (GCallback) _ddb_equalizer_mode_changed_gtk_check_menu_item_toggled, self, 0);
-		gtk_menu_shell_append ((GtkMenuShell*) mode_menu, (GtkWidget*) ((GtkMenuItem*) waker_item));
-		gtk_menu_item_set_submenu (mode_item, (GtkWidget*) mode_menu);
-		_g_object_unref0 (checkitem);
-		_g_object_unref0 (mode_item);
-		_g_object_unref0 (mode_menu);
-		__g_slist_free_g_object_unref0 (group);
-		_g_object_unref0 (thesame_item);
-		_g_object_unref0 (waker_item);
 	}
 	return obj;
-}
-
-
-static DdbEqualizerPoint* ddb_equalizer_point_construct (GType object_type) {
-	DdbEqualizerPoint* self;
-	self = (DdbEqualizerPoint*) g_type_create_instance (object_type);
-	return self;
-}
-
-
-static DdbEqualizerPoint* ddb_equalizer_point_new (void) {
-	return ddb_equalizer_point_construct (DDB_EQUALIZER_TYPE_POINT);
-}
-
-
-static void ddb_equalizer_value_point_init (GValue* value) {
-	value->data[0].v_pointer = NULL;
-}
-
-
-static void ddb_equalizer_value_point_free_value (GValue* value) {
-	if (value->data[0].v_pointer) {
-		ddb_equalizer_point_unref (value->data[0].v_pointer);
-	}
-}
-
-
-static void ddb_equalizer_value_point_copy_value (const GValue* src_value, GValue* dest_value) {
-	if (src_value->data[0].v_pointer) {
-		dest_value->data[0].v_pointer = ddb_equalizer_point_ref (src_value->data[0].v_pointer);
-	} else {
-		dest_value->data[0].v_pointer = NULL;
-	}
-}
-
-
-static gpointer ddb_equalizer_value_point_peek_pointer (const GValue* value) {
-	return value->data[0].v_pointer;
-}
-
-
-static gchar* ddb_equalizer_value_point_collect_value (GValue* value, guint n_collect_values, GTypeCValue* collect_values, guint collect_flags) {
-	if (collect_values[0].v_pointer) {
-		DdbEqualizerPoint* object;
-		object = collect_values[0].v_pointer;
-		if (object->parent_instance.g_class == NULL) {
-			return g_strconcat ("invalid unclassed object pointer for value type `", G_VALUE_TYPE_NAME (value), "'", NULL);
-		} else if (!g_value_type_compatible (G_TYPE_FROM_INSTANCE (object), G_VALUE_TYPE (value))) {
-			return g_strconcat ("invalid object type `", g_type_name (G_TYPE_FROM_INSTANCE (object)), "' for value type `", G_VALUE_TYPE_NAME (value), "'", NULL);
-		}
-		value->data[0].v_pointer = ddb_equalizer_point_ref (object);
-	} else {
-		value->data[0].v_pointer = NULL;
-	}
-	return NULL;
-}
-
-
-static gchar* ddb_equalizer_value_point_lcopy_value (const GValue* value, guint n_collect_values, GTypeCValue* collect_values, guint collect_flags) {
-	DdbEqualizerPoint** object_p;
-	object_p = collect_values[0].v_pointer;
-	if (!object_p) {
-		return g_strdup_printf ("value location for `%s' passed as NULL", G_VALUE_TYPE_NAME (value));
-	}
-	if (!value->data[0].v_pointer) {
-		*object_p = NULL;
-	} else if (collect_flags && G_VALUE_NOCOPY_CONTENTS) {
-		*object_p = value->data[0].v_pointer;
-	} else {
-		*object_p = ddb_equalizer_point_ref (value->data[0].v_pointer);
-	}
-	return NULL;
-}
-
-
-static GParamSpec* ddb_equalizer_param_spec_point (const gchar* name, const gchar* nick, const gchar* blurb, GType object_type, GParamFlags flags) {
-	DdbEqualizerParamSpecPoint* spec;
-	g_return_val_if_fail (g_type_is_a (object_type, DDB_EQUALIZER_TYPE_POINT), NULL);
-	spec = g_param_spec_internal (G_TYPE_PARAM_OBJECT, name, nick, blurb, flags);
-	G_PARAM_SPEC (spec)->value_type = object_type;
-	return G_PARAM_SPEC (spec);
-}
-
-
-static gpointer ddb_equalizer_value_get_point (const GValue* value) {
-	g_return_val_if_fail (G_TYPE_CHECK_VALUE_TYPE (value, DDB_EQUALIZER_TYPE_POINT), NULL);
-	return value->data[0].v_pointer;
-}
-
-
-static void ddb_equalizer_value_set_point (GValue* value, gpointer v_object) {
-	DdbEqualizerPoint* old;
-	g_return_if_fail (G_TYPE_CHECK_VALUE_TYPE (value, DDB_EQUALIZER_TYPE_POINT));
-	old = value->data[0].v_pointer;
-	if (v_object) {
-		g_return_if_fail (G_TYPE_CHECK_INSTANCE_TYPE (v_object, DDB_EQUALIZER_TYPE_POINT));
-		g_return_if_fail (g_value_type_compatible (G_TYPE_FROM_INSTANCE (v_object), G_VALUE_TYPE (value)));
-		value->data[0].v_pointer = v_object;
-		ddb_equalizer_point_ref (value->data[0].v_pointer);
-	} else {
-		value->data[0].v_pointer = NULL;
-	}
-	if (old) {
-		ddb_equalizer_point_unref (old);
-	}
-}
-
-
-static void ddb_equalizer_value_take_point (GValue* value, gpointer v_object) {
-	DdbEqualizerPoint* old;
-	g_return_if_fail (G_TYPE_CHECK_VALUE_TYPE (value, DDB_EQUALIZER_TYPE_POINT));
-	old = value->data[0].v_pointer;
-	if (v_object) {
-		g_return_if_fail (G_TYPE_CHECK_INSTANCE_TYPE (v_object, DDB_EQUALIZER_TYPE_POINT));
-		g_return_if_fail (g_value_type_compatible (G_TYPE_FROM_INSTANCE (v_object), G_VALUE_TYPE (value)));
-		value->data[0].v_pointer = v_object;
-	} else {
-		value->data[0].v_pointer = NULL;
-	}
-	if (old) {
-		ddb_equalizer_point_unref (old);
-	}
-}
-
-
-static void ddb_equalizer_point_class_init (DdbEqualizerPointClass * klass) {
-	ddb_equalizer_point_parent_class = g_type_class_peek_parent (klass);
-	DDB_EQUALIZER_POINT_CLASS (klass)->finalize = ddb_equalizer_point_finalize;
-}
-
-
-static void ddb_equalizer_point_instance_init (DdbEqualizerPoint * self) {
-	self->ref_count = 1;
-}
-
-
-static void ddb_equalizer_point_finalize (DdbEqualizerPoint* obj) {
-	DdbEqualizerPoint * self;
-	self = DDB_EQUALIZER_POINT (obj);
-}
-
-
-static GType ddb_equalizer_point_get_type (void) {
-	static volatile gsize ddb_equalizer_point_type_id__volatile = 0;
-	if (g_once_init_enter (&ddb_equalizer_point_type_id__volatile)) {
-		static const GTypeValueTable g_define_type_value_table = { ddb_equalizer_value_point_init, ddb_equalizer_value_point_free_value, ddb_equalizer_value_point_copy_value, ddb_equalizer_value_point_peek_pointer, "p", ddb_equalizer_value_point_collect_value, "p", ddb_equalizer_value_point_lcopy_value };
-		static const GTypeInfo g_define_type_info = { sizeof (DdbEqualizerPointClass), (GBaseInitFunc) NULL, (GBaseFinalizeFunc) NULL, (GClassInitFunc) ddb_equalizer_point_class_init, (GClassFinalizeFunc) NULL, NULL, sizeof (DdbEqualizerPoint), 0, (GInstanceInitFunc) ddb_equalizer_point_instance_init, &g_define_type_value_table };
-		static const GTypeFundamentalInfo g_define_type_fundamental_info = { (G_TYPE_FLAG_CLASSED | G_TYPE_FLAG_INSTANTIATABLE | G_TYPE_FLAG_DERIVABLE | G_TYPE_FLAG_DEEP_DERIVABLE) };
-		GType ddb_equalizer_point_type_id;
-		ddb_equalizer_point_type_id = g_type_register_fundamental (g_type_fundamental_next (), "DdbEqualizerPoint", &g_define_type_info, &g_define_type_fundamental_info, 0);
-		g_once_init_leave (&ddb_equalizer_point_type_id__volatile, ddb_equalizer_point_type_id);
-	}
-	return ddb_equalizer_point_type_id__volatile;
-}
-
-
-static gpointer ddb_equalizer_point_ref (gpointer instance) {
-	DdbEqualizerPoint* self;
-	self = instance;
-	g_atomic_int_inc (&self->ref_count);
-	return instance;
-}
-
-
-static void ddb_equalizer_point_unref (gpointer instance) {
-	DdbEqualizerPoint* self;
-	self = instance;
-	if (g_atomic_int_dec_and_test (&self->ref_count)) {
-		DDB_EQUALIZER_POINT_GET_CLASS (self)->finalize (self);
-		g_type_free_instance ((GTypeInstance *) self);
-	}
 }
 
 
@@ -1431,26 +560,21 @@ static void ddb_equalizer_class_init (DdbEqualizerClass * klass) {
 	GTK_WIDGET_CLASS (klass)->motion_notify_event = ddb_equalizer_real_motion_notify_event;
 	G_OBJECT_CLASS (klass)->constructor = ddb_equalizer_constructor;
 	G_OBJECT_CLASS (klass)->finalize = ddb_equalizer_finalize;
-	g_signal_new ("on_changed", DDB_TYPE_EQUALIZER, G_SIGNAL_RUN_LAST, 0, NULL, NULL, g_cclosure_user_marshal_VOID__POINTER_INT, G_TYPE_NONE, 2, G_TYPE_POINTER, G_TYPE_INT);
+	g_signal_new ("on_changed", DDB_TYPE_EQUALIZER, G_SIGNAL_RUN_LAST, 0, NULL, NULL, g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
 }
 
 
 static void ddb_equalizer_instance_init (DdbEqualizer * self) {
 	self->priv = DDB_EQUALIZER_GET_PRIVATE (self);
-	self->priv->points = NULL;
-	self->priv->current_point = NULL;
-	self->priv->values = g_new0 (double, bands);
-	self->priv->values_length1 = bands;
+	self->priv->values = g_new0 (double, DDB_EQUALIZER_bands);
+	self->priv->values_length1 = DDB_EQUALIZER_bands;
 	self->priv->_values_size_ = self->priv->values_length1;
-	self->priv->snap = FALSE;
+	self->priv->preamp = 0.5;
 	self->priv->aa_mode = FALSE;
-	self->priv->draw_envelope = FALSE;
 	self->priv->curve_hook = FALSE;
 	self->priv->preamp_hook = FALSE;
-	self->priv->menu = NULL;
 	self->priv->margin_bottom = -1;
 	self->priv->margin_left = -1;
-	self->priv->moving_cursor = gdk_cursor_new (GDK_FLEUR);
 	self->priv->pointer_cursor = gdk_cursor_new (GDK_LEFT_PTR);
 }
 
@@ -1458,10 +582,7 @@ static void ddb_equalizer_instance_init (DdbEqualizer * self) {
 static void ddb_equalizer_finalize (GObject* obj) {
 	DdbEqualizer * self;
 	self = DDB_EQUALIZER (obj);
-	__g_list_free_ddb_equalizer_point_unref0 (self->priv->points);
 	self->priv->values = (g_free (self->priv->values), NULL);
-	_g_object_unref0 (self->priv->menu);
-	_gdk_cursor_unref0 (self->priv->moving_cursor);
 	_gdk_cursor_unref0 (self->priv->pointer_cursor);
 	G_OBJECT_CLASS (ddb_equalizer_parent_class)->finalize (obj);
 }
@@ -1478,25 +599,6 @@ GType ddb_equalizer_get_type (void) {
 	return ddb_equalizer_type_id__volatile;
 }
 
-
-
-static void g_cclosure_user_marshal_VOID__POINTER_INT (GClosure * closure, GValue * return_value, guint n_param_values, const GValue * param_values, gpointer invocation_hint, gpointer marshal_data) {
-	typedef void (*GMarshalFunc_VOID__POINTER_INT) (gpointer data1, gpointer arg_1, gint arg_2, gpointer data2);
-	register GMarshalFunc_VOID__POINTER_INT callback;
-	register GCClosure * cc;
-	register gpointer data1, data2;
-	cc = (GCClosure *) closure;
-	g_return_if_fail (n_param_values == 3);
-	if (G_CCLOSURE_SWAP_DATA (closure)) {
-		data1 = closure->data;
-		data2 = param_values->data[0].v_pointer;
-	} else {
-		data1 = param_values->data[0].v_pointer;
-		data2 = closure->data;
-	}
-	callback = (GMarshalFunc_VOID__POINTER_INT) (marshal_data ? marshal_data : cc->callback);
-	callback (data1, g_value_get_pointer (param_values + 1), g_value_get_int (param_values + 2), data2);
-}
 
 
 

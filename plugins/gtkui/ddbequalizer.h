@@ -6,6 +6,8 @@
 
 #include <glib.h>
 #include <gtk/gtk.h>
+#include <float.h>
+#include <math.h>
 
 G_BEGIN_DECLS
 
@@ -33,7 +35,10 @@ struct _DdbEqualizerClass {
 
 GType ddb_equalizer_get_type (void);
 void ddb_equalizer_aa_mode_changed (DdbEqualizer* self, GtkCheckMenuItem* item);
-void ddb_equalizer_mode_changed (DdbEqualizer* self, GtkCheckMenuItem* item);
+void ddb_equalizer_set_band (DdbEqualizer* self, gint band, double v);
+double ddb_equalizer_get_band (DdbEqualizer* self, gint band);
+void ddb_equalizer_set_preamp (DdbEqualizer* self, double v);
+double ddb_equalizer_get_preamp (DdbEqualizer* self);
 DdbEqualizer* ddb_equalizer_new (void);
 DdbEqualizer* ddb_equalizer_construct (GType object_type);
 

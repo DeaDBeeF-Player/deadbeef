@@ -25,7 +25,6 @@
 #include "ddbequalizer.h"
 
 static GtkWidget *eqwin;
-static GtkWidget *sliders[18];
 
 float
 db_to_amp (float dB) {
@@ -39,57 +38,19 @@ amp_to_db (float amp) {
 }
 
 void
-eq_value_changed (GtkRange *range, gpointer  user_data) {
-    int band = (intptr_t)user_data;
+graphic_value_changed (DdbEqualizer *widget)
+{
+    printf ("graphic_value_changed\n");
     DB_supereq_dsp_t *eq = NULL;
     DB_dsp_t **plugs = deadbeef->plug_get_dsp_list ();
-    // find eq plugin
+
     for (int i = 0; plugs[i]; i++) {
         if (plugs[i]->plugin.id && !strcmp (plugs[i]->plugin.id, "supereq")) {
             eq = (DB_supereq_dsp_t *)plugs[i];
-            float val = gtk_range_get_value (range);
-            val = db_to_amp (val);
-            eq->set_band (band, val);
-            break;
-        }
-    }
-}
-
-void
-eq_init_widgets (GtkWidget *container) {
-    int i;
-    GtkWidget *hbox = gtk_hbox_new (FALSE, 0);
-    gtk_widget_show (hbox);
-    gtk_container_add (GTK_CONTAINER (container), hbox);
-
-    for (i = 0; i < 18; i++) {
-        GtkWidget *scale = sliders[i] = gtk_vscale_new_with_range (-20, 20, 1);
-        gtk_scale_set_value_pos (GTK_SCALE (scale), GTK_POS_BOTTOM);
-        gtk_scale_set_draw_value (GTK_SCALE (scale), TRUE);
-        gtk_range_set_inverted (GTK_RANGE (scale), TRUE);
-        gtk_range_set_update_policy (GTK_RANGE (scale), GTK_UPDATE_DELAYED);
-        g_signal_connect (scale, "value_changed", G_CALLBACK (eq_value_changed), (gpointer)(intptr_t)i);
-        gtk_widget_show (scale);
-        gtk_box_pack_start (GTK_BOX (hbox), scale, FALSE, FALSE, 0);
-    }
-}
-
-void
-graphic_value_changed (gpointer inst, double *values, gint count)
-{
-    DB_supereq_dsp_t *eq = NULL;
-    DB_dsp_t **plugs = deadbeef->plug_get_dsp_list ();
-
-    for (int i = 0; plugs[i]; i++)
-    {
-        if (plugs[i]->plugin.id && !strcmp (plugs[i]->plugin.id, "supereq"))
-        {
-            eq = (DB_supereq_dsp_t *)plugs[i];
-            for (int ii = 0; ii < count; ii++)
-            {
-                double val = db_to_amp (values[ii]);
-                eq->set_band (ii, val);
+            for (int ii = 0; ii < 18; ii++) {
+                eq->set_band (ii, db_to_amp (ddb_equalizer_get_band (widget, ii)));
             }
+            eq->set_preamp (db_to_amp (ddb_equalizer_get_preamp (widget)));
             break;
         }
     }
@@ -97,44 +58,33 @@ graphic_value_changed (gpointer inst, double *values, gint count)
 
 void
 eq_window_show (void) {
-/*    if (!eqwin) {
-        eqwin = gtk_hbox_new (FALSE, 0);
-        gtk_widget_set_size_request (eqwin, -1, 200);
-        eq_init_widgets (eqwin);
-        GtkWidget *cont = lookup_widget (mainwin, "vbox1");
-        gtk_box_pack_start (GTK_BOX (cont), eqwin, FALSE, FALSE, 0);
-    }
-    int i;
-    DB_supereq_dsp_t *eq = NULL;
-    DB_dsp_t **plugs = deadbeef->plug_get_dsp_list ();
-    // find eq plugin
-    for (i = 0; plugs[i]; i++) {
-        if (plugs[i]->plugin.id && !strcmp (plugs[i]->plugin.id, "supereq")) {
-            eq = (DB_supereq_dsp_t *)plugs[i];
-            break;
-        }
-    }
-
-    for (i = 0; i < 18; i++) {
-        GtkWidget *scale = sliders[i];
-        if (eq) {
-            float val = eq->get_band (i);
-            val = amp_to_db (val);
-            if (val < -20) {
-                val = -20;
-            }
-            if (val > 20) {
-                val = 20;
-            }
-            gtk_range_set_value (GTK_RANGE (scale), val);
-        }
-    }
-    gtk_widget_show (eqwin);*/
-
     if (!eqwin) {
         eqwin = GTK_WIDGET (ddb_equalizer_new());
         g_signal_connect (eqwin, "on_changed", G_CALLBACK (graphic_value_changed), 0);
         gtk_widget_set_size_request (eqwin, -1, 200);
+
+        int i;
+        DB_supereq_dsp_t *eq = NULL;
+        DB_dsp_t **plugs = deadbeef->plug_get_dsp_list ();
+        // find eq plugin
+        for (i = 0; plugs[i]; i++) {
+            if (plugs[i]->plugin.id && !strcmp (plugs[i]->plugin.id, "supereq")) {
+                eq = (DB_supereq_dsp_t *)plugs[i];
+                break;
+            }
+        }
+
+        printf ("init eq widget\n");
+        ddb_equalizer_set_preamp (DDB_EQUALIZER (eqwin), amp_to_db (eq->get_preamp ()));
+        for (i = 0; i < 18; i++) {
+            if (eq) {
+                float val = eq->get_band (i);
+                ddb_equalizer_set_band (DDB_EQUALIZER (eqwin), i, amp_to_db (val));
+            }
+        }
+
+        gtk_widget_show (eqwin);
+
         GtkWidget *cont = lookup_widget (mainwin, "vbox1");
         gtk_box_pack_start (GTK_BOX (cont), eqwin, FALSE, FALSE, 0);
     }
@@ -152,5 +102,4 @@ void
 eq_window_destroy (void) {
     gtk_widget_destroy (eqwin);
     eqwin = NULL;
-    memset (sliders, 0, sizeof (sliders));
 }

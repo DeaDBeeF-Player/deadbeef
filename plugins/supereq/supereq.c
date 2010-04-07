@@ -38,6 +38,7 @@ static float last_srate = 0;
 static int last_nch = 0, last_bps = 0;
 static float lbands[18] = {1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0};
 static float rbands[18] = {1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0};
+static float preamp = 1;
 static void *paramsroot;
 
 static int params_changed = 0;
@@ -58,10 +59,35 @@ supereq_on_configchanged (DB_event_t *ev, uintptr_t data) {
     return 0;
 }
 
+void
+recalc_table (void) {
+    void *params = paramlist_alloc ();
+
+    deadbeef->mutex_lock (mutex);
+    float lbands_copy[18];
+    float rbands_copy[18];
+    float srate = last_srate;
+    memcpy (lbands_copy, lbands, sizeof (lbands));
+    memcpy (rbands_copy, rbands, sizeof (rbands));
+    for (int i = 0; i < 18; i++) {
+        lbands_copy[i] *= preamp;
+        rbands_copy[i] *= preamp;
+    }
+    deadbeef->mutex_unlock (mutex);
+
+    equ_makeTable (lbands_copy, rbands_copy, params, srate);
+
+    deadbeef->mutex_lock (mutex);
+    paramlist_free (paramsroot);
+    paramsroot = params;
+    deadbeef->mutex_unlock (mutex);
+}
+
 int
 supereq_plugin_start (void) {
     enabled = deadbeef->conf_get_int ("supereq.enable", 0);
     // load bands from config
+    preamp = deadbeef->conf_get_float ("eq.preamp", 1);
     for (int i = 0; i < 18; i++) {
         char key[100];
         snprintf (key, sizeof (key), "eq.band%d", i);
@@ -73,9 +99,9 @@ supereq_plugin_start (void) {
     last_srate = 44100;
     last_nch = 2;
     last_bps = 16;
-    equ_makeTable (lbands, rbands, paramsroot, last_srate);
-    equ_clearbuf (last_bps,last_srate);
     mutex = deadbeef->mutex_create ();
+    recalc_table ();
+    equ_clearbuf (last_bps,last_srate);
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_CONFIGCHANGED, DB_CALLBACK (supereq_on_configchanged), 0);
     return 0;
 }
@@ -95,22 +121,7 @@ supereq_plugin_stop (void) {
 
 void
 supereq_regen_table_thread (void *param) {
-    void *params = paramlist_alloc ();
-
-    deadbeef->mutex_lock (mutex);
-    float lbands_copy[18];
-    float rbands_copy[18];
-    float srate = last_srate;
-    memcpy (lbands_copy, lbands, sizeof (lbands));
-    memcpy (rbands_copy, rbands, sizeof (rbands));
-    deadbeef->mutex_unlock (mutex);
-
-    equ_makeTable (lbands_copy, rbands_copy, params, srate);
-
-    deadbeef->mutex_lock (mutex);
-    paramlist_free (paramsroot);
-    paramsroot = params;
-    deadbeef->mutex_unlock (mutex);
+    recalc_table ();
     tid = 0;
 }
 
@@ -123,10 +134,11 @@ supereq_process_int16 (int16_t *samples, int nsamples, int nch, int bps, int sra
     }
 	if (last_srate != srate) {
         deadbeef->mutex_lock (mutex);
-        equ_makeTable (lbands, rbands, paramsroot, srate);
+        //equ_makeTable (lbands, rbands, paramsroot, srate);
 		last_srate = srate;
 		last_nch = nch;
 		last_bps = bps;
+        recalc_table ();
         deadbeef->mutex_unlock (mutex);
 		equ_clearbuf(bps,srate);
     }
@@ -155,6 +167,20 @@ supereq_set_band (int band, float value) {
     char key[100];
     snprintf (key, sizeof (key), "eq.band%d", band);
     deadbeef->conf_set_float (key, value);
+}
+
+float
+supereq_get_preamp (void) {
+    return preamp;
+}
+
+void
+supereq_set_preamp (float value) {
+    deadbeef->mutex_lock (mutex);
+    preamp = value;
+    deadbeef->mutex_unlock (mutex);
+    params_changed = 1;
+    deadbeef->conf_set_float ("eq.preamp", value);
 }
 
 void
@@ -202,6 +228,8 @@ static DB_supereq_dsp_t plugin = {
     .dsp.enabled = supereq_enabled,
     .get_band = supereq_get_band,
     .set_band = supereq_set_band,
+    .get_preamp = supereq_get_preamp,
+    .set_preamp = supereq_set_preamp,
 };
 
 DB_plugin_t *
