@@ -52,6 +52,7 @@ Bundled libraries:
 
 
 DUMB - Dynamic Universal Music Bibliotheque, Version 0.9.3
+http://dumb.sf.net
 Copyright © 2001-2005 Ben Davis, Robert J Ohannessian and Julien Cugniere.
 
 
