@@ -1,3 +1,23 @@
+/*
+    SuperEQ GTK Widget for for DeaDBeeF
+    Copyright (C) 2010 Viktor Semykin <thesame.ml@gmail.com>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+// sripped down and polished by Alexey Yakovenko <waker@users.sourceforge.net>
+
 const string[] freqs = {
     "55 Hz","77 Hz","110 Hz","156 Hz","220 Hz","311 Hz","440 Hz","622 Hz","880 Hz",
     "1.2 kHz","1.8 kHz","2.5 kHz","3.5 kHz","5 kHz","7 kHz","10 kHz","14 kHz","20 kHz"
@@ -34,11 +54,10 @@ namespace Ddb {
                 | Gdk.EventMask.LEAVE_NOTIFY_MASK
                 | Gdk.EventMask.POINTER_MOTION_MASK);
 
-            modify_bg (Gtk.StateType.NORMAL, get_style ().fg[Gtk.StateType.NORMAL]);
-
-            margin_bottom = (int)(Pango.units_to_double (get_style ().font_desc.get_size ())* Gdk.Screen.get_default ().get_resolution () / 72 + 4);
+            margin_bottom = (int)(Pango.units_to_double (get_style ().font_desc.get_size ()) * Gdk.Screen.get_default ().get_resolution () / 72 + 4);
             margin_left = margin_bottom * 4;
 
+            modify_bg (Gtk.StateType.NORMAL, Gtkui.get_bar_background_color ());
         }
 
         public void
@@ -52,7 +71,13 @@ namespace Ddb {
         expose_event (Gdk.EventExpose event)
         {
             Gdk.Color fore_bright_color = Gtkui.get_bar_foreground_color ();
-            Gdk.Color fore_dark_color = Gtkui.get_bar_foreground_color ();
+
+            Gdk.Color c1 = fore_bright_color;
+            Gdk.Color c2 = Gtkui.get_bar_background_color ();
+            Gdk.Color fore_dark_color = c2;
+            fore_dark_color.red += (int16)((c1.red - c2.red) * 0.5);
+            fore_dark_color.green += (int16)((c1.green - c2.green) * 0.5);
+            fore_dark_color.blue += (int16)((c1.blue - c2.blue) * 0.5);
 
             int width = allocation.width;
             int height = allocation.height;
@@ -89,17 +114,31 @@ namespace Ddb {
             //drawing freqs:
             Pango.Layout l = create_pango_layout (null);
             var ctx = l.get_context ();
-            var fd = ctx.get_font_description ();
+
+            var fd = get_style ().font_desc.copy ();
+
+//            var fd = ctx.get_font_description ();
+            fd.set_size ((int)(get_style ().font_desc.get_size () * 0.7));
             ctx.set_font_description (fd);
             for (i = 0; i < bands; i++)
             {
                 l.set_text (freqs[i], (int)freqs[i].len());
-                Gdk.draw_layout (d, gc, (int)((i+1)*step-5)+margin_left, height-margin_bottom+2, l);
+                Pango.Rectangle ink, log;
+                l.get_pixel_extents (out ink, out log);
+                int offs = 2;
+                if ((i % 2) != 0) {
+                    offs += 2;
+                }
+                Gdk.draw_layout (d, gc, (int)((i+1)*step)+margin_left - ink.width/2, height-margin_bottom + offs, l);
             }
+            fd.set_size ((int)(get_style ().font_desc.get_size ()));
+            ctx.set_font_description (fd);
             
             //drawing db's:
             l.set_width (margin_left-1);
             l.set_alignment (Pango.Alignment.RIGHT);
+
+            int fontsize = (int)(Pango.units_to_double (fd.get_size ()) * Gdk.Screen.get_default ().get_resolution () / 72);
 
             if ((mouse_y != -1) && (mouse_y < height - margin_bottom))
             {
@@ -113,15 +152,15 @@ namespace Ddb {
             double val = scale(1);
             tmp = "%s%.1fdB".printf (val > 0 ? "+" : "", val);
             l.set_text (tmp, (int)tmp.len());
-            Gdk.draw_layout (d, gc, margin_left-1, height-margin_bottom-6, l);
+            Gdk.draw_layout (d, gc, margin_left-1, height-margin_bottom-fontsize, l);
 
             val = scale(0);
             tmp = "%s%.1fdB".printf (val > 0 ? "+" : "", val);
             l.set_text (tmp, (int)tmp.len());
             Gdk.draw_layout (d, gc, margin_left-1, 1, l);
 
-            l.set_text ("0dB", 4);
-            Gdk.draw_layout (d, gc, margin_left-1, (int)((1-preamp)*(height-margin_bottom))-3, l);
+            l.set_text ("+0dB", 4);
+            Gdk.draw_layout (d, gc, margin_left-1, (int)((1-preamp)*(height-margin_bottom))-fontsize/2, l);
 
             l.set_text ("preamp", 6);
             l.set_alignment (Pango.Alignment.LEFT);
@@ -133,7 +172,7 @@ namespace Ddb {
             //draw preamp
             gc.set_clip_rectangle ({0, (int)(preamp * (height-margin_bottom)), 11, height});
 
-            gc.set_rgb_fg_color (fore_dark_color);
+            gc.set_rgb_fg_color (fore_bright_color);
             int count = (int)((height-margin_bottom) / 6)+1;
             for (int j = 0; j < count; j++)
                 d.draw_rectangle (
@@ -147,7 +186,7 @@ namespace Ddb {
             gc.set_clip_rectangle ({margin_left+1, 1, width-margin_left-2, height-margin_bottom-2});
 
             //drawing bars:
-            gc.set_rgb_fg_color (fore_dark_color);
+            gc.set_rgb_fg_color (fore_bright_color);
 
             int bar_w = 11;
             if (step < bar_w)
