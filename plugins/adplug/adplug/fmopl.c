@@ -244,7 +244,7 @@ static INT32 feedback2;		/* connect for SLOT 2 */
 
 /* --------------------- subroutines  --------------------- */
 
-INLINE int Limit( int val, int max, int min ) {
+static INLINE int Limit( int val, int max, int min ) {
 	if ( val > max )
 		val = max;
 	else if ( val < min )
@@ -254,7 +254,7 @@ INLINE int Limit( int val, int max, int min ) {
 }
 
 /* status set and IRQ handling */
-INLINE void OPL_STATUS_SET(FM_OPL *OPL,int flag)
+static INLINE void OPL_STATUS_SET(FM_OPL *OPL,int flag)
 {
 	/* set status flag */
 	OPL->status |= flag;
@@ -270,7 +270,7 @@ INLINE void OPL_STATUS_SET(FM_OPL *OPL,int flag)
 }
 
 /* status reset and IRQ handling */
-INLINE void OPL_STATUS_RESET(FM_OPL *OPL,int flag)
+static INLINE void OPL_STATUS_RESET(FM_OPL *OPL,int flag)
 {
 	/* reset status flag */
 	OPL->status &=~flag;
@@ -286,7 +286,7 @@ INLINE void OPL_STATUS_RESET(FM_OPL *OPL,int flag)
 }
 
 /* IRQ mask set */
-INLINE void OPL_STATUSMASK_SET(FM_OPL *OPL,int flag)
+static INLINE void OPL_STATUSMASK_SET(FM_OPL *OPL,int flag)
 {
 	OPL->statusmask = flag;
 	/* IRQ handling check */
@@ -295,7 +295,7 @@ INLINE void OPL_STATUSMASK_SET(FM_OPL *OPL,int flag)
 }
 
 /* ----- key on  ----- */
-INLINE void OPL_KEYON(OPL_SLOT *SLOT)
+static INLINE void OPL_KEYON(OPL_SLOT *SLOT)
 {
 	/* sin wave restart */
 	SLOT->Cnt = 0;
@@ -306,7 +306,7 @@ INLINE void OPL_KEYON(OPL_SLOT *SLOT)
 	SLOT->eve = EG_AED;
 }
 /* ----- key off ----- */
-INLINE void OPL_KEYOFF(OPL_SLOT *SLOT)
+static INLINE void OPL_KEYOFF(OPL_SLOT *SLOT)
 {
 	if( SLOT->evm > ENV_MOD_RR)
 	{
@@ -368,7 +368,7 @@ static void set_algorythm( OPL_CH *CH)
 }
 
 /* ---------- frequency counter for operater update ---------- */
-INLINE void CALC_FCSLOT(OPL_CH *CH,OPL_SLOT *SLOT)
+static INLINE void CALC_FCSLOT(OPL_CH *CH,OPL_SLOT *SLOT)
 {
 	int ksr;
 
@@ -402,7 +402,7 @@ static INLINE void set_mul(FM_OPL *OPL,int slot,int v)
 }
 
 /* set ksl & tl */
-INLINE void set_ksl_tl(FM_OPL *OPL,int slot,int v)
+static INLINE void set_ksl_tl(FM_OPL *OPL,int slot,int v)
 {
 	OPL_CH   *CH   = &OPL->P_CH[slot/2];
 	OPL_SLOT *SLOT = &CH->SLOT[slot&1];
@@ -713,7 +713,7 @@ static void OPLCloseTable( void )
 }
 
 /* CSM Key Controll */
-INLINE void CSMKeyControll(OPL_CH *CH)
+static INLINE void CSMKeyControll(OPL_CH *CH)
 {
 	OPL_SLOT *slot1 = &CH->SLOT[SLOT1];
 	OPL_SLOT *slot2 = &CH->SLOT[SLOT2];
