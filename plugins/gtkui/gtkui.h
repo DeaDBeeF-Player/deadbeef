@@ -93,6 +93,21 @@ void
 seekbar_redraw (void);
 
 void
+seekbar_draw (GtkWidget *widget);
+
+gboolean
+on_seekbar_button_press_event          (GtkWidget       *widget,
+                                        GdkEventButton  *event);
+
+gboolean
+on_seekbar_button_release_event        (GtkWidget       *widget,
+                                        GdkEventButton  *event);
+
+gboolean
+on_seekbar_motion_notify_event         (GtkWidget       *widget,
+                                        GdkEventMotion  *event);
+
+void
 volumebar_redraw (void);
 
 void

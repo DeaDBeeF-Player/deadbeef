@@ -247,30 +247,10 @@ void
 on_playlist_save_as_activate           (GtkMenuItem     *menuitem,
                                         gpointer         user_data);
 
-gboolean
-on_seekbar_button_press_event          (GtkWidget       *widget,
-                                        GdkEventButton  *event,
-                                        gpointer         user_data);
-
-gboolean
-on_seekbar_button_release_event        (GtkWidget       *widget,
-                                        GdkEventButton  *event,
-                                        gpointer         user_data);
-
-gboolean
-on_seekbar_configure_event             (GtkWidget       *widget,
-                                        GdkEventConfigure *event,
-                                        gpointer         user_data);
-
-gboolean
-on_seekbar_expose_event                (GtkWidget       *widget,
-                                        GdkEventExpose  *event,
-                                        gpointer         user_data);
 
 gboolean
 on_seekbar_motion_notify_event         (GtkWidget       *widget,
-                                        GdkEventMotion  *event,
-                                        gpointer         user_data);
+                                        GdkEventMotion  *event);
 
 gboolean
 on_volumebar_button_press_event        (GtkWidget       *widget,
@@ -949,3 +929,7 @@ gboolean
 on_mainwin_motion_notify_event         (GtkWidget       *widget,
                                         GdkEventMotion  *event,
                                         gpointer         user_data);
+
+GtkWidget*
+create_seekbar (gchar *widget_name, gchar *string1, gchar *string2,
+                gint int1, gint int2);

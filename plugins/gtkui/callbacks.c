@@ -35,6 +35,7 @@
 #include "ddblistview.h"
 #include "ddbtabstrip.h"
 #include "ddbvolumebar.h"
+#include "ddbseekbar.h"
 #include "search.h"
 #include "progress.h"
 #include "../../session.h"
@@ -477,12 +478,17 @@ seekbar_draw (GtkWidget *widget) {
     gtkui_get_bar_foreground_color (&clr_selection);
     gtkui_get_bar_background_color (&clr_back);
 
+    int ax = widget->allocation.x;
+    int ay = widget->allocation.y;
+    int aw = widget->allocation.width;
+    int ah = widget->allocation.height;
+
     DB_playItem_t *trk = deadbeef->streamer_get_playing_track ();
     if (!trk || deadbeef->pl_get_item_duration (trk) < 0) {
         if (trk) {
             deadbeef->pl_item_unref (trk);
         }
-        clearlooks_rounded_rectangle (cr, 2, widget->allocation.height/2-4, widget->allocation.width-4, 8, 4, 0xff);
+        clearlooks_rounded_rectangle (cr, 2+ax, widget->allocation.height/2-4+ay, aw-4, 8, 4, 0xff);
         // empty seekbar, just a frame
         cairo_set_source_rgb (cr, clr_selection.red/65535.f, clr_selection.green/65535.f, clr_selection.blue/65535.f );
         cairo_stroke (cr);
@@ -509,18 +515,18 @@ seekbar_draw (GtkWidget *widget) {
     // left
     if (pos > 0) {
         cairo_set_source_rgb (cr, clr_selection.red/65535.f, clr_selection.green/65535.f, clr_selection.blue/65535.f );
-        cairo_rectangle (cr, 0, widget->allocation.height/2-4, pos, 8);
+        cairo_rectangle (cr, ax, ah/2-4+ay, pos, 8);
         cairo_clip (cr);
-        clearlooks_rounded_rectangle (cr, 0, widget->allocation.height/2-4, widget->allocation.width, 8, 4, 0xff);
+        clearlooks_rounded_rectangle (cr, 0+ax, ah/2-4 + ay, aw, 8, 4, 0xff);
         cairo_fill (cr);
         cairo_reset_clip (cr);
     }
 
     // right
     cairo_set_source_rgb (cr, clr_back.red/65535.f, clr_back.green/65535.f, clr_back.blue/65535.f );
-    cairo_rectangle (cr, pos, widget->allocation.height/2-4, widget->allocation.width-pos, 8);
+    cairo_rectangle (cr, pos+ax, ah/2-4+ay, aw-pos, 8);
     cairo_clip (cr);
-    clearlooks_rounded_rectangle (cr, 0, widget->allocation.height/2-4, widget->allocation.width, 8, 4, 0xff);
+    clearlooks_rounded_rectangle (cr, 0+ax, ah/2-4+ay, aw, 8, 4, 0xff);
     cairo_fill (cr);
     cairo_reset_clip (cr);
 
@@ -563,39 +569,32 @@ on_seekbar_expose_event                (GtkWidget       *widget,
 
 gboolean
 on_seekbar_motion_notify_event         (GtkWidget       *widget,
-                                        GdkEventMotion  *event,
-                                        gpointer         user_data)
+                                        GdkEventMotion  *event)
 {
     if (seekbar_moving) {
-        seekbar_move_x = event->x;
+        seekbar_move_x = event->x - widget->allocation.x;
         gtk_widget_queue_draw (widget);
-        //seekbar_draw (widget);
-        //seekbar_expose (widget, 0, 0, widget->allocation.width, widget->allocation.height);
     }
     return FALSE;
 }
 
 gboolean
 on_seekbar_button_press_event          (GtkWidget       *widget,
-                                        GdkEventButton  *event,
-                                        gpointer         user_data)
+                                        GdkEventButton  *event)
 {
     if (deadbeef->get_output ()->state () == OUTPUT_STATE_STOPPED) {
         return FALSE;
     }
     seekbar_moving = 1;
-    seekbar_move_x = event->x;
+    seekbar_move_x = event->x - widget->allocation.x;
     gtk_widget_queue_draw (widget);
-    //seekbar_draw (widget);
-    //seekbar_expose (widget, 0, 0, widget->allocation.width, widget->allocation.height);
     return FALSE;
 }
 
 
 gboolean
 on_seekbar_button_release_event        (GtkWidget       *widget,
-                                        GdkEventButton  *event,
-                                        gpointer         user_data)
+                                        GdkEventButton  *event)
 {
     seekbar_moving = 0;
     gtk_widget_queue_draw (widget);
@@ -603,7 +602,7 @@ on_seekbar_button_release_event        (GtkWidget       *widget,
     //seekbar_expose (widget, 0, 0, widget->allocation.width, widget->allocation.height);
     DB_playItem_t *trk = deadbeef->streamer_get_playing_track ();
     if (trk) {
-        float time = event->x * deadbeef->pl_get_item_duration (trk) / (widget->allocation.width);
+        float time = (event->x - widget->allocation.x) * deadbeef->pl_get_item_duration (trk) / (widget->allocation.width);
         if (time < 0) {
             time = 0;
         }
@@ -1089,10 +1088,16 @@ on_mainwin_button_press_event          (GtkWidget       *widget,
                                         gpointer         user_data)
 {
     GtkWidget *volumebar = lookup_widget (mainwin, "volumebar");
+    GtkWidget *seekbar = lookup_widget (mainwin, "seekbar");
     if (event->x >= volumebar->allocation.x && event->x < volumebar->allocation.x + volumebar->allocation.width
             && event->y >= volumebar->allocation.y && event->y < volumebar->allocation.y + volumebar->allocation.height) {
         capture = volumebar;
         return gtk_widget_event (volumebar, (GdkEvent *)event);
+    }
+    else if (event->x >= seekbar->allocation.x && event->x < seekbar->allocation.x + seekbar->allocation.width
+            && event->y >= seekbar->allocation.y && event->y < seekbar->allocation.y + seekbar->allocation.height) {
+        capture = seekbar;
+        return gtk_widget_event (seekbar, (GdkEvent *)event);
     }
 
   return FALSE;
@@ -1104,10 +1109,8 @@ on_mainwin_button_release_event        (GtkWidget       *widget,
                                         GdkEventButton  *event,
                                         gpointer         user_data)
 {
-    GtkWidget *volumebar = lookup_widget (mainwin, "volumebar");
-    if (event->x >= volumebar->allocation.x && event->x < volumebar->allocation.x + volumebar->allocation.width
-            && event->y >= volumebar->allocation.y && event->y < volumebar->allocation.y + volumebar->allocation.height) {
-        return gtk_widget_event (volumebar, (GdkEvent *)event);
+    if (capture) {
+        return gtk_widget_event (capture, (GdkEvent *)event);
     }
     capture = NULL;
 
@@ -1122,9 +1125,14 @@ on_mainwin_scroll_event                (GtkWidget       *widget,
 {
     GdkEventScroll *event = (GdkEventScroll *)ev;
     GtkWidget *volumebar = lookup_widget (mainwin, "volumebar");
+    GtkWidget *seekbar = lookup_widget (mainwin, "seekbar");
     if (event->x >= volumebar->allocation.x && event->x < volumebar->allocation.x + volumebar->allocation.width
             && event->y >= volumebar->allocation.y && event->y < volumebar->allocation.y + volumebar->allocation.height) {
         return gtk_widget_event (volumebar, (GdkEvent *)event);
+    }
+    else if (event->x >= seekbar->allocation.x && event->x < seekbar->allocation.x + seekbar->allocation.width
+            && event->y >= seekbar->allocation.y && event->y < seekbar->allocation.y + seekbar->allocation.height) {
+        return gtk_widget_event (seekbar, (GdkEvent *)event);
     }
   return FALSE;
 }
@@ -1135,11 +1143,17 @@ on_mainwin_motion_notify_event         (GtkWidget       *widget,
                                         GdkEventMotion  *event,
                                         gpointer         user_data)
 {
-    GtkWidget *volumebar = lookup_widget (mainwin, "volumebar");
-    if (capture == volumebar || (event->x >= volumebar->allocation.x && event->x < volumebar->allocation.x + volumebar->allocation.width
-            && event->y >= volumebar->allocation.y && event->y < volumebar->allocation.y + volumebar->allocation.height)) {
-        return gtk_widget_event (volumebar, (GdkEvent *)event);
+    if (capture) {
+        return gtk_widget_event (capture, (GdkEvent *)event);
     }
   return FALSE;
+}
+
+
+GtkWidget*
+create_seekbar (gchar *widget_name, gchar *string1, gchar *string2,
+                gint int1, gint int2)
+{
+    return GTK_WIDGET (ddb_seekbar_new ());
 }
 

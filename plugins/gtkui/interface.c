@@ -516,11 +516,11 @@ create_mainwin (void)
   gtk_widget_show (image5);
   gtk_container_add (GTK_CONTAINER (nextbtn), image5);
 
-  seekbar = gtk_drawing_area_new ();
+  seekbar = create_seekbar ("seekbar", "", "", 0, 0);
   gtk_widget_show (seekbar);
   gtk_box_pack_start (GTK_BOX (hbox2), seekbar, TRUE, TRUE, 2);
-  gtk_widget_set_size_request (seekbar, 200, -1);
-  gtk_widget_set_events (seekbar, GDK_EXPOSURE_MASK | GDK_POINTER_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK);
+  GTK_WIDGET_UNSET_FLAGS (seekbar, GTK_CAN_FOCUS);
+  GTK_WIDGET_UNSET_FLAGS (seekbar, GTK_CAN_DEFAULT);
 
   volumebar = create_volumebar_widget ("volumebar", "", "", 0, 0);
   gtk_widget_show (volumebar);
@@ -704,18 +704,6 @@ create_mainwin (void)
                     NULL);
   g_signal_connect ((gpointer) nextbtn, "clicked",
                     G_CALLBACK (on_nextbtn_clicked),
-                    NULL);
-  g_signal_connect ((gpointer) seekbar, "button_press_event",
-                    G_CALLBACK (on_seekbar_button_press_event),
-                    NULL);
-  g_signal_connect ((gpointer) seekbar, "button_release_event",
-                    G_CALLBACK (on_seekbar_button_release_event),
-                    NULL);
-  g_signal_connect ((gpointer) seekbar, "expose_event",
-                    G_CALLBACK (on_seekbar_expose_event),
-                    NULL);
-  g_signal_connect ((gpointer) seekbar, "motion_notify_event",
-                    G_CALLBACK (on_seekbar_motion_notify_event),
                     NULL);
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
