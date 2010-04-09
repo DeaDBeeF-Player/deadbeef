@@ -439,6 +439,7 @@ streamer_set_current (playItem_t *it) {
             playing_track->played = 1;
             trace ("sending songstarted to plugins [2] current playtrack: %s\n", playing_track->fname);
             plug_trigger_event (DB_EV_SONGSTARTED, 0);
+            messagepump_push (M_SONGCHANGED, 0, from, to);
         }
         bytes_until_next_song = -1;
     }
