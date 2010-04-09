@@ -33,8 +33,6 @@ namespace Ddb {
 
         private int mouse_y;
         
-        private bool aa_mode = false;
-
         private bool curve_hook = false;
         private bool preamp_hook = false;
 
@@ -57,14 +55,7 @@ namespace Ddb {
             margin_bottom = (int)(Pango.units_to_double (get_style ().font_desc.get_size ()) * Gdk.Screen.get_default ().get_resolution () / 72 + 4);
             margin_left = margin_bottom * 4;
 
-            modify_bg (Gtk.StateType.NORMAL, Gtkui.get_bar_background_color ());
-        }
-
-        public void
-        aa_mode_changed (Gtk.CheckMenuItem item)
-        {
-            aa_mode = item.active;
-            queue_draw ();
+            color_changed ();
         }
 
         public override bool
@@ -353,6 +344,12 @@ namespace Ddb {
         public double
         get_preamp () {
             return ((1 - preamp) * 40.0) - 20.0;
+        }
+
+        public void
+        color_changed () {
+            Gtkui.init_theme_colors ();
+            modify_bg (Gtk.StateType.NORMAL, Gtkui.get_bar_background_color ());
         }
     }
 }

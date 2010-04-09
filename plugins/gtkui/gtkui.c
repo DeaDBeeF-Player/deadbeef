@@ -194,16 +194,13 @@ update_songinfo (gpointer ctx) {
         gtk_statusbar_push (sb, sb_context_id, sb_text);
     }
 
-    void seekbar_draw (GtkWidget *widget);
-    void seekbar_expose (GtkWidget *widget, int x, int y, int w, int h);
     if (mainwin) {
         GtkWidget *widget = lookup_widget (mainwin, "seekbar");
         // translate volume to seekbar pixels
         songpos /= duration;
         songpos *= widget->allocation.width;
         if (fabs (songpos - last_songpos) > 0.01) {
-            seekbar_draw (widget);
-            seekbar_expose (widget, 0, 0, widget->allocation.width, widget->allocation.height);
+            gtk_widget_queue_draw (widget);
             last_songpos = songpos;
         }
     }

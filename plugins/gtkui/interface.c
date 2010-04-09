@@ -125,7 +125,7 @@ create_mainwin (void)
   accel_group = gtk_accel_group_new ();
 
   mainwin = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_widget_set_events (mainwin, GDK_KEY_PRESS_MASK);
+  gtk_widget_set_events (mainwin, GDK_POINTER_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_KEY_PRESS_MASK);
   gtk_window_set_title (GTK_WINDOW (mainwin), "DeaDBeeF");
   gtk_window_set_default_size (GTK_WINDOW (mainwin), 500, 300);
 
@@ -570,6 +570,18 @@ create_mainwin (void)
   g_signal_connect ((gpointer) mainwin, "realize",
                     G_CALLBACK (on_mainwin_realize),
                     NULL);
+  g_signal_connect ((gpointer) mainwin, "button_press_event",
+                    G_CALLBACK (on_mainwin_button_press_event),
+                    NULL);
+  g_signal_connect ((gpointer) mainwin, "button_release_event",
+                    G_CALLBACK (on_mainwin_button_release_event),
+                    NULL);
+  g_signal_connect ((gpointer) mainwin, "scroll_event",
+                    G_CALLBACK (on_mainwin_scroll_event),
+                    NULL);
+  g_signal_connect ((gpointer) mainwin, "motion_notify_event",
+                    G_CALLBACK (on_mainwin_motion_notify_event),
+                    NULL);
   g_signal_connect ((gpointer) open, "activate",
                     G_CALLBACK (on_open_activate),
                     NULL);
@@ -698,9 +710,6 @@ create_mainwin (void)
                     NULL);
   g_signal_connect ((gpointer) seekbar, "button_release_event",
                     G_CALLBACK (on_seekbar_button_release_event),
-                    NULL);
-  g_signal_connect ((gpointer) seekbar, "configure_event",
-                    G_CALLBACK (on_seekbar_configure_event),
                     NULL);
   g_signal_connect ((gpointer) seekbar, "expose_event",
                     G_CALLBACK (on_seekbar_expose_event),

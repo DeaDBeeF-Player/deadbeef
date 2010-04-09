@@ -929,3 +929,23 @@ on_wv_strip_apev2_toggled              (GtkToggleButton *togglebutton,
 void
 on_wv_strip_id3v1_toggled              (GtkToggleButton *togglebutton,
                                         gpointer         user_data);
+
+gboolean
+on_mainwin_button_press_event          (GtkWidget       *widget,
+                                        GdkEventButton  *event,
+                                        gpointer         user_data);
+
+gboolean
+on_mainwin_button_release_event        (GtkWidget       *widget,
+                                        GdkEventButton  *event,
+                                        gpointer         user_data);
+
+gboolean
+on_mainwin_scroll_event                (GtkWidget       *widget,
+                                        GdkEvent        *event,
+                                        gpointer         user_data);
+
+gboolean
+on_mainwin_motion_notify_event         (GtkWidget       *widget,
+                                        GdkEventMotion  *event,
+                                        gpointer         user_data);

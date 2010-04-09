@@ -192,6 +192,7 @@ gtkui_override_tabstrip_colors (void) {
 
 void
 gtkui_init_theme_colors (void) {
+    printf ("init theme colors\n");
     override_listview_colors= deadbeef->conf_get_int ("gtkui.override_listview_colors", 0);
     override_bar_colors = deadbeef->conf_get_int ("gtkui.override_bar_colors", 0);
     override_tabstrip_colors = deadbeef->conf_get_int ("gtkui.override_tabstrip_colors", 0);

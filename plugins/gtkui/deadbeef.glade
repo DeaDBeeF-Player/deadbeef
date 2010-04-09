@@ -5,7 +5,7 @@
 
 <widget class="GtkWindow" id="mainwin">
   <property name="visible">True</property>
-  <property name="events">GDK_KEY_PRESS_MASK</property>
+  <property name="events">GDK_POINTER_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_KEY_PRESS_MASK</property>
   <property name="title" translatable="yes">DeaDBeeF</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
@@ -27,6 +27,10 @@
   <signal name="configure_event" handler="on_mainwin_configure_event" last_modification_time="Sun, 23 Aug 2009 15:26:53 GMT"/>
   <signal name="window_state_event" handler="on_mainwin_window_state_event" last_modification_time="Wed, 09 Dec 2009 19:39:55 GMT"/>
   <signal name="realize" handler="on_mainwin_realize" last_modification_time="Wed, 10 Mar 2010 18:20:51 GMT"/>
+  <signal name="button_press_event" handler="on_mainwin_button_press_event" last_modification_time="Fri, 09 Apr 2010 19:24:24 GMT"/>
+  <signal name="button_release_event" handler="on_mainwin_button_release_event" last_modification_time="Fri, 09 Apr 2010 19:24:31 GMT"/>
+  <signal name="scroll_event" handler="on_mainwin_scroll_event" last_modification_time="Fri, 09 Apr 2010 19:24:39 GMT"/>
+  <signal name="motion_notify_event" handler="on_mainwin_motion_notify_event" last_modification_time="Fri, 09 Apr 2010 19:24:49 GMT"/>
 
   <child>
     <widget class="GtkVBox" id="vbox1">
@@ -806,7 +810,6 @@
 	      <property name="events">GDK_EXPOSURE_MASK | GDK_POINTER_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
 	      <signal name="button_press_event" handler="on_seekbar_button_press_event" last_modification_time="Tue, 11 Aug 2009 17:47:59 GMT"/>
 	      <signal name="button_release_event" handler="on_seekbar_button_release_event" last_modification_time="Tue, 11 Aug 2009 17:48:02 GMT"/>
-	      <signal name="configure_event" handler="on_seekbar_configure_event" last_modification_time="Tue, 11 Aug 2009 17:48:06 GMT"/>
 	      <signal name="expose_event" handler="on_seekbar_expose_event" last_modification_time="Tue, 11 Aug 2009 17:48:11 GMT"/>
 	      <signal name="motion_notify_event" handler="on_seekbar_motion_notify_event" last_modification_time="Tue, 11 Aug 2009 17:48:18 GMT"/>
 	    </widget>

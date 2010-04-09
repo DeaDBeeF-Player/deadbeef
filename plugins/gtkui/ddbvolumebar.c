@@ -23,6 +23,8 @@
 #include "interface.h"
 #include "support.h"
 
+#define min(x,y) ((x)<(y)?(x):(y))
+
 G_DEFINE_TYPE (DdbVolumeBar, ddb_volumebar, GTK_TYPE_WIDGET);
 
 static void
@@ -47,9 +49,11 @@ ddb_volumebar_send_configure (DdbVolumeBar *darea)
 static void
 ddb_volumebar_realize (GtkWidget *widget) {
   DdbVolumeBar *darea = DDB_VOLUMEBAR (widget);
-  GdkWindowAttr attributes;
-  gint attributes_mask;
 
+  GTK_WIDGET_SET_FLAGS (widget, GTK_NO_WINDOW);
+  GTK_WIDGET_CLASS (ddb_volumebar_parent_class)->realize (widget);
+
+#if 0
   if (GTK_WIDGET_NO_WINDOW (widget))
     {
       GTK_WIDGET_CLASS (ddb_volumebar_parent_class)->realize (widget);
@@ -57,6 +61,8 @@ ddb_volumebar_realize (GtkWidget *widget) {
   else
     {
       GTK_WIDGET_SET_FLAGS (widget, GTK_REALIZED);
+      gint attributes_mask;
+      GdkWindowAttr attributes;
 
       attributes.window_type = GDK_WINDOW_CHILD;
       attributes.x = widget->allocation.x;
@@ -80,6 +86,7 @@ ddb_volumebar_realize (GtkWidget *widget) {
     }
 
   ddb_volumebar_send_configure (DDB_VOLUMEBAR (widget));
+#endif
 }
 
 static void
@@ -122,10 +129,6 @@ gboolean
 on_volumebar_scroll_event              (GtkWidget       *widget,
                                         GdkEventScroll        *event);
 
-gboolean
-on_volumebar_configure_event           (GtkWidget       *widget,
-                                        GdkEventConfigure *event);
-
 static void
 ddb_volumebar_class_init(DdbVolumeBarClass *class)
 {
@@ -135,7 +138,6 @@ ddb_volumebar_class_init(DdbVolumeBarClass *class)
   widget_class->expose_event = on_volumebar_expose_event;
   widget_class->button_press_event = on_volumebar_button_press_event;
   widget_class->button_release_event = on_volumebar_button_release_event;
-  widget_class->configure_event = on_volumebar_configure_event;
   widget_class->motion_notify_event = on_volumebar_motion_notify_event;
   widget_class->scroll_event = on_volumebar_scroll_event;
 }
@@ -175,7 +177,6 @@ volumebar_draw (GtkWidget *widget) {
     }
 #else
     GdkDrawable *volumebar_backbuf = GDK_DRAWABLE (widget->window);
-    gdk_draw_rectangle (volumebar_backbuf, widget->style->bg_gc[GTK_STATE_NORMAL], TRUE, 0, 0, widget->allocation.width, widget->allocation.height);
     float range = -deadbeef->volume_get_min_db ();
     int n = widget->allocation.width / 4;
     float vol = (range + deadbeef->volume_get_db ()) / range * n;
@@ -196,10 +197,10 @@ volumebar_draw (GtkWidget *widget) {
         _y += (h - _h);
         int _w = 3;
         if (i <= vol) {
-            gdk_draw_rectangle (volumebar_backbuf, front_gc, TRUE, _x, _y, _w, _h);
+            gdk_draw_rectangle (volumebar_backbuf, front_gc, TRUE, _x + widget->allocation.x, _y + widget->allocation.y, _w, _h);
         }
         else {
-            gdk_draw_rectangle (volumebar_backbuf, back_gc, TRUE, _x, _y, _w, _h);
+            gdk_draw_rectangle (volumebar_backbuf, back_gc, TRUE, _x + widget->allocation.x, _y + widget->allocation.y, _w, _h);
         }
     }
     g_object_unref (back_gc);
@@ -221,7 +222,7 @@ on_volumebar_motion_notify_event       (GtkWidget       *widget,
 {
     if (event->state & GDK_BUTTON1_MASK) {
         float range = -deadbeef->volume_get_min_db ();
-        float volume = event->x / widget->allocation.width * range - range;
+        float volume = (event->x - widget->allocation.x) / widget->allocation.width * range - range;
         if (volume > 0) {
             volume = 0;
         }
@@ -229,7 +230,7 @@ on_volumebar_motion_notify_event       (GtkWidget       *widget,
             volume = -range;
         }
         deadbeef->volume_set_db (volume);
-        volumebar_draw (widget);
+        gtk_widget_queue_draw (widget);
     }
     return FALSE;
 }
@@ -239,7 +240,7 @@ on_volumebar_button_press_event        (GtkWidget       *widget,
                                         GdkEventButton  *event)
 {
     float range = -deadbeef->volume_get_min_db ();
-    float volume = event->x / widget->allocation.width * range - range;
+    float volume = (event->x - widget->allocation.x)/ widget->allocation.width * range - range;
     if (volume < -range) {
         volume = -range;
     }
@@ -247,7 +248,8 @@ on_volumebar_button_press_event        (GtkWidget       *widget,
         volume = 0;
     }
     deadbeef->volume_set_db (volume);
-    volumebar_draw (widget);
+    printf ("queue_draw\n");
+    gtk_widget_queue_draw (widget);
     return FALSE;
 }
 
@@ -262,7 +264,7 @@ on_volumebar_button_release_event      (GtkWidget       *widget,
 void
 volumebar_notify_changed (void) {
     GtkWidget *widget = lookup_widget (mainwin, "volumebar");
-    volumebar_draw (widget);
+    gtk_widget_queue_draw (widget);
 }
 
 gboolean
@@ -285,14 +287,8 @@ on_volumebar_scroll_event              (GtkWidget       *widget,
     }
     deadbeef->volume_set_db (vol);
     GtkWidget *volumebar = lookup_widget (mainwin, "volumebar");
-    volumebar_draw (volumebar);
+    gtk_widget_queue_draw (widget);
     return FALSE;
 }
 
-gboolean
-on_volumebar_configure_event           (GtkWidget       *widget,
-                                        GdkEventConfigure *event)
-{
-    return FALSE;
-}
 

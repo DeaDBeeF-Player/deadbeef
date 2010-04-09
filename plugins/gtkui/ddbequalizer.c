@@ -62,7 +62,6 @@ struct _DdbEqualizerPrivate {
 	gint _values_size_;
 	double preamp;
 	gint mouse_y;
-	gboolean aa_mode;
 	gboolean curve_hook;
 	gboolean preamp_hook;
 	gint margin_bottom;
@@ -80,7 +79,6 @@ enum  {
 };
 #define DDB_EQUALIZER_bands 18
 #define DDB_EQUALIZER_spot_size 3
-void ddb_equalizer_aa_mode_changed (DdbEqualizer* self, GtkCheckMenuItem* item);
 static inline double ddb_equalizer_scale (DdbEqualizer* self, double val);
 static gboolean ddb_equalizer_real_expose_event (GtkWidget* base, GdkEventExpose* event);
 static gboolean ddb_equalizer_in_curve_area (DdbEqualizer* self, double x, double y);
@@ -93,20 +91,13 @@ void ddb_equalizer_set_band (DdbEqualizer* self, gint band, double v);
 double ddb_equalizer_get_band (DdbEqualizer* self, gint band);
 void ddb_equalizer_set_preamp (DdbEqualizer* self, double v);
 double ddb_equalizer_get_preamp (DdbEqualizer* self);
+void ddb_equalizer_color_changed (DdbEqualizer* self);
 DdbEqualizer* ddb_equalizer_new (void);
 DdbEqualizer* ddb_equalizer_construct (GType object_type);
 static GObject * ddb_equalizer_constructor (GType type, guint n_construct_properties, GObjectConstructParam * construct_properties);
 static void ddb_equalizer_finalize (GObject* obj);
 
 const char* freqs[18] = {"55 Hz", "77 Hz", "110 Hz", "156 Hz", "220 Hz", "311 Hz", "440 Hz", "622 Hz", "880 Hz", "1.2 kHz", "1.8 kHz", "2.5 kHz", "3.5 kHz", "5 kHz", "7 kHz", "10 kHz", "14 kHz", "20 kHz"};
-
-
-void ddb_equalizer_aa_mode_changed (DdbEqualizer* self, GtkCheckMenuItem* item) {
-	g_return_if_fail (self != NULL);
-	g_return_if_fail (item != NULL);
-	self->priv->aa_mode = gtk_check_menu_item_get_active (item);
-	gtk_widget_queue_draw ((GtkWidget*) self);
-}
 
 
 static gpointer _g_object_ref0 (gpointer self) {
@@ -557,6 +548,15 @@ double ddb_equalizer_get_preamp (DdbEqualizer* self) {
 }
 
 
+void ddb_equalizer_color_changed (DdbEqualizer* self) {
+	GdkColor _tmp1_;
+	GdkColor _tmp0_ = {0};
+	g_return_if_fail (self != NULL);
+	gtkui_init_theme_colors ();
+	gtk_widget_modify_bg ((GtkWidget*) self, GTK_STATE_NORMAL, (_tmp1_ = (gtkui_get_bar_background_color (&_tmp0_), _tmp0_), &_tmp1_));
+}
+
+
 DdbEqualizer* ddb_equalizer_construct (GType object_type) {
 	DdbEqualizer * self;
 	self = g_object_newv (object_type, 0, NULL);
@@ -577,12 +577,10 @@ static GObject * ddb_equalizer_constructor (GType type, guint n_construct_proper
 	obj = parent_class->constructor (type, n_construct_properties, construct_properties);
 	self = DDB_EQUALIZER (obj);
 	{
-		GdkColor _tmp1_;
-		GdkColor _tmp0_ = {0};
 		gtk_widget_add_events ((GtkWidget*) self, (gint) (((GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK) | GDK_LEAVE_NOTIFY_MASK) | GDK_POINTER_MOTION_MASK));
 		self->priv->margin_bottom = (gint) (((pango_units_to_double (pango_font_description_get_size (gtk_widget_get_style ((GtkWidget*) self)->font_desc)) * gdk_screen_get_resolution (gdk_screen_get_default ())) / 72) + 4);
 		self->priv->margin_left = self->priv->margin_bottom * 4;
-		gtk_widget_modify_bg ((GtkWidget*) self, GTK_STATE_NORMAL, (_tmp1_ = (gtkui_get_bar_background_color (&_tmp0_), _tmp0_), &_tmp1_));
+		ddb_equalizer_color_changed (self);
 	}
 	return obj;
 }
@@ -608,7 +606,6 @@ static void ddb_equalizer_instance_init (DdbEqualizer * self) {
 	self->priv->values_length1 = DDB_EQUALIZER_bands;
 	self->priv->_values_size_ = self->priv->values_length1;
 	self->priv->preamp = 0.5;
-	self->priv->aa_mode = FALSE;
 	self->priv->curve_hook = FALSE;
 	self->priv->preamp_hook = FALSE;
 	self->priv->margin_bottom = -1;
