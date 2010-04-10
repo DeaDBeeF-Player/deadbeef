@@ -3034,6 +3034,8 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
         footer = min (footer, apev2_start);
     }
 
+    trace ("size of in footer: %d\n", footer);
+
     // "TRCK" -- special case
     // "TYER"/"TDRC" -- special case
 
@@ -3196,7 +3198,7 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
         writesize -= (fsize - footer);
     }
     writesize -= header;
-    trace ("writesize: %d, id3v1_start: %d, apev2_start: %d, footer: %d\n", writesize, id3v1_start, apev2_start, footer);
+    trace ("writesize: %d, id3v1_start: %d(%d), apev2_start: %d, footer: %d\n", writesize, id3v1_start, fsize-id3v1_start, apev2_start, footer);
 
     while (writesize > 0) {
         int rb = min (8192, writesize);
@@ -3216,6 +3218,7 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
     }
 
     if (!write_apev2 && !strip_apev2 && apev2_start != 0) {
+        trace ("copying original apev2 tag\n");
         if (deadbeef->fseek (fp, apev2_start, SEEK_SET) == -1) {
             trace ("cmp3_write_metadata: failed to seek to original apev2 tag position in %s\n", it->fname);
             goto error;
@@ -3238,6 +3241,7 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
         free (buf);
     }
     else if (write_apev2) {
+        trace ("writing new apev2 tag\n");
         if (!strip_apev2 || junk_apev2_read_full (NULL, &apev2, fp) != 0) {
             deadbeef->junk_apev2_free (&apev2);
             memset (&apev2, 0, sizeof (apev2));
@@ -3275,6 +3279,7 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
     }
 
     if (!write_id3v1 && !strip_id3v1 && id3v1_start != 0) {
+        trace ("copying original id3v1 tag %d %d %d\n", write_id3v1, strip_id3v1, id3v1_start);
         if (deadbeef->fseek (fp, id3v1_start, SEEK_SET) == -1) {
             trace ("cmp3_write_metadata: failed to seek to original id3v1 tag position in %s\n", it->fname);
             goto error;
@@ -3290,6 +3295,7 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
         }
     }
     else if (write_id3v1) {
+        trace ("writing new id3v1 tag\n");
         if (junk_id3v1_write (out, it) != 0) {
             trace ("cmp3_write_metadata: failed to write id3v1 tag to %s\n", it->fname)
             goto error;

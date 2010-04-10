@@ -1192,7 +1192,7 @@ cmp3_write_metadata (DB_playItem_t *it) {
     // get options
 
     int strip_id3v2 = deadbeef->conf_get_int ("mp3.strip_id3v2", 0);
-    int strip_id3v1 = deadbeef->conf_get_int ("mp3.strip_id3v2", 0);
+    int strip_id3v1 = deadbeef->conf_get_int ("mp3.strip_id3v1", 0);
     int strip_apev2 = deadbeef->conf_get_int ("mp3.strip_apev2", 0);
     int write_id3v2 = deadbeef->conf_get_int ("mp3.write_id3v2", 1);
     int write_id3v1 = deadbeef->conf_get_int ("mp3.write_id3v1", 0);
