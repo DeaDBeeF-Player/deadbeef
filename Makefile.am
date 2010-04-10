@@ -4,26 +4,7 @@ SUBDIRS = ${MPGMAD_DIR}\
 		  dumb\
 		  pixmaps\
 		  icons\
-		  plugins/nullout\
-		  plugins/sid\
-		  plugins/ffap\
-		  plugins/vtx\
-		  plugins/adplug\
-		  ${HOTKEYS_DIR}\
-		  ${ALSA_DIR}\
-		  ${LFM_DIR}\
-          ${VFS_CURL_DIR}\
-          ${GTKUI_DIR}\
-          ${VORBIS_DIR}\
-          ${FFMPEG_DIR}\
-          ${FLAC_DIR}\
-          ${SNDFILE_DIR}\
-          ${WAVPACK_DIR}\
-          ${CDDA_DIR}\
-          ${OSS_DIR}\
-          ${PULSE_DIR}\
-          ${ARTWORK_DIR}\
-          plugins/supereq
+		  ${PLUGINS_DIRS}
 
 dumbpath=@top_srcdir@/dumb
 gmepath=@top_srcdir@/gme/Game_Music_Emu-0.5.2

@@ -52,16 +52,52 @@ AC_SUBST(INSANE_CXXFLAGS)
 CXXFLAGS="$CXXFLAGS $INSANE_CXXFLAGS -D_GNU_SOURCE -DLIBDIR=\\\"$libdir\\\" -DPREFIX=\\\"$prefix\\\" -DDOCDIR=\\\"$docdir\\\""
 CFLAGS="$CFLAGS $INSANE_CFLAGS -D_GNU_SOURCE -DLIBDIR=\\\"$libdir\\\" -DPREFIX=\\\"$prefix\\\" -DDOCDIR=\\\"$docdir\\\""
 
-PKG_CHECK_MODULES(DEPS, samplerate)
-PKG_CHECK_MODULES(GTKUI_DEPS, gtk+-2.0 >= 2.12 gthread-2.0 glib-2.0, HAVE_GTK=1, NO_GTK=1)
-PKG_CHECK_MODULES(ALSA_DEPS, alsa, HAVE_ALSA=1, NO_ALSA=1)
-PKG_CHECK_MODULES(FFMPEG_DEPS, libavcodec >= 51.0.0 libavutil libavformat >= 52.0.0, HAVE_FFMPEG=1, NO_FFMPEG=1)
-PKG_CHECK_MODULES(PULSE_DEPS, libpulse-simple, HAVE_PULSE=1, NO_PULSE=1)
-
-AC_ARG_ENABLE(libnotify, [  --enable-libnotify  Enable support for OSD notifications], [libnotify=yes])
-
+AC_ARG_ENABLE(libnotify, [  --enable-libnotify  Enable support for OSD notifications (default: no)], [
+    if test "x$enableval" = "xyes" ; then libnotify=yes ; fi
+])
 if test "x${libnotify}" = "xyes" ; then
-PKG_CHECK_MODULES(NOTIFY_DEPS, libnotify >= 0.4.4, HAVE_NOTIFY=1, NO_NOTIFY=1)
+    PKG_CHECK_MODULES(NOTIFY_DEPS, libnotify >= 0.4.4, HAVE_NOTIFY=1, NO_NOTIFY=1)
+fi
+
+AC_ARG_ENABLE(nullout, [  --enable-nullout Enable NULL output plugin (default: yes)], [if test "x$enableval" = "xno" ; then enable_nullout=no ; fi])
+AC_ARG_ENABLE(alsa, [  --enable-alsa  Enable ALSA output plugin (default: yes)], [ if test "x$enableval" = "xno" ; then enable_alsa=no ; fi])
+AC_ARG_ENABLE(oss, [  --enable-oss  Enable Open Sound System output plugin (default: yes)], [if test "x$enableval" = "xno" ; then enable_oss=no ; fi])
+AC_ARG_ENABLE(pulse, [  --enable-pulse   Enable PulseAudio output plugin (default: yes)], [if test "x$enableval" = "xno" ; then enable_pulse=no ; fi])
+AC_ARG_ENABLE(gtkui, [  --enable-gtkui  Enable standard GTK2 user interface plugin (default: yes)], [if test "x$enableval" = "xno" ; then enable_gtkui=no ; fi])
+AC_ARG_ENABLE(vfs_curl, [  --enable-vfs-curl  Enable HTTP streaming vfs plugin (default: yes)], [if test "x$enableval" = "xno" ; then enable_vfs_curl=no ; fi])
+AC_ARG_ENABLE(lfm, [  --enable-lfm  Enable last.fm/libre.fm scrobbler plugin (default: yes)], [if test "x$enableval" = "xno" ; then enable_lfm=no ; fi])
+AC_ARG_ENABLE(artwork, [  --enable-artwork  Enable album art loader plugin (default: yes)], [if test "x$enableval" = "xno" ; then enable_artwork="no" ; fi])
+AC_ARG_ENABLE(supereq, [  --enable-supereq  Enable SuperEQ DSP plugin (default: yes)], [if test "x$enableval" = "xno" ; then enable_supereq="no" ;  fi])
+AC_ARG_ENABLE(sid, [  --enable-sid  Enable commodore64 SID music player plugin (default: yes)], [if test "x$enableval" = "xno" ; then enable_sid="no" ; fi])
+AC_ARG_ENABLE(ffap, [  --enable-ffap  Enable Monkey's Audio plugin (default: yes)], [if test "x$enableval" = "xno" ; then enable_ffap="no" ; fi])
+AC_ARG_ENABLE(vtx, [  --enable-vtx  Enable libayemy VTX ZX-Spectrum music player plugin (default: yes)], [if test "x$enableval" = "xno" ; then enable_vtx="no" ; fi])
+AC_ARG_ENABLE(adplug, [  --enable-adplug  Enable adplug plugin (default: yes)], [if test "x$enableval" = "xno" ; then enable_adplug="no" ; else enable_adplug="yes"; fi])
+AC_ARG_ENABLE(hotkeys, [  --enable-hotkeys  Enable global hotkeys plugin (default: yes)], [if test "x$enableval" = "xno" ; then enable_hotkeys="no" ; fi])
+AC_ARG_ENABLE(vorbis, [  --enable-vorbis  Enable Ogg Vorbis player plugin (default: yes)], [if test "x$enableval" = "xno" ; then enable_vorbis="no" ; fi])
+AC_ARG_ENABLE(ffmpeg, [  --enable-ffmpeg  Enable FFMPEG plugin for WMA, MPC, TTA, etc (default: yes)], [if test "x$enableval" = "xno" ; then enable_ffmpeg="no" ; fi])
+AC_ARG_ENABLE(flac, [  --enable-flac  Enable FLAC player plugin (default: yes)], [if test "x$enableval" = "xno" ; then enable_flac="no" ; fi])
+AC_ARG_ENABLE(sndfile, [  --enable-sndfile  Enable libsndfile plugin for PCM wave files (default: yes)], [if test "x$enableval" = "xno" ; then enable_sndfile="no" ; fi])
+AC_ARG_ENABLE(wavpack, [  --enable-wavpack  Enable wavpack plugin (default: yes)], [if test "x$enableval" = "xno" ; then enable_wavpack="no" ; fi])
+AC_ARG_ENABLE(cdda, [  --enable-cdda  Enable CD-Audio plugin (default: yes)], [if test "x$enableval" = "xno" ; then enable_cdda="no" ; fi])
+
+PKG_CHECK_MODULES(DEPS, samplerate)
+
+if test "x$enable_gtkui" != "xno" ; then
+    PKG_CHECK_MODULES(GTKUI_DEPS, gtk+-2.0 >= 2.12 gthread-2.0 glib-2.0, HAVE_GTK=yes, HAVE_GTK=no)
+else
+    HAVE_GTK=no
+fi
+
+if test "x$enable_alsa" != "xno" ; then
+    PKG_CHECK_MODULES(ALSA_DEPS, alsa, HAVE_ALSA=yes, HAVE_ALSA=no)
+fi
+
+if test "x$enable_ffmpeg" != "xno" ; then
+    PKG_CHECK_MODULES(FFMPEG_DEPS, libavcodec >= 51.0.0 libavutil libavformat >= 52.0.0, HAVE_FFMPEG=yes, HAVE_FFMPEG=no)
+fi
+
+if test "x$enable_pulse" != "xno" ; then
+    PKG_CHECK_MODULES(PULSE_DEPS, libpulse-simple, HAVE_PULSE=yes, HAVE_PULSE=no)
 fi
 
 AC_CHECK_LIB([pthread], [main])
@@ -82,75 +118,87 @@ if test ${HAVE_SSE2}; then
 fi
 
 dnl curl lib
-AC_CHECK_LIB([curl], [main], [HAVE_CURL=1])
-AM_CONDITIONAL(HAVE_CURL, test $HAVE_CURL)
-if test ${HAVE_CURL}; then
+AC_CHECK_LIB([curl], [main], [HAVE_CURL=yes])
+AM_CONDITIONAL(HAVE_CURL, test "x$HAVE_CURL" = "xyes")
+if test "x$HAVE_CURL" = "xyes"; then
     CURL_LIBS="-lcurl"
     AC_SUBST(CURL_LIBS)
 fi
 
 dnl lastfm plugin
-if test ${HAVE_CURL}; then
-    LFM_DIR="plugins/lastfm"
-    AC_SUBST(LFM_DIR)
+if test "x$HAVE_CURL" = "xyes" && test "x$enable_lastfm" != "xno" ; then
+    PLUGINS_DIRS="$PLUGINS_DIRS plugins/lastfm"
 fi
 
 dnl mpgmad plugin
-AC_CHECK_LIB([mad], [main], [HAVE_LIBMAD=1])
-AM_CONDITIONAL(HAVE_LIBMAD, test $HAVE_LIBMAD)
-if test ${HAVE_LIBMAD}; then
-    MAD_LIBS="-lmad"
-    MPGMAD_DIR="plugins/mpgmad"
-    AC_SUBST(MAD_LIBS)
-    AC_SUBST(MPGMAD_DIR)
+if test "x$enable_mpgmad" != "xno" ; then
+    AC_CHECK_LIB([mad], [main], [HAVE_LIBMAD=yes])
+    AM_CONDITIONAL(HAVE_LIBMAD, test "x$HAVE_LIBMAD"="xyes")
+    if test "x$HAVE_LIBMAD"="xyes" ; then
+        MAD_LIBS="-lmad"
+        AC_SUBST(MAD_LIBS)
+        PLUGINS_DIRS="$PLUGINS_DIRS plugins/mpgmad"
+    fi
 fi
 
 dnl vorbis plugin
-AC_CHECK_LIB([vorbis], [main], [HAVE_VORBIS=1])
-AC_CHECK_LIB([vorbisfile], [main], [HAVE_VORBISFILE=1])
-AM_CONDITIONAL(HAVE_VORBIS, test $HAVE_VORBIS)
-AM_CONDITIONAL(HAVE_VORBISFILE, test $HAVE_VORBISFILE)
-if test ${HAVE_VORBIS} && test ${HAVE_VORBISFILE} ; then
-    VORBIS_LIBS="-lvorbis -lvorbisfile"
-    VORBIS_DIR="plugins/vorbis"
-    AC_SUBST(VORBIS_DIR)
-    AC_SUBST(VORBIS_LIBS)
+if test "x$enable_vorbis" != "xno" ; then
+    AC_CHECK_LIB([vorbis], [main], [HAVE_VORBIS=yes])
+    AC_CHECK_LIB([vorbisfile], [main], [HAVE_VORBISFILE=yes])
+    AM_CONDITIONAL(HAVE_VORBIS, test "x$HAVE_VORBIS" = "xyes")
+    AM_CONDITIONAL(HAVE_VORBISFILE, test "x$HAVE_VORBISFILE" = "xyes")
+    if test "x$HAVE_VORBIS" = "xyes" && test "x$HAVE_VORBISFILE" = "xyes" ; then
+        HAVE_VORBISPLUGIN=yes
+        VORBIS_LIBS="-lvorbis -lvorbisfile"
+        AC_SUBST(VORBIS_LIBS)
+        PLUGINS_DIRS="$PLUGINS_DIRS plugins/vorbis"
+    fi
 fi
 
 dnl flac plugin
-AC_CHECK_LIB([FLAC], [main], [HAVE_FLAC=1])
-AM_CONDITIONAL(HAVE_FLAC, test $HAVE_FLAC)
-if test ${HAVE_FLAC} ; then
-    FLAC_LIBS="-lFLAC"
-    FLAC_DIR="plugins/flac"
-    AC_SUBST(FLAC_LIBS)
-    AC_SUBST(FLAC_DIR)
+if test "x$enable_flac" != "xno" ; then
+    AC_CHECK_LIB([FLAC], [main], [HAVE_FLAC=yes])
+    AM_CONDITIONAL(HAVE_FLAC, test "x$HAVE_FLAC" = "xyes")
+    if test "x$HAVE_FLAC" = "xyes" ; then
+        HAVE_FLACPLUGIN=yes
+        FLAC_LIBS="-lFLAC"
+        AC_SUBST(FLAC_LIBS)
+        PLUGINS_DIRS="$PLUGINS_DIRS plugins/flac"
+    fi
 fi
 
 dnl wavpack plugin
-AC_CHECK_LIB([wavpack], [main], [HAVE_WAVPACK=1])
-AM_CONDITIONAL(HAVE_WAVPACK, test $HAVE_WAVPACK)
-if test ${HAVE_WAVPACK} ; then
-    WAVPACK_LIBS="-lwavpack"
-    WAVPACK_DIR="plugins/wavpack"
-    AC_SUBST(WAVPACK_LIBS)
-    AC_SUBST(WAVPACK_DIR)
+if test "x$enable_wavpack" != "xno" ; then
+    AC_CHECK_LIB([wavpack], [main], [HAVE_WAVPACK=yes])
+    AM_CONDITIONAL(HAVE_WAVPACK, test "x$HAVE_WAVPACK" = "xyes")
+    if test "x$HAVE_WAVPACK" = "xyes" ; then
+        HAVE_WAVPACKPLUGIN=yes
+        WAVPACK_LIBS="-lwavpack"
+        AC_SUBST(WAVPACK_LIBS)
+        PLUGINS_DIRS="$PLUGINS_DIRS plugins/wavpack"
+    fi
 fi
 
 dnl libsndfile plugin
-AC_CHECK_LIB([sndfile], [main], [HAVE_SNDFILE=1])
-AM_CONDITIONAL(HAVE_SNDFILE, test $HAVE_SNDFILE)
-if test ${HAVE_SNDFILE} ; then
-    SNDFILE_LIBS="-lsndfile"
-    SNDFILE_DIR="plugins/sndfile"
-    AC_SUBST(SNDFILE_LIBS)
-    AC_SUBST(SNDFILE_DIR)
+if test "x$enable_sndfile" != "xno" ; then
+    AC_CHECK_LIB([sndfile], [main], [HAVE_SNDFILE=yes])
+    AM_CONDITIONAL(HAVE_SNDFILE, test "x$HAVE_SNDFILE" = "xyes")
+    if test "x$HAVE_SNDFILE" = "xyes" ; then
+        HAVE_SNDFILEPLUGIN=yes
+        SNDFILE_LIBS="-lsndfile"
+        AC_SUBST(SNDFILE_LIBS)
+        PLUGINS_DIRS="$PLUGINS_DIRS plugins/sndfile"
+    fi
 fi
 
 dnl vfs_curl plugin
-if test ${HAVE_CURL}; then
-    VFS_CURL_DIR="plugins/vfs_curl"
-    AC_SUBST(VFS_CURL_DIR)
+if test "x$enable_vfs_curl" != "xno" ; then
+    if test "x$HAVE_CURL" = "xyes" ; then
+        HAVE_VFS_CURL=yes
+        VFS_CURL_LIBS="-lcurl"
+        AC_SUBST(VFS_CURL_LIBS)
+        PLUGINS_DIRS="$PLUGINS_DIRS plugins/vfs_curl"
+    fi
 fi
 
 dnl faad2 plugin
@@ -166,42 +214,47 @@ dnl     AC_SUBST(FAAD2_DIR)
 dnl fi
 
 dnl cdda plugin
-AC_CHECK_LIB([cdio], [main], [HAVE_CDIO=1])
-AC_CHECK_LIB([cddb], [main], [HAVE_CDDB=1])
-AM_CONDITIONAL(HAVE_CDIO, test $HAVE_CDIO)
-AM_CONDITIONAL(HAVE_CDDB, test $HAVE_CDDB)
-if test ${HAVE_CDIO} && test ${HAVE_CDDB}; then
-    CDDA_LIBS="-lcdio -lcddb"
-    CDDA_DIR="plugins/cdda"
-    AC_SUBST(CDDA_LIBS)
-    AC_SUBST(CDDA_DIR)
+if test "x$enable_cdda" != "xno" ; then
+    AC_CHECK_LIB([cdio], [main], [HAVE_CDIO=yes])
+    AC_CHECK_LIB([cddb], [main], [HAVE_CDDB=yes])
+    AM_CONDITIONAL(HAVE_CDIO, test "x$HAVE_CDIO" = "xyes")
+    AM_CONDITIONAL(HAVE_CDDB, test "x$HAVE_CDDB" = "xyes")
+    if test "x$HAVE_CDIO" = "xyes" && test "x$HAVE_CDDB" = "xyes" ; then
+        HAVE_CDDAPLUGIN=yes
+        CDDA_LIBS="-lcdio -lcddb"
+        AC_SUBST(CDDA_LIBS)
+        PLUGINS_DIRS="$PLUGINS_DIRS plugins/cdda"
+    fi
 fi
 
 dnl gtkui plugin
-AM_CONDITIONAL(HAVE_GTK, test $HAVE_GTK)
-if test ${HAVE_GTK}; then
-    GTKUI_DIR="plugins/gtkui"
-    AC_SUBST(GTKUI_DEPS_CFLAGS)
-    AC_SUBST(GTKUI_DEPS_LIBS)
-    AC_SUBST(GTKUI_DIR)
+if test "x$enable_gtkui" != "xno" ; then
+    if test "x$HAVE_GTK" = "xyes" ; then
+        AC_SUBST(GTKUI_DEPS_CFLAGS)
+        AC_SUBST(GTKUI_DEPS_LIBS)
+        PLUGINS_DIRS="$PLUGINS_DIRS plugins/gtkui"
+    fi
 fi
+AM_CONDITIONAL(HAVE_GTK, test "x$HAVE_GTK" = "xyes")
 
-AM_CONDITIONAL(HAVE_ALSA, test $HAVE_ALSA)
-if test ${HAVE_ALSA}; then
-    ALSA_DIR="plugins/alsa"
-    AC_SUBST(ALSA_DEPS_CFLAGS)
-    AC_SUBST(ALSA_DEPS_LIBS)
-    AC_SUBST(ALSA_DIR)
+if test "x$enable_alsa" != "xno" ; then
+    if test "x$HAVE_ALSA" = "xyes" ; then
+        AC_SUBST(ALSA_DEPS_CFLAGS)
+        AC_SUBST(ALSA_DEPS_LIBS)
+        PLUGINS_DIRS="$PLUGINS_DIRS plugins/alsa"
+    fi
 fi
+AM_CONDITIONAL(HAVE_ALSA, test "x$HAVE_ALSA" = "xyes")
 
-AM_CONDITIONAL(HAVE_FFMPEG, test $HAVE_FFMPEG)
-if test ${HAVE_FFMPEG}; then
-    dnl check headers
-    AC_CHECK_HEADER([ffmpeg/avformat.h], FFMPEG_DEPS_CFLAGS="$FFMPEG_DEPS_CFLAGS -D FFMPEG_OLD")
-    FFMPEG_DIR="plugins/ffmpeg"
-    AC_SUBST(FFMPEG_DEPS_CFLAGS)
-    AC_SUBST(FFMPEG_DEPS_LIBS)
-    AC_SUBST(FFMPEG_DIR)
+if test "x$enable_ffmpeg" != "xno" ; then
+    AM_CONDITIONAL(HAVE_FFMPEG, test "x$HAVE_FFMPEG" = "xyes")
+    if test "x$HAVE_FFMPEG" = "xyes" ; then
+        HAVE_FFMPEGPLUGIN=yes
+        AC_CHECK_HEADER([ffmpeg/avformat.h], FFMPEG_DEPS_CFLAGS="$FFMPEG_DEPS_CFLAGS -D FFMPEG_OLD")
+        AC_SUBST(FFMPEG_DEPS_CFLAGS)
+        AC_SUBST(FFMPEG_DEPS_LIBS)
+        PLUGINS_DIRS="$PLUGINS_DIRS plugins/ffmpeg"
+    fi
 fi
 
 AM_CONDITIONAL(HAVE_NOTIFY, test $HAVE_NOTIFY)
@@ -211,79 +264,109 @@ if test ${HAVE_NOTIFY}; then
     AC_SUBST(NOTIFY_DEPS_LIBS)
 fi
 
-AC_CHECK_HEADER([X11/Xlib.h], HAVE_XLIB_H=yes)
-if test "x$HAVE_XLIB_H" = "xyes"; then
-    HOTKEYS_DIR="plugins/hotkeys"
-    AC_SUBST(HOTKEYS_DIR)
-fi
-
-dnl *** OSS output (partly stolen from audacious)
-have_oss=no
-
-AC_MSG_CHECKING(for OSS include dir)
-OSS_CFLAGS=""
-if test -f "/etc/oss.conf" ; then
-    for i in `cat /etc/oss.conf`; do
-        t=`echo $i | sed -e 's/OSSLIBDIR=//'`
-        if test "x$i" != "x$t" ; then
-            if test -f "$t/include/sys/soundcard.h" -o -f "$i/include/soundcard.h" ; then
-                OSS_CFLAGS="-I$t/include/sys"
-                AC_MSG_RESULT([$OSS_CFLAGS])
-                have_oss=yes
-            fi
-        fi
-    done
-else
-    AC_MSG_RESULT([not found])
-fi
-
-if test "x$have_oss" != "xyes"; then
-    AC_MSG_CHECKING(for sys/soundcard.h)
-    AC_CHECK_HEADERS(sys/soundcard.h)
-    if test "x${ac_cv_header_sys_soundcard_h}" = "xyes" ; then
-        have_oss=yes
-        AC_MSG_RESULT([found])
-    else
-        AC_MSG_RESULT([not found])
+if test "x$enable_hotkeys" != "xno" ; then
+    AC_CHECK_HEADER([X11/Xlib.h], HAVE_XLIB_H=yes)
+    if test "x$HAVE_XLIB_H" = "xyes" ; then
+        HOTKEYS_LIBS="-lX11"
+        AC_SUBST(HOTKES_LIBS)
+        PLUGINS_DIRS="$PLUGINS_DIRS plugins/hotkeys"
     fi
 fi
 
+dnl *** OSS output (partly stolen from audacious)
+if test "x$enable_oss" != "xno"; then
+    have_oss=no
 
-if test "x$have_oss" = "xyes"; then
-    OSS_DIR="plugins/oss"
-    AC_SUBST(OSS_CFLAGS)
-    AC_SUBST(OSS_DIR)
+    AC_MSG_CHECKING(for OSS include dir)
+    OSS_CFLAGS=""
+    if test -f "/etc/oss.conf" ; then
+        for i in `cat /etc/oss.conf`; do
+            t=`echo $i | sed -e 's/OSSLIBDIR=//'`
+            if test "x$i" != "x$t" ; then
+                if test -f "$t/include/sys/soundcard.h" -o -f "$i/include/soundcard.h" ; then
+                    OSS_CFLAGS="-I$t/include/sys"
+                    AC_MSG_RESULT([$OSS_CFLAGS])
+                    have_oss=yes
+                fi
+            fi
+        done
+    else
+        AC_MSG_RESULT([not found])
+    fi
+
+    if test "x$have_oss" != "xyes"; then
+        AC_MSG_CHECKING(for sys/soundcard.h)
+        AC_CHECK_HEADERS(sys/soundcard.h)
+        if test "x${ac_cv_header_sys_soundcard_h}" = "xyes" ; then
+            have_oss=yes
+            AC_MSG_RESULT([found])
+        else
+            AC_MSG_RESULT([not found])
+        fi
+    fi
+
+
+    if test "x$have_oss" = "xyes"; then
+        AC_SUBST(OSS_CFLAGS)
+        PLUGINS_DIRS="$PLUGINS_DIRS plugins/oss"
+    fi
 fi
 
-dnl echo
-dnl echo "have_oss=$have_oss"
-dnl echo "OSS_CFLAGS=$OSS_CFLAGS"
-dnl echo "OSS_LIBS=$OSS_LIBS"
-dnl echo "OSS_DIR=$OSS_DIR"
-dnl echo
-
-AM_CONDITIONAL(HAVE_PULSE, test $HAVE_PULSE)
-if test ${HAVE_PULSE}; then
-    PULSE_DIR="plugins/pulse"
-    AC_SUBST(PULSE_DEPS_CFLAGS)
-    AC_SUBST(PULSE_DEPS_LIBS)
-    AC_SUBST(PULSE_DIR)
+if test "x$enable_pulseaudio" != "xno"; then
+    AM_CONDITIONAL(HAVE_PULSE, test "x$HAVE_PULSE" = "xyes")
+    if test "x$HAVE_PULSE" = "xyes"; then
+        HAVE_PULSEPLUGIN=yes
+        AC_SUBST(PULSE_DEPS_CFLAGS)
+        AC_SUBST(PULSE_DEPS_LIBS)
+        PLUGINS_DIRS="$PLUGINS_DIRS plugins/pulse"
+    fi
 fi
 
-if test ${HAVE_CURL}; then
-    HAVE_ARTWORK=1
-    ARTWORK_DIR="plugins/artwork"
-    AC_SUBST(ARTWORK_DIR)
+if test "x$enable_artwork" != "xno" ; then
+    if test "x$HAVE_CURL" = "xyes" && test "x$HAVE_VFS_CURL" = "xyes" ; then
+        HAVE_ARTWORK=yes
+        PLUGINS_DIRS="$PLUGINS_DIRS plugins/artwork"
+    fi
 fi
+
+if test "x$enable_adplug" != "xno" ; then
+    HAVE_ADPLUG=yes
+    PLUGINS_DIRS="$PLUGINS_DIRS plugins/adplug"
+fi
+
+if test "x$enable_ffap" != "xno" ; then
+    HAVE_FFAP=yes
+    PLUGINS_DIRS="$PLUGINS_DIRS plugins/ffap"
+fi
+
+if test "x$enable_sid" != "xno" ; then
+    HAVE_SID=yes
+    PLUGINS_DIRS="$PLUGINS_DIRS plugins/sid"
+fi
+
+if test "x$enable_nullout" != "xno" ; then
+    HAVE_NULLOUT=yes
+    PLUGINS_DIRS="$PLUGINS_DIRS plugins/nullout"
+fi
+
+if test "x$enable_supereq" != "xno" ; then
+    HAVE_SUPEREQ=yes
+    PLUGINS_DIRS="$PLUGINS_DIRS plugins/supereq"
+fi
+
+if test "x$enable_vtx" != "xno" ; then
+    HAVE_VTX=yes
+    PLUGINS_DIRS="$PLUGINS_DIRS plugins/vtx"
+fi
+
+AC_SUBST(PLUGINS_DIRS)
 
 echo
 echo "Build Configuration:"
 echo
 echo "* Maintainer Mode:        $USE_MAINTAINER_MODE"
 if test "x$USE_MAINTAINER_MODE" = "xyes" ; then
-echo
 echo "    * Vala:               $VALAC"
-echo
 fi
 
 dnl print summary
@@ -302,31 +385,34 @@ AC_DEFUN([PRINT_PLUGIN_INFO],
 )
 
 PRINT_PLUGIN_INFO([stdio],[Standard IO plugin],[true])
-PRINT_PLUGIN_INFO([nullout],[NULL output],[true])
-PRINT_PLUGIN_INFO([alsa],[ALSA output],[test $HAVE_ALSA])
-PRINT_PLUGIN_INFO([sid],[SID player based on libsidplay2],[true])
 PRINT_PLUGIN_INFO([gme],[chiptune music player based on GME],[true])
 PRINT_PLUGIN_INFO([dumb],[module player based on DUMB library],[true])
-PRINT_PLUGIN_INFO([ffap],[Monkey's audio (APE) decoder],[true])
-PRINT_PLUGIN_INFO([lastfm],[last.fm scrobbler],[test $HAVE_CURL])
-PRINT_PLUGIN_INFO([mpgmad],[mpeg player based on libmad],[test $HAVE_LIBMAD])
-PRINT_PLUGIN_INFO([vorbis],[ogg vorbis player],[test $HAVE_VORBISFILE && test $HAVE_VORBIS])
-PRINT_PLUGIN_INFO([flac],[flac player],[test $HAVE_FLAC])
-PRINT_PLUGIN_INFO([wavpack],[wavpack player],[test $HAVE_WAVPACK])
-PRINT_PLUGIN_INFO([sndfile],[PCM (wav,aiff,etc) player based on libsndfile],[test $HAVE_SNDFILE])
-PRINT_PLUGIN_INFO([vtx],[vtx file player (ay8910/12 emulation)],[true])
-PRINT_PLUGIN_INFO([adplug],[adplug player (OPL2/OPL3 emulation)],[true])
-PRINT_PLUGIN_INFO([vfs_curl],[http/ftp streaming support],[test $HAVE_CURL])
+PRINT_PLUGIN_INFO([nullout],[NULL output],[test "x$HAVE_NULLOUT" = "xyes"])
+PRINT_PLUGIN_INFO([alsa],[ALSA output],[test "x$HAVE_ALSA" = "xyes"])
+PRINT_PLUGIN_INFO([sid],[SID player based on libsidplay2],[test "x$HAVE_SID" = "xyes"])
+PRINT_PLUGIN_INFO([ffap],[Monkey's audio (APE) decoder],[test "x$HAVE_FFAP" = "xyes"])
+PRINT_PLUGIN_INFO([lastfm],[last.fm scrobbler],[test "x$HAVE_CURL" = "xyes"])
+PRINT_PLUGIN_INFO([mpgmad],[mpeg player based on libmad],[test "x$HAVE_LIBMAD" = "xyes"])
+PRINT_PLUGIN_INFO([vorbis],[ogg vorbis player],[test "x$HAVE_VORBISPLUGIN" = "xyes"])
+PRINT_PLUGIN_INFO([flac],[flac player],[test "x$HAVE_FLACPLUGIN" = "xyes"])
+PRINT_PLUGIN_INFO([wavpack],[wavpack player],[test "x$HAVE_WAVPACKPLUGIN" = "xyes"])
+PRINT_PLUGIN_INFO([sndfile],[PCM (wav,aiff,etc) player based on libsndfile],[test "x$HAVE_SNDFILEPLUGIN" = "xyes"])
+PRINT_PLUGIN_INFO([vtx],[vtx file player (ay8910/12 emulation)],[test "x$HAVE_VTX" = "xyes"])
+PRINT_PLUGIN_INFO([adplug],[adplug player (OPL2/OPL3 emulation)],[test "x$HAVE_ADPLUG" = "xyes"])
+PRINT_PLUGIN_INFO([vfs_curl],[http/ftp streaming support],[test "x$HAVE_VFS_CURL" = "xyes"])
 dnl PRINT_PLUGIN_INFO([faad2],[aac/mp4 player],[test $HAVE_FAAD && test $HAVE_MP4FF])
-PRINT_PLUGIN_INFO([cdda],[cd audio player],[test $HAVE_CDIO && test $HAVE_CDDB])
-PRINT_PLUGIN_INFO([gtkui],[GTK user interface],[test $HAVE_GTK])
+PRINT_PLUGIN_INFO([cdda],[cd audio player],[test "x$HAVE_CDDAPLUGIN" = "xyes"])
+PRINT_PLUGIN_INFO([gtkui],[GTK user interface],[test "x$HAVE_GTK" = "xyes"])
 PRINT_PLUGIN_INFO([hotkeys],[Global hotkeys support],[test "x$HAVE_XLIB_H" = "xyes"])
-PRINT_PLUGIN_INFO([libnotify],[Current track notification],[test $HAVE_NOTIFY])
-PRINT_PLUGIN_INFO([ffmpeg],[ffmpeg codecs],[test $HAVE_FFMPEG])
+PRINT_PLUGIN_INFO([libnotify],[Current track notification],[test "x$HAVE_NOTIFY" = "xyes"])
+PRINT_PLUGIN_INFO([ffmpeg],[ffmpeg codecs],[test "x$HAVE_FFMPEGPLUGIN" = "xyes"])
 PRINT_PLUGIN_INFO([oss],[oss output plugin],[test "x$have_oss" = "xyes"])
-PRINT_PLUGIN_INFO([pulse],[PulseAudio output plugin],[test $HAVE_PULSE])
-PRINT_PLUGIN_INFO([artwork],[Cover art plugin],[test $HAVE_ARTWORK])
-PRINT_PLUGIN_INFO([supereq],[Equalizer based on Super EQ library by Naoki Shibata],[true])
+PRINT_PLUGIN_INFO([pulse],[PulseAudio output plugin],[test "x$HAVE_PULSEPLUGIN" = "xyes"])
+PRINT_PLUGIN_INFO([artwork],[Cover art plugin],[test "x$HAVE_ARTWORK" = "xyes"])
+PRINT_PLUGIN_INFO([supereq],[Equalizer based on Super EQ library by Naoki Shibata],[test "x$HAVE_SUPEREQ" = "xyes"])
+echo
+echo "plugin build directories: $PLUGINS_DIRS"
+
 echo
 
 AC_OUTPUT([
