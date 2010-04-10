@@ -32,8 +32,6 @@
 #include "config.h"
 #endif
 
-#pragma GCC optimize("O0")
-
 #define MAX_TEXT_FRAME_SIZE 1024
 #define MAX_CUESHEET_FRAME_SIZE 10000
 #define MAX_APEV2_FRAME_SIZE 100000
@@ -173,11 +171,11 @@ junk_iconv (const char *in, int inlen, char *out, int outlen, const char *cs_in,
     int err = errno;
     iconv_close (cd);
 
-    trace ("iconv -f %s -t %s '%s': returned %d, inbytes %d/%d, outbytes %d/%d, errno=%d\n", cs_in, cs_out, in, res, inlen, inbytesleft, outlen, outbytesleft, err);
+//    trace ("iconv -f %s -t %s '%s': returned %d, inbytes %d/%d, outbytes %d/%d, errno=%d\n", cs_in, cs_out, in, res, inlen, inbytesleft, outlen, outbytesleft, err);
     if (res == -1) {
         return -1;
     }
-    trace ("iconv out: %s\n", out);
+//    trace ("iconv out: %s\n", out);
     return pout - out;
 }
 
@@ -1138,6 +1136,58 @@ junk_id3v2_add_text_frame_24 (DB_id3v2_tag_t *tag, const char *frame_id, const c
 }
 
 DB_id3v2_frame_t *
+junk_id3v2_add_comment_frame_23 (DB_id3v2_tag_t *tag, const char *lang, const char *descr, const char *value) {
+    trace ("junklib: setting 2.3 COMM frame lang=%s, descr='%s', data='%s'\n", lang, descr, value);
+
+    // make a frame
+    int descrlen = strlen (descr);
+    int outlen = strlen (value);
+
+    char input[descrlen+outlen+1];
+    memcpy (input, descr, descrlen);
+    input[descrlen] = 0;
+    memcpy (input+descrlen+1, value, outlen);
+
+    char buffer[2048];
+    int enc = 0;
+    int l = junk_iconv (input, sizeof (input), buffer, sizeof (buffer), UTF8, "iso8859-1");
+    if (l <= 0) {
+        l = junk_iconv (input, sizeof (input), buffer+2, sizeof (buffer) - 2, UTF8, "UCS-2LE");
+        if (l <= 0) {
+            trace ("failed to encode to ucs2 or iso8859-1\n");
+            return NULL;
+        }
+        else {
+            enc = 1;
+            buffer[0] = 0xff;
+            buffer[1] = 0xfe;
+            l += 2;
+        }
+    }
+
+    trace ("calculated frame size = %d\n", l + 4);
+    DB_id3v2_frame_t *f = malloc (l + 4 + sizeof (DB_id3v2_frame_t));
+    memset (f, 0, sizeof (DB_id3v2_frame_t));
+    strcpy (f->id, "COMM");
+    // flags are all zero
+    f->size = l + 4;
+    f->data[0] = enc; // encoding=utf8
+    memcpy (&f->data[1], lang, 3);
+    memcpy (&f->data[4], buffer, l);
+    // append to tag
+    DB_id3v2_frame_t *tail;
+    for (tail = tag->frames; tail && tail->next; tail = tail->next);
+    if (tail) {
+        tail->next = f;
+    }
+    else {
+        tag->frames = f;
+    }
+
+    return f;
+}
+
+DB_id3v2_frame_t *
 junk_id3v2_add_comment_frame_24 (DB_id3v2_tag_t *tag, const char *lang, const char *descr, const char *value) {
     trace ("junklib: setting 2.4 COMM frame lang=%s, descr='%s', data='%s'\n", lang, value);
 
@@ -1271,7 +1321,7 @@ junk_id3v2_convert_24_to_23 (DB_id3v2_tag_t *tag24, DB_id3v2_tag_t *tag23) {
 
     const char *copy_frames[] = {
         "AENC", "APIC",
-        "COMM", "COMR", "ENCR",
+        "COMR", "ENCR",
         "ETCO", "GEOB", "GRID",
         "LINK", "MCDI", "MLLT", "OWNE", "PRIV",
         "POPM", "POSS", "RBUF",
@@ -1339,6 +1389,37 @@ junk_id3v2_convert_24_to_23 (DB_id3v2_tag_t *tag24, DB_id3v2_tag_t *tag23) {
 
 
         if (!simplecopy && !text) {
+            if (!strcmp (f24->id, "COMM")) {
+                uint8_t enc = f24->data[0];
+                char lang[4] = {f24->data[1], f24->data[2], f24->data[3], 0};
+                trace ("COMM enc is: %d\n", (int)enc);
+                trace ("COMM language is: %s\n", lang);
+
+                char *descr = convstr_id3v2 (4, enc, f24->data+4, f24->size-4);
+                if (!descr) {
+                    trace ("failed to decode COMM frame, probably wrong encoding (%d)\n", enc);
+                }
+                else {
+                    // find value
+                    char *value = descr;
+                    while (*value && *value != '\n') {
+                        value++;
+                    }
+                    if (*value != '\n') {
+                        trace ("failed to parse COMM frame, descr was \"%s\"\n", descr);
+                    }
+                    else {
+                        *value = 0;
+                        value++;
+                        f23 = junk_id3v2_add_comment_frame_23 (tag23, lang, descr, value);
+                        if (f23) {
+                            tail = f23;
+                            f23 = NULL;
+                        }
+                    }
+                    free (descr);
+                }
+            }
             continue; // unknown frame
         }
 
@@ -1378,6 +1459,7 @@ junk_id3v2_convert_24_to_23 (DB_id3v2_tag_t *tag24, DB_id3v2_tag_t *tag23) {
             f23->flags[1] = flags[1];
         }
         else if (text) {
+
             char *decoded = convstr_id3v2 (4, f24->data[0], f24->data+1, f24->size-1);
             if (!decoded) {
                 trace ("junk_id3v2_convert_24_to_23: failed to decode text frame %s\n", f24->id);
@@ -2245,74 +2327,44 @@ junk_append_meta (const char *old, const char *new) {
 
 int
 junk_load_comm_frame (int version_major, playItem_t *it, uint8_t *readptr, int synched_size) {
-    char *comment = NULL;
     uint8_t enc = readptr[0];
     char lang[4] = {readptr[1], readptr[2], readptr[3], 0};
     trace ("COMM enc is: %d\n", (int)enc);
     trace ("COMM language is: %s\n", lang);
 
-    uint8_t *pdescr = readptr+4;
-    // find value field
-    uint8_t *pvalue = pdescr;
-    if ((enc == 3 && version_major == 4) || enc == 0) {
-        while (pvalue - pdescr < synched_size-4 && *pvalue) {
-            pvalue++;
-        }
-        if (pvalue - pdescr >= synched_size-4) {
-            pvalue = NULL;
-        }
-        else {
-            pvalue++;
-        }
-    }
-    else {
-        // unicode, find 0x00 0x00 0xXX
-        while (pvalue - pdescr + 2 < synched_size-4 && (pvalue[0] || pvalue[1] || !pvalue[2])) {
-            trace ("byte: %X\n", *pvalue);
-            pvalue++;
-        }
-        if (pvalue - pdescr + 2 >= synched_size-4) {
-            trace ("out of bounds: size=%d, framesize=%d\n", pvalue - pdescr + 1, synched_size-4);
-            pvalue = NULL;
-        }
-        else {
-            pvalue += 2;
-        }
-    }
-
-    if (!pvalue) {
-        trace ("failed to parse COMM frame\n");
-        return -1;
-    }
-
-    trace ("COMM descr length: %d\n", pvalue-pdescr);
-    char *descr = convstr_id3v2 (version_major, enc, pdescr, pvalue - pdescr);
-    trace ("COMM descr: %s\n", descr);
+    char *descr = convstr_id3v2 (version_major, enc, readptr+4, synched_size-4);
     if (!descr) {
-        trace ("failed to decode COMM descr\n");
+        trace ("failed to decode COMM frame, probably wrong encoding (%d)\n", enc);
         return -1;
     }
 
-    int valsize = synched_size - 4 - (pvalue - pdescr);
-    trace ("valsize=%d\n", valsize);
-    char *text = convstr_id3v2 (version_major, enc, pvalue, valsize);
-    trace ("COMM text: %s\n", text);
-    if (!text) {
-        trace ("failed to decode COMM text\n");
+    // find value
+    char *value = descr;
+    while (*value && *value != '\n') {
+        value++;
+    }
+    if (*value != '\n') {
+        trace ("failed to parse COMM frame, descr was \"%s\"\n", descr);
+        free (descr);
         return -1;
     }
 
-    int len = strlen (descr) + strlen (text) + 3;
-    comment = malloc (len);
+    *value = 0;
+    value++;
+
+    int len = strlen (descr) + strlen (value) + 3;
+    char comment[len];
 
     if (*descr) {
-        snprintf (comment, len, "%s: %s", descr, text);
+        snprintf (comment, len, "%s: %s", descr, value);
     }
     else {
-        strcpy (comment, text);
+        strcpy (comment, value);
     }
     trace ("COMM combined: %s\n", comment);
     pl_append_meta (it, "comment", comment);
+
+    free (descr);
     return 0;
 }
 
@@ -3135,12 +3187,13 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
                 if (val) {
                     if (strcmp (frm_name, "TXXX")) {
                         deadbeef->junk_id3v2_remove_frames (&id3v2, frm_name);
+                        trace ("add_frame %s %s\n", frm_name, val);
                         add_frame (&id3v2, frm_name, val);
                     }
                     else {
                         for (int txx = 0; txx_mapping[txx]; txx += 2) {
-                            if (txx_mapping[txx+1]) {
-                                trace ("adding txxx %s=%s\n", txx_mapping[txx], val);
+                            if (txx_mapping[txx+1] && !strcmp (frame_mapping[i+MAP_DDB], txx_mapping[txx+1])) {
+                                trace ("add_txxx_frame %s %s\n", txx_mapping[txx], val);
                                 add_txxx_frame (&id3v2, txx_mapping[txx], val);
                             }
                         }
