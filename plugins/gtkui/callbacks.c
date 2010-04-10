@@ -1087,6 +1087,9 @@ on_mainwin_button_press_event          (GtkWidget       *widget,
                                         GdkEventButton  *event,
                                         gpointer         user_data)
 {
+    if (event->window != mainwin->window) {
+        return FALSE;
+    }
     GtkWidget *volumebar = lookup_widget (mainwin, "volumebar");
     GtkWidget *seekbar = lookup_widget (mainwin, "seekbar");
     if (event->x >= volumebar->allocation.x && event->x < volumebar->allocation.x + volumebar->allocation.width
@@ -1110,9 +1113,10 @@ on_mainwin_button_release_event        (GtkWidget       *widget,
                                         gpointer         user_data)
 {
     if (capture) {
-        return gtk_widget_event (capture, (GdkEvent *)event);
+        gboolean res = gtk_widget_event (capture, (GdkEvent *)event);
+        capture = NULL;
+        return res;
     }
-    capture = NULL;
 
     return FALSE;
 }
@@ -1124,6 +1128,9 @@ on_mainwin_scroll_event                (GtkWidget       *widget,
                                         gpointer         user_data)
 {
     GdkEventScroll *event = (GdkEventScroll *)ev;
+    if (event->window != mainwin->window) {
+        return FALSE;
+    }
     GtkWidget *volumebar = lookup_widget (mainwin, "volumebar");
     GtkWidget *seekbar = lookup_widget (mainwin, "seekbar");
     if (event->x >= volumebar->allocation.x && event->x < volumebar->allocation.x + volumebar->allocation.width
