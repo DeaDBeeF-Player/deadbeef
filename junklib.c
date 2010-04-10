@@ -1045,20 +1045,36 @@ junk_id3v2_remove_frames (DB_id3v2_tag_t *tag, const char *frame_id) {
     return 0;
 }
 
+// this function will split multiline values into separate frames
 DB_id3v2_frame_t *
 junk_id3v2_add_text_frame (DB_id3v2_tag_t *tag, const char *frame_id, const char *value) {
-    // convert utf8 into ucs2_le
+    // copy value to handle multiline strings
     size_t inlen = strlen (value);
+    char buffer[inlen];
+    char *pp = buffer;
+    for (const char *p = value; *p; p++) {
+        if (*p == '\n') {
+            *pp++ = 0;
+            if (tag->version[0] == 3) {
+                inlen = p - value;
+                break;
+            }
+        }
+        else {
+            *pp++ = *p;
+        }
+    }
+
     if (!inlen) {
         return NULL;
     }
-    size_t outlen = inlen * 3;
-    uint8_t out[outlen];
+    uint8_t out[2048];
 
     trace ("junklib: setting id3v2.%d text frame '%s' = '%s'\n", tag->version[0], frame_id, value);
 
     int encoding = 0;
 
+    size_t outlen = -1;
     if (tag->version[0] == 4) {
         outlen = inlen;
         memcpy (out, value, inlen);
@@ -1092,16 +1108,19 @@ junk_id3v2_add_text_frame (DB_id3v2_tag_t *tag, const char *frame_id, const char
     f->data[0] = encoding;
     memcpy (f->data + 1, out, outlen);
     // append to tag
-    DB_id3v2_frame_t *tail;
+    DB_id3v2_frame_t *tail = NULL;
+
     for (tail = tag->frames; tail && tail->next; tail = tail->next);
+
     if (tail) {
         tail->next = f;
     }
     else {
         tag->frames = f;
     }
+    tail = f;
 
-    return f;
+    return tail;
 }
 
 DB_id3v2_frame_t *
@@ -3139,7 +3158,8 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
                 if (val && *val) {
                     if (strcmp (frm_name, "TXXX")) {
                         trace ("add_frame %s %s\n", frm_name, val);
-                        junk_id3v2_add_text_frame (&id3v2, frm_name, val);
+                        //junk_id3v2_add_text_frame (&id3v2, frm_name, val);
+                        junk_id3v2_add_text_frame (&id3v2, frm_name, "test line 1\nтестовая строка №2");
                     }
                     else {
                         for (int txx = 0; txx_mapping[txx]; txx += 2) {
