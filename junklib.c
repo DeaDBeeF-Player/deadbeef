@@ -25,6 +25,7 @@
 #include <errno.h>
 #include <ctype.h>
 #include <unistd.h>
+#include <assert.h>
 #include "playlist.h"
 #include "utf8.h"
 #include "plugins.h"
@@ -1045,7 +1046,7 @@ junk_id3v2_remove_frames (DB_id3v2_tag_t *tag, const char *frame_id) {
 }
 
 DB_id3v2_frame_t *
-junk_id3v2_add_text_frame_23 (DB_id3v2_tag_t *tag, const char *frame_id, const char *value) {
+junk_id3v2_add_text_frame (DB_id3v2_tag_t *tag, const char *frame_id, const char *value) {
     // convert utf8 into ucs2_le
     size_t inlen = strlen (value);
     if (!inlen) {
@@ -1054,41 +1055,42 @@ junk_id3v2_add_text_frame_23 (DB_id3v2_tag_t *tag, const char *frame_id, const c
     size_t outlen = inlen * 3;
     uint8_t out[outlen];
 
-    trace ("junklib: setting 2.3 text frame '%s' = '%s'\n", frame_id, value);
+    trace ("junklib: setting id3v2.%d text frame '%s' = '%s'\n", tag->version[0], frame_id, value);
 
     int encoding = 0;
 
-    int res;
-    res = junk_iconv (value, inlen, out, outlen, UTF8, "ISO-8859-1");
-    if (res == -1) {
-        res = junk_iconv (value, inlen, out+2, outlen-2, UTF8, "UCS-2LE");
-        if (res == -1) {
-            return NULL;
-        }
-        out[0] = 0xff;
-        out[1] = 0xfe;
-        outlen = res + 2;
-        trace ("successfully converted to ucs-2le (size=%d, bom: %x %x)\n", res, out[0], out[1]);
-        encoding = 1;
+    if (tag->version[0] == 4) {
+        outlen = inlen;
+        memcpy (out, value, inlen);
+        encoding = 3;
     }
     else {
-        trace ("successfully converted to iso8859-1 (size=%d)\n", res);
-        outlen = res;
+        outlen = junk_iconv (value, inlen, out, sizeof (out), UTF8, "ISO-8859-1");
+        if (outlen == -1) {
+            outlen = junk_iconv (value, inlen, out+2, sizeof (out) - 2, UTF8, "UCS-2LE");
+            if (outlen <= 0) {
+                return NULL;
+            }
+            out[0] = 0xff;
+            out[1] = 0xfe;
+            outlen += 2;
+            trace ("successfully converted to ucs-2le (size=%d, bom: %x %x)\n", outlen, out[0], out[1]);
+            encoding = 1;
+        }
+        else {
+            trace ("successfully converted to iso8859-1 (size=%d)\n", outlen);
+        }
     }
 
     // make a frame
-    int size = outlen + 1 + encoding + 1;
+    int size = outlen + 1;
     trace ("calculated frame size = %d\n", size);
     DB_id3v2_frame_t *f = malloc (size + sizeof (DB_id3v2_frame_t));
     memset (f, 0, sizeof (DB_id3v2_frame_t));
     strcpy (f->id, frame_id);
     f->size = size;
     f->data[0] = encoding;
-    memcpy (&f->data[1], out, outlen);
-    f->data[outlen+1] = 0;
-    if (encoding == 1) {
-        f->data[outlen+2] = 0;
-    }
+    memcpy (f->data + 1, out, outlen);
     // append to tag
     DB_id3v2_frame_t *tail;
     for (tail = tag->frames; tail && tail->next; tail = tail->next);
@@ -1103,40 +1105,7 @@ junk_id3v2_add_text_frame_23 (DB_id3v2_tag_t *tag, const char *frame_id, const c
 }
 
 DB_id3v2_frame_t *
-junk_id3v2_add_text_frame_24 (DB_id3v2_tag_t *tag, const char *frame_id, const char *value) {
-    trace ("junklib: setting 2.4 text frame '%s' = '%s'\n", frame_id, value);
-
-    // make a frame
-    int outlen = strlen (value);
-    if (!outlen) {
-        return NULL;
-    }
-
-    int size = outlen + 1 + 1;
-    trace ("calculated frame size = %d\n", size);
-    DB_id3v2_frame_t *f = malloc (size + sizeof (DB_id3v2_frame_t));
-    memset (f, 0, sizeof (DB_id3v2_frame_t));
-    strcpy (f->id, frame_id);
-    // flags are all zero
-    f->size = size;
-    f->data[0] = 3; // encoding=utf8
-    memcpy (&f->data[1], value, outlen);
-    f->data[outlen+1] = 0;
-    // append to tag
-    DB_id3v2_frame_t *tail;
-    for (tail = tag->frames; tail && tail->next; tail = tail->next);
-    if (tail) {
-        tail->next = f;
-    }
-    else {
-        tag->frames = f;
-    }
-
-    return f;
-}
-
-DB_id3v2_frame_t *
-junk_id3v2_add_comment_frame_23 (DB_id3v2_tag_t *tag, const char *lang, const char *descr, const char *value) {
+junk_id3v2_add_comment_frame (DB_id3v2_tag_t *tag, const char *lang, const char *descr, const char *value) {
     trace ("junklib: setting 2.3 COMM frame lang=%s, descr='%s', data='%s'\n", lang, descr, value);
 
     // make a frame
@@ -1150,18 +1119,28 @@ junk_id3v2_add_comment_frame_23 (DB_id3v2_tag_t *tag, const char *lang, const ch
 
     char buffer[2048];
     int enc = 0;
-    int l = junk_iconv (input, sizeof (input), buffer, sizeof (buffer), UTF8, "iso8859-1");
-    if (l <= 0) {
-        l = junk_iconv (input, sizeof (input), buffer+2, sizeof (buffer) - 2, UTF8, "UCS-2LE");
+    int l;
+
+    if (tag->version[0] == 4) {
+        // utf8
+        enc = 3;
+        memcpy (buffer, input, sizeof (input));
+        l = sizeof (input);
+    }
+    else {
+        l = junk_iconv (input, sizeof (input), buffer, sizeof (buffer), UTF8, "iso8859-1");
         if (l <= 0) {
-            trace ("failed to encode to ucs2 or iso8859-1\n");
-            return NULL;
-        }
-        else {
-            enc = 1;
-            buffer[0] = 0xff;
-            buffer[1] = 0xfe;
-            l += 2;
+            l = junk_iconv (input, sizeof (input), buffer+2, sizeof (buffer) - 2, UTF8, "UCS-2LE");
+            if (l <= 0) {
+                trace ("failed to encode to ucs2 or iso8859-1\n");
+                return NULL;
+            }
+            else {
+                enc = 1;
+                buffer[0] = 0xff;
+                buffer[1] = 0xfe;
+                l += 2;
+            }
         }
     }
 
@@ -1174,37 +1153,6 @@ junk_id3v2_add_comment_frame_23 (DB_id3v2_tag_t *tag, const char *lang, const ch
     f->data[0] = enc; // encoding=utf8
     memcpy (&f->data[1], lang, 3);
     memcpy (&f->data[4], buffer, l);
-    // append to tag
-    DB_id3v2_frame_t *tail;
-    for (tail = tag->frames; tail && tail->next; tail = tail->next);
-    if (tail) {
-        tail->next = f;
-    }
-    else {
-        tag->frames = f;
-    }
-
-    return f;
-}
-
-DB_id3v2_frame_t *
-junk_id3v2_add_comment_frame_24 (DB_id3v2_tag_t *tag, const char *lang, const char *descr, const char *value) {
-    trace ("junklib: setting 2.4 COMM frame lang=%s, descr='%s', data='%s'\n", lang, value);
-
-    // make a frame
-    int descrlen = strlen (descr);
-    int outlen = strlen (value);
-    int size = 1 + 3 + descrlen + 1 + outlen + 1;
-    trace ("calculated frame size = %d\n", size);
-    DB_id3v2_frame_t *f = malloc (size + sizeof (DB_id3v2_frame_t));
-    memset (f, 0, sizeof (DB_id3v2_frame_t));
-    strcpy (f->id, "COMM");
-    // flags are all zero
-    f->size = size;
-    f->data[0] = 3; // encoding=utf8
-    memcpy (&f->data[1], lang, 3);
-    memcpy (&f->data[4], descr, descrlen+1);
-    memcpy (&f->data[4+descrlen+1], value, outlen);
     // append to tag
     DB_id3v2_frame_t *tail;
     for (tail = tag->frames; tail && tail->next; tail = tail->next);
@@ -1247,13 +1195,7 @@ junk_id3v2_remove_txxx_frame (DB_id3v2_tag_t *tag, const char *key) {
 }
 
 DB_id3v2_frame_t *
-junk_id3v2_add_txxx_frame_24 (DB_id3v2_tag_t *tag, const char *key, const char *value) {
-    // TODO: WRITEME
-    return NULL;
-}
-
-DB_id3v2_frame_t *
-junk_id3v2_add_txxx_frame_23 (DB_id3v2_tag_t *tag, const char *key, const char *value) {
+junk_id3v2_add_txxx_frame (DB_id3v2_tag_t *tag, const char *key, const char *value) {
     int keylen = strlen (key);
     int valuelen = strlen (value);
     int len = keylen + valuelen + 1;
@@ -1265,24 +1207,36 @@ junk_id3v2_add_txxx_frame_23 (DB_id3v2_tag_t *tag, const char *key, const char *
     uint8_t out[2048];
     int encoding = 0;
 
-    int res = junk_iconv (buffer, len, out, sizeof (out), UTF8, "ISO-8859-1");
-    if (res == -1) {
-        res = junk_iconv (buffer, len, out+2, sizeof (out) - 2, UTF8, "UCS-2LE");
-        if (res == -1) {
-            return NULL;
-        }
-        out[0] = 0xff;
-        out[1] = 0xfe;
-        res += 2;
-        trace ("successfully converted to ucs-2le (size=%d, bom: %x %x)\n", res, out[0], out[1]);
-        encoding = 1;
+
+    int res;
+
+    if (tag->version[0] == 4) {
+        res = len;
+        encoding = 3;
+        memcpy (out, key, keylen);
+        out[keylen] = 0;
+        memcpy (out + keylen + 1, value, valuelen);
     }
-    else {
-        trace ("successfully converted to iso8859-1 (size=%d)\n", res);
+    else { // version 3
+        res = junk_iconv (buffer, len, out, sizeof (out), UTF8, "ISO-8859-1");
+        if (res == -1) {
+            res = junk_iconv (buffer, len, out+2, sizeof (out) - 2, UTF8, "UCS-2LE");
+            if (res == -1) {
+                return NULL;
+            }
+            out[0] = 0xff;
+            out[1] = 0xfe;
+            res += 2;
+            trace ("successfully converted to ucs-2le (size=%d, bom: %x %x)\n", res, out[0], out[1]);
+            encoding = 1;
+        }
+        else {
+            trace ("successfully converted to iso8859-1 (size=%d)\n", res);
+        }
     }
 
     // make a frame
-    int size = res + 1 + encoding + 1;
+    int size = res + 1;
     trace ("calculated frame size = %d\n", size);
     DB_id3v2_frame_t *f = malloc (size + sizeof (DB_id3v2_frame_t));
     memset (f, 0, sizeof (DB_id3v2_frame_t));
@@ -1290,10 +1244,6 @@ junk_id3v2_add_txxx_frame_23 (DB_id3v2_tag_t *tag, const char *key, const char *
     f->size = size;
     f->data[0] = encoding;
     memcpy (&f->data[1], out, res);
-    f->data[res+1] = 0;
-    if (encoding == 1) {
-        f->data[res+2] = 0;
-    }
     // append to tag
     DB_id3v2_frame_t *tail;
     for (tail = tag->frames; tail && tail->next; tail = tail->next);
@@ -1314,6 +1264,9 @@ int
 junk_id3v2_convert_24_to_23 (DB_id3v2_tag_t *tag24, DB_id3v2_tag_t *tag23) {
     DB_id3v2_frame_t *f24;
     DB_id3v2_frame_t *tail = tag23->frames;
+    assert (tag24->version[0] == 4);
+    tag23->version[0] = 3;
+    tag23->version[1] = 0;
 
     while (tail && tail->next) {
         tail = tail->next;
@@ -1411,7 +1364,7 @@ junk_id3v2_convert_24_to_23 (DB_id3v2_tag_t *tag24, DB_id3v2_tag_t *tag23) {
                     else {
                         *value = 0;
                         value++;
-                        f23 = junk_id3v2_add_comment_frame_23 (tag23, lang, descr, value);
+                        f23 = junk_id3v2_add_comment_frame (tag23, lang, descr, value);
                         if (f23) {
                             tail = f23;
                             f23 = NULL;
@@ -1472,7 +1425,7 @@ junk_id3v2_convert_24_to_23 (DB_id3v2_tag_t *tag24, DB_id3v2_tag_t *tag23) {
                 if (c >= 1) {
                     char s[5];
                     snprintf (s, sizeof (s), "%04d", year);
-                    f23 = junk_id3v2_add_text_frame_23 (tag23, "TYER", s);
+                    f23 = junk_id3v2_add_text_frame (tag23, "TYER", s);
                     if (f23) {
                         tail = f23;
                         f23 = NULL;
@@ -1481,14 +1434,14 @@ junk_id3v2_convert_24_to_23 (DB_id3v2_tag_t *tag24, DB_id3v2_tag_t *tag23) {
                 if (c == 3) {
                     char s[5];
                     snprintf (s, sizeof (s), "%02d%02d", month, day);
-                    f23 = junk_id3v2_add_text_frame_23 (tag23, "TDAT", s);
+                    f23 = junk_id3v2_add_text_frame (tag23, "TDAT", s);
                     if (f23) {
                         tail = f23;
                         f23 = NULL;
                     }
                 }
                 else {
-                    trace ("junk_id3v2_add_text_frame_23: 2.4 TDRC doesn't have month/day info; discarded\n");
+                    trace ("junk_id3v2_add_text_frame: 2.4 TDRC doesn't have month/day info; discarded\n");
                 }
             }
             else if (!strcmp (f24->id, "TDOR")) {
@@ -1498,19 +1451,19 @@ junk_id3v2_convert_24_to_23 (DB_id3v2_tag_t *tag24, DB_id3v2_tag_t *tag23) {
                 if (c == 1) {
                     char s[5];
                     snprintf (s, sizeof (s), "%04d", &year);
-                    f23 = junk_id3v2_add_text_frame_23 (tag23, "TORY", s);
+                    f23 = junk_id3v2_add_text_frame (tag23, "TORY", s);
                     if (f23) {
                         tail = f23;
                         f23 = NULL;
                     }
                 }
                 else {
-                    trace ("junk_id3v2_add_text_frame_23: 2.4 TDOR doesn't have month/day info; discarded\n");
+                    trace ("junk_id3v2_add_text_frame: 2.4 TDOR doesn't have month/day info; discarded\n");
                 }
             }
             else {
                 // encode for 2.3
-                f23 = junk_id3v2_add_text_frame_23 (tag23, f24->id, decoded);
+                f23 = junk_id3v2_add_text_frame (tag23, f24->id, decoded);
                 if (f23) {
                     tail = f23;
                     f23 = NULL;
@@ -1530,8 +1483,6 @@ junk_id3v2_convert_24_to_23 (DB_id3v2_tag_t *tag24, DB_id3v2_tag_t *tag23) {
     }
 
     // convert tag header
-    tag23->version[0] = 3;
-    tag23->version[1] = 0;
     tag23->flags = tag24->flags;
     tag23->flags &= ~(1<<4); // no footer (unsupported in 2.3)
     tag23->flags &= ~(1<<7); // no unsync
@@ -1656,7 +1607,7 @@ junk_id3v2_convert_23_to_24 (DB_id3v2_tag_t *tag23, DB_id3v2_tag_t *tag24) {
                 if (c >= 1) {
                     char s[5];
                     snprintf (s, sizeof (s), "%04d", year);
-                    f24 = junk_id3v2_add_text_frame_24 (tag24, "TYER", s);
+                    f24 = junk_id3v2_add_text_frame (tag24, "TYER", s);
                     if (f24) {
                         tail = f24;
                         f24 = NULL;
@@ -1665,14 +1616,14 @@ junk_id3v2_convert_23_to_24 (DB_id3v2_tag_t *tag23, DB_id3v2_tag_t *tag24) {
                 if (c == 3) {
                     char s[5];
                     snprintf (s, sizeof (s), "%02d%02d", month, day);
-                    f24 = junk_id3v2_add_text_frame_24 (tag24, "TDAT", s);
+                    f24 = junk_id3v2_add_text_frame (tag24, "TDAT", s);
                     if (f24) {
                         tail = f24;
                         f24 = NULL;
                     }
                 }
                 else {
-                    trace ("junk_id3v2_add_text_frame_24: 2.4 TDRC doesn't have month/day info; discarded\n");
+                    trace ("junk_id3v2_add_text_frame: 2.4 TDRC doesn't have month/day info; discarded\n");
                 }
             }
             else if (!strcmp (f23->id, "TORY")) {
@@ -1682,19 +1633,19 @@ junk_id3v2_convert_23_to_24 (DB_id3v2_tag_t *tag23, DB_id3v2_tag_t *tag24) {
                 if (c == 1) {
                     char s[5];
                     snprintf (s, sizeof (s), "%04d", &year);
-                    f24 = junk_id3v2_add_text_frame_24 (tag24, "TDOR", s);
+                    f24 = junk_id3v2_add_text_frame (tag24, "TDOR", s);
                     if (f24) {
                         tail = f24;
                         f24 = NULL;
                     }
                 }
                 else {
-                    trace ("junk_id3v2_add_text_frame_24: 2.4 TDOR doesn't have month/day info; discarded\n");
+                    trace ("junk_id3v2_add_text_frame: 2.4 TDOR doesn't have month/day info; discarded\n");
                 }
             }
             else {
-                // encode for 2.3
-                f24 = junk_id3v2_add_text_frame_24 (tag24, f23->id, decoded);
+                // encode for 2.4
+                f24 = junk_id3v2_add_text_frame (tag24, f23->id, decoded);
                 if (f24) {
                     tail = f24;
                     f24 = NULL;
@@ -1849,7 +1800,7 @@ junk_id3v2_convert_22_to_24 (DB_id3v2_tag_t *tag22, DB_id3v2_tag_t *tag24) {
                 continue; // failed, discard it
             }
             // encode for 2.4
-            f24 = junk_id3v2_add_text_frame_24 (tag24, text_frames_24[text], decoded);
+            f24 = junk_id3v2_add_text_frame (tag24, text_frames_24[text], decoded);
             if (f24) {
                 tail = f24;
                 f24 = NULL;
@@ -1905,7 +1856,7 @@ junk_id3v2_convert_22_to_24 (DB_id3v2_tag_t *tag22, DB_id3v2_tag_t *tag24) {
                 }
             }
         }
-        DB_id3v2_frame_t *f24 = junk_id3v2_add_text_frame_24 (tag24, "TDRC", tdrc);
+        DB_id3v2_frame_t *f24 = junk_id3v2_add_text_frame (tag24, "TDRC", tdrc);
         if (f24) {
             tail = f24;
         }
@@ -2016,7 +1967,7 @@ junk_id3v2_convert_apev2_to_24 (DB_apev2_tag_t *ape, DB_id3v2_tag_t *tag24) {
             char str[f_ape->size+1];
             memcpy (str, f_ape->data, f_ape->size);
             str[f_ape->size] = 0;
-            f24 = junk_id3v2_add_text_frame_24 (tag24, text_keys_24[i], str);
+            f24 = junk_id3v2_add_text_frame (tag24, text_keys_24[i], str);
             if (f24) {
                 tail = f24;
                 f24 = NULL;
@@ -2029,10 +1980,10 @@ junk_id3v2_convert_apev2_to_24 (DB_apev2_tag_t *ape, DB_id3v2_tag_t *tag24) {
                     memcpy (str, f_ape->data, f_ape->size);
                     str[f_ape->size] = 0;
                     if (!strcasecmp (f_ape->key, "Comment")) {
-                        junk_id3v2_add_comment_frame_24 (tag24, "eng", "", str);
+                        junk_id3v2_add_comment_frame (tag24, "eng", "", str);
                     }
                     else {
-                        junk_id3v2_add_comment_frame_24 (tag24, "eng", comm_frames[i], str);
+                        junk_id3v2_add_comment_frame (tag24, "eng", comm_frames[i], str);
                     }
                     break;
                 }
@@ -2203,7 +2154,7 @@ junk_id3v2_write (FILE *out, DB_id3v2_tag_t *tag) {
         goto error;
     }
     // run through list of frames, and calculate size
-    uint32_t sz = 0;
+    uint32_t sz = 10;
     int frm = 0;
     for (DB_id3v2_frame_t *f = tag->frames; f; f = f->next) {
         // each tag has 10 bytes header
@@ -2586,7 +2537,7 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
             readptr += 2;
 
             if (sz > MAX_ID3V2_FRAME_SIZE || readptr-tag + sz >= size) {
-                trace ("junk_id3v2_read_full: frame %s size is too big, discarded\n", frameid);
+                trace ("junk_id3v2_read_full: frame %s size is too big (%d), discarded\n", frameid, sz);
                 readptr += sz;
                 continue;
             }
@@ -3162,39 +3113,37 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
             }
         }
 
-        DB_id3v2_frame_t *(*add_frame) (DB_id3v2_tag_t *tag, const char *frame_id, const char *value);
-        DB_id3v2_frame_t *(*add_txxx_frame) (DB_id3v2_tag_t *tag, const char *key, const char *value);
-        if (id3v2_version == 3) {
-            add_frame = junk_id3v2_add_text_frame_23;
-            add_txxx_frame = junk_id3v2_add_txxx_frame_23;
-        }
-        else {
-            add_frame = junk_id3v2_add_text_frame_24;
-            add_txxx_frame = junk_id3v2_add_txxx_frame_24;
-        }
-
         // remove all known txxx frames
         for (int txx = 0; txx_mapping[txx]; txx += 2) {
             trace ("removing txxx %s\n", txx_mapping[txx])
             junk_id3v2_remove_txxx_frame (&id3v2, txx_mapping[txx]);
         }
 
+        // COMM
+        junk_id3v2_remove_frames (&id3v2, "COMM");
+        const char *val = pl_find_meta (it, "comment");
+        if (val && *val) {
+            junk_id3v2_add_comment_frame (&id3v2, "eng", "", val);
+        }
+
         // add all basic frames
         for (int i = 0; frame_mapping[i]; i += FRAME_MAPPINGS) {
             const char *frm_name = id3v2_version == 3 ? frame_mapping[i+MAP_ID3V23] : frame_mapping[i+MAP_ID3V24];
             if (frm_name) {
+                if (strcmp (frm_name, "TXXX")) {
+                    junk_id3v2_remove_frames (&id3v2, frm_name);
+                }
                 const char *val = pl_find_meta (it, frame_mapping[i+MAP_DDB]);
-                if (val) {
+                if (val && *val) {
                     if (strcmp (frm_name, "TXXX")) {
-                        deadbeef->junk_id3v2_remove_frames (&id3v2, frm_name);
                         trace ("add_frame %s %s\n", frm_name, val);
-                        add_frame (&id3v2, frm_name, val);
+                        junk_id3v2_add_text_frame (&id3v2, frm_name, val);
                     }
                     else {
                         for (int txx = 0; txx_mapping[txx]; txx += 2) {
                             if (txx_mapping[txx+1] && !strcmp (frame_mapping[i+MAP_DDB], txx_mapping[txx+1])) {
                                 trace ("add_txxx_frame %s %s\n", txx_mapping[txx], val);
-                                add_txxx_frame (&id3v2, txx_mapping[txx], val);
+                                junk_id3v2_add_txxx_frame (&id3v2, txx_mapping[txx], val);
                             }
                         }
                     }
@@ -3209,11 +3158,11 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
             char s[100];
             snprintf (s, sizeof (s), "%s/%s", track, totaltracks);
             junk_id3v2_remove_frames (&id3v2, "TRCK");
-            add_frame (&id3v2, "TRCK", s);
+            junk_id3v2_add_text_frame (&id3v2, "TRCK", s);
         }
         else if (track) {
             junk_id3v2_remove_frames (&id3v2, "TRCK");
-            add_frame (&id3v2, "TRCK", track);
+            junk_id3v2_add_text_frame (&id3v2, "TRCK", track);
         }
 
 #if 0
