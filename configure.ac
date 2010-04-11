@@ -52,35 +52,34 @@ AC_SUBST(INSANE_CXXFLAGS)
 CXXFLAGS="$CXXFLAGS $INSANE_CXXFLAGS -D_GNU_SOURCE -DLIBDIR=\\\"$libdir\\\" -DPREFIX=\\\"$prefix\\\" -DDOCDIR=\\\"$docdir\\\""
 CFLAGS="$CFLAGS $INSANE_CFLAGS -D_GNU_SOURCE -DLIBDIR=\\\"$libdir\\\" -DPREFIX=\\\"$prefix\\\" -DDOCDIR=\\\"$docdir\\\""
 
-AC_ARG_ENABLE(libnotify, [  --enable-libnotify  Enable support for OSD notifications (default: no)], [
-    if test "x$enableval" = "xyes" ; then libnotify=yes ; fi
-])
-if test "x${libnotify}" = "xyes" ; then
-    PKG_CHECK_MODULES(NOTIFY_DEPS, libnotify >= 0.4.4, HAVE_NOTIFY=1, NO_NOTIFY=1)
-fi
+AC_ARG_ENABLE(nullout,  [  --disable-nullout       build NULL output plugin (default: enabled)], [enable_nullout=$enableval], [enable_nullout=yes])
+AC_ARG_ENABLE(alsa,     [  --disable-alsa          build ALSA output plugin (default: enabled)], [enable_alsa=$enableval], [enable_alsa=yes])
+AC_ARG_ENABLE(oss,      [  --disable-oss           build Open Sound System output plugin (default: enabled)], [enable_oss=$enableval], [enable_oss=yes])
+AC_ARG_ENABLE(pulse,    [  --disable-pulse         build PulseAudio output plugin (default: enabled)], [enable_pulse=$enableval], [enable_pulse=yes])
+AC_ARG_ENABLE(gtkui,    [  --disable-gtkui         build standard GTK2 user interface plugin (default: enabled)], [enable_gtkui=$enableval], [enable_gtkui=yes])
+AC_ARG_ENABLE(vfs_curl, [  --disable-vfs-curl      build HTTP streaming vfs plugin (default: enabled)], [enable_vfs_curl=$enableval], [enable_vfs_curl=yes])
+AC_ARG_ENABLE(lfm,      [  --disable-lfm           build last.fm/libre.fm scrobbler plugin (default: enabled)], [enable_lfm=$enableval], [enable_lfm=yes])
+AC_ARG_ENABLE(artwork,  [  --disable-artwork       build album art loader plugin (default: enabled)], [enable_artwork=$enableval], [enable_artwork=yes])
+AC_ARG_ENABLE(supereq,  [  --disable-supereq       build SuperEQ DSP plugin (default: enabled)], [enable_supereq=$enableval], [enable_supereq=yes])
+AC_ARG_ENABLE(sid,      [  --disable-sid           build commodore64 SID music player plugin (default: enabled)], [enable_sid=$enableval], [enable_sid=yes])
+AC_ARG_ENABLE(ffap,     [  --disable-ffap          build Monkey's Audio plugin (default: enabled)], [enable_ffap=$enableval], [enable_ffap=yes])
+AC_ARG_ENABLE(vtx,      [  --disable-vtx           build libayemy VTX ZX-Spectrum music player plugin (default: enabled)], [enable_vtx=$enableval], [enable_vtx=yes])
+AC_ARG_ENABLE(adplug,   [  --disable-adplug        build adplug plugin (default: enabled)], [enable_adplug=$enableval], [enable_adplug=yes])
+AC_ARG_ENABLE(hotkeys,  [  --disable-hotkeys       build global hotkeys plugin (default: enabled)], [enable_hotkeys=$enableval], [enable_hotkeys=yes])
+AC_ARG_ENABLE(vorbis,   [  --disable-vorbis        build Ogg Vorbis player plugin (default: enabled)], [enable_vorbis=$enableval], [enable_vorbis=yes])
+AC_ARG_ENABLE(ffmpeg,   [  --disable-ffmpeg        build FFMPEG plugin for WMA, MPC, TTA, etc (default: enabled)], [enable_ffmpeg=$enableval], [enable_ffmpeg=yes])
+AC_ARG_ENABLE(flac,     [  --disable-flac          build FLAC player plugin (default: enabled)], [enable_flac=$enableval], [enable_flac=yes])
+AC_ARG_ENABLE(sndfile,  [  --disable-sndfile       build libsndfile plugin for PCM wave files (default: enabled)], [enable_sndfile=$enableval], [enable_sndfile=yes])
+AC_ARG_ENABLE(wavpack,  [  --disable-wavpack       build wavpack plugin (default: enabled)], [enable_wavpack=$enableval], [enable_wavpack=yes])
+AC_ARG_ENABLE(cdda,     [  --disable-cdda          build CD-Audio plugin (default: enabled)], [enable_cdda=$enableval], [enable_cdda=yes])
 
-AC_ARG_ENABLE(nullout, [  --enable-nullout Enable NULL output plugin (default: yes)], [if test "x$enableval" = "xno" ; then enable_nullout=no ; fi])
-AC_ARG_ENABLE(alsa, [  --enable-alsa  Enable ALSA output plugin (default: yes)], [ if test "x$enableval" = "xno" ; then enable_alsa=no ; fi])
-AC_ARG_ENABLE(oss, [  --enable-oss  Enable Open Sound System output plugin (default: yes)], [if test "x$enableval" = "xno" ; then enable_oss=no ; fi])
-AC_ARG_ENABLE(pulse, [  --enable-pulse   Enable PulseAudio output plugin (default: yes)], [if test "x$enableval" = "xno" ; then enable_pulse=no ; fi])
-AC_ARG_ENABLE(gtkui, [  --enable-gtkui  Enable standard GTK2 user interface plugin (default: yes)], [if test "x$enableval" = "xno" ; then enable_gtkui=no ; fi])
-AC_ARG_ENABLE(vfs_curl, [  --enable-vfs-curl  Enable HTTP streaming vfs plugin (default: yes)], [if test "x$enableval" = "xno" ; then enable_vfs_curl=no ; fi])
-AC_ARG_ENABLE(lfm, [  --enable-lfm  Enable last.fm/libre.fm scrobbler plugin (default: yes)], [if test "x$enableval" = "xno" ; then enable_lfm=no ; fi])
-AC_ARG_ENABLE(artwork, [  --enable-artwork  Enable album art loader plugin (default: yes)], [if test "x$enableval" = "xno" ; then enable_artwork="no" ; fi])
-AC_ARG_ENABLE(supereq, [  --enable-supereq  Enable SuperEQ DSP plugin (default: yes)], [if test "x$enableval" = "xno" ; then enable_supereq="no" ;  fi])
-AC_ARG_ENABLE(sid, [  --enable-sid  Enable commodore64 SID music player plugin (default: yes)], [if test "x$enableval" = "xno" ; then enable_sid="no" ; fi])
-AC_ARG_ENABLE(ffap, [  --enable-ffap  Enable Monkey's Audio plugin (default: yes)], [if test "x$enableval" = "xno" ; then enable_ffap="no" ; fi])
-AC_ARG_ENABLE(vtx, [  --enable-vtx  Enable libayemy VTX ZX-Spectrum music player plugin (default: yes)], [if test "x$enableval" = "xno" ; then enable_vtx="no" ; fi])
-AC_ARG_ENABLE(adplug, [  --enable-adplug  Enable adplug plugin (default: yes)], [if test "x$enableval" = "xno" ; then enable_adplug="no" ; else enable_adplug="yes"; fi])
-AC_ARG_ENABLE(hotkeys, [  --enable-hotkeys  Enable global hotkeys plugin (default: yes)], [if test "x$enableval" = "xno" ; then enable_hotkeys="no" ; fi])
-AC_ARG_ENABLE(vorbis, [  --enable-vorbis  Enable Ogg Vorbis player plugin (default: yes)], [if test "x$enableval" = "xno" ; then enable_vorbis="no" ; fi])
-AC_ARG_ENABLE(ffmpeg, [  --enable-ffmpeg  Enable FFMPEG plugin for WMA, MPC, TTA, etc (default: yes)], [if test "x$enableval" = "xno" ; then enable_ffmpeg="no" ; fi])
-AC_ARG_ENABLE(flac, [  --enable-flac  Enable FLAC player plugin (default: yes)], [if test "x$enableval" = "xno" ; then enable_flac="no" ; fi])
-AC_ARG_ENABLE(sndfile, [  --enable-sndfile  Enable libsndfile plugin for PCM wave files (default: yes)], [if test "x$enableval" = "xno" ; then enable_sndfile="no" ; fi])
-AC_ARG_ENABLE(wavpack, [  --enable-wavpack  Enable wavpack plugin (default: yes)], [if test "x$enableval" = "xno" ; then enable_wavpack="no" ; fi])
-AC_ARG_ENABLE(cdda, [  --enable-cdda  Enable CD-Audio plugin (default: yes)], [if test "x$enableval" = "xno" ; then enable_cdda="no" ; fi])
+AC_ARG_ENABLE(libnotify, [  --enable-libnotify      include support for OSD notifications into GTKUI plugin (default: no)], [enable_libnotify=$enableval], [enable_libnotify=no])
 
 PKG_CHECK_MODULES(DEPS, samplerate)
+
+if test "x$enable_libnotify" = "xyes" ; then
+    PKG_CHECK_MODULES(NOTIFY_DEPS, libnotify >= 0.4.4, HAVE_NOTIFY=yes, HAVE_NOTIFY=no)
+fi
 
 if test "x$enable_gtkui" != "xno" ; then
     PKG_CHECK_MODULES(GTKUI_DEPS, gtk+-2.0 >= 2.12 gthread-2.0 glib-2.0, HAVE_GTK=yes, HAVE_GTK=no)
@@ -119,7 +118,7 @@ fi
 
 dnl curl lib
 AC_CHECK_LIB([curl], [main], [HAVE_CURL=yes])
-AM_CONDITIONAL(HAVE_CURL, test "x$HAVE_CURL" = "xyes")
+dnl AM_CONDITIONAL(HAVE_CURL, test "x$HAVE_CURL" = "xyes")
 if test "x$HAVE_CURL" = "xyes"; then
     CURL_LIBS="-lcurl"
     AC_SUBST(CURL_LIBS)
@@ -133,7 +132,7 @@ fi
 dnl mpgmad plugin
 if test "x$enable_mpgmad" != "xno" ; then
     AC_CHECK_LIB([mad], [main], [HAVE_LIBMAD=yes])
-    AM_CONDITIONAL(HAVE_LIBMAD, test "x$HAVE_LIBMAD"="xyes")
+dnl    AM_CONDITIONAL(HAVE_LIBMAD, test "x$HAVE_LIBMAD"="xyes")
     if test "x$HAVE_LIBMAD"="xyes" ; then
         MAD_LIBS="-lmad"
         AC_SUBST(MAD_LIBS)
@@ -145,20 +144,20 @@ dnl vorbis plugin
 if test "x$enable_vorbis" != "xno" ; then
     AC_CHECK_LIB([vorbis], [main], [HAVE_VORBIS=yes])
     AC_CHECK_LIB([vorbisfile], [main], [HAVE_VORBISFILE=yes])
-    AM_CONDITIONAL(HAVE_VORBIS, test "x$HAVE_VORBIS" = "xyes")
-    AM_CONDITIONAL(HAVE_VORBISFILE, test "x$HAVE_VORBISFILE" = "xyes")
     if test "x$HAVE_VORBIS" = "xyes" && test "x$HAVE_VORBISFILE" = "xyes" ; then
         HAVE_VORBISPLUGIN=yes
         VORBIS_LIBS="-lvorbis -lvorbisfile"
         AC_SUBST(VORBIS_LIBS)
         PLUGINS_DIRS="$PLUGINS_DIRS plugins/vorbis"
     fi
+    dnl AM_CONDITIONAL(HAVE_VORBIS, test "x$HAVE_VORBIS" = "xyes")
+    dnl AM_CONDITIONAL(HAVE_VORBISFILE, test "x$HAVE_VORBISFILE" = "xyes")
 fi
 
 dnl flac plugin
 if test "x$enable_flac" != "xno" ; then
     AC_CHECK_LIB([FLAC], [main], [HAVE_FLAC=yes])
-    AM_CONDITIONAL(HAVE_FLAC, test "x$HAVE_FLAC" = "xyes")
+dnl    AM_CONDITIONAL(HAVE_FLAC, test "x$HAVE_FLAC" = "xyes")
     if test "x$HAVE_FLAC" = "xyes" ; then
         HAVE_FLACPLUGIN=yes
         FLAC_LIBS="-lFLAC"
@@ -170,7 +169,7 @@ fi
 dnl wavpack plugin
 if test "x$enable_wavpack" != "xno" ; then
     AC_CHECK_LIB([wavpack], [main], [HAVE_WAVPACK=yes])
-    AM_CONDITIONAL(HAVE_WAVPACK, test "x$HAVE_WAVPACK" = "xyes")
+dnl    AM_CONDITIONAL(HAVE_WAVPACK, test "x$HAVE_WAVPACK" = "xyes")
     if test "x$HAVE_WAVPACK" = "xyes" ; then
         HAVE_WAVPACKPLUGIN=yes
         WAVPACK_LIBS="-lwavpack"
@@ -182,7 +181,7 @@ fi
 dnl libsndfile plugin
 if test "x$enable_sndfile" != "xno" ; then
     AC_CHECK_LIB([sndfile], [main], [HAVE_SNDFILE=yes])
-    AM_CONDITIONAL(HAVE_SNDFILE, test "x$HAVE_SNDFILE" = "xyes")
+dnl    AM_CONDITIONAL(HAVE_SNDFILE, test "x$HAVE_SNDFILE" = "xyes")
     if test "x$HAVE_SNDFILE" = "xyes" ; then
         HAVE_SNDFILEPLUGIN=yes
         SNDFILE_LIBS="-lsndfile"
@@ -217,8 +216,8 @@ dnl cdda plugin
 if test "x$enable_cdda" != "xno" ; then
     AC_CHECK_LIB([cdio], [main], [HAVE_CDIO=yes])
     AC_CHECK_LIB([cddb], [main], [HAVE_CDDB=yes])
-    AM_CONDITIONAL(HAVE_CDIO, test "x$HAVE_CDIO" = "xyes")
-    AM_CONDITIONAL(HAVE_CDDB, test "x$HAVE_CDDB" = "xyes")
+dnl    AM_CONDITIONAL(HAVE_CDIO, test "x$HAVE_CDIO" = "xyes")
+dnl    AM_CONDITIONAL(HAVE_CDDB, test "x$HAVE_CDDB" = "xyes")
     if test "x$HAVE_CDIO" = "xyes" && test "x$HAVE_CDDB" = "xyes" ; then
         HAVE_CDDAPLUGIN=yes
         CDDA_LIBS="-lcdio -lcddb"
@@ -235,7 +234,7 @@ if test "x$enable_gtkui" != "xno" ; then
         PLUGINS_DIRS="$PLUGINS_DIRS plugins/gtkui"
     fi
 fi
-AM_CONDITIONAL(HAVE_GTK, test "x$HAVE_GTK" = "xyes")
+dnl AM_CONDITIONAL(HAVE_GTK, test "x$HAVE_GTK" = "xyes")
 
 if test "x$enable_alsa" != "xno" ; then
     if test "x$HAVE_ALSA" = "xyes" ; then
@@ -244,10 +243,10 @@ if test "x$enable_alsa" != "xno" ; then
         PLUGINS_DIRS="$PLUGINS_DIRS plugins/alsa"
     fi
 fi
-AM_CONDITIONAL(HAVE_ALSA, test "x$HAVE_ALSA" = "xyes")
+dnl AM_CONDITIONAL(HAVE_ALSA, test "x$HAVE_ALSA" = "xyes")
 
 if test "x$enable_ffmpeg" != "xno" ; then
-    AM_CONDITIONAL(HAVE_FFMPEG, test "x$HAVE_FFMPEG" = "xyes")
+dnl    AM_CONDITIONAL(HAVE_FFMPEG, test "x$HAVE_FFMPEG" = "xyes")
     if test "x$HAVE_FFMPEG" = "xyes" ; then
         HAVE_FFMPEGPLUGIN=yes
         AC_CHECK_HEADER([ffmpeg/avformat.h], FFMPEG_DEPS_CFLAGS="$FFMPEG_DEPS_CFLAGS -D FFMPEG_OLD")
@@ -257,8 +256,8 @@ if test "x$enable_ffmpeg" != "xno" ; then
     fi
 fi
 
-AM_CONDITIONAL(HAVE_NOTIFY, test $HAVE_NOTIFY)
-if test ${HAVE_NOTIFY}; then
+dnl AM_CONDITIONAL(HAVE_NOTIFY, test "x$HAVE_NOTIFY" = "xyes")
+if test "x$HAVE_NOTIFY" = "xyes"; then
     AC_DEFINE(HAVE_NOTIFY,1,[Use libnotify])
     AC_SUBST(NOTIFY_DEPS_CFLAGS)
     AC_SUBST(NOTIFY_DEPS_LIBS)
@@ -313,7 +312,7 @@ if test "x$enable_oss" != "xno"; then
 fi
 
 if test "x$enable_pulseaudio" != "xno"; then
-    AM_CONDITIONAL(HAVE_PULSE, test "x$HAVE_PULSE" = "xyes")
+dnl    AM_CONDITIONAL(HAVE_PULSE, test "x$HAVE_PULSE" = "xyes")
     if test "x$HAVE_PULSE" = "xyes"; then
         HAVE_PULSEPLUGIN=yes
         AC_SUBST(PULSE_DEPS_CFLAGS)

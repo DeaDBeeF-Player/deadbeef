@@ -1,4 +1,3 @@
-if HAVE_GTK
 gtkuidir = $(libdir)/$(PACKAGE)
 pkglib_LTLIBRARIES = gtkui.la
 
@@ -44,5 +43,4 @@ if MAINTAINER_MODE
 CLEANFILES =								\
 	$(BUILT_SOURCES)						\
 	$(gtkui_VALABUILTSOURCES)
-endif
 endif
