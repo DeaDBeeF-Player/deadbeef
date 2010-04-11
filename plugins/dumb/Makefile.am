@@ -1,3 +1,4 @@
+if HAVE_DUMB
 dumbpath=@top_srcdir@/plugins/dumb/dumb-kode54
 
 EXTRA_DIST = $(dumbpath)/readme.txt $(dumbpath)/ChangeLog $(dumbpath)/licence.txt $(dumbpath)/release.txt $(dumbpath)/todo.txt
@@ -103,4 +104,4 @@ dumb-kode54/src/helpers/resample.inc\
 dumb-kode54/src/helpers/resamp2.inc\
 dumb-kode54/src/helpers/resamp3.inc\
 cdumb.c
-
+endif

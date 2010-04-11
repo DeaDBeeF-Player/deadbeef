@@ -1,3 +1,4 @@
+if HAVE_ADPLUG
 adplugpath=@top_srcdir@/plugins/adplug
 
 adlibdir = $(libdir)/$(PACKAGE)
@@ -133,5 +134,4 @@ adplug_la_SOURCES = adplug-db.cpp\
 				   adplug/xsm.h
 
 adplug_la_LDFLAGS = -module
-
-
+endif

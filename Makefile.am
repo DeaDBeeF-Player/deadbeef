@@ -20,7 +20,7 @@ deadbeef_SOURCES =\
 	vfs.c vfs.h vfs_stdio.c\
 	timeline.c timeline.h\
 	md5/md5.c md5/md5.h\
-	metacache.c
+	metacache.c metacache.h
 
 sdkdir = $(pkgincludedir)
 sdk_HEADERS = deadbeef.h

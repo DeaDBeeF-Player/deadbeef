@@ -19,7 +19,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "gme/gme.h"
-#include "deadbeef.h"
+#include "../../deadbeef.h"
 
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;

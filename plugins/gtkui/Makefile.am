@@ -1,3 +1,4 @@
+if HAVE_GTKUI
 gtkuidir = $(libdir)/$(PACKAGE)
 pkglib_LTLIBRARIES = gtkui.la
 
@@ -17,7 +18,7 @@ gtkui_la_SOURCES = $(gtkui_VALABUILTSOURCES)\
 				   gtkui.c gtkui.h\
 				   callbacks.c interface.c support.c callbacks.h interface.h support.h\
 				   ddblistview.c ddblistview.h\
-				   mainplaylist.c\
+				   mainplaylist.c mainplaylist.h\
 				   drawing.h gdkdrawing.c\
 				   progress.c progress.h\
 				   search.c search.h\
@@ -43,4 +44,5 @@ if MAINTAINER_MODE
 CLEANFILES =								\
 	$(BUILT_SOURCES)						\
 	$(gtkui_VALABUILTSOURCES)
+endif
 endif

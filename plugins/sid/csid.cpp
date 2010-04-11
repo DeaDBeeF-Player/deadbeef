@@ -28,7 +28,7 @@
 //#include "md5.h"
 // #include "sidplay/sidendian.h"
 
-#include "deadbeef.h"
+#include "../../deadbeef.h"
 #include "csid.h"
 
 extern DB_decoder_t sid_plugin;
