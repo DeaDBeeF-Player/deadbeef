@@ -729,6 +729,19 @@ junk_find_id3v1 (DB_FILE *fp) {
 }
 
 int
+junk_add_track_meta (playItem_t *it, char *track) {
+    char *slash = strchr (track, '/');
+    if (slash) {
+        // split into track/number
+        *slash = 0;
+        slash++;
+        pl_add_meta (it, "numtracks", slash);
+    }
+    pl_add_meta (it, "track", track);
+    return 0;
+}
+
+int
 junk_apev2_read_full (playItem_t *it, DB_apev2_tag_t *tag_store, DB_FILE *fp) {
 //    trace ("trying to read ape tag\n");
     // try to read footer, position must be already at the EOF right before
@@ -777,6 +790,7 @@ junk_apev2_read_full (playItem_t *it, DB_apev2_tag_t *tag_store, DB_FILE *fp) {
         return -1;
     }
 
+#if 0
     // this code ensures that APEv2 frames don't get appended to
     // existing metainfo, but all APEv2 frames with the same key are
     // appended
@@ -794,6 +808,7 @@ junk_apev2_read_full (playItem_t *it, DB_apev2_tag_t *tag_store, DB_FILE *fp) {
         "totaltracks", "numtracks", it ? pl_find_meta (it, "numtracks") : NULL,
         NULL
     };
+#endif
 
     int i;
     for (i = 0; i < numitems; i++) {
@@ -862,21 +877,20 @@ junk_apev2_read_full (playItem_t *it, DB_apev2_tag_t *tag_store, DB_FILE *fp) {
                     }
 
                     int m;
-                    for (m = 0; metainfo[m]; m+=3) {
-                        if (!metainfo[m+2] && !strcasecmp (key, metainfo[m])) {
-                            pl_append_meta (it, metainfo[m+1], value);
+                    for (m = 0; frame_mapping[m]; m += FRAME_MAPPINGS) {
+                        if (frame_mapping[m + MAP_APEV2] && !strcasecmp (key, frame_mapping[m + MAP_APEV2])) {
+                            if (!strcmp (frame_mapping[m+MAP_DDB], "track")) {
+                                junk_add_track_meta (it, value);
+                            }
+                            else {
+                                pl_append_meta (it, frame_mapping[m+MAP_DDB], value);
+                            }
                             break;
                         }
                     }
 
-                    if (!metainfo[m]) {
-                        if (!strcasecmp (key, "track")) {
-                            pl_add_meta (it, "track", value);
-                        }
-                        else if (!strcasecmp (key, "cuesheet")) {
-                            pl_add_meta (it, "cuesheet", value);
-                        }
-                        else if (!strncasecmp (key, "replaygain_album_gain", 21)) {
+                    if (!frame_mapping[m]) {
+                        if (!strncasecmp (key, "replaygain_album_gain", 21)) {
                             it->replaygain_album_gain = atof (value);
                             trace ("album_gain=%s\n", value);
                         }
@@ -2386,19 +2400,6 @@ junk_id3v2_load_txx (int version_major, playItem_t *it, uint8_t *readptr, int sy
 }
 
 int
-junk_id3v2_add_track (playItem_t *it, char *track) {
-    char *slash = strchr (track, '/');
-    if (slash) {
-        // split into track/number
-        *slash = 0;
-        slash++;
-        pl_add_meta (it, "numtracks", slash);
-    }
-    pl_add_meta (it, "track", track);
-    return 0;
-}
-
-int
 junk_id3v2_add_genre (playItem_t *it, char *genre) {
     if (genre[0] == '(') {
         // find matching parenthesis
@@ -2680,7 +2681,7 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
 
                             if (text && *text) {
                                 if (!strcmp (frameid, "TRCK")) { // special case for track/totaltracks
-                                    junk_id3v2_add_track (it, text);
+                                    junk_add_track_meta (it, text);
                                 }
                                 else if (!strcmp (frameid, "TCON")) {
                                     junk_id3v2_add_genre (it, text);
@@ -2783,7 +2784,7 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                             char *text = convstr_id3v2 (version_major, readptr[0], readptr+1, synched_size-1);
                             if (text && *text) {
                                 if (!strcmp (frameid, "TRCK")) { // special case for track/totaltracks
-                                    junk_id3v2_add_track (it, text);
+                                    junk_add_track_meta (it, text);
                                 }
                                 else if (!strcmp (frameid, "TCON")) {
                                     junk_id3v2_add_genre (it, text);
@@ -2802,7 +2803,6 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                     readptr += sz;
                     continue;
                 }
-
 
                 if (!strcmp (frameid, "COM")) {
                     if (synched_size < 6) {
@@ -2838,119 +2838,6 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
         }
     }
     if (!err && it) {
-        return 0;
-// {{{ fold
-#if 0
-        if (artist) {
-            pl_add_meta (it, "artist", artist);
-            free (artist);
-        }
-        if (album) {
-            pl_add_meta (it, "album", album);
-            free (album);
-        }
-        if (band) {
-            pl_add_meta (it, "band", band);
-            free (band);
-        }
-        if (performer) {
-            pl_add_meta (it, "performer", performer);
-            free (performer);
-        }
-        if (composer) {
-            pl_add_meta (it, "composer", composer);
-            free (composer);
-        }
-        if (track) {
-            char *slash = strchr (track, '/');
-            if (slash) {
-                // split into track/number
-                *slash = 0;
-                slash++;
-                pl_add_meta (it, "numtracks", slash);
-            }
-            pl_add_meta (it, "track", track);
-            free (track);
-        }
-        if (title) {
-            pl_add_meta (it, "title", title);
-            free (title);
-        }
-        if (genre) {
-            if (genre[0] == '(') {
-                // find matching parenthesis
-                char *p = &genre[1];
-                while (*p && *p != ')') {
-                    if (!isdigit (*p)) {
-                        break;
-                    }
-                    p++;
-                }
-                if (*p == ')' && p[1] == 0) {
-                    *p = 0;
-                    memmove (genre, genre+1, p-genre);
-                }
-            }
-            // check if it is numeric
-            if (genre) {
-                const char *p = genre;
-                while (*p) {
-                    if (!isdigit (*p)) {
-                        break;
-                    }
-                    p++;
-                }
-                if (*p == 0 && p > genre) {
-                    int genre_id = atoi (genre);
-                    if (genre_id >= 0) {
-                        const char *genre_str = NULL;
-                        if (genre_id <= 147) {
-                            genre_str = junk_genretbl[genre_id];
-                        }
-                        else if (genre_id == 0xff) {
-                            genre_str = "None";
-                        }
-                        if (genre_str) {
-                            free (genre);
-                            genre = strdup (genre_str);
-                        }
-                    }
-                }
-                else if (!strcmp (genre, "CR")) {
-                    free (genre);
-                    genre = strdup ("Cover");
-                }
-                else if (!strcmp (genre, "RX")) {
-                    free (genre);
-                    genre = strdup ("Remix");
-                }
-            }
-
-            pl_add_meta (it, "genre", genre);
-            free (genre);
-        }
-        if (year) {
-            pl_add_meta (it, "year", year);
-            free (year);
-        }
-        if (copyright) {
-            pl_add_meta (it, "copyright", copyright);
-            free (copyright);
-        }
-        if (vendor) {
-            pl_add_meta (it, "vendor", vendor);
-            free (vendor);
-        }
-        if (comment) {
-            pl_add_meta (it, "comment", comment);
-            free (comment);
-        }
-        if (disc) {
-            pl_add_meta (it, "disc", disc);
-            free (disc);
-        }
-#endif
-// }}}
         return 0;
     }
     else if (err) {

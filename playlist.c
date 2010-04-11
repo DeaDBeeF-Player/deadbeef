@@ -1516,10 +1516,30 @@ pl_append_meta (playItem_t *it, const char *key, const char *value) {
         pl_add_meta (it, key, value);
     }
     else {
+        // check for duplicate data
+        const char *str = old;
+        int len;
+        while (str) {
+            char *next = strchr (str, '\n');
+
+            if (next) {
+                len = next - str;
+                next++;
+            }
+            else {
+                len = strlen (str);
+            }
+
+            if (!strncmp (str, value, len)) {
+                return;
+            }
+
+            str = next;
+        }
         int sz = strlen (old) + strlen (value) + 2;
-        char str[sz];
-        snprintf (str, sz, "%s\n%s", old, value);
-        pl_replace_meta (it, key, str);
+        char out[sz];
+        snprintf (out, sz, "%s\n%s", old, value);
+        pl_replace_meta (it, key, out);
     }
 }
 
@@ -2782,8 +2802,11 @@ pl_items_copy_junk (playItem_t *from, playItem_t *first, playItem_t *last) {
         const char *data = pl_find_meta (from, metainfo[m]);
         if (data) {
             playItem_t *i;
-            for (i = first; i != last; i = i->next[PL_MAIN]) {
+            for (i = first; ; i = i->next[PL_MAIN]) {
                 pl_add_meta (i, metainfo[m], data);
+                if (i == last) {
+                    break;
+                }
             }
         }
     }
