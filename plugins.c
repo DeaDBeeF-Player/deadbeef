@@ -241,6 +241,7 @@ static DB_functions_t deadbeef_api = {
     .plug_activate = plug_activate,
     .plug_get_decoder_id = plug_get_decoder_id,
     .plug_remove_decoder_id = plug_remove_decoder_id,
+    .plug_get_for_id = plug_get_for_id,
     // misc utilities
     .is_local_file = plug_is_local_file,
 };
@@ -926,6 +927,17 @@ plug_get_decoder_for_id (const char *id) {
     DB_decoder_t **plugins = plug_get_decoder_list ();
     for (int c = 0; plugins[c]; c++) {
         if (!strcmp (id, plugins[c]->plugin.id)) {
+            return plugins[c];
+        }
+    }
+    return NULL;
+}
+
+DB_plugin_t *
+plug_get_for_id (const char *id) {
+    DB_plugin_t **plugins = plug_get_list ();
+    for (int c = 0; plugins[c]; c++) {
+        if (plugins[c]->id && !strcmp (id, plugins[c]->id)) {
             return plugins[c];
         }
     }

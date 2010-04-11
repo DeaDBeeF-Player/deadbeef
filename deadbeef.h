@@ -494,6 +494,7 @@ typedef struct {
     int (*plug_activate) (struct DB_plugin_s *p, int activate);
     const char * (*plug_get_decoder_id) (const char *id);
     void (*plug_remove_decoder_id) (const char *id);
+    struct DB_plugin_s *(*plug_get_for_id) (const char *id);
     // misc utilities
     int (*is_local_file) (const char *fname); // returns 1 for local filename, 0 otherwise
 } DB_functions_t;
