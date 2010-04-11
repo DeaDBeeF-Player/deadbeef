@@ -1,12 +1,13 @@
-noinst_LIBRARIES = libdumb.a
-
-dumbpath=@top_srcdir@/dumb/dumb-kode54
+dumbpath=@top_srcdir@/plugins/dumb/dumb-kode54
 
 EXTRA_DIST = $(dumbpath)/readme.txt $(dumbpath)/ChangeLog $(dumbpath)/licence.txt $(dumbpath)/release.txt $(dumbpath)/todo.txt
 
-AM_CFLAGS = $(CFLAGS) -I$(dumbpath)/include
+pkglib_LTLIBRARIES = dumb.la
 
-libdumb_a_SOURCES =\
+AM_CFLAGS = $(CFLAGS) -I$(dumbpath)/include
+dumb_la_LDFLAGS = -module
+
+dumb_la_SOURCES =\
 dumb-kode54/src/it/readam.c\
 dumb-kode54/src/it/readstm.c\
 dumb-kode54/src/it/loads3m.c\
@@ -100,4 +101,6 @@ dumb-kode54/winamp/out.h\
 dumb-kode54/winamp/gui.h\
 dumb-kode54/src/helpers/resample.inc\
 dumb-kode54/src/helpers/resamp2.inc\
-dumb-kode54/src/helpers/resamp3.inc
+dumb-kode54/src/helpers/resamp3.inc\
+cdumb.c
+

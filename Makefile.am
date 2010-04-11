@@ -1,10 +1,6 @@
-SUBDIRS = ${MPGMAD_DIR}\
-		  dumb\
-		  pixmaps\
+SUBDIRS = pixmaps\
 		  icons\
 		  ${PLUGINS_DIRS}
-
-dumbpath=@top_srcdir@/dumb
 
 bin_PROGRAMS = deadbeef
 
@@ -23,14 +19,14 @@ deadbeef_SOURCES =\
 	optmath.h\
 	vfs.c vfs.h vfs_stdio.c\
 	timeline.c timeline.h\
-	cdumb.c\
 	md5/md5.c md5/md5.h\
 	metacache.c
 
 sdkdir = $(pkgincludedir)
 sdk_HEADERS = deadbeef.h
 
-deadbeef_LDADD = $(LDADD) $(DEPS_LIBS) $(ICONV_LIB) dumb/libdumb.a -lstdc++ -lm
+#deadbeef_LDADD = $(LDADD) $(DEPS_LIBS) $(ICONV_LIB) -lstdc++ -lm
+deadbeef_LDADD = $(LDADD) $(DEPS_LIBS) $(ICONV_LIB) -lm
 
 AM_CFLAGS = $(DEPS_CFLAGS) -std=c99
 AM_CPPFLAGS = $(DEPS_CFLAGS)

@@ -18,8 +18,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "dumb/dumb-kode54/include/dumb.h"
-#include "dumb/dumb-kode54/include/internal/it.h"
+#include "dumb.h"
+#include "internal/it.h"
 #include "deadbeef.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }

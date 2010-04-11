@@ -72,7 +72,8 @@ AC_ARG_ENABLE(flac,     [  --disable-flac          build FLAC player plugin (def
 AC_ARG_ENABLE(sndfile,  [  --disable-sndfile       build libsndfile plugin for PCM wave files (default: enabled)], [enable_sndfile=$enableval], [enable_sndfile=yes])
 AC_ARG_ENABLE(wavpack,  [  --disable-wavpack       build wavpack plugin (default: enabled)], [enable_wavpack=$enableval], [enable_wavpack=yes])
 AC_ARG_ENABLE(cdda,     [  --disable-cdda          build CD-Audio plugin (default: enabled)], [enable_cdda=$enableval], [enable_cdda=yes])
-AC_ARG_ENABLE(gme,      [  --disable-gme           build Game Music Emu plugin for NFS, AY, etc (default: enabled)], [enable_cdda=$enableval], [enable_gme=yes])
+AC_ARG_ENABLE(gme,      [  --disable-gme           build Game Music Emu plugin for NFS, AY, etc (default: enabled)], [enable_gme=$enableval], [enable_gme=yes])
+AC_ARG_ENABLE(dumb,      [  --disable-dumb         build D.U.M.B. plugin for MOD, S3M and other tracker formats (default: enabled)], [enable_dumb=$enableval], [enable_dumb=yes])
 
 AC_ARG_ENABLE(libnotify, [  --enable-libnotify      include support for OSD notifications into GTKUI plugin (default: no)], [enable_libnotify=$enableval], [enable_libnotify=no])
 
@@ -364,6 +365,11 @@ if test "x$enable_gme" != "xno" ; then
     PLUGINS_DIRS="$PLUGINS_DIRS plugins/gme"
 fi
 
+if test "x$enable_dumb" != "xno" ; then
+    HAVE_DUMB=yes
+    PLUGINS_DIRS="$PLUGINS_DIRS plugins/dumb"
+fi
+
 AC_SUBST(PLUGINS_DIRS)
 
 echo
@@ -391,7 +397,7 @@ AC_DEFUN([PRINT_PLUGIN_INFO],
 
 PRINT_PLUGIN_INFO([stdio],[Standard IO plugin],[true])
 PRINT_PLUGIN_INFO([gme],[chiptune music player based on GME],[test "x$HAVE_GME" = "xyes"])
-PRINT_PLUGIN_INFO([dumb],[module player based on DUMB library],[true])
+PRINT_PLUGIN_INFO([dumb],[module player based on DUMB library],[test "x$HAVE_DUMB" = "xyes"])
 PRINT_PLUGIN_INFO([nullout],[NULL output],[test "x$HAVE_NULLOUT" = "xyes"])
 PRINT_PLUGIN_INFO([alsa],[ALSA output],[test "x$HAVE_ALSA" = "xyes"])
 PRINT_PLUGIN_INFO([sid],[SID player based on libsidplay2],[test "x$HAVE_SID" = "xyes"])
@@ -428,7 +434,7 @@ plugins/gme/Makefile
 plugins/gme/Game_Music_Emu-0.5.2/Makefile
 plugins/gme/Game_Music_Emu-0.5.2/gme/Makefile
 plugins/sid/sidplay-libs/Makefile
-dumb/Makefile
+plugins/dumb/Makefile
 plugins/alsa/Makefile
 plugins/hotkeys/Makefile
 plugins/lastfm/Makefile

@@ -1,2 +1,1 @@
-PLUG(dumb)
 PLUG(stdio)
