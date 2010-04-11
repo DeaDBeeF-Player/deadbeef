@@ -558,9 +558,9 @@ main (int argc, char *argv[]) {
         close (s);
         exit (0);
     }
-    else {
-        perror ("INFO: failed to connect to existing session:");
-    }
+//    else {
+//        perror ("INFO: failed to connect to existing session:");
+//    }
     close(s);
 
     // hack: report nowplaying
