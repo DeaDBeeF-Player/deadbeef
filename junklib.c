@@ -2434,17 +2434,14 @@ junk_id3v2_add_genre (playItem_t *it, char *genre) {
                     genre_str = "None";
                 }
                 if (genre_str) {
-                    free (genre);
                     genre = strdup (genre_str);
                 }
             }
         }
         else if (!strcmp (genre, "CR")) {
-            free (genre);
             genre = strdup ("Cover");
         }
         else if (!strcmp (genre, "RX")) {
-            free (genre);
             genre = strdup ("Remix");
         }
     }
