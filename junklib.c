@@ -3155,8 +3155,8 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
                 if (val && *val) {
                     if (strcmp (frm_name, "TXXX")) {
                         trace ("add_frame %s %s\n", frm_name, val);
-                        //junk_id3v2_add_text_frame (&id3v2, frm_name, val);
-                        junk_id3v2_add_text_frame (&id3v2, frm_name, "test line 1\nтестовая строка №2");
+                        junk_id3v2_add_text_frame (&id3v2, frm_name, val);
+                        //junk_id3v2_add_text_frame (&id3v2, frm_name, "test line 1\nтестовая строка №2");
                     }
                     else {
                         for (int txx = 0; txx_mapping[txx]; txx += 2) {
