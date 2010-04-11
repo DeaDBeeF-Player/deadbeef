@@ -24,6 +24,12 @@
 #endif
 
 #include <gtk/gtk.h>
+
+// workaround to make older gtk compatible with vala codegen
+#if !GTK_CHECK_VERSION(2,14,0)
+#define gtk_widget_get_window(widget) ((widget)->window)
+#endif
+
 #include "../../deadbeef.h"
 
 extern DB_functions_t *deadbeef;
