@@ -62,3 +62,5 @@ Vgm_Emu.h\
 Vgm_Emu_Impl.h\
 Ym2413_Emu.h\
 Ym2612_Emu.h
+
+AM_CPPFLAGS = $(CXXFLAGS) -fPIC

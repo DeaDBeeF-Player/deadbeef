@@ -1,13 +1,10 @@
 SUBDIRS = ${MPGMAD_DIR}\
-		  gme/Game_Music_Emu-0.5.2\
-		  gme/Game_Music_Emu-0.5.2/gme\
 		  dumb\
 		  pixmaps\
 		  icons\
 		  ${PLUGINS_DIRS}
 
 dumbpath=@top_srcdir@/dumb
-gmepath=@top_srcdir@/gme/Game_Music_Emu-0.5.2
 
 bin_PROGRAMS = deadbeef
 
@@ -26,16 +23,16 @@ deadbeef_SOURCES =\
 	optmath.h\
 	vfs.c vfs.h vfs_stdio.c\
 	timeline.c timeline.h\
-	cgme.c cdumb.c\
+	cdumb.c\
 	md5/md5.c md5/md5.h\
 	metacache.c
 
 sdkdir = $(pkgincludedir)
 sdk_HEADERS = deadbeef.h
 
-deadbeef_LDADD = $(LDADD) $(DEPS_LIBS) $(ICONV_LIB) gme/Game_Music_Emu-0.5.2/gme/libgme.a dumb/libdumb.a -lstdc++ -lm
+deadbeef_LDADD = $(LDADD) $(DEPS_LIBS) $(ICONV_LIB) dumb/libdumb.a -lstdc++ -lm
 
-AM_CFLAGS = $(DEPS_CFLAGS) -I$(gmepath) -std=c99
+AM_CFLAGS = $(DEPS_CFLAGS) -std=c99
 AM_CPPFLAGS = $(DEPS_CFLAGS)
 
 docsdir = $(docdir)
