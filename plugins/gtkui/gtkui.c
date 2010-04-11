@@ -786,12 +786,17 @@ gtkui_thread (void *ctx) {
         gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (ts_mi), FALSE);
         gtk_widget_hide (ts);
     }
-    if (deadbeef->conf_get_int ("gtkui.eq.visible", 0)) {
-        gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (eq_mi), TRUE);
-        eq_window_show ();
+    if (!get_supereq_plugin ()) {
+        gtk_widget_hide (GTK_WIDGET (eq_mi));
     }
     else {
-        gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (eq_mi), FALSE);
+        if (deadbeef->conf_get_int ("gtkui.eq.visible", 0)) {
+            gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (eq_mi), TRUE);
+            eq_window_show ();
+        }
+        else {
+            gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (eq_mi), FALSE);
+        }
     }
 
     searchwin = create_searchwin ();

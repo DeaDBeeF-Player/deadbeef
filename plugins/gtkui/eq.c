@@ -40,7 +40,7 @@ amp_to_db (float amp) {
     return 20*log10 (amp);
 }
 
-static DB_supereq_dsp_t *
+DB_supereq_dsp_t *
 get_supereq_plugin (void) {
     DB_dsp_t **plugs = deadbeef->plug_get_dsp_list ();
     for (int i = 0; plugs[i]; i++) {
@@ -273,6 +273,10 @@ on_import_fb2k_preset_clicked                  (GtkButton       *button,
 
 void
 eq_window_show (void) {
+    DB_supereq_dsp_t *eq = get_supereq_plugin ();
+    if (!eq) {
+        return;
+    }
     if (!eqcont) {
         eqcont = gtk_vbox_new (FALSE, 8);
         GtkWidget *parent= lookup_widget (mainwin, "plugins_bottom_vbox");
@@ -338,7 +342,6 @@ eq_window_show (void) {
         g_signal_connect (eqwin, "on_changed", G_CALLBACK (eq_value_changed), 0);
         gtk_widget_set_size_request (eqwin, -1, 200);
 
-        DB_supereq_dsp_t *eq = get_supereq_plugin ();
 
         ddb_equalizer_set_preamp (DDB_EQUALIZER (eqwin), amp_to_db (eq->get_preamp ()));
         for (int i = 0; i < 18; i++) {
