@@ -269,7 +269,7 @@ if test "x$enable_hotkeys" != "xno" ; then
     AC_CHECK_HEADER([X11/Xlib.h], HAVE_XLIB_H=yes)
     if test "x$HAVE_XLIB_H" = "xyes" ; then
         HOTKEYS_LIBS="-lX11"
-        AC_SUBST(HOTKES_LIBS)
+        AC_SUBST(HOTKEYS_LIBS)
         PLUGINS_DIRS="$PLUGINS_DIRS plugins/hotkeys"
     fi
 fi
