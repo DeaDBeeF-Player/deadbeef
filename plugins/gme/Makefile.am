@@ -8,5 +8,5 @@ pkglib_LTLIBRARIES = gme.la
 gme_la_SOURCES = cgme.c
 gme_la_LDFLAGS = -module
 
-gme_la_LIBADD = $(LDADD) $(gmepath)/gme/libgme.a
+gme_la_LIBADD = $(LDADD) $(gmepath)/gme/libgme.a -lstdc++
 AM_CFLAGS = $(CFLAGS) -I$(gmepath) -std=c99 -fPIC
