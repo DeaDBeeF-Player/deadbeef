@@ -37,8 +37,8 @@
 #include "volume.h"
 #include "vfs.h"
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 static intptr_t streamer_tid;
 static int src_quality;
@@ -1206,14 +1206,20 @@ streamer_decode_src_libsamplerate (uint8_t *bytes, int size) {
     }
     float ratio = p_get_rate ()/(float)samplerate;
     while (size > 0) {
-        //if (streamer_buffering) trace ("src: initsize=%d, size=%d, ratio=%f, src_remaining=%d\n", initsize, size, ratio, src_remaining);
         int n_output_frames = size / sizeof (int16_t) / 2;
         int n_input_frames = n_output_frames * samplerate / p_get_rate () + 100;
         // read data from decoder
-        if (n_input_frames > SRC_BUFFER - src_remaining ) {
+        if (n_input_frames >= SRC_BUFFER - src_remaining ) {
             n_input_frames = SRC_BUFFER - src_remaining;
         }
-        int nread = streamer_read_data_for_src_float (&g_src_in_fbuffer[src_remaining*2], n_input_frames);
+
+        int nread;
+        if (!n_input_frames) {
+            nread = 0;
+        }
+        else {
+            nread = streamer_read_data_for_src_float (&g_src_in_fbuffer[src_remaining*2], n_input_frames);
+        }
         src_remaining += nread;
         if (!src_remaining) {
             trace ("SRC input buffer empty\n");
@@ -1229,29 +1235,21 @@ streamer_decode_src_libsamplerate (uint8_t *bytes, int size) {
 //        trace ("SRC from %d to %d\n", samplerate, p_get_rate ());
         srcdata.end_of_input = 0;//(nread == n_input_frames) ? 0 : 1;
         //if (streamer_buffering)
-//        trace ("src_in: input_frames=%d, output_frames=%d\n", srcdata.input_frames, srcdata.output_frames);
         src_lock ();
         src_set_ratio (src, ratio);
         int src_err = src_process (src, &srcdata);
         src_unlock ();
         if (src_err) {
             const char *err = src_strerror (src_err) ;
-            fprintf (stderr, "src_process error %s\n", err);
+            fprintf (stderr, "src_process error %s\n"
+                    "srcdata.data_in=%p, srcdata.data_out=%p, srcdata.input_frames=%d, srcdata.output_frames=%d, srcdata.src_ratio=%f", err, srcdata.data_in, srcdata.data_out, srcdata.input_frames, srcdata.output_frames, (float)srcdata.src_ratio);
             exit (-1);
         }
-//        if (streamer_buffering)
-//        trace ("src_out: input_frames_used=%d, output_frames_gen=%d\n", srcdata.input_frames_used, srcdata.output_frames_gen);
-//        if (src_remaining == SRC_BUFFER && !srcdata.output_frames_gen) {
-//            assert (0);
-//        }
         // convert back to s16 format
-//        trace ("out frames: %d\n", srcdata.output_frames_gen);
         int genbytes = srcdata.output_frames_gen * 4;
         int bytesread = min(size, genbytes);
-//        trace ("bytesread: %d\n", bytesread);
         float32_to_int16 ((float*)g_src_out_fbuffer, (int16_t*)bytes, bytesread>>1);
         size -= bytesread;
-//        trace ("size: %d\n", size);
         bytes += bytesread;
         // calculate how many unused input samples left
         src_remaining -= srcdata.input_frames_used;
