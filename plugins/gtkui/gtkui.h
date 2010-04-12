@@ -30,6 +30,12 @@
 #define gtk_widget_get_window(widget) ((widget)->window)
 #endif
 
+#if !GTK_CHECK_VERSION(2,18,0)
+#define gtk_widget_set_has_window(widget, has_window) \
+  if (has_window) GTK_WIDGET_UNSET_FLAGS (widget, GTK_NO_WINDOW); \
+  else GTK_WIDGET_SET_FLAGS (widget, GTK_NO_WINDOW);
+#endif
+
 #include "../../deadbeef.h"
 
 extern DB_functions_t *deadbeef;
