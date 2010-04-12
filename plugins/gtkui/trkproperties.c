@@ -80,19 +80,21 @@ on_metadata_edited (GtkCellRendererText *renderer, gchar *path, gchar *new_text,
 // full metadata
 static const char *types[] = {
     "artist", "Artist",
-    "albumartist", "Album Artist",
-//    "band", "Band",
     "title", "Track Title",
-    "track", "Track Number",
+    "performer", "Performer/conductor",
+    "band", "Band / Album artist",
     "album", "Album",
-    "genre", "Genre",
     "year", "Date",
-    "performer", "Performer",
-    "composer", "Composer",
+    "track", "Track Number",
     "numtracks", "Total Tracks",
+    "genre", "Genre",
+    "composer", "Composer",
     "disc", "Disc Number",
     "comment", "Comment",
     "vendor", "Encoded by",
+    // nonstandard frames, let's hide them for now
+//    "<performer>", "<PERFORMER>",
+//    "<albumartist>", "<ALBUM ARTIST>",
     NULL
 };
 

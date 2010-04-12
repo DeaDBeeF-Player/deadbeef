@@ -59,22 +59,22 @@ enum {
 
 static const char *frame_mapping[] = {
     "artist", "TPE1", "TPE1", "TP1", "Artist",
-    "band", "TPE2", "TPE2", "TP2", "Band", // fb2k doesn't understand this as "album artist"
+    "band", "TPE2", "TPE2", "TP2", "Band",
     "disc", "TPOS", "TPOS", "TPA", "Media",
     "title", "TIT2", "TIT2", "TT2", "Title",
     "album", "TALB", "TALB", "TAL", "Album",
     "copyright", "TCOP", "TCOP", "TCO", "Copyright",
     "genre", "TCON", "TCON", "TCO", "Genre",
     "vendor", "TENC", "TENC", "TEN", "ENCODER",
-    "conductor", "TPE3", "TPE3", "TP3", "Conductor",
+    "performer", "TPE3", "TPE3", "TP3", "Performer",
     "composer", "TCOM", "TCOM", "TCM", "Composer",
     "year", "TYER", "TDRC", "TYE", "Year",
     "track", "TRCK", "TRCK", "TRK", "Track",
     "comment", NULL, NULL, NULL, "Comment",
     "cuesheet", NULL, NULL, NULL, "Cuesheet",
-    "performer", "TXXX", "TXXX", "TXX", "Performer", // fb2k only
-    "albumartist", "TXXX", "TXXX", "TXX", "Album artist", // fb2k only
-    "date", "TXXX", "TXXX", "TXX", "Date", // fb2k only
+//    "<performer>", "TXXX", "TXXX", "TXX", "Performer", // fb2k only
+//    "<albumartist>", "TXXX", "TXXX", "TXX", "Album artist", // fb2k only
+//    "date", "TXXX", "TXXX", "TXX", "Date", // fb2k only
     NULL
 };
 
