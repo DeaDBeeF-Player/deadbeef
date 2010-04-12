@@ -6,7 +6,7 @@ EXTRA_DIST = $(dumbpath)/readme.txt $(dumbpath)/ChangeLog $(dumbpath)/licence.tx
 pkglib_LTLIBRARIES = dumb.la
 
 AM_CFLAGS = $(CFLAGS) -I$(dumbpath)/include
-dumb_la_LDFLAGS = -module
+dumb_la_LDFLAGS = -module -lm
 
 dumb_la_SOURCES =\
 dumb-kode54/src/it/readam.c\
