@@ -1,11 +1,8 @@
 dnl Process this file with autoconf to produce a configure script.
-dnl PACKAGE=deadbeef
-dnl VERSION=devel
 AC_INIT([deadbeef], [devel])
 
 AC_CONFIG_HEADER(config.h)
 
-dnl AM_INIT_AUTOMAKE($PACKAGE,$VERSION)
 AM_INIT_AUTOMAKE([1.11 dist-bzip2])
 AM_MAINTAINER_MODE()
 
