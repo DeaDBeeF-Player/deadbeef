@@ -1396,8 +1396,8 @@ pl_item_copy (playItem_t *out, playItem_t *it) {
     DB_metaInfo_t *meta = it->meta;
     while (meta) {
         DB_metaInfo_t *m = malloc (sizeof (DB_metaInfo_t));
-        m->key = meta->key;
-        m->value = metacache_add_string (meta->value); //strdup (meta->value);
+        m->key = metacache_add_string (meta->key);
+        m->value = metacache_add_string (meta->value);
         m->next = NULL;
         if (prev) {
             prev->next = m;
@@ -1439,8 +1439,8 @@ pl_item_free (playItem_t *it) {
         while (it->meta) {
             DB_metaInfo_t *m = it->meta;
             it->meta = m->next;
-            metacache_remove_string (m->key);//free (m->key);
-            metacache_remove_string (m->value);//free (m->value);
+            metacache_remove_string (m->key);
+            metacache_remove_string (m->value);
             free (m);
         }
         free (it);
