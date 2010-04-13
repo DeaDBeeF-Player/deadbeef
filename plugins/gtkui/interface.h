@@ -11,5 +11,4 @@ GtkWidget* create_trackproperties (void);
 GtkWidget* create_editcolumndlg (void);
 GtkWidget* create_prefwin (void);
 GtkWidget* create_editplaylistdlg (void);
-GtkWidget* create_plmenu (void);
 GtkWidget* create_addlocationdlg (void);

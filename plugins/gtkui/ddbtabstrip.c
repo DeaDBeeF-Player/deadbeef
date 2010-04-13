@@ -24,6 +24,14 @@
 #include "interface.h"
 #include "support.h"
 
+#define GLADE_HOOKUP_OBJECT(component,widget,name) \
+  g_object_set_data_full (G_OBJECT (component), name, \
+    gtk_widget_ref (widget), (GDestroyNotify) gtk_widget_unref)
+
+#define GLADE_HOOKUP_OBJECT_NO_REF(component,widget,name) \
+  g_object_set_data (G_OBJECT (component), name, widget)
+
+
 G_DEFINE_TYPE (DdbTabStrip, ddb_tabstrip, GTK_TYPE_WIDGET);
 
 static void
@@ -413,6 +421,152 @@ get_tab_under_cursor (int x) {
     return -1;
 }
 
+void
+on_rename_playlist1_activate           (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    GtkWidget *dlg = create_editplaylistdlg ();
+    gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
+    gtk_window_set_title (GTK_WINDOW (dlg), "Edit playlist");
+    GtkWidget *e = lookup_widget (dlg, "title");
+    char t[100];
+    deadbeef->plt_get_title (tab_clicked, t, sizeof (t));
+    gtk_entry_set_text (GTK_ENTRY (e), t);
+    int res = gtk_dialog_run (GTK_DIALOG (dlg));
+    if (res == GTK_RESPONSE_OK) {
+        const char *text = gtk_entry_get_text (GTK_ENTRY (e));
+        deadbeef->plt_set_title (tab_clicked, text);
+        extern GtkWidget *mainwin;
+    }
+    gtk_widget_destroy (dlg);
+}
+
+
+void
+on_remove_playlist1_activate           (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    if (tab_clicked != -1) {
+        deadbeef->plt_remove (tab_clicked);
+        int playlist = deadbeef->plt_get_curr ();
+        deadbeef->conf_set_int ("playlist.current", playlist);
+    }
+}
+
+void
+on_add_new_playlist1_activate          (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    int playlist = gtkui_add_new_playlist ();
+    if (playlist != -1) {
+        deadbeef->plt_set_curr (playlist);
+        deadbeef->conf_set_int ("playlist.current", playlist);
+        gtk_widget_queue_draw (lookup_widget (mainwin, "tabstrip"));
+    }
+}
+
+#if 0
+void
+on_load_playlist1_activate             (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+
+}
+
+
+void
+on_save_playlist1_activate             (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+
+}
+
+
+void
+on_save_all_playlists1_activate        (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+
+}
+#endif
+
+GtkWidget*
+create_plmenu (void)
+{
+  GtkWidget *plmenu;
+  GtkWidget *rename_playlist1;
+  GtkWidget *remove_playlist1;
+  GtkWidget *add_new_playlist1;
+  GtkWidget *separator11;
+  GtkWidget *load_playlist1;
+  GtkWidget *save_playlist1;
+  GtkWidget *save_all_playlists1;
+
+  plmenu = gtk_menu_new ();
+
+  rename_playlist1 = gtk_menu_item_new_with_mnemonic ("Rename Playlist");
+  gtk_widget_show (rename_playlist1);
+  gtk_container_add (GTK_CONTAINER (plmenu), rename_playlist1);
+
+  remove_playlist1 = gtk_menu_item_new_with_mnemonic ("Remove Playlist");
+  gtk_widget_show (remove_playlist1);
+  gtk_container_add (GTK_CONTAINER (plmenu), remove_playlist1);
+
+  add_new_playlist1 = gtk_menu_item_new_with_mnemonic ("Add New Playlist");
+  gtk_widget_show (add_new_playlist1);
+  gtk_container_add (GTK_CONTAINER (plmenu), add_new_playlist1);
+
+#if 0
+  separator11 = gtk_separator_menu_item_new ();
+  gtk_widget_show (separator11);
+  gtk_container_add (GTK_CONTAINER (plmenu), separator11);
+  gtk_widget_set_sensitive (separator11, FALSE);
+
+  load_playlist1 = gtk_menu_item_new_with_mnemonic ("Load Playlist");
+  gtk_widget_show (load_playlist1);
+  gtk_container_add (GTK_CONTAINER (plmenu), load_playlist1);
+
+  save_playlist1 = gtk_menu_item_new_with_mnemonic ("Save Playlist");
+  gtk_widget_show (save_playlist1);
+  gtk_container_add (GTK_CONTAINER (plmenu), save_playlist1);
+
+  save_all_playlists1 = gtk_menu_item_new_with_mnemonic ("Save All Playlists");
+  gtk_widget_show (save_all_playlists1);
+  gtk_container_add (GTK_CONTAINER (plmenu), save_all_playlists1);
+
+  g_signal_connect ((gpointer) rename_playlist1, "activate",
+                    G_CALLBACK (on_rename_playlist1_activate),
+                    NULL);
+  g_signal_connect ((gpointer) remove_playlist1, "activate",
+                    G_CALLBACK (on_remove_playlist1_activate),
+                    NULL);
+  g_signal_connect ((gpointer) add_new_playlist1, "activate",
+                    G_CALLBACK (on_add_new_playlist1_activate),
+                    NULL);
+  g_signal_connect ((gpointer) load_playlist1, "activate",
+                    G_CALLBACK (on_load_playlist1_activate),
+                    NULL);
+  g_signal_connect ((gpointer) save_playlist1, "activate",
+                    G_CALLBACK (on_save_playlist1_activate),
+                    NULL);
+  g_signal_connect ((gpointer) save_all_playlists1, "activate",
+                    G_CALLBACK (on_save_all_playlists1_activate),
+                    NULL);
+#endif
+
+  /* Store pointers to all widgets, for use by lookup_widget(). */
+  GLADE_HOOKUP_OBJECT_NO_REF (plmenu, plmenu, "plmenu");
+  GLADE_HOOKUP_OBJECT (plmenu, rename_playlist1, "rename_playlist1");
+  GLADE_HOOKUP_OBJECT (plmenu, remove_playlist1, "remove_playlist1");
+  GLADE_HOOKUP_OBJECT (plmenu, add_new_playlist1, "add_new_playlist1");
+//  GLADE_HOOKUP_OBJECT (plmenu, separator11, "separator11");
+//  GLADE_HOOKUP_OBJECT (plmenu, load_playlist1, "load_playlist1");
+//  GLADE_HOOKUP_OBJECT (plmenu, save_playlist1, "save_playlist1");
+//  GLADE_HOOKUP_OBJECT (plmenu, save_all_playlists1, "save_all_playlists1");
+
+  return plmenu;
+}
+
 gboolean
 on_tabstrip_button_press_event           (GtkWidget       *widget,
                                         GdkEventButton  *event)
@@ -565,75 +719,6 @@ on_tabstrip_drag_motion_event          (GtkWidget       *widget,
     }
     return FALSE;
 }
-
-void
-on_rename_playlist1_activate           (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
-    GtkWidget *dlg = create_editplaylistdlg ();
-    gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
-    gtk_window_set_title (GTK_WINDOW (dlg), "Edit playlist");
-    GtkWidget *e = lookup_widget (dlg, "title");
-    char t[100];
-    deadbeef->plt_get_title (tab_clicked, t, sizeof (t));
-    gtk_entry_set_text (GTK_ENTRY (e), t);
-    int res = gtk_dialog_run (GTK_DIALOG (dlg));
-    if (res == GTK_RESPONSE_OK) {
-        const char *text = gtk_entry_get_text (GTK_ENTRY (e));
-        deadbeef->plt_set_title (tab_clicked, text);
-        extern GtkWidget *mainwin;
-    }
-    gtk_widget_destroy (dlg);
-}
-
-
-void
-on_remove_playlist1_activate           (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
-    if (tab_clicked != -1) {
-        deadbeef->plt_remove (tab_clicked);
-        int playlist = deadbeef->plt_get_curr ();
-        deadbeef->conf_set_int ("playlist.current", playlist);
-    }
-}
-
-void
-on_add_new_playlist1_activate          (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
-    int playlist = gtkui_add_new_playlist ();
-    if (playlist != -1) {
-        deadbeef->plt_set_curr (playlist);
-        deadbeef->conf_set_int ("playlist.current", playlist);
-        gtk_widget_queue_draw (lookup_widget (mainwin, "tabstrip"));
-    }
-}
-
-
-void
-on_load_playlist1_activate             (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
-
-}
-
-
-void
-on_save_playlist1_activate             (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
-
-}
-
-
-void
-on_save_all_playlists1_activate        (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
-
-}
-
 void
 ddb_tabstrip_refresh (DdbTabStrip *ts) {
     gtk_widget_queue_draw (GTK_WIDGET (ts));

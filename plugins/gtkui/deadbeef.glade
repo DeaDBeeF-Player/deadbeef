@@ -4514,69 +4514,6 @@ SOCKS5_HOSTNAME</property>
   </child>
 </widget>
 
-<widget class="GtkMenu" id="plmenu">
-
-  <child>
-    <widget class="GtkMenuItem" id="rename_playlist1">
-      <property name="visible">True</property>
-      <property name="label" translatable="yes">Rename Playlist</property>
-      <property name="use_underline">True</property>
-      <signal name="activate" handler="on_rename_playlist1_activate" last_modification_time="Tue, 09 Feb 2010 17:43:59 GMT"/>
-    </widget>
-  </child>
-
-  <child>
-    <widget class="GtkMenuItem" id="remove_playlist1">
-      <property name="visible">True</property>
-      <property name="label" translatable="yes">Remove Playlist</property>
-      <property name="use_underline">True</property>
-      <signal name="activate" handler="on_remove_playlist1_activate" last_modification_time="Tue, 09 Feb 2010 17:43:59 GMT"/>
-    </widget>
-  </child>
-
-  <child>
-    <widget class="GtkMenuItem" id="add_new_playlist1">
-      <property name="visible">True</property>
-      <property name="label" translatable="yes">Add New Playlist</property>
-      <property name="use_underline">True</property>
-      <signal name="activate" handler="on_add_new_playlist1_activate" last_modification_time="Tue, 09 Feb 2010 17:43:59 GMT"/>
-    </widget>
-  </child>
-
-  <child>
-    <widget class="GtkSeparatorMenuItem" id="separator11">
-      <property name="visible">True</property>
-    </widget>
-  </child>
-
-  <child>
-    <widget class="GtkMenuItem" id="load_playlist1">
-      <property name="visible">True</property>
-      <property name="label" translatable="yes">Load Playlist</property>
-      <property name="use_underline">True</property>
-      <signal name="activate" handler="on_load_playlist1_activate" last_modification_time="Tue, 09 Feb 2010 17:43:59 GMT"/>
-    </widget>
-  </child>
-
-  <child>
-    <widget class="GtkMenuItem" id="save_playlist1">
-      <property name="visible">True</property>
-      <property name="label" translatable="yes">Save Playlist</property>
-      <property name="use_underline">True</property>
-      <signal name="activate" handler="on_save_playlist1_activate" last_modification_time="Tue, 09 Feb 2010 17:43:59 GMT"/>
-    </widget>
-  </child>
-
-  <child>
-    <widget class="GtkMenuItem" id="save_all_playlists1">
-      <property name="visible">True</property>
-      <property name="label" translatable="yes">Save All Playlists</property>
-      <property name="use_underline">True</property>
-      <signal name="activate" handler="on_save_all_playlists1_activate" last_modification_time="Tue, 09 Feb 2010 17:43:59 GMT"/>
-    </widget>
-  </child>
-</widget>
-
 <widget class="GtkDialog" id="addlocationdlg">
   <property name="border_width">8</property>
   <property name="visible">True</property>
