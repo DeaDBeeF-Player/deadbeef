@@ -149,11 +149,6 @@ ddb_tabstrip_destroy(GtkObject *object)
   tabstrip = DDB_TABSTRIP (object);
   class = gtk_type_class(gtk_widget_get_type());
 
-  if (tabstrip->backbuf) {
-      g_object_unref (tabstrip->backbuf);
-      tabstrip->backbuf = NULL;
-  }
-
   if (GTK_OBJECT_CLASS (ddb_tabstrip_parent_class)) {
       GTK_OBJECT_CLASS (ddb_tabstrip_parent_class)->destroy (object);
   }
@@ -189,8 +184,6 @@ ddb_tabstrip_init(DdbTabStrip *tabstrip)
     tabstrip->dragpt[1] = 0;
     tabstrip->prev_x = 0;
     tabstrip->movepos = 0;
-    tabstrip->backbuf = NULL;
-    gtk_widget_set_double_buffered (GTK_WIDGET (tabstrip), FALSE);
 }
 
 static int tab_clicked = -1;
@@ -240,17 +233,11 @@ ddb_tabstrip_draw_tab (GtkWidget *widget, GdkDrawable *drawable, int selected, i
         gdk_gc_set_rgb_fg_color (bg, (gtkui_get_tabstrip_base_color (&clr), &clr));//&widget->style->bg[GTK_STATE_NORMAL]); // FIXME: need base color
         gdk_gc_set_rgb_fg_color (outer_frame, (gtkui_get_tabstrip_dark_color (&clr), &clr));
         gdk_gc_set_rgb_fg_color (inner_frame, (gtkui_get_tabstrip_light_color (&clr), &clr));
-//        bg = widget->style->bg_gc[GTK_STATE_NORMAL];
-//        outer_frame = widget->style->dark_gc[GTK_STATE_NORMAL];
-//        inner_frame = widget->style->light_gc[GTK_STATE_NORMAL];
     }
     else {
         gdk_gc_set_rgb_fg_color (bg, (gtkui_get_tabstrip_mid_color (&clr), &clr));
         gdk_gc_set_rgb_fg_color (outer_frame, (gtkui_get_tabstrip_dark_color (&clr), &clr));
         gdk_gc_set_rgb_fg_color (inner_frame, (gtkui_get_tabstrip_mid_color (&clr), &clr));
-//        bg = widget->style->mid_gc[GTK_STATE_NORMAL];
-//        outer_frame = widget->style->dark_gc[GTK_STATE_NORMAL];
-//        inner_frame = widget->style->mid_gc[GTK_STATE_NORMAL];
     }
     gdk_draw_polygon (drawable, bg, TRUE, points_filled, 4);
     gdk_draw_lines (drawable, outer_frame, points_frame1, 9);
@@ -277,11 +264,10 @@ ddb_tabstrip_get_tab_width (DdbTabStrip *ts, int tab) {
 void
 tabstrip_render (DdbTabStrip *ts) {
     GtkWidget *widget = GTK_WIDGET (ts);
-    GdkDrawable *backbuf = ts->backbuf;
+    GdkDrawable *backbuf = gtk_widget_get_window (widget);
     int x = -ts->hscrollpos;
     int w = 0;
     int h = draw_get_font_size ();
-//    gtk_widget_set_size_request (widget, -1, h + 9 + 4);
     h = widget->allocation.height;
     tab_overlap_size = (h-4)/2;
     text_right_padding = h - 3;
@@ -402,11 +388,6 @@ tabstrip_render (DdbTabStrip *ts) {
     g_object_unref (gc);
 }
 
-void
-tabstrip_expose (DdbTabStrip *ts, int x, int y, int w, int h) {
-    gdk_draw_drawable (GTK_WIDGET (ts)->window, GTK_WIDGET (ts)->style->black_gc, ts->backbuf, x, y, x, y, w, h);
-}
-
 static int
 get_tab_under_cursor (int x) {
     int idx;
@@ -484,8 +465,7 @@ on_tabstrip_button_release_event         (GtkWidget       *widget,
         if (ts->prepare || ts->dragging >= 0) {
             ts->dragging = -1;
             ts->prepare = 0;
-            tabstrip_render (ts);
-            tabstrip_expose (ts, 0, 0, widget->allocation.width, widget->allocation.height);
+            gtk_widget_queue_draw (widget);
             if (tab_moved) {
                 deadbeef->pl_save_all ();
                 deadbeef->conf_save ();
@@ -505,13 +485,6 @@ on_tabstrip_configure_event              (GtkWidget       *widget,
     if (height != widget->allocation.height) {
         gtk_widget_set_size_request (widget, -1, height);
     }
-    DdbTabStrip *ts = DDB_TABSTRIP (widget);
-    if (ts->backbuf) {
-        g_object_unref (ts->backbuf);
-        ts->backbuf = NULL;
-    }
-    ts->backbuf = gdk_pixmap_new (widget->window, widget->allocation.width, widget->allocation.height, -1);
-    tabstrip_render (ts);
     return FALSE;
 }
 
@@ -520,7 +493,7 @@ gboolean
 on_tabstrip_expose_event                 (GtkWidget       *widget,
                                         GdkEventExpose  *event)
 {
-    tabstrip_expose (DDB_TABSTRIP (widget), event->area.x, event->area.y, event->area.width, event->area.height);
+    tabstrip_render (DDB_TABSTRIP (widget));
     return FALSE;
 }
 
@@ -573,8 +546,7 @@ on_tabstrip_motion_notify_event          (GtkWidget       *widget,
             ts->dragging = inspos;
             deadbeef->conf_set_int ("playlist.current", ts->dragging);
         }
-        tabstrip_render (ts);
-        tabstrip_expose (ts, 0, 0, widget->allocation.width, widget->allocation.height);
+        gtk_widget_queue_draw (widget);
     }
     return FALSE;
 }
@@ -634,9 +606,7 @@ on_add_new_playlist1_activate          (GtkMenuItem     *menuitem,
     if (playlist != -1) {
         deadbeef->plt_set_curr (playlist);
         deadbeef->conf_set_int ("playlist.current", playlist);
-        DdbTabStrip *ts = DDB_TABSTRIP (lookup_widget (mainwin, "tabstrip"));
-        tabstrip_render (ts);
-        tabstrip_expose (ts, 0, 0, GTK_WIDGET (ts)->allocation.width, GTK_WIDGET (ts)->allocation.height);
+        gtk_widget_queue_draw (lookup_widget (mainwin, "tabstrip"));
     }
 }
 
@@ -666,6 +636,5 @@ on_save_all_playlists1_activate        (GtkMenuItem     *menuitem,
 
 void
 ddb_tabstrip_refresh (DdbTabStrip *ts) {
-    tabstrip_render (ts);
-    tabstrip_expose (ts, 0, 0, GTK_WIDGET (ts)->allocation.width, GTK_WIDGET (ts)->allocation.height);
+    gtk_widget_queue_draw (GTK_WIDGET (ts));
 }
