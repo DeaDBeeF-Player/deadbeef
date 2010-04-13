@@ -517,11 +517,9 @@ ddb_listview_list_realize                    (GtkWidget       *widget,
 {
     GtkTargetEntry entry = {
         .target = "STRING",
-        .flags = GTK_TARGET_SAME_WIDGET/* | GTK_TARGET_OTHER_APP*/,
+        .flags = GTK_TARGET_SAME_APP,
         TARGET_SAMEWIDGET
     };
-    // setup drag-drop source
-//    gtk_drag_source_set (widget, GDK_BUTTON1_MASK, &entry, 1, GDK_ACTION_MOVE);
     // setup drag-drop target
     gtk_drag_dest_set (widget, GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_DROP, &entry, 1, GDK_ACTION_COPY | GDK_ACTION_MOVE);
     gtk_drag_dest_add_uri_targets (widget);
@@ -791,6 +789,12 @@ ddb_listview_list_drag_motion                (GtkWidget       *widget,
 {
     DdbListview *pl = DDB_LISTVIEW (gtk_object_get_data (GTK_OBJECT (widget), "owner"));
     ddb_listview_list_track_dragdrop (pl, y);
+    if (pl->drag_source_playlist != deadbeef->plt_get_curr ()) {
+        gdk_drag_status (drag_context, GDK_ACTION_COPY, time);
+    }
+    else {
+        gdk_drag_status (drag_context, GDK_ACTION_MOVE, time);
+    }
     return FALSE;
 }
 
@@ -1574,7 +1578,7 @@ ddb_listview_list_mousemove (DdbListview *ps, GdkEventMotion *ev, int ex, int ey
                 .info = TARGET_SAMEWIDGET
             };
             GtkTargetList *lst = gtk_target_list_new (&entry, 1);
-            gtk_drag_begin (widget, lst, GDK_ACTION_MOVE, TARGET_SAMEWIDGET, (GdkEvent *)ev);
+            gtk_drag_begin (widget, lst, GDK_ACTION_COPY | GDK_ACTION_MOVE, 1, (GdkEvent *)ev);
         }
     }
     else if (ps->areaselect) {

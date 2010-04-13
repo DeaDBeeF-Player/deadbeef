@@ -91,10 +91,10 @@ ddb_tabstrip_realize (GtkWidget *widget) {
     ddb_tabstrip_send_configure (DDB_TABSTRIP (widget));
     GtkTargetEntry entry = {
         .target = "STRING",
-        .flags = GTK_TARGET_SAME_WIDGET | GTK_TARGET_OTHER_APP,
+        .flags = GTK_TARGET_SAME_APP,
         0
     };
-    gtk_drag_dest_set (widget, GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_DROP, &entry, 1, GDK_ACTION_COPY);
+    gtk_drag_dest_set (widget, GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_DROP, &entry, 1, GDK_ACTION_COPY | GDK_ACTION_MOVE);
     gtk_drag_dest_set_track_motion (widget, TRUE);
 }
 
