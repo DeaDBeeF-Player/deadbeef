@@ -516,6 +516,17 @@ create_plmenu (void)
   gtk_widget_show (add_new_playlist1);
   gtk_container_add (GTK_CONTAINER (plmenu), add_new_playlist1);
 
+  g_signal_connect ((gpointer) rename_playlist1, "activate",
+                    G_CALLBACK (on_rename_playlist1_activate),
+                    NULL);
+  g_signal_connect ((gpointer) remove_playlist1, "activate",
+                    G_CALLBACK (on_remove_playlist1_activate),
+                    NULL);
+  g_signal_connect ((gpointer) add_new_playlist1, "activate",
+                    G_CALLBACK (on_add_new_playlist1_activate),
+                    NULL);
+
+
 #if 0
   separator11 = gtk_separator_menu_item_new ();
   gtk_widget_show (separator11);
@@ -534,15 +545,6 @@ create_plmenu (void)
   gtk_widget_show (save_all_playlists1);
   gtk_container_add (GTK_CONTAINER (plmenu), save_all_playlists1);
 
-  g_signal_connect ((gpointer) rename_playlist1, "activate",
-                    G_CALLBACK (on_rename_playlist1_activate),
-                    NULL);
-  g_signal_connect ((gpointer) remove_playlist1, "activate",
-                    G_CALLBACK (on_remove_playlist1_activate),
-                    NULL);
-  g_signal_connect ((gpointer) add_new_playlist1, "activate",
-                    G_CALLBACK (on_add_new_playlist1_activate),
-                    NULL);
   g_signal_connect ((gpointer) load_playlist1, "activate",
                     G_CALLBACK (on_load_playlist1_activate),
                     NULL);
