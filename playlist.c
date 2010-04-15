@@ -52,8 +52,8 @@
 #define PLAYLIST_MAJOR_VER 1
 #define PLAYLIST_MINOR_VER 1
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 #define SKIP_BLANK_CUE_TRACKS 1
 
@@ -1321,6 +1321,7 @@ pl_get_idx_of (playItem_t *it) {
         idx++;
     }
     if (!c) {
+        UNLOCK;
         return -1;
     }
     UNLOCK;
