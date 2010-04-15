@@ -18,11 +18,13 @@
 */
 #include <gtk/gtk.h>
 #include <string.h>
+#include <assert.h>
 #include "ddbtabstrip.h"
 #include "drawing.h"
 #include "gtkui.h"
 #include "interface.h"
 #include "support.h"
+#include "ddblistview.h"
 
 #define GLADE_HOOKUP_OBJECT(component,widget,name) \
   g_object_set_data_full (G_OBJECT (component), name, \
@@ -92,9 +94,10 @@ ddb_tabstrip_realize (GtkWidget *widget) {
     GtkTargetEntry entry = {
         .target = "STRING",
         .flags = GTK_TARGET_SAME_APP,
-        0
+        TARGET_SAMEWIDGET
     };
     gtk_drag_dest_set (widget, GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_DROP, &entry, 1, GDK_ACTION_COPY | GDK_ACTION_MOVE);
+    gtk_drag_dest_add_uri_targets (widget);
     gtk_drag_dest_set_track_motion (widget, TRUE);
 }
 
@@ -145,6 +148,34 @@ on_tabstrip_drag_motion_event          (GtkWidget       *widget,
                                         gint             y,
                                         guint            time);
 
+gboolean
+on_tabstrip_drag_drop                  (GtkWidget       *widget,
+                                        GdkDragContext  *drag_context,
+                                        gint             x,
+                                        gint             y,
+                                        guint            time);
+
+void
+on_tabstrip_drag_data_received         (GtkWidget       *widget,
+                                        GdkDragContext  *drag_context,
+                                        gint             x,
+                                        gint             y,
+                                        GtkSelectionData *data,
+                                        guint            target_type,
+                                        guint            time);
+
+void
+on_tabstrip_drag_leave                 (GtkWidget       *widget,
+                                        GdkDragContext  *drag_context,
+                                        guint            time);
+
+void
+on_tabstrip_drag_end                   (GtkWidget       *widget,
+                                        GdkDragContext  *drag_context);
+
+static int
+get_tab_under_cursor (int x);
+
 static void
 ddb_tabstrip_destroy(GtkObject *object)
 {
@@ -175,7 +206,73 @@ ddb_tabstrip_class_init(DdbTabStripClass *class)
   widget_class->configure_event = on_tabstrip_configure_event;
   widget_class->motion_notify_event = on_tabstrip_motion_notify_event;
   widget_class->drag_motion = on_tabstrip_drag_motion_event;
+  widget_class->drag_drop = on_tabstrip_drag_drop;
+  widget_class->drag_end = on_tabstrip_drag_end;
+  widget_class->drag_data_received = on_tabstrip_drag_data_received;
+  widget_class->drag_leave = on_tabstrip_drag_leave;
+
   object_class->destroy = ddb_tabstrip_destroy;
+}
+
+gboolean
+on_tabstrip_drag_drop                  (GtkWidget       *widget,
+                                        GdkDragContext  *drag_context,
+                                        gint             x,
+                                        gint             y,
+                                        guint            time)
+{
+    return TRUE;
+}
+
+void
+on_tabstrip_drag_data_received         (GtkWidget       *widget,
+                                        GdkDragContext  *drag_context,
+                                        gint             x,
+                                        gint             y,
+                                        GtkSelectionData *data,
+                                        guint            target_type,
+                                        guint            time)
+{
+    DdbListview *ps = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
+
+    gchar *ptr=(char*)data->data;
+    if (target_type == 0) { // uris
+        // this happens when dropped from file manager
+        char *mem = malloc (data->length+1);
+        memcpy (mem, ptr, data->length);
+        mem[data->length] = 0;
+        // we don't pass control structure, but there's only one drag-drop view currently
+        ps->binding->external_drag_n_drop (NULL, mem, data->length);
+    }
+    else if (target_type == 1) {
+        uint32_t *d= (uint32_t *)ptr;
+        int plt = *d;
+        d++;
+        int length = (data->length/4)-1;
+        if (plt == deadbeef->plt_get_curr ()) {
+            gtk_drag_finish (drag_context, TRUE, FALSE, time);
+            return;
+        }
+        ps->binding->drag_n_drop (NULL, plt, d, length);
+    }
+    gtk_drag_finish (drag_context, TRUE, FALSE, time);
+}
+
+void
+on_tabstrip_drag_leave                 (GtkWidget       *widget,
+                                        GdkDragContext  *drag_context,
+                                        guint            time)
+{
+    DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
+    ddb_listview_list_drag_leave (pl->list, drag_context, time, NULL);
+}
+
+void
+on_tabstrip_drag_end                   (GtkWidget       *widget,
+                                        GdkDragContext  *drag_context)
+{
+    DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
+    ddb_listview_list_drag_end (pl->list, drag_context, NULL);
 }
 
 GtkWidget * ddb_tabstrip_new() {
@@ -715,9 +812,39 @@ on_tabstrip_drag_motion_event          (GtkWidget       *widget,
                                         guint            time)
 {
     int tab = get_tab_under_cursor (x);
-    if (tab != -1) {
+    int prev = deadbeef->plt_get_curr ();
+    if (tab != -1 && tab != prev) {
         deadbeef->plt_set_curr (tab);
         deadbeef->conf_set_int ("playlist.current", tab);
+    }
+
+    GtkWidget *pl = lookup_widget (mainwin, "playlist");
+
+    int cnt = g_list_length (drag_context->targets);
+    int i;
+    for (i = 0; i < cnt; i++) {
+        GdkAtom a = GDK_POINTER_TO_ATOM (g_list_nth_data (drag_context->targets, i));
+        gchar *nm = gdk_atom_name (a);
+        if (!strcmp (nm, "text/uri-list")) {
+            g_free (nm);
+            break;
+        }
+        g_free (nm);
+    }
+    if (i != cnt) {
+        gdk_drag_status (drag_context, GDK_ACTION_COPY, time);
+    }
+    else {
+        GdkModifierType mask;
+
+        gdk_window_get_pointer (gtk_widget_get_window (widget),
+                NULL, NULL, &mask);
+        if (mask & GDK_CONTROL_MASK) {
+            gdk_drag_status (drag_context, GDK_ACTION_COPY, time);
+        }
+        else {
+            gdk_drag_status (drag_context, GDK_ACTION_MOVE, time);
+        }
     }
     return FALSE;
 }

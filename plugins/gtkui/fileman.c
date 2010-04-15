@@ -156,6 +156,10 @@ strcopy_special (char *dest, const char *src, int len) {
 static gboolean
 set_dnd_cursor_idle (gpointer data) {
     DdbListview *listview = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
+    if (!data) {
+        ddb_listview_set_cursor (listview, -1);
+        return FALSE;
+    }
     int cursor = deadbeef->pl_get_idx_of (DB_PLAYITEM (data));
     ddb_listview_set_cursor (listview, cursor);
     return FALSE;

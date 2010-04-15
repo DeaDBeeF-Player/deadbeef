@@ -205,6 +205,48 @@ enum {
 
 void ddb_listview_refresh (DdbListview *listview, uint32_t flags);
 
+gboolean
+ddb_listview_list_drag_drop                  (GtkWidget       *widget,
+                                        GdkDragContext  *drag_context,
+                                        gint             x,
+                                        gint             y,
+                                        guint            time,
+                                        gpointer         user_data);
+
+void
+ddb_listview_list_drag_data_get              (GtkWidget       *widget,
+                                        GdkDragContext  *drag_context,
+                                        GtkSelectionData *data,
+                                        guint            info,
+                                        guint            time,
+                                        gpointer         user_data);
+
+void
+ddb_listview_list_drag_end                   (GtkWidget       *widget,
+                                        GdkDragContext  *drag_context,
+                                        gpointer         user_data);
+
+void
+ddb_listview_list_drag_data_received         (GtkWidget       *widget,
+                                        GdkDragContext  *drag_context,
+                                        gint             x,
+                                        gint             y,
+                                        GtkSelectionData *data,
+                                        guint            target_type,
+                                        guint            time,
+                                        gpointer         user_data);
+
+void
+ddb_listview_list_drag_leave                 (GtkWidget       *widget,
+                                        GdkDragContext  *drag_context,
+                                        guint            time,
+                                        gpointer         user_data);
+
+void
+ddb_listview_list_drag_end                   (GtkWidget       *widget,
+                                        GdkDragContext  *drag_context,
+                                        gpointer         user_data);
+
 G_END_DECLS
 
 #endif // __DDBLISTVIEW_H

@@ -789,11 +789,31 @@ ddb_listview_list_drag_motion                (GtkWidget       *widget,
 {
     DdbListview *pl = DDB_LISTVIEW (gtk_object_get_data (GTK_OBJECT (widget), "owner"));
     ddb_listview_list_track_dragdrop (pl, y);
-    if (pl->drag_source_playlist != deadbeef->plt_get_curr ()) {
+    int cnt = g_list_length (drag_context->targets);
+    int i;
+    for (i = 0; i < cnt; i++) {
+        GdkAtom a = GDK_POINTER_TO_ATOM (g_list_nth_data (drag_context->targets, i));
+        gchar *nm = gdk_atom_name (a);
+        if (!strcmp (nm, "text/uri-list")) {
+            g_free (nm);
+            break;
+        }
+        g_free (nm);
+    }
+    if (i != cnt) {
         gdk_drag_status (drag_context, GDK_ACTION_COPY, time);
     }
     else {
-        gdk_drag_status (drag_context, GDK_ACTION_MOVE, time);
+        GdkModifierType mask;
+
+        gdk_window_get_pointer (gtk_widget_get_window (widget),
+                NULL, NULL, &mask);
+        if (mask & GDK_CONTROL_MASK) {
+            gdk_drag_status (drag_context, GDK_ACTION_COPY, time);
+        }
+        else {
+            gdk_drag_status (drag_context, GDK_ACTION_MOVE, time);
+        }
     }
     return FALSE;
 }
@@ -807,6 +827,8 @@ ddb_listview_list_drag_drop                  (GtkWidget       *widget,
                                         guint            time,
                                         gpointer         user_data)
 {
+    return TRUE;
+#if 0
     if (drag_context->targets) {
         GdkAtom target_type = GDK_POINTER_TO_ATOM (g_list_nth_data (drag_context->targets, TARGET_SAMEWIDGET));
         if (!target_type) {
@@ -816,6 +838,7 @@ ddb_listview_list_drag_drop                  (GtkWidget       *widget,
         return TRUE;
     }
     return FALSE;
+#endif
 }
 
 
@@ -1940,6 +1963,7 @@ ddb_listview_list_drag_end                   (GtkWidget       *widget,
                                         GdkDragContext  *drag_context,
                                         gpointer         user_data)
 {
+    printf ("ddb_listview_list_drag_end\n");
     DdbListview *ps = DDB_LISTVIEW (gtk_object_get_data (GTK_OBJECT (widget), "owner"));
     ddb_listview_refresh (ps, DDB_REFRESH_LIST|DDB_EXPOSE_LIST);
     ps->scroll_direction = 0;
