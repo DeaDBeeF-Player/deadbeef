@@ -541,7 +541,10 @@ cflac_init_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__Str
             }
         }
         deadbeef->pl_add_meta (it, "title", NULL);
-        deadbeef->pl_add_meta (it, "tags", "VorbisComments");
+        uint32_t f = deadbeef->pl_get_item_flags (it);
+        f &= ~DDB_TAG_MASK;
+        f |= DDB_TAG_VORBISCOMMENTS;
+        deadbeef->pl_set_item_flags (it, f);
     }
 }
 
@@ -663,6 +666,7 @@ cflac_insert (DB_playItem_t *after, const char *fname) {
         DB_playItem_t *last = deadbeef->pl_insert_cue_from_buffer (after, it, cuesheet, strlen (cuesheet), info.totalsamples, info.info.samplerate);
         if (last) {
             deadbeef->pl_item_unref (it);
+            deadbeef->pl_item_unref (last);
             return last;
         }
     }
@@ -673,6 +677,8 @@ cflac_insert (DB_playItem_t *after, const char *fname) {
         if (info.file) {
             deadbeef->fclose (info.file);
         }
+        deadbeef->pl_item_unref (it);
+        deadbeef->pl_item_unref (cue_after);
         trace ("flac: loaded external cuesheet\n");
         return cue_after;
     }
@@ -748,7 +754,10 @@ cflac_read_metadata (DB_playItem_t *it) {
     FLAC__metadata_iterator_delete (iter);
     err = 0;
     deadbeef->pl_add_meta (it, "title", NULL);
-    deadbeef->pl_add_meta (it, "tags", "VorbisComments");
+    uint32_t f = deadbeef->pl_get_item_flags (it);
+    f &= ~DDB_TAG_MASK;
+    f |= DDB_TAG_VORBISCOMMENTS;
+    deadbeef->pl_set_item_flags (it, f);
 error:
     if (chain) {
         FLAC__metadata_chain_delete (chain);

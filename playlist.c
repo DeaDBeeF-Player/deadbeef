@@ -47,10 +47,12 @@
 #define DEBUG_LOCKING 0
 
 // file format revision history
+// 1.1->1.2 changelog:
+//    added flags field
 // 1.0->1.1 changelog:
 //    added sample-accurate seek positions for sub-tracks
 #define PLAYLIST_MAJOR_VER 1
-#define PLAYLIST_MINOR_VER 1
+#define PLAYLIST_MINOR_VER 2
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -686,6 +688,7 @@ pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, c
     if (date[0]) {
         pl_add_meta (it, "year", date);
     }
+    it->_flags |= DDB_IS_SUBTRACK;
     after = pl_insert_item (after, it);
     pl_item_unref (it);
     *prev = it;
@@ -789,7 +792,12 @@ pl_insert_cue_from_buffer (playItem_t *after, playItem_t *origin, const uint8_t 
     }
     // copy metadata from embedded tags
     playItem_t *first = ins ? ins->next[PL_MAIN] : playlist->head[PL_MAIN];
-    pl_append_meta (origin, "tags", "cuesheet");
+    uint32_t f = pl_get_item_flags (origin);
+    f |= DDB_TAG_CUESHEET;
+    if (pl_find_meta (origin, "cuesheet")) {
+        f |= DDB_HAS_EMBEDDED_CUESHEET;
+    }
+    pl_set_item_flags (origin, f);
     pl_items_copy_junk (origin, first, after);
     UNLOCK;
     return after;
@@ -1704,6 +1712,9 @@ pl_save (const char *fname) {
         if (fwrite (&it->replaygain_track_peak, 1, 4, fp) != 4) {
             goto save_fail;
         }
+        if (fwrite (&it->_flags, 1, 4, fp) != 4) {
+            goto save_fail;
+        }
 
         int16_t nm = 0;
         DB_metaInfo_t *m;
@@ -1822,20 +1833,24 @@ pl_load (const char *fname) {
         goto load_fail;
     }
     if (strncmp (magic, "DBPL", 4)) {
+        trace ("bad signature\n");
         goto load_fail;
     }
     if (fread (&majorver, 1, 1, fp) != 1) {
         goto load_fail;
     }
     if (majorver != PLAYLIST_MAJOR_VER) {
+        trace ("bad majorver=%d\n", majorver);
         goto load_fail;
     }
     if (fread (&minorver, 1, 1, fp) != 1) {
         goto load_fail;
     }
-    if (minorver != PLAYLIST_MINOR_VER) {
+    if (minorver < 1/*PLAYLIST_MINOR_VER*/) {
+        trace ("bad minorver=%d\n", minorver);
         goto load_fail;
     }
+    trace ("playlist version=%d.%d\n", majorver, minorver);
     uint32_t cnt;
     if (fread (&cnt, 1, 4, fp) != 4) {
         goto load_fail;
@@ -1940,7 +1955,17 @@ pl_load (const char *fname) {
         if (it->replaygain_track_peak == 0) {
             it->replaygain_track_peak = 1;
         }
-        // printf ("loading file %s\n", it->fname);
+        if (minorver >= 2) {
+            if (fread (&it->_flags, 1, 4, fp) != 4) {
+                goto load_fail;
+            }
+        }
+        else {
+            if (it->tracknum != 0) {
+                it->_flags |= DDB_IS_READONLY; // to prevent editing metadata in subsongs
+            }
+        }
+
         int16_t nm = 0;
         if (fread (&nm, 1, 2, fp) != 2) {
             goto load_fail;
@@ -2238,6 +2263,7 @@ pl_format_title (playItem_t *it, int idx, char *s, int size, int id, const char 
     char dur[50];
     char elp[50];
     char fno[50];
+    char tags[200];
     const char *artist = NULL;
     const char *album = NULL;
     const char *track = NULL;
@@ -2381,7 +2407,44 @@ pl_format_title (playItem_t *it, int idx, char *s, int size, int id, const char 
                 meta = filename;
             }
             else if (*fmt == 'T') {
-                meta = pl_find_meta (it, "tags");
+//                meta = pl_find_meta (it, "tags");
+                char *t = tags;
+                char *e = tags + sizeof (tags);
+                int c;
+                *t = 0;
+
+                if (it->_flags & DDB_TAG_ID3V1) {
+                    c = snprintf (t, e-t, "ID3v1 | ");
+                    t += c;
+                }
+                if (it->_flags & DDB_TAG_ID3V22) {
+                    c = snprintf (t, e-t, "ID3v2.2 | ");
+                    t += c;
+                }
+                if (it->_flags & DDB_TAG_ID3V23) {
+                    c = snprintf (t, e-t, "ID3v2.3 | ");
+                    t += c;
+                }
+                if (it->_flags & DDB_TAG_ID3V24) {
+                    c = snprintf (t, e-t, "ID3v2.4 | ");
+                    t += c;
+                }
+                if (it->_flags & DDB_TAG_APEV2) {
+                    c = snprintf (t, e-t, "APEv2 | ");
+                    t += c;
+                }
+                if (it->_flags & DDB_TAG_VORBISCOMMENTS) {
+                    c = snprintf (t, e-t, "VorbisComments | ");
+                    t += c;
+                }
+                if (it->_flags & DDB_TAG_CUESHEET) {
+                    c = snprintf (t, e-t, "CueSheet | ");
+                    t += c;
+                }
+                if (t != tags) {
+                    *(t - 3) = 0;
+                }
+                meta = tags;
             }
             else {
                 *s++ = *fmt;
@@ -2814,3 +2877,17 @@ pl_items_copy_junk (playItem_t *from, playItem_t *first, playItem_t *last) {
     UNLOCK;
 }
 
+uint32_t
+pl_get_item_flags (playItem_t *it) {
+    LOCK;
+    uint32_t flags = it->_flags;
+    UNLOCK;
+    return flags;
+}
+
+void
+pl_set_item_flags (playItem_t *it, uint32_t flags) {
+    LOCK;
+    it->_flags = flags;
+    UNLOCK;
+}

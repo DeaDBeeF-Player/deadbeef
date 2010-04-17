@@ -1152,6 +1152,10 @@ cmp3_insert (DB_playItem_t *after, const char *fname) {
     it->fname = strdup (fname);
 
     deadbeef->rewind (fp);
+    // reset tags
+    uint32_t f = deadbeef->pl_get_item_flags (it);
+    f &= ~DDB_TAG_MASK;
+    deadbeef->pl_set_item_flags (it, f);
     /*int apeerr = */deadbeef->junk_apev2_read (it, fp);
     /*int v2err = */deadbeef->junk_id3v2_read (it, fp);
     /*int v1err = */deadbeef->junk_id3v1_read (it, fp);
@@ -1164,6 +1168,7 @@ cmp3_insert (DB_playItem_t *after, const char *fname) {
     DB_playItem_t *cue_after = deadbeef->pl_insert_cue (after, it, buffer.duration*buffer.samplerate, buffer.samplerate);
     if (cue_after) {
         deadbeef->pl_item_unref (it);
+        deadbeef->pl_item_unref (cue_after);
         return cue_after;
     }
 

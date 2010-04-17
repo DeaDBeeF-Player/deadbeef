@@ -79,6 +79,22 @@ extern "C" {
 #define PL_MAIN 0
 #define PL_SEARCH 1
 
+enum {
+    DDB_IS_SUBTRACK = (1<<0), // file is not single-track, might have metainfo in external file
+    DDB_IS_READONLY = (1<<1), // check this flag to block tag writing (e.g. in iso.wv)
+    DDB_HAS_EMBEDDED_CUESHEET = (1<<2),
+
+    DDB_TAG_ID3V1 = (1<<8),
+    DDB_TAG_ID3V22 = (1<<9),
+    DDB_TAG_ID3V23 = (1<<10),
+    DDB_TAG_ID3V24 = (1<<11),
+    DDB_TAG_APEV2 = (1<<12),
+    DDB_TAG_VORBISCOMMENTS = (1<<13),
+    DDB_TAG_CUESHEET = (1<<14),
+
+    DDB_TAG_MASK = 0x0000ff00
+};
+
 // playlist item
 // these are "public" fields, available to plugins
 typedef struct DB_playItem_s {
@@ -392,6 +408,7 @@ typedef struct {
        %g genre
        %c comment
        %r copyright
+       %T tags
        more to come
     */
     int (*pl_format_title) (DB_playItem_t *it, int idx, char *s, int size, int id, const char *fmt);
@@ -416,6 +433,8 @@ typedef struct {
     DB_metaInfo_t * (*pl_get_metadata) (DB_playItem_t *it);
     void (*pl_set_item_duration) (DB_playItem_t *it, float duration);
     float (*pl_get_item_duration) (DB_playItem_t *it);
+    uint32_t (*pl_get_item_flags) (DB_playItem_t *it);
+    void (*pl_set_item_flags) (DB_playItem_t *it, uint32_t flags);
     void (*pl_sort) (int iter, int id, const char *format, int ascending);
     void (*pl_items_copy_junk)(DB_playItem_t *from, DB_playItem_t *first, DB_playItem_t *last);
 

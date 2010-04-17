@@ -235,6 +235,8 @@ sndfile_insert (DB_playItem_t *after, const char *fname) {
 
     DB_playItem_t *cue_after = deadbeef->pl_insert_cue (after, it, totalsamples, samplerate);
     if (cue_after) {
+        deadbeef->pl_item_unref (it);
+        deadbeef->pl_item_unref (cue_after);
         return cue_after;
     }
 

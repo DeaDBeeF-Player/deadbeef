@@ -125,7 +125,10 @@ update_vorbis_comments (DB_playItem_t *it, vorbis_comment *vc) {
         }
     }
     deadbeef->pl_add_meta (it, "title", NULL);
-    deadbeef->pl_add_meta (it, "tags", "VorbisComments");
+    uint32_t f = deadbeef->pl_get_item_flags (it);
+    f &= ~DDB_TAG_MASK;
+    f |= DDB_TAG_VORBISCOMMENTS;
+    deadbeef->pl_set_item_flags (it, f);
 }
 
 static DB_fileinfo_t *
@@ -405,6 +408,7 @@ cvorbis_insert (DB_playItem_t *after, const char *fname) {
     DB_playItem_t *cue = deadbeef->pl_insert_cue (after, it, totalsamples, samplerate);
     if (cue) {
         deadbeef->pl_item_unref (it);
+        deadbeef->pl_item_unref (cue);
         return cue;
     }
 
@@ -414,6 +418,7 @@ cvorbis_insert (DB_playItem_t *after, const char *fname) {
         cue = deadbeef->pl_insert_cue_from_buffer (after, it, cuesheet, strlen (cuesheet), totalsamples, samplerate);
         if (cue) {
             deadbeef->pl_item_unref (it);
+            deadbeef->pl_item_unref (cue);
             return cue;
         }
     }

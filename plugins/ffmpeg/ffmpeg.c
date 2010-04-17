@@ -504,6 +504,7 @@ ffmpeg_insert (DB_playItem_t *after, const char *fname) {
     DB_playItem_t *cue = deadbeef->pl_insert_cue (after, it, totalsamples, samplerate);
     if (cue) {
         deadbeef->pl_item_unref (it);
+        deadbeef->pl_item_unref (cue);
         return cue;
     }
     // now the track is ready, insert into playlist

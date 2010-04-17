@@ -1729,24 +1729,27 @@ ffap_insert (DB_playItem_t *after, const char *fname) {
     deadbeef->fclose (fp);
     ape_free_ctx (&ape_ctx);
 
-    DB_playItem_t *cue  = deadbeef->pl_insert_cue (after, it, ape_ctx.totalsamples, ape_ctx.samplerate);
-    if (cue) {
-        deadbeef->pl_item_unref (it);
-        return cue;
-    }
-
     // embedded cue
     deadbeef->pl_lock ();
     const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
+    DB_playItem_t *cue = NULL;
     if (cuesheet) {
         cue = deadbeef->pl_insert_cue_from_buffer (after, it, cuesheet, strlen (cuesheet), ape_ctx.totalsamples, ape_ctx.samplerate);
         if (cue) {
             deadbeef->pl_item_unref (it);
+            deadbeef->pl_item_unref (cue);
             deadbeef->pl_unlock ();
             return cue;
         }
     }
     deadbeef->pl_unlock ();
+
+    cue  = deadbeef->pl_insert_cue (after, it, ape_ctx.totalsamples, ape_ctx.samplerate);
+    if (cue) {
+        deadbeef->pl_item_unref (it);
+        deadbeef->pl_item_unref (cue);
+        return cue;
+    }
 
     deadbeef->pl_add_meta (it, "title", NULL);
     after = deadbeef->pl_insert_item (after, it);

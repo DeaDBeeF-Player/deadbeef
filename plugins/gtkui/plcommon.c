@@ -256,6 +256,7 @@ main_properties_activate                (GtkMenuItem     *menuitem,
         return;
     }
     show_track_properties_dlg (it);
+    deadbeef->pl_item_unref (it);
 }
 
 void

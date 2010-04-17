@@ -555,7 +555,9 @@ junk_id3v1_read (playItem_t *it, DB_FILE *fp) {
         pl_add_meta (it, "track", s);
     }
 
-    pl_append_meta (it, "tags", "ID3v1");
+    uint32_t f = pl_get_item_flags (it);
+    f |= DDB_TAG_ID3V1;
+    pl_set_item_flags (it, f);
 
     return 0;
 }
@@ -782,7 +784,9 @@ junk_apev2_read_full (playItem_t *it, DB_apev2_tag_t *tag_store, DB_FILE *fp) {
     uint32_t flags = extract_i32_le (&header[20]);
 
     trace ("APEv%d, size=%d, items=%d, flags=%x\n", version, size, numitems, flags);
-    pl_append_meta (it, "tags", "APEv2");
+    uint32_t f = pl_get_item_flags (it);
+    f |= DDB_TAG_APEV2;
+    pl_set_item_flags (it, f);
 
     // now seek to beginning of the tag (exluding header)
     if (deadbeef->fseek (fp, -size, SEEK_CUR) == -1) {
@@ -2828,13 +2832,19 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
     }
     if (it) {
         if (version_major == 2) {
-            pl_append_meta (it, "tags", "ID3v2.2");
+            uint32_t f = pl_get_item_flags (it);
+            f |= DDB_TAG_ID3V22;
+            pl_set_item_flags (it, f);
         }
         else if (version_major == 3) {
-            pl_append_meta (it, "tags", "ID3v2.3");
+            uint32_t f = pl_get_item_flags (it);
+            f |= DDB_TAG_ID3V23;
+            pl_set_item_flags (it, f);
         }
         else if (version_major == 4) {
-            pl_append_meta (it, "tags", "ID3v2.4");
+            uint32_t f = pl_get_item_flags (it);
+            f |= DDB_TAG_ID3V24;
+            pl_set_item_flags (it, f);
         }
     }
     if (!err && it) {

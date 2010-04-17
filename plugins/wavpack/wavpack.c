@@ -293,6 +293,7 @@ wv_insert (DB_playItem_t *after, const char *fname) {
             deadbeef->fclose (fp);
             WavpackCloseFile (ctx);
             deadbeef->pl_item_unref (it);
+            deadbeef->pl_item_unref (last);
             return last;
         }
     }
@@ -301,6 +302,8 @@ wv_insert (DB_playItem_t *after, const char *fname) {
     if (cue_after) {
         deadbeef->fclose (fp);
         WavpackCloseFile (ctx);
+        deadbeef->pl_item_unref (it);
+        deadbeef->pl_item_unref (cue_after);
         return cue_after;
     }
 

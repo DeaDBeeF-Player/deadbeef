@@ -39,6 +39,7 @@ typedef struct playItem_s {
     float replaygain_track_peak;
     // private area, must not be visible to plugins
     float _duration; // in seconds
+    uint32_t _flags;
     int _refc;
     struct playItem_s *next[PL_MAX_ITERATORS]; // next item in linked list
     struct playItem_s *prev[PL_MAX_ITERATORS]; // prev item in linked list
@@ -232,6 +233,12 @@ pl_set_item_duration (playItem_t *it, float duration);
 
 float
 pl_get_item_duration (playItem_t *it);
+
+uint32_t
+pl_get_item_flags (playItem_t *it);
+
+void
+pl_set_item_flags (playItem_t *it, uint32_t flags);
 
 // returns number of characters printed, not including trailing 0
 // [a]rtist, [t]itle, al[b]um, [l]ength, track[n]umber

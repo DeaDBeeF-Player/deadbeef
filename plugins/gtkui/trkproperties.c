@@ -108,7 +108,9 @@ show_track_properties_dlg (DB_playItem_t *it) {
 
     int allow_editing = 0;
 
-    if (deadbeef->is_local_file (it->fname)) {
+    int is_subtrack = deadbeef->pl_get_item_flags (it) & DDB_IS_SUBTRACK;
+
+    if (!is_subtrack && deadbeef->is_local_file (it->fname)) {
         // get decoder plugin by id
         DB_decoder_t *dec = NULL;
         if (it->decoder_id) {
