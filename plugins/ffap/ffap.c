@@ -1833,6 +1833,53 @@ ffap_seek (DB_fileinfo_t *_info, float seconds) {
     return ffap_seek_sample (_info, seconds * _info->samplerate);
 }
 
+
+static int ffap_read_metadata (DB_playItem_t *it) {
+    DB_FILE *fp = deadbeef->fopen (it->fname);
+    if (!fp) {
+        return -1;
+    }
+    deadbeef->pl_delete_all_meta (it);
+    /*int apeerr = */deadbeef->junk_apev2_read (it, fp);
+    /*int v2err = */deadbeef->junk_id3v2_read (it, fp);
+    /*int v1err = */deadbeef->junk_id3v1_read (it, fp);
+    deadbeef->pl_add_meta (it, "title", NULL);
+    deadbeef->fclose (fp);
+    return 0;
+}
+
+static int ffap_write_metadata (DB_playItem_t *it) {
+    // get options
+    int strip_id3v2 = deadbeef->conf_get_int ("ape.strip_id3v2", 0);
+    int strip_id3v1 = 0;//deadbeef->conf_get_int ("ape.strip_id3v1", 0);
+    int strip_apev2 = deadbeef->conf_get_int ("ape.strip_apev2", 0);
+    int write_id3v2 = deadbeef->conf_get_int ("ape.write_id3v2", 0);
+    int write_id3v1 = 0;//deadbeef->conf_get_int ("ape.write_id3v1", 0);
+    int write_apev2 = deadbeef->conf_get_int ("ape.write_apev2", 1);
+
+    uint32_t junk_flags = 0;
+    if (strip_id3v2) {
+        junk_flags |= JUNK_STRIP_ID3V2;
+    }
+    if (strip_id3v1) {
+        junk_flags |= JUNK_STRIP_ID3V1;
+    }
+    if (strip_apev2) {
+        junk_flags |= JUNK_STRIP_APEV2;
+    }
+    if (write_id3v2) {
+        junk_flags |= JUNK_WRITE_ID3V2;
+    }
+    if (write_id3v1) {
+        junk_flags |= JUNK_WRITE_ID3V1;
+    }
+    if (write_apev2) {
+        junk_flags |= JUNK_WRITE_APEV2;
+    }
+
+    return deadbeef->junk_rewrite_tags (it, junk_flags, 4, NULL);
+}
+
 static const char *exts[] = { "ape", NULL };
 static const char *filetypes[] = { "APE", NULL };
 // define plugin interface
@@ -1853,6 +1900,8 @@ static DB_decoder_t plugin = {
     .seek = ffap_seek,
     .seek_sample = ffap_seek_sample,
     .insert = ffap_insert,
+    .read_metadata = ffap_read_metadata,
+    .write_metadata = ffap_write_metadata,
     .exts = exts,
     .filetypes = filetypes
 };
