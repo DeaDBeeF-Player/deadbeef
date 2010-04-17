@@ -2927,7 +2927,11 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
         id3v1_start = 0;
     }
 
-    int header = id3v2_start + id3v2_size;
+    int header = 0;
+    if (id3v2_size > 0) {
+        header = id3v2_start + id3v2_size;
+    }
+
     int footer = fsize;
 
     if (id3v1_start > 0) {
@@ -2937,7 +2941,7 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
         footer = min (footer, apev2_start);
     }
 
-    trace ("size of in footer: %d\n", footer);
+    trace ("header size: %d, footer size: %d\n", header, fsize-footer);
 
     // "TRCK" -- special case
     // "TYER"/"TDRC" -- special case
