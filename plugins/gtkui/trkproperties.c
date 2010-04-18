@@ -132,11 +132,16 @@ show_track_properties_dlg (DB_playItem_t *it) {
 
     GtkTreeView *tree;
     GtkListStore *store;
+    GtkTreeView *proptree;
+    GtkListStore *propstore;
     if (!trackproperties) {
         trackproperties = create_trackproperties ();
         gtk_window_set_transient_for (GTK_WINDOW (trackproperties), GTK_WINDOW (mainwin));
+
+        // metadata tree
         tree = GTK_TREE_VIEW (lookup_widget (trackproperties, "metalist"));
         store = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_STRING);
+        gtk_tree_view_set_model (tree, GTK_TREE_MODEL (store));
         GtkCellRenderer *rend_text = gtk_cell_renderer_text_new ();
         rend_text2 = gtk_cell_renderer_text_new ();
         g_signal_connect ((gpointer)rend_text2, "edited",
@@ -146,13 +151,26 @@ show_track_properties_dlg (DB_playItem_t *it) {
         GtkTreeViewColumn *col2 = gtk_tree_view_column_new_with_attributes ("Value", rend_text2, "text", 1, NULL);
         gtk_tree_view_append_column (tree, col1);
         gtk_tree_view_append_column (tree, col2);
+
+        // properties tree
+        proptree = GTK_TREE_VIEW (lookup_widget (trackproperties, "properties"));
+        propstore = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_STRING);
+        gtk_tree_view_set_model (proptree, GTK_TREE_MODEL (propstore));
+        GtkCellRenderer *rend_propkey = gtk_cell_renderer_text_new ();
+        GtkCellRenderer *rend_propvalue = gtk_cell_renderer_text_new ();
+        g_object_set (G_OBJECT (rend_propvalue), "editable", TRUE, NULL);
+        col1 = gtk_tree_view_column_new_with_attributes ("Key", rend_propkey, "text", 0, NULL);
+        col2 = gtk_tree_view_column_new_with_attributes ("Value", rend_propvalue, "text", 1, NULL);
+        gtk_tree_view_append_column (proptree, col1);
+        gtk_tree_view_append_column (proptree, col2);
     }
     else {
         tree = GTK_TREE_VIEW (lookup_widget (trackproperties, "metalist"));
         store = GTK_LIST_STORE (gtk_tree_view_get_model (tree));
-
-        // remove everything from store
         gtk_list_store_clear (store);
+        proptree = GTK_TREE_VIEW (lookup_widget (trackproperties, "properties"));
+        propstore = GTK_LIST_STORE (gtk_tree_view_get_model (proptree));
+        gtk_list_store_clear (propstore);
     }
 
     if (allow_editing) {
@@ -179,7 +197,6 @@ show_track_properties_dlg (DB_playItem_t *it) {
             value = "";
         }
         gtk_list_store_set (store, &iter, 0, types[i+1], 1, value, -1);
-        gtk_tree_view_set_model (tree, GTK_TREE_MODEL (store));
         i += 2;
     }
     deadbeef->pl_unlock ();
@@ -190,6 +207,23 @@ show_track_properties_dlg (DB_playItem_t *it) {
     else {
         gtk_widget_set_sensitive (lookup_widget (widget, "write_tags"), FALSE);
     }
+
+    // properties
+    char temp[200];
+    GtkTreeIter iter;
+    gtk_list_store_append (propstore, &iter);
+    gtk_list_store_set (propstore, &iter, 0, "Location", 1, it->fname, -1);
+    gtk_list_store_append (propstore, &iter);
+    snprintf (temp, sizeof (temp), "%d", it->tracknum);
+    gtk_list_store_set (propstore, &iter, 0, "Subtrack Index", 1, temp, -1);
+    gtk_list_store_append (propstore, &iter);
+    deadbeef->pl_format_time (deadbeef->pl_get_item_duration (it), temp, sizeof (temp));
+    gtk_list_store_set (propstore, &iter, 0, "Duration", 1, temp, -1);
+    gtk_list_store_append (propstore, &iter);
+    deadbeef->pl_format_title (it, -1, temp, sizeof (temp), -1, "%T");
+    gtk_list_store_set (propstore, &iter, 0, "Tag Type(s)", 1, temp, -1);
+    gtk_list_store_append (propstore, &iter);
+    gtk_list_store_set (propstore, &iter, 0, "Embedded Cuesheet", 1, (deadbeef->pl_get_item_flags (it) & DDB_HAS_EMBEDDED_CUESHEET) ? "Yes" : "No", -1);
 
     gtk_widget_show (widget);
     gtk_window_present (GTK_WINDOW (widget));

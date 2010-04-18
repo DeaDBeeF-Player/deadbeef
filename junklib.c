@@ -40,8 +40,8 @@
 
 #define UTF8 "utf-8"
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -892,6 +892,8 @@ junk_apev2_read_full (playItem_t *it, DB_apev2_tag_t *tag_store, DB_FILE *fp) {
                             break;
                         }
                     }
+
+                    trace ("apev2 %s=%s\n", key, value);
 
                     if (!frame_mapping[m]) {
                         if (!strncasecmp (key, "replaygain_album_gain", 21)) {

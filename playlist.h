@@ -246,6 +246,9 @@ int
 pl_format_title (playItem_t *it, int idx, char *s, int size, int id, const char *fmt);
 
 void
+pl_format_time (float t, char *dur, int size);
+
+void
 pl_reset_cursor (void);
 
 float

@@ -933,3 +933,4 @@ on_mainwin_motion_notify_event         (GtkWidget       *widget,
 GtkWidget*
 create_seekbar (gchar *widget_name, gchar *string1, gchar *string2,
                 gint int1, gint int2);
+

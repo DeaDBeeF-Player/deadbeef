@@ -1125,6 +1125,12 @@ create_trackproperties (void)
   GtkWidget *write_tags;
   GtkWidget *closebtn;
   GtkWidget *label64;
+  GtkWidget *vbox24;
+  GtkWidget *scrolledwindow6;
+  GtkWidget *properties;
+  GtkWidget *hbuttonbox2;
+  GtkWidget *button2;
+  GtkWidget *label80;
 
   trackproperties = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_widget_set_size_request (trackproperties, 400, 400);
@@ -1187,6 +1193,36 @@ create_trackproperties (void)
   gtk_widget_show (label64);
   gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook3), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook3), 0), label64);
 
+  vbox24 = gtk_vbox_new (FALSE, 8);
+  gtk_widget_show (vbox24);
+  gtk_container_add (GTK_CONTAINER (notebook3), vbox24);
+  gtk_container_set_border_width (GTK_CONTAINER (vbox24), 12);
+
+  scrolledwindow6 = gtk_scrolled_window_new (NULL, NULL);
+  gtk_widget_show (scrolledwindow6);
+  gtk_box_pack_start (GTK_BOX (vbox24), scrolledwindow6, TRUE, TRUE, 0);
+  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow6), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+  gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow6), GTK_SHADOW_IN);
+
+  properties = gtk_tree_view_new ();
+  gtk_widget_show (properties);
+  gtk_container_add (GTK_CONTAINER (scrolledwindow6), properties);
+  gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (properties), TRUE);
+
+  hbuttonbox2 = gtk_hbutton_box_new ();
+  gtk_widget_show (hbuttonbox2);
+  gtk_box_pack_start (GTK_BOX (vbox24), hbuttonbox2, FALSE, FALSE, 0);
+  gtk_button_box_set_layout (GTK_BUTTON_BOX (hbuttonbox2), GTK_BUTTONBOX_END);
+
+  button2 = gtk_button_new_with_mnemonic ("Close");
+  gtk_widget_show (button2);
+  gtk_container_add (GTK_CONTAINER (hbuttonbox2), button2);
+  GTK_WIDGET_SET_FLAGS (button2, GTK_CAN_DEFAULT);
+
+  label80 = gtk_label_new ("Properties");
+  gtk_widget_show (label80);
+  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook3), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook3), 1), label80);
+
   g_signal_connect ((gpointer) trackproperties, "key_press_event",
                     G_CALLBACK (on_trackproperties_key_press_event),
                     NULL);
@@ -1197,6 +1233,9 @@ create_trackproperties (void)
                     G_CALLBACK (on_write_tags_clicked),
                     NULL);
   g_signal_connect ((gpointer) closebtn, "clicked",
+                    G_CALLBACK (on_closebtn_clicked),
+                    NULL);
+  g_signal_connect ((gpointer) button2, "clicked",
                     G_CALLBACK (on_closebtn_clicked),
                     NULL);
 
@@ -1213,6 +1252,12 @@ create_trackproperties (void)
   GLADE_HOOKUP_OBJECT (trackproperties, write_tags, "write_tags");
   GLADE_HOOKUP_OBJECT (trackproperties, closebtn, "closebtn");
   GLADE_HOOKUP_OBJECT (trackproperties, label64, "label64");
+  GLADE_HOOKUP_OBJECT (trackproperties, vbox24, "vbox24");
+  GLADE_HOOKUP_OBJECT (trackproperties, scrolledwindow6, "scrolledwindow6");
+  GLADE_HOOKUP_OBJECT (trackproperties, properties, "properties");
+  GLADE_HOOKUP_OBJECT (trackproperties, hbuttonbox2, "hbuttonbox2");
+  GLADE_HOOKUP_OBJECT (trackproperties, button2, "button2");
+  GLADE_HOOKUP_OBJECT (trackproperties, label80, "label80");
 
   return trackproperties;
 }

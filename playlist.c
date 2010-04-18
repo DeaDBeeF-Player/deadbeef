@@ -2218,7 +2218,7 @@ pl_format_item_queue (playItem_t *it, char *s, int size) {
     return initsize-size;
 }
 
-static void
+void
 pl_format_time (float t, char *dur, int size) {
     if (t >= 0) {
         int hourdur = t / (60 * 60);
@@ -2863,6 +2863,7 @@ pl_items_copy_junk (playItem_t *from, playItem_t *first, playItem_t *last) {
         if (data) {
             playItem_t *i;
             for (i = first; ; i = i->next[PL_MAIN]) {
+                i->_flags = from->_flags; // stupid
                 pl_add_meta (i, metainfo[m], data);
                 if (i == last) {
                     break;
