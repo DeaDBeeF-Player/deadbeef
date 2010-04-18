@@ -697,7 +697,7 @@ ddb_listview_list_expose_event               (GtkWidget       *widget,
 void
 ddb_listview_list_expose (DdbListview *listview, int x, int y, int w, int h) {
     GtkWidget *widget = listview->list;
-    if (widget->window) {
+    if (widget->window && listview->backbuf) {
         draw_drawable (widget->window, widget->style->black_gc, listview->backbuf, x, y, x, y, w, h);
     }
 }

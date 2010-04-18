@@ -183,9 +183,6 @@ show_track_properties_dlg (DB_playItem_t *it) {
     GtkWidget *widget = trackproperties;
     GtkWidget *w;
     const char *meta;
-    // location
-    w = lookup_widget (widget, "location");
-    gtk_entry_set_text (GTK_ENTRY (w), it->fname);
 
     deadbeef->pl_lock ();
     int i = 0;

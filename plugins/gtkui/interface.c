@@ -1116,9 +1116,6 @@ create_trackproperties (void)
   GtkWidget *trackproperties;
   GtkWidget *notebook3;
   GtkWidget *vbox16;
-  GtkWidget *hbox23;
-  GtkWidget *label27;
-  GtkWidget *location;
   GtkWidget *scrolledwindow5;
   GtkWidget *metalist;
   GtkWidget *hbuttonbox1;
@@ -1147,21 +1144,6 @@ create_trackproperties (void)
   gtk_widget_show (vbox16);
   gtk_container_add (GTK_CONTAINER (notebook3), vbox16);
   gtk_container_set_border_width (GTK_CONTAINER (vbox16), 12);
-
-  hbox23 = gtk_hbox_new (FALSE, 8);
-  gtk_widget_show (hbox23);
-  gtk_box_pack_start (GTK_BOX (vbox16), hbox23, FALSE, TRUE, 0);
-
-  label27 = gtk_label_new ("Location:");
-  gtk_widget_show (label27);
-  gtk_box_pack_start (GTK_BOX (hbox23), label27, FALSE, FALSE, 0);
-  gtk_misc_set_alignment (GTK_MISC (label27), 0, 0.5);
-
-  location = gtk_entry_new ();
-  gtk_widget_show (location);
-  gtk_box_pack_start (GTK_BOX (hbox23), location, TRUE, TRUE, 0);
-  gtk_editable_set_editable (GTK_EDITABLE (location), FALSE);
-  gtk_entry_set_invisible_char (GTK_ENTRY (location), 8226);
 
   scrolledwindow5 = gtk_scrolled_window_new (NULL, NULL);
   gtk_widget_show (scrolledwindow5);
@@ -1243,9 +1225,6 @@ create_trackproperties (void)
   GLADE_HOOKUP_OBJECT_NO_REF (trackproperties, trackproperties, "trackproperties");
   GLADE_HOOKUP_OBJECT (trackproperties, notebook3, "notebook3");
   GLADE_HOOKUP_OBJECT (trackproperties, vbox16, "vbox16");
-  GLADE_HOOKUP_OBJECT (trackproperties, hbox23, "hbox23");
-  GLADE_HOOKUP_OBJECT (trackproperties, label27, "label27");
-  GLADE_HOOKUP_OBJECT (trackproperties, location, "location");
   GLADE_HOOKUP_OBJECT (trackproperties, scrolledwindow5, "scrolledwindow5");
   GLADE_HOOKUP_OBJECT (trackproperties, metalist, "metalist");
   GLADE_HOOKUP_OBJECT (trackproperties, hbuttonbox1, "hbuttonbox1");

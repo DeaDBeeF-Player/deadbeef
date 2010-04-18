@@ -367,6 +367,8 @@ eq_window_hide (void) {
 
 void
 eq_window_destroy (void) {
-    gtk_widget_destroy (eqwin);
-    eqwin = NULL;
+    if (eqwin) {
+        gtk_widget_destroy (eqwin);
+        eqwin = NULL;
+    }
 }
