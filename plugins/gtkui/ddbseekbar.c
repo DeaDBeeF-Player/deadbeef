@@ -61,6 +61,7 @@ static gboolean ddb_seekbar_real_expose_event (GtkWidget* base, GdkEventExpose* 
 static gboolean ddb_seekbar_real_button_press_event (GtkWidget* base, GdkEventButton* event);
 static gboolean ddb_seekbar_real_button_release_event (GtkWidget* base, GdkEventButton* event);
 static gboolean ddb_seekbar_real_motion_notify_event (GtkWidget* base, GdkEventMotion* event);
+static gboolean ddb_seekbar_real_configure_event (GtkWidget* base, GdkEventConfigure* event);
 DdbSeekbar* ddb_seekbar_new (void);
 DdbSeekbar* ddb_seekbar_construct (GType object_type);
 static GObject * ddb_seekbar_constructor (GType type, guint n_construct_properties, GObjectConstructParam * construct_properties);
@@ -125,6 +126,16 @@ static gboolean ddb_seekbar_real_motion_notify_event (GtkWidget* base, GdkEventM
 }
 
 
+static gboolean ddb_seekbar_real_configure_event (GtkWidget* base, GdkEventConfigure* event) {
+	DdbSeekbar * self;
+	gboolean result = FALSE;
+	self = (DdbSeekbar*) base;
+	gtkui_init_theme_colors ();
+	result = FALSE;
+	return result;
+}
+
+
 DdbSeekbar* ddb_seekbar_construct (GType object_type) {
 	DdbSeekbar * self;
 	self = g_object_newv (object_type, 0, NULL);
@@ -159,6 +170,7 @@ static void ddb_seekbar_class_init (DdbSeekbarClass * klass) {
 	GTK_WIDGET_CLASS (klass)->button_press_event = ddb_seekbar_real_button_press_event;
 	GTK_WIDGET_CLASS (klass)->button_release_event = ddb_seekbar_real_button_release_event;
 	GTK_WIDGET_CLASS (klass)->motion_notify_event = ddb_seekbar_real_motion_notify_event;
+	GTK_WIDGET_CLASS (klass)->configure_event = ddb_seekbar_real_configure_event;
 	G_OBJECT_CLASS (klass)->constructor = ddb_seekbar_constructor;
 }
 

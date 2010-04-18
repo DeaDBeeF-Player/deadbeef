@@ -53,6 +53,11 @@ namespace Ddb {
         public override bool motion_notify_event (Gdk.EventMotion event) {
             return on_seekbar_motion_notify_event (this, event);
         }
+
+        public override bool configure_event (Gdk.EventConfigure event) {
+            Gtkui.init_theme_colors ();
+            return false;
+        }
     }
 
 }

@@ -24,7 +24,7 @@ const string[] freqs = {
 };
 
 namespace Ddb {
-    public class Equalizer : Gtk.DrawingArea
+    public class Equalizer : Gtk.Widget
     {
         public signal void on_changed ();
 
@@ -54,8 +54,25 @@ namespace Ddb {
 
             margin_bottom = (int)(Pango.units_to_double (get_style ().font_desc.get_size ()) * Gdk.Screen.get_default ().get_resolution () / 72 + 4);
             margin_left = margin_bottom * 4;
+            set_app_paintable (true);
 
-            color_changed ();
+            //color_changed ();
+        }
+
+        public override void realize () {
+            var attrs = Gdk.WindowAttr () {
+                window_type = Gdk.WindowType.CHILD,
+                            wclass = Gdk.WindowClass.INPUT_OUTPUT,
+                            event_mask = get_events () | Gdk.EventMask.EXPOSURE_MASK
+            };
+            this.window = new Gdk.Window (get_parent_window (), attrs, 0);
+            this.window.move_resize (this.allocation.x, this.allocation.y,
+                    this.allocation.width, this.allocation.height);
+
+            this.window.set_user_data (this);
+            this.style = this.style.attach (this.window);
+//            this.style.set_background (this.window, Gtk.StateType.NORMAL);
+            set_flags (Gtk.WidgetFlags.REALIZED);
         }
 
         public override bool
@@ -75,6 +92,10 @@ namespace Ddb {
 
             Gdk.Drawable d = get_window();
             var gc = d.create_gc (Gdk.GCValues(), 0);
+
+            gc.set_rgb_fg_color (c2);
+
+            d.draw_rectangle (gc, true, 0, 0, width, height);
 
             gc.set_rgb_fg_color (fore_dark_color);
             //drawing grid:
@@ -346,10 +367,15 @@ namespace Ddb {
             return ((1 - preamp) * 40.0) - 20.0;
         }
 
-        public void
-        color_changed () {
+        //public void
+        //color_changed () {
+        //    //Gtkui.init_theme_colors ();
+        //    //modify_bg (Gtk.StateType.NORMAL, Gtkui.get_bar_background_color ());
+        //}
+
+        public override bool configure_event (Gdk.EventConfigure event) {
             Gtkui.init_theme_colors ();
-            modify_bg (Gtk.StateType.NORMAL, Gtkui.get_bar_background_color ());
+            return false;
         }
     }
 }

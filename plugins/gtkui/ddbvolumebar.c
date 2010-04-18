@@ -129,6 +129,9 @@ gboolean
 on_volumebar_scroll_event              (GtkWidget       *widget,
                                         GdkEventScroll        *event);
 
+gboolean
+on_volumebar_configure_event (GtkWidget *widget, GdkEventConfigure *event);
+
 static void
 ddb_volumebar_class_init(DdbVolumeBarClass *class)
 {
@@ -140,6 +143,7 @@ ddb_volumebar_class_init(DdbVolumeBarClass *class)
   widget_class->button_release_event = on_volumebar_button_release_event;
   widget_class->motion_notify_event = on_volumebar_motion_notify_event;
   widget_class->scroll_event = on_volumebar_scroll_event;
+  widget_class->configure_event = on_volumebar_configure_event;
 }
 
 GtkWidget * ddb_volumebar_new() {
@@ -291,4 +295,8 @@ on_volumebar_scroll_event              (GtkWidget       *widget,
     return FALSE;
 }
 
-
+gboolean
+on_volumebar_configure_event (GtkWidget *widget, GdkEventConfigure *event) {
+    gtkui_init_theme_colors ();
+    return FALSE;
+}

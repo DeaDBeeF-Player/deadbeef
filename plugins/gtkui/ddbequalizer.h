@@ -35,12 +35,12 @@ typedef struct _DdbSeekbarClass DdbSeekbarClass;
 typedef struct _DdbSeekbarPrivate DdbSeekbarPrivate;
 
 struct _DdbEqualizer {
-	GtkDrawingArea parent_instance;
+	GtkWidget parent_instance;
 	DdbEqualizerPrivate * priv;
 };
 
 struct _DdbEqualizerClass {
-	GtkDrawingAreaClass parent_class;
+	GtkWidgetClass parent_class;
 };
 
 struct _DdbSeekbar {
@@ -58,7 +58,6 @@ void ddb_equalizer_set_band (DdbEqualizer* self, gint band, double v);
 double ddb_equalizer_get_band (DdbEqualizer* self, gint band);
 void ddb_equalizer_set_preamp (DdbEqualizer* self, double v);
 double ddb_equalizer_get_preamp (DdbEqualizer* self);
-void ddb_equalizer_color_changed (DdbEqualizer* self);
 DdbEqualizer* ddb_equalizer_new (void);
 DdbEqualizer* ddb_equalizer_construct (GType object_type);
 GType ddb_seekbar_get_type (void);

@@ -43,17 +43,17 @@ typedef struct _DdbEqualizer DdbEqualizer;
 typedef struct _DdbEqualizerClass DdbEqualizerClass;
 typedef struct _DdbEqualizerPrivate DdbEqualizerPrivate;
 #define _gdk_cursor_unref0(var) ((var == NULL) ? NULL : (var = (gdk_cursor_unref (var), NULL)))
-#define _g_free0(var) (var = (g_free (var), NULL))
 #define _g_object_unref0(var) ((var == NULL) ? NULL : (var = (g_object_unref (var), NULL)))
+#define _g_free0(var) (var = (g_free (var), NULL))
 #define _pango_font_description_free0(var) ((var == NULL) ? NULL : (var = (pango_font_description_free (var), NULL)))
 
 struct _DdbEqualizer {
-	GtkDrawingArea parent_instance;
+	GtkWidget parent_instance;
 	DdbEqualizerPrivate * priv;
 };
 
 struct _DdbEqualizerClass {
-	GtkDrawingAreaClass parent_class;
+	GtkWidgetClass parent_class;
 };
 
 struct _DdbEqualizerPrivate {
@@ -79,6 +79,7 @@ enum  {
 };
 #define DDB_EQUALIZER_bands 18
 #define DDB_EQUALIZER_spot_size 3
+static void ddb_equalizer_real_realize (GtkWidget* base);
 static inline double ddb_equalizer_scale (DdbEqualizer* self, double val);
 static gboolean ddb_equalizer_real_expose_event (GtkWidget* base, GdkEventExpose* event);
 static gboolean ddb_equalizer_in_curve_area (DdbEqualizer* self, double x, double y);
@@ -91,13 +92,28 @@ void ddb_equalizer_set_band (DdbEqualizer* self, gint band, double v);
 double ddb_equalizer_get_band (DdbEqualizer* self, gint band);
 void ddb_equalizer_set_preamp (DdbEqualizer* self, double v);
 double ddb_equalizer_get_preamp (DdbEqualizer* self);
-void ddb_equalizer_color_changed (DdbEqualizer* self);
+static gboolean ddb_equalizer_real_configure_event (GtkWidget* base, GdkEventConfigure* event);
 DdbEqualizer* ddb_equalizer_new (void);
 DdbEqualizer* ddb_equalizer_construct (GType object_type);
 static GObject * ddb_equalizer_constructor (GType type, guint n_construct_properties, GObjectConstructParam * construct_properties);
 static void ddb_equalizer_finalize (GObject* obj);
 
 const char* freqs[18] = {"55 Hz", "77 Hz", "110 Hz", "156 Hz", "220 Hz", "311 Hz", "440 Hz", "622 Hz", "880 Hz", "1.2 kHz", "1.8 kHz", "2.5 kHz", "3.5 kHz", "5 kHz", "7 kHz", "10 kHz", "14 kHz", "20 kHz"};
+
+
+static void ddb_equalizer_real_realize (GtkWidget* base) {
+	DdbEqualizer * self;
+	GdkWindowAttr _tmp0_ = {0};
+	GdkWindowAttr attrs;
+	GdkWindow* _tmp1_;
+	self = (DdbEqualizer*) base;
+	attrs = (memset (&_tmp0_, 0, sizeof (GdkWindowAttr)), _tmp0_.window_type = GDK_WINDOW_CHILD, _tmp0_.wclass = GDK_INPUT_OUTPUT, _tmp0_.event_mask = gtk_widget_get_events ((GtkWidget*) self) | GDK_EXPOSURE_MASK, _tmp0_);
+	((GtkWidget*) self)->window = (_tmp1_ = gdk_window_new (gtk_widget_get_parent_window ((GtkWidget*) self), &attrs, 0), _g_object_unref0 (((GtkWidget*) self)->window), _tmp1_);
+	gdk_window_move_resize (((GtkWidget*) self)->window, ((GtkWidget*) self)->allocation.x, ((GtkWidget*) self)->allocation.y, ((GtkWidget*) self)->allocation.width, ((GtkWidget*) self)->allocation.height);
+	gdk_window_set_user_data (((GtkWidget*) self)->window, self);
+	gtk_widget_set_style ((GtkWidget*) self, gtk_style_attach (gtk_widget_get_style ((GtkWidget*) self), ((GtkWidget*) self)->window));
+	GTK_WIDGET_SET_FLAGS ((GtkWidget*) self, GTK_REALIZED);
+}
 
 
 static gpointer _g_object_ref0 (gpointer self) {
@@ -154,6 +170,8 @@ static gboolean ddb_equalizer_real_expose_event (GtkWidget* base, GdkEventExpose
 	height = ((GtkWidget*) self)->allocation.height;
 	d = _g_object_ref0 ((GdkDrawable*) gtk_widget_get_window ((GtkWidget*) self));
 	gc = _g_object_ref0 (GDK_DRAWABLE_GET_CLASS (d)->create_gc (d, (_tmp3_ = (memset (&_tmp2_, 0, sizeof (GdkGCValues)), _tmp2_), &_tmp3_), 0));
+	gdk_gc_set_rgb_fg_color (gc, &c2);
+	gdk_draw_rectangle (d, gc, TRUE, 0, 0, width, height);
 	gdk_gc_set_rgb_fg_color (gc, &fore_dark_color);
 	step = ((double) (width - self->priv->margin_left)) / ((double) (DDB_EQUALIZER_bands + 1));
 	{
@@ -548,12 +566,13 @@ double ddb_equalizer_get_preamp (DdbEqualizer* self) {
 }
 
 
-void ddb_equalizer_color_changed (DdbEqualizer* self) {
-	GdkColor _tmp1_;
-	GdkColor _tmp0_ = {0};
-	g_return_if_fail (self != NULL);
+static gboolean ddb_equalizer_real_configure_event (GtkWidget* base, GdkEventConfigure* event) {
+	DdbEqualizer * self;
+	gboolean result = FALSE;
+	self = (DdbEqualizer*) base;
 	gtkui_init_theme_colors ();
-	gtk_widget_modify_bg ((GtkWidget*) self, GTK_STATE_NORMAL, (_tmp1_ = (gtkui_get_bar_background_color (&_tmp0_), _tmp0_), &_tmp1_));
+	result = FALSE;
+	return result;
 }
 
 
@@ -580,7 +599,7 @@ static GObject * ddb_equalizer_constructor (GType type, guint n_construct_proper
 		gtk_widget_add_events ((GtkWidget*) self, (gint) (((GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK) | GDK_LEAVE_NOTIFY_MASK) | GDK_POINTER_MOTION_MASK));
 		self->priv->margin_bottom = (gint) (((pango_units_to_double (pango_font_description_get_size (gtk_widget_get_style ((GtkWidget*) self)->font_desc)) * gdk_screen_get_resolution (gdk_screen_get_default ())) / 72) + 4);
 		self->priv->margin_left = self->priv->margin_bottom * 4;
-		ddb_equalizer_color_changed (self);
+		gtk_widget_set_app_paintable ((GtkWidget*) self, TRUE);
 	}
 	return obj;
 }
@@ -589,11 +608,13 @@ static GObject * ddb_equalizer_constructor (GType type, guint n_construct_proper
 static void ddb_equalizer_class_init (DdbEqualizerClass * klass) {
 	ddb_equalizer_parent_class = g_type_class_peek_parent (klass);
 	g_type_class_add_private (klass, sizeof (DdbEqualizerPrivate));
+	GTK_WIDGET_CLASS (klass)->realize = ddb_equalizer_real_realize;
 	GTK_WIDGET_CLASS (klass)->expose_event = ddb_equalizer_real_expose_event;
 	GTK_WIDGET_CLASS (klass)->button_press_event = ddb_equalizer_real_button_press_event;
 	GTK_WIDGET_CLASS (klass)->button_release_event = ddb_equalizer_real_button_release_event;
 	GTK_WIDGET_CLASS (klass)->leave_notify_event = ddb_equalizer_real_leave_notify_event;
 	GTK_WIDGET_CLASS (klass)->motion_notify_event = ddb_equalizer_real_motion_notify_event;
+	GTK_WIDGET_CLASS (klass)->configure_event = ddb_equalizer_real_configure_event;
 	G_OBJECT_CLASS (klass)->constructor = ddb_equalizer_constructor;
 	G_OBJECT_CLASS (klass)->finalize = ddb_equalizer_finalize;
 	g_signal_new ("on_changed", DDB_TYPE_EQUALIZER, G_SIGNAL_RUN_LAST, 0, NULL, NULL, g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
@@ -628,7 +649,7 @@ GType ddb_equalizer_get_type (void) {
 	if (g_once_init_enter (&ddb_equalizer_type_id__volatile)) {
 		static const GTypeInfo g_define_type_info = { sizeof (DdbEqualizerClass), (GBaseInitFunc) NULL, (GBaseFinalizeFunc) NULL, (GClassInitFunc) ddb_equalizer_class_init, (GClassFinalizeFunc) NULL, NULL, sizeof (DdbEqualizer), 0, (GInstanceInitFunc) ddb_equalizer_instance_init, NULL };
 		GType ddb_equalizer_type_id;
-		ddb_equalizer_type_id = g_type_register_static (GTK_TYPE_DRAWING_AREA, "DdbEqualizer", &g_define_type_info, 0);
+		ddb_equalizer_type_id = g_type_register_static (GTK_TYPE_WIDGET, "DdbEqualizer", &g_define_type_info, 0);
 		g_once_init_leave (&ddb_equalizer_type_id__volatile, ddb_equalizer_type_id);
 	}
 	return ddb_equalizer_type_id__volatile;
