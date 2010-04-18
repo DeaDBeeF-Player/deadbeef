@@ -249,11 +249,7 @@ on_tabstrip_drag_data_received         (GtkWidget       *widget,
         int plt = *d;
         d++;
         int length = (data->length/4)-1;
-        if (plt == deadbeef->plt_get_curr ()) {
-            gtk_drag_finish (drag_context, TRUE, FALSE, time);
-            return;
-        }
-        ps->binding->drag_n_drop (NULL, plt, d, length);
+        ps->binding->drag_n_drop (NULL, plt, d, length, drag_context->action == GDK_ACTION_COPY ? 1 : 0);
     }
     gtk_drag_finish (drag_context, TRUE, FALSE, time);
 }

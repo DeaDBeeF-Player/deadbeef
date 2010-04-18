@@ -932,7 +932,7 @@ ddb_listview_list_drag_data_received         (GtkWidget       *widget,
             UNREF (drop_before);
             drop_before = next;
         }
-        ps->binding->drag_n_drop (drop_before, plt, d, length);
+        ps->binding->drag_n_drop (drop_before, plt, d, length, drag_context->action == GDK_ACTION_COPY ? 1 : 0);
         if (drop_before) {
             UNREF (drop_before);
         }
@@ -1965,7 +1965,6 @@ ddb_listview_list_drag_end                   (GtkWidget       *widget,
                                         GdkDragContext  *drag_context,
                                         gpointer         user_data)
 {
-    printf ("ddb_listview_list_drag_end\n");
     DdbListview *ps = DDB_LISTVIEW (gtk_object_get_data (GTK_OBJECT (widget), "owner"));
     ddb_listview_refresh (ps, DDB_REFRESH_LIST|DDB_EXPOSE_LIST);
     ps->scroll_direction = 0;

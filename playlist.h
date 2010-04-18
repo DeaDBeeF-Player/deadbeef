@@ -276,7 +276,7 @@ void
 pl_set_cursor (int iter, int cursor);
 
 void
-pl_move_items (int iter, playItem_t *drop_before, uint32_t *indexes, int count);
+pl_move_items (int iter, int plt_from, playItem_t *drop_before, uint32_t *indexes, int count);
 
 void
 pl_copy_items (int iter, int plt_from, playItem_t *before, uint32_t *indices, int cnt);

@@ -1236,7 +1236,7 @@ pl_add_dir (const char *dirname, int (*cb)(playItem_t *it, void *data), void *us
 }
 
 int
-pl_remove_item (playItem_t *it) {
+plt_remove_item (playlist_t *playlist, playItem_t *it) {
     if (!it)
         return -1;
     streamer_song_removed_notify (it);
@@ -1272,6 +1272,11 @@ pl_remove_item (playItem_t *it) {
     UNLOCK;
     pl_item_unref (it);
     return 0;
+}
+
+int
+pl_remove_item (playItem_t *it) {
+    return plt_remove_item (playlist, it);
 }
 
 int
@@ -1337,7 +1342,7 @@ pl_get_idx_of (playItem_t *it) {
 }
 
 playItem_t *
-pl_insert_item (playItem_t *after, playItem_t *it) {
+plt_insert_item (playlist_t *playlist, playItem_t *after, playItem_t *it) {
     GLOBAL_LOCK;
     pl_item_ref (it);
     if (!after) {
@@ -1377,6 +1382,11 @@ pl_insert_item (playItem_t *after, playItem_t *it) {
 
     GLOBAL_UNLOCK;
     return it;
+}
+
+playItem_t *
+pl_insert_item (playItem_t *after, playItem_t *it) {
+    return plt_insert_item (playlist, after, it);
 }
 
 void
@@ -2626,63 +2636,49 @@ pl_set_cursor (int iter, int cursor) {
 // list of items is indexes[count]
 // drop_before is insertion point
 void
-pl_move_items (int iter, playItem_t *drop_before, uint32_t *indexes, int count) {
-    // unlink items from playlist, and link together
+pl_move_items (int iter, int plt_from, playItem_t *drop_before, uint32_t *indexes, int count) {
     GLOBAL_LOCK;
+    playlist_t *playlist = playlists_head;
+    playlist_t *to = plt_get_curr_ptr ();
+
+    int i;
+    for (i = 0; i < plt_from; i++) {
+        playlist = playlist->next;
+    }
+
+    if (!playlist || !to) {
+        GLOBAL_UNLOCK;
+        return;
+    }
+
+    // unlink items from playlist, and link together
     playItem_t *head = NULL;
     playItem_t *tail = NULL;
     int processed = 0;
     int idx = 0;
     playItem_t *next = NULL;
-    for (playItem_t *it = playlist->head[iter]; it && processed < count; it = next, idx++) {
-        next = it->next[iter];
-        if (idx == indexes[processed]) {
-            if (it->prev[iter]) {
-                it->prev[iter]->next[iter] = it->next[iter];
-            }
-            else {
-                playlist->head[iter] = it->next[iter];
-            }
-            if (it->next[iter]) {
-                it->next[iter]->prev[iter] = it->prev[iter];
-            }
-            else {
-                playlist->tail[iter] = it->prev[iter];
-            }
-            if (tail) {
-                tail->next[iter] = it;
-                it->prev[iter] = tail;
-                tail = it;
-            }
-            else {
-                head = tail = it;
-                it->prev[iter] = it->next[iter] = NULL;
-            }
-            processed++;
-        }
-    }
+
     // find insertion point
     playItem_t *drop_after = NULL;
     if (drop_before) {
         drop_after = drop_before->prev[iter];
     }
     else {
-        drop_after = playlist->tail[iter];
+        drop_after = to->tail[iter];
     }
-    // insert in between
-    head->prev[iter] = drop_after;
-    if (drop_after) {
-        drop_after->next[iter] = head;
-    }
-    else {
-        playlist->head[iter] = head;
-    }
-    tail->next[iter] = drop_before;
-    if (drop_before) {
-        drop_before->prev[iter] = tail;
-    }
-    else {
-        playlist->tail[iter] = tail;
+
+    for (playItem_t *it = playlist->head[iter]; it && processed < count; it = next, idx++) {
+        next = it->next[iter];
+        if (idx == indexes[processed]) {
+            pl_item_ref (it);
+            if (drop_after == it) {
+                drop_after = it->prev[PL_MAIN];
+            }
+            plt_remove_item (playlist, it);
+            plt_insert_item (to, drop_after, it);
+            pl_item_unref (it);
+            processed++;
+        }
     }
     GLOBAL_UNLOCK;
 }

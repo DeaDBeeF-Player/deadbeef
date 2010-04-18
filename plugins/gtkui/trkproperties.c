@@ -25,6 +25,8 @@
 #include "support.h"
 #include "../../deadbeef.h"
 #include "gtkui.h"
+#include "mainplaylist.h"
+#include "search.h"
 
 static GtkWidget *trackproperties;
 static DB_playItem_t *track;
