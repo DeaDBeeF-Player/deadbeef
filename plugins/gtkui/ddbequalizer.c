@@ -28,6 +28,7 @@
 #include <float.h>
 #include <math.h>
 #include <gdk/gdk.h>
+#include <gtkui.h>
 #include <drawing.h>
 #include <pango/pango.h>
 

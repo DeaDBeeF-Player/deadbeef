@@ -23,8 +23,9 @@
 #include <glib.h>
 #include <glib-object.h>
 #include <gtk/gtk.h>
-#include <gtkui.h>
 #include <gdk/gdk.h>
+#include <gtkui.h>
+#include <drawing.h>
 
 
 #define DDB_TYPE_SEEKBAR (ddb_seekbar_get_type ())
