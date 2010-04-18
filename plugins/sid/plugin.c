@@ -24,6 +24,7 @@ const char *filetypes[] = { "SID", NULL };
 static const char settings_dlg[] =
     "property \"Enable HVSC\" checkbox hvsc_enable 0;\n"
     "property \"HVSC path\" file hvsc_path \"\";\n"
+    "property \"Samplerate\" entry sid.samplerate 48000;\n"
 ;
 
 // define plugin interface
@@ -37,7 +38,7 @@ DB_decoder_t sid_plugin = {
     .plugin.author = "Alexey Yakovenko",
     .plugin.email = "waker@users.sourceforge.net",
     .plugin.website = "http://deadbeef.sf.net",
-    .plugin.start = NULL,
+    .plugin.start = csid_start,
     .plugin.stop = csid_stop,
     .plugin.configdialog = settings_dlg,
     .plugin.id = "stdsid",

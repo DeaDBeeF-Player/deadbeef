@@ -292,7 +292,7 @@ csid_init (DB_playItem_t *it) {
 //    resid->create (1);
     info->resid->filter (true);
 
-    int samplerate = deadbeef->conf_get_int ("synth.samplerate", 48000);
+    int samplerate = deadbeef->conf_get_int ("sid.samplerate", 48000);
     int bps = deadbeef->get_output ()->bitspersample ();
 
     info->resid->sampling (samplerate);
@@ -576,8 +576,33 @@ csid_mutevoice (DB_fileinfo_t *_info, int voice, int mute) {
     }
 }
 
+static int
+csid_on_configchanged (DB_event_t *ev, uintptr_t data) {
+    int conf_hvsc_enable = deadbeef->conf_get_int ("hvsc_enable", 0);
+    int disable = !conf_hvsc_enable;
+    if (disable != sldb_disable) {
+        sldb_disable = disable;
+    }
+
+    // pick up new sldb filename in case it was changed
+    if (sldb) {
+        free (sldb);
+        sldb = NULL;
+        sldb_loaded = 0;
+    }
+
+    return 0;
+}
+
+int
+csid_start (void) {
+    deadbeef->ev_subscribe (DB_PLUGIN (&sid_plugin), DB_EV_CONFIGCHANGED, DB_CALLBACK (csid_on_configchanged), 0);
+    return 0;
+}
+
 int
 csid_stop (void) {
+    deadbeef->ev_unsubscribe (DB_PLUGIN (&sid_plugin), DB_EV_CONFIGCHANGED, DB_CALLBACK (csid_on_configchanged), 0);
     if (sldb) {
         free (sldb);
         sldb = NULL;

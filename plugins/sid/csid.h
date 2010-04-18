@@ -30,6 +30,7 @@ int csid_seek (DB_fileinfo_t *, float time);
 DB_playItem_t *csid_insert (DB_playItem_t *after, const char *fname);
 int csid_numvoices (DB_fileinfo_t *);
 void csid_mutevoice (DB_fileinfo_t *, int voice, int mute);
+int csid_start (void);
 int csid_stop (void);
 
 #ifdef __cplusplus
