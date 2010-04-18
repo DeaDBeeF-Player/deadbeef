@@ -252,7 +252,7 @@ adplug_insert (DB_playItem_t *after, const char *fname) {
             adplug_add_meta (it, "title", p->gettitle().c_str());
         }
         else {
-            adplug_add_meta (it, "title", NULL);
+            deadbeef->pl_add_meta (it, "title", NULL);
         }
         if (!p->getdesc().empty()) {
             adplug_add_meta (it, "comment", p->getdesc().c_str());
