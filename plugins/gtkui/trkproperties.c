@@ -236,7 +236,8 @@ on_write_tags_clicked                  (GtkButton       *button,
                 GtkTreeModel *model = GTK_TREE_MODEL (gtk_tree_view_get_model (tree));
                 gtk_tree_model_foreach (model, set_metadata_cb, track);
                 dec->write_metadata (track);
-                ddb_listview_refresh (DDB_LISTVIEW (lookup_widget (mainwin, "playlist")), DDB_REFRESH_LIST);
+                main_refresh ();
+                search_refresh ();
             }
             break;
         }
