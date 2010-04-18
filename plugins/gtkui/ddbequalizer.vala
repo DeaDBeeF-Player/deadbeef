@@ -47,11 +47,6 @@ namespace Ddb {
 
         construct
         {
-            add_events (Gdk.EventMask.BUTTON_PRESS_MASK
-                | Gdk.EventMask.BUTTON_RELEASE_MASK
-                | Gdk.EventMask.LEAVE_NOTIFY_MASK
-                | Gdk.EventMask.POINTER_MOTION_MASK);
-
             margin_bottom = (int)(Pango.units_to_double (get_style ().font_desc.get_size ()) * Gdk.Screen.get_default ().get_resolution () / 72 + 4);
             margin_left = margin_bottom * 4;
             set_app_paintable (true);
@@ -59,7 +54,32 @@ namespace Ddb {
             //color_changed ();
         }
 
+        public override bool configure_event (Gdk.EventConfigure event) {
+//            stdout.printf ("eq configure\n");
+            Gtkui.init_theme_colors ();
+            return false;
+        }
+
+        private void send_configure () {
+            Gdk.Event event = new Gdk.Event (Gdk.EventType.CONFIGURE);
+
+            event.configure.window = (Gdk.Window)this.window.ref ();
+            event.configure.send_event = 1;
+            event.configure.x = allocation.x;
+            event.configure.y = allocation.y;
+            event.configure.width = allocation.width;
+            event.configure.height = allocation.height;
+
+            this.event (event);
+        }
+
         public override void realize () {
+            set_flags (Gtk.WidgetFlags.REALIZED);
+            add_events (Gdk.EventMask.BUTTON_PRESS_MASK
+                | Gdk.EventMask.BUTTON_RELEASE_MASK
+                | Gdk.EventMask.LEAVE_NOTIFY_MASK
+                | Gdk.EventMask.POINTER_MOTION_MASK);
+
             var attrs = Gdk.WindowAttr () {
                 window_type = Gdk.WindowType.CHILD,
                             wclass = Gdk.WindowClass.INPUT_OUTPUT,
@@ -71,8 +91,8 @@ namespace Ddb {
 
             this.window.set_user_data (this);
             this.style = this.style.attach (this.window);
-//            this.style.set_background (this.window, Gtk.StateType.NORMAL);
-            set_flags (Gtk.WidgetFlags.REALIZED);
+            this.style.set_background (this.window, Gtk.StateType.NORMAL);
+            send_configure ();
         }
 
         public override bool
@@ -367,15 +387,5 @@ namespace Ddb {
             return ((1 - preamp) * 40.0) - 20.0;
         }
 
-        //public void
-        //color_changed () {
-        //    //Gtkui.init_theme_colors ();
-        //    //modify_bg (Gtk.StateType.NORMAL, Gtkui.get_bar_background_color ());
-        //}
-
-        public override bool configure_event (Gdk.EventConfigure event) {
-            Gtkui.init_theme_colors ();
-            return false;
-        }
     }
 }
