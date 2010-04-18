@@ -660,6 +660,9 @@ ddb_listview_list_render (DdbListview *listview, int x, int y, int w, int h) {
             DdbListviewIter next = listview->binding->next (it);
             listview->binding->unref (it);
             it = next;
+            if (!it) {
+                break; // sanity check, in case groups were not rebuilt yet
+            }
         }
         if (it) {
             listview->binding->unref (it);

@@ -1548,7 +1548,7 @@ create_prefwin (void)
 
   notebook = gtk_notebook_new ();
   gtk_widget_show (notebook);
-  gtk_box_pack_start (GTK_BOX (dialog_vbox2), notebook, FALSE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (dialog_vbox2), notebook, TRUE, TRUE, 0);
 
   vbox10 = gtk_vbox_new (FALSE, 8);
   gtk_widget_show (vbox10);
