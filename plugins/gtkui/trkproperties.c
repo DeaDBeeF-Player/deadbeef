@@ -59,14 +59,19 @@ on_trackproperties_key_press_event     (GtkWidget       *widget,
 }
 
 void
-on_closebtn_clicked                    (GtkButton       *button,
-                                        gpointer         user_data)
-{
+trkproperties_destroy (void) {
     if (trackproperties) {
         GtkWidget *w = trackproperties;
         on_trackproperties_delete_event (NULL, NULL, NULL);
         gtk_widget_destroy (w);
     }
+}
+
+void
+on_closebtn_clicked                    (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    trkproperties_destroy ();
 }
 
 void

@@ -847,6 +847,7 @@ gtkui_thread (void *ctx) {
     gtk_main ();
     cover_art_free ();
     eq_window_destroy ();
+    trkproperties_destroy ();
     gtk_widget_destroy (mainwin);
     gtk_widget_destroy (searchwin);
 #if HAVE_NOTIFY
