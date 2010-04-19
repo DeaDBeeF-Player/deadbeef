@@ -464,7 +464,7 @@ lfm_format_uri (int subm, DB_playItem_t *song, char *out, int outl) {
 
 static int
 lastfm_songstarted (DB_event_track_t *ev, uintptr_t data) {
-    trace ("lfm songfinished %s\n", ev->track->fname);
+    trace ("lfm songstarted %s\n", ev->track->fname);
     if (!deadbeef->conf_get_int ("lastfm.enable", 0)) {
         return 0;
     }
