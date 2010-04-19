@@ -84,6 +84,38 @@ on_songchanged (DB_event_trackchange_t *ev, uintptr_t data) {
                     dst += 5;
                     src++;
                 }
+                else if (*src == '<') {
+                    if (end - dst < 4) {
+                        break;
+                    }
+                    strcpy (dst, "&lt;");
+                    dst += 4;
+                    src++;
+                }
+                else if (*src == '>') {
+                    if (end - dst < 4) {
+                        break;
+                    }
+                    strcpy (dst, "&gt;");
+                    dst += 4;
+                    src++;
+                }
+                else if (*src == '\'') {
+                    if (end - dst < 6) {
+                        break;
+                    }
+                    strcpy (dst, "&apos;");
+                    dst += 6;
+                    src++;
+                }
+                else if (*src == '"') {
+                    if (end - dst < 6) {
+                        break;
+                    }
+                    strcpy (dst, "&quot;");
+                    dst += 6;
+                    src++;
+                }
                 else {
                     *dst++ = *src++;
                 }
@@ -128,10 +160,8 @@ on_songchanged (DB_event_trackchange_t *ev, uintptr_t data) {
 
             int serial;
             dbus_bool_t retval = dbus_connection_send(conn,msg,&serial);
-            printf ("retval: %d\n", retval);
-            //dbus_message_unref (msg);
             dbus_connection_flush (conn);
-
+            dbus_message_unref (msg);
         }
     }
     return 0;
