@@ -106,8 +106,17 @@ static void apply_conf (GtkWidget *w, DB_plugin_t *p) {
         // fetch data
         GtkWidget *widget = lookup_widget (w, key);
         if (widget) {
-            if (!strcmp (type, "entry") || !strcmp (type, "password") || !strcmp (type, "file")) {
+            if (!strcmp (type, "entry") || !strcmp (type, "password")) {
                 deadbeef->conf_set_str (key, gtk_entry_get_text (GTK_ENTRY (widget)));
+            }
+            else if (!strcmp (type, "file")) {
+                if (deadbeef->conf_get_int ("gtkui.pluginconf.use_filechooser_button", 0)) {
+                    // filechooser
+                    deadbeef->conf_set_str (key, gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (widget)));
+                }
+                else {
+                    deadbeef->conf_set_str (key, gtk_entry_get_text (GTK_ENTRY (widget)));
+                }
             }
             else if (!strcmp (type, "checkbox")) {
                 deadbeef->conf_set_int (key, gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)));
@@ -204,19 +213,27 @@ plugin_configure (GtkWidget *parentwin, DB_plugin_t *p) {
         else if (!strcmp (type, "file")) {
             label = gtk_label_new (labeltext);
             gtk_widget_show (label);
-            cont = gtk_hbox_new (FALSE, 2);
-            gtk_widget_show (cont);
-            prop = gtk_entry_new ();
-            gtk_entry_set_activates_default (GTK_ENTRY (prop), TRUE);
-            g_signal_connect (G_OBJECT (prop), "changed", G_CALLBACK (prop_changed), win);
-            gtk_widget_show (prop);
-            gtk_editable_set_editable (GTK_EDITABLE (prop), FALSE);
-            gtk_entry_set_text (GTK_ENTRY (prop), deadbeef->conf_get_str (key, def));
-            gtk_box_pack_start (GTK_BOX (cont), prop, TRUE, TRUE, 0);
-            GtkWidget *btn = gtk_button_new_with_label ("…");
-            gtk_widget_show (btn);
-            gtk_box_pack_start (GTK_BOX (cont), btn, FALSE, FALSE, 0);
-            g_signal_connect (G_OBJECT (btn), "clicked", G_CALLBACK (on_prop_browse_file), prop);
+            if (deadbeef->conf_get_int ("gtkui.pluginconf.use_filechooser_button", 0)) {
+                prop = gtk_file_chooser_button_new (labeltext, GTK_FILE_CHOOSER_ACTION_OPEN);
+                gtk_widget_show (prop);
+                gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (prop), deadbeef->conf_get_str (key, def));
+                g_signal_connect (G_OBJECT (prop), "file-set", G_CALLBACK (prop_changed), win);
+            }
+            else {
+                cont = gtk_hbox_new (FALSE, 2);
+                gtk_widget_show (cont);
+                prop = gtk_entry_new ();
+                gtk_entry_set_activates_default (GTK_ENTRY (prop), TRUE);
+                g_signal_connect (G_OBJECT (prop), "changed", G_CALLBACK (prop_changed), win);
+                gtk_widget_show (prop);
+                gtk_editable_set_editable (GTK_EDITABLE (prop), FALSE);
+                gtk_entry_set_text (GTK_ENTRY (prop), deadbeef->conf_get_str (key, def));
+                gtk_box_pack_start (GTK_BOX (cont), prop, TRUE, TRUE, 0);
+                GtkWidget *btn = gtk_button_new_with_label ("…");
+                gtk_widget_show (btn);
+                gtk_box_pack_start (GTK_BOX (cont), btn, FALSE, FALSE, 0);
+                g_signal_connect (G_OBJECT (btn), "clicked", G_CALLBACK (on_prop_browse_file), prop);
+            }
         }
         if (!strcmp (type, "password")) {
             gtk_entry_set_visibility (GTK_ENTRY (prop), FALSE);
