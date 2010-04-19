@@ -71,14 +71,15 @@ AC_ARG_ENABLE(wavpack,  [  --disable-wavpack       build wavpack plugin (default
 AC_ARG_ENABLE(cdda,     [  --disable-cdda          build CD-Audio plugin (default: enabled)], [enable_cdda=$enableval], [enable_cdda=yes])
 AC_ARG_ENABLE(gme,      [  --disable-gme           build Game Music Emu plugin for NFS, AY, etc (default: enabled)], [enable_gme=$enableval], [enable_gme=yes])
 AC_ARG_ENABLE(dumb,      [  --disable-dumb         build D.U.M.B. plugin for MOD, S3M and other tracker formats (default: enabled)], [enable_dumb=$enableval], [enable_dumb=yes])
+AC_ARG_ENABLE(notify,      [  --disable-notify         build notification-daemon support plugin (default: enabled)], [enable_notify=$enableval], [enable_notify=yes])
 
 AC_ARG_ENABLE(libnotify, [  --enable-libnotify      include support for OSD notifications into GTKUI plugin (default: no)], [enable_libnotify=$enableval], [enable_libnotify=no])
 
 PKG_CHECK_MODULES(DEPS, samplerate)
 
-if test "x$enable_libnotify" = "xyes" ; then
-    PKG_CHECK_MODULES(NOTIFY_DEPS, libnotify >= 0.4.4, HAVE_NOTIFY=yes, HAVE_NOTIFY=no)
-fi
+dnl if test "x$enable_libnotify" = "xyes" ; then
+dnl     PKG_CHECK_MODULES(NOTIFY_DEPS, libnotify >= 0.4.4, HAVE_NOTIFY=yes, HAVE_NOTIFY=no)
+dnl fi
 
 if test "x$enable_gtkui" != "xno" ; then
     PKG_CHECK_MODULES(GTKUI_DEPS, gtk+-2.0 >= 2.12 gthread-2.0 glib-2.0, HAVE_GTK=yes, HAVE_GTK=no)
@@ -120,6 +121,12 @@ AC_CHECK_LIB([curl], [main], [HAVE_CURL=yes])
 if test "x$HAVE_CURL" = "xyes"; then
     CURL_LIBS="-lcurl"
     AC_SUBST(CURL_LIBS)
+fi
+
+AC_CHECK_LIB([dbus-1], [main], [HAVE_DBUS=yes])
+if test "x$HAVE_DBUS" = "xyes"; then
+    DBUS_LIBS="-ldbus-1"
+    AC_SUBST(DBUS_LIBS)
 fi
 
 dnl mpgmad plugin
@@ -231,11 +238,11 @@ if test "x$enable_ffmpeg" != "xno" ; then
     fi
 fi
 
-if test "x$HAVE_NOTIFY" = "xyes"; then
-    AC_DEFINE(HAVE_NOTIFY,1,[Use libnotify])
-    AC_SUBST(NOTIFY_DEPS_CFLAGS)
-    AC_SUBST(NOTIFY_DEPS_LIBS)
-fi
+dnl if test "x$HAVE_NOTIFY" = "xyes"; then
+dnl     AC_DEFINE(HAVE_NOTIFY,1,[Use libnotify])
+dnl     AC_SUBST(NOTIFY_DEPS_CFLAGS)
+dnl     AC_SUBST(NOTIFY_DEPS_LIBS)
+dnl fi
 
 if test "x$enable_hotkeys" != "xno" ; then
     AC_CHECK_HEADER([X11/Xlib.h], HAVE_XLIB_H=yes)
@@ -336,7 +343,13 @@ if test "x$enable_dumb" != "xno" ; then
     HAVE_DUMB=yes
 fi
 
-PLUGINS_DIRS="plugins/lastfm plugins/mpgmad plugins/vorbis plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/dumb plugins/pulse"
+if test "x$HAVE_DBUS" = "xyes" && test "x$enable_notify" != "xno" ; then
+    HAVE_NOTIFY=yes
+    NOTIFY_LIBS="$DBUS_LIBS"
+    AC_SUBST(NOTIFY_LIBS)
+fi
+
+PLUGINS_DIRS="plugins/lastfm plugins/mpgmad plugins/vorbis plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/dumb plugins/pulse plugins/notify"
 
 AM_CONDITIONAL(HAVE_LIBMAD, test "x$HAVE_LIBMAD"="xyes")
 AM_CONDITIONAL(HAVE_VORBIS, test "x$HAVE_VORBISPLUGIN" = "xyes")
@@ -347,7 +360,6 @@ AM_CONDITIONAL(HAVE_CDDA, test "x$HAVE_CDDAPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_GTKUI, test "x$HAVE_GTKUI" = "xyes")
 AM_CONDITIONAL(HAVE_ALSA, test "x$HAVE_ALSAPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_FFMPEG, test "x$HAVE_FFMPEGPLUGIN" = "xyes")
-AM_CONDITIONAL(HAVE_NOTIFY, test "x$HAVE_NOTIFY" = "xyes")
 AM_CONDITIONAL(HAVE_PULSE, test "x$HAVE_PULSEPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_ARTWORK, test "x$HAVE_ARTWORK" = "xyes")
 AM_CONDITIONAL(HAVE_ADPLUG, test "x$HAVE_ADPLUG" = "xyes")
@@ -363,6 +375,7 @@ AM_CONDITIONAL(HAVE_HOTKEYS, test "x$HAVE_HOTKEYS" = "xyes")
 AM_CONDITIONAL(HAVE_MPGMAD, test "x$HAVE_MPGMAD" = "xyes")
 AM_CONDITIONAL(HAVE_OSS, test "x$HAVE_OSS" = "xyes")
 AM_CONDITIONAL(HAVE_SUPEREQ, test "x$HAVE_SUPEREQ" = "xyes")
+AM_CONDITIONAL(HAVE_NOTIFY, test "x$HAVE_NOTIFY" = "xyes")
 
 AC_SUBST(PLUGINS_DIRS)
 
@@ -409,14 +422,13 @@ dnl PRINT_PLUGIN_INFO([faad2],[aac/mp4 player],[test $HAVE_FAAD && test $HAVE_MP
 PRINT_PLUGIN_INFO([cdda],[cd audio player],[test "x$HAVE_CDDAPLUGIN" = "xyes"])
 PRINT_PLUGIN_INFO([gtkui],[GTK user interface],[test "x$HAVE_GTK" = "xyes"])
 PRINT_PLUGIN_INFO([hotkeys],[Global hotkeys support],[test "x$HAVE_HOTKEYS" = "xyes"])
-PRINT_PLUGIN_INFO([libnotify],[Current track notification],[test "x$HAVE_NOTIFY" = "xyes"])
+dnl PRINT_PLUGIN_INFO([libnotify],[Current track notification],[test "x$HAVE_NOTIFY" = "xyes"])
 PRINT_PLUGIN_INFO([ffmpeg],[ffmpeg codecs],[test "x$HAVE_FFMPEGPLUGIN" = "xyes"])
 PRINT_PLUGIN_INFO([oss],[oss output plugin],[test "x$HAVE_OSS" = "xyes"])
 PRINT_PLUGIN_INFO([pulse],[PulseAudio output plugin],[test "x$HAVE_PULSEPLUGIN" = "xyes"])
 PRINT_PLUGIN_INFO([artwork],[Cover art plugin],[test "x$HAVE_ARTWORK" = "xyes"])
 PRINT_PLUGIN_INFO([supereq],[Equalizer based on Super EQ library by Naoki Shibata],[test "x$HAVE_SUPEREQ" = "xyes"])
-echo
-echo "plugin build directories: $PLUGINS_DIRS"
+PRINT_PLUGIN_INFO([notify],[notification-daemon support plugin],[test "x$HAVE_NOTIFY" = "xyes"])
 
 echo
 
@@ -447,6 +459,7 @@ plugins/oss/Makefile
 plugins/pulse/Makefile
 plugins/artwork/Makefile
 plugins/supereq/Makefile
+plugins/notify/Makefile
 deadbeef.desktop
 ])
 
