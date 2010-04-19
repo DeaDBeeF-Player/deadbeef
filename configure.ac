@@ -73,13 +73,7 @@ AC_ARG_ENABLE(gme,      [  --disable-gme           build Game Music Emu plugin f
 AC_ARG_ENABLE(dumb,      [  --disable-dumb         build D.U.M.B. plugin for MOD, S3M and other tracker formats (default: enabled)], [enable_dumb=$enableval], [enable_dumb=yes])
 AC_ARG_ENABLE(notify,      [  --disable-notify         build notification-daemon support plugin (default: enabled)], [enable_notify=$enableval], [enable_notify=yes])
 
-AC_ARG_ENABLE(libnotify, [  --enable-libnotify      include support for OSD notifications into GTKUI plugin (default: no)], [enable_libnotify=$enableval], [enable_libnotify=no])
-
 PKG_CHECK_MODULES(DEPS, samplerate)
-
-dnl if test "x$enable_libnotify" = "xyes" ; then
-dnl     PKG_CHECK_MODULES(NOTIFY_DEPS, libnotify >= 0.4.4, HAVE_NOTIFY=yes, HAVE_NOTIFY=no)
-dnl fi
 
 if test "x$enable_gtkui" != "xno" ; then
     PKG_CHECK_MODULES(GTKUI_DEPS, gtk+-2.0 >= 2.12 gthread-2.0 glib-2.0, HAVE_GTK=yes, HAVE_GTK=no)
@@ -123,11 +117,7 @@ if test "x$HAVE_CURL" = "xyes"; then
     AC_SUBST(CURL_LIBS)
 fi
 
-AC_CHECK_LIB([dbus-1], [main], [HAVE_DBUS=yes])
-if test "x$HAVE_DBUS" = "xyes"; then
-    DBUS_LIBS="-ldbus-1"
-    AC_SUBST(DBUS_LIBS)
-fi
+PKG_CHECK_MODULES(DBUS_DEPS, dbus-1, HAVE_DBUS=yes, HAVE_DBUS=no)
 
 dnl mpgmad plugin
 if test "x$enable_mpgmad" != "xno" ; then
@@ -216,16 +206,12 @@ dnl gtkui plugin
 if test "x$enable_gtkui" != "xno" ; then
     if test "x$HAVE_GTK" = "xyes" ; then
         HAVE_GTKUI=yes
-        AC_SUBST(GTKUI_DEPS_CFLAGS)
-        AC_SUBST(GTKUI_DEPS_LIBS)
     fi
 fi
 
 if test "x$enable_alsa" != "xno" ; then
     if test "x$HAVE_ALSA" = "xyes" ; then
         HAVE_ALSAPLUGIN=yes
-        AC_SUBST(ALSA_DEPS_CFLAGS)
-        AC_SUBST(ALSA_DEPS_LIBS)
     fi
 fi
 
@@ -233,16 +219,8 @@ if test "x$enable_ffmpeg" != "xno" ; then
     if test "x$HAVE_FFMPEG" = "xyes" ; then
         HAVE_FFMPEGPLUGIN=yes
         AC_CHECK_HEADER([ffmpeg/avformat.h], FFMPEG_DEPS_CFLAGS="$FFMPEG_DEPS_CFLAGS -D FFMPEG_OLD")
-        AC_SUBST(FFMPEG_DEPS_CFLAGS)
-        AC_SUBST(FFMPEG_DEPS_LIBS)
     fi
 fi
-
-dnl if test "x$HAVE_NOTIFY" = "xyes"; then
-dnl     AC_DEFINE(HAVE_NOTIFY,1,[Use libnotify])
-dnl     AC_SUBST(NOTIFY_DEPS_CFLAGS)
-dnl     AC_SUBST(NOTIFY_DEPS_LIBS)
-dnl fi
 
 if test "x$enable_hotkeys" != "xno" ; then
     AC_CHECK_HEADER([X11/Xlib.h], HAVE_XLIB_H=yes)
@@ -295,8 +273,6 @@ fi
 if test "x$enable_pulseaudio" != "xno"; then
     if test "x$HAVE_PULSE" = "xyes"; then
         HAVE_PULSEPLUGIN=yes
-        AC_SUBST(PULSE_DEPS_CFLAGS)
-        AC_SUBST(PULSE_DEPS_LIBS)
     fi
 fi
 
@@ -345,8 +321,10 @@ fi
 
 if test "x$HAVE_DBUS" = "xyes" && test "x$enable_notify" != "xno" ; then
     HAVE_NOTIFY=yes
-    NOTIFY_LIBS="$DBUS_LIBS"
+    NOTIFY_LIBS="$DBUS_DEPS_LIBS"
+    NOTIFY_CFLAGS="$DBUS_DEPS_CFLAGS"
     AC_SUBST(NOTIFY_LIBS)
+    AC_SUBST(NOTIFY_CFLAGS)
 fi
 
 PLUGINS_DIRS="plugins/lastfm plugins/mpgmad plugins/vorbis plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/dumb plugins/pulse plugins/notify"
@@ -422,7 +400,6 @@ dnl PRINT_PLUGIN_INFO([faad2],[aac/mp4 player],[test $HAVE_FAAD && test $HAVE_MP
 PRINT_PLUGIN_INFO([cdda],[cd audio player],[test "x$HAVE_CDDAPLUGIN" = "xyes"])
 PRINT_PLUGIN_INFO([gtkui],[GTK user interface],[test "x$HAVE_GTK" = "xyes"])
 PRINT_PLUGIN_INFO([hotkeys],[Global hotkeys support],[test "x$HAVE_HOTKEYS" = "xyes"])
-dnl PRINT_PLUGIN_INFO([libnotify],[Current track notification],[test "x$HAVE_NOTIFY" = "xyes"])
 PRINT_PLUGIN_INFO([ffmpeg],[ffmpeg codecs],[test "x$HAVE_FFMPEGPLUGIN" = "xyes"])
 PRINT_PLUGIN_INFO([oss],[oss output plugin],[test "x$HAVE_OSS" = "xyes"])
 PRINT_PLUGIN_INFO([pulse],[PulseAudio output plugin],[test "x$HAVE_PULSEPLUGIN" = "xyes"])

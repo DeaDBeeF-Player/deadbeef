@@ -257,12 +257,11 @@ cvorbis_read (DB_fileinfo_t *_info, char *bytes, int size) {
     }
     else {
         if (info->ptrack && info->currentsample - info->last_comment_update > 5 * _info->samplerate) {
-            int idx = deadbeef->pl_get_idx_of (info->ptrack);
-            if (idx >= 0) {
+            if (info->ptrack) {
                 info->last_comment_update = info->currentsample;
                 vorbis_comment *vc = ov_comment (&info->vorbis_file, -1);
                 update_vorbis_comments (info->ptrack, vc);
-                deadbeef->sendmessage (M_TRACKCHANGED, 0, idx, 0);
+                deadbeef->plug_trigger_event_trackinfochanged (info->ptrack);
             }
             else {
                 info->ptrack = NULL;

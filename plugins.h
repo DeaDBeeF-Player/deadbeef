@@ -22,6 +22,8 @@
 
 extern DB_functions_t *deadbeef;
 
+struct playItem_s;
+
 void
 plug_load_all (void);
 
@@ -38,10 +40,10 @@ void
 plug_trigger_event (int ev, uintptr_t param);
 
 void
-plug_trigger_event_trackchange (int from, int to);
+plug_trigger_event_trackchange (struct playItem_s *from, struct playItem_s *to);
 
 void
-plug_trigger_event_trackinfochanged (int trk);
+plug_trigger_event_trackinfochanged (struct playItem_s *track);
 
 void
 plug_trigger_event_paused (int paused);

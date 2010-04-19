@@ -875,8 +875,7 @@ cmp3_stream_frame (mpgmad_info_t *info) {
 
     if (!eof) {
         if (info->buffer.file->vfs->streaming && info->buffer.currentsample - info->buffer.last_comment_update > 5 * info->info.samplerate) {
-            int idx = deadbeef->pl_get_idx_of (info->buffer.it);
-            if (idx >= 0) {
+            if (info->buffer.it) {
                 info->buffer.last_comment_update = info->buffer.currentsample;
                 const char *vfs_tit = deadbeef->fget_content_name (info->buffer.file);
                 if (vfs_tit) {
@@ -885,11 +884,11 @@ cmp3_stream_frame (mpgmad_info_t *info) {
                         char out[1024];
                         deadbeef->junk_recode (vfs_tit, strlen (vfs_tit), out, sizeof (out), cs);
                         deadbeef->pl_replace_meta (info->buffer.it, "title", out);
-                        deadbeef->sendmessage (M_TRACKCHANGED, 0, idx, 0);
+                        deadbeef->plug_trigger_event_trackinfochanged (info->buffer.it);
                     }
                     else {
                         deadbeef->pl_replace_meta (info->buffer.it, "title", vfs_tit);
-                        deadbeef->sendmessage (M_TRACKCHANGED, 0, idx, 0);
+                        deadbeef->plug_trigger_event_trackinfochanged (info->buffer.it);
                     }
                 }
             }

@@ -93,9 +93,10 @@ gtkpl_free (DdbListview *pl) {
 
 
 struct fromto_t {
-    int from;
-    int to;
+    DB_playItem_t *from;
+    DB_playItem_t *to;
 };
+
 static gboolean
 update_win_title_idle (gpointer data);
 static gboolean
@@ -335,12 +336,18 @@ redraw_queued_tracks_cb (gpointer nothing) {
 }
 
 void
-gtkpl_songchanged_wrapper (int from, int to) {
+gtkpl_songchanged_wrapper (DB_playItem_t *from, DB_playItem_t *to) {
     struct fromto_t *ft = malloc (sizeof (struct fromto_t));
     ft->from = from;
     ft->to = to;
+    if (from) {
+        deadbeef->pl_item_ref (from);
+    }
+    if (to) {
+        deadbeef->pl_item_ref (to);
+    }
     g_idle_add (update_win_title_idle, ft);
-    if (ft->to == -1) {
+    if (to) {
         // redraw seekbar
         g_idle_add (redraw_seekbar_cb, NULL);
     }
@@ -362,11 +369,6 @@ set_tray_tooltip (const char *text) {
 #endif
 }
 
-struct trackinfo_t {
-    int index;
-    DB_playItem_t *track;
-};
-
 static void
 current_track_changed (DB_playItem_t *it) {
     char str[600];
@@ -382,26 +384,33 @@ current_track_changed (DB_playItem_t *it) {
 
 static gboolean
 trackinfochanged_cb (gpointer data) {
-    struct trackinfo_t *ti = (struct trackinfo_t *)data;
+    DB_playItem_t *track = (DB_playItem_t *)data;
     GtkWidget *playlist = lookup_widget (mainwin, "playlist");
-    ddb_listview_draw_row (DDB_LISTVIEW (playlist), ti->index, (DdbListviewIter)ti->track);
+    if (track) {
+        int idx = deadbeef->pl_get_idx_of (track);
+        if (idx != -1) {
+            ddb_listview_draw_row (DDB_LISTVIEW (playlist), idx, (DdbListviewIter)track);
+        }
+    }
     DB_playItem_t *curr = deadbeef->streamer_get_playing_track ();
-    if (ti->track == curr) {
-        current_track_changed (ti->track);
+    if (track == curr) {
+        current_track_changed (track);
     }
     if (curr) {
         deadbeef->pl_item_unref (curr);
     }
-    free (ti);
+    if (track) {
+        deadbeef->pl_item_unref (track);
+    }
     return FALSE;
 }
 
 static int
 gtkui_on_trackinfochanged (DB_event_track_t *ev, uintptr_t data) {
-    struct trackinfo_t *ti = malloc (sizeof (struct trackinfo_t));
-    ti->index = ev->index;
-    ti->track = ev->track;
-    g_idle_add (trackinfochanged_cb, ti);
+    if (ev->track) {
+        deadbeef->pl_item_ref (ev->track);
+    }
+    g_idle_add (trackinfochanged_cb, ev->track);
     return 0;
 }
 
@@ -569,35 +578,34 @@ on_add_location_activate               (GtkMenuItem     *menuitem,
 }
 
 static void
-songchanged (DdbListview *ps, int from, int to) {
+songchanged (DdbListview *ps, DB_playItem_t *from, DB_playItem_t *to) {
     int str_plt = deadbeef->streamer_get_current_playlist ();
     int plt = deadbeef->plt_get_curr ();
     if (plt != str_plt) {
         // have nothing to do here -- active playlist is not the one with playing song
         return;
     }
-    if (!ddb_listview_is_scrolling (ps) && to != -1) {
-        if (deadbeef->conf_get_int ("playlist.scroll.followplayback", 0)) {
-            ddb_listview_scroll_to (ps, to);
-        }
-        if (deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 0)) {
-            ddb_listview_set_cursor (ps, to);
+    int to_idx = -1;
+    if (!ddb_listview_is_scrolling (ps) && to) {
+        to_idx = deadbeef->pl_get_idx_of (to);
+        if (to_idx != -1) {
+            if (deadbeef->conf_get_int ("playlist.scroll.followplayback", 0)) {
+                ddb_listview_scroll_to (ps, to_idx);
+            }
+            if (deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 0)) {
+                ddb_listview_set_cursor (ps, to_idx);
+            }
         }
     }
 
-    if (from >= 0) {
-        DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (from, PL_MAIN);
-        if (it) {
-            ddb_listview_draw_row (ps, from, it);
-            deadbeef->pl_item_unref (it);
+    if (from) {
+        int idx = deadbeef->pl_get_idx_of (from);
+        if (idx != -1) {
+            ddb_listview_draw_row (ps, idx, from);
         }
     }
-    if (to >= 0) {
-        DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (to, PL_MAIN);
-        if (it) {
-            ddb_listview_draw_row (ps, to, it);
-            deadbeef->pl_item_unref (it);
-        }
+    if (to && to_idx != -1) {
+        ddb_listview_draw_row (ps, to_idx, to);
     }
 }
 
@@ -608,13 +616,13 @@ static NotifyNotification* notification;
 static gboolean
 update_win_title_idle (gpointer data) {
     struct fromto_t *ft = (struct fromto_t *)data;
-    int from = ft->from;
-    int to = ft->to;
+    DB_playItem_t *from = ft->from;
+    DB_playItem_t *to = ft->to;
     free (ft);
 
     // show notification
 #if HAVE_NOTIFY
-    if (to != -1 && deadbeef->conf_get_int ("gtkui.notify.enable", 0)) {
+    if (to && deadbeef->conf_get_int ("gtkui.notify.enable", 0)) {
         DB_playItem_t *track = deadbeef->streamer_get_playing_track ();//deadbeef->pl_get_for_idx (to);
         if (track) {
             char cmd [1024];
@@ -635,8 +643,8 @@ update_win_title_idle (gpointer data) {
 #endif
 
     // update window title
-    if (from >= 0 || to >= 0) {
-        if (to >= 0) {
+    if (from || to) {
+        if (to) {
             DB_playItem_t *it = deadbeef->streamer_get_playing_track ();;
             if (it) { // it might have been deleted after event was sent
                 current_track_changed (it);
@@ -650,6 +658,12 @@ update_win_title_idle (gpointer data) {
     }
     // update playlist view
     songchanged (DDB_LISTVIEW (lookup_widget (mainwin, "playlist")), from, to);
+    if (from) {
+        deadbeef->pl_item_unref (from);
+    }
+    if (to) {
+        deadbeef->pl_item_unref (to);
+    }
     return FALSE;
 }
 

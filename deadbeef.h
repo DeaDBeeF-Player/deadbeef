@@ -193,14 +193,13 @@ typedef struct {
 
 typedef struct {
     DB_event_t ev;
-    int index;
     DB_playItem_t *track;
 } DB_event_track_t;
 
 typedef struct {
     DB_event_t ev;
-    int from;
-    int to;
+    DB_playItem_t *from;
+    DB_playItem_t *to;
 } DB_event_trackchange_t;
 
 typedef struct {
@@ -223,7 +222,7 @@ enum {
     DB_EV_SONGCHANGED = 1, // triggers when song was just changed
     DB_EV_SONGSTARTED = 2, // triggers when song started playing (for scrobblers and such)
     DB_EV_SONGFINISHED = 3, // triggers when song finished playing (for scrobblers and such)
-    DB_EV_TRACKDELETED = 4, // triggers when track is to be deleted from playlist
+//    DB_EV_TRACKDELETED = 4, // triggers when track is to be deleted from playlist
     DB_EV_CONFIGCHANGED = 5, // configuration option changed
     DB_EV_ACTIVATE = 6, // will be fired every time player is activated
     DB_EV_TRACKINFOCHANGED = 7, // notify plugins that trackinfo was changed
@@ -260,11 +259,11 @@ enum {
     M_STOPSONG,
     M_PAUSESONG,
     M_PLAYRANDOM,
-    M_SONGCHANGED, // p1=from, p2=to
+//    M_SONGCHANGED, // p1=from, p2=to
     M_TERMINATE, // must be sent to player thread to terminate
     M_PLAYLISTREFRESH,
     M_REINIT_SOUND,
-    M_TRACKCHANGED, // p1=tracknumber
+//    M_TRACKCHANGED, // p1=tracknumber
     M_CONFIGCHANGED, // no arguments
 };
 
@@ -515,6 +514,9 @@ typedef struct {
     const char * (*plug_get_decoder_id) (const char *id);
     void (*plug_remove_decoder_id) (const char *id);
     struct DB_plugin_s *(*plug_get_for_id) (const char *id);
+    // plugin events
+    void (*plug_trigger_event_trackchange) (DB_playItem_t *from, DB_playItem_t *to);
+    void (*plug_trigger_event_trackinfochanged) (DB_playItem_t *track);
     // misc utilities
     int (*is_local_file) (const char *fname); // returns 1 for local filename, 0 otherwise
 } DB_functions_t;

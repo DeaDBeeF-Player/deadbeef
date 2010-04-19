@@ -348,15 +348,15 @@ player_mainloop (void) {
                 break;
             case M_TERMINATE:
                 return;
-            case M_SONGCHANGED:
-                plug_trigger_event_trackchange (p1, p2);
-                break;
+//            case M_SONGCHANGED:
+//                plug_trigger_event_trackchange (p1, p2);
+//                break;
             case M_PLAYSONG:
                 streamer_play_current_track ();
                 break;
-            case M_TRACKCHANGED:
-                plug_trigger_event_trackinfochanged (p1);
-                break;
+//            case M_TRACKCHANGED:
+//                plug_trigger_event_trackinfochanged (p1);
+//                break;
             case M_PLAYSONGNUM:
                 p_stop ();
                 pl_playqueue_clear ();

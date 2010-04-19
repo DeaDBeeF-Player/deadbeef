@@ -329,10 +329,7 @@ cddb_thread (void *items_i)
     {
         // FIXME: problem will happen here if item(s) were deleted from playlist, and new items were added in their places
         // possible solutions: catch EV_TRACKDELETED and mark item(s) in every thread as NULL
-        int idx = deadbeef->pl_get_idx_of (items[i]);
         trace ("track %d, artist=%s, album=%s, title=%s\n", i, artist, disc_title, cddb_track_get_title (track));
-        if (idx == -1)
-            continue;
 
         deadbeef->pl_delete_all_meta (items[i]);
         deadbeef->pl_add_meta (items[i], "artist", artist);
@@ -341,7 +338,7 @@ cddb_thread (void *items_i)
         char tmp[5];
         snprintf (tmp, sizeof (tmp), "%02d", trk);
         deadbeef->pl_add_meta (items[i], "track", tmp);
-        deadbeef->sendmessage (M_TRACKCHANGED, 0, idx, 0);
+        deadbeef->plug_trigger_event_trackinfochanged (items[i]);
         deadbeef->pl_item_unref (items[i]);
     }
     cddb_disc_destroy (disc);

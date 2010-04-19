@@ -245,6 +245,9 @@ static DB_functions_t deadbeef_api = {
     .plug_get_decoder_id = plug_get_decoder_id,
     .plug_remove_decoder_id = plug_remove_decoder_id,
     .plug_get_for_id = plug_get_for_id,
+    // plugin events
+    .plug_trigger_event_trackchange = (void (*) (DB_playItem_t *from, DB_playItem_t *to))plug_trigger_event_trackchange,
+    .plug_trigger_event_trackinfochanged = (void (*) (DB_playItem_t *track))plug_trigger_event_trackinfochanged,
     // misc utilities
     .is_local_file = plug_is_local_file,
 };
@@ -447,24 +450,17 @@ plug_event_call (DB_event_t *ev) {
 void
 plug_trigger_event (int ev, uintptr_t param) {
     DB_event_t *event;
-    playItem_t *pltrack = NULL;
     switch (ev) {
     case DB_EV_SONGSTARTED:
     case DB_EV_SONGFINISHED:
         {
         DB_event_track_t *pev = alloca (sizeof (DB_event_track_t));
-        pev->index = -1;
-        pltrack = streamer_get_playing_track ();
+        playItem_t *pltrack = streamer_get_playing_track ();
         pev->track = DB_PLAYITEM (pltrack);
-        event = DB_EVENT (pev);
+        if (pltrack) {
+            pl_item_unref (pltrack);
         }
-        break;
-    case DB_EV_TRACKDELETED:
-        {
-            DB_event_track_t *pev = alloca (sizeof (DB_event_track_t));
-            pev->index = -1; // FIXME
-            pev->track = DB_PLAYITEM (param);
-            event = DB_EVENT (pev);
+        event = DB_EVENT (pev);
         }
         break;
     default:
@@ -472,30 +468,22 @@ plug_trigger_event (int ev, uintptr_t param) {
     }
     event->event = ev;
     plug_event_call (event);
-    if (pltrack) {
-        pl_item_unref (pltrack);
-    }
 }
 
 void
-plug_trigger_event_trackchange (int from, int to) {
+plug_trigger_event_trackchange (playItem_t *from, playItem_t *to) {
     DB_event_trackchange_t event;
     event.ev.event = DB_EV_SONGCHANGED;
-    event.from = from;
-    event.to = to;
+    event.from = (DB_playItem_t *)from;
+    event.to = (DB_playItem_t *)to;
     plug_event_call (DB_EVENT (&event));
 }
 void
-plug_trigger_event_trackinfochanged (int trk) {
+plug_trigger_event_trackinfochanged (playItem_t *track) {
     DB_event_track_t event;
     event.ev.event = DB_EV_TRACKINFOCHANGED;
-    event.index = trk;
-    playItem_t *track = pl_get_for_idx (trk);
     event.track = DB_PLAYITEM (track);
     plug_event_call (DB_EVENT (&event));
-    if (track) {
-        pl_item_unref (track);
-    }
 }
 
 void
