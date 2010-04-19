@@ -112,6 +112,26 @@ src_unlock (void) {
     mutex_unlock (srcmutex);
 }
 
+void
+streamer_start_playback (playItem_t *from, playItem_t *it) {
+    // free old copy of playing
+    if (playing_track) {
+        pl_item_unref (playing_track);
+        playing_track = NULL;
+    }
+    // assign new
+    playing_track = it;
+    if (playing_track) {
+        pl_item_ref (playing_track);
+        playing_track->played = 1;
+        playing_track->started_timestamp = time (NULL);
+        trace ("sending songstarted to plugins [2] current playtrack: %s\n", playing_track->fname);
+        plug_trigger_event (DB_EV_SONGSTARTED, 0);
+        trace ("from=%p, to=%p[2]\n", from, it);
+        plug_trigger_event_trackchange (from, it);
+    }
+}
+
 playItem_t *
 streamer_get_streaming_track (void) {
     if (streaming_track) {
@@ -427,17 +447,7 @@ streamer_set_current (playItem_t *it) {
         trace ("buffering = on\n");
         streamer_buffering = 1;
         playlist_track = it;
-        if (playing_track) {
-            pl_item_unref (playing_track);
-        }
-        playing_track = it;
-        if (playing_track) {
-            pl_item_ref (playing_track);
-            playing_track->played = 1;
-            trace ("sending songstarted to plugins [2] current playtrack: %s\n", playing_track->fname);
-            plug_trigger_event (DB_EV_SONGSTARTED, 0);
-            plug_trigger_event_trackchange (from, to);
-        }
+        streamer_start_playback (from, it);
         bytes_until_next_song = -1;
     }
 
@@ -694,34 +704,18 @@ streamer_thread (void *ctx) {
             trace ("bytes_until_next_song=0, starting playback of new song\n");
             playItem_t *from = playing_track;
             playItem_t *to = streaming_track;
-            trace ("from=%d, to=%d\n", from, to);
             trace ("sending songchanged\n");
-            plug_trigger_event_trackchange (from, to);
             bytes_until_next_song = -1;
             // plugin will get pointer to str_playing_song
             if (playing_track) {
                 trace ("sending songfinished to plugins [2]\n");
                 plug_trigger_event (DB_EV_SONGFINISHED, 0);
             }
-            // free old copy of playing
-            if (playing_track) {
-                pl_item_unref (playing_track);
-                playing_track = NULL;
-            }
             // copy streaming into playing
-            playing_track = streaming_track;
-            if (playing_track) {
-                pl_item_ref (playing_track);
-                playing_track->played = 1;
-                playing_track->started_timestamp = time (NULL);
-            }
+            streamer_start_playback (playing_track, streaming_track);
             last_bitrate = -1;
             avg_bitrate = -1;
             playlist_track = playing_track;
-            // that is needed for playlist drawing
-            // plugin will get pointer to new str_playing_song
-            trace ("sending songstarted to plugins [1] current playtrack: %s\n", playing_track->fname);
-            plug_trigger_event (DB_EV_SONGSTARTED, 0);
             playpos = 0;
 
             // try to switch samplerate to the closest supported by output plugin
