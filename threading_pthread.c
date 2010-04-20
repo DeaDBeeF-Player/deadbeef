@@ -180,7 +180,11 @@ int
 cond_wait (uintptr_t c, uintptr_t m) {
     pthread_cond_t *cond = (pthread_cond_t *)c;
     pthread_mutex_t *mutex = (pthread_mutex_t *)m;
-    int err = pthread_cond_wait (cond, mutex);
+    int err = mutex_lock (m);
+    if (err != 0) {
+        return err;
+    }
+    err = pthread_cond_wait (cond, mutex);
     if (err != 0) {
         fprintf (stderr, "pthread_cond_wait failed: %s\n", strerror (err));
     }
