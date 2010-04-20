@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <stddef.h>
 #include <time.h>
+#include <locale.h>
 #ifdef __linux__
 #include <sys/prctl.h>
 #endif
@@ -426,6 +427,7 @@ sigterm_handler (int sig) {
 
 int
 main (int argc, char *argv[]) {
+    setlocale (LC_NUMERIC, "C");
     fprintf (stderr, "starting deadbeef " VERSION "\n");
     srand (time (NULL));
 #ifdef __linux__
