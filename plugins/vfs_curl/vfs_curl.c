@@ -170,7 +170,7 @@ static size_t
 http_curl_write (void *ptr, size_t size, size_t nmemb, void *stream) {
     int avail = size * nmemb;
     HTTP_FILE *fp = (HTTP_FILE *)stream;
-    trace ("http_curl_write %d bytes, wait_meta=%d\n", size * nmemb, fp->wait_meta);
+//    trace ("http_curl_write %d bytes, wait_meta=%d\n", size * nmemb, fp->wait_meta);
     gettimeofday (&fp->last_read_time, NULL);
     if (fp->status == STATUS_ABORTED) {
         trace ("vfs_curl STATUS_ABORTED at start of packet\n");
@@ -220,7 +220,7 @@ http_curl_write (void *ptr, size_t size, size_t nmemb, void *stream) {
 
     if (fp->icy_metaint > 0) {
         while (fp->wait_meta < avail) {
-            trace ("http_curl_write_wrapper [1] %d\n", fp->wait_meta);
+//            trace ("http_curl_write_wrapper [1] %d\n", fp->wait_meta);
             size_t res1 = http_curl_write_wrapper (fp, ptr, fp->wait_meta);
             if (res1 != fp->wait_meta) {
                 return 0;
@@ -249,7 +249,7 @@ http_curl_write (void *ptr, size_t size, size_t nmemb, void *stream) {
     }
 
     if (avail) {
-        trace ("http_curl_write_wrapper [2] %d\n", avail);
+//        trace ("http_curl_write_wrapper [2] %d\n", avail);
         size_t res = http_curl_write_wrapper (fp, ptr, avail);
         avail -= res;
         fp->wait_meta -= res;
@@ -321,7 +321,7 @@ http_content_header_handler (void *ptr, size_t size, size_t nmemb, void *stream)
     uint8_t key[256];
     uint8_t value[256];
     while (p < end) {
-        if (p < end - 4) {
+        if (p <= end - 4) {
             if (!memcmp (p, "\r\n\r\n", 4)) {
                 p += 4;
                 return size * nmemb - (size_t)(p-(const uint8_t *)ptr);
@@ -375,7 +375,7 @@ http_curl_control (void *stream, double dltotal, double dlnow, double ultotal, d
     float sec = tm.tv_sec - fp->last_read_time.tv_sec;
     long response;
     CURLcode code = curl_easy_getinfo (fp->curl, CURLINFO_RESPONSE_CODE, &response);
-    trace ("http_curl_control: status = %d, response = %d, interval: %f seconds\n", fp ? fp->status : -1, response, sec);
+//    trace ("http_curl_control: status = %d, response = %d, interval: %f seconds\n", fp ? fp->status : -1, response, sec);
     if (fp->status == STATUS_READING && sec > TIMEOUT) {
         trace ("http_curl_control: timed out, restarting read\n");
         memcpy (&fp->last_read_time, &tm, sizeof (struct timeval));
