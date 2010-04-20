@@ -225,6 +225,9 @@ void
 pl_select_all (void);
 
 void
+plt_reshuffle (playlist_t *playlist, playItem_t **ppmin, playItem_t **ppmax);
+
+void
 pl_reshuffle (playItem_t **ppmin, playItem_t **ppmax);
 
 // required to calculate total playtime

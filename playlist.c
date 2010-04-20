@@ -2115,9 +2115,8 @@ pl_select_all (void) {
     GLOBAL_UNLOCK;
 }
 
-
 void
-pl_reshuffle (playItem_t **ppmin, playItem_t **ppmax) {
+plt_reshuffle (playlist_t *playlist, playItem_t **ppmin, playItem_t **ppmax) {
     GLOBAL_LOCK;
     playItem_t *pmin = NULL;
     playItem_t *pmax = NULL;
@@ -2138,6 +2137,11 @@ pl_reshuffle (playItem_t **ppmin, playItem_t **ppmax) {
         *ppmax = pmax;
     }
     GLOBAL_UNLOCK;
+}
+
+void
+pl_reshuffle (playItem_t **ppmin, playItem_t **ppmax) {
+    plt_reshuffle (playlist, ppmin, ppmax);
 }
 
 void

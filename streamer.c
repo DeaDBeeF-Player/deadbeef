@@ -232,7 +232,7 @@ streamer_move_to_nextsong (int reason) {
             if (!it) {
                 // all songs played, reshuffle and try again
                 if (pl_loop_mode == PLAYBACK_MODE_LOOP_ALL) { // loop
-                    pl_reshuffle (&it, NULL);
+                    plt_reshuffle (streamer_playlist, &it, NULL);
                 }
             }
             if (!it) {
@@ -268,7 +268,7 @@ streamer_move_to_nextsong (int reason) {
                 trace ("all songs played! reshuffle\n");
                 // all songs played, reshuffle and try again
                 if (pl_loop_mode == PLAYBACK_MODE_LOOP_ALL) { // loop
-                    pl_reshuffle (&it, NULL);
+                    plt_reshuffle (streamer_playlist, &it, NULL);
                 }
             }
             if (!it) {
