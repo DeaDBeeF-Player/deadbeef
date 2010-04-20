@@ -1089,10 +1089,10 @@ pl_insert_file (playItem_t *after, const char *fname, int *pabort, int (*cb)(pla
     // they must be handled before checking for http://,
     // so that remote playlist files referenced from other playlist files could
     // be loaded correctly
-    if (!memcmp (eol, "m3u", 4)) {
+    if (!memcmp (eol, "m3u", 3)) {
         return pl_insert_m3u (after, fname, pabort, cb, user_data);
     }
-    else if (!memcmp (eol, "pls", 4)) {
+    else if (!memcmp (eol, "pls", 3)) {
 
         return pl_insert_pls (after, fname, pabort, cb, user_data);
     }
