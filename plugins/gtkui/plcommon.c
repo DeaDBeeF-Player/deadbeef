@@ -226,7 +226,7 @@ main_reload_metadata_activate
     DdbListview *ps = DDB_LISTVIEW (gtk_object_get_data (GTK_OBJECT (menuitem), "ps"));
     DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
     while (it) {
-        if (deadbeef->pl_is_selected (it) && it->decoder_id) {
+        if (deadbeef->pl_is_selected (it) && deadbeef->is_local_file (it->fname) && it->decoder_id) {
             DB_decoder_t **decoders = deadbeef->plug_get_decoder_list ();
             for (int i = 0; decoders[i]; i++) {
                 if (!strcmp (decoders[i]->plugin.id, it->decoder_id)) {
