@@ -21,8 +21,8 @@
 #include "vfs.h"
 #include "plugins.h"
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 DB_FILE *
 vfs_fopen (const char *fname) {
@@ -48,6 +48,12 @@ vfs_fopen (const char *fname) {
         return fallback->open (fname);
     }
     return NULL;
+}
+
+void vfs_set_track (DB_FILE *stream, DB_playItem_t *it) {
+    if (stream->vfs->set_track) {
+        stream->vfs->set_track (stream, it);
+    }
 }
 
 void
@@ -85,17 +91,3 @@ vfs_get_content_type (DB_FILE *stream) {
     return stream->vfs->get_content_type (stream);
 }
 
-const char *
-vfs_get_content_name (DB_FILE *stream) {
-    if (stream->vfs->get_content_name) {
-        return stream->vfs->get_content_name (stream);
-    }
-    return NULL;
-}
-const char *
-vfs_get_content_genre (DB_FILE *stream) {
-    if (stream->vfs->get_content_genre) {
-        return stream->vfs->get_content_genre (stream);
-    }
-    return NULL;
-}

@@ -48,6 +48,7 @@ typedef struct {
     DB_vfs_t *vfs;
     char *url;
     uint8_t buffer[BUFFER_SIZE];
+    DB_playItem_t *track;
     long pos; // position in stream; use "& BUFFER_MASK" to make it index into ringbuffer
     int64_t length;
     int32_t remaining; // remaining bytes in buffer read from stream
@@ -56,8 +57,8 @@ typedef struct {
     intptr_t mutex;
     uint8_t nheaderpackets;
     char *content_type;
-    char *content_name;
-    char *content_genre;
+//    char *content_name;
+//    char *content_genre;
     CURL *curl;
     struct timeval last_read_time;
     uint8_t status;
@@ -127,6 +128,20 @@ http_curl_write_wrapper (HTTP_FILE *fp, void *ptr, size_t size) {
     return size - avail;
 }
 
+void
+vfs_curl_set_meta (DB_playItem_t *it, const char *meta, const char *value) {
+    const char *cs = deadbeef->junk_detect_charset (value);
+    if (cs) {
+        char out[1024];
+        deadbeef->junk_recode (value, strlen (value), out, sizeof (out), cs);
+        deadbeef->pl_replace_meta (it, meta, out);
+    }
+    else {
+        deadbeef->pl_replace_meta (it, meta, value);
+    }
+    deadbeef->plug_trigger_event_trackinfochanged (it);
+}
+
 int
 http_parse_shoutcast_meta (HTTP_FILE *fp, const char *meta, int size) {
     trace ("reading %d bytes of metadata\n", size);
@@ -150,10 +165,18 @@ http_parse_shoutcast_meta (HTTP_FILE *fp, const char *meta, int size) {
             memcpy (title, meta, s);
             title[s] = 0;
             trace ("got stream title: %s\n", title);
-            if (fp->content_name) {
-                free (fp->content_name);
+            if (fp->track) {
+                char *tit = strstr (title, " - ");
+                if (tit) {
+                    *tit = 0;
+                    tit += 3;
+                    vfs_curl_set_meta (fp->track, "artist", title);
+                    vfs_curl_set_meta (fp->track, "title", tit);
+                }
+                else {
+                    vfs_curl_set_meta (fp->track, "title", title);
+                }
             }
-            fp->content_name = strdup (title);
             return 0;
         }
         while (meta < e && *meta != ';') {
@@ -343,16 +366,14 @@ http_content_header_handler (void *ptr, size_t size, size_t nmemb, void *stream)
             fp->length = atoi (value);
         }
         else if (!strcasecmp (key, "icy-name")) {
-            if (fp->content_name) {
-                free (fp->content_name);
+            if (fp->track) {
+                vfs_curl_set_meta (fp->track, "title", value);
             }
-            fp->content_name = strdup (value);
         }
         else if (!strcasecmp (key, "icy-genre")) {
-            if (fp->content_genre) {
-                free (fp->content_genre);
+            if (fp->track) {
+                vfs_curl_set_meta (fp->track, "genre", value);
             }
-            fp->content_genre = strdup (value);
         }
         else if (!strcasecmp (key, "icy-metaint")) {
             //printf ("icy-metaint: %d\n", atoi (value));
@@ -483,14 +504,6 @@ http_thread_func (void *ctx) {
                     free (fp->content_type);
                     fp->content_type = NULL;
                 }
-                if (fp->content_name) {
-                    free (fp->content_name);
-                    fp->content_name = NULL;
-                }
-                if (fp->content_genre) {
-                    free (fp->content_genre);
-                    fp->content_genre = NULL;
-                }
                 fp->seektoend = 0;
                 fp->gotheader = 0;
                 fp->icyheader = 0;
@@ -529,6 +542,14 @@ http_open (const char *fname) {
     fp->url = strdup (fname);
     return (DB_FILE*)fp;
 }
+static void
+http_set_track (DB_FILE *f, DB_playItem_t *it) {
+    HTTP_FILE *fp = (HTTP_FILE *)f;
+    fp->track = it;
+    if (it) {
+        deadbeef->pl_item_ref (it);
+    }
+}
 
 static void
 http_close (DB_FILE *stream) {
@@ -545,11 +566,8 @@ http_close (DB_FILE *stream) {
     if (fp->content_type) {
         free (fp->content_type);
     }
-    if (fp->content_name) {
-        free (fp->content_name);
-    }
-    if (fp->content_genre) {
-        free (fp->content_genre);
+    if (fp->track) {
+        deadbeef->pl_item_unref (fp->track);
     }
     if (fp->url) {
         free (fp->url);
@@ -748,49 +766,6 @@ http_get_content_type (DB_FILE *stream) {
     return fp->content_type;
 }
 
-static const char *
-http_get_content_name (DB_FILE *stream) {
-    trace ("http_get_content_name\n");
-    assert (stream);
-    HTTP_FILE *fp = (HTTP_FILE *)stream;
-    if (fp->status == STATUS_ABORTED) {
-        return NULL;
-    }
-    if (fp->gotheader) {
-        trace ("returning %s\n", fp->content_name);
-        return fp->content_name;
-    }
-    if (!fp->tid) {
-        http_start_streamer (fp);
-    }
-    trace ("http_get_content_name waiting for response...\n");
-    while (fp->status != STATUS_FINISHED && fp->status != STATUS_ABORTED && !fp->gotheader && !vfs_curl_abort) {
-        usleep (3000);
-    }
-    return fp->content_name;
-}
-
-static const char *
-http_get_content_genre (DB_FILE *stream) {
-    trace ("http_get_content_genre\n");
-    assert (stream);
-    HTTP_FILE *fp = (HTTP_FILE *)stream;
-    if (fp->status == STATUS_ABORTED) {
-        return NULL;
-    }
-    if (fp->gotheader) {
-        return fp->content_genre;
-    }
-    if (!fp->tid) {
-        http_start_streamer (fp);
-    }
-    trace ("http_get_content_genre waiting for response...\n");
-    while (fp->status != STATUS_FINISHED && fp->status != STATUS_ABORTED && !fp->gotheader && !vfs_curl_abort) {
-        usleep (3000);
-    }
-    return fp->content_genre;
-}
-
 static int
 vfs_curl_on_abort (DB_event_t *ev, uintptr_t data) {
     trace ("vfs_curl: got abort signal (vfs_curl_count=%d)!\n", vfs_curl_count);
@@ -829,6 +804,7 @@ static DB_vfs_t plugin = {
     .plugin.version_major = 0,
     .plugin.version_minor = 1,
     .plugin.type = DB_PLUGIN_VFS,
+    .plugin.id = "vfs_curl",
     .plugin.name = "cURL vfs",
     .plugin.descr = "http and ftp streaming module using libcurl, with ICY protocol support",
     .plugin.author = "Alexey Yakovenko",
@@ -837,6 +813,7 @@ static DB_vfs_t plugin = {
     .plugin.start = vfs_curl_start,
     .plugin.stop = vfs_curl_stop,
     .open = http_open,
+    .set_track = http_set_track,
     .close = http_close,
     .read = http_read,
     .seek = http_seek,
@@ -844,8 +821,6 @@ static DB_vfs_t plugin = {
     .rewind = http_rewind,
     .getlength = http_getlength,
     .get_content_type = http_get_content_type,
-    .get_content_name = http_get_content_name,
-    .get_content_genre = http_get_content_genre,
     .scheme_names = scheme_names,
     .streaming = 1
 };

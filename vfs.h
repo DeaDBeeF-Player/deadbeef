@@ -23,6 +23,7 @@
 #include "deadbeef.h"
 
 DB_FILE* vfs_fopen (const char *fname);
+void vfs_set_track (DB_FILE *stream, DB_playItem_t *it);
 void vfs_fclose (DB_FILE *f);
 size_t vfs_fread (void *ptr, size_t size, size_t nmemb, DB_FILE *stream);
 int vfs_fseek (DB_FILE *stream, int64_t offset, int whence);
@@ -30,8 +31,6 @@ int64_t vfs_ftell (DB_FILE *stream);
 void vfs_rewind (DB_FILE *stream);
 int64_t vfs_fgetlength (DB_FILE *stream);
 const char *vfs_get_content_type (DB_FILE *stream);
-const char *vfs_get_content_name (DB_FILE *stream);
-const char *vfs_get_content_genre (DB_FILE *stream);
 void vfs_fstop (DB_FILE *stream);
 
 #endif // __VFS_H

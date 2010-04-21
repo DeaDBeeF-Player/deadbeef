@@ -490,8 +490,7 @@ typedef struct {
     void (*rewind) (DB_FILE *stream);
     int64_t (*fgetlength) (DB_FILE *stream);
     const char *(*fget_content_type) (DB_FILE *stream);
-    const char *(*fget_content_name) (DB_FILE *stream);
-    const char *(*fget_content_genre) (DB_FILE *stream);
+    void (*fset_track) (DB_FILE *stream, DB_playItem_t *it);
     void (*fstop) (DB_FILE *stream);
     // message passing
     int (*sendmessage) (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2);
@@ -664,6 +663,7 @@ typedef struct {
 typedef struct DB_vfs_s {
     DB_plugin_t plugin;
     DB_FILE* (*open) (const char *fname);
+    void (*set_track) (DB_FILE *f, DB_playItem_t *it);
     void (*close) (DB_FILE *f);
     size_t (*read) (void *ptr, size_t size, size_t nmemb, DB_FILE *stream);
     int (*seek) (DB_FILE *stream, int64_t offset, int whence);
@@ -671,8 +671,6 @@ typedef struct DB_vfs_s {
     void (*rewind) (DB_FILE *stream);
     int64_t (*getlength)(DB_FILE *stream);
     const char * (*get_content_type) (DB_FILE *stream);
-    const char * (*get_content_name) (DB_FILE *stream);
-    const char * (*get_content_genre) (DB_FILE *stream);
     const char **scheme_names; // NULL-terminated list of supported schemes, e.g. {"http", "ftp", NULL}
     unsigned streaming : 1;
 } DB_vfs_t;

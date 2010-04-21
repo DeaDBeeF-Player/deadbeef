@@ -596,30 +596,17 @@ cmp3_init (DB_playItem_t *it) {
         }
     }
     else {
+        deadbeef->fset_track (info->buffer.file, it);
         info->buffer.it->filetype = NULL;
         int len = deadbeef->fgetlength (info->buffer.file);
-        const char *name = deadbeef->fget_content_name (info->buffer.file);
-        const char *genre = deadbeef->fget_content_genre (info->buffer.file);
         if (len > 0) {
             deadbeef->pl_delete_all_meta (it);
             int v2err = deadbeef->junk_id3v2_read (it, info->buffer.file);
-            deadbeef->pl_add_meta (it, "title", NULL);
             if (v2err != 0) {
                 deadbeef->fseek (info->buffer.file, 0, SEEK_SET);
             }
         }
-        else {
-            deadbeef->pl_delete_all_meta (it);
-            if (name) {
-                deadbeef->pl_add_meta (it, "title", name);
-            }
-            else {
-                deadbeef->pl_add_meta (it, "title", NULL);
-            }
-            if (genre) {
-                deadbeef->pl_add_meta (it, "genre", genre);
-            }
-        }
+        deadbeef->pl_add_meta (it, "title", NULL);
         int res = cmp3_scan_stream (&info->buffer, 0);
         if (res < 0) {
             trace ("mpgmad: cmp3_init: initial cmp3_scan_stream failed\n");
@@ -871,28 +858,6 @@ cmp3_stream_frame (mpgmad_info_t *info) {
         info->buffer.decode_remaining = info->synth.pcm.length;
         deadbeef->streamer_set_bitrate (info->frame.header.bitrate/1000);
         break;
-    }
-
-    if (!eof) {
-        if (info->buffer.file->vfs->streaming && info->buffer.currentsample - info->buffer.last_comment_update > 5 * info->info.samplerate) {
-            if (info->buffer.it) {
-                info->buffer.last_comment_update = info->buffer.currentsample;
-                const char *vfs_tit = deadbeef->fget_content_name (info->buffer.file);
-                if (vfs_tit) {
-                    const char *cs = deadbeef->junk_detect_charset (vfs_tit);
-                    if (cs) {
-                        char out[1024];
-                        deadbeef->junk_recode (vfs_tit, strlen (vfs_tit), out, sizeof (out), cs);
-                        deadbeef->pl_replace_meta (info->buffer.it, "title", out);
-                        deadbeef->plug_trigger_event_trackinfochanged (info->buffer.it);
-                    }
-                    else {
-                        deadbeef->pl_replace_meta (info->buffer.it, "title", vfs_tit);
-                        deadbeef->plug_trigger_event_trackinfochanged (info->buffer.it);
-                    }
-                }
-            }
-        }
     }
 
     return eof;
