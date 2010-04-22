@@ -2,17 +2,17 @@ if HAVE_GTKUI
 gtkuidir = $(libdir)/$(PACKAGE)
 pkglib_LTLIBRARIES = gtkui.la
 
-gtkui_VALASOURCES = ddbequalizer.vala ddbseekbar.vala
-gtkui_VALABUILTSOURCES = $(gtkui_VALASOURCES:.vala=.c) ddbequalizer.h ddbseekbar.h
+gtkui_VALASOURCES = ddbequalizer.vala ddbseekbar.vala ddbcellrenderertextmultiline.vala
+gtkui_VALABUILTSOURCES = $(gtkui_VALASOURCES:.vala=.c) ddbequalizer.h ddbseekbar.h ddbcellrenderertextmultiline.h
 
 if MAINTAINER_MODE
 BUILT_SOURCES = vala.stamp
 vala.stamp: $(gtkui_VALASOURCES)
-	$(VALAC)  -C -H ddbequalizer.h --library ddbequalizer gtkui.vapi --pkg=gtk+-2.0 $^
-	$(VALAC)  -C -H ddbseekbar.h --library ddbseekbar gtkui.vapi --pkg=gtk+-2.0 $^
+	$(VALAC)  -C -H ddbcellrenderertextmultiline.h --library ddbcellrenderertextmultiline --pkg=gtk+-2.0 gdk-keysyms.vapi ddbcellrenderertextmultiline.vala
+	$(VALAC)  -C -H ddbequalizer.h --library ddbequalizer gtkui.vapi --pkg=gtk+-2.0 ddbequalizer.vala
+	$(VALAC)  -C -H ddbseekbar.h --library ddbseekbar gtkui.vapi --pkg=gtk+-2.0 ddbseekbar.vala
 	touch $@
 endif
-
 
 gtkui_la_SOURCES = $(gtkui_VALABUILTSOURCES)\
 				   gtkui.c gtkui.h\

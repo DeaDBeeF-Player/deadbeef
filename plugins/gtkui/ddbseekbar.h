@@ -6,22 +6,9 @@
 
 #include <glib.h>
 #include <gtk/gtk.h>
-#include <float.h>
-#include <math.h>
 
 G_BEGIN_DECLS
 
-
-#define DDB_TYPE_EQUALIZER (ddb_equalizer_get_type ())
-#define DDB_EQUALIZER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), DDB_TYPE_EQUALIZER, DdbEqualizer))
-#define DDB_EQUALIZER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), DDB_TYPE_EQUALIZER, DdbEqualizerClass))
-#define DDB_IS_EQUALIZER(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), DDB_TYPE_EQUALIZER))
-#define DDB_IS_EQUALIZER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), DDB_TYPE_EQUALIZER))
-#define DDB_EQUALIZER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), DDB_TYPE_EQUALIZER, DdbEqualizerClass))
-
-typedef struct _DdbEqualizer DdbEqualizer;
-typedef struct _DdbEqualizerClass DdbEqualizerClass;
-typedef struct _DdbEqualizerPrivate DdbEqualizerPrivate;
 
 #define DDB_TYPE_SEEKBAR (ddb_seekbar_get_type ())
 #define DDB_SEEKBAR(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), DDB_TYPE_SEEKBAR, DdbSeekbar))
@@ -34,15 +21,6 @@ typedef struct _DdbSeekbar DdbSeekbar;
 typedef struct _DdbSeekbarClass DdbSeekbarClass;
 typedef struct _DdbSeekbarPrivate DdbSeekbarPrivate;
 
-struct _DdbEqualizer {
-	GtkWidget parent_instance;
-	DdbEqualizerPrivate * priv;
-};
-
-struct _DdbEqualizerClass {
-	GtkWidgetClass parent_class;
-};
-
 struct _DdbSeekbar {
 	GtkWidget parent_instance;
 	DdbSeekbarPrivate * priv;
@@ -53,13 +31,6 @@ struct _DdbSeekbarClass {
 };
 
 
-GType ddb_equalizer_get_type (void);
-void ddb_equalizer_set_band (DdbEqualizer* self, gint band, double v);
-double ddb_equalizer_get_band (DdbEqualizer* self, gint band);
-void ddb_equalizer_set_preamp (DdbEqualizer* self, double v);
-double ddb_equalizer_get_preamp (DdbEqualizer* self);
-DdbEqualizer* ddb_equalizer_new (void);
-DdbEqualizer* ddb_equalizer_construct (GType object_type);
 GType ddb_seekbar_get_type (void);
 DdbSeekbar* ddb_seekbar_new (void);
 DdbSeekbar* ddb_seekbar_construct (GType object_type);

@@ -27,6 +27,7 @@
 #include "gtkui.h"
 #include "mainplaylist.h"
 #include "search.h"
+#include "ddbcellrenderertextmultiline.h"
 
 static GtkWidget *trackproperties;
 static DB_playItem_t *track;
@@ -54,6 +55,7 @@ on_trackproperties_key_press_event     (GtkWidget       *widget,
     if (event->keyval == GDK_Escape) {
         on_trackproperties_delete_event (NULL, NULL, NULL);
         gtk_widget_destroy (widget);
+        return TRUE;
     }
     return FALSE;
 }
@@ -148,7 +150,7 @@ show_track_properties_dlg (DB_playItem_t *it) {
         store = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_STRING);
         gtk_tree_view_set_model (tree, GTK_TREE_MODEL (store));
         GtkCellRenderer *rend_text = gtk_cell_renderer_text_new ();
-        rend_text2 = gtk_cell_renderer_text_new ();
+        rend_text2 = GTK_CELL_RENDERER (ddb_cell_renderer_text_multiline_new ());//gtk_cell_renderer_text_new ();
         g_signal_connect ((gpointer)rend_text2, "edited",
                 G_CALLBACK (on_metadata_edited),
                 store);
