@@ -543,16 +543,16 @@ junk_id3v1_read (playItem_t *it, DB_FILE *fp) {
 
     // add meta
 //    trace ("%s - %s - %s - %s - %s - %s\n", title, artist, album, year, comment, genre);
-    pl_add_meta (it, "title", convstr_id3v1 (title, strlen (title)));
-    pl_add_meta (it, "artist", convstr_id3v1 (artist, strlen (artist)));
-    pl_add_meta (it, "album", convstr_id3v1 (album, strlen (album)));
-    pl_add_meta (it, "year", year);
-    pl_add_meta (it, "comment", convstr_id3v1 (comment, strlen (comment)));
-    pl_add_meta (it, "genre", convstr_id3v1 (genre, strlen (genre)));
+    pl_append_meta (it, "title", convstr_id3v1 (title, strlen (title)));
+    pl_append_meta (it, "artist", convstr_id3v1 (artist, strlen (artist)));
+    pl_append_meta (it, "album", convstr_id3v1 (album, strlen (album)));
+    pl_append_meta (it, "year", year);
+    pl_append_meta (it, "comment", convstr_id3v1 (comment, strlen (comment)));
+    pl_append_meta (it, "genre", convstr_id3v1 (genre, strlen (genre)));
     if (tracknum != 0xff) {
         char s[4];
         snprintf (s, 4, "%d", tracknum);
-        pl_add_meta (it, "track", s);
+        pl_append_meta (it, "track", s);
     }
 
     uint32_t f = pl_get_item_flags (it);
@@ -585,6 +585,10 @@ junk_id3v1_write (FILE *fp, playItem_t *it) {
         }\
         else {\
             strncpy (store, temp, sizeof (store));\
+        }\
+        char *cr = strchr (store, '\n');\
+        if (cr) {\
+            *cr = 0;\
         }\
     }\
 }
