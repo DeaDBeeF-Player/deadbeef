@@ -40,8 +40,8 @@
 
 #define UTF8 "utf-8"
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -784,9 +784,11 @@ junk_apev2_read_full (playItem_t *it, DB_apev2_tag_t *tag_store, DB_FILE *fp) {
     uint32_t flags = extract_i32_le (&header[20]);
 
     trace ("APEv%d, size=%d, items=%d, flags=%x\n", version, size, numitems, flags);
-    uint32_t f = pl_get_item_flags (it);
-    f |= DDB_TAG_APEV2;
-    pl_set_item_flags (it, f);
+    if (it) {
+        uint32_t f = pl_get_item_flags (it);
+        f |= DDB_TAG_APEV2;
+        pl_set_item_flags (it, f);
+    }
 
     // now seek to beginning of the tag (exluding header)
     if (deadbeef->fseek (fp, -size, SEEK_CUR) == -1) {
