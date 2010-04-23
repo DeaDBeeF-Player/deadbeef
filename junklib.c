@@ -796,26 +796,6 @@ junk_apev2_read_full (playItem_t *it, DB_apev2_tag_t *tag_store, DB_FILE *fp) {
         return -1;
     }
 
-#if 0
-    // this code ensures that APEv2 frames don't get appended to
-    // existing metainfo, but all APEv2 frames with the same key are
-    // appended
-    const char *metainfo[] = {
-        "artist", "artist", it ? pl_find_meta (it, "artist") : NULL,
-        "album artist", "band", it ? pl_find_meta (it, "band") : NULL,
-        "title", "title", it ? pl_find_meta (it, "title") : NULL,
-        "album", "album", it ? pl_find_meta (it, "album") : NULL,
-        "year", "year", it ? pl_find_meta (it, "year") : NULL,
-        "genre", "genre", it ? pl_find_meta (it, "genre") : NULL,
-        "composer", "composer", it ? pl_find_meta (it, "composer") : NULL,
-//        "performer", "performer", it ? pl_find_meta (it, "performer") : NULL,
-        "comment", "comment", it ? pl_find_meta (it, "comment") : NULL,
-        "copyright", "copyright", it ? pl_find_meta (it, "copyright") : NULL,
-        "totaltracks", "numtracks", it ? pl_find_meta (it, "numtracks") : NULL,
-        NULL
-    };
-#endif
-
     int i;
     for (i = 0; i < numitems; i++) {
         uint8_t buffer[8];
@@ -889,6 +869,7 @@ junk_apev2_read_full (playItem_t *it, DB_apev2_tag_t *tag_store, DB_FILE *fp) {
                                 junk_add_track_meta (it, value);
                             }
                             else {
+                                trace ("pl_append_meta %s %s\n", frame_mapping[m+MAP_DDB], value);
                                 pl_append_meta (it, frame_mapping[m+MAP_DDB], value);
                             }
                             break;
@@ -1937,6 +1918,7 @@ junk_apev2_remove_frames (DB_apev2_tag_t *tag, const char *frame_id) {
 
 DB_apev2_frame_t *
 junk_apev2_add_text_frame (DB_apev2_tag_t *tag, const char *frame_id, const char *value) {
+    trace ("adding apev2 frame %s %s\n", frame_id, value);
     if (!*value) {
         return NULL;
     }
@@ -1945,25 +1927,45 @@ junk_apev2_add_text_frame (DB_apev2_tag_t *tag, const char *frame_id, const char
         tail = tail->next;
     }
 
-    int size = strlen (value);
-    DB_apev2_frame_t *f = malloc (sizeof (DB_apev2_frame_t) + size);
-    if (!f) {
-        trace ("junk_apev2_add_text_frame: failed to allocate %d bytes\n", size);
-        return NULL;
-    }
-    memset (f, 0, sizeof (DB_apev2_frame_t));
-    f->flags = 0;
-    strcpy (f->key, frame_id);
-    f->size = size;
-    memcpy (f->data, value, size);
+    const char *next = value;
+    while (*value) {
+        while (*next && *next != '\n') {
+            next++;
+        }
 
-    if (tail) {
-        tail->next = f;
+        //int size = strlen (value);
+        int size = next - value;
+        if (*next) {
+            next++;
+        }
+
+        if (!size) {
+            continue;
+        }
+
+        trace ("adding apev2 subframe %s len %d\n", value, size);
+        DB_apev2_frame_t *f = malloc (sizeof (DB_apev2_frame_t) + size);
+        if (!f) {
+            trace ("junk_apev2_add_text_frame: failed to allocate %d bytes\n", size);
+            return NULL;
+        }
+        memset (f, 0, sizeof (DB_apev2_frame_t));
+        f->flags = 0;
+        strcpy (f->key, frame_id);
+        f->size = size;
+        memcpy (f->data, value, size);
+
+        if (tail) {
+            tail->next = f;
+        }
+        else {
+            tag->frames = f;
+        }
+        tail = f;
+
+        value = next;
     }
-    else {
-        tag->frames = f;
-    }
-    return f;
+    return tail;
 }
 
 int
@@ -3163,13 +3165,13 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
         free (buf);
     }
     else if (write_apev2) {
-        trace ("writing new apev2 tag\n");
-        if (!strip_apev2 || junk_apev2_read_full (NULL, &apev2, fp) != 0) {
+        trace ("writing new apev2 tag (strip=%d)\n", strip_apev2);
+        if (strip_apev2 || junk_apev2_read_full (NULL, &apev2, fp) != 0) {
             deadbeef->junk_apev2_free (&apev2);
             memset (&apev2, 0, sizeof (apev2));
         }
         // add all basic frames
-        for (int i = 0; frame_mapping[i]; i += 3) {
+        for (int i = 0; frame_mapping[i]; i += FRAME_MAPPINGS) {
             if (frame_mapping[i+MAP_APEV2]) {
                 const char *val = pl_find_meta (it, frame_mapping[i+MAP_DDB]);
                 if (val) {

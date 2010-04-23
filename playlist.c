@@ -1531,6 +1531,7 @@ pl_add_meta (playItem_t *it, const char *key, const char *value) {
 void
 pl_append_meta (playItem_t *it, const char *key, const char *value) {
     const char *old = pl_find_meta (it, key);
+    size_t newlen = strlen (value);
     if (!old) {
         pl_add_meta (it, key, value);
     }
@@ -1549,13 +1550,13 @@ pl_append_meta (playItem_t *it, const char *key, const char *value) {
                 len = strlen (str);
             }
 
-            if (!strncmp (str, value, len)) {
+            if (len == newlen && !memcmp (str, value, len)) {
                 return;
             }
 
             str = next;
         }
-        int sz = strlen (old) + strlen (value) + 2;
+        int sz = strlen (old) + newlen + 2;
         char out[sz];
         snprintf (out, sz, "%s\n%s", old, value);
         pl_replace_meta (it, key, out);
