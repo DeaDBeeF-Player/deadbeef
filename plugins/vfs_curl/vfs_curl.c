@@ -35,6 +35,8 @@ static DB_functions_t *deadbeef;
 #define BUFFER_SIZE (0x10000)
 #define BUFFER_MASK 0xffff
 
+#define MAX_METADATA 1024
+
 #define TIMEOUT 10 // in seconds
 
 #define STATUS_INITIAL  0
@@ -48,6 +50,7 @@ typedef struct {
     DB_vfs_t *vfs;
     char *url;
     uint8_t buffer[BUFFER_SIZE];
+
     DB_playItem_t *track;
     long pos; // position in stream; use "& BUFFER_MASK" to make it index into ringbuffer
     int64_t length;
@@ -64,6 +67,11 @@ typedef struct {
     uint8_t status;
     int icy_metaint;
     int wait_meta;
+
+    char metadata[MAX_METADATA];
+    int metadata_size; // size of metadata in stream
+    int metadata_have_size; // amount which is already in metadata buffer
+
     // flags (bitfields to save some space)
     unsigned seektoend : 1; // indicates that next tell must return length
     unsigned gotheader : 1; // tells that all headers (including ICY) were processed (to start reading body)
@@ -242,33 +250,58 @@ http_curl_write (void *ptr, size_t size, size_t nmemb, void *stream) {
     deadbeef->mutex_unlock (fp->mutex);
 
     if (fp->icy_metaint > 0) {
-        while (fp->wait_meta < avail) {
-//            trace ("http_curl_write_wrapper [1] %d\n", fp->wait_meta);
-            size_t res1 = http_curl_write_wrapper (fp, ptr, fp->wait_meta);
-            if (res1 != fp->wait_meta) {
-                return 0;
-            }
-            avail -= res1;
-            ptr += res1;
-            uint32_t sz = (uint32_t)(*((uint8_t *)ptr)) * 16;
-            ptr ++;
-            if (sz > 0) {
-                if (http_parse_shoutcast_meta (fp, ptr, sz) < 0) {
-                    trace ("vfs_curl: got invalid icy metadata block\n");
-                    fp->remaining = 0;
-                    fp->status = STATUS_SEEK;
-                    return 0;
+        for (;;) {
+//            trace ("wait_meta=%d, avail=%d\n", fp->wait_meta, avail);
+            if (fp->metadata_size > 0) {
+                if (fp->metadata_size > fp->metadata_have_size) {
+                    trace ("metadata fetch mode, avail: %d, metadata_size: %d, metadata_have_size: %d)\n", avail, fp->metadata_size, fp->metadata_have_size);
+                    int sz = (fp->metadata_size - fp->metadata_have_size);
+                    sz = min (sz, avail);
+                    if (sz > 0) {
+                        trace ("fetching %d bytes of metadata (out of %d)\n", sz, fp->metadata_size);
+                        memcpy (fp->metadata + fp->metadata_have_size, ptr, sz);
+                        avail -= sz;
+                        ptr += sz;
+                        fp->metadata_have_size += sz;
+                    }
+                }
+                if (fp->metadata_size == fp->metadata_have_size) {
+                    int sz = fp->metadata_size;
+                    fp->metadata_size = fp->metadata_have_size = 0;
+                    if (http_parse_shoutcast_meta (fp, fp->metadata, sz) < 0) {
+                        trace ("vfs_curl: got invalid icy metadata block\n");
+                        fp->remaining = 0;
+                        fp->status = STATUS_SEEK;
+                        return 0;
+                    }
                 }
             }
-            avail -= sz + 1;
-            fp->wait_meta = fp->icy_metaint;
-            trace ("avail: %d\n", avail);
+            if (fp->wait_meta < avail) {
+                // read bytes remaining until metadata block
+                size_t res1 = http_curl_write_wrapper (fp, ptr, fp->wait_meta);
+                if (res1 != fp->wait_meta) {
+                    return 0;
+                }
+                avail -= res1;
+                ptr += res1;
+                uint32_t sz = (uint32_t)(*((uint8_t *)ptr)) * 16;
+                ptr ++;
+                fp->metadata_size = sz;
+                fp->metadata_have_size = 0;
+                fp->wait_meta = fp->icy_metaint;
+                avail--;
+                if (sz != 0) {
+                    trace ("found metadata block, size: %d (avail=%d)\n", sz, avail);
+                }
+            }
+            if ((!fp->metadata_size || !avail) && fp->wait_meta >= avail) {
+                break;
+            }
+            if (avail < 0) {
+                trace ("vfs_curl: something bad happened in metadata parser. can't continue streaming.\n");
+                return 0;
+            }
         }
-    }
-
-    if (avail < 0) {
-        trace ("vfs_curl: something bad happened in metadata parser. can't continue streaming.\n");
-        return 0;
     }
 
     if (avail) {
