@@ -598,7 +598,7 @@ static int ape_read_packet(DB_FILE *fp, APEContext *ape_ctx)
 
     if (ape->currentframe > ape->totalframes)
         return -1;
-//    fprintf (stderr, "seeking to %d\n", ape->frames[ape->currentframe].pos);
+    trace ("seeking to packet %d (%d + %d)\n", ape->currentframe, ape->frames[ape->currentframe].pos, ape_ctx->skip_header);
     if (deadbeef->fseek (fp, ape->frames[ape->currentframe].pos + ape_ctx->skip_header, SEEK_SET) != 0) {
         return -1;
     }
@@ -1761,9 +1761,9 @@ ffap_insert (DB_playItem_t *after, const char *fname) {
 static int
 ffap_read_int16 (DB_fileinfo_t *_info, char *buffer, int size) {
     ape_info_t *info = (ape_info_t*)_info;
-    if (info->ape_ctx.currentsample + size / (2 * info->ape_ctx.channels) > info->endsample) {
-        size = (info->endsample - info->ape_ctx.currentsample + 1) * 2 * info->ape_ctx.channels;
-        trace ("size truncated to %d bytes, cursample=%d, info->endsample=%d, totalsamples=%d\n", size, info->ape_ctx.currentsample, info->endsample, info->ape_ctx.totalsamples);
+    if (info->ape_ctx.currentsample + size / ((info->info.bps / 8) * info->ape_ctx.channels) > info->endsample) {
+        size = (info->endsample - info->ape_ctx.currentsample + 1) * (info->info.bps / 8) * info->ape_ctx.channels;
+        trace ("size truncated to %d bytes (%d samples), cursample=%d, info->endsample=%d, totalsamples=%d\n", size, size / (info->info.bps / 8) / info->ape_ctx.channels, info->ape_ctx.currentsample, info->endsample, info->ape_ctx.totalsamples);
         if (size <= 0) {
             return 0;
         }
@@ -1822,8 +1822,11 @@ ffap_seek_sample (DB_fileinfo_t *_info, int sample) {
     }
     info->ape_ctx.currentframe = nframe;
     info->ape_ctx.samplestoskip = newsample - nframe * info->ape_ctx.blocksperframe;
+    trace ("seek to sample %d at blockstart\n", nframe * info->ape_ctx.blocksperframe);
+    trace ("samples to skip: %d\n", info->ape_ctx.samplestoskip);
 
     // reset decoder
+    info->ape_ctx.remaining = 0;
     info->ape_ctx.packet_remaining = 0;
     info->ape_ctx.samples = 0;
     info->ape_ctx.currentsample = newsample;
