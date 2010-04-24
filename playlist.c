@@ -656,7 +656,7 @@ pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, c
                 trace ("fail :-(\n");
             }
         }
-        //trace ("calc endsample=%d, prevtime=%f, samplerate=%d, prev track duration=%f\n", (*prev)->endsample,  prevtime, samplerate, (*prev)->duration);
+        trace ("startsample=%d, endsample=%d, prevtime=%f, samplerate=%d, prev track duration=%f\n", (*prev)->startsample, (*prev)->endsample,  prevtime, samplerate, (*prev)->_duration);
     }
     // non-compliant hack to handle tracks which only store pregap info
     if (!index01[0]) {
@@ -688,7 +688,7 @@ pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, c
     if (date[0]) {
         pl_add_meta (it, "year", date);
     }
-    it->_flags |= DDB_IS_SUBTRACK;
+    it->_flags |= DDB_IS_SUBTRACK | DDB_TAG_CUESHEET;
     after = pl_insert_item (after, it);
     pl_item_unref (it);
     *prev = it;
