@@ -101,6 +101,7 @@ static const char *types[] = {
     "disc", "Disc Number",
     "comment", "Comment",
     "vendor", "Encoder / Vendor",
+    "copyright", "Copyright",
     // nonstandard frames, let's hide them for now
 //    "<performer>", "<PERFORMER>",
 //    "<albumartist>", "<ALBUM ARTIST>",
