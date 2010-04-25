@@ -37,8 +37,6 @@
 #include "drawing.h"
 #include "gtkui.h"
 
-#pragma GCC optimize("O0")
-
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
@@ -46,8 +44,8 @@
 #define SCROLL_STEP 20
 #define AUTOSCROLL_UPDATE_FREQ 0.01f
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 #define PL_NEXT(it) (ps->binding->next (it))
 #define PL_PREV(it) (ps->binding->prev (it))
