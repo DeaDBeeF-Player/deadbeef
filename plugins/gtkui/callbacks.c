@@ -558,16 +558,6 @@ on_seekbar_configure_event             (GtkWidget       *widget,
 #endif
 
 gboolean
-on_seekbar_expose_event                (GtkWidget       *widget,
-                                        GdkEventExpose  *event,
-                                        gpointer         user_data)
-{
-    //seekbar_expose (widget, event->area.x, event->area.y, event->area.width, event->area.height);
-    seekbar_draw (widget);
-    return FALSE;
-}
-
-gboolean
 on_seekbar_motion_notify_event         (GtkWidget       *widget,
                                         GdkEventMotion  *event)
 {
@@ -598,8 +588,6 @@ on_seekbar_button_release_event        (GtkWidget       *widget,
 {
     seekbar_moving = 0;
     gtk_widget_queue_draw (widget);
-    //seekbar_draw (widget);
-    //seekbar_expose (widget, 0, 0, widget->allocation.width, widget->allocation.height);
     DB_playItem_t *trk = deadbeef->streamer_get_playing_track ();
     if (trk) {
         float time = (event->x - widget->allocation.x) * deadbeef->pl_get_item_duration (trk) / (widget->allocation.width);

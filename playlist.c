@@ -1444,7 +1444,7 @@ void
 pl_item_ref (playItem_t *it) {
     LOCK;
     it->_refc++;
-    //trace ("\033[0;34m+it %p: refc=%d: %s\033[37;0m\n", it, it->_refc, it->fname);
+    trace ("\033[0;34m+it %p: refc=%d: %s\033[37;0m\n", it, it->_refc, it->fname);
     UNLOCK;
 }
 
@@ -1471,7 +1471,7 @@ void
 pl_item_unref (playItem_t *it) {
     LOCK;
     it->_refc--;
-    //trace ("\033[0;31m-it %p: refc=%d: %s\033[37;0m\n", it, it->_refc, it->fname);
+    trace ("\033[0;31m-it %p: refc=%d: %s\033[37;0m\n", it, it->_refc, it->fname);
     if (it->_refc < 0) {
         trace ("\033[0;31mplaylist: bad refcount on item %p\033[37;0m\n", it);
     }

@@ -474,6 +474,7 @@ void
 plug_trigger_event_trackchange (playItem_t *from, playItem_t *to) {
     DB_event_trackchange_t event;
     event.ev.event = DB_EV_SONGCHANGED;
+    //printf ("plug_trigger_event_trackchange %p %d %p %d\n", from, from ? from->_refc : -1, to, to ? to->_refc : -1);
     event.from = (DB_playItem_t *)from;
     event.to = (DB_playItem_t *)to;
     plug_event_call (DB_EVENT (&event));

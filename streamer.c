@@ -114,6 +114,12 @@ src_unlock (void) {
 
 void
 streamer_start_playback (playItem_t *from, playItem_t *it) {
+    if (from) {
+        pl_item_ref (from);
+    }
+    if (it) {
+        pl_item_ref (it);
+    }
     // free old copy of playing
     if (playing_track) {
         pl_item_unref (playing_track);
@@ -129,6 +135,12 @@ streamer_start_playback (playItem_t *from, playItem_t *it) {
         plug_trigger_event (DB_EV_SONGSTARTED, 0);
         trace ("from=%p, to=%p[2]\n", from, it);
         plug_trigger_event_trackchange (from, it);
+    }
+    if (from) {
+        pl_item_unref (from);
+    }
+    if (it) {
+        pl_item_unref (it);
     }
 }
 
@@ -440,9 +452,17 @@ streamer_song_removed_notify (playItem_t *it) {
 // that must be called after last sample from str_playing_song was done reading
 static int
 streamer_set_current (playItem_t *it) {
+    int err = 0;
     playItem_t *from, *to;
+    // need to add refs here, because streamer_start_playback can destroy items
     from = playing_track;
     to = it;
+    if (from) {
+        pl_item_ref (from);
+    }
+    if (to) {
+        pl_item_ref (to);
+    }
     if (!playing_track || p_isstopped ()) {
         trace ("buffering = on\n");
         streamer_buffering = 1;
@@ -480,7 +500,7 @@ streamer_set_current (playItem_t *it) {
         if (fp) {
             const char *ct = vfs_get_content_type (fp);
             if (ct) {
-                fprintf (stderr, "got content-type: %s\n", ct);
+                trace ("got content-type: %s\n", ct);
                 if (!strcmp (ct, "audio/mpeg")) {
                     plug = "stdmpg";
                 }
@@ -518,7 +538,8 @@ streamer_set_current (playItem_t *it) {
                 trace ("redraw track %d; playing_track=%p; playlist_track=%p\n", to, playing_track, playlist_track);
                 plug_trigger_event_trackinfochanged (to);
             }
-            return -1;
+            err = -1;
+            goto error;
         }
         else {
             mutex_lock (decodemutex);
@@ -549,7 +570,16 @@ streamer_set_current (playItem_t *it) {
 //    }
 success:
     plug_trigger_event_trackinfochanged (to);
-    return 0;
+
+error:
+    if (from) {
+        pl_item_unref (from);
+    }
+    if (to) {
+        pl_item_unref (to);
+    }
+
+    return err;
 }
 
 float
@@ -683,12 +713,18 @@ streamer_thread (void *ctx) {
                 trace ("sending songfinished to plugins [1]\n");
                 plug_trigger_event (DB_EV_SONGFINISHED, 0);
             }
+            if (from) {
+                pl_item_ref (from);
+            }
             streamer_set_current (NULL);
             if (playing_track) {
                 pl_item_unref (playing_track);
                 playing_track = NULL;
             }
             plug_trigger_event_trackchange (from, NULL);
+            if (from) {
+                pl_item_unref (from);
+            }
             continue;
         }
         else if (p_isstopped ()) {
@@ -1476,7 +1512,7 @@ streamer_configchanged (void) {
     int q = conf_get_int ("src_quality", 2);
     if (q != src_quality && q >= SRC_SINC_BEST_QUALITY && q <= SRC_LINEAR) {
         src_lock ();
-        fprintf (stderr, "changing src_quality from %d to %d\n", src_quality, q);
+        trace ("changing src_quality from %d to %d\n", src_quality, q);
         src_quality = q;
         if (src) {
             src_delete (src);

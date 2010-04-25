@@ -21,9 +21,6 @@
 #ifdef HAVE_CONFIG_H
 #include "../../config.h"
 #endif
-#if HAVE_NOTIFY
-#include <libnotify/notify.h>
-#endif
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
@@ -89,8 +86,6 @@ gtkpl_free (DdbListview *pl) {
     }
 #endif
 }
-
-
 
 struct fromto_t {
     DB_playItem_t *from;
@@ -347,10 +342,7 @@ gtkpl_songchanged_wrapper (DB_playItem_t *from, DB_playItem_t *to) {
         deadbeef->pl_item_ref (to);
     }
     g_idle_add (update_win_title_idle, ft);
-    if (to) {
-        // redraw seekbar
-        g_idle_add (redraw_seekbar_cb, NULL);
-    }
+    g_idle_add (redraw_seekbar_cb, NULL);
     g_idle_add (redraw_queued_tracks_cb, NULL);
 }
 
@@ -609,38 +601,12 @@ songchanged (DdbListview *ps, DB_playItem_t *from, DB_playItem_t *to) {
     }
 }
 
-#if HAVE_NOTIFY
-static NotifyNotification* notification;
-#endif
-
 static gboolean
 update_win_title_idle (gpointer data) {
     struct fromto_t *ft = (struct fromto_t *)data;
     DB_playItem_t *from = ft->from;
     DB_playItem_t *to = ft->to;
     free (ft);
-
-    // show notification
-#if HAVE_NOTIFY
-    if (to && deadbeef->conf_get_int ("gtkui.notify.enable", 0)) {
-        DB_playItem_t *track = deadbeef->streamer_get_playing_track ();//deadbeef->pl_get_for_idx (to);
-        if (track) {
-            char cmd [1024];
-            deadbeef->pl_format_title (track, -1, cmd, sizeof (cmd), -1, deadbeef->conf_get_str ("gtkui.notify.format", NOTIFY_DEFAULT_FORMAT));
-            if (notify_is_initted ()) {
-                if (notification) {
-                    notify_notification_close (notification, NULL);
-                }
-                notification = notify_notification_new ("DeaDBeeF", cmd, NULL, NULL);
-                if (notification) {
-                    notify_notification_set_timeout (notification, NOTIFY_EXPIRES_DEFAULT);
-                    notify_notification_show (notification, NULL);
-                }
-            }
-            deadbeef->pl_item_unref (track);
-        }
-    }
-#endif
 
     // update window title
     if (from || to) {
@@ -727,9 +693,6 @@ gtkui_thread (void *ctx) {
     gdk_threads_init ();
     gdk_threads_enter ();
     gtk_set_locale ();
-#if HAVE_NOTIFY
-    notify_init ("DeaDBeeF");
-#endif
 
     int argc = 2;
     const char **argv = alloca (sizeof (char *) * argc);
@@ -864,9 +827,6 @@ gtkui_thread (void *ctx) {
     trkproperties_destroy ();
     gtk_widget_destroy (mainwin);
     gtk_widget_destroy (searchwin);
-#if HAVE_NOTIFY
-    notify_uninit ();
-#endif
     gdk_threads_leave ();
 }
 
@@ -932,10 +892,6 @@ gtkui_load (DB_functions_t *api) {
 
 static const char settings_dlg[] =
     "property \"Run gtk_init with --sync (debug mode)\" checkbox gtkui.sync 0;\n"
-#if HAVE_NOTIFY
-    "property \"Enable OSD notifications\" checkbox gtkui.notify.enable 0;\n"
-    "property \"Notification format\" entry gtkui.notify.format \"" NOTIFY_DEFAULT_FORMAT "\";\n"
-#endif
 ;
 
 // define plugin interface
