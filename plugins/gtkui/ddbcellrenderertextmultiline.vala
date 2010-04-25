@@ -23,12 +23,10 @@ namespace Ddb {
         public bool editing_canceled = false;
         public string tree_path;
 
-//        private bool on_key_press_event (Gdk.EventKey event) {
         private override bool key_press_event (Gdk.EventKey event) {
-            stdout.printf ("key_press_event\n");
             bool res = true;
             if (event.keyval == Gdk.KeySyms.Return) {
-                if ((event.state & Gdk.ModifierType.CONTROL_MASK) != 0) {
+                if ((event.state & (Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.SHIFT_MASK)) != 0) {
                     res = base.key_press_event (event);
                 }
                 else {
@@ -46,29 +44,11 @@ namespace Ddb {
             else {
                 res = base.key_press_event (event);
             }
-            /**** seems like auto-adjusting height is impossible when inside of cellrenderer
-            // test buffer height
-            Gtk.TextBuffer buf = get_buffer ();
-            Gtk.TextIter begin, end;
-            buf.get_iter_at_offset (out begin, 0);
-            buf.get_iter_at_offset (out end, -1);
-            int y_begin, y_end;
-            int h_begin, h_end;
-            get_line_yrange (begin, out y_begin, out h_begin);
-            get_line_yrange (end, out y_end, out h_end);
-            stdout.printf ("new y: %d %d, %d %d\n", y_begin, h_begin, y_end, h_end);
-            if (allocation.height < y_end) {
-                stdout.printf ("set_size_request %d\n", y_end + h_end);
-                set_size_request (-1, y_end + h_end);
-            }
-            */
 
             return res;
         }
 
         public void start_editing (Gdk.Event event) {
-            // override keypress
-//            key_press_event.connect (on_key_press_event);
         }
     }
 

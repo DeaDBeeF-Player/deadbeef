@@ -25,9 +25,9 @@
 #include <gtk/gtk.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
 #include <gdk/gdkkeysyms.h>
 #include <gdk/gdk.h>
+#include <stdio.h>
 
 
 #define DDB_TYPE_CELL_EDITABLE_TEXT_VIEW (ddb_cell_editable_text_view_get_type ())
@@ -112,10 +112,9 @@ static gboolean ddb_cell_editable_text_view_real_key_press_event (GtkWidget* bas
 	gboolean result = FALSE;
 	gboolean res;
 	self = (DdbCellEditableTextView*) base;
-	fprintf (stdout, "key_press_event\n");
 	res = TRUE;
 	if ((*event).keyval == GDK_Return) {
-		if (((*event).state & GDK_CONTROL_MASK) != 0) {
+		if (((*event).state & (GDK_CONTROL_MASK | GDK_SHIFT_MASK)) != 0) {
 			res = GTK_WIDGET_CLASS (ddb_cell_editable_text_view_parent_class)->key_press_event ((GtkWidget*) GTK_TEXT_VIEW (self), event);
 		} else {
 			gtk_cell_editable_editing_done ((GtkCellEditable*) self);
