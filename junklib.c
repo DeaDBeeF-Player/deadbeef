@@ -844,9 +844,10 @@ junk_apev2_read_full (playItem_t *it, DB_apev2_tag_t *tag_store, DB_FILE *fp) {
             if (tag_store) {
                 DB_apev2_frame_t *frm = malloc (sizeof (DB_apev2_frame_t) + itemsize);
                 memset (frm, 0, sizeof (DB_apev2_tag_t));
-                frm->flags = flags;
+                frm->flags = itemflags;
                 strcpy (frm->key, key);
-                frm->size = size;
+                trace ("*** stored frame %s flags %X\n", key, itemflags);
+                frm->size = itemsize;
                 memcpy (frm->data, value, itemsize);
                 if (tail) {
                     tail->next = frm;
@@ -1903,7 +1904,7 @@ junk_apev2_remove_frames (DB_apev2_tag_t *tag, const char *frame_id) {
     DB_apev2_frame_t *prev = NULL;
     for (DB_apev2_frame_t *f = tag->frames; f; ) {
         DB_apev2_frame_t *next = f->next;
-        if (!strcmp (f->key, frame_id)) {
+        if (!strcasecmp (f->key, frame_id)) {
             if (prev) {
                 prev->next = f->next;
             }
