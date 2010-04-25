@@ -22,6 +22,7 @@
 #include <unistd.h>
 #include <assert.h>
 #include <curl/curlver.h>
+#include <time.h>
 #include "../../deadbeef.h"
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
@@ -190,10 +191,25 @@ http_parse_shoutcast_meta (HTTP_FILE *fp, const char *meta, int size) {
     return -1;
 }
 
+static void
+http_stream_reset (HTTP_FILE *fp) {
+    fp->gotheader = 0;
+    fp->icyheader = 0;
+    fp->gotsomeheader = 0;
+    fp->remaining = 0;
+    fp->metadata_size = 0;
+    fp->metadata_have_size = 0;
+    fp->skipbytes = 0;
+    fp->nheaderpackets = 0;
+    fp->icy_metaint = 0;
+    fp->wait_meta = 0;
+}
+
 static size_t
 http_curl_write (void *ptr, size_t size, size_t nmemb, void *stream) {
     int avail = size * nmemb;
     HTTP_FILE *fp = (HTTP_FILE *)stream;
+
 //    trace ("http_curl_write %d bytes, wait_meta=%d\n", size * nmemb, fp->wait_meta);
     gettimeofday (&fp->last_read_time, NULL);
     if (fp->status == STATUS_ABORTED) {
@@ -263,7 +279,7 @@ http_curl_write (void *ptr, size_t size, size_t nmemb, void *stream) {
                     fp->metadata_size = fp->metadata_have_size = 0;
                     if (http_parse_shoutcast_meta (fp, fp->metadata, sz) < 0) {
                         trace ("vfs_curl: got invalid icy metadata block\n");
-                        fp->remaining = 0;
+                        http_stream_reset (fp);
                         fp->status = STATUS_SEEK;
                         return 0;
                     }
@@ -426,7 +442,7 @@ http_curl_control (void *stream, double dltotal, double dlnow, double ultotal, d
     if (fp->status == STATUS_READING && sec > TIMEOUT) {
         trace ("http_curl_control: timed out, restarting read\n");
         memcpy (&fp->last_read_time, &tm, sizeof (struct timeval));
-        fp->remaining = 0;
+        http_stream_reset (fp);
         fp->status = STATUS_SEEK;
     }
     assert (stream);
