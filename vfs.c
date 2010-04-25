@@ -91,3 +91,9 @@ vfs_get_content_type (DB_FILE *stream) {
     return stream->vfs->get_content_type (stream);
 }
 
+void
+vfs_fabort (DB_FILE *stream) {
+    if (stream->vfs->abort) {
+        stream->vfs->abort (stream);
+    }
+}

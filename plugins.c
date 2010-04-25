@@ -223,6 +223,7 @@ static DB_functions_t deadbeef_api = {
     .fgetlength = vfs_fgetlength,
     .fget_content_type = vfs_get_content_type,
     .fset_track = (void (*) (DB_FILE *stream, DB_playItem_t *it))vfs_set_track,
+    .fabort = vfs_fabort,
     // message passing
     .sendmessage = messagepump_push,
     // configuration access

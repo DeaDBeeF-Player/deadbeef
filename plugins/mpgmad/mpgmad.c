@@ -570,6 +570,7 @@ cmp3_init (DB_playItem_t *it) {
     if (!info->buffer.file) {
         return NULL;
     }
+    info->info.file = info->buffer.file;
     deadbeef->pl_item_ref (it);
     info->buffer.it = it;
     info->info.readpos = 0;
@@ -909,6 +910,7 @@ cmp3_free (DB_fileinfo_t *_info) {
         }
         deadbeef->fclose (info->buffer.file);
         info->buffer.file = NULL;
+        info->info.file = NULL;
         mad_synth_finish (&info->synth);
         mad_frame_finish (&info->frame);
         mad_stream_finish (&info->stream);

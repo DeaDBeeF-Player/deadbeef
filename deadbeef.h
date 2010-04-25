@@ -222,7 +222,6 @@ enum {
     DB_EV_SONGCHANGED = 1, // triggers when song was just changed
     DB_EV_SONGSTARTED = 2, // triggers when song started playing (for scrobblers and such)
     DB_EV_SONGFINISHED = 3, // triggers when song finished playing (for scrobblers and such)
-//    DB_EV_TRACKDELETED = 4, // triggers when track is to be deleted from playlist
     DB_EV_CONFIGCHANGED = 5, // configuration option changed
     DB_EV_ACTIVATE = 6, // will be fired every time player is activated
     DB_EV_TRACKINFOCHANGED = 7, // notify plugins that trackinfo was changed
@@ -230,7 +229,6 @@ enum {
     DB_EV_PLAYLISTCHANGED = 9, // playlist contents were changed
     DB_EV_VOLUMECHANGED = 10, // volume was changed
     DB_EV_OUTPUTCHANGED = 11, // sound output plugin changed
-    DB_EV_ABORTREAD = 12, // tells plugins to stop reading operations, e.g. long-time http requests
     DB_EV_PLAYLISTSWITCH = 13, // playlist switch occured
     DB_EV_MAX
 };
@@ -491,7 +489,7 @@ typedef struct {
     int64_t (*fgetlength) (DB_FILE *stream);
     const char *(*fget_content_type) (DB_FILE *stream);
     void (*fset_track) (DB_FILE *stream, DB_playItem_t *it);
-    void (*fstop) (DB_FILE *stream);
+    void (*fabort) (DB_FILE *stream);
     // message passing
     int (*sendmessage) (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2);
     // configuration access
@@ -564,6 +562,7 @@ typedef struct DB_fileinfo_s {
     int channels;
     int samplerate;
     float readpos;
+    DB_FILE *file;
 } DB_fileinfo_t;
 
 // decoder plugin
@@ -671,6 +670,7 @@ typedef struct DB_vfs_s {
     void (*rewind) (DB_FILE *stream);
     int64_t (*getlength)(DB_FILE *stream);
     const char * (*get_content_type) (DB_FILE *stream);
+    void (*abort) (DB_FILE *stream);
     const char **scheme_names; // NULL-terminated list of supported schemes, e.g. {"http", "ftp", NULL}
     unsigned streaming : 1;
 } DB_vfs_t;

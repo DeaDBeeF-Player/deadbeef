@@ -39,7 +39,6 @@ static DB_functions_t *deadbeef;
 
 typedef struct {
     DB_fileinfo_t info;
-    DB_FILE *file;
     OggVorbis_File vorbis_file;
     vorbis_info *vi;
     int cur_bit_stream;
@@ -136,20 +135,20 @@ cvorbis_init (DB_playItem_t *it) {
     DB_fileinfo_t *_info = malloc (sizeof (ogg_info_t));
     ogg_info_t *info = (ogg_info_t *)_info;
     memset (info, 0, sizeof (ogg_info_t));
-    info->file = NULL;
+    info->info.file = NULL;
     info->vi = NULL;
     info->cur_bit_stream = -1;
     info->ptrack = it;
     deadbeef->pl_item_ref (it);
 
-    info->file = deadbeef->fopen (it->fname);
-    if (!info->file) {
+    info->info.file = deadbeef->fopen (it->fname);
+    if (!info->info.file) {
         trace ("ogg: failed to open file %s\n", it->fname);
         plugin.free (_info);
         return NULL;
     }
-    int ln = deadbeef->fgetlength (info->file);
-    if (info->file->vfs->streaming && ln == -1) {
+    int ln = deadbeef->fgetlength (info->info.file);
+    if (info->info.file->vfs->streaming && ln == -1) {
         ov_callbacks ovcb = {
             .read_func = cvorbis_fread,
             .seek_func = NULL,
@@ -158,7 +157,7 @@ cvorbis_init (DB_playItem_t *it) {
         };
 
         trace ("calling ov_open_callbacks\n");
-        int err = ov_open_callbacks (info->file, &info->vorbis_file, NULL, 0, ovcb);
+        int err = ov_open_callbacks (info->info.file, &info->vorbis_file, NULL, 0, ovcb);
         if (err != 0) {
             trace ("ov_open_callbacks returned %d\n", err);
             plugin.free (_info);
@@ -176,7 +175,7 @@ cvorbis_init (DB_playItem_t *it) {
         };
 
         trace ("calling ov_open_callbacks\n");
-        int err = ov_open_callbacks (info->file, &info->vorbis_file, NULL, 0, ovcb);
+        int err = ov_open_callbacks (info->info.file, &info->vorbis_file, NULL, 0, ovcb);
         if (err != 0) {
             trace ("ov_open_callbacks returned %d\n", err);
             plugin.free (_info);
@@ -202,7 +201,7 @@ cvorbis_init (DB_playItem_t *it) {
     _info->samplerate = info->vi->rate;
     _info->readpos = 0;
     info->currentsample = 0;
-    if (!info->file->vfs->streaming) {
+    if (!info->info.file->vfs->streaming) {
         if (it->endsample > 0) {
             info->startsample = it->startsample;
             info->endsample = it->endsample;
@@ -231,7 +230,7 @@ static void
 cvorbis_free (DB_fileinfo_t *_info) {
     ogg_info_t *info = (ogg_info_t *)_info;
     if (info) {
-        if (info->file) {
+        if (info->info.file) {
             if (info->ptrack) {
                 deadbeef->pl_item_unref (info->ptrack);
             }
@@ -246,7 +245,7 @@ static int
 cvorbis_read (DB_fileinfo_t *_info, char *bytes, int size) {
     ogg_info_t *info = (ogg_info_t *)_info;
 //    trace ("cvorbis_read %d bytes\n", size);
-    if (!info->file->vfs->streaming) {
+    if (!info->info.file->vfs->streaming) {
         if (info->currentsample + size / (2 * _info->channels) > info->endsample) {
             size = (info->endsample - info->currentsample + 1) * 2 * _info->channels;
             trace ("size truncated to %d bytes, cursample=%d, info->endsample=%d, totalsamples=%d\n", size, info->currentsample, info->endsample, ov_pcm_total (&info->vorbis_file, -1));
@@ -326,7 +325,7 @@ cvorbis_seek_sample (DB_fileinfo_t *_info, int sample) {
         trace ("vorbis: negative seek sample - ignored, but it is a bug!\n");
         return -1;
     }
-    if (!info->file) {
+    if (!info->info.file) {
         trace ("vorbis: file is NULL on seek\n");
         return -1;
     }

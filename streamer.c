@@ -572,7 +572,10 @@ streamer_get_apx_bitrate (void) {
 void
 streamer_set_nextsong (int song, int pstate) {
     trace ("streamer_set_nextsong %d %d\n", song, pstate);
-    plug_trigger_event (DB_EV_ABORTREAD, 0);
+    //plug_trigger_event (DB_EV_ABORTREAD, 0);
+    if (fileinfo && fileinfo->file) {
+        deadbeef->fabort (fileinfo->file);
+    }
     nextsong = song;
     nextsong_pstate = pstate;
     if (p_isstopped ()) {

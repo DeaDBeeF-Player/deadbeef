@@ -24,8 +24,8 @@
 #include <curl/curlver.h>
 #include "../../deadbeef.h"
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -60,8 +60,6 @@ typedef struct {
     intptr_t mutex;
     uint8_t nheaderpackets;
     char *content_type;
-//    char *content_name;
-//    char *content_genre;
     CURL *curl;
     struct timeval last_read_time;
     uint8_t status;
@@ -83,8 +81,6 @@ static DB_vfs_t plugin;
 
 static char http_err[CURL_ERROR_SIZE];
 
-static int vfs_curl_abort;
-static int vfs_curl_count;
 static int allow_new_streams;
 
 static size_t
@@ -94,9 +90,6 @@ static size_t
 http_curl_write_wrapper (HTTP_FILE *fp, void *ptr, size_t size) {
     size_t avail = size;
     while (avail > 0) {
-        if (vfs_curl_abort) {
-            break;
-        }
         deadbeef->mutex_lock (fp->mutex);
         if (fp->status == STATUS_SEEK) {
             trace ("vfs_curl seek request, aborting current request\n");
@@ -441,10 +434,6 @@ http_curl_control (void *stream, double dltotal, double dlnow, double ultotal, d
         trace ("vfs_curl STATUS_ABORTED in progress callback\n");
         return -1;
     }
-    if (vfs_curl_abort) {
-        trace ("vfs_curl: aborting stream %p due to external request\n");
-        return -1;
-    }
     return 0;
 }
 
@@ -514,9 +503,7 @@ http_thread_func (void *ctx) {
 #endif
             curl_easy_setopt (curl, CURLOPT_PROXYTYPE, curlproxytype);
         }
-        vfs_curl_count++;
         status = curl_easy_perform (curl);
-        vfs_curl_count--;
         trace ("vfs_curl: curl_easy_perform status=%d\n", status);
         if (status != 0) {
             trace ("curl error:\n%s\n", http_err);
@@ -575,6 +562,7 @@ http_open (const char *fname) {
     fp->url = strdup (fname);
     return (DB_FILE*)fp;
 }
+
 static void
 http_set_track (DB_FILE *f, DB_playItem_t *it) {
     HTTP_FILE *fp = (HTTP_FILE *)f;
@@ -624,7 +612,7 @@ http_read (void *ptr, size_t size, size_t nmemb, DB_FILE *stream) {
     while (fp->status != STATUS_FINISHED && sz > 0)
     {
         // wait until data is available
-        while ((fp->remaining == 0 || fp->skipbytes > 0) && fp->status != STATUS_FINISHED && !vfs_curl_abort) {
+        while ((fp->remaining == 0 || fp->skipbytes > 0) && fp->status != STATUS_FINISHED) {
 //            trace ("vfs_curl: readwait..\n");
             deadbeef->mutex_lock (fp->mutex);
             if (fp->status == STATUS_READING) {
@@ -793,39 +781,31 @@ http_get_content_type (DB_FILE *stream) {
         http_start_streamer (fp);
     }
     trace ("http_get_content_type waiting for response...\n");
-    while (fp->status != STATUS_FINISHED && fp->status != STATUS_ABORTED && !fp->gotheader && !vfs_curl_abort) {
+    while (fp->status != STATUS_FINISHED && fp->status != STATUS_ABORTED && !fp->gotheader) {
         usleep (3000);
     }
     return fp->content_type;
 }
 
-static int
-vfs_curl_on_abort (DB_event_t *ev, uintptr_t data) {
-    trace ("vfs_curl: got abort signal (vfs_curl_count=%d)!\n", vfs_curl_count);
-    if (vfs_curl_count > 0) {
-        vfs_curl_abort = 1;
-        while (vfs_curl_count > 0) {
-            trace ("vfs_curl: (vfs_curl_count=%d)!\n", vfs_curl_count);
-            usleep (20000);
-        }
-        vfs_curl_abort = 0;
-    }
-    trace ("vfs_curl: abort handler done!\n");
-    return 0;
+void
+http_abort (DB_FILE *fp) {
+    trace ("http_abort\n");
+    HTTP_FILE *f = (HTTP_FILE *)fp;
+    deadbeef->mutex_lock (f->mutex);
+    f->status = STATUS_ABORTED;
+    deadbeef->mutex_unlock (f->mutex);
+    deadbeef->thread_join (f->tid);
 }
 
 static int
 vfs_curl_start (void) {
-    deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_ABORTREAD, DB_CALLBACK (vfs_curl_on_abort), 0);
     allow_new_streams = 1;
     return 0;
 }
 
 static int
 vfs_curl_stop (void) {
-    deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_ABORTREAD, DB_CALLBACK (vfs_curl_on_abort), 0);
     allow_new_streams = 0;
-    vfs_curl_on_abort (NULL, 0);
     return 0;
 }
 
@@ -848,6 +828,7 @@ static DB_vfs_t plugin = {
     .open = http_open,
     .set_track = http_set_track,
     .close = http_close,
+    .abort = http_abort,
     .read = http_read,
     .seek = http_seek,
     .tell = http_tell,
