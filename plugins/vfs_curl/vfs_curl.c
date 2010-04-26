@@ -638,7 +638,7 @@ http_read (void *ptr, size_t size, size_t nmemb, DB_FILE *stream) {
                 if (sec > TIMEOUT) {
                     trace ("http_read: timed out, restarting read\n");
                     memcpy (&fp->last_read_time, &tm, sizeof (struct timeval));
-                    fp->remaining = 0;
+                    http_stream_reset (fp);
                     fp->status = STATUS_SEEK;
                     deadbeef->mutex_unlock (fp->mutex);
                     deadbeef->streamer_reset (1);
@@ -731,8 +731,7 @@ http_seek (DB_FILE *stream, int64_t offset, int whence) {
         }
     }
     // reset stream, and start over
-    fp->skipbytes = 0;
-    fp->remaining = 0;
+    http_stream_reset (fp);
     fp->pos = offset;
     fp->status = STATUS_SEEK;
 
@@ -758,7 +757,7 @@ http_rewind (DB_FILE *stream) {
     if (fp->tid) {
         deadbeef->mutex_lock (fp->mutex);
         fp->status = STATUS_SEEK;
-        fp->remaining = 0;
+        http_stream_reset (fp);
         fp->pos = 0;
         deadbeef->mutex_unlock (fp->mutex);
     }
