@@ -25,8 +25,8 @@
 #include <time.h>
 #include "../../deadbeef.h"
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -806,10 +806,12 @@ void
 http_abort (DB_FILE *fp) {
     trace ("http_abort\n");
     HTTP_FILE *f = (HTTP_FILE *)fp;
-    deadbeef->mutex_lock (f->mutex);
-    f->status = STATUS_ABORTED;
-    deadbeef->mutex_unlock (f->mutex);
-    deadbeef->thread_join (f->tid);
+    if (f->tid) {
+        deadbeef->mutex_lock (f->mutex);
+        f->status = STATUS_ABORTED;
+        deadbeef->mutex_unlock (f->mutex);
+        deadbeef->thread_join (f->tid);
+    }
 }
 
 static int
