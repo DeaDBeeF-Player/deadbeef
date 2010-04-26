@@ -463,10 +463,12 @@ streamer_set_current (playItem_t *it) {
     if (to) {
         pl_item_ref (to);
     }
+    trace ("\033[0;35mstreamer_set_current from %p to %p\033[37;0m\n", from, it);
     if (!playing_track || p_isstopped ()) {
         trace ("buffering = on\n");
         streamer_buffering = 1;
         playlist_track = it;
+        trace ("\033[0;35mstreamer_start_playback[1] from %p to %p\033[37;0m\n", from, it);
         streamer_start_playback (from, it);
         bytes_until_next_song = -1;
     }
@@ -495,7 +497,10 @@ streamer_set_current (playItem_t *it) {
     }
     if (!it->decoder_id && it->filetype && !strcmp (it->filetype, "content")) {
         // try to get content-type
+        mutex_lock (decodemutex);
+        trace ("\033[0;34mopening file %s\033[37;0m\n", it->fname);
         DB_FILE *fp = streamer_file = vfs_fopen (it->fname);
+        mutex_unlock (decodemutex);
         const char *plug = NULL;
         if (fp) {
             const char *ct = vfs_get_content_type (fp);
@@ -508,8 +513,11 @@ streamer_set_current (playItem_t *it) {
                     plug = "stdogg";
                 }
             }
+            mutex_lock (decodemutex);
             streamer_file = NULL;
             vfs_fclose (fp);
+            mutex_unlock (decodemutex);
+            trace ("\033[0;34mclosed file %s (bad or interrupted)\033[37;0m\n", it->fname);
         }
         if (plug) {
             DB_decoder_t **decoders = plug_get_decoder_list ();
@@ -527,7 +535,9 @@ streamer_set_current (playItem_t *it) {
         DB_fileinfo_t *info = NULL;
         dec = plug_get_decoder_for_id (it->decoder_id);
         if (dec) {
+            trace ("\033[0;33minit decoder for %s\033[37;0m\n", it->fname);
             info = dec->init (DB_PLAYITEM (it));
+            trace ("\033[0;33mgot decoder for %s\033[37;0m\n", it->fname);
         }
 
         if (!dec || !info) {
@@ -571,6 +581,8 @@ streamer_set_current (playItem_t *it) {
 success:
     plug_trigger_event_trackinfochanged (to);
 
+    trace ("\033[0;32mstr: %p, ply: %p\033[37;0m\n", streaming_track, playing_track);
+
 error:
     if (from) {
         pl_item_unref (from);
@@ -604,7 +616,15 @@ streamer_set_nextsong (int song, int pstate) {
     trace ("streamer_set_nextsong %d %d\n", song, pstate);
     //plug_trigger_event (DB_EV_ABORTREAD, 0);
     if (fileinfo && fileinfo->file) {
+        trace ("\033[0;31maborting current song: %s\033[37;0m\n", streaming_track ? streaming_track->fname : NULL);
+        mutex_lock (decodemutex);
         deadbeef->fabort (fileinfo->file);
+        if (streamer_file) {
+            trace ("\033[0;31maborting streamer_file\033[37;0m\n");
+            deadbeef->fabort (streamer_file);
+        }
+        mutex_unlock (decodemutex);
+        trace ("\033[0;31maborting current song done\033[37;0m\n");
     }
     nextsong = song;
     nextsong_pstate = pstate;
@@ -626,6 +646,75 @@ streamer_set_seek (float pos) {
 static int
 streamer_read_async (char *bytes, int size);
 
+static void
+streamer_start_new_song (void) {
+    trace ("nextsong=%d\n", nextsong);
+    int sng = nextsong;
+    int pstate = nextsong_pstate;
+    nextsong = -1;
+    src_remaining = 0;
+    if (badsong == sng) {
+        trace ("looped to bad file. stopping...\n");
+        streamer_set_nextsong (-2, 1);
+        badsong = -1;
+        return;
+    }
+    playItem_t *try = str_get_for_idx (sng);
+    if (!try) { // track is not in playlist
+        trace ("track #%d is not in playlist; stopping playback\n", sng);
+        p_stop ();
+
+        mutex_lock (decodemutex);
+        if (playing_track) {
+            pl_item_unref (playing_track);
+            playing_track = NULL;
+        }
+        if (streaming_track) {
+            pl_item_unref (streaming_track);
+            streaming_track = NULL;
+        }
+        mutex_unlock (decodemutex);
+
+        plug_trigger_event_trackchange (NULL, NULL);
+        return;
+    }
+    int ret = streamer_set_current (try);
+
+    if (ret < 0) {
+        trace ("\033[0;31mfailed to play track %s, skipping (current=%p/%p)...\033[37;0m\n", try->fname, streaming_track, playlist_track);
+        pl_item_unref (try);
+        try = NULL;
+        // remember bad song number in case of looping
+        if (badsong == -1) {
+            badsong = sng;
+        }
+        // try jump to next song
+        streamer_move_to_nextsong (0);
+        trace ("streamer_move_to_nextsong switched to track %d\n", nextsong);
+        usleep (50000);
+        return;
+    }
+    pl_item_unref (try);
+    try = NULL;
+    badsong = -1;
+    if (pstate == 0) {
+        p_stop ();
+    }
+    else if (pstate == 1) {
+        last_bitrate = -1;
+        avg_bitrate = -1;
+        if (p_state () != OUTPUT_STATE_PLAYING) {
+            if (p_play () < 0) {
+                fprintf (stderr, "streamer: failed to start playback; output plugin doesn't work\n");
+                streamer_set_nextsong (-2, 0);
+            }
+        }
+    }
+    else if (pstate == 2) {
+        p_pause ();
+    }
+}
+
 void
 streamer_thread (void *ctx) {
 #ifdef __linux__
@@ -637,71 +726,11 @@ streamer_thread (void *ctx) {
         struct timeval tm1;
         gettimeofday (&tm1, NULL);
         if (nextsong >= 0) { // start streaming next song
-            trace ("nextsong=%d\n", nextsong);
-            int sng = nextsong;
-            int pstate = nextsong_pstate;
-            nextsong = -1;
-            src_remaining = 0;
-            if (badsong == sng) {
-                trace ("looped to bad file. stopping...\n");
-                streamer_set_nextsong (-2, 1);
-                badsong = -1;
-                continue;
-            }
-            playItem_t *try = str_get_for_idx (sng);
-            if (!try) { // track is not in playlist
-                trace ("track #%d is not in playlist; stopping playback\n", sng);
-                p_stop ();
-
-                mutex_lock (decodemutex);
-                if (playing_track) {
-                    pl_item_unref (playing_track);
-                    playing_track = NULL;
-                }
-                if (streaming_track) {
-                    pl_item_unref (streaming_track);
-                    streaming_track = NULL;
-                }
-                mutex_unlock (decodemutex);
-
-                plug_trigger_event_trackchange (NULL, NULL);
-                continue;
-            }
-            int ret = streamer_set_current (try);
-
-            if (ret < 0) {
-                trace ("\033[0;31mfailed to play track %s, skipping (current=%p/%p)...\033[37;0m\n", try->fname, streaming_track, playlist_track);
-                pl_item_unref (try);
-                try = NULL;
-                // remember bad song number in case of looping
-                if (badsong == -1) {
-                    badsong = sng;
-                }
-                // try jump to next song
-                streamer_move_to_nextsong (0);
-                trace ("streamer_move_to_nextsong switched to track %d\n", nextsong);
-                usleep (50000);
-                continue;
-            }
-            pl_item_unref (try);
-            try = NULL;
-            badsong = -1;
-            if (pstate == 0) {
-                p_stop ();
-            }
-            else if (pstate == 1) {
-                last_bitrate = -1;
-                avg_bitrate = -1;
-                if (p_state () != OUTPUT_STATE_PLAYING) {
-                    if (p_play () < 0) {
-                        fprintf (stderr, "streamer: failed to start playback; output plugin doesn't work\n");
-                        streamer_set_nextsong (-2, 0);
-                    }
-                }
-            }
-            else if (pstate == 2) {
-                p_pause ();
-            }
+            streamer_start_new_song ();
+            // it's totally possible that song was switched
+            // while streamer_set_current was running,
+            // so we need to restart here
+            continue;
         }
         else if (nextsong == -2 && (nextsong_pstate==0 || bytes_until_next_song == 0)) {
             playItem_t *from = playing_track;
@@ -751,6 +780,7 @@ streamer_thread (void *ctx) {
                 plug_trigger_event (DB_EV_SONGFINISHED, 0);
             }
             // copy streaming into playing
+            trace ("\033[0;35mstreamer_start_playback[2] from %p to %p\033[37;0m\n", playing_track, streaming_track);
             streamer_start_playback (playing_track, streaming_track);
             last_bitrate = -1;
             avg_bitrate = -1;
