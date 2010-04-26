@@ -2214,8 +2214,7 @@ junk_id3v2_write (FILE *out, DB_id3v2_tag_t *tag) {
         goto error;
     }
     // run through list of frames, and calculate size
-    uint32_t sz = 10;
-    int frm = 0;
+    uint32_t sz = 0;
     for (DB_id3v2_frame_t *f = tag->frames; f; f = f->next) {
         // each tag has 10 bytes header
         if (tag->version[0] > 2) {
@@ -2547,11 +2546,13 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
     int err = 0;
     while (readptr - tag <= size - 4 && *readptr) {
         if (version_major == 3 || version_major == 4) {
+            trace ("pos %d of %d\n", readptr - tag, size);
             char frameid[5];
             memcpy (frameid, readptr, 4);
             frameid[4] = 0;
             readptr += 4;
             if (readptr - tag >= size - 4) {
+                trace ("reached the end of tag\n");
                 break;
             }
             uint32_t sz;
@@ -2580,7 +2581,7 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
             uint8_t flags2 = readptr[1];
             readptr += 2;
 
-            if (sz > MAX_ID3V2_FRAME_SIZE || readptr-tag + sz >= size) {
+            if (sz > MAX_ID3V2_FRAME_SIZE || readptr - tag + sz > size) {
                 trace ("junk_id3v2_read_full: frame %s size is too big (%d), discarded\n", frameid, sz);
                 readptr += sz;
                 continue;
