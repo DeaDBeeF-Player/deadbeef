@@ -25,6 +25,9 @@
 #include "hotkeys.h"
 #include "../../deadbeef.h"
 
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
+
 static DB_hotkeys_plugin_t plugin;
 static DB_functions_t *deadbeef;
 static int finished;
@@ -290,6 +293,7 @@ hotkeys_event_loop (void *unused) {
 
     while (!finished) {
         if (need_reset) {
+            trace ("hotkeys: reinitializing\n");
             XSetErrorHandler (x_err_handler);
             for (int i = 0; i < command_count; i++) {
                 XUngrabKey (disp, commands[i].keycode, commands[i].modifier, DefaultRootWindow (disp));
@@ -307,13 +311,23 @@ hotkeys_event_loop (void *unused) {
 
             if (event.xkey.type == KeyPress)
             {
-                for (i = 0; i < command_count; i++)
+                int state = event.xkey.state;
+                trace ("hotkeys: keypress, state=%X\n", state);
+                // ignore caps/scroll/numlock
+                state &= (ShiftMask|ControlMask|Mod1Mask|Mod4Mask);
+                trace ("filtered state=%X\n", state);
+                for (i = 0; i < command_count; i++) {
                     if ( (event.xkey.keycode == commands[ i ].keycode) &&
-                         ( (event.xkey.state & commands[ i ].modifier) == commands[ i ].modifier))
+                         (state == commands[ i ].modifier))
                     {
+                        trace ("matches to commands[%d]!\n", i);
                         commands[i].func ();
                         break;
                     }
+                }
+                if (i == command_count) {
+                    trace ("keypress doesn't match to any global hotkey\n");
+                }
             }
         }
         usleep (200 * 1000);
@@ -334,12 +348,7 @@ hotkeys_start (void) {
 
     read_config (disp);
     XSync (disp, 0);
-    if (command_count > 0) {
-        loop_tid = deadbeef->thread_start (hotkeys_event_loop, 0);
-    }
-    else {
-        cleanup ();
-    }
+    loop_tid = deadbeef->thread_start (hotkeys_event_loop, 0);
 }
 
 static int
@@ -364,6 +373,7 @@ hotkeys_get_name_for_keycode (int keycode) {
 void
 hotkeys_reset (void) {
     need_reset = 1;
+    trace ("hotkeys: reset flagged\n");
 }
 
 // define plugin interface
