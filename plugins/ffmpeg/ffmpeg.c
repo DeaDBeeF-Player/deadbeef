@@ -58,17 +58,18 @@ static DB_functions_t *deadbeef;
 static const char * exts[] = { "m4a", "mpc", "mp+", "mpp", "wma", "shn", "aa3", "oma", "ac3", "vqf", "tta", NULL };
 
 enum {
-    FT_M4A = 0,
-    FT_MUSEPACK = 1,
-    FT_WMA = 2,
-    FT_SHORTEN = 3,
-    FT_ATRAC3 = 4,
-    FT_VQF = 5,
-    FT_TTA = 6,
-    FT_UNKNOWN = 6
+    FT_AAC = 0,
+    FT_M4A = 1,
+    FT_MUSEPACK = 2,
+    FT_WMA = 3,
+    FT_SHORTEN = 4,
+    FT_ATRAC3 = 5,
+    FT_VQF = 6,
+    FT_TTA = 7,
+    FT_UNKNOWN = 8
 };
 
-static const char *filetypes[] = { "M4A", "MusePack", "WMA", "Shorten", "atrac3", "VQF", "TTA", "FFMPEG", NULL };
+static const char *filetypes[] = { "AAC", "M4A", "MusePack", "WMA", "Shorten", "atrac3", "VQF", "TTA", "FFMPEG", NULL };
 
 #define FF_PROTOCOL_NAME "deadbeef"
 
