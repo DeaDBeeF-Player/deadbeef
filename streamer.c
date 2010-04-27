@@ -125,6 +125,7 @@ streamer_start_playback (playItem_t *from, playItem_t *it) {
         pl_item_unref (playing_track);
         playing_track = NULL;
     }
+    playlist_track = it;
     // assign new
     playing_track = it;
     if (playing_track) {
@@ -440,7 +441,7 @@ streamer_song_removed_notify (playItem_t *it) {
         return; // streamer is not running
     }
     if (it == playlist_track) {
-        playlist_track = NULL;
+        playlist_track = playlist_track->next[PL_MAIN];
         // queue new next song for streaming
         if (bytes_until_next_song > 0) {
             streambuffer_fill = bytes_until_next_song;
@@ -467,7 +468,6 @@ streamer_set_current (playItem_t *it) {
     if (!playing_track || p_isstopped ()) {
         trace ("buffering = on\n");
         streamer_buffering = 1;
-        playlist_track = it;
         trace ("\033[0;35mstreamer_start_playback[1] from %p to %p\033[37;0m\n", from, it);
         streamer_start_playback (from, it);
         bytes_until_next_song = -1;
@@ -570,7 +570,6 @@ streamer_set_current (playItem_t *it) {
         it->played = 1;
         streamer_buffering = 0;
         if (playlist_track == it) {
-            playlist_track = NULL;
             plug_trigger_event_trackinfochanged (to);
         }
         return -1;
@@ -688,6 +687,7 @@ streamer_start_new_song (void) {
         if (badsong == -1) {
             badsong = sng;
         }
+        trace ("\033[0;34mbadsong=%d\033[37;0m\n", badsong);
         // try jump to next song
         streamer_move_to_nextsong (0);
         trace ("streamer_move_to_nextsong switched to track %d\n", nextsong);
