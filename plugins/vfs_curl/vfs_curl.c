@@ -409,7 +409,7 @@ http_content_header_handler (void *ptr, size_t size, size_t nmemb, void *stream)
         }
         else if (!strcasecmp (key, "icy-name")) {
             if (fp->track) {
-                vfs_curl_set_meta (fp->track, "title", value);
+                vfs_curl_set_meta (fp->track, "album", value);
             }
         }
         else if (!strcasecmp (key, "icy-genre")) {
