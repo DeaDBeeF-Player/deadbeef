@@ -208,7 +208,7 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
     }
     if (parg < pend) {
         // add files
-        if (!queue) {
+        if (!queue && plt_get_curr () != -1) {
             pl_clear ();
             pl_reset_cursor ();
         }
@@ -221,8 +221,10 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
             else {
                 pname = parg;
             }
-            if (pl_add_file (pname, NULL, NULL) < 0) {
-                fprintf (stderr, "failed to add file %s\n", pname);
+            if (pl_add_dir (pname, NULL, NULL) < 0) {
+                if (pl_add_file (pname, NULL, NULL) < 0) {
+                    fprintf (stderr, "failed to add file or folder %s\n", pname);
+                }
             }
             parg += strlen (parg);
             parg++;
@@ -577,6 +579,8 @@ main (int argc, char *argv[]) {
     conf_load (); // required by some plugins at startup
     messagepump_init (); // required to push messages while handling commandline
     plug_load_all (); // required to add files to playlist from commandline
+    pl_load_all ();
+    plt_set_curr (conf_get_int ("playlist.current", 0));
 
     // execute server commands in local context
     int noloadpl = 0;
@@ -599,15 +603,10 @@ main (int argc, char *argv[]) {
         exit (-1);
     }
     signal (SIGTERM, sigterm_handler);
-    atexit (atexit_handler); // helps to save in simple cases, like xkill
+    atexit (atexit_handler); // helps to save in simple cases
 
     // start all subsystems
     volume_set_db (conf_get_float ("playback.volume", 0));
-    if (!noloadpl) {
-        pl_load_all ();
-    }
-    plt_set_curr (conf_get_int ("playlist.current", 0));
-
     plug_trigger_event_playlistchanged ();
 // this is old code left for backwards compatibility
     {
