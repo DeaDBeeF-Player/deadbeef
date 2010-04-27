@@ -46,8 +46,8 @@
 
 #endif
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -91,8 +91,11 @@ typedef struct {
     int currentsample;
 } ffmpeg_info_t;
 
+static DB_playItem_t *current_track;
+
 static DB_fileinfo_t *
 ffmpeg_init (DB_playItem_t *it) {
+    trace ("ffmpeg init %s\n");
     DB_fileinfo_t *_info = malloc (sizeof (ffmpeg_info_t));
     ffmpeg_info_t *info = (ffmpeg_info_t*)_info;
     memset (info, 0, sizeof (ffmpeg_info_t));
@@ -113,12 +116,17 @@ ffmpeg_init (DB_playItem_t *it) {
     trace ("ffmpeg: uri: %s\n", uri);
 
     // open file
+    trace ("\033[0;31mffmpeg av_open_input_file\033[37;0m\n");
+    current_track = it;
     if ((ret = av_open_input_file(&info->fctx, uri, NULL, 0, NULL)) < 0) {
-        trace ("info->fctx is %p, ret %d/%s\n", info->fctx, ret, strerror(-ret));
+        current_track = NULL;
+        trace ("\033[0;31minfo->fctx is %p, ret %d/%s\033[0;31m\n", info->fctx, ret, strerror(-ret));
         plugin.free (_info);
         return NULL;
     }
+    current_track = NULL;
 
+    trace ("\033[0;31mffmpeg av_find_stream_info\033[37;0m\n");
     info->stream_id = -1;
     av_find_stream_info(info->fctx);
     for (i = 0; i < info->fctx->nb_streams; i++)
@@ -219,7 +227,7 @@ ffmpeg_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
     // return number of decoded bytes
     // return 0 on EOF
 
-    if (info->currentsample + size / (2 * _info->channels) > info->endsample) {
+    if (info->endsample >= 0 && info->currentsample + size / (2 * _info->channels) > info->endsample) {
         size = (info->endsample - info->currentsample + 1) * 2 * _info->channels;
         if (size <= 0) {
             return 0;
@@ -471,7 +479,12 @@ ffmpeg_insert (DB_playItem_t *after, const char *fname) {
     it->fname = strdup (fname);
     it->filetype = filetype;
 
-    deadbeef->pl_set_item_duration (it, duration);
+    if (!deadbeef->is_local_file (it->fname)) {
+        deadbeef->pl_set_item_duration (it, -1);
+    }
+    else {
+        deadbeef->pl_set_item_duration (it, duration);
+    }
 
     // add metainfo
 #if LIBAVFORMAT_VERSION_INT < (53<<16)
@@ -528,6 +541,10 @@ ffmpeg_vfs_open(URLContext *h, const char *filename, int flags)
     if (f == NULL)
         return -ENOENT;
 
+    if (f->vfs->streaming) {
+        deadbeef->fset_track (f, current_track);
+    }
+
     h->priv_data = f;
     return 0;
 }
@@ -535,6 +552,7 @@ ffmpeg_vfs_open(URLContext *h, const char *filename, int flags)
 static int
 ffmpeg_vfs_read(URLContext *h, unsigned char *buf, int size)
 {
+    trace ("ffmpeg_vfs_read %d\n", size);
     int res = deadbeef->fread (buf, 1, size, h->priv_data);
     return res;
 }
@@ -548,13 +566,19 @@ ffmpeg_vfs_write(URLContext *h, unsigned char *buf, int size)
 static int64_t
 ffmpeg_vfs_seek(URLContext *h, int64_t pos, int whence)
 {
+    trace ("ffmpeg_vfs_seek %d %d\n", pos, whence);
     DB_FILE *f = h->priv_data;
 
     if (whence == AVSEEK_SIZE) {
         return f->vfs->streaming ? -1 : deadbeef->fgetlength (h->priv_data);
     }
-    int ret = deadbeef->fseek (h->priv_data, pos, whence);
-    return ret;
+    else if (f->vfs->streaming) {
+        return -1;
+    }
+    else {
+        int ret = deadbeef->fseek (h->priv_data, pos, whence);
+        return ret;
+    }
 }
 
 static int

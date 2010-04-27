@@ -512,12 +512,17 @@ streamer_set_current (playItem_t *it) {
                 else if (!strcmp (ct, "application/ogg")) {
                     plug = "stdogg";
                 }
+                else if (!strcmp (ct, "audio/aacp")) {
+                    plug = "ffmpeg";
+                }
+                else if (!strcmp (ct, "audio/aac")) {
+                    plug = "ffmpeg";
+                }
             }
             mutex_lock (decodemutex);
             streamer_file = NULL;
             vfs_fclose (fp);
             mutex_unlock (decodemutex);
-            trace ("\033[0;34mclosed file %s (bad or interrupted)\033[37;0m\n", it->fname);
         }
         if (plug) {
             DB_decoder_t **decoders = plug_get_decoder_list ();
@@ -526,8 +531,12 @@ streamer_set_current (playItem_t *it) {
                 if (!strcmp (decoders[i]->plugin.id, plug)) {
                     it->decoder_id = decoders[i]->plugin.id;
                     it->filetype = decoders[i]->filetypes[0];
+                    trace ("\033[0;34mfound plugin %s\033[37;0m\n", plug);
                 }
             }
+        }
+        else {
+            trace ("\033[0;34mclosed file %s (bad or interrupted)\033[37;0m\n", it->fname);
         }
     }
     if (it->decoder_id) {
