@@ -265,6 +265,10 @@ read_config (Display *disp)
     // doing it on other thread
     for (i = 0; i < command_count; i++) {
         XGrabKey (disp, commands[i].keycode, commands[i].modifier, DefaultRootWindow (disp), False, GrabModeAsync, GrabModeAsync);
+        XGrabKey (disp, commands[i].keycode, commands[i].modifier|LockMask, DefaultRootWindow (disp), False, GrabModeAsync, GrabModeAsync);
+        XGrabKey (disp, commands[i].keycode, commands[i].modifier|Mod2Mask, DefaultRootWindow (disp), False, GrabModeAsync, GrabModeAsync);
+        XGrabKey (disp, commands[i].keycode, commands[i].modifier|Mod3Mask, DefaultRootWindow (disp), False, GrabModeAsync, GrabModeAsync);
+        XGrabKey (disp, commands[i].keycode, commands[i].modifier|Mod5Mask, DefaultRootWindow (disp), False, GrabModeAsync, GrabModeAsync);
     }
 }
 
@@ -297,6 +301,10 @@ hotkeys_event_loop (void *unused) {
             XSetErrorHandler (x_err_handler);
             for (int i = 0; i < command_count; i++) {
                 XUngrabKey (disp, commands[i].keycode, commands[i].modifier, DefaultRootWindow (disp));
+                XUngrabKey (disp, commands[i].keycode, commands[i].modifier|LockMask, DefaultRootWindow (disp));
+                XUngrabKey (disp, commands[i].keycode, commands[i].modifier|Mod2Mask, DefaultRootWindow (disp));
+                XUngrabKey (disp, commands[i].keycode, commands[i].modifier|Mod3Mask, DefaultRootWindow (disp));
+                XUngrabKey (disp, commands[i].keycode, commands[i].modifier|Mod5Mask, DefaultRootWindow (disp));
             }
             memset (commands, 0, sizeof (commands));
             command_count = 0;
