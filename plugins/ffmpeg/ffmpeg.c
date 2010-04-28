@@ -202,6 +202,7 @@ ffmpeg_init (DB_playItem_t *it) {
 
 static void
 ffmpeg_free (DB_fileinfo_t *_info) {
+    trace ("ffmpeg: free\n");
     ffmpeg_info_t *info = (ffmpeg_info_t*)_info;
     if (info) {
         if (info->buffer) {
@@ -211,11 +212,11 @@ ffmpeg_free (DB_fileinfo_t *_info) {
         if (info->have_packet) {
             av_free_packet (&info->pkt);
         }
-        if (info->fctx) {
-            av_close_input_file (info->fctx);
-        }
         if (info->ctx) {
             avcodec_close (info->ctx);
+        }
+        if (info->fctx) {
+            av_close_input_file (info->fctx);
         }
         free (info);
     }
