@@ -91,6 +91,7 @@ enum {
     DDB_TAG_APEV2 = (1<<12),
     DDB_TAG_VORBISCOMMENTS = (1<<13),
     DDB_TAG_CUESHEET = (1<<14),
+    DDB_TAG_ICY = (1<<15),
 
     DDB_TAG_MASK = 0x0000ff00
 };
