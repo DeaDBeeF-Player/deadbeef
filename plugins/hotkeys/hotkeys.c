@@ -264,11 +264,22 @@ read_config (Display *disp)
     // need to grab it here to prevent gdk_x_error from being called while we're
     // doing it on other thread
     for (i = 0; i < command_count; i++) {
-        XGrabKey (disp, commands[i].keycode, commands[i].modifier, DefaultRootWindow (disp), False, GrabModeAsync, GrabModeAsync);
-        XGrabKey (disp, commands[i].keycode, commands[i].modifier|LockMask, DefaultRootWindow (disp), False, GrabModeAsync, GrabModeAsync);
-        XGrabKey (disp, commands[i].keycode, commands[i].modifier|Mod2Mask, DefaultRootWindow (disp), False, GrabModeAsync, GrabModeAsync);
-        XGrabKey (disp, commands[i].keycode, commands[i].modifier|Mod3Mask, DefaultRootWindow (disp), False, GrabModeAsync, GrabModeAsync);
-        XGrabKey (disp, commands[i].keycode, commands[i].modifier|Mod5Mask, DefaultRootWindow (disp), False, GrabModeAsync, GrabModeAsync);
+        for (int f = 0; f < 16; f++) {
+            uint32_t flags = 0;
+            if (f & 1) {
+                flags |= LockMask;
+            }
+            if (f & 2) {
+                flags |= Mod2Mask;
+            }
+            if (f & 4) {
+                flags |= Mod3Mask;
+            }
+            if (f & 8) {
+                flags |= Mod5Mask;
+            }
+            XGrabKey (disp, commands[i].keycode, commands[i].modifier | flags, DefaultRootWindow (disp), False, GrabModeAsync, GrabModeAsync);
+        }
     }
 }
 
@@ -300,11 +311,22 @@ hotkeys_event_loop (void *unused) {
             trace ("hotkeys: reinitializing\n");
             XSetErrorHandler (x_err_handler);
             for (int i = 0; i < command_count; i++) {
-                XUngrabKey (disp, commands[i].keycode, commands[i].modifier, DefaultRootWindow (disp));
-                XUngrabKey (disp, commands[i].keycode, commands[i].modifier|LockMask, DefaultRootWindow (disp));
-                XUngrabKey (disp, commands[i].keycode, commands[i].modifier|Mod2Mask, DefaultRootWindow (disp));
-                XUngrabKey (disp, commands[i].keycode, commands[i].modifier|Mod3Mask, DefaultRootWindow (disp));
-                XUngrabKey (disp, commands[i].keycode, commands[i].modifier|Mod5Mask, DefaultRootWindow (disp));
+                for (int f = 0; f < 16; f++) {
+                    uint32_t flags = 0;
+                    if (f & 1) {
+                        flags |= LockMask;
+                    }
+                    if (f & 2) {
+                        flags |= Mod2Mask;
+                    }
+                    if (f & 4) {
+                        flags |= Mod3Mask;
+                    }
+                    if (f & 8) {
+                        flags |= Mod5Mask;
+                    }
+                    XUngrabKey (disp, commands[i].keycode, commands[i].modifier | flags, DefaultRootWindow (disp));
+                }
             }
             memset (commands, 0, sizeof (commands));
             command_count = 0;
