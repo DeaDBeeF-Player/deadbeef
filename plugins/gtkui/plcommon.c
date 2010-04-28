@@ -228,15 +228,17 @@ main_reload_metadata_activate
     while (it) {
         if (deadbeef->pl_is_selected (it) && deadbeef->is_local_file (it->fname) && it->decoder_id) {
             uint32_t f = deadbeef->pl_get_item_flags (it);
-            f &= ~DDB_TAG_MASK;
-            deadbeef->pl_set_item_flags (it, f);
-            DB_decoder_t **decoders = deadbeef->plug_get_decoder_list ();
-            for (int i = 0; decoders[i]; i++) {
-                if (!strcmp (decoders[i]->plugin.id, it->decoder_id)) {
-                    if (decoders[i]->read_metadata) {
-                        decoders[i]->read_metadata (it);
+            if (!(f & DDB_IS_SUBTRACK)) {
+                f &= ~DDB_TAG_MASK;
+                deadbeef->pl_set_item_flags (it, f);
+                DB_decoder_t **decoders = deadbeef->plug_get_decoder_list ();
+                for (int i = 0; decoders[i]; i++) {
+                    if (!strcmp (decoders[i]->plugin.id, it->decoder_id)) {
+                        if (decoders[i]->read_metadata) {
+                            decoders[i]->read_metadata (it);
+                        }
+                        break;
                     }
-                    break;
                 }
             }
         }
