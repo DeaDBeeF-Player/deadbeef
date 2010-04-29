@@ -141,6 +141,9 @@ vfs_curl_set_meta (DB_playItem_t *it, const char *meta, const char *value) {
     else {
         deadbeef->pl_replace_meta (it, meta, value);
     }
+    uint32_t f = deadbeef->pl_get_item_flags (it);
+    f |= DDB_TAG_ICY;
+    deadbeef->pl_set_item_flags (it, f);
     deadbeef->plug_trigger_event_trackinfochanged (it);
 }
 

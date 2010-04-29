@@ -2456,6 +2456,10 @@ pl_format_title (playItem_t *it, int idx, char *s, int size, int id, const char 
                     c = snprintf (t, e-t, "CueSheet | ");
                     t += c;
                 }
+                if (it->_flags & DDB_TAG_ICY) {
+                    c = snprintf (t, e-t, "Icy | ");
+                    t += c;
+                }
                 if (t != tags) {
                     *(t - 3) = 0;
                 }
