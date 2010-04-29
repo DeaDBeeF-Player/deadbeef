@@ -27,4 +27,7 @@ show_track_properties_dlg (struct DB_playItem_s *it);
 void
 trkproperties_destroy (void);
 
+void
+trkproperties_fill_metadata (void);
+
 #endif

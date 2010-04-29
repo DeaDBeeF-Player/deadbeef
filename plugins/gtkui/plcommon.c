@@ -247,6 +247,7 @@ main_reload_metadata_activate
         it = next;
     }
     playlist_refresh ();
+    trkproperties_fill_metadata ();
 }
 
 int clicked_idx = -1;

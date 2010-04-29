@@ -32,6 +32,8 @@
 static GtkWidget *trackproperties;
 static DB_playItem_t *track;
 static GtkCellRenderer *rend_text2;
+static GtkListStore *store;
+static GtkListStore *propstore;
 
 gboolean
 on_trackproperties_delete_event        (GtkWidget       *widget,
@@ -109,6 +111,46 @@ static const char *types[] = {
 };
 
 void
+trkproperties_fill_metadata (void) {
+    if (!trackproperties) {
+        return;
+    }
+
+    gtk_list_store_clear (store);
+    deadbeef->pl_lock ();
+    int i = 0;
+    while (types[i]) {
+        GtkTreeIter iter;
+        gtk_list_store_append (store, &iter);
+        const char *value = deadbeef->pl_find_meta (track, types[i]);
+        if (!value) {
+            value = "";
+        }
+        gtk_list_store_set (store, &iter, 0, types[i+1], 1, value, -1);
+        i += 2;
+    }
+    deadbeef->pl_unlock ();
+
+    // properties
+    char temp[200];
+    GtkTreeIter iter;
+    gtk_list_store_clear (propstore);
+    gtk_list_store_append (propstore, &iter);
+    gtk_list_store_set (propstore, &iter, 0, "Location", 1, track->fname, -1);
+    gtk_list_store_append (propstore, &iter);
+    snprintf (temp, sizeof (temp), "%d", track->tracknum);
+    gtk_list_store_set (propstore, &iter, 0, "Subtrack Index", 1, temp, -1);
+    gtk_list_store_append (propstore, &iter);
+    deadbeef->pl_format_time (deadbeef->pl_get_item_duration (track), temp, sizeof (temp));
+    gtk_list_store_set (propstore, &iter, 0, "Duration", 1, temp, -1);
+    gtk_list_store_append (propstore, &iter);
+    deadbeef->pl_format_title (track, -1, temp, sizeof (temp), -1, "%T");
+    gtk_list_store_set (propstore, &iter, 0, "Tag Type(s)", 1, temp, -1);
+    gtk_list_store_append (propstore, &iter);
+    gtk_list_store_set (propstore, &iter, 0, "Embedded Cuesheet", 1, (deadbeef->pl_get_item_flags (track) & DDB_HAS_EMBEDDED_CUESHEET) ? "Yes" : "No", -1);
+}
+
+void
 show_track_properties_dlg (DB_playItem_t *it) {
     if (it) {
         deadbeef->pl_item_ref (it);
@@ -139,9 +181,7 @@ show_track_properties_dlg (DB_playItem_t *it) {
     }
 
     GtkTreeView *tree;
-    GtkListStore *store;
     GtkTreeView *proptree;
-    GtkListStore *propstore;
     if (!trackproperties) {
         trackproperties = create_trackproperties ();
         gtk_window_set_transient_for (GTK_WINDOW (trackproperties), GTK_WINDOW (mainwin));
@@ -192,19 +232,7 @@ show_track_properties_dlg (DB_playItem_t *it) {
     GtkWidget *w;
     const char *meta;
 
-    deadbeef->pl_lock ();
-    int i = 0;
-    while (types[i]) {
-        GtkTreeIter iter;
-        gtk_list_store_append (store, &iter);
-        const char *value = deadbeef->pl_find_meta (it, types[i]);
-        if (!value) {
-            value = "";
-        }
-        gtk_list_store_set (store, &iter, 0, types[i+1], 1, value, -1);
-        i += 2;
-    }
-    deadbeef->pl_unlock ();
+    trkproperties_fill_metadata ();
 
     if (allow_editing) {
         gtk_widget_set_sensitive (lookup_widget (widget, "write_tags"), TRUE);
@@ -212,23 +240,6 @@ show_track_properties_dlg (DB_playItem_t *it) {
     else {
         gtk_widget_set_sensitive (lookup_widget (widget, "write_tags"), FALSE);
     }
-
-    // properties
-    char temp[200];
-    GtkTreeIter iter;
-    gtk_list_store_append (propstore, &iter);
-    gtk_list_store_set (propstore, &iter, 0, "Location", 1, it->fname, -1);
-    gtk_list_store_append (propstore, &iter);
-    snprintf (temp, sizeof (temp), "%d", it->tracknum);
-    gtk_list_store_set (propstore, &iter, 0, "Subtrack Index", 1, temp, -1);
-    gtk_list_store_append (propstore, &iter);
-    deadbeef->pl_format_time (deadbeef->pl_get_item_duration (it), temp, sizeof (temp));
-    gtk_list_store_set (propstore, &iter, 0, "Duration", 1, temp, -1);
-    gtk_list_store_append (propstore, &iter);
-    deadbeef->pl_format_title (it, -1, temp, sizeof (temp), -1, "%T");
-    gtk_list_store_set (propstore, &iter, 0, "Tag Type(s)", 1, temp, -1);
-    gtk_list_store_append (propstore, &iter);
-    gtk_list_store_set (propstore, &iter, 0, "Embedded Cuesheet", 1, (deadbeef->pl_get_item_flags (it) & DDB_HAS_EMBEDDED_CUESHEET) ? "Yes" : "No", -1);
 
     gtk_widget_show (widget);
     gtk_window_present (GTK_WINDOW (widget));
