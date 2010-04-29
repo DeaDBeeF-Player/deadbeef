@@ -1707,13 +1707,14 @@
 		  <property name="visible">True</property>
 		  <property name="items" translatable="yes">File number
 Playing
+Album Art
 Artist - Album
 Artist
 Album
 Title
 Length
 Track
-Album Art
+Band / Album Artist
 Custom</property>
 		  <property name="add_tearoffs">False</property>
 		  <property name="focus_on_click">True</property>
@@ -1850,7 +1851,7 @@ Right</property>
 	      <property name="label" translatable="yes">Format conversions (start with %):
   [a]rtist, [t]itle, al[b]um, track[n]umber,
   [l]ength, [y]ear, [g]enre, [c]omment,
-  copy[r]ight, [f]ilename
+  copy[r]ight, [f]ilename, [T]ags, [B]and
 Example: %a - %t [%l]</property>
 	      <property name="use_underline">False</property>
 	      <property name="use_markup">True</property>

@@ -283,10 +283,10 @@ main_playlist_init (GtkWidget *widget) {
     if (!col) {
         // create default set of columns
         add_column_helper (listview, "Playing", 50, DB_COLUMN_PLAYING, NULL, 0);
-        add_column_helper (listview, "Artist / Album", 150, DB_COLUMN_ARTIST_ALBUM, NULL, 0);
-        add_column_helper (listview, "Track №", 50, DB_COLUMN_TRACK, NULL, 1);
-        add_column_helper (listview, "Title / Track Artist", 150, DB_COLUMN_TITLE, NULL, 0);
-        add_column_helper (listview, "Duration", 50, DB_COLUMN_DURATION, NULL, 0);
+        add_column_helper (listview, "Artist / Album", 150, -1, "%a - %b", 0);
+        add_column_helper (listview, "Track №", 50, -1, "%n", 1);
+        add_column_helper (listview, "Title / Track Artist", 150, -1, "%t", 0);
+        add_column_helper (listview, "Duration", 50, -1, "%l", 0);
     }
     else {
         while (col) {

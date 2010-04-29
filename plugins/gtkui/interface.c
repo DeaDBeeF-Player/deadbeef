@@ -1307,13 +1307,14 @@ create_editcolumndlg (void)
   gtk_box_pack_start (GTK_BOX (hbox30), id, TRUE, TRUE, 0);
   gtk_combo_box_append_text (GTK_COMBO_BOX (id), "File number");
   gtk_combo_box_append_text (GTK_COMBO_BOX (id), "Playing");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (id), "Album Art");
   gtk_combo_box_append_text (GTK_COMBO_BOX (id), "Artist - Album");
   gtk_combo_box_append_text (GTK_COMBO_BOX (id), "Artist");
   gtk_combo_box_append_text (GTK_COMBO_BOX (id), "Album");
   gtk_combo_box_append_text (GTK_COMBO_BOX (id), "Title");
   gtk_combo_box_append_text (GTK_COMBO_BOX (id), "Length");
   gtk_combo_box_append_text (GTK_COMBO_BOX (id), "Track");
-  gtk_combo_box_append_text (GTK_COMBO_BOX (id), "Album Art");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (id), "Band / Album Artist");
   gtk_combo_box_append_text (GTK_COMBO_BOX (id), "Custom");
 
   hbox31 = gtk_hbox_new (FALSE, 8);
@@ -1346,7 +1347,7 @@ create_editcolumndlg (void)
   gtk_combo_box_append_text (GTK_COMBO_BOX (align), "Left");
   gtk_combo_box_append_text (GTK_COMBO_BOX (align), "Right");
 
-  label25 = gtk_label_new ("Format conversions (start with %):\n  [a]rtist, [t]itle, al[b]um, track[n]umber,\n  [l]ength, [y]ear, [g]enre, [c]omment,\n  copy[r]ight, [f]ilename\nExample: %a - %t [%l]");
+  label25 = gtk_label_new ("Format conversions (start with %):\n  [a]rtist, [t]itle, al[b]um, track[n]umber,\n  [l]ength, [y]ear, [g]enre, [c]omment,\n  copy[r]ight, [f]ilename, [T]ags, [B]and\nExample: %a - %t [%l]");
   gtk_widget_show (label25);
   gtk_box_pack_start (GTK_BOX (vbox14), label25, TRUE, TRUE, 0);
   GTK_WIDGET_SET_FLAGS (label25, GTK_CAN_FOCUS);

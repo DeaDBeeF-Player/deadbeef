@@ -49,7 +49,6 @@
 #include "streamer.h"
 #include "conf.h"
 #include "volume.h"
-#include "session.h"
 #include "plugins.h"
 
 #ifndef PATH_MAX
@@ -608,13 +607,6 @@ main (int argc, char *argv[]) {
     // start all subsystems
     volume_set_db (conf_get_float ("playback.volume", 0));
     plug_trigger_event_playlistchanged ();
-// this is old code left for backwards compatibility
-    {
-        char sessfile[1024]; // $HOME/.config/deadbeef/session
-        if (snprintf (sessfile, sizeof (sessfile), "%s/deadbeef/session", confdir) < sizeof (sessfile)) {
-            session_load (sessfile);
-        }
-    }
 
     streamer_init ();
 

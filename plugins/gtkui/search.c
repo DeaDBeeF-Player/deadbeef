@@ -424,10 +424,10 @@ search_playlist_init (GtkWidget *widget) {
     // create default set of columns
     DB_conf_item_t *col = deadbeef->conf_find ("search.column.", NULL);
     if (!col) {
-        add_column_helper (listview, "Artist / Album", 150, DB_COLUMN_ARTIST_ALBUM, NULL, 0);
-        add_column_helper (listview, "Track №", 50, DB_COLUMN_TRACK, NULL, 1);
-        add_column_helper (listview, "Title / Track Artist", 150, DB_COLUMN_TITLE, NULL, 0);
-        add_column_helper (listview, "Duration", 50, DB_COLUMN_DURATION, NULL, 0);
+        add_column_helper (listview, "Artist / Album", 150, -1, "%a - %b", 0);
+        add_column_helper (listview, "Track №", 50, -1, "%n", 1);
+        add_column_helper (listview, "Title / Track Artist", 150, -1, "%t", 0);
+        add_column_helper (listview, "Duration", 50, -1, "%l", 0);
     }
     else {
         while (col) {

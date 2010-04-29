@@ -14,7 +14,6 @@ deadbeef_SOURCES =\
 	playback.h\
 	threading_pthread.c threading.h\
 	volume.c volume.h\
-	session.h session.c \
 	junklib.h junklib.c utf8.c utf8.h\
 	optmath.h\
 	vfs.c vfs.h vfs_stdio.c\

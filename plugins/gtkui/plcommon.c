@@ -498,10 +498,90 @@ append_column_from_textdef (DdbListview *listview, const uint8_t *def) {
 
     col_info_t *inf = malloc (sizeof (col_info_t));
     memset (inf, 0, sizeof (col_info_t));
-    inf->format = strdup (fmt);
-    inf->id = id;
+
+    enum {
+        DB_COLUMN_ARTIST_ALBUM = 2,
+        DB_COLUMN_ARTIST = 3,
+        DB_COLUMN_ALBUM = 4,
+        DB_COLUMN_TITLE = 5,
+        DB_COLUMN_DURATION = 6,
+        DB_COLUMN_TRACK = 7,
+    };
+
+    inf->id = -1;
+    // convert IDs from pre-0.4
+    switch (id) {
+    case DB_COLUMN_ARTIST_ALBUM:
+        inf->format = strdup ("%a - %b");
+        break;
+    case DB_COLUMN_ARTIST:
+        inf->format = strdup ("%a");
+        break;
+    case DB_COLUMN_ALBUM:
+        inf->format = strdup ("%b");
+        break;
+    case DB_COLUMN_TITLE:
+        inf->format = strdup ("%t");
+        break;
+    case DB_COLUMN_DURATION:
+        inf->format = strdup ("%l");
+        break;
+    case DB_COLUMN_TRACK:
+        inf->format = strdup ("%n");
+        break;
+    default:
+        inf->format = *fmt ? strdup (fmt) : NULL;
+        inf->id = id;
+        break;
+    }
     ddb_listview_column_append (listview, title, width, align, id == DB_COLUMN_ALBUM_ART ? width : 0, inf);
 }
+
+static void
+init_column (col_info_t *inf, int id, const char *format) {
+    if (inf->format) {
+        free (inf->format);
+        inf->format = NULL;
+    }
+
+    inf->id = -1;
+
+    switch (id) {
+    case 0:
+        inf->id = DB_COLUMN_FILENUMBER;
+        break;
+    case 1:
+        inf->id = DB_COLUMN_PLAYING;
+        break;
+    case 2:
+        inf->id = DB_COLUMN_ALBUM_ART;
+        break;
+    case 3:
+        inf->format = strdup ("%a - %b");
+        break;
+    case 4:
+        inf->format = strdup ("%a");
+        break;
+    case 5:
+        inf->format = strdup ("%b");
+        break;
+    case 6:
+        inf->format = strdup ("%t");
+        break;
+    case 7:
+        inf->format = strdup ("%l");
+        break;
+    case 8:
+        inf->format = strdup ("%n");
+        break;
+    case 9:
+        inf->format = strdup ("%B");
+        break;
+    default:
+        inf->format = strdup (format);
+    }
+}
+
 
 void
 on_add_column_activate                 (GtkMenuItem     *menuitem,
@@ -516,16 +596,15 @@ on_add_column_activate                 (GtkMenuItem     *menuitem,
     if (response == GTK_RESPONSE_OK) {
         const gchar *title = gtk_entry_get_text (GTK_ENTRY (lookup_widget (dlg, "title")));
         const gchar *format = gtk_entry_get_text (GTK_ENTRY (lookup_widget (dlg, "format")));
-        int id = gtk_combo_box_get_active (GTK_COMBO_BOX (lookup_widget (dlg, "id")));
-        int align = gtk_combo_box_get_active (GTK_COMBO_BOX (lookup_widget (dlg, "align")));
-        if (id >= DB_COLUMN_ID_MAX) {
-            id = -1;
-        }
+        int sel = gtk_combo_box_get_active (GTK_COMBO_BOX (lookup_widget (dlg, "id")));
+
         col_info_t *inf = malloc (sizeof (col_info_t));
         memset (inf, 0, sizeof (col_info_t));
-        inf->format = strdup (format);
-        inf->id = id;
-        ddb_listview_column_insert (last_playlist, active_column, title, 100, align, id == DB_COLUMN_ALBUM_ART ? 100 : 0, inf);
+
+        init_column (inf, sel, format);
+
+        int align = gtk_combo_box_get_active (GTK_COMBO_BOX (lookup_widget (dlg, "align")));
+        ddb_listview_column_insert (last_playlist, active_column, title, 100, align, inf->id == DB_COLUMN_ALBUM_ART ? 100 : 0, inf);
         ddb_listview_refresh (last_playlist, DDB_REFRESH_COLUMNS | DDB_REFRESH_LIST | DDB_REFRESH_HSCROLL | DDB_EXPOSE_LIST | DDB_EXPOSE_COLUMNS);
     }
     gtk_widget_destroy (dlg);
@@ -554,12 +633,41 @@ on_edit_column_activate                (GtkMenuItem     *menuitem,
     }
 
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (dlg, "title")), title);
-    gtk_entry_set_text (GTK_ENTRY (lookup_widget (dlg, "format")), inf->format);
+    int idx = 10;
     if (inf->id == -1) {
-        gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "id")), DB_COLUMN_ID_MAX);
+        if (inf->format) {
+            if (!strcmp (inf->format, "%a - %b")) {
+                idx = 3;
+            }
+            else if (!strcmp (inf->format, "%a")) {
+                idx = 4;
+            }
+            else if (!strcmp (inf->format, "%b")) {
+                idx = 5;
+            }
+            else if (!strcmp (inf->format, "%t")) {
+                idx = 6;
+            }
+            else if (!strcmp (inf->format, "%l")) {
+                idx = 7;
+            }
+            else if (!strcmp (inf->format, "%n")) {
+                idx = 8;
+            }
+            else if (!strcmp (inf->format, "%B")) {
+                idx = 9;
+            }
+        }
     }
-    else {
-        gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "id")), inf->id);
+    else if (inf->id <= DB_COLUMN_PLAYING) {
+        idx = inf->id;
+    }
+    else if (inf->id == DB_COLUMN_ALBUM_ART) {
+        idx = 2;
+    }
+    gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "id")), idx);
+    if (idx == 10) {
+        gtk_entry_set_text (GTK_ENTRY (lookup_widget (dlg, "format")), inf->format);
     }
     gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "align")), align_right);
     gint response = gtk_dialog_run (GTK_DIALOG (dlg));
@@ -568,13 +676,9 @@ on_edit_column_activate                (GtkMenuItem     *menuitem,
         const gchar *format = gtk_entry_get_text (GTK_ENTRY (lookup_widget (dlg, "format")));
         int id = gtk_combo_box_get_active (GTK_COMBO_BOX (lookup_widget (dlg, "id")));
         int align = gtk_combo_box_get_active (GTK_COMBO_BOX (lookup_widget (dlg, "align")));
-        if (id >= DB_COLUMN_ID_MAX) {
-            id = -1;
-        }
-        free (inf->format);
-        inf->format = strdup (format);
-        inf->id = id;
-        ddb_listview_column_set_info (last_playlist, active_column, title, width, align, id == DB_COLUMN_ALBUM_ART ? width : 0, inf);
+
+        init_column (inf, id, format);
+        ddb_listview_column_set_info (last_playlist, active_column, title, width, align, inf->id == DB_COLUMN_ALBUM_ART ? width : 0, inf);
 
         ddb_listview_refresh (last_playlist, DDB_REFRESH_COLUMNS | DDB_REFRESH_LIST | DDB_EXPOSE_LIST | DDB_EXPOSE_COLUMNS);
     }

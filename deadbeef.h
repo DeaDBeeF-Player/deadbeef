@@ -235,15 +235,10 @@ enum {
 };
 
 // preset columns, working using IDs
+// DON'T add new ids in range 2-7, they are reserved for backwards compatibility
 enum pl_column_t {
     DB_COLUMN_FILENUMBER = 0,
     DB_COLUMN_PLAYING = 1,
-    DB_COLUMN_ARTIST_ALBUM = 2,
-    DB_COLUMN_ARTIST = 3,
-    DB_COLUMN_ALBUM = 4,
-    DB_COLUMN_TITLE = 5,
-    DB_COLUMN_DURATION = 6,
-    DB_COLUMN_TRACK = 7,
     DB_COLUMN_ALBUM_ART = 8,
     DB_COLUMN_ID_MAX
 };
@@ -400,6 +395,7 @@ typedef struct {
        %a artist
        %t title
        %b album
+       %B band / album artist
        %n track
        %l length (duration)
        %y year

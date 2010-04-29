@@ -2704,6 +2704,7 @@ ddb_listview_column_set_info (DdbListview *listview, int col, const char *title,
             c->align_right = align_right;
             c->minheight = minheight;
             c->user_data = user_data;
+            listview->binding->columns_changed (listview);
             return 0;
         }
     }

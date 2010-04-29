@@ -2242,18 +2242,6 @@ pl_format_time (float t, char *dur, int size) {
     }
 }
 
-// following helpers must be called from within pl_lock/unlock block
-static const char *
-pl_get_meta_cached (playItem_t *it, const char *meta, const char *ret, const char *def) {
-    if (!ret) {
-        ret = pl_find_meta (it, meta);
-        if (!ret) {
-            ret = def;
-        }
-    }
-    return ret;
-}
-
 static const char *
 pl_format_duration (playItem_t *it, const char *ret, char *dur, int size) {
     if (ret) {
@@ -2279,8 +2267,7 @@ pl_format_title (playItem_t *it, int idx, char *s, int size, int id, const char 
     char elp[50];
     char fno[50];
     char tags[200];
-    const char *artist = NULL;
-    const char *album = NULL;
+    char artistalbum[1024];
     const char *track = NULL;
     const char *title = NULL;
     const char *duration = NULL;
@@ -2307,42 +2294,6 @@ pl_format_title (playItem_t *it, int idx, char *s, int size, int id, const char 
         case DB_COLUMN_PLAYING:
             UNLOCK;
             return pl_format_item_queue (it, s, size);
-        case DB_COLUMN_ARTIST_ALBUM:
-            {
-                char artistalbum[1024];
-                artist = pl_get_meta_cached (it, "artist", artist, "Unknown artist");
-                album = pl_get_meta_cached (it, "album", album, "Unknown album");
-                snprintf (artistalbum, sizeof (artistalbum), "%s - %s", artist, album);
-                text = artistalbum;
-            }
-            break;
-        case DB_COLUMN_ARTIST:
-            text = (artist = pl_get_meta_cached (it, "artist", artist, "Unknown artist"));
-            break;
-        case DB_COLUMN_ALBUM:
-            text = (album = pl_get_meta_cached (it, "album", artist, "Unknown album"));
-            break;
-        case DB_COLUMN_TITLE:
-            text = (title = pl_get_meta_cached (it, "title", artist, "?"));
-            break;
-        case DB_COLUMN_DURATION:
-            text = (duration = pl_format_duration (it, duration, dur, sizeof (dur)));
-            break;
-        case DB_COLUMN_TRACK:
-            track = pl_get_meta_cached (it, "track", track, "");
-            text = track;
-#if 0 // kept for tracing purposes
-            char ftrk[50];
-            if (isdigit (track[0])) {
-                snprintf (ftrk, sizeof (ftrk), "%03d (%s)", atoi (track), track);
-                text = ftrk;
-            }
-            else {
-                snprintf (ftrk, sizeof (ftrk), "-1 (%s)", track);
-                text = ftrk;
-            }
-#endif
-            break;
         }
         if (text) {
             strncpy (s, text, size);
@@ -2373,28 +2324,40 @@ pl_format_title (playItem_t *it, int idx, char *s, int size, int id, const char 
                 break;
             }
             else if (*fmt == 'a') {
-                meta = (artist = pl_get_meta_cached (it, "artist", artist, "Unknown artist"));
+                meta = pl_find_meta (it, "artist");
+                if (!meta) {
+                    meta = "Unknown artist";
+                }
             }
             else if (*fmt == 't') {
-                meta = (title = pl_get_meta_cached (it, "title", title, "?"));
+                meta = pl_find_meta (it, "title");
+                if (!meta) {
+                    meta = "?";
+                }
             }
             else if (*fmt == 'b') {
-                meta = (album = pl_get_meta_cached (it, "album", album, "Unknown album"));
+                meta = pl_find_meta (it, "album");
+                if (!meta) {
+                    meta = "Unknown album";
+                }
+            }
+            else if (*fmt == 'B') {
+                meta = pl_find_meta (it, "band");
             }
             else if (*fmt == 'n') {
-                meta = (track = pl_get_meta_cached (it, "track", track, ""));
+                meta = pl_find_meta (it, "track");
             }
             else if (*fmt == 'y') {
-                meta = (year = pl_get_meta_cached (it, "year", year, ""));
+                meta = pl_find_meta (it, "year");
             }
             else if (*fmt == 'g') {
-                meta = (genre = pl_get_meta_cached (it, "genre", genre, ""));
+                meta = pl_find_meta (it, "genre");
             }
             else if (*fmt == 'c') {
-                meta = (comment = pl_get_meta_cached (it, "comment", comment, ""));
+                meta = pl_find_meta (it, "comment");
             }
             else if (*fmt == 'r') {
-                meta = (copyright = pl_get_meta_cached (it, "copyright", copyright, ""));
+                meta = pl_find_meta (it, "copyright");
             }
             else if (*fmt == 'l') {
                 const char *value = (duration = pl_format_duration (it, duration, dur, sizeof (dur)));
@@ -2502,6 +2465,15 @@ pl_sort (int iter, int id, const char *format, int ascending) {
     }
     GLOBAL_LOCK;
     int sorted = 0;
+    int is_duration = 0;
+    int is_track = 0;
+    if (format && id == -1 && !strcmp (format, "%l")) {
+        is_duration = 1;
+    }
+    if (format && id == -1 && !strcmp (format, "%n")) {
+        is_track = 1;
+    }
+
     do {
         sorted = 1;
         playItem_t *it;
@@ -2511,10 +2483,10 @@ pl_sort (int iter, int id, const char *format, int ascending) {
                 break;
             }
             int cmp;
-            if (id == DB_COLUMN_DURATION) {
+            if (is_duration) {
                 cmp = ascending ? next->_duration > it->_duration : it->_duration > next->_duration;
             }
-            else if (id == DB_COLUMN_TRACK) {
+            else if (is_track) {
                 const char *t;
                 t = pl_find_meta (it, "track");
                 int a = t ? atoi (t) : -1;
