@@ -2312,6 +2312,9 @@ pl_format_title (playItem_t *it, int idx, char *s, int size, int id, const char 
             else if (*fmt == 'n') {
                 meta = pl_find_meta (it, "track");
             }
+            else if (*fmt == 'N') {
+                meta = pl_find_meta (it, "numtracks");
+            }
             else if (*fmt == 'y') {
                 meta = pl_find_meta (it, "year");
             }

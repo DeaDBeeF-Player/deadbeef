@@ -1849,9 +1849,10 @@ Right</property>
 	      <property name="visible">True</property>
 	      <property name="can_focus">True</property>
 	      <property name="label" translatable="yes">Format conversions (start with %):
-  [a]rtist, [t]itle, al[b]um, track[n]umber,
+  [a]rtist, [t]itle, al[b]um, [B]and,
+  track[n]umber, [N]totaltracks,
   [l]ength, [y]ear, [g]enre, [c]omment,
-  copy[r]ight, [f]ilename, [T]ags, [B]and
+  copy[r]ight, [f]ilename, [T]ags
 Example: %a - %t [%l]</property>
 	      <property name="use_underline">False</property>
 	      <property name="use_markup">True</property>
