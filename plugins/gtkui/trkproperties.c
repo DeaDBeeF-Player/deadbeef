@@ -29,6 +29,9 @@
 #include "search.h"
 #include "ddbcellrenderertextmultiline.h"
 
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
+
 static GtkWidget *trackproperties;
 static DB_playItem_t *track;
 static GtkCellRenderer *rend_text2;
@@ -256,7 +259,7 @@ set_metadata_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpoi
 
     for (int i = 0; types[i]; i += 2) {
         if (!strcmp (skey, types[i+1])) {
-            printf ("setting %s = %s\n", types[i], svalue);
+            trace ("setting %s = %s\n", types[i], svalue);
             deadbeef->pl_replace_meta (DB_PLAYITEM (data), types[i], svalue);
         }
     }
@@ -268,9 +271,9 @@ void
 on_write_tags_clicked                  (GtkButton       *button,
                                         gpointer         user_data)
 {
-    fprintf (stderr, "on_write_tags_clicked\n");
+    trace ("on_write_tags_clicked\n");
     if (!deadbeef->conf_get_int ("enable_tag_writing", 0)) {
-        fprintf (stderr, "tag writing disabled\n");
+        trace ("tag writing disabled\n");
         return;
     }
     if (!track || !track->decoder_id) {
