@@ -1896,9 +1896,6 @@ pl_load (const char *fname) {
             }
             decoder[ll] = 0;
             it->decoder_id = plug_get_decoder_id (decoder);
-//            if (!it->decoder) {
-//                goto load_fail;
-//            }
         }
         else {
             it->decoder_id = NULL;
@@ -1972,8 +1969,8 @@ pl_load (const char *fname) {
             }
         }
         else {
-            if (it->tracknum != 0) {
-                it->_flags |= DDB_IS_READONLY; // to prevent editing metadata in subsongs
+            if (it->startsample > 0) {
+                it->_flags |= DDB_IS_SUBTRACK;
             }
         }
 
@@ -1984,22 +1981,6 @@ pl_load (const char *fname) {
         for (int i = 0; i < nm; i++) {
             char key[1024];
             char value[1024];
-#if 0
-            const char *valid_keys[] = {
-                "title",
-                "artist",
-                "album",
-                "vendor",
-                "year",
-                "genre",
-                "comment",
-                "track",
-                "band",
-                "cuesheet",
-                "copyright",
-                NULL
-            };
-#endif
 
             if (fread (&l, 1, 2, fp) != 2) {
                 goto load_fail;
@@ -2023,16 +2004,7 @@ pl_load (const char *fname) {
                     goto load_fail;
                 }
                 value[l] = 0;
-                //printf ("%s=%s\n", key, value);
                 pl_add_meta (it, key, value);
-#if 0
-                for (int n = 0; valid_keys[n]; n++) {
-                    if (!strcmp (valid_keys[n], key)) {
-                        pl_add_meta (it, valid_keys[n], value);
-                        break;
-                    }
-                }
-#endif
             }
         }
         pl_insert_item (playlist->tail[PL_MAIN], it);
@@ -2268,15 +2240,8 @@ pl_format_title (playItem_t *it, int idx, char *s, int size, int id, const char 
     char fno[50];
     char tags[200];
     char artistalbum[1024];
-    const char *track = NULL;
-    const char *title = NULL;
     const char *duration = NULL;
     const char *elapsed = NULL;
-    const char *year = NULL;
-    const char *genre = NULL;
-    const char *comment = NULL;
-    const char *copyright = NULL;
-    const char *filename = NULL;
 
     char *ss = s;
 
@@ -2375,17 +2340,15 @@ pl_format_title (playItem_t *it, int idx, char *s, int size, int id, const char 
                 }
             }
             else if (*fmt == 'f') {
-                filename = it->fname + strlen (it->fname) - 1;
-                while (filename > it->fname && (*filename) != '/') {
-                    filename--;
+                meta = it->fname + strlen (it->fname) - 1;
+                while (meta > it->fname && (*meta) != '/') {
+                    meta--;
                 }
-                if (*filename == '/') {
-                    filename++;
+                if (*meta == '/') {
+                    meta++;
                 }
-                meta = filename;
             }
             else if (*fmt == 'T') {
-//                meta = pl_find_meta (it, "tags");
                 char *t = tags;
                 char *e = tags + sizeof (tags);
                 int c;
