@@ -523,8 +523,8 @@ junk_id3v1_read (playItem_t *it, DB_FILE *fp) {
     memcpy (comment, &buffer[3+94], 30);
     str_trim_right (comment, 30);
     genreid = buffer[3+124];
-    tracknum = 0xff;
-    if (comment[28] == 0) {
+    tracknum = 0;
+    if (comment[28] == 0 && comment[29] != 0) {
         tracknum = comment[29];
     }
 //    255 = "None",
@@ -561,7 +561,7 @@ junk_id3v1_read (playItem_t *it, DB_FILE *fp) {
     if (*genre) {
         pl_add_meta (it, "genre", convstr_id3v1 (genre, strlen (genre)));
     }
-    if (tracknum != 0xff) {
+    if (tracknum != 0) {
         char s[4];
         snprintf (s, 4, "%d", tracknum);
         pl_add_meta (it, "track", s);
