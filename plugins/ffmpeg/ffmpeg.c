@@ -93,14 +93,19 @@ typedef struct {
 } ffmpeg_info_t;
 
 static DB_playItem_t *current_track;
+static DB_fileinfo_t *current_info;
 
 static DB_fileinfo_t *
-ffmpeg_init (DB_playItem_t *it) {
-    trace ("ffmpeg init %s\n");
+ffmpeg_open (void) {
     DB_fileinfo_t *_info = malloc (sizeof (ffmpeg_info_t));
-    ffmpeg_info_t *info = (ffmpeg_info_t*)_info;
-    memset (info, 0, sizeof (ffmpeg_info_t));
+    memset (_info, 0, sizeof (ffmpeg_info_t));
+    return _info;
+}
 
+static int
+ffmpeg_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
+    ffmpeg_info_t *info = (ffmpeg_info_t *)_info;
+    trace ("ffmpeg init %s\n", it->fname);
     // prepare to decode the track
     // return -1 on failure
 
@@ -119,13 +124,15 @@ ffmpeg_init (DB_playItem_t *it) {
     // open file
     trace ("\033[0;31mffmpeg av_open_input_file\033[37;0m\n");
     current_track = it;
+    current_info = _info;
     if ((ret = av_open_input_file(&info->fctx, uri, NULL, 0, NULL)) < 0) {
         current_track = NULL;
         trace ("\033[0;31minfo->fctx is %p, ret %d/%s\033[0;31m\n", info->fctx, ret, strerror(-ret));
-        plugin.free (_info);
-        return NULL;
+        return -1;
     }
+    trace ("\033[0;31mav_open_input_file done, ret=%d\033[0;31m\n", ret);
     current_track = NULL;
+    current_info = NULL;
 
     trace ("\033[0;31mffmpeg av_find_stream_info\033[37;0m\n");
     info->stream_id = -1;
@@ -146,16 +153,14 @@ ffmpeg_init (DB_playItem_t *it) {
     if (info->codec == NULL)
     {
         trace ("ffmpeg can't decode %s\n", it->fname);
-        plugin.free (_info);
-        return NULL;
+        return -1;
     }
     trace ("ffmpeg can decode %s\n", it->fname);
     trace ("ffmpeg: codec=%s, stream=%d\n", info->codec->name, i);
 
     if (avcodec_open (info->ctx, info->codec) < 0) {
         trace ("ffmpeg: avcodec_open failed\n");
-        plugin.free (_info);
-        return NULL;
+        return -1;
     }
 
     int bps = av_get_bits_per_sample_format (info->ctx->sample_fmt);
@@ -175,8 +180,7 @@ ffmpeg_init (DB_playItem_t *it) {
     int err = posix_memalign ((void **)&info->buffer, 16, AVCODEC_MAX_AUDIO_FRAME_SIZE);
     if (err) {
         fprintf (stderr, "ffmpeg: failed to allocate buffer memory\n");
-        plugin.free (_info);
-        return NULL;
+        return -1;
     }
 
     // fill in mandatory plugin fields
@@ -197,7 +201,7 @@ ffmpeg_init (DB_playItem_t *it) {
         info->startsample = 0;
         info->endsample = totalsamples - 1;
     }
-    return _info;
+    return 0;
 }
 
 static void
@@ -545,6 +549,9 @@ ffmpeg_vfs_open(URLContext *h, const char *filename, int flags)
 
     if (f->vfs->streaming) {
         deadbeef->fset_track (f, current_track);
+        if (current_info) {
+            current_info->file = f;
+        }
     }
 
     h->priv_data = f;
@@ -635,6 +642,7 @@ static DB_decoder_t plugin = {
     .plugin.website = "http://deadbeef.sf.net",
     .plugin.start = ffmpeg_start,
     .plugin.stop = ffmpeg_stop,
+    .open = ffmpeg_open,
     .init = ffmpeg_init,
     .free = ffmpeg_free,
     .read_int16 = ffmpeg_read_int16,

@@ -53,13 +53,18 @@ typedef struct {
 } adplug_info_t;
 
 DB_fileinfo_t *
-adplug_init (DB_playItem_t *it) {
-    // prepare to decode the track
-    // return -1 on failure
-
+adplug_open (void) {
     adplug_info_t *info = (adplug_info_t *)malloc (sizeof (adplug_info_t));
     DB_fileinfo_t *_info = (DB_fileinfo_t *)info;
     memset (info, 0, sizeof (adplug_info_t));
+    return _info;
+}
+
+int
+adplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
+    // prepare to decode the track
+    // return -1 on failure
+    adplug_info_t *info = (adplug_info_t *)_info;
 
     int samplerate = deadbeef->conf_get_int ("synth.samplerate", 48000);
     int bps = deadbeef->get_output ()->bitspersample ();
@@ -69,8 +74,7 @@ adplug_init (DB_playItem_t *it) {
     info->decoder = CAdPlug::factory (it->fname, info->opl, CAdPlug::players);
     if (!info->decoder) {
         trace ("adplug: failed to open %s\n", it->fname);
-        adplug_plugin.free (_info);
-        return NULL;
+        return -1;
     }
 
     info->subsong = it->tracknum;
@@ -88,7 +92,7 @@ adplug_init (DB_playItem_t *it) {
 
     trace ("adplug_init ok (duration=%f, totalsamples=%d)\n", deadbeef->pl_get_item_duration (it), totalsamples);
 
-    return _info;
+    return 0;
 }
 
 void

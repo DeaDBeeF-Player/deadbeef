@@ -26,7 +26,9 @@ extern const char *adplug_exts[];
 extern const char *adplug_filetypes[];
 
 DB_fileinfo_t *
-adplug_init (DB_playItem_t *it);
+adplug_open (void);
+int
+adplug_init (DB_fileinfo_t *_info, DB_playItem_t *it);
 void
 adplug_free (DB_fileinfo_t *);
 int
@@ -56,6 +58,7 @@ DB_decoder_t adplug_plugin = {
     .plugin.website = "http://deadbeef.sf.net",
     .plugin.start = adplug_start,
     .plugin.stop = adplug_stop,
+    .open = adplug_open,
     .init = adplug_init,
     .free = adplug_free,
     .read_int16 = adplug_read_int16,

@@ -85,17 +85,21 @@ static SF_VIRTUAL_IO vfs = {
 };
 
 static DB_fileinfo_t *
-sndfile_init (DB_playItem_t *it) {
+sndfile_open (void) {
     DB_fileinfo_t *_info = malloc (sizeof (sndfile_info_t));
+    memset (_info, 0, sizeof (sndfile_info_t));
+    return _info;
+}
+
+static int
+sndfile_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     sndfile_info_t *info = (sndfile_info_t*)_info;
-    memset (info, 0, sizeof (sndfile_info_t));
 
     SF_INFO inf;
     DB_FILE *fp = deadbeef->fopen (it->fname);
     if (!fp) {
         trace ("sndfile: failed to open %s\n", it->fname);
-        plugin.free (_info);
-        return NULL;
+        return -1;
     }
     int fsize = deadbeef->fgetlength (fp);
 
@@ -103,8 +107,7 @@ sndfile_init (DB_playItem_t *it) {
     info->ctx = sf_open_virtual (&vfs, SFM_READ, &inf, info);
     if (!info->ctx) {
         trace ("sndfile: %s: unsupported file format\n");
-        plugin.free (_info);
-        return NULL;
+        return -1;
     }
     _info->plugin = &plugin;
     _info->bps = 16;
@@ -115,8 +118,7 @@ sndfile_init (DB_playItem_t *it) {
         info->startsample = it->startsample;
         info->endsample = it->endsample;
         if (plugin.seek_sample (_info, 0) < 0) {
-            plugin.free (_info);
-            return NULL;
+            return -1;
         }
     }
     else {
@@ -132,7 +134,7 @@ sndfile_init (DB_playItem_t *it) {
         info->bitrate = -1;
     }
 
-    return _info;
+    return 0;
 }
 
 static void
@@ -262,6 +264,7 @@ static DB_decoder_t plugin = {
     .plugin.author = "Alexey Yakovenko",
     .plugin.email = "waker@users.sourceforge.net",
     .plugin.website = "http://deadbeef.sf.net",
+    .open = sndfile_open,
     .init = sndfile_init,
     .free = sndfile_free,
     .read_int16 = sndfile_read_int16,

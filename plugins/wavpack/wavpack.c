@@ -92,20 +92,22 @@ static WavpackStreamReader wsr = {
 };
 
 static DB_fileinfo_t *
-wv_init (DB_playItem_t *it) {
+wv_open (void) {
     DB_fileinfo_t *_info = malloc (sizeof (wvctx_t));
-    wvctx_t *info = (wvctx_t *)_info;
-    memset (info, 0, sizeof (wvctx_t));
+    memset (_info, 0, sizeof (wvctx_t));
+    return _info;
+}
 
+static int
+wv_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
+    wvctx_t *info = (wvctx_t *)_info;
     info->file = deadbeef->fopen (it->fname);
     if (!info->file) {
-        plugin.free (_info);
-        return NULL;
+        return -1;
     }
     info->ctx = WavpackOpenFileInputEx (&wsr, info->file, NULL, NULL, OPEN_2CH_MAX/*|OPEN_WVC*/, 0);
     if (!info->ctx) {
-        plugin.free (_info);
-        return NULL;
+        return -1;
     }
     _info->plugin = &plugin;
     _info->bps = WavpackGetBitsPerSample (info->ctx);
@@ -116,15 +118,14 @@ wv_init (DB_playItem_t *it) {
         info->startsample = it->startsample;
         info->endsample = it->endsample;
         if (plugin.seek_sample (_info, 0) < 0) {
-            plugin.free (_info);
-            return NULL;
+            return -1;
         }
     }
     else {
         info->startsample = 0;
         info->endsample = WavpackGetNumSamples (info->ctx)-1;
     }
-    return _info;
+    return 0;
 }
 
 static void
@@ -372,6 +373,7 @@ static DB_decoder_t plugin = {
     .plugin.author = "Alexey Yakovenko",
     .plugin.email = "waker@users.sourceforge.net",
     .plugin.website = "http://deadbeef.sf.net",
+    .open = wv_open,
     .init = wv_init,
     .free = wv_free,
     .read_int16 = wv_read_int16,

@@ -69,10 +69,15 @@ min (int a, int b) {
 }
 
 static DB_fileinfo_t *
-cda_init (DB_playItem_t *it) {
+cda_open (void) {
     DB_fileinfo_t *_info = malloc (sizeof (cdda_info_t));
+    memset (_info, 0, sizeof (cdda_info_t));
+    return _info;
+}
+
+static int
+cda_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     cdda_info_t *info = (cdda_info_t *)_info;
-    memset (info, 0, sizeof (cdda_info_t));
 
     trace ("cdda: init %s\n", it->fname);
 
@@ -86,8 +91,7 @@ cda_init (DB_playItem_t *it) {
     }
     else {
         trace ("cdda: bad name: %s\n", it->fname);
-        plugin.free (_info);
-        return NULL;
+        return -1;
     }
     int track_nr = atoi (nr);
     char *fname = (*location) ? location : NULL; //NULL if empty string; means pysical CD drive
@@ -96,15 +100,13 @@ cda_init (DB_playItem_t *it) {
     if  (!info->cdio)
     {
         trace ("cdda: Could not open CD\n");
-        plugin.free (_info);
-        return NULL;
+        return -1;
     }
 
     if (TRACK_FORMAT_AUDIO != cdio_get_track_format (info->cdio, track_nr))
     {
         trace ("cdda: Not an audio track (%d)\n", track_nr);
-        plugin.free (_info);
-        return NULL;
+        return -1;
     }
 
     _info->plugin = &plugin;
@@ -118,7 +120,7 @@ cda_init (DB_playItem_t *it) {
     info->current_sector = info->first_sector;
     info->tail_len = 0;
     info->current_sample = 0;
-    return _info;
+    return 0;
 }
 
 int
@@ -468,6 +470,7 @@ static DB_decoder_t plugin = {
     .plugin.start = cda_start,
     .plugin.stop = cda_stop,
     .plugin.configdialog = settings_dlg,
+    .open = cda_open,
     .init = cda_init,
     .free = cda_free,
     .read_int16 = cda_read_int16,

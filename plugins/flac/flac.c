@@ -171,17 +171,21 @@ cflac_init_error_callback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecode
 }
 
 static DB_fileinfo_t *
-cflac_init (DB_playItem_t *it) {
-    trace ("cflac_init %s\n", it->fname);
+cflac_open (void) {
     DB_fileinfo_t *_info = malloc (sizeof (flac_info_t));
+    memset (_info, 0, sizeof (flac_info_t));
+    return _info;
+}
+
+static int
+cflac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
+    trace ("cflac_init %s\n", it->fname);
     flac_info_t *info = (flac_info_t *)_info;
-    memset (info, 0, sizeof (flac_info_t));
 
     info->file = deadbeef->fopen (it->fname);
     if (!info->file) {
         trace ("cflac_init failed to open file\n");
-        plugin.free (_info);
-        return NULL;
+        return -1;
     }
 
     info->flac_critical_error = 0;
@@ -207,20 +211,17 @@ cflac_init (DB_playItem_t *it) {
         char sign[4];
         if (deadbeef->fread (sign, 1, 4, info->file) != 4) {
             trace ("cflac_init failed to read signature\n");
-            plugin.free (_info);
-            return NULL;
+            return -1;
         }
         if (strncmp (sign, "fLaC", 4)) {
             trace ("cflac_init bad signature\n");
-            plugin.free (_info);
-            return NULL;
+            return -1;
         }
         deadbeef->fseek (info->file, -4, SEEK_CUR);
     }
     else if (!FLAC_API_SUPPORTS_OGG_FLAC) {
         trace ("flac: ogg transport support is not compiled into FLAC library\n");
-        plugin.free (_info);
-        return NULL;
+        return -1;
     }
     else {
         isogg = 1;
@@ -230,8 +231,7 @@ cflac_init (DB_playItem_t *it) {
     info->decoder = FLAC__stream_decoder_new ();
     if (!info->decoder) {
         trace ("FLAC__stream_decoder_new failed\n");
-        plugin.free (_info);
-        return NULL;
+        return -1;
     }
     FLAC__stream_decoder_set_md5_checking (info->decoder, 0);
     if (isogg) {
@@ -242,14 +242,12 @@ cflac_init (DB_playItem_t *it) {
     }
     if (status != FLAC__STREAM_DECODER_INIT_STATUS_OK) {
         trace ("cflac_init bad decoder status\n");
-        plugin.free (_info);
-        return NULL;
+        return -1;
     }
     //_info->samplerate = -1;
     if (!FLAC__stream_decoder_process_until_end_of_metadata (info->decoder)) {
         trace ("cflac_init metadata failed\n");
-        plugin.free (_info);
-        return NULL;
+        return -1;
     }
 
     // bps/samplerate/channels were set by callbacks
@@ -258,8 +256,7 @@ cflac_init (DB_playItem_t *it) {
 
     if (_info->samplerate == -1) { // not a FLAC stream
         trace ("cflac_init not a flac stream\n");
-        plugin.free (_info);
-        return NULL;
+        return -1;
     }
     info->buffer = malloc (BUFFERSIZE);
     if (it->endsample > 0) {
@@ -267,8 +264,7 @@ cflac_init (DB_playItem_t *it) {
         info->endsample = it->endsample;
         if (plugin.seek_sample (_info, 0) < 0) {
             trace ("cflac_init failed to seek to sample 0\n");
-            plugin.free (_info);
-            return NULL;
+            return -1;
         }
         trace ("flac(cue): startsample=%d, endsample=%d, totalsamples=%d, currentsample=%d\n", info->startsample, info->endsample, info->totalsamples, info->currentsample);
     }
@@ -281,12 +277,11 @@ cflac_init (DB_playItem_t *it) {
 
     if (info->flac_critical_error) {
         trace ("flac: critical error while initializing\n");
-        plugin.free (_info);
-        return NULL;
+        return -1;
     }
 
     info->remaining = 0;
-    return _info;
+    return 0;
 }
 
 static void
@@ -843,6 +838,7 @@ static DB_decoder_t plugin = {
     .plugin.author = "Alexey Yakovenko",
     .plugin.email = "waker@users.sourceforge.net",
     .plugin.website = "http://deadbeef.sf.net",
+    .open = cflac_open,
     .init = cflac_init,
     .free = cflac_free,
     .read_int16 = cflac_read_int16,

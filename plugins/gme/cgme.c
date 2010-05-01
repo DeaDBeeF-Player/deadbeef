@@ -33,14 +33,18 @@ typedef struct {
 } gme_info_t;
 
 static DB_fileinfo_t *
-cgme_init (DB_playItem_t *it) {
+cgme_open (void) {
     DB_fileinfo_t *_info = malloc (sizeof (gme_info_t));
-    gme_info_t *info = (gme_info_t*)_info;
     memset (_info, 0, sizeof (gme_info_t));
+    return _info;
+}
+
+static int
+cgme_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
+    gme_info_t *info = (gme_info_t*)_info;
     int samplerate = deadbeef->conf_get_int ("synth.samplerate", 48000);
     if (gme_open_file (it->fname, &info->emu, samplerate)) {
-        plugin.free (_info);
-        return NULL;
+        return -1;
     }
     gme_mute_voices (info->emu, info->cgme_voicemask);
     gme_start_track (info->emu, it->tracknum);
@@ -56,7 +60,7 @@ cgme_init (DB_playItem_t *it) {
     info->duration = deadbeef->pl_get_item_duration (it);
     info->reallength = inf.length; 
     _info->readpos = 0;
-    return _info;
+    return 0;
 }
 
 static void
@@ -232,6 +236,7 @@ static DB_decoder_t plugin = {
     .plugin.start = cgme_start,
     .plugin.stop = cgme_stop,
     .plugin.configdialog = settings_dlg,
+    .open = cgme_open,
     .init = cgme_init,
     .free = cgme_free,
     .read_int16 = cgme_read,

@@ -48,11 +48,16 @@ static DUH*
 open_module(const char *fname, const char *ext, int *start_order, int *is_it, int *is_dos, const char **filetype);
 
 static DB_fileinfo_t *
-cdumb_init (DB_playItem_t *it) {
-    trace ("cdumb_init %s\n", it->fname);
+cdumb_open (void) {
     DB_fileinfo_t *_info = malloc (sizeof (dumb_info_t));
-    dumb_info_t *info = (dumb_info_t *)_info;
     memset (_info, 0, sizeof (dumb_info_t));
+    return _info;
+}
+
+static int
+cdumb_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
+    trace ("cdumb_init %s\n", it->fname);
+    dumb_info_t *info = (dumb_info_t *)_info;
 
     int start_order = 0;
 	int is_dos, is_it;
@@ -73,12 +78,11 @@ cdumb_init (DB_playItem_t *it) {
     _info->readpos = 0;
 
     if (cdumb_startrenderer (_info) < 0) {
-        plugin.free (_info);
-        return NULL;
+        return -1;
     }
 
     trace ("cdumb_init success (ptr=%p)\n", _info);
-    return _info;
+    return 0;
 }
 
 static int
@@ -807,6 +811,7 @@ static DB_decoder_t plugin = {
     .plugin.website = "http://deadbeef.sf.net",
     .plugin.start = cgme_start,
     .plugin.stop = cgme_stop,
+    .open = cdumb_open,
     .init = cdumb_init,
     .free = cdumb_free,
     .read_int16 = cdumb_read,

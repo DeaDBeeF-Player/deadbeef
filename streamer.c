@@ -541,17 +541,20 @@ streamer_set_current (playItem_t *it) {
     }
     if (it->decoder_id) {
         DB_decoder_t *dec = NULL;
-        DB_fileinfo_t *info = NULL;
         dec = plug_get_decoder_for_id (it->decoder_id);
         if (dec) {
             trace ("\033[0;33minit decoder for %s\033[37;0m\n", it->fname);
-            info = dec->init (DB_PLAYITEM (it));
-            trace ("\033[0;33mgot decoder for %s\033[37;0m\n", it->fname);
+            fileinfo = dec->open ();
+            if (fileinfo && dec->init (fileinfo, DB_PLAYITEM (it)) != 0) {
+                trace ("\033[0;31mfailed to init decoder\033[37;0m\n")
+                dec->free (fileinfo);
+                fileinfo = NULL;
+            }
         }
 
-        if (!dec || !info) {
+        if (!dec || !fileinfo) {
             it->played = 1;
-            trace ("decoder->init returned %p\n", info);
+            trace ("decoder->init returned %p\n", fileinfo);
             streamer_buffering = 0;
             if (playlist_track == it) {
                 trace ("redraw track %d; playing_track=%p; playlist_track=%p\n", to, playing_track, playlist_track);
@@ -562,14 +565,13 @@ streamer_set_current (playItem_t *it) {
         }
         else {
             mutex_lock (decodemutex);
-            fileinfo = info;
             if (streaming_track) {
                 pl_item_unref (streaming_track);
             }
             streaming_track = it;
             pl_item_ref (streaming_track);
             mutex_unlock (decodemutex);
-            trace ("bps=%d, channels=%d, samplerate=%d\n", info->bps, info->channels, info->samplerate);
+            trace ("bps=%d, channels=%d, samplerate=%d\n", fileinfo->bps, fileinfo->channels, fileinfo->samplerate);
         }
 // FIXME: that might break streaming at boundaries between 2 different samplerates
 //        streamer_reset (0); // reset SRC
@@ -624,7 +626,7 @@ streamer_set_nextsong (int song, int pstate) {
     trace ("streamer_set_nextsong %d %d\n", song, pstate);
     //plug_trigger_event (DB_EV_ABORTREAD, 0);
     if (fileinfo && fileinfo->file) {
-        trace ("\033[0;31maborting current song: %s\033[37;0m\n", streaming_track ? streaming_track->fname : NULL);
+        trace ("\033[0;31maborting current song: %s (fileinfo %p, file %p)\033[37;0m\n", streaming_track ? streaming_track->fname : NULL, fileinfo, fileinfo ? fileinfo->file : NULL);
         mutex_lock (decodemutex);
         deadbeef->fabort (fileinfo->file);
         if (streamer_file) {
@@ -698,9 +700,15 @@ streamer_start_new_song (void) {
         }
         trace ("\033[0;34mbadsong=%d\033[37;0m\n", badsong);
         // try jump to next song
-        streamer_move_to_nextsong (0);
-        trace ("streamer_move_to_nextsong switched to track %d\n", nextsong);
-        usleep (50000);
+        if (nextsong == sng) {
+            streamer_move_to_nextsong (0);
+            trace ("streamer_move_to_nextsong switched to track %d\n", nextsong);
+            usleep (50000);
+        }
+        else {
+            trace ("nextsong changed to %d by another thread, reinit\n", nextsong);
+            badsong = -1;
+        }
         return;
     }
     pl_item_unref (try);
@@ -735,6 +743,7 @@ streamer_thread (void *ctx) {
         struct timeval tm1;
         gettimeofday (&tm1, NULL);
         if (nextsong >= 0) { // start streaming next song
+            trace ("\033[0;34mnextsong=%d\033[37;0m\n", nextsong);
             streamer_start_new_song ();
             // it's totally possible that song was switched
             // while streamer_set_current was running,
@@ -810,22 +819,24 @@ streamer_thread (void *ctx) {
                         fileinfo->plugin->free (fileinfo);
                         fileinfo = NULL;
                         DB_decoder_t *dec = NULL;
-                        DB_fileinfo_t *info = NULL;
                         dec = plug_get_decoder_for_id (streaming_track->decoder_id);
                         if (dec) {
-                            info = dec->init (DB_PLAYITEM (streaming_track));
+                            fileinfo = dec->open ();
+                            if (fileinfo && dec->init (fileinfo, DB_PLAYITEM (streaming_track) < 0)) {
+                                dec->free (fileinfo);
+                                fileinfo = NULL;
+                            }
                         }
-                        if (!dec || !info) {
+                        if (!dec || !fileinfo) {
                             // FIXME: handle error
-                        }
-                        else {
-                            fileinfo = info;
                         }
                         mutex_unlock (decodemutex);
                         bytes_until_next_song = -1;
                         streamer_buffering = 1;
                         streamer_reset (1);
-                        prevtrack_samplerate = fileinfo->samplerate;
+                        if (fileinfo) {
+                            prevtrack_samplerate = fileinfo->samplerate;
+                        }
                     }
                 }
 
@@ -870,14 +881,17 @@ streamer_thread (void *ctx) {
 
                 mutex_lock (decodemutex);
                 DB_decoder_t *dec = NULL;
-                DB_fileinfo_t *info = NULL;
                 dec = plug_get_decoder_for_id (streaming_track->decoder_id);
                 if (dec) {
-                    info = dec->init (DB_PLAYITEM (streaming_track));
+                    fileinfo = dec->open ();
+                    if (fileinfo && dec->init (fileinfo, DB_PLAYITEM (streaming_track)) != 0) {
+                        dec->free (fileinfo);
+                        fileinfo = NULL;
+                    }
                 }
                 mutex_unlock (decodemutex);
 
-                if (!dec || !info) {
+                if (!dec || !fileinfo) {
                     if (streaming_track) {
                         plug_trigger_event_trackinfochanged (streaming_track);
                     }
@@ -886,9 +900,6 @@ streamer_thread (void *ctx) {
                     trace ("streamer_move_to_nextsong switched to track %d\n", nextsong);
                     usleep (50000);
                     continue;
-                }
-                else {
-                    fileinfo = info;
                 }
             }
 

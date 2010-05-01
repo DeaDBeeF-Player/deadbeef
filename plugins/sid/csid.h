@@ -23,7 +23,8 @@
 extern "C" {
 #endif
 
-DB_fileinfo_t *csid_init (DB_playItem_t *it);
+DB_fileinfo_t *csid_open (void);
+int csid_init (DB_fileinfo_t *_info, DB_playItem_t *it);
 void csid_free (DB_fileinfo_t *);
 int csid_read (DB_fileinfo_t *, char *bytes, int size);
 int csid_seek (DB_fileinfo_t *, float time);

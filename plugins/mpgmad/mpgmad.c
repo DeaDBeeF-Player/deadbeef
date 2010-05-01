@@ -560,15 +560,21 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
 
 
 static DB_fileinfo_t *
-cmp3_init (DB_playItem_t *it) {
+cmp3_open (void) {
     DB_fileinfo_t *_info = malloc (sizeof (mpgmad_info_t));
     mpgmad_info_t *info = (mpgmad_info_t *)_info;
     memset (info, 0, sizeof (mpgmad_info_t));
+    return _info;
+}
+
+static int
+cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
+    mpgmad_info_t *info = (mpgmad_info_t *)_info;
     _info->plugin = &plugin;
     memset (&info->buffer, 0, sizeof (info->buffer));
     info->buffer.file = deadbeef->fopen (it->fname);
     if (!info->buffer.file) {
-        return NULL;
+        return -1;
     }
     info->info.file = info->buffer.file;
     deadbeef->pl_item_ref (it);
@@ -611,8 +617,7 @@ cmp3_init (DB_playItem_t *it) {
         int res = cmp3_scan_stream (&info->buffer, 0);
         if (res < 0) {
             trace ("mpgmad: cmp3_init: initial cmp3_scan_stream failed\n");
-            plugin.free (_info);
-            return NULL;
+            return -1;
         }
         deadbeef->pl_set_item_duration (it, info->buffer.duration);
         if (info->buffer.duration >= 0) {
@@ -636,8 +641,7 @@ cmp3_init (DB_playItem_t *it) {
     }
     if (info->buffer.samplerate == 0) {
         trace ("bad mpeg file: %f\n", it->fname);
-        plugin.free (_info);
-        return NULL;
+        return -1;
     }
     _info->bps = info->buffer.bitspersample;
     _info->samplerate = info->buffer.samplerate;
@@ -648,7 +652,7 @@ cmp3_init (DB_playItem_t *it) {
 	mad_frame_init(&info->frame);
 	mad_synth_init(&info->synth);
 
-    return _info;
+    return 0;
 }
 
 /****************************************************************************
@@ -1213,6 +1217,7 @@ static DB_decoder_t plugin = {
     .plugin.author = "Alexey Yakovenko",
     .plugin.email = "waker@users.sourceforge.net",
     .plugin.website = "http://deadbeef.sf.net",
+    .open = cmp3_open,
     .init = cmp3_init,
     .free = cmp3_free,
     .read_int16 = cmp3_read_int16,

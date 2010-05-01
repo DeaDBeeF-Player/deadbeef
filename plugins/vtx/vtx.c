@@ -47,12 +47,17 @@ typedef struct {
 } vtx_info_t;
 
 static DB_fileinfo_t *
-vtx_init (DB_playItem_t *it) {
+vtx_open (void) {
+    DB_fileinfo_t *_info = malloc (sizeof (vtx_info_t));
+    memset (_info, 0, sizeof (vtx_info_t));
+    return _info;
+}
+
+static int
+vtx_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     // prepare to decode the track
     // return -1 on failure
-    DB_fileinfo_t *_info = malloc (sizeof (vtx_info_t));
     vtx_info_t *info = (vtx_info_t *)_info;
-    memset (info, 0, sizeof (vtx_info_t));
     
     size_t sz = 0;
     char *buf = NULL;
@@ -60,36 +65,31 @@ vtx_init (DB_playItem_t *it) {
     DB_FILE *fp = deadbeef->fopen (it->fname);
     if (!fp) {
         trace ("vtx: failed to open file %s\n", it->fname);
-        plugin.free (_info);
-        return NULL;
+        return -1;
     }
 
     sz = deadbeef->fgetlength (fp);
     if (sz <= 0) {
         trace ("vtx: bad file size\n");
-        plugin.free (_info);
-        return NULL;
+        return -1;
     }
 
     buf = malloc (sz);
     if (!buf) {
         trace ("vtx: out of memory\n");
-        plugin.free (_info);
-        return NULL;
+        return -1;
     }
     if (deadbeef->fread (buf, 1, sz, fp) != sz) {
         trace ("vtx: read failed\n");
         free (buf);
-        plugin.free (_info);
-        return NULL;
+        return -1;
     }
 
     info->decoder = ayemu_vtx_load (buf, sz);
     if (!info->decoder) {
         trace ("vtx: ayemu_vtx_load failed\n");
         free (buf);
-        plugin.free (_info);
-        return NULL;
+        return -1;
     }
     trace ("vtx: data=%p, size=%d\n", info->decoder->regdata, info->decoder->regdata_size);
 
@@ -112,7 +112,7 @@ vtx_init (DB_playItem_t *it) {
     _info->channels = deadbeef->get_output ()->channels ();
     _info->samplerate = samplerate;
     _info->readpos = 0;
-    return _info;
+    return 0;
 }
 
 static void
@@ -304,6 +304,7 @@ static DB_decoder_t plugin = {
     .plugin.website = "http://deadbeef.sf.net",
     .plugin.start = vtx_start,
     .plugin.stop = vtx_stop,
+    .open = vtx_open,
     .init = vtx_init,
     .free = vtx_free,
     .read_int16 = vtx_read_int16,

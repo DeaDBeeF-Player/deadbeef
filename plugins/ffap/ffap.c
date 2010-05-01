@@ -24,6 +24,7 @@
      demuxer and decoder joined into 1 module
      no mallocs/reallocs during decoding
      streaming through fixed ringbuffer (small mem footprint)
+     24bit support merged from rockbox
 */
 
 #if HAVE_CONFIG_H
@@ -670,16 +671,20 @@ ffap_free (DB_fileinfo_t *_info)
 }
 
 static DB_fileinfo_t *
-ffap_init(DB_playItem_t *it)
-{
+ffap_open (void) {
     DB_fileinfo_t *_info = malloc (sizeof (ape_info_t));
+    memset (_info, 0, sizeof (ape_info_t));
+    return _info;
+}
+
+static int
+ffap_init (DB_fileinfo_t *_info, DB_playItem_t *it)
+{
     ape_info_t *info = (ape_info_t*)_info;
-    memset (info, 0, sizeof (ape_info_t));
 
     info->fp = deadbeef->fopen (it->fname);
     if (!info->fp) {
-        plugin.free (_info);
-        return NULL;
+        return -1;
     }
     memset (&info->ape_ctx, 0, sizeof (info->ape_ctx));
     int skip = deadbeef->junk_get_leading_size (info->fp);
@@ -692,8 +697,7 @@ ffap_init(DB_playItem_t *it)
 
     if (info->ape_ctx.channels > 2) {
         fprintf (stderr, "ape: Only mono and stereo is supported\n");
-        plugin.free (_info);
-        return NULL;
+        return -1;
     }
 
 #if ENABLE_DEBUG
@@ -701,8 +705,7 @@ ffap_init(DB_playItem_t *it)
 #endif
     if (info->ape_ctx.compressiontype % 1000 || info->ape_ctx.compressiontype > COMPRESSION_LEVEL_INSANE) {
         fprintf (stderr, "ape: Incorrect compression level %d\n", info->ape_ctx.compressiontype);
-        plugin.free (_info);
-        return NULL;
+        return -1;
     }
     info->ape_ctx.fset = info->ape_ctx.compressiontype / 1000 - 1;
     for (i = 0; i < APE_FILTER_LEVELS; i++) {
@@ -711,8 +714,7 @@ ffap_init(DB_playItem_t *it)
         int err = posix_memalign ((void **)&info->ape_ctx.filterbuf[i], 16, (ape_filter_orders[info->ape_ctx.fset][i] * 3 + HISTORY_SIZE) * 4);
         if (err) {
             trace ("ffap: out of memory (posix_memalign)\n");
-            plugin.free (_info);
-            return NULL;
+            return -1;
         }
     }
 
@@ -735,10 +737,9 @@ ffap_init(DB_playItem_t *it)
     info->ape_ctx.packet_data = malloc (PACKET_BUFFER_SIZE);
     if (!info->ape_ctx.packet_data) {
         fprintf (stderr, "ape: failed to allocate memory for packet data\n");
-        plugin.free (_info);
-        return NULL;
+        return -1;
     }
-    return _info;
+    return 0;
 }
 
 /**
@@ -1900,6 +1901,7 @@ static DB_decoder_t plugin = {
     .plugin.author = "Alexey Yakovenko",
     .plugin.email = "waker@users.sourceforge.net",
     .plugin.website = "http://deadbeef.sf.net",
+    .open = ffap_open,
     .init = ffap_init,
     .free = ffap_free,
     .read_int16 = ffap_read_int16,

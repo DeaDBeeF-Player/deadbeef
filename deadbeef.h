@@ -565,8 +565,11 @@ typedef struct DB_fileinfo_s {
 // decoder plugin
 typedef struct DB_decoder_s {
     DB_plugin_t plugin;
+
+    DB_fileinfo_t *(*open) (void);
+
     // init is called to prepare song to be started
-    DB_fileinfo_t *(*init) (DB_playItem_t *it);
+    int (*init) (DB_fileinfo_t *info, DB_playItem_t *it);
 
     // free is called after decoding is finished
     void (*free) (DB_fileinfo_t *info);

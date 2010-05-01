@@ -617,14 +617,15 @@ http_close (DB_FILE *stream) {
 
 static size_t
 http_read (void *ptr, size_t size, size_t nmemb, DB_FILE *stream) {
-//    trace ("http_read %d\n", size*nmemb);
     assert (stream);
     assert (ptr);
     HTTP_FILE *fp = (HTTP_FILE *)stream;
+//    trace ("http_read %d (status=%d)\n", size*nmemb, fp->status);
     fp->seektoend = 0;
     int sz = size * nmemb;
-//    assert (size * nmemb <= BUFFER_SIZE);
-//    trace ("readpos=%d, readsize=%d\n", fp->pos & BUFFER_SIZE, sz);
+    if (fp->status == STATUS_ABORTED || fp->status == STATUS_FINISHED) {
+        return -1;
+    }
     if (!fp->tid) {
         http_start_streamer (fp);
     }

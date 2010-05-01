@@ -131,10 +131,16 @@ update_vorbis_comments (DB_playItem_t *it, vorbis_comment *vc) {
 }
 
 static DB_fileinfo_t *
-cvorbis_init (DB_playItem_t *it) {
+cvorbis_open (void) {
     DB_fileinfo_t *_info = malloc (sizeof (ogg_info_t));
     ogg_info_t *info = (ogg_info_t *)_info;
     memset (info, 0, sizeof (ogg_info_t));
+    return _info;
+}
+
+static int
+cvorbis_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
+    ogg_info_t *info = (ogg_info_t *)_info;
     info->info.file = NULL;
     info->vi = NULL;
     info->cur_bit_stream = -1;
@@ -144,8 +150,7 @@ cvorbis_init (DB_playItem_t *it) {
     info->info.file = deadbeef->fopen (it->fname);
     if (!info->info.file) {
         trace ("ogg: failed to open file %s\n", it->fname);
-        plugin.free (_info);
-        return NULL;
+        return -1;
     }
     int ln = deadbeef->fgetlength (info->info.file);
     if (info->info.file->vfs->streaming && ln == -1) {
@@ -160,8 +165,7 @@ cvorbis_init (DB_playItem_t *it) {
         int err = ov_open_callbacks (info->info.file, &info->vorbis_file, NULL, 0, ovcb);
         if (err != 0) {
             trace ("ov_open_callbacks returned %d\n", err);
-            plugin.free (_info);
-            return NULL;
+            return -1;
         }
         deadbeef->pl_set_item_duration (it, -1);
     }
@@ -178,21 +182,18 @@ cvorbis_init (DB_playItem_t *it) {
         int err = ov_open_callbacks (info->info.file, &info->vorbis_file, NULL, 0, ovcb);
         if (err != 0) {
             trace ("ov_open_callbacks returned %d\n", err);
-            plugin.free (_info);
-            return NULL;
+            return -1;
         }
 //        deadbeef->pl_set_item_duration (it, ov_time_total (&vorbis_file, -1));
     }
     info->vi = ov_info (&info->vorbis_file, -1);
     if (!info->vi) { // not a vorbis stream
         trace ("not a vorbis stream\n");
-        plugin.free (_info);
-        return NULL;
+        return -1;
     }
     if (info->vi->rate <= 0) {
         trace ("vorbis: bad samplerate\n");
-        plugin.free (_info);
-        return NULL;
+        return -1;
     }
     _info->plugin = &plugin;
     _info->bps = 16;
@@ -223,7 +224,7 @@ cvorbis_init (DB_playItem_t *it) {
         vorbis_comment *vc = ov_comment (&info->vorbis_file, -1);
         update_vorbis_comments (it, vc);
     }
-    return _info;
+    return 0;
 }
 
 static void
@@ -616,6 +617,7 @@ static DB_decoder_t plugin = {
     .plugin.website = "http://deadbeef.sf.net",
     .plugin.start = vorbis_start,
     .plugin.stop = vorbis_stop,
+    .open = cvorbis_open,
     .init = cvorbis_init,
     .free = cvorbis_free,
     .read_int16 = cvorbis_read,
