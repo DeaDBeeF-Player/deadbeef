@@ -660,6 +660,7 @@ static void
 streamer_start_new_song (void) {
     trace ("nextsong=%d\n", nextsong);
     int sng = nextsong;
+    int initsng = nextsong;
     int pstate = nextsong_pstate;
     nextsong = -1;
     src_remaining = 0;
@@ -700,13 +701,13 @@ streamer_start_new_song (void) {
         }
         trace ("\033[0;34mbadsong=%d\033[37;0m\n", badsong);
         // try jump to next song
-        if (nextsong == sng) {
+        if (nextsong == -1) {
             streamer_move_to_nextsong (0);
             trace ("streamer_move_to_nextsong switched to track %d\n", nextsong);
             usleep (50000);
         }
         else {
-            trace ("nextsong changed to %d by another thread, reinit\n", nextsong);
+            trace ("nextsong changed from %d to %d by another thread, reinit\n", initsng, nextsong);
             badsong = -1;
         }
         return;
