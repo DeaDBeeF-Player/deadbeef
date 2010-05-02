@@ -136,13 +136,13 @@ static void ddb_equalizer_real_realize (GtkWidget* base) {
 	GdkWindow* _tmp1_;
 	self = (DdbEqualizer*) base;
 	GTK_WIDGET_SET_FLAGS ((GtkWidget*) self, GTK_REALIZED);
-	gtk_widget_add_events ((GtkWidget*) self, (gint) (((GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK) | GDK_LEAVE_NOTIFY_MASK) | GDK_POINTER_MOTION_MASK));
 	attrs = (memset (&_tmp0_, 0, sizeof (GdkWindowAttr)), _tmp0_.window_type = GDK_WINDOW_CHILD, _tmp0_.wclass = GDK_INPUT_OUTPUT, _tmp0_.event_mask = gtk_widget_get_events ((GtkWidget*) self) | GDK_EXPOSURE_MASK, _tmp0_);
 	((GtkWidget*) self)->window = (_tmp1_ = gdk_window_new (gtk_widget_get_parent_window ((GtkWidget*) self), &attrs, 0), _g_object_unref0 (((GtkWidget*) self)->window), _tmp1_);
 	gdk_window_move_resize (((GtkWidget*) self)->window, ((GtkWidget*) self)->allocation.x, ((GtkWidget*) self)->allocation.y, ((GtkWidget*) self)->allocation.width, ((GtkWidget*) self)->allocation.height);
 	gdk_window_set_user_data (((GtkWidget*) self)->window, self);
 	gtk_widget_set_style ((GtkWidget*) self, gtk_style_attach (gtk_widget_get_style ((GtkWidget*) self), ((GtkWidget*) self)->window));
 	gtk_style_set_background (gtk_widget_get_style ((GtkWidget*) self), ((GtkWidget*) self)->window, GTK_STATE_NORMAL);
+	gtk_widget_add_events ((GtkWidget*) self, (gint) (((GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK) | GDK_LEAVE_NOTIFY_MASK) | GDK_POINTER_MOTION_MASK));
 	ddb_equalizer_send_configure (self);
 }
 

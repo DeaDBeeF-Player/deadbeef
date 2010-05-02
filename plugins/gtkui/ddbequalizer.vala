@@ -75,11 +75,6 @@ namespace Ddb {
 
         public override void realize () {
             set_flags (Gtk.WidgetFlags.REALIZED);
-            add_events (Gdk.EventMask.BUTTON_PRESS_MASK
-                | Gdk.EventMask.BUTTON_RELEASE_MASK
-                | Gdk.EventMask.LEAVE_NOTIFY_MASK
-                | Gdk.EventMask.POINTER_MOTION_MASK);
-
             var attrs = Gdk.WindowAttr () {
                 window_type = Gdk.WindowType.CHILD,
                             wclass = Gdk.WindowClass.INPUT_OUTPUT,
@@ -92,6 +87,11 @@ namespace Ddb {
             this.window.set_user_data (this);
             this.style = this.style.attach (this.window);
             this.style.set_background (this.window, Gtk.StateType.NORMAL);
+            add_events (Gdk.EventMask.BUTTON_PRESS_MASK
+                | Gdk.EventMask.BUTTON_RELEASE_MASK
+                | Gdk.EventMask.LEAVE_NOTIFY_MASK
+                | Gdk.EventMask.POINTER_MOTION_MASK);
+
             send_configure ();
         }
 
