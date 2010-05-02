@@ -789,11 +789,11 @@ cflac_write_metadata (DB_playItem_t *it) {
     do {
         FLAC__StreamMetadata *data = FLAC__metadata_iterator_get_block (iter);
         if (data && data->type == FLAC__METADATA_TYPE_VORBIS_COMMENT) {
-            // delete all crap
             for (int m = 0; metainfo[m]; m += 2) {
                 const char *val = deadbeef->pl_find_meta (it, metainfo[m+1]);
-                // FIXME: only remove if strip is set
-                do {} while (1 == FLAC__metadata_object_vorbiscomment_remove_entry_matching (data, metainfo[m]));
+                if (val) {
+                    do {} while (1 == FLAC__metadata_object_vorbiscomment_remove_entry_matching (data, metainfo[m]));
+                }
                 if (val && *val) {
                     while (val) {
                         const char *next = strchr (val, '\n');
