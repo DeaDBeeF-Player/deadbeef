@@ -891,6 +891,7 @@ gtkui_load (DB_functions_t *api) {
 }
 
 static const char settings_dlg[] =
+    "property \"Ask confirmation to delete files from disk\" checkbox gtkui.delete_files_ask 1;\n"
     "property \"Run gtk_init with --sync (debug mode)\" checkbox gtkui.sync 0;\n"
 ;
 

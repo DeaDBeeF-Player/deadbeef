@@ -312,14 +312,16 @@ on_remove_from_disk_activate                    (GtkMenuItem     *menuitem,
 {
     GtkWidget *widget = GTK_WIDGET (menuitem);
 
-    GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (mainwin), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO, "Delete files from disk");
-    gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dlg), "Files will be lost. Proceed?");
-    gtk_window_set_title (GTK_WINDOW (dlg), "Warning");
+    if (deadbeef->conf_get_int ("gtkui.delete_files_ask", 1)) {
+        GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (mainwin), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO, "Delete files from disk");
+        gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dlg), "Files will be lost. Proceed?\n(This dialog can be turned off in GTKUI plugin settings)");
+        gtk_window_set_title (GTK_WINDOW (dlg), "Warning");
 
-    int response = gtk_dialog_run (GTK_DIALOG (dlg));
-    gtk_widget_destroy (dlg);
-    if (response != GTK_RESPONSE_YES) {
-        return;
+        int response = gtk_dialog_run (GTK_DIALOG (dlg));
+        gtk_widget_destroy (dlg);
+        if (response != GTK_RESPONSE_YES) {
+            return;
+        }
     }
 
     deadbeef->pl_lock ();
