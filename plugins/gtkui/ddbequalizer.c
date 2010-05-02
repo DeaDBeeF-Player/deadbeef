@@ -44,18 +44,17 @@ typedef struct _DdbEqualizer DdbEqualizer;
 typedef struct _DdbEqualizerClass DdbEqualizerClass;
 typedef struct _DdbEqualizerPrivate DdbEqualizerPrivate;
 #define _gdk_cursor_unref0(var) ((var == NULL) ? NULL : (var = (gdk_cursor_unref (var), NULL)))
-#define _gdk_event_free0(var) ((var == NULL) ? NULL : (var = (gdk_event_free (var), NULL)))
-#define _g_object_unref0(var) ((var == NULL) ? NULL : (var = (g_object_unref (var), NULL)))
 #define _g_free0(var) (var = (g_free (var), NULL))
+#define _g_object_unref0(var) ((var == NULL) ? NULL : (var = (g_object_unref (var), NULL)))
 #define _pango_font_description_free0(var) ((var == NULL) ? NULL : (var = (pango_font_description_free (var), NULL)))
 
 struct _DdbEqualizer {
-	GtkWidget parent_instance;
+	GtkDrawingArea parent_instance;
 	DdbEqualizerPrivate * priv;
 };
 
 struct _DdbEqualizerClass {
-	GtkWidgetClass parent_class;
+	GtkDrawingAreaClass parent_class;
 };
 
 struct _DdbEqualizerPrivate {
@@ -82,7 +81,6 @@ enum  {
 #define DDB_EQUALIZER_bands 18
 #define DDB_EQUALIZER_spot_size 3
 static gboolean ddb_equalizer_real_configure_event (GtkWidget* base, GdkEventConfigure* event);
-static void ddb_equalizer_send_configure (DdbEqualizer* self);
 static void ddb_equalizer_real_realize (GtkWidget* base);
 static inline double ddb_equalizer_scale (DdbEqualizer* self, double val);
 static gboolean ddb_equalizer_real_expose_event (GtkWidget* base, GdkEventExpose* event);
@@ -114,36 +112,11 @@ static gboolean ddb_equalizer_real_configure_event (GtkWidget* base, GdkEventCon
 }
 
 
-static void ddb_equalizer_send_configure (DdbEqualizer* self) {
-	GdkEvent* event;
-	g_return_if_fail (self != NULL);
-	event = gdk_event_new (GDK_CONFIGURE);
-	event->configure.window = GDK_WINDOW (g_object_ref ((GObject*) ((GtkWidget*) self)->window));
-	event->configure.send_event = (gchar) 1;
-	event->configure.x = ((GtkWidget*) self)->allocation.x;
-	event->configure.y = ((GtkWidget*) self)->allocation.y;
-	event->configure.width = ((GtkWidget*) self)->allocation.width;
-	event->configure.height = ((GtkWidget*) self)->allocation.height;
-	gtk_widget_event ((GtkWidget*) self, event);
-	_gdk_event_free0 (event);
-}
-
-
 static void ddb_equalizer_real_realize (GtkWidget* base) {
 	DdbEqualizer * self;
-	GdkWindowAttr _tmp0_ = {0};
-	GdkWindowAttr attrs;
-	GdkWindow* _tmp1_;
 	self = (DdbEqualizer*) base;
-	GTK_WIDGET_SET_FLAGS ((GtkWidget*) self, GTK_REALIZED);
-	attrs = (memset (&_tmp0_, 0, sizeof (GdkWindowAttr)), _tmp0_.window_type = GDK_WINDOW_CHILD, _tmp0_.wclass = GDK_INPUT_OUTPUT, _tmp0_.event_mask = gtk_widget_get_events ((GtkWidget*) self) | GDK_EXPOSURE_MASK, _tmp0_);
-	((GtkWidget*) self)->window = (_tmp1_ = gdk_window_new (gtk_widget_get_parent_window ((GtkWidget*) self), &attrs, 0), _g_object_unref0 (((GtkWidget*) self)->window), _tmp1_);
-	gdk_window_move_resize (((GtkWidget*) self)->window, ((GtkWidget*) self)->allocation.x, ((GtkWidget*) self)->allocation.y, ((GtkWidget*) self)->allocation.width, ((GtkWidget*) self)->allocation.height);
-	gdk_window_set_user_data (((GtkWidget*) self)->window, self);
-	gtk_widget_set_style ((GtkWidget*) self, gtk_style_attach (gtk_widget_get_style ((GtkWidget*) self), ((GtkWidget*) self)->window));
-	gtk_style_set_background (gtk_widget_get_style ((GtkWidget*) self), ((GtkWidget*) self)->window, GTK_STATE_NORMAL);
-	gtk_widget_add_events ((GtkWidget*) self, (gint) (((GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK) | GDK_LEAVE_NOTIFY_MASK) | GDK_POINTER_MOTION_MASK));
-	ddb_equalizer_send_configure (self);
+	GTK_WIDGET_CLASS (ddb_equalizer_parent_class)->realize ((GtkWidget*) GTK_DRAWING_AREA (self));
+	gtk_widget_add_events ((GtkWidget*) self, (gint) ((((GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK) | GDK_BUTTON_RELEASE_MASK) | GDK_LEAVE_NOTIFY_MASK) | GDK_POINTER_MOTION_MASK));
 }
 
 
@@ -619,7 +592,6 @@ static GObject * ddb_equalizer_constructor (GType type, guint n_construct_proper
 	{
 		self->priv->margin_bottom = (gint) (((pango_units_to_double (pango_font_description_get_size (gtk_widget_get_style ((GtkWidget*) self)->font_desc)) * gdk_screen_get_resolution (gdk_screen_get_default ())) / 72) + 4);
 		self->priv->margin_left = self->priv->margin_bottom * 4;
-		gtk_widget_set_app_paintable ((GtkWidget*) self, TRUE);
 	}
 	return obj;
 }
@@ -669,7 +641,7 @@ GType ddb_equalizer_get_type (void) {
 	if (g_once_init_enter (&ddb_equalizer_type_id__volatile)) {
 		static const GTypeInfo g_define_type_info = { sizeof (DdbEqualizerClass), (GBaseInitFunc) NULL, (GBaseFinalizeFunc) NULL, (GClassInitFunc) ddb_equalizer_class_init, (GClassFinalizeFunc) NULL, NULL, sizeof (DdbEqualizer), 0, (GInstanceInitFunc) ddb_equalizer_instance_init, NULL };
 		GType ddb_equalizer_type_id;
-		ddb_equalizer_type_id = g_type_register_static (GTK_TYPE_WIDGET, "DdbEqualizer", &g_define_type_info, 0);
+		ddb_equalizer_type_id = g_type_register_static (GTK_TYPE_DRAWING_AREA, "DdbEqualizer", &g_define_type_info, 0);
 		g_once_init_leave (&ddb_equalizer_type_id__volatile, ddb_equalizer_type_id);
 	}
 	return ddb_equalizer_type_id__volatile;

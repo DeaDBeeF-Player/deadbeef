@@ -372,3 +372,11 @@ eq_window_destroy (void) {
         eqwin = NULL;
     }
 }
+
+void
+eq_redraw (void) {
+    if (eqwin) {
+        gtk_widget_queue_draw (eqwin);
+    }
+}
+

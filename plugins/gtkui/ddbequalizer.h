@@ -24,12 +24,12 @@ typedef struct _DdbEqualizerClass DdbEqualizerClass;
 typedef struct _DdbEqualizerPrivate DdbEqualizerPrivate;
 
 struct _DdbEqualizer {
-	GtkWidget parent_instance;
+	GtkDrawingArea parent_instance;
 	DdbEqualizerPrivate * priv;
 };
 
 struct _DdbEqualizerClass {
-	GtkWidgetClass parent_class;
+	GtkDrawingAreaClass parent_class;
 };
 
 

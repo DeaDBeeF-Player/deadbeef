@@ -26,6 +26,7 @@
 #include "drawing.h"
 #include "../hotkeys/hotkeys.h"
 #include "support.h"
+#include "eq.h"
 
 #define GLADE_HOOKUP_OBJECT(component,widget,name) \
   g_object_set_data_full (G_OBJECT (component), name, \
@@ -792,6 +793,7 @@ on_bar_foreground_color_set            (GtkColorButton  *colorbutton,
     gtkui_init_theme_colors ();
     seekbar_redraw ();
     volumebar_redraw ();
+    eq_redraw ();
 }
 
 
@@ -808,6 +810,7 @@ on_bar_background_color_set            (GtkColorButton  *colorbutton,
     gtkui_init_theme_colors ();
     seekbar_redraw ();
     volumebar_redraw ();
+    eq_redraw ();
 }
 
 void
@@ -921,6 +924,7 @@ on_override_bar_colors_toggled         (GtkToggleButton *togglebutton,
     prefwin_init_theme_colors ();
     seekbar_redraw ();
     volumebar_redraw ();
+    eq_redraw ();
 }
 
 
