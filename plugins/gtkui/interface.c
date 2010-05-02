@@ -1168,7 +1168,6 @@ create_trackproperties (void)
   trackproperties = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_widget_set_size_request (trackproperties, 400, 400);
   gtk_window_set_title (GTK_WINDOW (trackproperties), "Track Properties");
-  gtk_window_set_destroy_with_parent (GTK_WINDOW (trackproperties), TRUE);
   gtk_window_set_skip_taskbar_hint (GTK_WINDOW (trackproperties), TRUE);
   gtk_window_set_skip_pager_hint (GTK_WINDOW (trackproperties), TRUE);
 

@@ -37,19 +37,33 @@ static DB_playItem_t *track;
 static GtkCellRenderer *rend_text2;
 static GtkListStore *store;
 static GtkListStore *propstore;
+static int trkproperties_modified;
 
 gboolean
 on_trackproperties_delete_event        (GtkWidget       *widget,
                                         GdkEvent        *event,
                                         gpointer         user_data)
 {
+    if (trkproperties_modified) {
+        GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (mainwin), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO, "You've modified data for this track.");
+        gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (trackproperties));
+        gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dlg), "Really close the window?");
+        gtk_window_set_title (GTK_WINDOW (dlg), "Warning");
+
+        int response = gtk_dialog_run (GTK_DIALOG (dlg));
+        gtk_widget_destroy (dlg);
+        if (response != GTK_RESPONSE_YES) {
+            return TRUE;
+        }
+    }
+    gtk_widget_destroy (widget);
     rend_text2 = NULL;
     trackproperties = NULL;
     if (track) {
         deadbeef->pl_item_unref (track);
         track = NULL;
     }
-    return FALSE;
+    return TRUE;
 }
 
 gboolean
@@ -58,8 +72,7 @@ on_trackproperties_key_press_event     (GtkWidget       *widget,
                                         gpointer         user_data)
 {
     if (event->keyval == GDK_Escape) {
-        on_trackproperties_delete_event (NULL, NULL, NULL);
-        gtk_widget_destroy (widget);
+        on_trackproperties_delete_event (trackproperties, NULL, NULL);
         return TRUE;
     }
     return FALSE;
@@ -68,9 +81,7 @@ on_trackproperties_key_press_event     (GtkWidget       *widget,
 void
 trkproperties_destroy (void) {
     if (trackproperties) {
-        GtkWidget *w = trackproperties;
-        on_trackproperties_delete_event (NULL, NULL, NULL);
-        gtk_widget_destroy (w);
+        on_trackproperties_delete_event (trackproperties, NULL, NULL);
     }
 }
 
@@ -89,6 +100,7 @@ on_metadata_edited (GtkCellRendererText *renderer, gchar *path, gchar *new_text,
     gtk_tree_model_get_iter (GTK_TREE_MODEL (store), &iter, treepath);
     gtk_tree_path_free (treepath);
     gtk_list_store_set (store, &iter, 1, new_text, -1);
+    trkproperties_modified = 1;
 }
 
 // full metadata
@@ -118,7 +130,7 @@ trkproperties_fill_metadata (void) {
     if (!trackproperties) {
         return;
     }
-
+    trkproperties_modified = 0;
     gtk_list_store_clear (store);
     deadbeef->pl_lock ();
     int i = 0;
@@ -297,6 +309,7 @@ on_write_tags_clicked                  (GtkButton       *button,
             break;
         }
     }
+    trkproperties_modified = 0;
 #if 0
     DB_id3v2_tag_t tag;
     memset (&tag, 0, sizeof (tag));
