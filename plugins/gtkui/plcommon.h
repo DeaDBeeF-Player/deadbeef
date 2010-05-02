@@ -26,6 +26,9 @@ typedef struct {
     char *format;
 } col_info_t;
 
+#define MAX_GROUP_BY_STR 100
+extern char group_by_str[MAX_GROUP_BY_STR];
+
 void
 write_column_config (const char *name, int idx, const char *title, int width, int align_right, int id, const char *format);
 

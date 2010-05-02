@@ -33,6 +33,8 @@
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
+char group_by_str[MAX_GROUP_BY_STR];
+
 extern GtkWidget *theme_treeview;
 extern GdkPixbuf *play16_pixbuf;
 extern GdkPixbuf *pause16_pixbuf;
@@ -421,13 +423,11 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
     gtk_menu_popup (GTK_MENU (playlist_menu), NULL, NULL, NULL, listview, 0, gtk_get_current_event_time());
 }
 
-extern const char *group_by_str;
-
 void
 on_group_by_none_activate              (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    group_by_str = "";
+    strcpy (group_by_str, "");
     deadbeef->conf_set_str ("playlist.group_by", group_by_str);
     main_refresh ();
 }
@@ -436,7 +436,7 @@ void
 on_group_by_artist_date_album_activate (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    group_by_str = "%a - [%y] %b";
+    strcpy (group_by_str, "%a - [%y] %b");
     deadbeef->conf_set_str ("playlist.group_by", group_by_str);
     main_refresh ();
 }
@@ -445,9 +445,30 @@ void
 on_group_by_artist_activate            (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    group_by_str = "%a";
+    strcpy (group_by_str, "%a");
     deadbeef->conf_set_str ("playlist.group_by", group_by_str);
     main_refresh ();
+}
+
+void
+on_group_by_custom_activate            (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    GtkWidget *dlg = create_groupbydlg ();
+
+    gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
+//    gtk_window_set_title (GTK_WINDOW (dlg), "Group by");
+    gint response = gtk_dialog_run (GTK_DIALOG (dlg));
+
+    if (response == GTK_RESPONSE_OK) {
+        GtkWidget *entry = lookup_widget (dlg, "format");
+        const gchar *text = gtk_entry_get_text (GTK_ENTRY (entry));
+        strncpy (group_by_str, text, sizeof (group_by_str));
+        group_by_str[sizeof (group_by_str)-1] = 0;
+        deadbeef->conf_set_str ("playlist.group_by", group_by_str);
+        main_refresh ();
+    }
+    gtk_widget_destroy (dlg);
 }
 
 static DdbListview *last_playlist;
@@ -698,7 +719,7 @@ on_remove_column_activate              (GtkMenuItem     *menuitem,
 }
 
 GtkWidget*
-create_headermenu (void)
+create_headermenu (int groupby)
 {
   GtkWidget *headermenu;
   GtkWidget *add_column;
@@ -710,6 +731,7 @@ create_headermenu (void)
   GtkWidget *none;
   GtkWidget *artist_date_album;
   GtkWidget *artist;
+  GtkWidget *custom;
 
   headermenu = gtk_menu_new ();
 
@@ -725,29 +747,51 @@ create_headermenu (void)
   gtk_widget_show (remove_column);
   gtk_container_add (GTK_CONTAINER (headermenu), remove_column);
 
-  separator = gtk_separator_menu_item_new ();
-  gtk_widget_show (separator);
-  gtk_container_add (GTK_CONTAINER (headermenu), separator);
-  gtk_widget_set_sensitive (separator, FALSE);
+  if (groupby) {
+      separator = gtk_separator_menu_item_new ();
+      gtk_widget_show (separator);
+      gtk_container_add (GTK_CONTAINER (headermenu), separator);
+      gtk_widget_set_sensitive (separator, FALSE);
 
-  group_by = gtk_menu_item_new_with_mnemonic ("Group by");
-  gtk_widget_show (group_by);
-  gtk_container_add (GTK_CONTAINER (headermenu), group_by);
+      group_by = gtk_menu_item_new_with_mnemonic ("Group by");
+      gtk_widget_show (group_by);
+      gtk_container_add (GTK_CONTAINER (headermenu), group_by);
 
-  group_by_menu = gtk_menu_new ();
-  gtk_menu_item_set_submenu (GTK_MENU_ITEM (group_by), group_by_menu);
+      group_by_menu = gtk_menu_new ();
+      gtk_menu_item_set_submenu (GTK_MENU_ITEM (group_by), group_by_menu);
 
-  none = gtk_menu_item_new_with_mnemonic ("None");
-  gtk_widget_show (none);
-  gtk_container_add (GTK_CONTAINER (group_by_menu), none);
+      none = gtk_menu_item_new_with_mnemonic ("None");
+      gtk_widget_show (none);
+      gtk_container_add (GTK_CONTAINER (group_by_menu), none);
 
-  artist_date_album = gtk_menu_item_new_with_mnemonic ("Artist/Date/Album");
-  gtk_widget_show (artist_date_album);
-  gtk_container_add (GTK_CONTAINER (group_by_menu), artist_date_album);
+      artist_date_album = gtk_menu_item_new_with_mnemonic ("Artist/Date/Album");
+      gtk_widget_show (artist_date_album);
+      gtk_container_add (GTK_CONTAINER (group_by_menu), artist_date_album);
 
-  artist = gtk_menu_item_new_with_mnemonic ("Artist");
-  gtk_widget_show (artist);
-  gtk_container_add (GTK_CONTAINER (group_by_menu), artist);
+      artist = gtk_menu_item_new_with_mnemonic ("Artist");
+      gtk_widget_show (artist);
+      gtk_container_add (GTK_CONTAINER (group_by_menu), artist);
+
+      custom = gtk_menu_item_new_with_mnemonic ("Custom");
+      gtk_widget_show (custom);
+      gtk_container_add (GTK_CONTAINER (group_by_menu), custom);
+
+      g_signal_connect ((gpointer) none, "activate",
+              G_CALLBACK (on_group_by_none_activate),
+              NULL);
+
+      g_signal_connect ((gpointer) artist_date_album, "activate",
+              G_CALLBACK (on_group_by_artist_date_album_activate),
+              NULL);
+
+      g_signal_connect ((gpointer) artist, "activate",
+              G_CALLBACK (on_group_by_artist_activate),
+              NULL);
+
+      g_signal_connect ((gpointer) custom, "activate",
+              G_CALLBACK (on_group_by_custom_activate),
+              NULL);
+  }
 
   g_signal_connect ((gpointer) add_column, "activate",
                     G_CALLBACK (on_add_column_activate),
@@ -759,24 +803,12 @@ create_headermenu (void)
                     G_CALLBACK (on_remove_column_activate),
                     NULL);
 
-  g_signal_connect ((gpointer) none, "activate",
-                    G_CALLBACK (on_group_by_none_activate),
-                    NULL);
-
-  g_signal_connect ((gpointer) artist_date_album, "activate",
-                    G_CALLBACK (on_group_by_artist_date_album_activate),
-                    NULL);
-
-  g_signal_connect ((gpointer) artist, "activate",
-                    G_CALLBACK (on_group_by_artist_activate),
-                    NULL);
-
   return headermenu;
 }
 
 void
 header_context_menu (DdbListview *ps, int column) {
-    GtkWidget *menu = create_headermenu ();
+    GtkWidget *menu = create_headermenu (GTK_WIDGET (ps) == lookup_widget (mainwin, "playlist") ? 1 : 0);
     last_playlist = ps;
     active_column = column;
     gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, ps, 3, gtk_get_current_event_time());

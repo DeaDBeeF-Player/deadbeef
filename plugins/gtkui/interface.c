@@ -1016,6 +1016,10 @@ create_addprogress (void)
   GtkWidget *hbox7;
   GtkWidget *label22;
   GtkWidget *button1;
+  GtkWidget *alignment10;
+  GtkWidget *hbox51;
+  GtkWidget *image389;
+  GtkWidget *label87;
 
   addprogress = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_container_set_border_width (GTK_CONTAINER (addprogress), 12);
@@ -1045,11 +1049,27 @@ create_addprogress (void)
   gtk_widget_show (label22);
   gtk_box_pack_start (GTK_BOX (hbox7), label22, TRUE, FALSE, 0);
 
-  button1 = gtk_button_new_with_mnemonic ("Abort");
+  button1 = gtk_button_new ();
   gtk_widget_show (button1);
   gtk_box_pack_start (GTK_BOX (hbox7), button1, FALSE, FALSE, 0);
   gtk_widget_set_size_request (button1, 83, -1);
   GTK_WIDGET_UNSET_FLAGS (button1, GTK_CAN_FOCUS);
+
+  alignment10 = gtk_alignment_new (0.5, 0.5, 0, 0);
+  gtk_widget_show (alignment10);
+  gtk_container_add (GTK_CONTAINER (button1), alignment10);
+
+  hbox51 = gtk_hbox_new (FALSE, 2);
+  gtk_widget_show (hbox51);
+  gtk_container_add (GTK_CONTAINER (alignment10), hbox51);
+
+  image389 = gtk_image_new_from_stock ("gtk-stop", GTK_ICON_SIZE_BUTTON);
+  gtk_widget_show (image389);
+  gtk_box_pack_start (GTK_BOX (hbox51), image389, FALSE, FALSE, 0);
+
+  label87 = gtk_label_new_with_mnemonic ("_Abort");
+  gtk_widget_show (label87);
+  gtk_box_pack_start (GTK_BOX (hbox51), label87, FALSE, FALSE, 0);
 
   g_signal_connect ((gpointer) addprogress, "delete_event",
                     G_CALLBACK (on_addprogress_delete_event),
@@ -1065,6 +1085,10 @@ create_addprogress (void)
   GLADE_HOOKUP_OBJECT (addprogress, hbox7, "hbox7");
   GLADE_HOOKUP_OBJECT (addprogress, label22, "label22");
   GLADE_HOOKUP_OBJECT (addprogress, button1, "button1");
+  GLADE_HOOKUP_OBJECT (addprogress, alignment10, "alignment10");
+  GLADE_HOOKUP_OBJECT (addprogress, hbox51, "hbox51");
+  GLADE_HOOKUP_OBJECT (addprogress, image389, "image389");
+  GLADE_HOOKUP_OBJECT (addprogress, label87, "label87");
 
   return addprogress;
 }
@@ -1120,13 +1144,25 @@ create_trackproperties (void)
   GtkWidget *metalist;
   GtkWidget *hbuttonbox1;
   GtkWidget *write_tags;
+  GtkWidget *alignment11;
+  GtkWidget *hbox52;
+  GtkWidget *image390;
+  GtkWidget *label88;
   GtkWidget *closebtn;
+  GtkWidget *alignment12;
+  GtkWidget *hbox53;
+  GtkWidget *image391;
+  GtkWidget *label89;
   GtkWidget *label64;
   GtkWidget *vbox24;
   GtkWidget *scrolledwindow6;
   GtkWidget *properties;
   GtkWidget *hbuttonbox2;
   GtkWidget *button2;
+  GtkWidget *alignment13;
+  GtkWidget *hbox54;
+  GtkWidget *image392;
+  GtkWidget *label90;
   GtkWidget *label80;
 
   trackproperties = gtk_window_new (GTK_WINDOW_TOPLEVEL);
@@ -1161,15 +1197,47 @@ create_trackproperties (void)
   gtk_box_pack_start (GTK_BOX (vbox16), hbuttonbox1, FALSE, FALSE, 0);
   gtk_button_box_set_layout (GTK_BUTTON_BOX (hbuttonbox1), GTK_BUTTONBOX_END);
 
-  write_tags = gtk_button_new_with_mnemonic ("Write");
+  write_tags = gtk_button_new ();
   gtk_widget_show (write_tags);
   gtk_container_add (GTK_CONTAINER (hbuttonbox1), write_tags);
   GTK_WIDGET_SET_FLAGS (write_tags, GTK_CAN_DEFAULT);
 
-  closebtn = gtk_button_new_with_mnemonic ("Close");
+  alignment11 = gtk_alignment_new (0.5, 0.5, 0, 0);
+  gtk_widget_show (alignment11);
+  gtk_container_add (GTK_CONTAINER (write_tags), alignment11);
+
+  hbox52 = gtk_hbox_new (FALSE, 2);
+  gtk_widget_show (hbox52);
+  gtk_container_add (GTK_CONTAINER (alignment11), hbox52);
+
+  image390 = gtk_image_new_from_stock ("gtk-apply", GTK_ICON_SIZE_BUTTON);
+  gtk_widget_show (image390);
+  gtk_box_pack_start (GTK_BOX (hbox52), image390, FALSE, FALSE, 0);
+
+  label88 = gtk_label_new_with_mnemonic ("_Apply");
+  gtk_widget_show (label88);
+  gtk_box_pack_start (GTK_BOX (hbox52), label88, FALSE, FALSE, 0);
+
+  closebtn = gtk_button_new ();
   gtk_widget_show (closebtn);
   gtk_container_add (GTK_CONTAINER (hbuttonbox1), closebtn);
   GTK_WIDGET_SET_FLAGS (closebtn, GTK_CAN_DEFAULT);
+
+  alignment12 = gtk_alignment_new (0.5, 0.5, 0, 0);
+  gtk_widget_show (alignment12);
+  gtk_container_add (GTK_CONTAINER (closebtn), alignment12);
+
+  hbox53 = gtk_hbox_new (FALSE, 2);
+  gtk_widget_show (hbox53);
+  gtk_container_add (GTK_CONTAINER (alignment12), hbox53);
+
+  image391 = gtk_image_new_from_stock ("gtk-close", GTK_ICON_SIZE_BUTTON);
+  gtk_widget_show (image391);
+  gtk_box_pack_start (GTK_BOX (hbox53), image391, FALSE, FALSE, 0);
+
+  label89 = gtk_label_new_with_mnemonic ("_Close");
+  gtk_widget_show (label89);
+  gtk_box_pack_start (GTK_BOX (hbox53), label89, FALSE, FALSE, 0);
 
   label64 = gtk_label_new ("Metadata");
   gtk_widget_show (label64);
@@ -1196,10 +1264,26 @@ create_trackproperties (void)
   gtk_box_pack_start (GTK_BOX (vbox24), hbuttonbox2, FALSE, FALSE, 0);
   gtk_button_box_set_layout (GTK_BUTTON_BOX (hbuttonbox2), GTK_BUTTONBOX_END);
 
-  button2 = gtk_button_new_with_mnemonic ("Close");
+  button2 = gtk_button_new ();
   gtk_widget_show (button2);
   gtk_container_add (GTK_CONTAINER (hbuttonbox2), button2);
   GTK_WIDGET_SET_FLAGS (button2, GTK_CAN_DEFAULT);
+
+  alignment13 = gtk_alignment_new (0.5, 0.5, 0, 0);
+  gtk_widget_show (alignment13);
+  gtk_container_add (GTK_CONTAINER (button2), alignment13);
+
+  hbox54 = gtk_hbox_new (FALSE, 2);
+  gtk_widget_show (hbox54);
+  gtk_container_add (GTK_CONTAINER (alignment13), hbox54);
+
+  image392 = gtk_image_new_from_stock ("gtk-close", GTK_ICON_SIZE_BUTTON);
+  gtk_widget_show (image392);
+  gtk_box_pack_start (GTK_BOX (hbox54), image392, FALSE, FALSE, 0);
+
+  label90 = gtk_label_new_with_mnemonic ("_Close");
+  gtk_widget_show (label90);
+  gtk_box_pack_start (GTK_BOX (hbox54), label90, FALSE, FALSE, 0);
 
   label80 = gtk_label_new ("Properties");
   gtk_widget_show (label80);
@@ -1229,13 +1313,25 @@ create_trackproperties (void)
   GLADE_HOOKUP_OBJECT (trackproperties, metalist, "metalist");
   GLADE_HOOKUP_OBJECT (trackproperties, hbuttonbox1, "hbuttonbox1");
   GLADE_HOOKUP_OBJECT (trackproperties, write_tags, "write_tags");
+  GLADE_HOOKUP_OBJECT (trackproperties, alignment11, "alignment11");
+  GLADE_HOOKUP_OBJECT (trackproperties, hbox52, "hbox52");
+  GLADE_HOOKUP_OBJECT (trackproperties, image390, "image390");
+  GLADE_HOOKUP_OBJECT (trackproperties, label88, "label88");
   GLADE_HOOKUP_OBJECT (trackproperties, closebtn, "closebtn");
+  GLADE_HOOKUP_OBJECT (trackproperties, alignment12, "alignment12");
+  GLADE_HOOKUP_OBJECT (trackproperties, hbox53, "hbox53");
+  GLADE_HOOKUP_OBJECT (trackproperties, image391, "image391");
+  GLADE_HOOKUP_OBJECT (trackproperties, label89, "label89");
   GLADE_HOOKUP_OBJECT (trackproperties, label64, "label64");
   GLADE_HOOKUP_OBJECT (trackproperties, vbox24, "vbox24");
   GLADE_HOOKUP_OBJECT (trackproperties, scrolledwindow6, "scrolledwindow6");
   GLADE_HOOKUP_OBJECT (trackproperties, properties, "properties");
   GLADE_HOOKUP_OBJECT (trackproperties, hbuttonbox2, "hbuttonbox2");
   GLADE_HOOKUP_OBJECT (trackproperties, button2, "button2");
+  GLADE_HOOKUP_OBJECT (trackproperties, alignment13, "alignment13");
+  GLADE_HOOKUP_OBJECT (trackproperties, hbox54, "hbox54");
+  GLADE_HOOKUP_OBJECT (trackproperties, image392, "image392");
+  GLADE_HOOKUP_OBJECT (trackproperties, label90, "label90");
   GLADE_HOOKUP_OBJECT (trackproperties, label80, "label80");
 
   return trackproperties;
@@ -1262,7 +1358,15 @@ create_editcolumndlg (void)
   GtkWidget *label25;
   GtkWidget *dialog_action_area1;
   GtkWidget *cancelbutton1;
+  GtkWidget *alignment9;
+  GtkWidget *hbox50;
+  GtkWidget *image388;
+  GtkWidget *label86;
   GtkWidget *okbutton1;
+  GtkWidget *alignment8;
+  GtkWidget *hbox49;
+  GtkWidget *image387;
+  GtkWidget *label85;
 
   editcolumndlg = gtk_dialog_new ();
   gtk_container_set_border_width (GTK_CONTAINER (editcolumndlg), 12);
@@ -1359,15 +1463,47 @@ create_editcolumndlg (void)
   gtk_widget_show (dialog_action_area1);
   gtk_button_box_set_layout (GTK_BUTTON_BOX (dialog_action_area1), GTK_BUTTONBOX_END);
 
-  cancelbutton1 = gtk_button_new_with_mnemonic ("_Cancel");
+  cancelbutton1 = gtk_button_new ();
   gtk_widget_show (cancelbutton1);
   gtk_dialog_add_action_widget (GTK_DIALOG (editcolumndlg), cancelbutton1, GTK_RESPONSE_CANCEL);
   GTK_WIDGET_SET_FLAGS (cancelbutton1, GTK_CAN_DEFAULT);
 
-  okbutton1 = gtk_button_new_with_mnemonic ("_OK");
+  alignment9 = gtk_alignment_new (0.5, 0.5, 0, 0);
+  gtk_widget_show (alignment9);
+  gtk_container_add (GTK_CONTAINER (cancelbutton1), alignment9);
+
+  hbox50 = gtk_hbox_new (FALSE, 2);
+  gtk_widget_show (hbox50);
+  gtk_container_add (GTK_CONTAINER (alignment9), hbox50);
+
+  image388 = gtk_image_new_from_stock ("gtk-cancel", GTK_ICON_SIZE_BUTTON);
+  gtk_widget_show (image388);
+  gtk_box_pack_start (GTK_BOX (hbox50), image388, FALSE, FALSE, 0);
+
+  label86 = gtk_label_new_with_mnemonic ("_Cancel");
+  gtk_widget_show (label86);
+  gtk_box_pack_start (GTK_BOX (hbox50), label86, FALSE, FALSE, 0);
+
+  okbutton1 = gtk_button_new ();
   gtk_widget_show (okbutton1);
   gtk_dialog_add_action_widget (GTK_DIALOG (editcolumndlg), okbutton1, GTK_RESPONSE_OK);
   GTK_WIDGET_SET_FLAGS (okbutton1, GTK_CAN_DEFAULT);
+
+  alignment8 = gtk_alignment_new (0.5, 0.5, 0, 0);
+  gtk_widget_show (alignment8);
+  gtk_container_add (GTK_CONTAINER (okbutton1), alignment8);
+
+  hbox49 = gtk_hbox_new (FALSE, 2);
+  gtk_widget_show (hbox49);
+  gtk_container_add (GTK_CONTAINER (alignment8), hbox49);
+
+  image387 = gtk_image_new_from_stock ("gtk-ok", GTK_ICON_SIZE_BUTTON);
+  gtk_widget_show (image387);
+  gtk_box_pack_start (GTK_BOX (hbox49), image387, FALSE, FALSE, 0);
+
+  label85 = gtk_label_new_with_mnemonic ("_OK");
+  gtk_widget_show (label85);
+  gtk_box_pack_start (GTK_BOX (hbox49), label85, FALSE, FALSE, 0);
 
   g_signal_connect ((gpointer) id, "changed",
                     G_CALLBACK (on_column_id_changed),
@@ -1392,7 +1528,15 @@ create_editcolumndlg (void)
   GLADE_HOOKUP_OBJECT (editcolumndlg, label25, "label25");
   GLADE_HOOKUP_OBJECT_NO_REF (editcolumndlg, dialog_action_area1, "dialog_action_area1");
   GLADE_HOOKUP_OBJECT (editcolumndlg, cancelbutton1, "cancelbutton1");
+  GLADE_HOOKUP_OBJECT (editcolumndlg, alignment9, "alignment9");
+  GLADE_HOOKUP_OBJECT (editcolumndlg, hbox50, "hbox50");
+  GLADE_HOOKUP_OBJECT (editcolumndlg, image388, "image388");
+  GLADE_HOOKUP_OBJECT (editcolumndlg, label86, "label86");
   GLADE_HOOKUP_OBJECT (editcolumndlg, okbutton1, "okbutton1");
+  GLADE_HOOKUP_OBJECT (editcolumndlg, alignment8, "alignment8");
+  GLADE_HOOKUP_OBJECT (editcolumndlg, hbox49, "hbox49");
+  GLADE_HOOKUP_OBJECT (editcolumndlg, image387, "image387");
+  GLADE_HOOKUP_OBJECT (editcolumndlg, label85, "label85");
 
   return editcolumndlg;
 }
@@ -1533,9 +1677,17 @@ create_prefwin (void)
   GtkWidget *pref_plugin_website;
   GtkWidget *hbox20;
   GtkWidget *configure_plugin;
+  GtkWidget *alignment15;
+  GtkWidget *hbox56;
+  GtkWidget *image394;
+  GtkWidget *label92;
   GtkWidget *label3;
   GtkWidget *dialog_action_area2;
   GtkWidget *closebutton1;
+  GtkWidget *alignment14;
+  GtkWidget *hbox55;
+  GtkWidget *image393;
+  GtkWidget *label91;
 
   prefwin = gtk_dialog_new ();
   gtk_widget_set_size_request (prefwin, 630, 400);
@@ -2197,9 +2349,25 @@ create_prefwin (void)
   gtk_widget_show (hbox20);
   gtk_box_pack_start (GTK_BOX (vbox12), hbox20, FALSE, FALSE, 0);
 
-  configure_plugin = gtk_button_new_with_mnemonic ("Configure");
+  configure_plugin = gtk_button_new ();
   gtk_widget_show (configure_plugin);
   gtk_box_pack_start (GTK_BOX (hbox20), configure_plugin, TRUE, FALSE, 0);
+
+  alignment15 = gtk_alignment_new (0.5, 0.5, 0, 0);
+  gtk_widget_show (alignment15);
+  gtk_container_add (GTK_CONTAINER (configure_plugin), alignment15);
+
+  hbox56 = gtk_hbox_new (FALSE, 2);
+  gtk_widget_show (hbox56);
+  gtk_container_add (GTK_CONTAINER (alignment15), hbox56);
+
+  image394 = gtk_image_new_from_stock ("gtk-preferences", GTK_ICON_SIZE_BUTTON);
+  gtk_widget_show (image394);
+  gtk_box_pack_start (GTK_BOX (hbox56), image394, FALSE, FALSE, 0);
+
+  label92 = gtk_label_new_with_mnemonic ("Configure");
+  gtk_widget_show (label92);
+  gtk_box_pack_start (GTK_BOX (hbox56), label92, FALSE, FALSE, 0);
 
   label3 = gtk_label_new ("Plugins");
   gtk_widget_show (label3);
@@ -2210,10 +2378,26 @@ create_prefwin (void)
   gtk_widget_show (dialog_action_area2);
   gtk_button_box_set_layout (GTK_BUTTON_BOX (dialog_action_area2), GTK_BUTTONBOX_END);
 
-  closebutton1 = gtk_button_new_from_stock ("gtk-close");
+  closebutton1 = gtk_button_new ();
   gtk_widget_show (closebutton1);
   gtk_dialog_add_action_widget (GTK_DIALOG (prefwin), closebutton1, GTK_RESPONSE_CLOSE);
   GTK_WIDGET_SET_FLAGS (closebutton1, GTK_CAN_DEFAULT);
+
+  alignment14 = gtk_alignment_new (0.5, 0.5, 0, 0);
+  gtk_widget_show (alignment14);
+  gtk_container_add (GTK_CONTAINER (closebutton1), alignment14);
+
+  hbox55 = gtk_hbox_new (FALSE, 2);
+  gtk_widget_show (hbox55);
+  gtk_container_add (GTK_CONTAINER (alignment14), hbox55);
+
+  image393 = gtk_image_new_from_stock ("gtk-close", GTK_ICON_SIZE_BUTTON);
+  gtk_widget_show (image393);
+  gtk_box_pack_start (GTK_BOX (hbox55), image393, FALSE, FALSE, 0);
+
+  label91 = gtk_label_new_with_mnemonic ("_Close");
+  gtk_widget_show (label91);
+  gtk_box_pack_start (GTK_BOX (hbox55), label91, FALSE, FALSE, 0);
 
   g_signal_connect ((gpointer) pref_dynsamplerate, "clicked",
                     G_CALLBACK (on_pref_dynsamplerate_clicked),
@@ -2479,9 +2663,17 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, pref_plugin_website, "pref_plugin_website");
   GLADE_HOOKUP_OBJECT (prefwin, hbox20, "hbox20");
   GLADE_HOOKUP_OBJECT (prefwin, configure_plugin, "configure_plugin");
+  GLADE_HOOKUP_OBJECT (prefwin, alignment15, "alignment15");
+  GLADE_HOOKUP_OBJECT (prefwin, hbox56, "hbox56");
+  GLADE_HOOKUP_OBJECT (prefwin, image394, "image394");
+  GLADE_HOOKUP_OBJECT (prefwin, label92, "label92");
   GLADE_HOOKUP_OBJECT (prefwin, label3, "label3");
   GLADE_HOOKUP_OBJECT_NO_REF (prefwin, dialog_action_area2, "dialog_action_area2");
   GLADE_HOOKUP_OBJECT (prefwin, closebutton1, "closebutton1");
+  GLADE_HOOKUP_OBJECT (prefwin, alignment14, "alignment14");
+  GLADE_HOOKUP_OBJECT (prefwin, hbox55, "hbox55");
+  GLADE_HOOKUP_OBJECT (prefwin, image393, "image393");
+  GLADE_HOOKUP_OBJECT (prefwin, label91, "label91");
 
   return prefwin;
 }
@@ -2497,7 +2689,15 @@ create_editplaylistdlg (void)
   GtkWidget *title;
   GtkWidget *dialog_action_area3;
   GtkWidget *cancelbutton2;
+  GtkWidget *alignment17;
+  GtkWidget *hbox58;
+  GtkWidget *image396;
+  GtkWidget *label94;
   GtkWidget *okbutton2;
+  GtkWidget *alignment16;
+  GtkWidget *hbox57;
+  GtkWidget *image395;
+  GtkWidget *label93;
 
   editplaylistdlg = gtk_dialog_new ();
   gtk_container_set_border_width (GTK_CONTAINER (editplaylistdlg), 8);
@@ -2531,15 +2731,47 @@ create_editplaylistdlg (void)
   gtk_widget_show (dialog_action_area3);
   gtk_button_box_set_layout (GTK_BUTTON_BOX (dialog_action_area3), GTK_BUTTONBOX_END);
 
-  cancelbutton2 = gtk_button_new_from_stock ("gtk-cancel");
+  cancelbutton2 = gtk_button_new ();
   gtk_widget_show (cancelbutton2);
   gtk_dialog_add_action_widget (GTK_DIALOG (editplaylistdlg), cancelbutton2, GTK_RESPONSE_CANCEL);
   GTK_WIDGET_SET_FLAGS (cancelbutton2, GTK_CAN_DEFAULT);
 
-  okbutton2 = gtk_button_new_from_stock ("gtk-ok");
+  alignment17 = gtk_alignment_new (0.5, 0.5, 0, 0);
+  gtk_widget_show (alignment17);
+  gtk_container_add (GTK_CONTAINER (cancelbutton2), alignment17);
+
+  hbox58 = gtk_hbox_new (FALSE, 2);
+  gtk_widget_show (hbox58);
+  gtk_container_add (GTK_CONTAINER (alignment17), hbox58);
+
+  image396 = gtk_image_new_from_stock ("gtk-cancel", GTK_ICON_SIZE_BUTTON);
+  gtk_widget_show (image396);
+  gtk_box_pack_start (GTK_BOX (hbox58), image396, FALSE, FALSE, 0);
+
+  label94 = gtk_label_new_with_mnemonic ("_Cancel");
+  gtk_widget_show (label94);
+  gtk_box_pack_start (GTK_BOX (hbox58), label94, FALSE, FALSE, 0);
+
+  okbutton2 = gtk_button_new ();
   gtk_widget_show (okbutton2);
   gtk_dialog_add_action_widget (GTK_DIALOG (editplaylistdlg), okbutton2, GTK_RESPONSE_OK);
   GTK_WIDGET_SET_FLAGS (okbutton2, GTK_CAN_DEFAULT);
+
+  alignment16 = gtk_alignment_new (0.5, 0.5, 0, 0);
+  gtk_widget_show (alignment16);
+  gtk_container_add (GTK_CONTAINER (okbutton2), alignment16);
+
+  hbox57 = gtk_hbox_new (FALSE, 2);
+  gtk_widget_show (hbox57);
+  gtk_container_add (GTK_CONTAINER (alignment16), hbox57);
+
+  image395 = gtk_image_new_from_stock ("gtk-ok", GTK_ICON_SIZE_BUTTON);
+  gtk_widget_show (image395);
+  gtk_box_pack_start (GTK_BOX (hbox57), image395, FALSE, FALSE, 0);
+
+  label93 = gtk_label_new_with_mnemonic ("_OK");
+  gtk_widget_show (label93);
+  gtk_box_pack_start (GTK_BOX (hbox57), label93, FALSE, FALSE, 0);
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (editplaylistdlg, editplaylistdlg, "editplaylistdlg");
@@ -2550,7 +2782,15 @@ create_editplaylistdlg (void)
   GLADE_HOOKUP_OBJECT (editplaylistdlg, title, "title");
   GLADE_HOOKUP_OBJECT_NO_REF (editplaylistdlg, dialog_action_area3, "dialog_action_area3");
   GLADE_HOOKUP_OBJECT (editplaylistdlg, cancelbutton2, "cancelbutton2");
+  GLADE_HOOKUP_OBJECT (editplaylistdlg, alignment17, "alignment17");
+  GLADE_HOOKUP_OBJECT (editplaylistdlg, hbox58, "hbox58");
+  GLADE_HOOKUP_OBJECT (editplaylistdlg, image396, "image396");
+  GLADE_HOOKUP_OBJECT (editplaylistdlg, label94, "label94");
   GLADE_HOOKUP_OBJECT (editplaylistdlg, okbutton2, "okbutton2");
+  GLADE_HOOKUP_OBJECT (editplaylistdlg, alignment16, "alignment16");
+  GLADE_HOOKUP_OBJECT (editplaylistdlg, hbox57, "hbox57");
+  GLADE_HOOKUP_OBJECT (editplaylistdlg, image395, "image395");
+  GLADE_HOOKUP_OBJECT (editplaylistdlg, label93, "label93");
 
   return editplaylistdlg;
 }
@@ -2565,7 +2805,15 @@ create_addlocationdlg (void)
   GtkWidget *addlocation_entry;
   GtkWidget *addlocation_actionarea;
   GtkWidget *cancelbutton3;
+  GtkWidget *alignment18;
+  GtkWidget *hbox59;
+  GtkWidget *image397;
+  GtkWidget *label95;
   GtkWidget *okbutton3;
+  GtkWidget *alignment19;
+  GtkWidget *hbox60;
+  GtkWidget *image398;
+  GtkWidget *label96;
 
   addlocationdlg = gtk_dialog_new ();
   gtk_container_set_border_width (GTK_CONTAINER (addlocationdlg), 8);
@@ -2595,15 +2843,47 @@ create_addlocationdlg (void)
   gtk_widget_show (addlocation_actionarea);
   gtk_button_box_set_layout (GTK_BUTTON_BOX (addlocation_actionarea), GTK_BUTTONBOX_END);
 
-  cancelbutton3 = gtk_button_new_from_stock ("gtk-cancel");
+  cancelbutton3 = gtk_button_new ();
   gtk_widget_show (cancelbutton3);
   gtk_dialog_add_action_widget (GTK_DIALOG (addlocationdlg), cancelbutton3, GTK_RESPONSE_CANCEL);
   GTK_WIDGET_SET_FLAGS (cancelbutton3, GTK_CAN_DEFAULT);
 
-  okbutton3 = gtk_button_new_from_stock ("gtk-ok");
+  alignment18 = gtk_alignment_new (0.5, 0.5, 0, 0);
+  gtk_widget_show (alignment18);
+  gtk_container_add (GTK_CONTAINER (cancelbutton3), alignment18);
+
+  hbox59 = gtk_hbox_new (FALSE, 2);
+  gtk_widget_show (hbox59);
+  gtk_container_add (GTK_CONTAINER (alignment18), hbox59);
+
+  image397 = gtk_image_new_from_stock ("gtk-cancel", GTK_ICON_SIZE_BUTTON);
+  gtk_widget_show (image397);
+  gtk_box_pack_start (GTK_BOX (hbox59), image397, FALSE, FALSE, 0);
+
+  label95 = gtk_label_new_with_mnemonic ("_Cancel");
+  gtk_widget_show (label95);
+  gtk_box_pack_start (GTK_BOX (hbox59), label95, FALSE, FALSE, 0);
+
+  okbutton3 = gtk_button_new ();
   gtk_widget_show (okbutton3);
   gtk_dialog_add_action_widget (GTK_DIALOG (addlocationdlg), okbutton3, GTK_RESPONSE_OK);
   GTK_WIDGET_SET_FLAGS (okbutton3, GTK_CAN_DEFAULT);
+
+  alignment19 = gtk_alignment_new (0.5, 0.5, 0, 0);
+  gtk_widget_show (alignment19);
+  gtk_container_add (GTK_CONTAINER (okbutton3), alignment19);
+
+  hbox60 = gtk_hbox_new (FALSE, 2);
+  gtk_widget_show (hbox60);
+  gtk_container_add (GTK_CONTAINER (alignment19), hbox60);
+
+  image398 = gtk_image_new_from_stock ("gtk-ok", GTK_ICON_SIZE_BUTTON);
+  gtk_widget_show (image398);
+  gtk_box_pack_start (GTK_BOX (hbox60), image398, FALSE, FALSE, 0);
+
+  label96 = gtk_label_new_with_mnemonic ("_OK");
+  gtk_widget_show (label96);
+  gtk_box_pack_start (GTK_BOX (hbox60), label96, FALSE, FALSE, 0);
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (addlocationdlg, addlocationdlg, "addlocationdlg");
@@ -2613,8 +2893,141 @@ create_addlocationdlg (void)
   GLADE_HOOKUP_OBJECT (addlocationdlg, addlocation_entry, "addlocation_entry");
   GLADE_HOOKUP_OBJECT_NO_REF (addlocationdlg, addlocation_actionarea, "addlocation_actionarea");
   GLADE_HOOKUP_OBJECT (addlocationdlg, cancelbutton3, "cancelbutton3");
+  GLADE_HOOKUP_OBJECT (addlocationdlg, alignment18, "alignment18");
+  GLADE_HOOKUP_OBJECT (addlocationdlg, hbox59, "hbox59");
+  GLADE_HOOKUP_OBJECT (addlocationdlg, image397, "image397");
+  GLADE_HOOKUP_OBJECT (addlocationdlg, label95, "label95");
   GLADE_HOOKUP_OBJECT (addlocationdlg, okbutton3, "okbutton3");
+  GLADE_HOOKUP_OBJECT (addlocationdlg, alignment19, "alignment19");
+  GLADE_HOOKUP_OBJECT (addlocationdlg, hbox60, "hbox60");
+  GLADE_HOOKUP_OBJECT (addlocationdlg, image398, "image398");
+  GLADE_HOOKUP_OBJECT (addlocationdlg, label96, "label96");
 
   return addlocationdlg;
+}
+
+GtkWidget*
+create_groupbydlg (void)
+{
+  GtkWidget *groupbydlg;
+  GtkWidget *dialog_vbox5;
+  GtkWidget *vbox25;
+  GtkWidget *hbox46;
+  GtkWidget *label81;
+  GtkWidget *format;
+  GtkWidget *label82;
+  GtkWidget *dialog_action_area4;
+  GtkWidget *cancelbutton4;
+  GtkWidget *alignment7;
+  GtkWidget *hbox48;
+  GtkWidget *image386;
+  GtkWidget *label84;
+  GtkWidget *okbutton4;
+  GtkWidget *alignment6;
+  GtkWidget *hbox47;
+  GtkWidget *image385;
+  GtkWidget *label83;
+
+  groupbydlg = gtk_dialog_new ();
+  gtk_window_set_title (GTK_WINDOW (groupbydlg), "Group By");
+  gtk_window_set_type_hint (GTK_WINDOW (groupbydlg), GDK_WINDOW_TYPE_HINT_DIALOG);
+
+  dialog_vbox5 = GTK_DIALOG (groupbydlg)->vbox;
+  gtk_widget_show (dialog_vbox5);
+
+  vbox25 = gtk_vbox_new (FALSE, 8);
+  gtk_widget_show (vbox25);
+  gtk_box_pack_start (GTK_BOX (dialog_vbox5), vbox25, TRUE, TRUE, 0);
+  gtk_container_set_border_width (GTK_CONTAINER (vbox25), 12);
+
+  hbox46 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox46);
+  gtk_box_pack_start (GTK_BOX (vbox25), hbox46, FALSE, FALSE, 0);
+
+  label81 = gtk_label_new ("Format:");
+  gtk_widget_show (label81);
+  gtk_box_pack_start (GTK_BOX (hbox46), label81, FALSE, FALSE, 0);
+
+  format = gtk_entry_new ();
+  gtk_widget_show (format);
+  gtk_box_pack_start (GTK_BOX (hbox46), format, TRUE, TRUE, 0);
+  gtk_entry_set_invisible_char (GTK_ENTRY (format), 9679);
+  gtk_entry_set_activates_default (GTK_ENTRY (format), TRUE);
+
+  label82 = gtk_label_new ("Format conversions (start with %):\n  [a]rtist, [t]itle, al[b]um, [B]and,\n  track[n]umber, [N]totaltracks,\n  [l]ength, [y]ear, [g]enre, [c]omment,\n  copy[r]ight, [f]ilename, [T]ags\nExample: %a - %t [%l]");
+  gtk_widget_show (label82);
+  gtk_box_pack_start (GTK_BOX (vbox25), label82, FALSE, FALSE, 0);
+  GTK_WIDGET_SET_FLAGS (label82, GTK_CAN_FOCUS);
+  gtk_label_set_use_markup (GTK_LABEL (label82), TRUE);
+  gtk_label_set_selectable (GTK_LABEL (label82), TRUE);
+  gtk_misc_set_alignment (GTK_MISC (label82), 0.1, 0.5);
+
+  dialog_action_area4 = GTK_DIALOG (groupbydlg)->action_area;
+  gtk_widget_show (dialog_action_area4);
+  gtk_button_box_set_layout (GTK_BUTTON_BOX (dialog_action_area4), GTK_BUTTONBOX_END);
+
+  cancelbutton4 = gtk_button_new ();
+  gtk_widget_show (cancelbutton4);
+  gtk_dialog_add_action_widget (GTK_DIALOG (groupbydlg), cancelbutton4, GTK_RESPONSE_CANCEL);
+  GTK_WIDGET_SET_FLAGS (cancelbutton4, GTK_CAN_DEFAULT);
+
+  alignment7 = gtk_alignment_new (0.5, 0.5, 0, 0);
+  gtk_widget_show (alignment7);
+  gtk_container_add (GTK_CONTAINER (cancelbutton4), alignment7);
+
+  hbox48 = gtk_hbox_new (FALSE, 2);
+  gtk_widget_show (hbox48);
+  gtk_container_add (GTK_CONTAINER (alignment7), hbox48);
+
+  image386 = gtk_image_new_from_stock ("gtk-cancel", GTK_ICON_SIZE_BUTTON);
+  gtk_widget_show (image386);
+  gtk_box_pack_start (GTK_BOX (hbox48), image386, FALSE, FALSE, 0);
+
+  label84 = gtk_label_new_with_mnemonic ("_Cancel");
+  gtk_widget_show (label84);
+  gtk_box_pack_start (GTK_BOX (hbox48), label84, FALSE, FALSE, 0);
+
+  okbutton4 = gtk_button_new ();
+  gtk_widget_show (okbutton4);
+  gtk_dialog_add_action_widget (GTK_DIALOG (groupbydlg), okbutton4, GTK_RESPONSE_OK);
+  GTK_WIDGET_SET_FLAGS (okbutton4, GTK_CAN_DEFAULT);
+
+  alignment6 = gtk_alignment_new (0.5, 0.5, 0, 0);
+  gtk_widget_show (alignment6);
+  gtk_container_add (GTK_CONTAINER (okbutton4), alignment6);
+
+  hbox47 = gtk_hbox_new (FALSE, 2);
+  gtk_widget_show (hbox47);
+  gtk_container_add (GTK_CONTAINER (alignment6), hbox47);
+
+  image385 = gtk_image_new_from_stock ("gtk-ok", GTK_ICON_SIZE_BUTTON);
+  gtk_widget_show (image385);
+  gtk_box_pack_start (GTK_BOX (hbox47), image385, FALSE, FALSE, 0);
+
+  label83 = gtk_label_new_with_mnemonic ("_OK");
+  gtk_widget_show (label83);
+  gtk_box_pack_start (GTK_BOX (hbox47), label83, FALSE, FALSE, 0);
+
+  /* Store pointers to all widgets, for use by lookup_widget(). */
+  GLADE_HOOKUP_OBJECT_NO_REF (groupbydlg, groupbydlg, "groupbydlg");
+  GLADE_HOOKUP_OBJECT_NO_REF (groupbydlg, dialog_vbox5, "dialog_vbox5");
+  GLADE_HOOKUP_OBJECT (groupbydlg, vbox25, "vbox25");
+  GLADE_HOOKUP_OBJECT (groupbydlg, hbox46, "hbox46");
+  GLADE_HOOKUP_OBJECT (groupbydlg, label81, "label81");
+  GLADE_HOOKUP_OBJECT (groupbydlg, format, "format");
+  GLADE_HOOKUP_OBJECT (groupbydlg, label82, "label82");
+  GLADE_HOOKUP_OBJECT_NO_REF (groupbydlg, dialog_action_area4, "dialog_action_area4");
+  GLADE_HOOKUP_OBJECT (groupbydlg, cancelbutton4, "cancelbutton4");
+  GLADE_HOOKUP_OBJECT (groupbydlg, alignment7, "alignment7");
+  GLADE_HOOKUP_OBJECT (groupbydlg, hbox48, "hbox48");
+  GLADE_HOOKUP_OBJECT (groupbydlg, image386, "image386");
+  GLADE_HOOKUP_OBJECT (groupbydlg, label84, "label84");
+  GLADE_HOOKUP_OBJECT (groupbydlg, okbutton4, "okbutton4");
+  GLADE_HOOKUP_OBJECT (groupbydlg, alignment6, "alignment6");
+  GLADE_HOOKUP_OBJECT (groupbydlg, hbox47, "hbox47");
+  GLADE_HOOKUP_OBJECT (groupbydlg, image385, "image385");
+  GLADE_HOOKUP_OBJECT (groupbydlg, label83, "label83");
+
+  return groupbydlg;
 }
 

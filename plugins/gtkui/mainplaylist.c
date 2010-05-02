@@ -39,6 +39,7 @@ GdkPixbuf *play16_pixbuf;
 GdkPixbuf *pause16_pixbuf;
 GdkPixbuf *buffering16_pixbuf;
 
+
 // HACK!!
 extern GtkWidget *theme_treeview;
 
@@ -142,8 +143,6 @@ void main_selection_changed (DdbListviewIter it, int idx) {
     DdbListview *search = DDB_LISTVIEW (lookup_widget (searchwin, "searchlist"));
     ddb_listview_draw_row (search, search_get_idx ((DB_playItem_t *)it), it);
 }
-
-const char *group_by_str = "";
 
 void main_draw_group_title (DdbListview *listview, GdkDrawable *drawable, DdbListviewIter it, int x, int y, int width, int height) {
     if (group_by_str && group_by_str[0]) {
@@ -314,7 +313,8 @@ main_playlist_init (GtkWidget *widget) {
         g_object_set_property (G_OBJECT (widget), "has-tooltip", &value);
         g_signal_connect (G_OBJECT (widget), "query-tooltip", G_CALLBACK (playlist_tooltip_handler), NULL);
     }
-    group_by_str = deadbeef->conf_get_str ("playlist.group_by", "");
+    strncpy (group_by_str, deadbeef->conf_get_str ("playlist.group_by", ""), sizeof (group_by_str));
+    group_by_str[sizeof (group_by_str)-1] = 0;
 }
 
 void
