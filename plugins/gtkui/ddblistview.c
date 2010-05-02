@@ -715,10 +715,10 @@ ddb_listview_vscroll_event               (GtkWidget       *widget,
     // pass event to scrollbar
     int newscroll = gtk_range_get_value (GTK_RANGE (range));
     if (ev->direction == GDK_SCROLL_UP) {
-        newscroll -= SCROLL_STEP;
+        newscroll -= SCROLL_STEP * 2;
     }
     else if (ev->direction == GDK_SCROLL_DOWN) {
-        newscroll += SCROLL_STEP;
+        newscroll += SCROLL_STEP * 2;
     }
     gtk_range_set_value (GTK_RANGE (range), newscroll);
 
