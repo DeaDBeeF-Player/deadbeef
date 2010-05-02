@@ -934,3 +934,11 @@ GtkWidget*
 create_seekbar (gchar *widget_name, gchar *string1, gchar *string2,
                 gint int1, gint int2);
 
+
+void
+on_proxyuser_changed                   (GtkEditable     *editable,
+                                        gpointer         user_data);
+
+void
+on_proxypassword_changed               (GtkEditable     *editable,
+                                        gpointer         user_data);

@@ -801,74 +801,6 @@ on_column_id_changed                   (GtkComboBox     *combobox,
 }
 
 
-void
-on_pref_network_proxyaddress_changed   (GtkEditable     *editable,
-                                        gpointer         user_data)
-{
-    deadbeef->conf_set_str ("network.proxy.address", gtk_entry_get_text (GTK_ENTRY (editable)));
-}
-
-
-void
-on_pref_network_enableproxy_clicked    (GtkButton       *button,
-                                        gpointer         user_data)
-{
-    deadbeef->conf_set_int ("network.proxy", gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button)));
-}
-
-
-void
-on_pref_network_proxyport_changed      (GtkEditable     *editable,
-                                        gpointer         user_data)
-{
-    deadbeef->conf_set_int ("network.proxy.port", atoi (gtk_entry_get_text (GTK_ENTRY (editable))));
-}
-
-
-void
-on_pref_network_proxytype_changed      (GtkComboBox     *combobox,
-                                        gpointer         user_data)
-{
-
-    int active = gtk_combo_box_get_active (combobox);
-    switch (active) {
-    case 0:
-        deadbeef->conf_set_str ("network.proxy.type", "HTTP");
-        break;
-    case 1:
-        deadbeef->conf_set_str ("network.proxy.type", "HTTP_1_0");
-        break;
-    case 2:
-        deadbeef->conf_set_str ("network.proxy.type", "SOCKS4");
-        break;
-    case 3:
-        deadbeef->conf_set_str ("network.proxy.type", "SOCKS5");
-        break;
-    case 4:
-        deadbeef->conf_set_str ("network.proxy.type", "SOCKS4A");
-        break;
-    case 5:
-        deadbeef->conf_set_str ("network.proxy.type", "SOCKS5_HOSTNAME");
-        break;
-    default:
-        deadbeef->conf_set_str ("network.proxy.type", "HTTP");
-        break;
-    }
-}
-
-
-gboolean
-on_prefwin_key_press_event             (GtkWidget       *widget,
-                                        GdkEventKey     *event,
-                                        gpointer         user_data)
-{
-    if (event->keyval == GDK_Escape) {
-        gtk_widget_hide (widget);
-        gtk_widget_destroy (widget);
-    }
-    return FALSE;
-}
-
 gboolean
 on_mainwin_window_state_event          (GtkWidget       *widget,
                                         GdkEventWindowState *event,
@@ -1150,5 +1082,3 @@ create_seekbar (gchar *widget_name, gchar *string1, gchar *string2,
 {
     return GTK_WIDGET (ddb_seekbar_new ());
 }
-
-

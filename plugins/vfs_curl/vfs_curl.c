@@ -521,6 +521,13 @@ http_thread_func (void *ctx) {
             }
 #endif
             curl_easy_setopt (curl, CURLOPT_PROXYTYPE, curlproxytype);
+
+            const char *proxyuser = deadbeef->conf_get_str ("network.proxy.username", "");
+            const char *proxypass = deadbeef->conf_get_str ("network.proxy.password", "");
+            if (*proxyuser || *proxypass) {
+                curl_easy_setopt (curl, CURLOPT_PROXYUSERNAME, proxyuser);
+                curl_easy_setopt (curl, CURLOPT_PROXYUSERNAME, proxypass);
+            }
         }
         status = curl_easy_perform (curl);
         trace ("vfs_curl: curl_easy_perform status=%d\n", status);

@@ -156,6 +156,13 @@ curl_req_send (const char *req, const char *post) {
         }
 #endif
         curl_easy_setopt (curl, CURLOPT_PROXYTYPE, curlproxytype);
+
+        const char *proxyuser = deadbeef->conf_get_str ("network.proxy.username", "");
+        const char *proxypass = deadbeef->conf_get_str ("network.proxy.password", "");
+        if (*proxyuser || *proxypass) {
+            curl_easy_setopt (curl, CURLOPT_PROXYUSERNAME, proxyuser);
+            curl_easy_setopt (curl, CURLOPT_PROXYUSERNAME, proxypass);
+        }
     }
     int status = curl_easy_perform(curl);
     curl_easy_cleanup (curl);

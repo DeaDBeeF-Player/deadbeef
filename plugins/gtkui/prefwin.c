@@ -19,6 +19,8 @@
 #include <gtk/gtk.h>
 #include <string.h>
 #include <assert.h>
+#include <stdlib.h>
+#include <gdk/gdkkeysyms.h>
 #include "gtkui.h"
 #include "support.h"
 #include "interface.h"
@@ -468,6 +470,8 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
     else if (!strcasecmp (type, "SOCKS5_HOSTNAME")) {
         gtk_combo_box_set_active (combobox, 5);
     }
+    gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "proxyuser")), deadbeef->conf_get_str ("network.proxy.username", ""));
+    gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "proxypassword")), deadbeef->conf_get_str ("network.proxy.password", ""));
 
     // list of plugins
     GtkTreeView *tree = GTK_TREE_VIEW (lookup_widget (w, "pref_pluginlist"));
@@ -1070,5 +1074,88 @@ on_wv_strip_id3v1_toggled              (GtkToggleButton *togglebutton,
                                         gpointer         user_data)
 {
     deadbeef->conf_set_int ("wv.strip_id3v1", gtk_toggle_button_get_active (togglebutton));
+}
+
+void
+on_pref_network_proxyaddress_changed   (GtkEditable     *editable,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_str ("network.proxy.address", gtk_entry_get_text (GTK_ENTRY (editable)));
+}
+
+
+void
+on_pref_network_enableproxy_clicked    (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_int ("network.proxy", gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button)));
+}
+
+
+void
+on_pref_network_proxyport_changed      (GtkEditable     *editable,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_int ("network.proxy.port", atoi (gtk_entry_get_text (GTK_ENTRY (editable))));
+}
+
+
+void
+on_pref_network_proxytype_changed      (GtkComboBox     *combobox,
+                                        gpointer         user_data)
+{
+
+    int active = gtk_combo_box_get_active (combobox);
+    switch (active) {
+    case 0:
+        deadbeef->conf_set_str ("network.proxy.type", "HTTP");
+        break;
+    case 1:
+        deadbeef->conf_set_str ("network.proxy.type", "HTTP_1_0");
+        break;
+    case 2:
+        deadbeef->conf_set_str ("network.proxy.type", "SOCKS4");
+        break;
+    case 3:
+        deadbeef->conf_set_str ("network.proxy.type", "SOCKS5");
+        break;
+    case 4:
+        deadbeef->conf_set_str ("network.proxy.type", "SOCKS4A");
+        break;
+    case 5:
+        deadbeef->conf_set_str ("network.proxy.type", "SOCKS5_HOSTNAME");
+        break;
+    default:
+        deadbeef->conf_set_str ("network.proxy.type", "HTTP");
+        break;
+    }
+}
+
+void
+on_proxyuser_changed                   (GtkEditable     *editable,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_str ("network.proxy.username", gtk_entry_get_text (GTK_ENTRY (editable)));
+}
+
+
+void
+on_proxypassword_changed               (GtkEditable     *editable,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_str ("network.proxy.password", gtk_entry_get_text (GTK_ENTRY (editable)));
+}
+
+
+gboolean
+on_prefwin_key_press_event             (GtkWidget       *widget,
+                                        GdkEventKey     *event,
+                                        gpointer         user_data)
+{
+    if (event->keyval == GDK_Escape) {
+        gtk_widget_hide (widget);
+        gtk_widget_destroy (widget);
+    }
+    return FALSE;
 }
 

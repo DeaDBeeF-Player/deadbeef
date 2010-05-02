@@ -1616,6 +1616,12 @@ create_prefwin (void)
   GtkWidget *hbox15;
   GtkWidget *label20;
   GtkWidget *pref_network_proxytype;
+  GtkWidget *hbox61;
+  GtkWidget *label97;
+  GtkWidget *proxyuser;
+  GtkWidget *hbox62;
+  GtkWidget *label98;
+  GtkWidget *proxypassword;
   GtkWidget *label16;
   GtkWidget *vbox18;
   GtkWidget *frame5;
@@ -2026,7 +2032,7 @@ create_prefwin (void)
   gtk_container_add (GTK_CONTAINER (notebook), vbox11);
   gtk_container_set_border_width (GTK_CONTAINER (vbox11), 12);
 
-  pref_network_enableproxy = gtk_check_button_new_with_mnemonic ("Enable proxy server");
+  pref_network_enableproxy = gtk_check_button_new_with_mnemonic ("Enable Proxy Server");
   gtk_widget_show (pref_network_enableproxy);
   gtk_box_pack_start (GTK_BOX (vbox11), pref_network_enableproxy, FALSE, FALSE, 0);
 
@@ -2034,7 +2040,7 @@ create_prefwin (void)
   gtk_widget_show (hbox13);
   gtk_box_pack_start (GTK_BOX (vbox11), hbox13, FALSE, FALSE, 0);
 
-  label18 = gtk_label_new ("Proxy server address:");
+  label18 = gtk_label_new ("Proxy Server Address:");
   gtk_widget_show (label18);
   gtk_box_pack_start (GTK_BOX (hbox13), label18, FALSE, FALSE, 0);
   gtk_misc_set_alignment (GTK_MISC (label18), 0, 0.5);
@@ -2048,7 +2054,7 @@ create_prefwin (void)
   gtk_widget_show (hbox14);
   gtk_box_pack_start (GTK_BOX (vbox11), hbox14, FALSE, FALSE, 0);
 
-  label19 = gtk_label_new ("Proxy server port:");
+  label19 = gtk_label_new ("Proxy Server Port:");
   gtk_widget_show (label19);
   gtk_box_pack_start (GTK_BOX (hbox14), label19, FALSE, FALSE, 0);
   gtk_misc_set_alignment (GTK_MISC (label19), 0, 0.5);
@@ -2062,7 +2068,7 @@ create_prefwin (void)
   gtk_widget_show (hbox15);
   gtk_box_pack_start (GTK_BOX (vbox11), hbox15, FALSE, FALSE, 0);
 
-  label20 = gtk_label_new ("Proxy type:");
+  label20 = gtk_label_new ("Proxy Type:");
   gtk_widget_show (label20);
   gtk_box_pack_start (GTK_BOX (hbox15), label20, FALSE, FALSE, 0);
   gtk_misc_set_alignment (GTK_MISC (label20), 0, 0.5);
@@ -2076,6 +2082,33 @@ create_prefwin (void)
   gtk_combo_box_append_text (GTK_COMBO_BOX (pref_network_proxytype), "SOCKS5");
   gtk_combo_box_append_text (GTK_COMBO_BOX (pref_network_proxytype), "SOCKS4A");
   gtk_combo_box_append_text (GTK_COMBO_BOX (pref_network_proxytype), "SOCKS5_HOSTNAME");
+
+  hbox61 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox61);
+  gtk_box_pack_start (GTK_BOX (vbox11), hbox61, FALSE, FALSE, 0);
+
+  label97 = gtk_label_new ("Proxy Username:");
+  gtk_widget_show (label97);
+  gtk_box_pack_start (GTK_BOX (hbox61), label97, FALSE, FALSE, 0);
+
+  proxyuser = gtk_entry_new ();
+  gtk_widget_show (proxyuser);
+  gtk_box_pack_start (GTK_BOX (hbox61), proxyuser, TRUE, TRUE, 0);
+  gtk_entry_set_invisible_char (GTK_ENTRY (proxyuser), 9679);
+
+  hbox62 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox62);
+  gtk_box_pack_start (GTK_BOX (vbox11), hbox62, FALSE, FALSE, 0);
+
+  label98 = gtk_label_new ("Proxy Password:");
+  gtk_widget_show (label98);
+  gtk_box_pack_start (GTK_BOX (hbox62), label98, FALSE, FALSE, 0);
+
+  proxypassword = gtk_entry_new ();
+  gtk_widget_show (proxypassword);
+  gtk_box_pack_start (GTK_BOX (hbox62), proxypassword, TRUE, TRUE, 0);
+  gtk_entry_set_visibility (GTK_ENTRY (proxypassword), FALSE);
+  gtk_entry_set_invisible_char (GTK_ENTRY (proxypassword), 9679);
 
   label16 = gtk_label_new ("Network");
   gtk_widget_show (label16);
@@ -2473,6 +2506,12 @@ create_prefwin (void)
   g_signal_connect ((gpointer) pref_network_proxytype, "changed",
                     G_CALLBACK (on_pref_network_proxytype_changed),
                     NULL);
+  g_signal_connect ((gpointer) proxyuser, "changed",
+                    G_CALLBACK (on_proxyuser_changed),
+                    NULL);
+  g_signal_connect ((gpointer) proxypassword, "changed",
+                    G_CALLBACK (on_proxypassword_changed),
+                    NULL);
   g_signal_connect ((gpointer) write_id3v2, "toggled",
                     G_CALLBACK (on_write_id3v2_toggled),
                     NULL);
@@ -2602,6 +2641,12 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, hbox15, "hbox15");
   GLADE_HOOKUP_OBJECT (prefwin, label20, "label20");
   GLADE_HOOKUP_OBJECT (prefwin, pref_network_proxytype, "pref_network_proxytype");
+  GLADE_HOOKUP_OBJECT (prefwin, hbox61, "hbox61");
+  GLADE_HOOKUP_OBJECT (prefwin, label97, "label97");
+  GLADE_HOOKUP_OBJECT (prefwin, proxyuser, "proxyuser");
+  GLADE_HOOKUP_OBJECT (prefwin, hbox62, "hbox62");
+  GLADE_HOOKUP_OBJECT (prefwin, label98, "label98");
+  GLADE_HOOKUP_OBJECT (prefwin, proxypassword, "proxypassword");
   GLADE_HOOKUP_OBJECT (prefwin, label16, "label16");
   GLADE_HOOKUP_OBJECT (prefwin, vbox18, "vbox18");
   GLADE_HOOKUP_OBJECT (prefwin, frame5, "frame5");
