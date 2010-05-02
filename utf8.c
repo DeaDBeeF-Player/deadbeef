@@ -26,6 +26,7 @@
 //#include <alloca.h>
 #include "ctype.h"
 #include "utf8.h"
+#include "u8_lc_map.h"
 
 static const uint32_t offsetsFromUTF8[6] = {
     0x00000000UL, 0x00003080UL, 0x000E2080UL,
@@ -599,17 +600,33 @@ int u8_valid (const char  *str,
         return 1;
 }
 
-static const char lowerchars[] = "záéíñóúüäöåæøàçèéêабвгдеёжзийклмнорпстуфхцчшщъыьэюя";
-static const char upperchars[] = "ZÁÉÍÑÓÚÜÄÖÅÆØÀÇÈÉÊАБВГДЕЁЖЗИЙКЛМНОРПСТУФХЦЧШЩЪЫЬЭЮЯ";
+#if 0
+static const char lowerchars[] = "áéíñóúüäöåæøàçèêабвгдеёжзийклмнорпстуфхцчшщъыьэюя";
+static const char upperchars[] = "ÁÉÍÑÓÚÜÄÖÅÆØÀÇÈÊАБВГДЕЁЖЗИЙКЛМНОРПСТУФХЦЧШЩЪЫЬЭЮЯ";
+#endif
 
 int
 u8_tolower (const signed char *c, int l, char *out) {
-    if (*c > 0) {
-        *out = tolower (*c);
+    if (*c >= 65 && *c <= 90) {
+        *out = *c + 0x20;//tolower (*c);
+        out[1] = 0;
+        return 1;
+    }
+    else if (*c > 0) {
+        *out = *c;
         out[1] = 0;
         return 1;
     }
     else {
+#if 1
+        struct u8_case_map_t *lc = u8_lc_in_word_set (c, l);
+        if (lc) {
+            int ll = 2;//strlen (lc->lower);
+            memcpy (out, lc->lower, ll);
+            out[ll] = 0;
+            return ll;
+        }
+#else
         for (int i = 0; i < sizeof (upperchars)-l; i++) {
             if (!memcmp (upperchars+i, c, l)) {
                 // found!
@@ -618,6 +635,7 @@ u8_tolower (const signed char *c, int l, char *out) {
                 return l;
             }
         }
+#endif
         memcpy (out, c, l);
         out[l] = 0;
         return l;
@@ -669,4 +687,23 @@ utfcasestr (const char *s1, const char *s2) {
         s1 += i;
     }
     return NULL;
+}
+
+void
+u8_lc_map_test (void) {
+    struct u8_case_map_t *lc;
+    lc = u8_lc_in_word_set ("Á", 2);
+    printf ("%s -> %s\n", lc->name, lc->lower);
+    lc = u8_lc_in_word_set ("É", 2);
+    printf ("%s -> %s\n", lc->name, lc->lower);
+    lc = u8_lc_in_word_set ("Í", 2);
+    printf ("%s -> %s\n", lc->name, lc->lower);
+    lc = u8_lc_in_word_set ("Ñ", 2);
+    printf ("%s -> %s\n", lc->name, lc->lower);
+    lc = u8_lc_in_word_set ("П", 2);
+    printf ("%s -> %s\n", lc->name, lc->lower);
+    lc = u8_lc_in_word_set ("Л", 2);
+    printf ("%s -> %s\n", lc->name, lc->lower);
+    lc = u8_lc_in_word_set ("А", 2);
+    printf ("%s -> %s\n", lc->name, lc->lower);
 }

@@ -19,6 +19,9 @@
     by Jeff Bezanson
     placed in the public domain Fall 2005
 */
+#ifndef __UTF8_H
+#define __UTF8_H
+
 #include <stdint.h>
 #include <stdarg.h>
 
@@ -97,3 +100,5 @@ int u8_valid (const char  *str,
 
 const char *
 utfcasestr (const char *s1, const char *s2);
+
+#endif

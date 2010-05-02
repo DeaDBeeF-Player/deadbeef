@@ -428,6 +428,8 @@ sigterm_handler (int sig) {
 
 int
 main (int argc, char *argv[]) {
+    //u8_lc_map_test ();
+    //return -1;
     setlocale (LC_NUMERIC, "C");
     fprintf (stderr, "starting deadbeef " VERSION "\n");
     srand (time (NULL));

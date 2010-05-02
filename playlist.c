@@ -26,6 +26,7 @@
 #include <unistd.h>
 #include <assert.h>
 #include <time.h>
+#include <sys/time.h>
 #ifndef __linux__
 #define _POSIX_C_SOURCE
 #endif
@@ -2425,11 +2426,13 @@ pl_format_title (playItem_t *it, int idx, char *s, int size, int id, const char 
 }
 
 void
-pl_sort (int iter, int id, const char *format, int ascending) {
+pl_sort_bubble (int iter, int id, const char *format, int ascending) {
     if (id == DB_COLUMN_FILENUMBER) {
         return;
     }
     GLOBAL_LOCK;
+    struct timeval tm1;
+    gettimeofday (&tm1, NULL);
     int sorted = 0;
     int is_duration = 0;
     int is_track = 0;
@@ -2439,8 +2442,9 @@ pl_sort (int iter, int id, const char *format, int ascending) {
     if (format && id == -1 && !strcmp (format, "%n")) {
         is_track = 1;
     }
-
+    int niters = 0;
     do {
+        niters++;
         sorted = 1;
         playItem_t *it;
         for (it = playlist->head[iter]; it; it = it->next[iter]) {
@@ -2498,6 +2502,131 @@ pl_sort (int iter, int id, const char *format, int ascending) {
             }
         }
     } while (!sorted);
+    struct timeval tm2;
+    gettimeofday (&tm2, NULL);
+
+    int ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
+    trace ("sort time: %f seconds, %d iterations\n", ms / 1000.f, niters);
+    GLOBAL_UNLOCK;
+}
+
+static int pl_sort_is_duration;
+static int pl_sort_is_track;
+static int pl_sort_ascending;
+static int pl_sort_id;
+static const char *pl_sort_format;
+
+static int
+pl_sort_compare (playItem_t *a, playItem_t *b) {
+    int cmp;
+    // next = b
+    // it = a
+    if (pl_sort_is_duration) {
+        cmp = pl_sort_ascending ? b->_duration - a->_duration : a->_duration - b->_duration;
+    }
+    else if (pl_sort_is_track) {
+        const char *t;
+        t = pl_find_meta (a, "track");
+        int a = t ? atoi (t) : -1;
+        t = pl_find_meta (b, "track");
+        int b = t ? atoi (t) : -1;
+        cmp = pl_sort_ascending ? b - a : a - b;
+    }
+    else {
+        char title1[1024];
+        char title2[1024];
+        pl_format_title (a, -1, title1, sizeof (title1), pl_sort_id, pl_sort_format);
+        pl_format_title (b, -1, title2, sizeof (title2), pl_sort_id, pl_sort_format);
+        cmp = pl_sort_ascending ? strcmp (title2, title1) : strcmp (title1, title2);
+    }
+    return cmp;
+}
+
+/* preform merge sort on the linked list */
+playItem_t *mergesort(playItem_t *head, int iter);
+/* merge the lists.. */
+playItem_t *merge(playItem_t *head_one, playItem_t *head_two, int iter);
+
+/* preform merge sort on the linked list */
+playItem_t *mergesort(playItem_t *head, int iter) {
+    playItem_t *head_one;
+    playItem_t *head_two;
+
+    if((head == NULL) || (head->next[iter] == NULL)) 
+        return head;
+
+    head_one = head;
+    head_two = head->next[iter];
+    while((head_two != NULL) && (head_two->next[iter] != NULL)) {
+        head = head->next[iter];
+        head_two = head->next[iter]->next[iter];
+    }
+    head_two = head->next[iter];
+    head->next[iter] = NULL;
+
+    return merge(mergesort(head_one, iter), mergesort(head_two, iter), iter);
+}
+
+/* merge the lists.. */
+playItem_t *merge(playItem_t *head_one, playItem_t *head_two, int iter) {
+    playItem_t *head_three;
+
+    if(head_one == NULL) 
+        return head_two;
+
+    if(head_two == NULL) 
+        return head_one;
+
+    int cmp = pl_sort_compare (head_one, head_two);
+    if(cmp < 0) {
+        head_three = head_one;
+        head_three->next[iter] = merge(head_one->next[iter], head_two, iter);
+    } else {
+        head_three = head_two;
+        head_three->next[iter] = merge(head_one, head_two->next[iter], iter);
+    }
+
+    return head_three;
+}
+
+void
+pl_sort (int iter, int id, const char *format, int ascending) {
+    if (id == DB_COLUMN_FILENUMBER || !playlist->head[iter] || !playlist->head[iter]->next[iter]) {
+        return;
+    }
+    GLOBAL_LOCK;
+    struct timeval tm1;
+    gettimeofday (&tm1, NULL);
+    pl_sort_ascending = ascending;
+    trace ("ascending: %d\n", ascending);
+    pl_sort_id = id;
+    pl_sort_format = format;
+    if (format && id == -1 && !strcmp (format, "%l")) {
+        pl_sort_is_duration = 1;
+    }
+    else {
+        pl_sort_is_duration = 0;
+    }
+    if (format && id == -1 && !strcmp (format, "%n")) {
+        pl_sort_is_track = 1;
+    }
+    else {
+        pl_sort_is_track = 0;
+    }
+
+    playlist->head[iter] = mergesort (playlist->head[iter], iter);
+    // update `prev` pointers
+    playItem_t *prev = NULL;
+    for (playItem_t *it = playlist->head[iter]; it; it = it->next[iter]) {
+        it->prev[iter] = prev;
+        prev = it;
+    }
+
+    struct timeval tm2;
+    gettimeofday (&tm2, NULL);
+
+    int ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
+    trace ("sort time: %f seconds\n", ms / 1000.f);
     GLOBAL_UNLOCK;
 }
 
