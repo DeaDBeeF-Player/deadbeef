@@ -1,18 +1,21 @@
-dependencies for player core - includes support for sid, tracker music and chiptune music:
-    gtk+-2.0 >= 2.12 (+ gthread, + glib)
-    libsamplerate
-    alsa-lib
+if you want to build from git - install autotools, and run ./autogen.sh
+after doing that, or if you have botstrapped tarball, just run ./configure && make && make install
 
-optional/build dependencies
+full list of dependencies:
+    libsamplerate: REQUIRED dependency, does high quality resampling
+    gtk+-2.0 >= 2.12 (+ gthread, + glib): GTK+ 2.0 user interface
+    alsa-lib: ALSA support
     libvorbis: for ogg vorbis plugin
-    libcurl >= 7.10: for last.fm and vfs_curl (shoutcast/icecast) plugins
-    libmad: for mpgmad plugin (mpeg1,2 layers1,2,3)
+    libcurl >= 7.10: for last.fm, vfs_curl (shoutcast/icecast), artwork plugins
+    libmad: for mp3 plugin (mpeg1,2 layers1,2,3)
     libFLAC: for flac plugin
     wavpack: for wavpack plugin
     libsndfile: for sndfile plugin
     libcdio + libcddb: for cd audio plugin
-    ffmpeg: for ffmpeg plugin
+    ffmpeg (libavcodec + libavformat): for ffmpeg plugin
     xlib: for global hotkeys
+    dbus: for notification daemon support (OSD current song notifications)
+    pulseaudio: for PulseAudio output plugin
 
-if you want to build from git - install autotools, and run autoreconf
+actual package names for your Linux distribution may vary.
 
