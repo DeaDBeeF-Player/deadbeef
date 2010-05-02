@@ -23,7 +23,7 @@ Note that other included libraries and plugins may have separate licensing terms
 Contributors:
 
     Viktor Semykin <thesame.ml@gmail.com>
-        global hotkeys plugin, CD Audio plugin, lots of patches and suggestions
+        global hotkeys plugin, CD Audio plugin, Cover art plugin, lots of patches and suggestions
     
     Stas Akimushkin <uncle.lag@gmail.com>
         icons
@@ -36,16 +36,7 @@ Contributors:
     Alex Dedul <rotmer@gmail.com>
     Igor Rudchenko <igor@thinkpads.net>
 
-
     and all the other great people hanging at deadbeef-ru@cjr and #deadbeef-player
-
-
-Greetz to:
-
-    Bram Moolenaar for the greatest text editor
-    kb (Tammo Hinrichs) for making me interested in sound coding 10 years ago
-    Paniq (Leonard Ritter) for the great music to listen
-    Jan Marguc for explaining me a lot about synthesizers
 
 
 Bundled libraries:
@@ -57,21 +48,31 @@ Copyright © 2001-2005 Ben Davis, Robert J Ohannessian and Julien Cugniere.
 
 
 Game_Music_Emu Version 0.5.2
+http://code.google.com/p/game-music-emu
 Copyright © 2003-2006 Shay Green.
 
 
 libsidplay2 - commodore 64 SID emulation library
+http://sidplay2.sourceforge.net
 Copyright © Simon White and other authors.
 
 
-ffap - monkey's audio decoder based on apedec code from ffmpeg
+ffap - monkey's audio decoder based on code from ffmpeg and rockbox
+Copyright © 2009-2010 Alexey Yakovenko <waker@users.sourceforge.net>
 Copyright © 2007 Benjamin Zores <ben@geexbox.org>
-based upon libdemac from Dave Chapman
+Copyright © 2007 Dave Chapman
 
 
-libayemu - AY/YM sound chip emulator and music file loader
+ayemu - AY/YM sound chip emulator and music file loader
+http://sashnov.nm.ru/libayemu.html
 Copyright © 2003-2004 Alexander Sashnov <sashnov@ngs.ru>
 
 
-adplug - Replayer for many OPL2/OPL3 audio file formats.
+Adplug - Replayer for many OPL2/OPL3 audio file formats.
+http://adplug.sourceforge.net
 Copyright © 1999 - 2006 Simon Peter <dn.tlp@gmx.net>, et al.
+
+
+SuperEQ - High Quality Audio Equalizer
+http://shibatch.sourceforge.net
+Copyright © Naoki Shibata <shibatch@users.sourceforge.net>
