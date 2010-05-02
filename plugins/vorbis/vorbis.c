@@ -31,8 +31,8 @@
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
-#define trace(...) { fprintf (stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf (stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
@@ -101,6 +101,7 @@ update_vorbis_comments (DB_playItem_t *it, vorbis_comment *vc) {
             for (m = 0; metainfo[m]; m += 2) {
                 int l = strlen (metainfo[m]);
                 if (vc->comment_lengths[i] > l && !strncasecmp (metainfo[m], s, l) && s[l] == '=') {
+                    trace ("ogg adding %s\n", s);
                     deadbeef->pl_append_meta (it, metainfo[m+1], s + l + 1);
                 }
             }
@@ -532,7 +533,7 @@ cvorbis_write_metadata (DB_playItem_t *it) {
             }
         }
         if (!metainfo[m]) {
-            printf ("preserved field: %s\n", vc->user_comments[i]);
+            trace ("preserved field: %s\n", vc->user_comments[i]);
             // unknown field
             struct field *f = malloc (sizeof (struct field) + vc->comment_lengths[i]);
             memset (f, 0, sizeof (struct field));
@@ -550,9 +551,25 @@ cvorbis_write_metadata (DB_playItem_t *it) {
     for (int m = 0; metainfo[m]; m += 2) {
         const char *val = deadbeef->pl_find_meta (it, metainfo[m+1]);
         if (val && *val) {
-            char s[1024];
-            snprintf (s, sizeof (s), "%s=%s", metainfo[m], val);
-            vorbis_comment_add (vc, s);
+            while (val) {
+                const char *next = strchr (val, '\n');
+                int l;
+                if (next) {
+                    l = next - val;
+                    next++;
+                }
+                else {
+                    l = strlen (val);
+                }
+                if (l > 0) {
+                    char s[100+l+1];
+                    int n = snprintf (s, sizeof (s), "%s=", metainfo[m]);
+                    strncpy (s+n, val, l);
+                    *(s+n+l) = 0;
+                    vorbis_comment_add (vc, s);
+                }
+                val = next;
+            }
         }
     }
 
