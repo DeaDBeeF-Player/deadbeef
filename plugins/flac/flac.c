@@ -792,17 +792,33 @@ cflac_write_metadata (DB_playItem_t *it) {
             // delete all crap
             for (int m = 0; metainfo[m]; m += 2) {
                 const char *val = deadbeef->pl_find_meta (it, metainfo[m+1]);
+                // FIXME: only remove if strip is set
+                do {} while (1 == FLAC__metadata_object_vorbiscomment_remove_entry_matching (data, metainfo[m]));
                 if (val && *val) {
-                    char s[1024];
-                    snprintf (s, sizeof (s), "%s=%s", metainfo[m], val);
-                    FLAC__StreamMetadata_VorbisComment_Entry ent = {
-                        .length = strlen (s),
-                        .entry = (FLAC__byte*)s
-                    };
-                    FLAC__metadata_object_vorbiscomment_replace_comment (data, ent, 1, 1);
-                }
-                else {
-                    FLAC__metadata_object_vorbiscomment_remove_entry_matching (data, metainfo[m]);
+                    while (val) {
+                        const char *next = strchr (val, '\n');
+                        int l;
+                        if (next) {
+                            l = next - val;
+                            next++;
+                        }
+                        else {
+                            l = strlen (val);
+                        }
+                        if (l > 0) {
+                            char s[100+l+1];
+                            int n = snprintf (s, sizeof (s), "%s=", metainfo[m]);
+                            strncpy (s+n, val, l);
+                            *(s+n+l) = 0;
+                            FLAC__StreamMetadata_VorbisComment_Entry ent = {
+                                .length = strlen (s),
+                                .entry = (FLAC__byte*)s
+                            };
+                            //FLAC__metadata_object_vorbiscomment_replace_comment (data, ent, 1, 1);
+                            FLAC__metadata_object_vorbiscomment_append_comment (data, ent, 1);
+                        }
+                        val = next;
+                    }
                 }
             }
         }
