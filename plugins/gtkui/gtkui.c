@@ -692,7 +692,6 @@ gtkui_thread (void *ctx) {
     add_pixmap_directory (PREFIX "/share/deadbeef/pixmaps");
     gdk_threads_init ();
     gdk_threads_enter ();
-    gtk_set_locale ();
 
     int argc = 2;
     const char **argv = alloca (sizeof (char *) * argc);
@@ -701,6 +700,7 @@ gtkui_thread (void *ctx) {
     if (!deadbeef->conf_get_int ("gtkui.sync", 0)) {
         argc = 1;
     }
+    gtk_disable_setlocale ();
     gtk_init (&argc, (char ***)&argv);
 
     // system tray icon
