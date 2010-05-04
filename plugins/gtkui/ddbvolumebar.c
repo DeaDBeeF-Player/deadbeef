@@ -252,7 +252,6 @@ on_volumebar_button_press_event        (GtkWidget       *widget,
         volume = 0;
     }
     deadbeef->volume_set_db (volume);
-    printf ("queue_draw\n");
     gtk_widget_queue_draw (widget);
     return FALSE;
 }
