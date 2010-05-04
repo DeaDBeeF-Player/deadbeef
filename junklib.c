@@ -1489,7 +1489,7 @@ junk_id3v2_convert_24_to_23 (DB_id3v2_tag_t *tag24, DB_id3v2_tag_t *tag23) {
                 int c = sscanf (decoded, "%4d", &year);
                 if (c == 1) {
                     char s[5];
-                    snprintf (s, sizeof (s), "%04d", &year);
+                    snprintf (s, sizeof (s), "%04d", year);
                     f23 = junk_id3v2_add_text_frame (tag23, "TORY", s);
                     if (f23) {
                         tail = f23;
@@ -1671,7 +1671,7 @@ junk_id3v2_convert_23_to_24 (DB_id3v2_tag_t *tag23, DB_id3v2_tag_t *tag24) {
                 int c = sscanf (decoded, "%4d", &year);
                 if (c == 1) {
                     char s[5];
-                    snprintf (s, sizeof (s), "%04d", &year);
+                    snprintf (s, sizeof (s), "%04d", year);
                     f24 = junk_id3v2_add_text_frame (tag24, "TDOR", s);
                     if (f24) {
                         tail = f24;
@@ -1848,22 +1848,22 @@ junk_id3v2_convert_22_to_24 (DB_id3v2_tag_t *tag22, DB_id3v2_tag_t *tag24) {
         }
         else if (!strcmp (f22->id, "TYE")) {
             char *decoded = convstr_id3v2 (2, f22->data[0], f22->data+1, f22->size-1);
-            if (!decoded) {
+            if (decoded) {
                 year = atoi (decoded);
                 free (decoded);
             }
         }
         else if (!strcmp (f22->id, "TDA")) {
             char *decoded = convstr_id3v2 (2, f22->data[0], f22->data+1, f22->size-1);
-            if (!decoded) {
-                sscanf (decoded, "%02d02d", &month, &day);
+            if (decoded) {
+                sscanf (decoded, "%02d%02d", &month, &day);
                 free (decoded);
             }
         }
         else if (!strcmp (f22->id, "TIM")) {
             char *decoded = convstr_id3v2 (2, f22->data[0], f22->data+1, f22->size-1);
-            if (!decoded) {
-                sscanf (decoded, "%02d02d", &hour, &minute);
+            if (decoded) {
+                sscanf (decoded, "%02d%02d", &hour, &minute);
                 free (decoded);
             }
         }
@@ -1890,7 +1890,7 @@ junk_id3v2_convert_22_to_24 (DB_id3v2_tag_t *tag22, DB_id3v2_tag_t *tag24) {
                 n = sprintf (p, "-%02d", day);
                 p += n;
                 if (hour && minute) {
-                    n = sprintf (p, "-T%02d:02d", hour, minute);
+                    n = sprintf (p, "-T%02d:%02d", hour, minute);
                     p += n;
                 }
             }
@@ -2267,11 +2267,11 @@ junk_id3v2_write (FILE *out, DB_id3v2_tag_t *tag) {
             goto error;
         }
         if (fwrite (f->flags, 1, 2, out) != 2) {
-            fprintf (stderr, "junk_write_id3v2: failed to write frame header flags, id %s, size %s\n", f->id, f->size);
+            fprintf (stderr, "junk_write_id3v2: failed to write frame header flags, id %s, size %d\n", f->id, f->size);
             goto error;
         }
         if (fwrite (f->data, 1, f->size, out) != f->size) {
-            fprintf (stderr, "junk_write_id3v2: failed to write frame data, id %s, size %s\n", f->id, f->size);
+            fprintf (stderr, "junk_write_id3v2: failed to write frame data, id %s, size %d\n", f->id, f->size);
             goto error;
         }
         sz += f->size;
