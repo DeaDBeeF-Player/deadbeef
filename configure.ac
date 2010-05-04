@@ -279,8 +279,10 @@ if test "x$enable_pulseaudio" != "xno"; then
 fi
 
 dnl lastfm plugin
-if test "x$HAVE_CURL" = "xyes" && test "x$enable_lastfm" != "xno" ; then
-    HAVE_LASTFM=yes
+if test "x$enable_lfm" != "xno" ; then
+    if test "x$HAVE_CURL" = "xyes" && test "x$enable_lastfm" != "xno" ; then
+        HAVE_LASTFM=yes
+    fi
 fi
 
 if test "x$enable_artwork" != "xno" ; then
