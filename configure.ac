@@ -360,17 +360,17 @@ AM_CONDITIONAL(HAVE_NOTIFY, test "x$HAVE_NOTIFY" = "xyes")
 
 AC_SUBST(PLUGINS_DIRS)
 
+if test "x$USE_MAINTAINER_MODE" = "xyes" ; then
 echo
 echo "Build Configuration:"
 echo
 echo "* Maintainer Mode:        $USE_MAINTAINER_MODE"
-if test "x$USE_MAINTAINER_MODE" = "xyes" ; then
 echo "    * Vala:               $VALAC"
 fi
 
 dnl print summary
 echo
-echo "plugin summary:"
+echo "Plugin Summary:"
 echo
 
 AC_DEFUN([PRINT_PLUGIN_INFO],
