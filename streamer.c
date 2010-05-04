@@ -333,7 +333,12 @@ streamer_move_to_nextsong (int reason) {
             return 0;
         }
         pl_global_unlock ();
-        return streamer_move_to_randomsong ();
+        int res = streamer_move_to_randomsong ();
+        if (res == -1) {
+            trace ("streamer_move_to_randomsong error\n");
+            streamer_set_nextsong (-2, 1);
+            return -1;
+        }
     }
     pl_global_unlock ();
     return -1;
@@ -417,7 +422,13 @@ streamer_move_to_prevsong (void) {
         return 0;
     }
     else if (pl_order == PLAYBACK_ORDER_RANDOM) { // random
-        streamer_move_to_randomsong ();
+        int res = streamer_move_to_randomsong ();
+        if (res == -1) {
+            plt_unlock ();
+            streamer_set_nextsong (-2, 1);
+            trace ("streamer_move_to_randomsong error\n");
+            return -1;
+        }
     }
     plt_unlock ();
     return -1;
@@ -425,8 +436,10 @@ streamer_move_to_prevsong (void) {
 
 int
 streamer_move_to_randomsong (void) {
-    int cnt = pl_getcount (PL_MAIN);
+    playlist_t *plt = streamer_playlist;
+    int cnt = plt->count[PL_MAIN];
     if (!cnt) {
+        trace ("empty playlist\n");
         return -1;
     }
     int r = rand () / (float)RAND_MAX * cnt;
