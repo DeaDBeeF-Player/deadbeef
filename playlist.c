@@ -2543,12 +2543,12 @@ pl_sort_compare (playItem_t *a, playItem_t *b) {
 }
 
 /* preform merge sort on the linked list */
-playItem_t *mergesort(playItem_t *head, int iter);
+playItem_t *ddb_mergesort(playItem_t *head, int iter);
 /* merge the lists.. */
-playItem_t *merge(playItem_t *head_one, playItem_t *head_two, int iter);
+playItem_t *ddb_merge(playItem_t *head_one, playItem_t *head_two, int iter);
 
 /* preform merge sort on the linked list */
-playItem_t *mergesort(playItem_t *head, int iter) {
+playItem_t *ddb_mergesort(playItem_t *head, int iter) {
     playItem_t *head_one;
     playItem_t *head_two;
 
@@ -2564,11 +2564,11 @@ playItem_t *mergesort(playItem_t *head, int iter) {
     head_two = head->next[iter];
     head->next[iter] = NULL;
 
-    return merge(mergesort(head_one, iter), mergesort(head_two, iter), iter);
+    return ddb_merge(ddb_mergesort(head_one, iter), ddb_mergesort(head_two, iter), iter);
 }
 
 /* merge the lists.. */
-playItem_t *merge(playItem_t *head_one, playItem_t *head_two, int iter) {
+playItem_t *ddb_merge(playItem_t *head_one, playItem_t *head_two, int iter) {
     playItem_t *head_three;
 
     if(head_one == NULL) 
@@ -2580,10 +2580,10 @@ playItem_t *merge(playItem_t *head_one, playItem_t *head_two, int iter) {
     int cmp = pl_sort_compare (head_one, head_two);
     if(cmp < 0) {
         head_three = head_one;
-        head_three->next[iter] = merge(head_one->next[iter], head_two, iter);
+        head_three->next[iter] = ddb_merge(head_one->next[iter], head_two, iter);
     } else {
         head_three = head_two;
-        head_three->next[iter] = merge(head_one, head_two->next[iter], iter);
+        head_three->next[iter] = ddb_merge(head_one, head_two->next[iter], iter);
     }
 
     return head_three;
@@ -2614,7 +2614,7 @@ pl_sort (int iter, int id, const char *format, int ascending) {
         pl_sort_is_track = 0;
     }
 
-    playlist->head[iter] = mergesort (playlist->head[iter], iter);
+    playlist->head[iter] = ddb_mergesort (playlist->head[iter], iter);
     // update `prev` pointers
     playItem_t *prev = NULL;
     for (playItem_t *it = playlist->head[iter]; it; it = it->next[iter]) {
