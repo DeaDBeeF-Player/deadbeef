@@ -460,17 +460,21 @@ playlistswitch_cb (gpointer none) {
 static int
 gtkui_on_playlistswitch (DB_event_t *ev, uintptr_t data) {
     g_idle_add (playlistswitch_cb, NULL);
+    return 0;
 }
 
 static int
 gtkui_on_frameupdate (DB_event_t *ev, uintptr_t data) {
     g_idle_add (update_songinfo, NULL);
+
+    return 0;
 }
 
 static int
 gtkui_on_volumechanged (DB_event_t *ev, uintptr_t data) {
     GtkWidget *volumebar = lookup_widget (mainwin, "volumebar");
     gdk_window_invalidate_rect (volumebar->window, NULL, FALSE);
+
     return 0;
 }
 

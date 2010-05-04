@@ -281,6 +281,8 @@ read_config (Display *disp)
             XGrabKey (disp, commands[i].keycode, commands[i].modifier | flags, DefaultRootWindow (disp), False, GrabModeAsync, GrabModeAsync);
         }
     }
+
+    return 0;
 }
 
 DB_plugin_t *
@@ -300,6 +302,8 @@ x_err_handler (Display *d, XErrorEvent *evt) {
     char buffer[1024];
     XGetErrorText (d, evt->error_code, buffer, sizeof (buffer));
     fprintf (stderr, "hotkeys: xlib error: %s\n", buffer);
+
+    return 0;
 }
 
 static void
@@ -379,6 +383,8 @@ hotkeys_start (void) {
     read_config (disp);
     XSync (disp, 0);
     loop_tid = deadbeef->thread_start (hotkeys_event_loop, 0);
+
+    return 0;
 }
 
 static int
@@ -388,6 +394,8 @@ hotkeys_stop (void) {
         deadbeef->thread_join (loop_tid);
         cleanup ();
     }
+
+    return 0;
 }
 
 const char *

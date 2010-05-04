@@ -515,6 +515,8 @@ artwork_plugin_start (void)
     mutex = deadbeef->mutex_create_nonrecursive ();
     cond = deadbeef->cond_create ();
     tid = deadbeef->thread_start_low_priority (fetcher_thread, NULL);
+
+    return 0;
 }
 
 static int
@@ -537,6 +539,8 @@ artwork_plugin_stop (void)
     if (cond) {
         deadbeef->cond_free (cond);
     }
+
+    return 0;
 }
 
 static const char settings_dlg[] =
