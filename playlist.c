@@ -2659,6 +2659,9 @@ pl_is_selected (playItem_t *it) {
 
 playItem_t *
 pl_get_first (int iter) {
+    if (!playlist) {
+        return NULL;
+    }
     playItem_t *p = playlist->head[iter];
     if (p) {
         pl_item_ref (p);
