@@ -10,7 +10,6 @@ version 0.4.0
 	colors for custom widgets are taken from GTK theme, or can be set by user
 	fixed FreeBSD compatibility problems
 	improvemed resampling/streaming code
-	fixed 24-bit wavpack playback
 	enabled .TTA support in ffmpeg plugin
 	improved metadata readers (id3v1, id3v2, apev2)
 	improved Icy (shoutcast) protocol support
