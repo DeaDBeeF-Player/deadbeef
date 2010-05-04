@@ -31,7 +31,7 @@ DB_misc_t plugin;
 
 #define NOTIFY_DEFAULT_FORMAT "%a - %t"
 
-
+#if 0
 static void
 notify_marshal_dict_byte(DBusMessageIter *iter, const char *key, char value)
 {
@@ -59,7 +59,7 @@ notify_marshal_dict_string(DBusMessageIter *iter, const char *key, const char *v
   dbus_message_iter_close_container(&entry, &variant);
   dbus_message_iter_close_container(iter, &entry);
 }
-
+#endif
 
 static int
 on_songchanged (DB_event_trackchange_t *ev, uintptr_t data) {

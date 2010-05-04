@@ -789,8 +789,8 @@ streamer_thread (void *ctx) {
                 continue;
             }
             trace ("bytes_until_next_song=0, starting playback of new song\n");
-            playItem_t *from = playing_track;
-            playItem_t *to = streaming_track;
+            //playItem_t *from = playing_track;
+            //playItem_t *to = streaming_track;
             trace ("sending songchanged\n");
             bytes_until_next_song = -1;
             // plugin will get pointer to str_playing_song
@@ -1051,7 +1051,7 @@ streamer_reset (int full) { // must be called when current song changes by exter
     src_reset (src);
     // reset dsp
     DB_dsp_t **dsp = deadbeef->plug_get_dsp_list ();
-    int srate = p_get_rate ();
+    //int srate = p_get_rate ();
     for (int i = 0; dsp[i]; i++) {
         if (dsp[i]->enabled ()) {
             dsp[i]->reset ();
@@ -1318,7 +1318,7 @@ streamer_decode_src_libsamplerate (uint8_t *bytes, int size) {
         if (src_err) {
             const char *err = src_strerror (src_err) ;
             fprintf (stderr, "src_process error %s\n"
-                    "srcdata.data_in=%p, srcdata.data_out=%p, srcdata.input_frames=%d, srcdata.output_frames=%d, srcdata.src_ratio=%f", err, srcdata.data_in, srcdata.data_out, srcdata.input_frames, srcdata.output_frames, (float)srcdata.src_ratio);
+                    "srcdata.data_in=%p, srcdata.data_out=%p, srcdata.input_frames=%d, srcdata.output_frames=%d, srcdata.src_ratio=%f", err, srcdata.data_in, srcdata.data_out, (int)srcdata.input_frames, (int)srcdata.output_frames, (float)srcdata.src_ratio);
             exit (-1);
         }
         // convert back to s16 format

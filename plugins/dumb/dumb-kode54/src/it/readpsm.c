@@ -456,7 +456,7 @@ static DUMB_IT_SIGDATA *it_psm_load_sigdata(DUMBFILE *f, int * ver, int subsong)
 	PSMCHUNK *songchunk;
 	int n_song_chunks = 0;
 
-	PSMEVENT *event;
+	PSMEVENT *event = NULL;
 	int n_events = 0;
 
 	unsigned char * ptr;

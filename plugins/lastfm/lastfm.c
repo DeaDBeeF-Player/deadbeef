@@ -196,15 +196,15 @@ auth (void) {
     char token[100];
     deadbeef->md5 (sig, lfm_pass, strlen (lfm_pass));
     deadbeef->md5_to_str (passmd5, sig);
-    snprintf (token, sizeof (token), "%s%d", passmd5, timestamp);
+    snprintf (token, sizeof (token), "%s%d", passmd5, (int)timestamp);
     deadbeef->md5 (sig, token, strlen (token));
     deadbeef->md5_to_str (token, sig);
 
     const char *scrobbler_url = deadbeef->conf_get_str ("lastfm.scrobbler_url", SCROBBLER_URL_LFM);
 #if LFM_TESTMODE
-    snprintf (req, sizeof (req), "%s/?hs=true&p=1.2.1&c=tst&v=1.0&u=%s&t=%d&a=%s", scrobbler_url, lfm_user, timestamp, token);
+    snprintf (req, sizeof (req), "%s/?hs=true&p=1.2.1&c=tst&v=1.0&u=%s&t=%d&a=%s", scrobbler_url, lfm_user, (int)timestamp, token);
 #else
-    snprintf (req, sizeof (req), "%s/?hs=true&p=1.2.1&c=%s&v=%d.%d&u=%s&t=%d&a=%s", scrobbler_url, LFM_CLIENTID, plugin.plugin.version_major, plugin.plugin.version_minor, lfm_user, timestamp, token);
+    snprintf (req, sizeof (req), "%s/?hs=true&p=1.2.1&c=%s&v=%d.%d&u=%s&t=%d&a=%s", scrobbler_url, LFM_CLIENTID, plugin.plugin.version_major, plugin.plugin.version_minor, lfm_user, (int)timestamp, token);
 #endif
     // handshake
     int status = curl_req_send (req, NULL);

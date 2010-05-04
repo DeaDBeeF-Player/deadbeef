@@ -558,7 +558,7 @@ main (int argc, char *argv[]) {
                 fwrite (prn, 1, strlen (prn), stderr);
             }
             else if (sz > 0 && out[0]) {
-                fprintf (stderr, "got unknown response:\nlength=%d\n%s\n", sz, out);
+                fprintf (stderr, "got unknown response:\nlength=%d\n%s\n", (int)sz, out);
             }
         }
         close (s);

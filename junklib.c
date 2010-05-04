@@ -2601,7 +2601,7 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
             if (tag_store) {
                 DB_id3v2_frame_t *frm = malloc (sizeof (DB_id3v2_frame_t) + sz);
                 if (!frm) {
-                    fprintf (stderr, "junklib: failed to alloc %d bytes for id3v2 frame %s\n", sizeof (DB_id3v2_frame_t) + sz, frameid);
+                    fprintf (stderr, "junklib: failed to alloc %d bytes for id3v2 frame %s\n", (int)(sizeof (DB_id3v2_frame_t) + sz), frameid);
                     goto error;
                 }
                 memset (frm, 0, sizeof (DB_id3v2_frame_t));
@@ -2781,7 +2781,7 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
             if (tag_store) {
                 DB_id3v2_frame_t *frm = malloc (sizeof (DB_id3v2_frame_t) + sz);
                 if (!frm) {
-                    fprintf (stderr, "junklib: failed to alloc %d bytes for id3v2.2 frame %s\n", sizeof (DB_id3v2_frame_t) + sz, frameid);
+                    fprintf (stderr, "junklib: failed to alloc %d bytes for id3v2.2 frame %s\n", (int)(sizeof (DB_id3v2_frame_t) + sz), frameid);
                     goto error;
                 }
                 memset (frm, 0, sizeof (DB_id3v2_frame_t));

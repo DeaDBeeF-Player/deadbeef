@@ -421,6 +421,7 @@ paused_cb (gpointer nothing) {
 static int
 gtkui_on_paused (DB_event_state_t *ev, uintptr_t data) {
     g_idle_add (paused_cb, NULL);
+    return 0;
 }
 
 void
@@ -439,6 +440,7 @@ playlistchanged_cb (gpointer none) {
 static int
 gtkui_on_playlistchanged (DB_event_t *ev, uintptr_t data) {
     g_idle_add (playlistchanged_cb, NULL);
+    return 0;
 }
 
 static gboolean

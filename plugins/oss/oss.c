@@ -133,7 +133,7 @@ oss_change_rate (int rate) {
         return oss_rate;
     }
     if (rate == oss_rate) {
-        trace ("oss_change_rate: ignored\n", rate);
+        trace ("oss_change_rate %d: ignored\n", rate);
         return rate;
     }
     deadbeef->mutex_lock (mutex);

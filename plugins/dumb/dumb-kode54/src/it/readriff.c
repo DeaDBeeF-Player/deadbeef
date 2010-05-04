@@ -38,7 +38,7 @@ DUH *dumb_read_riff_quick( DUMBFILE * f )
 	{
 		unsigned char * buffer = 0;
 		unsigned size = 0;
-		unsigned read;
+		long read;
 		do
 		{
 			buffer = realloc( buffer, 32768 + size );

@@ -67,7 +67,7 @@ messagepump_reset (void) {
 int
 messagepump_push (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     if (!mfree) {
-        printf ("WARNING: message queue is full! message ignored (%d %p %d %d)\n", id, ctx, p1, p2);
+        printf ("WARNING: message queue is full! message ignored (%d %p %d %d)\n", id, (void*)ctx, p1, p2);
         return -1;
     }
     mutex_lock (mutex);
