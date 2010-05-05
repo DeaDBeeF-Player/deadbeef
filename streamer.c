@@ -332,10 +332,10 @@ streamer_move_to_nextsong (int reason) {
             pl_global_unlock ();
             return 0;
         }
-        pl_global_unlock ();
         int res = streamer_move_to_randomsong ();
         if (res == -1) {
             trace ("streamer_move_to_randomsong error\n");
+            pl_global_unlock ();
             streamer_set_nextsong (-2, 1);
             return -1;
         }
