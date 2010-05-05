@@ -319,7 +319,7 @@ cflac_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
             int n_output_frames = size / n_output_channels / sizeof (int16_t);
             int n = min (n_input_frames, n_output_frames);
 
-            trace ("flac: [1] if=%d, of=%d, n=%d, rem=%d, size=%d\n", n_input_frames, n_output_frames, n, remaining, size);
+            trace ("flac: [1] if=%d, of=%d, n=%d, rem=%d, size=%d\n", n_input_frames, n_output_frames, n, info->remaining, size);
             // convert from float to int16
             float *in = (float *)info->buffer;
             for (int i = 0; i < n; i++) {
