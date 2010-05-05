@@ -19,6 +19,7 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 #include <string.h>
+#include <math.h>
 #include "ddblistview.h"
 #include "trkproperties.h"
 #include "interface.h"
@@ -125,6 +126,11 @@ static const char *types[] = {
     NULL
 };
 
+static inline float
+amp_to_db (float amp) {
+    return 20*log10 (amp);
+}
+
 void
 trkproperties_fill_metadata (void) {
     if (!trackproperties) {
@@ -163,6 +169,20 @@ trkproperties_fill_metadata (void) {
     gtk_list_store_set (propstore, &iter, 0, "Tag Type(s)", 1, temp, -1);
     gtk_list_store_append (propstore, &iter);
     gtk_list_store_set (propstore, &iter, 0, "Embedded Cuesheet", 1, (deadbeef->pl_get_item_flags (track) & DDB_HAS_EMBEDDED_CUESHEET) ? "Yes" : "No", -1);
+
+    gtk_list_store_append (propstore, &iter);
+    snprintf (temp, sizeof (temp), "%0.2f dB", amp_to_db (track->replaygain_album_gain));
+    gtk_list_store_set (propstore, &iter, 0, "REPLAYGAIN_ALBUM_GAIN", 1, temp, -1);
+    gtk_list_store_append (propstore, &iter);
+    snprintf (temp, sizeof (temp), "%0.6f", track->replaygain_album_peak);
+    gtk_list_store_set (propstore, &iter, 0, "REPLAYGAIN_ALBUM_PEAK", 1, temp, -1);
+
+    gtk_list_store_append (propstore, &iter);
+    snprintf (temp, sizeof (temp), "%0.2f dB", amp_to_db (track->replaygain_track_gain));
+    gtk_list_store_set (propstore, &iter, 0, "REPLAYGAIN_TRACK_GAIN", 1, temp, -1);
+    gtk_list_store_append (propstore, &iter);
+    snprintf (temp, sizeof (temp), "%0.6f", track->replaygain_track_peak);
+    gtk_list_store_set (propstore, &iter, 0, "REPLAYGAIN_TRACK_PEAK", 1, temp, -1);
 }
 
 void
