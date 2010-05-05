@@ -692,7 +692,6 @@ pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, c
     }
     if (replaygain_album_gain[0]) {
         it->replaygain_album_gain = db_to_amp (atof (replaygain_album_gain));
-        printf ("album gain: %s -> %f\n", replaygain_album_gain, it->replaygain_album_gain);
     }
     if (replaygain_album_peak[0]) {
         it->replaygain_album_peak = atof (replaygain_album_peak);
@@ -808,6 +807,10 @@ pl_insert_cue_from_buffer (playItem_t *after, playItem_t *origin, const uint8_t 
         else {
 //            fprintf (stderr, "got unknown line:\n%s\n", p);
         }
+    }
+    if (ins == after) {
+        UNLOCK;
+        return NULL;
     }
     after = pl_process_cue_track (after, origin->fname, &prev, track, index00, index01, pregap, title, performer, albumtitle, genre, date, replaygain_album_gain, replaygain_album_peak, replaygain_track_gain, replaygain_track_peak, origin->decoder_id, origin->filetype, samplerate);
     if (after) {
