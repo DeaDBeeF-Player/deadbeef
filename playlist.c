@@ -43,6 +43,7 @@
 #include "common.h"
 #include "threading.h"
 #include "metacache.h"
+#include "volume.h"
 
 #define DISABLE_LOCKING 0
 #define DEBUG_LOCKING 0
@@ -602,7 +603,7 @@ pl_cue_parse_time (const char *p) {
 }
 
 static playItem_t *
-pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, char *track, char *index00, char *index01, char *pregap, char *title, char *performer, char *albumtitle, char *genre, char *date, const char *decoder_id, const char *ftype, int samplerate) {
+pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, char *track, char *index00, char *index01, char *pregap, char *title, char *performer, char *albumtitle, char *genre, char *date, char *replaygain_album_gain, char *replaygain_album_peak, char *replaygain_track_gain, char *replaygain_track_peak, const char *decoder_id, const char *ftype, int samplerate) {
     if (!track[0]) {
         return after;
     }
@@ -689,6 +690,19 @@ pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, c
     if (date[0]) {
         pl_add_meta (it, "year", date);
     }
+    if (replaygain_album_gain[0]) {
+        it->replaygain_album_gain = db_to_amp (atof (replaygain_album_gain));
+        printf ("album gain: %s -> %f\n", replaygain_album_gain, it->replaygain_album_gain);
+    }
+    if (replaygain_album_peak[0]) {
+        it->replaygain_album_peak = atof (replaygain_album_peak);
+    }
+    if (replaygain_track_gain[0]) {
+        it->replaygain_track_gain = db_to_amp (atof (replaygain_track_gain));
+    }
+    if (replaygain_track_peak[0]) {
+        it->replaygain_track_peak = atof (replaygain_track_peak);
+    }
     it->_flags |= DDB_IS_SUBTRACK | DDB_TAG_CUESHEET;
     after = pl_insert_item (after, it);
     pl_item_unref (it);
@@ -710,6 +724,10 @@ pl_insert_cue_from_buffer (playItem_t *after, playItem_t *origin, const uint8_t 
     char pregap[256] = "";
     char index00[256] = "";
     char index01[256] = "";
+    char replaygain_album_gain[256] = "";
+    char replaygain_album_peak[256] = "";
+    char replaygain_track_gain[256] = "";
+    char replaygain_track_peak[256] = "";
     playItem_t *prev = NULL;
     while (buffersize > 0) {
         const uint8_t *p = buffer;
@@ -754,20 +772,30 @@ pl_insert_cue_from_buffer (playItem_t *after, playItem_t *origin, const uint8_t 
         }
         else if (!strncmp (p, "TRACK ", 6)) {
             // add previous track
-            after = pl_process_cue_track (after, origin->fname, &prev, track, index00, index01, pregap, title, performer, albumtitle, genre, date, origin->decoder_id, origin->filetype, samplerate);
+            after = pl_process_cue_track (after, origin->fname, &prev, track, index00, index01, pregap, title, performer, albumtitle, genre, date, replaygain_album_gain, replaygain_album_peak, replaygain_track_gain, replaygain_track_peak, origin->decoder_id, origin->filetype, samplerate);
 
             track[0] = 0;
             title[0] = 0;
             pregap[0] = 0;
             index00[0] = 0;
             index01[0] = 0;
+            replaygain_track_gain[0] = 0;
+            replaygain_track_peak[0] = 0;
             pl_get_value_from_cue (p + 6, sizeof (track), track);
 //            printf ("got track: %s\n", track);
         }
-//        else if (!strncmp (p, "PERFORMER ", 10)) {
-//            pl_get_qvalue_from_cue (p + 10, performer);
-//        }
-
+        else if (!strncmp (p, "REM REPLAYGAIN_ALBUM_GAIN ", 26)) {
+            pl_get_value_from_cue (p + 26, sizeof (replaygain_album_gain), replaygain_album_gain);
+        }
+        else if (!strncmp (p, "REM REPLAYGAIN_ALBUM_PEAK ", 26)) {
+            pl_get_value_from_cue (p + 26, sizeof (replaygain_album_peak), replaygain_album_peak);
+        }
+        else if (!strncmp (p, "REM REPLAYGAIN_TRACK_GAIN ", 26)) {
+            pl_get_value_from_cue (p + 26, sizeof (replaygain_track_gain), replaygain_track_gain);
+        }
+        else if (!strncmp (p, "REM REPLAYGAIN_TRACK_PEAK ", 26)) {
+            pl_get_value_from_cue (p + 26, sizeof (replaygain_track_peak), replaygain_track_peak);
+        }
         else if (!strncmp (p, "PREGAP ", 7)) {
             pl_get_value_from_cue (p + 7, sizeof (pregap), pregap);
         }
@@ -781,7 +809,7 @@ pl_insert_cue_from_buffer (playItem_t *after, playItem_t *origin, const uint8_t 
 //            fprintf (stderr, "got unknown line:\n%s\n", p);
         }
     }
-    after = pl_process_cue_track (after, origin->fname, &prev, track, index00, index01, pregap, title, performer, albumtitle, genre, date, origin->decoder_id, origin->filetype, samplerate);
+    after = pl_process_cue_track (after, origin->fname, &prev, track, index00, index01, pregap, title, performer, albumtitle, genre, date, replaygain_album_gain, replaygain_album_peak, replaygain_track_gain, replaygain_track_peak, origin->decoder_id, origin->filetype, samplerate);
     if (after) {
         trace ("last track endsample: %d\n", numsamples-1);
         after->endsample = numsamples-1;
