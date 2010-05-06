@@ -46,8 +46,8 @@
 
 #endif
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -228,6 +228,7 @@ ffmpeg_free (DB_fileinfo_t *_info) {
 
 static int
 ffmpeg_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
+    trace ("ffmpeg_read_int16 %d\n", size);
     ffmpeg_info_t *info = (ffmpeg_info_t*)_info;
     // try decode `size' bytes
     // return number of decoded bytes
@@ -261,13 +262,13 @@ ffmpeg_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
         while (info->left_in_packet > 0 && size > 0) {
             int out_size = AVCODEC_MAX_AUDIO_FRAME_SIZE;
             int len;
-//            trace ("in: out_size=%d(%d), size=%d\n", out_size, AVCODEC_MAX_AUDIO_FRAME_SIZE, size);
+            //trace ("in: out_size=%d(%d), size=%d\n", out_size, AVCODEC_MAX_AUDIO_FRAME_SIZE, size);
 #if (LIBAVCODEC_VERSION_MAJOR <= 52) && (LIBAVCODEC_VERSION_MINOR <= 25)
             len = avcodec_decode_audio2 (info->ctx, (int16_t *)info->buffer, &out_size, info->pkt.data, info->pkt.size);
 #else
             len = avcodec_decode_audio3 (info->ctx, (int16_t *)info->buffer, &out_size, &info->pkt);
 #endif
-//            trace ("out: out_size=%d, len=%d\n", out_size, len);
+            trace ("out: out_size=%d, len=%d\n", out_size, len);
             if (len <= 0) {
                 break;
             }
@@ -306,17 +307,18 @@ ffmpeg_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
                 }
             }
             else {
+                trace ("av packet size: %d, numframes: %d\n", info->pkt.size, ret);
                 errcount = 0;
             }
             if (ret == -1) {
                 break;
             }
-//            trace ("idx:%d, stream:%d\n", pkt.stream_index, stream_id);
+            //trace ("idx:%d, stream:%d\n", info->pkt.stream_index, info->stream_id);
             if (info->pkt.stream_index != info->stream_id) {
                 av_free_packet (&info->pkt);
                 continue;
             }
-//            trace ("got packet: size=%d\n", pkt.size);
+            //trace ("got packet: size=%d\n", info->pkt.size);
             info->have_packet = 1;
             info->left_in_packet = info->pkt.size;
 
