@@ -160,8 +160,14 @@ curl_req_send (const char *req, const char *post) {
         const char *proxyuser = deadbeef->conf_get_str ("network.proxy.username", "");
         const char *proxypass = deadbeef->conf_get_str ("network.proxy.password", "");
         if (*proxyuser || *proxypass) {
+#if LIBCURL_VERSION_MINOR >= 19 && LIBCURL_VERSION_PATCH >= 1
             curl_easy_setopt (curl, CURLOPT_PROXYUSERNAME, proxyuser);
             curl_easy_setopt (curl, CURLOPT_PROXYUSERNAME, proxypass);
+#else
+            char pwd[200];
+            snprintf (pwd, sizeof (pwd), "%s:%s", proxyuser, proxypass);
+            curl_easy_setopt (curl, CURLOPT_PROXYUSERPWD, pwd);
+#endif
         }
     }
     int status = curl_easy_perform(curl);
