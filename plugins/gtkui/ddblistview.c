@@ -680,7 +680,17 @@ ddb_listview_list_render (DdbListview *listview, int x, int y, int w, int h) {
     if (grp_y < y + h + listview->scrollpos) {
         int hh = y + h - (grp_y - listview->scrollpos);
 //        gdk_draw_rectangle (listview->backbuf, listview->list->style->bg_gc[GTK_STATE_NORMAL], TRUE, x, grp_y - listview->scrollpos, w, hh);
-        gtk_paint_flat_box (treeview->style, listview->backbuf, GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, treeview, "cell_even_ruled", x, grp_y - listview->scrollpos, w, hh);
+        int theming = !gtkui_override_listview_colors ();
+        if (theming) {
+            gtk_paint_flat_box (treeview->style, listview->backbuf, GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, treeview, "cell_even_ruled", x, grp_y - listview->scrollpos, w, hh);
+        }
+        else {
+            GdkColor clr;
+            GdkGC *gc = gdk_gc_new (listview->backbuf);
+            gdk_gc_set_rgb_fg_color (gc, (gtkui_get_listview_even_row_color (&clr), &clr));
+            gdk_draw_rectangle (listview->backbuf, gc, TRUE, x, grp_y - listview->scrollpos, w, hh);
+            g_object_unref (gc);
+        }
     }
     draw_end ();
 }
