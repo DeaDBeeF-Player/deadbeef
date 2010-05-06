@@ -31,6 +31,9 @@ void
 plug_unload_all (void);
 
 void
+plug_cleanup (void);
+
+void
 plug_ev_subscribe (DB_plugin_t *plugin, int ev, DB_callback_t callback, uintptr_t data);
 
 void

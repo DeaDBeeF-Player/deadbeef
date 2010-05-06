@@ -446,6 +446,7 @@ void
 plt_free (void) {
     trace ("plt_free\n");
     PLT_LOCK;
+    pl_playqueue_clear ();
     plt_loading = 1;
     while (playlists_head) {
 
@@ -2882,7 +2883,11 @@ pl_playqueue_push (playItem_t *it) {
         return -1;
     }
     LOCK;
+    pl_item_ref (it);
     playqueue[playqueue_count++] = it;
+    for (int i = 0; i < playqueue_count; i++) {
+        plug_trigger_event_trackinfochanged (playqueue[i]);
+    }
     UNLOCK;
     return 0;
 }
@@ -2890,7 +2895,15 @@ pl_playqueue_push (playItem_t *it) {
 void
 pl_playqueue_clear (void) {
     LOCK;
+    int cnt = playqueue_count;
     playqueue_count = 0;
+    int i;
+    for (i = 0; i < cnt; i++) {
+        plug_trigger_event_trackinfochanged (playqueue[i]);
+    }
+    for (i = 0; i < cnt; i++) {
+        pl_item_unref (playqueue[i]);
+    }
     UNLOCK;
 }
 
@@ -2902,11 +2915,19 @@ pl_playqueue_pop (void) {
     LOCK;
     if (playqueue_count == 1) {
         playqueue_count = 0;
+        plug_trigger_event_trackinfochanged (playqueue[0]);
+        pl_item_unref (playqueue[0]);
         UNLOCK;
         return;
     }
+    playItem_t *it = playqueue[0];
     memmove (&playqueue[0], &playqueue[1], (playqueue_count-1) * sizeof (playItem_t*));
     playqueue_count--;
+    plug_trigger_event_trackinfochanged (it);
+    for (int i = 0; i < playqueue_count; i++) {
+        plug_trigger_event_trackinfochanged (playqueue[i]);
+    }
+    pl_item_unref (it);
     UNLOCK;
 }
 
@@ -2920,6 +2941,8 @@ pl_playqueue_remove (playItem_t *it) {
                 if (i < playqueue_count-1) {
                     memmove (&playqueue[i], &playqueue[i+1], (playqueue_count-i) * sizeof (playItem_t*));
                 }
+                plug_trigger_event_trackinfochanged (it);
+                pl_item_unref (it);
                 playqueue_count--;
                 break;
             }
@@ -2927,6 +2950,9 @@ pl_playqueue_remove (playItem_t *it) {
         if (i == playqueue_count) {
             break;
         }
+    }
+    for (int i = 0; i < playqueue_count; i++) {
+        plug_trigger_event_trackinfochanged (playqueue[i]);
     }
     UNLOCK;
 }

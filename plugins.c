@@ -744,8 +744,16 @@ plug_unload_all (void) {
         free (plugins);
         plugins = next;
     }
-    mutex_free (mutex);
     fprintf (stderr, "all plugins had been unloaded\n");
+}
+
+void
+plug_cleanup (void) {
+    if (mutex) {
+        mutex_free (mutex);
+        mutex = 0;
+    }
+    plug_free_decoder_ids ();
 }
 
 struct DB_decoder_s **

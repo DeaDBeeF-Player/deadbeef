@@ -643,10 +643,10 @@ main (int argc, char *argv[]) {
 
     // at this point we can simply do exit(0), but let's clean up for debugging
     plt_free (); // plt_free may access conf_*
+    pl_free ();
     conf_free ();
     messagepump_free ();
-    plug_free_decoder_ids ();
-    pl_free ();
+    plug_cleanup ();
     sigterm_handled = 1;
     fprintf (stderr, "hej-hej!\n");
     return 0;
