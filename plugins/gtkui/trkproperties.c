@@ -232,9 +232,11 @@ show_track_properties_dlg (DB_playItem_t *it) {
         gtk_tree_view_set_model (tree, GTK_TREE_MODEL (store));
         GtkCellRenderer *rend_text = gtk_cell_renderer_text_new ();
         rend_text2 = GTK_CELL_RENDERER (ddb_cell_renderer_text_multiline_new ());//gtk_cell_renderer_text_new ();
-        g_signal_connect ((gpointer)rend_text2, "edited",
-                G_CALLBACK (on_metadata_edited),
-                store);
+        if (allow_editing) {
+            g_signal_connect ((gpointer)rend_text2, "edited",
+                    G_CALLBACK (on_metadata_edited),
+                    store);
+        }
         GtkTreeViewColumn *col1 = gtk_tree_view_column_new_with_attributes ("Key", rend_text, "text", 0, NULL);
         GtkTreeViewColumn *col2 = gtk_tree_view_column_new_with_attributes ("Value", rend_text2, "text", 1, NULL);
         gtk_tree_view_append_column (tree, col1);
@@ -261,12 +263,12 @@ show_track_properties_dlg (DB_playItem_t *it) {
         gtk_list_store_clear (propstore);
     }
 
-    if (allow_editing) {
+//    if (allow_editing) {
         g_object_set (G_OBJECT (rend_text2), "editable", TRUE, NULL);
-    }
-    else {
-        g_object_set (G_OBJECT (rend_text2), "editable", FALSE, NULL);
-    }
+//    }
+//    else {
+//        g_object_set (G_OBJECT (rend_text2), "editable", FALSE, NULL);
+//    }
 
     GtkWidget *widget = trackproperties;
     GtkWidget *w;
