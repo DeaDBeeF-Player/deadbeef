@@ -94,6 +94,9 @@ plt_get_curr_ptr (void);
 int
 plt_get_count (void);
 
+playlist_t *
+plt_get_list (void);
+
 playItem_t *
 plt_get_head (int plt);
 

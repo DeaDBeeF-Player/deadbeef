@@ -41,7 +41,10 @@ streamer_unlock (void);
 // pstate indicates what to do with playback
 // -1 means "don't do anything"
 // -2 means "end of playlist"
-// otherwise "set state to this value"
+// 0 stop
+// 1 switch to current (gui) playlist, play if not playing
+// 2 pause
+// 3 play if not playing, don't switch playlist
 void
 streamer_set_nextsong (int song, int pstate);
 

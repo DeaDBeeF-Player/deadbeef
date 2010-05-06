@@ -206,22 +206,58 @@ str_get_for_idx (int idx) {
 
 int
 streamer_move_to_nextsong (int reason) {
+    trace ("streamer_move_to_nextsong (%d)\n", reason);
     pl_global_lock ();
     if (!streamer_playlist) {
         streamer_playlist = plt_get_curr_ptr ();
     }
-    playlist_t *plt = streamer_playlist;
-    playItem_t *it = pl_playqueue_getnext ();
-    if (it) {
-        pl_playqueue_pop ();
-        int r = str_get_idx_of (it);
-        pl_item_unref (it);
-        streamer_set_nextsong (r, 1);
-        pl_global_unlock ();
-        return 0;
+    while (pl_playqueue_getcount ()) {
+        trace ("pl_playqueue_getnext\n");
+        playItem_t *it = pl_playqueue_getnext ();
+        if (it) {
+            pl_playqueue_pop ();
+            int r = str_get_idx_of (it);
+            if (r >= 0) {
+                pl_item_unref (it);
+                streamer_set_nextsong (r, 1);
+                pl_global_unlock ();
+                return 0;
+            }
+            else {
+                trace ("%s not found in current streaming playlist\n", it->fname);
+                // find playlist
+                playlist_t *old = streamer_playlist;
+                streamer_playlist = plt_get_list ();
+                int i = 0;
+                while (streamer_playlist) {
+                    trace ("searching for %s in playlist %d\n", it->fname, i);
+                    int r = str_get_idx_of (it);
+                    if (r >= 0) {
+                        trace ("%s found in playlist %d\n", it->fname, i);
+                        pl_item_unref (it);
+                        streamer_set_nextsong (r, 3);
+                        pl_global_unlock ();
+                        return 0;
+                    }
+                    i++;
+                    streamer_playlist = streamer_playlist->next;
+                }
+                trace ("%s not found in any playlists\n", it->fname);
+                streamer_playlist = old;
+                pl_item_unref (it);
+            }
+        }
+    }
+    playItem_t *curr = playlist_track;
+    if (reason == 1) {
+        streamer_playlist = plt_get_curr_ptr ();
+        // check if prev song is in this playlist
+        if (-1 == str_get_idx_of (curr)) {
+            curr = NULL;
+        }
     }
 
-    playItem_t *curr = playlist_track;
+    playlist_t *plt = streamer_playlist;
     if (!plt->head[PL_MAIN]) {
         streamer_set_nextsong (-2, 1);
         pl_global_unlock ();
@@ -350,6 +386,12 @@ streamer_move_to_prevsong (void) {
     if (!streamer_playlist) {
         streamer_playlist = plt_get_curr_ptr ();
     }
+    streamer_playlist = plt_get_curr_ptr ();
+    // check if prev song is in this playlist
+    if (-1 == str_get_idx_of (playlist_track)) {
+        playlist_track = NULL;
+    }
+
     playlist_t *plt = streamer_playlist;
     pl_playqueue_clear ();
     if (!plt->head[PL_MAIN]) {
@@ -604,7 +646,7 @@ streamer_set_current (playItem_t *it) {
 success:
     plug_trigger_event_trackinfochanged (to);
 
-    trace ("\033[0;32mstr: %p, ply: %p\033[37;0m\n", streaming_track, playing_track);
+    trace ("\033[0;32mstr: %p (%s), ply: %p (%s)\033[37;0m\n", streaming_track, streaming_track ? streaming_track->fname : "null", playing_track, playing_track ? playing_track->fname : "null");
 
 error:
     if (from) {
@@ -637,7 +679,6 @@ streamer_get_apx_bitrate (void) {
 void
 streamer_set_nextsong (int song, int pstate) {
     trace ("streamer_set_nextsong %d %d\n", song, pstate);
-    //plug_trigger_event (DB_EV_ABORTREAD, 0);
     if (fileinfo && fileinfo->file) {
         trace ("\033[0;31maborting current song: %s (fileinfo %p, file %p)\033[37;0m\n", streaming_track ? streaming_track->fname : NULL, fileinfo, fileinfo ? fileinfo->file : NULL);
         mutex_lock (decodemutex);
@@ -728,10 +769,12 @@ streamer_start_new_song (void) {
     pl_item_unref (try);
     try = NULL;
     badsong = -1;
+    trace ("pstate = %d\n", pstate);
+    trace ("playback state = %d\n", p_state ());
     if (pstate == 0) {
         p_stop ();
     }
-    else if (pstate == 1) {
+    else if (pstate == 1 || pstate == 3) {
         last_bitrate = -1;
         avg_bitrate = -1;
         if (p_state () != OUTPUT_STATE_PLAYING) {

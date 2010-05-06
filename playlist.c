@@ -193,6 +193,11 @@ plt_gen_conf (void) {
 }
 
 playlist_t *
+plt_get_list (void) {
+    return playlists_head;
+}
+
+playlist_t *
 plt_get_curr_ptr (void) {
     return playlist;
 }
