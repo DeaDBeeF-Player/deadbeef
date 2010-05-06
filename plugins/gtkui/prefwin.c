@@ -826,6 +826,7 @@ on_override_listview_colors_toggled    (GtkToggleButton *togglebutton,
     gtk_widget_set_sensitive (lookup_widget (prefwin, "listview_colors_group"), active);
     deadbeef->sendmessage (M_CONFIGCHANGED, 0, 0, 0);
     gtkui_init_theme_colors ();
+    prefwin_init_theme_colors ();
     playlist_refresh ();
 }
 
