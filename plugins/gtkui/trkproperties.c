@@ -100,8 +100,13 @@ on_metadata_edited (GtkCellRendererText *renderer, gchar *path, gchar *new_text,
     GtkTreeIter iter;
     gtk_tree_model_get_iter (GTK_TREE_MODEL (store), &iter, treepath);
     gtk_tree_path_free (treepath);
-    gtk_list_store_set (store, &iter, 1, new_text, -1);
-    trkproperties_modified = 1;
+    GValue value = {0,};
+    gtk_tree_model_get_value (GTK_TREE_MODEL (store), &iter, 1, &value);
+    const char *svalue = g_value_get_string (&value);
+    if (strcmp (svalue, new_text)) {
+        gtk_list_store_set (store, &iter, 1, new_text, -1);
+        trkproperties_modified = 1;
+    }
 }
 
 // full metadata
