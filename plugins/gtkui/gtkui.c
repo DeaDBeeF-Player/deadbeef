@@ -577,12 +577,14 @@ on_add_location_activate               (GtkMenuItem     *menuitem,
 
 static void
 songchanged (DdbListview *ps, DB_playItem_t *from, DB_playItem_t *to) {
-    int str_plt = deadbeef->streamer_get_current_playlist ();
     int plt = deadbeef->plt_get_curr ();
+#if 0 // this breaks redraw when playqueue switches to another playlist
+    int str_plt = deadbeef->streamer_get_current_playlist ();
     if (plt != str_plt) {
         // have nothing to do here -- active playlist is not the one with playing song
         return;
     }
+#endif
     int to_idx = -1;
     if (!ddb_listview_is_scrolling (ps) && to) {
         to_idx = deadbeef->pl_get_idx_of (to);

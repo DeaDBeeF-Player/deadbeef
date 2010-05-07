@@ -484,6 +484,7 @@ plug_trigger_event_trackinfochanged (playItem_t *track) {
     DB_event_track_t event;
     event.ev.event = DB_EV_TRACKINFOCHANGED;
     event.track = DB_PLAYITEM (track);
+    //printf ("\033[0;31mtrackinfochanged %p(%s), playing: %p, streaming: %p\033[37;0m\n", track, track->fname, streamer_get_playing_track (), streamer_get_streaming_track ());
     plug_event_call (DB_EVENT (&event));
 }
 
