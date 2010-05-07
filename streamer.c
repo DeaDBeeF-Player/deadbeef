@@ -1648,6 +1648,7 @@ streamer_play_current_track (void) {
         if (next) {
             idx = str_get_idx_of (next);
             pl_playqueue_pop ();
+            pl_item_unref (next);
         }
         else {
             idx = plt->current_row[PL_MAIN];
