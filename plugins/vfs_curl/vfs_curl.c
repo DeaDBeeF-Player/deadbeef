@@ -41,7 +41,7 @@ static DB_functions_t *deadbeef;
 #define TIMEOUT 10 // in seconds
 
 #define STATUS_INITIAL  0
-#define STATUS_STARTING 1
+//#define STATUS_STARTING 1
 #define STATUS_READING  2
 #define STATUS_FINISHED 3
 #define STATUS_ABORTED  4
@@ -441,14 +441,17 @@ http_curl_control (void *stream, double dltotal, double dlnow, double ultotal, d
     float sec = tm.tv_sec - fp->last_read_time.tv_sec;
     long response;
     CURLcode code = curl_easy_getinfo (fp->curl, CURLINFO_RESPONSE_CODE, &response);
-//    trace ("http_curl_control: status = %d, response = %d, interval: %f seconds\n", fp ? fp->status : -1, response, sec);
+    trace ("http_curl_control: status = %d, response = %d, interval: %f seconds\n", fp ? fp->status : -1, response, sec);
     if (fp->status == STATUS_READING && sec > TIMEOUT) {
         trace ("http_curl_control: timed out, restarting read\n");
         memcpy (&fp->last_read_time, &tm, sizeof (struct timeval));
         http_stream_reset (fp);
         fp->status = STATUS_SEEK;
     }
-    assert (stream);
+    else if (fp->status == STATUS_SEEK) {
+        trace ("vfs_curl STATUS_SEEK in progress callback\n");
+        return -1;
+    }
     if (fp->status == STATUS_ABORTED) {
         trace ("vfs_curl STATUS_ABORTED in progress callback\n");
         return -1;
@@ -535,8 +538,10 @@ http_thread_func (void *ctx) {
 #endif
             }
         }
+//        fp->status = STATUS_INITIAL;
+        trace ("vfs_curl: calling curl_easy_perform (status=%d)...\n", fp->status);
         status = curl_easy_perform (curl);
-        trace ("vfs_curl: curl_easy_perform status=%d\n", status);
+        trace ("vfs_curl: curl_easy_perform retval=%d\n", status);
         if (status != 0) {
             trace ("curl error:\n%s\n", http_err);
         }

@@ -681,8 +681,8 @@ streamer_set_nextsong (int song, int pstate) {
     trace ("streamer_set_nextsong %d %d\n", song, pstate);
     if (fileinfo && fileinfo->file) {
         trace ("\033[0;31maborting current song: %s (fileinfo %p, file %p)\033[37;0m\n", streaming_track ? streaming_track->fname : NULL, fileinfo, fileinfo ? fileinfo->file : NULL);
-        mutex_lock (decodemutex);
         deadbeef->fabort (fileinfo->file);
+        mutex_lock (decodemutex);
         if (streamer_file) {
             trace ("\033[0;31maborting streamer_file\033[37;0m\n");
             deadbeef->fabort (streamer_file);
