@@ -125,7 +125,7 @@ cflac_write_callback (const FLAC__StreamDecoder *decoder, const FLAC__Frame *fra
     }
     int readbytes = frame->header.blocksize * channels * _info->bps / 8;
 
-    for (int i = 0; i < nsamples; i++) {
+    for (int i = 0; i <  nsamples; i++) {
         for (int c = 0; c < channels; c++) {
             int32_t sample = inputbuffer[c][i];
             *((float*)bufptr) = sample * mul;
@@ -259,6 +259,7 @@ cflac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         return -1;
     }
     info->buffer = malloc (BUFFERSIZE);
+    info->remaining = 0;
     if (it->endsample > 0) {
         info->startsample = it->startsample;
         info->endsample = it->endsample;
@@ -280,7 +281,6 @@ cflac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         return -1;
     }
 
-    info->remaining = 0;
     return 0;
 }
 
@@ -319,7 +319,7 @@ cflac_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
             int n_output_frames = size / n_output_channels / sizeof (int16_t);
             int n = min (n_input_frames, n_output_frames);
 
-            trace ("flac: [1] if=%d, of=%d, n=%d, rem=%d, size=%d\n", n_input_frames, n_output_frames, n, info->remaining, size);
+//            trace ("flac: [1] if=%d, of=%d, n=%d, rem=%d, size=%d\n", n_input_frames, n_output_frames, n, info->remaining, size);
             // convert from float to int16
             float *in = (float *)info->buffer;
             for (int i = 0; i < n; i++) {
@@ -340,7 +340,7 @@ cflac_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
             info->remaining -= sz;
             info->currentsample += n;
             _info->readpos += (float)n / _info->samplerate;
-            trace ("flac: [2] if=%d, of=%d, n=%d, rem=%d, size=%d\n", n_input_frames, n_output_frames, n, info->remaining, size);
+//            trace ("flac: [2] if=%d, of=%d, n=%d, rem=%d, size=%d\n", n_input_frames, n_output_frames, n, info->remaining, size);
         }
         if (!size) {
             break;
@@ -427,11 +427,11 @@ static int
 cflac_seek_sample (DB_fileinfo_t *_info, int sample) {
     flac_info_t *info = (flac_info_t *)_info;
     sample += info->startsample;
+    info->currentsample = sample;
+    info->remaining = 0;
     if (!FLAC__stream_decoder_seek_absolute (info->decoder, (FLAC__uint64)(sample))) {
         return -1;
     }
-    info->remaining = 0;
-    info->currentsample = sample;
     _info->readpos = (float)(sample - info->startsample)/ _info->samplerate;
     return 0;
 }
