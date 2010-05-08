@@ -540,6 +540,7 @@ http_thread_func (void *ctx) {
         }
 //        fp->status = STATUS_INITIAL;
         trace ("vfs_curl: calling curl_easy_perform (status=%d)...\n", fp->status);
+        gettimeofday (&fp->last_read_time, NULL);
         status = curl_easy_perform (curl);
         trace ("vfs_curl: curl_easy_perform retval=%d\n", status);
         if (status != 0) {
