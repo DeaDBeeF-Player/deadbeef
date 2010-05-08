@@ -2632,7 +2632,7 @@ playItem_t *ddb_merge(playItem_t *head_one, playItem_t *head_two, int iter) {
         return head_one;
 
     int cmp = pl_sort_compare (head_one, head_two);
-    if(cmp < 0) {
+    if(cmp <= 0) {
         head_three = head_one;
         head_three->next[iter] = ddb_merge(head_one->next[iter], head_two, iter);
     } else {
