@@ -23,20 +23,32 @@ Note that other included libraries and plugins may have separate licensing terms
 Contributors:
 
     Viktor Semykin <thesame.ml@gmail.com>
-        global hotkeys plugin, CD Audio plugin, Cover art plugin, lots of patches and suggestions
+        Global Hotkeys plugin, CD Audio plugin, Cover Art plugin, lots of patches and suggestions
     
-    Stas Akimushkin <uncle.lag@gmail.com>
-        icons
-
     Alexey A. Smirnov <alexey.smirnov@gmx.com>
+        Debian packaging, patches
+
+    Stas Akimushkin <uncle.lag@gmail.com>
+        Icon
+
     Igor Murzov <igor@gplsoft.org>
     tonn <tonn.post@gmail.com>
     Kryksyh <druid@foobar2000.ru>
     Derreck <sarumyanxxl@users.sourceforge.net>
     Alex Dedul <rotmer@gmail.com>
     Igor Rudchenko <igor@thinkpads.net>
+    Serghey Kotlyarov <shadowsbrother@gmail.com>
+    Veniamin Gvozdikov <g.veniamin@googlemail.com>
 
-    and all the other great people hanging at deadbeef-ru@cjr and #deadbeef-player
+
+Special Thanks To:
+
+    Jan Marguc
+    Bram Moolenaar
+    Olga Belozerova
+    James Lee
+
+    and to all the people and anonymous creatures hanging at deadbeef-ru@cjr and #deadbeef-player
 
 
 Bundled libraries:
