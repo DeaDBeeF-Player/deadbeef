@@ -3,6 +3,8 @@
 
 #include "../../deadbeef.h"
 
+extern DB_FILE *current_file;
+
 typedef void (*artwork_callback) (const char *fname, const char *artist, const char *album, void *user_data);
 
 typedef struct {

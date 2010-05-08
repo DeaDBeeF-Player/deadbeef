@@ -20,6 +20,8 @@
 static DB_artwork_plugin_t plugin;
 DB_functions_t *deadbeef;
 
+DB_FILE *current_file;
+
 typedef struct cover_query_s {
     char *fname;
     char *artist;
@@ -268,6 +270,7 @@ fetcher_thread (void *none)
                     DB_id3v2_tag_t tag;
                     memset (&tag, 0, sizeof (tag));
                     DB_FILE *fp = deadbeef->fopen (param->fname);
+                    current_file = fp;
                     int got_id3v2_pic = 0;
                     if (fp) {
                         int res = deadbeef->junk_id3v2_read_full (NULL, &tag, fp);
@@ -345,6 +348,7 @@ fetcher_thread (void *none)
                             continue;
                         }
                         deadbeef->junk_id3v2_free (&tag);
+                        current_file = NULL;
                         deadbeef->fclose (fp);
                     }
                 }
@@ -483,6 +487,9 @@ artwork_load (DB_functions_t *api) {
 void
 artwork_reset (int fast) {
     if (fast) {
+        if (current_file) {
+            deadbeef->fabort (current_file);
+        }
         deadbeef->mutex_lock (mutex);
         while (queue && queue->next) {
             cover_query_t *next = queue->next->next;
@@ -521,6 +528,9 @@ artwork_plugin_start (void)
 static int
 artwork_plugin_stop (void)
 {
+    if (current_file) {
+        deadbeef->fabort (current_file);
+    }
     if (tid) {
         terminate = 1;
         deadbeef->cond_signal (cond);
@@ -536,6 +546,7 @@ artwork_plugin_stop (void)
     }
     if (cond) {
         deadbeef->cond_free (cond);
+        cond = 0;
     }
 
     return 0;

@@ -42,6 +42,7 @@ fetch_from_albumart_org (const char *artist, const char *album, const char *dest
         trace ("fetch_from_albumart_org: failed to open %s\n", url);
         return -1;
     }
+    current_file = fp;
     const char searchstr[] = "http://ecx.images-amazon.com/images/I/";
     char buffer[10000];
     memset (buffer, 0, sizeof (buffer));
@@ -50,6 +51,7 @@ fetch_from_albumart_org (const char *artist, const char *album, const char *dest
     if (size > 0) {
         img = strstr (buffer, searchstr);
     }
+    current_file = NULL;
     deadbeef->fclose (fp);
 
     if (!img) {
@@ -70,10 +72,12 @@ fetch_from_albumart_org (const char *artist, const char *album, const char *dest
         trace ("fetch_from_albumart_org: failed to open %s\n", img);
         return -1;
     }
+    current_file = fp;
 
     FILE *out = fopen (dest, "w+b");
     if (!out) {
         trace ("fetch_from_albumart_org: failed to open %s for writing\n", dest);
+        current_file = NULL;
         deadbeef->fclose (fp);
         return -1;
     }
@@ -90,6 +94,7 @@ fetch_from_albumart_org (const char *artist, const char *album, const char *dest
     }
 
     fclose (out);
+    current_file = NULL;
     deadbeef->fclose (fp);
 
     if (error) {

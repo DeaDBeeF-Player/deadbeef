@@ -870,6 +870,10 @@ quit_gtk_cb (gpointer nothing) {
 
 static int
 gtkui_stop (void) {
+    if (coverart_plugin) {
+        coverart_plugin->plugin.plugin.stop ();
+        coverart_plugin = NULL;
+    }
     trace ("unsubscribing events\n");
     deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_ACTIVATE, DB_CALLBACK (gtkui_on_activate), 0);
     deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_SONGCHANGED, DB_CALLBACK (gtkui_on_songchanged), 0);
