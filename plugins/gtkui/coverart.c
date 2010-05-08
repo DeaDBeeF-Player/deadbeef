@@ -299,6 +299,12 @@ cover_art_free (void) {
     while (queue) {
         queue_pop ();
     }
+    for (int i = 0; i < CACHE_SIZE; i++) {
+        if (cache[i].pixbuf) {
+            g_object_unref (cache[i].pixbuf);
+        }
+    }
+    memset (cache, 0, sizeof (cache));
     deadbeef->mutex_free (cond);
     deadbeef->mutex_free (mutex);
 }
