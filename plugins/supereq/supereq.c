@@ -111,6 +111,9 @@ supereq_plugin_stop (void) {
     deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_CONFIGCHANGED, DB_CALLBACK (supereq_on_configchanged), 0);
     if (tid) {
         deadbeef->thread_join (tid);
+        tid = 0;
+    }
+    if (mutex) {
         deadbeef->mutex_free (mutex);
         mutex = 0;
     }

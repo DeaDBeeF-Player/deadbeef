@@ -289,6 +289,7 @@ extern "C" void equ_quit(void)
   free(fsamples);
   free(inbuf);
   free(outbuf);
+  free(ditherbuf);
 
   lires1   = NULL;
   lires2   = NULL;
