@@ -112,6 +112,21 @@ src_unlock (void) {
     mutex_unlock (srcmutex);
 }
 
+static void
+streamer_abort_files (void) {
+    if (fileinfo && fileinfo->file) {
+        trace ("\033[0;31maborting current song: %s (fileinfo %p, file %p)\033[37;0m\n", streaming_track ? streaming_track->fname : NULL, fileinfo, fileinfo ? fileinfo->file : NULL);
+        deadbeef->fabort (fileinfo->file);
+        trace ("\033[0;31maborting current song done\033[37;0m\n");
+    }
+    mutex_lock (decodemutex);
+    if (streamer_file) {
+        trace ("\033[0;31maborting streamer_file\033[37;0m\n");
+        deadbeef->fabort (streamer_file);
+    }
+    mutex_unlock (decodemutex);
+}
+
 void
 streamer_start_playback (playItem_t *from, playItem_t *it) {
     if (from) {
@@ -638,6 +653,12 @@ streamer_set_current (playItem_t *it) {
         if (playlist_track == it) {
             plug_trigger_event_trackinfochanged (to);
         }
+        if (from) {
+            pl_item_unref (from);
+        }
+        if (to) {
+            pl_item_unref (to);
+        }
         return -1;
     }
 //    if (bytes_until_next_song == -1) {
@@ -679,17 +700,7 @@ streamer_get_apx_bitrate (void) {
 void
 streamer_set_nextsong (int song, int pstate) {
     trace ("streamer_set_nextsong %d %d\n", song, pstate);
-    if (fileinfo && fileinfo->file) {
-        trace ("\033[0;31maborting current song: %s (fileinfo %p, file %p)\033[37;0m\n", streaming_track ? streaming_track->fname : NULL, fileinfo, fileinfo ? fileinfo->file : NULL);
-        deadbeef->fabort (fileinfo->file);
-        mutex_lock (decodemutex);
-        if (streamer_file) {
-            trace ("\033[0;31maborting streamer_file\033[37;0m\n");
-            deadbeef->fabort (streamer_file);
-        }
-        mutex_unlock (decodemutex);
-        trace ("\033[0;31maborting current song done\033[37;0m\n");
-    }
+    streamer_abort_files ();
     nextsong = song;
     nextsong_pstate = pstate;
     if (p_isstopped ()) {
@@ -1073,6 +1084,7 @@ streamer_init (void) {
 
 void
 streamer_free (void) {
+    streamer_abort_files ();
     streaming_terminate = 1;
     thread_join (streamer_tid);
     mutex_free (decodemutex);
