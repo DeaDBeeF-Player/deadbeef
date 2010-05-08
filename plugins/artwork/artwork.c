@@ -523,7 +523,6 @@ static int
 artwork_plugin_stop (void)
 {
     if (tid) {
-        printf ("terminate artwork plugin\n");
         terminate = 1;
         deadbeef->cond_signal (cond);
         deadbeef->thread_join (tid);
