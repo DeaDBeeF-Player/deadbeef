@@ -2564,7 +2564,7 @@ pl_sort_compare (playItem_t *a, playItem_t *b) {
     // next = b
     // it = a
     if (pl_sort_is_duration) {
-        cmp = pl_sort_ascending ? b->_duration - a->_duration : a->_duration - b->_duration;
+        cmp = pl_sort_ascending ? b->_duration * 1000 - a->_duration * 1000 : a->_duration * 1000  - b->_duration * 1000;
     }
     else if (pl_sort_is_track) {
         const char *t;
