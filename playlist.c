@@ -2569,9 +2569,21 @@ pl_sort_compare (playItem_t *a, playItem_t *b) {
     else if (pl_sort_is_track) {
         const char *t;
         t = pl_find_meta (a, "track");
-        int a = t ? atoi (t) : -1;
+        int a;
+        if (t && !isdigit (*t)) {
+            a = 999999;
+        }
+        else {
+            a = t ? atoi (t) : -1;
+        }
         t = pl_find_meta (b, "track");
-        int b = t ? atoi (t) : -1;
+        int b;
+        if (t && !isdigit (*t)) {
+            b = 999999;
+        }
+        else {
+            b = t ? atoi (t) : -1;
+        }
         cmp = pl_sort_ascending ? b - a : a - b;
     }
     else {
