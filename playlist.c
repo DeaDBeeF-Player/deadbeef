@@ -414,6 +414,11 @@ plt_get_title (int plt, char *buffer, int bufsize) {
     playlist_t *p = playlists_head;
     for (i = 0; p && i <= plt; i++) {
         if (i == plt) {
+            if (!buffer) {
+                int l = strlen (p->title);
+                PLT_UNLOCK;
+                return l;
+            }
             strncpy (buffer, p->title, bufsize);
             buffer[bufsize-1] = 0;
             PLT_UNLOCK;

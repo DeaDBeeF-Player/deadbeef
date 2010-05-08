@@ -19,6 +19,7 @@
 #include <gtk/gtk.h>
 #include <string.h>
 #include <assert.h>
+#include <glib.h>
 #include "ddbtabstrip.h"
 #include "drawing.h"
 #include "gtkui.h"
@@ -35,6 +36,15 @@
 
 
 G_DEFINE_TYPE (DdbTabStrip, ddb_tabstrip, GTK_TYPE_WIDGET);
+
+void
+plt_get_title_wrapper (int plt, char *buffer, int len) {
+    deadbeef->plt_get_title (plt, buffer, len);
+    char *end;
+    if (!g_utf8_validate (buffer, -1, (const gchar **)&end)) {
+        *end = 0;
+    }
+}
 
 static void
 ddb_tabstrip_send_configure (DdbTabStrip *darea)
@@ -352,7 +362,7 @@ int
 ddb_tabstrip_get_tab_width (DdbTabStrip *ts, int tab) {
     int width;
     char title[100];
-    deadbeef->plt_get_title (tab, title, sizeof (title));
+    plt_get_title_wrapper (tab, title, sizeof (title));
     int h = 0;
     draw_get_text_extents (title, strlen (title), &width, &h);
     width += text_left_padding + text_right_padding;
@@ -394,7 +404,7 @@ tabstrip_render (DdbTabStrip *ts) {
     int fullwidth = 0;
     for (idx = 0; idx < cnt; idx++) {
         char title[100];
-        deadbeef->plt_get_title (idx, title, sizeof (title));
+        plt_get_title_wrapper (idx, title, sizeof (title));
         int h = 0;
         draw_get_text_extents (title, strlen (title), &widths[idx], &h);
         widths[idx] += text_left_padding + text_right_padding;
@@ -418,7 +428,7 @@ tabstrip_render (DdbTabStrip *ts) {
 //            gtk_paint_box (widget->style, widget->window, idx == tab_selected ? GTK_STATE_PRELIGHT : GTK_STATE_NORMAL, GTK_SHADOW_OUT, &area, widget, "button", x, idx == tab_selected ? 0 : 1, w+margin_size, 32);
             ddb_tabstrip_draw_tab (widget, backbuf, idx == tab_selected, x, y, w, h);
             char tab_title[100];
-            deadbeef->plt_get_title (idx, tab_title, sizeof (tab_title));
+            plt_get_title_wrapper (idx, tab_title, sizeof (tab_title));
             GdkColor *color = &widget->style->text[GTK_STATE_NORMAL];
             float fg[3] = {(float)color->red/0xffff, (float)color->green/0xffff, (float)color->blue/0xffff};
             draw_set_fg_color (fg);
@@ -446,7 +456,7 @@ tabstrip_render (DdbTabStrip *ts) {
 //        gtk_paint_box (widget->style, widget->window, GTK_STATE_PRELIGHT, GTK_SHADOW_OUT, &area, widget, "button", x, idx == tab_selected ? 0 : 1, w, 32);
         ddb_tabstrip_draw_tab (widget, backbuf, 1, x, y, w, h);
         char tab_title[100];
-        deadbeef->plt_get_title (idx, tab_title, sizeof (tab_title));
+        plt_get_title_wrapper (idx, tab_title, sizeof (tab_title));
         GdkColor *color = &widget->style->text[GTK_STATE_NORMAL];
         float fg[3] = {(float)color->red/0xffff, (float)color->green/0xffff, (float)color->blue/0xffff};
         draw_set_fg_color (fg);
@@ -474,7 +484,7 @@ tabstrip_render (DdbTabStrip *ts) {
 //                    gtk_paint_box (widget->style, backbuf, GTK_STATE_SELECTED, GTK_SHADOW_OUT, NULL, widget, "button", x, 0, w, h);
                     ddb_tabstrip_draw_tab (widget, backbuf, 1, x, y, w, h);
                     char tab_title[100];
-                    deadbeef->plt_get_title (idx, tab_title, sizeof (tab_title));
+                    plt_get_title_wrapper (idx, tab_title, sizeof (tab_title));
                     GdkColor *color = &widget->style->text[GTK_STATE_NORMAL];
                     float fg[3] = {(float)color->red/0xffff, (float)color->green/0xffff, (float)color->blue/0xffff};
                     draw_set_fg_color (fg);
@@ -497,7 +507,7 @@ get_tab_under_cursor (int x) {
     int tab_selected = deadbeef->plt_get_curr ();
     for (idx = 0; idx < cnt; idx++) {
         char title[100];
-        deadbeef->plt_get_title (idx, title, sizeof (title));
+        plt_get_title_wrapper (idx, title, sizeof (title));
         int w = 0;
         int h = 0;
         draw_get_text_extents (title, strlen (title), &w, &h);
@@ -523,7 +533,7 @@ on_rename_playlist1_activate           (GtkMenuItem     *menuitem,
     gtk_window_set_title (GTK_WINDOW (dlg), "Edit playlist");
     GtkWidget *e = lookup_widget (dlg, "title");
     char t[100];
-    deadbeef->plt_get_title (tab_clicked, t, sizeof (t));
+    plt_get_title_wrapper (tab_clicked, t, sizeof (t));
     gtk_entry_set_text (GTK_ENTRY (e), t);
     int res = gtk_dialog_run (GTK_DIALOG (dlg));
     if (res == GTK_RESPONSE_OK) {
