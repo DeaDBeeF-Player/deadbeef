@@ -24,8 +24,8 @@
 
 extern DB_functions_t *deadbeef;
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(...)
 
 int
 fetch_from_albumart_org (const char *artist, const char *album, const char *dest)

@@ -9,8 +9,8 @@
 #define BASE_URL "http://ws.audioscrobbler.com/2.0/"
 #define API_KEY "b25b959554ed76058ac220b7b2e0a026"
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(...)
 
 extern DB_functions_t *deadbeef;
 
@@ -51,7 +51,7 @@ fetch_from_lastfm (const char *artist, const char *album, const char *dest)
 
     char *end = strstr (img, "</image>");
     if (!end || end == img) {
-        trace ("fetch_from_lastfm: bad xml from %s\n", url);
+        trace ("fetch_from_lastfm: bad xml (or image not found) from %s\n", url);
         return -1;
     }
 
