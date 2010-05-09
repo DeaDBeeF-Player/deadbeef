@@ -35,8 +35,8 @@
 #include <stdlib.h>
 #include "../../deadbeef.h"
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 static DB_output_t plugin;
 DB_functions_t *deadbeef;
@@ -64,10 +64,10 @@ oss_init (void) {
     mutex = 0;
 
     // prepare oss for playback
-    const char *name = "/dev/dsp";
+    const char *name = deadbeef->conf_get_str ("oss.device", "/dev/dsp");
     fd = open (name, O_WRONLY);
     if (fd == -1) {
-        trace ("oss: failed to open file\n");
+        fprintf (stderr, "oss: failed to open file %s\n", name);
         perror (name);
         plugin.free ();
         return -1;
@@ -87,7 +87,7 @@ oss_init (void) {
 
     int fmt = AFMT_S16_NE;
     if (ioctl (fd, SNDCTL_DSP_SETFMT, &fmt) == -1) {
-        trace ("oss: failed to set format\n");
+        fprintf (stderr, "oss: failed to set format\n");
         perror ("SNDCTL_DSP_SETFMT");
         plugin.free ();
         return -1;
@@ -101,19 +101,19 @@ oss_init (void) {
 
     int channels = 2;
     if (ioctl (fd, SNDCTL_DSP_CHANNELS, &channels) == -1) {
-        trace ("oss: failed to set channels\n");
+        fprintf (stderr, "oss: failed to set channels\n");
         perror ("SNDCTL_DSP_CHANNELS");
         plugin.free ();
         return -1;
     }
     if (channels != 2) {
-        trace ("oss: device doesn't support stereo output\n");
+        fprintf (stderr, "oss: device doesn't support stereo output\n");
         plugin.free ();
         return -1;
     }
 
     if (ioctl (fd, SNDCTL_DSP_SPEED, &oss_rate) == -1) {
-        trace ("oss: failed to set samplerate\n");
+        fprintf (stderr, "oss: failed to set samplerate\n");
         perror ("SNDCTL_DSP_CHANNELS");
         plugin.free ();
         return -1;
@@ -138,7 +138,7 @@ oss_change_rate (int rate) {
     }
     deadbeef->mutex_lock (mutex);
     if (ioctl (fd, SNDCTL_DSP_SPEED, &rate) == -1) {
-        trace ("oss: can't switch to %d samplerate\n", rate);
+        fprintf (stderr, "oss: can't switch to %d samplerate\n", rate);
         perror ("SNDCTL_DSP_CHANNELS");
         plugin.free ();
         return -1;
