@@ -1,44 +1,80 @@
 help file for deadbeef player
 
-USEFUL HOTKEYS
+* LINKS
 
-you can navigate playlist with arrow keys
-page up, page down, home, end also work
-use shift key to select multiple tracks
-playback is controlled winamp-style:
-z, x, c, v, b, n keys function as
-previous, play, pause, stop, next, random
-also notice hotkey hints in the menus
-it is not (yet?) possible to remap keys
-also see GLOBAL HOTKEYS section below
+    main website: http://deadbeef.sf.net
+    wiki: http://sf.net/apps/mediawiki/deadbeef
+    development website: http://sf.net/projects/deadbeef
+    info for contributors: http://contributing.appspot.com/deadbeef
 
-CONFIGURATION
+* USEFUL HOTKEYS
 
-since 0.3.0 release, all configuration is stored in single file:
-$HOME/.config/deadbeef/config
+    you can navigate playlist with arrow keys.
 
-most stuff can be configured through edit->preferences dialog
+    PgUp, PgDn, Home, End also work.
 
-GLOBAL HOTKEYS
+    use above with Shift key to select multiple tracks.
 
-it's not yet in GUI configuration window, so here we go..
+    playback is controlled Winamp™-style:
+    Z, X, C, V, B, N keys are mapped to following actions:
+    previous, play, pause, stop, next, random.
 
-syntax is following:
+    also notice hotkey hints in the menus.
 
-hotkeys.keyN <key_combination>: <action>
+    it is not (yet?) possible to remap keys.
+    also see GLOBAL HOTKEYS section below.
 
-example (note the numbers - must be like that):
+* CONFIGURATION
 
-hotkeys.key1 Ctrl Alt c: toggle_pause
-hotkeys.key2 Ctrl 0x76: prev
-hotkeys.key3 Ctrl Alt b: next
-hotkeys.key4 Ctrl Alt v: stop
-hotkeys.key5 Ctrl Alt x: play
-hotkeys.key6 Ctrl Alt n: play_random
-hotkeys.key7 Super u: volume_up
-hotkeys.key8 XF86AudioLowerVolume: volume_down
+    since 0.3.0 release, all configuration is stored in single file:
+    $HOME/.config/deadbeef/config
 
-full list of actions:
+    you need to exit player before editing this file, or your changes will be overwritten.
 
-toggle_pause, play, prev, next, stop, play_random, seek_fwd, seek_back, volume_up, volume_down, toggle_stop_after_current
+    most stuff can be configured through edit->preferences dialog.
+
+* ALBUM ART DISPLAY
+
+    to display album artwork, you need to follow the steps below
+
+    1. add new column, select Album Art type
+    2. right click on the playlist column headers, and in context menu select "group by" submenu. click "Artist/Date/Album".
+
+* OSD NOTIFICATIONS
+
+    you can enable/configure them in "OSD Notify" plugin options
+
+* CUESHEETS
+
+    to load image+cue rips, you need to open/add actual image files, and Deadbeef will find the right .cue file automatically.
+
+    you should not try to add .cue files to playlist
+
+    example:
+
+    Unknown Artist - Unknown Album.flac <---- open this file
+    Unknown Artist - Unknown Album.cue  <---- this file will be used automatically
+
+* GLOBAL HOTKEYS
+
+    now there's GUI configuration for global hotkeys plugin, but I keep this section for reference.
+
+    syntax is following:
+
+    hotkeys.keyN <key_combination>: <action>
+
+    example (note the numbers - must be like that):
+
+    hotkeys.key1 Ctrl Alt c: toggle_pause
+    hotkeys.key2 Ctrl 0x76: prev
+    hotkeys.key3 Ctrl Alt b: next
+    hotkeys.key4 Ctrl Alt v: stop
+    hotkeys.key5 Ctrl Alt x: play
+    hotkeys.key6 Ctrl Alt n: play_random
+    hotkeys.key7 Super u: volume_up
+    hotkeys.key8 XF86AudioLowerVolume: volume_down
+
+    list of actions (might be incomplete, because i don't update this section anymore):
+
+    toggle_pause, play, prev, next, stop, play_random, seek_fwd, seek_back, volume_up, volume_down, toggle_stop_after_current
 
