@@ -329,13 +329,16 @@ streamer_move_to_nextsong (int reason) {
             }
             playItem_t *it = pmin;
             if (!it) {
-                trace ("all songs played! reshuffle\n");
                 // all songs played, reshuffle and try again
-                if (pl_loop_mode == PLAYBACK_MODE_LOOP_ALL) { // loop
+                if (pl_loop_mode == PLAYBACK_MODE_LOOP_ALL || reason == 1) { // loop
+                    trace ("all songs played! reshuffle\n");
                     plt_reshuffle (streamer_playlist, &it, NULL);
                 }
             }
             if (!it) {
+                playItem_t *temp;
+                plt_reshuffle (streamer_playlist, &temp, NULL);
+                streamer_set_nextsong (-2, 1);
                 pl_global_unlock ();
                 return -1;
             }
@@ -890,7 +893,7 @@ streamer_thread (void *ctx) {
                         dec = plug_get_decoder_for_id (streaming_track->decoder_id);
                         if (dec) {
                             fileinfo = dec->open ();
-                            if (fileinfo && dec->init (fileinfo, DB_PLAYITEM (streaming_track) < 0)) {
+                            if (fileinfo && dec->init (fileinfo, DB_PLAYITEM (streaming_track)) < 0) {
                                 dec->free (fileinfo);
                                 fileinfo = NULL;
                             }
