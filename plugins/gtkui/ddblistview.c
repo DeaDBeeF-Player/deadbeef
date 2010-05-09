@@ -1158,6 +1158,14 @@ ddb_listview_list_render_row (DdbListview *listview, int row, DdbListviewIter it
         return;
     }
 
+    if (y + h <= 0) {
+        return;
+    }
+
+    if (y > GTK_WIDGET (listview)->allocation.height) {
+        return;
+    }
+
     draw_begin ((uintptr_t)listview->backbuf);
     ddb_listview_list_render_row_background (listview, it, even, cursor, x, y, w, h);
 	if (it) {
@@ -1266,6 +1274,9 @@ ddb_listview_select_single (DdbListview *ps, int sel) {
                 ps->binding->select (it, 1);
                 ddb_listview_draw_row (ps, idx, it);
                 ps->binding->selection_changed (it, idx);
+            }
+            else if (ps->binding->cursor () == idx) {
+                ddb_listview_draw_row (ps, idx, it);
             }
         }
         else if (ps->binding->is_selected (it)) {
