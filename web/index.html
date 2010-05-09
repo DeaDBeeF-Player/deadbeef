@@ -41,18 +41,20 @@
     }
 </style>
 <body>
-<div style="float:right"><script type="text/javascript" src="http://www.ohloh.net/p/380374/widgets/project_users.js?style=blue"></script></div>
+<div style="float:right;margin:0em 0.5em;"><script type="text/javascript" src="http://www.ohloh.net/p/380374/widgets/project_users.js?style=blue"></script></div>
+<div style="float:right;margin:0em 0.5em;"><a href="http://sourceforge.net/"><img src="http://sflogo.sourceforge.net/sflogo.php?group_id=272657&amp;type=3" alt="SourceForge.net"/></a></div>
 <br/>
 <ul id='header'>
     <li><a href="#about">About</a></li>
     <li><a href="#news">News</a></li>
-    <li><a id='faq' href="faq.txt">F.A.Q.</a></li>
+    <!--li><a id='faq' href="faq.txt">F.A.Q.</a></li-->
+    <li><a href="http://sourceforge.net/apps/mediawiki/deadbeef">Wiki</a></li>
     <li><a href="#license">Copying</a></li>
     <li><a href="#download">Download</a></li>
     <li><a href="#bugs">Reporting Bugs</a></li>
     <li><a href="#developers">Developer Information</a></li>
     <li><a href="#contacts">Contacts</a></li>
-    <li><a href="screenshot03.png">Screenshot</a></li>
+    <li><a href="screenshots.html">Screenshots</a></li>
 </ul>
 
 <h1 id='about'>About</h1>
@@ -73,6 +75,14 @@
     <li>drag and drop, both inside of playlist, and from filemanagers and such</li>
     <li>control playback from command line</li>
     <li>global hotkeys</li>
+    <li>multiple playlists</li>
+    <li>album artwork display</li>
+    <li>18-band graphical equalizer</li>
+    <li>metadata editor</li>
+    <li>user-customizable groups in playlists</li>
+    <li>user-customizable columns with flexible title formatting</li>
+    <li>radio and podcast support for ogg vorbis, mp3 and aac streams</li>
+    <li>gapless playback</li>
     <li>plugin support; bundled with lots of plugins, such as global hotkeys and last.fm scrobbler; sdk is included</li>
     <li>duration calculation is as precise as possible for vbr mp3 files (with and without xing/info tags)</li>
     <li>was tested and works on x86, x86_64 and ppc64 architectures. should work on most modern platforms</li>
@@ -80,9 +90,44 @@
 
 <h1 id="news">News</h1>
 
+<h2>release 0.4 is out</h2>
+<div class="post">
+    <p class="date">2010/05/09</p>
+    <p><a href="#download">get it!</a></p>
+    <p>Changelog since 0.3.3</p>
+    <ul>
+	<li>multiple tabbed playlists</li>
+	<li>added grouping of tracks using title-formatting strings</li>
+	<li>added Album Cover Art plugin</li>
+	<li>added EQ plugin (SuperEQ library by Naoki Shibata)</li>
+	<li>added basic PulseAudio support</li>
+	<li>added metadata editing support</li>
+	<li>improved global hotkeys plugin, with GUI configurator</li>
+	<li>colors for custom widgets are taken from GTK theme, and user-customizable</li>
+	<li>fixed FreeBSD compatibility problems</li>
+	<li>improved resampling/streaming code</li>
+	<li>enabled .TTA support in ffmpeg plugin</li>
+	<li>improved metadata readers (id3v1, id3v2, apev2)</li>
+	<li>improved Icy (shoutcast) protocol support</li>
+	<li>moved built-in decoders to their own dynamic libraries</li>
+	<li>now it's possible to exclude any plugin from build</li>
+	<li>player remembers scroll positions in playlists between sessions</li>
+	<li>added ability to delete selected files from disk (playlist context menu)</li>
+	<li>added ability to reload metadata (playlist context menu)</li>
+	<li>added AAC 'net streaming support (ffmpeg plugin)</li>
+	<li>faster search and sorting</li>
+	<li>added support for proxy username/password authentication</li>
+	<li>better recognizer of remote pls/m3u files for online radio</li>
+	<li>improved/fixed last.fm plugin</li>
+	<li>OSD notifications about track changes though any notification daemon</li>
+	<li>fixed gapless playback errors</li>
+    </ul>
+</div>
+
 <h2>release 0.3.3 is out</h2>
 <div class="post">
     <p class="date">2010/02/07</p>
+    <p><a href="#download">get it!</a></p>
     <p>Changelog since 0.3.2</p>
     <ul>
 	<li>fixed "unknown response" in command line</li>
@@ -104,6 +149,7 @@
 	<li>added support for icy metadata (title in shoutcast streams)</li>
 	<li>added experimental (optional) support for notifications using libnotify</li>
     </ul>
+    <p><a href="screenshot03.png">Screenshot</a></p>
 </div>
 
 <h2>release 0.3.2 is out</h2>
@@ -191,7 +237,6 @@
 <p>email: <a href="mailto:waker@users.sourceforge.net">Alexey Yakovenko</a></p>
 
 <hr/>
-<p><a href="http://sourceforge.net/">Project Web Hosted by<img src="http://sflogo.sourceforge.net/sflogo.php?group_id=272657&amp;type=3" alt="SourceForge.net"/></a></p>
 <script type="text/javascript">
 var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
 document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));

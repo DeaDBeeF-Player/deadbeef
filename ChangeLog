@@ -19,7 +19,7 @@ version 0.4.0
 	added ability to reload metadata (playlist context menu)
 	added AAC 'net streaming support (ffmpeg plugin)
 	faster search and sorting
-	added proxy username/password authentication
+	added support for proxy username/password authentication
 	better recognizer of remote pls/m3u files for online radio
 	improved/fixed last.fm plugin
 	OSD notifications about track changes though any notification daemon
