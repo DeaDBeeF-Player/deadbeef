@@ -2012,7 +2012,7 @@ pl_load (const char *fname) {
             }
         }
         else {
-            if (it->startsample > 0) {
+            if (it->startsample > 0 || it->endsample > 0 || it->tracknum > 0) {
                 it->_flags |= DDB_IS_SUBTRACK;
             }
         }
