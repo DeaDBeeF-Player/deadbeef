@@ -29,8 +29,8 @@
 
 #include "../../deadbeef.h"
 
-#define trace(...) { fprintf (stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf (stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 #define DEFAULT_SERVER "freedb.org"
 #define DEFAULT_PORT 888
@@ -438,7 +438,7 @@ cda_start (void) {
 static int
 cda_stop (void) {
     if (cddb_tid) {
-        fprintf (stderr, "cdda: waiting cddb query to end\n");
+        trace ("cdda: waiting cddb query to end\n");
         deadbeef->thread_join (cddb_tid);
     }
     deadbeef->mutex_free (mutex);
