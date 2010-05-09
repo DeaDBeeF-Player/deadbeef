@@ -305,7 +305,7 @@ cover_art_free (void) {
         }
     }
     memset (cache, 0, sizeof (cache));
-    deadbeef->mutex_free (cond);
+    deadbeef->cond_free (cond);
     deadbeef->mutex_free (mutex);
 }
 
