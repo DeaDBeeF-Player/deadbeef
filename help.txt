@@ -15,7 +15,7 @@ help file for deadbeef player
 
     use above with Shift key to select multiple tracks.
 
-    playback is controlled Winamp™-style:
+    playback is controlled Winamp™-style.
     Z, X, C, V, B, N keys are mapped to following actions:
     previous, play, pause, stop, next, random.
 
