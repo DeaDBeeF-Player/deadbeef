@@ -365,7 +365,7 @@ static void
 current_track_changed (DB_playItem_t *it) {
     char str[600];
     if (it) {
-        deadbeef->pl_format_title (it, -1, str, sizeof (str), -1, "DeaDBeeF-" VERSION " - %a - %t");
+        deadbeef->pl_format_title (it, -1, str, sizeof (str), -1, "%a - %t - DeaDBeeF-" VERSION);
     }
     else {
         strcpy (str, "DeaDBeeF-" VERSION);
