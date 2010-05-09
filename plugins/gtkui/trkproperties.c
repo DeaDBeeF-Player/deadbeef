@@ -215,7 +215,7 @@ show_track_properties_dlg (DB_playItem_t *it) {
             }
         }
 
-        if (dec && dec->write_metadata && deadbeef->conf_get_int ("enable_tag_writing", 0)) {
+        if (dec && dec->write_metadata/* && deadbeef->conf_get_int ("enable_tag_writing", 0)*/) {
             allow_editing = 1;
         }
     }
@@ -310,11 +310,12 @@ void
 on_write_tags_clicked                  (GtkButton       *button,
                                         gpointer         user_data)
 {
-    trace ("on_write_tags_clicked\n");
+#if 0
     if (!deadbeef->conf_get_int ("enable_tag_writing", 0)) {
         trace ("tag writing disabled\n");
         return;
     }
+#endif
     if (!track || !track->decoder_id) {
         return;
     }
@@ -337,88 +338,4 @@ on_write_tags_clicked                  (GtkButton       *button,
         }
     }
     trkproperties_modified = 0;
-#if 0
-    DB_id3v2_tag_t tag;
-    memset (&tag, 0, sizeof (tag));
-    DB_FILE *fp = deadbeef->fopen (track->fname);
-    if (fp) {
-        if (deadbeef->junk_read_id3v2_full (NULL, &tag, fp) < 0) {
-            fprintf (stderr, "failed to read tags from %s\n", track->fname);
-            goto error;
-        }
-        fprintf (stderr, "writing id3v2.%d.%d\n", tag.version[0], tag.version[1]);
-
-#if 0
-        // 2.3 editing test
-        if (tag.version[0] == 3) {
-            // remove frames
-            deadbeef->junk_id3v2_remove_frames (&tag, "TPE1");
-            deadbeef->junk_id3v2_remove_frames (&tag, "TIT2");
-
-            // add frames
-            deadbeef->junk_id3v2_add_text_frame_23 (&tag, "TPE1", "test title");
-            deadbeef->junk_id3v2_add_text_frame_23 (&tag, "TIT2", "название на русском");
-            if (deadbeef->junk_write_id3v2 (track->fname, &tag) < 0) {
-                fprintf (stderr, "failed to write tags to %s\n", track->fname);
-                goto error;
-            }
-        }
-#endif
-        // 2.4 -> 2.3 conversion test
-        if (tag.version[0] == 4) {
-            DB_id3v2_tag_t tag23;
-            memset (&tag23, 0, sizeof (tag23));
-            int res = deadbeef->junk_id3v2_convert_24_to_23 (&tag, &tag23);
-            if (res == -1) {
-                deadbeef->junk_free_id3v2 (&tag23);
-                goto error;
-            }
-            if (deadbeef->junk_write_id3v2 (track->fname, &tag23) < 0) {
-                fprintf (stderr, "failed to write 2.3 tag to %s\n", track->fname);
-                deadbeef->junk_free_id3v2 (&tag23);
-                goto error;
-            }
-            deadbeef->junk_free_id3v2 (&tag23);
-        }
-        else if (tag.version[0] == 3) {
-            DB_id3v2_tag_t tag24;
-            memset (&tag24, 0, sizeof (tag24));
-            int res = deadbeef->junk_id3v2_convert_23_to_24 (&tag, &tag24);
-            if (res == -1) {
-                deadbeef->junk_free_id3v2 (&tag24);
-                goto error;
-            }
-            if (deadbeef->junk_write_id3v2 (track->fname, &tag24) < 0) {
-                fprintf (stderr, "failed to write 2.4 tag to %s\n", track->fname);
-                deadbeef->junk_free_id3v2 (&tag24);
-                goto error;
-            }
-            deadbeef->junk_free_id3v2 (&tag24);
-        }
-        else if (tag.version[0] == 2) {
-            DB_id3v2_tag_t tag24;
-            memset (&tag24, 0, sizeof (tag24));
-            int res = deadbeef->junk_id3v2_convert_22_to_24 (&tag, &tag24);
-            if (res == -1) {
-                deadbeef->junk_free_id3v2 (&tag24);
-                goto error;
-            }
-            if (deadbeef->junk_write_id3v2 (track->fname, &tag24) < 0) {
-                fprintf (stderr, "failed to write 2.4 tag to %s\n", track->fname);
-                deadbeef->junk_free_id3v2 (&tag24);
-                goto error;
-            }
-            deadbeef->junk_free_id3v2 (&tag24);
-        }
-
-    }
-    else {
-        fprintf (stderr, "failed to open %s\n", track->fname);
-    }
-error:
-    if (fp) {
-        deadbeef->fclose (fp);
-    }
-    deadbeef->junk_free_id3v2 (&tag);
-#endif
 }
