@@ -2,18 +2,18 @@ version 0.4.0
 	multiple tabbed playlists
 	added grouping of tracks using title-formatting strings
 	added Album Cover Art plugin
-	added EQ plugin
+	added EQ plugin (SuperEQ library by Naoki Shibata)
 	added basic PulseAudio support
 	added metadata editing support
-	better drag-n-drop - it is now possible to copy tracks in playlist, and across multiple playlists
 	improved global hotkeys plugin, with GUI configurator
-	colors for custom widgets are taken from GTK theme, or can be set by user
+	colors for custom widgets are taken from GTK theme, and user-customizable
 	fixed FreeBSD compatibility problems
-	improvemed resampling/streaming code
+	improved resampling/streaming code
 	enabled .TTA support in ffmpeg plugin
 	improved metadata readers (id3v1, id3v2, apev2)
 	improved Icy (shoutcast) protocol support
-	all plugins are now in dynamic libraries, and it's possible to exclude any plugin from build
+	moved built-in decoders to their own dynamic libraries
+	now it's possible to exclude any plugin from build
 	player remembers scroll positions in playlists between sessions
 	added ability to delete selected files from disk (playlist context menu)
 	added ability to reload metadata (playlist context menu)
@@ -22,7 +22,7 @@ version 0.4.0
 	added proxy username/password authentication
 	better recognizer of remote pls/m3u files for online radio
 	improved/fixed last.fm plugin
-	notifications about track changes using [gnome/kde/xfce/e/you-name-it]-notification-daemon
+	OSD notifications about track changes though any notification daemon
 
 version 0.3.3
 	fixed "unknown response" in command line
