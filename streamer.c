@@ -792,6 +792,7 @@ streamer_start_new_song (void) {
         last_bitrate = -1;
         avg_bitrate = -1;
         if (p_state () != OUTPUT_STATE_PLAYING) {
+            streamer_reset (1);
             if (p_play () < 0) {
                 fprintf (stderr, "streamer: failed to start playback; output plugin doesn't work\n");
                 streamer_set_nextsong (-2, 0);
