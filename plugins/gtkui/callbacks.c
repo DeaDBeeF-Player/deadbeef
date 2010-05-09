@@ -43,8 +43,8 @@
 #include "drawing.h"
 #include "eq.h"
 
-#define trace(...) { fprintf (stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf (stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 #define SELECTED(it) (deadbeef->pl_is_selected(it))
 #define SELECT(it, sel) (deadbeef->pl_set_selected(it,sel))

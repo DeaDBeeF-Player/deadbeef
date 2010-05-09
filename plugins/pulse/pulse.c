@@ -36,8 +36,8 @@
 #include <string.h>
 #include "../../deadbeef.h"
 
-#define trace(...) { fprintf(stdout, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stdout, __VA_ARGS__); }
+#define trace(fmt,...)
 
 static DB_output_t plugin;
 DB_functions_t * deadbeef;
