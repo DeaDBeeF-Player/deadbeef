@@ -1749,7 +1749,9 @@ ddb_listview_list_set_hscroll (DdbListview *ps, int newscroll) {
         ps->hscrollpos = newscroll; 
         return;
     }
-    if (newscroll != ps->hscrollpos) {
+//    if (newscroll != ps->hscrollpos)
+    // need to redraw because this might be window resize
+    {
         ps->hscrollpos = newscroll;
         GtkWidget *widget = ps->list;
         ddb_listview_header_render (ps);
