@@ -23,8 +23,8 @@
 #include "../../deadbeef.h"
 #include "../../config.h"
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 #define min(x,y) ((x)<(y)?(x):(y))
 
@@ -127,19 +127,19 @@ palsa_set_hw_params (int samplerate) {
     int err = 0;
 
     if ((err = snd_pcm_hw_params_malloc (&hw_params)) < 0) {
-        trace ("cannot allocate hardware parameter structure (%s)\n",
+        fprintf (stderr, "cannot allocate hardware parameter structure (%s)\n",
                 snd_strerror (err));
         goto error;
     }
 
     if ((err = snd_pcm_hw_params_any (audio, hw_params)) < 0) {
-        trace ("cannot initialize hardware parameter structure (%s)\n",
+        fprintf (stderr, "cannot initialize hardware parameter structure (%s)\n",
                 snd_strerror (err));
         goto error;
     }
 
     if ((err = snd_pcm_hw_params_set_access (audio, hw_params, SND_PCM_ACCESS_RW_INTERLEAVED)) < 0) {
-        trace ("cannot set access type (%s)\n",
+        fprintf (stderr, "cannot set access type (%s)\n",
                 snd_strerror (err));
         goto error;
     }
@@ -151,7 +151,7 @@ palsa_set_hw_params (int samplerate) {
     fmt = SND_PCM_FORMAT_S16_LE;
 #endif
     if ((err = snd_pcm_hw_params_set_format (audio, hw_params, fmt)) < 0) {
-        trace ("cannot set sample format (%s)\n",
+        fprintf (stderr, "cannot set sample format (%s)\n",
                 snd_strerror (err));
         goto error;
     }
@@ -163,13 +163,13 @@ palsa_set_hw_params (int samplerate) {
     int ret = 0;
 
     if ((err = snd_pcm_hw_params_set_rate_resample (audio, hw_params, conf_alsa_resample)) < 0) {
-        trace ("cannot setup resampling (%s)\n",
+        fprintf (stderr, "cannot setup resampling (%s)\n",
                 snd_strerror (err));
         goto error;
     }
 
     if ((err = snd_pcm_hw_params_set_rate_near (audio, hw_params, &val, &ret)) < 0) {
-        trace ("cannot set sample rate (%s)\n",
+        fprintf (stderr, "cannot set sample rate (%s)\n",
                 snd_strerror (err));
         goto error;
     }
@@ -177,7 +177,7 @@ palsa_set_hw_params (int samplerate) {
     trace ("chosen samplerate: %d Hz\n", alsa_rate);
 
     if ((err = snd_pcm_hw_params_set_channels (audio, hw_params, 2)) < 0) {
-        trace ("cannot set channel count (%s)\n",
+        fprintf (stderr, "cannot set channel count (%s)\n",
                 snd_strerror (err));
         goto error;
     }
@@ -198,7 +198,7 @@ palsa_set_hw_params (int samplerate) {
     trace ("alsa period size: %d frames\n", (int)period_size);
 
     if ((err = snd_pcm_hw_params (audio, hw_params)) < 0) {
-        trace ("cannot set parameters (%s)\n",
+        fprintf (stderr, "cannot set parameters (%s)\n",
                 snd_strerror (err));
         goto error;
     }
@@ -225,7 +225,7 @@ palsa_init (void) {
     state = OUTPUT_STATE_STOPPED;
     //const char *conf_alsa_soundcard = conf_get_str ("alsa_soundcard", "default");
     if ((err = snd_pcm_open (&audio, conf_alsa_soundcard, SND_PCM_STREAM_PLAYBACK, 0))) {
-        trace ("could not open audio device (%s)\n",
+        fprintf (stderr, "could not open audio device (%s)\n",
                 snd_strerror (err));
         return -1;
     }
@@ -241,12 +241,12 @@ palsa_init (void) {
     }
 
     if ((err = snd_pcm_sw_params_malloc (&sw_params)) < 0) {
-        trace ("cannot allocate software parameters structure (%s)\n",
+        fprintf (stderr, "cannot allocate software parameters structure (%s)\n",
                 snd_strerror (err));
         goto open_error;
     }
     if ((err = snd_pcm_sw_params_current (audio, sw_params)) < 0) {
-        trace ("cannot initialize software parameters structure (%s)\n",
+        fprintf (stderr, "cannot initialize software parameters structure (%s)\n",
                 snd_strerror (err));
         goto open_error;
     }
@@ -254,18 +254,18 @@ palsa_init (void) {
     snd_pcm_sw_params_set_start_threshold (audio, sw_params, buffer_size - period_size);
 
     if ((err = snd_pcm_sw_params_set_avail_min (audio, sw_params, period_size)) < 0) {
-        trace ("cannot set minimum available count (%s)\n",
+        fprintf (stderr, "cannot set minimum available count (%s)\n",
                 snd_strerror (err));
         goto open_error;
     }
 
     snd_pcm_uframes_t av;
     if ((err = snd_pcm_sw_params_get_avail_min (sw_params, &av)) < 0) {
-        trace ("snd_pcm_sw_params_get_avail_min failed (%s)\n",
+        fprintf (stderr, "snd_pcm_sw_params_get_avail_min failed (%s)\n",
                 snd_strerror (err));
         goto open_error;
     }
-    trace ("alsa avail_min: %d frames\n", (int)av);
+    fprintf (stderr, "alsa avail_min: %d frames\n", (int)av);
 
 
 //    if ((err = snd_pcm_sw_params_set_start_threshold (audio, sw_params, 0U)) < 0) {
@@ -275,7 +275,7 @@ palsa_init (void) {
 //    }
 
     if ((err = snd_pcm_sw_params (audio, sw_params)) < 0) {
-        trace ("cannot set software parameters (%s)\n",
+        fprintf (stderr, "cannot set software parameters (%s)\n",
                 snd_strerror (err));
         goto open_error;
     }
@@ -287,7 +287,7 @@ palsa_init (void) {
        */
 
     if ((err = snd_pcm_prepare (audio)) < 0) {
-        trace ("cannot prepare audio interface for use (%s)\n",
+        fprintf (stderr, "cannot prepare audio interface for use (%s)\n",
                 snd_strerror (err));
         goto open_error;
     }
@@ -385,7 +385,7 @@ palsa_play (void) {
         }
         else {
             if ((err = snd_pcm_prepare (audio)) < 0) {
-                trace ("cannot prepare audio interface for use (%d, %s)\n",
+                fprintf (stderr, "cannot prepare audio interface for use (%d, %s)\n",
                         err, snd_strerror (err));
                 return -1;
             }
@@ -502,13 +502,13 @@ palsa_thread (void *context) {
             err = snd_pcm_writei (audio, buf, period_size);
             if (err < 0) {
                 if (err == -ESTRPIPE) {
-                    trace ("alsa: trying to recover from suspend... (error=%d, %s)\n", err,  snd_strerror (err));
+                    fprintf (stderr, "alsa: trying to recover from suspend... (error=%d, %s)\n", err,  snd_strerror (err));
                     deadbeef->sendmessage (M_REINIT_SOUND, 0, 0, 0);
                     break;
                 }
                 else {
                     if (err != -EPIPE) {
-                        trace ("alsa: snd_pcm_writei error=%d, %s\n", err, snd_strerror (err));
+                        fprintf (stderr, "alsa: snd_pcm_writei error=%d, %s\n", err, snd_strerror (err));
                     }
                     snd_pcm_prepare (audio);
                     snd_pcm_start (audio);
