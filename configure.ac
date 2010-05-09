@@ -70,7 +70,7 @@ AC_ARG_ENABLE(flac,     [  --disable-flac          disable FLAC player plugin (d
 AC_ARG_ENABLE(sndfile,  [  --disable-sndfile       disable libsndfile plugin for PCM wave files (default: enabled)], [enable_sndfile=$enableval], [enable_sndfile=yes])
 AC_ARG_ENABLE(wavpack,  [  --disable-wavpack       disable wavpack plugin (default: enabled)], [enable_wavpack=$enableval], [enable_wavpack=yes])
 AC_ARG_ENABLE(cdda,     [  --disable-cdda          disable CD-Audio plugin (default: enabled)], [enable_cdda=$enableval], [enable_cdda=yes])
-AC_ARG_ENABLE(gme,      [  --disable-gme           disable Game Music Emu plugin for NFS, AY, etc (default: enabled)], [enable_gme=$enableval], [enable_gme=yes])
+AC_ARG_ENABLE(gme,      [  --disable-gme           disable Game Music Emu plugin for NSF, AY, etc (default: enabled)], [enable_gme=$enableval], [enable_gme=yes])
 AC_ARG_ENABLE(dumb,     [  --disable-dumb          disable D.U.M.B. plugin for MOD, S3M and other tracker formats (default: enabled)], [enable_dumb=$enableval], [enable_dumb=yes])
 AC_ARG_ENABLE(notify,   [  --disable-notify        disable notification-daemon support plugin (default: enabled)], [enable_notify=$enableval], [enable_notify=yes])
 
