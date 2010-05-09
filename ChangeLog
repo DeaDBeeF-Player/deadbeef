@@ -23,6 +23,7 @@ version 0.4.0
 	better recognizer of remote pls/m3u files for online radio
 	improved/fixed last.fm plugin
 	OSD notifications about track changes though any notification daemon
+	fixed gapless playback errors
 
 version 0.3.3
 	fixed "unknown response" in command line
