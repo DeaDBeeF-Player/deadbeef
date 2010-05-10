@@ -380,6 +380,67 @@ ffmpeg_seek (DB_fileinfo_t *_info, float time) {
     return ffmpeg_seek_sample (_info, time * _info->samplerate);
 }
 
+static const char *map[] = {
+    "artist", "artist",
+    "title", "title",
+    "album", "album",
+    "track", "track",
+    "date", "year",
+    "genre", "genre",
+    "comment", "comment",
+    "performer", "performer",
+    "album_artist", "band",
+    "composer", "composer",
+    "encoder", "encoder",
+    "encoded_by", "vendor",
+    "disc", "disc",
+    "copyright", "copyright",
+    "tracktotal", "numtracks",
+    "publisher", "publisher",
+    NULL
+};
+
+static int
+ffmpeg_read_metadata_internal (DB_playItem_t *it, AVFormatContext *fctx) {
+//#if LIBAVFORMAT_VERSION_INT < (52<<16)
+//    if (!strlen (fctx->title)) {
+//        // title is empty, this call will set track title to filename without extension
+//        deadbeef->pl_add_meta (it, "title", NULL);
+//    }
+//    else {
+//        deadbeef->pl_add_meta (it, "title", fctx->title);
+//    }
+//    deadbeef->pl_add_meta (it, "artist", fctx->author);
+//    deadbeef->pl_add_meta (it, "album", fctx->album);
+//    deadbeef->pl_add_meta (it, "copyright", fctx->copyright);
+//    deadbeef->pl_add_meta (it, "comment", fctx->comment);
+//    deadbeef->pl_add_meta (it, "genre", fctx->genre);
+//
+//    char tmp[10];
+//    snprintf (tmp, sizeof (tmp), "%d", fctx->year);
+//    deadbeef->pl_add_meta (it, "year", tmp);
+//    snprintf (tmp, sizeof (tmp), "%d", fctx->track);
+//    deadbeef->pl_add_meta (it, "track", tmp);
+//#else
+// read using other means?
+// av_metadata_get?
+//#endif
+    AVMetadata *md = fctx->metadata;
+
+    for (int m = 0; map[m]; m += 2) {
+        AVMetadataTag *tag = NULL;
+        do {
+            tag = av_metadata_get (md, map[m], tag, AV_METADATA_DONT_STRDUP_KEY | AV_METADATA_DONT_STRDUP_VAL);
+            if (tag) {
+                printf ("%s = %s\n", map[m], tag->value);
+                deadbeef->pl_append_meta (it, map[m+1], tag->value);
+            }
+        } while (tag);
+    }
+    deadbeef->pl_add_meta (it, "title", NULL);
+    return 0;
+}
+
 static DB_playItem_t *
 ffmpeg_insert (DB_playItem_t *after, const char *fname) {
     // read information from the track
@@ -495,29 +556,7 @@ ffmpeg_insert (DB_playItem_t *after, const char *fname) {
     }
 
     // add metainfo
-#if LIBAVFORMAT_VERSION_INT < (53<<16)
-    if (!strlen (fctx->title)) {
-        // title is empty, this call will set track title to filename without extension
-        deadbeef->pl_add_meta (it, "title", NULL);
-    }
-    else {
-        deadbeef->pl_add_meta (it, "title", fctx->title);
-    }
-    deadbeef->pl_add_meta (it, "artist", fctx->author);
-    deadbeef->pl_add_meta (it, "album", fctx->album);
-    deadbeef->pl_add_meta (it, "copyright", fctx->copyright);
-    deadbeef->pl_add_meta (it, "comment", fctx->comment);
-    deadbeef->pl_add_meta (it, "genre", fctx->genre);
-
-    char tmp[10];
-    snprintf (tmp, sizeof (tmp), "%d", fctx->year);
-    deadbeef->pl_add_meta (it, "year", tmp);
-    snprintf (tmp, sizeof (tmp), "%d", fctx->track);
-    deadbeef->pl_add_meta (it, "track", tmp);
-#else
-// read using other means?
-// av_metadata_get?
-#endif
+    ffmpeg_read_metadata_internal (it, fctx);
     // free decoder
     av_close_input_file(fctx);
 
@@ -630,6 +669,60 @@ ffmpeg_stop (void) {
     return 0;
 }
 
+int
+ffmpeg_read_metadata (DB_playItem_t *it) {
+    trace ("ffmpeg_read_metadata: fname %s\n", it->fname);
+    AVCodec *codec = NULL;
+    AVCodecContext *ctx = NULL;
+    AVFormatContext *fctx = NULL;
+    int ret;
+    int l = strlen (it->fname);
+    char *uri = alloca (l + sizeof (FF_PROTOCOL_NAME) + 1);
+    int i;
+
+    // construct uri
+    memcpy (uri, FF_PROTOCOL_NAME, sizeof (FF_PROTOCOL_NAME)-1);
+    memcpy (uri + sizeof (FF_PROTOCOL_NAME)-1, ":", 1);
+    memcpy (uri + sizeof (FF_PROTOCOL_NAME), it->fname, l);
+    uri[sizeof (FF_PROTOCOL_NAME) + l] = 0;
+    trace ("ffmpeg: uri: %s\n", uri);
+
+    // open file
+    if ((ret = av_open_input_file(&fctx, uri, NULL, 0, NULL)) < 0) {
+        trace ("fctx is %p, ret %d/%s", fctx, ret, strerror(-ret));
+        return -1;
+    }
+
+    av_find_stream_info(fctx);
+    for (i = 0; i < fctx->nb_streams; i++)
+    {
+        ctx = fctx->streams[i]->codec;
+        if (ctx->codec_type == CODEC_TYPE_AUDIO)
+        {
+            codec = avcodec_find_decoder(ctx->codec_id);
+            if (codec != NULL)
+                break;
+        }
+    }
+    if (codec == NULL)
+    {
+        trace ("ffmpeg can't decode %s\n", fname);
+        av_close_input_file(fctx);
+        return -1;
+    }
+    if (avcodec_open (ctx, codec) < 0) {
+        trace ("ffmpeg: avcodec_open failed\n");
+        av_close_input_file(fctx);
+        return -1;
+    }
+
+    deadbeef->pl_delete_all_meta (it);
+    ffmpeg_read_metadata_internal (it, fctx);
+
+    av_close_input_file(fctx);
+    return 0;
+}
+
 // define plugin interface
 static DB_decoder_t plugin = {
     DB_PLUGIN_SET_API_VERSION
@@ -652,6 +745,7 @@ static DB_decoder_t plugin = {
     .seek = ffmpeg_seek,
     .seek_sample = ffmpeg_seek_sample,
     .insert = ffmpeg_insert,
+    .read_metadata = ffmpeg_read_metadata,
     .exts = exts,
     .filetypes = filetypes
 };
