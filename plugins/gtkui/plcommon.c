@@ -459,11 +459,12 @@ on_group_by_custom_activate            (GtkMenuItem     *menuitem,
     GtkWidget *dlg = create_groupbydlg ();
 
     gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
+    GtkWidget *entry = lookup_widget (dlg, "format");
+    gtk_entry_set_text (GTK_ENTRY (entry), group_by_str);
 //    gtk_window_set_title (GTK_WINDOW (dlg), "Group by");
     gint response = gtk_dialog_run (GTK_DIALOG (dlg));
 
     if (response == GTK_RESPONSE_OK) {
-        GtkWidget *entry = lookup_widget (dlg, "format");
         const gchar *text = gtk_entry_get_text (GTK_ENTRY (entry));
         strncpy (group_by_str, text, sizeof (group_by_str));
         group_by_str[sizeof (group_by_str)-1] = 0;
