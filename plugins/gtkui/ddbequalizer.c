@@ -247,7 +247,7 @@ static gboolean ddb_equalizer_real_expose_event (GtkWidget* base, GdkEventExpose
 	pango_layout_set_width (l, self->priv->margin_left - 1);
 	pango_layout_set_alignment (l, PANGO_ALIGN_RIGHT);
 	fontsize = (gint) ((pango_units_to_double (pango_font_description_get_size (fd)) * gdk_screen_get_resolution (gdk_screen_get_default ())) / 72);
-	if (self->priv->mouse_y != (-1)) {
+	if (self->priv->mouse_y >= 0) {
 		_tmp7_ = self->priv->mouse_y < (height - self->priv->margin_bottom);
 	} else {
 		_tmp7_ = FALSE;
@@ -619,6 +619,7 @@ static void ddb_equalizer_instance_init (DdbEqualizer * self) {
 	self->priv->values_length1 = DDB_EQUALIZER_bands;
 	self->priv->_values_size_ = self->priv->values_length1;
 	self->priv->preamp = 0.5;
+	self->priv->mouse_y = -1;
 	self->priv->curve_hook = FALSE;
 	self->priv->preamp_hook = FALSE;
 	self->priv->margin_bottom = -1;

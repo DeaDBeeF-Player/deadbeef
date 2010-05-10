@@ -31,7 +31,7 @@ namespace Ddb {
         private double[] values = new double [bands];
         private double preamp = 0.5;
 
-        private int mouse_y;
+        private int mouse_y = -1;
         
         private bool curve_hook = false;
         private bool preamp_hook = false;
@@ -58,56 +58,10 @@ namespace Ddb {
             return false;
         }
 
-//        private void send_configure () {
-//            Gdk.Event event = new Gdk.Event (Gdk.EventType.CONFIGURE);
-//
-//            event.configure.window = (Gdk.Window)this.window.ref ();
-//            event.configure.send_event = 1;
-//            event.configure.x = allocation.x;
-//            event.configure.y = allocation.y;
-//            event.configure.width = allocation.width;
-//            event.configure.height = allocation.height;
-//
-//            this.event (event);
-//        }
-
-//        public override void realize () {
-//            set_flags (Gtk.WidgetFlags.REALIZED);
-//            var attrs = Gdk.WindowAttr () {
-//                window_type = Gdk.WindowType.CHILD,
-//                x = allocation.x,
-//                y = allocation.y,
-//                width = allocation.width,
-//                height = allocation.height,
-//                wclass = Gdk.WindowClass.INPUT_OUTPUT,
-//                visual = get_visual (),
-//                colormap = get_colormap (),
-//                event_mask = get_events () | Gdk.EventMask.EXPOSURE_MASK | Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.BUTTON_RELEASE_MASK | Gdk.EventMask.LEAVE_NOTIFY_MASK | Gdk.EventMask.POINTER_MOTION_MASK
-//            };
-//            int attributes_mask = Gdk.WindowAttributesType.X | Gdk.WindowAttributesType.Y | Gdk.WindowAttributesType.VISUAL | Gdk.WindowAttributesType.COLORMAP;
-//            this.window = new Gdk.Window (get_parent_window (), attrs, attributes_mask);
-//
-//            this.window.set_user_data (this);
-//            this.style = this.style.attach (this.window);
-//            this.style.set_background (this.window, Gtk.StateType.NORMAL);
-//
-//            send_configure ();
-//        }
           public override void realize () {
               base.realize ();
               add_events (Gdk.EventMask.EXPOSURE_MASK | Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.BUTTON_RELEASE_MASK | Gdk.EventMask.LEAVE_NOTIFY_MASK | Gdk.EventMask.POINTER_MOTION_MASK);
           }
-
-//        public override void size_allocate (Gdk.Rectangle allocation) {
-//            this.allocation.x = allocation.x;
-//            this.allocation.y = allocation.y;
-//            this.allocation.width = allocation.width;
-//            this.allocation.height = allocation.height;
-//            if (is_realized ()) {
-//                window.move_resize (allocation.x, allocation.y, allocation.width, allocation.height);
-//                send_configure ();
-//            }
-//        }
 
         public override bool
         expose_event (Gdk.EventExpose event)
@@ -188,7 +142,7 @@ namespace Ddb {
 
             int fontsize = (int)(Pango.units_to_double (fd.get_size ()) * Gdk.Screen.get_default ().get_resolution () / 72);
 
-            if ((mouse_y != -1) && (mouse_y < height - margin_bottom))
+            if ((mouse_y >= 0) && (mouse_y < height - margin_bottom))
             {
                 double db = scale((double)(mouse_y-1) / (double)(height - margin_bottom - 2));
                 string tmp = "%s%.1fdB".printf (db > 0 ? "+" : "", db);
