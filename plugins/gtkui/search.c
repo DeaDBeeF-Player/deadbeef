@@ -49,8 +49,8 @@ void
 search_restore_attrs (void) {
     int x = deadbeef->conf_get_int ("searchwin.geometry.x", -1);
     int y = deadbeef->conf_get_int ("searchwin.geometry.y", -1);
-    int w = deadbeef->conf_get_int ("searchwin.geometry.w", 500);
-    int h = deadbeef->conf_get_int ("searchwin.geometry.h", 300);
+    int w = deadbeef->conf_get_int ("searchwin.geometry.w", 450);
+    int h = deadbeef->conf_get_int ("searchwin.geometry.h", 150);
     gtk_widget_show (searchwin);
     if (x != -1 && y != -1) {
         gtk_window_move (GTK_WINDOW (searchwin), x, y);
@@ -59,6 +59,9 @@ search_restore_attrs (void) {
             gtk_window_maximize (GTK_WINDOW (searchwin));
         }
         gtk_window_present (GTK_WINDOW (searchwin));
+    }
+    else {
+        gtk_window_resize (GTK_WINDOW (searchwin), w, h);
     }
 }
 

@@ -915,8 +915,6 @@
 </widget>
 
 <widget class="GtkWindow" id="searchwin">
-  <property name="width_request">600</property>
-  <property name="height_request">150</property>
   <property name="visible">True</property>
   <property name="events">GDK_KEY_PRESS_MASK</property>
   <property name="title" translatable="yes">Search</property>

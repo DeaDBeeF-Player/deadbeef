@@ -812,7 +812,6 @@ create_searchwin (void)
   GtkWidget *searchlist;
 
   searchwin = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_widget_set_size_request (searchwin, 600, 150);
   gtk_widget_set_events (searchwin, GDK_KEY_PRESS_MASK);
   gtk_window_set_title (GTK_WINDOW (searchwin), "Search");
   gtk_window_set_skip_taskbar_hint (GTK_WINDOW (searchwin), TRUE);
