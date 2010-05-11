@@ -402,29 +402,28 @@ static const char *map[] = {
 
 static int
 ffmpeg_read_metadata_internal (DB_playItem_t *it, AVFormatContext *fctx) {
-//#if LIBAVFORMAT_VERSION_INT < (52<<16)
-//    if (!strlen (fctx->title)) {
-//        // title is empty, this call will set track title to filename without extension
-//        deadbeef->pl_add_meta (it, "title", NULL);
-//    }
-//    else {
-//        deadbeef->pl_add_meta (it, "title", fctx->title);
-//    }
-//    deadbeef->pl_add_meta (it, "artist", fctx->author);
-//    deadbeef->pl_add_meta (it, "album", fctx->album);
-//    deadbeef->pl_add_meta (it, "copyright", fctx->copyright);
-//    deadbeef->pl_add_meta (it, "comment", fctx->comment);
-//    deadbeef->pl_add_meta (it, "genre", fctx->genre);
-//
-//    char tmp[10];
-//    snprintf (tmp, sizeof (tmp), "%d", fctx->year);
-//    deadbeef->pl_add_meta (it, "year", tmp);
-//    snprintf (tmp, sizeof (tmp), "%d", fctx->track);
-//    deadbeef->pl_add_meta (it, "track", tmp);
-//#else
+#if LIBAVFORMAT_VERSION_MAJOR <= 52 && LIBAVFORMAT_VERSION_MINOR < 43
+    if (!strlen (fctx->title)) {
+        // title is empty, this call will set track title to filename without extension
+        deadbeef->pl_add_meta (it, "title", NULL);
+    }
+    else {
+        deadbeef->pl_add_meta (it, "title", fctx->title);
+    }
+    deadbeef->pl_add_meta (it, "artist", fctx->author);
+    deadbeef->pl_add_meta (it, "album", fctx->album);
+    deadbeef->pl_add_meta (it, "copyright", fctx->copyright);
+    deadbeef->pl_add_meta (it, "comment", fctx->comment);
+    deadbeef->pl_add_meta (it, "genre", fctx->genre);
+
+    char tmp[10];
+    snprintf (tmp, sizeof (tmp), "%d", fctx->year);
+    deadbeef->pl_add_meta (it, "year", tmp);
+    snprintf (tmp, sizeof (tmp), "%d", fctx->track);
+    deadbeef->pl_add_meta (it, "track", tmp);
+#else
 // read using other means?
 // av_metadata_get?
-//#endif
     AVMetadata *md = fctx->metadata;
 
     for (int m = 0; map[m]; m += 2) {
@@ -432,12 +431,12 @@ ffmpeg_read_metadata_internal (DB_playItem_t *it, AVFormatContext *fctx) {
         do {
             tag = av_metadata_get (md, map[m], tag, AV_METADATA_DONT_STRDUP_KEY | AV_METADATA_DONT_STRDUP_VAL);
             if (tag) {
-                printf ("%s = %s\n", map[m], tag->value);
                 deadbeef->pl_append_meta (it, map[m+1], tag->value);
             }
         } while (tag);
     }
     deadbeef->pl_add_meta (it, "title", NULL);
+#endif
     return 0;
 }
 
