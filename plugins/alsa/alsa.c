@@ -494,7 +494,6 @@ palsa_thread (void *context) {
         }
         LOCK;
         /* find out how much space is available for playback data */
-        int written = 0;
         snd_pcm_sframes_t frames_to_deliver = snd_pcm_avail_update (audio);
         while (frames_to_deliver >= period_size) {
             err = 0;
@@ -519,7 +518,6 @@ palsa_thread (void *context) {
                     continue;
                 }
             }
-            written += period_size;
             frames_to_deliver = snd_pcm_avail_update (audio);
         }
         UNLOCK;
