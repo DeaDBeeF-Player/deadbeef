@@ -506,8 +506,18 @@ palsa_thread (void *context) {
             if (err < 0) {
                 if (err == -ESTRPIPE) {
                     fprintf (stderr, "alsa: trying to recover from suspend... (error=%d, %s)\n", err,  snd_strerror (err));
-                    deadbeef->sendmessage (M_REINIT_SOUND, 0, 0, 0);
-                    break;
+                    while ((err = snd_pcm_resume(audio)) == -EAGAIN) {
+                        sleep(1); /* wait until the suspend flag is released */
+                    }
+                    if (err < 0) {
+                        err = snd_pcm_prepare(audio);
+                        if (err < 0) {
+                            fprintf (stderr, "Can't recovery from suspend, prepare failed: %s", snd_strerror(err));
+                            exit (-1);
+                        }
+                    }
+            //        deadbeef->sendmessage (M_REINIT_SOUND, 0, 0, 0);
+            //        break;
                 }
                 else {
                     if (err != -EPIPE) {
