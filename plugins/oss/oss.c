@@ -53,7 +53,7 @@ static uintptr_t mutex;
 static void
 oss_thread (void *context);
 
-static void
+static int
 oss_callback (char *stream, int len);
 
 static int
@@ -244,13 +244,17 @@ oss_thread (void *context) {
             usleep (10000);
             continue;
         }
+
+        int res = 0;
         
         char buf[BLOCKSIZE];
-        oss_callback (buf, sizeof (buf));
+        int write_size = oss_callback (buf, sizeof (buf));
         deadbeef->mutex_lock (mutex);
-        int res = write (fd, buf, sizeof (buf));
+        if ( write_size > 0 )
+           res = write (fd, buf, write_size);
+
         deadbeef->mutex_unlock (mutex);
-        if (res != sizeof (buf)) {
+        if (res != write_size) {
             perror ("oss write");
             fprintf (stderr, "oss: failed to write buffer\n");
         }
@@ -258,7 +262,7 @@ oss_thread (void *context) {
     }
 }
 
-static void
+static int
 oss_callback (char *stream, int len) {
     int bytesread = deadbeef->streamer_read (stream, len);
     int16_t ivolume = deadbeef->volume_get_amp () * 1000;
@@ -266,9 +270,7 @@ oss_callback (char *stream, int len) {
         ((int16_t*)stream)[i] = (int16_t)(((int32_t)(((int16_t*)stream)[i])) * ivolume / 1000);
     }
 
-    if (bytesread < len) {
-        memset (stream + bytesread, 0, len-bytesread);
-    }
+    return bytesread;
 }
 
 static int

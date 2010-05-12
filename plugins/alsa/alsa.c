@@ -58,7 +58,7 @@ static char conf_alsa_soundcard[100] = "default";
 
 //static snd_async_handler_t *pcm_callback;
 
-static void
+static int
 palsa_callback (char *stream, int len);
 
 #if 0
@@ -497,9 +497,13 @@ palsa_thread (void *context) {
         int written = 0;
         snd_pcm_sframes_t frames_to_deliver = snd_pcm_avail_update (audio);
         while (frames_to_deliver >= period_size) {
+            err = 0;
             char buf[period_size * 4];
-            palsa_callback (buf, period_size * 4);
-            err = snd_pcm_writei (audio, buf, period_size);
+            int bytes_to_write = palsa_callback (buf, period_size * 4);
+
+            if ( bytes_to_write >= 4 )
+               err = snd_pcm_writei (audio, buf, snd_pcm_bytes_to_frames(audio, bytes_to_write));
+
             if (err < 0) {
                 if (err == -ESTRPIPE) {
                     fprintf (stderr, "alsa: trying to recover from suspend... (error=%d, %s)\n", err,  snd_strerror (err));
@@ -523,7 +527,7 @@ palsa_thread (void *context) {
     }
 }
 
-static void
+static int
 palsa_callback (char *stream, int len) {
     int bytesread = deadbeef->streamer_read (stream, len);
 
@@ -564,9 +568,7 @@ palsa_callback (char *stream, int len) {
         ((int16_t*)stream)[i] = (int16_t)(((int32_t)(((int16_t*)stream)[i])) * ivolume / 1000);
     }
 #endif
-    if (bytesread < len) {
-        memset (stream + bytesread, 0, len-bytesread);
-    }
+    return bytesread;
 }
 
 static int
