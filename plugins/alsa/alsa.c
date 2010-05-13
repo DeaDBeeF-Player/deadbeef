@@ -496,12 +496,20 @@ palsa_thread (void *context) {
         /* find out how much space is available for playback data */
         snd_pcm_sframes_t frames_to_deliver = snd_pcm_avail_update (audio);
         while (frames_to_deliver >= period_size) {
+            if (alsa_terminate) {
+                break;
+            }
             err = 0;
             char buf[period_size * 4];
             int bytes_to_write = palsa_callback (buf, period_size * 4);
 
-            if ( bytes_to_write >= 4 )
+            if ( bytes_to_write >= 4 ) {
                err = snd_pcm_writei (audio, buf, snd_pcm_bytes_to_frames(audio, bytes_to_write));
+            }
+            else {
+                usleep (10000);
+                continue;
+            }
 
             if (err < 0) {
                 if (err == -ESTRPIPE) {
