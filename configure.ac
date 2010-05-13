@@ -77,7 +77,7 @@ AC_ARG_ENABLE(notify,   [  --disable-notify        disable notification-daemon s
 PKG_CHECK_MODULES(DEPS, samplerate)
 
 if test "x$enable_gtkui" != "xno" ; then
-    PKG_CHECK_MODULES(GTKUI_DEPS, gtk+-3.0 >= 2.90 gthread-2.0 glib-2.0, HAVE_GTK=yes, HAVE_GTK=no)
+    PKG_CHECK_MODULES(GTKUI_DEPS, gtk+-2.0 >= 2.12 gthread-2.0 glib-2.0, HAVE_GTK=yes, HAVE_GTK=no)
 else
     HAVE_GTK=no
 fi
