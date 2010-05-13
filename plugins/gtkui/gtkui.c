@@ -107,7 +107,7 @@ static struct timeval last_br_update;
 static gboolean
 update_songinfo (gpointer ctx) {
     int iconified = gdk_window_get_state(mainwin->window) & GDK_WINDOW_STATE_ICONIFIED;
-    if (!GTK_WIDGET_VISIBLE (mainwin) || iconified) {
+    if (!gtk_widget_get_visible (mainwin) || iconified) {
         return FALSE;
     }
     char sbtext_new[512] = "-";
@@ -232,7 +232,7 @@ on_trayicon_scroll_event               (GtkWidget       *widget,
 void
 mainwin_toggle_visible (void) {
     int iconified = gdk_window_get_state(mainwin->window) & GDK_WINDOW_STATE_ICONIFIED;
-    if (GTK_WIDGET_VISIBLE (mainwin) && !iconified) {
+    if (gtk_widget_get_visible (mainwin) && !iconified) {
         gtk_widget_hide (mainwin);
     }
     else {
@@ -322,7 +322,7 @@ redraw_queued_tracks (DdbListview *pl, int list) {
 static gboolean
 redraw_queued_tracks_cb (gpointer nothing) {
     int iconified = gdk_window_get_state(mainwin->window) & GDK_WINDOW_STATE_ICONIFIED;
-    if (!GTK_WIDGET_VISIBLE (mainwin) || iconified) {
+    if (!gtk_widget_get_visible (mainwin) || iconified) {
         return FALSE;
     }
     redraw_queued_tracks (DDB_LISTVIEW (lookup_widget (mainwin, "playlist")), PL_MAIN);
@@ -644,7 +644,7 @@ update_win_title_idle (gpointer data) {
 static gboolean
 redraw_seekbar_cb (gpointer nothing) {
     int iconified = gdk_window_get_state(mainwin->window) & GDK_WINDOW_STATE_ICONIFIED;
-    if (!GTK_WIDGET_VISIBLE (mainwin) || iconified) {
+    if (!gtk_widget_get_visible (mainwin) || iconified) {
         return FALSE;
     }
     seekbar_redraw ();
@@ -733,7 +733,7 @@ gtkui_thread (void *ctx) {
     if (mainwin_icon_pixbuf)
     {
         gtk_window_set_icon (GTK_WINDOW (mainwin), mainwin_icon_pixbuf);
-        gdk_pixbuf_unref (mainwin_icon_pixbuf);
+        g_object_unref (G_OBJECT (mainwin_icon_pixbuf));
     }
     {
         int x = deadbeef->conf_get_int ("mainwin.geometry.x", 40);

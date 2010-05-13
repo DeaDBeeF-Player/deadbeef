@@ -274,6 +274,7 @@ ddb_listview_class_init(DdbListviewClass *class)
 {
   GtkTableClass *widget_class = (GtkTableClass *) class;
   GtkObjectClass *object_class = (GtkObjectClass *) class;
+  // FIXME!!!
   object_class->destroy = ddb_listview_destroy;
 }
 
@@ -357,10 +358,10 @@ ddb_listview_init(DdbListview *listview)
             (GtkAttachOptions) (GTK_FILL), 0, 0);
 
 
-    gtk_object_set_data (GTK_OBJECT (listview->list), "owner", listview);
-    gtk_object_set_data (GTK_OBJECT (listview->header), "owner", listview);
-    gtk_object_set_data (GTK_OBJECT (listview->scrollbar), "owner", listview);
-    gtk_object_set_data (GTK_OBJECT (listview->hscrollbar), "owner", listview);
+    g_object_set_data (G_OBJECT (listview->list), "owner", listview);
+    g_object_set_data (G_OBJECT (listview->header), "owner", listview);
+    g_object_set_data (G_OBJECT (listview->scrollbar), "owner", listview);
+    g_object_set_data (G_OBJECT (listview->hscrollbar), "owner", listview);
 
     g_signal_connect ((gpointer) listview->list, "configure_event",
             G_CALLBACK (ddb_listview_list_configure_event),
@@ -436,14 +437,13 @@ ddb_listview_init(DdbListview *listview)
 
 GtkWidget * ddb_listview_new()
 {
-   return GTK_WIDGET(gtk_type_new(ddb_listview_get_type()));
+   return g_object_newv (ddb_listview_get_type(), 0, NULL);//GTK_WIDGET(gtk_type_new(ddb_listview_get_type()));
 }
 
 static void
 ddb_listview_destroy(GtkObject *object)
 {
   DdbListview *listview;
-  DdbListviewClass *class;
 
   g_return_if_fail(object != NULL);
   g_return_if_fail(DDB_IS_LISTVIEW(object));
@@ -459,11 +459,11 @@ ddb_listview_destroy(GtkObject *object)
   }
 
   if (listview->cursor_sz) {
-      gdk_cursor_destroy (listview->cursor_sz);
+      gdk_cursor_unref (listview->cursor_sz);
       listview->cursor_sz = NULL;
   }
   if (listview->cursor_drag) {
-      gdk_cursor_destroy (listview->cursor_drag);
+      gdk_cursor_unref (listview->cursor_drag);
       listview->cursor_drag = NULL;
   }
   if (listview->backbuf) {
@@ -475,11 +475,9 @@ ddb_listview_destroy(GtkObject *object)
       listview->backbuf_header = NULL;
   }
 
-  class = gtk_type_class(gtk_widget_get_type());
-
-  if (GTK_OBJECT_CLASS (ddb_listview_parent_class)) {
-      GTK_OBJECT_CLASS (ddb_listview_parent_class)->destroy (object);
-  }
+//  if (G_OBJECT_CLASS (ddb_listview_parent_class)) {
+//      G_OBJECT_CLASS (ddb_listview_parent_class)->destroy (object);
+//  }
 }
 
 void
@@ -529,7 +527,7 @@ ddb_listview_list_configure_event            (GtkWidget       *widget,
         GdkEventConfigure *event,
         gpointer         user_data)
 {
-    DdbListview *ps = DDB_LISTVIEW (gtk_object_get_data (GTK_OBJECT (widget), "owner"));
+    DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
 
     draw_init_font (widget->style);
     int height = draw_get_font_size () + 12;
@@ -700,7 +698,7 @@ ddb_listview_list_expose_event               (GtkWidget       *widget,
         GdkEventExpose  *event,
         gpointer         user_data)
 {
-    DdbListview *ps = DDB_LISTVIEW (gtk_object_get_data (GTK_OBJECT (widget), "owner"));
+    DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
     ddb_listview_list_expose (ps, event->area.x, event->area.y, event->area.width, event->area.height);
     return FALSE;
 }
@@ -718,7 +716,7 @@ ddb_listview_vscroll_event               (GtkWidget       *widget,
                                         GdkEvent        *event,
                                         gpointer         user_data)
 {
-    DdbListview *ps = DDB_LISTVIEW (gtk_object_get_data (GTK_OBJECT (widget), "owner"));
+    DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
 	GdkEventScroll *ev = (GdkEventScroll*)event;
     GtkWidget *range = ps->scrollbar;;
     GtkWidget *list = ps->list;
@@ -739,7 +737,7 @@ void
 ddb_listview_vscroll_value_changed            (GtkRange        *widget,
                                         gpointer         user_data)
 {
-    DdbListview *ps = DDB_LISTVIEW (gtk_object_get_data (GTK_OBJECT (widget), "owner"));
+    DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
     int newscroll = gtk_range_get_value (GTK_RANGE (widget));
     if (ps->binding->vscroll_changed) {
         ps->binding->vscroll_changed (newscroll);
@@ -785,7 +783,7 @@ void
 ddb_listview_hscroll_value_changed           (GtkRange        *widget,
                                         gpointer         user_data)
 {
-    DdbListview *pl = DDB_LISTVIEW (gtk_object_get_data (GTK_OBJECT (widget), "owner"));
+    DdbListview *pl = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
     int newscroll = gtk_range_get_value (GTK_RANGE (widget));
     ddb_listview_list_set_hscroll (pl, newscroll);
 }
@@ -798,7 +796,7 @@ ddb_listview_list_drag_motion                (GtkWidget       *widget,
                                         guint            time,
                                         gpointer         user_data)
 {
-    DdbListview *pl = DDB_LISTVIEW (gtk_object_get_data (GTK_OBJECT (widget), "owner"));
+    DdbListview *pl = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
     ddb_listview_list_track_dragdrop (pl, y);
     int cnt = g_list_length (drag_context->targets);
     int i;
@@ -861,7 +859,7 @@ ddb_listview_list_drag_data_get              (GtkWidget       *widget,
                                         guint            time,
                                         gpointer         user_data)
 {
-    DdbListview *ps = DDB_LISTVIEW (gtk_object_get_data (GTK_OBJECT (widget), "owner"));
+    DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
     switch (target_type) {
     case TARGET_SAMEWIDGET:
         {
@@ -904,7 +902,7 @@ ddb_listview_list_drag_data_received         (GtkWidget       *widget,
                                         guint            time,
                                         gpointer         user_data)
 {
-    DdbListview *ps = DDB_LISTVIEW (gtk_object_get_data (GTK_OBJECT (widget), "owner"));
+    DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
     if (!ps->binding->external_drag_n_drop || !ps->binding->drag_n_drop) {
         gtk_drag_finish (drag_context, TRUE, FALSE, time);
         return;
@@ -967,7 +965,7 @@ ddb_listview_list_drag_leave                 (GtkWidget       *widget,
                                         guint            time,
                                         gpointer         user_data)
 {
-    DdbListview *pl = DDB_LISTVIEW (gtk_object_get_data (GTK_OBJECT (widget), "owner"));
+    DdbListview *pl = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
     ddb_listview_list_track_dragdrop (pl, -1);
 }
 
@@ -1193,7 +1191,8 @@ ddb_listview_list_render_row_background (DdbListview *ps, DdbListviewIter it, in
         if (treeview->style->depth == -1) {
             return; // drawing was called too early
         }
-        GTK_OBJECT_FLAGS (treeview) |= GTK_HAS_FOCUS;
+        GTK_WIDGET_SET_FLAGS (GTK_WIDGET (treeview), GTK_HAS_FOCUS);
+        //G_OBJECT_FLAGS (treeview) |= GTK_HAS_FOCUS;
     }
     int sel = it && ps->binding->is_selected (it);
     if (theming || !sel) {
@@ -1989,7 +1988,7 @@ ddb_listview_list_drag_end                   (GtkWidget       *widget,
                                         GdkDragContext  *drag_context,
                                         gpointer         user_data)
 {
-    DdbListview *ps = DDB_LISTVIEW (gtk_object_get_data (GTK_OBJECT (widget), "owner"));
+    DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
     ddb_listview_refresh (ps, DDB_REFRESH_LIST|DDB_EXPOSE_LIST);
     ps->scroll_direction = 0;
     ps->scroll_pointer_y = -1;
@@ -2099,7 +2098,7 @@ ddb_listview_header_expose_event                 (GtkWidget       *widget,
                                         GdkEventExpose  *event,
                                         gpointer         user_data)
 {
-    DdbListview *ps = DDB_LISTVIEW (gtk_object_get_data (GTK_OBJECT (widget), "owner"));
+    DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
     ddb_listview_header_expose (ps, event->area.x, event->area.y, event->area.width, event->area.height);
     return FALSE;
 }
@@ -2110,7 +2109,7 @@ ddb_listview_header_configure_event              (GtkWidget       *widget,
                                         GdkEventConfigure *event,
                                         gpointer         user_data)
 {
-    DdbListview *ps = DDB_LISTVIEW (gtk_object_get_data (GTK_OBJECT (widget), "owner"));
+    DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
     draw_init_font (widget->style);
     int height = draw_get_font_size () + 12;
     if (height != widget->allocation.height) {
@@ -2131,7 +2130,7 @@ ddb_listview_header_realize                      (GtkWidget       *widget,
                                         gpointer         user_data)
 {
     // create cursor for sizing headers
-    DdbListview *listview = DDB_LISTVIEW (gtk_object_get_data (GTK_OBJECT (widget), "owner"));
+    DdbListview *listview = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
     int h = draw_get_font_size ();
     gtk_widget_set_size_request (widget, -1, h + 10);
     listview->cursor_sz = gdk_cursor_new (GDK_SB_H_DOUBLE_ARROW);
@@ -2143,7 +2142,7 @@ ddb_listview_header_motion_notify_event          (GtkWidget       *widget,
                                         GdkEventMotion  *event,
                                         gpointer         user_data)
 {
-    DdbListview *ps = DDB_LISTVIEW (gtk_object_get_data (GTK_OBJECT (widget), "owner"));
+    DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
     int ev_x, ev_y;
     GdkModifierType ev_state;
 
@@ -2276,7 +2275,7 @@ ddb_listview_header_button_press_event           (GtkWidget       *widget,
                                         GdkEventButton  *event,
                                         gpointer         user_data)
 {
-    DdbListview *ps = DDB_LISTVIEW (gtk_object_get_data (GTK_OBJECT (widget), "owner"));
+    DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
 //    ps->active_column = ddb_listview_header_get_column_for_coord (ps, event->x);
     if (event->button == 1) {
         // start sizing/dragging
@@ -2320,7 +2319,7 @@ ddb_listview_header_button_release_event         (GtkWidget       *widget,
                                         GdkEventButton  *event,
                                         gpointer         user_data)
 {
-    DdbListview *ps = DDB_LISTVIEW (gtk_object_get_data (GTK_OBJECT (widget), "owner"));
+    DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
     if (event->button == 1) {
         if (ps->header_prepare) {
             ps->header_sizing = -1;
@@ -2445,7 +2444,7 @@ ddb_listview_list_button_press_event         (GtkWidget       *widget,
                                         GdkEventButton  *event,
                                         gpointer         user_data)
 {
-    DdbListview *ps = DDB_LISTVIEW (gtk_object_get_data (GTK_OBJECT (widget), "owner"));
+    DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
     if (event->button == 1) {
         ddb_listview_list_mouse1_pressed (ps, event->state, event->x, event->y, event->time);
     }
@@ -2494,7 +2493,7 @@ ddb_listview_list_button_release_event       (GtkWidget       *widget,
                                         GdkEventButton  *event,
                                         gpointer         user_data)
 {
-    DdbListview *ps = DDB_LISTVIEW (gtk_object_get_data (GTK_OBJECT (widget), "owner"));
+    DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
     if (event->button == 1) {
         ddb_listview_list_mouse1_released (ps, event->state, event->x, event->y, event->time);
     }
@@ -2509,7 +2508,7 @@ ddb_listview_motion_notify_event        (GtkWidget       *widget,
     int x = event->x;
     int y = event->y;
     gdk_event_request_motions (event);
-    DdbListview *ps = DDB_LISTVIEW (gtk_object_get_data (GTK_OBJECT (widget), "owner"));
+    DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
     ddb_listview_list_mousemove (ps, event, x, y);
     return FALSE;
 }

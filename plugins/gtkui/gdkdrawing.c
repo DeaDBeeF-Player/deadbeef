@@ -57,7 +57,7 @@ draw_copy (uintptr_t dest_canvas, uintptr_t src_canvas, int dx, int dy, int sx, 
 
 void
 draw_pixbuf (uintptr_t dest_canvas, uintptr_t pixbuf, int dx, int dy, int sx, int sy, int w, int h) {
-    gdk_pixbuf_render_to_drawable (GDK_PIXBUF (pixbuf), GDK_DRAWABLE (dest_canvas), gc, sx, sy, dx, dy, w, h, GDK_RGB_DITHER_NONE, 0, 0);
+    gdk_draw_pixbuf (GDK_DRAWABLE (dest_canvas), gc, GDK_PIXBUF (pixbuf), sx, sy, dx, dy, w, h, GDK_RGB_DITHER_NONE, 0, 0);
 }
 
 void

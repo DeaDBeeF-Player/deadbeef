@@ -323,7 +323,7 @@ main_playlist_free (void) {
 
 void
 main_refresh (void) {
-    if (mainwin && GTK_WIDGET_VISIBLE (mainwin)) {
+    if (mainwin && gtk_widget_get_visible (mainwin)) {
         DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
         ddb_listview_refresh (pl, DDB_REFRESH_VSCROLL | DDB_REFRESH_LIST | DDB_EXPOSE_LIST);
     }

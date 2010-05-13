@@ -632,7 +632,7 @@ on_mainwin_configure_event             (GtkWidget       *widget,
 #else
 	GdkWindowState window_state = gdk_window_get_state (G_OBJECT (widget));
 #endif
-    if (!(window_state & GDK_WINDOW_STATE_MAXIMIZED) && GTK_WIDGET_VISIBLE (widget)) {
+    if (!(window_state & GDK_WINDOW_STATE_MAXIMIZED) && gtk_widget_get_visible (widget)) {
         int x, y;
         int w, h;
         gtk_window_get_position (GTK_WINDOW (widget), &x, &y);

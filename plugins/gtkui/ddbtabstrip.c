@@ -29,7 +29,7 @@
 
 #define GLADE_HOOKUP_OBJECT(component,widget,name) \
   g_object_set_data_full (G_OBJECT (component), name, \
-    gtk_widget_ref (widget), (GDestroyNotify) gtk_widget_unref)
+    g_object_ref (G_OBJECT (widget)), (GDestroyNotify) g_object_unref)
 
 #define GLADE_HOOKUP_OBJECT_NO_REF(component,widget,name) \
   g_object_set_data (G_OBJECT (component), name, widget)
@@ -71,7 +71,7 @@ ddb_tabstrip_realize (GtkWidget *widget) {
     GdkWindowAttr attributes;
     gint attributes_mask;
 
-    if (GTK_WIDGET_NO_WINDOW (widget))
+    if (GTK_WIDGET_FLAGS (widget)&GTK_NO_WINDOW/*GTK_WIDGET_NO_WINDOW (widget)*/)
     {
         GTK_WIDGET_CLASS (ddb_tabstrip_parent_class)->realize (widget);
     }
@@ -120,9 +120,9 @@ ddb_tabstrip_size_allocate (GtkWidget     *widget,
 
   widget->allocation = *allocation;
 
-  if (GTK_WIDGET_REALIZED (widget))
+  if (GTK_WIDGET_FLAGS(widget)&GTK_REALIZED/*GTK_WIDGET_REALIZED (widget)*/)
     {
-      if (!GTK_WIDGET_NO_WINDOW (widget))
+      if (!(GTK_WIDGET_FLAGS (widget)&GTK_NO_WINDOW)/*GTK_WIDGET_NO_WINDOW (widget)*/)
         gdk_window_move_resize (widget->window,
                                 allocation->x, allocation->y,
                                 allocation->width, allocation->height);
@@ -190,17 +190,11 @@ static void
 ddb_tabstrip_destroy(GtkObject *object)
 {
   DdbTabStrip *tabstrip;
-  DdbTabStripClass *class;
 
   g_return_if_fail(object != NULL);
   g_return_if_fail(DDB_IS_TABSTRIP(object));
 
   tabstrip = DDB_TABSTRIP (object);
-  class = gtk_type_class(gtk_widget_get_type());
-
-  if (GTK_OBJECT_CLASS (ddb_tabstrip_parent_class)) {
-      GTK_OBJECT_CLASS (ddb_tabstrip_parent_class)->destroy (object);
-  }
 }
 
 static void

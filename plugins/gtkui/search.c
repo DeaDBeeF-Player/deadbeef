@@ -100,7 +100,7 @@ on_searchentry_changed                 (GtkEditable     *editable,
 
 void
 search_refresh (void) {
-    if (searchwin && GTK_WIDGET_VISIBLE (searchwin)) {
+    if (searchwin && gtk_widget_get_visible (searchwin)) {
         GtkWidget *pl = lookup_widget (searchwin, "searchlist");
         ddb_listview_refresh (DDB_LISTVIEW (pl), DDB_REFRESH_VSCROLL | DDB_REFRESH_LIST | DDB_EXPOSE_LIST);
     }
@@ -199,7 +199,7 @@ on_searchwin_configure_event           (GtkWidget       *widget,
 #else
 	GdkWindowState window_state = gdk_window_get_state (G_OBJECT (widget));
 #endif
-    if (!(window_state & GDK_WINDOW_STATE_MAXIMIZED) && GTK_WIDGET_VISIBLE (widget)) {
+    if (!(window_state & GDK_WINDOW_STATE_MAXIMIZED) && gtk_widget_get_visible (widget)) {
         int x, y;
         int w, h;
         gtk_window_get_position (GTK_WINDOW (widget), &x, &y);
@@ -217,7 +217,7 @@ on_searchwin_window_state_event        (GtkWidget       *widget,
                                         GdkEventWindowState *event,
                                         gpointer         user_data)
 {
-    if (!GTK_WIDGET_VISIBLE (widget)) {
+    if (!gtk_widget_get_visible (widget)) {
         return FALSE;
     }
     // based on pidgin maximization handler

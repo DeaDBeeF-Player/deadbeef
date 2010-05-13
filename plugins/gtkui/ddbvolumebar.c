@@ -50,7 +50,7 @@ static void
 ddb_volumebar_realize (GtkWidget *widget) {
   DdbVolumeBar *darea = DDB_VOLUMEBAR (widget);
 
-  GTK_WIDGET_SET_FLAGS (widget, GTK_NO_WINDOW);
+  gtk_widget_set_has_window (widget, FALSE);
   GTK_WIDGET_CLASS (ddb_volumebar_parent_class)->realize (widget);
 
 #if 0
@@ -98,9 +98,9 @@ ddb_volumebar_size_allocate (GtkWidget     *widget,
 
   widget->allocation = *allocation;
 
-  if (GTK_WIDGET_REALIZED (widget))
+  if (gtk_widget_get_realized (widget))
     {
-      if (!GTK_WIDGET_NO_WINDOW (widget))
+      if (gtk_widget_get_has_window (widget))
         gdk_window_move_resize (widget->window,
                                 allocation->x, allocation->y,
                                 allocation->width, allocation->height);

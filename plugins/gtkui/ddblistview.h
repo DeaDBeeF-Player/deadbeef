@@ -153,7 +153,7 @@ struct _DdbListviewClass {
   GtkTableClass parent_class;
 };
 
-GtkType ddb_listview_get_type(void);
+GType ddb_listview_get_type(void);
 
 GtkWidget * ddb_listview_new();
 
