@@ -274,7 +274,7 @@ typedef struct {
 
 // md5 calc control structure (see md5/md5.h)
 typedef struct DB_md5_s {
-    char data[70];
+    char data[88];
 } DB_md5_t;
 
 // forward decl for plugin struct
