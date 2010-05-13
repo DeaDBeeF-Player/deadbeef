@@ -25,6 +25,7 @@
 #include <sys/types.h>
 
 #include <cdio/cdio.h>
+#include <cdio/cdtext.h>
 #include <cddb/cddb.h>
 
 #include "../../deadbeef.h"
@@ -36,6 +37,7 @@
 #define DEFAULT_PORT 888
 #define DEFAULT_USE_CDDB 1
 #define DEFAULT_PROTOCOL 1
+#define DEFAULT_PREFER_CDTEXT 1
 
 #define SECTORSIZE CDIO_CD_FRAMESIZE_RAW //2352
 #define SAMPLESIZE 4 //bytes
@@ -298,6 +300,17 @@ insert_single_track (CdIo_t* cdio, DB_playItem_t *after, const char* file, int t
 }
 
 static void
+cleanup_thread_params (struct cddb_thread_params *params)
+{
+    int i;
+    for (i = 0; params->items[i]; i++)
+        deadbeef->pl_item_unref (params->items[i]);
+    cdio_destroy (params->cdio);
+    free (params);
+}
+
+
+static void
 cddb_thread (void *items_i)
 {
     struct cddb_thread_params *params = (struct cddb_thread_params*)items_i;
@@ -341,15 +354,86 @@ cddb_thread (void *items_i)
         snprintf (tmp, sizeof (tmp), "%02d", trk);
         deadbeef->pl_add_meta (items[i], "track", tmp);
         deadbeef->plug_trigger_event_trackinfochanged (items[i]);
-        deadbeef->pl_item_unref (items[i]);
     }
     cddb_disc_destroy (disc);
     deadbeef->mutex_unlock (mutex);
-    if (params->cdio) {
-        cdio_destroy (params->cdio);
-    }
-    free (params);
+    cleanup_thread_params (params);
     cddb_tid = 0;
+}
+
+static void
+read_track_cdtext (CdIo_t *cdio, int track_nr, DB_playItem_t *item)
+{
+    cdtext_t *cdtext = cdio_get_cdtext (cdio, 0);
+    if (!cdtext)
+    {
+        trace ("No cdtext\n");
+        return;
+    }
+    const char *artist = NULL;
+    const char *album = NULL;
+    int field_type;
+    for (field_type = 0; field_type < MAX_CDTEXT_FIELDS; field_type++)
+    {
+        const char *text = cdtext_get_const (field_type, cdtext);
+        const char *field = NULL;
+        if (text)
+        {
+            switch (field_type)
+            {
+                case CDTEXT_TITLE: album = strdup (text); break;
+                case CDTEXT_PERFORMER: artist = strdup (text); break;
+            }
+        }
+    }
+
+    trace ("artist: %s; album: %s\n", artist, album);
+    deadbeef->pl_replace_meta (item, "artist", artist);
+    deadbeef->pl_replace_meta (item, "album", album);
+
+    cdtext = cdio_get_cdtext (cdio, track_nr);
+    if (!cdtext)
+        return;
+
+    for (field_type = 0; field_type < MAX_CDTEXT_FIELDS; field_type++)
+    {
+        const char *text = cdtext_get_const (field_type, cdtext);
+        const char *field = NULL;
+        if (!text)
+            continue;
+        switch (field_type)
+        {
+            case CDTEXT_TITLE:      field = "title";    break;
+            case CDTEXT_PERFORMER:  field = "artist";   break;
+            case CDTEXT_COMPOSER:   field = "composer"; break;
+            case CDTEXT_GENRE:      field = "genre";    break;
+            case CDTEXT_SONGWRITER: field = "songwriter";   break;
+            case CDTEXT_MESSAGE:    field = "comment";  break;
+            default: field = NULL;
+        }
+        if (field)
+        {
+            trace ("%s: %s\n", field, text);
+            deadbeef->pl_replace_meta (item, field, text);
+        }
+    }
+}
+
+static int
+read_disc_cdtext (struct cddb_thread_params *params)
+{
+    DB_playItem_t **items = params->items;
+    cdtext_t *cdtext = cdio_get_cdtext (params->cdio, 0);
+    if (!cdtext)
+        return 0;
+
+    track_t first_track = cdio_get_first_track_num (params->cdio);
+    track_t tracks = cdio_get_num_tracks (params->cdio);
+    track_t i;
+    for (i = 0; i < tracks; i++)
+        read_track_cdtext (params->cdio, i + first_track, params->items[i]);
+
+    return 1;
 }
 
 static DB_playItem_t *
@@ -401,27 +485,30 @@ cda_insert (DB_playItem_t *after, const char *fname) {
         {
             res = insert_single_track (cdio, res, is_image ? fname : NULL, i+first_track);
             if (res) {
-                if (enable_cddb) {
-                    p->items[i] = res;
-                }
-                else {
-                    deadbeef->pl_item_unref (res);
-                }
+                p->items[i] = res;
             }
         }
-        trace ("cdda: querying freedb...\n");
-        if (enable_cddb) {
+
+        int got_cdtext = read_disc_cdtext (p);
+        int prefer_cdtext = deadbeef->conf_get_int ("cdda.prefer_cdtext", DEFAULT_PREFER_CDTEXT);
+
+        if ((!got_cdtext || !prefer_cdtext) && enable_cddb)
+        {
+            trace ("cdda: querying freedb...\n");
             if (cddb_tid) {
                 deadbeef->thread_join (cddb_tid);
             }
             cddb_tid = deadbeef->thread_start (cddb_thread, p); //will destroy cdio
         }
+        else
+            cleanup_thread_params (p);
     }
     else
     {
         track_nr = atoi (shortname);
         res = insert_single_track (cdio, after, NULL, track_nr);
         if (res) {
+            read_track_cdtext (cdio, track_nr, res);
             deadbeef->pl_item_unref (res);
         }
         cdio_destroy (cdio);
@@ -450,6 +537,7 @@ static const char *filetypes[] = { "cdda", NULL };
 
 static const char settings_dlg[] =
     "property \"Use CDDB/FreeDB\" checkbox cdda.freedb.enable 1;\n"
+    "property \"Prefer CD-Text over CDDB\" checkbox cdda.prefer_cdtext 1;\n"
     "property \"CDDB url (e.g. 'freedb.org')\" entry cdda.freedb.host freedb.org;\n"
     "property \"CDDB port number (e.g. '888')\" entry cdda.freedb.port 888;\n"
     "property \"Prefer CDDB protocol over HTTP\" checkbox cdda.protocol 1;"
