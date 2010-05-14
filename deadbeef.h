@@ -253,11 +253,9 @@ enum {
     M_STOPSONG,
     M_PAUSESONG,
     M_PLAYRANDOM,
-//    M_SONGCHANGED, // p1=from, p2=to
     M_TERMINATE, // must be sent to player thread to terminate
     M_PLAYLISTREFRESH,
     M_REINIT_SOUND,
-//    M_TRACKCHANGED, // p1=tracknumber
     M_CONFIGCHANGED, // no arguments
 };
 

@@ -230,7 +230,7 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
         }
         messagepump_push (M_PLAYLISTREFRESH, 0, 0, 0);
         if (!queue) {
-            messagepump_push (M_PLAYSONG, 0, 0, 0);
+            messagepump_push (M_PLAYSONG, 0, 1, 0);
             return 2; // don't reload playlist at startup
         }
     }
@@ -350,15 +350,16 @@ player_mainloop (void) {
                 break;
             case M_TERMINATE:
                 return;
-//            case M_SONGCHANGED:
-//                plug_trigger_event_trackchange (p1, p2);
-//                break;
             case M_PLAYSONG:
-                streamer_play_current_track ();
+                if (p1) {
+                    p_stop ();
+                    pl_playqueue_clear ();
+                    streamer_set_nextsong (0, 1);
+                }
+                else {
+                    streamer_play_current_track ();
+                }
                 break;
-//            case M_TRACKCHANGED:
-//                plug_trigger_event_trackinfochanged (p1);
-//                break;
             case M_PLAYSONGNUM:
                 p_stop ();
                 pl_playqueue_clear ();
