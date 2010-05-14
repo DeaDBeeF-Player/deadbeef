@@ -435,6 +435,7 @@ http_content_header_handler (void *ptr, size_t size, size_t nmemb, void *stream)
 static int
 http_curl_control (void *stream, double dltotal, double dlnow, double ultotal, double ulnow) {
     HTTP_FILE *fp = (HTTP_FILE *)stream;
+    deadbeef->mutex_lock (fp->mutex);
 
     struct timeval tm;
     gettimeofday (&tm, NULL);
@@ -450,12 +451,15 @@ http_curl_control (void *stream, double dltotal, double dlnow, double ultotal, d
     }
     else if (fp->status == STATUS_SEEK) {
         trace ("vfs_curl STATUS_SEEK in progress callback\n");
+        deadbeef->mutex_unlock (fp->mutex);
         return -1;
     }
     if (fp->status == STATUS_ABORTED) {
         trace ("vfs_curl STATUS_ABORTED in progress callback\n");
+        deadbeef->mutex_unlock (fp->mutex);
         return -1;
     }
+    deadbeef->mutex_unlock (fp->mutex);
     return 0;
 }
 

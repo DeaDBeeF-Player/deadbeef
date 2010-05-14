@@ -487,9 +487,9 @@ artwork_load (DB_functions_t *api) {
 void
 artwork_reset (int fast) {
     if (fast) {
-        if (current_file) {
-            deadbeef->fabort (current_file);
-        }
+//        if (current_file) {
+//            deadbeef->fabort (current_file);
+//        }
         deadbeef->mutex_lock (mutex);
         while (queue && queue->next) {
             cover_query_t *next = queue->next->next;
