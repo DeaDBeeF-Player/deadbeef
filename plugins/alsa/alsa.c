@@ -507,7 +507,9 @@ palsa_thread (void *context) {
                err = snd_pcm_writei (audio, buf, snd_pcm_bytes_to_frames(audio, bytes_to_write));
             }
             else {
+                UNLOCK;
                 usleep (10000);
+                LOCK
                 continue;
             }
 
