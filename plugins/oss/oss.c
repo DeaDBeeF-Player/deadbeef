@@ -185,7 +185,7 @@ static int
 oss_stop (void) {
     state = OUTPUT_STATE_STOPPED;
     deadbeef->streamer_reset (1);
-    return 0;
+    return oss_free();
 }
 
 static int
@@ -195,14 +195,21 @@ oss_pause (void) {
     }
     // set pause state
     state = OUTPUT_STATE_PAUSED;
-    return 0;
+    return oss_free();
 }
 
 static int
 oss_unpause (void) {
     // unset pause state
     if (state == OUTPUT_STATE_PAUSED) {
-        state = OUTPUT_STATE_PLAYING;
+
+       if (!oss_tid) {
+          if(oss_init() < 0) {
+             return -1;
+          }
+       }
+
+       state = OUTPUT_STATE_PLAYING;
     }
     return 0;
 }
