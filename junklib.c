@@ -37,6 +37,7 @@
 #define MAX_CUESHEET_FRAME_SIZE 10000
 #define MAX_APEV2_FRAME_SIZE 100000
 #define MAX_ID3V2_FRAME_SIZE 100000
+#define MAX_ID3V2_APIC_FRAME_SIZE 2000000
 
 #define UTF8 "utf-8"
 
@@ -2461,15 +2462,15 @@ junk_id3v2_add_genre (playItem_t *it, char *genre) {
                     genre_str = "None";
                 }
                 if (genre_str) {
-                    genre = strdup (genre_str);
+                    pl_add_meta (it, "genre", genre_str);
                 }
             }
         }
         else if (!strcmp (genre, "CR")) {
-            genre = strdup ("Cover");
+            pl_add_meta (it, "genre", "Cover");
         }
         else if (!strcmp (genre, "RX")) {
-            genre = strdup ("Remix");
+            pl_add_meta (it, "genre", "Remix");
         }
     }
 
@@ -2539,11 +2540,11 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
         uint32_t sz = (readptr[3] << 0) | (readptr[2] << 7) | (readptr[1] << 14) | (readptr[0] << 21);
         if (size < sz) {
             trace ("error: size of ext header (%d) is greater than tag size\n", sz);
-            return -1; // bad size
+            goto error; // bad size
         }
         readptr += sz;
     }
-    int err = 0;
+    int err = -1;
     while (readptr - tag <= size - 4 && *readptr) {
         if (version_major == 3 || version_major == 4) {
             trace ("pos %d of %d\n", readptr - tag, size);
@@ -2564,14 +2565,14 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
             }
             else {
                 trace ("unknown id3v2 version (2.%d.%d)\n", version_major, version_minor);
-                return -1;
+                goto error;
             }
             readptr += 4;
             trace ("got frame %s, size %d, pos %d, tagsize %d\n", frameid, sz, readptr-tag, size);
             if (readptr - tag >= size - sz) {
                 trace ("frame is out of tag bounds\n");
-                err = 1;
-                break; // size of frame is more than size of tag
+                err = -1;
+                goto error; // size of frame is more than size of tag
             }
             if (sz < 1) {
 //                err = 1;
@@ -2581,7 +2582,14 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
             uint8_t flags2 = readptr[1];
             readptr += 2;
 
-            if (sz > MAX_ID3V2_FRAME_SIZE || readptr - tag + sz > size) {
+            if (!strcmp (frameid, "APIC")) {
+                if (sz > MAX_ID3V2_APIC_FRAME_SIZE) {
+                    trace ("junk_id3v2_read_full: frame %s size is too big (%d), discarded\n", frameid, sz);
+                    readptr += sz;
+                    continue;
+                }
+            }
+            else if (sz > MAX_ID3V2_FRAME_SIZE || readptr - tag + sz > size) {
                 trace ("junk_id3v2_read_full: frame %s size is too big (%d), discarded\n", frameid, sz);
                 readptr += sz;
                 continue;
@@ -2720,6 +2728,8 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
 //                                if (text) {
 //                                    trace ("%s = %s\n", frameid, text);
 //                                }
+                            }
+                            if (text) {
                                 free (text);
                             }
                             break;
@@ -2871,27 +2881,23 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
             pl_set_item_flags (it, f);
         }
     }
-    if (!err && it) {
-        return 0;
-    }
-    else if (err) {
+    err = 0;
+error:
+    if (err != 0) {
         trace ("error parsing id3v2\n");
     }
 
-    return 0;
-
-error:
     if (tag) {
         free (tag);
     }
-    if (tag_store) {
+    if (tag_store && err != 0) {
         while (tag_store->frames) {
             DB_id3v2_frame_t *next = tag_store->frames->next;
             free (tag_store->frames);
             tag_store->frames = next;
         }
     }
-    return -1;
+    return err;
 }
 
 int
