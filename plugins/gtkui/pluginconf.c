@@ -25,6 +25,7 @@
 #include <stdlib.h>
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
+#include "../../gettext.h"
 #include "../../deadbeef.h"
 #include "gtkui.h"
 #include "parser.h"
@@ -37,7 +38,7 @@ extern GtkWidget *mainwin;
 
 void
 on_prop_browse_file (GtkButton *button, gpointer user_data) {
-    GtkWidget *dlg = gtk_file_chooser_dialog_new ("Open file...", GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
+    GtkWidget *dlg = gtk_file_chooser_dialog_new (_("Open file..."), GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
 
     gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dlg), FALSE);
     // restore folder
@@ -135,7 +136,7 @@ void
 plugin_configure (GtkWidget *parentwin, DB_plugin_t *p) {
     // create window
     char title[200];
-    snprintf (title, sizeof (title), "Setup %s", p->name);
+    snprintf (title, sizeof (title), _("Setup %s"), p->name);
     GtkWidget *win = gtk_dialog_new_with_buttons (title, GTK_WINDOW (parentwin), GTK_DIALOG_MODAL, GTK_STOCK_APPLY, GTK_RESPONSE_APPLY, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
     gtk_dialog_set_default_response (GTK_DIALOG (win), GTK_RESPONSE_OK);
     gtk_window_set_type_hint (GTK_WINDOW (win), GDK_WINDOW_TYPE_HINT_DIALOG);

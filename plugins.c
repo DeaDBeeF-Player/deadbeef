@@ -30,6 +30,7 @@
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
 #endif
+#include "gettext.h"
 #include "plugins.h"
 #include "md5/md5.h"
 #include "messagepump.h"
@@ -829,7 +830,7 @@ plug_get_output (void) {
 
 int
 plug_select_output (void) {
-    const char *outplugname = conf_get_str ("output_plugin", "ALSA output plugin");
+    const char *outplugname = conf_get_str ("output_plugin", _("ALSA output plugin"));
     for (int i = 0; g_output_plugins[i]; i++) {
         DB_output_t *p = g_output_plugins[i];
         if (!strcmp (p->plugin.name, outplugname)) {

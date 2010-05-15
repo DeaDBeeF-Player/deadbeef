@@ -15,11 +15,15 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+#ifdef HAVE_CONFIG_H
+#  include <config.h>
+#endif
 #include <gtk/gtk.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
+#include "../../gettext.h"
 #include "interface.h"
 #include "callbacks.h"
 #include "support.h"
@@ -46,7 +50,7 @@ void
 progress_show (void) {
     extern GtkWidget *mainwin;
     progress_aborted = 0;
-    progress_settext ("Initializing...");
+    progress_settext (_("Initializing..."));
     gtk_widget_show_all (progressdlg);
     gtk_window_present (GTK_WINDOW (progressdlg));
     gtk_window_set_transient_for (GTK_WINDOW (progressdlg), GTK_WINDOW (mainwin));

@@ -41,6 +41,7 @@
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
 #endif
+#include "gettext.h"
 #include "playlist.h"
 #include "playback.h"
 #include "unistd.h"
@@ -79,23 +80,23 @@ client_exec_command_line (const char *cmdline, int len) {
         //        if (filter == 1) {
         // help, version and nowplaying are executed with any filter
         if (!strcmp (parg, "--help") || !strcmp (parg, "-h")) {
-            fprintf (stdout, "Usage: deadbeef [options] [file(s)]\n");
-            fprintf (stdout, "Options:\n");
-            fprintf (stdout, "   --help  or  -h     Print help (this message) and exit\n");
-            fprintf (stdout, "   --quit             Quit player\n");
-            fprintf (stdout, "   --version          Print version info and exit\n");
-            fprintf (stdout, "   --play             Start playback\n");
-            fprintf (stdout, "   --stop             Stop playback\n");
-            fprintf (stdout, "   --pause            Pause playback\n");
-            fprintf (stdout, "   --next             Next song in playlist\n");
-            fprintf (stdout, "   --prev             Previous song in playlist\n");
-            fprintf (stdout, "   --random           Random song in playlist\n");
-            fprintf (stdout, "   --queue            Append file(s) to existing playlist\n");
-            fprintf (stdout, "   --nowplaying FMT   Print formatted track name to stdout\n");
-            fprintf (stdout, "                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
+            fprintf (stdout, _("Usage: deadbeef [options] [file(s)]\n"));
+            fprintf (stdout, _("Options:\n"));
+            fprintf (stdout, _("   --help  or  -h     Print help (this message) and exit\n"));
+            fprintf (stdout, _("   --quit             Quit player\n"));
+            fprintf (stdout, _("   --version          Print version info and exit\n"));
+            fprintf (stdout, _("   --play             Start playback\n"));
+            fprintf (stdout, _("   --stop             Stop playback\n"));
+            fprintf (stdout, _("   --pause            Pause playback\n"));
+            fprintf (stdout, _("   --next             Next song in playlist\n"));
+            fprintf (stdout, _("   --prev             Previous song in playlist\n"));
+            fprintf (stdout, _("   --random           Random song in playlist\n"));
+            fprintf (stdout, _("   --queue            Append file(s) to existing playlist\n"));
+            fprintf (stdout, _("   --nowplaying FMT   Print formatted track name to stdout\n"));
+            fprintf (stdout, _("                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
                              "                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
-                             "                      copy[r]ight, [e]lapsed\n");
-            fprintf (stdout, "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n");
+                             "                      copy[r]ight, [e]lapsed\n"));
+            fprintf (stdout, _("                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n"));
             return 1;
         }
         else if (!strcmp (parg, "--version")) {
@@ -429,10 +430,14 @@ sigterm_handler (int sig) {
 
 int
 main (int argc, char *argv[]) {
-    //u8_lc_map_test ();
-    //return -1;
-    setlocale (LC_ALL, "");
+	setlocale (LC_ALL, "");
     setlocale (LC_NUMERIC, "C");
+#ifdef ENABLE_NLS
+    fprintf (stderr, "enabling gettext support: package=" PACKAGE ", dir=" LOCALEDIR "...\n");
+	bindtextdomain (PACKAGE, LOCALEDIR);
+	bind_textdomain_codeset (PACKAGE, "UTF-8");
+	textdomain (PACKAGE);
+#endif					
     fprintf (stderr, "starting deadbeef " VERSION "\n");
     srand (time (NULL));
 #ifdef __linux__

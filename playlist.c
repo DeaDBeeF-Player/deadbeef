@@ -15,6 +15,9 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+//#ifdef HAVE_CONFIG_H
+//#  include <config.h>
+//#endif
 #include <stdlib.h>
 #include <string.h>
 #include <dirent.h>
@@ -32,6 +35,7 @@
 #endif
 #include <limits.h>
 #include <errno.h>
+#include "gettext.h"
 #include "playlist.h"
 #include "streamer.h"
 #include "messagepump.h"
@@ -358,7 +362,7 @@ plt_remove (int plt) {
         trace ("warning: deleting last playlist\n");
         pl_clear ();
         free (playlist->title);
-        playlist->title = strdup ("Default");
+        playlist->title = strdup (_("Default"));
         PLT_UNLOCK;
         plt_gen_conf ();
         plug_trigger_event (DB_EV_PLAYLISTSWITCH, 0);
@@ -2201,7 +2205,7 @@ pl_load_all (void) {
             fprintf (stderr, "error: cannot make string with default playlist path\n");
             return -1;
         }
-        plt_add (plt_get_count (), "Default");
+        plt_add (plt_get_count (), _("Default"));
         return pl_load (defpl);
     }
     trace ("pl_load_all started\n");

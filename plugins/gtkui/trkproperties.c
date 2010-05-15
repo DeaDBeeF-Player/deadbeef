@@ -16,10 +16,14 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
+#ifdef HAVE_CONFIG_H
+#  include <config.h>
+#endif
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 #include <string.h>
 #include <math.h>
+#include "../../gettext.h"
 #include "ddblistview.h"
 #include "trkproperties.h"
 #include "interface.h"
@@ -46,10 +50,10 @@ on_trackproperties_delete_event        (GtkWidget       *widget,
                                         gpointer         user_data)
 {
     if (trkproperties_modified) {
-        GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (mainwin), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO, "You've modified data for this track.");
+        GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (mainwin), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO, _("You've modified data for this track."));
         gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (trackproperties));
-        gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dlg), "Really close the window?");
-        gtk_window_set_title (GTK_WINDOW (dlg), "Warning");
+        gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dlg), _("Really close the window?"));
+        gtk_window_set_title (GTK_WINDOW (dlg), _("Warning"));
 
         int response = gtk_dialog_run (GTK_DIALOG (dlg));
         gtk_widget_destroy (dlg);
@@ -168,12 +172,12 @@ trkproperties_fill_metadata (void) {
     gtk_list_store_set (propstore, &iter, 0, "Subtrack Index", 1, temp, -1);
     gtk_list_store_append (propstore, &iter);
     deadbeef->pl_format_time (deadbeef->pl_get_item_duration (track), temp, sizeof (temp));
-    gtk_list_store_set (propstore, &iter, 0, "Duration", 1, temp, -1);
+    gtk_list_store_set (propstore, &iter, 0, _("Duration"), 1, temp, -1);
     gtk_list_store_append (propstore, &iter);
     deadbeef->pl_format_title (track, -1, temp, sizeof (temp), -1, "%T");
-    gtk_list_store_set (propstore, &iter, 0, "Tag Type(s)", 1, temp, -1);
+    gtk_list_store_set (propstore, &iter, 0, _("Tag Type(s)"), 1, temp, -1);
     gtk_list_store_append (propstore, &iter);
-    gtk_list_store_set (propstore, &iter, 0, "Embedded Cuesheet", 1, (deadbeef->pl_get_item_flags (track) & DDB_HAS_EMBEDDED_CUESHEET) ? "Yes" : "No", -1);
+    gtk_list_store_set (propstore, &iter, 0, _("Embedded Cuesheet"), 1, (deadbeef->pl_get_item_flags (track) & DDB_HAS_EMBEDDED_CUESHEET) ? "Yes" : "No", -1);
 
     gtk_list_store_append (propstore, &iter);
     snprintf (temp, sizeof (temp), "%0.2f dB", amp_to_db (track->replaygain_album_gain));
@@ -237,8 +241,8 @@ show_track_properties_dlg (DB_playItem_t *it) {
                     G_CALLBACK (on_metadata_edited),
                     store);
         }
-        GtkTreeViewColumn *col1 = gtk_tree_view_column_new_with_attributes ("Key", rend_text, "text", 0, NULL);
-        GtkTreeViewColumn *col2 = gtk_tree_view_column_new_with_attributes ("Value", rend_text2, "text", 1, NULL);
+        GtkTreeViewColumn *col1 = gtk_tree_view_column_new_with_attributes (_("Key"), rend_text, "text", 0, NULL);
+        GtkTreeViewColumn *col2 = gtk_tree_view_column_new_with_attributes (_("Value"), rend_text2, "text", 1, NULL);
         gtk_tree_view_append_column (tree, col1);
         gtk_tree_view_append_column (tree, col2);
 
@@ -249,8 +253,8 @@ show_track_properties_dlg (DB_playItem_t *it) {
         GtkCellRenderer *rend_propkey = gtk_cell_renderer_text_new ();
         GtkCellRenderer *rend_propvalue = gtk_cell_renderer_text_new ();
         g_object_set (G_OBJECT (rend_propvalue), "editable", TRUE, NULL);
-        col1 = gtk_tree_view_column_new_with_attributes ("Key", rend_propkey, "text", 0, NULL);
-        col2 = gtk_tree_view_column_new_with_attributes ("Value", rend_propvalue, "text", 1, NULL);
+        col1 = gtk_tree_view_column_new_with_attributes (_("Key"), rend_propkey, "text", 0, NULL);
+        col2 = gtk_tree_view_column_new_with_attributes (_("Value"), rend_propvalue, "text", 1, NULL);
         gtk_tree_view_append_column (proptree, col1);
         gtk_tree_view_append_column (proptree, col2);
     }

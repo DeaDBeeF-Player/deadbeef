@@ -524,7 +524,7 @@ on_rename_playlist1_activate           (GtkMenuItem     *menuitem,
 {
     GtkWidget *dlg = create_editplaylistdlg ();
     gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
-    gtk_window_set_title (GTK_WINDOW (dlg), "Edit playlist");
+    gtk_window_set_title (GTK_WINDOW (dlg), _("Edit playlist"));
     GtkWidget *e = lookup_widget (dlg, "title");
     char t[100];
     plt_get_title_wrapper (tab_clicked, t, sizeof (t));
@@ -601,15 +601,15 @@ create_plmenu (void)
 
   plmenu = gtk_menu_new ();
 
-  rename_playlist1 = gtk_menu_item_new_with_mnemonic ("Rename Playlist");
+  rename_playlist1 = gtk_menu_item_new_with_mnemonic (_("Rename Playlist"));
   gtk_widget_show (rename_playlist1);
   gtk_container_add (GTK_CONTAINER (plmenu), rename_playlist1);
 
-  remove_playlist1 = gtk_menu_item_new_with_mnemonic ("Remove Playlist");
+  remove_playlist1 = gtk_menu_item_new_with_mnemonic (_("Remove Playlist"));
   gtk_widget_show (remove_playlist1);
   gtk_container_add (GTK_CONTAINER (plmenu), remove_playlist1);
 
-  add_new_playlist1 = gtk_menu_item_new_with_mnemonic ("Add New Playlist");
+  add_new_playlist1 = gtk_menu_item_new_with_mnemonic (_("Add New Playlist"));
   gtk_widget_show (add_new_playlist1);
   gtk_container_add (GTK_CONTAINER (plmenu), add_new_playlist1);
 

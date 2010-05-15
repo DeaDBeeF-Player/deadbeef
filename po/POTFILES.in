@@ -1,0 +1,16 @@
+plugins/gtkui/callbacks.c
+plugins/gtkui/ddbtabstrip.c
+plugins/gtkui/eq.c
+plugins/gtkui/gtkui.c
+plugins/gtkui/interface.c
+plugins/gtkui/mainplaylist.c
+plugins/gtkui/plcommon.c
+plugins/gtkui/pluginconf.c
+plugins/gtkui/prefwin.c
+plugins/gtkui/progress.c
+plugins/gtkui/search.c
+plugins/gtkui/trkproperties.c
+main.c
+playlist.c
+plugins.c
+

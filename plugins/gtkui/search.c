@@ -24,6 +24,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
+#include "../../gettext.h"
 
 #include "callbacks.h"
 #include "interface.h"
@@ -429,10 +430,10 @@ search_playlist_init (GtkWidget *widget) {
     // create default set of columns
     DB_conf_item_t *col = deadbeef->conf_find ("search.column.", NULL);
     if (!col) {
-        add_column_helper (listview, "Artist / Album", 150, -1, "%a - %b", 0);
-        add_column_helper (listview, "Track No", 50, -1, "%n", 1);
-        add_column_helper (listview, "Title / Track Artist", 150, -1, "%t", 0);
-        add_column_helper (listview, "Duration", 50, -1, "%l", 0);
+        add_column_helper (listview, _("Artist / Album"), 150, -1, "%a - %b", 0);
+        add_column_helper (listview, _("Track No"), 50, -1, "%n", 1);
+        add_column_helper (listview, _("Title / Track Artist"), 150, -1, "%t", 0);
+        add_column_helper (listview, _("Duration"), 50, -1, "%l", 0);
     }
     else {
         while (col) {
