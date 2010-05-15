@@ -31,6 +31,7 @@
 #define _POSIX_C_SOURCE
 #endif
 #include <limits.h>
+#include <errno.h>
 #include "playlist.h"
 #include "streamer.h"
 #include "messagepump.h"
@@ -242,6 +243,7 @@ plt_get_sel_count (int plt) {
 
 int
 plt_add (int before, const char *title) {
+    assert (before >= 0);
     trace ("plt_add\n");
     playlist_t *plt = malloc (sizeof (playlist_t));
     memset (plt, 0, sizeof (playlist_t));
@@ -279,11 +281,30 @@ plt_add (int before, const char *title) {
     if (!playlist) {
         playlist = plt;
         if (!plt_loading) {
+            // shift files
+            for (int i = playlists_count-1; i >= before+1; i--) {
+                char path1[PATH_MAX];
+                char path2[PATH_MAX];
+                if (snprintf (path1, sizeof (path1), "%s/playlists/%d.dbpl", dbconfdir, i) > sizeof (path1)) {
+                    fprintf (stderr, "error: failed to make path string for playlist file\n");
+                    continue;
+                }
+                if (snprintf (path2, sizeof (path2), "%s/playlists/%d.dbpl", dbconfdir, i+1) > sizeof (path2)) {
+                    fprintf (stderr, "error: failed to make path string for playlist file\n");
+                    continue;
+                }
+                int err = rename (path1, path2);
+                if (err != 0) {
+                    fprintf (stderr, "playlist rename failed: %s\n", strerror (errno));
+                }
+            }
+#if 0
             // need to delete old playlist file if exists
             char path[PATH_MAX];
             if (snprintf (path, sizeof (path), "%s/playlists/%d.dbpl", dbconfdir, playlists_count-1) <= sizeof (path)) {
                 unlink (path);
             }
+#endif
             pl_save_current ();
         }
     }
@@ -291,14 +312,17 @@ plt_add (int before, const char *title) {
 
     plt_gen_conf ();
     if (!plt_loading) {
+        deadbeef->conf_save ();
         plug_trigger_event (DB_EV_PLAYLISTSWITCH, 0);
     }
     return playlists_count-1;
 }
 
+// NOTE: caller must ensure that configuration is saved after that call
 void
 plt_remove (int plt) {
     int i;
+    assert (plt >= 0 && plt < playlists_count);
     PLT_LOCK;
 
     // find playlist and notify streamer
@@ -309,6 +333,26 @@ plt_remove (int plt) {
         p = p->next;
     }
     streamer_notify_playlist_deleted (p);
+
+    if (!plt_loading) {
+        // move files (will decrease number of files by 1)
+        for (int i = plt+1; i < playlists_count; i++) {
+            char path1[PATH_MAX];
+            char path2[PATH_MAX];
+            if (snprintf (path1, sizeof (path1), "%s/playlists/%d.dbpl", dbconfdir, i-1) > sizeof (path1)) {
+                fprintf (stderr, "error: failed to make path string for playlist file\n");
+                continue;
+            }
+            if (snprintf (path2, sizeof (path2), "%s/playlists/%d.dbpl", dbconfdir, i) > sizeof (path2)) {
+                fprintf (stderr, "error: failed to make path string for playlist file\n");
+                continue;
+            }
+            int err = rename (path2, path1);
+            if (err != 0) {
+                fprintf (stderr, "playlist rename failed: %s\n", strerror (errno));
+            }
+        }
+    }
 
     if (!plt_loading && (playlists_head && !playlists_head->next)) {
         trace ("warning: deleting last playlist\n");
@@ -473,10 +517,11 @@ plt_free (void) {
 }
 
 void
-plt_move (int from, int before) {
-    if (from == before) {
+plt_move (int from, int to) {
+    if (from == to) {
         return;
     }
+    trace ("plt_move %d -> %d\n", from, to);
     int i;
     PLT_LOCK;
     playlist_t *p = playlists_head;
@@ -485,6 +530,25 @@ plt_move (int from, int before) {
     playlist_t *prev = NULL;
     playlist_t *ins = NULL;
 
+    // move 'from' to temp file
+    char path1[PATH_MAX];
+    char temp[PATH_MAX];
+    if (snprintf (path1, sizeof (path1), "%s/playlists/%d.dbpl", dbconfdir, from) > sizeof (path1)) {
+        fprintf (stderr, "error: failed to make path string for playlist file\n");
+        return;
+    }
+    if (snprintf (temp, sizeof (temp), "%s/playlists/temp.dbpl", dbconfdir) > sizeof (temp)) {
+        fprintf (stderr, "error: failed to make path string for playlist file\n");
+        return;
+    }
+    trace ("move %s->%s\n", path1, temp);
+    int err = rename (path1, temp);
+    if (err != 0) {
+        fprintf (stderr, "playlist rename %s->%s failed: %s\n", path1, temp, strerror (errno));
+        return;
+    }
+
+    // remove 'from' from list
     for (i = 0; p && i <= from; i++) {
         if (i == from) {
             pfrom = p;
@@ -499,18 +563,66 @@ plt_move (int from, int before) {
         prev = p;
         p = p->next;
     }
-//    if (before > from) {
-//        before--;
-//    }
 
-    if (before == 0) {
+    // shift files to fill the gap
+    trace ("fill gap\n");
+    for (int i = from; i < playlists_count-1; i++) {
+        char path2[PATH_MAX];
+        if (snprintf (path1, sizeof (path1), "%s/playlists/%d.dbpl", dbconfdir, i) > sizeof (path1)) {
+            fprintf (stderr, "error: failed to make path string for playlist file\n");
+            continue;
+        }
+        if (snprintf (path2, sizeof (path2), "%s/playlists/%d.dbpl", dbconfdir, i+1) > sizeof (path2)) {
+            fprintf (stderr, "error: failed to make path string for playlist file\n");
+            continue;
+        }
+        trace ("move %s->%s\n", path2, path1);
+        int err = rename (path2, path1);
+        if (err != 0) {
+            fprintf (stderr, "playlist rename %s->%s failed: %s\n", path2, path1, strerror (errno));
+        }
+    }
+    // open new gap
+    trace ("open new gap\n");
+    for (int i = playlists_count-2; i >= to; i--) {
+        char path2[PATH_MAX];
+        if (snprintf (path1, sizeof (path1), "%s/playlists/%d.dbpl", dbconfdir, i) > sizeof (path1)) {
+            fprintf (stderr, "error: failed to make path string for playlist file\n");
+            continue;
+        }
+        if (snprintf (path2, sizeof (path2), "%s/playlists/%d.dbpl", dbconfdir, i+1) > sizeof (path2)) {
+            fprintf (stderr, "error: failed to make path string for playlist file\n");
+            continue;
+        }
+        trace ("move %s->%s\n", path1, path2);
+        int err = rename (path1, path2);
+        if (err != 0) {
+            fprintf (stderr, "playlist rename %s->%s failed: %s\n", path1, path2, strerror (errno));
+        }
+    }
+    // move temp file
+    if (snprintf (path1, sizeof (path1), "%s/playlists/%d.dbpl", dbconfdir, to) > sizeof (path1)) {
+        fprintf (stderr, "error: failed to make path string for playlist file\n");
+    }
+    else {
+        trace ("move %s->%s\n", temp, path1);
+        int err = rename (temp, path1);
+        if (err != 0) {
+            fprintf (stderr, "playlist rename %s->%s failed: %s\n", temp, path1, strerror (errno));
+        }
+    }
+
+    // move pointers
+    if (to == 0) {
+        // insert 'from' as head
         pfrom->next = playlists_head;
         playlists_head = pfrom;
     }
     else {
+        // insert 'from' in the middle
         p = playlists_head;
-        for (i = 0; p && i < before; i++) {
-            if (i == before-1) {
+        for (i = 0; p && i < to; i++) {
+            if (i == to-1) {
                 playlist_t *next = p->next;
                 p->next = pfrom;
                 pfrom->next = next;
@@ -523,6 +635,7 @@ plt_move (int from, int before) {
 
     PLT_UNLOCK;
     plt_gen_conf ();
+    deadbeef->conf_save ();
 }
 
 void
@@ -1837,6 +1950,7 @@ pl_save_current (void) {
 
 int
 pl_save_all (void) {
+    trace ("pl_save_all\n");
     char path[PATH_MAX];
     if (snprintf (path, sizeof (path), "%s/playlists", dbconfdir) > sizeof (path)) {
         fprintf (stderr, "error: failed to make path string for playlists folder\n");

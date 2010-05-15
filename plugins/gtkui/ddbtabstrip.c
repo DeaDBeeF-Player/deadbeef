@@ -719,10 +719,6 @@ on_tabstrip_button_release_event         (GtkWidget       *widget,
             ts->dragging = -1;
             ts->prepare = 0;
             gtk_widget_queue_draw (widget);
-            if (tab_moved) {
-                deadbeef->pl_save_all ();
-                deadbeef->conf_save ();
-            }
         }
     }
     return FALSE;
