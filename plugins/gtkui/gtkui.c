@@ -437,9 +437,14 @@ playlistchanged_cb (gpointer none) {
     return FALSE;
 }
 
+void
+gtkui_playlist_changed (void) {
+    g_idle_add (playlistchanged_cb, NULL);
+}
+
 static int
 gtkui_on_playlistchanged (DB_event_t *ev, uintptr_t data) {
-    g_idle_add (playlistchanged_cb, NULL);
+    gtkui_playlist_changed ();
     return 0;
 }
 

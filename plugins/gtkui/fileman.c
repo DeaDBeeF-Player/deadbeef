@@ -99,6 +99,7 @@ static void
 open_files_worker (void *data) {
     GSList *lst = (GSList *)data;
     gtkpl_add_files (lst);
+    gtkui_playlist_changed ();
     extern GtkWidget *mainwin;
     DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
     ddb_listview_set_cursor (pl, 0);
@@ -108,6 +109,7 @@ open_files_worker (void *data) {
 void
 gtkui_open_files (struct _GSList *lst) {
     deadbeef->pl_clear ();
+    playlist_refresh ();
     deadbeef->thread_start (open_files_worker, lst);
 }
 
