@@ -1,3 +1,27 @@
+version 0.4.1
+	fixed search window size
+	better tag reader in ffmpeg plugin + reload metadata support
+	fixed EQ drawing unwanted current value at initialization
+	allow editing previous custom grouping value
+	increased sort speed
+	fixed alsa and oss plugins writing zero samples at start of tracks
+	fixed recover from suspend in alsa plugin
+	fixed md5 structure buffer overflow
+	added support for gtk3 (2.90), enabled with --enable-gtk3
+	improved oss plugin responsiveness on pause
+	fixed vfs_curl crashing randomly when loading album art
+	ignore currently paused song when opening new file(s) from commandline
+	fixed playlist moving bugs
+	fixed memory leaks in id3v2 parser
+	increased maximum limit on id3v2 APIC frame size to 2MiB
+	added cd text support
+	fixed wavpack crash on corrupted files
+	fixed random crash when using File -> Open
+	added remember/restore current folder in playlist save/load dialogs
+	fixed reversing track order after drag-n-drop
+	fixed "Loop single file" mode after track was moved or deleted
+	removed apply button from Global Hotkeys preferences window
+
 version 0.4.0
 	multiple tabbed playlists
 	added grouping of tracks using title-formatting strings
