@@ -593,13 +593,15 @@ cvorbis_write_metadata (DB_playItem_t *it) {
 
     err = 0;
 error:
+    if (fp) {
+        fclose (fp);
+    }
     if (out) {
         fclose (out);
     }
     if (state) {
         vcedit_clear (state);
     }
-
     while (preserved_fields) {
         struct field *next = preserved_fields->next;
         free (preserved_fields);
