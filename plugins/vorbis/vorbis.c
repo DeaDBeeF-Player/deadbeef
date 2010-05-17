@@ -581,8 +581,8 @@ cvorbis_write_metadata (DB_playItem_t *it) {
     snprintf (outname, sizeof (outname), "%s.temp.ogg", it->fname);
 
     out = fopen (outname, "w+b");
-    if (!fp) {
-        trace ("cvorbis_write_metadata: failed to open %s for writing\n", it->fname);
+    if (!out) {
+        trace ("cvorbis_write_metadata: failed to open %s for writing\n", outname);
         goto error;
     }
 
@@ -594,7 +594,7 @@ cvorbis_write_metadata (DB_playItem_t *it) {
     err = 0;
 error:
     if (out) {
-        fclose (fp);
+        fclose (out);
     }
     if (state) {
         vcedit_clear (state);
@@ -609,7 +609,7 @@ error:
     if (!err) {
         rename (outname, it->fname);
     }
-    else if (*outname) {
+    else if (out) {
         unlink (outname);
     }
 

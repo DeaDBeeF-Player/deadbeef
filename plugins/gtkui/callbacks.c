@@ -357,60 +357,6 @@ on_searchlist_realize                  (GtkWidget       *widget,
 {
 }
 
-char last_playlist_save_name[1024] = "";
-
-void
-save_playlist_as (void) {
-    GtkWidget *dlg = gtk_file_chooser_dialog_new (_("Save Playlist As"), GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_SAVE, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_SAVE, GTK_RESPONSE_OK, NULL);
-
-    gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER (dlg), TRUE);
-    gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER (dlg), "untitled.dbpl");
-
-    GtkFileFilter* flt;
-    flt = gtk_file_filter_new ();
-    gtk_file_filter_set_name (flt, _("DeaDBeeF playlist files (*.dbpl)"));
-    gtk_file_filter_add_pattern (flt, "*.dbpl");
-    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
-
-    if (gtk_dialog_run (GTK_DIALOG (dlg)) == GTK_RESPONSE_OK)
-    {
-        gchar *fname = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dlg));
-        gtk_widget_destroy (dlg);
-
-        if (fname) {
-            int res = deadbeef->pl_save (fname);
-            if (res >= 0 && strlen (fname) < 1024) {
-                strcpy (last_playlist_save_name, fname);
-            }
-            g_free (fname);
-        }
-    }
-    else {
-        gtk_widget_destroy (dlg);
-    }
-}
-
-void
-on_playlist_save_activate              (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
-    if (!last_playlist_save_name[0]) {
-        save_playlist_as ();
-    }
-    else {
-        /*int res = */deadbeef->pl_save (last_playlist_save_name);
-    }
-}
-
-
-void
-on_playlist_save_as_activate           (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
-    save_playlist_as ();
-}
-
-
 //static GdkPixmap *seekbar_backbuf;
 
 enum

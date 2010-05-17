@@ -132,4 +132,7 @@ volumebar_redraw (void);
 void
 tabstrip_redraw (void);
 
+void
+gtkui_playlist_changed (void);
+
 #endif

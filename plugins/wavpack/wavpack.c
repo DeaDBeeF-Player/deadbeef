@@ -105,8 +105,10 @@ wv_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     if (!info->file) {
         return -1;
     }
-    info->ctx = WavpackOpenFileInputEx (&wsr, info->file, NULL, NULL, OPEN_2CH_MAX/*|OPEN_WVC*/, 0);
+    char error[80];
+    info->ctx = WavpackOpenFileInputEx (&wsr, info->file, NULL, error, OPEN_2CH_MAX/*|OPEN_WVC*/, 0);
     if (!info->ctx) {
+        fprintf (stderr, "wavpack error: %s\n", error);
         return -1;
     }
     _info->plugin = &plugin;
@@ -226,9 +228,10 @@ wv_insert (DB_playItem_t *after, const char *fname) {
     if (!fp) {
         return NULL;
     }
-    WavpackContext *ctx = WavpackOpenFileInputEx (&wsr, fp, NULL, NULL, 0, 0);
+    char error[80];
+    WavpackContext *ctx = WavpackOpenFileInputEx (&wsr, fp, NULL, error, 0, 0);
     if (!ctx) {
-        trace ("WavpackOpenFileInput failed");
+        fprintf (stderr, "wavpack error: %s\n", error);
         deadbeef->fclose (fp);
         return NULL;
     }

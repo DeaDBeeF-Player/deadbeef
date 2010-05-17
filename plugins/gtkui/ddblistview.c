@@ -613,6 +613,7 @@ ddb_listview_list_render (DdbListview *listview, int x, int y, int w, int h) {
     }
     int idx = 0;
     int abs_idx = 0;
+    deadbeef->pl_lock ();
     // find 1st group
     DdbListviewGroup *grp = listview->groups;
     int grp_y = 0;
@@ -690,6 +691,7 @@ ddb_listview_list_render (DdbListview *listview, int x, int y, int w, int h) {
             g_object_unref (gc);
         }
     }
+    deadbeef->pl_unlock ();
     draw_end ();
 }
 

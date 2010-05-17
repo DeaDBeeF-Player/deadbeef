@@ -2813,6 +2813,7 @@ pl_move_items (int iter, int plt_from, playItem_t *drop_before, uint32_t *indexe
             plt_remove_item (playlist, it);
             plt_insert_item (to, drop_after, it);
             pl_item_unref (it);
+            drop_after = it;
             processed++;
         }
     }
