@@ -173,11 +173,11 @@ junk_iconv (const char *in, int inlen, char *out, int outlen, const char *cs_in,
     int err = errno;
     iconv_close (cd);
 
-//    trace ("iconv -f %s -t %s '%s': returned %d, inbytes %d/%d, outbytes %d/%d, errno=%d\n", cs_in, cs_out, in, res, inlen, inbytesleft, outlen, outbytesleft, err);
+    //trace ("iconv -f %s -t %s '%s': returned %d, inbytes %d/%d, outbytes %d/%d, errno=%d\n", cs_in, cs_out, in, res, inlen, inbytesleft, outlen, outbytesleft, err);
     if (res == -1) {
         return -1;
     }
-//    trace ("iconv out: %s\n", out);
+    //trace ("iconv out: %s (len=%d)\n", out, pout - out);
     return pout - out;
 }
 
@@ -2340,8 +2340,9 @@ int
 junk_load_comm_frame (int version_major, playItem_t *it, uint8_t *readptr, int synched_size) {
     uint8_t enc = readptr[0];
     char lang[4] = {readptr[1], readptr[2], readptr[3], 0};
-    trace ("COMM enc is: %d\n", (int)enc);
-    trace ("COMM language is: %s\n", lang);
+    trace ("COMM enc: %d\n", (int)enc);
+    trace ("COMM language: %s\n", lang);
+    trace ("COMM data size: %d\n", synched_size);
 
     char *descr = convstr_id3v2 (version_major, enc, readptr+4, synched_size-4);
     if (!descr) {
@@ -2349,6 +2350,7 @@ junk_load_comm_frame (int version_major, playItem_t *it, uint8_t *readptr, int s
         return -1;
     }
 
+    trace ("COMM raw data: %s\n", descr);
     // find value
     char *value = descr;
     while (*value && *value != '\n') {
@@ -2659,7 +2661,7 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                 if (flags2 & 0x02) { // unsync, just do nothing
                 }
                 if (flags2 & 0x01) { // data size
-                    synched_size = extract_i32 (readptr);
+                    synched_size = (readptr[3] << 0) | (readptr[2] << 7) | (readptr[1] << 14) | (readptr[0] << 21);
                     trace ("frame has extra size field = %d\n", synched_size);
                     readptr += 4;
                     sz -= 4;
