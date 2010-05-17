@@ -44,7 +44,6 @@ typedef struct {
     int totalsamples;
     int flac_critical_error;
     int init_stop_decoding;
-    int bytesread;
     DB_FILE *file;
 
     // used only on insert
@@ -52,13 +51,13 @@ typedef struct {
     DB_playItem_t *last;
     DB_playItem_t *it;
     const char *fname;
+    int bitrate;
 } flac_info_t;
 
 // callbacks
 FLAC__StreamDecoderReadStatus flac_read_cb (const FLAC__StreamDecoder *decoder, FLAC__byte buffer[], size_t *bytes, void *client_data) {
     flac_info_t *info = (flac_info_t *)client_data;
     size_t r = deadbeef->fread (buffer, 1, *bytes, info->file);
-    info->bytesread += r;
     *bytes = r;
     if (r == 0) {
         return FLAC__STREAM_DECODER_READ_STATUS_END_OF_STREAM;
@@ -102,16 +101,8 @@ cflac_write_callback (const FLAC__StreamDecoder *decoder, const FLAC__Frame *fra
     if (frame->header.blocksize == 0) {
         return FLAC__STREAM_DECODER_WRITE_STATUS_ABORT;
     }
-    //DB_fileinfo_t *_info = info->info;
-    //flac_info_t *info = (flac_info_t *)_info;
-    int bitrate = -1;
-    float sec = ((float)frame->header.blocksize / frame->header.sample_rate);
-    if (info->bytesread != 0 && sec > 0) {
-        bitrate = info->bytesread / sec * 8;
-    }
-    info->bytesread = 0;
-    if (bitrate > 0) {
-        deadbeef->streamer_set_bitrate (bitrate/1000);
+    if (info->bitrate > 0) {
+        deadbeef->streamer_set_bitrate (info->bitrate);
     }
     int bufsize = BUFFERSIZE - info->remaining;
     int bufsamples = bufsize / (_info->channels * _info->bps / 8);
@@ -148,6 +139,7 @@ cflac_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMe
     _info->samplerate = metadata->data.stream_info.sample_rate;
     _info->channels = metadata->data.stream_info.channels;
     _info->bps = metadata->data.stream_info.bits_per_sample;
+
 }
 
 static void
@@ -281,6 +273,20 @@ cflac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         return -1;
     }
 
+    size_t fsize = deadbeef->fgetlength (info->file);
+    FLAC__uint64 position;
+    FLAC__bool res = FLAC__stream_decoder_get_decode_position (info->decoder, &position);
+    if (res) {
+        fsize -= position;
+    }
+    FLAC__uint64 flac_totalsamples = FLAC__stream_decoder_get_total_samples (info->decoder);
+    float sec = flac_totalsamples / _info->samplerate;
+    if (sec > 0) {
+        info->bitrate = fsize / sec * 8 / 1000;
+    }
+    else {
+        info->bitrate = -1;
+    }
     return 0;
 }
 
