@@ -119,6 +119,37 @@ on_hk_slot_edited (GtkCellRendererText *renderer, gchar *path, gchar *new_text, 
     gtk_list_store_set (store, &iter, 0, new_text, -1);
 }
 
+static gboolean
+add_hotkey_to_config (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data) {
+    int *counter = (int *)data;
+    GValue key = {0,}, value = {0,};
+    gtk_tree_model_get_value (model, iter, 0, &key);
+    gtk_tree_model_get_value (model, iter, 1, &value);
+    const char *skey = g_value_get_string (&key);
+    const char *svalue = g_value_get_string (&value);
+
+    char conf_name[100];
+    char conf_value[100];
+    snprintf (conf_name, sizeof (conf_name), "hotkeys.key%d", *counter);
+    (*counter)++;
+    snprintf (conf_value, sizeof (conf_value), "%s: %s", svalue, skey);
+    deadbeef->conf_set_str (conf_name, conf_value);
+    return FALSE;
+}
+
+void
+hotkeys_apply (GtkTreeModel *model) {
+    DB_plugin_t *hotkeys = deadbeef->plug_get_for_id ("hotkeys");
+    if (hotkeys) {
+        // rebuild config
+        deadbeef->conf_remove_items ("hotkeys.key");
+        int counter = 1;
+        gtk_tree_model_foreach (model, add_hotkey_to_config, &counter);
+
+        ((DB_hotkeys_plugin_t *)hotkeys)->reset ();
+    }
+}
+
 void
 on_hk_binding_edited (GtkCellRendererAccel *accel, gchar *path, guint accel_key, GdkModifierType accel_mods, guint hardware_keycode, gpointer user_data) {
     GtkListStore *store = GTK_LIST_STORE (user_data);
@@ -148,10 +179,9 @@ on_hk_binding_edited (GtkCellRendererAccel *accel, gchar *path, guint accel_key,
         const char *name = ((DB_hotkeys_plugin_t *)hotkeys)->get_name_for_keycode (accel_key);
         strcat (new_value, name);
         gtk_list_store_set (store, &iter, 1, new_value, -1);
+
+        hotkeys_apply (GTK_TREE_MODEL (store));
     }
-//    if (!plugs[i]) {
-//        return;
-//    }
 }
 
 void
@@ -175,42 +205,7 @@ on_removehotkey_clicked                     (GtkButton *button, gpointer user_da
             }
         }
     }
-}
-
-static gboolean
-add_hotkey_to_config (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data) {
-    int *counter = (int *)data;
-    GValue key = {0,}, value = {0,};
-    gtk_tree_model_get_value (model, iter, 0, &key);
-    gtk_tree_model_get_value (model, iter, 1, &value);
-    const char *skey = g_value_get_string (&key);
-    const char *svalue = g_value_get_string (&value);
-
-    char conf_name[100];
-    char conf_value[100];
-    snprintf (conf_name, sizeof (conf_name), "hotkeys.key%d", *counter);
-    (*counter)++;
-    snprintf (conf_value, sizeof (conf_value), "%s: %s", svalue, skey);
-    deadbeef->conf_set_str (conf_name, conf_value);
-    return FALSE;
-}
-
-void
-on_applyhotkeys_clicked                     (GtkButton *button, gpointer user_data) {
-    DB_plugin_t **plugs = deadbeef->plug_get_list ();
-    int i;
-    for (i = 0; plugs[i]; i++) {
-        if (plugs[i]->id && !strcmp (plugs[i]->id, "hotkeys")) {
-            // rebuild config
-            deadbeef->conf_remove_items ("hotkeys.key");
-            int counter = 1;
-            GtkTreeModel *model = GTK_TREE_MODEL (user_data);
-            gtk_tree_model_foreach (model, add_hotkey_to_config, &counter);
-
-            ((DB_hotkeys_plugin_t *)plugs[i])->reset ();
-            break;
-        }
-    }
+    hotkeys_apply (model);
 }
 
 void
@@ -276,11 +271,6 @@ prefwin_add_hotkeys_tab (GtkWidget *prefwin) {
     gtk_container_add (GTK_CONTAINER (hbuttonbox3), removehotkey);
     GTK_WIDGET_SET_FLAGS (removehotkey, GTK_CAN_DEFAULT);
 
-    applyhotkeys = gtk_button_new_with_mnemonic ("Apply");
-    gtk_widget_show (applyhotkeys);
-    gtk_container_add (GTK_CONTAINER (hbuttonbox3), applyhotkeys);
-    GTK_WIDGET_SET_FLAGS (applyhotkeys, GTK_CAN_DEFAULT);
-
     label66 = gtk_label_new ("Global Hotkeys");
     gtk_widget_show (label66);
     int npages = gtk_notebook_get_n_pages (GTK_NOTEBOOK (notebook2));
@@ -298,7 +288,6 @@ prefwin_add_hotkeys_tab (GtkWidget *prefwin) {
 
     g_signal_connect ((gpointer)addhotkey, "clicked", G_CALLBACK (on_addhotkey_clicked), hkstore);
     g_signal_connect ((gpointer)removehotkey, "clicked", G_CALLBACK (on_removehotkey_clicked), hktree);
-    g_signal_connect ((gpointer)applyhotkeys, "clicked", G_CALLBACK (on_applyhotkeys_clicked), hkstore);
 
     // model for hotkey slots
     const char *slots[] = {

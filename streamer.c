@@ -280,6 +280,19 @@ streamer_move_to_nextsong (int reason) {
     }
     int pl_order = conf_get_int ("playback.order", 0);
     int pl_loop_mode = conf_get_int ("playback.loop", 0);
+
+    if (reason == 0 && pl_loop_mode == PLAYBACK_MODE_LOOP_SINGLE) { // song finished, loop mode is "loop 1 track"
+        int r = str_get_idx_of (playing_track);
+        if (r == -1) {
+            streamer_set_nextsong (-2, 1);
+        }
+        else {
+            streamer_set_nextsong (r, 1);
+        }
+        pl_global_unlock ();
+        return 0;
+    }
+
     if (pl_order == PLAYBACK_ORDER_SHUFFLE) { // shuffle
         if (!curr) {
             // find minimal notplayed
@@ -310,12 +323,6 @@ streamer_move_to_nextsong (int reason) {
         }
         else {
             trace ("pl_next_song: reason=%d, loop=%d\n", reason, pl_loop_mode);
-            if (reason == 0 && pl_loop_mode == PLAYBACK_MODE_LOOP_SINGLE) { // song finished, loop mode is "loop 1 track"
-                int r = str_get_idx_of (curr);
-                streamer_set_nextsong (r, 1);
-                pl_global_unlock ();
-                return 0;
-            }
             // find minimal notplayed above current
             int rating = curr->shufflerating;
             playItem_t *pmin = NULL; // notplayed minimum
@@ -351,12 +358,6 @@ streamer_move_to_nextsong (int reason) {
     else if (pl_order == PLAYBACK_ORDER_LINEAR) { // linear
         playItem_t *it = NULL;
         if (curr) {
-            if (reason == 0 && pl_loop_mode == PLAYBACK_MODE_LOOP_SINGLE) { // loop same track
-                int r = str_get_idx_of (curr);
-                streamer_set_nextsong (r, 1);
-                pl_global_unlock ();
-                return 0;
-            }
             it = curr->next[PL_MAIN];
         }
         if (!it) {
@@ -380,12 +381,6 @@ streamer_move_to_nextsong (int reason) {
         return 0;
     }
     else if (pl_order == PLAYBACK_ORDER_RANDOM) { // random
-        if (reason == 0 && pl_loop_mode == PLAYBACK_MODE_LOOP_SINGLE && curr) {
-            int r = str_get_idx_of (curr);
-            streamer_set_nextsong (r, 1);
-            pl_global_unlock ();
-            return 0;
-        }
         int res = streamer_move_to_randomsong ();
         if (res == -1) {
             trace ("streamer_move_to_randomsong error\n");
