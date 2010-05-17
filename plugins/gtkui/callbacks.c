@@ -661,7 +661,7 @@ void
 on_help1_activate                      (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    show_info_window (DOCDIR "/help.txt", "Help", &helpwindow);
+    show_info_window (DOCDIR "/help.txt", _("Help"), &helpwindow);
 }
 
 static GtkWidget *aboutwindow;
@@ -670,7 +670,9 @@ void
 on_about1_activate                     (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    show_info_window (DOCDIR "/about.txt", "About DeaDBeeF " VERSION, &aboutwindow);
+    char s[200];
+    snprintf (s, sizeof (s), _("About DeaDBeeF %s"), VERSION);
+    show_info_window (DOCDIR "/about.txt", s, &aboutwindow);
 }
 
 static GtkWidget *changelogwindow;
@@ -679,7 +681,9 @@ void
 on_changelog1_activate                 (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    show_info_window (DOCDIR "/ChangeLog", "DeaDBeeF " VERSION " ChangeLog", &changelogwindow);
+    char s[200];
+    snprintf (s, sizeof (s), _("DeaDBeeF %s ChangeLog"), VERSION);
+    show_info_window (DOCDIR "/ChangeLog", s, &changelogwindow);
 }
 
 static GtkWidget *gplwindow;

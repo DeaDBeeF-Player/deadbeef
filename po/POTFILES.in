@@ -13,4 +13,4 @@ plugins/gtkui/trkproperties.c
 main.c
 playlist.c
 plugins.c
-
+deadbeef.desktop.in
