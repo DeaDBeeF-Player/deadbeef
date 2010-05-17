@@ -250,6 +250,23 @@ cflac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         trace ("cflac_init not a flac stream\n");
         return -1;
     }
+
+    // bitrate
+    size_t fsize = deadbeef->fgetlength (info->file);
+    FLAC__uint64 position;
+    FLAC__bool res = FLAC__stream_decoder_get_decode_position (info->decoder, &position);
+    if (res) {
+        fsize -= position;
+    }
+    FLAC__uint64 flac_totalsamples = FLAC__stream_decoder_get_total_samples (info->decoder);
+    float sec = flac_totalsamples / _info->samplerate;
+    if (sec > 0) {
+        info->bitrate = fsize / sec * 8 / 1000;
+    }
+    else {
+        info->bitrate = -1;
+    }
+
     info->buffer = malloc (BUFFERSIZE);
     info->remaining = 0;
     if (it->endsample > 0) {
@@ -273,20 +290,6 @@ cflac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         return -1;
     }
 
-    size_t fsize = deadbeef->fgetlength (info->file);
-    FLAC__uint64 position;
-    FLAC__bool res = FLAC__stream_decoder_get_decode_position (info->decoder, &position);
-    if (res) {
-        fsize -= position;
-    }
-    FLAC__uint64 flac_totalsamples = FLAC__stream_decoder_get_total_samples (info->decoder);
-    float sec = flac_totalsamples / _info->samplerate;
-    if (sec > 0) {
-        info->bitrate = fsize / sec * 8 / 1000;
-    }
-    else {
-        info->bitrate = -1;
-    }
     return 0;
 }
 
