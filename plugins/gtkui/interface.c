@@ -126,7 +126,7 @@ create_mainwin (void)
 
   mainwin = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_widget_set_events (mainwin, GDK_POINTER_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_KEY_PRESS_MASK);
-  gtk_window_set_title (GTK_WINDOW (mainwin), _("DeaDBeeF"));
+  gtk_window_set_title (GTK_WINDOW (mainwin), "DeaDBeeF");
   gtk_window_set_default_size (GTK_WINDOW (mainwin), 500, 300);
 
   vbox1 = gtk_vbox_new (FALSE, 0);
@@ -416,11 +416,11 @@ create_mainwin (void)
   gtk_container_add (GTK_CONTAINER (menuitem4_menu), separator10);
   gtk_widget_set_sensitive (separator10, FALSE);
 
-  gpl1 = gtk_menu_item_new_with_mnemonic (_("_GPLv2"));
+  gpl1 = gtk_menu_item_new_with_mnemonic ("_GPLv2");
   gtk_widget_show (gpl1);
   gtk_container_add (GTK_CONTAINER (menuitem4_menu), gpl1);
 
-  lgpl1 = gtk_menu_item_new_with_mnemonic (_("_LGPLv2.1"));
+  lgpl1 = gtk_menu_item_new_with_mnemonic ("_LGPLv2.1");
   gtk_widget_show (lgpl1);
   gtk_container_add (GTK_CONTAINER (menuitem4_menu), lgpl1);
 
@@ -1485,7 +1485,7 @@ create_editcolumndlg (void)
   gtk_widget_show (image388);
   gtk_box_pack_start (GTK_BOX (hbox50), image388, FALSE, FALSE, 0);
 
-  label86 = gtk_label_new_with_mnemonic ("_Cancel");
+  label86 = gtk_label_new_with_mnemonic (_("_Cancel"));
   gtk_widget_show (label86);
   gtk_box_pack_start (GTK_BOX (hbox50), label86, FALSE, FALSE, 0);
 
@@ -1506,7 +1506,7 @@ create_editcolumndlg (void)
   gtk_widget_show (image387);
   gtk_box_pack_start (GTK_BOX (hbox49), image387, FALSE, FALSE, 0);
 
-  label85 = gtk_label_new_with_mnemonic ("_OK");
+  label85 = gtk_label_new_with_mnemonic (_("_OK"));
   gtk_widget_show (label85);
   gtk_box_pack_start (GTK_BOX (hbox49), label85, FALSE, FALSE, 0);
 
@@ -2082,12 +2082,12 @@ create_prefwin (void)
   pref_network_proxytype = gtk_combo_box_new_text ();
   gtk_widget_show (pref_network_proxytype);
   gtk_box_pack_start (GTK_BOX (hbox15), pref_network_proxytype, TRUE, TRUE, 0);
-  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_network_proxytype), _("HTTP"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_network_proxytype), _("HTTP_1_0"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_network_proxytype), _("SOCKS4"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_network_proxytype), _("SOCKS5"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_network_proxytype), _("SOCKS4A"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_network_proxytype), _("SOCKS5_HOSTNAME"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_network_proxytype), "HTTP");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_network_proxytype), "HTTP_1_0");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_network_proxytype), "SOCKS4");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_network_proxytype), "SOCKS5");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_network_proxytype), "SOCKS4A");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_network_proxytype), "SOCKS5_HOSTNAME");
 
   hbox61 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox61);
@@ -2199,7 +2199,7 @@ create_prefwin (void)
   gtk_box_pack_start (GTK_BOX (hbox39), id3v1_encoding, TRUE, TRUE, 0);
   gtk_entry_set_invisible_char (GTK_ENTRY (id3v1_encoding), 9679);
 
-  label68 = gtk_label_new (_("<b>MP3</b>"));
+  label68 = gtk_label_new ("<b>MP3</b>");
   gtk_widget_show (label68);
   gtk_frame_set_label_widget (GTK_FRAME (frame5), label68);
   gtk_label_set_use_markup (GTK_LABEL (label68), TRUE);
@@ -2247,7 +2247,7 @@ create_prefwin (void)
   gtk_widget_show (ape_strip_apev2);
   gtk_box_pack_start (GTK_BOX (hbox45), ape_strip_apev2, FALSE, FALSE, 0);
 
-  label70 = gtk_label_new (_("<b>APE</b>"));
+  label70 = gtk_label_new ("<b>APE</b>");
   gtk_widget_show (label70);
   gtk_frame_set_label_widget (GTK_FRAME (frame6), label70);
   gtk_label_set_use_markup (GTK_LABEL (label70), TRUE);
@@ -2291,7 +2291,7 @@ create_prefwin (void)
   gtk_widget_show (wv_strip_id3v1);
   gtk_box_pack_start (GTK_BOX (hbox43), wv_strip_id3v1, FALSE, FALSE, 0);
 
-  label79 = gtk_label_new (_("<b>WavPack</b>"));
+  label79 = gtk_label_new ("<b>WavPack</b>");
   gtk_widget_show (label79);
   gtk_frame_set_label_widget (GTK_FRAME (frame7), label79);
   gtk_label_set_use_markup (GTK_LABEL (label79), TRUE);
@@ -2433,7 +2433,7 @@ create_prefwin (void)
   gtk_widget_show (image393);
   gtk_box_pack_start (GTK_BOX (hbox55), image393, FALSE, FALSE, 0);
 
-  label91 = gtk_label_new_with_mnemonic ("_Close");
+  label91 = gtk_label_new_with_mnemonic (_("_Close"));
   gtk_widget_show (label91);
   gtk_box_pack_start (GTK_BOX (hbox55), label91, FALSE, FALSE, 0);
 
@@ -2798,7 +2798,7 @@ create_editplaylistdlg (void)
   gtk_widget_show (image396);
   gtk_box_pack_start (GTK_BOX (hbox58), image396, FALSE, FALSE, 0);
 
-  label94 = gtk_label_new_with_mnemonic ("_Cancel");
+  label94 = gtk_label_new_with_mnemonic (_("_Cancel"));
   gtk_widget_show (label94);
   gtk_box_pack_start (GTK_BOX (hbox58), label94, FALSE, FALSE, 0);
 
@@ -2819,7 +2819,7 @@ create_editplaylistdlg (void)
   gtk_widget_show (image395);
   gtk_box_pack_start (GTK_BOX (hbox57), image395, FALSE, FALSE, 0);
 
-  label93 = gtk_label_new_with_mnemonic ("_OK");
+  label93 = gtk_label_new_with_mnemonic (_("_OK"));
   gtk_widget_show (label93);
   gtk_box_pack_start (GTK_BOX (hbox57), label93, FALSE, FALSE, 0);
 
@@ -2910,7 +2910,7 @@ create_addlocationdlg (void)
   gtk_widget_show (image397);
   gtk_box_pack_start (GTK_BOX (hbox59), image397, FALSE, FALSE, 0);
 
-  label95 = gtk_label_new_with_mnemonic ("_Cancel");
+  label95 = gtk_label_new_with_mnemonic (_("_Cancel"));
   gtk_widget_show (label95);
   gtk_box_pack_start (GTK_BOX (hbox59), label95, FALSE, FALSE, 0);
 
@@ -2931,7 +2931,7 @@ create_addlocationdlg (void)
   gtk_widget_show (image398);
   gtk_box_pack_start (GTK_BOX (hbox60), image398, FALSE, FALSE, 0);
 
-  label96 = gtk_label_new_with_mnemonic ("_OK");
+  label96 = gtk_label_new_with_mnemonic (_("_OK"));
   gtk_widget_show (label96);
   gtk_box_pack_start (GTK_BOX (hbox60), label96, FALSE, FALSE, 0);
 
