@@ -609,7 +609,7 @@ error:
     if (!err) {
         rename (outname, it->fname);
     }
-    else if (*outname) {
+    else if (out) {
         unlink (outname);
     }
 
