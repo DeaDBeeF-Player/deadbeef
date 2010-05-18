@@ -235,7 +235,6 @@ prefwin_add_hotkeys_tab (GtkWidget *prefwin) {
     GtkWidget *hbuttonbox3;
     GtkWidget *addhotkey;
     GtkWidget *removehotkey;
-    GtkWidget *applyhotkeys;
     GtkWidget *label66;
 
     GtkWidget *notebook2 = lookup_widget (prefwin, "notebook");
@@ -277,10 +276,8 @@ prefwin_add_hotkeys_tab (GtkWidget *prefwin) {
     gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook2), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook2), npages-1), label66);
 
     GLADE_HOOKUP_OBJECT (prefwin, hotkeystree, "hotkeystree");
-//    GLADE_HOOKUP_OBJECT (prefwin, hbuttonbox3, "hbuttonbox3");
     GLADE_HOOKUP_OBJECT (prefwin, addhotkey, "addhotkey");
     GLADE_HOOKUP_OBJECT (prefwin, removehotkey, "removehotkey");
-    GLADE_HOOKUP_OBJECT (prefwin, applyhotkeys, "applyhotkeys");
 
     GtkTreeView *hktree = GTK_TREE_VIEW (lookup_widget (prefwin, "hotkeystree"));
     GtkListStore *hkstore = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_STRING);
