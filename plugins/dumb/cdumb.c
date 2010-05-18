@@ -15,6 +15,9 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+// based on fb2k dumb plugin from http://kode54.foobar2000.org
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
