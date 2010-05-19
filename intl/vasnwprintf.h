@@ -25,7 +25,7 @@
 /* Get wchar_t, size_t.  */
 #include <stddef.h>
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
 
@@ -39,7 +39,7 @@ extern "C" {
 extern wchar_t * asnwprintf (wchar_t *resultbuf, size_t *lengthp, const wchar_t *format, ...);
 extern wchar_t * vasnwprintf (wchar_t *resultbuf, size_t *lengthp, const wchar_t *format, va_list args);
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 }
 #endif
 

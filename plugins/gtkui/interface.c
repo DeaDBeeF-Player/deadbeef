@@ -1771,11 +1771,11 @@ create_prefwin (void)
   pref_src_quality = gtk_combo_box_new_text ();
   gtk_widget_show (pref_src_quality);
   gtk_box_pack_start (GTK_BOX (hbox9), pref_src_quality, TRUE, TRUE, 0);
-  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_src_quality), _("sinc_best_quality"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_src_quality), _("sinc_medium_quality"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_src_quality), _("sinc_fastest"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_src_quality), _("zero_order_hold"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_src_quality), _("linear"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_src_quality), "sinc_best_quality");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_src_quality), "sinc_medium_quality");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_src_quality), "sinc_fastest");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_src_quality), "zero_order_hold");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_src_quality), "linear");
 
   hbox10 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox10);

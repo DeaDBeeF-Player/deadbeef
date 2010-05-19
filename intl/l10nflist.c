@@ -1,4 +1,4 @@
-/* Copyright (C) 1995-1999, 2000-2006 Free Software Foundation, Inc.
+/* Copyright (C) 1995-1999, 2000-2007 Free Software Foundation, Inc.
    Contributed by Ulrich Drepper <drepper@gnu.ai.mit.edu>, 1995.
 
    This program is free software; you can redistribute it and/or modify it
@@ -346,7 +346,7 @@ _nl_make_l10nflist (struct loaded_l10nfile **l10nfile_list,
 const char *
 _nl_normalize_codeset (const char *codeset, size_t name_len)
 {
-  int len = 0;
+  size_t len = 0;
   int only_digit = 1;
   char *retval;
   char *wp;

@@ -21,15 +21,15 @@
 #ifndef OS2_AWARE
 
 #undef LIBDIR
-#define LIBDIR			_nlos2_libdir
+#define LIBDIR _nlos2_libdir
 extern char *_nlos2_libdir;
 
 #undef LOCALEDIR
-#define LOCALEDIR		_nlos2_localedir
+#define LOCALEDIR _nlos2_localedir
 extern char *_nlos2_localedir;
 
 #undef LOCALE_ALIAS_PATH
-#define LOCALE_ALIAS_PATH	_nlos2_localealiaspath
+#define LOCALE_ALIAS_PATH _nlos2_localealiaspath
 extern char *_nlos2_localealiaspath;
 
 #endif

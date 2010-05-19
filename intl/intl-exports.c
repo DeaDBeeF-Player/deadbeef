@@ -23,14 +23,14 @@
  /* Ensure that the variable x is exported from the library, and that a
     pseudo-variable IMP(x) is available.  */
 #define VARIABLE(x) \
- /* Export x without redefining x.  This code was found by compiling a	\
-    snippet:								\
-      extern __declspec(dllexport) int x; int x = 42;  */		\
- asm (".section .drectve\n");						\
- asm (".ascii \" -export:" #x ",data\"\n");				\
- asm (".data\n");							\
- /* Allocate a pseudo-variable IMP(x).  */				\
- extern int x;								\
+ /* Export x without redefining x.  This code was found by compiling a  \
+    snippet:                                                            \
+      extern __declspec(dllexport) int x; int x = 42;  */               \
+ asm (".section .drectve\n");                                           \
+ asm (".ascii \" -export:" #x ",data\"\n");                             \
+ asm (".data\n");                                                       \
+ /* Allocate a pseudo-variable IMP(x).  */                              \
+ extern int x;                                                          \
  void * IMP(x) = &x;
 
 VARIABLE(libintl_version)

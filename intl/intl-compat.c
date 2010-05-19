@@ -93,7 +93,7 @@ ngettext (const char *msgid1, const char *msgid2, unsigned long int n)
 DLL_EXPORTED
 char *
 dngettext (const char *domainname,
-	   const char *msgid1, const char *msgid2, unsigned long int n)
+           const char *msgid1, const char *msgid2, unsigned long int n)
 {
   return libintl_dngettext (domainname, msgid1, msgid2, n);
 }
@@ -102,8 +102,8 @@ dngettext (const char *domainname,
 DLL_EXPORTED
 char *
 dcngettext (const char *domainname,
-	    const char *msgid1, const char *msgid2, unsigned long int n,
-	    int category)
+            const char *msgid1, const char *msgid2, unsigned long int n,
+            int category)
 {
   return libintl_dcngettext (domainname, msgid1, msgid2, n, category);
 }

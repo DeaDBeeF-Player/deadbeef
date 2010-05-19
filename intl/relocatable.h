@@ -1,5 +1,5 @@
 /* Provide relocatable packages.
-   Copyright (C) 2003, 2005 Free Software Foundation, Inc.
+   Copyright (C) 2003, 2005, 2008 Free Software Foundation, Inc.
    Written by Bruno Haible <bruno@clisp.org>, 2003.
 
    This program is free software; you can redistribute it and/or modify it
@@ -46,23 +46,27 @@ extern "C" {
    instead of "/").  */
 extern RELOCATABLE_DLL_EXPORTED void
        set_relocation_prefix (const char *orig_prefix,
-			      const char *curr_prefix);
+                              const char *curr_prefix);
 
 /* Returns the pathname, relocated according to the current installation
-   directory.  */
+   directory.
+   The returned string is either PATHNAME unmodified or a freshly allocated
+   string that you can free with free() after casting it to 'char *'.  */
 extern const char * relocate (const char *pathname);
 
-/* Memory management: relocate() leaks memory, because it has to construct
-   a fresh pathname.  If this is a problem because your program calls
-   relocate() frequently, think about caching the result.  */
+/* Memory management: relocate() potentially allocates memory, because it has
+   to construct a fresh pathname.  If this is a problem because your program
+   calls relocate() frequently, think about caching the result.  Or free the
+   return value if it was different from the argument pathname.  */
 
 /* Convenience function:
    Computes the current installation prefix, based on the original
    installation prefix, the original installation directory of a particular
-   file, and the current pathname of this file.  Returns NULL upon failure.  */
-extern const char * compute_curr_prefix (const char *orig_installprefix,
-					 const char *orig_installdir,
-					 const char *curr_pathname);
+   file, and the current pathname of this file.
+   Returns it, freshly allocated.  Returns NULL upon failure.  */
+extern char * compute_curr_prefix (const char *orig_installprefix,
+                                   const char *orig_installdir,
+                                   const char *curr_pathname);
 
 #else
 

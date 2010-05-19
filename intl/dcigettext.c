@@ -1,5 +1,5 @@
 /* Implementation of the internal dcigettext function.
-   Copyright (C) 1995-1999, 2000-2007 Free Software Foundation, Inc.
+   Copyright (C) 1995-1999, 2000-2009 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify it
    under the terms of the GNU Library General Public License as published
@@ -26,9 +26,6 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
-
-/* NL_LOCALE_NAME does not work in glibc-2.4.  Ignore it.  */
-#undef HAVE_NL_LOCALE_NAME
 
 #include <sys/types.h>
 
@@ -91,9 +88,6 @@ extern int errno;
 #endif
 
 #if !defined _LIBC
-# if HAVE_NL_LOCALE_NAME
-#  include <langinfo.h>
-# endif
 # include "localcharset.h"
 #endif
 
@@ -234,7 +228,7 @@ static void *mempcpy (void *dest, const void *src, size_t n);
 #endif
 
 /* Whether to support different locales in different threads.  */
-#if defined _LIBC || HAVE_NL_LOCALE_NAME || (HAVE_STRUCT___LOCALE_STRUCT___NAMES && defined USE_IN_GETTEXT_TESTS) || defined IN_LIBGLOCALE
+#if defined _LIBC || HAVE_USELOCALE || defined IN_LIBGLOCALE
 # define HAVE_PER_THREAD_LOCALE
 #endif
 
@@ -269,7 +263,12 @@ struct known_translation_t
   size_t translation_length;
 
   /* Pointer to the string in question.  */
-  char msgid[ZERO];
+  union
+    {
+      char appended[ZERO];  /* used if domain != NULL */
+      const char *ptr;      /* used if domain == NULL */
+    }
+  msgid;
 };
 
 gl_rwlock_define_initialized (static, tree_lock)
@@ -288,7 +287,8 @@ transcmp (const void *p1, const void *p2)
   s1 = (const struct known_translation_t *) p1;
   s2 = (const struct known_translation_t *) p2;
 
-  result = strcmp (s1->msgid, s2->msgid);
+  result = strcmp (s1->domain != NULL ? s1->msgid.appended : s1->msgid.ptr,
+		   s2->domain != NULL ? s2->msgid.appended : s2->msgid.ptr);
   if (result == 0)
     {
       result = strcmp (s1->domainname, s2->domainname);
@@ -501,9 +501,8 @@ DCIGETTEXT (const char *domainname, const char *msgid1, const char *msgid2,
   char *retval;
   size_t retlen;
   int saved_errno;
-  struct known_translation_t *search;
+  struct known_translation_t search;
   struct known_translation_t **foundp = NULL;
-  size_t msgid_len;
 #if defined HAVE_PER_THREAD_LOCALE && !defined IN_LIBGLOCALE
   const char *localename;
 #endif
@@ -525,6 +524,11 @@ DCIGETTEXT (const char *domainname, const char *msgid1, const char *msgid2,
   /* Preserve the `errno' value.  */
   saved_errno = errno;
 
+#ifdef _LIBC
+  __libc_rwlock_define (extern, __libc_setlocale_lock attribute_hidden)
+  __libc_rwlock_rdlock (__libc_setlocale_lock);
+#endif
+
   gl_rwlock_rdlock (_nl_state_lock);
 
   /* If DOMAINNAME is NULL, we are interested in the default domain.  If
@@ -539,52 +543,37 @@ DCIGETTEXT (const char *domainname, const char *msgid1, const char *msgid2,
     category = LC_MESSAGES;
 #endif
 
-  msgid_len = strlen (msgid1) + 1;
-
   /* Try to find the translation among those which we found at
      some time.  */
-  search = (struct known_translation_t *)
-	   alloca (offsetof (struct known_translation_t, msgid) + msgid_len);
-  memcpy (search->msgid, msgid1, msgid_len);
-  search->domainname = domainname;
-  search->category = category;
+  search.domain = NULL;
+  search.msgid.ptr = msgid1;
+  search.domainname = domainname;
+  search.category = category;
 #ifdef HAVE_PER_THREAD_LOCALE
 # ifndef IN_LIBGLOCALE
 #  ifdef _LIBC
-  localename = __current_locale_name (category);
+  localename = _strdupa (_current_locale_name (category));
 #  else
-#   if HAVE_NL_LOCALE_NAME
-  /* NL_LOCALE_NAME is public glibc API introduced in glibc-2.4.  */
-  localename = nl_langinfo (NL_LOCALE_NAME (category));
-#   else
-#    if HAVE_STRUCT___LOCALE_STRUCT___NAMES && defined USE_IN_GETTEXT_TESTS
-  /* The __names field is not public glibc API and must therefore not be used
-     in code that is installed in public locations.  */
-  {
-    locale_t thread_locale = uselocale (NULL);
-    if (thread_locale != LC_GLOBAL_LOCALE)
-      localename = thread_locale->__names[category];
-    else
-      localename = "";
-  }
-#    endif
-#   endif
+  categoryname = category_to_name (category);
+#   define CATEGORYNAME_INITIALIZED
+  localename = _nl_locale_name_thread_unsafe (category, categoryname);
+  if (localename == NULL)
+    localename = "";
 #  endif
 # endif
-  search->localename = localename;
+  search.localename = localename;
 # ifdef IN_LIBGLOCALE
-  search->encoding = encoding;
+  search.encoding = encoding;
 # endif
 
   /* Since tfind/tsearch manage a balanced tree, concurrent tfind and
      tsearch calls can be fatal.  */
   gl_rwlock_rdlock (tree_lock);
 
-  foundp = (struct known_translation_t **) tfind (search, &root, transcmp);
+  foundp = (struct known_translation_t **) tfind (&search, &root, transcmp);
 
   gl_rwlock_unlock (tree_lock);
 
-  freea (search);
   if (foundp != NULL && (*foundp)->counter == _nl_msg_cat_cntr)
     {
       /* Now deal with plural.  */
@@ -595,6 +584,9 @@ DCIGETTEXT (const char *domainname, const char *msgid1, const char *msgid2,
 	retval = (char *) (*foundp)->translation;
 
       gl_rwlock_unlock (_nl_state_lock);
+# ifdef _LIBC
+      __libc_rwlock_unlock (__libc_setlocale_lock);
+# endif
       __set_errno (saved_errno);
       return retval;
     }
@@ -668,7 +660,9 @@ DCIGETTEXT (const char *domainname, const char *msgid1, const char *msgid2,
 #endif
 
   /* Now determine the symbolic name of CATEGORY and its value.  */
+#ifndef CATEGORYNAME_INITIALIZED
   categoryname = category_to_name (category);
+#endif
 #ifdef IN_LIBGLOCALE
   categoryvalue = guess_category_value (category, categoryname, localename);
 #else
@@ -773,9 +767,11 @@ DCIGETTEXT (const char *domainname, const char *msgid1, const char *msgid2,
 	      if (foundp == NULL)
 		{
 		  /* Create a new entry and add it to the search tree.  */
+		  size_t msgid_len;
 		  size_t size;
 		  struct known_translation_t *newp;
 
+		  msgid_len = strlen (msgid1) + 1;
 		  size = offsetof (struct known_translation_t, msgid)
 			 + msgid_len + domainname_len + 1;
 #ifdef HAVE_PER_THREAD_LOCALE
@@ -790,7 +786,8 @@ DCIGETTEXT (const char *domainname, const char *msgid1, const char *msgid2,
 #endif
 
 		      new_domainname =
-			(char *) mempcpy (newp->msgid, msgid1, msgid_len);
+			(char *) mempcpy (newp->msgid.appended, msgid1,
+					  msgid_len);
 		      memcpy (new_domainname, domainname, domainname_len + 1);
 #ifdef HAVE_PER_THREAD_LOCALE
 		      new_localename = new_domainname + domainname_len + 1;
@@ -839,6 +836,9 @@ DCIGETTEXT (const char *domainname, const char *msgid1, const char *msgid2,
 		retval = plural_lookup (domain, n, retval, retlen);
 
 	      gl_rwlock_unlock (_nl_state_lock);
+#ifdef _LIBC
+	      __libc_rwlock_unlock (__libc_setlocale_lock);
+#endif
 	      return retval;
 	    }
 	}
@@ -848,6 +848,9 @@ DCIGETTEXT (const char *domainname, const char *msgid1, const char *msgid2,
   /* Return the untranslated MSGID.  */
   FREE_BLOCKS (block_list);
   gl_rwlock_unlock (_nl_state_lock);
+#ifdef _LIBC
+  __libc_rwlock_unlock (__libc_setlocale_lock);
+#endif
 #ifndef _LIBC
   if (!ENABLE_SECURE)
     {
@@ -1030,6 +1033,7 @@ _nl_find_msg (struct loaded_l10nfile *domain_file,
 	{
 	  /* We have to allocate a new conversions table.  */
 	  gl_rwlock_wrlock (domain->conversions_lock);
+	  nconversions = domain->nconversions;
 
 	  /* Maybe in the meantime somebody added the translation.
 	     Recheck.  */
@@ -1203,13 +1207,29 @@ _nl_find_msg (struct loaded_l10nfile *domain_file,
 	     handle this case by converting RESULTLEN bytes, including
 	     NULs.  */
 
-	  if (convd->conv_tab == NULL
-	      && ((convd->conv_tab =
+	  /* This lock primarily protects the memory management variables
+	     freemem, freemem_size.  It also protects write accesses to
+	     convd->conv_tab.  It's not worth using a separate lock (such
+	     as domain->conversions_lock) for this purpose, because when
+	     modifying convd->conv_tab, we also need to lock freemem,
+	     freemem_size for most of the time.  */
+	  __libc_lock_define_initialized (static, lock)
+
+	  if (__builtin_expect (convd->conv_tab == NULL, 0))
+	    {
+	      __libc_lock_lock (lock);
+	      if (convd->conv_tab == NULL)
+		{
+		  convd->conv_tab =
 		    (char **) calloc (nstrings + domain->n_sysdep_strings,
-				      sizeof (char *)))
-		  == NULL))
-	    /* Mark that we didn't succeed allocating a table.  */
-	    convd->conv_tab = (char **) -1;
+				      sizeof (char *));
+		  if (convd->conv_tab != NULL)
+		    goto not_translated_yet;
+		  /* Mark that we didn't succeed allocating a table.  */
+		  convd->conv_tab = (char **) -1;
+		}
+	      __libc_lock_unlock (lock);
+	    }
 
 	  if (__builtin_expect (convd->conv_tab == (char **) -1, 0))
 	    /* Nothing we can do, no more memory.  We cannot use the
@@ -1223,7 +1243,6 @@ _nl_find_msg (struct loaded_l10nfile *domain_file,
 	      /* We use a bit more efficient memory handling.
 		 We allocate always larger blocks which get used over
 		 time.  This is faster than many small allocations.   */
-	      __libc_lock_define_initialized (static, lock)
 # define INITIAL_BLOCK_SIZE	4080
 	      static unsigned char *freemem;
 	      static size_t freemem_size;
@@ -1232,13 +1251,17 @@ _nl_find_msg (struct loaded_l10nfile *domain_file,
 	      unsigned char *outbuf;
 	      int malloc_count;
 # ifndef _LIBC
-	      transmem_block_t *transmem_list = NULL;
+	      transmem_block_t *transmem_list;
 # endif
 
 	      __libc_lock_lock (lock);
+	    not_translated_yet:
 
 	      inbuf = (const unsigned char *) result;
 	      outbuf = freemem + sizeof (size_t);
+# ifndef _LIBC
+	      transmem_list = NULL;
+# endif
 
 	      malloc_count = 0;
 	      while (1)
@@ -1515,20 +1538,13 @@ guess_category_value (int category, const char *categoryname)
 # ifdef _LIBC
   locale = __current_locale_name (category);
 # else
-#  if HAVE_STRUCT___LOCALE_STRUCT___NAMES && defined USE_IN_GETTEXT_TESTS
-  /* The __names field is not public glibc API and must therefore not be used
-     in code that is installed in public locations.  */
-  locale_t thread_locale = uselocale (NULL);
-  if (thread_locale != LC_GLOBAL_LOCALE)
-    {
-      locale = thread_locale->__names[category];
-      locale_defaulted = 0;
-    }
-  else
+  locale_defaulted = 0;
+#  if HAVE_USELOCALE
+  locale = _nl_locale_name_thread_unsafe (category, categoryname);
+  if (locale == NULL)
 #  endif
     {
       locale = _nl_locale_name_posix (category, categoryname);
-      locale_defaulted = 0;
       if (locale == NULL)
 	{
 	  locale = _nl_locale_name_default ();

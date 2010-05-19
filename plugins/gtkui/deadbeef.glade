@@ -2606,7 +2606,7 @@ Example: %a - %t [%l]</property>
 		  <child>
 		    <widget class="GtkComboBox" id="pref_src_quality">
 		      <property name="visible">True</property>
-		      <property name="items" translatable="yes">sinc_best_quality
+		      <property name="items">sinc_best_quality
 sinc_medium_quality
 sinc_fastest
 zero_order_hold
