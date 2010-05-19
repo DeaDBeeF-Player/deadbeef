@@ -2194,7 +2194,7 @@ pl_load_all (void) {
     char path[1024];
     DB_conf_item_t *it = conf_find ("playlist.tab.", NULL);
     if (!it) {
-        fprintf (stderr, "INFO: loading legacy default playlist\n");
+//        fprintf (stderr, "INFO: loading legacy default playlist\n");
         // legacy (0.3.3 and earlier)
         char defpl[1024]; // $HOME/.config/deadbeef/default.dbpl
         if (snprintf (defpl, sizeof (defpl), "%s/deadbeef/default.dbpl", confdir) > sizeof (defpl)) {
