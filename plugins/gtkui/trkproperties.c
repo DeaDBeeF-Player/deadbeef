@@ -196,6 +196,10 @@ trkproperties_fill_metadata (void) {
 
 void
 show_track_properties_dlg (DB_playItem_t *it) {
+    if (track) {
+        deadbeef->pl_item_unref (track);
+        track = NULL;
+    }
     if (it) {
         deadbeef->pl_item_ref (it);
     }
