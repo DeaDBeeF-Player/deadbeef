@@ -232,10 +232,10 @@ static void
 cvorbis_free (DB_fileinfo_t *_info) {
     ogg_info_t *info = (ogg_info_t *)_info;
     if (info) {
+        if (info->ptrack) {
+            deadbeef->pl_item_unref (info->ptrack);
+        }
         if (info->info.file) {
-            if (info->ptrack) {
-                deadbeef->pl_item_unref (info->ptrack);
-            }
             ov_clear (&info->vorbis_file);
             //fclose (file); //-- ov_clear closes it
         }
@@ -593,13 +593,15 @@ cvorbis_write_metadata (DB_playItem_t *it) {
 
     err = 0;
 error:
+    if (fp) {
+        fclose (fp);
+    }
     if (out) {
         fclose (out);
     }
     if (state) {
         vcedit_clear (state);
     }
-
     while (preserved_fields) {
         struct field *next = preserved_fields->next;
         free (preserved_fields);

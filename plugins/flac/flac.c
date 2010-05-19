@@ -246,8 +246,8 @@ cflac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     _info->plugin = &plugin;
     _info->readpos = 0;
 
-    if (_info->samplerate == -1) { // not a FLAC stream
-        trace ("cflac_init not a flac stream\n");
+    if (_info->samplerate <= 0) { // not a FLAC stream
+        fprintf (stderr, "corrupted/invalid flac stream\n");
         return -1;
     }
 

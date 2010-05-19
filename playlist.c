@@ -191,7 +191,7 @@ plt_gen_conf (void) {
     playlist_t *p = playlists_head;
     for (i = 0; i < cnt; i++, p = p->next) {
         char s[100];
-        snprintf (s, sizeof (s), "playlist.tab.%d", i);
+        snprintf (s, sizeof (s), "playlist.tab.%02d", i);
         conf_set_str (s, p->title);
     }
     PLT_UNLOCK;
@@ -249,6 +249,10 @@ int
 plt_add (int before, const char *title) {
     assert (before >= 0);
     trace ("plt_add\n");
+    if (plt_get_count () >= 100) {
+        fprintf (stderr, "can't create more than 100 playlists. sorry.\n");
+        return -1;
+    }
     playlist_t *plt = malloc (sizeof (playlist_t));
     memset (plt, 0, sizeof (playlist_t));
     plt->title = strdup (title);
@@ -2198,14 +2202,16 @@ pl_load_all (void) {
     char path[1024];
     DB_conf_item_t *it = conf_find ("playlist.tab.", NULL);
     if (!it) {
-        fprintf (stderr, "INFO: loading legacy default playlist\n");
+//        fprintf (stderr, "INFO: loading legacy default playlist\n");
         // legacy (0.3.3 and earlier)
         char defpl[1024]; // $HOME/.config/deadbeef/default.dbpl
         if (snprintf (defpl, sizeof (defpl), "%s/deadbeef/default.dbpl", confdir) > sizeof (defpl)) {
             fprintf (stderr, "error: cannot make string with default playlist path\n");
             return -1;
         }
-        plt_add (plt_get_count (), _("Default"));
+        if (plt_add (plt_get_count (), "Default") < 0) {
+            return -1;
+        }
         return pl_load (defpl);
     }
     trace ("pl_load_all started\n");
@@ -2215,7 +2221,9 @@ pl_load_all (void) {
     while (it) {
         fprintf (stderr, "INFO: loading playlist %s\n", it->value);
         if (!err) {
-            plt_add (plt_get_count (), it->value);
+            if (plt_add (plt_get_count (), it->value) < 0) {
+                return -1;
+            }
             plt_set_curr (plt_get_count () - 1);
         }
         err = 0;

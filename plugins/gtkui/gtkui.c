@@ -784,6 +784,7 @@ gtkui_thread (void *ctx) {
     const char **argv = alloca (sizeof (char *) * argc);
     argv[0] = "deadbeef";
     argv[1] = "--sync";
+    //argv[1] = "--g-fatal-warnings";
     if (!deadbeef->conf_get_int ("gtkui.sync", 0)) {
         argc = 1;
     }
