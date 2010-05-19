@@ -232,10 +232,10 @@ static void
 cvorbis_free (DB_fileinfo_t *_info) {
     ogg_info_t *info = (ogg_info_t *)_info;
     if (info) {
+        if (info->ptrack) {
+            deadbeef->pl_item_unref (info->ptrack);
+        }
         if (info->info.file) {
-            if (info->ptrack) {
-                deadbeef->pl_item_unref (info->ptrack);
-            }
             ov_clear (&info->vorbis_file);
             //fclose (file); //-- ov_clear closes it
         }
