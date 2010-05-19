@@ -913,10 +913,10 @@ cmp3_decode_float32 (mpgmad_info_t *info) {
 static void
 cmp3_free (DB_fileinfo_t *_info) {
     mpgmad_info_t *info = (mpgmad_info_t *)_info;
+    if (info->buffer.it) {
+        deadbeef->pl_item_unref (info->buffer.it);
+    }
     if (info->buffer.file) {
-        if (info->buffer.it) {
-            deadbeef->pl_item_unref (info->buffer.it);
-        }
         deadbeef->fclose (info->buffer.file);
         info->buffer.file = NULL;
         info->info.file = NULL;
