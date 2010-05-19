@@ -542,7 +542,7 @@ streamer_set_current (playItem_t *it) {
     }
 
 // code below breaks seekbar drawing during transition between tracks
-    trace ("streamer_set_current %p, buns=%d\n", it);
+    trace ("streamer_set_current %p, buns=%d\n", it, bytes_until_next_song);
     mutex_lock (decodemutex);
     if (fileinfo) {
         fileinfo->plugin->free (fileinfo);
