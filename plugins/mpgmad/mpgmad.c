@@ -790,6 +790,10 @@ cmp3_stream_frame (mpgmad_info_t *info) {
         // read more MPEG data if needed
         if(info->stream.buffer==NULL || info->stream.error==MAD_ERROR_BUFLEN) {
             // copy part of last frame to beginning
+            if (info->stream.next_frame && info->stream.bufend <= info->stream.next_frame) {
+                eof = 1;
+                break;
+            }
             if (info->stream.next_frame != NULL) {
                 info->buffer.remaining = info->stream.bufend - info->stream.next_frame;
                 memmove (info->buffer.input, info->stream.next_frame, info->buffer.remaining);
@@ -826,13 +830,14 @@ cmp3_stream_frame (mpgmad_info_t *info) {
             {
 #if 0
                 if(info->stream.error!=MAD_ERROR_LOSTSYNC) {
-                    trace ("mpgmad: recoverable frame level error (%s)\n", MadErrorString(&stream));
+                    trace ("mpgmad: recoverable frame level error (%s)\n", MadErrorString(&info->stream));
                 }
 #endif
                 continue;
             }
             else {
                 if(info->stream.error==MAD_ERROR_BUFLEN) {
+//                    trace ("mpgmad: recoverable frame level error (%s)\n", MadErrorString(&info->stream));
                     continue;
                 }
                 else
