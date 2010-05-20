@@ -433,7 +433,7 @@ main (int argc, char *argv[]) {
 	setlocale (LC_ALL, "");
     setlocale (LC_NUMERIC, "C");
 #ifdef ENABLE_NLS
-    fprintf (stderr, "enabling gettext support: package=" PACKAGE ", dir=" LOCALEDIR "...\n");
+//    fprintf (stderr, "enabling gettext support: package=" PACKAGE ", dir=" LOCALEDIR "...\n");
 	bindtextdomain (PACKAGE, LOCALEDIR);
 	bind_textdomain_codeset (PACKAGE, "UTF-8");
 	textdomain (PACKAGE);
