@@ -461,7 +461,7 @@ tabstrip_render (DdbTabStrip *ts) {
     }
     if (need_draw_moving) {
         x = -ts->hscrollpos + tabs_left_margin;
-        for (idx = 0; idx < 10; idx++) {
+        for (idx = 0; idx < cnt; idx++) {
             w = widths[idx];
             if (idx == ts->dragging) {
 #if 0
@@ -475,7 +475,7 @@ tabstrip_render (DdbTabStrip *ts) {
                     break;
                 }
                 if (w > 0) {
-//                    gtk_paint_box (widget->style, backbuf, GTK_STATE_SELECTED, GTK_SHADOW_OUT, NULL, widget, "button", x, 0, w, h);
+                    //gtk_paint_box (widget->style, backbuf, GTK_STATE_SELECTED, GTK_SHADOW_OUT, NULL, widget, "button", x, 0, w, h);
                     ddb_tabstrip_draw_tab (widget, backbuf, 1, x, y, w, h);
                     char tab_title[100];
                     plt_get_title_wrapper (idx, tab_title, sizeof (tab_title));
