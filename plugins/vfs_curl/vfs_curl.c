@@ -498,7 +498,7 @@ http_thread_func (void *ctx) {
         curl_easy_setopt (curl, CURLOPT_MAXREDIRS, 10);
         headers = curl_slist_append (headers, "Icy-Metadata:1");
         curl_easy_setopt (curl, CURLOPT_HTTPHEADER, headers);
-        if (fp->pos > 0) {
+        if (fp->pos > 0 && fp->length >= 0) {
             curl_easy_setopt (curl, CURLOPT_RESUME_FROM, fp->pos);
         }
         if (deadbeef->conf_get_int ("network.proxy", 0)) {
