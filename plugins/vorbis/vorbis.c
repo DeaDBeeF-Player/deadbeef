@@ -406,6 +406,7 @@ cvorbis_insert (DB_playItem_t *after, const char *fname) {
         if (nstreams > 0) {
             it->startsample = currentsample;
             it->endsample = currentsample + totalsamples;
+            deadbeef->pl_set_item_flags (it, DDB_IS_SUBTRACK);
         }
 
         // metainfo
@@ -481,14 +482,14 @@ cvorbis_read_metadata (DB_playItem_t *it) {
         trace ("cvorbis_read_metadata: ov_open_callbacks returned %d\n", res);
         goto error;
     }
-    vi = ov_info (&vorbis_file, -1);
+    vi = ov_info (&vorbis_file, it->tracknum);
     if (!vi) { // not a vorbis stream
         trace ("cvorbis_read_metadata: failed to ov_open %s\n", it->fname);
         goto error;
     }
 
     // metainfo
-    vorbis_comment *vc = ov_comment (&vorbis_file, -1);
+    vorbis_comment *vc = ov_comment (&vorbis_file, it->tracknum);
     if (vc) {
         update_vorbis_comments (it, vc);
     }
