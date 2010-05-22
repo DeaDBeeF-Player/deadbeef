@@ -144,7 +144,7 @@ cvorbis_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     ogg_info_t *info = (ogg_info_t *)_info;
     info->info.file = NULL;
     info->vi = NULL;
-    info->cur_bit_stream = -1;
+    info->cur_bit_stream = it->tracknum;
     info->ptrack = it;
     deadbeef->pl_item_ref (it);
 
@@ -187,7 +187,7 @@ cvorbis_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         }
 //        deadbeef->pl_set_item_duration (it, ov_time_total (&vorbis_file, -1));
     }
-    info->vi = ov_info (&info->vorbis_file, -1);
+    info->vi = ov_info (&info->vorbis_file, info->cur_bit_stream);
     if (!info->vi) { // not a vorbis stream
         trace ("not a vorbis stream\n");
         return -1;
@@ -385,46 +385,63 @@ cvorbis_insert (DB_playItem_t *after, const char *fname) {
         trace ("ov_open_callbacks returned %d\n", err);
         return NULL;
     }
-    vi = ov_info (&vorbis_file, -1);
-    if (!vi) { // not a vorbis stream
-        trace ("vorbis: failed to ov_open %s\n", fname);
-        return NULL;
-    }
-    float duration = ov_time_total (&vorbis_file, -1);
-    int totalsamples = ov_pcm_total (&vorbis_file, -1);
 
-    DB_playItem_t *it = deadbeef->pl_item_alloc ();
-    it->decoder_id = deadbeef->plug_get_decoder_id (plugin.plugin.id);
-    it->fname = strdup (fname);
-    it->filetype = "OggVorbis";
-    deadbeef->pl_set_item_duration (it, duration);
-
-    // metainfo
-    vorbis_comment *vc = ov_comment (&vorbis_file, -1);
-    update_vorbis_comments (it, vc);
-    int samplerate = vi->rate;
-    ov_clear (&vorbis_file);
-
-    DB_playItem_t *cue = deadbeef->pl_insert_cue (after, it, totalsamples, samplerate);
-    if (cue) {
-        deadbeef->pl_item_unref (it);
-        deadbeef->pl_item_unref (cue);
-        return cue;
-    }
-
-    // embedded cue
-    const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
-    if (cuesheet) {
-        cue = deadbeef->pl_insert_cue_from_buffer (after, it, cuesheet, strlen (cuesheet), totalsamples, samplerate);
-        if (cue) {
-            deadbeef->pl_item_unref (it);
-            deadbeef->pl_item_unref (cue);
-            return cue;
+    long nstreams = ov_streams (&vorbis_file);
+    int currentsample = 0;
+    for (int stream = 0; stream < nstreams; stream++) {
+        vi = ov_info (&vorbis_file, stream);
+        if (!vi) { // not a vorbis stream
+            trace ("vorbis: failed to ov_open %s\n", fname);
+            return NULL;
         }
-    }
+        float duration = ov_time_total (&vorbis_file, stream);
+        int totalsamples = ov_pcm_total (&vorbis_file, stream);
 
-    after = deadbeef->pl_insert_item (after, it);
-    deadbeef->pl_item_unref (it);
+        DB_playItem_t *it = deadbeef->pl_item_alloc ();
+        it->decoder_id = deadbeef->plug_get_decoder_id (plugin.plugin.id);
+        it->fname = strdup (fname);
+        it->filetype = "OggVorbis";
+        it->tracknum = stream;
+        deadbeef->pl_set_item_duration (it, duration);
+        if (nstreams > 0) {
+            it->startsample = currentsample;
+            it->endsample = currentsample + totalsamples;
+        }
+
+        // metainfo
+        vorbis_comment *vc = ov_comment (&vorbis_file, stream);
+        update_vorbis_comments (it, vc);
+        int samplerate = vi->rate;
+
+        if (nstreams == 1) {
+            DB_playItem_t *cue = deadbeef->pl_insert_cue (after, it, totalsamples, samplerate);
+            if (cue) {
+                deadbeef->pl_item_unref (it);
+                deadbeef->pl_item_unref (cue);
+                ov_clear (&vorbis_file);
+                return cue;
+            }
+
+            // embedded cue
+            const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
+            if (cuesheet) {
+                cue = deadbeef->pl_insert_cue_from_buffer (after, it, cuesheet, strlen (cuesheet), totalsamples, samplerate);
+                if (cue) {
+                    deadbeef->pl_item_unref (it);
+                    deadbeef->pl_item_unref (cue);
+                    ov_clear (&vorbis_file);
+                    return cue;
+                }
+            }
+        }
+        else {
+            currentsample += totalsamples;
+        }
+
+        after = deadbeef->pl_insert_item (after, it);
+        deadbeef->pl_item_unref (it);
+    }
+    ov_clear (&vorbis_file);
     return after;
 }
 
