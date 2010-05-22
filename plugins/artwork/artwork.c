@@ -435,7 +435,7 @@ fetcher_thread (void *none)
 char*
 get_album_art (const char *fname, const char *artist, const char *album, artwork_callback callback, void *user_data)
 {
-//    trace ("get_album_art: %s (%s - %s)\n", fname, artist, album);
+    trace ("get_album_art: %s (%s - %s)\n", fname, artist, album);
     char path [1024];
 
     if (!album) {
@@ -470,7 +470,7 @@ get_album_art (const char *fname, const char *artist, const char *album, artwork
             }
         }
 
-//        trace ("found %s in cache\n", path);
+        trace ("found %s in cache\n", path);
         return strdup (path);
     }
 
