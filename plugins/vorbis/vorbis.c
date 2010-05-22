@@ -391,8 +391,8 @@ cvorbis_insert (DB_playItem_t *after, const char *fname) {
     for (int stream = 0; stream < nstreams; stream++) {
         vi = ov_info (&vorbis_file, stream);
         if (!vi) { // not a vorbis stream
-            trace ("vorbis: failed to ov_open %s\n", fname);
-            return NULL;
+            trace ("vorbis: ov_info failed for file %s stream %d\n", fname, stream);
+            continue;
         }
         float duration = ov_time_total (&vorbis_file, stream);
         int totalsamples = ov_pcm_total (&vorbis_file, stream);
