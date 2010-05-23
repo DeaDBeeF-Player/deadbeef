@@ -10,6 +10,7 @@ plugins/gtkui/prefwin.c
 plugins/gtkui/progress.c
 plugins/gtkui/search.c
 plugins/gtkui/trkproperties.c
+plugins/notify/notify.c
 main.c
 playlist.c
 plugins.c

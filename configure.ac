@@ -15,6 +15,11 @@ AC_PROG_LIBTOOL
 AC_CONFIG_MACRO_DIR([m4])
 AC_C_BIGENDIAN
 AM_GNU_GETTEXT
+
+IT_PROG_INTLTOOL([0.41.0])
+GETTEXT_PACKAGE=deadbeef
+AC_SUBST(GETTEXT_PACKAGE)
+
 test "$prefix" = NONE && prefix=/usr/local
 AC_DEFINE_UNQUOTED(LOCALEDIR, "${prefix}/${DATADIRNAME}/locale", [Name of gettext locale directory])
 
