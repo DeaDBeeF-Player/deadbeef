@@ -2,8 +2,7 @@
 # Copyright (C) 2009-2001 Alexey Yakovenko <waker@users.sourceforge.net>
 # This file is distributed under the same license as the Deadbeef package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
-#, fuzzy
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: deadbeef\n"
@@ -15,12 +14,11 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
-"10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Pootle 1.1.0\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Poedit-Language: Ukrainian\n"
-"X-Poedit-Country: UKRAINE\n"
 "X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-Country: UKRAINE\n"
+"X-Generator: Pootle 1.1.0\n"
 
 #: ../plugins/gtkui/callbacks.c:97
 msgid "Supported sound formats"
@@ -28,57 +26,57 @@ msgstr "Формати аудіо, що підтримується"
 
 #: ../plugins/gtkui/callbacks.c:108
 msgid "Other files (*)"
-msgstr ""
+msgstr "Інші файли (*)"
 
 #: ../plugins/gtkui/callbacks.c:117
 msgid "Open file(s)..."
-msgstr ""
+msgstr "Відкрити файл(и)..."
 
 #: ../plugins/gtkui/callbacks.c:150
 msgid "Add file(s) to playlist..."
-msgstr ""
+msgstr "Додати файл(и) до списку програвання..."
 
 #: ../plugins/gtkui/callbacks.c:182
 msgid "Add folder(s) to playlist..."
-msgstr ""
+msgstr "Додати теку(и) до списку програвання..."
 
 #: ../plugins/gtkui/callbacks.c:640
 msgid "Failed while reading help file"
-msgstr ""
+msgstr "Невдача при читанні файлу допомоги"
 
 #: ../plugins/gtkui/callbacks.c:650
 msgid "Failed to load help file"
-msgstr ""
+msgstr "Не можу прочитати файл перемоги"
 
 #: ../plugins/gtkui/callbacks.c:664 ../plugins/gtkui/interface.c:1105
 msgid "Help"
-msgstr ""
+msgstr "Допомога"
 
 #: ../plugins/gtkui/callbacks.c:674
 #, c-format
 msgid "About DeaDBeeF %s"
-msgstr ""
+msgstr "Про DeaDBeeF %s"
 
 #: ../plugins/gtkui/callbacks.c:685
 #, c-format
 msgid "DeaDBeeF %s ChangeLog"
-msgstr ""
+msgstr "DeaDBeeF %s Список Змін"
 
 #: ../plugins/gtkui/ddbtabstrip.c:527
 msgid "Edit playlist"
-msgstr ""
+msgstr "Редагувати список програвання"
 
 #: ../plugins/gtkui/ddbtabstrip.c:604
 msgid "Rename Playlist"
-msgstr ""
+msgstr "Перейменувати список програвання"
 
 #: ../plugins/gtkui/ddbtabstrip.c:608
 msgid "Remove Playlist"
-msgstr ""
+msgstr "Вилучити список програвання"
 
 #: ../plugins/gtkui/ddbtabstrip.c:612
 msgid "Add New Playlist"
-msgstr ""
+msgstr "Додати новий список програвання"
 
 #: ../plugins/gtkui/eq.c:113
 msgid "Save DeaDBeeF EQ Preset"
@@ -106,11 +104,11 @@ msgstr ""
 
 #: ../plugins/gtkui/eq.c:292
 msgid "Enable"
-msgstr ""
+msgstr "Включити"
 
 #: ../plugins/gtkui/eq.c:299
 msgid "Zero All"
-msgstr ""
+msgstr "Обнулити"
 
 #: ../plugins/gtkui/eq.c:306
 msgid "Zero Preamp"
@@ -149,30 +147,29 @@ msgstr ""
 
 #: ../plugins/gtkui/gtkui.c:150
 msgid "Mono"
-msgstr ""
+msgstr "Моно"
 
 #: ../plugins/gtkui/gtkui.c:150
 msgid "Stereo"
-msgstr ""
+msgstr "Стерео"
 
 #: ../plugins/gtkui/gtkui.c:170
 #, c-format
 msgid "| %4d kbps "
-msgstr ""
+msgstr "| %4d kbps"
 
 #: ../plugins/gtkui/gtkui.c:176
 msgid "Paused | "
-msgstr ""
+msgstr "На паузі |"
 
 #: ../plugins/gtkui/gtkui.c:177
 #, c-format
-msgid ""
-"%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
+msgid "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
 msgstr ""
 
 #: ../plugins/gtkui/gtkui.c:533
 msgid "Save Playlist As"
-msgstr ""
+msgstr "Зберегти список програвання як"
 
 #: ../plugins/gtkui/gtkui.c:542 ../plugins/gtkui/gtkui.c:603
 msgid "DeaDBeeF playlist files (*.dbpl)"
@@ -180,89 +177,89 @@ msgstr ""
 
 #: ../plugins/gtkui/gtkui.c:596
 msgid "Load Playlist"
-msgstr ""
+msgstr "Викликати список програвання"
 
 #: ../plugins/gtkui/gtkui.c:741
 msgid "New Playlist"
-msgstr ""
+msgstr "Новий список програвання"
 
 #: ../plugins/gtkui/gtkui.c:744
 #, c-format
 msgid "New Playlist (%d)"
-msgstr ""
+msgstr "Новий список програвання (%d)"
 
 #: ../plugins/gtkui/interface.c:140
 msgid "_File"
-msgstr ""
+msgstr "_Файл"
 
 #: ../plugins/gtkui/interface.c:147
 msgid "_Open file(s)"
-msgstr ""
+msgstr "_Відкрити файл(и)"
 
 #: ../plugins/gtkui/interface.c:163
 msgid "Add file(s)"
-msgstr ""
+msgstr "Додати файл(и)"
 
 #: ../plugins/gtkui/interface.c:171
 msgid "Add folder(s)"
-msgstr ""
+msgstr "Додати теку(и)"
 
 #: ../plugins/gtkui/interface.c:179
 msgid "Add Audio CD"
-msgstr ""
+msgstr "Додати Аудіо CD"
 
 #: ../plugins/gtkui/interface.c:187 ../plugins/gtkui/interface.c:2870
 msgid "Add location"
-msgstr ""
+msgstr "Додати URL-посилання"
 
 #: ../plugins/gtkui/interface.c:196
 msgid "New playlist"
-msgstr ""
+msgstr "Новий список програвання"
 
 #: ../plugins/gtkui/interface.c:203
 msgid "Load playlist"
-msgstr ""
+msgstr "Викликати список програвання"
 
 #: ../plugins/gtkui/interface.c:207
 msgid "Save playlist"
-msgstr ""
+msgstr "Зберегти список програвання"
 
 #: ../plugins/gtkui/interface.c:211
 msgid "Save playlist as"
-msgstr ""
+msgstr "Зберегти список програвання як"
 
 #: ../plugins/gtkui/interface.c:220
 msgid "_Quit"
-msgstr ""
+msgstr "_Закінчити"
 
 #: ../plugins/gtkui/interface.c:231
 msgid "_Edit"
-msgstr ""
+msgstr "_Редагувати"
 
 #: ../plugins/gtkui/interface.c:238
 msgid "_Clear"
-msgstr ""
+msgstr "_Очистити"
 
 #: ../plugins/gtkui/interface.c:246
 msgid "Select all"
-msgstr ""
+msgstr "Вибрати все"
 
 #: ../plugins/gtkui/interface.c:253
 msgid "Deselect all"
-msgstr ""
+msgstr "Забрати вибирання всього"
 
 #: ../plugins/gtkui/interface.c:260
 msgid "Invert selection"
-msgstr ""
+msgstr "Інвертувати виділення"
 
 #: ../plugins/gtkui/interface.c:264
 msgid "Selection"
-msgstr ""
+msgstr "Вибір"
 
 #: ../plugins/gtkui/interface.c:271 ../plugins/gtkui/plcommon.c:387
 #: ../plugins/gtkui/prefwin.c:273
 msgid "Remove"
-msgstr ""
+msgstr "Вилучити"
 
 #: ../plugins/gtkui/interface.c:279
 msgid "Crop"
@@ -270,39 +267,39 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:283
 msgid "_Find"
-msgstr ""
+msgstr "_Знайти"
 
 #: ../plugins/gtkui/interface.c:295 ../plugins/gtkui/interface.c:1706
 msgid "Preferences"
-msgstr ""
+msgstr "Параметри"
 
 #: ../plugins/gtkui/interface.c:299
 msgid "_View"
-msgstr ""
+msgstr "_Вигляд"
 
 #: ../plugins/gtkui/interface.c:306
 msgid "Status bar"
-msgstr ""
+msgstr "Рядок стану"
 
 #: ../plugins/gtkui/interface.c:310
 msgid "Column headers"
-msgstr ""
+msgstr "Заголовки колонок"
 
 #: ../plugins/gtkui/interface.c:314
 msgid "Tabs"
-msgstr ""
+msgstr "Вкладки"
 
 #: ../plugins/gtkui/interface.c:318
 msgid "Equalizer"
-msgstr ""
+msgstr "Еквалайзер"
 
 #: ../plugins/gtkui/interface.c:322
 msgid "_Playback"
-msgstr ""
+msgstr "_Програвання"
 
 #: ../plugins/gtkui/interface.c:329
 msgid "Order"
-msgstr ""
+msgstr "Порядок"
 
 #: ../plugins/gtkui/interface.c:336
 msgid "Linear"
@@ -346,63 +343,63 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:395 ../plugins/gtkui/interface.c:402
 msgid "_Help"
-msgstr ""
+msgstr "_Допомога"
 
 #: ../plugins/gtkui/interface.c:410
 msgid "_ChangeLog"
-msgstr ""
+msgstr "_Впроваджені зміни"
 
 #: ../plugins/gtkui/interface.c:432
 msgid "_About"
-msgstr ""
+msgstr "_Про"
 
 #: ../plugins/gtkui/interface.c:816
 msgid "Search"
-msgstr ""
+msgstr "Пошук"
 
 #: ../plugins/gtkui/interface.c:891
 msgid "Stop"
-msgstr ""
+msgstr "Стоп"
 
 #: ../plugins/gtkui/interface.c:899
 msgid "Play"
-msgstr ""
+msgstr "Програвати"
 
 #: ../plugins/gtkui/interface.c:907
 msgid "Pause"
-msgstr ""
+msgstr "Пауза"
 
 #: ../plugins/gtkui/interface.c:915
 msgid "Previous"
-msgstr ""
+msgstr "Попереднє"
 
 #: ../plugins/gtkui/interface.c:923
 msgid "Next"
-msgstr ""
+msgstr "Наступне"
 
 #: ../plugins/gtkui/interface.c:931
 msgid "Play Random"
-msgstr ""
+msgstr "Програвати випадково"
 
 #: ../plugins/gtkui/interface.c:940
 msgid "About"
-msgstr ""
+msgstr "Про"
 
 #: ../plugins/gtkui/interface.c:953
 msgid "Quit"
-msgstr ""
+msgstr "Вийти"
 
 #: ../plugins/gtkui/interface.c:1025
 msgid "Adding files..."
-msgstr ""
+msgstr "Додавання файлів"
 
 #: ../plugins/gtkui/interface.c:1069
 msgid "_Abort"
-msgstr ""
+msgstr "_Припинити"
 
 #: ../plugins/gtkui/interface.c:1170
 msgid "Track Properties"
-msgstr ""
+msgstr "Властивості треків"
 
 #: ../plugins/gtkui/interface.c:1194
 msgid ""
@@ -412,20 +409,20 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:1221
 msgid "_Apply"
-msgstr ""
+msgstr "_Застосувати"
 
 #: ../plugins/gtkui/interface.c:1242 ../plugins/gtkui/interface.c:1288
 #: ../plugins/gtkui/interface.c:2436
 msgid "_Close"
-msgstr ""
+msgstr "З_акрити"
 
 #: ../plugins/gtkui/interface.c:1246
 msgid "Metadata"
-msgstr ""
+msgstr "Метадані"
 
 #: ../plugins/gtkui/interface.c:1292 ../plugins/gtkui/plcommon.c:402
 msgid "Properties"
-msgstr ""
+msgstr "Властивості"
 
 #: ../plugins/gtkui/interface.c:1378
 msgid "editcolumndlg"
@@ -433,24 +430,24 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:1393 ../plugins/gtkui/interface.c:2770
 msgid "Title:"
-msgstr ""
+msgstr "Назвак:"
 
 #: ../plugins/gtkui/interface.c:1401
 msgid "Enter new column title here"
-msgstr ""
+msgstr "Введіть назву нової колонки тут:"
 
 #: ../plugins/gtkui/interface.c:1409
 msgid "Type:"
-msgstr ""
+msgstr "Тип:"
 
 #: ../plugins/gtkui/interface.c:1417
 msgid "File number"
-msgstr ""
+msgstr "Номер файлу"
 
 #. create default set of columns
 #: ../plugins/gtkui/interface.c:1418 ../plugins/gtkui/mainplaylist.c:297
 msgid "Playing"
-msgstr ""
+msgstr "Програвання"
 
 #: ../plugins/gtkui/interface.c:1419
 msgid "Album Art"
@@ -462,23 +459,23 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:1421 ../plugins/gtkui/plcommon.c:774
 msgid "Artist"
-msgstr ""
+msgstr "Виконавець"
 
 #: ../plugins/gtkui/interface.c:1422 ../plugins/gtkui/interface.c:1795
 msgid "Album"
-msgstr ""
+msgstr "Альбом"
 
 #: ../plugins/gtkui/interface.c:1423 ../plugins/gtkui/prefwin.c:491
 msgid "Title"
-msgstr ""
+msgstr "Назва"
 
 #: ../plugins/gtkui/interface.c:1424
 msgid "Length"
-msgstr ""
+msgstr "Тривалість"
 
 #: ../plugins/gtkui/interface.c:1425 ../plugins/gtkui/interface.c:1794
 msgid "Track"
-msgstr ""
+msgstr "Трек"
 
 #: ../plugins/gtkui/interface.c:1426
 msgid "Band / Album Artist"
@@ -490,7 +487,7 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:1433 ../plugins/gtkui/interface.c:2997
 msgid "Format:"
-msgstr ""
+msgstr "Формат:"
 
 #: ../plugins/gtkui/interface.c:1448
 msgid "Alignment:"
@@ -517,12 +514,12 @@ msgstr ""
 #: ../plugins/gtkui/interface.c:1488 ../plugins/gtkui/interface.c:2801
 #: ../plugins/gtkui/interface.c:2913 ../plugins/gtkui/interface.c:3036
 msgid "_Cancel"
-msgstr ""
+msgstr "_Скасувати"
 
 #: ../plugins/gtkui/interface.c:1509 ../plugins/gtkui/interface.c:2822
 #: ../plugins/gtkui/interface.c:2934 ../plugins/gtkui/interface.c:3057
 msgid "_OK"
-msgstr ""
+msgstr "_ОК"
 
 #: ../plugins/gtkui/interface.c:1726
 msgid "Output plugin:"
@@ -534,7 +531,7 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:1748
 msgid "Sound"
-msgstr ""
+msgstr "Звук"
 
 #: ../plugins/gtkui/interface.c:1757
 msgid "Allow dynamic samplerate switching"
@@ -962,13 +959,9 @@ msgstr ""
 
 #: ../main.c:99
 #, c-format
-msgid ""
-"                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist "
-"- title\"\n"
+msgid "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n"
 msgstr ""
 
 #: ../playlist.c:365 ../playlist.c:2208
 msgid "Default"
 msgstr ""
-
- 	  	 
