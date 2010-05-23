@@ -6,15 +6,15 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 0.4.0\n"
-"Report-Msgid-Bugs-To: waker@users.sourceforge.net\n"
-"POT-Creation-Date: 2010-05-18 19:20+0300\n"
-"PO-Revision-Date: 2010-05-18 19:06+0300\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-05-21 18:30+0300\n"
+"PO-Revision-Date: 2010-05-21 18:32+0300\n"
 "Last-Translator: Dmitriy Simbiriatin <slpiv@mail.ru>\n"
 "Language-Team: ru <slpiv@mail.ru>\n"
-"Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: ru\n"
 
 #: ../plugins/gtkui/callbacks.c:97
 msgid "Supported sound formats"
@@ -44,7 +44,8 @@ msgstr "Не удалось прочитать файл справки"
 msgid "Failed to load help file"
 msgstr "Не удалось загрузить файл справки"
 
-#: ../plugins/gtkui/callbacks.c:664 ../plugins/gtkui/interface.c:1105
+#: ../plugins/gtkui/callbacks.c:664
+#: ../plugins/gtkui/interface.c:1105
 msgid "Help"
 msgstr "Справка"
 
@@ -160,16 +161,15 @@ msgstr "Пауза | "
 
 #: ../plugins/gtkui/gtkui.c:177
 #, c-format
-msgid ""
-"%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
-msgstr ""
-"%s%s %s| %dГц | %d бит | %s | %d:%02d / %s | %d композиций | %s общее время"
+msgid "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
+msgstr "%s%s %s| %dГц | %d бит | %s | %d:%02d / %s | %d композиций | %s общее время"
 
 #: ../plugins/gtkui/gtkui.c:533
 msgid "Save Playlist As"
 msgstr "Сохранить плейлист как ..."
 
-#: ../plugins/gtkui/gtkui.c:542 ../plugins/gtkui/gtkui.c:603
+#: ../plugins/gtkui/gtkui.c:542
+#: ../plugins/gtkui/gtkui.c:603
 msgid "DeaDBeeF playlist files (*.dbpl)"
 msgstr "Файлы плейлистов DeaDBeeF (*.dbpl)"
 
@@ -206,7 +206,8 @@ msgstr "Добавить каталог(и)"
 msgid "Add Audio CD"
 msgstr "Добавить аудио CD"
 
-#: ../plugins/gtkui/interface.c:187 ../plugins/gtkui/interface.c:2870
+#: ../plugins/gtkui/interface.c:187
+#: ../plugins/gtkui/interface.c:2870
 msgid "Add location"
 msgstr "Добавить расположение"
 
@@ -254,8 +255,9 @@ msgstr "Обратить выделение"
 msgid "Selection"
 msgstr "Выделенное"
 
-#: ../plugins/gtkui/interface.c:271 ../plugins/gtkui/plcommon.c:387
-#: ../plugins/gtkui/prefwin.c:273
+#: ../plugins/gtkui/interface.c:271
+#: ../plugins/gtkui/plcommon.c:387
+#: ../plugins/gtkui/prefwin.c:272
 msgid "Remove"
 msgstr "Удалить"
 
@@ -267,7 +269,8 @@ msgstr "Удалить невыделенное"
 msgid "_Find"
 msgstr "_Найти"
 
-#: ../plugins/gtkui/interface.c:295 ../plugins/gtkui/interface.c:1706
+#: ../plugins/gtkui/interface.c:295
+#: ../plugins/gtkui/interface.c:1706
 msgid "Preferences"
 msgstr "Настройки"
 
@@ -339,7 +342,8 @@ msgstr "Выделять текущую композицию"
 msgid "Stop after current"
 msgstr "Остановить после текущей"
 
-#: ../plugins/gtkui/interface.c:395 ../plugins/gtkui/interface.c:402
+#: ../plugins/gtkui/interface.c:395
+#: ../plugins/gtkui/interface.c:402
 msgid "_Help"
 msgstr "_Справка"
 
@@ -412,7 +416,8 @@ msgstr ""
 msgid "_Apply"
 msgstr "_Применить"
 
-#: ../plugins/gtkui/interface.c:1242 ../plugins/gtkui/interface.c:1288
+#: ../plugins/gtkui/interface.c:1242
+#: ../plugins/gtkui/interface.c:1288
 #: ../plugins/gtkui/interface.c:2436
 msgid "_Close"
 msgstr "_Закрыть"
@@ -421,7 +426,8 @@ msgstr "_Закрыть"
 msgid "Metadata"
 msgstr "Метаданные"
 
-#: ../plugins/gtkui/interface.c:1292 ../plugins/gtkui/plcommon.c:402
+#: ../plugins/gtkui/interface.c:1292
+#: ../plugins/gtkui/plcommon.c:402
 msgid "Properties"
 msgstr "Свойства"
 
@@ -429,7 +435,8 @@ msgstr "Свойства"
 msgid "editcolumndlg"
 msgstr "Редактировать столбец"
 
-#: ../plugins/gtkui/interface.c:1393 ../plugins/gtkui/interface.c:2770
+#: ../plugins/gtkui/interface.c:1393
+#: ../plugins/gtkui/interface.c:2770
 msgid "Title:"
 msgstr "Название:"
 
@@ -446,7 +453,8 @@ msgid "File number"
 msgstr "Номер композиции"
 
 #. create default set of columns
-#: ../plugins/gtkui/interface.c:1418 ../plugins/gtkui/mainplaylist.c:297
+#: ../plugins/gtkui/interface.c:1418
+#: ../plugins/gtkui/mainplaylist.c:297
 msgid "Playing"
 msgstr "Воспроизводится"
 
@@ -458,15 +466,18 @@ msgstr "Обложка альбома"
 msgid "Artist - Album"
 msgstr "Исполнитель - Альбом"
 
-#: ../plugins/gtkui/interface.c:1421 ../plugins/gtkui/plcommon.c:774
+#: ../plugins/gtkui/interface.c:1421
+#: ../plugins/gtkui/plcommon.c:774
 msgid "Artist"
 msgstr "Исполнитель"
 
-#: ../plugins/gtkui/interface.c:1422 ../plugins/gtkui/interface.c:1795
+#: ../plugins/gtkui/interface.c:1422
+#: ../plugins/gtkui/interface.c:1795
 msgid "Album"
 msgstr "Альбом"
 
-#: ../plugins/gtkui/interface.c:1423 ../plugins/gtkui/prefwin.c:491
+#: ../plugins/gtkui/interface.c:1423
+#: ../plugins/gtkui/prefwin.c:488
 msgid "Title"
 msgstr "Название"
 
@@ -474,7 +485,8 @@ msgstr "Название"
 msgid "Length"
 msgstr "Длина"
 
-#: ../plugins/gtkui/interface.c:1425 ../plugins/gtkui/interface.c:1794
+#: ../plugins/gtkui/interface.c:1425
+#: ../plugins/gtkui/interface.c:1794
 msgid "Track"
 msgstr "Композиция"
 
@@ -482,11 +494,13 @@ msgstr "Композиция"
 msgid "Band / Album Artist"
 msgstr "Группа / Исполнитель"
 
-#: ../plugins/gtkui/interface.c:1427 ../plugins/gtkui/plcommon.c:778
+#: ../plugins/gtkui/interface.c:1427
+#: ../plugins/gtkui/plcommon.c:778
 msgid "Custom"
 msgstr "Пользовательский"
 
-#: ../plugins/gtkui/interface.c:1433 ../plugins/gtkui/interface.c:2997
+#: ../plugins/gtkui/interface.c:1433
+#: ../plugins/gtkui/interface.c:2997
 msgid "Format:"
 msgstr "Формат:"
 
@@ -502,7 +516,8 @@ msgstr "По левому краю"
 msgid "Right"
 msgstr "По правому краю"
 
-#: ../plugins/gtkui/interface.c:1459 ../plugins/gtkui/interface.c:3007
+#: ../plugins/gtkui/interface.c:1459
+#: ../plugins/gtkui/interface.c:3007
 msgid ""
 "Format conversions (start with %):\n"
 "  [a]rtist, [t]itle, al[b]um, [B]and,\n"
@@ -518,13 +533,17 @@ msgstr ""
 "  copy[r]ight, [f]ilename, [T]ags\n"
 "Пример: %a - %t [%l]"
 
-#: ../plugins/gtkui/interface.c:1488 ../plugins/gtkui/interface.c:2801
-#: ../plugins/gtkui/interface.c:2913 ../plugins/gtkui/interface.c:3036
+#: ../plugins/gtkui/interface.c:1488
+#: ../plugins/gtkui/interface.c:2801
+#: ../plugins/gtkui/interface.c:2913
+#: ../plugins/gtkui/interface.c:3036
 msgid "_Cancel"
 msgstr "_Отмена"
 
-#: ../plugins/gtkui/interface.c:1509 ../plugins/gtkui/interface.c:2822
-#: ../plugins/gtkui/interface.c:2934 ../plugins/gtkui/interface.c:3057
+#: ../plugins/gtkui/interface.c:1509
+#: ../plugins/gtkui/interface.c:2822
+#: ../plugins/gtkui/interface.c:2934
+#: ../plugins/gtkui/interface.c:3057
 msgid "_OK"
 msgstr "_ОК"
 
@@ -572,7 +591,8 @@ msgstr "Сворачивать в трей при  закрытии"
 msgid "Middle mouse button closes playlist"
 msgstr "Средняя кнопка мыши закрывает плейлист"
 
-#: ../plugins/gtkui/interface.c:1827 ../plugins/gtkui/interface.c:1871
+#: ../plugins/gtkui/interface.c:1827
+#: ../plugins/gtkui/interface.c:1871
 msgid "Override"
 msgstr "Заменить"
 
@@ -610,9 +630,7 @@ msgstr "Вкладки"
 
 #: ../plugins/gtkui/interface.c:1941
 msgid "Override (looses GTK treeview theming, but speeds up rendering)"
-msgstr ""
-"Заменить (теряются настройки GTK темы, но увеличивается скорость "
-"визуализации)"
+msgstr "Заменить (теряются настройки GTK темы, но увеличивается скорость визуализации)"
 
 #: ../plugins/gtkui/interface.c:1950
 msgid "Even row"
@@ -686,24 +704,29 @@ msgstr "Сеть"
 msgid "Write ID3v2"
 msgstr "Писать ID3v2"
 
-#: ../plugins/gtkui/interface.c:2151 ../plugins/gtkui/interface.c:2278
+#: ../plugins/gtkui/interface.c:2151
+#: ../plugins/gtkui/interface.c:2278
 msgid "Write ID3v1"
 msgstr "Писать ID3v1"
 
-#: ../plugins/gtkui/interface.c:2155 ../plugins/gtkui/interface.c:2234
+#: ../plugins/gtkui/interface.c:2155
+#: ../plugins/gtkui/interface.c:2234
 #: ../plugins/gtkui/interface.c:2274
 msgid "Write APEv2"
 msgstr "Писать APEv2"
 
-#: ../plugins/gtkui/interface.c:2163 ../plugins/gtkui/interface.c:2242
+#: ../plugins/gtkui/interface.c:2163
+#: ../plugins/gtkui/interface.c:2242
 msgid "Strip ID3v2"
 msgstr "Вырезать ID3v2"
 
-#: ../plugins/gtkui/interface.c:2167 ../plugins/gtkui/interface.c:2290
+#: ../plugins/gtkui/interface.c:2167
+#: ../plugins/gtkui/interface.c:2290
 msgid "Strip ID3v1"
 msgstr "Вырезать ID3v1"
 
-#: ../plugins/gtkui/interface.c:2171 ../plugins/gtkui/interface.c:2246
+#: ../plugins/gtkui/interface.c:2171
+#: ../plugins/gtkui/interface.c:2246
 #: ../plugins/gtkui/interface.c:2286
 msgid "Strip APEv2"
 msgstr "Вырезать APEv2"
@@ -768,19 +791,24 @@ msgstr "Адрес:"
 msgid "Group By"
 msgstr "Группировать по"
 
-#: ../plugins/gtkui/mainplaylist.c:298 ../plugins/gtkui/search.c:433
+#: ../plugins/gtkui/mainplaylist.c:298
+#: ../plugins/gtkui/search.c:433
 msgid "Artist / Album"
 msgstr "Исполнитель / Альбом"
 
-#: ../plugins/gtkui/mainplaylist.c:299 ../plugins/gtkui/search.c:434
+#: ../plugins/gtkui/mainplaylist.c:299
+#: ../plugins/gtkui/search.c:434
 msgid "Track No"
 msgstr "№"
 
-#: ../plugins/gtkui/mainplaylist.c:300 ../plugins/gtkui/search.c:435
+#: ../plugins/gtkui/mainplaylist.c:300
+#: ../plugins/gtkui/search.c:435
 msgid "Title / Track Artist"
 msgstr "Заголовок / Исполнитель"
 
-#: ../plugins/gtkui/mainplaylist.c:301 ../plugins/gtkui/search.c:436
+#: ../plugins/gtkui/mainplaylist.c:301
+#: ../plugins/gtkui/search.c:436
+#: ../plugins/gtkui/trkproperties.c:175
 msgid "Duration"
 msgstr "Продолжительность"
 
@@ -796,7 +824,8 @@ msgstr ""
 "Файлы будут потеряны. Продолжить?\n"
 "(Этот диалог может быть отключён в настройках расширения GTKUI)"
 
-#: ../plugins/gtkui/plcommon.c:318 ../plugins/gtkui/trkproperties.c:56
+#: ../plugins/gtkui/plcommon.c:318
+#: ../plugins/gtkui/trkproperties.c:56
 msgid "Warning"
 msgstr "Предупреждение"
 
@@ -816,11 +845,13 @@ msgstr "Обновить метаданные"
 msgid "Remove from disk"
 msgstr "Удалить с жёсткого диска"
 
-#: ../plugins/gtkui/plcommon.c:616 ../plugins/gtkui/plcommon.c:741
+#: ../plugins/gtkui/plcommon.c:616
+#: ../plugins/gtkui/plcommon.c:741
 msgid "Add column"
 msgstr "Добавить столбец"
 
-#: ../plugins/gtkui/plcommon.c:646 ../plugins/gtkui/plcommon.c:745
+#: ../plugins/gtkui/plcommon.c:646
+#: ../plugins/gtkui/plcommon.c:745
 msgid "Edit column"
 msgstr "Редактировать столбец"
 
@@ -853,24 +884,25 @@ msgstr "Настройки %s"
 msgid "Default Audio Device"
 msgstr "Аудио устройство по умолчанию"
 
-#: ../plugins/gtkui/prefwin.c:268
+#: ../plugins/gtkui/prefwin.c:267
 msgid "Add"
 msgstr "Добавить"
 
-#: ../plugins/gtkui/prefwin.c:278
+#: ../plugins/gtkui/prefwin.c:277
 msgid "Global Hotkeys"
 msgstr "Горячие клавиши"
 
-#: ../plugins/gtkui/prefwin.c:335
+#: ../plugins/gtkui/prefwin.c:332
 msgid "Slot"
 msgstr "Слот"
 
-#: ../plugins/gtkui/prefwin.c:336
+#: ../plugins/gtkui/prefwin.c:333
 msgid "Key combination"
 msgstr "Комбинация клавиш"
 
 #. output plugin selection
-#: ../plugins/gtkui/prefwin.c:382 ../plugins/gtkui/prefwin.c:571
+#: ../plugins/gtkui/prefwin.c:379
+#: ../plugins/gtkui/prefwin.c:568
 #: ../plugins.c:833
 msgid "ALSA output plugin"
 msgstr "Модуль вывода ALSA"
@@ -887,6 +919,14 @@ msgstr "Данные для этой композиции были измене�
 msgid "Really close the window?"
 msgstr "Закрыть окно?"
 
+#: ../plugins/gtkui/trkproperties.c:178
+msgid "Tag Type(s)"
+msgstr "Тип(ы) тегов"
+
+#: ../plugins/gtkui/trkproperties.c:180
+msgid "Embedded Cuesheet"
+msgstr "Встроенный файл cue"
+
 #: ../plugins/gtkui/trkproperties.c:180
 msgid "Yes"
 msgstr "Да"
@@ -895,13 +935,19 @@ msgstr "Да"
 msgid "No"
 msgstr "Нет"
 
-#: ../plugins/gtkui/trkproperties.c:244 ../plugins/gtkui/trkproperties.c:256
+#: ../plugins/gtkui/trkproperties.c:248
+#: ../plugins/gtkui/trkproperties.c:260
 msgid "Key"
 msgstr "Ключ"
 
-#: ../plugins/gtkui/trkproperties.c:245 ../plugins/gtkui/trkproperties.c:257
+#: ../plugins/gtkui/trkproperties.c:249
+#: ../plugins/gtkui/trkproperties.c:261
 msgid "Value"
 msgstr "Значение"
+
+#: ../plugins/notify/notify.c:138
+msgid "DeaDBeeF now playing"
+msgstr "DeaDBeeF сейчас играет"
 
 #: ../main.c:83
 #, c-format
@@ -916,8 +962,7 @@ msgstr "Опции:\n"
 #: ../main.c:85
 #, c-format
 msgid "   --help  or  -h     Print help (this message) and exit\n"
-msgstr ""
-"   --help  или  -h     Вывести на экран справку (это сообщение) и выйти\n"
+msgstr "   --help  или  -h     Вывести на экран справку (это сообщение) и выйти\n"
 
 #: ../main.c:86
 #, c-format
@@ -927,9 +972,7 @@ msgstr "   --quit              Выйти из плеера\n"
 #: ../main.c:87
 #, c-format
 msgid "   --version          Print version info and exit\n"
-msgstr ""
-"   --version           Вывести на экран информацию о версии программы и "
-"выйти\n"
+msgstr "   --version           Вывести на экран информацию о версии программы и выйти\n"
 
 #: ../main.c:88
 #, c-format
@@ -969,8 +1012,7 @@ msgstr "   --queue             Добавить файл(ы) в существу
 #: ../main.c:95
 #, c-format
 msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
-msgstr ""
-"   --nowplaying ФМТ    Вывести на экран форматированное название композиции\n"
+msgstr "   --nowplaying ФМТ    Вывести на экран форматированное название композиции\n"
 
 #: ../main.c:96
 #, c-format
@@ -985,16 +1027,15 @@ msgstr ""
 
 #: ../main.c:99
 #, c-format
-msgid ""
-"                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist "
-"- title\"\n"
-msgstr ""
-"                       Например: --nowplaying \"%%a - %%t\" должна вывести "
-"на экран \"artist - title\"\n"
+msgid "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n"
+msgstr "                       Например: --nowplaying \"%%a - %%t\" должна вывести на экран \"artist - title\"\n"
 
-#: ../playlist.c:365 ../playlist.c:2208
+#: ../playlist.c:369
 msgid "Default"
 msgstr "Плейлист"
 
 #~ msgid "Apply"
 #~ msgstr "Применить"
+
+
+ 	  	 
