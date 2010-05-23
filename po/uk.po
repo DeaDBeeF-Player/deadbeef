@@ -700,7 +700,6 @@ msgid "2.3 (Recommended)"
 msgstr "2.3 (Рекомендовано)"
 
 #: ../plugins/gtkui/interface.c:2187
-#, fuzzy
 msgid "2.4"
 msgstr "2.4"
 
@@ -745,7 +744,6 @@ msgid "editplaylistdlg"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:2881
-#, fuzzy
 msgid "URL:"
 msgstr "URL:"
 
@@ -904,12 +902,12 @@ msgstr ""
 #: ../main.c:86
 #, c-format
 msgid "   --quit             Quit player\n"
-msgstr ""
+msgstr "   --quit             Вийти з програвача\n"
 
 #: ../main.c:87
 #, c-format
 msgid "   --version          Print version info and exit\n"
-msgstr ""
+msgstr "   --version          Показати інформацію про версію і вийти\n"
 
 #: ../main.c:88
 #, c-format
