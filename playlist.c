@@ -2209,7 +2209,7 @@ pl_load_all (void) {
             fprintf (stderr, "error: cannot make string with default playlist path\n");
             return -1;
         }
-        if (plt_add (plt_get_count (), "Default") < 0) {
+        if (plt_add (plt_get_count (), _("Default")) < 0) {
             return -1;
         }
         return pl_load (defpl);
