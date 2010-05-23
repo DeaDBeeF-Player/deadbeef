@@ -263,7 +263,7 @@ msgstr "Вилучити"
 
 #: ../plugins/gtkui/interface.c:279
 msgid "Crop"
-msgstr ""
+msgstr "Вилучити невиділене"
 
 #: ../plugins/gtkui/interface.c:283
 msgid "_Find"
@@ -307,7 +307,7 @@ msgstr "Лінійно"
 
 #: ../plugins/gtkui/interface.c:342
 msgid "Shuffle"
-msgstr ""
+msgstr "Перемішане"
 
 #: ../plugins/gtkui/interface.c:348
 msgid "Random"
@@ -315,27 +315,27 @@ msgstr "Випадково"
 
 #: ../plugins/gtkui/interface.c:354
 msgid "Looping"
-msgstr ""
+msgstr "Повторювати"
 
 #: ../plugins/gtkui/interface.c:361
 msgid "Loop All"
-msgstr ""
+msgstr "Повторювати все"
 
 #: ../plugins/gtkui/interface.c:367
 msgid "Loop Single Song"
-msgstr ""
+msgstr "Повторювати тільки одну пісню"
 
 #: ../plugins/gtkui/interface.c:373
 msgid "Don't Loop"
-msgstr ""
+msgstr "Не повторювати"
 
 #: ../plugins/gtkui/interface.c:379
 msgid "Scroll follows playback"
-msgstr ""
+msgstr "Прокручувати поточну пісню"
 
 #: ../plugins/gtkui/interface.c:384
 msgid "Cursor follows playback"
-msgstr ""
+msgstr "Виділяти поточну пісню"
 
 #: ../plugins/gtkui/interface.c:388
 msgid "Stop after current"
