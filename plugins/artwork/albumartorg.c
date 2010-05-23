@@ -74,9 +74,11 @@ fetch_from_albumart_org (const char *artist, const char *album, const char *dest
     }
     current_file = fp;
 
-    FILE *out = fopen (dest, "w+b");
+    char temp[PATH_MAX];
+    snprintf (temp, sizeof (temp), "%s.part", dest);
+    FILE *out = fopen (temp, "w+b");
     if (!out) {
-        trace ("fetch_from_albumart_org: failed to open %s for writing\n", dest);
+        trace ("fetch_from_albumart_org: failed to open %s for writing\n", temp);
         current_file = NULL;
         deadbeef->fclose (fp);
         return -1;
@@ -98,9 +100,16 @@ fetch_from_albumart_org (const char *artist, const char *album, const char *dest
     deadbeef->fclose (fp);
 
     if (error) {
+        unlink (temp);
+        return -1;
+    }
+
+    if (rename (temp, dest) != 0) {
+        unlink (temp);
         unlink (dest);
         return -1;
     }
+
     return 0;
 }
 

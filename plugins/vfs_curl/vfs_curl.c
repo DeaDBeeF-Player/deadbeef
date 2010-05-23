@@ -25,8 +25,10 @@
 #include <time.h>
 #include "../../deadbeef.h"
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#pragma GCC optimize("O0")
+
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -40,12 +42,13 @@ static DB_functions_t *deadbeef;
 
 #define TIMEOUT 10 // in seconds
 
-#define STATUS_INITIAL  0
-//#define STATUS_STARTING 1
-#define STATUS_READING  2
-#define STATUS_FINISHED 3
-#define STATUS_ABORTED  4
-#define STATUS_SEEK     5
+enum {
+    STATUS_INITIAL  = 0,
+    STATUS_READING  = 1,
+    STATUS_FINISHED = 2,
+    STATUS_ABORTED  = 3,
+    STATUS_SEEK     = 4,
+};
 
 typedef struct {
     DB_vfs_t *vfs;
@@ -495,7 +498,7 @@ http_thread_func (void *ctx) {
         curl_easy_setopt (curl, CURLOPT_MAXREDIRS, 10);
         headers = curl_slist_append (headers, "Icy-Metadata:1");
         curl_easy_setopt (curl, CURLOPT_HTTPHEADER, headers);
-        if (fp->pos > 0) {
+        if (fp->pos > 0 && fp->length >= 0) {
             curl_easy_setopt (curl, CURLOPT_RESUME_FROM, fp->pos);
         }
         if (deadbeef->conf_get_int ("network.proxy", 0)) {
@@ -551,6 +554,23 @@ http_thread_func (void *ctx) {
             trace ("curl error:\n%s\n", http_err);
         }
         deadbeef->mutex_lock (fp->mutex);
+        if (status == 0 && fp->length < 0 && fp->status != STATUS_ABORTED && fp->status != STATUS_SEEK) {
+            trace ("vfs_curl: restarting stream\n");
+            fp->status = STATUS_INITIAL;
+            fp->skipbytes = 0;
+            if (fp->content_type) {
+                free (fp->content_type);
+                fp->content_type = NULL;
+            }
+            fp->seektoend = 0;
+            fp->gotheader = 0;
+            fp->icyheader = 0;
+            fp->gotsomeheader = 0;
+            fp->wait_meta = 0;
+            fp->icy_metaint = 0;
+            deadbeef->mutex_unlock (fp->mutex);
+            continue;
+        }
         if (fp->status != STATUS_SEEK) {
             deadbeef->mutex_unlock (fp->mutex);
             break;

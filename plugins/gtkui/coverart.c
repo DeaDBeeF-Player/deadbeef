@@ -140,17 +140,18 @@ loading_thread (void *none) {
                 usleep (500000);
                 continue;
             }
-            trace ("loading image %s\n", queue->fname);
 
-            GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file (queue->fname, NULL);
+//            GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file (queue->fname, NULL);
+            GError *error;
+            GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file_at_scale (queue->fname, queue->width, queue->width, TRUE, &error);
             if (!pixbuf) {
-                trace ("GDK failed to load pixbuf from file %s\n", queue->fname);
                 pixbuf = gdk_pixbuf_new_from_file (DEFAULT_COVER_PATH, NULL);
             }
             if (!pixbuf) {
                 // make default empty image
                 pixbuf = gdk_pixbuf_new (GDK_COLORSPACE_RGB, FALSE, 8, 2, 2);
             }
+#if 0
             else {
                 int w, h;
                 w = gdk_pixbuf_get_width (pixbuf);
@@ -179,6 +180,7 @@ loading_thread (void *none) {
                     pixbuf = scaled;
                 }
             }
+#endif
             if (cache_min != -1) {
                 deadbeef->mutex_lock (mutex);
                 cache[cache_min].pixbuf = pixbuf;
@@ -217,9 +219,10 @@ get_pixbuf (const char *fname, int width) {
         if (cache[i].pixbuf) {
             if (!strcmp (fname, cache[i].fname) && cache[i].width == width) {
                 gettimeofday (&cache[i].tm, NULL);
-                g_object_ref (cache[i].pixbuf);
+                GdkPixbuf *pb = cache[i].pixbuf;
+                g_object_ref (pb);
                 deadbeef->mutex_unlock (mutex);
-                return cache[i].pixbuf;
+                return pb;
             }
         }
     }
@@ -242,7 +245,7 @@ get_cover_art (const char *fname, const char *artist, const char *album, int wid
         return NULL;
     }
     char *image_fname = coverart_plugin->get_album_art (fname, artist, album, cover_avail_callback, (void *)(intptr_t)width);
-    if (fname) {
+    if (image_fname) {
         GdkPixbuf *pb = get_pixbuf (image_fname, width);
         free (image_fname);
         return pb;

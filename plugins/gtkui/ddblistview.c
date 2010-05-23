@@ -28,7 +28,6 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
-#include <assert.h>
 #include <unistd.h>
 #include <ctype.h>
 #include <assert.h>
@@ -36,6 +35,8 @@
 #include "ddblistview.h"
 #include "drawing.h"
 #include "gtkui.h"
+
+#pragma GCC optimize("O0")
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -707,6 +708,7 @@ ddb_listview_list_expose_event               (GtkWidget       *widget,
 
 void
 ddb_listview_list_expose (DdbListview *listview, int x, int y, int w, int h) {
+//    printf ("listview height: %d\n", listview->list->allocation.height);
     GtkWidget *widget = listview->list;
     if (widget->window && listview->backbuf) {
         draw_drawable (widget->window, widget->style->black_gc, listview->backbuf, x, y, x, y, w, h);
@@ -974,6 +976,12 @@ ddb_listview_list_drag_leave                 (GtkWidget       *widget,
 // debug function for gdk_draw_drawable
 static inline void
 draw_drawable (GdkDrawable *window, GdkGC *gc, GdkDrawable *drawable, int x1, int y1, int x2, int y2, int w, int h) {
+    gint width1, height1;
+    gint width2, height2;
+    gdk_drawable_get_size (window, &width1, &height1);
+    gdk_drawable_get_size (drawable, &width2, &height2);
+//    assert (y1 >= 0 && y1 + h < height2);
+//    assert (y2 >= 0 && y2 + h < height1);
 //    printf ("dd: %p %p %p %d %d %d %d %d %d\n", window, gc, drawable, x1, y1, x2, y2, w, h);
     gdk_draw_drawable (window, gc, drawable, x1, y1, x2, y2, w, h);
 }
