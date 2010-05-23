@@ -453,7 +453,7 @@ msgstr "Програвання"
 
 #: ../plugins/gtkui/interface.c:1419
 msgid "Album Art"
-msgstr ""
+msgstr "Обкладинка альбому"
 
 #: ../plugins/gtkui/interface.c:1420
 msgid "Artist - Album"
@@ -481,11 +481,11 @@ msgstr "Трек"
 
 #: ../plugins/gtkui/interface.c:1426
 msgid "Band / Album Artist"
-msgstr ""
+msgstr "Гурт / Альбом Виконавець"
 
 #: ../plugins/gtkui/interface.c:1427 ../plugins/gtkui/plcommon.c:778
 msgid "Custom"
-msgstr ""
+msgstr "Користувацький"
 
 #: ../plugins/gtkui/interface.c:1433 ../plugins/gtkui/interface.c:2997
 msgid "Format:"
@@ -493,7 +493,7 @@ msgstr "Формат:"
 
 #: ../plugins/gtkui/interface.c:1448
 msgid "Alignment:"
-msgstr ""
+msgstr "Вирівнювання"
 
 #: ../plugins/gtkui/interface.c:1456
 msgid "Left"
@@ -512,6 +512,12 @@ msgid ""
 "  copy[r]ight, [f]ilename, [T]ags\n"
 "Example: %a - %t [%l]"
 msgstr ""
+"Перетворення формату (почати з %):\n"
+"  [a]виконавець, [t]itle, [b]альбом, [B]гурт,\n"
+"  [n]номер треку, [N]всіх треків,\n"
+"  [l]протяжність, [y]рік, [g]жанр, [c]коментар,\n"
+"  [r]копірайт, [f]назва файлу, [T]мітки\n"
+"Приклад: %a - %t [%l]"
 
 #: ../plugins/gtkui/interface.c:1488 ../plugins/gtkui/interface.c:2801
 #: ../plugins/gtkui/interface.c:2913 ../plugins/gtkui/interface.c:3036
@@ -525,11 +531,11 @@ msgstr "_ОК"
 
 #: ../plugins/gtkui/interface.c:1726
 msgid "Output plugin:"
-msgstr ""
+msgstr "Плагін виводу:"
 
 #: ../plugins/gtkui/interface.c:1739
 msgid "Output device:"
-msgstr ""
+msgstr "Пристрій виводу:"
 
 #: ../plugins/gtkui/interface.c:1748
 msgid "Sound"
@@ -537,15 +543,15 @@ msgstr "Звук"
 
 #: ../plugins/gtkui/interface.c:1757
 msgid "Allow dynamic samplerate switching"
-msgstr ""
+msgstr "Дозволити перетворення частоти дискретизації"
 
 #: ../plugins/gtkui/interface.c:1765
 msgid "Samplerate conversion quality:"
-msgstr ""
+msgstr "Алгоритм інтерполяції:"
 
 #: ../plugins/gtkui/interface.c:1784
 msgid "Replaygain mode:"
-msgstr ""
+msgstr "Режим автовирівнювання гучності:"
 
 #: ../plugins/gtkui/interface.c:1793
 msgid "Disable"
@@ -553,7 +559,7 @@ msgstr "Виключити"
 
 #: ../plugins/gtkui/interface.c:1797
 msgid "Replaygain peak scale"
-msgstr ""
+msgstr "Використовувати пікове значення"
 
 #: ../plugins/gtkui/interface.c:1801
 msgid "Sound (adv.)"
@@ -601,11 +607,11 @@ msgstr "Основний"
 
 #: ../plugins/gtkui/interface.c:1932
 msgid "Tab strip colors"
-msgstr ""
+msgstr "Кольори смужки вкладок"
 
 #: ../plugins/gtkui/interface.c:1941
 msgid "Override (looses GTK treeview theming, but speeds up rendering)"
-msgstr ""
+msgstr "Перезаписати (втрачаються  налаштування GTK, але пришвидшується візуалізація)"
 
 #: ../plugins/gtkui/interface.c:1950
 msgid "Even row"
@@ -682,16 +688,16 @@ msgstr "Вписати APEv2"
 
 #: ../plugins/gtkui/interface.c:2163 ../plugins/gtkui/interface.c:2242
 msgid "Strip ID3v2"
-msgstr ""
+msgstr "Вирізати ID3v2"
 
 #: ../plugins/gtkui/interface.c:2167 ../plugins/gtkui/interface.c:2290
 msgid "Strip ID3v1"
-msgstr ""
+msgstr "Вирізати  ID3v1"
 
 #: ../plugins/gtkui/interface.c:2171 ../plugins/gtkui/interface.c:2246
 #: ../plugins/gtkui/interface.c:2286
 msgid "Strip APEv2"
-msgstr ""
+msgstr "Вирізати APEv2"
 
 #: ../plugins/gtkui/interface.c:2179
 msgid "ID3v2 version"
@@ -707,7 +713,7 @@ msgstr "2.4"
 
 #: ../plugins/gtkui/interface.c:2193
 msgid "ID3v1 character encoding (default is iso8859-1)"
-msgstr ""
+msgstr "Кодування символів у ID3v1 (типово є iso8859-1)"
 
 #: ../plugins/gtkui/interface.c:2230
 msgid "Write ID3v2.4"
@@ -743,7 +749,7 @@ msgstr "Додатки"
 
 #: ../plugins/gtkui/interface.c:2754
 msgid "editplaylistdlg"
-msgstr ""
+msgstr "Редагувати список програвання"
 
 #: ../plugins/gtkui/interface.c:2881
 msgid "URL:"
@@ -778,6 +784,8 @@ msgid ""
 "Files will be lost. Proceed?\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
 msgstr ""
+"Файли буде втрачено. Продовжити?\n"
+"(Цей діалог можна виключити в налаштуваннях плагіна GTKUI)"
 
 #: ../plugins/gtkui/plcommon.c:318 ../plugins/gtkui/trkproperties.c:56
 msgid "Warning"
@@ -785,19 +793,19 @@ msgstr "Попередження"
 
 #: ../plugins/gtkui/plcommon.c:363
 msgid "Add to playback queue"
-msgstr ""
+msgstr "Додати до черги програвання"
 
 #: ../plugins/gtkui/plcommon.c:368
 msgid "Remove from playback queue"
-msgstr ""
+msgstr "Вилучити з черги програвання"
 
 #: ../plugins/gtkui/plcommon.c:376
 msgid "Reload metadata"
-msgstr ""
+msgstr "Перезавантажити метадані"
 
 #: ../plugins/gtkui/plcommon.c:392
 msgid "Remove from disk"
-msgstr ""
+msgstr "Вилучити з диску"
 
 #: ../plugins/gtkui/plcommon.c:616 ../plugins/gtkui/plcommon.c:741
 msgid "Add column"
@@ -846,7 +854,7 @@ msgstr "Глобальні скорочення клавіатури"
 
 #: ../plugins/gtkui/prefwin.c:335
 msgid "Slot"
-msgstr ""
+msgstr "Слот"
 
 #: ../plugins/gtkui/prefwin.c:336
 msgid "Key combination"
