@@ -2245,7 +2245,7 @@ Right</property>
 	      <property name="visible">True</property>
 	      <property name="can_focus">True</property>
 	      <property name="label" translatable="yes">Format conversions (start with %):
-  [a]rtist, [t]itle, al[b]um, [B]and,
+  [a]rtist, [t]itle, al[b]um, [B]and, [C]omposer
   track[n]umber, [N]totaltracks,
   [l]ength, [y]ear, [g]enre, [c]omment,
   copy[r]ight, [f]ilename, [T]ags
@@ -5815,7 +5815,7 @@ SOCKS5_HOSTNAME</property>
 	      <property name="visible">True</property>
 	      <property name="can_focus">True</property>
 	      <property name="label" translatable="yes">Format conversions (start with %):
-  [a]rtist, [t]itle, al[b]um, [B]and,
+  [a]rtist, [t]itle, al[b]um, [B]and, [C]omposer
   track[n]umber, [N]totaltracks,
   [l]ength, [y]ear, [g]enre, [c]omment,
   copy[r]ight, [f]ilename, [T]ags
