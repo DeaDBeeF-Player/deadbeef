@@ -2478,6 +2478,9 @@ pl_format_title (playItem_t *it, int idx, char *s, int size, int id, const char 
             else if (*fmt == 'B') {
                 meta = pl_find_meta (it, "band");
             }
+            else if (*fmt == 'C') {
+                meta = pl_find_meta (it, "composer");
+            }
             else if (*fmt == 'n') {
                 meta = pl_find_meta (it, "track");
             }
