@@ -938,7 +938,7 @@ msgstr "Valor"
 
 #: ../plugins/notify/notify.c:138
 msgid "DeaDBeeF now playing"
-msgstr ""
+msgstr "DeaDBeeF reproduciendo:"
 
 #: ../main.c:83
 #, c-format
