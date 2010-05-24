@@ -110,7 +110,6 @@ msgid "Zero Preamp"
 msgstr "Μηδέν προενίσχυση"
 
 #: ../plugins/gtkui/eq.c:313
-#, fuzzy
 msgid "Zero Bands"
 msgstr "Μηδέν ζώνες"
 
@@ -423,9 +422,8 @@ msgid "Properties"
 msgstr "Ιδιότητες"
 
 #: ../plugins/gtkui/interface.c:1378
-#, fuzzy
 msgid "editcolumndlg"
-msgstr "editcolumndlg"
+msgstr "Διάλογος επεξεργασίας στύλης"
 
 #: ../plugins/gtkui/interface.c:1393 ../plugins/gtkui/interface.c:2770
 msgid "Title:"
@@ -445,9 +443,8 @@ msgstr "Αριθμός αρχείου"
 
 #. create default set of columns
 #: ../plugins/gtkui/interface.c:1418 ../plugins/gtkui/mainplaylist.c:297
-#, fuzzy
 msgid "Playing"
-msgstr "Αναπαράγεται"
+msgstr "Αναπαραγωγή"
 
 #: ../plugins/gtkui/interface.c:1419
 msgid "Album Art"
@@ -540,7 +537,6 @@ msgid "Sound"
 msgstr "Ήχος"
 
 #: ../plugins/gtkui/interface.c:1757
-#, fuzzy
 msgid "Allow dynamic samplerate switching"
 msgstr "Να επιτρέπεται η δυναμική ρύθμιση samplerate"
 
@@ -557,12 +553,10 @@ msgid "Disable"
 msgstr "Ανενεργό"
 
 #: ../plugins/gtkui/interface.c:1797
-#, fuzzy
 msgid "Replaygain peak scale"
 msgstr "Κορυφή κλίμακας Replaygain"
 
 #: ../plugins/gtkui/interface.c:1801
-#, fuzzy
 msgid "Sound (adv.)"
 msgstr "Ήχος (προχ.)"
 
@@ -587,7 +581,6 @@ msgid "Background"
 msgstr "Παρασκήνιο"
 
 #: ../plugins/gtkui/interface.c:1862
-#, fuzzy
 msgid "Seekbar/Volumebar colors"
 msgstr "Χρώματα μπάρας μετατόπισης/ήχου"
 
@@ -746,17 +739,14 @@ msgid "Configure"
 msgstr "Ρύθμιση"
 
 #: ../plugins/gtkui/interface.c:2410
-#, fuzzy
 msgid "Plugins"
 msgstr "Plugins"
 
 #: ../plugins/gtkui/interface.c:2754
-#, fuzzy
 msgid "editplaylistdlg"
-msgstr "editplaylistdlg"
+msgstr "Διάλογος επεξεργασίας λίστας αναπαραγωγής"
 
 #: ../plugins/gtkui/interface.c:2881
-#, fuzzy
 msgid "URL:"
 msgstr "URL:"
 
@@ -840,7 +830,7 @@ msgid "Open file..."
 msgstr "Άνοιγμα αρχείου..."
 
 #: ../plugins/gtkui/pluginconf.c:139
-#, c-format, fuzzy
+#, c-format
 msgid "Setup %s"
 msgstr "Εγκατάσταση %s"
 
@@ -857,9 +847,8 @@ msgid "Global Hotkeys"
 msgstr "Συντομεύσεις πληκτρολογίου"
 
 #: ../plugins/gtkui/prefwin.c:332
-#, fuzzy
 msgid "Slot"
-msgstr "Θήκη"
+msgstr "Θέση"
 
 #: ../plugins/gtkui/prefwin.c:333
 msgid "Key combination"
@@ -888,7 +877,6 @@ msgid "Tag Type(s)"
 msgstr "Τύπος ετικέτας"
 
 #: ../plugins/gtkui/trkproperties.c:180
-#, fuzzy
 msgid "Embedded Cuesheet"
 msgstr "Ενσωματωμένα Cuesheet"
 
