@@ -138,7 +138,7 @@ msgstr "%d μέρες %d:%02d:%02d"
 #: ../plugins/gtkui/gtkui.c:140
 #, c-format
 msgid "Stopped | %d tracks | %s total playtime"
-msgstr "Σταματημένο | %d κομμάτια | %s συνολικός χρόνος αναπαραγωγής"
+msgstr "Διακοπή | %d κομμάτια | %s συνολικός χρόνος αναπαραγωγής"
 
 #: ../plugins/gtkui/gtkui.c:150
 msgid "Mono"
