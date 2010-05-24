@@ -10,10 +10,10 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Poedit-Country: GREECE\n"
 "Language: el\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-Language: Greek\n"
+"X-Poedit-Country: GREECE\n"
 
 #: ../plugins/gtkui/callbacks.c:97
 msgid "Supported sound formats"
@@ -785,7 +785,7 @@ msgstr "Διαγραφή αρχείων από το δίσκο"
 msgid ""
 "Files will be lost. Proceed?\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
-msgstr ""
+msgstr "τα αρχεία θα χαθούν. Να προχωρήσω; \\ n (Αυτό το παράθυρο μπορεί να απενεργοποιηθεί από τις ρυθμίσεις του GTKUI plugin)"
 
 #: ../plugins/gtkui/plcommon.c:318 ../plugins/gtkui/trkproperties.c:56
 msgid "Warning"
@@ -842,7 +842,7 @@ msgstr ""
 
 #: ../plugins/gtkui/prefwin.c:98
 msgid "Default Audio Device"
-msgstr ""
+msgstr "Προεπιλεγμένη συσκευή ήχου"
 
 #: ../plugins/gtkui/prefwin.c:267
 msgid "Add"
@@ -850,41 +850,43 @@ msgstr "Προσθήκη"
 
 #: ../plugins/gtkui/prefwin.c:277
 msgid "Global Hotkeys"
-msgstr ""
+msgstr "Συντομεύσεις πληκτρολογίου"
 
 #: ../plugins/gtkui/prefwin.c:332
+#, fuzzy
 msgid "Slot"
-msgstr ""
+msgstr "Θήκη"
 
 #: ../plugins/gtkui/prefwin.c:333
 msgid "Key combination"
-msgstr ""
+msgstr "Συνδυασμός πλήκτρων"
 
 #. output plugin selection
 #: ../plugins/gtkui/prefwin.c:379 ../plugins/gtkui/prefwin.c:568
 #: ../plugins.c:833
 msgid "ALSA output plugin"
-msgstr ""
+msgstr "Plugin εξόδου ALSA"
 
 #: ../plugins/gtkui/progress.c:53
 msgid "Initializing..."
-msgstr ""
+msgstr "Αρχικοποίηση..."
 
 #: ../plugins/gtkui/trkproperties.c:53
 msgid "You've modified data for this track."
-msgstr ""
+msgstr "Έχετε τροποποιήσει στοιχεία του κομματιού."
 
 #: ../plugins/gtkui/trkproperties.c:55
 msgid "Really close the window?"
-msgstr ""
+msgstr "Είστε σίγουροι πως θέλετε να κλείσετε το παράθυρο;"
 
 #: ../plugins/gtkui/trkproperties.c:178
 msgid "Tag Type(s)"
-msgstr ""
+msgstr "Τύπος ετικέτας"
 
 #: ../plugins/gtkui/trkproperties.c:180
+#, fuzzy
 msgid "Embedded Cuesheet"
-msgstr ""
+msgstr "Ενσωματωμένα Cuesheet"
 
 #: ../plugins/gtkui/trkproperties.c:180
 msgid "Yes"
@@ -905,67 +907,67 @@ msgstr "Τιμή"
 #: ../main.c:83
 #, c-format
 msgid "Usage: deadbeef [options] [file(s)]\n"
-msgstr ""
+msgstr "Χρήση: deadbeef [επιλογές] [αρχεία]\n"
 
 #: ../main.c:84
 #, c-format
 msgid "Options:\n"
-msgstr ""
+msgstr "Επιλογές:\n"
 
 #: ../main.c:85
 #, c-format
 msgid "   --help  or  -h     Print help (this message) and exit\n"
-msgstr ""
+msgstr " --help ή -h Εμφάνιση κειμένου βοήθειας και έξοδος\n"
 
 #: ../main.c:86
 #, c-format
 msgid "   --quit             Quit player\n"
-msgstr ""
+msgstr "--quit Έξοδος\n"
 
 #: ../main.c:87
 #, c-format
 msgid "   --version          Print version info and exit\n"
-msgstr ""
+msgstr "--version Εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
 
 #: ../main.c:88
 #, c-format
 msgid "   --play             Start playback\n"
-msgstr ""
+msgstr "--play Εκκίνηση αναπαραγωγής\n"
 
 #: ../main.c:89
 #, c-format
 msgid "   --stop             Stop playback\n"
-msgstr ""
+msgstr "--stop Διακοπή αναπαραγωγής\n"
 
 #: ../main.c:90
 #, c-format
 msgid "   --pause            Pause playback\n"
-msgstr ""
+msgstr "--pause Παύση αναπαραγωγής\n"
 
 #: ../main.c:91
 #, c-format
 msgid "   --next             Next song in playlist\n"
-msgstr ""
+msgstr "--next Επόμενο τραγούδι στη λίστα αναπαραγωγής\n"
 
 #: ../main.c:92
 #, c-format
 msgid "   --prev             Previous song in playlist\n"
-msgstr ""
+msgstr "--prev Προηγούμενο τραγούδι στη λίστα αναπαραγωγής\n"
 
 #: ../main.c:93
 #, c-format
 msgid "   --random           Random song in playlist\n"
-msgstr ""
+msgstr "--random Τυχαίο κομμάτι στη λίστα αναπαραγωγής\n"
 
 #: ../main.c:94
 #, c-format
 msgid "   --queue            Append file(s) to existing playlist\n"
-msgstr ""
+msgstr "--queue Προσάρτηση αρχείου στην υπάρχουσα λίστα αναπαραγωγής\n"
 
 #: ../main.c:95
 #, c-format
 msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
-msgstr ""
+msgstr "--nowplaying FMT Εμφάνιση μορφοποιημένου ονόματος κομματιού\n"
 
 #: ../main.c:96
 #, c-format
@@ -974,12 +976,15 @@ msgid ""
 "                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
 "                      copy[r]ight, [e]lapsed\n"
 msgstr ""
+"FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
+" [l]ength, track[n]umber, [y]ear, [c]omment,\n"
+" copy[r]ight, [e]lapsed\n"
 
 #: ../main.c:99
 #, c-format
 msgid "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n"
-msgstr ""
+msgstr "π.χ.: --nowplaying \"%%a - %%t\" θα εμφανίσει \"artist - title\"\n"
 
 #: ../playlist.c:369
 msgid "Default"
-msgstr ""
+msgstr "Προεπιλογή"
