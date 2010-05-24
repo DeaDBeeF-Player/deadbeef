@@ -110,8 +110,9 @@ msgid "Zero Preamp"
 msgstr "Μηδέν προενίσχυση"
 
 #: ../plugins/gtkui/eq.c:313
+#, fuzzy
 msgid "Zero Bands"
-msgstr ""
+msgstr "Μηδέν ζώνες"
 
 #: ../plugins/gtkui/eq.c:320
 msgid "Save Preset"
@@ -278,7 +279,7 @@ msgstr "Μπάρα κατάστασης"
 
 #: ../plugins/gtkui/interface.c:310
 msgid "Column headers"
-msgstr ""
+msgstr "Τίτλοι στύλων"
 
 #: ../plugins/gtkui/interface.c:314
 msgid "Tabs"
@@ -326,11 +327,11 @@ msgstr "Χωρίς επανάληψη"
 
 #: ../plugins/gtkui/interface.c:379
 msgid "Scroll follows playback"
-msgstr ""
+msgstr "Η κύληση ακολουθεί την αναπαραγωγή"
 
 #: ../plugins/gtkui/interface.c:384
 msgid "Cursor follows playback"
-msgstr ""
+msgstr "Ο δείκτης ποντικιού ακολουθεί την αναπαραγωγή"
 
 #: ../plugins/gtkui/interface.c:388
 msgid "Stop after current"
@@ -422,8 +423,9 @@ msgid "Properties"
 msgstr "Ιδιότητες"
 
 #: ../plugins/gtkui/interface.c:1378
+#, fuzzy
 msgid "editcolumndlg"
-msgstr ""
+msgstr "editcolumndlg"
 
 #: ../plugins/gtkui/interface.c:1393 ../plugins/gtkui/interface.c:2770
 msgid "Title:"
@@ -431,7 +433,7 @@ msgstr "Τίτλος:"
 
 #: ../plugins/gtkui/interface.c:1401
 msgid "Enter new column title here"
-msgstr ""
+msgstr "Εισαγωγή νέου τίτλου για τη στήλη"
 
 #: ../plugins/gtkui/interface.c:1409
 msgid "Type:"
@@ -449,7 +451,7 @@ msgstr "Αναπαράγεται"
 
 #: ../plugins/gtkui/interface.c:1419
 msgid "Album Art"
-msgstr ""
+msgstr "Σχέδιο άλπουμ"
 
 #: ../plugins/gtkui/interface.c:1420
 msgid "Artist - Album"
@@ -476,9 +478,8 @@ msgid "Track"
 msgstr "Κομμάτι"
 
 #: ../plugins/gtkui/interface.c:1426
-#, fuzzy
 msgid "Band / Album Artist"
-msgstr "Band / Καλλιτέχνης Album"
+msgstr "Συγκρότημα / Καλλιτέχνης άλμπουμ"
 
 #: ../plugins/gtkui/interface.c:1427 ../plugins/gtkui/plcommon.c:778
 msgid "Custom"
@@ -539,24 +540,26 @@ msgid "Sound"
 msgstr "Ήχος"
 
 #: ../plugins/gtkui/interface.c:1757
+#, fuzzy
 msgid "Allow dynamic samplerate switching"
-msgstr ""
+msgstr "Να επιτρέπεται η δυναμική ρύθμιση samplerate"
 
 #: ../plugins/gtkui/interface.c:1765
 msgid "Samplerate conversion quality:"
-msgstr ""
+msgstr "Ποιότητα μετατροπής samplerate:"
 
 #: ../plugins/gtkui/interface.c:1784
 msgid "Replaygain mode:"
-msgstr ""
+msgstr "Λειτουργία Replaygain:"
 
 #: ../plugins/gtkui/interface.c:1793
 msgid "Disable"
 msgstr "Ανενεργό"
 
 #: ../plugins/gtkui/interface.c:1797
+#, fuzzy
 msgid "Replaygain peak scale"
-msgstr ""
+msgstr "Κορυφή κλίμακας Replaygain"
 
 #: ../plugins/gtkui/interface.c:1801
 #, fuzzy
@@ -610,7 +613,7 @@ msgstr "Χρώματα στο χώρο καρτελών"
 
 #: ../plugins/gtkui/interface.c:1941
 msgid "Override (looses GTK treeview theming, but speeds up rendering)"
-msgstr ""
+msgstr "Παράκαμψη (χάνει το GTK treeview θέμα, αλλά επιταχύνει την απόδοση)"
 
 #: ../plugins/gtkui/interface.c:1950
 msgid "Even row"
@@ -748,8 +751,9 @@ msgid "Plugins"
 msgstr "Plugins"
 
 #: ../plugins/gtkui/interface.c:2754
+#, fuzzy
 msgid "editplaylistdlg"
-msgstr ""
+msgstr "editplaylistdlg"
 
 #: ../plugins/gtkui/interface.c:2881
 #, fuzzy
@@ -836,9 +840,9 @@ msgid "Open file..."
 msgstr "Άνοιγμα αρχείου..."
 
 #: ../plugins/gtkui/pluginconf.c:139
-#, c-format
+#, c-format, fuzzy
 msgid "Setup %s"
-msgstr ""
+msgstr "Εγκατάσταση %s"
 
 #: ../plugins/gtkui/prefwin.c:98
 msgid "Default Audio Device"
