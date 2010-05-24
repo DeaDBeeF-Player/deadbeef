@@ -1,712 +1,706 @@
-# Deadbeef Audio Player
-# Copyright (C) 2009-2001 Alexey Yakovenko <waker@users.sourceforge.net>
-# This file is distributed under the same license as the Deadbeef package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: deadbeef\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-24 04:07+0000\n"
-"PO-Revision-Date: 2010-05-24 00:21+0100\n"
-"Last-Translator: Yarema aka Knedlyk <yupadmin@gmail.com>\n"
-"Language-Team: UKRAINIAN <translate@linux.org.ua>\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: waker@users.sourceforge.net\n"
+"POT-Creation-Date: 2010-05-23 04:08+0000\n"
+"PO-Revision-Date: \n"
+"Last-Translator: George Vasilakos <forfolias@linuxteam.cs.teilar.gr>\n"
+"Language-Team: Greek\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: \n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Poedit-Language: Ukrainian\n"
-"X-Poedit-SourceCharset: utf-8\n"
-"X-Poedit-Country: UKRAINE\n"
-"X-Generator: Pootle 1.1.0\n"
+"Language: el\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-Language: Greek\n"
+"X-Poedit-Country: GREECE\n"
 
 #: ../plugins/gtkui/callbacks.c:97
 msgid "Supported sound formats"
-msgstr "Формати аудіо, що підтримується"
+msgstr "Υποστηριζόμενοι τύποι ήχου"
 
 #: ../plugins/gtkui/callbacks.c:108
 msgid "Other files (*)"
-msgstr "Інші файли (*)"
+msgstr "Άλλα αρχεία (*)"
 
 #: ../plugins/gtkui/callbacks.c:117
 msgid "Open file(s)..."
-msgstr "Відкрити файл(и)..."
+msgstr "Άνοιγμα αρχείου..."
 
 #: ../plugins/gtkui/callbacks.c:150
 msgid "Add file(s) to playlist..."
-msgstr "Додати файл(и) до списку програвання..."
+msgstr "Προσθήκη αρχείου στη λίστα αναπαραγωγής"
 
 #: ../plugins/gtkui/callbacks.c:182
 msgid "Add folder(s) to playlist..."
-msgstr "Додати теку(и) до списку програвання..."
+msgstr "Προσθήκη φακέλου στη λίστα αναπαραγωγής"
 
 #: ../plugins/gtkui/callbacks.c:640
 msgid "Failed while reading help file"
-msgstr "Невдача при читанні файлу допомоги"
+msgstr "Αποτυχία κατά την ανάγνωση του αρχείου βοήθειας"
 
 #: ../plugins/gtkui/callbacks.c:650
 msgid "Failed to load help file"
-msgstr "Не можу прочитати файл перемоги"
+msgstr "Αποτυχία κατά τη φόρτωση του αρχείου βοήθειας"
 
 #: ../plugins/gtkui/callbacks.c:664 ../plugins/gtkui/interface.c:1105
 msgid "Help"
-msgstr "Допомога"
+msgstr "Βοήθεια"
 
 #: ../plugins/gtkui/callbacks.c:674
 #, c-format
 msgid "About DeaDBeeF %s"
-msgstr "Про DeaDBeeF %s"
+msgstr "Περί DeaDBeeF %s"
 
 #: ../plugins/gtkui/callbacks.c:685
 #, c-format
 msgid "DeaDBeeF %s ChangeLog"
-msgstr "DeaDBeeF %s Список Змін"
+msgstr "DeaDBeeF %s ChangeLog"
 
 #: ../plugins/gtkui/ddbtabstrip.c:527
 msgid "Edit playlist"
-msgstr "Редагувати список програвання"
+msgstr "Επεξεργασία λίστας αναπαραγωγής"
 
 #: ../plugins/gtkui/ddbtabstrip.c:604
 msgid "Rename Playlist"
-msgstr "Перейменувати список програвання"
+msgstr "Μετονομασία λίστας αναπαραγωγής"
 
 #: ../plugins/gtkui/ddbtabstrip.c:608
 msgid "Remove Playlist"
-msgstr "Вилучити список програвання"
+msgstr "Αφαίρεση λίστας αναπαραγωγής"
 
 #: ../plugins/gtkui/ddbtabstrip.c:612
 msgid "Add New Playlist"
-msgstr "Додати новий список програвання"
+msgstr "Προσθήκη νέας λίστας αναπαραγωγής"
 
 #: ../plugins/gtkui/eq.c:113
 msgid "Save DeaDBeeF EQ Preset"
-msgstr "Зберегти типові значення еквалайзера DeaDBeeF"
+msgstr "Αποθήκευση ρύθμισης DeaDBeeF EQ"
 
 #: ../plugins/gtkui/eq.c:120
 msgid "DeaDBeeF EQ preset files (*.ddbeq)"
-msgstr "Файли типових значень еквалайзера DeaDBeeF (*.ddbeq)"
+msgstr "Αρχεία ρύθμισης DeaDBeeF EQ (*.ddbeq)"
 
 #: ../plugins/gtkui/eq.c:151
 msgid "Load DeaDBeeF EQ Preset..."
-msgstr "Завантаження типові значення еквалайзера DeaDBeeF..."
+msgstr "Φόρτωση ρύθμισης DeaDBeeF EQ"
 
 #: ../plugins/gtkui/eq.c:155
 msgid "DeaDBeeF EQ presets (*.ddbeq)"
-msgstr "Типові значення еквалайзера DeaDBeeF (*.ddbeq)"
+msgstr "Ρυθμίσεις DeaDBeeF EQ (*.ddbeq)"
 
 #: ../plugins/gtkui/eq.c:214
 msgid "Import Foobar2000 EQ Preset..."
-msgstr "Імпорт типових значень еквалайзера Foobar2000"
+msgstr "Εισαγωγή ρυθμίσεων Foobar2000 EQ..."
 
 #: ../plugins/gtkui/eq.c:218
 msgid "Foobar2000 EQ presets (*.feq)"
-msgstr "Типові значення еквалайзера Foobar2000 (*.feq)"
+msgstr "Ρυθμίσεις Foobar2000 EQ (*.feq)"
 
 #: ../plugins/gtkui/eq.c:292
 msgid "Enable"
-msgstr "Включити"
+msgstr "Ενεργό"
 
 #: ../plugins/gtkui/eq.c:299
 msgid "Zero All"
-msgstr "Скинути все на нуль"
+msgstr "Όλα μηδέν"
 
 #: ../plugins/gtkui/eq.c:306
 msgid "Zero Preamp"
-msgstr "Скинути на нуль підсилення"
+msgstr "Μηδέν προενίσχυση"
 
 #: ../plugins/gtkui/eq.c:313
 msgid "Zero Bands"
-msgstr "Скинути на нуль частоти"
+msgstr "Μηδέν ζώνες"
 
 #: ../plugins/gtkui/eq.c:320
 msgid "Save Preset"
-msgstr "Зберегти типові значення"
+msgstr "Αποθήκευση ρύθμισης"
 
 #: ../plugins/gtkui/eq.c:327
 msgid "Load Preset"
-msgstr "Завантажити типові значення"
+msgstr "Φόρτωση ρύθμισης"
 
 #: ../plugins/gtkui/eq.c:334
 msgid "Import Foobar2000 Preset"
-msgstr "Імортувати типові значення Foobar2000"
+msgstr "Εισαγωγή ρύθμισης Foobar2000"
 
 #: ../plugins/gtkui/gtkui.c:128
 #, c-format
 msgid "1 day %d:%02d:%02d"
-msgstr "1 день %d:%02d:%02d"
+msgstr "1 μέρα %d:%02d:%02d"
 
 #: ../plugins/gtkui/gtkui.c:131
 #, c-format
 msgid "%d days %d:%02d:%02d"
-msgstr "%d дні %d:%02d:%02d"
+msgstr "%d μέρες %d:%02d:%02d"
 
 #: ../plugins/gtkui/gtkui.c:140
 #, c-format
 msgid "Stopped | %d tracks | %s total playtime"
-msgstr "Зупинено | %d треків | %s повна тривалість програвання"
+msgstr "Διακοπή | %d κομμάτια | %s συνολικός χρόνος αναπαραγωγής"
 
 #: ../plugins/gtkui/gtkui.c:150
 msgid "Mono"
-msgstr "Моно"
+msgstr "Μονοφωνικό"
 
 #: ../plugins/gtkui/gtkui.c:150
 msgid "Stereo"
-msgstr "Стерео"
+msgstr "Στερεοφωνικό"
 
 #: ../plugins/gtkui/gtkui.c:170
 #, c-format
 msgid "| %4d kbps "
-msgstr "| %4d kbps"
+msgstr "| %4d kbps "
 
 #: ../plugins/gtkui/gtkui.c:176
 msgid "Paused | "
-msgstr "На паузі |"
+msgstr "Παύση |"
 
 #: ../plugins/gtkui/gtkui.c:177
 #, c-format
 msgid "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
-msgstr "%s%s %s| %dГц | %d біт | %s | %d:%02d / %s | %d треків | %s повна тривалість програвання"
+msgstr "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d κομμάτια | %s συνολικός χρόνος αναπαραγωγής"
 
 #: ../plugins/gtkui/gtkui.c:533
 msgid "Save Playlist As"
-msgstr "Зберегти список програвання як"
+msgstr "Αποθήκευση λίστας αναπαραγωγής ως"
 
 #: ../plugins/gtkui/gtkui.c:542 ../plugins/gtkui/gtkui.c:603
 msgid "DeaDBeeF playlist files (*.dbpl)"
-msgstr "Файли списків програвання DeaDBeeF (*.dbpl)"
+msgstr "Αρχεία λίστας αναπαραγωγής DeaDBeeF (*.dbpl)"
 
 #: ../plugins/gtkui/gtkui.c:596
 msgid "Load Playlist"
-msgstr "Завантажити список програвання"
+msgstr "Φόρτωση λίστας αναπαραγωγής"
 
 #: ../plugins/gtkui/gtkui.c:741
 msgid "New Playlist"
-msgstr "Новий список програвання"
+msgstr "Νέα λίστα αναπαραγωγής"
 
 #: ../plugins/gtkui/gtkui.c:744
 #, c-format
 msgid "New Playlist (%d)"
-msgstr "Новий список програвання (%d)"
+msgstr "Νέα λίστα αναπαραγωγής (%d)"
 
 #: ../plugins/gtkui/interface.c:140
 msgid "_File"
-msgstr "_Файл"
+msgstr "_Αρχείο"
 
 #: ../plugins/gtkui/interface.c:147
 msgid "_Open file(s)"
-msgstr "_Відкрити файл(и)"
+msgstr "_Άνοιγμα αρχείου"
 
 #: ../plugins/gtkui/interface.c:163
 msgid "Add file(s)"
-msgstr "Додати файл(и)"
+msgstr "Προσθήκη αρχείου"
 
 #: ../plugins/gtkui/interface.c:171
 msgid "Add folder(s)"
-msgstr "Додати теку(и)"
+msgstr "Προσθήκη φακέλου"
 
 #: ../plugins/gtkui/interface.c:179
 msgid "Add Audio CD"
-msgstr "Додати Аудіо CD"
+msgstr "Προσθήκη CD ήχου"
 
 #: ../plugins/gtkui/interface.c:187 ../plugins/gtkui/interface.c:2870
 msgid "Add location"
-msgstr "Додати URL-посилання"
+msgstr "Προσθήκη τοποθεσίας"
 
 #: ../plugins/gtkui/interface.c:196
 msgid "New playlist"
-msgstr "Новий список програвання"
+msgstr "Νέα λίστα αναπαραγωγής"
 
 #: ../plugins/gtkui/interface.c:203
 msgid "Load playlist"
-msgstr "Викликати список програвання"
+msgstr "Φόρτωση λίστας αναπαραγωγής"
 
 #: ../plugins/gtkui/interface.c:207
 msgid "Save playlist"
-msgstr "Зберегти список програвання"
+msgstr "Αποθήκευση λίστας αναπαραγωγής"
 
 #: ../plugins/gtkui/interface.c:211
 msgid "Save playlist as"
-msgstr "Зберегти список програвання як"
+msgstr "Αποθήκευση λίστας αναπαραγωγής ως"
 
 #: ../plugins/gtkui/interface.c:220
 msgid "_Quit"
-msgstr "_Закінчити"
+msgstr "_Έξοδος"
 
 #: ../plugins/gtkui/interface.c:231
 msgid "_Edit"
-msgstr "_Редагувати"
+msgstr "_Επεξεργασία"
 
 #: ../plugins/gtkui/interface.c:238
 msgid "_Clear"
-msgstr "_Очистити"
+msgstr "_Καθαρισμός"
 
 #: ../plugins/gtkui/interface.c:246
 msgid "Select all"
-msgstr "Вибрати все"
+msgstr "Επιλογή όλων"
 
 #: ../plugins/gtkui/interface.c:253
 msgid "Deselect all"
-msgstr "Забрати вибирання всього"
+msgstr "Αποεπιλογή όλων"
 
 #: ../plugins/gtkui/interface.c:260
 msgid "Invert selection"
-msgstr "Інвертувати виділення"
+msgstr "Αναστροφή επιλογής"
 
 #: ../plugins/gtkui/interface.c:264
 msgid "Selection"
-msgstr "Вибір"
+msgstr "Επιλογμένο"
 
 #: ../plugins/gtkui/interface.c:271 ../plugins/gtkui/plcommon.c:387
 #: ../plugins/gtkui/prefwin.c:272
 msgid "Remove"
-msgstr "Вилучити"
+msgstr "Αφαίρεση"
 
 #: ../plugins/gtkui/interface.c:279
 msgid "Crop"
-msgstr "Вилучити невиділене"
+msgstr "Περικοπή"
 
 #: ../plugins/gtkui/interface.c:283
 msgid "_Find"
-msgstr "_Знайти"
+msgstr "_Αναζήτηση"
 
 #: ../plugins/gtkui/interface.c:295 ../plugins/gtkui/interface.c:1706
 msgid "Preferences"
-msgstr "Параметри"
+msgstr "Ρυθμίσεις"
 
 #: ../plugins/gtkui/interface.c:299
 msgid "_View"
-msgstr "_Вигляд"
+msgstr "_Προβολή"
 
 #: ../plugins/gtkui/interface.c:306
 msgid "Status bar"
-msgstr "Рядок стану"
+msgstr "Μπάρα κατάστασης"
 
 #: ../plugins/gtkui/interface.c:310
 msgid "Column headers"
-msgstr "Заголовки колонок"
+msgstr "Τίτλοι στύλων"
 
 #: ../plugins/gtkui/interface.c:314
 msgid "Tabs"
-msgstr "Вкладки"
+msgstr "Καρτέλες"
 
 #: ../plugins/gtkui/interface.c:318
 msgid "Equalizer"
-msgstr "Еквалайзер"
+msgstr "Ισοσταθμιστής"
 
 #: ../plugins/gtkui/interface.c:322
 msgid "_Playback"
-msgstr "_Програвання"
+msgstr "Αναπαραγωγή"
 
 #: ../plugins/gtkui/interface.c:329
 msgid "Order"
-msgstr "Порядок"
+msgstr "Σειρά"
 
 #: ../plugins/gtkui/interface.c:336
 msgid "Linear"
-msgstr "Одне за одним"
+msgstr "Γραμμικά"
 
 #: ../plugins/gtkui/interface.c:342
 msgid "Shuffle"
-msgstr "Перемішане"
+msgstr "Ανακατεμένα"
 
 #: ../plugins/gtkui/interface.c:348
 msgid "Random"
-msgstr "Випадково"
+msgstr "Τυχαία"
 
 #: ../plugins/gtkui/interface.c:354
 msgid "Looping"
-msgstr "Повторювати"
+msgstr "Επανάληψη"
 
 #: ../plugins/gtkui/interface.c:361
 msgid "Loop All"
-msgstr "Повторювати все"
+msgstr "Επανάληψη όλων"
 
 #: ../plugins/gtkui/interface.c:367
 msgid "Loop Single Song"
-msgstr "Повторювати тільки одну пісню"
+msgstr "Επανάληψη κομματιού"
 
 #: ../plugins/gtkui/interface.c:373
 msgid "Don't Loop"
-msgstr "Не повторювати"
+msgstr "Χωρίς επανάληψη"
 
 #: ../plugins/gtkui/interface.c:379
 msgid "Scroll follows playback"
-msgstr "Прокручувати поточну пісню"
+msgstr "Η κύληση ακολουθεί την αναπαραγωγή"
 
 #: ../plugins/gtkui/interface.c:384
 msgid "Cursor follows playback"
-msgstr "Виділяти поточну пісню"
+msgstr "Ο δείκτης ποντικιού ακολουθεί την αναπαραγωγή"
 
 #: ../plugins/gtkui/interface.c:388
 msgid "Stop after current"
-msgstr "Зупинити піля поточного"
+msgstr "Διακοπή μετά το τρέχον"
 
 #: ../plugins/gtkui/interface.c:395 ../plugins/gtkui/interface.c:402
 msgid "_Help"
-msgstr "_Допомога"
+msgstr "_Βοήθεια"
 
 #: ../plugins/gtkui/interface.c:410
 msgid "_ChangeLog"
-msgstr "_Впроваджені зміни"
+msgstr "_ChangeLog"
 
 #: ../plugins/gtkui/interface.c:432
 msgid "_About"
-msgstr "_Про"
+msgstr "_Περί"
 
 #: ../plugins/gtkui/interface.c:816
 msgid "Search"
-msgstr "Пошук"
+msgstr "Αναζήτηση"
 
 #: ../plugins/gtkui/interface.c:891
 msgid "Stop"
-msgstr "Стоп"
+msgstr "Διακοπή"
 
 #: ../plugins/gtkui/interface.c:899
 msgid "Play"
-msgstr "Програвати"
+msgstr "Αναπαραγωγή"
 
 #: ../plugins/gtkui/interface.c:907
 msgid "Pause"
-msgstr "Пауза"
+msgstr "Παύση"
 
 #: ../plugins/gtkui/interface.c:915
 msgid "Previous"
-msgstr "Попереднє"
+msgstr "Προηγούμενο"
 
 #: ../plugins/gtkui/interface.c:923
 msgid "Next"
-msgstr "Наступне"
+msgstr "Επόμενο"
 
 #: ../plugins/gtkui/interface.c:931
 msgid "Play Random"
-msgstr "Програвати випадково"
+msgstr "Αναπαραγωγή τυχαίου"
 
 #: ../plugins/gtkui/interface.c:940
 msgid "About"
-msgstr "Про"
+msgstr "Περί"
 
 #: ../plugins/gtkui/interface.c:953
 msgid "Quit"
-msgstr "Вийти"
+msgstr "Έξοδος"
 
 #: ../plugins/gtkui/interface.c:1025
 msgid "Adding files..."
-msgstr "Додавання файлів"
+msgstr "Προσθήκη αρχείων"
 
 #: ../plugins/gtkui/interface.c:1069
 msgid "_Abort"
-msgstr "_Припинити"
+msgstr "_Ακύρωση"
 
 #: ../plugins/gtkui/interface.c:1170
 msgid "Track Properties"
-msgstr "Властивості треків"
+msgstr "Ιδιότητες κομματιού"
 
 #: ../plugins/gtkui/interface.c:1194
 msgid ""
 "<b>WARNING</b>: tag writing feature is still in development.\n"
 "<b>Make backup copies</b> before using."
 msgstr ""
-"<b>ПОПЕРЕДЖЕННЯ</b>: запис міток все ще в розробці.\n"
-"<b>Зробіть копії</b> перед використанням."
+"<b>ΠΡΟΕΙΔΟΠΟΙΗΣΉ</b>: η εγγραφή ετικετών είναι ακόμα υπό ανάπτυξη.\n"
+"<b>Κρατήστε αντίγραφα ασφαλείας</b> πριν τη χρήση."
 
 #: ../plugins/gtkui/interface.c:1221
 msgid "_Apply"
-msgstr "_Застосувати"
+msgstr "_Εφαρμογή"
 
 #: ../plugins/gtkui/interface.c:1242 ../plugins/gtkui/interface.c:1288
 #: ../plugins/gtkui/interface.c:2436
 msgid "_Close"
-msgstr "З_акрити"
+msgstr "_Κλείσιμο"
 
 #: ../plugins/gtkui/interface.c:1246
 msgid "Metadata"
-msgstr "Метадані"
+msgstr "Μεταδεδομένα"
 
 #: ../plugins/gtkui/interface.c:1292 ../plugins/gtkui/plcommon.c:402
 msgid "Properties"
-msgstr "Властивості"
+msgstr "Ιδιότητες"
 
 #: ../plugins/gtkui/interface.c:1378
 msgid "editcolumndlg"
-msgstr "Редагувати колонку"
+msgstr "Διάλογος επεξεργασίας στύλης"
 
 #: ../plugins/gtkui/interface.c:1393 ../plugins/gtkui/interface.c:2770
 msgid "Title:"
-msgstr "Назва:"
+msgstr "Τίτλος:"
 
 #: ../plugins/gtkui/interface.c:1401
 msgid "Enter new column title here"
-msgstr "Введіть назву нової колонки тут:"
+msgstr "Εισαγωγή νέου τίτλου για τη στήλη"
 
 #: ../plugins/gtkui/interface.c:1409
 msgid "Type:"
-msgstr "Тип:"
+msgstr "Τύπος"
 
 #: ../plugins/gtkui/interface.c:1417
 msgid "File number"
-msgstr "Номер файлу"
+msgstr "Αριθμός αρχείου"
 
 #. create default set of columns
 #: ../plugins/gtkui/interface.c:1418 ../plugins/gtkui/mainplaylist.c:297
 msgid "Playing"
-msgstr "Програвання"
+msgstr "Αναπαραγωγή"
 
 #: ../plugins/gtkui/interface.c:1419
 msgid "Album Art"
-msgstr "Обкладинка альбому"
+msgstr "Σχέδιο άλπουμ"
 
 #: ../plugins/gtkui/interface.c:1420
 msgid "Artist - Album"
-msgstr "Виконавець - Альбом"
+msgstr "Καλλιτέχνης - Άλμπουμ"
 
 #: ../plugins/gtkui/interface.c:1421 ../plugins/gtkui/plcommon.c:774
 msgid "Artist"
-msgstr "Виконавець"
+msgstr "Καλλιτέχνης"
 
 #: ../plugins/gtkui/interface.c:1422 ../plugins/gtkui/interface.c:1795
 msgid "Album"
-msgstr "Альбом"
+msgstr "Άλμπουμ"
 
 #: ../plugins/gtkui/interface.c:1423 ../plugins/gtkui/prefwin.c:488
 msgid "Title"
-msgstr "Назва"
+msgstr "Τίτλος"
 
 #: ../plugins/gtkui/interface.c:1424
 msgid "Length"
-msgstr "Тривалість"
+msgstr "Διάρκεια"
 
 #: ../plugins/gtkui/interface.c:1425 ../plugins/gtkui/interface.c:1794
 msgid "Track"
-msgstr "Трек"
+msgstr "Κομμάτι"
 
 #: ../plugins/gtkui/interface.c:1426
 msgid "Band / Album Artist"
-msgstr "Гурт / Альбом Виконавець"
+msgstr "Συγκρότημα / Καλλιτέχνης άλμπουμ"
 
 #: ../plugins/gtkui/interface.c:1427 ../plugins/gtkui/plcommon.c:778
 msgid "Custom"
-msgstr "Користувацький"
+msgstr "Αυτοσχέδιο"
 
 #: ../plugins/gtkui/interface.c:1433 ../plugins/gtkui/interface.c:2997
 msgid "Format:"
-msgstr "Формат:"
+msgstr "Μορφή:"
 
 #: ../plugins/gtkui/interface.c:1448
 msgid "Alignment:"
-msgstr "Вирівнювання"
+msgstr "Στοίχιση:"
 
 #: ../plugins/gtkui/interface.c:1456
 msgid "Left"
-msgstr "По лівому краю"
+msgstr "Αριστερά"
 
 #: ../plugins/gtkui/interface.c:1457
 msgid "Right"
-msgstr "По правому краю"
+msgstr "Δεξιά"
 
 #: ../plugins/gtkui/interface.c:1459 ../plugins/gtkui/interface.c:3007
 msgid ""
 "Format conversions (start with %):\n"
-"  [a]rtist, [t]itle, al[b]um, [B]and, [C]omposer\n"
+"  [a]rtist, [t]itle, al[b]um, [B]and,\n"
 "  track[n]umber, [N]totaltracks,\n"
 "  [l]ength, [y]ear, [g]enre, [c]omment,\n"
 "  copy[r]ight, [f]ilename, [T]ags\n"
 "Example: %a - %t [%l]"
 msgstr ""
-"Перетворення формату (початок з %):\n"
-"  [a]виконавець, [t]назва, [b]альбом, [B]гурт, [C]композитор\n"
-"  [n]номер треку, [N]всіх треків,\n"
-"  [l]протяжність, [y]рік, [g]жанр, [c]коментар,\n"
-"  [r]копірайт, [f]назва файлу, [T]мітки\n"
-"Приклад: %a - %t [%l]"
+"Μορφές μετατροπής (ξεκινούν με %):\n"
+"  [a]rtist, [t]itle, al[b]um, [B]and,\n"
+"  track[n]umber, [N]totaltracks,\n"
+"  [l]ength, [y]ear, [g]enre, [c]omment,\n"
+"  copy[r]ight, [f]ilename, [T]ags\n"
+"Παράδειγμα: %a - %t [%l]"
 
 #: ../plugins/gtkui/interface.c:1488 ../plugins/gtkui/interface.c:2801
 #: ../plugins/gtkui/interface.c:2913 ../plugins/gtkui/interface.c:3036
 msgid "_Cancel"
-msgstr "_Скасувати"
+msgstr "_Άκυρο"
 
 #: ../plugins/gtkui/interface.c:1509 ../plugins/gtkui/interface.c:2822
 #: ../plugins/gtkui/interface.c:2934 ../plugins/gtkui/interface.c:3057
 msgid "_OK"
-msgstr "_ОК"
+msgstr "_Εντάξει"
 
 #: ../plugins/gtkui/interface.c:1726
 msgid "Output plugin:"
-msgstr "Плагін виводу:"
+msgstr "Plugin εξόδου:"
 
 #: ../plugins/gtkui/interface.c:1739
 msgid "Output device:"
-msgstr "Пристрій виводу:"
+msgstr "Συσκευή εξόδου:"
 
 #: ../plugins/gtkui/interface.c:1748
 msgid "Sound"
-msgstr "Звук"
+msgstr "Ήχος"
 
 #: ../plugins/gtkui/interface.c:1757
 msgid "Allow dynamic samplerate switching"
-msgstr "Дозволити перетворення частоти дискретизації"
+msgstr "Να επιτρέπεται η δυναμική ρύθμιση samplerate"
 
 #: ../plugins/gtkui/interface.c:1765
 msgid "Samplerate conversion quality:"
-msgstr "Алгоритм інтерполяції:"
+msgstr "Ποιότητα μετατροπής samplerate:"
 
 #: ../plugins/gtkui/interface.c:1784
 msgid "Replaygain mode:"
-msgstr "Режим автовирівнювання гучності:"
+msgstr "Λειτουργία Replaygain:"
 
 #: ../plugins/gtkui/interface.c:1793
 msgid "Disable"
-msgstr "Виключити"
+msgstr "Ανενεργό"
 
 #: ../plugins/gtkui/interface.c:1797
 msgid "Replaygain peak scale"
-msgstr "Використовувати пікове значення"
+msgstr "Κορυφή κλίμακας Replaygain"
 
 #: ../plugins/gtkui/interface.c:1801
 msgid "Sound (adv.)"
-msgstr "Звук (розш.)"
+msgstr "Ήχος (προχ.)"
 
 #: ../plugins/gtkui/interface.c:1810
 msgid "Close minimizes to tray"
-msgstr "Закрити мінімізує до сист. лотка"
+msgstr "Το κλείσιμο να ελαχιστοποιεί στο tray"
 
 #: ../plugins/gtkui/interface.c:1814
 msgid "Middle mouse button closes playlist"
-msgstr "Середня кнопка миші закриває список програвання"
+msgstr "Το μεσαίο πλήκτρο του ποντικιού να κλείνει τη λίστα αναπαραγωγής"
 
 #: ../plugins/gtkui/interface.c:1827 ../plugins/gtkui/interface.c:1871
 msgid "Override"
-msgstr "Перезаписати"
+msgstr "Παράκαμψη"
 
 #: ../plugins/gtkui/interface.c:1836
 msgid "Foreground"
-msgstr "Передній план"
+msgstr "Προσκήνιο"
 
 #: ../plugins/gtkui/interface.c:1843
 msgid "Background"
-msgstr "Тло"
+msgstr "Παρασκήνιο"
 
 #: ../plugins/gtkui/interface.c:1862
 msgid "Seekbar/Volumebar colors"
-msgstr "Кольори Рядка Пошуку/Регулятора Гучності"
+msgstr "Χρώματα μπάρας μετατόπισης/ήχου"
 
 #: ../plugins/gtkui/interface.c:1880
 msgid "Middle"
-msgstr "Середньо"
+msgstr "Μέση"
 
 #: ../plugins/gtkui/interface.c:1887
 msgid "Light"
-msgstr "Легко"
+msgstr "Φωτεινό"
 
 #: ../plugins/gtkui/interface.c:1894
 msgid "Dark"
-msgstr "Темно"
+msgstr "Σκοτεινό"
 
 #: ../plugins/gtkui/interface.c:1925
 msgid "Base"
-msgstr "Основний"
+msgstr "Βάση"
 
 #: ../plugins/gtkui/interface.c:1932
 msgid "Tab strip colors"
-msgstr "Кольори смужки вкладок"
+msgstr "Χρώματα στο χώρο καρτελών"
 
 #: ../plugins/gtkui/interface.c:1941
 msgid "Override (looses GTK treeview theming, but speeds up rendering)"
-msgstr "Перезаписати (втрачаються  налаштування GTK, але пришвидшується візуалізація)"
+msgstr "Παράκαμψη (χάνει το GTK treeview θέμα, αλλά επιταχύνει την απόδοση)"
 
 #: ../plugins/gtkui/interface.c:1950
 msgid "Even row"
-msgstr "Парний рядок"
+msgstr "Ζυγή σειρά "
 
 #: ../plugins/gtkui/interface.c:1957
 msgid "Odd row"
-msgstr "Непарний рядок"
+msgstr "Μονή σειρά"
 
 #: ../plugins/gtkui/interface.c:1976
 msgid "Text"
-msgstr "Текст"
+msgstr "Κείμενο"
 
 #: ../plugins/gtkui/interface.c:1983
 msgid "Selected row"
-msgstr "Вибраний рядок"
+msgstr "Επιλεγμένη σειρά"
 
 #: ../plugins/gtkui/interface.c:2002
 msgid "Selected text"
-msgstr "Вибраний текст"
+msgstr "Επιλεγμένο κείμενο"
 
 #: ../plugins/gtkui/interface.c:2015
 msgid "Cursor"
-msgstr "Курсор"
+msgstr "Δείκτης ποντικιού"
 
 #: ../plugins/gtkui/interface.c:2028
 msgid "Playlist colors"
-msgstr "Кольори списку програвання"
+msgstr "Χρώματα λίστας αναπαραγωγής"
 
 #: ../plugins/gtkui/interface.c:2032
 msgid "GUI"
-msgstr "Графічний інтерфейс"
+msgstr "Γραφική Διεπαφή"
 
 #: ../plugins/gtkui/interface.c:2041
 msgid "Enable Proxy Server"
-msgstr "Включити сервер проксі"
+msgstr "Ενεργοποίηση Proxy Server"
 
 #: ../plugins/gtkui/interface.c:2049
 msgid "Proxy Server Address:"
-msgstr "Адреса сервера проксі:"
+msgstr "Διεύθυνση Proxy Server:"
 
 #: ../plugins/gtkui/interface.c:2063
 msgid "Proxy Server Port:"
-msgstr "Порт сервера проксі:"
+msgstr "Πόρτα Proxy Server:"
 
 #: ../plugins/gtkui/interface.c:2077
 msgid "Proxy Type:"
-msgstr "Тип проксі:"
+msgstr "Τύπος Proxy:"
 
 #: ../plugins/gtkui/interface.c:2096
 msgid "Proxy Username:"
-msgstr "Назва користувача проксі:"
+msgstr "Όνομα χρήστη Proxy:"
 
 #: ../plugins/gtkui/interface.c:2109
 msgid "Proxy Password:"
-msgstr "Пароль користувача проксі:"
+msgstr "Κωδικός Proxy:"
 
 #: ../plugins/gtkui/interface.c:2119
 msgid "Network"
-msgstr "Мережа"
+msgstr "Δίκτυο"
 
 #: ../plugins/gtkui/interface.c:2147
 msgid "Write ID3v2"
-msgstr "Вписати ID3v2"
+msgstr "Εγγραφή ID3v2"
 
 #: ../plugins/gtkui/interface.c:2151 ../plugins/gtkui/interface.c:2278
 msgid "Write ID3v1"
-msgstr "Вписати ID3v1"
+msgstr "Εγγραφή ID3v1"
 
 #: ../plugins/gtkui/interface.c:2155 ../plugins/gtkui/interface.c:2234
 #: ../plugins/gtkui/interface.c:2274
 msgid "Write APEv2"
-msgstr "Вписати APEv2"
+msgstr "Εγγραφή APEv2"
 
 #: ../plugins/gtkui/interface.c:2163 ../plugins/gtkui/interface.c:2242
 msgid "Strip ID3v2"
-msgstr "Вирізати ID3v2"
+msgstr "Αφαίρεση ID3v2"
 
 #: ../plugins/gtkui/interface.c:2167 ../plugins/gtkui/interface.c:2290
 msgid "Strip ID3v1"
-msgstr "Вирізати  ID3v1"
+msgstr "Αφαίρεση ID3v1"
 
 #: ../plugins/gtkui/interface.c:2171 ../plugins/gtkui/interface.c:2246
 #: ../plugins/gtkui/interface.c:2286
 msgid "Strip APEv2"
-msgstr "Вирізати APEv2"
+msgstr "Αφαίρεση APEv2"
 
 #: ../plugins/gtkui/interface.c:2179
 msgid "ID3v2 version"
-msgstr "Версія ID3v2"
+msgstr "Έκδοση ID3v2"
 
 #: ../plugins/gtkui/interface.c:2186
 msgid "2.3 (Recommended)"
-msgstr "2.3 (Рекомендовано)"
+msgstr "2.3 (Προτείνεται)"
 
 #: ../plugins/gtkui/interface.c:2187
 msgid "2.4"
@@ -714,43 +708,43 @@ msgstr "2.4"
 
 #: ../plugins/gtkui/interface.c:2193
 msgid "ID3v1 character encoding (default is iso8859-1)"
-msgstr "Кодування символів у ID3v1 (типово є iso8859-1)"
+msgstr "ID3v1 κωδικοποίηση χαρακτήρων (προεπιλογή είναι iso8859-1)"
 
 #: ../plugins/gtkui/interface.c:2230
 msgid "Write ID3v2.4"
-msgstr "Вписати ID3v2.4"
+msgstr "Εγγραφή ID3v2.4"
 
 #: ../plugins/gtkui/interface.c:2299
 msgid "Tag writer"
-msgstr "Записувач мітки"
+msgstr "Συγγραφέας ετικετών"
 
 #: ../plugins/gtkui/interface.c:2330
 msgid "Description:"
-msgstr "Опис:"
+msgstr "Περιγραφή:"
 
 #: ../plugins/gtkui/interface.c:2345
 msgid "Author(s):"
-msgstr "Автор(и):"
+msgstr "Συγγραφέας:"
 
 #: ../plugins/gtkui/interface.c:2360
 msgid "Email:"
-msgstr "Електронна пошта:"
+msgstr "Email:"
 
 #: ../plugins/gtkui/interface.c:2375
 msgid "Website:"
-msgstr "Веб-сторінка:"
+msgstr "Ιστοσελίδα:"
 
 #: ../plugins/gtkui/interface.c:2406
 msgid "Configure"
-msgstr "Налаштувати"
+msgstr "Ρύθμιση"
 
 #: ../plugins/gtkui/interface.c:2410
 msgid "Plugins"
-msgstr "Додатки"
+msgstr "Plugins"
 
 #: ../plugins/gtkui/interface.c:2754
 msgid "editplaylistdlg"
-msgstr "Редагувати список програвання"
+msgstr "Διάλογος επεξεργασίας λίστας αναπαραγωγής"
 
 #: ../plugins/gtkui/interface.c:2881
 msgid "URL:"
@@ -758,237 +752,231 @@ msgstr "URL:"
 
 #: ../plugins/gtkui/interface.c:2982
 msgid "Group By"
-msgstr "Групувати по"
+msgstr "Ομαδοποίηση κατά"
 
 #: ../plugins/gtkui/mainplaylist.c:298 ../plugins/gtkui/search.c:433
 msgid "Artist / Album"
-msgstr "Виконавець / Альбом"
+msgstr "Καλλιτέχνης / Άλμπουμ"
 
 #: ../plugins/gtkui/mainplaylist.c:299 ../plugins/gtkui/search.c:434
 msgid "Track No"
-msgstr "Номер треку"
+msgstr "Αριθμός κομματιού"
 
 #: ../plugins/gtkui/mainplaylist.c:300 ../plugins/gtkui/search.c:435
 msgid "Title / Track Artist"
-msgstr "Назва / Виконавець треку"
+msgstr "Τίτλος / Καλλιτέχνης κομματιού"
 
 #: ../plugins/gtkui/mainplaylist.c:301 ../plugins/gtkui/search.c:436
 #: ../plugins/gtkui/trkproperties.c:175
 msgid "Duration"
-msgstr "Тривалість"
+msgstr "Διάρκεια"
 
 #: ../plugins/gtkui/plcommon.c:316
 msgid "Delete files from disk"
-msgstr "Вилучити файли з диску"
+msgstr "Διαγραφή αρχείων από το δίσκο"
 
 #: ../plugins/gtkui/plcommon.c:317
 msgid ""
 "Files will be lost. Proceed?\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
-msgstr ""
-"Файли буде втрачено. Продовжити?\n"
-"(Цей діалог можна виключити в налаштуваннях плагіна GTKUI)"
+msgstr "τα αρχεία θα χαθούν. Να προχωρήσω; \\ n (Αυτό το παράθυρο μπορεί να απενεργοποιηθεί από τις ρυθμίσεις του GTKUI plugin)"
 
 #: ../plugins/gtkui/plcommon.c:318 ../plugins/gtkui/trkproperties.c:56
 msgid "Warning"
-msgstr "Попередження"
+msgstr "Προειδοποίηση"
 
 #: ../plugins/gtkui/plcommon.c:363
 msgid "Add to playback queue"
-msgstr "Додати до черги програвання"
+msgstr "Προσθήκη στην ουρά αναπαραγωγής"
 
 #: ../plugins/gtkui/plcommon.c:368
 msgid "Remove from playback queue"
-msgstr "Вилучити з черги програвання"
+msgstr "Αφαίρεση από την ουρά αναπαραγωγής"
 
 #: ../plugins/gtkui/plcommon.c:376
 msgid "Reload metadata"
-msgstr "Перезавантажити метадані"
+msgstr "Επαναφόρτωση μεταδεδομένων"
 
 #: ../plugins/gtkui/plcommon.c:392
 msgid "Remove from disk"
-msgstr "Вилучити з диску"
+msgstr "Αφαίρεση από τον δίσκο"
 
 #: ../plugins/gtkui/plcommon.c:616 ../plugins/gtkui/plcommon.c:741
 msgid "Add column"
-msgstr "Додати колонку"
+msgstr "Προσθήκη στήλης"
 
 #: ../plugins/gtkui/plcommon.c:646 ../plugins/gtkui/plcommon.c:745
 msgid "Edit column"
-msgstr "Редагувати колонку"
+msgstr "Επεξεργασία στήλη"
 
 #: ../plugins/gtkui/plcommon.c:749
 msgid "Remove column"
-msgstr "Вилучити колонку"
+msgstr "Αφαίρεση στήλης"
 
 #: ../plugins/gtkui/plcommon.c:759
 msgid "Group by"
-msgstr "Групувати по"
+msgstr "Ομαδοποίηση κατά"
 
 #: ../plugins/gtkui/plcommon.c:766
 msgid "None"
-msgstr "Нічого"
+msgstr "Κανένα"
 
 #: ../plugins/gtkui/plcommon.c:770
 msgid "Artist/Date/Album"
-msgstr "Виконавець/Дата/Альбом"
+msgstr "Καλλιτέχνης/Ημερομηνία/Άλμπουμ"
 
 #: ../plugins/gtkui/pluginconf.c:41
 msgid "Open file..."
-msgstr "Відкрити файл..."
+msgstr "Άνοιγμα αρχείου..."
 
 #: ../plugins/gtkui/pluginconf.c:139
 #, c-format
 msgid "Setup %s"
-msgstr "Встановлення %s"
+msgstr "Εγκατάσταση %s"
 
 #: ../plugins/gtkui/prefwin.c:98
 msgid "Default Audio Device"
-msgstr "Типовий пристрій Аудіо"
+msgstr "Προεπιλεγμένη συσκευή ήχου"
 
 #: ../plugins/gtkui/prefwin.c:267
 msgid "Add"
-msgstr "Додати"
+msgstr "Προσθήκη"
 
 #: ../plugins/gtkui/prefwin.c:277
 msgid "Global Hotkeys"
-msgstr "Глобальні скорочення клавіатури"
+msgstr "Συντομεύσεις πληκτρολογίου"
 
 #: ../plugins/gtkui/prefwin.c:332
 msgid "Slot"
-msgstr "Слот"
+msgstr "Θέση"
 
 #: ../plugins/gtkui/prefwin.c:333
 msgid "Key combination"
-msgstr "Комбінації клавіш"
+msgstr "Συνδυασμός πλήκτρων"
 
 #. output plugin selection
 #: ../plugins/gtkui/prefwin.c:379 ../plugins/gtkui/prefwin.c:568
 #: ../plugins.c:833
 msgid "ALSA output plugin"
-msgstr "Вихідний плагін ALSA"
+msgstr "Plugin εξόδου ALSA"
 
 #: ../plugins/gtkui/progress.c:53
 msgid "Initializing..."
-msgstr "Ініціалізація..."
+msgstr "Αρχικοποίηση..."
 
 #: ../plugins/gtkui/trkproperties.c:53
 msgid "You've modified data for this track."
-msgstr "Ви змінили дані для цього треку"
+msgstr "Έχετε τροποποιήσει στοιχεία του κομματιού."
 
 #: ../plugins/gtkui/trkproperties.c:55
 msgid "Really close the window?"
-msgstr "Дійсно закрити вікно?"
+msgstr "Είστε σίγουροι πως θέλετε να κλείσετε το παράθυρο;"
 
 #: ../plugins/gtkui/trkproperties.c:178
 msgid "Tag Type(s)"
-msgstr "Тип(и) мітки"
+msgstr "Τύπος ετικέτας"
 
 #: ../plugins/gtkui/trkproperties.c:180
 msgid "Embedded Cuesheet"
-msgstr "Вбудований список"
+msgstr "Ενσωματωμένα Cuesheet"
 
 #: ../plugins/gtkui/trkproperties.c:180
 msgid "Yes"
-msgstr "Так"
+msgstr "Ναί"
 
 #: ../plugins/gtkui/trkproperties.c:180
 msgid "No"
-msgstr "Ні"
+msgstr "Όχι"
 
 #: ../plugins/gtkui/trkproperties.c:248 ../plugins/gtkui/trkproperties.c:260
 msgid "Key"
-msgstr "Клавіша"
+msgstr "Πλήκτρο"
 
 #: ../plugins/gtkui/trkproperties.c:249 ../plugins/gtkui/trkproperties.c:261
 msgid "Value"
-msgstr "Значення"
+msgstr "Τιμή"
 
-#: ../plugins/notify/notify.c:138
-msgid "DeaDBeeF now playing"
-msgstr "DeaDBeeF почав програвання"
+#: ../main.c:83
+#, c-format
+msgid "Usage: deadbeef [options] [file(s)]\n"
+msgstr "Χρήση: deadbeef [επιλογές] [αρχεία]\n"
 
 #: ../main.c:84
 #, c-format
-msgid "Usage: deadbeef [options] [file(s)]\n"
-msgstr "Використання: deadbeef [опції] [файл(и)]\n"
+msgid "Options:\n"
+msgstr "Επιλογές:\n"
 
 #: ../main.c:85
 #, c-format
-msgid "Options:\n"
-msgstr "Опції:\n"
+msgid "   --help  or  -h     Print help (this message) and exit\n"
+msgstr " --help ή -h Εμφάνιση κειμένου βοήθειας και έξοδος\n"
 
 #: ../main.c:86
 #, c-format
-msgid "   --help  or  -h     Print help (this message) and exit\n"
-msgstr "   --help  або  -h     Показати цю допомогу (це повідомлення) і вийти\n"
+msgid "   --quit             Quit player\n"
+msgstr "--quit Έξοδος\n"
 
 #: ../main.c:87
 #, c-format
-msgid "   --quit             Quit player\n"
-msgstr "   --quit             Вийти з програвача\n"
+msgid "   --version          Print version info and exit\n"
+msgstr "--version Εμφάνιση πληροφοριών έκδοσης και έξοδος\n"
 
 #: ../main.c:88
 #, c-format
-msgid "   --version          Print version info and exit\n"
-msgstr "   --version          Показати інформацію про версію і вийти\n"
+msgid "   --play             Start playback\n"
+msgstr "--play Εκκίνηση αναπαραγωγής\n"
 
 #: ../main.c:89
 #, c-format
-msgid "   --play             Start playback\n"
-msgstr "   --play             Почати програвання\n"
+msgid "   --stop             Stop playback\n"
+msgstr "--stop Διακοπή αναπαραγωγής\n"
 
 #: ../main.c:90
 #, c-format
-msgid "   --stop             Stop playback\n"
-msgstr "   --stop             Зупинити програвання\n"
+msgid "   --pause            Pause playback\n"
+msgstr "--pause Παύση αναπαραγωγής\n"
 
 #: ../main.c:91
 #, c-format
-msgid "   --pause            Pause playback\n"
-msgstr "   --pause            Призупинити програвання\n"
+msgid "   --next             Next song in playlist\n"
+msgstr "--next Επόμενο τραγούδι στη λίστα αναπαραγωγής\n"
 
 #: ../main.c:92
 #, c-format
-msgid "   --next             Next song in playlist\n"
-msgstr "   --next             Наступна пісня в списку програвання\n"
+msgid "   --prev             Previous song in playlist\n"
+msgstr "--prev Προηγούμενο τραγούδι στη λίστα αναπαραγωγής\n"
 
 #: ../main.c:93
 #, c-format
-msgid "   --prev             Previous song in playlist\n"
-msgstr "   --prev             Попередня пісня в списку програвання\n"
+msgid "   --random           Random song in playlist\n"
+msgstr "--random Τυχαίο κομμάτι στη λίστα αναπαραγωγής\n"
 
 #: ../main.c:94
 #, c-format
-msgid "   --random           Random song in playlist\n"
-msgstr "   --random           Випадкова пісня в списку програвання\n"
+msgid "   --queue            Append file(s) to existing playlist\n"
+msgstr "--queue Προσάρτηση αρχείου στην υπάρχουσα λίστα αναπαραγωγής\n"
 
 #: ../main.c:95
 #, c-format
-msgid "   --queue            Append file(s) to existing playlist\n"
-msgstr "   --queue            Додати файл(и) до існуючого списку програвання\n"
+msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
+msgstr "--nowplaying FMT Εμφάνιση μορφοποιημένου ονόματος κομματιού\n"
 
 #: ../main.c:96
-#, c-format
-msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
-msgstr "   --nowplaying FMT   Показати форматовану назву треку до виводу\n"
-
-#: ../main.c:97
 #, c-format
 msgid ""
 "                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
 "                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
 "                      copy[r]ight, [e]lapsed\n"
 msgstr ""
-"                      FMT %%-синтаксис: [a]виконавець, [t]назва, [b]альбом,\n"
-"                      [l]тривалість, [n]номер треку, [y]рік, [c]коментар,\n"
-"                      [r]копірайт, [e]час що пройшов\n"
+"FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
+" [l]ength, track[n]umber, [y]ear, [c]omment,\n"
+" copy[r]ight, [e]lapsed\n"
 
-#: ../main.c:100
+#: ../main.c:99
 #, c-format
 msgid "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n"
-msgstr "                      наприклад: --nowplaying \"%%a - %%t\" повинно показати \"виконавець - назва\"\n"
+msgstr "π.χ.: --nowplaying \"%%a - %%t\" θα εμφανίσει \"artist - title\"\n"
 
-#: ../playlist.c:369 ../playlist.c:2212
+#: ../playlist.c:369
 msgid "Default"
-msgstr "Типово"
+msgstr "Προεπιλογή"
