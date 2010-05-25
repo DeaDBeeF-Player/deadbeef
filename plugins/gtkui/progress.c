@@ -28,6 +28,7 @@
 #include "callbacks.h"
 #include "support.h"
 #include "progress.h"
+#include "gtkui.h"
 
 static GtkWidget *progressdlg;
 static GtkWidget *progressitem;
@@ -35,10 +36,17 @@ static int progress_aborted;
 
 void
 progress_init (void) {
-    extern GtkWidget *mainwin;
     progressdlg = create_addprogress ();
     gtk_window_set_transient_for (GTK_WINDOW (progressdlg), GTK_WINDOW (mainwin));
     progressitem = lookup_widget (progressdlg, "progresstitle");
+}
+
+void
+progress_destroy (void) {
+    if (progressdlg) {
+        gtk_widget_destroy (progressdlg);
+        progressdlg = NULL;
+    }
 }
 
 void
@@ -48,8 +56,11 @@ progress_settext (const char *text) {
 
 void
 progress_show (void) {
-    extern GtkWidget *mainwin;
     progress_aborted = 0;
+    GtkWidget *playlist = lookup_widget (mainwin, "playlist");
+    if (playlist) {
+        gtk_widget_set_sensitive (playlist, FALSE);
+    }
     progress_settext (_("Initializing..."));
     gtk_widget_show_all (progressdlg);
     gtk_window_present (GTK_WINDOW (progressdlg));
@@ -59,6 +70,10 @@ progress_show (void) {
 void
 progress_hide (void) {
     gtk_widget_hide (progressdlg);
+    GtkWidget *playlist = lookup_widget (mainwin, "playlist");
+    if (playlist) {
+        gtk_widget_set_sensitive (playlist, TRUE);
+    }
 }
 
 void

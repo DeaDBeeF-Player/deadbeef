@@ -670,7 +670,19 @@ ddb_listview_list_render (DdbListview *listview, int x, int y, int w, int h) {
 
         int filler = grpheight - (listview->grouptitle_height + listview->rowheight * grp->num_items);
         if (filler > 0) {
-            gtk_paint_flat_box (treeview->style, listview->backbuf, GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, treeview, "cell_even_ruled", x, grp_y - listview->scrollpos + listview->grouptitle_height + listview->rowheight * grp->num_items, w, filler);
+            int theming = !gtkui_override_listview_colors ();
+            if (theming) {
+                gtk_paint_flat_box (treeview->style, listview->backbuf, GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, treeview, "cell_even_ruled", x, grp_y - listview->scrollpos + listview->grouptitle_height + listview->rowheight * grp->num_items, w, filler);
+            }
+            else {
+                GdkColor clr;
+                GdkGC *gc = gdk_gc_new (listview->backbuf);
+                gdk_gc_set_rgb_fg_color (gc, (gtkui_get_listview_even_row_color (&clr), &clr));
+                gdk_draw_rectangle (listview->backbuf, gc, TRUE, x, grp_y - listview->scrollpos + listview->grouptitle_height + listview->rowheight * grp->num_items, w, filler);
+                g_object_unref (gc);
+            }
+
+
             ddb_listview_list_render_row_foreground (listview, NULL, grp->head, 0, 0, grp->num_items * listview->rowheight, -listview->hscrollpos, grp_y - listview->scrollpos + listview->grouptitle_height + listview->rowheight * grp->num_items, listview->totalwidth, filler);
         }
 
@@ -1956,15 +1968,15 @@ ddb_listview_list_track_dragdrop (DdbListview *ps, int y) {
         ps->drag_motion_y = ddb_listview_get_row_pos (ps, sel) - ps->scrollpos;
     }
 
-    draw_begin ((uintptr_t)widget->window);
-    GtkStyle *style = gtk_widget_get_style (GTK_WIDGET (ps));
-    float clr[3] = { style->fg[GTK_STATE_NORMAL].red, style->fg[GTK_STATE_NORMAL].green, style->fg[GTK_STATE_NORMAL].blue };
-    draw_set_fg_color (clr);
+    GdkColor clr;
+    gtkui_get_listview_cursor_color (&clr);
+    GdkGC *gc = gdk_gc_new (widget->window);
+    gdk_gc_set_rgb_fg_color (gc, &clr);
+    gdk_draw_rectangle (widget->window, gc, TRUE, 0, ps->drag_motion_y-1, widget->allocation.width, 3);
+    gdk_draw_rectangle (widget->window, gc, TRUE, 0, ps->drag_motion_y-3, 3, 7);
+    gdk_draw_rectangle (widget->window, gc, TRUE, widget->allocation.width-3, ps->drag_motion_y-3, 3, 7);
+    g_object_unref (gc);
 
-    draw_rect (0, ps->drag_motion_y-1, widget->allocation.width, 3, 1);
-    draw_rect (0, ps->drag_motion_y-3, 3, 7, 1);
-    draw_rect (widget->allocation.width-3, ps->drag_motion_y-3, 3, 7, 1);
-    draw_end ();
     if (y < 10) {
         ps->scroll_pointer_y = y;
         ps->scroll_mode = 1;
