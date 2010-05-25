@@ -145,7 +145,12 @@ loading_thread (void *none) {
             GError *error;
             GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file_at_scale (queue->fname, queue->width, queue->width, TRUE, &error);
             if (!pixbuf) {
-                pixbuf = gdk_pixbuf_new_from_file (DEFAULT_COVER_PATH, NULL);
+                unlink (queue->fname);
+                fprintf (stderr, "gdk_pixbuf_new_from_file_at_scale %s %d failed, error: %s\n", queue->fname, queue->width, error->message);
+                pixbuf = gdk_pixbuf_new_from_file_at_scale (DEFAULT_COVER_PATH, queue->width, queue->width, TRUE, &error);
+                if (!pixbuf) {
+                    fprintf (stderr, "gdk_pixbuf_new_from_file_at_scale %s %d failed, error: %s\n", DEFAULT_COVER_PATH, queue->width, error->message);
+                }
             }
             if (!pixbuf) {
                 // make default empty image

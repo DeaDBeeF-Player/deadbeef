@@ -403,7 +403,7 @@ cvorbis_insert (DB_playItem_t *after, const char *fname) {
         it->filetype = "OggVorbis";
         it->tracknum = stream;
         deadbeef->pl_set_item_duration (it, duration);
-        if (nstreams > 0) {
+        if (nstreams > 1) {
             it->startsample = currentsample;
             it->endsample = currentsample + totalsamples;
             deadbeef->pl_set_item_flags (it, DDB_IS_SUBTRACK);
