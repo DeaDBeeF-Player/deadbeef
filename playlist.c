@@ -953,7 +953,7 @@ pl_insert_cue_from_buffer (playItem_t *after, playItem_t *origin, const uint8_t 
     // copy metadata from embedded tags
     playItem_t *first = ins ? ins->next[PL_MAIN] : playlist->head[PL_MAIN];
     uint32_t f = pl_get_item_flags (origin);
-    f |= DDB_TAG_CUESHEET;
+    f |= DDB_TAG_CUESHEET | DDB_IS_SUBTRACK;
     if (pl_find_meta (origin, "cuesheet")) {
         f |= DDB_HAS_EMBEDDED_CUESHEET;
     }

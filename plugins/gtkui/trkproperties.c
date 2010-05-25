@@ -219,7 +219,7 @@ show_track_properties_dlg (DB_playItem_t *it) {
             }
         }
 
-        if (dec && dec->write_metadata/* && deadbeef->conf_get_int ("enable_tag_writing", 0)*/) {
+        if (dec && dec->write_metadata) {
             allow_editing = 1;
         }
     }
