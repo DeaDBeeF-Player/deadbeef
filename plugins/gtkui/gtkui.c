@@ -912,6 +912,7 @@ gtkui_thread (void *ctx) {
     cover_art_free ();
     eq_window_destroy ();
     trkproperties_destroy ();
+    progress_destroy ();
     gtk_widget_destroy (mainwin);
     gtk_widget_destroy (searchwin);
     gdk_threads_leave ();
