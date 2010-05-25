@@ -646,12 +646,26 @@ typedef struct DB_dsp_s {
     int (*enabled) (void);
 } DB_dsp_t;
 
+typedef struct
+{
+    const char *title;
+    int (*callback) (DB_playItem_t *it, void *data);
+    void *data;
+} DB_single_action_t;
+
 // misc plugin
 // purpose is to provide extra services
 // e.g. scrobbling, converting, tagging, custom gui, etc.
 // misc plugins should be mostly event driven, so no special entry points in them
 typedef struct {
     DB_plugin_t plugin;
+    /* Returns actions available for this track
+       it - track
+       actions - array of actions
+       size - on input, size of array in pointers; on output - count of actions
+       returns 0 on error, nonzero on success
+    */
+    int (*get_single_actions) (DB_playItem_t *it, DB_single_action_t *actions[], int *size);
 } DB_misc_t;
 
 // vfs plugin

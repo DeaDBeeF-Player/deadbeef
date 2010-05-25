@@ -74,6 +74,7 @@ AC_ARG_ENABLE(cdda,     [  --disable-cdda          disable CD-Audio plugin (defa
 AC_ARG_ENABLE(gme,      [  --disable-gme           disable Game Music Emu plugin for NSF, AY, etc (default: enabled)], [enable_gme=$enableval], [enable_gme=yes])
 AC_ARG_ENABLE(dumb,     [  --disable-dumb          disable D.U.M.B. plugin for MOD, S3M and other tracker formats (default: enabled)], [enable_dumb=$enableval], [enable_dumb=yes])
 AC_ARG_ENABLE(notify,   [  --disable-notify        disable notification-daemon support plugin (default: enabled)], [enable_notify=$enableval], [enable_notify=yes])
+AC_ARG_ENABLE(shellexec,   [  --disable-notify        disable notification-daemon support plugin (default: enabled)], [enable_notify=$enableval], [enable_notify=yes])
 
 PKG_CHECK_MODULES(DEPS, samplerate)
 
@@ -290,6 +291,11 @@ if test "x$enable_lfm" != "xno" ; then
     fi
 fi
 
+dnl shellexec plugin
+if test "x$enable_shellexec" != "xno" ; then
+    HAVE_SHELLEXEC=yes
+fi
+
 if test "x$enable_artwork" != "xno" ; then
     if test "x$HAVE_CURL" = "xyes" && test "x$HAVE_VFS_CURL" = "xyes" ; then
         HAVE_ARTWORK=yes
@@ -336,7 +342,7 @@ if test "x$HAVE_DBUS" = "xyes" && test "x$enable_notify" != "xno" ; then
     AC_SUBST(NOTIFY_CFLAGS)
 fi
 
-PLUGINS_DIRS="plugins/lastfm plugins/mpgmad plugins/vorbis plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/dumb plugins/pulse plugins/notify"
+PLUGINS_DIRS="plugins/lastfm plugins/mpgmad plugins/vorbis plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/dumb plugins/pulse plugins/notify plugins/shellexec"
 
 AM_CONDITIONAL(HAVE_VORBIS, test "x$HAVE_VORBISPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_FLAC, test "x$HAVE_FLACPLUGIN" = "xyes")
@@ -362,6 +368,7 @@ AM_CONDITIONAL(HAVE_MPGMAD, test "x$HAVE_MPGMAD" = "xyes")
 AM_CONDITIONAL(HAVE_OSS, test "x$HAVE_OSS" = "xyes")
 AM_CONDITIONAL(HAVE_SUPEREQ, test "x$HAVE_SUPEREQ" = "xyes")
 AM_CONDITIONAL(HAVE_NOTIFY, test "x$HAVE_NOTIFY" = "xyes")
+AM_CONDITIONAL(HAVE_SHELLEXEC, test "x$HAVE_SHELLEXEC" = "xyes")
 
 AC_SUBST(PLUGINS_DIRS)
 
@@ -414,6 +421,7 @@ PRINT_PLUGIN_INFO([pulse],[PulseAudio output plugin],[test "x$HAVE_PULSEPLUGIN" 
 PRINT_PLUGIN_INFO([artwork],[Cover art plugin],[test "x$HAVE_ARTWORK" = "xyes"])
 PRINT_PLUGIN_INFO([supereq],[Equalizer based on Super EQ library by Naoki Shibata],[test "x$HAVE_SUPEREQ" = "xyes"])
 PRINT_PLUGIN_INFO([notify],[notification-daemon support plugin],[test "x$HAVE_NOTIFY" = "xyes"])
+PRINT_PLUGIN_INFO([shellexec],[shell commands plugin],[test "x$HAVE_SHELLEXEC" = "xyes"])
 
 echo
 
@@ -445,6 +453,7 @@ plugins/pulse/Makefile
 plugins/artwork/Makefile
 plugins/supereq/Makefile
 plugins/notify/Makefile
+plugins/shellexec/Makefile
 deadbeef.desktop
 ])
 

@@ -346,6 +346,14 @@ on_remove_from_disk_activate                    (GtkMenuItem     *menuitem,
 }
 
 void
+actionitem_activate (GtkMenuItem     *menuitem,
+                     DB_single_action_t *action)
+{
+    DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (clicked_idx, PL_MAIN);
+    action->callback (it, action->data);
+}
+
+void
 list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
     clicked_idx = deadbeef->pl_get_idx_of (it);
     int inqueue = deadbeef->pl_playqueue_test (it);
@@ -398,6 +406,46 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
     gtk_widget_show (separator8);
     gtk_container_add (GTK_CONTAINER (playlist_menu), separator8);
     gtk_widget_set_sensitive (separator8, FALSE);
+
+    ///
+    int count;
+    int i, j;
+    GtkWidget *actionitem;
+    DB_single_action_t *actions[4];
+    DB_plugin_t **plugins = deadbeef->plug_get_list();
+    for (i = 0; plugins[i]; i++)
+    {
+        if (plugins[i]->type != DB_PLUGIN_MISC)
+            continue;
+
+        DB_misc_t *misc = (DB_misc_t*)plugins[i];
+        if (!misc->get_single_actions)
+            continue;
+
+        count = 4;
+        if (!misc->get_single_actions (it, actions, &count))
+            continue;
+
+        if (count == 0)
+            continue;
+
+        for (j = 0; j < count; j++)
+        {
+            actionitem = gtk_menu_item_new_with_mnemonic (actions[j]->title);
+            gtk_widget_show (actionitem);
+            gtk_container_add (GTK_CONTAINER (playlist_menu), actionitem);
+            g_object_set_data (G_OBJECT (actionitem), "ps", listview);
+
+            g_signal_connect ((gpointer) actionitem, "activate",
+                    G_CALLBACK (actionitem_activate),
+                    actions[j]);
+        }
+        separator8 = gtk_separator_menu_item_new ();
+        gtk_widget_show (separator8);
+        gtk_container_add (GTK_CONTAINER (playlist_menu), separator8);
+        gtk_widget_set_sensitive (separator8, FALSE);
+    }
+    ///
 
     properties1 = gtk_menu_item_new_with_mnemonic ("Properties");
     gtk_widget_show (properties1);
