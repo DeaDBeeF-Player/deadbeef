@@ -670,7 +670,19 @@ ddb_listview_list_render (DdbListview *listview, int x, int y, int w, int h) {
 
         int filler = grpheight - (listview->grouptitle_height + listview->rowheight * grp->num_items);
         if (filler > 0) {
-            gtk_paint_flat_box (treeview->style, listview->backbuf, GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, treeview, "cell_even_ruled", x, grp_y - listview->scrollpos + listview->grouptitle_height + listview->rowheight * grp->num_items, w, filler);
+            int theming = !gtkui_override_listview_colors ();
+            if (theming) {
+                gtk_paint_flat_box (treeview->style, listview->backbuf, GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, treeview, "cell_even_ruled", x, grp_y - listview->scrollpos + listview->grouptitle_height + listview->rowheight * grp->num_items, w, filler);
+            }
+            else {
+                GdkColor clr;
+                GdkGC *gc = gdk_gc_new (listview->backbuf);
+                gdk_gc_set_rgb_fg_color (gc, (gtkui_get_listview_even_row_color (&clr), &clr));
+                gdk_draw_rectangle (listview->backbuf, gc, TRUE, x, grp_y - listview->scrollpos + listview->grouptitle_height + listview->rowheight * grp->num_items, w, filler);
+                g_object_unref (gc);
+            }
+
+
             ddb_listview_list_render_row_foreground (listview, NULL, grp->head, 0, 0, grp->num_items * listview->rowheight, -listview->hscrollpos, grp_y - listview->scrollpos + listview->grouptitle_height + listview->rowheight * grp->num_items, listview->totalwidth, filler);
         }
 
