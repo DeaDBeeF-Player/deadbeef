@@ -636,15 +636,16 @@ http_set_track (DB_FILE *f, DB_playItem_t *it) {
 
 static void
 http_close (DB_FILE *stream) {
-    trace ("http_close\n");
+    trace ("http_close %p\n", stream);
     assert (stream);
     HTTP_FILE *fp = (HTTP_FILE *)stream;
+
+    deadbeef->mutex_lock (fp->mutex);
     if (fp->tid) {
-        deadbeef->mutex_lock (fp->mutex);
         fp->status = STATUS_ABORTED;
+        trace ("http_close thread_join\n");
         deadbeef->mutex_unlock (fp->mutex);
         deadbeef->thread_join (fp->tid);
-        deadbeef->mutex_free (fp->mutex);
     }
     if (fp->content_type) {
         free (fp->content_type);
@@ -655,7 +656,9 @@ http_close (DB_FILE *stream) {
     if (fp->url) {
         free (fp->url);
     }
+    deadbeef->mutex_free (fp->mutex);
     free (stream);
+    trace ("http_close done\n");
 }
 
 static size_t
@@ -851,14 +854,18 @@ http_get_content_type (DB_FILE *stream) {
 
 void
 http_abort (DB_FILE *fp) {
-    trace ("http_abort\n");
+    trace ("http_abort %p\n", fp);
     HTTP_FILE *f = (HTTP_FILE *)fp;
     if (f->tid) {
         deadbeef->mutex_lock (f->mutex);
         f->status = STATUS_ABORTED;
+//        intptr_t tid = f->tid;
+//        f->tid = 0;
         deadbeef->mutex_unlock (f->mutex);
-        deadbeef->thread_join (f->tid);
+//        trace ("http_abort thread_join\n");
+//        deadbeef->thread_join (tid);
     }
+    trace ("http_abort done\n");
 }
 
 static int
