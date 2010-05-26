@@ -42,6 +42,7 @@
 #include "plcommon.h"
 #include "ddbtabstrip.h"
 #include "eq.h"
+#include "actions.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -625,13 +626,6 @@ on_playlist_load_activate              (GtkMenuItem     *menuitem,
         gtk_widget_destroy (dlg);
     }
 }
-void
-on_add_audio_cd_activate               (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
-    deadbeef->pl_add_file ("all.cda", NULL, NULL);
-    playlist_refresh ();
-}
 
 void
 on_add_location_activate               (GtkMenuItem     *menuitem,
@@ -891,6 +885,8 @@ gtkui_thread (void *ctx) {
 
     progress_init ();
     cover_art_init ();
+    add_mainmenu_actions (lookup_widget (mainwin, "menubar1"));
+
     gtk_widget_show (mainwin);
 
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_ACTIVATE, DB_CALLBACK (gtkui_on_activate), 0);
@@ -929,6 +925,8 @@ gtkui_start (void) {
             break;
         }
     }
+
+    gather_actions ();
 
     // gtk must be running in separate thread
     gtk_initialized = 0;

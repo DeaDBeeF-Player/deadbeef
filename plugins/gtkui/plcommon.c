@@ -28,6 +28,7 @@
 #include "support.h"
 #include "interface.h"
 #include "parser.h"
+#include "actions.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
@@ -347,10 +348,35 @@ on_remove_from_disk_activate                    (GtkMenuItem     *menuitem,
 
 void
 actionitem_activate (GtkMenuItem     *menuitem,
-                     DB_single_action_t *action)
+                     DB_plugin_action_t *action)
 {
-    DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (clicked_idx, PL_MAIN);
-    action->callback (it, action->data);
+    DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
+
+    // Plugin can handle all tracks by itself
+    if (action->flags & DB_ACTION_CAN_MULTIPLE_TRACKS)
+    {
+        action->callback (it, action->data);
+        deadbeef->pl_item_unref (it);
+        return;
+    }
+
+    // For single-track actions just invoke it with first selected track
+    if (0 == action->flags & DB_ACTION_ALLOW_MULTIPLE_TRACKS)
+    {
+        DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (clicked_idx, PL_MAIN);
+        action->callback (it, action->data);
+        deadbeef->pl_item_unref (it);
+        return;
+    }
+    
+    //We end up here if plugin won't traverse tracks and we have to do it for him
+    while (it) {
+        if (deadbeef->pl_is_selected (it))
+            action->callback (it, action->data);
+        DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+        deadbeef->pl_item_unref (it);
+        it = next;
+    }
 }
 
 void
@@ -407,45 +433,47 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
     gtk_container_add (GTK_CONTAINER (playlist_menu), separator8);
     gtk_widget_set_sensitive (separator8, FALSE);
 
-    ///
-    int count;
-    int i, j;
-    GtkWidget *actionitem;
-    DB_single_action_t *actions[4];
-    DB_plugin_t **plugins = deadbeef->plug_get_list();
-    for (i = 0; plugins[i]; i++)
+
+    if (plugins_actions)
     {
-        if (plugins[i]->type != DB_PLUGIN_MISC)
-            continue;
+        int selected_count = 0;
+        DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
+        while (it) {
+            if (deadbeef->pl_is_selected (it))
+                selected_count++;
+            DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+            deadbeef->pl_item_unref (it);
+            it = next;
+        }
 
-        DB_misc_t *misc = (DB_misc_t*)plugins[i];
-        if (!misc->get_single_actions)
-            continue;
-
-        count = 4;
-        if (!misc->get_single_actions (it, actions, &count))
-            continue;
-
-        if (count == 0)
-            continue;
-
-        for (j = 0; j < count; j++)
+        DB_plugin_action_t *action;
+        for (action = plugins_actions; action; action = action->next)
         {
-            actionitem = gtk_menu_item_new_with_mnemonic (actions[j]->title);
+            if (action->flags & DB_ACTION_COMMON)
+                continue;
+
+            GtkWidget *actionitem;
+            actionitem = gtk_menu_item_new_with_mnemonic (action->title);
             gtk_widget_show (actionitem);
             gtk_container_add (GTK_CONTAINER (playlist_menu), actionitem);
             g_object_set_data (G_OBJECT (actionitem), "ps", listview);
 
             g_signal_connect ((gpointer) actionitem, "activate",
                     G_CALLBACK (actionitem_activate),
-                    actions[j]);
+                    action);
+            if (!(
+                ((selected_count == 1) && (action->flags & DB_ACTION_SINGLE_TRACK)) ||
+                ((selected_count > 1) && (action->flags & DB_ACTION_ALLOW_MULTIPLE_TRACKS))
+                ))
+            {
+                gtk_widget_set_sensitive (GTK_WIDGET (actionitem), FALSE);
+            }
         }
         separator8 = gtk_separator_menu_item_new ();
         gtk_widget_show (separator8);
         gtk_container_add (GTK_CONTAINER (playlist_menu), separator8);
         gtk_widget_set_sensitive (separator8, FALSE);
     }
-    ///
 
     properties1 = gtk_menu_item_new_with_mnemonic ("Properties");
     gtk_widget_show (properties1);

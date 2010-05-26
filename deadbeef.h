@@ -513,6 +513,37 @@ typedef struct {
     int (*is_local_file) (const char *fname); // returns 1 for local filename, 0 otherwise
 } DB_functions_t;
 
+enum {
+    /* Action in main menu (or whereever ui prefers) */
+    DB_ACTION_COMMON = 1 << 0,
+
+    /* Action allowed for single track */
+    DB_ACTION_SINGLE_TRACK = 1 << 1,
+
+    /* Action allowed for multiple tracks at once */
+    DB_ACTION_ALLOW_MULTIPLE_TRACKS = 1 << 2,
+
+    /* Action can (and prefer) traverse multiple tracks by itself */
+    DB_ACTION_CAN_MULTIPLE_TRACKS = 1 << 3
+};
+
+typedef struct DB_plugin_action_s {
+    const char *title;
+    unsigned int flags;
+    /*
+    Function called when user activates menu item
+    @it - pointer to selected playitem for single-track action,
+        to first playitem for multiple-track action,
+        or NULL for common action
+    @data - opaque pointer
+    */
+    int (*callback) (DB_playItem_t *it, void *data);
+    void *data;
+
+    //we have linked list here
+    struct DB_plugin_action_s *next;
+} DB_plugin_action_t;
+
 // base plugin interface
 typedef struct DB_plugin_s {
     // type must be one of DB_PLUGIN_ types
@@ -549,6 +580,13 @@ typedef struct DB_plugin_s {
     // plugin configuration dialog is constructed from this data
     // can be NULL
     const char *configdialog;
+
+    // actions
+    /* by get_actions function plugin is queried for implemented actions
+    @action is linked list (initially null), function must add its actions to list
+    @returns nonzero on success, 0 on fail
+    */
+    int (*get_actions) (DB_plugin_action_t **actions);
 } DB_plugin_t;
 
 typedef struct DB_fileinfo_s {
@@ -646,26 +684,12 @@ typedef struct DB_dsp_s {
     int (*enabled) (void);
 } DB_dsp_t;
 
-typedef struct
-{
-    const char *title;
-    int (*callback) (DB_playItem_t *it, void *data);
-    void *data;
-} DB_single_action_t;
-
 // misc plugin
 // purpose is to provide extra services
 // e.g. scrobbling, converting, tagging, custom gui, etc.
 // misc plugins should be mostly event driven, so no special entry points in them
 typedef struct {
     DB_plugin_t plugin;
-    /* Returns actions available for this track
-       it - track
-       actions - array of actions
-       size - on input, size of array in pointers; on output - count of actions
-       returns 0 on error, nonzero on success
-    */
-    int (*get_single_actions) (DB_playItem_t *it, DB_single_action_t *actions[], int *size);
 } DB_misc_t;
 
 // vfs plugin

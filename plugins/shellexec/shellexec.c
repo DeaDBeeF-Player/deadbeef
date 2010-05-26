@@ -17,10 +17,9 @@
 */
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "../../deadbeef.h"
-
-#define MAX_COMMANDS 128
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
@@ -28,36 +27,10 @@
 static DB_misc_t plugin;
 static DB_functions_t *deadbeef;
 
-DB_single_action_t shx_actions [MAX_COMMANDS];
-static int single_action_count;
-
 DB_plugin_t *
 shellexec_load (DB_functions_t *api) {
     deadbeef = api;
     return DB_PLUGIN (&plugin);
-}
-
-static int
-shx_get_single_actions (DB_playItem_t *it, DB_single_action_t *actions[], int *size)
-{
-    if (*size < single_action_count)
-        return 0;
-
-    int i;
-    *size = single_action_count;
-    trace ("Shellexec: %d actions\n", single_action_count);
-    for (i=0; i < single_action_count; i++)
-        actions[i] = &shx_actions[i];
-    return 1;
-}
-
-static int
-shx_callback (DB_playItem_t *it, void *data)
-{
-    char fmt[1024]; //FIXME: possible stack corruption
-    deadbeef->pl_format_title (it, -1, fmt, sizeof (fmt), -1, data);
-    printf ("%s\n", fmt);
-    return 0;
 }
 
 static char*
@@ -72,18 +45,20 @@ trim (char* s)
 }
 
 static int
-shellexec_start (void)
+shx_callback (DB_playItem_t *it, void *data)
 {
-    trace ("Starting shellexec\n");
-    single_action_count = 0;
+    char fmt[1024]; //FIXME: possible stack corruption
+    deadbeef->pl_format_title (it, -1, fmt, sizeof (fmt), -1, data);
+    printf ("%s\n", fmt);
+    return 0;
+}
+
+static int
+shx_get_actions (DB_plugin_action_t **actions)
+{
     DB_conf_item_t *item = deadbeef->conf_find ("shellexec.", NULL);
     while (item)
     {
-        if (single_action_count == MAX_COMMANDS)
-        {
-            fprintf (stdout, "Shellexec: max number of commands (%d) exceeded\n", MAX_COMMANDS);
-            break;
-        }
         size_t l = strlen (item->value) + 1;
         char tmp[l];
         strcpy (tmp, item->value);
@@ -98,13 +73,19 @@ shellexec_start (void)
 
         *semicolon = 0;
 
-        shx_actions[single_action_count].title = strdup (trim (semicolon + 1));
-        shx_actions[single_action_count].callback = shx_callback;
-        shx_actions[single_action_count].data = strdup (trim (tmp));
+        DB_plugin_action_t *action = calloc (sizeof (DB_plugin_action_t), 1);
+
+        action->title = strdup (trim (semicolon + 1));
+        action->callback = shx_callback;
+        action->data = strdup (trim (tmp));
+        action->flags = DB_ACTION_SINGLE_TRACK | DB_ACTION_ALLOW_MULTIPLE_TRACKS;
+
+        action->next = *actions;
+        *actions = action;
 
         item = deadbeef->conf_find ("shellexec.", item);
-        single_action_count++;
     }
+    return 1;
 }
 
 // define plugin interface
@@ -118,8 +99,6 @@ static DB_misc_t plugin = {
     .plugin.author = "Viktor Semykin",
     .plugin.email = "thesame.ml@gmail.com",
     .plugin.website = "http://deadbeef.sf.net",
-    .plugin.start = shellexec_start,
-
-    .get_single_actions = shx_get_single_actions
+    .plugin.get_actions = shx_get_actions
 };
 

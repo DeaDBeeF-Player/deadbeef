@@ -532,6 +532,29 @@ cda_stop (void) {
     return 0;
 }
 
+static int
+cda_action_add_cd (DB_playItem_t *unused, void *data)
+{
+    deadbeef->pl_add_file ("all.cda", NULL, NULL);
+    //Wtf?
+    //playlist_refresh ();
+}
+
+static DB_plugin_action_t add_cd_action = {
+    .title = "File/Add Audio CD",
+    .flags = DB_ACTION_COMMON,
+    .callback = cda_action_add_cd,
+    .next = NULL
+};
+
+static int
+cda_get_actions (DB_plugin_action_t **actions)
+{
+    add_cd_action.next = *actions;
+    *actions = &add_cd_action;
+    return 1;
+}
+
 static const char *exts[] = { "cda", "nrg", NULL };
 static const char *filetypes[] = { "cdda", NULL };
 
@@ -558,6 +581,7 @@ static DB_decoder_t plugin = {
     .plugin.start = cda_start,
     .plugin.stop = cda_stop,
     .plugin.configdialog = settings_dlg,
+    .plugin.get_actions = cda_get_actions,
     .open = cda_open,
     .init = cda_init,
     .free = cda_free,

@@ -45,13 +45,13 @@
 	  <property name="child_pack_direction">GTK_PACK_DIRECTION_LTR</property>
 
 	  <child>
-	    <widget class="GtkMenuItem" id="menuitem1">
+	    <widget class="GtkMenuItem" id="File">
 	      <property name="visible">True</property>
 	      <property name="label" translatable="yes">_File</property>
 	      <property name="use_underline">True</property>
 
 	      <child>
-		<widget class="GtkMenu" id="menuitem1_menu">
+		<widget class="GtkMenu" id="File_menu">
 
 		  <child>
 		    <widget class="GtkImageMenuItem" id="open">
@@ -62,7 +62,7 @@
 		      <accelerator key="O" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image376">
+			<widget class="GtkImage" id="image423">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-open</property>
 			  <property name="icon_size">1</property>
@@ -89,7 +89,7 @@
 		      <signal name="activate" handler="on_add_files_activate" last_modification_time="Sat, 04 Jul 2009 13:04:01 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image377">
+			<widget class="GtkImage" id="image424">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-add</property>
 			  <property name="icon_size">1</property>
@@ -110,28 +110,7 @@
 		      <signal name="activate" handler="on_add_folders_activate" last_modification_time="Sun, 06 Sep 2009 17:51:40 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image378">
-			  <property name="visible">True</property>
-			  <property name="stock">gtk-add</property>
-			  <property name="icon_size">1</property>
-			  <property name="xalign">0.5</property>
-			  <property name="yalign">0.5</property>
-			  <property name="xpad">0</property>
-			  <property name="ypad">0</property>
-			</widget>
-		      </child>
-		    </widget>
-		  </child>
-
-		  <child>
-		    <widget class="GtkImageMenuItem" id="add_audio_cd">
-		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">Add Audio CD</property>
-		      <property name="use_underline">True</property>
-		      <signal name="activate" handler="on_add_audio_cd_activate" last_modification_time="Sat, 10 Oct 2009 15:29:22 GMT"/>
-
-		      <child internal-child="image">
-			<widget class="GtkImage" id="image379">
+			<widget class="GtkImage" id="image425">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-add</property>
 			  <property name="icon_size">1</property>
@@ -211,7 +190,7 @@
 		      <accelerator key="Q" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image380">
+			<widget class="GtkImage" id="image426">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-quit</property>
 			  <property name="icon_size">1</property>
@@ -229,13 +208,13 @@
 	  </child>
 
 	  <child>
-	    <widget class="GtkMenuItem" id="edit1">
+	    <widget class="GtkMenuItem" id="Edit">
 	      <property name="visible">True</property>
 	      <property name="label" translatable="yes">_Edit</property>
 	      <property name="use_underline">True</property>
 
 	      <child>
-		<widget class="GtkMenu" id="edit1_menu">
+		<widget class="GtkMenu" id="Edit_menu">
 
 		  <child>
 		    <widget class="GtkImageMenuItem" id="clear1">
@@ -245,7 +224,7 @@
 		      <signal name="activate" handler="on_clear1_activate" last_modification_time="Sun, 06 Sep 2009 18:30:03 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image381">
+			<widget class="GtkImage" id="image427">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-clear</property>
 			  <property name="icon_size">1</property>
@@ -288,13 +267,13 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkMenuItem" id="selection1">
+		    <widget class="GtkMenuItem" id="Selection">
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">Selection</property>
 		      <property name="use_underline">True</property>
 
 		      <child>
-			<widget class="GtkMenu" id="selection1_menu">
+			<widget class="GtkMenu" id="Selection_menu">
 
 			  <child>
 			    <widget class="GtkImageMenuItem" id="remove1">
@@ -304,7 +283,7 @@
 			      <signal name="activate" handler="on_remove1_activate" last_modification_time="Sun, 06 Sep 2009 18:30:03 GMT"/>
 
 			      <child internal-child="image">
-				<widget class="GtkImage" id="image382">
+				<widget class="GtkImage" id="image428">
 				  <property name="visible">True</property>
 				  <property name="stock">gtk-remove</property>
 				  <property name="icon_size">1</property>
@@ -360,13 +339,13 @@
 	  </child>
 
 	  <child>
-	    <widget class="GtkMenuItem" id="view1">
+	    <widget class="GtkMenuItem" id="View">
 	      <property name="visible">True</property>
 	      <property name="label" translatable="yes">_View</property>
 	      <property name="use_underline">True</property>
 
 	      <child>
-		<widget class="GtkMenu" id="view1_menu">
+		<widget class="GtkMenu" id="View_menu">
 
 		  <child>
 		    <widget class="GtkCheckMenuItem" id="view_status_bar">
@@ -413,22 +392,22 @@
 	  </child>
 
 	  <child>
-	    <widget class="GtkMenuItem" id="playback1">
+	    <widget class="GtkMenuItem" id="Playback">
 	      <property name="visible">True</property>
 	      <property name="label" translatable="yes">_Playback</property>
 	      <property name="use_underline">True</property>
 
 	      <child>
-		<widget class="GtkMenu" id="playback1_menu">
+		<widget class="GtkMenu" id="Playback_menu">
 
 		  <child>
-		    <widget class="GtkMenuItem" id="order1">
+		    <widget class="GtkMenuItem" id="Order">
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">Order</property>
 		      <property name="use_underline">True</property>
 
 		      <child>
-			<widget class="GtkMenu" id="order1_menu">
+			<widget class="GtkMenu" id="Order_menu">
 
 			  <child>
 			    <widget class="GtkRadioMenuItem" id="order_linear">
@@ -467,13 +446,13 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkMenuItem" id="looping1">
+		    <widget class="GtkMenuItem" id="Looping">
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">Looping</property>
 		      <property name="use_underline">True</property>
 
 		      <child>
-			<widget class="GtkMenu" id="looping1_menu">
+			<widget class="GtkMenu" id="Looping_menu">
 
 			  <child>
 			    <widget class="GtkRadioMenuItem" id="loop_all">
@@ -547,13 +526,13 @@
 	  </child>
 
 	  <child>
-	    <widget class="GtkMenuItem" id="menuitem4">
+	    <widget class="GtkMenuItem" id="Help">
 	      <property name="visible">True</property>
 	      <property name="label" translatable="yes">_Help</property>
 	      <property name="use_underline">True</property>
 
 	      <child>
-		<widget class="GtkMenu" id="menuitem4_menu">
+		<widget class="GtkMenu" id="Help_menu">
 
 		  <child>
 		    <widget class="GtkImageMenuItem" id="help1">
@@ -563,7 +542,7 @@
 		      <signal name="activate" handler="on_help1_activate" last_modification_time="Tue, 08 Sep 2009 17:32:06 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image383">
+			<widget class="GtkImage" id="image429">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-help</property>
 			  <property name="icon_size">1</property>
@@ -623,7 +602,7 @@
 		      <signal name="activate" handler="on_about1_activate" last_modification_time="Sat, 04 Jul 2009 12:57:58 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image384">
+			<widget class="GtkImage" id="image430">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-about</property>
 			  <property name="icon_size">1</property>

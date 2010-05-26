@@ -849,22 +849,32 @@ lfm_action_lookup (DB_playItem_t *it, void *data)
     free (command);
 }
 
-static DB_single_action_t lookup_action = {
+static int
+lfm_action_love (DB_playItem_t *it, void *data)
+{
+    printf ("Love starts here\n");
+}
+
+static DB_plugin_action_t love_action = {
+    .title = "Love at Last.fm",
+    .flags = DB_ACTION_SINGLE_TRACK,
+    .callback = lfm_action_love,
+    .next = NULL
+};
+
+static DB_plugin_action_t lookup_action = {
     .title = "Lookup at Last.fm",
-    .callback = lfm_action_lookup
+    .flags = DB_ACTION_SINGLE_TRACK,
+    .callback = lfm_action_lookup,
+    .next = &love_action
 };
 
 static int
-lfm_get_single_actions (DB_playItem_t *it, DB_single_action_t *actions[], int *size)
+lfm_get_actions (DB_plugin_action_t **actions)
 {
-    if (deadbeef->pl_find_meta (it, "artist") &&
-        deadbeef->pl_find_meta (it, "title"))
-    {
-        actions[0] = &lookup_action;
-        *size = 1;
-    }
-    else
-        *size = 0;
+    // Just prepend our action
+    love_action.next = *actions;
+    *actions = &lookup_action;
     return 1;
 }
 
@@ -890,5 +900,5 @@ static DB_misc_t plugin = {
     .plugin.start = lastfm_start,
     .plugin.stop = lastfm_stop,
     .plugin.configdialog = settings_dlg,
-    .get_single_actions = lfm_get_single_actions
+    .plugin.get_actions = lfm_get_actions
 };
