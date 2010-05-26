@@ -72,8 +72,8 @@ typedef struct _DdbListviewColumn DdbListviewColumn;
 
 struct _DdbListviewGroup {
     DdbListviewIter head;
-    uint32_t height;
-    uint32_t num_items;
+    int32_t height;
+    int32_t num_items;
     struct _DdbListviewGroup *next;
 };
 typedef struct _DdbListviewGroup DdbListviewGroup;
