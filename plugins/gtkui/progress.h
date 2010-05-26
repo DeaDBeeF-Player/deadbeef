@@ -23,6 +23,9 @@ void
 progress_init (void);
 
 void
+progress_destroy (void);
+
+void
 progress_show (void);
 
 void

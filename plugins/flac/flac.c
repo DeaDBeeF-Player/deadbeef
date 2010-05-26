@@ -545,10 +545,12 @@ cflac_init_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__Str
             }
         }
         deadbeef->pl_add_meta (it, "title", NULL);
-        uint32_t f = deadbeef->pl_get_item_flags (it);
-        f &= ~DDB_TAG_MASK;
-        f |= DDB_TAG_VORBISCOMMENTS;
-        deadbeef->pl_set_item_flags (it, f);
+        if (vc->num_comments > 0) {
+            uint32_t f = deadbeef->pl_get_item_flags (it);
+            f &= ~DDB_TAG_MASK;
+            f |= DDB_TAG_VORBISCOMMENTS;
+            deadbeef->pl_set_item_flags (it, f);
+        }
     }
 }
 
@@ -714,7 +716,6 @@ cflac_insert_fail:
 
 int
 cflac_read_metadata (DB_playItem_t *it) {
-    deadbeef->pl_delete_all_meta (it);
     int err = -1;
     FLAC__Metadata_Chain *chain = NULL;
     FLAC__Metadata_Iterator *iter = NULL;
@@ -736,6 +737,7 @@ cflac_read_metadata (DB_playItem_t *it) {
         trace ("cflac_read_metadata: FLAC__metadata_iterator_new failed\n");
         goto error;
     }
+    deadbeef->pl_delete_all_meta (it);
     FLAC__metadata_iterator_init (iter, chain);
     do {
         FLAC__StreamMetadata *data = FLAC__metadata_iterator_get_block (iter);
@@ -765,6 +767,10 @@ cflac_read_metadata (DB_playItem_t *it) {
 error:
     if (chain) {
         FLAC__metadata_chain_delete (chain);
+    }
+    if (err != 0) {
+        deadbeef->pl_delete_all_meta (it);
+        deadbeef->pl_add_meta (it, "title", NULL);
     }
 
     return err;

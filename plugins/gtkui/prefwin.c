@@ -539,6 +539,7 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
 
     gtk_dialog_run (GTK_DIALOG (prefwin));
     gtk_widget_destroy (prefwin);
+    deadbeef->conf_save ();
     prefwin = NULL;
 }
 
@@ -671,23 +672,6 @@ on_pref_pluginlist_cursor_changed      (GtkTreeView     *treeview,
     gtk_entry_set_text (e, p->website ? p->website : "");
 
     gtk_widget_set_sensitive (lookup_widget (prefwin, "configure_plugin"), p->configdialog ? TRUE : FALSE);
-}
-
-gboolean
-on_prefwin_delete_event                (GtkWidget       *widget,
-                                        GdkEvent        *event,
-                                        gpointer         user_data)
-{
-    prefwin = NULL;
-    return FALSE;
-}
-
-void
-on_pref_close_clicked                  (GtkButton       *button,
-                                        gpointer         user_data)
-{
-    gtk_widget_hide (prefwin);
-    gtk_widget_destroy (prefwin);
 }
 
 void
