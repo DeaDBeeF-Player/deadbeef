@@ -12,8 +12,8 @@
  *                                                   | <  /   \_
  * By entheh.                                        |  \/ /\   /
  *                                                    \_  /  > /
- *                                                      | \ / /
- *                                                      |  ' /
+ * This example demonstrates how to use DUMB without    | \ / /
+ * using Allegro.                                       |  ' /
  *                                                       \__/
  */
 
@@ -25,15 +25,12 @@
 #include <string.h>
 #include <dumb.h>
 
-#include <internal/it.h>
 
 union {
-	float s32[4096];
 	short s16[8192];
 	char s8[16384];
 } buffer;
 
-sample_t ** internal_buffer;
 
 int main(int argc, const char *const *argv) /* I'm const-crazy! */
 {
@@ -49,7 +46,6 @@ int main(int argc, const char *const *argv) /* I'm const-crazy! */
 	int unsign = 0;
 	int freq = 44100;
 	int n_channels = 2;
-	int solo = -1;
 	float volume = 1.0f;
 	float delay = 0.0f;
 	float delta;
@@ -69,7 +65,7 @@ int main(int argc, const char *const *argv) /* I'm const-crazy! */
 				fprintf(stderr,
 					"Cannot specify multiple filenames!\n"
 					"Second filename found: \"%s\"\n", arg);
-				return 1;
+				return EXIT_FAILURE;
 			}
 			fn = arg;
 			continue;
@@ -82,7 +78,7 @@ int main(int argc, const char *const *argv) /* I'm const-crazy! */
 				case 'O':
 					if (i >= argc) {
 						fprintf(stderr, "Out of arguments; output filename expected!\n");
-						return 1;
+						return EXIT_FAILURE;
 					}
 					fn_out = argv[i++];
 					break;
@@ -90,40 +86,37 @@ int main(int argc, const char *const *argv) /* I'm const-crazy! */
 				case 'D':
 					if (i >= argc) {
 						fprintf(stderr, "Out of arguments; delay expected!\n");
-						return 1;
+						return EXIT_FAILURE;
 					}
 					delay = (float)strtod(argv[i++], &endptr);
 					if (*endptr != 0 || delay < 0.0f || delay > 64.0f) {
 						fprintf(stderr, "Invalid delay!\n");
-						return 1;
+						return EXIT_FAILURE;
 					}
 					break;
 				case 'v':
 				case 'V':
 					if (i >= argc) {
 						fprintf(stderr, "Out of arguments; volume expected!\n");
-						return 1;
+						return EXIT_FAILURE;
 					}
 					volume = (float)strtod(argv[i++], &endptr);
 					if (*endptr != 0 || volume < -8.0f || volume > 8.0f) {
 						fprintf(stderr, "Invalid volume!\n");
-						return 1;
+						return EXIT_FAILURE;
 					}
 					break;
 				case 's':
 				case 'S':
 					if (i >= argc) {
 						fprintf(stderr, "Out of arguments; sampling rate expected!\n");
-						return 1;
+						return EXIT_FAILURE;
 					}
 					freq = strtol(argv[i++], &endptr, 10);
 					if (*endptr != 0 || freq < 1 || freq > 960000) {
 						fprintf(stderr, "Invalid sampling rate!\n");
-						return 1;
+						return EXIT_FAILURE;
 					}
-					break;
-				case 'f':
-					depth = 32;
 					break;
 				case '8':
 					depth = 8;
@@ -144,29 +137,17 @@ int main(int argc, const char *const *argv) /* I'm const-crazy! */
 				case 'R':
 					if (i >= argc) {
 						fprintf(stderr, "Out of arguments; resampling quality expected!\n");
-						return 1;
+						return EXIT_FAILURE;
 					}
 					dumb_resampling_quality = strtol(argv[i++], &endptr, 10);
 					if (*endptr != 0 || dumb_resampling_quality < 0 || dumb_resampling_quality > 2) {
 						fprintf(stderr, "Invalid resampling quality!\n");
-						return 1;
-					}
-					break;
-				case 'c':
-				case 'C':
-					if (i >= argc) {
-						fprintf(stderr, "Out of arguments; channel number expected!\n");
-						return 1;
-					}
-					solo = strtol(argv[i++], &endptr, 10);
-					if (*endptr != 0 || solo < 0 || solo >= DUMB_IT_N_CHANNELS) {
-						fprintf(stderr, "Invalid channel number!\n");
-						return 1;
+						return EXIT_FAILURE;
 					}
 					break;
 				default:
 					fprintf(stderr, "Invalid switch - '%c'!\n", isprint(arg[-1]) ? arg[-1] : '?');
-					return 1;
+					return EXIT_FAILURE;
 			}
 		}
 	}
@@ -187,21 +168,28 @@ int main(int argc, const char *const *argv) /* I'm const-crazy! */
 			"-v <volume> adjust the volume (default 1.0)\n"
 			"-s <freq>   set the sampling rate in Hz (default 44100)\n"
 			"-8          generate 8-bit instead of 16-bit\n"
-			"-f          generate 32-bit floating point data instead of 16-bit\n"
 			"-b          generate big-endian data instead of little-endian (meaningless when\n"
 			"              using -8)\n"
 			"-m          generate mono output instead of stereo left/right pairs\n"
 			"-u          generated unsigned output instead of signed\n"
-			"-r <value>  specify the resampling quality to use\n"
-			"-c <value>  specify a channel number to solo\n");
-		return 1;
+			"-r <value>  specify the resampling quality to use\n");
+		return EXIT_FAILURE;
 	}
 
+	/* Initialisation, as in dumbplay.c, except this time we have to
+	 * register stdio files since we're not using Allegro.
+	 */
 	atexit(&dumb_exit);
 	dumb_register_stdfiles();
 
+	/* Mix as many voices as possible. DUMB only maintains state for 256
+	 * of them.
+	 */
 	dumb_it_max_to_mix = 256;
 
+	/* We may as well try and load a .duh file too, even though that file
+	 * format will probably never materialise. :)
+	 */
 	duh = load_duh(fn);
 	if (!duh) {
 		duh = dumb_load_it(fn);
@@ -213,38 +201,22 @@ int main(int argc, const char *const *argv) /* I'm const-crazy! */
 					duh = dumb_load_mod(fn);
 					if (!duh) {
 						fprintf(stderr, "Unable to open %s!\n", fn);
-						return 1;
+						return EXIT_FAILURE;
 					}
 				}
 			}
 		}
 	}
 
+	/* This is equivalent to al_start_duh(), except the object returned
+	 * contains playback state alone and no Allegro audio stream. We can
+	 * get samples from it on demand.
+	 */
 	sr = duh_start_sigrenderer(duh, 0, n_channels, 0);
 	if (!sr) {
 		unload_duh(duh);
 		fprintf(stderr, "Unable to play file!\n");
-		return 1;
-	}
-
-	if (solo >= 0) {
-		DUMB_IT_SIGRENDERER * itsr = duh_get_it_sigrenderer(sr);
-		if (itsr) {
-			for (i = 0; i < DUMB_IT_N_CHANNELS; i++) {
-				if (i != solo) {
-					IT_CHANNEL * channel = &itsr->channel[i];
-					IT_PLAYING * playing = channel->playing;
-					channel->flags |= IT_CHANNEL_MUTED;
-					/* start_sigrenderer leaves me all of the channels the first tick triggered */
-					if (playing) {
-						playing->ramp_volume[0] = 0;
-						playing->ramp_volume[1] = 0;
-						playing->ramp_delta[0] = 0;
-						playing->ramp_delta[1] = 0;
-					}
-				}
-			}
-		}
+		return EXIT_FAILURE;
 	}
 
 	if (fn_out) {
@@ -258,7 +230,7 @@ int main(int argc, const char *const *argv) /* I'm const-crazy! */
 				fprintf(stderr, "Unable to open %s for writing!\n", fn_out);
 				duh_end_sigrenderer(sr);
 				unload_duh(duh);
-				return 1;
+				return EXIT_FAILURE;
 			}
 		}
 	} else {
@@ -268,7 +240,7 @@ int main(int argc, const char *const *argv) /* I'm const-crazy! */
 			fprintf(stderr, "Out of memory!\n");
 			duh_end_sigrenderer(sr);
 			unload_duh(duh);
-			return 1;
+			return EXIT_FAILURE;
 		}
 		strcpy(fn_out, fn);
 		for (p = fn_out; *p; p++)
@@ -281,52 +253,48 @@ int main(int argc, const char *const *argv) /* I'm const-crazy! */
 			free(fn_out);
 			duh_end_sigrenderer(sr);
 			unload_duh(duh);
-			return 1;
+			return EXIT_FAILURE;
 		}
 		free(fn_out);
 	}
 
+	/* Install dumb_it_callback_terminate() as the loop and XM speed zero
+	 * callbacks. That means DUMB will stop generating samples
+	 * immediately upon either of these events occurring.
+	 * The callback function itself is provided by DUMB.
+	 */
 	{
 		DUMB_IT_SIGRENDERER *itsr = duh_get_it_sigrenderer(sr);
-		dumb_it_set_ramp_style(itsr, 2);
 		dumb_it_set_loop_callback(itsr, &dumb_it_callback_terminate, NULL);
 		dumb_it_set_xm_speed_zero_callback(itsr, &dumb_it_callback_terminate, NULL);
-		dumb_it_set_global_volume_zero_callback(itsr, &dumb_it_callback_terminate, NULL);
 	}
 
-	length = (LONG_LONG)_dumb_it_build_checkpoints(duh_get_it_sigdata(duh), 0) * freq >> 16;
+	/* This length value is not accurate. It is only used for the
+	 * progress bar.
+	 */
+	length = (LONG_LONG)duh_get_length(duh) * freq >> 16;
 	done = 0;
 	dots = 0;
 	delta = 65536.0f / freq;
-	bufsize = sizeof(buffer);
-	if (depth == 32) bufsize /= sizeof(*buffer.s32);
-	else if (depth == 16) bufsize /= sizeof(*buffer.s16);
+	bufsize = depth == 16 ? 8192 : 16384;
 	bufsize /= n_channels;
 
-	if (depth == 32) {
-		internal_buffer = create_sample_buffer(n_channels, bufsize);
-		if (!internal_buffer) {
-			fprintf(stderr, "Out of memory!\n");
-			duh_end_sigrenderer(sr);
-			unload_duh(duh);
-		}
-	}
-
+	/* Write the initial delay to the file if one was requested. */
 	{
 		long l = (long)floor(delay * freq + 0.5f);
 		l *= n_channels * (depth >> 3);
 		if (l) {
-			if (unsign && depth != 32) {
+			if (unsign) {
 				if (depth == 16) {
 					if (bigendian) {
 						for (i = 0; i < 8192; i++) {
-							buffer.s8[i*2] = 0x80;
-							buffer.s8[i*2+1] = 0x00;
+							buffer.s8[i*2] = (char)0x80;
+							buffer.s8[i*2+1] = (char)0x00;
 						}
 					} else {
 						for (i = 0; i < 8192; i++) {
-							buffer.s8[i*2] = 0x00;
-							buffer.s8[i*2+1] = 0x80;
+							buffer.s8[i*2] = (char)0x00;
+							buffer.s8[i*2+1] = (char)0x80;
 						}
 					}
 				} else
@@ -341,43 +309,43 @@ int main(int argc, const char *const *argv) /* I'm const-crazy! */
 		}
 	}
 
+	/* On Linux, clock() is a measure of how much processing time was
+	 * used by the program.
+	 */
 	start = clock();
 
 	fprintf(stderr, "................................................................\n");
 	for (;;) {
-		int l;
-		
-		if (depth != 32) {
-			l = duh_render(sr, depth, unsign, volume, delta, bufsize, &buffer);
-			if (depth == 16) {
-				if (bigendian) {
-					for (i = 0; i < l * n_channels; i++) {
-						short val = buffer.s16[i];
-						buffer.s8[i*2] = val >> 8;
-						buffer.s8[i*2+1] = val;
-					}
-				} else {
-					for (i = 0; i < l * n_channels; i++) {
-						short val = buffer.s16[i];
-						buffer.s8[i*2] = val;
-						buffer.s8[i*2+1] = val >> 8;
-					}
+		/* This is the function that generates samples. It is all
+		 * explained in docs/dumb.txt. The return value is the number
+		 * of samples generated. If it's less than the buffer size,
+		 * we known that it's finished.
+		 */
+		int l = duh_render(sr, depth, unsign, volume, delta, bufsize, &buffer);
+		if (depth == 16) {
+			/* If you are only targeting platforms of a specific
+			 * endianness or you can find out what endianness the
+			 * target platform is, you should be able to
+			 * eliminate one case here.
+			 */
+			if (bigendian) {
+				for (i = 0; i < l * n_channels; i++) {
+					short val = buffer.s16[i];
+					buffer.s8[i*2] = (char)(val >> 8);
+					buffer.s8[i*2+1] = (char)val;
 				}
-			}
-		} else {
-			int j;
-			dumb_silence(internal_buffer[0], bufsize * n_channels);
-			l = duh_sigrenderer_get_samples(sr, volume, delta, bufsize, internal_buffer);
-			for (i = 0; i < n_channels; i++) {
-				for (j = i; j < l; j++) {
-					buffer.s32[j * n_channels] = (float)((double)internal_buffer[i][j] * (1.0 / (double)(0x800000)));
+			} else {
+				for (i = 0; i < l * n_channels; i++) {
+					short val = buffer.s16[i];
+					buffer.s8[i*2] = (char)val;
+					buffer.s8[i*2+1] = (char)(val >> 8);
 				}
 			}
 		}
 		if (outf) fwrite(buffer.s8, 1, l * n_channels * (depth >> 3), outf);
 		if (l < bufsize) break;
 		done += l;
-		l = done * 64 / length;
+		l = (int)(done * 64 / length);
 		while (dots < 64 && l > dots) {
 			fprintf(stderr, "|");
 			dots++;
@@ -392,13 +360,12 @@ int main(int argc, const char *const *argv) /* I'm const-crazy! */
 
 	end = clock();
 
-	if (depth == 32) destroy_sample_buffer(internal_buffer);
-
+	/* Deallocate stuff and close the output file. */
 	duh_end_sigrenderer(sr);
 	unload_duh(duh);
 	if (outf && outf != stdout) fclose(outf);
 
 	fprintf(stderr, "Elapsed time: %f seconds\n", (end - start) / (float)CLOCKS_PER_SEC);
 
-	return 0;
+	return EXIT_SUCCESS;
 }

@@ -5,7 +5,7 @@
 # should be run indirectly through the 'make config' target (or the 'make'
 # target the first time).
 
-if [ ! -e make/dumbask ]; then
+if [ ! -f make/dumbask ]; then
   echo "You should not be running this directly! Use 'make' or 'make config'."
   exit
 fi
@@ -24,7 +24,9 @@ echo "Please specify an installation prefix (default $DEFAULT_PREFIX)."
 echo -n '> '
 read PREFIX
 if [ -z $PREFIX ]; then PREFIX=$DEFAULT_PREFIX; fi
-echo "PREFIX := $PREFIX" >> make/config.tmp
+echo "PREFIX := `echo "$PREFIX" | \
+  sed -e 's/\${\([A-Za-z_][A-Za-z0-9_]*\)}/$(\1)/g' \
+      -e 's/\$\([A-Za-z_][A-Za-z0-9_]*\)/$(\1)/g'`" >> make/config.tmp
 fi
 
 mv -f make/config.tmp make/config.txt

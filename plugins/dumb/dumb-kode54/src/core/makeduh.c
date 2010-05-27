@@ -84,6 +84,9 @@ DUH *make_duh(
 	duh->n_tags = 0;
 	duh->tag = NULL;
 
+	duh->n_tags = 0;
+	duh->tag = NULL;
+
 	fail = 0;
 
 	for (i = 0; i < n_signals; i++) {

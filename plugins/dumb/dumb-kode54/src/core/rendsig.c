@@ -126,10 +126,12 @@ void duh_sigrenderer_set_sample_analyser_callback(
 	DUH_SIGRENDERER_SAMPLE_ANALYSER_CALLBACK callback, void *data
 )
 {
-	if (sigrenderer) {
-		sigrenderer->callback = callback;
-		sigrenderer->callback_data = data;
-	}
+	(void)sigrenderer;
+	(void)callback;
+	(void)data;
+	fprintf(stderr,
+		"Call to deprecated function duh_sigrenderer_set_analyser_callback(). The\n"
+		"callback was not installed. See dumb/docs/deprec.txt for how to fix this.\n");
 }
 
 

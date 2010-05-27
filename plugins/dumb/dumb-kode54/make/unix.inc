@@ -11,6 +11,7 @@ FIX = $(1)
 ECHO = @echo $(1)
 DELETE = rm -f $(1)
 COPY = cp $(1) $(2)
+MKDIR = mkdir $(1)
 
 EXE_SUFFIX :=
 

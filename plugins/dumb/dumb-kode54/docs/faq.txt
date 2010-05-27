@@ -1,6 +1,3 @@
-TO DO: add question regarding set_close_button_callback vs set_window_close_hook
-TO DO: add question regarding mixing of DJGPP and MinGW object files
-
 /*  _______         ____    __         ___    ___
  * \    _  \       \    /  \  /       \   \  /   /       '   '  '
  *  |  | \  \       |  |    ||         |   \/   |         .      .
@@ -16,9 +13,8 @@ TO DO: add question regarding mixing of DJGPP and MinGW object files
  * This file covers some of the common problems      |  \/ /\   /
  * and misconceptions people have with DUMB. If       \_  /  > /
  * your problem is not covered here, please             | \ / /
- * contact me. I'll do my best to help - but            |  ' /
- * don't be offended if I just direct you to the         \__/
- * manual!
+ * contact me and I'll do my best to help.              |  ' /
+ *                                                       \__/
  */
 
 
@@ -110,7 +106,9 @@ TO DO: add question regarding mixing of DJGPP and MinGW object files
    the volume. If not, then it's a problem with DUMB; please let me know.
 
    If for whatever reason you cannot modify the module file itself, you can
-   make it sound better by reducing the volume passed to al_start_duh().
+   make it sound better by reducing the volume passed to al_start_duh(). Try
+   halving or quartering the value; search for a level at which the
+   distortion goes away.
 
 
 *****************************************************************************
@@ -118,11 +116,15 @@ TO DO: add question regarding mixing of DJGPP and MinGW object files
 * right!                                                                    *
 *****************************************************************************
 
-   DUMB cannot and will not support ModPlug Tracker. Please see
-   docs/modplug.txt for details. The original trackers, which DUMB is
-   designed to mimic as closely as possible, are listed in readme.txt.
-   If you find DUMB plays your module differently from the original tracker,
-   then please contact me.
+   ModPlug Tracker differs from the original trackers in several ways, which
+   means modules written in one will not always play correctly or even load
+   in the other. DUMB's first loyalty is to the original trackers, which are
+   listed in readme.txt. This means it will have to differ from ModPlug
+   Tracker in several ways. For more information, please see
+   docs/modplug.txt.
+
+   If you find DUMB plays your module differently from the original tracker
+   for the format you are using, then please contact me.
 
 
 *****************************************************************************
@@ -135,6 +137,12 @@ TO DO: add question regarding mixing of DJGPP and MinGW object files
    necessary for loading stand-alone files, though not for loading Allegro
    datafiles with embedded music. Follow the instructions in docs/howto.txt
    carefully and you shouldn't have this problem.
+
+   The system is designed this way to make sure you can exclude code you are
+   not using. If DUMB set you up for standard file access by default, then
+   the standard library code for accessing files would get pulled in even if
+   you never used it. This is especially important for dedicated systems that
+   have limited standard libraries.
 
    If DUMB crashes with a specific music module, please let me know.
 
@@ -174,13 +182,13 @@ TO DO: add question regarding mixing of DJGPP and MinGW object files
 
    Other possible causes are as follows:
 
-   - The speakers are turned down (duh)
-   - The volume of some system mixer is turned down
+   - The speakers are turned down (duh);
+   - The volume of some system mixer is turned down;
    - Another program is using the sound card (not a problem for most modern
-     systems)
+     systems);
    - You didn't initialise Allegro's sound system; see install_sound() in
-     Allegro's docs
-   - Allegro's drivers don't work on your system and chosen platform
+     Allegro's docs;
+   - Allegro's drivers don't work on your system and chosen platform.
 
    In order to narrow down the cause, consider the following:
 
@@ -220,8 +228,14 @@ TO DO: add question regarding mixing of DJGPP and MinGW object files
 * Why does DUMB use so much processor time compared with other players?     *
 *****************************************************************************
 
-   This should be less so in this release than in previous releases; the
-   resampling and filtering algorithms have been optimised.
+   It doesn't! It is now on a par with the ModPlug rendering engine (tested
+   using ModPlugXMMS with reverb, surround and other such effects disabled).
+   Previous releases were less than optimal, but DUMB's resampling algorithm
+   was - and still is - one of a kind. Take a look at the code. Come on, I
+   dare ya.
+
+   All that said, you can reduce the amount of processor time DUMB uses by
+   reducing the quality.
 
    By default, DUMB uses the most expensive resampling quality option. I've
    found on an AthlonXP 1800+ and on a Pentium 233 that it typically uses
@@ -253,12 +267,20 @@ TO DO: add question regarding mixing of DJGPP and MinGW object files
 * I e-mailed you and you replied with "RTFM"! What does that mean?          *
 *****************************************************************************
 
-   Read The Manual. If it's a specific problem, I'll probably be kind and
-   tell you where to look in the manual. However, if I get the impression you
-   haven't even looked for a solution in the manual, expect no mercy ...
+   It means Read The Manual. I would only say this to someone who has clearly
+   not even tried reading the documentation. So if you are reading this FAQ
+   entry, you have too much time on your hands!
+
+
+*****************************************************************************
+* What happened to DUMB's IRC channel?                                      *
+*****************************************************************************
+
+   It has been discontinued. It wasn't used very much, and it only really
+   works if I'm there at the same time as someone wants to chat. For most
+   problems, e-mail is much more effective. However, if you would like to
+   chat about something, please do e-mail me and we'll arrange it.
 
 
 Ben Davis
 entheh@users.sf.net
-IRC EFnet #dumb
-See readme.txt for details on using IRC.

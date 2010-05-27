@@ -245,3 +245,5 @@ int dumb_it_sr_get_channel_muted(DUMB_IT_SIGRENDERER *sr, int channel)
 {
 	return sr ? (sr->channel[channel].flags & IT_CHANNEL_MUTED) != 0 : 0;
 }
+
+

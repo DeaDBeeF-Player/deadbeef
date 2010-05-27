@@ -140,6 +140,13 @@ float al_duh_get_volume(AL_DUH_PLAYER *dp)
 
 
 
+float al_duh_get_volume(AL_DUH_PLAYER *dp)
+{
+	return dp ? dp->volume : 0;
+}
+
+
+
 int al_poll_duh(AL_DUH_PLAYER *dp)
 {
 	unsigned short *sptr;

@@ -29,6 +29,7 @@
 /** TODO:
 
  * XM_TREMOLO                        doesn't sound quite right...
+ * XM_E_SET_FINETUNE                 done but not tested yet.
  * XM_SET_ENVELOPE_POSITION          todo.
 
  * VIBRATO conversion needs to be checked (sample/effect/volume). Plus check
@@ -515,7 +516,6 @@ static int it_xm_read_sample_header(IT_SAMPLE *sample, DUMBFILE *f)
 	sample->default_pan    = dumbfile_getc(f); /* 0-255 */
 	relative_note_number   = (signed char)dumbfile_getc(f);
 
-	/*dumbfile_skip(f, 1);  /* reserved */
 	reserved = dumbfile_getc(f);
 
 	dumbfile_getnc(sample->name, 22, f);
@@ -674,6 +674,10 @@ static DUMB_IT_SIGDATA *it_xm_load_sigdata(DUMBFILE *f, int * version)
 		TRACE("XM error: Not an Extended Module\n");
 		return NULL;
 	}
+
+	sigdata = malloc(sizeof(*sigdata));
+	if (!sigdata)
+		return NULL;
 
 	sigdata = malloc(sizeof(*sigdata));
 	if (!sigdata)
@@ -919,6 +923,8 @@ static DUMB_IT_SIGDATA *it_xm_load_sigdata(DUMBFILE *f, int * version)
 				_dumb_it_unload_sigdata(sigdata);
 				return NULL;
 			}
+			for (j = total_samples; j < total_samples+extra.n_samples; j++)
+				sigdata->sample[j].data = NULL;
 
 			if (extra.n_samples) {
 				/* adjust instrument sample map (make indices absolute) */

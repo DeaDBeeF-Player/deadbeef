@@ -12,6 +12,7 @@ ECHO = @$(COMSPEC) /C ECHO $(1)
 # Note: the following two macros only work for single files!
 DELETE = $(COMSPEC) /C DEL $(call FIX,$(1))
 COPY = $(COMSPEC) /C COPY $(call FIX,$(1)) $(call FIX,$(2))
+MKDIR = $(COMSPEC) /C MKDIR $(call FIX,$(1))
 
 EXE_SUFFIX := .exe
 
