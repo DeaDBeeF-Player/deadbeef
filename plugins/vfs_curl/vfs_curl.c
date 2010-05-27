@@ -25,10 +25,8 @@
 #include <time.h>
 #include "../../deadbeef.h"
 
-#pragma GCC optimize("O0")
-
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -556,18 +554,18 @@ http_thread_func (void *ctx) {
         deadbeef->mutex_lock (fp->mutex);
         if (status == 0 && fp->length < 0 && fp->status != STATUS_ABORTED && fp->status != STATUS_SEEK) {
             trace ("vfs_curl: restarting stream\n");
+            // NOTE: don't do http_stream_reset here - we don't want to cut the ending
             fp->status = STATUS_INITIAL;
-            fp->skipbytes = 0;
-            if (fp->content_type) {
-                free (fp->content_type);
-                fp->content_type = NULL;
-            }
-            fp->seektoend = 0;
             fp->gotheader = 0;
             fp->icyheader = 0;
             fp->gotsomeheader = 0;
-            fp->wait_meta = 0;
+            fp->metadata_size = 0;
+            fp->metadata_have_size = 0;
+            fp->skipbytes = 0;
+            fp->nheaderpackets = 0;
+            fp->seektoend = 0;
             fp->icy_metaint = 0;
+            fp->wait_meta = 0;
             deadbeef->mutex_unlock (fp->mutex);
             continue;
         }
@@ -636,15 +634,16 @@ http_set_track (DB_FILE *f, DB_playItem_t *it) {
 
 static void
 http_close (DB_FILE *stream) {
-    trace ("http_close\n");
+    trace ("http_close %p\n", stream);
     assert (stream);
     HTTP_FILE *fp = (HTTP_FILE *)stream;
+
+    deadbeef->mutex_lock (fp->mutex);
     if (fp->tid) {
-        deadbeef->mutex_lock (fp->mutex);
         fp->status = STATUS_ABORTED;
+        trace ("http_close thread_join\n");
         deadbeef->mutex_unlock (fp->mutex);
         deadbeef->thread_join (fp->tid);
-        deadbeef->mutex_free (fp->mutex);
     }
     if (fp->content_type) {
         free (fp->content_type);
@@ -655,7 +654,9 @@ http_close (DB_FILE *stream) {
     if (fp->url) {
         free (fp->url);
     }
+    deadbeef->mutex_free (fp->mutex);
     free (stream);
+    trace ("http_close done\n");
 }
 
 static size_t
@@ -851,14 +852,14 @@ http_get_content_type (DB_FILE *stream) {
 
 void
 http_abort (DB_FILE *fp) {
-    trace ("http_abort\n");
+    trace ("http_abort %p\n", fp);
     HTTP_FILE *f = (HTTP_FILE *)fp;
     if (f->tid) {
         deadbeef->mutex_lock (f->mutex);
         f->status = STATUS_ABORTED;
         deadbeef->mutex_unlock (f->mutex);
-        deadbeef->thread_join (f->tid);
     }
+    trace ("http_abort done\n");
 }
 
 static int
