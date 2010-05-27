@@ -866,93 +866,93 @@ msgstr "Comando"
 
 #: ../plugins/gtkui/prefwin.c:333
 msgid "Key combination"
-msgstr "Combinación de teclas"
+msgstr ""
 
 #. output plugin selection
 #: ../plugins/gtkui/prefwin.c:379 ../plugins/gtkui/prefwin.c:569
 #: ../plugins.c:833
 msgid "ALSA output plugin"
-msgstr "Plugin de salida ALSA"
+msgstr "ALSA output plugin"
 
 #: ../plugins/gtkui/progress.c:64
 msgid "Initializing..."
-msgstr "Inicializando..."
+msgstr "Initialiseren..."
 
 #: ../plugins/gtkui/trkproperties.c:53
 msgid "You've modified data for this track."
-msgstr "Has modificado los datos de ésta pista."
+msgstr ""
 
 #: ../plugins/gtkui/trkproperties.c:55
 msgid "Really close the window?"
-msgstr "¿Deseas cerrar la ventana?"
+msgstr ""
 
 #: ../plugins/gtkui/trkproperties.c:178
 msgid "Tag Type(s)"
-msgstr "Tipo de Etiqueta(s)"
+msgstr ""
 
 #: ../plugins/gtkui/trkproperties.c:180
 msgid "Embedded Cuesheet"
-msgstr "Hoja Cue Embedida"
+msgstr ""
 
 #: ../plugins/gtkui/trkproperties.c:180
 msgid "Yes"
-msgstr "Si"
+msgstr "Ja"
 
 #: ../plugins/gtkui/trkproperties.c:180
 msgid "No"
-msgstr "No"
+msgstr "Nee"
 
 #: ../plugins/gtkui/trkproperties.c:248 ../plugins/gtkui/trkproperties.c:260
 msgid "Key"
-msgstr "Clave"
+msgstr "Toets"
 
 #: ../plugins/gtkui/trkproperties.c:249 ../plugins/gtkui/trkproperties.c:261
 msgid "Value"
-msgstr "Valor"
+msgstr "Waarde"
 
 #: ../plugins/notify/notify.c:138
 msgid "DeaDBeeF now playing"
-msgstr "DeaDBeeF reproduciendo:"
+msgstr "DeaDBeeF speelt nu af"
 
 #: ../main.c:84
 #, c-format
 msgid "Usage: deadbeef [options] [file(s)]\n"
-msgstr "Uso: deadbeef [opciones] [archivo(s)]\n"
+msgstr ""
 
 #: ../main.c:85
 #, c-format
 msgid "Options:\n"
-msgstr "Opciones:\n"
+msgstr "Opties:\n"
 
 #: ../main.c:86
 #, c-format
 msgid "   --help  or  -h     Print help (this message) and exit\n"
-msgstr "   --help  o  -h      Mostrar la ayuda (éste mensaje) y salir\n"
+msgstr ""
 
 #: ../main.c:87
 #, c-format
 msgid "   --quit             Quit player\n"
-msgstr "   --quit             Cerrar reproductor\n"
+msgstr ""
 
 #: ../main.c:88
 #, c-format
 msgid "   --version          Print version info and exit\n"
-msgstr "   --version          Mostar la versión y salir\n"
+msgstr ""
 
 #: ../main.c:89
 #, c-format
 msgid "   --play             Start playback\n"
-msgstr "   --play             Iniciar reproducción\n"
+msgstr ""
 
 #: ../main.c:90
 #, c-format
 msgid "   --stop             Stop playback\n"
-msgstr "   --stop             Parar reproducción\n"
+msgstr ""
 
 #: ../main.c:91
 #, c-format
 msgid "   --pause            Pause playback\n"
-msgstr "   --pause            Pausar reproducción\n"
+msgstr ""
 
 #: ../main.c:92
 #, c-format
