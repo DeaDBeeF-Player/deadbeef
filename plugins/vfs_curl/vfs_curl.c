@@ -556,18 +556,18 @@ http_thread_func (void *ctx) {
         deadbeef->mutex_lock (fp->mutex);
         if (status == 0 && fp->length < 0 && fp->status != STATUS_ABORTED && fp->status != STATUS_SEEK) {
             trace ("vfs_curl: restarting stream\n");
+            // NOTE: don't do http_stream_reset here - we don't want to cut the ending
             fp->status = STATUS_INITIAL;
-            fp->skipbytes = 0;
-            if (fp->content_type) {
-                free (fp->content_type);
-                fp->content_type = NULL;
-            }
-            fp->seektoend = 0;
             fp->gotheader = 0;
             fp->icyheader = 0;
             fp->gotsomeheader = 0;
-            fp->wait_meta = 0;
+            fp->metadata_size = 0;
+            fp->metadata_have_size = 0;
+            fp->skipbytes = 0;
+            fp->nheaderpackets = 0;
+            fp->seektoend = 0;
             fp->icy_metaint = 0;
+            fp->wait_meta = 0;
             deadbeef->mutex_unlock (fp->mutex);
             continue;
         }
@@ -859,11 +859,7 @@ http_abort (DB_FILE *fp) {
     if (f->tid) {
         deadbeef->mutex_lock (f->mutex);
         f->status = STATUS_ABORTED;
-//        intptr_t tid = f->tid;
-//        f->tid = 0;
         deadbeef->mutex_unlock (f->mutex);
-//        trace ("http_abort thread_join\n");
-//        deadbeef->thread_join (tid);
     }
     trace ("http_abort done\n");
 }
