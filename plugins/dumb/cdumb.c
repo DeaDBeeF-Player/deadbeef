@@ -25,8 +25,8 @@
 #include "internal/it.h"
 #include "../../deadbeef.h"
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
@@ -103,7 +103,16 @@ cdumb_startrenderer (DB_fileinfo_t *_info) {
 
     DUMB_IT_SIGRENDERER *itsr = duh_get_it_sigrenderer (info->renderer);
     dumb_it_set_loop_callback (itsr, &dumb_it_callback_terminate, NULL);
-    dumb_it_set_resampling_quality (itsr, 2);
+
+    int q = deadbeef->conf_get_int ("dumb.resampling_quality", 2);
+    if (q < 0) {
+        q = 0;
+    }
+    else if (q >= DUMB_RQ_N_LEVELS) {
+        q = DUMB_RQ_N_LEVELS - 1;
+    }
+
+    dumb_it_set_resampling_quality (itsr, q);
     dumb_it_set_xm_speed_zero_callback (itsr, &dumb_it_callback_terminate, NULL);
     dumb_it_set_global_volume_zero_callback (itsr, &dumb_it_callback_terminate, NULL);
     return 0;
@@ -800,6 +809,9 @@ cgme_stop (void) {
 
 static const char *filetypes[] = { "IT", "XM", "S3M", "STM", "669", "PTM", "PSM", "MTM", "RIFF", "ASY", "MOD", NULL };
 
+static const char settings_dlg[] =
+    "property \"Resampling quality (0..2, higher is better)\" entry dumb.resampling_quality 2;\n"
+;
 // define plugin interface
 static DB_decoder_t plugin = {
     DB_PLUGIN_SET_API_VERSION
@@ -814,6 +826,7 @@ static DB_decoder_t plugin = {
     .plugin.website = "http://deadbeef.sf.net",
     .plugin.start = cgme_start,
     .plugin.stop = cgme_stop,
+    .plugin.configdialog = settings_dlg,
     .open = cdumb_open,
     .init = cdumb_init,
     .free = cdumb_free,
