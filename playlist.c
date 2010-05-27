@@ -823,13 +823,13 @@ pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, c
         pl_add_meta (it, "year", date);
     }
     if (replaygain_album_gain[0]) {
-        it->replaygain_album_gain = db_to_amp (atof (replaygain_album_gain));
+        it->replaygain_album_gain = atof (replaygain_album_gain);
     }
     if (replaygain_album_peak[0]) {
         it->replaygain_album_peak = atof (replaygain_album_peak);
     }
     if (replaygain_track_gain[0]) {
-        it->replaygain_track_gain = db_to_amp (atof (replaygain_track_gain));
+        it->replaygain_track_gain = atof (replaygain_track_gain);
     }
     if (replaygain_track_peak[0]) {
         it->replaygain_track_peak = atof (replaygain_track_peak);
