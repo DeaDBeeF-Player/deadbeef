@@ -2,7 +2,7 @@
 # Copyright (C) 2009-2001 Alexey Yakovenko <waker@users.sourceforge.net>
 # This file is distributed under the same license as the Deadbeef package.
 # depaz <depazzz@gmail.com>, 2010.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
@@ -18,85 +18,85 @@ msgstr ""
 
 #: ../plugins/gtkui/callbacks.c:97
 msgid "Supported sound formats"
-msgstr "Formatos de audio soportados"
+msgstr "Ondersteunde geluidsformaten"
 
 #: ../plugins/gtkui/callbacks.c:108
 msgid "Other files (*)"
-msgstr "Otros archivos (*)"
+msgstr "Andere bestanden (*)"
 
 #: ../plugins/gtkui/callbacks.c:117
 msgid "Open file(s)..."
-msgstr "Abrir archivo(s)..."
+msgstr "Open bestand(en)..."
 
 #: ../plugins/gtkui/callbacks.c:150
 msgid "Add file(s) to playlist..."
-msgstr "Añadir archivo(s) a la lista de reproducción..."
+msgstr "Voeg bestand(en) toe aan de afspeellijst..."
 
 #: ../plugins/gtkui/callbacks.c:182
 msgid "Add folder(s) to playlist..."
-msgstr "Añadir carpeta(s) a la lista de reproducción"
+msgstr "Voeg map(pen) toe aan de afspeellijst..."
 
 #: ../plugins/gtkui/callbacks.c:640
 msgid "Failed while reading help file"
-msgstr "Error al leer el archivo de ayuda"
+msgstr "Error bij het lezen van het help bestand"
 
 #: ../plugins/gtkui/callbacks.c:650
 msgid "Failed to load help file"
-msgstr "Error al cargar el archivo de ayuda"
+msgstr "Mislukt bij het lezen van het help bestand"
 
 #: ../plugins/gtkui/callbacks.c:664 ../plugins/gtkui/interface.c:1105
 msgid "Help"
-msgstr "Ayuda"
+msgstr "Help"
 
 #: ../plugins/gtkui/callbacks.c:674
 #, c-format
 msgid "About DeaDBeeF %s"
-msgstr "Acerca de DeaDBeeF %s"
+msgstr "Over DeaDBeeF %s"
 
 #: ../plugins/gtkui/callbacks.c:685
 #, c-format
 msgid "DeaDBeeF %s ChangeLog"
-msgstr "Cambios en DeaDBeeF %s"
+msgstr "DeaDBeeF %s ChangeLog"
 
 #: ../plugins/gtkui/ddbtabstrip.c:527
 msgid "Edit playlist"
-msgstr "Editar Lista de Reproducción"
+msgstr "Bewerk afspeellijst"
 
 #: ../plugins/gtkui/ddbtabstrip.c:604
 msgid "Rename Playlist"
-msgstr "Renombrar Lista de Reproducción"
+msgstr "Hernoem Afspeellijst"
 
 #: ../plugins/gtkui/ddbtabstrip.c:608
 msgid "Remove Playlist"
-msgstr "Quitar Lista de Reproducción"
+msgstr "Verwijder Afspeellijst"
 
 #: ../plugins/gtkui/ddbtabstrip.c:612
 msgid "Add New Playlist"
-msgstr "Nueva Lista de Reproducción"
+msgstr "Maak een nieuwe afspeellijst"
 
 #: ../plugins/gtkui/eq.c:113
 msgid "Save DeaDBeeF EQ Preset"
-msgstr "Guardar Ajustes del Ec de DeaDBeeF"
+msgstr ""
 
 #: ../plugins/gtkui/eq.c:120
 msgid "DeaDBeeF EQ preset files (*.ddbeq)"
-msgstr "Ajustes del Ec de DeaDBeeF (*.ddbeq)"
+msgstr ""
 
 #: ../plugins/gtkui/eq.c:151
 msgid "Load DeaDBeeF EQ Preset..."
-msgstr "Cargar Ajustes del Ec"
+msgstr ""
 
 #: ../plugins/gtkui/eq.c:155
 msgid "DeaDBeeF EQ presets (*.ddbeq)"
-msgstr "Ajustes del Ec de DeaDBeeF (*.ddbeq)"
+msgstr ""
 
 #: ../plugins/gtkui/eq.c:214
 msgid "Import Foobar2000 EQ Preset..."
-msgstr "Importar Ajustes del Ec de Foobar2000"
+msgstr ""
 
 #: ../plugins/gtkui/eq.c:218
 msgid "Foobar2000 EQ presets (*.feq)"
-msgstr "Ajustes de Ec de Foobar2000"
+msgstr ""
 
 #: ../plugins/gtkui/eq.c:292
 msgid "Enable"
@@ -160,10 +160,8 @@ msgstr "Pausado | "
 
 #: ../plugins/gtkui/gtkui.c:177
 #, c-format
-msgid ""
-"%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
-msgstr ""
-"%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d pistas | Tiempo total: %s"
+msgid "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
+msgstr "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d pistas | Tiempo total: %s"
 
 #: ../plugins/gtkui/gtkui.c:533
 msgid "Save Playlist As"
@@ -502,7 +500,6 @@ msgid "Right"
 msgstr "Derecha"
 
 #: ../plugins/gtkui/interface.c:1459 ../plugins/gtkui/interface.c:3007
-#, fuzzy
 msgid ""
 "Format conversions (start with %):\n"
 "  [a]rtist, [t]itle, al[b]um, [B]and, [C]omposer\n"
@@ -511,12 +508,6 @@ msgid ""
 "  copy[r]ight, [f]ilename, [T]ags\n"
 "Example: %a - %t [%l]"
 msgstr ""
-"Formato (empezar con %):\n"
-"  a: Artista, t: Título, b: Álbum, B: Grupo,\n"
-"  n: Número de pista, N: Pistas totales,\n"
-"  l: Duración, y: Año, g: Género, c: Comentario,\n"
-"  r: Copyright, f: Archivo, T: Etiquetas\n"
-"Ejemplo: %a - %t [%l]"
 
 #: ../plugins/gtkui/interface.c:1488 ../plugins/gtkui/interface.c:2801
 #: ../plugins/gtkui/interface.c:2913 ../plugins/gtkui/interface.c:3036
@@ -969,9 +960,7 @@ msgstr "   --queue            Añadir archivo(s) a la lista de reproducción\n"
 #: ../main.c:96
 #, c-format
 msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
-msgstr ""
-"   --nowplaying FMT   Mostrar nombre de la pista formateado a través de "
-"stdout\n"
+msgstr "   --nowplaying FMT   Mostrar nombre de la pista formateado a través de stdout\n"
 
 #: ../main.c:97
 #, c-format
@@ -986,12 +975,8 @@ msgstr ""
 
 #: ../main.c:100
 #, c-format
-msgid ""
-"                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist "
-"- title\"\n"
-msgstr ""
-"                      ej.: --nowplaying \"%%a - %%t\" mostraría \"artista - "
-"título\"\n"
+msgid "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n"
+msgstr "                      ej.: --nowplaying \"%%a - %%t\" mostraría \"artista - título\"\n"
 
 #: ../playlist.c:369 ../playlist.c:2212
 msgid "Default"
