@@ -781,59 +781,59 @@ msgstr "Título / Intérprete"
 #: ../plugins/gtkui/mainplaylist.c:301 ../plugins/gtkui/search.c:436
 #: ../plugins/gtkui/trkproperties.c:175
 msgid "Duration"
-msgstr "Duración"
+msgstr "Speeltijd"
 
 #: ../plugins/gtkui/plcommon.c:316
 msgid "Delete files from disk"
-msgstr "Eliminar archivos del disco duro"
+msgstr "Verwijder bestanden van schijf"
 
 #: ../plugins/gtkui/plcommon.c:317
 msgid ""
 "Files will be lost. Proceed?\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
 msgstr ""
-"Perderás los archivos. ¿Deseas continuar?\n"
-"(Éste aviso puede desactivarse en las opciones del plugin GTKUI)"
+"Bestanden zullen verloren worden. Doorgaan?\n"
+"(Dit venster kunt u uitschakelen in de GTKUI plugin instellingen)"
 
 #: ../plugins/gtkui/plcommon.c:318 ../plugins/gtkui/trkproperties.c:56
 msgid "Warning"
-msgstr "Aviso"
+msgstr "Waarschuwing"
 
 #: ../plugins/gtkui/plcommon.c:363
 msgid "Add to playback queue"
-msgstr "Añadir a cola de reproducción"
+msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:368
 msgid "Remove from playback queue"
-msgstr "Quitar de cola de reproducción"
+msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:376
 msgid "Reload metadata"
-msgstr "Recargar metadatos"
+msgstr "Herlaad metadata"
 
 #: ../plugins/gtkui/plcommon.c:392
 msgid "Remove from disk"
-msgstr "Eliminar archivo del disco duro"
+msgstr "Verwijder van schijf"
 
 #: ../plugins/gtkui/plcommon.c:616 ../plugins/gtkui/plcommon.c:741
 msgid "Add column"
-msgstr "Añadir columna"
+msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:646 ../plugins/gtkui/plcommon.c:745
 msgid "Edit column"
-msgstr "Editar columna"
+msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:749
 msgid "Remove column"
-msgstr "Quitar columna"
+msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:759
 msgid "Group by"
-msgstr "Agrupar por"
+msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:766
 msgid "None"
-msgstr "Nada"
+msgstr "Geen"
 
 #: ../plugins/gtkui/plcommon.c:770
 msgid "Artist/Date/Album"
