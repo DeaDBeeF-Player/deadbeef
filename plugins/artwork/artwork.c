@@ -159,11 +159,6 @@ check_dir (const char *dir, mode_t mode)
 static int
 copy_file (const char *in, const char *out) {
     trace ("copying %s to %s\n", in, out);
-    char *buf = malloc (BUFFER_SIZE);
-    if (!buf) {
-        trace ("artwork: failed to alloc %d bytes\n", BUFFER_SIZE);
-        return -1;
-    }
     FILE *fin = fopen (in, "rb");
     if (!fin) {
         trace ("artwork: failed to open file %s for reading\n", in);
@@ -173,6 +168,13 @@ copy_file (const char *in, const char *out) {
     if (!fout) {
         fclose (fin);
         trace ("artwork: failed to open file %s for writing\n", out);
+        return -1;
+    }
+    char *buf = malloc (BUFFER_SIZE);
+    if (!buf) {
+        trace ("artwork: failed to alloc %d bytes\n", BUFFER_SIZE);
+        fclose (fin);
+        fclose (fout);
         return -1;
     }
 
