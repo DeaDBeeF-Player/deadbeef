@@ -176,14 +176,14 @@ trkproperties_fill_metadata (void) {
     gtk_list_store_set (propstore, &iter, 0, "Embedded Cuesheet", 1, (deadbeef->pl_get_item_flags (track) & DDB_HAS_EMBEDDED_CUESHEET) ? "Yes" : "No", -1);
 
     gtk_list_store_append (propstore, &iter);
-    snprintf (temp, sizeof (temp), "%0.2f dB", amp_to_db (track->replaygain_album_gain));
+    snprintf (temp, sizeof (temp), "%0.2f dB", track->replaygain_album_gain);
     gtk_list_store_set (propstore, &iter, 0, "REPLAYGAIN_ALBUM_GAIN", 1, temp, -1);
     gtk_list_store_append (propstore, &iter);
     snprintf (temp, sizeof (temp), "%0.6f", track->replaygain_album_peak);
     gtk_list_store_set (propstore, &iter, 0, "REPLAYGAIN_ALBUM_PEAK", 1, temp, -1);
 
     gtk_list_store_append (propstore, &iter);
-    snprintf (temp, sizeof (temp), "%0.2f dB", amp_to_db (track->replaygain_track_gain));
+    snprintf (temp, sizeof (temp), "%0.2f dB", track->replaygain_track_gain);
     gtk_list_store_set (propstore, &iter, 0, "REPLAYGAIN_TRACK_GAIN", 1, temp, -1);
     gtk_list_store_append (propstore, &iter);
     snprintf (temp, sizeof (temp), "%0.6f", track->replaygain_track_peak);
