@@ -837,32 +837,32 @@ msgstr "Nada"
 
 #: ../plugins/gtkui/plcommon.c:770
 msgid "Artist/Date/Album"
-msgstr "Artista/Fecha/Álbum"
+msgstr "Artiest/Datum/Album"
 
 #: ../plugins/gtkui/pluginconf.c:41
 msgid "Open file..."
-msgstr "Abrir archivo..."
+msgstr "Open bestand.."
 
 #: ../plugins/gtkui/pluginconf.c:139
 #, c-format
 msgid "Setup %s"
-msgstr "Configurar %s"
+msgstr "Configuratie %s"
 
 #: ../plugins/gtkui/prefwin.c:98
 msgid "Default Audio Device"
-msgstr "Dispositivo de Audio por Defecto"
+msgstr "Standaard Geluids Apparaat"
 
 #: ../plugins/gtkui/prefwin.c:267
 msgid "Add"
-msgstr "Añadir"
+msgstr "Toevoegen"
 
 #: ../plugins/gtkui/prefwin.c:277
 msgid "Global Hotkeys"
-msgstr "Teclas Rápidas Globales"
+msgstr ""
 
 #: ../plugins/gtkui/prefwin.c:332
 msgid "Slot"
-msgstr "Comando"
+msgstr ""
 
 #: ../plugins/gtkui/prefwin.c:333
 msgid "Key combination"
