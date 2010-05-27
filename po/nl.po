@@ -100,46 +100,46 @@ msgstr ""
 
 #: ../plugins/gtkui/eq.c:292
 msgid "Enable"
-msgstr "Activar"
+msgstr "Inschakelen"
 
 #: ../plugins/gtkui/eq.c:299
 msgid "Zero All"
-msgstr "Resetear Todo"
+msgstr ""
 
 #: ../plugins/gtkui/eq.c:306
 msgid "Zero Preamp"
-msgstr "Resetear Preamp"
+msgstr ""
 
 #: ../plugins/gtkui/eq.c:313
 msgid "Zero Bands"
-msgstr "Resetear Bandas"
+msgstr ""
 
 #: ../plugins/gtkui/eq.c:320
 msgid "Save Preset"
-msgstr "Guardar Ajustes"
+msgstr ""
 
 #: ../plugins/gtkui/eq.c:327
 msgid "Load Preset"
-msgstr "Cargar Ajustes"
+msgstr ""
 
 #: ../plugins/gtkui/eq.c:334
 msgid "Import Foobar2000 Preset"
-msgstr "Importar de Foobar2000"
+msgstr ""
 
 #: ../plugins/gtkui/gtkui.c:128
 #, c-format
 msgid "1 day %d:%02d:%02d"
-msgstr "1 día y %d:%02d:%02d"
+msgstr "1 dag %d:%02d:%02d"
 
 #: ../plugins/gtkui/gtkui.c:131
 #, c-format
 msgid "%d days %d:%02d:%02d"
-msgstr "%d días y %d:%02d:%02d"
+msgstr "%d dagen %d:%02d:%02d"
 
 #: ../plugins/gtkui/gtkui.c:140
 #, c-format
 msgid "Stopped | %d tracks | %s total playtime"
-msgstr "Parado | %d pistas | Tiempo total: %s "
+msgstr "Gestopt | %d titels | %s totale speeltijd"
 
 #: ../plugins/gtkui/gtkui.c:150
 msgid "Mono"
@@ -147,7 +147,7 @@ msgstr "Mono"
 
 #: ../plugins/gtkui/gtkui.c:150
 msgid "Stereo"
-msgstr "Estéreo"
+msgstr "Stereo"
 
 #: ../plugins/gtkui/gtkui.c:170
 #, c-format
@@ -156,41 +156,41 @@ msgstr "| %4d kbps "
 
 #: ../plugins/gtkui/gtkui.c:176
 msgid "Paused | "
-msgstr "Pausado | "
+msgstr "Gepauzeerd | "
 
 #: ../plugins/gtkui/gtkui.c:177
 #, c-format
 msgid "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
-msgstr "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d pistas | Tiempo total: %s"
+msgstr "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d titels | %s totale speeltijd"
 
 #: ../plugins/gtkui/gtkui.c:533
 msgid "Save Playlist As"
-msgstr "Guardar Lista de Reproducción Como..."
+msgstr "Afspeellijst opslaan als"
 
 #: ../plugins/gtkui/gtkui.c:542 ../plugins/gtkui/gtkui.c:603
 msgid "DeaDBeeF playlist files (*.dbpl)"
-msgstr "Listas de reproducción de DeaDBeeF (*.dbpl)"
+msgstr "DeaDBeeF afspeellijst bestand (*.dbpl)"
 
 #: ../plugins/gtkui/gtkui.c:596
 msgid "Load Playlist"
-msgstr "Cargar Lista de Reproducción"
+msgstr "Afspeellijst laden"
 
 #: ../plugins/gtkui/gtkui.c:741
 msgid "New Playlist"
-msgstr "Lista de Reproducción"
+msgstr "Nieuwe afspeellijst"
 
 #: ../plugins/gtkui/gtkui.c:744
 #, c-format
 msgid "New Playlist (%d)"
-msgstr "Lista de Reproducción (%d)"
+msgstr "Nieuwe afspeellijst (%d)"
 
 #: ../plugins/gtkui/interface.c:140
 msgid "_File"
-msgstr "_Archivo"
+msgstr "_Bestand"
 
 #: ../plugins/gtkui/interface.c:147
 msgid "_Open file(s)"
-msgstr "_Abrir archivo(s)"
+msgstr "_Open bestand(en)"
 
 #: ../plugins/gtkui/interface.c:163
 msgid "Add file(s)"
@@ -255,7 +255,7 @@ msgstr "Selección"
 #: ../plugins/gtkui/interface.c:271 ../plugins/gtkui/plcommon.c:387
 #: ../plugins/gtkui/prefwin.c:272
 msgid "Remove"
-msgstr "Quitar"
+msgstr "Verwijder"
 
 #: ../plugins/gtkui/interface.c:279
 msgid "Crop"
