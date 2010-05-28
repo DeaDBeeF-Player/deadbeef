@@ -467,7 +467,7 @@ msgstr "Titel"
 
 #: ../plugins/gtkui/interface.c:1424
 msgid "Length"
-msgstr "Speelduur"
+msgstr "Lengte"
 
 #: ../plugins/gtkui/interface.c:1425 ../plugins/gtkui/interface.c:1794
 msgid "Track"
