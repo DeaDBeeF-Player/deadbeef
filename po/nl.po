@@ -623,7 +623,7 @@ msgstr "Geselecteerde text"
 
 #: ../plugins/gtkui/interface.c:2015
 msgid "Cursor"
-msgstr "Cursor"
+msgstr "Muisaanwijzer"
 
 #: ../plugins/gtkui/interface.c:2028
 msgid "Playlist colors"
