@@ -540,12 +540,18 @@ plt_move (int from, int to) {
         PLT_UNLOCK;
         return;
     }
-    trace ("move %s->%s\n", path1, temp);
-    int err = rename (path1, temp);
-    if (err != 0) {
-        fprintf (stderr, "playlist rename %s->%s failed: %s\n", path1, temp, strerror (errno));
-        PLT_UNLOCK;
-        return;
+
+    struct stat st;
+    int err = stat (path1, &st);
+    if (!err) {
+        trace ("move %s->%s\n", path1, temp);
+
+        int err = rename (path1, temp);
+        if (err != 0) {
+            fprintf (stderr, "playlist rename %s->%s failed: %s\n", path1, temp, strerror (errno));
+            PLT_UNLOCK;
+            return;
+        }
     }
 
     // remove 'from' from list
@@ -576,10 +582,13 @@ plt_move (int from, int to) {
             fprintf (stderr, "error: failed to make path string for playlist file\n");
             continue;
         }
-        trace ("move %s->%s\n", path2, path1);
-        int err = rename (path2, path1);
-        if (err != 0) {
-            fprintf (stderr, "playlist rename %s->%s failed: %s\n", path2, path1, strerror (errno));
+        int err = stat (path2, &st);
+        if (!err) {
+            trace ("move %s->%s\n", path2, path1);
+            int err = rename (path2, path1);
+            if (err != 0) {
+                fprintf (stderr, "playlist rename %s->%s failed: %s\n", path2, path1, strerror (errno));
+            }
         }
     }
     // open new gap
@@ -594,10 +603,13 @@ plt_move (int from, int to) {
             fprintf (stderr, "error: failed to make path string for playlist file\n");
             continue;
         }
-        trace ("move %s->%s\n", path1, path2);
-        int err = rename (path1, path2);
-        if (err != 0) {
-            fprintf (stderr, "playlist rename %s->%s failed: %s\n", path1, path2, strerror (errno));
+        int err = stat (path1, &st);
+        if (!err) {
+            trace ("move %s->%s\n", path1, path2);
+            int err = rename (path1, path2);
+            if (err != 0) {
+                fprintf (stderr, "playlist rename %s->%s failed: %s\n", path1, path2, strerror (errno));
+            }
         }
     }
     // move temp file
@@ -605,10 +617,13 @@ plt_move (int from, int to) {
         fprintf (stderr, "error: failed to make path string for playlist file\n");
     }
     else {
-        trace ("move %s->%s\n", temp, path1);
-        int err = rename (temp, path1);
-        if (err != 0) {
-            fprintf (stderr, "playlist rename %s->%s failed: %s\n", temp, path1, strerror (errno));
+        int err = stat (path1, &st);
+        if (!err) {
+            trace ("move %s->%s\n", temp, path1);
+            int err = rename (temp, path1);
+            if (err != 0) {
+                fprintf (stderr, "playlist rename %s->%s failed: %s\n", temp, path1, strerror (errno));
+            }
         }
     }
 
