@@ -1140,22 +1140,22 @@ apply_replay_gain_int16 (playItem_t *it, char *bytes, int size) {
         if (it->replaygain_track_gain == 0) {
             return;
         }
+        vol = db_to_amp (streaming_track->replaygain_track_gain) * 1000;
         if (conf_replaygain_scale && replaygain_scale) {
-            vol = db_to_amp (streaming_track->replaygain_track_gain)/streaming_track->replaygain_track_peak * 1000;
-        }
-        else {
-            vol = db_to_amp (streaming_track->replaygain_track_gain) * 1000;
+            if (vol * streaming_track->replaygain_track_peak > 1000) {
+                vol = 1000 / streaming_track->replaygain_track_peak;
+            }
         }
     }
     else if (conf_replaygain_mode == 2) {
         if (it->replaygain_album_gain == 0) {
             return;
         }
+        vol = db_to_amp (streaming_track->replaygain_album_gain) * 1000;
         if (conf_replaygain_scale && replaygain_scale) {
-            vol = db_to_amp (streaming_track->replaygain_album_gain)/streaming_track->replaygain_album_peak * 1000;
-        }
-        else {
-            vol = db_to_amp (streaming_track->replaygain_album_gain) * 1000;
+            if (vol * streaming_track->replaygain_album_peak > 1000) {
+                vol = 1000 / streaming_track->replaygain_album_peak;
+            }
         }
     }
     int16_t *s = (int16_t*)bytes;
@@ -1182,22 +1182,22 @@ apply_replay_gain_float32 (playItem_t *it, char *bytes, int size) {
         if (it->replaygain_track_gain == 0) {
             return;
         }
+        vol = db_to_amp (it->replaygain_track_gain);
         if (conf_replaygain_scale && replaygain_scale) {
-            vol = db_to_amp (it->replaygain_track_gain)/it->replaygain_track_peak;
-        }
-        else {
-            vol = db_to_amp (it->replaygain_track_gain);
+            if (vol * it->replaygain_track_peak > 1.f) {
+                vol = 1.f / it->replaygain_track_peak;
+            }
         }
     }
     else if (conf_replaygain_mode == 2) {
         if (it->replaygain_album_gain == 0) {
             return;
         }
+        vol = db_to_amp (it->replaygain_album_gain);
         if (conf_replaygain_scale && replaygain_scale) {
-            vol = db_to_amp (it->replaygain_album_gain)/it->replaygain_album_peak;
-        }
-        else {
-            vol = db_to_amp (it->replaygain_album_gain);
+            if (vol * it->replaygain_album_peak > 1.f) {
+                vol = 1.f / it->replaygain_album_peak;
+            }
         }
     }
     float *s = (float*)bytes;

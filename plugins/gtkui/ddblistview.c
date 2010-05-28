@@ -72,8 +72,8 @@ typedef struct _DdbListviewColumn DdbListviewColumn;
 
 struct _DdbListviewGroup {
     DdbListviewIter head;
-    uint32_t height;
-    uint32_t num_items;
+    int32_t height;
+    int32_t num_items;
     struct _DdbListviewGroup *next;
 };
 typedef struct _DdbListviewGroup DdbListviewGroup;
@@ -302,6 +302,7 @@ ddb_listview_init(DdbListview *listview)
 //    listview->areaselect_dx = -1;
 //    listview->areaselect_dy = -1;
     listview->dragwait = 0;
+    listview->drag_source_playlist = -1;
     listview->shift_sel_anchor = -1;
 
     listview->header_dragging = -1;
@@ -718,12 +719,33 @@ ddb_listview_list_expose_event               (GtkWidget       *widget,
     return FALSE;
 }
 
+static void
+ddb_listview_draw_dnd_marker (DdbListview *ps) {
+    if (ps->drag_motion_y < 0) {
+        return;
+    }
+    int drag_motion_y = ps->drag_motion_y - ps->scrollpos;
+
+    GtkWidget *widget = ps->list;
+    GdkColor clr;
+    gtkui_get_listview_cursor_color (&clr);
+    GdkGC *gc = gdk_gc_new (widget->window);
+    gdk_gc_set_rgb_fg_color (gc, &clr);
+    gdk_draw_rectangle (widget->window, gc, TRUE, 0, drag_motion_y-1, widget->allocation.width, 3);
+    gdk_draw_rectangle (widget->window, gc, TRUE, 0, drag_motion_y-3, 3, 7);
+    gdk_draw_rectangle (widget->window, gc, TRUE, widget->allocation.width-3, drag_motion_y-3, 3, 7);
+    g_object_unref (gc);
+
+}
+
 void
 ddb_listview_list_expose (DdbListview *listview, int x, int y, int w, int h) {
-//    printf ("listview height: %d\n", listview->list->allocation.height);
     GtkWidget *widget = listview->list;
     if (widget->window && listview->backbuf) {
         draw_drawable (widget->window, widget->style->black_gc, listview->backbuf, x, y, x, y, w, h);
+    }
+    if (listview->drag_motion_y >= 0 && listview->drag_motion_y-listview->scrollpos-3 < y+h && listview->drag_motion_y-listview->scrollpos+3 >= y) {
+        ddb_listview_draw_dnd_marker (listview);
     }
 }
 
@@ -1952,8 +1974,12 @@ ddb_listview_list_track_dragdrop (DdbListview *ps, int y) {
     GtkWidget *widget = ps->list;
     if (ps->drag_motion_y != -1) {
         // erase previous track
-        draw_drawable (widget->window, widget->style->black_gc, ps->backbuf, 0, ps->drag_motion_y-3, 0, ps->drag_motion_y-3, widget->allocation.width, 7);
+        draw_drawable (widget->window, widget->style->black_gc, ps->backbuf, 0, ps->drag_motion_y-3-ps->scrollpos, 0, ps->drag_motion_y-ps->scrollpos-3, widget->allocation.width, 7);
 
+    }
+    if (y == -1) {
+        ps->drag_motion_y = -1;
+        return;
     }
     int sel = ddb_listview_dragdrop_get_row_from_coord (ps, y);
     if (sel == -1) {
@@ -1961,22 +1987,16 @@ ddb_listview_list_track_dragdrop (DdbListview *ps, int y) {
             ps->drag_motion_y = 0;
         }
         else {
-            ps->drag_motion_y = ddb_listview_get_row_pos (ps, ps->binding->count ()-1) - ps->scrollpos + ps->rowheight;
+            // after last row
+            ps->drag_motion_y = ddb_listview_get_row_pos (ps, ps->binding->count ()-1) + ps->rowheight;
         }
     }
     else {
-        ps->drag_motion_y = ddb_listview_get_row_pos (ps, sel) - ps->scrollpos;
+        ps->drag_motion_y = ddb_listview_get_row_pos (ps, sel);
     }
 
-    GdkColor clr;
-    gtkui_get_listview_cursor_color (&clr);
-    GdkGC *gc = gdk_gc_new (widget->window);
-    gdk_gc_set_rgb_fg_color (gc, &clr);
-    gdk_draw_rectangle (widget->window, gc, TRUE, 0, ps->drag_motion_y-1, widget->allocation.width, 3);
-    gdk_draw_rectangle (widget->window, gc, TRUE, 0, ps->drag_motion_y-3, 3, 7);
-    gdk_draw_rectangle (widget->window, gc, TRUE, widget->allocation.width-3, ps->drag_motion_y-3, 3, 7);
-    g_object_unref (gc);
-
+    ddb_listview_draw_dnd_marker (ps);
+    
     if (y < 10) {
         ps->scroll_pointer_y = y;
         ps->scroll_mode = 1;

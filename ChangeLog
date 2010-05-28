@@ -1,26 +1,36 @@
 version 0.4.1
-	fixed search window size
-	better tag reader in ffmpeg plugin + reload metadata support
+	better default/minimal search window size
+	improved tag reader in ffmpeg plugin + reload metadata support
 	fixed EQ drawing unwanted current value at initialization
 	allow editing previous custom grouping value
 	increased sort speed
-	fixed alsa and oss plugins writing zero samples at start of tracks
+	fixed alsa and oss plugins writing zero samples at start of tracks (TheMaister)
 	fixed recover from suspend in alsa plugin
 	fixed md5 structure buffer overflow
-	added support for gtk3 (2.90), enabled with --enable-gtk3
-	improved oss plugin responsiveness on pause
+	added experimental support for gtk3 (2.90), enabled with --enable-gtk3
+	improved oss plugin responsiveness on pause (TheMaister)
 	fixed vfs_curl crashing randomly when loading album art
 	ignore currently paused song when opening new file(s) from commandline
 	fixed playlist moving bugs
 	fixed memory leaks in id3v2 parser
 	increased maximum limit on id3v2 APIC frame size to 2MiB
-	added cd text support
+	added cd text support (Viktor Semykin)
 	fixed wavpack crash on corrupted files
 	fixed random crash when using File -> Open
 	added remember/restore current folder in playlist save/load dialogs
 	fixed reversing track order after drag-n-drop
 	fixed "Loop single file" mode after track was moved or deleted
 	removed apply button from Global Hotkeys preferences window
+	fixed FLAC bitrate calculation
+	fixed ID3v2 "extra size" field parser
+	fixed memory leaks in vorbis plugin
+	fixed several crash-bugs in mp3 plugin
+	fixed known bugs in album artwork code
+	added automatic backtrace printing on SIGSEGV
+	added multi-track vorbis files support
+	added %C(composer) expansion to title formatting
+	fixed few theming/colors issues
+	fixed replaygain field parsing when reading cuesheets and r.g. peak scale handling (David Bryant)
 
 version 0.4.0
 	multiple tabbed playlists
