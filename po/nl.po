@@ -194,204 +194,204 @@ msgstr "_Open bestand(en)"
 
 #: ../plugins/gtkui/interface.c:163
 msgid "Add file(s)"
-msgstr "Añadir archivo(s)"
+msgstr "Voeg bestand(en) toe"
 
 #: ../plugins/gtkui/interface.c:171
 msgid "Add folder(s)"
-msgstr "Añadir carpeta(s)"
+msgstr "Voeg map(pen) toe"
 
 #: ../plugins/gtkui/interface.c:179
 msgid "Add Audio CD"
-msgstr "Añadir CD de audio"
+msgstr "Voeg Audio CD toe"
 
 #: ../plugins/gtkui/interface.c:187 ../plugins/gtkui/interface.c:2870
 msgid "Add location"
-msgstr "Añadir dirección"
+msgstr "Voeg locatie toe"
 
 #: ../plugins/gtkui/interface.c:196
 msgid "New playlist"
-msgstr "Nueva lista de reproducción"
+msgstr "Nieuwe afspeellijst"
 
 #: ../plugins/gtkui/interface.c:203
 msgid "Load playlist"
-msgstr "Cargar lista de reproducción"
+msgstr "Laad afspeellijst"
 
 #: ../plugins/gtkui/interface.c:207
 msgid "Save playlist"
-msgstr "Guardar lista de reproducción"
+msgstr "Afspeellijst opslaan"
 
 #: ../plugins/gtkui/interface.c:211
 msgid "Save playlist as"
-msgstr "Guardar lista de reproducción como..."
+msgstr "Afspeellijst opslaan als.."
 
 #: ../plugins/gtkui/interface.c:220
 msgid "_Quit"
-msgstr "_Salir"
+msgstr "_Afsluiten"
 
 #: ../plugins/gtkui/interface.c:231
 msgid "_Edit"
-msgstr "_Editar"
+msgstr "_Bewerken"
 
 #: ../plugins/gtkui/interface.c:238
 msgid "_Clear"
-msgstr "_Limpiar"
+msgstr "_Wissen"
 
 #: ../plugins/gtkui/interface.c:246
 msgid "Select all"
-msgstr "Seleccionar todo"
+msgstr "Selecteer alles"
 
 #: ../plugins/gtkui/interface.c:253
 msgid "Deselect all"
-msgstr "Deseleccionar todo"
+msgstr "Deselecteer alles"
 
 #: ../plugins/gtkui/interface.c:260
 msgid "Invert selection"
-msgstr "Invertir selección"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:264
 msgid "Selection"
-msgstr "Selección"
+msgstr "Selectie"
 
 #: ../plugins/gtkui/interface.c:271 ../plugins/gtkui/plcommon.c:387
 #: ../plugins/gtkui/prefwin.c:272
 msgid "Remove"
-msgstr "Verwijder"
+msgstr "Verwijderen"
 
 #: ../plugins/gtkui/interface.c:279
 msgid "Crop"
-msgstr "Cortar"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:283
 msgid "_Find"
-msgstr "_Buscar"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:295 ../plugins/gtkui/interface.c:1706
 msgid "Preferences"
-msgstr "Preferencias"
+msgstr "Voorkeuren"
 
 #: ../plugins/gtkui/interface.c:299
 msgid "_View"
-msgstr "_Ver"
+msgstr "_Beeld"
 
 #: ../plugins/gtkui/interface.c:306
 msgid "Status bar"
-msgstr "Barra de estado"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:310
 msgid "Column headers"
-msgstr "Cabeceras de columnas"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:314
 msgid "Tabs"
-msgstr "Pestañas"
+msgstr "Tabbladen"
 
 #: ../plugins/gtkui/interface.c:318
 msgid "Equalizer"
-msgstr "Ecualizador"
+msgstr "Equalizer"
 
 #: ../plugins/gtkui/interface.c:322
 msgid "_Playback"
-msgstr "_Reproducción"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:329
 msgid "Order"
-msgstr "Orden"
+msgstr "Ordenen"
 
 #: ../plugins/gtkui/interface.c:336
 msgid "Linear"
-msgstr "Lineal"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:342
 msgid "Shuffle"
-msgstr "Barajar"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:348
 msgid "Random"
-msgstr "Aleatorio"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:354
 msgid "Looping"
-msgstr "Repetir"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:361
 msgid "Loop All"
-msgstr "Repetir Todo"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:367
 msgid "Loop Single Song"
-msgstr "Repetir Una Canción"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:373
 msgid "Don't Loop"
-msgstr "No Repetir"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:379
 msgid "Scroll follows playback"
-msgstr "Desplazar al cambiar de pista"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:384
 msgid "Cursor follows playback"
-msgstr "Seleccionar al cambiar de pista"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:388
 msgid "Stop after current"
-msgstr "Parar al terminar la pista actual"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:395 ../plugins/gtkui/interface.c:402
 msgid "_Help"
-msgstr "_Ayuda"
+msgstr "_Help"
 
 #: ../plugins/gtkui/interface.c:410
 msgid "_ChangeLog"
-msgstr "_Cambios"
+msgstr "_ChangeLog"
 
 #: ../plugins/gtkui/interface.c:432
 msgid "_About"
-msgstr "_Acerca de"
+msgstr "_Over"
 
 #: ../plugins/gtkui/interface.c:816
 msgid "Search"
-msgstr "Buscar"
+msgstr "Zoeken"
 
 #: ../plugins/gtkui/interface.c:891
 msgid "Stop"
-msgstr "Parar"
+msgstr "Stoppen"
 
 #: ../plugins/gtkui/interface.c:899
 msgid "Play"
-msgstr "Reproducir"
+msgstr "Afspelen"
 
 #: ../plugins/gtkui/interface.c:907
 msgid "Pause"
-msgstr "Pausar"
+msgstr "Pauzeren"
 
 #: ../plugins/gtkui/interface.c:915
 msgid "Previous"
-msgstr "Anterior"
+msgstr "Vorige"
 
 #: ../plugins/gtkui/interface.c:923
 msgid "Next"
-msgstr "Siguiente"
+msgstr "Volgende"
 
 #: ../plugins/gtkui/interface.c:931
 msgid "Play Random"
-msgstr "Aleatorio"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:940
 msgid "About"
-msgstr "Acerca de"
+msgstr "Over"
 
 #: ../plugins/gtkui/interface.c:953
 msgid "Quit"
-msgstr "Salir"
+msgstr "Afsluiten"
 
 #: ../plugins/gtkui/interface.c:1025
 msgid "Adding files..."
-msgstr "Añadiendo archivos..."
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1069
 msgid "_Abort"
-msgstr "_Abortar"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1170
 msgid "Track Properties"
