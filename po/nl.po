@@ -395,32 +395,30 @@ msgstr "_Abortar"
 
 #: ../plugins/gtkui/interface.c:1170
 msgid "Track Properties"
-msgstr "Propiedades de la Pista"
+msgstr "Titel eigenschappen"
 
 #: ../plugins/gtkui/interface.c:1194
 msgid ""
 "<b>WARNING</b>: tag writing feature is still in development.\n"
 "<b>Make backup copies</b> before using."
 msgstr ""
-"<b>AVISO</b>: la edición de etiquetas está aún en desarrollo.\n"
-"<b>Haz copias de seguridad</b> antes de intentarlo."
 
 #: ../plugins/gtkui/interface.c:1221
 msgid "_Apply"
-msgstr "_Aplicar"
+msgstr "_Toepassen"
 
 #: ../plugins/gtkui/interface.c:1242 ../plugins/gtkui/interface.c:1288
 #: ../plugins/gtkui/interface.c:2436
 msgid "_Close"
-msgstr "_Cerrar"
+msgstr "_Sluiten"
 
 #: ../plugins/gtkui/interface.c:1246
 msgid "Metadata"
-msgstr "Metadatos"
+msgstr "Metadata"
 
 #: ../plugins/gtkui/interface.c:1292 ../plugins/gtkui/plcommon.c:402
 msgid "Properties"
-msgstr "Propiedades"
+msgstr "Eigenschappen"
 
 #: ../plugins/gtkui/interface.c:1378
 msgid "editcolumndlg"
@@ -428,76 +426,76 @@ msgstr "editcolumndlg"
 
 #: ../plugins/gtkui/interface.c:1393 ../plugins/gtkui/interface.c:2770
 msgid "Title:"
-msgstr "Título:"
+msgstr "Titel:"
 
 #: ../plugins/gtkui/interface.c:1401
 msgid "Enter new column title here"
-msgstr "Introduce el título de la columna"
+msgstr "Voer een nieuwe column titel in"
 
 #: ../plugins/gtkui/interface.c:1409
 msgid "Type:"
-msgstr "Tipo:"
+msgstr "Type:"
 
 #: ../plugins/gtkui/interface.c:1417
 msgid "File number"
-msgstr "Número de archivo"
+msgstr ""
 
 #. create default set of columns
 #: ../plugins/gtkui/interface.c:1418 ../plugins/gtkui/mainplaylist.c:297
 msgid "Playing"
-msgstr "Reproduciendo"
+msgstr "Aan het afspelen"
 
 #: ../plugins/gtkui/interface.c:1419
 msgid "Album Art"
-msgstr "Portada"
+msgstr "Albumhoes"
 
 #: ../plugins/gtkui/interface.c:1420
 msgid "Artist - Album"
-msgstr "Artista - Álbum"
+msgstr "Artiest - Album"
 
 #: ../plugins/gtkui/interface.c:1421 ../plugins/gtkui/plcommon.c:774
 msgid "Artist"
-msgstr "Artista"
+msgstr "Artiest"
 
 #: ../plugins/gtkui/interface.c:1422 ../plugins/gtkui/interface.c:1795
 msgid "Album"
-msgstr "Álbum"
+msgstr "Album"
 
 #: ../plugins/gtkui/interface.c:1423 ../plugins/gtkui/prefwin.c:488
 msgid "Title"
-msgstr "Título"
+msgstr "Titel"
 
 #: ../plugins/gtkui/interface.c:1424
 msgid "Length"
-msgstr "Duración"
+msgstr "Speelduur"
 
 #: ../plugins/gtkui/interface.c:1425 ../plugins/gtkui/interface.c:1794
 msgid "Track"
-msgstr "Pista"
+msgstr "Titel"
 
 #: ../plugins/gtkui/interface.c:1426
 msgid "Band / Album Artist"
-msgstr "Grupo / Artista"
+msgstr "Band / Album Artiest"
 
 #: ../plugins/gtkui/interface.c:1427 ../plugins/gtkui/plcommon.c:778
 msgid "Custom"
-msgstr "Personalizado"
+msgstr "Aangepast"
 
 #: ../plugins/gtkui/interface.c:1433 ../plugins/gtkui/interface.c:2997
 msgid "Format:"
-msgstr "Formato:"
+msgstr "Formaat:"
 
 #: ../plugins/gtkui/interface.c:1448
 msgid "Alignment:"
-msgstr "Alineación:"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1456
 msgid "Left"
-msgstr "Izquierda"
+msgstr "Links"
 
 #: ../plugins/gtkui/interface.c:1457
 msgid "Right"
-msgstr "Derecha"
+msgstr "Rechts"
 
 #: ../plugins/gtkui/interface.c:1459 ../plugins/gtkui/interface.c:3007
 msgid ""
@@ -512,12 +510,12 @@ msgstr ""
 #: ../plugins/gtkui/interface.c:1488 ../plugins/gtkui/interface.c:2801
 #: ../plugins/gtkui/interface.c:2913 ../plugins/gtkui/interface.c:3036
 msgid "_Cancel"
-msgstr "_Cancelar"
+msgstr "_Annuleer"
 
 #: ../plugins/gtkui/interface.c:1509 ../plugins/gtkui/interface.c:2822
 #: ../plugins/gtkui/interface.c:2934 ../plugins/gtkui/interface.c:3057
 msgid "_OK"
-msgstr "_Aceptar"
+msgstr "_Accepteer"
 
 #: ../plugins/gtkui/interface.c:1726
 msgid "Output plugin:"
