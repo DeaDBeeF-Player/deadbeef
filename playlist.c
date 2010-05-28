@@ -302,20 +302,13 @@ plt_add (int before, const char *title) {
                     fprintf (stderr, "playlist rename failed: %s\n", strerror (errno));
                 }
             }
-#if 0
-            // need to delete old playlist file if exists
-            char path[PATH_MAX];
-            if (snprintf (path, sizeof (path), "%s/playlists/%d.dbpl", dbconfdir, playlists_count-1) <= sizeof (path)) {
-                unlink (path);
-            }
-#endif
-            pl_save_current ();
         }
     }
     PLT_UNLOCK;
 
     plt_gen_conf ();
     if (!plt_loading) {
+        pl_save_n (before);
         deadbeef->conf_save ();
         plug_trigger_event (DB_EV_PLAYLISTSWITCH, 0);
     }
@@ -539,16 +532,19 @@ plt_move (int from, int to) {
     char temp[PATH_MAX];
     if (snprintf (path1, sizeof (path1), "%s/playlists/%d.dbpl", dbconfdir, from) > sizeof (path1)) {
         fprintf (stderr, "error: failed to make path string for playlist file\n");
+        PLT_UNLOCK;
         return;
     }
     if (snprintf (temp, sizeof (temp), "%s/playlists/temp.dbpl", dbconfdir) > sizeof (temp)) {
         fprintf (stderr, "error: failed to make path string for playlist file\n");
+        PLT_UNLOCK;
         return;
     }
     trace ("move %s->%s\n", path1, temp);
     int err = rename (path1, temp);
     if (err != 0) {
         fprintf (stderr, "playlist rename %s->%s failed: %s\n", path1, temp, strerror (errno));
+        PLT_UNLOCK;
         return;
     }
 
@@ -1927,7 +1923,7 @@ save_fail:
 }
 
 int
-pl_save_current (void) {
+pl_save_n (int n) {
     char path[PATH_MAX];
     if (snprintf (path, sizeof (path), "%s/playlists", dbconfdir) > sizeof (path)) {
         fprintf (stderr, "error: failed to make path string for playlists folder\n");
@@ -1937,11 +1933,10 @@ pl_save_current (void) {
     mkdir (path, 0755);
 
     PLT_LOCK;
-    int curr = plt_get_curr ();
     int err = 0;
 
     plt_loading = 1;
-    if (snprintf (path, sizeof (path), "%s/playlists/%d.dbpl", dbconfdir, curr) > sizeof (path)) {
+    if (snprintf (path, sizeof (path), "%s/playlists/%d.dbpl", dbconfdir, n) > sizeof (path)) {
         fprintf (stderr, "error: failed to make path string for playlist file\n");
         PLT_UNLOCK;
         return -1;
@@ -1950,6 +1945,11 @@ pl_save_current (void) {
     plt_loading = 0;
     PLT_UNLOCK;
     return err;
+}
+
+int
+pl_save_current (void) {
+    return pl_save_n (plt_get_curr ());
 }
 
 int
