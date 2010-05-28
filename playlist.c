@@ -2229,10 +2229,13 @@ pl_load_all (void) {
         }
         else {
             fprintf (stderr, "INFO: from file %s\n", path);
-            err = pl_load (path);
+            int load_err = pl_load (path);
+            if (load_err != 0) {
+                fprintf (stderr, "WARNING: failed to load playlist '%s' (%s)\n", it->value, path);
+            }
         }
         it = conf_find ("playlist.tab.", it);
-        fprintf (stderr, "conf_find returned %p\n", it);
+        trace ("conf_find returned %p (%s)\n", it, it ? it->value : "null");
         i++;
     }
     plt_set_curr (0);
