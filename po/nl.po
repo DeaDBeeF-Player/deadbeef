@@ -587,55 +587,55 @@ msgstr "Frente"
 
 #: ../plugins/gtkui/interface.c:1843 ../plugins/gtkui/deadbeef.glade.h:14
 msgid "Background"
-msgstr "Fondo"
+msgstr "Achtergrond"
 
 #: ../plugins/gtkui/interface.c:1862 ../plugins/gtkui/deadbeef.glade.h:103
 msgid "Seekbar/Volumebar colors"
-msgstr "Colores de barras de tiempo/volumen"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1880 ../plugins/gtkui/deadbeef.glade.h:69
 msgid "Middle"
-msgstr "Medio"
+msgstr "Midden"
 
 #: ../plugins/gtkui/interface.c:1887 ../plugins/gtkui/deadbeef.glade.h:62
 msgid "Light"
-msgstr "Claro"
+msgstr "Licht"
 
 #: ../plugins/gtkui/interface.c:1894 ../plugins/gtkui/deadbeef.glade.h:22
 msgid "Dark"
-msgstr "Oscuro"
+msgstr "Donker"
 
 #: ../plugins/gtkui/interface.c:1925 ../plugins/gtkui/deadbeef.glade.h:15
 msgid "Base"
-msgstr "Base"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1932 ../plugins/gtkui/deadbeef.glade.h:117
 msgid "Tab strip colors"
-msgstr "Colores de pestañas"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1941 ../plugins/gtkui/deadbeef.glade.h:79
 msgid "Override (looses GTK treeview theming, but speeds up rendering)"
-msgstr "Cambiar (ignora el tema GTK, pero acelera el renderizado)"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1950 ../plugins/gtkui/deadbeef.glade.h:33
 msgid "Even row"
-msgstr "Fila par"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1957 ../plugins/gtkui/deadbeef.glade.h:74
 msgid "Odd row"
-msgstr "Fila impar"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1976 ../plugins/gtkui/deadbeef.glade.h:120
 msgid "Text"
-msgstr "Texto"
+msgstr "Text"
 
 #: ../plugins/gtkui/interface.c:1983 ../plugins/gtkui/deadbeef.glade.h:105
 msgid "Selected row"
-msgstr "Fila seleccionada"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:2002 ../plugins/gtkui/deadbeef.glade.h:106
 msgid "Selected text"
-msgstr "Texto Seleccionado"
+msgstr "Geselecteerde text"
 
 #: ../plugins/gtkui/interface.c:2015 ../plugins/gtkui/deadbeef.glade.h:20
 msgid "Cursor"
@@ -643,27 +643,27 @@ msgstr "Cursor"
 
 #: ../plugins/gtkui/interface.c:2028 ../plugins/gtkui/deadbeef.glade.h:83
 msgid "Playlist colors"
-msgstr "Colores de lista de reproducción"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:2032 ../plugins/gtkui/deadbeef.glade.h:54
 msgid "GUI"
-msgstr "Interfaz"
+msgstr "Interface"
 
 #: ../plugins/gtkui/interface.c:2041 ../plugins/gtkui/deadbeef.glade.h:30
 msgid "Enable Proxy Server"
-msgstr "Activar Servidor Proxy"
+msgstr "Schakel Proxy Server in"
 
 #: ../plugins/gtkui/interface.c:2049 ../plugins/gtkui/deadbeef.glade.h:89
 msgid "Proxy Server Address:"
-msgstr "Dirección:"
+msgstr "Proxy Server Adres:"
 
 #: ../plugins/gtkui/interface.c:2063 ../plugins/gtkui/deadbeef.glade.h:90
 msgid "Proxy Server Port:"
-msgstr "Puerto:"
+msgstr "Proxy Server Poort:"
 
 #: ../plugins/gtkui/interface.c:2077 ../plugins/gtkui/deadbeef.glade.h:91
 msgid "Proxy Type:"
-msgstr "Tipo:"
+msgstr "Proxy type"
 
 #: ../plugins/gtkui/interface.c:2096 ../plugins/gtkui/deadbeef.glade.h:92
 msgid "Proxy Username:"
