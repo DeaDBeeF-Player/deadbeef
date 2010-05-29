@@ -33,6 +33,7 @@ version 0.4.1
 	fixed replaygain field parsing when reading cuesheets and r.g. peak scale handling (David Bryant)
 	added support for WavPack correction files (David Bryant)
 	fixed loading of album art embedded in ID3v2
+	added MP4 file type to ffmpeg plugin
 
 version 0.4.0
 	multiple tabbed playlists
