@@ -35,12 +35,15 @@ Contributors:
         Global Hotkeys plugin, CD Audio plugin, Cover Art plugin, lots of patches and suggestions
     
     Alex Dedul <rotmer@gmail.com>
+    David Bryant <david@wavpack.com>
     Derreck <sarumyanxxl@users.sourceforge.net>
     Igor Murzov <igor@gplsoft.org>
     Igor Rudchenko <igor@thinkpads.net>
     Kryksyh <druid@foobar2000.ru>
     Serghey Kotlyarov <shadowsbrother@gmail.com>
+    Themaister <maister@archlinux.us>
     Veniamin Gvozdikov <g.veniamin@googlemail.com>
+
 
 
 Special Thanks To:

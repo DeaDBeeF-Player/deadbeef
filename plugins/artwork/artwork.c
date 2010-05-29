@@ -229,7 +229,7 @@ id3v2_skip_str (int enc, uint8_t *ptr, uint8_t *end) {
     }
     else {
         while (ptr < end-1 && (ptr[0] || ptr[1])) {
-            ptr++;
+            ptr += 2;
         }
         ptr += 2;
         if (ptr >= end) {
@@ -437,7 +437,7 @@ fetcher_thread (void *none)
 char*
 get_album_art (const char *fname, const char *artist, const char *album, artwork_callback callback, void *user_data)
 {
-    trace ("get_album_art: %s (%s - %s)\n", fname, artist, album);
+//    trace ("get_album_art: %s (%s - %s)\n", fname, artist, album);
     char path [1024];
 
     if (!album) {
