@@ -43,8 +43,8 @@
 #include "junklib.h"
 #include "vfs.h"
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 #ifndef PATH_MAX
 #define PATH_MAX    1024    /* max # of characters in a path name */
