@@ -55,7 +55,7 @@
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
 
-static const char * exts[] = { "m4a", "mpc", "mp+", "mpp", "wma", "shn", "aa3", "oma", "ac3", "vqf", "tta", NULL };
+static const char * exts[] = { "m4a", "mp4", "mpc", "mp+", "mpp", "wma", "shn", "aa3", "oma", "ac3", "vqf", "tta", NULL };
 
 enum {
     FT_AAC = 0,
@@ -518,6 +518,9 @@ ffmpeg_insert (DB_playItem_t *after, const char *fname) {
     }
 
     if (!strcasecmp (ext, "m4a")) {
+        filetype = filetypes[FT_M4A];
+    }
+    else if (!strcasecmp (ext, "mp4")) {
         filetype = filetypes[FT_M4A];
     }
     else if (!strcasecmp (ext, "mpc") || !strcasecmp (ext, "mp+") || !strcasecmp (ext, "mpp")) {
