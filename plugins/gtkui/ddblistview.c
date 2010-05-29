@@ -36,8 +36,6 @@
 #include "drawing.h"
 #include "gtkui.h"
 
-#pragma GCC optimize("O0")
-
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
