@@ -124,7 +124,7 @@ wv_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     }
     _info->plugin = &plugin;
     _info->bps = WavpackGetBitsPerSample (info->ctx);
-    _info->channels = WavpackGetNumChannels (info->ctx);
+    _info->channels = WavpackGetReducedChannels (info->ctx);
     _info->samplerate = WavpackGetSampleRate (info->ctx);
     _info->readpos = 0;
     if (it->endsample > 0) {
@@ -173,7 +173,7 @@ wv_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
         }
     }
     int32_t buffer[size/2];
-    int nchannels = WavpackGetNumChannels (info->ctx);
+    int nchannels = WavpackGetReducedChannels (info->ctx);
     int n = WavpackUnpackSamples (info->ctx, buffer, size/(2*nchannels));
     size = n * 2 * nchannels;
     // convert to int16
@@ -204,7 +204,7 @@ wv_read_float32 (DB_fileinfo_t *_info, char *bytes, int size) {
         }
     }
     int32_t buffer[size/4];
-    int nchannels = WavpackGetNumChannels (info->ctx);
+    int nchannels = WavpackGetReducedChannels (info->ctx);
     int n = WavpackUnpackSamples (info->ctx, buffer, size/(4*nchannels));
     size = n * 4 * nchannels;
     // convert to int16
