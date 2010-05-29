@@ -34,7 +34,7 @@ static DB_functions_t *deadbeef;
 
 typedef struct {
     DB_fileinfo_t info;
-    DB_FILE *file;
+    DB_FILE *file, *c_file;
     WavpackContext *ctx;
     int startsample;
     int endsample;
@@ -105,8 +105,19 @@ wv_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     if (!info->file) {
         return -1;
     }
+
+    char *c_fname = alloca (strlen (it->fname) + 2);
+    if (c_fname) {
+        strcpy (c_fname, it->fname);
+        strcat (c_fname, "c");
+        info->c_file = deadbeef->fopen (c_fname);
+    }
+    else {
+        fprintf (stderr, "wavpack warning: failed to alloc memory for correction file name\n");
+    }
+
     char error[80];
-    info->ctx = WavpackOpenFileInputEx (&wsr, info->file, NULL, error, OPEN_2CH_MAX/*|OPEN_WVC*/, 0);
+    info->ctx = WavpackOpenFileInputEx (&wsr, info->file, info->c_file, error, OPEN_2CH_MAX, 0);
     if (!info->ctx) {
         fprintf (stderr, "wavpack error: %s\n", error);
         return -1;
@@ -137,6 +148,10 @@ wv_free (DB_fileinfo_t *_info) {
         if (info->file) {
             deadbeef->fclose (info->file);
             info->file = NULL;
+        }
+        if (info->c_file) {
+            deadbeef->fclose (info->c_file);
+            info->c_file = NULL;
         }
         if (info->ctx) {
             WavpackCloseFile (info->ctx);

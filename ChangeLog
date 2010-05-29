@@ -31,6 +31,8 @@ version 0.4.1
 	added %C(composer) expansion to title formatting
 	fixed few theming/colors issues
 	fixed replaygain field parsing when reading cuesheets and r.g. peak scale handling (David Bryant)
+	added support for WavPack correction files (David Bryant)
+	fixed loading of album art embedded in ID3v2
 
 version 0.4.0
 	multiple tabbed playlists
