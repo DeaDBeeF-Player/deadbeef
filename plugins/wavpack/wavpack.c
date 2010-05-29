@@ -106,11 +106,15 @@ wv_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         return -1;
     }
 
-    char *c_fname = malloc (strlen (it->fname) + 10);
-    strcpy (c_fname, it->fname);
-    strcat (c_fname, "c");
-    info->c_file = deadbeef->fopen (c_fname);
-    free (c_fname);
+    char *c_fname = alloca (strlen (it->fname) + 2);
+    if (c_fname) {
+        strcpy (c_fname, it->fname);
+        strcat (c_fname, "c");
+        info->c_file = deadbeef->fopen (c_fname);
+    }
+    else {
+        fprintf (stderr, "wavpack warning: failed to alloc memory for correction file name\n");
+    }
 
     char error[80];
     info->ctx = WavpackOpenFileInputEx (&wsr, info->file, info->c_file, error, OPEN_2CH_MAX, 0);
