@@ -21,6 +21,7 @@
 #include <wavpack/wavpack.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include "../../deadbeef.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
@@ -117,13 +118,13 @@ wv_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     }
 
     char error[80];
-    info->ctx = WavpackOpenFileInputEx (&wsr, info->file, info->c_file, error, OPEN_2CH_MAX, 0);
+    info->ctx = WavpackOpenFileInputEx (&wsr, info->file, info->c_file, error, OPEN_2CH_MAX | OPEN_NORMALIZE, 0);
     if (!info->ctx) {
         fprintf (stderr, "wavpack error: %s\n", error);
         return -1;
     }
     _info->plugin = &plugin;
-    _info->bps = WavpackGetBitsPerSample (info->ctx);
+    _info->bps = WavpackGetBytesPerSample (info->ctx) * 8;
     _info->channels = WavpackGetReducedChannels (info->ctx);
     _info->samplerate = WavpackGetSampleRate (info->ctx);
     _info->readpos = 0;
@@ -179,11 +180,33 @@ wv_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
     // convert to int16
     int32_t *p = buffer;
     n *= nchannels;
-    while (n > 0) {
-        *((int16_t *)bytes) = (int16_t)((*p) >> (_info->bps-16));
-        bytes += sizeof (int16_t);
-        p++;
-        n--;
+
+    if (WavpackGetMode (info->ctx) & MODE_FLOAT) {
+        while (n > 0) {
+            float val = *(float*)p;
+            if (val >= 1.0)
+                *((int16_t *)bytes) = 32767;
+            else if (val <= -1.0)
+                *((int16_t *)bytes) = -32768;
+            else
+                *((int16_t *)bytes) = floor (val * 32768.f);
+            bytes += sizeof (int16_t);
+            p++;
+            n--;
+        }
+    }
+    else {
+        while (n > 0) {
+            if (_info->bps >= 16) {
+                *((int16_t *)bytes) = (int16_t)((*p) >> (_info->bps-16));
+            }
+            else {
+                *((int16_t *)bytes) = (int16_t)((*p) << (16-_info->bps));
+            }
+            bytes += sizeof (int16_t);
+            p++;
+            n--;
+        }
     }
     _info->readpos = (float)(WavpackGetSampleIndex (info->ctx)-info->startsample)/WavpackGetSampleRate (info->ctx);
 
@@ -207,15 +230,21 @@ wv_read_float32 (DB_fileinfo_t *_info, char *bytes, int size) {
     int nchannels = WavpackGetReducedChannels (info->ctx);
     int n = WavpackUnpackSamples (info->ctx, buffer, size/(4*nchannels));
     size = n * 4 * nchannels;
-    // convert to int16
-    int32_t *p = buffer;
+    // convert to float32
     n *= nchannels;
-    float mul = 1.f/ ((1 << (_info->bps-1))-1);
-    while (n > 0) {
-        *((float *)bytes) = (*p) * mul;
-        bytes += sizeof (float);
-        p++;
-        n--;
+
+    if (WavpackGetMode (info->ctx) & MODE_FLOAT) {
+        memcpy (bytes, buffer, size);
+    }
+    else {
+        float mul = 1.f/ (1UL << (_info->bps-1));
+        int32_t *p = buffer;
+        while (n > 0) {
+            *((float *)bytes) = (*p) * mul;
+            bytes += sizeof (float);
+            p++;
+            n--;
+        }
     }
     _info->readpos = (float)(WavpackGetSampleIndex (info->ctx)-info->startsample)/WavpackGetSampleRate (info->ctx);
     deadbeef->streamer_set_bitrate (WavpackGetInstantBitrate (info->ctx) / 1000);
