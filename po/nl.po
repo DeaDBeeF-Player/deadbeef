@@ -993,11 +993,12 @@ msgid "Default"
 msgstr "Standaard"
 
 #: ../plugins/gtkui/deadbeef.glade.h:1
-#, fuzzy
 msgid ""
 "2.3 (Recommended)\n"
 "2.4"
-msgstr "2.3 (Aangeraden)"
+msgstr ""
+"2.3 (Aangeraden)\n"
+"2.4"
 
 #: ../plugins/gtkui/deadbeef.glade.h:25
 msgid ""
@@ -1022,11 +1023,12 @@ msgid ""
 msgstr ""
 
 #: ../plugins/gtkui/deadbeef.glade.h:60
-#, fuzzy
 msgid ""
 "Left\n"
 "Right"
-msgstr "Rechts"
+msgstr ""
+"Links\n"
+"Rechts"
 
 #: ../plugins/gtkui/support.c:90 ../plugins/gtkui/support.c:114
 #, c-format
