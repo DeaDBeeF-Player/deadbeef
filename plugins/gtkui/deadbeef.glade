@@ -6,7 +6,7 @@
 <widget class="GtkWindow" id="mainwin">
   <property name="visible">True</property>
   <property name="events">GDK_POINTER_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_KEY_PRESS_MASK</property>
-  <property name="title" translatable="yes">DeaDBeeF</property>
+  <property name="title">DeaDBeeF</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
   <property name="modal">False</property>
@@ -594,7 +594,7 @@
 		  <child>
 		    <widget class="GtkMenuItem" id="gpl1">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">_GPLv2</property>
+		      <property name="label">_GPLv2</property>
 		      <property name="use_underline">True</property>
 		      <signal name="activate" handler="on_gpl1_activate" last_modification_time="Wed, 06 Jan 2010 20:30:20 GMT"/>
 		    </widget>
@@ -603,7 +603,7 @@
 		  <child>
 		    <widget class="GtkMenuItem" id="lgpl1">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">_LGPLv2.1</property>
+		      <property name="label">_LGPLv2.1</property>
 		      <property name="use_underline">True</property>
 		      <signal name="activate" handler="on_lgpl1_activate" last_modification_time="Wed, 06 Jan 2010 20:30:20 GMT"/>
 		    </widget>
@@ -1893,7 +1893,7 @@
 		      <child>
 			<widget class="GtkLabel" id="label86">
 			  <property name="visible">True</property>
-			  <property name="label">_Cancel</property>
+			  <property name="label" translatable="yes">_Cancel</property>
 			  <property name="use_underline">True</property>
 			  <property name="use_markup">False</property>
 			  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -1968,7 +1968,7 @@
 		      <child>
 			<widget class="GtkLabel" id="label85">
 			  <property name="visible">True</property>
-			  <property name="label">_OK</property>
+			  <property name="label" translatable="yes">_OK</property>
 			  <property name="use_underline">True</property>
 			  <property name="use_markup">False</property>
 			  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -2361,7 +2361,7 @@ Example: %a - %t [%l]</property>
 		      <child>
 			<widget class="GtkLabel" id="label91">
 			  <property name="visible">True</property>
-			  <property name="label">_Close</property>
+			  <property name="label" translatable="yes">_Close</property>
 			  <property name="use_underline">True</property>
 			  <property name="use_markup">False</property>
 			  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -2606,7 +2606,7 @@ Example: %a - %t [%l]</property>
 		  <child>
 		    <widget class="GtkComboBox" id="pref_src_quality">
 		      <property name="visible">True</property>
-		      <property name="items" translatable="yes">sinc_best_quality
+		      <property name="items">sinc_best_quality
 sinc_medium_quality
 sinc_fastest
 zero_order_hold
@@ -3772,7 +3772,7 @@ Album</property>
 		  <child>
 		    <widget class="GtkComboBox" id="pref_network_proxytype">
 		      <property name="visible">True</property>
-		      <property name="items" translatable="yes">HTTP
+		      <property name="items">HTTP
 HTTP_1_0
 SOCKS4
 SOCKS5
@@ -4239,7 +4239,7 @@ SOCKS5_HOSTNAME</property>
 		  <child>
 		    <widget class="GtkLabel" id="label68">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">&lt;b&gt;MP3&lt;/b&gt;</property>
+		      <property name="label">&lt;b&gt;MP3&lt;/b&gt;</property>
 		      <property name="use_underline">False</property>
 		      <property name="use_markup">True</property>
 		      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -4411,7 +4411,7 @@ SOCKS5_HOSTNAME</property>
 		      <child>
 			<widget class="GtkLabel" id="label70">
 			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">&lt;b&gt;APE&lt;/b&gt;</property>
+			  <property name="label">&lt;b&gt;APE&lt;/b&gt;</property>
 			  <property name="use_underline">False</property>
 			  <property name="use_markup">True</property>
 			  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -4577,7 +4577,7 @@ SOCKS5_HOSTNAME</property>
 		      <child>
 			<widget class="GtkLabel" id="label79">
 			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">&lt;b&gt;WavPack&lt;/b&gt;</property>
+			  <property name="label">&lt;b&gt;WavPack&lt;/b&gt;</property>
 			  <property name="use_underline">False</property>
 			  <property name="use_markup">True</property>
 			  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -5126,7 +5126,7 @@ SOCKS5_HOSTNAME</property>
 		      <child>
 			<widget class="GtkLabel" id="label94">
 			  <property name="visible">True</property>
-			  <property name="label">_Cancel</property>
+			  <property name="label" translatable="yes">_Cancel</property>
 			  <property name="use_underline">True</property>
 			  <property name="use_markup">False</property>
 			  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -5201,7 +5201,7 @@ SOCKS5_HOSTNAME</property>
 		      <child>
 			<widget class="GtkLabel" id="label93">
 			  <property name="visible">True</property>
-			  <property name="label">_OK</property>
+			  <property name="label" translatable="yes">_OK</property>
 			  <property name="use_underline">True</property>
 			  <property name="use_markup">False</property>
 			  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -5387,7 +5387,7 @@ SOCKS5_HOSTNAME</property>
 		      <child>
 			<widget class="GtkLabel" id="label95">
 			  <property name="visible">True</property>
-			  <property name="label">_Cancel</property>
+			  <property name="label" translatable="yes">_Cancel</property>
 			  <property name="use_underline">True</property>
 			  <property name="use_markup">False</property>
 			  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -5462,7 +5462,7 @@ SOCKS5_HOSTNAME</property>
 		      <child>
 			<widget class="GtkLabel" id="label96">
 			  <property name="visible">True</property>
-			  <property name="label">_OK</property>
+			  <property name="label" translatable="yes">_OK</property>
 			  <property name="use_underline">True</property>
 			  <property name="use_markup">False</property>
 			  <property name="justify">GTK_JUSTIFY_LEFT</property>

@@ -27,6 +27,7 @@
 #include <assert.h>
 #include <ctype.h>
 #include <gdk/gdkkeysyms.h>
+#include "../../gettext.h"
 
 #include "callbacks.h"
 #include "interface.h"
@@ -93,7 +94,7 @@ file_filter_func (const GtkFileFilterInfo *filter_info, gpointer data) {
 static GtkFileFilter *
 set_file_filter (GtkWidget *dlg, const char *name) {
     if (!name) {
-        name = "Supported sound formats";
+        name = _("Supported sound formats");
     }
 
     GtkFileFilter* flt;
@@ -104,7 +105,7 @@ set_file_filter (GtkWidget *dlg, const char *name) {
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
     gtk_file_chooser_set_filter (GTK_FILE_CHOOSER (dlg), flt);
     flt = gtk_file_filter_new ();
-    gtk_file_filter_set_name (flt, "Other files (*)");
+    gtk_file_filter_set_name (flt, _("Other files (*)"));
     gtk_file_filter_add_pattern (flt, "*");
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
 }
@@ -113,7 +114,7 @@ void
 on_open_activate                       (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    GtkWidget *dlg = gtk_file_chooser_dialog_new ("Open file(s)...", GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
+    GtkWidget *dlg = gtk_file_chooser_dialog_new (_("Open file(s)..."), GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
 
     set_file_filter (dlg, NULL);
 
@@ -146,7 +147,7 @@ void
 on_add_files_activate                  (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    GtkWidget *dlg = gtk_file_chooser_dialog_new ("Add file(s) to playlist...", GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
+    GtkWidget *dlg = gtk_file_chooser_dialog_new (_("Add file(s) to playlist..."), GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
 
     set_file_filter (dlg, NULL);
 
@@ -178,7 +179,7 @@ void
 on_add_folders_activate                (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    GtkWidget *dlg = gtk_file_chooser_dialog_new ("Add folder(s) to playlist...", GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
+    GtkWidget *dlg = gtk_file_chooser_dialog_new (_("Add folder(s) to playlist..."), GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
 
     set_file_filter (dlg, NULL);
 
@@ -636,7 +637,7 @@ show_info_window (const char *fname, const char *title, GtkWidget **pwindow) {
         char buf[s+1];
         if (fread (buf, 1, s, fp) != s) {
             fprintf (stderr, "error reading help file contents\n");
-            const char *error = "Failed while reading help file";
+            const char *error = _("Failed while reading help file");
             gtk_text_buffer_set_text (buffer, error, strlen (error));
         }
         else {
@@ -646,7 +647,7 @@ show_info_window (const char *fname, const char *title, GtkWidget **pwindow) {
         fclose (fp);
     }
     else {
-        const char *error = "Failed to load help file";
+        const char *error = _("Failed to load help file");
         gtk_text_buffer_set_text (buffer, error, strlen (error));
     }
     gtk_text_view_set_buffer (GTK_TEXT_VIEW (txt), buffer);
@@ -660,7 +661,7 @@ void
 on_help1_activate                      (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    show_info_window (DOCDIR "/help.txt", "Help", &helpwindow);
+    show_info_window (DOCDIR "/help.txt", _("Help"), &helpwindow);
 }
 
 static GtkWidget *aboutwindow;
@@ -669,7 +670,9 @@ void
 on_about1_activate                     (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    show_info_window (DOCDIR "/about.txt", "About DeaDBeeF " VERSION, &aboutwindow);
+    char s[200];
+    snprintf (s, sizeof (s), _("About DeaDBeeF %s"), VERSION);
+    show_info_window (DOCDIR "/about.txt", s, &aboutwindow);
 }
 
 static GtkWidget *changelogwindow;
@@ -678,7 +681,9 @@ void
 on_changelog1_activate                 (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    show_info_window (DOCDIR "/ChangeLog", "DeaDBeeF " VERSION " ChangeLog", &changelogwindow);
+    char s[200];
+    snprintf (s, sizeof (s), _("DeaDBeeF %s ChangeLog"), VERSION);
+    show_info_window (DOCDIR "/ChangeLog", s, &changelogwindow);
 }
 
 static GtkWidget *gplwindow;

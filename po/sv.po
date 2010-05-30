@@ -1,0 +1,1122 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-05-27 16:47+0200\n"
+"PO-Revision-Date: 2010-05-27 20:57+0200\n"
+"Last-Translator: Martin <brother@bsnet.se>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: sv\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Pootle 2.0.1\n"
+
+#: ../plugins/gtkui/callbacks.c:97
+msgid "Supported sound formats"
+msgstr "Ljudformat med stöd"
+
+#: ../plugins/gtkui/callbacks.c:108
+msgid "Other files (*)"
+msgstr "Andra filer (*)"
+
+#: ../plugins/gtkui/callbacks.c:117
+msgid "Open file(s)..."
+msgstr "Öppna fil(er)..."
+
+#: ../plugins/gtkui/callbacks.c:150
+msgid "Add file(s) to playlist..."
+msgstr "Lägg till fil(er) till spellista..."
+
+#: ../plugins/gtkui/callbacks.c:182
+msgid "Add folder(s) to playlist..."
+msgstr "Lägg till katalog(er) till spellista..."
+
+#: ../plugins/gtkui/callbacks.c:640
+msgid "Failed while reading help file"
+msgstr "Misslyckades vid läsning av hjälpfil"
+
+#: ../plugins/gtkui/callbacks.c:650
+msgid "Failed to load help file"
+msgstr "MIsslyckades med att läsa hjälpfil"
+
+#: ../plugins/gtkui/callbacks.c:664 ../plugins/gtkui/interface.c:1105
+#: ../plugins/gtkui/deadbeef.glade.h:56
+msgid "Help"
+msgstr "Hjälp"
+
+#: ../plugins/gtkui/callbacks.c:674
+#, c-format
+msgid "About DeaDBeeF %s"
+msgstr "Om DeaDBeeF %s"
+
+#: ../plugins/gtkui/callbacks.c:685
+#, c-format
+msgid "DeaDBeeF %s ChangeLog"
+msgstr "DeadBeeF %s Ändrligslogg"
+
+#: ../plugins/gtkui/ddbtabstrip.c:527
+msgid "Edit playlist"
+msgstr "Redigera spellista"
+
+#: ../plugins/gtkui/ddbtabstrip.c:604
+msgid "Rename Playlist"
+msgstr "Byt namn på spellista"
+
+#: ../plugins/gtkui/ddbtabstrip.c:608
+msgid "Remove Playlist"
+msgstr "Ta bort spellista"
+
+#: ../plugins/gtkui/ddbtabstrip.c:612
+msgid "Add New Playlist"
+msgstr "Lägg till ny spellista"
+
+#: ../plugins/gtkui/eq.c:113
+msgid "Save DeaDBeeF EQ Preset"
+msgstr ""
+
+#: ../plugins/gtkui/eq.c:120
+msgid "DeaDBeeF EQ preset files (*.ddbeq)"
+msgstr ""
+
+#: ../plugins/gtkui/eq.c:151
+msgid "Load DeaDBeeF EQ Preset..."
+msgstr ""
+
+#: ../plugins/gtkui/eq.c:155
+msgid "DeaDBeeF EQ presets (*.ddbeq)"
+msgstr ""
+
+#: ../plugins/gtkui/eq.c:214
+msgid "Import Foobar2000 EQ Preset..."
+msgstr ""
+
+#: ../plugins/gtkui/eq.c:218
+msgid "Foobar2000 EQ presets (*.feq)"
+msgstr ""
+
+#: ../plugins/gtkui/eq.c:292
+msgid "Enable"
+msgstr "Aktivera"
+
+#: ../plugins/gtkui/eq.c:299
+msgid "Zero All"
+msgstr "Nollställ alla"
+
+#: ../plugins/gtkui/eq.c:306
+msgid "Zero Preamp"
+msgstr ""
+
+#: ../plugins/gtkui/eq.c:313
+msgid "Zero Bands"
+msgstr ""
+
+#: ../plugins/gtkui/eq.c:320
+msgid "Save Preset"
+msgstr ""
+
+#: ../plugins/gtkui/eq.c:327
+msgid "Load Preset"
+msgstr ""
+
+#: ../plugins/gtkui/eq.c:334
+msgid "Import Foobar2000 Preset"
+msgstr ""
+
+#: ../plugins/gtkui/gtkui.c:128
+#, c-format
+msgid "1 day %d:%02d:%02d"
+msgstr "1 dag %d:%02d:%02d"
+
+#: ../plugins/gtkui/gtkui.c:131
+#, c-format
+msgid "%d days %d:%02d:%02d"
+msgstr "%d dagar %d:%02d:%02d"
+
+#: ../plugins/gtkui/gtkui.c:140
+#, c-format
+msgid "Stopped | %d tracks | %s total playtime"
+msgstr "Stoppad | %d spår | %s total speltid"
+
+#: ../plugins/gtkui/gtkui.c:150
+msgid "Mono"
+msgstr "Mono"
+
+#: ../plugins/gtkui/gtkui.c:150
+msgid "Stereo"
+msgstr "Stereo"
+
+#: ../plugins/gtkui/gtkui.c:170
+#, c-format
+msgid "| %4d kbps "
+msgstr "| %4d kbps "
+
+#: ../plugins/gtkui/gtkui.c:176
+msgid "Paused | "
+msgstr "Pausad | "
+
+#: ../plugins/gtkui/gtkui.c:177
+#, c-format
+msgid ""
+"%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
+msgstr "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d spår | %s total speltid"
+
+#: ../plugins/gtkui/gtkui.c:533
+msgid "Save Playlist As"
+msgstr "Spara spellista som"
+
+#: ../plugins/gtkui/gtkui.c:542 ../plugins/gtkui/gtkui.c:603
+msgid "DeaDBeeF playlist files (*.dbpl)"
+msgstr "DeaDBeeF spellistfil (*.dbpl)"
+
+#: ../plugins/gtkui/gtkui.c:596
+msgid "Load Playlist"
+msgstr "Läs in spellista"
+
+#: ../plugins/gtkui/gtkui.c:741
+msgid "New Playlist"
+msgstr "Ny spellista"
+
+#: ../plugins/gtkui/gtkui.c:744
+#, c-format
+msgid "New Playlist (%d)"
+msgstr "Ny spellista (%d)"
+
+#: ../plugins/gtkui/interface.c:140 ../plugins/gtkui/deadbeef.glade.h:138
+msgid "_File"
+msgstr "_Arkiv"
+
+#: ../plugins/gtkui/interface.c:147 ../plugins/gtkui/deadbeef.glade.h:142
+msgid "_Open file(s)"
+msgstr "_Öppna fil(er)"
+
+#: ../plugins/gtkui/interface.c:163 ../plugins/gtkui/deadbeef.glade.h:7
+msgid "Add file(s)"
+msgstr "Lägg till fil(er)"
+
+#: ../plugins/gtkui/interface.c:171 ../plugins/gtkui/deadbeef.glade.h:8
+msgid "Add folder(s)"
+msgstr "Lägg till katalog(er)"
+
+#: ../plugins/gtkui/interface.c:179 ../plugins/gtkui/deadbeef.glade.h:6
+msgid "Add Audio CD"
+msgstr "Lägg till ljud-CD"
+
+#: ../plugins/gtkui/interface.c:187 ../plugins/gtkui/interface.c:2870
+#: ../plugins/gtkui/deadbeef.glade.h:9
+msgid "Add location"
+msgstr "Lägg till plats"
+
+#: ../plugins/gtkui/interface.c:196 ../plugins/gtkui/deadbeef.glade.h:72
+msgid "New playlist"
+msgstr "Ny spellista"
+
+#: ../plugins/gtkui/interface.c:203 ../plugins/gtkui/deadbeef.glade.h:64
+msgid "Load playlist"
+msgstr "Läs in spellista"
+
+#: ../plugins/gtkui/interface.c:207 ../plugins/gtkui/deadbeef.glade.h:99
+msgid "Save playlist"
+msgstr "Spara spellista"
+
+#: ../plugins/gtkui/interface.c:211 ../plugins/gtkui/deadbeef.glade.h:100
+msgid "Save playlist as"
+msgstr "Spara spellista som"
+
+#: ../plugins/gtkui/interface.c:220 ../plugins/gtkui/deadbeef.glade.h:144
+msgid "_Quit"
+msgstr "A_vsluta"
+
+#: ../plugins/gtkui/interface.c:231 ../plugins/gtkui/deadbeef.glade.h:137
+msgid "_Edit"
+msgstr "_Redigera"
+
+#: ../plugins/gtkui/interface.c:238 ../plugins/gtkui/deadbeef.glade.h:135
+msgid "_Clear"
+msgstr "R_ensa"
+
+#: ../plugins/gtkui/interface.c:246 ../plugins/gtkui/deadbeef.glade.h:104
+msgid "Select all"
+msgstr "Markera allt"
+
+#: ../plugins/gtkui/interface.c:253 ../plugins/gtkui/deadbeef.glade.h:24
+msgid "Deselect all"
+msgstr "Avmarkera allt"
+
+#: ../plugins/gtkui/interface.c:260 ../plugins/gtkui/deadbeef.glade.h:59
+msgid "Invert selection"
+msgstr "Invertera markering"
+
+#: ../plugins/gtkui/interface.c:264 ../plugins/gtkui/deadbeef.glade.h:107
+msgid "Selection"
+msgstr "Markering"
+
+#: ../plugins/gtkui/interface.c:271 ../plugins/gtkui/plcommon.c:387
+#: ../plugins/gtkui/prefwin.c:272 ../plugins/gtkui/deadbeef.glade.h:95
+msgid "Remove"
+msgstr "Ta bort"
+
+#: ../plugins/gtkui/interface.c:279 ../plugins/gtkui/deadbeef.glade.h:19
+msgid "Crop"
+msgstr "Beskär"
+
+#: ../plugins/gtkui/interface.c:283 ../plugins/gtkui/deadbeef.glade.h:139
+msgid "_Find"
+msgstr "_Sök"
+
+#: ../plugins/gtkui/interface.c:295 ../plugins/gtkui/interface.c:1706
+#: ../plugins/gtkui/deadbeef.glade.h:85
+msgid "Preferences"
+msgstr "Egenskaper"
+
+#: ../plugins/gtkui/interface.c:299 ../plugins/gtkui/deadbeef.glade.h:145
+msgid "_View"
+msgstr "_Visa"
+
+#: ../plugins/gtkui/interface.c:306 ../plugins/gtkui/deadbeef.glade.h:111
+msgid "Status bar"
+msgstr "Statusrad"
+
+#: ../plugins/gtkui/interface.c:310 ../plugins/gtkui/deadbeef.glade.h:17
+msgid "Column headers"
+msgstr "Kolumnhuvuden"
+
+#: ../plugins/gtkui/interface.c:314 ../plugins/gtkui/deadbeef.glade.h:118
+msgid "Tabs"
+msgstr "Flikar"
+
+#: ../plugins/gtkui/interface.c:318 ../plugins/gtkui/deadbeef.glade.h:32
+msgid "Equalizer"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:322 ../plugins/gtkui/deadbeef.glade.h:143
+msgid "_Playback"
+msgstr "_Uppspelning"
+
+#: ../plugins/gtkui/interface.c:329 ../plugins/gtkui/deadbeef.glade.h:75
+msgid "Order"
+msgstr "Ordning"
+
+#: ../plugins/gtkui/interface.c:336 ../plugins/gtkui/deadbeef.glade.h:63
+msgid "Linear"
+msgstr "Linjär"
+
+#: ../plugins/gtkui/interface.c:342 ../plugins/gtkui/deadbeef.glade.h:108
+msgid "Shuffle"
+msgstr "Blanda"
+
+#: ../plugins/gtkui/interface.c:348 ../plugins/gtkui/deadbeef.glade.h:94
+msgid "Random"
+msgstr "Slumpa"
+
+#: ../plugins/gtkui/interface.c:354 ../plugins/gtkui/deadbeef.glade.h:67
+msgid "Looping"
+msgstr "Upprepning"
+
+#: ../plugins/gtkui/interface.c:361 ../plugins/gtkui/deadbeef.glade.h:65
+msgid "Loop All"
+msgstr "Upprepa alla"
+
+#: ../plugins/gtkui/interface.c:367 ../plugins/gtkui/deadbeef.glade.h:66
+msgid "Loop Single Song"
+msgstr "Upprepa ett spår"
+
+#: ../plugins/gtkui/interface.c:373 ../plugins/gtkui/deadbeef.glade.h:28
+msgid "Don't Loop"
+msgstr "Upprepa inte"
+
+#: ../plugins/gtkui/interface.c:379 ../plugins/gtkui/deadbeef.glade.h:101
+msgid "Scroll follows playback"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:384 ../plugins/gtkui/deadbeef.glade.h:21
+msgid "Cursor follows playback"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:388 ../plugins/gtkui/deadbeef.glade.h:113
+msgid "Stop after current"
+msgstr "Stanna efter nuvarande"
+
+#: ../plugins/gtkui/interface.c:395 ../plugins/gtkui/interface.c:402
+#: ../plugins/gtkui/deadbeef.glade.h:140
+msgid "_Help"
+msgstr "_Hjälp"
+
+#: ../plugins/gtkui/interface.c:410 ../plugins/gtkui/deadbeef.glade.h:134
+msgid "_ChangeLog"
+msgstr "_Ändringslogg"
+
+#: ../plugins/gtkui/interface.c:432 ../plugins/gtkui/deadbeef.glade.h:131
+msgid "_About"
+msgstr "_Om"
+
+#: ../plugins/gtkui/interface.c:816 ../plugins/gtkui/deadbeef.glade.h:102
+msgid "Search"
+msgstr "Sök"
+
+#: ../plugins/gtkui/interface.c:891 ../plugins/gtkui/deadbeef.glade.h:112
+msgid "Stop"
+msgstr "Stopp"
+
+#: ../plugins/gtkui/interface.c:899 ../plugins/gtkui/deadbeef.glade.h:81
+msgid "Play"
+msgstr "Spela"
+
+#: ../plugins/gtkui/interface.c:907 ../plugins/gtkui/deadbeef.glade.h:80
+msgid "Pause"
+msgstr "Paus"
+
+#: ../plugins/gtkui/interface.c:915 ../plugins/gtkui/deadbeef.glade.h:86
+msgid "Previous"
+msgstr "Föregående"
+
+#: ../plugins/gtkui/interface.c:923 ../plugins/gtkui/deadbeef.glade.h:73
+msgid "Next"
+msgstr "Nästa"
+
+#: ../plugins/gtkui/interface.c:931 ../plugins/gtkui/deadbeef.glade.h:82
+msgid "Play Random"
+msgstr "Spela slumpad"
+
+#: ../plugins/gtkui/interface.c:940 ../plugins/gtkui/deadbeef.glade.h:5
+msgid "About"
+msgstr "Om"
+
+#: ../plugins/gtkui/interface.c:953 ../plugins/gtkui/deadbeef.glade.h:93
+msgid "Quit"
+msgstr "Avsluta"
+
+#: ../plugins/gtkui/interface.c:1025 ../plugins/gtkui/deadbeef.glade.h:10
+msgid "Adding files..."
+msgstr "Lägger till filer..."
+
+#: ../plugins/gtkui/interface.c:1069 ../plugins/gtkui/deadbeef.glade.h:130
+msgid "_Abort"
+msgstr "_Avbryt"
+
+#: ../plugins/gtkui/interface.c:1170 ../plugins/gtkui/deadbeef.glade.h:122
+msgid "Track Properties"
+msgstr "Spåregenskaper"
+
+#: ../plugins/gtkui/interface.c:1194 ../plugins/gtkui/deadbeef.glade.h:3
+msgid ""
+"<b>WARNING</b>: tag writing feature is still in development.\n"
+"<b>Make backup copies</b> before using."
+msgstr ""
+"<b>VARNING</b>: funktionen för att skriva taggar är fortfarande i "
+"utvecklingsfasen.\n"
+"<b>Gör säkerhetskopior</b> innan den används."
+
+#: ../plugins/gtkui/interface.c:1221 ../plugins/gtkui/deadbeef.glade.h:132
+msgid "_Apply"
+msgstr "_Verkställ"
+
+#: ../plugins/gtkui/interface.c:1242 ../plugins/gtkui/interface.c:1288
+#: ../plugins/gtkui/interface.c:2436 ../plugins/gtkui/deadbeef.glade.h:136
+msgid "_Close"
+msgstr "_Stäng"
+
+#: ../plugins/gtkui/interface.c:1246 ../plugins/gtkui/deadbeef.glade.h:68
+msgid "Metadata"
+msgstr "Metadata"
+
+#: ../plugins/gtkui/interface.c:1292 ../plugins/gtkui/plcommon.c:402
+#: ../plugins/gtkui/deadbeef.glade.h:87
+msgid "Properties"
+msgstr "Egenskaper"
+
+#: ../plugins/gtkui/interface.c:1378 ../plugins/gtkui/deadbeef.glade.h:146
+msgid "editcolumndlg"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:1393 ../plugins/gtkui/interface.c:2770
+#: ../plugins/gtkui/deadbeef.glade.h:121
+msgid "Title:"
+msgstr "Titel:"
+
+#: ../plugins/gtkui/interface.c:1401 ../plugins/gtkui/deadbeef.glade.h:31
+msgid "Enter new column title here"
+msgstr "Ange ny kolumntitel här"
+
+#: ../plugins/gtkui/interface.c:1409 ../plugins/gtkui/deadbeef.glade.h:123
+msgid "Type:"
+msgstr "Typ:"
+
+#: ../plugins/gtkui/interface.c:1417
+msgid "File number"
+msgstr "Filnummer"
+
+#. create default set of columns
+#: ../plugins/gtkui/interface.c:1418 ../plugins/gtkui/mainplaylist.c:297
+msgid "Playing"
+msgstr "Spelar"
+
+#: ../plugins/gtkui/interface.c:1419
+msgid "Album Art"
+msgstr "Albumillustration"
+
+#: ../plugins/gtkui/interface.c:1420
+msgid "Artist - Album"
+msgstr "Artist - Album"
+
+#: ../plugins/gtkui/interface.c:1421 ../plugins/gtkui/plcommon.c:774
+msgid "Artist"
+msgstr "Artist"
+
+#: ../plugins/gtkui/interface.c:1422 ../plugins/gtkui/interface.c:1795
+msgid "Album"
+msgstr "Album"
+
+#: ../plugins/gtkui/interface.c:1423 ../plugins/gtkui/prefwin.c:488
+msgid "Title"
+msgstr "Titel"
+
+#: ../plugins/gtkui/interface.c:1424
+msgid "Length"
+msgstr "Längd"
+
+#: ../plugins/gtkui/interface.c:1425 ../plugins/gtkui/interface.c:1794
+msgid "Track"
+msgstr "Spår"
+
+#: ../plugins/gtkui/interface.c:1426
+msgid "Band / Album Artist"
+msgstr "Artist"
+
+#: ../plugins/gtkui/interface.c:1427 ../plugins/gtkui/plcommon.c:778
+msgid "Custom"
+msgstr "Anpassad"
+
+#: ../plugins/gtkui/interface.c:1433 ../plugins/gtkui/interface.c:2997
+#: ../plugins/gtkui/deadbeef.glade.h:53
+msgid "Format:"
+msgstr "Format:"
+
+#: ../plugins/gtkui/interface.c:1448 ../plugins/gtkui/deadbeef.glade.h:11
+msgid "Alignment:"
+msgstr "Justering:"
+
+#: ../plugins/gtkui/interface.c:1456
+msgid "Left"
+msgstr "Vänster"
+
+#: ../plugins/gtkui/interface.c:1457
+msgid "Right"
+msgstr "Höger"
+
+# sanslöst kass uppställning
+#: ../plugins/gtkui/interface.c:1459 ../plugins/gtkui/interface.c:3007
+#: ../plugins/gtkui/deadbeef.glade.h:47
+#, no-c-format
+msgid ""
+"Format conversions (start with %):\n"
+"  [a]rtist, [t]itle, al[b]um, [B]and, [C]omposer\n"
+"  track[n]umber, [N]totaltracks,\n"
+"  [l]ength, [y]ear, [g]enre, [c]omment,\n"
+"  copy[r]ight, [f]ilename, [T]ags\n"
+"Example: %a - %t [%l]"
+msgstr ""
+"Formateringsregler (börja med %):\n"
+"  artist ([a]), titel ([t]), album ([b]), band ([B]), kompositör ([C])\n"
+"  spårnummer ([n]), antal spår ([N]),\n"
+"  längd ([l]), år ([y]), genre ([g]), kommentar ([c]),\n"
+"  upphovs[r]ätt, [f]ilnamn, taggar ([T])\n"
+"Exempel: %a - %t [%l]"
+
+#: ../plugins/gtkui/interface.c:1488 ../plugins/gtkui/interface.c:2801
+#: ../plugins/gtkui/interface.c:2913 ../plugins/gtkui/interface.c:3036
+#: ../plugins/gtkui/deadbeef.glade.h:133
+msgid "_Cancel"
+msgstr "_Avbryt"
+
+#: ../plugins/gtkui/interface.c:1509 ../plugins/gtkui/interface.c:2822
+#: ../plugins/gtkui/interface.c:2934 ../plugins/gtkui/interface.c:3057
+#: ../plugins/gtkui/deadbeef.glade.h:141
+msgid "_OK"
+msgstr "_OK"
+
+#: ../plugins/gtkui/interface.c:1726 ../plugins/gtkui/deadbeef.glade.h:77
+msgid "Output plugin:"
+msgstr "Instick för uppspelning:"
+
+#: ../plugins/gtkui/interface.c:1739 ../plugins/gtkui/deadbeef.glade.h:76
+msgid "Output device:"
+msgstr "Enhet för uppspelning:"
+
+#: ../plugins/gtkui/interface.c:1748 ../plugins/gtkui/deadbeef.glade.h:109
+msgid "Sound"
+msgstr "Ljud"
+
+#: ../plugins/gtkui/interface.c:1757 ../plugins/gtkui/deadbeef.glade.h:12
+msgid "Allow dynamic samplerate switching"
+msgstr "Tillåt att dynamisk samplingsnivå skiftar"
+
+#: ../plugins/gtkui/interface.c:1765 ../plugins/gtkui/deadbeef.glade.h:98
+msgid "Samplerate conversion quality:"
+msgstr "Konverteringskvalité för samplingsnivå:"
+
+#: ../plugins/gtkui/interface.c:1784 ../plugins/gtkui/deadbeef.glade.h:96
+msgid "Replaygain mode:"
+msgstr "Läge för justering av uppspelningsvolym:"
+
+#: ../plugins/gtkui/interface.c:1793
+msgid "Disable"
+msgstr "Avaktivera"
+
+#: ../plugins/gtkui/interface.c:1797 ../plugins/gtkui/deadbeef.glade.h:97
+msgid "Replaygain peak scale"
+msgstr "Övre gräns för justering av uppspelningsvolym"
+
+#: ../plugins/gtkui/interface.c:1801 ../plugins/gtkui/deadbeef.glade.h:110
+msgid "Sound (adv.)"
+msgstr "Ljud (avancerat)"
+
+#: ../plugins/gtkui/interface.c:1810 ../plugins/gtkui/deadbeef.glade.h:16
+msgid "Close minimizes to tray"
+msgstr "Stäng minimerar till systembricka"
+
+#: ../plugins/gtkui/interface.c:1814 ../plugins/gtkui/deadbeef.glade.h:70
+msgid "Middle mouse button closes playlist"
+msgstr "Klicka med musknappen i mitten för att stänga spellista"
+
+#: ../plugins/gtkui/interface.c:1827 ../plugins/gtkui/interface.c:1871
+#: ../plugins/gtkui/deadbeef.glade.h:78
+msgid "Override"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:1836 ../plugins/gtkui/deadbeef.glade.h:45
+msgid "Foreground"
+msgstr "Förgrund"
+
+#: ../plugins/gtkui/interface.c:1843 ../plugins/gtkui/deadbeef.glade.h:14
+msgid "Background"
+msgstr "Bakgrund"
+
+#: ../plugins/gtkui/interface.c:1862 ../plugins/gtkui/deadbeef.glade.h:103
+msgid "Seekbar/Volumebar colors"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:1880 ../plugins/gtkui/deadbeef.glade.h:69
+msgid "Middle"
+msgstr "Mitten"
+
+#: ../plugins/gtkui/interface.c:1887 ../plugins/gtkui/deadbeef.glade.h:62
+msgid "Light"
+msgstr "Ljus"
+
+#: ../plugins/gtkui/interface.c:1894 ../plugins/gtkui/deadbeef.glade.h:22
+msgid "Dark"
+msgstr "Mörk"
+
+#: ../plugins/gtkui/interface.c:1925 ../plugins/gtkui/deadbeef.glade.h:15
+msgid "Base"
+msgstr "Bas"
+
+#: ../plugins/gtkui/interface.c:1932 ../plugins/gtkui/deadbeef.glade.h:117
+msgid "Tab strip colors"
+msgstr "Färg för flikrad"
+
+#: ../plugins/gtkui/interface.c:1941 ../plugins/gtkui/deadbeef.glade.h:79
+msgid "Override (looses GTK treeview theming, but speeds up rendering)"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:1950 ../plugins/gtkui/deadbeef.glade.h:33
+msgid "Even row"
+msgstr "Jämn rad"
+
+#: ../plugins/gtkui/interface.c:1957 ../plugins/gtkui/deadbeef.glade.h:74
+msgid "Odd row"
+msgstr "Ojämn rad"
+
+#: ../plugins/gtkui/interface.c:1976 ../plugins/gtkui/deadbeef.glade.h:120
+msgid "Text"
+msgstr "Text"
+
+#: ../plugins/gtkui/interface.c:1983 ../plugins/gtkui/deadbeef.glade.h:105
+msgid "Selected row"
+msgstr "Markerad rad"
+
+#: ../plugins/gtkui/interface.c:2002 ../plugins/gtkui/deadbeef.glade.h:106
+msgid "Selected text"
+msgstr "Markerad text"
+
+#: ../plugins/gtkui/interface.c:2015 ../plugins/gtkui/deadbeef.glade.h:20
+msgid "Cursor"
+msgstr "Markör"
+
+#: ../plugins/gtkui/interface.c:2028 ../plugins/gtkui/deadbeef.glade.h:83
+msgid "Playlist colors"
+msgstr "Spellistans färger"
+
+#: ../plugins/gtkui/interface.c:2032 ../plugins/gtkui/deadbeef.glade.h:54
+msgid "GUI"
+msgstr "GUI"
+
+#: ../plugins/gtkui/interface.c:2041 ../plugins/gtkui/deadbeef.glade.h:30
+msgid "Enable Proxy Server"
+msgstr "Aktivera proxyserver"
+
+#: ../plugins/gtkui/interface.c:2049 ../plugins/gtkui/deadbeef.glade.h:89
+msgid "Proxy Server Address:"
+msgstr "Adress för proxyserver:"
+
+#: ../plugins/gtkui/interface.c:2063 ../plugins/gtkui/deadbeef.glade.h:90
+msgid "Proxy Server Port:"
+msgstr "Port för proxyserver:"
+
+#: ../plugins/gtkui/interface.c:2077 ../plugins/gtkui/deadbeef.glade.h:91
+msgid "Proxy Type:"
+msgstr "Proxytyp:"
+
+#: ../plugins/gtkui/interface.c:2096 ../plugins/gtkui/deadbeef.glade.h:92
+msgid "Proxy Username:"
+msgstr "Användarnamn för proxy:"
+
+#: ../plugins/gtkui/interface.c:2109 ../plugins/gtkui/deadbeef.glade.h:88
+msgid "Proxy Password:"
+msgstr "Lösenord för proxy:"
+
+#: ../plugins/gtkui/interface.c:2119 ../plugins/gtkui/deadbeef.glade.h:71
+msgid "Network"
+msgstr "Nätverk"
+
+#: ../plugins/gtkui/interface.c:2147 ../plugins/gtkui/deadbeef.glade.h:128
+msgid "Write ID3v2"
+msgstr "Skriv ID3v2"
+
+#: ../plugins/gtkui/interface.c:2151 ../plugins/gtkui/interface.c:2278
+#: ../plugins/gtkui/deadbeef.glade.h:127
+msgid "Write ID3v1"
+msgstr "Skriv ID3v1"
+
+#: ../plugins/gtkui/interface.c:2155 ../plugins/gtkui/interface.c:2234
+#: ../plugins/gtkui/interface.c:2274 ../plugins/gtkui/deadbeef.glade.h:126
+msgid "Write APEv2"
+msgstr "Skriv APEv2"
+
+#: ../plugins/gtkui/interface.c:2163 ../plugins/gtkui/interface.c:2242
+#: ../plugins/gtkui/deadbeef.glade.h:116
+msgid "Strip ID3v2"
+msgstr "Rensa ID3v2"
+
+#: ../plugins/gtkui/interface.c:2167 ../plugins/gtkui/interface.c:2290
+#: ../plugins/gtkui/deadbeef.glade.h:115
+msgid "Strip ID3v1"
+msgstr "Rensa ID3v1"
+
+#: ../plugins/gtkui/interface.c:2171 ../plugins/gtkui/interface.c:2246
+#: ../plugins/gtkui/interface.c:2286 ../plugins/gtkui/deadbeef.glade.h:114
+msgid "Strip APEv2"
+msgstr "Rensa APEv2"
+
+#: ../plugins/gtkui/interface.c:2179 ../plugins/gtkui/deadbeef.glade.h:58
+msgid "ID3v2 version"
+msgstr "ID3v2 version"
+
+#: ../plugins/gtkui/interface.c:2186
+msgid "2.3 (Recommended)"
+msgstr "2.3 (Rekomenderad)"
+
+#: ../plugins/gtkui/interface.c:2187
+msgid "2.4"
+msgstr "2.4"
+
+#: ../plugins/gtkui/interface.c:2193 ../plugins/gtkui/deadbeef.glade.h:57
+msgid "ID3v1 character encoding (default is iso8859-1)"
+msgstr "ID3v1 teckenkodning ( iso8859-1 är standard)"
+
+#: ../plugins/gtkui/interface.c:2230 ../plugins/gtkui/deadbeef.glade.h:129
+msgid "Write ID3v2.4"
+msgstr "Skriv ID3v2.4"
+
+#: ../plugins/gtkui/interface.c:2299 ../plugins/gtkui/deadbeef.glade.h:119
+msgid "Tag writer"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2330 ../plugins/gtkui/deadbeef.glade.h:23
+msgid "Description:"
+msgstr "Beskrivning:"
+
+#: ../plugins/gtkui/interface.c:2345 ../plugins/gtkui/deadbeef.glade.h:13
+msgid "Author(s):"
+msgstr "Författare:"
+
+#: ../plugins/gtkui/interface.c:2360 ../plugins/gtkui/deadbeef.glade.h:29
+msgid "Email:"
+msgstr "E-post:"
+
+#: ../plugins/gtkui/interface.c:2375 ../plugins/gtkui/deadbeef.glade.h:125
+msgid "Website:"
+msgstr "Webbplats:"
+
+#: ../plugins/gtkui/interface.c:2406 ../plugins/gtkui/deadbeef.glade.h:18
+msgid "Configure"
+msgstr "Inställningar"
+
+#: ../plugins/gtkui/interface.c:2410 ../plugins/gtkui/deadbeef.glade.h:84
+msgid "Plugins"
+msgstr "Instick"
+
+#: ../plugins/gtkui/interface.c:2754 ../plugins/gtkui/deadbeef.glade.h:147
+msgid "editplaylistdlg"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2881 ../plugins/gtkui/deadbeef.glade.h:124
+msgid "URL:"
+msgstr "URL:"
+
+#: ../plugins/gtkui/interface.c:2982 ../plugins/gtkui/deadbeef.glade.h:55
+msgid "Group By"
+msgstr "Gruppera efter"
+
+#: ../plugins/gtkui/mainplaylist.c:298 ../plugins/gtkui/search.c:433
+msgid "Artist / Album"
+msgstr "Artist / Album"
+
+#: ../plugins/gtkui/mainplaylist.c:299 ../plugins/gtkui/search.c:434
+msgid "Track No"
+msgstr "Spårnummer"
+
+#: ../plugins/gtkui/mainplaylist.c:300 ../plugins/gtkui/search.c:435
+msgid "Title / Track Artist"
+msgstr "Titel / Artist för spåret"
+
+#: ../plugins/gtkui/mainplaylist.c:301 ../plugins/gtkui/search.c:436
+#: ../plugins/gtkui/trkproperties.c:175
+msgid "Duration"
+msgstr "Längd"
+
+#: ../plugins/gtkui/plcommon.c:316
+msgid "Delete files from disk"
+msgstr "Radera filer från disk"
+
+#: ../plugins/gtkui/plcommon.c:317
+msgid ""
+"Files will be lost. Proceed?\n"
+"(This dialog can be turned off in GTKUI plugin settings)"
+msgstr ""
+"Filer kommer att förloras. Fortsätta?\n"
+"(Denna dialogruta kan stängas av i inställningarna för GTKUI-instick)"
+
+#: ../plugins/gtkui/plcommon.c:318 ../plugins/gtkui/trkproperties.c:56
+msgid "Warning"
+msgstr "Varning"
+
+#: ../plugins/gtkui/plcommon.c:363
+msgid "Add to playback queue"
+msgstr "Lägg till i uppspelningskön"
+
+#: ../plugins/gtkui/plcommon.c:368
+msgid "Remove from playback queue"
+msgstr "Ta bort från uppspelningskön"
+
+#: ../plugins/gtkui/plcommon.c:376
+msgid "Reload metadata"
+msgstr "Ladda om metadata"
+
+#: ../plugins/gtkui/plcommon.c:392
+msgid "Remove from disk"
+msgstr "Ta bort från disk"
+
+#: ../plugins/gtkui/plcommon.c:616 ../plugins/gtkui/plcommon.c:741
+msgid "Add column"
+msgstr "Lägg till kolumn"
+
+#: ../plugins/gtkui/plcommon.c:646 ../plugins/gtkui/plcommon.c:745
+msgid "Edit column"
+msgstr "Redigera kolumn"
+
+#: ../plugins/gtkui/plcommon.c:749
+msgid "Remove column"
+msgstr "Ta bort kolumn"
+
+#: ../plugins/gtkui/plcommon.c:759
+msgid "Group by"
+msgstr "Gruppera efter"
+
+#: ../plugins/gtkui/plcommon.c:766
+msgid "None"
+msgstr "Ingen"
+
+#: ../plugins/gtkui/plcommon.c:770
+msgid "Artist/Date/Album"
+msgstr "Artist/Datum/Album"
+
+#: ../plugins/gtkui/pluginconf.c:41
+msgid "Open file..."
+msgstr "Öppna fil..."
+
+#: ../plugins/gtkui/pluginconf.c:139
+#, c-format
+msgid "Setup %s"
+msgstr ""
+
+#: ../plugins/gtkui/prefwin.c:98
+msgid "Default Audio Device"
+msgstr "Standardljudenhet"
+
+#: ../plugins/gtkui/prefwin.c:267
+msgid "Add"
+msgstr "Lägg till"
+
+#: ../plugins/gtkui/prefwin.c:277
+msgid "Global Hotkeys"
+msgstr "Globala snabbtangenter"
+
+#: ../plugins/gtkui/prefwin.c:332
+msgid "Slot"
+msgstr ""
+
+#: ../plugins/gtkui/prefwin.c:333
+msgid "Key combination"
+msgstr ""
+
+#. output plugin selection
+#: ../plugins/gtkui/prefwin.c:379 ../plugins/gtkui/prefwin.c:569
+#: ../plugins.c:833
+msgid "ALSA output plugin"
+msgstr ""
+
+#: ../plugins/gtkui/progress.c:64
+msgid "Initializing..."
+msgstr "Förbereder..."
+
+#: ../plugins/gtkui/trkproperties.c:53
+msgid "You've modified data for this track."
+msgstr "Du har ändrat data för detta spår."
+
+#: ../plugins/gtkui/trkproperties.c:55
+msgid "Really close the window?"
+msgstr "Ska fönstret verkligen stängas?"
+
+#: ../plugins/gtkui/trkproperties.c:178
+msgid "Tag Type(s)"
+msgstr ""
+
+#: ../plugins/gtkui/trkproperties.c:180
+msgid "Embedded Cuesheet"
+msgstr ""
+
+#: ../plugins/gtkui/trkproperties.c:180
+msgid "Yes"
+msgstr "Ja"
+
+#: ../plugins/gtkui/trkproperties.c:180
+msgid "No"
+msgstr "Nej"
+
+#: ../plugins/gtkui/trkproperties.c:248 ../plugins/gtkui/trkproperties.c:260
+msgid "Key"
+msgstr "Nyckel"
+
+#: ../plugins/gtkui/trkproperties.c:249 ../plugins/gtkui/trkproperties.c:261
+msgid "Value"
+msgstr "Värde"
+
+#: ../plugins/notify/notify.c:138
+msgid "DeaDBeeF now playing"
+msgstr "DeaDBeeF spelar"
+
+#: ../main.c:84
+#, c-format
+msgid "Usage: deadbeef [options] [file(s)]\n"
+msgstr "Användning: deadbeef [flaggor] [fil(er)]\n"
+
+#: ../main.c:85
+#, c-format
+msgid "Options:\n"
+msgstr "Flaggor:\n"
+
+#: ../main.c:86
+#, c-format
+msgid "   --help  or  -h     Print help (this message) and exit\n"
+msgstr ""
+
+#: ../main.c:87
+#, c-format
+msgid "   --quit             Quit player\n"
+msgstr ""
+
+#: ../main.c:88
+#, c-format
+msgid "   --version          Print version info and exit\n"
+msgstr ""
+
+#: ../main.c:89
+#, c-format
+msgid "   --play             Start playback\n"
+msgstr ""
+
+#: ../main.c:90
+#, c-format
+msgid "   --stop             Stop playback\n"
+msgstr ""
+
+#: ../main.c:91
+#, c-format
+msgid "   --pause            Pause playback\n"
+msgstr ""
+
+#: ../main.c:92
+#, c-format
+msgid "   --next             Next song in playlist\n"
+msgstr ""
+
+#: ../main.c:93
+#, c-format
+msgid "   --prev             Previous song in playlist\n"
+msgstr ""
+
+#: ../main.c:94
+#, c-format
+msgid "   --random           Random song in playlist\n"
+msgstr ""
+
+#: ../main.c:95
+#, c-format
+msgid "   --queue            Append file(s) to existing playlist\n"
+msgstr ""
+
+#: ../main.c:96
+#, c-format
+msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
+msgstr ""
+
+#: ../main.c:97
+#, c-format
+msgid ""
+"                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
+"                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
+"                      copy[r]ight, [e]lapsed\n"
+msgstr ""
+
+#: ../main.c:100
+#, c-format
+msgid ""
+"                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist "
+"- title\"\n"
+msgstr ""
+
+#: ../playlist.c:369 ../playlist.c:2212
+msgid "Default"
+msgstr "Standard"
+
+#: ../plugins/gtkui/deadbeef.glade.h:1
+msgid ""
+"2.3 (Recommended)\n"
+"2.4"
+msgstr ""
+"2.3 (rekomenderad)\n"
+"2.4"
+
+#: ../plugins/gtkui/deadbeef.glade.h:25
+msgid ""
+"Disable\n"
+"Track\n"
+"Album"
+msgstr ""
+"Avaktiver\n"
+"Spår\n"
+"Album"
+
+#: ../plugins/gtkui/deadbeef.glade.h:34
+msgid ""
+"File number\n"
+"Playing\n"
+"Album Art\n"
+"Artist - Album\n"
+"Artist\n"
+"Album\n"
+"Title\n"
+"Length\n"
+"Track\n"
+"Band / Album Artist\n"
+"Custom"
+msgstr ""
+"Filnummer\n"
+"Spelar\n"
+"Albumbild\n"
+"Artist -Album\n"
+"Artist\n"
+"Album\n"
+"Titel\n"
+"Längd\n"
+"Spår\n"
+"Band / Artist på album\n"
+"Anpassad"
+
+#: ../plugins/gtkui/deadbeef.glade.h:60
+msgid ""
+"Left\n"
+"Right"
+msgstr ""
+"Vänster\n"
+"Höger"
+
+#: ../plugins/gtkui/support.c:90 ../plugins/gtkui/support.c:114
+#, c-format
+msgid "Couldn't find pixmap file: %s"
+msgstr "Kunde inte hitta pixmap-fil: %s"
+
+#: ../plugins/vorbis/vcedit.c:129 ../plugins/vorbis/vcedit.c:155
+msgid "Couldn't get enough memory for input buffering."
+msgstr "Kunde inte allokera tillräckligt med minne för att buffra inläsning."
+
+#: ../plugins/vorbis/vcedit.c:179 ../plugins/vorbis/vcedit.c:550
+msgid "Error reading first page of Ogg bitstream."
+msgstr "Fel vid läsning av första sidan av Ogg-bitströmmen."
+
+#: ../plugins/vorbis/vcedit.c:185 ../plugins/vorbis/vcedit.c:557
+msgid "Error reading initial header packet."
+msgstr "Fel vid läsning av inledande pakethuvud."
+
+#: ../plugins/vorbis/vcedit.c:237
+msgid "Couldn't get enough memory to register new stream serial number."
+msgstr ""
+"Kunde inte allokera tillräckligt med minne för att registrera nytt "
+"serienummer."
+
+#: ../plugins/vorbis/vcedit.c:505
+msgid "Input truncated or empty."
+msgstr "Inläsning trunkerad eller tom."
+
+#: ../plugins/vorbis/vcedit.c:507
+msgid "Input is not an Ogg bitstream."
+msgstr "Källan är inte en Ogg-bitström."
+
+#: ../plugins/vorbis/vcedit.c:565
+msgid "Ogg bitstream does not contain Vorbis data."
+msgstr "Ogg-bitströmmen innehåller ingen Vorbis-data."
+
+#: ../plugins/vorbis/vcedit.c:578
+msgid "EOF before recognised stream."
+msgstr "Fick EOF innan strömtypen kunde identifieras."
+
+#: ../plugins/vorbis/vcedit.c:594
+msgid "Ogg bitstream does not contain a supported data-type."
+msgstr "Ogg-bitströmmen innehåller inte en datatyp som stöds."
+
+#: ../plugins/vorbis/vcedit.c:638
+msgid "Corrupt secondary header."
+msgstr "Trasigt sekundärt huvud."
+
+#: ../plugins/vorbis/vcedit.c:659
+msgid "EOF before end of Vorbis headers."
+msgstr "Fick EOF innan Vorbis-huvudet blev komplett."
+
+#: ../plugins/vorbis/vcedit.c:834
+msgid "Corrupt or missing data, continuing..."
+msgstr "Trasig eller saknas data, fortsätter..."
+
+#: ../plugins/vorbis/vcedit.c:874
+msgid ""
+"Error writing stream to output. Output stream may be corrupted or truncated."
+msgstr ""
+"Fel vid skrivning av ström till utkälla. Strömmen kan vara skadad eller "
+"trunkerad."

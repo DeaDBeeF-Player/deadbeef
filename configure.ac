@@ -6,6 +6,7 @@ AC_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE([1.11 dist-bzip2])
 AM_MAINTAINER_MODE()
 
+AC_USE_SYSTEM_EXTENSIONS
 AC_PROG_CC
 AC_PROG_CXX
 AC_STDC_HEADERS
@@ -13,6 +14,15 @@ AC_PROG_INSTALL
 AC_PROG_LIBTOOL
 AC_CONFIG_MACRO_DIR([m4])
 AC_C_BIGENDIAN
+AM_GNU_GETTEXT
+
+IT_PROG_INTLTOOL([0.41.0])
+GETTEXT_PACKAGE=deadbeef
+AC_SUBST(GETTEXT_PACKAGE)
+
+test "$prefix" = NONE && prefix=/usr/local
+AC_DEFINE_UNQUOTED(LOCALEDIR, "${prefix}/${DATADIRNAME}/locale", [Name of gettext locale directory])
+
 if test "x$USE_MAINTAINER_MODE" = "xyes" ; then
     AM_PROG_VALAC([0.7.0])
     if test "x$VALAC" = "x" ; then
@@ -453,6 +463,8 @@ plugins/artwork/Makefile
 plugins/supereq/Makefile
 plugins/notify/Makefile
 plugins/emidi/Makefile
+intl/Makefile
+po/Makefile.in
 deadbeef.desktop
 ])
 

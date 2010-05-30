@@ -26,6 +26,7 @@
 #include <math.h>
 #include <sys/time.h>
 #include <unistd.h>
+#include "../../gettext.h"
 #include "gtkui.h"
 #include "ddblistview.h"
 #include "mainplaylist.h"
@@ -124,10 +125,10 @@ update_songinfo (gpointer ctx) {
         snprintf (totaltime_str, sizeof (totaltime_str), "%d:%02d:%02d", hourtotal, mintotal, sectotal);
     }
     else if (daystotal == 1) {
-        snprintf (totaltime_str, sizeof (totaltime_str), "1 day %d:%02d:%02d", hourtotal, mintotal, sectotal);
+        snprintf (totaltime_str, sizeof (totaltime_str), _("1 day %d:%02d:%02d"), hourtotal, mintotal, sectotal);
     }
     else {
-        snprintf (totaltime_str, sizeof (totaltime_str), "%d days %d:%02d:%02d", daystotal, hourtotal, mintotal, sectotal);
+        snprintf (totaltime_str, sizeof (totaltime_str), _("%d days %d:%02d:%02d"), daystotal, hourtotal, mintotal, sectotal);
     }
 
     DB_playItem_t *track = deadbeef->streamer_get_playing_track ();
@@ -136,7 +137,7 @@ update_songinfo (gpointer ctx) {
     float duration = track ? deadbeef->pl_get_item_duration (track) : -1;
 
     if (deadbeef->get_output ()->state () == OUTPUT_STATE_STOPPED || !track || !c) {
-        snprintf (sbtext_new, sizeof (sbtext_new), "Stopped | %d tracks | %s total playtime", deadbeef->pl_getcount (PL_MAIN), totaltime_str);
+        snprintf (sbtext_new, sizeof (sbtext_new), _("Stopped | %d tracks | %s total playtime"), deadbeef->pl_getcount (PL_MAIN), totaltime_str);
         songpos = 0;
     }
     else {
@@ -146,7 +147,7 @@ update_songinfo (gpointer ctx) {
         int mindur = duration / 60;
         int secdur = duration - mindur * 60;
 
-        const char *mode = c->channels == 1 ? "Mono" : "Stereo";
+        const char *mode = c->channels == 1 ? _("Mono") : _("Stereo");
         int samplerate = c->samplerate;
         int bitspersample = c->bps;
         songpos = playpos;
@@ -166,14 +167,14 @@ update_songinfo (gpointer ctx) {
             memcpy (&last_br_update, &tm, sizeof (tm));
             int bitrate = deadbeef->streamer_get_apx_bitrate ();
             if (bitrate > 0) {
-                snprintf (sbitrate, sizeof (sbitrate), "| %4d kbps ", bitrate);
+                snprintf (sbitrate, sizeof (sbitrate), _("| %4d kbps "), bitrate);
             }
             else {
                 sbitrate[0] = 0;
             }
         }
-        const char *spaused = deadbeef->get_output ()->state () == OUTPUT_STATE_PAUSED ? "Paused | " : "";
-        snprintf (sbtext_new, sizeof (sbtext_new), "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime", spaused, track->filetype ? track->filetype:"-", sbitrate, samplerate, bitspersample, mode, minpos, secpos, t, deadbeef->pl_getcount (PL_MAIN), totaltime_str);
+        const char *spaused = deadbeef->get_output ()->state () == OUTPUT_STATE_PAUSED ? _("Paused | ") : "";
+        snprintf (sbtext_new, sizeof (sbtext_new), _("%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"), spaused, track->filetype ? track->filetype:"-", sbitrate, samplerate, bitspersample, mode, minpos, secpos, t, deadbeef->pl_getcount (PL_MAIN), totaltime_str);
     }
 
     if (strcmp (sbtext_new, sb_text)) {
@@ -529,7 +530,7 @@ char last_playlist_save_name[1024] = "";
 
 void
 save_playlist_as (void) {
-    GtkWidget *dlg = gtk_file_chooser_dialog_new ("Save Playlist As", GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_SAVE, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_SAVE, GTK_RESPONSE_OK, NULL);
+    GtkWidget *dlg = gtk_file_chooser_dialog_new (_("Save Playlist As"), GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_SAVE, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_SAVE, GTK_RESPONSE_OK, NULL);
 
     gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER (dlg), TRUE);
     gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER (dlg), "untitled.dbpl");
@@ -538,7 +539,7 @@ save_playlist_as (void) {
 
     GtkFileFilter* flt;
     flt = gtk_file_filter_new ();
-    gtk_file_filter_set_name (flt, "DeaDBeeF playlist files (*.dbpl)");
+    gtk_file_filter_set_name (flt, _("DeaDBeeF playlist files (*.dbpl)"));
     gtk_file_filter_add_pattern (flt, "*.dbpl");
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
 
@@ -592,14 +593,14 @@ void
 on_playlist_load_activate              (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    GtkWidget *dlg = gtk_file_chooser_dialog_new ("Load Playlist", GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
+    GtkWidget *dlg = gtk_file_chooser_dialog_new (_("Load Playlist"), GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
 
     // restore folder
     gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dlg), deadbeef->conf_get_str ("filechooser.playlist.lastdir", ""));
 
     GtkFileFilter* flt;
     flt = gtk_file_filter_new ();
-    gtk_file_filter_set_name (flt, "DeaDBeeF playlist files (*.dbpl)");
+    gtk_file_filter_set_name (flt, _("DeaDBeeF playlist files (*.dbpl)"));
     gtk_file_filter_add_pattern (flt, "*.dbpl");
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
     
@@ -737,10 +738,10 @@ gtkui_add_new_playlist (void) {
     for (;;) {
         char name[100];
         if (!idx) {
-            strcpy (name, "New Playlist");
+            strcpy (name, _("New Playlist"));
         }
         else {
-            snprintf (name, sizeof (name), "New Playlist (%d)", idx);
+            snprintf (name, sizeof (name), _("New Playlist (%d)"), idx);
         }
         for (i = 0; i < cnt; i++) {
             char t[100];

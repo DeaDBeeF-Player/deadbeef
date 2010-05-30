@@ -16,11 +16,15 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
+#ifdef HAVE_CONFIG_H
+#  include <config.h>
+#endif
 #include <gtk/gtk.h>
 #include <string.h>
 #include <assert.h>
 #include <stdlib.h>
 #include <gdk/gdkkeysyms.h>
+#include "../../gettext.h"
 #include "gtkui.h"
 #include "support.h"
 #include "interface.h"
@@ -91,7 +95,7 @@ preferences_fill_soundcards (void) {
     GtkTreeModel *mdl = gtk_combo_box_get_model (combobox);
     gtk_list_store_clear (GTK_LIST_STORE (mdl));
 
-    gtk_combo_box_append_text (combobox, "Default Audio Device");
+    gtk_combo_box_append_text (combobox, _("Default Audio Device"));
     if (!strcmp (s, "default")) {
         gtk_combo_box_set_active (combobox, 0);
     }
@@ -260,17 +264,17 @@ prefwin_add_hotkeys_tab (GtkWidget *prefwin) {
     gtk_box_pack_start (GTK_BOX (vbox17), hbuttonbox3, FALSE, FALSE, 0);
     gtk_button_box_set_layout (GTK_BUTTON_BOX (hbuttonbox3), GTK_BUTTONBOX_END);
 
-    addhotkey = gtk_button_new_with_mnemonic ("Add");
+    addhotkey = gtk_button_new_with_mnemonic (_("Add"));
     gtk_widget_show (addhotkey);
     gtk_container_add (GTK_CONTAINER (hbuttonbox3), addhotkey);
     GTK_WIDGET_SET_FLAGS (addhotkey, GTK_CAN_DEFAULT);
 
-    removehotkey = gtk_button_new_with_mnemonic ("Remove");
+    removehotkey = gtk_button_new_with_mnemonic (_("Remove"));
     gtk_widget_show (removehotkey);
     gtk_container_add (GTK_CONTAINER (hbuttonbox3), removehotkey);
     GTK_WIDGET_SET_FLAGS (removehotkey, GTK_CAN_DEFAULT);
 
-    label66 = gtk_label_new ("Global Hotkeys");
+    label66 = gtk_label_new (_("Global Hotkeys"));
     gtk_widget_show (label66);
     int npages = gtk_notebook_get_n_pages (GTK_NOTEBOOK (notebook2));
     gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook2), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook2), npages-1), label66);
@@ -325,8 +329,8 @@ prefwin_add_hotkeys_tab (GtkWidget *prefwin) {
             hkstore);
 
 
-    GtkTreeViewColumn *hk_col1 = gtk_tree_view_column_new_with_attributes ("Slot", rend_hk_slot, "text", 0, NULL);
-    GtkTreeViewColumn *hk_col2 = gtk_tree_view_column_new_with_attributes ("Key combination", rend_hk_binding, "text", 1, NULL);
+    GtkTreeViewColumn *hk_col1 = gtk_tree_view_column_new_with_attributes (_("Slot"), rend_hk_slot, "text", 0, NULL);
+    GtkTreeViewColumn *hk_col2 = gtk_tree_view_column_new_with_attributes (_("Key combination"), rend_hk_binding, "text", 1, NULL);
     gtk_tree_view_append_column (hktree, hk_col1);
     gtk_tree_view_append_column (hktree, hk_col2);
 
@@ -372,7 +376,7 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
     GtkComboBox *combobox = NULL;
 
     // output plugin selection
-    const char *outplugname = deadbeef->conf_get_str ("output_plugin", "ALSA output plugin");
+    const char *outplugname = deadbeef->conf_get_str ("output_plugin", _("ALSA output plugin"));
     combobox = GTK_COMBO_BOX (lookup_widget (w, "pref_output_plugin"));
 
     DB_output_t **out_plugs = deadbeef->plug_get_output_list ();
@@ -481,7 +485,7 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
     }
 #else
     GtkListStore *store = gtk_list_store_new (1, G_TYPE_STRING);
-    GtkTreeViewColumn *col2 = gtk_tree_view_column_new_with_attributes ("Title", rend_text, "text", 0, NULL);
+    GtkTreeViewColumn *col2 = gtk_tree_view_column_new_with_attributes (_("Title"), rend_text, "text", 0, NULL);
     gtk_tree_view_append_column (tree, col2);
     DB_plugin_t **plugins = deadbeef->plug_get_list ();
     int i;
@@ -562,7 +566,7 @@ void
 on_pref_output_plugin_changed          (GtkComboBox     *combobox,
                                         gpointer         user_data)
 {
-    const char *outplugname = deadbeef->conf_get_str ("output_plugin", "ALSA output plugin");
+    const char *outplugname = deadbeef->conf_get_str ("output_plugin", _("ALSA output plugin"));
     int active = gtk_combo_box_get_active (combobox);
 
     DB_output_t **out_plugs = deadbeef->plug_get_output_list ();

@@ -313,9 +313,9 @@ on_remove_from_disk_activate                    (GtkMenuItem     *menuitem,
     GtkWidget *widget = GTK_WIDGET (menuitem);
 
     if (deadbeef->conf_get_int ("gtkui.delete_files_ask", 1)) {
-        GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (mainwin), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO, "Delete files from disk");
-        gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dlg), "Files will be lost. Proceed?\n(This dialog can be turned off in GTKUI plugin settings)");
-        gtk_window_set_title (GTK_WINDOW (dlg), "Warning");
+        GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (mainwin), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO, _("Delete files from disk"));
+        gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dlg), _("Files will be lost. Proceed?\n(This dialog can be turned off in GTKUI plugin settings)"));
+        gtk_window_set_title (GTK_WINDOW (dlg), _("Warning"));
 
         int response = gtk_dialog_run (GTK_DIALOG (dlg));
         gtk_widget_destroy (dlg);
@@ -360,12 +360,12 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
     GtkWidget *reload_metadata;
 
     playlist_menu = gtk_menu_new ();
-    add_to_playback_queue1 = gtk_menu_item_new_with_mnemonic ("Add to playback queue");
+    add_to_playback_queue1 = gtk_menu_item_new_with_mnemonic (_("Add to playback queue"));
     gtk_widget_show (add_to_playback_queue1);
     gtk_container_add (GTK_CONTAINER (playlist_menu), add_to_playback_queue1);
     g_object_set_data (G_OBJECT (add_to_playback_queue1), "ps", listview);
 
-    remove_from_playback_queue1 = gtk_menu_item_new_with_mnemonic ("Remove from playback queue");
+    remove_from_playback_queue1 = gtk_menu_item_new_with_mnemonic (_("Remove from playback queue"));
     if (inqueue == -1) {
         gtk_widget_set_sensitive (remove_from_playback_queue1, FALSE);
     }
@@ -373,7 +373,7 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
     gtk_container_add (GTK_CONTAINER (playlist_menu), remove_from_playback_queue1);
     g_object_set_data (G_OBJECT (remove_from_playback_queue1), "ps", listview);
 
-    reload_metadata = gtk_menu_item_new_with_mnemonic ("Reload metadata");
+    reload_metadata = gtk_menu_item_new_with_mnemonic (_("Reload metadata"));
     gtk_widget_show (reload_metadata);
     gtk_container_add (GTK_CONTAINER (playlist_menu), reload_metadata);
     g_object_set_data (G_OBJECT (reload_metadata), "ps", listview);
@@ -384,12 +384,12 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
     gtk_container_add (GTK_CONTAINER (playlist_menu), separator9);
     gtk_widget_set_sensitive (separator9, FALSE);
 
-    remove2 = gtk_menu_item_new_with_mnemonic ("Remove");
+    remove2 = gtk_menu_item_new_with_mnemonic (_("Remove"));
     gtk_widget_show (remove2);
     gtk_container_add (GTK_CONTAINER (playlist_menu), remove2);
     g_object_set_data (G_OBJECT (remove2), "ps", listview);
 
-    remove_from_disk = gtk_menu_item_new_with_mnemonic ("Remove from disk");
+    remove_from_disk = gtk_menu_item_new_with_mnemonic (_("Remove from disk"));
     gtk_widget_show (remove_from_disk);
     gtk_container_add (GTK_CONTAINER (playlist_menu), remove_from_disk);
     g_object_set_data (G_OBJECT (remove_from_disk), "ps", listview);
@@ -399,7 +399,7 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
     gtk_container_add (GTK_CONTAINER (playlist_menu), separator8);
     gtk_widget_set_sensitive (separator8, FALSE);
 
-    properties1 = gtk_menu_item_new_with_mnemonic ("Properties");
+    properties1 = gtk_menu_item_new_with_mnemonic (_("Properties"));
     gtk_widget_show (properties1);
     gtk_container_add (GTK_CONTAINER (playlist_menu), properties1);
     g_object_set_data (G_OBJECT (properties1), "ps", listview);
@@ -613,7 +613,7 @@ on_add_column_activate                 (GtkMenuItem     *menuitem,
 {
     GtkWidget *dlg = create_editcolumndlg ();
     gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
-    gtk_window_set_title (GTK_WINDOW (dlg), "Add column");
+    gtk_window_set_title (GTK_WINDOW (dlg), _("Add column"));
     gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "id")), 0);
     gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "align")), 0);
     gint response = gtk_dialog_run (GTK_DIALOG (dlg));
@@ -643,7 +643,7 @@ on_edit_column_activate                (GtkMenuItem     *menuitem,
         return;
     GtkWidget *dlg = create_editcolumndlg ();
     gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
-    gtk_window_set_title (GTK_WINDOW (dlg), "Edit column");
+    gtk_window_set_title (GTK_WINDOW (dlg), _("Edit column"));
 
     const char *title;
     int width;
@@ -738,15 +738,15 @@ create_headermenu (int groupby)
 
   headermenu = gtk_menu_new ();
 
-  add_column = gtk_menu_item_new_with_mnemonic ("Add column");
+  add_column = gtk_menu_item_new_with_mnemonic (_("Add column"));
   gtk_widget_show (add_column);
   gtk_container_add (GTK_CONTAINER (headermenu), add_column);
 
-  edit_column = gtk_menu_item_new_with_mnemonic ("Edit column");
+  edit_column = gtk_menu_item_new_with_mnemonic (_("Edit column"));
   gtk_widget_show (edit_column);
   gtk_container_add (GTK_CONTAINER (headermenu), edit_column);
 
-  remove_column = gtk_menu_item_new_with_mnemonic ("Remove column");
+  remove_column = gtk_menu_item_new_with_mnemonic (_("Remove column"));
   gtk_widget_show (remove_column);
   gtk_container_add (GTK_CONTAINER (headermenu), remove_column);
 
@@ -756,26 +756,26 @@ create_headermenu (int groupby)
       gtk_container_add (GTK_CONTAINER (headermenu), separator);
       gtk_widget_set_sensitive (separator, FALSE);
 
-      group_by = gtk_menu_item_new_with_mnemonic ("Group by");
+      group_by = gtk_menu_item_new_with_mnemonic (_("Group by"));
       gtk_widget_show (group_by);
       gtk_container_add (GTK_CONTAINER (headermenu), group_by);
 
       group_by_menu = gtk_menu_new ();
       gtk_menu_item_set_submenu (GTK_MENU_ITEM (group_by), group_by_menu);
 
-      none = gtk_menu_item_new_with_mnemonic ("None");
+      none = gtk_menu_item_new_with_mnemonic (_("None"));
       gtk_widget_show (none);
       gtk_container_add (GTK_CONTAINER (group_by_menu), none);
 
-      artist_date_album = gtk_menu_item_new_with_mnemonic ("Artist/Date/Album");
+      artist_date_album = gtk_menu_item_new_with_mnemonic (_("Artist/Date/Album"));
       gtk_widget_show (artist_date_album);
       gtk_container_add (GTK_CONTAINER (group_by_menu), artist_date_album);
 
-      artist = gtk_menu_item_new_with_mnemonic ("Artist");
+      artist = gtk_menu_item_new_with_mnemonic (_("Artist"));
       gtk_widget_show (artist);
       gtk_container_add (GTK_CONTAINER (group_by_menu), artist);
 
-      custom = gtk_menu_item_new_with_mnemonic ("Custom");
+      custom = gtk_menu_item_new_with_mnemonic (_("Custom"));
       gtk_widget_show (custom);
       gtk_container_add (GTK_CONTAINER (group_by_menu), custom);
 
