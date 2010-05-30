@@ -867,7 +867,7 @@ msgstr "Додати"
 
 #: ../plugins/gtkui/prefwin.c:277
 msgid "Global Hotkeys"
-msgstr "Глобальні скорочення клавіатури"
+msgstr "Глоб. скор. клавіш"
 
 #: ../plugins/gtkui/prefwin.c:332
 msgid "Slot"
