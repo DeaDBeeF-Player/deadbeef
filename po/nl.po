@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-29 04:08+0000\n"
+"POT-Creation-Date: 2010-05-30 08:17+0000\n"
 "PO-Revision-Date: 2010-05-21 18:34+0300\n"
 "Last-Translator: F.J. de Pablos <depazzz@gmail.com>\n"
 "Language-Team: Spanish\n"
@@ -117,11 +117,11 @@ msgstr ""
 
 #: ../plugins/gtkui/eq.c:320
 msgid "Save Preset"
-msgstr ""
+msgstr "Opslaan van preset"
 
 #: ../plugins/gtkui/eq.c:327
 msgid "Load Preset"
-msgstr ""
+msgstr "laden van preset"
 
 #: ../plugins/gtkui/eq.c:334
 msgid "Import Foobar2000 Preset"
@@ -261,7 +261,7 @@ msgstr "Verwijderen"
 
 #: ../plugins/gtkui/interface.c:279 ../plugins/gtkui/deadbeef.glade.h:19
 msgid "Crop"
-msgstr ""
+msgstr "verkleinen"
 
 #: ../plugins/gtkui/interface.c:283 ../plugins/gtkui/deadbeef.glade.h:139
 msgid "_Find"
@@ -306,11 +306,11 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:342 ../plugins/gtkui/deadbeef.glade.h:108
 msgid "Shuffle"
-msgstr ""
+msgstr "Willekeurig"
 
 #: ../plugins/gtkui/interface.c:348 ../plugins/gtkui/deadbeef.glade.h:94
 msgid "Random"
-msgstr ""
+msgstr "Willekeurig"
 
 #: ../plugins/gtkui/interface.c:354 ../plugins/gtkui/deadbeef.glade.h:67
 msgid "Looping"
@@ -379,7 +379,7 @@ msgstr "Volgende"
 
 #: ../plugins/gtkui/interface.c:931 ../plugins/gtkui/deadbeef.glade.h:82
 msgid "Play Random"
-msgstr ""
+msgstr "Willekeurig afspelen "
 
 #: ../plugins/gtkui/interface.c:940 ../plugins/gtkui/deadbeef.glade.h:5
 msgid "About"
@@ -391,11 +391,11 @@ msgstr "Afsluiten"
 
 #: ../plugins/gtkui/interface.c:1025 ../plugins/gtkui/deadbeef.glade.h:10
 msgid "Adding files..."
-msgstr ""
+msgstr "Toevoegen van bestanden..."
 
 #: ../plugins/gtkui/interface.c:1069 ../plugins/gtkui/deadbeef.glade.h:130
 msgid "_Abort"
-msgstr ""
+msgstr "_Afbreken"
 
 #: ../plugins/gtkui/interface.c:1170 ../plugins/gtkui/deadbeef.glade.h:122
 msgid "Track Properties"
@@ -993,11 +993,12 @@ msgid "Default"
 msgstr "Standaard"
 
 #: ../plugins/gtkui/deadbeef.glade.h:1
-#, fuzzy
 msgid ""
 "2.3 (Recommended)\n"
 "2.4"
-msgstr "2.3 (Aangeraden)"
+msgstr ""
+"2.3 (Aangeraden)\n"
+"2.4"
 
 #: ../plugins/gtkui/deadbeef.glade.h:25
 msgid ""
@@ -1022,11 +1023,12 @@ msgid ""
 msgstr ""
 
 #: ../plugins/gtkui/deadbeef.glade.h:60
-#, fuzzy
 msgid ""
 "Left\n"
 "Right"
-msgstr "Rechts"
+msgstr ""
+"Links\n"
+"Rechts"
 
 #: ../plugins/gtkui/support.c:90 ../plugins/gtkui/support.c:114
 #, c-format

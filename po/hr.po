@@ -1,14 +1,14 @@
-# Croatian translations for PACKAGE package.
-# Copyright (C) 2010 THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
+# Croatian translations for deadbeef package.
+# Copyright (C) 2010 Alexey Yakovenko <waker@users.sourceforge.net>
+# This file is distributed under the same license as the deadbeef package.
 #  Ivica Kolić<ikoli@yahoo.com>, 2010.
-#  Ivica Kolić<ikoli@yahoo.com> <>, 2010.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: deadbeef\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-05-27 04:08+0000\n"
-"PO-Revision-Date: 2010-05-28 00:33+0200\n"
+"PO-Revision-Date: 2010-05-31 00:12+0200\n"
 "Last-Translator:  Ivica Kolić<ikoli@yahoo.com> <>\n"
 "Language-Team: Croatian <>\n"
 "MIME-Version: 1.0\n"
@@ -43,7 +43,7 @@ msgstr ""
 
 #: ../plugins/gtkui/callbacks.c:650
 msgid "Failed to load help file"
-msgstr ""
+msgstr "Neuspjeh u učitavanju datoteke pomoći"
 
 #: ../plugins/gtkui/callbacks.c:664 ../plugins/gtkui/interface.c:1105
 msgid "Help"
@@ -140,7 +140,7 @@ msgstr ""
 #: ../plugins/gtkui/gtkui.c:140
 #, c-format
 msgid "Stopped | %d tracks | %s total playtime"
-msgstr ""
+msgstr "Zustavljeno | %d zapisi| %s ukupno vrijeme sviranja"
 
 #: ../plugins/gtkui/gtkui.c:150
 msgid "Mono"
@@ -164,6 +164,8 @@ msgstr "Pauzirano | "
 msgid ""
 "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
 msgstr ""
+"%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d zapisi | %s ukupno vrijeme "
+"sviranja"
 
 #: ../plugins/gtkui/gtkui.c:533
 msgid "Save Playlist As"
@@ -397,7 +399,7 @@ msgstr "_Prekini"
 
 #: ../plugins/gtkui/interface.c:1170
 msgid "Track Properties"
-msgstr ""
+msgstr "Svojstva zapisa"
 
 #: ../plugins/gtkui/interface.c:1194
 msgid ""
@@ -432,7 +434,7 @@ msgstr "Naslov:"
 
 #: ../plugins/gtkui/interface.c:1401
 msgid "Enter new column title here"
-msgstr ""
+msgstr "Unesi naziv novog stupca"
 
 #: ../plugins/gtkui/interface.c:1409
 msgid "Type:"
@@ -473,7 +475,7 @@ msgstr "Dužina"
 
 #: ../plugins/gtkui/interface.c:1425 ../plugins/gtkui/interface.c:1794
 msgid "Track"
-msgstr ""
+msgstr "Zapis"
 
 #: ../plugins/gtkui/interface.c:1426
 msgid "Band / Album Artist"
@@ -719,7 +721,7 @@ msgstr "Opis:"
 
 #: ../plugins/gtkui/interface.c:2345
 msgid "Author(s):"
-msgstr "Aotor(i):"
+msgstr "Autor(i):"
 
 #: ../plugins/gtkui/interface.c:2360
 msgid "Email:"
@@ -735,7 +737,7 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:2410
 msgid "Plugins"
-msgstr "Prikjlučci"
+msgstr "Priključci"
 
 #: ../plugins/gtkui/interface.c:2754
 msgid "editplaylistdlg"
@@ -755,11 +757,11 @@ msgstr "Umjetnik /album"
 
 #: ../plugins/gtkui/mainplaylist.c:299 ../plugins/gtkui/search.c:434
 msgid "Track No"
-msgstr ""
+msgstr "Broj zapisa"
 
 #: ../plugins/gtkui/mainplaylist.c:300 ../plugins/gtkui/search.c:435
 msgid "Title / Track Artist"
-msgstr ""
+msgstr "Naslov/ zapis umjetnik"
 
 #: ../plugins/gtkui/mainplaylist.c:301 ../plugins/gtkui/search.c:436
 #: ../plugins/gtkui/trkproperties.c:175
@@ -800,15 +802,15 @@ msgstr "Ukloni sa diska"
 
 #: ../plugins/gtkui/plcommon.c:616 ../plugins/gtkui/plcommon.c:741
 msgid "Add column"
-msgstr ""
+msgstr "Dodaj stupac"
 
 #: ../plugins/gtkui/plcommon.c:646 ../plugins/gtkui/plcommon.c:745
 msgid "Edit column"
-msgstr ""
+msgstr "Uredi stupac"
 
 #: ../plugins/gtkui/plcommon.c:749
 msgid "Remove column"
-msgstr ""
+msgstr "Ukloni stupac"
 
 #: ../plugins/gtkui/plcommon.c:759
 msgid "Group by"
@@ -915,7 +917,7 @@ msgstr "   --help  or  -h     Ispisuje pomoć (ova poruka) i izlazi\n"
 #: ../main.c:87
 #, c-format
 msgid "   --quit             Quit player\n"
-msgstr "   --quit             Iskjluči svirač\n"
+msgstr "   --quit             Isključi svirač\n"
 
 #: ../main.c:88
 #, c-format
@@ -976,6 +978,8 @@ msgid ""
 "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist "
 "- title\"\n"
 msgstr ""
+"                      e.g.: sadasvira \"%%a - %%t\" treba ispisati "
+"\"umjetnik - naslov\"\n"
 
 #: ../playlist.c:369 ../playlist.c:2212
 msgid "Default"

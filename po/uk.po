@@ -2,12 +2,12 @@
 # Copyright (C) 2009-2001 Alexey Yakovenko <waker@users.sourceforge.net>
 # This file is distributed under the same license as the Deadbeef package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: deadbeef\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-27 16:47+0200\n"
+"POT-Creation-Date: 2010-05-30 08:17+0000\n"
 "PO-Revision-Date: 2010-05-24 00:21+0100\n"
 "Last-Translator: Yarema aka Knedlyk <yupadmin@gmail.com>\n"
 "Language-Team: UKRAINIAN <translate@linux.org.ua>\n"
@@ -15,8 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: \n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
-"10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Poedit-Language: Ukrainian\n"
 "X-Poedit-SourceCharset: utf-8\n"
 "X-Poedit-Country: UKRAINE\n"
@@ -167,11 +166,8 @@ msgstr "На паузі |"
 
 #: ../plugins/gtkui/gtkui.c:177
 #, c-format
-msgid ""
-"%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
-msgstr ""
-"%s%s %s| %dГц | %d біт | %s | %d:%02d / %s | %d треків | %s повна тривалість "
-"програвання"
+msgid "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
+msgstr "%s%s %s| %dГц | %d біт | %s | %d:%02d / %s | %d треків | %s повна тривалість програвання"
 
 #: ../plugins/gtkui/gtkui.c:533
 msgid "Save Playlist As"
@@ -628,8 +624,7 @@ msgstr "Кольори смужки вкладок"
 
 #: ../plugins/gtkui/interface.c:1941 ../plugins/gtkui/deadbeef.glade.h:79
 msgid "Override (looses GTK treeview theming, but speeds up rendering)"
-msgstr ""
-"Перезаписати (втрачаються  налаштування GTK, але пришвидшується візуалізація)"
+msgstr "Перезаписати (втрачаються  налаштування GTK, але пришвидшується візуалізація)"
 
 #: ../plugins/gtkui/interface.c:1950 ../plugins/gtkui/deadbeef.glade.h:33
 msgid "Even row"
@@ -872,7 +867,7 @@ msgstr "Додати"
 
 #: ../plugins/gtkui/prefwin.c:277
 msgid "Global Hotkeys"
-msgstr "Глобальні скорочення клавіатури"
+msgstr "Глоб. скор. клавіш"
 
 #: ../plugins/gtkui/prefwin.c:332
 msgid "Slot"
@@ -941,8 +936,7 @@ msgstr "Опції:\n"
 #: ../main.c:86
 #, c-format
 msgid "   --help  or  -h     Print help (this message) and exit\n"
-msgstr ""
-"   --help  або  -h     Показати цю допомогу (це повідомлення) і вийти\n"
+msgstr "   --help  або  -h     Показати цю допомогу (це повідомлення) і вийти\n"
 
 #: ../main.c:87
 #, c-format
@@ -1007,23 +1001,20 @@ msgstr ""
 
 #: ../main.c:100
 #, c-format
-msgid ""
-"                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist "
-"- title\"\n"
-msgstr ""
-"                      наприклад: --nowplaying \"%%a - %%t\" повинно показати "
-"\"виконавець - назва\"\n"
+msgid "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n"
+msgstr "                      наприклад: --nowplaying \"%%a - %%t\" повинно показати \"виконавець - назва\"\n"
 
-#: ../playlist.c:369 ../playlist.c:2212
+#: ../playlist.c:362 ../playlist.c:2227
 msgid "Default"
 msgstr "Типово"
 
 #: ../plugins/gtkui/deadbeef.glade.h:1
-#, fuzzy
 msgid ""
 "2.3 (Recommended)\n"
 "2.4"
-msgstr "2.3 (Рекомендовано)"
+msgstr ""
+"2.3 (Рекомендовано)\n"
+"2.4"
 
 #: ../plugins/gtkui/deadbeef.glade.h:25
 msgid ""
@@ -1031,6 +1022,9 @@ msgid ""
 "Track\n"
 "Album"
 msgstr ""
+"Виключити\n"
+"Трек\n"
+"Альбом"
 
 #: ../plugins/gtkui/deadbeef.glade.h:34
 msgid ""
@@ -1046,68 +1040,79 @@ msgid ""
 "Band / Album Artist\n"
 "Custom"
 msgstr ""
+"Номер файлу\n"
+"Програвання\n"
+"Обкладинка\n"
+"Виконавець - Альбом\n"
+"Виконавець\n"
+"Альбом\n"
+"Назва\n"
+"Тривалість\n"
+"Трек\n"
+"Гурт / Альбом Виконавець\n"
+"Користувацьке"
 
 #: ../plugins/gtkui/deadbeef.glade.h:60
-#, fuzzy
 msgid ""
 "Left\n"
 "Right"
-msgstr "По правому краю"
+msgstr ""
+"Зліва\n"
+"Справа"
 
 #: ../plugins/gtkui/support.c:90 ../plugins/gtkui/support.c:114
 #, c-format
 msgid "Couldn't find pixmap file: %s"
-msgstr ""
+msgstr "Не можу знайти файл pixmap: %s"
 
 #: ../plugins/vorbis/vcedit.c:129 ../plugins/vorbis/vcedit.c:155
 msgid "Couldn't get enough memory for input buffering."
-msgstr ""
+msgstr "Не можу отримати достатньо пам’яті для вхідного буфорування."
 
 #: ../plugins/vorbis/vcedit.c:179 ../plugins/vorbis/vcedit.c:550
 msgid "Error reading first page of Ogg bitstream."
-msgstr ""
+msgstr "Помилка читання першої сторінки потоку Ogg."
 
 #: ../plugins/vorbis/vcedit.c:185 ../plugins/vorbis/vcedit.c:557
 msgid "Error reading initial header packet."
-msgstr ""
+msgstr "Помилка читання початкового пакету заголовку."
 
 #: ../plugins/vorbis/vcedit.c:237
 msgid "Couldn't get enough memory to register new stream serial number."
-msgstr ""
+msgstr "Не можу отримати достатньо пам’яті для реєстрації нового серійного номера потоку."
 
 #: ../plugins/vorbis/vcedit.c:505
 msgid "Input truncated or empty."
-msgstr ""
+msgstr "Вхідні дані спотворені або порожні."
 
 #: ../plugins/vorbis/vcedit.c:507
 msgid "Input is not an Ogg bitstream."
-msgstr ""
+msgstr "Вхідні дані не є потоком Ogg."
 
 #: ../plugins/vorbis/vcedit.c:565
 msgid "Ogg bitstream does not contain Vorbis data."
-msgstr ""
+msgstr "Потік Ogg не містить даних Vorbis."
 
 #: ../plugins/vorbis/vcedit.c:578
 msgid "EOF before recognised stream."
-msgstr ""
+msgstr "EOF перед розпізнаним потоком."
 
 #: ../plugins/vorbis/vcedit.c:594
 msgid "Ogg bitstream does not contain a supported data-type."
-msgstr ""
+msgstr "Потік Ogg не містить даних, що підтримуються."
 
 #: ../plugins/vorbis/vcedit.c:638
 msgid "Corrupt secondary header."
-msgstr ""
+msgstr "Другий заголовок пошкоджено."
 
 #: ../plugins/vorbis/vcedit.c:659
 msgid "EOF before end of Vorbis headers."
-msgstr ""
+msgstr "EOF перед кінцем заголовків Vorbis."
 
 #: ../plugins/vorbis/vcedit.c:834
 msgid "Corrupt or missing data, continuing..."
-msgstr ""
+msgstr "Пошкоджено або пропущено заголовки, продовжую..."
 
 #: ../plugins/vorbis/vcedit.c:874
-msgid ""
-"Error writing stream to output. Output stream may be corrupted or truncated."
-msgstr ""
+msgid "Error writing stream to output. Output stream may be corrupted or truncated."
+msgstr "Помилка запису потоку до виходу. Вихідний потік, можливо, пошкоджено або спотворено."
