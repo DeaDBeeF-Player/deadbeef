@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-05-27 16:47+0200\n"
-"PO-Revision-Date: 2010-05-27 20:57+0200\n"
+"PO-Revision-Date: 2010-05-31 10:17+0200\n"
 "Last-Translator: Martin <brother@bsnet.se>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: sv\n"
@@ -111,23 +111,23 @@ msgstr "Nollställ alla"
 
 #: ../plugins/gtkui/eq.c:306
 msgid "Zero Preamp"
-msgstr ""
+msgstr "Ingen förstärkning"
 
 #: ../plugins/gtkui/eq.c:313
 msgid "Zero Bands"
-msgstr ""
+msgstr "Nollställ band"
 
 #: ../plugins/gtkui/eq.c:320
 msgid "Save Preset"
-msgstr ""
+msgstr "Spara inställningar"
 
 #: ../plugins/gtkui/eq.c:327
 msgid "Load Preset"
-msgstr ""
+msgstr "Läs in inställningar"
 
 #: ../plugins/gtkui/eq.c:334
 msgid "Import Foobar2000 Preset"
-msgstr ""
+msgstr "Importera inställningar från Foobar2000"
 
 #: ../plugins/gtkui/gtkui.c:128
 #, c-format
@@ -335,9 +335,10 @@ msgstr "Upprepa inte"
 msgid "Scroll follows playback"
 msgstr ""
 
+# sjukt svårt att översätta utan kotext.
 #: ../plugins/gtkui/interface.c:384 ../plugins/gtkui/deadbeef.glade.h:21
 msgid "Cursor follows playback"
-msgstr ""
+msgstr "Markering följer uppspelning"
 
 #: ../plugins/gtkui/interface.c:388 ../plugins/gtkui/deadbeef.glade.h:113
 msgid "Stop after current"
@@ -600,7 +601,7 @@ msgstr "Bakgrund"
 
 #: ../plugins/gtkui/interface.c:1862 ../plugins/gtkui/deadbeef.glade.h:103
 msgid "Seekbar/Volumebar colors"
-msgstr ""
+msgstr "Färg på sök-/volym-fält"
 
 #: ../plugins/gtkui/interface.c:1880 ../plugins/gtkui/deadbeef.glade.h:69
 msgid "Middle"
@@ -875,13 +876,13 @@ msgstr ""
 
 #: ../plugins/gtkui/prefwin.c:333
 msgid "Key combination"
-msgstr ""
+msgstr "Tangentkombination"
 
 #. output plugin selection
 #: ../plugins/gtkui/prefwin.c:379 ../plugins/gtkui/prefwin.c:569
 #: ../plugins.c:833
 msgid "ALSA output plugin"
-msgstr ""
+msgstr "ALSA-instick för utdata"
 
 #: ../plugins/gtkui/progress.c:64
 msgid "Initializing..."
@@ -901,7 +902,7 @@ msgstr ""
 
 #: ../plugins/gtkui/trkproperties.c:180
 msgid "Embedded Cuesheet"
-msgstr ""
+msgstr "Inbäddat körschema"
 
 #: ../plugins/gtkui/trkproperties.c:180
 msgid "Yes"
@@ -941,17 +942,17 @@ msgstr ""
 #: ../main.c:87
 #, c-format
 msgid "   --quit             Quit player\n"
-msgstr ""
+msgstr "   --quit             Stäng spelare\n"
 
 #: ../main.c:88
 #, c-format
 msgid "   --version          Print version info and exit\n"
-msgstr ""
+msgstr "   --version          Skriv ut versionsinformation och avsluta\n"
 
 #: ../main.c:89
 #, c-format
 msgid "   --play             Start playback\n"
-msgstr ""
+msgstr "   --play             Påbörja uppspelning\n"
 
 #: ../main.c:90
 #, c-format
