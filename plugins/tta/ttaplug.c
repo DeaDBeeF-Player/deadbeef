@@ -146,6 +146,7 @@ tta_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
             }
         }
     }
+    info->currentsample += (initsize-size) / sample_size;
     return initsize-size;
 }
 
