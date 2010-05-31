@@ -153,12 +153,16 @@ tta_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
 static int
 tta_seek_sample (DB_fileinfo_t *_info, int sample) {
     tta_info_t *info = (tta_info_t *)_info;
-    if (set_position (sample * 1000 / info->tta.SAMPLERATE / SEEK_STEP) != 0) {
+    int seek_time = (sample + info->startsample) / SEEK_STEP * 1000 / info->tta.SAMPLERATE;
+
+    if (set_position (seek_time) != 0) {
         fprintf (stderr, "tta: seek failed\n");
         return -1;
     }
-    info->currentsample = sample;
-    _info->readpos = (sample - info->startsample) / _info->samplerate;
+    sample = (seek_time * SEEK_STEP) / 1000 * info->tta.SAMPLERATE;
+
+    info->currentsample = sample - info->startsample;
+    _info->readpos = sample / _info->samplerate;
     return 0;
 }
 
