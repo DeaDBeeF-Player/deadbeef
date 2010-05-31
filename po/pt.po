@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: deadbeef\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-05-31 04:08+0000\n"
-"PO-Revision-Date: 2010-05-31 14:04-0000\n"
+"PO-Revision-Date: 2010-05-31 14:31-0000\n"
 "Last-Translator: Sérgio Marques <smarquespt@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -370,12 +370,12 @@ msgstr "Não fazer loop"
 #: ../plugins/gtkui/interface.c:379
 #: ../plugins/gtkui/deadbeef.glade.h:101
 msgid "Scroll follows playback"
-msgstr ""
+msgstr "Deslocamento segue a reprodução"
 
 #: ../plugins/gtkui/interface.c:384
 #: ../plugins/gtkui/deadbeef.glade.h:21
 msgid "Cursor follows playback"
-msgstr ""
+msgstr "Cursor segue a reprodução"
 
 #: ../plugins/gtkui/interface.c:388
 #: ../plugins/gtkui/deadbeef.glade.h:113
@@ -593,6 +593,12 @@ msgid ""
 "  copy[r]ight, [f]ilename, [T]ags\n"
 "Example: %a - %t [%l]"
 msgstr ""
+"Conversão de Formatos (iniciam com %):\n"
+"  [a]rtista, [t]ítulo, ál[b]um, [B]anda, [C]ompositor\n"
+"  [n]úmerodefaixa, [N]totaldefaixas,\n"
+"  [l]duração, [y]ano, [g]énero, [c]omentário,\n"
+"  di[r]eitosdeautor, nomede[f]icheiro, [T]marcas\n"
+"Exemplo: %a - %t [%l]"
 
 #: ../plugins/gtkui/interface.c:1488
 #: ../plugins/gtkui/interface.c:2801
@@ -628,12 +634,12 @@ msgstr "Som"
 #: ../plugins/gtkui/interface.c:1757
 #: ../plugins/gtkui/deadbeef.glade.h:12
 msgid "Allow dynamic samplerate switching"
-msgstr ""
+msgstr "Permitir troca dinâmica da taxa de amostragem"
 
 #: ../plugins/gtkui/interface.c:1765
 #: ../plugins/gtkui/deadbeef.glade.h:98
 msgid "Samplerate conversion quality:"
-msgstr ""
+msgstr "Qualidade de conversão:"
 
 #: ../plugins/gtkui/interface.c:1784
 #: ../plugins/gtkui/deadbeef.glade.h:96
@@ -647,7 +653,7 @@ msgstr "Desactivar"
 #: ../plugins/gtkui/interface.c:1797
 #: ../plugins/gtkui/deadbeef.glade.h:97
 msgid "Replaygain peak scale"
-msgstr ""
+msgstr "Escala de consistência"
 
 #: ../plugins/gtkui/interface.c:1801
 #: ../plugins/gtkui/deadbeef.glade.h:110
@@ -662,7 +668,7 @@ msgstr "Fechar minimiza para área de notificação"
 #: ../plugins/gtkui/interface.c:1814
 #: ../plugins/gtkui/deadbeef.glade.h:70
 msgid "Middle mouse button closes playlist"
-msgstr ""
+msgstr "Botão central do rato fecha a lista"
 
 #: ../plugins/gtkui/interface.c:1827
 #: ../plugins/gtkui/interface.c:1871
@@ -708,12 +714,12 @@ msgstr "Base"
 #: ../plugins/gtkui/interface.c:1932
 #: ../plugins/gtkui/deadbeef.glade.h:117
 msgid "Tab strip colors"
-msgstr ""
+msgstr "Cores do separador"
 
 #: ../plugins/gtkui/interface.c:1941
 #: ../plugins/gtkui/deadbeef.glade.h:79
 msgid "Override (looses GTK treeview theming, but speeds up rendering)"
-msgstr ""
+msgstr "Sobrepor (perde a vista em árvore, mas acelera o processamento)"
 
 #: ../plugins/gtkui/interface.c:1950
 #: ../plugins/gtkui/deadbeef.glade.h:33
@@ -974,7 +980,7 @@ msgstr "Agrupar por"
 
 #: ../plugins/gtkui/plcommon.c:766
 msgid "None"
-msgstr ""
+msgstr "Nenhum"
 
 #: ../plugins/gtkui/plcommon.c:770
 msgid "Artist/Date/Album"
@@ -1003,7 +1009,7 @@ msgstr "Teclas de Atalho"
 
 #: ../plugins/gtkui/prefwin.c:332
 msgid "Slot"
-msgstr ""
+msgstr "Ranhura"
 
 #: ../plugins/gtkui/prefwin.c:333
 msgid "Key combination"
@@ -1071,57 +1077,57 @@ msgstr "Opções:\n"
 #: ../main.c:86
 #, c-format
 msgid "   --help  or  -h     Print help (this message) and exit\n"
-msgstr ""
+msgstr "   --help  ou  -h     Imprime a ajuda e sai\n"
 
 #: ../main.c:87
 #, c-format
 msgid "   --quit             Quit player\n"
-msgstr ""
+msgstr "   --quit             Sair do DeadBeeF\n"
 
 #: ../main.c:88
 #, c-format
 msgid "   --version          Print version info and exit\n"
-msgstr ""
+msgstr "   --version          Imprimir info da versão e sai\n"
 
 #: ../main.c:89
 #, c-format
 msgid "   --play             Start playback\n"
-msgstr ""
+msgstr "   --play             Inicia reprodução\n"
 
 #: ../main.c:90
 #, c-format
 msgid "   --stop             Stop playback\n"
-msgstr ""
+msgstr "   --stop             Para reprodução\n"
 
 #: ../main.c:91
 #, c-format
 msgid "   --pause            Pause playback\n"
-msgstr ""
+msgstr "   --pause            Pausa reprodução\n"
 
 #: ../main.c:92
 #, c-format
 msgid "   --next             Next song in playlist\n"
-msgstr ""
+msgstr "   --next             Avança uma canção\n"
 
 #: ../main.c:93
 #, c-format
 msgid "   --prev             Previous song in playlist\n"
-msgstr ""
+msgstr "   --prev             Retrocede uma canção\n"
 
 #: ../main.c:94
 #, c-format
 msgid "   --random           Random song in playlist\n"
-msgstr ""
+msgstr "   --random           Canção aleatória na lista\n"
 
 #: ../main.c:95
 #, c-format
 msgid "   --queue            Append file(s) to existing playlist\n"
-msgstr ""
+msgstr "   --queue            Acrescenta ficheiro(s) à lista existente\n"
 
 #: ../main.c:96
 #, c-format
 msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
-msgstr ""
+msgstr "   --nowplaying FMT   Imprime o nome da faixa para stdout\n"
 
 #: ../main.c:97
 #, c-format
@@ -1130,11 +1136,14 @@ msgid ""
 "                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
 "                      copy[r]ight, [e]lapsed\n"
 msgstr ""
+"                      FMT %%-syntaxe: [a]rtista, [t]ítulo, ál[b]um,\n"
+"                      [l]duração, [n]úmerodafaixa, [y]ano, [c]omentário,\n"
+"                      di[r]eitosdeautor, d[e]corrido\n"
 
 #: ../main.c:100
 #, c-format
 msgid "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n"
-msgstr ""
+msgstr "                      ex: --nowplaying \"%%a - %%t\" deve imprimir \"artista - título\"\n"
 
 #: ../playlist.c:362
 #: ../playlist.c:2227
@@ -1173,6 +1182,17 @@ msgid ""
 "Band / Album Artist\n"
 "Custom"
 msgstr ""
+"Número do ficheiro\n"
+"Em reprodução\n"
+"Capa do Álbum\n"
+"Artista - Álbum\n"
+"Artista\n"
+"Álbum\n"
+"Título\n"
+"Duração\n"
+"Faixa\n"
+"Banda / Artista do Album\n"
+"Personalizar"
 
 #: ../plugins/gtkui/deadbeef.glade.h:60
 msgid ""
@@ -1191,21 +1211,21 @@ msgstr "Incapaz de encontrar o ficheiro: %s"
 #: ../plugins/vorbis/vcedit.c:129
 #: ../plugins/vorbis/vcedit.c:155
 msgid "Couldn't get enough memory for input buffering."
-msgstr ""
+msgstr "Incapaz de obter memória para o processamento da entrada."
 
 #: ../plugins/vorbis/vcedit.c:179
 #: ../plugins/vorbis/vcedit.c:550
 msgid "Error reading first page of Ogg bitstream."
-msgstr ""
+msgstr "Erro ao obter o fluxo de bits Ogg."
 
 #: ../plugins/vorbis/vcedit.c:185
 #: ../plugins/vorbis/vcedit.c:557
 msgid "Error reading initial header packet."
-msgstr ""
+msgstr "Erro ao ler o pacote do cabeçalho inicial."
 
 #: ../plugins/vorbis/vcedit.c:237
 msgid "Couldn't get enough memory to register new stream serial number."
-msgstr ""
+msgstr "Incapaz de obter memória para registar um novo n.º de série do fluxo."
 
 #: ../plugins/vorbis/vcedit.c:505
 msgid "Input truncated or empty."
@@ -1221,19 +1241,19 @@ msgstr "O ficheiro Ogg não possui dados Vorbis."
 
 #: ../plugins/vorbis/vcedit.c:578
 msgid "EOF before recognised stream."
-msgstr ""
+msgstr "EOF antes do fluxo reconhecido."
 
 #: ../plugins/vorbis/vcedit.c:594
 msgid "Ogg bitstream does not contain a supported data-type."
-msgstr ""
+msgstr "O fluxo de bits Ogg não possui um tipo de dados válido."
 
 #: ../plugins/vorbis/vcedit.c:638
 msgid "Corrupt secondary header."
-msgstr ""
+msgstr "Cabeçalho secundário danificado."
 
 #: ../plugins/vorbis/vcedit.c:659
 msgid "EOF before end of Vorbis headers."
-msgstr ""
+msgstr "EOF antes do final dos cabeçalhos Vorbis."
 
 #: ../plugins/vorbis/vcedit.c:834
 msgid "Corrupt or missing data, continuing..."
@@ -1241,5 +1261,5 @@ msgstr "Dados danificados ou em falta, continuando..."
 
 #: ../plugins/vorbis/vcedit.c:874
 msgid "Error writing stream to output. Output stream may be corrupted or truncated."
-msgstr ""
+msgstr "Erro ao escrever o fluxo de saída. O fluxo pode estar danificado ou bloqueado."
 
