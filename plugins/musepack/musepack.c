@@ -44,9 +44,11 @@ typedef struct {
     mpc_decoder mpcdec;
     mpc_reader reader;
     int currentsample;
+    int startsample;
+    int endsample;
     mpc_uint32_t vbr_update_acc;
     mpc_uint32_t vbr_update_bits;
-    MPC_SAMPLE_FORMAT buffer[MPC_FRAME_LENGTH];
+    float buffer[MPC_DECODER_BUFFER_LENGTH];
     int remaining;
 } musepack_info_t;
 
@@ -118,12 +120,23 @@ musepack_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     }
     info->vbr_update_acc = 0;
     info->vbr_update_bits = 0;
+    info->remaining = 0;
 
     _info->bps = 16;
     _info->channels = info->si.channels;
     _info->samplerate = info->si.sample_freq;
     _info->readpos = 0;
     _info->plugin = &plugin;
+
+    if (it->endsample > 0) {
+        info->startsample = it->startsample;
+        info->endsample = it->endsample;
+        plugin.seek_sample (_info, 0);
+    }
+    else {
+        info->startsample = 0;
+        info->endsample = mpc_streaminfo_get_length_samples (&info->si)-1;
+    }
 
     return 0;
 }
@@ -143,6 +156,14 @@ musepack_free (DB_fileinfo_t *_info) {
 static int
 musepack_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
     musepack_info_t *info = (musepack_info_t *)_info;
+
+    if (info->currentsample + size / (2 * _info->channels) > info->endsample) {
+        size = (info->endsample - info->currentsample + 1) * 2 * _info->channels;
+        if (size <= 0) {
+            return 0;
+        }
+    }
+
     int initsize = size;
     int out_channels = _info->channels;
     if (out_channels > 2) {
@@ -154,9 +175,10 @@ musepack_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
         if (info->remaining > 0) {
             int n = size / sample_size;
             n = min (n, info->remaining);
-            MPC_SAMPLE_FORMAT *p = info->buffer;
+            int nn = n;
+            float *p = info->buffer;
             while (n > 0) {
-                int sample = ((float)(*p) / (float)(1L<<14))*0x7fff; //(int)(*p) >> (MPC_FIXED_POINT_SHIFT-15);
+                int sample = (int)(*p * 32767.0f);
                 if (sample > 32767) {
                     sample = 32767;
                 }
@@ -166,7 +188,7 @@ musepack_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
                 *((int16_t *)bytes) = (int16_t)sample;
                 bytes += 2;
                 if (_info->channels == 2) {
-                    sample = ((float)(*p) / (float)(1L<<14))*0x7fff;// >> (MPC_FIXED_POINT_SHIFT-15);
+                    sample = (int)(*(p+1) * 32767.0f);
                     if (sample > 32767) {
                         sample = 32767;
                     }
@@ -180,32 +202,92 @@ musepack_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
                 size -= sample_size;
                 p += info->si.channels;
             }
-            if (info->remaining > n) {
-                memmove (info->buffer, info->buffer + n, info->remaining - n);
+            if (info->remaining > nn) {
+                memmove (info->buffer, p, (info->remaining - nn) * sizeof (float) * _info->channels);
             }
-            info->remaining -= n;
+            info->remaining -= nn;
         }
 
         if (size > 0 && !info->remaining) {
             mpc_uint32_t decoded = mpc_decoder_decode (&info->mpcdec, info->buffer, &info->vbr_update_acc, &info->vbr_update_bits);
-            printf ("decoder returned %d\n", decoded);
-            info->remaining += decoded;
+            if (!decoded) {
+                break;
+            }
+            assert (decoded <= MPC_DECODER_BUFFER_LENGTH);
+            info->remaining = decoded;
         }
     }
     return initsize-size;
 }
 
 static int
+musepack_read_float32 (DB_fileinfo_t *_info, char *bytes, int size) {
+    musepack_info_t *info = (musepack_info_t *)_info;
+
+    if (info->currentsample + size / (4 * _info->channels) > info->endsample) {
+        size = (info->endsample - info->currentsample + 1) * 4 * _info->channels;
+        if (size <= 0) {
+            return 0;
+        }
+    }
+
+    int initsize = size;
+    int out_channels = _info->channels;
+    if (out_channels > 2) {
+        out_channels = 2;
+    }
+
+    while (size > 0) {
+        if (info->remaining > 0) {
+            int n = size / (out_channels * 4);
+            n = min (n, info->remaining);
+            int nn = n;
+            float *p = info->buffer;
+            while (n > 0) {
+                *((float *)bytes) = *p;
+                bytes += 4;
+                if (out_channels == 2) {
+                    *((float *)bytes) = *(p+1);
+                    bytes += 4;
+                }
+                n--;
+                size -= out_channels * 4;
+                p += info->si.channels;
+            }
+            if (info->remaining > nn) {
+                memmove (info->buffer, p, (info->remaining - nn) * 4 * _info->channels);
+            }
+            info->remaining -= nn;
+        }
+
+        if (size > 0 && !info->remaining) {
+            mpc_uint32_t decoded = mpc_decoder_decode (&info->mpcdec, info->buffer, &info->vbr_update_acc, &info->vbr_update_bits);
+            if (!decoded) {
+                break;
+            }
+            assert (decoded <= MPC_DECODER_BUFFER_LENGTH);
+            info->remaining = decoded;
+        }
+    }
+    return initsize-size;
+}
+static int
 musepack_seek_sample (DB_fileinfo_t *_info, int sample) {
     musepack_info_t *info = (musepack_info_t *)_info;
+    mpc_bool_t res = mpc_decoder_seek_sample (&info->mpcdec, sample);
+    if (!res) {
+        fprintf (stderr, "musepack: seek failed\n");
+        return -1;
+    }
     info->currentsample = sample;
+    _info->readpos = (sample - info->startsample) / _info->samplerate;
     return 0;
 }
 
 static int
 musepack_seek (DB_fileinfo_t *_info, float time) {
     musepack_info_t *info = (musepack_info_t *)_info;
-//    return musepack_seek_sample (_info, time * info->vi->rate);
+    return musepack_seek_sample (_info, time * _info->samplerate);
 }
 
 static DB_playItem_t *
@@ -305,6 +387,7 @@ static DB_decoder_t plugin = {
     .init = musepack_init,
     .free = musepack_free,
     .read_int16 = musepack_read_int16,
+    .read_float32 = musepack_read_float32,
     .seek = musepack_seek,
     .seek_sample = musepack_seek_sample,
     .insert = musepack_insert,
