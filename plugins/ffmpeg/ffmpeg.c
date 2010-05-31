@@ -55,7 +55,7 @@
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
 
-static const char * exts[] = { "m4a", "mp4", "mp+", "mpp", "wma", "shn", "aa3", "oma", "ac3", "vqf", "tta", NULL };
+static const char * exts[] = { "m4a", "mp4", "mp+", "mpp", "wma", "shn", "aa3", "oma", "ac3", "vqf", NULL };
 
 enum {
     FT_AAC = 0,
