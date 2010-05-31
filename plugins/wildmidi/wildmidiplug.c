@@ -92,6 +92,7 @@ wmidi_seek_sample (DB_fileinfo_t *_info, int sample) {
     wmidi_info_t *info = (wmidi_info_t *)_info;
     unsigned long int s = sample;
     WildMidi_SampledSeek (info->m, &s);
+    _info->readpos = s/44100.0f;
     return 0;
 }
 
@@ -125,7 +126,8 @@ wmidi_insert (DB_playItem_t *after, const char *fname) {
 
 int
 wmidi_start (void) {
-    WildMidi_Init ("/etc/timidity++/timidity-freepats.cfg", 44100, 0);
+    const char *config_file = deadbeef->conf_get_str ("wildmidi.config", "/etc/timidity++/timidity-freepats.cfg");
+    WildMidi_Init (config_file, 44100, 0);
     return 0;
 }
 

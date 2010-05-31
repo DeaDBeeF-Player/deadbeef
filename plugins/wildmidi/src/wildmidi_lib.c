@@ -723,7 +723,7 @@ WM_FreePatches ( void ) {
 }
 
 int
-WM_LoadConfig (const char *config_file) {
+WM_LoadConfig (const char *config_file, const char *top_config_dir) {
 	unsigned long int config_size = 0;
 	unsigned char *config_buffer =  NULL;
 	char * dir_end =  NULL;
@@ -737,6 +737,10 @@ WM_LoadConfig (const char *config_file) {
 	char * new_config = NULL;
 	struct _patch * tmp_patch;
 
+	if (top_config_dir) {
+        config_dir = strdup (top_config_dir);
+    }
+
 	if ((config_buffer = WM_BufferFile(config_file, &config_size)) == NULL) {
 		return -1;
 	}
@@ -745,19 +749,21 @@ WM_LoadConfig (const char *config_file) {
 		return -1;
 	}
 	
-	dir_end = strrchr(config_file,'/');
-	if (dir_end != NULL) {
-		config_dir = malloc((dir_end - config_file + 2));
-		if (config_dir == NULL) {
-			WM_ERROR(__FUNCTION__, __LINE__, WM_ERR_MEM, "to parse config", errno);
-			WM_ERROR(__FUNCTION__, __LINE__, WM_ERR_LOAD, config_file, 0);
-			WM_FreePatches();
-			free (config_buffer);
-			return -1;
-		}
-		strncpy(config_dir, config_file, (dir_end - config_file + 1));
-		config_dir[dir_end - config_file + 1] = '\0';
-	}
+	if (!config_dir) {
+        dir_end = strrchr(config_file,'/');
+        if (dir_end != NULL) {
+            config_dir = malloc((dir_end - config_file + 2));
+            if (config_dir == NULL) {
+                WM_ERROR(__FUNCTION__, __LINE__, WM_ERR_MEM, "to parse config", errno);
+                WM_ERROR(__FUNCTION__, __LINE__, WM_ERR_LOAD, config_file, 0);
+                WM_FreePatches();
+                free (config_buffer);
+                return -1;
+            }
+            strncpy(config_dir, config_file, (dir_end - config_file + 1));
+            config_dir[dir_end - config_file + 1] = '\0';
+        }
+    }
 	config_ptr = 0;
 	line_start_ptr = 0;
 	while (config_ptr < config_size) {
@@ -846,7 +852,7 @@ WM_LoadConfig (const char *config_file) {
             printf ("wildmidi config_dir: %s\n", config_dir);
 			continue;
 		} else if (strncasecmp(line_buffer, "source ", 7) == 0) {
-			if (config_dir != NULL, 0) {
+			if (config_dir != NULL && line_buffer[7] != '/') {
 				new_config = malloc(strlen(config_dir) + strlen(&line_buffer[7]) + 1);
 				if (new_config == NULL) {
 					WM_ERROR(__FUNCTION__, __LINE__, WM_ERR_MEM, "to parse config", errno);
@@ -872,7 +878,7 @@ WM_LoadConfig (const char *config_file) {
 				strcpy(new_config, &line_buffer[7]);
 			}
             printf ("wildmidi load new_config: %s\n", new_config);
-			if (WM_LoadConfig(new_config) == -1) {
+			if (WM_LoadConfig(new_config, config_dir) == -1) {
 				free (new_config);
 				free (line_buffer);
 				free (config_buffer);
@@ -3716,7 +3722,7 @@ WildMidi_Init (const char * config_file, unsigned short int rate, unsigned short
 		return -1;
 	}
 	WM_InitPatches();
-	if (WM_LoadConfig(config_file) == -1) {
+	if (WM_LoadConfig(config_file, NULL) == -1) {
 		return -1;
 	}
 
