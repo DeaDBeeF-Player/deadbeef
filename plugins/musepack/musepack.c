@@ -356,6 +356,35 @@ musepack_insert (DB_playItem_t *after, const char *fname) {
     return after;
 }
 
+static int musepack_read_metadata (DB_playItem_t *it) {
+    DB_FILE *fp = deadbeef->fopen (it->fname);
+    if (!fp) {
+        return -1;
+    }
+    deadbeef->pl_delete_all_meta (it);
+    /*int apeerr = */deadbeef->junk_apev2_read (it, fp);
+    deadbeef->pl_add_meta (it, "title", NULL);
+    deadbeef->fclose (fp);
+    return 0;
+}
+
+static int musepack_write_metadata (DB_playItem_t *it) {
+    // get options
+    int strip_apev2 = deadbeef->conf_get_int ("ape.strip_apev2", 0);
+    int write_apev2 = deadbeef->conf_get_int ("ape.write_apev2", 1);
+
+    uint32_t junk_flags = 0;
+    if (strip_apev2) {
+        junk_flags |= JUNK_STRIP_APEV2;
+    }
+    if (write_apev2) {
+        junk_flags |= JUNK_WRITE_APEV2;
+    }
+
+    return deadbeef->junk_rewrite_tags (it, junk_flags, 4, NULL);
+}
+
+
 static int
 musepack_start (void) {
     return 0;
@@ -391,8 +420,8 @@ static DB_decoder_t plugin = {
     .seek = musepack_seek,
     .seek_sample = musepack_seek_sample,
     .insert = musepack_insert,
-//    .read_metadata = musepack_read_metadata,
-//    .write_metadata = musepack_write_metadata,
+    .read_metadata = musepack_read_metadata,
+    .write_metadata = musepack_write_metadata,
     .exts = exts,
     .filetypes = filetypes
 };
