@@ -213,11 +213,12 @@ on_trayicon_scroll_event               (GtkWidget       *widget,
                                         gpointer         user_data)
 {
     float vol = deadbeef->volume_get_db ();
+    int sens = deadbeef->conf_get_int ("gtkui.tray_volume_sensitivity", 1);
     if (event->direction == GDK_SCROLL_UP || event->direction == GDK_SCROLL_RIGHT) {
-        vol += 1;
+        vol += sens;
     }
     else if (event->direction == GDK_SCROLL_DOWN || event->direction == GDK_SCROLL_LEFT) {
-        vol -= 1;
+        vol -= sens;
     }
     if (vol > 0) {
         vol = 0;
@@ -985,6 +986,7 @@ gtkui_load (DB_functions_t *api) {
 
 static const char settings_dlg[] =
     "property \"Ask confirmation to delete files from disk\" checkbox gtkui.delete_files_ask 1;\n"
+    "property \"Status icon volume control sensitivity\" entry gtkui.tray_volume_sensitivity 1;\n"
     "property \"Run gtk_init with --sync (debug mode)\" checkbox gtkui.sync 0;\n"
 ;
 
