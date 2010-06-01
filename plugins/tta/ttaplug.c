@@ -20,7 +20,7 @@
 #include <assert.h>
 #include <limits.h>
 #include <unistd.h>
-#include "ttalib.h"
+#include "ttadec.h"
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
 #endif
@@ -33,7 +33,7 @@
 //#define trace(fmt,...)
 
 static DB_decoder_t plugin;
-static DB_functions_t *deadbeef;
+DB_functions_t *deadbeef;
 
 #define MAX_BSIZE (MAX_BPS>>3)
 
@@ -91,7 +91,7 @@ static void
 tta_free (DB_fileinfo_t *_info) {
     tta_info_t *info = (tta_info_t *)_info;
     if (info) {
-        player_stop ();
+        player_stop (&info->tta);
         close_tta_file (&info->tta);
         free (info);
     }
@@ -138,7 +138,7 @@ tta_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
         }
 
         if (size > 0 && !info->remaining) {
-            info->remaining = get_samples (info->buffer);
+            info->remaining = get_samples (&info->tta, info->buffer);
             if (!info->remaining) {
                 break;
             }
@@ -153,7 +153,7 @@ tta_seek_sample (DB_fileinfo_t *_info, int sample) {
     tta_info_t *info = (tta_info_t *)_info;
     int seek_time = (sample + info->startsample) / SEEK_STEP * 1000 / info->tta.SAMPLERATE;
 
-    if (set_position (seek_time) != 0) {
+    if (set_position (&info->tta, seek_time) != 0) {
         fprintf (stderr, "tta: seek failed\n");
         return -1;
     }

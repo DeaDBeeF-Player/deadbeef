@@ -40,37 +40,113 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "ttalib.h"
 #include "ttadec.h"
 #include "filter.h"
 
+#include "../../deadbeef.h"
+
+#define trace(...) { fprintf (stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
+
+extern DB_functions_t *deadbeef;
+
 /******************* static variables and structures *******************/
 
-static unsigned char isobuffers[ISO_BUFFERS_SIZE + 4];
-static unsigned char *iso_buffers_end = isobuffers + ISO_BUFFERS_SIZE;
-static unsigned int pcm_buffer_size;
+const unsigned int crc32_table[256] = {
+	0x00000000, 0x77073096, 0xee0e612c, 0x990951ba,
+	0x076dc419, 0x706af48f, 0xe963a535, 0x9e6495a3,
+	0x0edb8832, 0x79dcb8a4, 0xe0d5e91e, 0x97d2d988,
+	0x09b64c2b, 0x7eb17cbd, 0xe7b82d07, 0x90bf1d91,
+	0x1db71064, 0x6ab020f2, 0xf3b97148, 0x84be41de,
+	0x1adad47d, 0x6ddde4eb, 0xf4d4b551, 0x83d385c7,
+	0x136c9856, 0x646ba8c0, 0xfd62f97a, 0x8a65c9ec,
+	0x14015c4f, 0x63066cd9, 0xfa0f3d63, 0x8d080df5,
+	0x3b6e20c8, 0x4c69105e, 0xd56041e4, 0xa2677172,
+	0x3c03e4d1, 0x4b04d447, 0xd20d85fd, 0xa50ab56b,
+	0x35b5a8fa, 0x42b2986c, 0xdbbbc9d6, 0xacbcf940,
+	0x32d86ce3, 0x45df5c75, 0xdcd60dcf, 0xabd13d59,
+	0x26d930ac, 0x51de003a, 0xc8d75180, 0xbfd06116,
+	0x21b4f4b5, 0x56b3c423, 0xcfba9599, 0xb8bda50f,
+	0x2802b89e, 0x5f058808, 0xc60cd9b2, 0xb10be924,
+	0x2f6f7c87, 0x58684c11, 0xc1611dab, 0xb6662d3d,
+	0x76dc4190, 0x01db7106, 0x98d220bc, 0xefd5102a,
+	0x71b18589, 0x06b6b51f, 0x9fbfe4a5, 0xe8b8d433,
+	0x7807c9a2, 0x0f00f934, 0x9609a88e, 0xe10e9818,
+	0x7f6a0dbb, 0x086d3d2d, 0x91646c97, 0xe6635c01,
+	0x6b6b51f4, 0x1c6c6162, 0x856530d8, 0xf262004e,
+	0x6c0695ed, 0x1b01a57b, 0x8208f4c1, 0xf50fc457,
+	0x65b0d9c6, 0x12b7e950, 0x8bbeb8ea, 0xfcb9887c,
+	0x62dd1ddf, 0x15da2d49, 0x8cd37cf3, 0xfbd44c65,
+	0x4db26158, 0x3ab551ce, 0xa3bc0074, 0xd4bb30e2,
+	0x4adfa541, 0x3dd895d7, 0xa4d1c46d, 0xd3d6f4fb,
+	0x4369e96a, 0x346ed9fc, 0xad678846, 0xda60b8d0,
+	0x44042d73, 0x33031de5, 0xaa0a4c5f, 0xdd0d7cc9,
+	0x5005713c, 0x270241aa, 0xbe0b1010, 0xc90c2086,
+	0x5768b525, 0x206f85b3, 0xb966d409, 0xce61e49f,
+	0x5edef90e, 0x29d9c998, 0xb0d09822, 0xc7d7a8b4,
+	0x59b33d17, 0x2eb40d81, 0xb7bd5c3b, 0xc0ba6cad,
+	0xedb88320, 0x9abfb3b6, 0x03b6e20c, 0x74b1d29a,
+	0xead54739, 0x9dd277af, 0x04db2615, 0x73dc1683,
+	0xe3630b12, 0x94643b84, 0x0d6d6a3e, 0x7a6a5aa8,
+	0xe40ecf0b, 0x9309ff9d, 0x0a00ae27, 0x7d079eb1,
+	0xf00f9344, 0x8708a3d2, 0x1e01f268, 0x6906c2fe,
+	0xf762575d, 0x806567cb, 0x196c3671, 0x6e6b06e7,
+	0xfed41b76, 0x89d32be0, 0x10da7a5a, 0x67dd4acc,
+	0xf9b9df6f, 0x8ebeeff9, 0x17b7be43, 0x60b08ed5,
+	0xd6d6a3e8, 0xa1d1937e, 0x38d8c2c4, 0x4fdff252,
+	0xd1bb67f1, 0xa6bc5767, 0x3fb506dd, 0x48b2364b,
+	0xd80d2bda, 0xaf0a1b4c, 0x36034af6, 0x41047a60,
+	0xdf60efc3, 0xa867df55, 0x316e8eef, 0x4669be79,
+	0xcb61b38c, 0xbc66831a, 0x256fd2a0, 0x5268e236,
+	0xcc0c7795, 0xbb0b4703, 0x220216b9, 0x5505262f,
+	0xc5ba3bbe, 0xb2bd0b28, 0x2bb45a92, 0x5cb36a04,
+	0xc2d7ffa7, 0xb5d0cf31, 0x2cd99e8b, 0x5bdeae1d,
+	0x9b64c2b0, 0xec63f226, 0x756aa39c, 0x026d930a,
+	0x9c0906a9, 0xeb0e363f, 0x72076785, 0x05005713,
+	0x95bf4a82, 0xe2b87a14, 0x7bb12bae, 0x0cb61b38,
+	0x92d28e9b, 0xe5d5be0d, 0x7cdcefb7, 0x0bdbdf21,
+	0x86d3d2d4, 0xf1d4e242, 0x68ddb3f8, 0x1fda836e,
+	0x81be16cd, 0xf6b9265b, 0x6fb077e1, 0x18b74777,
+	0x88085ae6, 0xff0f6a70, 0x66063bca, 0x11010b5c,
+	0x8f659eff, 0xf862ae69, 0x616bffd3, 0x166ccf45,
+	0xa00ae278, 0xd70dd2ee, 0x4e048354, 0x3903b3c2,
+	0xa7672661, 0xd06016f7, 0x4969474d, 0x3e6e77db,
+	0xaed16a4a, 0xd9d65adc, 0x40df0b66, 0x37d83bf0,
+	0xa9bcae53, 0xdebb9ec5, 0x47b2cf7f, 0x30b5ffe9,
+	0xbdbdf21c, 0xcabac28a, 0x53b39330, 0x24b4a3a6,
+	0xbad03605, 0xcdd70693, 0x54de5729, 0x23d967bf,
+	0xb3667a2e, 0xc4614ab8, 0x5d681b02, 0x2a6f2b94,
+	0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d
+}; 
 
-static decoder	tta[MAX_NCH];	// decoder state
-static int	cache[MAX_NCH];	// decoder cache
+const unsigned int bit_mask[] = {
+	0x00000000, 0x00000001, 0x00000003, 0x00000007,
+	0x0000000f, 0x0000001f, 0x0000003f, 0x0000007f,
+	0x000000ff, 0x000001ff, 0x000003ff, 0x000007ff,
+	0x00000fff, 0x00001fff, 0x00003fff, 0x00007fff,
+	0x0000ffff, 0x0001ffff, 0x0003ffff, 0x0007ffff,
+	0x000fffff, 0x001fffff, 0x003fffff, 0x007fffff,
+	0x00ffffff, 0x01ffffff, 0x03ffffff, 0x07ffffff,
+	0x0fffffff, 0x1fffffff, 0x3fffffff, 0x7fffffff,
+	0xffffffff
+};
 
-tta_info *ttainfo;		// currently playing file info
+const unsigned int bit_shift[] = {
+	0x00000001, 0x00000002, 0x00000004, 0x00000008,
+	0x00000010, 0x00000020, 0x00000040, 0x00000080,
+	0x00000100, 0x00000200, 0x00000400, 0x00000800,
+	0x00001000, 0x00002000, 0x00004000, 0x00008000,
+	0x00010000, 0x00020000, 0x00040000, 0x00080000,
+	0x00100000, 0x00200000, 0x00400000, 0x00800000,
+	0x01000000, 0x02000000, 0x04000000, 0x08000000,
+	0x10000000, 0x20000000, 0x40000000, 0x80000000,
+	0x80000000, 0x80000000, 0x80000000, 0x80000000,
+	0x80000000, 0x80000000, 0x80000000, 0x80000000
+};
 
-static unsigned int fframes;	// number of frames in file
-static unsigned int framelen;	// the frame length in samples
-static unsigned int lastlen;	// the length of the last frame in samples
-static unsigned int data_pos;	// currently playing frame index
-static unsigned int data_cur;	// the playing position in frame
+const unsigned int *shift_16 = bit_shift + 4;
 
-static int maxvalue;		// output data max value
-static unsigned int *seek_table;	// the playing position table
-static unsigned int st_state;	//seek table status
-
-static unsigned int frame_crc32;
-static unsigned int bit_count;
-static unsigned int bit_cache;
-static unsigned char *bitpos;
-
-static int read_id3_tags (tta_info *info);
+static int skip_id3_tag (tta_info *info);
 
 /************************* crc32 functions *****************************/
 
@@ -90,70 +166,70 @@ crc32 (unsigned char *buffer, unsigned int len) {
 /************************* bit operations ******************************/
 
 #define GET_BINARY(value, bits) \
-	while (bit_count < bits) { \
-		if (bitpos == iso_buffers_end) { \
-			if (!fread(isobuffers, 1, \
-			    ISO_BUFFERS_SIZE, ttainfo->HANDLE)) { \
-			    ttainfo->STATE = READ_ERROR; \
+	while (info->bit_count < bits) { \
+		if (info->bitpos == info->iso_buffers_end) { \
+			if (!deadbeef->fread(info->isobuffers, 1, \
+			    ISO_BUFFERS_SIZE, info->HANDLE)) { \
+			    info->STATE = READ_ERROR; \
 			    return -1; } \
-			bitpos = isobuffers; } \
-		UPDATE_CRC32(*bitpos, frame_crc32); \
-		bit_cache |= *bitpos << bit_count; \
-		bit_count += 8; \
-		bitpos++; } \
-	value = bit_cache & bit_mask[bits]; \
-	bit_cache >>= bits; \
-	bit_count -= bits; \
-	bit_cache &= bit_mask[bit_count];
+			info->bitpos = info->isobuffers; } \
+		UPDATE_CRC32(*info->bitpos, info->frame_crc32); \
+		info->bit_cache |= *info->bitpos << info->bit_count; \
+		info->bit_count += 8; \
+		info->bitpos++; } \
+	value = info->bit_cache & bit_mask[bits]; \
+	info->bit_cache >>= bits; \
+	info->bit_count -= bits; \
+	info->bit_cache &= bit_mask[info->bit_count];
 
 #define GET_UNARY(value) \
 	value = 0; \
-	while (!(bit_cache ^ bit_mask[bit_count])) { \
-		if (bitpos == iso_buffers_end) { \
-			if (!fread(isobuffers, 1, \
-			    ISO_BUFFERS_SIZE, ttainfo->HANDLE)) { \
-			    ttainfo->STATE = READ_ERROR; \
+	while (!(info->bit_cache ^ bit_mask[info->bit_count])) { \
+		if (info->bitpos == info->iso_buffers_end) { \
+			if (!deadbeef->fread(info->isobuffers, 1, \
+			    ISO_BUFFERS_SIZE, info->HANDLE)) { \
+			    info->STATE = READ_ERROR; \
 			    return -1; } \
-			bitpos = isobuffers; } \
-		value += bit_count; \
-		bit_cache = *bitpos++; \
-		UPDATE_CRC32(bit_cache, frame_crc32); \
-		bit_count = 8; } \
-	while (bit_cache & 1) { \
+			info->bitpos = info->isobuffers; } \
+		value += info->bit_count; \
+		info->bit_cache = *info->bitpos++; \
+		UPDATE_CRC32(info->bit_cache, info->frame_crc32); \
+		info->bit_count = 8; } \
+	while (info->bit_cache & 1) { \
 		value++; \
-		bit_cache >>= 1; \
-		bit_count--; } \
-	bit_cache >>= 1; \
-	bit_count--;
+		info->bit_cache >>= 1; \
+		info->bit_count--; } \
+	info->bit_cache >>= 1; \
+	info->bit_count--;
 
-static void init_buffer_read() {
-	frame_crc32 = 0xFFFFFFFFUL;
-	bit_count = bit_cache = 0;
-	bitpos = iso_buffers_end;
+static void init_buffer_read(tta_info *info) {
+	info->frame_crc32 = 0xFFFFFFFFUL;
+	info->bit_count = info->bit_cache = 0;
+	info->bitpos = info->iso_buffers_end;
 }
 
-static int done_buffer_read() {
+static int done_buffer_read(tta_info *info) {
 	unsigned int crc32, rbytes;
 
-	frame_crc32 ^= 0xFFFFFFFFUL;
-	rbytes = iso_buffers_end - bitpos;
+	info->frame_crc32 ^= 0xFFFFFFFFUL;
+	rbytes = info->iso_buffers_end - info->bitpos;
 
 	if (rbytes < sizeof(int)) {
-	    memcpy(isobuffers, bitpos, 4);
-	    if (!fread(isobuffers + rbytes, 1,
-		ISO_BUFFERS_SIZE - rbytes, ttainfo->HANDLE))
+	    memcpy(info->isobuffers, info->bitpos, 4);
+	    if (!deadbeef->fread(info->isobuffers + rbytes, 1,
+		ISO_BUFFERS_SIZE - rbytes, info->HANDLE))
 		return -1;
-	    bitpos = isobuffers;
+	    info->bitpos = info->isobuffers;
 	}
 
-	memcpy(&crc32, bitpos, 4);
+	memcpy(&crc32, info->bitpos, 4);
 	crc32 = ENDSWAP_INT32(crc32);
-	bitpos += sizeof(int);
+	info->bitpos += sizeof(int);
     
-	if (crc32 != frame_crc32) return -1;
+	if (crc32 != info->frame_crc32) return -1;
 
-	bit_cache = bit_count = 0;
-	frame_crc32 = 0xFFFFFFFFUL;
+	info->bit_cache = info->bit_count = 0;
+	info->frame_crc32 = 0xFFFFFFFFUL;
 
 	return 0;
 }
@@ -176,14 +252,14 @@ int open_tta_file (const char *filename, tta_info *info, unsigned int data_offse
 	unsigned int checksum;
 	unsigned int datasize;
 	unsigned int origsize;
-	FILE *infile;
+	DB_FILE *infile;
 	tta_hdr ttahdr;
 
 	// clear the memory
 	memset (info, 0, sizeof(tta_info));
 
 	// open file
-	infile = fopen(filename, "rb");
+	infile = deadbeef->fopen(filename);
 	if (!infile) {
 		info->STATE = OPEN_ERROR;
 		return -1;
@@ -191,29 +267,30 @@ int open_tta_file (const char *filename, tta_info *info, unsigned int data_offse
 	info->HANDLE = infile;
 
 	// get file size
-	fseek (infile, 0, SEEK_END);
-	info->FILESIZE = ftell (infile);
-	fseek (infile, 0, SEEK_SET);
+	deadbeef->fseek (infile, 0, SEEK_END);
+	info->FILESIZE = deadbeef->ftell (infile);
+	deadbeef->fseek (infile, 0, SEEK_SET);
 
 	// read id3 tags
 	if (!data_offset) {
-//		if ((data_offset = skip_id3_tag (info)) < 0) {
-		if ((data_offset = read_id3_tags (info)) < 0) {
-		    fclose(infile);
+		if ((data_offset = skip_id3_tag (info)) < 0) {
+		    deadbeef->fclose(infile);
 		    return -1;
 		}
-	} else fseek (infile, data_offset, SEEK_SET);
+	} else deadbeef->fseek (infile, data_offset, SEEK_SET);
 
 	// read TTA header
-	if (fread (&ttahdr, 1, sizeof (ttahdr), infile) == 0) {
-		fclose (infile);
+	if (deadbeef->fread (&ttahdr, 1, sizeof (ttahdr), infile) == 0) {
+        trace ("tta: failed to read header\n");
+		deadbeef->fclose (infile);
 		info->STATE = READ_ERROR;
 		return -1;
 	}
 
 	// check for TTA3 signature
 	if (ENDSWAP_INT32(ttahdr.TTAid) != TTA1_SIGN) {
-		fclose (infile);
+        trace ("tta: format error (wrong signature)\n");
+		deadbeef->fclose (infile);
 		info->STATE = FORMAT_ERROR;
 		return -1;
 	}
@@ -222,7 +299,8 @@ int open_tta_file (const char *filename, tta_info *info, unsigned int data_offse
 	checksum = crc32((unsigned char *) &ttahdr,
 	sizeof(tta_hdr) - sizeof(int));
 	if (checksum != ttahdr.CRC32) {
-		fclose (infile);
+        trace ("tta: file error: crc32 mismatch\n");
+		deadbeef->fclose (infile);
 		info->STATE = FILE_ERROR;
 		return -1;
 	}
@@ -246,7 +324,8 @@ int open_tta_file (const char *filename, tta_info *info, unsigned int data_offse
 		ttahdr.SampleRate != 64000 &&
 		ttahdr.SampleRate != 88200 &&
 		ttahdr.SampleRate != 96000)) {
-		fclose (infile);
+        trace ("tta: format error: invalid samplerate\n");
+		deadbeef->fclose (infile);
 		info->STATE = FORMAT_ERROR;
 		return -1;
 	}
@@ -301,26 +380,26 @@ static void seek_table_init (unsigned int *seek_table,
 	}
 }
 
-int set_position (unsigned int pos) {
+int set_position (tta_info *info, unsigned int pos) {
 	unsigned int seek_pos;
 
-	if (pos >= fframes) return 0;
-	if (!st_state) {
-		ttainfo->STATE = FILE_ERROR;
+	if (pos >= info->fframes) return 0;
+	if (!info->st_state) {
+		info->STATE = FILE_ERROR;
 		return -1;
 	}
 
-	seek_pos = ttainfo->DATAPOS + seek_table[data_pos = pos];
-	if (fseek(ttainfo->HANDLE, seek_pos, SEEK_SET) < 0) {
-		ttainfo->STATE = READ_ERROR;
+	seek_pos = info->DATAPOS + info->seek_table[info->data_pos = pos];
+	if (deadbeef->fseek(info->HANDLE, seek_pos, SEEK_SET) < 0) {
+		info->STATE = READ_ERROR;
 		return -1;
 	}
 
-	data_cur = 0;
-	framelen = 0;
+	info->data_cur = 0;
+	info->framelen = 0;
 
 	// init bit reader
-	init_buffer_read();
+	init_buffer_read(info);
 
 	return 0;
 }
@@ -329,84 +408,83 @@ int player_init (tta_info *info) {
 	unsigned int checksum;
 	unsigned int data_offset;
 	unsigned int st_size;
+	info->iso_buffers_end = info->isobuffers + ISO_BUFFERS_SIZE;
 
-	ttainfo = info;
+	info->framelen = 0;
+	info->data_pos = 0;
+	info->data_cur = 0;
 
-	framelen = 0;
-	data_pos = 0;
-	data_cur = 0;
+	info->lastlen = info->DATALENGTH % info->FRAMELEN;
+	info->fframes = info->DATALENGTH / info->FRAMELEN + (info->lastlen ? 1 : 0);
+	st_size = (info->fframes + 1) * sizeof(int);
 
-	lastlen = ttainfo->DATALENGTH % ttainfo->FRAMELEN;
-	fframes = ttainfo->DATALENGTH / ttainfo->FRAMELEN + (lastlen ? 1 : 0);
-	st_size = (fframes + 1) * sizeof(int);
-
-	seek_table = (unsigned int *) malloc(st_size);
-	if (!seek_table) {
-		ttainfo->STATE = MEMORY_ERROR;
+	info->seek_table = (unsigned int *) malloc(st_size);
+	if (!info->seek_table) {
+		info->STATE = MEMORY_ERROR;
 		return -1;
 	}
 
 	// read seek table
-	if (!fread(seek_table, st_size, 1, ttainfo->HANDLE)) {
-		ttainfo->STATE = READ_ERROR;
+	if (!deadbeef->fread(info->seek_table, st_size, 1, info->HANDLE)) {
+		info->STATE = READ_ERROR;
 		return -1;
 	}
 
-	checksum = crc32((unsigned char *) seek_table, st_size - sizeof(int));
-	st_state = (checksum == ENDSWAP_INT32(seek_table[fframes]));
+	checksum = crc32((unsigned char *) info->seek_table, st_size - sizeof(int));
+	info->st_state = (checksum == ENDSWAP_INT32(info->seek_table[info->fframes]));
 	data_offset = sizeof(tta_hdr) + st_size;
 
 	// init seek table
-	seek_table_init(seek_table, fframes, data_offset);
+	seek_table_init(info->seek_table, info->fframes, data_offset);
 
 	// init bit reader
-	init_buffer_read();
+	init_buffer_read(info);
 
-	pcm_buffer_size = PCM_BUFFER_LENGTH * ttainfo->BSIZE * ttainfo->NCH;
-	maxvalue = (1UL << ttainfo->BPS) - 1;
+	info->pcm_buffer_size = PCM_BUFFER_LENGTH * info->BSIZE * info->NCH;
+	info->maxvalue = (1UL << info->BPS) - 1;
 
 	return 0;
 }
 
 void close_tta_file (tta_info *info) {
 	if (info->HANDLE) {
-		fclose (info->HANDLE);
+		deadbeef->fclose (info->HANDLE);
 		info->HANDLE = NULL;
 	}
 }
 
-void player_stop () {
-	if (seek_table) {
-		free(seek_table);
-		seek_table = NULL;
+void player_stop (tta_info *info) {
+	if (info->seek_table) {
+		free(info->seek_table);
+		info->seek_table = NULL;
 	}
 }
 
-int get_samples (byte *buffer) {
+int get_samples (tta_info *info, byte *buffer) {
 	unsigned int k, depth, unary, binary;
 	byte *p = buffer;
-	decoder *dec = tta;
-	int *prev = cache;
+	decoder *dec = info->tta;
+	int *prev = info->cache;
 	int value, res;
 
-	for (res = 0; p < buffer + pcm_buffer_size;) {
+	for (res = 0; p < buffer + info->pcm_buffer_size;) {
 		fltst *fst = &dec->fst;
 		adapt *rice = &dec->rice;
 		int *last = &dec->last;
 
-		if (data_cur == framelen) {
-			if (data_pos == fframes) break;
-			if (framelen && done_buffer_read()) {
-			    if (set_position(data_pos)) return -1;
+		if (info->data_cur == info->framelen) {
+			if (info->data_pos == info->fframes) break;
+			if (info->framelen && done_buffer_read(info)) {
+			    if (set_position(info, info->data_pos)) return -1;
 			    if (res) break;
 			}
 
-			if (data_pos == fframes - 1 && lastlen)
-				framelen = lastlen;
-			else framelen = ttainfo->FRAMELEN;
+			if (info->data_pos == info->fframes - 1 && info->lastlen)
+				info->framelen = info->lastlen;
+			else info->framelen = info->FRAMELEN;
 
-			decoder_init(tta, ttainfo->NCH, ttainfo->BSIZE);
-			data_pos++; data_cur = 0;
+			decoder_init(info->tta, info->NCH, info->BSIZE);
+			info->data_pos++; info->data_cur = 0;
 		}
 
 		// decode Rice unsigned
@@ -446,36 +524,36 @@ int get_samples (byte *buffer) {
 		hybrid_filter(fst, &value);
 
 		// decompress stage 2: fixed order 1 prediction
-		switch (ttainfo->BSIZE) {
+		switch (info->BSIZE) {
 		case 1: value += PREDICTOR1(*last, 4); break;	// bps 8
 		case 2: value += PREDICTOR1(*last, 5); break;	// bps 16
 		case 3: value += PREDICTOR1(*last, 5); break;	// bps 24
 		} *last = value;
 
 		// check for errors
-		if (abs(value) > maxvalue) {
+		if (abs(value) > info->maxvalue) {
 			unsigned int tail =
-				pcm_buffer_size / (ttainfo->BSIZE * ttainfo->NCH) - res;
-			memset(buffer, 0, pcm_buffer_size);
-			data_cur += tail; res += tail;
+				info->pcm_buffer_size / (info->BSIZE * info->NCH) - res;
+			memset(buffer, 0, info->pcm_buffer_size);
+			info->data_cur += tail; res += tail;
 			break;
 		}
 
-		if (dec < tta + (ttainfo->NCH - 1)) {
+		if (dec < info->tta + (info->NCH - 1)) {
 			*prev++ = value; dec++;
 		} else {
 			*prev = value;
-			if (ttainfo->NCH > 1) {
+			if (info->NCH > 1) {
 				int *r = prev - 1;
-				for (*prev += *r/2; r >= cache; r--)
+				for (*prev += *r/2; r >= info->cache; r--)
 					*r = *(r + 1) - *r;
-				for (r = cache; r < prev; r++)
-					WRITE_BUFFER(r, ttainfo->BSIZE, p)
+				for (r = info->cache; r < prev; r++)
+					WRITE_BUFFER(r, info->BSIZE, p)
 			}
-			WRITE_BUFFER(prev, ttainfo->BSIZE, p)
-			prev = cache;
-			data_cur++; res++;
-			dec = tta;
+			WRITE_BUFFER(prev, info->BSIZE, p)
+			prev = info->cache;
+			info->data_cur++; res++;
+			dec = info->tta;
 		}
 	}
 
@@ -518,194 +596,18 @@ static unsigned int unpack_sint32 (const char *ptr) {
 	return value;
 }
 
-static int get_frame_id (const char *id) {
-	if (!memcmp(id, "TIT2", 4)) return TIT2;	// Title
-	if (!memcmp(id, "TPE1", 4)) return TPE1;	// Artist
-	if (!memcmp(id, "TALB", 4)) return TALB;	// Album
-	if (!memcmp(id, "TRCK", 4)) return TRCK;	// Track
-	if (!memcmp(id, "TYER", 4)) return TYER;	// Year
-	if (!memcmp(id, "TCON", 4)) return TCON;	// Genre
-	if (!memcmp(id, "COMM", 4)) return COMM;	// Comment
-	return 0;
-}
-
-#if 0
-
 static int skip_id3_tag (tta_info *info) {
-	id3v2_tag id3v2;
-	int id3v2_size;
-
-	////////////////////////////////////////
-	// skip ID3v2 tag
-	if (!fread(&id3v2, 1, sizeof(id3v2_tag), info->HANDLE))
-		goto read_error;
-	
-	if (memcmp(id3v2.id, "ID3", 3)) {
-		if (fseek (info->HANDLE, 0, SEEK_SET) < 0)
-		    goto read_error;
-		return 0;
-	}
-
-	if (id3v2.size[0] & 0x80) goto file_error;
-	id3v2_size = unpack_sint28(id3v2.size);
-
-	id3v2_size += (id3v2.flags &
-		ID3_FOOTERPRESENT_FLAG) ? 20 : 10;
-	fseek (info->HANDLE, id3v2_size, SEEK_SET);
-	info->ID3.size = id3v2_size;
+	int id3v2_size = deadbeef->junk_get_leading_size (info->HANDLE);
+	printf ("id3v2_size: %d\n", id3v2_size);
+	if (id3v2_size < 0) {
+        id3v2_size = 0;
+        deadbeef->rewind (info->HANDLE);
+    }
+    else {
+        deadbeef->fseek (info->HANDLE, id3v2_size, SEEK_SET);
+    }
 
 	return id3v2_size;
-
-file_error:
-	ttainfo->STATE = FILE_ERROR;
-	return -1;
-
-read_error:
-	ttainfo->STATE = READ_ERROR;
-	return -1;
-}
-
-#endif
-
-static int read_id3_tags (tta_info *info) {
-	id3v1_tag id3v1;
-	id3v2_tag id3v2;
-	id3v2_frame frame_header;
-	int id3v2_size;
-	char *buffer = NULL;
-	char *ptr;
-
-	////////////////////////////////////////
-	// ID3v1 support
-	if (fseek (info->HANDLE, -(int) sizeof(id3v1_tag),
-		SEEK_END) < 0) goto read_error;
-
-	if (!fread (&id3v1, sizeof(id3v1_tag), 1,
-		info->HANDLE)) goto read_error;
-
-	if (!memcmp (id3v1.id, "TAG", 3)) {
-		memcpy(info->ID3.title, id3v1.title, 30);
-		memcpy(info->ID3.artist, id3v1.artist, 30);
-		memcpy(info->ID3.album, id3v1.album, 30);
-		memcpy(info->ID3.year, id3v1.year, 4);
-		memcpy(info->ID3.comment, id3v1.comment, 28);
-
-		if (id3v1.genre > GENRES-1) id3v1.genre = 12;
-		sprintf(info->ID3.track, "%02d", id3v1.track);
-		if (id3v1.genre && id3v1.genre != 0xFF)
-		    sprintf(info->ID3.genre, "%s", genre[id3v1.genre]);
-		info->ID3.id3has |= 1;
-	}
-
-	if (fseek (info->HANDLE, 0, SEEK_SET) < 0)
-		goto read_error;
-
-	////////////////////////////////////////
-	// ID3v2 minimal support
-	if (!fread(&id3v2, 1, sizeof(id3v2_tag), info->HANDLE))
-		goto read_error;
-	
-	if (memcmp(id3v2.id, "ID3", 3)) {
-		if (fseek (info->HANDLE, 0, SEEK_SET) < 0)
-		    goto read_error;
-		return 0;
-	}
-
-	if (id3v2.size[0] & 0x80) goto file_error;
-	id3v2_size = unpack_sint28(id3v2.size);
-
-	if (!(buffer = (unsigned char *) malloc (id3v2_size))) {
-		ttainfo->STATE = MEMORY_ERROR;
-		goto read_done;
-	}
-
-	if ((id3v2.flags & ID3_UNSYNCHRONISATION_FLAG) ||
-		(id3v2.flags & ID3_EXPERIMENTALTAG_FLAG) ||
-		(id3v2.version < 3)) goto read_done;
-
-	if (!fread(buffer, 1, id3v2_size, info->HANDLE)) {
-		free (buffer);
-		goto read_error;
-	}
-
-	ptr = buffer;
-
-	// skip extended header if present
-	if (id3v2.flags & ID3_EXTENDEDHEADER_FLAG) {
-		int offset = unpack_sint32(ptr);
-		ptr += offset;
-	}
-
-	// read id3v2 frames
-	while (ptr - buffer < id3v2_size) {
-		char *data = NULL;
-		int data_size, frame_id;
-		int size = 0;
-
-		// get frame header
-		memcpy(&frame_header, ptr, sizeof(id3v2_frame));
-		ptr += sizeof(id3v2_frame);
-		data_size = unpack_sint32(frame_header.size);
-
-		// skip unsupported frames
-		if (!(frame_id = get_frame_id(frame_header.id)) ||
-			frame_header.flags & FRAME_COMPRESSION_FLAG ||
-			frame_header.flags & FRAME_ENCRYPTION_FLAG ||
-			frame_header.flags & FRAME_UNSYNCHRONISATION_FLAG || (
-			*ptr != FIELD_TEXT_ISO_8859_1 &&
-			*ptr != FIELD_TEXT_UTF_8)) {
-			ptr += data_size;
-			continue;
-		}
-
-		data_size--; ptr++;
-
-		switch (frame_id) {
-		case TIT2:	data = info->ID3.title;
-				size = sizeof(info->ID3.title) - 1; break;
-		case TPE1:	data = info->ID3.artist;
-				size = sizeof(info->ID3.artist) - 1; break;
-		case TALB:	data = info->ID3.album;
-				size = sizeof(info->ID3.album) - 1; break;
-		case TRCK:	data = info->ID3.track;
-				size = sizeof(info->ID3.track) - 1; break;
-		case TYER:	data = info->ID3.year;
-				size = sizeof(info->ID3.year) - 1; break;
-		case TCON:	data = info->ID3.genre;
-				size = sizeof(info->ID3.genre) - 1; break;
-		case COMM:	data = info->ID3.comment;
-				size = sizeof(info->ID3.comment) - 1;
-				data_size -= 3; ptr += 3;
-
-				// skip zero short description
-				if (*ptr == 0) { data_size--; ptr++; }
-				break;
-		}
-
-		if (data_size < size) size = data_size;
-		memcpy(data, ptr, size); data[size] = '\0';
-		ptr += data_size;
-	}
-
-	info->ID3.id3has |= 2;
-
-read_done:
-	if (buffer) free(buffer);
-
-	id3v2_size += (id3v2.flags &
-		ID3_FOOTERPRESENT_FLAG) ? 20 : 10;
-	fseek (info->HANDLE, id3v2_size, SEEK_SET);
-	info->ID3.size = id3v2_size;
-
-	return id3v2_size;
-
-file_error:
-	ttainfo->STATE = FILE_ERROR;
-	return -1;
-
-read_error:
-	ttainfo->STATE = READ_ERROR;
-	return -1;
 }
 
 /* eof */
