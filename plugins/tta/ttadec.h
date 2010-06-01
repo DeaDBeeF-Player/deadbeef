@@ -134,7 +134,6 @@ typedef struct {
 #define READ_ERROR      5	// Can't read from file
 #define MEMORY_ERROR    6	// Insufficient memory available
 
-#define FRAME_TIME              1.04489795918367346939
 #define SEEK_STEP               (int)(FRAME_TIME * 1000)
 
 #define ISO_BUFFER_LENGTH       (1024*32)
@@ -195,7 +194,7 @@ void    close_tta_file (	// FUNCTION: closes currently playing file
 
 int	set_position (		// FUNCTION: sets playback position
         tta_info *info, // tta context
-        unsigned int pos);	// seek position = seek_time_ms / SEEK_STEP
+        unsigned int pos);	// sample number
 /*
  * RETURN VALUE
  * This function returns 0 if success. Otherwise, -1 is returned

@@ -45,6 +45,7 @@ typedef struct {
     int endsample;
     char buffer[PCM_BUFFER_LENGTH * MAX_BSIZE * MAX_NCH];
     int remaining;
+    int samples_to_skip;
 } tta_info_t;
 
 static DB_fileinfo_t *
@@ -115,6 +116,14 @@ tta_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
     int sample_size = ((_info->bps >> 3) * out_channels);
 
     while (size > 0) {
+        if (info->samples_to_skip > 0 && info->remaining > 0) {
+            int skip = min (info->remaining, info->samples_to_skip);
+            if (skip < info->remaining) {
+                memmove (info->buffer, info->buffer + skip * info->tta.BSIZE * info->tta.NCH, (info->remaining - skip) * info->tta.BSIZE * info->tta.NCH);
+            }
+            info->remaining -= skip;
+            info->samples_to_skip -= skip;
+        }
         if (info->remaining > 0) {
             int n = size / sample_size;
             n = min (n, info->remaining);
@@ -132,7 +141,7 @@ tta_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
                 p += info->tta.NCH * info->tta.BSIZE;
             }
             if (info->remaining > nn) {
-                memmove (info->buffer, p, (info->remaining - nn) * sizeof (float) * _info->channels);
+                memmove (info->buffer, p, (info->remaining - nn) * info->tta.BSIZE * info->tta.NCH);
             }
             info->remaining -= nn;
         }
@@ -151,15 +160,14 @@ tta_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
 static int
 tta_seek_sample (DB_fileinfo_t *_info, int sample) {
     tta_info_t *info = (tta_info_t *)_info;
-    int seek_time = (sample + info->startsample) / SEEK_STEP * 1000 / info->tta.SAMPLERATE;
 
-    if (set_position (&info->tta, seek_time) != 0) {
+    info->samples_to_skip = set_position (&info->tta, sample + info->startsample);
+    if (info->samples_to_skip < 0) {
         fprintf (stderr, "tta: seek failed\n");
         return -1;
     }
-    sample = (seek_time * SEEK_STEP) / 1000 * info->tta.SAMPLERATE;
 
-    info->currentsample = sample - info->startsample;
+    info->currentsample = sample;
     _info->readpos = sample / _info->samplerate;
     return 0;
 }

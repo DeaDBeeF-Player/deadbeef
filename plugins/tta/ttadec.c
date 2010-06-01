@@ -380,8 +380,11 @@ static void seek_table_init (unsigned int *seek_table,
 	}
 }
 
-int set_position (tta_info *info, unsigned int pos) {
-	unsigned int seek_pos;
+int set_position (tta_info *info, unsigned int _pos) {
+    // pos: seek position = seek_time_ms / SEEK_STEP
+//    int pos = _pos / SEEK_STEP * 1000 / info->SAMPLERATE;
+    int pos = _pos / info->framelen;
+    unsigned int seek_pos;
 
 	if (pos >= info->fframes) return 0;
 	if (!info->st_state) {
@@ -401,7 +404,9 @@ int set_position (tta_info *info, unsigned int pos) {
 	// init bit reader
 	init_buffer_read(info);
 
-	return 0;
+    trace ("seek to sample %d, skip %d (%d - %d * %d)\n", _pos, _pos - pos * info->FRAMELEN, _pos, pos, info->FRAMELEN);
+
+	return _pos - pos * info->FRAMELEN;
 }
 
 int player_init (tta_info *info) {
@@ -598,7 +603,7 @@ static unsigned int unpack_sint32 (const char *ptr) {
 
 static int skip_id3_tag (tta_info *info) {
 	int id3v2_size = deadbeef->junk_get_leading_size (info->HANDLE);
-	printf ("id3v2_size: %d\n", id3v2_size);
+	trace ("id3v2_size: %d\n", id3v2_size);
 	if (id3v2_size < 0) {
         id3v2_size = 0;
         deadbeef->rewind (info->HANDLE);
