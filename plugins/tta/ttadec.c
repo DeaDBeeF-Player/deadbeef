@@ -383,7 +383,7 @@ static void seek_table_init (unsigned int *seek_table,
 int set_position (tta_info *info, unsigned int _pos) {
     // pos: seek position = seek_time_ms / SEEK_STEP
 //    int pos = _pos / SEEK_STEP * 1000 / info->SAMPLERATE;
-    int pos = _pos / info->framelen;
+    int pos = _pos / info->FRAMELEN;
     unsigned int seek_pos;
 
 	if (pos >= info->fframes) return 0;
