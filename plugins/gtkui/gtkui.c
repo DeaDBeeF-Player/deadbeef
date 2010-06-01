@@ -65,6 +65,8 @@ GtkWidget *traymenu;
 GtkWidget *theme_treeview;
 GtkWidget *theme_button;
 
+#define TRAY_ICON "deadbeef-tray-icon"
+
 // that must be called before gtk_init
 void
 gtkpl_init (void) {
@@ -794,8 +796,21 @@ gtkui_thread (void *ctx) {
 
     // system tray icon
     traymenu = create_traymenu ();
-    GdkPixbuf *trayicon_pixbuf = create_pixbuf ("play_24.png");
-    trayicon = gtk_status_icon_new_from_pixbuf (trayicon_pixbuf);
+
+    const char *icon_name = deadbeef->conf_get_str ("gtkui.custom_tray_icon", TRAY_ICON);
+    GtkIconTheme *theme = gtk_icon_theme_get_default();
+
+    if (!gtk_icon_theme_has_icon(theme, icon_name))
+        icon_name = "deadbeef";
+    else {
+        GtkIconInfo *icon_info = gtk_icon_theme_lookup_icon(theme, icon_name, 48, GTK_ICON_LOOKUP_USE_BUILTIN);
+        const gboolean icon_is_builtin = gtk_icon_info_get_filename(icon_info) == NULL;
+        gtk_icon_info_free(icon_info);
+        icon_name = icon_is_builtin ? "deadbeef" : icon_name;
+    }
+
+    trayicon = gtk_status_icon_new_from_icon_name(icon_name);
+
     set_tray_tooltip ("DeaDBeeF");
     //gtk_status_icon_set_title (GTK_STATUS_ICON (trayicon), "DeaDBeeF");
 #if GTK_MINOR_VERSION <= 14
@@ -987,6 +1002,7 @@ gtkui_load (DB_functions_t *api) {
 static const char settings_dlg[] =
     "property \"Ask confirmation to delete files from disk\" checkbox gtkui.delete_files_ask 1;\n"
     "property \"Status icon volume control sensitivity\" entry gtkui.tray_volume_sensitivity 1;\n"
+    "property \"Custom status icon\" entry gtkui.custom_tray_icon \"" TRAY_ICON "\" ;\n"
     "property \"Run gtk_init with --sync (debug mode)\" checkbox gtkui.sync 0;\n"
 ;
 
