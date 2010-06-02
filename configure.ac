@@ -355,12 +355,7 @@ if test "x$enable_emidi" != "xno" ; then
 fi
 
 if test "x$enable_musepack" != "xno" ; then
-    AC_CHECK_LIB([mpcdec], [main], [HAVE_MPCDEC=yes])
-    if test "x$HAVE_MPCDEC" = "xyes" ; then
-        HAVE_MUSEPACK=yes
-        MUSEPACK_LIBS="-lmpcdec"
-        AC_SUBST(MUSEPACK_LIBS)
-    fi
+    HAVE_MUSEPACK=yes
 fi
 
 if test "x$enable_wildmidi" != "xno" ; then

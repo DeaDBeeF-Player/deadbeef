@@ -20,8 +20,7 @@
 #include <assert.h>
 #include <limits.h>
 #include <unistd.h>
-#include <mpcdec/mpcdec.h>
-#include <mpcdec/math.h>
+#include "mpcdec.h"
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
 #endif
@@ -39,24 +38,25 @@ static DB_functions_t *deadbeef;
 typedef struct {
     DB_fileinfo_t info;
     mpc_streaminfo si;
-    mpc_decoder mpcdec;
+    mpc_demux *demux;
+//    mpc_decoder *mpcdec;
     mpc_reader reader;
     int currentsample;
     int startsample;
     int endsample;
     mpc_uint32_t vbr_update_acc;
     mpc_uint32_t vbr_update_bits;
-    float buffer[MPC_DECODER_BUFFER_LENGTH];
+    MPC_SAMPLE_FORMAT buffer[MPC_DECODER_BUFFER_LENGTH];
     int remaining;
 } musepack_info_t;
 
-mpc_int32_t musepack_vfs_read (void *t, void *ptr, mpc_int32_t size) {
-    return deadbeef->fread(ptr, 1, size, (DB_FILE *)t);
+mpc_int32_t musepack_vfs_read (mpc_reader *r, void *ptr, mpc_int32_t size) {
+    return deadbeef->fread(ptr, 1, size, (DB_FILE *)r->data);
 }
 
 /// Seeks to byte position offset.
-mpc_bool_t musepack_vfs_seek (void *t, mpc_int32_t offset) {
-    int res = deadbeef->fseek ((DB_FILE *)t, offset, SEEK_SET);
+mpc_bool_t musepack_vfs_seek (mpc_reader *r, mpc_int32_t offset) {
+    int res = deadbeef->fseek ((DB_FILE *)r->data, offset, SEEK_SET);
     if (res == 0) {
         return 1;
     }
@@ -64,17 +64,17 @@ mpc_bool_t musepack_vfs_seek (void *t, mpc_int32_t offset) {
 }
 
 /// Returns the current byte offset in the stream.
-mpc_int32_t musepack_vfs_tell (void *t) {
-    return deadbeef->ftell ((DB_FILE *)t);
+mpc_int32_t musepack_vfs_tell (mpc_reader *r) {
+    return deadbeef->ftell ((DB_FILE *)r->data);
 }
 
 /// Returns the total length of the source stream, in bytes.
-mpc_int32_t musepack_vfs_get_size (void *t) {
-    return deadbeef->fgetlength ((DB_FILE *)t);
+mpc_int32_t musepack_vfs_get_size (mpc_reader *r) {
+    return deadbeef->fgetlength ((DB_FILE *)r->data);
 }
 
 /// True if the stream is a seekable stream.
-mpc_bool_t musepack_vfs_canseek (void *t) {
+mpc_bool_t musepack_vfs_canseek (mpc_reader *r) {
     return 1;
 }
 
@@ -102,20 +102,21 @@ musepack_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     }
     info->reader.data = fp;
 
-    mpc_streaminfo_init (&info->si);
-    mpc_int32_t err;
-    if ((err = mpc_streaminfo_read (&info->si, &info->reader)) != ERROR_CODE_OK) {
-        fprintf (stderr, "mpc_streaminfo_read failed (err=%d)\n", err);
-        deadbeef->fclose ((DB_FILE *)info->reader.data);
+    info->demux = mpc_demux_init (&info->reader);
+    if (!info->demux) {
+        fprintf (stderr, "mpc: mpc_demux_init failed\n");
+        deadbeef->fclose (fp);
         info->reader.data = NULL;
         return -1;
     }
-    mpc_decoder_setup (&info->mpcdec, &info->reader);
-    if (!mpc_decoder_initialize (&info->mpcdec, &info->si)) {
-        deadbeef->fclose ((DB_FILE *)info->reader.data);
-        info->reader.data = NULL;
-        return -1;
-    }
+    mpc_demux_get_info (info->demux, &info->si);
+
+//    info->mpcdec = mpc_decoder_init (&info->si);
+//    if (!info->mpcdec) {
+//        deadbeef->fclose ((DB_FILE *)info->reader.data);
+//        info->reader.data = NULL;
+//        return -1;
+//    }
     info->vbr_update_acc = 0;
     info->vbr_update_bits = 0;
     info->remaining = 0;
@@ -143,6 +144,14 @@ static void
 musepack_free (DB_fileinfo_t *_info) {
     musepack_info_t *info = (musepack_info_t *)_info;
     if (info) {
+//        if (info->mpcdec) {
+//            mpc_decoder_exit (info->mpcdec);
+//            info->decoder = NULL;
+//        }
+        if (info->demux) {
+            mpc_demux_exit (info->demux);
+            info->demux = NULL;
+        }
         if (info->reader.data) {
             deadbeef->fclose ((DB_FILE *)info->reader.data);
             info->reader.data = NULL;
@@ -207,14 +216,17 @@ musepack_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
         }
 
         if (size > 0 && !info->remaining) {
-            mpc_uint32_t decoded = mpc_decoder_decode (&info->mpcdec, info->buffer, &info->vbr_update_acc, &info->vbr_update_bits);
-            if (!decoded) {
+            mpc_frame_info frame;
+            frame.buffer = info->buffer;
+            mpc_status err = mpc_demux_decode (info->demux, &frame);
+            if (err != 0 || frame.bits == -1) {
                 break;
             }
-            assert (decoded <= MPC_DECODER_BUFFER_LENGTH);
-            info->remaining = decoded;
+
+            info->remaining = frame.samples;
         }
     }
+    info->currentsample += (initsize-size) / sample_size;
     return initsize-size;
 }
 
@@ -259,26 +271,30 @@ musepack_read_float32 (DB_fileinfo_t *_info, char *bytes, int size) {
         }
 
         if (size > 0 && !info->remaining) {
-            mpc_uint32_t decoded = mpc_decoder_decode (&info->mpcdec, info->buffer, &info->vbr_update_acc, &info->vbr_update_bits);
-            if (!decoded) {
+            mpc_frame_info frame;
+            frame.buffer = info->buffer;
+            mpc_status err = mpc_demux_decode (info->demux, &frame);
+            if (err != 0 || frame.bits == -1) {
                 break;
             }
-            assert (decoded <= MPC_DECODER_BUFFER_LENGTH);
-            info->remaining = decoded;
+
+            info->remaining = frame.samples;
         }
     }
+    info->currentsample += (initsize-size) / (4 * _info->channels);
     return initsize-size;
 }
 static int
 musepack_seek_sample (DB_fileinfo_t *_info, int sample) {
     musepack_info_t *info = (musepack_info_t *)_info;
-    mpc_bool_t res = mpc_decoder_seek_sample (&info->mpcdec, sample);
-    if (!res) {
+    mpc_status err = mpc_demux_seek_sample (info->demux, sample + info->startsample);
+    if (err != 0) {
         fprintf (stderr, "musepack: seek failed\n");
         return -1;
     }
-    info->currentsample = sample;
-    _info->readpos = (sample - info->startsample) / _info->samplerate;
+    info->currentsample = sample + info->startsample;
+    _info->readpos = (float)sample / _info->samplerate;
+    info->remaining = 0;
     return 0;
 }
 
@@ -300,21 +316,27 @@ musepack_insert (DB_playItem_t *after, const char *fname) {
 
     DB_FILE *fp = deadbeef->fopen (fname);
     if (!fp) {
+        fprintf (stderr, "mpc: insert failed to open %s\n", fname);
         return NULL;
     }
     reader.data = fp;
 
-    mpc_streaminfo si;
-    mpc_streaminfo_init (&si);
-    mpc_int32_t err;
-    if ((err = mpc_streaminfo_read (&si, &reader)) != ERROR_CODE_OK) {
-        fprintf (stderr, "mpc_streaminfo_read failed (err=%d)\n", err);
+    mpc_demux *demux = mpc_demux_init (&reader);
+    if (!demux) {
+        fprintf (stderr, "mpc: mpc_demux_init failed\n");
         deadbeef->fclose (fp);
         return NULL;
     }
 
+    mpc_streaminfo si;
+    //mpc_streaminfo_init (&si);
+    mpc_demux_get_info (demux, &si);
+
     int totalsamples = mpc_streaminfo_get_length_samples (&si);
     double dur = mpc_streaminfo_get_length (&si);
+
+    mpc_demux_exit (demux);
+    demux = NULL;
 
     DB_playItem_t *it = deadbeef->pl_item_alloc ();
     it->decoder_id = deadbeef->plug_get_decoder_id (plugin.plugin.id);
