@@ -869,13 +869,22 @@ static DB_plugin_action_t lookup_action = {
     .next = &love_action
 };
 
-static int
-lfm_get_actions (DB_plugin_action_t **actions)
+static DB_plugin_action_t *
+lfm_get_actions (DB_playItem_t *it)
 {
-    // Just prepend our action
-    love_action.next = *actions;
-    *actions = &lookup_action;
-    return 1;
+    if (!it ||
+        !deadbeef->pl_find_meta (it, "artist") ||
+        !deadbeef->pl_find_meta (it, "title"))
+    {
+        love_action.flags |= DB_ACTION_DISABLED;
+        lookup_action.flags |= DB_ACTION_DISABLED;
+    }
+    else
+    {
+        love_action.flags &= ~DB_ACTION_DISABLED;
+        lookup_action.flags &= ~DB_ACTION_DISABLED;
+    }
+    return &lookup_action;
 }
 
 static const char settings_dlg[] =

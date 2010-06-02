@@ -547,12 +547,10 @@ static DB_plugin_action_t add_cd_action = {
     .next = NULL
 };
 
-static int
-cda_get_actions (DB_plugin_action_t **actions)
+static DB_plugin_action_t *
+cda_get_actions (DB_playItem_t *unused)
 {
-    add_cd_action.next = *actions;
-    *actions = &add_cd_action;
-    return 1;
+    return &add_cd_action;
 }
 
 static const char *exts[] = { "cda", "nrg", NULL };

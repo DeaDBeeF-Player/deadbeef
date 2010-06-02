@@ -927,8 +927,6 @@ gtkui_start (void) {
         }
     }
 
-    gather_actions ();
-
     // gtk must be running in separate thread
     gtk_initialized = 0;
     gtk_tid = deadbeef->thread_start (gtkui_thread, NULL);

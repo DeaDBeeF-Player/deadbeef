@@ -27,6 +27,8 @@
 static DB_misc_t plugin;
 static DB_functions_t *deadbeef;
 
+static DB_plugin_action_t *actions;
+
 DB_plugin_t *
 shellexec_load (DB_functions_t *api) {
     deadbeef = api;
@@ -53,9 +55,18 @@ shx_callback (DB_playItem_t *it, void *data)
     return 0;
 }
 
-static int
-shx_get_actions (DB_plugin_action_t **actions)
+static DB_plugin_action_t *
+shx_get_actions (DB_playItem_t *unused)
 {
+    return actions;
+}
+
+static int
+shx_start ()
+{
+    actions = NULL;
+    DB_plugin_action_t *prev = NULL;
+
     DB_conf_item_t *item = deadbeef->conf_find ("shellexec.", NULL);
     while (item)
     {
@@ -79,13 +90,18 @@ shx_get_actions (DB_plugin_action_t **actions)
         action->callback = shx_callback;
         action->data = strdup (trim (tmp));
         action->flags = DB_ACTION_SINGLE_TRACK | DB_ACTION_ALLOW_MULTIPLE_TRACKS;
+        action->next = NULL;
 
-        action->next = *actions;
-        *actions = action;
+        if (prev)
+            prev->next = action;
+        prev = action;
+
+        if (!actions)
+            actions = action;
 
         item = deadbeef->conf_find ("shellexec.", item);
     }
-    return 1;
+    return 0;
 }
 
 // define plugin interface
@@ -94,11 +110,12 @@ static DB_misc_t plugin = {
     .plugin.api_vminor = DB_API_VERSION_MINOR,
     .plugin.type = DB_PLUGIN_MISC,
     .plugin.id = "shellexec",
-    .plugin.name = "Shell commands for tracks",
+    .plugin.name = "Shell commands",
     .plugin.descr = "Executes configurable shell commands for tracks",
     .plugin.author = "Viktor Semykin",
     .plugin.email = "thesame.ml@gmail.com",
     .plugin.website = "http://deadbeef.sf.net",
+    .plugin.start = shx_start,
     .plugin.get_actions = shx_get_actions
 };
 

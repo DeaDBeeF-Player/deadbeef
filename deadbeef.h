@@ -524,7 +524,10 @@ enum {
     DB_ACTION_ALLOW_MULTIPLE_TRACKS = 1 << 2,
 
     /* Action can (and prefer) traverse multiple tracks by itself */
-    DB_ACTION_CAN_MULTIPLE_TRACKS = 1 << 3
+    DB_ACTION_CAN_MULTIPLE_TRACKS = 1 << 3,
+    
+    /* Action is inactive */
+    DB_ACTION_DISABLED = 1 << 4
 };
 
 typedef struct DB_plugin_action_s {
@@ -583,10 +586,9 @@ typedef struct DB_plugin_s {
 
     // actions
     /* by get_actions function plugin is queried for implemented actions
-    @action is linked list (initially null), function must add its actions to list
-    @returns nonzero on success, 0 on fail
+    @returns linked list of actions
     */
-    int (*get_actions) (DB_plugin_action_t **actions);
+    DB_plugin_action_t* (*get_actions) (DB_playItem_t *it);
 } DB_plugin_t;
 
 typedef struct DB_fileinfo_s {

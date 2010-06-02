@@ -26,22 +26,6 @@
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
 
-DB_plugin_action_t *plugins_actions = NULL;
-
-void
-gather_actions ()
-{
-    trace ("gathering actions\n");
-    DB_plugin_t **plugins = deadbeef->plug_get_list();
-    int i;
-
-    for (i = 0; plugins[i]; i++)
-    {
-        if (plugins[i]->get_actions)
-            plugins[i]->get_actions (&plugins_actions);
-    }
-}
-
 static void
 on_actionitem_activate (GtkMenuItem     *menuitem,
                            DB_plugin_action_t *action)
@@ -52,70 +36,81 @@ on_actionitem_activate (GtkMenuItem     *menuitem,
 void
 add_mainmenu_actions (GtkWidget *mainwin)
 {
-    DB_plugin_action_t *action;
-    for (action = plugins_actions; action; action = action->next)
+    DB_plugin_t **plugins = deadbeef->plug_get_list();
+    int i;
+
+    for (i = 0; plugins[i]; i++)
     {
-        if (0 == (action->flags & DB_ACTION_COMMON))
+        if (!plugins[i]->get_actions)
             continue;
 
-        //We won't add item directly to main menu
-        if (!strchr (action->title, '/'))
-            continue;
+        DB_plugin_action_t *actions = plugins[i]->get_actions (NULL);
+        DB_plugin_action_t *action;
 
-        char *tmp;
-        char *ptr = tmp = strdup (action->title);
-        char *prev_title = NULL;
-
-        GtkWidget *current = mainwin;
-        GtkWidget *previous;
-
-        while (1)
+        for (action = actions; action; action = action->next)
         {
-            char *slash = strchr (ptr, '/');
-            if (!slash)
+            if (0 == (action->flags & DB_ACTION_COMMON))
+                continue;
+
+            //We won't add item directly to main menu
+            if (!strchr (action->title, '/'))
+                continue;
+
+            char *tmp;
+            char *ptr = tmp = strdup (action->title);
+            char *prev_title = NULL;
+
+            GtkWidget *current = mainwin;
+            GtkWidget *previous;
+
+            while (1)
             {
-                GtkWidget *actionitem;
-                actionitem = gtk_image_menu_item_new_with_mnemonic (ptr);
-                gtk_widget_show (actionitem);
+                char *slash = strchr (ptr, '/');
+                if (!slash)
+                {
+                    GtkWidget *actionitem;
+                    actionitem = gtk_image_menu_item_new_with_mnemonic (ptr);
+                    gtk_widget_show (actionitem);
 
-                /* Here we have special cases for different submenus */
-                if (0 == strcmp ("File", prev_title))
-                    gtk_menu_shell_insert (GTK_MENU_SHELL (current), actionitem, 5);
-                else if (0 == strcmp ("Edit", prev_title))
-                    gtk_menu_shell_insert (GTK_MENU_SHELL (current), actionitem, 7);
-                else
-                    gtk_container_add (GTK_CONTAINER (current), actionitem);
+                    /* Here we have special cases for different submenus */
+                    if (0 == strcmp ("File", prev_title))
+                        gtk_menu_shell_insert (GTK_MENU_SHELL (current), actionitem, 5);
+                    else if (0 == strcmp ("Edit", prev_title))
+                        gtk_menu_shell_insert (GTK_MENU_SHELL (current), actionitem, 7);
+                    else
+                        gtk_container_add (GTK_CONTAINER (current), actionitem);
 
-                g_signal_connect ((gpointer) actionitem, "activate",
-                    G_CALLBACK (on_actionitem_activate),
-                    action);
-                break;
+                    g_signal_connect ((gpointer) actionitem, "activate",
+                        G_CALLBACK (on_actionitem_activate),
+                        action);
+                    break;
+                }
+                *slash = 0;
+                char menuname [1024];
+
+                snprintf (menuname, sizeof (menuname), "%s_menu", ptr);
+
+                previous = current;
+                current = lookup_widget (current, menuname);
+                if (!current)
+                {
+                    GtkWidget *newitem;
+
+                    newitem = gtk_menu_item_new_with_mnemonic (ptr);
+                    gtk_widget_show (newitem);
+
+                    //If we add new submenu in main bar, add it before 'Help'
+                    if (NULL == prev_title)
+                        gtk_menu_shell_insert (GTK_MENU_SHELL (previous), newitem, 4);
+                    else
+                        gtk_container_add (GTK_CONTAINER (previous), newitem);
+
+                    current = gtk_menu_new ();
+                    gtk_menu_item_set_submenu (GTK_MENU_ITEM (newitem), current);
+                }
+                prev_title = ptr;
+                ptr = slash + 1;
             }
-            *slash = 0;
-            char menuname [1024];
-
-            snprintf (menuname, sizeof (menuname), "%s_menu", ptr);
-
-            previous = current;
-            current = lookup_widget (current, menuname);
-            if (!current)
-            {
-                GtkWidget *newitem;
-
-                newitem = gtk_menu_item_new_with_mnemonic (ptr);
-                gtk_widget_show (newitem);
-
-                //If we add new submenu in main bar, add it before 'Help'
-                if (NULL == prev_title)
-                    gtk_menu_shell_insert (GTK_MENU_SHELL (previous), newitem, 4);
-                else
-                    gtk_container_add (GTK_CONTAINER (previous), newitem);
-
-                current = gtk_menu_new ();
-                gtk_menu_item_set_submenu (GTK_MENU_ITEM (newitem), current);
-            }
-            prev_title = ptr;
-            ptr = slash + 1;
         }
     }
 }

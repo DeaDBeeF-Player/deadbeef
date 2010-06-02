@@ -21,9 +21,6 @@
 #ifndef __ACTIONS_H
 #define __ACTIONS_H
 
-extern DB_plugin_action_t *plugins_actions;
-
-void gather_actions ();
 void add_mainmenu_actions (GtkWidget *mainwin);
 
 #endif

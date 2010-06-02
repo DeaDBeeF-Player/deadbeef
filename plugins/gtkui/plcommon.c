@@ -433,25 +433,38 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
     gtk_container_add (GTK_CONTAINER (playlist_menu), separator8);
     gtk_widget_set_sensitive (separator8, FALSE);
 
-
-    if (plugins_actions)
-    {
-        int selected_count = 0;
-        DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
-        while (it) {
-            if (deadbeef->pl_is_selected (it))
-                selected_count++;
-            DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
-            deadbeef->pl_item_unref (it);
-            it = next;
+    int selected_count = 0;
+    DB_playItem_t *pit = deadbeef->pl_get_first (PL_MAIN);
+    DB_playItem_t *selected = NULL;
+    while (pit) {
+        if (deadbeef->pl_is_selected (pit))
+        {
+            if (!selected)
+                selected = pit;
+            selected_count++;
         }
+        DB_playItem_t *next = deadbeef->pl_get_next (pit, PL_MAIN);
+        deadbeef->pl_item_unref (pit);
+        pit = next;
+    }
 
+    DB_plugin_t **plugins = deadbeef->plug_get_list();
+    int i;
+
+    for (i = 0; plugins[i]; i++)
+    {
+        if (!plugins[i]->get_actions)
+            continue;
+
+        DB_plugin_action_t *actions = plugins[i]->get_actions (selected);
         DB_plugin_action_t *action;
-        for (action = plugins_actions; action; action = action->next)
+
+        int count = 0;
+        for (action = actions; action; action = action->next)
         {
             if (action->flags & DB_ACTION_COMMON)
                 continue;
-
+            count++;
             GtkWidget *actionitem;
             actionitem = gtk_menu_item_new_with_mnemonic (action->title);
             gtk_widget_show (actionitem);
@@ -464,15 +477,19 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
             if (!(
                 ((selected_count == 1) && (action->flags & DB_ACTION_SINGLE_TRACK)) ||
                 ((selected_count > 1) && (action->flags & DB_ACTION_ALLOW_MULTIPLE_TRACKS))
-                ))
+                ) ||
+                action->flags & DB_ACTION_DISABLED)
             {
                 gtk_widget_set_sensitive (GTK_WIDGET (actionitem), FALSE);
             }
         }
-        separator8 = gtk_separator_menu_item_new ();
-        gtk_widget_show (separator8);
-        gtk_container_add (GTK_CONTAINER (playlist_menu), separator8);
-        gtk_widget_set_sensitive (separator8, FALSE);
+        if (count > 0)
+        {
+            separator8 = gtk_separator_menu_item_new ();
+            gtk_widget_show (separator8);
+            gtk_container_add (GTK_CONTAINER (playlist_menu), separator8);
+            gtk_widget_set_sensitive (separator8, FALSE);
+        }
     }
 
     properties1 = gtk_menu_item_new_with_mnemonic ("Properties");
