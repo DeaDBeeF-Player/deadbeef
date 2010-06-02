@@ -25,67 +25,98 @@
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
 
+typedef struct {
+    DB_fileinfo_t info;
+    int startsample;
+    int endsample;
+    int currentsample;
+} example_info_t;
+
 static const char * exts[] = { "example", NULL }; // e.g. mp3
 static const char *filetypes[] = { "example", NULL }; // e.g. MP3
 
+// allocate codec control structure
+static DB_fileinfo_t *
+example_open (void) {
+    DB_fileinfo_t *_info = malloc (sizeof (example_info_t));
+    example_info_t *info = (example_info_t *)_info;
+    memset (info, 0, sizeof (example_info_t));
+    return _info;
+}
+
+// prepare to decode the track, fill in mandatory plugin fields
+// return -1 on failure
 static int
-example_init (DB_playItem_t *it) {
-    // prepare to decode the track
-    // return -1 on failure
+example_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
+    example_info_t *info = (example_info_t *)_info;
 
-    // fill in mandatory plugin fields
-    plugin.info.bps = deadbeef->get_output ()->bitspersample ();
-    plugin.info.channels = deadbeef->get_output ()->channels ();
-    plugin.info.samplerate = decoder->samplerate;
-    plugin.info.readpos = 0;
+    _info->bps = ;
+    _info->channels = ;
+    _info->samplerate = ;
+    _info->readpos = 0;
+    _info->plugin = &plugin;
 
+    if (it->endsample > 0) {
+        info->startsample = it->startsample;
+        info->endsample = it->endsample;
+        plugin.seek_sample (_info, 0);
+    }
+    else {
+        info->startsample = 0;
+        info->endsample = TOTALSAMPLES-1;
+    }
     return 0;
 }
 
+// free everything allocated in _init
 static void
-example_free (void) {
-    // free everything allocated in _init
+example_free (DB_fileinfo_t *_info) {
+    example_info_t *info = (example_info_t *)_info;
+    if (info) {
+        free (info);
+    }
 }
 
-static int
-example_read_int16 (char *bytes, int size) {
-    // try decode `size' bytes
-    // return number of decoded bytes
-    // return 0 on EOF
 
-    plugin.info.readpos = (float)currentsample / plugin.info.samplerate;
+// try decode `size' bytes
+// return number of decoded bytes
+// or 0 on EOF/error
+static int
+example_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
+    example_info_t *info = (example_info_t *)_info;
+    info->currentsample += size / (_info->channels * _info->bps/8);
     return size;
 }
 
+// seek to specified sample (frame)
+// return 0 on success
+// return -1 on failure
 static int
 example_seek_sample (int sample) {
-    // seek to specified sample (frame)
-    // return 0 on success
-    // return -1 on failure
+    example_info_t *info = (example_info_t *)_info;
     
-    // update readpos
+    info->currentsample = sample + info->startsample;
     plugin.info.readpos = (float)sample / plugin.info.samplerate;
     return 0;
 }
 
+// seek to specified time in seconds
+// return 0 on success
+// return -1 on failure
 static int
 example_seek (float time) {
-    // seek to specified time in seconds
-    // return 0 on success
-    // return -1 on failure
     return example_seek_sample (time * plugin.info.samplerate);
-    return 0;
 }
+
+// read information from the track
+// load/process cuesheet if exists
+// insert track into playlist
+// return track pointer on success
+// return NULL on failure
 
 static DB_playItem_t *
 example_insert (DB_playItem_t *after, const char *fname) {
-    // read information from the track
-    // load/process cuesheet if exists
-    // insert track into playlist
-    // return track pointer on success
-    // return NULL on failure
-
-example:
+// example code (won't compile):
 
     // open file
     DB_FILE *fp = deadbeef->fopen (fname);
@@ -164,6 +195,7 @@ example_start (void) {
     // return -1 on failure
     return 0;
 }
+
 static int
 example_stop (void) {
     // undo everything done in _start here
