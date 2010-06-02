@@ -167,7 +167,8 @@ tta_seek_sample (DB_fileinfo_t *_info, int sample) {
         return -1;
     }
 
-    info->currentsample = sample;
+    info->currentsample = sample + info->startsample;
+    info->remaining = 0;
     _info->readpos = sample / _info->samplerate;
     return 0;
 }
