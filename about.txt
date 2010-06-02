@@ -102,3 +102,8 @@ Copyright © 2005-2009, The Musepack Development Team
 WildMidi 0.2.2 - Midi Processing Library
 http://wildmidi.sourceforge.net
 Copyright © 2001-2004 Chris Ison
+
+
+ttadec - TTAv1 decoder
+http://true-audio.com/
+Copyright © 2004 True Audio Software
