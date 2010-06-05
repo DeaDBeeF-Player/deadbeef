@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-06-04 04:18+0000\n"
+"POT-Creation-Date: 2010-06-05 04:19+0000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: George Vasilakos <forfolias@linuxteam.cs.teilar.gr>\n"
 "Language-Team: Greek\n"
@@ -912,9 +912,8 @@ msgid "Value"
 msgstr "Τιμή"
 
 #: ../plugins/notify/notify.c:138
-#, fuzzy
 msgid "DeaDBeeF now playing"
-msgstr "DeaDBeeF %s ChangeLog"
+msgstr "DeaDBeeF τώρα αναπαράγει"
 
 #: ../main.c:84
 #, c-format
