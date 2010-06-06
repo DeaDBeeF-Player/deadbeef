@@ -1,11 +1,11 @@
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-06-05 04:19+0000\n"
+"POT-Creation-Date: 2010-06-06 04:19+0000\n"
 "PO-Revision-Date: \n"
-"Last-Translator: George Vasilakos <forfolias@linuxteam.cs.teilar.gr>\n"
+"Last-Translator: Giorgos Koutsikos <ragecryx@yahoo.gr>\n"
 "Language-Team: Greek\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -43,7 +43,8 @@ msgstr "Αποτυχία κατά την ανάγνωση του αρχείου 
 msgid "Failed to load help file"
 msgstr "Αποτυχία κατά τη φόρτωση του αρχείου βοήθειας"
 
-#: ../plugins/gtkui/callbacks.c:664 ../plugins/gtkui/interface.c:1105
+#: ../plugins/gtkui/callbacks.c:664
+#: ../plugins/gtkui/interface.c:1105
 #: ../plugins/gtkui/deadbeef.glade.h:56
 msgid "Help"
 msgstr "Βοήθεια"
@@ -167,7 +168,8 @@ msgstr "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d κομμάτια | %s σ
 msgid "Save Playlist As"
 msgstr "Αποθήκευση λίστας αναπαραγωγής ως"
 
-#: ../plugins/gtkui/gtkui.c:542 ../plugins/gtkui/gtkui.c:603
+#: ../plugins/gtkui/gtkui.c:542
+#: ../plugins/gtkui/gtkui.c:603
 msgid "DeaDBeeF playlist files (*.dbpl)"
 msgstr "Αρχεία λίστας αναπαραγωγής DeaDBeeF (*.dbpl)"
 
@@ -184,223 +186,278 @@ msgstr "Νέα λίστα αναπαραγωγής"
 msgid "New Playlist (%d)"
 msgstr "Νέα λίστα αναπαραγωγής (%d)"
 
-#: ../plugins/gtkui/interface.c:140 ../plugins/gtkui/deadbeef.glade.h:138
+#: ../plugins/gtkui/interface.c:140
+#: ../plugins/gtkui/deadbeef.glade.h:138
 msgid "_File"
 msgstr "_Αρχείο"
 
-#: ../plugins/gtkui/interface.c:147 ../plugins/gtkui/deadbeef.glade.h:142
+#: ../plugins/gtkui/interface.c:147
+#: ../plugins/gtkui/deadbeef.glade.h:142
 msgid "_Open file(s)"
 msgstr "_Άνοιγμα αρχείου"
 
-#: ../plugins/gtkui/interface.c:163 ../plugins/gtkui/deadbeef.glade.h:7
+#: ../plugins/gtkui/interface.c:163
+#: ../plugins/gtkui/deadbeef.glade.h:7
 msgid "Add file(s)"
 msgstr "Προσθήκη αρχείου"
 
-#: ../plugins/gtkui/interface.c:171 ../plugins/gtkui/deadbeef.glade.h:8
+#: ../plugins/gtkui/interface.c:171
+#: ../plugins/gtkui/deadbeef.glade.h:8
 msgid "Add folder(s)"
 msgstr "Προσθήκη φακέλου"
 
-#: ../plugins/gtkui/interface.c:179 ../plugins/gtkui/deadbeef.glade.h:6
+#: ../plugins/gtkui/interface.c:179
+#: ../plugins/gtkui/deadbeef.glade.h:6
 msgid "Add Audio CD"
 msgstr "Προσθήκη CD ήχου"
 
-#: ../plugins/gtkui/interface.c:187 ../plugins/gtkui/interface.c:2870
+#: ../plugins/gtkui/interface.c:187
+#: ../plugins/gtkui/interface.c:2870
 #: ../plugins/gtkui/deadbeef.glade.h:9
 msgid "Add location"
 msgstr "Προσθήκη τοποθεσίας"
 
-#: ../plugins/gtkui/interface.c:196 ../plugins/gtkui/deadbeef.glade.h:72
+#: ../plugins/gtkui/interface.c:196
+#: ../plugins/gtkui/deadbeef.glade.h:72
 msgid "New playlist"
 msgstr "Νέα λίστα αναπαραγωγής"
 
-#: ../plugins/gtkui/interface.c:203 ../plugins/gtkui/deadbeef.glade.h:64
+#: ../plugins/gtkui/interface.c:203
+#: ../plugins/gtkui/deadbeef.glade.h:64
 msgid "Load playlist"
 msgstr "Φόρτωση λίστας αναπαραγωγής"
 
-#: ../plugins/gtkui/interface.c:207 ../plugins/gtkui/deadbeef.glade.h:99
+#: ../plugins/gtkui/interface.c:207
+#: ../plugins/gtkui/deadbeef.glade.h:99
 msgid "Save playlist"
 msgstr "Αποθήκευση λίστας αναπαραγωγής"
 
-#: ../plugins/gtkui/interface.c:211 ../plugins/gtkui/deadbeef.glade.h:100
+#: ../plugins/gtkui/interface.c:211
+#: ../plugins/gtkui/deadbeef.glade.h:100
 msgid "Save playlist as"
 msgstr "Αποθήκευση λίστας αναπαραγωγής ως"
 
-#: ../plugins/gtkui/interface.c:220 ../plugins/gtkui/deadbeef.glade.h:144
+#: ../plugins/gtkui/interface.c:220
+#: ../plugins/gtkui/deadbeef.glade.h:144
 msgid "_Quit"
 msgstr "_Έξοδος"
 
-#: ../plugins/gtkui/interface.c:231 ../plugins/gtkui/deadbeef.glade.h:137
+#: ../plugins/gtkui/interface.c:231
+#: ../plugins/gtkui/deadbeef.glade.h:137
 msgid "_Edit"
 msgstr "_Επεξεργασία"
 
-#: ../plugins/gtkui/interface.c:238 ../plugins/gtkui/deadbeef.glade.h:135
+#: ../plugins/gtkui/interface.c:238
+#: ../plugins/gtkui/deadbeef.glade.h:135
 msgid "_Clear"
 msgstr "_Καθαρισμός"
 
-#: ../plugins/gtkui/interface.c:246 ../plugins/gtkui/deadbeef.glade.h:104
+#: ../plugins/gtkui/interface.c:246
+#: ../plugins/gtkui/deadbeef.glade.h:104
 msgid "Select all"
 msgstr "Επιλογή όλων"
 
-#: ../plugins/gtkui/interface.c:253 ../plugins/gtkui/deadbeef.glade.h:24
+#: ../plugins/gtkui/interface.c:253
+#: ../plugins/gtkui/deadbeef.glade.h:24
 msgid "Deselect all"
 msgstr "Αποεπιλογή όλων"
 
-#: ../plugins/gtkui/interface.c:260 ../plugins/gtkui/deadbeef.glade.h:59
+#: ../plugins/gtkui/interface.c:260
+#: ../plugins/gtkui/deadbeef.glade.h:59
 msgid "Invert selection"
 msgstr "Αναστροφή επιλογής"
 
-#: ../plugins/gtkui/interface.c:264 ../plugins/gtkui/deadbeef.glade.h:107
+#: ../plugins/gtkui/interface.c:264
+#: ../plugins/gtkui/deadbeef.glade.h:107
 msgid "Selection"
 msgstr "Επιλογμένο"
 
-#: ../plugins/gtkui/interface.c:271 ../plugins/gtkui/plcommon.c:387
-#: ../plugins/gtkui/prefwin.c:272 ../plugins/gtkui/deadbeef.glade.h:95
+#: ../plugins/gtkui/interface.c:271
+#: ../plugins/gtkui/plcommon.c:387
+#: ../plugins/gtkui/prefwin.c:272
+#: ../plugins/gtkui/deadbeef.glade.h:95
 msgid "Remove"
 msgstr "Αφαίρεση"
 
-#: ../plugins/gtkui/interface.c:279 ../plugins/gtkui/deadbeef.glade.h:19
+#: ../plugins/gtkui/interface.c:279
+#: ../plugins/gtkui/deadbeef.glade.h:19
 msgid "Crop"
 msgstr "Περικοπή"
 
-#: ../plugins/gtkui/interface.c:283 ../plugins/gtkui/deadbeef.glade.h:139
+#: ../plugins/gtkui/interface.c:283
+#: ../plugins/gtkui/deadbeef.glade.h:139
 msgid "_Find"
 msgstr "_Αναζήτηση"
 
-#: ../plugins/gtkui/interface.c:295 ../plugins/gtkui/interface.c:1706
+#: ../plugins/gtkui/interface.c:295
+#: ../plugins/gtkui/interface.c:1706
 #: ../plugins/gtkui/deadbeef.glade.h:85
 msgid "Preferences"
 msgstr "Ρυθμίσεις"
 
-#: ../plugins/gtkui/interface.c:299 ../plugins/gtkui/deadbeef.glade.h:145
+#: ../plugins/gtkui/interface.c:299
+#: ../plugins/gtkui/deadbeef.glade.h:145
 msgid "_View"
 msgstr "_Προβολή"
 
-#: ../plugins/gtkui/interface.c:306 ../plugins/gtkui/deadbeef.glade.h:111
+#: ../plugins/gtkui/interface.c:306
+#: ../plugins/gtkui/deadbeef.glade.h:111
 msgid "Status bar"
 msgstr "Μπάρα κατάστασης"
 
-#: ../plugins/gtkui/interface.c:310 ../plugins/gtkui/deadbeef.glade.h:17
+#: ../plugins/gtkui/interface.c:310
+#: ../plugins/gtkui/deadbeef.glade.h:17
 msgid "Column headers"
 msgstr "Τίτλοι στύλων"
 
-#: ../plugins/gtkui/interface.c:314 ../plugins/gtkui/deadbeef.glade.h:118
+#: ../plugins/gtkui/interface.c:314
+#: ../plugins/gtkui/deadbeef.glade.h:118
 msgid "Tabs"
 msgstr "Καρτέλες"
 
-#: ../plugins/gtkui/interface.c:318 ../plugins/gtkui/deadbeef.glade.h:32
+#: ../plugins/gtkui/interface.c:318
+#: ../plugins/gtkui/deadbeef.glade.h:32
 msgid "Equalizer"
 msgstr "Ισοσταθμιστής"
 
-#: ../plugins/gtkui/interface.c:322 ../plugins/gtkui/deadbeef.glade.h:143
+#: ../plugins/gtkui/interface.c:322
+#: ../plugins/gtkui/deadbeef.glade.h:143
 msgid "_Playback"
 msgstr "Αναπαραγωγή"
 
-#: ../plugins/gtkui/interface.c:329 ../plugins/gtkui/deadbeef.glade.h:75
+#: ../plugins/gtkui/interface.c:329
+#: ../plugins/gtkui/deadbeef.glade.h:75
 msgid "Order"
 msgstr "Σειρά"
 
-#: ../plugins/gtkui/interface.c:336 ../plugins/gtkui/deadbeef.glade.h:63
+#: ../plugins/gtkui/interface.c:336
+#: ../plugins/gtkui/deadbeef.glade.h:63
 msgid "Linear"
 msgstr "Γραμμικά"
 
-#: ../plugins/gtkui/interface.c:342 ../plugins/gtkui/deadbeef.glade.h:108
+#: ../plugins/gtkui/interface.c:342
+#: ../plugins/gtkui/deadbeef.glade.h:108
 msgid "Shuffle"
 msgstr "Ανακατεμένα"
 
-#: ../plugins/gtkui/interface.c:348 ../plugins/gtkui/deadbeef.glade.h:94
+#: ../plugins/gtkui/interface.c:348
+#: ../plugins/gtkui/deadbeef.glade.h:94
 msgid "Random"
 msgstr "Τυχαία"
 
-#: ../plugins/gtkui/interface.c:354 ../plugins/gtkui/deadbeef.glade.h:67
+#: ../plugins/gtkui/interface.c:354
+#: ../plugins/gtkui/deadbeef.glade.h:67
 msgid "Looping"
 msgstr "Επανάληψη"
 
-#: ../plugins/gtkui/interface.c:361 ../plugins/gtkui/deadbeef.glade.h:65
+#: ../plugins/gtkui/interface.c:361
+#: ../plugins/gtkui/deadbeef.glade.h:65
 msgid "Loop All"
 msgstr "Επανάληψη όλων"
 
-#: ../plugins/gtkui/interface.c:367 ../plugins/gtkui/deadbeef.glade.h:66
+#: ../plugins/gtkui/interface.c:367
+#: ../plugins/gtkui/deadbeef.glade.h:66
 msgid "Loop Single Song"
 msgstr "Επανάληψη κομματιού"
 
-#: ../plugins/gtkui/interface.c:373 ../plugins/gtkui/deadbeef.glade.h:28
+#: ../plugins/gtkui/interface.c:373
+#: ../plugins/gtkui/deadbeef.glade.h:28
 msgid "Don't Loop"
 msgstr "Χωρίς επανάληψη"
 
-#: ../plugins/gtkui/interface.c:379 ../plugins/gtkui/deadbeef.glade.h:101
+#: ../plugins/gtkui/interface.c:379
+#: ../plugins/gtkui/deadbeef.glade.h:101
 msgid "Scroll follows playback"
 msgstr "Η κύληση ακολουθεί την αναπαραγωγή"
 
-#: ../plugins/gtkui/interface.c:384 ../plugins/gtkui/deadbeef.glade.h:21
+#: ../plugins/gtkui/interface.c:384
+#: ../plugins/gtkui/deadbeef.glade.h:21
 msgid "Cursor follows playback"
 msgstr "Ο δείκτης ποντικιού ακολουθεί την αναπαραγωγή"
 
-#: ../plugins/gtkui/interface.c:388 ../plugins/gtkui/deadbeef.glade.h:113
+#: ../plugins/gtkui/interface.c:388
+#: ../plugins/gtkui/deadbeef.glade.h:113
 msgid "Stop after current"
 msgstr "Διακοπή μετά το τρέχον"
 
-#: ../plugins/gtkui/interface.c:395 ../plugins/gtkui/interface.c:402
+#: ../plugins/gtkui/interface.c:395
+#: ../plugins/gtkui/interface.c:402
 #: ../plugins/gtkui/deadbeef.glade.h:140
 msgid "_Help"
 msgstr "_Βοήθεια"
 
-#: ../plugins/gtkui/interface.c:410 ../plugins/gtkui/deadbeef.glade.h:134
+#: ../plugins/gtkui/interface.c:410
+#: ../plugins/gtkui/deadbeef.glade.h:134
 msgid "_ChangeLog"
 msgstr "_ChangeLog"
 
-#: ../plugins/gtkui/interface.c:432 ../plugins/gtkui/deadbeef.glade.h:131
+#: ../plugins/gtkui/interface.c:432
+#: ../plugins/gtkui/deadbeef.glade.h:131
 msgid "_About"
 msgstr "_Περί"
 
-#: ../plugins/gtkui/interface.c:816 ../plugins/gtkui/deadbeef.glade.h:102
+#: ../plugins/gtkui/interface.c:816
+#: ../plugins/gtkui/deadbeef.glade.h:102
 msgid "Search"
 msgstr "Αναζήτηση"
 
-#: ../plugins/gtkui/interface.c:891 ../plugins/gtkui/deadbeef.glade.h:112
+#: ../plugins/gtkui/interface.c:891
+#: ../plugins/gtkui/deadbeef.glade.h:112
 msgid "Stop"
 msgstr "Διακοπή"
 
-#: ../plugins/gtkui/interface.c:899 ../plugins/gtkui/deadbeef.glade.h:81
+#: ../plugins/gtkui/interface.c:899
+#: ../plugins/gtkui/deadbeef.glade.h:81
 msgid "Play"
 msgstr "Αναπαραγωγή"
 
-#: ../plugins/gtkui/interface.c:907 ../plugins/gtkui/deadbeef.glade.h:80
+#: ../plugins/gtkui/interface.c:907
+#: ../plugins/gtkui/deadbeef.glade.h:80
 msgid "Pause"
 msgstr "Παύση"
 
-#: ../plugins/gtkui/interface.c:915 ../plugins/gtkui/deadbeef.glade.h:86
+#: ../plugins/gtkui/interface.c:915
+#: ../plugins/gtkui/deadbeef.glade.h:86
 msgid "Previous"
 msgstr "Προηγούμενο"
 
-#: ../plugins/gtkui/interface.c:923 ../plugins/gtkui/deadbeef.glade.h:73
+#: ../plugins/gtkui/interface.c:923
+#: ../plugins/gtkui/deadbeef.glade.h:73
 msgid "Next"
 msgstr "Επόμενο"
 
-#: ../plugins/gtkui/interface.c:931 ../plugins/gtkui/deadbeef.glade.h:82
+#: ../plugins/gtkui/interface.c:931
+#: ../plugins/gtkui/deadbeef.glade.h:82
 msgid "Play Random"
 msgstr "Αναπαραγωγή τυχαίου"
 
-#: ../plugins/gtkui/interface.c:940 ../plugins/gtkui/deadbeef.glade.h:5
+#: ../plugins/gtkui/interface.c:940
+#: ../plugins/gtkui/deadbeef.glade.h:5
 msgid "About"
 msgstr "Περί"
 
-#: ../plugins/gtkui/interface.c:953 ../plugins/gtkui/deadbeef.glade.h:93
+#: ../plugins/gtkui/interface.c:953
+#: ../plugins/gtkui/deadbeef.glade.h:93
 msgid "Quit"
 msgstr "Έξοδος"
 
-#: ../plugins/gtkui/interface.c:1025 ../plugins/gtkui/deadbeef.glade.h:10
+#: ../plugins/gtkui/interface.c:1025
+#: ../plugins/gtkui/deadbeef.glade.h:10
 msgid "Adding files..."
 msgstr "Προσθήκη αρχείων"
 
-#: ../plugins/gtkui/interface.c:1069 ../plugins/gtkui/deadbeef.glade.h:130
+#: ../plugins/gtkui/interface.c:1069
+#: ../plugins/gtkui/deadbeef.glade.h:130
 msgid "_Abort"
 msgstr "_Ακύρωση"
 
-#: ../plugins/gtkui/interface.c:1170 ../plugins/gtkui/deadbeef.glade.h:122
+#: ../plugins/gtkui/interface.c:1170
+#: ../plugins/gtkui/deadbeef.glade.h:122
 msgid "Track Properties"
 msgstr "Ιδιότητες κομματιού"
 
-#: ../plugins/gtkui/interface.c:1194 ../plugins/gtkui/deadbeef.glade.h:3
+#: ../plugins/gtkui/interface.c:1194
+#: ../plugins/gtkui/deadbeef.glade.h:3
 msgid ""
 "<b>WARNING</b>: tag writing feature is still in development.\n"
 "<b>Make backup copies</b> before using."
@@ -408,38 +465,47 @@ msgstr ""
 "<b>ΠΡΟΕΙΔΟΠΟΙΗΣΉ</b>: η εγγραφή ετικετών είναι ακόμα υπό ανάπτυξη.\n"
 "<b>Κρατήστε αντίγραφα ασφαλείας</b> πριν τη χρήση."
 
-#: ../plugins/gtkui/interface.c:1221 ../plugins/gtkui/deadbeef.glade.h:132
+#: ../plugins/gtkui/interface.c:1221
+#: ../plugins/gtkui/deadbeef.glade.h:132
 msgid "_Apply"
 msgstr "_Εφαρμογή"
 
-#: ../plugins/gtkui/interface.c:1242 ../plugins/gtkui/interface.c:1288
-#: ../plugins/gtkui/interface.c:2436 ../plugins/gtkui/deadbeef.glade.h:136
+#: ../plugins/gtkui/interface.c:1242
+#: ../plugins/gtkui/interface.c:1288
+#: ../plugins/gtkui/interface.c:2436
+#: ../plugins/gtkui/deadbeef.glade.h:136
 msgid "_Close"
 msgstr "_Κλείσιμο"
 
-#: ../plugins/gtkui/interface.c:1246 ../plugins/gtkui/deadbeef.glade.h:68
+#: ../plugins/gtkui/interface.c:1246
+#: ../plugins/gtkui/deadbeef.glade.h:68
 msgid "Metadata"
 msgstr "Μεταδεδομένα"
 
-#: ../plugins/gtkui/interface.c:1292 ../plugins/gtkui/plcommon.c:402
+#: ../plugins/gtkui/interface.c:1292
+#: ../plugins/gtkui/plcommon.c:402
 #: ../plugins/gtkui/deadbeef.glade.h:87
 msgid "Properties"
 msgstr "Ιδιότητες"
 
-#: ../plugins/gtkui/interface.c:1378 ../plugins/gtkui/deadbeef.glade.h:146
+#: ../plugins/gtkui/interface.c:1378
+#: ../plugins/gtkui/deadbeef.glade.h:146
 msgid "editcolumndlg"
 msgstr "Διάλογος επεξεργασίας στύλης"
 
-#: ../plugins/gtkui/interface.c:1393 ../plugins/gtkui/interface.c:2770
+#: ../plugins/gtkui/interface.c:1393
+#: ../plugins/gtkui/interface.c:2770
 #: ../plugins/gtkui/deadbeef.glade.h:121
 msgid "Title:"
 msgstr "Τίτλος:"
 
-#: ../plugins/gtkui/interface.c:1401 ../plugins/gtkui/deadbeef.glade.h:31
+#: ../plugins/gtkui/interface.c:1401
+#: ../plugins/gtkui/deadbeef.glade.h:31
 msgid "Enter new column title here"
 msgstr "Εισαγωγή νέου τίτλου για τη στήλη"
 
-#: ../plugins/gtkui/interface.c:1409 ../plugins/gtkui/deadbeef.glade.h:123
+#: ../plugins/gtkui/interface.c:1409
+#: ../plugins/gtkui/deadbeef.glade.h:123
 msgid "Type:"
 msgstr "Τύπος"
 
@@ -448,7 +514,8 @@ msgid "File number"
 msgstr "Αριθμός αρχείου"
 
 #. create default set of columns
-#: ../plugins/gtkui/interface.c:1418 ../plugins/gtkui/mainplaylist.c:297
+#: ../plugins/gtkui/interface.c:1418
+#: ../plugins/gtkui/mainplaylist.c:297
 msgid "Playing"
 msgstr "Αναπαραγωγή"
 
@@ -460,15 +527,18 @@ msgstr "Σχέδιο άλπουμ"
 msgid "Artist - Album"
 msgstr "Καλλιτέχνης - Άλμπουμ"
 
-#: ../plugins/gtkui/interface.c:1421 ../plugins/gtkui/plcommon.c:774
+#: ../plugins/gtkui/interface.c:1421
+#: ../plugins/gtkui/plcommon.c:774
 msgid "Artist"
 msgstr "Καλλιτέχνης"
 
-#: ../plugins/gtkui/interface.c:1422 ../plugins/gtkui/interface.c:1795
+#: ../plugins/gtkui/interface.c:1422
+#: ../plugins/gtkui/interface.c:1795
 msgid "Album"
 msgstr "Άλμπουμ"
 
-#: ../plugins/gtkui/interface.c:1423 ../plugins/gtkui/prefwin.c:488
+#: ../plugins/gtkui/interface.c:1423
+#: ../plugins/gtkui/prefwin.c:488
 msgid "Title"
 msgstr "Τίτλος"
 
@@ -476,7 +546,8 @@ msgstr "Τίτλος"
 msgid "Length"
 msgstr "Διάρκεια"
 
-#: ../plugins/gtkui/interface.c:1425 ../plugins/gtkui/interface.c:1794
+#: ../plugins/gtkui/interface.c:1425
+#: ../plugins/gtkui/interface.c:1794
 msgid "Track"
 msgstr "Κομμάτι"
 
@@ -484,16 +555,19 @@ msgstr "Κομμάτι"
 msgid "Band / Album Artist"
 msgstr "Συγκρότημα / Καλλιτέχνης άλμπουμ"
 
-#: ../plugins/gtkui/interface.c:1427 ../plugins/gtkui/plcommon.c:778
+#: ../plugins/gtkui/interface.c:1427
+#: ../plugins/gtkui/plcommon.c:778
 msgid "Custom"
 msgstr "Αυτοσχέδιο"
 
-#: ../plugins/gtkui/interface.c:1433 ../plugins/gtkui/interface.c:2997
+#: ../plugins/gtkui/interface.c:1433
+#: ../plugins/gtkui/interface.c:2997
 #: ../plugins/gtkui/deadbeef.glade.h:53
 msgid "Format:"
 msgstr "Μορφή:"
 
-#: ../plugins/gtkui/interface.c:1448 ../plugins/gtkui/deadbeef.glade.h:11
+#: ../plugins/gtkui/interface.c:1448
+#: ../plugins/gtkui/deadbeef.glade.h:11
 msgid "Alignment:"
 msgstr "Στοίχιση:"
 
@@ -505,9 +579,10 @@ msgstr "Αριστερά"
 msgid "Right"
 msgstr "Δεξιά"
 
-#: ../plugins/gtkui/interface.c:1459 ../plugins/gtkui/interface.c:3007
+#: ../plugins/gtkui/interface.c:1459
+#: ../plugins/gtkui/interface.c:3007
 #: ../plugins/gtkui/deadbeef.glade.h:47
-#, fuzzy, no-c-format
+#, no-c-format
 msgid ""
 "Format conversions (start with %):\n"
 "  [a]rtist, [t]itle, al[b]um, [B]and, [C]omposer\n"
@@ -516,46 +591,56 @@ msgid ""
 "  copy[r]ight, [f]ilename, [T]ags\n"
 "Example: %a - %t [%l]"
 msgstr ""
-"Μορφές μετατροπής (ξεκινούν με %):\n"
+"Format μετατροπής (ξεκινούν με %):\n"
 "  [a]rtist, [t]itle, al[b]um, [B]and,\n"
 "  track[n]umber, [N]totaltracks,\n"
 "  [l]ength, [y]ear, [g]enre, [c]omment,\n"
 "  copy[r]ight, [f]ilename, [T]ags\n"
 "Παράδειγμα: %a - %t [%l]"
 
-#: ../plugins/gtkui/interface.c:1488 ../plugins/gtkui/interface.c:2801
-#: ../plugins/gtkui/interface.c:2913 ../plugins/gtkui/interface.c:3036
+#: ../plugins/gtkui/interface.c:1488
+#: ../plugins/gtkui/interface.c:2801
+#: ../plugins/gtkui/interface.c:2913
+#: ../plugins/gtkui/interface.c:3036
 #: ../plugins/gtkui/deadbeef.glade.h:133
 msgid "_Cancel"
 msgstr "_Άκυρο"
 
-#: ../plugins/gtkui/interface.c:1509 ../plugins/gtkui/interface.c:2822
-#: ../plugins/gtkui/interface.c:2934 ../plugins/gtkui/interface.c:3057
+#: ../plugins/gtkui/interface.c:1509
+#: ../plugins/gtkui/interface.c:2822
+#: ../plugins/gtkui/interface.c:2934
+#: ../plugins/gtkui/interface.c:3057
 #: ../plugins/gtkui/deadbeef.glade.h:141
 msgid "_OK"
 msgstr "_Εντάξει"
 
-#: ../plugins/gtkui/interface.c:1726 ../plugins/gtkui/deadbeef.glade.h:77
+#: ../plugins/gtkui/interface.c:1726
+#: ../plugins/gtkui/deadbeef.glade.h:77
 msgid "Output plugin:"
 msgstr "Plugin εξόδου:"
 
-#: ../plugins/gtkui/interface.c:1739 ../plugins/gtkui/deadbeef.glade.h:76
+#: ../plugins/gtkui/interface.c:1739
+#: ../plugins/gtkui/deadbeef.glade.h:76
 msgid "Output device:"
 msgstr "Συσκευή εξόδου:"
 
-#: ../plugins/gtkui/interface.c:1748 ../plugins/gtkui/deadbeef.glade.h:109
+#: ../plugins/gtkui/interface.c:1748
+#: ../plugins/gtkui/deadbeef.glade.h:109
 msgid "Sound"
 msgstr "Ήχος"
 
-#: ../plugins/gtkui/interface.c:1757 ../plugins/gtkui/deadbeef.glade.h:12
+#: ../plugins/gtkui/interface.c:1757
+#: ../plugins/gtkui/deadbeef.glade.h:12
 msgid "Allow dynamic samplerate switching"
 msgstr "Να επιτρέπεται η δυναμική ρύθμιση samplerate"
 
-#: ../plugins/gtkui/interface.c:1765 ../plugins/gtkui/deadbeef.glade.h:98
+#: ../plugins/gtkui/interface.c:1765
+#: ../plugins/gtkui/deadbeef.glade.h:98
 msgid "Samplerate conversion quality:"
 msgstr "Ποιότητα μετατροπής samplerate:"
 
-#: ../plugins/gtkui/interface.c:1784 ../plugins/gtkui/deadbeef.glade.h:96
+#: ../plugins/gtkui/interface.c:1784
+#: ../plugins/gtkui/deadbeef.glade.h:96
 msgid "Replaygain mode:"
 msgstr "Λειτουργία Replaygain:"
 
@@ -563,153 +648,191 @@ msgstr "Λειτουργία Replaygain:"
 msgid "Disable"
 msgstr "Ανενεργό"
 
-#: ../plugins/gtkui/interface.c:1797 ../plugins/gtkui/deadbeef.glade.h:97
+#: ../plugins/gtkui/interface.c:1797
+#: ../plugins/gtkui/deadbeef.glade.h:97
 msgid "Replaygain peak scale"
 msgstr "Κορυφή κλίμακας Replaygain"
 
-#: ../plugins/gtkui/interface.c:1801 ../plugins/gtkui/deadbeef.glade.h:110
+#: ../plugins/gtkui/interface.c:1801
+#: ../plugins/gtkui/deadbeef.glade.h:110
 msgid "Sound (adv.)"
 msgstr "Ήχος (προχ.)"
 
-#: ../plugins/gtkui/interface.c:1810 ../plugins/gtkui/deadbeef.glade.h:16
+#: ../plugins/gtkui/interface.c:1810
+#: ../plugins/gtkui/deadbeef.glade.h:16
 msgid "Close minimizes to tray"
 msgstr "Το κλείσιμο να ελαχιστοποιεί στο tray"
 
-#: ../plugins/gtkui/interface.c:1814 ../plugins/gtkui/deadbeef.glade.h:70
+#: ../plugins/gtkui/interface.c:1814
+#: ../plugins/gtkui/deadbeef.glade.h:70
 msgid "Middle mouse button closes playlist"
 msgstr "Το μεσαίο πλήκτρο του ποντικιού να κλείνει τη λίστα αναπαραγωγής"
 
-#: ../plugins/gtkui/interface.c:1827 ../plugins/gtkui/interface.c:1871
+#: ../plugins/gtkui/interface.c:1827
+#: ../plugins/gtkui/interface.c:1871
 #: ../plugins/gtkui/deadbeef.glade.h:78
 msgid "Override"
 msgstr "Παράκαμψη"
 
-#: ../plugins/gtkui/interface.c:1836 ../plugins/gtkui/deadbeef.glade.h:45
+#: ../plugins/gtkui/interface.c:1836
+#: ../plugins/gtkui/deadbeef.glade.h:45
 msgid "Foreground"
 msgstr "Προσκήνιο"
 
-#: ../plugins/gtkui/interface.c:1843 ../plugins/gtkui/deadbeef.glade.h:14
+#: ../plugins/gtkui/interface.c:1843
+#: ../plugins/gtkui/deadbeef.glade.h:14
 msgid "Background"
 msgstr "Παρασκήνιο"
 
-#: ../plugins/gtkui/interface.c:1862 ../plugins/gtkui/deadbeef.glade.h:103
+#: ../plugins/gtkui/interface.c:1862
+#: ../plugins/gtkui/deadbeef.glade.h:103
 msgid "Seekbar/Volumebar colors"
 msgstr "Χρώματα μπάρας μετατόπισης/ήχου"
 
-#: ../plugins/gtkui/interface.c:1880 ../plugins/gtkui/deadbeef.glade.h:69
+#: ../plugins/gtkui/interface.c:1880
+#: ../plugins/gtkui/deadbeef.glade.h:69
 msgid "Middle"
 msgstr "Μέση"
 
-#: ../plugins/gtkui/interface.c:1887 ../plugins/gtkui/deadbeef.glade.h:62
+#: ../plugins/gtkui/interface.c:1887
+#: ../plugins/gtkui/deadbeef.glade.h:62
 msgid "Light"
 msgstr "Φωτεινό"
 
-#: ../plugins/gtkui/interface.c:1894 ../plugins/gtkui/deadbeef.glade.h:22
+#: ../plugins/gtkui/interface.c:1894
+#: ../plugins/gtkui/deadbeef.glade.h:22
 msgid "Dark"
 msgstr "Σκοτεινό"
 
-#: ../plugins/gtkui/interface.c:1925 ../plugins/gtkui/deadbeef.glade.h:15
+#: ../plugins/gtkui/interface.c:1925
+#: ../plugins/gtkui/deadbeef.glade.h:15
 msgid "Base"
 msgstr "Βάση"
 
-#: ../plugins/gtkui/interface.c:1932 ../plugins/gtkui/deadbeef.glade.h:117
+#: ../plugins/gtkui/interface.c:1932
+#: ../plugins/gtkui/deadbeef.glade.h:117
 msgid "Tab strip colors"
 msgstr "Χρώματα στο χώρο καρτελών"
 
-#: ../plugins/gtkui/interface.c:1941 ../plugins/gtkui/deadbeef.glade.h:79
+#: ../plugins/gtkui/interface.c:1941
+#: ../plugins/gtkui/deadbeef.glade.h:79
 msgid "Override (looses GTK treeview theming, but speeds up rendering)"
 msgstr "Παράκαμψη (χάνει το GTK treeview θέμα, αλλά επιταχύνει την απόδοση)"
 
-#: ../plugins/gtkui/interface.c:1950 ../plugins/gtkui/deadbeef.glade.h:33
+#: ../plugins/gtkui/interface.c:1950
+#: ../plugins/gtkui/deadbeef.glade.h:33
 msgid "Even row"
 msgstr "Ζυγή σειρά "
 
-#: ../plugins/gtkui/interface.c:1957 ../plugins/gtkui/deadbeef.glade.h:74
+#: ../plugins/gtkui/interface.c:1957
+#: ../plugins/gtkui/deadbeef.glade.h:74
 msgid "Odd row"
 msgstr "Μονή σειρά"
 
-#: ../plugins/gtkui/interface.c:1976 ../plugins/gtkui/deadbeef.glade.h:120
+#: ../plugins/gtkui/interface.c:1976
+#: ../plugins/gtkui/deadbeef.glade.h:120
 msgid "Text"
 msgstr "Κείμενο"
 
-#: ../plugins/gtkui/interface.c:1983 ../plugins/gtkui/deadbeef.glade.h:105
+#: ../plugins/gtkui/interface.c:1983
+#: ../plugins/gtkui/deadbeef.glade.h:105
 msgid "Selected row"
 msgstr "Επιλεγμένη σειρά"
 
-#: ../plugins/gtkui/interface.c:2002 ../plugins/gtkui/deadbeef.glade.h:106
+#: ../plugins/gtkui/interface.c:2002
+#: ../plugins/gtkui/deadbeef.glade.h:106
 msgid "Selected text"
 msgstr "Επιλεγμένο κείμενο"
 
-#: ../plugins/gtkui/interface.c:2015 ../plugins/gtkui/deadbeef.glade.h:20
+#: ../plugins/gtkui/interface.c:2015
+#: ../plugins/gtkui/deadbeef.glade.h:20
 msgid "Cursor"
 msgstr "Δείκτης ποντικιού"
 
-#: ../plugins/gtkui/interface.c:2028 ../plugins/gtkui/deadbeef.glade.h:83
+#: ../plugins/gtkui/interface.c:2028
+#: ../plugins/gtkui/deadbeef.glade.h:83
 msgid "Playlist colors"
 msgstr "Χρώματα λίστας αναπαραγωγής"
 
-#: ../plugins/gtkui/interface.c:2032 ../plugins/gtkui/deadbeef.glade.h:54
+#: ../plugins/gtkui/interface.c:2032
+#: ../plugins/gtkui/deadbeef.glade.h:54
 msgid "GUI"
 msgstr "Γραφική Διεπαφή"
 
-#: ../plugins/gtkui/interface.c:2041 ../plugins/gtkui/deadbeef.glade.h:30
+#: ../plugins/gtkui/interface.c:2041
+#: ../plugins/gtkui/deadbeef.glade.h:30
 msgid "Enable Proxy Server"
 msgstr "Ενεργοποίηση Proxy Server"
 
-#: ../plugins/gtkui/interface.c:2049 ../plugins/gtkui/deadbeef.glade.h:89
+#: ../plugins/gtkui/interface.c:2049
+#: ../plugins/gtkui/deadbeef.glade.h:89
 msgid "Proxy Server Address:"
 msgstr "Διεύθυνση Proxy Server:"
 
-#: ../plugins/gtkui/interface.c:2063 ../plugins/gtkui/deadbeef.glade.h:90
+#: ../plugins/gtkui/interface.c:2063
+#: ../plugins/gtkui/deadbeef.glade.h:90
 msgid "Proxy Server Port:"
 msgstr "Πόρτα Proxy Server:"
 
-#: ../plugins/gtkui/interface.c:2077 ../plugins/gtkui/deadbeef.glade.h:91
+#: ../plugins/gtkui/interface.c:2077
+#: ../plugins/gtkui/deadbeef.glade.h:91
 msgid "Proxy Type:"
 msgstr "Τύπος Proxy:"
 
-#: ../plugins/gtkui/interface.c:2096 ../plugins/gtkui/deadbeef.glade.h:92
+#: ../plugins/gtkui/interface.c:2096
+#: ../plugins/gtkui/deadbeef.glade.h:92
 msgid "Proxy Username:"
 msgstr "Όνομα χρήστη Proxy:"
 
-#: ../plugins/gtkui/interface.c:2109 ../plugins/gtkui/deadbeef.glade.h:88
+#: ../plugins/gtkui/interface.c:2109
+#: ../plugins/gtkui/deadbeef.glade.h:88
 msgid "Proxy Password:"
 msgstr "Κωδικός Proxy:"
 
-#: ../plugins/gtkui/interface.c:2119 ../plugins/gtkui/deadbeef.glade.h:71
+#: ../plugins/gtkui/interface.c:2119
+#: ../plugins/gtkui/deadbeef.glade.h:71
 msgid "Network"
 msgstr "Δίκτυο"
 
-#: ../plugins/gtkui/interface.c:2147 ../plugins/gtkui/deadbeef.glade.h:128
+#: ../plugins/gtkui/interface.c:2147
+#: ../plugins/gtkui/deadbeef.glade.h:128
 msgid "Write ID3v2"
 msgstr "Εγγραφή ID3v2"
 
-#: ../plugins/gtkui/interface.c:2151 ../plugins/gtkui/interface.c:2278
+#: ../plugins/gtkui/interface.c:2151
+#: ../plugins/gtkui/interface.c:2278
 #: ../plugins/gtkui/deadbeef.glade.h:127
 msgid "Write ID3v1"
 msgstr "Εγγραφή ID3v1"
 
-#: ../plugins/gtkui/interface.c:2155 ../plugins/gtkui/interface.c:2234
-#: ../plugins/gtkui/interface.c:2274 ../plugins/gtkui/deadbeef.glade.h:126
+#: ../plugins/gtkui/interface.c:2155
+#: ../plugins/gtkui/interface.c:2234
+#: ../plugins/gtkui/interface.c:2274
+#: ../plugins/gtkui/deadbeef.glade.h:126
 msgid "Write APEv2"
 msgstr "Εγγραφή APEv2"
 
-#: ../plugins/gtkui/interface.c:2163 ../plugins/gtkui/interface.c:2242
+#: ../plugins/gtkui/interface.c:2163
+#: ../plugins/gtkui/interface.c:2242
 #: ../plugins/gtkui/deadbeef.glade.h:116
 msgid "Strip ID3v2"
 msgstr "Αφαίρεση ID3v2"
 
-#: ../plugins/gtkui/interface.c:2167 ../plugins/gtkui/interface.c:2290
+#: ../plugins/gtkui/interface.c:2167
+#: ../plugins/gtkui/interface.c:2290
 #: ../plugins/gtkui/deadbeef.glade.h:115
 msgid "Strip ID3v1"
 msgstr "Αφαίρεση ID3v1"
 
-#: ../plugins/gtkui/interface.c:2171 ../plugins/gtkui/interface.c:2246
-#: ../plugins/gtkui/interface.c:2286 ../plugins/gtkui/deadbeef.glade.h:114
+#: ../plugins/gtkui/interface.c:2171
+#: ../plugins/gtkui/interface.c:2246
+#: ../plugins/gtkui/interface.c:2286
+#: ../plugins/gtkui/deadbeef.glade.h:114
 msgid "Strip APEv2"
 msgstr "Αφαίρεση APEv2"
 
-#: ../plugins/gtkui/interface.c:2179 ../plugins/gtkui/deadbeef.glade.h:58
+#: ../plugins/gtkui/interface.c:2179
+#: ../plugins/gtkui/deadbeef.glade.h:58
 msgid "ID3v2 version"
 msgstr "Έκδοση ID3v2"
 
@@ -721,67 +844,83 @@ msgstr "2.3 (Προτείνεται)"
 msgid "2.4"
 msgstr "2.4"
 
-#: ../plugins/gtkui/interface.c:2193 ../plugins/gtkui/deadbeef.glade.h:57
+#: ../plugins/gtkui/interface.c:2193
+#: ../plugins/gtkui/deadbeef.glade.h:57
 msgid "ID3v1 character encoding (default is iso8859-1)"
 msgstr "ID3v1 κωδικοποίηση χαρακτήρων (προεπιλογή είναι iso8859-1)"
 
-#: ../plugins/gtkui/interface.c:2230 ../plugins/gtkui/deadbeef.glade.h:129
+#: ../plugins/gtkui/interface.c:2230
+#: ../plugins/gtkui/deadbeef.glade.h:129
 msgid "Write ID3v2.4"
 msgstr "Εγγραφή ID3v2.4"
 
-#: ../plugins/gtkui/interface.c:2299 ../plugins/gtkui/deadbeef.glade.h:119
+#: ../plugins/gtkui/interface.c:2299
+#: ../plugins/gtkui/deadbeef.glade.h:119
 msgid "Tag writer"
 msgstr "Συγγραφέας ετικετών"
 
-#: ../plugins/gtkui/interface.c:2330 ../plugins/gtkui/deadbeef.glade.h:23
+#: ../plugins/gtkui/interface.c:2330
+#: ../plugins/gtkui/deadbeef.glade.h:23
 msgid "Description:"
 msgstr "Περιγραφή:"
 
-#: ../plugins/gtkui/interface.c:2345 ../plugins/gtkui/deadbeef.glade.h:13
+#: ../plugins/gtkui/interface.c:2345
+#: ../plugins/gtkui/deadbeef.glade.h:13
 msgid "Author(s):"
 msgstr "Συγγραφέας:"
 
-#: ../plugins/gtkui/interface.c:2360 ../plugins/gtkui/deadbeef.glade.h:29
+#: ../plugins/gtkui/interface.c:2360
+#: ../plugins/gtkui/deadbeef.glade.h:29
 msgid "Email:"
 msgstr "Email:"
 
-#: ../plugins/gtkui/interface.c:2375 ../plugins/gtkui/deadbeef.glade.h:125
+#: ../plugins/gtkui/interface.c:2375
+#: ../plugins/gtkui/deadbeef.glade.h:125
 msgid "Website:"
 msgstr "Ιστοσελίδα:"
 
-#: ../plugins/gtkui/interface.c:2406 ../plugins/gtkui/deadbeef.glade.h:18
+#: ../plugins/gtkui/interface.c:2406
+#: ../plugins/gtkui/deadbeef.glade.h:18
 msgid "Configure"
 msgstr "Ρύθμιση"
 
-#: ../plugins/gtkui/interface.c:2410 ../plugins/gtkui/deadbeef.glade.h:84
+#: ../plugins/gtkui/interface.c:2410
+#: ../plugins/gtkui/deadbeef.glade.h:84
 msgid "Plugins"
 msgstr "Plugins"
 
-#: ../plugins/gtkui/interface.c:2754 ../plugins/gtkui/deadbeef.glade.h:147
+#: ../plugins/gtkui/interface.c:2754
+#: ../plugins/gtkui/deadbeef.glade.h:147
 msgid "editplaylistdlg"
 msgstr "Διάλογος επεξεργασίας λίστας αναπαραγωγής"
 
-#: ../plugins/gtkui/interface.c:2881 ../plugins/gtkui/deadbeef.glade.h:124
+#: ../plugins/gtkui/interface.c:2881
+#: ../plugins/gtkui/deadbeef.glade.h:124
 msgid "URL:"
 msgstr "URL:"
 
-#: ../plugins/gtkui/interface.c:2982 ../plugins/gtkui/deadbeef.glade.h:55
+#: ../plugins/gtkui/interface.c:2982
+#: ../plugins/gtkui/deadbeef.glade.h:55
 msgid "Group By"
 msgstr "Ομαδοποίηση κατά"
 
-#: ../plugins/gtkui/mainplaylist.c:298 ../plugins/gtkui/search.c:433
+#: ../plugins/gtkui/mainplaylist.c:298
+#: ../plugins/gtkui/search.c:433
 msgid "Artist / Album"
 msgstr "Καλλιτέχνης / Άλμπουμ"
 
-#: ../plugins/gtkui/mainplaylist.c:299 ../plugins/gtkui/search.c:434
+#: ../plugins/gtkui/mainplaylist.c:299
+#: ../plugins/gtkui/search.c:434
 msgid "Track No"
 msgstr "Αριθμός κομματιού"
 
-#: ../plugins/gtkui/mainplaylist.c:300 ../plugins/gtkui/search.c:435
+#: ../plugins/gtkui/mainplaylist.c:300
+#: ../plugins/gtkui/search.c:435
 msgid "Title / Track Artist"
 msgstr "Τίτλος / Καλλιτέχνης κομματιού"
 
-#: ../plugins/gtkui/mainplaylist.c:301 ../plugins/gtkui/search.c:436
+#: ../plugins/gtkui/mainplaylist.c:301
+#: ../plugins/gtkui/search.c:436
 #: ../plugins/gtkui/trkproperties.c:175
 msgid "Duration"
 msgstr "Διάρκεια"
@@ -796,7 +935,8 @@ msgid ""
 "(This dialog can be turned off in GTKUI plugin settings)"
 msgstr "τα αρχεία θα χαθούν. Να προχωρήσω; \\ n (Αυτό το παράθυρο μπορεί να απενεργοποιηθεί από τις ρυθμίσεις του GTKUI plugin)"
 
-#: ../plugins/gtkui/plcommon.c:318 ../plugins/gtkui/trkproperties.c:56
+#: ../plugins/gtkui/plcommon.c:318
+#: ../plugins/gtkui/trkproperties.c:56
 msgid "Warning"
 msgstr "Προειδοποίηση"
 
@@ -816,11 +956,13 @@ msgstr "Επαναφόρτωση μεταδεδομένων"
 msgid "Remove from disk"
 msgstr "Αφαίρεση από τον δίσκο"
 
-#: ../plugins/gtkui/plcommon.c:616 ../plugins/gtkui/plcommon.c:741
+#: ../plugins/gtkui/plcommon.c:616
+#: ../plugins/gtkui/plcommon.c:741
 msgid "Add column"
 msgstr "Προσθήκη στήλης"
 
-#: ../plugins/gtkui/plcommon.c:646 ../plugins/gtkui/plcommon.c:745
+#: ../plugins/gtkui/plcommon.c:646
+#: ../plugins/gtkui/plcommon.c:745
 msgid "Edit column"
 msgstr "Επεξεργασία στήλη"
 
@@ -870,7 +1012,8 @@ msgid "Key combination"
 msgstr "Συνδυασμός πλήκτρων"
 
 #. output plugin selection
-#: ../plugins/gtkui/prefwin.c:379 ../plugins/gtkui/prefwin.c:569
+#: ../plugins/gtkui/prefwin.c:379
+#: ../plugins/gtkui/prefwin.c:569
 #: ../plugins.c:833
 msgid "ALSA output plugin"
 msgstr "Plugin εξόδου ALSA"
@@ -903,11 +1046,13 @@ msgstr "Ναί"
 msgid "No"
 msgstr "Όχι"
 
-#: ../plugins/gtkui/trkproperties.c:248 ../plugins/gtkui/trkproperties.c:260
+#: ../plugins/gtkui/trkproperties.c:248
+#: ../plugins/gtkui/trkproperties.c:260
 msgid "Key"
 msgstr "Πλήκτρο"
 
-#: ../plugins/gtkui/trkproperties.c:249 ../plugins/gtkui/trkproperties.c:261
+#: ../plugins/gtkui/trkproperties.c:249
+#: ../plugins/gtkui/trkproperties.c:261
 msgid "Value"
 msgstr "Τιμή"
 
@@ -996,7 +1141,8 @@ msgstr ""
 msgid "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n"
 msgstr "π.χ.: --nowplaying \"%%a - %%t\" θα εμφανίσει \"artist - title\"\n"
 
-#: ../playlist.c:362 ../playlist.c:2227
+#: ../playlist.c:362
+#: ../playlist.c:2227
 msgid "Default"
 msgstr "Προεπιλογή"
 
@@ -1032,6 +1178,17 @@ msgid ""
 "Band / Album Artist\n"
 "Custom"
 msgstr ""
+"Αριθμός αρχείου\n"
+"Αναπαραγωγή\n"
+"Εξώφυλλο\n"
+"Καλλιτέχνης - Άλμπουμ\n"
+"Καλλιτέχνης\n"
+"Άλμπουμ\n"
+"Τίτλος\n"
+"Διάρκεια\n"
+"Κομμάτι\n"
+"Καλλιτέχνης Μπάντας / Άλμπουμ\n"
+"Προσαρμοσμένο"
 
 #: ../plugins/gtkui/deadbeef.glade.h:60
 msgid ""
@@ -1041,41 +1198,43 @@ msgstr ""
 "Αριστερα\n"
 "Δεξιά"
 
-#: ../plugins/gtkui/support.c:90 ../plugins/gtkui/support.c:114
+#: ../plugins/gtkui/support.c:90
+#: ../plugins/gtkui/support.c:114
 #, c-format
 msgid "Couldn't find pixmap file: %s"
 msgstr "Δε βρέθηκε το αρχείο pixmap: %s"
 
-#: ../plugins/vorbis/vcedit.c:129 ../plugins/vorbis/vcedit.c:155
+#: ../plugins/vorbis/vcedit.c:129
+#: ../plugins/vorbis/vcedit.c:155
 msgid "Couldn't get enough memory for input buffering."
 msgstr "Δεν ήταν δυνατή η χρήση αρκετής μνήμης για το input buffering"
 
-#: ../plugins/vorbis/vcedit.c:179 ../plugins/vorbis/vcedit.c:550
-#, fuzzy
+#: ../plugins/vorbis/vcedit.c:179
+#: ../plugins/vorbis/vcedit.c:550
 msgid "Error reading first page of Ogg bitstream."
-msgstr "Σφάλμα ανάγνωσης πρώτη σελίδα του Ogg bitstream."
+msgstr "Σφάλμα ανάγνωσης πρώτης σελίδας του Ogg bitstream."
 
-#: ../plugins/vorbis/vcedit.c:185 ../plugins/vorbis/vcedit.c:557
-#, fuzzy
+#: ../plugins/vorbis/vcedit.c:185
+#: ../plugins/vorbis/vcedit.c:557
 msgid "Error reading initial header packet."
-msgstr "Σφάλμα ανάγνωσης αρχικό πακέτο κεφαλίδα."
+msgstr "Σφάλμα ανάγνωσης κεφαλίδας αρχικού πακέτου."
 
 #: ../plugins/vorbis/vcedit.c:237
 #, fuzzy
 msgid "Couldn't get enough memory to register new stream serial number."
-msgstr "Δεν μπόρεσα να πάρω αρκετή μνήμη για την καταγραφή νέος αύξων αριθμός ρεύμα."
+msgstr "Δεν μπόρεσα να πάρω αρκετή μνήμη για την καταγραφή νέου σειριακού αριθμού του streaming."
 
 #: ../plugins/vorbis/vcedit.c:505
 msgid "Input truncated or empty."
-msgstr ""
+msgstr "Η είσοδος είναι περικομμένη ή άδεια."
 
 #: ../plugins/vorbis/vcedit.c:507
 msgid "Input is not an Ogg bitstream."
-msgstr ""
+msgstr "Η είσοδος δεν είναι μια ροή δεδομένων Ogg"
 
 #: ../plugins/vorbis/vcedit.c:565
 msgid "Ogg bitstream does not contain Vorbis data."
-msgstr ""
+msgstr "Το Ogg bitstream δεν περιέχει δεδομένα Vorbis"
 
 #: ../plugins/vorbis/vcedit.c:578
 msgid "EOF before recognised stream."
@@ -1083,11 +1242,11 @@ msgstr ""
 
 #: ../plugins/vorbis/vcedit.c:594
 msgid "Ogg bitstream does not contain a supported data-type."
-msgstr ""
+msgstr "Η ροή δεδομένων Ogg δεν περιέχει κάποιον υποστηριζόμενο τύπο δεδομένων."
 
 #: ../plugins/vorbis/vcedit.c:638
 msgid "Corrupt secondary header."
-msgstr ""
+msgstr "Αλλοιωμένη δευτερεύουσα κεφαλίδα."
 
 #: ../plugins/vorbis/vcedit.c:659
 msgid "EOF before end of Vorbis headers."
@@ -1095,8 +1254,9 @@ msgstr ""
 
 #: ../plugins/vorbis/vcedit.c:834
 msgid "Corrupt or missing data, continuing..."
-msgstr ""
+msgstr "Χαμένα ή αλλοιωμένα δεδομένα, συνέχεια..."
 
 #: ../plugins/vorbis/vcedit.c:874
 msgid "Error writing stream to output. Output stream may be corrupted or truncated."
 msgstr ""
+
