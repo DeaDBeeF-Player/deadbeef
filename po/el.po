@@ -1107,4 +1107,4 @@ msgstr "Χαμένα ή αλλοιωμένα δεδομένα, συνέχεια.
 
 #: ../plugins/vorbis/vcedit.c:874
 msgid "Error writing stream to output. Output stream may be corrupted or truncated."
-msgstr "Σφάλμα κατά την εγγραφή της ροής στην έξοδο. Η ροή ξόδου μπορεί να είναι κατεστραμμένη ή ελλιπής."
+msgstr "Σφάλμα κατά την εγγραφή της ροής στην έξοδο. Η ροή εξόδου μπορεί να είναι κατεστραμμένη ή ελλιπής."
