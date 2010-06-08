@@ -500,7 +500,6 @@ static void it_reset_filter_state(IT_FILTER_STATE *state)
  * output starting at dst[pos]. The pos parameter is required for getting
  * click removal right.
  */
-
 static void it_filter(DUMB_CLICK_REMOVER *cr, IT_FILTER_STATE *state, sample_t *dst, long pos, sample_t *src, long size, int step, int sampfreq, int cutoff, int resonance)
 {
 	sample_t currsample = state->currsample;
@@ -730,7 +729,6 @@ static void reset_tick_counts(DUMB_IT_SIGRENDERER *sigrenderer)
 		channel->note_delay_count = 0;
 	}
 }
-
 
 
 static void reset_channel_effects(IT_CHANNEL *channel)
@@ -1047,6 +1045,24 @@ static void update_effects(DUMB_IT_SIGRENDERER *sigrenderer)
 				{
 					channel->pan = 32;
 				}
+				channel->pan += channel->panslide;
+				if (channel->pan > 64) {
+					if (channel->panslide >= 0)
+						channel->pan = 64;
+					else
+						channel->pan = 0;
+				}
+				channel->truepan = channel->pan << IT_ENVELOPE_SHIFT;
+			}
+		}
+
+		if (channel->panslide && !IT_IS_SURROUND(channel->pan)) {
+			if (sigrenderer->sigdata->flags & IT_WAS_AN_XM) {
+				if (channel->panslide == -128)
+					channel->truepan = 32;
+				else
+					channel->truepan = MID(32, channel->truepan + channel->panslide*64, 32+255*64);
+			} else {
 				channel->pan += channel->panslide;
 				if (channel->pan > 64) {
 					if (channel->panslide >= 0)
@@ -1678,6 +1694,12 @@ static void get_default_volpan(DUMB_IT_SIGDATA *sigdata, IT_CHANNEL *channel)
 		return;
 
 	channel->volume = sigdata->sample[channel->sample-1].default_volume;
+
+	if (sigdata->flags & IT_WAS_AN_XM) {
+		if (!(sigdata->flags & IT_WAS_A_MOD))
+			channel->truepan = 32 + sigdata->sample[channel->sample-1].default_pan*64;
+		return;
+	}
 
 	if (sigdata->flags & IT_WAS_AN_XM) {
 		if (!(sigdata->flags & IT_WAS_A_MOD))
@@ -5540,3 +5562,4 @@ int dumb_it_scan_for_playable_orders(DUMB_IT_SIGDATA *sigdata, dumb_scan_callbac
 
 	return 0;
 }
+

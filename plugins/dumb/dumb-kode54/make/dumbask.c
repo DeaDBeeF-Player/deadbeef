@@ -21,7 +21,9 @@ int main(int argc, const char *const argv[])
 	printf("%s", argv[1]);
 
 	for (;;) {
-		char c = toupper(getchar());
+		char c = getchar();
+		if (c == EOF) return 0;
+		c = toupper(c);
 		int i;
 		for (i = 0; options[i]; i++)
 			if (c == toupper(options[i]))

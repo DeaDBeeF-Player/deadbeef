@@ -52,6 +52,10 @@ void dumb_register_dat_it(long type);
 void dumb_register_dat_xm(long type);
 void dumb_register_dat_s3m(long type);
 void dumb_register_dat_mod(long type);
+void dumb_register_dat_it_quick(long type);
+void dumb_register_dat_xm_quick(long type);
+void dumb_register_dat_s3m_quick(long type);
+void dumb_register_dat_mod_quick(long type);
 
 
 /* DUH Playing Functions */

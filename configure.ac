@@ -6,6 +6,7 @@ AC_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE([1.11 dist-bzip2])
 AM_MAINTAINER_MODE()
 
+AC_USE_SYSTEM_EXTENSIONS
 AC_PROG_CC
 AC_PROG_CXX
 AC_STDC_HEADERS
@@ -13,6 +14,15 @@ AC_PROG_INSTALL
 AC_PROG_LIBTOOL
 AC_CONFIG_MACRO_DIR([m4])
 AC_C_BIGENDIAN
+AM_GNU_GETTEXT
+
+IT_PROG_INTLTOOL([0.40.0])
+GETTEXT_PACKAGE=deadbeef
+AC_SUBST(GETTEXT_PACKAGE)
+
+test "$prefix" = NONE && prefix=/usr/local
+AC_DEFINE_UNQUOTED(LOCALEDIR, "${prefix}/${DATADIRNAME}/locale", [Name of gettext locale directory])
+
 if test "x$USE_MAINTAINER_MODE" = "xyes" ; then
     AM_PROG_VALAC([0.7.0])
     if test "x$VALAC" = "x" ; then
@@ -75,6 +85,10 @@ AC_ARG_ENABLE(gme,      [  --disable-gme           disable Game Music Emu plugin
 AC_ARG_ENABLE(dumb,     [  --disable-dumb          disable D.U.M.B. plugin for MOD, S3M and other tracker formats (default: enabled)], [enable_dumb=$enableval], [enable_dumb=yes])
 AC_ARG_ENABLE(notify,   [  --disable-notify        disable notification-daemon support plugin (default: enabled)], [enable_notify=$enableval], [enable_notify=yes])
 AC_ARG_ENABLE(shellexec,   [  --disable-notify        disable notification-daemon support plugin (default: enabled)], [enable_notify=$enableval], [enable_notify=yes])
+dnl AC_ARG_ENABLE(emidi,    [  --disable-emidi         disable emidi plugin (default: enabled)], [enable_emidi=$enableval], [enable_emidi=yes])
+AC_ARG_ENABLE(musepack, [  --disable-musepack      disable musepack plugin (default: enabled)], [enable_musepack=$enableval], [enable_musepack=yes])
+AC_ARG_ENABLE(wildmidi, [  --disable-wildmidi      disable wildmidi plugin (default: enabled)], [enable_wildmidi=$enableval], [enable_wildmidi=yes])
+AC_ARG_ENABLE(tta,    [  --disable-tta             disable tta plugin (default: enabled)], [enable_tta=$enableval], [enable_tta=yes])
 
 PKG_CHECK_MODULES(DEPS, samplerate)
 
@@ -342,7 +356,23 @@ if test "x$HAVE_DBUS" = "xyes" && test "x$enable_notify" != "xno" ; then
     AC_SUBST(NOTIFY_CFLAGS)
 fi
 
-PLUGINS_DIRS="plugins/lastfm plugins/mpgmad plugins/vorbis plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/dumb plugins/pulse plugins/notify plugins/shellexec"
+dnl if test "x$enable_emidi" != "xno" ; then
+dnl     HAVE_EMIDI=yes
+dnl fi
+
+if test "x$enable_musepack" != "xno" ; then
+    HAVE_MUSEPACK=yes
+fi
+
+if test "x$enable_wildmidi" != "xno" ; then
+    HAVE_WILDMIDI=yes
+fi
+
+if test "x$enable_tta" != "xno" ; then
+    HAVE_TTA=yes
+fi
+
+PLUGINS_DIRS="plugins/lastfm plugins/mpgmad plugins/vorbis plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/dumb plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/shellexec"
 
 AM_CONDITIONAL(HAVE_VORBIS, test "x$HAVE_VORBISPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_FLAC, test "x$HAVE_FLACPLUGIN" = "xyes")
@@ -369,6 +399,10 @@ AM_CONDITIONAL(HAVE_OSS, test "x$HAVE_OSS" = "xyes")
 AM_CONDITIONAL(HAVE_SUPEREQ, test "x$HAVE_SUPEREQ" = "xyes")
 AM_CONDITIONAL(HAVE_NOTIFY, test "x$HAVE_NOTIFY" = "xyes")
 AM_CONDITIONAL(HAVE_SHELLEXEC, test "x$HAVE_SHELLEXEC" = "xyes")
+dnl AM_CONDITIONAL(HAVE_EMIDI, test "x$HAVE_EMIDI" = "xyes")
+AM_CONDITIONAL(HAVE_MUSEPACK, test "x$HAVE_MUSEPACK" = "xyes")
+AM_CONDITIONAL(HAVE_WILDMIDI, test "x$HAVE_WILDMIDI" = "xyes")
+AM_CONDITIONAL(HAVE_TTA, test "x$HAVE_TTA" = "xyes")
 
 AC_SUBST(PLUGINS_DIRS)
 
@@ -422,6 +456,10 @@ PRINT_PLUGIN_INFO([artwork],[Cover art plugin],[test "x$HAVE_ARTWORK" = "xyes"])
 PRINT_PLUGIN_INFO([supereq],[Equalizer based on Super EQ library by Naoki Shibata],[test "x$HAVE_SUPEREQ" = "xyes"])
 PRINT_PLUGIN_INFO([notify],[notification-daemon support plugin],[test "x$HAVE_NOTIFY" = "xyes"])
 PRINT_PLUGIN_INFO([shellexec],[shell commands plugin],[test "x$HAVE_SHELLEXEC" = "xyes"])
+dnl PRINT_PLUGIN_INFO([emidi],[Emu de MIDI player plugin],[test "x$HAVE_EMIDI" = "xyes"])
+PRINT_PLUGIN_INFO([musepack],[musepack player plugin],[test "x$HAVE_MUSEPACK" = "xyes"])
+PRINT_PLUGIN_INFO([wildmidi],[WildMidi player plugin],[test "x$HAVE_WILDMIDI" = "xyes"])
+PRINT_PLUGIN_INFO([tta],[TTA player plugin],[test "x$HAVE_TTA" = "xyes"])
 
 echo
 
@@ -454,6 +492,12 @@ plugins/artwork/Makefile
 plugins/supereq/Makefile
 plugins/notify/Makefile
 plugins/shellexec/Makefile
+dnl plugins/emidi/Makefile
+plugins/musepack/Makefile
+plugins/wildmidi/Makefile
+plugins/tta/Makefile
+intl/Makefile
+po/Makefile.in
 deadbeef.desktop
 ])
 

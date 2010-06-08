@@ -1,0 +1,82 @@
+WildMidi v0.2.0 Release
+
+Introduction
+==============
+
+WildMidi is a wave table player that uses gus pat sound sets to play midi file. The WildMidi player
+is the frontend, and is only designed to pass information to the core library and output any audio
+data the library returns.
+
+The core of the project, libWildMidi, is the work horse behind the player. Designed to be used in future
+and existing projects, like QuakeForge (http://www.quakeforge.net), its capable of multithreading and
+multiprocessing of midi files, allowing for the mixing of multiple midi file at any one time if someone
+had a desire to do so. This library is what turns the midi files into audio data using the gus pat sets.
+
+Not all midi events are supported by the core library at this stage, and more research is being done to
+improve performance and quality so that more events can be added.
+
+At the moment Wildmidi will only work in linux and cygwin. Native windows support is not available 
+at this stage but is planned.
+
+
+Installation
+==============
+to compile and install wildmidi use the following proceedure
+
+./configure
+make
+make install
+
+This will work for both linux and cygwin
+
+FreeBSD users, use ./configure --with-timidity-cfg=/usr/local/share/timidity/timidity.cfg
+
+If you want to change the default timidity.cfg path and/or file use --with-timidity-cfg=/full/path_and_filename/of/new/config.cfg
+
+Running
+=============
+
+NOTE: it is assumed here that your system is setup correctly and that you have
+installed some gus pats. I personally recommend eawpats, but you may have your
+own favorates.
+
+If you have /etc/timidity.cfg, once installed you can simply do 
+
+wildmidi <midi file name>
+
+if not, you can use the command line option -c to point wildmidi to the timidity.cfg
+
+example: wildmidi -c ~/guspats/timidity.cfg 
+
+
+Once the program is running, you can quit from it by pressing q
+
+Cygwin users: Yes, I know about the screen roll. I am looking at a different interface
+		  to corrct this.
+
+
+Further Information
+===================
+For further information feel free to contact myself at one of the following
+
+Email: wildcode@users.sourceforge.net
+IRC: #quakeforge on irc.oftc.net
+
+
+Known Bugs
+===========
+
+1) Reverb engine fails badly at rates below 22050
+2) Output in cygwin scrolls
+3) Surround options looses base on surround systems
+4) Some midi file lengths (total time) are reported wrong
+
+
+Thanks to
+==========
+Quakeforge   .. http://www.quakeforge.net
+	          irc: #quakeforge irc.oftc.net
+
+Eric A Welsh .. http://www.stardate.bc.ca/eawpatches/html/default.htm
+
+xmms         .. http://www.xmms.org/

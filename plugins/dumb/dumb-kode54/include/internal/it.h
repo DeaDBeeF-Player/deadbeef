@@ -299,6 +299,16 @@ struct IT_SAMPLE
 #define IT_PTM_NOTE_SLIDE_UP          35
 #define IT_PTM_NOTE_SLIDE_DOWN_RETRIG 36
 #define IT_PTM_NOTE_SLIDE_UP_RETRIG   37
+#define IT_MIDI_MACRO            26 //see MIDI.TXT
+
+/* Some effects needed for XM compatibility */
+#define IT_XM_PORTAMENTO_DOWN       27
+#define IT_XM_PORTAMENTO_UP         28
+#define IT_XM_FINE_VOLSLIDE_DOWN    29
+#define IT_XM_FINE_VOLSLIDE_UP      30
+#define IT_XM_RETRIGGER_NOTE        31
+#define IT_XM_KEY_OFF               32
+#define IT_XM_SET_ENVELOPE_POSITION 33
 
 #define IT_N_EFFECTS                  38
 

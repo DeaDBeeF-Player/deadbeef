@@ -92,3 +92,13 @@ Copyright © 1999 - 2006 Simon Peter <dn.tlp@gmx.net>, et al.
 SuperEQ - High Quality Audio Equalizer
 http://shibatch.sourceforge.net
 Copyright © Naoki Shibata <shibatch@users.sourceforge.net>
+
+
+libmpcdec - musepack decoder from Musepack SV8 libraries r435
+http://www.musepack.net
+Copyright © 2005-2009, The Musepack Development Team
+
+
+WildMidi 0.2.2 - Midi Processing Library
+http://wildmidi.sourceforge.net
+Copyright © 2001-2004 Chris Ison

@@ -122,7 +122,7 @@ static int readbits(int bitwidth, readblock_crap * crap)
 /** WARNING - do we even need to pass `right`? */
 /** WARNING - why bother memsetting at all? The whole array is written... */
 // if we do memset, dumb_silence() would be neater...
-static int decompress8(DUMBFILE *f, signed char *data, int len, int it215)
+static int decompress8(DUMBFILE *f, signed char *data, int len, int cmwt)
 {
 	int blocklen, blockpos;
 	byte bitwidth;
@@ -197,7 +197,7 @@ static int decompress8(DUMBFILE *f, signed char *data, int len, int it215)
 			/* Version 2.15 was an unofficial version with hacked compression
 			 * code. Yay, better compression :D
 			 */
-			*data++ = it215 ? d2 : d1;
+			*data++ = cmwt == 0x215 ? d2 : d1;
 			len--;
 			blockpos++;
 		}
@@ -208,7 +208,7 @@ static int decompress8(DUMBFILE *f, signed char *data, int len, int it215)
 
 
 
-static int decompress16(DUMBFILE *f, short *data, int len, int it215)
+static int decompress16(DUMBFILE *f, short *data, int len, int cmwt)
 {
 	int blocklen, blockpos;
 	byte bitwidth;
@@ -282,7 +282,7 @@ static int decompress16(DUMBFILE *f, short *data, int len, int it215)
 			/* Version 2.15 was an unofficial version with hacked compression
 			 * code. Yay, better compression :D
 			 */
-			*data++ = it215 ? d2 : d1;
+			*data++ = cmwt == 0x215 ? d2 : d1;
 			len--;
 			blockpos++;
 		}
@@ -308,6 +308,13 @@ static int it_read_envelope(IT_ENVELOPE *envelope, DUMBFILE *f)
 		envelope->node_t[n] = dumbfile_igetw(f);
 	}
 	dumbfile_skip(f, 75 - envelope->n_nodes * 3 + 1);
+
+	if (envelope->n_nodes <= 0)
+		envelope->flags &= ~IT_ENVELOPE_ON;
+	else {
+		if (envelope->loop_end >= envelope->n_nodes || envelope->loop_start > envelope->loop_end) envelope->flags &= ~IT_ENVELOPE_LOOP_ON;
+		if (envelope->sus_loop_end >= envelope->n_nodes || envelope->sus_loop_start > envelope->sus_loop_end) envelope->flags &= ~IT_ENVELOPE_SUSTAIN_LOOP;
+	}
 
 	if (envelope->n_nodes <= 0)
 		envelope->flags &= ~IT_ENVELOPE_ON;
@@ -411,6 +418,16 @@ static int it_read_old_instrument(IT_INSTRUMENT *instrument, DUMBFILE *f)
 
 	if (dumbfile_error(f))
 		return -1;
+
+	{
+		IT_ENVELOPE *envelope = &instrument->volume_envelope;
+		if (envelope->n_nodes <= 0)
+			envelope->flags &= ~IT_ENVELOPE_ON;
+		else {
+			if (envelope->loop_end >= envelope->n_nodes || envelope->loop_start > envelope->loop_end) envelope->flags &= ~IT_ENVELOPE_LOOP_ON;
+			if (envelope->sus_loop_end >= envelope->n_nodes || envelope->sus_loop_start > envelope->sus_loop_end) envelope->flags &= ~IT_ENVELOPE_SUSTAIN_LOOP;
+		}
+	}
 
 	{
 		IT_ENVELOPE *envelope = &instrument->volume_envelope;
@@ -666,7 +683,6 @@ static long it_read_sample_data(int cmwt, IT_SAMPLE *sample, unsigned char conve
 		/** WARNING - unresolved business here... test with ModPlug? */
 
 		if (sample->flags & IT_SAMPLE_STEREO)
-			//exit(37); // TODO: if this ever happens, maybe sample->length should be doubled below?
 			return -1;
 
 /*
@@ -1215,9 +1231,6 @@ static sigdata_t *it_load_sigdata(DUMBFILE *f)
 		switch (component[n].type) {
 
 			case IT_COMPONENT_SONG_MESSAGE:
-				if ( n < n_components ) {
-					message_length = min( message_length, component[n+1].offset - component[n].offset );
-				}
 				sigdata->song_message = malloc(message_length + 1);
 				if (sigdata->song_message) {
 					if (dumbfile_getnc(sigdata->song_message, message_length, f) < message_length) {
@@ -1309,8 +1322,6 @@ static sigdata_t *it_load_sigdata(DUMBFILE *f)
 
 	return sigdata;
 }
-
-
 
 DUH *dumb_read_it_quick(DUMBFILE *f)
 {

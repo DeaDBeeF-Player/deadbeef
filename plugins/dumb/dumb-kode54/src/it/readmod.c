@@ -197,10 +197,8 @@ static int it_mod_read_sample_data(IT_SAMPLE *sample, DUMBFILE *f, unsigned long
 	} else {
 		truncated_size = 0;
 	}
-
 	if (sample->length) {
 		sample->data = malloc(sample->length);
-
 		if (!sample->data)
 			return -1;
 
@@ -452,6 +450,12 @@ static DUMB_IT_SIGDATA *it_mod_load_sigdata(DUMBFILE *f, int restrict)
 	f = dumbfile_buffer_mod(f, &fft);
 	if (!f)
 		return NULL;
+
+	sigdata = malloc(sizeof(*sigdata));
+	if (!sigdata) {
+		dumbfile_close(f);
+		return NULL;
+	}
 
 	sigdata = malloc(sizeof(*sigdata));
 	if (!sigdata) {
@@ -755,8 +759,6 @@ static DUMB_IT_SIGDATA *it_mod_load_sigdata(DUMBFILE *f, int restrict)
 
 	return sigdata;
 }
-
-
 
 DUH *dumb_read_mod_quick(DUMBFILE *f, int restrict)
 {

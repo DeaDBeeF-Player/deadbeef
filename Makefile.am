@@ -1,8 +1,20 @@
 SUBDIRS = pixmaps\
 		  icons\
-		  ${PLUGINS_DIRS}
+		  ${PLUGINS_DIRS}\
+		  po\
+		  intl
 
 bin_PROGRAMS = deadbeef
+
+INTLTOOL_FILES = \
+		intltool-extract.in \
+		intltool-merge.in \
+		intltool-update.in
+
+DISTCLEANFILES = \
+		intltool-extract \
+		intltool-merge \
+		intltool-update
 
 deadbeef_SOURCES =\
 	main.c common.h deadbeef.h\
@@ -19,7 +31,8 @@ deadbeef_SOURCES =\
 	vfs.c vfs.h vfs_stdio.c\
 	timeline.c timeline.h\
 	md5/md5.c md5/md5.h\
-	metacache.c metacache.h
+	metacache.c metacache.h\
+	gettext.h
 
 sdkdir = $(pkgincludedir)
 sdk_HEADERS = deadbeef.h
@@ -36,4 +49,6 @@ docs_DATA = README COPYING.GPLv2 help.txt about.txt ChangeLog COPYING.LGPLv2.1
 desktopdir = $(datadir)/applications
 desktop_DATA = deadbeef.desktop
 
-EXTRA_DIST = $(docs_DATA) $(desktop_DATA)
+EXTRA_DIST = $(docs_DATA) $(desktop_DATA) $(INTLTOOL_FILES)
+
+ACLOCAL_AMFLAGS = -I m4
