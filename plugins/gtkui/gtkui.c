@@ -152,7 +152,7 @@ update_songinfo (gpointer ctx) {
         const char *mode;
         char temp[20];
         if (c->channels <= 2) {
-            c->channels == 1 ? _("Mono") : _("Stereo");
+            mode = c->channels == 1 ? _("Mono") : _("Stereo");
         }
         else {
             snprintf (temp, sizeof (temp), "%dch Multichannel", c->channels);
