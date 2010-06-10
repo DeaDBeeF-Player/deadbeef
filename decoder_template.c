@@ -92,7 +92,7 @@ example_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
 // return 0 on success
 // return -1 on failure
 static int
-example_seek_sample (int sample) {
+example_seek_sample (DB_fileinfo_t *_info, int sample) {
     example_info_t *info = (example_info_t *)_info;
     
     info->currentsample = sample + info->startsample;
@@ -104,7 +104,7 @@ example_seek_sample (int sample) {
 // return 0 on success
 // return -1 on failure
 static int
-example_seek (float time) {
+example_seek (DB_fileinfo_t *_info, float time) {
     return example_seek_sample (time * plugin.info.samplerate);
 }
 
