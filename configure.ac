@@ -90,6 +90,7 @@ AC_ARG_ENABLE(wildmidi, [  --disable-wildmidi      disable wildmidi plugin (defa
 AC_ARG_ENABLE(tta,     [  --disable-tta            disable tta plugin (default: enabled)], [enable_tta=$enableval], [enable_tta=yes])
 AC_ARG_ENABLE(dca,     [  --disable-dca            disable dca (DTS audio)  plugin (default: enabled)], [enable_dca=$enableval], [enable_dca=yes])
 AC_ARG_ENABLE(aac,     [  --disable-aac            disable AAC decoder based on FAAD2 (default: enabled)], [enable_aac=$enableval], [enable_aac=yes])
+AC_ARG_ENABLE(mms,     [  --disable-mms            disable MMS streaming vfs plugin (default: enabled)], [enable_mms=$enableval], [enable_mms=yes])
 
 PKG_CHECK_MODULES(DEPS, samplerate)
 
@@ -372,7 +373,17 @@ if test "x$enable_aac" != "xno" ; then
     fi
 fi
 
-PLUGINS_DIRS="plugins/lastfm plugins/mpgmad plugins/vorbis plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/dumb plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/aac"
+if test "x$enable_mms" != "xno" ; then
+    AC_CHECK_LIB([mms], [main], [HAVE_LIBMMS=1])
+    AM_CONDITIONAL(HAVE_LIBMMS, test $HAVE_LIBMMS)
+    if test ${HAVE_LIBMMS} ; then
+        LIBMMS_LIBS="-lmms"
+        AC_SUBST(LIBMMS_LIBS)
+        HAVE_MMS=yes
+    fi
+fi
+
+PLUGINS_DIRS="plugins/lastfm plugins/mpgmad plugins/vorbis plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/dumb plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/aac plugins/mms"
 
 AM_CONDITIONAL(HAVE_VORBIS, test "x$HAVE_VORBISPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_FLAC, test "x$HAVE_FLACPLUGIN" = "xyes")
@@ -404,6 +415,7 @@ AM_CONDITIONAL(HAVE_WILDMIDI, test "x$HAVE_WILDMIDI" = "xyes")
 AM_CONDITIONAL(HAVE_TTA, test "x$HAVE_TTA" = "xyes")
 AM_CONDITIONAL(HAVE_DCA, test "x$HAVE_DCA" = "xyes")
 AM_CONDITIONAL(HAVE_AAC, test "x$HAVE_AAC" = "xyes")
+AM_CONDITIONAL(HAVE_MMS, test "x$HAVE_MMS" = "xyes")
 
 AC_SUBST(PLUGINS_DIRS)
 
@@ -461,6 +473,7 @@ PRINT_PLUGIN_INFO([wildmidi],[WildMidi player plugin],[test "x$HAVE_WILDMIDI" = 
 PRINT_PLUGIN_INFO([tta],[TTA player plugin],[test "x$HAVE_TTA" = "xyes"])
 PRINT_PLUGIN_INFO([dca],[libdca (DTS Audio) player plugin],[test "x$HAVE_DCA" = "xyes"])
 PRINT_PLUGIN_INFO([aac],[AAC player (m4a, aac, mp4) based on FAAD2],[test "x$HAVE_AAC" = "xyes"])
+PRINT_PLUGIN_INFO([mms],[mms streaming support],[test "x$HAVE_MMS" = "xyes"])
 
 echo
 
@@ -497,6 +510,7 @@ plugins/wildmidi/Makefile
 plugins/tta/Makefile
 plugins/dca/Makefile
 plugins/aac/Makefile
+plugins/mms/Makefile
 intl/Makefile
 po/Makefile.in
 deadbeef.desktop

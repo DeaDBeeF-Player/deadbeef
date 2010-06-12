@@ -586,6 +586,9 @@ streamer_set_current (playItem_t *it) {
                 else if (!strcmp (ct, "audio/aac")) {
                     plug = "ffmpeg";
                 }
+                else if (!strcmp (ct, "audio/wma")) {
+                    plug = "ffmpeg";
+                }
             }
             mutex_lock (decodemutex);
             streamer_file = NULL;
