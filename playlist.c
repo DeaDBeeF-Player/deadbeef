@@ -97,6 +97,7 @@ pl_init (void) {
     mutex = mutex_create ();
     mutex_plt = mutex_create ();
 #endif
+    return 0;
 }
 
 void
