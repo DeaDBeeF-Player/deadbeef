@@ -788,6 +788,9 @@ streamer_start_new_song (void) {
         avg_bitrate = -1;
         if (p_state () != OUTPUT_STATE_PLAYING) {
             streamer_reset (1);
+            if (fileinfo) {
+                plug_get_output ()->change_rate (fileinfo->samplerate);
+            }
             if (p_play () < 0) {
                 fprintf (stderr, "streamer: failed to start playback; output plugin doesn't work\n");
                 streamer_set_nextsong (-2, 0);
@@ -909,6 +912,9 @@ streamer_thread (void *ctx) {
 
                 // output plugin may stop playback before switching samplerate
                 if (p_state () != OUTPUT_STATE_PLAYING) {
+                    if (fileinfo) {
+                        plug_get_output ()->change_rate (fileinfo->samplerate);
+                    }
                     if (p_play () < 0) {
                         fprintf (stderr, "streamer: failed to start playback after samplerate change; output plugin doesn't work\n");
                         streamer_set_nextsong (-2, 0);
