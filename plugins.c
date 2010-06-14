@@ -321,7 +321,9 @@ typedef struct plugin_s {
     DB_plugin_t *plugin;
     struct plugin_s *next;
 } plugin_t;
+
 plugin_t *plugins;
+plugin_t *plugins_tail;
 
 void
 plug_ev_subscribe (DB_plugin_t *plugin, int ev, DB_callback_t callback, uintptr_t data) {
@@ -533,8 +535,13 @@ plug_init_plugin (DB_plugin_t* (*loadfunc)(DB_functions_t *), void *handle) {
     memset (plug, 0, sizeof (plugin_t));
     plug->plugin = plugin_api;
     plug->handle = handle;
-    plug->next = plugins;
-    plugins = plug;
+    if (plugins_tail) {
+        plugins_tail->next = plug;
+        plugins_tail = plug;
+    }
+    else {
+        plugins = plugins_tail = plug;
+    }
     return 0;
 }
 
@@ -746,6 +753,7 @@ plug_unload_all (void) {
         free (plugins);
         plugins = next;
     }
+    plugins_tail = NULL;
     fprintf (stderr, "all plugins had been unloaded\n");
 }
 
