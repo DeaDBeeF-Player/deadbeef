@@ -41,13 +41,13 @@ typedef struct {
     DB_fileinfo_t info;
     NeAACDecHandle dec;
     DB_FILE *file;
+    mp4ff_t *mp4file;
     int startsample;
     int endsample;
     int currentsample;
     char buffer[AAC_BUFFER_SIZE];
     int remaining;
     int faad_channels;
-
     char out_buffer[OUT_BUFFER_SIZE];
     int out_remaining;
 } aac_info_t;
@@ -140,7 +140,7 @@ parse_aac_stream(DB_FILE *fp, int *samplerate, int *channels, float *duration, i
 
 // returns -1 for error, 0 for mp4, 1 for aac
 int
-aac_probe (DB_FILE *fp, float *duration, int *samplerate, int *channels, int *totalsamples) {
+aac_probe (DB_FILE *fp, float *duration, int *samplerate, int *channels, int *totalsamples, int *mp4track) {
     // try mp4
 
     mp4ff_callback_t cb = {
@@ -181,10 +181,15 @@ aac_probe (DB_FILE *fp, float *duration, int *samplerate, int *channels, int *to
             trace ("mp4 track: %d\n", i);
             *samplerate = mp4ff_get_sample_rate (mp4, i);
             *channels = mp4ff_get_channel_count (mp4, i);
-            int64_t length = mp4ff_get_track_duration (mp4, i);
-            int scale = mp4ff_time_scale (mp4, i);
-            if (length > 0 && scale > 0) {
-                *duration = length * 1000 / scale;
+            int samples = mp4ff_num_samples(mp4, i);
+            trace ("mp4 nsamples=%d, samplerate=%d\n", samples * 1024, *samplerate);
+            *duration = (float)samples * 1024 / (*samplerate);
+
+            if (totalsamples) {
+                *totalsamples = samples;
+            }
+            if (mp4track) {
+                *mp4track = i;
             }
             return 0;
         }
@@ -224,9 +229,25 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     }
     int offs = deadbeef->ftell (info->file);
 
-    int res = aac_probe (info->file, &duration, &samplerate, &channels, &totalsamples);
+    int mp4track;
+    int res = aac_probe (info->file, &duration, &samplerate, &channels, &totalsamples, &mp4track);
     if (res == -1) {
         return -1;
+    }
+
+    if (res == 0) {
+        mp4ff_callback_t cb = {
+            .read = aac_fs_read,
+            .write = NULL,
+            .seek = aac_fs_seek,
+            .truncate = NULL,
+            .user_data = info->file
+        };
+
+        info->mp4file = mp4ff_open_read (&cb);
+        if (!info->mp4file) {
+            return -1;
+        }
     }
 
     duration = (float)totalsamples / samplerate;
@@ -252,28 +273,44 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     info->remaining = deadbeef->fread (info->buffer, 1, AAC_BUFFER_SIZE, info->file);
 
     info->dec = NeAACDecOpen ();
-    NeAACDecConfigurationPtr conf = NeAACDecGetCurrentConfiguration (info->dec);
-    conf->dontUpSampleImplicitSBR = 1;
-    NeAACDecSetConfiguration (info->dec, conf);
-    unsigned long srate;
-    unsigned char ch;
-    int consumed = NeAACDecInit (info->dec, info->buffer, info->remaining, &srate, &ch);
-    if (consumed < 0) {
-        trace ("NeAACDecInit returned %d\n", consumed);
-        return -1;
+
+    if (info->mp4file) {
+        unsigned char *buffer = NULL;
+        int buffer_size = 0;
+        mp4ff_get_decoder_config(info->mp4file, mp4track, &buffer, &buffer_size);
+        unsigned long srate;
+        unsigned char ch;
+        if (NeAACDecInit2(info->dec, buffer, buffer_size, &srate, &ch) < 0) {
+            trace ("NeAACDecInit2 returned error\n");
+            return -1;
+        }
+     
+        // ...TODO...
     }
-    if (consumed > info->remaining) {
-        trace ("NeAACDecInit consumed more than available! wtf?\n");
-        return -1;
+    else {
+        NeAACDecConfigurationPtr conf = NeAACDecGetCurrentConfiguration (info->dec);
+        conf->dontUpSampleImplicitSBR = 1;
+        NeAACDecSetConfiguration (info->dec, conf);
+        unsigned long srate;
+        unsigned char ch;
+        int consumed = NeAACDecInit (info->dec, info->buffer, info->remaining, &srate, &ch);
+        if (consumed < 0) {
+            trace ("NeAACDecInit returned %d\n", consumed);
+            return -1;
+        }
+        if (consumed > info->remaining) {
+            trace ("NeAACDecInit consumed more than available! wtf?\n");
+            return -1;
+        }
+        if (consumed == info->remaining) {
+            info->remaining = 0;
+        }
+        else if (consumed > 0) {
+            memmove (info->buffer, info->buffer + consumed, info->remaining - consumed);
+            info->remaining -= consumed;
+        }
+        info->faad_channels = ch;
     }
-    if (consumed == info->remaining) {
-        info->remaining = 0;
-    }
-    else if (consumed > 0) {
-        memmove (info->buffer, info->buffer + consumed, info->remaining - consumed);
-        info->remaining -= consumed;
-    }
-    info->faad_channels = ch;
 //    _info->samplerate = srate;
 
     // recalculate duration
@@ -289,6 +326,9 @@ aac_free (DB_fileinfo_t *_info) {
     if (info) {
         if (info->file) {
             deadbeef->fclose (info->file);
+        }
+        if (info->mp4file) {
+            mp4ff_close (info->mp4file);
         }
         if (info->dec) {
             NeAACDecClose (info->dec);
@@ -402,7 +442,7 @@ aac_insert (DB_playItem_t *after, const char *fname) {
     float duration;
     int samplerate;
     int channels;
-    int res = aac_probe (fp, &duration, &samplerate, &channels, NULL);
+    int res = aac_probe (fp, &duration, &samplerate, &channels, NULL, NULL);
     if (res == -1) {
         deadbeef->fclose (fp);
         return NULL;
