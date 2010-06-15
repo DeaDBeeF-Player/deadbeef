@@ -45,6 +45,8 @@ typedef struct {
     mp4ff_callback_t mp4reader;
     int mp4track;
     int mp4sample;
+    int mp4framesize;
+    int skipsamples;
     int startsample;
     int endsample;
     int currentsample;
@@ -286,8 +288,13 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
                 mp4AudioSpecificConfig mp4ASC;
                 if (NeAACDecAudioSpecificConfig(buff, buff_size, &mp4ASC) >= 0)
                 {
-//                    if (mp4ASC.frameLengthFlag == 1) framesize = 960;
-//                    if (mp4ASC.sbr_present_flag == 1) framesize *= 2;
+                    info->mp4framesize = 1024;
+                    if (mp4ASC.frameLengthFlag == 1) {
+                        info->mp4framesize = 960;
+                    }
+                    if (mp4ASC.sbr_present_flag == 1) {
+                        info->mp4framesize *= 2;
+                    }
                 }
                 free (buff);
             }
@@ -396,6 +403,14 @@ aac_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
     int sample_size = ch * (_info->bps >> 3);
 
     while (size > 0) {
+        if (info->skipsamples > 0 && info->out_remaining > 0) {
+            int skip = min (info->out_remaining, info->skipsamples);
+            if (skip < info->out_remaining) {
+                memmove (info->out_buffer, info->out_buffer + skip * 2 * info->faad_channels, (info->out_remaining - skip) * 2 * info->faad_channels);
+            }
+            info->out_remaining -= skip;
+            info->skipsamples -= skip;
+        }
         if (info->out_remaining > 0) {
             int n = size / sample_size;
             n = min (info->out_remaining, n);
@@ -474,9 +489,17 @@ aac_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
 static int
 aac_seek_sample (DB_fileinfo_t *_info, int sample) {
     aac_info_t *info = (aac_info_t *)_info;
+
+    sample += info->startsample;
+    if (info->mp4file) {
+        info->mp4sample = sample / (info->mp4framesize-1);
+        info->skipsamples = sample - info->mp4sample * (info->mp4framesize-1);
+        info->remaining = 0;
+        info->out_remaining = 0;
+    }
     
-    info->currentsample = sample + info->startsample;
-    _info->readpos = (float)sample / _info->samplerate;
+    info->currentsample = sample - info->startsample;
+    _info->readpos = (float)info->currentsample / _info->samplerate;
     return 0;
 }
 
