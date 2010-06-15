@@ -514,10 +514,10 @@ aac_insert (DB_playItem_t *after, const char *fname) {
         return NULL;
     }
     else if (res == 0) {
-        ftype = "mp4";
+        ftype = plugin.filetypes[1];
     }
     else if (res == 1) {
-        ftype = "aac";
+        ftype = plugin.filetypes[0];
     }
 
     DB_playItem_t *it = deadbeef->pl_item_alloc ();
@@ -543,7 +543,7 @@ aac_insert (DB_playItem_t *after, const char *fname) {
 }
 
 static const char * exts[] = { "aac", "mp4", "m4a", NULL };
-static const char *filetypes[] = { "aac", "mp4", NULL };
+static const char *filetypes[] = { "RAW AAC", "MP4 AAC", NULL };
 
 // define plugin interface
 static DB_decoder_t plugin = {
