@@ -435,9 +435,10 @@ seekbar_draw (GtkWidget *widget) {
         if (trk) {
             deadbeef->pl_item_unref (trk);
         }
-        clearlooks_rounded_rectangle (cr, 2+ax, widget->allocation.height/2-4+ay, aw-4, 8, 4, 0xff);
         // empty seekbar, just a frame
+        clearlooks_rounded_rectangle (cr, 2+ax, widget->allocation.height/2-4+ay, aw-4, 8, 4, 0xff);
         cairo_set_source_rgb (cr, clr_selection.red/65535.f, clr_selection.green/65535.f, clr_selection.blue/65535.f );
+        cairo_set_line_width (cr, 2);
         cairo_stroke (cr);
         cairo_destroy (cr);
         return;
