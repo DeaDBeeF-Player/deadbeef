@@ -83,8 +83,16 @@ aac_fs_seek (void *user_data, uint64_t position) {
 static int
 parse_aac_stream(DB_FILE *fp, int *samplerate, int *channels, float *duration, int *totalsamples)
 {
+    int skip = deadbeef->junk_get_leading_size (fp);
+    if (skip >= 0) {
+        deadbeef->fseek (fp, skip, SEEK_SET);
+    }
     int offs = deadbeef->ftell (fp);
     int fsize = deadbeef->fgetlength (fp);
+    if (skip > 0) {
+        fsize -= skip;
+    }
+
     uint8_t buf[ADTS_HEADER_SIZE*8];
 
     int nsamples = 0;
@@ -128,7 +136,7 @@ parse_aac_stream(DB_FILE *fp, int *samplerate, int *channels, float *duration, i
             }
             bufsize = 0;
         }
-    } while (totalsamples || frame < 100);
+    } while (totalsamples || frame < 1000);
 
     if (!frame || !stream_sr || !nsamples) {
         return -1;
@@ -140,11 +148,11 @@ parse_aac_stream(DB_FILE *fp, int *samplerate, int *channels, float *duration, i
     if (totalsamples) {
         *totalsamples = nsamples;
         *duration = nsamples / (float)stream_sr;
-        trace ("aac: duration=%f (%d samples @ %d Hz), fsize=%d\n", *duration, *totalsamples, stream_sr, fsize);
+        trace ("aac: duration=%f (%d samples @ %d Hz), fsize=%d, nframes=%d\n", *duration, *totalsamples, stream_sr, fsize, frame);
     }
     else {
         int pos = deadbeef->ftell (fp);
-        int totalsamples = fsize / (pos-offs) * nsamples;
+        int totalsamples = (double)fsize / (pos-offs) * nsamples;
         *duration = totalsamples / (float)stream_sr;
         trace ("aac: duration=%f (%d samples @ %d Hz), fsize=%d\n", *duration, totalsamples, stream_sr, fsize);
     }
@@ -329,23 +337,13 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         trace ("found aac stream\n");
     }
 
-    duration = (float)totalsamples / samplerate;
-    deadbeef->pl_set_item_duration (it, duration);
+//    duration = (float)totalsamples / samplerate;
+//    deadbeef->pl_set_item_duration (it, duration);
 
     _info->bps = 16;
     _info->channels = channels;
     _info->samplerate = samplerate;
     _info->plugin = &plugin;
-
-    if (it->endsample > 0) {
-        info->startsample = it->startsample;
-        info->endsample = it->endsample;
-        plugin.seek_sample (_info, 0);
-    }
-    else {
-        info->startsample = 0;
-        info->endsample = totalsamples-1;
-    }
 
     deadbeef->fseek (info->file, offs, SEEK_SET);
 
@@ -377,6 +375,18 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         }
         info->faad_channels = ch;
     }
+
+    if (it->endsample > 0) {
+        info->startsample = it->startsample;
+        info->endsample = it->endsample;
+        plugin.seek_sample (_info, 0);
+    }
+    else {
+        info->startsample = 0;
+        info->endsample = totalsamples-1;
+    }
+
+
 //    _info->samplerate = srate;
 
     // recalculate duration
@@ -405,8 +415,15 @@ aac_free (DB_fileinfo_t *_info) {
 
 static int
 aac_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
-    int initsize = size;
     aac_info_t *info = (aac_info_t *)_info;
+    if (info->currentsample + size / (2 * _info->channels) > info->endsample) {
+        size = (info->endsample - info->currentsample + 1) * 2 * _info->channels;
+        if (size <= 0) {
+            return 0;
+        }
+    }
+
+    int initsize = size;
     int eof = 0;
     int ch = min (_info->channels, 2);
     int sample_size = ch * (_info->bps >> 3);
@@ -505,9 +522,12 @@ aac_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
 int
 seek_raw_aac (aac_info_t *info, int sample) {
     deadbeef->rewind (info->file);
+    int skip = deadbeef->junk_get_leading_size (info->file);
+    if (skip >= 0) {
+        deadbeef->fseek (info->file, skip, SEEK_SET);
+    }
 
     int offs = deadbeef->ftell (info->file);
-    int fsize = deadbeef->fgetlength (info->file);
     uint8_t buf[ADTS_HEADER_SIZE*8];
 
     int nsamples = 0;
@@ -575,8 +595,8 @@ aac_seek_sample (DB_fileinfo_t *_info, int sample) {
     }
     info->remaining = 0;
     info->out_remaining = 0;
-    info->currentsample = sample - info->startsample;
-    _info->readpos = (float)info->currentsample / _info->samplerate;
+    info->currentsample = sample;
+    _info->readpos = (float)(info->currentsample - info->startsample) / _info->samplerate;
     return 0;
 }
 
@@ -608,7 +628,10 @@ aac_insert (DB_playItem_t *after, const char *fname) {
     float duration;
     int samplerate;
     int channels;
-    int res = aac_probe (fp, &duration, &samplerate, &channels, NULL, NULL);
+    int totalsamples;
+
+    // slowwww!
+    int res = aac_probe (fp, &duration, &samplerate, &channels, &totalsamples, NULL);
     if (res == -1) {
         deadbeef->fclose (fp);
         return NULL;
@@ -633,9 +656,33 @@ aac_insert (DB_playItem_t *after, const char *fname) {
         int v2err = deadbeef->junk_id3v2_read (it, fp);
         int v1err = deadbeef->junk_id3v1_read (it, fp);
     }
-    deadbeef->pl_add_meta (it, "title", NULL);
 
     deadbeef->fclose (fp);
+
+    // embedded cue
+    deadbeef->pl_lock ();
+    const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
+    DB_playItem_t *cue = NULL;
+
+    if (cuesheet) {
+        cue = deadbeef->pl_insert_cue_from_buffer (after, it, cuesheet, strlen (cuesheet), totalsamples, samplerate);
+        if (cue) {
+            deadbeef->pl_item_unref (it);
+            deadbeef->pl_item_unref (cue);
+            deadbeef->pl_unlock ();
+            return cue;
+        }
+    }
+    deadbeef->pl_unlock ();
+
+    cue  = deadbeef->pl_insert_cue (after, it, totalsamples, samplerate);
+    if (cue) {
+        deadbeef->pl_item_unref (it);
+        deadbeef->pl_item_unref (cue);
+        return cue;
+    }
+
+    deadbeef->pl_add_meta (it, "title", NULL);
 
     after = deadbeef->pl_insert_item (after, it);
     deadbeef->pl_item_unref (it);
