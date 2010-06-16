@@ -20,7 +20,7 @@
 #include <assert.h>
 #include <limits.h>
 #include <unistd.h>
-#include "mpcdec.h"
+#include "mpc/mpcdec.h"
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
 #endif
