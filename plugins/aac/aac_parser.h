@@ -24,6 +24,8 @@
 
 #define ADTS_HEADER_SIZE 7
 
+// buf size must be at least ADTS_HEADER_SIZE*8
+// returns frame size
 int
 aac_sync(const uint8_t *buf, int *channels, int *sample_rate, int *bit_rate, int *samples);
 

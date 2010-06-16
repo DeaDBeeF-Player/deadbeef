@@ -34,8 +34,6 @@ static const int aac_channels[8] = {
     0, 1, 2, 3, 4, 5, 6, 8
 };
 
-// buf size must be at least ADTS_HEADER_SIZE*8
-// returns frame size
 int
 aac_sync(const uint8_t *buf, int *channels, int *sample_rate, int *bit_rate, int *samples)
 {
@@ -43,7 +41,7 @@ aac_sync(const uint8_t *buf, int *channels, int *sample_rate, int *bit_rate, int
 
     // 12 sync bits
     if (buf[0] != 0xff || (buf[1]&0xf0) != 0xf0) {
-        trace ("unsync\n");
+        //trace ("unsync\n");
         return 0;
     }
 

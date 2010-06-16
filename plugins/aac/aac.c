@@ -83,47 +83,54 @@ aac_fs_seek (void *user_data, uint64_t position) {
 static int
 parse_aac_stream(DB_FILE *fp, int *samplerate, int *channels, float *duration, int *totalsamples)
 {
+    int offs = deadbeef->ftell (fp);
     int fsize = deadbeef->fgetlength (fp);
-    uint8_t buf[8192];
+    uint8_t buf[ADTS_HEADER_SIZE*8];
 
-    int nframesfound = 0;
     int nsamples = 0;
     int stream_sr = 0;
     int stream_ch = 0;
 
     int eof = 0;
     int bufsize = 0;
+    int remaining = 0;
+
+    int frame = 0;
+
     do {
+        int size = sizeof (buf) - bufsize;
+        if (deadbeef->fread (buf + bufsize, 1, size, fp) != size) {
+            trace ("parse_aac_stream: eof\n");
+            break;
+        }
         bufsize = sizeof (buf);
-        int bytesread = deadbeef->fread (buf, 1, bufsize, fp);
-        if (bytesread != bufsize) {
-            eof = 1;
-        }
-        bufsize = bytesread;
 
-        uint8_t *ptr = buf;
-        while (ptr < buf + bufsize - ADTS_HEADER_SIZE*8) {
-            int channels, samplerate, bitrate, samples;
-            int size = aac_sync (ptr, &channels, &samplerate, &bitrate, &samples);
-            if (size == 0) {
-                ptr++;
-            }
-            else {
-                //trace ("aac: sync: %d %d %d %d %d\n", channels, samplerate, bitrate, samples, size);
-                nframesfound++;
-                nsamples += samples;
-                if (!stream_sr) {
-                    stream_sr = samplerate;
-                }
-                if (!stream_ch) {
-                    stream_ch = channels;
-                }
-                ptr += size;
-            }
+        int channels, samplerate, bitrate, samples;
+        size = aac_sync (buf, &channels, &samplerate, &bitrate, &samples);
+        if (size == 0) {
+            memmove (buf, buf+1, sizeof (buf)-1);
+            bufsize--;
+            continue;
         }
-    } while (totalsamples && !eof);
+        else {
+            //trace ("aac: frame #%d sync: %d %d %d %d %d\n", frame, channels, samplerate, bitrate, samples, size);
+            frame++;
+            nsamples += samples;
+            if (!stream_sr) {
+                stream_sr = samplerate;
+            }
+            if (!stream_ch) {
+                stream_ch = channels;
+            }
+            if (deadbeef->fseek (fp, size-sizeof(buf), SEEK_CUR) == -1) {
+                trace ("parse_aac_stream: invalid seek %d\n", size-sizeof(buf));
+                break;
+            }
+            bufsize = 0;
+        }
+    } while (totalsamples || frame < 100);
 
-    if (!nframesfound || !stream_sr || !nsamples || !bufsize) {
+    if (!frame || !stream_sr || !nsamples) {
         return -1;
     }
 
@@ -133,11 +140,13 @@ parse_aac_stream(DB_FILE *fp, int *samplerate, int *channels, float *duration, i
     if (totalsamples) {
         *totalsamples = nsamples;
         *duration = nsamples / (float)stream_sr;
+        trace ("aac: duration=%f (%d samples @ %d Hz), fsize=%d\n", *duration, *totalsamples, stream_sr, fsize);
     }
     else {
-        int totalsamples = fsize / bufsize * nsamples;
+        int pos = deadbeef->ftell (fp);
+        int totalsamples = fsize / (pos-offs) * nsamples;
         *duration = totalsamples / (float)stream_sr;
-        trace ("aac: duration=%f (%d samples @ %d Hz), fsize=%d, bufsize=%d\n", *duration, totalsamples, stream_sr, fsize, bufsize);
+        trace ("aac: duration=%f (%d samples @ %d Hz), fsize=%d\n", *duration, totalsamples, stream_sr, fsize);
     }
 
     return 0;
@@ -456,10 +465,13 @@ aac_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
                 if (res == 0) {
                     eof = 1;
                 }
+                info->remaining += res;
             }
 
+            //trace ("NeAACDecDecode %d bytes %d offs\n", info->remaining, deadbeef->ftell (info->file));
             samples = NeAACDecDecode (info->dec, &frame_info, info->buffer, info->remaining);
             if (!samples) {
+                trace ("NeAACDecDecode failed\n");
                 break;
             }
             int consumed = frame_info.bytesconsumed;
@@ -483,7 +495,66 @@ aac_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
     }
 
     info->currentsample += (initsize-size) / sample_size;
+    if (size != 0) {
+        trace ("aac_read_int16 eof\n");
+    }
     return initsize-size;
+}
+
+// returns -1 on error, 0 on success
+int
+seek_raw_aac (aac_info_t *info, int sample) {
+    deadbeef->rewind (info->file);
+
+    int offs = deadbeef->ftell (info->file);
+    int fsize = deadbeef->fgetlength (info->file);
+    uint8_t buf[ADTS_HEADER_SIZE*8];
+
+    int nsamples = 0;
+    int stream_sr = 0;
+    int stream_ch = 0;
+
+    int eof = 0;
+    int bufsize = 0;
+    int remaining = 0;
+
+    int frame = 0;
+
+    int frame_samples = 0;
+    int curr_sample = 0;
+
+    do {
+        curr_sample += frame_samples;
+        int size = sizeof (buf) - bufsize;
+        if (deadbeef->fread (buf + bufsize, 1, size, info->file) != size) {
+            trace ("seek_raw_aac: eof\n");
+            break;
+        }
+        bufsize = sizeof (buf);
+
+        int channels, samplerate, bitrate;
+        size = aac_sync (buf, &channels, &samplerate, &bitrate, &frame_samples);
+        if (size == 0) {
+            memmove (buf, buf+1, sizeof (buf)-1);
+            bufsize--;
+            continue;
+        }
+        else {
+            //trace ("aac: frame #%d sync: %d %d %d %d %d\n", frame, channels, samplerate, bitrate, samples, size);
+            frame++;
+            if (deadbeef->fseek (info->file, size-sizeof(buf), SEEK_CUR) == -1) {
+                trace ("seek_raw_aac: invalid seek %d\n", size-sizeof(buf));
+                break;
+            }
+            bufsize = 0;
+        }
+    } while (curr_sample + frame_samples < sample);
+
+    if (curr_sample + frame_samples < sample) {
+        return -1;
+    }
+
+    return sample - curr_sample;
 }
 
 static int
@@ -494,10 +565,16 @@ aac_seek_sample (DB_fileinfo_t *_info, int sample) {
     if (info->mp4file) {
         info->mp4sample = sample / (info->mp4framesize-1);
         info->skipsamples = sample - info->mp4sample * (info->mp4framesize-1);
-        info->remaining = 0;
-        info->out_remaining = 0;
     }
-    
+    else {
+        int res = seek_raw_aac (info, sample);
+        if (res < 0) {
+            return -1;
+        }
+        info->skipsamples = res;
+    }
+    info->remaining = 0;
+    info->out_remaining = 0;
     info->currentsample = sample - info->startsample;
     _info->readpos = (float)info->currentsample / _info->samplerate;
     return 0;
