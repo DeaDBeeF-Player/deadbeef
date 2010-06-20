@@ -150,7 +150,15 @@ update_songinfo (gpointer ctx) {
         int mindur = duration / 60;
         int secdur = duration - mindur * 60;
 
-        const char *mode = c->channels == 1 ? _("Mono") : _("Stereo");
+        const char *mode;
+        char temp[20];
+        if (c->channels <= 2) {
+            c->channels == 1 ? _("Mono") : _("Stereo");
+        }
+        else {
+            snprintf (temp, sizeof (temp), "%dch Multichannel", c->channels);
+            mode = temp;
+        }
         int samplerate = c->samplerate;
         int bitspersample = c->bps;
         songpos = playpos;

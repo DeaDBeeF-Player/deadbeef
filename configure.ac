@@ -88,7 +88,8 @@ AC_ARG_ENABLE(shellexec,   [  --disable-notify        disable notification-daemo
 dnl AC_ARG_ENABLE(emidi,    [  --disable-emidi         disable emidi plugin (default: enabled)], [enable_emidi=$enableval], [enable_emidi=yes])
 AC_ARG_ENABLE(musepack, [  --disable-musepack      disable musepack plugin (default: enabled)], [enable_musepack=$enableval], [enable_musepack=yes])
 AC_ARG_ENABLE(wildmidi, [  --disable-wildmidi      disable wildmidi plugin (default: enabled)], [enable_wildmidi=$enableval], [enable_wildmidi=yes])
-AC_ARG_ENABLE(tta,    [  --disable-tta             disable tta plugin (default: enabled)], [enable_tta=$enableval], [enable_tta=yes])
+AC_ARG_ENABLE(tta,     [  --disable-tta            disable tta plugin (default: enabled)], [enable_tta=$enableval], [enable_tta=yes])
+AC_ARG_ENABLE(dca,     [  --disable-dca            disable dca (DTS audio)  plugin (default: enabled)], [enable_dca=$enableval], [enable_dca=yes])
 
 PKG_CHECK_MODULES(DEPS, samplerate)
 
@@ -372,7 +373,15 @@ if test "x$enable_tta" != "xno" ; then
     HAVE_TTA=yes
 fi
 
+<<<<<<< HEAD
 PLUGINS_DIRS="plugins/lastfm plugins/mpgmad plugins/vorbis plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/dumb plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/shellexec"
+=======
+if test "x$enable_dca" != "xno" ; then
+    HAVE_DCA=yes
+fi
+
+PLUGINS_DIRS="plugins/lastfm plugins/mpgmad plugins/vorbis plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/dumb plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca"
+>>>>>>> 8038f2149215607f58078503c4afac35db11fae9
 
 AM_CONDITIONAL(HAVE_VORBIS, test "x$HAVE_VORBISPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_FLAC, test "x$HAVE_FLACPLUGIN" = "xyes")
@@ -403,6 +412,7 @@ dnl AM_CONDITIONAL(HAVE_EMIDI, test "x$HAVE_EMIDI" = "xyes")
 AM_CONDITIONAL(HAVE_MUSEPACK, test "x$HAVE_MUSEPACK" = "xyes")
 AM_CONDITIONAL(HAVE_WILDMIDI, test "x$HAVE_WILDMIDI" = "xyes")
 AM_CONDITIONAL(HAVE_TTA, test "x$HAVE_TTA" = "xyes")
+AM_CONDITIONAL(HAVE_DCA, test "x$HAVE_DCA" = "xyes")
 
 AC_SUBST(PLUGINS_DIRS)
 
@@ -460,6 +470,7 @@ dnl PRINT_PLUGIN_INFO([emidi],[Emu de MIDI player plugin],[test "x$HAVE_EMIDI" =
 PRINT_PLUGIN_INFO([musepack],[musepack player plugin],[test "x$HAVE_MUSEPACK" = "xyes"])
 PRINT_PLUGIN_INFO([wildmidi],[WildMidi player plugin],[test "x$HAVE_WILDMIDI" = "xyes"])
 PRINT_PLUGIN_INFO([tta],[TTA player plugin],[test "x$HAVE_TTA" = "xyes"])
+PRINT_PLUGIN_INFO([dca],[libdca (DTS Audio) player plugin],[test "x$HAVE_DCA" = "xyes"])
 
 echo
 
@@ -491,11 +502,15 @@ plugins/pulse/Makefile
 plugins/artwork/Makefile
 plugins/supereq/Makefile
 plugins/notify/Makefile
+<<<<<<< HEAD
 plugins/shellexec/Makefile
 dnl plugins/emidi/Makefile
+=======
+>>>>>>> 8038f2149215607f58078503c4afac35db11fae9
 plugins/musepack/Makefile
 plugins/wildmidi/Makefile
 plugins/tta/Makefile
+plugins/dca/Makefile
 intl/Makefile
 po/Makefile.in
 deadbeef.desktop
