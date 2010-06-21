@@ -96,7 +96,7 @@ example_seek_sample (DB_fileinfo_t *_info, int sample) {
     example_info_t *info = (example_info_t *)_info;
     
     info->currentsample = sample + info->startsample;
-    plugin.info.readpos = (float)sample / plugin.info.samplerate;
+    _info->readpos = (float)sample / _info->samplerate;
     return 0;
 }
 
@@ -105,7 +105,7 @@ example_seek_sample (DB_fileinfo_t *_info, int sample) {
 // return -1 on failure
 static int
 example_seek (DB_fileinfo_t *_info, float time) {
-    return example_seek_sample (time * plugin.info.samplerate);
+    return example_seek_sample (_info, time * _info->samplerate);
 }
 
 // read information from the track
@@ -163,7 +163,7 @@ example_insert (DB_playItem_t *after, const char *fname) {
 
     // no cuesheet, prepare track for addition
     DB_playItem_t *it = deadbeef->pl_item_alloc ();
-    it->decoder = &plugin;
+    it->decoder_id = deadbeef->plug_get_decoder_id (plugin.plugin.id);
     it->fname = strdup (fname);
     it->filetype = filetypes[0];
     deadbeef->pl_set_item_duration (it, (float)ti.total_num_samples/ti.samplerate);
@@ -184,6 +184,7 @@ example_insert (DB_playItem_t *after, const char *fname) {
 
     // now the track is ready, insert into playlist
     after = deadbeef->pl_insert_item (after, it);
+    deadbeef->pl_item_unref (it);
     return after;
 }
 
