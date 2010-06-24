@@ -91,8 +91,11 @@ static uintptr_t mutex_plt;
 #define GLOBAL_LOCK {pl_global_lock();}
 #define GLOBAL_UNLOCK {pl_global_unlock();}
 
+static playlist_t dummy_playlist; // used at startup to prevent crashes
+
 int
 pl_init (void) {
+    playlist = &dummy_playlist;
 #if !DISABLE_LOCKING
     mutex = mutex_create ();
     mutex_plt = mutex_create ();
