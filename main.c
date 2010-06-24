@@ -623,6 +623,7 @@ main (int argc, char *argv[]) {
 
     pl_init ();
     conf_load (); // required by some plugins at startup
+    volume_set_db (conf_get_float ("playback.volume", 0)); // volume need to be initialized before plugins start
     messagepump_init (); // required to push messages while handling commandline
     plug_load_all (); // required to add files to playlist from commandline
     pl_load_all ();
@@ -652,7 +653,6 @@ main (int argc, char *argv[]) {
     atexit (atexit_handler); // helps to save in simple cases
 
     // start all subsystems
-    volume_set_db (conf_get_float ("playback.volume", 0));
     plug_trigger_event_playlistchanged ();
 
     streamer_init ();
