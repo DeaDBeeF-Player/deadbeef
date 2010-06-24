@@ -38,7 +38,9 @@
 #include <sys/fcntl.h>
 #include <sys/errno.h>
 #include <signal.h>
+#ifdef __linux__
 #include <execinfo.h>
+#endif
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
 #endif
@@ -429,6 +431,7 @@ sigterm_handler (int sig) {
     exit (0);
 }
 
+#ifdef __linux__
 void
 sigsegv_handler (int sig) {
     fprintf (stderr, "Segmentation Fault\n");
@@ -458,10 +461,13 @@ sigsegv_handler (int sig) {
     free(strings);
     exit (0);
 }
+#endif
 
 int
 main (int argc, char *argv[]) {
+#ifdef __linux__
     signal (SIGSEGV, sigsegv_handler);
+#endif
     setlocale (LC_ALL, "");
     setlocale (LC_NUMERIC, "C");
 #ifdef ENABLE_NLS
