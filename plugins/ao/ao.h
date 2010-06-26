@@ -182,12 +182,12 @@ int ao_get_lib(char *filename, uint8 **buffer, uint64 *length);
 
 int ao_identify (char *buffer);
 
-int ao_start (uint32 type, char *buffer, uint32 size);
+void *ao_start (uint32 type, uint8 *buffer, uint32 size);
 
-int ao_stop (uint32 type);
+int ao_stop (uint32 type, void *handle);
 
-int ao_get_info (uint32 type, ao_display_info *info);
+int ao_get_info (uint32 type, void *handle, ao_display_info *info);
 
-int ao_decode (uint32 type, int16 *buffer, uint32 size);
+int ao_decode (uint32 type, void *handle, int16 *buffer, uint32 size);
 
 #endif // AO_H

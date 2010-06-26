@@ -44,11 +44,13 @@
 
 #define DEBUG_LOADER	(0)
 
-static corlett_t	*c = NULL;
-static char 		psfby[256];
-char			*spu_pOutput;
-int			psf_refresh  = -1;
+char *spu_pOutput; // hack!
+int psf_refresh = -1; // hack
 
+typedef struct {
+    corlett_t	*c;
+    char psfby[256];
+} psf_synth_t;
 
 // main RAM
 extern uint32 psx_ram[((2*1024*1024)/4)+4];
@@ -66,8 +68,11 @@ extern void psx_hw_slice(void);
 extern void psx_hw_frame(void);
 extern void setlength(int32 stop, int32 fade);
 
-int32 psf_start(uint8 *buffer, uint32 length)
+void *psf_start(uint8 *buffer, uint32 length)
 {
+    psf_synth_t *s = malloc (sizeof (psf_synth_t));
+    psf_refresh = -1;
+
 	uint8 *file, *lib_decoded, *lib_raw_file, *alib_decoded;
 	uint32 offset, plength, PC, SP, GP, lengthMS, fadeMS;
 	uint64 file_len, lib_len, lib_raw_length, alib_len;
@@ -81,9 +86,10 @@ int32 psf_start(uint8 *buffer, uint32 length)
 //	printf("Length = %d\n", length);
 
 	// Decode the current GSF
-	if (corlett_decode(buffer, length, &file, &file_len, &c) != AO_SUCCESS)
+	if (corlett_decode(buffer, length, &file, &file_len, &s->c) != AO_SUCCESS)
 	{
-		return AO_FAIL;
+        psf_stop (s);
+		return NULL;
 	}
 
 //	printf("file_len %d reserve %d\n", file_len, c->res_size);
@@ -91,7 +97,8 @@ int32 psf_start(uint8 *buffer, uint32 length)
 	// check for PSX EXE signature
 	if (strncmp((char *)file, "PS-X EXE", 8))
 	{
-		return AO_FAIL;
+        psf_stop (s);
+		return NULL;
 	}
 
 	#if DEBUG_LOADER
@@ -103,11 +110,11 @@ int32 psf_start(uint8 *buffer, uint32 length)
 	printf("refresh: [%s]\n", c->inf_refresh);			
 	#endif
 
-	if (c->inf_refresh[0] == '5')
+	if (s->c->inf_refresh[0] == '5')
 	{
 		psf_refresh = 50;
 	}
-	if (c->inf_refresh[0] == '6')
+	if (s->c->inf_refresh[0] == '6')
 	{
 		psf_refresh = 60;
 	}
@@ -121,23 +128,25 @@ int32 psf_start(uint8 *buffer, uint32 length)
 	#endif
 
 	// Get the library file, if any
-	if (c->lib[0] != 0)
+	if (s->c->lib[0] != 0)
 	{
 		uint64 tmp_length;
 	
 		#if DEBUG_LOADER	
 		printf("Loading library: %s\n", c->lib);
 		#endif
-		if (ao_get_lib(c->lib, &lib_raw_file, &tmp_length) != AO_SUCCESS)
+		if (ao_get_lib(s->c->lib, &lib_raw_file, &tmp_length) != AO_SUCCESS)
 		{
-			return AO_FAIL;
+            psf_stop (s);
+            return NULL;
 		}
 		lib_raw_length = tmp_length;
 		
 		if (corlett_decode(lib_raw_file, lib_raw_length, &lib_decoded, &lib_len, &lib) != AO_SUCCESS)
 		{
 			free(lib_raw_file);
-			return AO_FAIL;
+            psf_stop (s);
+            return NULL;
 		}
 				
 		// Free up raw file
@@ -147,7 +156,8 @@ int32 psf_start(uint8 *buffer, uint32 length)
 		{
 			printf("Major error!  PSF was OK, but referenced library is not!\n");
 			free(lib);
-			return AO_FAIL;
+            psf_stop (s);
+            return NULL;
 		}
 
 		#if DEBUG_LOADER	
@@ -208,7 +218,7 @@ int32 psf_start(uint8 *buffer, uint32 length)
 	// load any auxiliary libraries now
 	for (i = 0; i < 8; i++)
 	{
-		if (c->libaux[i][0] != 0)
+		if (s->c->libaux[i][0] != 0)
 		{
 			uint64 tmp_length;
 		
@@ -216,16 +226,18 @@ int32 psf_start(uint8 *buffer, uint32 length)
 			printf("Loading aux library: %s\n", c->libaux[i]);
 			#endif
 
-			if (ao_get_lib(c->libaux[i], &lib_raw_file, &tmp_length) != AO_SUCCESS)
+			if (ao_get_lib(s->c->libaux[i], &lib_raw_file, &tmp_length) != AO_SUCCESS)
 			{
-				return AO_FAIL;
+                psf_stop (s);
+                return NULL;
 			}
 			lib_raw_length = tmp_length;
 		
 			if (corlett_decode(lib_raw_file, lib_raw_length, &alib_decoded, &alib_len, &lib) != AO_SUCCESS)
 			{
 				free(lib_raw_file);
-				return AO_FAIL;
+                psf_stop (s);
+                return NULL;
 			}
 				
 			// Free up raw file
@@ -235,7 +247,8 @@ int32 psf_start(uint8 *buffer, uint32 length)
 			{
 				printf("Major error!  PSF was OK, but referenced library is not!\n");
 				free(lib);
-				return AO_FAIL;
+                psf_stop (s);
+                return NULL;
 			}
 
 			#if DEBUG_LOADER	
@@ -261,14 +274,14 @@ int32 psf_start(uint8 *buffer, uint32 length)
 //	free(lib_decoded);
 	
 	// Finally, set psfby tag
-	strcpy(psfby, "n/a");
-	if (c)
+	strcpy(s->psfby, "n/a");
+	if (s->c)
 	{
 		int i;
 		for (i = 0; i < MAX_UNKNOWN_TAGS; i++)
 		{
-			if (!strcasecmp(c->tag_name[i], "psfby"))
-				strcpy(psfby, c->tag_data[i]);
+			if (!strcasecmp(s->c->tag_name[i], "psfby"))
+				strcpy(s->psfby, s->c->tag_data[i]);
 		}
 	}
 
@@ -310,8 +323,8 @@ int32 psf_start(uint8 *buffer, uint32 length)
 	SPUinit();
 	SPUopen();
 
-	lengthMS = psfTimeToMS(c->inf_length);
-	fadeMS = psfTimeToMS(c->inf_fade);
+	lengthMS = psfTimeToMS(s->c->inf_length);
+	fadeMS = psfTimeToMS(s->c->inf_fade);
 
 	#if DEBUG_LOADER
 	printf("length %d fade %d\n", lengthMS, fadeMS);
@@ -327,9 +340,9 @@ int32 psf_start(uint8 *buffer, uint32 length)
 	// patch illegal Chocobo Dungeon 2 code - CaitSith2 put a jump in the delay slot from a BNE
 	// and rely on Highly Experimental's buggy-ass CPU to rescue them.  Verified on real hardware
 	// that the initial code is wrong.
-	if (c->inf_game)
+	if (s->c->inf_game)
 	{
-		if (!strcmp(c->inf_game, "Chocobo Dungeon 2"))
+		if (!strcmp(s->c->inf_game, "Chocobo Dungeon 2"))
 		{
 			if (psx_ram[0xbc090/4] == LE32(0x0802f040))
 			{
@@ -351,16 +364,17 @@ int32 psf_start(uint8 *buffer, uint32 length)
 
 	mips_execute(5000);
 	
-	return AO_SUCCESS;
+	return s;
 }
 
-void spu_update(unsigned char* pSound,long lBytes)
+void spu_update (unsigned char* pSound,long lBytes)
 {
 	memcpy(spu_pOutput, pSound, lBytes);
 }
 
-int32 psf_gen(int16 *buffer, uint32 samples)
+int32 psf_gen(void *handle, int16 *buffer, uint32 samples)
 {	
+    psf_synth_t *s = handle;
 	int i;
 
 	for (i = 0; i < samples; i++)
@@ -377,16 +391,19 @@ int32 psf_gen(int16 *buffer, uint32 samples)
 	return AO_SUCCESS;
 }
 
-int32 psf_stop(void)
+int32 psf_stop(void *handle)
 {
+    psf_synth_t *s = handle;
 	SPUclose();
-	free(c);
+	free(s->c);
+	free (s);
 
 	return AO_SUCCESS;
 }
 
-int32 psf_command(int32 command, int32 parameter)
+int32 psf_command(void *handle, int32 command, int32 parameter)
 {
+    psf_synth_t *s = handle;
 	union cpuinfo mipsinfo;
 	uint32 lengthMS, fadeMS;
 
@@ -404,8 +421,8 @@ int32 psf_command(int32 command, int32 parameter)
 			SPUinit();
 			SPUopen();
 
-			lengthMS = psfTimeToMS(c->inf_length);
-			fadeMS = psfTimeToMS(c->inf_fade);
+			lengthMS = psfTimeToMS(s->c->inf_length);
+			fadeMS = psfTimeToMS(s->c->inf_fade);
 
 			if (lengthMS == 0) 
 			{
@@ -429,34 +446,35 @@ int32 psf_command(int32 command, int32 parameter)
 	return AO_FAIL;
 }
 
-int32 psf_fill_info(ao_display_info *info)
+int32 psf_fill_info(void *handle, ao_display_info *info)
 {
-	if (c == NULL)
+    psf_synth_t *s = handle;
+	if (s->c == NULL)
 		return AO_FAIL;
 		
 	strcpy(info->title[1], "Name: ");
-	sprintf(info->info[1], "%s", c->inf_title);
+	sprintf(info->info[1], "%s", s->c->inf_title);
 
 	strcpy(info->title[2], "Game: ");
-	sprintf(info->info[2], "%s", c->inf_game);
+	sprintf(info->info[2], "%s", s->c->inf_game);
 	
 	strcpy(info->title[3], "Artist: ");
-	sprintf(info->info[3], "%s", c->inf_artist);
+	sprintf(info->info[3], "%s", s->c->inf_artist);
 
 	strcpy(info->title[4], "Copyright: ");
-	sprintf(info->info[4], "%s", c->inf_copy);
+	sprintf(info->info[4], "%s", s->c->inf_copy);
 
 	strcpy(info->title[5], "Year: ");
-	sprintf(info->info[5], "%s", c->inf_year);
+	sprintf(info->info[5], "%s", s->c->inf_year);
 
 	strcpy(info->title[6], "Length: ");
-	sprintf(info->info[6], "%s", c->inf_length);
+	sprintf(info->info[6], "%s", s->c->inf_length);
 
 	strcpy(info->title[7], "Fade: ");
-	sprintf(info->info[7], "%s", c->inf_fade);
+	sprintf(info->info[7], "%s", s->c->inf_fade);
 
 	strcpy(info->title[8], "Ripper: ");
-	sprintf(info->info[8], "%s", psfby);
+	sprintf(info->info[8], "%s", s->psfby);
 
 	return AO_SUCCESS;
 }

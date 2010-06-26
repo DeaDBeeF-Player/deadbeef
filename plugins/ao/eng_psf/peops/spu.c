@@ -490,6 +490,7 @@ int SPUasync(u32 cycles)
  return(1);
 }
 
+extern void spu_update (unsigned char* pSound,long lBytes); // HACK!
 void SPU_flushboot(void)
 {
    if((u8*)pS>((u8*)pSpuBuffer+1024))

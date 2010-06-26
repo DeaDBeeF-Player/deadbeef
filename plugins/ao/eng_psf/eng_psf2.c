@@ -35,7 +35,7 @@
 // eng_psf2.c
 //
 // References:
-// psf_format.txt v1.6 by Neill Corlett (filesystem and decompression info)
+// psf_format.txt v1.6 by Neill Corlett (s->filesystem and decompression info)
 // Intel ELF format specs ELF.PS (general ELF parsing info)
 // http://ps2dev.org/kb.x?T=457 (IRX relocation and inter-module call info)
 // http://ps2dev.org/ (the whole site - lots of IOP info)
@@ -61,26 +61,28 @@
 #include "corlett.h"
 
 #define DEBUG_LOADER	(0)
-#define MAX_FS		(32)	// maximum # of filesystems (libs and subdirectories)
+#define MAX_FS		(32)	// maximum # of s->filesystems (libs and subdirectories)
 
 // ELF relocation helpers
 #define ELF32_R_SYM(val)                ((val) >> 8)
 #define ELF32_R_TYPE(val)               ((val) & 0xff)
 
-static corlett_t	*c = NULL;
-static char 		psfby[256];
-static char		*spu_pOutput;
-
 // main RAM
 extern uint32 psx_ram[(2*1024*1024)/4];
 extern uint32 initial_ram[(2*1024*1024)/4];
-static uint32 initialPC, initialSP;
 static uint32 loadAddr, lengthMS, fadeMS;
-
+static char		*spu_pOutput;
 static uint8 *filesys[MAX_FS];
-static uint8 *lib_raw_file;
 static uint32 fssize[MAX_FS];
 static int num_fs;
+
+typedef struct {
+    corlett_t	*c;
+    char 		psfby[256];
+    uint32 initialPC, initialSP;
+
+    uint8 *lib_raw_file;
+} psf2_synth_t;
 
 extern void mips_init( void );
 extern void mips_reset( void *param );
@@ -381,8 +383,8 @@ static dump_files(int fs, uint8 *buf, uint32 buflen)
 
 	printf("Dumping FS %d\n", fs);
 		
-	start = filesys[fs];
-	len = fssize[fs];
+	start = s->filesys[fs];
+	len = s->fssize[fs];
 
 	cptr = start + 4; 
 
@@ -456,8 +458,10 @@ uint32 psf2_load_file(char *file, uint8 *buf, uint32 buflen)
 	return 0xffffffff;
 }
 
-int32 psf2_start(uint8 *buffer, uint32 length)
+void *psf2_start(uint8 *buffer, uint32 length)
 {
+    psf2_synth_t *s = malloc (sizeof (psf2_synth_t));
+
 	uint8 *file, *lib_decoded;
 	uint32 irx_len;
 	uint64 file_len, lib_raw_length, lib_len;
@@ -472,39 +476,42 @@ int32 psf2_start(uint8 *buffer, uint32 length)
 	memset(psx_ram, 0, 2*1024*1024);
 
 	// Decode the current PSF2
-	if (corlett_decode(buffer, length, &file, &file_len, &c) != AO_SUCCESS)
+	if (corlett_decode(buffer, length, &file, &file_len, &s->c) != AO_SUCCESS)
 	{
-		return AO_FAIL;
+        free (s);
+		return NULL;
 	}
 
 	if (file_len > 0) printf("ERROR: PSF2 can't have a program section!  ps %08x\n", file_len);
 
 	#if DEBUG_LOADER
-	printf("FS section: size %x\n", c->res_size);
+	printf("FS section: size %x\n", s->c->res_size);
 	#endif
 
 	num_fs = 1;
-	filesys[0] = (uint8 *)c->res_section;
-	fssize[0] = c->res_size;
+	filesys[0] = (uint8 *)s->c->res_section;
+	fssize[0] = s->c->res_size;
 
 	// Get the library file, if any
-	if (c->lib[0] != 0)
+	if (s->c->lib[0] != 0)
 	{
 		uint64 tmp_length;
 	
 		#if DEBUG_LOADER	
-		printf("Loading library: %s\n", c->lib);
+		printf("Loading library: %s\n", s->c->lib);
 		#endif
-		if (ao_get_lib(c->lib, &lib_raw_file, &tmp_length) != AO_SUCCESS)
+		if (ao_get_lib(s->c->lib, &s->lib_raw_file, &tmp_length) != AO_SUCCESS)
 		{
-			return AO_FAIL;
+            free (s);
+            return NULL;
 		}
 		lib_raw_length = tmp_length;
 
-		if (corlett_decode(lib_raw_file, lib_raw_length, &lib_decoded, &lib_len, &lib) != AO_SUCCESS)
+		if (corlett_decode(s->lib_raw_file, lib_raw_length, &lib_decoded, &lib_len, &lib) != AO_SUCCESS)
 		{
-			free(lib_raw_file);
-			return AO_FAIL;
+			free(s->lib_raw_file);
+            free (s);
+            return NULL;
 		}
 				
 		#if DEBUG_LOADER
@@ -520,7 +527,7 @@ int32 psf2_start(uint8 *buffer, uint32 length)
 	#if 0
 	buf = (uint8 *)malloc(16*1024*1024);
 	dump_files(0, buf, 16*1024*1024);
-	if (c->lib[0] != 0)
+	if (s->c->lib[0] != 0)
 		dump_files(1, buf, 16*1024*1024);
 	free(buf);
 	#endif
@@ -531,18 +538,19 @@ int32 psf2_start(uint8 *buffer, uint32 length)
 
 	if (irx_len != 0xffffffff)
 	{
-		initialPC = psf2_load_elf(buf, irx_len);
-		initialSP = 0x801ffff0;
+		s->initialPC = psf2_load_elf(buf, irx_len);
+		s->initialSP = 0x801ffff0;
 	}
 	free(buf);
 
-	if (initialPC == 0xffffffff)
+	if (s->initialPC == 0xffffffff)
 	{
-		return AO_FAIL;
+        free (s);
+        return NULL;
 	}
 
-	lengthMS = psfTimeToMS(c->inf_length);
-	fadeMS = psfTimeToMS(c->inf_fade);
+	lengthMS = psfTimeToMS(s->c->inf_length);
+	fadeMS = psfTimeToMS(s->c->inf_fade);
 	if (lengthMS == 0) 
 	{
 		lengthMS = ~0;
@@ -552,10 +560,10 @@ int32 psf2_start(uint8 *buffer, uint32 length)
 	mips_init();
 	mips_reset(NULL);
 
-	mipsinfo.i = initialPC;
+	mipsinfo.i = s->initialPC;
 	mips_set_info(CPUINFO_INT_PC, &mipsinfo);
 
-	mipsinfo.i = initialSP;
+	mipsinfo.i = s->initialSP;
 	mips_set_info(CPUINFO_INT_REGISTER + MIPS_R29, &mipsinfo);
 	mips_set_info(CPUINFO_INT_REGISTER + MIPS_R30, &mipsinfo);
 
@@ -583,7 +591,7 @@ int32 psf2_start(uint8 *buffer, uint32 length)
 	SPU2init();
 	SPU2open(NULL);
 
-	return AO_SUCCESS;
+	return s;
 }
 
 void ps2_update(unsigned char *pSound, long lBytes)
@@ -591,7 +599,7 @@ void ps2_update(unsigned char *pSound, long lBytes)
 	memcpy(spu_pOutput, pSound, lBytes);	// (for direct 44.1kHz output)
 }
 
-int32 psf2_gen(int16 *buffer, uint32 samples)
+int32 psf2_gen(void *handle, int16 *buffer, uint32 samples)
 {	
 	int i;
 
@@ -611,20 +619,23 @@ int32 psf2_gen(int16 *buffer, uint32 samples)
 	return AO_SUCCESS;
 }
 
-int32 psf2_stop(void)
+int32 psf2_stop(void *handle)
 {
+    psf2_synth_t *s = handle;
 	SPU2close();
-	if (c->lib[0] != 0)
+	if (s->c->lib[0] != 0)
 	{
-		free(lib_raw_file);
+		free(s->lib_raw_file);
 	}
-	free(c);
+	free(s->c);
+	free (s);
 
 	return AO_SUCCESS;
 }
 
-int32 psf2_command(int32 command, int32 parameter)
+int32 psf2_command(void *handle, int32 command, int32 parameter)
 {
+    psf2_synth_t *s = handle;
 	union cpuinfo mipsinfo;
 	uint32 lengthMS, fadeMS;
 
@@ -641,10 +652,10 @@ int32 psf2_command(int32 command, int32 parameter)
 			SPU2init();
 			SPU2open(NULL);
 
-			mipsinfo.i = initialPC;
+			mipsinfo.i = s->initialPC;
 			mips_set_info(CPUINFO_INT_PC, &mipsinfo);
 
-			mipsinfo.i = initialSP;
+			mipsinfo.i = s->initialSP;
 			mips_set_info(CPUINFO_INT_REGISTER + MIPS_R29, &mipsinfo);
 			mips_set_info(CPUINFO_INT_REGISTER + MIPS_R30, &mipsinfo);
 
@@ -661,8 +672,8 @@ int32 psf2_command(int32 command, int32 parameter)
 
 			psx_hw_init();
 
-			lengthMS = psfTimeToMS(c->inf_length);
-			fadeMS = psfTimeToMS(c->inf_fade);
+			lengthMS = psfTimeToMS(s->c->inf_length);
+			fadeMS = psfTimeToMS(s->c->inf_fade);
 			if (lengthMS == 0) 
 			{
 				lengthMS = ~0;
@@ -675,34 +686,35 @@ int32 psf2_command(int32 command, int32 parameter)
 	return AO_FAIL;
 }
 
-int32 psf2_fill_info(ao_display_info *info)
+int32 psf2_fill_info(void *handle, ao_display_info *info)
 {
-	if (c == NULL)
+    psf2_synth_t *s = handle;
+	if (s->c == NULL)
 		return AO_FAIL;
 		
 	strcpy(info->title[1], "Name: ");
-	sprintf(info->info[1], "%s", c->inf_title);
+	sprintf(info->info[1], "%s", s->c->inf_title);
 
 	strcpy(info->title[2], "Game: ");
-	sprintf(info->info[2], "%s", c->inf_game);
+	sprintf(info->info[2], "%s", s->c->inf_game);
 	
 	strcpy(info->title[3], "Artist: ");
-	sprintf(info->info[3], "%s", c->inf_artist);
+	sprintf(info->info[3], "%s", s->c->inf_artist);
 
 	strcpy(info->title[4], "Copyright: ");
-	sprintf(info->info[4], "%s", c->inf_copy);
+	sprintf(info->info[4], "%s", s->c->inf_copy);
 
 	strcpy(info->title[5], "Year: ");
-	sprintf(info->info[5], "%s", c->inf_year);
+	sprintf(info->info[5], "%s", s->c->inf_year);
 
 	strcpy(info->title[6], "Length: ");
-	sprintf(info->info[6], "%s", c->inf_length);
+	sprintf(info->info[6], "%s", s->c->inf_length);
 
 	strcpy(info->title[7], "Fade: ");
-	sprintf(info->info[7], "%s", c->inf_fade);
+	sprintf(info->info[7], "%s", s->c->inf_fade);
 
 	strcpy(info->title[8], "Ripper: ");
-	sprintf(info->info[8], "%s", psfby);
+	sprintf(info->info[8], "%s", s->psfby);
 
 	return AO_SUCCESS;
 }

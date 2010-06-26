@@ -20,6 +20,6 @@ eng_psf/peops2/adsr.h eng_psf/peops2/dma.h eng_psf/peops2/externals.h eng_psf/pe
 ao_la_LDFLAGS = -module -fPIC
 
 ao_la_LIBADD = $(LDADD)
-AM_CFLAGS = $(CFLAGS) -DPATH_MAX=1024 -DHAS_PSXCPU=1 -I.. -Ieng_ssf -Ieng_qsf -Ieng_dsf -DLSB_FIRST=1 -lm $(ZLIB_LIBS)
+AM_CFLAGS = $(CFLAGS) -Wall -DPATH_MAX=1024 -DHAS_PSXCPU=1 -I.. -Ieng_ssf -Ieng_qsf -Ieng_dsf -DLSB_FIRST=1 -lm $(ZLIB_LIBS)
 endif
 

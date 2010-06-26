@@ -39,28 +39,40 @@
 #include "eng_protos.h"
 #include "cpuintrf.h"
 #include "psx.h"
+#include "peops/externals.h"
 
 extern int SPUinit(void);
 extern int SPUopen(void);
 extern int SPUclose(void);
 extern void SPUinjectRAMImage(unsigned short *source);
+extern void setlength(int32 stop, int32 fade);
+extern void SPUwriteRegister(u32 reg, u16 val);
+extern u16 SPUreadRegister(u32 reg);
 
-static uint8 *start_of_file, *song_ptr;
-static uint32 cur_tick, cur_event, num_events, next_tick, end_tick;
-static int old_fmt;
-static char name[128], song[128], company[128];
+typedef struct {
+    uint8 *start_of_file, *song_ptr;
+    uint32 cur_tick, cur_event, num_events, next_tick, end_tick;
+    int old_fmt;
+    char name[128], song[128], company[128];
+} spu_synth_t;
 
-int32 spu_start(uint8 *buffer, uint32 length)
+extern char *spu_pOutput; // hack!
+
+void *spu_start(uint8 *buffer, uint32 length)
 {
+    spu_synth_t *s = malloc (sizeof (spu_synth_t));
+    memset (s, 0, sizeof (spu_synth_t));
+
 	int i;
 	uint16 reg;
 
 	if (strncmp((char *)buffer, "SPU", 3))
 	{
-		return AO_FAIL;
+		spu_stop (s);
+		return NULL;
 	}
 
-	start_of_file = buffer;
+	s->start_of_file = buffer;
 
 	SPUinit();
 	SPUopen();
@@ -77,123 +89,121 @@ int32 spu_start(uint8 *buffer, uint32 length)
 		SPUwriteRegister((i/2)+0x1f801c00, reg);
 	}
 
-	old_fmt = 1;
+	s->old_fmt = 1;
 
 	if ((buffer[0x80200] != 0x44) || (buffer[0x80201] != 0xac) || (buffer[0x80202] != 0x00) || (buffer[0x80203] != 0x00))
 	{
-		old_fmt = 0;
+		s->old_fmt = 0;
 	}
 
-	if (old_fmt)
+	if (s->old_fmt)
 	{
-		num_events = buffer[0x80204] | buffer[0x80205]<<8 | buffer[0x80206]<<16 | buffer[0x80207]<<24;
+		s->num_events = buffer[0x80204] | buffer[0x80205]<<8 | buffer[0x80206]<<16 | buffer[0x80207]<<24;
 
-		if (((num_events * 12) + 0x80208) > length)
+		if (((s->num_events * 12) + 0x80208) > length)
 		{
-			old_fmt = 0;
+			s->old_fmt = 0;
 		}
 		else
 		{
-			cur_tick = 0;
+			s->cur_tick = 0;
 		}
 	}
 
-	if (!old_fmt)
+	if (!s->old_fmt)
 	{
-		end_tick = buffer[0x80200] | buffer[0x80201]<<8 | buffer[0x80202]<<16 | buffer[0x80203]<<24; 
-		cur_tick = buffer[0x80204] | buffer[0x80205]<<8 | buffer[0x80206]<<16 | buffer[0x80207]<<24; 
-		next_tick = cur_tick;
+		s->end_tick = buffer[0x80200] | buffer[0x80201]<<8 | buffer[0x80202]<<16 | buffer[0x80203]<<24; 
+		s->cur_tick = buffer[0x80204] | buffer[0x80205]<<8 | buffer[0x80206]<<16 | buffer[0x80207]<<24; 
+		s->next_tick = s->cur_tick;
 	}
 
-	song_ptr = &buffer[0x80208];
-	cur_event = 0;
+	s->song_ptr = &buffer[0x80208];
+	s->cur_event = 0;
 
-	strncpy((char *)&buffer[4], name, 128);
-	strncpy((char *)&buffer[0x44], song, 128);
-	strncpy((char *)&buffer[0x84], company, 128);
+	strncpy((char *)&buffer[4], s->name, 128);
+	strncpy((char *)&buffer[0x44], s->song, 128);
+	strncpy((char *)&buffer[0x84], s->company, 128);
 
-	return AO_SUCCESS;
+	return s;
 }
 
 extern int SPUasync(uint32 cycles);
 extern void SPU_flushboot(void);
 
-extern char *spu_pOutput;	// this is a bit lame, but we'll deal
-
-static void spu_tick(void)
+static void spu_tick(spu_synth_t *s)
 {
 	uint32 time, reg, size;
 	uint16 rdata;
 	uint8 opcode;
 
-	if (old_fmt)
+	if (s->old_fmt)
 	{
-		time = song_ptr[0] | song_ptr[1]<<8 | song_ptr[2]<<16 | song_ptr[3]<<24;
+		time = s->song_ptr[0] | s->song_ptr[1]<<8 | s->song_ptr[2]<<16 | s->song_ptr[3]<<24;
 
-		while ((time == cur_tick) && (cur_event < num_events))
+		while ((time == s->cur_tick) && (s->cur_event < s->num_events))
 		{
-			reg = song_ptr[4] | song_ptr[5]<<8 | song_ptr[6]<<16 | song_ptr[7]<<24;
-			rdata = song_ptr[8] | song_ptr[9]<<8;
+			reg = s->song_ptr[4] | s->song_ptr[5]<<8 | s->song_ptr[6]<<16 | s->song_ptr[7]<<24;
+			rdata = s->song_ptr[8] | s->song_ptr[9]<<8;
 
 			SPUwriteRegister(reg, rdata);
 
-			cur_event++;
-			song_ptr += 12;
+			s->cur_event++;
+			s->song_ptr += 12;
 
-			time = song_ptr[0] | song_ptr[1]<<8 | song_ptr[2]<<16 | song_ptr[3]<<24;
+			time = s->song_ptr[0] | s->song_ptr[1]<<8 | s->song_ptr[2]<<16 | s->song_ptr[3]<<24;
 		}
 	}
 	else
 	{
-		if (cur_tick < end_tick)
+		if (s->cur_tick < s->end_tick)
 		{
-			while (cur_tick == next_tick)
+			while (s->cur_tick == s->next_tick)
 			{
-				opcode = song_ptr[0];
-				song_ptr++;
+				opcode = s->song_ptr[0];
+				s->song_ptr++;
 
 				switch (opcode)
 				{
 					case 0:	// write register
-						reg = song_ptr[0] | song_ptr[1]<<8 | song_ptr[2]<<16 | song_ptr[3]<<24;
-						rdata = song_ptr[4] | song_ptr[5]<<8;
+						reg = s->song_ptr[0] | s->song_ptr[1]<<8 | s->song_ptr[2]<<16 | s->song_ptr[3]<<24;
+						rdata = s->song_ptr[4] | s->song_ptr[5]<<8;
 
 						SPUwriteRegister(reg, rdata);
 
-						next_tick = song_ptr[6] | song_ptr[7]<<8 | song_ptr[8]<<16 | song_ptr[9]<<24; 
-						song_ptr += 10;
+						s->next_tick = s->song_ptr[6] | s->song_ptr[7]<<8 | s->song_ptr[8]<<16 | s->song_ptr[9]<<24; 
+						s->song_ptr += 10;
 						break;
 
 					case 1:	// read register
-				 		reg = song_ptr[0] | song_ptr[1]<<8 | song_ptr[2]<<16 | song_ptr[3]<<24;
+				 		reg = s->song_ptr[0] | s->song_ptr[1]<<8 | s->song_ptr[2]<<16 | s->song_ptr[3]<<24;
 						SPUreadRegister(reg);
-						next_tick = song_ptr[4] | song_ptr[5]<<8 | song_ptr[6]<<16 | song_ptr[7]<<24; 
-						song_ptr += 8;
+						s->next_tick = s->song_ptr[4] | s->song_ptr[5]<<8 | s->song_ptr[6]<<16 | s->song_ptr[7]<<24; 
+						s->song_ptr += 8;
 						break;
 
 					case 2: // dma write
-						size = song_ptr[0] | song_ptr[1]<<8 | song_ptr[2]<<16 | song_ptr[3]<<24; 
-						song_ptr += (4 + size);
-						next_tick = song_ptr[0] | song_ptr[1]<<8 | song_ptr[2]<<16 | song_ptr[3]<<24; 
-						song_ptr += 4;
+						size = s->song_ptr[0] | s->song_ptr[1]<<8 | s->song_ptr[2]<<16 | s->song_ptr[3]<<24; 
+						s->song_ptr += (4 + size);
+						s->next_tick = s->song_ptr[0] | s->song_ptr[1]<<8 | s->song_ptr[2]<<16 | s->song_ptr[3]<<24; 
+						s->song_ptr += 4;
 						break;
 
 					case 3: // dma read
-						next_tick = song_ptr[4] | song_ptr[5]<<8 | song_ptr[6]<<16 | song_ptr[7]<<24; 
-						song_ptr += 8;
+						s->next_tick = s->song_ptr[4] | s->song_ptr[5]<<8 | s->song_ptr[6]<<16 | s->song_ptr[7]<<24; 
+						s->song_ptr += 8;
 						break;
 
 					case 4: // xa play
-						song_ptr += (32 + 16384);
-						next_tick = song_ptr[0] | song_ptr[1]<<8 | song_ptr[2]<<16 | song_ptr[3]<<24; 
-						song_ptr += 4;
+						s->song_ptr += (32 + 16384);
+						s->next_tick = s->song_ptr[0] | s->song_ptr[1]<<8 | s->song_ptr[2]<<16 | s->song_ptr[3]<<24; 
+						s->song_ptr += 4;
 						break;
 
 					case 5: // cdda play
-						size = song_ptr[0] | song_ptr[1]<<8 | song_ptr[2]<<16 | song_ptr[3]<<24; 
-						song_ptr += (4 + size);
-						next_tick = song_ptr[0] | song_ptr[1]<<8 | song_ptr[2]<<16 | song_ptr[3]<<24; 
-						song_ptr += 4;
+						size = s->song_ptr[0] | s->song_ptr[1]<<8 | s->song_ptr[2]<<16 | s->song_ptr[3]<<24; 
+						s->song_ptr += (4 + size);
+						s->next_tick = s->song_ptr[0] | s->song_ptr[1]<<8 | s->song_ptr[2]<<16 | s->song_ptr[3]<<24; 
+						s->song_ptr += 4;
 						break;
 
 					default:
@@ -205,27 +215,28 @@ static void spu_tick(void)
 		}
 		else
 		{
-//			ao_song_done = 1;
+//			ao_s->song_done = 1;
 		}
 	}
 
-	cur_tick++;
+	s->cur_tick++;
 }
 
-int32 spu_gen(int16 *buffer, uint32 samples)
+int32 spu_gen(void *handle, int16 *buffer, uint32 samples)
 {
+    spu_synth_t *s = handle;
 	int i, run = 1;
 
-	if (old_fmt)
+	if (s->old_fmt)
 	{
-		if (cur_event >= num_events)
+		if (s->cur_event >= s->num_events)
 		{
 			run = 0;
 		}
 	}
 	else
 	{
-		if (cur_tick >= end_tick)
+		if (s->cur_tick >= s->end_tick)
 		{
 			run = 0;
 		}
@@ -235,7 +246,7 @@ int32 spu_gen(int16 *buffer, uint32 samples)
 	{
 		for (i = 0; i < samples; i++)
 		{
-		  	spu_tick();
+		  	spu_tick(s);
 			SPUasync(384);
 		}
 
@@ -250,13 +261,15 @@ int32 spu_gen(int16 *buffer, uint32 samples)
 	return AO_SUCCESS;
 }
 
-int32 spu_stop(void)
+int32 spu_stop(void *handle)
 {
+    free (handle);
 	return AO_SUCCESS;
 }
 
-int32 spu_command(int32 command, int32 parameter)
+int32 spu_command(void *handle, int32 command, int32 parameter)
 {
+    spu_synth_t *s = handle;
 	switch (command)
 	{
 		case COMMAND_GET_MIN:
@@ -278,20 +291,20 @@ int32 spu_command(int32 command, int32 parameter)
 		
 		case COMMAND_RESTART:
 		{
-			song_ptr = &start_of_file[0x80200];
+			s->song_ptr = &s->start_of_file[0x80200];
 
-			if (old_fmt)
+			if (s->old_fmt)
 			{
-				num_events = song_ptr[4] | song_ptr[5]<<8 | song_ptr[6]<<16 | song_ptr[7]<<24;
+				s->num_events = s->song_ptr[4] | s->song_ptr[5]<<8 | s->song_ptr[6]<<16 | s->song_ptr[7]<<24;
 			}
 			else
 			{
-				end_tick = song_ptr[0] | song_ptr[1]<<8 | song_ptr[2]<<16 | song_ptr[3]<<24; 
-				cur_tick = song_ptr[4] | song_ptr[5]<<8 | song_ptr[6]<<16 | song_ptr[7]<<24; 
+				s->end_tick = s->song_ptr[0] | s->song_ptr[1]<<8 | s->song_ptr[2]<<16 | s->song_ptr[3]<<24; 
+				s->cur_tick = s->song_ptr[4] | s->song_ptr[5]<<8 | s->song_ptr[6]<<16 | s->song_ptr[7]<<24; 
 			}
 
-			song_ptr += 8;
-			cur_event = 0;
+			s->song_ptr += 8;
+			s->cur_event = 0;
 			return AO_SUCCESS;
 		}
 		break;
@@ -306,14 +319,15 @@ int32 spu_command(int32 command, int32 parameter)
 	return AO_FAIL;
 }
 
-int32 spu_fill_info(ao_display_info *info)
+int32 spu_fill_info(void *handle, ao_display_info *info)
 {
+    spu_synth_t *s = handle;
 	strcpy(info->title[1], "Game: ");
-	sprintf(info->info[1], "%.128s", name);
+	sprintf(info->info[1], "%.128s", s->name);
 	strcpy(info->title[2], "Song: ");
-	sprintf(info->info[2], "%.128s", song);
+	sprintf(info->info[2], "%.128s", s->song);
 	strcpy(info->title[3], "Company: ");
-	sprintf(info->info[3], "%.128s", company);
+	sprintf(info->info[3], "%.128s", s->company);
 
 	return AO_SUCCESS;
 }

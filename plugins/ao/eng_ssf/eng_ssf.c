@@ -75,17 +75,23 @@ Sega driver commands:
 #include "sat_hw.h"
 #include "scsp.h"
 
+extern int m68k_execute(int num_cycles);
+
 #define DEBUG_LOADER	(0)
 
-static corlett_t	*c = NULL;
-static char 		psfby[256];
-static uint32		decaybegin, decayend, total_samples;
+typedef struct {
+    corlett_t	*c;
+    char 		psfby[256];
+    uint32		decaybegin, decayend, total_samples;
+} ssf_synth_t;
 
 void *scsp_start(const void *config);
 void SCSP_Update(void *param, INT16 **inputs, INT16 **buf, int samples);
 
-int32 ssf_start(uint8 *buffer, uint32 length)
+void *ssf_start(uint8 *buffer, uint32 length)
 {
+    ssf_synth_t *s = malloc (sizeof (ssf_synth_t));
+    memset (s, 0, sizeof (ssf_synth_t));
 	uint8 *file, *lib_decoded, *lib_raw_file;
 	uint32 offset, plength, lengthMS, fadeMS;
 	uint64 file_len, lib_len, lib_raw_length;
@@ -97,9 +103,10 @@ int32 ssf_start(uint8 *buffer, uint32 length)
 	memset(sat_ram, 0, 512*1024);
 
 	// Decode the current SSF
-	if (corlett_decode(buffer, length, &file, &file_len, &c) != AO_SUCCESS)
+	if (corlett_decode(buffer, length, &file, &file_len, &s->c) != AO_SUCCESS)
 	{
-		return AO_FAIL;
+		ssf_stop (s);
+		return NULL;
 	}
 
 	#if DEBUG_LOADER
@@ -109,7 +116,7 @@ int32 ssf_start(uint8 *buffer, uint32 length)
 	// Get the library file, if any
 	for (i=0; i<9; i++) 
 	{
-		libfile = i ? c->libaux[i-1] : c->lib;
+		libfile = i ? s->c->libaux[i-1] : s->c->lib;
 		if (libfile[0] != 0)
 		{
 			uint64 tmp_length;
@@ -119,14 +126,16 @@ int32 ssf_start(uint8 *buffer, uint32 length)
 			#endif
 			if (ao_get_lib(libfile, &lib_raw_file, &tmp_length) != AO_SUCCESS)
 			{
-				return AO_FAIL;
+                ssf_stop (s);
+                return NULL;
 			}
 			lib_raw_length = tmp_length;
 		
 			if (corlett_decode(lib_raw_file, lib_raw_length, &lib_decoded, &lib_len, &lib) != AO_SUCCESS)
 			{
 				free(lib_raw_file);
-				return AO_FAIL;
+                ssf_stop (s);
+                return NULL;
 			}
 				
 			// Free up raw file
@@ -161,13 +170,13 @@ int32 ssf_start(uint8 *buffer, uint32 length)
 	free(file);
 	
 	// Finally, set psfby tag
-	strcpy(psfby, "n/a");
-	if (c)
+	strcpy(s->psfby, "n/a");
+	if (s->c)
 	{
 		for (i = 0; i < MAX_UNKNOWN_TAGS; i++)
 		{
-			if (!strcasecmp(c->tag_name[i], "psfby"))
-				strcpy(psfby, c->tag_data[i]);
+			if (!strcasecmp(s->c->tag_name[i], "psfby"))
+				strcpy(s->psfby, s->c->tag_data[i]);
 		}
 	}
 
@@ -194,9 +203,9 @@ int32 ssf_start(uint8 *buffer, uint32 length)
 	sat_hw_init();
 
 	// now figure out the time in samples for the length/fade
-	lengthMS = psfTimeToMS(c->inf_length);
-	fadeMS = psfTimeToMS(c->inf_fade);
-	total_samples = 0;
+	lengthMS = psfTimeToMS(s->c->inf_length);
+	fadeMS = psfTimeToMS(s->c->inf_fade);
+	s->total_samples = 0;
 
 	if (lengthMS == 0)
 	{
@@ -205,22 +214,23 @@ int32 ssf_start(uint8 *buffer, uint32 length)
 
 	if (lengthMS == ~0)
 	{
-		decaybegin = lengthMS;
+		s->decaybegin = lengthMS;
 	}
 	else
 	{
 		lengthMS = (lengthMS * 441) / 10;
 		fadeMS = (fadeMS * 441) / 10;
 
-		decaybegin = lengthMS;
-		decayend = lengthMS + fadeMS;
+		s->decaybegin = lengthMS;
+		s->decayend = lengthMS + fadeMS;
 	}
 
-	return AO_SUCCESS;
+	return s;
 }
 
-int32 ssf_gen(int16 *buffer, uint32 samples)
+int32 ssf_gen(void *handle, int16 *buffer, uint32 samples)
 {	
+    ssf_synth_t *s = handle;
 	int i;
 	int16 output[samples], output2[samples];
 	int16 *stereo[2];
@@ -237,9 +247,9 @@ int32 ssf_gen(int16 *buffer, uint32 samples)
 	for (i = 0; i < samples; i++)
 	{
 		// process the fade tags
-		if (total_samples >= decaybegin)
+		if (s->total_samples >= s->decaybegin)
 		{
-			if (total_samples >= decayend)
+			if (s->total_samples >= s->decayend)
 			{
 				// song is done here, call out as necessary to make your player stop
 				output[i] = 0;
@@ -247,16 +257,16 @@ int32 ssf_gen(int16 *buffer, uint32 samples)
 			}
 			else
 			{
-				int32 fader = 256 - (256*(total_samples - decaybegin)/(decayend-decaybegin));
+				int32 fader = 256 - (256*(s->total_samples - s->decaybegin)/(s->decayend-s->decaybegin));
 				output[i] = (output[i] * fader)>>8;
 				output2[i] = (output2[i] * fader)>>8;
 
-				total_samples++;
+				s->total_samples++;
 			}
 		}
 		else
 		{
-			total_samples++;
+			s->total_samples++;
 		}
 
 		*outp++ = output[i];
@@ -266,12 +276,12 @@ int32 ssf_gen(int16 *buffer, uint32 samples)
 	return AO_SUCCESS;
 }
 
-int32 ssf_stop(void)
+int32 ssf_stop(void *handle)
 {
 	return AO_SUCCESS;
 }
 
-int32 ssf_command(int32 command, int32 parameter)
+int32 ssf_command(void *handle, int32 command, int32 parameter)
 
 {
 	switch (command)
@@ -283,34 +293,35 @@ int32 ssf_command(int32 command, int32 parameter)
 	return AO_FAIL;
 }
 
-int32 ssf_fill_info(ao_display_info *info)
+int32 ssf_fill_info(void *handle, ao_display_info *info)
 {
-	if (c == NULL)
+    ssf_synth_t *s = handle;
+	if (s->c == NULL)
 		return AO_FAIL;
 		
 	strcpy(info->title[1], "Name: ");
-	sprintf(info->info[1], "%s", c->inf_title);
+	sprintf(info->info[1], "%s", s->c->inf_title);
 
 	strcpy(info->title[2], "Game: ");
-	sprintf(info->info[2], "%s", c->inf_game);
+	sprintf(info->info[2], "%s", s->c->inf_game);
 	
 	strcpy(info->title[3], "Artist: ");
-	sprintf(info->info[3], "%s", c->inf_artist);
+	sprintf(info->info[3], "%s", s->c->inf_artist);
 
 	strcpy(info->title[4], "Copyright: ");
-	sprintf(info->info[4], "%s", c->inf_copy);
+	sprintf(info->info[4], "%s", s->c->inf_copy);
 
 	strcpy(info->title[5], "Year: ");
-	sprintf(info->info[5], "%s", c->inf_year);
+	sprintf(info->info[5], "%s", s->c->inf_year);
 
 	strcpy(info->title[6], "Length: ");
-	sprintf(info->info[6], "%s", c->inf_length);
+	sprintf(info->info[6], "%s", s->c->inf_length);
 
 	strcpy(info->title[7], "Fade: ");
-	sprintf(info->info[7], "%s", c->inf_fade);
+	sprintf(info->info[7], "%s", s->c->inf_fade);
 
 	strcpy(info->title[8], "Ripper: ");
-	sprintf(info->info[8], "%s", psfby);
+	sprintf(info->info[8], "%s", s->psfby);
 
 	return AO_SUCCESS;
 }

@@ -41,12 +41,12 @@ static struct
 { 
 	uint32 sig; 
 	char *name; 
-	int32 (*start)(uint8 *, uint32); 
-	int32 (*gen)(int16 *, uint32); 
-	int32 (*stop)(void); 
-	int32 (*command)(int32, int32); 
+	void * (*start)(uint8 *, uint32); // returns handle
+	int32 (*gen)(void *handle, int16 *, uint32); 
+	int32 (*stop)(void *handle); 
+	int32 (*command)(void *handle, int32, int32); 
 	uint32 rate; 
-	int32 (*fillinfo)(ao_display_info *); 
+	int32 (*fillinfo)(void *handle, ao_display_info *); 
 } types[] = {
 	{ 0x50534641, "Capcom QSound (.qsf)", qsf_start, qsf_gen, qsf_stop, qsf_command, 60, qsf_fill_info },
 	{ 0x50534611, "Sega Saturn (.ssf)", ssf_start, ssf_gen, ssf_stop, ssf_command, 60, ssf_fill_info },
@@ -196,7 +196,9 @@ int main(int argv, char *argc[])
 		return -1;
 	}
 
-	if ((*types[type].start)(buffer, size) != AO_SUCCESS)
+    void *handle = (*types[type].start)(buffer, size);
+
+	if (!handle)
 	{
 		free(buffer);
 		printf("ERROR: Engine rejected file!\n");
@@ -256,24 +258,24 @@ ao_identify (char *buffer) {
     return type;
 }
 
-int
-ao_start (uint32 type, char *buffer, uint32 size) {
+void *
+ao_start (uint32 type, uint8 *buffer, uint32 size) {
     printf ("ao_start %d %p %d\n", type, buffer, size);
 	return (*types[type].start)(buffer, size);
 }
 
 int
-ao_stop (uint32 type) {
-	return (*types[type].stop)();
+ao_stop (uint32 type, void *handle) {
+	return (*types[type].stop)(handle);
 }
 
 int
-ao_get_info (uint32 type, ao_display_info *info) {
-	return (*types[type].fillinfo)(info);
+ao_get_info (uint32 type, void *handle, ao_display_info *info) {
+	return (*types[type].fillinfo)(handle, info);
 }
 
 int
-ao_decode (uint32 type, int16 *buffer, uint32 size) {
-	(*types[type].gen)(buffer, size);
+ao_decode (uint32 type, void *handle, int16 *buffer, uint32 size) {
+	(*types[type].gen)(handle, buffer, size);
 	return size;
 }

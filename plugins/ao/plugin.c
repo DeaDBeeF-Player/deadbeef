@@ -38,6 +38,7 @@ typedef struct {
     DB_fileinfo_t info;
     int currentsample;
     uint32 type;
+    void *decoder;
     char *filebuffer;
     size_t filesize;
     char buffer[735*4]; // psf2 decoder only works with 735 samples buffer
@@ -71,7 +72,7 @@ aoplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     info->filesize = deadbeef->fgetlength (file);
     info->filebuffer = malloc (info->filesize);
     if (!info->filebuffer) {
-		fprintf(stderr, "psf: could not allocate %d bytes of memory\n", info->filesize);
+		fprintf(stderr, "psf: could not allocate %d bytes of memory\n", (int)info->filesize);
 		deadbeef->fclose (file);
         return -1;
     }
@@ -89,7 +90,8 @@ aoplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         return -1;
     }
 
-    if (ao_start (info->type, info->filebuffer, info->filesize) != AO_SUCCESS) {
+    info->decoder = ao_start (info->type, (uint8 *)info->filebuffer, info->filesize);
+    if (!info->decoder) {
         fprintf (stderr, "psf: ao_start failed\n");
         return -1;
     }
@@ -102,7 +104,7 @@ aoplug_free (DB_fileinfo_t *_info) {
     aoplug_info_t *info = (aoplug_info_t *)_info;
     if (info) {
         if (info->filebuffer) {
-            ao_stop (info->type);
+            ao_stop (info->type, info->decoder);
             free (info->filebuffer);
             info->filebuffer = NULL;
         }
@@ -130,7 +132,7 @@ aoplug_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
             size -= n*4;
         }
         if (!info->remaining) {
-            ao_decode (info->type, (int16_t *)info->buffer, 735);
+            ao_decode (info->type, info->decoder, (int16_t *)info->buffer, 735);
             info->remaining = 735;
         }
     }
@@ -164,7 +166,7 @@ aoplug_insert (DB_playItem_t *after, const char *fname) {
     char *buffer = malloc (size);
     if (!buffer) {
         deadbeef->fclose (fp);
-		fprintf(stderr, "psf: could not allocate %d bytes of memory\n", size);
+		fprintf(stderr, "psf: could not allocate %d bytes of memory\n", (int)size);
         return NULL;
     }
 
@@ -182,16 +184,19 @@ aoplug_insert (DB_playItem_t *after, const char *fname) {
         return NULL;
     }
 
-    if (ao_start (type, buffer, size) != AO_SUCCESS) {
+    void *dec = ao_start (type, (uint8*)buffer, size);
+    if (!dec) {
         free (buffer);
         return NULL;
     }
-
     ao_display_info info;
     int have_info = 0;
-    if (ao_get_info (type, &info) == AO_SUCCESS) {
+    if (ao_get_info (type, dec, &info) == AO_SUCCESS) {
         have_info = 1;
     }
+
+    ao_stop (type, dec);
+    dec = NULL;
 
 	free (buffer);
 	
@@ -233,8 +238,8 @@ aoplug_insert (DB_playItem_t *after, const char *fname) {
         int i;
         for (i = 1; i < 9; i++) {
             if (!strncasecmp (info.title[i], "Length: ", 8)) {
-                int min, sec, unused;
-                if (sscanf (info.info[i], "%d:%d", &min, &sec, &unused) == 2) {
+                int min, sec;
+                if (sscanf (info.info[i], "%d:%d", &min, &sec) == 2) {
                     duration = min * 60 + sec;
                 }
             }
@@ -289,6 +294,8 @@ static DB_decoder_t plugin = {
     .plugin.author = "Alexey Yakovenko",
     .plugin.email = "waker@users.sourceforge.net",
     .plugin.website = "http://deadbeef.sf.net",
+    .plugin.start = aoplug_start,
+    .plugin.stop = aoplug_stop,
     .open = aoplug_open,
     .init = aoplug_init,
     .free = aoplug_free,
