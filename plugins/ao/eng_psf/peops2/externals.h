@@ -245,62 +245,6 @@ typedef struct
 // SPU.C globals
 ///////////////////////////////////////////////////////////
 
-#ifndef _IN_SPU
-
-// psx buffers / addresses
-
-extern unsigned short  regArea[];                        
-extern unsigned short  spuMem[];
-extern unsigned char * spuMemC;
-extern unsigned char * pSpuIrq[];
-extern unsigned char * pSpuBuffer;
-
-// user settings
-
-extern int        iUseXA;
-extern int        iVolume;
-extern int        iXAPitch;
-extern int        iUseTimer;
-extern int        iSPUIRQWait;
-extern int        iDebugMode;
-extern int        iRecordMode;
-extern int        iUseReverb;
-extern int        iUseInterpolation;
-extern int        iDisStereo;
-// MISC
-
-extern SPUCHAN s_chan[];
-extern REVERBInfo rvb[];
-
-extern unsigned long dwNoiseVal;
-extern unsigned short spuCtrl2[];
-extern unsigned short spuStat2[];
-extern unsigned long  spuIrq2[];
-extern unsigned long  spuAddr2[];
-extern unsigned long   spuRvbAddr2[];
-extern unsigned long   spuRvbAEnd2[];
-
-extern int      bEndThread; 
-extern int      bThreadEnded;
-extern int      bSpuInit;
-
-extern int      SSumR[];
-extern int      SSumL[];
-extern int      iCycle;
-extern short *  pS;
-extern unsigned long dwNewChannel2[];
-extern unsigned long dwEndChannel2[];
-
-extern int iSpuAsyncWait;
-
-#ifdef _WINDOWS
-//extern HWND    hWMain;                               // window handle
-//extern HWND    hWDebug;
-#endif
-
-extern void (CALLBACK *cddavCallback)(unsigned short,unsigned short);
-
-#endif
 
 ///////////////////////////////////////////////////////////
 // CFG.C globals
@@ -357,18 +301,6 @@ extern unsigned long   XALastVal;
 
 extern int           iLeftXAVol;
 extern int           iRightXAVol;
-
-#endif
-
-///////////////////////////////////////////////////////////
-// REVERB.C globals
-///////////////////////////////////////////////////////////
-
-#ifndef _IN_REVERB
-
-extern int *          sRVBPlay[];
-extern int *          sRVBEnd[];
-extern int *          sRVBStart[];
 
 #endif
 

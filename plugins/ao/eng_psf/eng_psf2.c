@@ -83,8 +83,6 @@ typedef struct {
     char		*spu_pOutput;
 } psf2_synth_t;
 
-extern void setlength2(int32 stop, int32 fade);
-
 void ps2_update(unsigned char *pSound, long lBytes, void *data)
 {
     psf2_synth_t *s = data;
@@ -556,7 +554,6 @@ void *psf2_start(uint8 *buffer, uint32 length)
 	{
 		lengthMS = ~0;
 	}
-	setlength2(lengthMS, fadeMS);
 
 	mipsinfo.i = s->initialPC;
 	mips_set_info(s->mips_cpu, CPUINFO_INT_PC, &mipsinfo);
@@ -588,6 +585,7 @@ void *psf2_start(uint8 *buffer, uint32 length)
 	psx_hw_init(s->mips_cpu);
 	SPU2init(s->mips_cpu, ps2_update, s);
 	SPU2open(s->mips_cpu, NULL);
+	setlength2(s->mips_cpu->spu2, lengthMS, fadeMS);
 
 	return s;
 }
@@ -672,7 +670,7 @@ int32 psf2_command(void *handle, int32 command, int32 parameter)
 			{
 				lengthMS = ~0;
 			}
-			setlength2(lengthMS, fadeMS);
+			setlength2(s->mips_cpu->spu2, lengthMS, fadeMS);
 
 			return AO_SUCCESS;
 		

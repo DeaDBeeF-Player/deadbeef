@@ -27,17 +27,18 @@
 //
 //*************************************************************************//
 
+struct spu2_state_s;
 
-void SoundOn(int start,int end,unsigned short val);
-void SoundOff(int start,int end,unsigned short val);
-void VolumeOn(int start,int end,unsigned short val,int iRight);
-void FModOn(int start,int end,unsigned short val);
-void NoiseOn(int start,int end,unsigned short val);
-void SetVolumeL(unsigned char ch,short vol);
-void SetVolumeR(unsigned char ch,short vol);
-void SetPitch(int ch,unsigned short val);
-void ReverbOn(int start,int end,unsigned short val,int iRight);
-void SetReverbAddr(int core);
+void SoundOn(struct spu2_state_s *spu, int start,int end,unsigned short val);
+void SoundOff(struct spu2_state_s *spu, int start,int end,unsigned short val);
+void VolumeOn(struct spu2_state_s *spu, int start,int end,unsigned short val,int iRight);
+void FModOn(struct spu2_state_s *spu, int start,int end,unsigned short val);
+void NoiseOn(struct spu2_state_s *spu, int start,int end,unsigned short val);
+void SetVolumeL(struct spu2_state_s *spu, unsigned char ch,short vol);
+void SetVolumeR(struct spu2_state_s *spu, unsigned char ch,short vol);
+void SetPitch(struct spu2_state_s *spu, int ch,unsigned short val);
+void ReverbOn(struct spu2_state_s *spu, int start,int end,unsigned short val,int iRight);
+void SetReverbAddr(struct spu2_state_s *spu, int core);
 
 //EXPORT_GCC void CALLBACK SPU2write(unsigned long reg, unsigned short val);
 

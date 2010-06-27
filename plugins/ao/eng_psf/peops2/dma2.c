@@ -35,6 +35,7 @@
 #include "../peops2/registers.h"
 //#include "debug.h"
 #include "../psx.h"
+#include "../peops2/spu.h"
 
 //extern uint32 psx_ram[(2*1024*1024)/4];
 
@@ -44,47 +45,49 @@
 
 EXPORT_GCC void CALLBACK SPU2readDMA4Mem(mips_cpu_context *cpu, u32 usPSXMem,int iSize)
 {
+    spu2_state_t *spu = cpu->spu2;
  int i;
  u16 *ram16 = (u16 *)&cpu->psx_ram[0];
 
  for(i=0;i<iSize;i++)
   {
-   ram16[usPSXMem>>1]=spuMem[spuAddr2[0]];                  // spu addr 0 got by writeregister
+   ram16[usPSXMem>>1]=spu->spuMem[spu->spuAddr2[0]];                  // spu addr 0 got by writeregister
    usPSXMem+=2;
-   spuAddr2[0]++;                                     // inc spu addr
-   if(spuAddr2[0]>0xfffff) spuAddr2[0]=0;             // wrap
+   spu->spuAddr2[0]++;                                     // inc spu addr
+   if(spu->spuAddr2[0]>0xfffff) spu->spuAddr2[0]=0;             // wrap
   }
 
- spuAddr2[0]+=0x20; //?????
+ spu->spuAddr2[0]+=0x20; //?????
  
 
- iSpuAsyncWait=0;
+ spu->iSpuAsyncWait=0;
 
  // got from J.F. and Kanodin... is it needed?
- regArea[(PS2_C0_ADMAS)>>1]=0;                         // Auto DMA complete
- spuStat2[0]=0x80;                                     // DMA complete
+ spu->regArea[(PS2_C0_ADMAS)>>1]=0;                         // Auto DMA complete
+ spu->spuStat2[0]=0x80;                                     // DMA complete
 }
 
 EXPORT_GCC void CALLBACK SPU2readDMA7Mem(mips_cpu_context *cpu, u32 usPSXMem,int iSize)
 {
+    spu2_state_t *spu = cpu->spu2;
  int i;
  u16 *ram16 = (u16 *)&cpu->psx_ram[0];
 
  for(i=0;i<iSize;i++)
   {
-   ram16[usPSXMem>>1]=spuMem[spuAddr2[1]];             // spu addr 1 got by writeregister
+   ram16[usPSXMem>>1]=spu->spuMem[spu->spuAddr2[1]];             // spu addr 1 got by writeregister
    usPSXMem+=2;
-   spuAddr2[1]++;                                      // inc spu addr
-   if(spuAddr2[1]>0xfffff) spuAddr2[1]=0;              // wrap
+   spu->spuAddr2[1]++;                                      // inc spu addr
+   if(spu->spuAddr2[1]>0xfffff) spu->spuAddr2[1]=0;              // wrap
   }
 
- spuAddr2[1]+=0x20; //?????
+ spu->spuAddr2[1]+=0x20; //?????
 
- iSpuAsyncWait=0;
+ spu->iSpuAsyncWait=0;
 
  // got from J.F. and Kanodin... is it needed?
- regArea[(PS2_C1_ADMAS)>>1]=0;                         // Auto DMA complete
- spuStat2[1]=0x80;                                     // DMA complete
+ spu->regArea[(PS2_C1_ADMAS)>>1]=0;                         // Auto DMA complete
+ spu->spuStat2[1]=0x80;                                     // DMA complete
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -101,39 +104,41 @@ EXPORT_GCC void CALLBACK SPU2readDMA7Mem(mips_cpu_context *cpu, u32 usPSXMem,int
 
 EXPORT_GCC void CALLBACK SPU2writeDMA4Mem(mips_cpu_context *cpu, u32 usPSXMem,int iSize)
 {
+    spu2_state_t *spu = cpu->spu2;
  int i;
  u16 *ram16 = (u16 *)&cpu->psx_ram[0];
 
  for(i=0;i<iSize;i++)
   {
-   spuMem[spuAddr2[0]] = ram16[usPSXMem>>1];                 // spu addr 0 got by writeregister
+   spu->spuMem[spu->spuAddr2[0]] = ram16[usPSXMem>>1];                 // spu addr 0 got by writeregister
    usPSXMem+=2;
-   spuAddr2[0]++;                                      // inc spu addr
-   if(spuAddr2[0]>0xfffff) spuAddr2[0]=0;              // wrap
+   spu->spuAddr2[0]++;                                      // inc spu addr
+   if(spu->spuAddr2[0]>0xfffff) spu->spuAddr2[0]=0;              // wrap
   }
  
- iSpuAsyncWait=0;
+ spu->iSpuAsyncWait=0;
 
  // got from J.F. and Kanodin... is it needed?
- spuStat2[0]=0x80;                                     // DMA complete
+ spu->spuStat2[0]=0x80;                                     // DMA complete
 }
 
 EXPORT_GCC void CALLBACK SPU2writeDMA7Mem(mips_cpu_context *cpu, u32 usPSXMem,int iSize)
 {
+    spu2_state_t *spu = cpu->spu2;
  int i;
  u16 *ram16 = (u16 *)&cpu->psx_ram[0];
 
  for(i=0;i<iSize;i++)
   {
-   spuMem[spuAddr2[1]] = ram16[usPSXMem>>1];           // spu addr 1 got by writeregister
-   spuAddr2[1]++;                                      // inc spu addr
-   if(spuAddr2[1]>0xfffff) spuAddr2[1]=0;              // wrap
+   spu->spuMem[spu->spuAddr2[1]] = ram16[usPSXMem>>1];           // spu addr 1 got by writeregister
+   spu->spuAddr2[1]++;                                      // inc spu addr
+   if(spu->spuAddr2[1]>0xfffff) spu->spuAddr2[1]=0;              // wrap
   }
  
- iSpuAsyncWait=0;
+ spu->iSpuAsyncWait=0;
 
  // got from J.F. and Kanodin... is it needed?
- spuStat2[1]=0x80;                                     // DMA complete
+ spu->spuStat2[1]=0x80;                                     // DMA complete
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -142,14 +147,15 @@ EXPORT_GCC void CALLBACK SPU2writeDMA7Mem(mips_cpu_context *cpu, u32 usPSXMem,in
 
 void InterruptDMA4(mips_cpu_context *cpu) 
 {
+    spu2_state_t *spu = cpu->spu2;
 // taken from linuzappz NULL spu2
 //	spu2Rs16(CORE0_ATTR)&= ~0x30;
 //	spu2Rs16(REG__1B0) = 0;
 //	spu2Rs16(SPU2_STATX_WRDY_M)|= 0x80;
 
- spuCtrl2[0]&=~0x30;
- regArea[(PS2_C0_ADMAS)>>1]=0;
- spuStat2[0]|=0x80;
+ spu->spuCtrl2[0]&=~0x30;
+ spu->regArea[(PS2_C0_ADMAS)>>1]=0;
+ spu->spuStat2[0]|=0x80;
 }
                        
 EXPORT_GCC void CALLBACK SPU2interruptDMA4(mips_cpu_context *cpu) 
@@ -159,14 +165,15 @@ EXPORT_GCC void CALLBACK SPU2interruptDMA4(mips_cpu_context *cpu)
 
 void InterruptDMA7(mips_cpu_context *cpu) 
 {
+    spu2_state_t *spu = cpu->spu2;
 // taken from linuzappz NULL spu2
 //	spu2Rs16(CORE1_ATTR)&= ~0x30;
 //	spu2Rs16(REG__5B0) = 0;
 //	spu2Rs16(SPU2_STATX_DREQ)|= 0x80;
 
- spuCtrl2[1]&=~0x30;
- regArea[(PS2_C1_ADMAS)>>1]=0;
- spuStat2[1]|=0x80;
+ spu->spuCtrl2[1]&=~0x30;
+ spu->regArea[(PS2_C1_ADMAS)>>1]=0;
+ spu->spuStat2[1]|=0x80;
 }
 
 EXPORT_GCC void CALLBACK SPU2interruptDMA7(mips_cpu_context *cpu) 

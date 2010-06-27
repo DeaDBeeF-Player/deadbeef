@@ -47,37 +47,31 @@
 // globals
 ////////////////////////////////////////////////////////////////////////
 
-// REVERB info and timing vars...
-
-int *          sRVBPlay[2];
-int *          sRVBEnd[2];
-int *          sRVBStart[2];
-
 ////////////////////////////////////////////////////////////////////////
 // START REVERB
 ////////////////////////////////////////////////////////////////////////
 
-INLINE void StartREVERB(int ch)
+INLINE void StartREVERB(spu2_state_t *spu, int ch)
 {
  int core=ch/24;
  
- if((s_chan[ch].bReverbL || s_chan[ch].bReverbR) && (spuCtrl2[core]&0x80))       // reverb possible?
+ if((spu->s_chan[ch].bReverbL || spu->s_chan[ch].bReverbR) && (spu->spuCtrl2[core]&0x80))       // reverb possible?
   {
-   if(iUseReverb==1) s_chan[ch].bRVBActive=1;
+   if(spu->iUseReverb==1) spu->s_chan[ch].bRVBActive=1;
   }
- else s_chan[ch].bRVBActive=0;                         // else -> no reverb
+ else spu->s_chan[ch].bRVBActive=0;                         // else -> no reverb
 }
 
 ////////////////////////////////////////////////////////////////////////
 // HELPER FOR NEILL'S REVERB: re-inits our reverb mixing buf
 ////////////////////////////////////////////////////////////////////////
 
-INLINE void InitREVERB(void)
+INLINE void InitREVERB(spu2_state_t *spu)
 {
- if(iUseReverb==1)
+ if(spu->iUseReverb==1)
   {
-   memset(sRVBStart[0],0,NSSIZE*2*4);
-   memset(sRVBStart[1],0,NSSIZE*2*4);
+   memset(spu->sRVBStart[0],0,NSSIZE*2*4);
+   memset(spu->sRVBStart[1],0,NSSIZE*2*4);
   }
 }
 
@@ -85,154 +79,154 @@ INLINE void InitREVERB(void)
 // STORE REVERB
 ////////////////////////////////////////////////////////////////////////
 
-INLINE void StoreREVERB(int ch,int ns)
+INLINE void StoreREVERB(spu2_state_t *spu, int ch,int ns)
 {
  int core=ch/24;
  
- if(iUseReverb==0) return;
+ if(spu->iUseReverb==0) return;
  else
- if(iUseReverb==1) // -------------------------------- // Neil's reverb
+ if(spu->iUseReverb==1) // -------------------------------- // Neil's reverb
   {
-   const int iRxl=(s_chan[ch].sval*s_chan[ch].iLeftVolume*s_chan[ch].bReverbL)/0x4000;
-   const int iRxr=(s_chan[ch].sval*s_chan[ch].iRightVolume*s_chan[ch].bReverbR)/0x4000;
+   const int iRxl=(spu->s_chan[ch].sval*spu->s_chan[ch].iLeftVolume*spu->s_chan[ch].bReverbL)/0x4000;
+   const int iRxr=(spu->s_chan[ch].sval*spu->s_chan[ch].iRightVolume*spu->s_chan[ch].bReverbR)/0x4000;
 
    ns<<=1;
 
-   *(sRVBStart[core]+ns)  +=iRxl;                      // -> we mix all active reverb channels into an extra buffer
-   *(sRVBStart[core]+ns+1)+=iRxr;
+   *(spu->sRVBStart[core]+ns)  +=iRxl;                      // -> we mix all active reverb channels into an extra buffer
+   *(spu->sRVBStart[core]+ns+1)+=iRxr;
   }
 }
 
 ////////////////////////////////////////////////////////////////////////
 
-INLINE int g_buffer(int iOff,int core)                   // get_buffer content helper: takes care about wraps
+INLINE int g_buffer(spu2_state_t *spu, int iOff,int core)                   // get_buffer content helper: takes care about wraps
 {
- short * p=(short *)spuMem;
- iOff=(iOff)+rvb[core].CurrAddr;
- while(iOff>rvb[core].EndAddr)   iOff=rvb[core].StartAddr+(iOff-(rvb[core].EndAddr+1));
- while(iOff<rvb[core].StartAddr) iOff=rvb[core].EndAddr-(rvb[core].StartAddr-iOff);
+ short * p=(short *)spu->spuMem;
+ iOff=(iOff)+spu->rvb[core].CurrAddr;
+ while(iOff>spu->rvb[core].EndAddr)   iOff=spu->rvb[core].StartAddr+(iOff-(spu->rvb[core].EndAddr+1));
+ while(iOff<spu->rvb[core].StartAddr) iOff=spu->rvb[core].EndAddr-(spu->rvb[core].StartAddr-iOff);
  return (int)*(p+iOff);
 }
 
 ////////////////////////////////////////////////////////////////////////
 
-INLINE void s_buffer(int iOff,int iVal,int core)        // set_buffer content helper: takes care about wraps and clipping
+INLINE void s_buffer(spu2_state_t *spu, int iOff,int iVal,int core)        // set_buffer content helper: takes care about wraps and clipping
 {
- short * p=(short *)spuMem;
- iOff=(iOff)+rvb[core].CurrAddr;
- while(iOff>rvb[core].EndAddr) iOff=rvb[core].StartAddr+(iOff-(rvb[core].EndAddr+1));
- while(iOff<rvb[core].StartAddr) iOff=rvb[core].EndAddr-(rvb[core].StartAddr-iOff);
+ short * p=(short *)spu->spuMem;
+ iOff=(iOff)+spu->rvb[core].CurrAddr;
+ while(iOff>spu->rvb[core].EndAddr) iOff=spu->rvb[core].StartAddr+(iOff-(spu->rvb[core].EndAddr+1));
+ while(iOff<spu->rvb[core].StartAddr) iOff=spu->rvb[core].EndAddr-(spu->rvb[core].StartAddr-iOff);
  if(iVal<-32768L) iVal=-32768L;if(iVal>32767L) iVal=32767L;
  *(p+iOff)=(short)iVal;
 }
 
 ////////////////////////////////////////////////////////////////////////
 
-INLINE void s_buffer1(int iOff,int iVal,int core)      // set_buffer (+1 sample) content helper: takes care about wraps and clipping
+INLINE void s_buffer1(spu2_state_t *spu, int iOff,int iVal,int core)      // set_buffer (+1 sample) content helper: takes care about wraps and clipping
 {
- short * p=(short *)spuMem;
- iOff=(iOff)+rvb[core].CurrAddr+1;
- while(iOff>rvb[core].EndAddr) iOff=rvb[core].StartAddr+(iOff-(rvb[core].EndAddr+1));
- while(iOff<rvb[core].StartAddr) iOff=rvb[core].EndAddr-(rvb[core].StartAddr-iOff);
+ short * p=(short *)spu->spuMem;
+ iOff=(iOff)+spu->rvb[core].CurrAddr+1;
+ while(iOff>spu->rvb[core].EndAddr) iOff=spu->rvb[core].StartAddr+(iOff-(spu->rvb[core].EndAddr+1));
+ while(iOff<spu->rvb[core].StartAddr) iOff=spu->rvb[core].EndAddr-(spu->rvb[core].StartAddr-iOff);
  if(iVal<-32768L) iVal=-32768L;if(iVal>32767L) iVal=32767L;
  *(p+iOff)=(short)iVal;
 }
 
 ////////////////////////////////////////////////////////////////////////
 
-INLINE int MixREVERBLeft(int ns,int core)
+INLINE int MixREVERBLeft(spu2_state_t *spu, int ns,int core)
 {
- if(iUseReverb==1)
+ if(spu->iUseReverb==1)
   {
-   if(!rvb[core].StartAddr || !rvb[core].EndAddr || 
-      rvb[core].StartAddr>=rvb[core].EndAddr)          // reverb is off
+   if(!spu->rvb[core].StartAddr || !spu->rvb[core].EndAddr || 
+      spu->rvb[core].StartAddr>=spu->rvb[core].EndAddr)          // reverb is off
     {
-     rvb[core].iLastRVBLeft=rvb[core].iLastRVBRight=rvb[core].iRVBLeft=rvb[core].iRVBRight=0;
+     spu->rvb[core].iLastRVBLeft=spu->rvb[core].iLastRVBRight=spu->rvb[core].iRVBLeft=spu->rvb[core].iRVBRight=0;
      return 0;
     }
 
-   rvb[core].iCnt++;                                    
+   spu->rvb[core].iCnt++;                                    
 
-   if(rvb[core].iCnt&1)                                // we work on every second left value: downsample to 22 khz
+   if(spu->rvb[core].iCnt&1)                                // we work on every second left value: downsample to 22 khz
     {
-     if((spuCtrl2[core]&0x80))                         // -> reverb on? oki
+     if((spu->spuCtrl2[core]&0x80))                         // -> reverb on? oki
       {
        int ACC0,ACC1,FB_A0,FB_A1,FB_B0,FB_B1;
 
-       const int INPUT_SAMPLE_L=*(sRVBStart[core]+(ns<<1));                         
-       const int INPUT_SAMPLE_R=*(sRVBStart[core]+(ns<<1)+1);                     
+       const int INPUT_SAMPLE_L=*(spu->sRVBStart[core]+(ns<<1));                         
+       const int INPUT_SAMPLE_R=*(spu->sRVBStart[core]+(ns<<1)+1);                     
 
-       const int IIR_INPUT_A0 = (g_buffer(rvb[core].IIR_SRC_A0,core) * rvb[core].IIR_COEF)/32768L + (INPUT_SAMPLE_L * rvb[core].IN_COEF_L)/32768L;
-       const int IIR_INPUT_A1 = (g_buffer(rvb[core].IIR_SRC_A1,core) * rvb[core].IIR_COEF)/32768L + (INPUT_SAMPLE_R * rvb[core].IN_COEF_R)/32768L;
-       const int IIR_INPUT_B0 = (g_buffer(rvb[core].IIR_SRC_B0,core) * rvb[core].IIR_COEF)/32768L + (INPUT_SAMPLE_L * rvb[core].IN_COEF_L)/32768L;
-       const int IIR_INPUT_B1 = (g_buffer(rvb[core].IIR_SRC_B1,core) * rvb[core].IIR_COEF)/32768L + (INPUT_SAMPLE_R * rvb[core].IN_COEF_R)/32768L;
+       const int IIR_INPUT_A0 = (g_buffer(spu, spu->rvb[core].IIR_SRC_A0,core) * spu->rvb[core].IIR_COEF)/32768L + (INPUT_SAMPLE_L * spu->rvb[core].IN_COEF_L)/32768L;
+       const int IIR_INPUT_A1 = (g_buffer(spu, spu->rvb[core].IIR_SRC_A1,core) * spu->rvb[core].IIR_COEF)/32768L + (INPUT_SAMPLE_R * spu->rvb[core].IN_COEF_R)/32768L;
+       const int IIR_INPUT_B0 = (g_buffer(spu, spu->rvb[core].IIR_SRC_B0,core) * spu->rvb[core].IIR_COEF)/32768L + (INPUT_SAMPLE_L * spu->rvb[core].IN_COEF_L)/32768L;
+       const int IIR_INPUT_B1 = (g_buffer(spu, spu->rvb[core].IIR_SRC_B1,core) * spu->rvb[core].IIR_COEF)/32768L + (INPUT_SAMPLE_R * spu->rvb[core].IN_COEF_R)/32768L;
 
-       const int IIR_A0 = (IIR_INPUT_A0 * rvb[core].IIR_ALPHA)/32768L + (g_buffer(rvb[core].IIR_DEST_A0,core) * (32768L - rvb[core].IIR_ALPHA))/32768L;
-       const int IIR_A1 = (IIR_INPUT_A1 * rvb[core].IIR_ALPHA)/32768L + (g_buffer(rvb[core].IIR_DEST_A1,core) * (32768L - rvb[core].IIR_ALPHA))/32768L;
-       const int IIR_B0 = (IIR_INPUT_B0 * rvb[core].IIR_ALPHA)/32768L + (g_buffer(rvb[core].IIR_DEST_B0,core) * (32768L - rvb[core].IIR_ALPHA))/32768L;
-       const int IIR_B1 = (IIR_INPUT_B1 * rvb[core].IIR_ALPHA)/32768L + (g_buffer(rvb[core].IIR_DEST_B1,core) * (32768L - rvb[core].IIR_ALPHA))/32768L;
+       const int IIR_A0 = (IIR_INPUT_A0 * spu->rvb[core].IIR_ALPHA)/32768L + (g_buffer(spu, spu->rvb[core].IIR_DEST_A0,core) * (32768L - spu->rvb[core].IIR_ALPHA))/32768L;
+       const int IIR_A1 = (IIR_INPUT_A1 * spu->rvb[core].IIR_ALPHA)/32768L + (g_buffer(spu, spu->rvb[core].IIR_DEST_A1,core) * (32768L - spu->rvb[core].IIR_ALPHA))/32768L;
+       const int IIR_B0 = (IIR_INPUT_B0 * spu->rvb[core].IIR_ALPHA)/32768L + (g_buffer(spu, spu->rvb[core].IIR_DEST_B0,core) * (32768L - spu->rvb[core].IIR_ALPHA))/32768L;
+       const int IIR_B1 = (IIR_INPUT_B1 * spu->rvb[core].IIR_ALPHA)/32768L + (g_buffer(spu, spu->rvb[core].IIR_DEST_B1,core) * (32768L - spu->rvb[core].IIR_ALPHA))/32768L;
 
-       s_buffer1(rvb[core].IIR_DEST_A0, IIR_A0,core);
-       s_buffer1(rvb[core].IIR_DEST_A1, IIR_A1,core);
-       s_buffer1(rvb[core].IIR_DEST_B0, IIR_B0,core);
-       s_buffer1(rvb[core].IIR_DEST_B1, IIR_B1,core);
+       s_buffer1(spu, spu->rvb[core].IIR_DEST_A0, IIR_A0,core);
+       s_buffer1(spu, spu->rvb[core].IIR_DEST_A1, IIR_A1,core);
+       s_buffer1(spu, spu->rvb[core].IIR_DEST_B0, IIR_B0,core);
+       s_buffer1(spu, spu->rvb[core].IIR_DEST_B1, IIR_B1,core);
  
-       ACC0 = (g_buffer(rvb[core].ACC_SRC_A0,core) * rvb[core].ACC_COEF_A)/32768L +
-              (g_buffer(rvb[core].ACC_SRC_B0,core) * rvb[core].ACC_COEF_B)/32768L +
-              (g_buffer(rvb[core].ACC_SRC_C0,core) * rvb[core].ACC_COEF_C)/32768L +
-              (g_buffer(rvb[core].ACC_SRC_D0,core) * rvb[core].ACC_COEF_D)/32768L;
-       ACC1 = (g_buffer(rvb[core].ACC_SRC_A1,core) * rvb[core].ACC_COEF_A)/32768L +
-              (g_buffer(rvb[core].ACC_SRC_B1,core) * rvb[core].ACC_COEF_B)/32768L +
-              (g_buffer(rvb[core].ACC_SRC_C1,core) * rvb[core].ACC_COEF_C)/32768L +
-              (g_buffer(rvb[core].ACC_SRC_D1,core) * rvb[core].ACC_COEF_D)/32768L;
+       ACC0 = (g_buffer(spu, spu->rvb[core].ACC_SRC_A0,core) * spu->rvb[core].ACC_COEF_A)/32768L +
+              (g_buffer(spu, spu->rvb[core].ACC_SRC_B0,core) * spu->rvb[core].ACC_COEF_B)/32768L +
+              (g_buffer(spu, spu->rvb[core].ACC_SRC_C0,core) * spu->rvb[core].ACC_COEF_C)/32768L +
+              (g_buffer(spu, spu->rvb[core].ACC_SRC_D0,core) * spu->rvb[core].ACC_COEF_D)/32768L;
+       ACC1 = (g_buffer(spu, spu->rvb[core].ACC_SRC_A1,core) * spu->rvb[core].ACC_COEF_A)/32768L +
+              (g_buffer(spu, spu->rvb[core].ACC_SRC_B1,core) * spu->rvb[core].ACC_COEF_B)/32768L +
+              (g_buffer(spu, spu->rvb[core].ACC_SRC_C1,core) * spu->rvb[core].ACC_COEF_C)/32768L +
+              (g_buffer(spu, spu->rvb[core].ACC_SRC_D1,core) * spu->rvb[core].ACC_COEF_D)/32768L;
 
-       FB_A0 = g_buffer(rvb[core].MIX_DEST_A0 - rvb[core].FB_SRC_A,core);
-       FB_A1 = g_buffer(rvb[core].MIX_DEST_A1 - rvb[core].FB_SRC_A,core);
-       FB_B0 = g_buffer(rvb[core].MIX_DEST_B0 - rvb[core].FB_SRC_B,core);
-       FB_B1 = g_buffer(rvb[core].MIX_DEST_B1 - rvb[core].FB_SRC_B,core);
+       FB_A0 = g_buffer(spu, spu->rvb[core].MIX_DEST_A0 - spu->rvb[core].FB_SRC_A,core);
+       FB_A1 = g_buffer(spu, spu->rvb[core].MIX_DEST_A1 - spu->rvb[core].FB_SRC_A,core);
+       FB_B0 = g_buffer(spu, spu->rvb[core].MIX_DEST_B0 - spu->rvb[core].FB_SRC_B,core);
+       FB_B1 = g_buffer(spu, spu->rvb[core].MIX_DEST_B1 - spu->rvb[core].FB_SRC_B,core);
 
-       s_buffer(rvb[core].MIX_DEST_A0, ACC0 - (FB_A0 * rvb[core].FB_ALPHA)/32768L,core);
-       s_buffer(rvb[core].MIX_DEST_A1, ACC1 - (FB_A1 * rvb[core].FB_ALPHA)/32768L,core);
+       s_buffer(spu, spu->rvb[core].MIX_DEST_A0, ACC0 - (FB_A0 * spu->rvb[core].FB_ALPHA)/32768L,core);
+       s_buffer(spu, spu->rvb[core].MIX_DEST_A1, ACC1 - (FB_A1 * spu->rvb[core].FB_ALPHA)/32768L,core);
        
-       s_buffer(rvb[core].MIX_DEST_B0, (rvb[core].FB_ALPHA * ACC0)/32768L - (FB_A0 * (int)(rvb[core].FB_ALPHA^0xFFFF8000))/32768L - (FB_B0 * rvb[core].FB_X)/32768L,core);
-       s_buffer(rvb[core].MIX_DEST_B1, (rvb[core].FB_ALPHA * ACC1)/32768L - (FB_A1 * (int)(rvb[core].FB_ALPHA^0xFFFF8000))/32768L - (FB_B1 * rvb[core].FB_X)/32768L,core);
+       s_buffer(spu, spu->rvb[core].MIX_DEST_B0, (spu->rvb[core].FB_ALPHA * ACC0)/32768L - (FB_A0 * (int)(spu->rvb[core].FB_ALPHA^0xFFFF8000))/32768L - (FB_B0 * spu->rvb[core].FB_X)/32768L,core);
+       s_buffer(spu, spu->rvb[core].MIX_DEST_B1, (spu->rvb[core].FB_ALPHA * ACC1)/32768L - (FB_A1 * (int)(spu->rvb[core].FB_ALPHA^0xFFFF8000))/32768L - (FB_B1 * spu->rvb[core].FB_X)/32768L,core);
  
-       rvb[core].iLastRVBLeft  = rvb[core].iRVBLeft;
-       rvb[core].iLastRVBRight = rvb[core].iRVBRight;
+       spu->rvb[core].iLastRVBLeft  = spu->rvb[core].iRVBLeft;
+       spu->rvb[core].iLastRVBRight = spu->rvb[core].iRVBRight;
 
-       rvb[core].iRVBLeft  = (g_buffer(rvb[core].MIX_DEST_A0,core)+g_buffer(rvb[core].MIX_DEST_B0,core))/3;
-       rvb[core].iRVBRight = (g_buffer(rvb[core].MIX_DEST_A1,core)+g_buffer(rvb[core].MIX_DEST_B1,core))/3;
+       spu->rvb[core].iRVBLeft  = (g_buffer(spu, spu->rvb[core].MIX_DEST_A0,core)+g_buffer(spu, spu->rvb[core].MIX_DEST_B0,core))/3;
+       spu->rvb[core].iRVBRight = (g_buffer(spu, spu->rvb[core].MIX_DEST_A1,core)+g_buffer(spu, spu->rvb[core].MIX_DEST_B1,core))/3;
 
-       rvb[core].iRVBLeft  = (rvb[core].iRVBLeft  * rvb[core].VolLeft)  / 0x4000;
-       rvb[core].iRVBRight = (rvb[core].iRVBRight * rvb[core].VolRight) / 0x4000;
+       spu->rvb[core].iRVBLeft  = (spu->rvb[core].iRVBLeft  * spu->rvb[core].VolLeft)  / 0x4000;
+       spu->rvb[core].iRVBRight = (spu->rvb[core].iRVBRight * spu->rvb[core].VolRight) / 0x4000;
 
-       rvb[core].CurrAddr++;
-       if(rvb[core].CurrAddr>rvb[core].EndAddr) rvb[core].CurrAddr=rvb[core].StartAddr;
+       spu->rvb[core].CurrAddr++;
+       if(spu->rvb[core].CurrAddr>spu->rvb[core].EndAddr) spu->rvb[core].CurrAddr=spu->rvb[core].StartAddr;
 
-       return rvb[core].iLastRVBLeft+(rvb[core].iRVBLeft-rvb[core].iLastRVBLeft)/2;
+       return spu->rvb[core].iLastRVBLeft+(spu->rvb[core].iRVBLeft-spu->rvb[core].iLastRVBLeft)/2;
       }
      else                                              // -> reverb off
       {
-       rvb[core].iLastRVBLeft=rvb[core].iLastRVBRight=rvb[core].iRVBLeft=rvb[core].iRVBRight=0;
+       spu->rvb[core].iLastRVBLeft=spu->rvb[core].iLastRVBRight=spu->rvb[core].iRVBLeft=spu->rvb[core].iRVBRight=0;
       }
 
-     rvb[core].CurrAddr++;
-     if(rvb[core].CurrAddr>rvb[core].EndAddr) rvb[core].CurrAddr=rvb[core].StartAddr;
+     spu->rvb[core].CurrAddr++;
+     if(spu->rvb[core].CurrAddr>spu->rvb[core].EndAddr) spu->rvb[core].CurrAddr=spu->rvb[core].StartAddr;
     }
 
-   return rvb[core].iLastRVBLeft;
+   return spu->rvb[core].iLastRVBLeft;
   }
  return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////
 
-INLINE int MixREVERBRight(int core)
+INLINE int MixREVERBRight(spu2_state_t *spu, int core)
 {
- if(iUseReverb==1)                                     // Neill's reverb:
+ if(spu->iUseReverb==1)                                     // Neill's reverb:
   {
-   int i=rvb[core].iLastRVBRight+(rvb[core].iRVBRight-rvb[core].iLastRVBRight)/2;
-   rvb[core].iLastRVBRight=rvb[core].iRVBRight;
+   int i=spu->rvb[core].iLastRVBRight+(spu->rvb[core].iRVBRight-spu->rvb[core].iLastRVBRight)/2;
+   spu->rvb[core].iLastRVBRight=spu->rvb[core].iRVBRight;
    return i;                                           // -> just return the last right reverb val (little bit scaled by the previous right val)
   }
  return 0;

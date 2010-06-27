@@ -24,6 +24,6 @@
 //
 //*************************************************************************//
 
-void InterruptDMA4(void);
-void InterruptDMA7(void); 
+void InterruptDMA4(mips_cpu_context *cpu);
+void InterruptDMA7(mips_cpu_context *cpu); 
  
