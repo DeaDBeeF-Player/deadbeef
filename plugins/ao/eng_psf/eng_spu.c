@@ -40,23 +40,27 @@
 #include "cpuintrf.h"
 #include "psx.h"
 #include "peops/externals.h"
+#include "peops/spu.h"
+#include "peops/regs.h"
 
-extern int SPUinit(void);
-extern int SPUopen(void);
-extern int SPUclose(void);
-extern void SPUinjectRAMImage(unsigned short *source);
 extern void setlength(int32 stop, int32 fade);
-extern void SPUwriteRegister(u32 reg, u16 val);
-extern u16 SPUreadRegister(u32 reg);
 
 typedef struct {
     uint8 *start_of_file, *song_ptr;
     uint32 cur_tick, cur_event, num_events, next_tick, end_tick;
     int old_fmt;
     char name[128], song[128], company[128];
+    char *spu_pOutput;
+    mips_cpu_context *mips_cpu;
 } spu_synth_t;
 
-extern char *spu_pOutput; // hack!
+
+static void spu_update (unsigned char* pSound,long lBytes,void *data)
+{
+    spu_synth_t *s = data;
+	memcpy(s->spu_pOutput, pSound, lBytes);
+}
+
 
 void *spu_start(uint8 *buffer, uint32 length)
 {
@@ -74,19 +78,20 @@ void *spu_start(uint8 *buffer, uint32 length)
 
 	s->start_of_file = buffer;
 
-	SPUinit();
-	SPUopen();
+    s->mips_cpu = mips_alloc ();
+	SPUinit(s->mips_cpu, spu_update, s);
+	SPUopen(s->mips_cpu);
 	setlength(~0, 0);
 
 	// upload the SPU RAM image
-	SPUinjectRAMImage((unsigned short *)&buffer[0]);
+	SPUinjectRAMImage(s->mips_cpu, (unsigned short *)&buffer[0]);
 
 	// apply the register image	
 	for (i = 0; i < 512; i += 2)
 	{
 		reg = buffer[0x80000+i] | buffer[0x80000+i+1]<<8;
 
-		SPUwriteRegister((i/2)+0x1f801c00, reg);
+		SPUwriteRegister(s->mips_cpu, (i/2)+0x1f801c00, reg);
 	}
 
 	s->old_fmt = 1;
@@ -127,9 +132,6 @@ void *spu_start(uint8 *buffer, uint32 length)
 	return s;
 }
 
-extern int SPUasync(uint32 cycles);
-extern void SPU_flushboot(void);
-
 static void spu_tick(spu_synth_t *s)
 {
 	uint32 time, reg, size;
@@ -145,7 +147,7 @@ static void spu_tick(spu_synth_t *s)
 			reg = s->song_ptr[4] | s->song_ptr[5]<<8 | s->song_ptr[6]<<16 | s->song_ptr[7]<<24;
 			rdata = s->song_ptr[8] | s->song_ptr[9]<<8;
 
-			SPUwriteRegister(reg, rdata);
+			SPUwriteRegister(s->mips_cpu, reg, rdata);
 
 			s->cur_event++;
 			s->song_ptr += 12;
@@ -168,7 +170,7 @@ static void spu_tick(spu_synth_t *s)
 						reg = s->song_ptr[0] | s->song_ptr[1]<<8 | s->song_ptr[2]<<16 | s->song_ptr[3]<<24;
 						rdata = s->song_ptr[4] | s->song_ptr[5]<<8;
 
-						SPUwriteRegister(reg, rdata);
+						SPUwriteRegister(s->mips_cpu, reg, rdata);
 
 						s->next_tick = s->song_ptr[6] | s->song_ptr[7]<<8 | s->song_ptr[8]<<16 | s->song_ptr[9]<<24; 
 						s->song_ptr += 10;
@@ -176,7 +178,7 @@ static void spu_tick(spu_synth_t *s)
 
 					case 1:	// read register
 				 		reg = s->song_ptr[0] | s->song_ptr[1]<<8 | s->song_ptr[2]<<16 | s->song_ptr[3]<<24;
-						SPUreadRegister(reg);
+						SPUreadRegister(s->mips_cpu, reg);
 						s->next_tick = s->song_ptr[4] | s->song_ptr[5]<<8 | s->song_ptr[6]<<16 | s->song_ptr[7]<<24; 
 						s->song_ptr += 8;
 						break;
@@ -247,11 +249,11 @@ int32 spu_gen(void *handle, int16 *buffer, uint32 samples)
 		for (i = 0; i < samples; i++)
 		{
 		  	spu_tick(s);
-			SPUasync(384);
+			SPUasync(s->mips_cpu, 384);
 		}
 
-		spu_pOutput = (char *)buffer;
-		SPU_flushboot();
+		s->spu_pOutput = (char *)buffer;
+		SPU_flushboot(s->mips_cpu);
 	}
 	else
 	{

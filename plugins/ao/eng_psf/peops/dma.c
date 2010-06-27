@@ -28,17 +28,14 @@
 
 #define _IN_DMA
 
-extern uint32 psx_ram[(2*1024*1024)/4];
-
-//#include "externals.h"
 ////////////////////////////////////////////////////////////////////////
 // READ DMA (many values)
 ////////////////////////////////////////////////////////////////////////
 
-void SPUreadDMAMem(u32 usPSXMem,int iSize)
+void SPUreadDMAMem(mips_cpu_context *cpu, u32 usPSXMem,int iSize)
 {
  int i;
- u16 *ram16 = (u16 *)&psx_ram[0];
+ u16 *ram16 = (u16 *)&cpu->psx_ram[0];
 
  for(i=0;i<iSize;i++)
   {
@@ -61,10 +58,10 @@ void SPUreadDMAMem(u32 usPSXMem,int iSize)
 // WRITE DMA (many values)
 ////////////////////////////////////////////////////////////////////////
 
-void SPUwriteDMAMem(u32 usPSXMem,int iSize)
+void SPUwriteDMAMem(mips_cpu_context *cpu, u32 usPSXMem,int iSize)
 {
  int i;
- u16 *ram16 = (u16 *)&psx_ram[0];
+ u16 *ram16 = (u16 *)&cpu->psx_ram[0];
 
  for(i=0;i<iSize;i++)
   {

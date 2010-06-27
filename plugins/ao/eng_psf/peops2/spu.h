@@ -27,13 +27,15 @@
 //
 //*************************************************************************//
 
+#include "../psx.h"
 
-void SetupTimer(void);
-void RemoveTimer(void);
-EXPORT_GCC void CALLBACK SPU2playADPCMchannel(xa_decode_t *xap);
 
-EXPORT_GCC long CALLBACK SPU2init(void);
-EXPORT_GCC long CALLBACK SPU2open(void *pDsp);
-EXPORT_GCC void CALLBACK SPU2async(unsigned long cycle);
-EXPORT_GCC void CALLBACK SPU2close(void);
+//void SetupTimer(mips_cpu_context *cpu);
+//void RemoveTimer(mips_cpu_context *cpu);
+//EXPORT_GCC void CALLBACK SPU2playADPCMchannel(mips_cpu_context *cpu, xa_decode_t *xap);
+
+EXPORT_GCC long CALLBACK SPU2init(mips_cpu_context *cpu, void (*callback)(unsigned char *, long, void *), void *data);
+EXPORT_GCC long CALLBACK SPU2open(mips_cpu_context *cpu, void *pDsp);
+EXPORT_GCC void CALLBACK SPU2async(mips_cpu_context *cpu, unsigned long cycle);
+EXPORT_GCC void CALLBACK SPU2close(mips_cpu_context *cpu);
 

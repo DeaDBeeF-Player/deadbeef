@@ -39,5 +39,5 @@ void SetPitch(int ch,unsigned short val);
 void ReverbOn(int start,int end,unsigned short val,int iRight);
 void SetReverbAddr(int core);
 
-EXPORT_GCC void CALLBACK SPU2write(unsigned long reg, unsigned short val);
+//EXPORT_GCC void CALLBACK SPU2write(unsigned long reg, unsigned short val);
 

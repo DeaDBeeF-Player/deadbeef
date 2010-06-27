@@ -2,6 +2,7 @@
 #define _MIPS_H
 
 #include "ao.h"
+#include "osd_cpu.h"
 //#include "driver.h"
 
 typedef void genf(void);
@@ -78,6 +79,16 @@ typedef struct mips_cpu_context_s
 	PAIR cp2dr[ 32 ];
 	int (*irq_callback)(struct mips_cpu_context_s *cpu, int irqline);
     int mips_ICount;
+    // PSX main RAM
+    uint32 psx_ram[(2*1024*1024)/4];
+    uint32 psx_scratch[0x400];
+    // backup image to restart songs
+    uint32 initial_ram[(2*1024*1024)/4];
+    uint32 initial_scratch[0x400];
+
+    // spu callback
+    void (*spu_callback)(unsigned char *, long, void *);
+    void *spu_callback_data;
 } mips_cpu_context;
 
 union cpuinfo
@@ -296,11 +307,11 @@ enum
 #define CF_RFE ( 16 )
 
 #ifdef MAME_DEBUG
-extern unsigned DasmMIPS(char *buff, unsigned _pc);
+unsigned DasmMIPS(char *buff, unsigned _pc);
 #endif
 
 #if (HAS_PSXCPU)
-extern void psxcpu_get_info(mips_cpu_context *cpu, UINT32 state, union cpuinfo *info);
+void psxcpu_get_info(mips_cpu_context *cpu, UINT32 state, union cpuinfo *info);
 #endif
 
 mips_cpu_context *mips_alloc(void);
@@ -316,16 +327,18 @@ int mips_execute( mips_cpu_context *cpu, int cycles );
 int mips_get_icount(mips_cpu_context *cpu);
 void mips_set_icount(mips_cpu_context *cpu, int count);
 
+uint32 mips_get_cause(mips_cpu_context *cpu);
+uint32 mips_get_status(mips_cpu_context *cpu);
+void mips_set_status(mips_cpu_context *cpu, uint32 status);
+uint32 mips_get_ePC(mips_cpu_context *cpu);
+
+
 void psx_hw_init(mips_cpu_context *cpu);
 void psx_hw_slice(mips_cpu_context *cpu);
 void psx_hw_frame(mips_cpu_context *cpu);
 void ps2_hw_slice(mips_cpu_context *cpu);
 void ps2_hw_frame(mips_cpu_context *cpu);
 
-uint16 SPUreadRegister(uint32 reg);
-void SPUwriteRegister(uint32 reg, uint16 val);
-void SPUwriteDMAMem(uint32 usPSXMem,int iSize);
-void SPUreadDMAMem(uint32 usPSXMem,int iSize);
 void mips_shorten_frame(mips_cpu_context *cpu);
 uint32 psf2_load_file(mips_cpu_context *cpu, char *file, uint8 *buf, uint32 buflen);
 uint32 psf2_load_elf(mips_cpu_context *cpu, uint8 *start, uint32 len);
@@ -340,5 +353,15 @@ uint32 program_read_dword_32le(mips_cpu_context *cpu, offs_t address);
 void program_write_byte_32le(mips_cpu_context *cpu, offs_t address, uint8 data);
 void program_write_word_32le(mips_cpu_context *cpu, offs_t address, uint16 data);
 void program_write_dword_32le(mips_cpu_context *cpu, offs_t address, uint32 data);
+
+// SPU2
+void SPU2write(mips_cpu_context *cpu, unsigned long reg, unsigned short val);
+unsigned short SPU2read(mips_cpu_context *cpu, unsigned long reg);
+void SPU2readDMA4Mem(mips_cpu_context *cpu, uint32 usPSXMem,int iSize);
+void SPU2writeDMA4Mem(mips_cpu_context *cpu, uint32 usPSXMem,int iSize);
+void SPU2readDMA7Mem(mips_cpu_context *cpu, uint32 usPSXMem,int iSize);
+void SPU2writeDMA7Mem(mips_cpu_context *cpu, uint32 usPSXMem,int iSize);
+void SPU2interruptDMA4(mips_cpu_context *cpu);
+void SPU2interruptDMA7(mips_cpu_context *cpu);
 
 #endif

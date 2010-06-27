@@ -44,23 +44,24 @@
 
 #define DEBUG_LOADER	(0)
 
-char *spu_pOutput; // hack!
 int psf_refresh = -1; // hack
 
 typedef struct {
     corlett_t	*c;
     char psfby[256];
     mips_cpu_context *mips_cpu;
+    char *spu_pOutput;
 } psf_synth_t;
 
-// main RAM
-extern uint32 psx_ram[((2*1024*1024)/4)+4];
-extern uint32 psx_scratch[0x400];
-extern uint32 initial_ram[((2*1024*1024)/4)+4];
-extern uint32 initial_scratch[0x400];
 static uint32 initialPC, initialGP, initialSP;
 
 extern void setlength(int32 stop, int32 fade);
+
+static void spu_update (unsigned char* pSound,long lBytes,void *data)
+{
+    psf_synth_t *s = data;
+	memcpy(s->spu_pOutput, pSound, lBytes);
+}
 
 void *psf_start(uint8 *buffer, uint32 length)
 {
@@ -73,9 +74,6 @@ void *psf_start(uint8 *buffer, uint32 length)
 	corlett_t *lib;
 	int i;
 	union cpuinfo mipsinfo;
-
-	// clear PSX work RAM before we start scribbling in it
-	memset(psx_ram, 0, 2*1024*1024);
 
 //	printf("Length = %d\n", length);
 
@@ -121,6 +119,7 @@ void *psf_start(uint8 *buffer, uint32 length)
 	printf("Top level: PC %x GP %x SP %x\n", PC, GP, SP);
 	#endif
 
+	s->mips_cpu = mips_alloc();
 	// Get the library file, if any
 	if (s->c->lib[0] != 0)
 	{
@@ -191,7 +190,7 @@ void *psf_start(uint8 *buffer, uint32 length)
 		#if DEBUG_LOADER
 		printf("library offset: %x plength: %d\n", offset, plength);
 		#endif
-		memcpy(&psx_ram[offset/4], lib_decoded+2048, plength);
+		memcpy(&s->mips_cpu->psx_ram[offset/4], lib_decoded+2048, plength);
 		
 		// Dispose the corlett structure for the lib - we don't use it
 		free(lib);
@@ -207,7 +206,7 @@ void *psf_start(uint8 *buffer, uint32 length)
 	{
 		plength = file_len-2048;
 	}
-	memcpy(&psx_ram[offset/4], file+2048, plength);
+	memcpy(&s->mips_cpu->psx_ram[offset/4], file+2048, plength);
 
 	// load any auxiliary libraries now
 	for (i = 0; i < 8; i++)
@@ -257,7 +256,7 @@ void *psf_start(uint8 *buffer, uint32 length)
 			offset = alib_decoded[0x18] | alib_decoded[0x19]<<8 | alib_decoded[0x1a]<<16 | alib_decoded[0x1b]<<24;
 			offset &= 0x3fffffff;	// kill any MIPS cache segment indicators
 			plength = alib_decoded[0x1c] | alib_decoded[0x1d]<<8 | alib_decoded[0x1e]<<16 | alib_decoded[0x1f]<<24;
-			memcpy(&psx_ram[offset/4], alib_decoded+2048, plength);
+			memcpy(&s->mips_cpu->psx_ram[offset/4], alib_decoded+2048, plength);
 		
 			// Dispose the corlett structure for the lib - we don't use it
 			free(lib);
@@ -279,9 +278,11 @@ void *psf_start(uint8 *buffer, uint32 length)
 		}
 	}
 
-	s->mips_cpu = mips_alloc();
 	mips_init (s->mips_cpu);
 	mips_reset(s->mips_cpu, NULL);
+//	// clear PSX work RAM before we start scribbling in it
+//	memset(s->mips_cpu->psx_ram, 0, 2*1024*1024);
+
 
 	// set the initial PC, SP, GP
 	#if DEBUG_LOADER	
@@ -315,8 +316,8 @@ void *psf_start(uint8 *buffer, uint32 length)
 	#endif
 
 	psx_hw_init(s->mips_cpu);
-	SPUinit();
-	SPUopen();
+	SPUinit(s->mips_cpu, spu_update, s);
+	SPUopen(s->mips_cpu);
 
 	lengthMS = psfTimeToMS(s->c->inf_length);
 	fadeMS = psfTimeToMS(s->c->inf_fade);
@@ -339,11 +340,11 @@ void *psf_start(uint8 *buffer, uint32 length)
 	{
 		if (!strcmp(s->c->inf_game, "Chocobo Dungeon 2"))
 		{
-			if (psx_ram[0xbc090/4] == LE32(0x0802f040))
+			if (s->mips_cpu->psx_ram[0xbc090/4] == LE32(0x0802f040))
 			{
-		 		psx_ram[0xbc090/4] = LE32(0);
-				psx_ram[0xbc094/4] = LE32(0x0802f040);
-				psx_ram[0xbc098/4] = LE32(0);
+		 		s->mips_cpu->psx_ram[0xbc090/4] = LE32(0);
+				s->mips_cpu->psx_ram[0xbc094/4] = LE32(0x0802f040);
+				s->mips_cpu->psx_ram[0xbc098/4] = LE32(0);
 			}
 		}
 	}
@@ -351,8 +352,8 @@ void *psf_start(uint8 *buffer, uint32 length)
 //	psx_ram[0x118b8/4] = LE32(0);	// crash 2 hack
 
 	// backup the initial state for restart
-	memcpy(initial_ram, psx_ram, 2*1024*1024);
-	memcpy(initial_scratch, psx_scratch, 0x400);
+	memcpy(s->mips_cpu->initial_ram, s->mips_cpu->psx_ram, 2*1024*1024);
+	memcpy(s->mips_cpu->initial_scratch, s->mips_cpu->psx_scratch, 0x400);
 	initialPC = PC;
 	initialGP = GP;
 	initialSP = SP;
@@ -360,11 +361,6 @@ void *psf_start(uint8 *buffer, uint32 length)
 	mips_execute(s->mips_cpu, 5000);
 	
 	return s;
-}
-
-void spu_update (unsigned char* pSound,long lBytes)
-{
-	memcpy(spu_pOutput, pSound, lBytes);
 }
 
 int32 psf_gen(void *handle, int16 *buffer, uint32 samples)
@@ -375,11 +371,11 @@ int32 psf_gen(void *handle, int16 *buffer, uint32 samples)
 	for (i = 0; i < samples; i++)
 	{
 		psx_hw_slice(s->mips_cpu);
-		SPUasync(384);
+		SPUasync(s->mips_cpu, 384);
 	}
 
-	spu_pOutput = (char *)buffer;
-	SPU_flushboot();
+    s->spu_pOutput = (char *)buffer;
+	SPU_flushboot(s->mips_cpu);
 
 	psx_hw_frame(s->mips_cpu);
 
@@ -389,7 +385,7 @@ int32 psf_gen(void *handle, int16 *buffer, uint32 samples)
 int32 psf_stop(void *handle)
 {
     psf_synth_t *s = handle;
-	SPUclose();
+	SPUclose(s->mips_cpu);
 	free(s->c);
 	free (s);
 
@@ -405,16 +401,16 @@ int32 psf_command(void *handle, int32 command, int32 parameter)
 	switch (command)
 	{
 		case COMMAND_RESTART:
-			SPUclose();
+			SPUclose(s->mips_cpu);
 
-			memcpy(psx_ram, initial_ram, 2*1024*1024);
-			memcpy(psx_scratch, initial_scratch, 0x400);
+			memcpy(s->mips_cpu->psx_ram, s->mips_cpu->initial_ram, 2*1024*1024);
+			memcpy(s->mips_cpu->psx_scratch, s->mips_cpu->initial_scratch, 0x400);
 
 //			mips_init();
 			mips_reset(s->mips_cpu, NULL);
 			psx_hw_init(s->mips_cpu);
-			SPUinit();
-			SPUopen();
+            SPUinit(s->mips_cpu, spu_update, s);
+            SPUopen(s->mips_cpu);
 
 			lengthMS = psfTimeToMS(s->c->inf_length);
 			fadeMS = psfTimeToMS(s->c->inf_fade);

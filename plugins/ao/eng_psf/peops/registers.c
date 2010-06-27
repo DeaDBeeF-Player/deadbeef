@@ -57,7 +57,7 @@ static void SetPitch(int ch,u16 val);
 // WRITE REGISTERS: called by main emu
 ////////////////////////////////////////////////////////////////////////
 
-void SPUwriteRegister(u32 reg, u16 val)
+void SPUwriteRegister(mips_cpu_context *cpu, u32 reg, u16 val)
 {
  const u32 r=reg&0xfff;
  regArea[(r-0xc00)>>1] = val;
@@ -297,7 +297,7 @@ void SPUwriteRegister(u32 reg, u16 val)
 // READ REGISTER: called by main emu
 ////////////////////////////////////////////////////////////////////////
 
-u16 SPUreadRegister(u32 reg)
+u16 SPUreadRegister(mips_cpu_context *cpu, u32 reg)
 {
  const u32 r=reg&0xfff;
 

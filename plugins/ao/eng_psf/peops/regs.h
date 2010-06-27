@@ -24,4 +24,6 @@
 //
 //*************************************************************************//
 
-void SPUwriteRegister(u32 reg, u16 val);
+#include "../psx.h"
+
+void SPUwriteRegister(mips_cpu_context *cpu, u32 reg, u16 val);

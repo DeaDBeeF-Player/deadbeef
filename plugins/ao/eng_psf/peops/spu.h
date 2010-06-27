@@ -24,16 +24,18 @@
 //
 //*************************************************************************//
 
+#include "externals.h"
+#include "../psx.h"
 void sexyd_update(unsigned char* pSound,long lBytes);
 
-int SPUasync(u32 cycles);
-void SPU_flushboot(void);
-int SPUinit(void);
-int SPUopen(void);
-int SPUclose(void);
-int SPUshutdown(void);
-void SPUinjectRAMImage(u16 *pIncoming);
-void SPUreadDMAMem(u32 usPSXMem,int iSize);
-void SPUwriteDMAMem(u32 usPSXMem,int iSize);
-u16 SPUreadRegister(u32 reg);
+int SPUasync(mips_cpu_context *cpu, u32 cycles);
+void SPU_flushboot(mips_cpu_context *cpu);
+int SPUinit(mips_cpu_context *cpu, void (*update_cb)(unsigned char *pSound, long lBytes, void *data), void *data);
+int SPUopen(mips_cpu_context *cpu);
+int SPUclose(mips_cpu_context *cpu);
+int SPUshutdown(mips_cpu_context *cpu);
+void SPUinjectRAMImage(mips_cpu_context *cpu, u16 *pIncoming);
+void SPUreadDMAMem(mips_cpu_context *cpu, u32 usPSXMem,int iSize);
+void SPUwriteDMAMem(mips_cpu_context *cpu, u32 usPSXMem,int iSize);
+u16 SPUreadRegister(mips_cpu_context *cpu, u32 reg);
 

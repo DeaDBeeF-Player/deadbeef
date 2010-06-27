@@ -24,8 +24,9 @@
 //
 //*************************************************************************//
 
+#include "../psx.h"
 
-u16 CALLBACK SPUreadDMA(void);
-void CALLBACK SPUreadDMAMem(u16 * pusPSXMem,int iSize);
-void CALLBACK SPUwriteDMA(u16 val);
-void CALLBACK SPUwriteDMAMem(u16 * pusPSXMem,int iSize);
+u16 CALLBACK SPUreadDMA(mips_cpu_context *cpu);
+void CALLBACK SPUreadDMAMem(mips_cpu_context *cpu, u16 * pusPSXMem,int iSize);
+void CALLBACK SPUwriteDMA(mips_cpu_context *cpu, u16 val);
+void CALLBACK SPUwriteDMAMem(mips_cpu_context *cpu, u16 * pusPSXMem,int iSize);

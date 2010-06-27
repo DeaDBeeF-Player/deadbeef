@@ -45,6 +45,7 @@
 #include "../peops2/registers.h"
 #include "../peops2/regs.h"
 #include "../peops2/reverb.h"
+#include "../psx.h"
 
 /*
 // adsr time values (in ms) by James Higgs ... see the end of
@@ -75,7 +76,7 @@ void VolumeOn(int start,int end,unsigned short val,int iRight);
 // WRITE REGISTERS: called by main emu
 ////////////////////////////////////////////////////////////////////////
 
-EXPORT_GCC void CALLBACK SPU2write(unsigned long reg, unsigned short val)
+EXPORT_GCC void CALLBACK SPU2write(mips_cpu_context *cpu, unsigned long reg, unsigned short val)
 {
  long r=reg&0xffff;
 
@@ -786,7 +787,7 @@ EXPORT_GCC void CALLBACK SPU2write(unsigned long reg, unsigned short val)
 // READ REGISTER: called by main emu
 ////////////////////////////////////////////////////////////////////////
 
-EXPORT_GCC unsigned short CALLBACK SPU2read(unsigned long reg)
+EXPORT_GCC unsigned short CALLBACK SPU2read(mips_cpu_context *cpu, unsigned long reg)
 {
  long r=reg&0xffff;
 
@@ -906,13 +907,13 @@ EXPORT_GCC unsigned short CALLBACK SPU2read(unsigned long reg)
  return regArea[r>>1];
 }
 
-EXPORT_GCC void CALLBACK SPU2writePS1Port(unsigned long reg, unsigned short val)
+EXPORT_GCC void CALLBACK SPU2writePS1Port(mips_cpu_context *cpu, unsigned long reg, unsigned short val)
 {
  const u32 r=reg&0xfff;
 
  if(r>=0xc00 && r<0xd80)	// channel info
  {
- 	SPU2write(r-0xc00, val);
+ 	SPU2write(cpu, r-0xc00, val);
  	return;
  }
 
@@ -1070,13 +1071,13 @@ EXPORT_GCC void CALLBACK SPU2writePS1Port(unsigned long reg, unsigned short val)
    }
 }
 
-EXPORT_GCC unsigned short CALLBACK SPU2readPS1Port(unsigned long reg)
+EXPORT_GCC unsigned short CALLBACK SPU2readPS1Port(mips_cpu_context *cpu, unsigned long reg)
 {
  const u32 r=reg&0xfff;
 
  if(r>=0x0c00 && r<0x0d80)
   {
-  	return SPU2read(r-0xc00);
+  	return SPU2read(cpu, r-0xc00);
   }
 
  switch(r)

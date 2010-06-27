@@ -50,6 +50,8 @@
 #include "ao.h"
 #include "cpuintrf.h"
 #include "psx.h"
+#include "peops/spu.h"
+#include "peops/regs.h"
 	
 #define DEBUG_HLE_BIOS	(0)		// debug PS1 HLE BIOS
 #define DEBUG_HLE_IOP	(0)		// debug PS2 IOP OS calls
@@ -58,16 +60,6 @@
 
 extern int psf_refresh;
 extern int psxcpu_verbose;
-
-// SPU2
-extern void SPU2write(unsigned long reg, unsigned short val);
-extern unsigned short SPU2read(unsigned long reg);
-extern void SPU2readDMA4Mem(uint32 usPSXMem,int iSize);
-extern void SPU2writeDMA4Mem(uint32 usPSXMem,int iSize);
-extern void SPU2readDMA7Mem(uint32 usPSXMem,int iSize);
-extern void SPU2writeDMA7Mem(uint32 usPSXMem,int iSize);
-extern void SPU2interruptDMA4(void);
-extern void SPU2interruptDMA7(void);
 
 #define MAX_FILE_SLOTS	(32)
 
@@ -214,13 +206,6 @@ static EvtCtrlBlk *CounterEvent;
 // Sony event modes
 #define EvMdINTR	0x1000
 #define EvMdNOINTR	0x2000
-
-// PSX main RAM
-uint32 psx_ram[(2*1024*1024)/4];
-uint32 psx_scratch[0x400];
-// backup image to restart songs
-uint32 initial_ram[(2*1024*1024)/4];
-uint32 initial_scratch[0x400];
 
 static uint32 spu_delay, dma_icr, irq_data, irq_mask, dma_timer, WAI;
 static uint32 dma4_madr, dma4_bcr, dma4_chcr, dma4_delay;
@@ -457,18 +442,18 @@ void psx_irq_set(mips_cpu_context *cpu, uint32 irq)
 
 static uint32 gpu_stat = 0;
 
-uint32 psx_hw_read(offs_t offset, uint32 mem_mask)
+uint32 psx_hw_read(mips_cpu_context *cpu, offs_t offset, uint32 mem_mask)
 {
 	if (offset >= 0x00000000 && offset <= 0x007fffff)
 	{
 		offset &= 0x1fffff;
-		return LE32(psx_ram[offset>>2]);
+		return LE32(cpu->psx_ram[offset>>2]);
 	}
 
 	if (offset >= 0x80000000 && offset <= 0x807fffff)
 	{
 		offset &= 0x1fffff;
-		return LE32(psx_ram[offset>>2]);
+		return LE32(cpu->psx_ram[offset>>2]);
 	}
 
 	if (offset == 0xbfc00180 || offset == 0xbfc00184)	// exception vector
@@ -496,11 +481,11 @@ uint32 psx_hw_read(offs_t offset, uint32 mem_mask)
 	{
 		if ((mem_mask == 0xffff0000) || (mem_mask == 0xffffff00))
 		{
-			return SPUreadRegister(offset) & ~mem_mask;
+			return SPUreadRegister(cpu, offset) & ~mem_mask;
 		}
 		else if (mem_mask == 0x0000ffff)
 		{
-			return SPUreadRegister(offset)<<16;
+			return SPUreadRegister(cpu, offset)<<16;
 		}
 		else printf("SPU: read unknown mask %08x\n", mem_mask);
 	}
@@ -509,15 +494,15 @@ uint32 psx_hw_read(offs_t offset, uint32 mem_mask)
 	{
 		if ((mem_mask == 0xffff0000) || (mem_mask == 0xffffff00))
 		{
-			return SPU2read(offset) & ~mem_mask;
+			return SPU2read(cpu, offset) & ~mem_mask;
 		}
 		else if (mem_mask == 0x0000ffff)
 		{
-			return SPU2read(offset)<<16;
+			return SPU2read(cpu, offset)<<16;
 		}
 		else if (mem_mask == 0)
 		{
-			return SPU2read(offset) | SPU2read(offset+2)<<16;
+			return SPU2read(cpu, offset) | SPU2read(cpu, offset+2)<<16;
 		}
 		else printf("SPU2: read unknown mask %08x\n", mem_mask);
 	}
@@ -573,30 +558,30 @@ uint32 psx_hw_read(offs_t offset, uint32 mem_mask)
 	{
 		union cpuinfo mipsinfo;
 
-		mips_get_info(CPUINFO_INT_PC, &mipsinfo);
+		mips_get_info(cpu, CPUINFO_INT_PC, &mipsinfo);
 		printf("Unknown read: %08x, mask %08x (PC=%x)\n", offset&~3, mem_mask, mipsinfo.i);
 	}
 	#endif
 	return 0;
 }
 
-static void psx_dma4(uint32 madr, uint32 bcr, uint32 chcr)
+static void psx_dma4(mips_cpu_context *cpu, uint32 madr, uint32 bcr, uint32 chcr)
 {
 	if (chcr == 0x01000201)	// cpu to SPU
 	{
 //		printf("DMA4: RAM %08x to SPU\n", madr);
 		bcr = (bcr>>16) * (bcr & 0xffff) * 2;
-		SPUwriteDMAMem(madr&0x1fffff, bcr);
+		SPUwriteDMAMem(cpu, madr&0x1fffff, bcr);
 	}
 	else
 	{
 //		printf("DMA4: SPU to RAM %08x\n", madr);
 		bcr = (bcr>>16) * (bcr & 0xffff) * 2;
-		SPUreadDMAMem(madr&0x1fffff, bcr);
+		SPUreadDMAMem(cpu, madr&0x1fffff, bcr);
 	}
 }
 
-static void ps2_dma4(uint32 madr, uint32 bcr, uint32 chcr)
+static void ps2_dma4(mips_cpu_context *cpu, uint32 madr, uint32 bcr, uint32 chcr)
 {
 	if (chcr == 0x01000201)	// cpu to SPU2
 	{
@@ -604,7 +589,7 @@ static void ps2_dma4(uint32 madr, uint32 bcr, uint32 chcr)
 		printf("DMA4: RAM %08x to SPU2\n", madr);
 		#endif
 		bcr = (bcr>>16) * (bcr & 0xffff) * 4;
-		SPU2writeDMA4Mem(madr&0x1fffff, bcr);
+		SPU2writeDMA4Mem(cpu, madr&0x1fffff, bcr);
 	}
 	else
 	{
@@ -612,13 +597,13 @@ static void ps2_dma4(uint32 madr, uint32 bcr, uint32 chcr)
 		printf("DMA4: SPU2 to RAM %08x\n", madr);
 		#endif
 		bcr = (bcr>>16) * (bcr & 0xffff) * 4;
-		SPU2readDMA4Mem(madr&0x1fffff, bcr);
+		SPU2readDMA4Mem(cpu, madr&0x1fffff, bcr);
 	}
 
 	dma4_delay = 80;
 }
 
-static void ps2_dma7(uint32 madr, uint32 bcr, uint32 chcr)
+static void ps2_dma7(mips_cpu_context *cpu, uint32 madr, uint32 bcr, uint32 chcr)
 {
 	if ((chcr == 0x01000201) || (chcr == 0x00100010) || (chcr == 0x000f0010) || (chcr == 0x00010010))	// cpu to SPU2
 	{
@@ -626,7 +611,7 @@ static void ps2_dma7(uint32 madr, uint32 bcr, uint32 chcr)
 		printf("DMA7: RAM %08x to SPU2\n", madr);
 		#endif
 		bcr = (bcr>>16) * (bcr & 0xffff) * 4;
-		SPU2writeDMA7Mem(madr&0x1fffff, bcr);
+		SPU2writeDMA7Mem(cpu, madr&0x1fffff, bcr);
 	}
 	else
 	{
@@ -651,8 +636,8 @@ void psx_hw_write(mips_cpu_context *cpu, offs_t offset, uint32 data, uint32 mem_
 
 		mips_get_info(cpu, CPUINFO_INT_PC, &mipsinfo);
 
-		psx_ram[offset>>2] &= LE32(mem_mask);
-		psx_ram[offset>>2] |= LE32(data);
+		cpu->psx_ram[offset>>2] &= LE32(mem_mask);
+		cpu->psx_ram[offset>>2] |= LE32(data);
 		return;
 	}
 
@@ -661,8 +646,8 @@ void psx_hw_write(mips_cpu_context *cpu, offs_t offset, uint32 data, uint32 mem_
 		offset &= 0x1fffff;
 //		if (offset < 0x10000) printf("Write %x to kernel @ %x\n", data, offset);
 		mips_get_info(cpu, CPUINFO_INT_PC, &mipsinfo);
-		psx_ram[offset>>2] &= LE32(mem_mask);
-		psx_ram[offset>>2] |= LE32(data);
+		cpu->psx_ram[offset>>2] &= LE32(mem_mask);
+		cpu->psx_ram[offset>>2] |= LE32(data);
 		return;
 	}
 
@@ -678,12 +663,12 @@ void psx_hw_write(mips_cpu_context *cpu, offs_t offset, uint32 data, uint32 mem_
 	  //		printf("SPU2 wrote %x to SPU1 address %x!\n", data, offset);
 		if (mem_mask == 0xffff0000)
 		{
-			SPUwriteRegister(offset, data);
+			SPUwriteRegister(cpu, offset, data);
 			return;
 		}
 		else if (mem_mask == 0x0000ffff)
 		{
-			SPUwriteRegister(offset, data>>16);
+			SPUwriteRegister(cpu, offset, data>>16);
 			return;
 		}
 		else printf("SPU: write unknown mask %08x\n", mem_mask);
@@ -693,18 +678,18 @@ void psx_hw_write(mips_cpu_context *cpu, offs_t offset, uint32 data, uint32 mem_
 	{
 		if (mem_mask == 0xffff0000)
 		{
-			SPU2write(offset, data);
+			SPU2write(cpu, offset, data);
 			return;
 		}
 		else if (mem_mask == 0x0000ffff)
 		{
-			SPU2write(offset, data>>16);
+			SPU2write(cpu, offset, data>>16);
 			return;
 		}
 		else if (mem_mask == 0)
 		{
-			SPU2write(offset, data & 0xffff);
-			SPU2write(offset+2, data>>16);
+			SPU2write(cpu, offset, data & 0xffff);
+			SPU2write(cpu, offset+2, data>>16);
 			return;
 		}
 		else printf("SPU2: write unknown mask %08x\n", mem_mask);
@@ -747,7 +732,7 @@ void psx_hw_write(mips_cpu_context *cpu, offs_t offset, uint32 data, uint32 mem_
 	else if (offset == 0x1f8010c8)
 	{
 		dma4_chcr = data;
-		psx_dma4(dma4_madr, dma4_bcr, dma4_chcr);
+		psx_dma4(cpu, dma4_madr, dma4_bcr, dma4_chcr);
 
 		if (dma_icr & (1 << (16+4)))
 		{
@@ -792,7 +777,7 @@ void psx_hw_write(mips_cpu_context *cpu, offs_t offset, uint32 data, uint32 mem_
 	else if (offset == 0xbf8010c8)
 	{
 		dma4_chcr = data;
-		ps2_dma4(dma4_madr, dma4_bcr, dma4_chcr);
+		ps2_dma4(cpu, dma4_madr, dma4_bcr, dma4_chcr);
 
 		if (dma_icr & (1 << (16+4)))
 		{
@@ -817,7 +802,7 @@ void psx_hw_write(mips_cpu_context *cpu, offs_t offset, uint32 data, uint32 mem_
 	else if (offset == 0xbf801504)
 	{
 		dma7_chcr = data;
-		ps2_dma7(dma7_madr, dma7_bcr, dma7_chcr);
+		ps2_dma7(cpu, dma7_madr, dma7_bcr, dma7_chcr);
 		return;
 	}
 							 
@@ -924,11 +909,6 @@ enum
 
 static uint32 heap_addr, entry_int = 0;
 
-extern uint32 mips_get_cause(void);
-extern uint32 mips_get_status(void);
-extern void mips_set_status(uint32 status);
-extern uint32 mips_get_ePC(void);
-
 static uint32 irq_regs[37];
 
 static int irq_mutex = 0;
@@ -978,7 +958,7 @@ static void call_irq_routine(mips_cpu_context *cpu, uint32 routine, uint32 param
 	mips_set_info(cpu, CPUINFO_INT_REGISTER + MIPS_R31, &mipsinfo);
 
 	// make sure we're set
-	psx_ram[0x1000/4] = LE32(FUNCT_HLECALL);
+	cpu->psx_ram[0x1000/4] = LE32(FUNCT_HLECALL);
 
 	softcall_target = 0;
 	oldICount = mips_get_icount(cpu);
@@ -1021,7 +1001,7 @@ void psx_bios_exception(mips_cpu_context *cpu, uint32 pc)
 	mips_get_info(cpu, CPUINFO_INT_REGISTER + MIPS_R4, &mipsinfo);
 	a0 = mipsinfo.i;
 
-	switch (mips_get_cause() & 0x3c)
+	switch (mips_get_cause(cpu) & 0x3c)
 	{
 		case 0:	// IRQ
 //			printf("IRQ: %x, mask %x\n", irq_data, irq_mask);
@@ -1050,7 +1030,7 @@ void psx_bios_exception(mips_cpu_context *cpu, uint32 pc)
 					mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R31, &mipsinfo);
 				
 					// make sure we're set
-					psx_ram[0x1000/4] = LE32(FUNCT_HLECALL);
+					cpu->psx_ram[0x1000/4] = LE32(FUNCT_HLECALL);
 		
 					softcall_target = 0;
 					oldICount = mips_get_icount(cpu);
@@ -1082,7 +1062,7 @@ void psx_bios_exception(mips_cpu_context *cpu, uint32 pc)
 							mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R31, &mipsinfo);
 							
 							// make sure we're set
-							psx_ram[0x1000/4] = LE32(FUNCT_HLECALL);
+							cpu->psx_ram[0x1000/4] = LE32(FUNCT_HLECALL);
 					
 							softcall_target = 0;
 							oldICount = mips_get_icount(cpu);
@@ -1112,25 +1092,25 @@ void psx_bios_exception(mips_cpu_context *cpu, uint32 pc)
 //				printf("taking entry_int\n");
 
 				// RA (and PC)
-				mipsinfo.i = LE32(psx_ram[((a0&0x1fffff)+0)/4]);
+				mipsinfo.i = LE32(cpu->psx_ram[((a0&0x1fffff)+0)/4]);
 				mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R31, &mipsinfo);
 				mips_set_info(cpu,CPUINFO_INT_PC, &mipsinfo);
 				// SP
-				mipsinfo.i = LE32(psx_ram[((a0&0x1fffff)+4)/4]);
+				mipsinfo.i = LE32(cpu->psx_ram[((a0&0x1fffff)+4)/4]);
 				mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R29, &mipsinfo);
 				// FP
-				mipsinfo.i = LE32(psx_ram[((a0&0x1fffff)+8)/4]);
+				mipsinfo.i = LE32(cpu->psx_ram[((a0&0x1fffff)+8)/4]);
 				mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R30, &mipsinfo);
 
 				// S0-S7 are next
 				for (i = 0; i < 8; i++)
 				{
-					mipsinfo.i = LE32(psx_ram[((a0&0x1fffff)+12+(i*4))/4]);
+					mipsinfo.i = LE32(cpu->psx_ram[((a0&0x1fffff)+12+(i*4))/4]);
 					mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R16 + i, &mipsinfo);
 				}
 
 				// GP
-				mipsinfo.i = LE32(psx_ram[((a0&0x1fffff)+44)/4]);
+				mipsinfo.i = LE32(cpu->psx_ram[((a0&0x1fffff)+44)/4]);
 				mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R28, &mipsinfo);
 
 				// v0 = 1
@@ -1152,18 +1132,18 @@ void psx_bios_exception(mips_cpu_context *cpu, uint32 pc)
 				mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_HI, &mipsinfo);
 				mipsinfo.i = irq_regs[33];
 				mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_LO, &mipsinfo);
-				mipsinfo.i = mips_get_ePC();
+				mipsinfo.i = mips_get_ePC(cpu);
 				mips_set_info(cpu,CPUINFO_INT_PC, &mipsinfo);
 
-				status = mips_get_status();
+				status = mips_get_status(cpu);
 				status = (status & 0xfffffff0) | ((status & 0x3c)>>2);
-				mips_set_status(status);
+				mips_set_status(cpu, status);
 			}
 			break;
 
 		case 0x20:	// syscall
 			// syscall always farks with the status, so get it now
-			status = mips_get_status();
+			status = mips_get_status(cpu);
 
 			switch (a0)
 			{
@@ -1189,12 +1169,12 @@ void psx_bios_exception(mips_cpu_context *cpu, uint32 pc)
 			}
 
 			// PC = ePC + 4
-			mipsinfo.i = mips_get_ePC() + 4;
+			mipsinfo.i = mips_get_ePC(cpu) + 4;
 			mips_set_info(cpu,CPUINFO_INT_PC, &mipsinfo);
 
 			// and update the status accordingly
 			status = (status & 0xfffffff0) | ((status & 0x3c)>>2);
-			mips_set_status(status);
+			mips_set_status(cpu, status);
 			break;
 
 		default:
@@ -1280,11 +1260,11 @@ void psx_hw_init(mips_cpu_context *cpu)
 	iNumTimers = 0;
 
 	// set PS1 BIOS HLE breakpoints
-	psx_ram[0xa0/4] = LE32(FUNCT_HLECALL);
-	psx_ram[0xb0/4] = LE32(FUNCT_HLECALL);
-	psx_ram[0xc0/4] = LE32(FUNCT_HLECALL);
+	cpu->psx_ram[0xa0/4] = LE32(FUNCT_HLECALL);
+	cpu->psx_ram[0xb0/4] = LE32(FUNCT_HLECALL);
+	cpu->psx_ram[0xc0/4] = LE32(FUNCT_HLECALL);
 
-	Event = (EvtCtrlBlk *)&psx_ram[0x1000/4];
+	Event = (EvtCtrlBlk *)&cpu->psx_ram[0x1000/4];
 	CounterEvent = (Event + (32*2));
 
 	dma_icr = 0;
@@ -1361,27 +1341,27 @@ void psx_bios_hle(mips_cpu_context *cpu, uint32 pc)
 				case 0x13:	// setjmp
 					// RA
 					mips_get_info(cpu, CPUINFO_INT_REGISTER + MIPS_R31, &mipsinfo);
-					psx_ram[((a0&0x1fffff)+0)/4] = LE32(mipsinfo.i);
+					cpu->psx_ram[((a0&0x1fffff)+0)/4] = LE32(mipsinfo.i);
 					#if DEBUG_HLE_BIOS
 					printf("HLEBIOS: setjmp(%08x) => PC %08x\n", a0, mipsinfo.i);
 					#endif
 					// SP
 					mips_get_info(cpu, CPUINFO_INT_REGISTER + MIPS_R29, &mipsinfo);
-					psx_ram[((a0&0x1fffff)+4)/4] = LE32(mipsinfo.i);
+					cpu->psx_ram[((a0&0x1fffff)+4)/4] = LE32(mipsinfo.i);
 					// FP
 					mips_get_info(cpu, CPUINFO_INT_REGISTER + MIPS_R30, &mipsinfo);
-					psx_ram[((a0&0x1fffff)+8)/4] = LE32(mipsinfo.i);
+					cpu->psx_ram[((a0&0x1fffff)+8)/4] = LE32(mipsinfo.i);
 
 					// S0-S7 are next
 					for (i = 0; i < 8; i++)
 					{
 						mips_get_info(cpu, CPUINFO_INT_REGISTER + MIPS_R16 + i, &mipsinfo);
-						psx_ram[((a0&0x1fffff)+12+(i*4))/4] = LE32(mipsinfo.i);
+						cpu->psx_ram[((a0&0x1fffff)+12+(i*4))/4] = LE32(mipsinfo.i);
 					}
 
 					// GP
 					mips_get_info(cpu, CPUINFO_INT_REGISTER + MIPS_R28, &mipsinfo);
-					psx_ram[((a0&0x1fffff)+44)/4] = LE32(mipsinfo.i);
+					cpu->psx_ram[((a0&0x1fffff)+44)/4] = LE32(mipsinfo.i);
 
 					// v0 = 0
 					mipsinfo.i = 0;
@@ -1396,8 +1376,8 @@ void psx_bios_hle(mips_cpu_context *cpu, uint32 pc)
 						printf("HLEBIOS: strncmp(%08x, %08x, %d)\n", a0, a1, a2);
 						#endif
 
-						dst = (uint8 *)psx_ram;
-						src = (uint8 *)psx_ram;
+						dst = (uint8 *)cpu->psx_ram;
+						src = (uint8 *)cpu->psx_ram;
 						dst += (a0 & 0x1fffff);
 						src += (a1 & 0x1fffff);
 
@@ -1415,8 +1395,8 @@ void psx_bios_hle(mips_cpu_context *cpu, uint32 pc)
 						printf("HLEBIOS: strcpy(%08x, %08x)\n", a0, a1);
 						#endif
 
-						dst = (uint8 *)psx_ram;
-						src = (uint8 *)psx_ram;
+						dst = (uint8 *)cpu->psx_ram;
+						src = (uint8 *)cpu->psx_ram;
 						dst += (a0 & 0x1fffff);
 						src += (a1 & 0x1fffff);
 
@@ -1441,7 +1421,7 @@ void psx_bios_hle(mips_cpu_context *cpu, uint32 pc)
 						printf("HLEBIOS: bzero(%08x, %08x)\n", a0, a1);
 						#endif
 
-						dst = (uint8 *)psx_ram;
+						dst = (uint8 *)cpu->psx_ram;
 						dst += (a0 & 0x1fffff);
 						memset(dst, 0, a1);
 					}
@@ -1455,8 +1435,8 @@ void psx_bios_hle(mips_cpu_context *cpu, uint32 pc)
 						printf("HLEBIOS: memcpy(%08x, %08x, %08x)\n", a0, a1, a2);
 						#endif
 
-						dst = (uint8 *)psx_ram;
-						src = (uint8 *)psx_ram;
+						dst = (uint8 *)cpu->psx_ram;
+						src = (uint8 *)cpu->psx_ram;
 						dst += (a0 & 0x1fffff);
 						src += (a1 & 0x1fffff);
 
@@ -1482,7 +1462,7 @@ void psx_bios_hle(mips_cpu_context *cpu, uint32 pc)
 						printf("HLEBIOS: memset(%08x, %08x, %08x)\n", a0, a1, a2);
 						#endif
 
-						dst = (uint8 *)psx_ram;
+						dst = (uint8 *)cpu->psx_ram;
 						dst += (a0 & 0x1fffff);
 
 						while (a2)
@@ -1526,22 +1506,22 @@ void psx_bios_hle(mips_cpu_context *cpu, uint32 pc)
 						chunk = heap_addr;
 
 						// find a free block that's big enough
-						while ((a0 > LE32(psx_ram[(chunk+BLK_SIZE)/4])) ||
-						       (LE32(psx_ram[(chunk+BLK_STAT)/4]) ==  1))
+						while ((a0 > LE32(cpu->psx_ram[(chunk+BLK_SIZE)/4])) ||
+						       (LE32(cpu->psx_ram[(chunk+BLK_STAT)/4]) ==  1))
 						{
-							chunk = LE32(psx_ram[(chunk+BLK_FD)]);
+							chunk = LE32(cpu->psx_ram[(chunk+BLK_FD)]);
 						}
 
 						// split free block
 						fd = chunk + 16 + a0;	// free block starts after block record and allocation size
-						psx_ram[(fd+BLK_STAT)/4] = psx_ram[(chunk+BLK_STAT)/4];
-						psx_ram[(fd+BLK_SIZE)/4] = LE32(LE32(psx_ram[(chunk+BLK_SIZE)/4]) - a0);
-						psx_ram[(fd+BLK_FD)/4] = psx_ram[(chunk+BLK_FD)/4]; 
-						psx_ram[(fd+BLK_BK)/4] = chunk;
+						cpu->psx_ram[(fd+BLK_STAT)/4] = cpu->psx_ram[(chunk+BLK_STAT)/4];
+						cpu->psx_ram[(fd+BLK_SIZE)/4] = LE32(LE32(cpu->psx_ram[(chunk+BLK_SIZE)/4]) - a0);
+						cpu->psx_ram[(fd+BLK_FD)/4] = cpu->psx_ram[(chunk+BLK_FD)/4]; 
+						cpu->psx_ram[(fd+BLK_BK)/4] = chunk;
 
-						psx_ram[(chunk+BLK_STAT)/4] = LE32(1);
-						psx_ram[(chunk+BLK_SIZE)/4] = LE32(a0);
-						psx_ram[(chunk+BLK_FD)/4] = LE32(fd);
+						cpu->psx_ram[(chunk+BLK_STAT)/4] = LE32(1);
+						cpu->psx_ram[(chunk+BLK_SIZE)/4] = LE32(a0);
+						cpu->psx_ram[(chunk+BLK_FD)/4] = LE32(fd);
 
 						mipsinfo.i = chunk + 16;
 						mipsinfo.i |= 0x80000000;
@@ -1560,24 +1540,24 @@ void psx_bios_hle(mips_cpu_context *cpu, uint32 pc)
 
 					heap_addr = a0 & 0x3fffffff;
 
-					psx_ram[(heap_addr+BLK_STAT)/4] = LE32(0);
-					psx_ram[(heap_addr+BLK_FD)/4] = LE32(0);
-					psx_ram[(heap_addr+BLK_BK)/4] = LE32(0);
+					cpu->psx_ram[(heap_addr+BLK_STAT)/4] = LE32(0);
+					cpu->psx_ram[(heap_addr+BLK_FD)/4] = LE32(0);
+					cpu->psx_ram[(heap_addr+BLK_BK)/4] = LE32(0);
 
 					// if heap size out of range, clamp it
 					if (((a0 & 0x1fffff) + a1) >= 2*1024*1024)
 					{
-						psx_ram[(heap_addr+BLK_SIZE)/4] = LE32(0x1ffffc - (a0 & 0x1fffff));
+						cpu->psx_ram[(heap_addr+BLK_SIZE)/4] = LE32(0x1ffffc - (a0 & 0x1fffff));
 					}
 					else
 					{
-						psx_ram[(heap_addr+BLK_SIZE)/4] = LE32(a1);
+						cpu->psx_ram[(heap_addr+BLK_SIZE)/4] = LE32(a1);
 					}
 					break;
 
 				case 0x3f:	// printf
 					#if DEBUG_HLE_BIOS
-					printf("HLEBIOS: printf(%08x) = %s\n", a0, &psx_ram[(a0&0x1fffff)/4]);
+					printf("HLEBIOS: printf(%08x) = %s\n", a0, &cpu->psx_ram[(a0&0x1fffff)/4]);
 					#endif
 					break;
 
@@ -1761,14 +1741,14 @@ void psx_bios_hle(mips_cpu_context *cpu, uint32 pc)
 					mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_HI, &mipsinfo);
 					mipsinfo.i = irq_regs[33];
 					mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_LO, &mipsinfo);
-					mipsinfo.i = mips_get_ePC();
+					mipsinfo.i = mips_get_ePC(cpu);
 //					printf("ReturnFromException: IRQ state %x\n", irq_data & irq_mask);
 //					printf("HLEBIOS: ReturnFromException, cause = %08x, PC = %08x\n", mips_get_cause(), mipsinfo.i);
 					mips_set_info(cpu,CPUINFO_INT_PC, &mipsinfo);
 
-					status = mips_get_status();
+					status = mips_get_status(cpu);
 					status = (status & 0xfffffff0) | ((status & 0x3c)>>2);
-					mips_set_status(status);
+					mips_set_status(cpu, status);
 					return;	// force return to avoid PC=RA below
 					break;
 
@@ -1806,11 +1786,11 @@ void psx_bios_hle(mips_cpu_context *cpu, uint32 pc)
 					#endif
 
 					// v0 = (a0*4)+0x8600
-					mipsinfo.i = LE32(psx_ram[((a0<<2) + 0x8600)/4]);
+					mipsinfo.i = LE32(cpu->psx_ram[((a0<<2) + 0x8600)/4]);
 					mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 
 					// (a0*4)+0x8600 = a1;
-					psx_ram[((a0<<2) + 0x8600)/4] = LE32(a1);
+					cpu->psx_ram[((a0<<2) + 0x8600)/4] = LE32(a1);
 					break;
 			      
 				default:
@@ -1843,7 +1823,7 @@ void psx_hw_runcounters(mips_cpu_context *cpu)
 
 			if (dma4_delay == 0)
 			{
-				SPU2interruptDMA4();
+				SPU2interruptDMA4(cpu);
 
 				if (dma4_cb)
 				{
@@ -1858,7 +1838,7 @@ void psx_hw_runcounters(mips_cpu_context *cpu)
 
 			if (dma7_delay == 0)
 			{
-				SPU2interruptDMA7();
+				SPU2interruptDMA7(cpu);
 
 				if (dma7_cb)
 				{
@@ -1955,16 +1935,16 @@ uint8 program_read_byte_32le(mips_cpu_context *cpu, offs_t address)
 	switch (address & 0x3)
 	{
 		case 0:
-			return psx_hw_read(address, 0xffffff00);
+			return psx_hw_read(cpu, address, 0xffffff00);
 			break;
 		case 1:
-			return psx_hw_read(address, 0xffff00ff)>>8;
+			return psx_hw_read(cpu, address, 0xffff00ff)>>8;
 			break;
 		case 2:
-			return psx_hw_read(address, 0xff00ffff)>>16;
+			return psx_hw_read(cpu, address, 0xff00ffff)>>16;
 			break;
 		case 3:
-			return psx_hw_read(address, 0x00ffffff)>>24;
+			return psx_hw_read(cpu, address, 0x00ffffff)>>24;
 			break;
 	}
 	return 0;
@@ -1973,14 +1953,14 @@ uint8 program_read_byte_32le(mips_cpu_context *cpu, offs_t address)
 uint16 program_read_word_32le(mips_cpu_context *cpu, offs_t address)
 {
 	if (address & 2)
-		return psx_hw_read(address, 0x0000ffff)>>16;
+		return psx_hw_read(cpu, address, 0x0000ffff)>>16;
 
-	return psx_hw_read(address, 0xffff0000);
+	return psx_hw_read(cpu, address, 0xffff0000);
 }
 
 uint32 program_read_dword_32le(mips_cpu_context *cpu, offs_t address)
 {
-	return psx_hw_read(address, 0);
+	return psx_hw_read(cpu, address, 0);
 }
 
 void program_write_byte_32le(mips_cpu_context *cpu, offs_t address, uint8 data)
@@ -2093,7 +2073,7 @@ static void iop_sprintf(mips_cpu_context *cpu, char *out, char *fmt, uint32 psta
 				mips_get_info(cpu, curparm, &mipsinfo);
 				curparm++;
 
-				pstr = (char *)psx_ram;
+				pstr = (char *)cpu->psx_ram;
 				pstr += (mipsinfo.i & 0x1fffff);
 
 				sprintf(temp, tfmt, pstr);
@@ -2136,19 +2116,19 @@ void psx_iop_call(mips_cpu_context *cpu, uint32 pc, uint32 callnum)
 	a3 = mipsinfo.i;
 
 	scan = (pc&0x0fffffff)/4;
-	while ((psx_ram[scan] != LE32(0x41e00000)) && (scan >= (0x10000/4)))
+	while ((cpu->psx_ram[scan] != LE32(0x41e00000)) && (scan >= (0x10000/4)))
 	{
 		scan--;
 	}
 
-	if (psx_ram[scan] != LE32(0x41e00000))
+	if (cpu->psx_ram[scan] != LE32(0x41e00000))
 	{
 		printf("FATAL ERROR: couldn't find IOP link signature\n");
 		return;
 	}
 
 	scan += 3;	// skip zero and version
-	memcpy(name, &psx_ram[scan], 8);
+	memcpy(name, &cpu->psx_ram[scan], 8);
 	name[8] = '\0';
 
 //	printf("IOP: call module [%s] service %d (PC=%08x)\n", name, callnum, pc);
@@ -2158,7 +2138,7 @@ void psx_iop_call(mips_cpu_context *cpu, uint32 pc, uint32 callnum)
 		switch (callnum)
 		{
 			case 4:	// printf
-				mname = (char *)psx_ram;
+				mname = (char *)cpu->psx_ram;
 				mname += a0 & 0x1fffff;
 				mname += (a0 & 3);
 
@@ -2238,7 +2218,7 @@ void psx_iop_call(mips_cpu_context *cpu, uint32 pc, uint32 callnum)
 				a0 /= 4;
 				#if DEBUG_THREADING
 				printf("   : flags %x routine %08x pri %x stacksize %d refCon %08x\n",
-					psx_ram[a0], psx_ram[a0+1], psx_ram[a0+2], psx_ram[a0+3], psx_ram[a0+4]);
+					cpu->psx_ram[a0], cpu->psx_ram[a0+1], cpu->psx_ram[a0+2], cpu->psx_ram[a0+3], cpu->psx_ram[a0+4]);
 				#endif
 
 				newAlloc = psf2_get_loadaddr();
@@ -2248,14 +2228,14 @@ void psx_iop_call(mips_cpu_context *cpu, uint32 pc, uint32 callnum)
 					newAlloc &= ~0xf;
 					newAlloc += 16;
 				}
-				psf2_set_loadaddr(newAlloc + LE32(psx_ram[a0+3]));
+				psf2_set_loadaddr(newAlloc + LE32(cpu->psx_ram[a0+3]));
 				
 				threads[iNumThreads].iState = TS_CREATED;
 				threads[iNumThreads].stackloc = newAlloc;
-				threads[iNumThreads].flags = LE32(psx_ram[a0]);
-				threads[iNumThreads].routine = LE32(psx_ram[a0+2]);
-				threads[iNumThreads].stacksize = LE32(psx_ram[a0+3]);
-				threads[iNumThreads].refCon = LE32(psx_ram[a0+4]);
+				threads[iNumThreads].flags = LE32(cpu->psx_ram[a0]);
+				threads[iNumThreads].routine = LE32(cpu->psx_ram[a0+2]);
+				threads[iNumThreads].stacksize = LE32(cpu->psx_ram[a0+3]);
+				threads[iNumThreads].refCon = LE32(cpu->psx_ram[a0+4]);
 
 				mipsinfo.i = iNumThreads;
 				iNumThreads++;
@@ -2350,8 +2330,8 @@ void psx_iop_call(mips_cpu_context *cpu, uint32 pc, uint32 callnum)
 				a0 &= 0x1fffff;
 				a0 /= 4;
 
-				psx_ram[a0] = LE32(sys_time & 0xffffffff);  	// low
-				psx_ram[a0+1] = LE32(sys_time >> 32);	// high
+				cpu->psx_ram[a0] = LE32(sys_time & 0xffffffff);  	// low
+				cpu->psx_ram[a0+1] = LE32(sys_time >> 32);	// high
 
 				mipsinfo.i = 0;
 				mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
@@ -2372,8 +2352,8 @@ void psx_iop_call(mips_cpu_context *cpu, uint32 pc, uint32 callnum)
 					hi = dTicks>>32;
 					lo = dTicks & 0xffffffff;
 
-					psx_ram[((a1 & 0x1fffff)/4)] = LE32(lo);
-					psx_ram[((a1 & 0x1fffff)/4)+1] = LE32(hi);
+					cpu->psx_ram[((a1 & 0x1fffff)/4)] = LE32(lo);
+					cpu->psx_ram[((a1 & 0x1fffff)/4)+1] = LE32(hi);
 
 					mipsinfo.i = 0;
 					mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
@@ -2396,8 +2376,8 @@ void psx_iop_call(mips_cpu_context *cpu, uint32 pc, uint32 callnum)
 					a1 /= 4;
 					a2 /= 4;
 
-					temp = LE32(psx_ram[a0]);
-					temp |= (uint64)LE32(psx_ram[a0+1])<<32;
+					temp = LE32(cpu->psx_ram[a0]);
+					temp |= (uint64)LE32(cpu->psx_ram[a0+1])<<32;
 
 					temp *= (uint64)1000000;
 					temp /= (uint64)36864000;
@@ -2406,8 +2386,8 @@ void psx_iop_call(mips_cpu_context *cpu, uint32 pc, uint32 callnum)
 					seconds = (temp / 1000000) & 0xffffffff;
 					usec = (temp % 1000000) & 0xffffffff;
 
-					psx_ram[a1] = LE32(seconds);
-					psx_ram[a2] = LE32(usec);
+					cpu->psx_ram[a1] = LE32(seconds);
+					cpu->psx_ram[a2] = LE32(usec);
 				}
 				break;
 
@@ -2429,9 +2409,9 @@ void psx_iop_call(mips_cpu_context *cpu, uint32 pc, uint32 callnum)
 				a0 &= 0x1fffff;
 				a0 /= 4;
  
-				evflags[iNumFlags].type = LE32(psx_ram[a0]);
-				evflags[iNumFlags].value = LE32(psx_ram[a0+1]);
-				evflags[iNumFlags].param = LE32(psx_ram[a0+2]);
+				evflags[iNumFlags].type = LE32(cpu->psx_ram[a0]);
+				evflags[iNumFlags].value = LE32(cpu->psx_ram[a0+1]);
+				evflags[iNumFlags].param = LE32(cpu->psx_ram[a0+2]);
 				evflags[iNumFlags].inUse = 1;
 
 				#if DEBUG_HLE_IOP
@@ -2558,14 +2538,14 @@ void psx_iop_call(mips_cpu_context *cpu, uint32 pc, uint32 callnum)
 				a0 &= 0x7fffffff;
 				a0 /= 4;
 
-//				printf("Sema %d Parms: %08x %08x %08x %08x\n", mipsinfo.i, psx_ram[a0], psx_ram[a0+1], psx_ram[a0+2], psx_ram[a0+3]);
+//				printf("Sema %d Parms: %08x %08x %08x %08x\n", mipsinfo.i, cpu->psx_ram[a0], cpu->psx_ram[a0+1], cpu->psx_ram[a0+2], cpu->psx_ram[a0+3]);
 	
 				if (mipsinfo.i != -1)
 				{
-					semaphores[mipsinfo.i].attr = LE32(psx_ram[a0]);
-					semaphores[mipsinfo.i].option = LE32(psx_ram[a0+1]);
-					semaphores[mipsinfo.i].init = LE32(psx_ram[a0+2]);
-					semaphores[mipsinfo.i].max = LE32(psx_ram[a0+3]);
+					semaphores[mipsinfo.i].attr = LE32(cpu->psx_ram[a0]);
+					semaphores[mipsinfo.i].option = LE32(cpu->psx_ram[a0+1]);
+					semaphores[mipsinfo.i].init = LE32(cpu->psx_ram[a0+2]);
+					semaphores[mipsinfo.i].max = LE32(cpu->psx_ram[a0+3]);
 
 					semaphores[mipsinfo.i].current = semaphores[mipsinfo.i].init;
 
@@ -2774,8 +2754,8 @@ void psx_iop_call(mips_cpu_context *cpu, uint32 pc, uint32 callnum)
 					printf("IOP: memcpy(%08x, %08x, %d)\n", a0, a1, a2);
 					#endif
 
-					dst = (uint8 *)&psx_ram[(a0&0x1fffff)/4];
-					src = (uint8 *)&psx_ram[(a1&0x1fffff)/4];
+					dst = (uint8 *)&cpu->psx_ram[(a0&0x1fffff)/4];
+					src = (uint8 *)&cpu->psx_ram[(a1&0x1fffff)/4];
 					// get exact byte alignment
 					dst += a0 % 4;
 					src += a1 % 4;
@@ -2802,8 +2782,8 @@ void psx_iop_call(mips_cpu_context *cpu, uint32 pc, uint32 callnum)
 					printf("IOP: memmove(%08x, %08x, %d)\n", a0, a1, a2);
 					#endif
 
-					dst = (uint8 *)&psx_ram[(a0&0x1fffff)/4];
-					src = (uint8 *)&psx_ram[(a1&0x1fffff)/4];
+					dst = (uint8 *)&cpu->psx_ram[(a0&0x1fffff)/4];
+					src = (uint8 *)&cpu->psx_ram[(a1&0x1fffff)/4];
 					// get exact byte alignment
 					dst += a0 % 4;
 					src += a1 % 4;
@@ -2834,7 +2814,7 @@ void psx_iop_call(mips_cpu_context *cpu, uint32 pc, uint32 callnum)
 					printf("IOP: memset(%08x, %02x, %d) [PC=%x]\n", a0, a1, a2, mipsinfo.i);
 					#endif
 
-					dst = (uint8 *)&psx_ram[(a0&0x1fffff)/4];
+					dst = (uint8 *)&cpu->psx_ram[(a0&0x1fffff)/4];
 					dst += (a0 & 3);
 
 					memset(dst, a1, a2);
@@ -2849,15 +2829,15 @@ void psx_iop_call(mips_cpu_context *cpu, uint32 pc, uint32 callnum)
 					printf("IOP: bzero(%08x, %08x)\n", a0, a1);
 					#endif
 
-					dst = (uint8 *)&psx_ram[(a0&0x1fffff)/4];
+					dst = (uint8 *)&cpu->psx_ram[(a0&0x1fffff)/4];
 					dst += (a0 & 3);
 					memset(dst, 0, a1);
 				}
 				break;
 
 			case 19:	// sprintf
-				mname = (char *)psx_ram;
-				str1 = (char *)psx_ram;
+				mname = (char *)cpu->psx_ram;
+				str1 = (char *)cpu->psx_ram;
 				mname += a0 & 0x1fffff;
 				str1 += a1 & 0x1fffff;
 
@@ -2882,8 +2862,8 @@ void psx_iop_call(mips_cpu_context *cpu, uint32 pc, uint32 callnum)
 					printf("IOP: strcpy(%08x, %08x)\n", a0, a1);
 					#endif
 
-					dst = (uint8 *)&psx_ram[(a0&0x1fffff)/4];
-					src = (uint8 *)&psx_ram[(a1&0x1fffff)/4];
+					dst = (uint8 *)&cpu->psx_ram[(a0&0x1fffff)/4];
+					src = (uint8 *)&cpu->psx_ram[(a1&0x1fffff)/4];
 					// get exact byte alignment
 					dst += a0 % 4;
 					src += a1 % 4;
@@ -2911,7 +2891,7 @@ void psx_iop_call(mips_cpu_context *cpu, uint32 pc, uint32 callnum)
 					printf("IOP: strlen(%08x) [PC=%x]\n", a0, mipsinfo.i);
 					#endif
 
-					dst = (char *)&psx_ram[(a0&0x1fffff)/4];
+					dst = (char *)&cpu->psx_ram[(a0&0x1fffff)/4];
 					dst += (a0 & 3);
 					mipsinfo.i = strlen(dst);
 					mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
@@ -2926,8 +2906,8 @@ void psx_iop_call(mips_cpu_context *cpu, uint32 pc, uint32 callnum)
 					printf("IOP: strncpy(%08x, %08x, %d)\n", a0, a1, a2);
 					#endif
 
-					dst = (char *)&psx_ram[(a0&0x1fffff)/4];
-					src = (char *)&psx_ram[(a1&0x1fffff)/4];
+					dst = (char *)&cpu->psx_ram[(a0&0x1fffff)/4];
+					src = (char *)&cpu->psx_ram[(a1&0x1fffff)/4];
 					// get exact byte alignment
 					dst += a0 % 4;
 					src += a1 % 4;
@@ -2949,7 +2929,7 @@ void psx_iop_call(mips_cpu_context *cpu, uint32 pc, uint32 callnum)
 
 
 			case 36:	// strtol
-				mname = (char *)&psx_ram[(a0 & 0x1fffff)/4];
+				mname = (char *)&cpu->psx_ram[(a0 & 0x1fffff)/4];
 				mname += (a0 & 3);
 
 				if (a1)
@@ -3087,10 +3067,10 @@ void psx_iop_call(mips_cpu_context *cpu, uint32 pc, uint32 callnum)
 				printf("IOP: RegisterLibraryEntries(%08x) (PC=%x)\n", a0, mipsinfo.i);
 				#endif
 				
-				if (psx_ram[a0/4] == LE32(0x41c00000))
+				if (cpu->psx_ram[a0/4] == LE32(0x41c00000))
 				{
 					a0 += 3*4;
-					memcpy(&reglibs[iNumLibs].name, &psx_ram[a0/4], 8);
+					memcpy(&reglibs[iNumLibs].name, &cpu->psx_ram[a0/4], 8);
 					reglibs[iNumLibs].name[8] = '\0';
 					#if DEBUG_HLE_IOP
 					printf("Lib name [%s]\n", &reglibs[iNumLibs].name);
@@ -3176,7 +3156,7 @@ void psx_iop_call(mips_cpu_context *cpu, uint32 pc, uint32 callnum)
 				break;
 
 			case 14: // Kprintf
-				mname = (char *)psx_ram;
+				mname = (char *)cpu->psx_ram;
 				mname += a0 & 0x1fffff;
 				mname += (a0 & 3);
 
@@ -3209,7 +3189,7 @@ void psx_iop_call(mips_cpu_context *cpu, uint32 pc, uint32 callnum)
 				{
 					FILE *f;
 					f = fopen("psxram.bin", "wb");
-					fwrite(psx_ram, 2*1024*1024, 1, f);
+					fwrite(cpu->psx_ram, 2*1024*1024, 1, f);
 					fclose(f);
 				}
 				#endif
@@ -3228,9 +3208,9 @@ void psx_iop_call(mips_cpu_context *cpu, uint32 pc, uint32 callnum)
 		switch (callnum)
 		{
 			case 7:	// LoadStartModule
-				mname = (char *)&psx_ram[(a0 & 0x1fffff)/4];
+				mname = (char *)&cpu->psx_ram[(a0 & 0x1fffff)/4];
 				mname += 8;
-				str1 = (char *)&psx_ram[(a2 & 0x1fffff)/4];
+				str1 = (char *)&cpu->psx_ram[(a2 & 0x1fffff)/4];
 				#if DEBUG_HLE_IOP
 				printf("LoadStartModule: %s\n", mname);
 				#endif
@@ -3256,7 +3236,7 @@ void psx_iop_call(mips_cpu_context *cpu, uint32 pc, uint32 callnum)
 					if (start != 0xffffffff)
 					{
 						uint32 args[20], numargs = 1, argofs;
-						uint8 *argwalk = (uint8 *)psx_ram, *argbase;
+						uint8 *argwalk = (uint8 *)cpu->psx_ram, *argbase;
 						
 						argwalk += (a2 & 0x1fffff);
 						argbase = argwalk;
@@ -3288,7 +3268,7 @@ void psx_iop_call(mips_cpu_context *cpu, uint32 pc, uint32 callnum)
 							#if DEBUG_HLE_IOP
 //							printf("Arg %d: %08x [%s]\n", i, args[i], &argbase[args[i]-a2]); 
 							#endif
-							psx_ram[(newAlloc/4)+i] = LE32(args[i]);
+							cpu->psx_ram[(newAlloc/4)+i] = LE32(args[i]);
 						}
 
 						// set argv and argc
@@ -3338,7 +3318,7 @@ void psx_iop_call(mips_cpu_context *cpu, uint32 pc, uint32 callnum)
 						return;
 					}
 
-					mname = (char *)psx_ram;
+					mname = (char *)cpu->psx_ram;
 					mname += (a0 & 0x1fffff);
 
 					if (!strncmp(mname, "aofile:", 7))
@@ -3406,7 +3386,7 @@ void psx_iop_call(mips_cpu_context *cpu, uint32 pc, uint32 callnum)
 						a2 = filesize[a0] - filepos[a0];
 					}
 
-					rp = (uint8 *)psx_ram;
+					rp = (uint8 *)cpu->psx_ram;
 					rp += (a1 & 0x1fffff);
 					memcpy(rp, &filedata[a0][filepos[a0]], a2);
 
@@ -3489,7 +3469,7 @@ void psx_iop_call(mips_cpu_context *cpu, uint32 pc, uint32 callnum)
 					mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_DELAYV, &mipsinfo);
 					mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_DELAYR, &mipsinfo);
 
-					mipsinfo.i = LE32(psx_ram[(reglibs[lib].dispatch/4) + callnum]);
+					mipsinfo.i = LE32(cpu->psx_ram[(reglibs[lib].dispatch/4) + callnum]);
 
 					// (NOTE: we get called in the delay slot!)
 					#if DEBUG_HLE_IOP

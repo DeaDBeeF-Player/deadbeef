@@ -102,6 +102,7 @@
 #include "../peops2/externals.h"
 #include "../peops2/regs.h"
 #include "../peops2/dma.h"
+#include "../peops2/spu.h"
  
 ////////////////////////////////////////////////////////////////////////
 // globals
@@ -167,8 +168,6 @@ short * pS;
 static int lastch=-1;      // last channel processed on spu irq in timer mode
 static int lastns=0;       // last ns pos
 static int iSecureStart=0; // secure start counter
-
-extern void ps2_update(unsigned char *samples, long lBytes);
 
 ////////////////////////////////////////////////////////////////////////
 // CODE AREA
@@ -359,7 +358,7 @@ void setlength2(s32 stop, s32 fade)
 
 int iSpuAsyncWait=0;
 
-static void *MAINThread(int samp2run)
+static void *MAINThread(mips_cpu_context *cpu, int samp2run)
 {
  int s_1,s_2,fa,voldiv=iVolume;
  unsigned char * start;unsigned int nSample;
@@ -762,7 +761,7 @@ ENDX:   ;
   // wanna have around 1/60 sec (16.666 ms) updates
 	if ((((unsigned char *)pS)-((unsigned char *)pSpuBuffer)) == (735*4))
 	{
-	    	ps2_update((u8*)pSpuBuffer,(u8*)pS-(u8*)pSpuBuffer);
+	    	cpu->spu_callback((u8*)pSpuBuffer,(u8*)pS-(u8*)pSpuBuffer, cpu->spu_callback_data);
 	        pS=(short *)pSpuBuffer;					  
 	}
  }
@@ -783,7 +782,7 @@ ENDX:   ;
 //  1 time every 'cycle' cycles... harhar
 ////////////////////////////////////////////////////////////////////////
 
-EXPORT_GCC void CALLBACK SPU2async(unsigned long cycle)
+EXPORT_GCC void CALLBACK SPU2async(mips_cpu_context *cpu, unsigned long cycle)
 {
  if(iSpuAsyncWait)
   {
@@ -792,7 +791,7 @@ EXPORT_GCC void CALLBACK SPU2async(unsigned long cycle)
    iSpuAsyncWait=0;
   }
 
-   MAINThread(0);                                      // -> linux high-compat mode
+   MAINThread(cpu, 0);                                      // -> linux high-compat mode
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -804,8 +803,10 @@ EXPORT_GCC void CALLBACK SPU2async(unsigned long cycle)
 ////////////////////////////////////////////////////////////////////////
 
               
-EXPORT_GCC long CALLBACK SPU2init(void)
+EXPORT_GCC long CALLBACK SPU2init(mips_cpu_context *cpu, void (*callback)(unsigned char *, long, void *), void *data)
 {
+    cpu->spu_callback = callback;
+    cpu->spu_callback_data = data;
  spuMemC=(unsigned char *)spuMem;                      // just small setup
  memset((void *)s_chan,0,MAXCHAN*sizeof(SPUCHAN));
  memset(rvb,0,2*sizeof(REVERBInfo));
@@ -821,7 +822,7 @@ EXPORT_GCC long CALLBACK SPU2init(void)
 // SETUPTIMER: init of certain buffers and threads/timers
 ////////////////////////////////////////////////////////////////////////
 
-static void SetupTimer(void)
+static void SetupTimer(mips_cpu_context *cpu)
 {
  memset(SSumR,0,NSSIZE*sizeof(int));                   // init some mixing buffers
  memset(SSumL,0,NSSIZE*sizeof(int));
@@ -836,7 +837,7 @@ static void SetupTimer(void)
 // REMOVETIMER: kill threads/timers
 ////////////////////////////////////////////////////////////////////////
 
-static void RemoveTimer(void)
+static void RemoveTimer(mips_cpu_context *cpu)
 {
  bEndThread=1;                                         // raise flag to end thread
  bThreadEnded=0;                                       // no more spu is running
@@ -847,7 +848,7 @@ static void RemoveTimer(void)
 // SETUPSTREAMS: init most of the spu buffers
 ////////////////////////////////////////////////////////////////////////
 
-static void SetupStreams(void)
+static void SetupStreams(mips_cpu_context *cpu)
 { 
  int i;
 
@@ -882,7 +883,7 @@ static void SetupStreams(void)
 // REMOVESTREAMS: free most buffer
 ////////////////////////////////////////////////////////////////////////
 
-static void RemoveStreams(void)
+static void RemoveStreams(mips_cpu_context *cpu)
 { 
  free(pSpuBuffer);                                     // free mixing buffer
  pSpuBuffer=NULL;
@@ -908,7 +909,7 @@ static void RemoveStreams(void)
 // SPUOPEN: called by main emu after init
 ////////////////////////////////////////////////////////////////////////
    
-EXPORT_GCC long CALLBACK SPU2open(void *pDsp)                          
+EXPORT_GCC long CALLBACK SPU2open(mips_cpu_context *cpu, void *pDsp)                          
 {
  if(bSPUIsOpen) return 0;                              // security for some stupid main emus
 
@@ -942,9 +943,9 @@ EXPORT_GCC long CALLBACK SPU2open(void *pDsp)
  
 // SetupSound();                                         // setup midas (before init!)
 
- SetupStreams();                                       // prepare streaming
+ SetupStreams(cpu);                                       // prepare streaming
 
- SetupTimer();                                         // timer for feeding data
+ SetupTimer(cpu);                                         // timer for feeding data
 
  bSPUIsOpen=1;
 
@@ -957,17 +958,17 @@ EXPORT_GCC long CALLBACK SPU2open(void *pDsp)
 // SPUCLOSE: called before shutdown
 ////////////////////////////////////////////////////////////////////////
 
-EXPORT_GCC void CALLBACK SPU2close(void)
+EXPORT_GCC void CALLBACK SPU2close(mips_cpu_context *cpu)
 {
  if(!bSPUIsOpen) return;                               // some security
 
  bSPUIsOpen=0;                                         // no more open
 
- RemoveTimer();                                        // no more feeding
+ RemoveTimer(cpu);                                        // no more feeding
 
-// RemoveSound();                                        // no more sound handling
+// RemoveSound(cpu);                                        // no more sound handling
 
- RemoveStreams();                                      // no more streaming
+ RemoveStreams(cpu);                                      // no more streaming
 }
 
 ////////////////////////////////////////////////////////////////////////

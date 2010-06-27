@@ -124,7 +124,7 @@ static const int f[5][2] = {
                         {  115, -52 },
                         {   98, -55 },
                         {  122, -60 } };
-s16 * pS;
+static s16 * pS;
 static s32 ttemp;
 
 ////////////////////////////////////////////////////////////////////////
@@ -202,7 +202,7 @@ void setlength(s32 stop, s32 fade)
 }
 
 #define CLIP(_x) {if(_x>32767) _x=32767; if(_x<-32767) _x=-32767;}
-int SPUasync(u32 cycles)
+int SPUasync(mips_cpu_context *cpu, u32 cycles)
 {
  int volmul=iVolume;
  static s32 dosampies;
@@ -490,12 +490,12 @@ int SPUasync(u32 cycles)
  return(1);
 }
 
-extern void spu_update (unsigned char* pSound,long lBytes); // HACK!
-void SPU_flushboot(void)
+void SPU_flushboot(mips_cpu_context *cpu)
 {
    if((u8*)pS>((u8*)pSpuBuffer+1024))
    {
-    spu_update((u8*)pSpuBuffer,(u8*)pS-(u8*)pSpuBuffer);
+    //spu_update(cpu, (u8*)pSpuBuffer,(u8*)pS-(u8*)pSpuBuffer);
+    cpu->spu_callback ((u8*)pSpuBuffer,(u8*)pS-(u8*)pSpuBuffer, cpu->spu_callback_data);
     pS=(s16 *)pSpuBuffer;
    }
 }   
@@ -522,8 +522,10 @@ static u64 gettime64(void)
 // SPUINIT: this func will be called first by the main emu
 ////////////////////////////////////////////////////////////////////////
               
-int SPUinit(void)
+int SPUinit(mips_cpu_context *cpu, void (*update_cb)(unsigned char *pSound, long lBytes, void *data), void *data)
 {
+    cpu->spu_callback = update_cb;
+    cpu->spu_callback_data = data;
  spuMemC=(u8*)spuMem;                      // just small setup
  memset((void *)s_chan,0,MAXCHAN*sizeof(SPUCHAN));
  memset((void *)&rvb,0,sizeof(REVERBInfo));
@@ -584,7 +586,7 @@ void RemoveStreams(void)
 // SPUOPEN: called by main emu after init
 ////////////////////////////////////////////////////////////////////////
    
-int SPUopen(void)
+int SPUopen(mips_cpu_context *cpu)
 {
  if(bSPUIsOpen) return 0;                              // security for some stupid main emus
  spuIrq=0;                       
@@ -611,7 +613,7 @@ int SPUopen(void)
 // SPUCLOSE: called before shutdown
 ////////////////////////////////////////////////////////////////////////
 
-int SPUclose(void)
+int SPUclose(mips_cpu_context *cpu)
 {
  if(!bSPUIsOpen) return 0;                             // some security
 
@@ -626,12 +628,12 @@ int SPUclose(void)
 // SPUSHUTDOWN: called by main emu on final exit
 ////////////////////////////////////////////////////////////////////////
 
-int SPUshutdown(void)
+int SPUshutdown(mips_cpu_context *cpu)
 {
  return 0;
 }
 
-void SPUinjectRAMImage(u16 *pIncoming)
+void SPUinjectRAMImage(mips_cpu_context *cpu, u16 *pIncoming)
 {
 	int i;
 

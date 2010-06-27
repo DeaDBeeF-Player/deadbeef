@@ -34,17 +34,18 @@
 #include "../peops2/externals.h"
 #include "../peops2/registers.h"
 //#include "debug.h"
+#include "../psx.h"
 
-extern uint32 psx_ram[(2*1024*1024)/4];
+//extern uint32 psx_ram[(2*1024*1024)/4];
 
 ////////////////////////////////////////////////////////////////////////
 // READ DMA (many values)
 ////////////////////////////////////////////////////////////////////////
 
-EXPORT_GCC void CALLBACK SPU2readDMA4Mem(u32 usPSXMem,int iSize)
+EXPORT_GCC void CALLBACK SPU2readDMA4Mem(mips_cpu_context *cpu, u32 usPSXMem,int iSize)
 {
  int i;
- u16 *ram16 = (u16 *)&psx_ram[0];
+ u16 *ram16 = (u16 *)&cpu->psx_ram[0];
 
  for(i=0;i<iSize;i++)
   {
@@ -64,10 +65,10 @@ EXPORT_GCC void CALLBACK SPU2readDMA4Mem(u32 usPSXMem,int iSize)
  spuStat2[0]=0x80;                                     // DMA complete
 }
 
-EXPORT_GCC void CALLBACK SPU2readDMA7Mem(u32 usPSXMem,int iSize)
+EXPORT_GCC void CALLBACK SPU2readDMA7Mem(mips_cpu_context *cpu, u32 usPSXMem,int iSize)
 {
  int i;
- u16 *ram16 = (u16 *)&psx_ram[0];
+ u16 *ram16 = (u16 *)&cpu->psx_ram[0];
 
  for(i=0;i<iSize;i++)
   {
@@ -98,10 +99,10 @@ EXPORT_GCC void CALLBACK SPU2readDMA7Mem(u32 usPSXMem,int iSize)
 // WRITE DMA (many values)
 ////////////////////////////////////////////////////////////////////////
 
-EXPORT_GCC void CALLBACK SPU2writeDMA4Mem(u32 usPSXMem,int iSize)
+EXPORT_GCC void CALLBACK SPU2writeDMA4Mem(mips_cpu_context *cpu, u32 usPSXMem,int iSize)
 {
  int i;
- u16 *ram16 = (u16 *)&psx_ram[0];
+ u16 *ram16 = (u16 *)&cpu->psx_ram[0];
 
  for(i=0;i<iSize;i++)
   {
@@ -117,10 +118,10 @@ EXPORT_GCC void CALLBACK SPU2writeDMA4Mem(u32 usPSXMem,int iSize)
  spuStat2[0]=0x80;                                     // DMA complete
 }
 
-EXPORT_GCC void CALLBACK SPU2writeDMA7Mem(u32 usPSXMem,int iSize)
+EXPORT_GCC void CALLBACK SPU2writeDMA7Mem(mips_cpu_context *cpu, u32 usPSXMem,int iSize)
 {
  int i;
- u16 *ram16 = (u16 *)&psx_ram[0];
+ u16 *ram16 = (u16 *)&cpu->psx_ram[0];
 
  for(i=0;i<iSize;i++)
   {
@@ -139,7 +140,7 @@ EXPORT_GCC void CALLBACK SPU2writeDMA7Mem(u32 usPSXMem,int iSize)
 // INTERRUPTS
 ////////////////////////////////////////////////////////////////////////
 
-void InterruptDMA4(void) 
+void InterruptDMA4(mips_cpu_context *cpu) 
 {
 // taken from linuzappz NULL spu2
 //	spu2Rs16(CORE0_ATTR)&= ~0x30;
@@ -151,12 +152,12 @@ void InterruptDMA4(void)
  spuStat2[0]|=0x80;
 }
                        
-EXPORT_GCC void CALLBACK SPU2interruptDMA4(void) 
+EXPORT_GCC void CALLBACK SPU2interruptDMA4(mips_cpu_context *cpu) 
 {
- InterruptDMA4();
+ InterruptDMA4(cpu);
 }
 
-void InterruptDMA7(void) 
+void InterruptDMA7(mips_cpu_context *cpu) 
 {
 // taken from linuzappz NULL spu2
 //	spu2Rs16(CORE1_ATTR)&= ~0x30;
@@ -168,8 +169,8 @@ void InterruptDMA7(void)
  spuStat2[1]|=0x80;
 }
 
-EXPORT_GCC void CALLBACK SPU2interruptDMA7(void) 
+EXPORT_GCC void CALLBACK SPU2interruptDMA7(mips_cpu_context *cpu) 
 {
- InterruptDMA7();
+ InterruptDMA7(cpu);
 }
 

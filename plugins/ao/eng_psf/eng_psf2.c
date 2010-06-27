@@ -68,10 +68,7 @@
 #define ELF32_R_TYPE(val)               ((val) & 0xff)
 
 // main RAM
-extern uint32 psx_ram[(2*1024*1024)/4];
-extern uint32 initial_ram[(2*1024*1024)/4];
 static uint32 loadAddr, lengthMS, fadeMS;
-static char		*spu_pOutput;
 static uint8 *filesys[MAX_FS];
 static uint32 fssize[MAX_FS];
 static int num_fs;
@@ -83,10 +80,18 @@ typedef struct {
 
     uint8 *lib_raw_file;
     mips_cpu_context *mips_cpu;
+    char		*spu_pOutput;
 } psf2_synth_t;
 
 extern void setlength2(int32 stop, int32 fade);
 
+void ps2_update(unsigned char *pSound, long lBytes, void *data)
+{
+    psf2_synth_t *s = data;
+	memcpy(s->spu_pOutput, pSound, lBytes);	// (for direct 44.1kHz output)
+}
+
+#if 0
 static uint32 secname(uint8 *start, uint32 strndx, uint32 shoff, uint32 shentsize, uint32 name)
 {
 	uint32 offset, shent;
@@ -101,6 +106,7 @@ static uint32 secname(uint8 *start, uint32 strndx, uint32 shoff, uint32 shentsiz
 	
 	return offset;	
 }
+#endif
 
 static void do_iopmod(uint8 *start, uint32 offset)
 {
@@ -179,7 +185,7 @@ uint32 psf2_load_elf(mips_cpu_context *cpu, uint8 *start, uint32 len)
 				break;
 
 			case 1:			// PROGBITS: copy data to destination
-				memcpy(&psx_ram[(loadAddr + addr)/4], &start[offset], size);
+				memcpy(&cpu->psx_ram[(loadAddr + addr)/4], &start[offset], size);
 				totallen += size;
 				break;
 
@@ -190,7 +196,7 @@ uint32 psf2_load_elf(mips_cpu_context *cpu, uint8 *start, uint32 len)
 				break;
 
 			case 8:			// NOBITS: BSS region, zero out destination
-				memset(&psx_ram[(loadAddr + addr)/4], 0, size);
+				memset(&cpu->psx_ram[(loadAddr + addr)/4], 0, size);
 				totallen += size;
 				break;
 
@@ -202,7 +208,7 @@ uint32 psf2_load_elf(mips_cpu_context *cpu, uint8 *start, uint32 len)
 
 					offs = start[offset+(rec*8)] | start[offset+1+(rec*8)]<<8 | start[offset+2+(rec*8)]<<16 | start[offset+3+(rec*8)]<<24;
 					info = start[offset+4+(rec*8)] | start[offset+5+(rec*8)]<<8 | start[offset+6+(rec*8)]<<16 | start[offset+7+(rec*8)]<<24;
-					target = LE32(psx_ram[(loadAddr+offs)/4]);
+					target = LE32(cpu->psx_ram[(loadAddr+offs)/4]);
 					
 //					printf("[%04d] offs %08x type %02x info %08x => %08x\n", rec, offs, ELF32_R_TYPE(info), ELF32_R_SYM(info), target);
 
@@ -241,7 +247,7 @@ uint32 psf2_load_elf(mips_cpu_context *cpu, uint8 *start, uint32 len)
 							val = loadAddr + vallo;
 							target = (target & ~0xffff) | (val & 0xffff);
 
-							psx_ram[(loadAddr+hi16offs)/4] = LE32(hi16target);
+							cpu->psx_ram[(loadAddr+hi16offs)/4] = LE32(hi16target);
 							break;
 
 						default:
@@ -250,7 +256,7 @@ uint32 psf2_load_elf(mips_cpu_context *cpu, uint8 *start, uint32 len)
 							break;
 					}
 
-					psx_ram[(loadAddr+offs)/4] = LE32(target);
+					cpu->psx_ram[(loadAddr+offs)/4] = LE32(target);
 				}						
 				break;
 
@@ -337,7 +343,7 @@ static uint32 load_file_ex(uint8 *top, uint8 *start, uint32 len, char *file, uin
 				uerr = uncompress(&buf[uofs], &dlength, &top[cofs], usize);
 				if (uerr != Z_OK)
 				{
-					printf("Decompress fail: %x %d!\n", dlength, uerr);
+					printf("Decompress fail: %x %d!\n", (unsigned int)dlength, uerr);
 					return 0xffffffff;
 				}
 
@@ -466,9 +472,6 @@ void *psf2_start(uint8 *buffer, uint32 length)
 	loadAddr = 0x23f00;	// this value makes allocations work out similarly to how they would 
 				// in Highly Experimental (as per Shadow Hearts' hard-coded assumptions)
 
-	// clear IOP work RAM before we start scribbling in it
-	memset(psx_ram, 0, 2*1024*1024);
-
 	// Decode the current PSF2
 	if (corlett_decode(buffer, length, &file, &file_len, &s->c) != AO_SUCCESS)
 	{
@@ -476,7 +479,7 @@ void *psf2_start(uint8 *buffer, uint32 length)
 		return NULL;
 	}
 
-	if (file_len > 0) printf("ERROR: PSF2 can't have a program section!  ps %08x\n", file_len);
+	if (file_len > 0) printf("ERROR: PSF2 can't have a program section!  ps %08x\n", (unsigned int)file_len);
 
 	#if DEBUG_LOADER
 	printf("FS section: size %x\n", s->c->res_size);
@@ -572,26 +575,21 @@ void *psf2_start(uint8 *buffer, uint32 length)
 
 	mipsinfo.i = 0x80000004;	// argv
 	mips_set_info(s->mips_cpu, CPUINFO_INT_REGISTER + MIPS_R5, &mipsinfo);
-	psx_ram[1] = LE32(0x80000008);
+	s->mips_cpu->psx_ram[1] = LE32(0x80000008);
 	
-	buf = (uint8 *)&psx_ram[2];
+	buf = (uint8 *)(&s->mips_cpu->psx_ram[2]);
 	strcpy((char *)buf, "aofile:/");		
 
-	psx_ram[0] = LE32(FUNCT_HLECALL);
+	s->mips_cpu->psx_ram[0] = LE32(FUNCT_HLECALL);
 
 	// back up initial RAM image to quickly restart songs
-	memcpy(initial_ram, psx_ram, 2*1024*1024);
+	memcpy(s->mips_cpu->initial_ram, s->mips_cpu->psx_ram, 2*1024*1024);
 
 	psx_hw_init(s->mips_cpu);
-	SPU2init();
-	SPU2open(NULL);
+	SPU2init(s->mips_cpu, ps2_update, s);
+	SPU2open(s->mips_cpu, NULL);
 
 	return s;
-}
-
-void ps2_update(unsigned char *pSound, long lBytes)
-{
-	memcpy(spu_pOutput, pSound, lBytes);	// (for direct 44.1kHz output)
 }
 
 int32 psf2_gen(void *handle, int16 *buffer, uint32 samples)
@@ -602,11 +600,11 @@ int32 psf2_gen(void *handle, int16 *buffer, uint32 samples)
 //	memset (buffer, 0, samples * 4);
 //	return AO_SUCCESS;
 //
-	spu_pOutput = (char *)buffer;
+	s->spu_pOutput = (char *)buffer;
 
 	for (i = 0; i < samples; i++)
 	{
-		SPU2async(1);
+		SPU2async(s->mips_cpu, 1);
 		ps2_hw_slice(s->mips_cpu);
 	}
 
@@ -618,7 +616,7 @@ int32 psf2_gen(void *handle, int16 *buffer, uint32 samples)
 int32 psf2_stop(void *handle)
 {
     psf2_synth_t *s = handle;
-	SPU2close();
+	SPU2close(s->mips_cpu);
 	if (s->c->lib[0] != 0)
 	{
 		free(s->lib_raw_file);
@@ -638,15 +636,15 @@ int32 psf2_command(void *handle, int32 command, int32 parameter)
 	switch (command)
 	{
 		case COMMAND_RESTART:
-			SPU2close();
+			SPU2close(s->mips_cpu);
 
-			memcpy(psx_ram, initial_ram, 2*1024*1024);
+			memcpy(s->mips_cpu->psx_ram, s->mips_cpu->initial_ram, 2*1024*1024);
 
 			mips_init(s->mips_cpu);
 			mips_reset(s->mips_cpu, NULL);
 			psx_hw_init(s->mips_cpu);
-			SPU2init();
-			SPU2open(NULL);
+			SPU2init(s->mips_cpu, ps2_update, s);
+			SPU2open(s->mips_cpu, NULL);
 
 			mipsinfo.i = s->initialPC;
 			mips_set_info(s->mips_cpu, CPUINFO_INT_PC, &mipsinfo);
