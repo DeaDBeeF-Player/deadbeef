@@ -51,23 +51,23 @@
 
 ////////////////////////////////////////////////////////////////////////
 
-static INLINE s64 g_buffer(int iOff)                          // get_buffer content helper: takes care about wraps
+static INLINE s64 g_buffer(spu_state_t *spu, int iOff)                          // get_buffer content helper: takes care about wraps
 {
- s16 * p=(s16 *)spuMem;
- iOff=(iOff*4)+rvb.CurrAddr;
- while(iOff>0x3FFFF)       iOff=rvb.StartAddr+(iOff-0x40000);
- while(iOff<rvb.StartAddr) iOff=0x3ffff-(rvb.StartAddr-iOff);
+ s16 * p=(s16 *)spu->spuMem;
+ iOff=(iOff*4)+spu->rvb.CurrAddr;
+ while(iOff>0x3FFFF)       iOff=spu->rvb.StartAddr+(iOff-0x40000);
+ while(iOff<spu->rvb.StartAddr) iOff=0x3ffff-(spu->rvb.StartAddr-iOff);
  return (int)(s16)BFLIP16(*(p+iOff));
 }
 
 ////////////////////////////////////////////////////////////////////////
 
-static INLINE void s_buffer(int iOff,int iVal)                // set_buffer content helper: takes care about wraps and clipping
+static INLINE void s_buffer(spu_state_t *spu, int iOff,int iVal)                // set_buffer content helper: takes care about wraps and clipping
 {
- s16 * p=(s16 *)spuMem;
- iOff=(iOff*4)+rvb.CurrAddr;
- while(iOff>0x3FFFF) iOff=rvb.StartAddr+(iOff-0x40000);
- while(iOff<rvb.StartAddr) iOff=0x3ffff-(rvb.StartAddr-iOff);
+ s16 * p=(s16 *)spu->spuMem;
+ iOff=(iOff*4)+spu->rvb.CurrAddr;
+ while(iOff>0x3FFFF) iOff=spu->rvb.StartAddr+(iOff-0x40000);
+ while(iOff<spu->rvb.StartAddr) iOff=0x3ffff-(spu->rvb.StartAddr-iOff);
  if(iVal<-32768L) iVal=-32768L;
  if(iVal>32767L) iVal=32767L;
  *(p+iOff)=(s16)BFLIP16((s16)iVal);
@@ -75,17 +75,17 @@ static INLINE void s_buffer(int iOff,int iVal)                // set_buffer cont
 
 ////////////////////////////////////////////////////////////////////////
 
-static INLINE void s_buffer1(int iOff,int iVal)                // set_buffer (+1 sample) content helper: takes care about wraps and clipping
+static INLINE void s_buffer1(spu_state_t *spu, int iOff,int iVal)                // set_buffer (+1 sample) content helper: takes care about wraps and clipping
 {
- s16 * p=(s16 *)spuMem;
- iOff=(iOff*4)+rvb.CurrAddr+1;
- while(iOff>0x3FFFF) iOff=rvb.StartAddr+(iOff-0x40000);
- while(iOff<rvb.StartAddr) iOff=0x3ffff-(rvb.StartAddr-iOff);
+ s16 * p=(s16 *)spu->spuMem;
+ iOff=(iOff*4)+spu->rvb.CurrAddr+1;
+ while(iOff>0x3FFFF) iOff=spu->rvb.StartAddr+(iOff-0x40000);
+ while(iOff<spu->rvb.StartAddr) iOff=0x3ffff-(spu->rvb.StartAddr-iOff);
  if(iVal<-32768L) iVal=-32768L;if(iVal>32767L) iVal=32767L;
  *(p+iOff)=(s16)BFLIP16((s16)iVal);
 }
 
-static INLINE void MixREVERBLeftRight(s32 *oleft, s32 *oright, s32 inleft, s32 inright)
+static INLINE void MixREVERBLeftRight(spu_state_t *spu, s32 *oleft, s32 *oright, s32 inleft, s32 inright)
 {
    static s32 downbuf[2][8];
    static s32 upbuf[2][8];
@@ -96,9 +96,9 @@ static INLINE void MixREVERBLeftRight(s32 *oleft, s32 *oright, s32 inleft, s32 i
 			       };
    int x;
 
-   if(!rvb.StartAddr)                                  // reverb is off
+   if(!spu->rvb.StartAddr)                                  // reverb is off
     {
-     rvb.iRVBLeft=rvb.iRVBRight=0;
+     spu->rvb.iRVBLeft=spu->rvb.iRVBRight=0;
      return;
     }
 
@@ -110,7 +110,7 @@ static INLINE void MixREVERBLeftRight(s32 *oleft, s32 *oright, s32 inleft, s32 i
 
    if(dbpos&1)                                          // we work on every second left value: downsample to 22 khz
     {
-     if(spuCtrl&0x80)                                  // -> reverb on? oki
+     if(spu->spuCtrl&0x80)                                  // -> reverb on? oki
       {
        int ACC0,ACC1,FB_A0,FB_A1,FB_B0,FB_B1;
        s32 INPUT_SAMPLE_L=0;                         
@@ -127,58 +127,58 @@ static INLINE void MixREVERBLeftRight(s32 *oleft, s32 *oright, s32 inleft, s32 i
        INPUT_SAMPLE_L>>=(16-8);
        INPUT_SAMPLE_R>>=(16-8);
        {
-        const s64 IIR_INPUT_A0 = ((g_buffer(rvb.IIR_SRC_A0) * rvb.IIR_COEF)>>15) + ((INPUT_SAMPLE_L * rvb.IN_COEF_L)>>15);
-        const s64 IIR_INPUT_A1 = ((g_buffer(rvb.IIR_SRC_A1) * rvb.IIR_COEF)>>15) + ((INPUT_SAMPLE_R * rvb.IN_COEF_R)>>15);
-        const s64 IIR_INPUT_B0 = ((g_buffer(rvb.IIR_SRC_B0) * rvb.IIR_COEF)>>15) + ((INPUT_SAMPLE_L * rvb.IN_COEF_L)>>15);
-        const s64 IIR_INPUT_B1 = ((g_buffer(rvb.IIR_SRC_B1) * rvb.IIR_COEF)>>15) + ((INPUT_SAMPLE_R * rvb.IN_COEF_R)>>15);
-        const s64 IIR_A0 = ((IIR_INPUT_A0 * rvb.IIR_ALPHA)>>15) + ((g_buffer(rvb.IIR_DEST_A0) * (32768L - rvb.IIR_ALPHA))>>15);
-        const s64 IIR_A1 = ((IIR_INPUT_A1 * rvb.IIR_ALPHA)>>15) + ((g_buffer(rvb.IIR_DEST_A1) * (32768L - rvb.IIR_ALPHA))>>15);
-        const s64 IIR_B0 = ((IIR_INPUT_B0 * rvb.IIR_ALPHA)>>15) + ((g_buffer(rvb.IIR_DEST_B0) * (32768L - rvb.IIR_ALPHA))>>15);
-        const s64 IIR_B1 = ((IIR_INPUT_B1 * rvb.IIR_ALPHA)>>15) + ((g_buffer(rvb.IIR_DEST_B1) * (32768L - rvb.IIR_ALPHA))>>15);
+        const s64 IIR_INPUT_A0 = ((g_buffer(spu, spu->rvb.IIR_SRC_A0) * spu->rvb.IIR_COEF)>>15) + ((INPUT_SAMPLE_L * spu->rvb.IN_COEF_L)>>15);
+        const s64 IIR_INPUT_A1 = ((g_buffer(spu, spu->rvb.IIR_SRC_A1) * spu->rvb.IIR_COEF)>>15) + ((INPUT_SAMPLE_R * spu->rvb.IN_COEF_R)>>15);
+        const s64 IIR_INPUT_B0 = ((g_buffer(spu, spu->rvb.IIR_SRC_B0) * spu->rvb.IIR_COEF)>>15) + ((INPUT_SAMPLE_L * spu->rvb.IN_COEF_L)>>15);
+        const s64 IIR_INPUT_B1 = ((g_buffer(spu, spu->rvb.IIR_SRC_B1) * spu->rvb.IIR_COEF)>>15) + ((INPUT_SAMPLE_R * spu->rvb.IN_COEF_R)>>15);
+        const s64 IIR_A0 = ((IIR_INPUT_A0 * spu->rvb.IIR_ALPHA)>>15) + ((g_buffer(spu, spu->rvb.IIR_DEST_A0) * (32768L - spu->rvb.IIR_ALPHA))>>15);
+        const s64 IIR_A1 = ((IIR_INPUT_A1 * spu->rvb.IIR_ALPHA)>>15) + ((g_buffer(spu, spu->rvb.IIR_DEST_A1) * (32768L - spu->rvb.IIR_ALPHA))>>15);
+        const s64 IIR_B0 = ((IIR_INPUT_B0 * spu->rvb.IIR_ALPHA)>>15) + ((g_buffer(spu, spu->rvb.IIR_DEST_B0) * (32768L - spu->rvb.IIR_ALPHA))>>15);
+        const s64 IIR_B1 = ((IIR_INPUT_B1 * spu->rvb.IIR_ALPHA)>>15) + ((g_buffer(spu, spu->rvb.IIR_DEST_B1) * (32768L - spu->rvb.IIR_ALPHA))>>15);
 
-       s_buffer1(rvb.IIR_DEST_A0, IIR_A0);
-       s_buffer1(rvb.IIR_DEST_A1, IIR_A1);
-       s_buffer1(rvb.IIR_DEST_B0, IIR_B0);
-       s_buffer1(rvb.IIR_DEST_B1, IIR_B1);
+       s_buffer1(spu, spu->rvb.IIR_DEST_A0, IIR_A0);
+       s_buffer1(spu, spu->rvb.IIR_DEST_A1, IIR_A1);
+       s_buffer1(spu, spu->rvb.IIR_DEST_B0, IIR_B0);
+       s_buffer1(spu, spu->rvb.IIR_DEST_B1, IIR_B1);
  
-       ACC0 = ((g_buffer(rvb.ACC_SRC_A0) * rvb.ACC_COEF_A)>>15) +
-              ((g_buffer(rvb.ACC_SRC_B0) * rvb.ACC_COEF_B)>>15) +
-              ((g_buffer(rvb.ACC_SRC_C0) * rvb.ACC_COEF_C)>>15) +
-              ((g_buffer(rvb.ACC_SRC_D0) * rvb.ACC_COEF_D)>>15);
-       ACC1 = ((g_buffer(rvb.ACC_SRC_A1) * rvb.ACC_COEF_A)>>15) +
-              ((g_buffer(rvb.ACC_SRC_B1) * rvb.ACC_COEF_B)>>15) +
-              ((g_buffer(rvb.ACC_SRC_C1) * rvb.ACC_COEF_C)>>15) +
-              ((g_buffer(rvb.ACC_SRC_D1) * rvb.ACC_COEF_D)>>15);
+       ACC0 = ((g_buffer(spu, spu->rvb.ACC_SRC_A0) * spu->rvb.ACC_COEF_A)>>15) +
+              ((g_buffer(spu, spu->rvb.ACC_SRC_B0) * spu->rvb.ACC_COEF_B)>>15) +
+              ((g_buffer(spu, spu->rvb.ACC_SRC_C0) * spu->rvb.ACC_COEF_C)>>15) +
+              ((g_buffer(spu, spu->rvb.ACC_SRC_D0) * spu->rvb.ACC_COEF_D)>>15);
+       ACC1 = ((g_buffer(spu, spu->rvb.ACC_SRC_A1) * spu->rvb.ACC_COEF_A)>>15) +
+              ((g_buffer(spu, spu->rvb.ACC_SRC_B1) * spu->rvb.ACC_COEF_B)>>15) +
+              ((g_buffer(spu, spu->rvb.ACC_SRC_C1) * spu->rvb.ACC_COEF_C)>>15) +
+              ((g_buffer(spu, spu->rvb.ACC_SRC_D1) * spu->rvb.ACC_COEF_D)>>15);
 
-       FB_A0 = g_buffer(rvb.MIX_DEST_A0 - rvb.FB_SRC_A);
-       FB_A1 = g_buffer(rvb.MIX_DEST_A1 - rvb.FB_SRC_A);
-       FB_B0 = g_buffer(rvb.MIX_DEST_B0 - rvb.FB_SRC_B);
-       FB_B1 = g_buffer(rvb.MIX_DEST_B1 - rvb.FB_SRC_B);
+       FB_A0 = g_buffer(spu, spu->rvb.MIX_DEST_A0 - spu->rvb.FB_SRC_A);
+       FB_A1 = g_buffer(spu, spu->rvb.MIX_DEST_A1 - spu->rvb.FB_SRC_A);
+       FB_B0 = g_buffer(spu, spu->rvb.MIX_DEST_B0 - spu->rvb.FB_SRC_B);
+       FB_B1 = g_buffer(spu, spu->rvb.MIX_DEST_B1 - spu->rvb.FB_SRC_B);
 
-       s_buffer(rvb.MIX_DEST_A0, ACC0 - ((FB_A0 * rvb.FB_ALPHA)>>15));
-       s_buffer(rvb.MIX_DEST_A1, ACC1 - ((FB_A1 * rvb.FB_ALPHA)>>15));
+       s_buffer(spu, spu->rvb.MIX_DEST_A0, ACC0 - ((FB_A0 * spu->rvb.FB_ALPHA)>>15));
+       s_buffer(spu, spu->rvb.MIX_DEST_A1, ACC1 - ((FB_A1 * spu->rvb.FB_ALPHA)>>15));
        
-       s_buffer(rvb.MIX_DEST_B0, ((rvb.FB_ALPHA * ACC0)>>15) - ((FB_A0 * (int)(rvb.FB_ALPHA^0xFFFF8000))>>15) - ((FB_B0 * rvb.FB_X)>>15));
-       s_buffer(rvb.MIX_DEST_B1, ((rvb.FB_ALPHA * ACC1)>>15) - ((FB_A1 * (int)(rvb.FB_ALPHA^0xFFFF8000))>>15) - ((FB_B1 * rvb.FB_X)>>15));
+       s_buffer(spu, spu->rvb.MIX_DEST_B0, ((spu->rvb.FB_ALPHA * ACC0)>>15) - ((FB_A0 * (int)(spu->rvb.FB_ALPHA^0xFFFF8000))>>15) - ((FB_B0 * spu->rvb.FB_X)>>15));
+       s_buffer(spu, spu->rvb.MIX_DEST_B1, ((spu->rvb.FB_ALPHA * ACC1)>>15) - ((FB_A1 * (int)(spu->rvb.FB_ALPHA^0xFFFF8000))>>15) - ((FB_B1 * spu->rvb.FB_X)>>15));
  
-       rvb.iRVBLeft  = (g_buffer(rvb.MIX_DEST_A0)+g_buffer(rvb.MIX_DEST_B0))/3;
-       rvb.iRVBRight = (g_buffer(rvb.MIX_DEST_A1)+g_buffer(rvb.MIX_DEST_B1))/3;
+       spu->rvb.iRVBLeft  = (g_buffer(spu, spu->rvb.MIX_DEST_A0)+g_buffer(spu, spu->rvb.MIX_DEST_B0))/3;
+       spu->rvb.iRVBRight = (g_buffer(spu, spu->rvb.MIX_DEST_A1)+g_buffer(spu, spu->rvb.MIX_DEST_B1))/3;
 
-       rvb.iRVBLeft  = ((s64)rvb.iRVBLeft * rvb.VolLeft)  >> 14;
-       rvb.iRVBRight = ((s64)rvb.iRVBRight * rvb.VolRight) >> 14;
+       spu->rvb.iRVBLeft  = ((s64)spu->rvb.iRVBLeft * spu->rvb.VolLeft)  >> 14;
+       spu->rvb.iRVBRight = ((s64)spu->rvb.iRVBRight * spu->rvb.VolRight) >> 14;
 
-       upbuf[0][ubpos]=rvb.iRVBLeft;
-       upbuf[1][ubpos]=rvb.iRVBRight;
+       upbuf[0][ubpos]=spu->rvb.iRVBLeft;
+       upbuf[1][ubpos]=spu->rvb.iRVBRight;
        ubpos=(ubpos+1)&7;
        } // Bracket hack(et).
       }
      else                                              // -> reverb off
       {
-       rvb.iRVBLeft=rvb.iRVBRight=0;
+       spu->rvb.iRVBLeft=spu->rvb.iRVBRight=0;
        return;
       }
-     rvb.CurrAddr++;
-     if(rvb.CurrAddr>0x3ffff) rvb.CurrAddr=rvb.StartAddr;
+     spu->rvb.CurrAddr++;
+     if(spu->rvb.CurrAddr>0x3ffff) spu->rvb.CurrAddr=spu->rvb.StartAddr;
     }
     else
     {

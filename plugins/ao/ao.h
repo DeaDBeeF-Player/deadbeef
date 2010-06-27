@@ -109,6 +109,42 @@ typedef signed long long	int64;
 typedef unsigned long long	uint64;
 #endif
 
+typedef int8 s8;
+typedef int16 s16;
+typedef int32 s32;
+typedef int64 s64;
+
+typedef uint8 u8;
+typedef uint16 u16;
+typedef uint32 u32;
+typedef uint64 u64;
+
+#ifndef INLINE
+#if defined(_MSC_VER)
+#define INLINE __forceinline
+#elif defined(__GNUC__)
+#define INLINE __inline__
+#elif defined(_MWERKS_)
+#define INLINE inline
+#elif defined(__powerc)
+#define INLINE inline
+#else
+#define INLINE
+#endif
+#endif
+
+#if LSB_FIRST
+static INLINE u16 BFLIP16(u16 x)
+{
+ return x;
+}
+#else
+static INLINE u16 BFLIP16(u16 x)
+{
+ return( ((x>>8)&0xFF)| ((x&0xFF)<<8) );
+}
+#endif
+
 #ifdef WIN32
 #ifndef _BASETSD_H
 typedef signed int			INT32;
@@ -125,20 +161,6 @@ typedef unsigned long       UINT64;
 #else
 typedef signed long long	INT64;
 typedef unsigned long long	UINT64;
-#endif
-#endif
-
-#ifndef INLINE
-#if defined(_MSC_VER)
-#define INLINE __forceinline
-#elif defined(__GNUC__)
-#define INLINE __inline__
-#elif defined(_MWERKS_)
-#define INLINE inline
-#elif defined(__powerc)
-#define INLINE inline
-#else
-#define INLINE
 #endif
 #endif
 

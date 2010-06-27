@@ -21,28 +21,6 @@
 #ifndef PEOPS_EXTERNALS
 #define PEOPS_EXTERNALS
 
-typedef int8 s8;
-typedef int16 s16;
-typedef int32 s32;
-typedef int64 s64;
-
-typedef uint8 u8;
-typedef uint16 u16;
-typedef uint32 u32;
-typedef uint64 u64;
-
-#if LSB_FIRST
-static INLINE u16 BFLIP16(u16 x)
-{
- return x;
-}
-#else
-static INLINE u16 BFLIP16(u16 x)
-{
- return( ((x>>8)&0xFF)| ((x&0xFF)<<8) );
-}
-#endif
-
 //*************************************************************************//
 // History of changes:
 //

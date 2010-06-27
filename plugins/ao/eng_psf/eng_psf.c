@@ -55,8 +55,6 @@ typedef struct {
 
 static uint32 initialPC, initialGP, initialSP;
 
-extern void setlength(int32 stop, int32 fade);
-
 static void spu_update (unsigned char* pSound,long lBytes,void *data)
 {
     psf_synth_t *s = data;
@@ -331,7 +329,7 @@ void *psf_start(uint8 *buffer, uint32 length)
 		lengthMS = ~0;
 	}
 
-	setlength(lengthMS, fadeMS);
+	setlength(s->mips_cpu->spu, lengthMS, fadeMS);
 
 	// patch illegal Chocobo Dungeon 2 code - CaitSith2 put a jump in the delay slot from a BNE
 	// and rely on Highly Experimental's buggy-ass CPU to rescue them.  Verified on real hardware
@@ -419,7 +417,7 @@ int32 psf_command(void *handle, int32 command, int32 parameter)
 			{
 				lengthMS = ~0;
 			}
-			setlength(lengthMS, fadeMS);
+			setlength(s->mips_cpu->spu, lengthMS, fadeMS);
 
 			mipsinfo.i = initialPC;
 			mips_set_info(s->mips_cpu, CPUINFO_INT_PC, &mipsinfo);

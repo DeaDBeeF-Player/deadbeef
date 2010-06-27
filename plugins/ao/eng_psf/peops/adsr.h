@@ -24,5 +24,5 @@
 //
 //*************************************************************************//
 
-static INLINE void StartADSR(int ch);
-static INLINE int  MixADSR(int ch);
+static INLINE void StartADSR(spu_state_t *spu, int ch);
+static INLINE int  MixADSR(spu_state_t *spu, int ch);

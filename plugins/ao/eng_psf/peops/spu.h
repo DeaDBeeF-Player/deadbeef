@@ -28,6 +28,39 @@
 #include "../psx.h"
 void sexyd_update(unsigned char* pSound,long lBytes);
 
+typedef struct spu_state_s {
+    // psx buffer / addresses
+    u16  regArea[0x200];
+    u16  spuMem[256*1024];
+    u8 * spuMemC;
+    u8 * pSpuIrq;
+    u8 * pSpuBuffer;
+
+    // user settings          
+    int             iVolume;
+
+    // MAIN infos struct for each channel
+
+    SPUCHAN         s_chan[MAXCHAN+1];                     // channel + 1 infos (1 is security for fmod handling)
+    REVERBInfo      rvb;
+
+    u32   dwNoiseVal;//=1;                          // global noise generator
+
+    u16  spuCtrl;                             // some vars to store psx reg infos
+    u16  spuStat;
+    u16  spuIrq;             
+    u32  spuAddr; //=0xffffffff;                    // address into spu mem
+    int  bSPUIsOpen;
+
+    s16 * pS;
+    s32 ttemp;
+    u32 sampcount;
+    u32 decaybegin;
+    u32 decayend;
+
+    s32 dosampies;
+} spu_state_t;
+
 int SPUasync(mips_cpu_context *cpu, u32 cycles);
 void SPU_flushboot(mips_cpu_context *cpu);
 int SPUinit(mips_cpu_context *cpu, void (*update_cb)(unsigned char *pSound, long lBytes, void *data), void *data);

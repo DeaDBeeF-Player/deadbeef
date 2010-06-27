@@ -86,7 +86,9 @@ typedef struct mips_cpu_context_s
     uint32 initial_ram[(2*1024*1024)/4];
     uint32 initial_scratch[0x400];
 
-    // spu callback
+    // spu
+    struct spu_state_s *spu;
+    struct spu2_state_s *spu2;
     void (*spu_callback)(unsigned char *, long, void *);
     void *spu_callback_data;
 } mips_cpu_context;
@@ -353,6 +355,9 @@ uint32 program_read_dword_32le(mips_cpu_context *cpu, offs_t address);
 void program_write_byte_32le(mips_cpu_context *cpu, offs_t address, uint8 data);
 void program_write_word_32le(mips_cpu_context *cpu, offs_t address, uint16 data);
 void program_write_dword_32le(mips_cpu_context *cpu, offs_t address, uint32 data);
+
+// SPU1
+void setlength(struct spu_state_s *spu, s32 stop, s32 fade);
 
 // SPU2
 void SPU2write(mips_cpu_context *cpu, unsigned long reg, unsigned short val);

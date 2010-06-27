@@ -39,10 +39,10 @@ void SPUreadDMAMem(mips_cpu_context *cpu, u32 usPSXMem,int iSize)
 
  for(i=0;i<iSize;i++)
   {
-   ram16[usPSXMem>>1]=spuMem[spuAddr>>1];		// spu addr got by writeregister
+   ram16[usPSXMem>>1]=cpu->spu->spuMem[cpu->spu->spuAddr>>1];		// spu addr got by writeregister
    usPSXMem+=2;
-   spuAddr+=2;                                         // inc spu addr
-   if(spuAddr>0x7ffff) spuAddr=0;                      // wrap
+   cpu->spu->spuAddr+=2;                                         // inc spu addr
+   if(cpu->spu->spuAddr>0x7ffff) cpu->spu->spuAddr=0;                      // wrap
   }
 }
 
@@ -66,10 +66,10 @@ void SPUwriteDMAMem(mips_cpu_context *cpu, u32 usPSXMem,int iSize)
  for(i=0;i<iSize;i++)
   {
 //  printf("main RAM %x => SPU %x\n", usPSXMem, spuAddr);
-   spuMem[spuAddr>>1] = ram16[usPSXMem>>1];
+   cpu->spu->spuMem[cpu->spu->spuAddr>>1] = ram16[usPSXMem>>1];
    usPSXMem+=2;                  			// spu addr got by writeregister
-   spuAddr+=2;                                         // inc spu addr
-   if(spuAddr>0x7ffff) spuAddr=0;                      // wrap
+   cpu->spu->spuAddr+=2;                                         // inc spu addr
+   if(cpu->spu->spuAddr>0x7ffff) cpu->spu->spuAddr=0;                      // wrap
   }
 }
 

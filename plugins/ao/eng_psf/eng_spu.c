@@ -43,8 +43,6 @@
 #include "peops/spu.h"
 #include "peops/regs.h"
 
-extern void setlength(int32 stop, int32 fade);
-
 typedef struct {
     uint8 *start_of_file, *song_ptr;
     uint32 cur_tick, cur_event, num_events, next_tick, end_tick;
@@ -81,7 +79,7 @@ void *spu_start(uint8 *buffer, uint32 length)
     s->mips_cpu = mips_alloc ();
 	SPUinit(s->mips_cpu, spu_update, s);
 	SPUopen(s->mips_cpu);
-	setlength(~0, 0);
+	setlength(s->mips_cpu->spu, ~0, 0);
 
 	// upload the SPU RAM image
 	SPUinjectRAMImage(s->mips_cpu, (unsigned short *)&buffer[0]);
