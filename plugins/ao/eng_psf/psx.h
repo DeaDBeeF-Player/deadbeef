@@ -7,7 +7,7 @@
 typedef void genf(void);
 typedef int offs_t;
 
-#define cpu_readop32(pc) program_read_dword_32le(pc)
+#define cpu_readop32(pc) program_read_dword_32le(cpu, pc)
 #define change_pc(pc)																	\
 
 
@@ -63,23 +63,41 @@ struct address_map_t
 };
 typedef struct address_map_t *(*construct_map_t)(struct address_map_t *map);
 
+typedef struct mips_cpu_context_s
+{
+	UINT32 op;
+	UINT32 pc;
+	UINT32 prevpc;
+	UINT32 delayv;
+	UINT32 delayr;
+	UINT32 hi;
+	UINT32 lo;
+	UINT32 r[ 32 ];
+	UINT32 cp0r[ 32 ];
+	PAIR cp2cr[ 32 ];
+	PAIR cp2dr[ 32 ];
+	int (*irq_callback)(struct mips_cpu_context_s *cpu, int irqline);
+    int mips_ICount;
+} mips_cpu_context;
+
 union cpuinfo
 {
 	int64	i;											/* generic integers */
 	void *	p;											/* generic pointers */
 	genf *  f;											/* generic function pointers */
 	char *	s;											/* generic strings */
+	mips_cpu_context *cpu;
 
-	void	(*setinfo)(UINT32 state, union cpuinfo *info);/* CPUINFO_PTR_SET_INFO */
-	void	(*getcontext)(void *context);				/* CPUINFO_PTR_GET_CONTEXT */
-	void	(*setcontext)(void *context);				/* CPUINFO_PTR_SET_CONTEXT */
-	void	(*init)(void);								/* CPUINFO_PTR_INIT */
-	void	(*reset)(void *param);						/* CPUINFO_PTR_RESET */
-	void	(*exit)(void);								/* CPUINFO_PTR_EXIT */
-	int		(*execute)(int cycles);						/* CPUINFO_PTR_EXECUTE */
-	void	(*burn)(int cycles);						/* CPUINFO_PTR_BURN */
-	offs_t	(*disassemble)(char *buffer, offs_t pc);	/* CPUINFO_PTR_DISASSEMBLE */
-	int		(*irqcallback)(int state);					/* CPUINFO_PTR_IRQCALLBACK */
+	void	(*setinfo)(mips_cpu_context *cpu, UINT32 state, union cpuinfo *info);/* CPUINFO_PTR_SET_INFO */
+//	void	(*getcontext)(void *context);				/* CPUINFO_PTR_GET_CONTEXT */
+//	void	(*setcontext)(void *context);				/* CPUINFO_PTR_SET_CONTEXT */
+	void	(*init)(mips_cpu_context *cpu);								/* CPUINFO_PTR_INIT */
+	void	(*reset)(mips_cpu_context *cpu, void *param);						/* CPUINFO_PTR_RESET */
+	void	(*exit)(mips_cpu_context *cpu);								/* CPUINFO_PTR_EXIT */
+	int		(*execute)(mips_cpu_context *cpu, int cycles);						/* CPUINFO_PTR_EXECUTE */
+	void	(*burn)(mips_cpu_context *cpu, int cycles);						/* CPUINFO_PTR_BURN */
+	offs_t	(*disassemble)(mips_cpu_context *cpu, char *buffer, offs_t pc);	/* CPUINFO_PTR_DISASSEMBLE */
+	int		(*irqcallback)(mips_cpu_context *cpu, int state);					/* CPUINFO_PTR_IRQCALLBACK */
 	int *	icount;										/* CPUINFO_PTR_INSTRUCTION_COUNTER */
 	construct_map_t internal_map;						/* CPUINFO_PTR_INTERNAL_MEMORY_MAP */
 };
@@ -282,7 +300,45 @@ extern unsigned DasmMIPS(char *buff, unsigned _pc);
 #endif
 
 #if (HAS_PSXCPU)
-extern void psxcpu_get_info(UINT32 state, union cpuinfo *info);
+extern void psxcpu_get_info(mips_cpu_context *cpu, UINT32 state, union cpuinfo *info);
 #endif
+
+mips_cpu_context *mips_alloc(void);
+void mips_free (mips_cpu_context *cpu);
+
+void mips_init(mips_cpu_context *cpu);
+void mips_exit(mips_cpu_context *cpu);
+void mips_reset(mips_cpu_context *cpu, void *param );
+int mips_execute(mips_cpu_context *cpu, int cycles );
+void mips_set_info(mips_cpu_context *cpu, UINT32 state, union cpuinfo *info);
+void mips_get_info(mips_cpu_context *cpu, UINT32 state, union cpuinfo *info);
+int mips_execute( mips_cpu_context *cpu, int cycles );
+int mips_get_icount(mips_cpu_context *cpu);
+void mips_set_icount(mips_cpu_context *cpu, int count);
+
+void psx_hw_init(mips_cpu_context *cpu);
+void psx_hw_slice(mips_cpu_context *cpu);
+void psx_hw_frame(mips_cpu_context *cpu);
+void ps2_hw_slice(mips_cpu_context *cpu);
+void ps2_hw_frame(mips_cpu_context *cpu);
+
+uint16 SPUreadRegister(uint32 reg);
+void SPUwriteRegister(uint32 reg, uint16 val);
+void SPUwriteDMAMem(uint32 usPSXMem,int iSize);
+void SPUreadDMAMem(uint32 usPSXMem,int iSize);
+void mips_shorten_frame(mips_cpu_context *cpu);
+uint32 psf2_load_file(mips_cpu_context *cpu, char *file, uint8 *buf, uint32 buflen);
+uint32 psf2_load_elf(mips_cpu_context *cpu, uint8 *start, uint32 len);
+void psx_hw_runcounters(mips_cpu_context *cpu);
+
+
+void psx_bios_hle(mips_cpu_context *cpu, uint32 pc);
+void psx_iop_call(mips_cpu_context *cpu, uint32 pc, uint32 callnum);
+uint8 program_read_byte_32le(mips_cpu_context *cpu, offs_t address);
+uint16 program_read_word_32le(mips_cpu_context *cpu, offs_t address);
+uint32 program_read_dword_32le(mips_cpu_context *cpu, offs_t address);
+void program_write_byte_32le(mips_cpu_context *cpu, offs_t address, uint8 data);
+void program_write_word_32le(mips_cpu_context *cpu, offs_t address, uint16 data);
+void program_write_dword_32le(mips_cpu_context *cpu, offs_t address, uint32 data);
 
 #endif

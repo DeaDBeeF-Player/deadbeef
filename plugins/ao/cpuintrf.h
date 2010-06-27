@@ -632,8 +632,8 @@ enum
 	CPUINFO_PTR_FIRST = 0x10000,
 
 	CPUINFO_PTR_SET_INFO = CPUINFO_PTR_FIRST,			/* R/O: void (*set_info)(UINT32 state, INT64 data, void *ptr) */
-	CPUINFO_PTR_GET_CONTEXT,							/* R/O: void (*get_context)(void *buffer) */
-	CPUINFO_PTR_SET_CONTEXT,							/* R/O: void (*set_context)(void *buffer) */
+	CPUINFO_PTR_GET_CONTEXT_,							/* R/O: void (*get_context)(void *buffer) */
+	CPUINFO_PTR_SET_CONTEXT_,							/* R/O: void (*set_context)(void *buffer) */
 	CPUINFO_PTR_INIT,									/* R/O: void (*init)(void) */
 	CPUINFO_PTR_RESET,									/* R/O: void (*reset)(void *param) */
 	CPUINFO_PTR_EXIT,									/* R/O: void (*exit)(void) */

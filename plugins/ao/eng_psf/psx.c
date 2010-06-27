@@ -60,15 +60,6 @@
 #define CAUSE_CE2 ( 2L << 28 )
 #define CAUSE_BD ( 1L << 31 )
 
-extern void psx_bios_hle(uint32 pc);
-extern void psx_iop_call(uint32 pc, uint32 callnum);
-extern uint8 program_read_byte_32le(offs_t address);
-extern uint16 program_read_word_32le(offs_t address);
-extern uint32 program_read_dword_32le(offs_t address);
-extern void program_write_byte_32le(offs_t address, uint8 data);
-extern void program_write_word_32le(offs_t address, uint16 data);
-extern void program_write_dword_32le(offs_t address, uint32 data);
-
 static UINT8 mips_reg_layout[] =
 {
 	MIPS_PC, -1,
@@ -164,25 +155,7 @@ static const char *delayn[] =
 
 #define REGPC ( 32 )
 
-typedef struct
-{
-	UINT32 op;
-	UINT32 pc;
-	UINT32 prevpc;
-	UINT32 delayv;
-	UINT32 delayr;
-	UINT32 hi;
-	UINT32 lo;
-	UINT32 r[ 32 ];
-	UINT32 cp0r[ 32 ];
-	PAIR cp2cr[ 32 ];
-	PAIR cp2dr[ 32 ];
-	int (*irq_callback)(int irqline);
-} mips_cpu_context;
-
-static mips_cpu_context mipscpu;
-
-static int mips_ICount = 0;
+//static mips_cpu_context mipscpu;
 
 static UINT32 mips_mtc0_writemask[]=
 {
@@ -228,18 +201,18 @@ void GTELOG(const char *a,...)
 	va_start( va, a );
 	vsprintf( s_text, a, va );
 	va_end( va );
-	logerror( "%08x: GTE: %08x %s\n", mipscpu.pc, INS_COFUN( mipscpu.op ), s_text );
+	logerror( "%08x: GTE: %08x %s\n", cpu->pc, INS_COFUN( cpu->op ), s_text );
 }
 #else
 INLINE void GTELOG(const char *a, ...) {}
 #endif
 
-static UINT32 getcp2dr( int n_reg );
-static void setcp2dr( int n_reg, UINT32 n_value );
-static UINT32 getcp2cr( int n_reg );
-static void setcp2cr( int n_reg, UINT32 n_value );
-static void docop2( int gteop );
-static void mips_exception( int exception );
+static UINT32 getcp2dr( mips_cpu_context *cpu, int n_reg );
+static void setcp2dr( mips_cpu_context *cpu, int n_reg, UINT32 n_value );
+static UINT32 getcp2cr( mips_cpu_context *cpu, int n_reg );
+static void setcp2cr( mips_cpu_context *cpu, int n_reg, UINT32 n_value );
+static void docop2( mips_cpu_context *cpu, int gteop );
+static void mips_exception(mips_cpu_context *cpu,  int exception );
 
 void mips_stop( void )
 {
@@ -250,633 +223,639 @@ void mips_stop( void )
 #endif
 }
 
-INLINE void mips_set_cp0r( int reg, UINT32 value )
+INLINE void mips_set_cp0r(mips_cpu_context *cpu, int reg, UINT32 value )
 {
-	mipscpu.cp0r[ reg ] = value;
+	cpu->cp0r[ reg ] = value;
 	if( reg == CP0_SR || reg == CP0_CAUSE )
 	{
-		if( ( mipscpu.cp0r[ CP0_SR ] & SR_IEC ) != 0 && ( mipscpu.cp0r[ CP0_SR ] & mipscpu.cp0r[ CP0_CAUSE ] & CAUSE_IP ) != 0 )
+		if( ( cpu->cp0r[ CP0_SR ] & SR_IEC ) != 0 && ( cpu->cp0r[ CP0_SR ] & cpu->cp0r[ CP0_CAUSE ] & CAUSE_IP ) != 0 )
 		{
-			mips_exception( EXC_INT );
+			mips_exception(cpu, EXC_INT );
 		}
-		else if( mipscpu.delayr != REGPC && ( mipscpu.pc & ( ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) | 3 ) ) != 0 )
+		else if( cpu->delayr != REGPC && ( cpu->pc & ( ( ( cpu->cp0r[ CP0_SR ] & SR_KUC ) << 30 ) | 3 ) ) != 0 )
 		{
-			mips_exception( EXC_ADEL );
-			mips_set_cp0r( CP0_BADVADDR, mipscpu.pc );
+			mips_exception( cpu, EXC_ADEL );
+			mips_set_cp0r( cpu, CP0_BADVADDR, cpu->pc );
 		}
 	}
 }
 
-INLINE void mips_commit_delayed_load( void )
+INLINE void mips_commit_delayed_load(mips_cpu_context *cpu)
 {
-	if( mipscpu.delayr != 0 )
+	if( cpu->delayr != 0 )
 	{
-		mipscpu.r[ mipscpu.delayr ] = mipscpu.delayv;
-		mipscpu.delayr = 0;
-		mipscpu.delayv = 0;
+		cpu->r[ cpu->delayr ] = cpu->delayv;
+		cpu->delayr = 0;
+		cpu->delayv = 0;
 	}
 }
 
-INLINE void mips_delayed_branch( UINT32 n_adr )
+INLINE void mips_delayed_branch(mips_cpu_context *cpu, UINT32 n_adr )
 {
-	if( ( n_adr & ( ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) | 3 ) ) != 0 )
+	if( ( n_adr & ( ( ( cpu->cp0r[ CP0_SR ] & SR_KUC ) << 30 ) | 3 ) ) != 0 )
 	{
-		mips_exception( EXC_ADEL );
-		mips_set_cp0r( CP0_BADVADDR, n_adr );
+		mips_exception( cpu, EXC_ADEL );
+		mips_set_cp0r( cpu, CP0_BADVADDR, n_adr );
 	}
 	else
 	{
-		mips_commit_delayed_load();
-		mipscpu.delayr = REGPC;
-		mipscpu.delayv = n_adr;
-		mipscpu.pc += 4;
+		mips_commit_delayed_load(cpu);
+		cpu->delayr = REGPC;
+		cpu->delayv = n_adr;
+		cpu->pc += 4;
 	}
 }
 
-INLINE void mips_set_pc( unsigned val )
+INLINE void mips_set_pc(mips_cpu_context *cpu, unsigned val )
 {
-	mipscpu.pc = val;
+	cpu->pc = val;
 	change_pc( val );
-	mipscpu.delayr = 0;
-	mipscpu.delayv = 0;
+	cpu->delayr = 0;
+	cpu->delayv = 0;
 }
 
-INLINE void mips_advance_pc( void )
+INLINE void mips_advance_pc(mips_cpu_context *cpu)
 {
-	if( mipscpu.delayr == REGPC )
+	if( cpu->delayr == REGPC )
 	{
-		mips_set_pc( mipscpu.delayv );
+		mips_set_pc( cpu, cpu->delayv );
 	}
 	else
 	{
-		mips_commit_delayed_load();
-		mipscpu.pc += 4;
+		mips_commit_delayed_load(cpu);
+		cpu->pc += 4;
 	}
 }
 
-INLINE void mips_load( UINT32 n_r, UINT32 n_v )
+INLINE void mips_load(mips_cpu_context *cpu, UINT32 n_r, UINT32 n_v )
 {
-	mips_advance_pc();
+	mips_advance_pc(cpu);
 	if( n_r != 0 )
 	{
-		mipscpu.r[ n_r ] = n_v;
+		cpu->r[ n_r ] = n_v;
 	}
 }
 
-INLINE void mips_delayed_load( UINT32 n_r, UINT32 n_v )
+INLINE void mips_delayed_load( mips_cpu_context *cpu, UINT32 n_r, UINT32 n_v )
 {
-	if( mipscpu.delayr == REGPC )
+	if( cpu->delayr == REGPC )
 	{
-		mips_set_pc( mipscpu.delayv );
-		mipscpu.delayr = n_r;
-		mipscpu.delayv = n_v;
+		mips_set_pc( cpu, cpu->delayv );
+		cpu->delayr = n_r;
+		cpu->delayv = n_v;
 	}
 	else
 	{
-		mips_commit_delayed_load();
-		mipscpu.pc += 4;
+		mips_commit_delayed_load(cpu);
+		cpu->pc += 4;
 		if( n_r != 0 )
 		{
-			mipscpu.r[ n_r ] = n_v;
+			cpu->r[ n_r ] = n_v;
 		}
 	}
 }
 
-static void mips_exception( int exception )
+static void mips_exception( mips_cpu_context *cpu, int exception )
 {
-	mips_set_cp0r( CP0_SR, ( mipscpu.cp0r[ CP0_SR ] & ~0x3f ) | ( ( mipscpu.cp0r[ CP0_SR ] << 2 ) & 0x3f ) );
-	if( mipscpu.delayr == REGPC )
+	mips_set_cp0r( cpu, CP0_SR, ( cpu->cp0r[ CP0_SR ] & ~0x3f ) | ( ( cpu->cp0r[ CP0_SR ] << 2 ) & 0x3f ) );
+	if( cpu->delayr == REGPC )
 	{
-		mips_set_cp0r( CP0_EPC, mipscpu.pc - 4 );
-		mips_set_cp0r( CP0_CAUSE, ( mipscpu.cp0r[ CP0_CAUSE ] & ~CAUSE_EXC ) | CAUSE_BD | ( exception << 2 ) );
+		mips_set_cp0r( cpu, CP0_EPC, cpu->pc - 4 );
+		mips_set_cp0r( cpu, CP0_CAUSE, ( cpu->cp0r[ CP0_CAUSE ] & ~CAUSE_EXC ) | CAUSE_BD | ( exception << 2 ) );
 	}
 	else
 	{
-		mips_commit_delayed_load();
-		mips_set_cp0r( CP0_EPC, mipscpu.pc );
-		mips_set_cp0r( CP0_CAUSE, ( mipscpu.cp0r[ CP0_CAUSE ] & ~( CAUSE_EXC | CAUSE_BD ) ) | ( exception << 2 ) );
+		mips_commit_delayed_load(cpu);
+		mips_set_cp0r( cpu, CP0_EPC, cpu->pc );
+		mips_set_cp0r( cpu, CP0_CAUSE, ( cpu->cp0r[ CP0_CAUSE ] & ~( CAUSE_EXC | CAUSE_BD ) ) | ( exception << 2 ) );
 	}
-	if( mipscpu.cp0r[ CP0_SR ] & SR_BEV )
+	if( cpu->cp0r[ CP0_SR ] & SR_BEV )
 	{
-		mips_set_pc( 0xbfc00180 );
+		mips_set_pc (cpu,  0xbfc00180 );
 	}
 	else
 	{
-		mips_set_pc( 0x80000080 );
+		mips_set_pc (cpu,  0x80000080 );
 	}
 }
 
-void mips_init( void )
+mips_cpu_context *mips_alloc( void ) {
+    mips_cpu_context *ctx = malloc (sizeof (mips_cpu_context));
+    memset (ctx, 0, sizeof (mips_cpu_context));
+    return ctx;
+}
+
+void mips_init(mips_cpu_context *cpu)
 {
 #if 0
 	int cpu = cpu_getactivecpu();
 
-	state_save_register_UINT32( "psxcpu", cpu, "op", &mipscpu.op, 1 );
-	state_save_register_UINT32( "psxcpu", cpu, "pc", &mipscpu.pc, 1 );
-	state_save_register_UINT32( "psxcpu", cpu, "delayv", &mipscpu.delayv, 1 );
-	state_save_register_UINT32( "psxcpu", cpu, "delayr", &mipscpu.delayr, 1 );
-	state_save_register_UINT32( "psxcpu", cpu, "hi", &mipscpu.hi, 1 );
-	state_save_register_UINT32( "psxcpu", cpu, "lo", &mipscpu.lo, 1 );
-	state_save_register_UINT32( "psxcpu", cpu, "r", &mipscpu.r[ 0 ], 32 );
-	state_save_register_UINT32( "psxcpu", cpu, "cp0r", &mipscpu.cp0r[ 0 ], 32 );
-	state_save_register_UINT32( "psxcpu", cpu, "cp2cr", &mipscpu.cp2cr[ 0 ].d, 32 );
-	state_save_register_UINT32( "psxcpu", cpu, "cp2dr", &mipscpu.cp2dr[ 0 ].d, 32 );
+	state_save_register_UINT32( "psxcpu", cpu, "op", &cpu->op, 1 );
+	state_save_register_UINT32( "psxcpu", cpu, "pc", &cpu->pc, 1 );
+	state_save_register_UINT32( "psxcpu", cpu, "delayv", &cpu->delayv, 1 );
+	state_save_register_UINT32( "psxcpu", cpu, "delayr", &cpu->delayr, 1 );
+	state_save_register_UINT32( "psxcpu", cpu, "hi", &cpu->hi, 1 );
+	state_save_register_UINT32( "psxcpu", cpu, "lo", &cpu->lo, 1 );
+	state_save_register_UINT32( "psxcpu", cpu, "r", &cpu->r[ 0 ], 32 );
+	state_save_register_UINT32( "psxcpu", cpu, "cp0r", &cpu->cp0r[ 0 ], 32 );
+	state_save_register_UINT32( "psxcpu", cpu, "cp2cr", &cpu->cp2cr[ 0 ].d, 32 );
+	state_save_register_UINT32( "psxcpu", cpu, "cp2dr", &cpu->cp2dr[ 0 ].d, 32 );
 #endif
 }
 
-void mips_reset( void *param )
+void mips_reset( mips_cpu_context *cpu, void *param )
 {
-	mips_set_cp0r( CP0_SR, ( mipscpu.cp0r[ CP0_SR ] & ~( SR_TS | SR_SWC | SR_KUC | SR_IEC ) ) | SR_BEV );
-	mips_set_cp0r( CP0_RANDOM, 63 ); /* todo: */
-	mips_set_cp0r( CP0_PRID, 0x00000200 ); /* todo: */
-	mips_set_pc( 0xbfc00000 );
-	mipscpu.prevpc = 0xffffffff;
+	mips_set_cp0r( cpu, CP0_SR, ( cpu->cp0r[ CP0_SR ] & ~( SR_TS | SR_SWC | SR_KUC | SR_IEC ) ) | SR_BEV );
+	mips_set_cp0r( cpu, CP0_RANDOM, 63 ); /* todo: */
+	mips_set_cp0r( cpu, CP0_PRID, 0x00000200 ); /* todo: */
+	mips_set_pc (cpu,  0xbfc00000 );
+	cpu->prevpc = 0xffffffff;
 }
 
-static void mips_exit( void )
-{
+void mips_exit(mips_cpu_context *cpu) {
+    free (cpu);
 }
 
-void mips_shorten_frame(void)
+void mips_shorten_frame(mips_cpu_context *cpu)
 {
-	mips_ICount = 0;
+	cpu->mips_ICount = 0;
 }
 
-void psx_hw_runcounters(void);
+void psx_hw_runcounters(mips_cpu_context *cpu);
 
 int psxcpu_verbose = 0;
 
-int mips_execute( int cycles )
+int mips_execute( mips_cpu_context *cpu, int cycles )
 {
 	UINT32 n_res;
 
-	mips_ICount = cycles;
+	cpu->mips_ICount = cycles;
 	do
 	{
 //		CALL_MAME_DEBUG;
 
 //		psx_hw_runcounters();
 	
-		mipscpu.op = cpu_readop32( mipscpu.pc );
+		cpu->op = cpu_readop32( cpu->pc );
 
 #if 0
-		while (mipscpu.prevpc == mipscpu.pc)
+		while (cpu->prevpc == cpu->pc)
 		{
 			psx_hw_runcounters();
-			mips_ICount--;
+			cpu->mips_ICount--;
 
-			if (mips_ICount == 0) return cycles;
+			if (cpu->mips_ICount == 0) return cycles;
 		}
 
 		// if we're not in a delay slot, update
 		// if we're in a delay slot and the delay instruction is not NOP, update
-		if (( mipscpu.delayr == 0 ) || ((mipscpu.delayr != 0) && (mipscpu.op != 0)))
+		if (( cpu->delayr == 0 ) || ((cpu->delayr != 0) && (cpu->op != 0)))
 		{
-			mipscpu.prevpc = mipscpu.pc;
+			cpu->prevpc = cpu->pc;
 		}	
 #endif
 #if 0
 		if (1) //psxcpu_verbose)
 		{
-			printf("[%08x: %08x] [SP %08x RA %08x V0 %08x V1 %08x A0 %08x S0 %08x S1 %08x]\n", mipscpu.pc, mipscpu.op, mipscpu.r[29], mipscpu.r[31], mipscpu.r[2], mipscpu.r[3], mipscpu.r[4], mipscpu.r[ 16 ], mipscpu.r[ 17 ]);
+			printf("[%08x: %08x] [SP %08x RA %08x V0 %08x V1 %08x A0 %08x S0 %08x S1 %08x]\n", cpu->pc, cpu->op, cpu->r[29], cpu->r[31], cpu->r[2], cpu->r[3], cpu->r[4], cpu->r[ 16 ], cpu->r[ 17 ]);
 //			psxcpu_verbose--;
 		}
 #endif
-		switch( INS_OP( mipscpu.op ) )
+		switch( INS_OP( cpu->op ) )
 		{
 		case OP_SPECIAL:
-			switch( INS_FUNCT( mipscpu.op ) )
+			switch( INS_FUNCT( cpu->op ) )
 			{
 			case FUNCT_HLECALL:
-//				printf("HLECALL, PC = %08x\n", mipscpu.pc);
-				psx_bios_hle(mipscpu.pc);
+//				printf("HLECALL, PC = %08x\n", cpu->pc);
+				psx_bios_hle(cpu, cpu->pc);
 				break;
 			case FUNCT_SLL:
-				mips_load( INS_RD( mipscpu.op ), mipscpu.r[ INS_RT( mipscpu.op ) ] << INS_SHAMT( mipscpu.op ) );
+				mips_load(cpu,  INS_RD( cpu->op ), cpu->r[ INS_RT( cpu->op ) ] << INS_SHAMT( cpu->op ) );
 				break;
 			case FUNCT_SRL:
-				mips_load( INS_RD( mipscpu.op ), mipscpu.r[ INS_RT( mipscpu.op ) ] >> INS_SHAMT( mipscpu.op ) );
+				mips_load(cpu,  INS_RD( cpu->op ), cpu->r[ INS_RT( cpu->op ) ] >> INS_SHAMT( cpu->op ) );
 				break;
 			case FUNCT_SRA:
-				mips_load( INS_RD( mipscpu.op ), (INT32)mipscpu.r[ INS_RT( mipscpu.op ) ] >> INS_SHAMT( mipscpu.op ) );
+				mips_load(cpu,  INS_RD( cpu->op ), (INT32)cpu->r[ INS_RT( cpu->op ) ] >> INS_SHAMT( cpu->op ) );
 				break;
 			case FUNCT_SLLV:
-				mips_load( INS_RD( mipscpu.op ), mipscpu.r[ INS_RT( mipscpu.op ) ] << ( mipscpu.r[ INS_RS( mipscpu.op ) ] & 31 ) );
+				mips_load(cpu,  INS_RD( cpu->op ), cpu->r[ INS_RT( cpu->op ) ] << ( cpu->r[ INS_RS( cpu->op ) ] & 31 ) );
 				break;
 			case FUNCT_SRLV:
-				mips_load( INS_RD( mipscpu.op ), mipscpu.r[ INS_RT( mipscpu.op ) ] >> ( mipscpu.r[ INS_RS( mipscpu.op ) ] & 31 ) );
+				mips_load(cpu,  INS_RD( cpu->op ), cpu->r[ INS_RT( cpu->op ) ] >> ( cpu->r[ INS_RS( cpu->op ) ] & 31 ) );
 				break;
 			case FUNCT_SRAV:
-				mips_load( INS_RD( mipscpu.op ), (INT32)mipscpu.r[ INS_RT( mipscpu.op ) ] >> ( mipscpu.r[ INS_RS( mipscpu.op ) ] & 31 ) );
+				mips_load(cpu,  INS_RD( cpu->op ), (INT32)cpu->r[ INS_RT( cpu->op ) ] >> ( cpu->r[ INS_RS( cpu->op ) ] & 31 ) );
 				break;
 			case FUNCT_JR:
-				if( INS_RD( mipscpu.op ) != 0 )
+				if( INS_RD( cpu->op ) != 0 )
 				{
-					mips_exception( EXC_RI );
+					mips_exception( cpu, EXC_RI );
 				}
 				else
 				{
-					mips_delayed_branch( mipscpu.r[ INS_RS( mipscpu.op ) ] );
+					mips_delayed_branch( cpu, cpu->r[ INS_RS( cpu->op ) ] );
 				}
 				break;
 			case FUNCT_JALR:
-				n_res = mipscpu.pc + 8;
-				mips_delayed_branch( mipscpu.r[ INS_RS( mipscpu.op ) ] );
-				if( INS_RD( mipscpu.op ) != 0 )
+				n_res = cpu->pc + 8;
+				mips_delayed_branch( cpu, cpu->r[ INS_RS( cpu->op ) ] );
+				if( INS_RD( cpu->op ) != 0 )
 				{
-					mipscpu.r[ INS_RD( mipscpu.op ) ] = n_res;
+					cpu->r[ INS_RD( cpu->op ) ] = n_res;
 				}
 				break;
 			case FUNCT_SYSCALL:
-				mips_exception( EXC_SYS );
+				mips_exception( cpu, EXC_SYS );
 				break;
 			case FUNCT_BREAK:
 				printf("BREAK!\n");
 				exit(-1);
-//				mips_exception( EXC_BP );
-				mips_advance_pc();
+//				mips_exception( cpu, EXC_BP );
+				mips_advance_pc(cpu);
 				break;
 			case FUNCT_MFHI:
-				mips_load( INS_RD( mipscpu.op ), mipscpu.hi );
+				mips_load(cpu,  INS_RD( cpu->op ), cpu->hi );
 				break;
 			case FUNCT_MTHI:
-				if( INS_RD( mipscpu.op ) != 0 )
+				if( INS_RD( cpu->op ) != 0 )
 				{
-					mips_exception( EXC_RI );
+					mips_exception(cpu, EXC_RI );
 				}
 				else
 				{
-					mips_advance_pc();
-					mipscpu.hi = mipscpu.r[ INS_RS( mipscpu.op ) ];
+					mips_advance_pc(cpu);
+					cpu->hi = cpu->r[ INS_RS( cpu->op ) ];
 				}
 				break;
 			case FUNCT_MFLO:
-				mips_load( INS_RD( mipscpu.op ),  mipscpu.lo );
+				mips_load(cpu,  INS_RD( cpu->op ),  cpu->lo );
 				break;
 			case FUNCT_MTLO:
-				if( INS_RD( mipscpu.op ) != 0 )
+				if( INS_RD( cpu->op ) != 0 )
 				{
-					mips_exception( EXC_RI );
+					mips_exception(cpu, EXC_RI );
 				}
 				else
 				{
-					mips_advance_pc();
-					mipscpu.lo = mipscpu.r[ INS_RS( mipscpu.op ) ];
+					mips_advance_pc(cpu);
+					cpu->lo = cpu->r[ INS_RS( cpu->op ) ];
 				}
 				break;
 			case FUNCT_MULT:
-				if( INS_RD( mipscpu.op ) != 0 )
+				if( INS_RD( cpu->op ) != 0 )
 				{
-					mips_exception( EXC_RI );
+					mips_exception(cpu, EXC_RI );
 				}
 				else
 				{
 					INT64 n_res64;
-					n_res64 = MUL_64_32_32( (INT32)mipscpu.r[ INS_RS( mipscpu.op ) ], (INT32)mipscpu.r[ INS_RT( mipscpu.op ) ] );
-					mips_advance_pc();
-					mipscpu.lo = LO32_32_64( n_res64 );
-					mipscpu.hi = HI32_32_64( n_res64 );
+					n_res64 = MUL_64_32_32( (INT32)cpu->r[ INS_RS( cpu->op ) ], (INT32)cpu->r[ INS_RT( cpu->op ) ] );
+					mips_advance_pc(cpu);
+					cpu->lo = LO32_32_64( n_res64 );
+					cpu->hi = HI32_32_64( n_res64 );
 				}
 				break;
 			case FUNCT_MULTU:
-				if( INS_RD( mipscpu.op ) != 0 )
+				if( INS_RD( cpu->op ) != 0 )
 				{
-					mips_exception( EXC_RI );
+					mips_exception(cpu, EXC_RI );
 				}
 				else
 				{
 					UINT64 n_res64;
-					n_res64 = MUL_U64_U32_U32( mipscpu.r[ INS_RS( mipscpu.op ) ], mipscpu.r[ INS_RT( mipscpu.op ) ] );
-					mips_advance_pc();
-					mipscpu.lo = LO32_U32_U64( n_res64 );
-					mipscpu.hi = HI32_U32_U64( n_res64 );
+					n_res64 = MUL_U64_U32_U32( cpu->r[ INS_RS( cpu->op ) ], cpu->r[ INS_RT( cpu->op ) ] );
+					mips_advance_pc(cpu);
+					cpu->lo = LO32_U32_U64( n_res64 );
+					cpu->hi = HI32_U32_U64( n_res64 );
 				}
 				break;
 			case FUNCT_DIV:
-				if( INS_RD( mipscpu.op ) != 0 )
+				if( INS_RD( cpu->op ) != 0 )
 				{
-					mips_exception( EXC_RI );
+					mips_exception(cpu, EXC_RI );
 				}
 				else
 				{
 					UINT32 n_div;
 					UINT32 n_mod;
-					if( mipscpu.r[ INS_RT( mipscpu.op ) ] != 0 )
+					if( cpu->r[ INS_RT( cpu->op ) ] != 0 )
 					{
-						n_div = (INT32)mipscpu.r[ INS_RS( mipscpu.op ) ] / (INT32)mipscpu.r[ INS_RT( mipscpu.op ) ];
-						n_mod = (INT32)mipscpu.r[ INS_RS( mipscpu.op ) ] % (INT32)mipscpu.r[ INS_RT( mipscpu.op ) ];
-						mips_advance_pc();
-						mipscpu.lo = n_div;
-						mipscpu.hi = n_mod;
+						n_div = (INT32)cpu->r[ INS_RS( cpu->op ) ] / (INT32)cpu->r[ INS_RT( cpu->op ) ];
+						n_mod = (INT32)cpu->r[ INS_RS( cpu->op ) ] % (INT32)cpu->r[ INS_RT( cpu->op ) ];
+						mips_advance_pc(cpu);
+						cpu->lo = n_div;
+						cpu->hi = n_mod;
 					}
 					else
 					{
-						mips_advance_pc();
+						mips_advance_pc(cpu);
 					}
 				}
 				break;
 			case FUNCT_DIVU:
-				if( INS_RD( mipscpu.op ) != 0 )
+				if( INS_RD( cpu->op ) != 0 )
 				{
-					mips_exception( EXC_RI );
+					mips_exception(cpu, EXC_RI );
 				}
 				else
 				{
 					UINT32 n_div;
 					UINT32 n_mod;
-					if( mipscpu.r[ INS_RT( mipscpu.op ) ] != 0 )
+					if( cpu->r[ INS_RT( cpu->op ) ] != 0 )
 					{
-						n_div = mipscpu.r[ INS_RS( mipscpu.op ) ] / mipscpu.r[ INS_RT( mipscpu.op ) ];
-						n_mod = mipscpu.r[ INS_RS( mipscpu.op ) ] % mipscpu.r[ INS_RT( mipscpu.op ) ];
-						mips_advance_pc();
-						mipscpu.lo = n_div;
-						mipscpu.hi = n_mod;
+						n_div = cpu->r[ INS_RS( cpu->op ) ] / cpu->r[ INS_RT( cpu->op ) ];
+						n_mod = cpu->r[ INS_RS( cpu->op ) ] % cpu->r[ INS_RT( cpu->op ) ];
+						mips_advance_pc(cpu);
+						cpu->lo = n_div;
+						cpu->hi = n_mod;
 					}
 					else
 					{
-						mips_advance_pc();
+						mips_advance_pc(cpu);
 					}
 				}
 				break;
 			case FUNCT_ADD:
 				{
-					n_res = mipscpu.r[ INS_RS( mipscpu.op ) ] + mipscpu.r[ INS_RT( mipscpu.op ) ];
-					if( (INT32)( ~( mipscpu.r[ INS_RS( mipscpu.op ) ] ^ mipscpu.r[ INS_RT( mipscpu.op ) ] ) & ( mipscpu.r[ INS_RS( mipscpu.op ) ] ^ n_res ) ) < 0 )
+					n_res = cpu->r[ INS_RS( cpu->op ) ] + cpu->r[ INS_RT( cpu->op ) ];
+					if( (INT32)( ~( cpu->r[ INS_RS( cpu->op ) ] ^ cpu->r[ INS_RT( cpu->op ) ] ) & ( cpu->r[ INS_RS( cpu->op ) ] ^ n_res ) ) < 0 )
 					{
-						mips_exception( EXC_OVF );
+						mips_exception(cpu, EXC_OVF );
 					}
 					else
 					{
-						mips_load( INS_RD( mipscpu.op ), n_res );
+						mips_load(cpu,  INS_RD( cpu->op ), n_res );
 					}
 				}
 				break;
 			case FUNCT_ADDU:
-				mips_load( INS_RD( mipscpu.op ), mipscpu.r[ INS_RS( mipscpu.op ) ] + mipscpu.r[ INS_RT( mipscpu.op ) ] );
+				mips_load(cpu,  INS_RD( cpu->op ), cpu->r[ INS_RS( cpu->op ) ] + cpu->r[ INS_RT( cpu->op ) ] );
 				break;
 			case FUNCT_SUB:
-				n_res = mipscpu.r[ INS_RS( mipscpu.op ) ] - mipscpu.r[ INS_RT( mipscpu.op ) ];
-				if( (INT32)( ( mipscpu.r[ INS_RS( mipscpu.op ) ] ^ mipscpu.r[ INS_RT( mipscpu.op ) ] ) & ( mipscpu.r[ INS_RS( mipscpu.op ) ] ^ n_res ) ) < 0 )
+				n_res = cpu->r[ INS_RS( cpu->op ) ] - cpu->r[ INS_RT( cpu->op ) ];
+				if( (INT32)( ( cpu->r[ INS_RS( cpu->op ) ] ^ cpu->r[ INS_RT( cpu->op ) ] ) & ( cpu->r[ INS_RS( cpu->op ) ] ^ n_res ) ) < 0 )
 				{
-					mips_exception( EXC_OVF );
+					mips_exception(cpu, EXC_OVF );
 				}
 				else
 				{
-					mips_load( INS_RD( mipscpu.op ), n_res );
+					mips_load(cpu,  INS_RD( cpu->op ), n_res );
 				}
 				break;
 			case FUNCT_SUBU:
-				mips_load( INS_RD( mipscpu.op ), mipscpu.r[ INS_RS( mipscpu.op ) ] - mipscpu.r[ INS_RT( mipscpu.op ) ] );
+				mips_load(cpu,  INS_RD( cpu->op ), cpu->r[ INS_RS( cpu->op ) ] - cpu->r[ INS_RT( cpu->op ) ] );
 				break;
 			case FUNCT_AND:
-				mips_load( INS_RD( mipscpu.op ), mipscpu.r[ INS_RS( mipscpu.op ) ] & mipscpu.r[ INS_RT( mipscpu.op ) ] );
+				mips_load(cpu,  INS_RD( cpu->op ), cpu->r[ INS_RS( cpu->op ) ] & cpu->r[ INS_RT( cpu->op ) ] );
 				break;
 			case FUNCT_OR:
-				mips_load( INS_RD( mipscpu.op ), mipscpu.r[ INS_RS( mipscpu.op ) ] | mipscpu.r[ INS_RT( mipscpu.op ) ] );
+				mips_load(cpu,  INS_RD( cpu->op ), cpu->r[ INS_RS( cpu->op ) ] | cpu->r[ INS_RT( cpu->op ) ] );
 				break;
 			case FUNCT_XOR:
-				mips_load( INS_RD( mipscpu.op ), mipscpu.r[ INS_RS( mipscpu.op ) ] ^ mipscpu.r[ INS_RT( mipscpu.op ) ] );
+				mips_load(cpu,  INS_RD( cpu->op ), cpu->r[ INS_RS( cpu->op ) ] ^ cpu->r[ INS_RT( cpu->op ) ] );
 				break;
 			case FUNCT_NOR:
-				mips_load( INS_RD( mipscpu.op ), ~( mipscpu.r[ INS_RS( mipscpu.op ) ] | mipscpu.r[ INS_RT( mipscpu.op ) ] ) );
+				mips_load(cpu,  INS_RD( cpu->op ), ~( cpu->r[ INS_RS( cpu->op ) ] | cpu->r[ INS_RT( cpu->op ) ] ) );
 				break;
 			case FUNCT_SLT:
-				mips_load( INS_RD( mipscpu.op ), (INT32)mipscpu.r[ INS_RS( mipscpu.op ) ] < (INT32)mipscpu.r[ INS_RT( mipscpu.op ) ] );
+				mips_load(cpu,  INS_RD( cpu->op ), (INT32)cpu->r[ INS_RS( cpu->op ) ] < (INT32)cpu->r[ INS_RT( cpu->op ) ] );
 				break;
 			case FUNCT_SLTU:
-				mips_load( INS_RD( mipscpu.op ), mipscpu.r[ INS_RS( mipscpu.op ) ] < mipscpu.r[ INS_RT( mipscpu.op ) ] );
+				mips_load(cpu,  INS_RD( cpu->op ), cpu->r[ INS_RS( cpu->op ) ] < cpu->r[ INS_RT( cpu->op ) ] );
 				break;
 			default:
-				mips_exception( EXC_RI );
+				mips_exception(cpu, EXC_RI );
 				break;
 			}
 			break;
 		case OP_REGIMM:
-			switch( INS_RT( mipscpu.op ) )
+			switch( INS_RT( cpu->op ) )
 			{
 			case RT_BLTZ:
-				if( (INT32)mipscpu.r[ INS_RS( mipscpu.op ) ] < 0 )
+				if( (INT32)cpu->r[ INS_RS( cpu->op ) ] < 0 )
 				{
-					mips_delayed_branch( mipscpu.pc + 4 + ( MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) ) << 2 ) );
+					mips_delayed_branch( cpu, cpu->pc + 4 + ( MIPS_WORD_EXTEND( INS_IMMEDIATE( cpu->op ) ) << 2 ) );
 				}
 				else
 				{
-					mips_advance_pc();
+					mips_advance_pc(cpu);
 				}
 				break;
 			case RT_BGEZ:
-				if( (INT32)mipscpu.r[ INS_RS( mipscpu.op ) ] >= 0 )
+				if( (INT32)cpu->r[ INS_RS( cpu->op ) ] >= 0 )
 				{
-					mips_delayed_branch( mipscpu.pc + 4 + ( MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) ) << 2 ) );
+					mips_delayed_branch( cpu, cpu->pc + 4 + ( MIPS_WORD_EXTEND( INS_IMMEDIATE( cpu->op ) ) << 2 ) );
 				}
 				else
 				{
-					mips_advance_pc();
+					mips_advance_pc(cpu);
 				}
 				break;
 			case RT_BLTZAL:
-				n_res = mipscpu.pc + 8;
-				if( (INT32)mipscpu.r[ INS_RS( mipscpu.op ) ] < 0 )
+				n_res = cpu->pc + 8;
+				if( (INT32)cpu->r[ INS_RS( cpu->op ) ] < 0 )
 				{
-					mips_delayed_branch( mipscpu.pc + 4 + ( MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) ) << 2 ) );
+					mips_delayed_branch( cpu, cpu->pc + 4 + ( MIPS_WORD_EXTEND( INS_IMMEDIATE( cpu->op ) ) << 2 ) );
 				}
 				else
 				{
-					mips_advance_pc();
+					mips_advance_pc(cpu);
 				}
-				mipscpu.r[ 31 ] = n_res;
+				cpu->r[ 31 ] = n_res;
 				break;
 			case RT_BGEZAL:
-				n_res = mipscpu.pc + 8;
-				if( (INT32)mipscpu.r[ INS_RS( mipscpu.op ) ] >= 0 )
+				n_res = cpu->pc + 8;
+				if( (INT32)cpu->r[ INS_RS( cpu->op ) ] >= 0 )
 				{
-					mips_delayed_branch( mipscpu.pc + 4 + ( MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) ) << 2 ) );
+					mips_delayed_branch( cpu, cpu->pc + 4 + ( MIPS_WORD_EXTEND( INS_IMMEDIATE( cpu->op ) ) << 2 ) );
 				}
 				else
 				{
-					mips_advance_pc();
+					mips_advance_pc(cpu);
 				}
-				mipscpu.r[ 31 ] = n_res;
+				cpu->r[ 31 ] = n_res;
 				break;
 			}
 			break;
 		case OP_J:
-			mips_delayed_branch( ( ( mipscpu.pc + 4 ) & 0xf0000000 ) + ( INS_TARGET( mipscpu.op ) << 2 ) );
+			mips_delayed_branch( cpu, ( ( cpu->pc + 4 ) & 0xf0000000 ) + ( INS_TARGET( cpu->op ) << 2 ) );
 			break;
 		case OP_JAL:
-			n_res = mipscpu.pc + 8;
-			mips_delayed_branch( ( ( mipscpu.pc + 4 ) & 0xf0000000 ) + ( INS_TARGET( mipscpu.op ) << 2 ) );
-			mipscpu.r[ 31 ] = n_res;
+			n_res = cpu->pc + 8;
+			mips_delayed_branch( cpu, ( ( cpu->pc + 4 ) & 0xf0000000 ) + ( INS_TARGET( cpu->op ) << 2 ) );
+			cpu->r[ 31 ] = n_res;
 			break;
 		case OP_BEQ:
-			if( mipscpu.r[ INS_RS( mipscpu.op ) ] == mipscpu.r[ INS_RT( mipscpu.op ) ] )
+			if( cpu->r[ INS_RS( cpu->op ) ] == cpu->r[ INS_RT( cpu->op ) ] )
 			{
-				mips_delayed_branch( mipscpu.pc + 4 + ( MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) ) << 2 ) );
+				mips_delayed_branch( cpu, cpu->pc + 4 + ( MIPS_WORD_EXTEND( INS_IMMEDIATE( cpu->op ) ) << 2 ) );
 			}
 			else
 			{
-				mips_advance_pc();
+				mips_advance_pc(cpu);
 			}
 			break;
 		case OP_BNE:
-			if( mipscpu.r[ INS_RS( mipscpu.op ) ] != mipscpu.r[ INS_RT( mipscpu.op ) ] )
+			if( cpu->r[ INS_RS( cpu->op ) ] != cpu->r[ INS_RT( cpu->op ) ] )
 			{
-				mips_delayed_branch( mipscpu.pc + 4 + ( MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) ) << 2 ) );
+				mips_delayed_branch( cpu, cpu->pc + 4 + ( MIPS_WORD_EXTEND( INS_IMMEDIATE( cpu->op ) ) << 2 ) );
 			}
 			else
 			{
-				mips_advance_pc();
+				mips_advance_pc(cpu);
 			}
 			break;
 		case OP_BLEZ:
-			if( INS_RT( mipscpu.op ) != 0 )
+			if( INS_RT( cpu->op ) != 0 )
 			{
-				mips_exception( EXC_RI );
+				mips_exception(cpu, EXC_RI );
 			}
-			else if( (INT32)mipscpu.r[ INS_RS( mipscpu.op ) ] <= 0 )
+			else if( (INT32)cpu->r[ INS_RS( cpu->op ) ] <= 0 )
 			{
-				mips_delayed_branch( mipscpu.pc + 4 + ( MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) ) << 2 ) );
+				mips_delayed_branch( cpu, cpu->pc + 4 + ( MIPS_WORD_EXTEND( INS_IMMEDIATE( cpu->op ) ) << 2 ) );
 			}
 			else
 			{
-				mips_advance_pc();
+				mips_advance_pc(cpu);
 			}
 			break;
 		case OP_BGTZ:
-			if( INS_RT( mipscpu.op ) != 0 )
+			if( INS_RT( cpu->op ) != 0 )
 			{
-				mips_exception( EXC_RI );
+				mips_exception(cpu, EXC_RI );
 			}
-			else if( (INT32)mipscpu.r[ INS_RS( mipscpu.op ) ] > 0 )
+			else if( (INT32)cpu->r[ INS_RS( cpu->op ) ] > 0 )
 			{
-				mips_delayed_branch( mipscpu.pc + 4 + ( MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) ) << 2 ) );
+				mips_delayed_branch( cpu, cpu->pc + 4 + ( MIPS_WORD_EXTEND( INS_IMMEDIATE( cpu->op ) ) << 2 ) );
 			}
 			else
 			{
-				mips_advance_pc();
+				mips_advance_pc(cpu);
 			}
 			break;
 		case OP_ADDI:
 			{
 				UINT32 n_imm;
-				n_imm = MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) );
-				n_res = mipscpu.r[ INS_RS( mipscpu.op ) ] + n_imm;
-				if( (INT32)( ~( mipscpu.r[ INS_RS( mipscpu.op ) ] ^ n_imm ) & ( mipscpu.r[ INS_RS( mipscpu.op ) ] ^ n_res ) ) < 0 )
+				n_imm = MIPS_WORD_EXTEND( INS_IMMEDIATE( cpu->op ) );
+				n_res = cpu->r[ INS_RS( cpu->op ) ] + n_imm;
+				if( (INT32)( ~( cpu->r[ INS_RS( cpu->op ) ] ^ n_imm ) & ( cpu->r[ INS_RS( cpu->op ) ] ^ n_res ) ) < 0 )
 				{
-					mips_exception( EXC_OVF );
+					mips_exception(cpu, EXC_OVF );
 				}
 				else
 				{
-					mips_load( INS_RT( mipscpu.op ), n_res );
+					mips_load(cpu,  INS_RT( cpu->op ), n_res );
 				}
 			}
 			break;
 		case OP_ADDIU:
-			if (INS_RT( mipscpu.op ) == 0)
+			if (INS_RT( cpu->op ) == 0)
 			{
-				psx_iop_call(mipscpu.pc, INS_IMMEDIATE(mipscpu.op));
-				mips_advance_pc();
+				psx_iop_call(cpu, cpu->pc, INS_IMMEDIATE(cpu->op));
+				mips_advance_pc(cpu);
 			}
 			else
 			{
-				mips_load( INS_RT( mipscpu.op ), mipscpu.r[ INS_RS( mipscpu.op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) ) );
+				mips_load(cpu,  INS_RT( cpu->op ), cpu->r[ INS_RS( cpu->op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( cpu->op ) ) );
 			}
 			break;
 		case OP_SLTI:
-			mips_load( INS_RT( mipscpu.op ), (INT32)mipscpu.r[ INS_RS( mipscpu.op ) ] < MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) ) );
+			mips_load(cpu,  INS_RT( cpu->op ), (INT32)cpu->r[ INS_RS( cpu->op ) ] < MIPS_WORD_EXTEND( INS_IMMEDIATE( cpu->op ) ) );
 			break;
 		case OP_SLTIU:
-			mips_load( INS_RT( mipscpu.op ), mipscpu.r[ INS_RS( mipscpu.op ) ] < (UINT32)MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) ) );
+			mips_load(cpu,  INS_RT( cpu->op ), cpu->r[ INS_RS( cpu->op ) ] < (UINT32)MIPS_WORD_EXTEND( INS_IMMEDIATE( cpu->op ) ) );
 			break;
 		case OP_ANDI:
-			mips_load( INS_RT( mipscpu.op ), mipscpu.r[ INS_RS( mipscpu.op ) ] & INS_IMMEDIATE( mipscpu.op ) );
+			mips_load(cpu,  INS_RT( cpu->op ), cpu->r[ INS_RS( cpu->op ) ] & INS_IMMEDIATE( cpu->op ) );
 			break;
 		case OP_ORI:
-			mips_load( INS_RT( mipscpu.op ), mipscpu.r[ INS_RS( mipscpu.op ) ] | INS_IMMEDIATE( mipscpu.op ) );
+			mips_load(cpu,  INS_RT( cpu->op ), cpu->r[ INS_RS( cpu->op ) ] | INS_IMMEDIATE( cpu->op ) );
 			break;
 		case OP_XORI:
-			mips_load( INS_RT( mipscpu.op ), mipscpu.r[ INS_RS( mipscpu.op ) ] ^ INS_IMMEDIATE( mipscpu.op ) );
+			mips_load(cpu,  INS_RT( cpu->op ), cpu->r[ INS_RS( cpu->op ) ] ^ INS_IMMEDIATE( cpu->op ) );
 			break;
 		case OP_LUI:
-			mips_load( INS_RT( mipscpu.op ), INS_IMMEDIATE( mipscpu.op ) << 16 );
+			mips_load(cpu,  INS_RT( cpu->op ), INS_IMMEDIATE( cpu->op ) << 16 );
 			break;
 		case OP_COP0:
-			if( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) != 0 && ( mipscpu.cp0r[ CP0_SR ] & SR_CU0 ) == 0 )
+			if( ( cpu->cp0r[ CP0_SR ] & SR_KUC ) != 0 && ( cpu->cp0r[ CP0_SR ] & SR_CU0 ) == 0 )
 			{
-				mips_exception( EXC_CPU );
-				mips_set_cp0r( CP0_CAUSE, ( mipscpu.cp0r[ CP0_CAUSE ] & ~CAUSE_CE ) | CAUSE_CE0 );
+				mips_exception(cpu, EXC_CPU );
+				mips_set_cp0r( cpu, CP0_CAUSE, ( cpu->cp0r[ CP0_CAUSE ] & ~CAUSE_CE ) | CAUSE_CE0 );
 			}
 			else
 			{
-				switch( INS_RS( mipscpu.op ) )
+				switch( INS_RS( cpu->op ) )
 				{
 				case RS_MFC:
-					mips_delayed_load( INS_RT( mipscpu.op ), mipscpu.cp0r[ INS_RD( mipscpu.op ) ] );
+					mips_delayed_load( cpu, INS_RT( cpu->op ), cpu->cp0r[ INS_RD( cpu->op ) ] );
 					break;
 				case RS_CFC:
 					/* todo: */
-					logerror( "%08x: COP0 CFC not supported\n", mipscpu.pc );
+					logerror( "%08x: COP0 CFC not supported\n", cpu->pc );
 					mips_stop();
-					mips_advance_pc();
+					mips_advance_pc(cpu);
 					break;
 				case RS_MTC:
-					n_res = ( mipscpu.cp0r[ INS_RD( mipscpu.op ) ] & ~mips_mtc0_writemask[ INS_RD( mipscpu.op ) ] ) |
-						( mipscpu.r[ INS_RT( mipscpu.op ) ] & mips_mtc0_writemask[ INS_RD( mipscpu.op ) ] );
-					mips_advance_pc();
-					mips_set_cp0r( INS_RD( mipscpu.op ), n_res );
+					n_res = ( cpu->cp0r[ INS_RD( cpu->op ) ] & ~mips_mtc0_writemask[ INS_RD( cpu->op ) ] ) |
+						( cpu->r[ INS_RT( cpu->op ) ] & mips_mtc0_writemask[ INS_RD( cpu->op ) ] );
+					mips_advance_pc(cpu);
+					mips_set_cp0r(cpu, INS_RD( cpu->op ), n_res );
 					break;
 				case RS_CTC:
 					/* todo: */
-					logerror( "%08x: COP0 CTC not supported\n", mipscpu.pc );
+					logerror( "%08x: COP0 CTC not supported\n", cpu->pc );
 					mips_stop();
-					mips_advance_pc();
+					mips_advance_pc(cpu);
 					break;
 				case RS_BC:
-					switch( INS_RT( mipscpu.op ) )
+					switch( INS_RT( cpu->op ) )
 					{
 					case RT_BCF:
 						/* todo: */
-						logerror( "%08x: COP0 BCF not supported\n", mipscpu.pc );
+						logerror( "%08x: COP0 BCF not supported\n", cpu->pc );
 						mips_stop();
-						mips_advance_pc();
+						mips_advance_pc(cpu);
 						break;
 					case RT_BCT:
 						/* todo: */
-						logerror( "%08x: COP0 BCT not supported\n", mipscpu.pc );
+						logerror( "%08x: COP0 BCT not supported\n", cpu->pc );
 						mips_stop();
-						mips_advance_pc();
+						mips_advance_pc(cpu);
 						break;
 					default:
 						/* todo: */
-						logerror( "%08x: COP0 unknown command %08x\n", mipscpu.pc, mipscpu.op );
+						logerror( "%08x: COP0 unknown command %08x\n", cpu->pc, cpu->op );
 						mips_stop();
-						mips_advance_pc();
+						mips_advance_pc(cpu);
 						break;
 					}
 					break;
 				default:
-					switch( INS_CO( mipscpu.op ) )
+					switch( INS_CO( cpu->op ) )
 					{
 					case 1:
-						switch( INS_CF( mipscpu.op ) )
+						switch( INS_CF( cpu->op ) )
 						{
 						case CF_RFE:
-							mips_advance_pc();
-							mips_set_cp0r( CP0_SR, ( mipscpu.cp0r[ CP0_SR ] & ~0xf ) | ( ( mipscpu.cp0r[ CP0_SR ] >> 2 ) & 0xf ) );
+							mips_advance_pc(cpu);
+							mips_set_cp0r(cpu, CP0_SR, ( cpu->cp0r[ CP0_SR ] & ~0xf ) | ( ( cpu->cp0r[ CP0_SR ] >> 2 ) & 0xf ) );
 							break;
 						default:
 							/* todo: */
-							logerror( "%08x: COP0 unknown command %08x\n", mipscpu.pc, mipscpu.op );
+							logerror( "%08x: COP0 unknown command %08x\n", cpu->pc, cpu->op );
 							mips_stop();
-							mips_advance_pc();
+							mips_advance_pc(cpu);
 							break;
 						}
 						break;
 					default:
 						/* todo: */
-						logerror( "%08x: COP0 unknown command %08x\n", mipscpu.pc, mipscpu.op );
+						logerror( "%08x: COP0 unknown command %08x\n", cpu->pc, cpu->op );
 						mips_stop();
-						mips_advance_pc();
+						mips_advance_pc(cpu);
 						break;
 					}
 					break;
@@ -884,76 +863,76 @@ int mips_execute( int cycles )
 			}
 			break;
 		case OP_COP1:
-			if( ( mipscpu.cp0r[ CP0_SR ] & SR_CU1 ) == 0 )
+			if( ( cpu->cp0r[ CP0_SR ] & SR_CU1 ) == 0 )
 			{
-				mips_exception( EXC_CPU );
-				mips_set_cp0r( CP0_CAUSE, ( mipscpu.cp0r[ CP0_CAUSE ] & ~CAUSE_CE ) | CAUSE_CE1 );
+				mips_exception(cpu, EXC_CPU );
+				mips_set_cp0r(cpu, CP0_CAUSE, ( cpu->cp0r[ CP0_CAUSE ] & ~CAUSE_CE ) | CAUSE_CE1 );
 			}
 			else
 			{
-				switch( INS_RS( mipscpu.op ) )
+				switch( INS_RS( cpu->op ) )
 				{
 				case RS_MFC:
 					/* todo: */
-					logerror( "%08x: COP1 BCT not supported\n", mipscpu.pc );
+					logerror( "%08x: COP1 BCT not supported\n", cpu->pc );
 					mips_stop();
-					mips_advance_pc();
+					mips_advance_pc(cpu);
 					break;
 				case RS_CFC:
 					/* todo: */
-					logerror( "%08x: COP1 CFC not supported\n", mipscpu.pc );
+					logerror( "%08x: COP1 CFC not supported\n", cpu->pc );
 					mips_stop();
-					mips_advance_pc();
+					mips_advance_pc(cpu);
 					break;
 				case RS_MTC:
 					/* todo: */
-					logerror( "%08x: COP1 MTC not supported\n", mipscpu.pc );
+					logerror( "%08x: COP1 MTC not supported\n", cpu->pc );
 					mips_stop();
-					mips_advance_pc();
+					mips_advance_pc(cpu);
 					break;
 				case RS_CTC:
 					/* todo: */
-					logerror( "%08x: COP1 CTC not supported\n", mipscpu.pc );
+					logerror( "%08x: COP1 CTC not supported\n", cpu->pc );
 					mips_stop();
-					mips_advance_pc();
+					mips_advance_pc(cpu);
 					break;
 				case RS_BC:
-					switch( INS_RT( mipscpu.op ) )
+					switch( INS_RT( cpu->op ) )
 					{
 					case RT_BCF:
 						/* todo: */
-						logerror( "%08x: COP1 BCF not supported\n", mipscpu.pc );
+						logerror( "%08x: COP1 BCF not supported\n", cpu->pc );
 						mips_stop();
-						mips_advance_pc();
+						mips_advance_pc(cpu);
 						break;
 					case RT_BCT:
 						/* todo: */
-						logerror( "%08x: COP1 BCT not supported\n", mipscpu.pc );
+						logerror( "%08x: COP1 BCT not supported\n", cpu->pc );
 						mips_stop();
-						mips_advance_pc();
+						mips_advance_pc(cpu);
 						break;
 					default:
 						/* todo: */
-						logerror( "%08x: COP1 unknown command %08x\n", mipscpu.pc, mipscpu.op );
+						logerror( "%08x: COP1 unknown command %08x\n", cpu->pc, cpu->op );
 						mips_stop();
-						mips_advance_pc();
+						mips_advance_pc(cpu);
 						break;
 					}
 					break;
 				default:
-					switch( INS_CO( mipscpu.op ) )
+					switch( INS_CO( cpu->op ) )
 					{
 					case 1:
 						/* todo: */
-						logerror( "%08x: COP1 unknown command %08x\n", mipscpu.pc, mipscpu.op );
+						logerror( "%08x: COP1 unknown command %08x\n", cpu->pc, cpu->op );
 						mips_stop();
-						mips_advance_pc();
+						mips_advance_pc(cpu);
 						break;
 					default:
 						/* todo: */
-						logerror( "%08x: COP1 unknown command %08x\n", mipscpu.pc, mipscpu.op );
+						logerror( "%08x: COP1 unknown command %08x\n", cpu->pc, cpu->op );
 						mips_stop();
-						mips_advance_pc();
+						mips_advance_pc(cpu);
 						break;
 					}
 					break;
@@ -961,64 +940,64 @@ int mips_execute( int cycles )
 			}
 			break;
 		case OP_COP2:
-			if( ( mipscpu.cp0r[ CP0_SR ] & SR_CU2 ) == 0 )
+			if( ( cpu->cp0r[ CP0_SR ] & SR_CU2 ) == 0 )
 			{
-				mips_exception( EXC_CPU );
-				mips_set_cp0r( CP0_CAUSE, ( mipscpu.cp0r[ CP0_CAUSE ] & ~CAUSE_CE ) | CAUSE_CE2 );
+				mips_exception(cpu, EXC_CPU );
+				mips_set_cp0r(cpu, CP0_CAUSE, ( cpu->cp0r[ CP0_CAUSE ] & ~CAUSE_CE ) | CAUSE_CE2 );
 			}
 			else
 			{
-				switch( INS_RS( mipscpu.op ) )
+				switch( INS_RS( cpu->op ) )
 				{
 				case RS_MFC:
-					mips_delayed_load( INS_RT( mipscpu.op ), getcp2dr( INS_RD( mipscpu.op ) ) );
+					mips_delayed_load(cpu, INS_RT( cpu->op ), getcp2dr(cpu, INS_RD( cpu->op ) ) );
 					break;
 				case RS_CFC:
-					mips_delayed_load( INS_RT( mipscpu.op ), getcp2cr( INS_RD( mipscpu.op ) ) );
+					mips_delayed_load(cpu, INS_RT( cpu->op ), getcp2cr(cpu, INS_RD( cpu->op ) ) );
 					break;
 				case RS_MTC:
-					setcp2dr( INS_RD( mipscpu.op ), mipscpu.r[ INS_RT( mipscpu.op ) ] );
-					mips_advance_pc();
+					setcp2dr(cpu, INS_RD( cpu->op ), cpu->r[ INS_RT( cpu->op ) ] );
+					mips_advance_pc(cpu);
 					break;
 				case RS_CTC:
-					setcp2cr( INS_RD( mipscpu.op ), mipscpu.r[ INS_RT( mipscpu.op ) ] );
-					mips_advance_pc();
+					setcp2cr(cpu, INS_RD( cpu->op ), cpu->r[ INS_RT( cpu->op ) ] );
+					mips_advance_pc(cpu);
 					break;
 				case RS_BC:
-					switch( INS_RT( mipscpu.op ) )
+					switch( INS_RT( cpu->op ) )
 					{
 					case RT_BCF:
 						/* todo: */
-						logerror( "%08x: COP2 BCF not supported\n", mipscpu.pc );
+						logerror( "%08x: COP2 BCF not supported\n", cpu->pc );
 						mips_stop();
-						mips_advance_pc();
+						mips_advance_pc(cpu);
 						break;
 					case RT_BCT:
 						/* todo: */
-						logerror( "%08x: COP2 BCT not supported\n", mipscpu.pc );
+						logerror( "%08x: COP2 BCT not supported\n", cpu->pc );
 						mips_stop();
-						mips_advance_pc();
+						mips_advance_pc(cpu);
 						break;
 					default:
 						/* todo: */
-						logerror( "%08x: COP2 unknown command %08x\n", mipscpu.pc, mipscpu.op );
+						logerror( "%08x: COP2 unknown command %08x\n", cpu->pc, cpu->op );
 						mips_stop();
-						mips_advance_pc();
+						mips_advance_pc(cpu);
 						break;
 					}
 					break;
 				default:
-					switch( INS_CO( mipscpu.op ) )
+					switch( INS_CO( cpu->op ) )
 					{
 					case 1:
-						docop2( INS_COFUN( mipscpu.op ) );
-						mips_advance_pc();
+						docop2(cpu, INS_COFUN( cpu->op ) );
+						mips_advance_pc(cpu);
 						break;
 					default:
 						/* todo: */
-						logerror( "%08x: COP2 unknown command %08x\n", mipscpu.pc, mipscpu.op );
+						logerror( "%08x: COP2 unknown command %08x\n", cpu->pc, cpu->op );
 						mips_stop();
-						mips_advance_pc();
+						mips_advance_pc(cpu);
 						break;
 					}
 					break;
@@ -1026,642 +1005,643 @@ int mips_execute( int cycles )
 			}
 			break;
 		case OP_LB:
-			if( ( mipscpu.cp0r[ CP0_SR ] & SR_ISC ) != 0 )
+			if( ( cpu->cp0r[ CP0_SR ] & SR_ISC ) != 0 )
 			{
 				/* todo: */
-				logerror( "%08x: LB SR_ISC not supported\n", mipscpu.pc );
+				logerror( "%08x: LB SR_ISC not supported\n", cpu->pc );
 				mips_stop();
-				mips_advance_pc();
+				mips_advance_pc(cpu);
 			}
-			else if( ( mipscpu.cp0r[ CP0_SR ] & ( SR_RE | SR_KUC ) ) == ( SR_RE | SR_KUC ) )
+			else if( ( cpu->cp0r[ CP0_SR ] & ( SR_RE | SR_KUC ) ) == ( SR_RE | SR_KUC ) )
 			{
 				UINT32 n_adr;
-				n_adr = mipscpu.r[ INS_RS( mipscpu.op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) );
-				if( ( n_adr & ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) ) != 0 )
+				n_adr = cpu->r[ INS_RS( cpu->op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( cpu->op ) );
+				if( ( n_adr & ( ( cpu->cp0r[ CP0_SR ] & SR_KUC ) << 30 ) ) != 0 )
 				{
-					mips_exception( EXC_ADEL );
-					mips_set_cp0r( CP0_BADVADDR, n_adr );
+					mips_exception(cpu, EXC_ADEL );
+					mips_set_cp0r(cpu, CP0_BADVADDR, n_adr );
 				}
 				else
 				{
-					mips_delayed_load( INS_RT( mipscpu.op ), MIPS_BYTE_EXTEND( program_read_byte_32le( n_adr ^ 3 ) ) );
+					mips_delayed_load(cpu, INS_RT( cpu->op ), MIPS_BYTE_EXTEND( program_read_byte_32le( cpu, n_adr ^ 3 ) ) );
 				}
 			}
 			else
 			{
 				UINT32 n_adr;
-				n_adr = mipscpu.r[ INS_RS( mipscpu.op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) );
-				if( ( n_adr & ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) ) != 0 )
+				n_adr = cpu->r[ INS_RS( cpu->op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( cpu->op ) );
+				if( ( n_adr & ( ( cpu->cp0r[ CP0_SR ] & SR_KUC ) << 30 ) ) != 0 )
 				{
-					mips_exception( EXC_ADEL );
-					mips_set_cp0r( CP0_BADVADDR, n_adr );
+					mips_exception(cpu, EXC_ADEL );
+					mips_set_cp0r(cpu, CP0_BADVADDR, n_adr );
 				}
 				else
 				{
-					mips_delayed_load( INS_RT( mipscpu.op ), MIPS_BYTE_EXTEND( program_read_byte_32le( n_adr ) ) );
+					mips_delayed_load(cpu, INS_RT( cpu->op ), MIPS_BYTE_EXTEND( program_read_byte_32le( cpu, n_adr ) ) );
 				}
 			}
 			break;
 		case OP_LH:
-			if( ( mipscpu.cp0r[ CP0_SR ] & SR_ISC ) != 0 )
+			if( ( cpu->cp0r[ CP0_SR ] & SR_ISC ) != 0 )
 			{
 				/* todo: */
-				logerror( "%08x: LH SR_ISC not supported\n", mipscpu.pc );
+				logerror( "%08x: LH SR_ISC not supported\n", cpu->pc );
 				mips_stop();
-				mips_advance_pc();
+				mips_advance_pc(cpu);
 			}
-			else if( ( mipscpu.cp0r[ CP0_SR ] & ( SR_RE | SR_KUC ) ) == ( SR_RE | SR_KUC ) )
+			else if( ( cpu->cp0r[ CP0_SR ] & ( SR_RE | SR_KUC ) ) == ( SR_RE | SR_KUC ) )
 			{
 				UINT32 n_adr;
-				n_adr = mipscpu.r[ INS_RS( mipscpu.op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) );
-				if( ( n_adr & ( ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) | 1 ) ) != 0 )
+				n_adr = cpu->r[ INS_RS( cpu->op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( cpu->op ) );
+				if( ( n_adr & ( ( ( cpu->cp0r[ CP0_SR ] & SR_KUC ) << 30 ) | 1 ) ) != 0 )
 				{
-					mips_exception( EXC_ADEL );
-					mips_set_cp0r( CP0_BADVADDR, n_adr );
+					mips_exception(cpu, EXC_ADEL );
+					mips_set_cp0r(cpu, CP0_BADVADDR, n_adr );
 				}
 				else
 				{
-					mips_delayed_load( INS_RT( mipscpu.op ), MIPS_WORD_EXTEND( program_read_word_32le( n_adr ^ 2 ) ) );
+					mips_delayed_load(cpu, INS_RT( cpu->op ), MIPS_WORD_EXTEND( program_read_word_32le( cpu, n_adr ^ 2 ) ) );
 				}
 			}
 			else
 			{
 				UINT32 n_adr;
-				n_adr = mipscpu.r[ INS_RS( mipscpu.op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) );
-				if( ( n_adr & ( ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) | 1 ) ) != 0 )
+				n_adr = cpu->r[ INS_RS( cpu->op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( cpu->op ) );
+				if( ( n_adr & ( ( ( cpu->cp0r[ CP0_SR ] & SR_KUC ) << 30 ) | 1 ) ) != 0 )
 				{
-					mips_exception( EXC_ADEL );
-					mips_set_cp0r( CP0_BADVADDR, n_adr );
+					mips_exception(cpu, EXC_ADEL );
+					mips_set_cp0r(cpu, CP0_BADVADDR, n_adr );
 				}
 				else
 				{
-					mips_delayed_load( INS_RT( mipscpu.op ), MIPS_WORD_EXTEND( program_read_word_32le( n_adr ) ) );
+					mips_delayed_load(cpu, INS_RT( cpu->op ), MIPS_WORD_EXTEND( program_read_word_32le( cpu, n_adr ) ) );
 				}
 			}
 			break;
 		case OP_LWL:
-			if( ( mipscpu.cp0r[ CP0_SR ] & SR_ISC ) != 0 )
+			if( ( cpu->cp0r[ CP0_SR ] & SR_ISC ) != 0 )
 			{
 				/* todo: */
-				logerror( "%08x: LWL SR_ISC not supported\n", mipscpu.pc );
+				logerror( "%08x: LWL SR_ISC not supported\n", cpu->pc );
 				mips_stop();
-				mips_advance_pc();
+				mips_advance_pc(cpu);
 			}
-			else if( ( mipscpu.cp0r[ CP0_SR ] & ( SR_RE | SR_KUC ) ) == ( SR_RE | SR_KUC ) )
+			else if( ( cpu->cp0r[ CP0_SR ] & ( SR_RE | SR_KUC ) ) == ( SR_RE | SR_KUC ) )
 			{
 				UINT32 n_adr;
-				n_adr = mipscpu.r[ INS_RS( mipscpu.op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) );
-				if( ( n_adr & ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) ) != 0 )
+				n_adr = cpu->r[ INS_RS( cpu->op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( cpu->op ) );
+				if( ( n_adr & ( ( cpu->cp0r[ CP0_SR ] & SR_KUC ) << 30 ) ) != 0 )
 				{
-					mips_exception( EXC_ADEL );
-					mips_set_cp0r( CP0_BADVADDR, n_adr );
+					mips_exception(cpu, EXC_ADEL );
+					mips_set_cp0r(cpu, CP0_BADVADDR, n_adr );
 				}
 				else
 				{
 					switch( n_adr & 3 )
 					{
 					case 0:
-						n_res = ( mipscpu.r[ INS_RT( mipscpu.op ) ] & 0x00ffffff ) | ( (UINT32)program_read_byte_32le( n_adr + 3 ) << 24 );
+						n_res = ( cpu->r[ INS_RT( cpu->op ) ] & 0x00ffffff ) | ( (UINT32)program_read_byte_32le( cpu, n_adr + 3 ) << 24 );
 						break;
 					case 1:
-						n_res = ( mipscpu.r[ INS_RT( mipscpu.op ) ] & 0x0000ffff ) | ( (UINT32)program_read_word_32le( n_adr + 1 ) << 16 );
+						n_res = ( cpu->r[ INS_RT( cpu->op ) ] & 0x0000ffff ) | ( (UINT32)program_read_word_32le( cpu, n_adr + 1 ) << 16 );
 						break;
 					case 2:
-						n_res = ( mipscpu.r[ INS_RT( mipscpu.op ) ] & 0x000000ff ) | ( (UINT32)program_read_byte_32le( n_adr - 1 ) << 8 ) | ( (UINT32)program_read_word_32le( n_adr ) << 16 );
+						n_res = ( cpu->r[ INS_RT( cpu->op ) ] & 0x000000ff ) | ( (UINT32)program_read_byte_32le( cpu, n_adr - 1 ) << 8 ) | ( (UINT32)program_read_word_32le( cpu, n_adr ) << 16 );
 						break;
 					default:
-						n_res = program_read_dword_32le( n_adr - 3 );
+						n_res = program_read_dword_32le( cpu, n_adr - 3 );
 						break;
 					}
-					mips_delayed_load( INS_RT( mipscpu.op ), n_res );
+					mips_delayed_load(cpu, INS_RT( cpu->op ), n_res );
 				}
 			}
 			else
 			{
 				UINT32 n_adr;
-				n_adr = mipscpu.r[ INS_RS( mipscpu.op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) );
-				if( ( n_adr & ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) ) != 0 )
+				n_adr = cpu->r[ INS_RS( cpu->op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( cpu->op ) );
+				if( ( n_adr & ( ( cpu->cp0r[ CP0_SR ] & SR_KUC ) << 30 ) ) != 0 )
 				{
-					mips_exception( EXC_ADEL );
-					mips_set_cp0r( CP0_BADVADDR, n_adr );
+					mips_exception(cpu, EXC_ADEL );
+					mips_set_cp0r(cpu, CP0_BADVADDR, n_adr );
 				}
 				else
 				{
 					switch( n_adr & 3 )
 					{
 					case 0:
-						n_res = ( mipscpu.r[ INS_RT( mipscpu.op ) ] & 0x00ffffff ) | ( (UINT32)program_read_byte_32le( n_adr ) << 24 );
+						n_res = ( cpu->r[ INS_RT( cpu->op ) ] & 0x00ffffff ) | ( (UINT32)program_read_byte_32le( cpu, n_adr ) << 24 );
 						break;
 					case 1:
-						n_res = ( mipscpu.r[ INS_RT( mipscpu.op ) ] & 0x0000ffff ) | ( (UINT32)program_read_word_32le( n_adr - 1 ) << 16 );
+						n_res = ( cpu->r[ INS_RT( cpu->op ) ] & 0x0000ffff ) | ( (UINT32)program_read_word_32le( cpu, n_adr - 1 ) << 16 );
 						break;
 					case 2:
-						n_res = ( mipscpu.r[ INS_RT( mipscpu.op ) ] & 0x000000ff ) | ( (UINT32)program_read_word_32le( n_adr - 2 ) << 8 ) | ( (UINT32)program_read_byte_32le( n_adr ) << 24 );
+						n_res = ( cpu->r[ INS_RT( cpu->op ) ] & 0x000000ff ) | ( (UINT32)program_read_word_32le( cpu, n_adr - 2 ) << 8 ) | ( (UINT32)program_read_byte_32le( cpu, n_adr ) << 24 );
 						break;
 					default:
-						n_res = program_read_dword_32le( n_adr - 3 );
+						n_res = program_read_dword_32le( cpu, n_adr - 3 );
 						break;
 					}
-					mips_delayed_load( INS_RT( mipscpu.op ), n_res );
+					mips_delayed_load(cpu, INS_RT( cpu->op ), n_res );
 				}
 			}
 			break;
 		case OP_LW:
-			if( ( mipscpu.cp0r[ CP0_SR ] & SR_ISC ) != 0 )
+			if( ( cpu->cp0r[ CP0_SR ] & SR_ISC ) != 0 )
 			{
 				/* todo: */
-				logerror( "%08x: LW SR_ISC not supported\n", mipscpu.pc );
+				logerror( "%08x: LW SR_ISC not supported\n", cpu->pc );
 				mips_stop();
-				mips_advance_pc();
+				mips_advance_pc(cpu);
 			}
 			else
 			{
 				UINT32 n_adr;
-				n_adr = mipscpu.r[ INS_RS( mipscpu.op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) );
+				n_adr = cpu->r[ INS_RS( cpu->op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( cpu->op ) );
 #if 0
-				if( ( n_adr & ( ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) | 3 ) ) != 0 )
+				if( ( n_adr & ( ( ( cpu->cp0r[ CP0_SR ] & SR_KUC ) << 30 ) | 3 ) ) != 0 )
 				{
 					printf("ADEL\n");
-					mips_exception( EXC_ADEL );
-					mips_set_cp0r( CP0_BADVADDR, n_adr );
+					mips_exception(cpu, EXC_ADEL );
+					mips_set_cp0r(cpu, CP0_BADVADDR, n_adr );
 				}
 				else
 #endif
 				{
-					mips_delayed_load( INS_RT( mipscpu.op ), program_read_dword_32le( n_adr ) );
+					mips_delayed_load(cpu, INS_RT( cpu->op ), program_read_dword_32le( cpu, n_adr ) );
 				}
 			}
 			break;
 		case OP_LBU:
-			if( ( mipscpu.cp0r[ CP0_SR ] & SR_ISC ) != 0 )
+			if( ( cpu->cp0r[ CP0_SR ] & SR_ISC ) != 0 )
 			{
 				/* todo: */
-				logerror( "%08x: LBU SR_ISC not supported\n", mipscpu.pc );
+				logerror( "%08x: LBU SR_ISC not supported\n", cpu->pc );
 				mips_stop();
-				mips_advance_pc();
+				mips_advance_pc(cpu);
 			}
-			else if( ( mipscpu.cp0r[ CP0_SR ] & ( SR_RE | SR_KUC ) ) == ( SR_RE | SR_KUC ) )
+			else if( ( cpu->cp0r[ CP0_SR ] & ( SR_RE | SR_KUC ) ) == ( SR_RE | SR_KUC ) )
 			{
 				UINT32 n_adr;
-				n_adr = mipscpu.r[ INS_RS( mipscpu.op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) );
-				if( ( n_adr & ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) ) != 0 )
+				n_adr = cpu->r[ INS_RS( cpu->op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( cpu->op ) );
+				if( ( n_adr & ( ( cpu->cp0r[ CP0_SR ] & SR_KUC ) << 30 ) ) != 0 )
 				{
-					mips_exception( EXC_ADEL );
-					mips_set_cp0r( CP0_BADVADDR, n_adr );
+					mips_exception(cpu, EXC_ADEL );
+					mips_set_cp0r(cpu, CP0_BADVADDR, n_adr );
 				}
 				else
 				{
-					mips_delayed_load( INS_RT( mipscpu.op ), program_read_byte_32le( n_adr ^ 3 ) );
+					mips_delayed_load(cpu, INS_RT( cpu->op ), program_read_byte_32le( cpu, n_adr ^ 3 ) );
 				}
 			}
 			else
 			{
 				UINT32 n_adr;
-				n_adr = mipscpu.r[ INS_RS( mipscpu.op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) );
-				if( ( n_adr & ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) ) != 0 )
+				n_adr = cpu->r[ INS_RS( cpu->op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( cpu->op ) );
+				if( ( n_adr & ( ( cpu->cp0r[ CP0_SR ] & SR_KUC ) << 30 ) ) != 0 )
 				{
-					mips_exception( EXC_ADEL );
-					mips_set_cp0r( CP0_BADVADDR, n_adr );
+					mips_exception(cpu, EXC_ADEL );
+					mips_set_cp0r(cpu, CP0_BADVADDR, n_adr );
 				}
 				else
 				{
-					mips_delayed_load( INS_RT( mipscpu.op ), program_read_byte_32le( n_adr ) );
+					mips_delayed_load(cpu, INS_RT( cpu->op ), program_read_byte_32le( cpu, n_adr ) );
 				}
 			}
 			break;
 		case OP_LHU:
-			if( ( mipscpu.cp0r[ CP0_SR ] & SR_ISC ) != 0 )
+			if( ( cpu->cp0r[ CP0_SR ] & SR_ISC ) != 0 )
 			{
 				/* todo: */
-				logerror( "%08x: LHU SR_ISC not supported\n", mipscpu.pc );
+				logerror( "%08x: LHU SR_ISC not supported\n", cpu->pc );
 				mips_stop();
-				mips_advance_pc();
+				mips_advance_pc(cpu);
 			}
-			else if( ( mipscpu.cp0r[ CP0_SR ] & ( SR_RE | SR_KUC ) ) == ( SR_RE | SR_KUC ) )
+			else if( ( cpu->cp0r[ CP0_SR ] & ( SR_RE | SR_KUC ) ) == ( SR_RE | SR_KUC ) )
 			{
 				UINT32 n_adr;
-				n_adr = mipscpu.r[ INS_RS( mipscpu.op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) );
-				if( ( n_adr & ( ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) | 1 ) ) != 0 )
+				n_adr = cpu->r[ INS_RS( cpu->op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( cpu->op ) );
+				if( ( n_adr & ( ( ( cpu->cp0r[ CP0_SR ] & SR_KUC ) << 30 ) | 1 ) ) != 0 )
 				{
-					mips_exception( EXC_ADEL );
-					mips_set_cp0r( CP0_BADVADDR, n_adr );
+					mips_exception(cpu, EXC_ADEL );
+					mips_set_cp0r(cpu, CP0_BADVADDR, n_adr );
 				}
 				else
 				{
-					mips_delayed_load( INS_RT( mipscpu.op ), program_read_word_32le( n_adr ^ 2 ) );
+					mips_delayed_load(cpu, INS_RT( cpu->op ), program_read_word_32le( cpu, n_adr ^ 2 ) );
 				}
 			}
 			else
 			{
 				UINT32 n_adr;
-				n_adr = mipscpu.r[ INS_RS( mipscpu.op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) );
-				if( ( n_adr & ( ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) | 1 ) ) != 0 )
+				n_adr = cpu->r[ INS_RS( cpu->op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( cpu->op ) );
+				if( ( n_adr & ( ( ( cpu->cp0r[ CP0_SR ] & SR_KUC ) << 30 ) | 1 ) ) != 0 )
 				{
-					mips_exception( EXC_ADEL );
-					mips_set_cp0r( CP0_BADVADDR, n_adr );
+					mips_exception(cpu, EXC_ADEL );
+					mips_set_cp0r(cpu, CP0_BADVADDR, n_adr );
 				}
 				else
 				{
-					mips_delayed_load( INS_RT( mipscpu.op ), program_read_word_32le( n_adr ) );
+					mips_delayed_load(cpu, INS_RT( cpu->op ), program_read_word_32le( cpu, n_adr ) );
 				}
 			}
 			break;
 		case OP_LWR:
-			if( ( mipscpu.cp0r[ CP0_SR ] & SR_ISC ) != 0 )
+			if( ( cpu->cp0r[ CP0_SR ] & SR_ISC ) != 0 )
 			{
 				/* todo: */
-				logerror( "%08x: LWR SR_ISC not supported\n", mipscpu.pc );
+				logerror( "%08x: LWR SR_ISC not supported\n", cpu->pc );
 				mips_stop();
-				mips_advance_pc();
+				mips_advance_pc(cpu);
 			}
-			else if( ( mipscpu.cp0r[ CP0_SR ] & ( SR_RE | SR_KUC ) ) == ( SR_RE | SR_KUC ) )
+			else if( ( cpu->cp0r[ CP0_SR ] & ( SR_RE | SR_KUC ) ) == ( SR_RE | SR_KUC ) )
 			{
 				UINT32 n_adr;
-				n_adr = mipscpu.r[ INS_RS( mipscpu.op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) );
-				if( ( n_adr & ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) ) != 0 )
+				n_adr = cpu->r[ INS_RS( cpu->op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( cpu->op ) );
+				if( ( n_adr & ( ( cpu->cp0r[ CP0_SR ] & SR_KUC ) << 30 ) ) != 0 )
 				{
-					mips_exception( EXC_ADEL );
-					mips_set_cp0r( CP0_BADVADDR, n_adr );
+					mips_exception(cpu, EXC_ADEL );
+					mips_set_cp0r(cpu, CP0_BADVADDR, n_adr );
 				}
 				else
 				{
 					switch( n_adr & 3 )
 					{
 					case 3:
-						n_res = ( mipscpu.r[ INS_RT( mipscpu.op ) ] & 0xffffff00 ) | program_read_byte_32le( n_adr - 3 );
+						n_res = ( cpu->r[ INS_RT( cpu->op ) ] & 0xffffff00 ) | program_read_byte_32le( cpu, n_adr - 3 );
 						break;
 					case 2:
-						n_res = ( mipscpu.r[ INS_RT( mipscpu.op ) ] & 0xffff0000 ) | program_read_word_32le( n_adr - 2 );
+						n_res = ( cpu->r[ INS_RT( cpu->op ) ] & 0xffff0000 ) | program_read_word_32le( cpu, n_adr - 2 );
 						break;
 					case 1:
-						n_res = ( mipscpu.r[ INS_RT( mipscpu.op ) ] & 0xff000000 ) | program_read_word_32le( n_adr - 1 ) | ( (UINT32)program_read_byte_32le( n_adr + 1 ) << 16 );
+						n_res = ( cpu->r[ INS_RT( cpu->op ) ] & 0xff000000 ) | program_read_word_32le( cpu, n_adr - 1 ) | ( (UINT32)program_read_byte_32le( cpu, n_adr + 1 ) << 16 );
 						break;
 					default:
-						n_res = program_read_dword_32le( n_adr );
+						n_res = program_read_dword_32le( cpu, n_adr );
 						break;
 					}
-					mips_delayed_load( INS_RT( mipscpu.op ), n_res );
+					mips_delayed_load(cpu, INS_RT( cpu->op ), n_res );
 				}
 			}
 			else
 			{
 				UINT32 n_adr;
-				n_adr = mipscpu.r[ INS_RS( mipscpu.op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) );
-				if( ( n_adr & ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) ) != 0 )
+				n_adr = cpu->r[ INS_RS( cpu->op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( cpu->op ) );
+				if( ( n_adr & ( ( cpu->cp0r[ CP0_SR ] & SR_KUC ) << 30 ) ) != 0 )
 				{
-					mips_exception( EXC_ADEL );
-					mips_set_cp0r( CP0_BADVADDR, n_adr );
+					mips_exception(cpu, EXC_ADEL );
+					mips_set_cp0r(cpu, CP0_BADVADDR, n_adr );
 				}
 				else
 				{
 					switch( n_adr & 3 )
 					{
 					case 3:
-						n_res = ( mipscpu.r[ INS_RT( mipscpu.op ) ] & 0xffffff00 ) | program_read_byte_32le( n_adr );
+						n_res = ( cpu->r[ INS_RT( cpu->op ) ] & 0xffffff00 ) | program_read_byte_32le( cpu, n_adr );
 						break;
 					case 2:
-						n_res = ( mipscpu.r[ INS_RT( mipscpu.op ) ] & 0xffff0000 ) | program_read_word_32le( n_adr );
+						n_res = ( cpu->r[ INS_RT( cpu->op ) ] & 0xffff0000 ) | program_read_word_32le( cpu, n_adr );
 						break;
 					case 1:
-						n_res = ( mipscpu.r[ INS_RT( mipscpu.op ) ] & 0xff000000 ) | program_read_byte_32le( n_adr ) | ( (UINT32)program_read_word_32le( n_adr + 1 ) << 8 );
+						n_res = ( cpu->r[ INS_RT( cpu->op ) ] & 0xff000000 ) | program_read_byte_32le( cpu, n_adr ) | ( (UINT32)program_read_word_32le( cpu, n_adr + 1 ) << 8 );
 						break;
 					default:
-						n_res = program_read_dword_32le( n_adr );
+						n_res = program_read_dword_32le( cpu, n_adr );
 						break;
 					}
-					mips_delayed_load( INS_RT( mipscpu.op ), n_res );
+					mips_delayed_load(cpu, INS_RT( cpu->op ), n_res );
 				}
 			}
 			break;
 		case OP_SB:
-			if( ( mipscpu.cp0r[ CP0_SR ] & SR_ISC ) != 0 )
+			if( ( cpu->cp0r[ CP0_SR ] & SR_ISC ) != 0 )
 			{
 				/* todo: */
-				logerror( "%08x: SB SR_ISC not supported\n", mipscpu.pc );
+				logerror( "%08x: SB SR_ISC not supported\n", cpu->pc );
 				mips_stop();
-				mips_advance_pc();
+				mips_advance_pc(cpu);
 			}
-			else if( ( mipscpu.cp0r[ CP0_SR ] & ( SR_RE | SR_KUC ) ) == ( SR_RE | SR_KUC ) )
+			else if( ( cpu->cp0r[ CP0_SR ] & ( SR_RE | SR_KUC ) ) == ( SR_RE | SR_KUC ) )
 			{
 				UINT32 n_adr;
-				n_adr = mipscpu.r[ INS_RS( mipscpu.op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) );
-				if( ( n_adr & ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) ) != 0 )
+				n_adr = cpu->r[ INS_RS( cpu->op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( cpu->op ) );
+				if( ( n_adr & ( ( cpu->cp0r[ CP0_SR ] & SR_KUC ) << 30 ) ) != 0 )
 				{
-					mips_exception( EXC_ADES );
-					mips_set_cp0r( CP0_BADVADDR, n_adr );
+					mips_exception(cpu, EXC_ADES );
+					mips_set_cp0r(cpu, CP0_BADVADDR, n_adr );
 				}
 				else
 				{
-					program_write_byte_32le( n_adr ^ 3, mipscpu.r[ INS_RT( mipscpu.op ) ] );
-					mips_advance_pc();
+					program_write_byte_32le( cpu, n_adr ^ 3, cpu->r[ INS_RT( cpu->op ) ] );
+					mips_advance_pc(cpu);
 				}
 			}
 			else
 			{
 				UINT32 n_adr;
-				n_adr = mipscpu.r[ INS_RS( mipscpu.op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) );
-				if( ( n_adr & ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) ) != 0 )
+				n_adr = cpu->r[ INS_RS( cpu->op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( cpu->op ) );
+				if( ( n_adr & ( ( cpu->cp0r[ CP0_SR ] & SR_KUC ) << 30 ) ) != 0 )
 				{
-					mips_exception( EXC_ADES );
-					mips_set_cp0r( CP0_BADVADDR, n_adr );
+					mips_exception(cpu, EXC_ADES );
+					mips_set_cp0r(cpu, CP0_BADVADDR, n_adr );
 				}
 				else
 				{
-					program_write_byte_32le( n_adr, mipscpu.r[ INS_RT( mipscpu.op ) ] );
-					mips_advance_pc();
+					program_write_byte_32le( cpu, n_adr, cpu->r[ INS_RT( cpu->op ) ] );
+					mips_advance_pc(cpu);
 				}
 			}
 			break;
 		case OP_SH:
-			if( ( mipscpu.cp0r[ CP0_SR ] & SR_ISC ) != 0 )
+			if( ( cpu->cp0r[ CP0_SR ] & SR_ISC ) != 0 )
 			{
 				/* todo: */
-				logerror( "%08x: SH SR_ISC not supported\n", mipscpu.pc );
+				logerror( "%08x: SH SR_ISC not supported\n", cpu->pc );
 				mips_stop();
-				mips_advance_pc();
+				mips_advance_pc(cpu);
 			}
-			else if( ( mipscpu.cp0r[ CP0_SR ] & ( SR_RE | SR_KUC ) ) == ( SR_RE | SR_KUC ) )
+			else if( ( cpu->cp0r[ CP0_SR ] & ( SR_RE | SR_KUC ) ) == ( SR_RE | SR_KUC ) )
 			{
 				UINT32 n_adr;
-				n_adr = mipscpu.r[ INS_RS( mipscpu.op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) );
-				if( ( n_adr & ( ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) | 1 ) ) != 0 )
+				n_adr = cpu->r[ INS_RS( cpu->op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( cpu->op ) );
+				if( ( n_adr & ( ( ( cpu->cp0r[ CP0_SR ] & SR_KUC ) << 30 ) | 1 ) ) != 0 )
 				{
-					mips_exception( EXC_ADES );
-					mips_set_cp0r( CP0_BADVADDR, n_adr );
+					mips_exception(cpu, EXC_ADES );
+					mips_set_cp0r(cpu, CP0_BADVADDR, n_adr );
 				}
 				else
 				{
-					program_write_word_32le( n_adr ^ 2, mipscpu.r[ INS_RT( mipscpu.op ) ] );
-					mips_advance_pc();
+					program_write_word_32le( cpu, n_adr ^ 2, cpu->r[ INS_RT( cpu->op ) ] );
+					mips_advance_pc(cpu);
 				}
 			}
 			else
 			{
 				UINT32 n_adr;
-				n_adr = mipscpu.r[ INS_RS( mipscpu.op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) );
-				if( ( n_adr & ( ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) | 1 ) ) != 0 )
+				n_adr = cpu->r[ INS_RS( cpu->op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( cpu->op ) );
+				if( ( n_adr & ( ( ( cpu->cp0r[ CP0_SR ] & SR_KUC ) << 30 ) | 1 ) ) != 0 )
 				{
-					mips_exception( EXC_ADES );
-					mips_set_cp0r( CP0_BADVADDR, n_adr );
+					mips_exception(cpu, EXC_ADES );
+					mips_set_cp0r(cpu, CP0_BADVADDR, n_adr );
 				}
 				else
 				{
-					program_write_word_32le( n_adr, mipscpu.r[ INS_RT( mipscpu.op ) ] );
-					mips_advance_pc();
+					program_write_word_32le( cpu, n_adr, cpu->r[ INS_RT( cpu->op ) ] );
+					mips_advance_pc(cpu);
 				}
 			}
 			break;
 		case OP_SWL:
-			if( ( mipscpu.cp0r[ CP0_SR ] & SR_ISC ) != 0 )
+			if( ( cpu->cp0r[ CP0_SR ] & SR_ISC ) != 0 )
 			{
 				/* todo: */
 				printf("SR_ISC not supported\n");
-				logerror( "%08x: SWL SR_ISC not supported\n", mipscpu.pc );
+				logerror( "%08x: SWL SR_ISC not supported\n", cpu->pc );
 				mips_stop();
-				mips_advance_pc();
+				mips_advance_pc(cpu);
 			}
-			else if( ( mipscpu.cp0r[ CP0_SR ] & ( SR_RE | SR_KUC ) ) == ( SR_RE | SR_KUC ) )
+			else if( ( cpu->cp0r[ CP0_SR ] & ( SR_RE | SR_KUC ) ) == ( SR_RE | SR_KUC ) )
 			{
 				UINT32 n_adr;
-				n_adr = mipscpu.r[ INS_RS( mipscpu.op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) );
-				if( ( n_adr & ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) ) != 0 )
+				n_adr = cpu->r[ INS_RS( cpu->op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( cpu->op ) );
+				if( ( n_adr & ( ( cpu->cp0r[ CP0_SR ] & SR_KUC ) << 30 ) ) != 0 )
 				{
 					printf("permission violation?\n");
-					mips_exception( EXC_ADES );
-					mips_set_cp0r( CP0_BADVADDR, n_adr );
+					mips_exception(cpu, EXC_ADES );
+					mips_set_cp0r(cpu, CP0_BADVADDR, n_adr );
 				}
 				else
 				{
 					switch( n_adr & 3 )
 					{
 					case 0:
-						program_write_byte_32le( n_adr + 3, mipscpu.r[ INS_RT( mipscpu.op ) ] >> 24 );
+						program_write_byte_32le( cpu, n_adr + 3, cpu->r[ INS_RT( cpu->op ) ] >> 24 );
 						break;
 					case 1:
-						program_write_word_32le( n_adr + 1, mipscpu.r[ INS_RT( mipscpu.op ) ] >> 16 );
+						program_write_word_32le( cpu, n_adr + 1, cpu->r[ INS_RT( cpu->op ) ] >> 16 );
 						break;
 					case 2:
-						program_write_byte_32le( n_adr - 1, mipscpu.r[ INS_RT( mipscpu.op ) ] >> 8 );
-						program_write_word_32le( n_adr, mipscpu.r[ INS_RT( mipscpu.op ) ] >> 16 );
+						program_write_byte_32le( cpu, n_adr - 1, cpu->r[ INS_RT( cpu->op ) ] >> 8 );
+						program_write_word_32le( cpu, n_adr, cpu->r[ INS_RT( cpu->op ) ] >> 16 );
 						break;
 					case 3:
-						program_write_dword_32le( n_adr - 3, mipscpu.r[ INS_RT( mipscpu.op ) ] );
+						program_write_dword_32le( cpu, n_adr - 3, cpu->r[ INS_RT( cpu->op ) ] );
 						break;
 					}
-					mips_advance_pc();
+					mips_advance_pc(cpu);
 				}
 			}
 			else
 			{
 				UINT32 n_adr;
-				n_adr = mipscpu.r[ INS_RS( mipscpu.op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) );
-				if( ( n_adr & ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) ) != 0 )
+				n_adr = cpu->r[ INS_RS( cpu->op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( cpu->op ) );
+				if( ( n_adr & ( ( cpu->cp0r[ CP0_SR ] & SR_KUC ) << 30 ) ) != 0 )
 				{
 					printf("permission violation 2\n");
-					mips_exception( EXC_ADES );
-					mips_set_cp0r( CP0_BADVADDR, n_adr );
+					mips_exception(cpu, EXC_ADES );
+					mips_set_cp0r(cpu, CP0_BADVADDR, n_adr );
 				}
 				else
 				{
 					switch( n_adr & 3 )
 					{
 					case 0:
-						program_write_byte_32le( n_adr, mipscpu.r[ INS_RT( mipscpu.op ) ] >> 24 );
+						program_write_byte_32le( cpu, n_adr, cpu->r[ INS_RT( cpu->op ) ] >> 24 );
 						break;
 					case 1:
-						program_write_word_32le( n_adr - 1, mipscpu.r[ INS_RT( mipscpu.op ) ] >> 16 );
+						program_write_word_32le( cpu, n_adr - 1, cpu->r[ INS_RT( cpu->op ) ] >> 16 );
 						break;
 					case 2:
-						program_write_word_32le( n_adr - 2, mipscpu.r[ INS_RT( mipscpu.op ) ] >> 8 );
-						program_write_byte_32le( n_adr, mipscpu.r[ INS_RT( mipscpu.op ) ] >> 24 );
+						program_write_word_32le( cpu, n_adr - 2, cpu->r[ INS_RT( cpu->op ) ] >> 8 );
+						program_write_byte_32le( cpu, n_adr, cpu->r[ INS_RT( cpu->op ) ] >> 24 );
 						break;
 					case 3:
-						program_write_dword_32le( n_adr - 3, mipscpu.r[ INS_RT( mipscpu.op ) ] );
+						program_write_dword_32le( cpu, n_adr - 3, cpu->r[ INS_RT( cpu->op ) ] );
 						break;
 					}
-					mips_advance_pc();
+					mips_advance_pc(cpu);
 				}
 			}
 			break;
 		case OP_SW:
-			if( ( mipscpu.cp0r[ CP0_SR ] & SR_ISC ) != 0 )
+			if( ( cpu->cp0r[ CP0_SR ] & SR_ISC ) != 0 )
 			{
 				/* todo: */
 /* used by bootstrap
-				logerror( "%08x: SW SR_ISC not supported\n", mipscpu.pc );
+				logerror( "%08x: SW SR_ISC not supported\n", cpu->pc );
 				mips_stop();
 */
-				mips_advance_pc();
+				mips_advance_pc(cpu);
 			}
 			else
 			{
 				UINT32 n_adr;
-				n_adr = mipscpu.r[ INS_RS( mipscpu.op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) );
-				if(0) // ( n_adr & ( ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) | 3 ) ) != 0 )
+				n_adr = cpu->r[ INS_RS( cpu->op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( cpu->op ) );
+				if(0) // ( n_adr & ( ( ( cpu->cp0r[ CP0_SR ] & SR_KUC ) << 30 ) | 3 ) ) != 0 )
 				{
-					mips_exception( EXC_ADES );
-					mips_set_cp0r( CP0_BADVADDR, n_adr );
+					mips_exception(cpu, EXC_ADES );
+					mips_set_cp0r(cpu, CP0_BADVADDR, n_adr );
 				}
 				else
 				{
-					program_write_dword_32le( n_adr, mipscpu.r[ INS_RT( mipscpu.op ) ] );
-					mips_advance_pc();
+					program_write_dword_32le( cpu, n_adr, cpu->r[ INS_RT( cpu->op ) ] );
+					mips_advance_pc(cpu);
 				}
 			}
 			break;
 		case OP_SWR:
-			if( ( mipscpu.cp0r[ CP0_SR ] & SR_ISC ) != 0 )
+			if( ( cpu->cp0r[ CP0_SR ] & SR_ISC ) != 0 )
 			{
 				/* todo: */
-				logerror( "%08x: SWR SR_ISC not supported\n", mipscpu.pc );
+				logerror( "%08x: SWR SR_ISC not supported\n", cpu->pc );
 				mips_stop();
-				mips_advance_pc();
+				mips_advance_pc(cpu);
 			}
-			else if( ( mipscpu.cp0r[ CP0_SR ] & ( SR_RE | SR_KUC ) ) == ( SR_RE | SR_KUC ) )
+			else if( ( cpu->cp0r[ CP0_SR ] & ( SR_RE | SR_KUC ) ) == ( SR_RE | SR_KUC ) )
 			{
 				UINT32 n_adr;
-				n_adr = mipscpu.r[ INS_RS( mipscpu.op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) );
-				if( ( n_adr & ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) ) != 0 )
+				n_adr = cpu->r[ INS_RS( cpu->op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( cpu->op ) );
+				if( ( n_adr & ( ( cpu->cp0r[ CP0_SR ] & SR_KUC ) << 30 ) ) != 0 )
 				{
-					mips_exception( EXC_ADES );
-					mips_set_cp0r( CP0_BADVADDR, n_adr );
+					mips_exception(cpu, EXC_ADES );
+					mips_set_cp0r(cpu, CP0_BADVADDR, n_adr );
 				}
 				else
 				{
 					switch( n_adr & 3 )
 					{
 					case 0:
-						program_write_dword_32le( n_adr, mipscpu.r[ INS_RT( mipscpu.op ) ] );
+						program_write_dword_32le( cpu, n_adr, cpu->r[ INS_RT( cpu->op ) ] );
 						break;
 					case 1:
-						program_write_word_32le( n_adr - 1, mipscpu.r[ INS_RT( mipscpu.op ) ] );
-						program_write_byte_32le( n_adr + 1, mipscpu.r[ INS_RT( mipscpu.op ) ] >> 16 );
+						program_write_word_32le( cpu, n_adr - 1, cpu->r[ INS_RT( cpu->op ) ] );
+						program_write_byte_32le( cpu, n_adr + 1, cpu->r[ INS_RT( cpu->op ) ] >> 16 );
 						break;
 					case 2:
-						program_write_word_32le( n_adr - 2, mipscpu.r[ INS_RT( mipscpu.op ) ] );
+						program_write_word_32le( cpu, n_adr - 2, cpu->r[ INS_RT( cpu->op ) ] );
 						break;
 					case 3:
-						program_write_byte_32le( n_adr - 3, mipscpu.r[ INS_RT( mipscpu.op ) ] );
+						program_write_byte_32le( cpu, n_adr - 3, cpu->r[ INS_RT( cpu->op ) ] );
 						break;
 					}
-					mips_advance_pc();
+					mips_advance_pc(cpu);
 				}
 			}
 			else
 			{
 				UINT32 n_adr;
-				n_adr = mipscpu.r[ INS_RS( mipscpu.op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) );
-				if( ( n_adr & ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) ) != 0 )
+				n_adr = cpu->r[ INS_RS( cpu->op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( cpu->op ) );
+				if( ( n_adr & ( ( cpu->cp0r[ CP0_SR ] & SR_KUC ) << 30 ) ) != 0 )
 				{
-					mips_exception( EXC_ADES );
-					mips_set_cp0r( CP0_BADVADDR, n_adr );
+					mips_exception(cpu, EXC_ADES );
+					mips_set_cp0r(cpu, CP0_BADVADDR, n_adr );
 				}
 				else
 				{
 					switch( n_adr & 3 )
 					{
 					case 0:
-						program_write_dword_32le( n_adr, mipscpu.r[ INS_RT( mipscpu.op ) ] );
+						program_write_dword_32le( cpu, n_adr, cpu->r[ INS_RT( cpu->op ) ] );
 						break;
 					case 1:
-						program_write_byte_32le( n_adr, mipscpu.r[ INS_RT( mipscpu.op ) ] );
-						program_write_word_32le( n_adr + 1, mipscpu.r[ INS_RT( mipscpu.op ) ] >> 8 );
+						program_write_byte_32le( cpu, n_adr, cpu->r[ INS_RT( cpu->op ) ] );
+						program_write_word_32le( cpu, n_adr + 1, cpu->r[ INS_RT( cpu->op ) ] >> 8 );
 						break;
 					case 2:
-						program_write_word_32le( n_adr, mipscpu.r[ INS_RT( mipscpu.op ) ] );
+						program_write_word_32le( cpu, n_adr, cpu->r[ INS_RT( cpu->op ) ] );
 						break;
 					case 3:
-						program_write_byte_32le( n_adr, mipscpu.r[ INS_RT( mipscpu.op ) ] );
+						program_write_byte_32le( cpu, n_adr, cpu->r[ INS_RT( cpu->op ) ] );
 						break;
 					}
-					mips_advance_pc();
+					mips_advance_pc(cpu);
 				}
 			}
 			break;
 		case OP_LWC1:
 			/* todo: */
-			logerror( "%08x: COP1 LWC not supported\n", mipscpu.pc );
+			logerror( "%08x: COP1 LWC not supported\n", cpu->pc );
 			mips_stop();
-			mips_advance_pc();
+			mips_advance_pc(cpu);
 			break;
 		case OP_LWC2:
-			if( ( mipscpu.cp0r[ CP0_SR ] & SR_CU2 ) == 0 )
+			if( ( cpu->cp0r[ CP0_SR ] & SR_CU2 ) == 0 )
 			{
-				mips_exception( EXC_CPU );
-				mips_set_cp0r( CP0_CAUSE, ( mipscpu.cp0r[ CP0_CAUSE ] & ~CAUSE_CE ) | CAUSE_CE2 );
+				mips_exception(cpu, EXC_CPU );
+				mips_set_cp0r(cpu, CP0_CAUSE, ( cpu->cp0r[ CP0_CAUSE ] & ~CAUSE_CE ) | CAUSE_CE2 );
 			}
-			else if( ( mipscpu.cp0r[ CP0_SR ] & SR_ISC ) != 0 )
+			else if( ( cpu->cp0r[ CP0_SR ] & SR_ISC ) != 0 )
 			{
 				/* todo: */
-				logerror( "%08x: LWC2 SR_ISC not supported\n", mipscpu.pc );
+				logerror( "%08x: LWC2 SR_ISC not supported\n", cpu->pc );
 				mips_stop();
-				mips_advance_pc();
+				mips_advance_pc(cpu);
 			}
 			else
 			{
 				UINT32 n_adr;
-				n_adr = mipscpu.r[ INS_RS( mipscpu.op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) );
-				if( ( n_adr & ( ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) | 3 ) ) != 0 )
+				n_adr = cpu->r[ INS_RS( cpu->op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( cpu->op ) );
+				if( ( n_adr & ( ( ( cpu->cp0r[ CP0_SR ] & SR_KUC ) << 30 ) | 3 ) ) != 0 )
 				{
-					mips_exception( EXC_ADEL );
-					mips_set_cp0r( CP0_BADVADDR, n_adr );
+					mips_exception(cpu, EXC_ADEL );
+					mips_set_cp0r(cpu, CP0_BADVADDR, n_adr );
 				}
 				else
 				{
 					/* todo: delay? */
-					setcp2dr( INS_RT( mipscpu.op ), program_read_dword_32le( n_adr ) );
-					mips_advance_pc();
+					setcp2dr(cpu, INS_RT( cpu->op ), program_read_dword_32le( cpu, n_adr ) );
+					mips_advance_pc(cpu);
 				}
 			}
 			break;
 		case OP_SWC1:
 			/* todo: */
-			logerror( "%08x: COP1 SWC not supported\n", mipscpu.pc );
+			logerror( "%08x: COP1 SWC not supported\n", cpu->pc );
 			mips_stop();
-			mips_advance_pc();
+			mips_advance_pc(cpu);
 			break;
 		case OP_SWC2:
-			if( ( mipscpu.cp0r[ CP0_SR ] & SR_CU2 ) == 0 )
+			if( ( cpu->cp0r[ CP0_SR ] & SR_CU2 ) == 0 )
 			{
-				mips_exception( EXC_CPU );
-				mips_set_cp0r( CP0_CAUSE, ( mipscpu.cp0r[ CP0_CAUSE ] & ~CAUSE_CE ) | CAUSE_CE2 );
+				mips_exception(cpu, EXC_CPU );
+				mips_set_cp0r(cpu, CP0_CAUSE, ( cpu->cp0r[ CP0_CAUSE ] & ~CAUSE_CE ) | CAUSE_CE2 );
 			}
-			else if( ( mipscpu.cp0r[ CP0_SR ] & SR_ISC ) != 0 )
+			else if( ( cpu->cp0r[ CP0_SR ] & SR_ISC ) != 0 )
 			{
 				/* todo: */
-				logerror( "%08x: SWC2 SR_ISC not supported\n", mipscpu.pc );
+				logerror( "%08x: SWC2 SR_ISC not supported\n", cpu->pc );
 				mips_stop();
-				mips_advance_pc();
+				mips_advance_pc(cpu);
 			}
 			else
 			{
 				UINT32 n_adr;
-				n_adr = mipscpu.r[ INS_RS( mipscpu.op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) );
-				if( ( n_adr & ( ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) | 3 ) ) != 0 )
+				n_adr = cpu->r[ INS_RS( cpu->op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( cpu->op ) );
+				if( ( n_adr & ( ( ( cpu->cp0r[ CP0_SR ] & SR_KUC ) << 30 ) | 3 ) ) != 0 )
 				{
-					mips_exception( EXC_ADES );
-					mips_set_cp0r( CP0_BADVADDR, n_adr );
+					mips_exception(cpu, EXC_ADES );
+					mips_set_cp0r(cpu, CP0_BADVADDR, n_adr );
 				}
 				else
 				{
-					program_write_dword_32le( n_adr, getcp2dr( INS_RT( mipscpu.op ) ) );
-					mips_advance_pc();
+					program_write_dword_32le( cpu, n_adr, getcp2dr(cpu, INS_RT( cpu->op ) ) );
+					mips_advance_pc(cpu);
 				}
 			}
 			break;
 		default:
-//			printf( "%08x: unknown opcode %08x (prev %08x, RA %08x)\n", mipscpu.pc, mipscpu.op, mipscpu.prevpc,  mipscpu.r[31] );
+//			printf( "%08x: unknown opcode %08x (prev %08x, RA %08x)\n", cpu->pc, cpu->op, cpu->prevpc,  cpu->r[31] );
 //			mips_stop();
-//			mips_exception( EXC_RI );
+//			mips_exception(cpu, EXC_RI );
   			break;
 		}
-skipinterp:
-		mips_ICount--;
-	} while( mips_ICount > 0 );
+//skipinterp: // unused label
+		cpu->mips_ICount--;
+	} while( cpu->mips_ICount > 0 );
 
-	return cycles - mips_ICount;
+	return cycles - cpu->mips_ICount;
 }
 
+#if 0
 static void mips_get_context( void *dst )
 {
 	if( dst )
@@ -1675,11 +1655,12 @@ static void mips_set_context( void *src )
 	if( src )
 	{
 		mipscpu = *(mips_cpu_context *)src;
-		change_pc( mipscpu.pc );
+		change_pc( cpu->pc );
 	}
 }
+#endif
 
-static void set_irq_line( int irqline, int state )
+static void set_irq_line( mips_cpu_context *cpu, int irqline, int state )
 {
 	UINT32 ip;
 
@@ -1710,11 +1691,11 @@ static void set_irq_line( int irqline, int state )
 	switch( state )
 	{
 	case CLEAR_LINE:
-		mips_set_cp0r( CP0_CAUSE, mipscpu.cp0r[ CP0_CAUSE ] & ~ip );
+		mips_set_cp0r(cpu, CP0_CAUSE, cpu->cp0r[ CP0_CAUSE ] & ~ip );
 		break;
 	case ASSERT_LINE:
-		mips_set_cp0r( CP0_CAUSE, mipscpu.cp0r[ CP0_CAUSE ] |= ip );
-		if( mipscpu.irq_callback )
+		mips_set_cp0r(cpu, CP0_CAUSE, cpu->cp0r[ CP0_CAUSE ] |= ip );
+		if( cpu->irq_callback )
 		{
 			/* HOLD_LINE interrupts are not supported by the architecture.
 			By acknowledging the interupt here they are treated like PULSE_LINE
@@ -1722,7 +1703,7 @@ static void set_irq_line( int irqline, int state )
 			There is also a problem with PULSE_LINE interrupts as the interrupt
 			pending bits aren't latched the emulated code won't know what caused
 			the interrupt. */
-			(*mipscpu.irq_callback)( irqline );
+			(*cpu->irq_callback)( cpu, irqline );
 		}
 		break;
 	}
@@ -1732,7 +1713,7 @@ static void set_irq_line( int irqline, int state )
  * Return a formatted string for a register
  ****************************************************************************/
 
-offs_t mips_dasm( char *buffer, offs_t pc )
+offs_t mips_dasm( mips_cpu_context *cpu, char *buffer, offs_t pc )
 {
 	offs_t ret;
 	change_pc( pc );
@@ -1742,145 +1723,145 @@ offs_t mips_dasm( char *buffer, offs_t pc )
 	sprintf( buffer, "$%08x", cpu_readop32( pc ) );
 	ret = 4;
 #endif
-	change_pc( mipscpu.pc );
+	change_pc( cpu->pc );
 	return ret;
 }
 
 /* preliminary gte code */
 
-#define VXY0 ( mipscpu.cp2dr[ 0 ].d )
-#define VX0  ( mipscpu.cp2dr[ 0 ].w.l )
-#define VY0  ( mipscpu.cp2dr[ 0 ].w.h )
-#define VZ0  ( mipscpu.cp2dr[ 1 ].w.l )
-#define VXY1 ( mipscpu.cp2dr[ 2 ].d )
-#define VX1  ( mipscpu.cp2dr[ 2 ].w.l )
-#define VY1  ( mipscpu.cp2dr[ 2 ].w.h )
-#define VZ1  ( mipscpu.cp2dr[ 3 ].w.l )
-#define VXY2 ( mipscpu.cp2dr[ 4 ].d )
-#define VX2  ( mipscpu.cp2dr[ 4 ].w.l )
-#define VY2  ( mipscpu.cp2dr[ 4 ].w.h )
-#define VZ2  ( mipscpu.cp2dr[ 5 ].w.l )
-#define RGB  ( mipscpu.cp2dr[ 6 ].d )
-#define R    ( mipscpu.cp2dr[ 6 ].b.l )
-#define G    ( mipscpu.cp2dr[ 6 ].b.h )
-#define B    ( mipscpu.cp2dr[ 6 ].b.h2 )
-#define CODE ( mipscpu.cp2dr[ 6 ].b.h3 )
-#define OTZ  ( mipscpu.cp2dr[ 7 ].w.l )
-#define IR0  ( mipscpu.cp2dr[ 8 ].d )
-#define IR1  ( mipscpu.cp2dr[ 9 ].d )
-#define IR2  ( mipscpu.cp2dr[ 10 ].d )
-#define IR3  ( mipscpu.cp2dr[ 11 ].d )
-#define SXY0 ( mipscpu.cp2dr[ 12 ].d )
-#define SX0  ( mipscpu.cp2dr[ 12 ].w.l )
-#define SY0  ( mipscpu.cp2dr[ 12 ].w.h )
-#define SXY1 ( mipscpu.cp2dr[ 13 ].d )
-#define SX1  ( mipscpu.cp2dr[ 13 ].w.l )
-#define SY1  ( mipscpu.cp2dr[ 13 ].w.h )
-#define SXY2 ( mipscpu.cp2dr[ 14 ].d )
-#define SX2  ( mipscpu.cp2dr[ 14 ].w.l )
-#define SY2  ( mipscpu.cp2dr[ 14 ].w.h )
-#define SXYP ( mipscpu.cp2dr[ 15 ].d )
-#define SXP  ( mipscpu.cp2dr[ 15 ].w.l )
-#define SYP  ( mipscpu.cp2dr[ 15 ].w.h )
-#define SZ0  ( mipscpu.cp2dr[ 16 ].w.l )
-#define SZ1  ( mipscpu.cp2dr[ 17 ].w.l )
-#define SZ2  ( mipscpu.cp2dr[ 18 ].w.l )
-#define SZ3  ( mipscpu.cp2dr[ 19 ].w.l )
-#define RGB0 ( mipscpu.cp2dr[ 20 ].d )
-#define R0   ( mipscpu.cp2dr[ 20 ].b.l )
-#define G0   ( mipscpu.cp2dr[ 20 ].b.h )
-#define B0   ( mipscpu.cp2dr[ 20 ].b.h2 )
-#define CD0  ( mipscpu.cp2dr[ 20 ].b.h3 )
-#define RGB1 ( mipscpu.cp2dr[ 21 ].d )
-#define R1   ( mipscpu.cp2dr[ 21 ].b.l )
-#define G1   ( mipscpu.cp2dr[ 21 ].b.h )
-#define B1   ( mipscpu.cp2dr[ 21 ].b.h2 )
-#define CD1  ( mipscpu.cp2dr[ 21 ].b.h3 )
-#define RGB2 ( mipscpu.cp2dr[ 22 ].d )
-#define R2   ( mipscpu.cp2dr[ 22 ].b.l )
-#define G2   ( mipscpu.cp2dr[ 22 ].b.h )
-#define B2   ( mipscpu.cp2dr[ 22 ].b.h2 )
-#define CD2  ( mipscpu.cp2dr[ 22 ].b.h3 )
-#define RES1 ( mipscpu.cp2dr[ 23 ].d )
-#define MAC0 ( mipscpu.cp2dr[ 24 ].d )
-#define MAC1 ( mipscpu.cp2dr[ 25 ].d )
-#define MAC2 ( mipscpu.cp2dr[ 26 ].d )
-#define MAC3 ( mipscpu.cp2dr[ 27 ].d )
-#define IRGB ( mipscpu.cp2dr[ 28 ].d )
-#define ORGB ( mipscpu.cp2dr[ 29 ].d )
-#define LZCS ( mipscpu.cp2dr[ 30 ].d )
-#define LZCR ( mipscpu.cp2dr[ 31 ].d )
+#define VXY0 ( cpu->cp2dr[ 0 ].d )
+#define VX0  ( cpu->cp2dr[ 0 ].w.l )
+#define VY0  ( cpu->cp2dr[ 0 ].w.h )
+#define VZ0  ( cpu->cp2dr[ 1 ].w.l )
+#define VXY1 ( cpu->cp2dr[ 2 ].d )
+#define VX1  ( cpu->cp2dr[ 2 ].w.l )
+#define VY1  ( cpu->cp2dr[ 2 ].w.h )
+#define VZ1  ( cpu->cp2dr[ 3 ].w.l )
+#define VXY2 ( cpu->cp2dr[ 4 ].d )
+#define VX2  ( cpu->cp2dr[ 4 ].w.l )
+#define VY2  ( cpu->cp2dr[ 4 ].w.h )
+#define VZ2  ( cpu->cp2dr[ 5 ].w.l )
+#define RGB  ( cpu->cp2dr[ 6 ].d )
+#define R    ( cpu->cp2dr[ 6 ].b.l )
+#define G    ( cpu->cp2dr[ 6 ].b.h )
+#define B    ( cpu->cp2dr[ 6 ].b.h2 )
+#define CODE ( cpu->cp2dr[ 6 ].b.h3 )
+#define OTZ  ( cpu->cp2dr[ 7 ].w.l )
+#define IR0  ( cpu->cp2dr[ 8 ].d )
+#define IR1  ( cpu->cp2dr[ 9 ].d )
+#define IR2  ( cpu->cp2dr[ 10 ].d )
+#define IR3  ( cpu->cp2dr[ 11 ].d )
+#define SXY0 ( cpu->cp2dr[ 12 ].d )
+#define SX0  ( cpu->cp2dr[ 12 ].w.l )
+#define SY0  ( cpu->cp2dr[ 12 ].w.h )
+#define SXY1 ( cpu->cp2dr[ 13 ].d )
+#define SX1  ( cpu->cp2dr[ 13 ].w.l )
+#define SY1  ( cpu->cp2dr[ 13 ].w.h )
+#define SXY2 ( cpu->cp2dr[ 14 ].d )
+#define SX2  ( cpu->cp2dr[ 14 ].w.l )
+#define SY2  ( cpu->cp2dr[ 14 ].w.h )
+#define SXYP ( cpu->cp2dr[ 15 ].d )
+#define SXP  ( cpu->cp2dr[ 15 ].w.l )
+#define SYP  ( cpu->cp2dr[ 15 ].w.h )
+#define SZ0  ( cpu->cp2dr[ 16 ].w.l )
+#define SZ1  ( cpu->cp2dr[ 17 ].w.l )
+#define SZ2  ( cpu->cp2dr[ 18 ].w.l )
+#define SZ3  ( cpu->cp2dr[ 19 ].w.l )
+#define RGB0 ( cpu->cp2dr[ 20 ].d )
+#define R0   ( cpu->cp2dr[ 20 ].b.l )
+#define G0   ( cpu->cp2dr[ 20 ].b.h )
+#define B0   ( cpu->cp2dr[ 20 ].b.h2 )
+#define CD0  ( cpu->cp2dr[ 20 ].b.h3 )
+#define RGB1 ( cpu->cp2dr[ 21 ].d )
+#define R1   ( cpu->cp2dr[ 21 ].b.l )
+#define G1   ( cpu->cp2dr[ 21 ].b.h )
+#define B1   ( cpu->cp2dr[ 21 ].b.h2 )
+#define CD1  ( cpu->cp2dr[ 21 ].b.h3 )
+#define RGB2 ( cpu->cp2dr[ 22 ].d )
+#define R2   ( cpu->cp2dr[ 22 ].b.l )
+#define G2   ( cpu->cp2dr[ 22 ].b.h )
+#define B2   ( cpu->cp2dr[ 22 ].b.h2 )
+#define CD2  ( cpu->cp2dr[ 22 ].b.h3 )
+#define RES1 ( cpu->cp2dr[ 23 ].d )
+#define MAC0 ( cpu->cp2dr[ 24 ].d )
+#define MAC1 ( cpu->cp2dr[ 25 ].d )
+#define MAC2 ( cpu->cp2dr[ 26 ].d )
+#define MAC3 ( cpu->cp2dr[ 27 ].d )
+#define IRGB ( cpu->cp2dr[ 28 ].d )
+#define ORGB ( cpu->cp2dr[ 29 ].d )
+#define LZCS ( cpu->cp2dr[ 30 ].d )
+#define LZCR ( cpu->cp2dr[ 31 ].d )
 
-#define D1  ( mipscpu.cp2cr[ 0 ].d )
-#define R11 ( mipscpu.cp2cr[ 0 ].w.l )
-#define R12 ( mipscpu.cp2cr[ 0 ].w.h )
-#define R13 ( mipscpu.cp2cr[ 1 ].w.l )
-#define R21 ( mipscpu.cp2cr[ 1 ].w.h )
-#define D2  ( mipscpu.cp2cr[ 2 ].d )
-#define R22 ( mipscpu.cp2cr[ 2 ].w.l )
-#define R23 ( mipscpu.cp2cr[ 2 ].w.h )
-#define R31 ( mipscpu.cp2cr[ 3 ].w.l )
-#define R32 ( mipscpu.cp2cr[ 3 ].w.h )
-#define D3  ( mipscpu.cp2cr[ 4 ].d )
-#define R33 ( mipscpu.cp2cr[ 4 ].w.l )
-#define TRX ( mipscpu.cp2cr[ 5 ].d )
-#define TRY ( mipscpu.cp2cr[ 6 ].d )
-#define TRZ ( mipscpu.cp2cr[ 7 ].d )
-#define L11 ( mipscpu.cp2cr[ 8 ].w.l )
-#define L12 ( mipscpu.cp2cr[ 8 ].w.h )
-#define L13 ( mipscpu.cp2cr[ 9 ].w.l )
-#define L21 ( mipscpu.cp2cr[ 9 ].w.h )
-#define L22 ( mipscpu.cp2cr[ 10 ].w.l )
-#define L23 ( mipscpu.cp2cr[ 10 ].w.h )
-#define L31 ( mipscpu.cp2cr[ 11 ].w.l )
-#define L32 ( mipscpu.cp2cr[ 11 ].w.h )
-#define L33 ( mipscpu.cp2cr[ 12 ].w.l )
-#define RBK ( mipscpu.cp2cr[ 13 ].d )
-#define GBK ( mipscpu.cp2cr[ 14 ].d )
-#define BBK ( mipscpu.cp2cr[ 15 ].d )
-#define LR1 ( mipscpu.cp2cr[ 16 ].w.l )
-#define LR2 ( mipscpu.cp2cr[ 16 ].w.h )
-#define LR3 ( mipscpu.cp2cr[ 17 ].w.l )
-#define LG1 ( mipscpu.cp2cr[ 17 ].w.h )
-#define LG2 ( mipscpu.cp2cr[ 18 ].w.l )
-#define LG3 ( mipscpu.cp2cr[ 18 ].w.h )
-#define LB1 ( mipscpu.cp2cr[ 19 ].w.l )
-#define LB2 ( mipscpu.cp2cr[ 19 ].w.h )
-#define LB3 ( mipscpu.cp2cr[ 20 ].w.l )
-#define RFC ( mipscpu.cp2cr[ 21 ].d )
-#define GFC ( mipscpu.cp2cr[ 22 ].d )
-#define BFC ( mipscpu.cp2cr[ 23 ].d )
-#define OFX ( mipscpu.cp2cr[ 24 ].d )
-#define OFY ( mipscpu.cp2cr[ 25 ].d )
-#define H   ( mipscpu.cp2cr[ 26 ].w.l )
-#define DQA ( mipscpu.cp2cr[ 27 ].w.l )
-#define DQB ( mipscpu.cp2cr[ 28 ].d )
-#define ZSF3 ( mipscpu.cp2cr[ 29 ].w.l )
-#define ZSF4 ( mipscpu.cp2cr[ 30 ].w.l )
-#define FLAG ( mipscpu.cp2cr[ 31 ].d )
+#define D1  ( cpu->cp2cr[ 0 ].d )
+#define R11 ( cpu->cp2cr[ 0 ].w.l )
+#define R12 ( cpu->cp2cr[ 0 ].w.h )
+#define R13 ( cpu->cp2cr[ 1 ].w.l )
+#define R21 ( cpu->cp2cr[ 1 ].w.h )
+#define D2  ( cpu->cp2cr[ 2 ].d )
+#define R22 ( cpu->cp2cr[ 2 ].w.l )
+#define R23 ( cpu->cp2cr[ 2 ].w.h )
+#define R31 ( cpu->cp2cr[ 3 ].w.l )
+#define R32 ( cpu->cp2cr[ 3 ].w.h )
+#define D3  ( cpu->cp2cr[ 4 ].d )
+#define R33 ( cpu->cp2cr[ 4 ].w.l )
+#define TRX ( cpu->cp2cr[ 5 ].d )
+#define TRY ( cpu->cp2cr[ 6 ].d )
+#define TRZ ( cpu->cp2cr[ 7 ].d )
+#define L11 ( cpu->cp2cr[ 8 ].w.l )
+#define L12 ( cpu->cp2cr[ 8 ].w.h )
+#define L13 ( cpu->cp2cr[ 9 ].w.l )
+#define L21 ( cpu->cp2cr[ 9 ].w.h )
+#define L22 ( cpu->cp2cr[ 10 ].w.l )
+#define L23 ( cpu->cp2cr[ 10 ].w.h )
+#define L31 ( cpu->cp2cr[ 11 ].w.l )
+#define L32 ( cpu->cp2cr[ 11 ].w.h )
+#define L33 ( cpu->cp2cr[ 12 ].w.l )
+#define RBK ( cpu->cp2cr[ 13 ].d )
+#define GBK ( cpu->cp2cr[ 14 ].d )
+#define BBK ( cpu->cp2cr[ 15 ].d )
+#define LR1 ( cpu->cp2cr[ 16 ].w.l )
+#define LR2 ( cpu->cp2cr[ 16 ].w.h )
+#define LR3 ( cpu->cp2cr[ 17 ].w.l )
+#define LG1 ( cpu->cp2cr[ 17 ].w.h )
+#define LG2 ( cpu->cp2cr[ 18 ].w.l )
+#define LG3 ( cpu->cp2cr[ 18 ].w.h )
+#define LB1 ( cpu->cp2cr[ 19 ].w.l )
+#define LB2 ( cpu->cp2cr[ 19 ].w.h )
+#define LB3 ( cpu->cp2cr[ 20 ].w.l )
+#define RFC ( cpu->cp2cr[ 21 ].d )
+#define GFC ( cpu->cp2cr[ 22 ].d )
+#define BFC ( cpu->cp2cr[ 23 ].d )
+#define OFX ( cpu->cp2cr[ 24 ].d )
+#define OFY ( cpu->cp2cr[ 25 ].d )
+#define H   ( cpu->cp2cr[ 26 ].w.l )
+#define DQA ( cpu->cp2cr[ 27 ].w.l )
+#define DQB ( cpu->cp2cr[ 28 ].d )
+#define ZSF3 ( cpu->cp2cr[ 29 ].w.l )
+#define ZSF4 ( cpu->cp2cr[ 30 ].w.l )
+#define FLAG ( cpu->cp2cr[ 31 ].d )
 
-static UINT32 getcp2dr( int n_reg )
+static UINT32 getcp2dr(mips_cpu_context *cpu, int n_reg )
 {
 	if( n_reg == 1 || n_reg == 3 || n_reg == 5 || n_reg == 8 || n_reg == 9 || n_reg == 10 || n_reg == 11 )
 	{
-		mipscpu.cp2dr[ n_reg ].d = (INT32)(INT16)mipscpu.cp2dr[ n_reg ].d;
+		cpu->cp2dr[ n_reg ].d = (INT32)(INT16)cpu->cp2dr[ n_reg ].d;
 	}
 	else if( n_reg == 17 || n_reg == 18 || n_reg == 19 )
 	{
-		mipscpu.cp2dr[ n_reg ].d = (UINT32)(UINT16)mipscpu.cp2dr[ n_reg ].d;
+		cpu->cp2dr[ n_reg ].d = (UINT32)(UINT16)cpu->cp2dr[ n_reg ].d;
 	}
 	else if( n_reg == 29 )
 	{
 		ORGB = ( ( IR1 >> 7 ) & 0x1f ) | ( ( IR2 >> 2 ) & 0x3e0 ) | ( ( IR3 << 3 ) & 0x7c00 );
 	}
-	GTELOG( "get CP2DR%u=%08x", n_reg, mipscpu.cp2dr[ n_reg ].d );
-	return mipscpu.cp2dr[ n_reg ].d;
+	GTELOG( "get CP2DR%u=%08x", n_reg, cpu->cp2dr[ n_reg ].d );
+	return cpu->cp2dr[ n_reg ].d;
 }
 
-static void setcp2dr( int n_reg, UINT32 n_value )
+static void setcp2dr(mips_cpu_context *cpu, int n_reg, UINT32 n_value )
 {
 	GTELOG( "set CP2DR%u=%08x", n_reg, n_value );
-	mipscpu.cp2dr[ n_reg ].d = n_value;
+	cpu->cp2dr[ n_reg ].d = n_value;
 
 	if( n_reg == 15 )
 	{
@@ -1912,19 +1893,19 @@ static void setcp2dr( int n_reg, UINT32 n_value )
 	}
 }
 
-static UINT32 getcp2cr( int n_reg )
+static UINT32 getcp2cr(mips_cpu_context *cpu, int n_reg )
 {
-	GTELOG( "get CP2CR%u=%08x", n_reg, mipscpu.cp2cr[ n_reg ].d );
-	return mipscpu.cp2cr[ n_reg ].d;
+	GTELOG( "get CP2CR%u=%08x", n_reg, cpu->cp2cr[ n_reg ].d );
+	return cpu->cp2cr[ n_reg ].d;
 }
 
-static void setcp2cr( int n_reg, UINT32 n_value )
+static void setcp2cr(mips_cpu_context *cpu, int n_reg, UINT32 n_value )
 {
 	GTELOG( "set CP2CR%u=%08x", n_reg, n_value );
-	mipscpu.cp2cr[ n_reg ].d = n_value;
+	cpu->cp2cr[ n_reg ].d = n_value;
 }
 
-INLINE INT32 LIM( INT32 n_value, INT32 n_max, INT32 n_min, UINT32 n_flag )
+INLINE INT32 LIM( mips_cpu_context *cpu, INT32 n_value, INT32 n_max, INT32 n_min, UINT32 n_flag )
 {
 	if( n_value > n_max )
 	{
@@ -1939,7 +1920,7 @@ INLINE INT32 LIM( INT32 n_value, INT32 n_max, INT32 n_min, UINT32 n_flag )
 	return n_value;
 }
 
-INLINE INT64 BOUNDS( INT64 n_value, INT64 n_max, int n_maxflag, INT64 n_min, int n_minflag )
+INLINE INT64 BOUNDS( mips_cpu_context *cpu, INT64 n_value, INT64 n_max, int n_maxflag, INT64 n_min, int n_minflag )
 {
 	if( n_value > n_max )
 	{
@@ -1952,18 +1933,18 @@ INLINE INT64 BOUNDS( INT64 n_value, INT64 n_max, int n_maxflag, INT64 n_min, int
 	return n_value;
 }
 
-#define A1( a ) BOUNDS( ( a ), 0x7fffffff, 30, -(INT64)0x80000000, ( 1 << 27 ) )
-#define A2( a ) BOUNDS( ( a ), 0x7fffffff, 29, -(INT64)0x80000000, ( 1 << 26 ) )
-#define A3( a ) BOUNDS( ( a ), 0x7fffffff, 28, -(INT64)0x80000000, ( 1 << 25 ) )
-#define Lm_B1( a, l ) LIM( ( a ), 0x7fff, -0x8000 * !l, ( 1 << 31 ) | ( 1 << 24 ) )
-#define Lm_B2( a, l ) LIM( ( a ), 0x7fff, -0x8000 * !l, ( 1 << 31 ) | ( 1 << 23 ) )
-#define Lm_B3( a, l ) LIM( ( a ), 0x7fff, -0x8000 * !l, ( 1 << 22 ) )
-#define Lm_C1( a ) LIM( ( a ), 0x00ff, 0x0000, ( 1 << 21 ) )
-#define Lm_C2( a ) LIM( ( a ), 0x00ff, 0x0000, ( 1 << 20 ) )
-#define Lm_C3( a ) LIM( ( a ), 0x00ff, 0x0000, ( 1 << 19 ) )
-#define Lm_D( a ) LIM( ( a ), 0xffff, 0x0000, ( 1 << 31 ) | ( 1 << 18 ) )
+#define A1( a ) BOUNDS( cpu, ( a ), 0x7fffffff, 30, -(INT64)0x80000000, ( 1 << 27 ) )
+#define A2( a ) BOUNDS( cpu, ( a ), 0x7fffffff, 29, -(INT64)0x80000000, ( 1 << 26 ) )
+#define A3( a ) BOUNDS( cpu, ( a ), 0x7fffffff, 28, -(INT64)0x80000000, ( 1 << 25 ) )
+#define Lm_B1( a, l ) LIM( cpu, ( a ), 0x7fff, -0x8000 * !l, ( 1 << 31 ) | ( 1 << 24 ) )
+#define Lm_B2( a, l ) LIM( cpu, ( a ), 0x7fff, -0x8000 * !l, ( 1 << 31 ) | ( 1 << 23 ) )
+#define Lm_B3( a, l ) LIM( cpu, ( a ), 0x7fff, -0x8000 * !l, ( 1 << 22 ) )
+#define Lm_C1( a ) LIM( cpu, ( a ), 0x00ff, 0x0000, ( 1 << 21 ) )
+#define Lm_C2( a ) LIM( cpu, ( a ), 0x00ff, 0x0000, ( 1 << 20 ) )
+#define Lm_C3( a ) LIM( cpu, ( a ), 0x00ff, 0x0000, ( 1 << 19 ) )
+#define Lm_D( a ) LIM( cpu, ( a ), 0xffff, 0x0000, ( 1 << 31 ) | ( 1 << 18 ) )
 
-INLINE UINT32 Lm_E( UINT32 n_z )
+INLINE UINT32 Lm_E( mips_cpu_context *cpu, UINT32 n_z )
 {
 	if( n_z <= H / 2 )
 	{
@@ -1977,12 +1958,12 @@ INLINE UINT32 Lm_E( UINT32 n_z )
 	return n_z;
 }
 
-#define F( a ) BOUNDS( ( a ), 0x7fffffff, ( 1 << 31 ) | ( 1 << 16 ), -(INT64)0x80000000, ( 1 << 31 ) | ( 1 << 15 ) )
-#define Lm_G1( a ) LIM( ( a ), 0x3ff, -0x400, ( 1 << 31 ) | ( 1 << 14 ) )
-#define Lm_G2( a ) LIM( ( a ), 0x3ff, -0x400, ( 1 << 31 ) | ( 1 << 13 ) )
-#define Lm_H( a ) LIM( ( a ), 0xfff, 0x000, ( 1 << 12 ) )
+#define F( a ) BOUNDS( cpu, ( a ), 0x7fffffff, ( 1 << 31 ) | ( 1 << 16 ), -(INT64)0x80000000, ( 1 << 31 ) | ( 1 << 15 ) )
+#define Lm_G1( a ) LIM( cpu, ( a ), 0x3ff, -0x400, ( 1 << 31 ) | ( 1 << 14 ) )
+#define Lm_G2( a ) LIM( cpu, ( a ), 0x3ff, -0x400, ( 1 << 31 ) | ( 1 << 13 ) )
+#define Lm_H( a ) LIM( cpu, ( a ), 0xfff, 0x000, ( 1 << 12 ) )
 
-static void docop2( int gteop )
+static void docop2(mips_cpu_context *cpu, int gteop )
 {
 	int n_sf;
 	int n_v;
@@ -1991,23 +1972,23 @@ static void docop2( int gteop )
 	UINT16 n_v1;
 	UINT16 n_v2;
 	UINT16 n_v3;
-	const UINT16 **p_n_mx;
-	const UINT32 **p_n_cv;
-	static const UINT16 n_zm = 0;
-	static const UINT32 n_zc = 0;
-	static const UINT16 *p_n_vx[] = { &VX0, &VX1, &VX2 };
-	static const UINT16 *p_n_vy[] = { &VY0, &VY1, &VY2 };
-	static const UINT16 *p_n_vz[] = { &VZ0, &VZ1, &VZ2 };
-	static const UINT16 *p_n_rm[] = { &R11, &R12, &R13, &R21, &R22, &R23, &R31, &R32, &R33 };
-	static const UINT16 *p_n_lm[] = { &L11, &L12, &L13, &L21, &L22, &L23, &L31, &L32, &L33 };
-	static const UINT16 *p_n_cm[] = { &LR1, &LR2, &LR3, &LG1, &LG2, &LG3, &LB1, &LB2, &LB3 };
-	static const UINT16 *p_n_zm[] = { &n_zm, &n_zm, &n_zm, &n_zm, &n_zm, &n_zm, &n_zm, &n_zm, &n_zm };
-	static const UINT16 **p_p_n_mx[] = { p_n_rm, p_n_lm, p_n_cm, p_n_zm };
-	static const UINT32 *p_n_tr[] = { &TRX, &TRY, &TRZ };
-	static const UINT32 *p_n_bk[] = { &RBK, &GBK, &BBK };
-	static const UINT32 *p_n_fc[] = { &RFC, &GFC, &BFC };
-	static const UINT32 *p_n_zc[] = { &n_zc, &n_zc, &n_zc };
-	static const UINT32 **p_p_n_cv[] = { p_n_tr, p_n_bk, p_n_fc, p_n_zc };
+	UINT16 **p_n_mx;
+	UINT32 **p_n_cv;
+	UINT16 n_zm = 0;
+	UINT32 n_zc = 0;
+	UINT16 *p_n_vx[] = { &VX0, &VX1, &VX2 };
+	UINT16 *p_n_vy[] = { &VY0, &VY1, &VY2 };
+	UINT16 *p_n_vz[] = { &VZ0, &VZ1, &VZ2 };
+	UINT16 *p_n_rm[] = { &R11, &R12, &R13, &R21, &R22, &R23, &R31, &R32, &R33 };
+	UINT16 *p_n_lm[] = { &L11, &L12, &L13, &L21, &L22, &L23, &L31, &L32, &L33 };
+	UINT16 *p_n_cm[] = { &LR1, &LR2, &LR3, &LG1, &LG2, &LG3, &LB1, &LB2, &LB3 };
+	UINT16 *p_n_zm[] = { &n_zm, &n_zm, &n_zm, &n_zm, &n_zm, &n_zm, &n_zm, &n_zm, &n_zm };
+	UINT16 **p_p_n_mx[] = { p_n_rm, p_n_lm, p_n_cm, p_n_zm };
+	UINT32 *p_n_tr[] = { &TRX, &TRY, &TRZ };
+	UINT32 *p_n_bk[] = { &RBK, &GBK, &BBK };
+	UINT32 *p_n_fc[] = { &RFC, &GFC, &BFC };
+	UINT32 *p_n_zc[] = { &n_zc, &n_zc, &n_zc };
+	UINT32 **p_p_n_cv[] = { p_n_tr, p_n_bk, p_n_fc, p_n_zc };
 
 	switch( GTE_FUNCT( gteop ) )
 	{
@@ -2029,9 +2010,9 @@ static void docop2( int gteop )
 			SZ3 = Lm_D( (INT32)MAC3 );
 			SXY0 = SXY1;
 			SXY1 = SXY2;
-			SX2 = Lm_G1( F( (INT64)(INT32)OFX + ( (INT64)(INT16)IR1 * ( ( (UINT32)H << 16 ) / Lm_E( SZ3 ) ) ) ) >> 16 );
-			SY2 = Lm_G2( F( (INT64)(INT32)OFY + ( (INT64)(INT16)IR2 * ( ( (UINT32)H << 16 ) / Lm_E( SZ3 ) ) ) ) >> 16 );
-			MAC0 = F( (INT64)(INT32)DQB + ( (INT64)(INT16)DQA * ( ( (UINT32)H << 16 ) / Lm_E( SZ3 ) ) ) );
+			SX2 = Lm_G1( F( (INT64)(INT32)OFX + ( (INT64)(INT16)IR1 * ( ( (UINT32)H << 16 ) / Lm_E( cpu, SZ3 ) ) ) ) >> 16 );
+			SY2 = Lm_G2( F( (INT64)(INT32)OFY + ( (INT64)(INT16)IR2 * ( ( (UINT32)H << 16 ) / Lm_E( cpu, SZ3 ) ) ) ) >> 16 );
+			MAC0 = F( (INT64)(INT32)DQB + ( (INT64)(INT16)DQA * ( ( (UINT32)H << 16 ) / Lm_E( cpu, SZ3 ) ) ) );
 			IR0 = Lm_H( (INT32)MAC0 >> 12 );
 			return;
 		}
@@ -2495,9 +2476,9 @@ static void docop2( int gteop )
 				SZ3 = Lm_D( (INT32)MAC3 );
 				SXY0 = SXY1;
 				SXY1 = SXY2;
-				SX2 = Lm_G1( F( ( (INT64)(INT32)OFX + ( (INT64)(INT16)IR1 * ( ( (UINT32)H << 16 ) / Lm_E( SZ3 ) ) ) ) >> 16 ) );
-				SY2 = Lm_G2( F( ( (INT64)(INT32)OFY + ( (INT64)(INT16)IR2 * ( ( (UINT32)H << 16 ) / Lm_E( SZ3 ) ) ) ) >> 16 ) );
-				MAC0 = F( (INT64)(INT32)DQB + ( (INT64)(INT16)DQA * ( ( (UINT32)H << 16 ) / Lm_E( SZ3 ) ) ) );
+				SX2 = Lm_G1( F( ( (INT64)(INT32)OFX + ( (INT64)(INT16)IR1 * ( ( (UINT32)H << 16 ) / Lm_E( cpu, SZ3 ) ) ) ) >> 16 ) );
+				SY2 = Lm_G2( F( ( (INT64)(INT32)OFY + ( (INT64)(INT16)IR2 * ( ( (UINT32)H << 16 ) / Lm_E( cpu, SZ3 ) ) ) ) >> 16 ) );
+				MAC0 = F( (INT64)(INT32)DQB + ( (INT64)(INT16)DQA * ( ( (UINT32)H << 16 ) / Lm_E( cpu, SZ3 ) ) ) );
 				IR0 = Lm_H( (INT32)MAC0 >> 12 );
 			}
 			return;
@@ -2605,7 +2586,7 @@ static void docop2( int gteop )
 		break;
 	}
 //	usrintf_showmessage_secs( 1, "unknown GTE op %08x", gteop );
-	logerror( "%08x: unknown GTE op %08x\n", mipscpu.pc, gteop );
+	logerror( "%08x: unknown GTE op %08x\n", cpu->pc, gteop );
 	mips_stop();
 }
 
@@ -2613,156 +2594,156 @@ static void docop2( int gteop )
  * Generic set_info
  **************************************************************************/
 
-void mips_set_info(UINT32 state, union cpuinfo *info)
+void mips_set_info(mips_cpu_context *cpu, UINT32 state, union cpuinfo *info)
 {
 	switch (state)
 	{
 		/* --- the following bits of info are set as 64-bit signed integers --- */
-		case CPUINFO_INT_INPUT_STATE + MIPS_IRQ0:		set_irq_line(MIPS_IRQ0, info->i);		break;
-		case CPUINFO_INT_INPUT_STATE + MIPS_IRQ1:		set_irq_line(MIPS_IRQ1, info->i);		break;
-		case CPUINFO_INT_INPUT_STATE + MIPS_IRQ2:		set_irq_line(MIPS_IRQ2, info->i);		break;
-		case CPUINFO_INT_INPUT_STATE + MIPS_IRQ3:		set_irq_line(MIPS_IRQ3, info->i);		break;
-		case CPUINFO_INT_INPUT_STATE + MIPS_IRQ4:		set_irq_line(MIPS_IRQ4, info->i);		break;
-		case CPUINFO_INT_INPUT_STATE + MIPS_IRQ5:		set_irq_line(MIPS_IRQ5, info->i);		break;
+		case CPUINFO_INT_INPUT_STATE + MIPS_IRQ0:		set_irq_line(cpu, MIPS_IRQ0, info->i);		break;
+		case CPUINFO_INT_INPUT_STATE + MIPS_IRQ1:		set_irq_line(cpu, MIPS_IRQ1, info->i);		break;
+		case CPUINFO_INT_INPUT_STATE + MIPS_IRQ2:		set_irq_line(cpu, MIPS_IRQ2, info->i);		break;
+		case CPUINFO_INT_INPUT_STATE + MIPS_IRQ3:		set_irq_line(cpu, MIPS_IRQ3, info->i);		break;
+		case CPUINFO_INT_INPUT_STATE + MIPS_IRQ4:		set_irq_line(cpu, MIPS_IRQ4, info->i);		break;
+		case CPUINFO_INT_INPUT_STATE + MIPS_IRQ5:		set_irq_line(cpu, MIPS_IRQ5, info->i);		break;
 
-		case CPUINFO_INT_PC:							mips_set_pc( info->i );					break;
-		case CPUINFO_INT_REGISTER + MIPS_PC:			mips_set_pc( info->i );					break;
+		case CPUINFO_INT_PC:							mips_set_pc (cpu,  info->i );					break;
+		case CPUINFO_INT_REGISTER + MIPS_PC:			mips_set_pc (cpu,  info->i );					break;
 		case CPUINFO_INT_SP:							/* no stack */							break;
-		case CPUINFO_INT_REGISTER + MIPS_DELAYV:		mipscpu.delayv = info->i;				break;
-		case CPUINFO_INT_REGISTER + MIPS_DELAYR:		if( info->i <= REGPC ) mipscpu.delayr = info->i; break;
-		case CPUINFO_INT_REGISTER + MIPS_HI:			mipscpu.hi = info->i;					break;
-		case CPUINFO_INT_REGISTER + MIPS_LO:			mipscpu.lo = info->i;					break;
-		case CPUINFO_INT_REGISTER + MIPS_R0:			mipscpu.r[ 0 ] = info->i;				break;
-		case CPUINFO_INT_REGISTER + MIPS_R1:			mipscpu.r[ 1 ] = info->i;				break;
-		case CPUINFO_INT_REGISTER + MIPS_R2:			mipscpu.r[ 2 ] = info->i;				break;
-		case CPUINFO_INT_REGISTER + MIPS_R3:			mipscpu.r[ 3 ] = info->i;				break;
-		case CPUINFO_INT_REGISTER + MIPS_R4:			mipscpu.r[ 4 ] = info->i;				break;
-		case CPUINFO_INT_REGISTER + MIPS_R5:			mipscpu.r[ 5 ] = info->i;				break;
-		case CPUINFO_INT_REGISTER + MIPS_R6:			mipscpu.r[ 6 ] = info->i;				break;
-		case CPUINFO_INT_REGISTER + MIPS_R7:			mipscpu.r[ 7 ] = info->i;				break;
-		case CPUINFO_INT_REGISTER + MIPS_R8:			mipscpu.r[ 8 ] = info->i;				break;
-		case CPUINFO_INT_REGISTER + MIPS_R9:			mipscpu.r[ 9 ] = info->i;				break;
-		case CPUINFO_INT_REGISTER + MIPS_R10:			mipscpu.r[ 10 ] = info->i;				break;
-		case CPUINFO_INT_REGISTER + MIPS_R11:			mipscpu.r[ 11 ] = info->i;				break;
-		case CPUINFO_INT_REGISTER + MIPS_R12:			mipscpu.r[ 12 ] = info->i;				break;
-		case CPUINFO_INT_REGISTER + MIPS_R13:			mipscpu.r[ 13 ] = info->i;				break;
-		case CPUINFO_INT_REGISTER + MIPS_R14:			mipscpu.r[ 14 ] = info->i;				break;
-		case CPUINFO_INT_REGISTER + MIPS_R15:			mipscpu.r[ 15 ] = info->i;				break;
-		case CPUINFO_INT_REGISTER + MIPS_R16:			mipscpu.r[ 16 ] = info->i;				break;
-		case CPUINFO_INT_REGISTER + MIPS_R17:			mipscpu.r[ 17 ] = info->i;				break;
-		case CPUINFO_INT_REGISTER + MIPS_R18:			mipscpu.r[ 18 ] = info->i;				break;
-		case CPUINFO_INT_REGISTER + MIPS_R19:			mipscpu.r[ 19 ] = info->i;				break;
-		case CPUINFO_INT_REGISTER + MIPS_R20:			mipscpu.r[ 20 ] = info->i;				break;
-		case CPUINFO_INT_REGISTER + MIPS_R21:			mipscpu.r[ 21 ] = info->i;				break;
-		case CPUINFO_INT_REGISTER + MIPS_R22:			mipscpu.r[ 22 ] = info->i;				break;
-		case CPUINFO_INT_REGISTER + MIPS_R23:			mipscpu.r[ 23 ] = info->i;				break;
-		case CPUINFO_INT_REGISTER + MIPS_R24:			mipscpu.r[ 24 ] = info->i;				break;
-		case CPUINFO_INT_REGISTER + MIPS_R25:			mipscpu.r[ 25 ] = info->i;				break;
-		case CPUINFO_INT_REGISTER + MIPS_R26:			mipscpu.r[ 26 ] = info->i;				break;
-		case CPUINFO_INT_REGISTER + MIPS_R27:			mipscpu.r[ 27 ] = info->i;				break;
-		case CPUINFO_INT_REGISTER + MIPS_R28:			mipscpu.r[ 28 ] = info->i;				break;
-		case CPUINFO_INT_REGISTER + MIPS_R29:			mipscpu.r[ 29 ] = info->i;				break;
-		case CPUINFO_INT_REGISTER + MIPS_R30:			mipscpu.r[ 30 ] = info->i;				break;
-		case CPUINFO_INT_REGISTER + MIPS_R31:			mipscpu.r[ 31 ] = info->i;				break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R0:			mips_set_cp0r( 0, info->i );			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R1:			mips_set_cp0r( 1, info->i );			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R2:			mips_set_cp0r( 2, info->i );			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R3:			mips_set_cp0r( 3, info->i );			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R4:			mips_set_cp0r( 4, info->i );			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R5:			mips_set_cp0r( 5, info->i );			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R6:			mips_set_cp0r( 6, info->i );			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R7:			mips_set_cp0r( 7, info->i );			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R8:			mips_set_cp0r( 8, info->i );			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R9:			mips_set_cp0r( 9, info->i );			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R10:		mips_set_cp0r( 10, info->i );			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R11:		mips_set_cp0r( 11, info->i );			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R12:		mips_set_cp0r( 12, info->i );			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R13:		mips_set_cp0r( 13, info->i );			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R14:		mips_set_cp0r( 14, info->i );			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R15:		mips_set_cp0r( 15, info->i );			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R16:		mips_set_cp0r( 16, info->i );			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R17:		mips_set_cp0r( 17, info->i );			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R18:		mips_set_cp0r( 18, info->i );			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R19:		mips_set_cp0r( 19, info->i );			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R20:		mips_set_cp0r( 20, info->i );			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R21:		mips_set_cp0r( 21, info->i );			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R22:		mips_set_cp0r( 22, info->i );			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R23:		mips_set_cp0r( 23, info->i );			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R24:		mips_set_cp0r( 24, info->i );			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R25:		mips_set_cp0r( 25, info->i );			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R26:		mips_set_cp0r( 26, info->i );			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R27:		mips_set_cp0r( 27, info->i );			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R28:		mips_set_cp0r( 28, info->i );			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R29:		mips_set_cp0r( 29, info->i );			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R30:		mips_set_cp0r( 30, info->i );			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R31:		mips_set_cp0r( 31, info->i );			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR0:		mipscpu.cp2dr[ 0 ].d = info->i;			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR1:		mipscpu.cp2dr[ 1 ].d = info->i;			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR2:		mipscpu.cp2dr[ 2 ].d = info->i;			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR3:		mipscpu.cp2dr[ 3 ].d = info->i;			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR4:		mipscpu.cp2dr[ 4 ].d = info->i;			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR5:		mipscpu.cp2dr[ 5 ].d = info->i;			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR6:		mipscpu.cp2dr[ 6 ].d = info->i;			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR7:		mipscpu.cp2dr[ 7 ].d = info->i;			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR8:		mipscpu.cp2dr[ 8 ].d = info->i;			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR9:		mipscpu.cp2dr[ 9 ].d = info->i;			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR10:		mipscpu.cp2dr[ 10 ].d = info->i;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR11:		mipscpu.cp2dr[ 11 ].d = info->i;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR12:		mipscpu.cp2dr[ 12 ].d = info->i;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR13:		mipscpu.cp2dr[ 13 ].d = info->i;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR14:		mipscpu.cp2dr[ 14 ].d = info->i;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR15:		mipscpu.cp2dr[ 15 ].d = info->i;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR16:		mipscpu.cp2dr[ 16 ].d = info->i;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR17:		mipscpu.cp2dr[ 17 ].d = info->i;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR18:		mipscpu.cp2dr[ 18 ].d = info->i;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR19:		mipscpu.cp2dr[ 19 ].d = info->i;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR20:		mipscpu.cp2dr[ 20 ].d = info->i;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR21:		mipscpu.cp2dr[ 21 ].d = info->i;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR22:		mipscpu.cp2dr[ 22 ].d = info->i;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR23:		mipscpu.cp2dr[ 23 ].d = info->i;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR24:		mipscpu.cp2dr[ 24 ].d = info->i;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR25:		mipscpu.cp2dr[ 25 ].d = info->i;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR26:		mipscpu.cp2dr[ 26 ].d = info->i;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR27:		mipscpu.cp2dr[ 27 ].d = info->i;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR28:		mipscpu.cp2dr[ 28 ].d = info->i;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR29:		mipscpu.cp2dr[ 29 ].d = info->i;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR30:		mipscpu.cp2dr[ 30 ].d = info->i;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR31:		mipscpu.cp2dr[ 31 ].d = info->i;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR0:		mipscpu.cp2cr[ 0 ].d = info->i;			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR1:		mipscpu.cp2cr[ 1 ].d = info->i;			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR2:		mipscpu.cp2cr[ 2 ].d = info->i;			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR3:		mipscpu.cp2cr[ 3 ].d = info->i;			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR4:		mipscpu.cp2cr[ 4 ].d = info->i;			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR5:		mipscpu.cp2cr[ 5 ].d = info->i;			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR6:		mipscpu.cp2cr[ 6 ].d = info->i;			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR7:		mipscpu.cp2cr[ 7 ].d = info->i;			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR8:		mipscpu.cp2cr[ 8 ].d = info->i;			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR9:		mipscpu.cp2cr[ 9 ].d = info->i;			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR10:		mipscpu.cp2cr[ 10 ].d = info->i;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR11:		mipscpu.cp2cr[ 11 ].d = info->i;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR12:		mipscpu.cp2cr[ 12 ].d = info->i;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR13:		mipscpu.cp2cr[ 13 ].d = info->i;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR14:		mipscpu.cp2cr[ 14 ].d = info->i;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR15:		mipscpu.cp2cr[ 15 ].d = info->i;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR16:		mipscpu.cp2cr[ 16 ].d = info->i;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR17:		mipscpu.cp2cr[ 17 ].d = info->i;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR18:		mipscpu.cp2cr[ 18 ].d = info->i;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR19:		mipscpu.cp2cr[ 19 ].d = info->i;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR20:		mipscpu.cp2cr[ 20 ].d = info->i;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR21:		mipscpu.cp2cr[ 21 ].d = info->i;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR22:		mipscpu.cp2cr[ 22 ].d = info->i;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR23:		mipscpu.cp2cr[ 23 ].d = info->i;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR24:		mipscpu.cp2cr[ 24 ].d = info->i;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR25:		mipscpu.cp2cr[ 25 ].d = info->i;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR26:		mipscpu.cp2cr[ 26 ].d = info->i;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR27:		mipscpu.cp2cr[ 27 ].d = info->i;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR28:		mipscpu.cp2cr[ 28 ].d = info->i;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR29:		mipscpu.cp2cr[ 29 ].d = info->i;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR30:		mipscpu.cp2cr[ 30 ].d = info->i;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR31:		mipscpu.cp2cr[ 31 ].d = info->i;		break;
+		case CPUINFO_INT_REGISTER + MIPS_DELAYV:		cpu->delayv = info->i;				break;
+		case CPUINFO_INT_REGISTER + MIPS_DELAYR:		if( info->i <= REGPC ) cpu->delayr = info->i; break;
+		case CPUINFO_INT_REGISTER + MIPS_HI:			cpu->hi = info->i;					break;
+		case CPUINFO_INT_REGISTER + MIPS_LO:			cpu->lo = info->i;					break;
+		case CPUINFO_INT_REGISTER + MIPS_R0:			cpu->r[ 0 ] = info->i;				break;
+		case CPUINFO_INT_REGISTER + MIPS_R1:			cpu->r[ 1 ] = info->i;				break;
+		case CPUINFO_INT_REGISTER + MIPS_R2:			cpu->r[ 2 ] = info->i;				break;
+		case CPUINFO_INT_REGISTER + MIPS_R3:			cpu->r[ 3 ] = info->i;				break;
+		case CPUINFO_INT_REGISTER + MIPS_R4:			cpu->r[ 4 ] = info->i;				break;
+		case CPUINFO_INT_REGISTER + MIPS_R5:			cpu->r[ 5 ] = info->i;				break;
+		case CPUINFO_INT_REGISTER + MIPS_R6:			cpu->r[ 6 ] = info->i;				break;
+		case CPUINFO_INT_REGISTER + MIPS_R7:			cpu->r[ 7 ] = info->i;				break;
+		case CPUINFO_INT_REGISTER + MIPS_R8:			cpu->r[ 8 ] = info->i;				break;
+		case CPUINFO_INT_REGISTER + MIPS_R9:			cpu->r[ 9 ] = info->i;				break;
+		case CPUINFO_INT_REGISTER + MIPS_R10:			cpu->r[ 10 ] = info->i;				break;
+		case CPUINFO_INT_REGISTER + MIPS_R11:			cpu->r[ 11 ] = info->i;				break;
+		case CPUINFO_INT_REGISTER + MIPS_R12:			cpu->r[ 12 ] = info->i;				break;
+		case CPUINFO_INT_REGISTER + MIPS_R13:			cpu->r[ 13 ] = info->i;				break;
+		case CPUINFO_INT_REGISTER + MIPS_R14:			cpu->r[ 14 ] = info->i;				break;
+		case CPUINFO_INT_REGISTER + MIPS_R15:			cpu->r[ 15 ] = info->i;				break;
+		case CPUINFO_INT_REGISTER + MIPS_R16:			cpu->r[ 16 ] = info->i;				break;
+		case CPUINFO_INT_REGISTER + MIPS_R17:			cpu->r[ 17 ] = info->i;				break;
+		case CPUINFO_INT_REGISTER + MIPS_R18:			cpu->r[ 18 ] = info->i;				break;
+		case CPUINFO_INT_REGISTER + MIPS_R19:			cpu->r[ 19 ] = info->i;				break;
+		case CPUINFO_INT_REGISTER + MIPS_R20:			cpu->r[ 20 ] = info->i;				break;
+		case CPUINFO_INT_REGISTER + MIPS_R21:			cpu->r[ 21 ] = info->i;				break;
+		case CPUINFO_INT_REGISTER + MIPS_R22:			cpu->r[ 22 ] = info->i;				break;
+		case CPUINFO_INT_REGISTER + MIPS_R23:			cpu->r[ 23 ] = info->i;				break;
+		case CPUINFO_INT_REGISTER + MIPS_R24:			cpu->r[ 24 ] = info->i;				break;
+		case CPUINFO_INT_REGISTER + MIPS_R25:			cpu->r[ 25 ] = info->i;				break;
+		case CPUINFO_INT_REGISTER + MIPS_R26:			cpu->r[ 26 ] = info->i;				break;
+		case CPUINFO_INT_REGISTER + MIPS_R27:			cpu->r[ 27 ] = info->i;				break;
+		case CPUINFO_INT_REGISTER + MIPS_R28:			cpu->r[ 28 ] = info->i;				break;
+		case CPUINFO_INT_REGISTER + MIPS_R29:			cpu->r[ 29 ] = info->i;				break;
+		case CPUINFO_INT_REGISTER + MIPS_R30:			cpu->r[ 30 ] = info->i;				break;
+		case CPUINFO_INT_REGISTER + MIPS_R31:			cpu->r[ 31 ] = info->i;				break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R0:			mips_set_cp0r(cpu, 0, info->i );			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R1:			mips_set_cp0r(cpu, 1, info->i );			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R2:			mips_set_cp0r(cpu, 2, info->i );			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R3:			mips_set_cp0r(cpu, 3, info->i );			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R4:			mips_set_cp0r(cpu, 4, info->i );			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R5:			mips_set_cp0r(cpu, 5, info->i );			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R6:			mips_set_cp0r(cpu, 6, info->i );			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R7:			mips_set_cp0r(cpu, 7, info->i );			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R8:			mips_set_cp0r(cpu, 8, info->i );			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R9:			mips_set_cp0r(cpu, 9, info->i );			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R10:		mips_set_cp0r(cpu, 10, info->i );			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R11:		mips_set_cp0r(cpu, 11, info->i );			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R12:		mips_set_cp0r(cpu, 12, info->i );			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R13:		mips_set_cp0r(cpu, 13, info->i );			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R14:		mips_set_cp0r(cpu, 14, info->i );			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R15:		mips_set_cp0r(cpu, 15, info->i );			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R16:		mips_set_cp0r(cpu, 16, info->i );			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R17:		mips_set_cp0r(cpu, 17, info->i );			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R18:		mips_set_cp0r(cpu, 18, info->i );			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R19:		mips_set_cp0r(cpu, 19, info->i );			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R20:		mips_set_cp0r(cpu, 20, info->i );			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R21:		mips_set_cp0r(cpu, 21, info->i );			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R22:		mips_set_cp0r(cpu, 22, info->i );			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R23:		mips_set_cp0r(cpu, 23, info->i );			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R24:		mips_set_cp0r(cpu, 24, info->i );			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R25:		mips_set_cp0r(cpu, 25, info->i );			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R26:		mips_set_cp0r(cpu, 26, info->i );			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R27:		mips_set_cp0r(cpu, 27, info->i );			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R28:		mips_set_cp0r(cpu, 28, info->i );			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R29:		mips_set_cp0r(cpu, 29, info->i );			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R30:		mips_set_cp0r(cpu, 30, info->i );			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R31:		mips_set_cp0r(cpu, 31, info->i );			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR0:		cpu->cp2dr[ 0 ].d = info->i;			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR1:		cpu->cp2dr[ 1 ].d = info->i;			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR2:		cpu->cp2dr[ 2 ].d = info->i;			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR3:		cpu->cp2dr[ 3 ].d = info->i;			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR4:		cpu->cp2dr[ 4 ].d = info->i;			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR5:		cpu->cp2dr[ 5 ].d = info->i;			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR6:		cpu->cp2dr[ 6 ].d = info->i;			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR7:		cpu->cp2dr[ 7 ].d = info->i;			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR8:		cpu->cp2dr[ 8 ].d = info->i;			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR9:		cpu->cp2dr[ 9 ].d = info->i;			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR10:		cpu->cp2dr[ 10 ].d = info->i;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR11:		cpu->cp2dr[ 11 ].d = info->i;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR12:		cpu->cp2dr[ 12 ].d = info->i;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR13:		cpu->cp2dr[ 13 ].d = info->i;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR14:		cpu->cp2dr[ 14 ].d = info->i;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR15:		cpu->cp2dr[ 15 ].d = info->i;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR16:		cpu->cp2dr[ 16 ].d = info->i;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR17:		cpu->cp2dr[ 17 ].d = info->i;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR18:		cpu->cp2dr[ 18 ].d = info->i;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR19:		cpu->cp2dr[ 19 ].d = info->i;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR20:		cpu->cp2dr[ 20 ].d = info->i;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR21:		cpu->cp2dr[ 21 ].d = info->i;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR22:		cpu->cp2dr[ 22 ].d = info->i;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR23:		cpu->cp2dr[ 23 ].d = info->i;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR24:		cpu->cp2dr[ 24 ].d = info->i;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR25:		cpu->cp2dr[ 25 ].d = info->i;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR26:		cpu->cp2dr[ 26 ].d = info->i;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR27:		cpu->cp2dr[ 27 ].d = info->i;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR28:		cpu->cp2dr[ 28 ].d = info->i;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR29:		cpu->cp2dr[ 29 ].d = info->i;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR30:		cpu->cp2dr[ 30 ].d = info->i;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR31:		cpu->cp2dr[ 31 ].d = info->i;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR0:		cpu->cp2cr[ 0 ].d = info->i;			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR1:		cpu->cp2cr[ 1 ].d = info->i;			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR2:		cpu->cp2cr[ 2 ].d = info->i;			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR3:		cpu->cp2cr[ 3 ].d = info->i;			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR4:		cpu->cp2cr[ 4 ].d = info->i;			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR5:		cpu->cp2cr[ 5 ].d = info->i;			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR6:		cpu->cp2cr[ 6 ].d = info->i;			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR7:		cpu->cp2cr[ 7 ].d = info->i;			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR8:		cpu->cp2cr[ 8 ].d = info->i;			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR9:		cpu->cp2cr[ 9 ].d = info->i;			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR10:		cpu->cp2cr[ 10 ].d = info->i;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR11:		cpu->cp2cr[ 11 ].d = info->i;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR12:		cpu->cp2cr[ 12 ].d = info->i;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR13:		cpu->cp2cr[ 13 ].d = info->i;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR14:		cpu->cp2cr[ 14 ].d = info->i;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR15:		cpu->cp2cr[ 15 ].d = info->i;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR16:		cpu->cp2cr[ 16 ].d = info->i;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR17:		cpu->cp2cr[ 17 ].d = info->i;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR18:		cpu->cp2cr[ 18 ].d = info->i;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR19:		cpu->cp2cr[ 19 ].d = info->i;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR20:		cpu->cp2cr[ 20 ].d = info->i;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR21:		cpu->cp2cr[ 21 ].d = info->i;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR22:		cpu->cp2cr[ 22 ].d = info->i;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR23:		cpu->cp2cr[ 23 ].d = info->i;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR24:		cpu->cp2cr[ 24 ].d = info->i;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR25:		cpu->cp2cr[ 25 ].d = info->i;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR26:		cpu->cp2cr[ 26 ].d = info->i;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR27:		cpu->cp2cr[ 27 ].d = info->i;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR28:		cpu->cp2cr[ 28 ].d = info->i;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR29:		cpu->cp2cr[ 29 ].d = info->i;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR30:		cpu->cp2cr[ 30 ].d = info->i;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR31:		cpu->cp2cr[ 31 ].d = info->i;		break;
 		
 		/* --- the following bits of info are set as pointers to data or functions --- */
-		case CPUINFO_PTR_IRQ_CALLBACK:					mipscpu.irq_callback = info->irqcallback;			break;
+		case CPUINFO_PTR_IRQ_CALLBACK:					cpu->irq_callback = info->irqcallback;			break;
 	}
 }
 
@@ -2772,12 +2753,12 @@ void mips_set_info(UINT32 state, union cpuinfo *info)
  * Generic get_info
  **************************************************************************/
 
-void mips_get_info(UINT32 state, union cpuinfo *info)
+void mips_get_info(mips_cpu_context *cpu, UINT32 state, union cpuinfo *info)
 {
 	switch (state)
 	{
 		/* --- the following bits of info are returned as 64-bit signed integers --- */
-		case CPUINFO_INT_CONTEXT_SIZE:					info->i = sizeof(mipscpu);				break;
+		case CPUINFO_INT_CONTEXT_SIZE:					info->i = sizeof(mips_cpu_context);				break;
 		case CPUINFO_INT_INPUT_LINES:					info->i = 6;							break;
 		case CPUINFO_INT_DEFAULT_IRQ_VECTOR:			info->i = 0;							break;
 		case CPUINFO_INT_ENDIANNESS:					info->i = CPU_IS_LE;					break;
@@ -2797,167 +2778,167 @@ void mips_get_info(UINT32 state, union cpuinfo *info)
 		case CPUINFO_INT_ADDRBUS_WIDTH + ADDRESS_SPACE_IO: 		info->i = 0;					break;
 		case CPUINFO_INT_ADDRBUS_SHIFT + ADDRESS_SPACE_IO: 		info->i = 0;					break;
 
-		case CPUINFO_INT_INPUT_STATE + MIPS_IRQ0:		info->i = (mipscpu.cp0r[ CP0_CAUSE ] & 0x400) ? ASSERT_LINE : CLEAR_LINE; break;
-		case CPUINFO_INT_INPUT_STATE + MIPS_IRQ1:		info->i = (mipscpu.cp0r[ CP0_CAUSE ] & 0x800) ? ASSERT_LINE : CLEAR_LINE; break;
-		case CPUINFO_INT_INPUT_STATE + MIPS_IRQ2:		info->i = (mipscpu.cp0r[ CP0_CAUSE ] & 0x1000) ? ASSERT_LINE : CLEAR_LINE; break;
-		case CPUINFO_INT_INPUT_STATE + MIPS_IRQ3:		info->i = (mipscpu.cp0r[ CP0_CAUSE ] & 0x2000) ? ASSERT_LINE : CLEAR_LINE; break;
-		case CPUINFO_INT_INPUT_STATE + MIPS_IRQ4:		info->i = (mipscpu.cp0r[ CP0_CAUSE ] & 0x4000) ? ASSERT_LINE : CLEAR_LINE; break;
-		case CPUINFO_INT_INPUT_STATE + MIPS_IRQ5:		info->i = (mipscpu.cp0r[ CP0_CAUSE ] & 0x8000) ? ASSERT_LINE : CLEAR_LINE; break;
+		case CPUINFO_INT_INPUT_STATE + MIPS_IRQ0:		info->i = (cpu->cp0r[ CP0_CAUSE ] & 0x400) ? ASSERT_LINE : CLEAR_LINE; break;
+		case CPUINFO_INT_INPUT_STATE + MIPS_IRQ1:		info->i = (cpu->cp0r[ CP0_CAUSE ] & 0x800) ? ASSERT_LINE : CLEAR_LINE; break;
+		case CPUINFO_INT_INPUT_STATE + MIPS_IRQ2:		info->i = (cpu->cp0r[ CP0_CAUSE ] & 0x1000) ? ASSERT_LINE : CLEAR_LINE; break;
+		case CPUINFO_INT_INPUT_STATE + MIPS_IRQ3:		info->i = (cpu->cp0r[ CP0_CAUSE ] & 0x2000) ? ASSERT_LINE : CLEAR_LINE; break;
+		case CPUINFO_INT_INPUT_STATE + MIPS_IRQ4:		info->i = (cpu->cp0r[ CP0_CAUSE ] & 0x4000) ? ASSERT_LINE : CLEAR_LINE; break;
+		case CPUINFO_INT_INPUT_STATE + MIPS_IRQ5:		info->i = (cpu->cp0r[ CP0_CAUSE ] & 0x8000) ? ASSERT_LINE : CLEAR_LINE; break;
 
 		case CPUINFO_INT_PREVIOUSPC:					/* not implemented */					break;
 
-		case CPUINFO_INT_PC:							info->i = mipscpu.pc;					break;
-		case CPUINFO_INT_REGISTER + MIPS_PC:			info->i = mipscpu.pc;					break;
+		case CPUINFO_INT_PC:							info->i = cpu->pc;					break;
+		case CPUINFO_INT_REGISTER + MIPS_PC:			info->i = cpu->pc;					break;
 		case CPUINFO_INT_SP:
 			/* because there is no hardware stack and the pipeline causes the cpu to execute the
 			instruction after a subroutine call before the subroutine is executed there is little
 			chance of cmd_step_over() in mamedbg.c working. */
 								info->i = 0;													break;
-		case CPUINFO_INT_REGISTER + MIPS_DELAYV:		info->i = mipscpu.delayv;				break;
-		case CPUINFO_INT_REGISTER + MIPS_DELAYR:		info->i = mipscpu.delayr;				break;
-		case CPUINFO_INT_REGISTER + MIPS_HI:			info->i = mipscpu.hi;					break;
-		case CPUINFO_INT_REGISTER + MIPS_LO:			info->i = mipscpu.lo;					break;
-		case CPUINFO_INT_REGISTER + MIPS_R0:			info->i = mipscpu.r[ 0 ];				break;
-		case CPUINFO_INT_REGISTER + MIPS_R1:			info->i = mipscpu.r[ 1 ];				break;
-		case CPUINFO_INT_REGISTER + MIPS_R2:			info->i = mipscpu.r[ 2 ];				break;
-		case CPUINFO_INT_REGISTER + MIPS_R3:			info->i = mipscpu.r[ 3 ];				break;
-		case CPUINFO_INT_REGISTER + MIPS_R4:			info->i = mipscpu.r[ 4 ];				break;
-		case CPUINFO_INT_REGISTER + MIPS_R5:			info->i = mipscpu.r[ 5 ];				break;
-		case CPUINFO_INT_REGISTER + MIPS_R6:			info->i = mipscpu.r[ 6 ];				break;
-		case CPUINFO_INT_REGISTER + MIPS_R7:			info->i = mipscpu.r[ 7 ];				break;
-		case CPUINFO_INT_REGISTER + MIPS_R8:			info->i = mipscpu.r[ 8 ];				break;
-		case CPUINFO_INT_REGISTER + MIPS_R9:			info->i = mipscpu.r[ 9 ];				break;
-		case CPUINFO_INT_REGISTER + MIPS_R10:			info->i = mipscpu.r[ 10 ];				break;
-		case CPUINFO_INT_REGISTER + MIPS_R11:			info->i = mipscpu.r[ 11 ];				break;
-		case CPUINFO_INT_REGISTER + MIPS_R12:			info->i = mipscpu.r[ 12 ];				break;
-		case CPUINFO_INT_REGISTER + MIPS_R13:			info->i = mipscpu.r[ 13 ];				break;
-		case CPUINFO_INT_REGISTER + MIPS_R14:			info->i = mipscpu.r[ 14 ];				break;
-		case CPUINFO_INT_REGISTER + MIPS_R15:			info->i = mipscpu.r[ 15 ];				break;
-		case CPUINFO_INT_REGISTER + MIPS_R16:			info->i = mipscpu.r[ 16 ];				break;
-		case CPUINFO_INT_REGISTER + MIPS_R17:			info->i = mipscpu.r[ 17 ];				break;
-		case CPUINFO_INT_REGISTER + MIPS_R18:			info->i = mipscpu.r[ 18 ];				break;
-		case CPUINFO_INT_REGISTER + MIPS_R19:			info->i = mipscpu.r[ 19 ];				break;
-		case CPUINFO_INT_REGISTER + MIPS_R20:			info->i = mipscpu.r[ 20 ];				break;
-		case CPUINFO_INT_REGISTER + MIPS_R21:			info->i = mipscpu.r[ 21 ];				break;
-		case CPUINFO_INT_REGISTER + MIPS_R22:			info->i = mipscpu.r[ 22 ];				break;
-		case CPUINFO_INT_REGISTER + MIPS_R23:			info->i = mipscpu.r[ 23 ];				break;
-		case CPUINFO_INT_REGISTER + MIPS_R24:			info->i = mipscpu.r[ 24 ];				break;
-		case CPUINFO_INT_REGISTER + MIPS_R25:			info->i = mipscpu.r[ 25 ];				break;
-		case CPUINFO_INT_REGISTER + MIPS_R26:			info->i = mipscpu.r[ 26 ];				break;
-		case CPUINFO_INT_REGISTER + MIPS_R27:			info->i = mipscpu.r[ 27 ];				break;
-		case CPUINFO_INT_REGISTER + MIPS_R28:			info->i = mipscpu.r[ 28 ];				break;
-		case CPUINFO_INT_REGISTER + MIPS_R29:			info->i = mipscpu.r[ 29 ];				break;
-		case CPUINFO_INT_REGISTER + MIPS_R30:			info->i = mipscpu.r[ 30 ];				break;
-		case CPUINFO_INT_REGISTER + MIPS_R31:			info->i = mipscpu.r[ 31 ];				break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R0:			info->i = mipscpu.cp0r[ 0 ];			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R1:			info->i = mipscpu.cp0r[ 1 ];			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R2:			info->i = mipscpu.cp0r[ 2 ];			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R3:			info->i = mipscpu.cp0r[ 3 ];			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R4:			info->i = mipscpu.cp0r[ 4 ];			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R5:			info->i = mipscpu.cp0r[ 5 ];			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R6:			info->i = mipscpu.cp0r[ 6 ];			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R7:			info->i = mipscpu.cp0r[ 7 ];			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R8:			info->i = mipscpu.cp0r[ 8 ];			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R9:			info->i = mipscpu.cp0r[ 9 ];			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R10:		info->i = mipscpu.cp0r[ 10 ];			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R11:		info->i = mipscpu.cp0r[ 11 ];			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R12:		info->i = mipscpu.cp0r[ 12 ];			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R13:		info->i = mipscpu.cp0r[ 13 ];			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R14:		info->i = mipscpu.cp0r[ 14 ];			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R15:		info->i = mipscpu.cp0r[ 15 ];			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R16:		info->i = mipscpu.cp0r[ 16 ];			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R17:		info->i = mipscpu.cp0r[ 17 ];			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R18:		info->i = mipscpu.cp0r[ 18 ];			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R19:		info->i = mipscpu.cp0r[ 19 ];			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R20:		info->i = mipscpu.cp0r[ 20 ];			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R21:		info->i = mipscpu.cp0r[ 21 ];			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R22:		info->i = mipscpu.cp0r[ 22 ];			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R23:		info->i = mipscpu.cp0r[ 23 ];			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R24:		info->i = mipscpu.cp0r[ 24 ];			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R25:		info->i = mipscpu.cp0r[ 25 ];			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R26:		info->i = mipscpu.cp0r[ 26 ];			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R27:		info->i = mipscpu.cp0r[ 27 ];			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R28:		info->i = mipscpu.cp0r[ 28 ];			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R29:		info->i = mipscpu.cp0r[ 29 ];			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R30:		info->i = mipscpu.cp0r[ 30 ];			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP0R31:		info->i = mipscpu.cp0r[ 31 ];			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR0:		info->i = mipscpu.cp2dr[ 0 ].d;			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR1:		info->i = mipscpu.cp2dr[ 1 ].d;			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR2:		info->i = mipscpu.cp2dr[ 2 ].d;			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR3:		info->i = mipscpu.cp2dr[ 3 ].d;			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR4:		info->i = mipscpu.cp2dr[ 4 ].d;			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR5:		info->i = mipscpu.cp2dr[ 5 ].d;			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR6:		info->i = mipscpu.cp2dr[ 6 ].d;			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR7:		info->i = mipscpu.cp2dr[ 7 ].d;			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR8:		info->i = mipscpu.cp2dr[ 8 ].d;			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR9:		info->i = mipscpu.cp2dr[ 9 ].d;			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR10:		info->i = mipscpu.cp2dr[ 10 ].d;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR11:		info->i = mipscpu.cp2dr[ 11 ].d;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR12:		info->i = mipscpu.cp2dr[ 12 ].d;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR13:		info->i = mipscpu.cp2dr[ 13 ].d;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR14:		info->i = mipscpu.cp2dr[ 14 ].d;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR15:		info->i = mipscpu.cp2dr[ 15 ].d;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR16:		info->i = mipscpu.cp2dr[ 16 ].d;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR17:		info->i = mipscpu.cp2dr[ 17 ].d;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR18:		info->i = mipscpu.cp2dr[ 18 ].d;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR19:		info->i = mipscpu.cp2dr[ 19 ].d;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR20:		info->i = mipscpu.cp2dr[ 20 ].d;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR21:		info->i = mipscpu.cp2dr[ 21 ].d;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR22:		info->i = mipscpu.cp2dr[ 22 ].d;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR23:		info->i = mipscpu.cp2dr[ 23 ].d;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR24:		info->i = mipscpu.cp2dr[ 24 ].d;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR25:		info->i = mipscpu.cp2dr[ 25 ].d;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR26:		info->i = mipscpu.cp2dr[ 26 ].d;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR27:		info->i = mipscpu.cp2dr[ 27 ].d;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR28:		info->i = mipscpu.cp2dr[ 28 ].d;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR29:		info->i = mipscpu.cp2dr[ 29 ].d;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR30:		info->i = mipscpu.cp2dr[ 30 ].d;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2DR31:		info->i = mipscpu.cp2dr[ 31 ].d;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR0:		info->i = mipscpu.cp2cr[ 0 ].d;			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR1:		info->i = mipscpu.cp2cr[ 1 ].d;			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR2:		info->i = mipscpu.cp2cr[ 2 ].d;			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR3:		info->i = mipscpu.cp2cr[ 3 ].d;			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR4:		info->i = mipscpu.cp2cr[ 4 ].d;			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR5:		info->i = mipscpu.cp2cr[ 5 ].d;			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR6:		info->i = mipscpu.cp2cr[ 6 ].d;			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR7:		info->i = mipscpu.cp2cr[ 7 ].d;			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR8:		info->i = mipscpu.cp2cr[ 8 ].d;			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR9:		info->i = mipscpu.cp2cr[ 9 ].d;			break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR10:		info->i = mipscpu.cp2cr[ 10 ].d;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR11:		info->i = mipscpu.cp2cr[ 11 ].d;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR12:		info->i = mipscpu.cp2cr[ 12 ].d;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR13:		info->i = mipscpu.cp2cr[ 13 ].d;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR14:		info->i = mipscpu.cp2cr[ 14 ].d;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR15:		info->i = mipscpu.cp2cr[ 15 ].d;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR16:		info->i = mipscpu.cp2cr[ 16 ].d;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR17:		info->i = mipscpu.cp2cr[ 17 ].d;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR18:		info->i = mipscpu.cp2cr[ 18 ].d;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR19:		info->i = mipscpu.cp2cr[ 19 ].d;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR20:		info->i = mipscpu.cp2cr[ 20 ].d;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR21:		info->i = mipscpu.cp2cr[ 21 ].d;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR22:		info->i = mipscpu.cp2cr[ 22 ].d;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR23:		info->i = mipscpu.cp2cr[ 23 ].d;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR24:		info->i = mipscpu.cp2cr[ 24 ].d;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR25:		info->i = mipscpu.cp2cr[ 25 ].d;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR26:		info->i = mipscpu.cp2cr[ 26 ].d;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR27:		info->i = mipscpu.cp2cr[ 27 ].d;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR28:		info->i = mipscpu.cp2cr[ 28 ].d;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR29:		info->i = mipscpu.cp2cr[ 29 ].d;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR30:		info->i = mipscpu.cp2cr[ 30 ].d;		break;
-		case CPUINFO_INT_REGISTER + MIPS_CP2CR31:		info->i = mipscpu.cp2cr[ 31 ].d;		break;
+		case CPUINFO_INT_REGISTER + MIPS_DELAYV:		info->i = cpu->delayv;				break;
+		case CPUINFO_INT_REGISTER + MIPS_DELAYR:		info->i = cpu->delayr;				break;
+		case CPUINFO_INT_REGISTER + MIPS_HI:			info->i = cpu->hi;					break;
+		case CPUINFO_INT_REGISTER + MIPS_LO:			info->i = cpu->lo;					break;
+		case CPUINFO_INT_REGISTER + MIPS_R0:			info->i = cpu->r[ 0 ];				break;
+		case CPUINFO_INT_REGISTER + MIPS_R1:			info->i = cpu->r[ 1 ];				break;
+		case CPUINFO_INT_REGISTER + MIPS_R2:			info->i = cpu->r[ 2 ];				break;
+		case CPUINFO_INT_REGISTER + MIPS_R3:			info->i = cpu->r[ 3 ];				break;
+		case CPUINFO_INT_REGISTER + MIPS_R4:			info->i = cpu->r[ 4 ];				break;
+		case CPUINFO_INT_REGISTER + MIPS_R5:			info->i = cpu->r[ 5 ];				break;
+		case CPUINFO_INT_REGISTER + MIPS_R6:			info->i = cpu->r[ 6 ];				break;
+		case CPUINFO_INT_REGISTER + MIPS_R7:			info->i = cpu->r[ 7 ];				break;
+		case CPUINFO_INT_REGISTER + MIPS_R8:			info->i = cpu->r[ 8 ];				break;
+		case CPUINFO_INT_REGISTER + MIPS_R9:			info->i = cpu->r[ 9 ];				break;
+		case CPUINFO_INT_REGISTER + MIPS_R10:			info->i = cpu->r[ 10 ];				break;
+		case CPUINFO_INT_REGISTER + MIPS_R11:			info->i = cpu->r[ 11 ];				break;
+		case CPUINFO_INT_REGISTER + MIPS_R12:			info->i = cpu->r[ 12 ];				break;
+		case CPUINFO_INT_REGISTER + MIPS_R13:			info->i = cpu->r[ 13 ];				break;
+		case CPUINFO_INT_REGISTER + MIPS_R14:			info->i = cpu->r[ 14 ];				break;
+		case CPUINFO_INT_REGISTER + MIPS_R15:			info->i = cpu->r[ 15 ];				break;
+		case CPUINFO_INT_REGISTER + MIPS_R16:			info->i = cpu->r[ 16 ];				break;
+		case CPUINFO_INT_REGISTER + MIPS_R17:			info->i = cpu->r[ 17 ];				break;
+		case CPUINFO_INT_REGISTER + MIPS_R18:			info->i = cpu->r[ 18 ];				break;
+		case CPUINFO_INT_REGISTER + MIPS_R19:			info->i = cpu->r[ 19 ];				break;
+		case CPUINFO_INT_REGISTER + MIPS_R20:			info->i = cpu->r[ 20 ];				break;
+		case CPUINFO_INT_REGISTER + MIPS_R21:			info->i = cpu->r[ 21 ];				break;
+		case CPUINFO_INT_REGISTER + MIPS_R22:			info->i = cpu->r[ 22 ];				break;
+		case CPUINFO_INT_REGISTER + MIPS_R23:			info->i = cpu->r[ 23 ];				break;
+		case CPUINFO_INT_REGISTER + MIPS_R24:			info->i = cpu->r[ 24 ];				break;
+		case CPUINFO_INT_REGISTER + MIPS_R25:			info->i = cpu->r[ 25 ];				break;
+		case CPUINFO_INT_REGISTER + MIPS_R26:			info->i = cpu->r[ 26 ];				break;
+		case CPUINFO_INT_REGISTER + MIPS_R27:			info->i = cpu->r[ 27 ];				break;
+		case CPUINFO_INT_REGISTER + MIPS_R28:			info->i = cpu->r[ 28 ];				break;
+		case CPUINFO_INT_REGISTER + MIPS_R29:			info->i = cpu->r[ 29 ];				break;
+		case CPUINFO_INT_REGISTER + MIPS_R30:			info->i = cpu->r[ 30 ];				break;
+		case CPUINFO_INT_REGISTER + MIPS_R31:			info->i = cpu->r[ 31 ];				break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R0:			info->i = cpu->cp0r[ 0 ];			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R1:			info->i = cpu->cp0r[ 1 ];			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R2:			info->i = cpu->cp0r[ 2 ];			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R3:			info->i = cpu->cp0r[ 3 ];			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R4:			info->i = cpu->cp0r[ 4 ];			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R5:			info->i = cpu->cp0r[ 5 ];			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R6:			info->i = cpu->cp0r[ 6 ];			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R7:			info->i = cpu->cp0r[ 7 ];			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R8:			info->i = cpu->cp0r[ 8 ];			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R9:			info->i = cpu->cp0r[ 9 ];			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R10:		info->i = cpu->cp0r[ 10 ];			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R11:		info->i = cpu->cp0r[ 11 ];			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R12:		info->i = cpu->cp0r[ 12 ];			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R13:		info->i = cpu->cp0r[ 13 ];			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R14:		info->i = cpu->cp0r[ 14 ];			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R15:		info->i = cpu->cp0r[ 15 ];			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R16:		info->i = cpu->cp0r[ 16 ];			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R17:		info->i = cpu->cp0r[ 17 ];			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R18:		info->i = cpu->cp0r[ 18 ];			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R19:		info->i = cpu->cp0r[ 19 ];			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R20:		info->i = cpu->cp0r[ 20 ];			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R21:		info->i = cpu->cp0r[ 21 ];			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R22:		info->i = cpu->cp0r[ 22 ];			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R23:		info->i = cpu->cp0r[ 23 ];			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R24:		info->i = cpu->cp0r[ 24 ];			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R25:		info->i = cpu->cp0r[ 25 ];			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R26:		info->i = cpu->cp0r[ 26 ];			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R27:		info->i = cpu->cp0r[ 27 ];			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R28:		info->i = cpu->cp0r[ 28 ];			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R29:		info->i = cpu->cp0r[ 29 ];			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R30:		info->i = cpu->cp0r[ 30 ];			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP0R31:		info->i = cpu->cp0r[ 31 ];			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR0:		info->i = cpu->cp2dr[ 0 ].d;			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR1:		info->i = cpu->cp2dr[ 1 ].d;			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR2:		info->i = cpu->cp2dr[ 2 ].d;			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR3:		info->i = cpu->cp2dr[ 3 ].d;			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR4:		info->i = cpu->cp2dr[ 4 ].d;			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR5:		info->i = cpu->cp2dr[ 5 ].d;			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR6:		info->i = cpu->cp2dr[ 6 ].d;			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR7:		info->i = cpu->cp2dr[ 7 ].d;			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR8:		info->i = cpu->cp2dr[ 8 ].d;			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR9:		info->i = cpu->cp2dr[ 9 ].d;			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR10:		info->i = cpu->cp2dr[ 10 ].d;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR11:		info->i = cpu->cp2dr[ 11 ].d;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR12:		info->i = cpu->cp2dr[ 12 ].d;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR13:		info->i = cpu->cp2dr[ 13 ].d;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR14:		info->i = cpu->cp2dr[ 14 ].d;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR15:		info->i = cpu->cp2dr[ 15 ].d;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR16:		info->i = cpu->cp2dr[ 16 ].d;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR17:		info->i = cpu->cp2dr[ 17 ].d;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR18:		info->i = cpu->cp2dr[ 18 ].d;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR19:		info->i = cpu->cp2dr[ 19 ].d;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR20:		info->i = cpu->cp2dr[ 20 ].d;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR21:		info->i = cpu->cp2dr[ 21 ].d;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR22:		info->i = cpu->cp2dr[ 22 ].d;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR23:		info->i = cpu->cp2dr[ 23 ].d;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR24:		info->i = cpu->cp2dr[ 24 ].d;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR25:		info->i = cpu->cp2dr[ 25 ].d;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR26:		info->i = cpu->cp2dr[ 26 ].d;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR27:		info->i = cpu->cp2dr[ 27 ].d;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR28:		info->i = cpu->cp2dr[ 28 ].d;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR29:		info->i = cpu->cp2dr[ 29 ].d;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR30:		info->i = cpu->cp2dr[ 30 ].d;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2DR31:		info->i = cpu->cp2dr[ 31 ].d;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR0:		info->i = cpu->cp2cr[ 0 ].d;			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR1:		info->i = cpu->cp2cr[ 1 ].d;			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR2:		info->i = cpu->cp2cr[ 2 ].d;			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR3:		info->i = cpu->cp2cr[ 3 ].d;			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR4:		info->i = cpu->cp2cr[ 4 ].d;			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR5:		info->i = cpu->cp2cr[ 5 ].d;			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR6:		info->i = cpu->cp2cr[ 6 ].d;			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR7:		info->i = cpu->cp2cr[ 7 ].d;			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR8:		info->i = cpu->cp2cr[ 8 ].d;			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR9:		info->i = cpu->cp2cr[ 9 ].d;			break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR10:		info->i = cpu->cp2cr[ 10 ].d;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR11:		info->i = cpu->cp2cr[ 11 ].d;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR12:		info->i = cpu->cp2cr[ 12 ].d;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR13:		info->i = cpu->cp2cr[ 13 ].d;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR14:		info->i = cpu->cp2cr[ 14 ].d;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR15:		info->i = cpu->cp2cr[ 15 ].d;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR16:		info->i = cpu->cp2cr[ 16 ].d;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR17:		info->i = cpu->cp2cr[ 17 ].d;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR18:		info->i = cpu->cp2cr[ 18 ].d;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR19:		info->i = cpu->cp2cr[ 19 ].d;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR20:		info->i = cpu->cp2cr[ 20 ].d;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR21:		info->i = cpu->cp2cr[ 21 ].d;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR22:		info->i = cpu->cp2cr[ 22 ].d;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR23:		info->i = cpu->cp2cr[ 23 ].d;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR24:		info->i = cpu->cp2cr[ 24 ].d;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR25:		info->i = cpu->cp2cr[ 25 ].d;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR26:		info->i = cpu->cp2cr[ 26 ].d;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR27:		info->i = cpu->cp2cr[ 27 ].d;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR28:		info->i = cpu->cp2cr[ 28 ].d;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR29:		info->i = cpu->cp2cr[ 29 ].d;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR30:		info->i = cpu->cp2cr[ 30 ].d;		break;
+		case CPUINFO_INT_REGISTER + MIPS_CP2CR31:		info->i = cpu->cp2cr[ 31 ].d;		break;
 
 		/* --- the following bits of info are returned as pointers to data or functions --- */
 		case CPUINFO_PTR_SET_INFO:						info->setinfo = mips_set_info;			break;
-		case CPUINFO_PTR_GET_CONTEXT:					info->getcontext = mips_get_context;	break;
-		case CPUINFO_PTR_SET_CONTEXT:					info->setcontext = mips_set_context;	break;
+//		case CPUINFO_PTR_GET_CONTEXT:					info->getcontext = mips_get_context;	break;
+//		case CPUINFO_PTR_SET_CONTEXT:					info->setcontext = mips_set_context;	break;
 		case CPUINFO_PTR_INIT:							info->init = mips_init;					break;
 		case CPUINFO_PTR_RESET:							info->reset = mips_reset;				break;
 		case CPUINFO_PTR_EXIT:							info->exit = mips_exit;					break;
 		case CPUINFO_PTR_EXECUTE:						info->execute = mips_execute;			break;
 		case CPUINFO_PTR_BURN:							info->burn = NULL;						break;
 		case CPUINFO_PTR_DISASSEMBLE:					info->disassemble = mips_dasm;			break;
-		case CPUINFO_PTR_IRQ_CALLBACK:					info->irqcallback = mipscpu.irq_callback; break;
-		case CPUINFO_PTR_INSTRUCTION_COUNTER:			info->icount = &mips_ICount;			break;
+		case CPUINFO_PTR_IRQ_CALLBACK:					info->irqcallback = cpu->irq_callback; break;
+		case CPUINFO_PTR_INSTRUCTION_COUNTER:			info->icount = &cpu->mips_ICount;			break;
 		case CPUINFO_PTR_REGISTER_LAYOUT:				info->p = mips_reg_layout;				break;
 		case CPUINFO_PTR_WINDOW_LAYOUT:					info->p = mips_win_layout;				break;
 
@@ -2971,171 +2952,171 @@ void mips_get_info(UINT32 state, union cpuinfo *info)
 
 		case CPUINFO_STR_FLAGS:							strcpy(info->s = cpuintrf_temp_str(), " "); break;
 
-		case CPUINFO_STR_REGISTER + MIPS_PC:			sprintf( info->s = cpuintrf_temp_str(), "pc      :%08x", mipscpu.pc ); break;
-		case CPUINFO_STR_REGISTER + MIPS_DELAYV:		sprintf( info->s = cpuintrf_temp_str(), "delay   :%08x", mipscpu.delayv ); break;
-		case CPUINFO_STR_REGISTER + MIPS_DELAYR:		sprintf( info->s = cpuintrf_temp_str(), "delay %s:%02x", delayn[ mipscpu.delayr ], mipscpu.delayr ); break;
-		case CPUINFO_STR_REGISTER + MIPS_HI:			sprintf( info->s = cpuintrf_temp_str(), "hi      :%08x", mipscpu.hi ); break;
-		case CPUINFO_STR_REGISTER + MIPS_LO:			sprintf( info->s = cpuintrf_temp_str(), "lo      :%08x", mipscpu.lo ); break;
-		case CPUINFO_STR_REGISTER + MIPS_R0:			sprintf( info->s = cpuintrf_temp_str(), "zero    :%08x", mipscpu.r[ 0 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_R1:			sprintf( info->s = cpuintrf_temp_str(), "at      :%08x", mipscpu.r[ 1 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_R2:			sprintf( info->s = cpuintrf_temp_str(), "v0      :%08x", mipscpu.r[ 2 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_R3:			sprintf( info->s = cpuintrf_temp_str(), "v1      :%08x", mipscpu.r[ 3 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_R4:			sprintf( info->s = cpuintrf_temp_str(), "a0      :%08x", mipscpu.r[ 4 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_R5:			sprintf( info->s = cpuintrf_temp_str(), "a1      :%08x", mipscpu.r[ 5 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_R6:			sprintf( info->s = cpuintrf_temp_str(), "a2      :%08x", mipscpu.r[ 6 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_R7:			sprintf( info->s = cpuintrf_temp_str(), "a3      :%08x", mipscpu.r[ 7 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_R8:			sprintf( info->s = cpuintrf_temp_str(), "t0      :%08x", mipscpu.r[ 8 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_R9:			sprintf( info->s = cpuintrf_temp_str(), "t1      :%08x", mipscpu.r[ 9 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_R10:			sprintf( info->s = cpuintrf_temp_str(), "t2      :%08x", mipscpu.r[ 10 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_R11:			sprintf( info->s = cpuintrf_temp_str(), "t3      :%08x", mipscpu.r[ 11 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_R12:			sprintf( info->s = cpuintrf_temp_str(), "t4      :%08x", mipscpu.r[ 12 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_R13:			sprintf( info->s = cpuintrf_temp_str(), "t5      :%08x", mipscpu.r[ 13 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_R14:			sprintf( info->s = cpuintrf_temp_str(), "t6      :%08x", mipscpu.r[ 14 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_R15:			sprintf( info->s = cpuintrf_temp_str(), "t7      :%08x", mipscpu.r[ 15 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_R16:			sprintf( info->s = cpuintrf_temp_str(), "s0      :%08x", mipscpu.r[ 16 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_R17:			sprintf( info->s = cpuintrf_temp_str(), "s1      :%08x", mipscpu.r[ 17 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_R18:			sprintf( info->s = cpuintrf_temp_str(), "s2      :%08x", mipscpu.r[ 18 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_R19:			sprintf( info->s = cpuintrf_temp_str(), "s3      :%08x", mipscpu.r[ 19 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_R20:			sprintf( info->s = cpuintrf_temp_str(), "s4      :%08x", mipscpu.r[ 20 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_R21:			sprintf( info->s = cpuintrf_temp_str(), "s5      :%08x", mipscpu.r[ 21 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_R22:			sprintf( info->s = cpuintrf_temp_str(), "s6      :%08x", mipscpu.r[ 22 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_R23:			sprintf( info->s = cpuintrf_temp_str(), "s7      :%08x", mipscpu.r[ 23 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_R24:			sprintf( info->s = cpuintrf_temp_str(), "t8      :%08x", mipscpu.r[ 24 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_R25:			sprintf( info->s = cpuintrf_temp_str(), "t9      :%08x", mipscpu.r[ 25 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_R26:			sprintf( info->s = cpuintrf_temp_str(), "k0      :%08x", mipscpu.r[ 26 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_R27:			sprintf( info->s = cpuintrf_temp_str(), "k1      :%08x", mipscpu.r[ 27 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_R28:			sprintf( info->s = cpuintrf_temp_str(), "gp      :%08x", mipscpu.r[ 28 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_R29:			sprintf( info->s = cpuintrf_temp_str(), "sp      :%08x", mipscpu.r[ 29 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_R30:			sprintf( info->s = cpuintrf_temp_str(), "fp      :%08x", mipscpu.r[ 30 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_R31:			sprintf( info->s = cpuintrf_temp_str(), "ra      :%08x", mipscpu.r[ 31 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP0R0:			sprintf( info->s = cpuintrf_temp_str(), "Index   :%08x", mipscpu.cp0r[ 0 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP0R1:			sprintf( info->s = cpuintrf_temp_str(), "Random  :%08x", mipscpu.cp0r[ 1 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP0R2:			sprintf( info->s = cpuintrf_temp_str(), "EntryLo :%08x", mipscpu.cp0r[ 2 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP0R3:			sprintf( info->s = cpuintrf_temp_str(), "cp0r3   :%08x", mipscpu.cp0r[ 3 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP0R4:			sprintf( info->s = cpuintrf_temp_str(), "Context :%08x", mipscpu.cp0r[ 4 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP0R5:			sprintf( info->s = cpuintrf_temp_str(), "cp0r5   :%08x", mipscpu.cp0r[ 5 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP0R6:			sprintf( info->s = cpuintrf_temp_str(), "cp0r6   :%08x", mipscpu.cp0r[ 6 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP0R7:			sprintf( info->s = cpuintrf_temp_str(), "cp0r7   :%08x", mipscpu.cp0r[ 7 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP0R8:			sprintf( info->s = cpuintrf_temp_str(), "BadVAddr:%08x", mipscpu.cp0r[ 8 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP0R9:			sprintf( info->s = cpuintrf_temp_str(), "cp0r9   :%08x", mipscpu.cp0r[ 9 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP0R10:		sprintf( info->s = cpuintrf_temp_str(), "EntryHi :%08x", mipscpu.cp0r[ 10 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP0R11:		sprintf( info->s = cpuintrf_temp_str(), "cp0r11  :%08x", mipscpu.cp0r[ 11 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP0R12:		sprintf( info->s = cpuintrf_temp_str(), "SR      :%08x", mipscpu.cp0r[ 12 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP0R13:		sprintf( info->s = cpuintrf_temp_str(), "Cause   :%08x", mipscpu.cp0r[ 13 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP0R14:		sprintf( info->s = cpuintrf_temp_str(), "EPC     :%08x", mipscpu.cp0r[ 14 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP0R15:		sprintf( info->s = cpuintrf_temp_str(), "PRId    :%08x", mipscpu.cp0r[ 15 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP0R16:		sprintf( info->s = cpuintrf_temp_str(), "cp0r16  :%08x", mipscpu.cp0r[ 16 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP0R17:		sprintf( info->s = cpuintrf_temp_str(), "cp0r17  :%08x", mipscpu.cp0r[ 17 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP0R18:		sprintf( info->s = cpuintrf_temp_str(), "cp0r18  :%08x", mipscpu.cp0r[ 18 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP0R19:		sprintf( info->s = cpuintrf_temp_str(), "cp0r19  :%08x", mipscpu.cp0r[ 19 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP0R20:		sprintf( info->s = cpuintrf_temp_str(), "cp0r20  :%08x", mipscpu.cp0r[ 20 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP0R21:		sprintf( info->s = cpuintrf_temp_str(), "cp0r21  :%08x", mipscpu.cp0r[ 21 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP0R22:		sprintf( info->s = cpuintrf_temp_str(), "cp0r22  :%08x", mipscpu.cp0r[ 22 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP0R23:		sprintf( info->s = cpuintrf_temp_str(), "cp0r23  :%08x", mipscpu.cp0r[ 23 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP0R24:		sprintf( info->s = cpuintrf_temp_str(), "cp0r24  :%08x", mipscpu.cp0r[ 24 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP0R25:		sprintf( info->s = cpuintrf_temp_str(), "cp0r25  :%08x", mipscpu.cp0r[ 25 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP0R26:		sprintf( info->s = cpuintrf_temp_str(), "cp0r26  :%08x", mipscpu.cp0r[ 26 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP0R27:		sprintf( info->s = cpuintrf_temp_str(), "cp0r27  :%08x", mipscpu.cp0r[ 27 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP0R28:		sprintf( info->s = cpuintrf_temp_str(), "cp0r28  :%08x", mipscpu.cp0r[ 28 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP0R29:		sprintf( info->s = cpuintrf_temp_str(), "cp0r29  :%08x", mipscpu.cp0r[ 29 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP0R30:		sprintf( info->s = cpuintrf_temp_str(), "cp0r30  :%08x", mipscpu.cp0r[ 30 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP0R31:		sprintf( info->s = cpuintrf_temp_str(), "cp0r31  :%08x", mipscpu.cp0r[ 31 ] ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2DR0:		sprintf( info->s = cpuintrf_temp_str(), "vxy0    :%08x", mipscpu.cp2dr[ 0 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2DR1:		sprintf( info->s = cpuintrf_temp_str(), "vz0     :%08x", mipscpu.cp2dr[ 1 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2DR2:		sprintf( info->s = cpuintrf_temp_str(), "vxy1    :%08x", mipscpu.cp2dr[ 2 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2DR3:		sprintf( info->s = cpuintrf_temp_str(), "vz1     :%08x", mipscpu.cp2dr[ 3 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2DR4:		sprintf( info->s = cpuintrf_temp_str(), "vxy2    :%08x", mipscpu.cp2dr[ 4 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2DR5:		sprintf( info->s = cpuintrf_temp_str(), "vz2     :%08x", mipscpu.cp2dr[ 5 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2DR6:		sprintf( info->s = cpuintrf_temp_str(), "rgb     :%08x", mipscpu.cp2dr[ 6 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2DR7:		sprintf( info->s = cpuintrf_temp_str(), "otz     :%08x", mipscpu.cp2dr[ 7 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2DR8:		sprintf( info->s = cpuintrf_temp_str(), "ir0     :%08x", mipscpu.cp2dr[ 8 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2DR9:		sprintf( info->s = cpuintrf_temp_str(), "ir1     :%08x", mipscpu.cp2dr[ 9 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2DR10:		sprintf( info->s = cpuintrf_temp_str(), "ir2     :%08x", mipscpu.cp2dr[ 10 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2DR11:		sprintf( info->s = cpuintrf_temp_str(), "ir3     :%08x", mipscpu.cp2dr[ 11 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2DR12:		sprintf( info->s = cpuintrf_temp_str(), "sxy0    :%08x", mipscpu.cp2dr[ 12 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2DR13:		sprintf( info->s = cpuintrf_temp_str(), "sxy1    :%08x", mipscpu.cp2dr[ 13 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2DR14:		sprintf( info->s = cpuintrf_temp_str(), "sxy2    :%08x", mipscpu.cp2dr[ 14 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2DR15:		sprintf( info->s = cpuintrf_temp_str(), "sxyp    :%08x", mipscpu.cp2dr[ 15 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2DR16:		sprintf( info->s = cpuintrf_temp_str(), "sz0     :%08x", mipscpu.cp2dr[ 16 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2DR17:		sprintf( info->s = cpuintrf_temp_str(), "sz1     :%08x", mipscpu.cp2dr[ 17 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2DR18:		sprintf( info->s = cpuintrf_temp_str(), "sz2     :%08x", mipscpu.cp2dr[ 18 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2DR19:		sprintf( info->s = cpuintrf_temp_str(), "sz3     :%08x", mipscpu.cp2dr[ 19 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2DR20:		sprintf( info->s = cpuintrf_temp_str(), "rgb0    :%08x", mipscpu.cp2dr[ 20 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2DR21:		sprintf( info->s = cpuintrf_temp_str(), "rgb1    :%08x", mipscpu.cp2dr[ 21 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2DR22:		sprintf( info->s = cpuintrf_temp_str(), "rgb2    :%08x", mipscpu.cp2dr[ 22 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2DR23:		sprintf( info->s = cpuintrf_temp_str(), "res1    :%08x", mipscpu.cp2dr[ 23 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2DR24:		sprintf( info->s = cpuintrf_temp_str(), "mac0    :%08x", mipscpu.cp2dr[ 24 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2DR25:		sprintf( info->s = cpuintrf_temp_str(), "mac1    :%08x", mipscpu.cp2dr[ 25 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2DR26:		sprintf( info->s = cpuintrf_temp_str(), "mac2    :%08x", mipscpu.cp2dr[ 26 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2DR27:		sprintf( info->s = cpuintrf_temp_str(), "mac3    :%08x", mipscpu.cp2dr[ 27 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2DR28:		sprintf( info->s = cpuintrf_temp_str(), "irgb    :%08x", mipscpu.cp2dr[ 28 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2DR29:		sprintf( info->s = cpuintrf_temp_str(), "orgb    :%08x", mipscpu.cp2dr[ 29 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2DR30:		sprintf( info->s = cpuintrf_temp_str(), "lzcs    :%08x", mipscpu.cp2dr[ 30 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2DR31:		sprintf( info->s = cpuintrf_temp_str(), "lzcr    :%08x", mipscpu.cp2dr[ 31 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2CR0:		sprintf( info->s = cpuintrf_temp_str(), "r11r12  :%08x", mipscpu.cp2cr[ 0 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2CR1:		sprintf( info->s = cpuintrf_temp_str(), "r13r21  :%08x", mipscpu.cp2cr[ 1 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2CR2:		sprintf( info->s = cpuintrf_temp_str(), "r22r23  :%08x", mipscpu.cp2cr[ 2 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2CR3:		sprintf( info->s = cpuintrf_temp_str(), "r31r32  :%08x", mipscpu.cp2cr[ 3 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2CR4:		sprintf( info->s = cpuintrf_temp_str(), "r33     :%08x", mipscpu.cp2cr[ 4 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2CR5:		sprintf( info->s = cpuintrf_temp_str(), "trx     :%08x", mipscpu.cp2cr[ 5 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2CR6:		sprintf( info->s = cpuintrf_temp_str(), "try     :%08x", mipscpu.cp2cr[ 6 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2CR7:		sprintf( info->s = cpuintrf_temp_str(), "trz     :%08x", mipscpu.cp2cr[ 7 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2CR8:		sprintf( info->s = cpuintrf_temp_str(), "l11l12  :%08x", mipscpu.cp2cr[ 8 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2CR9:		sprintf( info->s = cpuintrf_temp_str(), "l13l21  :%08x", mipscpu.cp2cr[ 9 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2CR10:		sprintf( info->s = cpuintrf_temp_str(), "l22l23  :%08x", mipscpu.cp2cr[ 10 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2CR11:		sprintf( info->s = cpuintrf_temp_str(), "l31l32  :%08x", mipscpu.cp2cr[ 11 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2CR12:		sprintf( info->s = cpuintrf_temp_str(), "l33     :%08x", mipscpu.cp2cr[ 12 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2CR13:		sprintf( info->s = cpuintrf_temp_str(), "rbk     :%08x", mipscpu.cp2cr[ 13 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2CR14:		sprintf( info->s = cpuintrf_temp_str(), "gbk     :%08x", mipscpu.cp2cr[ 14 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2CR15:		sprintf( info->s = cpuintrf_temp_str(), "bbk     :%08x", mipscpu.cp2cr[ 15 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2CR16:		sprintf( info->s = cpuintrf_temp_str(), "lr1lr2  :%08x", mipscpu.cp2cr[ 16 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2CR17:		sprintf( info->s = cpuintrf_temp_str(), "lr31g1  :%08x", mipscpu.cp2cr[ 17 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2CR18:		sprintf( info->s = cpuintrf_temp_str(), "lg2lg3  :%08x", mipscpu.cp2cr[ 18 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2CR19:		sprintf( info->s = cpuintrf_temp_str(), "lb1lb2  :%08x", mipscpu.cp2cr[ 19 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2CR20:		sprintf( info->s = cpuintrf_temp_str(), "lb3     :%08x", mipscpu.cp2cr[ 20 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2CR21:		sprintf( info->s = cpuintrf_temp_str(), "rfc     :%08x", mipscpu.cp2cr[ 21 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2CR22:		sprintf( info->s = cpuintrf_temp_str(), "gfc     :%08x", mipscpu.cp2cr[ 22 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2CR23:		sprintf( info->s = cpuintrf_temp_str(), "bfc     :%08x", mipscpu.cp2cr[ 23 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2CR24:		sprintf( info->s = cpuintrf_temp_str(), "ofx     :%08x", mipscpu.cp2cr[ 24 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2CR25:		sprintf( info->s = cpuintrf_temp_str(), "ofy     :%08x", mipscpu.cp2cr[ 25 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2CR26:		sprintf( info->s = cpuintrf_temp_str(), "h       :%08x", mipscpu.cp2cr[ 26 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2CR27:		sprintf( info->s = cpuintrf_temp_str(), "dqa     :%08x", mipscpu.cp2cr[ 27 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2CR28:		sprintf( info->s = cpuintrf_temp_str(), "dqb     :%08x", mipscpu.cp2cr[ 28 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2CR29:		sprintf( info->s = cpuintrf_temp_str(), "zsf3    :%08x", mipscpu.cp2cr[ 29 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2CR30:		sprintf( info->s = cpuintrf_temp_str(), "zsf4    :%08x", mipscpu.cp2cr[ 30 ].d ); break;
-		case CPUINFO_STR_REGISTER + MIPS_CP2CR31:		sprintf( info->s = cpuintrf_temp_str(), "flag    :%08x", mipscpu.cp2cr[ 31 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_PC:			sprintf( info->s = cpuintrf_temp_str(), "pc      :%08x", cpu->pc ); break;
+		case CPUINFO_STR_REGISTER + MIPS_DELAYV:		sprintf( info->s = cpuintrf_temp_str(), "delay   :%08x", cpu->delayv ); break;
+		case CPUINFO_STR_REGISTER + MIPS_DELAYR:		sprintf( info->s = cpuintrf_temp_str(), "delay %s:%02x", delayn[ cpu->delayr ], cpu->delayr ); break;
+		case CPUINFO_STR_REGISTER + MIPS_HI:			sprintf( info->s = cpuintrf_temp_str(), "hi      :%08x", cpu->hi ); break;
+		case CPUINFO_STR_REGISTER + MIPS_LO:			sprintf( info->s = cpuintrf_temp_str(), "lo      :%08x", cpu->lo ); break;
+		case CPUINFO_STR_REGISTER + MIPS_R0:			sprintf( info->s = cpuintrf_temp_str(), "zero    :%08x", cpu->r[ 0 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_R1:			sprintf( info->s = cpuintrf_temp_str(), "at      :%08x", cpu->r[ 1 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_R2:			sprintf( info->s = cpuintrf_temp_str(), "v0      :%08x", cpu->r[ 2 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_R3:			sprintf( info->s = cpuintrf_temp_str(), "v1      :%08x", cpu->r[ 3 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_R4:			sprintf( info->s = cpuintrf_temp_str(), "a0      :%08x", cpu->r[ 4 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_R5:			sprintf( info->s = cpuintrf_temp_str(), "a1      :%08x", cpu->r[ 5 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_R6:			sprintf( info->s = cpuintrf_temp_str(), "a2      :%08x", cpu->r[ 6 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_R7:			sprintf( info->s = cpuintrf_temp_str(), "a3      :%08x", cpu->r[ 7 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_R8:			sprintf( info->s = cpuintrf_temp_str(), "t0      :%08x", cpu->r[ 8 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_R9:			sprintf( info->s = cpuintrf_temp_str(), "t1      :%08x", cpu->r[ 9 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_R10:			sprintf( info->s = cpuintrf_temp_str(), "t2      :%08x", cpu->r[ 10 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_R11:			sprintf( info->s = cpuintrf_temp_str(), "t3      :%08x", cpu->r[ 11 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_R12:			sprintf( info->s = cpuintrf_temp_str(), "t4      :%08x", cpu->r[ 12 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_R13:			sprintf( info->s = cpuintrf_temp_str(), "t5      :%08x", cpu->r[ 13 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_R14:			sprintf( info->s = cpuintrf_temp_str(), "t6      :%08x", cpu->r[ 14 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_R15:			sprintf( info->s = cpuintrf_temp_str(), "t7      :%08x", cpu->r[ 15 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_R16:			sprintf( info->s = cpuintrf_temp_str(), "s0      :%08x", cpu->r[ 16 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_R17:			sprintf( info->s = cpuintrf_temp_str(), "s1      :%08x", cpu->r[ 17 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_R18:			sprintf( info->s = cpuintrf_temp_str(), "s2      :%08x", cpu->r[ 18 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_R19:			sprintf( info->s = cpuintrf_temp_str(), "s3      :%08x", cpu->r[ 19 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_R20:			sprintf( info->s = cpuintrf_temp_str(), "s4      :%08x", cpu->r[ 20 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_R21:			sprintf( info->s = cpuintrf_temp_str(), "s5      :%08x", cpu->r[ 21 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_R22:			sprintf( info->s = cpuintrf_temp_str(), "s6      :%08x", cpu->r[ 22 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_R23:			sprintf( info->s = cpuintrf_temp_str(), "s7      :%08x", cpu->r[ 23 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_R24:			sprintf( info->s = cpuintrf_temp_str(), "t8      :%08x", cpu->r[ 24 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_R25:			sprintf( info->s = cpuintrf_temp_str(), "t9      :%08x", cpu->r[ 25 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_R26:			sprintf( info->s = cpuintrf_temp_str(), "k0      :%08x", cpu->r[ 26 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_R27:			sprintf( info->s = cpuintrf_temp_str(), "k1      :%08x", cpu->r[ 27 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_R28:			sprintf( info->s = cpuintrf_temp_str(), "gp      :%08x", cpu->r[ 28 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_R29:			sprintf( info->s = cpuintrf_temp_str(), "sp      :%08x", cpu->r[ 29 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_R30:			sprintf( info->s = cpuintrf_temp_str(), "fp      :%08x", cpu->r[ 30 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_R31:			sprintf( info->s = cpuintrf_temp_str(), "ra      :%08x", cpu->r[ 31 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP0R0:			sprintf( info->s = cpuintrf_temp_str(), "Index   :%08x", cpu->cp0r[ 0 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP0R1:			sprintf( info->s = cpuintrf_temp_str(), "Random  :%08x", cpu->cp0r[ 1 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP0R2:			sprintf( info->s = cpuintrf_temp_str(), "EntryLo :%08x", cpu->cp0r[ 2 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP0R3:			sprintf( info->s = cpuintrf_temp_str(), "cp0r3   :%08x", cpu->cp0r[ 3 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP0R4:			sprintf( info->s = cpuintrf_temp_str(), "Context :%08x", cpu->cp0r[ 4 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP0R5:			sprintf( info->s = cpuintrf_temp_str(), "cp0r5   :%08x", cpu->cp0r[ 5 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP0R6:			sprintf( info->s = cpuintrf_temp_str(), "cp0r6   :%08x", cpu->cp0r[ 6 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP0R7:			sprintf( info->s = cpuintrf_temp_str(), "cp0r7   :%08x", cpu->cp0r[ 7 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP0R8:			sprintf( info->s = cpuintrf_temp_str(), "BadVAddr:%08x", cpu->cp0r[ 8 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP0R9:			sprintf( info->s = cpuintrf_temp_str(), "cp0r9   :%08x", cpu->cp0r[ 9 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP0R10:		sprintf( info->s = cpuintrf_temp_str(), "EntryHi :%08x", cpu->cp0r[ 10 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP0R11:		sprintf( info->s = cpuintrf_temp_str(), "cp0r11  :%08x", cpu->cp0r[ 11 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP0R12:		sprintf( info->s = cpuintrf_temp_str(), "SR      :%08x", cpu->cp0r[ 12 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP0R13:		sprintf( info->s = cpuintrf_temp_str(), "Cause   :%08x", cpu->cp0r[ 13 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP0R14:		sprintf( info->s = cpuintrf_temp_str(), "EPC     :%08x", cpu->cp0r[ 14 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP0R15:		sprintf( info->s = cpuintrf_temp_str(), "PRId    :%08x", cpu->cp0r[ 15 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP0R16:		sprintf( info->s = cpuintrf_temp_str(), "cp0r16  :%08x", cpu->cp0r[ 16 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP0R17:		sprintf( info->s = cpuintrf_temp_str(), "cp0r17  :%08x", cpu->cp0r[ 17 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP0R18:		sprintf( info->s = cpuintrf_temp_str(), "cp0r18  :%08x", cpu->cp0r[ 18 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP0R19:		sprintf( info->s = cpuintrf_temp_str(), "cp0r19  :%08x", cpu->cp0r[ 19 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP0R20:		sprintf( info->s = cpuintrf_temp_str(), "cp0r20  :%08x", cpu->cp0r[ 20 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP0R21:		sprintf( info->s = cpuintrf_temp_str(), "cp0r21  :%08x", cpu->cp0r[ 21 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP0R22:		sprintf( info->s = cpuintrf_temp_str(), "cp0r22  :%08x", cpu->cp0r[ 22 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP0R23:		sprintf( info->s = cpuintrf_temp_str(), "cp0r23  :%08x", cpu->cp0r[ 23 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP0R24:		sprintf( info->s = cpuintrf_temp_str(), "cp0r24  :%08x", cpu->cp0r[ 24 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP0R25:		sprintf( info->s = cpuintrf_temp_str(), "cp0r25  :%08x", cpu->cp0r[ 25 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP0R26:		sprintf( info->s = cpuintrf_temp_str(), "cp0r26  :%08x", cpu->cp0r[ 26 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP0R27:		sprintf( info->s = cpuintrf_temp_str(), "cp0r27  :%08x", cpu->cp0r[ 27 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP0R28:		sprintf( info->s = cpuintrf_temp_str(), "cp0r28  :%08x", cpu->cp0r[ 28 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP0R29:		sprintf( info->s = cpuintrf_temp_str(), "cp0r29  :%08x", cpu->cp0r[ 29 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP0R30:		sprintf( info->s = cpuintrf_temp_str(), "cp0r30  :%08x", cpu->cp0r[ 30 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP0R31:		sprintf( info->s = cpuintrf_temp_str(), "cp0r31  :%08x", cpu->cp0r[ 31 ] ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2DR0:		sprintf( info->s = cpuintrf_temp_str(), "vxy0    :%08x", cpu->cp2dr[ 0 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2DR1:		sprintf( info->s = cpuintrf_temp_str(), "vz0     :%08x", cpu->cp2dr[ 1 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2DR2:		sprintf( info->s = cpuintrf_temp_str(), "vxy1    :%08x", cpu->cp2dr[ 2 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2DR3:		sprintf( info->s = cpuintrf_temp_str(), "vz1     :%08x", cpu->cp2dr[ 3 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2DR4:		sprintf( info->s = cpuintrf_temp_str(), "vxy2    :%08x", cpu->cp2dr[ 4 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2DR5:		sprintf( info->s = cpuintrf_temp_str(), "vz2     :%08x", cpu->cp2dr[ 5 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2DR6:		sprintf( info->s = cpuintrf_temp_str(), "rgb     :%08x", cpu->cp2dr[ 6 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2DR7:		sprintf( info->s = cpuintrf_temp_str(), "otz     :%08x", cpu->cp2dr[ 7 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2DR8:		sprintf( info->s = cpuintrf_temp_str(), "ir0     :%08x", cpu->cp2dr[ 8 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2DR9:		sprintf( info->s = cpuintrf_temp_str(), "ir1     :%08x", cpu->cp2dr[ 9 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2DR10:		sprintf( info->s = cpuintrf_temp_str(), "ir2     :%08x", cpu->cp2dr[ 10 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2DR11:		sprintf( info->s = cpuintrf_temp_str(), "ir3     :%08x", cpu->cp2dr[ 11 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2DR12:		sprintf( info->s = cpuintrf_temp_str(), "sxy0    :%08x", cpu->cp2dr[ 12 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2DR13:		sprintf( info->s = cpuintrf_temp_str(), "sxy1    :%08x", cpu->cp2dr[ 13 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2DR14:		sprintf( info->s = cpuintrf_temp_str(), "sxy2    :%08x", cpu->cp2dr[ 14 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2DR15:		sprintf( info->s = cpuintrf_temp_str(), "sxyp    :%08x", cpu->cp2dr[ 15 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2DR16:		sprintf( info->s = cpuintrf_temp_str(), "sz0     :%08x", cpu->cp2dr[ 16 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2DR17:		sprintf( info->s = cpuintrf_temp_str(), "sz1     :%08x", cpu->cp2dr[ 17 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2DR18:		sprintf( info->s = cpuintrf_temp_str(), "sz2     :%08x", cpu->cp2dr[ 18 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2DR19:		sprintf( info->s = cpuintrf_temp_str(), "sz3     :%08x", cpu->cp2dr[ 19 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2DR20:		sprintf( info->s = cpuintrf_temp_str(), "rgb0    :%08x", cpu->cp2dr[ 20 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2DR21:		sprintf( info->s = cpuintrf_temp_str(), "rgb1    :%08x", cpu->cp2dr[ 21 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2DR22:		sprintf( info->s = cpuintrf_temp_str(), "rgb2    :%08x", cpu->cp2dr[ 22 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2DR23:		sprintf( info->s = cpuintrf_temp_str(), "res1    :%08x", cpu->cp2dr[ 23 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2DR24:		sprintf( info->s = cpuintrf_temp_str(), "mac0    :%08x", cpu->cp2dr[ 24 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2DR25:		sprintf( info->s = cpuintrf_temp_str(), "mac1    :%08x", cpu->cp2dr[ 25 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2DR26:		sprintf( info->s = cpuintrf_temp_str(), "mac2    :%08x", cpu->cp2dr[ 26 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2DR27:		sprintf( info->s = cpuintrf_temp_str(), "mac3    :%08x", cpu->cp2dr[ 27 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2DR28:		sprintf( info->s = cpuintrf_temp_str(), "irgb    :%08x", cpu->cp2dr[ 28 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2DR29:		sprintf( info->s = cpuintrf_temp_str(), "orgb    :%08x", cpu->cp2dr[ 29 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2DR30:		sprintf( info->s = cpuintrf_temp_str(), "lzcs    :%08x", cpu->cp2dr[ 30 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2DR31:		sprintf( info->s = cpuintrf_temp_str(), "lzcr    :%08x", cpu->cp2dr[ 31 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2CR0:		sprintf( info->s = cpuintrf_temp_str(), "r11r12  :%08x", cpu->cp2cr[ 0 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2CR1:		sprintf( info->s = cpuintrf_temp_str(), "r13r21  :%08x", cpu->cp2cr[ 1 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2CR2:		sprintf( info->s = cpuintrf_temp_str(), "r22r23  :%08x", cpu->cp2cr[ 2 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2CR3:		sprintf( info->s = cpuintrf_temp_str(), "r31r32  :%08x", cpu->cp2cr[ 3 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2CR4:		sprintf( info->s = cpuintrf_temp_str(), "r33     :%08x", cpu->cp2cr[ 4 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2CR5:		sprintf( info->s = cpuintrf_temp_str(), "trx     :%08x", cpu->cp2cr[ 5 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2CR6:		sprintf( info->s = cpuintrf_temp_str(), "try     :%08x", cpu->cp2cr[ 6 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2CR7:		sprintf( info->s = cpuintrf_temp_str(), "trz     :%08x", cpu->cp2cr[ 7 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2CR8:		sprintf( info->s = cpuintrf_temp_str(), "l11l12  :%08x", cpu->cp2cr[ 8 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2CR9:		sprintf( info->s = cpuintrf_temp_str(), "l13l21  :%08x", cpu->cp2cr[ 9 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2CR10:		sprintf( info->s = cpuintrf_temp_str(), "l22l23  :%08x", cpu->cp2cr[ 10 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2CR11:		sprintf( info->s = cpuintrf_temp_str(), "l31l32  :%08x", cpu->cp2cr[ 11 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2CR12:		sprintf( info->s = cpuintrf_temp_str(), "l33     :%08x", cpu->cp2cr[ 12 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2CR13:		sprintf( info->s = cpuintrf_temp_str(), "rbk     :%08x", cpu->cp2cr[ 13 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2CR14:		sprintf( info->s = cpuintrf_temp_str(), "gbk     :%08x", cpu->cp2cr[ 14 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2CR15:		sprintf( info->s = cpuintrf_temp_str(), "bbk     :%08x", cpu->cp2cr[ 15 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2CR16:		sprintf( info->s = cpuintrf_temp_str(), "lr1lr2  :%08x", cpu->cp2cr[ 16 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2CR17:		sprintf( info->s = cpuintrf_temp_str(), "lr31g1  :%08x", cpu->cp2cr[ 17 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2CR18:		sprintf( info->s = cpuintrf_temp_str(), "lg2lg3  :%08x", cpu->cp2cr[ 18 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2CR19:		sprintf( info->s = cpuintrf_temp_str(), "lb1lb2  :%08x", cpu->cp2cr[ 19 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2CR20:		sprintf( info->s = cpuintrf_temp_str(), "lb3     :%08x", cpu->cp2cr[ 20 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2CR21:		sprintf( info->s = cpuintrf_temp_str(), "rfc     :%08x", cpu->cp2cr[ 21 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2CR22:		sprintf( info->s = cpuintrf_temp_str(), "gfc     :%08x", cpu->cp2cr[ 22 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2CR23:		sprintf( info->s = cpuintrf_temp_str(), "bfc     :%08x", cpu->cp2cr[ 23 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2CR24:		sprintf( info->s = cpuintrf_temp_str(), "ofx     :%08x", cpu->cp2cr[ 24 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2CR25:		sprintf( info->s = cpuintrf_temp_str(), "ofy     :%08x", cpu->cp2cr[ 25 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2CR26:		sprintf( info->s = cpuintrf_temp_str(), "h       :%08x", cpu->cp2cr[ 26 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2CR27:		sprintf( info->s = cpuintrf_temp_str(), "dqa     :%08x", cpu->cp2cr[ 27 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2CR28:		sprintf( info->s = cpuintrf_temp_str(), "dqb     :%08x", cpu->cp2cr[ 28 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2CR29:		sprintf( info->s = cpuintrf_temp_str(), "zsf3    :%08x", cpu->cp2cr[ 29 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2CR30:		sprintf( info->s = cpuintrf_temp_str(), "zsf4    :%08x", cpu->cp2cr[ 30 ].d ); break;
+		case CPUINFO_STR_REGISTER + MIPS_CP2CR31:		sprintf( info->s = cpuintrf_temp_str(), "flag    :%08x", cpu->cp2cr[ 31 ].d ); break;
 #endif
 	}
 }
 
-uint32 mips_get_cause(void)
+uint32 mips_get_cause(mips_cpu_context *cpu)
 {
-	return mipscpu.cp0r[ CP0_CAUSE ];
+	return cpu->cp0r[ CP0_CAUSE ];
 }
 
-uint32 mips_get_status(void)
+uint32 mips_get_status(mips_cpu_context *cpu)
 {
-	return mipscpu.cp0r[ CP0_SR ];
+	return cpu->cp0r[ CP0_SR ];
 }
 
-void mips_set_status(uint32 status)
+void mips_set_status(mips_cpu_context *cpu, uint32 status)
 {
-	mipscpu.cp0r[ CP0_SR ] = status;
+	cpu->cp0r[ CP0_SR ] = status;
 }
 
-uint32 mips_get_ePC(void)
+uint32 mips_get_ePC(mips_cpu_context *cpu)
 {
-	return mipscpu.cp0r[ CP0_EPC ];
+	return cpu->cp0r[ CP0_EPC ];
 }
 
-int mips_get_icount(void)
+int mips_get_icount(mips_cpu_context *cpu)
 {
-	return mips_ICount;
+	return cpu->mips_ICount;
 }
 
-void mips_set_icount(int count)
+void mips_set_icount(mips_cpu_context *cpu, int count)
 {
-	mips_ICount = count;
+	cpu->mips_ICount = count;
 }
 
 
@@ -3144,7 +3125,7 @@ void mips_set_icount(int count)
  * CPU-specific set_info
  **************************************************************************/
 
-void psxcpu_get_info(UINT32 state, union cpuinfo *info)
+void psxcpu_get_info(mips_cpu_context *cpu, UINT32 state, union cpuinfo *info)
 {
 	switch (state)
 	{
@@ -3152,7 +3133,7 @@ void psxcpu_get_info(UINT32 state, union cpuinfo *info)
 //		case CPUINFO_STR_NAME:							strcpy(info->s = cpuintrf_temp_str(), "PSX CPU"); break;
 
 		default:
-			mips_get_info(state, info);
+			mips_get_info(cpu, state, info);
 			break;
 	}
 }

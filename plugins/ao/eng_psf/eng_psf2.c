@@ -82,15 +82,9 @@ typedef struct {
     uint32 initialPC, initialSP;
 
     uint8 *lib_raw_file;
+    mips_cpu_context *mips_cpu;
 } psf2_synth_t;
 
-extern void mips_init( void );
-extern void mips_reset( void *param );
-extern int mips_execute( int cycles );
-extern void mips_set_info(UINT32 state, union cpuinfo *info);
-extern void psx_hw_init(void);
-extern void ps2_hw_slice(void);
-extern void ps2_hw_frame(void);
 extern void setlength2(int32 stop, int32 fade);
 
 static uint32 secname(uint8 *start, uint32 strndx, uint32 shoff, uint32 shentsize, uint32 name)
@@ -127,7 +121,7 @@ static void do_iopmod(uint8 *start, uint32 offset)
 	#endif
 }
 
-uint32 psf2_load_elf(uint8 *start, uint32 len)
+uint32 psf2_load_elf(mips_cpu_context *cpu, uint8 *start, uint32 len)
 {
 	uint32 entry, phoff, shoff, phentsize, shentsize, phnum, shnum, shstrndx;
 	uint32 name, type, flags, addr, offset, size, shent;
@@ -441,7 +435,7 @@ static dump_files(int fs, uint8 *buf, uint32 buflen)
 #endif
 
 // find a file on our filesystems
-uint32 psf2_load_file(char *file, uint8 *buf, uint32 buflen)
+uint32 psf2_load_file(mips_cpu_context *cpu, char *file, uint8 *buf, uint32 buflen)
 {
 	int i;
 	uint32 flen;
@@ -532,13 +526,17 @@ void *psf2_start(uint8 *buffer, uint32 length)
 	free(buf);
 	#endif
 
+	s->mips_cpu = mips_alloc ();
+	mips_init(s->mips_cpu);
+	mips_reset(s->mips_cpu, NULL);
+
 	// load psf2.irx, which kicks everything off
 	buf = (uint8 *)malloc(512*1024);
-	irx_len = psf2_load_file("psf2.irx", buf, 512*1024);
+	irx_len = psf2_load_file(s->mips_cpu, "psf2.irx", buf, 512*1024);
 
 	if (irx_len != 0xffffffff)
 	{
-		s->initialPC = psf2_load_elf(buf, irx_len);
+		s->initialPC = psf2_load_elf(s->mips_cpu, buf, irx_len);
 		s->initialSP = 0x801ffff0;
 	}
 	free(buf);
@@ -557,26 +555,23 @@ void *psf2_start(uint8 *buffer, uint32 length)
 	}
 	setlength2(lengthMS, fadeMS);
 
-	mips_init();
-	mips_reset(NULL);
-
 	mipsinfo.i = s->initialPC;
-	mips_set_info(CPUINFO_INT_PC, &mipsinfo);
+	mips_set_info(s->mips_cpu, CPUINFO_INT_PC, &mipsinfo);
 
 	mipsinfo.i = s->initialSP;
-	mips_set_info(CPUINFO_INT_REGISTER + MIPS_R29, &mipsinfo);
-	mips_set_info(CPUINFO_INT_REGISTER + MIPS_R30, &mipsinfo);
+	mips_set_info(s->mips_cpu, CPUINFO_INT_REGISTER + MIPS_R29, &mipsinfo);
+	mips_set_info(s->mips_cpu, CPUINFO_INT_REGISTER + MIPS_R30, &mipsinfo);
 
 	// set RA
 	mipsinfo.i = 0x80000000;
-	mips_set_info(CPUINFO_INT_REGISTER + MIPS_R31, &mipsinfo);
+	mips_set_info(s->mips_cpu, CPUINFO_INT_REGISTER + MIPS_R31, &mipsinfo);
 
 	// set A0 & A1 to point to "aofile:/"
 	mipsinfo.i = 2;	// argc
-	mips_set_info(CPUINFO_INT_REGISTER + MIPS_R4, &mipsinfo);
+	mips_set_info(s->mips_cpu, CPUINFO_INT_REGISTER + MIPS_R4, &mipsinfo);
 
 	mipsinfo.i = 0x80000004;	// argv
-	mips_set_info(CPUINFO_INT_REGISTER + MIPS_R5, &mipsinfo);
+	mips_set_info(s->mips_cpu, CPUINFO_INT_REGISTER + MIPS_R5, &mipsinfo);
 	psx_ram[1] = LE32(0x80000008);
 	
 	buf = (uint8 *)&psx_ram[2];
@@ -587,7 +582,7 @@ void *psf2_start(uint8 *buffer, uint32 length)
 	// back up initial RAM image to quickly restart songs
 	memcpy(initial_ram, psx_ram, 2*1024*1024);
 
-	psx_hw_init();
+	psx_hw_init(s->mips_cpu);
 	SPU2init();
 	SPU2open(NULL);
 
@@ -602,6 +597,7 @@ void ps2_update(unsigned char *pSound, long lBytes)
 int32 psf2_gen(void *handle, int16 *buffer, uint32 samples)
 {	
 	int i;
+	psf2_synth_t *s = handle;
 
 //	memset (buffer, 0, samples * 4);
 //	return AO_SUCCESS;
@@ -611,10 +607,10 @@ int32 psf2_gen(void *handle, int16 *buffer, uint32 samples)
 	for (i = 0; i < samples; i++)
 	{
 		SPU2async(1);
-		ps2_hw_slice();
+		ps2_hw_slice(s->mips_cpu);
 	}
 
-	ps2_hw_frame();
+	ps2_hw_frame(s->mips_cpu);
 	
 	return AO_SUCCESS;
 }
@@ -646,31 +642,31 @@ int32 psf2_command(void *handle, int32 command, int32 parameter)
 
 			memcpy(psx_ram, initial_ram, 2*1024*1024);
 
-			mips_init();
-			mips_reset(NULL);
-			psx_hw_init();
+			mips_init(s->mips_cpu);
+			mips_reset(s->mips_cpu, NULL);
+			psx_hw_init(s->mips_cpu);
 			SPU2init();
 			SPU2open(NULL);
 
 			mipsinfo.i = s->initialPC;
-			mips_set_info(CPUINFO_INT_PC, &mipsinfo);
+			mips_set_info(s->mips_cpu, CPUINFO_INT_PC, &mipsinfo);
 
 			mipsinfo.i = s->initialSP;
-			mips_set_info(CPUINFO_INT_REGISTER + MIPS_R29, &mipsinfo);
-			mips_set_info(CPUINFO_INT_REGISTER + MIPS_R30, &mipsinfo);
+			mips_set_info(s->mips_cpu, CPUINFO_INT_REGISTER + MIPS_R29, &mipsinfo);
+			mips_set_info(s->mips_cpu, CPUINFO_INT_REGISTER + MIPS_R30, &mipsinfo);
 
 			// set RA
 			mipsinfo.i = 0x80000000;
-			mips_set_info(CPUINFO_INT_REGISTER + MIPS_R31, &mipsinfo);
+			mips_set_info(s->mips_cpu, CPUINFO_INT_REGISTER + MIPS_R31, &mipsinfo);
 
 			// set A0 & A1 to point to "aofile:/"
 			mipsinfo.i = 2;	// argc
-			mips_set_info(CPUINFO_INT_REGISTER + MIPS_R4, &mipsinfo);
+			mips_set_info(s->mips_cpu, CPUINFO_INT_REGISTER + MIPS_R4, &mipsinfo);
 
 			mipsinfo.i = 0x80000004;	// argv
-			mips_set_info(CPUINFO_INT_REGISTER + MIPS_R5, &mipsinfo);
+			mips_set_info(s->mips_cpu, CPUINFO_INT_REGISTER + MIPS_R5, &mipsinfo);
 
-			psx_hw_init();
+			psx_hw_init(s->mips_cpu);
 
 			lengthMS = psfTimeToMS(s->c->inf_length);
 			fadeMS = psfTimeToMS(s->c->inf_fade);

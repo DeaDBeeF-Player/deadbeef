@@ -225,6 +225,7 @@ int main(int argv, char *argc[])
 // stub for MAME stuff
 int change_pc(int foo)
 {
+    return 0;
 }
 
 int

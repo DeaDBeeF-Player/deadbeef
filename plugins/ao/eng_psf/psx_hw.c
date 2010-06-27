@@ -56,24 +56,8 @@
 #define DEBUG_UNK_RW	(0)		// debug unknown reads/writes
 #define DEBUG_THREADING (0)		// debug PS2 IOP threading
 
-extern void mips_get_info(UINT32 state, union cpuinfo *info);
-extern void mips_set_info(UINT32 state, union cpuinfo *info);
-extern int psxcpu_verbose;
-extern uint16 SPUreadRegister(uint32 reg);
-extern void SPUwriteRegister(uint32 reg, uint16 val);
-extern void SPUwriteDMAMem(uint32 usPSXMem,int iSize);
-extern void SPUreadDMAMem(uint32 usPSXMem,int iSize);
-extern void mips_shorten_frame(void);
-extern int mips_execute( int cycles );
-extern uint32 psf2_load_file(char *file, uint8 *buf, uint32 buflen);
-extern uint32 psf2_load_elf(uint8 *start, uint32 len);
-void psx_hw_runcounters(void);
-int mips_get_icount(void);
-void mips_set_icount(int count);
-
 extern int psf_refresh;
-
-static int skipyet = 0;
+extern int psxcpu_verbose;
 
 // SPU2
 extern void SPU2write(unsigned long reg, unsigned short val);
@@ -93,7 +77,7 @@ static uint8 *filedata[MAX_FILE_SLOTS];
 static uint32 filesize[MAX_FILE_SLOTS], filepos[MAX_FILE_SLOTS];
 uint32 psf2_get_loadaddr(void);
 void psf2_set_loadaddr(uint32 new);
-static void call_irq_routine(uint32 routine, uint32 parameter);
+static void call_irq_routine(mips_cpu_context *cpu, uint32 routine, uint32 parameter);
 static int intr_susp = 0;
 
 static uint64 sys_time;
@@ -245,7 +229,7 @@ static uint32 dma4_cb, dma7_cb, dma4_fval, dma4_flag, dma7_fval, dma7_flag;
 static uint32 irq9_cb, irq9_fval, irq9_flag;
 
 // take a snapshot of the CPU state for a thread
-static void FreezeThread(int32 iThread, int flag)
+static void FreezeThread(mips_cpu_context *cpu, int32 iThread, int flag)
 {
 	int i;
 	union cpuinfo mipsinfo;
@@ -256,16 +240,16 @@ static void FreezeThread(int32 iThread, int flag)
 
 	for (i = 0; i < 32; i++)
 	{
-		mips_get_info(CPUINFO_INT_REGISTER + MIPS_R0 + i, &mipsinfo);
+		mips_get_info(cpu, CPUINFO_INT_REGISTER + MIPS_R0 + i, &mipsinfo);
 		threads[iThread].save_regs[i] = mipsinfo.i;
 	}
-	mips_get_info(CPUINFO_INT_REGISTER + MIPS_HI, &mipsinfo);
+	mips_get_info(cpu, CPUINFO_INT_REGISTER + MIPS_HI, &mipsinfo);
 	threads[iThread].save_regs[32] = mipsinfo.i;
-	mips_get_info(CPUINFO_INT_REGISTER + MIPS_LO, &mipsinfo);
+	mips_get_info(cpu, CPUINFO_INT_REGISTER + MIPS_LO, &mipsinfo);
 	threads[iThread].save_regs[33] = mipsinfo.i;
-	mips_get_info(CPUINFO_INT_REGISTER + MIPS_DELAYV, &mipsinfo);
+	mips_get_info(cpu, CPUINFO_INT_REGISTER + MIPS_DELAYV, &mipsinfo);
 	threads[iThread].save_regs[35] = mipsinfo.i;
-	mips_get_info(CPUINFO_INT_REGISTER + MIPS_DELAYR, &mipsinfo);
+	mips_get_info(cpu, CPUINFO_INT_REGISTER + MIPS_DELAYR, &mipsinfo);
 	threads[iThread].save_regs[36] = mipsinfo.i;
 
 
@@ -273,11 +257,11 @@ static void FreezeThread(int32 iThread, int flag)
 	// to come back to or else the syscall will recurse	
 	if (flag)
 	{
-		mips_get_info(CPUINFO_INT_REGISTER + MIPS_R31, &mipsinfo);
+		mips_get_info(cpu, CPUINFO_INT_REGISTER + MIPS_R31, &mipsinfo);
 	}
 	else
 	{
-		mips_get_info(CPUINFO_INT_PC, &mipsinfo);
+		mips_get_info(cpu, CPUINFO_INT_PC, &mipsinfo);
 	}
 	threads[iThread].save_regs[34] = mipsinfo.i;
 
@@ -299,7 +283,7 @@ static void FreezeThread(int32 iThread, int flag)
 }
 
 // restore the CPU state from a thread's snapshot
-static void ThawThread(int32 iThread)
+static void ThawThread(mips_cpu_context *cpu, int32 iThread)
 {
 	int i;
 	union cpuinfo mipsinfo;
@@ -335,25 +319,25 @@ static void ThawThread(int32 iThread)
 	for (i = 0; i < 32; i++)
 	{
 		mipsinfo.i = threads[iThread].save_regs[i];
-		mips_set_info(CPUINFO_INT_REGISTER + MIPS_R0 + i, &mipsinfo);
+		mips_set_info(cpu, CPUINFO_INT_REGISTER + MIPS_R0 + i, &mipsinfo);
 	}
 
 	mipsinfo.i = threads[iThread].save_regs[32];
-	mips_set_info(CPUINFO_INT_REGISTER + MIPS_HI, &mipsinfo);
+	mips_set_info(cpu, CPUINFO_INT_REGISTER + MIPS_HI, &mipsinfo);
 	mipsinfo.i = threads[iThread].save_regs[33];
-	mips_set_info(CPUINFO_INT_REGISTER + MIPS_LO, &mipsinfo);
+	mips_set_info(cpu, CPUINFO_INT_REGISTER + MIPS_LO, &mipsinfo);
 	mipsinfo.i = threads[iThread].save_regs[34];
-	mips_set_info(CPUINFO_INT_PC, &mipsinfo);
+	mips_set_info(cpu, CPUINFO_INT_PC, &mipsinfo);
 	mipsinfo.i = threads[iThread].save_regs[35];
-	mips_set_info(CPUINFO_INT_REGISTER + MIPS_DELAYV, &mipsinfo);
+	mips_set_info(cpu, CPUINFO_INT_REGISTER + MIPS_DELAYV, &mipsinfo);
 	mipsinfo.i = threads[iThread].save_regs[36];
-	mips_set_info(CPUINFO_INT_REGISTER + MIPS_DELAYR, &mipsinfo);
+	mips_set_info(cpu, CPUINFO_INT_REGISTER + MIPS_DELAYR, &mipsinfo);
 
 	threads[iThread].iState = TS_RUNNING;
 }
 
 // find a new thread to run
-static void ps2_reschedule(void)
+static void ps2_reschedule(mips_cpu_context *cpu)
 {
 	int i, starti, iNextThread;
 
@@ -412,9 +396,9 @@ static void ps2_reschedule(void)
 
 		if (iCurThread != -1)
 		{
-			FreezeThread(iCurThread, 0);
+			FreezeThread(cpu, iCurThread, 0);
 		}
-		ThawThread(iNextThread);
+		ThawThread(cpu, iNextThread);
 		iCurThread = iNextThread;
 		threads[iCurThread].iState = TS_RUNNING;
 	}
@@ -434,19 +418,19 @@ static void ps2_reschedule(void)
 				}
 				#endif
 
-				mips_shorten_frame();	// kill the CPU
+				mips_shorten_frame(cpu);	// kill the CPU
 				iCurThread = -1;	// no threads are active
 			}
 		}
 		else
 		{
-			mips_shorten_frame();	// kill the CPU
+			mips_shorten_frame(cpu);	// kill the CPU
 			iCurThread = -1;	// no threads are active
 		}
 	}
 }
 
-static void psx_irq_update(void)
+static void psx_irq_update(mips_cpu_context *cpu)
 {
 	union cpuinfo mipsinfo;
 
@@ -454,21 +438,21 @@ static void psx_irq_update(void)
 	{	// assert the line
 		WAI = 0;
 		mipsinfo.i = ASSERT_LINE;
-		mips_set_info( CPUINFO_INT_INPUT_STATE + MIPS_IRQ0, &mipsinfo );
+		mips_set_info( cpu, CPUINFO_INT_INPUT_STATE + MIPS_IRQ0, &mipsinfo );
 	}
 	else
 	{
 		// clear the line
 		mipsinfo.i = CLEAR_LINE;
-		mips_set_info( CPUINFO_INT_INPUT_STATE + MIPS_IRQ0, &mipsinfo );
+		mips_set_info( cpu, CPUINFO_INT_INPUT_STATE + MIPS_IRQ0, &mipsinfo );
 	}
 }
 
-void psx_irq_set(uint32 irq)
+void psx_irq_set(mips_cpu_context *cpu, uint32 irq)
 {
 	irq_data |= irq;
 
-	psx_irq_update();
+	psx_irq_update(cpu);
 }
 
 static uint32 gpu_stat = 0;
@@ -656,7 +640,7 @@ static void ps2_dma7(uint32 madr, uint32 bcr, uint32 chcr)
 	dma7_delay = 80;
 }
 
-void psx_hw_write(offs_t offset, uint32 data, uint32 mem_mask)
+void psx_hw_write(mips_cpu_context *cpu, offs_t offset, uint32 data, uint32 mem_mask)
 {
 	union cpuinfo mipsinfo;
 
@@ -665,7 +649,7 @@ void psx_hw_write(offs_t offset, uint32 data, uint32 mem_mask)
 		offset &= 0x1fffff;
 //		if (offset < 0x10000) printf("Write %x to kernel @ %x\n", data, offset);
 
-		mips_get_info(CPUINFO_INT_PC, &mipsinfo);
+		mips_get_info(cpu, CPUINFO_INT_PC, &mipsinfo);
 
 		psx_ram[offset>>2] &= LE32(mem_mask);
 		psx_ram[offset>>2] |= LE32(data);
@@ -676,7 +660,7 @@ void psx_hw_write(offs_t offset, uint32 data, uint32 mem_mask)
 	{
 		offset &= 0x1fffff;
 //		if (offset < 0x10000) printf("Write %x to kernel @ %x\n", data, offset);
-		mips_get_info(CPUINFO_INT_PC, &mipsinfo);
+		mips_get_info(cpu, CPUINFO_INT_PC, &mipsinfo);
 		psx_ram[offset>>2] &= LE32(mem_mask);
 		psx_ram[offset>>2] |= LE32(data);
 		return;
@@ -788,14 +772,14 @@ void psx_hw_write(offs_t offset, uint32 data, uint32 mem_mask)
 	else if (offset == 0x1f801070)
 	{
 		irq_data = (irq_data & mem_mask) | (irq_data & irq_mask & data);
-		psx_irq_update();
+		psx_irq_update(cpu);
 		return;
 	}
 	else if (offset == 0x1f801074)
 	{
 		irq_mask &= mem_mask;
 		irq_mask |= data;
-		psx_irq_update();
+		psx_irq_update(cpu);
 		return;
 	}
 
@@ -855,12 +839,12 @@ void psx_hw_write(offs_t offset, uint32 data, uint32 mem_mask)
 }
 
 // called per sample, 1/44100th of a second (768 clock cycles)
-void psx_hw_slice(void)
+void psx_hw_slice(mips_cpu_context *cpu)
 {
-	psx_hw_runcounters();
+	psx_hw_runcounters(cpu);
 
 	if (!WAI)
-		mips_execute(768/CLOCK_DIV);
+		mips_execute(cpu, 768/CLOCK_DIV);
 
 	if (dma_timer)
 	{
@@ -868,31 +852,31 @@ void psx_hw_slice(void)
 		if (dma_timer == 0)
 		{
 			dma_icr |= (1 << (24+4));
-			psx_irq_set(0x0008);
+			psx_irq_set(cpu, 0x0008);
 		}
 	}
 }
 
-void ps2_hw_slice(void)
+void ps2_hw_slice(mips_cpu_context *cpu)
 {
 	int i = 0;
 
 	timerexp = 0;
-	psx_hw_runcounters();
+	psx_hw_runcounters(cpu);
 
 	if (iCurThread != -1)
 	{
-		mips_execute(836/CLOCK_DIV);
+		mips_execute(cpu, 836/CLOCK_DIV);
 	}
 	else	// no thread, don't run CPU, just update counters
 	{
 		if (timerexp)
 		{
-			ps2_reschedule();
+			ps2_reschedule(cpu);
 
 			if (iCurThread != -1)
 			{
-				mips_execute((836/CLOCK_DIV)-i);
+				mips_execute(cpu, (836/CLOCK_DIV)-i);
 				i = (836/CLOCK_DIV);
 			}
 		}
@@ -901,7 +885,7 @@ void ps2_hw_slice(void)
 
 static int fcnt = 0;
 
-void psx_hw_frame(void)
+void psx_hw_frame(mips_cpu_context *cpu)
 {
 	if (psf_refresh == 50)
 	{
@@ -909,7 +893,7 @@ void psx_hw_frame(void)
 
 		if (fcnt < 6)
 		{
-			psx_irq_set(1);
+			psx_irq_set(cpu, 1);
 		}
 		else
 		{
@@ -918,13 +902,13 @@ void psx_hw_frame(void)
 	}
 	else	// NTSC
 	{
-		psx_irq_set(1);
+		psx_irq_set(cpu, 1);
 	}
 }
 
-void ps2_hw_frame(void)
+void ps2_hw_frame(mips_cpu_context *cpu)
 {
-	ps2_reschedule();
+	ps2_reschedule(cpu);
 }
 
 // BIOS HLE
@@ -949,7 +933,7 @@ static uint32 irq_regs[37];
 
 static int irq_mutex = 0;
 
-static void call_irq_routine(uint32 routine, uint32 parameter)
+static void call_irq_routine(mips_cpu_context *cpu, uint32 routine, uint32 parameter)
 {
 	int j, oldICount;
 	union cpuinfo mipsinfo;
@@ -967,65 +951,65 @@ static void call_irq_routine(uint32 routine, uint32 parameter)
 	// save regs for IRQ
 	for (j = 0; j < 32; j++)
 	{
-		mips_get_info(CPUINFO_INT_REGISTER + MIPS_R0 + j, &mipsinfo);
+		mips_get_info(cpu, CPUINFO_INT_REGISTER + MIPS_R0 + j, &mipsinfo);
 		irq_regs[j] = mipsinfo.i;
 	}
-	mips_get_info(CPUINFO_INT_REGISTER + MIPS_HI, &mipsinfo);
+	mips_get_info(cpu, CPUINFO_INT_REGISTER + MIPS_HI, &mipsinfo);
 	irq_regs[32] = mipsinfo.i;
-	mips_get_info(CPUINFO_INT_REGISTER + MIPS_LO, &mipsinfo);
+	mips_get_info(cpu, CPUINFO_INT_REGISTER + MIPS_LO, &mipsinfo);
 	irq_regs[33] = mipsinfo.i;
-	mips_get_info(CPUINFO_INT_PC, &mipsinfo);
+	mips_get_info(cpu, CPUINFO_INT_PC, &mipsinfo);
 	irq_regs[34] = mipsinfo.i;
-	mips_get_info(CPUINFO_INT_REGISTER + MIPS_DELAYV, &mipsinfo);
+	mips_get_info(cpu, CPUINFO_INT_REGISTER + MIPS_DELAYV, &mipsinfo);
 	irq_regs[35] = mipsinfo.i;
-	mips_get_info(CPUINFO_INT_REGISTER + MIPS_DELAYR, &mipsinfo);
+	mips_get_info(cpu, CPUINFO_INT_REGISTER + MIPS_DELAYR, &mipsinfo);
 	irq_regs[36] = mipsinfo.i;
 
 	// PC = timer handler routine
 	mipsinfo.i = routine; 
-	mips_set_info(CPUINFO_INT_PC, &mipsinfo);
+	mips_set_info(cpu, CPUINFO_INT_PC, &mipsinfo);
 
 	// parameter in a0
 	mipsinfo.i = parameter;
-	mips_set_info(CPUINFO_INT_REGISTER + MIPS_R4, &mipsinfo);
+	mips_set_info(cpu, CPUINFO_INT_REGISTER + MIPS_R4, &mipsinfo);
 
 	// RA = a trap address we can set
 	mipsinfo.i = 0x80001000;
-	mips_set_info(CPUINFO_INT_REGISTER + MIPS_R31, &mipsinfo);
+	mips_set_info(cpu, CPUINFO_INT_REGISTER + MIPS_R31, &mipsinfo);
 
 	// make sure we're set
 	psx_ram[0x1000/4] = LE32(FUNCT_HLECALL);
 
 	softcall_target = 0;
-	oldICount = mips_get_icount();
+	oldICount = mips_get_icount(cpu);
 	while (!softcall_target)
 	{
-		mips_execute(10);
+		mips_execute(cpu, 10);
 	}
-	mips_set_icount(oldICount);
+	mips_set_icount(cpu,oldICount);
 
 	// restore IRQ regs
 	for (j = 0; j < 32; j++)
 	{
 		mipsinfo.i = irq_regs[j];
-		mips_set_info(CPUINFO_INT_REGISTER + MIPS_R0 + j, &mipsinfo);
+		mips_set_info(cpu, CPUINFO_INT_REGISTER + MIPS_R0 + j, &mipsinfo);
 	}
 
 	mipsinfo.i = irq_regs[32];
-	mips_set_info(CPUINFO_INT_REGISTER + MIPS_HI, &mipsinfo);
+	mips_set_info(cpu, CPUINFO_INT_REGISTER + MIPS_HI, &mipsinfo);
 	mipsinfo.i = irq_regs[33];
-	mips_set_info(CPUINFO_INT_REGISTER + MIPS_LO, &mipsinfo);
+	mips_set_info(cpu, CPUINFO_INT_REGISTER + MIPS_LO, &mipsinfo);
 	mipsinfo.i = irq_regs[34];
-	mips_set_info(CPUINFO_INT_PC, &mipsinfo);
+	mips_set_info(cpu, CPUINFO_INT_PC, &mipsinfo);
 	mipsinfo.i = irq_regs[35];
-	mips_set_info(CPUINFO_INT_REGISTER + MIPS_DELAYV, &mipsinfo);
+	mips_set_info(cpu, CPUINFO_INT_REGISTER + MIPS_DELAYV, &mipsinfo);
 	mipsinfo.i = irq_regs[36];
-	mips_set_info(CPUINFO_INT_REGISTER + MIPS_DELAYR, &mipsinfo);
+	mips_set_info(cpu, CPUINFO_INT_REGISTER + MIPS_DELAYR, &mipsinfo);
 
 	irq_mutex = 0;
 }
 
-void psx_bios_exception(uint32 pc)
+void psx_bios_exception(mips_cpu_context *cpu, uint32 pc)
 {
 	uint32 a0, status;
 	union cpuinfo mipsinfo;
@@ -1034,7 +1018,7 @@ void psx_bios_exception(uint32 pc)
 //	printf("bios_exception: cause %x\n", mips_get_cause() & 0x3c);
 
 	// get a0
-	mips_get_info(CPUINFO_INT_REGISTER + MIPS_R4, &mipsinfo);
+	mips_get_info(cpu, CPUINFO_INT_REGISTER + MIPS_R4, &mipsinfo);
 	a0 = mipsinfo.i;
 
 	switch (mips_get_cause() & 0x3c)
@@ -1044,12 +1028,12 @@ void psx_bios_exception(uint32 pc)
 			// save all regs
 			for (i = 0; i < 32; i++)
 			{
-				mips_get_info(CPUINFO_INT_REGISTER + MIPS_R0 + i, &mipsinfo);
+				mips_get_info(cpu,CPUINFO_INT_REGISTER + MIPS_R0 + i, &mipsinfo);
 				irq_regs[i] = mipsinfo.i;
 			}
-			mips_get_info(CPUINFO_INT_REGISTER + MIPS_HI, &mipsinfo);
+			mips_get_info(cpu, CPUINFO_INT_REGISTER + MIPS_HI, &mipsinfo);
 			irq_regs[32] = mipsinfo.i;
-			mips_get_info(CPUINFO_INT_REGISTER + MIPS_LO, &mipsinfo);
+			mips_get_info(cpu, CPUINFO_INT_REGISTER + MIPS_LO, &mipsinfo);
 			irq_regs[33] = mipsinfo.i;
 
 			// check BIOS-driven interrupts
@@ -1061,20 +1045,20 @@ void psx_bios_exception(uint32 pc)
 					mipsinfo.i = LE32(CounterEvent[3][1].fhandler);
 //	       				printf("Cause = %x, ePC = %x\n", mips_get_cause(), mips_get_ePC());
 //	       				printf("VBL running handler @ %x\n", mipsinfo.i);
-					mips_set_info(CPUINFO_INT_PC, &mipsinfo);
+					mips_set_info(cpu,CPUINFO_INT_PC, &mipsinfo);
 					mipsinfo.i = 0x80001000;
-					mips_set_info(CPUINFO_INT_REGISTER + MIPS_R31, &mipsinfo);
+					mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R31, &mipsinfo);
 				
 					// make sure we're set
 					psx_ram[0x1000/4] = LE32(FUNCT_HLECALL);
 		
 					softcall_target = 0;
-					oldICount = mips_get_icount();
+					oldICount = mips_get_icount(cpu);
 					while (!softcall_target)
 					{
-						mips_execute(10);
+						mips_execute(cpu, 10);
 					}
-					mips_set_icount(oldICount);
+					mips_set_icount(cpu, oldICount);
 
 //	       				printf("Exiting softcall handler\n");
 
@@ -1093,20 +1077,20 @@ void psx_bios_exception(uint32 pc)
 							mipsinfo.i = LE32(CounterEvent[i][1].fhandler);
 //							printf("Cause = %x, ePC = %x\n", mips_get_cause(), mips_get_ePC());
 //							printf("Counter %d running handler @ %x\n", i, mipsinfo.i);
-							mips_set_info(CPUINFO_INT_PC, &mipsinfo);
+							mips_set_info(cpu,CPUINFO_INT_PC, &mipsinfo);
 							mipsinfo.i = 0x80001000;
-							mips_set_info(CPUINFO_INT_REGISTER + MIPS_R31, &mipsinfo);
+							mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R31, &mipsinfo);
 							
 							// make sure we're set
 							psx_ram[0x1000/4] = LE32(FUNCT_HLECALL);
 					
 							softcall_target = 0;
-							oldICount = mips_get_icount();
+							oldICount = mips_get_icount(cpu);
 							while (!softcall_target)
 							{
-								mips_execute(10);
+								mips_execute(cpu, 10);
 							}
-							mips_set_icount(oldICount);
+							mips_set_icount(cpu,oldICount);
 
 //							printf("Exiting softcall handler\n");
 							irq_data &= ~(1 << (i+4));
@@ -1121,7 +1105,7 @@ void psx_bios_exception(uint32 pc)
 		 	
 			if (entry_int)
 			{
-				psx_hw_write(0x1f801070, 0xffffffff, 0);
+				psx_hw_write(cpu, 0x1f801070, 0xffffffff, 0);
 
 				a0 = entry_int;
 
@@ -1129,47 +1113,47 @@ void psx_bios_exception(uint32 pc)
 
 				// RA (and PC)
 				mipsinfo.i = LE32(psx_ram[((a0&0x1fffff)+0)/4]);
-				mips_set_info(CPUINFO_INT_REGISTER + MIPS_R31, &mipsinfo);
-				mips_set_info(CPUINFO_INT_PC, &mipsinfo);
+				mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R31, &mipsinfo);
+				mips_set_info(cpu,CPUINFO_INT_PC, &mipsinfo);
 				// SP
 				mipsinfo.i = LE32(psx_ram[((a0&0x1fffff)+4)/4]);
-				mips_set_info(CPUINFO_INT_REGISTER + MIPS_R29, &mipsinfo);
+				mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R29, &mipsinfo);
 				// FP
 				mipsinfo.i = LE32(psx_ram[((a0&0x1fffff)+8)/4]);
-				mips_set_info(CPUINFO_INT_REGISTER + MIPS_R30, &mipsinfo);
+				mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R30, &mipsinfo);
 
 				// S0-S7 are next
 				for (i = 0; i < 8; i++)
 				{
 					mipsinfo.i = LE32(psx_ram[((a0&0x1fffff)+12+(i*4))/4]);
-					mips_set_info(CPUINFO_INT_REGISTER + MIPS_R16 + i, &mipsinfo);
+					mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R16 + i, &mipsinfo);
 				}
 
 				// GP
 				mipsinfo.i = LE32(psx_ram[((a0&0x1fffff)+44)/4]);
-				mips_set_info(CPUINFO_INT_REGISTER + MIPS_R28, &mipsinfo);
+				mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R28, &mipsinfo);
 
 				// v0 = 1
 				mipsinfo.i = 1;
-				mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+				mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 			}
 			else
 			{
-				psx_hw_write(0x1f801070, 0, 0xffff0000);
+				psx_hw_write(cpu, 0x1f801070, 0, 0xffff0000);
 
 				// note: the entry_int won't be bailing us out here, so do it ourselves
 				for (i = 0; i < 32; i++)
 				{
 					mipsinfo.i = irq_regs[i];
-					mips_set_info(CPUINFO_INT_REGISTER + MIPS_R0 + i, &mipsinfo);
+					mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R0 + i, &mipsinfo);
 				}
 
 				mipsinfo.i = irq_regs[32];
-				mips_set_info(CPUINFO_INT_REGISTER + MIPS_HI, &mipsinfo);
+				mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_HI, &mipsinfo);
 				mipsinfo.i = irq_regs[33];
-				mips_set_info(CPUINFO_INT_REGISTER + MIPS_LO, &mipsinfo);
+				mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_LO, &mipsinfo);
 				mipsinfo.i = mips_get_ePC();
-				mips_set_info(CPUINFO_INT_PC, &mipsinfo);
+				mips_set_info(cpu,CPUINFO_INT_PC, &mipsinfo);
 
 				status = mips_get_status();
 				status = (status & 0xfffffff0) | ((status & 0x3c)>>2);
@@ -1206,7 +1190,7 @@ void psx_bios_exception(uint32 pc)
 
 			// PC = ePC + 4
 			mipsinfo.i = mips_get_ePC() + 4;
-			mips_set_info(CPUINFO_INT_PC, &mipsinfo);
+			mips_set_info(cpu,CPUINFO_INT_PC, &mipsinfo);
 
 			// and update the status accordingly
 			status = (status & 0xfffffff0) | ((status & 0x3c)>>2);
@@ -1264,7 +1248,7 @@ static uint32 calc_spec(uint32 a1)
 	return spec;
 }
 
-void psx_hw_init(void)
+void psx_hw_init(mips_cpu_context *cpu)
 {
 	timerexp = 0;
 
@@ -1323,7 +1307,7 @@ void psx_hw_init(void)
 	root_cnts[2].sysclock = 0;
 }
 
-void psx_bios_hle(uint32 pc)
+void psx_bios_hle(mips_cpu_context *cpu, uint32 pc)
 {
 	uint32 subcall, status;
 	union cpuinfo mipsinfo;
@@ -1341,7 +1325,7 @@ void psx_bios_hle(uint32 pc)
 
 	if (pc == 0xbfc00180 || pc == 0xbfc00184)	// exception, not BIOS call
 	{
-		psx_bios_exception(pc);
+		psx_bios_exception(cpu, pc);
 		return;
 	}
 
@@ -1352,18 +1336,18 @@ void psx_bios_hle(uint32 pc)
 		return;
 	}
 
-	mips_get_info(CPUINFO_INT_REGISTER + MIPS_R9, &mipsinfo);
+	mips_get_info(cpu, CPUINFO_INT_REGISTER + MIPS_R9, &mipsinfo);
 
 	subcall = mipsinfo.i & 0xff;
 
 	// most calls have a0/a1 as parameters, so prefetch them
-	mips_get_info(CPUINFO_INT_REGISTER + MIPS_R4, &mipsinfo);
+	mips_get_info(cpu, CPUINFO_INT_REGISTER + MIPS_R4, &mipsinfo);
 	a0 = mipsinfo.i;
-	mips_get_info(CPUINFO_INT_REGISTER + MIPS_R5, &mipsinfo);
+	mips_get_info(cpu, CPUINFO_INT_REGISTER + MIPS_R5, &mipsinfo);
 	a1 = mipsinfo.i;
-	mips_get_info(CPUINFO_INT_REGISTER + MIPS_R6, &mipsinfo);
+	mips_get_info(cpu, CPUINFO_INT_REGISTER + MIPS_R6, &mipsinfo);
 	a2 = mipsinfo.i;
-	mips_get_info(CPUINFO_INT_REGISTER + MIPS_R7, &mipsinfo);
+	mips_get_info(cpu, CPUINFO_INT_REGISTER + MIPS_R7, &mipsinfo);
 	a3 = mipsinfo.i;
 
 //	mips_get_info(CPUINFO_INT_REGISTER + MIPS_R31, &mipsinfo);
@@ -1376,32 +1360,32 @@ void psx_bios_hle(uint32 pc)
 			{
 				case 0x13:	// setjmp
 					// RA
-					mips_get_info(CPUINFO_INT_REGISTER + MIPS_R31, &mipsinfo);
+					mips_get_info(cpu, CPUINFO_INT_REGISTER + MIPS_R31, &mipsinfo);
 					psx_ram[((a0&0x1fffff)+0)/4] = LE32(mipsinfo.i);
 					#if DEBUG_HLE_BIOS
 					printf("HLEBIOS: setjmp(%08x) => PC %08x\n", a0, mipsinfo.i);
 					#endif
 					// SP
-					mips_get_info(CPUINFO_INT_REGISTER + MIPS_R29, &mipsinfo);
+					mips_get_info(cpu, CPUINFO_INT_REGISTER + MIPS_R29, &mipsinfo);
 					psx_ram[((a0&0x1fffff)+4)/4] = LE32(mipsinfo.i);
 					// FP
-					mips_get_info(CPUINFO_INT_REGISTER + MIPS_R30, &mipsinfo);
+					mips_get_info(cpu, CPUINFO_INT_REGISTER + MIPS_R30, &mipsinfo);
 					psx_ram[((a0&0x1fffff)+8)/4] = LE32(mipsinfo.i);
 
 					// S0-S7 are next
 					for (i = 0; i < 8; i++)
 					{
-						mips_get_info(CPUINFO_INT_REGISTER + MIPS_R16 + i, &mipsinfo);
+						mips_get_info(cpu, CPUINFO_INT_REGISTER + MIPS_R16 + i, &mipsinfo);
 						psx_ram[((a0&0x1fffff)+12+(i*4))/4] = LE32(mipsinfo.i);
 					}
 
 					// GP
-					mips_get_info(CPUINFO_INT_REGISTER + MIPS_R28, &mipsinfo);
+					mips_get_info(cpu, CPUINFO_INT_REGISTER + MIPS_R28, &mipsinfo);
 					psx_ram[((a0&0x1fffff)+44)/4] = LE32(mipsinfo.i);
 
 					// v0 = 0
 					mipsinfo.i = 0;
-					mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+					mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 					break;
 
 				case 0x18:	// strncmp
@@ -1419,7 +1403,7 @@ void psx_bios_hle(uint32 pc)
 
 						// v0 = result
 						mipsinfo.i = strncmp((char *)dst, (char *)src, a2);
-						mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+						mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 					}
 					break;
 
@@ -1445,7 +1429,7 @@ void psx_bios_hle(uint32 pc)
 
 						// v0 = a0
 						mipsinfo.i = a0;
-						mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+						mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 					}
 					break;
 
@@ -1486,7 +1470,7 @@ void psx_bios_hle(uint32 pc)
 
 						// v0 = a0
 						mipsinfo.i = a0;
-						mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+						mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 					}
 					break;
 				
@@ -1510,7 +1494,7 @@ void psx_bios_hle(uint32 pc)
 
 						// v0 = a0
 						mipsinfo.i = a0;
-						mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+						mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 					}
 					break;
 
@@ -1521,7 +1505,7 @@ void psx_bios_hle(uint32 pc)
 
 					// v0 = result
 					mipsinfo.i = 1 + (int)(32767.0*rand()/(RAND_MAX+1.0));
-					mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+					mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 					break;
 
 				case 0x30:	// srand
@@ -1564,7 +1548,7 @@ void psx_bios_hle(uint32 pc)
 						#if DEBUG_HLE_BIOS
 						printf("== %08x\n", mipsinfo.i);
 						#endif
-						mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+						mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 					}
 					break;
 				
@@ -1669,7 +1653,7 @@ void psx_bios_hle(uint32 pc)
 
 						// v0 = ev | spec<<8;
 						mipsinfo.i = ev | (spec<<8);
-						mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+						mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 					}
 					break;
 
@@ -1680,7 +1664,7 @@ void psx_bios_hle(uint32 pc)
 						ev = a0 & 0xff;
 						spec = (a0 >> 8) & 0xff;
 
-						mips_get_info(CPUINFO_INT_REGISTER + MIPS_R31, &mipsinfo);
+						mips_get_info(cpu, CPUINFO_INT_REGISTER + MIPS_R31, &mipsinfo);
 						#if DEBUG_HLE_BIOS
 						printf("HLEBIOS: WaitEvent(ev %d spec %d) PC=%x\n", ev, spec, mipsinfo.i);
 						#endif
@@ -1689,10 +1673,10 @@ void psx_bios_hle(uint32 pc)
 
 						// v0 = 1
 						mipsinfo.i = 1;
-						mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+						mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 
 						WAI = 1;
-						mips_shorten_frame();
+						mips_shorten_frame(cpu);
 					}
 					break;
 
@@ -1720,11 +1704,11 @@ void psx_bios_hle(uint32 pc)
 
 						WAI = 1;
 
-						mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+						mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 
 						// it looks like this sets v1 to something non-zero too
 						// (code in Crash 2 & 3 actually relies on that behavior)
-						mips_set_info(CPUINFO_INT_REGISTER + MIPS_R3, &mipsinfo);
+						mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R3, &mipsinfo);
 					}
 					break;
 
@@ -1743,7 +1727,7 @@ void psx_bios_hle(uint32 pc)
 
 						// v0 = 1
 						mipsinfo.i = 1;
-						mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+						mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 					}
 					break;
 
@@ -1762,7 +1746,7 @@ void psx_bios_hle(uint32 pc)
 
 						// v0 = 1
 						mipsinfo.i = 1;
-						mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+						mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 					}
 					break;
 
@@ -1770,17 +1754,17 @@ void psx_bios_hle(uint32 pc)
 					for (i = 0; i < 32; i++)
 					{
 						mipsinfo.i = irq_regs[i];
-						mips_set_info(CPUINFO_INT_REGISTER + MIPS_R0 + i, &mipsinfo);
+						mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R0 + i, &mipsinfo);
 					}
 
 					mipsinfo.i = irq_regs[32];
-					mips_set_info(CPUINFO_INT_REGISTER + MIPS_HI, &mipsinfo);
+					mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_HI, &mipsinfo);
 					mipsinfo.i = irq_regs[33];
-					mips_set_info(CPUINFO_INT_REGISTER + MIPS_LO, &mipsinfo);
+					mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_LO, &mipsinfo);
 					mipsinfo.i = mips_get_ePC();
 //					printf("ReturnFromException: IRQ state %x\n", irq_data & irq_mask);
 //					printf("HLEBIOS: ReturnFromException, cause = %08x, PC = %08x\n", mips_get_cause(), mipsinfo.i);
-					mips_set_info(CPUINFO_INT_PC, &mipsinfo);
+					mips_set_info(cpu,CPUINFO_INT_PC, &mipsinfo);
 
 					status = mips_get_status();
 					status = (status & 0xfffffff0) | ((status & 0x3c)>>2);
@@ -1823,7 +1807,7 @@ void psx_bios_hle(uint32 pc)
 
 					// v0 = (a0*4)+0x8600
 					mipsinfo.i = LE32(psx_ram[((a0<<2) + 0x8600)/4]);
-					mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+					mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 
 					// (a0*4)+0x8600 = a1;
 					psx_ram[((a0<<2) + 0x8600)/4] = LE32(a1);
@@ -1839,13 +1823,13 @@ void psx_bios_hle(uint32 pc)
 	}
 
 	// PC = RA
-	mips_get_info(CPUINFO_INT_REGISTER + MIPS_R31, &mipsinfo);
-	mips_set_info(CPUINFO_INT_PC, &mipsinfo);
+	mips_get_info(cpu, CPUINFO_INT_REGISTER + MIPS_R31, &mipsinfo);
+	mips_set_info(cpu,CPUINFO_INT_PC, &mipsinfo);
 }
 
 // root counters
 
-void psx_hw_runcounters(void)
+void psx_hw_runcounters(mips_cpu_context *cpu)
 {
 	int i, j;
 	union cpuinfo mipsinfo;
@@ -1863,7 +1847,7 @@ void psx_hw_runcounters(void)
 
 				if (dma4_cb)
 				{
-					call_irq_routine(dma4_cb, dma4_flag);
+					call_irq_routine(cpu, dma4_cb, dma4_flag);
 				}
 			}
 		}
@@ -1878,7 +1862,7 @@ void psx_hw_runcounters(void)
 
 				if (dma7_cb)
 				{
-					call_irq_routine(dma7_cb, dma7_flag);
+					call_irq_routine(cpu, dma7_cb, dma7_flag);
 				}
 			}
 		}
@@ -1898,7 +1882,7 @@ void psx_hw_runcounters(void)
 
 					timerexp = 1;
 
-					ps2_reschedule();
+					ps2_reschedule(cpu);
 				}
 			}
 		}
@@ -1917,7 +1901,7 @@ void psx_hw_runcounters(void)
 						iop_timers[i].count -= iop_timers[i].target;
 
 	//					printf("Timer %d: handler = %08x, param = %08x\n", i, iop_timers[i].handler, iop_timers[i].hparam);
-						call_irq_routine(iop_timers[i].handler, iop_timers[i].hparam);
+						call_irq_routine(cpu, iop_timers[i].handler, iop_timers[i].hparam);
 
 						timerexp = 1;
 					} 
@@ -1951,7 +1935,7 @@ void psx_hw_runcounters(void)
 					root_cnts[i].count %= root_cnts[i].target;
 				}
 				
-				psx_irq_set(1<<(4+i));
+				psx_irq_set(cpu, 1<<(4+i));
 			}
 		}
 	}
@@ -1966,7 +1950,7 @@ void SPUirq(void)
 
 // PSXCPU callbacks
 
-uint8 program_read_byte_32le(offs_t address)
+uint8 program_read_byte_32le(mips_cpu_context *cpu, offs_t address)
 {
 	switch (address & 0x3)
 	{
@@ -1983,9 +1967,10 @@ uint8 program_read_byte_32le(offs_t address)
 			return psx_hw_read(address, 0x00ffffff)>>24;
 			break;
 	}
+	return 0;
 }
 
-uint16 program_read_word_32le(offs_t address)
+uint16 program_read_word_32le(mips_cpu_context *cpu, offs_t address)
 {
 	if (address & 2)
 		return psx_hw_read(address, 0x0000ffff)>>16;
@@ -1993,48 +1978,48 @@ uint16 program_read_word_32le(offs_t address)
 	return psx_hw_read(address, 0xffff0000);
 }
 
-uint32 program_read_dword_32le(offs_t address)
+uint32 program_read_dword_32le(mips_cpu_context *cpu, offs_t address)
 {
 	return psx_hw_read(address, 0);
 }
 
-void program_write_byte_32le(offs_t address, uint8 data)
+void program_write_byte_32le(mips_cpu_context *cpu, offs_t address, uint8 data)
 {
 	switch (address & 0x3)
 	{
 		case 0:
-			psx_hw_write(address, data, 0xffffff00);
+			psx_hw_write(cpu, address, data, 0xffffff00);
 			break;
 		case 1:
-			psx_hw_write(address, data<<8, 0xffff00ff);
+			psx_hw_write(cpu, address, data<<8, 0xffff00ff);
 			break;
 		case 2:
-			psx_hw_write(address, data<<16, 0xff00ffff);
+			psx_hw_write(cpu, address, data<<16, 0xff00ffff);
 			break;
 		case 3:
-			psx_hw_write(address, data<<24, 0x00ffffff);
+			psx_hw_write(cpu, address, data<<24, 0x00ffffff);
 			break;
 	}
 }
 
-void program_write_word_32le(offs_t address, uint16 data)
+void program_write_word_32le(mips_cpu_context *cpu, offs_t address, uint16 data)
 {
 	if (address & 2)
 	{
-		psx_hw_write(address, data<<16, 0x0000ffff);
+		psx_hw_write(cpu, address, data<<16, 0x0000ffff);
 		return;
 	}
 
-	psx_hw_write(address, data, 0xffff0000);
+	psx_hw_write(cpu, address, data, 0xffff0000);
 }
 
-void program_write_dword_32le(offs_t address, uint32 data)
+void program_write_dword_32le(mips_cpu_context *cpu, offs_t address, uint32 data)
 {
-	psx_hw_write(address, data, 0);
+	psx_hw_write(cpu, address, data, 0);
 }
 
 // sprintf replacement
-static iop_sprintf(char *out, char *fmt, uint32 pstart)
+static void iop_sprintf(mips_cpu_context *cpu, char *out, char *fmt, uint32 pstart)
 {
 	char temp[64], tfmt[64];
 	char *cf, *pstr;
@@ -2098,14 +2083,14 @@ static iop_sprintf(char *out, char *fmt, uint32 pstart)
 
 			if (isnum)
 			{
-				mips_get_info(curparm, &mipsinfo);
+				mips_get_info(cpu, curparm, &mipsinfo);
 //				printf("parameter %d = %x\n", curparm-pstart, mipsinfo.i);
 				curparm++;
 				sprintf(temp, tfmt, (int32)mipsinfo.i);
 			}
 			else
 			{
-				mips_get_info(curparm, &mipsinfo);
+				mips_get_info(cpu, curparm, &mipsinfo);
 				curparm++;
 
 				pstr = (char *)psx_ram;
@@ -2130,7 +2115,7 @@ static iop_sprintf(char *out, char *fmt, uint32 pstart)
 }
 
 // PS2 IOP callbacks
-void psx_iop_call(uint32 pc, uint32 callnum)
+void psx_iop_call(mips_cpu_context *cpu, uint32 pc, uint32 callnum)
 {
 	uint32 scan;
 	char *mname, *str1, *str2, *str3, name[9], out[512];
@@ -2141,13 +2126,13 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 //	printf("IOP call @ %08x\n", pc);
 
 	// prefetch parameters
-	mips_get_info(CPUINFO_INT_REGISTER + MIPS_R4, &mipsinfo);
+	mips_get_info(cpu, CPUINFO_INT_REGISTER + MIPS_R4, &mipsinfo);
 	a0 = mipsinfo.i;
-	mips_get_info(CPUINFO_INT_REGISTER + MIPS_R5, &mipsinfo);
+	mips_get_info(cpu, CPUINFO_INT_REGISTER + MIPS_R5, &mipsinfo);
 	a1 = mipsinfo.i;
-	mips_get_info(CPUINFO_INT_REGISTER + MIPS_R6, &mipsinfo);
+	mips_get_info(cpu, CPUINFO_INT_REGISTER + MIPS_R6, &mipsinfo);
 	a2 = mipsinfo.i;
-	mips_get_info(CPUINFO_INT_REGISTER + MIPS_R7, &mipsinfo);
+	mips_get_info(cpu, CPUINFO_INT_REGISTER + MIPS_R7, &mipsinfo);
 	a3 = mipsinfo.i;
 
 	scan = (pc&0x0fffffff)/4;
@@ -2177,7 +2162,7 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 				mname += a0 & 0x1fffff;
 				mname += (a0 & 3);
 
-				iop_sprintf(out, mname, CPUINFO_INT_REGISTER + MIPS_R5);	// a1 is first parm
+				iop_sprintf(cpu, out, mname, CPUINFO_INT_REGISTER + MIPS_R5);	// a1 is first parm
 				
 			/*	if (out[strlen(out)-1] != '\n')
 				{
@@ -2204,7 +2189,7 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 				#endif
 
 				mipsinfo.i = 0;
-				mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+				mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 				break;
 
 			case 7: // sceSifSetDma
@@ -2213,7 +2198,7 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 				#endif
 
 				mipsinfo.i = 1;	// nonzero = success
-				mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+				mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 				break;
 
 			case 8:	// sceSifDmaStat
@@ -2222,7 +2207,7 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 				#endif
 
 				mipsinfo.i = -1;	// dma completed
-				mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+				mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 				break;
 
 			case 29: // sceSifCheckInit
@@ -2231,7 +2216,7 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 				#endif
 
 				mipsinfo.i = 1;
-				mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+				mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 				break;
 
 			default:
@@ -2274,7 +2259,7 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 
 				mipsinfo.i = iNumThreads;
 				iNumThreads++;
-				mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+				mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 				break;
 
 			case 6:	// StartThread
@@ -2282,8 +2267,8 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 				printf("IOP: StartThread(%d %d)\n", a0, a1);
 				#endif
 
-				FreezeThread(iCurThread, 1);
-				ThawThread(a0);
+				FreezeThread(cpu, iCurThread, 1);
+				ThawThread(cpu, a0);
 				iCurThread = a0;
 				break;
 
@@ -2293,7 +2278,7 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 				#endif
 
 				mipsinfo.i = iCurThread;
-				mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+				mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 				break;
 
 			case 24:// SleepThread
@@ -2302,11 +2287,11 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 				printf("IOP: SleepThread() [curThread %d, PC=%x]\n", iCurThread, mipsinfo.i);
 				#endif
 
-				FreezeThread(iCurThread, 1);
+				FreezeThread(cpu, iCurThread, 1);
 				threads[iCurThread].iState = TS_SLEEPING;
 				iCurThread = -1;
 
-				ps2_reschedule();
+				ps2_reschedule(cpu);
 				break;
 
 			case 25:// WakeupThread
@@ -2346,14 +2331,14 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 					}
 					dTicks = (double)a0;
 
-					FreezeThread(iCurThread, 1);
+					FreezeThread(cpu, iCurThread, 1);
 					threads[iCurThread].iState = TS_WAITDELAY;
 					dTicks /= (double)1000000.0;
 					dTicks *= (double)36864000.0;	// 768*48000 = IOP native-mode clock rate
 					threads[iCurThread].waitparm = (uint32)dTicks;
 					iCurThread = -1;
 
-					ps2_reschedule();
+					ps2_reschedule(cpu);
 				}
 				break;
 
@@ -2369,7 +2354,7 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 				psx_ram[a0+1] = LE32(sys_time >> 32);	// high
 
 				mipsinfo.i = 0;
-				mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+				mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 				break;
 
 			case 39:// USec2SysClock
@@ -2391,7 +2376,7 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 					psx_ram[((a1 & 0x1fffff)/4)+1] = LE32(hi);
 
 					mipsinfo.i = 0;
-					mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+					mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 				}
 				break;
 
@@ -2436,7 +2421,7 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 		switch (callnum)
 		{
 			case 4:	// CreateEventFlag
-				mips_get_info(CPUINFO_INT_REGISTER + MIPS_R31, &mipsinfo);
+				mips_get_info(cpu, CPUINFO_INT_REGISTER + MIPS_R31, &mipsinfo);
 				#if DEBUG_HLE_IOP
 				printf("IOP: CreateEventFlag(%08x) (PC=%x)\n", a0, mipsinfo.i);
 				#endif
@@ -2455,7 +2440,7 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 
 				mipsinfo.i = iNumFlags+1;
 				iNumFlags++;
-				mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+				mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 				break;
 
 			case 6: // SetEventFlag
@@ -2467,7 +2452,7 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 				evflags[a0].value |= a1;
 
 				mipsinfo.i = 0;
-				mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+				mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 				break;
 
 			case 7: // iSetEventFlag
@@ -2479,7 +2464,7 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 				evflags[a0].value |= a1;
 
 				mipsinfo.i = 0;
-				mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+				mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 
 				for (i=0; i < iNumThreads; i++)
 				{
@@ -2492,7 +2477,7 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 
 			case 8:	// ClearEventFlag
 				a0--;
-				mips_get_info(CPUINFO_INT_REGISTER + MIPS_R31, &mipsinfo);
+				mips_get_info(cpu, CPUINFO_INT_REGISTER + MIPS_R31, &mipsinfo);
 				#if DEBUG_HLE_IOP
 				printf("IOP: ClearEventFlag(%d %08x) (PC=%x)\n", a0, a1, mipsinfo.i);
 				#endif
@@ -2500,7 +2485,7 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 				evflags[a0].value &= a1;
 
 				mipsinfo.i = 0;
-				mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+				mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 				break;
 
 			case 9: // iClearEventFlag
@@ -2512,7 +2497,7 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 				evflags[a0].value &= a1;
 
 				mipsinfo.i = 0;
-				mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+				mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 				break;
 
 			case 10:// WaitEventFlag
@@ -2525,17 +2510,17 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 				// if we're not set, freeze this thread
 				if (!(evflags[a0].value & a1))
 				{
-					FreezeThread(iCurThread, 1);
+					FreezeThread(cpu, iCurThread, 1);
 					threads[iCurThread].iState = TS_WAITEVFLAG;
 					threads[iCurThread].waitparm = a0;
 					iCurThread = -1;
 
-					ps2_reschedule();
+					ps2_reschedule(cpu);
 				}
 				else
 				{
 					mipsinfo.i = 0;
-					mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+					mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 				}
 				break;
 
@@ -2587,7 +2572,7 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 					semaphores[mipsinfo.i].inuse = 1;
 				}
 
-				mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+				mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 				break;
 
 			case 6: // SignalSema
@@ -2621,7 +2606,7 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 					}
 				}
 
-				mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+				mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 				break;
 
 			case 7: // iSignalSema
@@ -2655,7 +2640,7 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 					}
 				}
 
-				mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+				mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 				break;
 
 			case 8: // WaitSema
@@ -2670,14 +2655,14 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 				}
 				else
 				{
-					FreezeThread(iCurThread, 1);
+					FreezeThread(cpu,iCurThread, 1);
 					threads[iCurThread].iState = TS_WAITSEMA;
 					threads[iCurThread].waitparm = a0;
-					ps2_reschedule();
+					ps2_reschedule(cpu);
 				}
 
 				mipsinfo.i = 0;
-				mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+				mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 				break;
 
 			default:
@@ -2705,7 +2690,7 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 
 				mipsinfo.i = iNumTimers+1;
 				iNumTimers++;
-				mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+				mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 				break;
 
 			case 6: // FreeHardTimer
@@ -2713,12 +2698,12 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 				printf("IOP: FreeHardTimer(%d)\n", a0);
 				#endif
 				mipsinfo.i = 0;
-				mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+				mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 				break;
 
 			case 10:// GetTimerCounter
 				mipsinfo.i = iop_timers[a0-1].count;
-				mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+				mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 				break;
 
 			case 20: // SetTimerHandler
@@ -2732,7 +2717,7 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 				iop_timers[a0-1].hparam = a3;
 
 				mipsinfo.i = 0;
-				mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+				mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 				break;
 
 			case 22: // SetupHardTimer
@@ -2746,7 +2731,7 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 				iop_timers[a0-1].prescale = a3;
 
 				mipsinfo.i = 0;
-				mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+				mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 				break;
 
 			case 23: // StartHardTimer
@@ -2758,7 +2743,7 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 				iop_timers[a0-1].count = 0;
 
 				mipsinfo.i = 0;
-				mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+				mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 				break;
 
 			case 24: // StopHardTimer
@@ -2769,7 +2754,7 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 				iop_timers[a0-1].iActive = 0;
 
 				mipsinfo.i = 0;
-				mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+				mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 				break;
 
 			default:
@@ -2805,7 +2790,7 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 
 					// v0 = a0
 					mipsinfo.i = a0;
-					mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+					mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 				}
 				break;
 
@@ -2836,7 +2821,7 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 
 					// v0 = a0
 					mipsinfo.i = a0;
-					mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+					mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 				}
 				break;
 
@@ -2882,7 +2867,7 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 				printf("%x %x %x %x\n", a0, a1, a2, a3);
 				#endif
 
-				iop_sprintf(mname, str1, CPUINFO_INT_REGISTER + MIPS_R6);	// a2 is first parameter
+				iop_sprintf(cpu, mname, str1, CPUINFO_INT_REGISTER + MIPS_R6);	// a2 is first parameter
 
 				#if DEBUG_HLE_IOP
 				printf("     = [%s]\n", mname);
@@ -2913,7 +2898,7 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 
 					// v0 = a0
 					mipsinfo.i = a0;
-					mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+					mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 				}
 				break;
 
@@ -2929,7 +2914,7 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 					dst = (char *)&psx_ram[(a0&0x1fffff)/4];
 					dst += (a0 & 3);
 					mipsinfo.i = strlen(dst);
-					mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+					mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 				}
 				break;
 
@@ -2958,7 +2943,7 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 
 					// v0 = a0
 					mipsinfo.i = a0;
-					mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+					mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 				}
 				break;
 
@@ -2973,7 +2958,7 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 				}
 
 				mipsinfo.i = strtol(mname, NULL, a2);
-				mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+				mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 				break;
 
 			default:
@@ -3059,7 +3044,7 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 					mipsinfo.i = 0;
 				}
 				intr_susp = 1;
-				mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+				mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 				break;
 
 			case 18:	// CpuResumeIntr
@@ -3068,7 +3053,7 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 				#endif
 				intr_susp = 0;
 				mipsinfo.i = 0;
-				mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+				mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 				break;
 
 			case 23:	// QueryIntrContext
@@ -3077,7 +3062,7 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 				printf("IOP: QueryIntrContext(PC=%x)\n", mipsinfo.i);
 				#endif
 				mipsinfo.i = 0;
-				mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+				mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 				break;
 
 			default:
@@ -3121,7 +3106,7 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 				}
 
 				mipsinfo.i = 0;
-				mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+				mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 				break;
 
 			default:
@@ -3163,7 +3148,7 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 				#endif
 
 				mipsinfo.i = newAlloc; // | 0x80000000;
-				mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+				mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 				break;
 
 			case 5:	// FreeMemory
@@ -3178,7 +3163,7 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 				#endif
 
 				mipsinfo.i = (2*1024*1024) - psf2_get_loadaddr();
-				mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+				mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 				break;
 
 			case 8:	// QueryTotalFreeMemSize
@@ -3187,7 +3172,7 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 				#endif
 
 				mipsinfo.i = (2*1024*1024) - psf2_get_loadaddr();
-				mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+				mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 				break;
 
 			case 14: // Kprintf
@@ -3195,7 +3180,7 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 				mname += a0 & 0x1fffff;
 				mname += (a0 & 3);
 
-				iop_sprintf(out, mname, CPUINFO_INT_REGISTER + MIPS_R5);	// a1 is first parm
+				iop_sprintf(cpu, out, mname, CPUINFO_INT_REGISTER + MIPS_R5);	// a1 is first parm
 				
 				if (out[strlen(out)-1] != '\n')
 				{
@@ -3261,12 +3246,12 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 				psf2_set_loadaddr(newAlloc + 2048);
 
 				tempmem = (uint8 *)malloc(2*1024*1024);
-				if (psf2_load_file(mname, tempmem, 2*1024*1024) != 0xffffffff)
+				if (psf2_load_file(cpu, mname, tempmem, 2*1024*1024) != 0xffffffff)
 				{
 					uint32 start;
 					int i;
 
-					start = psf2_load_elf(tempmem, 2*1024*1024);
+					start = psf2_load_elf(cpu, tempmem, 2*1024*1024);
 
 					if (start != 0xffffffff)
 					{
@@ -3308,14 +3293,14 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 
 						// set argv and argc
 						mipsinfo.i = numargs;
-						mips_set_info(CPUINFO_INT_REGISTER + MIPS_R4, &mipsinfo);
+						mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R4, &mipsinfo);
 						mipsinfo.i = 0x80000000 | newAlloc;
-						mips_set_info(CPUINFO_INT_REGISTER + MIPS_R5, &mipsinfo);
+						mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R5, &mipsinfo);
 
 						// leave RA alone, PC = module start
 						// (NOTE: we get called in the delay slot!)
 						mipsinfo.i = start - 4;
-						mips_set_info(CPUINFO_INT_PC, &mipsinfo);
+						mips_set_info(cpu,CPUINFO_INT_PC, &mipsinfo);
 					}
 				}
 				free(tempmem);
@@ -3349,7 +3334,7 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 					{
 						printf("IOP: out of file slots!\n");
 						mipsinfo.i = 0xffffffff;
-						mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+						mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 						return;
 					}
 
@@ -3369,13 +3354,13 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 						mname += 7;
 					}
 
-					mips_get_info(CPUINFO_INT_REGISTER + MIPS_R31, &mipsinfo);
+					mips_get_info(cpu, CPUINFO_INT_REGISTER + MIPS_R31, &mipsinfo);
 					#if DEBUG_HLE_IOP
 					printf("IOP: open(\"%s\") (PC=%08x)\n", mname, mipsinfo.i);
 					#endif
 
 					filedata[slot2use] = malloc(6*1024*1024);
-					filesize[slot2use] = psf2_load_file(mname, filedata[slot2use], 6*1024*1024);
+					filesize[slot2use] = psf2_load_file(cpu, mname, filedata[slot2use], 6*1024*1024);
 					filepos[slot2use] = 0;
 					filestat[slot2use] = 1;
 
@@ -3388,12 +3373,12 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 						mipsinfo.i = slot2use;
 					}
 				}
-				mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+				mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 				break;
 
 			case 5:	// close
 				#if DEBUG_HLE_IOP
-				mips_get_info(CPUINFO_INT_REGISTER + MIPS_R31, &mipsinfo);
+				mips_get_info(cpu, CPUINFO_INT_REGISTER + MIPS_R31, &mipsinfo);
 				printf("IOP: close(%d) (PC=%08x)\n", a0, mipsinfo.i);
 				#endif
 				free(filedata[a0]);
@@ -3428,12 +3413,12 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 					filepos[a0] += a2;
 					mipsinfo.i = a2;
 				}
-				mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+				mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 				break;
 
 			case 8:	// lseek
 				#if DEBUG_HLE_IOP
-				mips_get_info(CPUINFO_INT_REGISTER + MIPS_R31, &mipsinfo);
+				mips_get_info(cpu, CPUINFO_INT_REGISTER + MIPS_R31, &mipsinfo);
 				printf("IOP: lseek(%d, %d, %s) (PC=%08x)\n", a0, a1, seek_types[a2], mipsinfo.i);
 				#endif
 
@@ -3457,7 +3442,7 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 				}
 
 				mipsinfo.i = filepos[a0];
-				mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+				mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 				break;
 
 			case 20:	// AddDrv
@@ -3466,7 +3451,7 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 				#endif
 
 				mipsinfo.i = 0;
-				mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+				mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 				break;
 
 			case 21:	// DelDrv
@@ -3475,7 +3460,7 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 				#endif
 
 				mipsinfo.i = 0;
-				mips_set_info(CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
+				mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_R2, &mipsinfo);
 				break;
 
 			default:
@@ -3495,14 +3480,14 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 					#if DEBUG_HLE_IOP
 					uint32 PC;
 
-					mips_get_info(CPUINFO_INT_REGISTER + MIPS_R31, &mipsinfo);
+					mips_get_info(cpu, CPUINFO_INT_REGISTER + MIPS_R31, &mipsinfo);
 					PC = mipsinfo.i;
 					#endif
 
 					// zap the delay slot handling
 					mipsinfo.i = 0;
-					mips_set_info(CPUINFO_INT_REGISTER + MIPS_DELAYV, &mipsinfo);
-					mips_set_info(CPUINFO_INT_REGISTER + MIPS_DELAYR, &mipsinfo);
+					mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_DELAYV, &mipsinfo);
+					mips_set_info(cpu,CPUINFO_INT_REGISTER + MIPS_DELAYR, &mipsinfo);
 
 					mipsinfo.i = LE32(psx_ram[(reglibs[lib].dispatch/4) + callnum]);
 
@@ -3527,7 +3512,7 @@ void psx_iop_call(uint32 pc, uint32 callnum)
 					#endif
 
 					mipsinfo.i -= 4;
-					mips_set_info(CPUINFO_INT_PC, &mipsinfo);
+					mips_set_info(cpu,CPUINFO_INT_PC, &mipsinfo);
 
 					return;
 				}

@@ -50,6 +50,7 @@ int psf_refresh = -1; // hack
 typedef struct {
     corlett_t	*c;
     char psfby[256];
+    mips_cpu_context *mips_cpu;
 } psf_synth_t;
 
 // main RAM
@@ -59,13 +60,6 @@ extern uint32 initial_ram[((2*1024*1024)/4)+4];
 extern uint32 initial_scratch[0x400];
 static uint32 initialPC, initialGP, initialSP;
 
-extern void mips_init( void );
-extern void mips_reset( void *param );
-extern int mips_execute( int cycles );
-extern void mips_set_info(UINT32 state, union cpuinfo *info);
-extern void psx_hw_init(void);
-extern void psx_hw_slice(void);
-extern void psx_hw_frame(void);
 extern void setlength(int32 stop, int32 fade);
 
 void *psf_start(uint8 *buffer, uint32 length)
@@ -285,8 +279,9 @@ void *psf_start(uint8 *buffer, uint32 length)
 		}
 	}
 
-	mips_init();
-	mips_reset(NULL);
+	s->mips_cpu = mips_alloc();
+	mips_init (s->mips_cpu);
+	mips_reset(s->mips_cpu, NULL);
 
 	// set the initial PC, SP, GP
 	#if DEBUG_LOADER	
@@ -294,7 +289,7 @@ void *psf_start(uint8 *buffer, uint32 length)
 	printf("Refresh = %d\n", psf_refresh);
 	#endif
 	mipsinfo.i = PC;
-	mips_set_info(CPUINFO_INT_PC, &mipsinfo);
+	mips_set_info(s->mips_cpu, CPUINFO_INT_PC, &mipsinfo);
 
 	// set some reasonable default for the stack
 	if (SP == 0)
@@ -303,11 +298,11 @@ void *psf_start(uint8 *buffer, uint32 length)
 	}
 
 	mipsinfo.i = SP;
-	mips_set_info(CPUINFO_INT_REGISTER + MIPS_R29, &mipsinfo);
-	mips_set_info(CPUINFO_INT_REGISTER + MIPS_R30, &mipsinfo);
+	mips_set_info(s->mips_cpu, CPUINFO_INT_REGISTER + MIPS_R29, &mipsinfo);
+	mips_set_info(s->mips_cpu, CPUINFO_INT_REGISTER + MIPS_R30, &mipsinfo);
 
 	mipsinfo.i = GP;
-	mips_set_info(CPUINFO_INT_REGISTER + MIPS_R28, &mipsinfo);
+	mips_set_info(s->mips_cpu, CPUINFO_INT_REGISTER + MIPS_R28, &mipsinfo);
 
 	#if DEBUG_LOADER && 1
 	{
@@ -319,7 +314,7 @@ void *psf_start(uint8 *buffer, uint32 length)
 	}
 	#endif
 
-	psx_hw_init();
+	psx_hw_init(s->mips_cpu);
 	SPUinit();
 	SPUopen();
 
@@ -362,7 +357,7 @@ void *psf_start(uint8 *buffer, uint32 length)
 	initialGP = GP;
 	initialSP = SP;
 
-	mips_execute(5000);
+	mips_execute(s->mips_cpu, 5000);
 	
 	return s;
 }
@@ -379,14 +374,14 @@ int32 psf_gen(void *handle, int16 *buffer, uint32 samples)
 
 	for (i = 0; i < samples; i++)
 	{
-		psx_hw_slice();
+		psx_hw_slice(s->mips_cpu);
 		SPUasync(384);
 	}
 
 	spu_pOutput = (char *)buffer;
 	SPU_flushboot();
 
-	psx_hw_frame();
+	psx_hw_frame(s->mips_cpu);
 
 	return AO_SUCCESS;
 }
@@ -415,9 +410,9 @@ int32 psf_command(void *handle, int32 command, int32 parameter)
 			memcpy(psx_ram, initial_ram, 2*1024*1024);
 			memcpy(psx_scratch, initial_scratch, 0x400);
 
-			mips_init();
-			mips_reset(NULL);
-			psx_hw_init();
+//			mips_init();
+			mips_reset(s->mips_cpu, NULL);
+			psx_hw_init(s->mips_cpu);
 			SPUinit();
 			SPUopen();
 
@@ -431,14 +426,14 @@ int32 psf_command(void *handle, int32 command, int32 parameter)
 			setlength(lengthMS, fadeMS);
 
 			mipsinfo.i = initialPC;
-			mips_set_info(CPUINFO_INT_PC, &mipsinfo);
+			mips_set_info(s->mips_cpu, CPUINFO_INT_PC, &mipsinfo);
 			mipsinfo.i = initialSP;
-			mips_set_info(CPUINFO_INT_REGISTER + MIPS_R29, &mipsinfo);
-			mips_set_info(CPUINFO_INT_REGISTER + MIPS_R30, &mipsinfo);
+			mips_set_info(s->mips_cpu, CPUINFO_INT_REGISTER + MIPS_R29, &mipsinfo);
+			mips_set_info(s->mips_cpu, CPUINFO_INT_REGISTER + MIPS_R30, &mipsinfo);
 			mipsinfo.i = initialGP;
-			mips_set_info(CPUINFO_INT_REGISTER + MIPS_R28, &mipsinfo);
+			mips_set_info(s->mips_cpu, CPUINFO_INT_REGISTER + MIPS_R28, &mipsinfo);
 
-			mips_execute(5000);
+			mips_execute(s->mips_cpu, 5000);
 
 			return AO_SUCCESS;
 		
