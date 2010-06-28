@@ -204,7 +204,7 @@ int ao_get_lib(char *filename, uint8 **buffer, uint64 *length);
 
 int ao_identify (char *buffer);
 
-void *ao_start (uint32 type, uint8 *buffer, uint32 size);
+void *ao_start (uint32 type, const char *name, uint8 *buffer, uint32 size);
 
 int ao_stop (uint32 type, void *handle);
 

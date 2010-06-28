@@ -90,7 +90,7 @@ aoplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         return -1;
     }
 
-    info->decoder = ao_start (info->type, (uint8 *)info->filebuffer, info->filesize);
+    info->decoder = ao_start (info->type, it->fname, (uint8 *)info->filebuffer, info->filesize);
     if (!info->decoder) {
         fprintf (stderr, "psf: ao_start failed\n");
         return -1;
@@ -184,7 +184,7 @@ aoplug_insert (DB_playItem_t *after, const char *fname) {
         return NULL;
     }
 
-    void *dec = ao_start (type, (uint8*)buffer, size);
+    void *dec = ao_start (type, fname, (uint8*)buffer, size);
     if (!dec) {
         free (buffer);
         return NULL;

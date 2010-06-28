@@ -456,7 +456,7 @@ uint32 psf2_load_file(mips_cpu_context *cpu, char *file, uint8 *buf, uint32 bufl
 	return 0xffffffff;
 }
 
-void *psf2_start(uint8 *buffer, uint32 length)
+void *psf2_start(const char *path, uint8 *buffer, uint32 length)
 {
     psf2_synth_t *s = malloc (sizeof (psf2_synth_t));
 

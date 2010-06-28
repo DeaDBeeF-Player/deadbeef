@@ -61,7 +61,7 @@ static void spu_update (unsigned char* pSound,long lBytes,void *data)
 	memcpy(s->spu_pOutput, pSound, lBytes);
 }
 
-void *psf_start(uint8 *buffer, uint32 length)
+void *psf_start(const char *path, uint8 *buffer, uint32 length)
 {
     psf_synth_t *s = malloc (sizeof (psf_synth_t));
     psf_refresh = -1;

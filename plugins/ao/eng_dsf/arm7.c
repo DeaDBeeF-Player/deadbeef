@@ -15,14 +15,14 @@
   // definitions and macros
 
   /** Macro for accessing banked registers. */
-#define RX_BANK(t,r) (ARM7.Rx_bank [t][r - 8])
+#define RX_BANK(t,r) (cpu->Rx_bank [t][r - 8])
   //--------------------------------------------------------------------------
 
   //--------------------------------------------------------------------------
   // private functions
 
   /** CPU Reset. */
-static void Reset (void);
+static void Reset (struct sARM7 *cpu);
   //--------------------------------------------------------------------------
 
   //--------------------------------------------------------------------------
@@ -43,171 +43,177 @@ static const int s_tabTryb [32] = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 
   // public functions
 
+struct sARM7* ARM7_Alloc ()
+{
+    struct sARM7 *cpu = malloc (sizeof (struct sARM7));
+    memset (cpu, 0, sizeof (struct sARM7));
+    return cpu;
+}
 
   //--------------------------------------------------------------------------
   /** ARM7 emulator init. */
-void ARM7_Init ()
+void ARM7_Init (struct sARM7 *cpu)
   {
   // sane startup values
-  ARM7.fiq = 0;
-  ARM7.irq = 0;
-  ARM7.carry = 0;
-  ARM7.overflow = 0;
-  ARM7.flagi = FALSE;
-  ARM7.cykle = 0;
+  cpu->fiq = 0;
+  cpu->irq = 0;
+  cpu->carry = 0;
+  cpu->overflow = 0;
+  cpu->flagi = FALSE;
+  cpu->cykle = 0;
 
   // reset will do the rest
-  ARM7_HardReset ();
+  ARM7_HardReset (cpu);
   }
   //--------------------------------------------------------------------------
 
   //--------------------------------------------------------------------------
   /** Power-ON reset. */
-void ARM7_HardReset ()
+void ARM7_HardReset (struct sARM7 *cpu)
   {
   // CPSR that makes sense
-  ARM7.Rx [ARM7_CPSR] = ARM7_CPSR_I | ARM7_CPSR_F | ARM7_CPSR_M_svc;
-  Reset ();
+  cpu->Rx [ARM7_CPSR] = ARM7_CPSR_I | ARM7_CPSR_F | ARM7_CPSR_M_svc;
+  Reset (cpu);
   }
   //--------------------------------------------------------------------------
 
   //--------------------------------------------------------------------------
   /** Hardware reset via /RESET line. */
-void ARM7_SoftReset ()
+void ARM7_SoftReset (struct sARM7 *cpu)
   {
-  Reset ();
+  Reset (cpu);
   }
   //--------------------------------------------------------------------------
 
   //--------------------------------------------------------------------------
   /** CPSR update, possibly changing operating mode. */
-void ARM7_SetCPSR (ARM7_REG sr)
+void ARM7_SetCPSR (struct sARM7 *cpu, ARM7_REG sr)
   {
   int stary, nowy;
 
-  stary = s_tabTryb [ARM7_CPSR_M (ARM7.Rx [ARM7_CPSR])];
+  stary = s_tabTryb [ARM7_CPSR_M (cpu->Rx [ARM7_CPSR])];
   nowy = s_tabTryb [ARM7_CPSR_M (sr)];
   // do we have to change modes?
   if (nowy != stary)
     {
     // save this mode registers
-    RX_BANK (stary, ARM7_SP) = ARM7.Rx [ARM7_SP],
-    RX_BANK (stary, ARM7_LR) = ARM7.Rx [ARM7_LR],
-    RX_BANK (stary, ARM7_SPSR) = ARM7.Rx [ARM7_SPSR];
+    RX_BANK (stary, ARM7_SP) = cpu->Rx [ARM7_SP],
+    RX_BANK (stary, ARM7_LR) = cpu->Rx [ARM7_LR],
+    RX_BANK (stary, ARM7_SPSR) = cpu->Rx [ARM7_SPSR];
     if (stary == ARM7_MODE_fiq)
       {
       // copy R8-R12
-      RX_BANK (ARM7_MODE_fiq, 8) = ARM7.Rx [8],
-      RX_BANK (ARM7_MODE_fiq, 9) = ARM7.Rx [9],
-      RX_BANK (ARM7_MODE_fiq, 10) = ARM7.Rx [10],
-      RX_BANK (ARM7_MODE_fiq, 11) = ARM7.Rx [11],
-      RX_BANK (ARM7_MODE_fiq, 12) = ARM7.Rx [12];
-      ARM7.Rx [8] = RX_BANK (ARM7_MODE_usr, 8),
-      ARM7.Rx [9] = RX_BANK (ARM7_MODE_usr, 9),
-      ARM7.Rx [10] = RX_BANK (ARM7_MODE_usr, 10),
-      ARM7.Rx [11] = RX_BANK (ARM7_MODE_usr, 11),
-      ARM7.Rx [12] = RX_BANK (ARM7_MODE_usr, 12);
+      RX_BANK (ARM7_MODE_fiq, 8) = cpu->Rx [8],
+      RX_BANK (ARM7_MODE_fiq, 9) = cpu->Rx [9],
+      RX_BANK (ARM7_MODE_fiq, 10) = cpu->Rx [10],
+      RX_BANK (ARM7_MODE_fiq, 11) = cpu->Rx [11],
+      RX_BANK (ARM7_MODE_fiq, 12) = cpu->Rx [12];
+      cpu->Rx [8] = RX_BANK (ARM7_MODE_usr, 8),
+      cpu->Rx [9] = RX_BANK (ARM7_MODE_usr, 9),
+      cpu->Rx [10] = RX_BANK (ARM7_MODE_usr, 10),
+      cpu->Rx [11] = RX_BANK (ARM7_MODE_usr, 11),
+      cpu->Rx [12] = RX_BANK (ARM7_MODE_usr, 12);
       }
 
     // fetch new mode registers
-    ARM7.Rx [ARM7_SP] = RX_BANK (nowy, ARM7_SP),
-    ARM7.Rx [ARM7_LR] = RX_BANK (nowy, ARM7_LR),
-    ARM7.Rx [ARM7_SPSR] = RX_BANK (nowy, ARM7_SPSR);
+    cpu->Rx [ARM7_SP] = RX_BANK (nowy, ARM7_SP),
+    cpu->Rx [ARM7_LR] = RX_BANK (nowy, ARM7_LR),
+    cpu->Rx [ARM7_SPSR] = RX_BANK (nowy, ARM7_SPSR);
     if (nowy == ARM7_MODE_fiq)
       {
       // copy R8-R12
-      RX_BANK (ARM7_MODE_usr, 8) = ARM7.Rx [8],
-      RX_BANK (ARM7_MODE_usr, 9) = ARM7.Rx [9],
-      RX_BANK (ARM7_MODE_usr, 10) = ARM7.Rx [10],
-      RX_BANK (ARM7_MODE_usr, 11) = ARM7.Rx [11],
-      RX_BANK (ARM7_MODE_usr, 12) = ARM7.Rx [12];
-      ARM7.Rx [8] = RX_BANK (ARM7_MODE_fiq, 8),
-      ARM7.Rx [9] = RX_BANK (ARM7_MODE_fiq, 9),
-      ARM7.Rx [10] = RX_BANK (ARM7_MODE_fiq, 10),
-      ARM7.Rx [11] = RX_BANK (ARM7_MODE_fiq, 11),
-      ARM7.Rx [12] = RX_BANK (ARM7_MODE_fiq, 12);
+      RX_BANK (ARM7_MODE_usr, 8) = cpu->Rx [8],
+      RX_BANK (ARM7_MODE_usr, 9) = cpu->Rx [9],
+      RX_BANK (ARM7_MODE_usr, 10) = cpu->Rx [10],
+      RX_BANK (ARM7_MODE_usr, 11) = cpu->Rx [11],
+      RX_BANK (ARM7_MODE_usr, 12) = cpu->Rx [12];
+      cpu->Rx [8] = RX_BANK (ARM7_MODE_fiq, 8),
+      cpu->Rx [9] = RX_BANK (ARM7_MODE_fiq, 9),
+      cpu->Rx [10] = RX_BANK (ARM7_MODE_fiq, 10),
+      cpu->Rx [11] = RX_BANK (ARM7_MODE_fiq, 11),
+      cpu->Rx [12] = RX_BANK (ARM7_MODE_fiq, 12);
       }
     }
 
   // new CPSR value
-  ARM7.Rx [ARM7_CPSR] = sr;
+  cpu->Rx [ARM7_CPSR] = sr;
 
   // mode change could've enabled interrups, so we test for those and set
   // appropriate flag for the instruction loop to catch
-  if (ARM7.fiq)
-    ARM7.flagi |= ARM7_FL_FIQ;
+  if (cpu->fiq)
+    cpu->flagi |= ARM7_FL_FIQ;
 #ifndef ARM7_DREAMCAST
-  if (ARM7.irq)
-    ARM7.flagi |= ARM7_FL_IRQ;
+  if (cpu->irq)
+    cpu->flagi |= ARM7_FL_IRQ;
 #endif
   }
   //--------------------------------------------------------------------------
 
   //--------------------------------------------------------------------------
   /** Sets FIQ line state. */
-void ARM7_SetFIQ (int stan)
+void ARM7_SetFIQ (struct sARM7 *cpu, int stan)
   {
   stan = stan ? TRUE : FALSE;
   // we catch changes only
-  if (stan ^ ARM7.fiq)
+  if (stan ^ cpu->fiq)
     {
-    ARM7.fiq = stan;
-    if (ARM7.fiq)
-      ARM7.flagi |= ARM7_FL_FIQ;
+    cpu->fiq = stan;
+    if (cpu->fiq)
+      cpu->flagi |= ARM7_FL_FIQ;
     }
   }
   //--------------------------------------------------------------------------
 
   //--------------------------------------------------------------------------
   /** Sets IRQ line state. */
-void ARM7_SetIRQ (int stan)
+void ARM7_SetIRQ (struct sARM7 *cpu, int stan)
   {
   stan = stan ? TRUE : FALSE;
   // we catch changes only
-  if (stan ^ ARM7.irq)
+  if (stan ^ cpu->irq)
     {
-    ARM7.irq = stan;
-    if (ARM7.irq)
-      ARM7.flagi |= ARM7_FL_IRQ;
+    cpu->irq = stan;
+    if (cpu->irq)
+      cpu->flagi |= ARM7_FL_IRQ;
     }
   }
   //--------------------------------------------------------------------------
 
   //--------------------------------------------------------------------------
   /** Tests for pending interrupts, switches to one if possible. */
-void ARM7_CheckIRQ ()
+void ARM7_CheckIRQ (struct sARM7 *cpu)
   {
-  UINT32 sr = ARM7.Rx [ARM7_CPSR];
+  UINT32 sr = cpu->Rx [ARM7_CPSR];
 
   // clear all interrupt flags
-  ARM7.flagi &= ~(ARM7_FL_FIQ | ARM7_FL_IRQ);
+  cpu->flagi &= ~(ARM7_FL_FIQ | ARM7_FL_IRQ);
   
   // check for pending interrupts we can switch to
   // (FIQ can interrupt IRQ, but not the other way around)
-  if (ARM7.fiq)
+  if (cpu->fiq)
     {
     if (!(sr & ARM7_CPSR_F))
       {
       // FIQ
-      ARM7_SetCPSR (ARM7_CPSR_MX (sr, ARM7_CPSR_M_fiq) | ARM7_CPSR_F | ARM7_CPSR_I);
-      ARM7.Rx [ARM7_SPSR] = sr;
+      ARM7_SetCPSR (cpu, ARM7_CPSR_MX (sr, ARM7_CPSR_M_fiq) | ARM7_CPSR_F | ARM7_CPSR_I);
+      cpu->Rx [ARM7_SPSR] = sr;
       // set new PC (return from interrupt will subtract 4)
-      ARM7.Rx [ARM7_LR] = ARM7.Rx [ARM7_PC] + 4;
-      ARM7.Rx [ARM7_PC] = 0x0000001c;
+      cpu->Rx [ARM7_LR] = cpu->Rx [ARM7_PC] + 4;
+      cpu->Rx [ARM7_PC] = 0x0000001c;
       }
     }
 #ifndef ARM7_DREAMCAST
-  if (ARM7.irq)
+  if (cpu->irq)
     {
     if (!(sr & ARM7_CPSR_I))
       {
       // IRQ
-      ARM7_SetCPSR (ARM7_CPSR_MX (sr, ARM7_CPSR_M_irq) | ARM7_CPSR_I);
-      ARM7.Rx [ARM7_SPSR] = sr;
+      ARM7_SetCPSR (cpu, ARM7_CPSR_MX (sr, ARM7_CPSR_M_irq) | ARM7_CPSR_I);
+      cpu->Rx [ARM7_SPSR] = sr;
       // set new PC (return from interrupt will subtract 4)
-      ARM7.Rx [ARM7_LR] = ARM7.Rx [ARM7_PC] + 4;
-      ARM7.Rx [ARM7_PC] = 0x00000018;
-      ARM7.irq = 0;
+      cpu->Rx [ARM7_LR] = cpu->Rx [ARM7_PC] + 4;
+      cpu->Rx [ARM7_PC] = 0x00000018;
+      cpu->irq = 0;
       }
     }
 #endif
@@ -216,38 +222,38 @@ void ARM7_CheckIRQ ()
 
   //--------------------------------------------------------------------------
   /** Single step. */
-void ARM7_Step ()
+void ARM7_Step (struct sARM7 *cpu)
 {
   // make a step
 #ifdef ARM7_THUMB
-  if (ARM7.Rx[ARM7_CPSR] & ARM7_CPSR_T)
+  if (cpu->Rx[ARM7_CPSR] & ARM7_CPSR_T)
   {
-	ARM7i_Thumb_Step();
+	ARM7i_Thumb_Step(cpu);
   }
   else
 #endif
   {
-        ARM7i_Step ();
+        ARM7i_Step (cpu);
   }
   // and test interrupts
-  ARM7_CheckIRQ ();
+  ARM7_CheckIRQ (cpu);
 }
   //--------------------------------------------------------------------------
 
   //--------------------------------------------------------------------------
   /** Runs emulation for at least n cycles, returns actual amount of cycles
  burned - normal interpreter. */
-int ARM7_Execute (int n)
+int ARM7_Execute (struct sARM7 *cpu, int n)
   {
-  ARM7.cykle = 0;
-  while (ARM7.cykle < n)
+  cpu->cykle = 0;
+  while (cpu->cykle < n)
     {
-    ARM7_CheckIRQ ();
-    while (!ARM7.flagi && ARM7.cykle < n)
+    ARM7_CheckIRQ (cpu);
+    while (!cpu->flagi && cpu->cykle < n)
       // make one step, sum up cycles
-      ARM7.cykle += ARM7i_Step ();
+      cpu->cykle += ARM7i_Step (cpu);
     }
-  return ARM7.cykle;
+  return cpu->cykle;
   }
   //--------------------------------------------------------------------------
 
@@ -257,18 +263,18 @@ int ARM7_Execute (int n)
 
   //--------------------------------------------------------------------------
   /** CPU Reset. */
-void Reset (void)
+void Reset (struct sARM7 *cpu)
   {
   // clear ALU flags
-  ARM7.carry = 0;
-  ARM7.overflow = 0;
+  cpu->carry = 0;
+  cpu->overflow = 0;
   // test CPSR mode and pick a valid one if necessary
-  if (s_tabTryb [ARM7_CPSR_M (ARM7.Rx [ARM7_CPSR])] < 0)
-    ARM7.Rx [ARM7_CPSR] = ARM7_CPSR_I | ARM7_CPSR_F | ARM7_CPSR_M_svc;
+  if (s_tabTryb [ARM7_CPSR_M (cpu->Rx [ARM7_CPSR])] < 0)
+    cpu->Rx [ARM7_CPSR] = ARM7_CPSR_I | ARM7_CPSR_F | ARM7_CPSR_M_svc;
   // set up registers according to manual
-  RX_BANK (ARM7_MODE_svc, ARM7_LR) = ARM7.Rx [ARM7_PC];
-  RX_BANK (ARM7_MODE_svc, ARM7_SPSR) = ARM7.Rx [ARM7_CPSR];
-  ARM7_SetCPSR (ARM7_CPSR_I | ARM7_CPSR_F | ARM7_CPSR_M_svc);
-  ARM7.Rx [ARM7_PC] = 0x00000000;
+  RX_BANK (ARM7_MODE_svc, ARM7_LR) = cpu->Rx [ARM7_PC];
+  RX_BANK (ARM7_MODE_svc, ARM7_SPSR) = cpu->Rx [ARM7_CPSR];
+  ARM7_SetCPSR (cpu, ARM7_CPSR_I | ARM7_CPSR_F | ARM7_CPSR_M_svc);
+  cpu->Rx [ARM7_PC] = 0x00000000;
   }
   //--------------------------------------------------------------------------

@@ -175,7 +175,7 @@ struct _AICA
 	unsigned char *AICARAM;
 	UINT32 AICARAM_LENGTH;
 	char Master;
-	void (*IntARMCB)(int irq);
+	void (*IntARMCB)(struct sARM7 *cpu, int irq);
 
 	INT32 *buffertmpl, *buffertmpr;
 
@@ -201,6 +201,8 @@ struct _AICA
 	int ARTABLE[64], DRTABLE[64];
 
 	struct _AICADSP DSP;
+
+	struct sARM7 *cpu;
 };
 
 static struct _AICA *AllocedAICA;
@@ -245,7 +247,7 @@ static void CheckPendingIRQ(struct _AICA *AICA)
 	if(AICA->MidiW!=AICA->MidiR)
 	{
 		AICA->IRQL = AICA->IrqMidi;
-		AICA->IntARMCB(1);
+		AICA->IntARMCB(AICA->cpu, 1);
 		return;
 	}
 	if(!pend)
@@ -254,21 +256,21 @@ static void CheckPendingIRQ(struct _AICA *AICA)
 		if(en&0x40)
 		{
 			AICA->IRQL = AICA->IrqTimA;
-			AICA->IntARMCB(1);
+			AICA->IntARMCB(AICA->cpu, 1);
 			return;
 		}
 	if(pend&0x80)
 		if(en&0x80)
 		{
 			AICA->IRQL = AICA->IrqTimBC;
-			AICA->IntARMCB(1);
+			AICA->IntARMCB(AICA->cpu, 1);
 			return;
 		}
 	if(pend&0x100)
 		if(en&0x100)
 		{
 			AICA->IRQL = AICA->IrqTimBC;
-			AICA->IntARMCB(1);
+			AICA->IntARMCB(AICA->cpu, 1);
 			return;
 		}
 }
@@ -482,6 +484,7 @@ static void AICA_StopSlot(struct _SLOT *slot,int keyoff)
 
 static void AICA_Init(struct _AICA *AICA, const struct AICAinterface *intf)
 {
+    printf ("AICA_Init(cpu=%p)\n", intf->cpu);
 	int i=0;
 
 	AICA->IrqTimA = AICA->IrqTimBC = AICA->IrqMidi = 0;
@@ -503,10 +506,11 @@ static void AICA_Init(struct _AICA *AICA, const struct AICAinterface *intf)
 
 		if (intf->region)
 		{
-			AICA->AICARAM = &dc_ram[0];
+			AICA->AICARAM = &intf->cpu->dc_ram[0];
 			AICA->AICARAM_LENGTH = 2*1024*1024;
 			AICA->DSP.AICARAM = (UINT16 *)AICA->AICARAM;
 			AICA->DSP.AICARAM_LENGTH =  (2*1024*1024)/2;
+			AICA->cpu = intf->cpu;
 		}
 	}
 
@@ -786,7 +790,7 @@ static void AICA_UpdateRegR(struct _AICA *AICA, int reg)
 				unsigned short v=AICA->udata.data[0x8/2];
 				v&=0xff00;
 				v|=AICA->MidiStack[AICA->MidiR];
-				AICA->IntARMCB(0);	// cancel the IRQ
+				AICA->IntARMCB(AICA->cpu, 0);	// cancel the IRQ
 				if(AICA->MidiR!=AICA->MidiW)
 				{
 					++AICA->MidiR;
@@ -852,7 +856,7 @@ static void AICA_w16(struct _AICA *AICA,unsigned int addr,unsigned short val)
 
 			if (val)
 			{
-				AICA->IntARMCB(0);
+				AICA->IntARMCB(AICA->cpu, 0);
 			}
 		}
 	}

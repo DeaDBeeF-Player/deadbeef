@@ -8,6 +8,7 @@
 #define _ARM7_h_
 
 #include "cpuintrf.h"
+#include "aica.h"
 
   //--------------------------------------------------------------------------
   // definitions and macros
@@ -115,41 +116,43 @@ struct sARM7
   UINT32 kod;
   /** Cycle counter. */
   int cykle;
-  };
-  //--------------------------------------------------------------------------
 
-  //--------------------------------------------------------------------------
-  /** ARM7 state. */
-extern struct sARM7 ARM7;
+  uint8 dc_ram[8*1024*1024];
+
+  struct AICAinterface aica_interface;
+  };
   //--------------------------------------------------------------------------
 
   //--------------------------------------------------------------------------
   // public procedures
 
+  /** ARM7 allocate spu state. */
+struct sARM7* ARM7_Alloc (void);
+
   /** ARM7 emulator init. */
-void ARM7_Init (void);
+void ARM7_Init (struct sARM7 *cpu);
 
   /** Power-ON reset. */
-void ARM7_HardReset (void);
+void ARM7_HardReset (struct sARM7 *cpu);
   /** Hardware reset via /RESET line. */
-void ARM7_SoftReset (void);
+void ARM7_SoftReset (struct sARM7 *cpu);
 
   /** CPSR update, possibly changing operating mode. */
-void ARM7_SetCPSR (ARM7_REG sr);
+void ARM7_SetCPSR (struct sARM7 *cpu, ARM7_REG sr);
 
   /** Sets FIQ line state. */
-void ARM7_SetFIQ (int stan);
+void ARM7_SetFIQ (struct sARM7 *cpu, int stan);
   /** Sets IRQ line state. */
-void ARM7_SetIRQ (int stan);
+void ARM7_SetIRQ (struct sARM7 *cpu, int stan);
 
   /** Tests for pending interrupts, switches to one if possible. */
-void ARM7_CheckIRQ (void);
+void ARM7_CheckIRQ (struct sARM7 *cpu);
 
   /** Single step. */
-void ARM7_Step (void);
+void ARM7_Step (struct sARM7 *cpu);
   /** Runs emulation for at least n cycles, returns actual amount of cycles
  burned - normal interpreter. */
-int ARM7_Execute (int n);
+int ARM7_Execute (struct sARM7 *cpu, int n);
   //--------------------------------------------------------------------------
 
 enum
@@ -159,7 +162,7 @@ enum
 };
 
 #ifdef ENABLE_DEBUGGER
-extern UINT32 arm7_disasm( char *pBuf, UINT32 pc, UINT32 opcode );
-extern UINT32 thumb_disasm( char *pBuf, UINT32 pc, UINT16 opcode );
+extern UINT32 arm7_disasm( struct sARM7 *cpu, char *pBuf, UINT32 pc, UINT32 opcode );
+extern UINT32 thumb_disasm( struct sARM7 *cpu, char *pBuf, UINT32 pc, UINT16 opcode );
 #endif
 #endif

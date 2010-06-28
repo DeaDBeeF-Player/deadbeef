@@ -15,13 +15,15 @@ typedef int8 data8_t;
 typedef int16 data16_t;
 typedef int32 data32_t;
 typedef int offs_t;
+struct sARM7;
 
 struct AICAinterface 
 {
 	int num;
+	struct sARM7 *cpu;
 	void *region[MAX_AICA];
 	int mixing_level[MAX_AICA];			/* volume */
-	void (*irq_callback[MAX_AICA])(int state);	/* irq callback */
+	void (*irq_callback[MAX_AICA])(struct sARM7 *cpu, int state);	/* irq callback */
 };
 
 int AICA_sh_start(struct AICAinterface *intf);
@@ -40,5 +42,7 @@ WRITE16_HANDLER( AICA_1_w );
 // MIDI I/O access (used for comms on Model 2/3)
 WRITE16_HANDLER( AICA_MidiIn );
 READ16_HANDLER( AICA_MidiOutR );
+
+void *aica_start(const void *config);
 
 #endif

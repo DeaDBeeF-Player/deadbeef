@@ -60,7 +60,7 @@ static void spu_update (unsigned char* pSound,long lBytes,void *data)
 }
 
 
-void *spu_start(uint8 *buffer, uint32 length)
+void *spu_start(const char *path, uint8 *buffer, uint32 length)
 {
     spu_synth_t *s = malloc (sizeof (spu_synth_t));
     memset (s, 0, sizeof (spu_synth_t));

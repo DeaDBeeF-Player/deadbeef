@@ -41,7 +41,7 @@ static struct
 { 
 	uint32 sig; 
 	char *name; 
-	void * (*start)(uint8 *, uint32); // returns handle
+	void * (*start)(const char *path, uint8 *, uint32); // returns handle
 	int32 (*gen)(void *handle, int16 *, uint32); 
 	int32 (*stop)(void *handle); 
 	int32 (*command)(void *handle, int32, int32); 
@@ -196,7 +196,7 @@ int main(int argv, char *argc[])
 		return -1;
 	}
 
-    void *handle = (*types[type].start)(buffer, size);
+    void *handle = (*types[type].start)(argc[1], buffer, size);
 
 	if (!handle)
 	{
@@ -260,9 +260,9 @@ ao_identify (char *buffer) {
 }
 
 void *
-ao_start (uint32 type, uint8 *buffer, uint32 size) {
+ao_start (uint32 type, const char *path, uint8 *buffer, uint32 size) {
     printf ("ao_start %d %p %d\n", type, buffer, size);
-	return (*types[type].start)(buffer, size);
+	return (*types[type].start)(path, buffer, size);
 }
 
 int

@@ -141,7 +141,7 @@ static int32 qsf_irq_cb(int param)
 	return 0x000000ff;	// RST_38
 }
 
-void *qsf_start(uint8 *buffer, uint32 length)
+void *qsf_start(const char *path, uint8 *buffer, uint32 length)
 {
     qsf_synth_t *s = malloc (sizeof (qsf_synth_t));
     memset (s, 0, sizeof (qsf_synth_t));

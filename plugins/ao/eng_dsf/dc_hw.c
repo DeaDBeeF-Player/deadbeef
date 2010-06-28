@@ -12,14 +12,12 @@
 #include "arm7core.h"
 #endif
 
-uint8 dc_ram[8*1024*1024];
-
-static void aica_irq(int irq)
+static void aica_irq(struct sARM7 *cpu, int irq)
 {
 	if (irq > 0)
 	{
 		#if DK_CORE
-		ARM7_SetFIQ(TRUE);
+		ARM7_SetFIQ(cpu, TRUE);
 		#else
 		set_irq_line(ARM7_FIRQ_LINE, 1);
 		#endif
@@ -27,7 +25,7 @@ static void aica_irq(int irq)
 	else
 	{
 		#if DK_CORE
-		ARM7_SetFIQ(FALSE);
+		ARM7_SetFIQ(cpu, FALSE);
 		#else
 		set_irq_line(ARM7_FIRQ_LINE, 0);
 		#endif
@@ -39,19 +37,11 @@ static void aica_irq(int irq)
 #define MIXER(level,pan) ((level & 0xff) | ((pan & 0x03) << 8))
 #define YM3012_VOL(LVol,LPan,RVol,RPan) (MIXER(LVol,LPan)|(MIXER(RVol,RPan) << 16))
 
-static struct AICAinterface aica_interface =
-{
-	1,
-	{ dc_ram, },
-	{ YM3012_VOL(100, MIXER_PAN_LEFT, 100, MIXER_PAN_RIGHT) },
-	{ aica_irq, },
-};
-
-uint8 dc_read8(int addr)
+uint8 dc_read8(struct sARM7 *cpu, int addr)
 {
 	if (addr < 0x800000)
 	{
-		return dc_ram[addr];
+		return cpu->dc_ram[addr];
 	}
 
 	if ((addr >= 0x800000) && (addr <= 0x807fff))
@@ -72,11 +62,11 @@ uint8 dc_read8(int addr)
 	return -1;
 }
 
-uint16 dc_read16(int addr)
+uint16 dc_read16(struct sARM7 *cpu, int addr)
 {
 	if (addr < 0x800000)
 	{
-		return dc_ram[addr] | (dc_ram[addr+1]<<8);
+		return cpu->dc_ram[addr] | (cpu->dc_ram[addr+1]<<8);
 	}
 
 	if ((addr >= 0x800000) && (addr <= 0x807fff))
@@ -88,11 +78,11 @@ uint16 dc_read16(int addr)
 	return -1;
 }
 
-uint32 dc_read32(int addr)
+uint32 dc_read32(struct sARM7 *cpu, int addr)
 {
 	if (addr < 0x800000)
 	{
-		return dc_ram[addr] | (dc_ram[addr+1]<<8) | (dc_ram[addr+2]<<16) | (dc_ram[addr+3]<<24);
+		return cpu->dc_ram[addr] | (cpu->dc_ram[addr+1]<<8) | (cpu->dc_ram[addr+2]<<16) | (cpu->dc_ram[addr+3]<<24);
 	}
 
 	if ((addr >= 0x800000) && (addr <= 0x807fff))
@@ -105,11 +95,11 @@ uint32 dc_read32(int addr)
 	return 0;
 }
 
-void dc_write8(int addr, uint8 data)
+void dc_write8(struct sARM7 *cpu, int addr, uint8 data)
 {
 	if (addr < 0x800000)
 	{
-		dc_ram[addr] = data;
+		cpu->dc_ram[addr] = data;
 		return;
 	}
 
@@ -126,12 +116,12 @@ void dc_write8(int addr, uint8 data)
 	printf("W8 %x @ %x\n", data, addr);
 }
 
-void dc_write16(int addr, uint16 data)
+void dc_write16(struct sARM7 *cpu, int addr, uint16 data)
 {
 	if (addr < 0x800000)
 	{
-		dc_ram[addr] = data&0xff;
-		dc_ram[addr+1] = (data>>8) & 0xff;
+		cpu->dc_ram[addr] = data&0xff;
+		cpu->dc_ram[addr+1] = (data>>8) & 0xff;
 		return;
 	}
 
@@ -144,14 +134,14 @@ void dc_write16(int addr, uint16 data)
 	printf("W16 %x @ %x\n", data, addr);
 }
 
-void dc_write32(int addr, uint32 data)
+void dc_write32(struct sARM7 *cpu, int addr, uint32 data)
 {
 	if (addr < 0x800000)
 	{
-		dc_ram[addr] = data&0xff;
-		dc_ram[addr+1] = (data>>8) & 0xff;
-		dc_ram[addr+2] = (data>>16) & 0xff;
-		dc_ram[addr+3] = (data>>24) & 0xff;
+		cpu->dc_ram[addr] = data&0xff;
+		cpu->dc_ram[addr+1] = (data>>8) & 0xff;
+		cpu->dc_ram[addr+2] = (data>>16) & 0xff;
+		cpu->dc_ram[addr+3] = (data>>24) & 0xff;
 		return;
 	}
 
@@ -166,9 +156,23 @@ void dc_write32(int addr, uint32 data)
 	printf("W32 %x @ %x\n", data, addr);
 }
 
-void dc_hw_init(void)
+void dc_hw_init(struct sARM7 *cpu)
 {
-	aica_interface.region[0] = dc_ram;
-	aica_start(&aica_interface);
+#if 0
+static struct AICAinterface aica_interface =
+{
+	1,
+	{ cpu->dc_ram, },
+	{ YM3012_VOL(100, MIXER_PAN_LEFT, 100, MIXER_PAN_RIGHT) },
+	{ aica_irq, },
+};
+#endif
+
+    cpu->aica_interface.num = 1;
+    cpu->aica_interface.region[0] = cpu->dc_ram;
+    cpu->aica_interface.mixing_level[0] = YM3012_VOL(100, MIXER_PAN_LEFT, 100, MIXER_PAN_RIGHT);
+    cpu->aica_interface.irq_callback[0] = aica_irq;
+    cpu->aica_interface.cpu = cpu;
+	aica_start(&cpu->aica_interface);
 }
 

@@ -88,7 +88,7 @@ typedef struct {
 void *scsp_start(const void *config);
 void SCSP_Update(void *param, INT16 **inputs, INT16 **buf, int samples);
 
-void *ssf_start(uint8 *buffer, uint32 length)
+void *ssf_start(const char *path, uint8 *buffer, uint32 length)
 {
     ssf_synth_t *s = malloc (sizeof (ssf_synth_t));
     memset (s, 0, sizeof (ssf_synth_t));

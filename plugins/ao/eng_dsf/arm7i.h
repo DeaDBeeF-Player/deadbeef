@@ -13,7 +13,7 @@
   // public functions
 
   /** Single step, returns number of burned cycles. */
-int ARM7i_Step(void);
+int ARM7i_Step(struct sARM7 *cpu);
   //--------------------------------------------------------------------------
 
 #endif

@@ -19,7 +19,7 @@
 #include "dc_hw.h"
 #include "aica.h"
 
-#define DEBUG_LOADER	(0)
+#define DEBUG_LOADER	(1)
 #define DK_CORE	(1)
 
 #if DK_CORE
@@ -32,12 +32,13 @@ typedef struct {
     corlett_t	*c;
     char 		psfby[256];
     uint32		decaybegin, decayend, total_samples;
+    struct sARM7 *cpu;
 } dsf_synth_t;
 
-void *aica_start(const void *config);
+//void *aica_start(const void *config);
 void AICA_Update(void *param, INT16 **inputs, INT16 **buf, int samples);
 
-void *dsf_start(uint8 *buffer, uint32 length)
+void *dsf_start(const char *path, uint8 *buffer, uint32 length)
 {
     dsf_synth_t *s = malloc (sizeof (dsf_synth_t));
     memset (s, 0, sizeof (dsf_synth_t));
@@ -48,9 +49,6 @@ void *dsf_start(uint8 *buffer, uint32 length)
 	corlett_t *lib;
 	char *libfile;
 	int i;
-
-	// clear Dreamcast work RAM before we start scribbling in it
-	memset(dc_ram, 0, 8*1024*1024);
 
 	// Decode the current SSF
 	if (corlett_decode(buffer, length, &file, &file_len, &s->c) != AO_SUCCESS)
@@ -63,17 +61,32 @@ void *dsf_start(uint8 *buffer, uint32 length)
 	printf("%d bytes decoded\n", file_len);
 	#endif
 
+	s->cpu = ARM7_Alloc ();
 	// Get the library file, if any
 	for (i=0; i<9; i++) {
 		libfile = i ? s->c->libaux[i-1] : s->c->lib;
 		if (libfile[0] != 0)
 		{
 			uint64 tmp_length;
+			char libpath[PATH_MAX];
+			const char *e = path + strlen(path);
+			while (e > path && *e != '/') {
+                e--;
+            }
+            if (*e == '/') {
+                e++;
+                memcpy (libpath, path, e-path);
+                libpath[e-path] = 0;
+                strcat (libpath, libfile);
+            }
+            else {
+                strcpy (libpath, libfile);
+            }
 	
 			#if DEBUG_LOADER	
-			printf("Loading library: %s\n", c->lib);
+			printf("Loading library: %s\n", libpath);
 			#endif
-			if (ao_get_lib(libfile, &lib_raw_file, &tmp_length) != AO_SUCCESS)
+			if (ao_get_lib(libpath, &lib_raw_file, &tmp_length) != AO_SUCCESS)
 			{
                 dsf_stop (s);
 				return NULL;
@@ -92,7 +105,7 @@ void *dsf_start(uint8 *buffer, uint32 length)
 
 			// patch the file into ram
 			offset = lib_decoded[0] | lib_decoded[1]<<8 | lib_decoded[2]<<16 | lib_decoded[3]<<24;
-			memcpy(&dc_ram[offset], lib_decoded+4, lib_len-4);
+			memcpy(&s->cpu->dc_ram[offset], lib_decoded+4, lib_len-4);
 
 			// Dispose the corlett structure for the lib - we don't use it
 			free(lib);
@@ -101,7 +114,7 @@ void *dsf_start(uint8 *buffer, uint32 length)
 
 	// now patch the file into RAM over the libraries
 	offset = file[3]<<24 | file[2]<<16 | file[1]<<8 | file[0];
-	memcpy(&dc_ram[offset], file+4, file_len-4);
+	memcpy(&s->cpu->dc_ram[offset], file+4, file_len-4);
 
 	free(file);
 	
@@ -116,23 +129,23 @@ void *dsf_start(uint8 *buffer, uint32 length)
 		}
 	}
 
-	#if DEBUG_LOADER && 1
+	#if DEBUG_LOADER && 0
 	{
 		FILE *f;
 
 		f = fopen("dcram.bin", "wb");
-		fwrite(dc_ram, 2*1024*1024, 1, f);
+		fwrite(s->cpu->dc_ram, 2*1024*1024, 1, f);
 		fclose(f);
 	}
 	#endif
 
 	#if DK_CORE
-	ARM7_Init();
+	ARM7_Init(s->cpu);
 	#else
-	arm7_init(0, 45000000, NULL, NULL);
-	arm7_reset();
+	arm7_init(cpu, 0, 45000000, NULL, NULL);
+	arm7_reset(s->cpu);
 	#endif
-	dc_hw_init();
+	dc_hw_init(s->cpu);
 
 	// now figure out the time in samples for the length/fade
 	lengthMS = psfTimeToMS(s->c->inf_length);
@@ -174,9 +187,9 @@ int32 dsf_gen(void *handle, int16 *buffer, uint32 samples)
 	for (i = 0; i < samples; i++)
 	{
 		#if DK_CORE
-		ARM7_Execute((33000000 / 60 / 4) / 735);
+		ARM7_Execute(s->cpu, (33000000 / 60 / 4) / 735);
 		#else
-		arm7_execute((33000000 / 60 / 4) / 735);
+		arm7_execute(s->cpu, (33000000 / 60 / 4) / 735);
 		#endif
 		stereo[0] = &output[opos];
 		stereo[1] = &output2[opos];

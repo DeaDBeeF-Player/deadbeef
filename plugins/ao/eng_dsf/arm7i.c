@@ -6,6 +6,7 @@
 
 #include "arm7.h"
 #include "arm7i.h"
+#include "dc_hw.h"
 
   //--------------------------------------------------------------------------
   // definitions and macros
@@ -49,85 +50,85 @@
   // private functions
 	   
   /** Condition EQ. */
-static int R_WEQ (void);
+static int R_WEQ (struct sARM7 *cpu);
   /** Condition NE. */
-static int R_WNE (void);
+static int R_WNE (struct sARM7 *cpu);
   /** Condition CS. */
-static int R_WCS (void);
+static int R_WCS (struct sARM7 *cpu);
   /** Condition CC. */
-static int R_WCC (void);
+static int R_WCC (struct sARM7 *cpu);
   /** Condition MI. */
-static int R_WMI (void);
+static int R_WMI (struct sARM7 *cpu);
   /** Condition PL. */
-static int R_WPL (void);
+static int R_WPL (struct sARM7 *cpu);
   /** Condition VS. */
-static int R_WVS (void);
+static int R_WVS (struct sARM7 *cpu);
   /** Condition VC. */
-static int R_WVC (void);
+static int R_WVC (struct sARM7 *cpu);
   /** Condition HI. */
-static int R_WHI (void);
+static int R_WHI (struct sARM7 *cpu);
   /** Condition LS. */
-static int R_WLS (void);
+static int R_WLS (struct sARM7 *cpu);
   /** Condition GE. */
-static int R_WGE (void);
+static int R_WGE (struct sARM7 *cpu);
   /** Condition LT. */
-static int R_WLT (void);
+static int R_WLT (struct sARM7 *cpu);
   /** Condition GT. */
-static int R_WGT (void);
+static int R_WGT (struct sARM7 *cpu);
   /** Condition LE. */
-static int R_WLE (void);
+static int R_WLE (struct sARM7 *cpu);
   /** Condition AL. */
-static int R_WAL (void);
+static int R_WAL (struct sARM7 *cpu);
   /** Undefined condition. */
-static int R_Wxx (void);
+static int R_Wxx (struct sARM7 *cpu);
 
   /** Calculates barrel shifter output. */
-static UINT32 WyliczPrzes (void);
+static UINT32 WyliczPrzes (struct sARM7 *cpu);
   /** Logical shift left. */
-static UINT32 LSL_x (UINT32 w, int i);
+static UINT32 LSL_x (struct sARM7 *cpu, UINT32 w, int i);
   /** Logical shift right. */
-static UINT32 LSR_x (UINT32 w, int i);
+static UINT32 LSR_x (struct sARM7 *cpu, UINT32 w, int i);
   /** Arithmetic shift right. */
-static UINT32 ASR_x (UINT32 w, int i);
+static UINT32 ASR_x (struct sARM7 *cpu, UINT32 w, int i);
   /** Rotate right. */
-static UINT32 ROR_x (UINT32 w, int i);
+static UINT32 ROR_x (struct sARM7 *cpu, UINT32 w, int i);
   /** Rotate right extended. */
-static UINT32 RRX_1 (UINT32 w);
+static UINT32 RRX_1 (struct sARM7 *cpu, UINT32 w);
 
   /** Group 00x opcodes. */
-static void R_G00x (void);
+static void R_G00x (struct sARM7 *cpu);
   /** Multiply instructions. */
-static void R_MUL_MLA (void);
+static void R_MUL_MLA (struct sARM7 *cpu);
   /** Single data swap. */
-static void R_SWP (void);
+static void R_SWP (struct sARM7 *cpu);
   /** PSR Transfer. */
-static void R_PSR (void);
+static void R_PSR (struct sARM7 *cpu);
   /** Data processing instructions. */
-static void R_DP (void);
+static void R_DP (struct sARM7 *cpu);
   /** Data processing result writeback. */
-static void R_WynikDP (ARM7_REG w);
+static void R_WynikDP (struct sARM7 *cpu, ARM7_REG w);
   /** Data processing flags writeback. */
-static void R_FlagiDP (ARM7_REG w);
+static void R_FlagiDP (struct sARM7 *cpu, ARM7_REG w);
   /** Single data transfer. */
-static void R_SDT (void);
+static void R_SDT (struct sARM7 *cpu);
   /** Rozkaz "Undefined". */
-static void R_Und ();
+static void R_Und (struct sARM7 *cpu);
   /** Block Data Transfer. */
-static void R_BDT ();
+static void R_BDT (struct sARM7 *cpu);
   /** Block load instructions. */
-static void R_LDM (int Rn, UINT32 adres);
+static void R_LDM (struct sARM7 *cpu, int Rn, UINT32 adres);
   /** Block store instructions. */
-static void R_STM (int Rn, UINT32 adres);
+static void R_STM (struct sARM7 *cpu, int Rn, UINT32 adres);
   /** Branch/Branch with link. */
-static void R_B_BL (void);
+static void R_B_BL (struct sARM7 *cpu);
   /** Group 110 opcodes. */
-static void R_G110 (void);
+static void R_G110 (struct sARM7 *cpu);
   /** Group 111 opcodes. */
-static void R_G111 (void);
+static void R_G111 (struct sARM7 *cpu);
 
 #ifdef ARM7_THUMB
   /** Halfword and Signed Data Transfer. */
-static void R_HSDT ();
+static void R_HSDT (struct sARM7 *cpu);
 #endif
   //--------------------------------------------------------------------------
 
@@ -135,10 +136,10 @@ static void R_HSDT ();
   // private data
 
   /** Flag testing functions for conditional execution. */
-static int (*s_tabWar [16]) (void) = {R_WEQ, R_WNE, R_WCS, R_WCC, R_WMI, R_WPL,
+static int (*s_tabWar [16]) (struct sARM7 *cpu) = {R_WEQ, R_WNE, R_WCS, R_WCC, R_WMI, R_WPL,
  R_WVS, R_WVC, R_WHI, R_WLS, R_WGE, R_WLT, R_WGT, R_WLE, R_WAL, R_Wxx};
   /** Handler table for instruction groups. */
-static void (*s_tabGrup [8]) (void) = {R_G00x, R_G00x, R_SDT, R_SDT, R_BDT,
+static void (*s_tabGrup [8]) (struct sARM7 *cpu) = {R_G00x, R_G00x, R_SDT, R_SDT, R_BDT,
  R_B_BL, R_G110, R_G111};
   /** Data processing instructions split to arithmetic and logical. */
 static int s_tabAL [16] = {FALSE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,
@@ -154,17 +155,17 @@ static int s_cykle;
 
   //--------------------------------------------------------------------------
   /** Single step, returns number of burned cycles. */
-int ARM7i_Step ()
+int ARM7i_Step (struct sARM7 *cpu)
   {
-  ARM7.kod = arm7_read_32 (ARM7.Rx [ARM7_PC] & ~3);
+  cpu->kod = arm7_read_32 (cpu, cpu->Rx [ARM7_PC] & ~3);
 
   // we increment PC here, and if there's a load from memory it will simply
   // overwrite it (all PC modyfing code should be aware of this)
-  ARM7.Rx [ARM7_PC] += 4;
+  cpu->Rx [ARM7_PC] += 4;
   s_cykle = 2;
   // condition test and group selection
-  if (s_tabWar [(ARM7.kod >> 28) & 15] ())
-    s_tabGrup [(ARM7.kod >> 25) & 7] ();
+  if (s_tabWar [(cpu->kod >> 28) & 15] (cpu))
+    s_tabGrup [(cpu->kod >> 25) & 7] (cpu);
   return s_cykle;
   }
   //--------------------------------------------------------------------------
@@ -175,139 +176,139 @@ int ARM7i_Step ()
 
   //--------------------------------------------------------------------------
   /** Condition EQ. */
-int R_WEQ ()
+int R_WEQ (struct sARM7 *cpu)
   {
   // "Z set"
-  return ARM7.Rx [ARM7_CPSR] & ARM7_CPSR_Z;
+  return cpu->Rx [ARM7_CPSR] & ARM7_CPSR_Z;
   }
   //--------------------------------------------------------------------------
 
   //--------------------------------------------------------------------------
   /** Condition NE. */
-int R_WNE ()
+int R_WNE (struct sARM7 *cpu)
   {
   // "Z clear"
-  return !(ARM7.Rx [ARM7_CPSR] & ARM7_CPSR_Z);
+  return !(cpu->Rx [ARM7_CPSR] & ARM7_CPSR_Z);
   }
   //--------------------------------------------------------------------------
 
   //--------------------------------------------------------------------------
   /** Condition CS. */
-int R_WCS ()
+int R_WCS (struct sARM7 *cpu)
   {
   // "C set"
-  return ARM7.Rx [ARM7_CPSR] & ARM7_CPSR_C;
+  return cpu->Rx [ARM7_CPSR] & ARM7_CPSR_C;
   }
   //--------------------------------------------------------------------------
 
   //--------------------------------------------------------------------------
   /** Condition CC. */
-int R_WCC ()
+int R_WCC (struct sARM7 *cpu)
   {
   // "C clear"
-  return !(ARM7.Rx [ARM7_CPSR] & ARM7_CPSR_C);
+  return !(cpu->Rx [ARM7_CPSR] & ARM7_CPSR_C);
   }
   //--------------------------------------------------------------------------
 
   //--------------------------------------------------------------------------
   /** Condition MI. */
-int R_WMI ()
+int R_WMI (struct sARM7 *cpu)
   {
   // "N set"
-  return ARM7.Rx [ARM7_CPSR] & ARM7_CPSR_N;
+  return cpu->Rx [ARM7_CPSR] & ARM7_CPSR_N;
   }
   //--------------------------------------------------------------------------
 
   //--------------------------------------------------------------------------
   /** Condition PL. */
-int R_WPL ()
+int R_WPL (struct sARM7 *cpu)
   {
   // "N clear"
-  return !(ARM7.Rx [ARM7_CPSR] & ARM7_CPSR_N);
+  return !(cpu->Rx [ARM7_CPSR] & ARM7_CPSR_N);
   }
   //--------------------------------------------------------------------------
 
   //--------------------------------------------------------------------------
   /** Condition VS. */
-int R_WVS ()
+int R_WVS (struct sARM7 *cpu)
   {
   // "V set"
-  return ARM7.Rx [ARM7_CPSR] & ARM7_CPSR_V;
+  return cpu->Rx [ARM7_CPSR] & ARM7_CPSR_V;
   }
   //--------------------------------------------------------------------------
 
   //--------------------------------------------------------------------------
   /** Condition VC. */
-int R_WVC ()
+int R_WVC (struct sARM7 *cpu)
   {
   // "V clear"
-  return !(ARM7.Rx [ARM7_CPSR] & ARM7_CPSR_V);
+  return !(cpu->Rx [ARM7_CPSR] & ARM7_CPSR_V);
   }
   //--------------------------------------------------------------------------
 
   //--------------------------------------------------------------------------
   /** Condition HI. */
-int R_WHI ()
+int R_WHI (struct sARM7 *cpu)
   {
   // "C set and Z clear"
-  return (ARM7.Rx [ARM7_CPSR] & ARM7_CPSR_C) &&\
- !(ARM7.Rx [ARM7_CPSR] & ARM7_CPSR_Z);
+  return (cpu->Rx [ARM7_CPSR] & ARM7_CPSR_C) &&\
+ !(cpu->Rx [ARM7_CPSR] & ARM7_CPSR_Z);
   }
   //--------------------------------------------------------------------------
 
   //--------------------------------------------------------------------------
   /** Condition LS. */
-int R_WLS ()
+int R_WLS (struct sARM7 *cpu)
   {
   // "C clear or Z set"
-  return !(ARM7.Rx [ARM7_CPSR] & ARM7_CPSR_C) ||\
- (ARM7.Rx [ARM7_CPSR] & ARM7_CPSR_Z);
+  return !(cpu->Rx [ARM7_CPSR] & ARM7_CPSR_C) ||\
+ (cpu->Rx [ARM7_CPSR] & ARM7_CPSR_Z);
   }
   //--------------------------------------------------------------------------
 
   //--------------------------------------------------------------------------
   /** Condition GE. */
-int R_WGE ()
+int R_WGE (struct sARM7 *cpu)
   {
   // "N equals V"
-  return (ARM7.Rx [ARM7_CPSR] & ARM7_CPSR_N) &&\
- (ARM7.Rx [ARM7_CPSR] & ARM7_CPSR_V) || !(ARM7.Rx [ARM7_CPSR] & ARM7_CPSR_N) &&\
- !(ARM7.Rx [ARM7_CPSR] & ARM7_CPSR_V);
+  return (cpu->Rx [ARM7_CPSR] & ARM7_CPSR_N) &&\
+ (cpu->Rx [ARM7_CPSR] & ARM7_CPSR_V) || !(cpu->Rx [ARM7_CPSR] & ARM7_CPSR_N) &&\
+ !(cpu->Rx [ARM7_CPSR] & ARM7_CPSR_V);
   }
   //--------------------------------------------------------------------------
 
   //--------------------------------------------------------------------------
   /** Condition LT. */
-int R_WLT ()
+int R_WLT (struct sARM7 *cpu)
   {
   // "N not equal to V"
-  return !(ARM7.Rx [ARM7_CPSR] & ARM7_CPSR_N) &&\
- (ARM7.Rx [ARM7_CPSR] & ARM7_CPSR_V) || (ARM7.Rx [ARM7_CPSR] & ARM7_CPSR_N) &&\
- !(ARM7.Rx [ARM7_CPSR] & ARM7_CPSR_V);
+  return !(cpu->Rx [ARM7_CPSR] & ARM7_CPSR_N) &&\
+ (cpu->Rx [ARM7_CPSR] & ARM7_CPSR_V) || (cpu->Rx [ARM7_CPSR] & ARM7_CPSR_N) &&\
+ !(cpu->Rx [ARM7_CPSR] & ARM7_CPSR_V);
   }
   //--------------------------------------------------------------------------
 
   //--------------------------------------------------------------------------
   /** Condition GT. */
-int R_WGT ()
+int R_WGT (struct sARM7 *cpu)
   {
   // "Z clear AND (N equals V)"
-  return !(ARM7.Rx [ARM7_CPSR] & ARM7_CPSR_Z) && R_WGE ();
+  return !(cpu->Rx [ARM7_CPSR] & ARM7_CPSR_Z) && R_WGE (cpu);
   }
   //--------------------------------------------------------------------------
 
   //--------------------------------------------------------------------------
   /** Condition LE. */
-int R_WLE ()
+int R_WLE (struct sARM7 *cpu)
   {
   // "Z set OR (N not equal to V)"
-  return (ARM7.Rx [ARM7_CPSR] & ARM7_CPSR_Z) || R_WLT ();
+  return (cpu->Rx [ARM7_CPSR] & ARM7_CPSR_Z) || R_WLT (cpu);
   }
   //--------------------------------------------------------------------------
 
   //--------------------------------------------------------------------------
   /** Condition AL. */
-int R_WAL ()
+int R_WAL (struct sARM7 *cpu)
   {
   // "(ignored)"
   return TRUE;
@@ -316,7 +317,7 @@ int R_WAL ()
 
   //--------------------------------------------------------------------------
   /** Undefined condition. */
-int R_Wxx ()
+int R_Wxx (struct sARM7 *cpu)
   {
   // behaviour undefined
   return FALSE;
@@ -325,45 +326,45 @@ int R_Wxx ()
 
   //--------------------------------------------------------------------------
   /** Calculates barrel shifter output. */
-UINT32 WyliczPrzes ()
+UINT32 WyliczPrzes (struct sARM7 *cpu)
   {
   int Rm, Rs, i;
   UINT32 w;
 
   // Rm is source for the shift operation
-  Rm = ARM7.kod & 15;
+  Rm = cpu->kod & 15;
 
-  if (ARM7.kod & (1 << 4))
+  if (cpu->kod & (1 << 4))
     {
     s_cykle++;
     // shift count in Rs (8 lowest bits)
     if (Rm != ARM7_PC)
-      w = ARM7.Rx [Rm];
+      w = cpu->Rx [Rm];
     else
-      w = (ARM7.Rx [ARM7_PC] & ~3) + 12 + PC_ADJUSTMENT;
+      w = (cpu->Rx [ARM7_PC] & ~3) + 12 + PC_ADJUSTMENT;
     // Rs can't be PC
-    Rs = (ARM7.kod >> 8) & 15;
-    i = (UINT8)ARM7.Rx [Rs];
+    Rs = (cpu->kod >> 8) & 15;
+    i = (UINT8)cpu->Rx [Rs];
     if (i == 0)
       {
       // special case
-      ARM7.carry = (ARM7.Rx [ARM7_CPSR] & ARM7_CPSR_C) ? 1 : 0;
+      cpu->carry = (cpu->Rx [ARM7_CPSR] & ARM7_CPSR_C) ? 1 : 0;
       return w;
       }
 
-    switch ((ARM7.kod >> 5) & 3)
+    switch ((cpu->kod >> 5) & 3)
       {
       case 0:
-        w = LSL_x (w, i);
+        w = LSL_x (cpu, w, i);
         break;
       case 1:
-        w = LSR_x (w, i);
+        w = LSR_x (cpu, w, i);
         break;
       case 2:
-        w = ASR_x (w, i);
+        w = ASR_x (cpu, w, i);
         break;
       case 3:
-        w = ROR_x (w, i);
+        w = ROR_x (cpu, w, i);
         break;
       }
     }
@@ -371,33 +372,33 @@ UINT32 WyliczPrzes ()
     {
     // shift count as immediate in opcode
     if (Rm != ARM7_PC)
-      w = ARM7.Rx [Rm];
+      w = cpu->Rx [Rm];
     else
-      w = (ARM7.Rx [ARM7_PC] & ~3) + 8 + PC_ADJUSTMENT;
-    i = (ARM7.kod >> 7) & 31;
+      w = (cpu->Rx [ARM7_PC] & ~3) + 8 + PC_ADJUSTMENT;
+    i = (cpu->kod >> 7) & 31;
 
-    switch ((ARM7.kod >> 5) & 3)
+    switch ((cpu->kod >> 5) & 3)
       {
       case 0:
-        w = LSL_x (w, i);
+        w = LSL_x (cpu, w, i);
         break;
       case 1:
         if (i > 0)
-          w = LSR_x (w, i);
+          w = LSR_x (cpu, w, i);
         else
-          w = LSR_x (w, 32);
+          w = LSR_x (cpu, w, 32);
         break;
       case 2:
         if (i > 0)
-          w = ASR_x (w, i);
+          w = ASR_x (cpu, w, i);
         else
-          w = ASR_x (w, 32);
+          w = ASR_x (cpu, w, 32);
         break;
       case 3:
         if (i > 0)
-          w = ROR_x (w, i);
+          w = ROR_x (cpu, w, i);
         else
-          w = RRX_1 (w);
+          w = RRX_1 (cpu, w);
         break;
       }
     }
@@ -407,28 +408,28 @@ UINT32 WyliczPrzes ()
 
   //--------------------------------------------------------------------------
   /** Logical shift left. */
-UINT32 LSL_x (UINT32 w, int i)
+UINT32 LSL_x (struct sARM7 *cpu, UINT32 w, int i)
 {
 	// LSL #0 copies C into carry out and returns unmodified value
 	if (i == 0)
 	{
-		ARM7.carry = (ARM7.Rx [ARM7_CPSR] & ARM7_CPSR_C) ? 1 : 0;
+		cpu->carry = (cpu->Rx [ARM7_CPSR] & ARM7_CPSR_C) ? 1 : 0;
 		return w;
 	}
 	// LSL #32 copies LSB to carry out and returns zero
 	if (i == 32)
 	{
-		ARM7.carry = w & 1;
+		cpu->carry = w & 1;
 		return 0;
 	}
 	// LSL > #32 returns zero for both carry and output
 	if (i > 32)
 	{
-		ARM7.carry = 0;
+		cpu->carry = 0;
 		return 0;
 	}
         // normal shift
-	ARM7.carry = (w & (1 << (32 - i))) ? 1 : 0;
+	cpu->carry = (w & (1 << (32 - i))) ? 1 : 0;
 	w = SHL (w, i);
 	return w;
 }
@@ -436,22 +437,22 @@ UINT32 LSL_x (UINT32 w, int i)
 
   //--------------------------------------------------------------------------
   /** Logical shift right. */
-UINT32 LSR_x (UINT32 w, int i)
+UINT32 LSR_x (struct sARM7 *cpu, UINT32 w, int i)
 {
 	// LSR #32 copies MSB to carry out and returns zero
 	if (i == 32)
 	{
-		ARM7.carry = (w & (1 << 31)) ? 1 : 0;
+		cpu->carry = (w & (1 << 31)) ? 1 : 0;
 		return 0;
 	}
 	// LSR > #32 returns zero for both carry and output
 	if (i > 32)
 	{
-		ARM7.carry = 0;
+		cpu->carry = 0;
 		return 0;
 	}
         // normal shift
-	ARM7.carry = (w & (1 << (i - 1))) ? 1 : 0;
+	cpu->carry = (w & (1 << (i - 1))) ? 1 : 0;
 	w = SHR (w, i);
 	return w;
 }
@@ -459,22 +460,22 @@ UINT32 LSR_x (UINT32 w, int i)
 
   //--------------------------------------------------------------------------
   /** Arithmetic shift right. */
-UINT32 ASR_x (UINT32 w, int i)
+UINT32 ASR_x (struct sARM7 *cpu, UINT32 w, int i)
 {
 	// ASR >= #32 carry out and output value depends on the minus sign
 	if (i >= 32)
 	{
 		if (w & (1 << 31))
 		{
-			ARM7.carry = 1;
+			cpu->carry = 1;
 			return ~0;
 		}
 
-		ARM7.carry = 0;
+		cpu->carry = 0;
 		return 0;
 	}
 	// normal shift
-	ARM7.carry = (w & (1 << (i - 1))) ? 1 : 0;
+	cpu->carry = (w & (1 << (i - 1))) ? 1 : 0;
 	w = SAR (w, i);
 	return w;
 }
@@ -482,18 +483,18 @@ UINT32 ASR_x (UINT32 w, int i)
 
   //--------------------------------------------------------------------------
   /** Rotate right. */
-UINT32 ROR_x (UINT32 w, int i)
+UINT32 ROR_x (struct sARM7 *cpu, UINT32 w, int i)
 {
 	// mask count to [0; 31]
 	i &= 0x1f;
 	// ROR #32,#64,etc. copies MSB into carry out and returns unmodified value
 	if (i == 0)
 	{
-		ARM7.carry = (w & (1 << 31)) ? 1 : 0;
+		cpu->carry = (w & (1 << 31)) ? 1 : 0;
 		return w;
 	}
 	// normal shift
-	ARM7.carry = (w & (1 << (i-1))) ? 1 : 0;
+	cpu->carry = (w & (1 << (i-1))) ? 1 : 0;
 	w = ROR (w, i);
 	return w;
 }
@@ -501,74 +502,74 @@ UINT32 ROR_x (UINT32 w, int i)
 
   //--------------------------------------------------------------------------
   /** Rotate right extended. */
-UINT32 RRX_1 (UINT32 w)
+UINT32 RRX_1 (struct sARM7 *cpu, UINT32 w)
   {
   // same as RCR by 1 in IA32
-  ARM7.carry = w & 1;
-  return (w >> 1) | ((ARM7.Rx [ARM7_CPSR] & ARM7_CPSR_C) << 2);
+  cpu->carry = w & 1;
+  return (w >> 1) | ((cpu->Rx [ARM7_CPSR] & ARM7_CPSR_C) << 2);
   }
   //--------------------------------------------------------------------------
 
   //--------------------------------------------------------------------------
   /** Group 00x opcodes. */
-void R_G00x ()
+void R_G00x (struct sARM7 *cpu)
   {
 #ifdef ARM7_THUMB
   // 24 constant bits
-  if ((ARM7.kod & 0x0ffffff0) == 0x012fff10)	// BX - branch with possible mode transfer
+  if ((cpu->kod & 0x0ffffff0) == 0x012fff10)	// BX - branch with possible mode transfer
   {
   #ifdef ARM7_THUMB
-  	int Rn = ARM7.Rx[ARM7.kod & 0xf];
+  	int Rn = cpu->Rx[cpu->kod & 0xf];
 
 	// switching to Thumb mode?
 	if (Rn & 1)
 	{
-		ARM7_SetCPSR(ARM7.Rx[ARM7_CPSR] | ARM7_CPSR_T);
+		ARM7_SetCPSR(cpu->Rx[ARM7_CPSR] | ARM7_CPSR_T);
 	}
        
-	ARM7.Rx[ARM7_PC] = Rn & ~1;
+	cpu->Rx[ARM7_PC] = Rn & ~1;
   #endif
   }
   // 15 constant bits
-  else if ((ARM7.kod & 0x0fb00ff0) == 0x01000090)
-    R_SWP ();
+  else if ((cpu->kod & 0x0fb00ff0) == 0x01000090)
+    R_SWP (cpu);
   // 10 constant bits
-  else if ((ARM7.kod & 0x0fc000f0) == 0x00000090)
-    R_MUL_MLA ();
+  else if ((cpu->kod & 0x0fc000f0) == 0x00000090)
+    R_MUL_MLA (cpu);
   // 10 constant bits
-  else if ((ARM7.kod & 0x0e400f90) == 0x00000090)
-    R_HSDT ();
+  else if ((cpu->kod & 0x0e400f90) == 0x00000090)
+    R_HSDT (cpu);
   // 9 constant bits
-  else if ((ARM7.kod & 0x0f8000f0) == 0x00800090)
+  else if ((cpu->kod & 0x0f8000f0) == 0x00800090)
   {
 //    logerror("G00x / Multiply long\n");
   }
   // 6 constant bits	 
-  else if ((ARM7.kod & 0x0e400090) == 0x00400090)
-    R_HSDT ();
+  else if ((cpu->kod & 0x0e400090) == 0x00400090)
+    R_HSDT (cpu);
   // 2 constant bits
   else
     {
-    if ((ARM7.kod & 0x01900000) == 0x01000000)
+    if ((cpu->kod & 0x01900000) == 0x01000000)
       // TST, TEQ, CMP & CMN without S bit are "PSR Transfer"
-      R_PSR ();
+      R_PSR (cpu);
     else
       // the rest is "Data processing"
-      R_DP ();
+      R_DP (cpu);
     }
 #else
-  if ((ARM7.kod & 0x03b00090) == 0x01000090)
-    R_SWP ();
-  else if ((ARM7.kod & 0x03c00090) == 0x00000090)
-    R_MUL_MLA ();
+  if ((cpu->kod & 0x03b00090) == 0x01000090)
+    R_SWP (cpu);
+  else if ((cpu->kod & 0x03c00090) == 0x00000090)
+    R_MUL_MLA (cpu);
   else
     {
-    if ((ARM7.kod & 0x01900000) == 0x01000000)
+    if ((cpu->kod & 0x01900000) == 0x01000000)
       // TST, TEQ, CMP & CMN without S bit are "PSR Transfer"
-      R_PSR ();
+      R_PSR (cpu);
     else
       // the rest is "Data processing"
-      R_DP ();
+      R_DP (cpu);
     }
 #endif
   }
@@ -576,33 +577,33 @@ void R_G00x ()
 
   //--------------------------------------------------------------------------
   /** Single data swap. */
-void R_SWP ()
+void R_SWP (struct sARM7 *cpu)
   {
   int Rn, Rd, Rm;
   UINT32 adres, w;
 
-#define BIT_B (ARM7.kod & (1 << 21))
+#define BIT_B (cpu->kod & (1 << 21))
 
   s_cykle += 4;
   // none of these can be PC
-  Rn = (ARM7.kod >> 16) & 15;
-  Rd = (ARM7.kod >> 12) & 15;
-  Rm = ARM7.kod & 15;
-  adres = ARM7.Rx [Rn];
+  Rn = (cpu->kod >> 16) & 15;
+  Rd = (cpu->kod >> 12) & 15;
+  Rm = cpu->kod & 15;
+  adres = cpu->Rx [Rn];
 
   if (BIT_B)
     {
     // "byte"
-    w = arm7_read_8 (adres);
-    arm7_write_8 (adres, (UINT8)ARM7.Rx [Rm]);
+    w = arm7_read_8 (cpu, adres);
+    arm7_write_8 (cpu, adres, (UINT8)cpu->Rx [Rm]);
     }
   else
     {
     // "word"
-    w = RBOD (arm7_read_32 (adres & ~3), adres & 3);
-    arm7_write_32 (adres & ~3, ARM7.Rx [Rm]);
+    w = RBOD (arm7_read_32 (cpu, adres & ~3), adres & 3);
+    arm7_write_32 (cpu, adres & ~3, cpu->Rx [Rm]);
     }
-  ARM7.Rx [Rd] = w;
+  cpu->Rx [Rd] = w;
 
 #undef BIT_B
   }
@@ -610,37 +611,37 @@ void R_SWP ()
 
   //--------------------------------------------------------------------------
   /** Multiply instructions. */
-void R_MUL_MLA ()
+void R_MUL_MLA (struct sARM7 *cpu)
   {
   int Rm, Rs, Rn, Rd;
   UINT32 wynik;
 
-#define BIT_A (ARM7.kod & (1 << 21))
-#define BIT_S (ARM7.kod & (1 << 20))
+#define BIT_A (cpu->kod & (1 << 21))
+#define BIT_S (cpu->kod & (1 << 20))
 
   s_cykle += 2;
   // none of these can be PC, also Rd != Rm
-  Rd = (ARM7.kod >> 16) & 15,
-  Rs = (ARM7.kod >> 8) & 15,
-  Rm = ARM7.kod & 15;
+  Rd = (cpu->kod >> 16) & 15,
+  Rs = (cpu->kod >> 8) & 15,
+  Rm = cpu->kod & 15;
 
   // MUL
-  wynik = ARM7.Rx [Rm] * ARM7.Rx [Rs];
+  wynik = cpu->Rx [Rm] * cpu->Rx [Rs];
   if (BIT_A)
     {
     // MLA
-    Rn = (ARM7.kod >> 12) & 15;
-    wynik += ARM7.Rx [Rn];
+    Rn = (cpu->kod >> 12) & 15;
+    wynik += cpu->Rx [Rn];
     }
-  ARM7.Rx [Rd] = wynik;
+  cpu->Rx [Rd] = wynik;
 
   if (BIT_S)
     {
     // V remains unchanged, C is undefined
-    ARM7.Rx [ARM7_CPSR] &= ~(ARM7_CPSR_N | ARM7_CPSR_Z);
+    cpu->Rx [ARM7_CPSR] &= ~(ARM7_CPSR_N | ARM7_CPSR_Z);
     if (wynik == 0)
-      ARM7.Rx [ARM7_CPSR] |= ARM7_CPSR_Z;
-    ARM7.Rx [ARM7_CPSR] |= wynik & 0x80000000;
+      cpu->Rx [ARM7_CPSR] |= ARM7_CPSR_Z;
+    cpu->Rx [ARM7_CPSR] |= wynik & 0x80000000;
     }
 
 #undef BIT_S
@@ -650,77 +651,77 @@ void R_MUL_MLA ()
 
   //--------------------------------------------------------------------------
   /** PSR Transfer. */
-void R_PSR ()
+void R_PSR (struct sARM7 *cpu)
   {
   int Rd, Rm;
   UINT32 w, arg;
 
-#define BIT_I (ARM7.kod & (1 << 25))
-#define BIT_P (ARM7.kod & (1 << 22))
+#define BIT_I (cpu->kod & (1 << 25))
+#define BIT_P (cpu->kod & (1 << 22))
 
   // none of the registers involved can be PC
 
-  if (ARM7.kod & (1 << 21))
+  if (cpu->kod & (1 << 21))
     {
     // MSR
-    Rm = ARM7.kod & 15;
+    Rm = cpu->kod & 15;
     if (BIT_I)
       // immediate (lower 12 bits)
-      arg = ROR (ARM7.kod & 0xff, ((ARM7.kod >> 8) & 0xf) * 2);
+      arg = ROR (cpu->kod & 0xff, ((cpu->kod >> 8) & 0xf) * 2);
     else
       // register
-      arg = ARM7.Rx [Rm];
+      arg = cpu->Rx [Rm];
 
     // decode mask bits
     if (BIT_P)
       {
-      w = ARM7.Rx [ARM7_SPSR];
-      if (ARM7_CPSR_M (ARM7.Rx [ARM7_CPSR]) > ARM7_CPSR_M_usr &&\
- ARM7_CPSR_M (ARM7.Rx [ARM7_CPSR]) < ARM7_CPSR_M_sys)
+      w = cpu->Rx [ARM7_SPSR];
+      if (ARM7_CPSR_M (cpu->Rx [ARM7_CPSR]) > ARM7_CPSR_M_usr &&\
+ ARM7_CPSR_M (cpu->Rx [ARM7_CPSR]) < ARM7_CPSR_M_sys)
         {
-        if (ARM7.kod & (1 << 16))
+        if (cpu->kod & (1 << 16))
           w = (w & 0xffffff00) | (arg & 0x000000ff);
-        if (ARM7.kod & (1 << 17))
+        if (cpu->kod & (1 << 17))
           w = (w & 0xffff00ff) | (arg & 0x0000ff00);
-        if (ARM7.kod & (1 << 18))
+        if (cpu->kod & (1 << 18))
           w = (w & 0xff00ffff) | (arg & 0x00ff0000);
-        if (ARM7.kod & (1 << 19))
+        if (cpu->kod & (1 << 19))
           // ARMv5E should have 0xf8000000 argument mask
           w = (w & 0x00ffffff) | (arg & 0xf0000000);
         }
       // force valid mode
       w |= 0x10;
-      ARM7.Rx [ARM7_SPSR] = w;
+      cpu->Rx [ARM7_SPSR] = w;
       }
     else
       {
-      w = ARM7.Rx [ARM7_CPSR];
+      w = cpu->Rx [ARM7_CPSR];
       // only flags can be changed in User mode
-      if (ARM7_CPSR_M (ARM7.Rx [ARM7_CPSR]) != ARM7_CPSR_M_usr)
+      if (ARM7_CPSR_M (cpu->Rx [ARM7_CPSR]) != ARM7_CPSR_M_usr)
         {
-        if (ARM7.kod & (1 << 16))
+        if (cpu->kod & (1 << 16))
           w = (w & 0xffffff00) | (arg & 0x000000ff);
-        if (ARM7.kod & (1 << 17))
+        if (cpu->kod & (1 << 17))
           w = (w & 0xffff00ff) | (arg & 0x0000ff00);
-        if (ARM7.kod & (1 << 18))
+        if (cpu->kod & (1 << 18))
           w = (w & 0xff00ffff) | (arg & 0x00ff0000);
         }
-      if (ARM7.kod & (1 << 19))
+      if (cpu->kod & (1 << 19))
         // ARMv5E should have 0xf8000000 argument mask
         w = (w & 0x00ffffff) | (arg & 0xf0000000);
       // force valid mode
       w |= 0x10;
-      ARM7_SetCPSR (w);
+      ARM7_SetCPSR (cpu, w);
       }
     }
   else
     {
     // MRS
-    Rd = (ARM7.kod >> 12) & 15;
+    Rd = (cpu->kod >> 12) & 15;
     if (BIT_P)
-      ARM7.Rx [Rd] = ARM7.Rx [ARM7_SPSR];
+      cpu->Rx [Rd] = cpu->Rx [ARM7_SPSR];
     else
-      ARM7.Rx [Rd] = ARM7.Rx [ARM7_CPSR];
+      cpu->Rx [Rd] = cpu->Rx [ARM7_CPSR];
     }
 
 #undef BIT_P
@@ -730,146 +731,146 @@ void R_PSR ()
 
   //--------------------------------------------------------------------------
   /** Data processing instructions. */
-void R_DP ()
+void R_DP (struct sARM7 *cpu)
   {
   int Rn;
   ARM7_REG arg1, arg2, w;
 
-#define BIT_I (ARM7.kod & (1 << 25))
+#define BIT_I (cpu->kod & (1 << 25))
 
   // Rn can be PC, so we need to account for that
-  Rn = (ARM7.kod >> 16) & 15;
+  Rn = (cpu->kod >> 16) & 15;
 
   if (BIT_I)
     {
     if (Rn != ARM7_PC)
-      arg1 = ARM7.Rx [Rn];
+      arg1 = cpu->Rx [Rn];
     else
-      arg1 = (ARM7.Rx [ARM7_PC] & ~3) + 8 + PC_ADJUSTMENT;
+      arg1 = (cpu->Rx [ARM7_PC] & ~3) + 8 + PC_ADJUSTMENT;
     // immediate in lowest 12 bits
-    arg2 = ROR (ARM7.kod & 0xff, ((ARM7.kod >> 8) & 0xf) * 2);
+    arg2 = ROR (cpu->kod & 0xff, ((cpu->kod >> 8) & 0xf) * 2);
     // preload carry out from C
-    ARM7.carry = (ARM7.Rx [ARM7_CPSR] & ARM7_CPSR_C) ? 1 : 0;
+    cpu->carry = (cpu->Rx [ARM7_CPSR] & ARM7_CPSR_C) ? 1 : 0;
     }
   else
     {
     if (Rn != ARM7_PC)
-      arg1 = ARM7.Rx [Rn];
+      arg1 = cpu->Rx [Rn];
     else
       // register or immediate shift?
-      if (ARM7.kod & (1 << 4))
-        arg1 = (ARM7.Rx [ARM7_PC] & ~3) + 12 + PC_ADJUSTMENT;
+      if (cpu->kod & (1 << 4))
+        arg1 = (cpu->Rx [ARM7_PC] & ~3) + 12 + PC_ADJUSTMENT;
       else
-        arg1 = (ARM7.Rx [ARM7_PC] & ~3) + 8 + PC_ADJUSTMENT;
+        arg1 = (cpu->Rx [ARM7_PC] & ~3) + 8 + PC_ADJUSTMENT;
     // calculate in barrel shifter
-    arg2 = WyliczPrzes ();
+    arg2 = WyliczPrzes (cpu);
     }
 
   // decode instruction type
-  switch ((ARM7.kod >> 21) & 15)
+  switch ((cpu->kod >> 21) & 15)
     {
     case 0:
       // AND
-      R_WynikDP (arg1 & arg2);
+      R_WynikDP (cpu, arg1 & arg2);
       break;
 
     case 1:
       // EOR
-      R_WynikDP (arg1 ^ arg2);
+      R_WynikDP (cpu, arg1 ^ arg2);
       break;
 
     case 2:
       // SUB
       w = arg1 - arg2;
-      ARM7.carry = SUBCARRY (arg1, arg2, w);
-      ARM7.overflow = SUBOVERFLOW (arg1, arg2, w);
-      R_WynikDP (w);
+      cpu->carry = SUBCARRY (arg1, arg2, w);
+      cpu->overflow = SUBOVERFLOW (arg1, arg2, w);
+      R_WynikDP (cpu, w);
       break;
 
     case 3:
       // RSB
       w = arg2 - arg1;
-      ARM7.carry = SUBCARRY (arg2, arg1, w);
-      ARM7.overflow = SUBOVERFLOW (arg2, arg1, w);
-      R_WynikDP (w);
+      cpu->carry = SUBCARRY (arg2, arg1, w);
+      cpu->overflow = SUBOVERFLOW (arg2, arg1, w);
+      R_WynikDP (cpu, w);
       break;
 
     case 4:
       // ADD
       w = arg1 + arg2;
-      ARM7.carry = ADDCARRY (arg1, arg2, w);
-      ARM7.overflow = ADDOVERFLOW (arg1, arg2, w);
-      R_WynikDP (w);
+      cpu->carry = ADDCARRY (arg1, arg2, w);
+      cpu->overflow = ADDOVERFLOW (arg1, arg2, w);
+      R_WynikDP (cpu, w);
       break;
 
     case 5:
       // ADC
-      w = arg1 + arg2 + ((ARM7.Rx [ARM7_CPSR] & ARM7_CPSR_C) ? 1 : 0);
-      ARM7.carry = ADDCARRY (arg1, arg2, w);
-      ARM7.overflow = ADDOVERFLOW (arg1, arg2, w);
-      R_WynikDP (w);
+      w = arg1 + arg2 + ((cpu->Rx [ARM7_CPSR] & ARM7_CPSR_C) ? 1 : 0);
+      cpu->carry = ADDCARRY (arg1, arg2, w);
+      cpu->overflow = ADDOVERFLOW (arg1, arg2, w);
+      R_WynikDP (cpu, w);
       break;
 
     case 6:
       // SBC
-      w = arg1 - arg2 - ((ARM7.Rx [ARM7_CPSR] & ARM7_CPSR_C) ? 0 : 1);
-      ARM7.carry = SUBCARRY (arg1, arg2, w);
-      ARM7.overflow = SUBOVERFLOW (arg1, arg2, w);
-      R_WynikDP (w);
+      w = arg1 - arg2 - ((cpu->Rx [ARM7_CPSR] & ARM7_CPSR_C) ? 0 : 1);
+      cpu->carry = SUBCARRY (arg1, arg2, w);
+      cpu->overflow = SUBOVERFLOW (arg1, arg2, w);
+      R_WynikDP (cpu, w);
       break;
 
     case 7:
       // RSC
-      w = arg2 - arg1 - ((ARM7.Rx [ARM7_CPSR] & ARM7_CPSR_C) ? 0 : 1);
-      ARM7.carry = SUBCARRY (arg2, arg1, w);
-      ARM7.overflow = SUBOVERFLOW (arg2, arg1, w);
-      R_WynikDP (w);
+      w = arg2 - arg1 - ((cpu->Rx [ARM7_CPSR] & ARM7_CPSR_C) ? 0 : 1);
+      cpu->carry = SUBCARRY (arg2, arg1, w);
+      cpu->overflow = SUBOVERFLOW (arg2, arg1, w);
+      R_WynikDP (cpu, w);
       break;
 
     case 8:
       // TST
-      R_FlagiDP (arg1 & arg2);
+      R_FlagiDP (cpu, arg1 & arg2);
       break;
 
     case 9:
       // TEQ
-      R_FlagiDP (arg1 ^ arg2);
+      R_FlagiDP (cpu, arg1 ^ arg2);
       break;
 
     case 10:
       // CMP
       w = arg1 - arg2;
-      ARM7.carry = SUBCARRY (arg1, arg2, w);
-      ARM7.overflow = SUBOVERFLOW (arg1, arg2, w);
-      R_FlagiDP (w);
+      cpu->carry = SUBCARRY (arg1, arg2, w);
+      cpu->overflow = SUBOVERFLOW (arg1, arg2, w);
+      R_FlagiDP (cpu, w);
       break;
 
     case 11:
       // CMN
       w = arg1 + arg2;
-      ARM7.carry = ADDCARRY (arg1, arg2, w);
-      ARM7.overflow = ADDOVERFLOW (arg1, arg2, w);
-      R_FlagiDP (w);
+      cpu->carry = ADDCARRY (arg1, arg2, w);
+      cpu->overflow = ADDOVERFLOW (arg1, arg2, w);
+      R_FlagiDP (cpu, w);
       break;
 
     case 12:
       // ORR
-      R_WynikDP (arg1 | arg2);
+      R_WynikDP (cpu, arg1 | arg2);
       break;
 
     case 13:
       // MOV
-      R_WynikDP (arg2);
+      R_WynikDP (cpu, arg2);
       break;
 
     case 14:
       // BIC
-      R_WynikDP (arg1 & ~arg2);
+      R_WynikDP (cpu, arg1 & ~arg2);
       break;
 
     case 15:
       // MVN
-      R_WynikDP (~arg2);
+      R_WynikDP (cpu, ~arg2);
       break;
     }
 
@@ -879,25 +880,25 @@ void R_DP ()
 
   //--------------------------------------------------------------------------
   /** Data processing result writeback. */
-void R_WynikDP (ARM7_REG w)
+void R_WynikDP (struct sARM7 *cpu, ARM7_REG w)
   {
   int Rd;
 
-#define BIT_S (ARM7.kod & (1 << 20))
+#define BIT_S (cpu->kod & (1 << 20))
 
-  Rd = (ARM7.kod >> 12) & 15;
-  ARM7.Rx [Rd] = w;
+  Rd = (cpu->kod >> 12) & 15;
+  cpu->Rx [Rd] = w;
   if (BIT_S)
     {
     if (Rd == ARM7_PC)
       {
       s_cykle += 4;
       // copy current SPSR to CPSR
-      ARM7_SetCPSR (ARM7.Rx [ARM7_SPSR]);
+      ARM7_SetCPSR (cpu, cpu->Rx [ARM7_SPSR]);
       }
     else
       // save new flags
-      R_FlagiDP (w);
+      R_FlagiDP (cpu, w);
     }
 
 #undef BIT_S
@@ -906,62 +907,62 @@ void R_WynikDP (ARM7_REG w)
 
   //--------------------------------------------------------------------------
   /** Data processing flags writeback. */
-void R_FlagiDP (ARM7_REG w)
+void R_FlagiDP (struct sARM7 *cpu, ARM7_REG w)
   {
   // arithmetic or logical instruction?
-  if (s_tabAL [(ARM7.kod >> 21) & 15])
+  if (s_tabAL [(cpu->kod >> 21) & 15])
     {
-    ARM7.Rx [ARM7_CPSR] &= ~(ARM7_CPSR_N | ARM7_CPSR_Z | ARM7_CPSR_C |\
+    cpu->Rx [ARM7_CPSR] &= ~(ARM7_CPSR_N | ARM7_CPSR_Z | ARM7_CPSR_C |\
  ARM7_CPSR_V);
-    ARM7.Rx [ARM7_CPSR] |= ARM7.overflow << 28;
+    cpu->Rx [ARM7_CPSR] |= cpu->overflow << 28;
     }
   else
-    ARM7.Rx [ARM7_CPSR] &= ~(ARM7_CPSR_N | ARM7_CPSR_Z | ARM7_CPSR_C);
-  ARM7.Rx [ARM7_CPSR] |= ARM7.carry << 29;
+    cpu->Rx [ARM7_CPSR] &= ~(ARM7_CPSR_N | ARM7_CPSR_Z | ARM7_CPSR_C);
+  cpu->Rx [ARM7_CPSR] |= cpu->carry << 29;
   if (w == 0)
-    ARM7.Rx [ARM7_CPSR] |= ARM7_CPSR_Z;
-  ARM7.Rx [ARM7_CPSR] |= w & 0x80000000;
+    cpu->Rx [ARM7_CPSR] |= ARM7_CPSR_Z;
+  cpu->Rx [ARM7_CPSR] |= w & 0x80000000;
   }
   //--------------------------------------------------------------------------
 
   //--------------------------------------------------------------------------
   /** Single data transfer. */
-void R_SDT (void)
+void R_SDT (struct sARM7 *cpu)
   {
   int Rn, Rd, offset;
   UINT32 adres, w = 0;
 
-#define BIT_I (ARM7.kod & (1 << 25))
-#define BIT_P (ARM7.kod & (1 << 24))
-#define BIT_U (ARM7.kod & (1 << 23))
-#define BIT_B (ARM7.kod & (1 << 22))
-#define BIT_W (ARM7.kod & (1 << 21))
-#define BIT_L (ARM7.kod & (1 << 20))
+#define BIT_I (cpu->kod & (1 << 25))
+#define BIT_P (cpu->kod & (1 << 24))
+#define BIT_U (cpu->kod & (1 << 23))
+#define BIT_B (cpu->kod & (1 << 22))
+#define BIT_W (cpu->kod & (1 << 21))
+#define BIT_L (cpu->kod & (1 << 20))
 
-  if (BIT_I && (ARM7.kod & (1 << 4)))
+  if (BIT_I && (cpu->kod & (1 << 4)))
     {
-    R_Und ();
+    R_Und (cpu);
     return;
     }
 
-  Rn = (ARM7.kod >> 16) & 15,
-  Rd = (ARM7.kod >> 12) & 15;
+  Rn = (cpu->kod >> 16) & 15,
+  Rd = (cpu->kod >> 12) & 15;
   if (Rn != ARM7_PC)
-    adres = ARM7.Rx [Rn];
+    adres = cpu->Rx [Rn];
   else
-    adres = ARM7.Rx [ARM7_PC] & ~3;
+    adres = cpu->Rx [ARM7_PC] & ~3;
   if (!BIT_L)
     if (Rd != ARM7_PC)
-      w = ARM7.Rx [Rd];
+      w = cpu->Rx [Rd];
     else
-      w = (ARM7.Rx [ARM7_PC] & ~3) + 12 + PC_ADJUSTMENT;
+      w = (cpu->Rx [ARM7_PC] & ~3) + 12 + PC_ADJUSTMENT;
 
   if (BIT_I)
     // calculate value in barrel shifter
-    offset = WyliczPrzes ();
+    offset = WyliczPrzes (cpu);
   else
     // immediate in lowest 12 bits
-    offset = ARM7.kod & 0xfff;
+    offset = cpu->kod & 0xfff;
 
   if (!BIT_U)
     offset = -offset;
@@ -971,11 +972,11 @@ void R_SDT (void)
     adres += offset;
     if (BIT_W)
       // "write-back"
-      ARM7.Rx [Rn] = adres;
+      cpu->Rx [Rn] = adres;
     }
   else
     // "post-index"
-    ARM7.Rx [Rn] += offset;
+    cpu->Rx [Rn] += offset;
   if (Rn == ARM7_PC)
     adres += 8 + PC_ADJUSTMENT;
 
@@ -985,10 +986,10 @@ void R_SDT (void)
     // "load"
     if (BIT_B)
       // "byte"
-      ARM7.Rx [Rd] = arm7_read_8 (adres);
+      cpu->Rx [Rd] = arm7_read_8 (cpu, adres);
     else
       // "word"
-      ARM7.Rx [Rd] = RBOD (arm7_read_32 (adres & ~3), adres & 3);
+      cpu->Rx [Rd] = RBOD (arm7_read_32 (cpu, adres & ~3), adres & 3);
     }
   else
     {
@@ -996,10 +997,10 @@ void R_SDT (void)
     // "store"
     if (BIT_B)
       // "byte"
-      arm7_write_8 (adres, (UINT8)w);
+      arm7_write_8 (cpu, adres, (UINT8)w);
     else
       // "word"
-      arm7_write_32 (adres & ~3, w);
+      arm7_write_32 (cpu, adres & ~3, w);
     }
 
 #undef BIT_L
@@ -1013,69 +1014,69 @@ void R_SDT (void)
 
   //--------------------------------------------------------------------------
   /** Undefined. */
-void R_Und ()
+void R_Und (struct sARM7 *cpu)
   {
-  UINT32 sr = ARM7.Rx [ARM7_CPSR];
-  ARM7_SetCPSR (ARM7_CPSR_MX (sr, ARM7_CPSR_M_und) | ARM7_CPSR_I);
-  ARM7.Rx [ARM7_SPSR] = sr;
-  ARM7.Rx [ARM7_LR] = ARM7.Rx [ARM7_PC] + 4;
-  ARM7.Rx [ARM7_PC] = 0x00000004;
+  UINT32 sr = cpu->Rx [ARM7_CPSR];
+  ARM7_SetCPSR (cpu, ARM7_CPSR_MX (sr, ARM7_CPSR_M_und) | ARM7_CPSR_I);
+  cpu->Rx [ARM7_SPSR] = sr;
+  cpu->Rx [ARM7_LR] = cpu->Rx [ARM7_PC] + 4;
+  cpu->Rx [ARM7_PC] = 0x00000004;
   }
   //--------------------------------------------------------------------------
 
-#define BIT_U (ARM7.kod & (1 << 23))
-#define BIT_S (ARM7.kod & (1 << 22))
+#define BIT_U (cpu->kod & (1 << 23))
+#define BIT_S (cpu->kod & (1 << 22))
   //--------------------------------------------------------------------------
   /** Block Data Transfer. */
-void R_BDT ()
+void R_BDT (struct sARM7 *cpu)
   {
   int Rn, usr = FALSE;
   UINT32 adres;
   ARM7_REG cpsr = 0;
 
-#define BIT_L (ARM7.kod & (1 << 20))
+#define BIT_L (cpu->kod & (1 << 20))
 
   // Rn can't be PC
-  Rn = (ARM7.kod >> 16) & 15;
-  adres = ARM7.Rx [Rn];
+  Rn = (cpu->kod >> 16) & 15;
+  adres = cpu->Rx [Rn];
 
   // transfer in User mode
   if (BIT_S)
-    if (!BIT_L || !(ARM7.kod & (1 << ARM7_PC)))
+    if (!BIT_L || !(cpu->kod & (1 << ARM7_PC)))
       usr = TRUE;
 
   if (usr)
     {
 //EMU_BLAD (BLAD_WEWNETRZNY, "BDT: user transfer");
-    cpsr = ARM7.Rx [ARM7_CPSR];
-    ARM7_SetCPSR (ARM7_CPSR_MX (cpsr, ARM7_CPSR_M_usr));
+    cpsr = cpu->Rx [ARM7_CPSR];
+    ARM7_SetCPSR (cpu, ARM7_CPSR_MX (cpsr, ARM7_CPSR_M_usr));
     }
 
   if (BIT_L)
     // "load"
-    R_LDM (Rn, adres);
+    R_LDM (cpu, Rn, adres);
   else
     // "store"
-    R_STM (Rn, adres);
+    R_STM (cpu, Rn, adres);
 
   if (usr)
-    ARM7_SetCPSR (cpsr);
+    ARM7_SetCPSR (cpu, cpsr);
 
 #undef BIT_L
   }
   //--------------------------------------------------------------------------
 
-#define BIT_P (ARM7.kod & (1 << 24))
-#define BIT_W (ARM7.kod & (1 << 21))
+#define BIT_P (cpu->kod & (1 << 24))
+#define BIT_W (cpu->kod & (1 << 21))
   //--------------------------------------------------------------------------
   /** Block load instructions. */
-void R_LDM (int Rn, UINT32 adres)
+void R_LDM (struct sARM7 *cpu, int Rn, UINT32 adres)
   {
   int i, n, sp;
 
   // count registers on the list
   for (i = 0, n = 0; i < 16; i++)
-    if (ARM7.kod & (1 << i))
+    if (cpu->kod & (1 << i))
       n++;
   s_cykle += n * 2 + 1;
 
@@ -1091,41 +1092,41 @@ void R_LDM (int Rn, UINT32 adres)
     }
   if (BIT_W)
     // "write-back"
-    ARM7.Rx [Rn] += n;
+    cpu->Rx [Rn] += n;
 
   // for all registers in mask
   if (sp)
     for (i = 0; i < 16; i++)
       {
-      if (!(ARM7.kod & (1 << i)))
+      if (!(cpu->kod & (1 << i)))
         continue;
       adres += 4;
-      ARM7.Rx [i] = arm7_read_32 (adres);
+      cpu->Rx [i] = arm7_read_32 (cpu, adres);
       }
   else
     for (i = 0; i < 16; i++)
       {
-      if (!(ARM7.kod & (1 << i)))
+      if (!(cpu->kod & (1 << i)))
         continue;
-      ARM7.Rx [i] = arm7_read_32 (adres);
+      cpu->Rx [i] = arm7_read_32 (cpu, adres);
       adres += 4;
       }
 
   // special case - mode change when PC is written
-  if ((ARM7.kod & (1 << ARM7_PC)) && BIT_S)
-    ARM7_SetCPSR (ARM7.Rx [ARM7_SPSR]);
+  if ((cpu->kod & (1 << ARM7_PC)) && BIT_S)
+    ARM7_SetCPSR (cpu, cpu->Rx [ARM7_SPSR]);
   }
   //--------------------------------------------------------------------------
 
   //--------------------------------------------------------------------------
   /** Block store instructions. */
-void R_STM (int Rn, UINT32 adres)
+void R_STM (struct sARM7 *cpu, int Rn, UINT32 adres)
   {
   int i, n, p, sp;
 
   // count registers on the list and remember the first one
   for (i = 0, n = 0, p = -1; i < 16; i++)
-    if (ARM7.kod & (1 << i))
+    if (cpu->kod & (1 << i))
       {
       n++;
       if (p < 0)
@@ -1146,37 +1147,37 @@ void R_STM (int Rn, UINT32 adres)
   // if base register is not the first one to transfer, writeback happens here
   if (BIT_W && Rn != p)
     // "write-back"
-    ARM7.Rx [Rn] += n;
+    cpu->Rx [Rn] += n;
 
   // registers R0-R14
   if (sp)
     for (i = 0; i < 15; i++)
       {
-      if (!(ARM7.kod & (1 << i)))
+      if (!(cpu->kod & (1 << i)))
         continue;
       adres += 4;
-      arm7_write_32 (adres, ARM7.Rx [i]);
+      arm7_write_32 (cpu, adres, cpu->Rx [i]);
       }
   else
     for (i = 0; i < 15; i++)
       {
-      if (!(ARM7.kod & (1 << i)))
+      if (!(cpu->kod & (1 << i)))
         continue;
-      arm7_write_32 (adres, ARM7.Rx [i]);
+      arm7_write_32 (cpu, adres, cpu->Rx [i]);
       adres += 4;
       }
 
   // PC is a special case
-  if (ARM7.kod & (1 << ARM7_PC))
+  if (cpu->kod & (1 << ARM7_PC))
   {
     if (sp)
       {
       adres += 4;
-      arm7_write_32 (adres, (ARM7.Rx [ARM7_PC] & ~3) + 12 + PC_ADJUSTMENT);
+      arm7_write_32 (cpu, adres, (cpu->Rx [ARM7_PC] & ~3) + 12 + PC_ADJUSTMENT);
       }
     else
       {
-      arm7_write_32 (adres, (ARM7.Rx [ARM7_PC] & ~3) + 12 + PC_ADJUSTMENT);
+      arm7_write_32 (cpu, adres, (cpu->Rx [ARM7_PC] & ~3) + 12 + PC_ADJUSTMENT);
       adres += 4;
       }
    }
@@ -1184,7 +1185,7 @@ void R_STM (int Rn, UINT32 adres)
   // if base register is the first one to transfer, writeback happens here
   if (BIT_W && Rn == p)
     // "write-back"
-    ARM7.Rx [Rn] += n;
+    cpu->Rx [Rn] += n;
   }
   //--------------------------------------------------------------------------
 #undef BIT_W
@@ -1194,22 +1195,22 @@ void R_STM (int Rn, UINT32 adres)
 
   //--------------------------------------------------------------------------
   /** Branch/Branch with link. */
-void R_B_BL ()
+void R_B_BL (struct sARM7 *cpu)
   {
   INT32 offset;
 
-#define BIT_L (ARM7.kod & (1 << 24))
+#define BIT_L (cpu->kod & (1 << 24))
 
   s_cykle += 4;
-  offset = (ARM7.kod & 0x00ffffff) << 2;
+  offset = (cpu->kod & 0x00ffffff) << 2;
   if (offset & 0x02000000)
     offset |= 0xfc000000;
   offset += 8 + PC_ADJUSTMENT;
   if (BIT_L)
     // "Branch with link"
-    ARM7.Rx [ARM7_LR] = (ARM7.Rx [ARM7_PC] & ~3) + 4 + PC_ADJUSTMENT;
+    cpu->Rx [ARM7_LR] = (cpu->Rx [ARM7_PC] & ~3) + 4 + PC_ADJUSTMENT;
   // "Branch"
-  ARM7.Rx [ARM7_PC] += offset;
+  cpu->Rx [ARM7_PC] += offset;
 
 #undef BIT_L
   }
@@ -1217,7 +1218,7 @@ void R_B_BL ()
 
   //--------------------------------------------------------------------------
   /** Group 110 opcodes. */
-void R_G110 ()
+void R_G110 (struct sARM7 *cpu)
   {
 //	logerror("ARM7: G110 / Coprocessor data transfer\n");
   }
@@ -1225,22 +1226,22 @@ void R_G110 ()
 
   //--------------------------------------------------------------------------
   /** Group 111 opcodes. */
-void R_G111 ()
+void R_G111 (struct sARM7 *cpu)
   {
-  if ((ARM7.kod & 0xf0000000) == 0xe0000000)
+  if ((cpu->kod & 0xf0000000) == 0xe0000000)
     {
-/*    if (ARM7.kod & (1 << 4))
+/*    if (cpu->kod & (1 << 4))
 	logerror("ARM7: G111 / Coprocessor register transfer\n");
     else
 	logerror("ARM7: G111 / Coprocessor data operation\n"); */
     }
   else
     {
-    UINT32 sr = ARM7.Rx [ARM7_CPSR];
-    ARM7_SetCPSR (ARM7_CPSR_MX (sr, ARM7_CPSR_M_svc) | ARM7_CPSR_I);
-    ARM7.Rx [ARM7_SPSR] = sr;
-    ARM7.Rx [ARM7_LR] = ARM7.Rx [ARM7_PC];
-    ARM7.Rx [ARM7_PC] = 0x00000008;
+    UINT32 sr = cpu->Rx [ARM7_CPSR];
+    ARM7_SetCPSR (cpu, ARM7_CPSR_MX (sr, ARM7_CPSR_M_svc) | ARM7_CPSR_I);
+    cpu->Rx [ARM7_SPSR] = sr;
+    cpu->Rx [ARM7_LR] = cpu->Rx [ARM7_PC];
+    cpu->Rx [ARM7_PC] = 0x00000008;
     }
   }
   //--------------------------------------------------------------------------
@@ -1253,34 +1254,34 @@ void R_HSDT ()
   int Rm, Rd, Rn, offset;
   uint32_t adres, w;
 
-#define BIT_P (ARM7.kod & (1 << 24))
-#define BIT_U (ARM7.kod & (1 << 23))
-#define BIT_W (ARM7.kod & (1 << 21))
-#define BIT_L (ARM7.kod & (1 << 20))
-#define BIT_S (ARM7.kod & (1 << 6))
-#define BIT_H (ARM7.kod & (1 << 5))
+#define BIT_P (cpu->kod & (1 << 24))
+#define BIT_U (cpu->kod & (1 << 23))
+#define BIT_W (cpu->kod & (1 << 21))
+#define BIT_L (cpu->kod & (1 << 20))
+#define BIT_S (cpu->kod & (1 << 6))
+#define BIT_H (cpu->kod & (1 << 5))
 
   // Rm can't be PC
-  Rn = (ARM7.kod >> 16) & 15;
-  Rd = (ARM7.kod >> 12) & 15;
+  Rn = (cpu->kod >> 16) & 15;
+  Rd = (cpu->kod >> 12) & 15;
   if (Rn != ARM7_PC)
-    adres = ARM7.Rx [Rn];
+    adres = cpu->Rx [Rn];
   else
-    adres = ARM7.Rx [ARM7_PC] & ~3;
+    adres = cpu->Rx [ARM7_PC] & ~3;
   if (!BIT_L)
     if (Rd != ARM7_PC)
-      w = ARM7.Rx [Rd];
+      w = cpu->Rx [Rd];
     else
-      w = (ARM7.Rx [ARM7_PC] & ~3) + 12 + POPRAWKA_PC;
+      w = (cpu->Rx [ARM7_PC] & ~3) + 12 + POPRAWKA_PC;
 
   if (1 << 22)
     // immediate
-    offset = ((ARM7.kod >> 4) & 0xf0) | (ARM7.kod & 15);
+    offset = ((cpu->kod >> 4) & 0xf0) | (cpu->kod & 15);
   else
     {
     // register
-    Rm = ARM7.kod & 15;
-    offset = ARM7.Rx [Rm];
+    Rm = cpu->kod & 15;
+    offset = cpu->Rx [Rm];
     }
 
   if (!BIT_U)
@@ -1291,11 +1292,11 @@ void R_HSDT ()
     adres += offset;
     if (BIT_W)
       // "write-back"
-      ARM7.Rx [Rn] = adres;
+      cpu->Rx [Rn] = adres;
     }
   else
     // "post-index"
-    ARM7.Rx [Rn] += offset;
+    cpu->Rx [Rn] += offset;
   if (Rn == ARM7_PC)
     adres += 8 + POPRAWKA_PC;
 
@@ -1307,14 +1308,14 @@ void R_HSDT ()
       {
       if (BIT_H)
         // "signed halfword"
-        ARM7.Rx [Rd] = (INT32)(INT16)arm7_read_16 (adres);
+        cpu->Rx [Rd] = (INT32)(INT16)arm7_read_16 (adres);
       else
         // "signed byte"
-        ARM7.Rx [Rd] = (INT32)(INT8)arm7_read_8 (adres);
+        cpu->Rx [Rd] = (INT32)(INT8)arm7_read_8 (cpu, adres);
       }
     else
       // "unsigned halfword"
-      ARM7.Rx [Rd] = arm7_read_16 (adres);
+      cpu->Rx [Rd] = arm7_read_16 (adres);
     }
   else
     {
@@ -1325,7 +1326,7 @@ void R_HSDT ()
       arm7_write_16 (adres, (UINT16)w);
     else
       // "byte"
-      arm7_write_8 (adres, (UINT8)w);
+      arm7_write_8 (cpu, adres, (UINT8)w);
     }
 
 #undef BIT_H
