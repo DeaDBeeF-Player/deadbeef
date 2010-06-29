@@ -120,6 +120,7 @@ struct sARM7
   uint8 dc_ram[8*1024*1024];
 
   struct AICAinterface aica_interface;
+  struct _AICA *AICA;
   };
   //--------------------------------------------------------------------------
 

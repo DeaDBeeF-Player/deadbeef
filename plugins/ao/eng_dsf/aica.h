@@ -26,12 +26,14 @@ struct AICAinterface
 	void (*irq_callback[MAX_AICA])(struct sARM7 *cpu, int state);	/* irq callback */
 };
 
+struct _AICA;
+
 int AICA_sh_start(struct AICAinterface *intf);
 void AICA_sh_stop(void);
 void scsp_stop(void);
 
-#define READ16_HANDLER(name)	data16_t name(offs_t offset, data16_t mem_mask)
-#define WRITE16_HANDLER(name)	void     name(offs_t offset, data16_t data, data16_t mem_mask)
+#define READ16_HANDLER(name)	data16_t name(struct _AICA *AICA, offs_t offset, data16_t mem_mask)
+#define WRITE16_HANDLER(name)	void     name(struct _AICA *AICA, offs_t offset, data16_t data, data16_t mem_mask)
 
 // AICA register access
 READ16_HANDLER( AICA_0_r );
@@ -44,5 +46,6 @@ WRITE16_HANDLER( AICA_MidiIn );
 READ16_HANDLER( AICA_MidiOutR );
 
 void *aica_start(const void *config);
+void AICA_Update(struct _AICA *AICA, void *param, INT16 **inputs, INT16 **buf, int samples);
 
 #endif

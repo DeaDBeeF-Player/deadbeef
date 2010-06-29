@@ -203,18 +203,18 @@ struct _AICA
 	struct _AICADSP DSP;
 
 	struct sARM7 *cpu;
+
+    INT16 *bufferl;
+    INT16 *bufferr;
+
+    int length;
+
+    signed short *RBUFDST;	//this points to where the sample will be stored in the RingBuf
 };
 
-static struct _AICA *AllocedAICA;
+//static struct _AICA *AllocedAICA;
 
 static const float SDLT[16]={-1000000.0,-42.0,-39.0,-36.0,-33.0,-30.0,-27.0,-24.0,-21.0,-18.0,-15.0,-12.0,-9.0,-6.0,-3.0,0.0};
-
-static INT16 *bufferl;
-static INT16 *bufferr;
-
-static int length;
-
-static signed short *RBUFDST;	//this points to where the sample will be stored in the RingBuf
 
 static unsigned char DecodeSCI(struct _AICA *AICA, unsigned char irq)
 {
@@ -702,7 +702,7 @@ static void AICA_UpdateReg(struct _AICA *AICA, int reg)
 			break;
 		case 0x8:
 		case 0x9:
-			AICA_MidiIn(0, AICA->udata.data[0x8/2]&0xff, 0);
+			AICA_MidiIn(AICA, 0, AICA->udata.data[0x8/2]&0xff, 0);
 			break;
 		case 0x12:
 		case 0x13:
@@ -1131,8 +1131,8 @@ static void AICA_DoMasterSamples(struct _AICA *AICA, int nsamples)
 	INT16 *bufr,*bufl;
 	int sl, s, i;
 
-	bufr=bufferr;
-	bufl=bufferl;
+	bufr=AICA->bufferr;
+	bufl=AICA->bufferl;
 
 	for(s=0;s<nsamples;++s)
 	{
@@ -1145,7 +1145,7 @@ static void AICA_DoMasterSamples(struct _AICA *AICA, int nsamples)
 		{
 			struct _SLOT *slot=AICA->Slots+sl;
 			slot->mslc = (MSLC(AICA)==sl);
-			RBUFDST=AICA->RINGBUF+AICA->BUFPTR;
+			AICA->RBUFDST=AICA->RINGBUF+AICA->BUFPTR;
 			if(AICA->Slots[sl].active)
 			{
 				unsigned int Enc;
@@ -1193,12 +1193,11 @@ int AICA_IRQCB(void *param)
 	return -1;
 }
 
-void AICA_Update(void *param, INT16 **inputs, INT16 **buf, int samples)
+void AICA_Update(struct _AICA *AICA, void *param, INT16 **inputs, INT16 **buf, int samples)
 {
-	struct _AICA *AICA = AllocedAICA;
-	bufferl = buf[0];
-	bufferr = buf[1];
-	length = samples;
+	AICA->bufferl = buf[0];
+	AICA->bufferr = buf[1];
+	AICA->length = samples;
 	AICA_DoMasterSamples(AICA, samples);
 }
 
@@ -1223,19 +1222,16 @@ void *aica_start(const void *config)
 //		AICA->stream = stream_create(0, 2, 44100, AICA, AICA_Update);
 	}
 
-	AllocedAICA = AICA;
-
 	return AICA;
 }
 
-void aica_stop(void)
+void aica_stop(struct _AICA *AICA)
 {
-	free(AllocedAICA);
+	free(AICA);
 }
 
-void AICA_set_ram_base(int which, void *base)
+void AICA_set_ram_base(struct _AICA *AICA, int which, void *base)
 {
-	struct _AICA *AICA = AllocedAICA;
 	if (AICA)
 	{
 		AICA->AICARAM = base;
@@ -1245,7 +1241,6 @@ void AICA_set_ram_base(int which, void *base)
 
 READ16_HANDLER( AICA_0_r )
 {
-	struct _AICA *AICA = AllocedAICA;
 	UINT16 res = AICA_r16(AICA, offset*2);
 
 //	printf("Read AICA @ %x => %x (PC=%x, R5=%x)\n", offset*2, res, arm7_get_register(15), arm7_get_register(5));
@@ -1257,7 +1252,6 @@ extern UINT32* stv_scu;
 
 WRITE16_HANDLER( AICA_0_w )
 {
-	struct _AICA *AICA = AllocedAICA;
 	UINT16 tmp;
 
 	tmp = AICA_r16(AICA, offset*2);
@@ -1267,14 +1261,12 @@ WRITE16_HANDLER( AICA_0_w )
 
 WRITE16_HANDLER( AICA_MidiIn )
 {
-	struct _AICA *AICA = AllocedAICA; 
 	AICA->MidiStack[AICA->MidiW++]=data;
 	AICA->MidiW &= 15;
 }
 
 READ16_HANDLER( AICA_MidiOutR )
 {
-	struct _AICA *AICA = AllocedAICA; 
 	unsigned char val;
 
 	val=AICA->MidiStack[AICA->MidiR++];

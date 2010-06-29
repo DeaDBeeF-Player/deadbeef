@@ -46,7 +46,7 @@ uint8 dc_read8(struct sARM7 *cpu, int addr)
 
 	if ((addr >= 0x800000) && (addr <= 0x807fff))
 	{
-		int foo = AICA_0_r((addr-0x800000)/2, 0);
+		int foo = AICA_0_r(cpu->AICA, (addr-0x800000)/2, 0);
 
 		if (addr & 1)
 		{
@@ -71,7 +71,7 @@ uint16 dc_read16(struct sARM7 *cpu, int addr)
 
 	if ((addr >= 0x800000) && (addr <= 0x807fff))
 	{
-		return AICA_0_r((addr-0x800000)/2, 0);
+		return AICA_0_r(cpu->AICA, (addr-0x800000)/2, 0);
 	}
 
 	printf("R16 @ %x\n", addr);
@@ -88,7 +88,7 @@ uint32 dc_read32(struct sARM7 *cpu, int addr)
 	if ((addr >= 0x800000) && (addr <= 0x807fff))
 	{
 		addr &= 0x7fff;
-		return AICA_0_r(addr/2, 0) & 0xffff;
+		return AICA_0_r(cpu->AICA, addr/2, 0) & 0xffff;
 	}
 
 //	printf("R32 @ %x\n", addr);
@@ -107,9 +107,9 @@ void dc_write8(struct sARM7 *cpu, int addr, uint8 data)
 	{
 		addr -= 0x800000;
 		if ((addr & 1))
-			AICA_0_w(addr>>1, data<<8, 0x00ff);
+			AICA_0_w(cpu->AICA, addr>>1, data<<8, 0x00ff);
 		else
-			AICA_0_w(addr>>1, data, 0xff00);
+			AICA_0_w(cpu->AICA, addr>>1, data, 0xff00);
 		return;
 	}
 
@@ -127,7 +127,7 @@ void dc_write16(struct sARM7 *cpu, int addr, uint16 data)
 
 	if ((addr >= 0x800000) && (addr <= 0x807fff))
 	{
-		AICA_0_w((addr-0x800000)/2, data, 0);
+		AICA_0_w(cpu->AICA, (addr-0x800000)/2, data, 0);
 		return;
 	}
 
@@ -148,8 +148,8 @@ void dc_write32(struct sARM7 *cpu, int addr, uint32 data)
 	if ((addr >= 0x800000) && (addr <= 0x807fff))
 	{
 		addr -= 0x800000;
-		AICA_0_w((addr>>1), data&0xffff, 0x0000);
-		AICA_0_w((addr>>1)+1, data>>16, 0x0000);
+		AICA_0_w(cpu->AICA, (addr>>1), data&0xffff, 0x0000);
+		AICA_0_w(cpu->AICA, (addr>>1)+1, data>>16, 0x0000);
 		return;
 	}
 
@@ -173,6 +173,6 @@ static struct AICAinterface aica_interface =
     cpu->aica_interface.mixing_level[0] = YM3012_VOL(100, MIXER_PAN_LEFT, 100, MIXER_PAN_RIGHT);
     cpu->aica_interface.irq_callback[0] = aica_irq;
     cpu->aica_interface.cpu = cpu;
-	aica_start(&cpu->aica_interface);
+	cpu->AICA = aica_start(&cpu->aica_interface);
 }
 

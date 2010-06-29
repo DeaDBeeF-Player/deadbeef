@@ -17,7 +17,9 @@
 #include "eng_protos.h"
 #include "corlett.h"
 #include "dc_hw.h"
+#include "cpuintrf.h"
 #include "aica.h"
+#include "aicadsp.h"
 
 #define DEBUG_LOADER	(1)
 #define DK_CORE	(1)
@@ -34,9 +36,6 @@ typedef struct {
     uint32		decaybegin, decayend, total_samples;
     struct sARM7 *cpu;
 } dsf_synth_t;
-
-//void *aica_start(const void *config);
-void AICA_Update(void *param, INT16 **inputs, INT16 **buf, int samples);
 
 void *dsf_start(const char *path, uint8 *buffer, uint32 length)
 {
@@ -193,7 +192,7 @@ int32 dsf_gen(void *handle, int16 *buffer, uint32 samples)
 		#endif
 		stereo[0] = &output[opos];
 		stereo[1] = &output2[opos];
-		AICA_Update(NULL, NULL, stereo, 1);
+		AICA_Update(s->cpu->AICA, NULL, NULL, stereo, 1);
 		opos++;		
 	}
 

@@ -25,12 +25,6 @@
 static void Reset (struct sARM7 *cpu);
   //--------------------------------------------------------------------------
 
-  //--------------------------------------------------------------------------
-  // public variables
-
-  /** ARM7 state. */
-struct sARM7 ARM7;
-
   // private variables
 
   /** Table for decoding bit-coded mode to zero based index. */
