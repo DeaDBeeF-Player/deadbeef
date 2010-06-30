@@ -83,6 +83,7 @@ typedef struct {
     char RAM[0x1000], RAM2[0x1000];
     int32 cur_bank;
     z80_state_t *z80;
+    qsound_state_t *qs;
 } qsf_synth_t;
 
 static struct QSound_interface qsintf = 
@@ -283,7 +284,7 @@ void *qsf_start(const char *path, uint8 *buffer, uint32 length)
         z80_set_irq_callback(s->z80, qsf_irq_cb);
     }
 	qsintf.sample_rom = s->QSamples;
-	qsound_sh_start(&qsintf);
+	s->qs = qsound_sh_start(&qsintf);
 
 	return s;
 }
@@ -319,7 +320,7 @@ int32 qsf_gen(qsf_synth_t *s, int16 *buffer, uint32 samples)
 		z80_execute(s->z80, (8000000/44100)*tickinc);
 		stereo[0] = &output[opos];
 		stereo[1] = &output2[opos];
-		qsound_update(0, stereo, tickinc);
+		qsound_update(s->qs, 0, stereo, tickinc);
 
 		opos += tickinc;
 		samples_to_next_tick -= tickinc;
@@ -337,7 +338,7 @@ int32 qsf_gen(qsf_synth_t *s, int16 *buffer, uint32 samples)
 		z80_execute(s->z80, (8000000/44100)*(samples-opos));
 		stereo[0] = &output[opos];
 		stereo[1] = &output2[opos];
-		qsound_update(0, stereo, (samples-opos));
+		qsound_update(s->qs, 0, stereo, (samples-opos));
 
 		samples_to_next_tick -= (samples-opos);
 
@@ -364,6 +365,9 @@ int32 qsf_stop(void *handle)
 	free(s->QSamples);
 	if (s->z80) {
         z80_free (s->z80);
+    }
+    if (s->qs) {
+        qsound_sh_stop (s->qs);
     }
 	free(s);
 
@@ -430,7 +434,7 @@ uint8 qsf_memory_read(qsf_synth_t *s, uint16 addr)
 	}
 	else if (addr == 0xd007)
 	{
-		return qsound_status_r();
+		return qsound_status_r(s->qs);
 	}
 	else if (addr >= 0xf000)
 	{
@@ -469,17 +473,17 @@ void qsf_memory_write(qsf_synth_t *s, uint16 addr, uint8 byte)
 	}
 	else if (addr == 0xd000)
 	{
-		qsound_data_h_w(byte);
+		qsound_data_h_w(s->qs, byte);
 		return;
 	}
 	else if (addr == 0xd001)
 	{
-		qsound_data_l_w(byte);
+		qsound_data_l_w(s->qs, byte);
 		return;
 	}
 	else if (addr == 0xd002)
 	{
-		qsound_cmd_w(byte);
+		qsound_cmd_w(s->qs, byte);
 		return;
 	}
 	else if (addr == 0xd003)
