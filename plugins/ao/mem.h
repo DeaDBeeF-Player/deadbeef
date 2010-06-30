@@ -7,11 +7,12 @@
 
 // mem.h
 
-uint8 memory_read(uint16 addr);
-uint8 memory_readop(uint16 addr);
-uint8 memory_readport(uint16 addr);
-void memory_write(uint16 addr, uint8 byte);
-void memory_writeport(uint16 addr, uint8 byte);
+// defined in eng_qsf.c
+uint8 memory_read(void *userdata, uint16 addr);
+uint8 memory_readop(void *userdata, uint16 addr);
+uint8 memory_readport(void *userdata, uint16 addr);
+void memory_write(void *userdata, uint16 addr, uint8 byte);
+void memory_writeport(void *userdata, uint16 addr, uint8 byte);
 
 uint8 dc_read8(uint32 addr);
 uint16 dc_read16(uint32 addr);

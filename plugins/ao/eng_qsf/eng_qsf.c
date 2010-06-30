@@ -82,6 +82,7 @@ typedef struct {
     char *Z80ROM, *QSamples;
     char RAM[0x1000], RAM2[0x1000];
     int32 cur_bank;
+    z80_state_t *z80;
 } qsf_synth_t;
 
 static struct QSound_interface qsintf = 
@@ -90,7 +91,38 @@ static struct QSound_interface qsintf =
 	NULL
 };
 
-extern void cps1_decode(unsigned char *rom, int swap_key1,int swap_key2,int addr_key,int xor_key);
+uint8 qsf_memory_read(qsf_synth_t *s, uint16 addr);
+uint8 qsf_memory_readport(qsf_synth_t *s, uint16 addr);
+void qsf_memory_write(qsf_synth_t *s, uint16 addr, uint8 byte);
+void qsf_memory_writeport(qsf_synth_t *s, uint16 addr, uint8 byte);
+
+/* redirect stubs to interface the Z80 core to the QSF engine */
+uint8 memory_read(void *userdata, uint16 addr)
+{
+	return qsf_memory_read(userdata, addr);
+}
+
+uint8 memory_readop(void *userdata, uint16 addr)
+{
+	return memory_read(userdata, addr);
+}
+
+uint8 memory_readport(void *userdata, uint16 addr)
+{
+	return qsf_memory_readport(userdata, addr);
+}
+
+void memory_write(void *userdata, uint16 addr, uint8 byte)
+{
+	qsf_memory_write(userdata, addr, byte);
+}
+
+void memory_writeport(void *userdata, uint16 addr, uint8 byte)
+{
+	qsf_memory_writeport(userdata, addr, byte);
+}
+
+int32 qsf_stop(void *handle);
 
 static void qsf_walktags(qsf_synth_t *s, uint8 *buffer, uint8 *end)
 {
@@ -150,7 +182,8 @@ void *qsf_start(const char *path, uint8 *buffer, uint32 length)
 	uint64 file_len, lib_len, lib_raw_length;
 	corlett_t *lib;
 
-	z80_init();
+	s->z80 = z80_init();
+	s->z80->userdata = s;
 
 	s->Z80ROM = malloc(512*1024);
 	s->QSamples = malloc(8*1024*1024);
@@ -174,11 +207,26 @@ void *qsf_start(const char *path, uint8 *buffer, uint32 length)
 	{
 		uint64 tmp_length;
 	
-		#if DEBUG_LOADER	
-		printf("Loading library: %s\n", s->c->lib);
-		#endif
-		if (ao_get_lib(s->c->lib, &lib_raw_file, &tmp_length) != AO_SUCCESS)
-		{
+        char libpath[PATH_MAX];
+        const char *e = path + strlen(path);
+        while (e > path && *e != '/') {
+            e--;
+        }
+        if (*e == '/') {
+            e++;
+            memcpy (libpath, path, e-path);
+            libpath[e-path] = 0;
+            strcat (libpath, s->c->lib);
+        }
+        else {
+            strcpy (libpath, s->c->lib);
+        }
+
+#if DEBUG_LOADER	
+        printf("Loading library: %s\n", libpath);
+#endif
+        if (ao_get_lib(libpath, &lib_raw_file, &tmp_length) != AO_SUCCESS)
+        {
             qsf_stop (s);
             return NULL;
 		}
@@ -230,21 +278,23 @@ void *qsf_start(const char *path, uint8 *buffer, uint32 length)
 		}
 	}
 
-	z80_reset(NULL);
-	z80_set_irq_callback(qsf_irq_cb);
+    if (s->z80) {
+        z80_reset(s->z80, NULL);
+        z80_set_irq_callback(s->z80, qsf_irq_cb);
+    }
 	qsintf.sample_rom = s->QSamples;
 	qsound_sh_start(&qsintf);
 
 	return s;
 }
 
-static void timer_tick(void)
+static void timer_tick(qsf_synth_t *s)
 {
-	z80_set_irq_line(0, ASSERT_LINE);
-	z80_set_irq_line(0, CLEAR_LINE);
+	z80_set_irq_line(s->z80, 0, ASSERT_LINE);
+	z80_set_irq_line(s->z80, 0, CLEAR_LINE);
 }
 
-int32 qsf_gen(int16 *buffer, uint32 samples)
+int32 qsf_gen(qsf_synth_t *s, int16 *buffer, uint32 samples)
 {	
 	int16 output[44100/30], output2[44100/30];
 	int16 *stereo[2];
@@ -266,7 +316,7 @@ int32 qsf_gen(int16 *buffer, uint32 samples)
 
 	for (i = 0; i < loops; i++)
 	{
-		z80_execute((8000000/44100)*tickinc);
+		z80_execute(s->z80, (8000000/44100)*tickinc);
 		stereo[0] = &output[opos];
 		stereo[1] = &output2[opos];
 		qsound_update(0, stereo, tickinc);
@@ -276,7 +326,7 @@ int32 qsf_gen(int16 *buffer, uint32 samples)
 
 		if (samples_to_next_tick <= 0)
 		{
-			timer_tick();
+			timer_tick(s);
 			samples_to_next_tick = samples_per_tick;
 		}
 	}
@@ -284,7 +334,7 @@ int32 qsf_gen(int16 *buffer, uint32 samples)
 	// are there "leftovers"?
 	if (opos < samples)
 	{
-		z80_execute((8000000/44100)*(samples-opos));
+		z80_execute(s->z80, (8000000/44100)*(samples-opos));
 		stereo[0] = &output[opos];
 		stereo[1] = &output2[opos];
 		qsound_update(0, stereo, (samples-opos));
@@ -293,7 +343,7 @@ int32 qsf_gen(int16 *buffer, uint32 samples)
 
 		if (samples_to_next_tick <= 0)
 		{
-			timer_tick();
+			timer_tick(s);
 			samples_to_next_tick = samples_per_tick;
 		}
 	}
@@ -312,6 +362,9 @@ int32 qsf_stop(void *handle)
     qsf_synth_t *s = (qsf_synth_t *)handle;
 	free(s->Z80ROM);
 	free(s->QSamples);
+	if (s->z80) {
+        z80_free (s->z80);
+    }
 	free(s);
 
 	return AO_SUCCESS;
@@ -383,6 +436,7 @@ uint8 qsf_memory_read(qsf_synth_t *s, uint16 addr)
 	{
 		return s->RAM2[addr-0xf000];
 	}
+	return 0;
 }
 
 uint8 qsf_memory_readop(qsf_synth_t *s, uint16 addr)
@@ -445,7 +499,7 @@ void qsf_memory_write(qsf_synth_t *s, uint16 addr, uint8 byte)
 	}
 }
 
-void qsf_memory_writeport(uint16 addr, uint8 byte)
+void qsf_memory_writeport(qsf_synth_t *s, uint16 addr, uint8 byte)
 {
 	printf("Unk port %x @ %x\n", byte, addr);
 }

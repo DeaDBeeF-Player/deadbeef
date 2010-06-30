@@ -58,32 +58,6 @@ static struct
 	{ 0xffffffff, "", NULL, NULL, NULL, NULL, 0, NULL }
 };
 
-/* redirect stubs to interface the Z80 core to the QSF engine */
-uint8 memory_read(uint16 addr)
-{
-	return qsf_memory_read(addr);
-}
-
-uint8 memory_readop(uint16 addr)
-{
-	return memory_read(addr);
-}
-
-uint8 memory_readport(uint16 addr)
-{
-	return qsf_memory_readport(addr);
-}
-
-void memory_write(uint16 addr, uint8 byte)
-{
-	qsf_memory_write(addr, byte);
-}
-
-void memory_writeport(uint16 addr, uint8 byte)
-{
-	qsf_memory_writeport(addr, byte);
-}
-
 /* ao_get_lib: called to load secondary files */
 int ao_get_lib(char *filename, uint8 **buffer, uint64 *length)
 {

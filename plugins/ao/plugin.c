@@ -31,7 +31,7 @@
 DB_functions_t *deadbeef;
 static DB_decoder_t plugin;
 
-static const char * exts[] = { "psf", "psf2", "spu", "ssf", "minidsf", "qsf", "dsf", NULL };
+static const char * exts[] = { "psf", "psf2", "spu", "ssf", "minidsf", "qsf", "dsf", "miniqsf", NULL };
 static const char *filetypes[] = { "PSF", "PSF2", "SPU", "SSF", "QSF", "DSF", NULL };
 
 typedef struct {
