@@ -532,14 +532,14 @@ enum {
 
 typedef struct DB_plugin_action_s {
     const char *title;
-    unsigned int flags;
-    /*
-    Function called when user activates menu item
-    @it - pointer to selected playitem for single-track action,
-        to first playitem for multiple-track action,
-        or NULL for common action
-    @data - opaque pointer
-    */
+    uint32_t flags;
+    /**
+     * Function called when user activates menu item
+     * @it - pointer to selected playitem for single-track action,
+     *   to first playitem for multiple-track action,
+     *   or NULL for common action
+     * @data - opaque pointer
+     */
     int (*callback) (DB_playItem_t *it, void *data);
     void *data;
 

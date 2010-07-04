@@ -350,8 +350,6 @@ void
 actionitem_activate (GtkMenuItem     *menuitem,
                      DB_plugin_action_t *action)
 {
-    DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
-
     // Plugin can handle all tracks by itself
     if (action->flags & DB_ACTION_CAN_MULTIPLE_TRACKS)
     {
@@ -369,7 +367,8 @@ actionitem_activate (GtkMenuItem     *menuitem,
         return;
     }
     
-    //We end up here if plugin won't traverse tracks and we have to do it for him
+    //We end up here if plugin won't traverse tracks and we have to do it ourselves
+    DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
     while (it) {
         if (deadbeef->pl_is_selected (it))
             action->callback (it, action->data);
@@ -377,6 +376,7 @@ actionitem_activate (GtkMenuItem     *menuitem,
         deadbeef->pl_item_unref (it);
         it = next;
     }
+    deadbeef->pl_item_unref (it);
 }
 
 void

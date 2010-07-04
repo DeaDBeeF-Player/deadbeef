@@ -84,7 +84,7 @@ AC_ARG_ENABLE(cdda,     [  --disable-cdda          disable CD-Audio plugin (defa
 AC_ARG_ENABLE(gme,      [  --disable-gme           disable Game Music Emu plugin for NSF, AY, etc (default: enabled)], [enable_gme=$enableval], [enable_gme=yes])
 AC_ARG_ENABLE(dumb,     [  --disable-dumb          disable D.U.M.B. plugin for MOD, S3M and other tracker formats (default: enabled)], [enable_dumb=$enableval], [enable_dumb=yes])
 AC_ARG_ENABLE(notify,   [  --disable-notify        disable notification-daemon support plugin (default: enabled)], [enable_notify=$enableval], [enable_notify=yes])
-AC_ARG_ENABLE(shellexec,   [  --disable-notify        disable notification-daemon support plugin (default: enabled)], [enable_notify=$enableval], [enable_notify=yes])
+AC_ARG_ENABLE(shellexec,   [  --disable-shellexec        disable shell commands plugin (default: enabled)], [enable_shellexec=$enableval], [enable_shellexec=yes])
 dnl AC_ARG_ENABLE(emidi,    [  --disable-emidi         disable emidi plugin (default: enabled)], [enable_emidi=$enableval], [enable_emidi=yes])
 AC_ARG_ENABLE(musepack, [  --disable-musepack      disable musepack plugin (default: enabled)], [enable_musepack=$enableval], [enable_musepack=yes])
 AC_ARG_ENABLE(wildmidi, [  --disable-wildmidi      disable wildmidi plugin (default: enabled)], [enable_wildmidi=$enableval], [enable_wildmidi=yes])
