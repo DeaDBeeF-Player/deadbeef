@@ -33,18 +33,23 @@
 #define s16_BE(s16,channels) do {} while (0)
 #define s32_LE(s32,channels) s32_swap (s32, channels)
 #define s32_BE(s32,channels) do {} while (0)
+#define u32_LE(u32) ((((u32)&0xff000000)>>24)|(((u32)&0x00ff0000)>>8)|(((u32)&0x0000ff00)<<8)|(((u32)&0x000000ff)<<24))
+#define u16_LE(u16) ((((u16)&0xff00)>>8)|(((u16)&0x00ff)<<8))
 #else
 #define s16_LE(s16,channels) do {} while (0)
 #define s16_BE(s16,channels) s16_swap (s16, channels)
 #define s32_LE(s32,channels) do {} while (0)
 #define s32_BE(s32,channels) s32_swap (s32, channels)
+#define u32_LE(u32) (u32)
+#define u16_LE(u16) (u16)
 #endif
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
-#define trace(...) { fprintf (stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf (stderr, __VA_ARGS__); }
+#define trace(fmt,...)
+
 static const char * exts[] = { "wav", NULL };
 static const char *filetypes[] = { "DTS WAV", NULL };
 
@@ -266,6 +271,7 @@ dts_open_wav (DB_FILE *fp, wavfmt_t *fmt, int *totalsamples) {
     if (deadbeef->fread (&size, 1, sizeof (size), fp) != sizeof (size)) {
         return -1;
     }
+    size = u32_LE(size);
 
     char type[4];
     if (deadbeef->fread (type, 1, sizeof (type), fp) != sizeof (type)) {
@@ -291,10 +297,18 @@ dts_open_wav (DB_FILE *fp, wavfmt_t *fmt, int *totalsamples) {
     if (deadbeef->fread (&fmtsize, 1, sizeof (fmtsize), fp) != sizeof (fmtsize)) {
         return -1;
     }
+    fmtsize = u32_LE(fmtsize);
 
     if (deadbeef->fread (fmt, 1, sizeof (wavfmt_t), fp) != sizeof (wavfmt_t)) {
         return -1;
     }
+    fmt->wFormatTag = u16_LE (fmt->wFormatTag);
+    fmt->nChannels = u16_LE (fmt->nChannels);
+    fmt->nSamplesPerSec = u32_LE (fmt->nSamplesPerSec);
+    fmt->nAvgBytesPerSec = u32_LE (fmt->nAvgBytesPerSec);
+    fmt->nBlockAlign = u16_LE (fmt->nBlockAlign);
+    fmt->wBitsPerSample = u16_LE (fmt->wBitsPerSample);
+    fmt->cbSize = u16_LE (fmt->cbSize);
 
     if (fmt->wFormatTag != 0x0001 || fmt->wBitsPerSample != 16) {
         return -1;
@@ -317,6 +331,7 @@ dts_open_wav (DB_FILE *fp, wavfmt_t *fmt, int *totalsamples) {
     if (deadbeef->fread (&datasize, 1, sizeof (datasize), fp) != sizeof (datasize)) {
         return -1;
     }
+    datasize = u32_LE (datasize);
 
     *totalsamples = datasize / ((fmt->wBitsPerSample >> 3) * fmt->nChannels);
 

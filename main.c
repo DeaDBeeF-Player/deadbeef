@@ -38,7 +38,9 @@
 #include <sys/fcntl.h>
 #include <sys/errno.h>
 #include <signal.h>
+#ifdef __linux__
 #include <execinfo.h>
+#endif
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
 #endif
@@ -429,6 +431,7 @@ sigterm_handler (int sig) {
     exit (0);
 }
 
+#ifdef __linux__
 void
 sigsegv_handler (int sig) {
     fprintf (stderr, "Segmentation Fault\n");
@@ -458,10 +461,13 @@ sigsegv_handler (int sig) {
     free(strings);
     exit (0);
 }
+#endif
 
 int
 main (int argc, char *argv[]) {
+#ifdef __linux__
     signal (SIGSEGV, sigsegv_handler);
+#endif
     setlocale (LC_ALL, "");
     setlocale (LC_NUMERIC, "C");
 #ifdef ENABLE_NLS
@@ -617,6 +623,7 @@ main (int argc, char *argv[]) {
 
     pl_init ();
     conf_load (); // required by some plugins at startup
+    volume_set_db (conf_get_float ("playback.volume", 0)); // volume need to be initialized before plugins start
     messagepump_init (); // required to push messages while handling commandline
     plug_load_all (); // required to add files to playlist from commandline
     pl_load_all ();
@@ -646,7 +653,6 @@ main (int argc, char *argv[]) {
     atexit (atexit_handler); // helps to save in simple cases
 
     // start all subsystems
-    volume_set_db (conf_get_float ("playback.volume", 0));
     plug_trigger_event_playlistchanged ();
 
     streamer_init ();

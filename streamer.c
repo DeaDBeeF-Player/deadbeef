@@ -491,6 +491,9 @@ streamer_move_to_prevsong (void) {
 
 int
 streamer_move_to_randomsong (void) {
+    if (!streamer_playlist) {
+        streamer_playlist = plt_get_curr_ptr ();
+    }
     playlist_t *plt = streamer_playlist;
     int cnt = plt->count[PL_MAIN];
     if (!cnt) {
@@ -584,6 +587,9 @@ streamer_set_current (playItem_t *it) {
                     plug = "ffmpeg";
                 }
                 else if (!strcmp (ct, "audio/aac")) {
+                    plug = "ffmpeg";
+                }
+                else if (!strcmp (ct, "audio/wma")) {
                     plug = "ffmpeg";
                 }
             }
@@ -788,6 +794,9 @@ streamer_start_new_song (void) {
         avg_bitrate = -1;
         if (p_state () != OUTPUT_STATE_PLAYING) {
             streamer_reset (1);
+            if (fileinfo) {
+                plug_get_output ()->change_rate (fileinfo->samplerate);
+            }
             if (p_play () < 0) {
                 fprintf (stderr, "streamer: failed to start playback; output plugin doesn't work\n");
                 streamer_set_nextsong (-2, 0);
@@ -909,6 +918,9 @@ streamer_thread (void *ctx) {
 
                 // output plugin may stop playback before switching samplerate
                 if (p_state () != OUTPUT_STATE_PLAYING) {
+                    if (fileinfo) {
+                        plug_get_output ()->change_rate (fileinfo->samplerate);
+                    }
                     if (p_play () < 0) {
                         fprintf (stderr, "streamer: failed to start playback after samplerate change; output plugin doesn't work\n");
                         streamer_set_nextsong (-2, 0);
@@ -1517,8 +1529,6 @@ streamer_read_async (char *bytes, int size) {
                 trace ("finished streaming song, queueing next\n");
                 bytes_until_next_song = streambuffer_fill;
                 if (conf_get_int ("playlist.stop_after_current", 0)) {
-                    conf_set_int ("playlist.stop_after_current", 0);
-                    plug_trigger_event (DB_EV_CONFIGCHANGED, 0);
                     streamer_set_nextsong (-2, 1);
                 }
                 else {

@@ -91,12 +91,16 @@ static uintptr_t mutex_plt;
 #define GLOBAL_LOCK {pl_global_lock();}
 #define GLOBAL_UNLOCK {pl_global_unlock();}
 
+static playlist_t dummy_playlist; // used at startup to prevent crashes
+
 int
 pl_init (void) {
+    playlist = &dummy_playlist;
 #if !DISABLE_LOCKING
     mutex = mutex_create ();
     mutex_plt = mutex_create ();
 #endif
+    return 0;
 }
 
 void
@@ -748,13 +752,16 @@ pl_cue_parse_time (const char *p) {
 static playItem_t *
 pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, char *track, char *index00, char *index01, char *pregap, char *title, char *performer, char *albumtitle, char *genre, char *date, char *replaygain_album_gain, char *replaygain_album_peak, char *replaygain_track_gain, char *replaygain_track_peak, const char *decoder_id, const char *ftype, int samplerate) {
     if (!track[0]) {
+        trace ("pl_process_cue_track: invalid track (file=%s, title=%s)\n", fname, title);
         return after;
     }
     if (!index00[0] && !index01[0]) {
+        trace ("pl_process_cue_track: invalid index (file=%s, title=%s, track=%s)\n", fname, title, track);
         return after;
     }
 #if SKIP_BLANK_CUE_TRACKS
     if (!title[0]) {
+        trace ("pl_process_cue_track: invalid title (file=%s, title=%s, track=%s)\n", fname, title, track);
         return after;
     }
 #endif
@@ -783,6 +790,7 @@ pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, c
             prevtime = f_index01;
         }
         else {
+            trace ("pl_process_cue_track: invalid pregap or index01 (pregap=%s, index01=%s)\n", pregap, index01);
             return after;
         }
         (*prev)->endsample = (prevtime * samplerate) - 1;
@@ -806,6 +814,7 @@ pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, c
     // non-compliant hack to handle tracks which only store pregap info
     if (!index01[0]) {
         *prev = NULL;
+        trace ("pl_process_cue_track: invalid index01 (pregap=%s, index01=%s)\n", pregap, index01);
         return after;
     }
     playItem_t *it = pl_item_alloc ();
@@ -892,18 +901,19 @@ pl_insert_cue_from_buffer (playItem_t *after, playItem_t *origin, const uint8_t 
         buffersize -= p-buffer;
         buffer = p;
         p = pl_cue_skipspaces (str);
+//        trace ("cue line: %s\n", p);
         if (!strncmp (p, "PERFORMER ", 10)) {
             pl_get_qvalue_from_cue (p + 10, sizeof (performer), performer);
-//            printf ("got performer: %s\n", performer);
+            trace ("cue: got performer: %s\n", performer);
         }
         else if (!strncmp (p, "TITLE ", 6)) {
-            if (str[0] > ' ') {
+            if (str[0] > ' ' && !albumtitle[0]) {
                 pl_get_qvalue_from_cue (p + 6, sizeof (albumtitle), albumtitle);
-//                printf ("got albumtitle: %s\n", albumtitle);
+                trace ("cue: got albumtitle: %s\n", albumtitle);
             }
             else {
                 pl_get_qvalue_from_cue (p + 6, sizeof (title), title);
-//                printf ("got title: %s\n", title);
+                trace ("cue: got title: %s\n", title);
             }
         }
         else if (!strncmp (p, "REM GENRE ", 10)) {
@@ -913,8 +923,10 @@ pl_insert_cue_from_buffer (playItem_t *after, playItem_t *origin, const uint8_t 
             pl_get_value_from_cue (p + 9, sizeof (date), date);
         }
         else if (!strncmp (p, "TRACK ", 6)) {
+            trace ("cue: adding track: %s %s %s\n", origin->fname, title, track);
             // add previous track
             after = pl_process_cue_track (after, origin->fname, &prev, track, index00, index01, pregap, title, performer, albumtitle, genre, date, replaygain_album_gain, replaygain_album_peak, replaygain_track_gain, replaygain_track_peak, origin->decoder_id, origin->filetype, samplerate);
+            trace ("cue: added %p (%p)\n", after);
 
             track[0] = 0;
             title[0] = 0;
@@ -924,7 +936,7 @@ pl_insert_cue_from_buffer (playItem_t *after, playItem_t *origin, const uint8_t 
             replaygain_track_gain[0] = 0;
             replaygain_track_peak[0] = 0;
             pl_get_value_from_cue (p + 6, sizeof (track), track);
-//            printf ("got track: %s\n", track);
+            trace ("cue: got track: %s\n", track);
         }
         else if (!strncmp (p, "REM REPLAYGAIN_ALBUM_GAIN ", 26)) {
             pl_get_value_from_cue (p + 26, sizeof (replaygain_album_gain), replaygain_album_gain);

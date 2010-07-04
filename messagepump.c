@@ -42,6 +42,7 @@ int
 messagepump_init (void) {
     messagepump_reset ();
     mutex = mutex_create ();
+    return 0;
 }
 
 void

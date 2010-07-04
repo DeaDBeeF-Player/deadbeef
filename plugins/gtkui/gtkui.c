@@ -153,7 +153,7 @@ update_songinfo (gpointer ctx) {
         const char *mode;
         char temp[20];
         if (c->channels <= 2) {
-            c->channels == 1 ? _("Mono") : _("Stereo");
+            mode = c->channels == 1 ? _("Mono") : _("Stereo");
         }
         else {
             snprintf (temp, sizeof (temp), "%dch Multichannel", c->channels);
@@ -218,6 +218,15 @@ update_songinfo (gpointer ctx) {
     return FALSE;
 }
 
+void
+set_tray_tooltip (const char *text) {
+#if (GTK_MINOR_VERSION < 16)
+        gtk_status_icon_set_tooltip (trayicon, text);
+#else
+        gtk_status_icon_set_tooltip_text (trayicon, text);
+#endif
+}
+
 gboolean
 on_trayicon_scroll_event               (GtkWidget       *widget,
                                         GdkEventScroll  *event,
@@ -234,11 +243,23 @@ on_trayicon_scroll_event               (GtkWidget       *widget,
     if (vol > 0) {
         vol = 0;
     }
-    else if (vol < -60) {
-        vol = -60;
+    else if (vol < deadbeef->volume_get_min_db ()) {
+        vol = deadbeef->volume_get_min_db ();
     }
     deadbeef->volume_set_db (vol);
     volumebar_redraw ();
+
+#if 0
+    char str[100];
+    if (deadbeef->conf_get_int ("gtkui.show_gain_in_db", 1)) {
+        snprintf (str, sizeof (str), "Gain: %s%d dB", vol == 0 ? "+" : "", (int)vol);
+    }
+    else {
+        snprintf (str, sizeof (str), "Gain: %d%%", (int)(deadbeef->volume_get_amp () * 100));
+    }
+    set_tray_tooltip (str);
+#endif
+
     return FALSE;
 }
 
@@ -363,15 +384,6 @@ static int
 gtkui_on_songchanged (DB_event_trackchange_t *ev, uintptr_t data) {
     gtkpl_songchanged_wrapper (ev->from, ev->to);
     return 0;
-}
-
-void
-set_tray_tooltip (const char *text) {
-#if (GTK_MINOR_VERSION < 16)
-        gtk_status_icon_set_tooltip (trayicon, text);
-#else
-        gtk_status_icon_set_tooltip_text (trayicon, text);
-#endif
 }
 
 static void
@@ -1006,6 +1018,7 @@ gtkui_load (DB_functions_t *api) {
 static const char settings_dlg[] =
     "property \"Ask confirmation to delete files from disk\" checkbox gtkui.delete_files_ask 1;\n"
     "property \"Status icon volume control sensitivity\" entry gtkui.tray_volume_sensitivity 1;\n"
+//    "property \"Show volume in dB (percentage otherwise)\" entry gtkui.show_gain_in_db 1\n"
     "property \"Custom status icon\" entry gtkui.custom_tray_icon \"" TRAY_ICON "\" ;\n"
     "property \"Run gtk_init with --sync (debug mode)\" checkbox gtkui.sync 0;\n"
 ;

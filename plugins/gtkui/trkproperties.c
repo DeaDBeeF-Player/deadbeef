@@ -178,6 +178,8 @@ trkproperties_fill_metadata (void) {
     gtk_list_store_set (propstore, &iter, 0, _("Tag Type(s)"), 1, temp, -1);
     gtk_list_store_append (propstore, &iter);
     gtk_list_store_set (propstore, &iter, 0, _("Embedded Cuesheet"), 1, (deadbeef->pl_get_item_flags (track) & DDB_HAS_EMBEDDED_CUESHEET) ? _("Yes") : _("No"), -1);
+    gtk_list_store_append (propstore, &iter);
+    gtk_list_store_set (propstore, &iter, 0, _("Codec"), 1, track->decoder_id, -1);
 
     gtk_list_store_append (propstore, &iter);
     snprintf (temp, sizeof (temp), "%0.2f dB", track->replaygain_album_gain);
