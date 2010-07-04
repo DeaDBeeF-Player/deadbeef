@@ -1,9 +1,10 @@
 #ifndef _SAT_HW_H_
 #define _SAT_HW_H_
 
-extern uint8 sat_ram[512*1024];
+struct m68ki_cpu_core_s;
 
-void sat_hw_init(void);
+void sat_hw_init(struct m68ki_cpu_core_s *cpu);
+void sat_hw_free(struct m68ki_cpu_core_s *cpu);
 
 #if !LSB_FIRST
 static unsigned short INLINE mem_readword_swap(unsigned short *addr)

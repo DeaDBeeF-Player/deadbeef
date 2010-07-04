@@ -15,20 +15,24 @@ typedef int8 data8_t;
 typedef int16 data16_t;
 typedef int32 data32_t;
 typedef int offs_t;
+struct m68ki_cpu_core_s;
 
 struct SCSPinterface 
 {
 	int num;
 	void *region[MAX_SCSP];
 	int mixing_level[MAX_SCSP];			/* volume */
-	void (*irq_callback[MAX_SCSP])(int state);	/* irq callback */
+	void (*irq_callback[MAX_SCSP])(struct m68ki_cpu_core_s *cpu, int state);	/* irq callback */
+	struct m68ki_cpu_core_s *cpu;
 };
 
-void *scsp_start(const void *config);
+void *SCSP_Start(const void *config);
+void SCSP_Exit (void *param);
+
 void SCSP_Update(void *param, INT16 **inputs, INT16 **buf, int samples);
 
-#define READ16_HANDLER(name)	data16_t name(offs_t offset, data16_t mem_mask)
-#define WRITE16_HANDLER(name)	void     name(offs_t offset, data16_t data, data16_t mem_mask)
+#define READ16_HANDLER(name)	data16_t name(void *param, offs_t offset, data16_t mem_mask)
+#define WRITE16_HANDLER(name)	void     name(void *param, offs_t offset, data16_t data, data16_t mem_mask)
 
 // SCSP register access
 READ16_HANDLER( SCSP_0_r );

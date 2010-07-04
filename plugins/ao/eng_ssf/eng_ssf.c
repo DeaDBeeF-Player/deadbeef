@@ -74,8 +74,7 @@ Sega driver commands:
 #include "corlett.h"
 #include "sat_hw.h"
 #include "scsp.h"
-
-extern int m68k_execute(int num_cycles);
+#include "m68kcpu.h"
 
 #define DEBUG_LOADER	(0)
 
@@ -83,10 +82,8 @@ typedef struct {
     corlett_t	*c;
     char 		psfby[256];
     uint32		decaybegin, decayend, total_samples;
+    m68ki_cpu_core *cpu;
 } ssf_synth_t;
-
-void *scsp_start(const void *config);
-void SCSP_Update(void *param, INT16 **inputs, INT16 **buf, int samples);
 
 void *ssf_start(const char *path, uint8 *buffer, uint32 length)
 {
@@ -99,8 +96,9 @@ void *ssf_start(const char *path, uint8 *buffer, uint32 length)
 	char *libfile;
 	int i;
 
-	// clear Saturn work RAM before we start scribbling in it
-	memset(sat_ram, 0, 512*1024);
+    s->cpu = m68k_init ();
+//	// clear Saturn work RAM before we start scribbling in it
+//	memset(cpu->sat_ram, 0, 512*1024);
 
 	// Decode the current SSF
 	if (corlett_decode(buffer, length, &file, &file_len, &s->c) != AO_SUCCESS)
@@ -149,7 +147,7 @@ void *ssf_start(const char *path, uint8 *buffer, uint32 length)
 			{
 				lib_len = 0x80000-offset+4;
 			}
-			memcpy(&sat_ram[offset], lib_decoded+4, lib_len-4);
+			memcpy(&s->cpu->sat_ram[offset], lib_decoded+4, lib_len-4);
 
 			// Dispose the corlett structure for the lib - we don't use it
 			free(lib);
@@ -165,7 +163,7 @@ void *ssf_start(const char *path, uint8 *buffer, uint32 length)
 		file_len = 0x80000-offset+4;
 	}
 
-	memcpy(&sat_ram[offset], file+4, file_len-4);
+	memcpy(&s->cpu->sat_ram[offset], file+4, file_len-4);
 
 	free(file);
 	
@@ -185,7 +183,7 @@ void *ssf_start(const char *path, uint8 *buffer, uint32 length)
 		FILE *f;
 
 		f = fopen("satram.bin", "wb");
-		fwrite(sat_ram, 512*1024, 1, f);
+		fwrite(cpu->sat_ram, 512*1024, 1, f);
 		fclose(f);
 	}
 	#endif
@@ -195,12 +193,12 @@ void *ssf_start(const char *path, uint8 *buffer, uint32 length)
 	{
 		uint8 temp;
 
-		temp = sat_ram[i];
-		sat_ram[i] = sat_ram[i+1];
-		sat_ram[i+1] = temp;
+		temp = s->cpu->sat_ram[i];
+		s->cpu->sat_ram[i] = s->cpu->sat_ram[i+1];
+		s->cpu->sat_ram[i+1] = temp;
 	}
 
-	sat_hw_init();
+	sat_hw_init(s->cpu);
 
 	// now figure out the time in samples for the length/fade
 	lengthMS = psfTimeToMS(s->c->inf_length);
@@ -238,10 +236,10 @@ int32 ssf_gen(void *handle, int16 *buffer, uint32 samples)
 
 	for (i = 0; i < samples; i++)
 	{
-		m68k_execute((11300000/60)/735);
+		m68k_execute(s->cpu, (11300000/60)/735);
 		stereo[0] = &output[i];
 		stereo[1] = &output2[i];
-		SCSP_Update(NULL, NULL, stereo, 1);
+		SCSP_Update(s->cpu->SCSP, NULL, stereo, 1);
 	}
 
 	for (i = 0; i < samples; i++)
@@ -278,7 +276,9 @@ int32 ssf_gen(void *handle, int16 *buffer, uint32 samples)
 
 int32 ssf_stop(void *handle)
 {
-	return AO_SUCCESS;
+    ssf_synth_t *s = handle;
+	sat_hw_free (s->cpu);
+    return AO_SUCCESS;
 }
 
 int32 ssf_command(void *handle, int32 command, int32 parameter)

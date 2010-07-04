@@ -145,7 +145,6 @@ struct _SLOT
 	signed short Prev;	//Previous sample (for interpolation)
 };
 
-
 #define MEM4B(scsp)		((scsp->udata.data[0]>>0x0)&0x0200)
 #define DAC18B(scsp)		((scsp->udata.data[0]>>0x0)&0x0100)
 #define MVOL(scsp)		((scsp->udata.data[0]>>0x0)&0x000F)
@@ -172,6 +171,8 @@ struct _SLOT
 
 #define USEDSP
 
+struct m68ki_cpu_core_s;
+
 struct _SCSP
 {
 	union
@@ -189,7 +190,7 @@ struct _SCSP
 	unsigned char *SCSPRAM;
 	UINT32 SCSPRAM_LENGTH;
 	char Master;
-	void (*Int68kCB)(int irq);
+	void (*Int68kCB)(struct m68ki_cpu_core_s *cpu, int irq);
 
 	INT32 *buffertmpl, *buffertmpr;
 
@@ -214,10 +215,16 @@ struct _SCSP
 
 	int ARTABLE[64], DRTABLE[64];
 
+    struct m68ki_cpu_core_s *cpu;
 	struct _SCSPDSP DSP;
-};
 
-static struct _SCSP *AllocedSCSP;
+    INT16 *bufferl;
+    INT16 *bufferr;
+
+    int length;
+
+    signed short *RBUFDST;	//this points to where the sample will be stored in the RingBuf
+};
 
 static void dma_scsp(struct _SCSP *SCSP); 		/*SCSP DMA transfer function*/
 #define	scsp_dgate		scsp_regs[0x16/2] & 0x4000
@@ -226,13 +233,6 @@ static void dma_scsp(struct _SCSP *SCSP); 		/*SCSP DMA transfer function*/
 #define dma_transfer_end	((scsp_regs[0x24/2] & 0x10)>>4)|(((scsp_regs[0x26/2] & 0x10)>>4)<<1)|(((scsp_regs[0x28/2] & 0x10)>>4)<<2)
 
 static const float SDLT[8]={-1000000.0,-36.0,-30.0,-24.0,-18.0,-12.0,-6.0,0.0};
-
-static INT16 *bufferl;
-static INT16 *bufferr;
-
-static int length;
-
-static signed short *RBUFDST;	//this points to where the sample will be stored in the RingBuf
 
 static unsigned char DecodeSCI(struct _SCSP *SCSP,unsigned char irq)
 {
@@ -251,9 +251,9 @@ static void ResetInterrupts(struct _SCSP *SCSP)
 {
 	UINT32 reset = SCSP->udata.data[0x22/2];
 	if (reset & 0x40)
-		SCSP->Int68kCB(-SCSP->IrqTimA);
+		SCSP->Int68kCB(SCSP->cpu, -SCSP->IrqTimA);
 	if (reset & 0x180)
-		SCSP->Int68kCB(-SCSP->IrqTimBC);
+		SCSP->Int68kCB(SCSP->cpu, -SCSP->IrqTimBC);
 }
 
 static void CheckPendingIRQ(struct _SCSP *SCSP)
@@ -262,7 +262,7 @@ static void CheckPendingIRQ(struct _SCSP *SCSP)
 	UINT32 en=SCSP->udata.data[0x1e/2];
 	if(SCSP->MidiW!=SCSP->MidiR)
 	{
-		SCSP->Int68kCB(SCSP->IrqMidi);
+		SCSP->Int68kCB(SCSP->cpu, SCSP->IrqMidi);
 		return;
 	}
 	if(!pend)
@@ -270,23 +270,23 @@ static void CheckPendingIRQ(struct _SCSP *SCSP)
 	if(pend&0x40)
 		if(en&0x40)
 		{
-			SCSP->Int68kCB(SCSP->IrqTimA);
+			SCSP->Int68kCB(SCSP->cpu, SCSP->IrqTimA);
 			return;
 		}
 	if(pend&0x80)
 		if(en&0x80)
 		{
-			SCSP->Int68kCB(SCSP->IrqTimBC);
+			SCSP->Int68kCB(SCSP->cpu, SCSP->IrqTimBC);
 			return;
 		}
 	if(pend&0x100)
 		if(en&0x100)
 		{
-			SCSP->Int68kCB(SCSP->IrqTimBC);
+			SCSP->Int68kCB(SCSP->cpu, SCSP->IrqTimBC);
 			return;
 		}
 
-	SCSP->Int68kCB(0);
+	SCSP->Int68kCB(SCSP->cpu, 0);
 }
 
 static int Get_AR(struct _SCSP *SCSP,int base,int R)
@@ -452,6 +452,7 @@ static void SCSP_Init(struct _SCSP *SCSP, const struct SCSPinterface *intf)
 	// get SCSP RAM
 	{
 		memset(SCSP,0,sizeof(*SCSP));
+        SCSP->cpu = intf->cpu;
 
 		if (!i)
 		{
@@ -464,7 +465,7 @@ static void SCSP_Init(struct _SCSP *SCSP, const struct SCSPinterface *intf)
 
 		if (intf->region)
 		{
-			SCSP->SCSPRAM = &sat_ram[0]; //(unsigned char *)intf->region;
+			SCSP->SCSPRAM = (unsigned char *)intf->region[0];
 			SCSP->SCSPRAM_LENGTH = 512*1024;
 			SCSP->DSP.SCSPRAM = (UINT16 *)SCSP->SCSPRAM;
 			SCSP->DSP.SCSPRAM_LENGTH =  (512*1024)/2;
@@ -644,7 +645,7 @@ static void SCSP_UpdateReg(struct _SCSP *SCSP, int reg)
 			break;
 		case 0x6:
 		case 0x7:
-			SCSP_MidiIn(0, SCSP->udata.data[0x6/2]&0xff, 0);
+			SCSP_MidiIn(SCSP, 0, SCSP->udata.data[0x6/2]&0xff, 0);
 			break;
 		case 0x12:
 		case 0x13:
@@ -732,7 +733,7 @@ static void SCSP_UpdateRegR(struct _SCSP *SCSP, int reg)
 				unsigned short v=SCSP->udata.data[0x5/2];
 				v&=0xff00;
 				v|=SCSP->MidiStack[SCSP->MidiR];
-				SCSP->Int68kCB(0);	// cancel the IRQ
+				SCSP->Int68kCB(SCSP->cpu, 0);	// cancel the IRQ
 				if(SCSP->MidiR!=SCSP->MidiW)
 				{
 					++SCSP->MidiR;
@@ -1000,7 +1001,7 @@ INLINE INT32 SCSP_UpdateSlot(struct _SCSP *SCSP, struct _SLOT *slot)
 	if(!STWINH(slot))
 	{
 		unsigned short Enc=((TL(slot))<<0x0)|(0x7<<0xd);
-		*RBUFDST=(sample*SCSP->LPANTABLE[Enc])>>(SHIFT+1);
+		*SCSP->RBUFDST=(sample*SCSP->LPANTABLE[Enc])>>(SHIFT+1);
 	}
 		
 	return sample;
@@ -1011,8 +1012,8 @@ static void SCSP_DoMasterSamples(struct _SCSP *SCSP, int nsamples)
 	INT16 *bufr,*bufl;
 	int sl, s, i;
 
-	bufr=bufferr;
-	bufl=bufferl;
+	bufr=SCSP->bufferr;
+	bufl=SCSP->bufferl;
 
 	for(s=0;s<nsamples;++s)
 	{
@@ -1023,9 +1024,9 @@ static void SCSP_DoMasterSamples(struct _SCSP *SCSP, int nsamples)
 		for(sl=0;sl<32;++sl)
 		{
 #if FM_DELAY
-			RBUFDST=SCSP->DELAYBUF+SCSP->DELAYPTR;
+			SCSP->RBUFDST=SCSP->DELAYBUF+SCSP->DELAYPTR;
 #else
-			RBUFDST=SCSP->RINGBUF+SCSP->BUFPTR;
+			SCSP->RBUFDST=SCSP->RINGBUF+SCSP->BUFPTR;
 #endif
 			if(SCSP->Slots[sl].active)
 			{
@@ -1136,14 +1137,14 @@ int SCSP_IRQCB(void *param)
 
 void SCSP_Update(void *param, INT16 **inputs, INT16 **buf, int samples)
 {
-	struct _SCSP *SCSP = AllocedSCSP;
-	bufferl = buf[0];
-	bufferr = buf[1];
-	length = samples;
+	struct _SCSP *SCSP = param;
+	SCSP->bufferl = buf[0];
+	SCSP->bufferr = buf[1];
+	SCSP->length = samples;
 	SCSP_DoMasterSamples(SCSP, samples);
 }
 
-void *scsp_start(const void *config)
+void *SCSP_Start(const void *config)
 {
 	const struct SCSPinterface *intf;
 
@@ -1164,15 +1165,25 @@ void *scsp_start(const void *config)
 //		SCSP->stream = stream_create(0, 2, 44100, SCSP, SCSP_Update);
 	}
 
-	AllocedSCSP = SCSP;
-
 	return SCSP;
 }
 
+void SCSP_Exit (void *param) {
+    if (param) {
+        struct _SCSP *SCSP = param;
+        if (SCSP->buffertmpl) {
+            free (SCSP->buffertmpl);
+        }
+        if (SCSP->buffertmpr) {
+            free (SCSP->buffertmpr);
+        }
+        free (param);
+    }
+}
 
-void SCSP_set_ram_base(int which, void *base)
+
+void SCSP_set_ram_base(struct _SCSP *SCSP, int which, void *base)
 {
-	struct _SCSP *SCSP = AllocedSCSP;
 	if (SCSP)
 	{
 		SCSP->SCSPRAM = base;
@@ -1183,16 +1194,12 @@ void SCSP_set_ram_base(int which, void *base)
 
 READ16_HANDLER( SCSP_0_r )
 {
-	struct _SCSP *SCSP = AllocedSCSP;
-
-	return SCSP_r16(SCSP, offset*2);
+	return SCSP_r16(param, offset*2);
 }
-
-extern UINT32* stv_scu;
 
 WRITE16_HANDLER( SCSP_0_w )
 {
-	struct _SCSP *SCSP = AllocedSCSP;
+	struct _SCSP *SCSP = param;
 	UINT16 tmp, *scsp_regs;
 
 	tmp = SCSP_r16(SCSP, offset*2);
@@ -1235,6 +1242,8 @@ WRITE16_HANDLER( SCSP_0_w )
 		//check main cpu IRQ
 		case 0x42a:
 #if 0
+        extern UINT32* stv_scu;
+
 			if(stv_scu && !(stv_scu[40] & 0x40) /*&& scsp_regs[0x42c/2] & 0x20*/)/*Main CPU allow sound irq*/
 			{
 				cpunum_set_input_line_and_vector(0, 9, HOLD_LINE , 0x46);
@@ -1251,14 +1260,14 @@ WRITE16_HANDLER( SCSP_0_w )
 
 WRITE16_HANDLER( SCSP_MidiIn )
 {
-	struct _SCSP *SCSP = AllocedSCSP; 
+	struct _SCSP *SCSP = param; 
 	SCSP->MidiStack[SCSP->MidiW++]=data;
 	SCSP->MidiW &= 15;
 }
 
 READ16_HANDLER( SCSP_MidiOutR )
 {
-	struct _SCSP *SCSP = AllocedSCSP; 
+	struct _SCSP *SCSP = param; 
 	unsigned char val;
 
 	val=SCSP->MidiStack[SCSP->MidiR++];

@@ -32,17 +32,16 @@ static const char* copyright_notice =
 /* ================================ INCLUDES ============================== */
 /* ======================================================================== */
 
+#include <stdlib.h>
+#include <string.h>
 #include "m68kops.h"
 #include "m68kcpu.h"
+
+#pragma GCC optimize("O0")
 
 /* ======================================================================== */
 /* ================================= DATA ================================= */
 /* ======================================================================== */
-
-int  m68ki_initial_cycles;
-int  m68ki_remaining_cycles = 0;                     /* Number of clocks remaining */
-uint m68ki_tracing = 0;
-uint m68ki_address_space;
 
 #ifdef M68K_LOG_ENABLE
 char* m68ki_cpu_names[9] =
@@ -58,17 +57,6 @@ char* m68ki_cpu_names[9] =
 	"M68020"
 };
 #endif /* M68K_LOG_ENABLE */
-
-/* The CPU core */
-m68ki_cpu_core m68ki_cpu = {0};
-
-#if M68K_EMULATE_ADDRESS_ERROR
-jmp_buf m68ki_aerr_trap;
-#endif /* M68K_EMULATE_ADDRESS_ERROR */
-
-uint    m68ki_aerr_address;
-uint    m68ki_aerr_write_mode;
-uint    m68ki_aerr_fc;
 
 /* Used by shift & rotate instructions */
 uint8 m68ki_shift_8_table[65] =
@@ -364,50 +352,41 @@ uint8 m68ki_ea_idx_cycle_table[64] =
  */
 
 /* Interrupt acknowledge */
-static int default_int_ack_callback_data;
-static int default_int_ack_callback(int int_level)
+static int default_int_ack_callback(m68ki_cpu_core *cpu, int int_level)
 {
-	default_int_ack_callback_data = int_level;
+	cpu->default_int_ack_callback_data = int_level;
 	CPU_INT_LEVEL = 0;
 	return M68K_INT_ACK_AUTOVECTOR;
 }
 
 /* Breakpoint acknowledge */
-static unsigned int default_bkpt_ack_callback_data;
-static void default_bkpt_ack_callback(unsigned int data)
+static void default_bkpt_ack_callback(m68ki_cpu_core *cpu, unsigned int data)
 {
-	default_bkpt_ack_callback_data = data;
+	cpu->default_bkpt_ack_callback_data = data;
 }
 
 /* Called when a reset instruction is executed */
-static void default_reset_instr_callback(void)
+static void default_reset_instr_callback(m68ki_cpu_core *cpu)
 {
 }
 
 /* Called when the program counter changed by a large value */
-static unsigned int default_pc_changed_callback_data;
-static void default_pc_changed_callback(unsigned int new_pc)
+static void default_pc_changed_callback(m68ki_cpu_core *cpu, unsigned int new_pc)
 {
-	default_pc_changed_callback_data = new_pc;
+	cpu->default_pc_changed_callback_data = new_pc;
 }
 
 /* Called every time there's bus activity (read/write to/from memory */
-static unsigned int default_set_fc_callback_data;
-static void default_set_fc_callback(unsigned int new_fc)
+static void default_set_fc_callback(m68ki_cpu_core *cpu, unsigned int new_fc)
 {
-	default_set_fc_callback_data = new_fc;
+	cpu->default_set_fc_callback_data = new_fc;
 }
 
 /* Called every instruction cycle prior to execution */
-static void default_instr_hook_callback(void)
+static void default_instr_hook_callback(m68ki_cpu_core *cpu)
 {
 }
 
-
-#if M68K_EMULATE_ADDRESS_ERROR
-	#include <setjmp.h>
-	jmp_buf m68ki_aerr_trap;
-#endif /* M68K_EMULATE_ADDRESS_ERROR */
 
 
 /* ======================================================================== */
@@ -415,9 +394,9 @@ static void default_instr_hook_callback(void)
 /* ======================================================================== */
 
 /* Access the internals of the CPU */
-unsigned int m68k_get_reg(void* context, m68k_register_t regnum)
+unsigned int m68k_get_reg(m68ki_cpu_core *_cpu, void* context, m68k_register_t regnum)
 {
-	m68ki_cpu_core* cpu = context != NULL ?(m68ki_cpu_core*)context : &m68ki_cpu;
+	m68ki_cpu_core* cpu = context != NULL ?(m68ki_cpu_core*)context : _cpu;
 
 	switch(regnum)
 	{
@@ -475,7 +454,7 @@ unsigned int m68k_get_reg(void* context, m68k_register_t regnum)
 	return 0;
 }
 
-void m68k_set_reg(m68k_register_t regnum, unsigned int value)
+void m68k_set_reg(m68ki_cpu_core *cpu, m68k_register_t regnum, unsigned int value)
 {
 	switch(regnum)
 	{
@@ -495,8 +474,8 @@ void m68k_set_reg(m68k_register_t regnum, unsigned int value)
 		case M68K_REG_A5:	REG_A[5] = MASK_OUT_ABOVE_32(value); return;
 		case M68K_REG_A6:	REG_A[6] = MASK_OUT_ABOVE_32(value); return;
 		case M68K_REG_A7:	REG_A[7] = MASK_OUT_ABOVE_32(value); return;
-		case M68K_REG_PC:	m68ki_jump(MASK_OUT_ABOVE_32(value)); return;
-		case M68K_REG_SR:	m68ki_set_sr(value); return;
+		case M68K_REG_PC:	m68ki_jump(cpu, MASK_OUT_ABOVE_32(value)); return;
+		case M68K_REG_SR:	m68ki_set_sr(cpu, value); return;
 		case M68K_REG_SP:	REG_SP = MASK_OUT_ABOVE_32(value); return;
 		case M68K_REG_USP:	if(FLAG_S)
 								REG_USP = MASK_OUT_ABOVE_32(value);
@@ -520,45 +499,45 @@ void m68k_set_reg(m68k_register_t regnum, unsigned int value)
 		case M68K_REG_CAAR:	REG_CAAR = MASK_OUT_ABOVE_32(value); return;
 		case M68K_REG_PPC:	REG_PPC = MASK_OUT_ABOVE_32(value); return;
 		case M68K_REG_IR:	REG_IR = MASK_OUT_ABOVE_16(value); return;
-		case M68K_REG_CPU_TYPE: m68k_set_cpu_type(value); return;
+		case M68K_REG_CPU_TYPE: m68k_set_cpu_type(cpu, value); return;
 		default:			return;
 	}
 }
 
 /* Set the callbacks */
-void m68k_set_int_ack_callback(int  (*callback)(int int_level))
+void m68k_set_int_ack_callback(m68ki_cpu_core *cpu, int  (*callback)(m68ki_cpu_core *cpu, int int_level))
 {
 	CALLBACK_INT_ACK = callback ? callback : default_int_ack_callback;
 }
 
-void m68k_set_bkpt_ack_callback(void  (*callback)(unsigned int data))
+void m68k_set_bkpt_ack_callback(m68ki_cpu_core *cpu, void  (*callback)(m68ki_cpu_core *cpu, unsigned int data))
 {
 	CALLBACK_BKPT_ACK = callback ? callback : default_bkpt_ack_callback;
 }
 
-void m68k_set_reset_instr_callback(void  (*callback)(void))
+void m68k_set_reset_instr_callback(m68ki_cpu_core *cpu, void  (*callback)(m68ki_cpu_core *cpu))
 {
 	CALLBACK_RESET_INSTR = callback ? callback : default_reset_instr_callback;
 }
 
-void m68k_set_pc_changed_callback(void  (*callback)(unsigned int new_pc))
+void m68k_set_pc_changed_callback(m68ki_cpu_core *cpu, void  (*callback)(m68ki_cpu_core *cpu, unsigned int new_pc))
 {
 	CALLBACK_PC_CHANGED = callback ? callback : default_pc_changed_callback;
 }
 
-void m68k_set_fc_callback(void  (*callback)(unsigned int new_fc))
+void m68k_set_fc_callback(m68ki_cpu_core *cpu, void  (*callback)(m68ki_cpu_core *cpu, unsigned int new_fc))
 {
 	CALLBACK_SET_FC = callback ? callback : default_set_fc_callback;
 }
 
-void m68k_set_instr_hook_callback(void  (*callback)(void))
+void m68k_set_instr_hook_callback(m68ki_cpu_core *cpu, void  (*callback)(m68ki_cpu_core *cpu))
 {
 	CALLBACK_INSTR_HOOK = callback ? callback : default_instr_hook_callback;
 }
 
 #include <stdio.h>
 /* Set the CPU type. */
-void m68k_set_cpu_type(unsigned int cpu_type)
+void m68k_set_cpu_type(m68ki_cpu_core *cpu, unsigned int cpu_type)
 {
 	switch(cpu_type)
 	{
@@ -629,18 +608,16 @@ void m68k_set_cpu_type(unsigned int cpu_type)
 	}
 }
 
-int m68k_trap0;
-
 /* Execute some instructions until we use up num_cycles clock cycles */
 /* ASG: removed per-instruction interrupt checks */
-int m68k_execute(int num_cycles)
+int m68k_execute(m68ki_cpu_core *cpu, int num_cycles)
 {
 	/* Make sure we're not stopped */
 	if(!CPU_STOPPED)
 	{
 		/* Set our pool of clock cycles available */
 		SET_CYCLES(num_cycles);
-		m68ki_initial_cycles = num_cycles;
+		cpu->m68ki_initial_cycles = num_cycles;
 
 		/* ASG: update cycles */
 		USE_CYCLES(CPU_INT_CYCLES);
@@ -667,8 +644,8 @@ int m68k_execute(int num_cycles)
 			REG_PPC = REG_PC;
 
 			/* Read an instruction and call its handler */
-			REG_IR = m68ki_read_imm_16();
-			m68ki_instruction_jump_table[REG_IR]();
+			REG_IR = m68ki_read_imm_16(cpu);
+			m68ki_instruction_jump_table[REG_IR](cpu);
 			USE_CYCLES(CYC_INSTRUCTION[REG_IR]);
 
 			/* Trace m68k_exception, if necessary */
@@ -683,7 +660,7 @@ int m68k_execute(int num_cycles)
 		CPU_INT_CYCLES = 0;
 
 		/* return how many clocks we used */
-		return m68ki_initial_cycles - GET_CYCLES();
+		return cpu->m68ki_initial_cycles - GET_CYCLES();
 	}
 
 	/* We get here if the CPU is stopped or halted */
@@ -694,27 +671,27 @@ int m68k_execute(int num_cycles)
 }
 
 
-int m68k_cycles_run(void)
+int m68k_cycles_run(m68ki_cpu_core *cpu)
 {
-	return m68ki_initial_cycles - GET_CYCLES();
+	return cpu->m68ki_initial_cycles - GET_CYCLES();
 }
 
-int m68k_cycles_remaining(void)
+int m68k_cycles_remaining(m68ki_cpu_core *cpu)
 {
 	return GET_CYCLES();
 }
 
 /* Change the timeslice */
-void m68k_modify_timeslice(int cycles)
+void m68k_modify_timeslice(m68ki_cpu_core *cpu, int cycles)
 {
-	m68ki_initial_cycles += cycles;
+	cpu->m68ki_initial_cycles += cycles;
 	ADD_CYCLES(cycles);
 }
 
 
-void m68k_end_timeslice(void)
+void m68k_end_timeslice(m68ki_cpu_core *cpu)
 {
-	m68ki_initial_cycles = GET_CYCLES();
+	cpu->m68ki_initial_cycles = GET_CYCLES();
 	SET_CYCLES(0);
 }
 
@@ -723,7 +700,7 @@ void m68k_end_timeslice(void)
 /* KS: Modified so that IPL* bits match with mask positions in the SR
  *     and cleaned out remenants of the interrupt controller.
  */
-void m68k_set_irq(unsigned int int_level)
+void m68k_set_irq(m68ki_cpu_core *cpu, unsigned int int_level)
 {
 	uint old_level = CPU_INT_LEVEL;
 	CPU_INT_LEVEL = int_level << 8;
@@ -731,12 +708,12 @@ void m68k_set_irq(unsigned int int_level)
 	/* A transition from < 7 to 7 always interrupts (NMI) */
 	/* Note: Level 7 can also level trigger like a normal IRQ */
 	if(old_level != 0x0700 && CPU_INT_LEVEL == 0x0700)
-		m68ki_exception_interrupt(7); /* Edge triggered level 7 (NMI) */
+		m68ki_exception_interrupt(cpu, 7); /* Edge triggered level 7 (NMI) */
 	else
-		m68ki_check_interrupts(); /* Level triggered (IRQ) */
+		m68ki_check_interrupts(cpu); /* Level triggered (IRQ) */
 }
 
-void m68k_init(void)
+m68ki_cpu_core *m68k_init(void)
 {
 	static uint emulation_initialized = 0;
 
@@ -747,16 +724,20 @@ void m68k_init(void)
 		emulation_initialized = 1;
 	}
 
-	m68k_set_int_ack_callback(NULL);
-	m68k_set_bkpt_ack_callback(NULL);
-	m68k_set_reset_instr_callback(NULL);
-	m68k_set_pc_changed_callback(NULL);
-	m68k_set_fc_callback(NULL);
-	m68k_set_instr_hook_callback(NULL);
+	m68ki_cpu_core *cpu = malloc (sizeof (m68ki_cpu_core));
+	memset (cpu, 0, sizeof (m68ki_cpu_core));
+
+	m68k_set_int_ack_callback(cpu, NULL);
+	m68k_set_bkpt_ack_callback(cpu, NULL);
+	m68k_set_reset_instr_callback(cpu, NULL);
+	m68k_set_pc_changed_callback(cpu, NULL);
+	m68k_set_fc_callback(cpu, NULL);
+	m68k_set_instr_hook_callback(cpu, NULL);
+	return cpu;
 }
 
 /* Pulse the RESET line on the CPU */
-void m68k_pulse_reset(void)
+void m68k_pulse_reset(m68ki_cpu_core *cpu)
 {
 	/* Clear all stop levels and eat up all remaining cycles */
 	CPU_STOPPED = 0;
@@ -772,7 +753,7 @@ void m68k_pulse_reset(void)
 	/* Reset VBR */
 	REG_VBR = 0;
 	/* Go to supervisor mode */
-	m68ki_set_sm_flag(SFLAG_SET | MFLAG_CLEAR);
+	m68ki_set_sm_flag(cpu, SFLAG_SET | MFLAG_CLEAR);
 
 	/* Invalidate the prefetch queue */
 #if M68K_EMULATE_PREFETCH
@@ -781,31 +762,32 @@ void m68k_pulse_reset(void)
 #endif /* M68K_EMULATE_PREFETCH */
 
 	/* Read the initial stack pointer and program counter */
-	m68ki_jump(0);
-	REG_SP = m68ki_read_imm_32();
-	REG_PC = m68ki_read_imm_32();
-	m68ki_jump(REG_PC);
+	m68ki_jump(cpu, 0);
+	REG_SP = m68ki_read_imm_32(cpu);
+	REG_PC = m68ki_read_imm_32(cpu);
+	m68ki_jump(cpu, REG_PC);
 
 	CPU_RUN_MODE = RUN_MODE_NORMAL;
 }
 
 /* Pulse the HALT line on the CPU */
-void m68k_pulse_halt(void)
+void m68k_pulse_halt(m68ki_cpu_core *cpu)
 {
 	CPU_STOPPED |= STOP_LEVEL_HALT;
 }
 
+#if 0
 
 /* Get and set the current CPU context */
 /* This is to allow for multiple CPUs */
-unsigned int m68k_context_size()
+unsigned int m68k_context_size(m68ki_cpu_core *cpu)
 {
 	return sizeof(m68ki_cpu_core);
 }
 
-unsigned int m68k_get_context(void* dst)
+unsigned int m68k_get_context(m68ki_cpu_core *cpu, void* dst)
 {
-	if(dst) *(m68ki_cpu_core*)dst = m68ki_cpu;
+	if(dst) *(m68ki_cpu_core*)dst = cpu;
 	return sizeof(m68ki_cpu_core);
 }
 
@@ -814,7 +796,7 @@ void m68k_set_context(void* src)
 	if(src) m68ki_cpu = *(m68ki_cpu_core*)src;
 }
 
-
+#endif
 
 /* ======================================================================== */
 /* ============================== MAME STUFF ============================== */
