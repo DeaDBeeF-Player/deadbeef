@@ -536,14 +536,13 @@ typedef struct DB_plugin_action_s {
     uint32_t flags;
     /**
      * Function called when user activates menu item
-     * @it - pointer to selected playitem for single-track action,
+     * @action pointer to action struct itself
+     * @it pointer to selected playitem for single-track action,
      *   to first playitem for multiple-track action,
      *   or NULL for common action
-     * @data - opaque pointer
+     * @returns unused
      */
-//    int (*callback) (DB_playItem_t *it, void *data);
     int (*callback) (struct DB_plugin_action_s *action, DB_playItem_t *it);
-//    void *data;
 
     //we have linked list here
     struct DB_plugin_action_s *next;

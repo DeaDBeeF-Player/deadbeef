@@ -15,6 +15,28 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+/*
+    Configuration scheme:
+
+    shellexec.NN shcmd:title:name:flags
+    
+    @shcmd is the command executed by the shell
+        formating directives are allowed, see
+        format_shell_command function
+
+    @title is the title of command displayed in UI
+
+    @name used for referencing command, for example in hotkeys
+        configuration
+
+    @flags comma-separated of command flags, allowed flags are:
+        single - command allowed only for single track
+        local - command allowed only for local files
+        remote - command allowed only for non-local files
+        disabled - ignore command
+*/
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -27,6 +49,7 @@
 static DB_misc_t plugin;
 static DB_functions_t *deadbeef;
 
+//Probably it's reasonable to move these flags to parent struct
 enum {
     SHX_ACTION_LOCAL_ONLY       = 1 << 0,
     SHX_ACTION_REMOTE_ONLY      = 1 << 1
@@ -163,7 +186,6 @@ format_shell_command (DB_playItem_t *it, const char *format)
 }
 
 static int
-//shx_callback (DB_playItem_t *it, void *data)
 shx_callback (Shx_action_t *action, DB_playItem_t *it)
 {
     char *cmd = format_shell_command (it, action->shcommand);
@@ -241,13 +263,10 @@ shx_start ()
             fprintf (stderr, "Shellexec: too many parameters in configuration line (%s)\n", item->value);
             continue;
         }
-        Shx_action_t *action = calloc (sizeof (Shx_action_t), 1);
+        if (strstr (flags, "disabled"))
+            continue;
 
-        trace ("Shellexec: title <%s>, name <%s>, command <%s>, flags <%s>\n",
-            title,
-            name,
-            command,
-            flags);
+        Shx_action_t *action = calloc (sizeof (Shx_action_t), 1);
 
         action->parent.title = strdup (title);
         action->parent.name = strdup (name);
