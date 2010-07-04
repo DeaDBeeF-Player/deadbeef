@@ -507,9 +507,9 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
     g_signal_connect ((gpointer) remove2, "activate",
             G_CALLBACK (on_remove2_activate),
             NULL);
-    g_signal_connect ((gpointer) remove_from_disk, "activate",
-            G_CALLBACK (on_remove_from_disk_activate),
-            NULL);
+/*    g_signal_connect ((gpointer) remove_from_disk, "activate",*/
+/*            G_CALLBACK (on_remove_from_disk_activate),*/
+/*            NULL);*/
     g_signal_connect ((gpointer) properties1, "activate",
             G_CALLBACK (main_properties_activate),
             NULL);
