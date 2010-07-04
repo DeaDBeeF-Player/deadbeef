@@ -291,20 +291,28 @@ int32 spu_command(void *handle, int32 command, int32 parameter)
 		
 		case COMMAND_RESTART:
 		{
-			s->song_ptr = &s->start_of_file[0x80200];
+            printf ("eng_spu restart\n");
+            uint8 *buffer = s->start_of_file;
+            int i;
+            uint16 reg;
 
-			if (s->old_fmt)
-			{
-				s->num_events = s->song_ptr[4] | s->song_ptr[5]<<8 | s->song_ptr[6]<<16 | s->song_ptr[7]<<24;
-			}
-			else
-			{
-				s->end_tick = s->song_ptr[0] | s->song_ptr[1]<<8 | s->song_ptr[2]<<16 | s->song_ptr[3]<<24; 
-				s->cur_tick = s->song_ptr[4] | s->song_ptr[5]<<8 | s->song_ptr[6]<<16 | s->song_ptr[7]<<24; 
-			}
+            // apply the register image	
+            for (i = 0; i < 512; i += 2)
+            {
+                reg = buffer[0x80000+i] | buffer[0x80000+i+1]<<8;
 
-			s->song_ptr += 8;
-			s->cur_event = 0;
+                SPUwriteRegister(s->mips_cpu, (i/2)+0x1f801c00, reg);
+            }
+
+            if (!s->old_fmt)
+            {
+                s->end_tick = buffer[0x80200] | buffer[0x80201]<<8 | buffer[0x80202]<<16 | buffer[0x80203]<<24; 
+                s->cur_tick = buffer[0x80204] | buffer[0x80205]<<8 | buffer[0x80206]<<16 | buffer[0x80207]<<24; 
+                s->next_tick = s->cur_tick;
+            }
+
+            s->song_ptr = &buffer[0x80208];
+            s->cur_event = 0;
 			return AO_SUCCESS;
 		}
 		break;

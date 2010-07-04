@@ -43,6 +43,8 @@ typedef struct {
     size_t filesize;
     char buffer[735*4]; // psf2 decoder only works with 735 samples buffer
     int remaining;
+    int skipsamples;
+    float duration;
 } aoplug_info_t;
 
 static DB_fileinfo_t *
@@ -62,6 +64,7 @@ aoplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     _info->samplerate = 44100;
     _info->readpos = 0;
     _info->plugin = &plugin;
+    info->duration = deadbeef->pl_get_item_duration (it);
 
     DB_FILE *file = deadbeef->fopen (it->fname);
     if (!file) {
@@ -114,13 +117,26 @@ aoplug_free (DB_fileinfo_t *_info) {
 
 static int
 aoplug_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
-//    printf ("aoplug_read_int16 %d samples\n", size/4);
     aoplug_info_t *info = (aoplug_info_t *)_info;
+//    printf ("aoplug_read_int16 %d samples, curr %d, end %d\n", size/4, info->currentsample, (int)(info->duration * _info->samplerate));
+
+    if (info->currentsample >= info->duration * _info->samplerate) {
+        return 0;
+    }
 
     int initsize = size;
 
     while (size > 0) {
         if (info->remaining > 0) {
+            if (info->skipsamples > 0) {
+                int n = min (info->skipsamples, info->remaining);
+                if (info->remaining > n) {
+                    memmove (info->buffer, info->buffer+n*4, (info->remaining - n)*4);
+                }
+                info->remaining -= n;
+                info->skipsamples -= n;
+                continue;
+            }
             int n = size / 4;
             n = min (info->remaining, n);
             memcpy (bytes, info->buffer, n * 4);
@@ -136,14 +152,21 @@ aoplug_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
             info->remaining = 735;
         }
     }
-    info->currentsample += size / (_info->channels * _info->bps/8);
+    info->currentsample += (initsize-size) / (_info->channels * _info->bps/8);
     return initsize-size;
 }
 
 static int
 aoplug_seek_sample (DB_fileinfo_t *_info, int sample) {
     aoplug_info_t *info = (aoplug_info_t *)_info;
-    
+    if (sample > info->currentsample) {
+        info->skipsamples = sample-info->currentsample;
+    }
+    else {
+        // restart song
+        ao_command (info->type, info->decoder, COMMAND_RESTART, 0);
+        info->skipsamples = sample;
+    }
     info->currentsample = sample;
     _info->readpos = (float)sample / _info->samplerate;
     return 0;
@@ -221,10 +244,10 @@ aoplug_insert (DB_playItem_t *after, const char *fname) {
         else if (!strcasecmp (ext, "ssf")) {
             it->filetype = filetypes[3];
         }
-        else if (!strcasecmp (ext, "dsf") || !strcasecmp (ext, "ninidsf")) {
+        else if (!strcasecmp (ext, "dsf") || !strcasecmp (ext, "minidsf")) {
             it->filetype = filetypes[5];
         }
-        else if (!strcasecmp (ext, "qsf")) {
+        else if (!strcasecmp (ext, "qsf") || !strcasecmp (ext, "miniqsf")) {
             it->filetype = filetypes[4];
         }
     }

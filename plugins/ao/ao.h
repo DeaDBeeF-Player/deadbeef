@@ -212,4 +212,6 @@ int ao_get_info (uint32 type, void *handle, ao_display_info *info);
 
 int ao_decode (uint32 type, void *handle, int16 *buffer, uint32 size);
 
+int ao_command (uint32 type, void *handle, int32 command, int32 param);
+
 #endif // AO_H

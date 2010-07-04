@@ -254,3 +254,8 @@ ao_decode (uint32 type, void *handle, int16 *buffer, uint32 size) {
 	(*types[type].gen)(handle, buffer, size);
 	return size;
 }
+
+int
+ao_command (uint32 type, void *handle, int32 command, int32 param) {
+	return (*types[type].command)(handle, command, param);
+}
