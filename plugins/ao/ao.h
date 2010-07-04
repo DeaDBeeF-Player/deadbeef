@@ -7,6 +7,10 @@
 #ifndef __AO_H
 #define __AO_H
 
+#ifdef HAVE_CONFIG_H
+#include "../../config.h"
+#endif
+
 #define AO_SUCCESS					1
 #define AO_FAIL						0
 #define AO_FAIL_DECOMPRESSION		-1
@@ -27,12 +31,20 @@ enum
 	COMMAND_JUMP
 };
 
+#if 0
 /* Compiler defines for Xcode */
 #ifdef __BIG_ENDIAN__
 	#undef LSB_FIRST
 #endif
 
 #ifdef __LITTLE_ENDIAN__
+	#define LSB_FIRST	1
+#endif
+#endif
+
+#ifdef WORDS_BIGENDIAN
+	#undef LSB_FIRST
+#else
 	#define LSB_FIRST	1
 #endif
 
