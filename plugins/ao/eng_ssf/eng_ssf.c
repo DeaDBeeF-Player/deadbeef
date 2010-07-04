@@ -82,6 +82,7 @@ typedef struct {
     corlett_t	*c;
     char 		psfby[256];
     uint32		decaybegin, decayend, total_samples;
+    uint8 init_sat_ram[512*1024];
     m68ki_cpu_core *cpu;
 } ssf_synth_t;
 
@@ -178,7 +179,7 @@ void *ssf_start(const char *path, uint8 *buffer, uint32 length)
 		}
 	}
 
-	#if DEBUG_LOADER && 1
+	#if DEBUG_LOADER
 	{
 		FILE *f;
 
@@ -197,6 +198,9 @@ void *ssf_start(const char *path, uint8 *buffer, uint32 length)
 		s->cpu->sat_ram[i] = s->cpu->sat_ram[i+1];
 		s->cpu->sat_ram[i+1] = temp;
 	}
+
+	// backup for fast restarting
+	memcpy (s->init_sat_ram, s->cpu->sat_ram, sizeof (s->init_sat_ram));
 
 	sat_hw_init(s->cpu);
 
@@ -284,9 +288,14 @@ int32 ssf_stop(void *handle)
 int32 ssf_command(void *handle, int32 command, int32 parameter)
 
 {
+    ssf_synth_t *s = handle;
 	switch (command)
 	{
 		case COMMAND_RESTART:
+            sat_hw_free (s->cpu);
+            memcpy (s->cpu->sat_ram, s->init_sat_ram, sizeof (s->init_sat_ram));
+            sat_hw_init (s->cpu);
+            s->total_samples = 0;
 			return AO_SUCCESS;
 		
 	}
