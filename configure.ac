@@ -373,15 +373,11 @@ if test "x$enable_tta" != "xno" ; then
     HAVE_TTA=yes
 fi
 
-<<<<<<< HEAD
-PLUGINS_DIRS="plugins/lastfm plugins/mpgmad plugins/vorbis plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/dumb plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/shellexec"
-=======
 if test "x$enable_dca" != "xno" ; then
     HAVE_DCA=yes
 fi
 
-PLUGINS_DIRS="plugins/lastfm plugins/mpgmad plugins/vorbis plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/dumb plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca"
->>>>>>> 8038f2149215607f58078503c4afac35db11fae9
+PLUGINS_DIRS="plugins/lastfm plugins/mpgmad plugins/vorbis plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/dumb plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/shellexec"
 
 AM_CONDITIONAL(HAVE_VORBIS, test "x$HAVE_VORBISPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_FLAC, test "x$HAVE_FLACPLUGIN" = "xyes")
@@ -502,11 +498,8 @@ plugins/pulse/Makefile
 plugins/artwork/Makefile
 plugins/supereq/Makefile
 plugins/notify/Makefile
-<<<<<<< HEAD
 plugins/shellexec/Makefile
 dnl plugins/emidi/Makefile
-=======
->>>>>>> 8038f2149215607f58078503c4afac35db11fae9
 plugins/musepack/Makefile
 plugins/wildmidi/Makefile
 plugins/tta/Makefile
