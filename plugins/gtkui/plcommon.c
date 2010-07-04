@@ -353,7 +353,7 @@ actionitem_activate (GtkMenuItem     *menuitem,
     // Plugin can handle all tracks by itself
     if (action->flags & DB_ACTION_CAN_MULTIPLE_TRACKS)
     {
-        action->callback (NULL, action->data);
+        action->callback (action, NULL);
         return;
     }
 
@@ -361,7 +361,7 @@ actionitem_activate (GtkMenuItem     *menuitem,
     if (0 == action->flags & DB_ACTION_ALLOW_MULTIPLE_TRACKS)
     {
         DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (clicked_idx, PL_MAIN);
-        action->callback (it, action->data);
+        action->callback (action, it);
         deadbeef->pl_item_unref (it);
         return;
     }
@@ -370,7 +370,7 @@ actionitem_activate (GtkMenuItem     *menuitem,
     DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
     while (it) {
         if (deadbeef->pl_is_selected (it))
-            action->callback (it, action->data);
+            action->callback (action, it);
         DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
         deadbeef->pl_item_unref (it);
         it = next;
@@ -421,10 +421,10 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
     gtk_container_add (GTK_CONTAINER (playlist_menu), remove2);
     g_object_set_data (G_OBJECT (remove2), "ps", listview);
 
-    remove_from_disk = gtk_menu_item_new_with_mnemonic (_("Remove from disk"));
-    gtk_widget_show (remove_from_disk);
-    gtk_container_add (GTK_CONTAINER (playlist_menu), remove_from_disk);
-    g_object_set_data (G_OBJECT (remove_from_disk), "ps", listview);
+/*    remove_from_disk = gtk_menu_item_new_with_mnemonic (_("Remove from disk"));*/
+/*    gtk_widget_show (remove_from_disk);*/
+/*    gtk_container_add (GTK_CONTAINER (playlist_menu), remove_from_disk);*/
+/*    g_object_set_data (G_OBJECT (remove_from_disk), "ps", listview);*/
 
     separator8 = gtk_separator_menu_item_new ();
     gtk_widget_show (separator8);

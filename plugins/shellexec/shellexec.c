@@ -27,7 +27,20 @@
 static DB_misc_t plugin;
 static DB_functions_t *deadbeef;
 
-static DB_plugin_action_t *actions;
+enum {
+    SHX_ACTION_LOCAL_ONLY       = 1 << 0,
+    SHX_ACTION_REMOTE_ONLY      = 1 << 1
+};
+
+typedef struct Shx_action_s
+{
+    DB_plugin_action_t parent;
+
+    const char *shcommand;
+    uint32_t shx_flags;
+} Shx_action_t;
+
+static Shx_action_t *actions;
 
 DB_plugin_t *
 shellexec_load (DB_functions_t *api) {
@@ -41,15 +54,16 @@ trim (char* s)
     char *h, *t;
     
     for (h = s; *h == ' ' || *h == '\t'; h++);
-    for (t = s + strlen (s); *t == ' ' || *t == '\t'; t--);
-    * (t+1) = 0;
+    for (t = s + strlen (s)-1; *t == ' ' || *t == '\t'; t--);
+    *(t+1) = 0;
     return h;
 }
 
 static int
 shell_quote (const char *source, char *dest)
 {
-    char *sp, *dp;
+    const char *sp;
+    char *dp;
 
     for (sp = source, dp = dest; *sp; sp++, dp++)
     {
@@ -82,7 +96,7 @@ shell_quote (const char *source, char *dest)
     Output:
     echo 'Blind Faith' - 'Can'\''t Find My Way Home' %a - %t
 */
-static const char*
+static char*
 format_shell_command (DB_playItem_t *it, const char *format)
 {
     char *p;
@@ -149,9 +163,10 @@ format_shell_command (DB_playItem_t *it, const char *format)
 }
 
 static int
-shx_callback (DB_playItem_t *it, void *data)
+//shx_callback (DB_playItem_t *it, void *data)
+shx_callback (Shx_action_t *action, DB_playItem_t *it)
 {
-    const char *cmd = format_shell_command (it, data);
+    char *cmd = format_shell_command (it, action->shcommand);
     printf ("%s\n", cmd);
     system (cmd);
     free (cmd);
@@ -159,8 +174,17 @@ shx_callback (DB_playItem_t *it, void *data)
 }
 
 static DB_plugin_action_t *
-shx_get_actions (DB_playItem_t *unused)
+shx_get_actions (DB_playItem_t *it)
 {
+    Shx_action_t *action = actions;
+    for (action = actions; action; action = action->parent.next)
+    {
+        if (((action->shx_flags & SHX_ACTION_LOCAL_ONLY) && !deadbeef->is_local_file (it->fname)) ||
+            ((action->shx_flags & SHX_ACTION_REMOTE_ONLY) && deadbeef->is_local_file (it->fname)))
+            action->parent.flags |= DB_ACTION_DISABLED;
+        else
+            action->parent.flags &= ~DB_ACTION_DISABLED;
+    }
     return actions;
 }
 
@@ -168,35 +192,83 @@ static int
 shx_start ()
 {
     actions = NULL;
-    DB_plugin_action_t *prev = NULL;
+    Shx_action_t *prev = NULL;
 
     DB_conf_item_t *item = deadbeef->conf_find ("shellexec.", NULL);
     while (item)
     {
         size_t l = strlen (item->value) + 1;
         char tmp[l];
+        char *tmpptr;
         strcpy (tmp, item->value);
         trace ("Shellexec: %s\n", tmp);
 
-        char *semicolon = strchr (tmp, ':');
-        if (!semicolon)
+        const char *command;
+        const char *title;
+        const char *name;
+        const char *flags;
+
+        char *semicolon;
+        int idx = 0;
+        tmpptr = tmp;
+        do
         {
-            fprintf (stdout, "Shellexec: wrong option <%s>\n", tmp);
+            semicolon = strchr (tmpptr, ':');
+            if (semicolon)
+                *semicolon = 0;
+
+            trace ("Shellexec: idx: %d, tmp: %s\n", idx, tmpptr);
+            switch (idx)
+            {
+                case 0: command = trim (tmpptr); break;
+                case 1: title = trim (tmpptr); break;
+                case 2: name = trim (tmpptr); break;
+                case 3: flags = trim (tmpptr); break;
+            }
+            if (semicolon)
+                tmpptr = semicolon + 1;
+            idx++;
+        }
+        while (semicolon);
+
+        if (idx < 2)
+        {
+            fprintf (stderr, "Shellexec: need at least command and title (%s)\n", item->value);
             continue;
         }
+        if (idx > 4)
+        {
+            fprintf (stderr, "Shellexec: too many parameters in configuration line (%s)\n", item->value);
+            continue;
+        }
+        Shx_action_t *action = calloc (sizeof (Shx_action_t), 1);
 
-        *semicolon = 0;
+        trace ("Shellexec: title <%s>, name <%s>, command <%s>, flags <%s>\n",
+            title,
+            name,
+            command,
+            flags);
 
-        DB_plugin_action_t *action = calloc (sizeof (DB_plugin_action_t), 1);
+        action->parent.title = strdup (title);
+        action->parent.name = strdup (name);
+        action->shcommand = strdup (command);
+        action->parent.callback = shx_callback;
+        action->parent.flags = DB_ACTION_SINGLE_TRACK;
+        action->parent.next = NULL;
 
-        action->title = strdup (trim (semicolon + 1));
-        action->callback = shx_callback;
-        action->data = strdup (trim (tmp));
-        action->flags = DB_ACTION_SINGLE_TRACK | DB_ACTION_ALLOW_MULTIPLE_TRACKS;
-        action->next = NULL;
+        action->shx_flags = 0;
+
+        if (strstr (flags, "local"))
+            action->shx_flags |= SHX_ACTION_LOCAL_ONLY;
+
+        if (strstr (flags, "remote"))
+            action->shx_flags |= SHX_ACTION_REMOTE_ONLY;
+
+        if (0 == strstr (flags, "single"))
+            action->parent.flags |= DB_ACTION_ALLOW_MULTIPLE_TRACKS;
 
         if (prev)
-            prev->next = action;
+            prev->parent.next = action;
         prev = action;
 
         if (!actions)

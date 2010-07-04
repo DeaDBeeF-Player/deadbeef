@@ -532,6 +532,7 @@ enum {
 
 typedef struct DB_plugin_action_s {
     const char *title;
+    const char *name;
     uint32_t flags;
     /**
      * Function called when user activates menu item
@@ -540,8 +541,9 @@ typedef struct DB_plugin_action_s {
      *   or NULL for common action
      * @data - opaque pointer
      */
-    int (*callback) (DB_playItem_t *it, void *data);
-    void *data;
+//    int (*callback) (DB_playItem_t *it, void *data);
+    int (*callback) (struct DB_plugin_action_s *action, DB_playItem_t *it);
+//    void *data;
 
     //we have linked list here
     struct DB_plugin_action_s *next;

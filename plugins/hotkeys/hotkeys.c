@@ -25,8 +25,8 @@
 #include "hotkeys.h"
 #include "../../deadbeef.h"
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 static DB_hotkeys_plugin_t plugin;
 static DB_functions_t *deadbeef;
@@ -48,22 +48,19 @@ static const xkey_t keys[] = {
     #include "keysyms.inc"
 };
 
-typedef void (*command_func_t) (void);
+//typedef void (*command_func_t) (void *command);
 
-typedef struct {
+typedef struct command_s {
     int keycode;
     int modifier;
-    command_func_t func;
+    const char *action;
+    void (*func) (struct command_s *command);
 } command_t;
+
+typedef void (*command_func_t) (command_t *command);
 
 static command_t commands [MAX_COMMAND_COUNT];
 static int command_count = 0;
-
-
-typedef struct {
-    char* name;
-    void (*func) (void);
-} known_command_t;
 
 static int
 get_keycode (Display *disp, const char* name, KeySym *syms, int first_kk, int last_kk, int ks_per_kk) {
@@ -95,36 +92,139 @@ trim (char* s)
 }
 
 static void
-cmd_seek_fwd () {
+cmd_seek_fwd (void *unused) {
     deadbeef->playback_set_pos (deadbeef->playback_get_pos () + 5);
 }
 
 static void
-cmd_seek_back () {
+cmd_seek_back (void *unused) {
     deadbeef->playback_set_pos (deadbeef->playback_get_pos () - 5);
 }
 
 static void
-cmd_volume_up () {
+cmd_volume_up (void *unused) {
     deadbeef->volume_set_db (deadbeef->volume_get_db () + 2);
 }
 
 static void
-cmd_volume_down () {
+cmd_volume_down (void *unused) {
     deadbeef->volume_set_db (deadbeef->volume_get_db () - 2);
 }
 
 static void
-cmd_stop_after_current () {
+cmd_stop_after_current (void *unused) {
     int var = deadbeef->conf_get_int ("playlist.stop_after_current", 0);
     var = 1 - var;
     deadbeef->conf_set_int ("playlist.stop_after_current", var);
     deadbeef->sendmessage (M_CONFIGCHANGED, 0, 0, 0);
 }
 
+/*
+    FIXME: This function has many common code with plcommon.c
+    and it does full traverse of playlist twice
+*/
+static void
+cmd_invoke_plugin_command (command_t *command)
+{
+    trace ("We're here to invoke %s\n", command->action);
+
+    DB_plugin_action_t *action = NULL;
+    DB_plugin_t **plugins = deadbeef->plug_get_list();
+    int i;
+
+    int selected_count = 0;
+    DB_playItem_t *pit = deadbeef->pl_get_first (PL_MAIN);
+    DB_playItem_t *selected = NULL;
+    while (pit) {
+        if (deadbeef->pl_is_selected (pit))
+        {
+            if (!selected)
+                selected = pit;
+            selected_count++;
+        }
+        DB_playItem_t *next = deadbeef->pl_get_next (pit, PL_MAIN);
+        deadbeef->pl_item_unref (pit);
+        pit = next;
+    }
+
+    for (i = 0; plugins[i]; i++)
+    {
+        if (!plugins[i]->get_actions)
+            continue;
+
+        DB_plugin_action_t *actions = plugins[i]->get_actions (selected);
+        DB_plugin_action_t *iter;
+        for (iter = actions; iter; iter = iter->next)
+        {
+            if (!iter->name)
+                continue;
+            if (0 == strcmp (iter->name, command->action))
+            {
+                action = iter;
+                break;
+            }
+        }
+        if (action)
+            break;
+    }
+    if (!action)
+    {
+        fprintf (stderr, "Hotkeys: action %s not found\n", command->action);
+        return;
+    }
+
+    if (action->flags & DB_ACTION_COMMON)
+    {
+        //Simply call common action
+        action->callback (action, NULL);
+        return;
+    }
+    //Now we're checking af action is applicable:
+
+    if (selected_count == 0)
+    {
+        fprintf (stderr, "No tracks selected\n");
+        return;
+    }
+    if ((selected_count == 1) && (0 == action->flags & DB_ACTION_SINGLE_TRACK))
+    {
+        fprintf (stderr, "Hotkeys: action %s not allowed for single track\n", action->name);
+        return;
+    }
+    if ((selected_count > 1) && (0 == action->flags & DB_ACTION_ALLOW_MULTIPLE_TRACKS))
+    {
+        fprintf (stderr, "Hotkeys: action %s not allowed for multiple tracks\n", action->name);
+        return;
+    }
+
+    //So, action is allowed, do it.
+
+    if (action->flags & DB_ACTION_CAN_MULTIPLE_TRACKS)
+    {
+        action->callback (action, NULL);
+        return;
+    }
+
+    pit = deadbeef->pl_get_first (PL_MAIN);
+    while (pit) {
+        if (deadbeef->pl_is_selected (pit))
+        {
+            action->callback (action, pit);
+        }
+        DB_playItem_t *next = deadbeef->pl_get_next (pit, PL_MAIN);
+        deadbeef->pl_item_unref (pit);
+        pit = next;
+    }
+}
+
 static command_func_t
 get_command (const char* command)
 {
+    /*
+        These deadbeef functions don't take any parameters
+        but I assume we use cdecl convention so actual
+        parameters count doesn't matter.
+    */
     if (!strcasecmp (command, "toggle_pause"))
         return deadbeef->playback_pause;
 
@@ -158,7 +258,8 @@ get_command (const char* command)
     else if (!strcasecmp (command, "toggle_stop_after_current"))
         return cmd_stop_after_current;
 
-    return NULL;
+    return cmd_invoke_plugin_command;
+//    return NULL;
 }
 
 static int
@@ -248,6 +349,7 @@ read_config (Display *disp)
             else {
                 command = trim (command);
                 cmd_entry->func = get_command (command);
+                cmd_entry->action = strdup (command);
                 if (!cmd_entry->func)
                 {
                     fprintf (stderr, "hotkeys: Unknown command <%s> while parsing %s %s\n", command,  item->key, item->value);
@@ -355,7 +457,7 @@ hotkeys_event_loop (void *unused) {
                          (state == commands[ i ].modifier))
                     {
                         trace ("matches to commands[%d]!\n", i);
-                        commands[i].func ();
+                        commands[i].func (&commands[i]);
                         break;
                     }
                 }

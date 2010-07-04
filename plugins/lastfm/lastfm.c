@@ -23,8 +23,8 @@
 #include <curl/curl.h>
 #include "../../deadbeef.h"
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 #define LFM_TESTMODE 0
 #define LFM_IGNORE_RULES 0
@@ -825,7 +825,7 @@ lastfm_stop (void) {
 }
 
 static int
-lfm_action_lookup (DB_playItem_t *it, void *data)
+lfm_action_lookup (DB_plugin_action_t *action, DB_playItem_t *it)
 {
     const char *artist = deadbeef->pl_find_meta (it, "artist");
     const char *title = deadbeef->pl_find_meta (it, "title");
@@ -857,6 +857,7 @@ lfm_action_love (DB_playItem_t *it, void *data)
 
 static DB_plugin_action_t love_action = {
     .title = "Love at Last.fm",
+    .name = "lfm_love",
     .flags = DB_ACTION_SINGLE_TRACK,
     .callback = lfm_action_love,
     .next = NULL
@@ -864,6 +865,7 @@ static DB_plugin_action_t love_action = {
 
 static DB_plugin_action_t lookup_action = {
     .title = "Lookup at Last.fm",
+    .name = "lfm_lookup",
     .flags = DB_ACTION_SINGLE_TRACK,
     .callback = lfm_action_lookup,
     .next = &love_action

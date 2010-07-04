@@ -30,7 +30,8 @@ static void
 on_actionitem_activate (GtkMenuItem     *menuitem,
                            DB_plugin_action_t *action)
 {
-    action->callback (NULL, action->data);
+//    action->callback (NULL, action->data);
+    action->callback (action, NULL);
 }
 
 void
