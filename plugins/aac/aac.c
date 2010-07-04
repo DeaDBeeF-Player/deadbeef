@@ -20,6 +20,9 @@
 #include <string.h>
 #include <stdio.h>
 #include <neaacdec.h>
+#ifdef HAVE_CONFIG_H
+#include "../../config.h"
+#endif
 #include <mp4ff.h>
 #include <stdlib.h>
 #include "../../deadbeef.h"
