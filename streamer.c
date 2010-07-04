@@ -491,6 +491,9 @@ streamer_move_to_prevsong (void) {
 
 int
 streamer_move_to_randomsong (void) {
+    if (!streamer_playlist) {
+        streamer_playlist = plt_get_curr_ptr ();
+    }
     playlist_t *plt = streamer_playlist;
     int cnt = plt->count[PL_MAIN];
     if (!cnt) {
