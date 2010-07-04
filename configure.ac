@@ -366,8 +366,6 @@ fi
 if test "x$enable_aac" != "xno" ; then
     AC_CHECK_LIB([faad], [main], [HAVE_FAAD=1])
     AC_CHECK_LIB([mp4ff], [main], [HAVE_MP4FF=1])
-    AM_CONDITIONAL(HAVE_FAAD, test $HAVE_FAAD)
-    AM_CONDITIONAL(HAVE_MP4FF, test $HAVE_MP4FF)
     if test ${HAVE_FAAD} && test ${HAVE_MP4FF} ; then
         FAAD2_LIBS="-lfaad -lmp4ff"
         AC_SUBST(FAAD2_LIBS)
@@ -377,7 +375,6 @@ fi
 
 if test "x$enable_mms" != "xno" ; then
     AC_CHECK_LIB([mms], [main], [HAVE_LIBMMS=1])
-    AM_CONDITIONAL(HAVE_LIBMMS, test $HAVE_LIBMMS)
     if test ${HAVE_LIBMMS} ; then
         LIBMMS_LIBS="-lmms"
         AC_SUBST(LIBMMS_LIBS)
