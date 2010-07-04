@@ -96,12 +96,19 @@ trim (char* s)
 
 static void
 cmd_seek_fwd () {
-    deadbeef->playback_set_pos (deadbeef->playback_get_pos () + 5);
+    float pos = deadbeef->streamer_get_playpos ();
+    pos += 5;
+    deadbeef->streamer_seek (pos);
 }
 
 static void
 cmd_seek_back () {
-    deadbeef->playback_set_pos (deadbeef->playback_get_pos () - 5);
+    float pos = deadbeef->streamer_get_playpos ();
+    pos -= 5;
+    if (pos < 0) {
+        pos = 0;
+    }
+    deadbeef->streamer_seek (pos);
 }
 
 static void

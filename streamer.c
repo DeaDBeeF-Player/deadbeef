@@ -714,6 +714,7 @@ streamer_set_nextsong (int song, int pstate) {
         // no sense to wait until end of previous song, reset buffer
         bytes_until_next_song = 0;
         playpos = 0;
+        seekpos = -1;
     }
 }
 
@@ -880,6 +881,7 @@ streamer_thread (void *ctx) {
             avg_bitrate = -1;
             playlist_track = playing_track;
             playpos = 0;
+            seekpos = -1;
 
             // try to switch samplerate to the closest supported by output plugin
             if (conf_get_int ("playback.dynsamplerate", 0)) {
