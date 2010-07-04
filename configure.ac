@@ -85,7 +85,6 @@ AC_ARG_ENABLE(gme,      [  --disable-gme           disable Game Music Emu plugin
 AC_ARG_ENABLE(dumb,     [  --disable-dumb          disable D.U.M.B. plugin for MOD, S3M and other tracker formats (default: enabled)], [enable_dumb=$enableval], [enable_dumb=yes])
 AC_ARG_ENABLE(notify,   [  --disable-notify        disable notification-daemon support plugin (default: enabled)], [enable_notify=$enableval], [enable_notify=yes])
 AC_ARG_ENABLE(shellexec,   [  --disable-shellexec        disable shell commands plugin (default: enabled)], [enable_shellexec=$enableval], [enable_shellexec=yes])
-dnl AC_ARG_ENABLE(emidi,    [  --disable-emidi         disable emidi plugin (default: enabled)], [enable_emidi=$enableval], [enable_emidi=yes])
 AC_ARG_ENABLE(musepack, [  --disable-musepack      disable musepack plugin (default: enabled)], [enable_musepack=$enableval], [enable_musepack=yes])
 AC_ARG_ENABLE(wildmidi, [  --disable-wildmidi      disable wildmidi plugin (default: enabled)], [enable_wildmidi=$enableval], [enable_wildmidi=yes])
 AC_ARG_ENABLE(tta,     [  --disable-tta            disable tta plugin (default: enabled)], [enable_tta=$enableval], [enable_tta=yes])
@@ -349,10 +348,6 @@ if test "x$HAVE_DBUS" = "xyes" && test "x$enable_notify" != "xno" ; then
     AC_SUBST(NOTIFY_CFLAGS)
 fi
 
-dnl if test "x$enable_emidi" != "xno" ; then
-dnl     HAVE_EMIDI=yes
-dnl fi
-
 if test "x$enable_musepack" != "xno" ; then
     HAVE_MUSEPACK=yes
 fi
@@ -369,7 +364,7 @@ if test "x$enable_dca" != "xno" ; then
     HAVE_DCA=yes
 fi
 
-f test "x$enable_aac" != "xno" ; then
+if test "x$enable_aac" != "xno" ; then
     AC_CHECK_LIB([faad], [main], [HAVE_FAAD=1])
     AC_CHECK_LIB([mp4ff], [main], [HAVE_MP4FF=1])
     AM_CONDITIONAL(HAVE_FAAD, test $HAVE_FAAD)
@@ -492,7 +487,6 @@ PRINT_PLUGIN_INFO([artwork],[Cover art plugin],[test "x$HAVE_ARTWORK" = "xyes"])
 PRINT_PLUGIN_INFO([supereq],[Equalizer based on Super EQ library by Naoki Shibata],[test "x$HAVE_SUPEREQ" = "xyes"])
 PRINT_PLUGIN_INFO([notify],[notification-daemon support plugin],[test "x$HAVE_NOTIFY" = "xyes"])
 PRINT_PLUGIN_INFO([shellexec],[shell commands plugin],[test "x$HAVE_SHELLEXEC" = "xyes"])
-dnl PRINT_PLUGIN_INFO([emidi],[Emu de MIDI player plugin],[test "x$HAVE_EMIDI" = "xyes"])
 PRINT_PLUGIN_INFO([musepack],[musepack player plugin],[test "x$HAVE_MUSEPACK" = "xyes"])
 PRINT_PLUGIN_INFO([wildmidi],[WildMidi player plugin],[test "x$HAVE_WILDMIDI" = "xyes"])
 PRINT_PLUGIN_INFO([tta],[TTA player plugin],[test "x$HAVE_TTA" = "xyes"])
@@ -533,7 +527,6 @@ plugins/artwork/Makefile
 plugins/supereq/Makefile
 plugins/notify/Makefile
 plugins/shellexec/Makefile
-dnl plugins/emidi/Makefile
 plugins/musepack/Makefile
 plugins/wildmidi/Makefile
 plugins/tta/Makefile

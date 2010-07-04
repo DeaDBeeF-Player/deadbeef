@@ -353,8 +353,7 @@ actionitem_activate (GtkMenuItem     *menuitem,
     // Plugin can handle all tracks by itself
     if (action->flags & DB_ACTION_CAN_MULTIPLE_TRACKS)
     {
-        action->callback (it, action->data);
-        deadbeef->pl_item_unref (it);
+        action->callback (NULL, action->data);
         return;
     }
 
@@ -376,7 +375,6 @@ actionitem_activate (GtkMenuItem     *menuitem,
         deadbeef->pl_item_unref (it);
         it = next;
     }
-    deadbeef->pl_item_unref (it);
 }
 
 void
