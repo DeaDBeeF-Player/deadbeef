@@ -69,8 +69,7 @@ that no encryption is used.
 #define DEBUG_LOADER	(0)
 
 // timer rate is 285 Hz
-static int32 samples_per_tick = 44100/285;
-static int32 samples_to_next_tick = 44100/285;
+static const int32 samples_per_tick = 44100/285;
 
 typedef struct {
     corlett_t *c;
@@ -81,9 +80,11 @@ typedef struct {
     int32 uses_kabuki;
     char *Z80ROM, *QSamples;
     char RAM[0x1000], RAM2[0x1000];
+    char initRAM[0x1000], initRAM2[0x1000];
     int32 cur_bank;
     z80_state_t *z80;
     qsound_state_t *qs;
+    int32 samples_to_next_tick;
 } qsf_synth_t;
 
 static struct QSound_interface qsintf = 
@@ -194,9 +195,6 @@ void *qsf_start(const char *path, uint8 *buffer, uint32 length)
 	s->xkey = 0;
 	s->cur_bank = 0;
 
-	memset(s->RAM, 0, 0x1000);
-	memset(s->RAM2, 0, 0x1000);
-		
 	// Decode the current QSF
 	if (corlett_decode(buffer, length, &file, &file_len, &s->c) != AO_SUCCESS)
 	{
@@ -279,12 +277,16 @@ void *qsf_start(const char *path, uint8 *buffer, uint32 length)
 		}
 	}
 
+	memcpy (s->initRAM, s->RAM, 0x1000);
+	memcpy (s->initRAM2, s->RAM2, 0x1000);
+
     if (s->z80) {
         z80_reset(s->z80, NULL);
         z80_set_irq_callback(s->z80, qsf_irq_cb);
     }
 	qsintf.sample_rom = s->QSamples;
 	s->qs = qsound_sh_start(&qsintf);
+	s->samples_to_next_tick = samples_per_tick;
 
 	return s;
 }
@@ -303,13 +305,13 @@ int32 qsf_gen(qsf_synth_t *s, int16 *buffer, uint32 samples)
 	int32 i, opos, tickinc, loops;
 
 	// our largest possible step is samples_per_tick or samples, whichever is smaller
-	if (samples_to_next_tick > samples)
+	if (s->samples_to_next_tick > samples)
 	{
 		tickinc = samples;
 	}
 	else
 	{
-		tickinc = samples_to_next_tick;
+		tickinc = s->samples_to_next_tick;
 	}
 
 	loops = samples / tickinc;
@@ -323,12 +325,12 @@ int32 qsf_gen(qsf_synth_t *s, int16 *buffer, uint32 samples)
 		qsound_update(s->qs, 0, stereo, tickinc);
 
 		opos += tickinc;
-		samples_to_next_tick -= tickinc;
+		s->samples_to_next_tick -= tickinc;
 
-		if (samples_to_next_tick <= 0)
+		if (s->samples_to_next_tick <= 0)
 		{
 			timer_tick(s);
-			samples_to_next_tick = samples_per_tick;
+			s->samples_to_next_tick = samples_per_tick;
 		}
 	}
 
@@ -340,12 +342,12 @@ int32 qsf_gen(qsf_synth_t *s, int16 *buffer, uint32 samples)
 		stereo[1] = &output2[opos];
 		qsound_update(s->qs, 0, stereo, (samples-opos));
 
-		samples_to_next_tick -= (samples-opos);
+		s->samples_to_next_tick -= (samples-opos);
 
-		if (samples_to_next_tick <= 0)
+		if (s->samples_to_next_tick <= 0)
 		{
 			timer_tick(s);
-			samples_to_next_tick = samples_per_tick;
+			s->samples_to_next_tick = samples_per_tick;
 		}
 	}
 
@@ -376,9 +378,20 @@ int32 qsf_stop(void *handle)
 
 int32 qsf_command(void *handle, int32 command, int32 parameter)
 {
+    qsf_synth_t *s = handle;
 	switch (command)
 	{
 		case COMMAND_RESTART:
+            memcpy (s->RAM, s->initRAM, 0x1000);
+            memcpy (s->RAM2, s->initRAM2, 0x1000);
+
+            if (s->z80) {
+                z80_reset(s->z80, NULL);
+                z80_set_irq_callback(s->z80, qsf_irq_cb);
+            }
+            qsound_sh_stop (s->qs);
+            s->qs = qsound_sh_start(&qsintf);
+            s->samples_to_next_tick = samples_per_tick;
 			return AO_SUCCESS;
 		
 	}

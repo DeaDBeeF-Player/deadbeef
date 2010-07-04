@@ -111,16 +111,19 @@ qsound_state_t *qsound_sh_start( struct QSound_interface *qsintf )
 
 void qsound_sh_stop (qsound_state_t *qs)
 {
+    if (qs) {
 #if LOG_WAVE
-	if (fpRawDataR)
-	{
-		fclose(fpRawDataR);
-	}
-	if (fpRawDataL)
-	{
-		fclose(fpRawDataL);
-	}
+        if (qs->fpRawDataR)
+        {
+            fclose(qs->fpRawDataR);
+        }
+        if (qs->fpRawDataL)
+        {
+            fclose(qs->fpRawDataL);
+        }
 #endif
+        free (qs);
+    }
 }
 
 void qsound_data_h_w(qsound_state_t *qs, int data)
