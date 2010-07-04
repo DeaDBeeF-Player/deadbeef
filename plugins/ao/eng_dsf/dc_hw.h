@@ -4,6 +4,7 @@
 #include "arm7i.h"
 
 void dc_hw_init(struct sARM7 *cpu);
+void dc_hw_free (struct sARM7 *cpu);
 void dc_write8(struct sARM7 *cpu, int addr, uint8 data);
 void dc_write16(struct sARM7 *cpu, int addr, uint16 data);
 void dc_write32(struct sARM7 *cpu, int addr, uint32 data);

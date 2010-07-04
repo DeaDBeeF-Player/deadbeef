@@ -46,6 +46,7 @@ WRITE16_HANDLER( AICA_MidiIn );
 READ16_HANDLER( AICA_MidiOutR );
 
 void *aica_start(const void *config);
+void aica_stop(struct _AICA *AICA);
 void AICA_Update(struct _AICA *AICA, void *param, INT16 **inputs, INT16 **buf, int samples);
 
 #endif

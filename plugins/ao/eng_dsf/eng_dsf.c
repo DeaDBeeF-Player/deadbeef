@@ -35,6 +35,7 @@ typedef struct {
     char 		psfby[256];
     uint32		decaybegin, decayend, total_samples;
     struct sARM7 *cpu;
+    uint8 init_dc_ram[8*1024*1024];
 } dsf_synth_t;
 
 void *dsf_start(const char *path, uint8 *buffer, uint32 length)
@@ -138,6 +139,8 @@ void *dsf_start(const char *path, uint8 *buffer, uint32 length)
 	}
 	#endif
 
+
+    memcpy (s->init_dc_ram, s->cpu->dc_ram, sizeof (s->init_dc_ram));
 	#if DK_CORE
 	ARM7_Init(s->cpu);
 	#else
@@ -236,9 +239,15 @@ int32 dsf_stop(void *handle)
 
 int32 dsf_command(void *handle, int32 command, int32 parameter)
 {
+    dsf_synth_t *s = handle;
 	switch (command)
 	{
 		case COMMAND_RESTART:
+            dc_hw_free (s->cpu);
+            memcpy (s->cpu->dc_ram, s->init_dc_ram, sizeof (s->init_dc_ram));
+            ARM7_Init(s->cpu);
+            dc_hw_init (s->cpu);
+            s->total_samples = 0;
 			return AO_SUCCESS;
 		
 	}

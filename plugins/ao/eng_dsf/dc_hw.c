@@ -176,3 +176,7 @@ static struct AICAinterface aica_interface =
 	cpu->AICA = aica_start(&cpu->aica_interface);
 }
 
+void dc_hw_free (struct sARM7 *cpu) {
+    aica_stop (cpu->AICA);
+    cpu->AICA =  NULL;
+}
