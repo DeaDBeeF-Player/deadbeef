@@ -584,10 +584,10 @@ streamer_set_current (playItem_t *it) {
                     plug = "stdogg";
                 }
                 else if (!strcmp (ct, "audio/aacp")) {
-                    plug = "ffmpeg";
+                    plug = "aac";
                 }
                 else if (!strcmp (ct, "audio/aac")) {
-                    plug = "ffmpeg";
+                    plug = "aac";
                 }
                 else if (!strcmp (ct, "audio/wma")) {
                     plug = "ffmpeg";
