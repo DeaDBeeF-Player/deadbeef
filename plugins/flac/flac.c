@@ -853,7 +853,7 @@ error:
     return err;
 }
 
-static const char *exts[] = { "flac", "ogg", "oga", NULL };
+static const char *exts[] = { "flac", "oga", NULL };
 
 static const char *filetypes[] = { "FLAC", "OggFLAC", NULL };
 
