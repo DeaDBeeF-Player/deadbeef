@@ -259,100 +259,84 @@ msgstr "Remove"
 
 #: ../plugins/gtkui/interface.c:279 ../plugins/gtkui/deadbeef.glade.h:19
 msgid "Crop"
-msgstr ""
+msgstr "Crop"
 
 #: ../plugins/gtkui/interface.c:283 ../plugins/gtkui/deadbeef.glade.h:139
-#, fuzzy
 msgid "_Find"
-msgstr "Find"
+msgstr "_Find"
 
 #: ../plugins/gtkui/interface.c:295 ../plugins/gtkui/interface.c:1706
 #: ../plugins/gtkui/deadbeef.glade.h:85
-#, fuzzy
 msgid "Preferences"
 msgstr "Preferences"
 
 #: ../plugins/gtkui/interface.c:299 ../plugins/gtkui/deadbeef.glade.h:145
-#, fuzzy
 msgid "_View"
 msgstr "_View"
 
 #: ../plugins/gtkui/interface.c:306 ../plugins/gtkui/deadbeef.glade.h:111
-#, fuzzy
 msgid "Status bar"
-msgstr "half bar"
+msgstr "Status bar"
 
 #: ../plugins/gtkui/interface.c:310 ../plugins/gtkui/deadbeef.glade.h:17
-#, fuzzy
 msgid "Column headers"
-msgstr "Display Column Headers"
+msgstr "Column headers"
 
 #: ../plugins/gtkui/interface.c:314 ../plugins/gtkui/deadbeef.glade.h:118
-#, fuzzy
 msgid "Tabs"
-msgstr "Tabs position"
+msgstr "Tabs"
 
 #: ../plugins/gtkui/interface.c:318 ../plugins/gtkui/deadbeef.glade.h:32
 msgid "Equalizer"
-msgstr ""
+msgstr "Equaliser"
 
 #: ../plugins/gtkui/interface.c:322 ../plugins/gtkui/deadbeef.glade.h:143
 msgid "_Playback"
-msgstr ""
+msgstr "_Playback"
 
 #: ../plugins/gtkui/interface.c:329 ../plugins/gtkui/deadbeef.glade.h:75
-#, fuzzy
 msgid "Order"
 msgstr "Order"
 
 #: ../plugins/gtkui/interface.c:336 ../plugins/gtkui/deadbeef.glade.h:63
-#, fuzzy
 msgid "Linear"
 msgstr "Linear"
 
 #: ../plugins/gtkui/interface.c:342 ../plugins/gtkui/deadbeef.glade.h:108
-#, fuzzy
 msgid "Shuffle"
-msgstr "Shuffle Data"
+msgstr "Shuffle"
 
 #: ../plugins/gtkui/interface.c:348 ../plugins/gtkui/deadbeef.glade.h:94
-#, fuzzy
 msgid "Random"
-msgstr "_Random"
+msgstr "Random"
 
 #: ../plugins/gtkui/interface.c:354 ../plugins/gtkui/deadbeef.glade.h:67
 msgid "Looping"
-msgstr ""
+msgstr "Looping"
 
 #: ../plugins/gtkui/interface.c:361 ../plugins/gtkui/deadbeef.glade.h:65
-#, fuzzy
 msgid "Loop All"
-msgstr "All Files"
+msgstr "Loop All"
 
 #: ../plugins/gtkui/interface.c:367 ../plugins/gtkui/deadbeef.glade.h:66
-#, fuzzy
 msgid "Loop Single Song"
-msgstr "ANOVA - Single Factor"
+msgstr "Loop Single Song"
 
 #: ../plugins/gtkui/interface.c:373 ../plugins/gtkui/deadbeef.glade.h:28
-#, fuzzy
 msgid "Don't Loop"
-msgstr "_Loop Playlist"
+msgstr "Don’t Loop"
 
 #: ../plugins/gtkui/interface.c:379 ../plugins/gtkui/deadbeef.glade.h:101
-#, fuzzy
 msgid "Scroll follows playback"
-msgstr "Default volume for playback"
+msgstr "Scroll follows playback"
 
 #: ../plugins/gtkui/interface.c:384 ../plugins/gtkui/deadbeef.glade.h:21
-#, fuzzy
 msgid "Cursor follows playback"
-msgstr "_Share cursor position"
+msgstr "Cursor follows playback"
 
 #: ../plugins/gtkui/interface.c:388 ../plugins/gtkui/deadbeef.glade.h:113
-#, fuzzy
 msgid "Stop after current"
-msgstr "Close the current file"
+msgstr "Stop after current"
 
 #: ../plugins/gtkui/interface.c:395 ../plugins/gtkui/interface.c:402
 #: ../plugins/gtkui/deadbeef.glade.h:140
