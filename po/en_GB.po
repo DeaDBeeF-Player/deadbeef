@@ -769,106 +769,91 @@ msgid "Group By"
 msgstr "Group By"
 
 #: ../plugins/gtkui/mainplaylist.c:298 ../plugins/gtkui/search.c:433
-#, fuzzy
 msgid "Artist / Album"
-msgstr "Rename Artist"
+msgstr "Artist / Album"
 
 #: ../plugins/gtkui/mainplaylist.c:299 ../plugins/gtkui/search.c:434
-#, fuzzy
 msgid "Track No"
-msgstr "No dependencies"
+msgstr "Track No."
 
 #: ../plugins/gtkui/mainplaylist.c:300 ../plugins/gtkui/search.c:435
-#, fuzzy
 msgid "Title / Track Artist"
-msgstr "Burning track %2d/%d..."
+msgstr "Title / Track Artist"
 
 #: ../plugins/gtkui/mainplaylist.c:301 ../plugins/gtkui/search.c:436
 #: ../plugins/gtkui/trkproperties.c:175
-#, fuzzy
 msgid "Duration"
-msgstr "DURATION:the duration of a security"
+msgstr "Duration"
 
 #: ../plugins/gtkui/plcommon.c:316
-#, fuzzy
 msgid "Delete files from disk"
-msgstr "Delete files after adding"
+msgstr "Delete files from disk"
 
 #: ../plugins/gtkui/plcommon.c:317
 msgid ""
 "Files will be lost. Proceed?\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
 msgstr ""
+"Files will be lost. Proceed?\n"
+"(This dialog can be turned off in GTKUI plugin settings)"
 
 #: ../plugins/gtkui/plcommon.c:318 ../plugins/gtkui/trkproperties.c:56
-#, fuzzy
 msgid "Warning"
 msgstr "Warning"
 
 #: ../plugins/gtkui/plcommon.c:363
-#, fuzzy
 msgid "Add to playback queue"
-msgstr "days:number of days to add"
+msgstr "Add to playback queue"
 
 #: ../plugins/gtkui/plcommon.c:368
-#, fuzzy
 msgid "Remove from playback queue"
-msgstr "Remove Item from Playlist"
+msgstr "Remove from playback queue"
 
 #: ../plugins/gtkui/plcommon.c:376
-#, fuzzy
 msgid "Reload metadata"
-msgstr "Invalid metadata '%s'"
+msgstr "Reload metadata"
 
 #: ../plugins/gtkui/plcommon.c:392
-#, fuzzy
 msgid "Remove from disk"
-msgstr "Remove from Bookmark"
+msgstr "Remove from disk"
 
 #: ../plugins/gtkui/plcommon.c:616 ../plugins/gtkui/plcommon.c:741
-#, fuzzy
 msgid "Add column"
-msgstr "Autofitting column %s"
+msgstr "Add column"
 
 #: ../plugins/gtkui/plcommon.c:646 ../plugins/gtkui/plcommon.c:745
-#, fuzzy
 msgid "Edit column"
-msgstr "Autofitting column %s"
+msgstr "Edit column"
 
 #: ../plugins/gtkui/plcommon.c:749
-#, fuzzy
 msgid "Remove column"
-msgstr "Autofitting column %s"
+msgstr "Remove column"
 
 #: ../plugins/gtkui/plcommon.c:759
-#, fuzzy
 msgid "Group by"
-msgstr "By Row"
+msgstr "Group by"
 
 #: ../plugins/gtkui/plcommon.c:766
-#, fuzzy
 msgid "None"
 msgstr "None"
 
 #: ../plugins/gtkui/plcommon.c:770
-#, fuzzy
 msgid "Artist/Date/Album"
-msgstr "Format as Date"
+msgstr "Artist/Date/Album"
 
 #: ../plugins/gtkui/pluginconf.c:41
-#, fuzzy
 msgid "Open file..."
-msgstr "Open File"
+msgstr "Open file..."
 
 #: ../plugins/gtkui/pluginconf.c:139
-#, fuzzy, c-format
+#, c-format
 msgid "Setup %s"
-msgstr "Page Setup"
+msgstr "Setup %s"
 
 #: ../plugins/gtkui/prefwin.c:98
 #, fuzzy
 msgid "Default Audio Device"
-msgstr "Default Audio Language"
+msgstr "Default Audio Device"
 
 #: ../plugins/gtkui/prefwin.c:267
 #, fuzzy
