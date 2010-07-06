@@ -340,104 +340,88 @@ msgstr "Stop after current"
 
 #: ../plugins/gtkui/interface.c:395 ../plugins/gtkui/interface.c:402
 #: ../plugins/gtkui/deadbeef.glade.h:140
-#, fuzzy
 msgid "_Help"
 msgstr "_Help"
 
 #: ../plugins/gtkui/interface.c:410 ../plugins/gtkui/deadbeef.glade.h:134
 msgid "_ChangeLog"
-msgstr ""
+msgstr "_ChangeLog"
 
 #: ../plugins/gtkui/interface.c:432 ../plugins/gtkui/deadbeef.glade.h:131
-#, fuzzy
 msgid "_About"
 msgstr "_About"
 
 #: ../plugins/gtkui/interface.c:816 ../plugins/gtkui/deadbeef.glade.h:102
-#, fuzzy
 msgid "Search"
 msgstr "Search"
 
 #: ../plugins/gtkui/interface.c:891 ../plugins/gtkui/deadbeef.glade.h:112
-#, fuzzy
 msgid "Stop"
 msgstr "Stop"
 
 #: ../plugins/gtkui/interface.c:899 ../plugins/gtkui/deadbeef.glade.h:81
-#, fuzzy
 msgid "Play"
 msgstr "Play"
 
 #: ../plugins/gtkui/interface.c:907 ../plugins/gtkui/deadbeef.glade.h:80
-#, fuzzy
 msgid "Pause"
 msgstr "Pause"
 
 #: ../plugins/gtkui/interface.c:915 ../plugins/gtkui/deadbeef.glade.h:86
-#, fuzzy
 msgid "Previous"
 msgstr "Previous"
 
 #: ../plugins/gtkui/interface.c:923 ../plugins/gtkui/deadbeef.glade.h:73
-#, fuzzy
 msgid "Next"
 msgstr "Next"
 
 #: ../plugins/gtkui/interface.c:931 ../plugins/gtkui/deadbeef.glade.h:82
-#, fuzzy
 msgid "Play Random"
-msgstr "Random Numbers"
+msgstr "Play Random"
 
 #: ../plugins/gtkui/interface.c:940 ../plugins/gtkui/deadbeef.glade.h:5
-#, fuzzy
 msgid "About"
 msgstr "About"
 
 #: ../plugins/gtkui/interface.c:953 ../plugins/gtkui/deadbeef.glade.h:93
-#, fuzzy
 msgid "Quit"
 msgstr "Quit"
 
 #: ../plugins/gtkui/interface.c:1025 ../plugins/gtkui/deadbeef.glade.h:10
-#, fuzzy
 msgid "Adding files..."
-msgstr "Adding files to the composition"
+msgstr "Adding files..."
 
 #: ../plugins/gtkui/interface.c:1069 ../plugins/gtkui/deadbeef.glade.h:130
-#, fuzzy
 msgid "_Abort"
-msgstr "Abort."
+msgstr "_Abort"
 
 #: ../plugins/gtkui/interface.c:1170 ../plugins/gtkui/deadbeef.glade.h:122
-#, fuzzy
 msgid "Track Properties"
-msgstr "Checkbox Properties"
+msgstr "Track Properties"
 
 #: ../plugins/gtkui/interface.c:1194 ../plugins/gtkui/deadbeef.glade.h:3
 msgid ""
 "<b>WARNING</b>: tag writing feature is still in development.\n"
 "<b>Make backup copies</b> before using."
 msgstr ""
+"<b>WARNING</b>: tag writing feature is still in development.\n"
+"<b>Make backup copies</b> before using."
 
 #: ../plugins/gtkui/interface.c:1221 ../plugins/gtkui/deadbeef.glade.h:132
-#, fuzzy
 msgid "_Apply"
-msgstr "Apply _Alignment"
+msgstr "_Apply"
 
 #: ../plugins/gtkui/interface.c:1242 ../plugins/gtkui/interface.c:1288
 #: ../plugins/gtkui/interface.c:2436 ../plugins/gtkui/deadbeef.glade.h:136
-#, fuzzy
 msgid "_Close"
 msgstr "_Close"
 
 #: ../plugins/gtkui/interface.c:1246 ../plugins/gtkui/deadbeef.glade.h:68
-#, fuzzy
 msgid "Metadata"
-msgstr "Invalid metadata '%s'"
+msgstr "Metadata"
 
 #: ../plugins/gtkui/interface.c:1292 ../plugins/gtkui/plcommon.c:402
 #: ../plugins/gtkui/deadbeef.glade.h:87
-#, fuzzy
 msgid "Properties"
 msgstr "Properties"
 
