@@ -525,105 +525,87 @@ msgstr ""
 #: ../plugins/gtkui/interface.c:1488 ../plugins/gtkui/interface.c:2801
 #: ../plugins/gtkui/interface.c:2913 ../plugins/gtkui/interface.c:3036
 #: ../plugins/gtkui/deadbeef.glade.h:133
-#, fuzzy
 msgid "_Cancel"
 msgstr "_Cancel"
 
 #: ../plugins/gtkui/interface.c:1509 ../plugins/gtkui/interface.c:2822
 #: ../plugins/gtkui/interface.c:2934 ../plugins/gtkui/interface.c:3057
 #: ../plugins/gtkui/deadbeef.glade.h:141
-#, fuzzy
 msgid "_OK"
-msgstr "OK"
+msgstr "_OK"
 
 #: ../plugins/gtkui/interface.c:1726 ../plugins/gtkui/deadbeef.glade.h:77
-#, fuzzy
 msgid "Output plugin:"
-msgstr "Plugin loader"
+msgstr "Output plugin:"
 
 #: ../plugins/gtkui/interface.c:1739 ../plugins/gtkui/deadbeef.glade.h:76
-#, fuzzy
 msgid "Output device:"
-msgstr "Burning device"
+msgstr "Output device:"
 
 #: ../plugins/gtkui/interface.c:1748 ../plugins/gtkui/deadbeef.glade.h:109
-#, fuzzy
 msgid "Sound"
-msgstr "Rock Sound"
+msgstr "Sound"
 
 #: ../plugins/gtkui/interface.c:1757 ../plugins/gtkui/deadbeef.glade.h:12
 msgid "Allow dynamic samplerate switching"
-msgstr ""
+msgstr "Allow dynamic sample-rate switching"
 
 #: ../plugins/gtkui/interface.c:1765 ../plugins/gtkui/deadbeef.glade.h:98
-#, fuzzy
 msgid "Samplerate conversion quality:"
-msgstr "Quality Assurance and sheet copy."
+msgstr "Sample-rate conversion quality:"
 
 #: ../plugins/gtkui/interface.c:1784 ../plugins/gtkui/deadbeef.glade.h:96
-#, fuzzy
 msgid "Replaygain mode:"
-msgstr "Transliterate mode"
+msgstr "Replay-gain mode:"
 
 #: ../plugins/gtkui/interface.c:1793
-#, fuzzy
 msgid "Disable"
-msgstr "0 for disable"
+msgstr "Disable"
 
 #: ../plugins/gtkui/interface.c:1797 ../plugins/gtkui/deadbeef.glade.h:97
-#, fuzzy
 msgid "Replaygain peak scale"
-msgstr "scale:the scale parameter of the distribution"
+msgstr "Replay-gain peak scale"
 
 #: ../plugins/gtkui/interface.c:1801 ../plugins/gtkui/deadbeef.glade.h:110
-#, fuzzy
 msgid "Sound (adv.)"
-msgstr "Rock Sound"
+msgstr "Sound (adv.)"
 
 #: ../plugins/gtkui/interface.c:1810 ../plugins/gtkui/deadbeef.glade.h:16
-#, fuzzy
 msgid "Close minimizes to tray"
-msgstr "Failed to close file %s"
+msgstr "Close minimises to tray"
 
 #: ../plugins/gtkui/interface.c:1814 ../plugins/gtkui/deadbeef.glade.h:70
 msgid "Middle mouse button closes playlist"
-msgstr ""
+msgstr "Middle mouse button closes playlist"
 
 #: ../plugins/gtkui/interface.c:1827 ../plugins/gtkui/interface.c:1871
 #: ../plugins/gtkui/deadbeef.glade.h:78
-#, fuzzy
 msgid "Override"
-msgstr "Override locale settings"
+msgstr "Override"
 
 #: ../plugins/gtkui/interface.c:1836 ../plugins/gtkui/deadbeef.glade.h:45
-#, fuzzy
 msgid "Foreground"
 msgstr "Foreground"
 
 #: ../plugins/gtkui/interface.c:1843 ../plugins/gtkui/deadbeef.glade.h:14
-#, fuzzy
 msgid "Background"
 msgstr "Background"
 
 #: ../plugins/gtkui/interface.c:1862 ../plugins/gtkui/deadbeef.glade.h:103
-#, fuzzy
 msgid "Seekbar/Volumebar colors"
-msgstr "_Vary colours by bubble"
+msgstr "Seek-bar/Volume-bar colours"
 
 #: ../plugins/gtkui/interface.c:1880 ../plugins/gtkui/deadbeef.glade.h:69
-#, fuzzy
 msgid "Middle"
-msgstr "_Middle section:"
+msgstr "Middle"
 
 #: ../plugins/gtkui/interface.c:1887 ../plugins/gtkui/deadbeef.glade.h:62
-#, fuzzy
 msgid "Light"
 msgstr "Light"
 
 #: ../plugins/gtkui/interface.c:1894 ../plugins/gtkui/deadbeef.glade.h:22
-#, fuzzy
 msgid "Dark"
-msgstr "dark blue"
+msgstr "Dark"
 
 #: ../plugins/gtkui/interface.c:1925 ../plugins/gtkui/deadbeef.glade.h:15
 #, fuzzy
