@@ -10,9 +10,9 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Poedit-Country: UNITED KINGDOM\n"
 "X-Poedit-Language: English en_GB\n"
 "X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-Country: UNITED KINGDOM\n"
 
 #: ../plugins/gtkui/callbacks.c:97
 msgid "Supported sound formats"
@@ -160,7 +160,7 @@ msgstr "Paused | "
 #: ../plugins/gtkui/gtkui.c:177
 #, c-format
 msgid "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
-msgstr "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total play-time"
+msgstr "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
 
 #: ../plugins/gtkui/gtkui.c:533
 msgid "Save Playlist As"
