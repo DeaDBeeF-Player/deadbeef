@@ -1020,7 +1020,6 @@ msgstr ""
 "Album"
 
 #: ../plugins/gtkui/deadbeef.glade.h:34
-#, fuzzy
 msgid ""
 "File number\n"
 "Playing\n"
@@ -1073,41 +1072,40 @@ msgstr "Error reading initial header packet."
 
 #: ../plugins/vorbis/vcedit.c:237
 msgid "Couldn't get enough memory to register new stream serial number."
-msgstr ""
+msgstr "Couldn’t get enough memory to register new stream serial number."
 
 #: ../plugins/vorbis/vcedit.c:505
 msgid "Input truncated or empty."
-msgstr ""
+msgstr "Input truncated or empty."
 
 #: ../plugins/vorbis/vcedit.c:507
 msgid "Input is not an Ogg bitstream."
-msgstr ""
+msgstr "Input is not an Ogg bit-stream."
 
 #: ../plugins/vorbis/vcedit.c:565
 msgid "Ogg bitstream does not contain Vorbis data."
-msgstr ""
+msgstr "Ogg bit-stream does not contain Vorbis data."
 
 #: ../plugins/vorbis/vcedit.c:578
 msgid "EOF before recognised stream."
-msgstr ""
+msgstr "EOF before recognised stream."
 
 #: ../plugins/vorbis/vcedit.c:594
 msgid "Ogg bitstream does not contain a supported data-type."
-msgstr ""
+msgstr "Ogg bit-stream does not contain a supported data-type."
 
 #: ../plugins/vorbis/vcedit.c:638
-#, fuzzy
 msgid "Corrupt secondary header."
-msgstr "Custom header configuration"
+msgstr "Corrupt secondary header."
 
 #: ../plugins/vorbis/vcedit.c:659
 msgid "EOF before end of Vorbis headers."
-msgstr ""
+msgstr "EOF before end of Vorbis headers."
 
 #: ../plugins/vorbis/vcedit.c:834
 msgid "Corrupt or missing data, continuing..."
-msgstr ""
+msgstr "Corrupt or missing data, continuing..."
 
 #: ../plugins/vorbis/vcedit.c:874
 msgid "Error writing stream to output. Output stream may be corrupted or truncated."
-msgstr ""
+msgstr "Error writing stream to output. Output stream may be corrupted or truncated."
