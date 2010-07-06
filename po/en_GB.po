@@ -937,49 +937,49 @@ msgid "   --quit             Quit player\n"
 msgstr "   --quit             Quit player\n"
 
 #: ../main.c:88
-#, fuzzy, c-format
+#, c-format
 msgid "   --version          Print version info and exit\n"
-msgstr "  -V, --version                       Print version information and exit"
+msgstr "   --version          Print version info and exit\n"
 
 #: ../main.c:89
-#, fuzzy, c-format
+#, c-format
 msgid "   --play             Start playback\n"
-msgstr "Social from the start"
+msgstr "   --play             Start playback\n"
 
 #: ../main.c:90
-#, fuzzy, c-format
+#, c-format
 msgid "   --stop             Stop playback\n"
-msgstr "Set stop bound"
+msgstr "   --stop             Stop playback\n"
 
 #: ../main.c:91
-#, fuzzy, c-format
+#, c-format
 msgid "   --pause            Pause playback\n"
-msgstr "Default volume for playback"
+msgstr "   --pause            Pause playback\n"
 
 #: ../main.c:92
-#, fuzzy, c-format
+#, c-format
 msgid "   --next             Next song in playlist\n"
-msgstr "Add Items in Folder to Playlist"
+msgstr "   --next             Next song in playlist\n"
 
 #: ../main.c:93
 #, c-format
 msgid "   --prev             Previous song in playlist\n"
-msgstr ""
+msgstr "   --prev             Previous song in playlist\n"
 
 #: ../main.c:94
-#, fuzzy, c-format
+#, c-format
 msgid "   --random           Random song in playlist\n"
-msgstr "Add Items in Folder to Playlist"
+msgstr "   --random           Random song in playlist\n"
 
 #: ../main.c:95
 #, c-format
 msgid "   --queue            Append file(s) to existing playlist\n"
-msgstr ""
+msgstr "   --queue            Append file(s) to existing playlist\n"
 
 #: ../main.c:96
 #, c-format
 msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
-msgstr ""
+msgstr "   --nowplaying FMT   Print formatted track name to stdout\n"
 
 #: ../main.c:97
 #, c-format
@@ -988,33 +988,39 @@ msgid ""
 "                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
 "                      copy[r]ight, [e]lapsed\n"
 msgstr ""
+"                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
+"                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
+"                      copy[r]ight, [e]lapsed\n"
 
 #: ../main.c:100
 #, c-format
 msgid "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n"
-msgstr ""
+msgstr "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n"
 
 #: ../playlist.c:362 ../playlist.c:2227
-#, fuzzy
 msgid "Default"
 msgstr "Default"
 
 #: ../plugins/gtkui/deadbeef.glade.h:1
-#, fuzzy
 msgid ""
 "2.3 (Recommended)\n"
 "2.4"
-msgstr "Recommended packages:"
+msgstr ""
+"2.3 (Recommended)\n"
+"2.4"
 
 #: ../plugins/gtkui/deadbeef.glade.h:25
-#, fuzzy
 msgid ""
 "Disable\n"
 "Track\n"
 "Album"
-msgstr "Disable Player Embedding"
+msgstr ""
+"Disable\n"
+"Track\n"
+"Album"
 
 #: ../plugins/gtkui/deadbeef.glade.h:34
+#, fuzzy
 msgid ""
 "File number\n"
 "Playing\n"
@@ -1028,31 +1034,42 @@ msgid ""
 "Band / Album Artist\n"
 "Custom"
 msgstr ""
+"File number\n"
+"Playing\n"
+"Album Art\n"
+"Artist - Album\n"
+"Artist\n"
+"Album\n"
+"Title\n"
+"Length\n"
+"Track\n"
+"Band / Album Artist\n"
+"Custom"
 
 #: ../plugins/gtkui/deadbeef.glade.h:60
-#, fuzzy
 msgid ""
 "Left\n"
 "Right"
-msgstr "triangle left"
+msgstr ""
+"Left\n"
+"Right"
 
 #: ../plugins/gtkui/support.c:90 ../plugins/gtkui/support.c:114
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't find pixmap file: %s"
-msgstr "Couldn't find plugin with id=\"%s\"."
+msgstr "Couldn’t find pixmap file: %s"
 
 #: ../plugins/vorbis/vcedit.c:129 ../plugins/vorbis/vcedit.c:155
 msgid "Couldn't get enough memory for input buffering."
-msgstr ""
+msgstr "Couldn’t get enough memory for input buffering."
 
 #: ../plugins/vorbis/vcedit.c:179 ../plugins/vorbis/vcedit.c:550
 msgid "Error reading first page of Ogg bitstream."
-msgstr ""
+msgstr "Error reading first page of Ogg bitstream."
 
 #: ../plugins/vorbis/vcedit.c:185 ../plugins/vorbis/vcedit.c:557
-#, fuzzy
 msgid "Error reading initial header packet."
-msgstr "Error reading archive member header"
+msgstr "Error reading initial header packet."
 
 #: ../plugins/vorbis/vcedit.c:237
 msgid "Couldn't get enough memory to register new stream serial number."
