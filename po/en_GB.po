@@ -427,96 +427,80 @@ msgstr "Properties"
 
 #: ../plugins/gtkui/interface.c:1378 ../plugins/gtkui/deadbeef.glade.h:146
 msgid "editcolumndlg"
-msgstr ""
+msgstr "editcolumndlg"
 
 #: ../plugins/gtkui/interface.c:1393 ../plugins/gtkui/interface.c:2770
 #: ../plugins/gtkui/deadbeef.glade.h:121
-#, fuzzy
 msgid "Title:"
 msgstr "Title:"
 
 #: ../plugins/gtkui/interface.c:1401 ../plugins/gtkui/deadbeef.glade.h:31
 msgid "Enter new column title here"
-msgstr ""
+msgstr "Enter new column title here"
 
 #: ../plugins/gtkui/interface.c:1409 ../plugins/gtkui/deadbeef.glade.h:123
-#, fuzzy
 msgid "Type:"
 msgstr "Type:"
 
 #: ../plugins/gtkui/interface.c:1417
-#, fuzzy
 msgid "File number"
-msgstr "n:the number of trials"
+msgstr "File number"
 
 #. create default set of columns
 #: ../plugins/gtkui/interface.c:1418 ../plugins/gtkui/mainplaylist.c:297
-#, fuzzy
 msgid "Playing"
 msgstr "Playing"
 
 #: ../plugins/gtkui/interface.c:1419
 msgid "Album Art"
-msgstr ""
+msgstr "Album Art"
 
 #: ../plugins/gtkui/interface.c:1420
-#, fuzzy
 msgid "Artist - Album"
-msgstr "Rename Artist"
+msgstr "Artist - Album"
 
 #: ../plugins/gtkui/interface.c:1421 ../plugins/gtkui/plcommon.c:774
-#, fuzzy
 msgid "Artist"
 msgstr "Artist"
 
 #: ../plugins/gtkui/interface.c:1422 ../plugins/gtkui/interface.c:1795
-#, fuzzy
 msgid "Album"
 msgstr "Album"
 
 #: ../plugins/gtkui/interface.c:1423 ../plugins/gtkui/prefwin.c:488
-#, fuzzy
 msgid "Title"
 msgstr "Title"
 
 #: ../plugins/gtkui/interface.c:1424
-#, fuzzy
 msgid "Length"
 msgstr "Length"
 
 #: ../plugins/gtkui/interface.c:1425 ../plugins/gtkui/interface.c:1794
-#, fuzzy
 msgid "Track"
-msgstr "Closing track..."
+msgstr "Track"
 
 #: ../plugins/gtkui/interface.c:1426
-#, fuzzy
 msgid "Band / Album Artist"
-msgstr "Rename the artist of the selected file"
+msgstr "Band / Album Artist"
 
 #: ../plugins/gtkui/interface.c:1427 ../plugins/gtkui/plcommon.c:778
-#, fuzzy
 msgid "Custom"
 msgstr "Custom"
 
 #: ../plugins/gtkui/interface.c:1433 ../plugins/gtkui/interface.c:2997
 #: ../plugins/gtkui/deadbeef.glade.h:53
-#, fuzzy
 msgid "Format:"
-msgstr "Format"
+msgstr "Format:"
 
 #: ../plugins/gtkui/interface.c:1448 ../plugins/gtkui/deadbeef.glade.h:11
-#, fuzzy
 msgid "Alignment:"
-msgstr "Alignment"
+msgstr "Alignment:"
 
 #: ../plugins/gtkui/interface.c:1456
-#, fuzzy
 msgid "Left"
 msgstr "Left"
 
 #: ../plugins/gtkui/interface.c:1457
-#, fuzzy
 msgid "Right"
 msgstr "Right"
 
@@ -531,6 +515,12 @@ msgid ""
 "  copy[r]ight, [f]ilename, [T]ags\n"
 "Example: %a - %t [%l]"
 msgstr ""
+"Format conversions (start with %):\n"
+"  [a]rtist, [t]itle, al[b]um, [B]and, [C]omposer\n"
+"  track[n]umber, [N]totaltracks,\n"
+"  [l]ength, [y]ear, [g]enre, [c]omment,\n"
+"  copy[r]ight, [f]ilename, [T]ags\n"
+"Example: %a - %t [%l]"
 
 #: ../plugins/gtkui/interface.c:1488 ../plugins/gtkui/interface.c:2801
 #: ../plugins/gtkui/interface.c:2913 ../plugins/gtkui/interface.c:3036
