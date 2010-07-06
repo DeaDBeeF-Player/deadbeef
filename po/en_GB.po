@@ -851,103 +851,90 @@ msgid "Setup %s"
 msgstr "Setup %s"
 
 #: ../plugins/gtkui/prefwin.c:98
-#, fuzzy
 msgid "Default Audio Device"
 msgstr "Default Audio Device"
 
 #: ../plugins/gtkui/prefwin.c:267
-#, fuzzy
 msgid "Add"
 msgstr "Add"
 
 #: ../plugins/gtkui/prefwin.c:277
-#, fuzzy
 msgid "Global Hotkeys"
-msgstr "Global notification command"
+msgstr "Global Hot-keys"
 
 #: ../plugins/gtkui/prefwin.c:332
 msgid "Slot"
-msgstr ""
+msgstr "Slot"
 
 #: ../plugins/gtkui/prefwin.c:333
-#, fuzzy
 msgid "Key combination"
-msgstr "Key shortcuts"
+msgstr "Key combination"
 
 #. output plugin selection
 #: ../plugins/gtkui/prefwin.c:379 ../plugins/gtkui/prefwin.c:569
 #: ../plugins.c:833
-#, fuzzy
 msgid "ALSA output plugin"
-msgstr "Unknown plugin name."
+msgstr "ALSA output plug-in"
 
 #: ../plugins/gtkui/progress.c:64
-#, fuzzy
 msgid "Initializing..."
 msgstr "Initialising..."
 
 #: ../plugins/gtkui/trkproperties.c:53
 msgid "You've modified data for this track."
-msgstr ""
+msgstr "You’ve modified data for this track."
 
 #: ../plugins/gtkui/trkproperties.c:55
-#, fuzzy
 msgid "Really close the window?"
-msgstr "Close this window"
+msgstr "Really close the window?"
 
 #: ../plugins/gtkui/trkproperties.c:178
-#, fuzzy
 msgid "Tag Type(s)"
-msgstr "Plot Type"
+msgstr "Tag Type(s)"
 
 #: ../plugins/gtkui/trkproperties.c:180
-#, fuzzy
 msgid "Embedded Cuesheet"
-msgstr "A pointer to the embedded widget"
+msgstr "Embedded Cue-sheet"
 
 #: ../plugins/gtkui/trkproperties.c:180
-#, fuzzy
 msgid "Yes"
 msgstr "Yes"
 
 #: ../plugins/gtkui/trkproperties.c:180
-#, fuzzy
 msgid "No"
 msgstr "No"
 
 #: ../plugins/gtkui/trkproperties.c:248 ../plugins/gtkui/trkproperties.c:260
-#, fuzzy
 msgid "Key"
-msgstr "Key shortcuts"
+msgstr "Key short-cuts"
 
 #: ../plugins/gtkui/trkproperties.c:249 ../plugins/gtkui/trkproperties.c:261
-#, fuzzy
 msgid "Value"
 msgstr "Value"
 
 #: ../plugins/notify/notify.c:138
 msgid "DeaDBeeF now playing"
-msgstr ""
+msgstr "DeaDBeeF now playing"
 
 #: ../main.c:84
-#, fuzzy, c-format
+#, c-format
 msgid "Usage: deadbeef [options] [file(s)]\n"
-msgstr "       %s [options] --build-list [[name file]...]\n"
+msgstr "Usage: deadbeef [options] [file(s)]\n"
 
 #: ../main.c:85
-#, fuzzy, c-format
+#, c-format
 msgid "Options:\n"
-msgstr "Options"
+msgstr "Options:\n"
 
 #: ../main.c:86
 #, c-format
 msgid "   --help  or  -h     Print help (this message) and exit\n"
-msgstr ""
+msgstr "   --help  or  -h     Print help (this message) and exit\n"
 
 #: ../main.c:87
-#, fuzzy, c-format
+#, c-format
 msgid "   --quit             Quit player\n"
-msgstr "Sound player"
+msgstr "   --quit             Quit player\n"
 
 #: ../main.c:88
 #, fuzzy, c-format
