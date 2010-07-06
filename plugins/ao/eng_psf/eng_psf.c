@@ -122,11 +122,25 @@ void *psf_start(const char *path, uint8 *buffer, uint32 length)
 	if (s->c->lib[0] != 0)
 	{
 		uint64 tmp_length;
+        char libpath[PATH_MAX];
+        const char *e = path + strlen(path);
+        while (e > path && *e != '/') {
+            e--;
+        }
+        if (*e == '/') {
+            e++;
+            memcpy (libpath, path, e-path);
+            libpath[e-path] = 0;
+            strcat (libpath, s->c->lib);
+        }
+        else {
+            strcpy (libpath, s->c->lib);
+        }
 	
 		#if DEBUG_LOADER	
 		printf("Loading library: %s\n", c->lib);
 		#endif
-		if (ao_get_lib(s->c->lib, &lib_raw_file, &tmp_length) != AO_SUCCESS)
+		if (ao_get_lib(libpath, &lib_raw_file, &tmp_length) != AO_SUCCESS)
 		{
             psf_stop (s);
             return NULL;
@@ -383,7 +397,10 @@ int32 psf_gen(void *handle, int16 *buffer, uint32 samples)
 int32 psf_stop(void *handle)
 {
     psf_synth_t *s = handle;
-	SPUclose(s->mips_cpu);
+    if (s->mips_cpu) {
+        SPUclose(s->mips_cpu);
+        mips_exit (s->mips_cpu);
+    }
 	free(s->c);
 	free (s);
 

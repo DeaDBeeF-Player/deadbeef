@@ -593,11 +593,16 @@ int SPUopen(mips_cpu_context *cpu)
 int SPUclose(mips_cpu_context *cpu)
 {
     spu_state_t *spu = cpu->spu;
+    if (!spu) {
+        return 0;
+    }
  if(!spu->bSPUIsOpen) return 0;                             // some security
 
  spu->bSPUIsOpen=0;                                         // no more open
 
  RemoveStreams(spu);                                      // no more streaming
+ free (spu);
+ cpu->spu = NULL;
 
  return 0;
 }
