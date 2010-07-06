@@ -58,9 +58,8 @@ msgid "DeaDBeeF %s ChangeLog"
 msgstr "DeaDBeeF %s ChangeLog"
 
 #: ../plugins/gtkui/ddbtabstrip.c:527
-#, fuzzy
 msgid "Edit playlist"
-msgstr "Clear Playlist"
+msgstr "Edit playlist"
 
 #: ../plugins/gtkui/ddbtabstrip.c:604
 msgid "Rename Playlist"
@@ -99,68 +98,60 @@ msgid "Foobar2000 EQ presets (*.feq)"
 msgstr "Foobar2000 EQ presets (*.feq)"
 
 #: ../plugins/gtkui/eq.c:292
-#, fuzzy
 msgid "Enable"
 msgstr "Enable"
 
 #: ../plugins/gtkui/eq.c:299
-#, fuzzy
 msgid "Zero All"
-msgstr "All Files"
+msgstr "Zero All"
 
 #: ../plugins/gtkui/eq.c:306
-#, fuzzy
 msgid "Zero Preamp"
-msgstr "Invalid as zero"
+msgstr "Zero Preamp"
 
 #: ../plugins/gtkui/eq.c:313
-#, fuzzy
 msgid "Zero Bands"
-msgstr "Invalid as zero"
+msgstr "Zero Bands"
 
 #: ../plugins/gtkui/eq.c:320
-#, fuzzy
 msgid "Save Preset"
-msgstr "Save as"
+msgstr "Save Preset"
 
 #: ../plugins/gtkui/eq.c:327
-#, fuzzy
 msgid "Load Preset"
-msgstr "Load file"
+msgstr "Load Preset"
 
 #: ../plugins/gtkui/eq.c:334
-#, fuzzy
 msgid "Import Foobar2000 Preset"
-msgstr "Could not import %s."
+msgstr "Import Foobar2000 Preset"
 
 #: ../plugins/gtkui/gtkui.c:128
-#, fuzzy, c-format
+#, c-format
 msgid "1 day %d:%02d:%02d"
-msgstr "To_day"
+msgstr "1 day %d:%02d:%02d"
 
 #: ../plugins/gtkui/gtkui.c:131
-#, fuzzy, c-format
+#, c-format
 msgid "%d days %d:%02d:%02d"
-msgstr "Marked days"
+msgstr "%d days %d:%02d:%02d"
 
 #: ../plugins/gtkui/gtkui.c:140
 #, c-format
 msgid "Stopped | %d tracks | %s total playtime"
-msgstr ""
+msgstr "Stopped | %d tracks | %s total playtime"
 
 #: ../plugins/gtkui/gtkui.c:150
-#, fuzzy
 msgid "Mono"
 msgstr "Mono"
 
 #: ../plugins/gtkui/gtkui.c:150
 msgid "Stereo"
-msgstr ""
+msgstr "Stereo"
 
 #: ../plugins/gtkui/gtkui.c:170
 #, c-format
 msgid "| %4d kbps "
-msgstr ""
+msgstr "| %4d kbps "
 
 #: ../plugins/gtkui/gtkui.c:176
 #, fuzzy
@@ -170,27 +161,23 @@ msgstr "Paused"
 #: ../plugins/gtkui/gtkui.c:177
 #, c-format
 msgid "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
-msgstr ""
+msgstr "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
 
 #: ../plugins/gtkui/gtkui.c:533
-#, fuzzy
 msgid "Save Playlist As"
-msgstr "_Save as image"
+msgstr "Save Playlist As"
 
 #: ../plugins/gtkui/gtkui.c:542 ../plugins/gtkui/gtkui.c:603
-#, fuzzy
 msgid "DeaDBeeF playlist files (*.dbpl)"
-msgstr "Play all files on the playlist forever"
+msgstr "DeaDBeeF playlist files (*.dbpl)"
 
 #: ../plugins/gtkui/gtkui.c:596
-#, fuzzy
 msgid "Load Playlist"
-msgstr "Clear Playlist"
+msgstr "Load Playlist"
 
 #: ../plugins/gtkui/gtkui.c:741
-#, fuzzy
 msgid "New Playlist"
-msgstr "Clear Playlist"
+msgstr "New Playlist"
 
 #: ../plugins/gtkui/gtkui.c:744
 #, fuzzy, c-format
