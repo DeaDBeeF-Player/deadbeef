@@ -154,9 +154,8 @@ msgid "| %4d kbps "
 msgstr "| %4d kbps "
 
 #: ../plugins/gtkui/gtkui.c:176
-#, fuzzy
 msgid "Paused | "
-msgstr "Paused"
+msgstr "Paused | "
 
 #: ../plugins/gtkui/gtkui.c:177
 #, c-format
@@ -180,99 +179,81 @@ msgid "New Playlist"
 msgstr "New Playlist"
 
 #: ../plugins/gtkui/gtkui.c:744
-#, fuzzy, c-format
+#, c-format
 msgid "New Playlist (%d)"
-msgstr "Clear Playlist"
+msgstr "New Playlist (%d)"
 
 #: ../plugins/gtkui/interface.c:140 ../plugins/gtkui/deadbeef.glade.h:138
-#, fuzzy
 msgid "_File"
 msgstr "_File"
 
 #: ../plugins/gtkui/interface.c:147 ../plugins/gtkui/deadbeef.glade.h:142
-#, fuzzy
 msgid "_Open file(s)"
-msgstr "Open File"
+msgstr "_Open file(s)"
 
 #: ../plugins/gtkui/interface.c:163 ../plugins/gtkui/deadbeef.glade.h:7
-#, fuzzy
 msgid "Add file(s)"
-msgstr "Open File"
+msgstr "Add file(s)"
 
 #: ../plugins/gtkui/interface.c:171 ../plugins/gtkui/deadbeef.glade.h:8
-#, fuzzy
 msgid "Add folder(s)"
-msgstr "Create folder?"
+msgstr "Add folder(s)"
 
 #: ../plugins/gtkui/interface.c:179 ../plugins/gtkui/deadbeef.glade.h:6
-#, fuzzy
 msgid "Add Audio CD"
-msgstr "Open _Audio CD"
+msgstr "Add Audio CD"
 
 #: ../plugins/gtkui/interface.c:187 ../plugins/gtkui/interface.c:2870
 #: ../plugins/gtkui/deadbeef.glade.h:9
-#, fuzzy
 msgid "Add location"
-msgstr "Copy Location"
+msgstr "Add location"
 
 #: ../plugins/gtkui/interface.c:196 ../plugins/gtkui/deadbeef.glade.h:72
-#, fuzzy
 msgid "New playlist"
-msgstr "Clear Playlist"
+msgstr "New playlist"
 
 #: ../plugins/gtkui/interface.c:203 ../plugins/gtkui/deadbeef.glade.h:64
-#, fuzzy
 msgid "Load playlist"
-msgstr "Clear Playlist"
+msgstr "Load playlist"
 
 #: ../plugins/gtkui/interface.c:207 ../plugins/gtkui/deadbeef.glade.h:99
-#, fuzzy
 msgid "Save playlist"
-msgstr "Save Playlist"
+msgstr "Save playlist"
 
 #: ../plugins/gtkui/interface.c:211 ../plugins/gtkui/deadbeef.glade.h:100
-#, fuzzy
 msgid "Save playlist as"
-msgstr "_Save as image"
+msgstr "Save playlist as"
 
 #: ../plugins/gtkui/interface.c:220 ../plugins/gtkui/deadbeef.glade.h:144
-#, fuzzy
 msgid "_Quit"
 msgstr "_Quit"
 
 #: ../plugins/gtkui/interface.c:231 ../plugins/gtkui/deadbeef.glade.h:137
-#, fuzzy
 msgid "_Edit"
 msgstr "_Edit"
 
 #: ../plugins/gtkui/interface.c:238 ../plugins/gtkui/deadbeef.glade.h:135
-#, fuzzy
 msgid "_Clear"
 msgstr "_Clear"
 
 #: ../plugins/gtkui/interface.c:246 ../plugins/gtkui/deadbeef.glade.h:104
-#, fuzzy
 msgid "Select all"
-msgstr "Select _All"
+msgstr "Select all"
 
 #: ../plugins/gtkui/interface.c:253 ../plugins/gtkui/deadbeef.glade.h:24
-#, fuzzy
 msgid "Deselect all"
-msgstr "All Files"
+msgstr "Deselect all"
 
 #: ../plugins/gtkui/interface.c:260 ../plugins/gtkui/deadbeef.glade.h:59
-#, fuzzy
 msgid "Invert selection"
-msgstr "Invert Selection"
+msgstr "Invert selection"
 
 #: ../plugins/gtkui/interface.c:264 ../plugins/gtkui/deadbeef.glade.h:107
-#, fuzzy
 msgid "Selection"
 msgstr "Selection"
 
 #: ../plugins/gtkui/interface.c:271 ../plugins/gtkui/plcommon.c:387
 #: ../plugins/gtkui/prefwin.c:272 ../plugins/gtkui/deadbeef.glade.h:95
-#, fuzzy
 msgid "Remove"
 msgstr "Remove"
 
