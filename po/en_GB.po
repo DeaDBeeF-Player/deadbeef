@@ -608,102 +608,85 @@ msgid "Dark"
 msgstr "Dark"
 
 #: ../plugins/gtkui/interface.c:1925 ../plugins/gtkui/deadbeef.glade.h:15
-#, fuzzy
 msgid "Base"
-msgstr "b:base (2 ≤ @{b} ≤ 36)"
+msgstr "Base"
 
 #: ../plugins/gtkui/interface.c:1932 ../plugins/gtkui/deadbeef.glade.h:117
-#, fuzzy
 msgid "Tab strip colors"
-msgstr "Changing sheet tab colours"
+msgstr "Tab strip colours"
 
 #: ../plugins/gtkui/interface.c:1941 ../plugins/gtkui/deadbeef.glade.h:79
 msgid "Override (looses GTK treeview theming, but speeds up rendering)"
-msgstr ""
+msgstr "Override (loses GTK tree-view theming, but speeds up rendering)"
 
 #: ../plugins/gtkui/interface.c:1950 ../plugins/gtkui/deadbeef.glade.h:33
-#, fuzzy
 msgid "Even row"
-msgstr "Autofitting row %s"
+msgstr "Even row"
 
 #: ../plugins/gtkui/interface.c:1957 ../plugins/gtkui/deadbeef.glade.h:74
-#, fuzzy
 msgid "Odd row"
-msgstr "Autofitting row %s"
+msgstr "Odd row"
 
 #: ../plugins/gtkui/interface.c:1976 ../plugins/gtkui/deadbeef.glade.h:120
-#, fuzzy
 msgid "Text"
 msgstr "Text"
 
 #: ../plugins/gtkui/interface.c:1983 ../plugins/gtkui/deadbeef.glade.h:105
-#, fuzzy
 msgid "Selected row"
-msgstr "Autofitting row %s"
+msgstr "Selected row"
 
 #: ../plugins/gtkui/interface.c:2002 ../plugins/gtkui/deadbeef.glade.h:106
-#, fuzzy
 msgid "Selected text"
-msgstr "Set Text"
+msgstr "Selected text"
 
 #: ../plugins/gtkui/interface.c:2015 ../plugins/gtkui/deadbeef.glade.h:20
-#, fuzzy
 msgid "Cursor"
-msgstr "Cursor colour"
+msgstr "Cursor"
 
 #: ../plugins/gtkui/interface.c:2028 ../plugins/gtkui/deadbeef.glade.h:83
-#, fuzzy
 msgid "Playlist colors"
-msgstr "Clear Playlist"
+msgstr "Play-list colours"
 
 #: ../plugins/gtkui/interface.c:2032 ../plugins/gtkui/deadbeef.glade.h:54
 msgid "GUI"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:2041 ../plugins/gtkui/deadbeef.glade.h:30
-#, fuzzy
 msgid "Enable Proxy Server"
-msgstr "Server not started"
+msgstr "Enable Proxy Server"
 
 #: ../plugins/gtkui/interface.c:2049 ../plugins/gtkui/deadbeef.glade.h:89
-#, fuzzy
 msgid "Proxy Server Address:"
-msgstr "Copy E-mail Address"
+msgstr "Proxy Server Address:"
 
 #: ../plugins/gtkui/interface.c:2063 ../plugins/gtkui/deadbeef.glade.h:90
-#, fuzzy
 msgid "Proxy Server Port:"
-msgstr "Neath Port Talbot"
+msgstr "Proxy Server Port:"
 
 #: ../plugins/gtkui/interface.c:2077 ../plugins/gtkui/deadbeef.glade.h:91
-#, fuzzy
 msgid "Proxy Type:"
-msgstr "Plot Type"
+msgstr "Proxy Type:"
 
 #: ../plugins/gtkui/interface.c:2096 ../plugins/gtkui/deadbeef.glade.h:92
 msgid "Proxy Username:"
-msgstr ""
+msgstr "Proxy User-name:"
 
 #: ../plugins/gtkui/interface.c:2109 ../plugins/gtkui/deadbeef.glade.h:88
-#, fuzzy
 msgid "Proxy Password:"
-msgstr "Enter password"
+msgstr "Proxy Password:"
 
 #: ../plugins/gtkui/interface.c:2119 ../plugins/gtkui/deadbeef.glade.h:71
-#, fuzzy
 msgid "Network"
 msgstr "Network"
 
 #: ../plugins/gtkui/interface.c:2147 ../plugins/gtkui/deadbeef.glade.h:128
-#, fuzzy
 msgid "Write ID3v2"
-msgstr "Write only"
+msgstr "Write ID3v2"
 
 #: ../plugins/gtkui/interface.c:2151 ../plugins/gtkui/interface.c:2278
 #: ../plugins/gtkui/deadbeef.glade.h:127
-#, fuzzy
 msgid "Write ID3v1"
-msgstr "Write only"
+msgstr "Write ID3v1"
 
 #: ../plugins/gtkui/interface.c:2155 ../plugins/gtkui/interface.c:2234
 #: ../plugins/gtkui/interface.c:2274 ../plugins/gtkui/deadbeef.glade.h:126
