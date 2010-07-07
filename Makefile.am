@@ -29,7 +29,6 @@ deadbeef_SOURCES =\
 	junklib.h junklib.c utf8.c utf8.h u8_lc_map.h\
 	optmath.h\
 	vfs.c vfs.h vfs_stdio.c\
-	timeline.c timeline.h\
 	md5/md5.c md5/md5.h\
 	metacache.c metacache.h\
 	gettext.h
