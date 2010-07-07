@@ -2,12 +2,12 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # Grzegorz Gibas <amigib@gmail.com>, 2010.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeef\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-05 22:19+0200\n"
+"POT-Creation-Date: 2010-07-07 04:11+0000\n"
 "PO-Revision-Date: 2010-07-05 22:14+0100\n"
 "Last-Translator: Grzegorz Gibas <amigib@gmail.com>\n"
 "Language-Team: Polish Translation Team <amigib@gmail.com>\n"
@@ -37,7 +37,7 @@ msgstr "Dodaj katalog(i) do listy odtwarzania..."
 
 #: ../plugins/gtkui/callbacks.c:640
 msgid "Failed while reading help file"
-msgstr "Nie mogę odczytać pliku pomocy"
+msgstr "Nie można odczytać pliku pomocy"
 
 #: ../plugins/gtkui/callbacks.c:650
 msgid "Failed to load help file"
@@ -108,11 +108,11 @@ msgstr "Wyzeruj wszystkie"
 
 #: ../plugins/gtkui/eq.c:306
 msgid "Zero Preamp"
-msgstr ""
+msgstr "Wyzeruj Preamp"
 
 #: ../plugins/gtkui/eq.c:313
 msgid "Zero Bands"
-msgstr ""
+msgstr "Wyzeruj słupki"
 
 #: ../plugins/gtkui/eq.c:320
 msgid "Save Preset"
@@ -139,7 +139,7 @@ msgstr "%d dni %d:%02d:%02d"
 #: ../plugins/gtkui/gtkui.c:140
 #, c-format
 msgid "Stopped | %d tracks | %s total playtime"
-msgstr "Zatrzymane | %d utworów | całkowity czas odtwarzania to %s"
+msgstr "Zatrzymane | %d utworów | całkowity czas trwania listy odtwarzania to %s"
 
 #: ../plugins/gtkui/gtkui.c:150
 msgid "Mono"
@@ -160,11 +160,8 @@ msgstr "Wstrzymane |"
 
 #: ../plugins/gtkui/gtkui.c:177
 #, c-format
-msgid ""
-"%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
-msgstr ""
-"%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d utworów | całkowity czas "
-"odtwarzania to %s"
+msgid "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
+msgstr "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d utworów | całkowity czas trwania listy odtwarzania to %s"
 
 #: ../plugins/gtkui/gtkui.c:533
 msgid "Save Playlist As"
@@ -291,9 +288,8 @@ msgid "Tabs"
 msgstr "Karty"
 
 #: ../plugins/gtkui/interface.c:318 ../plugins/gtkui/deadbeef.glade.h:32
-#, fuzzy
 msgid "Equalizer"
-msgstr "Equalizer"
+msgstr "Korektor"
 
 #: ../plugins/gtkui/interface.c:322 ../plugins/gtkui/deadbeef.glade.h:143
 msgid "_Playback"
@@ -487,7 +483,7 @@ msgstr "Utwór"
 
 #: ../plugins/gtkui/interface.c:1426
 msgid "Band / Album Artist"
-msgstr "Zespół / "
+msgstr "Zespół / Album Artysta"
 
 #: ../plugins/gtkui/interface.c:1427 ../plugins/gtkui/plcommon.c:778
 msgid "Custom"
@@ -522,7 +518,7 @@ msgid ""
 "Example: %a - %t [%l]"
 msgstr ""
 "Formaty konwersji (zaczyna się od %):\n"
-"  [a]rtista, [t]ytuł, al[b]um, [B]zespół, [C]kompozytor\n"
+"  [a]rtysta, [t]ytuł, al[b]um, [B]zespół, [C]kompozytor\n"
 "  [n]umer utworu, [N]ogółem wszystkich utworów,\n"
 "  [l]długość, [y]rok, [g]atunek, [c]komentarz,\n"
 "  p[r]awa autorskie, [f]nazwa pliku, [T]agi\n"
@@ -658,7 +654,7 @@ msgstr "Kolory listy odtwarzania"
 
 #: ../plugins/gtkui/interface.c:2032 ../plugins/gtkui/deadbeef.glade.h:54
 msgid "GUI"
-msgstr ""
+msgstr "Interfejs"
 
 #: ../plugins/gtkui/interface.c:2041 ../plugins/gtkui/deadbeef.glade.h:30
 msgid "Enable Proxy Server"
@@ -915,7 +911,7 @@ msgstr "Nie"
 
 #: ../plugins/gtkui/trkproperties.c:248 ../plugins/gtkui/trkproperties.c:260
 msgid "Key"
-msgstr ""
+msgstr "Klawisz"
 
 #: ../plugins/gtkui/trkproperties.c:249 ../plugins/gtkui/trkproperties.c:261
 msgid "Value"
@@ -938,8 +934,7 @@ msgstr "Opcje:\n"
 #: ../main.c:86
 #, c-format
 msgid "   --help  or  -h     Print help (this message) and exit\n"
-msgstr ""
-"   --help  lub  -h     Wyświetla pomoc (ten tekst) i wychodzi z programu\n"
+msgstr "   --help  lub  -h     Wyświetla pomoc (ten tekst) i wychodzi z programu\n"
 
 #: ../main.c:87
 #, c-format
@@ -984,8 +979,7 @@ msgstr "   --random           Losowy utwór na liście odtwarzania\n"
 #: ../main.c:95
 #, c-format
 msgid "   --queue            Append file(s) to existing playlist\n"
-msgstr ""
-"   --queue            Dodaje plik(i) do istniejącej listy odtwarzania\n"
+msgstr "   --queue            Dodaje plik(i) do istniejącej listy odtwarzania\n"
 
 #: ../main.c:96
 #, c-format
@@ -1002,14 +996,10 @@ msgstr ""
 
 #: ../main.c:100
 #, c-format
-msgid ""
-"                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist "
-"- title\"\n"
-msgstr ""
-"                      np.: --nowplaying \"%%a - %%t\" powinno wyświetlić "
-"\"artysta - tytuł\"\n"
+msgid "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n"
+msgstr "                      np.: --nowplaying \"%%a - %%t\" powinno wyświetlić \"artysta - tytuł\"\n"
 
-#: ../playlist.c:369 ../playlist.c:2212
+#: ../playlist.c:362 ../playlist.c:2227
 msgid "Default"
 msgstr "Domyślne"
 
@@ -1068,7 +1058,7 @@ msgstr ""
 #: ../plugins/gtkui/support.c:90 ../plugins/gtkui/support.c:114
 #, c-format
 msgid "Couldn't find pixmap file: %s"
-msgstr ""
+msgstr "Nie można znaleźć pliku pixmapy: %s"
 
 #: ../plugins/vorbis/vcedit.c:129 ../plugins/vorbis/vcedit.c:155
 msgid "Couldn't get enough memory for input buffering."
@@ -1119,6 +1109,5 @@ msgid "Corrupt or missing data, continuing..."
 msgstr ""
 
 #: ../plugins/vorbis/vcedit.c:874
-msgid ""
-"Error writing stream to output. Output stream may be corrupted or truncated."
+msgid "Error writing stream to output. Output stream may be corrupted or truncated."
 msgstr ""
