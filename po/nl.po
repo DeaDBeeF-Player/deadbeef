@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-30 08:17+0000\n"
+"POT-Creation-Date: 2010-07-12 04:11+0000\n"
 "PO-Revision-Date: 2010-05-21 18:34+0300\n"
 "Last-Translator: F.J. de Pablos <depazzz@gmail.com>\n"
 "Language-Team: Spanish\n"
@@ -105,7 +105,7 @@ msgstr "Inschakelen"
 
 #: ../plugins/gtkui/eq.c:299
 msgid "Zero All"
-msgstr ""
+msgstr "Alles Dempen"
 
 #: ../plugins/gtkui/eq.c:306
 msgid "Zero Preamp"
