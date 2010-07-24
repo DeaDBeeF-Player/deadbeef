@@ -2,7 +2,7 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # Grzegorz Gibas <amigib@gmail.com>, Łukasz Jasiński <alvarus@alvarus.org>, 2010.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeef\n"
@@ -139,8 +139,7 @@ msgstr "%d dni %d:%02d:%02d"
 #: ../plugins/gtkui/gtkui.c:140
 #, c-format
 msgid "Stopped | %d tracks | %s total playtime"
-msgstr ""
-"Zatrzymane | %d utworów | całkowity czas trwania listy odtwarzania to %s"
+msgstr "Zatrzymane | %d utworów | całkowity czas trwania listy odtwarzania to %s"
 
 #: ../plugins/gtkui/gtkui.c:150
 msgid "Mono"
@@ -161,11 +160,8 @@ msgstr "Wstrzymane |"
 
 #: ../plugins/gtkui/gtkui.c:177
 #, c-format
-msgid ""
-"%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
-msgstr ""
-"%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d utworów | całkowity czas "
-"trwania listy odtwarzania to %s"
+msgid "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
+msgstr "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d utworów | całkowity czas trwania listy odtwarzania to %s"
 
 #: ../plugins/gtkui/gtkui.c:533
 msgid "Save Playlist As"
@@ -308,9 +304,8 @@ msgid "Linear"
 msgstr "Liniowo"
 
 #: ../plugins/gtkui/interface.c:342 ../plugins/gtkui/deadbeef.glade.h:108
-#, fuzzy
 msgid "Shuffle"
-msgstr "Wymieszaj"
+msgstr "Losowo"
 
 #: ../plugins/gtkui/interface.c:348 ../plugins/gtkui/deadbeef.glade.h:94
 msgid "Random"
@@ -553,7 +548,6 @@ msgid "Sound"
 msgstr "Dźwięk"
 
 #: ../plugins/gtkui/interface.c:1757 ../plugins/gtkui/deadbeef.glade.h:12
-#, fuzzy
 msgid "Allow dynamic samplerate switching"
 msgstr "Pozwól na dynamiczną zmianę samplerate"
 
@@ -938,8 +932,7 @@ msgstr "Opcje:\n"
 #: ../main.c:86
 #, c-format
 msgid "   --help  or  -h     Print help (this message) and exit\n"
-msgstr ""
-"   --help  lub  -h     Wyświetla pomoc (ten tekst) i wychodzi z programu\n"
+msgstr "   --help  lub  -h     Wyświetla pomoc (ten tekst) i wychodzi z programu\n"
 
 #: ../main.c:87
 #, c-format
@@ -984,8 +977,7 @@ msgstr "   --random           Losowy utwór na liście odtwarzania\n"
 #: ../main.c:95
 #, c-format
 msgid "   --queue            Append file(s) to existing playlist\n"
-msgstr ""
-"   --queue            Dodaje plik(i) do istniejącej listy odtwarzania\n"
+msgstr "   --queue            Dodaje plik(i) do istniejącej listy odtwarzania\n"
 
 #: ../main.c:96
 #, c-format
@@ -1005,12 +997,8 @@ msgstr ""
 
 #: ../main.c:100
 #, c-format
-msgid ""
-"                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist "
-"- title\"\n"
-msgstr ""
-"                      np.: --nowplaying \"%%a - %%t\" powinno wyświetlić "
-"\"artysta - tytuł\"\n"
+msgid "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n"
+msgstr "                      np.: --nowplaying \"%%a - %%t\" powinno wyświetlić \"artysta - tytuł\"\n"
 
 #: ../playlist.c:362 ../playlist.c:2227
 msgid "Default"
@@ -1122,7 +1110,5 @@ msgid "Corrupt or missing data, continuing..."
 msgstr "Uszkodzone lub brakujące dane, kontynuacja..."
 
 #: ../plugins/vorbis/vcedit.c:874
-msgid ""
-"Error writing stream to output. Output stream may be corrupted or truncated."
-msgstr ""
-"Błąd zapisu strumienia wyjściowego. Strumień wyjściowy może być uszkodzony lub obcięty."
+msgid "Error writing stream to output. Output stream may be corrupted or truncated."
+msgstr "Błąd zapisu strumienia wyjściowego. Strumień wyjściowy może być uszkodzony lub obcięty."
