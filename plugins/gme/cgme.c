@@ -42,7 +42,7 @@ cgme_open (void) {
 static int
 cgme_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     gme_info_t *info = (gme_info_t*)_info;
-    int samplerate = deadbeef->conf_get_int ("synth.samplerate", 48000);
+    int samplerate = deadbeef->conf_get_int ("synth.samplerate", 44100);
     if (gme_open_file (it->fname, &info->emu, samplerate)) {
         return -1;
     }

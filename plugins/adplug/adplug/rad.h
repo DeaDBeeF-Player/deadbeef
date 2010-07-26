@@ -30,13 +30,13 @@ public:
 		: CmodPlayer(newopl)
 	{ *desc = '\0'; };
 
-	bool load(const std::string &filename, const CFileProvider &fp);
+	bool load(const char *filename, const CFileProvider &fp);
 	float getrefresh();
 
-	std::string gettype()
-	{ return std::string("Reality ADlib Tracker"); };
-	std::string getdesc()
-	{ return std::string(desc); };
+	const char * gettype()
+	{ return "Reality ADlib Tracker"; };
+	const char * getdesc()
+	{ return desc; };
 
 private:
 	unsigned char version,radflags;

@@ -32,22 +32,22 @@ class CjbmPlayer: public CPlayer
   CjbmPlayer(Copl *newopl) : CPlayer(newopl), m(0)
     { }
   ~CjbmPlayer()
-    { if(m != NULL) delete [] m; }
+    { delete [] m; }
 
-  bool load(const std::string &filename, const CFileProvider &fp);
+  bool load(const char *filename, const CFileProvider &fp);
   bool update();
   void rewind(int subsong);
 
   float getrefresh()
     { return timer; }
 
-  std::string gettype()
+  const char * gettype()
     {
-      return std::string(flags&1 ? "JBM Adlib Music [rhythm mode]" :
-			 "JBM Adlib Music");
+      return flags&1 ? "JBM Adlib Music [rhythm mode]" :
+			 "JBM Adlib Music";
     }
-  std::string getauthor()
-    { return std::string("Johannes Bjerregaard"); }
+  const char * getauthor()
+    { return "Johannes Bjerregaard"; }
 
  protected:
 

@@ -48,10 +48,10 @@
  *
  */
 
-#include <cstring>
 #include <inttypes.h>
 #include <stdarg.h>
 #include <assert.h>
+#include <string.h>
 
 #include "adl.h"
 #include "debug.h"
@@ -2321,7 +2321,7 @@ void CadlPlayer::play(uint8_t track) {
 // 	playSoundEffect(1);
 // }
 
-bool CadlPlayer::load(const std::string &filename, const CFileProvider &fp)
+bool CadlPlayer::load(const char *filename, const CFileProvider &fp)
 {
   binistream	*f = fp.open(filename);
 

@@ -27,10 +27,10 @@
 
 /***** CFileProvider *****/
 
-bool CFileProvider::extension(const std::string &filename,
-			      const std::string &extension)
+bool CFileProvider::extension(const char *filename,
+			      const char *extension)
 {
-  const char *fname = filename.c_str(), *ext = extension.c_str();
+  const char *fname = filename, *ext = extension;
 
   if(strlen(fname) < strlen(ext) ||
      stricmp(fname + strlen(fname) - strlen(ext), ext))
@@ -52,7 +52,7 @@ unsigned long CFileProvider::filesize(binistream *f)
 
 /***** CProvider_Filesystem *****/
 
-binistream *CProvider_Filesystem::open(std::string filename) const
+binistream *CProvider_Filesystem::open(const char * filename) const
 {
   binifstream *f = new binifstream(filename);
 

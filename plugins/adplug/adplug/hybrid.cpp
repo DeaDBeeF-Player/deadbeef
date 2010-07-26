@@ -232,14 +232,14 @@ float CxadhybridPlayer::xadplayer_getrefresh()
   return 50.0f;
 }
 
-std::string CxadhybridPlayer::xadplayer_gettype()
+const char * CxadhybridPlayer::xadplayer_gettype()
 {
-  return (std::string("xad: hybrid player"));
+  return "xad: hybrid player";
 }
 
-std::string CxadhybridPlayer::xadplayer_getinstrument(unsigned int i)
+const char * CxadhybridPlayer::xadplayer_getinstrument(unsigned int i)
 {
-  return (std::string(hyb.inst[i].name,7));
+  return hyb.inst[i].name;
 }
 
 unsigned int CxadhybridPlayer::xadplayer_getinstruments()

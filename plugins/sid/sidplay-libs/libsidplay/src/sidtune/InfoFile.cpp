@@ -23,9 +23,6 @@
 #ifdef HAVE_EXCEPTIONS
 #   include <new>
 #endif
-#include <iostream>
-#include <iomanip>
-#include <sstream>
 #include <ctype.h>
 #include <string.h>
 
@@ -135,35 +132,27 @@ bool SidTune::SID_fileSupport(const void* dataBuffer, uint_least32_t dataBufLen,
             }
             // Create whitespace eating (!) input string stream.
 
-            std::string s (pParseBuf, restLen);
-
-            std::istringstream parseStream (s);
-            // A second one just for copying.
-            std::istringstream parseCopyStream (s);
-            if ( !parseStream || !parseCopyStream )
-            {
-                break;
-            }
+            const char *s = pParseBuf;
+            int pos = 0;
+            int posCopy = 0;
             // Now copy the next X characters except white-spaces.
             for ( uint_least16_t i = 0; i < parseChunkLen; i++ )
             {
-                char c;
-                parseCopyStream >> c;
-                pParseChunk[i] = c;
+                pParseChunk[i] = s[i];
             }
             pParseChunk[parseChunkLen]=0;
             // Now check for the possible keywords.
             // ADDRESS
             if ( SidTuneTools::myStrNcaseCmp( pParseChunk, keyword_address ) == 0 )
             {
-                SidTuneTools::skipToEqu( parseStream );
-                info.loadAddr = (uint_least16_t)SidTuneTools::readHex( parseStream );
-                if ( !parseStream )
+                SidTuneTools::skipToEqu( s, restLen, pos );
+                info.loadAddr = (uint_least16_t)SidTuneTools::readHex( s, restLen, pos );
+                if ( pos>=restLen )
                     break;
-                info.initAddr = (uint_least16_t)SidTuneTools::readHex( parseStream );
-                if ( !parseStream )
+                info.initAddr = (uint_least16_t)SidTuneTools::readHex( s, restLen, pos );
+                if ( pos>=restLen )
                     break;
-                info.playAddr = (uint_least16_t)SidTuneTools::readHex( parseStream );
+                info.playAddr = (uint_least16_t)SidTuneTools::readHex( s, restLen, pos );
                 hasAddress = true;
             }
             // NAME
@@ -197,16 +186,16 @@ bool SidTune::SID_fileSupport(const void* dataBuffer, uint_least32_t dataBufLen,
             // SONGS
             else if ( SidTuneTools::myStrNcaseCmp( pParseChunk, keyword_songs ) == 0 )
             {
-                SidTuneTools::skipToEqu( parseStream );
-                info.songs = (uint_least16_t)SidTuneTools::readDec( parseStream );
-                info.startSong = (uint_least16_t)SidTuneTools::readDec( parseStream );
+                SidTuneTools::skipToEqu( s, restLen, pos );
+                info.songs = (uint_least16_t)SidTuneTools::readDec( s, restLen, pos );
+                info.startSong = (uint_least16_t)SidTuneTools::readDec( s, restLen, pos );
                 hasSongs = true;
             }
             // SPEED
             else if ( SidTuneTools::myStrNcaseCmp( pParseChunk, keyword_speed ) == 0 )
             {
-                SidTuneTools::skipToEqu( parseStream );
-                oldStyleSpeed = SidTuneTools::readHex(parseStream);
+                SidTuneTools::skipToEqu( s, restLen, pos );
+                oldStyleSpeed = SidTuneTools::readHex( s, restLen, pos );
                 hasSpeed = true;
             }
             // SIDSONG
@@ -217,10 +206,10 @@ bool SidTune::SID_fileSupport(const void* dataBuffer, uint_least32_t dataBufLen,
             // RELOC
             else if ( SidTuneTools::myStrNcaseCmp( pParseChunk, keyword_reloc ) == 0 )
             {
-                info.relocStartPage = (uint_least8_t)SidTuneTools::readHex( parseStream );
-                if ( !parseStream )
+                info.relocStartPage = (uint_least8_t)SidTuneTools::readHex( s, restLen, pos );
+                if ( pos >= restLen )
                     break;
-                info.relocPages = (uint_least8_t)SidTuneTools::readHex( parseStream );
+                info.relocPages = (uint_least8_t)SidTuneTools::readHex( s, restLen, pos );
             }
             // CLOCK
             else if ( SidTuneTools::myStrNcaseCmp( pParseChunk, keyword_clock ) == 0 )
@@ -307,6 +296,7 @@ bool SidTune::SID_fileSupport(const void* dataBuffer, uint_least32_t dataBufLen,
 }
 
 
+#if 0
 bool SidTune::SID_fileSupportSave( std::ofstream& toFile )
 {
     toFile << keyword_id << std::endl
@@ -396,3 +386,4 @@ bool SidTune::SID_fileSupportSave( std::ofstream& toFile )
         return true;
     }
 }
+#endif

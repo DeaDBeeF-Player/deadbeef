@@ -19,7 +19,7 @@
  * dro2.cpp - DOSBox Raw OPL v2.0 player by Adam Nielsen <malvineous@shikadi.net>
  */
 
-#include <cstring>
+#include <string.h>
 #include <stdio.h>
 
 #include "dro2.h"
@@ -42,7 +42,7 @@ Cdro2Player::~Cdro2Player()
 	if (this->piConvTable) delete[] this->piConvTable;
 }
 
-bool Cdro2Player::load(const std::string &filename, const CFileProvider &fp)
+bool Cdro2Player::load(const char * filename, const CFileProvider &fp)
 {
 	binistream *f = fp.open(filename);
 	if (!f) return false;

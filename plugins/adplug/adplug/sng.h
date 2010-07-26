@@ -35,14 +35,14 @@ public:
 	~CsngPlayer()
 	{ if(data) delete [] data; };
 
-	bool load(const std::string &filename, const CFileProvider &fp);
+	bool load(const char *filename, const CFileProvider &fp);
 	bool update();
 	void rewind(int subsong);
 	float getrefresh()
 	{ return 70.0f; };
 
-	std::string gettype()
-	{ return std::string("SNG File Format"); };
+	const char * gettype()
+	{ return "SNG File Format"; };
 
 protected:
 	struct {

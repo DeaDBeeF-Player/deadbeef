@@ -19,7 +19,7 @@
  * msc.c - MSC Player by Lubomir Bulej (pallas@kadan.cz)
  */
 
-#include <cstring>
+#include <string.h>
 #include <stdio.h>
 
 #include "msc.h"
@@ -63,7 +63,7 @@ CmscPlayer::~CmscPlayer()
     delete [] desc;
 }
 
-bool CmscPlayer::load(const std::string & filename, const CFileProvider & fp)
+bool CmscPlayer::load(const char * filename, const CFileProvider & fp)
 {
   binistream * 	bf;
   msc_header	hdr;
@@ -172,12 +172,10 @@ float CmscPlayer::getrefresh()
   return 1193180 / (float) (timer_div ? timer_div : 0xffff);
 }
 
-std::string CmscPlayer::gettype()
+const char * CmscPlayer::gettype()
 {
-  char vstr [40];
-
   sprintf(vstr, "AdLib MSCplay (version %d)", version);
-  return std::string (vstr);
+  return vstr;
 }
 
 /*** private methods *************************************/

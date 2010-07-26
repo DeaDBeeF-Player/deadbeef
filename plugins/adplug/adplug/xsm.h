@@ -29,12 +29,12 @@ public:
   CxsmPlayer(Copl *newopl);
   ~CxsmPlayer();
 
-  bool load(const std::string &filename, const CFileProvider &fp);
+  bool load(const char *filename, const CFileProvider &fp);
   bool update();
   void rewind(int subsong);
   float getrefresh();
 
-  std::string gettype() { return std::string("eXtra Simple Music"); }
+  const char * gettype() { return "eXtra Simple Music"; }
 
 private:
   unsigned short	songlen;

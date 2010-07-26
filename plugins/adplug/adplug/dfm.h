@@ -30,16 +30,16 @@ public:
 		: CmodPlayer(newopl)
 	{ };
 
-	bool load(const std::string &filename, const CFileProvider &fp);
+	bool load(const char *filename, const CFileProvider &fp);
 	float getrefresh();
 
-	std::string gettype();
+	const char * gettype();
 	unsigned int getinstruments()
 	{ return 32; };
-	std::string getinstrument(unsigned int n)
-	{ if(*instname[n]) return std::string(instname[n],1,*instname[n]); else return std::string(); };
-	std::string getdesc()
-	{ return std::string(songinfo,1,*songinfo); };
+	const char * getinstrument(unsigned int n)
+	{ return instname[n]; };
+	const char * getdesc()
+	{ return songinfo; };
 
 private:
 	struct {
@@ -49,4 +49,5 @@ private:
 
 	char songinfo[33];
 	char instname[32][12];
+	char tmpstr[20];
 };

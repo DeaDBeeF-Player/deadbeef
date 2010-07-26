@@ -101,15 +101,16 @@ char* SidTuneTools::fileExtOfPath(char* s)
 
 // Parse input string stream. Read and convert a hexa-decimal number up 
 // to a ``,'' or ``:'' or ``\0'' or end of stream.
-uint_least32_t SidTuneTools::readHex( std::istringstream& hexin )
+uint_least32_t SidTuneTools::readHex( const char *s, int size, int &pos)
 {
     uint_least32_t hexLong = 0;
     char c;
     do
     {
-        hexin >> c;
-        if ( !hexin )
+        if (pos >= size) {
             break;
+        }
+        c = s[pos++];
         if (( c != ',') && ( c != ':' ) && ( c != 0 ))
         {
             // machine independed to_upper
@@ -120,25 +121,27 @@ uint_least32_t SidTuneTools::readHex( std::istringstream& hexin )
         }
         else
         {
-            if ( c == 0 )
-                hexin.putback(c);
+            if ( c == 0 ) {
+                pos--;
+            }
             break;
         }
-    }  while ( hexin );
+    }  while ( pos < size );
     return hexLong;
 }
 
 // Parse input string stream. Read and convert a decimal number up 
 // to a ``,'' or ``:'' or ``\0'' or end of stream.
-uint_least32_t SidTuneTools::readDec( std::istringstream& decin )
+uint_least32_t SidTuneTools::readDec( const char *s, int size, int &pos )
 {
     uint_least32_t hexLong = 0;
     char c;
     do
     {
-        decin >> c;
-        if ( !decin )
+        if (pos >= size) {
             break;
+        }
+        c = s[pos++];
         if (( c != ',') && ( c != ':' ) && ( c != 0 ))
         {
             c &= 0x0f;
@@ -147,11 +150,12 @@ uint_least32_t SidTuneTools::readDec( std::istringstream& decin )
         }
         else
         { 
-            if ( c == 0 )
-                decin.putback(c);
+            if ( c == 0 ) {
+                pos--;
+            }
             break;
         }
-    }  while ( decin );
+    }  while ( pos < size);
     return hexLong;
 }
 
@@ -187,12 +191,15 @@ const char* SidTuneTools::returnNextLine(const char* s)
 }
 
 // Skip any characters in an input string stream up to '='.
-void SidTuneTools::skipToEqu( std::istringstream& parseStream )
+void SidTuneTools::skipToEqu( const char *s, int size, int &pos )
 {
     char c;
     do
     {
-        parseStream >> c;
+        if (pos >= size) {
+            break;
+        }
+        c = s[pos++];
     }
     while ( c != '=' );
 }

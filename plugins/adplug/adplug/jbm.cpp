@@ -63,7 +63,7 @@ CPlayer *CjbmPlayer::factory(Copl *newopl)
   return new CjbmPlayer(newopl);
 }
 
-bool CjbmPlayer::load(const std::string &filename, const CFileProvider &fp)
+bool CjbmPlayer::load(const char *filename, const CFileProvider &fp)
 {
   binistream	*f = fp.open(filename); if(!f) return false;
   int		filelen = fp.filesize(f);

@@ -24,8 +24,7 @@
 #ifndef H_ADPLUG_DATABASE
 #define H_ADPLUG_DATABASE
 
-#include <iostream>
-#include <string>
+#if 0
 #include <binio.h>
 
 class CAdPlugDatabase
@@ -53,7 +52,7 @@ public:
 
     RecordType	type;
     CKey	key;
-    std::string	filetype, comment;
+    char *filetype, comment;
 
     static CRecord *factory(RecordType type);
     static CRecord *factory(binistream &in);
@@ -63,8 +62,8 @@ public:
 
     void write(binostream &out);
 
-    bool user_read(std::istream &in, std::ostream &out);
-    bool user_write(std::ostream &out);
+    //bool user_read(std::istream &in, std::ostream &out);
+    //bool user_write(std::ostream &out);
 
   protected:
     virtual void read_own(binistream &in) = 0;
@@ -165,5 +164,7 @@ protected:
   virtual bool user_read_own(std::istream &in, std::ostream &out);
   virtual bool user_write_own(std::ostream &out);
 };
+
+#endif
 
 #endif

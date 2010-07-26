@@ -25,7 +25,7 @@
  * Protracker-like format, this is most certainly the player you want to use.
  */
 
-#include <cstring>
+#include <string.h>
 #include "protrack.h"
 #include "debug.h"
 

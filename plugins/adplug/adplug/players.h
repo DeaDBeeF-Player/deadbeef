@@ -22,9 +22,6 @@
 #ifndef H_ADPLUG_PLAYERS
 #define H_ADPLUG_PLAYERS
 
-#include <string>
-#include <list>
-
 #include "opl.h"
 #include "player.h"
 
@@ -34,27 +31,47 @@ public:
   typedef CPlayer *(*Factory)(Copl *);
 
   Factory	factory;
-  std::string	filetype;
+  char filetype[50];
 
   CPlayerDesc();
   CPlayerDesc(const CPlayerDesc &pd);
-  CPlayerDesc(Factory f, const std::string &type, const char *ext);
+  CPlayerDesc(Factory f, const char *type, const char *ext);
 
   ~CPlayerDesc();
 
   void add_extension(const char *ext);
   const char *get_extension(unsigned int n) const;
 
+  CPlayerDesc *next;
+
 private:
   char		*extensions;
   unsigned long	extlength;
 };
 
-class CPlayers: public std::list<const CPlayerDesc *>
+class CPlayers
 {
 public:
-  const CPlayerDesc *lookup_filetype(const std::string &ftype) const;
-  const CPlayerDesc *lookup_extension(const std::string &extension) const;
+  CPlayerDesc *head;
+  CPlayerDesc *tail;
+    CPlayers() {
+        head = 0;
+        tail = 0;
+    }
+  const CPlayerDesc *lookup_filetype(const char *ftype) const;
+  const CPlayerDesc *lookup_extension(const char *extension) const;
+
+  void push_back (CPlayerDesc *ply) {
+      ply->next = 0;
+      if (tail) {
+          tail->next = ply;
+      }
+      tail = ply;
+      if (!head) {
+          head = ply;
+      }
+  }
+
 };
 
 #endif

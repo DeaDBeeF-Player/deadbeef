@@ -119,7 +119,7 @@ float CxadhypPlayer::xadplayer_getrefresh()
   return 60.0f;
 }
 
-std::string CxadhypPlayer::xadplayer_gettype()
+const char * CxadhypPlayer::xadplayer_gettype()
 {
-  return std::string("xad: hypnosis player");
+  return "xad: hypnosis player";
 }

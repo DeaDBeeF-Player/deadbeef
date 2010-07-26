@@ -166,9 +166,9 @@ float CxadpsiPlayer::xadplayer_getrefresh()
   return 70.0f;
 }
 
-std::string CxadpsiPlayer::xadplayer_gettype()
+const char * CxadpsiPlayer::xadplayer_gettype()
 {
-  return std::string("xad: psi player");
+  return "xad: psi player";
 }
 
 unsigned int CxadpsiPlayer::xadplayer_getinstruments()

@@ -24,12 +24,11 @@
 #include "SidTuneTools.h"
 #include "sidendian.h"
 #include "PP20.h"
+#include <stdio.h>
 
 #ifdef HAVE_EXCEPTIONS
 #   include <new>
 #endif
-#include <iostream>
-#include <iomanip>
 #include <string.h>
 #include <limits.h>
 
@@ -100,6 +99,7 @@ inline void SidTune::setFileNameExtensions(const char **fileNameExt)
 {
     fileNameExtensions = ((fileNameExt!=0)?fileNameExt:defaultFileNameExt);
 }
+#define SIDTUNE_NO_STDIN_LOADER
 
 SidTune::SidTune(const char* fileName, const char **fileNameExt,
                  const bool separatorIsSlash)
@@ -252,39 +252,18 @@ bool SidTune::loadFile(const char* fileName, Buffer_sidtt<const uint_least8_t>& 
     Buffer_sidtt<uint_least8_t> fileBuf;
     uint_least32_t fileLen = 0;
 
-    // This sucks big time
-    //openmode createAtrr = std::ios::in;
-    std::_Ios_Openmode createAtrr = std::ios::in;
-#ifdef HAVE_IOS_NOCREATE
-    createAtrr |= std::ios::nocreate;
-#endif
-    // Open binary input file stream at end of file.
-#if defined(HAVE_IOS_BIN)
-    createAtrr |= std::ios::bin;
-#else
-    createAtrr |= std::ios::binary;
-#endif
+    FILE *fp = fopen (fileName, "rb");
 
-    std::fstream myIn(fileName,createAtrr);
-    // As a replacement for !is_open(), bad() and the NOT-operator don't seem
-    // to work on all systems.
-#if defined(DONT_HAVE_IS_OPEN)
-    if ( !myIn )
-#else
-    if ( !myIn.is_open() )
-#endif
+    if (!fp)
     {
         info.statusString = SidTune::txt_cantOpenFile;
         return false;
     }
     else
     {
-#if defined(HAVE_SEEKG_OFFSET)
-        fileLen = (myIn.seekg(0,std::ios::end)).offset();
-#else
-        myIn.seekg(0,std::ios::end);
-        fileLen = (uint_least32_t)myIn.tellg();
-#endif
+        fseek (fp, 0, SEEK_END);
+        fileLen = ftell (fp);
+        rewind (fp);
 #ifdef HAVE_EXCEPTIONS
         if ( !fileBuf.assign(new(std::nothrow) uint_least8_t[fileLen],fileLen) )
 #else
@@ -294,19 +273,9 @@ bool SidTune::loadFile(const char* fileName, Buffer_sidtt<const uint_least8_t>& 
             info.statusString = SidTune::txt_notEnoughMemory;
             return false;
         }
-        myIn.seekg(0,std::ios::beg);
         uint_least32_t restFileLen = fileLen;
-        // 16-bit compatible loading. Is this really necessary?
-        while ( restFileLen > INT_MAX )
-        {
-            myIn.read((char*)fileBuf.get()+(fileLen-restFileLen),INT_MAX);  // !cast!
-            restFileLen -= INT_MAX;
-        }
-        if ( restFileLen > 0 )
-        {
-            myIn.read((char*)fileBuf.get()+(fileLen-restFileLen),restFileLen);  // !cast!
-        }
-        if ( myIn.bad() )
+        int res = fread((char*)fileBuf.get()+(fileLen-restFileLen),1,restFileLen,fp);
+        if ( res != restFileLen )
         {
             info.statusString = SidTune::txt_cantLoadFile;
             return false;
@@ -316,7 +285,7 @@ bool SidTune::loadFile(const char* fileName, Buffer_sidtt<const uint_least8_t>& 
             info.statusString = SidTune::txt_noErrors;
         }
     }
-    myIn.close();
+    fclose(fp);
     if ( fileLen==0 )
     {
         info.statusString = SidTune::txt_empty;
@@ -443,6 +412,7 @@ void SidTune::cleanup()
     status = false;
 }
 
+#define SIDTUNE_NO_STDIN_LOADER
 #if !defined(SIDTUNE_NO_STDIN_LOADER)
 
 void SidTune::getFromStdIn()
@@ -839,7 +809,8 @@ void SidTune::convertOldStyleSpeedToTables(uint_least32_t speed, int clock)
 //
 // File format conversion ---------------------------------------------------
 //
-                
+ 
+#if 0
 bool SidTune::saveToOpenFile(std::ofstream& toFile, const uint_least8_t* buffer,
                              uint_least32_t bufLen )
 {
@@ -984,6 +955,7 @@ bool SidTune::savePSIDfile( const char* fileName, bool overWriteFlag )
     }
     return success;
 }
+#endif
 
 bool SidTune::checkRealC64Info (uint_least32_t speed)
 {

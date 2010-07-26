@@ -49,7 +49,7 @@ CPlayer *CdmoLoader::factory(Copl *newopl)
   return new CdmoLoader(newopl);
 }
 
-bool CdmoLoader::load(const std::string &filename, const CFileProvider &fp)
+bool CdmoLoader::load(const char *filename, const CFileProvider &fp)
 {
   int i,j;
   binistream *f;
@@ -209,19 +209,19 @@ bool CdmoLoader::load(const std::string &filename, const CFileProvider &fp)
   return true;
 }
 
-std::string CdmoLoader::gettype()
+const char * CdmoLoader::gettype()
 {
-  return std::string("TwinTeam (packed S3M)");
+  return "TwinTeam (packed S3M)";
 }
 
-std::string CdmoLoader::getauthor()
+const char * CdmoLoader::getauthor()
 {
   /*
     All available .DMO modules written by one composer. And because all .DMO
     stuff was lost due to hd crash (TwinTeam guys said this), there are
     never(?) be another.
   */
-  return std::string("Benjamin GERARDIN");
+  return "Benjamin GERARDIN";
 }
 
 /* -------- Private Methods ------------------------------- */

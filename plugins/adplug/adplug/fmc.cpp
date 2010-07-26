@@ -19,7 +19,7 @@
   fmc.cpp - FMC Loader by Riven the Mage <riven@ok.ru>
 */
 
-#include <cstring>
+#include <string.h>
 #include "fmc.h"
 
 /* -------- Public Methods -------------------------------- */
@@ -29,7 +29,7 @@ CPlayer *CfmcLoader::factory(Copl *newopl)
   return new CfmcLoader(newopl);
 }
 
-bool CfmcLoader::load(const std::string &filename, const CFileProvider &fp)
+bool CfmcLoader::load(const char *filename, const CFileProvider &fp)
 {
   binistream *f = fp.open(filename); if(!f) return false;
   const unsigned char conv_fx[16] = {0,1,2,3,4,8,255,255,255,255,26,11,12,13,14,15};
@@ -168,19 +168,19 @@ float CfmcLoader::getrefresh()
   return 50.0f;
 }
 
-std::string CfmcLoader::gettype()
+const char * CfmcLoader::gettype()
 {
-  return std::string("Faust Music Creator");
+  return "Faust Music Creator";
 }
 
-std::string CfmcLoader::gettitle()
+const char * CfmcLoader::gettitle()
 {
-  return std::string(header.title);
+  return header.title;
 }
 
-std::string CfmcLoader::getinstrument(unsigned int n)
+const char * CfmcLoader::getinstrument(unsigned int n)
 {
-  return std::string(instruments[n].name);
+  return instruments[n].name;
 }
 
 unsigned int CfmcLoader::getinstruments()

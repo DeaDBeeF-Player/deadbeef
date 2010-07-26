@@ -24,7 +24,6 @@
   slides use previous effect data instead of current.
 */
 
-#include <cstring>
 #include <stdlib.h>
 #include <string.h>
 
@@ -37,7 +36,7 @@ CPlayer *CcffLoader::factory(Copl *newopl)
   return new CcffLoader(newopl);
 }
 
-bool CcffLoader::load(const std::string &filename, const CFileProvider &fp)
+bool CcffLoader::load(const char *filename, const CFileProvider &fp)
 {
   binistream *f = fp.open(filename); if(!f) return false;
   const unsigned char conv_inst[11] = { 2,1,10,9,4,3,6,5,0,8,7 };
@@ -275,27 +274,27 @@ void CcffLoader::rewind(int subsong)
     }
 }
 
-std::string CcffLoader::gettype()
+const char * CcffLoader::gettype()
 {
   if (header.packed)
-    return std::string("BoomTracker 4, packed");
+    return "BoomTracker 4, packed";
   else
-    return std::string("BoomTracker 4");
+    return "BoomTracker 4";
 }
 
-std::string CcffLoader::gettitle()
+const char * CcffLoader::gettitle()
 {
-  return std::string(song_title,20);
+  return song_title;
 }
 
-std::string CcffLoader::getauthor()
+const char * CcffLoader::getauthor()
 {
-  return std::string(song_author,20);
+  return song_author;
 }
 
-std::string CcffLoader::getinstrument(unsigned int n)
+const char * CcffLoader::getinstrument(unsigned int n)
 {
-  return std::string(instruments[n].name);
+  return instruments[n].name;
 }
 
 unsigned int CcffLoader::getinstruments()

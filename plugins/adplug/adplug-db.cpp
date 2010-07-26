@@ -66,7 +66,7 @@ adplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     // return -1 on failure
     adplug_info_t *info = (adplug_info_t *)_info;
 
-    int samplerate = deadbeef->conf_get_int ("synth.samplerate", 48000);
+    int samplerate = deadbeef->conf_get_int ("synth.samplerate", 44100);
     int bps = deadbeef->get_output ()->bitspersample ();
     int channels = 2;
     info->opl = new CEmuopl (samplerate, true, channels == 2);
@@ -79,7 +79,7 @@ adplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     info->subsong = it->tracknum;
     info->decoder->rewind (info->subsong);
-    info->totalsamples = info->decoder->songlength (info->subsong) * samplerate / 1000;
+    info->totalsamples = info->decoder->songlength (info->subsong) / 1000.f * samplerate;
     info->currentsample = 0;
     info->toadd = 0;
 
@@ -90,7 +90,7 @@ adplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     _info->samplerate = samplerate;
     _info->readpos = 0;
 
-    trace ("adplug_init ok (duration=%f, totalsamples=%d)\n", deadbeef->pl_get_item_duration (it), totalsamples);
+    trace ("adplug_init ok (songlength=%d, duration=%f, totalsamples=%d)\n", info->decoder->songlength (info->subsong), deadbeef->pl_get_item_duration (it), info->totalsamples);
 
     return 0;
 }
@@ -235,6 +235,8 @@ adplug_insert (DB_playItem_t *after, const char *fname) {
     // return track pointer on success
     // return NULL on failure
 
+    trace ("adplug: trying to insert %s\n", fname);
+
     CSilentopl opl;
     CPlayer *p = CAdPlug::factory (fname, &opl, CAdPlug::players);
     if (!p) {
@@ -252,18 +254,19 @@ adplug_insert (DB_playItem_t *after, const char *fname) {
         it->tracknum = i;
         deadbeef->pl_set_item_duration (it, p->songlength (i)/1000.f);
         // add metainfo
-        if (!p->gettitle().empty()) {
-            adplug_add_meta (it, "title", p->gettitle().c_str());
-        }
-        else {
-            deadbeef->pl_add_meta (it, "title", NULL);
-        }
-        if (!p->getdesc().empty()) {
-            adplug_add_meta (it, "comment", p->getdesc().c_str());
-        }
-        if (!p->getauthor().empty()) {
-            adplug_add_meta (it, "artist", p->getauthor().c_str());
-        }
+//        if (p->gettitle()[0]) {
+//            adplug_add_meta (it, "title", p->gettitle());
+//        }
+//        else {
+//            deadbeef->pl_add_meta (it, "title", NULL);
+//        }
+//        if (p->getdesc()[0]) {
+//            adplug_add_meta (it, "comment", p->getdesc());
+//        }
+//        if (!p->getauthor()[0]) {
+//            adplug_add_meta (it, "artist", p->getauthor());
+//        }
+        deadbeef->pl_add_meta (it, "title", NULL);
         // insert
         after = deadbeef->pl_insert_item (after, it);
         deadbeef->pl_item_unref (it);

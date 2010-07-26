@@ -19,7 +19,7 @@
  * mtk.cpp - MPU-401 Trakker Loader by Simon Peter (dn.tlp@gmx.net)
  */
 
-#include <cstring>
+#include <string.h>
 #include "mtk.h"
 
 /*** public methods **************************************/
@@ -29,7 +29,7 @@ CPlayer *CmtkLoader::factory(Copl *newopl)
   return new CmtkLoader(newopl);
 }
 
-bool CmtkLoader::load(const std::string &filename, const CFileProvider &fp)
+bool CmtkLoader::load(const char *filename, const CFileProvider &fp)
 {
   binistream *f = fp.open(filename); if(!f) return false;
   struct {

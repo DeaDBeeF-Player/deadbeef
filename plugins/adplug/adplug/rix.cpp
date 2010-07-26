@@ -20,7 +20,7 @@
  *                                             BSPAL <BSPAL.ys168.com>
  */
 
-#include <cstring>
+#include <string.h>
 #include "rix.h"
 #include "debug.h"
 
@@ -64,13 +64,16 @@ CrixPlayer::~CrixPlayer()
     delete [] file_buffer;
 }
 
-bool CrixPlayer::load(const std::string &filename, const CFileProvider &fp)
+bool CrixPlayer::load(const char *filename, const CFileProvider &fp)
 {
   binistream *f = fp.open(filename); if(!f) return false;
   unsigned long i=0;
 
-  if(stricmp(filename.substr(filename.length()-4,4).c_str(),".mkf")==0)
-  {
+  const char *pext = filename + strlen (filename);
+  while (pext > filename && *pext != '.') {
+      pext--;
+  }
+  if (*pext == '.' && !stricmp (pext+1, ".mkf")) {
 	  flag_mkf=1;
 	  f->seek(0);
 	  int offset=f->readInt(4);

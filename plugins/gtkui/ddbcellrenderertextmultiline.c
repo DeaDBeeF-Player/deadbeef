@@ -89,7 +89,7 @@ enum  {
 	DDB_CELL_EDITABLE_TEXT_VIEW_DUMMY_PROPERTY
 };
 static gboolean ddb_cell_editable_text_view_real_key_press_event (GtkWidget* base, GdkEventKey* event);
-static void ddb_cell_editable_text_view_real_start_editing (GtkCellEditable* base, GdkEvent* event);
+void ddb_cell_editable_text_view_start_editing (DdbCellEditableTextView* self, GdkEvent* event);
 DdbCellEditableTextView* ddb_cell_editable_text_view_new (void);
 DdbCellEditableTextView* ddb_cell_editable_text_view_construct (GType object_type);
 static void ddb_cell_editable_text_view_finalize (GObject* obj);
@@ -138,9 +138,8 @@ static gboolean ddb_cell_editable_text_view_real_key_press_event (GtkWidget* bas
 }
 
 
-static void ddb_cell_editable_text_view_real_start_editing (GtkCellEditable* base, GdkEvent* event) {
-	DdbCellEditableTextView * self;
-	self = (DdbCellEditableTextView*) base;
+void ddb_cell_editable_text_view_start_editing (DdbCellEditableTextView* self, GdkEvent* event) {
+	g_return_if_fail (self != NULL);
 	g_return_if_fail (event != NULL);
 }
 
@@ -166,7 +165,6 @@ static void ddb_cell_editable_text_view_class_init (DdbCellEditableTextViewClass
 
 static void ddb_cell_editable_text_view_gtk_cell_editable_interface_init (GtkCellEditableIface * iface) {
 	ddb_cell_editable_text_view_gtk_cell_editable_parent_iface = g_type_interface_peek_parent (iface);
-	iface->start_editing = ddb_cell_editable_text_view_real_start_editing;
 }
 
 
