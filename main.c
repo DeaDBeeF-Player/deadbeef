@@ -270,7 +270,8 @@ server_start (void) {
     memcpy (srv_local.sun_path, server_id, sizeof (server_id));
     int len = offsetof(struct sockaddr_un, sun_path) + sizeof (server_id)-1;
 #else
-    snprintf (srv_local.sun_path, sizeof (srv_local.sun_path), "%s/socket", dbconfdir);
+    char *socketdirenv = getenv ("DDB_SOCKET_DIR");
+    snprintf (srv_local.sun_path, sizeof (srv_local.sun_path), "%s/socket", socketdirenv ? socketdirenv : dbconfdir);
     if (unlink(srv_local.sun_path) < 0) {
         perror ("INFO: unlink socket");
     }
@@ -569,7 +570,8 @@ main (int argc, char *argv[]) {
     memcpy (remote.sun_path, server_id, sizeof (server_id));
     len = offsetof(struct sockaddr_un, sun_path) + sizeof (server_id)-1;
 #else
-    snprintf (remote.sun_path, sizeof (remote.sun_path), "%s/socket", dbconfdir);
+    char *socketdirenv = getenv ("DDB_SOCKET_DIR");
+    snprintf (remote.sun_path, sizeof (remote.sun_path), "%s/socket", socketdirenv ? socketdirenv : dbconfdir);
     len = offsetof(struct sockaddr_un, sun_path) + strlen (remote.sun_path);
 #endif
     if (connect(s, (struct sockaddr *)&remote, len) == 0) {
