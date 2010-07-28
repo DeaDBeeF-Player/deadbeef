@@ -15,12 +15,17 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 #include "junklib.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#if HAVE_ICONV
 #define LIBICONV_PLUG
 #include <iconv.h>
+#endif
 #include <limits.h>
 #include <errno.h>
 #include <ctype.h>
@@ -29,9 +34,6 @@
 #include "playlist.h"
 #include "utf8.h"
 #include "plugins.h"
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
 
 #define MAX_TEXT_FRAME_SIZE 1024
 #define MAX_CUESHEET_FRAME_SIZE 10000
@@ -153,6 +155,7 @@ extract_f32 (unsigned char *buf) {
 
 int
 junk_iconv (const char *in, int inlen, char *out, int outlen, const char *cs_in, const char *cs_out) {
+#if HAVE_ICONV
     iconv_t cd = iconv_open (cs_out, cs_in);
     if (cd == (iconv_t)-1) {
         return -1;
@@ -179,6 +182,10 @@ junk_iconv (const char *in, int inlen, char *out, int outlen, const char *cs_in,
     }
     //trace ("iconv out: %s (len=%d)\n", out, pout - out);
     return pout - out;
+#elif TARGET_ANDROID
+    // TODO: android charset conversion
+    return 0;
+#endif
 }
 
 

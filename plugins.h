@@ -24,7 +24,7 @@ extern DB_functions_t *deadbeef;
 
 struct playItem_s;
 
-void
+int
 plug_load_all (void);
 
 void

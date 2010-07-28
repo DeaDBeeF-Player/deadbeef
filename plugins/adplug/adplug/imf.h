@@ -35,18 +35,18 @@ public:
 	~CimfPlayer()
 	  { if(data) delete [] data; if(footer) delete [] footer; };
 
-	bool load(const std::string &filename, const CFileProvider &fp);
+	bool load(const char *filename, const CFileProvider &fp);
 	bool update();
 	void rewind(int subsong);
 	float getrefresh()
 	  { return timer; };
 
-	std::string gettype()
-	  { return std::string("IMF File Format"); }
-	std::string gettitle();
-	std::string getauthor()
+	const char * gettype()
+	  { return "IMF File Format"; }
+	const char * gettitle();
+	const char * getauthor()
 	  { return author_name; }
-	std::string getdesc();
+	const char * getdesc();
 
 protected:
 	unsigned long	pos, size;
@@ -54,7 +54,9 @@ protected:
 	bool		songend;
 	float		rate, timer;
 	char		*footer;
-	std::string	track_name, game_name, author_name, remarks;
+	char track_name[100], game_name[100], author_name[100], remarks[100];
+	char title[100];
+	char desc[100];
 
 	struct Sdata {
 		unsigned char	reg, val;
@@ -62,7 +64,7 @@ protected:
 	} *data;
 
 private:
-	float getrate(const std::string &filename, const CFileProvider &fp, binistream *f);
+	float getrate(const char *filename, const CFileProvider &fp, binistream *f);
 };
 
 #endif

@@ -30,7 +30,7 @@ CPlayer *CdfmLoader::factory(Copl *newopl)
   return new CdfmLoader(newopl);
 }
 
-bool CdfmLoader::load(const std::string &filename, const CFileProvider &fp)
+bool CdfmLoader::load(const char *filename, const CFileProvider &fp)
 {
   binistream *f = fp.open(filename); if(!f) return false;
   unsigned char		npats,n,note,fx,c,r,param;
@@ -101,12 +101,10 @@ bool CdfmLoader::load(const std::string &filename, const CFileProvider &fp)
   return true;
 }
 
-std::string CdfmLoader::gettype()
+const char * CdfmLoader::gettype()
 {
-	char tmpstr[20];
-
 	sprintf(tmpstr,"Digital-FM %d.%d",header.hiver,header.lover);
-	return std::string(tmpstr);
+	return tmpstr;
 }
 
 float CdfmLoader::getrefresh()

@@ -32,14 +32,14 @@ public:
 	~CbamPlayer()
 	{ if(song) delete [] song; };
 
-	bool load(const std::string &filename, const CFileProvider &fp);
+	bool load(const char *filename, const CFileProvider &fp);
 	bool update();
 	void rewind(int subsong);
 	float getrefresh()
 	{ return 25.0f; };
 
-	std::string gettype()
-	{ return std::string("Bob's Adlib Music"); };
+	const char *gettype()
+	{ return "Bob's Adlib Music"; };
 
 private:
 	static const unsigned short freq[];

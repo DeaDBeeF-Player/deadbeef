@@ -19,8 +19,7 @@
  * adplug.cpp - CAdPlug utility class, by Simon Peter <dn.tlp@gmx.net>
  */
 
-#include <cstring>
-#include <string>
+#include <string.h>
 #include <binfile.h>
 
 #include "adplug.h"
@@ -72,7 +71,7 @@
 /***** CAdPlug *****/
 
 // List of all players that come with the standard AdPlug distribution
-const CPlayerDesc CAdPlug::allplayers[] = {
+CPlayerDesc CAdPlug::allplayers[] = {
   CPlayerDesc(ChscPlayer::factory, "HSC-Tracker", ".hsc\0"),
   CPlayerDesc(CsngPlayer::factory, "SNGPlay", ".sng\0"),
   CPlayerDesc(CimfPlayer::factory, "Apogee IMF", ".imf\0.wlf\0.adlib\0"),
@@ -116,7 +115,7 @@ const CPlayerDesc CAdPlug::allplayers[] = {
   CPlayerDesc()
 };
 
-const CPlayers &CAdPlug::init_players(const CPlayerDesc pd[])
+const CPlayers &CAdPlug::init_players(CPlayerDesc pd[])
 {
   static CPlayers	initplayers;
   unsigned int		i;
@@ -128,23 +127,23 @@ const CPlayers &CAdPlug::init_players(const CPlayerDesc pd[])
 }
 
 const CPlayers CAdPlug::players = CAdPlug::init_players(CAdPlug::allplayers);
-CAdPlugDatabase *CAdPlug::database = 0;
+//CAdPlugDatabase *CAdPlug::database = 0;
 
-CPlayer *CAdPlug::factory(const std::string &fn, Copl *opl, const CPlayers &pl,
+CPlayer *CAdPlug::factory(const char *fn, Copl *opl, const CPlayers &pl,
 			  const CFileProvider &fp)
 {
   CPlayer			*p;
-  CPlayers::const_iterator	i;
+  CPlayerDesc *i;
   unsigned int			j;
 
-  AdPlug_LogWrite("*** CAdPlug::factory(\"%s\",opl,fp) ***\n", fn.c_str());
+  AdPlug_LogWrite("*** CAdPlug::factory(\"%s\",opl,fp) ***\n", fn);
 
   // Try a direct hit by file extension
-  for(i = pl.begin(); i != pl.end(); i++)
-    for(j = 0; (*i)->get_extension(j); j++)
-      if(fp.extension(fn, (*i)->get_extension(j))) {
-	AdPlug_LogWrite("Trying direct hit: %s\n", (*i)->filetype.c_str());
-	if((p = (*i)->factory(opl))) {
+  for(i = pl.head; i; i = i->next)
+    for(j = 0; i->get_extension(j); j++)
+      if(fp.extension(fn, i->get_extension(j))) {
+	AdPlug_LogWrite("Trying direct hit: %s\n", i->filetype);
+	if((p = i->factory(opl))) {
 	  if(p->load(fn, fp)) {
 	    AdPlug_LogWrite("got it!\n");
 	    AdPlug_LogWrite("--- CAdPlug::factory ---\n");
@@ -155,9 +154,9 @@ CPlayer *CAdPlug::factory(const std::string &fn, Copl *opl, const CPlayers &pl,
       }
 
   // Try all players, one by one
-  for(i = pl.begin(); i != pl.end(); i++) {
-    AdPlug_LogWrite("Trying: %s\n", (*i)->filetype.c_str());
-    if((p = (*i)->factory(opl))) {
+  for(i = pl.head; i; i = i->next) {
+    AdPlug_LogWrite("Trying: %s\n", i->filetype);
+    if((p = i->factory(opl))) {
       if(p->load(fn, fp)) {
         AdPlug_LogWrite("got it!\n");
         AdPlug_LogWrite("--- CAdPlug::factory ---\n");
@@ -173,18 +172,20 @@ CPlayer *CAdPlug::factory(const std::string &fn, Copl *opl, const CPlayers &pl,
   return 0;
 }
 
+#if 0
 void CAdPlug::set_database(CAdPlugDatabase *db)
 {
   database = db;
 }
+#endif
 
-std::string CAdPlug::get_version()
+const char * CAdPlug::get_version()
 {
-  return std::string(VERSION);
+  return VERSION;
 }
 
-void CAdPlug::debug_output(const std::string &filename)
+void CAdPlug::debug_output(const char *filename)
 {
-  AdPlug_LogFile(filename.c_str());
-  AdPlug_LogWrite("CAdPlug::debug_output(\"%s\"): Redirected.\n",filename.c_str());
+  AdPlug_LogFile(filename);
+  AdPlug_LogWrite("CAdPlug::debug_output(\"%s\"): Redirected.\n",filename);
 }

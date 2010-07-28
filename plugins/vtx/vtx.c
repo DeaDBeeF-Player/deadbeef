@@ -100,7 +100,7 @@ vtx_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     ayemu_set_chip_freq (&info->ay, info->decoder->chipFreq);
     ayemu_set_stereo (&info->ay, info->decoder->stereo, NULL);
 
-    int samplerate = deadbeef->conf_get_int ("synth.samplerate", 48000);
+    int samplerate = deadbeef->conf_get_int ("synth.samplerate", 44100);
 
     ayemu_set_sound_format (&info->ay, samplerate, deadbeef->get_output ()->channels (), deadbeef->get_output ()->bitspersample ());
 

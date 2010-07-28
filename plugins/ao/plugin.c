@@ -31,7 +31,7 @@
 DB_functions_t *deadbeef;
 static DB_decoder_t plugin;
 
-static const char * exts[] = { "psf", "psf2", "spu", "ssf", "minidsf", "qsf", "dsf", "miniqsf", NULL };
+static const char * exts[] = { "psf", "psf2", "spu", "ssf", "qsf", "dsf", "minipsf", "minipsf2", "minissf", "miniqsf", "minidsf", NULL };
 static const char *filetypes[] = { "PSF", "PSF2", "SPU", "SSF", "QSF", "DSF", NULL };
 
 typedef struct {
@@ -232,16 +232,16 @@ aoplug_insert (DB_playItem_t *after, const char *fname) {
     }
     if (*ext == '.') {
         ext++;
-        if (!strcasecmp (ext, "psf")) {
+        if (!strcasecmp (ext, "psf") || !strcasecmp (ext, "minipsf")) {
             it->filetype = filetypes[0];
         }
-        else if (!strcasecmp (ext, "psf2")) {
+        else if (!strcasecmp (ext, "psf2") || !strcasecmp (ext, "minipsf2")) {
             it->filetype = filetypes[1];
         }
         else if (!strcasecmp (ext, "spu")) {
             it->filetype = filetypes[2];
         }
-        else if (!strcasecmp (ext, "ssf")) {
+        else if (!strcasecmp (ext, "ssf") || !strcasecmp (ext, "minissf")) {
             it->filetype = filetypes[3];
         }
         else if (!strcasecmp (ext, "dsf") || !strcasecmp (ext, "minidsf")) {

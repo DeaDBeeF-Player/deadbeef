@@ -20,11 +20,10 @@
  *
  * Visit:  http://tenacity.hispeed.com/aomit/oplx/
  */
-#include <cstring>
-#include <algorithm>
-
+#include <string.h>
 #include "rol.h"
 #include "debug.h"
+
 
 int   const CrolPlayer::kSizeofDataRecord    =  30;
 int   const CrolPlayer::kMaxTickBeat         =  60;
@@ -65,15 +64,22 @@ CPlayer *CrolPlayer::factory(Copl *newopl)
 }
 //---------------------------------------------------------
 CrolPlayer::CrolPlayer(Copl *newopl)
-:  CPlayer         ( newopl )
+: CPlayer         ( newopl )
   ,rol_header      ( NULL )
   ,mNextTempoEvent ( 0 )
   ,mCurrTick       ( 0 )
   ,mTimeOfLastNote ( 0 )
   ,mRefresh        ( kDefaultUpdateTme )
   ,bdRegister      ( 0 )
+  ,n_voice_data(0)
+  ,n_tempo_events(0)
+  ,n_used_ins(0)
 {
     int n;
+
+    mTempoEvents = 0;
+    voice_data = 0;
+    ins_list = 0;
 
     memset(bxRegister,  0, sizeof(bxRegister) );
     memset(volumeCache, 0, sizeof(volumeCache) );
@@ -90,25 +96,31 @@ CrolPlayer::~CrolPlayer()
         delete rol_header;
         rol_header=NULL;
     }
+
+    delete[] mTempoEvents;
+    delete[] voice_data;
+    delete[] ins_list;
 }
 //---------------------------------------------------------
-bool CrolPlayer::load(const std::string &filename, const CFileProvider &fp)
+bool CrolPlayer::load(const char *filename, const CFileProvider &fp)
 {
     binistream *f = fp.open(filename); if(!f) return false;
 
-    char *fn = new char[filename.length()+12];
+    char fn[strlen(filename)+12];
     int i;
-    std::string bnk_filename;
+    const char * bnk_filename;
 
-    AdPlug_LogWrite("*** CrolPlayer::load(f, \"%s\") ***\n", filename.c_str());
-    strcpy(fn,filename.data());
-    for (i=strlen(fn)-1; i>=0; i--)
-      if (fn[i] == '/' || fn[i] == '\\')
-	break;
+    AdPlug_LogWrite("*** CrolPlayer::load(f, \"%s\") ***\n", filename);
+    strcpy(fn,filename);
+    int len = strlen(fn)-1;
+    for (i=len; i>=0; i--) {
+        if (fn[i] == '/' || fn[i] == '\\') {
+            break;
+        }
+    }
     strcpy(fn+i+1,"standard.bnk");
     bnk_filename = fn;
-    delete [] fn;
-    AdPlug_LogWrite("bnk_filename = \"%s\"\n",bnk_filename.c_str());
+    AdPlug_LogWrite("bnk_filename = \"%s\"\n",bnk_filename);
 
     rol_header = new SRolHeader;
     memset( rol_header, 0, sizeof(SRolHeader) );
@@ -157,27 +169,27 @@ bool CrolPlayer::load(const std::string &filename, const CFileProvider &fp)
 
     rewind( 0 );
     AdPlug_LogWrite("--- CrolPlayer::load ---\n");
+
     return true;
 }
 //---------------------------------------------------------
 bool CrolPlayer::update()
 {
-    if( mNextTempoEvent < mTempoEvents.size() &&
+    if( mNextTempoEvent < n_tempo_events &&
         mTempoEvents[mNextTempoEvent].time == mCurrTick )
     {
         SetRefresh( mTempoEvents[mNextTempoEvent].multiplier );
         ++mNextTempoEvent;
     }
 
-    TVoiceData::iterator curr = voice_data.begin();
-    TVoiceData::iterator end  = voice_data.end();
-    int voice                 = 0;
 
-    while( curr != end )
+    int curr = 0;
+    int end  = n_voice_data;
+
+    while( curr < end )
     {
-        UpdateVoice( voice, *curr );
+        UpdateVoice( curr, voice_data[curr] );
         ++curr;
-        ++voice;
     }
 
     ++mCurrTick;
@@ -193,12 +205,10 @@ bool CrolPlayer::update()
 //---------------------------------------------------------
 void CrolPlayer::rewind( int subsong )
 {
-    TVoiceData::iterator curr = voice_data.begin();
-    TVoiceData::iterator end  = voice_data.end();
-
-    while( curr != end )
+    int curr = 0;
+    while( curr < n_voice_data )
     {
-        CVoiceData &voice = *curr;
+        CVoiceData &voice = voice_data[curr];
 
         voice.Reset();
         ++curr;
@@ -246,23 +256,17 @@ float CrolPlayer::getrefresh()
 //---------------------------------------------------------
 void CrolPlayer::UpdateVoice( int const voice, CVoiceData &voiceData )
 {
-    TNoteEvents const &nEvents = voiceData.note_events;
-
-    if( nEvents.empty() || voiceData.mEventStatus & CVoiceData::kES_NoteEnd )
+    if( !voiceData.n_note_events || (voiceData.mEventStatus & CVoiceData::kES_NoteEnd) )
     {
         return; // no note data to process, don't bother doing anything.
     }
 
-    TInstrumentEvents  &iEvents = voiceData.instrument_events;
-    TVolumeEvents      &vEvents = voiceData.volume_events;
-    TPitchEvents       &pEvents = voiceData.pitch_events;
-
     if( !(voiceData.mEventStatus & CVoiceData::kES_InstrEnd ) &&
-        iEvents[voiceData.next_instrument_event].time == mCurrTick )
+        voiceData.instrument_events[voiceData.next_instrument_event].time == mCurrTick )
     {
-        if( voiceData.next_instrument_event < iEvents.size() )
+        if( voiceData.next_instrument_event < voiceData.n_instrument_events )
         {
-            send_ins_data_to_chip( voice, iEvents[voiceData.next_instrument_event].ins_index );
+            send_ins_data_to_chip( voice, voiceData.instrument_events[voiceData.next_instrument_event].ins_index );
             ++voiceData.next_instrument_event;
         }
         else
@@ -272,11 +276,11 @@ void CrolPlayer::UpdateVoice( int const voice, CVoiceData &voiceData )
     }
 
     if( !(voiceData.mEventStatus & CVoiceData::kES_VolumeEnd ) &&
-        vEvents[voiceData.next_volume_event].time == mCurrTick )
+        voiceData.volume_events[voiceData.next_volume_event].time == mCurrTick )
     {
-      SVolumeEvent const &volumeEvent = vEvents[voiceData.next_volume_event];
+      SVolumeEvent const &volumeEvent = voiceData.volume_events[voiceData.next_volume_event];
 
-        if(  voiceData.next_volume_event < vEvents.size() )
+        if(  voiceData.next_volume_event < voiceData.n_volume_events )
         {
             int const volume = (int)(63.0f*(1.0f - volumeEvent.multiplier));
 
@@ -297,9 +301,9 @@ void CrolPlayer::UpdateVoice( int const voice, CVoiceData &voiceData )
             ++voiceData.current_note;
         }
 
-        if( voiceData.current_note < nEvents.size() )
+        if( voiceData.current_note < voiceData.n_note_events )
         {
-            SNoteEvent const &noteEvent = nEvents[voiceData.current_note];
+            SNoteEvent const &noteEvent = voiceData.note_events[voiceData.current_note];
 
             SetNote( voice, noteEvent.number );
             voiceData.current_note_duration = 0;
@@ -315,11 +319,11 @@ void CrolPlayer::UpdateVoice( int const voice, CVoiceData &voiceData )
     }
 
     if( !(voiceData.mEventStatus & CVoiceData::kES_PitchEnd ) &&
-        pEvents[voiceData.next_pitch_event].time == mCurrTick )
+        voiceData.pitch_events[voiceData.next_pitch_event].time == mCurrTick )
     {
-        if( voiceData.next_pitch_event < pEvents.size() )
+        if( voiceData.next_pitch_event < voiceData.n_pitch_events )
         {
-            SetPitch(voice,pEvents[voiceData.next_pitch_event].variation);
+            SetPitch(voice,voiceData.pitch_events[voiceData.next_pitch_event].variation);
             ++voiceData.next_pitch_event;
         }
         else
@@ -454,7 +458,8 @@ void CrolPlayer::load_tempo_events( binistream *f )
 {
     int16 const num_tempo_events = f->readInt( 2 );
 
-    mTempoEvents.reserve( num_tempo_events );
+    mTempoEvents = new STempoEvent[num_tempo_events];
+    memset (mTempoEvents, 0, sizeof (STempoEvent) * num_tempo_events);
 
     for(int i=0; i<num_tempo_events; ++i)
     {
@@ -462,35 +467,36 @@ void CrolPlayer::load_tempo_events( binistream *f )
 
         event.time       = f->readInt( 2 );
         event.multiplier = f->readFloat( binio::Single );
-        mTempoEvents.push_back( event );
+        mTempoEvents[n_tempo_events++] = event;
     }
 }
 //---------------------------------------------------------
-bool CrolPlayer::load_voice_data( binistream *f, std::string const &bnk_filename, const CFileProvider &fp )
+bool CrolPlayer::load_voice_data( binistream *f, const char *bnk_filename, const CFileProvider &fp )
 {
     SBnkHeader bnk_header;
-    binistream *bnk_file = fp.open( bnk_filename.c_str() );
+    memset (&bnk_header, 0, sizeof (bnk_header));
+    binistream *bnk_file = fp.open( bnk_filename);
 
     if( bnk_file )
     {
         load_bnk_info( bnk_file, bnk_header );
 
         int const numVoices = rol_header->mode ? kNumMelodicVoices : kNumPercussiveVoices;
+        voice_data = new CVoiceData[numVoices];
 
-        voice_data.reserve( numVoices );
         for(int i=0; i<numVoices; ++i)
         {
-            CVoiceData voice;
+            CVoiceData &voice = voice_data[n_voice_data++];
 
             load_note_events( f, voice );
             load_instrument_events( f, voice, bnk_file, bnk_header );
             load_volume_events( f, voice );
             load_pitch_events( f, voice );
 
-            voice_data.push_back( voice );
         }
 
         fp.close(bnk_file);
+        delete[] bnk_header.ins_name_list;
 
         return true;
     }
@@ -506,19 +512,16 @@ void CrolPlayer::load_note_events( binistream *f, CVoiceData &voice )
 
     if( time_of_last_note != 0 )
     {
-        TNoteEvents &note_events = voice.note_events;
         int16 total_duration     = 0;
 
         do
         {
-            SNoteEvent event;
+            SNoteEvent &event = voice.note_events[voice.n_note_events++];
 
             event.number   = f->readInt( 2 );
             event.duration = f->readInt( 2 );
 
             event.number += kSilenceNote; // adding -12
-
-            note_events.push_back( event );
 
             total_duration += event.duration;
         } while( total_duration < time_of_last_note );
@@ -536,21 +539,17 @@ void CrolPlayer::load_instrument_events( binistream *f, CVoiceData &voice,
                                          binistream *bnk_file, SBnkHeader const &bnk_header )
 {
     int16 const number_of_instrument_events = f->readInt( 2 );
-
-    TInstrumentEvents &instrument_events = voice.instrument_events;
-
-    instrument_events.reserve( number_of_instrument_events );
+    voice.instrument_events = new SInstrumentEvent[number_of_instrument_events];
+    memset (voice.instrument_events, 0, sizeof (SInstrumentEvent) * number_of_instrument_events);
 
     for(int i=0; i<number_of_instrument_events; ++i)
     {
-        SInstrumentEvent event;
+        SInstrumentEvent &event = voice.instrument_events[voice.n_instrument_events++];
         event.time = f->readInt( 2 );
         f->readString( event.name, 9 );
 
-	    std::string event_name = event.name;
+	    const char * event_name = event.name;
         event.ins_index = load_rol_instrument( bnk_file, bnk_header, event_name );
-
-        instrument_events.push_back( event );
 
         f->seek( 1+2, binio::Add );
     }
@@ -561,18 +560,14 @@ void CrolPlayer::load_instrument_events( binistream *f, CVoiceData &voice,
 void CrolPlayer::load_volume_events( binistream *f, CVoiceData &voice )
 {
     int16 const number_of_volume_events = f->readInt( 2 );
-
-    TVolumeEvents &volume_events = voice.volume_events;
-
-    volume_events.reserve( number_of_volume_events );
+    voice.volume_events = new SVolumeEvent[number_of_volume_events];
+    memset (voice.volume_events, 0, sizeof (SVolumeEvent) * number_of_volume_events);
 
     for(int i=0; i<number_of_volume_events; ++i)
     {
-        SVolumeEvent event;
+        SVolumeEvent &event = voice.volume_events[voice.n_volume_events++];
         event.time       = f->readInt( 2 );
         event.multiplier = f->readFloat( binio::Single );
-
-        volume_events.push_back( event );
     }
 
     f->seek( 15, binio::Add );
@@ -581,18 +576,14 @@ void CrolPlayer::load_volume_events( binistream *f, CVoiceData &voice )
 void CrolPlayer::load_pitch_events( binistream *f, CVoiceData &voice )
 {
     int16 const number_of_pitch_events = f->readInt( 2 );
-
-    TPitchEvents &pitch_events = voice.pitch_events;
-
-    pitch_events.reserve( number_of_pitch_events );
+    voice.pitch_events = new SPitchEvent[number_of_pitch_events];
+    memset (voice.pitch_events, 0, sizeof (SPitchEvent) * number_of_pitch_events);
 
     for(int i=0; i<number_of_pitch_events; ++i)
     {
-        SPitchEvent event;
+        SPitchEvent &event = voice.pitch_events[voice.n_pitch_events++];
         event.time      = f->readInt( 2 );
         event.variation = f->readFloat( binio::Single );
-
-        pitch_events.push_back( event );
     }
 }
 //---------------------------------------------------------
@@ -610,31 +601,27 @@ bool CrolPlayer::load_bnk_info( binistream *f, SBnkHeader &header )
 
   f->seek( header.abs_offset_of_name_list, binio::Set );
 
-  TInstrumentNames &ins_name_list = header.ins_name_list;
-  ins_name_list.reserve( header.number_of_list_entries_used );
+  header.ins_name_list = new SInstrumentName[header.number_of_list_entries_used];
+  memset (header.ins_name_list, 0, sizeof (SInstrumentName) * header.number_of_list_entries_used);
 
   for(int i=0; i<header.number_of_list_entries_used; ++i)
     {
-      SInstrumentName instrument;
+      SInstrumentName &instrument = header.ins_name_list[header.n_ins_names++];
 
       instrument.index = f->readInt( 2 );
       instrument.record_used = f->readInt(1);
       f->readString( instrument.name, 9 );
-
-      // printf("%s = #%d\n", instrument.name, i );
-
-      ins_name_list.push_back( instrument );
     }
 
-  //std::sort( ins_name_list.begin(), ins_name_list.end(), StringCompare() );
+    // preallocate space for instruments
+    ins_list = new SUsedList[header.number_of_list_entries_used * 2];
+    memset (ins_list, 0, sizeof (SUsedList) * header.number_of_list_entries_used * 2);
 
   return true;
 }
 //---------------------------------------------------------
-int CrolPlayer::load_rol_instrument( binistream *f, SBnkHeader const &header, std::string &name )
+int CrolPlayer::load_rol_instrument( binistream *f, SBnkHeader const &header, const char * name )
 {
-    TInstrumentNames const &ins_name_list = header.ins_name_list;
-
     int const ins_index = get_ins_index( name );
 
     if( ins_index != -1 )
@@ -642,42 +629,41 @@ int CrolPlayer::load_rol_instrument( binistream *f, SBnkHeader const &header, st
         return ins_index;
     }
 
-    typedef TInstrumentNames::const_iterator TInsIter;
-    typedef std::pair<TInsIter, TInsIter>    TInsIterPair;
+    if (n_used_ins >= header.n_ins_names * 2) {
+        AdPlug_LogWrite("*** CrolPlayer::load_rol_instrument out of memory***\n");
+        return -1;
+    }
 
-    TInsIterPair range = std::equal_range( ins_name_list.begin(), 
-                                           ins_name_list.end(), 
-                                           name, 
-                                           StringCompare() );
-
-    if( range.first != range.second )
-    {
-        int const seekOffs = header.abs_offset_of_data + (range.first->index*kSizeofDataRecord);
+    // find instrument struct by name to get file pos
+    int ipos;
+    for (ipos = 0; ipos < header.n_ins_names; ipos++) {
+        if (!stricmp (name, header.ins_name_list[ipos].name)) {
+            break;
+        }
+    }
+    if (ipos < header.n_ins_names && ipos >= 0) {
+        int const seekOffs = header.abs_offset_of_data + (header.ins_name_list[ipos].index*kSizeofDataRecord);
         f->seek( seekOffs, binio::Set );
     }
 
-    SUsedList usedIns;
-    usedIns.name = name;
+    SUsedList &usedIns = ins_list[n_used_ins++];
+    usedIns.name = name; // no strdup, pointing to SInstrumentEvent name
 
-    if( range.first != range.second )
-    {
+    if (ipos < header.n_ins_names && ipos >= 0) {
         read_rol_instrument( f, usedIns.instrument );
     }
-    else
-    {
+    else {
         // set up default instrument data here
         memset( &usedIns.instrument, 0, sizeof(SRolInstrument) );
     }
-    ins_list.push_back( usedIns );
-
-    return ins_list.size()-1;
+    return n_used_ins-1;
 }
 //---------------------------------------------------------
-int CrolPlayer::get_ins_index( std::string const &name ) const
+int CrolPlayer::get_ins_index( const char * const &name ) const
 {
-    for(unsigned int i=0; i<ins_list.size(); ++i)
+    for(unsigned int i=0; i<n_used_ins; ++i)
     {
-        if( stricmp(ins_list[i].name.c_str(), name.c_str()) == 0 )
+        if( stricmp(ins_list[i].name, name) == 0 )
         {
             return i;
         }

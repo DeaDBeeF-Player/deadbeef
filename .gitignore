@@ -20,7 +20,6 @@ stamp-h*
 *.guess
 autom4te.cache
 tags
-deadbeef
 todo.txt
 test
 shots
@@ -36,3 +35,13 @@ m4
 *.lo
 deadbeef.desktop
 .vimrc
+ddbcellrenderertextmultiline.vapi
+ddbequalizer.vapi
+ddbseekbar.vapi
+vala.stamp
+*.tar.bz2
+*.tar.gz
+*.gmo
+POTFILES
+stamp-it
+

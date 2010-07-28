@@ -65,7 +65,7 @@ CPlayer *CbamPlayer::factory(Copl *newopl)
   return new CbamPlayer(newopl);
 }
 
-bool CbamPlayer::load(const std::string &filename, const CFileProvider &fp)
+bool CbamPlayer::load(const char *filename, const CFileProvider &fp)
 {
         binistream *f = fp.open(filename); if(!f) return false;
 	char id[4];

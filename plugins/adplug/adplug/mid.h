@@ -30,18 +30,18 @@ public:
   ~CmidPlayer()
     { if(data) delete [] data; }
 
-  bool load(const std::string &filename, const CFileProvider &fp);
+  bool load(const char *filename, const CFileProvider &fp);
   bool update();
   void rewind(int subsong);
   float getrefresh();
 
-  std::string gettype();
-  std::string gettitle()
-    { return std::string(title); }
-  std::string getauthor()
-    { return std::string(author); }
-  std::string getdesc()
-    { return std::string(remarks); }
+  const char * gettype();
+  const char * gettitle()
+    { return title; }
+  const char * getauthor()
+    { return author; }
+  const char * getdesc()
+    { return remarks; }
   unsigned int getinstruments()
     { return tins; }
   unsigned int getsubsongs()
@@ -95,7 +95,7 @@ public:
   int type,tins,stins;
 
  private:
-  bool load_sierra_ins(const std::string &fname, const CFileProvider &fp);
+  bool load_sierra_ins(const char *fname, const CFileProvider &fp);
   void midiprintf(const char *format, ...);
   unsigned char datalook(long pos);
   unsigned long getnexti(unsigned long num);

@@ -178,15 +178,15 @@ unsigned long CmidPlayer::getval()
 	return(v);
 }
 
-bool CmidPlayer::load_sierra_ins(const std::string &fname, const CFileProvider &fp)
+bool CmidPlayer::load_sierra_ins(const char *fname, const CFileProvider &fp)
 {
     long i,j,k,l;
     unsigned char ins[28];
     char *pfilename;
     binistream *f;
 
-    pfilename = (char *)malloc(fname.length()+9);
-    strcpy(pfilename,fname.c_str());
+    pfilename = (char *)malloc(strlen (fname)+9);
+    strcpy(pfilename,fname);
     j=0;
     for(i=strlen(pfilename)-1; i >= 0; i--)
       if(pfilename[i] == '/' || pfilename[i] == '\\') {
@@ -281,7 +281,7 @@ void CmidPlayer::sierra_next_section()
     doing=1;
 }
 
-bool CmidPlayer::load(const std::string &filename, const CFileProvider &fp)
+bool CmidPlayer::load(const char *filename, const CFileProvider &fp)
 {
     binistream *f = fp.open(filename); if(!f) return false;
     int good;
@@ -1089,22 +1089,22 @@ void CmidPlayer::rewind(int subsong)
     midi_fm_reset();
 }
 
-std::string CmidPlayer::gettype()
+const char * CmidPlayer::gettype()
 {
 	switch(type) {
 	case FILE_LUCAS:
-		return std::string("LucasArts AdLib MIDI");
+		return "LucasArts AdLib MIDI";
 	case FILE_MIDI:
-		return std::string("General MIDI");
+		return "General MIDI";
 	case FILE_CMF:
-		return std::string("Creative Music Format (CMF MIDI)");
+		return "Creative Music Format (CMF MIDI)";
 	case FILE_OLDLUCAS:
-		return std::string("Lucasfilm Adlib MIDI");
+		return "Lucasfilm Adlib MIDI";
 	case FILE_ADVSIERRA:
-		return std::string("Sierra On-Line VGA MIDI");
+		return "Sierra On-Line VGA MIDI";
 	case FILE_SIERRA:
-		return std::string("Sierra On-Line EGA MIDI");
+		return "Sierra On-Line EGA MIDI";
 	default:
-		return std::string("MIDI unknown");
+		return "MIDI unknown";
 	}
 }

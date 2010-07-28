@@ -29,7 +29,7 @@
  * Following commands are ignored: Gxy, Hxy, Kxy - &xy
  */
 
-#include <cstring>
+#include <string.h>
 #include "a2m.h"
 
 const unsigned int Ca2mLoader::MAXFREQ = 2000,
@@ -59,7 +59,7 @@ CPlayer *Ca2mLoader::factory(Copl *newopl)
   return new Ca2mLoader(newopl);
 }
 
-bool Ca2mLoader::load(const std::string &filename, const CFileProvider &fp)
+bool Ca2mLoader::load(const char *filename, const CFileProvider &fp)
 {
   binistream *f = fp.open(filename); if(!f) return false;
   char id[10];

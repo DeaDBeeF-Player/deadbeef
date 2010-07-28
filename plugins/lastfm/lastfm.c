@@ -845,12 +845,13 @@ lfm_action_lookup (DB_plugin_action_t *action, DB_playItem_t *it)
     char *command = NULL;
     if (-1 == asprintf (&command, "xdg-open 'http://www.last.fm/music/%s/_/%s'", eartist, etitle))
         return 0;
+    printf ("executing %s\n", command);
     system (command);
     free (command);
 }
 
 static int
-lfm_action_love (DB_playItem_t *it, void *data)
+lfm_action_love (DB_plugin_action_t *act, DB_playItem_t *it)
 {
     printf ("Love starts here\n");
 }
@@ -868,7 +869,7 @@ static DB_plugin_action_t lookup_action = {
     .name = "lfm_lookup",
     .flags = DB_ACTION_SINGLE_TRACK,
     .callback = lfm_action_lookup,
-    .next = &love_action
+    .next = NULL// &love_action
 };
 
 static DB_plugin_action_t *

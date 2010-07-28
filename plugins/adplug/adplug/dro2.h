@@ -41,14 +41,14 @@ class Cdro2Player: public CPlayer
 		Cdro2Player(Copl *newopl);
 		~Cdro2Player();
 
-		bool load(const std::string &filename, const CFileProvider &fp);
+		bool load(const char * filename, const CFileProvider &fp);
 		bool update();
 		void rewind(int subsong);
 		float getrefresh();
 
-		std::string gettype()
+		const char * gettype()
 		{
-			return std::string("DOSBox Raw OPL v2.0");
+			return "DOSBox Raw OPL v2.0";
 		}
 
 	protected:

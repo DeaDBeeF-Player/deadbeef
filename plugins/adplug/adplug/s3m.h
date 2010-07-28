@@ -31,14 +31,14 @@ class Cs3mPlayer: public CPlayer
 
   Cs3mPlayer(Copl *newopl);
 
-  bool load(const std::string &filename, const CFileProvider &fp);
+  bool load(const char *filename, const CFileProvider &fp);
   bool update();
   void rewind(int subsong);
   float getrefresh();
 
-  std::string gettype();
-  std::string gettitle()
-    { return std::string(header.name); };
+  const char * gettype();
+  const char * gettitle()
+    { return header.name; };
 
   unsigned int getpatterns()
     { return header.patnum; };
@@ -54,8 +54,8 @@ class Cs3mPlayer: public CPlayer
     { return speed; };
   unsigned int getinstruments()
     { return header.insnum; };
-  std::string getinstrument(unsigned int n)
-    { return std::string(inst[n].name); };
+  const char * getinstrument(unsigned int n)
+    { return inst[n].name; };
 
  protected:
   struct s3mheader {
@@ -88,6 +88,8 @@ class Cs3mPlayer: public CPlayer
   s3mheader header;
   unsigned char orders[256];
   unsigned char crow,ord,speed,tempo,del,songend,loopstart,loopcnt;
+
+  char filetype[30];
 
  private:
   static const char chnresolv[];

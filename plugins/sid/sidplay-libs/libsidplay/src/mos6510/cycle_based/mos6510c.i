@@ -168,10 +168,15 @@ const char _sidtune_CHRtab[256] =  // CHR$ conversion table (0x01 = no output)
 #define getFlagZ()    (Register_z_Flag == 0)
 #define getFlagC()    (Register_c_Flag != 0)
 
+// c++ exception version
+//#define stealCycle() \
+//    interrupts.delay++; \
+//    throw((int_least8_t) -1);
+
+// longjmp version
 #define stealCycle() \
     interrupts.delay++; \
-    throw((int_least8_t) -1);
-
+    longjmp (jmp_env, -1);
 
 // Handle bus access signals
 void MOS6510::aecSignal (bool state)

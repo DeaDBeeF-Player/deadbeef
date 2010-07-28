@@ -26,13 +26,13 @@
 //
 // Set to 1 to build std::string supporting methods. You need the STL to
 // do this.
-#define BINIO_ENABLE_STRING	1
+#define BINIO_ENABLE_STRING	0
 
 // BINIO_ENABLE_IOSTREAM - Build iostream wrapper classes
 //
 // Set to 1 to build the iostream wrapper classes. You need the standard
 // C++ library to do this.
-#define BINIO_ENABLE_IOSTREAM	1
+#define BINIO_ENABLE_IOSTREAM	0
 
 // BINIO_ISO_STDLIB - Build with ISO C++ standard library compliance
 //

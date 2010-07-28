@@ -56,20 +56,20 @@ aac_sync(const uint8_t *buf, int *channels, int *sample_rate, int *bit_rate, int
 
     int profile_objecttype = (buf[2] & 0xC0) >> 6;
 
-    //const char *profiles[4] = {
-    //    "0 Main profile AAC MAIN",
-    //    "1 Low Complexity profile (LC)AAC LC",
-    //    "2 Scalable Sample Rate profile (SSR)AAC SSR",
-    //    "3 (reserved)AAC LTP"
-    //};
-    //trace ("profile: %s\n", profiles[profile_objecttype]);
+    const char *profiles[4] = {
+        "0 Main profile AAC MAIN",
+        "1 Low Complexity profile (LC)AAC LC",
+        "2 Scalable Sample Rate profile (SSR)AAC SSR",
+        "3 (reserved)AAC LTP"
+    };
+    trace ("profile: %s\n", profiles[profile_objecttype]);
 
     int sample_freq_index = (buf[2] & 0x3C) >> 2;
     if (!aac_sample_rates[sample_freq_index]) {
         //trace ("invalid samplerate\n");
         return 0;
     }
-    //trace ("samplerate %d (#%d)\n", aac_sample_rates[sample_freq_index], sample_freq_index);
+    trace ("samplerate %d (#%d)\n", aac_sample_rates[sample_freq_index], sample_freq_index);
     int private_bit = (buf[2] & 0x02) >> 1;
 
     int channel_conf = ((buf[2] & 0x01) << 2) | ((buf[3] & 0xC0) >> 6);
@@ -77,7 +77,7 @@ aac_sync(const uint8_t *buf, int *channels, int *sample_rate, int *bit_rate, int
         //trace ("invalid channels\n");
         return 0;
     }
-    //trace ("channels %d\n", aac_channels[channel_conf]);
+    trace ("channels %d\n", aac_channels[channel_conf]);
     int orig_copy = (buf[3] & 0x20) >> 5;
     int home = (buf[3] & 0x10) >> 4;
     int copyright_ident_bit = (buf[3] & 0x08) >> 3;
@@ -89,6 +89,7 @@ aac_sync(const uint8_t *buf, int *channels, int *sample_rate, int *bit_rate, int
     }
     int adts_buffer_fullness = ((buf[5] & 0x1F) << 3) | ((buf[6] & 0xFC) >> 2);
     rdb = buf[7] & 0x03;
+    trace ("rdb: %d\n", rdb);
 
     *channels = aac_channels[channel_conf];
     *sample_rate = aac_sample_rates[sample_freq_index];

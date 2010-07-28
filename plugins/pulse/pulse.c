@@ -143,8 +143,11 @@ static int pulse_play(void)
 
 static int pulse_stop(void)
 {
+    float vol = deadbeef->volume_get_amp();
+    deadbeef->volume_set_amp(0.0);
     state = OUTPUT_STATE_STOPPED;
     deadbeef->streamer_reset(1);
+    deadbeef->volume_set_amp(vol);
     return 0;
 }
 

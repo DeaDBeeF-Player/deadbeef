@@ -67,7 +67,7 @@
 #define sint32 signed   long
 #define uint8  unsigned char
 #define uint16 unsigned short
-#define uint32 unsigned long
+#define uint32 unsigned int
 /* signed and unsigned int must be at least 32 bits wide */
 #define sint   signed   int
 #define uint   unsigned int

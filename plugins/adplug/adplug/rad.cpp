@@ -22,7 +22,7 @@
  * some volumes are dropped out
  */
 
-#include <cstring>
+#include <string.h>
 #include "rad.h"
 
 CPlayer *CradLoader::factory(Copl *newopl)
@@ -30,7 +30,7 @@ CPlayer *CradLoader::factory(Copl *newopl)
   return new CradLoader(newopl);
 }
 
-bool CradLoader::load(const std::string &filename, const CFileProvider &fp)
+bool CradLoader::load(const char *filename, const CFileProvider &fp)
 {
   binistream *f = fp.open(filename); if(!f) return false;
   char id[16];

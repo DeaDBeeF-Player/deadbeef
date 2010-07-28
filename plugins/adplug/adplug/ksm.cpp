@@ -40,22 +40,22 @@ CPlayer *CksmPlayer::factory(Copl *newopl)
   return new CksmPlayer(newopl);
 }
 
-bool CksmPlayer::load(const std::string &filename, const CFileProvider &fp)
+bool CksmPlayer::load(const char *filename, const CFileProvider &fp)
 {
   binistream	*f;
   int		i;
-  char		*fn = new char[filename.length() + 9];
+  char		*fn = new char[strlen (filename) + 9];
 
   // file validation section
   if(!fp.extension(filename, ".ksm")) {
     AdPlug_LogWrite("CksmPlayer::load(,\"%s\"): File doesn't have '.ksm' "
-		    "extension! Rejected!\n", filename.c_str());
+		    "extension! Rejected!\n", filename);
     return false;
   }
-  AdPlug_LogWrite("*** CksmPlayer::load(,\"%s\") ***\n", filename.c_str());
+  AdPlug_LogWrite("*** CksmPlayer::load(,\"%s\") ***\n", filename);
 
   // Load instruments from 'insts.dat'
-  strcpy(fn, filename.c_str());
+  strcpy(fn, filename);
   for(i = strlen(fn) - 1; i >= 0; i--)
     if(fn[i] == '/' || fn[i] == '\\')
       break;
@@ -289,12 +289,12 @@ void CksmPlayer::rewind(int subsong)
   nownote = 0;
 }
 
-std::string CksmPlayer::getinstrument(unsigned int n)
+const char * CksmPlayer::getinstrument(unsigned int n)
 {
   if(trchan[n])
-    return std::string(instname[trinst[n]]);
+    return instname[trinst[n]];
   else
-    return std::string();
+    return "";
 }
 
 /*** private methods *************************************/

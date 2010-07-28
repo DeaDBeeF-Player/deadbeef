@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifdef HAVE_CONFIG_H
-#  include <config.h>
+#  include "config.h"
 #endif
 #include <stdlib.h>
 #include <string.h>
@@ -1352,6 +1352,10 @@ pl_insert_file (playItem_t *after, const char *fname, int *pabort, int (*cb)(pla
     return NULL;
 }
 
+static int dirent_alphasort (const struct dirent **a, const struct dirent **b) {
+    return strcmp ((*a)->d_name, (*b)->d_name);
+}
+
 playItem_t *
 pl_insert_dir (playItem_t *after, const char *dirname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
     if (!memcmp (dirname, "file://", 7)) {
@@ -1365,7 +1369,7 @@ pl_insert_dir (playItem_t *after, const char *dirname, int *pabort, int (*cb)(pl
     struct dirent **namelist = NULL;
     int n;
 
-    n = scandir (dirname, &namelist, NULL, alphasort);
+    n = scandir (dirname, &namelist, NULL, dirent_alphasort);
     if (n < 0)
     {
         if (namelist)

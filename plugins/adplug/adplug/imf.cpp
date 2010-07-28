@@ -42,6 +42,7 @@
  */
 
 #include <string.h>
+#include <stdio.h>
 
 #include "imf.h"
 #include "database.h"
@@ -53,7 +54,7 @@ CPlayer *CimfPlayer::factory(Copl *newopl)
   return new CimfPlayer(newopl);
 }
 
-bool CimfPlayer::load(const std::string &filename, const CFileProvider &fp)
+bool CimfPlayer::load(const char *filename, const CFileProvider &fp)
 {
   binistream *f = fp.open(filename); if(!f) return false;
   unsigned long fsize, flsize, mfsize = 0;
@@ -76,8 +77,8 @@ bool CimfPlayer::load(const std::string &filename, const CFileProvider &fp)
 	f->seek(0);	// It's a normal IMF file
     } else {
       // It's a IMF file with header
-      track_name = f->readString('\0');
-      game_name = f->readString('\0');
+      f->readString(track_name, sizeof (track_name), '\0');
+      f->readString(game_name, sizeof (game_name), '\0');
       f->ignore(1);
       mfsize = f->pos() + 2;
     }
@@ -108,9 +109,9 @@ bool CimfPlayer::load(const std::string &filename, const CFileProvider &fp)
   if(fsize && (fsize < flsize - 2 - mfsize)) {
     if(f->readInt(1) == 0x1a) {
       // Adam Nielsen's footer format
-      track_name = f->readString();
-      author_name = f->readString();
-      remarks = f->readString();
+      f->readString(track_name, sizeof (track_name));
+      f->readString(author_name, sizeof (author_name));
+      f->readString(remarks, sizeof (remarks));
     } else {
       // Generic footer
       unsigned long footerlen = flsize - fsize - 2 - mfsize;
@@ -150,45 +151,48 @@ void CimfPlayer::rewind(int subsong)
 	opl->init(); opl->write(1,32);	// go to OPL2 mode
 }
 
-std::string CimfPlayer::gettitle()
+const char * CimfPlayer::gettitle()
 {
-  std::string	title;
+    title[0] = 0;
+    if(track_name[0] && game_name[0]) {
+        snprintf (title, sizeof (title), "%s - %s", game_name, track_name);
+    }
+    else if (track_name[0]) {
+        strcpy (title, track_name);
+    }
+    else if (game_name[0]) {
+        strcpy (title, game_name);
+    }
 
-  title = track_name;
-
-  if(!track_name.empty() && !game_name.empty())
-    title += " - ";
-
-  title += game_name;
-
-  return title;
+    return title;
 }
 
-std::string CimfPlayer::getdesc()
+const char * CimfPlayer::getdesc()
 {
-  std::string	desc;
-
+    desc[0] = 0;
   if(footer)
-    desc = std::string(footer);
+    strcpy (desc, footer);
 
-  if(!remarks.empty() && footer)
-    desc += "\n\n";
-
-  desc += remarks;
+  if(remarks[0] && footer) {
+    strcat (desc, "\n\n");
+    strcat (desc, remarks);
+  }
 
   return desc;
 }
 
 /*** private methods *************************************/
 
-float CimfPlayer::getrate(const std::string &filename, const CFileProvider &fp, binistream *f)
+float CimfPlayer::getrate(const char *filename, const CFileProvider &fp, binistream *f)
 {
+#if 0
   if(db) {	// Database available
     f->seek(0, binio::Set);
     CClockRecord *record = (CClockRecord *)db->search(CAdPlugDatabase::CKey(*f));
     if (record && record->type == CAdPlugDatabase::CRecord::ClockSpeed)
       return record->clock;
   }
+#endif
 
   // Otherwise the database is either unavailable, or there's no entry for this file
   if (fp.extension(filename, ".imf")) return 560.0f;

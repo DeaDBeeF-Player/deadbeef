@@ -38,6 +38,13 @@
 #include <assert.h>
 #include "../../deadbeef.h"
 
+#ifdef TARGET_ANDROID
+int posix_memalign (void **memptr, size_t alignment, size_t size) {
+    *memptr = malloc (size);
+    return *memptr ? 0 : -1;
+}
+#endif
+
 #define ENABLE_DEBUG 0
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }

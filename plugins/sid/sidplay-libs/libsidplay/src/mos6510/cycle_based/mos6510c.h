@@ -71,11 +71,12 @@
 
 #include "sidtypes.h"
 #include "sidendian.h"
-
+#include <setjmp.h>
 
 class MOS6510: public C64Environment, public Event
 {
 private:
+    jmp_buf jmp_env;
     // External signals
     bool aec; /* Address Controller, blocks all */
     bool rdy; /* Bus Access, blocks reads */
@@ -293,9 +294,22 @@ public:
 inline void MOS6510::clock (void)
 {
     int_least8_t i = cycleCount++;
-    try {
+
+// C++ exception version
+//    try {
+//        (this->*procCycle[i]) ();
+//    } catch (int_least8_t delta) {
+//        cycleCount += delta;
+//        m_blocked   = true;
+//        eventContext.cancel (this);
+//    }
+
+    // longjmp version
+    int_least8_t delta = setjmp (jmp_env);
+    if (delta == 0) {
         (this->*procCycle[i]) ();
-    } catch (int_least8_t delta) {
+    }
+    else {
         cycleCount += delta;
         m_blocked   = true;
         eventContext.cancel (this);

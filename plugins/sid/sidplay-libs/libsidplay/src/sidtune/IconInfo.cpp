@@ -37,7 +37,6 @@
 #   include <new>
 #endif
 #include <string.h>
-#include <sstream>
 
 // Amiga Workbench specific structures.
 
@@ -359,12 +358,13 @@ bool SidTune::INFO_fileSupport(const void* dataBuffer, uint_least32_t dataLength
         // Now check all possible keywords.
         if ( SidTuneTools::myStrNcaseCmp(cmpBuf,_sidtune_keyword_address) == 0 )
         {
-            std::string s (cmpBuf + strlen(_sidtune_keyword_address),                                          toolLen - strlen(_sidtune_keyword_address));
-            std::istringstream addrIn(s);
-            info.loadAddr = (uint_least16_t)SidTuneTools::readHex( addrIn );
-            info.initAddr = (uint_least16_t)SidTuneTools::readHex( addrIn );
-            info.playAddr = (uint_least16_t)SidTuneTools::readHex( addrIn );
-            if ( !addrIn )
+            const char *addrIn= cmpBuf + strlen(_sidtune_keyword_address);
+            int len = toolLen - strlen(_sidtune_keyword_address);
+            int pos = 0;
+            info.loadAddr = (uint_least16_t)SidTuneTools::readHex( addrIn, len, pos );
+            info.initAddr = (uint_least16_t)SidTuneTools::readHex( addrIn, len, pos );
+            info.playAddr = (uint_least16_t)SidTuneTools::readHex( addrIn, len, pos );
+            if ( pos >= len )
             {
                 return false;
             }
@@ -372,25 +372,27 @@ bool SidTune::INFO_fileSupport(const void* dataBuffer, uint_least32_t dataLength
         }
         else if ( SidTuneTools::myStrNcaseCmp(cmpBuf,_sidtune_keyword_songs) == 0 )
         {
-            std::string s ( cmpBuf + strlen(_sidtune_keyword_songs),                                          toolLen - strlen(_sidtune_keyword_songs));
-            std::istringstream numIn(s);
-            if ( !numIn )
+            const char *numIn = cmpBuf + strlen(_sidtune_keyword_songs);
+            int len = toolLen - strlen(_sidtune_keyword_songs);
+            int pos = 0;
+            if ( !pos >= len )
             {
                 return false;
             }
-            info.songs = (uint_least16_t)SidTuneTools::readDec( numIn );
-            info.startSong = (uint_least16_t)SidTuneTools::readDec( numIn );
+            info.songs = (uint_least16_t)SidTuneTools::readDec( numIn, len, pos );
+            info.startSong = (uint_least16_t)SidTuneTools::readDec( numIn, len, pos );
             hasSongs = true;
         }
         else if ( SidTuneTools::myStrNcaseCmp(cmpBuf,_sidtune_keyword_speed) == 0 )
         {
-            std::string s (cmpBuf + strlen(_sidtune_keyword_speed),                                            toolLen - strlen(_sidtune_keyword_speed));
-            std::istringstream speedIn (s);
-            if ( !speedIn )
+            const char *speedIn = cmpBuf + strlen(_sidtune_keyword_speed);
+            int len = toolLen - strlen(_sidtune_keyword_speed);
+            int pos = 0;
+            if ( pos >= len )
             {
                 return false;
             }
-            oldStyleSpeed = SidTuneTools::readHex(speedIn);
+            oldStyleSpeed = SidTuneTools::readHex(speedIn, len, pos);
             hasSpeed = true;
         }
         else if ( SidTuneTools::myStrNcaseCmp(cmpBuf,_sidtune_keyword_name) == 0 )

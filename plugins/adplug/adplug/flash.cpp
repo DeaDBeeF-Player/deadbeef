@@ -219,9 +219,9 @@ float CxadflashPlayer::xadplayer_getrefresh()
   return 17.5f;
 }
 
-std::string CxadflashPlayer::xadplayer_gettype()
+const char * CxadflashPlayer::xadplayer_gettype()
 {
-  return std::string("xad: flash player");
+  return "xad: flash player";
 }
 
 unsigned int CxadflashPlayer::xadplayer_getinstruments()

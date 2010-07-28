@@ -491,11 +491,25 @@ void *psf2_start(const char *path, uint8 *buffer, uint32 length)
 	if (s->c->lib[0] != 0)
 	{
 		uint64 tmp_length;
+        char libpath[PATH_MAX];
+        const char *e = path + strlen(path);
+        while (e > path && *e != '/') {
+            e--;
+        }
+        if (*e == '/') {
+            e++;
+            memcpy (libpath, path, e-path);
+            libpath[e-path] = 0;
+            strcat (libpath, s->c->lib);
+        }
+        else {
+            strcpy (libpath, s->c->lib);
+        }
 	
 		#if DEBUG_LOADER	
 		printf("Loading library: %s\n", s->c->lib);
 		#endif
-		if (ao_get_lib(s->c->lib, &s->lib_raw_file, &tmp_length) != AO_SUCCESS)
+		if (ao_get_lib(libpath, &s->lib_raw_file, &tmp_length) != AO_SUCCESS)
 		{
             free (s);
             return NULL;
