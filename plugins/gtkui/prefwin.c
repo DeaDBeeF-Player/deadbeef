@@ -110,24 +110,11 @@ preferences_fill_soundcards (void) {
     }
 }
 
-void
-on_hk_slot_edited (GtkCellRendererText *renderer, gchar *path, gchar *new_text, gpointer user_data) {
-    if (!new_text || !new_text[0]) {
-        return;
-    }
-    GtkListStore *store = GTK_LIST_STORE (user_data);
-    GtkTreePath *treepath = gtk_tree_path_new_from_string (path);
-    GtkTreeIter iter;
-    gtk_tree_model_get_iter (GTK_TREE_MODEL (store), &iter, treepath);
-    gtk_tree_path_free (treepath);
-    gtk_list_store_set (store, &iter, 0, new_text, -1);
-}
-
 static gboolean
 add_hotkey_to_config (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data) {
     int *counter = (int *)data;
     GValue key = {0,}, value = {0,};
-    gtk_tree_model_get_value (model, iter, 0, &key);
+    gtk_tree_model_get_value (model, iter, 2, &key);
     gtk_tree_model_get_value (model, iter, 1, &value);
     const char *skey = g_value_get_string (&key);
     const char *svalue = g_value_get_string (&value);
@@ -138,6 +125,10 @@ add_hotkey_to_config (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter,
     (*counter)++;
     snprintf (conf_value, sizeof (conf_value), "%s: %s", svalue, skey);
     deadbeef->conf_set_str (conf_name, conf_value);
+
+    g_value_unset (&key);
+    g_value_unset (&value);
+
     return FALSE;
 }
 
@@ -152,6 +143,46 @@ hotkeys_apply (GtkTreeModel *model) {
 
         ((DB_hotkeys_plugin_t *)hotkeys)->reset ();
     }
+}
+
+#if 0 // this doesn't work well with combobox cells
+void
+on_hk_slot_edited (GtkCellRendererText *renderer, gchar *path, gchar *new_text, gpointer user_data) {
+    if (!new_text || !new_text[0]) {
+        return;
+    }
+    GtkListStore *store = GTK_LIST_STORE (user_data);
+    GtkTreePath *treepath = gtk_tree_path_new_from_string (path);
+    GtkTreeIter iter;
+    gtk_tree_model_get_iter (GTK_TREE_MODEL (store), &iter, treepath);
+    gtk_tree_path_free (treepath);
+    gtk_list_store_set (store, &iter, 0, new_text, -1);
+}
+#endif
+
+void
+on_hk_slot_changed (GtkCellRendererCombo *combo, gchar *path, GtkTreeIter *new_iter, gpointer user_data) {
+
+    GtkTreeModel *combo_model = NULL;
+    g_object_get (combo, "model", &combo_model, NULL);
+    GValue gtitle = {0,}, gname = {0,};
+    gtk_tree_model_get_value (combo_model, new_iter, 0, &gtitle);
+    gtk_tree_model_get_value (combo_model, new_iter, 1, &gname);
+
+    const char *title = g_value_get_string (&gtitle);
+    const char *name = g_value_get_string (&gname);
+
+    GtkListStore *store = GTK_LIST_STORE (user_data);
+    GtkTreePath *treepath = gtk_tree_path_new_from_string (path);
+    GtkTreeIter iter;
+    gtk_tree_model_get_iter (GTK_TREE_MODEL (store), &iter, treepath);
+    gtk_tree_path_free (treepath);
+
+    gtk_list_store_set (store, &iter, 0, title, 2, name, -1);
+
+    g_value_unset (&gtitle);
+    g_value_unset (&gname);
+    hotkeys_apply (GTK_TREE_MODEL (store));
 }
 
 void
@@ -229,7 +260,6 @@ prefwin_init_theme_colors (void) {
     gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "listview_cursor")), (gtkui_get_listview_cursor_color (&clr), &clr));
 }
 
-
 // this should be in separate plugin
 void
 prefwin_add_hotkeys_tab (GtkWidget *prefwin) {
@@ -284,13 +314,13 @@ prefwin_add_hotkeys_tab (GtkWidget *prefwin) {
     GLADE_HOOKUP_OBJECT (prefwin, removehotkey, "removehotkey");
 
     GtkTreeView *hktree = GTK_TREE_VIEW (lookup_widget (prefwin, "hotkeystree"));
-    GtkListStore *hkstore = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_STRING);
+    GtkListStore *hkstore = gtk_list_store_new (3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
     GtkCellRenderer *rend_hk_slot = gtk_cell_renderer_combo_new ();
 
     g_signal_connect ((gpointer)addhotkey, "clicked", G_CALLBACK (on_addhotkey_clicked), hkstore);
     g_signal_connect ((gpointer)removehotkey, "clicked", G_CALLBACK (on_removehotkey_clicked), hktree);
 
-    // model for hotkey slots
+#if 0
     const char *slots[] = {
         "toggle_pause",
         "play",
@@ -305,20 +335,48 @@ prefwin_add_hotkeys_tab (GtkWidget *prefwin) {
         "toggle_stop_after_current",
         NULL
     };
-    GtkListStore *slots_store = gtk_list_store_new (1, G_TYPE_STRING);
+#endif
+    GtkListStore *slots_store = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_STRING);
+#if 0
     for (int i = 0; slots[i]; i++) {
         GtkTreeIter iter;
         gtk_list_store_append (slots_store, &iter);
         gtk_list_store_set (slots_store, &iter, 0, slots[i], -1);
     }
+#endif
+    // traverse all plugins and collect all exported actions to dropdown
+    // column0: title
+    // column1: name (invisible)
+    DB_plugin_t **plugins = deadbeef->plug_get_list ();
+    for (int i = 0; plugins[i]; i++) {
+        DB_plugin_t *p = plugins[i];
+        if (p->get_actions) {
+            DB_plugin_action_t *actions = p->get_actions (NULL);
+            while (actions) {
+                if (actions->name && actions->title) { // only add actions with both the name and the title
+                    GtkTreeIter iter;
+                    gtk_list_store_append (slots_store, &iter);
+                    gtk_list_store_set (slots_store, &iter, 0, actions->title, 1, actions->name, -1);
+                }
+                else {
+                    fprintf (stderr, "WARNING: action %s/%s from plugin %s is missing name and/or title\n", actions->name, actions->title, p->name);
+                }
+                actions = actions->next;
+            }
+        }
+    }
+
     g_object_set (G_OBJECT (rend_hk_slot), "mode", GTK_CELL_RENDERER_MODE_EDITABLE, NULL);
     g_object_set (G_OBJECT (rend_hk_slot), "has-entry", FALSE, NULL);
     g_object_set (G_OBJECT (rend_hk_slot), "text-column", 0, NULL);
     g_object_set (G_OBJECT (rend_hk_slot), "model", slots_store, NULL);
     g_object_set (G_OBJECT (rend_hk_slot), "editable", TRUE, NULL);
 
-    g_signal_connect ((gpointer)rend_hk_slot, "edited",
-            G_CALLBACK (on_hk_slot_edited),
+//    g_signal_connect ((gpointer)rend_hk_slot, "edited",
+//            G_CALLBACK (on_hk_slot_edited),
+//            hkstore);
+    g_signal_connect ((gpointer)rend_hk_slot, "changed",
+            G_CALLBACK (on_hk_slot_changed),
             hkstore);
 
     GtkCellRenderer *rend_hk_binding = gtk_cell_renderer_accel_new ();
@@ -334,7 +392,11 @@ prefwin_add_hotkeys_tab (GtkWidget *prefwin) {
     gtk_tree_view_append_column (hktree, hk_col1);
     gtk_tree_view_append_column (hktree, hk_col2);
 
-    // fetch hotkeys from config
+    // fetch hotkeys from config, and add them to list
+    // model:
+    //   column0: title of action
+    //   column1: key combination
+    //   column2 (hidden): name of action
     DB_conf_item_t *item = deadbeef->conf_find ("hotkeys.", NULL);
     while (item) {
         size_t l = strlen (item->value);
@@ -353,9 +415,36 @@ prefwin_add_hotkeys_tab (GtkWidget *prefwin) {
             command++;
         }
         if (*command) {
-            GtkTreeIter iter;
-            gtk_list_store_append (hkstore, &iter);
-            gtk_list_store_set (hkstore, &iter, 0, command, 1, param, -1);
+            // find action with this name, and add to list
+            DB_plugin_action_t *actions = NULL;
+            DB_plugin_t **plugins = deadbeef->plug_get_list ();
+            for (int i = 0; plugins[i]; i++) {
+                DB_plugin_t *p = plugins[i];
+                if (p->get_actions) {
+                    actions = p->get_actions (NULL);
+                    while (actions) {
+                        if (actions->name && actions->title && !strcasecmp (actions->name, command)) { // only add actions with both the name and the title
+                            GtkTreeIter iter;
+                            gtk_list_store_append (hkstore, &iter);
+                            gtk_list_store_set (hkstore, &iter, 0, actions->title, 1, param, 2, actions->name, -1);
+                            break; // found
+                        }
+                        actions = actions->next;
+                    }
+                    if (actions) {
+                        break;
+                    }
+                }
+            }
+
+            if (!actions) {
+                // not found, add anyway to avoid removal from config file
+                // (might be missing plugin)
+                GtkTreeIter iter;
+                gtk_list_store_append (hkstore, &iter);
+                gtk_list_store_set (hkstore, &iter, 0, command, 1, param, 2, command, -1);
+            }
+
             item = deadbeef->conf_find ("hotkeys.", item);
         }
     }

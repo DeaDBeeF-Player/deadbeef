@@ -101,11 +101,13 @@ shx_callback (Shx_action_t *action, DB_playItem_t *it)
 static DB_plugin_action_t *
 shx_get_actions (DB_playItem_t *it)
 {
+    int is_local = it ? deadbeef->is_local_file (it->fname) : 1;
+
     Shx_action_t *action;
     for (action = actions; action; action = (Shx_action_t *)action->parent.next)
     {
-        if (((action->shx_flags & SHX_ACTION_LOCAL_ONLY) && !deadbeef->is_local_file (it->fname)) ||
-            ((action->shx_flags & SHX_ACTION_REMOTE_ONLY) && deadbeef->is_local_file (it->fname)))
+        if (((action->shx_flags & SHX_ACTION_LOCAL_ONLY) && !is_local) ||
+            ((action->shx_flags & SHX_ACTION_REMOTE_ONLY) && is_local))
             action->parent.flags |= DB_ACTION_DISABLED;
         else
             action->parent.flags &= ~DB_ACTION_DISABLED;
