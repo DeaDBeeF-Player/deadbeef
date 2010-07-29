@@ -182,6 +182,7 @@ format_shell_command (DB_playItem_t *it, const char *format)
         }
     }
     strcpy (res_p, trailing);
+    strcat (res_p, "&");
     return res;
 }
 
