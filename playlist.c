@@ -2436,13 +2436,14 @@ pl_format_elapsed (const char *ret, char *elapsed, int size) {
     return elapsed;
 }
 
-int
-pl_format_title (playItem_t *it, int idx, char *s, int size, int id, const char *fmt) {
+// this function allows to escape special chars substituted for conversions
+// @escape_chars: list of escapable characters terminated with 0, or NULL if none
+static int
+pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s, int size, int id, const char *fmt) {
     char dur[50];
     char elp[50];
     char fno[50];
     char tags[200];
-    char artistalbum[1024];
     const char *duration = NULL;
     const char *elapsed = NULL;
 
@@ -2480,7 +2481,7 @@ pl_format_title (playItem_t *it, int idx, char *s, int size, int id, const char 
         return 0;
     }
     int n = size-1;
-    while (*fmt && n) {
+    while (*fmt && n > 0) {
         if (*fmt != '%') {
             *s++ = *fmt;
             n--;
@@ -2557,6 +2558,9 @@ pl_format_title (playItem_t *it, int idx, char *s, int size, int id, const char 
                     meta++;
                 }
             }
+            else if (*fmt == 'F') {
+                meta = it->fname;
+            }
             else if (*fmt == 'T') {
                 char *t = tags;
                 char *e = tags + sizeof (tags);
@@ -2607,16 +2611,53 @@ pl_format_title (playItem_t *it, int idx, char *s, int size, int id, const char 
 
             if (meta) {
                 const char *value = meta;
-                while (n > 0 && *value) {
-                    *s++ = *value++;
+                if (escape_chars) {
+                    // need space for at least 2 single-quotes
+                    if (n < 2) {
+                        goto error;
+                    }
+                    *s++ = '\'';
                     n--;
+                    while (n > 2 && *value) {
+                        const char *e = escape_chars;
+                        for (; *e; e++) {
+                            if (*value == *e) {
+                                if (n < 2) {
+                                    // doesn't fit into output buffer, return
+                                    // empty string and error code
+                                    *ss = 0;
+                                    return -1;
+                                }
+                                *s++ = '\\';
+                                n--;
+                                *s++ = *value++;
+                                n--;
+                            }
+                            else {
+                                *s++ = *value++;
+                            }
+                        }
+                    }
+                    if (n < 1) {
+                        fprintf (stderr, "pl_format_title_int: got unpredicted state while formatting escaped string. please report a bug.\n");
+                        *ss = 0; // should never happen
+                        return -1; 
+                    }
+                    *s++ = '\'';
+                    n--;
+                }
+                else {
+                    while (n > 0 && *value) {
+                        *s++ = *value++;
+                        n--;
+                    }
                 }
             }
         }
         fmt++;
     }
+error:
     *s = 0;
-
     UNLOCK;
 
     // replace all \n with ;
@@ -2628,6 +2669,16 @@ pl_format_title (playItem_t *it, int idx, char *s, int size, int id, const char 
     }
 
     return size - n - 1;
+}
+
+int
+pl_format_title (playItem_t *it, int idx, char *s, int size, int id, const char *fmt) {
+    return pl_format_title_int (NULL, it, idx, s, size, id, fmt);
+}
+
+int
+pl_format_title_escaped (playItem_t *it, int idx, char *s, int size, int id, const char *fmt) {
+    return pl_format_title_int ("'", it, idx, s, size, id, fmt);
 }
 
 static int pl_sort_is_duration;

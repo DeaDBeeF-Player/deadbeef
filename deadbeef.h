@@ -405,6 +405,8 @@ typedef struct {
        more to come
     */
     int (*pl_format_title) (DB_playItem_t *it, int idx, char *s, int size, int id, const char *fmt);
+    // _escaped version wraps all conversions with '' and replaces every ' in conversions with \'
+    int (*pl_format_title_escaped) (DB_playItem_t *it, int idx, char *s, int size, int id, const char *fmt);
     void (*pl_format_time) (float t, char *dur, int size);
     void (*pl_format_item_display_name) (DB_playItem_t *it, char *str, int len);
 //    void (*pl_set_next) (DB_playItem_t *it, DB_playItem_t *next, int iter);

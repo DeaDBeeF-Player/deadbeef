@@ -40,6 +40,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <limits.h>
 
 #include "../../deadbeef.h"
 
@@ -83,116 +84,17 @@ trim (char* s)
 }
 
 static int
-shell_quote (const char *source, char *dest)
-{
-    const char *sp;
-    char *dp;
-
-    for (sp = source, dp = dest; *sp; sp++, dp++)
-    {
-        if (*sp == '\'')
-        {
-            strcpy (dp, "'\\''");
-            dp += 3;
-        }
-        else
-            *dp = *sp;
-    }
-    *dp = 0;
-}
-
-
-/*
-    format_shell_command function
-    Similarly to db_format_title formats track's string
-    and quotes all fields to make them safe for shell
-    
-    %a, %t, %b, %B, %C, %n, %N, %y, %g, %c, %r are handled. Use double-% to
-    skip field.
-
-
-    Example:
-
-    Format string:
-    echo %a - %t %%a - %%t
-
-    Output:
-    echo 'Blind Faith' - 'Can'\''t Find My Way Home' %a - %t
-*/
-static char*
-format_shell_command (DB_playItem_t *it, const char *format)
-{
-    char *p;
-    const char *trailing = format;
-    const char *field;
-    char *res, *res_p;
-
-    res = res_p = malloc (65536); //FIXME: possible heap corruption
-
-    for (;;)
-    {
-        p = strchr (trailing, '%');
-        if (!p) break;
-
-        switch (*(p+1))
-        {
-            case 'a': field = "artist"; break;
-            case 't': field = "title"; break;
-            case 'b': field = "album"; break;
-            case 'B': field = "band"; break;
-            case 'C': field = "composer"; break;
-            case 'n': field = "track"; break;
-            case 'N': field = "numtracks"; break;
-            case 'y': field = "year"; break;
-            case 'g': field = "genre"; break;
-            case 'c': field = "comment"; break;
-            case 'r': field = "copyright"; break;
-            case 'f': break;
-            default: field = NULL;
-        }
-
-        if (field == NULL)
-        {
-            int l = ((*(p+1) == '%') ? 1 : 0);
-            trace ("field is null; p: %s; p+1: %s; l: %d; trailing: %s; res_p: %s\n", p, p+1, l, trailing, res_p);
-            strncpy (res_p, trailing, p-trailing+l);
-            res_p += (p-trailing+l);
-            trailing = p+l+1;
-            trace ("res: %s; trailing: %s\n", res, res_p, trailing);
-            continue;
-        }
-        else
-        {
-            const char *meta;
-            if (*(p+1) == 'f')
-                meta = it->fname;
-            else
-                meta = deadbeef->pl_find_meta (it, field);
-
-            char quoted [strlen (meta) * 4 + 1]; //Worst case is when all chars are single quote
-            shell_quote (meta, quoted);
-            
-            strncpy (res_p, trailing, p-trailing);
-            res_p += (p-trailing);
-            *res_p++ = '\'';
-            strcpy (res_p, quoted);
-            res_p += strlen (quoted);
-            *res_p++ = '\'';
-            trailing = p+2;
-        }
-    }
-    strcpy (res_p, trailing);
-    strcat (res_p, "&");
-    return res;
-}
-
-static int
 shx_callback (Shx_action_t *action, DB_playItem_t *it)
 {
-    char *cmd = format_shell_command (it, action->shcommand);
-    printf ("%s\n", cmd);
+    char cmd[_POSIX_ARG_MAX];
+    int res = deadbeef->pl_format_title_escaped (it, -1, cmd, sizeof (cmd) - 2, -1, action->shcommand);
+    if (res < 0) {
+        trace ("shellexec: failed to format string for execution (too long?)\n");
+        return -1;
+    }
+    strcat (cmd, "&");
+    trace ("%s\n", cmd);
     system (cmd);
-    free (cmd);
     return 0;
 }
 
