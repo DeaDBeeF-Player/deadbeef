@@ -8,7 +8,6 @@
 #include <gtk/gtk.h>
 #include <stdlib.h>
 #include <string.h>
-#include <gdk/gdk.h>
 
 G_BEGIN_DECLS
 
@@ -57,7 +56,6 @@ struct _DdbCellRendererTextMultilineClass {
 
 
 GType ddb_cell_editable_text_view_get_type (void);
-void ddb_cell_editable_text_view_start_editing (DdbCellEditableTextView* self, GdkEvent* event);
 DdbCellEditableTextView* ddb_cell_editable_text_view_new (void);
 DdbCellEditableTextView* ddb_cell_editable_text_view_construct (GType object_type);
 GType ddb_cell_renderer_text_multiline_get_type (void);
