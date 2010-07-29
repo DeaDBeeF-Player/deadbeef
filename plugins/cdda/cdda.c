@@ -533,7 +533,7 @@ cda_stop (void) {
 }
 
 static int
-cda_action_add_cd (DB_playItem_t *unused, void *data)
+cda_action_add_cd (DB_plugin_action_t *act, DB_playItem_t *it)
 {
     deadbeef->pl_add_file ("all.cda", NULL, NULL);
     //Wtf?
