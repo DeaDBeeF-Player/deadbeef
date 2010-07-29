@@ -48,8 +48,6 @@ static const xkey_t keys[] = {
     #include "keysyms.inc"
 };
 
-//typedef void (*command_func_t) (void *command);
-
 typedef struct command_s {
     int keycode;
     int modifier;
@@ -179,7 +177,7 @@ cmd_invoke_plugin_command (command_t *command)
         action->callback (action, NULL);
         return;
     }
-    //Now we're checking af action is applicable:
+    //Now we're checking if action is applicable:
 
     if (selected_count == 0)
     {
@@ -225,6 +223,9 @@ get_command (const char* command)
         but I assume we use cdecl convention so actual
         parameters count doesn't matter.
     */
+    // +waker:
+    // TODO: export all this commands as standard plugin actions
+    // ignore typecast warnings for now
     if (!strcasecmp (command, "toggle_pause"))
         return deadbeef->playback_pause;
 

@@ -198,8 +198,8 @@ shx_callback (Shx_action_t *action, DB_playItem_t *it)
 static DB_plugin_action_t *
 shx_get_actions (DB_playItem_t *it)
 {
-    Shx_action_t *action = actions;
-    for (action = actions; action; action = action->parent.next)
+    Shx_action_t *action;
+    for (action = actions; action; action = (Shx_action_t *)action->parent.next)
     {
         if (((action->shx_flags & SHX_ACTION_LOCAL_ONLY) && !deadbeef->is_local_file (it->fname)) ||
             ((action->shx_flags & SHX_ACTION_REMOTE_ONLY) && deadbeef->is_local_file (it->fname)))
@@ -207,7 +207,7 @@ shx_get_actions (DB_playItem_t *it)
         else
             action->parent.flags &= ~DB_ACTION_DISABLED;
     }
-    return actions;
+    return (DB_plugin_action_t *)actions;
 }
 
 static int
@@ -271,7 +271,7 @@ shx_start ()
         action->parent.title = strdup (title);
         action->parent.name = strdup (name);
         action->shcommand = strdup (command);
-        action->parent.callback = shx_callback;
+        action->parent.callback = (DB_plugin_action_callback_t)shx_callback;
         action->parent.flags = DB_ACTION_SINGLE_TRACK;
         action->parent.next = NULL;
 
@@ -287,7 +287,7 @@ shx_start ()
             action->parent.flags |= DB_ACTION_ALLOW_MULTIPLE_TRACKS;
 
         if (prev)
-            prev->parent.next = action;
+            prev->parent.next = (DB_plugin_action_t *)action;
         prev = action;
 
         if (!actions)

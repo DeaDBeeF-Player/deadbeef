@@ -22,6 +22,7 @@
 
 #include "gtkui.h"
 #include "../../deadbeef.h"
+#include "support.h"
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
@@ -30,7 +31,6 @@ static void
 on_actionitem_activate (GtkMenuItem     *menuitem,
                            DB_plugin_action_t *action)
 {
-//    action->callback (NULL, action->data);
     action->callback (action, NULL);
 }
 

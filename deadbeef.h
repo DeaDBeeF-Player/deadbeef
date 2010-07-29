@@ -531,6 +531,10 @@ enum {
     DB_ACTION_DISABLED = 1 << 4
 };
 
+struct DB_plugin_action_s;
+
+typedef int (*DB_plugin_action_callback_t) (struct DB_plugin_action_s *action, DB_playItem_t *it);
+
 typedef struct DB_plugin_action_s {
     const char *title;
     const char *name;
@@ -543,7 +547,7 @@ typedef struct DB_plugin_action_s {
      *   or NULL for common action
      * @returns unused
      */
-    int (*callback) (struct DB_plugin_action_s *action, DB_playItem_t *it);
+    DB_plugin_action_callback_t callback;
 
     //we have linked list here
     struct DB_plugin_action_s *next;
