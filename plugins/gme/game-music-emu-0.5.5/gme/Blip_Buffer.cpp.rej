@@ -1,0 +1,11 @@
+--- /home/waker/Downloads/Game_Music_Emu-0.5.2//gme/Blip_Buffer.cpp	2006-12-11 17:13:57.000000000 +0100
++++ .//gme/Blip_Buffer.cpp	2010-05-09 20:40:36.000000000 +0200
+@@ -27,7 +27,7 @@
+ 
+ Blip_Buffer::Blip_Buffer()
+ {
+-	factor_       = LONG_MAX;
++	factor_       = 0x7fffffff;
+ 	offset_       = 0;
+ 	buffer_       = 0;
+ 	buffer_size_  = 0;
