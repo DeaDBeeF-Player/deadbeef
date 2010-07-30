@@ -36,4 +36,7 @@ icon192_DATA=$(iconspath)/192x192/deadbeef.png
 icon256dir=$(prefix)/share/icons/hicolor/256x256/apps
 icon256_DATA=$(iconspath)/256x256/deadbeef.png
 
-EXTRA_DIST = $(icon16_DATA) $(icon24_DATA) $(icon32_DATA) $(icon48_DATA)
+iconscalabledir=$(prefix)/share/icons/hicolor/scalable/apps
+iconscalable_DATA=$(iconspath)/scalable/deadbeef.svg
+
+EXTRA_DIST = $(icon16_DATA) $(icon22_DATA) $(icon24_DATA) $(icon32_DATA) $(icon36_DATA) $(icon48_DATA) $(icon64_DATA) $(icon72_DATA) $(icon96_DATA) $(icon128_DATA) $(icon192_DATA) $(icon256_DATA) $(iconscalable_DATA)
