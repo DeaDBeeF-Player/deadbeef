@@ -504,6 +504,9 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
     // close_send_to_tray
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "pref_close_send_to_tray")), deadbeef->conf_get_int ("close_send_to_tray", 0));
 
+    // hide tray icon
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "hide_tray_icon")), deadbeef->conf_get_int ("gtkui.hide_tray_icon", 0));
+
     // mmb_delete_playlist
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "mmb_delete_playlist")), deadbeef->conf_get_int ("gtkui.mmb_delete_playlist", 0));
 
@@ -727,6 +730,15 @@ on_pref_close_send_to_tray_clicked     (GtkButton       *button,
 {
     int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button));
     deadbeef->conf_set_int ("close_send_to_tray", active);
+    deadbeef->sendmessage (M_CONFIGCHANGED, 0, 0, 0);
+}
+
+void
+on_hide_tray_icon_toggled              (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    int active = gtk_toggle_button_get_active (togglebutton);
+    deadbeef->conf_set_int ("gtkui.hide_tray_icon", active);
     deadbeef->sendmessage (M_CONFIGCHANGED, 0, 0, 0);
 }
 

@@ -220,11 +220,13 @@ update_songinfo (gpointer ctx) {
 
 void
 set_tray_tooltip (const char *text) {
+    if (trayicon) {
 #if (GTK_MINOR_VERSION < 16)
         gtk_status_icon_set_tooltip (trayicon, text);
 #else
         gtk_status_icon_set_tooltip_text (trayicon, text);
 #endif
+    }
 }
 
 gboolean
@@ -510,6 +512,61 @@ gtkui_on_volumechanged (DB_event_t *ev, uintptr_t data) {
     return 0;
 }
 
+static gboolean
+gtkui_update_status_icon (gpointer unused) {
+    int hide_tray_icon = deadbeef->conf_get_int ("gtkui.hide_tray_icon", 0);
+    if (hide_tray_icon && !trayicon) {
+        return FALSE;
+    }
+    if (trayicon) {
+        if (hide_tray_icon) {
+            g_object_set (trayicon, "visible", FALSE, NULL);
+        }
+        else {
+            g_object_set (trayicon, "visible", TRUE, NULL);
+        }
+        return FALSE;
+    }
+    // system tray icon
+    traymenu = create_traymenu ();
+
+    const char *icon_name = deadbeef->conf_get_str ("gtkui.custom_tray_icon", TRAY_ICON);
+    GtkIconTheme *theme = gtk_icon_theme_get_default();
+
+    if (!gtk_icon_theme_has_icon(theme, icon_name))
+        icon_name = "deadbeef";
+    else {
+        GtkIconInfo *icon_info = gtk_icon_theme_lookup_icon(theme, icon_name, 48, GTK_ICON_LOOKUP_USE_BUILTIN);
+        const gboolean icon_is_builtin = gtk_icon_info_get_filename(icon_info) == NULL;
+        gtk_icon_info_free(icon_info);
+        icon_name = icon_is_builtin ? "deadbeef" : icon_name;
+    }
+
+    trayicon = gtk_status_icon_new_from_icon_name(icon_name);
+    if (hide_tray_icon) {
+        g_object_set (trayicon, "visible", FALSE, NULL);
+    }
+
+    set_tray_tooltip ("DeaDBeeF");
+
+#if GTK_MINOR_VERSION <= 14
+    g_signal_connect ((gpointer)trayicon, "activate", G_CALLBACK (on_trayicon_activate), NULL);
+#else
+    g_signal_connect ((gpointer)trayicon, "scroll_event", G_CALLBACK (on_trayicon_scroll_event), NULL);
+    g_signal_connect ((gpointer)trayicon, "button_press_event", G_CALLBACK (on_trayicon_button_press_event), NULL);
+#endif
+    g_signal_connect ((gpointer)trayicon, "popup_menu", G_CALLBACK (on_trayicon_popup_menu), NULL);
+
+    return FALSE;
+}
+
+static void
+gtkui_hide_status_icon () {
+    if (trayicon) {
+        g_object_set (trayicon, "visible", FALSE, NULL);
+    }
+}
+
 static int
 gtkui_on_configchanged (DB_event_t *ev, uintptr_t data) {
     // order and looping
@@ -534,6 +591,9 @@ gtkui_on_configchanged (DB_event_t *ev, uintptr_t data) {
     // stop after current
     int stop_after_current = deadbeef->conf_get_int ("playlist.stop_after_current", 0);
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "stop_after_current")), stop_after_current ? TRUE : FALSE);
+
+    // tray icon
+    g_idle_add (gtkui_update_status_icon, NULL);
 
     return 0;
 }
@@ -808,33 +868,6 @@ gtkui_thread (void *ctx) {
     gtk_disable_setlocale ();
     gtk_init (&argc, (char ***)&argv);
 
-    // system tray icon
-    traymenu = create_traymenu ();
-
-    const char *icon_name = deadbeef->conf_get_str ("gtkui.custom_tray_icon", TRAY_ICON);
-    GtkIconTheme *theme = gtk_icon_theme_get_default();
-
-    if (!gtk_icon_theme_has_icon(theme, icon_name))
-        icon_name = "deadbeef";
-    else {
-        GtkIconInfo *icon_info = gtk_icon_theme_lookup_icon(theme, icon_name, 48, GTK_ICON_LOOKUP_USE_BUILTIN);
-        const gboolean icon_is_builtin = gtk_icon_info_get_filename(icon_info) == NULL;
-        gtk_icon_info_free(icon_info);
-        icon_name = icon_is_builtin ? "deadbeef" : icon_name;
-    }
-
-    trayicon = gtk_status_icon_new_from_icon_name(icon_name);
-
-    set_tray_tooltip ("DeaDBeeF");
-    //gtk_status_icon_set_title (GTK_STATUS_ICON (trayicon), "DeaDBeeF");
-#if GTK_MINOR_VERSION <= 14
-    g_signal_connect ((gpointer)trayicon, "activate", G_CALLBACK (on_trayicon_activate), NULL);
-#else
-    g_signal_connect ((gpointer)trayicon, "scroll_event", G_CALLBACK (on_trayicon_scroll_event), NULL);
-    g_signal_connect ((gpointer)trayicon, "button_press_event", G_CALLBACK (on_trayicon_button_press_event), NULL);
-#endif
-    g_signal_connect ((gpointer)trayicon, "popup_menu", G_CALLBACK (on_trayicon_popup_menu), NULL);
-
     mainwin = create_mainwin ();
     gtkpl_init ();
 
@@ -941,6 +974,7 @@ gtkui_thread (void *ctx) {
     eq_window_destroy ();
     trkproperties_destroy ();
     progress_destroy ();
+    gtkui_hide_status_icon ();
     gtk_widget_destroy (mainwin);
     gtk_widget_destroy (searchwin);
     gdk_threads_leave ();
