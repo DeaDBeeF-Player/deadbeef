@@ -17,6 +17,7 @@ License along with this module; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 
 #include "blargg_source.h"
+#include <stdio.h>
 
 long const spectrum_clock = 3546900;
 long const cpc_clock      = 2000000;
@@ -212,6 +213,10 @@ blargg_err_t Ay_Emu::start_track_( int track )
 		//debug_printf( "addr: $%04X, len: $%04X\n", addr, len );
 		if ( addr < ram_start && addr >= 0x400 ) // several tracks use low data
 			debug_printf( "Block addr in ROM\n" );
+
+		if (!in) {
+            return "NULL in pointer\n";
+        }
 		memcpy( mem.ram + addr, in, len );
 		
 		if ( file.end - blocks < 8 )
