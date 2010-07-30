@@ -838,13 +838,8 @@ gtkui_thread (void *ctx) {
     mainwin = create_mainwin ();
     gtkpl_init ();
 
-    GdkPixbuf *mainwin_icon_pixbuf;
-    mainwin_icon_pixbuf = create_pixbuf ("play_24.png");
-    if (mainwin_icon_pixbuf)
-    {
-        gtk_window_set_icon (GTK_WINDOW (mainwin), mainwin_icon_pixbuf);
-        g_object_unref (G_OBJECT (mainwin_icon_pixbuf));
-    }
+    gtk_window_set_icon_name (GTK_WINDOW (mainwin), "deadbeef");
+
     {
         int x = deadbeef->conf_get_int ("mainwin.geometry.x", 40);
         int y = deadbeef->conf_get_int ("mainwin.geometry.y", 40);
