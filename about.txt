@@ -28,23 +28,29 @@ Contributors:
     Anton Novikov <tonn.post@gmail.com>
         PulseAudio plugin
 
-    Stas Akimushkin <uncle.lag@gmail.com>
+    Sofias <sofias@radikalismus.com>
         Icon
 
+    Stas Akimushkin <uncle.lag@gmail.com>
+        Original artwork
+
     Viktor Semykin <thesame.ml@gmail.com>
-        Global Hotkeys plugin, CD Audio plugin, Cover Art plugin, lots of patches and suggestions
+        Global Hotkeys, CD Audio, Cover Art, ShellExec plugins, lots of patches and suggestions
+
+    These people sent patches or helped with testing, distribution, or in other ways:
     
-    Alex Dedul <rotmer@gmail.com>
-    David Bryant <david@wavpack.com>
-    Derreck <sarumyanxxl@users.sourceforge.net>
-    Igor Murzov <igor@gplsoft.org>
-    Igor Rudchenko <igor@thinkpads.net>
-    Kryksyh <druid@foobar2000.ru>
-    Serghey Kotlyarov <shadowsbrother@gmail.com>
-    Themaister <maister@archlinux.us>
-    Veniamin Gvozdikov <g.veniamin@googlemail.com>
+        Alex Dedul <rotmer@gmail.com>
+        David Bryant <david@wavpack.com>
+        Derreck <sarumyanxxl@users.sourceforge.net>
+        Igor Murzov <igor@gplsoft.org>
+        Igor Rudchenko <igor@thinkpads.net>
+        Jan D. Behrens <zykure@web.de>
+        Kryksyh <druid@foobar2000.ru>
+        Serghey Kotlyarov <shadowsbrother@gmail.com>
+        Themaister <maister@archlinux.us>
+        Veniamin Gvozdikov <g.veniamin@googlemail.com>
 
-
+    If you think your name is missing here, or needs to be removed, please send an email to Alexey Yakovenko <waker@users.sf.net>
 
 Special Thanks To:
 
@@ -63,7 +69,7 @@ http://dumb.sf.net
 Copyright © 2001-2005 Ben Davis, Robert J Ohannessian and Julien Cugniere.
 
 
-Game_Music_Emu Version 0.5.2
+Game_Music_Emu Version 0.5.5
 http://code.google.com/p/game-music-emu
 Copyright © 2003-2006 Shay Green.
 
