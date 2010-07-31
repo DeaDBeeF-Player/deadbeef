@@ -144,7 +144,12 @@ cvorbis_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     ogg_info_t *info = (ogg_info_t *)_info;
     info->info.file = NULL;
     info->vi = NULL;
-    info->cur_bit_stream = it->tracknum;
+    if (it->endsample > 0) {
+        info->cur_bit_stream = -1;
+    }
+    else {
+        info->cur_bit_stream = it->tracknum;
+    }
     info->ptrack = it;
     deadbeef->pl_item_ref (it);
 
