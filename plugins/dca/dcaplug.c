@@ -377,16 +377,6 @@ dts_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     }
 
     _info->plugin = &plugin;
-
-    if (it->endsample > 0) {
-        info->startsample = it->startsample;
-        info->endsample = it->endsample;
-        plugin.seek_sample (_info, 0);
-    }
-    else {
-        info->startsample = 0;
-        info->endsample = totalsamples-1;
-    }
     info->gain = 1;
     info->bufptr = info->buf;
     info->bufpos = info->buf + HEADER_SIZE;
@@ -408,6 +398,16 @@ dts_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     _info->channels = channels_multi (info->flags);
     _info->samplerate = info->sample_rate;
+
+    if (it->endsample > 0) {
+        info->startsample = it->startsample;
+        info->endsample = it->endsample;
+        plugin.seek_sample (_info, 0);
+    }
+    else {
+        info->startsample = 0;
+        info->endsample = totalsamples-1;
+    }
 
     trace ("dca_init: nchannels: %d, samplerate: %d\n", _info->channels, _info->samplerate);
     return 0;
@@ -488,6 +488,7 @@ dts_seek_sample (DB_fileinfo_t *_info, int sample) {
     ddb_dca_state_t *info = (ddb_dca_state_t *)_info;
 
     // calculate file offset from framesize / framesamples
+    sample += info->startsample;
     int nframe = sample / info->frame_length;
     int offs = info->frame_byte_size * nframe + info->offset;
     deadbeef->fseek (info->file, offs, SEEK_SET);
@@ -495,7 +496,7 @@ dts_seek_sample (DB_fileinfo_t *_info, int sample) {
     info->skipsamples = sample - nframe * info->frame_length;
 
     info->currentsample = sample;
-    _info->readpos = sample / _info->samplerate;
+    _info->readpos = (float)(sample - info->startsample) / _info->samplerate;
     return 0;
 }
 
