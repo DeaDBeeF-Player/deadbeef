@@ -50,8 +50,8 @@
 //#define trace(...) { fprintf (stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
-static const char * exts[] = { "wav", NULL };
-static const char *filetypes[] = { "DTS WAV", NULL };
+static const char * exts[] = { "wav", "dts", "cpt", NULL };
+static const char *filetypes[] = { "DTS WAV", "DTS", NULL };
 
 enum {
     FT_DTSWAV,
@@ -187,7 +187,7 @@ convert_samples (ddb_dca_state_t *state, int flags)
 
 // returns number of frames decoded
 static int
-dca_decode_data (ddb_dca_state_t *ddb_state, uint8_t * start, int size)
+dca_decode_data (ddb_dca_state_t *ddb_state, uint8_t * start, int size, int probe)
 {
     int n_decoded = 0;
     uint8_t * end = start + size;
@@ -213,6 +213,9 @@ dca_decode_data (ddb_dca_state_t *ddb_state, uint8_t * start, int size)
                         ddb_state->bufptr[0] = ddb_state->bufptr[1];
                     }
                     continue;
+                }
+                else if (probe) {
+                    return length;
                 }
                 ddb_state->bufpos = ddb_state->buf + length;
             }
@@ -360,15 +363,19 @@ dts_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     int totalsamples = -1;
     // WAV format
     if ((info->offset = dts_open_wav (info->file, &fmt, &totalsamples)) == -1) {
-        fprintf (stderr, "dca: unrecognized format in %s\n", it->fname);
-        deadbeef->fclose (info->file);
-        return -1;
+        // try raw DTS @ 48KHz
+        info->offset = 0;
+        totalsamples = -1;
+        info->wavchannels = 2;
+        _info->bps = 16;
+    }
+    else {
+        _info->bps = fmt.wBitsPerSample;
+        _info->channels = fmt.nChannels;
+        info->wavchannels = fmt.nChannels;
+        _info->samplerate = fmt.nSamplesPerSec;
     }
 
-    _info->bps = fmt.wBitsPerSample;
-    _info->channels = fmt.nChannels;
-    info->wavchannels = fmt.nChannels;
-    _info->samplerate = fmt.nSamplesPerSec;
     _info->plugin = &plugin;
 
     if (it->endsample > 0) {
@@ -392,11 +399,12 @@ dts_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     // prebuffer 1st piece, and get decoded samplerate and nchannels
     uint8_t buffer[BUFFER_SIZE];
     size_t rd = deadbeef->fread (buffer, 1, sizeof (buffer), info->file);
-    int nsamples = dca_decode_data (info, buffer, rd);
-    if (!nsamples) {
-        trace ("dca: failed to decode first batch\n");
+    int len = dca_decode_data (info, buffer, rd, 1);
+    if (!len) {
+        trace ("dca: probe failed\n");
         return -1;
     }
+
     _info->channels = channels_multi (info->flags);
     _info->samplerate = info->sample_rate;
 
@@ -421,10 +429,12 @@ dts_free (DB_fileinfo_t *_info) {
 static int
 dts_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
     ddb_dca_state_t *info = (ddb_dca_state_t *)_info;
-    if (info->currentsample + size / (2 * _info->channels) > info->endsample) {
-        size = (info->endsample - info->currentsample + 1) * 2 * _info->channels;
-        if (size <= 0) {
-            return 0;
+    if (info->endsample >= 0) {
+        if (info->currentsample + size / (2 * _info->channels) > info->endsample) {
+            size = (info->endsample - info->currentsample + 1) * 2 * _info->channels;
+            if (size <= 0) {
+                return 0;
+            }
         }
     }
 
@@ -459,7 +469,7 @@ dts_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
         if (size > 0 && !info->remaining) {
             uint8_t buffer[BUFFER_SIZE];
             size_t rd = deadbeef->fread (buffer, 1, sizeof (buffer), info->file);
-            int nsamples = dca_decode_data (info, buffer, rd);
+            int nsamples = dca_decode_data (info, buffer, rd, 0);
             if (!nsamples) {
                 break;
             }
@@ -503,22 +513,27 @@ dts_insert (DB_playItem_t *after, const char *fname) {
         fprintf (stderr, "dca: failed to open %s\n", fname);
         return NULL;
     }
+    int fsize = deadbeef->fgetlength (fp);
 
     wavfmt_t fmt;
     int totalsamples = -1;
     const char *filetype = NULL;
 
     int offset = 0;
+    double dur = -1;
     // WAV format
     if ((offset = dts_open_wav (fp, &fmt, &totalsamples)) != -1) {
         filetype = filetypes[FT_DTSWAV];
+        dur = (float)totalsamples / fmt.nSamplesPerSec;
     }
     else {
-        fprintf (stderr, "dca: unrecognized format in %s\n", fname);
-        goto error;
+        // try raw DTS @ 48KHz
+        offset = 0;
+        filetype = filetypes[FT_DTS];
+        //fprintf (stderr, "dca: unrecognized format in %s\n", fname);
+        //goto error;
     }
 
-    double dur = (float)totalsamples / fmt.nSamplesPerSec;
 
     // try to decode piece of file -- that seems to be the only way to check
     // it's dts
@@ -534,13 +549,20 @@ dts_insert (DB_playItem_t *after, const char *fname) {
     state.gain = 1;
     state.bufptr = state.buf;
     state.bufpos = state.buf + HEADER_SIZE;
-    int dca_frames = dca_decode_data (&state, buffer, size);
+
+    int len = dca_decode_data (&state, buffer, size, 1);
 
     dca_free (state.state);
-    trace ("dca: got %d dca frames", dca_frames);
-    if (!dca_frames) {
+    if (!len) {
         trace ("dca: doesn't seem to be a DTS stream\n");
         goto error;
+    }
+    trace ("dca stream info: len=%d, samplerate=%d, bitrate=%d, framelength=%d\n", len, state.sample_rate, state.bit_rate, state.frame_length);
+
+    // calculate duration
+    if (dur < 0) {
+        totalsamples = fsize / len * state.frame_length;
+        dur = (float)totalsamples / state.sample_rate;
     }
 
     DB_playItem_t *it = deadbeef->pl_item_alloc ();
@@ -553,7 +575,7 @@ dts_insert (DB_playItem_t *after, const char *fname) {
 
     // embedded cue
     DB_playItem_t *cue = NULL;
-    cue  = deadbeef->pl_insert_cue (after, it, totalsamples, 48000);
+    cue  = deadbeef->pl_insert_cue (after, it, totalsamples, state.sample_rate);
     if (cue) {
         deadbeef->pl_item_unref (it);
         deadbeef->pl_item_unref (cue);
