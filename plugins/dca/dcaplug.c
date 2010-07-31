@@ -94,6 +94,7 @@ typedef struct {
     int frame_length;
     int flags;
     int bit_rate;
+    int frame_byte_size;
     char output_buffer[OUT_BUFFER_SIZE];
     int remaining;
     int skipsamples;
@@ -404,6 +405,7 @@ dts_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         trace ("dca: probe failed\n");
         return -1;
     }
+    info->frame_byte_size = len;
 
     _info->channels = channels_multi (info->flags);
     _info->samplerate = info->sample_rate;
@@ -486,14 +488,12 @@ static int
 dts_seek_sample (DB_fileinfo_t *_info, int sample) {
     ddb_dca_state_t *info = (ddb_dca_state_t *)_info;
 
-    if (sample >= info->currentsample) {
-        info->skipsamples = sample - info->currentsample;
-    }
-    else {
-        deadbeef->fseek (info->file, info->offset, SEEK_SET);
-        info->remaining = 0;
-        info->skipsamples = sample;
-    }
+    // calculate file offset from framesize / framesamples
+    int nframe = sample / info->frame_length;
+    int offs = info->frame_byte_size * nframe + info->offset;
+    deadbeef->fseek (info->file, offs, SEEK_SET);
+    info->remaining = 0;
+    info->skipsamples = sample - nframe * info->frame_length;
 
     info->currentsample = sample;
     _info->readpos = sample / _info->samplerate;
