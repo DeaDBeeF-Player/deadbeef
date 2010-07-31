@@ -628,7 +628,7 @@ static DB_plugin_action_t action_toggle_pause = {
 };
 
 static DB_plugin_action_t action_play_pause = {
-    .title = "Play/Pause",
+    .title = "Play\\/Pause",
     .name = "play_pause",
     .flags = DB_ACTION_COMMON,
     .callback = action_play_pause_cb,

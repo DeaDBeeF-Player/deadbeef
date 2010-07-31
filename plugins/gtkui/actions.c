@@ -19,6 +19,7 @@
 */
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "gtkui.h"
 #include "../../deadbeef.h"
@@ -50,15 +51,25 @@ add_mainmenu_actions (GtkWidget *mainwin)
 
         for (action = actions; action; action = action->next)
         {
+            char *tmp = NULL;
             if (0 == (action->flags & DB_ACTION_COMMON))
                 continue;
 
-            //We won't add item directly to main menu
-            if (!strchr (action->title, '/'))
+            // 1st check if we have slashes
+            const char *slash = action->title;
+            while (NULL != (slash = strchr (slash, '/'))) {
+                if (slash && slash > action->title && *(slash-1) == '\\') {
+                    slash++;
+                    continue;
+                }
+                break;
+            }
+            if (!slash) {
                 continue;
+            }
 
-            char *tmp;
             char *ptr = tmp = strdup (action->title);
+
             char *prev_title = NULL;
 
             GtkWidget *current = mainwin;
@@ -66,7 +77,13 @@ add_mainmenu_actions (GtkWidget *mainwin)
 
             while (1)
             {
+                // find unescaped forward slash
                 char *slash = strchr (ptr, '/');
+                if (slash && slash > ptr && *(slash-1) == '\\') {
+                    ptr = slash + 1;
+                    continue;
+                }
+
                 if (!slash)
                 {
                     GtkWidget *actionitem;
@@ -111,6 +128,9 @@ add_mainmenu_actions (GtkWidget *mainwin)
                 }
                 prev_title = ptr;
                 ptr = slash + 1;
+            }
+            if (tmp) {
+                free (tmp);
             }
         }
     }

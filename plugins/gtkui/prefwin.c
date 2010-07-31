@@ -260,6 +260,21 @@ prefwin_init_theme_colors (void) {
     gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "listview_cursor")), (gtkui_get_listview_cursor_color (&clr), &clr));
 }
 
+static void
+unescape_forward_slash (const char *src, char *dst, int size) {
+    char *start = dst;
+    while (*src) {
+        if (dst - start >= size - 1) {
+            break;
+        }
+        if (*src == '\\' && *(src+1) == '/') {
+            src++;
+        }
+        *dst++ = *src++;
+    }
+    *dst = 0;
+}
+
 // this should be in separate plugin
 void
 prefwin_add_hotkeys_tab (GtkWidget *prefwin) {
@@ -320,30 +335,7 @@ prefwin_add_hotkeys_tab (GtkWidget *prefwin) {
     g_signal_connect ((gpointer)addhotkey, "clicked", G_CALLBACK (on_addhotkey_clicked), hkstore);
     g_signal_connect ((gpointer)removehotkey, "clicked", G_CALLBACK (on_removehotkey_clicked), hktree);
 
-#if 0
-    const char *slots[] = {
-        "toggle_pause",
-        "play",
-        "prev",
-        "next",
-        "stop",
-        "play_random",
-        "seek_fwd",
-        "seek_back",
-        "volume_up",
-        "volume_down",
-        "toggle_stop_after_current",
-        NULL
-    };
-#endif
     GtkListStore *slots_store = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_STRING);
-#if 0
-    for (int i = 0; slots[i]; i++) {
-        GtkTreeIter iter;
-        gtk_list_store_append (slots_store, &iter);
-        gtk_list_store_set (slots_store, &iter, 0, slots[i], -1);
-    }
-#endif
     // traverse all plugins and collect all exported actions to dropdown
     // column0: title
     // column1: name (invisible)
@@ -356,7 +348,9 @@ prefwin_add_hotkeys_tab (GtkWidget *prefwin) {
                 if (actions->name && actions->title) { // only add actions with both the name and the title
                     GtkTreeIter iter;
                     gtk_list_store_append (slots_store, &iter);
-                    gtk_list_store_set (slots_store, &iter, 0, actions->title, 1, actions->name, -1);
+                    char title[100];
+                    unescape_forward_slash (actions->title, title, sizeof (title));
+                    gtk_list_store_set (slots_store, &iter, 0, title, 1, actions->name, -1);
                 }
                 else {
                     fprintf (stderr, "WARNING: action %s/%s from plugin %s is missing name and/or title\n", actions->name, actions->title, p->name);
@@ -426,7 +420,9 @@ prefwin_add_hotkeys_tab (GtkWidget *prefwin) {
                         if (actions->name && actions->title && !strcasecmp (actions->name, command)) { // only add actions with both the name and the title
                             GtkTreeIter iter;
                             gtk_list_store_append (hkstore, &iter);
-                            gtk_list_store_set (hkstore, &iter, 0, actions->title, 1, param, 2, actions->name, -1);
+                            char title[100];
+                            unescape_forward_slash (actions->title, title, sizeof (title));
+                            gtk_list_store_set (hkstore, &iter, 0, title, 1, param, 2, actions->name, -1);
                             break; // found
                         }
                         actions = actions->next;
