@@ -260,7 +260,6 @@ error:
 // returns offset to DTS data in the file, or -1
 static int
 dts_open_wav (DB_FILE *fp, wavfmt_t *fmt, int *totalsamples) {
-    // FIXME: endianess
     char riff[4];
     int offset = -1;
 
