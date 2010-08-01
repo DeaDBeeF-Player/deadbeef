@@ -18,7 +18,7 @@ msgstr ""
 
 #: ../plugins/gtkui/callbacks.c:97
 msgid "Supported sound formats"
-msgstr "Formatos de audio soportados"
+msgstr "Formatos de audio admitidos"
 
 #: ../plugins/gtkui/callbacks.c:108
 msgid "Other files (*)"
@@ -61,19 +61,19 @@ msgstr "Cambios en DeaDBeeF %s"
 
 #: ../plugins/gtkui/ddbtabstrip.c:527
 msgid "Edit playlist"
-msgstr "Editar Lista de Reproducción"
+msgstr "Editar lista de reproducción"
 
 #: ../plugins/gtkui/ddbtabstrip.c:604
 msgid "Rename Playlist"
-msgstr "Renombrar Lista de Reproducción"
+msgstr "Renombrar lista de reproducción"
 
 #: ../plugins/gtkui/ddbtabstrip.c:608
 msgid "Remove Playlist"
-msgstr "Quitar Lista de Reproducción"
+msgstr "Quitar lista de reproducción"
 
 #: ../plugins/gtkui/ddbtabstrip.c:612
 msgid "Add New Playlist"
-msgstr "Nueva Lista de Reproducción"
+msgstr "Nueva lista de reproducción"
 
 #: ../plugins/gtkui/eq.c:113
 msgid "Save DeaDBeeF EQ Preset"
@@ -85,7 +85,7 @@ msgstr "Ajustes del Ec de DeaDBeeF (*.ddbeq)"
 
 #: ../plugins/gtkui/eq.c:151
 msgid "Load DeaDBeeF EQ Preset..."
-msgstr "Cargar Ajustes del Ec"
+msgstr "Cargar Ajustes del Ec de DeaDBeef..."
 
 #: ../plugins/gtkui/eq.c:155
 msgid "DeaDBeeF EQ presets (*.ddbeq)"
@@ -93,11 +93,11 @@ msgstr "Ajustes del Ec de DeaDBeeF (*.ddbeq)"
 
 #: ../plugins/gtkui/eq.c:214
 msgid "Import Foobar2000 EQ Preset..."
-msgstr "Importar Ajustes del Ec de Foobar2000"
+msgstr "Importar Ajustes del Ec de Foobar2000..."
 
 #: ../plugins/gtkui/eq.c:218
 msgid "Foobar2000 EQ presets (*.feq)"
-msgstr "Ajustes de Ec de Foobar2000"
+msgstr "Ajustes de Ec de Foobar2000 (*.feq)"
 
 #: ../plugins/gtkui/eq.c:292
 msgid "Enable"
@@ -105,27 +105,27 @@ msgstr "Activar"
 
 #: ../plugins/gtkui/eq.c:299
 msgid "Zero All"
-msgstr "Resetear Todo"
+msgstr "Restablecer todo"
 
 #: ../plugins/gtkui/eq.c:306
 msgid "Zero Preamp"
-msgstr "Resetear Preamp"
+msgstr "Resablecer preamp"
 
 #: ../plugins/gtkui/eq.c:313
 msgid "Zero Bands"
-msgstr "Resetear Bandas"
+msgstr "Resablecer bandas"
 
 #: ../plugins/gtkui/eq.c:320
 msgid "Save Preset"
-msgstr "Guardar Ajustes"
+msgstr "Guardar ajustes"
 
 #: ../plugins/gtkui/eq.c:327
 msgid "Load Preset"
-msgstr "Cargar Ajustes"
+msgstr "Cargar ajustes"
 
 #: ../plugins/gtkui/eq.c:334
 msgid "Import Foobar2000 Preset"
-msgstr "Importar de Foobar2000"
+msgstr "Importar ajustes de Foobar2000"
 
 #: ../plugins/gtkui/gtkui.c:128
 #, c-format
@@ -140,7 +140,7 @@ msgstr "%d días y %d:%02d:%02d"
 #: ../plugins/gtkui/gtkui.c:140
 #, c-format
 msgid "Stopped | %d tracks | %s total playtime"
-msgstr "Parado | %d pistas | Tiempo total: %s "
+msgstr "Detenido | %d pistas | Tiempo total: %s "
 
 #: ../plugins/gtkui/gtkui.c:150
 msgid "Mono"
@@ -166,7 +166,7 @@ msgstr "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d pistas | Tiempo total: %
 
 #: ../plugins/gtkui/gtkui.c:533
 msgid "Save Playlist As"
-msgstr "Guardar Lista de Reproducción Como..."
+msgstr "Guardar lista de reproducción como..."
 
 #: ../plugins/gtkui/gtkui.c:542 ../plugins/gtkui/gtkui.c:603
 msgid "DeaDBeeF playlist files (*.dbpl)"
@@ -174,16 +174,16 @@ msgstr "Listas de reproducción de DeaDBeeF (*.dbpl)"
 
 #: ../plugins/gtkui/gtkui.c:596
 msgid "Load Playlist"
-msgstr "Cargar Lista de Reproducción"
+msgstr "Cargar lista de reproducción"
 
 #: ../plugins/gtkui/gtkui.c:741
 msgid "New Playlist"
-msgstr "Lista de Reproducción"
+msgstr "Nueva lista de reproducción"
 
 #: ../plugins/gtkui/gtkui.c:744
 #, c-format
 msgid "New Playlist (%d)"
-msgstr "Lista de Reproducción (%d)"
+msgstr "Nueva lista de reproducción (%d)"
 
 #: ../plugins/gtkui/interface.c:140 ../plugins/gtkui/deadbeef.glade.h:138
 msgid "_File"
@@ -261,7 +261,7 @@ msgstr "Quitar"
 
 #: ../plugins/gtkui/interface.c:279 ../plugins/gtkui/deadbeef.glade.h:19
 msgid "Crop"
-msgstr "Cortar"
+msgstr "Recortar"
 
 #: ../plugins/gtkui/interface.c:283 ../plugins/gtkui/deadbeef.glade.h:139
 msgid "_Find"
@@ -318,15 +318,15 @@ msgstr "Repetir"
 
 #: ../plugins/gtkui/interface.c:361 ../plugins/gtkui/deadbeef.glade.h:65
 msgid "Loop All"
-msgstr "Repetir Todo"
+msgstr "Repetir todo"
 
 #: ../plugins/gtkui/interface.c:367 ../plugins/gtkui/deadbeef.glade.h:66
 msgid "Loop Single Song"
-msgstr "Repetir Una Canción"
+msgstr "Repetir una canción"
 
 #: ../plugins/gtkui/interface.c:373 ../plugins/gtkui/deadbeef.glade.h:28
 msgid "Don't Loop"
-msgstr "No Repetir"
+msgstr "No repetir"
 
 #: ../plugins/gtkui/interface.c:379 ../plugins/gtkui/deadbeef.glade.h:101
 msgid "Scroll follows playback"
@@ -338,7 +338,7 @@ msgstr "Seleccionar al cambiar de pista"
 
 #: ../plugins/gtkui/interface.c:388 ../plugins/gtkui/deadbeef.glade.h:113
 msgid "Stop after current"
-msgstr "Parar al terminar la pista actual"
+msgstr "Detener al terminar la pista actual"
 
 #: ../plugins/gtkui/interface.c:395 ../plugins/gtkui/interface.c:402
 #: ../plugins/gtkui/deadbeef.glade.h:140
@@ -438,7 +438,7 @@ msgstr "Título:"
 
 #: ../plugins/gtkui/interface.c:1401 ../plugins/gtkui/deadbeef.glade.h:31
 msgid "Enter new column title here"
-msgstr "Introduce el título de la columna"
+msgstr "Introduzca el título de la columna"
 
 #: ../plugins/gtkui/interface.c:1409 ../plugins/gtkui/deadbeef.glade.h:123
 msgid "Type:"
@@ -483,7 +483,7 @@ msgstr "Pista"
 
 #: ../plugins/gtkui/interface.c:1426
 msgid "Band / Album Artist"
-msgstr "Grupo / Artista"
+msgstr "Banda / Artista"
 
 #: ../plugins/gtkui/interface.c:1427 ../plugins/gtkui/plcommon.c:778
 msgid "Custom"
@@ -538,7 +538,7 @@ msgstr "_Aceptar"
 
 #: ../plugins/gtkui/interface.c:1726 ../plugins/gtkui/deadbeef.glade.h:77
 msgid "Output plugin:"
-msgstr "Plugin de salida:"
+msgstr "Complemento de salida:"
 
 #: ../plugins/gtkui/interface.c:1739 ../plugins/gtkui/deadbeef.glade.h:76
 msgid "Output device:"
