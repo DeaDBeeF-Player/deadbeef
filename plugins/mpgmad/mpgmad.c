@@ -649,6 +649,7 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 //    trace ("mpgmad: nchannels: %d\n", _info->channels);
 
 	mad_stream_init(&info->stream);
+	mad_stream_options (&info->stream, MAD_OPTION_IGNORECRC);
 	mad_frame_init(&info->frame);
 	mad_synth_init(&info->synth);
 
@@ -986,6 +987,7 @@ cmp3_seek_sample (DB_fileinfo_t *_info, int sample) {
                 info->buffer.remaining = 0;
                 info->buffer.decode_remaining = 0;
                 mad_stream_init(&info->stream);
+                mad_stream_options (&info->stream, MAD_OPTION_IGNORECRC);
                 mad_frame_init(&info->frame);
                 mad_synth_init(&info->synth);
 
@@ -1029,6 +1031,7 @@ cmp3_seek_sample (DB_fileinfo_t *_info, int sample) {
         return -1;
     }
 	mad_stream_init(&info->stream);
+	mad_stream_options (&info->stream, MAD_OPTION_IGNORECRC);
 	mad_frame_init(&info->frame);
 	mad_synth_init(&info->synth);
     _info->readpos = (float)(info->buffer.currentsample - info->buffer.startsample) / info->buffer.samplerate;
