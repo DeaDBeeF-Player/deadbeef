@@ -29,8 +29,8 @@
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
-#define trace(...) { fprintf (stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf (stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 static DB_decoder_t plugin;
 DB_functions_t *deadbeef;
@@ -60,6 +60,7 @@ static int
 tta_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     tta_info_t *info = (tta_info_t *)_info;
 
+    trace ("open_tta_file %s\n", it->fname);
     if (open_tta_file (it->fname, &info->tta, 0) != 0) {
         fprintf (stderr, "tta: failed to open %s\n", it->fname);
         return -1;
@@ -85,6 +86,7 @@ tta_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         info->startsample = 0;
         info->endsample = (info->tta.DATALENGTH)-1;
     }
+    trace ("open_tta_file %s success!\n", it->fname);
     return 0;
 }
 
@@ -113,7 +115,7 @@ tta_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
     if (out_channels > 2) {
         out_channels = 2;
     }
-    int sample_size = ((_info->bps >> 3) * out_channels);
+    int sample_size = 2 * out_channels;
 
     while (size > 0) {
         if (info->samples_to_skip > 0 && info->remaining > 0) {
@@ -129,6 +131,7 @@ tta_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
             n = min (n, info->remaining);
             int nn = n;
             char *p = info->buffer;
+            p += (_info->bps >> 3) - 2; // hack: shift buffer, so that we always get 2 most significant bytes (24 bit support)
             while (n > 0) {
                 *((int16_t*)bytes) = (int16_t)(((uint8_t)p[1]<<8) | (uint8_t)p[0]);
                 bytes += 2;
@@ -140,6 +143,7 @@ tta_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
                 size -= sample_size;
                 p += info->tta.NCH * info->tta.BSIZE;
             }
+            p -= (_info->bps >> 3) - 2;
             if (info->remaining > nn) {
                 memmove (info->buffer, p, (info->remaining - nn) * info->tta.BSIZE * info->tta.NCH);
             }
@@ -187,10 +191,10 @@ tta_insert (DB_playItem_t *after, const char *fname) {
         return NULL;
     }
 
-    if (tta.BPS != 16) {
-        fprintf (stderr, "tta: only 16 bit is supported yet, skipped %s\n", fname);
-        return NULL;
-    }
+//    if (tta.BPS != 16) {
+//        fprintf (stderr, "tta: only 16 bit is supported yet, skipped %s\n", fname);
+//        return NULL;
+//    }
 
     int totalsamples = tta.DATALENGTH;
     double dur = tta.LENGTH;
