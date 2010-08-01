@@ -2,12 +2,12 @@
 # Copyright (C) 2009-2001 Alexey Yakovenko <waker@users.sourceforge.net>
 # This file is distributed under the same license as the Deadbeef package.
 # depaz <depazzz@gmail.com>, 2010.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-27 16:47+0200\n"
+"POT-Creation-Date: 2010-08-01 04:20+0000\n"
 "PO-Revision-Date: 2010-05-21 18:34+0300\n"
 "Last-Translator: F.J. de Pablos <depazzz@gmail.com>\n"
 "Language-Team: Spanish\n"
@@ -161,10 +161,8 @@ msgstr "Pausado | "
 
 #: ../plugins/gtkui/gtkui.c:177
 #, c-format
-msgid ""
-"%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
-msgstr ""
-"%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d pistas | Tiempo total: %s"
+msgid "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
+msgstr "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d pistas | Tiempo total: %s"
 
 #: ../plugins/gtkui/gtkui.c:533
 msgid "Save Playlist As"
@@ -510,7 +508,7 @@ msgstr "Derecha"
 
 #: ../plugins/gtkui/interface.c:1459 ../plugins/gtkui/interface.c:3007
 #: ../plugins/gtkui/deadbeef.glade.h:47
-#, fuzzy, no-c-format
+#, no-c-format
 msgid ""
 "Format conversions (start with %):\n"
 "  [a]rtist, [t]itle, al[b]um, [B]and, [C]omposer\n"
@@ -519,11 +517,11 @@ msgid ""
 "  copy[r]ight, [f]ilename, [T]ags\n"
 "Example: %a - %t [%l]"
 msgstr ""
-"Formato (empezar con %):\n"
-"  a: Artista, t: Título, b: Álbum, B: Grupo,\n"
-"  n: Número de pista, N: Pistas totales,\n"
-"  l: Duración, y: Año, g: Género, c: Comentario,\n"
-"  r: Copyright, f: Archivo, T: Etiquetas\n"
+"Conversiones de formato (empezar con %):\n"
+"a: Artista, t: Título,  b: Álbum, B: Banda,  C: Compositor\n"
+"n: Número de pista,  N: Pistas totales,\n"
+"l: Duración,  y: Año,  g: Género, c: Comentario,\n"
+"r: Copyright,  f: Nombre de archivo, T: Etiquetas\n"
 "Ejemplo: %a - %t [%l]"
 
 #: ../plugins/gtkui/interface.c:1488 ../plugins/gtkui/interface.c:2801
@@ -983,9 +981,7 @@ msgstr "   --queue            Añadir archivo(s) a la lista de reproducción\n"
 #: ../main.c:96
 #, c-format
 msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
-msgstr ""
-"   --nowplaying FMT   Mostrar nombre de la pista formateado a través de "
-"stdout\n"
+msgstr "   --nowplaying FMT   Mostrar nombre de la pista formateado a través de stdout\n"
 
 #: ../main.c:97
 #, c-format
@@ -1000,23 +996,20 @@ msgstr ""
 
 #: ../main.c:100
 #, c-format
-msgid ""
-"                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist "
-"- title\"\n"
-msgstr ""
-"                      ej.: --nowplaying \"%%a - %%t\" mostraría \"artista - "
-"título\"\n"
+msgid "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n"
+msgstr "                      ej.: --nowplaying \"%%a - %%t\" mostraría \"artista - título\"\n"
 
-#: ../playlist.c:369 ../playlist.c:2212
+#: ../playlist.c:362 ../playlist.c:2227
 msgid "Default"
 msgstr "Por defecto"
 
 #: ../plugins/gtkui/deadbeef.glade.h:1
-#, fuzzy
 msgid ""
 "2.3 (Recommended)\n"
 "2.4"
-msgstr "2.3 (Recomendada)"
+msgstr ""
+"2.3 (Recomendada)\n"
+"2.4"
 
 #: ../plugins/gtkui/deadbeef.glade.h:25
 msgid ""
@@ -1024,6 +1017,9 @@ msgid ""
 "Track\n"
 "Album"
 msgstr ""
+"Deshabilitar\n"
+"\\Pista\n"
+"Album"
 
 #: ../plugins/gtkui/deadbeef.glade.h:34
 msgid ""
@@ -1039,68 +1035,79 @@ msgid ""
 "Band / Album Artist\n"
 "Custom"
 msgstr ""
+"Número de archivo\n"
+"Reproduciendo\n"
+"Arte del álbum\n"
+"Artista - Álbum\n"
+"Artista\n"
+"Album\n"
+"Título\n"
+"Duración\n"
+"Pista\n"
+"Banda / Artista del álbum\n"
+"Personalizado"
 
 #: ../plugins/gtkui/deadbeef.glade.h:60
-#, fuzzy
 msgid ""
 "Left\n"
 "Right"
-msgstr "Derecha"
+msgstr ""
+"Izquierda\n"
+"Derecha"
 
 #: ../plugins/gtkui/support.c:90 ../plugins/gtkui/support.c:114
 #, c-format
 msgid "Couldn't find pixmap file: %s"
-msgstr ""
+msgstr "imposible encontrar el archivo pixmap: %s"
 
 #: ../plugins/vorbis/vcedit.c:129 ../plugins/vorbis/vcedit.c:155
 msgid "Couldn't get enough memory for input buffering."
-msgstr ""
+msgstr "Imposible obtener suficiente memoria para el búfer de entrada."
 
 #: ../plugins/vorbis/vcedit.c:179 ../plugins/vorbis/vcedit.c:550
 msgid "Error reading first page of Ogg bitstream."
-msgstr ""
+msgstr "Error al leer la primera página del flujo de bits Ogg."
 
 #: ../plugins/vorbis/vcedit.c:185 ../plugins/vorbis/vcedit.c:557
 msgid "Error reading initial header packet."
-msgstr ""
+msgstr "Error al leer el paquete de encabezado inicial."
 
 #: ../plugins/vorbis/vcedit.c:237
 msgid "Couldn't get enough memory to register new stream serial number."
-msgstr ""
+msgstr "Imposible obtener suficiente memoria para registrar el número de serie de un nuevo flujo."
 
 #: ../plugins/vorbis/vcedit.c:505
 msgid "Input truncated or empty."
-msgstr ""
+msgstr "Entrada truncada o vacía."
 
 #: ../plugins/vorbis/vcedit.c:507
 msgid "Input is not an Ogg bitstream."
-msgstr ""
+msgstr "La entrada no es un flujo de bits Ogg."
 
 #: ../plugins/vorbis/vcedit.c:565
 msgid "Ogg bitstream does not contain Vorbis data."
-msgstr ""
+msgstr "El flijo de bits Ogg no contiene datos Vorbis."
 
 #: ../plugins/vorbis/vcedit.c:578
 msgid "EOF before recognised stream."
-msgstr ""
+msgstr "Fin de archivo antes de un flujo reconocido."
 
 #: ../plugins/vorbis/vcedit.c:594
 msgid "Ogg bitstream does not contain a supported data-type."
-msgstr ""
+msgstr "El flujo de bits Ogg no contiene un tipo de datos admitido."
 
 #: ../plugins/vorbis/vcedit.c:638
 msgid "Corrupt secondary header."
-msgstr ""
+msgstr "Encabezado secundario corrupto."
 
 #: ../plugins/vorbis/vcedit.c:659
 msgid "EOF before end of Vorbis headers."
-msgstr ""
+msgstr "Fin de archivo antes del fin de los encabezados Vorbis."
 
 #: ../plugins/vorbis/vcedit.c:834
 msgid "Corrupt or missing data, continuing..."
-msgstr ""
+msgstr "Datos corruptos o incompletos, continuando..."
 
 #: ../plugins/vorbis/vcedit.c:874
-msgid ""
-"Error writing stream to output. Output stream may be corrupted or truncated."
-msgstr ""
+msgid "Error writing stream to output. Output stream may be corrupted or truncated."
+msgstr "Error al escribir el flujo a la salida. El flujo de salida puede estar corrupto o truncado."
