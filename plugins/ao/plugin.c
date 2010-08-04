@@ -177,6 +177,32 @@ aoplug_seek (DB_fileinfo_t *_info, float time) {
     return aoplug_seek_sample (_info, time * _info->samplerate);
 }
 
+static void
+aoplug_add_meta (DB_playItem_t *it, const char *key, const char *value, const char *comment_title) {
+    const char *res = NULL;
+    char tmp[200];
+    // check utf8
+    if (deadbeef->junk_recode (value, strlen (value), tmp, sizeof (tmp), "utf-8") >= 0) {
+        if (key) {
+            deadbeef->pl_add_meta (it, key, value);
+        }
+        res = value;
+    }
+    // check shift-jis
+    if (deadbeef->junk_recode (value, strlen (value), tmp, sizeof (tmp), "SHIFT-JIS") >= 0) {
+        if (key) {
+            deadbeef->pl_add_meta (it, key, tmp);
+        }
+        res = tmp;
+    }
+
+    if (res) {
+        char s[1024];
+        snprintf (s, sizeof (s), "%s%s", comment_title, res);
+        deadbeef->pl_append_meta (it, "comment", s);
+    }
+}
+
 static DB_playItem_t *
 aoplug_insert (DB_playItem_t *after, const char *fname) {
     DB_FILE *fp = deadbeef->fopen (fname);
@@ -267,26 +293,29 @@ aoplug_insert (DB_playItem_t *after, const char *fname) {
                 }
             }
             else if (!strncasecmp (info.title[i], "Name: ", 6) || !strncasecmp (info.title[i], "Song: ", 6)) {
-                deadbeef->pl_add_meta (it, "title", info.info[i]);
+                aoplug_add_meta (it, "title", info.info[i], info.title[i]);
             }
             else if (!strncasecmp (info.title[i], "Game: ", 6)) {
-                deadbeef->pl_add_meta (it, "album", info.info[i]);
+                aoplug_add_meta (it, "album", info.info[i], info.title[i]);
             }
             else if (!strncasecmp (info.title[i], "Artist: ", 8)) {
-                deadbeef->pl_add_meta (it, "artist", info.info[i]);
+                aoplug_add_meta (it, "artist", info.info[i], info.title[i]);
             }
             else if (!strncasecmp (info.title[i], "Copyright: ", 11)) {
-                deadbeef->pl_add_meta (it, "copyright", info.info[i]);
+                aoplug_add_meta (it, "copyright", info.info[i], info.title[i]);
             }
             else if (!strncasecmp (info.title[i], "Year: ", 6)) {
-                deadbeef->pl_add_meta (it, "date", info.info[i]);
+                aoplug_add_meta (it, "date", info.info[i], info.title[i]);
             }
             else if (!strncasecmp (info.title[i], "Year: ", 6)) {
-                deadbeef->pl_add_meta (it, "date", info.info[i]);
+                aoplug_add_meta (it, "date", info.info[i], info.title[i]);
             }
-            char s[1024];
-            snprintf (s, sizeof (s), "%s%s", info.title[i], info.info[i]);
-            deadbeef->pl_append_meta (it, "comment", s);
+            else {
+                aoplug_add_meta (it, NULL, info.info[i], info.title[i]);
+//                char s[1024];
+//                snprintf (s, sizeof (s), "%s%s", info.title[i], info.info[i]);
+//                deadbeef->pl_append_meta (it, "comment", s);
+            }
         }
     }
     deadbeef->pl_set_item_duration (it, duration);
