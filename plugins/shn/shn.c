@@ -26,8 +26,8 @@
 #include "../../deadbeef.h"
 #include "bitshift.h"
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 static DB_decoder_t plugin;
 DB_functions_t *deadbeef;
@@ -306,15 +306,14 @@ shn_init_decoder (shn_fileinfo_t *info) {
     return 0;
 }
 
-int
-shn_init(DB_fileinfo_t *_info, DB_playItem_t *it) {
-    shn_fileinfo_t *info = (shn_fileinfo_t *)_info;
+static void
+shn_init_config (void) {
 
 	shn_cfg.error_output_method = ERROR_OUTPUT_DEVNULL;
 	shn_cfg.error_output_method_config_name = "error_output_method";
-	shn_cfg.seek_tables_path = NULL;
+	shn_cfg.seek_tables_path = "";
 	shn_cfg.seek_tables_path_config_name = "seek_tables_path";
-	shn_cfg.relative_seek_tables_path = NULL;
+	shn_cfg.relative_seek_tables_path = "";
 	shn_cfg.relative_seek_tables_path_config_name = "relative_seek_tables_path";
 	shn_cfg.verbose = 0;
 	shn_cfg.verbose_config_name = "verbose";
@@ -324,6 +323,13 @@ shn_init(DB_fileinfo_t *_info, DB_playItem_t *it) {
 	shn_cfg.load_textfiles_config_name = "load_textfiles";
 	shn_cfg.textfile_extensions = NULL;
 	shn_cfg.textfile_extensions_config_name = "textfile_extensions";
+}
+
+int
+shn_init(DB_fileinfo_t *_info, DB_playItem_t *it) {
+    trace ("shn_init\n");
+    shn_fileinfo_t *info = (shn_fileinfo_t *)_info;
+    shn_init_config ();
 
 // {{{ xmms config reader
 #if 0
@@ -879,6 +885,7 @@ shn_insert (DB_playItem_t *after, const char *fname) {
 		return NULL;
     }
 
+    shn_init_config ();
 	if (!(tmp_file = load_shn(fname))) {
         trace ("shn: load_shn failed\n");
 		return NULL;
