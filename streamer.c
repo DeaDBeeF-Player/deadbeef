@@ -1510,22 +1510,35 @@ streamer_read_async (char *bytes, int size) {
                 bytes_until_next_song = -1;
             }
         }
-        // apply dsp
-        DB_dsp_t **dsp = deadbeef->plug_get_dsp_list ();
-        int srate = p_get_rate ();
-        for (int i = 0; dsp[i]; i++) {
-            if (dsp[i]->enabled ()) {
-                dsp[i]->process_int16 ((int16_t *)bytes, bytesread/4, 2, 16, srate);
+        trace ("streamer: bytesread=%d\n", bytesread);
+        if (bytesread > 0) {
+            // apply dsp
+            DB_dsp_t **dsp = deadbeef->plug_get_dsp_list ();
+            int srate = p_get_rate ();
+            for (int i = 0; dsp[i]; i++) {
+                if (dsp[i]->enabled ()) {
+                    dsp[i]->process_int16 ((int16_t *)bytes, bytesread/4, 2, 16, srate);
+                }
             }
         }
         mutex_unlock (decodemutex);
         bytes += bytesread;
         size -= bytesread;
+        trace ("streamer: size=%d\n", size);
         if (size == 0) {
             return initsize;
         }
         else  {
             // that means EOF
+            trace ("streamer: EOF! buns: %d\n", bytes_until_next_song);
+
+            // in case of decoder error, or EOF while buffering - switch to next song instantly
+            if (bytesread < 0 || (streamer_is_buffering && bytesread == 0)) {
+                streamer_move_to_nextsong (0);
+                bytes_until_next_song = 0;
+                break;
+            }
+
             if (bytes_until_next_song < 0) // don't start streaming new if already draining
             {
                 trace ("finished streaming song, queueing next\n");
