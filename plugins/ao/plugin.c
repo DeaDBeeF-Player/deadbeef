@@ -291,6 +291,7 @@ aoplug_insert (DB_playItem_t *after, const char *fname) {
                 if (sscanf (info.info[i], "%d:%d", &min, &sec) == 2) {
                     duration = min * 60 + sec;
                 }
+                aoplug_add_meta (it, NULL, info.info[i], info.title[i]);
             }
             else if (!strncasecmp (info.title[i], "Name: ", 6) || !strncasecmp (info.title[i], "Song: ", 6)) {
                 aoplug_add_meta (it, "title", info.info[i], info.title[i]);
@@ -305,16 +306,13 @@ aoplug_insert (DB_playItem_t *after, const char *fname) {
                 aoplug_add_meta (it, "copyright", info.info[i], info.title[i]);
             }
             else if (!strncasecmp (info.title[i], "Year: ", 6)) {
-                aoplug_add_meta (it, "date", info.info[i], info.title[i]);
+                aoplug_add_meta (it, "year", info.info[i], info.title[i]);
             }
-            else if (!strncasecmp (info.title[i], "Year: ", 6)) {
-                aoplug_add_meta (it, "date", info.info[i], info.title[i]);
+            else if (!strncasecmp (info.title[i], "Ripper: ", 8)) {
+                aoplug_add_meta (it, "vendor", info.info[i], info.title[i]);
             }
             else {
                 aoplug_add_meta (it, NULL, info.info[i], info.title[i]);
-//                char s[1024];
-//                snprintf (s, sizeof (s), "%s%s", info.title[i], info.info[i]);
-//                deadbeef->pl_append_meta (it, "comment", s);
             }
         }
     }
