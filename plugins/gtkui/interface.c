@@ -1441,7 +1441,7 @@ create_editcolumndlg (void)
   gtk_combo_box_append_text (GTK_COMBO_BOX (align), _("Left"));
   gtk_combo_box_append_text (GTK_COMBO_BOX (align), _("Right"));
 
-  label25 = gtk_label_new (_("Format conversions (start with %):\n  [a]rtist, [t]itle, al[b]um, [B]and, [C]omposer\n  track[n]umber, [N]totaltracks,\n  [l]ength, [y]ear, [g]enre, [c]omment,\n  copy[r]ight, [f]ilename, [T]ags\nExample: %a - %t [%l]"));
+  label25 = gtk_label_new (_("Format conversions (start with %):\n  [a]rtist, [t]itle, al[b]um, [B]and, [C]omposer\n  track[n]umber, [N]totaltracks,\n  [l]ength, [y]ear, [g]enre, [c]omment,\n  copy[r]ight, [f]ilename, [F]ullPathname, [T]ags,\n  [d]irectory, [D]irectoryWithPath\nExample: %a - %t [%l]"));
   gtk_widget_show (label25);
   gtk_box_pack_start (GTK_BOX (vbox14), label25, TRUE, TRUE, 0);
   GTK_WIDGET_SET_FLAGS (label25, GTK_CAN_FOCUS);

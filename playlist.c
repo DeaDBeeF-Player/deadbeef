@@ -2444,6 +2444,7 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
     char elp[50];
     char fno[50];
     char tags[200];
+    char dirname[PATH_MAX];
     const char *duration = NULL;
     const char *elapsed = NULL;
 
@@ -2603,6 +2604,52 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
                     *(t - 3) = 0;
                 }
                 meta = tags;
+            }
+            else if (*fmt == 'd') {
+                // directory
+                const char *end = it->fname + strlen (it->fname) - 1;
+                while (end > it->fname && (*end) != '/') {
+                    end--;
+                }
+                if (*end != '/') {
+                    meta = ""; // got relative path without folder (should not happen)
+                }
+                else {
+                    const char *start = end;
+                    start--;
+                    while (start > it->fname && (*start != '/')) {
+                        start--;
+                    }
+
+                    if (*start == '/') {
+                        start++;
+                    }
+
+                    // copy
+                    int len = end-start;
+                    len = min (len, sizeof (dirname)-1);
+                    strncpy (dirname, start, len);
+                    dirname[len] = 0;
+                    meta = dirname;
+                }
+            }
+            else if (*fmt == 'D') {
+                // directory with path
+                const char *end = it->fname + strlen (it->fname) - 1;
+                while (end > it->fname && (*end) != '/') {
+                    end--;
+                }
+                if (*end != '/') {
+                    meta = ""; // got relative path without folder (should not happen)
+                }
+                else {
+                    // copy
+                    int len = end - it->fname;
+                    len = min (len, sizeof (dirname)-1);
+                    strncpy (dirname, it->fname, len);
+                    dirname[len] = 0;
+                    meta = dirname;
+                }
             }
             else {
                 *s++ = *fmt;

@@ -402,6 +402,10 @@ typedef struct {
        %c comment
        %r copyright
        %T tags
+       %f filename without path
+       %F full pathname/uri
+       %d directory without path (e.g. /home/user/file.mp3 -> user)
+       %D directory name with full path (e.g. /home/user/file.mp3 -> /home/user)
        more to come
     */
     int (*pl_format_title) (DB_playItem_t *it, int idx, char *s, int size, int id, const char *fmt);
