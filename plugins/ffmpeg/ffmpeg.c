@@ -55,20 +55,19 @@
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
 
-static const char * exts[] = { "m4a", "mp+", "mpp", "wma", "shn", "aa3", "oma", "ac3", "vqf", NULL };
+static const char * exts[] = { "m4a", "mp+", "mpp", "wma", "aa3", "oma", "ac3", "vqf", NULL };
 
 enum {
 //    FT_AAC = 0,
     FT_M4A = 0,
     FT_WMA = 1,
-    FT_SHORTEN = 2,
-    FT_ATRAC3 = 3,
-    FT_VQF = 4,
-    FT_TTA = 5,
-    FT_UNKNOWN = 6
+    FT_ATRAC3 = 2,
+    FT_VQF = 3,
+    FT_TTA = 4,
+    FT_UNKNOWN = 5
 };
 
-static const char *filetypes[] = { "M4A", "WMA", "Shorten", "atrac3", "VQF", "TTA", "FFMPEG (unknown)", NULL };
+static const char *filetypes[] = { "M4A", "WMA", "atrac3", "VQF", "TTA", "FFMPEG (unknown)", NULL };
 
 #define FF_PROTOCOL_NAME "deadbeef"
 
@@ -527,9 +526,6 @@ ffmpeg_insert (DB_playItem_t *after, const char *fname) {
 //    }
     else if (!strcasecmp (ext, "wma")) {
         filetype = filetypes[FT_WMA];
-    }
-    else if (!strcasecmp (ext, "shn")) {
-        filetype = filetypes[FT_SHORTEN];
     }
     else if (!strcasecmp (ext, "aa3") || !strcasecmp (ext, "oma") || !strcasecmp (ext, "ac3")) {
         filetype = filetypes[FT_ATRAC3];
