@@ -55,11 +55,10 @@
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
 
-static const char * exts[] = { "m4a", "mp+", "mpp", "wma", "aa3", "oma", "ac3", "vqf", NULL };
+static const char * exts[] = { "m4a", "wma", "aa3", "oma", "ac3", "vqf", NULL };
 
 enum {
-//    FT_AAC = 0,
-    FT_M4A = 0,
+    FT_ALAC = 0,
     FT_WMA = 1,
     FT_ATRAC3 = 2,
     FT_VQF = 3,
@@ -67,7 +66,7 @@ enum {
     FT_UNKNOWN = 5
 };
 
-static const char *filetypes[] = { "M4A", "WMA", "atrac3", "VQF", "TTA", "FFMPEG (unknown)", NULL };
+static const char *filetypes[] = { "ALAC", "WMA", "atrac3", "VQF", "TTA", "FFMPEG (unknown)", NULL };
 
 #define FF_PROTOCOL_NAME "deadbeef"
 
@@ -440,6 +439,7 @@ ffmpeg_read_metadata_internal (DB_playItem_t *it, AVFormatContext *fctx) {
 
 static DB_playItem_t *
 ffmpeg_insert (DB_playItem_t *after, const char *fname) {
+    trace ("ffmpeg_insert %s\n", fname);
     // read information from the track
     // load/process cuesheet if exists
     // insert track into playlist
@@ -474,8 +474,9 @@ ffmpeg_insert (DB_playItem_t *after, const char *fname) {
         if (ctx->codec_type == CODEC_TYPE_AUDIO)
         {
             codec = avcodec_find_decoder(ctx->codec_id);
-            if (codec != NULL)
+            if (codec != NULL && !strcasecmp (codec->name, "alac")) { // only open alac streams
                 break;
+            }
         }
     }
 //    AVStream *stream = fctx->streams[i];
@@ -516,14 +517,8 @@ ffmpeg_insert (DB_playItem_t *after, const char *fname) {
     }
 
     if (!strcasecmp (ext, "m4a")) {
-        filetype = filetypes[FT_M4A];
+        filetype = filetypes[FT_ALAC];
     }
-//    if (!strcasecmp (ext, "aac")) {
-//        filetype = filetypes[FT_AAC];
-//    }
-//    else if (!strcasecmp (ext, "mp4")) {
-//        filetype = filetypes[FT_M4A];
-//    }
     else if (!strcasecmp (ext, "wma")) {
         filetype = filetypes[FT_WMA];
     }
@@ -703,7 +698,7 @@ ffmpeg_read_metadata (DB_playItem_t *it) {
     }
     if (codec == NULL)
     {
-        trace ("ffmpeg can't decode %s\n", fname);
+        trace ("ffmpeg can't decode %s\n", it->fname);
         av_close_input_file(fctx);
         return -1;
     }
