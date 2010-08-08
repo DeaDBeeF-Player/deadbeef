@@ -416,7 +416,7 @@ musepack_stop (void) {
     return 0;
 }
 
-static const char * exts[] = { "mpc", "mpp", NULL };
+static const char * exts[] = { "mpc", "mpp", "mp+", NULL };
 static const char *filetypes[] = { "MusePack", NULL };
 
 // define plugin interface
