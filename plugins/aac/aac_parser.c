@@ -22,8 +22,8 @@
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 static const int aac_sample_rates[16] = {
     96000, 88200, 64000, 48000, 44100, 32000,
@@ -94,6 +94,9 @@ aac_sync(const uint8_t *buf, int *channels, int *sample_rate, int *bit_rate, int
     *channels = aac_channels[channel_conf];
     *sample_rate = aac_sample_rates[sample_freq_index];
     *samples = rdb * 1024;
+    if (*channels <= 0 || *sample_rate <= 0 || *samples <= 0) {
+        return 0;
+    }
     *bit_rate = size * 8 * *sample_rate / *samples;
 
     return size;

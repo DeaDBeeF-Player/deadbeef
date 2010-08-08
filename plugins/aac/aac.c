@@ -31,8 +31,8 @@
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
@@ -86,7 +86,8 @@ aac_fs_seek (void *user_data, uint64_t position) {
 static int
 parse_aac_stream(DB_FILE *fp, int *psamplerate, int *pchannels, float *pduration, int *ptotalsamples)
 {
-    int framepos = deadbeef->ftell (fp);;
+    size_t framepos = deadbeef->ftell (fp);
+    size_t initfpos = framepos;
     int firstframepos = -1;
     int fsize = -1;
     int offs = 0;
@@ -132,6 +133,9 @@ parse_aac_stream(DB_FILE *fp, int *psamplerate, int *pchannels, float *pduration
             memmove (buf, buf+1, sizeof (buf)-1);
             bufsize--;
             trace ("aac_sync fail, framepos: %d\n", framepos);
+            if (deadbeef->ftell (fp) - initfpos > 2000) { // how many is enough to make sure?
+                break;
+            }
             framepos++;
             continue;
         }
@@ -669,7 +673,6 @@ aac_insert (DB_playItem_t *after, const char *fname) {
         ftype = plugin.filetypes[0];
     }
     else {
-
         int skip = deadbeef->junk_get_leading_size (fp);
         if (skip >= 0) {
             deadbeef->fseek (fp, skip, SEEK_SET);
