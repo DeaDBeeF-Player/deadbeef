@@ -44,4 +44,4 @@ vala.stamp
 *.gmo
 POTFILES
 stamp-it
-
+po/Makevars.template
