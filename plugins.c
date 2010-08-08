@@ -44,8 +44,8 @@
 #include "junklib.h"
 #include "vfs.h"
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 #ifndef PATH_MAX
 #define PATH_MAX    1024    /* max # of characters in a path name */
@@ -651,7 +651,6 @@ plug_load_all (void) {
                         break;
                     }
                     d_name[l-3] = 0;
-                    trace ("module name is %s\n", d_name);
                     strcat (d_name, "_load");
                     DB_plugin_t *(*plug_load)(DB_functions_t *api) = dlsym (handle, d_name);
                     if (!plug_load) {
@@ -699,28 +698,28 @@ plug_load_all (void) {
     for (plug = plugins; plug; plug = plug->next) {
         g_plugins[numplugins++] = plug->plugin;
         if (plug->plugin->type == DB_PLUGIN_DECODER) {
-            trace ("found decoder plugin %s\n", plug->plugin->name);
+//            trace ("found decoder plugin %s\n", plug->plugin->name);
             if (numdecoders >= MAX_DECODER_PLUGINS) {
                 break;
             }
             g_decoder_plugins[numdecoders++] = (DB_decoder_t *)plug->plugin;
         }
         else if (plug->plugin->type == DB_PLUGIN_VFS) {
-            trace ("found vfs plugin %s\n", plug->plugin->name);
+//            trace ("found vfs plugin %s\n", plug->plugin->name);
             if (numvfs >= MAX_VFS_PLUGINS) {
                 break;
             }
             g_vfs_plugins[numvfs++] = (DB_vfs_t *)plug->plugin;
         }
         else if (plug->plugin->type == DB_PLUGIN_OUTPUT) {
-            trace ("found output plugin %s\n", plug->plugin->name);
+//            trace ("found output plugin %s\n", plug->plugin->name);
             if (numoutput >= MAX_OUTPUT_PLUGINS) {
                 break;
             }
             g_output_plugins[numoutput++] = (DB_output_t *)plug->plugin;
         }
         else if (plug->plugin->type == DB_PLUGIN_DSP) {
-            trace ("found dsp plugin %s\n", plug->plugin->name);
+//            trace ("found dsp plugin %s\n", plug->plugin->name);
             if (numdsp >= MAX_DSP_PLUGINS) {
                 break;
             }
