@@ -1416,7 +1416,7 @@ ddb_listview_click_selection (DdbListview *ps, int ex, int ey, DdbListviewGroup 
 //   }}}
 // }}}
 void
-ddb_listview_list_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, double time) {
+ddb_listview_list_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, GdkEventType type) {
     // cursor must be set here, but selection must be handled in keyrelease
     int cnt = ps->binding->count ();
     if (cnt == 0) {
@@ -1434,7 +1434,7 @@ ddb_listview_list_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, do
     }
 
     int cursor = ps->binding->cursor ();
-    if (time - ps->clicktime < 0.5
+    if (type == GDK_2BUTTON_PRESS
             && fabs(ps->lastpos[0] - ex) < 3
             && fabs(ps->lastpos[1] - ey) < 3) {
         // doubleclick - play this item
@@ -1449,12 +1449,6 @@ ddb_listview_list_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, do
             }
             return;
         }
-
-        // prevent next click to trigger doubleclick
-        ps->clicktime = time-1;
-    }
-    else {
-        ps->clicktime = time;
     }
 
     int prev = cursor;
@@ -2507,7 +2501,7 @@ ddb_listview_list_button_press_event         (GtkWidget       *widget,
 {
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
     if (event->button == 1) {
-        ddb_listview_list_mouse1_pressed (ps, event->state, event->x, event->y, event->time);
+        ddb_listview_list_mouse1_pressed (ps, event->state, event->x, event->y, event->type);
     }
     else if (event->button == 3) {
         // get item under cursor
