@@ -946,3 +946,7 @@ on_hide_tray_icon_toggled              (GtkToggleButton *togglebutton,
 void
 on_embolden_current_toggled            (GtkToggleButton *togglebutton,
                                         gpointer         user_data);
+
+void
+on_hide_delete_from_disk_toggled       (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);

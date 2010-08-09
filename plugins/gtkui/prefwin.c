@@ -506,6 +506,12 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
     // mmb_delete_playlist
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "mmb_delete_playlist")), deadbeef->conf_get_int ("gtkui.mmb_delete_playlist", 0));
 
+    // embolden current track
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "embolden_current")), deadbeef->conf_get_int ("gtkui.embolden_current_track", 0));
+
+    // hide_delete_from_disk
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "hide_delete_from_disk")), deadbeef->conf_get_int ("gtkui.hide_remove_from_disk", 0));
+
     // override bar colors
     int override = deadbeef->conf_get_int ("gtkui.override_bar_colors", 0);
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (prefwin, "override_bar_colors")), override);
@@ -1240,5 +1246,13 @@ on_embolden_current_toggled            (GtkToggleButton *togglebutton,
     deadbeef->conf_set_int ("gtkui.embolden_current_track", active);
     gtkui_embolden_current_track = active;
     playlist_refresh ();
+}
+
+void
+on_hide_delete_from_disk_toggled       (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (togglebutton));
+    deadbeef->conf_set_int ("gtkui.hide_remove_from_disk", active);
 }
 

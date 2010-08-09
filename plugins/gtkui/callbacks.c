@@ -1043,3 +1043,4 @@ create_seekbar (gchar *widget_name, gchar *string1, gchar *string2,
     return GTK_WIDGET (ddb_seekbar_new ());
 }
 
+

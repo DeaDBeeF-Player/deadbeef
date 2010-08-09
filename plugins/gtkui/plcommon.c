@@ -424,10 +424,14 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
     gtk_container_add (GTK_CONTAINER (playlist_menu), remove2);
     g_object_set_data (G_OBJECT (remove2), "ps", listview);
 
-/*    remove_from_disk = gtk_menu_item_new_with_mnemonic (_("Remove from disk"));*/
-/*    gtk_widget_show (remove_from_disk);*/
-/*    gtk_container_add (GTK_CONTAINER (playlist_menu), remove_from_disk);*/
-/*    g_object_set_data (G_OBJECT (remove_from_disk), "ps", listview);*/
+    int hide_remove_from_disk = deadbeef->conf_get_int ("gtkui.hide_remove_from_disk", 0);
+
+    if (!hide_remove_from_disk) {
+        remove_from_disk = gtk_menu_item_new_with_mnemonic (_("Remove from disk"));
+        gtk_widget_show (remove_from_disk);
+        gtk_container_add (GTK_CONTAINER (playlist_menu), remove_from_disk);
+        g_object_set_data (G_OBJECT (remove_from_disk), "ps", listview);
+    }
 
     separator8 = gtk_separator_menu_item_new ();
     gtk_widget_show (separator8);
@@ -510,9 +514,11 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
     g_signal_connect ((gpointer) remove2, "activate",
             G_CALLBACK (on_remove2_activate),
             NULL);
-/*    g_signal_connect ((gpointer) remove_from_disk, "activate",*/
-/*            G_CALLBACK (on_remove_from_disk_activate),*/
-/*            NULL);*/
+    if (!hide_remove_from_disk) {
+        g_signal_connect ((gpointer) remove_from_disk, "activate",
+                G_CALLBACK (on_remove_from_disk_activate),
+                NULL);
+    }
     g_signal_connect ((gpointer) properties1, "activate",
             G_CALLBACK (main_properties_activate),
             NULL);
