@@ -942,3 +942,7 @@ on_proxypassword_changed               (GtkEditable     *editable,
 void
 on_hide_tray_icon_toggled              (GtkToggleButton *togglebutton,
                                         gpointer         user_data);
+
+void
+on_embolden_current_toggled            (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);

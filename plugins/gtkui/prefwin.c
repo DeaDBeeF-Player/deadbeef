@@ -1231,3 +1231,14 @@ on_prefwin_key_press_event             (GtkWidget       *widget,
     return FALSE;
 }
 
+
+void
+on_embolden_current_toggled            (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (togglebutton));
+    deadbeef->conf_set_int ("gtkui.embolden_current_track", active);
+    gtkui_embolden_current_track = active;
+    playlist_refresh ();
+}
+

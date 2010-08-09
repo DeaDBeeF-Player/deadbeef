@@ -174,6 +174,9 @@ void draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbListview
         draw_set_fg_color (fg);
 
         draw_init_font (GTK_WIDGET (listview)->style);
+        if (gtkui_embolden_current_track && it && it == playing_track) {
+            draw_init_font_bold ();
+        }
         if (calign_right) {
             draw_text (x+5, y + height/2 - draw_get_font_size ()/2 - 2, cwidth-10, 1, text);
         }

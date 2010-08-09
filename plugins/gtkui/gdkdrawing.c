@@ -114,7 +114,20 @@ draw_init_font (GtkStyle *new_font_style) {
         pango_layout_set_font_description (pangolayout, desc);
         pango_ready = 1;
     }
+    else if (new_font_style) {
+        PangoFontDescription *desc = font_style->font_desc;
+        pango_layout_set_font_description (pangolayout, desc);
+    }
 }
+
+void
+draw_init_font_bold (void) {
+    PangoFontDescription *desc = pango_font_description_copy (font_style->font_desc);
+    pango_font_description_set_weight (desc, PANGO_WEIGHT_BOLD);
+    pango_layout_set_font_description (pangolayout, desc);
+    pango_font_description_free(desc);
+}
+
 
 float
 draw_get_font_size (void) {

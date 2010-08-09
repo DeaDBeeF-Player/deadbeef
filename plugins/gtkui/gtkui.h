@@ -48,6 +48,7 @@
 extern DB_functions_t *deadbeef;
 extern GtkWidget *mainwin;
 extern GtkWidget *searchwin;
+extern int gtkui_embolden_current_track;
 
 struct _GSList;
 

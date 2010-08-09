@@ -66,6 +66,8 @@ GtkWidget *traymenu;
 GtkWidget *theme_treeview;
 GtkWidget *theme_button;
 
+int gtkui_embolden_current_track;
+
 #define TRAY_ICON "deadbeef-tray-icon"
 
 // that must be called before gtk_init
@@ -591,6 +593,9 @@ gtkui_on_configchanged (DB_event_t *ev, uintptr_t data) {
     // stop after current
     int stop_after_current = deadbeef->conf_get_int ("playlist.stop_after_current", 0);
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "stop_after_current")), stop_after_current ? TRUE : FALSE);
+
+    // embolden current track
+    gtkui_embolden_current_track = deadbeef->conf_get_int ("gtkui.embolden_current_track", 0);
 
     // tray icon
     g_idle_add (gtkui_update_status_icon, NULL);

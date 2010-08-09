@@ -1559,6 +1559,7 @@ create_prefwin (void)
   GtkWidget *pref_close_send_to_tray;
   GtkWidget *mmb_delete_playlist;
   GtkWidget *hide_tray_icon;
+  GtkWidget *embolden_current;
   GtkWidget *notebook4;
   GtkWidget *vbox21;
   GtkWidget *override_bar_colors;
@@ -1804,6 +1805,10 @@ create_prefwin (void)
   hide_tray_icon = gtk_check_button_new_with_mnemonic (_("Hide system tray icon"));
   gtk_widget_show (hide_tray_icon);
   gtk_box_pack_start (GTK_BOX (vbox9), hide_tray_icon, FALSE, FALSE, 0);
+
+  embolden_current = gtk_check_button_new_with_mnemonic (_("Use bold font for currently playing track"));
+  gtk_widget_show (embolden_current);
+  gtk_box_pack_start (GTK_BOX (vbox9), embolden_current, FALSE, FALSE, 0);
 
   notebook4 = gtk_notebook_new ();
   gtk_widget_show (notebook4);
@@ -2448,6 +2453,9 @@ create_prefwin (void)
   g_signal_connect ((gpointer) hide_tray_icon, "toggled",
                     G_CALLBACK (on_hide_tray_icon_toggled),
                     NULL);
+  g_signal_connect ((gpointer) embolden_current, "toggled",
+                    G_CALLBACK (on_embolden_current_toggled),
+                    NULL);
   g_signal_connect ((gpointer) override_bar_colors, "toggled",
                     G_CALLBACK (on_override_bar_colors_toggled),
                     NULL);
@@ -2592,6 +2600,7 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, pref_close_send_to_tray, "pref_close_send_to_tray");
   GLADE_HOOKUP_OBJECT (prefwin, mmb_delete_playlist, "mmb_delete_playlist");
   GLADE_HOOKUP_OBJECT (prefwin, hide_tray_icon, "hide_tray_icon");
+  GLADE_HOOKUP_OBJECT (prefwin, embolden_current, "embolden_current");
   GLADE_HOOKUP_OBJECT (prefwin, notebook4, "notebook4");
   GLADE_HOOKUP_OBJECT (prefwin, vbox21, "vbox21");
   GLADE_HOOKUP_OBJECT (prefwin, override_bar_colors, "override_bar_colors");
