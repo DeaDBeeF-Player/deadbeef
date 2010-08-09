@@ -298,6 +298,13 @@ on_mainwin_key_press_event             (GtkWidget       *widget,
         // button for that one is not in toolbar anymore, so handle it manually
         deadbeef->sendmessage (M_PLAYRANDOM, 0, 0, 0);
     }
+    else if ((event->state == GDK_MOD1_MASK || event->state == 0) && event->keyval >= GDK_1 && event->keyval <= GDK_9) {
+        int pl = event->keyval - GDK_1;
+        if (pl >= 0 && pl < deadbeef->plt_get_count ()) {
+            deadbeef->plt_set_curr (pl);
+            deadbeef->conf_set_int ("playlist.current", pl);
+        }
+    }
     else {
         ddb_listview_handle_keypress (DDB_LISTVIEW (lookup_widget (mainwin, "playlist")), event->keyval, event->state);
     }
