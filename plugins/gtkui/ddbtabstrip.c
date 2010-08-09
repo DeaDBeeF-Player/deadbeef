@@ -678,6 +678,19 @@ on_tabstrip_button_press_event           (GtkWidget       *widget,
             deadbeef->plt_set_curr (tab_clicked);
             deadbeef->conf_set_int ("playlist.current", tab_clicked);
         }
+        else {
+            if (event->type == GDK_2BUTTON_PRESS) {
+                // new tab
+                int playlist = gtkui_add_new_playlist ();
+                if (playlist != -1) {
+                    deadbeef->plt_set_curr (playlist);
+                    deadbeef->conf_set_int ("playlist.current", playlist);
+                    tabstrip_render (ts);
+                }
+                return FALSE;
+            }
+            return FALSE;
+        }
 
         int x = -ts->hscrollpos + tabs_left_margin;
         int idx;
