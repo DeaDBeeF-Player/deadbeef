@@ -1356,15 +1356,19 @@ static int dirent_alphasort (const struct dirent **a, const struct dirent **b) {
     return strcmp ((*a)->d_name, (*b)->d_name);
 }
 
+static int follow_symlinks = 0;
+
 playItem_t *
-pl_insert_dir (playItem_t *after, const char *dirname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
+pl_insert_dir_int (playItem_t *after, const char *dirname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
     if (!memcmp (dirname, "file://", 7)) {
         dirname += 7;
     }
-    struct stat buf;
-    lstat (dirname, &buf);
-    if (S_ISLNK(buf.st_mode)) {
-        return NULL;
+    if (!follow_symlinks) {
+        struct stat buf;
+        lstat (dirname, &buf);
+        if (S_ISLNK(buf.st_mode)) {
+            return NULL;
+        }
     }
     struct dirent **namelist = NULL;
     int n;
@@ -1386,7 +1390,7 @@ pl_insert_dir (playItem_t *after, const char *dirname, int *pabort, int (*cb)(pl
             {
                 char fullname[PATH_MAX];
                 snprintf (fullname, sizeof (fullname), "%s/%s", dirname, namelist[i]->d_name);
-                playItem_t *inserted = pl_insert_dir (after, fullname, pabort, cb, user_data);
+                playItem_t *inserted = pl_insert_dir_int (after, fullname, pabort, cb, user_data);
                 if (!inserted) {
                     inserted = pl_insert_file (after, fullname, pabort, cb, user_data);
                 }
@@ -1402,6 +1406,12 @@ pl_insert_dir (playItem_t *after, const char *dirname, int *pabort, int (*cb)(pl
         free (namelist);
     }
     return after;
+}
+
+playItem_t *
+pl_insert_dir (playItem_t *after, const char *dirname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
+    follow_symlinks = conf_get_int ("add_folders_follow_symlinks", 0);
+    return pl_insert_dir_int (after, dirname, pabort, cb, user_data);
 }
 
 int
