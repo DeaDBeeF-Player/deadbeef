@@ -44,10 +44,10 @@
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
 #endif
+#include <unistd.h>
 #include "gettext.h"
 #include "playlist.h"
 #include "playback.h"
-#include "unistd.h"
 #include "threading.h"
 #include "messagepump.h"
 #include "streamer.h"
