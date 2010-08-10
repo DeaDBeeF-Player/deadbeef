@@ -109,22 +109,19 @@ extern DB_functions_t *deadbeef;
 #define PROB_EXTRA_CHUNKS(f)            ((f.problems) & (PROBLEM_EXTRA_CHUNKS))
 #define PROB_HDR_INCONSISTENT(f)        ((f.problems) & (PROBLEM_HEADER_INCONSISTENT))
 
+#include <limits.h>
+
+#ifndef PATH_MAX
+#define PATH_MAX    1024    /* max # of characters in a path name */
+#endif
+
 typedef struct _shn_config
 {
 	int      error_output_method;
-	char    *error_output_method_config_name;
-	char    *seek_tables_path;
-	char    *seek_tables_path_config_name;
-	char    *relative_seek_tables_path;
-	char    *relative_seek_tables_path_config_name;
+	char    seek_tables_path[PATH_MAX];
+	char    relative_seek_tables_path[PATH_MAX];
 	int  verbose;
-	char    *verbose_config_name;
 	int  swap_bytes;
-	char    *swap_bytes_config_name;
-	int  load_textfiles;
-	char	 *load_textfiles_config_name;
-	char	 *textfile_extensions;
-	char	 *textfile_extensions_config_name;
 } shn_config;
 
 typedef struct _shn_decode_state

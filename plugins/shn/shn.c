@@ -308,21 +308,11 @@ shn_init_decoder (shn_fileinfo_t *info) {
 
 static void
 shn_init_config (void) {
-
 	shn_cfg.error_output_method = ERROR_OUTPUT_DEVNULL;
-	shn_cfg.error_output_method_config_name = "error_output_method";
-	shn_cfg.seek_tables_path = "";
-	shn_cfg.seek_tables_path_config_name = "seek_tables_path";
-	shn_cfg.relative_seek_tables_path = "";
-	shn_cfg.relative_seek_tables_path_config_name = "relative_seek_tables_path";
+	strncpy (shn_cfg.seek_tables_path, deadbeef->conf_get_str ("shn.seektable_path", ""), sizeof (shn_cfg.seek_tables_path));
+	strncpy (shn_cfg.relative_seek_tables_path, deadbeef->conf_get_str ("shn.relative_seektable_path", "seektables"), sizeof (shn_cfg.relative_seek_tables_path));
 	shn_cfg.verbose = 0;
-	shn_cfg.verbose_config_name = "verbose";
-	shn_cfg.swap_bytes = 0;
-	shn_cfg.swap_bytes_config_name = "swap_bytes";
-	shn_cfg.load_textfiles = 0;
-	shn_cfg.load_textfiles_config_name = "load_textfiles";
-	shn_cfg.textfile_extensions = NULL;
-	shn_cfg.textfile_extensions_config_name = "textfile_extensions";
+	shn_cfg.swap_bytes = deadbeef->conf_get_int ("shn.swap_bytes", 0);
 }
 
 int
@@ -330,28 +320,6 @@ shn_init(DB_fileinfo_t *_info, DB_playItem_t *it) {
     trace ("shn_init\n");
     shn_fileinfo_t *info = (shn_fileinfo_t *)_info;
     shn_init_config ();
-
-// {{{ xmms config reader
-#if 0
-	filename = g_strconcat(g_get_home_dir(), "/.xmms/config", NULL);
-	if ((cfg = xmms_cfg_open_file(filename)) != 0)
-	{
-		xmms_cfg_read_int(cfg, XMMS_SHN_VERSION_TAG, shn_cfg.error_output_method_config_name, &shn_cfg.error_output_method);
-		xmms_cfg_read_boolean(cfg, XMMS_SHN_VERSION_TAG, shn_cfg.verbose_config_name, &shn_cfg.verbose);
-		if (!xmms_cfg_read_string(cfg, XMMS_SHN_VERSION_TAG, shn_cfg.seek_tables_path_config_name, &shn_cfg.seek_tables_path))
-			shn_cfg.seek_tables_path = g_strdup(g_get_home_dir());
-		if (!xmms_cfg_read_string(cfg, XMMS_SHN_VERSION_TAG, shn_cfg.relative_seek_tables_path_config_name, &shn_cfg.relative_seek_tables_path))
-			shn_cfg.relative_seek_tables_path = g_strdup("");
-		xmms_cfg_read_boolean(cfg, XMMS_SHN_VERSION_TAG, shn_cfg.swap_bytes_config_name, &shn_cfg.swap_bytes);
-		xmms_cfg_read_boolean(cfg, XMMS_SHN_VERSION_TAG, shn_cfg.load_textfiles_config_name, &shn_cfg.load_textfiles);
-		if (!xmms_cfg_read_string(cfg, XMMS_SHN_VERSION_TAG, shn_cfg.textfile_extensions_config_name, &shn_cfg.textfile_extensions))
-			shn_cfg.textfile_extensions = g_strdup("txt,nfo");
-		xmms_cfg_free(cfg);
-	}
-
-	g_free(filename);
-#endif
-// }}}
 
 	char data[4];
     DB_FILE *f;
@@ -1775,6 +1743,13 @@ void write_and_wait(shn_file *this_shn,int block_size)
 static const char * exts[] = { "shn", NULL };
 static const char *filetypes[] = { "Shorten", NULL };
 
+
+static const char settings_dlg[] =
+    "property \"Relative seek table path\" entry shn.relative_seektable_path seektables;\n"
+    "property \"Absolute seek table path\" entry shn.seektable_path \"\";\n"
+    "property \"Swap audio bytes (toggle if all you hear is static)\" checkbox shn.swap_bytes 0;\n"
+;
+
 // define plugin interface
 static DB_decoder_t plugin = {
     DB_PLUGIN_SET_API_VERSION
@@ -1787,6 +1762,7 @@ static DB_decoder_t plugin = {
     .plugin.author = "Alexey Yakovenko",
     .plugin.email = "waker@users.sourceforge.net",
     .plugin.website = "http://deadbeef.sf.net",
+    .plugin.configdialog = settings_dlg,
     .open = shn_open,
     .init = shn_init,
     .free = shn_free,
