@@ -2451,7 +2451,7 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
     char *ss = s;
 
     LOCK;
-    if (id != -1) {
+    if (id != -1 && it) {
         const char *text = NULL;
         switch (id) {
         case DB_COLUMN_FILENUMBER:
@@ -2492,6 +2492,9 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
             const char *meta = NULL;
             if (*fmt == 0) {
                 break;
+            }
+            else if (!it && !strchr ("V", *fmt)) {
+                // only %V (version) works without track pointer
             }
             else if (*fmt == 'a') {
                 meta = pl_find_meta (it, "artist");
@@ -2650,6 +2653,9 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
                     dirname[len] = 0;
                     meta = dirname;
                 }
+            }
+            else if (*fmt == 'V') {
+                meta = VERSION;
             }
             else {
                 *s++ = *fmt;

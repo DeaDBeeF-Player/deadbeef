@@ -390,18 +390,30 @@ gtkui_on_songchanged (DB_event_trackchange_t *ev, uintptr_t data) {
     return 0;
 }
 
-static void
-current_track_changed (DB_playItem_t *it) {
-    char str[600];
-    if (it) {
-        deadbeef->pl_format_title (it, -1, str, sizeof (str), -1, "%a - %t - DeaDBeeF-" VERSION);
+void
+gtkui_set_titlebar (DB_playItem_t *it) {
+    if (!it) {
+        it = deadbeef->streamer_get_playing_track ();
     }
     else {
-        strcpy (str, "DeaDBeeF-" VERSION);
+        deadbeef->pl_item_ref (it);
     }
+    char str[600];
+    const char *fmt;
+    if (it) {
+        fmt = deadbeef->conf_get_str ("gtkui.titlebar_playing", "%a - %t - DeaDBeeF-%V");
+    }
+    else {
+        fmt = deadbeef->conf_get_str ("gtkui.titlebar_stopped", "DeaDBeeF-%V");
+    }
+    deadbeef->pl_format_title (it, -1, str, sizeof (str), -1, fmt);
     gtk_window_set_title (GTK_WINDOW (mainwin), str);
+    if (it) {
+        deadbeef->pl_item_unref (it);
+    }
     set_tray_tooltip (str);
 }
+
 
 static gboolean
 trackinfochanged_cb (gpointer data) {
@@ -415,7 +427,7 @@ trackinfochanged_cb (gpointer data) {
     }
     DB_playItem_t *curr = deadbeef->streamer_get_playing_track ();
     if (track == curr) {
-        current_track_changed (track);
+        gtkui_set_titlebar (track);
     }
     if (curr) {
         deadbeef->pl_item_unref (curr);
@@ -549,8 +561,6 @@ gtkui_update_status_icon (gpointer unused) {
         g_object_set (trayicon, "visible", FALSE, NULL);
     }
 
-    set_tray_tooltip ("DeaDBeeF");
-
 #if GTK_MINOR_VERSION <= 14
     g_signal_connect ((gpointer)trayicon, "activate", G_CALLBACK (on_trayicon_activate), NULL);
 #else
@@ -558,6 +568,8 @@ gtkui_update_status_icon (gpointer unused) {
     g_signal_connect ((gpointer)trayicon, "button_press_event", G_CALLBACK (on_trayicon_button_press_event), NULL);
 #endif
     g_signal_connect ((gpointer)trayicon, "popup_menu", G_CALLBACK (on_trayicon_popup_menu), NULL);
+
+    gtkui_set_titlebar (NULL);
 
     return FALSE;
 }
@@ -780,15 +792,17 @@ update_win_title_idle (gpointer data) {
     // update window title
     if (from || to) {
         if (to) {
-            DB_playItem_t *it = deadbeef->streamer_get_playing_track ();;
+            DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
             if (it) { // it might have been deleted after event was sent
-                current_track_changed (it);
+                gtkui_set_titlebar (it);
                 deadbeef->pl_item_unref (it);
+            }
+            else {
+                gtkui_set_titlebar (NULL);
             }
         }
         else {
-            gtk_window_set_title (GTK_WINDOW (mainwin), "DeaDBeeF-" VERSION);
-            set_tray_tooltip ("DeaDBeeF-" VERSION);
+            gtkui_set_titlebar (NULL);
         }
     }
     // update playlist view
@@ -930,14 +944,6 @@ gtkui_thread (void *ctx) {
     searchwin = create_searchwin ();
     gtk_window_set_transient_for (GTK_WINDOW (searchwin), GTK_WINDOW (mainwin));
 
-#if 0
-    // get saved scrollpos before creating listview, to avoid reset
-    int curr = deadbeef->plt_get_curr ();
-    char conf[100];
-    snprintf (conf, sizeof (conf), "playlist.scroll.%d", curr);
-    int scroll = deadbeef->conf_get_int (conf, 0);
-#endif
-
     DdbListview *main_playlist = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
     main_playlist_init (GTK_WIDGET (main_playlist));
 
@@ -970,9 +976,9 @@ gtkui_thread (void *ctx) {
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_OUTPUTCHANGED, DB_CALLBACK (gtkui_on_outputchanged), 0);
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_PLAYLISTSWITCH, DB_CALLBACK (gtkui_on_playlistswitch), 0);
 
-//    playlist_refresh ();
-//    ddb_listview_set_vscroll (main_playlist, scroll);
-    gtk_window_set_title (GTK_WINDOW (mainwin), "DeaDBeeF-" VERSION);
+    char str[600];
+    deadbeef->pl_format_title (NULL, -1, str, sizeof (str), -1, deadbeef->conf_get_str ("gtkui.titlebar_stopped", "DeaDBeeF-%V"));
+    gtk_window_set_title (GTK_WINDOW (mainwin), str);
     gtk_initialized = 1;
     gtk_main ();
     cover_art_free ();

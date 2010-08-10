@@ -1561,6 +1561,13 @@ create_prefwin (void)
   GtkWidget *hide_tray_icon;
   GtkWidget *embolden_current;
   GtkWidget *hide_delete_from_disk;
+  GtkWidget *hbox64;
+  GtkWidget *label101;
+  GtkWidget *titlebar_format_playing;
+  GtkWidget *hbox65;
+  GtkWidget *label102;
+  GtkWidget *titlebar_format_stopped;
+  GtkWidget *label2;
   GtkWidget *notebook4;
   GtkWidget *vbox21;
   GtkWidget *override_bar_colors;
@@ -1598,7 +1605,7 @@ create_prefwin (void)
   GtkWidget *label62;
   GtkWidget *listview_cursor;
   GtkWidget *label75;
-  GtkWidget *label2;
+  GtkWidget *label100;
   GtkWidget *vbox11;
   GtkWidget *pref_network_enableproxy;
   GtkWidget *hbox13;
@@ -1815,9 +1822,42 @@ create_prefwin (void)
   gtk_widget_show (hide_delete_from_disk);
   gtk_box_pack_start (GTK_BOX (vbox9), hide_delete_from_disk, FALSE, FALSE, 0);
 
+  hbox64 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox64);
+  gtk_box_pack_start (GTK_BOX (vbox9), hbox64, FALSE, FALSE, 0);
+
+  label101 = gtk_label_new (_("Titlebar text while playing:"));
+  gtk_widget_show (label101);
+  gtk_box_pack_start (GTK_BOX (hbox64), label101, FALSE, FALSE, 0);
+  gtk_misc_set_alignment (GTK_MISC (label101), 0, 0.5);
+
+  titlebar_format_playing = gtk_entry_new ();
+  gtk_widget_show (titlebar_format_playing);
+  gtk_box_pack_start (GTK_BOX (hbox64), titlebar_format_playing, TRUE, TRUE, 0);
+  gtk_entry_set_invisible_char (GTK_ENTRY (titlebar_format_playing), 8226);
+
+  hbox65 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox65);
+  gtk_box_pack_start (GTK_BOX (vbox9), hbox65, FALSE, FALSE, 0);
+
+  label102 = gtk_label_new (_("Titlebar text while stopped:"));
+  gtk_widget_show (label102);
+  gtk_box_pack_start (GTK_BOX (hbox65), label102, FALSE, FALSE, 0);
+  gtk_misc_set_alignment (GTK_MISC (label102), 0, 0.5);
+
+  titlebar_format_stopped = gtk_entry_new ();
+  gtk_widget_show (titlebar_format_stopped);
+  gtk_box_pack_start (GTK_BOX (hbox65), titlebar_format_stopped, TRUE, TRUE, 0);
+  gtk_entry_set_invisible_char (GTK_ENTRY (titlebar_format_stopped), 8226);
+
+  label2 = gtk_label_new (_("GUI"));
+  gtk_widget_show (label2);
+  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), 2), label2);
+
   notebook4 = gtk_notebook_new ();
   gtk_widget_show (notebook4);
-  gtk_box_pack_start (GTK_BOX (vbox9), notebook4, TRUE, TRUE, 0);
+  gtk_container_add (GTK_CONTAINER (notebook), notebook4);
+  gtk_container_set_border_width (GTK_CONTAINER (notebook4), 12);
 
   vbox21 = gtk_vbox_new (FALSE, 8);
   gtk_widget_show (vbox21);
@@ -2029,9 +2069,9 @@ create_prefwin (void)
   gtk_widget_show (label75);
   gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook4), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook4), 2), label75);
 
-  label2 = gtk_label_new (_("GUI"));
-  gtk_widget_show (label2);
-  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), 2), label2);
+  label100 = gtk_label_new (_("Colors"));
+  gtk_widget_show (label100);
+  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), 3), label100);
 
   vbox11 = gtk_vbox_new (FALSE, 8);
   gtk_widget_show (vbox11);
@@ -2118,7 +2158,7 @@ create_prefwin (void)
 
   label16 = gtk_label_new (_("Network"));
   gtk_widget_show (label16);
-  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), 3), label16);
+  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), 4), label16);
 
   vbox18 = gtk_vbox_new (FALSE, 0);
   gtk_widget_show (vbox18);
@@ -2298,7 +2338,7 @@ create_prefwin (void)
 
   label67 = gtk_label_new (_("Tag writer"));
   gtk_widget_show (label67);
-  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), 4), label67);
+  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), 5), label67);
 
   hpaned1 = gtk_hpaned_new ();
   gtk_widget_show (hpaned1);
@@ -2409,7 +2449,7 @@ create_prefwin (void)
 
   label3 = gtk_label_new (_("Plugins"));
   gtk_widget_show (label3);
-  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), 5), label3);
+  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), 6), label3);
   gtk_misc_set_alignment (GTK_MISC (label3), 0.48, 0.5);
 
   dialog_action_area2 = GTK_DIALOG (prefwin)->action_area;
@@ -2463,6 +2503,12 @@ create_prefwin (void)
                     NULL);
   g_signal_connect ((gpointer) hide_delete_from_disk, "toggled",
                     G_CALLBACK (on_hide_delete_from_disk_toggled),
+                    NULL);
+  g_signal_connect ((gpointer) titlebar_format_playing, "changed",
+                    G_CALLBACK (on_titlebar_format_playing_changed),
+                    NULL);
+  g_signal_connect ((gpointer) titlebar_format_stopped, "changed",
+                    G_CALLBACK (on_titlebar_format_stopped_changed),
                     NULL);
   g_signal_connect ((gpointer) override_bar_colors, "toggled",
                     G_CALLBACK (on_override_bar_colors_toggled),
@@ -2610,6 +2656,13 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, hide_tray_icon, "hide_tray_icon");
   GLADE_HOOKUP_OBJECT (prefwin, embolden_current, "embolden_current");
   GLADE_HOOKUP_OBJECT (prefwin, hide_delete_from_disk, "hide_delete_from_disk");
+  GLADE_HOOKUP_OBJECT (prefwin, hbox64, "hbox64");
+  GLADE_HOOKUP_OBJECT (prefwin, label101, "label101");
+  GLADE_HOOKUP_OBJECT (prefwin, titlebar_format_playing, "titlebar_format_playing");
+  GLADE_HOOKUP_OBJECT (prefwin, hbox65, "hbox65");
+  GLADE_HOOKUP_OBJECT (prefwin, label102, "label102");
+  GLADE_HOOKUP_OBJECT (prefwin, titlebar_format_stopped, "titlebar_format_stopped");
+  GLADE_HOOKUP_OBJECT (prefwin, label2, "label2");
   GLADE_HOOKUP_OBJECT (prefwin, notebook4, "notebook4");
   GLADE_HOOKUP_OBJECT (prefwin, vbox21, "vbox21");
   GLADE_HOOKUP_OBJECT (prefwin, override_bar_colors, "override_bar_colors");
@@ -2647,7 +2700,7 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, label62, "label62");
   GLADE_HOOKUP_OBJECT (prefwin, listview_cursor, "listview_cursor");
   GLADE_HOOKUP_OBJECT (prefwin, label75, "label75");
-  GLADE_HOOKUP_OBJECT (prefwin, label2, "label2");
+  GLADE_HOOKUP_OBJECT (prefwin, label100, "label100");
   GLADE_HOOKUP_OBJECT (prefwin, vbox11, "vbox11");
   GLADE_HOOKUP_OBJECT (prefwin, pref_network_enableproxy, "pref_network_enableproxy");
   GLADE_HOOKUP_OBJECT (prefwin, hbox13, "hbox13");

@@ -950,3 +950,11 @@ on_embolden_current_toggled            (GtkToggleButton *togglebutton,
 void
 on_hide_delete_from_disk_toggled       (GtkToggleButton *togglebutton,
                                         gpointer         user_data);
+
+void
+on_titlebar_format_playing_changed     (GtkEditable     *editable,
+                                        gpointer         user_data);
+
+void
+on_titlebar_format_stopped_changed     (GtkEditable     *editable,
+                                        gpointer         user_data);

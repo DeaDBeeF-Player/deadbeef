@@ -136,4 +136,7 @@ tabstrip_redraw (void);
 void
 gtkui_playlist_changed (void);
 
+void
+gtkui_set_titlebar (DB_playItem_t *it);
+
 #endif
