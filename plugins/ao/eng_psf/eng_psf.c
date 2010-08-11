@@ -44,6 +44,9 @@
 
 #define DEBUG_LOADER	(0)
 
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
+
 int psf_refresh = -1; // hack
 
 typedef struct {
@@ -137,9 +140,7 @@ void *psf_start(const char *path, uint8 *buffer, uint32 length)
             strcpy (libpath, s->c->lib);
         }
 	
-		#if DEBUG_LOADER	
-		printf("Loading library: %s\n", c->lib);
-		#endif
+		trace ("Loading library: %s\n", s->c->lib);
 		if (ao_get_lib(libpath, &lib_raw_file, &tmp_length) != AO_SUCCESS)
 		{
             psf_stop (s);
@@ -226,12 +227,24 @@ void *psf_start(const char *path, uint8 *buffer, uint32 length)
 		if (s->c->libaux[i][0] != 0)
 		{
 			uint64 tmp_length;
+            char libpath[PATH_MAX];
+            const char *e = path + strlen(path);
+            while (e > path && *e != '/') {
+                e--;
+            }
+            if (*e == '/') {
+                e++;
+                memcpy (libpath, path, e-path);
+                libpath[e-path] = 0;
+                strcat (libpath, s->c->lib);
+            }
+            else {
+                strcpy (libpath, s->c->lib);
+        }
 		
-			#if DEBUG_LOADER	
-			printf("Loading aux library: %s\n", c->libaux[i]);
-			#endif
+			trace ("Loading aux library: %s\n", s->c->libaux[i]);
 
-			if (ao_get_lib(s->c->libaux[i], &lib_raw_file, &tmp_length) != AO_SUCCESS)
+			if (ao_get_lib(libpath, &lib_raw_file, &tmp_length) != AO_SUCCESS)
 			{
                 psf_stop (s);
                 return NULL;

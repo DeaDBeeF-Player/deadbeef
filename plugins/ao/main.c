@@ -68,7 +68,7 @@ int ao_get_lib(char *filename, uint8 **buffer, uint64 *length)
 	auxfile = fopen(filename, "rb");
 	if (!auxfile)
 	{
-		printf("Unable to find auxiliary file %s\n", filename);
+		fprintf(stderr, "Unable to find auxiliary file %s\n", filename);
 		return AO_FAIL;
 	}
 
