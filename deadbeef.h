@@ -585,22 +585,27 @@ typedef struct DB_plugin_s {
 
     // start is called to start plugin; can be NULL
     int (*start) (void);
+    
     // stop is called to deinit plugin; can be NULL
     int (*stop) (void);
+
+    // connect is called to setup connections between different plugins
+    // it is called after all plugin's start method was executed
+    // can be NULL
+    int (*connect) (void);
+    
     // exec_cmdline may be called at any moment when user sends commandline to player
     // can be NULL if plugin doesn't support commandline processing
     // cmdline is 0-separated list of strings, guaranteed to have 0 at the end
     // cmdline_size is number of bytes pointed by cmdline
     int (*exec_cmdline) (const char *cmdline, int cmdline_size);
+    
+    // @returns linked list of actions
+    DB_plugin_action_t* (*get_actions) (DB_playItem_t *it);
+
     // plugin configuration dialog is constructed from this data
     // can be NULL
     const char *configdialog;
-
-    // actions
-    /* by get_actions function plugin is queried for implemented actions
-    @returns linked list of actions
-    */
-    DB_plugin_action_t* (*get_actions) (DB_playItem_t *it);
 } DB_plugin_t;
 
 typedef struct DB_fileinfo_s {

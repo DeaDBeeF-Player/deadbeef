@@ -734,6 +734,14 @@ plug_load_all (void) {
             }
         }
     }
+    // connect plugins
+    for (plug = plugins; plug; plug = plug->next) {
+        if (plug->plugin->connect) {
+            if (plug->plugin->connect () < 0) {
+                plug->plugin->inactive = 1;
+            }
+        }
+    }
 
 //    trace ("numplugins: %d, numdecoders: %d, numvfs: %d\n", numplugins, numdecoders, numvfs);
     g_plugins[numplugins] = NULL;
