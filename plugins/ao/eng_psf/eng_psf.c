@@ -236,13 +236,13 @@ void *psf_start(const char *path, uint8 *buffer, uint32 length)
                 e++;
                 memcpy (libpath, path, e-path);
                 libpath[e-path] = 0;
-                strcat (libpath, s->c->lib);
+                strcat (libpath, s->c->libaux[i]);
             }
             else {
-                strcpy (libpath, s->c->lib);
-        }
+                strcpy (libpath, s->c->libaux[i]);
+            }
 		
-			trace ("Loading aux library: %s\n", s->c->libaux[i]);
+			trace ("Loading aux library: %s\n", libpath);
 
 			if (ao_get_lib(libpath, &lib_raw_file, &tmp_length) != AO_SUCCESS)
 			{
