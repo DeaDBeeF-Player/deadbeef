@@ -92,6 +92,7 @@ draw_rect (float x, float y, float w, float h, int fill) {
 }
 
 static GtkStyle *font_style = NULL;
+static PangoWeight font_weight = PANGO_WEIGHT_NORMAL;
 
 void
 draw_init_font (GtkStyle *new_font_style) {
@@ -111,6 +112,7 @@ draw_init_font (GtkStyle *new_font_style) {
         pangolayout = pango_layout_new (pangoctx);
         pango_layout_set_ellipsize (pangolayout, PANGO_ELLIPSIZE_END);
         PangoFontDescription *desc = font_style->font_desc;
+        font_weight = pango_font_description_get_weight (desc);
         pango_layout_set_font_description (pangolayout, desc);
         pango_ready = 1;
     }
@@ -126,6 +128,12 @@ draw_init_font_bold (void) {
     pango_font_description_set_weight (desc, PANGO_WEIGHT_BOLD);
     pango_layout_set_font_description (pangolayout, desc);
     pango_font_description_free(desc);
+}
+
+void
+draw_init_font_normal (void) {
+    pango_font_description_set_weight (font_style->font_desc, font_weight);
+    pango_layout_set_font_description (pangolayout, font_style->font_desc);
 }
 
 

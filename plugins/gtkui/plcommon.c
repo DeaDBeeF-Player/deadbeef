@@ -183,6 +183,9 @@ void draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbListview
         else {
             draw_text (x + 5, y + height/2 - draw_get_font_size ()/2 - 2, cwidth-10, 0, text);
         }
+        if (gtkui_embolden_current_track && it && it == playing_track) {
+            draw_init_font_normal ();
+        }
     }
     if (playing_track) {
         deadbeef->pl_item_unref (playing_track);
