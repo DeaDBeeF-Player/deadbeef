@@ -314,16 +314,7 @@ int open_tta_file (const char *filename, tta_info *info, unsigned int data_offse
 	// check for player supported formats
 	if (ttahdr.AudioFormat != WAVE_FORMAT_PCM ||
 		ttahdr.NumChannels > MAX_NCH ||
-		ttahdr.BitsPerSample > MAX_BPS ||(
-		ttahdr.SampleRate != 16000 &&
-		ttahdr.SampleRate != 22050 &&
-		ttahdr.SampleRate != 24000 &&
-		ttahdr.SampleRate != 32000 &&
-		ttahdr.SampleRate != 44100 &&
-		ttahdr.SampleRate != 48000 &&
-		ttahdr.SampleRate != 64000 &&
-		ttahdr.SampleRate != 88200 &&
-		ttahdr.SampleRate != 96000)) {
+		ttahdr.BitsPerSample > MAX_BPS) {
         trace ("tta: format error: invalid samplerate\n");
 		deadbeef->fclose (infile);
 		info->STATE = FORMAT_ERROR;
