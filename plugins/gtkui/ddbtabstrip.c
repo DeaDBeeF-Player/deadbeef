@@ -685,7 +685,6 @@ on_tabstrip_button_press_event           (GtkWidget       *widget,
                 if (playlist != -1) {
                     deadbeef->plt_set_curr (playlist);
                     deadbeef->conf_set_int ("playlist.current", playlist);
-                    //tabstrip_render (ts);
                 }
                 return FALSE;
             }
@@ -710,7 +709,16 @@ on_tabstrip_button_press_event           (GtkWidget       *widget,
         gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, widget, 0, gtk_get_current_event_time());
     }
     else if (event->button == 2) {
-        if (deadbeef->conf_get_int ("gtkui.mmb_delete_playlist", 0)) {
+        if (tab_clicked == -1) {
+            // new tab
+            int playlist = gtkui_add_new_playlist ();
+            if (playlist != -1) {
+                deadbeef->plt_set_curr (playlist);
+                deadbeef->conf_set_int ("playlist.current", playlist);
+            }
+            return FALSE;
+        }
+        else if (deadbeef->conf_get_int ("gtkui.mmb_delete_playlist", 0)) {
             if (tab_clicked != -1) {
                 deadbeef->plt_remove (tab_clicked);
                 int playlist = deadbeef->plt_get_curr ();
