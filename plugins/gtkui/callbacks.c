@@ -1059,3 +1059,4 @@ create_seekbar (gchar *widget_name, gchar *string1, gchar *string2,
 }
 
 
+

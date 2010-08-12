@@ -398,6 +398,18 @@ plt_remove (int plt) {
     }
 }
 
+int
+plt_find (const char *name) {
+    playlist_t *p = playlists_head;
+    int i = -1;
+    for (i = 0; p; i++, p = p->next) {
+        if (!strcmp (p->title, name)) {
+            return i;
+        }
+    }
+    return -1;
+}
+
 void
 plt_set_curr (int plt) {
     int i;

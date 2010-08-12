@@ -1567,6 +1567,9 @@ create_prefwin (void)
   GtkWidget *hbox65;
   GtkWidget *label102;
   GtkWidget *titlebar_format_stopped;
+  GtkWidget *hbox66;
+  GtkWidget *cli_add_to_playlist;
+  GtkWidget *cli_playlist_name;
   GtkWidget *label2;
   GtkWidget *notebook4;
   GtkWidget *vbox21;
@@ -1849,6 +1852,19 @@ create_prefwin (void)
   gtk_widget_show (titlebar_format_stopped);
   gtk_box_pack_start (GTK_BOX (hbox65), titlebar_format_stopped, TRUE, TRUE, 0);
   gtk_entry_set_invisible_char (GTK_ENTRY (titlebar_format_stopped), 8226);
+
+  hbox66 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox66);
+  gtk_box_pack_start (GTK_BOX (vbox9), hbox66, FALSE, FALSE, 0);
+
+  cli_add_to_playlist = gtk_check_button_new_with_mnemonic (_("Add files from command line (or file manager) to this playlist:"));
+  gtk_widget_show (cli_add_to_playlist);
+  gtk_box_pack_start (GTK_BOX (hbox66), cli_add_to_playlist, FALSE, FALSE, 0);
+
+  cli_playlist_name = gtk_entry_new ();
+  gtk_widget_show (cli_playlist_name);
+  gtk_box_pack_start (GTK_BOX (hbox66), cli_playlist_name, TRUE, TRUE, 0);
+  gtk_entry_set_invisible_char (GTK_ENTRY (cli_playlist_name), 9679);
 
   label2 = gtk_label_new (_("GUI"));
   gtk_widget_show (label2);
@@ -2510,6 +2526,12 @@ create_prefwin (void)
   g_signal_connect ((gpointer) titlebar_format_stopped, "changed",
                     G_CALLBACK (on_titlebar_format_stopped_changed),
                     NULL);
+  g_signal_connect ((gpointer) cli_add_to_playlist, "toggled",
+                    G_CALLBACK (on_cli_add_to_playlist_toggled),
+                    NULL);
+  g_signal_connect ((gpointer) cli_playlist_name, "changed",
+                    G_CALLBACK (on_cli_playlist_name_changed),
+                    NULL);
   g_signal_connect ((gpointer) override_bar_colors, "toggled",
                     G_CALLBACK (on_override_bar_colors_toggled),
                     NULL);
@@ -2662,6 +2684,9 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, hbox65, "hbox65");
   GLADE_HOOKUP_OBJECT (prefwin, label102, "label102");
   GLADE_HOOKUP_OBJECT (prefwin, titlebar_format_stopped, "titlebar_format_stopped");
+  GLADE_HOOKUP_OBJECT (prefwin, hbox66, "hbox66");
+  GLADE_HOOKUP_OBJECT (prefwin, cli_add_to_playlist, "cli_add_to_playlist");
+  GLADE_HOOKUP_OBJECT (prefwin, cli_playlist_name, "cli_playlist_name");
   GLADE_HOOKUP_OBJECT (prefwin, label2, "label2");
   GLADE_HOOKUP_OBJECT (prefwin, notebook4, "notebook4");
   GLADE_HOOKUP_OBJECT (prefwin, vbox21, "vbox21");

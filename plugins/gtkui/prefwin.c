@@ -516,6 +516,12 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "titlebar_format_playing")), deadbeef->conf_get_str ("gtkui.titlebar_playing", "%a - %t - DeaDBeeF-%V"));
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "titlebar_format_stopped")), deadbeef->conf_get_str ("gtkui.titlebar_stopped", "DeaDBeeF-%V"));
 
+    // cli playlist
+    int active = deadbeef->conf_get_int ("cli_add_to_specific_playlist", 1);
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (prefwin, "cli_add_to_playlist")), active);
+    gtk_widget_set_sensitive (lookup_widget (prefwin, "cli_playlist_name"), active);
+    gtk_entry_set_text (GTK_ENTRY (lookup_widget (prefwin, "cli_playlist_name")), deadbeef->conf_get_str ("cli_add_playlist_name", "Default"));
+
     // override bar colors
     int override = deadbeef->conf_get_int ("gtkui.override_bar_colors", 0);
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (prefwin, "override_bar_colors")), override);
@@ -1275,5 +1281,22 @@ on_titlebar_format_stopped_changed     (GtkEditable     *editable,
 {
     deadbeef->conf_set_str ("gtkui.titlebar_stopped", gtk_entry_get_text (GTK_ENTRY (editable)));
     gtkui_set_titlebar (NULL);
+}
+
+void
+on_cli_add_to_playlist_toggled         (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (togglebutton));
+    deadbeef->conf_set_int ("cli_add_to_specific_playlist", active);
+    gtk_widget_set_sensitive (lookup_widget (prefwin, "cli_playlist_name"), active);
+}
+
+
+void
+on_cli_playlist_name_changed           (GtkEditable     *editable,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_str ("cli_add_playlist_name", gtk_entry_get_text (GTK_ENTRY (editable)));
 }
 

@@ -210,6 +210,16 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
         parg++;
     }
     if (parg < pend) {
+        if (conf_get_int ("cli_add_to_specific_playlist", 1)) {
+            const char *str = conf_get_str ("cli_add_playlist_name", "Default");
+            int idx = plt_find (str);
+            if (idx < 0) {
+                idx = plt_add (plt_get_count (), str);
+            }
+            if (idx >= 0) {
+                plt_set_curr (idx);
+            }
+        }
         // add files
         if (!queue && plt_get_curr () != -1) {
             pl_clear ();

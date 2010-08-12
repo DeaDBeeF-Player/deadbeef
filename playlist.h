@@ -109,6 +109,9 @@ plt_add (int before, const char *title);
 void
 plt_remove (int plt);
 
+int
+plt_find (const char *name);
+
 void
 plt_free (void);
 
