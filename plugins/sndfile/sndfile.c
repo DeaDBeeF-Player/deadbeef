@@ -110,7 +110,29 @@ sndfile_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         return -1;
     }
     _info->plugin = &plugin;
-    _info->bps = 16;
+
+    switch (inf.format&0x000f) {
+    case SF_FORMAT_PCM_S8:
+    case SF_FORMAT_PCM_U8:
+        _info->bps = 8;
+        break;
+    case SF_FORMAT_PCM_16:
+        _info->bps = 16;
+        break;
+    case SF_FORMAT_PCM_24:
+        _info->bps = 24;
+        break;
+    case SF_FORMAT_PCM_32:
+    case SF_FORMAT_FLOAT:
+        _info->bps = 24;
+        break;
+    case SF_FORMAT_DOUBLE:
+        _info->bps = 64;
+        break;
+    default:
+        _info->bps = 16;
+    }
+
     _info->channels = inf.channels;
     _info->samplerate = inf.samplerate;
     _info->readpos = 0;
@@ -250,7 +272,7 @@ sndfile_insert (DB_playItem_t *after, const char *fname) {
 }
 
 static const char * exts[] = { "wav", "aif", "aiff", "snd", "au", "paf", "svx", "nist", "voc", "ircam", "w64", "mat4", "mat5", "pvf", "xi", "htk", "sds", "avr", "wavex", "sd2", "caf", "wve", NULL };
-static const char *filetypes[] = { "wav", NULL };
+static const char *filetypes[] = { "WAV", NULL };
 
 // define plugin interface
 static DB_decoder_t plugin = {
