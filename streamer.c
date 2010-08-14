@@ -1533,7 +1533,7 @@ streamer_read_async (char *bytes, int size) {
             trace ("streamer: EOF! buns: %d\n", bytes_until_next_song);
 
             // in case of decoder error, or EOF while buffering - switch to next song instantly
-            if (bytesread < 0 || (streamer_is_buffering && bytesread == 0)) {
+            if (bytesread < 0 || (streamer_is_buffering() && bytesread == 0)) {
                 streamer_move_to_nextsong (0);
                 bytes_until_next_song = 0;
                 break;
