@@ -135,7 +135,7 @@ tta_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
                 while (n > 0) {
                     *((int16_t*)bytes) = (int16_t)(((uint8_t)p[1]<<8) | (uint8_t)p[0]);
                     bytes += 2;
-                    if (_info->channels == 2) {
+                    if (out_ch == 2) {
                         *((int16_t*)bytes) = (int16_t)(((uint8_t)(p+info->tta.BSIZE)[1]<<8) | (uint8_t)(p+info->tta.BSIZE)[0]);
                         bytes += 2;
                     }
@@ -149,7 +149,7 @@ tta_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
                 while (n > 0) {
                     *((int16_t*)bytes) = ((int16_t)(p[0])) << 8;
                     bytes += 2;
-                    if (_info->channels == 2) {
+                    if (out_ch == 2) {
                         *((int16_t*)bytes) = ((int16_t)(p[1])) << 8;
                         bytes += 2;
                     }
