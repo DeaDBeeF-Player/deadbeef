@@ -103,19 +103,16 @@ tta_free (DB_fileinfo_t *_info) {
 static int
 tta_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
     tta_info_t *info = (tta_info_t *)_info;
-    if (info->currentsample + size / (2 * _info->channels) > info->endsample) {
-        size = (info->endsample - info->currentsample + 1) * 2 * _info->channels;
+    int out_ch = min (_info->channels, 2);
+    if (info->currentsample + size / (2 * out_ch) > info->endsample) {
+        size = (info->endsample - info->currentsample + 1) * 2 * out_ch;
         if (size <= 0) {
             return 0;
         }
     }
 
     int initsize = size;
-    int out_channels = _info->channels;
-    if (out_channels > 2) {
-        out_channels = 2;
-    }
-    int sample_size = 2 * out_channels;
+    int sample_size = 2 * out_ch;
 
     while (size > 0) {
         if (info->samples_to_skip > 0 && info->remaining > 0) {
@@ -131,19 +128,36 @@ tta_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
             n = min (n, info->remaining);
             int nn = n;
             char *p = info->buffer;
-            p += (_info->bps >> 3) - 2; // hack: shift buffer, so that we always get 2 most significant bytes (24 bit support)
-            while (n > 0) {
-                *((int16_t*)bytes) = (int16_t)(((uint8_t)p[1]<<8) | (uint8_t)p[0]);
-                bytes += 2;
-                if (_info->channels == 2) {
-                    *((int16_t*)bytes) = (int16_t)(((uint8_t)(p+info->tta.BSIZE)[1]<<8) | (uint8_t)(p+info->tta.BSIZE)[0]);
+            if (_info->bps > 8) {
+            // hack: shift buffer, so that we always get 2 most significant bytes (24 bit support)
+            // same hack kinda works for 8bit, but it's not lossless
+                p += (_info->bps >> 3) - 2;
+                while (n > 0) {
+                    *((int16_t*)bytes) = (int16_t)(((uint8_t)p[1]<<8) | (uint8_t)p[0]);
                     bytes += 2;
+                    if (_info->channels == 2) {
+                        *((int16_t*)bytes) = (int16_t)(((uint8_t)(p+info->tta.BSIZE)[1]<<8) | (uint8_t)(p+info->tta.BSIZE)[0]);
+                        bytes += 2;
+                    }
+                    n--;
+                    size -= sample_size;
+                    p += info->tta.NCH * info->tta.BSIZE;
                 }
-                n--;
-                size -= sample_size;
-                p += info->tta.NCH * info->tta.BSIZE;
+                p -= (_info->bps >> 3) - 2;
             }
-            p -= (_info->bps >> 3) - 2;
+            else {
+                while (n > 0) {
+                    *((int16_t*)bytes) = ((int16_t)(p[0])) << 8;
+                    bytes += 2;
+                    if (_info->channels == 2) {
+                        *((int16_t*)bytes) = ((int16_t)(p[1])) << 8;
+                        bytes += 2;
+                    }
+                    n--;
+                    size -= sample_size;
+                    p += info->tta.NCH * info->tta.BSIZE;
+                }
+            }
             if (info->remaining > nn) {
                 memmove (info->buffer, p, (info->remaining - nn) * info->tta.BSIZE * info->tta.NCH);
             }
