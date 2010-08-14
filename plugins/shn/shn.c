@@ -60,6 +60,8 @@ typedef struct {
     int currentsample;
     int startsample;
     int endsample;
+
+    int skipsamples;
 } shn_fileinfo_t;
 
 shn_config shn_cfg;
@@ -387,8 +389,7 @@ shn_init(DB_fileinfo_t *_info, DB_playItem_t *it) {
 }
 
 void
-shn_free (DB_fileinfo_t *_info) {
-    shn_fileinfo_t *info = (shn_fileinfo_t *)_info;
+shn_free_decoder (shn_fileinfo_t *info) {
     if (info->shnfile) {
         if (info->shnfile->decode_state) {
             if(info->shnfile->decode_state->writebuf != NULL) {
@@ -405,6 +406,12 @@ shn_free (DB_fileinfo_t *_info) {
             info->shnfile = NULL;
         }
     }
+}
+
+void
+shn_free (DB_fileinfo_t *_info) {
+    shn_fileinfo_t *info = (shn_fileinfo_t *)_info;
+    shn_free_decoder (info);
     if (info->buffer) {
         free(info->buffer);
         info->buffer = NULL;
@@ -741,6 +748,19 @@ shn_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
         if (info->shnfile->vars.bytes_in_buf > 0) {
             int n = size / sample_size;
             int nsamples = info->shnfile->vars.bytes_in_buf / (_info->channels * 2);
+            if (info->skipsamples > 0) {
+                int nskip = min(nsamples, info->skipsamples);
+                info->skipsamples -= nskip;
+                if (nskip == nsamples) {
+                    info->shnfile->vars.bytes_in_buf = 0;
+                    continue;
+                }
+                else {
+                    memmove (info->shnfile->vars.buffer, info->shnfile->vars.buffer + nskip * (_info->channels * 2), info->shnfile->vars.bytes_in_buf - nskip * (_info->channels * 2));
+                    nsamples -= nskip;
+                    continue;
+                }
+            }
             n = min (nsamples, n);
             char *src = info->shnfile->vars.buffer;
             for (int i = 0; i < n; i++) {
@@ -779,6 +799,25 @@ shn_seek_sample (DB_fileinfo_t *_info, int sample) {
     sample += info->startsample;
 
     info->shnfile->vars.seek_to = sample / _info->samplerate;
+
+    if (info->shnfile->vars.seek_table_entries == NO_SEEK_TABLE) {
+        // seek by skipping samples from the start
+        if (sample > info->currentsample) {
+            info->skipsamples = sample - info->currentsample;
+        }
+        else {
+            // restart
+            shn_free_decoder (info);
+            deadbeef->rewind (info->shnfile->vars.fd);
+            if (shn_init_decoder (info) < 0) {
+                return -1;
+            }
+            info->skipsamples = sample;
+        }
+        info->currentsample = info->shnfile->vars.seek_to * _info->samplerate;
+        _info->readpos = info->shnfile->vars.seek_to;
+        return 0;
+    }
 
     ulong seekto_offset;
     int i, j;
