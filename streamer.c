@@ -1035,7 +1035,9 @@ streamer_thread (void *ctx) {
             int bytesread = streamer_read_async (buf,sz);
             streamer_lock ();
             memcpy (streambuffer+streambuffer_fill, buf, sz);
-            streambuffer_fill += bytesread;
+            if (bytesread > 0) {
+                streambuffer_fill += bytesread;
+            }
 //            if (streamer_buffering) trace ("fill: %d, read: %d, size=%d, blocksize=%d\n", streambuffer_fill, bytesread, STREAM_BUFFER_SIZE, blocksize);
         }
         streamer_unlock ();
