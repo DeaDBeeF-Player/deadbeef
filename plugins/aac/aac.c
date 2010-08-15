@@ -313,12 +313,13 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
                         break;
                     }
                 }
+                trace ("mp4 probe-buffer size: %d\n", buff_size);
 
                 if (i != ntracks && buff) 
                 {
                     trace ("mp4 track: %d\n", i);
-                    samplerate = mp4ff_get_sample_rate (info->mp4file, i);
-                    channels = mp4ff_get_channel_count (info->mp4file, i);
+//                    samplerate = mp4ff_get_sample_rate (info->mp4file, i);
+//                    channels = mp4ff_get_channel_count (info->mp4file, i);
                     int samples = mp4ff_num_samples(info->mp4file, i);
                     trace ("mp4 nsamples=%d, samplerate=%d\n", samples * 1024, samplerate);
                     duration = (float)samples * 1024 / samplerate;
@@ -334,6 +335,11 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
                         return -1;
                     }
                     info->faad_channels = ch;
+                    samplerate = srate;
+                    channels = ch;
+                    NeAACDecConfigurationPtr conf = NeAACDecGetCurrentConfiguration (info->dec);
+                    conf->dontUpSampleImplicitSBR = 1;
+                    NeAACDecSetConfiguration (info->dec, conf);
                     mp4AudioSpecificConfig mp4ASC;
                     if (NeAACDecAudioSpecificConfig(buff, buff_size, &mp4ASC) >= 0)
                     {
@@ -396,6 +402,9 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     _info->plugin = &plugin;
 
     if (!info->mp4file) {
+        //trace ("NeAACDecGetCapabilities\n");
+        //unsigned long caps = NeAACDecGetCapabilities();
+
         trace ("NeAACDecOpen\n");
         info->dec = NeAACDecOpen ();
 
