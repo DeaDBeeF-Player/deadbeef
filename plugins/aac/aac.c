@@ -418,6 +418,7 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         unsigned char ch;
         trace ("NeAACDecInit\n");
         int consumed = NeAACDecInit (info->dec, info->buffer, info->remaining, &srate, &ch);
+        trace ("NeAACDecInit returned samplerate=%d, channels=%d\n", (int)srate, (int)ch);
         if (consumed < 0) {
             trace ("NeAACDecInit returned %d\n", consumed);
             return -1;
@@ -434,9 +435,6 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             info->remaining -= consumed;
         }
         info->faad_channels = ch;
-//        _info->channels = ch;
-//        _info->samplerate = srate;
-        trace ("NeAACDecInit returned samplerate=%d, channels=%d\n", (int)srate, (int)ch);
     }
 
     if (!info->file->vfs->streaming) {
