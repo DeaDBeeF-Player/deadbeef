@@ -1533,14 +1533,7 @@ streamer_read_async (char *bytes, int size) {
             trace ("streamer: EOF! buns: %d\n", bytes_until_next_song);
 
             // in case of decoder error, or EOF while buffering - switch to next song instantly
-            if (bytesread < 0 || (streamer_is_buffering() && bytesread == 0)) {
-                streamer_move_to_nextsong (0);
-                bytes_until_next_song = 0;
-                break;
-            }
-
-            if (bytes_until_next_song < 0) // don't start streaming new if already draining
-            {
+            if (bytesread < 0 || (bytes_until_next_song < 0 && streamer_is_buffering() && bytesread == 0) || bytes_until_next_song < 0) {
                 trace ("finished streaming song, queueing next\n");
                 bytes_until_next_song = streambuffer_fill;
                 if (conf_get_int ("playlist.stop_after_current", 0)) {
