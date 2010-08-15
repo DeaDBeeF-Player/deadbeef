@@ -230,9 +230,9 @@ aac_probe (DB_FILE *fp, float *duration, int *samplerate, int *channels, int *to
             trace ("mp4 track: %d\n", i);
             *samplerate = mp4ff_get_sample_rate (mp4, i);
             *channels = mp4ff_get_channel_count (mp4, i);
-            int samples = mp4ff_num_samples(mp4, i);
-            trace ("mp4 nsamples=%d, samplerate=%d\n", samples * 1024, *samplerate);
-            *duration = (float)samples * 1024 / (*samplerate);
+            int samples = mp4ff_num_samples(mp4, i) * 1024;
+            trace ("mp4 nsamples=%d, samplerate=%d\n", samples, *samplerate);
+            *duration = (float)samples / (*samplerate);
 
             if (totalsamples) {
                 *totalsamples = samples;
@@ -322,8 +322,7 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 //                    channels = mp4ff_get_channel_count (info->mp4file, i);
                     int samples = mp4ff_num_samples(info->mp4file, i);
                     trace ("mp4 nsamples=%d, samplerate=%d\n", samples * 1024, samplerate);
-                    duration = (float)samples * 1024 / samplerate;
-                    totalsamples = samples * 1024;
+                    totalsamples = samples;
                     info->mp4track = i;
 
                     // init mp4 decoding
@@ -351,6 +350,8 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
                             info->mp4framesize *= 2;
                         }
                     }
+                    totalsamples *= info->mp4framesize;
+                    duration = (float)totalsamples  / samplerate;
                     free (buff);
                 }
                 else {
@@ -473,10 +474,12 @@ aac_free (DB_fileinfo_t *_info) {
 static int
 aac_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
     aac_info_t *info = (aac_info_t *)_info;
+    int out_ch = min (_info->channels, 2);
     if (!info->file->vfs->streaming) {
-        if (info->currentsample + size / (2 * _info->channels) > info->endsample) {
-            size = (info->endsample - info->currentsample + 1) * 2 * _info->channels;
+        if (info->currentsample + size / (2 * out_ch) > info->endsample) {
+            size = (info->endsample - info->currentsample + 1) * 2 * out_ch;
             if (size <= 0) {
+                printf ("aac eof by currentsample\n");
                 return 0;
             }
         }
@@ -484,8 +487,7 @@ aac_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
 
     int initsize = size;
     int eof = 0;
-    int ch = min (_info->channels, 2);
-    int sample_size = ch * (_info->bps >> 3);
+    int sample_size = out_ch * (_info->bps >> 3);
 
     while (size > 0) {
         if (info->skipsamples > 0 && info->out_remaining > 0) {
@@ -570,9 +572,6 @@ aac_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
     }
 
     info->currentsample += (initsize-size) / sample_size;
-    if (size != 0) {
-        trace ("aac_read_int16 eof\n");
-    }
     return initsize-size;
 }
 
