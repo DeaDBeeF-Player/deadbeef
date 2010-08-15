@@ -23,10 +23,10 @@
 #ifdef HAVE_CONFIG_H
 #include "../../config.h"
 #endif
-#include <mp4ff.h>
 #include <stdlib.h>
 #include "../../deadbeef.h"
 #include "aac_parser.h"
+#include "mp4ff/mp4ff.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
