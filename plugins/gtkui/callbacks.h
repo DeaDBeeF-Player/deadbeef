@@ -966,3 +966,8 @@ on_cli_add_to_playlist_toggled         (GtkToggleButton *togglebutton,
 void
 on_cli_playlist_name_changed           (GtkEditable     *editable,
                                         gpointer         user_data);
+
+gboolean
+on_statusbar_button_press_event        (GtkWidget       *widget,
+                                        GdkEventButton  *event,
+                                        gpointer         user_data);

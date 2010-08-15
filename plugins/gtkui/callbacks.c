@@ -302,6 +302,16 @@ on_playrand_clicked                    (GtkButton       *button,
     deadbeef->sendmessage (M_PLAYRANDOM, 0, 0, 0);
 }
 
+void
+focus_on_playing_track (void) {
+    DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
+    if (it) {
+        int idx = deadbeef->pl_get_idx_of (it);
+        ddb_listview_scroll_to (DDB_LISTVIEW (lookup_widget (mainwin, "playlist")), idx);
+        ddb_listview_set_cursor (DDB_LISTVIEW (lookup_widget (mainwin, "playlist")), idx);
+        deadbeef->pl_item_unref (it);
+    }
+}
 
 gboolean
 on_mainwin_key_press_event             (GtkWidget       *widget,
@@ -319,6 +329,9 @@ on_mainwin_key_press_event             (GtkWidget       *widget,
             deadbeef->plt_set_curr (pl);
             deadbeef->conf_set_int ("playlist.current", pl);
         }
+    }
+    else if (event->state == GDK_CONTROL_MASK && event->keyval == GDK_j) {
+        focus_on_playing_track ();
     }
     else {
         ddb_listview_handle_keypress (DDB_LISTVIEW (lookup_widget (mainwin, "playlist")), event->keyval, event->state);
@@ -1057,6 +1070,3 @@ create_seekbar (gchar *widget_name, gchar *string1, gchar *string2,
 {
     return GTK_WIDGET (ddb_seekbar_new ());
 }
-
-
-
