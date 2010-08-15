@@ -692,6 +692,9 @@ create_mainwin (void)
   g_signal_connect ((gpointer) nextbtn, "clicked",
                     G_CALLBACK (on_nextbtn_clicked),
                     NULL);
+  g_signal_connect ((gpointer) statusbar, "button_press_event",
+                    G_CALLBACK (on_statusbar_button_press_event),
+                    NULL);
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (mainwin, mainwin, "mainwin");

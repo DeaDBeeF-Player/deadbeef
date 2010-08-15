@@ -882,6 +882,7 @@
 	<widget class="GtkStatusbar" id="statusbar">
 	  <property name="visible">True</property>
 	  <property name="has_resize_grip">True</property>
+	  <signal name="button_press_event" handler="on_statusbar_button_press_event" last_modification_time="Sun, 15 Aug 2010 20:30:35 GMT"/>
 	</widget>
 	<packing>
 	  <property name="padding">0</property>
