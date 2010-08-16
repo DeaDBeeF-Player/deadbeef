@@ -58,6 +58,7 @@ typedef struct {
     int faad_channels;
     char out_buffer[OUT_BUFFER_SIZE];
     int out_remaining;
+    int num_errors;
 } aac_info_t;
 
 // allocate codec control structure
@@ -546,8 +547,14 @@ aac_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
 
             samples = NeAACDecDecode (info->dec, &frame_info, info->buffer, info->remaining);
             if (!samples) {
-                trace ("NeAACDecDecode failed\n");
-                break;
+                trace ("NeAACDecDecode failed, consumed=%d\n", frame_info.bytesconsumed);
+                if (info->num_errors > 10) {
+                    trace ("NeAACDecDecode failed 10 times, interrupting\n");
+                    break;
+                }
+                info->num_errors++;
+                info->remaining = 0;
+                continue;
             }
             int consumed = frame_info.bytesconsumed;
             if (consumed > info->remaining) {
