@@ -146,7 +146,8 @@ static void
 cflac_error_callback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorStatus status, void *client_data) {
     DB_fileinfo_t *_info = (DB_fileinfo_t *)client_data;
     flac_info_t *info = (flac_info_t *)_info;
-    if (status != FLAC__STREAM_DECODER_ERROR_STATUS_LOST_SYNC) {
+    if (status != FLAC__STREAM_DECODER_ERROR_STATUS_LOST_SYNC
+            && status != FLAC__STREAM_DECODER_ERROR_STATUS_FRAME_CRC_MISMATCH) {
         trace ("cflac: got error callback: %s\n", FLAC__StreamDecoderErrorStatusString[status]);
         info->flac_critical_error = 1;
     }
