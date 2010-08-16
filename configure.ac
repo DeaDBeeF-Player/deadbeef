@@ -366,9 +366,8 @@ fi
 
 if test "x$enable_aac" != "xno" ; then
     AC_CHECK_LIB([faad], [main], [HAVE_FAAD=1])
-    AC_CHECK_LIB([mp4ff], [main], [HAVE_MP4FF=1])
-    if test ${HAVE_FAAD} && test ${HAVE_MP4FF} ; then
-        FAAD2_LIBS="-lfaad -lmp4ff"
+    if test ${HAVE_FAAD} ; then
+        FAAD2_LIBS="-lfaad"
         AC_SUBST(FAAD2_LIBS)
         HAVE_AAC=yes
     fi
