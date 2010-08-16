@@ -556,6 +556,7 @@ aac_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
                 info->remaining = 0;
                 continue;
             }
+            info->num_errors=0;
             int consumed = frame_info.bytesconsumed;
             if (consumed > info->remaining) {
                 trace ("NeAACDecDecode consumed more than available! wtf?\n");
