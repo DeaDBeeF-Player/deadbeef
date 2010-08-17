@@ -62,11 +62,10 @@ enum {
     FT_WMA = 1,
     FT_ATRAC3 = 2,
     FT_VQF = 3,
-    FT_TTA = 4,
-    FT_UNKNOWN = 5
+    FT_UNKNOWN = 4
 };
 
-static const char *filetypes[] = { "ALAC", "WMA", "atrac3", "VQF", "TTA", "FFMPEG (unknown)", NULL };
+static const char *filetypes[] = { "ALAC", "WMA", "atrac3", "VQF", "FFMPEG (unknown)", NULL };
 
 #define FF_PROTOCOL_NAME "deadbeef"
 
@@ -158,6 +157,16 @@ ffmpeg_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     if (avcodec_open (info->ctx, info->codec) < 0) {
         trace ("ffmpeg: avcodec_open failed\n");
         return -1;
+    }
+
+    if (!strcasecmp (info->codec->name, "alac")) {
+        it->filetype = filetypes[FT_ALAC];
+    }
+    else if (strcasestr (info->codec->name, "wma")) {
+        it->filetype = filetypes[FT_WMA];
+    }
+    else {
+        it->filetype = filetypes[FT_UNKNOWN];
     }
 
     int bps = av_get_bits_per_sample_format (info->ctx->sample_fmt);
@@ -506,39 +515,11 @@ ffmpeg_insert (DB_playItem_t *after, const char *fname) {
 
     int totalsamples = fctx->duration * samplerate / AV_TIME_BASE;
 
-    // find filetype
-    const char *filetype;
-    const char *ext = fname + strlen(fname) - 1;
-    while (ext > fname && *ext != '.') {
-        ext--;
-    }
-    if (*ext == '.') {
-        ext++;
-    }
-
-    if (!strcasecmp (ext, "m4a")) {
-        filetype = filetypes[FT_ALAC];
-    }
-    else if (!strcasecmp (ext, "wma")) {
-        filetype = filetypes[FT_WMA];
-    }
-    else if (!strcasecmp (ext, "aa3") || !strcasecmp (ext, "oma") || !strcasecmp (ext, "ac3")) {
-        filetype = filetypes[FT_ATRAC3];
-    }
-    else if (!strcasecmp (ext, "vqf")) {
-        filetype = filetypes[FT_VQF];
-    }
-    else if (!strcasecmp (ext, "tta")) {
-        filetype = filetypes[FT_TTA];
-    }
-    else {
-        filetype = filetypes[FT_UNKNOWN];
-    }
-
     DB_playItem_t *it = deadbeef->pl_item_alloc ();
     it->decoder_id = deadbeef->plug_get_decoder_id (plugin.plugin.id);
     it->fname = strdup (fname);
-    it->filetype = filetype;
+    // FIXME: get proper codec
+    it->filetype = filetypes[FT_UNKNOWN];
 
     if (!deadbeef->is_local_file (it->fname)) {
         deadbeef->pl_set_item_duration (it, -1);
