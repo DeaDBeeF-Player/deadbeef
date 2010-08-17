@@ -190,22 +190,23 @@ parse_aac_stream(DB_FILE *fp, int *psamplerate, int *pchannels, float *pduration
 
 // returns -1 for error, 0 for mp4, 1 for aac
 int
-aac_probe (DB_FILE *fp, float *duration, int *samplerate, int *channels, int *totalsamples, int *mp4track) {
+aac_probe (DB_FILE *fp, mp4ff_callback_t *cb, float *duration, int *samplerate, int *channels, int *totalsamples, int *mp4track, mp4ff_t **pmp4) {
     // try mp4
 
-    mp4ff_callback_t cb = {
-        .read = aac_fs_read,
-        .write = NULL,
-        .seek = aac_fs_seek,
-        .truncate = NULL,
-        .user_data = fp
-    };
-
+    if (mp4track) {
+        *mp4track = -1;
+    }
+    if (*pmp4) {
+        *pmp4 = NULL;
+    }
     *duration = -1;
-    mp4ff_t *mp4 = mp4ff_open_read (&cb);
+    mp4ff_t *mp4 = mp4ff_open_read (cb);
     if (!mp4) {
         trace ("not an mp4 file\n");
         return -1;
+    }
+    if (pmp4) {
+        *pmp4 = mp4;
     }
     int ntracks = mp4ff_total_tracks (mp4);
     if (ntracks > 0) {
@@ -241,10 +242,19 @@ aac_probe (DB_FILE *fp, float *duration, int *samplerate, int *channels, int *to
             if (mp4track) {
                 *mp4track = i;
             }
+            if (!*pmp4) {
+                mp4ff_close (mp4);
+            }
             return 0;
         }
     }
-    mp4ff_close (mp4);
+    if (*pmp4) {
+        *pmp4 = NULL;
+    }
+    if (mp4) {
+        mp4ff_close (mp4);
+        mp4 = NULL;
+    }
     trace ("mp4 track not found, looking for aac stream...\n");
 
     // not an mp4, try raw aac
@@ -479,7 +489,6 @@ aac_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
         if (info->currentsample + size / (2 * out_ch) > info->endsample) {
             size = (info->endsample - info->currentsample + 1) * 2 * out_ch;
             if (size <= 0) {
-                printf ("aac eof by currentsample\n");
                 return 0;
             }
         }
@@ -683,6 +692,9 @@ aac_insert (DB_playItem_t *after, const char *fname) {
     int totalsamples = 0;
     int samplerate = 0;
 
+    int mp4track = -1;
+    mp4ff_t *mp4 = NULL;
+
     if (fp->vfs->streaming) {
         trace ("streaming aac (%s)\n", fname);
         ftype = plugin.filetypes[0];
@@ -696,7 +708,15 @@ aac_insert (DB_playItem_t *after, const char *fname) {
         int channels;
 
         // slowwww!
-        int res = aac_probe (fp, &duration, &samplerate, &channels, &totalsamples, NULL);
+        mp4ff_callback_t cb = {
+            .read = aac_fs_read,
+            .write = NULL,
+            .seek = aac_fs_seek,
+            .truncate = NULL,
+            .user_data = fp
+        };
+
+        int res = aac_probe (fp, &cb, &duration, &samplerate, &channels, &totalsamples, &mp4track, &mp4);
         if (res == -1) {
             deadbeef->fclose (fp);
             return NULL;
@@ -717,7 +737,20 @@ aac_insert (DB_playItem_t *after, const char *fname) {
 //    trace ("duration: %f sec\n", duration);
 
     // read tags
-    if (ftype == "aac") {
+    if (mp4) {
+#if 0
+        printf ("got mp4 file, reading metadata..\n");
+        // read mp4 tags via mp4ff means
+        int nmeta = mp4ff_meta_get_num_items (mp4);
+        printf ("nmeta=%d\n", nmeta);
+        for (int i = 0; i < nmeta; i++) {
+            char *item, *value;
+            int n = mp4ff_meta_get_by_index (mp4, i, &item, &value);
+            printf ("%d %d %s %s\n", i, n, item, value);
+        }
+#endif
+    }
+    else if (ftype == "aac") {
         int apeerr = deadbeef->junk_apev2_read (it, fp);
         int v2err = deadbeef->junk_id3v2_read (it, fp);
         int v1err = deadbeef->junk_id3v1_read (it, fp);
