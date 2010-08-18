@@ -921,16 +921,34 @@ aac_insert (DB_playItem_t *after, const char *fname) {
 
     // read tags
     if (mp4) {
-#if 0
-        printf ("got mp4 file, reading metadata..\n");
-        // read mp4 tags via mp4ff means
-        int nmeta = mp4ff_meta_get_num_items (mp4);
-        printf ("nmeta=%d\n", nmeta);
-        for (int i = 0; i < nmeta; i++) {
-            char *item, *value;
-            int n = mp4ff_meta_get_by_index (mp4, i, &item, &value);
-            printf ("%d %d %s %s\n", i, n, item, value);
+#ifndef USE_MP4FF
+        const MP4Tags *tags = MP4TagsAlloc ();
+        MP4TagsFetch (tags, mp4);
+
+        deadbeef->pl_add_meta (it, "title", tags->name);
+        deadbeef->pl_add_meta (it, "artist", tags->artist);
+        deadbeef->pl_add_meta (it, "albumArtist", tags->albumArtist);
+        deadbeef->pl_add_meta (it, "album", tags->album);
+        deadbeef->pl_add_meta (it, "composer", tags->composer);
+        deadbeef->pl_add_meta (it, "comments", tags->comments);
+        deadbeef->pl_add_meta (it, "genre", tags->genre);
+        deadbeef->pl_add_meta (it, "year", tags->releaseDate);
+        char s[10];
+        if (tags->track) {
+            snprintf (s, sizeof (s), "%d", tags->track->index);
+            deadbeef->pl_add_meta (it, "track", s);
+            snprintf (s, sizeof (s), "%d", tags->track->total);
+            deadbeef->pl_add_meta (it, "numtracks", s);
         }
+        if (tags->disk) {
+            snprintf (s, sizeof (s), "%d", tags->disk->index);
+            deadbeef->pl_add_meta (it, "disc", s);
+            snprintf (s, sizeof (s), "%d", tags->disk->total);
+            deadbeef->pl_add_meta (it, "numdiscs", s);
+        }
+        deadbeef->pl_add_meta (it, "copyright", tags->copyright);
+        deadbeef->pl_add_meta (it, "vendor", tags->encodedBy);
+        MP4TagsFree (tags);
 #endif
     }
     else if (ftype == "aac") {
