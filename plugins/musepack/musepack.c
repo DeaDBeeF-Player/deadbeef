@@ -339,6 +339,7 @@ musepack_insert (DB_playItem_t *after, const char *fname) {
     // chapters
     int nchapters = mpc_demux_chap_nb (demux);
     DB_playItem_t *prev = NULL;
+    DB_playItem_t *meta = NULL;
     if (nchapters > 1) {
         int i;
         for (i = 0; i < nchapters; i++) {
@@ -351,14 +352,23 @@ musepack_insert (DB_playItem_t *after, const char *fname) {
             it->startsample = ch->sample;
             it->endsample = totalsamples-1;
             deadbeef->pl_set_item_flags (it, DDB_IS_SUBTRACK);
-            if (prev) {
+            if (!prev) {
+                /*int apeerr = */deadbeef->junk_apev2_read (it, fp);
+                meta = it;
+            }
+            else {
                 prev->endsample = it->startsample-1;
                 float dur = (prev->endsample - prev->startsample) / (float)si.sample_freq;
                 deadbeef->pl_set_item_duration (prev, dur);
+                deadbeef->pl_items_copy_junk (meta, it, it);
             }
             if (i == nchapters - 1) {
                 float dur = (it->endsample - it->startsample) / (float)si.sample_freq;
                 deadbeef->pl_set_item_duration (it, dur);
+            }
+            if (ch->tag_size > 0) {
+                uint8_t *tag = ch->tag;
+                deadbeef->junk_apev2_read_mem (it, ch->tag, ch->tag_size);
             }
             after = deadbeef->pl_insert_item (after, it);
             prev = it;
