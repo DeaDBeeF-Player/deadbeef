@@ -755,7 +755,7 @@ junk_find_id3v1 (DB_FILE *fp) {
 }
 
 int
-junk_add_track_meta (playItem_t *it, char *track) {
+junk_add_track_meta (playItem_t *it, const char *track) {
     char *slash = strchr (track, '/');
     if (slash) {
         // split into track/number
@@ -768,8 +768,148 @@ junk_add_track_meta (playItem_t *it, char *track) {
 }
 
 int
+junk_apev2_add_frame (playItem_t *it, DB_apev2_tag_t *tag_store, DB_apev2_frame_t **tail, uint32_t itemsize, uint32_t itemflags, const char *key, const uint8_t *value) {
+    if (tag_store) {
+        DB_apev2_frame_t *frm = malloc (sizeof (DB_apev2_frame_t) + itemsize);
+        memset (frm, 0, sizeof (DB_apev2_tag_t));
+        frm->flags = itemflags;
+        strcpy (frm->key, key);
+        trace ("*** stored frame %s flags %X\n", key, itemflags);
+        frm->size = itemsize;
+        memcpy (frm->data, value, itemsize);
+        if (*tail) {
+            (*tail)->next = frm;
+        }
+        else {
+            tag_store->frames = frm;
+        }
+        *tail = frm;
+    }
+
+    if (it) {
+        int valuetype = ((itemflags >> 1) & 3);
+        // add metainfo only if it's textual
+        if (valuetype == 0 && (itemsize < MAX_TEXT_FRAME_SIZE || (!strcasecmp (key, "cuesheet") && itemsize < MAX_CUESHEET_FRAME_SIZE))) {
+            if (!u8_valid (value, itemsize, NULL)) {
+                trace ("junk_read_ape_full: bad encoding in text frame %s\n", key);
+                return -1;
+            }
+
+            int m;
+            for (m = 0; frame_mapping[m]; m += FRAME_MAPPINGS) {
+                if (frame_mapping[m + MAP_APEV2] && !strcasecmp (key, frame_mapping[m + MAP_APEV2])) {
+                    if (!strcmp (frame_mapping[m+MAP_DDB], "track")) {
+                        junk_add_track_meta (it, value);
+                    }
+                    else {
+                        trace ("pl_append_meta %s %s\n", frame_mapping[m+MAP_DDB], value);
+                        pl_append_meta (it, frame_mapping[m+MAP_DDB], value);
+                    }
+                    break;
+                }
+            }
+
+            trace ("apev2 %s=%s\n", key, value);
+
+            if (!frame_mapping[m]) {
+                if (!strncasecmp (key, "replaygain_album_gain", 21)) {
+                    it->replaygain_album_gain = atof (value);
+                    trace ("album_gain=%s\n", value);
+                }
+                else if (!strncasecmp (key, "replaygain_album_peak", 21)) {
+                    it->replaygain_album_peak = atof (value);
+                    trace ("album_peak=%s\n", value);
+                }
+                else if (!strncasecmp (key, "replaygain_track_gain", 21)) {
+                    it->replaygain_track_gain = atof (value);
+                    trace ("track_gain=%s\n", value);
+                }
+                else if (!strncasecmp (key, "replaygain_track_peak", 21)) {
+                    it->replaygain_track_peak = atof (value);
+                    trace ("track_peak=%s\n", value);
+                }
+            }
+        }
+    }
+}
+
+int
+junk_apev2_read_full_mem (playItem_t *it, DB_apev2_tag_t *tag_store, char *mem, int memsize) {
+    char *end = mem+memsize;
+#define STEP(x,y) {mem+=(x);if(mem+(y)>end) {trace ("fail %d\n", (x));return -1;}}
+
+    char *header = mem;
+
+    DB_apev2_frame_t *tail = NULL;
+
+    uint32_t version = extract_i32_le (&header[0]);
+    int32_t size = extract_i32_le (&header[4]);
+    uint32_t numitems = extract_i32_le (&header[8]);
+    uint32_t flags = extract_i32_le (&header[12]);
+
+    trace ("APEv%d, size=%d, items=%d, flags=%x\n", version, size, numitems, flags);
+    if (it) {
+        uint32_t f = pl_get_item_flags (it);
+        f |= DDB_TAG_APEV2;
+        pl_set_item_flags (it, f);
+    }
+
+    STEP(24, 8);
+
+    int i;
+    for (i = 0; i < numitems; i++) {
+        trace ("reading item %d\n", i);
+        uint8_t *buffer = mem;
+
+        uint32_t itemsize = extract_i32_le (&buffer[0]);
+        uint32_t itemflags = extract_i32_le (&buffer[4]);
+
+        STEP(8, 1);
+        trace ("size=%d, flags=%x\n", itemsize, itemflags);
+
+        // read key until 0 (stupid and slow)
+        char key[256];
+        int keysize = 0;
+        while (keysize <= 255 && mem < end) {
+            key[keysize] = *mem;
+            printf ("%c(%x)\n", *mem, *mem);
+            mem++;
+            if (key[keysize] == 0) {
+                break;
+            }
+            if (key[keysize] < 0x20) {
+                trace ("nonascii chars\n");
+                return -1; // non-ascii chars and chars with codes 0..0x1f not allowed in ape item keys
+            }
+            keysize++;
+        }
+        key[255] = 0;
+        trace ("item %d, size %d, flags %08x, keysize %d, key %s\n", i, itemsize, itemflags, keysize, key);
+        // read value
+        if (itemsize <= MAX_APEV2_FRAME_SIZE) // just a sanity check
+        {
+            STEP(0,itemsize);
+            uint8_t *value = malloc (itemsize+1);
+            if (!value) {
+                trace ("junk_read_ape_full: failed to allocate %d bytes\n", itemsize+1);
+                return -1;
+            }
+            memcpy (value, mem, itemsize);
+            value[itemsize] = 0;
+
+            junk_apev2_add_frame (it, tag_store, &tail, itemsize, itemflags, key, value);
+
+            free (value);
+        }
+        else {
+            STEP(itemsize,8);
+        }
+    }
+    return 0;
+}
+
+int
 junk_apev2_read_full (playItem_t *it, DB_apev2_tag_t *tag_store, DB_FILE *fp) {
-//    trace ("trying to read ape tag\n");
     // try to read footer, position must be already at the EOF right before
     // id3v1 (if present)
 
@@ -861,68 +1001,7 @@ junk_apev2_read_full (playItem_t *it, DB_apev2_tag_t *tag_store, DB_FILE *fp) {
             }
             value[itemsize] = 0;
 
-            if (tag_store) {
-                DB_apev2_frame_t *frm = malloc (sizeof (DB_apev2_frame_t) + itemsize);
-                memset (frm, 0, sizeof (DB_apev2_tag_t));
-                frm->flags = itemflags;
-                strcpy (frm->key, key);
-                trace ("*** stored frame %s flags %X\n", key, itemflags);
-                frm->size = itemsize;
-                memcpy (frm->data, value, itemsize);
-                if (tail) {
-                    tail->next = frm;
-                }
-                else {
-                    tag_store->frames = frm;
-                }
-                tail = frm;
-            }
-
-            if (it) {
-                int valuetype = ((itemflags >> 1) & 3);
-                // add metainfo only if it's textual
-                if (valuetype == 0 && (itemsize < MAX_TEXT_FRAME_SIZE || (!strcasecmp (key, "cuesheet") && itemsize < MAX_CUESHEET_FRAME_SIZE))) {
-                    if (!u8_valid (value, itemsize, NULL)) {
-                        trace ("junk_read_ape_full: bad encoding in text frame %s\n", key);
-                        continue;
-                    }
-
-                    int m;
-                    for (m = 0; frame_mapping[m]; m += FRAME_MAPPINGS) {
-                        if (frame_mapping[m + MAP_APEV2] && !strcasecmp (key, frame_mapping[m + MAP_APEV2])) {
-                            if (!strcmp (frame_mapping[m+MAP_DDB], "track")) {
-                                junk_add_track_meta (it, value);
-                            }
-                            else {
-                                trace ("pl_append_meta %s %s\n", frame_mapping[m+MAP_DDB], value);
-                                pl_append_meta (it, frame_mapping[m+MAP_DDB], value);
-                            }
-                            break;
-                        }
-                    }
-
-                    trace ("apev2 %s=%s\n", key, value);
-
-                    if (!frame_mapping[m]) {
-                        if (!strncasecmp (key, "replaygain_album_gain", 21)) {
-                            it->replaygain_album_gain = atof (value);
-                            trace ("album_gain=%s\n", value);
-                        }
-                        else if (!strncasecmp (key, "replaygain_album_peak", 21)) {
-                            it->replaygain_album_peak = atof (value);
-                            trace ("album_peak=%s\n", value);
-                        }
-                        else if (!strncasecmp (key, "replaygain_track_gain", 21)) {
-                            it->replaygain_track_gain = atof (value);
-                            trace ("track_gain=%s\n", value);
-                        }
-                        else if (!strncasecmp (key, "replaygain_track_peak", 21)) {
-                            it->replaygain_track_peak = atof (value);
-                            trace ("track_peak=%s\n", value);
-                        }
-                    }
-                }
-            }
+            junk_apev2_add_frame (it, tag_store, &tail, itemsize, itemflags, key, value);
             free (value);
         }
         else {
@@ -940,6 +1019,11 @@ junk_apev2_read_full (playItem_t *it, DB_apev2_tag_t *tag_store, DB_FILE *fp) {
 int
 junk_apev2_read (playItem_t *it, DB_FILE *fp) {
     return junk_apev2_read_full (it, NULL, fp);
+}
+
+int
+junk_apev2_read_mem (playItem_t *it, char *mem, int size) {
+    return junk_apev2_read_full_mem (it, NULL, mem, size);
 }
 
 int
