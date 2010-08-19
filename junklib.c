@@ -872,7 +872,6 @@ junk_apev2_read_full_mem (playItem_t *it, DB_apev2_tag_t *tag_store, char *mem, 
         int keysize = 0;
         while (keysize <= 255 && mem < end) {
             key[keysize] = *mem;
-            printf ("%c(%x)\n", *mem, *mem);
             mem++;
             if (key[keysize] == 0) {
                 break;
