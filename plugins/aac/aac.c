@@ -879,8 +879,60 @@ static const char *metainfo[] = {
 
 /* find a metadata item by name */
 /* returns 0 if item found, 1 if no such item */
-extern int32_t mp4ff_meta_find_by_name(const mp4ff_t *f, const char *item, char **value);
+int32_t mp4ff_meta_find_by_name(const mp4ff_t *f, const char *item, char **value);
+
+
+void
+aac_load_tags (DB_playItem_t *it, mp4ff_t *mp4) {
+    char *s;
+    for (int i = 0; metainfo[i]; i += 2) {
+        if (mp4ff_meta_find_by_name(mp4, metainfo[i], &s)) {
+            deadbeef->pl_add_meta (it, metainfo[i+1], s);
+            free (s);
+        }
+    }
+    deadbeef->pl_add_meta (it, "title", NULL);
+}
 #endif
+
+
+int
+aac_read_metadata (DB_playItem_t *it) {
+#ifdef USE_MP4FF
+    DB_FILE *fp = deadbeef->fopen (it->fname);
+    if (!fp) {
+        return -1;
+    }
+
+    if (fp->vfs->streaming) {
+        deadbeef->fclose (fp);
+        return -1;
+    }
+
+    MP4FILE_CB cb = {
+        .read = aac_fs_read,
+        .write = NULL,
+        .seek = aac_fs_seek,
+        .truncate = NULL,
+        .user_data = fp
+    };
+
+    deadbeef->pl_delete_all_meta (it);
+
+    mp4ff_t *mp4 = mp4ff_open_read (&cb);
+    if (mp4) {
+        aac_load_tags (it, mp4);
+        mp4ff_close (mp4);
+    }
+    else {
+        /*int apeerr = */deadbeef->junk_apev2_read (it, fp);
+        /*int v2err = */deadbeef->junk_id3v2_read (it, fp);
+        /*int v1err = */deadbeef->junk_id3v1_read (it, fp);
+        deadbeef->pl_add_meta (it, "title", NULL);
+    }
+    deadbeef->fclose (fp);
+#endif
+}
 
 static DB_playItem_t *
 aac_insert (DB_playItem_t *after, const char *fname) {
@@ -951,13 +1003,8 @@ aac_insert (DB_playItem_t *after, const char *fname) {
     // read tags
     if (mp4) {
 #ifdef USE_MP4FF
-        char *s;
-        for (int i = 0; metainfo[i]; i += 2) {
-            if (mp4ff_meta_find_by_name(mp4, metainfo[i], &s)) {
-                deadbeef->pl_add_meta (it, metainfo[i+1], s);
-                free (s);
-            }
-        }
+        aac_load_tags (it, mp4);
+        mp4ff_close (mp4);
 #else
         const MP4Tags *tags = MP4TagsAlloc ();
         MP4TagsFetch (tags, mp4);
@@ -985,13 +1032,16 @@ aac_insert (DB_playItem_t *after, const char *fname) {
         }
         deadbeef->pl_add_meta (it, "copyright", tags->copyright);
         deadbeef->pl_add_meta (it, "vendor", tags->encodedBy);
+        deadbeef->pl_add_meta (it, "title", NULL);
         MP4TagsFree (tags);
+        MP4Close (mp4);
 #endif
     }
     else if (ftype == "aac") {
         int apeerr = deadbeef->junk_apev2_read (it, fp);
         int v2err = deadbeef->junk_id3v2_read (it, fp);
         int v1err = deadbeef->junk_id3v1_read (it, fp);
+        deadbeef->pl_add_meta (it, "title", NULL);
     }
 
     deadbeef->fclose (fp);
@@ -1050,6 +1100,7 @@ static DB_decoder_t plugin = {
     .seek = aac_seek,
     .seek_sample = aac_seek_sample,
     .insert = aac_insert,
+    .read_metadata = aac_read_metadata,
     .exts = exts,
     .filetypes = filetypes
 };
