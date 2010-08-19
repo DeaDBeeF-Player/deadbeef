@@ -30,6 +30,7 @@
 #ifdef USE_MP4FF
 #include "mp4ff/mp4ff.h"
 #else
+#warning linking mp4v2 to faad2 is illegal
 #include <mp4v2/mp4v2.h>
 #endif
 
@@ -853,6 +854,34 @@ aac_seek (DB_fileinfo_t *_info, float t) {
     return aac_seek_sample (_info, t * _info->samplerate);
 }
 
+#ifdef USE_MP4FF
+static const char *metainfo[] = {
+    "artist", "artist",
+    "title", "title",
+    "album", "album",
+    "track", "track",
+    "date", "year",
+    "genre", "genre",
+    "comment", "comment",
+    "performer", "performer",
+    "albumartist", "band",
+    "writer", "composer",
+    "vendor", "vendor",
+    "disc", "disc",
+    "compilation", "compilation",
+    "totaldiscs", "numdiscs",
+    "copyright", "copyright",
+    "totaltracks", "numtracks",
+    "tool", "tool",
+    NULL
+};
+
+
+/* find a metadata item by name */
+/* returns 0 if item found, 1 if no such item */
+extern int32_t mp4ff_meta_find_by_name(const mp4ff_t *f, const char *item, char **value);
+#endif
+
 static DB_playItem_t *
 aac_insert (DB_playItem_t *after, const char *fname) {
     trace ("adding %s\n", fname);
@@ -921,7 +950,15 @@ aac_insert (DB_playItem_t *after, const char *fname) {
 
     // read tags
     if (mp4) {
-#ifndef USE_MP4FF
+#ifdef USE_MP4FF
+        char *s;
+        for (int i = 0; metainfo[i]; i += 2) {
+            if (mp4ff_meta_find_by_name(mp4, metainfo[i], &s)) {
+                deadbeef->pl_add_meta (it, metainfo[i+1], s);
+                free (s);
+            }
+        }
+#else
         const MP4Tags *tags = MP4TagsAlloc ();
         MP4TagsFetch (tags, mp4);
 

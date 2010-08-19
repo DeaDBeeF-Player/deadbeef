@@ -344,7 +344,7 @@ int32_t mp4ff_parse_metadata(mp4ff_t *f, const int32_t size)
 
 /* find a metadata item by name */
 /* returns 0 if item found, 1 if no such item */
-static int32_t mp4ff_meta_find_by_name(const mp4ff_t *f, const char *item, char **value)
+int32_t mp4ff_meta_find_by_name(const mp4ff_t *f, const char *item, char **value)
 {
     uint32_t i;
 

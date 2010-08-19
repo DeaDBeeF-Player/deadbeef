@@ -289,7 +289,7 @@ static int32_t mp4ff_tag_add_field(mp4ff_metadata_t *tags, const char *item, con
 static int32_t mp4ff_tag_set_field(mp4ff_metadata_t *tags, const char *item, const char *value);
 static int32_t mp4ff_set_metadata_name(mp4ff_t *f, const uint8_t atom_type, char **name);
 static int32_t mp4ff_parse_tag(mp4ff_t *f, const uint8_t parent_atom_type, const int32_t size);
-static int32_t mp4ff_meta_find_by_name(const mp4ff_t *f, const char *item, char **value);
+int32_t mp4ff_meta_find_by_name(const mp4ff_t *f, const char *item, char **value);
 int32_t mp4ff_parse_metadata(mp4ff_t *f, const int32_t size);
 int32_t mp4ff_tag_delete(mp4ff_metadata_t *tags);
 int32_t mp4ff_meta_get_num_items(const mp4ff_t *f);
