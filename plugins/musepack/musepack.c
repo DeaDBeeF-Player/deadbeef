@@ -336,8 +336,39 @@ musepack_insert (DB_playItem_t *after, const char *fname) {
     int totalsamples = mpc_streaminfo_get_length_samples (&si);
     double dur = mpc_streaminfo_get_length (&si);
 
-    mpc_demux_exit (demux);
-    demux = NULL;
+    // chapters
+    int nchapters = mpc_demux_chap_nb (demux);
+    DB_playItem_t *prev = NULL;
+    if (nchapters > 1) {
+        int i;
+        for (i = 0; i < nchapters; i++) {
+            const mpc_chap_info *ch = mpc_demux_chap (demux, i);
+            DB_playItem_t *it = deadbeef->pl_item_alloc ();
+            it->decoder_id = deadbeef->plug_get_decoder_id (plugin.plugin.id);
+            it->fname = strdup (fname);
+            it->filetype = "MusePack";
+            it->tracknum = i;
+            it->startsample = ch->sample;
+            it->endsample = totalsamples-1;
+            deadbeef->pl_set_item_flags (it, DDB_IS_SUBTRACK);
+            if (prev) {
+                prev->endsample = it->startsample-1;
+                float dur = (prev->endsample - prev->startsample) / (float)si.sample_freq;
+                deadbeef->pl_set_item_duration (prev, dur);
+            }
+            if (i == nchapters - 1) {
+                float dur = (it->endsample - it->startsample) / (float)si.sample_freq;
+                deadbeef->pl_set_item_duration (it, dur);
+            }
+            after = deadbeef->pl_insert_item (after, it);
+            prev = it;
+            deadbeef->pl_item_unref (it);
+        }
+        mpc_demux_exit (demux);
+        demux = NULL;
+        deadbeef->fclose (fp);
+        return after;
+    }
 
     DB_playItem_t *it = deadbeef->pl_item_alloc ();
     it->decoder_id = deadbeef->plug_get_decoder_id (plugin.plugin.id);
@@ -348,8 +379,9 @@ musepack_insert (DB_playItem_t *after, const char *fname) {
     /*int apeerr = */deadbeef->junk_apev2_read (it, fp);
     deadbeef->fclose (fp);
 
-    // embedded cue
     deadbeef->pl_lock ();
+
+    // embedded cue
     const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
     DB_playItem_t *cue = NULL;
     if (cuesheet) {
@@ -358,6 +390,8 @@ musepack_insert (DB_playItem_t *after, const char *fname) {
             deadbeef->pl_item_unref (it);
             deadbeef->pl_item_unref (cue);
             deadbeef->pl_unlock ();
+            mpc_demux_exit (demux);
+            demux = NULL;
             return cue;
         }
     }
@@ -367,12 +401,18 @@ musepack_insert (DB_playItem_t *after, const char *fname) {
     if (cue) {
         deadbeef->pl_item_unref (it);
         deadbeef->pl_item_unref (cue);
+        mpc_demux_exit (demux);
+        demux = NULL;
+
         return cue;
     }
 
     deadbeef->pl_add_meta (it, "title", NULL);
     after = deadbeef->pl_insert_item (after, it);
     deadbeef->pl_item_unref (it);
+
+    mpc_demux_exit (demux);
+    demux = NULL;
 
     return after;
 }
