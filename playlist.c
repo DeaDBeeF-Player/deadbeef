@@ -3189,7 +3189,7 @@ void
 pl_items_copy_junk (playItem_t *from, playItem_t *first, playItem_t *last) {
     LOCK;
     const char *metainfo[] = {
-        "year", "genre", "copyright", "vendor", "comment", "tags", "numtracks", "band", "performer", "composer", "disc", NULL
+        "year", "genre", "copyright", "vendor", "comment", "tags", "numtracks", "band", "performer", "composer", "disc", "title", "artist", "album", NULL
     };
     for (int m = 0; metainfo[m]; m++) {
         const char *data = pl_find_meta (from, metainfo[m]);
