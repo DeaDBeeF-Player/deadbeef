@@ -387,6 +387,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
 
             if (!strncmp (xing, magic, 4) || !strncmp (info, magic, 4)) {
                 trace ("xing/info frame found\n");
+                buffer->startoffset += packetlength;
                 // read flags
                 uint32_t flags;
                 uint8_t buf[4];
