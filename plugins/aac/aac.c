@@ -63,6 +63,7 @@ typedef struct {
     int32_t timescale;
     u_int32_t maxSampleSize;
     int mp4track;
+    int mp4samples;
     int mp4sample;
     int mp4framesize;
     int skipsamples;
@@ -422,7 +423,8 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
                 {
                     trace ("mp4 track: %d\n", i);
                     int samples = mp4ff_num_samples(info->mp4file, i);
-                    trace ("mp4 nsamples=%d, samplerate=%d\n", samples * 1024, samplerate);
+                    info->mp4samples = samples;
+                    trace ("mp4 mp4samples=%d, nsamples=%d, samplerate=%d\n", samples, samples * 1024, samplerate);
                     totalsamples = samples;
                     info->mp4track = i;
 
@@ -713,6 +715,9 @@ aac_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
             u_int64_t myDuration = MP4ConvertFromTrackDuration (info->mp4file, info->mp4track,
                     sampleDuration, MP4_MSECS_TIME_SCALE);
 #endif
+            if (info->mp4sample >= info->mp4samples) {
+                break;
+            }
             info->mp4sample++;
             samples = NeAACDecDecode(info->dec, &frame_info, buffer, buffer_size);
 #ifdef USE_MP4FF
