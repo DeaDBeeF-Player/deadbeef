@@ -353,14 +353,13 @@ musepack_insert (DB_playItem_t *after, const char *fname) {
             it->endsample = totalsamples-1;
             deadbeef->pl_set_item_flags (it, DDB_IS_SUBTRACK);
             if (!prev) {
-                /*int apeerr = */deadbeef->junk_apev2_read (it, fp);
-                meta = it;
+                meta = deadbeef->pl_item_alloc ();
+                /*int apeerr = */deadbeef->junk_apev2_read (meta, fp);
             }
             else {
                 prev->endsample = it->startsample-1;
                 float dur = (prev->endsample - prev->startsample) / (float)si.sample_freq;
                 deadbeef->pl_set_item_duration (prev, dur);
-                deadbeef->pl_items_copy_junk (meta, it, it);
             }
             if (i == nchapters - 1) {
                 float dur = (it->endsample - it->startsample) / (float)si.sample_freq;
@@ -369,6 +368,9 @@ musepack_insert (DB_playItem_t *after, const char *fname) {
             if (ch->tag_size > 0) {
                 uint8_t *tag = ch->tag;
                 deadbeef->junk_apev2_read_mem (it, ch->tag, ch->tag_size);
+                if (meta) {
+                    deadbeef->pl_items_copy_junk (meta, it, it);
+                }
             }
             after = deadbeef->pl_insert_item (after, it);
             prev = it;
@@ -377,6 +379,9 @@ musepack_insert (DB_playItem_t *after, const char *fname) {
         mpc_demux_exit (demux);
         demux = NULL;
         deadbeef->fclose (fp);
+        if (meta) {
+            deadbeef->pl_item_unref (meta);
+        }
         return after;
     }
 
