@@ -899,6 +899,7 @@ junk_apev2_read_full_mem (playItem_t *it, DB_apev2_tag_t *tag_store, char *mem, 
             junk_apev2_add_frame (it, tag_store, &tail, itemsize, itemflags, key, value);
 
             free (value);
+            STEP(itemsize, 8);
         }
         else {
             STEP(itemsize,8);
