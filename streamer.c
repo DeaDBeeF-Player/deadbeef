@@ -1052,7 +1052,7 @@ streamer_thread (void *ctx) {
 
         int ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
         alloc_time -= ms;
-        if (alloc_time > 0) {
+        if (!streamer_buffering && alloc_time > 0) {
             usleep (alloc_time * 1000);
 //            usleep (1000);
         }
