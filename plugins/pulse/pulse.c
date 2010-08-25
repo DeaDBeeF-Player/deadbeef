@@ -143,11 +143,8 @@ static int pulse_play(void)
 
 static int pulse_stop(void)
 {
-    float vol = deadbeef->volume_get_amp();
-    deadbeef->volume_set_amp(0.0);
     state = OUTPUT_STATE_STOPPED;
     deadbeef->streamer_reset(1);
-    deadbeef->volume_set_amp(vol);
     return 0;
 }
 
@@ -218,17 +215,18 @@ static void pulse_thread(void *context)
     {
         if (state != OUTPUT_STATE_PLAYING || !deadbeef->streamer_ok_to_read (-1))
         {
-            usleep(1000);
+            usleep(10000);
             continue;
         }
 
         char buf[buffer_size];
+        deadbeef->mutex_lock(mutex);
         pulse_callback (buf, sizeof (buf));
         int error;
 
-        deadbeef->mutex_lock(mutex);
         int res = pa_simple_write(s, buf, sizeof (buf), &error);
         deadbeef->mutex_unlock(mutex);
+        usleep (1000);
 
         if (res < 0)
         {
@@ -242,12 +240,6 @@ static void pulse_thread(void *context)
 
 static void pulse_callback(char *stream, int len)
 {
-    if (!deadbeef->streamer_ok_to_read (len))
-    {
-        memset (stream, 0, len);
-        return;
-    }
-
     int bytesread = deadbeef->streamer_read(stream, len);
     int16_t ivolume = deadbeef->volume_get_amp() * 1000;
 
