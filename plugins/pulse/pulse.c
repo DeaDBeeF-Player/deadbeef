@@ -220,13 +220,12 @@ static void pulse_thread(void *context)
         }
 
         char buf[buffer_size];
-        deadbeef->mutex_lock(mutex);
         pulse_callback (buf, sizeof (buf));
         int error;
 
+        deadbeef->mutex_lock(mutex);
         int res = pa_simple_write(s, buf, sizeof (buf), &error);
         deadbeef->mutex_unlock(mutex);
-        usleep (1000);
 
         if (res < 0)
         {
