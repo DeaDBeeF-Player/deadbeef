@@ -518,10 +518,15 @@ gtkui_on_frameupdate (DB_event_t *ev, uintptr_t data) {
     return 0;
 }
 
-static int
-gtkui_on_volumechanged (DB_event_t *ev, uintptr_t data) {
+static gboolean
+gtkui_volumechanged_cb (gpointer ctx) {
     GtkWidget *volumebar = lookup_widget (mainwin, "volumebar");
     gdk_window_invalidate_rect (volumebar->window, NULL, FALSE);
+}
+
+static int
+gtkui_on_volumechanged (DB_event_t *ev, uintptr_t data) {
+    g_idle_add (gtkui_volumechanged_cb, NULL);
 
     return 0;
 }
