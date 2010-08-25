@@ -19,7 +19,7 @@
   mad.cpp - MAD loader by Riven the Mage <riven@ok.ru>
 */
 
-#include <cstring>
+#include <string.h>
 #include "mad.h"
 
 /* -------- Public Methods -------------------------------- */
@@ -29,7 +29,7 @@ CPlayer *CmadLoader::factory(Copl *newopl)
   return new CmadLoader(newopl);
 }
 
-bool CmadLoader::load(const std::string &filename, const CFileProvider &fp)
+bool CmadLoader::load(const char *filename, const CFileProvider &fp)
 {
   binistream *f = fp.open(filename); if(!f) return false;
   const unsigned char conv_inst[10] = { 2,1,10,9,4,3,6,5,8,7 };
@@ -111,14 +111,14 @@ float CmadLoader::getrefresh()
 	return (float)timer;
 }
 
-std::string CmadLoader::gettype()
+const char * CmadLoader::gettype()
 {
-	return std::string("Mlat Adlib Tracker");
+	return "Mlat Adlib Tracker";
 }
 
-std::string CmadLoader::getinstrument(unsigned int n)
+const char * CmadLoader::getinstrument(unsigned int n)
 {
-	return std::string(instruments[n].name,8);
+	return instruments[n].name;
 }
 
 unsigned int CmadLoader::getinstruments()

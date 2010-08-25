@@ -55,20 +55,17 @@
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
 
-static const char * exts[] = { "m4a", "mp4", "mp+", "mpp", "wma", "shn", "aa3", "oma", "ac3", "vqf", "tta", NULL };
+static const char * exts[] = { "m4a", "wma", "aa3", "oma", "ac3", "vqf", NULL };
 
 enum {
-    FT_AAC = 0,
-    FT_M4A = 1,
-    FT_WMA = 2,
-    FT_SHORTEN = 3,
-    FT_ATRAC3 = 4,
-    FT_VQF = 5,
-    FT_TTA = 6,
-    FT_UNKNOWN = 7
+    FT_ALAC = 0,
+    FT_WMA = 1,
+    FT_ATRAC3 = 2,
+    FT_VQF = 3,
+    FT_UNKNOWN = 4
 };
 
-static const char *filetypes[] = { "AAC", "M4A", "WMA", "Shorten", "atrac3", "VQF", "TTA", "FFMPEG", NULL };
+static const char *filetypes[] = { "ALAC", "WMA", "atrac3", "VQF", "FFMPEG (unknown)", NULL };
 
 #define FF_PROTOCOL_NAME "deadbeef"
 
@@ -160,6 +157,16 @@ ffmpeg_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     if (avcodec_open (info->ctx, info->codec) < 0) {
         trace ("ffmpeg: avcodec_open failed\n");
         return -1;
+    }
+
+    if (!strcasecmp (info->codec->name, "alac")) {
+        it->filetype = filetypes[FT_ALAC];
+    }
+    else if (strcasestr (info->codec->name, "wma")) {
+        it->filetype = filetypes[FT_WMA];
+    }
+    else {
+        it->filetype = filetypes[FT_UNKNOWN];
     }
 
     int bps = av_get_bits_per_sample_format (info->ctx->sample_fmt);
@@ -441,6 +448,7 @@ ffmpeg_read_metadata_internal (DB_playItem_t *it, AVFormatContext *fctx) {
 
 static DB_playItem_t *
 ffmpeg_insert (DB_playItem_t *after, const char *fname) {
+    trace ("ffmpeg_insert %s\n", fname);
     // read information from the track
     // load/process cuesheet if exists
     // insert track into playlist
@@ -475,8 +483,9 @@ ffmpeg_insert (DB_playItem_t *after, const char *fname) {
         if (ctx->codec_type == CODEC_TYPE_AUDIO)
         {
             codec = avcodec_find_decoder(ctx->codec_id);
-            if (codec != NULL)
+            if (codec != NULL && !strcasecmp (codec->name, "alac")) { // only open alac streams
                 break;
+            }
         }
     }
 //    AVStream *stream = fctx->streams[i];
@@ -506,45 +515,11 @@ ffmpeg_insert (DB_playItem_t *after, const char *fname) {
 
     int totalsamples = fctx->duration * samplerate / AV_TIME_BASE;
 
-    // find filetype
-    const char *filetype;
-    const char *ext = fname + strlen(fname) - 1;
-    while (ext > fname && *ext != '.') {
-        ext--;
-    }
-    if (*ext == '.') {
-        ext++;
-    }
-
-    if (!strcasecmp (ext, "m4a")) {
-        filetype = filetypes[FT_M4A];
-    }
-    else if (!strcasecmp (ext, "mp4")) {
-        filetype = filetypes[FT_M4A];
-    }
-    else if (!strcasecmp (ext, "wma")) {
-        filetype = filetypes[FT_WMA];
-    }
-    else if (!strcasecmp (ext, "shn")) {
-        filetype = filetypes[FT_SHORTEN];
-    }
-    else if (!strcasecmp (ext, "aa3") || !strcasecmp (ext, "oma") || !strcasecmp (ext, "ac3")) {
-        filetype = filetypes[FT_ATRAC3];
-    }
-    else if (!strcasecmp (ext, "vqf")) {
-        filetype = filetypes[FT_VQF];
-    }
-    else if (!strcasecmp (ext, "tta")) {
-        filetype = filetypes[FT_TTA];
-    }
-    else {
-        filetype = filetypes[FT_UNKNOWN];
-    }
-
     DB_playItem_t *it = deadbeef->pl_item_alloc ();
     it->decoder_id = deadbeef->plug_get_decoder_id (plugin.plugin.id);
     it->fname = strdup (fname);
-    it->filetype = filetype;
+    // FIXME: get proper codec
+    it->filetype = filetypes[FT_UNKNOWN];
 
     if (!deadbeef->is_local_file (it->fname)) {
         deadbeef->pl_set_item_duration (it, -1);
@@ -606,7 +581,7 @@ ffmpeg_vfs_read(URLContext *h, unsigned char *buf, int size)
 }
 
 static int
-ffmpeg_vfs_write(URLContext *h, unsigned char *buf, int size)
+ffmpeg_vfs_write(URLContext *h, const unsigned char *buf, int size)
 {
     return -1;
 }
@@ -704,7 +679,7 @@ ffmpeg_read_metadata (DB_playItem_t *it) {
     }
     if (codec == NULL)
     {
-        trace ("ffmpeg can't decode %s\n", fname);
+        trace ("ffmpeg can't decode %s\n", it->fname);
         av_close_input_file(fctx);
         return -1;
     }

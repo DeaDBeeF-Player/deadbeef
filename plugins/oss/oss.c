@@ -194,23 +194,14 @@ oss_pause (void) {
         return -1;
     }
     // set pause state
+    oss_free();
     state = OUTPUT_STATE_PAUSED;
-    return oss_free();
+    return 0;
 }
 
 static int
 oss_unpause (void) {
-    // unset pause state
-    if (state == OUTPUT_STATE_PAUSED) {
-
-       if (!oss_tid) {
-          if(oss_init() < 0) {
-             return -1;
-          }
-       }
-
-       state = OUTPUT_STATE_PLAYING;
-    }
+    oss_play ();
     return 0;
 }
 

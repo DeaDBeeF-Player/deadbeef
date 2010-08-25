@@ -32,12 +32,12 @@ class CmscPlayer: public CPlayer
   CmscPlayer(Copl * newopl);
   ~CmscPlayer();
 	
-  bool load(const std::string &filename, const CFileProvider &fp);
+  bool load(const char *filename, const CFileProvider &fp);
   bool update();
   void rewind(int subsong);
   float getrefresh();
 
-  std::string gettype ();
+  const char * gettype ();
 
  protected:
   typedef unsigned char		u8;
@@ -81,6 +81,8 @@ class CmscPlayer: public CPlayer
 
  private:
   static const u8 msc_signature [MSC_SIGN_LEN];
+  char vstr [40];
+
 
   bool load_header (binistream * bf, msc_header * hdr);
   bool decode_octet (u8 * output);

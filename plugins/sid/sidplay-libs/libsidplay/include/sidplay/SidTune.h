@@ -24,7 +24,7 @@
 #include "Buffer.h"
 #include "SmartPtr.h"
 
-#include <fstream>
+//#include <fstream>
 
 
 const uint_least16_t SIDTUNE_MAX_SONGS = 256;
@@ -237,7 +237,7 @@ class SID_EXTERN SidTune
     // to load files. Error string is put into info.statusString, though.
     bool loadFile(const char* fileName, Buffer_sidtt<const uint_least8_t>& bufferRef);
     
-    bool saveToOpenFile( std::ofstream& toFile, const uint_least8_t* buffer, uint_least32_t bufLen );
+//    bool saveToOpenFile( std::ofstream& toFile, const uint_least8_t* buffer, uint_least32_t bufLen );
     
  protected:  // -------------------------------------------------------------
 
@@ -288,11 +288,11 @@ class SID_EXTERN SidTune
     // Support for various file formats.
 
     virtual bool PSID_fileSupport(const void* buffer, const uint_least32_t bufLen);
-    virtual bool PSID_fileSupportSave(std::ofstream& toFile, const uint_least8_t* dataBuffer);
+    //virtual bool PSID_fileSupportSave(std::ofstream& toFile, const uint_least8_t* dataBuffer);
 
     virtual bool SID_fileSupport(const void* dataBuffer, uint_least32_t dataBufLen,
                                  const void* sidBuffer, uint_least32_t sidBufLen);
-    virtual bool SID_fileSupportSave(std::ofstream& toFile);
+    //virtual bool SID_fileSupportSave(std::ofstream& toFile);
 
     virtual bool MUS_fileSupport(Buffer_sidtt<const uint_least8_t>& musBufRef,
                                  Buffer_sidtt<const uint_least8_t>& strBufRef);

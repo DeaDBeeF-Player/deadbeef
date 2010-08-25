@@ -31,12 +31,12 @@ class ChscPlayer: public CPlayer
 
   ChscPlayer(Copl *newopl): CPlayer(newopl), mtkmode(0) {}
 
-  bool load(const std::string &filename, const CFileProvider &fp);
+  bool load(const char *filename, const CFileProvider &fp);
   bool update();
   void rewind(int subsong);
   float getrefresh() { return 18.2f; };	// refresh rate is fixed at 18.2Hz
 
-  std::string gettype() { return std::string("HSC Adlib Composer / HSC-Tracker"); }
+  const char * gettype() { return "HSC Adlib Composer / HSC-Tracker"; }
   unsigned int getpatterns();
   unsigned int getpattern() { return song[songpos]; }
   unsigned int getorders();

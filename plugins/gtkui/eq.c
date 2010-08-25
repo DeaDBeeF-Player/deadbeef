@@ -292,6 +292,7 @@ eq_window_show (void) {
         eqenablebtn = button = gtk_check_button_new_with_label (_("Enable"));
         gtk_widget_show (button);
         gtk_box_pack_start (GTK_BOX (buttons), button, FALSE, FALSE, 0);
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (eqenablebtn), deadbeef->conf_get_int ("supereq.enable", 0));
         g_signal_connect ((gpointer) button, "toggled",
                 G_CALLBACK (on_enable_toggled),
                 NULL);
@@ -354,7 +355,6 @@ eq_window_show (void) {
         gtk_widget_show (eqwin);
         gtk_box_pack_start (GTK_BOX (eqcont), eqwin, TRUE, TRUE, 0);
     }
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (eqenablebtn), deadbeef->conf_get_int ("supereq.enable", 0));
     gtk_widget_show (eqcont);
 }
 

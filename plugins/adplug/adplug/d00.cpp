@@ -53,7 +53,7 @@ CPlayer *Cd00Player::factory(Copl *newopl)
   return new Cd00Player(newopl);
 }
 
-bool Cd00Player::load(const std::string &filename, const CFileProvider &fp)
+bool Cd00Player::load(const char * filename, const CFileProvider &fp)
 {
   binistream	*f = fp.open(filename); if(!f) return false;
   d00header	*checkhead;
@@ -82,7 +82,7 @@ bool Cd00Player::load(const std::string &filename, const CFileProvider &fp)
     delete checkhead;
 
   AdPlug_LogWrite("Cd00Player::load(f,\"%s\"): %s format D00 file detected!\n",
-		  filename.c_str(), ver1 ? "Old" : "New");
+		  filename, ver1 ? "Old" : "New");
 
   // load section
   filesize = fp.filesize(f); f->seek(0);
@@ -448,12 +448,10 @@ void Cd00Player::rewind(int subsong)
   cursubsong = subsong;
 }
 
-std::string Cd00Player::gettype()
+const char * Cd00Player::gettype()
 {
-  char	tmpstr[40];
-
   sprintf(tmpstr,"EdLib packed (version %d)",version > 1 ? header->version : header1->version);
-  return std::string(tmpstr);
+  return tmpstr;
 }
 
 float Cd00Player::getrefresh()

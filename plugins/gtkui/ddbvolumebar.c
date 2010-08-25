@@ -153,33 +153,17 @@ GtkWidget * ddb_volumebar_new() {
 static void
 ddb_volumebar_init(DdbVolumeBar *volumebar)
 {
+    char s[100];
+    int db = deadbeef->volume_get_db ();
+    snprintf (s, sizeof (s), "%s%ddB", db < 0 ? "" : "+", db);
+    gtk_widget_set_tooltip_text (GTK_WIDGET (volumebar), s);
 }
-
-#define DRAW_DEBUG 0
 
 void
 volumebar_draw (GtkWidget *widget) {
     if (!widget) {
         return;
     }
-#if DRAW_DEBUG
-    gdk_draw_rectangle (widget->window, widget->style->bg_gc[0], TRUE, 0, 0, widget->allocation.width, widget->allocation.height);
-    GdkGC **gc[] = {
-        widget->style->fg_gc,
-        widget->style->bg_gc,
-        widget->style->light_gc,
-        widget->style->dark_gc,
-        widget->style->mid_gc,
-        widget->style->text_gc,
-        widget->style->base_gc,
-        widget->style->text_aa_gc
-    };
-    for (int i = 0; i < 8; i++) {
-        for (int state = 0; state < 5; state++) {
-            gdk_draw_rectangle (widget->window, gc[i][state], TRUE, i * 8, state * 5, 8, 5);
-        }
-    }
-#else
     GdkDrawable *volumebar_backbuf = GDK_DRAWABLE (widget->window);
     float range = -deadbeef->volume_get_min_db ();
     int n = widget->allocation.width / 4;
@@ -207,9 +191,21 @@ volumebar_draw (GtkWidget *widget) {
             gdk_draw_rectangle (volumebar_backbuf, back_gc, TRUE, _x + widget->allocation.x, _y + widget->allocation.y, _w, _h);
         }
     }
+#if 0
+    if (DDB_VOLUMEBAR (widget)->show_dbs) {
+        draw_begin ((uintptr_t)widget->window);
+        draw_init_font (widget->style);
+        char s[100];
+        int db = deadbeef->volume_get_db ();
+        snprintf (s, sizeof (s), "%s%ddB", db < 0 ? "" : "+", db);
+        draw_text (widget->allocation.x, widget->allocation.y, widget->allocation.width, 0, s);
+        gtk_widget_set_tooltip_text (widget, s);
+        gtk_widget_trigger_tooltip_query (widget);
+        draw_end ();
+    }
+#endif
     g_object_unref (back_gc);
     g_object_unref (front_gc);
-#endif
 }
 
 gboolean
@@ -234,6 +230,11 @@ on_volumebar_motion_notify_event       (GtkWidget       *widget,
             volume = -range;
         }
         deadbeef->volume_set_db (volume);
+        char s[100];
+        int db = volume;
+        snprintf (s, sizeof (s), "%s%ddB", db < 0 ? "" : "+", db);
+        gtk_widget_set_tooltip_text (widget, s);
+        gtk_widget_trigger_tooltip_query (widget);
         gtk_widget_queue_draw (widget);
     }
     return FALSE;
@@ -243,16 +244,24 @@ gboolean
 on_volumebar_button_press_event        (GtkWidget       *widget,
                                         GdkEventButton  *event)
 {
-    float range = -deadbeef->volume_get_min_db ();
-    float volume = (event->x - widget->allocation.x)/ widget->allocation.width * range - range;
-    if (volume < -range) {
-        volume = -range;
+    if (event->button == 1) {
+        float range = -deadbeef->volume_get_min_db ();
+        float volume = (event->x - widget->allocation.x)/ widget->allocation.width * range - range;
+        if (volume < -range) {
+            volume = -range;
+        }
+        if (volume > 0) {
+            volume = 0;
+        }
+        deadbeef->volume_set_db (volume);
+        char s[100];
+        int db = volume;
+        snprintf (s, sizeof (s), "%s%ddB", db < 0 ? "" : "+", db);
+        gtk_widget_set_tooltip_text (widget, s);
+        gtk_widget_trigger_tooltip_query (widget);
+//        DDB_VOLUMEBAR (widget)->show_dbs = 1;
+        gtk_widget_queue_draw (widget);
     }
-    if (volume > 0) {
-        volume = 0;
-    }
-    deadbeef->volume_set_db (volume);
-    gtk_widget_queue_draw (widget);
     return FALSE;
 }
 
@@ -261,6 +270,10 @@ gboolean
 on_volumebar_button_release_event      (GtkWidget       *widget,
                                         GdkEventButton  *event)
 {
+    if (event->button == 1) {
+//        DDB_VOLUMEBAR (widget)->show_dbs = 0;
+        gtk_widget_queue_draw (widget);
+    }
   return FALSE;
 }
 
@@ -268,6 +281,11 @@ void
 volumebar_notify_changed (void) {
     GtkWidget *widget = lookup_widget (mainwin, "volumebar");
     gtk_widget_queue_draw (widget);
+    char s[100];
+    int db = deadbeef->volume_get_db ();
+    snprintf (s, sizeof (s), "%s%ddB", db < 0 ? "" : "+", db);
+    gtk_widget_set_tooltip_text (widget, s);
+    gtk_widget_trigger_tooltip_query (widget);
 }
 
 gboolean
@@ -291,6 +309,11 @@ on_volumebar_scroll_event              (GtkWidget       *widget,
     deadbeef->volume_set_db (vol);
     GtkWidget *volumebar = lookup_widget (mainwin, "volumebar");
     gtk_widget_queue_draw (widget);
+    char s[100];
+    int db = deadbeef->volume_get_db ();
+    snprintf (s, sizeof (s), "%s%ddB", db < 0 ? "" : "+", db);
+    gtk_widget_set_tooltip_text (widget, s);
+    gtk_widget_trigger_tooltip_query (widget);
     return FALSE;
 }
 

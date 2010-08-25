@@ -40,7 +40,7 @@
   comment : inaccurate replaying, because constant outport; in original player it can be 380 or 382.
 */
 
-#include <cstring>
+#include <string.h>
 #include "bmf.h"
 #include "debug.h"
 
@@ -381,19 +381,19 @@ float CxadbmfPlayer::xadplayer_getrefresh()
   return bmf.timer;
 }
 
-std::string CxadbmfPlayer::xadplayer_gettype()
+const char * CxadbmfPlayer::xadplayer_gettype()
 {
-  return std::string("xad: BMF Adlib Tracker");
+  return "xad: BMF Adlib Tracker";
 }
 
-std::string CxadbmfPlayer::xadplayer_gettitle()
+const char * CxadbmfPlayer::xadplayer_gettitle()
 {
-  return std::string(bmf.title);
+  return bmf.title;
 }
 
-std::string CxadbmfPlayer::xadplayer_getauthor()
+const char * CxadbmfPlayer::xadplayer_getauthor()
 {
-  return std::string(bmf.author);
+  return bmf.author;
 }
 
 unsigned int CxadbmfPlayer::xadplayer_getinstruments()
@@ -401,9 +401,9 @@ unsigned int CxadbmfPlayer::xadplayer_getinstruments()
   return 32;
 }
 
-std::string CxadbmfPlayer::xadplayer_getinstrument(unsigned int i)
+const char * CxadbmfPlayer::xadplayer_getinstrument(unsigned int i)
 {
-  return std::string(bmf.instruments[i].name);
+  return bmf.instruments[i].name;
 }
 
 /* -------- Internal Functions ---------------------------- */

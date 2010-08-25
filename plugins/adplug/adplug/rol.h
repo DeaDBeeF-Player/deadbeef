@@ -23,10 +23,6 @@
 #ifndef H_ROLPLAYER
 #define H_ROLPLAYER
 
-#include <vector>
-#include <string>
-#include <strings.h>
-
 #include "player.h"
 
 class CrolPlayer: public CPlayer
@@ -38,12 +34,12 @@ public:
 
     ~CrolPlayer();
 
-    bool  load      (const std::string &filename, const CFileProvider &fp);
+    bool  load      (const char *filename, const CFileProvider &fp);
     bool  update    ();
     void  rewind    (int subsong);	// rewinds to specified subsong
     float getrefresh();			// returns needed timer refresh rate
 
-    std::string gettype() { return std::string("Adlib Visual Composer"); }
+    const char * gettype() { return "Adlib Visual Composer"; }
 
 private:
     typedef unsigned short    uint16;
@@ -103,10 +99,9 @@ private:
         real32 variation;
     } SPitchEvent;
 
-    typedef std::vector<SNoteEvent>       TNoteEvents;
-    typedef std::vector<SInstrumentEvent> TInstrumentEvents;
-    typedef std::vector<SVolumeEvent>     TVolumeEvents;
-    typedef std::vector<SPitchEvent>      TPitchEvents;
+    enum {
+        MAX_NOTE_EVENTS = 2000,
+    };
 
 #define bit_pos( pos ) (1<<pos)
 
@@ -132,7 +127,21 @@ private:
                ,next_instrument_event( 0 )
                ,next_volume_event    ( 0 )
                ,next_pitch_event     ( 0 )
+                ,n_note_events (0)
+                ,n_instrument_events(0)
+                ,n_volume_events(0)
+                ,n_pitch_events(0)
         {
+            memset (note_events, 0, sizeof (note_events));
+            instrument_events = 0;
+            volume_events = 0;
+            pitch_events = 0;
+        }
+
+        ~CVoiceData () {
+            delete[] instrument_events;
+            delete[] volume_events;
+            delete[] pitch_events;
         }
 
         void Reset()
@@ -147,10 +156,14 @@ private:
             next_pitch_event      = 0;
         }
 
-        TNoteEvents       note_events;
-        TInstrumentEvents instrument_events;
-        TVolumeEvents     volume_events;
-        TPitchEvents      pitch_events;
+        SNoteEvent       note_events[MAX_NOTE_EVENTS];
+        int n_note_events;
+        SInstrumentEvent *instrument_events;
+        int n_instrument_events;
+        SVolumeEvent     *volume_events;
+        int n_volume_events;
+        SPitchEvent      *pitch_events;
+        int n_pitch_events;
 
         bool              mForceNote : 1;
         int               mEventStatus;
@@ -169,8 +182,6 @@ private:
         char   name[9];
     } SInstrumentName;
 
-    typedef std::vector<SInstrumentName> TInstrumentNames;
-
     typedef struct
     {
         char   version_major;
@@ -181,7 +192,8 @@ private:
         int32  abs_offset_of_name_list;
         int32  abs_offset_of_data;
 
-        TInstrumentNames ins_name_list;
+        SInstrumentName *ins_name_list;
+        int n_ins_names;
     } SBnkHeader;
 
     typedef struct
@@ -221,12 +233,12 @@ private:
 
     typedef struct
     {
-        std::string    name;
+        const char *    name;
         SRolInstrument instrument;
     } SUsedList;
 
     void load_tempo_events     ( binistream *f );
-    bool load_voice_data       ( binistream *f, std::string const &bnk_filename, const CFileProvider &fp );
+    bool load_voice_data       ( binistream *f, const char *bnk_filename, const CFileProvider &fp );
     void load_note_events      ( binistream *f, CVoiceData &voice );
     void load_instrument_events( binistream *f, CVoiceData &voice,
                                  binistream *bnk_file, SBnkHeader const &bnk_header );
@@ -234,10 +246,10 @@ private:
     void load_pitch_events     ( binistream *f, CVoiceData &voice );
 
     bool load_bnk_info         ( binistream *f, SBnkHeader &header );
-    int  load_rol_instrument   ( binistream *f, SBnkHeader const &header, std::string &name );
+    int  load_rol_instrument   ( binistream *f, SBnkHeader const &header, const char *name );
     void read_rol_instrument   ( binistream *f, SRolInstrument &ins );
     void read_fm_operator      ( binistream *f, SOPL2Op &opl2_op );
-    int  get_ins_index( std::string const &name ) const;
+    int  get_ins_index( const char * const &name ) const;
 
     void UpdateVoice( int const voice, CVoiceData &voiceData );
     void SetNote( int const voice, int const note );
@@ -250,36 +262,13 @@ private:
     void send_ins_data_to_chip( int const voice, int const ins_index );
     void send_operator( int const voice, SOPL2Op const &modulator, SOPL2Op const &carrier );
 
-    class StringCompare
-    {
-    public:
-        bool operator()( SInstrumentName const &lhs, SInstrumentName const &rhs ) const
-        {
-            return keyLess(lhs.name, rhs.name);
-        }
-
-        bool operator()( SInstrumentName const &lhs, std::string const &rhs ) const
-        {
-            return keyLess(lhs.name, rhs.c_str());
-        }
-
-        bool operator()( std::string const &lhs, SInstrumentName const &rhs ) const
-        {
-            return keyLess(lhs.c_str(), rhs.name);
-        }
-    private:
-        bool keyLess( const char *const lhs, const char *const rhs ) const
-        {
-            return stricmp(lhs, rhs) < 0;
-        }
-    };
-
-    typedef std::vector<CVoiceData> TVoiceData;
-
     SRolHeader *rol_header;
-    std::vector<STempoEvent>    mTempoEvents;
-    TVoiceData                  voice_data;
-    std::vector<SUsedList>      ins_list;
+    STempoEvent    *mTempoEvents;
+    int n_tempo_events;
+    CVoiceData                  *voice_data;
+    int n_voice_data;
+    SUsedList      *ins_list;
+    int n_used_ins;
 
     unsigned int                mNextTempoEvent;
     int                         mCurrTick;

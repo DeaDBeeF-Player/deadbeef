@@ -22,7 +22,7 @@
   NOTE: Panning (Ex) effect is ignored.
 */
 
-#include <cstring>
+#include <string.h>
 #include "dtm.h"
 
 /* -------- Public Methods -------------------------------- */
@@ -32,7 +32,7 @@ CPlayer *CdtmLoader::factory(Copl *newopl)
   return new CdtmLoader(newopl);
 }
 
-bool CdtmLoader::load(const std::string &filename, const CFileProvider &fp)
+bool CdtmLoader::load(const char *filename, const CFileProvider &fp)
 {
   binistream *f = fp.open(filename); if(!f) return false;
   const unsigned char conv_inst[11] = { 2,1,10,9,4,3,6,5,0,8,7 };
@@ -251,29 +251,29 @@ float CdtmLoader::getrefresh()
   return 18.2f;
 }
 
-std::string CdtmLoader::gettype()
+const char * CdtmLoader::gettype()
 {
-  return std::string("DeFy Adlib Tracker");
+  return "DeFy Adlib Tracker";
 }
 
-std::string CdtmLoader::gettitle()
+const char * CdtmLoader::gettitle()
 {
-  return std::string(header.title);
+  return header.title;
 }
 
-std::string CdtmLoader::getauthor()
+const char * CdtmLoader::getauthor()
 {
-  return std::string(header.author);
+  return header.author;
 }
 
-std::string CdtmLoader::getdesc()
+const char * CdtmLoader::getdesc()
 {
-  return std::string(desc);
+  return desc;
 }
 
-std::string CdtmLoader::getinstrument(unsigned int n)
+const char * CdtmLoader::getinstrument(unsigned int n)
 {
-  return std::string(instruments[n].name);
+  return instruments[n].name;
 }
 
 unsigned int CdtmLoader::getinstruments()

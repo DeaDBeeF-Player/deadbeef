@@ -16,7 +16,7 @@ AC_CONFIG_MACRO_DIR([m4])
 AC_C_BIGENDIAN
 AM_GNU_GETTEXT
 
-IT_PROG_INTLTOOL([0.41.0])
+IT_PROG_INTLTOOL([0.40.0])
 GETTEXT_PACKAGE=deadbeef
 AC_SUBST(GETTEXT_PACKAGE)
 
@@ -84,9 +84,15 @@ AC_ARG_ENABLE(cdda,     [  --disable-cdda          disable CD-Audio plugin (defa
 AC_ARG_ENABLE(gme,      [  --disable-gme           disable Game Music Emu plugin for NSF, AY, etc (default: enabled)], [enable_gme=$enableval], [enable_gme=yes])
 AC_ARG_ENABLE(dumb,     [  --disable-dumb          disable D.U.M.B. plugin for MOD, S3M and other tracker formats (default: enabled)], [enable_dumb=$enableval], [enable_dumb=yes])
 AC_ARG_ENABLE(notify,   [  --disable-notify        disable notification-daemon support plugin (default: enabled)], [enable_notify=$enableval], [enable_notify=yes])
-AC_ARG_ENABLE(emidi,    [  --disable-emidi         disable emidi plugin (default: enabled)], [enable_emidi=$enableval], [enable_emidi=yes])
+AC_ARG_ENABLE(shellexec,   [  --disable-shellexec        disable shell commands plugin (default: enabled)], [enable_shellexec=$enableval], [enable_shellexec=yes])
 AC_ARG_ENABLE(musepack, [  --disable-musepack      disable musepack plugin (default: enabled)], [enable_musepack=$enableval], [enable_musepack=yes])
-AC_ARG_ENABLE(wildmidi,    [  --disable-wildmidi         disable wildmidi plugin (default: enabled)], [enable_wildmidi=$enableval], [enable_wildmidi=yes])
+AC_ARG_ENABLE(wildmidi, [  --disable-wildmidi      disable wildmidi plugin (default: enabled)], [enable_wildmidi=$enableval], [enable_wildmidi=yes])
+AC_ARG_ENABLE(tta,     [  --disable-tta            disable tta plugin (default: enabled)], [enable_tta=$enableval], [enable_tta=yes])
+AC_ARG_ENABLE(dca,     [  --disable-dca            disable dca (DTS audio)  plugin (default: enabled)], [enable_dca=$enableval], [enable_dca=yes])
+AC_ARG_ENABLE(aac,     [  --disable-aac            disable AAC decoder based on FAAD2 (default: enabled)], [enable_aac=$enableval], [enable_aac=yes])
+AC_ARG_ENABLE(mms,     [  --disable-mms            disable MMS streaming vfs plugin (default: enabled)], [enable_mms=$enableval], [enable_mms=yes])
+AC_ARG_ENABLE(shn,     [  --disable-shn            disable shorten plugin (default: enabled)], [enable_shn=$enableval], [enable_shn=yes])
+AC_ARG_ENABLE(ao,     [  --disable-ao            disable audio overload plugin (default: enabled)], [enable_ao=$enableval], [enable_ao=yes])
 
 PKG_CHECK_MODULES(DEPS, samplerate)
 
@@ -199,18 +205,6 @@ if test "x$enable_vfs_curl" != "xno" ; then
     fi
 fi
 
-dnl faad2 plugin
-dnl AC_CHECK_LIB([faad], [main], [HAVE_FAAD=1])
-dnl AC_CHECK_LIB([mp4ff], [main], [HAVE_MP4FF=1])
-dnl AM_CONDITIONAL(HAVE_FAAD, test $HAVE_FAAD)
-dnl AM_CONDITIONAL(HAVE_MP4FF, test $HAVE_MP4FF)
-dnl if test ${HAVE_FAAD} && test ${HAVE_MP4FF} ; then
-dnl     FAAD2_LIBS="-lfaad -lmp4ff -lmp4v2"
-dnl     FAAD2_DIR="plugins/faad2"
-dnl     AC_SUBST(FAAD2_LIBS)
-dnl     AC_SUBST(FAAD2_DIR)
-dnl fi
-
 dnl cdda plugin
 if test "x$enable_cdda" != "xno" ; then
     AC_CHECK_LIB([cdio], [main], [HAVE_CDIO=yes])
@@ -303,6 +297,11 @@ if test "x$enable_lfm" != "xno" ; then
     fi
 fi
 
+dnl shellexec plugin
+if test "x$enable_shellexec" != "xno" ; then
+    HAVE_SHELLEXEC=yes
+fi
+
 if test "x$enable_artwork" != "xno" ; then
     if test "x$HAVE_CURL" = "xyes" && test "x$HAVE_VFS_CURL" = "xyes" ; then
         HAVE_ARTWORK=yes
@@ -349,24 +348,54 @@ if test "x$HAVE_DBUS" = "xyes" && test "x$enable_notify" != "xno" ; then
     AC_SUBST(NOTIFY_CFLAGS)
 fi
 
-if test "x$enable_emidi" != "xno" ; then
-    HAVE_EMIDI=yes
-fi
-
 if test "x$enable_musepack" != "xno" ; then
-    AC_CHECK_LIB([mpcdec], [main], [HAVE_MPCDEC=yes])
-    if test "x$HAVE_MPCDEC" = "xyes" ; then
-        HAVE_MUSEPACK=yes
-        MUSEPACK_LIBS="-lmpcdec"
-        AC_SUBST(MUSEPACK_LIBS)
-    fi
+    HAVE_MUSEPACK=yes
 fi
 
 if test "x$enable_wildmidi" != "xno" ; then
     HAVE_WILDMIDI=yes
 fi
 
-PLUGINS_DIRS="plugins/lastfm plugins/mpgmad plugins/vorbis plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/dumb plugins/pulse plugins/notify plugins/emidi plugins/musepack plugins/wildmidi"
+if test "x$enable_tta" != "xno" ; then
+    HAVE_TTA=yes
+fi
+
+if test "x$enable_dca" != "xno" ; then
+    HAVE_DCA=yes
+fi
+
+if test "x$enable_aac" != "xno" ; then
+    AC_CHECK_LIB([faad], [main], [HAVE_FAAD=1])
+    if test ${HAVE_FAAD} ; then
+        FAAD2_LIBS="-lfaad"
+        AC_SUBST(FAAD2_LIBS)
+        HAVE_AAC=yes
+    fi
+fi
+
+if test "x$enable_mms" != "xno" ; then
+    AC_CHECK_LIB([mms], [main], [HAVE_LIBMMS=1])
+    if test ${HAVE_LIBMMS} ; then
+        LIBMMS_LIBS="-lmms"
+        AC_SUBST(LIBMMS_LIBS)
+        HAVE_MMS=yes
+    fi
+fi
+
+if test "x$enable_shn" != "xno" ; then
+    HAVE_SHN=yes
+fi
+
+if test "x$enable_ao" != "xno" ; then
+    AC_CHECK_LIB([z], [main], [HAVE_ZLIB=yes])
+    if test "x$HAVE_ZLIB" = "xyes"; then
+        ZLIB_LIBS="-lz"
+        AC_SUBST(ZLIB_LIBS)
+        HAVE_AO=yes
+    fi
+fi
+
+PLUGINS_DIRS="plugins/lastfm plugins/mpgmad plugins/vorbis plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/dumb plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/aac plugins/mms plugins/shn plugins/ao plugins/shellexec"
 
 AM_CONDITIONAL(HAVE_VORBIS, test "x$HAVE_VORBISPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_FLAC, test "x$HAVE_FLACPLUGIN" = "xyes")
@@ -392,9 +421,15 @@ AM_CONDITIONAL(HAVE_MPGMAD, test "x$HAVE_MPGMAD" = "xyes")
 AM_CONDITIONAL(HAVE_OSS, test "x$HAVE_OSS" = "xyes")
 AM_CONDITIONAL(HAVE_SUPEREQ, test "x$HAVE_SUPEREQ" = "xyes")
 AM_CONDITIONAL(HAVE_NOTIFY, test "x$HAVE_NOTIFY" = "xyes")
-AM_CONDITIONAL(HAVE_EMIDI, test "x$HAVE_EMIDI" = "xyes")
+AM_CONDITIONAL(HAVE_SHELLEXEC, test "x$HAVE_SHELLEXEC" = "xyes")
 AM_CONDITIONAL(HAVE_MUSEPACK, test "x$HAVE_MUSEPACK" = "xyes")
 AM_CONDITIONAL(HAVE_WILDMIDI, test "x$HAVE_WILDMIDI" = "xyes")
+AM_CONDITIONAL(HAVE_TTA, test "x$HAVE_TTA" = "xyes")
+AM_CONDITIONAL(HAVE_DCA, test "x$HAVE_DCA" = "xyes")
+AM_CONDITIONAL(HAVE_AAC, test "x$HAVE_AAC" = "xyes")
+AM_CONDITIONAL(HAVE_MMS, test "x$HAVE_MMS" = "xyes")
+AM_CONDITIONAL(HAVE_SHN, test "x$HAVE_SHN" = "xyes")
+AM_CONDITIONAL(HAVE_AO, test "x$HAVE_AO" = "xyes")
 
 AC_SUBST(PLUGINS_DIRS)
 
@@ -437,7 +472,6 @@ PRINT_PLUGIN_INFO([sndfile],[PCM (wav,aiff,etc) player based on libsndfile],[tes
 PRINT_PLUGIN_INFO([vtx],[vtx file player (ay8910/12 emulation)],[test "x$HAVE_VTX" = "xyes"])
 PRINT_PLUGIN_INFO([adplug],[adplug player (OPL2/OPL3 emulation)],[test "x$HAVE_ADPLUG" = "xyes"])
 PRINT_PLUGIN_INFO([vfs_curl],[http/ftp streaming support],[test "x$HAVE_VFS_CURL" = "xyes"])
-dnl PRINT_PLUGIN_INFO([faad2],[aac/mp4 player],[test $HAVE_FAAD && test $HAVE_MP4FF])
 PRINT_PLUGIN_INFO([cdda],[cd audio player],[test "x$HAVE_CDDAPLUGIN" = "xyes"])
 PRINT_PLUGIN_INFO([gtkui],[GTK user interface],[test "x$HAVE_GTK" = "xyes"])
 PRINT_PLUGIN_INFO([hotkeys],[Global hotkeys support],[test "x$HAVE_HOTKEYS" = "xyes"])
@@ -447,9 +481,15 @@ PRINT_PLUGIN_INFO([pulse],[PulseAudio output plugin],[test "x$HAVE_PULSEPLUGIN" 
 PRINT_PLUGIN_INFO([artwork],[Cover art plugin],[test "x$HAVE_ARTWORK" = "xyes"])
 PRINT_PLUGIN_INFO([supereq],[Equalizer based on Super EQ library by Naoki Shibata],[test "x$HAVE_SUPEREQ" = "xyes"])
 PRINT_PLUGIN_INFO([notify],[notification-daemon support plugin],[test "x$HAVE_NOTIFY" = "xyes"])
-PRINT_PLUGIN_INFO([emidi],[Emu de MIDI player plugin],[test "x$HAVE_EMIDI" = "xyes"])
+PRINT_PLUGIN_INFO([shellexec],[shell commands plugin],[test "x$HAVE_SHELLEXEC" = "xyes"])
 PRINT_PLUGIN_INFO([musepack],[musepack player plugin],[test "x$HAVE_MUSEPACK" = "xyes"])
 PRINT_PLUGIN_INFO([wildmidi],[WildMidi player plugin],[test "x$HAVE_WILDMIDI" = "xyes"])
+PRINT_PLUGIN_INFO([tta],[TTA player plugin],[test "x$HAVE_TTA" = "xyes"])
+PRINT_PLUGIN_INFO([dca],[libdca (DTS Audio) player plugin],[test "x$HAVE_DCA" = "xyes"])
+PRINT_PLUGIN_INFO([aac],[AAC player (m4a, aac, mp4) based on FAAD2],[test "x$HAVE_AAC" = "xyes"])
+PRINT_PLUGIN_INFO([mms],[mms streaming support],[test "x$HAVE_MMS" = "xyes"])
+PRINT_PLUGIN_INFO([shn],[shorten player based on xmms-shn],[test "x$HAVE_SHN" = "xyes"])
+PRINT_PLUGIN_INFO([ao],[psf1/psf2/spu/ssf player using Audio Overload],[test "x$HAVE_AO" = "xyes"])
 
 echo
 
@@ -481,9 +521,15 @@ plugins/pulse/Makefile
 plugins/artwork/Makefile
 plugins/supereq/Makefile
 plugins/notify/Makefile
-plugins/emidi/Makefile
+plugins/shellexec/Makefile
 plugins/musepack/Makefile
 plugins/wildmidi/Makefile
+plugins/tta/Makefile
+plugins/dca/Makefile
+plugins/aac/Makefile
+plugins/mms/Makefile
+plugins/shn/Makefile
+plugins/ao/Makefile
 intl/Makefile
 po/Makefile.in
 deadbeef.desktop

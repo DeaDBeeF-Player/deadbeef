@@ -122,6 +122,9 @@ static void apply_conf (GtkWidget *w, DB_plugin_t *p) {
             else if (!strcmp (type, "checkbox")) {
                 deadbeef->conf_set_int (key, gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)));
             }
+            else if (!strncmp (type, "hscale[", 7)) {
+                deadbeef->conf_set_float (key, gtk_range_get_value (GTK_RANGE (widget)));
+            }
         }
     }
     deadbeef->sendmessage (M_CONFIGCHANGED, 0, 0, 0);
@@ -235,6 +238,30 @@ plugin_configure (GtkWidget *parentwin, DB_plugin_t *p) {
                 gtk_box_pack_start (GTK_BOX (cont), btn, FALSE, FALSE, 0);
                 g_signal_connect (G_OBJECT (btn), "clicked", G_CALLBACK (on_prop_browse_file), prop);
             }
+        }
+        else if (!strncmp (type, "hscale[", 7)) {
+            float min, max, step;
+            if (3 != sscanf (type+6, "[%f,%f,%f]", &min, &max, &step)) {
+                min = 0;
+                max = 100;
+                step = 1;
+            }
+            if (min >= max) {
+                float tmp = min;
+                min = max;
+                max = tmp;
+                break;
+            }
+            if (step <= 0) {
+                step = 1;
+            }
+            prop = gtk_hscale_new_with_range (min, max, step);
+            label = gtk_label_new (labeltext);
+            gtk_widget_show (label);
+            g_signal_connect (G_OBJECT (prop), "value-changed", G_CALLBACK (prop_changed), win);
+            gtk_widget_show (prop);
+            gtk_range_set_value (GTK_RANGE (prop), (gdouble)deadbeef->conf_get_float (key, (float)*def));
+            gtk_scale_set_value_pos (GTK_SCALE (prop), GTK_POS_RIGHT);
         }
         if (!strcmp (type, "password")) {
             gtk_entry_set_visibility (GTK_ENTRY (prop), FALSE);

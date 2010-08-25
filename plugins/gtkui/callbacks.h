@@ -367,10 +367,6 @@ on_helpwindow_key_press_event          (GtkWidget       *widget,
                                         gpointer         user_data);
 
 void
-on_add_audio_cd_activate               (GtkMenuItem     *menuitem,
-                                        gpointer         user_data);
-
-void
 on_preferences_activate                (GtkMenuItem     *menuitem,
                                         gpointer         user_data);
 
@@ -941,4 +937,37 @@ on_proxyuser_changed                   (GtkEditable     *editable,
 
 void
 on_proxypassword_changed               (GtkEditable     *editable,
+                                        gpointer         user_data);
+
+void
+on_hide_tray_icon_toggled              (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);
+
+void
+on_embolden_current_toggled            (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);
+
+void
+on_hide_delete_from_disk_toggled       (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);
+
+void
+on_titlebar_format_playing_changed     (GtkEditable     *editable,
+                                        gpointer         user_data);
+
+void
+on_titlebar_format_stopped_changed     (GtkEditable     *editable,
+                                        gpointer         user_data);
+
+void
+on_cli_add_to_playlist_toggled         (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);
+
+void
+on_cli_playlist_name_changed           (GtkEditable     *editable,
+                                        gpointer         user_data);
+
+gboolean
+on_statusbar_button_press_event        (GtkWidget       *widget,
+                                        GdkEventButton  *event,
                                         gpointer         user_data);

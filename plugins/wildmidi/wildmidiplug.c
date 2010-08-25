@@ -124,9 +124,11 @@ wmidi_insert (DB_playItem_t *after, const char *fname) {
     return after;
 }
 
+#define DEFAULT_TIMIDITY_CONFIG "/etc/timidity++/timidity-freepats.cfg"
+
 int
 wmidi_start (void) {
-    const char *config_file = deadbeef->conf_get_str ("wildmidi.config", "/etc/timidity++/timidity-freepats.cfg");
+    const char *config_file = deadbeef->conf_get_str ("wildmidi.config", DEFAULT_TIMIDITY_CONFIG);
     WildMidi_Init (config_file, 44100, 0);
     return 0;
 }
@@ -146,6 +148,9 @@ wildmidi_load (DB_functions_t *api) {
 static const char *exts[] = { "mid",NULL };
 const char *filetypes[] = { "MID", NULL };
 
+static const char settings_dlg[] =
+    "property \"Timidity++ bank configuration file\" file wildmidi.config \"" DEFAULT_TIMIDITY_CONFIG "\";\n"
+;
 // define plugin interface
 DB_decoder_t wmidi_plugin = {
     DB_PLUGIN_SET_API_VERSION
@@ -160,6 +165,7 @@ DB_decoder_t wmidi_plugin = {
     .plugin.start = wmidi_start,
     .plugin.stop = wmidi_stop,
     .plugin.id = "wmidi",
+    .plugin.configdialog = settings_dlg,
     .open = wmidi_open,
     .init = wmidi_init,
     .free = wmidi_free,

@@ -75,10 +75,10 @@ protected:
   void            xadplayer_rewind(int subsong);
   void            xadplayer_update();
   float           xadplayer_getrefresh();
-  std::string     xadplayer_gettype();
-  std::string     xadplayer_gettitle();
-  std::string     xadplayer_getauthor();
-  std::string     xadplayer_getinstrument(unsigned int i);
+  const char *     xadplayer_gettype();
+  const char *     xadplayer_gettitle();
+  const char *     xadplayer_getauthor();
+  const char *     xadplayer_getinstrument(unsigned int i);
   unsigned int    xadplayer_getinstruments();
   //
 private:

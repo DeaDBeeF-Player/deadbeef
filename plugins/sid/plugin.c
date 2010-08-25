@@ -49,8 +49,9 @@ DB_decoder_t sid_plugin = {
     .seek = csid_seek,
     .seek_sample = NULL,
     .insert = csid_insert,
-    .numvoices = csid_numvoices,
-    .mutevoice = csid_mutevoice,
+//    .numvoices = csid_numvoices,
+//    .mutevoice = csid_mutevoice,
     .exts = exts,
     .filetypes = filetypes,
 };
+

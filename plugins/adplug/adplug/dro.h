@@ -33,14 +33,14 @@ class CdroPlayer: public CPlayer
 	delete [] data;
     }
 
-  bool load(const std::string &filename, const CFileProvider &fp);
+  bool load(const char *filename, const CFileProvider &fp);
   bool update();
   void rewind(int subsong);
   float getrefresh();
 
-  std::string gettype()
+  const char * gettype()
     {
-      return std::string("DOSBox Raw OPL v0.1");
+      return "DOSBox Raw OPL v0.1";
     }
 
  protected:

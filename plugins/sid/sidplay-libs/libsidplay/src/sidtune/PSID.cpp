@@ -242,6 +242,7 @@ bool SidTune::PSID_fileSupport(const void* buffer, const uint_least32_t bufLen)
 }
 
 
+#if 0
 bool SidTune::PSID_fileSupportSave(std::ofstream& fMyOut, const uint_least8_t* dataBuffer)
 {
     psidHeader myHeader;
@@ -311,3 +312,4 @@ bool SidTune::PSID_fileSupportSave(std::ofstream& fMyOut, const uint_least8_t* d
     else
         return true;
 }
+#endif

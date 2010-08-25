@@ -40,8 +40,6 @@ adplug_la_SOURCES = adplug-db.cpp\
 				   adplug/cff.h\
 				   adplug/d00.cpp\
 				   adplug/d00.h\
-				   adplug/database.cpp\
-				   adplug/database.h\
 				   adplug/debug.c\
 				   adplug/debug.h\
 				   adplug/dfm.cpp\
@@ -132,6 +130,9 @@ adplug_la_SOURCES = adplug-db.cpp\
 				   adplug/xad.h\
 				   adplug/xsm.cpp\
 				   adplug/xsm.h
+
+#				   adplug/database.cpp
+#				   adplug/database.h
 
 adplug_la_LDFLAGS = -module
 endif

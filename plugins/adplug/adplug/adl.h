@@ -36,7 +36,7 @@ class CadlPlayer: public CPlayer
   CadlPlayer(Copl *newopl);
   ~CadlPlayer();
 
-  bool load(const std::string &filename, const CFileProvider &fp);
+  bool load(const char *filename, const CFileProvider &fp);
   bool update();
   void rewind(int subsong = -1);
 
@@ -48,7 +48,7 @@ class CadlPlayer: public CPlayer
 
   unsigned int getsubsongs();
   unsigned int getsubsong() { return cursubsong; }
-  std::string gettype() { return std::string("Westwood ADL"); }
+  const char *gettype() { return "Westwood ADL"; }
 
  private:
   int numsubsongs, cursubsong;

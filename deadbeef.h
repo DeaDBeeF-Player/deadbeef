@@ -54,7 +54,8 @@ extern "C" {
 // DON'T release plugins without DB_PLUGIN_SET_API_VERSION
 
 // api version history:
-// 0.7 -- devel
+// 9.9 -- devel
+// 0.7 -- deabdeef-0.4.0
 // 0.6 -- deadbeef-0.3.3
 // 0.5 -- deadbeef-0.3.2
 // 0.4 -- deadbeef-0.3.0
@@ -62,8 +63,8 @@ extern "C" {
 // 0.2 -- deadbeef-0.2.3
 // 0.1 -- deadbeef-0.2.0
 
-#define DB_API_VERSION_MAJOR 0
-#define DB_API_VERSION_MINOR 7
+#define DB_API_VERSION_MAJOR 9
+#define DB_API_VERSION_MINOR 9
 
 #define DB_PLUGIN_SET_API_VERSION\
     .plugin.api_vmajor = DB_API_VERSION_MAJOR,\
@@ -401,9 +402,15 @@ typedef struct {
        %c comment
        %r copyright
        %T tags
+       %f filename without path
+       %F full pathname/uri
+       %d directory without path (e.g. /home/user/file.mp3 -> user)
+       %D directory name with full path (e.g. /home/user/file.mp3 -> /home/user)
        more to come
     */
     int (*pl_format_title) (DB_playItem_t *it, int idx, char *s, int size, int id, const char *fmt);
+    // _escaped version wraps all conversions with '' and replaces every ' in conversions with \'
+    int (*pl_format_title_escaped) (DB_playItem_t *it, int idx, char *s, int size, int id, const char *fmt);
     void (*pl_format_time) (float t, char *dur, int size);
     void (*pl_format_item_display_name) (DB_playItem_t *it, char *str, int len);
 //    void (*pl_set_next) (DB_playItem_t *it, DB_playItem_t *next, int iter);
@@ -461,7 +468,9 @@ typedef struct {
     DB_id3v2_frame_t *(*junk_id3v2_add_text_frame) (DB_id3v2_tag_t *tag, const char *frame_id, const char *value); 
     int (*junk_id3v2_remove_frames) (DB_id3v2_tag_t *tag, const char *frame_id);
     int (*junk_apev2_read) (DB_playItem_t *it, DB_FILE *fp);
+    int (*junk_apev2_read_mem) (DB_playItem_t *it, char *mem, int size);
     int (*junk_apev2_read_full) (DB_playItem_t *it, DB_apev2_tag_t *tag_store, DB_FILE *fp);
+    int (*junk_apev2_read_full_mem) (DB_playItem_t *it, DB_apev2_tag_t *tag_store, char *mem, int memsize);
     int (*junk_apev2_find) (DB_FILE *fp, int32_t *psize, uint32_t *pflags, uint32_t *pnumitems);
     int (*junk_apev2_remove_frames) (DB_apev2_tag_t *tag, const char *frame_id);
     DB_apev2_frame_t * (*junk_apev2_add_text_frame) (DB_apev2_tag_t *tag, const char *frame_id, const char *value);
@@ -513,6 +522,45 @@ typedef struct {
     int (*is_local_file) (const char *fname); // returns 1 for local filename, 0 otherwise
 } DB_functions_t;
 
+enum {
+    /* Action in main menu (or whereever ui prefers) */
+    DB_ACTION_COMMON = 1 << 0,
+
+    /* Action allowed for single track */
+    DB_ACTION_SINGLE_TRACK = 1 << 1,
+
+    /* Action allowed for multiple tracks at once */
+    DB_ACTION_ALLOW_MULTIPLE_TRACKS = 1 << 2,
+
+    /* Action can (and prefer) traverse multiple tracks by itself */
+    DB_ACTION_CAN_MULTIPLE_TRACKS = 1 << 3,
+    
+    /* Action is inactive */
+    DB_ACTION_DISABLED = 1 << 4
+};
+
+struct DB_plugin_action_s;
+
+typedef int (*DB_plugin_action_callback_t) (struct DB_plugin_action_s *action, DB_playItem_t *it);
+
+typedef struct DB_plugin_action_s {
+    const char *title;
+    const char *name;
+    uint32_t flags;
+    /**
+     * Function called when user activates menu item
+     * @action pointer to action struct itself
+     * @it pointer to selected playitem for single-track action,
+     *   to first playitem for multiple-track action,
+     *   or NULL for common action
+     * @returns unused
+     */
+    DB_plugin_action_callback_t callback;
+
+    //we have linked list here
+    struct DB_plugin_action_s *next;
+} DB_plugin_action_t;
+
 // base plugin interface
 typedef struct DB_plugin_s {
     // type must be one of DB_PLUGIN_ types
@@ -539,13 +587,24 @@ typedef struct DB_plugin_s {
 
     // start is called to start plugin; can be NULL
     int (*start) (void);
+    
     // stop is called to deinit plugin; can be NULL
     int (*stop) (void);
+
+    // connect is called to setup connections between different plugins
+    // it is called after all plugin's start method was executed
+    // can be NULL
+    int (*connect) (void);
+    
     // exec_cmdline may be called at any moment when user sends commandline to player
     // can be NULL if plugin doesn't support commandline processing
     // cmdline is 0-separated list of strings, guaranteed to have 0 at the end
     // cmdline_size is number of bytes pointed by cmdline
     int (*exec_cmdline) (const char *cmdline, int cmdline_size);
+    
+    // @returns linked list of actions
+    DB_plugin_action_t* (*get_actions) (DB_playItem_t *it);
+
     // plugin configuration dialog is constructed from this data
     // can be NULL
     const char *configdialog;

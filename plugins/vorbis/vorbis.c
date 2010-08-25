@@ -144,7 +144,12 @@ cvorbis_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     ogg_info_t *info = (ogg_info_t *)_info;
     info->info.file = NULL;
     info->vi = NULL;
-    info->cur_bit_stream = it->tracknum;
+    if (it->endsample > 0) {
+        info->cur_bit_stream = -1;
+    }
+    else {
+        info->cur_bit_stream = it->tracknum;
+    }
     info->ptrack = it;
     deadbeef->pl_item_ref (it);
 
@@ -247,9 +252,10 @@ static int
 cvorbis_read (DB_fileinfo_t *_info, char *bytes, int size) {
     ogg_info_t *info = (ogg_info_t *)_info;
 //    trace ("cvorbis_read %d bytes\n", size);
+    int out_ch = min (_info->channels, 2);
     if (!info->info.file->vfs->streaming) {
-        if (info->currentsample + size / (2 * _info->channels) > info->endsample) {
-            size = (info->endsample - info->currentsample + 1) * 2 * _info->channels;
+        if (info->currentsample + size / (2 * out_ch) > info->endsample) {
+            size = (info->endsample - info->currentsample + 1) * 2 * out_ch;
             trace ("size truncated to %d bytes, cursample=%d, info->endsample=%d, totalsamples=%d\n", size, info->currentsample, info->endsample, ov_pcm_total (&info->vorbis_file, -1));
             if (size <= 0) {
                 return 0;
@@ -279,7 +285,24 @@ cvorbis_read (DB_fileinfo_t *_info, char *bytes, int size) {
 #if WORDS_BIGENDIAN
         endianess = 1;
 #endif
-        ret=ov_read (&info->vorbis_file, bytes, size, endianess, 2, 1, &info->cur_bit_stream);
+
+        if (out_ch != _info->channels) {
+            int nframes = size / out_ch / 2;
+            int16_t buf[nframes * _info->channels];
+            ret=ov_read (&info->vorbis_file, (char*)buf, sizeof(buf), endianess, 2, 1, &info->cur_bit_stream);
+            if (ret > 0) {
+                int n = ret / _info->channels / 2;
+                for (int i = 0; i < n; i++) {
+                    for (int j = 0; j < out_ch; j++) {
+                        ((int16_t *)bytes)[i * out_ch + j] = buf[i * _info->channels + j];
+                    }
+                }
+                ret = n * out_ch * 2;
+            }
+        }
+        else {
+            ret=ov_read (&info->vorbis_file, bytes, size, endianess, 2, 1, &info->cur_bit_stream);
+        }
         if (ret <= 0)
         {
             if (ret < 0) {
@@ -304,12 +327,12 @@ cvorbis_read (DB_fileinfo_t *_info, char *bytes, int size) {
         }
         else if (ret < size)
         {
-            info->currentsample += ret / (info->vi->channels * 2);
+            info->currentsample += ret / (out_ch * 2);
             size -= ret;
             bytes += ret;
         }
         else {
-            info->currentsample += ret / (info->vi->channels * 2);
+            info->currentsample += ret / (out_ch * 2);
             size = 0;
             break;
         }

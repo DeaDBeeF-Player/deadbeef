@@ -28,7 +28,7 @@
 #endif
 #include <limits.h>
 #ifdef HAVE_CONFIG_H
-#  include <config.h>
+#  include "config.h"
 #endif
 #include "gettext.h"
 #include "plugins.h"
@@ -44,8 +44,8 @@
 #include "junklib.h"
 #include "vfs.h"
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 #ifndef PATH_MAX
 #define PATH_MAX    1024    /* max # of characters in a path name */
@@ -160,6 +160,7 @@ static DB_functions_t deadbeef_api = {
     .pl_get_next = (DB_playItem_t *(*) (DB_playItem_t *, int))pl_get_next,
     .pl_get_prev = (DB_playItem_t *(*) (DB_playItem_t *, int))pl_get_prev,
     .pl_format_title = (int (*) (DB_playItem_t *it, int idx, char *s, int size, int id, const char *fmt))pl_format_title,
+    .pl_format_title_escaped = (int (*) (DB_playItem_t *it, int idx, char *s, int size, int id, const char *fmt))pl_format_title_escaped,
     .pl_format_time = pl_format_time,
     .pl_move_items = (void (*) (int iter, int plt_from, DB_playItem_t *drop_before, uint32_t *indexes, int count))pl_move_items,
     .pl_copy_items = (void (*) (int iter, int plt_from, DB_playItem_t *before, uint32_t *indices, int cnt))pl_copy_items,
@@ -202,7 +203,9 @@ static DB_functions_t deadbeef_api = {
     .junk_id3v2_remove_frames = junk_id3v2_remove_frames,
     .junk_id3v2_add_text_frame = junk_id3v2_add_text_frame,
     .junk_apev2_read = (int (*)(DB_playItem_t *it, DB_FILE *fp))junk_apev2_read,
+    .junk_apev2_read_mem = (int (*) (DB_playItem_t *it, char *mem, int size))junk_apev2_read_mem,
     .junk_apev2_read_full = (int (*) (DB_playItem_t *it, DB_apev2_tag_t *tag_store, DB_FILE *fp))junk_apev2_read_full,
+    .junk_apev2_read_full_mem = (int (*) (DB_playItem_t *it, DB_apev2_tag_t *tag_store, char *mem, int memsize))junk_apev2_read_full_mem,
     .junk_apev2_find = junk_apev2_find,
     .junk_apev2_remove_frames = junk_apev2_remove_frames,
     .junk_apev2_add_text_frame = junk_apev2_add_text_frame,
@@ -321,7 +324,9 @@ typedef struct plugin_s {
     DB_plugin_t *plugin;
     struct plugin_s *next;
 } plugin_t;
+
 plugin_t *plugins;
+plugin_t *plugins_tail;
 
 void
 plug_ev_subscribe (DB_plugin_t *plugin, int ev, DB_callback_t callback, uintptr_t data) {
@@ -338,7 +343,7 @@ plug_ev_subscribe (DB_plugin_t *plugin, int ev, DB_callback_t callback, uintptr_
     }
     mutex_unlock (mutex);
     if (i == MAX_HANDLERS) {
-        fprintf (stderr, "failed to subscribe plugin %s to event %d (too many event handlers)\n", plugin->name, ev);
+        trace ("failed to subscribe plugin %s to event %d (too many event handlers)\n", plugin->name, ev);
     }
 }
 
@@ -521,28 +526,39 @@ plug_init_plugin (DB_plugin_t* (*loadfunc)(DB_functions_t *), void *handle) {
     if (plugin_api->api_vmajor != 0 || plugin_api->api_vminor != 0) {
         // version check enabled
         if (plugin_api->api_vmajor != DB_API_VERSION_MAJOR || plugin_api->api_vminor != DB_API_VERSION_MINOR) {
-            fprintf (stderr, "\033[0;31mWARNING: plugin \"%s\" wants API v%d.%d (got %d.%d), will not be loaded\033[0;m\n", plugin_api->name, plugin_api->api_vmajor, plugin_api->api_vminor, DB_API_VERSION_MAJOR, DB_API_VERSION_MINOR);
+            trace ("\033[0;31mWARNING: plugin \"%s\" wants API v%d.%d (got %d.%d), will not be loaded\033[0;m\n", plugin_api->name, plugin_api->api_vmajor, plugin_api->api_vminor, DB_API_VERSION_MAJOR, DB_API_VERSION_MINOR);
             return -1;
         }
     }
     else {
-            fprintf (stderr, "\033[0;31mWARNING: plugin \"%s\" has disabled version check. do not distribute!\033[0;m\n", plugin_api->name);
+            trace ("\033[0;31mWARNING: plugin \"%s\" has disabled version check. do not distribute!\033[0;m\n", plugin_api->name);
     }
 #endif
     plugin_t *plug = malloc (sizeof (plugin_t));
     memset (plug, 0, sizeof (plugin_t));
     plug->plugin = plugin_api;
     plug->handle = handle;
-    plug->next = plugins;
-    plugins = plug;
+    if (plugins_tail) {
+        plugins_tail->next = plug;
+        plugins_tail = plug;
+    }
+    else {
+        plugins = plugins_tail = plug;
+    }
     return 0;
 }
 
-void
+static int dirent_alphasort (const struct dirent **a, const struct dirent **b) {
+    return strcmp ((*a)->d_name, (*b)->d_name);
+}
+
+int
 plug_load_all (void) {
 #if DISABLE_VERSIONCHECK
-    fprintf (stderr, "\033[0;31mDISABLE_VERSIONCHECK=1! do not distribute!\033[0;m\n");
+    trace ("\033[0;31mDISABLE_VERSIONCHECK=1! do not distribute!\033[0;m\n");
 #endif
+
+#if !TARGET_ANDROID
     const char *conf_blacklist_plugins = conf_get_str ("blacklist_plugins", "");
     trace ("plug: mutex_create\n");
     mutex = mutex_create ();
@@ -558,13 +574,13 @@ plug_load_all (void) {
         char *homedir = getenv ("HOME");
 
         if (!homedir) {
-            fprintf (stderr, "plug_load_all: warning: unable to find home directory\n");
+            trace ("plug_load_all: warning: unable to find home directory\n");
             xdg_plugin_dir[0] = 0;
         }
         else {
             int written = snprintf (xdg_plugin_dir, sizeof (xdg_plugin_dir), "%s/.local/lib/deadbeef", homedir);
             if (written > sizeof (xdg_plugin_dir)) {
-                fprintf (stderr, "warning: XDG_LOCAL_HOME value is too long: %s. Ignoring.", xdg_local_home);
+                trace ("warning: XDG_LOCAL_HOME value is too long: %s. Ignoring.", xdg_local_home);
                 xdg_plugin_dir[0] = 0;
             }
         }
@@ -579,9 +595,9 @@ plug_load_all (void) {
         if (!(*plugdir)) {
             continue;
         }
-        fprintf (stderr, "loading plugins from %s\n", plugdir);
+        trace ("loading plugins from %s\n", plugdir);
         namelist = NULL;
-        n = scandir (plugdir, &namelist, NULL, alphasort);
+        n = scandir (plugdir, &namelist, NULL, dirent_alphasort);
         if (n < 0)
         {
             if (namelist) {
@@ -625,29 +641,28 @@ plug_load_all (void) {
                         }
                     }
                     if (!p) {
-                        fprintf (stderr, "plugin %s is blacklisted in config file\n", d_name);
+                        trace ("plugin %s is blacklisted in config file\n", d_name);
                         break;
                     }
                     char fullname[PATH_MAX];
                     snprintf (fullname, PATH_MAX, "%s/%s", plugdir, d_name);
-                    fprintf (stderr, "loading plugin %s\n", d_name);
+                    trace ("loading plugin %s\n", d_name);
                     void *handle = dlopen (fullname, RTLD_NOW);
                     if (!handle) {
-                        fprintf (stderr, "dlopen error: %s\n", dlerror ());
+                        trace ("dlopen error: %s\n", dlerror ());
                         break;
                     }
                     d_name[l-3] = 0;
-                    fprintf (stderr, "module name is %s\n", d_name);
                     strcat (d_name, "_load");
                     DB_plugin_t *(*plug_load)(DB_functions_t *api) = dlsym (handle, d_name);
                     if (!plug_load) {
-                        fprintf (stderr, "dlsym error: %s\n", dlerror ());
+                        trace ("dlsym error: %s\n", dlerror ());
                         dlclose (handle);
                         break;
                     }
                     if (plug_init_plugin (plug_load, handle) < 0) {
                         d_name[l-3] = 0;
-                        fprintf (stderr, "plugin %s is incompatible with current version of deadbeef, please upgrade the plugin\n", d_name);
+                        trace ("plugin %s is incompatible with current version of deadbeef, please upgrade the plugin\n", d_name);
                         dlclose (handle);
                         break;
                     }
@@ -658,6 +673,7 @@ plug_load_all (void) {
             free (namelist);
         }
     }
+#endif
 // load all compiled-in modules
 #define PLUG(n) extern DB_plugin_t * n##_load (DB_functions_t *api);
 #include "moduleconf.h"
@@ -665,6 +681,14 @@ plug_load_all (void) {
 #define PLUG(n) plug_init_plugin (n##_load, NULL);
 #include "moduleconf.h"
 #undef PLUG
+#if TARGET_ANDROID
+#define PLUG(n) extern DB_plugin_t * n##_load (DB_functions_t *api);
+#include "moduleconf-android.h"
+#undef PLUG
+#define PLUG(n) plug_init_plugin (n##_load, NULL);
+#include "moduleconf-android.h"
+#undef PLUG
+#endif
 
     plugin_t *plug;
     // categorize plugins
@@ -676,28 +700,28 @@ plug_load_all (void) {
     for (plug = plugins; plug; plug = plug->next) {
         g_plugins[numplugins++] = plug->plugin;
         if (plug->plugin->type == DB_PLUGIN_DECODER) {
-            fprintf (stderr, "found decoder plugin %s\n", plug->plugin->name);
+//            trace ("found decoder plugin %s\n", plug->plugin->name);
             if (numdecoders >= MAX_DECODER_PLUGINS) {
                 break;
             }
             g_decoder_plugins[numdecoders++] = (DB_decoder_t *)plug->plugin;
         }
         else if (plug->plugin->type == DB_PLUGIN_VFS) {
-            fprintf (stderr, "found vfs plugin %s\n", plug->plugin->name);
+//            trace ("found vfs plugin %s\n", plug->plugin->name);
             if (numvfs >= MAX_VFS_PLUGINS) {
                 break;
             }
             g_vfs_plugins[numvfs++] = (DB_vfs_t *)plug->plugin;
         }
         else if (plug->plugin->type == DB_PLUGIN_OUTPUT) {
-            fprintf (stderr, "found output plugin %s\n", plug->plugin->name);
+//            trace ("found output plugin %s\n", plug->plugin->name);
             if (numoutput >= MAX_OUTPUT_PLUGINS) {
                 break;
             }
             g_output_plugins[numoutput++] = (DB_output_t *)plug->plugin;
         }
         else if (plug->plugin->type == DB_PLUGIN_DSP) {
-            fprintf (stderr, "found dsp plugin %s\n", plug->plugin->name);
+//            trace ("found dsp plugin %s\n", plug->plugin->name);
             if (numdsp >= MAX_DSP_PLUGINS) {
                 break;
             }
@@ -712,8 +736,16 @@ plug_load_all (void) {
             }
         }
     }
+    // connect plugins
+    for (plug = plugins; plug; plug = plug->next) {
+        if (plug->plugin->connect) {
+            if (plug->plugin->connect () < 0) {
+                plug->plugin->inactive = 1;
+            }
+        }
+    }
 
-//    fprintf (stderr, "numplugins: %d, numdecoders: %d, numvfs: %d\n", numplugins, numdecoders, numvfs);
+//    trace ("numplugins: %d, numdecoders: %d, numvfs: %d\n", numplugins, numdecoders, numvfs);
     g_plugins[numplugins] = NULL;
     g_decoder_plugins[numdecoders] = NULL;
     g_vfs_plugins[numvfs] = NULL;
@@ -721,32 +753,36 @@ plug_load_all (void) {
 
     // select output plugin
     if (plug_select_output () < 0) {
-        fprintf (stderr, "failed to find output plugin!\n");
-        exit (-1);
+        trace ("failed to find output plugin!\n");
+        return -1;
     }
+    return 0;
 }
 
 void
 plug_unload_all (void) {
-    fprintf (stderr, "plug_unload_all\n");
+    trace ("plug_unload_all\n");
     plugin_t *p;
     for (p = plugins; p; p = p->next) {
         if (p->plugin->stop) {
-            fprintf (stderr, "stopping %s...\n", p->plugin->name);
+            trace ("stopping %s...\n", p->plugin->name);
             fflush (stderr);
             p->plugin->stop ();
         }
     }
-    fprintf (stderr, "stopped all plugins\n");
+    trace ("stopped all plugins\n");
     while (plugins) {
         plugin_t *next = plugins->next;
+#if !TARGET_ANDROID
         if (plugins->handle) {
             dlclose (plugins->handle);
         }
+#endif
         free (plugins);
         plugins = next;
     }
-    fprintf (stderr, "all plugins had been unloaded\n");
+    plugins_tail = NULL;
+    trace ("all plugins had been unloaded\n");
 }
 
 void
@@ -797,7 +833,7 @@ plug_activate (DB_plugin_t *plug, int activate) {
                 plug->inactive = 0;
             }
             else {
-                fprintf (stderr, "failed to start plugin %s\n", plug->name);
+                trace ("failed to start plugin %s\n", plug->name);
                 return -1;
             }
             return 0;
@@ -812,7 +848,7 @@ plug_activate (DB_plugin_t *plug, int activate) {
                 plug->inactive = 1;
             }
             else {
-                fprintf (stderr, "failed to stop plugin %s\n", plug->name);
+                trace ("failed to stop plugin %s\n", plug->name);
                 return -1;
             }
             return 0;
@@ -834,7 +870,7 @@ plug_select_output (void) {
     for (int i = 0; g_output_plugins[i]; i++) {
         DB_output_t *p = g_output_plugins[i];
         if (!strcmp (p->plugin.name, outplugname)) {
-            fprintf (stderr, "selected output plugin: %s\n", outplugname);
+            trace ("selected output plugin: %s\n", outplugname);
             output_plugin = p;
             break;
         }
@@ -842,7 +878,7 @@ plug_select_output (void) {
     if (!output_plugin) {
         output_plugin = g_output_plugins[0];
         if (output_plugin) {
-            fprintf (stderr, "selected output plugin: %s\n", output_plugin->plugin.name);
+            trace ("selected output plugin: %s\n", output_plugin->plugin.name);
             conf_set_str ("output_plugin", output_plugin->plugin.name);
         }
     }
@@ -862,7 +898,7 @@ plug_reinit_sound (void) {
     DB_output_t *prev = plug_get_output ();
     if (plug_select_output () < 0) {
         const char *outplugname = conf_get_str ("output_plugin", "ALSA output plugin");
-        fprintf (stderr, "failed to select output plugin %s\nreverted to %s\n", outplugname, prev->plugin.name);
+        trace ("failed to select output plugin %s\nreverted to %s\n", outplugname, prev->plugin.name);
         output_plugin = prev;
     }
     streamer_reset (1);
@@ -873,7 +909,7 @@ plug_reinit_sound (void) {
 
     if (state != OUTPUT_STATE_PAUSED && state != OUTPUT_STATE_STOPPED) {
         if (p_play () < 0) {
-            fprintf (stderr, "failed to reinit sound output\n");
+            trace ("failed to reinit sound output\n");
             streamer_set_nextsong (-2, 0);
         }
     }

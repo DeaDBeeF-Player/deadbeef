@@ -18,7 +18,11 @@
 */
 
 #include <string.h>
+#ifdef TINYWV
+#include <wavpack.h>
+#else
 #include <wavpack/wavpack.h>
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -35,12 +39,20 @@ static DB_functions_t *deadbeef;
 
 typedef struct {
     DB_fileinfo_t info;
-    DB_FILE *file, *c_file;
+    DB_FILE *file;
+#ifndef TINYWV
+    DB_FILE *c_file;
+#endif
     WavpackContext *ctx;
     int startsample;
     int endsample;
 } wvctx_t;
 
+#ifdef TINYWV
+int32_t wv_read_stream(void *buf, int32_t sz, void *file_handle) {
+    return deadbeef->fread (buf, 1, sz, (DB_FILE *)file_handle);
+}
+#else
 int32_t wv_read_bytes(void *id, void *data, int32_t bcount) {
 //    trace ("wv_read_bytes\n");
     return deadbeef->fread (data, 1, bcount, id);
@@ -91,6 +103,7 @@ static WavpackStreamReader wsr = {
     .can_seek = wv_can_seek,
     .write_bytes = wv_write_bytes
 };
+#endif
 
 static DB_fileinfo_t *
 wv_open (void) {
@@ -107,6 +120,7 @@ wv_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         return -1;
     }
 
+#ifndef TINYWV
     char *c_fname = alloca (strlen (it->fname) + 2);
     if (c_fname) {
         strcpy (c_fname, it->fname);
@@ -116,9 +130,14 @@ wv_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     else {
         fprintf (stderr, "wavpack warning: failed to alloc memory for correction file name\n");
     }
+#endif
 
     char error[80];
+#ifdef TINYWV
+    info->ctx = WavpackOpenFileInput (wv_read_stream, info->file, error);
+#else
     info->ctx = WavpackOpenFileInputEx (&wsr, info->file, info->c_file, error, OPEN_2CH_MAX | OPEN_NORMALIZE, 0);
+#endif
     if (!info->ctx) {
         fprintf (stderr, "wavpack error: %s\n", error);
         return -1;
@@ -150,10 +169,12 @@ wv_free (DB_fileinfo_t *_info) {
             deadbeef->fclose (info->file);
             info->file = NULL;
         }
+#ifndef TINYWV
         if (info->c_file) {
             deadbeef->fclose (info->c_file);
             info->c_file = NULL;
         }
+#endif
         if (info->ctx) {
             WavpackCloseFile (info->ctx);
             info->ctx = NULL;
@@ -210,7 +231,9 @@ wv_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
     }
     _info->readpos = (float)(WavpackGetSampleIndex (info->ctx)-info->startsample)/WavpackGetSampleRate (info->ctx);
 
+#ifndef TINYWV
     deadbeef->streamer_set_bitrate (WavpackGetInstantBitrate (info->ctx) / 1000);
+#endif
 
     return size;
 }
@@ -247,15 +270,19 @@ wv_read_float32 (DB_fileinfo_t *_info, char *bytes, int size) {
         }
     }
     _info->readpos = (float)(WavpackGetSampleIndex (info->ctx)-info->startsample)/WavpackGetSampleRate (info->ctx);
+#ifndef TINYWV
     deadbeef->streamer_set_bitrate (WavpackGetInstantBitrate (info->ctx) / 1000);
+#endif
     return size;
 }
 
 static int
 wv_seek_sample (DB_fileinfo_t *_info, int sample) {
+#ifndef TINYWV
     wvctx_t *info = (wvctx_t *)_info;
     WavpackSeekSample (info->ctx, sample + info->startsample);
     _info->readpos = (float)(WavpackGetSampleIndex (info->ctx) - info->startsample) / WavpackGetSampleRate (info->ctx);
+#endif
     return 0;
 }
 
@@ -273,7 +300,11 @@ wv_insert (DB_playItem_t *after, const char *fname) {
         return NULL;
     }
     char error[80];
+#ifdef TINYWV
+    WavpackContext *ctx = WavpackOpenFileInput (wv_read_stream, fp, error);
+#else
     WavpackContext *ctx = WavpackOpenFileInputEx (&wsr, fp, NULL, error, 0, 0);
+#endif
     if (!ctx) {
         fprintf (stderr, "wavpack error: %s\n", error);
         deadbeef->fclose (fp);

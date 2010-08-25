@@ -31,7 +31,8 @@ gtkui_la_SOURCES = $(gtkui_VALABUILTSOURCES)\
 				   coverart.c coverart.h\
 				   plcommon.c plcommon.h\
 				   prefwin.c\
-				   eq.c eq.h
+				   eq.c eq.h\
+				   actions.c actions.h
 
 gtkui_la_LDFLAGS = -module
 

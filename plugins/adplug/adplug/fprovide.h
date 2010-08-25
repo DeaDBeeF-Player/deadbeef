@@ -22,7 +22,6 @@
 #ifndef H_ADPLUG_FILEPROVIDER
 #define H_ADPLUG_FILEPROVIDER
 
-#include <string>
 #include <binio.h>
 
 class CFileProvider
@@ -32,18 +31,18 @@ public:
     {
     }
 
-  virtual binistream *open(std::string) const = 0;
+  virtual binistream *open(const char *) const = 0;
   virtual void close(binistream *) const = 0;
 
-  static bool extension(const std::string &filename,
-			const std::string &extension);
+  static bool extension(const char *filename,
+			const char *extension);
   static unsigned long filesize(binistream *f);
 };
 
 class CProvider_Filesystem: public CFileProvider
 {
 public:
-  virtual binistream *open(std::string filename) const;
+  virtual binistream *open(const char *filename) const;
   virtual void close(binistream *f) const;
 };
 

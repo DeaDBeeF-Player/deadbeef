@@ -31,14 +31,14 @@ CPlayer *ChscPlayer::factory(Copl *newopl)
   return new ChscPlayer(newopl);
 }
 
-bool ChscPlayer::load(const std::string &filename, const CFileProvider &fp)
+bool ChscPlayer::load(const char *filename, const CFileProvider &fp)
 {
   binistream	*f = fp.open(filename);
   int		i;
 
   // file validation section
   if(!f || !fp.extension(filename, ".hsc") || fp.filesize(f) > 59187) {
-    AdPlug_LogWrite("ChscPlayer::load(\"%s\"): Not a HSC file!\n", filename.c_str());
+    AdPlug_LogWrite("ChscPlayer::load(\"%s\"): Not a HSC file!\n", filename);
     fp.close(f);
     return false;
   }

@@ -29,12 +29,12 @@ class CldsPlayer: public CPlayer
   CldsPlayer(Copl *newopl);
   virtual ~CldsPlayer();
 
-  bool load(const std::string &filename, const CFileProvider &fp);
+  bool load(const char *filename, const CFileProvider &fp);
   virtual bool update();
   virtual void rewind(int subsong = -1);
   float getrefresh() { return 70.0f; }
 
-  std::string gettype() { return std::string("LOUDNESS Sound System"); }
+  const char * gettype() { return "LOUDNESS Sound System"; }
   unsigned int getorders() { return numposi; }
   unsigned int getorder() { return posplay; }
   unsigned int getrow() { return pattplay; }

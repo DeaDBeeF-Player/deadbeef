@@ -28,6 +28,7 @@
 #include "support.h"
 #include "interface.h"
 #include "parser.h"
+#include "actions.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
@@ -173,11 +174,17 @@ void draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbListview
         draw_set_fg_color (fg);
 
         draw_init_font (GTK_WIDGET (listview)->style);
+        if (gtkui_embolden_current_track && it && it == playing_track) {
+            draw_init_font_bold ();
+        }
         if (calign_right) {
             draw_text (x+5, y + height/2 - draw_get_font_size ()/2 - 2, cwidth-10, 1, text);
         }
         else {
             draw_text (x + 5, y + height/2 - draw_get_font_size ()/2 - 2, cwidth-10, 0, text);
+        }
+        if (gtkui_embolden_current_track && it && it == playing_track) {
+            draw_init_font_normal ();
         }
     }
     if (playing_track) {
@@ -346,6 +353,37 @@ on_remove_from_disk_activate                    (GtkMenuItem     *menuitem,
 }
 
 void
+actionitem_activate (GtkMenuItem     *menuitem,
+                     DB_plugin_action_t *action)
+{
+    // Plugin can handle all tracks by itself
+    if (action->flags & DB_ACTION_CAN_MULTIPLE_TRACKS)
+    {
+        action->callback (action, NULL);
+        return;
+    }
+
+    // For single-track actions just invoke it with first selected track
+    if (0 == action->flags & DB_ACTION_ALLOW_MULTIPLE_TRACKS)
+    {
+        DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (clicked_idx, PL_MAIN);
+        action->callback (action, it);
+        deadbeef->pl_item_unref (it);
+        return;
+    }
+    
+    //We end up here if plugin won't traverse tracks and we have to do it ourselves
+    DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
+    while (it) {
+        if (deadbeef->pl_is_selected (it))
+            action->callback (action, it);
+        DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+        deadbeef->pl_item_unref (it);
+        it = next;
+    }
+}
+
+void
 list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
     clicked_idx = deadbeef->pl_get_idx_of (it);
     int inqueue = deadbeef->pl_playqueue_test (it);
@@ -389,15 +427,78 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
     gtk_container_add (GTK_CONTAINER (playlist_menu), remove2);
     g_object_set_data (G_OBJECT (remove2), "ps", listview);
 
-    remove_from_disk = gtk_menu_item_new_with_mnemonic (_("Remove from disk"));
-    gtk_widget_show (remove_from_disk);
-    gtk_container_add (GTK_CONTAINER (playlist_menu), remove_from_disk);
-    g_object_set_data (G_OBJECT (remove_from_disk), "ps", listview);
+    int hide_remove_from_disk = deadbeef->conf_get_int ("gtkui.hide_remove_from_disk", 0);
+
+    if (!hide_remove_from_disk) {
+        remove_from_disk = gtk_menu_item_new_with_mnemonic (_("Remove from disk"));
+        gtk_widget_show (remove_from_disk);
+        gtk_container_add (GTK_CONTAINER (playlist_menu), remove_from_disk);
+        g_object_set_data (G_OBJECT (remove_from_disk), "ps", listview);
+    }
 
     separator8 = gtk_separator_menu_item_new ();
     gtk_widget_show (separator8);
     gtk_container_add (GTK_CONTAINER (playlist_menu), separator8);
     gtk_widget_set_sensitive (separator8, FALSE);
+
+    int selected_count = 0;
+    DB_playItem_t *pit = deadbeef->pl_get_first (PL_MAIN);
+    DB_playItem_t *selected = NULL;
+    while (pit) {
+        if (deadbeef->pl_is_selected (pit))
+        {
+            if (!selected)
+                selected = pit;
+            selected_count++;
+        }
+        DB_playItem_t *next = deadbeef->pl_get_next (pit, PL_MAIN);
+        deadbeef->pl_item_unref (pit);
+        pit = next;
+    }
+
+    DB_plugin_t **plugins = deadbeef->plug_get_list();
+    int i;
+
+    for (i = 0; plugins[i]; i++)
+    {
+        if (!plugins[i]->get_actions)
+            continue;
+
+        DB_plugin_action_t *actions = plugins[i]->get_actions (selected);
+        DB_plugin_action_t *action;
+
+        int count = 0;
+        for (action = actions; action; action = action->next)
+        {
+            if (action->flags & DB_ACTION_COMMON)
+                continue;
+            count++;
+            GtkWidget *actionitem;
+            actionitem = gtk_menu_item_new_with_mnemonic (action->title);
+            gtk_widget_show (actionitem);
+            gtk_container_add (GTK_CONTAINER (playlist_menu), actionitem);
+            g_object_set_data (G_OBJECT (actionitem), "ps", listview);
+
+            g_signal_connect ((gpointer) actionitem, "activate",
+                    G_CALLBACK (actionitem_activate),
+                    action);
+            if (!(
+                ((selected_count == 1) && (action->flags & DB_ACTION_SINGLE_TRACK)) ||
+                ((selected_count > 1) && (action->flags & DB_ACTION_ALLOW_MULTIPLE_TRACKS))
+                ) ||
+                action->flags & DB_ACTION_DISABLED)
+            {
+                gtk_widget_set_sensitive (GTK_WIDGET (actionitem), FALSE);
+            }
+        }
+        if (count > 0)
+        {
+            separator8 = gtk_separator_menu_item_new ();
+            gtk_widget_show (separator8);
+            gtk_container_add (GTK_CONTAINER (playlist_menu), separator8);
+            gtk_widget_set_sensitive (separator8, FALSE);
+        }
+    }
 
     properties1 = gtk_menu_item_new_with_mnemonic (_("Properties"));
     gtk_widget_show (properties1);
@@ -416,9 +517,11 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
     g_signal_connect ((gpointer) remove2, "activate",
             G_CALLBACK (on_remove2_activate),
             NULL);
-    g_signal_connect ((gpointer) remove_from_disk, "activate",
-            G_CALLBACK (on_remove_from_disk_activate),
-            NULL);
+    if (!hide_remove_from_disk) {
+        g_signal_connect ((gpointer) remove_from_disk, "activate",
+                G_CALLBACK (on_remove_from_disk_activate),
+                NULL);
+    }
     g_signal_connect ((gpointer) properties1, "activate",
             G_CALLBACK (main_properties_activate),
             NULL);

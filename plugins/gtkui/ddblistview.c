@@ -1416,7 +1416,7 @@ ddb_listview_click_selection (DdbListview *ps, int ex, int ey, DdbListviewGroup 
 //   }}}
 // }}}
 void
-ddb_listview_list_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, double time) {
+ddb_listview_list_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, GdkEventType type) {
     // cursor must be set here, but selection must be handled in keyrelease
     int cnt = ps->binding->count ();
     if (cnt == 0) {
@@ -1434,7 +1434,7 @@ ddb_listview_list_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, do
     }
 
     int cursor = ps->binding->cursor ();
-    if (time - ps->clicktime < 0.5
+    if (type == GDK_2BUTTON_PRESS
             && fabs(ps->lastpos[0] - ex) < 3
             && fabs(ps->lastpos[1] - ey) < 3) {
         // doubleclick - play this item
@@ -1449,12 +1449,6 @@ ddb_listview_list_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, do
             }
             return;
         }
-
-        // prevent next click to trigger doubleclick
-        ps->clicktime = time-1;
-    }
-    else {
-        ps->clicktime = time;
     }
 
     int prev = cursor;
@@ -2034,6 +2028,8 @@ ddb_listview_list_drag_end                   (GtkWidget       *widget,
     ps->scroll_pointer_y = -1;
 }
 
+// #define HEADERS_GTKTHEME
+
 void
 ddb_listview_header_render (DdbListview *ps) {
     GtkWidget *widget = ps->header;
@@ -2042,10 +2038,18 @@ ddb_listview_header_render (DdbListview *ps) {
     int h = widget->allocation.height;
     const char *detail = "button";
 
-    // fill background
-    //gdk_draw_rectangle (widget->window, widget->style->base_gc[GTK_STATE_NORMAL], TRUE, 0, 0,  widget->allocation.width, widget->allocation.height);
+    // fill background and draw bottom line
+#if !HEADERS_GTKTHEME
+    GdkGC *gc = gdk_gc_new (ps->backbuf_header);
+    GdkColor clr;
+    gdk_gc_set_rgb_fg_color (gc, (gtkui_get_tabstrip_base_color (&clr), &clr));
+    gdk_draw_rectangle (ps->backbuf_header, gc, TRUE, 0, 0,  widget->allocation.width, widget->allocation.height);
+    gdk_gc_set_rgb_fg_color (gc, (gtkui_get_tabstrip_dark_color (&clr), &clr));
+    gdk_draw_line (ps->backbuf_header, gc, 0, widget->allocation.height-1, widget->allocation.width, widget->allocation.height-1);
+#else
     gtk_paint_box (theme_button->style, ps->backbuf_header, GTK_STATE_NORMAL, GTK_SHADOW_OUT, NULL, widget, detail, -10, -10, widget->allocation.width+20, widget->allocation.height+20);
     gdk_draw_line (ps->backbuf_header, widget->style->mid_gc[GTK_STATE_NORMAL], 0, widget->allocation.height-1, widget->allocation.width, widget->allocation.height-1);
+#endif
     draw_begin ((uintptr_t)ps->backbuf_header);
     x = -ps->hscrollpos;
     DdbListviewColumn *c;
@@ -2071,7 +2075,14 @@ ddb_listview_header_render (DdbListview *ps) {
             int arrow_sz = 10;
             int sort = c->sort_order;
             if (w > 0) {
+#if !HEADERS_GTKTHEME
+                gdk_gc_set_rgb_fg_color (gc, (gtkui_get_tabstrip_dark_color (&clr), &clr));
+                gdk_draw_line (ps->backbuf_header, gc, xx+w - 2, 2, xx+w - 2, h-4);
+                gdk_gc_set_rgb_fg_color (gc, (gtkui_get_tabstrip_light_color (&clr), &clr));
+                gdk_draw_line (ps->backbuf_header, gc, xx+w - 1, 2, xx+w - 1, h-4);
+#else
                 gtk_paint_vline (widget->style, ps->backbuf_header, GTK_STATE_NORMAL, NULL, widget, NULL, 2, h-4, xx+w - 2);
+#endif
                 GdkColor *gdkfg = &theme_button->style->fg[0];
                 float fg[3] = {(float)gdkfg->red/0xffff, (float)gdkfg->green/0xffff, (float)gdkfg->blue/0xffff};
                 draw_set_fg_color (fg);
@@ -2131,6 +2142,10 @@ ddb_listview_header_render (DdbListview *ps) {
         }
     }
     draw_end ();
+
+#if !HEADERS_GTKTHEME
+    g_object_unref (gc);
+#endif
 }
 
 gboolean
@@ -2486,7 +2501,7 @@ ddb_listview_list_button_press_event         (GtkWidget       *widget,
 {
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
     if (event->button == 1) {
-        ddb_listview_list_mouse1_pressed (ps, event->state, event->x, event->y, event->time);
+        ddb_listview_list_mouse1_pressed (ps, event->state, event->x, event->y, event->type);
     }
     else if (event->button == 3) {
         // get item under cursor

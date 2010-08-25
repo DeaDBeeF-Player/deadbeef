@@ -111,6 +111,9 @@ cda_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         return -1;
     }
 
+    int channels = cdio_get_track_channels (info->cdio, track_nr);
+    trace ("cdio nchannels: %d\n", channels);
+
     _info->plugin = &plugin;
     _info->bps = 16,
     _info->channels = 2,
@@ -438,7 +441,7 @@ read_disc_cdtext (struct cddb_thread_params *params)
 
 static DB_playItem_t *
 cda_insert (DB_playItem_t *after, const char *fname) {
-//    trace ("CDA insert: %s\n", fname);
+    trace ("CDA insert: %s\n", fname);
     CdIo_t* cdio = NULL;
     int track_nr;
     DB_playItem_t *res;
@@ -461,6 +464,7 @@ cda_insert (DB_playItem_t *after, const char *fname) {
     }
 
     if (!cdio) {
+        trace ("not an audio disc/image, or file not found (%s)\n", fname);
         return NULL;
     }
 
@@ -483,6 +487,7 @@ cda_insert (DB_playItem_t *after, const char *fname) {
 
         for (i = 0; i < tracks; i++)
         {
+            trace ("inserting track %d\n", i);
             res = insert_single_track (cdio, res, is_image ? fname : NULL, i+first_track);
             if (res) {
                 p->items[i] = res;
@@ -532,6 +537,27 @@ cda_stop (void) {
     return 0;
 }
 
+static int
+cda_action_add_cd (DB_plugin_action_t *act, DB_playItem_t *it)
+{
+    deadbeef->pl_add_file ("all.cda", NULL, NULL);
+    //Wtf?
+    //playlist_refresh ();
+}
+
+static DB_plugin_action_t add_cd_action = {
+    .title = "File/Add Audio CD",
+    .flags = DB_ACTION_COMMON,
+    .callback = cda_action_add_cd,
+    .next = NULL
+};
+
+static DB_plugin_action_t *
+cda_get_actions (DB_playItem_t *unused)
+{
+    return &add_cd_action;
+}
+
 static const char *exts[] = { "cda", "nrg", NULL };
 static const char *filetypes[] = { "cdda", NULL };
 
@@ -558,6 +584,7 @@ static DB_decoder_t plugin = {
     .plugin.start = cda_start,
     .plugin.stop = cda_stop,
     .plugin.configdialog = settings_dlg,
+    .plugin.get_actions = cda_get_actions,
     .open = cda_open,
     .init = cda_init,
     .free = cda_free,

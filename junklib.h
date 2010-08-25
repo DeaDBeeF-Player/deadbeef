@@ -69,7 +69,13 @@ int
 junk_apev2_read_full (struct playItem_s *it, DB_apev2_tag_t *tag_store, DB_FILE *fp);
 
 int
+junk_apev2_read_full_mem (struct playItem_s *it, DB_apev2_tag_t *tag_store, char *mem, int memsize);
+
+int
 junk_apev2_read (struct playItem_s *it, DB_FILE *fp);
+
+int
+junk_apev2_read_mem (struct playItem_s *it, char *mem, int size);
 
 int
 junk_apev2_find (DB_FILE *fp, int32_t *psize, uint32_t *pflags, uint32_t *pnumitems);

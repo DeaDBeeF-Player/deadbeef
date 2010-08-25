@@ -109,7 +109,6 @@ struct _DdbListview {
     // current state
     int scrollpos;
     int hscrollpos;
-    double clicktime; // for doubleclick detection
     int rowheight;
 
     int col_movepos;

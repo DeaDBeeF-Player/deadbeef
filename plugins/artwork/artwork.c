@@ -354,6 +354,87 @@ fetcher_thread (void *none)
                         deadbeef->fclose (fp);
                     }
                 }
+            }
+
+            // try to load embedded from apev2
+            if (deadbeef->is_local_file (param->fname)) {
+                if (deadbeef->conf_get_int ("artwork.enable_embedded", 1)) {
+                    trace ("trying to load artwork from apev2 tag for %s\n", param->fname);
+                    DB_apev2_tag_t tag;
+                    memset (&tag, 0, sizeof (tag));
+                    DB_FILE *fp = deadbeef->fopen (param->fname);
+                    current_file = fp;
+                    int got_apev2_pic = 0;
+                    if (fp) {
+                        int res = deadbeef->junk_apev2_read_full (NULL, &tag, fp);
+                        if (!res) {
+                            for (DB_apev2_frame_t *f = tag.frames; f; f = f->next) {
+                                if (!strcasecmp (f->key, "cover art (front)")) {
+                                    uint8_t *name = f->data, *ext = f->data, *data = f->data;
+                                    uint8_t *end = f->data + f->size;
+                                    while (data < end && *data)
+                                        data++;
+                                    if (data == end) {
+                                        trace ("artwork: apev2 cover art frame has no name\n");
+                                        continue;
+                                    }
+                                    int sz = end - ++data;
+                                    if (sz < 20) {
+                                        trace ("artwork: apev2 cover art frame is too small\n");
+                                        continue;
+                                    }
+                                    ext = strrchr (name, '.');
+                                    if (!ext || !*++ext) {
+                                        trace ("artwork: apev2 cover art name has no extension\n");
+                                        continue;
+                                    }
+                                    if (strcasecmp (ext, "jpeg") && strcasecmp (ext, "jpg") && strcasecmp (ext, "png")) {
+                                        trace ("artwork: unsupported file type: %s\n", ext);
+                                        continue;
+                                    }
+                                    trace ("found apev2 cover art of %d bytes (%s)\n", sz, ext);
+                                    char tmp_path[1024];
+                                    char cache_path[1024];
+                                    make_cache_path (cache_path, sizeof (cache_path), param->album, param->artist);
+                                    trace ("will write apev2 cover art into %s\n", cache_path);
+                                    snprintf (tmp_path, sizeof (tmp_path), "%s.part", cache_path);
+                                    FILE *out = fopen (tmp_path, "w+b");
+                                    if (!out) {
+                                        trace ("artwork: failed to open %s for writing\n", tmp_path);
+                                        break;
+                                    }
+                                    if (fwrite (data, 1, sz, out) != sz) {
+                                        trace ("artwork: failed to write apev2 picture into %s\n", tmp_path);
+                                        fclose (out);
+                                        unlink (tmp_path);
+                                        break;
+                                    }
+                                    fclose (out);
+                                    int err = rename (tmp_path, cache_path);
+                                    if (err != 0) {
+                                        trace ("Failed not move %s to %s: %s\n", tmp_path, cache_path, strerror (err));
+                                        unlink (tmp_path);
+                                        break;
+                                    }
+                                    unlink (tmp_path);
+                                    got_apev2_pic = 1;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (got_apev2_pic) {
+                            if (param->callback) {
+                                param->callback (param->fname, param->artist, param->album, param->user_data);
+                            }
+                            queue_pop ();
+                            continue;
+                        }
+                        deadbeef->junk_apev2_free (&tag);
+                        current_file = NULL;
+                        deadbeef->fclose (fp);
+                    }
+                }
 
                 if (deadbeef->conf_get_int ("artwork.enable_localfolder", 1)) {
                     /* Searching in track directory */

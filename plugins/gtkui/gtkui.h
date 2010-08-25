@@ -48,6 +48,7 @@
 extern DB_functions_t *deadbeef;
 extern GtkWidget *mainwin;
 extern GtkWidget *searchwin;
+extern int gtkui_embolden_current_track;
 
 struct _GSList;
 
@@ -134,5 +135,8 @@ tabstrip_redraw (void);
 
 void
 gtkui_playlist_changed (void);
+
+void
+gtkui_set_titlebar (DB_playItem_t *it);
 
 #endif

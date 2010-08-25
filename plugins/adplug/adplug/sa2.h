@@ -31,18 +31,18 @@ public:
 		: CmodPlayer(newopl)
 	{ }
 
-	bool load(const std::string &filename, const CFileProvider &fp);
+	bool load(const char *filename, const CFileProvider &fp);
 
-	std::string gettype();
-	std::string gettitle();
+	const char * gettype();
+	const char * gettitle();
 	unsigned int getinstruments()
 	{ return 31; }
-	std::string getinstrument(unsigned int n)
+	const char * getinstrument(unsigned int n)
 	{
 	  if(n < 29)
-	    return std::string(instname[n],1,16);
+	    return instname[n];
 	  else
-	    return std::string("-broken-");
+	    return "-broken-";
 	}
 
 private:
@@ -52,4 +52,6 @@ private:
 	} header;
 
 	char instname[29][17];
+	char filetype[40];
+	char title[200];
 };

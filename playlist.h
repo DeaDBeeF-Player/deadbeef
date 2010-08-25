@@ -109,6 +109,9 @@ plt_add (int before, const char *title);
 void
 plt_remove (int plt);
 
+int
+plt_find (const char *name);
+
 void
 plt_free (void);
 
@@ -254,6 +257,9 @@ pl_set_item_flags (playItem_t *it, uint32_t flags);
 // [a]rtist, [t]itle, al[b]um, [l]ength, track[n]umber
 int
 pl_format_title (playItem_t *it, int idx, char *s, int size, int id, const char *fmt);
+
+int
+pl_format_title_escaped (playItem_t *it, int idx, char *s, int size, int id, const char *fmt);
 
 void
 pl_format_time (float t, char *dur, int size);

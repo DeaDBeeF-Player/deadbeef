@@ -134,7 +134,7 @@ on_songchanged (DB_event_trackchange_t *ev, uintptr_t data) {
 
             const char *v_appname = "DeaDBeeF";
             dbus_uint32_t v_id = 0;
-            const char *v_iconname = PREFIX "/share/deadbeef/pixmaps/play_24.png";
+            const char *v_iconname = "deadbeef";
             const char *v_summary = _("DeaDBeeF now playing");
             const char *v_body = esc;
             dbus_int32_t v_timeout = -1;

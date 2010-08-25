@@ -108,6 +108,7 @@ set_file_filter (GtkWidget *dlg, const char *name) {
     gtk_file_filter_set_name (flt, _("Other files (*)"));
     gtk_file_filter_add_pattern (flt, "*");
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
+    return flt;
 }
 
 void
@@ -176,10 +177,25 @@ on_add_files_activate                  (GtkMenuItem     *menuitem,
 }
 
 void
+on_follow_symlinks_toggled         (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_int ("add_folders_follow_symlinks", gtk_toggle_button_get_active (togglebutton));
+}
+
+void
 on_add_folders_activate                (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     GtkWidget *dlg = gtk_file_chooser_dialog_new (_("Add folder(s) to playlist..."), GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
+
+    GtkWidget *check = gtk_check_button_new_with_mnemonic (_("Follow symlinks"));
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (check), deadbeef->conf_get_int ("add_folders_follow_symlinks", 0));
+    g_signal_connect ((gpointer) check, "toggled",
+            G_CALLBACK (on_follow_symlinks_toggled),
+            NULL);
+    gtk_widget_show (check);
+    gtk_file_chooser_set_extra_widget (GTK_FILE_CHOOSER (dlg), check);
 
     set_file_filter (dlg, NULL);
 
@@ -286,6 +302,16 @@ on_playrand_clicked                    (GtkButton       *button,
     deadbeef->sendmessage (M_PLAYRANDOM, 0, 0, 0);
 }
 
+void
+focus_on_playing_track (void) {
+    DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
+    if (it) {
+        int idx = deadbeef->pl_get_idx_of (it);
+        ddb_listview_scroll_to (DDB_LISTVIEW (lookup_widget (mainwin, "playlist")), idx);
+        ddb_listview_set_cursor (DDB_LISTVIEW (lookup_widget (mainwin, "playlist")), idx);
+        deadbeef->pl_item_unref (it);
+    }
+}
 
 gboolean
 on_mainwin_key_press_event             (GtkWidget       *widget,
@@ -296,6 +322,16 @@ on_mainwin_key_press_event             (GtkWidget       *widget,
     if (event->keyval == GDK_n && !event->state) {
         // button for that one is not in toolbar anymore, so handle it manually
         deadbeef->sendmessage (M_PLAYRANDOM, 0, 0, 0);
+    }
+    else if ((event->state == GDK_MOD1_MASK || event->state == 0) && event->keyval >= GDK_1 && event->keyval <= GDK_9) {
+        int pl = event->keyval - GDK_1;
+        if (pl >= 0 && pl < deadbeef->plt_get_count ()) {
+            deadbeef->plt_set_curr (pl);
+            deadbeef->conf_set_int ("playlist.current", pl);
+        }
+    }
+    else if (event->state == GDK_CONTROL_MASK && event->keyval == GDK_j) {
+        focus_on_playing_track ();
     }
     else {
         ddb_listview_handle_keypress (DDB_LISTVIEW (lookup_widget (mainwin, "playlist")), event->keyval, event->state);
@@ -434,9 +470,10 @@ seekbar_draw (GtkWidget *widget) {
         if (trk) {
             deadbeef->pl_item_unref (trk);
         }
-        clearlooks_rounded_rectangle (cr, 2+ax, widget->allocation.height/2-4+ay, aw-4, 8, 4, 0xff);
         // empty seekbar, just a frame
+        clearlooks_rounded_rectangle (cr, 2+ax, widget->allocation.height/2-4+ay, aw-4, 8, 4, 0xff);
         cairo_set_source_rgb (cr, clr_selection.red/65535.f, clr_selection.green/65535.f, clr_selection.blue/65535.f );
+        cairo_set_line_width (cr, 2);
         cairo_stroke (cr);
         cairo_destroy (cr);
         return;

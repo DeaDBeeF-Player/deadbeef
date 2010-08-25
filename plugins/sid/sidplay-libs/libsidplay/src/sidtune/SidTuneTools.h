@@ -26,8 +26,6 @@
 
 #include <string.h>
 
-#include <sstream>
-
 #define MYSTRICMP stricmp
 #if defined(HAVE_STRCASECMP)
   #undef  MYSTRICMP
@@ -66,18 +64,17 @@ class SidTuneTools
 
     // Parse input string stream. Read and convert a hexa-decimal number up 
     // to a ``,'' or ``:'' or ``\0'' or end of stream.
-    static uint_least32_t readHex(std::istringstream& parseStream);
+    static uint_least32_t readHex(const char *parseStream, int size, int &pos);
 
     // Parse input string stream. Read and convert a decimal number up 
     // to a ``,'' or ``:'' or ``\0'' or end of stream.
-    static uint_least32_t readDec(std::istringstream& parseStream);
-
+    static uint_least32_t readDec(const char *parseStream, int size, int &pos);
     // Search terminated string for next newline sequence.
     // Skip it and return pointer to start of next line.
     static const char* returnNextLine(const char* pBuffer);
 
     // Skip any characters in an input string stream up to '='.
-    static void skipToEqu(std::istringstream& parseStream);
+    static void skipToEqu(const char *parseStream, int size, int &pos);
 
     // Start at first character behind '=' and copy rest of string.
     static void copyStringValueToEOL(const char* pSourceStr, char* pDestStr, int destMaxLen);
