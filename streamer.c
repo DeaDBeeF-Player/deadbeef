@@ -1127,8 +1127,10 @@ void
 streamer_reset (int full) { // must be called when current song changes by external reasons
     src_lock ();
     if (full) {
+        streamer_lock ();
         streambuffer_pos = 0;
         streambuffer_fill = 0;
+        streamer_unlock ();
     }
     src_remaining = 0;
     src_reset (src);
