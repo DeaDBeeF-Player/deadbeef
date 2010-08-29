@@ -3651,7 +3651,7 @@ WM_ParseNewMidi(unsigned char *mididata, unsigned long int midisize ) {
 	mdi->samples_per_delta = (WM_SampleRate << 10) / (2 * mdi->divisions);
 	mdi->recalc_samples = 1;
 	mdi->last_note = mdi->note;
-	if (mdi->info.mixer_options & WM_MO_LINEAR_VOLUME) {
+	if ((mdi->info.mixer_options & WM_MO_LINEAR_VOLUME) || !mdi->log_max_vol) {
 		mdi->amp = 281;
 	} else {
 		mdi->amp = 281 * mdi->lin_max_vol / mdi->log_max_vol;
