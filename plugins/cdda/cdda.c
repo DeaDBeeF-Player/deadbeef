@@ -455,6 +455,9 @@ cda_insert (DB_playItem_t *after, const char *fname) {
     }
     const char *ext = strrchr (shortname, '.') + 1;
     int is_image = ext && (0 == strcmp (ext, "nrg"));
+    if (is_image && !deadbeef->conf_get_int ("cdda.enable_nrg", 0)) {
+        return NULL;
+    }
 
     if (0 == strcmp (ext, "cda")) {
         cdio = cdio_open (NULL, DRIVER_UNKNOWN);
@@ -566,7 +569,8 @@ static const char settings_dlg[] =
     "property \"Prefer CD-Text over CDDB\" checkbox cdda.prefer_cdtext 1;\n"
     "property \"CDDB url (e.g. 'freedb.org')\" entry cdda.freedb.host freedb.org;\n"
     "property \"CDDB port number (e.g. '888')\" entry cdda.freedb.port 888;\n"
-    "property \"Prefer CDDB protocol over HTTP\" checkbox cdda.protocol 1;"
+    "property \"Prefer CDDB protocol over HTTP\" checkbox cdda.protocol 1;\n"
+    "property \"Enable NRG image support\" checkbox cdda.enable_nrg 0;"
 ;
 
 // define plugin interface
@@ -577,7 +581,7 @@ static DB_decoder_t plugin = {
     .plugin.type = DB_PLUGIN_DECODER,
     .plugin.id = "cda",
     .plugin.name = "Audio CD player",
-    .plugin.descr = "using libcdio, includes .nrg image support",
+    .plugin.descr = "Audio CD plugins using libcdio and libcddb",
     .plugin.author = "Viktor Semykin, Alexey Yakovenko",
     .plugin.email = "thesame.ml@gmail.com, waker@users.sourceforge.net",
     .plugin.website = "http://deadbeef.sf.net",
