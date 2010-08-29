@@ -39,6 +39,12 @@ static volatile int terminate;
 static volatile int clear_queue;
 static intptr_t tid;
 
+int artwork_enable_embedded;
+int artwork_enable_local;
+int artwork_enable_lfm;
+int artwork_enable_aao;
+int artwork_reset_time;
+
 void
 make_cache_dir_path (char *path, int size, const char *album, const char *artist) {
     int sz = snprintf (path, size, "%s/artcache/", deadbeef->get_config_dir ());
@@ -267,7 +273,7 @@ fetcher_thread (void *none)
 
             // try to load embedded from id3v2
             if (deadbeef->is_local_file (param->fname)) {
-                if (deadbeef->conf_get_int ("artwork.enable_embedded", 1)) {
+                if (artwork_enable_embedded) {
                     trace ("trying to load artwork from id3v2 tag for %s\n", param->fname);
                     DB_id3v2_tag_t tag;
                     memset (&tag, 0, sizeof (tag));
@@ -358,7 +364,7 @@ fetcher_thread (void *none)
 
             // try to load embedded from apev2
             if (deadbeef->is_local_file (param->fname)) {
-                if (deadbeef->conf_get_int ("artwork.enable_embedded", 1)) {
+                if (artwork_enable_embedded) {
                     trace ("trying to load artwork from apev2 tag for %s\n", param->fname);
                     DB_apev2_tag_t tag;
                     memset (&tag, 0, sizeof (tag));
@@ -436,7 +442,7 @@ fetcher_thread (void *none)
                     }
                 }
 
-                if (deadbeef->conf_get_int ("artwork.enable_localfolder", 1)) {
+                if (artwork_enable_local) {
                     /* Searching in track directory */
                     strncpy (path, param->fname, sizeof (path));
                     char *slash = strrchr (path, '/');
@@ -477,19 +483,17 @@ fetcher_thread (void *none)
 
             make_cache_path (path, sizeof (path), param->album, param->artist);
 
-            if (deadbeef->conf_get_int ("artwork.enable_lastfm", 0) && !fetch_from_lastfm (param->artist, param->album, path)) {
+            if (artwork_enable_lfm && !fetch_from_lastfm (param->artist, param->album, path)) {
                 trace ("art found on last.fm for %s %s\n", param->album, param->artist);
             }
-            else if (deadbeef->conf_get_int ("artwork.enable_albumartorg", 0) && !fetch_from_albumart_org (param->artist, param->album, path)) {
+            else if (artwork_enable_aao && !fetch_from_albumart_org (param->artist, param->album, path)) {
                 trace ("art found on albumart.org for %s %s\n", param->album, param->artist);
             }
             else {
                 trace ("art not found for %s %s\n", param->album, param->artist);
-                if (!copy_file (DEFAULT_COVER_PATH, path)) {
-                    if (param->callback) {
-                        param->callback (param->fname, param->artist, param->album, param->user_data);
-                    }
-                }
+//                if (param->callback) {
+//                    param->callback (DEFAULT_COVER_PATH, param->artist, param->album, param->user_data);
+//                }
                 queue_pop ();
                 continue;
             }
@@ -542,15 +546,14 @@ get_album_art (const char *fname, const char *artist, const char *album, artwork
     struct stat stat_buf;
     if (0 == stat (path, &stat_buf)) {
         int cache_period = deadbeef->conf_get_int ("artwork.cache.period", 48);
+        time_t tm = time (NULL);
         // invalidate cache every 2 days
-        if (cache_period > 0) {
-            time_t tm = time (NULL);
-            if (tm - stat_buf.st_mtime > cache_period * 60 * 60) {
-                trace ("reloading cached file %s\n", path);
-                unlink (path);
-                queue_add (fname, artist, album, callback, user_data);
-                return strdup (DEFAULT_COVER_PATH);
-            }
+        if ((cache_period > 0 && (tm - stat_buf.st_mtime > cache_period * 60 * 60))
+                || artwork_reset_time > stat_buf.st_mtime) {
+            trace ("reloading cached file %s\n", path);
+            unlink (path);
+            queue_add (fname, artist, album, callback, user_data);
+            return strdup (DEFAULT_COVER_PATH);
         }
 
         trace ("found %s in cache\n", path);
@@ -598,9 +601,39 @@ artwork_reset (int fast) {
 }
 
 static int
+artwork_on_configchanged (DB_event_t *ev, uintptr_t data) {
+    int new_artwork_enable_embedded = deadbeef->conf_get_int ("artwork.enable_embedded", 1);
+    int new_artwork_enable_local = deadbeef->conf_get_int ("artwork.enable_localfolder", 1);
+    int new_artwork_enable_lfm = deadbeef->conf_get_int ("artwork.enable_lastfm", 0);
+    int new_artwork_enable_aao = deadbeef->conf_get_int ("artwork.enable_albumartorg", 0);
+    if (new_artwork_enable_embedded != artwork_enable_embedded
+            || new_artwork_enable_local != artwork_enable_local
+            || new_artwork_enable_lfm != artwork_enable_lfm
+            || new_artwork_enable_aao != artwork_enable_aao) {
+        artwork_enable_embedded = new_artwork_enable_embedded;
+        artwork_enable_local = new_artwork_enable_local;
+        artwork_enable_lfm = new_artwork_enable_lfm;
+        artwork_enable_aao = new_artwork_enable_aao;
+        artwork_reset_time = time (NULL);
+        deadbeef->conf_set_int ("artwork.cache_reset_time", artwork_reset_time);
+    }
+
+    return 0;
+}
+
+static int
 artwork_plugin_start (void)
 {
     terminate = 0;
+
+    artwork_enable_embedded = deadbeef->conf_get_int ("artwork.enable_embedded", 1);
+    artwork_enable_local = deadbeef->conf_get_int ("artwork.enable_localfolder", 1);
+    artwork_enable_lfm = deadbeef->conf_get_int ("artwork.enable_lastfm", 0);
+    artwork_enable_aao = deadbeef->conf_get_int ("artwork.enable_albumartorg", 0);
+    artwork_reset_time = deadbeef->conf_get_int ("artwork.cache_reset_time", 0);
+
+    deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_CONFIGCHANGED, DB_CALLBACK (artwork_on_configchanged), 0);
+
     mutex = deadbeef->mutex_create_nonrecursive ();
     cond = deadbeef->cond_create ();
     tid = deadbeef->thread_start_low_priority (fetcher_thread, NULL);
@@ -611,6 +644,7 @@ artwork_plugin_start (void)
 static int
 artwork_plugin_stop (void)
 {
+    deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_CONFIGCHANGED, DB_CALLBACK (artwork_on_configchanged), 0);
     if (current_file) {
         deadbeef->fabort (current_file);
     }
