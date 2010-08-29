@@ -128,7 +128,7 @@ wmidi_insert (DB_playItem_t *after, const char *fname) {
     return after;
 }
 
-#define DEFAULT_TIMIDITY_CONFIG "/etc/timidity++/timidity-freepats.cfg:/etc/timidity/freepats.cfg:/etc/timidity/freepats/freepats.cfg:::"
+#define DEFAULT_TIMIDITY_CONFIG "/etc/timidity++/timidity-freepats.cfg:/etc/timidity/freepats.cfg:/etc/timidity/freepats/freepats.cfg"
 
 int
 wmidi_start (void) {
