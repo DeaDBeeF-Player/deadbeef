@@ -62,10 +62,11 @@ enum {
     FT_WMA = 1,
     FT_ATRAC3 = 2,
     FT_VQF = 3,
-    FT_UNKNOWN = 4
+    FT_AC3 = 4,
+    FT_UNKNOWN = 5
 };
 
-static const char *filetypes[] = { "ALAC", "WMA", "atrac3", "VQF", "FFMPEG (unknown)", NULL };
+static const char *filetypes[] = { "ALAC", "WMA", "ATRAC3", "VQF", "AC3", "FFMPEG (unknown)", NULL };
 
 #define FF_PROTOCOL_NAME "deadbeef"
 
@@ -164,6 +165,9 @@ ffmpeg_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     }
     else if (strcasestr (info->codec->name, "wma")) {
         it->filetype = filetypes[FT_WMA];
+    }
+    else if (strcasestr (info->codec->name, "ac3")) {
+        it->filetype = filetypes[FT_AC3];
     }
     else {
         it->filetype = filetypes[FT_UNKNOWN];
