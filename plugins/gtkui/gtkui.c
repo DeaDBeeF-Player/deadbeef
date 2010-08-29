@@ -993,6 +993,65 @@ gtkui_thread (void *ctx) {
     gdk_threads_leave ();
 }
 
+gboolean
+gtkui_progress_show_idle (gpointer data) {
+    progress_show ();
+    return FALSE;
+}
+
+gboolean
+gtkui_set_progress_text_idle (gpointer data) {
+    const char *text = (const char *)data;
+    progress_settext (text);
+    return FALSE;
+}
+
+gboolean
+gtkui_progress_hide_idle (gpointer data) {
+    progress_hide ();
+    deadbeef->sendmessage (M_PLAYLISTREFRESH, 0, 0, 0);
+    //playlist_refresh ();
+    return FALSE;
+}
+
+int
+gtkui_add_file_info_cb (DB_playItem_t *it, void *data) {
+    if (progress_is_aborted ()) {
+        return -1;
+    }
+    g_idle_add (gtkui_set_progress_text_idle, it->fname);
+    return 0;
+}
+
+int (*gtkui_original_pl_add_dir) (const char *dirname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
+int (*gtkui_original_pl_add_file) (const char *fname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
+void (*gtkui_original_pl_add_files_begin) (void);
+void (*gtkui_original_pl_add_files_end) (void);
+
+int
+gtkui_pl_add_dir (const char *dirname, int (*cb)(DB_playItem_t *it, void *data), void *user_data) {
+    int res = gtkui_original_pl_add_dir (dirname, gtkui_add_file_info_cb, NULL);
+    return res;
+}
+
+int
+gtkui_pl_add_file (const char *filename, int (*cb)(DB_playItem_t *it, void *data), void *user_data) {
+    int res = gtkui_original_pl_add_file (filename, gtkui_add_file_info_cb, NULL);
+    return res;
+}
+
+void
+gtkui_pl_add_files_begin (void) {
+    g_idle_add (gtkui_progress_show_idle, NULL);
+    gtkui_original_pl_add_files_begin ();
+}
+
+void
+gtkui_pl_add_files_end (void) {
+    g_idle_add (gtkui_progress_hide_idle, NULL);
+    gtkui_original_pl_add_files_end ();
+}
+
 static int
 gtkui_start (void) {
     // gtk must be running in separate thread
@@ -1002,6 +1061,19 @@ gtkui_start (void) {
     while (!gtk_initialized) {
         usleep (10000);
     }
+
+    // override default pl_add_dir
+    gtkui_original_pl_add_dir = deadbeef->pl_add_dir;
+    deadbeef->pl_add_dir = gtkui_pl_add_dir;
+
+    gtkui_original_pl_add_file = deadbeef->pl_add_file;
+    deadbeef->pl_add_file = gtkui_pl_add_file;
+
+    gtkui_original_pl_add_files_begin = deadbeef->pl_add_files_begin;
+    deadbeef->pl_add_files_begin = gtkui_pl_add_files_begin;
+
+    gtkui_original_pl_add_files_end = deadbeef->pl_add_files_end;
+    deadbeef->pl_add_files_end = gtkui_pl_add_files_end;
 
     return 0;
 }

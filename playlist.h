@@ -144,6 +144,12 @@ pl_add_dir (const char *dirname, int (*cb)(playItem_t *it, void *data), void *us
 int
 pl_add_file (const char *fname, int (*cb)(playItem_t *it, void *data), void *user_data);
 
+void
+pl_add_files_begin (void);
+
+void
+pl_add_files_end (void);
+
 playItem_t *
 pl_insert_dir (playItem_t *after, const char *dirname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data);
 

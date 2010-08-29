@@ -139,4 +139,19 @@ gtkui_playlist_changed (void);
 void
 gtkui_set_titlebar (DB_playItem_t *it);
 
+gboolean
+gtkui_progress_show_idle (gpointer data);
+
+gboolean
+gtkui_progress_hide_idle (gpointer data);
+
+gboolean
+gtkui_set_progress_text_idle (gpointer data);
+
+int
+gtkui_add_file_info_cb (DB_playItem_t *it, void *data);
+
+extern int (*gtkui_original_pl_add_dir) (const char *dirname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
+extern int (*gtkui_original_pl_add_file) (const char *fname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
+
 #endif

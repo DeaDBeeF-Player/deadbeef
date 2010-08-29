@@ -225,6 +225,9 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
             pl_clear ();
             pl_reset_cursor ();
         }
+        if (parg < pend) {
+            deadbeef->pl_add_files_begin ();
+        }
         while (parg < pend) {
             char resolved[PATH_MAX];
             const char *pname;
@@ -234,14 +237,15 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
             else {
                 pname = parg;
             }
-            if (pl_add_dir (pname, NULL, NULL) < 0) {
-                if (pl_add_file (pname, NULL, NULL) < 0) {
+            if (deadbeef->pl_add_dir (pname, NULL, NULL) < 0) {
+                if (deadbeef->pl_add_file (pname, NULL, NULL) < 0) {
                     fprintf (stderr, "failed to add file or folder %s\n", pname);
                 }
             }
             parg += strlen (parg);
             parg++;
         }
+        deadbeef->pl_add_files_end ();
         messagepump_push (M_PLAYLISTREFRESH, 0, 0, 0);
         if (!queue) {
             messagepump_push (M_PLAYSONG, 0, 1, 0);

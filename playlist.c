@@ -1448,6 +1448,14 @@ pl_add_dir (const char *dirname, int (*cb)(playItem_t *it, void *data), void *us
     return -1;
 }
 
+void
+pl_add_files_begin (void) {
+}
+
+void
+pl_add_files_end (void) {
+}
+
 int
 plt_remove_item (playlist_t *playlist, playItem_t *it) {
     if (!it)

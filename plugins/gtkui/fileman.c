@@ -7,70 +7,40 @@
 #include "progress.h"
 #include "support.h"
 
-static gboolean
-progress_show_idle (gpointer data) {
-    progress_show ();
-    return FALSE;
-}
-
-static gboolean
-set_progress_text_idle (gpointer data) {
-    const char *text = (const char *)data;
-    progress_settext (text);
-    return FALSE;
-}
-
-int
-gtkpl_add_file_info_cb (DB_playItem_t *it, void *data) {
-    if (progress_is_aborted ()) {
-        return -1;
-    }
-    g_idle_add (set_progress_text_idle, it->fname);
-    return 0;
-}
-
-static gboolean
-progress_hide_idle (gpointer data) {
-    progress_hide ();
-    deadbeef->sendmessage (M_PLAYLISTREFRESH, 0, 0, 0);
-    //playlist_refresh ();
-    return FALSE;
-}
-
 void
 gtkpl_add_dir (DdbListview *ps, char *folder) {
-    g_idle_add (progress_show_idle, NULL);
-    deadbeef->pl_add_dir (folder, gtkpl_add_file_info_cb, NULL);
+    g_idle_add (gtkui_progress_show_idle, NULL);
+    gtkui_original_pl_add_dir (folder, gtkui_add_file_info_cb, NULL);
     g_free (folder);
-    g_idle_add (progress_hide_idle, NULL);
+    g_idle_add (gtkui_progress_hide_idle, NULL);
 }
 
 static void
 gtkpl_adddir_cb (gpointer data, gpointer userdata) {
-    deadbeef->pl_add_dir (data, gtkpl_add_file_info_cb, userdata);
+    gtkui_original_pl_add_dir (data, gtkui_add_file_info_cb, userdata);
     g_free (data);
 }
 
 void
 gtkpl_add_dirs (GSList *lst) {
-    g_idle_add (progress_show_idle, NULL);
+    g_idle_add (gtkui_progress_show_idle, NULL);
     g_slist_foreach(lst, gtkpl_adddir_cb, NULL);
     g_slist_free (lst);
-    g_idle_add (progress_hide_idle, NULL);
+    g_idle_add (gtkui_progress_hide_idle, NULL);
 }
 
 static void
 gtkpl_addfile_cb (gpointer data, gpointer userdata) {
-    deadbeef->pl_add_file (data, gtkpl_add_file_info_cb, userdata);
+    gtkui_original_pl_add_file (data, gtkui_add_file_info_cb, userdata);
     g_free (data);
 }
 
 void
 gtkpl_add_files (GSList *lst) {
-    g_idle_add (progress_show_idle, NULL);
+    g_idle_add (gtkui_progress_show_idle, NULL);
     g_slist_foreach(lst, gtkpl_addfile_cb, NULL);
     g_slist_free (lst);
-    g_idle_add (progress_hide_idle, NULL);
+    g_idle_add (gtkui_progress_hide_idle, NULL);
 }
 
 static void
@@ -170,7 +140,7 @@ set_dnd_cursor_idle (gpointer data) {
 void
 gtkpl_add_fm_dropped_files (DB_playItem_t *drop_before, char *ptr, int length) {
     DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
-    g_idle_add (progress_show_idle, NULL);
+    g_idle_add (gtkui_progress_show_idle, NULL);
 
     DdbListviewIter first = NULL;
     DdbListviewIter after = NULL;
@@ -192,9 +162,9 @@ gtkpl_add_fm_dropped_files (DB_playItem_t *drop_before, char *ptr, int length) {
             //strncpy (fname, p, pe - p);
             //fname[pe - p] = 0;
             int abort = 0;
-            DdbListviewIter inserted = deadbeef->pl_insert_dir (after, fname, &abort, gtkpl_add_file_info_cb, NULL);
+            DdbListviewIter inserted = deadbeef->pl_insert_dir (after, fname, &abort, gtkui_add_file_info_cb, NULL);
             if (!inserted && !abort) {
-                inserted = deadbeef->pl_insert_file (after, fname, &abort, gtkpl_add_file_info_cb, NULL);
+                inserted = deadbeef->pl_insert_file (after, fname, &abort, gtkui_add_file_info_cb, NULL);
             }
             if (inserted) {
                 if (!first) {
@@ -218,7 +188,7 @@ gtkpl_add_fm_dropped_files (DB_playItem_t *drop_before, char *ptr, int length) {
     }
     free (ptr);
 
-    g_idle_add (progress_hide_idle, NULL);
+    g_idle_add (gtkui_progress_hide_idle, NULL);
     g_idle_add (set_dnd_cursor_idle, first);
 }
 

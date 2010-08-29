@@ -2805,6 +2805,7 @@ ddb_listview_free_groups (DdbListview *listview) {
 
 void
 ddb_listview_build_groups (DdbListview *listview) {
+    deadbeef->pl_lock ();
     ddb_listview_free_groups (listview);
     listview->fullheight = 0;
 
@@ -2837,6 +2838,7 @@ ddb_listview_build_groups (DdbListview *listview) {
 //            }
             listview->fullheight = grp->height;
             listview->fullheight += listview->grouptitle_height;
+            deadbeef->pl_unlock ();
             return;
         }
         if (!grp || strcmp (str, curr)) {
@@ -2871,6 +2873,7 @@ ddb_listview_build_groups (DdbListview *listview) {
         }
         listview->fullheight += grp->height;
     }
+    deadbeef->pl_unlock ();
 }
 void
 ddb_listview_set_vscroll (DdbListview *listview, gboolean scroll) {
