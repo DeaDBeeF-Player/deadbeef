@@ -236,12 +236,11 @@ static int
 ffmpeg_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
     trace ("ffmpeg_read_int16 %d\n", size);
     ffmpeg_info_t *info = (ffmpeg_info_t*)_info;
-    // try decode `size' bytes
-    // return number of decoded bytes
-    // return 0 on EOF
 
-    if (info->endsample >= 0 && info->currentsample + size / (2 * _info->channels) > info->endsample) {
-        size = (info->endsample - info->currentsample + 1) * 2 * _info->channels;
+    int out_ch = min (2, _info->channels);
+
+    if (info->endsample >= 0 && info->currentsample + size / (2 * out_ch) > info->endsample) {
+        size = (info->endsample - info->currentsample + 1) * 2 * out_ch;
         if (size <= 0) {
             return 0;
         }
@@ -255,14 +254,25 @@ ffmpeg_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
     while (size > 0) {
 
         if (info->left_in_buffer > 0) {
-            int sz = min (size, info->left_in_buffer);
-            memcpy (bytes, info->buffer, sz);
+//            int sz = min (size, info->left_in_buffer);
+            int nsamples = size / out_ch / 2;
+            int nsamples_buf = info->left_in_buffer / 2 / _info->channels;
+            nsamples = min (nsamples, nsamples_buf);
+            int sz = nsamples * 2 * _info->channels;
+            for (int i = 0; i < nsamples; i++) {
+                *((int16_t*)bytes) = ((int16_t*)info->buffer)[i * _info->channels + 0];
+                bytes += 2;
+                size -= 2;
+                if (out_ch > 1) {
+                    *((int16_t*)bytes) = ((int16_t*)info->buffer)[i * _info->channels + 1];
+                    bytes += 2;
+                    size -= 2;
+                }
+            }
             if (sz != info->left_in_buffer) {
                 memmove (info->buffer, info->buffer+sz, info->left_in_buffer-sz);
             }
             info->left_in_buffer -= sz;
-            size -= sz;
-            bytes += sz;
         }
 
         while (info->left_in_packet > 0 && size > 0) {
@@ -345,7 +355,7 @@ ffmpeg_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
         }
     }
 
-    info->currentsample += (initsize-size) / (2 * _info->channels);
+    info->currentsample += (initsize-size) / (2 * out_ch);
     _info->readpos = (float)info->currentsample / _info->samplerate;
 
     return initsize-size;
