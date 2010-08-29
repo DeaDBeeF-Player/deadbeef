@@ -522,6 +522,7 @@ static gboolean
 gtkui_volumechanged_cb (gpointer ctx) {
     GtkWidget *volumebar = lookup_widget (mainwin, "volumebar");
     gdk_window_invalidate_rect (volumebar->window, NULL, FALSE);
+    return FALSE;
 }
 
 static int
