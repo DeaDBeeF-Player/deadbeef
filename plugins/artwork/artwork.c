@@ -5,6 +5,7 @@
 #include <errno.h>
 #include <dirent.h>
 #include <unistd.h>
+#include <fnmatch.h>
 #include "../../deadbeef.h"
 #include "artwork.h"
 #include "lastfm.h"
@@ -16,6 +17,7 @@
 #define trace(...)
 
 #define DEFAULT_COVER_PATH (PREFIX "/share/deadbeef/pixmaps/noartwork.jpg")
+#define DEFAULT_FILEMASK "*cover*.jpg;*front*.jpg"
 
 static DB_artwork_plugin_t plugin;
 DB_functions_t *deadbeef;
@@ -44,6 +46,7 @@ int artwork_enable_local;
 int artwork_enable_lfm;
 int artwork_enable_aao;
 int artwork_reset_time;
+char artwork_filemask[200];
 
 void
 make_cache_dir_path (char *path, int size, const char *album, const char *artist) {
@@ -212,12 +215,26 @@ copy_file (const char *in, const char *out) {
 static int
 filter_jpg (const struct dirent *f)
 {
-    const char *ext = strrchr (f->d_name, '.');
-    if (!ext)
-        return 0;
-    if (0 == strcasecmp (ext, ".jpg") ||
-        0 == strcasecmp (ext, ".jpeg"))
-        return 1;
+    char mask[200] = "";
+    char *p = artwork_filemask;
+    while (p) {
+        *mask = 0;
+        char *e = strchr (p, ';');
+        if (e) {
+            strncpy (mask, p, e-p);
+            mask[e-p] = 0;
+            e++;
+        }
+        else {
+            strcpy (mask, p);
+        }
+        if (*mask) {
+            if (!fnmatch (mask, f->d_name, 0)) {
+                return 1;
+            }
+        }
+        p = e;
+    }
     return 0;
 }
 
@@ -606,15 +623,21 @@ artwork_on_configchanged (DB_event_t *ev, uintptr_t data) {
     int new_artwork_enable_local = deadbeef->conf_get_int ("artwork.enable_localfolder", 1);
     int new_artwork_enable_lfm = deadbeef->conf_get_int ("artwork.enable_lastfm", 0);
     int new_artwork_enable_aao = deadbeef->conf_get_int ("artwork.enable_albumartorg", 0);
+    char new_artwork_filemask[200];
+    strncpy (new_artwork_filemask, deadbeef->conf_get_str ("artwork.filemask", DEFAULT_FILEMASK), sizeof (new_artwork_filemask));
+    new_artwork_filemask[sizeof(new_artwork_filemask)-1] = 0;
+
     if (new_artwork_enable_embedded != artwork_enable_embedded
             || new_artwork_enable_local != artwork_enable_local
             || new_artwork_enable_lfm != artwork_enable_lfm
-            || new_artwork_enable_aao != artwork_enable_aao) {
+            || new_artwork_enable_aao != artwork_enable_aao
+            || strcmp (new_artwork_filemask, artwork_filemask)) {
         artwork_enable_embedded = new_artwork_enable_embedded;
         artwork_enable_local = new_artwork_enable_local;
         artwork_enable_lfm = new_artwork_enable_lfm;
         artwork_enable_aao = new_artwork_enable_aao;
         artwork_reset_time = time (NULL);
+        strcpy (artwork_filemask, new_artwork_filemask);
         deadbeef->conf_set_int ("artwork.cache_reset_time", artwork_reset_time);
     }
 
@@ -631,6 +654,9 @@ artwork_plugin_start (void)
     artwork_enable_lfm = deadbeef->conf_get_int ("artwork.enable_lastfm", 0);
     artwork_enable_aao = deadbeef->conf_get_int ("artwork.enable_albumartorg", 0);
     artwork_reset_time = deadbeef->conf_get_int ("artwork.cache_reset_time", 0);
+
+    strncpy (artwork_filemask, deadbeef->conf_get_str ("artwork.filemask", DEFAULT_FILEMASK), sizeof (artwork_filemask));
+    artwork_filemask[sizeof(artwork_filemask)-1] = 0;
 
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_CONFIGCHANGED, DB_CALLBACK (artwork_on_configchanged), 0);
 
@@ -673,6 +699,7 @@ static const char settings_dlg[] =
     "property \"Cache update period (hr)\" entry artwork.cache.period 48;\n"
     "property \"Fetch from embedded tags\" checkbox artwork.enable_embedded 1;\n"
     "property \"Fetch from local folder\" checkbox artwork.enable_localfolder 1;\n"
+    "property \"Local cover file mask\" entry artwork.filemask \"" DEFAULT_FILEMASK "\";\n"
     "property \"Fetch from last.fm\" checkbox artwork.enable_lastfm 0;\n"
     "property \"Fetch from albumart.org\" checkbox artwork.enable_albumartorg 0;\n"
 ;
