@@ -414,17 +414,27 @@ gtkui_set_titlebar (DB_playItem_t *it) {
     set_tray_tooltip (str);
 }
 
-
-static gboolean
-trackinfochanged_cb (gpointer data) {
-    DB_playItem_t *track = (DB_playItem_t *)data;
-    GtkWidget *playlist = lookup_widget (mainwin, "playlist");
+static void
+trackinfochanged_wrapper (DdbListview *playlist, DB_playItem_t *track) {
     if (track) {
         int idx = deadbeef->pl_get_idx_of (track);
         if (idx != -1) {
             ddb_listview_draw_row (DDB_LISTVIEW (playlist), idx, (DdbListviewIter)track);
         }
     }
+}
+
+static gboolean
+trackinfochanged_cb (gpointer data) {
+    DB_playItem_t *track = (DB_playItem_t *)data;
+    GtkWidget *playlist = lookup_widget (mainwin, "playlist");
+    trackinfochanged_wrapper (DDB_LISTVIEW (playlist), track);
+
+    if (searchwin && gtk_widget_get_visible (searchwin)) {
+        GtkWidget *search = lookup_widget (searchwin, "searchlist");
+        trackinfochanged_wrapper (DDB_LISTVIEW (search), track);
+    }
+
     DB_playItem_t *curr = deadbeef->streamer_get_playing_track ();
     if (track == curr) {
         gtkui_set_titlebar (track);
