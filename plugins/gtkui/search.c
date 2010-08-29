@@ -177,6 +177,7 @@ on_searchwin_key_press_event           (GtkWidget       *widget,
             DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (max (row, 0), PL_SEARCH);
             if (it) {
                 deadbeef->sendmessage (M_PLAYSONGNUM, 0, deadbeef->pl_get_idx_of (it), 0);
+                deadbeef->pl_item_unref (it);
             }
         }
     }
