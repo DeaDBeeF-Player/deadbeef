@@ -361,6 +361,7 @@ typedef struct {
     DB_playItem_t *(*pl_insert_dir) (DB_playItem_t *after, const char *dirname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
     DB_playItem_t *(*pl_insert_file) (DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
     int (*pl_get_idx_of) (DB_playItem_t *it);
+    int (*pl_get_idx_of_iter) (DB_playItem_t *it, int iter);
     DB_playItem_t * (*pl_get_for_idx) (int idx);
     DB_playItem_t * (*pl_get_for_idx_and_iter) (int idx, int iter);
     float (*pl_get_totaltime) (void);

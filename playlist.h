@@ -183,6 +183,9 @@ pl_get_for_idx_and_iter (int idx, int iter);
 int
 pl_get_idx_of (playItem_t *it);
 
+int
+pl_get_idx_of_iter (playItem_t *it, int iter);
+
 playItem_t *
 pl_insert_cue_from_buffer (playItem_t *after, playItem_t *origin, const uint8_t *buffer, int buffersize, int numsamples, int samplerate);
 

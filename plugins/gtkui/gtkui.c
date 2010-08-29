@@ -415,11 +415,11 @@ gtkui_set_titlebar (DB_playItem_t *it) {
 }
 
 static void
-trackinfochanged_wrapper (DdbListview *playlist, DB_playItem_t *track) {
+trackinfochanged_wrapper (DdbListview *playlist, DB_playItem_t *track, int iter) {
     if (track) {
-        int idx = deadbeef->pl_get_idx_of (track);
+        int idx = deadbeef->pl_get_idx_of_iter (track, iter);
         if (idx != -1) {
-            ddb_listview_draw_row (DDB_LISTVIEW (playlist), idx, (DdbListviewIter)track);
+            ddb_listview_draw_row (playlist, idx, (DdbListviewIter)track);
         }
     }
 }
@@ -428,11 +428,11 @@ static gboolean
 trackinfochanged_cb (gpointer data) {
     DB_playItem_t *track = (DB_playItem_t *)data;
     GtkWidget *playlist = lookup_widget (mainwin, "playlist");
-    trackinfochanged_wrapper (DDB_LISTVIEW (playlist), track);
+    trackinfochanged_wrapper (DDB_LISTVIEW (playlist), track, PL_MAIN);
 
     if (searchwin && gtk_widget_get_visible (searchwin)) {
         GtkWidget *search = lookup_widget (searchwin, "searchlist");
-        trackinfochanged_wrapper (DDB_LISTVIEW (search), track);
+        trackinfochanged_wrapper (DDB_LISTVIEW (search), track, PL_SEARCH);
     }
 
     DB_playItem_t *curr = deadbeef->streamer_get_playing_track ();

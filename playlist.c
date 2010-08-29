@@ -1539,11 +1539,16 @@ pl_get_for_idx (int idx) {
 
 int
 pl_get_idx_of (playItem_t *it) {
+    return pl_get_idx_of_iter (it, PL_MAIN);
+}
+
+int
+pl_get_idx_of_iter (playItem_t *it, int iter) {
     LOCK;
-    playItem_t *c = playlist->head[PL_MAIN];
+    playItem_t *c = playlist->head[iter];
     int idx = 0;
     while (c && c != it) {
-        c = c->next[PL_MAIN];
+        c = c->next[iter];
         idx++;
     }
     if (!c) {
