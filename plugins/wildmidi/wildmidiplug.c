@@ -21,6 +21,10 @@
 #include <string.h>
 #include "../../deadbeef.h"
 #include "wildmidi_lib.h"
+#ifdef HAVE_CONFIG_H
+#include "../../config.h"
+#endif
+#include "../../gettext.h"
 
 extern DB_decoder_t wmidi_plugin;
 
@@ -124,12 +128,39 @@ wmidi_insert (DB_playItem_t *after, const char *fname) {
     return after;
 }
 
-#define DEFAULT_TIMIDITY_CONFIG "/etc/timidity++/timidity-freepats.cfg"
+#define DEFAULT_TIMIDITY_CONFIG "/etc/timidity++/timidity-freepats.cfg:/etc/timidity/freepats.cfg:/etc/timidity/freepats/freepats.cfg:::"
 
 int
 wmidi_start (void) {
-    const char *config_file = deadbeef->conf_get_str ("wildmidi.config", DEFAULT_TIMIDITY_CONFIG);
-    WildMidi_Init (config_file, 44100, 0);
+    const char *config_files = deadbeef->conf_get_str ("wildmidi.config", DEFAULT_TIMIDITY_CONFIG);
+    char config[1024] = "";
+    const char *p = config_files;
+    while (p) {
+        *config = 0;
+        char *e = strchr (p, ':');
+        if (e) {
+            strncpy (config, p, e-p);
+            config[e-p] = 0;
+            e++;
+        }
+        else {
+            strcpy (config, p);
+        }
+        if (*config) {
+            FILE *f = fopen (config, "rb");
+            if (f) {
+                fclose (f);
+                break;
+            }
+        }
+        p = e;
+    }
+    if (*config) {
+        WildMidi_Init (config, 44100, 0);
+    }
+    else {
+        fprintf (stderr, _("wildmidi: freepats config file not found. Please install timidity-freepats package, or specify path to freepats.cfg in the plugin settings."));
+    }
     return 0;
 }
 
