@@ -184,7 +184,7 @@ volumebar_draw (GtkWidget *widget) {
         int _y = widget->allocation.height/2-h/2;
         _y += (h - _h);
         int _w = 3;
-        if (i <= vol) {
+        if (i < vol) {
             gdk_draw_rectangle (volumebar_backbuf, front_gc, TRUE, _x + widget->allocation.x, _y + widget->allocation.y, _w, _h);
         }
         else {
