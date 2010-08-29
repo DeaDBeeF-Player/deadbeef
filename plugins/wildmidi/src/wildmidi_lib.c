@@ -849,7 +849,6 @@ WM_LoadConfig (const char *config_file, const char *top_config_dir) {
 				strcpy(config_dir, &line_buffer[4]);
 				strcat(config_dir,"/");
 			}
-            printf ("wildmidi config_dir: %s\n", config_dir);
 			continue;
 		} else if (strncasecmp(line_buffer, "source ", 7) == 0) {
 			if (config_dir != NULL && line_buffer[7] != '/') {
@@ -877,7 +876,6 @@ WM_LoadConfig (const char *config_file, const char *top_config_dir) {
 				}
 				strcpy(new_config, &line_buffer[7]);
 			}
-            printf ("wildmidi load new_config: %s\n", new_config);
 			if (WM_LoadConfig(new_config, config_dir) == -1) {
 				free (new_config);
 				free (line_buffer);
@@ -889,7 +887,6 @@ WM_LoadConfig (const char *config_file, const char *top_config_dir) {
 			free (new_config);
 			continue;
 		} else if (strncasecmp(line_buffer, "bank ", 5) == 0) {
-            printf ("loading bank, config_dir: %s\n", config_dir);
 			if (!isdigit(line_buffer[5])) {
 				WM_ERROR(__FUNCTION__, __LINE__, WM_ERR_INVALID, "(syntax error in bank line)", 0);
 				WM_ERROR(__FUNCTION__, __LINE__, WM_ERR_LOAD, config_file, 0);

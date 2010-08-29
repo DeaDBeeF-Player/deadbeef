@@ -54,7 +54,7 @@ wmidi_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     info->m = WildMidi_Open (it->fname);
     if (!info->m) {
-        fprintf (stderr, "wmidi: failed to open %s\n", it->fname);
+        trace ("wmidi: failed to open %s\n", it->fname);
         return -1;
     }
 
@@ -84,7 +84,7 @@ wmidi_read (DB_fileinfo_t *_info, char *bytes, int size) {
     wmidi_info_t *info = (wmidi_info_t *)_info;
     int bufferused = WildMidi_GetOutput (info->m, (char *)bytes, size);
     if (bufferused < 0) {
-        fprintf (stderr, "WildMidi_GetOutput returned %d\n", bufferused);
+        trace ("WildMidi_GetOutput returned %d\n", bufferused);
         return 0;
     }
 
@@ -111,7 +111,7 @@ wmidi_insert (DB_playItem_t *after, const char *fname) {
 
     midi *m = WildMidi_Open (fname);
     if (!m) {
-        fprintf (stderr, "wmidi: failed to open %s\n", fname);
+        trace ("wmidi: failed to open %s\n", fname);
         return NULL;
     }
 
