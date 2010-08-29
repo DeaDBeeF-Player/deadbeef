@@ -896,6 +896,22 @@ aac_load_tags (DB_playItem_t *it, mp4ff_t *mp4) {
             free (s);
         }
     }
+    it->replaygain_track_gain = 0;
+    it->replaygain_track_peak = 0;
+    it->replaygain_album_gain = 0;
+    it->replaygain_album_peak = 0;
+    if (mp4ff_meta_find_by_name(mp4, "replaygain_track_gain", &s)) {
+        it->replaygain_track_gain = atof (s);
+    }
+    if (mp4ff_meta_find_by_name(mp4, "replaygain_track_peak", &s)) {
+        it->replaygain_track_peak = atof (s);
+    }
+    if (mp4ff_meta_find_by_name(mp4, "replaygain_album_gain", &s)) {
+        it->replaygain_album_gain = atof (s);
+    }
+    if (mp4ff_meta_find_by_name(mp4, "replaygain_album_peak", &s)) {
+        it->replaygain_album_peak = atof (s);
+    }
     deadbeef->pl_add_meta (it, "title", NULL);
 }
 #endif
