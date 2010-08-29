@@ -64,6 +64,9 @@ main_get_cursor (void) {
 
 static void
 main_set_cursor (int cursor) {
+    char conf[100];
+    snprintf (conf, sizeof (conf), "playlist.cursor.%d", deadbeef->plt_get_curr ());
+    deadbeef->conf_set_int (conf, cursor);
     return deadbeef->pl_set_cursor (PL_MAIN, cursor);
 }
 

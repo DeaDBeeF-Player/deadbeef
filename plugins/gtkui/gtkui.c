@@ -506,9 +506,19 @@ playlistswitch_cb (gpointer none) {
     char conf[100];
     snprintf (conf, sizeof (conf), "playlist.scroll.%d", curr);
     int scroll = deadbeef->conf_get_int (conf, 0);
+    snprintf (conf, sizeof (conf), "playlist.cursor.%d", curr);
+    int cursor = deadbeef->conf_get_int (conf, -1);
 //    gdk_window_invalidate_rect (tabstrip->window, NULL, FALSE);
     ddb_tabstrip_refresh (DDB_TABSTRIP (tabstrip));
     DdbListview *listview = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
+    deadbeef->pl_set_cursor (PL_MAIN, cursor);
+    if (cursor != -1) {
+        DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (cursor, PL_MAIN);
+        if (it) {
+            deadbeef->pl_set_selected (it, 1);
+            deadbeef->pl_item_unref (it);
+        }
+    }
     playlist_refresh ();
     ddb_listview_set_vscroll (listview, scroll);
     search_refresh ();
