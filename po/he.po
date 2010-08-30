@@ -8,13 +8,15 @@ msgstr ""
 "Project-Id-Version: DeaDBeeF\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-05-27 16:47+0200\n"
-"PO-Revision-Date: 2010-05-23 04:26+0200\n"
-"Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
+"PO-Revision-Date: 2010-06-05 12:33+0200\n"
+"Last-Translator: Yaron <sh.yaron@gmail.com>\n"
 "Language-Team: Gezer <sh.yaron@gmail.com>\n"
+"Language: he\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Pootle 2.0.1\n"
 "X-Poedit-Language: Hebrew\n"
 "X-Poedit-Country: ISRAEL\n"
 "X-Poedit-SourceCharset: UTF-8\n"
@@ -514,7 +516,7 @@ msgstr "ימין"
 
 #: ../plugins/gtkui/interface.c:1459 ../plugins/gtkui/interface.c:3007
 #: ../plugins/gtkui/deadbeef.glade.h:47
-#, fuzzy, no-c-format
+#, no-c-format
 msgid ""
 "Format conversions (start with %):\n"
 "  [a]rtist, [t]itle, al[b]um, [B]and, [C]omposer\n"
@@ -523,12 +525,10 @@ msgid ""
 "  copy[r]ight, [f]ilename, [T]ags\n"
 "Example: %a - %t [%l]"
 msgstr ""
-"המרת מבנים (מתחיל ב־%):\n"
-"  [a]rtist, [t]itle, al[b]um, [B]and,\n"
-"  track[n]umber, [N]totaltracks,\n"
-"  [l]ength, [y]ear, [g]enre, [c]omment,\n"
-"  copy[r]ight, [f]ilename, [T]ags\n"
-"דוגמה: %a - %t [%l]"
+"המרות בעיצוב (מתחילות ב־%):\n"
+"  [a]rtist, [t]itle, al[b]um, [B]and, [C]omposer  track[n]umber, "
+"[N]totaltracks,  [l]ength, [y]ear, [g]enre, [c]omment,  copy[r]ight, "
+"[f]ilename, [T]agsדוגמה: %a‏ - %t‏ [%l]"
 
 #: ../plugins/gtkui/interface.c:1488 ../plugins/gtkui/interface.c:2801
 #: ../plugins/gtkui/interface.c:2913 ../plugins/gtkui/interface.c:3036
@@ -921,9 +921,8 @@ msgid "Value"
 msgstr "ערך"
 
 #: ../plugins/notify/notify.c:138
-#, fuzzy
 msgid "DeaDBeeF now playing"
-msgstr "יומן השינויים של DeaDBeeF %s"
+msgstr "DeaDBeeF מנגן כעת"
 
 #: ../main.c:84
 #, c-format
@@ -1015,11 +1014,12 @@ msgid "Default"
 msgstr "ברירת מחדל"
 
 #: ../plugins/gtkui/deadbeef.glade.h:1
-#, fuzzy
 msgid ""
 "2.3 (Recommended)\n"
 "2.4"
-msgstr "2.3 (מומלץ)"
+msgstr ""
+"2.3 (מומלץ)\n"
+"2.4"
 
 #: ../plugins/gtkui/deadbeef.glade.h:25
 msgid ""
@@ -1027,6 +1027,8 @@ msgid ""
 "Track\n"
 "Album"
 msgstr ""
+"נטרול\n"
+"רצועהאלבום"
 
 #: ../plugins/gtkui/deadbeef.glade.h:34
 msgid ""
@@ -1042,68 +1044,72 @@ msgid ""
 "Band / Album Artist\n"
 "Custom"
 msgstr ""
+"מספר הקובץ\n"
+"מתנגןעטיפת האלבוםאמן - אלבוםאמןאלבוםכותרתמשךרצועהלהקה / אמן האלבוםמותאם "
+"אישית"
 
 #: ../plugins/gtkui/deadbeef.glade.h:60
-#, fuzzy
 msgid ""
 "Left\n"
 "Right"
-msgstr "ימין"
+msgstr ""
+"שמאל\n"
+"ימין"
 
 #: ../plugins/gtkui/support.c:90 ../plugins/gtkui/support.c:114
 #, c-format
 msgid "Couldn't find pixmap file: %s"
-msgstr ""
+msgstr "לא ניתן למצוא את קובץ ה־pixmap:‏ %s"
 
 #: ../plugins/vorbis/vcedit.c:129 ../plugins/vorbis/vcedit.c:155
 msgid "Couldn't get enough memory for input buffering."
-msgstr ""
+msgstr "לא ניתן לקבל מספיק זיכרון לצורך אגירת הקלט."
 
 #: ../plugins/vorbis/vcedit.c:179 ../plugins/vorbis/vcedit.c:550
 msgid "Error reading first page of Ogg bitstream."
-msgstr ""
+msgstr "ארעה שגיאה בעת קריאת העמוד הראשון של תזרים הסיביות מסוג Ogg."
 
 #: ../plugins/vorbis/vcedit.c:185 ../plugins/vorbis/vcedit.c:557
 msgid "Error reading initial header packet."
-msgstr ""
+msgstr "ארעה שגיאה בקריאת מנת הכותרת ההתחלתית."
 
 #: ../plugins/vorbis/vcedit.c:237
 msgid "Couldn't get enough memory to register new stream serial number."
-msgstr ""
+msgstr "לא ניתן לקבל מספיק זיכרון כדי לרשום את המספר הסידורי של התזרים החדש."
 
 #: ../plugins/vorbis/vcedit.c:505
 msgid "Input truncated or empty."
-msgstr ""
+msgstr "הקלט קטוע או ריק."
 
 #: ../plugins/vorbis/vcedit.c:507
 msgid "Input is not an Ogg bitstream."
-msgstr ""
+msgstr "הקלט אינו תזרים סיביות מסוג Ogg."
 
 #: ../plugins/vorbis/vcedit.c:565
 msgid "Ogg bitstream does not contain Vorbis data."
-msgstr ""
+msgstr "תזרים הסיביות מסוג Ogg אין מכיל נתוני Vorbis."
 
 #: ../plugins/vorbis/vcedit.c:578
 msgid "EOF before recognised stream."
-msgstr ""
+msgstr "EOF לפני תזרים מוכר."
 
 #: ../plugins/vorbis/vcedit.c:594
 msgid "Ogg bitstream does not contain a supported data-type."
-msgstr ""
+msgstr "תזרים הסיביות מסוג Ogg אינו מכיל טיפוס נתונים נתמך."
 
 #: ../plugins/vorbis/vcedit.c:638
 msgid "Corrupt secondary header."
-msgstr ""
+msgstr "כותרת משנית פגומה."
 
 #: ../plugins/vorbis/vcedit.c:659
 msgid "EOF before end of Vorbis headers."
-msgstr ""
+msgstr "EOF (סוף הקובץ) בטרם סוף כותרות ה־Vorbis."
 
 #: ../plugins/vorbis/vcedit.c:834
 msgid "Corrupt or missing data, continuing..."
-msgstr ""
+msgstr "נתונים פגומים או חסרים, ממשיך..."
 
 #: ../plugins/vorbis/vcedit.c:874
 msgid ""
 "Error writing stream to output. Output stream may be corrupted or truncated."
-msgstr ""
+msgstr "ארעה שגיאה בכתיבת התזרים לפלט. תזרים הפלט פגום או קטוע."
