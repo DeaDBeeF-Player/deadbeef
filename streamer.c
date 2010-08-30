@@ -714,7 +714,7 @@ streamer_set_nextsong (int song, int pstate) {
         // no sense to wait until end of previous song, reset buffer
         bytes_until_next_song = 0;
         playpos = 0;
-        seekpos = -1;
+//        seekpos = -1;
     }
 }
 
@@ -1700,6 +1700,11 @@ streamer_play_current_track (void) {
 struct DB_fileinfo_s *
 streamer_get_current_fileinfo (void) {
     return fileinfo;
+}
+
+void
+streamer_set_current_playlist (int plt) {
+    streamer_playlist = plt_get (plt);
 }
 
 int

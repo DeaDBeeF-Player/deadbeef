@@ -971,3 +971,7 @@ gboolean
 on_statusbar_button_press_event        (GtkWidget       *widget,
                                         GdkEventButton  *event,
                                         gpointer         user_data);
+
+void
+on_resume_last_session_toggled         (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);

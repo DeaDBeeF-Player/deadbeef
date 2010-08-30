@@ -522,6 +522,9 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
     gtk_widget_set_sensitive (lookup_widget (prefwin, "cli_playlist_name"), active);
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (prefwin, "cli_playlist_name")), deadbeef->conf_get_str ("cli_add_playlist_name", "Default"));
 
+    // resume last session
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "resume_last_session")), deadbeef->conf_get_int ("resume_last_session", 0));
+
     // override bar colors
     int override = deadbeef->conf_get_int ("gtkui.override_bar_colors", 0);
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (prefwin, "override_bar_colors")), override);
@@ -1298,5 +1301,13 @@ on_cli_playlist_name_changed           (GtkEditable     *editable,
                                         gpointer         user_data)
 {
     deadbeef->conf_set_str ("cli_add_playlist_name", gtk_entry_get_text (GTK_ENTRY (editable)));
+}
+
+void
+on_resume_last_session_toggled         (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (togglebutton));
+    deadbeef->conf_set_int ("resume_last_session", active);
 }
 

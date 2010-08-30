@@ -91,6 +91,9 @@ pl_global_unlock (void);
 playlist_t *
 plt_get_curr_ptr (void);
 
+playlist_t *
+plt_get (int idx);
+
 int
 plt_get_count (void);
 

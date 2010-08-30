@@ -211,6 +211,17 @@ plt_get_curr_ptr (void) {
     return playlist;
 }
 
+playlist_t *
+plt_get (int idx) {
+    playlist_t *p = playlists_head;
+    for (int i = 0; p && i <= idx; i++, p = p->next) {
+        if (i == idx) {
+            return p;
+        }
+    }
+    return NULL;
+}
+
 int
 plt_get_count (void) {
     return playlists_count;
