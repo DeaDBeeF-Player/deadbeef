@@ -213,7 +213,7 @@ copy_file (const char *in, const char *out) {
 }
 
 static int
-filter_jpg (const struct dirent *f)
+filter_custom (const struct dirent *f)
 {
     char mask[200] = "";
     char *p = artwork_filemask;
@@ -235,6 +235,19 @@ filter_jpg (const struct dirent *f)
         }
         p = e;
     }
+    return 0;
+}
+
+static int
+filter_jpg (const struct dirent *f)
+{
+    const char *ext = strrchr (f->d_name, '.');
+    if (!ext)
+        return 0;
+    if (!strcasecmp (ext, ".jpg") || !strcasecmp (ext, ".jpeg")) {
+        return 1;
+    }
+
     return 0;
 }
 
@@ -467,7 +480,10 @@ fetcher_thread (void *none)
                         *slash = 0; // assuming at least one slash exist
                     }
                     trace ("scanning directory: %s\n", path);
-                    files_count = scandir (path, &files, filter_jpg, alphasort);
+                    files_count = scandir (path, &files, filter_custom, alphasort);
+                    if (files_count == 0) {
+                        files_count = scandir (path, &files, filter_jpg, alphasort);
+                    }
 
                     if (files_count > 0) {
                         trace ("found cover for %s - %s in local folder\n", param->artist, param->album);
