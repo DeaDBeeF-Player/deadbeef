@@ -27,6 +27,12 @@
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
+//#define WRITE_DUMP 1
+
+#if WRITE_DUMP
+FILE *out;
+#endif
+
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
@@ -170,7 +176,7 @@ static int
 cmp3_scan_stream (buffer_t *buffer, int sample) {
     trace ("cmp3_scan_stream %d\n", sample);
     int initpos = deadbeef->ftell (buffer->file);
-    trace ("filepos: %d\n", initpos);
+    trace ("initpos: %d\n", initpos);
 //    if (sample == 0) {
 //        sample = -1;
 //    }
@@ -357,7 +363,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
             buffer->frameduration = dur;
             buffer->channels = nchannels;
             buffer->bitspersample = 16;
-            //trace ("frame %d(@%d) mpeg v%d layer %d bitrate %d samplerate %d packetlength %d framedur %f channels %d\n", nframe, pos, ver, layer, bitrate, samplerate, packetlength, dur, nchannels);
+            //trace ("frame %d mpeg v%d layer %d bitrate %d samplerate %d packetlength %d framedur %f channels %d\n", nframe, ver, layer, bitrate, samplerate, packetlength, dur, nchannels);
         }
         // try to read xing/info tag (only on initial scans)
         if (sample <= 0 && !got_xing_header)
@@ -376,11 +382,6 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
             if (deadbeef->fread (magic, 1, 4, buffer->file) != 4) {
                 trace ("cmp3_scan_stream: EOF while checking for Xing header\n");
                 return -1; // EOF
-            }
-            // add information to skip this frame
-            int startoffset = deadbeef->ftell (buffer->file) + packetlength;
-            if (startoffset > buffer->startoffset) {
-                buffer->startoffset = startoffset;
             }
 
 //            trace ("xing magic: %c%c%c%c\n", magic[0], magic[1], magic[2], magic[3]);
@@ -822,6 +823,9 @@ cmp3_stream_frame (mpgmad_info_t *info) {
                 if (bytes[0] != 0xff || (bytes[1]&(3<<5)) != (3<<5)) {
                     trace ("mpgmad: read didn't start at frame boundary!\ncmp3_scan_stream is broken\n");
                 }
+                else {
+                    trace ("mpgmad: streambuffer=NULL\n");
+                }
             }
         }
         info->stream.error=0;
@@ -830,16 +834,14 @@ cmp3_stream_frame (mpgmad_info_t *info) {
         {
             if(MAD_RECOVERABLE(info->stream.error))
             {
-#if 0
                 if(info->stream.error!=MAD_ERROR_LOSTSYNC) {
                     trace ("mpgmad: recoverable frame level error (%s)\n", MadErrorString(&info->stream));
                 }
-#endif
                 continue;
             }
             else {
                 if(info->stream.error==MAD_ERROR_BUFLEN) {
-//                    trace ("mpgmad: recoverable frame level error (%s)\n", MadErrorString(&info->stream));
+                    trace ("mpgmad: recoverable frame level error (%s)\n", MadErrorString(&info->stream));
                     continue;
                 }
                 else
@@ -931,12 +933,22 @@ cmp3_free (DB_fileinfo_t *_info) {
 
 static int
 cmp3_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
+#if WRITE_DUMP
+    if (!out) {
+        out = fopen ("out.raw", "w+b");
+    }
+#endif
     mpgmad_info_t *info = (mpgmad_info_t *)_info;
     info->buffer.readsize = size;
     info->buffer.out = bytes;
     cmp3_decode_int16 (info);
     info->buffer.currentsample += (size - info->buffer.readsize) / 4;
     _info->readpos = (float)(info->buffer.currentsample - info->buffer.startsample) / info->buffer.samplerate;
+#if WRITE_DUMP
+    if (size - info->buffer.readsize > 0) {
+        fwrite (bytes, 1, size - info->buffer.readsize, out);
+    }
+#endif
     return size - info->buffer.readsize;
 }
 
