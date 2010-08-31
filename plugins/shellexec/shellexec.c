@@ -130,44 +130,37 @@ shx_start ()
         strcpy (tmp, item->value);
         trace ("Shellexec: %s\n", tmp);
 
-        const char *command;
-        const char *title;
-        const char *name;
-        const char *flags;
+        char *args[4] = {0};
 
-        char *semicolon;
         int idx = 0;
-        tmpptr = tmp;
-        do
-        {
-            semicolon = strchr (tmpptr, ':');
-            if (semicolon)
-                *semicolon = 0;
-
-            trace ("Shellexec: idx: %d, tmp: %s\n", idx, tmpptr);
-            switch (idx)
-            {
-                case 0: command = trim (tmpptr); break;
-                case 1: title = trim (tmpptr); break;
-                case 2: name = trim (tmpptr); break;
-                case 3: flags = trim (tmpptr); break;
+        char *p = tmp;
+        while (idx < 4 && p) {
+            char *e = strchr (p, ':');
+            args[idx++] = p;
+            if (!e) {
+                break;
             }
-            if (semicolon)
-                tmpptr = semicolon + 1;
-            idx++;
+            *e = 0;
+            p = e+1;
         }
-        while (semicolon);
 
         if (idx < 2)
         {
             fprintf (stderr, "Shellexec: need at least command and title (%s)\n", item->value);
             continue;
         }
-        if (idx > 4)
-        {
-            fprintf (stderr, "Shellexec: too many parameters in configuration line (%s)\n", item->value);
-            continue;
+
+        const char *command = args[0];
+        const char *title = args[1];
+        const char *name = args[2];
+        const char *flags = args[3];
+        if (!name) {
+            name = "noname";
         }
+        if (!flags) {
+            flags = "local";
+        }
+
         if (strstr (flags, "disabled"))
             continue;
 
