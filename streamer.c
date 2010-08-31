@@ -40,6 +40,12 @@
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
+// #define WRITE_DUMP 1
+
+#if WRITE_DUMP
+FILE *out;
+#endif
+
 static intptr_t streamer_tid;
 static int src_quality;
 static SRC_STATE *src;
@@ -1083,6 +1089,9 @@ streamer_thread (void *ctx) {
 
 int
 streamer_init (void) {
+#if WRITE_DUMP
+    out = fopen ("out.raw", "w+b");
+#endif
     mutex = mutex_create ();
     decodemutex = mutex_create ();
     srcmutex = mutex_create ();
@@ -1099,6 +1108,9 @@ streamer_init (void) {
 
 void
 streamer_free (void) {
+#if WRITE_DUMP
+    fclose (out);
+#endif
     streamer_abort_files ();
     streaming_terminate = 1;
     thread_join (streamer_tid);
@@ -1615,6 +1627,9 @@ streamer_read (char *bytes, int size) {
 
     int ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
     printf ("streamer_read took %d ms\n", ms);
+#endif
+#if WRITE_DUMP
+    fwrite (bytes, 1, sz, out);
 #endif
     return sz;
 }
