@@ -154,4 +154,7 @@ gtkui_add_file_info_cb (DB_playItem_t *it, void *data);
 extern int (*gtkui_original_pl_add_dir) (const char *dirname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
 extern int (*gtkui_original_pl_add_file) (const char *fname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
 
+void
+gtkui_focus_on_playing_track (void);
+
 #endif

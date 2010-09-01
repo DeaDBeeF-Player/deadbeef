@@ -19,6 +19,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <gdk/gdkkeysyms.h>
 #include "gtkui.h"
 #include "plcommon.h"
 #include "coverart.h"
@@ -40,6 +41,8 @@ extern GtkWidget *theme_treeview;
 extern GdkPixbuf *play16_pixbuf;
 extern GdkPixbuf *pause16_pixbuf;
 extern GdkPixbuf *buffering16_pixbuf;
+
+static int clicked_idx = -1;
 
 void
 write_column_config (const char *name, int idx, const char *title, int width, int align_right, int id, const char *format) {
@@ -258,8 +261,6 @@ main_reload_metadata_activate
     playlist_refresh ();
     trkproperties_fill_metadata ();
 }
-
-int clicked_idx = -1;
 
 void
 main_properties_activate                (GtkMenuItem     *menuitem,

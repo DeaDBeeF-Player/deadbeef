@@ -992,7 +992,9 @@ gtkui_thread (void *ctx) {
     deadbeef->pl_format_title (NULL, -1, str, sizeof (str), -1, deadbeef->conf_get_str ("gtkui.titlebar_stopped", "DeaDBeeF-%V"));
     gtk_window_set_title (GTK_WINDOW (mainwin), str);
     gtk_initialized = 1;
+
     gtk_main ();
+
     cover_art_free ();
     eq_window_destroy ();
     trkproperties_destroy ();
@@ -1060,6 +1062,17 @@ void
 gtkui_pl_add_files_end (void) {
     g_idle_add (gtkui_progress_hide_idle, NULL);
     gtkui_original_pl_add_files_end ();
+}
+
+void
+gtkui_focus_on_playing_track (void) {
+    DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
+    if (it) {
+        int idx = deadbeef->pl_get_idx_of (it);
+        ddb_listview_scroll_to (DDB_LISTVIEW (lookup_widget (mainwin, "playlist")), idx);
+        ddb_listview_set_cursor (DDB_LISTVIEW (lookup_widget (mainwin, "playlist")), idx);
+        deadbeef->pl_item_unref (it);
+    }
 }
 
 static int
