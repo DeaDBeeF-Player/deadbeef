@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 0.4.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-09-01 04:24+0000\n"
-"PO-Revision-Date: 2010-09-02 11:15+0200\n"
+"PO-Revision-Date: 2010-09-02 14:31+0200\n"
 "Last-Translator: Max <mpui@tut.by>\n"
 "Language-Team: ru <slpiv@mail.ru>\n"
 "Language: ru\n"
@@ -604,15 +604,15 @@ msgstr "Использовать жирный шрифт для текущего
 
 #: ../plugins/gtkui/interface.c:1842 ../plugins/gtkui/deadbeef.glade.h:66
 msgid "Hide \"Delete from disk\" context menu item"
-msgstr ""
+msgstr "Спрятать \"Удалить с диска\" из контекстного меню"
 
 #: ../plugins/gtkui/interface.c:1850 ../plugins/gtkui/deadbeef.glade.h:134
 msgid "Titlebar text while playing:"
-msgstr ""
+msgstr "Заголовок окна при проигрывании"
 
 #: ../plugins/gtkui/interface.c:1864 ../plugins/gtkui/deadbeef.glade.h:135
 msgid "Titlebar text while stopped:"
-msgstr ""
+msgstr "Заголовок окна при остановке"
 
 #: ../plugins/gtkui/interface.c:1874 ../plugins/gtkui/deadbeef.glade.h:63
 msgid "GUI"
@@ -629,11 +629,11 @@ msgstr "Передний план"
 
 #: ../plugins/gtkui/interface.c:1904 ../plugins/gtkui/deadbeef.glade.h:14
 msgid "Background"
-msgstr "Фон"
+msgstr "Задний план"
 
 #: ../plugins/gtkui/interface.c:1923 ../plugins/gtkui/deadbeef.glade.h:116
 msgid "Seekbar/Volumebar colors"
-msgstr "Полоса проигрывания/Регулятор громкости"
+msgstr "Цвета Полосы проигрывания/Регулятора громкости"
 
 #: ../plugins/gtkui/interface.c:1941 ../plugins/gtkui/deadbeef.glade.h:80
 msgid "Middle"
@@ -653,11 +653,13 @@ msgstr "Базовый"
 
 #: ../plugins/gtkui/interface.c:1993 ../plugins/gtkui/deadbeef.glade.h:129
 msgid "Tab strip colors"
-msgstr "Вкладки"
+msgstr "Цвета вкладок"
 
 #: ../plugins/gtkui/interface.c:2002 ../plugins/gtkui/deadbeef.glade.h:90
 msgid "Override (looses GTK treeview theming, but speeds up rendering)"
-msgstr "Заменить (теряются настройки GTK темы, но увеличивается скорость визуализации)"
+msgstr ""
+"Заменить прорисовку (теряются настройки GTK темы, но увеличивается скорость "
+"визуализации)"
 
 #: ../plugins/gtkui/interface.c:2011 ../plugins/gtkui/deadbeef.glade.h:34
 msgid "Even row"
@@ -693,12 +695,11 @@ msgstr "Указатель"
 
 #: ../plugins/gtkui/interface.c:2089 ../plugins/gtkui/deadbeef.glade.h:95
 msgid "Playlist colors"
-msgstr "Плейлист"
+msgstr "Цвета списка воспроизведения"
 
 #: ../plugins/gtkui/interface.c:2093 ../plugins/gtkui/deadbeef.glade.h:17
-#, fuzzy
 msgid "Colors"
-msgstr "_Закрыть"
+msgstr "Цвета"
 
 #: ../plugins/gtkui/interface.c:2102 ../plugins/gtkui/deadbeef.glade.h:31
 msgid "Enable Proxy Server"
@@ -972,7 +973,7 @@ msgstr "Нет"
 
 #: ../plugins/gtkui/trkproperties.c:182
 msgid "Codec"
-msgstr ""
+msgstr "Кодек"
 
 #: ../plugins/gtkui/trkproperties.c:250 ../plugins/gtkui/trkproperties.c:262
 msgid "Key"
@@ -1072,11 +1073,12 @@ msgid "Default"
 msgstr "Плейлист"
 
 #: ../plugins/gtkui/deadbeef.glade.h:1
-#, fuzzy
 msgid ""
 "2.3 (Recommended)\n"
 "2.4"
-msgstr "2.3 (Рекомендуемая)"
+msgstr ""
+"2.3 (Рекомендуемая)\n"
+"2.4"
 
 #: ../plugins/gtkui/deadbeef.glade.h:26
 msgid ""
@@ -1124,59 +1126,63 @@ msgstr "По правому краю"
 #: ../plugins/gtkui/support.c:90 ../plugins/gtkui/support.c:114
 #, c-format
 msgid "Couldn't find pixmap file: %s"
-msgstr ""
+msgstr "Не могу найти pixmap-файл : %s"
 
 #: ../plugins/vorbis/vcedit.c:129 ../plugins/vorbis/vcedit.c:155
 msgid "Couldn't get enough memory for input buffering."
-msgstr ""
+msgstr "Не могу выделить достаточно памяти для входного буфера"
 
 #: ../plugins/vorbis/vcedit.c:179 ../plugins/vorbis/vcedit.c:550
 msgid "Error reading first page of Ogg bitstream."
-msgstr ""
+msgstr "Ошибка чтения заголовка потока OGG"
 
 #: ../plugins/vorbis/vcedit.c:185 ../plugins/vorbis/vcedit.c:557
 msgid "Error reading initial header packet."
-msgstr ""
+msgstr "Ошибка чтения заглавного пакета"
 
 #: ../plugins/vorbis/vcedit.c:237
 msgid "Couldn't get enough memory to register new stream serial number."
 msgstr ""
+"Не могу выделить достаточно памяти для регистрации серийниго номера нового "
+"потока"
 
 #: ../plugins/vorbis/vcedit.c:505
 msgid "Input truncated or empty."
-msgstr ""
+msgstr "Входной поток пустой"
 
 #: ../plugins/vorbis/vcedit.c:507
 msgid "Input is not an Ogg bitstream."
-msgstr ""
+msgstr "На входе не OGG аудио."
 
 #: ../plugins/vorbis/vcedit.c:565
 msgid "Ogg bitstream does not contain Vorbis data."
-msgstr ""
+msgstr "Поток OGG не содержит данных Vorbis"
 
 #: ../plugins/vorbis/vcedit.c:578
 msgid "EOF before recognised stream."
-msgstr ""
+msgstr "получен EOF "
 
 #: ../plugins/vorbis/vcedit.c:594
 msgid "Ogg bitstream does not contain a supported data-type."
-msgstr ""
+msgstr "Тип данных потока OGG  не поддерживается"
 
 #: ../plugins/vorbis/vcedit.c:638
 msgid "Corrupt secondary header."
-msgstr ""
+msgstr "Повреждён вторичный заголовок"
 
 #: ../plugins/vorbis/vcedit.c:659
 msgid "EOF before end of Vorbis headers."
-msgstr ""
+msgstr "Поток прерван до окончания передачи заголовков Vorbis"
 
 #: ../plugins/vorbis/vcedit.c:834
 msgid "Corrupt or missing data, continuing..."
-msgstr ""
+msgstr "Повреждённые или отсутствующие данные, продолжаем..."
 
 #: ../plugins/vorbis/vcedit.c:874
 msgid "Error writing stream to output. Output stream may be corrupted or truncated."
 msgstr ""
+"Ошибка записи потока на вывод. Выходной поток может быть повреждён или "
+"обрезан."
 
 #~ msgid "Add Audio CD"
 #~ msgstr "Добавить аудио CD"
