@@ -8,15 +8,16 @@ msgstr ""
 "Project-Id-Version: 0.4.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-09-01 04:24+0000\n"
-"PO-Revision-Date: 2010-05-25 18:12+0200\n"
+"PO-Revision-Date: 2010-09-02 11:15+0200\n"
 "Last-Translator: Max <mpui@tut.by>\n"
 "Language-Team: ru <slpiv@mail.ru>\n"
+"Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: ru\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Pootle 2.0.1\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
+"10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: Pootle 2.0.5\n"
 
 #: ../plugins/gtkui/callbacks.c:97
 msgid "Supported sound formats"
@@ -40,7 +41,7 @@ msgstr "Добавить каталог(и) в плейлист..."
 
 #: ../plugins/gtkui/callbacks.c:192
 msgid "Follow symlinks"
-msgstr ""
+msgstr "Следовать символическим ссылкам"
 
 #: ../plugins/gtkui/callbacks.c:677
 msgid "Failed while reading help file"
@@ -510,7 +511,7 @@ msgid "Right"
 msgstr "По правому краю"
 
 #: ../plugins/gtkui/interface.c:1444 ../plugins/gtkui/deadbeef.glade.h:48
-#, fuzzy, no-c-format
+#, no-c-format
 msgid ""
 "Format conversions (start with %):\n"
 "  [a]rtist, [t]itle, al[b]um, [B]and, [C]omposer\n"
@@ -520,11 +521,11 @@ msgid ""
 "  [d]irectory, [D]irectoryWithPath\n"
 "Example: %a - %t [%l]"
 msgstr ""
-"Формат преобразования (начинается с %):\n"
-"  [a]rtist, [t]itle, al[b]um, [B]and,\n"
-"  track[n]umber, [N]totaltracks,\n"
-"  [l]ength, [y]ear, [g]enre, [c]omment,\n"
-"  copy[r]ight, [f]ilename, [T]ags\n"
+"Формат преобразования:\n"
+"  %a исполнитель, %t название, %b альбом, %B Бэнд\n"
+"  %С Композитор %n номер дорожки , %N всего дорожек\n"
+"  %l длительность %y год, %g жанр, %c комментарий\n"
+"  %r авторские права %f имя файла %T тэги\n"
 "Пример: %a - %t [%l]"
 
 #: ../plugins/gtkui/interface.c:1473 ../plugins/gtkui/interface.c:2900
@@ -574,15 +575,16 @@ msgstr "Использовать пиковое значение"
 #: ../plugins/gtkui/interface.c:1804 ../plugins/gtkui/deadbeef.glade.h:7
 msgid "Add files from command line (or file manager) to this playlist:"
 msgstr ""
+"Добавлять файлы из командной строки (или файлового менеджера) в этот список "
+"воспроизведения"
 
 #: ../plugins/gtkui/interface.c:1813 ../plugins/gtkui/deadbeef.glade.h:110
 msgid "Resume previous session on startup"
-msgstr ""
+msgstr "Восстановить предыдущую сессию при запуске"
 
 #: ../plugins/gtkui/interface.c:1817 ../plugins/gtkui/deadbeef.glade.h:94
-#, fuzzy
 msgid "Playback"
-msgstr "_Воспроизведение"
+msgstr "Воспроизведение"
 
 #: ../plugins/gtkui/interface.c:1826 ../plugins/gtkui/deadbeef.glade.h:16
 msgid "Close minimizes to tray"
@@ -594,11 +596,11 @@ msgstr "Средняя кнопка мыши закрывает плейлист
 
 #: ../plugins/gtkui/interface.c:1834 ../plugins/gtkui/deadbeef.glade.h:67
 msgid "Hide system tray icon"
-msgstr ""
+msgstr "Не показывать значок в трее"
 
 #: ../plugins/gtkui/interface.c:1838 ../plugins/gtkui/deadbeef.glade.h:139
 msgid "Use bold font for currently playing track"
-msgstr ""
+msgstr "Использовать жирный шрифт для текущего трека"
 
 #: ../plugins/gtkui/interface.c:1842 ../plugins/gtkui/deadbeef.glade.h:66
 msgid "Hide \"Delete from disk\" context menu item"
