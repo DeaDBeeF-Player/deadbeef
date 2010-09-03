@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 0.4.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-09-01 04:24+0000\n"
-"PO-Revision-Date: 2010-09-02 14:31+0200\n"
+"PO-Revision-Date: 2010-09-03 14:22+0200\n"
 "Last-Translator: Max <mpui@tut.by>\n"
 "Language-Team: ru <slpiv@mail.ru>\n"
 "Language: ru\n"
@@ -819,7 +819,7 @@ msgid "Group By"
 msgstr "Группировать по"
 
 #: ../plugins/gtkui/interface.c:3106 ../plugins/gtkui/deadbeef.glade.h:56
-#, fuzzy, no-c-format
+#, no-c-format
 msgid ""
 "Format conversions (start with %):\n"
 "  [a]rtist, [t]itle, al[b]um, [B]and, [C]omposer\n"
@@ -828,11 +828,10 @@ msgid ""
 "  copy[r]ight, [f]ilename, [T]ags\n"
 "Example: %a - %t [%l]"
 msgstr ""
-"Формат преобразования (начинается с %):\n"
-"  [a]rtist, [t]itle, al[b]um, [B]and,\n"
-"  track[n]umber, [N]totaltracks,\n"
-"  [l]ength, [y]ear, [g]enre, [c]omment,\n"
-"  copy[r]ight, [f]ilename, [T]ags\n"
+"Макросы: %a исполнитель, %t название, %a альбом, \n"
+"  %B команда, %n номер дорожки, %N всего дорожек,\n"
+"  %l длительность, %y год, %g жанр, %c комментарий,\n"
+"  %r авторские права, %f имя файла, %T Тэги\n"
 "Пример: %a - %t [%l]"
 
 #: ../plugins/gtkui/mainplaylist.c:301 ../plugins/gtkui/search.c:434
@@ -1117,11 +1116,12 @@ msgstr ""
 "Разное"
 
 #: ../plugins/gtkui/deadbeef.glade.h:71
-#, fuzzy
 msgid ""
 "Left\n"
 "Right"
-msgstr "По правому краю"
+msgstr ""
+"Левый\n"
+"правый"
 
 #: ../plugins/gtkui/support.c:90 ../plugins/gtkui/support.c:114
 #, c-format
