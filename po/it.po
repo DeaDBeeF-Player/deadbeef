@@ -1119,7 +1119,7 @@ msgstr "Errore durante la lettura inziale dei pacchetti di testa."
 
 #: ../plugins/vorbis/vcedit.c:237
 msgid "Couldn't get enough memory to register new stream serial number."
-msgstr ""
+msgstr "Impossibile ottenere abbastanza memoria per registrare il numero di serie del nuovo flusso"
 
 #: ../plugins/vorbis/vcedit.c:505
 msgid "Input truncated or empty."
@@ -1139,7 +1139,7 @@ msgstr "Fine del file prima di aver riconosciuto lo stream."
 
 #: ../plugins/vorbis/vcedit.c:594
 msgid "Ogg bitstream does not contain a supported data-type."
-msgstr ""
+msgstr "Il flusso Ogg non contiene un tipo di dati riconosciuto."
 
 #: ../plugins/vorbis/vcedit.c:638
 msgid "Corrupt secondary header."
@@ -1155,4 +1155,4 @@ msgstr "Dati persi o corrotti, continuo..."
 
 #: ../plugins/vorbis/vcedit.c:874
 msgid "Error writing stream to output. Output stream may be corrupted or truncated."
-msgstr ""
+msgstr "Errore di scrittura del file di uscita. Il flusso di uscita potrebbe essere danneggiato o troncato."
