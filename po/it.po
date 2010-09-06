@@ -810,6 +810,12 @@ msgid ""
 "  copy[r]ight, [f]ilename, [T]ags\n"
 "Example: %a - %t [%l]"
 msgstr ""
+"Formati di conversione (iniza con %):\n"
+" [a]rtista, [t]itolo, al[b]um, [B]and, [C]ompositore\n"
+" traccia[n]umero, [N]TracceTotali,\n"
+" [l]unghezza, [y]anno, [g]enere, [c]ommento,\n"
+" copy[r]ight, [f]NomeFile, [T]Etichetta\n"
+"Esempio: %a - %t [%l]"
 
 #: ../plugins/gtkui/mainplaylist.c:301 ../plugins/gtkui/search.c:434
 msgid "Artist / Album"
