@@ -10,8 +10,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Poedit-Language: Italian\n"
 "X-Poedit-Country: Italy\n"
+"X-Poedit-Language: Italian\n"
 
 #: ../plugins/gtkui/callbacks.c:97
 msgid "Supported sound formats"
@@ -98,77 +98,72 @@ msgstr "Importa Foobar2000 EQ Preset"
 
 #: ../plugins/gtkui/eq.c:218
 msgid "Foobar2000 EQ presets (*.feq)"
-msgstr ""
+msgstr "Foobar2000 EQ presets (*.feq)"
 
 #: ../plugins/gtkui/eq.c:292
-#, fuzzy
 msgid "Enable"
-msgstr "Disabilita"
+msgstr "Abilita"
 
 #: ../plugins/gtkui/eq.c:300
-#, fuzzy
 msgid "Zero All"
-msgstr "Loop tutte"
+msgstr "Tutto Zero"
 
 #: ../plugins/gtkui/eq.c:307
 msgid "Zero Preamp"
-msgstr ""
+msgstr "Zero Preamp"
 
 #: ../plugins/gtkui/eq.c:314
 msgid "Zero Bands"
-msgstr ""
+msgstr "Zero Bands"
 
 #: ../plugins/gtkui/eq.c:321
 msgid "Save Preset"
-msgstr ""
+msgstr "Salva preset"
 
 #: ../plugins/gtkui/eq.c:328
-#, fuzzy
 msgid "Load Preset"
-msgstr "Carica Playlist"
+msgstr "Carica preset"
 
 #: ../plugins/gtkui/eq.c:335
 msgid "Import Foobar2000 Preset"
-msgstr ""
+msgstr "Importa Foobar2000 Preset"
 
 #: ../plugins/gtkui/gtkui.c:133
 #, c-format
 msgid "1 day %d:%02d:%02d"
-msgstr ""
+msgstr "1 giorno %d:%02d:%02d"
 
 #: ../plugins/gtkui/gtkui.c:136
 #, c-format
 msgid "%d days %d:%02d:%02d"
-msgstr ""
+msgstr "%d giorni %d:%02d:%02d"
 
 #: ../plugins/gtkui/gtkui.c:145
 #, c-format
 msgid "Stopped | %d tracks | %s total playtime"
-msgstr ""
+msgstr "Stop | %d tracce | %s tempo totale"
 
 #: ../plugins/gtkui/gtkui.c:158
 msgid "Mono"
-msgstr ""
+msgstr "Mono"
 
 #: ../plugins/gtkui/gtkui.c:158
-#, fuzzy
 msgid "Stereo"
-msgstr "Stop"
+msgstr "Stereo"
 
 #: ../plugins/gtkui/gtkui.c:183
 #, c-format
 msgid "| %4d kbps "
-msgstr ""
+msgstr "| %4d kbps"
 
 #: ../plugins/gtkui/gtkui.c:189
-#, fuzzy
 msgid "Paused | "
-msgstr "Pausa"
+msgstr "Pausa |"
 
 #: ../plugins/gtkui/gtkui.c:190
 #, c-format
 msgid "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
-msgstr ""
+msgstr "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracce | %s tempo totale"
 
 #: ../plugins/gtkui/gtkui.c:660
 msgid "Save Playlist As"
@@ -573,7 +568,7 @@ msgstr "Modalità di ReplayGain (volume regolabile)"
 
 #: ../plugins/gtkui/interface.c:1804 ../plugins/gtkui/deadbeef.glade.h:7
 msgid "Add files from command line (or file manager) to this playlist:"
-msgstr ""
+msgstr "Aggiungi files da linea di comando (o file manager) a questa playlist:"
 
 #: ../plugins/gtkui/interface.c:1813 ../plugins/gtkui/deadbeef.glade.h:110
 msgid "Resume previous session on startup"
@@ -589,7 +584,7 @@ msgstr "Chiudi minimizza nel vassoio di sistema"
 
 #: ../plugins/gtkui/interface.c:1830 ../plugins/gtkui/deadbeef.glade.h:81
 msgid "Middle mouse button closes playlist"
-msgstr ""
+msgstr "Il pulsante centrale del mouse chiude la playlist"
 
 #: ../plugins/gtkui/interface.c:1834 ../plugins/gtkui/deadbeef.glade.h:67
 msgid "Hide system tray icon"
@@ -618,7 +613,7 @@ msgstr "GUI"
 #: ../plugins/gtkui/interface.c:1888 ../plugins/gtkui/interface.c:1932
 #: ../plugins/gtkui/deadbeef.glade.h:89
 msgid "Override"
-msgstr ""
+msgstr "Sovrascrivere"
 
 #: ../plugins/gtkui/interface.c:1897 ../plugins/gtkui/deadbeef.glade.h:46
 msgid "Foreground"
@@ -634,7 +629,7 @@ msgstr "Colori della Seekbar/Barra del volume"
 
 #: ../plugins/gtkui/interface.c:1941 ../plugins/gtkui/deadbeef.glade.h:80
 msgid "Middle"
-msgstr ""
+msgstr "Centrale"
 
 #: ../plugins/gtkui/interface.c:1948 ../plugins/gtkui/deadbeef.glade.h:73
 msgid "Light"
@@ -654,7 +649,7 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:2002 ../plugins/gtkui/deadbeef.glade.h:90
 msgid "Override (looses GTK treeview theming, but speeds up rendering)"
-msgstr ""
+msgstr "Sovrascrivi (perdita del tema GTK ma rendering più veloce)"
 
 #: ../plugins/gtkui/interface.c:2011 ../plugins/gtkui/deadbeef.glade.h:34
 msgid "Even row"
@@ -678,7 +673,7 @@ msgstr "Testo selezionato"
 
 #: ../plugins/gtkui/interface.c:2076 ../plugins/gtkui/deadbeef.glade.h:21
 msgid "Cursor"
-msgstr ""
+msgstr "Cursore"
 
 #: ../plugins/gtkui/interface.c:2089 ../plugins/gtkui/deadbeef.glade.h:95
 msgid "Playlist colors"
@@ -759,7 +754,7 @@ msgstr "2.4"
 
 #: ../plugins/gtkui/interface.c:2254 ../plugins/gtkui/deadbeef.glade.h:68
 msgid "ID3v1 character encoding (default is iso8859-1)"
-msgstr ""
+msgstr "ID3v1 codifica caratteri (predefinito iso8859-1)"
 
 #: ../plugins/gtkui/interface.c:2291 ../plugins/gtkui/deadbeef.glade.h:144
 msgid "Write ID3v2.4"
@@ -803,7 +798,7 @@ msgstr "URL:"
 
 #: ../plugins/gtkui/interface.c:3081 ../plugins/gtkui/deadbeef.glade.h:64
 msgid "Group By"
-msgstr ""
+msgstr "Raggruppamento"
 
 #: ../plugins/gtkui/interface.c:3106 ../plugins/gtkui/deadbeef.glade.h:56
 #, no-c-format
@@ -842,6 +837,8 @@ msgid ""
 "Files will be lost. Proceed?\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
 msgstr ""
+"I files andranno persi. Procedere?\n"
+" (Questo dialogo può essere spento in Opzioni plugin --> GTKUI"
 
 #: ../plugins/gtkui/plcommon.c:325 ../plugins/gtkui/trkproperties.c:56
 msgid "Warning"
@@ -877,7 +874,7 @@ msgstr "Rimuovi colonna"
 
 #: ../plugins/gtkui/plcommon.c:862
 msgid "Group by"
-msgstr ""
+msgstr "Raggruppamento"
 
 #: ../plugins/gtkui/plcommon.c:869
 msgid "None"
@@ -928,7 +925,7 @@ msgstr "Inizializzazione..."
 
 #: ../plugins/gtkui/trkproperties.c:53
 msgid "You've modified data for this track."
-msgstr ""
+msgstr "Hai modificato i dati per questa traccia."
 
 #: ../plugins/gtkui/trkproperties.c:55
 msgid "Really close the window?"
@@ -1110,15 +1107,15 @@ msgstr "File pixmap non trovato: %s"
 
 #: ../plugins/vorbis/vcedit.c:129 ../plugins/vorbis/vcedit.c:155
 msgid "Couldn't get enough memory for input buffering."
-msgstr ""
+msgstr "Impossibile ottenere memoria sufficiente per il buffering d'ingresso"
 
 #: ../plugins/vorbis/vcedit.c:179 ../plugins/vorbis/vcedit.c:550
 msgid "Error reading first page of Ogg bitstream."
-msgstr ""
+msgstr "Errore nella lettura della prima pagina del bitstream Ogg."
 
 #: ../plugins/vorbis/vcedit.c:185 ../plugins/vorbis/vcedit.c:557
 msgid "Error reading initial header packet."
-msgstr ""
+msgstr "Errore durante la lettura inziale dei pacchetti di testa."
 
 #: ../plugins/vorbis/vcedit.c:237
 msgid "Couldn't get enough memory to register new stream serial number."
