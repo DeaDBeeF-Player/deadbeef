@@ -10,8 +10,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Poedit-Country: Italy\n"
 "X-Poedit-Language: Italian\n"
+"X-Poedit-Country: Italy\n"
 
 #: ../plugins/gtkui/callbacks.c:97
 msgid "Supported sound formats"
@@ -645,7 +645,7 @@ msgstr "Base"
 
 #: ../plugins/gtkui/interface.c:1993 ../plugins/gtkui/deadbeef.glade.h:129
 msgid "Tab strip colors"
-msgstr ""
+msgstr "Colore delle schede"
 
 #: ../plugins/gtkui/interface.c:2002 ../plugins/gtkui/deadbeef.glade.h:90
 msgid "Override (looses GTK treeview theming, but speeds up rendering)"
@@ -891,7 +891,7 @@ msgstr "Apri file..."
 #: ../plugins/gtkui/pluginconf.c:142
 #, c-format
 msgid "Setup %s"
-msgstr ""
+msgstr "Configura %s"
 
 #: ../plugins/gtkui/prefwin.c:98
 msgid "Default Audio Device"
@@ -937,7 +937,7 @@ msgstr "Tipo(i) di tag(s)"
 
 #: ../plugins/gtkui/trkproperties.c:180
 msgid "Embedded Cuesheet"
-msgstr ""
+msgstr "Cuesheet incorporato"
 
 #: ../plugins/gtkui/trkproperties.c:180
 msgid "Yes"
@@ -1135,7 +1135,7 @@ msgstr "Il file Ogg non contiene dati Vorbis."
 
 #: ../plugins/vorbis/vcedit.c:578
 msgid "EOF before recognised stream."
-msgstr ""
+msgstr "Fine del file prima di aver riconosciuto lo stream."
 
 #: ../plugins/vorbis/vcedit.c:594
 msgid "Ogg bitstream does not contain a supported data-type."
@@ -1143,15 +1143,15 @@ msgstr ""
 
 #: ../plugins/vorbis/vcedit.c:638
 msgid "Corrupt secondary header."
-msgstr ""
+msgstr "Header secondario corrotto"
 
 #: ../plugins/vorbis/vcedit.c:659
 msgid "EOF before end of Vorbis headers."
-msgstr ""
+msgstr "Fine del file raggiunta prima della fine dell'intestazione Vorbis."
 
 #: ../plugins/vorbis/vcedit.c:834
 msgid "Corrupt or missing data, continuing..."
-msgstr ""
+msgstr "Dati persi o corrotti, continuo..."
 
 #: ../plugins/vorbis/vcedit.c:874
 msgid "Error writing stream to output. Output stream may be corrupted or truncated."
