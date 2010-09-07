@@ -33,6 +33,10 @@ msgstr "Aggiungi file(s) alla playlist..."
 msgid "Add folder(s) to playlist..."
 msgstr "Aggiungi cartella(e) alla playlist"
 
+#: ../plugins/gtkui/interface.c:179 ../plugins/gtkui/deadbeef.glade.h:6
+msgid "Add Audio CD"
+msgstr "Aggiungi Audio CD"
+
 #: ../plugins/gtkui/callbacks.c:192
 msgid "Follow symlinks"
 msgstr "Segui i link simbolici"
