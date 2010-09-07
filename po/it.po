@@ -1,9 +1,9 @@
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: DeadBeef\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-09-06 04:25+0000\n"
+"POT-Creation-Date: 2010-09-07 04:26+0000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: paolo stivanin <paolostivanin@gmail.com>\n"
 "Language-Team: Italian\n"
@@ -310,7 +310,7 @@ msgstr "Colonna intestazione"
 #: ../plugins/gtkui/interface.c:304
 #: ../plugins/gtkui/deadbeef.glade.h:130
 msgid "Tabs"
-msgstr "Tabs"
+msgstr "Schede"
 
 #: ../plugins/gtkui/interface.c:308
 #: ../plugins/gtkui/deadbeef.glade.h:33
@@ -381,7 +381,7 @@ msgstr "Stop finita la canzone"
 #: ../plugins/gtkui/interface.c:392
 #: ../plugins/gtkui/deadbeef.glade.h:155
 msgid "_Help"
-msgstr "§_Aiuto"
+msgstr "_Aiuto"
 
 #: ../plugins/gtkui/interface.c:400
 #: ../plugins/gtkui/deadbeef.glade.h:149
@@ -514,7 +514,7 @@ msgstr "File numero"
 #: ../plugins/gtkui/interface.c:1403
 #: ../plugins/gtkui/mainplaylist.c:300
 msgid "Playing"
-msgstr "Riproducendo"
+msgstr "Riproduzione"
 
 #: ../plugins/gtkui/interface.c:1404
 msgid "Album Art"
