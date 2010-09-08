@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: lxde.deadbeef\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-09-08 04:26+0000\n"
-"PO-Revision-Date: 2010-09-08 17:32+0100\n"
+"PO-Revision-Date: 2010-09-08 17:41+0100\n"
 "Last-Translator: Miguel Anxo Bouzada <mbouzada@gmail.com>\n"
 "Language-Team: Galician <proxecto@trasno.net>\n"
 "MIME-Version: 1.0\n"
@@ -27,19 +27,19 @@ msgstr "Outros ficheiros (*)"
 
 #: ../plugins/gtkui/callbacks.c:118
 msgid "Open file(s)..."
-msgstr ""
+msgstr "Abrir ficheiro(s)"
 
 #: ../plugins/gtkui/callbacks.c:151
 msgid "Add file(s) to playlist..."
-msgstr ""
+msgstr "Engadir ficheiro(s) á lista de reprodución..."
 
 #: ../plugins/gtkui/callbacks.c:190
 msgid "Add folder(s) to playlist..."
-msgstr ""
+msgstr "Engadir cartafol(es) á lista de reprodución..."
 
 #: ../plugins/gtkui/callbacks.c:192
 msgid "Follow symlinks"
-msgstr ""
+msgstr "Seguir ligazóns sinbólicas"
 
 #: ../plugins/gtkui/callbacks.c:677
 msgid "Failed while reading help file"
@@ -58,7 +58,7 @@ msgstr "Axuda"
 #: ../plugins/gtkui/callbacks.c:711
 #, c-format
 msgid "About DeaDBeeF %s"
-msgstr ""
+msgstr "Sobre DeaDBeeF %s"
 
 #: ../plugins/gtkui/callbacks.c:722
 #, c-format
@@ -136,17 +136,17 @@ msgstr ""
 #: ../plugins/gtkui/gtkui.c:133
 #, c-format
 msgid "1 day %d:%02d:%02d"
-msgstr ""
+msgstr "1 día %d:%02d:%02d"
 
 #: ../plugins/gtkui/gtkui.c:136
 #, c-format
 msgid "%d days %d:%02d:%02d"
-msgstr ""
+msgstr "%d días %d:%02d:%02d"
 
 #: ../plugins/gtkui/gtkui.c:145
 #, c-format
 msgid "Stopped | %d tracks | %s total playtime"
-msgstr ""
+msgstr "Detido | %d pistas | %s tempo total de reprodución"
 
 #: ../plugins/gtkui/gtkui.c:158
 msgid "Mono"
@@ -163,12 +163,12 @@ msgstr "| %4d kbps "
 
 #: ../plugins/gtkui/gtkui.c:189
 msgid "Paused | "
-msgstr ""
+msgstr "Pausado | "
 
 #: ../plugins/gtkui/gtkui.c:190
 #, c-format
 msgid "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
-msgstr ""
+msgstr "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d pistas | %s tempo total de reprodución"
 
 #: ../plugins/gtkui/gtkui.c:660
 msgid "Save Playlist As"
@@ -177,7 +177,7 @@ msgstr "Gardar a lista de reprodución como"
 #: ../plugins/gtkui/gtkui.c:669
 #: ../plugins/gtkui/gtkui.c:730
 msgid "DeaDBeeF playlist files (*.dbpl)"
-msgstr ""
+msgstr "Ficheiros de listas de reprodución DeaDBeeF (*.dbpl)"
 
 #: ../plugins/gtkui/gtkui.c:723
 msgid "Load Playlist"
@@ -200,7 +200,7 @@ msgstr "_Ficheiro"
 #: ../plugins/gtkui/interface.c:145
 #: ../plugins/gtkui/deadbeef.glade.h:157
 msgid "_Open file(s)"
-msgstr ""
+msgstr "_Abrir ficheiro(s)"
 
 #: ../plugins/gtkui/interface.c:161
 #: ../plugins/gtkui/deadbeef.glade.h:6
@@ -261,7 +261,7 @@ msgstr "Seleccionar todo"
 #: ../plugins/gtkui/interface.c:243
 #: ../plugins/gtkui/deadbeef.glade.h:25
 msgid "Deselect all"
-msgstr ""
+msgstr "Desmarcar todo"
 
 #: ../plugins/gtkui/interface.c:250
 #: ../plugins/gtkui/deadbeef.glade.h:70
@@ -271,7 +271,7 @@ msgstr "Inverter a selección"
 #: ../plugins/gtkui/interface.c:254
 #: ../plugins/gtkui/deadbeef.glade.h:120
 msgid "Selection"
-msgstr ""
+msgstr "Selección"
 
 #: ../plugins/gtkui/interface.c:261
 #: ../plugins/gtkui/plcommon.c:425
@@ -283,12 +283,12 @@ msgstr "Quitar"
 #: ../plugins/gtkui/interface.c:269
 #: ../plugins/gtkui/deadbeef.glade.h:20
 msgid "Crop"
-msgstr ""
+msgstr "Cortar"
 
 #: ../plugins/gtkui/interface.c:273
 #: ../plugins/gtkui/deadbeef.glade.h:154
 msgid "_Find"
-msgstr ""
+msgstr "_Buscar"
 
 #: ../plugins/gtkui/interface.c:285
 #: ../plugins/gtkui/interface.c:1705
@@ -304,37 +304,37 @@ msgstr "_Ver"
 #: ../plugins/gtkui/interface.c:296
 #: ../plugins/gtkui/deadbeef.glade.h:123
 msgid "Status bar"
-msgstr ""
+msgstr "Barra de estado"
 
 #: ../plugins/gtkui/interface.c:300
 #: ../plugins/gtkui/deadbeef.glade.h:18
 msgid "Column headers"
-msgstr ""
+msgstr "Cabeceiras de columna"
 
 #: ../plugins/gtkui/interface.c:304
 #: ../plugins/gtkui/deadbeef.glade.h:130
 msgid "Tabs"
-msgstr ""
+msgstr "Lapelas"
 
 #: ../plugins/gtkui/interface.c:308
 #: ../plugins/gtkui/deadbeef.glade.h:33
 msgid "Equalizer"
-msgstr ""
+msgstr "Ecualizador"
 
 #: ../plugins/gtkui/interface.c:312
 #: ../plugins/gtkui/deadbeef.glade.h:158
 msgid "_Playback"
-msgstr ""
+msgstr "_Reproducir"
 
 #: ../plugins/gtkui/interface.c:319
 #: ../plugins/gtkui/deadbeef.glade.h:86
 msgid "Order"
-msgstr ""
+msgstr "Orde"
 
 #: ../plugins/gtkui/interface.c:326
 #: ../plugins/gtkui/deadbeef.glade.h:74
 msgid "Linear"
-msgstr ""
+msgstr "Liñal"
 
 #: ../plugins/gtkui/interface.c:332
 #: ../plugins/gtkui/deadbeef.glade.h:121
@@ -344,7 +344,7 @@ msgstr ""
 #: ../plugins/gtkui/interface.c:338
 #: ../plugins/gtkui/deadbeef.glade.h:106
 msgid "Random"
-msgstr ""
+msgstr "Ao chou"
 
 #: ../plugins/gtkui/interface.c:344
 #: ../plugins/gtkui/deadbeef.glade.h:78
@@ -534,7 +534,7 @@ msgstr "Artista"
 #: ../plugins/gtkui/interface.c:1407
 #: ../plugins/gtkui/interface.c:1794
 msgid "Album"
-msgstr ""
+msgstr "Album"
 
 #: ../plugins/gtkui/interface.c:1408
 #: ../plugins/gtkui/prefwin.c:595
@@ -563,12 +563,12 @@ msgstr "Personalizado"
 #: ../plugins/gtkui/interface.c:3096
 #: ../plugins/gtkui/deadbeef.glade.h:62
 msgid "Format:"
-msgstr ""
+msgstr "Formato:"
 
 #: ../plugins/gtkui/interface.c:1433
 #: ../plugins/gtkui/deadbeef.glade.h:11
 msgid "Alignment:"
-msgstr ""
+msgstr "Aliñamento"
 
 #: ../plugins/gtkui/interface.c:1441
 msgid "Left"
@@ -659,7 +659,7 @@ msgstr ""
 #: ../plugins/gtkui/interface.c:1817
 #: ../plugins/gtkui/deadbeef.glade.h:94
 msgid "Playback"
-msgstr ""
+msgstr "Reprodución"
 
 #: ../plugins/gtkui/interface.c:1826
 #: ../plugins/gtkui/deadbeef.glade.h:16
@@ -952,12 +952,12 @@ msgstr ""
 #: ../plugins/gtkui/mainplaylist.c:301
 #: ../plugins/gtkui/search.c:434
 msgid "Artist / Album"
-msgstr ""
+msgstr "Artista / Album"
 
 #: ../plugins/gtkui/mainplaylist.c:302
 #: ../plugins/gtkui/search.c:435
 msgid "Track No"
-msgstr ""
+msgstr "Pista num."
 
 #: ../plugins/gtkui/mainplaylist.c:303
 #: ../plugins/gtkui/search.c:436
@@ -968,11 +968,11 @@ msgstr ""
 #: ../plugins/gtkui/search.c:437
 #: ../plugins/gtkui/trkproperties.c:175
 msgid "Duration"
-msgstr ""
+msgstr "Duración"
 
 #: ../plugins/gtkui/plcommon.c:323
 msgid "Delete files from disk"
-msgstr ""
+msgstr "Eliminar ficheiros do disco"
 
 #: ../plugins/gtkui/plcommon.c:324
 msgid ""
