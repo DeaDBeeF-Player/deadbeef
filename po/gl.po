@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: lxde.deadbeef\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-09-08 04:26+0000\n"
-"PO-Revision-Date: 2010-09-08 17:41+0100\n"
+"PO-Revision-Date: 2010-09-08 17:50+0100\n"
 "Last-Translator: Miguel Anxo Bouzada <mbouzada@gmail.com>\n"
 "Language-Team: Galician <proxecto@trasno.net>\n"
 "MIME-Version: 1.0\n"
@@ -19,7 +19,7 @@ msgstr ""
 
 #: ../plugins/gtkui/callbacks.c:97
 msgid "Supported sound formats"
-msgstr ""
+msgstr "Formatos de son admitidos"
 
 #: ../plugins/gtkui/callbacks.c:108
 msgid "Other files (*)"
@@ -107,7 +107,7 @@ msgstr ""
 
 #: ../plugins/gtkui/eq.c:292
 msgid "Enable"
-msgstr ""
+msgstr "Activar"
 
 #: ../plugins/gtkui/eq.c:300
 msgid "Zero All"
@@ -339,7 +339,7 @@ msgstr "Liñal"
 #: ../plugins/gtkui/interface.c:332
 #: ../plugins/gtkui/deadbeef.glade.h:121
 msgid "Shuffle"
-msgstr ""
+msgstr "Barallar"
 
 #: ../plugins/gtkui/interface.c:338
 #: ../plugins/gtkui/deadbeef.glade.h:106
@@ -501,7 +501,7 @@ msgstr "Título:"
 #: ../plugins/gtkui/interface.c:1386
 #: ../plugins/gtkui/deadbeef.glade.h:32
 msgid "Enter new column title here"
-msgstr ""
+msgstr "Introduza aquí o novo título da colunma"
 
 #: ../plugins/gtkui/interface.c:1394
 #: ../plugins/gtkui/deadbeef.glade.h:137
@@ -524,7 +524,7 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:1405
 msgid "Artist - Album"
-msgstr ""
+msgstr "Artista - Álbum"
 
 #: ../plugins/gtkui/interface.c:1406
 #: ../plugins/gtkui/plcommon.c:877
@@ -534,7 +534,7 @@ msgstr "Artista"
 #: ../plugins/gtkui/interface.c:1407
 #: ../plugins/gtkui/interface.c:1794
 msgid "Album"
-msgstr "Album"
+msgstr "Álbum"
 
 #: ../plugins/gtkui/interface.c:1408
 #: ../plugins/gtkui/prefwin.c:595
@@ -552,7 +552,7 @@ msgstr "Pista"
 
 #: ../plugins/gtkui/interface.c:1411
 msgid "Band / Album Artist"
-msgstr ""
+msgstr "Banda / Álbum Artista"
 
 #: ../plugins/gtkui/interface.c:1412
 #: ../plugins/gtkui/plcommon.c:881
@@ -610,12 +610,12 @@ msgstr "_Aceptar"
 #: ../plugins/gtkui/interface.c:1725
 #: ../plugins/gtkui/deadbeef.glade.h:88
 msgid "Output plugin:"
-msgstr ""
+msgstr "Engadido de saída:"
 
 #: ../plugins/gtkui/interface.c:1738
 #: ../plugins/gtkui/deadbeef.glade.h:87
 msgid "Output device:"
-msgstr ""
+msgstr "Dispositivo de saída:"
 
 #: ../plugins/gtkui/interface.c:1747
 #: ../plugins/gtkui/deadbeef.glade.h:122
@@ -699,7 +699,7 @@ msgstr ""
 #: ../plugins/gtkui/interface.c:1874
 #: ../plugins/gtkui/deadbeef.glade.h:63
 msgid "GUI"
-msgstr ""
+msgstr "IGU"
 
 #: ../plugins/gtkui/interface.c:1888
 #: ../plugins/gtkui/interface.c:1932
@@ -725,22 +725,22 @@ msgstr ""
 #: ../plugins/gtkui/interface.c:1941
 #: ../plugins/gtkui/deadbeef.glade.h:80
 msgid "Middle"
-msgstr ""
+msgstr "Medio"
 
 #: ../plugins/gtkui/interface.c:1948
 #: ../plugins/gtkui/deadbeef.glade.h:73
 msgid "Light"
-msgstr ""
+msgstr "Claro"
 
 #: ../plugins/gtkui/interface.c:1955
 #: ../plugins/gtkui/deadbeef.glade.h:23
 msgid "Dark"
-msgstr ""
+msgstr "Escuro"
 
 #: ../plugins/gtkui/interface.c:1986
 #: ../plugins/gtkui/deadbeef.glade.h:15
 msgid "Base"
-msgstr ""
+msgstr "Base"
 
 #: ../plugins/gtkui/interface.c:1993
 #: ../plugins/gtkui/deadbeef.glade.h:129
@@ -952,7 +952,7 @@ msgstr ""
 #: ../plugins/gtkui/mainplaylist.c:301
 #: ../plugins/gtkui/search.c:434
 msgid "Artist / Album"
-msgstr "Artista / Album"
+msgstr "Artista / Álbum"
 
 #: ../plugins/gtkui/mainplaylist.c:302
 #: ../plugins/gtkui/search.c:435
@@ -1004,16 +1004,16 @@ msgstr ""
 #: ../plugins/gtkui/plcommon.c:719
 #: ../plugins/gtkui/plcommon.c:844
 msgid "Add column"
-msgstr ""
+msgstr "Engadir columna"
 
 #: ../plugins/gtkui/plcommon.c:749
 #: ../plugins/gtkui/plcommon.c:848
 msgid "Edit column"
-msgstr ""
+msgstr "Editar columna"
 
 #: ../plugins/gtkui/plcommon.c:852
 msgid "Remove column"
-msgstr ""
+msgstr "Quitar columna"
 
 #: ../plugins/gtkui/plcommon.c:862
 msgid "Group by"
@@ -1029,7 +1029,7 @@ msgstr ""
 
 #: ../plugins/gtkui/pluginconf.c:41
 msgid "Open file..."
-msgstr ""
+msgstr "Abrir ficheiro..."
 
 #: ../plugins/gtkui/pluginconf.c:142
 #, c-format
@@ -1038,7 +1038,7 @@ msgstr ""
 
 #: ../plugins/gtkui/prefwin.c:98
 msgid "Default Audio Device"
-msgstr ""
+msgstr "Dispositivo de son predeterminado"
 
 #: ../plugins/gtkui/prefwin.c:312
 msgid "Add"
@@ -1093,7 +1093,7 @@ msgstr "Non"
 
 #: ../plugins/gtkui/trkproperties.c:182
 msgid "Codec"
-msgstr ""
+msgstr "Codec"
 
 #: ../plugins/gtkui/trkproperties.c:250
 #: ../plugins/gtkui/trkproperties.c:262
@@ -1197,6 +1197,8 @@ msgid ""
 "2.3 (Recommended)\n"
 "2.4"
 msgstr ""
+"2.3 (Recomendado)\n"
+"2.4"
 
 #: ../plugins/gtkui/deadbeef.glade.h:26
 msgid ""
@@ -1204,6 +1206,9 @@ msgid ""
 "Track\n"
 "Album"
 msgstr ""
+"Desactivar\n"
+"Pista\n"
+"Álbum"
 
 #: ../plugins/gtkui/deadbeef.glade.h:35
 msgid ""
@@ -1225,6 +1230,8 @@ msgid ""
 "Left\n"
 "Right"
 msgstr ""
+"Esquerda\n"
+"Dereita"
 
 #: ../plugins/gtkui/support.c:90
 #: ../plugins/gtkui/support.c:114
