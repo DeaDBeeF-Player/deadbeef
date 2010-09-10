@@ -19,3 +19,4 @@ intl/plural.c
 plugins/gtkui/deadbeef.glade
 plugins/gtkui/support.c
 plugins/vorbis/vcedit.c
+plugins/wildmidi/wildmidiplug.c
