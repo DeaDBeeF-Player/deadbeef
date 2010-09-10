@@ -2,20 +2,21 @@
 # Copyright (C) 2009-2001 Alexey Yakovenko <waker@users.sourceforge.net>
 # This file is distributed under the same license as the Deadbeef package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: deadbeef\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-08-31 04:25+0000\n"
+"POT-Creation-Date: 2010-09-10 15:02+0200\n"
 "PO-Revision-Date: 2010-05-24 00:21+0100\n"
 "Last-Translator: Yarema aka Knedlyk <yupadmin@gmail.com>\n"
 "Language-Team: UKRAINIAN <translate@linux.org.ua>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: \n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Poedit-Language: Ukrainian\n"
 "X-Poedit-SourceCharset: utf-8\n"
 "X-Poedit-Country: UKRAINE\n"
@@ -170,8 +171,11 @@ msgstr "На паузі |"
 
 #: ../plugins/gtkui/gtkui.c:190
 #, c-format
-msgid "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
-msgstr "%s%s %s| %dГц | %d біт | %s | %d:%02d / %s | %d треків | %s повна тривалість програвання"
+msgid ""
+"%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
+msgstr ""
+"%s%s %s| %dГц | %d біт | %s | %d:%02d / %s | %d треків | %s повна тривалість "
+"програвання"
 
 #: ../plugins/gtkui/gtkui.c:660
 msgid "Save Playlist As"
@@ -576,7 +580,9 @@ msgstr "Використовувати пікове значення"
 
 #: ../plugins/gtkui/interface.c:1804 ../plugins/gtkui/deadbeef.glade.h:7
 msgid "Add files from command line (or file manager) to this playlist:"
-msgstr "Додати файли з командної стрічки (або менеджера файлів) до цього списку програвання:"
+msgstr ""
+"Додати файли з командної стрічки (або менеджера файлів) до цього списку "
+"програвання:"
 
 #: ../plugins/gtkui/interface.c:1813 ../plugins/gtkui/deadbeef.glade.h:110
 msgid "Resume previous session on startup"
@@ -657,7 +663,8 @@ msgstr "Кольори смужки вкладок"
 
 #: ../plugins/gtkui/interface.c:2002 ../plugins/gtkui/deadbeef.glade.h:90
 msgid "Override (looses GTK treeview theming, but speeds up rendering)"
-msgstr "Перезаписати (втрачаються  налаштування GTK, але пришвидшується візуалізація)"
+msgstr ""
+"Перезаписати (втрачаються  налаштування GTK, але пришвидшується візуалізація)"
 
 #: ../plugins/gtkui/interface.c:2011 ../plugins/gtkui/deadbeef.glade.h:34
 msgid "Even row"
@@ -990,7 +997,8 @@ msgstr "Опції:\n"
 #: ../main.c:91
 #, c-format
 msgid "   --help  or  -h     Print help (this message) and exit\n"
-msgstr "   --help  або  -h     Показати цю допомогу (це повідомлення) і вийти\n"
+msgstr ""
+"   --help  або  -h     Показати цю допомогу (це повідомлення) і вийти\n"
 
 #: ../main.c:92
 #, c-format
@@ -1055,8 +1063,12 @@ msgstr ""
 
 #: ../main.c:105
 #, c-format
-msgid "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n"
-msgstr "                      наприклад: --nowplaying \"%%a - %%t\" повинно показати \"виконавець - назва\"\n"
+msgid ""
+"                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist "
+"- title\"\n"
+msgstr ""
+"                      наприклад: --nowplaying \"%%a - %%t\" повинно показати "
+"\"виконавець - назва\"\n"
 
 #: ../playlist.c:377 ../playlist.c:2289
 msgid "Default"
@@ -1133,7 +1145,9 @@ msgstr "Помилка читання початкового пакету заг
 
 #: ../plugins/vorbis/vcedit.c:237
 msgid "Couldn't get enough memory to register new stream serial number."
-msgstr "Не можу отримати достатньо пам’яті для реєстрації нового серійного номера потоку."
+msgstr ""
+"Не можу отримати достатньо пам’яті для реєстрації нового серійного номера "
+"потоку."
 
 #: ../plugins/vorbis/vcedit.c:505
 msgid "Input truncated or empty."
@@ -1168,8 +1182,18 @@ msgid "Corrupt or missing data, continuing..."
 msgstr "Пошкоджено або пропущено заголовки, продовжую..."
 
 #: ../plugins/vorbis/vcedit.c:874
-msgid "Error writing stream to output. Output stream may be corrupted or truncated."
-msgstr "Помилка запису потоку до виходу. Вихідний потік, можливо, пошкоджено або спотворено."
+msgid ""
+"Error writing stream to output. Output stream may be corrupted or truncated."
+msgstr ""
+"Помилка запису потоку до виходу. Вихідний потік, можливо, пошкоджено або "
+"спотворено."
+
+#: ../plugins/wildmidi/wildmidiplug.c:162
+#, c-format
+msgid ""
+"wildmidi: freepats config file not found. Please install timidity-freepats "
+"package, or specify path to freepats.cfg in the plugin settings."
+msgstr ""
 
 #~ msgid "Sound (adv.)"
 #~ msgstr "Звук (розш.)"

@@ -16,10 +16,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: deadbeef\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-09-02 04:25+0000\n"
+"POT-Creation-Date: 2010-09-10 15:02+0200\n"
 "PO-Revision-Date: 2010-09-02 17:30+01:00\n"
 "Last-Translator: Joe Hansen <joedalton2@yahoo.dk>\n"
 "Language-Team: \n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -603,7 +604,8 @@ msgstr "Replaygains niveauskala"
 
 #: ../plugins/gtkui/interface.c:1804 ../plugins/gtkui/deadbeef.glade.h:7
 msgid "Add files from command line (or file manager) to this playlist:"
-msgstr "Tilføj filer fra kommandolinje (eller filhåndtering) til afspilningslisten:"
+msgstr ""
+"Tilføj filer fra kommandolinje (eller filhåndtering) til afspilningslisten:"
 
 #: ../plugins/gtkui/interface.c:1813 ../plugins/gtkui/deadbeef.glade.h:110
 msgid "Resume previous session on startup"
@@ -959,10 +961,10 @@ msgstr "Plads"
 msgid "Key combination"
 msgstr "Tastekombination"
 
-#. output plugin selection
 # Mon ikke det er et udvidelsesmodul som gør at man kan sende lyd ud via
 # ALSA, jeg vil mene det skal være "ALSA-uddataudvidelsesmodul" eller
 # "Uddataudvidelsesmodul til ALSA"
+#. output plugin selection
 #: ../plugins/gtkui/prefwin.c:464 ../plugins/gtkui/prefwin.c:676
 #: ../plugins.c:872
 msgid "ALSA output plugin"
@@ -1214,4 +1216,9 @@ msgstr ""
 "Fejl ved skrivning af strøm til uddata. Uddatastrøm er måske ødelagt eller "
 "afkortet."
 
-
+#: ../plugins/wildmidi/wildmidiplug.c:162
+#, c-format
+msgid ""
+"wildmidi: freepats config file not found. Please install timidity-freepats "
+"package, or specify path to freepats.cfg in the plugin settings."
+msgstr ""
