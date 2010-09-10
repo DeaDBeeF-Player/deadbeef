@@ -389,9 +389,37 @@ tabstrip_need_arrows (DdbTabStrip *ts) {
 }
 
 void
+tabstrip_adjust_hscroll (DdbTabStrip *ts) {
+    GtkWidget *widget = GTK_WIDGET (ts);
+    ts->hscrollpos = deadbeef->conf_get_int ("gtkui.tabscroll", 0);
+    if (deadbeef->plt_get_count () > 0) {
+        int need_arrows = tabstrip_need_arrows (ts);
+        if (need_arrows) {
+            int w = 0;
+            int cnt = deadbeef->plt_get_count ();
+            for (int idx = 0; idx < cnt; idx++) {
+                w += ddb_tabstrip_get_tab_width (ts, idx) - tab_overlap_size;
+            }
+            w += tab_overlap_size;
+            if (ts->hscrollpos > w - (widget->allocation.width - arrow_widget_width*2)) {
+                ts->hscrollpos = w - (widget->allocation.width - arrow_widget_width*2);
+                deadbeef->conf_set_int ("gtkui.tabscroll", ts->hscrollpos);
+            }
+        }
+        else {
+            ts->hscrollpos = 0;
+            deadbeef->conf_set_int ("gtkui.tabscroll", ts->hscrollpos);
+        }
+    }
+}
+
+void
 tabstrip_render (DdbTabStrip *ts) {
     GtkWidget *widget = GTK_WIDGET (ts);
     GdkDrawable *backbuf = gtk_widget_get_window (widget);
+
+    tabstrip_adjust_hscroll (ts);
+
     int cnt = deadbeef->plt_get_count ();
     int hscroll = ts->hscrollpos;
 
@@ -717,6 +745,7 @@ on_tabstrip_button_press_event           (GtkWidget       *widget,
                 if (ts->hscrollpos < 0) {
                     ts->hscrollpos = 0;
                 }
+                deadbeef->conf_set_int ("gtkui.tabscroll", ts->hscrollpos);
                 gtk_widget_queue_draw (widget);
                 return FALSE;
             }
@@ -731,6 +760,7 @@ on_tabstrip_button_press_event           (GtkWidget       *widget,
                 if (ts->hscrollpos > w - (widget->allocation.width - arrow_widget_width*2)) {
                     ts->hscrollpos = w - (widget->allocation.width - arrow_widget_width*2);
                 }
+                deadbeef->conf_set_int ("gtkui.tabscroll", ts->hscrollpos);
                 gtk_widget_queue_draw (widget);
                 return FALSE;
             }
@@ -810,28 +840,13 @@ on_tabstrip_button_release_event         (GtkWidget       *widget,
     return FALSE;
 }
 
-
 gboolean
 on_tabstrip_configure_event              (GtkWidget       *widget,
                                         GdkEventConfigure *event)
 {
     draw_init_font (widget->style);
     DdbTabStrip *ts = DDB_TABSTRIP (widget);
-    int need_arrows = tabstrip_need_arrows (ts);
-    if (need_arrows) {
-        int w = 0;
-        int cnt = deadbeef->plt_get_count ();
-        for (int idx = 0; idx < cnt; idx++) {
-            w += ddb_tabstrip_get_tab_width (ts, idx) - tab_overlap_size;
-        }
-        w += tab_overlap_size;
-        if (ts->hscrollpos > w - (widget->allocation.width - arrow_widget_width*2)) {
-            ts->hscrollpos = w - (widget->allocation.width - arrow_widget_width*2);
-        }
-    }
-    else {
-        ts->hscrollpos = 0;
-    }
+    tabstrip_adjust_hscroll (ts);
     int height = draw_get_font_size () + 13;
     if (height != widget->allocation.height) {
         gtk_widget_set_size_request (widget, -1, height);
