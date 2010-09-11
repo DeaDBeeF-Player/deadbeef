@@ -2,19 +2,19 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: lxde.deadbeef\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-09-10 15:02+0200\n"
+"POT-Creation-Date: 2010-09-11 04:23+0000\n"
 "PO-Revision-Date: 2010-09-09 11:09+0100\n"
 "Last-Translator: Miguel Anxo Bouzada <mbouzada@gmail.com>\n"
 "Language-Team: Galician <proxecto@trasno.net>\n"
-"Language: gl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: gl\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-Language: Galician\n"
 
@@ -167,10 +167,8 @@ msgstr "Pausado | "
 
 #: ../plugins/gtkui/gtkui.c:190
 #, c-format
-msgid ""
-"%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
-msgstr ""
-"%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d pistas | Tempo total:  %s"
+msgid "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
+msgstr "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d pistas | Tempo total:  %s"
 
 #: ../plugins/gtkui/gtkui.c:660
 msgid "Save Playlist As"
@@ -575,9 +573,7 @@ msgstr "Escala de límite de normalización de volume"
 
 #: ../plugins/gtkui/interface.c:1804 ../plugins/gtkui/deadbeef.glade.h:7
 msgid "Add files from command line (or file manager) to this playlist:"
-msgstr ""
-"Engadir ficheiros desde a liña de ordes (ou xestor de ficheiros) a esta "
-"lista de reprodución:"
+msgstr "Engadir ficheiros desde a liña de ordes (ou xestor de ficheiros) a esta lista de reprodución:"
 
 #: ../plugins/gtkui/interface.c:1813 ../plugins/gtkui/deadbeef.glade.h:110
 msgid "Resume previous session on startup"
@@ -1036,8 +1032,7 @@ msgstr "   --random           Canción ao chou da lista de reprodución\n"
 #: ../main.c:100
 #, c-format
 msgid "   --queue            Append file(s) to existing playlist\n"
-msgstr ""
-"   --queue            Engadir ficheiro(s) á lista de reprodución existente\n"
+msgstr "   --queue            Engadir ficheiro(s) á lista de reprodución existente\n"
 
 #: ../main.c:101
 #, c-format
@@ -1057,12 +1052,8 @@ msgstr ""
 
 #: ../main.c:105
 #, c-format
-msgid ""
-"                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist "
-"- title\"\n"
-msgstr ""
-"                      e.g.: --nowplaying \"%%a - %%t\" mostraría \"artista - "
-"\"título\"\n"
+msgid "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n"
+msgstr "                      e.g.: --nowplaying \"%%a - %%t\" mostraría \"artista - \"título\"\n"
 
 #: ../playlist.c:377 ../playlist.c:2289
 msgid "Default"
@@ -1139,9 +1130,7 @@ msgstr "Produciuse un erro ao ler o paquete de cabeceira inicial."
 
 #: ../plugins/vorbis/vcedit.c:237
 msgid "Couldn't get enough memory to register new stream serial number."
-msgstr ""
-"Non foi posíbel obter memoria abondo para rexistrar o número de serie dun "
-"novo fluxo."
+msgstr "Non foi posíbel obter memoria abondo para rexistrar o número de serie dun novo fluxo."
 
 #: ../plugins/vorbis/vcedit.c:505
 msgid "Input truncated or empty."
@@ -1176,15 +1165,10 @@ msgid "Corrupt or missing data, continuing..."
 msgstr "Datos danados ou incompletos, continuando..."
 
 #: ../plugins/vorbis/vcedit.c:874
-msgid ""
-"Error writing stream to output. Output stream may be corrupted or truncated."
-msgstr ""
-"Produciuse un erro ao escribir o fluxo á saída. O fluxo de saída pode estar "
-"danado ou truncado."
+msgid "Error writing stream to output. Output stream may be corrupted or truncated."
+msgstr "Produciuse un erro ao escribir o fluxo á saída. O fluxo de saída pode estar danado ou truncado."
 
 #: ../plugins/wildmidi/wildmidiplug.c:162
 #, c-format
-msgid ""
-"wildmidi: freepats config file not found. Please install timidity-freepats "
-"package, or specify path to freepats.cfg in the plugin settings."
-msgstr ""
+msgid "wildmidi: freepats config file not found. Please install timidity-freepats package, or specify path to freepats.cfg in the plugin settings."
+msgstr "wildmidi: mon se atopa o ficheiro de configuración de freepats. Instale o paquete timidity-freepats, ou especifique a ruta para freepats.cfg na configuración do engadido."
