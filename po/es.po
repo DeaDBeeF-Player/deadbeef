@@ -39,7 +39,7 @@ msgstr "Añadir carpeta(s) a la lista de reproducción"
 
 #: ../plugins/gtkui/callbacks.c:192
 msgid "Follow symlinks"
-msgstr "Seguir enlaces simbólicos"
+msgstr "Seguir enlace simbólico"
 
 #: ../plugins/gtkui/callbacks.c:677
 msgid "Failed while reading help file"
@@ -82,7 +82,7 @@ msgstr "Nueva lista de reproducción"
 
 #: ../plugins/gtkui/eq.c:113
 msgid "Save DeaDBeeF EQ Preset"
-msgstr "Guardar ajustes del Ec de DeaDBeeF"
+msgstr "Guardar Ajustes del Ec de DeaDBeeF"
 
 #: ../plugins/gtkui/eq.c:120
 msgid "DeaDBeeF EQ preset files (*.ddbeq)"
@@ -90,7 +90,7 @@ msgstr "Ajustes del Ec de DeaDBeeF (*.ddbeq)"
 
 #: ../plugins/gtkui/eq.c:151
 msgid "Load DeaDBeeF EQ Preset..."
-msgstr "Cargar ajustes del Ec de DeaDBeef..."
+msgstr "Cargar Ajustes del Ec de DeaDBeef..."
 
 #: ../plugins/gtkui/eq.c:155
 msgid "DeaDBeeF EQ presets (*.ddbeq)"
@@ -98,7 +98,7 @@ msgstr "Ajustes del Ec de DeaDBeeF (*.ddbeq)"
 
 #: ../plugins/gtkui/eq.c:214
 msgid "Import Foobar2000 EQ Preset..."
-msgstr "Importar ajustes del Ec de Foobar2000..."
+msgstr "Importar Ajustes del Ec de Foobar2000..."
 
 #: ../plugins/gtkui/eq.c:218
 msgid "Foobar2000 EQ presets (*.feq)"
@@ -209,7 +209,7 @@ msgstr "Añadir carpeta(s)"
 #: ../plugins/gtkui/interface.c:177 ../plugins/gtkui/interface.c:2969
 #: ../plugins/gtkui/deadbeef.glade.h:9
 msgid "Add location"
-msgstr "Añadir ubicación"
+msgstr "Añadir dirección"
 
 #: ../plugins/gtkui/interface.c:186 ../plugins/gtkui/deadbeef.glade.h:83
 msgid "New playlist"
@@ -360,7 +360,7 @@ msgstr "Buscar"
 
 #: ../plugins/gtkui/interface.c:876 ../plugins/gtkui/deadbeef.glade.h:124
 msgid "Stop"
-msgstr "Detener"
+msgstr "Parar"
 
 #: ../plugins/gtkui/interface.c:884 ../plugins/gtkui/deadbeef.glade.h:92
 msgid "Play"
@@ -408,7 +408,7 @@ msgid ""
 "<b>Make backup copies</b> before using."
 msgstr ""
 "<b>AVISO</b>: la edición de etiquetas está aún en desarrollo.\n"
-"<b>Haga copias de seguridad</b> antes de intentarlo."
+"<b>Haz copias de seguridad</b> antes de intentarlo."
 
 #: ../plugins/gtkui/interface.c:1206 ../plugins/gtkui/deadbeef.glade.h:147
 msgid "_Apply"
@@ -547,11 +547,11 @@ msgstr "Dispositivo de salida:"
 
 #: ../plugins/gtkui/interface.c:1747 ../plugins/gtkui/deadbeef.glade.h:122
 msgid "Sound"
-msgstr "Sonido"
+msgstr "Audio"
 
 #: ../plugins/gtkui/interface.c:1756 ../plugins/gtkui/deadbeef.glade.h:12
 msgid "Allow dynamic samplerate switching"
-msgstr "Permitir cambio dinámico de frecuencia"
+msgstr "Permitir  cambio dinámico de frecuencia"
 
 #: ../plugins/gtkui/interface.c:1764 ../plugins/gtkui/deadbeef.glade.h:111
 msgid "Samplerate conversion quality:"
@@ -571,11 +571,11 @@ msgstr "Normalizar con replaygain"
 
 #: ../plugins/gtkui/interface.c:1804 ../plugins/gtkui/deadbeef.glade.h:7
 msgid "Add files from command line (or file manager) to this playlist:"
-msgstr "Agregar archivos desde la línea de comandos (o el gestor de archivos) a la lista de reproducción:"
+msgstr "Agregar archivos desde la línea de comandos (o administrador de archivos) a la lista de reproducción:"
 
 #: ../plugins/gtkui/interface.c:1813 ../plugins/gtkui/deadbeef.glade.h:110
 msgid "Resume previous session on startup"
-msgstr "Al inicio, reanudar la sesión anterior"
+msgstr "Reanudar la sesión anterior al inicio"
 
 #: ../plugins/gtkui/interface.c:1817 ../plugins/gtkui/deadbeef.glade.h:94
 msgid "Playback"
@@ -591,7 +591,7 @@ msgstr "Botón central del ratón cierra la lista de reproducción."
 
 #: ../plugins/gtkui/interface.c:1834 ../plugins/gtkui/deadbeef.glade.h:67
 msgid "Hide system tray icon"
-msgstr "Ocultar icono de la bandeja del sistema"
+msgstr "Esconder icono de la bandeja del sistema"
 
 #: ../plugins/gtkui/interface.c:1838 ../plugins/gtkui/deadbeef.glade.h:139
 msgid "Use bold font for currently playing track"
@@ -599,7 +599,7 @@ msgstr "Usar negrita para la pista en reproducción"
 
 #: ../plugins/gtkui/interface.c:1842 ../plugins/gtkui/deadbeef.glade.h:66
 msgid "Hide \"Delete from disk\" context menu item"
-msgstr "Ocultar \"Borrar desde el disco\" del menú contextual"
+msgstr "Esconder \"Borrar desde el disco\" del menú contextual"
 
 #: ../plugins/gtkui/interface.c:1850 ../plugins/gtkui/deadbeef.glade.h:134
 msgid "Titlebar text while playing:"
@@ -688,19 +688,19 @@ msgstr "Colores:"
 
 #: ../plugins/gtkui/interface.c:2102 ../plugins/gtkui/deadbeef.glade.h:31
 msgid "Enable Proxy Server"
-msgstr "Activar servidor proxy"
+msgstr "Activar Servidor Proxy"
 
 #: ../plugins/gtkui/interface.c:2110 ../plugins/gtkui/deadbeef.glade.h:101
 msgid "Proxy Server Address:"
-msgstr "Dirección del proxy:"
+msgstr "Dirección:"
 
 #: ../plugins/gtkui/interface.c:2124 ../plugins/gtkui/deadbeef.glade.h:102
 msgid "Proxy Server Port:"
-msgstr "Puerto del proxy:"
+msgstr "Puerto:"
 
 #: ../plugins/gtkui/interface.c:2138 ../plugins/gtkui/deadbeef.glade.h:103
 msgid "Proxy Type:"
-msgstr "Tipo de proxy:"
+msgstr "Tipo:"
 
 #: ../plugins/gtkui/interface.c:2157 ../plugins/gtkui/deadbeef.glade.h:104
 msgid "Proxy Username:"
@@ -846,7 +846,7 @@ msgid ""
 "Files will be lost. Proceed?\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
 msgstr ""
-"Perderá los archivos. ¿Desea continuar?\n"
+"Perderás los archivos. ¿Deseas continuar?\n"
 "(Éste aviso puede desactivarse en las opciones del plugin GTKUI)"
 
 #: ../plugins/gtkui/plcommon.c:325 ../plugins/gtkui/trkproperties.c:56
@@ -904,7 +904,7 @@ msgstr "Configurar %s"
 
 #: ../plugins/gtkui/prefwin.c:98
 msgid "Default Audio Device"
-msgstr "Dispositivo predeterminado de audio"
+msgstr "Dispositivo de Audio por Defecto"
 
 #: ../plugins/gtkui/prefwin.c:312
 msgid "Add"
@@ -926,7 +926,7 @@ msgstr "Combinación de teclas"
 #: ../plugins/gtkui/prefwin.c:464 ../plugins/gtkui/prefwin.c:676
 #: ../plugins.c:872
 msgid "ALSA output plugin"
-msgstr "Complemento de salida ALSA"
+msgstr "Plugin de salida ALSA"
 
 #: ../plugins/gtkui/progress.c:64
 msgid "Initializing..."
@@ -942,11 +942,11 @@ msgstr "¿Deseas cerrar la ventana?"
 
 #: ../plugins/gtkui/trkproperties.c:178
 msgid "Tag Type(s)"
-msgstr "Tipo de etiqueta(s)"
+msgstr "Tipo de Etiqueta(s)"
 
 #: ../plugins/gtkui/trkproperties.c:180
 msgid "Embedded Cuesheet"
-msgstr "Hoja Cue embebida"
+msgstr "Hoja Cue Embedida"
 
 #: ../plugins/gtkui/trkproperties.c:180
 msgid "Yes"
@@ -1169,7 +1169,7 @@ msgstr "Error al escribir el flujo a la salida. El flujo de salida puede estar c
 #: ../plugins/wildmidi/wildmidiplug.c:162
 #, c-format
 msgid "wildmidi: freepats config file not found. Please install timidity-freepats package, or specify path to freepats.cfg in the plugin settings."
-msgstr "wildmidi: el archivo de configuración freepats no se puede encontrar. Por favor instale el paquete timidity-freepats o especifique la ruta a freepats.cfg en la configuración del complemento."
+msgstr "wildmidi: el archivo de configuración freepats no se puede encontrar. Por favor instale el paquete timidity-freepats o especifique la ruta a freepats.cfg en la configuración del plugin."
 
 #~ msgid "Add Audio CD"
 #~ msgstr "Añadir CD de audio"
