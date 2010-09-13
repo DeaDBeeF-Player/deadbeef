@@ -381,7 +381,7 @@ tabstrip_need_arrows (DdbTabStrip *ts) {
             return 1;
         }
     }
-    w += tab_overlap_size;
+    w += tab_overlap_size + 3;
     if (w >= widget->allocation.width) {
         return 1;
     }
@@ -400,7 +400,7 @@ tabstrip_adjust_hscroll (DdbTabStrip *ts) {
             for (int idx = 0; idx < cnt; idx++) {
                 w += ddb_tabstrip_get_tab_width (ts, idx) - tab_overlap_size;
             }
-            w += tab_overlap_size;
+            w += tab_overlap_size + 3;
             if (ts->hscrollpos > w - (widget->allocation.width - arrow_widget_width*2)) {
                 ts->hscrollpos = w - (widget->allocation.width - arrow_widget_width*2);
                 deadbeef->conf_set_int ("gtkui.tabscroll", ts->hscrollpos);
@@ -452,7 +452,6 @@ tabstrip_render (DdbTabStrip *ts) {
     int need_draw_moving = 0;
     int idx;
     int widths[cnt];
-    int fullwidth = 0;
     for (idx = 0; idx < cnt; idx++) {
         char title[100];
         plt_get_title_wrapper (idx, title, sizeof (title));
@@ -462,9 +461,7 @@ tabstrip_render (DdbTabStrip *ts) {
         if (widths[idx] < min_tab_size) {
             widths[idx] = min_tab_size;
         }
-        fullwidth += widths[idx] - tab_overlap_size;
     }
-    fullwidth += tab_overlap_size;
 
     x = -hscroll + tabs_left_margin;
 
@@ -756,7 +753,7 @@ on_tabstrip_button_press_event           (GtkWidget       *widget,
                 for (int idx = 0; idx < cnt; idx++) {
                     w += ddb_tabstrip_get_tab_width (ts, idx) - tab_overlap_size;
                 }
-                w += tab_overlap_size;
+                w += tab_overlap_size + 3;
                 if (ts->hscrollpos > w - (widget->allocation.width - arrow_widget_width*2)) {
                     ts->hscrollpos = w - (widget->allocation.width - arrow_widget_width*2);
                 }
