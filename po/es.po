@@ -2,19 +2,19 @@
 # Copyright (C) 2009-2001 Alexey Yakovenko <waker@users.sourceforge.net>
 # This file is distributed under the same license as the Deadbeef package.
 # depaz <depazzz@gmail.com>, 2010.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-09-10 15:02+0200\n"
+"POT-Creation-Date: 2010-09-12 04:26+0000\n"
 "PO-Revision-Date: 2010-05-21 18:34+0300\n"
 "Last-Translator: F.J. de Pablos <depazzz@gmail.com>\n"
 "Language-Team: Spanish\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: ../plugins/gtkui/callbacks.c:97
@@ -39,7 +39,7 @@ msgstr "Añadir carpeta(s) a la lista de reproducción"
 
 #: ../plugins/gtkui/callbacks.c:192
 msgid "Follow symlinks"
-msgstr ""
+msgstr "Seguir enlace simbólico"
 
 #: ../plugins/gtkui/callbacks.c:677
 msgid "Failed while reading help file"
@@ -166,10 +166,8 @@ msgstr "Pausado | "
 
 #: ../plugins/gtkui/gtkui.c:190
 #, c-format
-msgid ""
-"%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
-msgstr ""
-"%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d pistas | Tiempo total: %s"
+msgid "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
+msgstr "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d pistas | Tiempo total: %s"
 
 #: ../plugins/gtkui/gtkui.c:660
 msgid "Save Playlist As"
@@ -510,7 +508,7 @@ msgid "Right"
 msgstr "Derecha"
 
 #: ../plugins/gtkui/interface.c:1444 ../plugins/gtkui/deadbeef.glade.h:48
-#, fuzzy, no-c-format
+#, no-c-format
 msgid ""
 "Format conversions (start with %):\n"
 "  [a]rtist, [t]itle, al[b]um, [B]and, [C]omposer\n"
@@ -573,14 +571,13 @@ msgstr "Normalizar con replaygain"
 
 #: ../plugins/gtkui/interface.c:1804 ../plugins/gtkui/deadbeef.glade.h:7
 msgid "Add files from command line (or file manager) to this playlist:"
-msgstr ""
+msgstr "Agregar archivos desde la línea de comandos (o administrador de archivos) a la lista de reproducción:"
 
 #: ../plugins/gtkui/interface.c:1813 ../plugins/gtkui/deadbeef.glade.h:110
 msgid "Resume previous session on startup"
-msgstr ""
+msgstr "Reanudar la sesión anterior al inicio"
 
 #: ../plugins/gtkui/interface.c:1817 ../plugins/gtkui/deadbeef.glade.h:94
-#, fuzzy
 msgid "Playback"
 msgstr "_Reproducción"
 
@@ -594,23 +591,23 @@ msgstr "Botón central del ratón cierra la lista de reproducción."
 
 #: ../plugins/gtkui/interface.c:1834 ../plugins/gtkui/deadbeef.glade.h:67
 msgid "Hide system tray icon"
-msgstr ""
+msgstr "Esconder icono de la bandeja del sistema"
 
 #: ../plugins/gtkui/interface.c:1838 ../plugins/gtkui/deadbeef.glade.h:139
 msgid "Use bold font for currently playing track"
-msgstr ""
+msgstr "Usar negrita para la pista en reproducción"
 
 #: ../plugins/gtkui/interface.c:1842 ../plugins/gtkui/deadbeef.glade.h:66
 msgid "Hide \"Delete from disk\" context menu item"
-msgstr ""
+msgstr "Esconder \"Borrar desde el disco\" del menú contextual"
 
 #: ../plugins/gtkui/interface.c:1850 ../plugins/gtkui/deadbeef.glade.h:134
 msgid "Titlebar text while playing:"
-msgstr ""
+msgstr "Texto a mostrar en la barra de título mientras se reproduce:"
 
 #: ../plugins/gtkui/interface.c:1864 ../plugins/gtkui/deadbeef.glade.h:135
 msgid "Titlebar text while stopped:"
-msgstr ""
+msgstr "Texto a mostrar en la barra de título mientras no se reproduce:"
 
 #: ../plugins/gtkui/interface.c:1874 ../plugins/gtkui/deadbeef.glade.h:63
 msgid "GUI"
@@ -687,7 +684,7 @@ msgstr "Colores de lista de reproducción"
 
 #: ../plugins/gtkui/interface.c:2093 ../plugins/gtkui/deadbeef.glade.h:17
 msgid "Colors"
-msgstr ""
+msgstr "Colores:"
 
 #: ../plugins/gtkui/interface.c:2102 ../plugins/gtkui/deadbeef.glade.h:31
 msgid "Enable Proxy Server"
@@ -961,7 +958,7 @@ msgstr "No"
 
 #: ../plugins/gtkui/trkproperties.c:182
 msgid "Codec"
-msgstr ""
+msgstr "Codec"
 
 #: ../plugins/gtkui/trkproperties.c:250 ../plugins/gtkui/trkproperties.c:262
 msgid "Key"
@@ -1038,9 +1035,7 @@ msgstr "   --queue            Añadir archivo(s) a la lista de reproducción\n"
 #: ../main.c:101
 #, c-format
 msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
-msgstr ""
-"   --nowplaying FMT   Mostrar nombre de la pista formateado a través de "
-"stdout\n"
+msgstr "   --nowplaying FMT   Mostrar nombre de la pista formateado a través de stdout\n"
 
 #: ../main.c:102
 #, c-format
@@ -1055,12 +1050,8 @@ msgstr ""
 
 #: ../main.c:105
 #, c-format
-msgid ""
-"                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist "
-"- title\"\n"
-msgstr ""
-"                      ej.: --nowplaying \"%%a - %%t\" mostraría \"artista - "
-"título\"\n"
+msgid "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n"
+msgstr "                      ej.: --nowplaying \"%%a - %%t\" mostraría \"artista - título\"\n"
 
 #: ../playlist.c:377 ../playlist.c:2289
 msgid "Default"
@@ -1137,9 +1128,7 @@ msgstr "Error al leer el paquete de encabezado inicial."
 
 #: ../plugins/vorbis/vcedit.c:237
 msgid "Couldn't get enough memory to register new stream serial number."
-msgstr ""
-"Imposible obtener suficiente memoria para registrar el número de serie de un "
-"nuevo flujo."
+msgstr "Imposible obtener suficiente memoria para registrar el número de serie de un nuevo flujo."
 
 #: ../plugins/vorbis/vcedit.c:505
 msgid "Input truncated or empty."
@@ -1174,18 +1163,13 @@ msgid "Corrupt or missing data, continuing..."
 msgstr "Datos corruptos o incompletos, continuando..."
 
 #: ../plugins/vorbis/vcedit.c:874
-msgid ""
-"Error writing stream to output. Output stream may be corrupted or truncated."
-msgstr ""
-"Error al escribir el flujo a la salida. El flujo de salida puede estar "
-"corrupto o truncado."
+msgid "Error writing stream to output. Output stream may be corrupted or truncated."
+msgstr "Error al escribir el flujo a la salida. El flujo de salida puede estar corrupto o truncado."
 
 #: ../plugins/wildmidi/wildmidiplug.c:162
 #, c-format
-msgid ""
-"wildmidi: freepats config file not found. Please install timidity-freepats "
-"package, or specify path to freepats.cfg in the plugin settings."
-msgstr ""
+msgid "wildmidi: freepats config file not found. Please install timidity-freepats package, or specify path to freepats.cfg in the plugin settings."
+msgstr "wildmidi: el archivo de configuración freepats no se puede encontrar. Por favor instale el paquete timidity-freepats o especifique la ruta a freepats.cfg en la configuración del plugin."
 
 #~ msgid "Add Audio CD"
 #~ msgstr "Añadir CD de audio"
