@@ -728,7 +728,32 @@ create_plmenu (void)
 }
 
 static void
+tabstrip_scroll_to_tab (DdbTabStrip *ts, int tab) {
+    GtkWidget *widget = GTK_WIDGET (ts);
+    int w = 0;
+    int cnt = deadbeef->plt_get_count ();
+    int boundary = widget->allocation.width - arrow_widget_width*2 + ts->hscrollpos;
+    for (int idx = 0; idx < cnt; idx++) {
+        int tab_w = ddb_tabstrip_get_tab_width (ts, idx);
+        if (idx == tab) {
+            if (w < ts->hscrollpos) {
+                ts->hscrollpos = w;
+                deadbeef->conf_set_int ("gtkui.tabscroll", ts->hscrollpos);
+            }
+            else if (w < boundary && w + tab_w >= boundary) {
+                ts->hscrollpos += (w+tab_w) - boundary;
+                deadbeef->conf_set_int ("gtkui.tabscroll", ts->hscrollpos);
+            }
+            gtk_widget_queue_draw (widget);
+            break;
+        }
+        w += tab_w - tab_overlap_size;
+    }
+}
+
+static void
 tabstrip_scroll_left (DdbTabStrip *ts) {
+#if 0
     // scroll to leftmost border-spanning tab
     int scrollsize = 0;
     int w = 0;
@@ -749,10 +774,19 @@ tabstrip_scroll_left (DdbTabStrip *ts) {
     }
     deadbeef->conf_set_int ("gtkui.tabscroll", ts->hscrollpos);
     gtk_widget_queue_draw (GTK_WIDGET (ts));
+#endif
+    int tab = deadbeef->plt_get_curr ();
+    if (tab > 0) {
+        tab--;
+        deadbeef->plt_set_curr (tab);
+        deadbeef->conf_set_int ("playlist.current", tab);
+        tabstrip_scroll_to_tab (ts, tab);
+    }
 }
 
 static void
 tabstrip_scroll_right (DdbTabStrip *ts) {
+#if 0
     // scroll to rightmost border-spanning tab
     GtkWidget *widget = GTK_WIDGET (ts);
     int scrollsize = 0;
@@ -774,6 +808,14 @@ tabstrip_scroll_right (DdbTabStrip *ts) {
     }
     deadbeef->conf_set_int ("gtkui.tabscroll", ts->hscrollpos);
     gtk_widget_queue_draw (widget);
+#endif
+    int tab = deadbeef->plt_get_curr ();
+    if (tab < deadbeef->plt_get_count ()-1) {
+        tab++;
+        deadbeef->plt_set_curr (tab);
+        deadbeef->conf_set_int ("playlist.current", tab);
+        tabstrip_scroll_to_tab (ts, tab);
+    }
 }
 
 gboolean
@@ -833,6 +875,11 @@ on_tabstrip_button_press_event           (GtkWidget       *widget,
                 return FALSE;
             }
             return FALSE;
+        }
+
+        // adjust scroll if clicked tab spans border
+        if (need_arrows) {
+            tabstrip_scroll_to_tab (ts, tab_clicked);
         }
 
         int hscroll = ts->hscrollpos;
