@@ -692,15 +692,15 @@ msgstr "Activar servidor proxy"
 
 #: ../plugins/gtkui/interface.c:2110 ../plugins/gtkui/deadbeef.glade.h:101
 msgid "Proxy Server Address:"
-msgstr "Dirección:"
+msgstr "Dirección del proxy:"
 
 #: ../plugins/gtkui/interface.c:2124 ../plugins/gtkui/deadbeef.glade.h:102
 msgid "Proxy Server Port:"
-msgstr "Puerto:"
+msgstr "Puerto del proxy:"
 
 #: ../plugins/gtkui/interface.c:2138 ../plugins/gtkui/deadbeef.glade.h:103
 msgid "Proxy Type:"
-msgstr "Tipo:"
+msgstr "Tipo de proxy:"
 
 #: ../plugins/gtkui/interface.c:2157 ../plugins/gtkui/deadbeef.glade.h:104
 msgid "Proxy Username:"
@@ -846,7 +846,7 @@ msgid ""
 "Files will be lost. Proceed?\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
 msgstr ""
-"Perderás los archivos. ¿Deseas continuar?\n"
+"Perderá los archivos. ¿Desea continuar?\n"
 "(Éste aviso puede desactivarse en las opciones del plugin GTKUI)"
 
 #: ../plugins/gtkui/plcommon.c:325 ../plugins/gtkui/trkproperties.c:56
@@ -904,7 +904,7 @@ msgstr "Configurar %s"
 
 #: ../plugins/gtkui/prefwin.c:98
 msgid "Default Audio Device"
-msgstr "Dispositivo de Audio por Defecto"
+msgstr "Dispositivo predeterminado de audio"
 
 #: ../plugins/gtkui/prefwin.c:312
 msgid "Add"
@@ -926,7 +926,7 @@ msgstr "Combinación de teclas"
 #: ../plugins/gtkui/prefwin.c:464 ../plugins/gtkui/prefwin.c:676
 #: ../plugins.c:872
 msgid "ALSA output plugin"
-msgstr "Plugin de salida ALSA"
+msgstr "Complemento de salida ALSA"
 
 #: ../plugins/gtkui/progress.c:64
 msgid "Initializing..."
@@ -942,11 +942,11 @@ msgstr "¿Deseas cerrar la ventana?"
 
 #: ../plugins/gtkui/trkproperties.c:178
 msgid "Tag Type(s)"
-msgstr "Tipo de Etiqueta(s)"
+msgstr "Tipo de etiqueta(s)"
 
 #: ../plugins/gtkui/trkproperties.c:180
 msgid "Embedded Cuesheet"
-msgstr "Hoja Cue Embedida"
+msgstr "Hoja Cue embebida"
 
 #: ../plugins/gtkui/trkproperties.c:180
 msgid "Yes"
@@ -1169,7 +1169,7 @@ msgstr "Error al escribir el flujo a la salida. El flujo de salida puede estar c
 #: ../plugins/wildmidi/wildmidiplug.c:162
 #, c-format
 msgid "wildmidi: freepats config file not found. Please install timidity-freepats package, or specify path to freepats.cfg in the plugin settings."
-msgstr "wildmidi: el archivo de configuración freepats no se puede encontrar. Por favor instale el paquete timidity-freepats o especifique la ruta a freepats.cfg en la configuración del plugin."
+msgstr "wildmidi: el archivo de configuración freepats no se puede encontrar. Por favor instale el paquete timidity-freepats o especifique la ruta a freepats.cfg en la configuración del complemento."
 
 #~ msgid "Add Audio CD"
 #~ msgstr "Añadir CD de audio"
