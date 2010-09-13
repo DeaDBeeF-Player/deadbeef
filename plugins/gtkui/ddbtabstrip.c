@@ -727,6 +727,70 @@ create_plmenu (void)
   return plmenu;
 }
 
+static void
+tabstrip_scroll_left (DdbTabStrip *ts) {
+    // scroll to leftmost border-spanning tab
+    int scrollsize = 0;
+    int w = 0;
+    int cnt = deadbeef->plt_get_count ();
+    for (int idx = 0; idx < cnt; idx++) {
+        int tab_w = ddb_tabstrip_get_tab_width (ts, idx);
+        if (w < ts->hscrollpos && w + tab_w >= ts->hscrollpos) {
+            scrollsize = ts->hscrollpos - w;
+            break;
+        }
+        w += tab_w - tab_overlap_size;
+    }
+    w += tab_overlap_size + 3;
+
+    ts->hscrollpos -= scrollsize;
+    if (ts->hscrollpos < 0) {
+        ts->hscrollpos = 0;
+    }
+    deadbeef->conf_set_int ("gtkui.tabscroll", ts->hscrollpos);
+    gtk_widget_queue_draw (GTK_WIDGET (ts));
+}
+
+static void
+tabstrip_scroll_right (DdbTabStrip *ts) {
+    // scroll to rightmost border-spanning tab
+    GtkWidget *widget = GTK_WIDGET (ts);
+    int scrollsize = 0;
+    int w = 0;
+    int cnt = deadbeef->plt_get_count ();
+    int boundary = widget->allocation.width - arrow_widget_width*2 + ts->hscrollpos;
+    for (int idx = 0; idx < cnt; idx++) {
+        int tab_w = ddb_tabstrip_get_tab_width (ts, idx);
+
+        if (scrollsize == 0 && w < boundary && w + tab_w >= boundary) {
+            scrollsize = (w + tab_w) - boundary;
+        }
+        w += tab_w - tab_overlap_size;
+    }
+    w += tab_overlap_size + 3;
+    ts->hscrollpos += scrollsize;
+    if (ts->hscrollpos > w - (widget->allocation.width - arrow_widget_width*2)) {
+        ts->hscrollpos = w - (widget->allocation.width - arrow_widget_width*2);
+    }
+    deadbeef->conf_set_int ("gtkui.tabscroll", ts->hscrollpos);
+    gtk_widget_queue_draw (widget);
+}
+
+gboolean
+tabstrip_scroll_cb (gpointer data) {
+    DdbTabStrip *ts = DDB_TABSTRIP (data);
+    if (ts->scroll_direction < 0) {
+        tabstrip_scroll_left (ts);
+    }
+    else if (ts->scroll_direction > 0) {
+        tabstrip_scroll_right (ts);
+    }
+    else {
+        return FALSE;
+    }
+    return TRUE;
+}
+
 gboolean
 on_tabstrip_button_press_event           (GtkWidget       *widget,
                                         GdkEventButton  *event)
@@ -738,27 +802,19 @@ on_tabstrip_button_press_event           (GtkWidget       *widget,
         int need_arrows = tabstrip_need_arrows (ts);
         if (need_arrows) {
             if (event->x < arrow_widget_width) {
-                ts->hscrollpos -= 20;
-                if (ts->hscrollpos < 0) {
-                    ts->hscrollpos = 0;
+                if (event->type == GDK_BUTTON_PRESS) {
+                    tabstrip_scroll_left (ts);
+                    ts->scroll_direction = -1;
+                    ts->scroll_timer = g_timeout_add (300, tabstrip_scroll_cb, ts);
                 }
-                deadbeef->conf_set_int ("gtkui.tabscroll", ts->hscrollpos);
-                gtk_widget_queue_draw (widget);
                 return FALSE;
             }
             else if (event->x >= widget->allocation.width - arrow_widget_width) {
-                ts->hscrollpos += 20;
-                int w = 0;
-                int cnt = deadbeef->plt_get_count ();
-                for (int idx = 0; idx < cnt; idx++) {
-                    w += ddb_tabstrip_get_tab_width (ts, idx) - tab_overlap_size;
+                if (event->type == GDK_BUTTON_PRESS) {
+                    tabstrip_scroll_right (ts);
+                    ts->scroll_direction = 1;
+                    ts->scroll_timer = g_timeout_add (300, tabstrip_scroll_cb, ts);
                 }
-                w += tab_overlap_size + 3;
-                if (ts->hscrollpos > w - (widget->allocation.width - arrow_widget_width*2)) {
-                    ts->hscrollpos = w - (widget->allocation.width - arrow_widget_width*2);
-                }
-                deadbeef->conf_set_int ("gtkui.tabscroll", ts->hscrollpos);
-                gtk_widget_queue_draw (widget);
                 return FALSE;
             }
         }
@@ -828,6 +884,10 @@ on_tabstrip_button_release_event         (GtkWidget       *widget,
 {
     DdbTabStrip *ts = DDB_TABSTRIP (widget);
     if (event->button == 1) {
+        if (ts->scroll_timer > 0) {
+            ts->scroll_direction = 0;
+            ts->scroll_timer = 0;
+        }
         if (ts->prepare || ts->dragging >= 0) {
             ts->dragging = -1;
             ts->prepare = 0;
