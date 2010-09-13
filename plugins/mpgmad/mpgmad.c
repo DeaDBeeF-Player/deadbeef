@@ -195,11 +195,12 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
         buffer->totalsamples = 0;
         fsize = deadbeef->fgetlength (buffer->file) - initpos;
     }
-    if (sample == 0 && buffer->avg_packetlength == 0) {
+    if (sample <= 0 && buffer->avg_packetlength == 0) {
         buffer->avg_packetlength = 0;
         buffer->avg_samplerate = 0;
         buffer->avg_samples_per_frame = 0;
         buffer->nframes = 0;
+        trace ("setting startoffset to %d\n", initpos);
         buffer->startoffset = initpos;
     }
 
@@ -585,7 +586,7 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     if (!info->buffer.file->vfs->streaming) {
         int skip = deadbeef->junk_get_leading_size (info->buffer.file);
         if (skip > 0) {
-            trace ("mpgmad: skipping %d bytes of junk\n", skip);
+            trace ("mpgmad: skipping %d(%xH) bytes of junk\n", skip, skip);
             deadbeef->fseek (info->buffer.file, skip, SEEK_SET);
         }
         cmp3_scan_stream (&info->buffer, -1); // scan entire stream, calc duration
@@ -601,6 +602,7 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             info->buffer.endsample = info->buffer.totalsamples-1;
             info->buffer.skipsamples = info->buffer.startdelay;
             info->buffer.currentsample = info->buffer.startdelay;
+            trace ("mpgmad: seeking to %d(%xH) start offset\n", info->buffer.startoffset, info->buffer.startoffset);
             deadbeef->fseek (info->buffer.file, info->buffer.startoffset, SEEK_SET);
         }
     }
@@ -650,6 +652,7 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     _info->channels = 2;//info->buffer.channels;
 //    trace ("mpgmad: nchannels: %d\n", _info->channels);
 
+    deadbeef->fseek (info->buffer.file, 0x60dae, SEEK_SET);
 	mad_stream_init(&info->stream);
 	mad_stream_options (&info->stream, MAD_OPTION_IGNORECRC);
 	mad_frame_init(&info->frame);
