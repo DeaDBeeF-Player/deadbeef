@@ -481,6 +481,41 @@ sigsegv_handler (int sig) {
 }
 #endif
 
+void
+save_resume_state (void) {
+    playItem_t *trk = streamer_get_playing_track ();
+    float playpos = -1;
+    int playtrack = -1;
+    int playlist = streamer_get_current_playlist ();
+    int paused = (p_get_state () == OUTPUT_STATE_PAUSED);
+    if (trk && playlist >= 0) {
+        playtrack = str_get_idx_of (trk);
+        playpos = streamer_get_playpos ();
+        pl_item_unref (trk);
+    }
+
+    conf_set_float ("resume.position", playpos);
+    conf_set_int ("resume.track", playtrack);
+    conf_set_int ("resume.playlist", playlist);
+    conf_set_int ("resume.paused", paused);
+}
+
+void
+restore_resume_state (void) {
+    if (conf_get_int ("resume_last_session", 0) && p_isstopped ()) {
+        int plt = conf_get_int ("resume.playlist", -1);
+        int track = conf_get_int ("resume.track", -1);
+        float pos = conf_get_float ("resume.position", -1);
+        int paused = conf_get_int ("resume.paused", 0);
+        trace ("resume: track %d pos %f playlist %d\n", track, pos, plt);
+        if (plt >= 0 && track >= 0 && pos >= 0) {
+            streamer_set_current_playlist (plt);
+            streamer_set_seek (pos);
+            streamer_set_nextsong (track, paused ? 2 : 3);
+        }
+    }
+}
+
 int
 main (int argc, char *argv[]) {
 #ifdef __linux__
@@ -676,34 +711,12 @@ main (int argc, char *argv[]) {
 
     streamer_init ();
 
-    if (conf_get_int ("resume_last_session", 0) && p_isstopped ()) {
-        int plt = conf_get_int ("resume.playlist", -1);
-        int track = conf_get_int ("resume.track", -1);
-        float pos = conf_get_float ("resume.position", -1);
-        trace ("resume: track %d pos %f playlist %d\n", track, pos, plt);
-        if (plt >= 0 && track >= 0 && pos >= 0) {
-            streamer_set_current_playlist (plt);
-            streamer_set_seek (pos);
-            streamer_set_nextsong (track, 3);
-        }
-    }
+    restore_resume_state ();
 
     // this runs in main thread (blocks right here)
     player_mainloop ();
 
-    playItem_t *trk = streamer_get_playing_track ();
-    float playpos = -1;
-    int playtrack = -1;
-    int playlist = streamer_get_current_playlist ();
-    if (trk && playlist >= 0) {
-        playtrack = str_get_idx_of (trk);
-        playpos = streamer_get_playpos ();
-        pl_item_unref (trk);
-    }
-
-    conf_set_float ("resume.position", playpos);
-    conf_set_int ("resume.track", playtrack);
-    conf_set_int ("resume.playlist", playlist);
+    save_resume_state ();
 
     // save config
     pl_save_all ();

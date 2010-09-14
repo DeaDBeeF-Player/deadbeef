@@ -811,6 +811,19 @@ streamer_start_new_song (void) {
         }
     }
     else if (pstate == 2) {
+        if (p_get_state () == OUTPUT_STATE_STOPPED) {
+            last_bitrate = -1;
+            avg_bitrate = -1;
+            streamer_reset (1);
+            if (fileinfo) {
+                plug_get_output ()->change_rate (fileinfo->samplerate);
+            }
+            if (p_play () < 0) {
+                fprintf (stderr, "streamer: failed to start playback; output plugin doesn't work\n");
+                streamer_set_nextsong (-2, 0);
+                return;
+            }
+        }
         p_pause ();
     }
 }
