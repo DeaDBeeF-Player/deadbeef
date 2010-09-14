@@ -523,6 +523,7 @@ create_mainwin (void)
   seekbar = create_seekbar ("seekbar", "", "", 0, 0);
   gtk_widget_show (seekbar);
   gtk_box_pack_start (GTK_BOX (hbox2), seekbar, TRUE, TRUE, 2);
+  gtk_widget_set_size_request (seekbar, 20, -1);
   GTK_WIDGET_UNSET_FLAGS (seekbar, GTK_CAN_FOCUS);
   GTK_WIDGET_UNSET_FLAGS (seekbar, GTK_CAN_DEFAULT);
 

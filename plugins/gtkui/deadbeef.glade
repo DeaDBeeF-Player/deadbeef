@@ -800,6 +800,7 @@
 
 	  <child>
 	    <widget class="Custom" id="seekbar">
+	      <property name="width_request">20</property>
 	      <property name="visible">True</property>
 	      <property name="creation_function">create_seekbar</property>
 	      <property name="int1">0</property>
