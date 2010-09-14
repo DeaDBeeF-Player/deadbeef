@@ -652,7 +652,6 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     _info->channels = 2;//info->buffer.channels;
 //    trace ("mpgmad: nchannels: %d\n", _info->channels);
 
-    deadbeef->fseek (info->buffer.file, 0x60dae, SEEK_SET);
 	mad_stream_init(&info->stream);
 	mad_stream_options (&info->stream, MAD_OPTION_IGNORECRC);
 	mad_frame_init(&info->frame);
