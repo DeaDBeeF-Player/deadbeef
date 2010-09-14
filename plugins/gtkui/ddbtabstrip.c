@@ -735,6 +735,9 @@ tabstrip_scroll_to_tab (DdbTabStrip *ts, int tab) {
     int boundary = widget->allocation.width - arrow_widget_width*2 + ts->hscrollpos;
     for (int idx = 0; idx < cnt; idx++) {
         int tab_w = ddb_tabstrip_get_tab_width (ts, idx);
+        if (idx == cnt-1) {
+            tab_w += 3;
+        }
         if (idx == tab) {
             if (w < ts->hscrollpos) {
                 ts->hscrollpos = w;
@@ -780,8 +783,8 @@ tabstrip_scroll_left (DdbTabStrip *ts) {
         tab--;
         deadbeef->plt_set_curr (tab);
         deadbeef->conf_set_int ("playlist.current", tab);
-        tabstrip_scroll_to_tab (ts, tab);
     }
+    tabstrip_scroll_to_tab (ts, tab);
 }
 
 static void
@@ -814,8 +817,8 @@ tabstrip_scroll_right (DdbTabStrip *ts) {
         tab++;
         deadbeef->plt_set_curr (tab);
         deadbeef->conf_set_int ("playlist.current", tab);
-        tabstrip_scroll_to_tab (ts, tab);
     }
+    tabstrip_scroll_to_tab (ts, tab);
 }
 
 gboolean
