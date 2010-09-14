@@ -2,19 +2,19 @@
 # Copyright (C) 2010 HZ
 # This file is distributed under the same license as the PACKAGE package.
 # Baurzhan Muftakhidinov <baurthefirst@gmail.com>, 2010.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-09-10 15:02+0200\n"
+"POT-Creation-Date: 2010-09-14 04:26+0000\n"
 "PO-Revision-Date: 2010-06-24 12:09+0600\n"
 "Last-Translator: Baurzhan Muftakhidinov <baurthefirst@gmail.com>\n"
 "Language-Team: Kazakh <kk_KZ@googlegroups.com>\n"
-"Language: kk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: kk\n"
 "Plural-Forms: nplurals=1; plural=0\n"
 
 #: ../plugins/gtkui/callbacks.c:97
@@ -166,8 +166,7 @@ msgstr "Аялдатылған | "
 
 #: ../plugins/gtkui/gtkui.c:190
 #, c-format
-msgid ""
-"%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
+msgid "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
 msgstr "%s%s %s| %dГц | %d бит | %s | %d:%02d / %s | %d трек | %s жалпы уақыты"
 
 #: ../plugins/gtkui/gtkui.c:660
@@ -573,9 +572,7 @@ msgstr "Пиктік мәнін қолдану"
 
 #: ../plugins/gtkui/interface.c:1804 ../plugins/gtkui/deadbeef.glade.h:7
 msgid "Add files from command line (or file manager) to this playlist:"
-msgstr ""
-"Бұл ойнату тізіміне файлдарды командалық жолдан (не файлдар басқарушысынан) "
-"қосу:"
+msgstr "Бұл ойнату тізіміне файлдарды командалық жолдан (не файлдар басқарушысынан) қосу:"
 
 #: ../plugins/gtkui/interface.c:1813 ../plugins/gtkui/deadbeef.glade.h:110
 msgid "Resume previous session on startup"
@@ -1054,12 +1051,8 @@ msgstr ""
 
 #: ../main.c:105
 #, c-format
-msgid ""
-"                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist "
-"- title\"\n"
-msgstr ""
-"                      мыс.: --nowplaying \"%%a - %%t\" экранға \"artist - "
-"title\" шығаруы тиіс\n"
+msgid "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n"
+msgstr "                      мыс.: --nowplaying \"%%a - %%t\" экранға \"artist - title\" шығаруы тиіс\n"
 
 #: ../playlist.c:377 ../playlist.c:2289
 msgid "Default"
@@ -1136,9 +1129,7 @@ msgstr "Бастапқы тақырыптама дестесін оқу қате
 
 #: ../plugins/vorbis/vcedit.c:237
 msgid "Couldn't get enough memory to register new stream serial number."
-msgstr ""
-"Жаңа ағымның сериялық нөмірін тіркеу үшін керек жады мөлшерін алу мүмкін "
-"емес."
+msgstr "Жаңа ағымның сериялық нөмірін тіркеу үшін керек жады мөлшерін алу мүмкін емес."
 
 #: ../plugins/vorbis/vcedit.c:505
 msgid "Input truncated or empty."
@@ -1173,17 +1164,13 @@ msgid "Corrupt or missing data, continuing..."
 msgstr "Ақпарат зақымдалған не мүлдем жоқ, жалғастыру..."
 
 #: ../plugins/vorbis/vcedit.c:874
-msgid ""
-"Error writing stream to output. Output stream may be corrupted or truncated."
-msgstr ""
-"Шығысқа ағымды жазу қатесі. Шығыс ағымы зақымдалған не қиылған болуы мүмкін."
+msgid "Error writing stream to output. Output stream may be corrupted or truncated."
+msgstr "Шығысқа ағымды жазу қатесі. Шығыс ағымы зақымдалған не қиылған болуы мүмкін."
 
 #: ../plugins/wildmidi/wildmidiplug.c:162
 #, c-format
-msgid ""
-"wildmidi: freepats config file not found. Please install timidity-freepats "
-"package, or specify path to freepats.cfg in the plugin settings."
-msgstr ""
+msgid "wildmidi: freepats config file not found. Please install timidity-freepats package, or specify path to freepats.cfg in the plugin settings."
+msgstr "wildmidi: freepats баптаулар файлы табылмады. timidity-freepats дестесін орнатыңыз, немесе плагин баптауларында freepats.cfg файлына дейінгі жолды көрсетіңіз."
 
 #~ msgid "Add Audio CD"
 #~ msgstr "Аудио CD қосу"
