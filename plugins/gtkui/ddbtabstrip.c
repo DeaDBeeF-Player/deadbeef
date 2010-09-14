@@ -388,6 +388,43 @@ tabstrip_need_arrows (DdbTabStrip *ts) {
     return 0;
 }
 
+static void
+tabstrip_scroll_to_tab_int (DdbTabStrip *ts, int tab, int redraw) {
+    GtkWidget *widget = GTK_WIDGET (ts);
+    int w = 0;
+    int cnt = deadbeef->plt_get_count ();
+    int boundary = widget->allocation.width - arrow_widget_width*2 + ts->hscrollpos;
+    for (int idx = 0; idx < cnt; idx++) {
+        int tab_w = ddb_tabstrip_get_tab_width (ts, idx);
+        if (idx == cnt-1) {
+            tab_w += 3;
+        }
+        if (idx == tab) {
+            if (w < ts->hscrollpos) {
+                ts->hscrollpos = w;
+                deadbeef->conf_set_int ("gtkui.tabscroll", ts->hscrollpos);
+                if (redraw) {
+                    gtk_widget_queue_draw (widget);
+                }
+            }
+            else if (w + tab_w >= boundary) {
+                ts->hscrollpos += (w+tab_w) - boundary;
+                deadbeef->conf_set_int ("gtkui.tabscroll", ts->hscrollpos);
+                if (redraw) {
+                    gtk_widget_queue_draw (widget);
+                }
+            }
+            break;
+        }
+        w += tab_w - tab_overlap_size;
+    }
+}
+
+static void
+tabstrip_scroll_to_tab (DdbTabStrip *ts, int tab) {
+    tabstrip_scroll_to_tab_int (ts, tab, 1);
+}
+
 void
 tabstrip_adjust_hscroll (DdbTabStrip *ts) {
     GtkWidget *widget = GTK_WIDGET (ts);
@@ -405,6 +442,7 @@ tabstrip_adjust_hscroll (DdbTabStrip *ts) {
                 ts->hscrollpos = w - (widget->allocation.width - arrow_widget_width*2);
                 deadbeef->conf_set_int ("gtkui.tabscroll", ts->hscrollpos);
             }
+            tabstrip_scroll_to_tab_int (ts, deadbeef->plt_get_curr (), 0);
         }
         else {
             ts->hscrollpos = 0;
@@ -725,33 +763,6 @@ create_plmenu (void)
 //  GLADE_HOOKUP_OBJECT (plmenu, save_all_playlists1, "save_all_playlists1");
 
   return plmenu;
-}
-
-static void
-tabstrip_scroll_to_tab (DdbTabStrip *ts, int tab) {
-    GtkWidget *widget = GTK_WIDGET (ts);
-    int w = 0;
-    int cnt = deadbeef->plt_get_count ();
-    int boundary = widget->allocation.width - arrow_widget_width*2 + ts->hscrollpos;
-    for (int idx = 0; idx < cnt; idx++) {
-        int tab_w = ddb_tabstrip_get_tab_width (ts, idx);
-        if (idx == cnt-1) {
-            tab_w += 3;
-        }
-        if (idx == tab) {
-            if (w < ts->hscrollpos) {
-                ts->hscrollpos = w;
-                deadbeef->conf_set_int ("gtkui.tabscroll", ts->hscrollpos);
-            }
-            else if (w < boundary && w + tab_w >= boundary) {
-                ts->hscrollpos += (w+tab_w) - boundary;
-                deadbeef->conf_set_int ("gtkui.tabscroll", ts->hscrollpos);
-            }
-            gtk_widget_queue_draw (widget);
-            break;
-        }
-        w += tab_w - tab_overlap_size;
-    }
 }
 
 static void
