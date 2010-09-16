@@ -40,6 +40,12 @@
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
+// #define WRITE_DUMP 1
+
+#if WRITE_DUMP
+FILE *out;
+#endif
+
 static intptr_t streamer_tid;
 static int src_quality;
 static SRC_STATE *src;
@@ -500,7 +506,14 @@ streamer_move_to_randomsong (void) {
         trace ("empty playlist\n");
         return -1;
     }
+    int curr = str_get_idx_of (playing_track);
     int r = rand () / (float)RAND_MAX * cnt;
+    if (r == curr) {
+        r++;
+        if (r >= cnt) {
+            r = 0;
+        }
+    }
     streamer_set_nextsong (r, 1);
     return 0;
 }
@@ -584,9 +597,12 @@ streamer_set_current (playItem_t *it) {
                     plug = "stdogg";
                 }
                 else if (!strcmp (ct, "audio/aacp")) {
-                    plug = "ffmpeg";
+                    plug = "aac";
                 }
                 else if (!strcmp (ct, "audio/aac")) {
+                    plug = "aac";
+                }
+                else if (!strcmp (ct, "audio/wma")) {
                     plug = "ffmpeg";
                 }
             }
@@ -711,7 +727,7 @@ streamer_set_nextsong (int song, int pstate) {
         // no sense to wait until end of previous song, reset buffer
         bytes_until_next_song = 0;
         playpos = 0;
-        seekpos = -1;
+//        seekpos = -1;
     }
 }
 
@@ -802,6 +818,19 @@ streamer_start_new_song (void) {
         }
     }
     else if (pstate == 2) {
+        if (p_get_state () == OUTPUT_STATE_STOPPED) {
+            last_bitrate = -1;
+            avg_bitrate = -1;
+            streamer_reset (1);
+            if (fileinfo) {
+                plug_get_output ()->change_rate (fileinfo->samplerate);
+            }
+            if (p_play () < 0) {
+                fprintf (stderr, "streamer: failed to start playback; output plugin doesn't work\n");
+                streamer_set_nextsong (-2, 0);
+                return;
+            }
+        }
         p_pause ();
     }
 }
@@ -1032,7 +1061,9 @@ streamer_thread (void *ctx) {
             int bytesread = streamer_read_async (buf,sz);
             streamer_lock ();
             memcpy (streambuffer+streambuffer_fill, buf, sz);
-            streambuffer_fill += bytesread;
+            if (bytesread > 0) {
+                streambuffer_fill += bytesread;
+            }
 //            if (streamer_buffering) trace ("fill: %d, read: %d, size=%d, blocksize=%d\n", streambuffer_fill, bytesread, STREAM_BUFFER_SIZE, blocksize);
         }
         streamer_unlock ();
@@ -1047,7 +1078,7 @@ streamer_thread (void *ctx) {
 
         int ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
         alloc_time -= ms;
-        if (alloc_time > 0) {
+        if (!streamer_buffering && alloc_time > 0) {
             usleep (alloc_time * 1000);
 //            usleep (1000);
         }
@@ -1078,6 +1109,9 @@ streamer_thread (void *ctx) {
 
 int
 streamer_init (void) {
+#if WRITE_DUMP
+    out = fopen ("out.raw", "w+b");
+#endif
     mutex = mutex_create ();
     decodemutex = mutex_create ();
     srcmutex = mutex_create ();
@@ -1094,6 +1128,9 @@ streamer_init (void) {
 
 void
 streamer_free (void) {
+#if WRITE_DUMP
+    fclose (out);
+#endif
     streamer_abort_files ();
     streaming_terminate = 1;
     thread_join (streamer_tid);
@@ -1122,8 +1159,10 @@ void
 streamer_reset (int full) { // must be called when current song changes by external reasons
     src_lock ();
     if (full) {
+        streamer_lock ();
         streambuffer_pos = 0;
         streambuffer_fill = 0;
+        streamer_unlock ();
     }
     src_remaining = 0;
     src_reset (src);
@@ -1507,29 +1546,33 @@ streamer_read_async (char *bytes, int size) {
                 bytes_until_next_song = -1;
             }
         }
-        // apply dsp
-        DB_dsp_t **dsp = deadbeef->plug_get_dsp_list ();
-        int srate = p_get_rate ();
-        for (int i = 0; dsp[i]; i++) {
-            if (dsp[i]->enabled ()) {
-                dsp[i]->process_int16 ((int16_t *)bytes, bytesread/4, 2, 16, srate);
+        trace ("streamer: bytesread=%d\n", bytesread);
+        if (bytesread > 0) {
+            // apply dsp
+            DB_dsp_t **dsp = deadbeef->plug_get_dsp_list ();
+            int srate = p_get_rate ();
+            for (int i = 0; dsp[i]; i++) {
+                if (dsp[i]->enabled ()) {
+                    dsp[i]->process_int16 ((int16_t *)bytes, bytesread/4, 2, 16, srate);
+                }
             }
         }
         mutex_unlock (decodemutex);
         bytes += bytesread;
         size -= bytesread;
+        trace ("streamer: size=%d\n", size);
         if (size == 0) {
             return initsize;
         }
         else  {
             // that means EOF
-            if (bytes_until_next_song < 0) // don't start streaming new if already draining
-            {
+            trace ("streamer: EOF! buns: %d\n", bytes_until_next_song);
+
+            // in case of decoder error, or EOF while buffering - switch to next song instantly
+            if (bytesread < 0 || (bytes_until_next_song < 0 && streamer_is_buffering() && bytesread == 0) || bytes_until_next_song < 0) {
                 trace ("finished streaming song, queueing next\n");
                 bytes_until_next_song = streambuffer_fill;
                 if (conf_get_int ("playlist.stop_after_current", 0)) {
-                    conf_set_int ("playlist.stop_after_current", 0);
-                    plug_trigger_event (DB_EV_CONFIGCHANGED, 0);
                     streamer_set_nextsong (-2, 1);
                 }
                 else {
@@ -1604,6 +1647,9 @@ streamer_read (char *bytes, int size) {
 
     int ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
     printf ("streamer_read took %d ms\n", ms);
+#endif
+#if WRITE_DUMP
+    fwrite (bytes, 1, sz, out);
 #endif
     return sz;
 }
@@ -1689,6 +1735,11 @@ streamer_play_current_track (void) {
 struct DB_fileinfo_s *
 streamer_get_current_fileinfo (void) {
     return fileinfo;
+}
+
+void
+streamer_set_current_playlist (int plt) {
+    streamer_playlist = plt_get (plt);
 }
 
 int

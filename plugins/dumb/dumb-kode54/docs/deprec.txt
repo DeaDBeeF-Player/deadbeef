@@ -170,27 +170,48 @@ DUH_RENDERER *al_duh_decompose_to_renderer(AL_DUH_PLAYER *dp);
 *********************
 
 
+sample_t **create_sample_buffer(int n_channels, long length);
+
 long duh_render_signal(DUH_SIGRENDERER *sigrenderer,
                        float volume, float delta,
                        long size, sample_t **samples);
 
-   This function used to return samples in DUMB's internal format. This
-   format consisted of 32-bit integers whose 'normal range' was -0x8000 to
-   0x7FFF (any samples outside this range would have to be clipped when sent
-   to the sound card).
+long duh_sigrenderer_get_samples(DUH_SIGRENDERER *sigrenderer,
+                                 float volume, float delta,
+                                 long size, sample_t **samples);
 
-   DUMB's internal format has changed. DUMB still uses 32-bit integers, but
-   now the normal range is -0x800000 to 0x7FFFFF. The lowest eight bits are
-   discarded at the final stage by duh_render() when you ask for 16-bit
-   output. A new function, duh_sigrenderer_get_samples(), will return samples
-   in DUMB's new internal format. It takes exactly the same parameters, so
-   all you have to do to the call itself is change the name; however, you
-   will most likely have to change your code to account for the new
-   normalised range.
+   These functions dealt with samples in DUMB's internal format, which
+   consists of 32-bit integers. For duh_render_signal(), the older of the two
+   rendering functions, the integers had a 'normal range' of -0x8000 to
+   0x7FFF: any samples outside this range would have to be clipped when sent
+   to the sound card. For duh_sigrenderer_get_samples(), the range had
+   increased to -0x800000 to 0x7FFFFF, hence the new function was created and
+   the old turned into an inefficient wrapper and deprecated.
 
-   duh_render_signal() will still be able to give you the samples in DUMB's
-   old internal format, but it is inefficient. You should change your code as
-   soon as possible.
+   Since then, another change has taken place: DUMB now interleaves left and
+   right samples when processing stereo data. This meant
+   create_sample_buffer() and duh_sigrenderer_get_samples() both had to be
+   deprecated, because if you were using them yourself, you were probably
+   processing the sample data. The functions still exist and will convert the
+   data into the right form for you, but they are inefficient.
+
+   To update your code, first call allocate_sample_buffer() instead of
+   create_sample_buffer(), and then call duh_sigrenderer_generate_samples()
+   with the same arguments as whichever renderer function you were using
+   before. Be aware first that the range is -0x800000 to 0x7FFFFF, so you
+   will need to account for this if you were using duh_render_signal(). Then
+   change the way you index the samples. Whereas before you had to write
+   samples[channel][position], you now have to write
+
+      samples[0][position] for mono (no change);
+      samples[0][position*2+channel] for stereo.
+
+   The [0] is still there in anticipation of surround sound support: samples
+   will only ever be interleaved in twos, because each new interleaving
+   pattern results in more code duplication.
+
+   destroy_sample_buffer() has not been deprecated, since it is compatible
+   with both the old and the new allocation functions.
 
 
 typedef void (*DUH_SIGRENDERER_CALLBACK)(void *data, sample_t **samples,
@@ -199,39 +220,50 @@ typedef void (*DUH_SIGRENDERER_CALLBACK)(void *data, sample_t **samples,
 void duh_sigrenderer_set_callback(DUH_SIGRENDERER *sigrenderer,
                               DUH_SIGRENDERER_CALLBACK callback, void *data);
 
-   This callback was intended to allow you to analyse the output. It was by
-   no means intended to let you modify the output. For this reason, the names
-   have been changed to DUH_SIGRENDERER_ANALYSER_CALLBACK and
-   duh_sigrenderer_set_analyser_callback, and the 'samples' parameter to your
-   callback should now be specified as follows:
+typedef void (*DUH_SIGRENDERER_ANALYSER_CALLBACK)
+                                             (void *data, sample_t **samples,
+                                              int n_channels, long length);
+
+void duh_sigrenderer_set_analyser_callback(DUH_SIGRENDERER *sigrenderer,
+                     DUH_SIGRENDERER_ANALYSER_CALLBACK callback, void *data);
+
+   For the same reasons as explained above for create_sample_buffer() and
+   friends, these two functions (and corresponding typedefs) have had to be
+   deprecated.
+
+   If you were using duh_sigrenderer_set_callback(), then be aware that it
+   was only intended to allow you to analyse the output, not modify it. For
+   this reason, the names were changed to DUH_SIGRENDERER_ANALYSER_CALLBACK
+   and duh_sigrenderer_set_analyser_callback(), and the 'samples' parameter
+   to your callback needed to be specified as follows:
 
       const sample_t *const *samples
 
    The first 'const' indicates that you must not modify the samples. The
    second indicates that you must not modify the pointers to each channel.
 
-   There is a second reason why this change was necessary, and it is the one
-   described further up for duh_render_signal()'s entry: the format in which
-   the samples themselves are stored has changed. They are 256 times as
-   large, with a normal range from -0x800000 to 0x7FFFFF. You will most
-   likely need to change your code to account for this.
-
-   If you try to call the old function, it will print a message to stderr
-   directing you to this file, and it will not install the callback. You
-   shouldn't be able to get this far without a compiler warning (or, if you
-   don't have GCC 3.1 or later, some compiler errors).
-
    If you wanted to use this callback to apply a DSP effect, don't worry;
    there is a better way of doing this. It is undocumented, so contact me
    and I shall try to help. Contact details are at the bottom of this file.
 
+   Having corrected that, follow the instructions under
+   create_sample_buffer() to update your code to handle the new sample
+   format. Then call duh_sigrenderer_set_sample_analyser_callback() instead
+   (note the addition of 'sample' to the name).
+
+   If you try to call one of the old functions, it will print a message to
+   stderr directing you to this file, and it will not install the callback.
+   You shouldn't be able to get this far without a compiler warning (or, if
+   you don't have GCC 3.1 or later, some compiler errors).
+
    For reference, here are the new definitions:
 
-   typedef void (*DUH_SIGRENDERER_ANALYSER_CALLBACK)(void *data,
+   typedef void (*DUH_SIGRENDERER_SAMPLE_ANALYSER_CALLBACK)(void *data,
                 const sample_t *const *samples, int n_channels, long length);
 
-   void duh_sigrenderer_set_analyser_callback(DUH_SIGRENDERER *sigrenderer,
-                     DUH_SIGRENDERER_ANALYSER_CALLBACK callback, void *data);
+   void duh_sigrenderer_set_sample_analyser_callback(
+              DUH_SIGRENDERER *sigrenderer,
+              DUH_SIGRENDERER_SAMPLE_ANALYSER_CALLBACK callback, void *data);
 
 
 int dumb_resampling_quality;
@@ -277,5 +309,3 @@ because it's lame.
 
 Ben Davis
 entheh@users.sf.net
-IRC EFnet #dumb
-See readme.txt for details on using IRC.

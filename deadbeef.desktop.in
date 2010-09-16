@@ -1,10 +1,13 @@
 [Desktop Entry]
+Encoding=UTF-8
 Name=DeaDBeeF
 GenericName=Audio Player
-Comment=Play music
+Comment=Listen to music
 Exec=deadbeef %F
-MimeType=application/ogg;audio/x-vorbis+ogg;application/x-ogg;audio/mp3;audio/prs.sid;audio/x-flac;audio/mpeg;audio/x-mpeg;audio/x-mod;audio/x-it;audio/x-s3m;audio/x-xm
-Categories=AudioVideo;Player
+MimeType=application/ogg;audio/x-vorbis+ogg;application/x-ogg;audio/mp3;audio/prs.sid;audio/x-flac;audio/mpeg;audio/x-mpeg;audio/x-mod;audio/x-it;audio/x-s3m;audio/x-xm;
+Categories=AudioVideo;Player;GTK;
 Terminal=false
 Type=Application
 Icon=deadbeef
+GenericName[ru]=Аудио плеер
+Comment[ru]=Слушай музыку

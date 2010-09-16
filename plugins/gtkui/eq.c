@@ -110,14 +110,14 @@ on_zero_bands_clicked                  (GtkButton       *button,
 void
 on_save_preset_clicked                  (GtkButton       *button,
         gpointer         user_data) {
-    GtkWidget *dlg = gtk_file_chooser_dialog_new ("Save DeaDBeeF EQ Preset", GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_SAVE, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_SAVE, GTK_RESPONSE_OK, NULL);
+    GtkWidget *dlg = gtk_file_chooser_dialog_new (_("Save DeaDBeeF EQ Preset"), GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_SAVE, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_SAVE, GTK_RESPONSE_OK, NULL);
 
     gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER (dlg), TRUE);
     gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER (dlg), "untitled.ddbeq");
 
     GtkFileFilter* flt;
     flt = gtk_file_filter_new ();
-    gtk_file_filter_set_name (flt, "DeaDBeeF preset files (*.ddbeq)");
+    gtk_file_filter_set_name (flt, _("DeaDBeeF EQ preset files (*.ddbeq)"));
     gtk_file_filter_add_pattern (flt, "*.ddbeq");
 
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
@@ -148,11 +148,11 @@ on_save_preset_clicked                  (GtkButton       *button,
 void
 on_load_preset_clicked                  (GtkButton       *button,
         gpointer         user_data) {
-    GtkWidget *dlg = gtk_file_chooser_dialog_new ("Load DeaDBeeF EQ Preset...", GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
+    GtkWidget *dlg = gtk_file_chooser_dialog_new (_("Load DeaDBeeF EQ Preset..."), GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
 
     GtkFileFilter* flt;
     flt = gtk_file_filter_new ();
-    gtk_file_filter_set_name (flt, "DeaDBeeF  EQ presets (*.ddbeq)");
+    gtk_file_filter_set_name (flt, _("DeaDBeeF EQ presets (*.ddbeq)"));
     gtk_file_filter_add_pattern (flt, "*.ddbeq");
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
 
@@ -211,11 +211,11 @@ on_load_preset_clicked                  (GtkButton       *button,
 void
 on_import_fb2k_preset_clicked                  (GtkButton       *button,
         gpointer         user_data) {
-    GtkWidget *dlg = gtk_file_chooser_dialog_new ("Import Foobar2000 EQ Preset...", GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
+    GtkWidget *dlg = gtk_file_chooser_dialog_new (_("Import Foobar2000 EQ Preset..."), GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
 
     GtkFileFilter* flt;
     flt = gtk_file_filter_new ();
-    gtk_file_filter_set_name (flt, "Foobar2000 EQ presets (*.feq)");
+    gtk_file_filter_set_name (flt, _("Foobar2000 EQ presets (*.feq)"));
     gtk_file_filter_add_pattern (flt, "*.feq");
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
 
@@ -289,49 +289,50 @@ eq_window_show (void) {
 
         GtkWidget *button;
 
-        eqenablebtn = button = gtk_check_button_new_with_label ("Enable");
+        eqenablebtn = button = gtk_check_button_new_with_label (_("Enable"));
         gtk_widget_show (button);
         gtk_box_pack_start (GTK_BOX (buttons), button, FALSE, FALSE, 0);
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (eqenablebtn), deadbeef->conf_get_int ("supereq.enable", 0));
         g_signal_connect ((gpointer) button, "toggled",
                 G_CALLBACK (on_enable_toggled),
                 NULL);
 
-        button = gtk_button_new_with_label ("Zero All");
+        button = gtk_button_new_with_label (_("Zero All"));
         gtk_widget_show (button);
         gtk_box_pack_start (GTK_BOX (buttons), button, FALSE, FALSE, 0);
         g_signal_connect ((gpointer) button, "clicked",
                 G_CALLBACK (on_zero_all_clicked),
                 NULL);
 
-        button = gtk_button_new_with_label ("Zero Preamp");
+        button = gtk_button_new_with_label (_("Zero Preamp"));
         gtk_widget_show (button);
         gtk_box_pack_start (GTK_BOX (buttons), button, FALSE, FALSE, 0);
         g_signal_connect ((gpointer) button, "clicked",
                 G_CALLBACK (on_zero_preamp_clicked),
                 NULL);
 
-        button = gtk_button_new_with_label ("Zero Bands");
+        button = gtk_button_new_with_label (_("Zero Bands"));
         gtk_widget_show (button);
         gtk_box_pack_start (GTK_BOX (buttons), button, FALSE, FALSE, 0);
         g_signal_connect ((gpointer) button, "clicked",
                 G_CALLBACK (on_zero_bands_clicked),
                 NULL);
 
-        button = gtk_button_new_with_label ("Save Preset");
+        button = gtk_button_new_with_label (_("Save Preset"));
         gtk_widget_show (button);
         gtk_box_pack_start (GTK_BOX (buttons), button, FALSE, FALSE, 0);
         g_signal_connect ((gpointer) button, "clicked",
                 G_CALLBACK (on_save_preset_clicked),
                 NULL);
 
-        button = gtk_button_new_with_label ("Load Preset");
+        button = gtk_button_new_with_label (_("Load Preset"));
         gtk_widget_show (button);
         gtk_box_pack_start (GTK_BOX (buttons), button, FALSE, FALSE, 0);
         g_signal_connect ((gpointer) button, "clicked",
                 G_CALLBACK (on_load_preset_clicked),
                 NULL);
 
-        button = gtk_button_new_with_label ("Import Foobar2000 Preset");
+        button = gtk_button_new_with_label (_("Import Foobar2000 Preset"));
         gtk_widget_show (button);
         gtk_box_pack_start (GTK_BOX (buttons), button, FALSE, FALSE, 0);
         g_signal_connect ((gpointer) button, "clicked",
@@ -354,7 +355,6 @@ eq_window_show (void) {
         gtk_widget_show (eqwin);
         gtk_box_pack_start (GTK_BOX (eqcont), eqwin, TRUE, TRUE, 0);
     }
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (eqenablebtn), deadbeef->conf_get_int ("supereq.enable", 0));
     gtk_widget_show (eqcont);
 }
 

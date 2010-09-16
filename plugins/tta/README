@@ -1,0 +1,72 @@
+TTA Hardware Players Library
+============================
+
+Version 1.2, (c) 2004 Alexander Djourik. All rights reserved.
+
+* Introduction
+
+This library provides to decode a multichannel 8,16 and 24
+bits TTA audio files. TTA is a lossless audio format. Being
+"lossless" means that no data/quality is lost in the compression
+- when uncompressed, the data will be identical to the original.
+The compression ratios of TTA depend on the type of music file
+being compressed, but the compression size will generally range
+between 30% - 70% of the original.
+
+TTA format supports both of ID3v1/v2 tags. Detailed format
+description is available at http://www.true-audio.com.
+
+The decoder process has a minimal system requirements and does
+not required to create a big additional memory pools. As the
+TTA algorithms has a same system requirements both for decoding
+and for encoding processes - the TTA recorder can be easily
+realized also.
+
+* Changes
+
+  14/04/2004 1.0 Initial release
+  16/04/2004 1.1 Code optimization
+                 Code clean-up
+  29/10/2004 1.2 ID3 tags support
+		 Code clean-up
+
+* To Do
+
+  - TTA recorder functions.
+
+* Developers
+
+  Alexander Djourik <ald@true-audio.com>
+  Pavel Zhilin <pzh@true-audio.com>
+
+* Copying
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+1. Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in the
+   documentation and/or other materials provided with the distribution.
+3. Neither the name of the True Audio Software nor the names of its
+   contributors may be used to endorse or promote products derived
+   from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+* See also
+
+Please visit the TTA homepage at http://tta.sourceforge.net for the
+latest in news and downloads.

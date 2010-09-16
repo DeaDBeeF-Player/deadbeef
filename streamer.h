@@ -98,8 +98,15 @@ streamer_move_to_randomsong (void);
 struct DB_fileinfo_s *
 streamer_get_current_fileinfo (void);
 
+void
+streamer_set_current_playlist (int plt);
+
 int
 streamer_get_current_playlist (void);
+
+// returns track index in current streamer playlist
+int
+str_get_idx_of (playItem_t *it);
 
 void
 streamer_notify_playlist_deleted (playlist_t *plt);

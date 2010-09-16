@@ -45,7 +45,7 @@ protected:
   void 		    xadplayer_rewind(int subsong);
   void 		    xadplayer_update();
   float 	    xadplayer_getrefresh();
-  std::string	    xadplayer_gettype();
+  const char *	    xadplayer_gettype();
 
 private:
   static const unsigned char hyp_adlib_registers[99];

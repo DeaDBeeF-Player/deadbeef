@@ -16,6 +16,7 @@ full list of dependencies:
     xlib: for global hotkeys
     dbus: for notification daemon support (OSD current song notifications)
     pulseaudio: for PulseAudio output plugin
+    faad2: for AAC plugin
 
 actual package names for your Linux distribution may vary.
 

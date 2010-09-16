@@ -91,6 +91,9 @@ pl_global_unlock (void);
 playlist_t *
 plt_get_curr_ptr (void);
 
+playlist_t *
+plt_get (int idx);
+
 int
 plt_get_count (void);
 
@@ -108,6 +111,9 @@ plt_add (int before, const char *title);
 
 void
 plt_remove (int plt);
+
+int
+plt_find (const char *name);
 
 void
 plt_free (void);
@@ -140,6 +146,12 @@ pl_add_dir (const char *dirname, int (*cb)(playItem_t *it, void *data), void *us
 
 int
 pl_add_file (const char *fname, int (*cb)(playItem_t *it, void *data), void *user_data);
+
+void
+pl_add_files_begin (void);
+
+void
+pl_add_files_end (void);
 
 playItem_t *
 pl_insert_dir (playItem_t *after, const char *dirname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data);
@@ -179,6 +191,9 @@ pl_get_for_idx_and_iter (int idx, int iter);
 
 int
 pl_get_idx_of (playItem_t *it);
+
+int
+pl_get_idx_of_iter (playItem_t *it, int iter);
 
 playItem_t *
 pl_insert_cue_from_buffer (playItem_t *after, playItem_t *origin, const uint8_t *buffer, int buffersize, int numsamples, int samplerate);
@@ -254,6 +269,9 @@ pl_set_item_flags (playItem_t *it, uint32_t flags);
 // [a]rtist, [t]itle, al[b]um, [l]ength, track[n]umber
 int
 pl_format_title (playItem_t *it, int idx, char *s, int size, int id, const char *fmt);
+
+int
+pl_format_title_escaped (playItem_t *it, int idx, char *s, int size, int id, const char *fmt);
 
 void
 pl_format_time (float t, char *dur, int size);

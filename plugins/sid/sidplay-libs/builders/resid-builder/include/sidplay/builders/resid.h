@@ -22,7 +22,6 @@
  * creating a wrapper instead of implementing a SID emulation
  */
 
-#include <vector>
 #include <sidplay/sidbuilder.h>
 #include <sidplay/event.h>
 
@@ -37,11 +36,13 @@ private:
     static const char  *ERR_FILTER_DEFINITION;
     char        m_errorBuffer[100];
     const char *m_error;
-    std::vector<sidemu *> sidobjs;
+    enum { MAX_SIDOBJS = 10 };
+    sidemu * sidobjs[MAX_SIDOBJS];
+    int n_sidobjs;
 
 public:
     sidemu *getsidemu (int i) {
-        if (i >= sidobjs.size ()) {
+        if (i >= n_sidobjs) {
             return NULL;
         }
         return sidobjs[i];

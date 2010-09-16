@@ -53,6 +53,11 @@
 #define DUMB_MONTH_STR1 "8"
 #define DUMB_DAY_STR1   "7"
 
+#define DUMB_YEAR_STR2  "05"
+#define DUMB_YEAR_STR4  "2005"
+#define DUMB_MONTH_STR1 "8"
+#define DUMB_DAY_STR1   "7"
+
 #if DUMB_MONTH < 10
 #define DUMB_MONTH_STR2 "0"DUMB_MONTH_STR1
 #else
@@ -214,6 +219,8 @@ DUH *load_duh(const char *filename);
 DUH *read_duh(DUMBFILE *f);
 
 long duh_get_length(DUH *duh);
+
+const char *duh_get_tag(DUH *duh, const char *key);
 
 const char *duh_get_tag(DUH *duh, const char *key);
 
@@ -486,6 +493,9 @@ void dumb_it_sr_set_channel_volume(DUMB_IT_SIGRENDERER *sr, int channel, int vol
 int dumb_it_sr_get_channel_muted(DUMB_IT_SIGRENDERER *sr, int channel);
 void dumb_it_sr_set_channel_muted(DUMB_IT_SIGRENDERER *sr, int channel, int muted);
 
+int dumb_it_sr_get_channel_muted(DUMB_IT_SIGRENDERER *sr, int channel);
+void dumb_it_sr_set_channel_muted(DUMB_IT_SIGRENDERER *sr, int channel, int muted);
+
 typedef struct DUMB_IT_CHANNEL_STATE DUMB_IT_CHANNEL_STATE;
 
 struct DUMB_IT_CHANNEL_STATE
@@ -609,6 +619,19 @@ sample_t **allocate_sample_buffer(int n_channels, long length);
 void destroy_sample_buffer(sample_t **samples);
 
 
+/* Sample Buffer Allocation Helpers */
+
+#ifdef DUMB_DECLARE_DEPRECATED
+sample_t **create_sample_buffer(int n_channels, long length) DUMB_DEPRECATED;
+/* DUMB has been changed to interleave stereo samples. Use
+ * allocate_sample_buffer() instead, and see the comments for
+ * duh_sigrenderer_set_analyser_callback().
+ */
+#endif
+sample_t **allocate_sample_buffer(int n_channels, long length);
+void destroy_sample_buffer(sample_t **samples);
+
+
 /* Silencing Helper */
 
 void dumb_silence(sample_t *samples, long length);
@@ -709,6 +732,7 @@ void dumb_resample_get_current_sample_8_2_1(DUMB_RESAMPLER *resampler, DUMB_VOLU
 void dumb_resample_get_current_sample_8_2_2(DUMB_RESAMPLER *resampler, DUMB_VOLUME_RAMP_INFO * volume_left, DUMB_VOLUME_RAMP_INFO * volume_right, sample_t *dst);
 void dumb_end_resampler_8(DUMB_RESAMPLER *resampler);
 
+
 void dumb_reset_resampler_n(int n, DUMB_RESAMPLER *resampler, void *src, int src_channels, long pos, long start, long end, int quality);
 DUMB_RESAMPLER *dumb_start_resampler_n(int n, void *src, int src_channels, long pos, long start, long end, int quality);
 long dumb_resample_n_1_1(int n, DUMB_RESAMPLER *resampler, sample_t *dst, long dst_size, DUMB_VOLUME_RAMP_INFO * volume, float delta);
@@ -732,6 +756,8 @@ DUH *make_duh(
 	DUH_SIGTYPE_DESC *desc[],
 	sigdata_t *sigdata[]
 );
+
+void duh_set_length(DUH *duh, long length);
 
 void duh_set_length(DUH *duh, long length);
 

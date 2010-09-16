@@ -2,14 +2,14 @@
 
 pkgname=deadbeef
 pkgver=0.4.1
-pkgrel=1
+pkgrel=2
 pkgdesc="mp3/ogg/flac/ape/sid/mod/nsf/m4a/mpc/shn music player based on GTK2"
 arch=(i686 x86_64)
 url="http://deadbeef.sourceforge.net"
 license=('GPL2')
 makedepends=('gtk2', 'libsamplerate', 'libvorbis', 'libmad', 'flac', 'curl', 'alsa-lib', 'wavpack', 'libsndfile', 'libcdio', 'libcddb', 'ffmpeg')
 depends=('gtk2' 'libsamplerate' 'alsa-lib')
-optdepends=('libvorbis: ogg vorbis playback', 'libmad: mp1/2/3 playback', 'flac: flac playback', 'curl: lastfm scrobbler, shoutcast, icecast, podcast support', 'wavpack: wv playback', 'libsndfile: wav playback', "libcdio and libcddb: audio cd playback", "ffmpeg: for aac, mpc, shn, aa3, oma, ac3, etc")
+optdepends=('libvorbis: ogg vorbis playback', 'libmad: mp1/2/3 playback', 'flac: flac playback', 'curl: lastfm scrobbler, shoutcast, icecast, podcast support', 'wavpack: wv playback', 'libsndfile: wav playback', "libcdio: audio cd plugin", "libcddb: audio cd plugin", "ffmpeg: for aac, mpc, shn, aa3, oma, ac3, etc")
 makedepends=('pkgconfig')
 source=(http://downloads.sourceforge.net/project/$pkgname/$pkgname-$pkgver.tar.bz2)
 md5sums=('69383c6490461751c2ec6281158a8624')

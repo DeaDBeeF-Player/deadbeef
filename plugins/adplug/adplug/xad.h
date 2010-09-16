@@ -32,15 +32,15 @@ public:
         CxadPlayer(Copl * newopl);
         ~CxadPlayer();
 
-        bool	load(const std::string &filename, const CFileProvider &fp);
+        bool	load(const char *filename, const CFileProvider &fp);
         bool	update();
         void	rewind(int subsong);
         float	getrefresh();
 
-        std::string     gettype();
-        std::string     gettitle();
-        std::string     getauthor();
-        std::string     getinstrument(unsigned int i);
+        const char *     gettype();
+        const char *     gettitle();
+        const char *     getauthor();
+        const char *     getinstrument(unsigned int i);
         unsigned int    getinstruments();
 
 protected:
@@ -48,18 +48,18 @@ protected:
 	virtual bool xadplayer_load() = 0;
 	virtual void xadplayer_update() = 0;
 	virtual float xadplayer_getrefresh() = 0;
-	virtual std::string xadplayer_gettype() = 0;
-	virtual std::string xadplayer_gettitle()
+	virtual const char * xadplayer_gettype() = 0;
+	virtual const char * xadplayer_gettitle()
 	  {
-	    return std::string(xad.title);
+	    return xad.title;
 	  }
-	virtual std::string xadplayer_getauthor()
+	virtual const char *xadplayer_getauthor()
 	  {
-	    return std::string(xad.author);
+	    return xad.author;
 	  }
-	virtual std::string xadplayer_getinstrument(unsigned int i)
+	virtual const char *xadplayer_getinstrument(unsigned int i)
 	  {
-	    return std::string("");
+	    return "";
 	  }
 	virtual unsigned int xadplayer_getinstruments()
 	  {

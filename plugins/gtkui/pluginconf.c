@@ -25,6 +25,7 @@
 #include <stdlib.h>
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
+#include "../../gettext.h"
 #include "../../deadbeef.h"
 #include "gtkui.h"
 #include "parser.h"
@@ -37,7 +38,7 @@ extern GtkWidget *mainwin;
 
 void
 on_prop_browse_file (GtkButton *button, gpointer user_data) {
-    GtkWidget *dlg = gtk_file_chooser_dialog_new ("Open file...", GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
+    GtkWidget *dlg = gtk_file_chooser_dialog_new (_("Open file..."), GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
 
     gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dlg), FALSE);
     // restore folder
@@ -121,6 +122,9 @@ static void apply_conf (GtkWidget *w, DB_plugin_t *p) {
             else if (!strcmp (type, "checkbox")) {
                 deadbeef->conf_set_int (key, gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)));
             }
+            else if (!strncmp (type, "hscale[", 7)) {
+                deadbeef->conf_set_float (key, gtk_range_get_value (GTK_RANGE (widget)));
+            }
         }
     }
     deadbeef->sendmessage (M_CONFIGCHANGED, 0, 0, 0);
@@ -135,7 +139,7 @@ void
 plugin_configure (GtkWidget *parentwin, DB_plugin_t *p) {
     // create window
     char title[200];
-    snprintf (title, sizeof (title), "Setup %s", p->name);
+    snprintf (title, sizeof (title), _("Setup %s"), p->name);
     GtkWidget *win = gtk_dialog_new_with_buttons (title, GTK_WINDOW (parentwin), GTK_DIALOG_MODAL, GTK_STOCK_APPLY, GTK_RESPONSE_APPLY, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
     gtk_dialog_set_default_response (GTK_DIALOG (win), GTK_RESPONSE_OK);
     gtk_window_set_type_hint (GTK_WINDOW (win), GDK_WINDOW_TYPE_HINT_DIALOG);
@@ -234,6 +238,30 @@ plugin_configure (GtkWidget *parentwin, DB_plugin_t *p) {
                 gtk_box_pack_start (GTK_BOX (cont), btn, FALSE, FALSE, 0);
                 g_signal_connect (G_OBJECT (btn), "clicked", G_CALLBACK (on_prop_browse_file), prop);
             }
+        }
+        else if (!strncmp (type, "hscale[", 7)) {
+            float min, max, step;
+            if (3 != sscanf (type+6, "[%f,%f,%f]", &min, &max, &step)) {
+                min = 0;
+                max = 100;
+                step = 1;
+            }
+            if (min >= max) {
+                float tmp = min;
+                min = max;
+                max = tmp;
+                break;
+            }
+            if (step <= 0) {
+                step = 1;
+            }
+            prop = gtk_hscale_new_with_range (min, max, step);
+            label = gtk_label_new (labeltext);
+            gtk_widget_show (label);
+            g_signal_connect (G_OBJECT (prop), "value-changed", G_CALLBACK (prop_changed), win);
+            gtk_widget_show (prop);
+            gtk_range_set_value (GTK_RANGE (prop), (gdouble)deadbeef->conf_get_float (key, (float)*def));
+            gtk_scale_set_value_pos (GTK_SCALE (prop), GTK_POS_RIGHT);
         }
         if (!strcmp (type, "password")) {
             gtk_entry_set_visibility (GTK_ENTRY (prop), FALSE);

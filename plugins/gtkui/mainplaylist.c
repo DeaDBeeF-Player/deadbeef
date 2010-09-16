@@ -16,8 +16,12 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
+#ifdef HAVE_CONFIG_H
+#  include <config.h>
+#endif
 #include <stdlib.h>
 #include <string.h>
+#include "../../gettext.h"
 #include "parser.h"
 #include "gtkui.h"
 #include "ddblistview.h"
@@ -60,6 +64,9 @@ main_get_cursor (void) {
 
 static void
 main_set_cursor (int cursor) {
+    char conf[100];
+    snprintf (conf, sizeof (conf), "playlist.cursor.%d", deadbeef->plt_get_curr ());
+    deadbeef->conf_set_int (conf, cursor);
     return deadbeef->pl_set_cursor (PL_MAIN, cursor);
 }
 
@@ -290,11 +297,11 @@ main_playlist_init (GtkWidget *widget) {
     DB_conf_item_t *col = deadbeef->conf_find ("playlist.column.", NULL);
     if (!col) {
         // create default set of columns
-        add_column_helper (listview, "Playing", 50, DB_COLUMN_PLAYING, NULL, 0);
-        add_column_helper (listview, "Artist / Album", 150, -1, "%a - %b", 0);
-        add_column_helper (listview, "Track No", 50, -1, "%n", 1);
-        add_column_helper (listview, "Title / Track Artist", 150, -1, "%t", 0);
-        add_column_helper (listview, "Duration", 50, -1, "%l", 0);
+        add_column_helper (listview, _("Playing"), 50, DB_COLUMN_PLAYING, NULL, 0);
+        add_column_helper (listview, _("Artist / Album"), 150, -1, "%a - %b", 0);
+        add_column_helper (listview, _("Track No"), 50, -1, "%n", 1);
+        add_column_helper (listview, _("Title / Track Artist"), 150, -1, "%t", 0);
+        add_column_helper (listview, _("Duration"), 50, -1, "%l", 0);
     }
     else {
         while (col) {

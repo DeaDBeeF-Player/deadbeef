@@ -26,6 +26,7 @@
 #include <math.h>
 #include <sys/time.h>
 #include <unistd.h>
+#include "../../gettext.h"
 #include "gtkui.h"
 #include "ddblistview.h"
 #include "mainplaylist.h"
@@ -42,6 +43,7 @@
 #include "plcommon.h"
 #include "ddbtabstrip.h"
 #include "eq.h"
+#include "actions.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -63,6 +65,10 @@ GtkWidget *traymenu;
 // playlist theming
 GtkWidget *theme_treeview;
 GtkWidget *theme_button;
+
+int gtkui_embolden_current_track;
+
+#define TRAY_ICON "deadbeef-tray-icon"
 
 // that must be called before gtk_init
 void
@@ -124,10 +130,10 @@ update_songinfo (gpointer ctx) {
         snprintf (totaltime_str, sizeof (totaltime_str), "%d:%02d:%02d", hourtotal, mintotal, sectotal);
     }
     else if (daystotal == 1) {
-        snprintf (totaltime_str, sizeof (totaltime_str), "1 day %d:%02d:%02d", hourtotal, mintotal, sectotal);
+        snprintf (totaltime_str, sizeof (totaltime_str), _("1 day %d:%02d:%02d"), hourtotal, mintotal, sectotal);
     }
     else {
-        snprintf (totaltime_str, sizeof (totaltime_str), "%d days %d:%02d:%02d", daystotal, hourtotal, mintotal, sectotal);
+        snprintf (totaltime_str, sizeof (totaltime_str), _("%d days %d:%02d:%02d"), daystotal, hourtotal, mintotal, sectotal);
     }
 
     DB_playItem_t *track = deadbeef->streamer_get_playing_track ();
@@ -136,7 +142,7 @@ update_songinfo (gpointer ctx) {
     float duration = track ? deadbeef->pl_get_item_duration (track) : -1;
 
     if (deadbeef->get_output ()->state () == OUTPUT_STATE_STOPPED || !track || !c) {
-        snprintf (sbtext_new, sizeof (sbtext_new), "Stopped | %d tracks | %s total playtime", deadbeef->pl_getcount (PL_MAIN), totaltime_str);
+        snprintf (sbtext_new, sizeof (sbtext_new), _("Stopped | %d tracks | %s total playtime"), deadbeef->pl_getcount (PL_MAIN), totaltime_str);
         songpos = 0;
     }
     else {
@@ -146,7 +152,15 @@ update_songinfo (gpointer ctx) {
         int mindur = duration / 60;
         int secdur = duration - mindur * 60;
 
-        const char *mode = c->channels == 1 ? "Mono" : "Stereo";
+        const char *mode;
+        char temp[20];
+        if (c->channels <= 2) {
+            mode = c->channels == 1 ? _("Mono") : _("Stereo");
+        }
+        else {
+            snprintf (temp, sizeof (temp), "%dch Multichannel", c->channels);
+            mode = temp;
+        }
         int samplerate = c->samplerate;
         int bitspersample = c->bps;
         songpos = playpos;
@@ -166,14 +180,14 @@ update_songinfo (gpointer ctx) {
             memcpy (&last_br_update, &tm, sizeof (tm));
             int bitrate = deadbeef->streamer_get_apx_bitrate ();
             if (bitrate > 0) {
-                snprintf (sbitrate, sizeof (sbitrate), "| %4d kbps ", bitrate);
+                snprintf (sbitrate, sizeof (sbitrate), _("| %4d kbps "), bitrate);
             }
             else {
                 sbitrate[0] = 0;
             }
         }
-        const char *spaused = deadbeef->get_output ()->state () == OUTPUT_STATE_PAUSED ? "Paused | " : "";
-        snprintf (sbtext_new, sizeof (sbtext_new), "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime", spaused, track->filetype ? track->filetype:"-", sbitrate, samplerate, bitspersample, mode, minpos, secpos, t, deadbeef->pl_getcount (PL_MAIN), totaltime_str);
+        const char *spaused = deadbeef->get_output ()->state () == OUTPUT_STATE_PAUSED ? _("Paused | ") : "";
+        snprintf (sbtext_new, sizeof (sbtext_new), _("%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"), spaused, track->filetype ? track->filetype:"-", sbitrate, samplerate, bitspersample, mode, minpos, secpos, t, deadbeef->pl_getcount (PL_MAIN), totaltime_str);
     }
 
     if (strcmp (sbtext_new, sb_text)) {
@@ -206,26 +220,50 @@ update_songinfo (gpointer ctx) {
     return FALSE;
 }
 
+void
+set_tray_tooltip (const char *text) {
+    if (trayicon) {
+#if (GTK_MINOR_VERSION < 16)
+        gtk_status_icon_set_tooltip (trayicon, text);
+#else
+        gtk_status_icon_set_tooltip_text (trayicon, text);
+#endif
+    }
+}
+
 gboolean
 on_trayicon_scroll_event               (GtkWidget       *widget,
                                         GdkEventScroll  *event,
                                         gpointer         user_data)
 {
     float vol = deadbeef->volume_get_db ();
+    int sens = deadbeef->conf_get_int ("gtkui.tray_volume_sensitivity", 1);
     if (event->direction == GDK_SCROLL_UP || event->direction == GDK_SCROLL_RIGHT) {
-        vol += 1;
+        vol += sens;
     }
     else if (event->direction == GDK_SCROLL_DOWN || event->direction == GDK_SCROLL_LEFT) {
-        vol -= 1;
+        vol -= sens;
     }
     if (vol > 0) {
         vol = 0;
     }
-    else if (vol < -60) {
-        vol = -60;
+    else if (vol < deadbeef->volume_get_min_db ()) {
+        vol = deadbeef->volume_get_min_db ();
     }
     deadbeef->volume_set_db (vol);
     volumebar_redraw ();
+
+#if 0
+    char str[100];
+    if (deadbeef->conf_get_int ("gtkui.show_gain_in_db", 1)) {
+        snprintf (str, sizeof (str), "Gain: %s%d dB", vol == 0 ? "+" : "", (int)vol);
+    }
+    else {
+        snprintf (str, sizeof (str), "Gain: %d%%", (int)(deadbeef->volume_get_amp () * 100));
+    }
+    set_tray_tooltip (str);
+#endif
+
     return FALSE;
 }
 
@@ -353,40 +391,53 @@ gtkui_on_songchanged (DB_event_trackchange_t *ev, uintptr_t data) {
 }
 
 void
-set_tray_tooltip (const char *text) {
-#if (GTK_MINOR_VERSION < 16)
-        gtk_status_icon_set_tooltip (trayicon, text);
-#else
-        gtk_status_icon_set_tooltip_text (trayicon, text);
-#endif
+gtkui_set_titlebar (DB_playItem_t *it) {
+    if (!it) {
+        it = deadbeef->streamer_get_playing_track ();
+    }
+    else {
+        deadbeef->pl_item_ref (it);
+    }
+    char str[600];
+    const char *fmt;
+    if (it) {
+        fmt = deadbeef->conf_get_str ("gtkui.titlebar_playing", "%a - %t - DeaDBeeF-%V");
+    }
+    else {
+        fmt = deadbeef->conf_get_str ("gtkui.titlebar_stopped", "DeaDBeeF-%V");
+    }
+    deadbeef->pl_format_title (it, -1, str, sizeof (str), -1, fmt);
+    gtk_window_set_title (GTK_WINDOW (mainwin), str);
+    if (it) {
+        deadbeef->pl_item_unref (it);
+    }
+    set_tray_tooltip (str);
 }
 
 static void
-current_track_changed (DB_playItem_t *it) {
-    char str[600];
-    if (it) {
-        deadbeef->pl_format_title (it, -1, str, sizeof (str), -1, "%a - %t - DeaDBeeF-" VERSION);
+trackinfochanged_wrapper (DdbListview *playlist, DB_playItem_t *track, int iter) {
+    if (track) {
+        int idx = deadbeef->pl_get_idx_of_iter (track, iter);
+        if (idx != -1) {
+            ddb_listview_draw_row (playlist, idx, (DdbListviewIter)track);
+        }
     }
-    else {
-        strcpy (str, "DeaDBeeF-" VERSION);
-    }
-    gtk_window_set_title (GTK_WINDOW (mainwin), str);
-    set_tray_tooltip (str);
 }
 
 static gboolean
 trackinfochanged_cb (gpointer data) {
     DB_playItem_t *track = (DB_playItem_t *)data;
     GtkWidget *playlist = lookup_widget (mainwin, "playlist");
-    if (track) {
-        int idx = deadbeef->pl_get_idx_of (track);
-        if (idx != -1) {
-            ddb_listview_draw_row (DDB_LISTVIEW (playlist), idx, (DdbListviewIter)track);
-        }
+    trackinfochanged_wrapper (DDB_LISTVIEW (playlist), track, PL_MAIN);
+
+    if (searchwin && gtk_widget_get_visible (searchwin)) {
+        GtkWidget *search = lookup_widget (searchwin, "searchlist");
+        trackinfochanged_wrapper (DDB_LISTVIEW (search), track, PL_SEARCH);
     }
+
     DB_playItem_t *curr = deadbeef->streamer_get_playing_track ();
     if (track == curr) {
-        current_track_changed (track);
+        gtkui_set_titlebar (track);
     }
     if (curr) {
         deadbeef->pl_item_unref (curr);
@@ -455,9 +506,19 @@ playlistswitch_cb (gpointer none) {
     char conf[100];
     snprintf (conf, sizeof (conf), "playlist.scroll.%d", curr);
     int scroll = deadbeef->conf_get_int (conf, 0);
+    snprintf (conf, sizeof (conf), "playlist.cursor.%d", curr);
+    int cursor = deadbeef->conf_get_int (conf, -1);
 //    gdk_window_invalidate_rect (tabstrip->window, NULL, FALSE);
     ddb_tabstrip_refresh (DDB_TABSTRIP (tabstrip));
     DdbListview *listview = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
+    deadbeef->pl_set_cursor (PL_MAIN, cursor);
+    if (cursor != -1) {
+        DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (cursor, PL_MAIN);
+        if (it) {
+            deadbeef->pl_set_selected (it, 1);
+            deadbeef->pl_item_unref (it);
+        }
+    }
     playlist_refresh ();
     ddb_listview_set_vscroll (listview, scroll);
     search_refresh ();
@@ -477,12 +538,73 @@ gtkui_on_frameupdate (DB_event_t *ev, uintptr_t data) {
     return 0;
 }
 
-static int
-gtkui_on_volumechanged (DB_event_t *ev, uintptr_t data) {
+static gboolean
+gtkui_volumechanged_cb (gpointer ctx) {
     GtkWidget *volumebar = lookup_widget (mainwin, "volumebar");
     gdk_window_invalidate_rect (volumebar->window, NULL, FALSE);
+    return FALSE;
+}
+
+static int
+gtkui_on_volumechanged (DB_event_t *ev, uintptr_t data) {
+    g_idle_add (gtkui_volumechanged_cb, NULL);
 
     return 0;
+}
+
+static gboolean
+gtkui_update_status_icon (gpointer unused) {
+    int hide_tray_icon = deadbeef->conf_get_int ("gtkui.hide_tray_icon", 0);
+    if (hide_tray_icon && !trayicon) {
+        return FALSE;
+    }
+    if (trayicon) {
+        if (hide_tray_icon) {
+            g_object_set (trayicon, "visible", FALSE, NULL);
+        }
+        else {
+            g_object_set (trayicon, "visible", TRUE, NULL);
+        }
+        return FALSE;
+    }
+    // system tray icon
+    traymenu = create_traymenu ();
+
+    const char *icon_name = deadbeef->conf_get_str ("gtkui.custom_tray_icon", TRAY_ICON);
+    GtkIconTheme *theme = gtk_icon_theme_get_default();
+
+    if (!gtk_icon_theme_has_icon(theme, icon_name))
+        icon_name = "deadbeef";
+    else {
+        GtkIconInfo *icon_info = gtk_icon_theme_lookup_icon(theme, icon_name, 48, GTK_ICON_LOOKUP_USE_BUILTIN);
+        const gboolean icon_is_builtin = gtk_icon_info_get_filename(icon_info) == NULL;
+        gtk_icon_info_free(icon_info);
+        icon_name = icon_is_builtin ? "deadbeef" : icon_name;
+    }
+
+    trayicon = gtk_status_icon_new_from_icon_name(icon_name);
+    if (hide_tray_icon) {
+        g_object_set (trayicon, "visible", FALSE, NULL);
+    }
+
+#if GTK_MINOR_VERSION <= 14
+    g_signal_connect ((gpointer)trayicon, "activate", G_CALLBACK (on_trayicon_activate), NULL);
+#else
+    g_signal_connect ((gpointer)trayicon, "scroll_event", G_CALLBACK (on_trayicon_scroll_event), NULL);
+    g_signal_connect ((gpointer)trayicon, "button_press_event", G_CALLBACK (on_trayicon_button_press_event), NULL);
+#endif
+    g_signal_connect ((gpointer)trayicon, "popup_menu", G_CALLBACK (on_trayicon_popup_menu), NULL);
+
+    gtkui_set_titlebar (NULL);
+
+    return FALSE;
+}
+
+static void
+gtkui_hide_status_icon () {
+    if (trayicon) {
+        g_object_set (trayicon, "visible", FALSE, NULL);
+    }
 }
 
 static int
@@ -510,6 +632,12 @@ gtkui_on_configchanged (DB_event_t *ev, uintptr_t data) {
     int stop_after_current = deadbeef->conf_get_int ("playlist.stop_after_current", 0);
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "stop_after_current")), stop_after_current ? TRUE : FALSE);
 
+    // embolden current track
+    gtkui_embolden_current_track = deadbeef->conf_get_int ("gtkui.embolden_current_track", 0);
+
+    // tray icon
+    g_idle_add (gtkui_update_status_icon, NULL);
+
     return 0;
 }
 
@@ -529,7 +657,7 @@ char last_playlist_save_name[1024] = "";
 
 void
 save_playlist_as (void) {
-    GtkWidget *dlg = gtk_file_chooser_dialog_new ("Save Playlist As", GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_SAVE, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_SAVE, GTK_RESPONSE_OK, NULL);
+    GtkWidget *dlg = gtk_file_chooser_dialog_new (_("Save Playlist As"), GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_SAVE, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_SAVE, GTK_RESPONSE_OK, NULL);
 
     gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER (dlg), TRUE);
     gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER (dlg), "untitled.dbpl");
@@ -538,7 +666,7 @@ save_playlist_as (void) {
 
     GtkFileFilter* flt;
     flt = gtk_file_filter_new ();
-    gtk_file_filter_set_name (flt, "DeaDBeeF playlist files (*.dbpl)");
+    gtk_file_filter_set_name (flt, _("DeaDBeeF playlist files (*.dbpl)"));
     gtk_file_filter_add_pattern (flt, "*.dbpl");
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
 
@@ -592,14 +720,14 @@ void
 on_playlist_load_activate              (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    GtkWidget *dlg = gtk_file_chooser_dialog_new ("Load Playlist", GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
+    GtkWidget *dlg = gtk_file_chooser_dialog_new (_("Load Playlist"), GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
 
     // restore folder
     gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dlg), deadbeef->conf_get_str ("filechooser.playlist.lastdir", ""));
 
     GtkFileFilter* flt;
     flt = gtk_file_filter_new ();
-    gtk_file_filter_set_name (flt, "DeaDBeeF playlist files (*.dbpl)");
+    gtk_file_filter_set_name (flt, _("DeaDBeeF playlist files (*.dbpl)"));
     gtk_file_filter_add_pattern (flt, "*.dbpl");
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
     
@@ -624,13 +752,6 @@ on_playlist_load_activate              (GtkMenuItem     *menuitem,
     else {
         gtk_widget_destroy (dlg);
     }
-}
-void
-on_add_audio_cd_activate               (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
-    deadbeef->pl_add_file ("all.cda", NULL, NULL);
-    playlist_refresh ();
 }
 
 void
@@ -697,15 +818,17 @@ update_win_title_idle (gpointer data) {
     // update window title
     if (from || to) {
         if (to) {
-            DB_playItem_t *it = deadbeef->streamer_get_playing_track ();;
+            DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
             if (it) { // it might have been deleted after event was sent
-                current_track_changed (it);
+                gtkui_set_titlebar (it);
                 deadbeef->pl_item_unref (it);
+            }
+            else {
+                gtkui_set_titlebar (NULL);
             }
         }
         else {
-            gtk_window_set_title (GTK_WINDOW (mainwin), "DeaDBeeF-" VERSION);
-            set_tray_tooltip ("DeaDBeeF-" VERSION);
+            gtkui_set_titlebar (NULL);
         }
     }
     // update playlist view
@@ -737,10 +860,10 @@ gtkui_add_new_playlist (void) {
     for (;;) {
         char name[100];
         if (!idx) {
-            strcpy (name, "New Playlist");
+            strcpy (name, _("New Playlist"));
         }
         else {
-            snprintf (name, sizeof (name), "New Playlist (%d)", idx);
+            snprintf (name, sizeof (name), _("New Playlist (%d)"), idx);
         }
         for (i = 0; i < cnt; i++) {
             char t[100];
@@ -790,30 +913,11 @@ gtkui_thread (void *ctx) {
     gtk_disable_setlocale ();
     gtk_init (&argc, (char ***)&argv);
 
-    // system tray icon
-    traymenu = create_traymenu ();
-    GdkPixbuf *trayicon_pixbuf = create_pixbuf ("play_24.png");
-    trayicon = gtk_status_icon_new_from_pixbuf (trayicon_pixbuf);
-    set_tray_tooltip ("DeaDBeeF");
-    //gtk_status_icon_set_title (GTK_STATUS_ICON (trayicon), "DeaDBeeF");
-#if GTK_MINOR_VERSION <= 14
-    g_signal_connect ((gpointer)trayicon, "activate", G_CALLBACK (on_trayicon_activate), NULL);
-#else
-    g_signal_connect ((gpointer)trayicon, "scroll_event", G_CALLBACK (on_trayicon_scroll_event), NULL);
-    g_signal_connect ((gpointer)trayicon, "button_press_event", G_CALLBACK (on_trayicon_button_press_event), NULL);
-#endif
-    g_signal_connect ((gpointer)trayicon, "popup_menu", G_CALLBACK (on_trayicon_popup_menu), NULL);
-
     mainwin = create_mainwin ();
     gtkpl_init ();
 
-    GdkPixbuf *mainwin_icon_pixbuf;
-    mainwin_icon_pixbuf = create_pixbuf ("play_24.png");
-    if (mainwin_icon_pixbuf)
-    {
-        gtk_window_set_icon (GTK_WINDOW (mainwin), mainwin_icon_pixbuf);
-        g_object_unref (G_OBJECT (mainwin_icon_pixbuf));
-    }
+    gtk_window_set_icon_name (GTK_WINDOW (mainwin), "deadbeef");
+
     {
         int x = deadbeef->conf_get_int ("mainwin.geometry.x", 40);
         int y = deadbeef->conf_get_int ("mainwin.geometry.y", 40);
@@ -833,7 +937,6 @@ gtkui_thread (void *ctx) {
     GtkWidget *header_mi = lookup_widget (mainwin, "view_headers");
     GtkWidget *sb_mi = lookup_widget (mainwin, "view_status_bar");
     GtkWidget *ts_mi = lookup_widget (mainwin, "view_tabs");
-    GtkWidget *eq_mi = lookup_widget (mainwin, "view_eq");
     GtkWidget *sb = lookup_widget (mainwin, "statusbar");
     GtkWidget *ts = lookup_widget (mainwin, "tabstrip");
     if (deadbeef->conf_get_int ("gtkui.statusbar.visible", 1)) {
@@ -850,29 +953,8 @@ gtkui_thread (void *ctx) {
         gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (ts_mi), FALSE);
         gtk_widget_hide (ts);
     }
-    if (!get_supereq_plugin ()) {
-        gtk_widget_hide (GTK_WIDGET (eq_mi));
-    }
-    else {
-        if (deadbeef->conf_get_int ("gtkui.eq.visible", 0)) {
-            gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (eq_mi), TRUE);
-            eq_window_show ();
-        }
-        else {
-            gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (eq_mi), FALSE);
-        }
-    }
-
     searchwin = create_searchwin ();
     gtk_window_set_transient_for (GTK_WINDOW (searchwin), GTK_WINDOW (mainwin));
-
-#if 0
-    // get saved scrollpos before creating listview, to avoid reset
-    int curr = deadbeef->plt_get_curr ();
-    char conf[100];
-    snprintf (conf, sizeof (conf), "playlist.scroll.%d", curr);
-    int scroll = deadbeef->conf_get_int (conf, 0);
-#endif
 
     DdbListview *main_playlist = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
     main_playlist_init (GTK_WIDGET (main_playlist));
@@ -891,6 +973,8 @@ gtkui_thread (void *ctx) {
 
     progress_init ();
     cover_art_init ();
+    add_mainmenu_actions (lookup_widget (mainwin, "menubar1"));
+
     gtk_widget_show (mainwin);
 
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_ACTIVATE, DB_CALLBACK (gtkui_on_activate), 0);
@@ -904,33 +988,95 @@ gtkui_thread (void *ctx) {
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_OUTPUTCHANGED, DB_CALLBACK (gtkui_on_outputchanged), 0);
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_PLAYLISTSWITCH, DB_CALLBACK (gtkui_on_playlistswitch), 0);
 
-//    playlist_refresh ();
-//    ddb_listview_set_vscroll (main_playlist, scroll);
-    gtk_window_set_title (GTK_WINDOW (mainwin), "DeaDBeeF-" VERSION);
+    char str[600];
+    deadbeef->pl_format_title (NULL, -1, str, sizeof (str), -1, deadbeef->conf_get_str ("gtkui.titlebar_stopped", "DeaDBeeF-%V"));
+    gtk_window_set_title (GTK_WINDOW (mainwin), str);
     gtk_initialized = 1;
+
     gtk_main ();
+
     cover_art_free ();
     eq_window_destroy ();
     trkproperties_destroy ();
     progress_destroy ();
+    gtkui_hide_status_icon ();
     gtk_widget_destroy (mainwin);
     gtk_widget_destroy (searchwin);
     gdk_threads_leave ();
 }
 
+gboolean
+gtkui_progress_show_idle (gpointer data) {
+    progress_show ();
+    return FALSE;
+}
+
+gboolean
+gtkui_set_progress_text_idle (gpointer data) {
+    const char *text = (const char *)data;
+    progress_settext (text);
+    return FALSE;
+}
+
+gboolean
+gtkui_progress_hide_idle (gpointer data) {
+    progress_hide ();
+    deadbeef->sendmessage (M_PLAYLISTREFRESH, 0, 0, 0);
+    //playlist_refresh ();
+    return FALSE;
+}
+
+int
+gtkui_add_file_info_cb (DB_playItem_t *it, void *data) {
+    if (progress_is_aborted ()) {
+        return -1;
+    }
+    g_idle_add (gtkui_set_progress_text_idle, it->fname);
+    return 0;
+}
+
+int (*gtkui_original_pl_add_dir) (const char *dirname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
+int (*gtkui_original_pl_add_file) (const char *fname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
+void (*gtkui_original_pl_add_files_begin) (void);
+void (*gtkui_original_pl_add_files_end) (void);
+
+int
+gtkui_pl_add_dir (const char *dirname, int (*cb)(DB_playItem_t *it, void *data), void *user_data) {
+    int res = gtkui_original_pl_add_dir (dirname, gtkui_add_file_info_cb, NULL);
+    return res;
+}
+
+int
+gtkui_pl_add_file (const char *filename, int (*cb)(DB_playItem_t *it, void *data), void *user_data) {
+    int res = gtkui_original_pl_add_file (filename, gtkui_add_file_info_cb, NULL);
+    return res;
+}
+
+void
+gtkui_pl_add_files_begin (void) {
+    g_idle_add (gtkui_progress_show_idle, NULL);
+    gtkui_original_pl_add_files_begin ();
+}
+
+void
+gtkui_pl_add_files_end (void) {
+    g_idle_add (gtkui_progress_hide_idle, NULL);
+    gtkui_original_pl_add_files_end ();
+}
+
+void
+gtkui_focus_on_playing_track (void) {
+    DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
+    if (it) {
+        int idx = deadbeef->pl_get_idx_of (it);
+        ddb_listview_scroll_to (DDB_LISTVIEW (lookup_widget (mainwin, "playlist")), idx);
+        ddb_listview_set_cursor (DDB_LISTVIEW (lookup_widget (mainwin, "playlist")), idx);
+        deadbeef->pl_item_unref (it);
+    }
+}
+
 static int
 gtkui_start (void) {
-    // find coverart plugin
-    DB_plugin_t **plugins = deadbeef->plug_get_list ();
-    for (int i = 0; plugins[i]; i++) {
-        DB_plugin_t *p = plugins[i];
-        if (p->id && !strcmp (p->id, "cover_loader")) {
-            fprintf (stderr, "gtkui: found cover-art loader plugin\n");
-            coverart_plugin = (DB_artwork_plugin_t *)p;
-            break;
-        }
-    }
-
     // gtk must be running in separate thread
     gtk_initialized = 0;
     gtk_tid = deadbeef->thread_start (gtkui_thread, NULL);
@@ -939,8 +1085,60 @@ gtkui_start (void) {
         usleep (10000);
     }
 
+    // override default pl_add_dir
+    gtkui_original_pl_add_dir = deadbeef->pl_add_dir;
+    deadbeef->pl_add_dir = gtkui_pl_add_dir;
+
+    gtkui_original_pl_add_file = deadbeef->pl_add_file;
+    deadbeef->pl_add_file = gtkui_pl_add_file;
+
+    gtkui_original_pl_add_files_begin = deadbeef->pl_add_files_begin;
+    deadbeef->pl_add_files_begin = gtkui_pl_add_files_begin;
+
+    gtkui_original_pl_add_files_end = deadbeef->pl_add_files_end;
+    deadbeef->pl_add_files_end = gtkui_pl_add_files_end;
+
     return 0;
 }
+
+gboolean
+gtkui_connect_cb (void *none) {
+    // equalizer
+    GtkWidget *eq_mi = lookup_widget (mainwin, "view_eq");
+    if (!get_supereq_plugin ()) {
+        gtk_widget_hide (GTK_WIDGET (eq_mi));
+    }
+    else {
+        if (deadbeef->conf_get_int ("gtkui.eq.visible", 0)) {
+            gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (eq_mi), TRUE);
+            eq_window_show ();
+        }
+        else {
+            gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (eq_mi), FALSE);
+        }
+    }
+
+    // cover_art
+    DB_plugin_t **plugins = deadbeef->plug_get_list ();
+    for (int i = 0; plugins[i]; i++) {
+        DB_plugin_t *p = plugins[i];
+        if (p->id && !strcmp (p->id, "cover_loader")) {
+            trace ("gtkui: found cover-art loader plugin\n");
+            coverart_plugin = (DB_artwork_plugin_t *)p;
+            break;
+        }
+    }
+    return FALSE;
+}
+
+static int
+gtkui_connect (void) {
+    // need to do it in gtk thread
+    g_idle_add (gtkui_connect_cb, NULL);
+
+    return 0;
+}
+
 
 static gboolean
 quit_gtk_cb (gpointer nothing) {
@@ -984,6 +1182,9 @@ gtkui_load (DB_functions_t *api) {
 
 static const char settings_dlg[] =
     "property \"Ask confirmation to delete files from disk\" checkbox gtkui.delete_files_ask 1;\n"
+    "property \"Status icon volume control sensitivity\" entry gtkui.tray_volume_sensitivity 1;\n"
+//    "property \"Show volume in dB (percentage otherwise)\" entry gtkui.show_gain_in_db 1\n"
+    "property \"Custom status icon\" entry gtkui.custom_tray_icon \"" TRAY_ICON "\" ;\n"
     "property \"Run gtk_init with --sync (debug mode)\" checkbox gtkui.sync 0;\n"
 ;
 
@@ -1001,5 +1202,6 @@ static DB_gui_t plugin = {
     .plugin.website = "http://deadbeef.sf.net",
     .plugin.start = gtkui_start,
     .plugin.stop = gtkui_stop,
+    .plugin.connect = gtkui_connect,
     .plugin.configdialog = settings_dlg,
 };

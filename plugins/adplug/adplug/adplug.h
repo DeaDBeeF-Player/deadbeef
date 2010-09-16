@@ -22,8 +22,6 @@
 #ifndef H_ADPLUG_ADPLUG
 #define H_ADPLUG_ADPLUG
 
-#include <string>
-
 #include "player.h"
 #include "opl.h"
 #include "fprovide.h"
@@ -37,19 +35,19 @@ class CAdPlug
 public:
   static const CPlayers players;
 
-  static CPlayer *factory(const std::string &fn, Copl *opl,
+  static CPlayer *factory(const char *fn, Copl *opl,
 			  const CPlayers &pl = players,
 			  const CFileProvider &fp = CProvider_Filesystem());
 
-  static void set_database(CAdPlugDatabase *db);
-  static std::string get_version();
-  static void debug_output(const std::string &filename);
+//  static void set_database(CAdPlugDatabase *db);
+  static const char *get_version();
+  static void debug_output(const char *filename);
 
 private:
-  static CAdPlugDatabase *database;
-  static const CPlayerDesc allplayers[];
+//  static CAdPlugDatabase *database;
+  static CPlayerDesc allplayers[];
 
-  static const CPlayers &init_players(const CPlayerDesc pd[]);
+  static const CPlayers &init_players(CPlayerDesc pd[]);
 };
 
 #endif

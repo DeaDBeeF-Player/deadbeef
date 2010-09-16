@@ -19,7 +19,7 @@
  * diskopl.h - Disk Writer OPL, by Simon Peter <dn.tlp@gmx.net>
  */
 
-#include <string>
+#include <string.h>
 #include <stdio.h>
 #include "opl.h"
 #include "player.h"
@@ -27,7 +27,7 @@
 class CDiskopl: public Copl
 {
  public:
-  CDiskopl(std::string filename);
+  CDiskopl(const char * filename);
   virtual ~CDiskopl();
 
   void update(CPlayer *p);			// write to file

@@ -109,5 +109,3 @@ feel something should be added, please don't hesitate to let me know!
 
 Ben Davis
 entheh@users.sf.net
-IRC EFnet #dumb
-See readme.txt for details on using IRC.

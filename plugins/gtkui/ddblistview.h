@@ -84,6 +84,7 @@ typedef struct {
     void (*col_sort) (int col, int sort_order, void *user_data);
     void (*col_free_user_data) (void *user_data);
     void (*vscroll_changed) (int pos);
+    void (*cursor_changed) (int pos);
 } DdbListviewBinding;
 
 struct _DdbListviewColumn;
@@ -109,7 +110,6 @@ struct _DdbListview {
     // current state
     int scrollpos;
     int hscrollpos;
-    double clicktime; // for doubleclick detection
     int rowheight;
 
     int col_movepos;

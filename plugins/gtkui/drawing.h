@@ -63,6 +63,12 @@ void
 draw_init_font (GtkStyle *style);
 
 void
+draw_init_font_bold (void);
+
+void
+draw_init_font_normal (void);
+
+void
 draw_text (float x, float y, int width, int align, const char *text);
 
 void

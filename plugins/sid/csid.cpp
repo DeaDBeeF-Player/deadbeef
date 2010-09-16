@@ -18,10 +18,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#define LIBICONV_PLUG
-#include <iconv.h>
+#include <ctype.h>
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
+#endif
+#if HAVE_ICONV
+#define LIBICONV_PLUG
+#include <iconv.h>
 #endif
 #include "sidplay/sidplay2.h"
 #include "sidplay/builders/resid.h"
@@ -297,7 +300,7 @@ csid_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 //    resid->create (1);
     info->resid->filter (true);
 
-    int samplerate = deadbeef->conf_get_int ("sid.samplerate", 48000);
+    int samplerate = deadbeef->conf_get_int ("sid.samplerate", 44100);
     int bps = deadbeef->get_output ()->bitspersample ();
 
     info->resid->sampling (samplerate);
@@ -354,6 +357,7 @@ csid_read (DB_fileinfo_t *_info, char *bytes, int size) {
     int rd = info->sidplay->play (bytes, size/_info->channels);
     _info->readpos += size/_info->channels/2 / (float)_info->samplerate;
 
+#if 0
 #if WORDS_BIGENDIAN
     // convert samples from le to be
     int n = rd * _info->channels/2;
@@ -365,6 +369,7 @@ csid_read (DB_fileinfo_t *_info, char *bytes, int size) {
         ptr++;
         n--;
     }
+#endif
 #endif
     return rd * _info->channels;
 }
@@ -401,8 +406,9 @@ csid_seek (DB_fileinfo_t *_info, float time) {
 
 static const char *
 convstr (const char* str) {
+#ifdef HAVE_ICONV
     int sz = strlen (str);
-    static char out[2048];
+    static char out[2048]; // FIXME: this is not thread-safe
     const char *enc = "iso8859-1";
     iconv_t cd = iconv_open ("utf-8", enc);
     if (cd == (iconv_t)-1) {
@@ -423,17 +429,24 @@ convstr (const char* str) {
         iconv_close (cd);
     }
     return out;
+#else
+    return str;
+#endif
 }
 
 extern "C" DB_playItem_t *
 csid_insert (DB_playItem_t *after, const char *fname) {
+    trace ("inserting %s\n", fname);
     sldb_load ();
     SidTune *tune;
+    trace ("new SidTune\n");
     tune = new SidTune (fname);
     int tunes = tune->getInfo ().songs;
+    trace ("subtunes: %d\n", tunes);
     uint8_t sig[16];
     unsigned char tmp[2];
 #if 1
+    trace ("calculating md5\n");
     DB_md5_t md5;
     deadbeef->md5_init (&md5);
     deadbeef->md5_append (&md5, (const uint8_t *)tune->cache.get () + tune->fileOffset, tune->getInfo ().c64dataLen);
@@ -486,13 +499,15 @@ csid_insert (DB_playItem_t *after, const char *fname) {
     memcpy (sig, myMD5.getDigest (), 16);
 #endif
 
-    sldb_load ();
+//    sldb_load ();
     int song = -1;
     if (sldb_loaded) {
         song = sldb_find (sig);
     }
 
+    trace ("inserting tunes...\n");
     for (int s = 0; s < tunes; s++) {
+        trace ("select %d...\n", s);
         if (tune->selectSong (s+1)) {
             DB_playItem_t *it = deadbeef->pl_item_alloc ();
             it->decoder_id = deadbeef->plug_get_decoder_id (sid_plugin.plugin.id);
@@ -502,6 +517,7 @@ csid_insert (DB_playItem_t *after, const char *fname) {
             tune->getInfo (sidinfo);
             int i = sidinfo.numberOfInfoStrings;
             int title_added = 0;
+            trace ("set %d metainfo...\n", s);
             if (i >= 1 && sidinfo.infoString[0] && sidinfo.infoString[0][0]) {
                 const char *meta;
                 if (sidinfo.songs > 1) {
@@ -553,10 +569,12 @@ csid_insert (DB_playItem_t *after, const char *fname) {
             deadbeef->pl_item_unref (it);
         }
     }
+    trace ("delete sidtune\n");
     delete tune;
     return after;
 }
 
+#if 0
 int
 csid_numvoices (DB_fileinfo_t *_info) {
     return 3;
@@ -580,6 +598,7 @@ csid_mutevoice (DB_fileinfo_t *_info, int voice, int mute) {
         }
     }
 }
+#endif
 
 static int
 csid_on_configchanged (DB_event_t *ev, uintptr_t data) {

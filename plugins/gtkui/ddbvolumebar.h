@@ -38,6 +38,7 @@ typedef void * DdbVolumeBarColIter;
 
 struct _DdbVolumeBar {
     GtkWidget parent;
+    int show_dbs;
 };
 
 struct _DdbVolumeBarClass {

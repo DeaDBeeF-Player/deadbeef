@@ -37,6 +37,10 @@
 
 G_DEFINE_TYPE (DdbTabStrip, ddb_tabstrip, GTK_TYPE_WIDGET);
 
+extern GtkWidget *theme_button;
+#define arrow_sz 10
+#define arrow_widget_width (arrow_sz+4)
+
 void
 plt_get_title_wrapper (int plt, char *buffer, int len) {
     deadbeef->plt_get_title (plt, buffer, len);
@@ -184,7 +188,7 @@ on_tabstrip_drag_end                   (GtkWidget       *widget,
                                         GdkDragContext  *drag_context);
 
 static int
-get_tab_under_cursor (int x);
+get_tab_under_cursor (DdbTabStrip *ts, int x);
 
 static void
 ddb_tabstrip_destroy(GtkObject *object)
@@ -366,11 +370,103 @@ ddb_tabstrip_get_tab_width (DdbTabStrip *ts, int tab) {
     return width;
 }
 
+int
+tabstrip_need_arrows (DdbTabStrip *ts) {
+    GtkWidget *widget = GTK_WIDGET (ts);
+    int cnt = deadbeef->plt_get_count ();
+    int w = 0;
+    for (int idx = 0; idx < cnt; idx++) {
+        w += ddb_tabstrip_get_tab_width (ts, idx) - tab_overlap_size;
+        if (w >= widget->allocation.width) {
+            return 1;
+        }
+    }
+    w += tab_overlap_size + 3;
+    if (w >= widget->allocation.width) {
+        return 1;
+    }
+    return 0;
+}
+
+static void
+tabstrip_scroll_to_tab_int (DdbTabStrip *ts, int tab, int redraw) {
+    GtkWidget *widget = GTK_WIDGET (ts);
+    int w = 0;
+    int cnt = deadbeef->plt_get_count ();
+    int boundary = widget->allocation.width - arrow_widget_width*2 + ts->hscrollpos;
+    for (int idx = 0; idx < cnt; idx++) {
+        int tab_w = ddb_tabstrip_get_tab_width (ts, idx);
+        if (idx == cnt-1) {
+            tab_w += 3;
+        }
+        if (idx == tab) {
+            if (w < ts->hscrollpos) {
+                ts->hscrollpos = w;
+                deadbeef->conf_set_int ("gtkui.tabscroll", ts->hscrollpos);
+                if (redraw) {
+                    gtk_widget_queue_draw (widget);
+                }
+            }
+            else if (w + tab_w >= boundary) {
+                ts->hscrollpos += (w+tab_w) - boundary;
+                deadbeef->conf_set_int ("gtkui.tabscroll", ts->hscrollpos);
+                if (redraw) {
+                    gtk_widget_queue_draw (widget);
+                }
+            }
+            break;
+        }
+        w += tab_w - tab_overlap_size;
+    }
+}
+
+static void
+tabstrip_scroll_to_tab (DdbTabStrip *ts, int tab) {
+    tabstrip_scroll_to_tab_int (ts, tab, 1);
+}
+
+void
+tabstrip_adjust_hscroll (DdbTabStrip *ts) {
+    GtkWidget *widget = GTK_WIDGET (ts);
+    ts->hscrollpos = deadbeef->conf_get_int ("gtkui.tabscroll", 0);
+    if (deadbeef->plt_get_count () > 0) {
+        int need_arrows = tabstrip_need_arrows (ts);
+        if (need_arrows) {
+            int w = 0;
+            int cnt = deadbeef->plt_get_count ();
+            for (int idx = 0; idx < cnt; idx++) {
+                w += ddb_tabstrip_get_tab_width (ts, idx) - tab_overlap_size;
+            }
+            w += tab_overlap_size + 3;
+            if (ts->hscrollpos > w - (widget->allocation.width - arrow_widget_width*2)) {
+                ts->hscrollpos = w - (widget->allocation.width - arrow_widget_width*2);
+                deadbeef->conf_set_int ("gtkui.tabscroll", ts->hscrollpos);
+            }
+            tabstrip_scroll_to_tab_int (ts, deadbeef->plt_get_curr (), 0);
+        }
+        else {
+            ts->hscrollpos = 0;
+            deadbeef->conf_set_int ("gtkui.tabscroll", ts->hscrollpos);
+        }
+    }
+}
+
 void
 tabstrip_render (DdbTabStrip *ts) {
     GtkWidget *widget = GTK_WIDGET (ts);
     GdkDrawable *backbuf = gtk_widget_get_window (widget);
-    int x = -ts->hscrollpos;
+
+    tabstrip_adjust_hscroll (ts);
+
+    int cnt = deadbeef->plt_get_count ();
+    int hscroll = ts->hscrollpos;
+
+    int need_arrows = tabstrip_need_arrows (ts);
+    if (need_arrows) {
+        hscroll -= arrow_widget_width;
+    }
+
+    int x = -hscroll;
     int w = 0;
     int h = draw_get_font_size ();
     h = widget->allocation.height;
@@ -378,7 +474,6 @@ tabstrip_render (DdbTabStrip *ts) {
     text_right_padding = h - 3;
 
     const char *detail = "button";
-    int cnt = deadbeef->plt_get_count ();
     int tab_selected = deadbeef->plt_get_curr ();
 
     GdkGC *gc = gdk_gc_new (backbuf);
@@ -395,7 +490,6 @@ tabstrip_render (DdbTabStrip *ts) {
     int need_draw_moving = 0;
     int idx;
     int widths[cnt];
-    int fullwidth = 0;
     for (idx = 0; idx < cnt; idx++) {
         char title[100];
         plt_get_title_wrapper (idx, title, sizeof (title));
@@ -405,11 +499,9 @@ tabstrip_render (DdbTabStrip *ts) {
         if (widths[idx] < min_tab_size) {
             widths[idx] = min_tab_size;
         }
-        fullwidth += widths[idx] - tab_overlap_size;
     }
-    fullwidth += tab_overlap_size;
 
-    x = -ts->hscrollpos + tabs_left_margin;
+    x = -hscroll + tabs_left_margin;
 
     for (idx = 0; idx < cnt; idx++) {
         w = widths[idx];
@@ -419,7 +511,6 @@ tabstrip_render (DdbTabStrip *ts) {
         area.width = w;
         area.height = 24;
         if (idx != tab_selected) {
-//            gtk_paint_box (widget->style, widget->window, idx == tab_selected ? GTK_STATE_PRELIGHT : GTK_STATE_NORMAL, GTK_SHADOW_OUT, &area, widget, "button", x, idx == tab_selected ? 0 : 1, w+margin_size, 32);
             ddb_tabstrip_draw_tab (widget, backbuf, idx == tab_selected, x, y, w, h);
             char tab_title[100];
             plt_get_title_wrapper (idx, tab_title, sizeof (tab_title));
@@ -433,7 +524,7 @@ tabstrip_render (DdbTabStrip *ts) {
     gdk_draw_line (backbuf, widget->style->dark_gc[GTK_STATE_NORMAL], 0, widget->allocation.height-2, widget->allocation.width, widget->allocation.height-2);
     gdk_draw_line (backbuf, widget->style->light_gc[GTK_STATE_NORMAL], 0, widget->allocation.height-1, widget->allocation.width, widget->allocation.height-1);
     // calc position for drawin selected tab
-    x = -ts->hscrollpos;
+    x = -hscroll;
     for (idx = 0; idx < tab_selected; idx++) {
         x += widths[idx] - tab_overlap_size;
     }
@@ -447,7 +538,6 @@ tabstrip_render (DdbTabStrip *ts) {
         area.y = 0;
         area.width = w;
         area.height = 24;
-//        gtk_paint_box (widget->style, widget->window, GTK_STATE_PRELIGHT, GTK_SHADOW_OUT, &area, widget, "button", x, idx == tab_selected ? 0 : 1, w, 32);
         ddb_tabstrip_draw_tab (widget, backbuf, 1, x, y, w, h);
         char tab_title[100];
         plt_get_title_wrapper (idx, tab_title, sizeof (tab_title));
@@ -460,22 +550,15 @@ tabstrip_render (DdbTabStrip *ts) {
         need_draw_moving = 1;
     }
     if (need_draw_moving) {
-        x = -ts->hscrollpos + tabs_left_margin;
+        x = -hscroll + tabs_left_margin;
         for (idx = 0; idx < cnt; idx++) {
             w = widths[idx];
             if (idx == ts->dragging) {
-#if 0
-                // draw empty slot
-                if (x < widget->allocation.width) {
-                    gtk_paint_box (widget->style, backbuf, GTK_STATE_ACTIVE, GTK_SHADOW_ETCHED_IN, NULL, widget, "button", x, 0, w, h);
-                }
-#endif
                 x = ts->movepos;
                 if (x >= widget->allocation.width) {
                     break;
                 }
                 if (w > 0) {
-                    //gtk_paint_box (widget->style, backbuf, GTK_STATE_SELECTED, GTK_SHADOW_OUT, NULL, widget, "button", x, 0, w, h);
                     ddb_tabstrip_draw_tab (widget, backbuf, 1, x, y, w, h);
                     char tab_title[100];
                     plt_get_title_wrapper (idx, tab_title, sizeof (tab_title));
@@ -489,15 +572,31 @@ tabstrip_render (DdbTabStrip *ts) {
             x += w - tab_overlap_size;
         }
     }
+
+    if (need_arrows) {
+        int sz = widget->allocation.height-3;
+        GdkColor clr;
+        gdk_gc_set_rgb_fg_color (gc, (gtkui_get_tabstrip_mid_color (&clr), &clr));
+        gdk_draw_rectangle (backbuf, gc, TRUE, 0, 1, arrow_widget_width, sz);
+        gtk_paint_arrow (widget->style, widget->window, GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, widget, NULL, GTK_ARROW_LEFT, TRUE, 2, sz/2-arrow_sz/2, arrow_sz, arrow_sz);
+        gdk_draw_rectangle (backbuf, gc, TRUE, widget->allocation.width-arrow_widget_width, 1, arrow_widget_width, sz);
+        gtk_paint_arrow (widget->style, widget->window, GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, widget, NULL, GTK_ARROW_RIGHT, TRUE, widget->allocation.width-arrow_sz-2, 1+sz/2-arrow_sz/2, arrow_sz, arrow_sz);
+    }
+
     draw_end ();
     g_object_unref (gc);
 }
 
 static int
-get_tab_under_cursor (int x) {
+get_tab_under_cursor (DdbTabStrip *ts, int x) {
+    int hscroll = ts->hscrollpos;
+    int need_arrows = tabstrip_need_arrows (ts);
+    if (need_arrows) {
+        hscroll -= arrow_widget_width;
+    }
     int idx;
     int cnt = deadbeef->plt_get_count ();
-    int fw = tabs_left_margin;
+    int fw = tabs_left_margin - hscroll;
     int tab_selected = deadbeef->plt_get_curr ();
     for (idx = 0; idx < cnt; idx++) {
         char title[100];
@@ -524,7 +623,7 @@ on_rename_playlist1_activate           (GtkMenuItem     *menuitem,
 {
     GtkWidget *dlg = create_editplaylistdlg ();
     gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
-    gtk_window_set_title (GTK_WINDOW (dlg), "Edit playlist");
+    gtk_window_set_title (GTK_WINDOW (dlg), _("Edit playlist"));
     GtkWidget *e = lookup_widget (dlg, "title");
     char t[100];
     plt_get_title_wrapper (tab_clicked, t, sizeof (t));
@@ -601,15 +700,15 @@ create_plmenu (void)
 
   plmenu = gtk_menu_new ();
 
-  rename_playlist1 = gtk_menu_item_new_with_mnemonic ("Rename Playlist");
+  rename_playlist1 = gtk_menu_item_new_with_mnemonic (_("Rename Playlist"));
   gtk_widget_show (rename_playlist1);
   gtk_container_add (GTK_CONTAINER (plmenu), rename_playlist1);
 
-  remove_playlist1 = gtk_menu_item_new_with_mnemonic ("Remove Playlist");
+  remove_playlist1 = gtk_menu_item_new_with_mnemonic (_("Remove Playlist"));
   gtk_widget_show (remove_playlist1);
   gtk_container_add (GTK_CONTAINER (plmenu), remove_playlist1);
 
-  add_new_playlist1 = gtk_menu_item_new_with_mnemonic ("Add New Playlist");
+  add_new_playlist1 = gtk_menu_item_new_with_mnemonic (_("Add New Playlist"));
   gtk_widget_show (add_new_playlist1);
   gtk_container_add (GTK_CONTAINER (plmenu), add_new_playlist1);
 
@@ -666,20 +765,142 @@ create_plmenu (void)
   return plmenu;
 }
 
+static void
+tabstrip_scroll_left (DdbTabStrip *ts) {
+#if 0
+    // scroll to leftmost border-spanning tab
+    int scrollsize = 0;
+    int w = 0;
+    int cnt = deadbeef->plt_get_count ();
+    for (int idx = 0; idx < cnt; idx++) {
+        int tab_w = ddb_tabstrip_get_tab_width (ts, idx);
+        if (w < ts->hscrollpos && w + tab_w >= ts->hscrollpos) {
+            scrollsize = ts->hscrollpos - w;
+            break;
+        }
+        w += tab_w - tab_overlap_size;
+    }
+    w += tab_overlap_size + 3;
+
+    ts->hscrollpos -= scrollsize;
+    if (ts->hscrollpos < 0) {
+        ts->hscrollpos = 0;
+    }
+    deadbeef->conf_set_int ("gtkui.tabscroll", ts->hscrollpos);
+    gtk_widget_queue_draw (GTK_WIDGET (ts));
+#endif
+    int tab = deadbeef->plt_get_curr ();
+    if (tab > 0) {
+        tab--;
+        deadbeef->plt_set_curr (tab);
+        deadbeef->conf_set_int ("playlist.current", tab);
+    }
+    tabstrip_scroll_to_tab (ts, tab);
+}
+
+static void
+tabstrip_scroll_right (DdbTabStrip *ts) {
+#if 0
+    // scroll to rightmost border-spanning tab
+    GtkWidget *widget = GTK_WIDGET (ts);
+    int scrollsize = 0;
+    int w = 0;
+    int cnt = deadbeef->plt_get_count ();
+    int boundary = widget->allocation.width - arrow_widget_width*2 + ts->hscrollpos;
+    for (int idx = 0; idx < cnt; idx++) {
+        int tab_w = ddb_tabstrip_get_tab_width (ts, idx);
+
+        if (scrollsize == 0 && w < boundary && w + tab_w >= boundary) {
+            scrollsize = (w + tab_w) - boundary;
+        }
+        w += tab_w - tab_overlap_size;
+    }
+    w += tab_overlap_size + 3;
+    ts->hscrollpos += scrollsize;
+    if (ts->hscrollpos > w - (widget->allocation.width - arrow_widget_width*2)) {
+        ts->hscrollpos = w - (widget->allocation.width - arrow_widget_width*2);
+    }
+    deadbeef->conf_set_int ("gtkui.tabscroll", ts->hscrollpos);
+    gtk_widget_queue_draw (widget);
+#endif
+    int tab = deadbeef->plt_get_curr ();
+    if (tab < deadbeef->plt_get_count ()-1) {
+        tab++;
+        deadbeef->plt_set_curr (tab);
+        deadbeef->conf_set_int ("playlist.current", tab);
+    }
+    tabstrip_scroll_to_tab (ts, tab);
+}
+
+gboolean
+tabstrip_scroll_cb (gpointer data) {
+    DdbTabStrip *ts = DDB_TABSTRIP (data);
+    if (ts->scroll_direction < 0) {
+        tabstrip_scroll_left (ts);
+    }
+    else if (ts->scroll_direction > 0) {
+        tabstrip_scroll_right (ts);
+    }
+    else {
+        return FALSE;
+    }
+    return TRUE;
+}
+
 gboolean
 on_tabstrip_button_press_event           (GtkWidget       *widget,
                                         GdkEventButton  *event)
 {
     DdbTabStrip *ts = DDB_TABSTRIP (widget);
-    tab_clicked = get_tab_under_cursor (event->x);
+    tab_clicked = get_tab_under_cursor (ts, event->x);
     if (event->button == 1)
     {
+        int need_arrows = tabstrip_need_arrows (ts);
+        if (need_arrows) {
+            if (event->x < arrow_widget_width) {
+                if (event->type == GDK_BUTTON_PRESS) {
+                    tabstrip_scroll_left (ts);
+                    ts->scroll_direction = -1;
+                    ts->scroll_timer = g_timeout_add (300, tabstrip_scroll_cb, ts);
+                }
+                return FALSE;
+            }
+            else if (event->x >= widget->allocation.width - arrow_widget_width) {
+                if (event->type == GDK_BUTTON_PRESS) {
+                    tabstrip_scroll_right (ts);
+                    ts->scroll_direction = 1;
+                    ts->scroll_timer = g_timeout_add (300, tabstrip_scroll_cb, ts);
+                }
+                return FALSE;
+            }
+        }
         if (tab_clicked != -1) {
             deadbeef->plt_set_curr (tab_clicked);
             deadbeef->conf_set_int ("playlist.current", tab_clicked);
         }
+        else {
+            if (event->type == GDK_2BUTTON_PRESS) {
+                // new tab
+                int playlist = gtkui_add_new_playlist ();
+                if (playlist != -1) {
+                    deadbeef->plt_set_curr (playlist);
+                    deadbeef->conf_set_int ("playlist.current", playlist);
+                }
+                return FALSE;
+            }
+            return FALSE;
+        }
 
-        int x = -ts->hscrollpos + tabs_left_margin;
+        // adjust scroll if clicked tab spans border
+        if (need_arrows) {
+            tabstrip_scroll_to_tab (ts, tab_clicked);
+        }
+
+        int hscroll = ts->hscrollpos;
+        if (need_arrows) {
+            hscroll -= arrow_widget_width;
+        }
+        int x = -hscroll + tabs_left_margin;
         int idx;
         for (idx = 0; idx < tab_clicked; idx++) {
             int width = ddb_tabstrip_get_tab_width (ts, idx);
@@ -697,7 +918,16 @@ on_tabstrip_button_press_event           (GtkWidget       *widget,
         gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, widget, 0, gtk_get_current_event_time());
     }
     else if (event->button == 2) {
-        if (deadbeef->conf_get_int ("gtkui.mmb_delete_playlist", 0)) {
+        if (tab_clicked == -1) {
+            // new tab
+            int playlist = gtkui_add_new_playlist ();
+            if (playlist != -1) {
+                deadbeef->plt_set_curr (playlist);
+                deadbeef->conf_set_int ("playlist.current", playlist);
+            }
+            return FALSE;
+        }
+        else if (deadbeef->conf_get_int ("gtkui.mmb_delete_playlist", 0)) {
             if (tab_clicked != -1) {
                 deadbeef->plt_remove (tab_clicked);
                 int playlist = deadbeef->plt_get_curr ();
@@ -715,6 +945,10 @@ on_tabstrip_button_release_event         (GtkWidget       *widget,
 {
     DdbTabStrip *ts = DDB_TABSTRIP (widget);
     if (event->button == 1) {
+        if (ts->scroll_timer > 0) {
+            ts->scroll_direction = 0;
+            ts->scroll_timer = 0;
+        }
         if (ts->prepare || ts->dragging >= 0) {
             ts->dragging = -1;
             ts->prepare = 0;
@@ -724,12 +958,13 @@ on_tabstrip_button_release_event         (GtkWidget       *widget,
     return FALSE;
 }
 
-
 gboolean
 on_tabstrip_configure_event              (GtkWidget       *widget,
                                         GdkEventConfigure *event)
 {
     draw_init_font (widget->style);
+    DdbTabStrip *ts = DDB_TABSTRIP (widget);
+    tabstrip_adjust_hscroll (ts);
     int height = draw_get_font_size () + 13;
     if (height != widget->allocation.height) {
         gtk_widget_set_size_request (widget, -1, height);
@@ -768,7 +1003,12 @@ on_tabstrip_motion_notify_event          (GtkWidget       *widget,
 
         // find closest tab to the left
         int idx;
-        int x = -ts->hscrollpos + tabs_left_margin;
+        int hscroll = ts->hscrollpos;
+        int need_arrows = tabstrip_need_arrows (ts);
+        if (need_arrows) {
+            hscroll -= arrow_widget_width;
+        }
+        int x = -hscroll + tabs_left_margin;
         int inspos = -1;
         int cnt = deadbeef->plt_get_count ();
         for (idx = 0; idx < cnt; idx++) {
@@ -782,16 +1022,28 @@ on_tabstrip_motion_notify_event          (GtkWidget       *widget,
         if (inspos >= 0 && inspos != ts->dragging) {
             char str1[100];
             char str2[100];
+            char strcursor1[100];
+            char strcursor2[100];
             int pos1;
             int pos2;
+            int cursor1;
+            int cursor2;
             snprintf (str1, sizeof (str1), "playlist.scroll.%d", ts->dragging);
             pos1 = deadbeef->conf_get_int (str1, 0);
             snprintf (str2, sizeof (str2), "playlist.scroll.%d", inspos);
             pos2 = deadbeef->conf_get_int (str2, 0);
+
+            snprintf (strcursor1, sizeof (strcursor1), "playlist.cursor.%d", ts->dragging);
+            cursor1 = deadbeef->conf_get_int (strcursor1, 0);
+            snprintf (strcursor2, sizeof (strcursor2), "playlist.cursor.%d", inspos);
+            cursor2 = deadbeef->conf_get_int (strcursor2, 0);
+
             deadbeef->plt_move (ts->dragging, inspos);
             tab_moved = 1;
             deadbeef->conf_set_int (str1, pos2);
             deadbeef->conf_set_int (str2, pos1);
+            deadbeef->conf_set_int (strcursor1, cursor2);
+            deadbeef->conf_set_int (strcursor2, cursor1);
             ts->dragging = inspos;
             deadbeef->conf_set_int ("playlist.current", ts->dragging);
         }
@@ -807,7 +1059,7 @@ on_tabstrip_drag_motion_event          (GtkWidget       *widget,
                                         gint             y,
                                         guint            time)
 {
-    int tab = get_tab_under_cursor (x);
+    int tab = get_tab_under_cursor (DDB_TABSTRIP (widget), x);
     int prev = deadbeef->plt_get_curr ();
     if (tab != -1 && tab != prev) {
         deadbeef->plt_set_curr (tab);

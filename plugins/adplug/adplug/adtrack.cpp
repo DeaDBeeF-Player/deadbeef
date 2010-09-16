@@ -35,6 +35,10 @@
 #include "adtrack.h"
 #include "debug.h"
 
+#include <limits.h>
+#ifndef PATH_MAX
+#define PATH_MAX    1024    /* max # of characters in a path name */
+#endif
 /*** Public methods ***/
 
 CPlayer *CadtrackLoader::factory(Copl *newopl)
@@ -42,7 +46,7 @@ CPlayer *CadtrackLoader::factory(Copl *newopl)
   return new CadtrackLoader(newopl);
 }
 
-bool CadtrackLoader::load(const std::string &filename, const CFileProvider &fp)
+bool CadtrackLoader::load(const char * filename, const CFileProvider &fp)
 {
   binistream *f = fp.open(filename); if(!f) return false;
   binistream *instf;
@@ -57,10 +61,21 @@ bool CadtrackLoader::load(const std::string &filename, const CFileProvider &fp)
     { fp.close(f); return false; }
 
   // check for instruments file
-  std::string instfilename(filename, 0, filename.find_last_of('.'));
-  instfilename += ".ins";
+  char instfilename[PATH_MAX];
+  strncpy (instfilename, filename, sizeof (instfilename)-5);
+  instfilename[PATH_MAX-5] = 0;
+  char *pext = instfilename + strlen (instfilename);
+  while (pext > instfilename && *pext != '.') {
+      pext--;
+  }
+  if (*pext == '.') {
+      strcpy (pext, ".ins");
+  }
+  else {
+      strcat (instfilename, ".ins");
+  }
   AdPlug_LogWrite("CadtrackLoader::load(,\"%s\"): Checking for \"%s\"...\n",
-		  filename.c_str(), instfilename.c_str());
+		  filename, instfilename);
   instf = fp.open(instfilename);
   if(!instf || fp.filesize(instf) != 468) { fp.close(f); return false; }
 

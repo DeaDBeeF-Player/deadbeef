@@ -25,8 +25,8 @@
 #include "hotkeys.h"
 #include "../../deadbeef.h"
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 static DB_hotkeys_plugin_t plugin;
 static DB_functions_t *deadbeef;
@@ -48,22 +48,14 @@ static const xkey_t keys[] = {
     #include "keysyms.inc"
 };
 
-typedef void (*command_func_t) (void);
-
-typedef struct {
+typedef struct command_s {
     int keycode;
     int modifier;
-    command_func_t func;
+    DB_plugin_action_t *action;
 } command_t;
 
 static command_t commands [MAX_COMMAND_COUNT];
 static int command_count = 0;
-
-
-typedef struct {
-    char* name;
-    void (*func) (void);
-} known_command_t;
 
 static int
 get_keycode (Display *disp, const char* name, KeySym *syms, int first_kk, int last_kk, int ks_per_kk) {
@@ -95,43 +87,134 @@ trim (char* s)
 }
 
 static void
-cmd_seek_fwd () {
-    float pos = deadbeef->streamer_get_playpos ();
-    pos += 5;
-    deadbeef->streamer_seek (pos);
+cmd_seek_fwd (void *unused) {
+    deadbeef->playback_set_pos (deadbeef->playback_get_pos () + 5);
 }
 
 static void
-cmd_seek_back () {
-    float pos = deadbeef->streamer_get_playpos ();
-    pos -= 5;
-    if (pos < 0) {
-        pos = 0;
-    }
-    deadbeef->streamer_seek (pos);
+cmd_seek_back (void *unused) {
+    deadbeef->playback_set_pos (deadbeef->playback_get_pos () - 5);
 }
 
 static void
-cmd_volume_up () {
+cmd_volume_up (void *unused) {
     deadbeef->volume_set_db (deadbeef->volume_get_db () + 2);
 }
 
 static void
-cmd_volume_down () {
+cmd_volume_down (void *unused) {
     deadbeef->volume_set_db (deadbeef->volume_get_db () - 2);
 }
 
 static void
-cmd_stop_after_current () {
+cmd_stop_after_current (void *unused) {
     int var = deadbeef->conf_get_int ("playlist.stop_after_current", 0);
     var = 1 - var;
     deadbeef->conf_set_int ("playlist.stop_after_current", var);
     deadbeef->sendmessage (M_CONFIGCHANGED, 0, 0, 0);
 }
 
-static command_func_t
-get_command (const char* command)
+/*
+    FIXME: This function has many common code with plcommon.c
+    and it does full traverse of playlist twice
+*/
+static void
+cmd_invoke_plugin_command (DB_plugin_action_t *action)
 {
+    trace ("We're here to invoke action %s / %s\n", action->title, action->name);
+
+    DB_plugin_t **plugins = deadbeef->plug_get_list();
+    int i;
+
+    int selected_count = 0;
+    DB_playItem_t *pit = deadbeef->pl_get_first (PL_MAIN);
+    DB_playItem_t *selected = NULL;
+    while (pit) {
+        if (deadbeef->pl_is_selected (pit))
+        {
+            if (!selected)
+                selected = pit;
+            selected_count++;
+        }
+        DB_playItem_t *next = deadbeef->pl_get_next (pit, PL_MAIN);
+        deadbeef->pl_item_unref (pit);
+        pit = next;
+    }
+
+
+    if (action->flags & DB_ACTION_COMMON)
+    {
+        //Simply call common action
+        action->callback (action, NULL);
+        return;
+    }
+    //Now we're checking if action is applicable:
+
+    if (selected_count == 0)
+    {
+        fprintf (stderr, "No tracks selected\n");
+        return;
+    }
+    if ((selected_count == 1) && (0 == action->flags & DB_ACTION_SINGLE_TRACK))
+    {
+        fprintf (stderr, "Hotkeys: action %s not allowed for single track\n", action->name);
+        return;
+    }
+    if ((selected_count > 1) && (0 == action->flags & DB_ACTION_ALLOW_MULTIPLE_TRACKS))
+    {
+        fprintf (stderr, "Hotkeys: action %s not allowed for multiple tracks\n", action->name);
+        return;
+    }
+
+    //So, action is allowed, do it.
+
+    if (action->flags & DB_ACTION_CAN_MULTIPLE_TRACKS)
+    {
+        action->callback (action, NULL);
+        return;
+    }
+
+    pit = deadbeef->pl_get_first (PL_MAIN);
+    while (pit) {
+        if (deadbeef->pl_is_selected (pit))
+        {
+            action->callback (action, pit);
+        }
+        DB_playItem_t *next = deadbeef->pl_get_next (pit, PL_MAIN);
+        deadbeef->pl_item_unref (pit);
+        pit = next;
+    }
+}
+
+static DB_plugin_action_t *
+get_action (const char* command)
+{
+    DB_plugin_t **plugins = deadbeef->plug_get_list ();
+    for (int i = 0; plugins[i]; i++) {
+        DB_plugin_t *p = plugins[i];
+        if (p->get_actions) {
+            DB_plugin_action_t *actions = p->get_actions (NULL);
+            while (actions) {
+                if (actions->name && !strcasecmp (command, actions->name)) {
+                    return actions;
+                }
+                actions = actions->next;
+            }
+        }
+    }
+
+    return NULL;
+
+
+#if 0
+    /*
+        These deadbeef functions don't take any parameters
+        but I assume we use cdecl convention so actual
+        parameters count doesn't matter.
+    */
+    // +waker:
+    // TODO: export all this commands as standard plugin actions
+    // ignore typecast warnings for now
     if (!strcasecmp (command, "toggle_pause"))
         return deadbeef->playback_pause;
 
@@ -165,7 +248,9 @@ get_command (const char* command)
     else if (!strcasecmp (command, "toggle_stop_after_current"))
         return cmd_stop_after_current;
 
-    return NULL;
+    return cmd_invoke_plugin_command;
+//    return NULL;
+#endif
 }
 
 static int
@@ -254,8 +339,8 @@ read_config (Display *disp)
             }
             else {
                 command = trim (command);
-                cmd_entry->func = get_command (command);
-                if (!cmd_entry->func)
+                cmd_entry->action = get_action (command);
+                if (!cmd_entry->action)
                 {
                     fprintf (stderr, "hotkeys: Unknown command <%s> while parsing %s %s\n", command,  item->key, item->value);
                 }
@@ -362,7 +447,7 @@ hotkeys_event_loop (void *unused) {
                          (state == commands[ i ].modifier))
                     {
                         trace ("matches to commands[%d]!\n", i);
-                        commands[i].func ();
+                        cmd_invoke_plugin_command (commands[i].action);
                         break;
                     }
                 }
@@ -421,6 +506,189 @@ hotkeys_reset (void) {
     trace ("hotkeys: reset flagged\n");
 }
 
+int
+action_play_cb (struct DB_plugin_action_s *action, DB_playItem_t *it) {
+    deadbeef->playback_play ();
+    return 0;
+}
+
+int
+action_prev_cb (struct DB_plugin_action_s *action, DB_playItem_t *it) {
+    deadbeef->playback_prev ();
+    return 0;
+}
+
+int
+action_next_cb (struct DB_plugin_action_s *action, DB_playItem_t *it) {
+    deadbeef->playback_next ();
+    return 0;
+}
+
+int
+action_stop_cb (struct DB_plugin_action_s *action, DB_playItem_t *it) {
+    deadbeef->playback_stop ();
+    return 0;
+}
+
+int
+action_toggle_pause_cb (struct DB_plugin_action_s *action, DB_playItem_t *it) {
+    deadbeef->playback_pause ();
+    return 0;
+}
+
+int
+action_play_pause_cb (struct DB_plugin_action_s *action, DB_playItem_t *it) {
+    int state = deadbeef->get_output ()->state ();
+    if (state == OUTPUT_STATE_PLAYING) {
+        deadbeef->playback_pause ();
+    }
+    else {
+        deadbeef->playback_play ();
+    }
+    return 0;
+}
+
+int
+action_play_random_cb (struct DB_plugin_action_s *action, DB_playItem_t *it) {
+    deadbeef->playback_random ();
+    return 0;
+}
+
+int
+action_seek_forward_cb (struct DB_plugin_action_s *action, DB_playItem_t *it) {
+    deadbeef->playback_set_pos (deadbeef->playback_get_pos () + 5);
+    return 0;
+}
+
+int
+action_seek_backward_cb (struct DB_plugin_action_s *action, DB_playItem_t *it) {
+    deadbeef->playback_set_pos (deadbeef->playback_get_pos () - 5);
+    return 0;
+}
+
+int
+action_volume_up_cb (struct DB_plugin_action_s *action, DB_playItem_t *it) {
+    deadbeef->volume_set_db (deadbeef->volume_get_db () + 2);
+    return 0;
+}
+
+int
+action_volume_down_cb (struct DB_plugin_action_s *action, DB_playItem_t *it) {
+    deadbeef->volume_set_db (deadbeef->volume_get_db () - 2);
+    return 0;
+}
+
+int
+action_toggle_stop_after_current_cb (struct DB_plugin_action_s *action, DB_playItem_t *it) {
+    int var = deadbeef->conf_get_int ("playlist.stop_after_current", 0);
+    var = 1 - var;
+    deadbeef->conf_set_int ("playlist.stop_after_current", var);
+    deadbeef->sendmessage (M_CONFIGCHANGED, 0, 0, 0);
+    return 0;
+}
+
+static DB_plugin_action_t action_play = {
+    .title = "Play",
+    .name = "play",
+    .flags = DB_ACTION_COMMON,
+    .callback = action_play_cb,
+    .next = NULL
+};
+
+static DB_plugin_action_t action_stop = {
+    .title = "Stop",
+    .name = "stop",
+    .flags = DB_ACTION_COMMON,
+    .callback = action_stop_cb,
+    .next = &action_play
+};
+
+static DB_plugin_action_t action_prev = {
+    .title = "Previous",
+    .name = "prev",
+    .flags = DB_ACTION_COMMON,
+    .callback = action_prev_cb,
+    .next = &action_stop
+};
+
+static DB_plugin_action_t action_next = {
+    .title = "Next",
+    .name = "next",
+    .flags = DB_ACTION_COMMON,
+    .callback = action_next_cb,
+    .next = &action_prev
+};
+
+static DB_plugin_action_t action_toggle_pause = {
+    .title = "Toggle Pause",
+    .name = "toggle_pause",
+    .flags = DB_ACTION_COMMON,
+    .callback = action_toggle_pause_cb,
+    .next = &action_next
+};
+
+static DB_plugin_action_t action_play_pause = {
+    .title = "Play\\/Pause",
+    .name = "play_pause",
+    .flags = DB_ACTION_COMMON,
+    .callback = action_play_pause_cb,
+    .next = &action_toggle_pause
+};
+
+static DB_plugin_action_t action_play_random = {
+    .title = "Play Random",
+    .name = "playback_random",
+    .flags = DB_ACTION_COMMON,
+    .callback = action_play_random_cb,
+    .next = &action_play_pause
+};
+
+static DB_plugin_action_t action_seek_forward = {
+    .title = "Seek Forward",
+    .name = "seek_fwd",
+    .flags = DB_ACTION_COMMON,
+    .callback = action_seek_forward_cb,
+    .next = &action_play_random
+};
+
+static DB_plugin_action_t action_seek_backward = {
+    .title = "Seek Backward",
+    .name = "seek_back",
+    .flags = DB_ACTION_COMMON,
+    .callback = action_seek_backward_cb,
+    .next = &action_seek_forward
+};
+
+static DB_plugin_action_t action_volume_up = {
+    .title = "Volume Up",
+    .name = "volume_up",
+    .flags = DB_ACTION_COMMON,
+    .callback = action_volume_up_cb,
+    .next = &action_seek_backward
+};
+
+static DB_plugin_action_t action_volume_down = {
+    .title = "Volume Down",
+    .name = "volume_down",
+    .flags = DB_ACTION_COMMON,
+    .callback = action_volume_down_cb,
+    .next = &action_volume_up
+};
+
+static DB_plugin_action_t action_toggle_stop_after_current = {
+    .title = "Toggle Stop After Current",
+    .name = "toggle_stop_after_current",
+    .flags = DB_ACTION_COMMON,
+    .callback = action_toggle_stop_after_current_cb,
+    .next = &action_volume_down
+};
+
+static DB_plugin_action_t *
+hotkeys_get_actions (DB_playItem_t *it)
+{
+    return &action_toggle_stop_after_current;
+}
+
 // define plugin interface
 static DB_hotkeys_plugin_t plugin = {
     .misc.plugin.api_vmajor = DB_API_VERSION_MAJOR,
@@ -434,6 +702,7 @@ static DB_hotkeys_plugin_t plugin = {
     .misc.plugin.website = "http://deadbeef.sf.net",
     .misc.plugin.start = hotkeys_start,
     .misc.plugin.stop = hotkeys_stop,
+    .misc.plugin.get_actions = hotkeys_get_actions,
     .get_name_for_keycode = hotkeys_get_name_for_keycode,
     .reset = hotkeys_reset,
 };

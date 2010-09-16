@@ -35,7 +35,7 @@ CxadPlayer::~CxadPlayer()
     delete [] tune;
 }
 
-bool CxadPlayer::load(const std::string &filename, const CFileProvider &fp)
+bool CxadPlayer::load(const char *filename, const CFileProvider &fp)
 {
   binistream *f = fp.open(filename); if(!f) return false;
   bool ret = false;
@@ -103,22 +103,22 @@ float CxadPlayer::getrefresh()
   return xadplayer_getrefresh();
 }
 
-std::string CxadPlayer::gettype()
+const char * CxadPlayer::gettype()
 {
   return xadplayer_gettype();
 }
 
-std::string CxadPlayer::gettitle()
+const char * CxadPlayer::gettitle()
 {
   return xadplayer_gettitle();
 }
 
-std::string CxadPlayer::getauthor()
+const char * CxadPlayer::getauthor()
 {
   return xadplayer_getauthor();
 }
 
-std::string CxadPlayer::getinstrument(unsigned int i)
+const char * CxadPlayer::getinstrument(unsigned int i)
 {
   return xadplayer_getinstrument(i);
 }

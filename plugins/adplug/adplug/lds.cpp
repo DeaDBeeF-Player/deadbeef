@@ -83,7 +83,7 @@ CldsPlayer::~CldsPlayer()
   if(patterns) delete [] patterns;
 }
 
-bool CldsPlayer::load(const std::string &filename, const CFileProvider &fp)
+bool CldsPlayer::load(const char *filename, const CFileProvider &fp)
 {
   binistream	*f;
   unsigned int	i, j;
@@ -142,7 +142,7 @@ bool CldsPlayer::load(const std::string &filename, const CFileProvider &fp)
 
   AdPlug_LogWrite("CldsPlayer::load(\"%s\",fp): loading LOUDNESS file: mode = "
 		  "%d, pattlen = %d, numpatch = %d, numposi = %d\n",
-		  filename.c_str(), mode, pattlen, numpatch, numposi);
+		  filename, mode, pattlen, numpatch, numposi);
 
   // load patterns
   f->ignore(2);		// ignore # of digital sounds (not played by this player)

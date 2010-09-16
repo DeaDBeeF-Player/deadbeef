@@ -24,13 +24,13 @@
 //static const unsigned short note_table[12] = {363,385,408,432,458,485,514,544,577,611,647,686};
 const unsigned char CDiskopl::op_table[9] = {0x00, 0x01, 0x02, 0x08, 0x09, 0x0a, 0x10, 0x11, 0x12};
 
-CDiskopl::CDiskopl(std::string filename)
+CDiskopl::CDiskopl(const char * filename)
   : old_freq(0.0f), del(1), nowrite(false)
 {
   unsigned short clock = 0xffff;
 
   currType = TYPE_OPL3;
-  f = fopen(filename.c_str(),"wb");
+  f = fopen(filename,"wb");
   fwrite("RAWADATA",8,1,f);
   fwrite(&clock,sizeof(clock),1,f);
 }

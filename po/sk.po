@@ -1,0 +1,1264 @@
+# translation of DeaDBeeF to Slovak
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the deadbeef package.
+#
+# Ivan Masár <helix84@centrum.sk>, 2010.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: deadbeef\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-05-27 16:47+0200\n"
+"PO-Revision-Date: 2010-07-08 10:21+0100\n"
+"Last-Translator: Ivan Masár <helix84@centrum.sk>\n"
+"Language-Team: Slovak <sk-i18n@lists.linux.sk>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../plugins/gtkui/callbacks.c:97
+msgid "Supported sound formats"
+msgstr "Podporované formáty zvuku"
+
+#: ../plugins/gtkui/callbacks.c:108
+msgid "Other files (*)"
+msgstr "Ostatné súbory (*)"
+
+#: ../plugins/gtkui/callbacks.c:117
+msgid "Open file(s)..."
+msgstr "Otvoriť súbor(y)..."
+
+#: ../plugins/gtkui/callbacks.c:150
+msgid "Add file(s) to playlist..."
+msgstr "Pridať súbor(y) do zoznamu stôp..."
+
+#: ../plugins/gtkui/callbacks.c:182
+msgid "Add folder(s) to playlist..."
+msgstr "Pridať priečinok/priečinky do zoznamu stôp..."
+
+#: ../plugins/gtkui/callbacks.c:640
+msgid "Failed while reading help file"
+msgstr "Zlyhalo čítanie súboru Pomocníka"
+
+#: ../plugins/gtkui/callbacks.c:650
+msgid "Failed to load help file"
+msgstr "Zlyhalo načítanie súboru Pomocníka"
+
+#: ../plugins/gtkui/callbacks.c:664
+#: ../plugins/gtkui/interface.c:1105
+#: ../plugins/gtkui/deadbeef.glade.h:56
+msgid "Help"
+msgstr "Pomocník"
+
+#: ../plugins/gtkui/callbacks.c:674
+#, c-format
+msgid "About DeaDBeeF %s"
+msgstr "O aplikácii DeaDBeeF %s"
+
+#: ../plugins/gtkui/callbacks.c:685
+#, c-format
+msgid "DeaDBeeF %s ChangeLog"
+msgstr "Záznam zmien DeaDBeeF %s"
+
+#: ../plugins/gtkui/ddbtabstrip.c:527
+msgid "Edit playlist"
+msgstr "Upraviť zoznam stôp"
+
+#: ../plugins/gtkui/ddbtabstrip.c:604
+msgid "Rename Playlist"
+msgstr "Premenovať zoznam stôp"
+
+#: ../plugins/gtkui/ddbtabstrip.c:608
+msgid "Remove Playlist"
+msgstr "Odstrániť zoznam stôp"
+
+#: ../plugins/gtkui/ddbtabstrip.c:612
+msgid "Add New Playlist"
+msgstr "Pridať nový zoznam stôp"
+
+#: ../plugins/gtkui/eq.c:113
+msgid "Save DeaDBeeF EQ Preset"
+msgstr "Uložiť predvoľby ekvalizéru DeaDBeeF"
+
+#: ../plugins/gtkui/eq.c:120
+msgid "DeaDBeeF EQ preset files (*.ddbeq)"
+msgstr "Predvoľby ekvalizéru DeaDBeeF (*.ddbeq)"
+
+#: ../plugins/gtkui/eq.c:151
+msgid "Load DeaDBeeF EQ Preset..."
+msgstr "Načítať Predvoľby ekvalizéru DeaDBeeF..."
+
+#: ../plugins/gtkui/eq.c:155
+msgid "DeaDBeeF EQ presets (*.ddbeq)"
+msgstr "Predvoľby ekvalizéru DeaDBeeF (*.ddbeq)"
+
+#: ../plugins/gtkui/eq.c:214
+msgid "Import Foobar2000 EQ Preset..."
+msgstr "Importovať predvoľby ekvalizéru Foobar2000..."
+
+#: ../plugins/gtkui/eq.c:218
+msgid "Foobar2000 EQ presets (*.feq)"
+msgstr "Predvoľby ekvalizéru Foobar2000 (*.ddbeq)"
+
+#: ../plugins/gtkui/eq.c:292
+msgid "Enable"
+msgstr "Zapnúť"
+
+#: ../plugins/gtkui/eq.c:299
+msgid "Zero All"
+msgstr "Znulovať všetky"
+
+#: ../plugins/gtkui/eq.c:306
+msgid "Zero Preamp"
+msgstr "Znulovať predzos"
+
+#: ../plugins/gtkui/eq.c:313
+msgid "Zero Bands"
+msgstr "Znulovať pásma"
+
+#: ../plugins/gtkui/eq.c:320
+msgid "Save Preset"
+msgstr "Uložiť predvoľby"
+
+#: ../plugins/gtkui/eq.c:327
+msgid "Load Preset"
+msgstr "Načítať predvoľby"
+
+#: ../plugins/gtkui/eq.c:334
+msgid "Import Foobar2000 Preset"
+msgstr "Importovať predvoľby Foobar2000"
+
+#: ../plugins/gtkui/gtkui.c:128
+#, c-format
+msgid "1 day %d:%02d:%02d"
+msgstr "1 deň %d:%02d:%02d"
+
+#: ../plugins/gtkui/gtkui.c:131
+#, c-format
+msgid "%d days %d:%02d:%02d"
+msgstr "%d dní %d:%02d:%02d"
+
+#: ../plugins/gtkui/gtkui.c:140
+#, c-format
+msgid "Stopped | %d tracks | %s total playtime"
+msgstr "Zastavené | %d stôp | %s celkový čas"
+
+#: ../plugins/gtkui/gtkui.c:150
+msgid "Mono"
+msgstr "Mono"
+
+#: ../plugins/gtkui/gtkui.c:150
+msgid "Stereo"
+msgstr "Stereo"
+
+#: ../plugins/gtkui/gtkui.c:170
+#, c-format
+msgid "| %4d kbps "
+msgstr "| %4d kbps "
+
+#: ../plugins/gtkui/gtkui.c:176
+msgid "Paused | "
+msgstr "Pozastavené | "
+
+#: ../plugins/gtkui/gtkui.c:177
+#, c-format
+msgid "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
+msgstr "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d stôp | %s celkový čas"
+
+#: ../plugins/gtkui/gtkui.c:533
+msgid "Save Playlist As"
+msgstr "Uložiť zoznam stôp ako"
+
+#: ../plugins/gtkui/gtkui.c:542
+#: ../plugins/gtkui/gtkui.c:603
+msgid "DeaDBeeF playlist files (*.dbpl)"
+msgstr "Zoznamy stôp DeaDBeeF (*.dbpl)"
+
+#: ../plugins/gtkui/gtkui.c:596
+msgid "Load Playlist"
+msgstr "Načítať zoznam stôp"
+
+#: ../plugins/gtkui/gtkui.c:741
+msgid "New Playlist"
+msgstr "Nový zoznam stôp"
+
+#: ../plugins/gtkui/gtkui.c:744
+#, c-format
+msgid "New Playlist (%d)"
+msgstr "Nový zoznam stôp (%d)"
+
+#: ../plugins/gtkui/interface.c:140
+#: ../plugins/gtkui/deadbeef.glade.h:138
+msgid "_File"
+msgstr "_Súbor"
+
+#: ../plugins/gtkui/interface.c:147
+#: ../plugins/gtkui/deadbeef.glade.h:142
+msgid "_Open file(s)"
+msgstr "_Otvoriť súbor(y)"
+
+#: ../plugins/gtkui/interface.c:163
+#: ../plugins/gtkui/deadbeef.glade.h:7
+msgid "Add file(s)"
+msgstr "Pridať súbor(y)"
+
+#: ../plugins/gtkui/interface.c:171
+#: ../plugins/gtkui/deadbeef.glade.h:8
+msgid "Add folder(s)"
+msgstr "Pridať priečinok/priečinky"
+
+#: ../plugins/gtkui/interface.c:179
+#: ../plugins/gtkui/deadbeef.glade.h:6
+msgid "Add Audio CD"
+msgstr "Pridať zvukové CD"
+
+#: ../plugins/gtkui/interface.c:187
+#: ../plugins/gtkui/interface.c:2870
+#: ../plugins/gtkui/deadbeef.glade.h:9
+msgid "Add location"
+msgstr "Pridať umiestnenie"
+
+#: ../plugins/gtkui/interface.c:196
+#: ../plugins/gtkui/deadbeef.glade.h:72
+msgid "New playlist"
+msgstr "Nový zoznam stôp"
+
+#: ../plugins/gtkui/interface.c:203
+#: ../plugins/gtkui/deadbeef.glade.h:64
+msgid "Load playlist"
+msgstr "Načítať zoznam stôp"
+
+#: ../plugins/gtkui/interface.c:207
+#: ../plugins/gtkui/deadbeef.glade.h:99
+msgid "Save playlist"
+msgstr "Uložiť zoznam stôp"
+
+#: ../plugins/gtkui/interface.c:211
+#: ../plugins/gtkui/deadbeef.glade.h:100
+msgid "Save playlist as"
+msgstr "Uložiť zoznam stôp ako"
+
+#: ../plugins/gtkui/interface.c:220
+#: ../plugins/gtkui/deadbeef.glade.h:144
+msgid "_Quit"
+msgstr "_Ukončiť"
+
+#: ../plugins/gtkui/interface.c:231
+#: ../plugins/gtkui/deadbeef.glade.h:137
+msgid "_Edit"
+msgstr "_Upraviť"
+
+#: ../plugins/gtkui/interface.c:238
+#: ../plugins/gtkui/deadbeef.glade.h:135
+msgid "_Clear"
+msgstr "_Vyčistiť"
+
+#: ../plugins/gtkui/interface.c:246
+#: ../plugins/gtkui/deadbeef.glade.h:104
+msgid "Select all"
+msgstr "Vybrať všetky"
+
+#: ../plugins/gtkui/interface.c:253
+#: ../plugins/gtkui/deadbeef.glade.h:24
+msgid "Deselect all"
+msgstr "Zrušiť výber"
+
+#: ../plugins/gtkui/interface.c:260
+#: ../plugins/gtkui/deadbeef.glade.h:59
+msgid "Invert selection"
+msgstr "Invertovať výber"
+
+#: ../plugins/gtkui/interface.c:264
+#: ../plugins/gtkui/deadbeef.glade.h:107
+msgid "Selection"
+msgstr "Výber"
+
+#: ../plugins/gtkui/interface.c:271
+#: ../plugins/gtkui/plcommon.c:387
+#: ../plugins/gtkui/prefwin.c:272
+#: ../plugins/gtkui/deadbeef.glade.h:95
+msgid "Remove"
+msgstr "Odstrániť"
+
+#: ../plugins/gtkui/interface.c:279
+#: ../plugins/gtkui/deadbeef.glade.h:19
+msgid "Crop"
+msgstr "Orezať"
+
+#: ../plugins/gtkui/interface.c:283
+#: ../plugins/gtkui/deadbeef.glade.h:139
+msgid "_Find"
+msgstr "_Nájsť"
+
+#: ../plugins/gtkui/interface.c:295
+#: ../plugins/gtkui/interface.c:1706
+#: ../plugins/gtkui/deadbeef.glade.h:85
+msgid "Preferences"
+msgstr "Nastavenia"
+
+#: ../plugins/gtkui/interface.c:299
+#: ../plugins/gtkui/deadbeef.glade.h:145
+msgid "_View"
+msgstr "_Zobraziť"
+
+#: ../plugins/gtkui/interface.c:306
+#: ../plugins/gtkui/deadbeef.glade.h:111
+msgid "Status bar"
+msgstr "Stavový panel"
+
+#: ../plugins/gtkui/interface.c:310
+#: ../plugins/gtkui/deadbeef.glade.h:17
+msgid "Column headers"
+msgstr "Hlavičky stĺpcov"
+
+#: ../plugins/gtkui/interface.c:314
+#: ../plugins/gtkui/deadbeef.glade.h:118
+msgid "Tabs"
+msgstr "Karty"
+
+#: ../plugins/gtkui/interface.c:318
+#: ../plugins/gtkui/deadbeef.glade.h:32
+msgid "Equalizer"
+msgstr "Ekvalizér"
+
+#: ../plugins/gtkui/interface.c:322
+#: ../plugins/gtkui/deadbeef.glade.h:143
+msgid "_Playback"
+msgstr "_Prehrávanie"
+
+#: ../plugins/gtkui/interface.c:329
+#: ../plugins/gtkui/deadbeef.glade.h:75
+msgid "Order"
+msgstr "Poradie"
+
+#: ../plugins/gtkui/interface.c:336
+#: ../plugins/gtkui/deadbeef.glade.h:63
+msgid "Linear"
+msgstr "Lineárne"
+
+#: ../plugins/gtkui/interface.c:342
+#: ../plugins/gtkui/deadbeef.glade.h:108
+msgid "Shuffle"
+msgstr "Zamiešať"
+
+#: ../plugins/gtkui/interface.c:348
+#: ../plugins/gtkui/deadbeef.glade.h:94
+msgid "Random"
+msgstr "Náhodné"
+
+#: ../plugins/gtkui/interface.c:354
+#: ../plugins/gtkui/deadbeef.glade.h:67
+msgid "Looping"
+msgstr "Opakovať"
+
+#: ../plugins/gtkui/interface.c:361
+#: ../plugins/gtkui/deadbeef.glade.h:65
+msgid "Loop All"
+msgstr "Opakovať všetky"
+
+#: ../plugins/gtkui/interface.c:367
+#: ../plugins/gtkui/deadbeef.glade.h:66
+msgid "Loop Single Song"
+msgstr "Opakovať jedinú stopu"
+
+#: ../plugins/gtkui/interface.c:373
+#: ../plugins/gtkui/deadbeef.glade.h:28
+msgid "Don't Loop"
+msgstr "Neopakovať"
+
+#: ../plugins/gtkui/interface.c:379
+#: ../plugins/gtkui/deadbeef.glade.h:101
+msgid "Scroll follows playback"
+msgstr "Posúvať podľa prehrávanej stopy"
+
+#: ../plugins/gtkui/interface.c:384
+#: ../plugins/gtkui/deadbeef.glade.h:21
+msgid "Cursor follows playback"
+msgstr "Kurzor podľa prehrávanej stopy"
+
+#: ../plugins/gtkui/interface.c:388
+#: ../plugins/gtkui/deadbeef.glade.h:113
+msgid "Stop after current"
+msgstr "Zastaviť po tejto stope"
+
+#: ../plugins/gtkui/interface.c:395
+#: ../plugins/gtkui/interface.c:402
+#: ../plugins/gtkui/deadbeef.glade.h:140
+msgid "_Help"
+msgstr "_Pomocník"
+
+#: ../plugins/gtkui/interface.c:410
+#: ../plugins/gtkui/deadbeef.glade.h:134
+msgid "_ChangeLog"
+msgstr "_Záznam zmien"
+
+#: ../plugins/gtkui/interface.c:432
+#: ../plugins/gtkui/deadbeef.glade.h:131
+msgid "_About"
+msgstr "O _aplikácii"
+
+#: ../plugins/gtkui/interface.c:816
+#: ../plugins/gtkui/deadbeef.glade.h:102
+msgid "Search"
+msgstr "Hľadať"
+
+#: ../plugins/gtkui/interface.c:891
+#: ../plugins/gtkui/deadbeef.glade.h:112
+msgid "Stop"
+msgstr "Zastaviť"
+
+#: ../plugins/gtkui/interface.c:899
+#: ../plugins/gtkui/deadbeef.glade.h:81
+msgid "Play"
+msgstr "Prehrať"
+
+#: ../plugins/gtkui/interface.c:907
+#: ../plugins/gtkui/deadbeef.glade.h:80
+msgid "Pause"
+msgstr "Pozastaviť"
+
+#: ../plugins/gtkui/interface.c:915
+#: ../plugins/gtkui/deadbeef.glade.h:86
+msgid "Previous"
+msgstr "Predošlá"
+
+#: ../plugins/gtkui/interface.c:923
+#: ../plugins/gtkui/deadbeef.glade.h:73
+msgid "Next"
+msgstr "Ďalšia"
+
+#: ../plugins/gtkui/interface.c:931
+#: ../plugins/gtkui/deadbeef.glade.h:82
+msgid "Play Random"
+msgstr "Prehrať náhodnú"
+
+#: ../plugins/gtkui/interface.c:940
+#: ../plugins/gtkui/deadbeef.glade.h:5
+msgid "About"
+msgstr "O aplikácii"
+
+#: ../plugins/gtkui/interface.c:953
+#: ../plugins/gtkui/deadbeef.glade.h:93
+msgid "Quit"
+msgstr "Ukončiť"
+
+#: ../plugins/gtkui/interface.c:1025
+#: ../plugins/gtkui/deadbeef.glade.h:10
+msgid "Adding files..."
+msgstr "Pridávajú sa súbory..."
+
+#: ../plugins/gtkui/interface.c:1069
+#: ../plugins/gtkui/deadbeef.glade.h:130
+msgid "_Abort"
+msgstr "_Zrušiť"
+
+#: ../plugins/gtkui/interface.c:1170
+#: ../plugins/gtkui/deadbeef.glade.h:122
+msgid "Track Properties"
+msgstr "Vlastnosti stopy"
+
+#: ../plugins/gtkui/interface.c:1194
+#: ../plugins/gtkui/deadbeef.glade.h:3
+msgid ""
+"<b>WARNING</b>: tag writing feature is still in development.\n"
+"<b>Make backup copies</b> before using."
+msgstr ""
+"<b>UPOZORNENIE</b>: zapisovanie značiek je zatiaľ vlastnosť vo vývoji.\n"
+"<b>Urobte si zálohy</b> predtým, než ju budete používať."
+
+#: ../plugins/gtkui/interface.c:1221
+#: ../plugins/gtkui/deadbeef.glade.h:132
+msgid "_Apply"
+msgstr "_Použiť"
+
+#: ../plugins/gtkui/interface.c:1242
+#: ../plugins/gtkui/interface.c:1288
+#: ../plugins/gtkui/interface.c:2436
+#: ../plugins/gtkui/deadbeef.glade.h:136
+msgid "_Close"
+msgstr "_Zatvoriť"
+
+#: ../plugins/gtkui/interface.c:1246
+#: ../plugins/gtkui/deadbeef.glade.h:68
+msgid "Metadata"
+msgstr "Metadáta"
+
+#: ../plugins/gtkui/interface.c:1292
+#: ../plugins/gtkui/plcommon.c:402
+#: ../plugins/gtkui/deadbeef.glade.h:87
+msgid "Properties"
+msgstr "Vlastnosti"
+
+#: ../plugins/gtkui/interface.c:1378
+#: ../plugins/gtkui/deadbeef.glade.h:146
+msgid "editcolumndlg"
+msgstr "editcolumndlg"
+
+#: ../plugins/gtkui/interface.c:1393
+#: ../plugins/gtkui/interface.c:2770
+#: ../plugins/gtkui/deadbeef.glade.h:121
+msgid "Title:"
+msgstr "Názov:"
+
+#: ../plugins/gtkui/interface.c:1401
+#: ../plugins/gtkui/deadbeef.glade.h:31
+msgid "Enter new column title here"
+msgstr "Sem zadajte názov stĺpca"
+
+#: ../plugins/gtkui/interface.c:1409
+#: ../plugins/gtkui/deadbeef.glade.h:123
+msgid "Type:"
+msgstr "Typ:"
+
+#: ../plugins/gtkui/interface.c:1417
+msgid "File number"
+msgstr "Číslo súboru"
+
+#. create default set of columns
+#: ../plugins/gtkui/interface.c:1418
+#: ../plugins/gtkui/mainplaylist.c:297
+msgid "Playing"
+msgstr "Hrá"
+
+#: ../plugins/gtkui/interface.c:1419
+msgid "Album Art"
+msgstr "Obal albumu"
+
+#: ../plugins/gtkui/interface.c:1420
+msgid "Artist - Album"
+msgstr "Interpret - Album"
+
+#: ../plugins/gtkui/interface.c:1421
+#: ../plugins/gtkui/plcommon.c:774
+msgid "Artist"
+msgstr "Interpret"
+
+#: ../plugins/gtkui/interface.c:1422
+#: ../plugins/gtkui/interface.c:1795
+msgid "Album"
+msgstr "Album"
+
+#: ../plugins/gtkui/interface.c:1423
+#: ../plugins/gtkui/prefwin.c:488
+msgid "Title"
+msgstr "Názov"
+
+#: ../plugins/gtkui/interface.c:1424
+msgid "Length"
+msgstr "Dĺžka"
+
+#: ../plugins/gtkui/interface.c:1425
+#: ../plugins/gtkui/interface.c:1794
+msgid "Track"
+msgstr "Stopa"
+
+#: ../plugins/gtkui/interface.c:1426
+msgid "Band / Album Artist"
+msgstr "Skupina/interpret"
+
+#: ../plugins/gtkui/interface.c:1427
+#: ../plugins/gtkui/plcommon.c:778
+msgid "Custom"
+msgstr "Vlastné"
+
+#: ../plugins/gtkui/interface.c:1433
+#: ../plugins/gtkui/interface.c:2997
+#: ../plugins/gtkui/deadbeef.glade.h:53
+msgid "Format:"
+msgstr "Formát:"
+
+#: ../plugins/gtkui/interface.c:1448
+#: ../plugins/gtkui/deadbeef.glade.h:11
+msgid "Alignment:"
+msgstr "Zarovnanie:"
+
+#: ../plugins/gtkui/interface.c:1456
+msgid "Left"
+msgstr "Vľavo"
+
+#: ../plugins/gtkui/interface.c:1457
+msgid "Right"
+msgstr "Vpravo"
+
+#: ../plugins/gtkui/interface.c:1459
+#: ../plugins/gtkui/interface.c:3007
+#: ../plugins/gtkui/deadbeef.glade.h:47
+#, no-c-format
+msgid ""
+"Format conversions (start with %):\n"
+"  [a]rtist, [t]itle, al[b]um, [B]and, [C]omposer\n"
+"  track[n]umber, [N]totaltracks,\n"
+"  [l]ength, [y]ear, [g]enre, [c]omment,\n"
+"  copy[r]ight, [f]ilename, [T]ags\n"
+"Example: %a - %t [%l]"
+msgstr ""
+"Konverzia formátu (začína %):\n"
+"  [a] interpret, [t] názov, [b] album, [B] skupina, [C] skladateľ\n"
+"  [n] číslo stopy, [N] počet stôp,\n"
+"  [l] dĺžka, [y] rok, [g] žáner, [c] komentár,\n"
+"  [r] autorské práva, [f] názov súboru, [T] značky\n"
+"Príklad: %a - %t [%l]"
+
+#: ../plugins/gtkui/interface.c:1488
+#: ../plugins/gtkui/interface.c:2801
+#: ../plugins/gtkui/interface.c:2913
+#: ../plugins/gtkui/interface.c:3036
+#: ../plugins/gtkui/deadbeef.glade.h:133
+msgid "_Cancel"
+msgstr "_Zrušiť"
+
+#: ../plugins/gtkui/interface.c:1509
+#: ../plugins/gtkui/interface.c:2822
+#: ../plugins/gtkui/interface.c:2934
+#: ../plugins/gtkui/interface.c:3057
+#: ../plugins/gtkui/deadbeef.glade.h:141
+msgid "_OK"
+msgstr "_OK"
+
+#: ../plugins/gtkui/interface.c:1726
+#: ../plugins/gtkui/deadbeef.glade.h:77
+msgid "Output plugin:"
+msgstr "Výstupný zásuvný modul:"
+
+#: ../plugins/gtkui/interface.c:1739
+#: ../plugins/gtkui/deadbeef.glade.h:76
+msgid "Output device:"
+msgstr "Výstupné zariadenie:"
+
+#: ../plugins/gtkui/interface.c:1748
+#: ../plugins/gtkui/deadbeef.glade.h:109
+msgid "Sound"
+msgstr "Zvuk"
+
+#: ../plugins/gtkui/interface.c:1757
+#: ../plugins/gtkui/deadbeef.glade.h:12
+msgid "Allow dynamic samplerate switching"
+msgstr "Povoliť dynamické prepínanie vzorkovania"
+
+#: ../plugins/gtkui/interface.c:1765
+#: ../plugins/gtkui/deadbeef.glade.h:98
+msgid "Samplerate conversion quality:"
+msgstr "Kvalita konverzie vzorkovania:"
+
+#: ../plugins/gtkui/interface.c:1784
+#: ../plugins/gtkui/deadbeef.glade.h:96
+msgid "Replaygain mode:"
+msgstr "Režim replaygain:"
+
+#: ../plugins/gtkui/interface.c:1793
+msgid "Disable"
+msgstr "Vypnúť"
+
+#: ../plugins/gtkui/interface.c:1797
+#: ../plugins/gtkui/deadbeef.glade.h:97
+msgid "Replaygain peak scale"
+msgstr "Najvyšší replaygain:"
+
+#: ../plugins/gtkui/interface.c:1801
+#: ../plugins/gtkui/deadbeef.glade.h:110
+msgid "Sound (adv.)"
+msgstr "Zvuk (pokr.)"
+
+#: ../plugins/gtkui/interface.c:1810
+#: ../plugins/gtkui/deadbeef.glade.h:16
+msgid "Close minimizes to tray"
+msgstr "Zatvorenie minimalizuje do oznamovacej oblasti"
+
+#: ../plugins/gtkui/interface.c:1814
+#: ../plugins/gtkui/deadbeef.glade.h:70
+msgid "Middle mouse button closes playlist"
+msgstr "Stredné tlačidlo myši zatvára zoznam stôp"
+
+#: ../plugins/gtkui/interface.c:1827
+#: ../plugins/gtkui/interface.c:1871
+#: ../plugins/gtkui/deadbeef.glade.h:78
+msgid "Override"
+msgstr "Prekonať"
+
+#: ../plugins/gtkui/interface.c:1836
+#: ../plugins/gtkui/deadbeef.glade.h:45
+msgid "Foreground"
+msgstr "Popredie"
+
+#: ../plugins/gtkui/interface.c:1843
+#: ../plugins/gtkui/deadbeef.glade.h:14
+msgid "Background"
+msgstr "Pozadie"
+
+#: ../plugins/gtkui/interface.c:1862
+#: ../plugins/gtkui/deadbeef.glade.h:103
+msgid "Seekbar/Volumebar colors"
+msgstr "Farby lišty pozície a hlasitosti"
+
+#: ../plugins/gtkui/interface.c:1880
+#: ../plugins/gtkui/deadbeef.glade.h:69
+msgid "Middle"
+msgstr "Stredné"
+
+#: ../plugins/gtkui/interface.c:1887
+#: ../plugins/gtkui/deadbeef.glade.h:62
+msgid "Light"
+msgstr "Svetlé"
+
+#: ../plugins/gtkui/interface.c:1894
+#: ../plugins/gtkui/deadbeef.glade.h:22
+msgid "Dark"
+msgstr "Tmavé"
+
+#: ../plugins/gtkui/interface.c:1925
+#: ../plugins/gtkui/deadbeef.glade.h:15
+msgid "Base"
+msgstr "Základ"
+
+#: ../plugins/gtkui/interface.c:1932
+#: ../plugins/gtkui/deadbeef.glade.h:117
+msgid "Tab strip colors"
+msgstr "Farby pruhu kariet"
+
+#: ../plugins/gtkui/interface.c:1941
+#: ../plugins/gtkui/deadbeef.glade.h:79
+msgid "Override (looses GTK treeview theming, but speeds up rendering)"
+msgstr "Prekonať (nepoužije témy vzhľadu stromového zobrazenia GTK, ale urýchli vykresľovanie)"
+
+#: ../plugins/gtkui/interface.c:1950
+#: ../plugins/gtkui/deadbeef.glade.h:33
+msgid "Even row"
+msgstr "Párny riadok"
+
+#: ../plugins/gtkui/interface.c:1957
+#: ../plugins/gtkui/deadbeef.glade.h:74
+msgid "Odd row"
+msgstr "Nepárny riadok"
+
+#: ../plugins/gtkui/interface.c:1976
+#: ../plugins/gtkui/deadbeef.glade.h:120
+msgid "Text"
+msgstr "Text"
+
+#: ../plugins/gtkui/interface.c:1983
+#: ../plugins/gtkui/deadbeef.glade.h:105
+msgid "Selected row"
+msgstr "Vybraný riadok"
+
+#: ../plugins/gtkui/interface.c:2002
+#: ../plugins/gtkui/deadbeef.glade.h:106
+msgid "Selected text"
+msgstr "Vybraný text"
+
+#: ../plugins/gtkui/interface.c:2015
+#: ../plugins/gtkui/deadbeef.glade.h:20
+msgid "Cursor"
+msgstr "Kurzor"
+
+#: ../plugins/gtkui/interface.c:2028
+#: ../plugins/gtkui/deadbeef.glade.h:83
+msgid "Playlist colors"
+msgstr "Farby zoznamu stôp"
+
+#: ../plugins/gtkui/interface.c:2032
+#: ../plugins/gtkui/deadbeef.glade.h:54
+msgid "GUI"
+msgstr "Rozhranie"
+
+#: ../plugins/gtkui/interface.c:2041
+#: ../plugins/gtkui/deadbeef.glade.h:30
+msgid "Enable Proxy Server"
+msgstr "Zapnúť proxy server"
+
+#: ../plugins/gtkui/interface.c:2049
+#: ../plugins/gtkui/deadbeef.glade.h:89
+msgid "Proxy Server Address:"
+msgstr "Adresa proxy servera:"
+
+#: ../plugins/gtkui/interface.c:2063
+#: ../plugins/gtkui/deadbeef.glade.h:90
+msgid "Proxy Server Port:"
+msgstr "Port proxy servera:"
+
+#: ../plugins/gtkui/interface.c:2077
+#: ../plugins/gtkui/deadbeef.glade.h:91
+msgid "Proxy Type:"
+msgstr "Typ proxy:"
+
+#: ../plugins/gtkui/interface.c:2096
+#: ../plugins/gtkui/deadbeef.glade.h:92
+msgid "Proxy Username:"
+msgstr "Používateľ proxy:"
+
+#: ../plugins/gtkui/interface.c:2109
+#: ../plugins/gtkui/deadbeef.glade.h:88
+msgid "Proxy Password:"
+msgstr "Heslo pre proxy:"
+
+#: ../plugins/gtkui/interface.c:2119
+#: ../plugins/gtkui/deadbeef.glade.h:71
+msgid "Network"
+msgstr "Sieť"
+
+#: ../plugins/gtkui/interface.c:2147
+#: ../plugins/gtkui/deadbeef.glade.h:128
+msgid "Write ID3v2"
+msgstr "Zapísať ID3v2"
+
+#: ../plugins/gtkui/interface.c:2151
+#: ../plugins/gtkui/interface.c:2278
+#: ../plugins/gtkui/deadbeef.glade.h:127
+msgid "Write ID3v1"
+msgstr "Zapísať ID3v1"
+
+#: ../plugins/gtkui/interface.c:2155
+#: ../plugins/gtkui/interface.c:2234
+#: ../plugins/gtkui/interface.c:2274
+#: ../plugins/gtkui/deadbeef.glade.h:126
+msgid "Write APEv2"
+msgstr "Zapísať APEv2"
+
+#: ../plugins/gtkui/interface.c:2163
+#: ../plugins/gtkui/interface.c:2242
+#: ../plugins/gtkui/deadbeef.glade.h:116
+msgid "Strip ID3v2"
+msgstr "Odstrániť ID3v2"
+
+#: ../plugins/gtkui/interface.c:2167
+#: ../plugins/gtkui/interface.c:2290
+#: ../plugins/gtkui/deadbeef.glade.h:115
+msgid "Strip ID3v1"
+msgstr "Odstrániť ID3v1"
+
+#: ../plugins/gtkui/interface.c:2171
+#: ../plugins/gtkui/interface.c:2246
+#: ../plugins/gtkui/interface.c:2286
+#: ../plugins/gtkui/deadbeef.glade.h:114
+msgid "Strip APEv2"
+msgstr "Odstrániť APEv2"
+
+#: ../plugins/gtkui/interface.c:2179
+#: ../plugins/gtkui/deadbeef.glade.h:58
+msgid "ID3v2 version"
+msgstr "Verzia ID3v2"
+
+#: ../plugins/gtkui/interface.c:2186
+msgid "2.3 (Recommended)"
+msgstr "2.3 (odporúča sa)"
+
+#: ../plugins/gtkui/interface.c:2187
+msgid "2.4"
+msgstr "2.4"
+
+#: ../plugins/gtkui/interface.c:2193
+#: ../plugins/gtkui/deadbeef.glade.h:57
+msgid "ID3v1 character encoding (default is iso8859-1)"
+msgstr "Kódovanie znakov ID3v1 (predvolené je iso8859-1)"
+
+#: ../plugins/gtkui/interface.c:2230
+#: ../plugins/gtkui/deadbeef.glade.h:129
+msgid "Write ID3v2.4"
+msgstr "Zapísať ID3v2.4"
+
+#: ../plugins/gtkui/interface.c:2299
+#: ../plugins/gtkui/deadbeef.glade.h:119
+msgid "Tag writer"
+msgstr "Zapisovať značiek"
+
+#: ../plugins/gtkui/interface.c:2330
+#: ../plugins/gtkui/deadbeef.glade.h:23
+msgid "Description:"
+msgstr "Popis:"
+
+#: ../plugins/gtkui/interface.c:2345
+#: ../plugins/gtkui/deadbeef.glade.h:13
+msgid "Author(s):"
+msgstr "Autor(i):"
+
+#: ../plugins/gtkui/interface.c:2360
+#: ../plugins/gtkui/deadbeef.glade.h:29
+msgid "Email:"
+msgstr "Email:"
+
+#: ../plugins/gtkui/interface.c:2375
+#: ../plugins/gtkui/deadbeef.glade.h:125
+msgid "Website:"
+msgstr "Webstránka:"
+
+#: ../plugins/gtkui/interface.c:2406
+#: ../plugins/gtkui/deadbeef.glade.h:18
+msgid "Configure"
+msgstr "Nastaviť"
+
+#: ../plugins/gtkui/interface.c:2410
+#: ../plugins/gtkui/deadbeef.glade.h:84
+msgid "Plugins"
+msgstr "Zásuvné moduly"
+
+#: ../plugins/gtkui/interface.c:2754
+#: ../plugins/gtkui/deadbeef.glade.h:147
+msgid "editplaylistdlg"
+msgstr "editplaylistdlg"
+
+#: ../plugins/gtkui/interface.c:2881
+#: ../plugins/gtkui/deadbeef.glade.h:124
+msgid "URL:"
+msgstr "URL:"
+
+#: ../plugins/gtkui/interface.c:2982
+#: ../plugins/gtkui/deadbeef.glade.h:55
+msgid "Group By"
+msgstr "Zoskupiť podľa"
+
+#: ../plugins/gtkui/mainplaylist.c:298
+#: ../plugins/gtkui/search.c:433
+msgid "Artist / Album"
+msgstr "Interpret/album"
+
+#: ../plugins/gtkui/mainplaylist.c:299
+#: ../plugins/gtkui/search.c:434
+msgid "Track No"
+msgstr "Č. stopy"
+
+#: ../plugins/gtkui/mainplaylist.c:300
+#: ../plugins/gtkui/search.c:435
+msgid "Title / Track Artist"
+msgstr "Názov/interpret stopy"
+
+#: ../plugins/gtkui/mainplaylist.c:301
+#: ../plugins/gtkui/search.c:436
+#: ../plugins/gtkui/trkproperties.c:175
+msgid "Duration"
+msgstr "Trvanie"
+
+#: ../plugins/gtkui/plcommon.c:316
+msgid "Delete files from disk"
+msgstr "Zmazať súbory z disku"
+
+#: ../plugins/gtkui/plcommon.c:317
+msgid ""
+"Files will be lost. Proceed?\n"
+"(This dialog can be turned off in GTKUI plugin settings)"
+msgstr ""
+"Súbory sa stratia. Pokračovať?\n"
+"(Tento dialóg môžete vypnúť v nastaveniach zásuvných modulov GTKUI)"
+
+#: ../plugins/gtkui/plcommon.c:318
+#: ../plugins/gtkui/trkproperties.c:56
+msgid "Warning"
+msgstr "Upozornenie"
+
+#: ../plugins/gtkui/plcommon.c:363
+msgid "Add to playback queue"
+msgstr "Pridať do frontu prehrávaných"
+
+#: ../plugins/gtkui/plcommon.c:368
+msgid "Remove from playback queue"
+msgstr "Odstrániť z frontu prehrávaných"
+
+#: ../plugins/gtkui/plcommon.c:376
+msgid "Reload metadata"
+msgstr "Znovu načítať metadáta"
+
+#: ../plugins/gtkui/plcommon.c:392
+msgid "Remove from disk"
+msgstr "Odstrániť z disku"
+
+#: ../plugins/gtkui/plcommon.c:616
+#: ../plugins/gtkui/plcommon.c:741
+msgid "Add column"
+msgstr "Pridať stĺpec"
+
+#: ../plugins/gtkui/plcommon.c:646
+#: ../plugins/gtkui/plcommon.c:745
+msgid "Edit column"
+msgstr "Upraviť stĺpec"
+
+#: ../plugins/gtkui/plcommon.c:749
+msgid "Remove column"
+msgstr "Odstrániť stĺpec"
+
+#: ../plugins/gtkui/plcommon.c:759
+msgid "Group by"
+msgstr "Zoskupiť podľa"
+
+#: ../plugins/gtkui/plcommon.c:766
+msgid "None"
+msgstr "Žiadne"
+
+#: ../plugins/gtkui/plcommon.c:770
+msgid "Artist/Date/Album"
+msgstr "Interpret/dátum/album"
+
+#: ../plugins/gtkui/pluginconf.c:41
+msgid "Open file..."
+msgstr "Otvoriť súbor..."
+
+#: ../plugins/gtkui/pluginconf.c:139
+#, c-format
+msgid "Setup %s"
+msgstr "Nastaviť %s"
+
+#: ../plugins/gtkui/prefwin.c:98
+msgid "Default Audio Device"
+msgstr "Predvolené zvukové zariadenie"
+
+#: ../plugins/gtkui/prefwin.c:267
+msgid "Add"
+msgstr "Pridať"
+
+#: ../plugins/gtkui/prefwin.c:277
+msgid "Global Hotkeys"
+msgstr "Globálne klávesové skratky"
+
+#: ../plugins/gtkui/prefwin.c:332
+msgid "Slot"
+msgstr "Miesto"
+
+#: ../plugins/gtkui/prefwin.c:333
+msgid "Key combination"
+msgstr "Kombinácia klávesov"
+
+#. output plugin selection
+#: ../plugins/gtkui/prefwin.c:379
+#: ../plugins/gtkui/prefwin.c:569
+#: ../plugins.c:833
+msgid "ALSA output plugin"
+msgstr "Výstupný modul ALSA"
+
+#: ../plugins/gtkui/progress.c:64
+msgid "Initializing..."
+msgstr "Inicializuje sa..."
+
+#: ../plugins/gtkui/trkproperties.c:53
+msgid "You've modified data for this track."
+msgstr "Zmenili ste dáta tejto stopy."
+
+#: ../plugins/gtkui/trkproperties.c:55
+msgid "Really close the window?"
+msgstr "Naozaj zatvoriť toto okno?"
+
+#: ../plugins/gtkui/trkproperties.c:178
+msgid "Tag Type(s)"
+msgstr "Typ(y) značiek"
+
+#: ../plugins/gtkui/trkproperties.c:180
+msgid "Embedded Cuesheet"
+msgstr "Vložený cue"
+
+#: ../plugins/gtkui/trkproperties.c:180
+msgid "Yes"
+msgstr "Áno"
+
+#: ../plugins/gtkui/trkproperties.c:180
+msgid "No"
+msgstr "Nie"
+
+#: ../plugins/gtkui/trkproperties.c:248
+#: ../plugins/gtkui/trkproperties.c:260
+msgid "Key"
+msgstr "Kľúč"
+
+#: ../plugins/gtkui/trkproperties.c:249
+#: ../plugins/gtkui/trkproperties.c:261
+msgid "Value"
+msgstr "Hodnota"
+
+#: ../plugins/notify/notify.c:138
+msgid "DeaDBeeF now playing"
+msgstr "DeaDBeeF teraz prehráva"
+
+#: ../main.c:84
+#, c-format
+msgid "Usage: deadbeef [options] [file(s)]\n"
+msgstr "Použitie: deadbeef [možnosti] [súbor(y)]\n"
+
+#: ../main.c:85
+#, c-format
+msgid "Options:\n"
+msgstr "Možnosti:\n"
+
+#: ../main.c:86
+#, c-format
+msgid "   --help  or  -h     Print help (this message) and exit\n"
+msgstr "   --help alebo -h    Vypíše túto správu Pomocníka a skončí\n"
+
+#: ../main.c:87
+#, c-format
+msgid "   --quit             Quit player\n"
+msgstr "   --quit             Ukončí prehrávač\n"
+
+#: ../main.c:88
+#, c-format
+msgid "   --version          Print version info and exit\n"
+msgstr "   --version          Vypíše informácie o verzii a skončí\n"
+
+#: ../main.c:89
+#, c-format
+msgid "   --play             Start playback\n"
+msgstr "   --play             Začne prehrávanie\n"
+
+#: ../main.c:90
+#, c-format
+msgid "   --stop             Stop playback\n"
+msgstr "   --stop             Zastaví prehrávanie\n"
+
+#: ../main.c:91
+#, c-format
+msgid "   --pause            Pause playback\n"
+msgstr "   --pause            Pozastaví prehrávanie\n"
+
+#: ../main.c:92
+#, c-format
+msgid "   --next             Next song in playlist\n"
+msgstr "   --next             Ďalšia stopa v zozname\n"
+
+#: ../main.c:93
+#, c-format
+msgid "   --prev             Previous song in playlist\n"
+msgstr "   --prev             Predošlá stopa v zozname\n"
+
+#: ../main.c:94
+#, c-format
+msgid "   --random           Random song in playlist\n"
+msgstr "   --random           Náhodná stopa v zozname\n"
+
+#: ../main.c:95
+#, c-format
+msgid "   --queue            Append file(s) to existing playlist\n"
+msgstr "   --queue            Pridá súbory do existujúceho zoznamu stôp\n"
+
+#: ../main.c:96
+#, c-format
+msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
+msgstr "   --nowplaying FMT   Vypíše formátovaný názov stopy na štand. výstup\n"
+
+#: ../main.c:97
+#, c-format
+msgid ""
+"                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
+"                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
+"                      copy[r]ight, [e]lapsed\n"
+msgstr ""
+"                      FMT %%-syntax: [a] interpret, [t] názov, [b] album,\n"
+"                      [l] dĺžka, [n] č. stopy, [y] rok, [c] komentár,\n"
+"                      [r] autorské práva, [e] uplynulo\n"
+
+#: ../main.c:100
+#, c-format
+msgid "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n"
+msgstr "                      napr.: --nowplaying „%%a - %%t“ by malo vypísať „interpret - názov“\n"
+
+#: ../playlist.c:369
+#: ../playlist.c:2212
+msgid "Default"
+msgstr "Predvolené"
+
+#: ../plugins/gtkui/deadbeef.glade.h:1
+msgid ""
+"2.3 (Recommended)\n"
+"2.4"
+msgstr ""
+"2.3 (odporúča sa)\n"
+"2.4"
+
+#: ../plugins/gtkui/deadbeef.glade.h:25
+msgid ""
+"Disable\n"
+"Track\n"
+"Album"
+msgstr ""
+"Vypnúť\n"
+"Stopa\n"
+"Album"
+
+#: ../plugins/gtkui/deadbeef.glade.h:34
+msgid ""
+"File number\n"
+"Playing\n"
+"Album Art\n"
+"Artist - Album\n"
+"Artist\n"
+"Album\n"
+"Title\n"
+"Length\n"
+"Track\n"
+"Band / Album Artist\n"
+"Custom"
+msgstr ""
+"Č. súboru\n"
+"Hrá\n"
+"Obal albumu\n"
+"Interpret - Album\n"
+"Interpret\n"
+"Album\n"
+"Názov\n"
+"Dĺžka\n"
+"Stopa\n"
+"Skupina/Interpret albumu\n"
+"Vlastné"
+
+#: ../plugins/gtkui/deadbeef.glade.h:60
+msgid ""
+"Left\n"
+"Right"
+msgstr ""
+"Vľavo\n"
+"Vpravo"
+
+#: ../plugins/gtkui/support.c:90
+#: ../plugins/gtkui/support.c:114
+#, c-format
+msgid "Couldn't find pixmap file: %s"
+msgstr "Nepodarilo sa nájsť súbor pixmap: %s"
+
+#: ../plugins/vorbis/vcedit.c:129
+#: ../plugins/vorbis/vcedit.c:155
+msgid "Couldn't get enough memory for input buffering."
+msgstr "Nepodarilo sa získať dosť pamäte na bufrovanie vstupu."
+
+#: ../plugins/vorbis/vcedit.c:179
+#: ../plugins/vorbis/vcedit.c:550
+msgid "Error reading first page of Ogg bitstream."
+msgstr "Chyba pri čítaní prvej stránky bitového toku Ogg."
+
+#: ../plugins/vorbis/vcedit.c:185
+#: ../plugins/vorbis/vcedit.c:557
+msgid "Error reading initial header packet."
+msgstr "Chyba pri čítaní prvého paketu hlavičky."
+
+#: ../plugins/vorbis/vcedit.c:237
+msgid "Couldn't get enough memory to register new stream serial number."
+msgstr "Nepodarilo sa získať dosť pamäte na registráciu sériového čísla toku."
+
+#: ../plugins/vorbis/vcedit.c:505
+msgid "Input truncated or empty."
+msgstr "Vstup je orezaný alebo prázdny."
+
+#: ../plugins/vorbis/vcedit.c:507
+msgid "Input is not an Ogg bitstream."
+msgstr "Vstup nie je bitový tok Ogg."
+
+#: ../plugins/vorbis/vcedit.c:565
+msgid "Ogg bitstream does not contain Vorbis data."
+msgstr "Bitový tok Ogg neobsahuje dáta Vorbis."
+
+#: ../plugins/vorbis/vcedit.c:578
+msgid "EOF before recognised stream."
+msgstr "Koniec súboru pred rozpoznaním toku."
+
+#: ../plugins/vorbis/vcedit.c:594
+msgid "Ogg bitstream does not contain a supported data-type."
+msgstr "Bitový tok Ogg neobsahuje podporovaný typ dát."
+
+#: ../plugins/vorbis/vcedit.c:638
+msgid "Corrupt secondary header."
+msgstr "Poškodená sekundárna hlavička-"
+
+#: ../plugins/vorbis/vcedit.c:659
+msgid "EOF before end of Vorbis headers."
+msgstr "Koniec súboru pred koncom hlavičiek Vorbis."
+
+#: ../plugins/vorbis/vcedit.c:834
+msgid "Corrupt or missing data, continuing..."
+msgstr "Poškodené alebo chýbajúce dáta, pokračuje sa..."
+
+#: ../plugins/vorbis/vcedit.c:874
+msgid "Error writing stream to output. Output stream may be corrupted or truncated."
+msgstr "Chyba pri zapisovaní toku na výstup. Výstupný tok môže byť poškodený alebo orezaný."
+

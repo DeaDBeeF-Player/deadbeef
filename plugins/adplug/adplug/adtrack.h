@@ -30,11 +30,11 @@ public:
 		: CmodPlayer(newopl)
 	{ };
 
-	bool load(const std::string &filename, const CFileProvider &fp);
+	bool load(const char *filename, const CFileProvider &fp);
 	float getrefresh();
 
-	std::string gettype()
-	{ return std::string("Adlib Tracker 1.0"); };
+	const char * gettype()
+	{ return "Adlib Tracker 1.0"; };
 	unsigned int getinstruments()
 	{ return 9; };
 

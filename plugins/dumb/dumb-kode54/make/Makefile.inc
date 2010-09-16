@@ -20,7 +20,7 @@ $(OBJDIR)/%.o: src/core/%.c include/dumb.h include/internal/dumb.h
 $(OBJDIR)/%.o: src/helpers/%.c include/dumb.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-$(OBJDIR)/resample.o: src/helpers/resample.inc
+$(OBJDIR)/resample.o: src/helpers/resample.inc src/helpers/resamp2.inc src/helpers/resamp3.inc
 
 $(OBJDIR)/%.o: src/it/%.c include/dumb.h include/internal/it.h
 	$(CC) $(CFLAGS) -c -o $@ $<

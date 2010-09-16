@@ -44,9 +44,10 @@
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
 #endif
+#include <unistd.h>
+#include "gettext.h"
 #include "playlist.h"
 #include "playback.h"
-#include "unistd.h"
 #include "threading.h"
 #include "messagepump.h"
 #include "streamer.h"
@@ -66,6 +67,9 @@
 #define USE_ABSTRACT_NAME 0
 #endif
 
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
+
 // some common global variables
 char confdir[1024]; // $HOME/.config
 char dbconfdir[1024]; // $HOME/.config/deadbeef
@@ -82,23 +86,23 @@ client_exec_command_line (const char *cmdline, int len) {
         //        if (filter == 1) {
         // help, version and nowplaying are executed with any filter
         if (!strcmp (parg, "--help") || !strcmp (parg, "-h")) {
-            fprintf (stdout, "Usage: deadbeef [options] [file(s)]\n");
-            fprintf (stdout, "Options:\n");
-            fprintf (stdout, "   --help  or  -h     Print help (this message) and exit\n");
-            fprintf (stdout, "   --quit             Quit player\n");
-            fprintf (stdout, "   --version          Print version info and exit\n");
-            fprintf (stdout, "   --play             Start playback\n");
-            fprintf (stdout, "   --stop             Stop playback\n");
-            fprintf (stdout, "   --pause            Pause playback\n");
-            fprintf (stdout, "   --next             Next song in playlist\n");
-            fprintf (stdout, "   --prev             Previous song in playlist\n");
-            fprintf (stdout, "   --random           Random song in playlist\n");
-            fprintf (stdout, "   --queue            Append file(s) to existing playlist\n");
-            fprintf (stdout, "   --nowplaying FMT   Print formatted track name to stdout\n");
-            fprintf (stdout, "                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
+            fprintf (stdout, _("Usage: deadbeef [options] [file(s)]\n"));
+            fprintf (stdout, _("Options:\n"));
+            fprintf (stdout, _("   --help  or  -h     Print help (this message) and exit\n"));
+            fprintf (stdout, _("   --quit             Quit player\n"));
+            fprintf (stdout, _("   --version          Print version info and exit\n"));
+            fprintf (stdout, _("   --play             Start playback\n"));
+            fprintf (stdout, _("   --stop             Stop playback\n"));
+            fprintf (stdout, _("   --pause            Pause playback\n"));
+            fprintf (stdout, _("   --next             Next song in playlist\n"));
+            fprintf (stdout, _("   --prev             Previous song in playlist\n"));
+            fprintf (stdout, _("   --random           Random song in playlist\n"));
+            fprintf (stdout, _("   --queue            Append file(s) to existing playlist\n"));
+            fprintf (stdout, _("   --nowplaying FMT   Print formatted track name to stdout\n"));
+            fprintf (stdout, _("                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
                              "                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
-                             "                      copy[r]ight, [e]lapsed\n");
-            fprintf (stdout, "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n");
+                             "                      copy[r]ight, [e]lapsed\n"));
+            fprintf (stdout, _("                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n"));
             return 1;
         }
         else if (!strcmp (parg, "--version")) {
@@ -209,10 +213,23 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
         parg++;
     }
     if (parg < pend) {
+        if (conf_get_int ("cli_add_to_specific_playlist", 1)) {
+            const char *str = conf_get_str ("cli_add_playlist_name", "Default");
+            int idx = plt_find (str);
+            if (idx < 0) {
+                idx = plt_add (plt_get_count (), str);
+            }
+            if (idx >= 0) {
+                plt_set_curr (idx);
+            }
+        }
         // add files
         if (!queue && plt_get_curr () != -1) {
             pl_clear ();
             pl_reset_cursor ();
+        }
+        if (parg < pend) {
+            deadbeef->pl_add_files_begin ();
         }
         while (parg < pend) {
             char resolved[PATH_MAX];
@@ -223,14 +240,15 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
             else {
                 pname = parg;
             }
-            if (pl_add_dir (pname, NULL, NULL) < 0) {
-                if (pl_add_file (pname, NULL, NULL) < 0) {
+            if (deadbeef->pl_add_dir (pname, NULL, NULL) < 0) {
+                if (deadbeef->pl_add_file (pname, NULL, NULL) < 0) {
                     fprintf (stderr, "failed to add file or folder %s\n", pname);
                 }
             }
             parg += strlen (parg);
             parg++;
         }
+        deadbeef->pl_add_files_end ();
         messagepump_push (M_PLAYLISTREFRESH, 0, 0, 0);
         if (!queue) {
             messagepump_push (M_PLAYSONG, 0, 1, 0);
@@ -269,7 +287,8 @@ server_start (void) {
     memcpy (srv_local.sun_path, server_id, sizeof (server_id));
     int len = offsetof(struct sockaddr_un, sun_path) + sizeof (server_id)-1;
 #else
-    snprintf (srv_local.sun_path, sizeof (srv_local.sun_path), "%s/socket", dbconfdir);
+    char *socketdirenv = getenv ("DDB_SOCKET_DIR");
+    snprintf (srv_local.sun_path, sizeof (srv_local.sun_path), "%s/socket", socketdirenv ? socketdirenv : dbconfdir);
     if (unlink(srv_local.sun_path) < 0) {
         perror ("INFO: unlink socket");
     }
@@ -462,6 +481,41 @@ sigsegv_handler (int sig) {
 }
 #endif
 
+void
+save_resume_state (void) {
+    playItem_t *trk = streamer_get_playing_track ();
+    float playpos = -1;
+    int playtrack = -1;
+    int playlist = streamer_get_current_playlist ();
+    int paused = (p_get_state () == OUTPUT_STATE_PAUSED);
+    if (trk && playlist >= 0) {
+        playtrack = str_get_idx_of (trk);
+        playpos = streamer_get_playpos ();
+        pl_item_unref (trk);
+    }
+
+    conf_set_float ("resume.position", playpos);
+    conf_set_int ("resume.track", playtrack);
+    conf_set_int ("resume.playlist", playlist);
+    conf_set_int ("resume.paused", paused);
+}
+
+void
+restore_resume_state (void) {
+    if (conf_get_int ("resume_last_session", 0) && p_isstopped ()) {
+        int plt = conf_get_int ("resume.playlist", -1);
+        int track = conf_get_int ("resume.track", -1);
+        float pos = conf_get_float ("resume.position", -1);
+        int paused = conf_get_int ("resume.paused", 0);
+        trace ("resume: track %d pos %f playlist %d\n", track, pos, plt);
+        if (plt >= 0 && track >= 0 && pos >= 0) {
+            streamer_set_current_playlist (plt);
+            streamer_set_seek (pos);
+            streamer_set_nextsong (track, paused ? 2 : 3);
+        }
+    }
+}
+
 int
 main (int argc, char *argv[]) {
 #ifdef __linux__
@@ -469,6 +523,12 @@ main (int argc, char *argv[]) {
 #endif
     setlocale (LC_ALL, "");
     setlocale (LC_NUMERIC, "C");
+#ifdef ENABLE_NLS
+//    fprintf (stderr, "enabling gettext support: package=" PACKAGE ", dir=" LOCALEDIR "...\n");
+	bindtextdomain (PACKAGE, LOCALEDIR);
+	bind_textdomain_codeset (PACKAGE, "UTF-8");
+	textdomain (PACKAGE);
+#endif					
     fprintf (stderr, "starting deadbeef " VERSION "\n");
     srand (time (NULL));
 #ifdef __linux__
@@ -562,7 +622,8 @@ main (int argc, char *argv[]) {
     memcpy (remote.sun_path, server_id, sizeof (server_id));
     len = offsetof(struct sockaddr_un, sun_path) + sizeof (server_id)-1;
 #else
-    snprintf (remote.sun_path, sizeof (remote.sun_path), "%s/socket", dbconfdir);
+    char *socketdirenv = getenv ("DDB_SOCKET_DIR");
+    snprintf (remote.sun_path, sizeof (remote.sun_path), "%s/socket", socketdirenv ? socketdirenv : dbconfdir);
     len = offsetof(struct sockaddr_un, sun_path) + strlen (remote.sun_path);
 #endif
     if (connect(s, (struct sockaddr *)&remote, len) == 0) {
@@ -616,6 +677,7 @@ main (int argc, char *argv[]) {
 
     pl_init ();
     conf_load (); // required by some plugins at startup
+    volume_set_db (conf_get_float ("playback.volume", 0)); // volume need to be initialized before plugins start
     messagepump_init (); // required to push messages while handling commandline
     plug_load_all (); // required to add files to playlist from commandline
     pl_load_all ();
@@ -645,13 +707,16 @@ main (int argc, char *argv[]) {
     atexit (atexit_handler); // helps to save in simple cases
 
     // start all subsystems
-    volume_set_db (conf_get_float ("playback.volume", 0));
     plug_trigger_event_playlistchanged ();
 
     streamer_init ();
 
+    restore_resume_state ();
+
     // this runs in main thread (blocks right here)
     player_mainloop ();
+
+    save_resume_state ();
 
     // save config
     pl_save_all ();

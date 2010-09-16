@@ -44,6 +44,8 @@ struct _DdbTabStrip {
     int dragpt[2];
     int prev_x;
     int movepos;
+    guint scroll_timer;
+    int scroll_direction;
 };
 
 struct _DdbTabStripClass {

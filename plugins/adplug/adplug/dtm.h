@@ -28,15 +28,15 @@ class CdtmLoader: public CmodPlayer
 
   CdtmLoader(Copl *newopl) : CmodPlayer(newopl) { };
 
-  bool	load(const std::string &filename, const CFileProvider &fp);
+  bool	load(const char *filename, const CFileProvider &fp);
   void	rewind(int subsong);
   float	getrefresh();
 
-  std::string     gettype();
-  std::string     gettitle();
-  std::string     getauthor();
-  std::string     getdesc();
-  std::string     getinstrument(unsigned int n);
+  const char *     gettype();
+  const char *     gettitle();
+  const char *     getauthor();
+  const char *     getdesc();
+  const char *     getinstrument(unsigned int n);
   unsigned int    getinstruments();
 
  private:

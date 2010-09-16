@@ -27,6 +27,7 @@
 #include <assert.h>
 #include <ctype.h>
 #include <gdk/gdkkeysyms.h>
+#include "../../gettext.h"
 
 #include "callbacks.h"
 #include "interface.h"
@@ -93,7 +94,7 @@ file_filter_func (const GtkFileFilterInfo *filter_info, gpointer data) {
 static GtkFileFilter *
 set_file_filter (GtkWidget *dlg, const char *name) {
     if (!name) {
-        name = "Supported sound formats";
+        name = _("Supported sound formats");
     }
 
     GtkFileFilter* flt;
@@ -104,16 +105,17 @@ set_file_filter (GtkWidget *dlg, const char *name) {
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
     gtk_file_chooser_set_filter (GTK_FILE_CHOOSER (dlg), flt);
     flt = gtk_file_filter_new ();
-    gtk_file_filter_set_name (flt, "Other files (*)");
+    gtk_file_filter_set_name (flt, _("Other files (*)"));
     gtk_file_filter_add_pattern (flt, "*");
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
+    return flt;
 }
 
 void
 on_open_activate                       (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    GtkWidget *dlg = gtk_file_chooser_dialog_new ("Open file(s)...", GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
+    GtkWidget *dlg = gtk_file_chooser_dialog_new (_("Open file(s)..."), GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
 
     set_file_filter (dlg, NULL);
 
@@ -146,7 +148,7 @@ void
 on_add_files_activate                  (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    GtkWidget *dlg = gtk_file_chooser_dialog_new ("Add file(s) to playlist...", GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
+    GtkWidget *dlg = gtk_file_chooser_dialog_new (_("Add file(s) to playlist..."), GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
 
     set_file_filter (dlg, NULL);
 
@@ -175,10 +177,25 @@ on_add_files_activate                  (GtkMenuItem     *menuitem,
 }
 
 void
+on_follow_symlinks_toggled         (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_int ("add_folders_follow_symlinks", gtk_toggle_button_get_active (togglebutton));
+}
+
+void
 on_add_folders_activate                (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    GtkWidget *dlg = gtk_file_chooser_dialog_new ("Add folder(s) to playlist...", GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
+    GtkWidget *dlg = gtk_file_chooser_dialog_new (_("Add folder(s) to playlist..."), GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
+
+    GtkWidget *check = gtk_check_button_new_with_mnemonic (_("Follow symlinks"));
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (check), deadbeef->conf_get_int ("add_folders_follow_symlinks", 0));
+    g_signal_connect ((gpointer) check, "toggled",
+            G_CALLBACK (on_follow_symlinks_toggled),
+            NULL);
+    gtk_widget_show (check);
+    gtk_file_chooser_set_extra_widget (GTK_FILE_CHOOSER (dlg), check);
 
     set_file_filter (dlg, NULL);
 
@@ -285,7 +302,6 @@ on_playrand_clicked                    (GtkButton       *button,
     deadbeef->sendmessage (M_PLAYRANDOM, 0, 0, 0);
 }
 
-
 gboolean
 on_mainwin_key_press_event             (GtkWidget       *widget,
                                         GdkEventKey     *event,
@@ -295,6 +311,13 @@ on_mainwin_key_press_event             (GtkWidget       *widget,
     if (event->keyval == GDK_n && !event->state) {
         // button for that one is not in toolbar anymore, so handle it manually
         deadbeef->sendmessage (M_PLAYRANDOM, 0, 0, 0);
+    }
+    else if ((event->state == GDK_MOD1_MASK || event->state == 0) && event->keyval >= GDK_1 && event->keyval <= GDK_9) {
+        int pl = event->keyval - GDK_1;
+        if (pl >= 0 && pl < deadbeef->plt_get_count ()) {
+            deadbeef->plt_set_curr (pl);
+            deadbeef->conf_set_int ("playlist.current", pl);
+        }
     }
     else {
         ddb_listview_handle_keypress (DDB_LISTVIEW (lookup_widget (mainwin, "playlist")), event->keyval, event->state);
@@ -433,9 +456,10 @@ seekbar_draw (GtkWidget *widget) {
         if (trk) {
             deadbeef->pl_item_unref (trk);
         }
-        clearlooks_rounded_rectangle (cr, 2+ax, widget->allocation.height/2-4+ay, aw-4, 8, 4, 0xff);
         // empty seekbar, just a frame
+        clearlooks_rounded_rectangle (cr, 2+ax, widget->allocation.height/2-4+ay, aw-4, 8, 4, 0xff);
         cairo_set_source_rgb (cr, clr_selection.red/65535.f, clr_selection.green/65535.f, clr_selection.blue/65535.f );
+        cairo_set_line_width (cr, 2);
         cairo_stroke (cr);
         cairo_destroy (cr);
         return;
@@ -636,7 +660,7 @@ show_info_window (const char *fname, const char *title, GtkWidget **pwindow) {
         char buf[s+1];
         if (fread (buf, 1, s, fp) != s) {
             fprintf (stderr, "error reading help file contents\n");
-            const char *error = "Failed while reading help file";
+            const char *error = _("Failed while reading help file");
             gtk_text_buffer_set_text (buffer, error, strlen (error));
         }
         else {
@@ -646,7 +670,7 @@ show_info_window (const char *fname, const char *title, GtkWidget **pwindow) {
         fclose (fp);
     }
     else {
-        const char *error = "Failed to load help file";
+        const char *error = _("Failed to load help file");
         gtk_text_buffer_set_text (buffer, error, strlen (error));
     }
     gtk_text_view_set_buffer (GTK_TEXT_VIEW (txt), buffer);
@@ -660,7 +684,7 @@ void
 on_help1_activate                      (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    show_info_window (DOCDIR "/help.txt", "Help", &helpwindow);
+    show_info_window (DOCDIR "/help.txt", _("Help"), &helpwindow);
 }
 
 static GtkWidget *aboutwindow;
@@ -669,7 +693,9 @@ void
 on_about1_activate                     (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    show_info_window (DOCDIR "/about.txt", "About DeaDBeeF " VERSION, &aboutwindow);
+    char s[200];
+    snprintf (s, sizeof (s), _("About DeaDBeeF %s"), VERSION);
+    show_info_window (DOCDIR "/about.txt", s, &aboutwindow);
 }
 
 static GtkWidget *changelogwindow;
@@ -678,7 +704,9 @@ void
 on_changelog1_activate                 (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    show_info_window (DOCDIR "/ChangeLog", "DeaDBeeF " VERSION " ChangeLog", &changelogwindow);
+    char s[200];
+    snprintf (s, sizeof (s), _("DeaDBeeF %s ChangeLog"), VERSION);
+    show_info_window (DOCDIR "/ChangeLog", s, &changelogwindow);
 }
 
 static GtkWidget *gplwindow;
@@ -1028,3 +1056,12 @@ create_seekbar (gchar *widget_name, gchar *string1, gchar *string2,
 {
     return GTK_WIDGET (ddb_seekbar_new ());
 }
+
+
+void
+on_jump_to_current_track1_activate     (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    gtkui_focus_on_playing_track ();
+}
+

@@ -15,6 +15,9 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+#ifdef HAVE_CONFIG_H
+#  include "config.h"
+#endif
 #include <stdlib.h>
 #include <string.h>
 #include <dirent.h>
@@ -32,6 +35,7 @@
 #endif
 #include <limits.h>
 #include <errno.h>
+#include "gettext.h"
 #include "playlist.h"
 #include "streamer.h"
 #include "messagepump.h"
@@ -87,12 +91,16 @@ static uintptr_t mutex_plt;
 #define GLOBAL_LOCK {pl_global_lock();}
 #define GLOBAL_UNLOCK {pl_global_unlock();}
 
+static playlist_t dummy_playlist; // used at startup to prevent crashes
+
 int
 pl_init (void) {
+    playlist = &dummy_playlist;
 #if !DISABLE_LOCKING
     mutex = mutex_create ();
     mutex_plt = mutex_create ();
 #endif
+    return 0;
 }
 
 void
@@ -201,6 +209,17 @@ plt_get_list (void) {
 playlist_t *
 plt_get_curr_ptr (void) {
     return playlist;
+}
+
+playlist_t *
+plt_get (int idx) {
+    playlist_t *p = playlists_head;
+    for (int i = 0; p && i <= idx; i++, p = p->next) {
+        if (i == idx) {
+            return p;
+        }
+    }
+    return NULL;
 }
 
 int
@@ -355,7 +374,7 @@ plt_remove (int plt) {
         trace ("warning: deleting last playlist\n");
         pl_clear ();
         free (playlist->title);
-        playlist->title = strdup ("Default");
+        playlist->title = strdup (_("Default"));
         PLT_UNLOCK;
         plt_gen_conf ();
         plug_trigger_event (DB_EV_PLAYLISTSWITCH, 0);
@@ -388,6 +407,18 @@ plt_remove (int plt) {
     if (!plt_loading) {
         plug_trigger_event (DB_EV_PLAYLISTSWITCH, 0);
     }
+}
+
+int
+plt_find (const char *name) {
+    playlist_t *p = playlists_head;
+    int i = -1;
+    for (i = 0; p; i++, p = p->next) {
+        if (!strcmp (p->title, name)) {
+            return i;
+        }
+    }
+    return -1;
 }
 
 void
@@ -744,13 +775,16 @@ pl_cue_parse_time (const char *p) {
 static playItem_t *
 pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, char *track, char *index00, char *index01, char *pregap, char *title, char *performer, char *albumtitle, char *genre, char *date, char *replaygain_album_gain, char *replaygain_album_peak, char *replaygain_track_gain, char *replaygain_track_peak, const char *decoder_id, const char *ftype, int samplerate) {
     if (!track[0]) {
+        trace ("pl_process_cue_track: invalid track (file=%s, title=%s)\n", fname, title);
         return after;
     }
     if (!index00[0] && !index01[0]) {
+        trace ("pl_process_cue_track: invalid index (file=%s, title=%s, track=%s)\n", fname, title, track);
         return after;
     }
 #if SKIP_BLANK_CUE_TRACKS
     if (!title[0]) {
+        trace ("pl_process_cue_track: invalid title (file=%s, title=%s, track=%s)\n", fname, title, track);
         return after;
     }
 #endif
@@ -779,6 +813,7 @@ pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, c
             prevtime = f_index01;
         }
         else {
+            trace ("pl_process_cue_track: invalid pregap or index01 (pregap=%s, index01=%s)\n", pregap, index01);
             return after;
         }
         (*prev)->endsample = (prevtime * samplerate) - 1;
@@ -802,6 +837,7 @@ pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, c
     // non-compliant hack to handle tracks which only store pregap info
     if (!index01[0]) {
         *prev = NULL;
+        trace ("pl_process_cue_track: invalid index01 (pregap=%s, index01=%s)\n", pregap, index01);
         return after;
     }
     playItem_t *it = pl_item_alloc ();
@@ -888,18 +924,19 @@ pl_insert_cue_from_buffer (playItem_t *after, playItem_t *origin, const uint8_t 
         buffersize -= p-buffer;
         buffer = p;
         p = pl_cue_skipspaces (str);
+//        trace ("cue line: %s\n", p);
         if (!strncmp (p, "PERFORMER ", 10)) {
             pl_get_qvalue_from_cue (p + 10, sizeof (performer), performer);
-//            printf ("got performer: %s\n", performer);
+            trace ("cue: got performer: %s\n", performer);
         }
         else if (!strncmp (p, "TITLE ", 6)) {
-            if (str[0] > ' ') {
+            if (str[0] > ' ' && !albumtitle[0]) {
                 pl_get_qvalue_from_cue (p + 6, sizeof (albumtitle), albumtitle);
-//                printf ("got albumtitle: %s\n", albumtitle);
+                trace ("cue: got albumtitle: %s\n", albumtitle);
             }
             else {
                 pl_get_qvalue_from_cue (p + 6, sizeof (title), title);
-//                printf ("got title: %s\n", title);
+                trace ("cue: got title: %s\n", title);
             }
         }
         else if (!strncmp (p, "REM GENRE ", 10)) {
@@ -909,8 +946,10 @@ pl_insert_cue_from_buffer (playItem_t *after, playItem_t *origin, const uint8_t 
             pl_get_value_from_cue (p + 9, sizeof (date), date);
         }
         else if (!strncmp (p, "TRACK ", 6)) {
+            trace ("cue: adding track: %s %s %s\n", origin->fname, title, track);
             // add previous track
             after = pl_process_cue_track (after, origin->fname, &prev, track, index00, index01, pregap, title, performer, albumtitle, genre, date, replaygain_album_gain, replaygain_album_peak, replaygain_track_gain, replaygain_track_peak, origin->decoder_id, origin->filetype, samplerate);
+            trace ("cue: added %p (%p)\n", after);
 
             track[0] = 0;
             title[0] = 0;
@@ -920,7 +959,7 @@ pl_insert_cue_from_buffer (playItem_t *after, playItem_t *origin, const uint8_t 
             replaygain_track_gain[0] = 0;
             replaygain_track_peak[0] = 0;
             pl_get_value_from_cue (p + 6, sizeof (track), track);
-//            printf ("got track: %s\n", track);
+            trace ("cue: got track: %s\n", track);
         }
         else if (!strncmp (p, "REM REPLAYGAIN_ALBUM_GAIN ", 26)) {
             pl_get_value_from_cue (p + 26, sizeof (replaygain_album_gain), replaygain_album_gain);
@@ -1336,20 +1375,28 @@ pl_insert_file (playItem_t *after, const char *fname, int *pabort, int (*cb)(pla
     return NULL;
 }
 
+static int dirent_alphasort (const struct dirent **a, const struct dirent **b) {
+    return strcmp ((*a)->d_name, (*b)->d_name);
+}
+
+static int follow_symlinks = 0;
+
 playItem_t *
-pl_insert_dir (playItem_t *after, const char *dirname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
+pl_insert_dir_int (playItem_t *after, const char *dirname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
     if (!memcmp (dirname, "file://", 7)) {
         dirname += 7;
     }
-    struct stat buf;
-    lstat (dirname, &buf);
-    if (S_ISLNK(buf.st_mode)) {
-        return NULL;
+    if (!follow_symlinks) {
+        struct stat buf;
+        lstat (dirname, &buf);
+        if (S_ISLNK(buf.st_mode)) {
+            return NULL;
+        }
     }
     struct dirent **namelist = NULL;
     int n;
 
-    n = scandir (dirname, &namelist, NULL, alphasort);
+    n = scandir (dirname, &namelist, NULL, dirent_alphasort);
     if (n < 0)
     {
         if (namelist)
@@ -1366,7 +1413,7 @@ pl_insert_dir (playItem_t *after, const char *dirname, int *pabort, int (*cb)(pl
             {
                 char fullname[PATH_MAX];
                 snprintf (fullname, sizeof (fullname), "%s/%s", dirname, namelist[i]->d_name);
-                playItem_t *inserted = pl_insert_dir (after, fullname, pabort, cb, user_data);
+                playItem_t *inserted = pl_insert_dir_int (after, fullname, pabort, cb, user_data);
                 if (!inserted) {
                     inserted = pl_insert_file (after, fullname, pabort, cb, user_data);
                 }
@@ -1382,6 +1429,12 @@ pl_insert_dir (playItem_t *after, const char *dirname, int *pabort, int (*cb)(pl
         free (namelist);
     }
     return after;
+}
+
+playItem_t *
+pl_insert_dir (playItem_t *after, const char *dirname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
+    follow_symlinks = conf_get_int ("add_folders_follow_symlinks", 0);
+    return pl_insert_dir_int (after, dirname, pabort, cb, user_data);
 }
 
 int
@@ -1404,6 +1457,14 @@ pl_add_dir (const char *dirname, int (*cb)(playItem_t *it, void *data), void *us
         return 0;
     }
     return -1;
+}
+
+void
+pl_add_files_begin (void) {
+}
+
+void
+pl_add_files_end (void) {
 }
 
 int
@@ -1497,11 +1558,16 @@ pl_get_for_idx (int idx) {
 
 int
 pl_get_idx_of (playItem_t *it) {
+    return pl_get_idx_of_iter (it, PL_MAIN);
+}
+
+int
+pl_get_idx_of_iter (playItem_t *it, int iter) {
     LOCK;
-    playItem_t *c = playlist->head[PL_MAIN];
+    playItem_t *c = playlist->head[iter];
     int idx = 0;
     while (c && c != it) {
-        c = c->next[PL_MAIN];
+        c = c->next[iter];
         idx++;
     }
     if (!c) {
@@ -2220,7 +2286,7 @@ pl_load_all (void) {
             fprintf (stderr, "error: cannot make string with default playlist path\n");
             return -1;
         }
-        if (plt_add (plt_get_count (), "Default") < 0) {
+        if (plt_add (plt_get_count (), _("Default")) < 0) {
             return -1;
         }
         return pl_load (defpl);
@@ -2416,20 +2482,22 @@ pl_format_elapsed (const char *ret, char *elapsed, int size) {
     return elapsed;
 }
 
-int
-pl_format_title (playItem_t *it, int idx, char *s, int size, int id, const char *fmt) {
+// this function allows to escape special chars substituted for conversions
+// @escape_chars: list of escapable characters terminated with 0, or NULL if none
+static int
+pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s, int size, int id, const char *fmt) {
     char dur[50];
     char elp[50];
     char fno[50];
     char tags[200];
-    char artistalbum[1024];
+    char dirname[PATH_MAX];
     const char *duration = NULL;
     const char *elapsed = NULL;
 
     char *ss = s;
 
     LOCK;
-    if (id != -1) {
+    if (id != -1 && it) {
         const char *text = NULL;
         switch (id) {
         case DB_COLUMN_FILENUMBER:
@@ -2460,7 +2528,7 @@ pl_format_title (playItem_t *it, int idx, char *s, int size, int id, const char 
         return 0;
     }
     int n = size-1;
-    while (*fmt && n) {
+    while (*fmt && n > 0) {
         if (*fmt != '%') {
             *s++ = *fmt;
             n--;
@@ -2470,6 +2538,9 @@ pl_format_title (playItem_t *it, int idx, char *s, int size, int id, const char 
             const char *meta = NULL;
             if (*fmt == 0) {
                 break;
+            }
+            else if (!it && !strchr ("V", *fmt)) {
+                // only %V (version) works without track pointer
             }
             else if (*fmt == 'a') {
                 meta = pl_find_meta (it, "artist");
@@ -2537,6 +2608,9 @@ pl_format_title (playItem_t *it, int idx, char *s, int size, int id, const char 
                     meta++;
                 }
             }
+            else if (*fmt == 'F') {
+                meta = it->fname;
+            }
             else if (*fmt == 'T') {
                 char *t = tags;
                 char *e = tags + sizeof (tags);
@@ -2580,6 +2654,55 @@ pl_format_title (playItem_t *it, int idx, char *s, int size, int id, const char 
                 }
                 meta = tags;
             }
+            else if (*fmt == 'd') {
+                // directory
+                const char *end = it->fname + strlen (it->fname) - 1;
+                while (end > it->fname && (*end) != '/') {
+                    end--;
+                }
+                if (*end != '/') {
+                    meta = ""; // got relative path without folder (should not happen)
+                }
+                else {
+                    const char *start = end;
+                    start--;
+                    while (start > it->fname && (*start != '/')) {
+                        start--;
+                    }
+
+                    if (*start == '/') {
+                        start++;
+                    }
+
+                    // copy
+                    int len = end-start;
+                    len = min (len, sizeof (dirname)-1);
+                    strncpy (dirname, start, len);
+                    dirname[len] = 0;
+                    meta = dirname;
+                }
+            }
+            else if (*fmt == 'D') {
+                // directory with path
+                const char *end = it->fname + strlen (it->fname) - 1;
+                while (end > it->fname && (*end) != '/') {
+                    end--;
+                }
+                if (*end != '/') {
+                    meta = ""; // got relative path without folder (should not happen)
+                }
+                else {
+                    // copy
+                    int len = end - it->fname;
+                    len = min (len, sizeof (dirname)-1);
+                    strncpy (dirname, it->fname, len);
+                    dirname[len] = 0;
+                    meta = dirname;
+                }
+            }
+            else if (*fmt == 'V') {
+                meta = VERSION;
+            }
             else {
                 *s++ = *fmt;
                 n--;
@@ -2587,16 +2710,53 @@ pl_format_title (playItem_t *it, int idx, char *s, int size, int id, const char 
 
             if (meta) {
                 const char *value = meta;
-                while (n > 0 && *value) {
-                    *s++ = *value++;
+                if (escape_chars) {
+                    // need space for at least 2 single-quotes
+                    if (n < 2) {
+                        goto error;
+                    }
+                    *s++ = '\'';
                     n--;
+                    while (n > 2 && *value) {
+                        const char *e = escape_chars;
+                        for (; *e; e++) {
+                            if (*value == *e) {
+                                if (n < 2) {
+                                    // doesn't fit into output buffer, return
+                                    // empty string and error code
+                                    *ss = 0;
+                                    return -1;
+                                }
+                                *s++ = '\\';
+                                n--;
+                                *s++ = *value++;
+                                n--;
+                            }
+                            else {
+                                *s++ = *value++;
+                            }
+                        }
+                    }
+                    if (n < 1) {
+                        fprintf (stderr, "pl_format_title_int: got unpredicted state while formatting escaped string. please report a bug.\n");
+                        *ss = 0; // should never happen
+                        return -1; 
+                    }
+                    *s++ = '\'';
+                    n--;
+                }
+                else {
+                    while (n > 0 && *value) {
+                        *s++ = *value++;
+                        n--;
+                    }
                 }
             }
         }
         fmt++;
     }
+error:
     *s = 0;
-
     UNLOCK;
 
     // replace all \n with ;
@@ -2608,6 +2768,16 @@ pl_format_title (playItem_t *it, int idx, char *s, int size, int id, const char 
     }
 
     return size - n - 1;
+}
+
+int
+pl_format_title (playItem_t *it, int idx, char *s, int size, int id, const char *fmt) {
+    return pl_format_title_int (NULL, it, idx, s, size, id, fmt);
+}
+
+int
+pl_format_title_escaped (playItem_t *it, int idx, char *s, int size, int id, const char *fmt) {
+    return pl_format_title_int ("'", it, idx, s, size, id, fmt);
 }
 
 static int pl_sort_is_duration;
@@ -3043,7 +3213,7 @@ void
 pl_items_copy_junk (playItem_t *from, playItem_t *first, playItem_t *last) {
     LOCK;
     const char *metainfo[] = {
-        "year", "genre", "copyright", "vendor", "comment", "tags", "numtracks", "band", "performer", "composer", "disc", NULL
+        "year", "genre", "copyright", "vendor", "comment", "tags", "numtracks", "band", "performer", "composer", "disc", "title", "artist", "album", NULL
     };
     for (int m = 0; metainfo[m]; m++) {
         const char *data = pl_find_meta (from, metainfo[m]);

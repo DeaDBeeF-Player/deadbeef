@@ -29,7 +29,7 @@ CPlayer *CamdLoader::factory(Copl *newopl)
   return new CamdLoader(newopl);
 }
 
-bool CamdLoader::load(const std::string &filename, const CFileProvider &fp)
+bool CamdLoader::load(const char *filename, const CFileProvider &fp)
 {
   binistream *f = fp.open(filename); if(!f) return false;
   struct {

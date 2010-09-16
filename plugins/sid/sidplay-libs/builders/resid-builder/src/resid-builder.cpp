@@ -37,7 +37,7 @@
  ***************************************************************************/
 
 #include <stdio.h>
-#include <cstring>
+#include <string.h>
 
 #include "config.h"
 #ifdef HAVE_EXCEPTIONS
@@ -53,6 +53,7 @@ const char *ReSIDBuilder::ERR_FILTER_DEFINITION = "RESID ERROR: Filter definitio
 ReSIDBuilder::ReSIDBuilder (const char * const name)
 :sidbuilder (name)
 {
+    n_sidobjs = 0;
     m_error = "N/A";
 }
 
@@ -97,7 +98,7 @@ uint ReSIDBuilder::create (uint sids)
 			m_error = sid->error ();
 			goto ReSIDBuilder_create_error;
 		}
-	    sidobjs.push_back (sid);
+	    sidobjs[n_sidobjs++] = sid;
 	}
     return count;
 
@@ -113,7 +114,7 @@ const char *ReSIDBuilder::credits ()
     m_status = true;
 
     // Available devices
-    if (sidobjs.size ())
+    if (n_sidobjs)
     {
         ReSID *sid = (ReSID *) sidobjs[0];
         return sid->credits ();
@@ -136,14 +137,14 @@ uint ReSIDBuilder::devices (bool created)
 {
     m_status = true;
     if (created)
-        return sidobjs.size ();
+        return n_sidobjs;
     else // Available devices
 		return 0;
 }
 
 void ReSIDBuilder::filter (const sid_filter_t *filter)
 {
-    int size = sidobjs.size ();
+    int size = n_sidobjs;
 	m_status = true;
     for (int i = 0; i < size; i++)
 	{
@@ -160,7 +161,7 @@ ReSIDBuilder_sidFilterDef_error:
 
 void ReSIDBuilder::filter (bool enable)
 {
-    int size = sidobjs.size ();
+    int size = n_sidobjs;
 	m_status = true;
     for (int i = 0; i < size; i++)
 	{
@@ -172,7 +173,7 @@ void ReSIDBuilder::filter (bool enable)
 // Find a free SID of the required specs
 sidemu *ReSIDBuilder::lock (c64env *env, sid2_model_t model)
 {
-    int size = sidobjs.size ();
+    int size = n_sidobjs;
     m_status = true;
 
     for (int i = 0; i < size; i++)
@@ -193,7 +194,7 @@ sidemu *ReSIDBuilder::lock (c64env *env, sid2_model_t model)
 // Allow something to use this SID
 void ReSIDBuilder::unlock (sidemu *device)
 {
-    int size = sidobjs.size ();
+    int size = n_sidobjs;
     // Maek sure this is our SID
     for (int i = 0; i < size; i++)
     {
@@ -209,15 +210,15 @@ void ReSIDBuilder::unlock (sidemu *device)
 // Remove all SID emulations.
 void ReSIDBuilder::remove ()
 {
-    int size = sidobjs.size ();
+    int size = n_sidobjs;
     for (int i = 0; i < size; i++)
         delete sidobjs[i];
-    sidobjs.clear();
+    n_sidobjs = 0;
 }
 
 void ReSIDBuilder::sampling (uint_least32_t freq)
 {
-    int size = sidobjs.size ();
+    int size = n_sidobjs;
 	m_status = true;
     for (int i = 0; i < size; i++)
 	{
