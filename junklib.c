@@ -62,7 +62,7 @@ enum {
 
 static const char *frame_mapping[] = {
     "artist", "TPE1", "TPE1", "TP1", "Artist",
-    "band", "TPE2", "TPE2", "TP2", "Band",
+    "band", "TPE2", "TPE2", "TP2", "Album artist",
     "disc", "TPOS", "TPOS", "TPA", "Media",
     "title", "TIT2", "TIT2", "TT2", "Title",
     "album", "TALB", "TALB", "TAL", "Album",
