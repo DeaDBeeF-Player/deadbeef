@@ -35,6 +35,9 @@
 #endif
 #include <inttypes.h>
 
+//#define trace(...) { fprintf (stderr, __VA_ARGS__); }
+#define trace(fmt,...)
+
 #define BUFFER_SIZE 4096
 static uint8_t buffer[BUFFER_SIZE];
 static FILE * in_file;
@@ -44,7 +47,7 @@ static int demux_pes = 0;
 
 static void print_usage (char ** argv)
 {
-    fprintf (stderr, "usage: %s [-h] [-s <track>] [-t <pid>] <file>\n"
+    trace ( "usage: %s [-h] [-s <track>] [-t <pid>] <file>\n"
 	     "\t-h\tdisplay help\n"
 	     "\t-s\tset track number (0-7 or 0x80-0x87)\n"
 	     "\t-t\tuse transport stream demultiplexer, pid 0x10-0x1ffe\n"
@@ -66,7 +69,7 @@ static void handle_args (int argc, char ** argv)
 	    if (demux_track < 0x80)
 		demux_track += 0x80;
 	    if (demux_track < 0x80 || demux_track > 0x87 || *s) {
-		fprintf (stderr, "Invalid track number: %s\n", optarg);
+		trace ( "Invalid track number: %s\n", optarg);
 		print_usage (argv);
 	    }
 	    break;
@@ -74,7 +77,7 @@ static void handle_args (int argc, char ** argv)
 	case 't':
 	    demux_pid = strtol (optarg, &s, 0);
 	    if (demux_pid < 0x10 || demux_pid > 0x1ffe || *s) {
-		fprintf (stderr, "Invalid pid: %s\n", optarg);
+		trace ( "Invalid pid: %s\n", optarg);
 		print_usage (argv);
 	    }
 	    break;
@@ -90,7 +93,7 @@ static void handle_args (int argc, char ** argv)
     if (optind < argc) {
 	in_file = fopen (argv[optind], "rb");
 	if (!in_file) {
-	    fprintf (stderr, "%s - could not open file %s\n", strerror (errno),
+	    trace ( "%s - could not open file %s\n", strerror (errno),
 		     argv[optind]);
 	    exit (1);
 	}
@@ -218,12 +221,12 @@ static int demux (uint8_t * buf, uint8_t * end, int flags)
 	}
 	if (demux_pid || demux_pes) {
 	    if (header[3] != 0xbd) {
-		fprintf (stderr, "bad stream id %x\n", header[3]);
+		trace ( "bad stream id %x\n", header[3]);
 		exit (1);
 	    }
 	    NEEDBYTES (9);
 	    if ((header[6] & 0xc0) != 0x80) {	/* not mpeg2 */
-		fprintf (stderr, "bad multiplex - not mpeg2\n");
+		trace ( "bad multiplex - not mpeg2\n");
 		exit (1);
 	    }
 	    len = 9 + header[8];
@@ -257,7 +260,7 @@ static int demux (uint8_t * buf, uint8_t * end, int flags)
 		DONEBYTES (12);
 		/* header points to the mpeg1 pack header */
 	    } else {
-		fprintf (stderr, "weird pack header\n");
+		trace ( "weird pack header\n");
 		DONEBYTES (5);
 	    }
 	    break;
@@ -274,7 +277,7 @@ static int demux (uint8_t * buf, uint8_t * end, int flags)
 		    len++;
 		    NEEDBYTES (len);
 		    if (len == 23) {
-			fprintf (stderr, "too much stuffing\n");
+			trace ( "too much stuffing\n");
 			break;
 		    }
 		}
@@ -309,7 +312,7 @@ static int demux (uint8_t * buf, uint8_t * end, int flags)
 	    break;
 	default:
 	    if (header[3] < 0xb9) {
-		fprintf (stderr,
+		trace (
 			 "looks like a video stream, not system stream\n");
 		exit (1);
 	    } else {
@@ -353,7 +356,7 @@ static void ts_loop (void)
 	buf = buffer;
 	for (; (nextbuf = buf + 188) <= end; buf = nextbuf) {
 	    if (*buf != 0x47) {
-		fprintf (stderr, "bad sync byte\n");
+		trace ( "bad sync byte\n");
 		nextbuf = buf + 1;
 		continue;
 	    }

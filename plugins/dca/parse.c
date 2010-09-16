@@ -46,6 +46,9 @@
 #include "tables_fir.h"
 #include "tables_vq.h"
 
+//#define trace(...) { fprintf (stderr, __VA_ARGS__); }
+#define trace(fmt,...)
+
 /* #define DEBUG */
 
 #if defined(HAVE_MEMALIGN) && !defined(__cplusplus)
@@ -520,7 +523,7 @@ static int dca_subframe_header (dca_state_t * state)
 
             if (state->bitalloc[j][k] > 26)
             {
-                fprintf (stderr, "bitalloc index [%i][%i] too big (%i)\n",
+                trace ("bitalloc index [%i][%i] too big (%i)\n",
                          j, k, state->bitalloc[j][k]);
                 return -1;
             }
@@ -950,7 +953,7 @@ static int dca_subsubframe (dca_state_t * state)
 
             if (!state->debug_flag & 0x01)
             {
-                fprintf (stderr, "Stream with high frequencies VQ coding\n");
+                trace ("Stream with high frequencies VQ coding\n");
                 state->debug_flag |= 0x01;
             }
 
@@ -974,7 +977,7 @@ static int dca_subsubframe (dca_state_t * state)
         }
         else
         {
-            fprintf( stderr, "Didn't get subframe DSYNC\n" );
+            trace( "Didn't get subframe DSYNC\n" );
         }
     }
 
@@ -1125,7 +1128,7 @@ int decode_blockcode( int code, int levels, int *values )
         return 1;
     else
     {
-        fprintf (stderr, "ERROR: block code look-up failed\n");
+        trace ("ERROR: block code look-up failed\n");
         return 0;
     }
 }
