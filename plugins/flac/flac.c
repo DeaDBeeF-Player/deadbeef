@@ -493,7 +493,7 @@ static const char *metainfo[] = {
     "DISCNUMBER", "disc",
     "COPYRIGHT", "copyright",
     "TRACKTOTAL", "numtracks",
-    "ALBUMARTIST", "band",
+    "ALBUM ARTIST", "band",
     NULL
 };
 
