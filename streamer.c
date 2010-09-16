@@ -506,7 +506,14 @@ streamer_move_to_randomsong (void) {
         trace ("empty playlist\n");
         return -1;
     }
+    int curr = str_get_idx_of (playing_track);
     int r = rand () / (float)RAND_MAX * cnt;
+    if (r == curr) {
+        r++;
+        if (r >= cnt) {
+            r = 0;
+        }
+    }
     streamer_set_nextsong (r, 1);
     return 0;
 }
