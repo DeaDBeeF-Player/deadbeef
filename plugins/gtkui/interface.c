@@ -1146,7 +1146,6 @@ create_trackproperties (void)
   GtkWidget *vbox16;
   GtkWidget *scrolledwindow5;
   GtkWidget *metalist;
-  GtkWidget *label99;
   GtkWidget *hbuttonbox1;
   GtkWidget *write_tags;
   GtkWidget *alignment11;
@@ -1195,11 +1194,6 @@ create_trackproperties (void)
   gtk_widget_show (metalist);
   gtk_container_add (GTK_CONTAINER (scrolledwindow5), metalist);
   gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (metalist), TRUE);
-
-  label99 = gtk_label_new (_("<b>WARNING</b>: tag writing feature is still in development.\n<b>Make backup copies</b> before using."));
-  gtk_widget_show (label99);
-  gtk_box_pack_start (GTK_BOX (vbox16), label99, FALSE, FALSE, 0);
-  gtk_label_set_use_markup (GTK_LABEL (label99), TRUE);
 
   hbuttonbox1 = gtk_hbutton_box_new ();
   gtk_widget_show (hbuttonbox1);
@@ -1320,7 +1314,6 @@ create_trackproperties (void)
   GLADE_HOOKUP_OBJECT (trackproperties, vbox16, "vbox16");
   GLADE_HOOKUP_OBJECT (trackproperties, scrolledwindow5, "scrolledwindow5");
   GLADE_HOOKUP_OBJECT (trackproperties, metalist, "metalist");
-  GLADE_HOOKUP_OBJECT (trackproperties, label99, "label99");
   GLADE_HOOKUP_OBJECT (trackproperties, hbuttonbox1, "hbuttonbox1");
   GLADE_HOOKUP_OBJECT (trackproperties, write_tags, "write_tags");
   GLADE_HOOKUP_OBJECT (trackproperties, alignment11, "alignment11");
