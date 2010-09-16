@@ -76,7 +76,7 @@ static const char *frame_mapping[] = {
     "comment", NULL, NULL, NULL, "Comment",
     "cuesheet", NULL, NULL, NULL, "Cuesheet",
 //    "<performer>", "TXXX", "TXXX", "TXX", "Performer", // fb2k only
-//    "<albumartist>", "TXXX", "TXXX", "TXX", "Album artist", // fb2k only
+//    "band", "TXXX", "TXXX", "TXX", "Album artist", // fb2k only
 //    "date", "TXXX", "TXXX", "TXX", "Date", // fb2k only
     NULL
 };
@@ -2505,10 +2505,10 @@ junk_id3v2_load_txx (int version_major, playItem_t *it, uint8_t *readptr, int sy
             it->replaygain_track_peak = atof (val);
         }
         else if (!strcasecmp (txx, "performer")) {
-            pl_append_meta (it, "performer", val);
+            pl_replace_meta (it, "performer", val);
         }
         else if (!strcasecmp (txx, "album artist")) {
-            pl_append_meta (it, "albumartist", val);
+            pl_replace_meta (it, "band", val);
         }
         else if (!strcasecmp (txx, "date")) {
             pl_replace_meta (it, "year", val);
