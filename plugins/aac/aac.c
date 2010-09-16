@@ -869,7 +869,7 @@ static const char *metainfo[] = {
     "genre", "genre",
     "comment", "comment",
     "performer", "performer",
-    "albumartist", "band",
+    "album_artist", "band",
     "writer", "composer",
     "vendor", "vendor",
     "disc", "disc",
