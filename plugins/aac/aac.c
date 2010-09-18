@@ -378,7 +378,10 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         if (skip >= 0) {
             deadbeef->fseek (info->file, skip, SEEK_SET);
         }
-        offs  =deadbeef->ftell (info->file);
+        offs = deadbeef->ftell (info->file);
+    }
+    else {
+        deadbeef->fset_track (info->file, it);
     }
 
     info->mp4track = -1;
