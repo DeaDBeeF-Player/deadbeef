@@ -1,42 +1,40 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Indonesian translation of deadbeef
+# Copyright (C) 2010 THE deadbeef'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the deadbeef package.
+# Andika Triwidada <andika@gmail.com>, 2010.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: DeaDBeeF\n"
+"Project-Id-Version: deadbeef master\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-09-10 15:02+0200\n"
-"PO-Revision-Date: 2010-06-03 17:59+0100\n"
-"Last-Translator: Lutz Thuns <lOtz1009@opensuse.org>\n"
-"Language-Team: \n"
+"PO-Revision-Date: 2010-09-08 17:47+0700\n"
+"Last-Translator: Andika Triwidada <andika@gmail.com>\n"
+"Language-Team: Indonesian Translation Team <id@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Poedit-Country: Germany\n"
-"X-Poedit-Language: German\n"
 
 #: ../plugins/gtkui/callbacks.c:97
 msgid "Supported sound formats"
-msgstr "Unterstützte Tonformate"
+msgstr "Format suara yang didukung"
 
 #: ../plugins/gtkui/callbacks.c:108
 msgid "Other files (*)"
-msgstr "Andere Dateien (*)"
+msgstr "Berkas lain (*)"
 
 #: ../plugins/gtkui/callbacks.c:118
 msgid "Open file(s)..."
-msgstr "Dateien öffnen…"
+msgstr "Buka berkas..."
 
 #: ../plugins/gtkui/callbacks.c:151
 msgid "Add file(s) to playlist..."
-msgstr "Dateien zur Wiedergabeliste hinzufügen…"
+msgstr "Tambahkan berkas ke daftar putar..."
 
 #: ../plugins/gtkui/callbacks.c:190
 msgid "Add folder(s) to playlist..."
-msgstr "Verzeichnisse zur Wiedergabeliste hinzufügen…"
+msgstr "Tambahkan folder ke daftar putar..."
 
 #: ../plugins/gtkui/callbacks.c:192
 msgid "Follow symlinks"
@@ -44,78 +42,78 @@ msgstr ""
 
 #: ../plugins/gtkui/callbacks.c:677
 msgid "Failed while reading help file"
-msgstr "Fehler beim Lesen der Hilfedatei"
+msgstr "Gagal saat membaca berkas bantuan"
 
 #: ../plugins/gtkui/callbacks.c:687
 msgid "Failed to load help file"
-msgstr "Fehler beim Laden der Hilfedatei"
+msgstr "Gagal memuat berkas bantuan"
 
 #: ../plugins/gtkui/callbacks.c:701 ../plugins/gtkui/interface.c:1090
 #: ../plugins/gtkui/deadbeef.glade.h:65
 msgid "Help"
-msgstr "Hilfe"
+msgstr "Bantuan"
 
 #: ../plugins/gtkui/callbacks.c:711
 #, c-format
 msgid "About DeaDBeeF %s"
-msgstr "Über DeaDBeeF %s"
+msgstr "Tentang DeaDBeeF %s"
 
 #: ../plugins/gtkui/callbacks.c:722
 #, c-format
 msgid "DeaDBeeF %s ChangeLog"
-msgstr ""
+msgstr "ChangeLog DeaDBeeF %s"
 
 #: ../plugins/gtkui/ddbtabstrip.c:527
 msgid "Edit playlist"
-msgstr "Wiedergabeliste bearbeiten"
+msgstr "Sunting daftar putar"
 
 #: ../plugins/gtkui/ddbtabstrip.c:604
 msgid "Rename Playlist"
-msgstr "Wiedergabeliste umbenennen"
+msgstr "Ubah Nama Daftar Putar"
 
 #: ../plugins/gtkui/ddbtabstrip.c:608
 msgid "Remove Playlist"
-msgstr "Wiedergabeliste löschen"
+msgstr "Hapus Daftar Putar"
 
 #: ../plugins/gtkui/ddbtabstrip.c:612
 msgid "Add New Playlist"
-msgstr "Neue Wiedergabeliste hinzufügen"
+msgstr "Tambah Daftar Putar Baru"
 
 #: ../plugins/gtkui/eq.c:113
 msgid "Save DeaDBeeF EQ Preset"
-msgstr "DeaDBeeF EQ Voreinstellung speichern"
+msgstr "Simpan Preset EQ DeaDBeeF"
 
 #: ../plugins/gtkui/eq.c:120
 msgid "DeaDBeeF EQ preset files (*.ddbeq)"
-msgstr "DeaDBeeF EQ Voreinstellung (*.ddbeq)"
+msgstr ""
 
 #: ../plugins/gtkui/eq.c:151
 msgid "Load DeaDBeeF EQ Preset..."
-msgstr "DeaDBeeF EQ Voreinstellung laden..."
+msgstr ""
 
 #: ../plugins/gtkui/eq.c:155
 msgid "DeaDBeeF EQ presets (*.ddbeq)"
-msgstr "DeaDBeeF EQ Voreinstellungen (*.ddbeq)"
+msgstr ""
 
 #: ../plugins/gtkui/eq.c:214
 msgid "Import Foobar2000 EQ Preset..."
-msgstr "Foobar2000 EQ Voreinstellung laden..."
+msgstr ""
 
 #: ../plugins/gtkui/eq.c:218
 msgid "Foobar2000 EQ presets (*.feq)"
-msgstr "Foobar2000 EQ Voreinstellungen (*.feq)"
+msgstr ""
 
 #: ../plugins/gtkui/eq.c:292
 msgid "Enable"
-msgstr "Aktivieren"
+msgstr "Aktifkan"
 
 #: ../plugins/gtkui/eq.c:300
 msgid "Zero All"
-msgstr ""
+msgstr "Nolkan Semua"
 
 #: ../plugins/gtkui/eq.c:307
 msgid "Zero Preamp"
-msgstr ""
+msgstr "Nolkan Preamp"
 
 #: ../plugins/gtkui/eq.c:314
 msgid "Zero Bands"
@@ -123,30 +121,30 @@ msgstr ""
 
 #: ../plugins/gtkui/eq.c:321
 msgid "Save Preset"
-msgstr "Voreinstellung speichern"
+msgstr ""
 
 #: ../plugins/gtkui/eq.c:328
 msgid "Load Preset"
-msgstr "Voreinstellung laden"
+msgstr ""
 
 #: ../plugins/gtkui/eq.c:335
 msgid "Import Foobar2000 Preset"
-msgstr "Importiere Foobar2000 Voreinstellung"
+msgstr ""
 
 #: ../plugins/gtkui/gtkui.c:133
 #, c-format
 msgid "1 day %d:%02d:%02d"
-msgstr "1 Tag %d:%02d:%02d"
+msgstr "1 hari %d:%02d:%02d"
 
 #: ../plugins/gtkui/gtkui.c:136
 #, c-format
 msgid "%d days %d:%02d:%02d"
-msgstr "%d Tage %d:%02d:%02d"
+msgstr "%d hari %d:%02d:%02d"
 
 #: ../plugins/gtkui/gtkui.c:145
 #, c-format
 msgid "Stopped | %d tracks | %s total playtime"
-msgstr "Angehalten | %d Titel | %s gesamte Spielzeit"
+msgstr "Berhenti | %d trek | %s waktu putar total"
 
 #: ../plugins/gtkui/gtkui.c:158
 msgid "Mono"
@@ -163,134 +161,134 @@ msgstr "| %4d kbps "
 
 #: ../plugins/gtkui/gtkui.c:189
 msgid "Paused | "
-msgstr "Angehalten | "
+msgstr "Jeda | "
 
 #: ../plugins/gtkui/gtkui.c:190
 #, c-format
 msgid ""
 "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
 msgstr ""
-"%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d Titel | %s gesamte Spielzeit"
+"%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d trek | %s waktu putar total"
 
 #: ../plugins/gtkui/gtkui.c:660
 msgid "Save Playlist As"
-msgstr "Wiedergabeliste speichern unter"
+msgstr "Simpan Daftar Putar Sebagai"
 
 #: ../plugins/gtkui/gtkui.c:669 ../plugins/gtkui/gtkui.c:730
 msgid "DeaDBeeF playlist files (*.dbpl)"
-msgstr "DeaDBeeF Wiedergabeliste (*.dbpl)"
+msgstr ""
 
 #: ../plugins/gtkui/gtkui.c:723
 msgid "Load Playlist"
-msgstr "Wiedergabeliste laden"
+msgstr "Muat Daftar Putar"
 
 #: ../plugins/gtkui/gtkui.c:863
 msgid "New Playlist"
-msgstr "Neue Wiedergabeliste"
+msgstr "Daftar Putar Baru"
 
 #: ../plugins/gtkui/gtkui.c:866
 #, c-format
 msgid "New Playlist (%d)"
-msgstr "Neue Wiedergabeliste (%d)"
+msgstr "Daftar Putar Baru (%d)"
 
 #: ../plugins/gtkui/interface.c:138 ../plugins/gtkui/deadbeef.glade.h:153
 msgid "_File"
-msgstr "_Datei"
+msgstr "_Berkas"
 
 #: ../plugins/gtkui/interface.c:145 ../plugins/gtkui/deadbeef.glade.h:157
 msgid "_Open file(s)"
-msgstr "Dateien ö_ffnen"
+msgstr "_Buka berkas"
 
 #: ../plugins/gtkui/interface.c:161 ../plugins/gtkui/deadbeef.glade.h:6
 msgid "Add file(s)"
-msgstr "Dateien hinzufügen"
+msgstr "Tambah berkas"
 
 #: ../plugins/gtkui/interface.c:169 ../plugins/gtkui/deadbeef.glade.h:8
 msgid "Add folder(s)"
-msgstr "Verzeichnisse hinzufügen"
+msgstr "Tambah folder"
 
 #: ../plugins/gtkui/interface.c:177 ../plugins/gtkui/interface.c:2969
 #: ../plugins/gtkui/deadbeef.glade.h:9
 msgid "Add location"
-msgstr "Ort hinzufügen"
+msgstr "Tambah lokasi"
 
 #: ../plugins/gtkui/interface.c:186 ../plugins/gtkui/deadbeef.glade.h:83
 msgid "New playlist"
-msgstr "Neue Wiedergabeliste"
+msgstr "Daftar putar baru"
 
 #: ../plugins/gtkui/interface.c:193 ../plugins/gtkui/deadbeef.glade.h:75
 msgid "Load playlist"
-msgstr "Wiedergabeliste laden"
+msgstr "Muat daftar putar"
 
 #: ../plugins/gtkui/interface.c:197 ../plugins/gtkui/deadbeef.glade.h:112
 msgid "Save playlist"
-msgstr "Wiedergabeliste speichern"
+msgstr "Simpan daftar putar"
 
 #: ../plugins/gtkui/interface.c:201 ../plugins/gtkui/deadbeef.glade.h:113
 msgid "Save playlist as"
-msgstr "Wiedergabeliste speichern unter"
+msgstr "Simpan daftar putar sebagai"
 
 #: ../plugins/gtkui/interface.c:210 ../plugins/gtkui/deadbeef.glade.h:159
 msgid "_Quit"
-msgstr "_Beenden"
+msgstr "_Keluar"
 
 #: ../plugins/gtkui/interface.c:221 ../plugins/gtkui/deadbeef.glade.h:152
 msgid "_Edit"
-msgstr "_Bearbeiten"
+msgstr "_Sunting"
 
 #: ../plugins/gtkui/interface.c:228 ../plugins/gtkui/deadbeef.glade.h:150
 msgid "_Clear"
-msgstr "_Löschen"
+msgstr "_Bersihkan"
 
 #: ../plugins/gtkui/interface.c:236 ../plugins/gtkui/deadbeef.glade.h:117
 msgid "Select all"
-msgstr "Alles auswählen"
+msgstr "Pilih semua"
 
 #: ../plugins/gtkui/interface.c:243 ../plugins/gtkui/deadbeef.glade.h:25
 msgid "Deselect all"
-msgstr "Alles abwählen"
+msgstr "Pilih tak satupun"
 
 #: ../plugins/gtkui/interface.c:250 ../plugins/gtkui/deadbeef.glade.h:70
 msgid "Invert selection"
-msgstr "Auswahl umkehren"
+msgstr "Balik pilihan"
 
 #: ../plugins/gtkui/interface.c:254 ../plugins/gtkui/deadbeef.glade.h:120
 msgid "Selection"
-msgstr "Auswahl"
+msgstr "Pilihan"
 
 #: ../plugins/gtkui/interface.c:261 ../plugins/gtkui/plcommon.c:425
 #: ../plugins/gtkui/prefwin.c:317 ../plugins/gtkui/deadbeef.glade.h:107
 msgid "Remove"
-msgstr "Entfernen"
+msgstr "Buang"
 
 #: ../plugins/gtkui/interface.c:269 ../plugins/gtkui/deadbeef.glade.h:20
 msgid "Crop"
-msgstr "Abschneiden"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:273 ../plugins/gtkui/deadbeef.glade.h:154
 msgid "_Find"
-msgstr "Suchen"
+msgstr "_Cari"
 
 #: ../plugins/gtkui/interface.c:285 ../plugins/gtkui/interface.c:1705
 #: ../plugins/gtkui/deadbeef.glade.h:97
 msgid "Preferences"
-msgstr "Einstellungen"
+msgstr "Preferensi"
 
 #: ../plugins/gtkui/interface.c:289 ../plugins/gtkui/deadbeef.glade.h:160
 msgid "_View"
-msgstr "_Ansicht"
+msgstr "_Tilik"
 
 #: ../plugins/gtkui/interface.c:296 ../plugins/gtkui/deadbeef.glade.h:123
 msgid "Status bar"
-msgstr "Statusleiste"
+msgstr "Bilah status"
 
 #: ../plugins/gtkui/interface.c:300 ../plugins/gtkui/deadbeef.glade.h:18
 msgid "Column headers"
-msgstr "Spaltentitel"
+msgstr "Header kolom"
 
 #: ../plugins/gtkui/interface.c:304 ../plugins/gtkui/deadbeef.glade.h:130
 msgid "Tabs"
-msgstr "Reiter"
+msgstr "Tab"
 
 #: ../plugins/gtkui/interface.c:308 ../plugins/gtkui/deadbeef.glade.h:33
 msgid "Equalizer"
@@ -298,167 +296,162 @@ msgstr "Equalizer"
 
 #: ../plugins/gtkui/interface.c:312 ../plugins/gtkui/deadbeef.glade.h:158
 msgid "_Playback"
-msgstr "_Wiedergabe"
+msgstr "_Putar"
 
 #: ../plugins/gtkui/interface.c:319 ../plugins/gtkui/deadbeef.glade.h:86
 msgid "Order"
-msgstr "Reihenfolge"
+msgstr "Urutan"
 
 #: ../plugins/gtkui/interface.c:326 ../plugins/gtkui/deadbeef.glade.h:74
 msgid "Linear"
-msgstr "Linear"
+msgstr "Linier"
 
 #: ../plugins/gtkui/interface.c:332 ../plugins/gtkui/deadbeef.glade.h:121
 msgid "Shuffle"
-msgstr ""
+msgstr "Kocok"
 
 #: ../plugins/gtkui/interface.c:338 ../plugins/gtkui/deadbeef.glade.h:106
 msgid "Random"
-msgstr "Zufällig"
+msgstr "Acak"
 
 #: ../plugins/gtkui/interface.c:344 ../plugins/gtkui/deadbeef.glade.h:78
 msgid "Looping"
-msgstr "Wiederholen"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:351 ../plugins/gtkui/deadbeef.glade.h:76
 msgid "Loop All"
-msgstr "Wiederhole alle"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:357 ../plugins/gtkui/deadbeef.glade.h:77
 msgid "Loop Single Song"
-msgstr "Wiederhole einzelnes Lied"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:363 ../plugins/gtkui/deadbeef.glade.h:29
 msgid "Don't Loop"
-msgstr "Nicht wiederholen"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:369 ../plugins/gtkui/deadbeef.glade.h:114
-#, fuzzy
 msgid "Scroll follows playback"
-msgstr "Bildlauf folgt Wiedergabe"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:374 ../plugins/gtkui/deadbeef.glade.h:22
 msgid "Cursor follows playback"
-msgstr "Mauszeiger folgt Wiedergabe"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:378 ../plugins/gtkui/deadbeef.glade.h:125
 msgid "Stop after current"
-msgstr "Nach aktuellem Titel beenden"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:385 ../plugins/gtkui/interface.c:392
 #: ../plugins/gtkui/deadbeef.glade.h:155
 msgid "_Help"
-msgstr "_Hilfe"
+msgstr "Ba_ntuan"
 
 #: ../plugins/gtkui/interface.c:400 ../plugins/gtkui/deadbeef.glade.h:149
 msgid "_ChangeLog"
-msgstr ""
+msgstr "_ChangeLog"
 
 #: ../plugins/gtkui/interface.c:422 ../plugins/gtkui/deadbeef.glade.h:146
 msgid "_About"
-msgstr "_Info"
+msgstr "Tent_ang"
 
 #: ../plugins/gtkui/interface.c:801 ../plugins/gtkui/deadbeef.glade.h:115
 msgid "Search"
-msgstr "Suche"
+msgstr "Cari"
 
 #: ../plugins/gtkui/interface.c:876 ../plugins/gtkui/deadbeef.glade.h:124
 msgid "Stop"
-msgstr "Stopp"
+msgstr "Berhenti"
 
 #: ../plugins/gtkui/interface.c:884 ../plugins/gtkui/deadbeef.glade.h:92
 msgid "Play"
-msgstr "Abspielen"
+msgstr "Putar"
 
 #: ../plugins/gtkui/interface.c:892 ../plugins/gtkui/deadbeef.glade.h:91
 msgid "Pause"
-msgstr "Anhalten"
+msgstr "Jeda"
 
 #: ../plugins/gtkui/interface.c:900 ../plugins/gtkui/deadbeef.glade.h:98
 msgid "Previous"
-msgstr "Vorheriges"
+msgstr "Sebelumnya"
 
 #: ../plugins/gtkui/interface.c:908 ../plugins/gtkui/deadbeef.glade.h:84
 msgid "Next"
-msgstr "Nächstes"
+msgstr "Selanjutnya"
 
 #: ../plugins/gtkui/interface.c:916 ../plugins/gtkui/deadbeef.glade.h:93
 msgid "Play Random"
-msgstr "Zufälliges Abspielen"
+msgstr "Putar Acak"
 
 #: ../plugins/gtkui/interface.c:925 ../plugins/gtkui/deadbeef.glade.h:5
 msgid "About"
-msgstr "Info"
+msgstr "Tentang"
 
 #: ../plugins/gtkui/interface.c:938 ../plugins/gtkui/deadbeef.glade.h:105
 msgid "Quit"
-msgstr "Beenden"
+msgstr "Keluar"
 
 #: ../plugins/gtkui/interface.c:1010 ../plugins/gtkui/deadbeef.glade.h:10
 msgid "Adding files..."
-msgstr "Dateien hinzufügen…"
+msgstr "Menambah berkas..."
 
 #: ../plugins/gtkui/interface.c:1054 ../plugins/gtkui/deadbeef.glade.h:145
 msgid "_Abort"
-msgstr "A_bbrechen"
+msgstr "Gugurk_an"
 
 #: ../plugins/gtkui/interface.c:1155 ../plugins/gtkui/deadbeef.glade.h:136
-#, fuzzy
 msgid "Track Properties"
-msgstr "Titeleigenschaften"
+msgstr "Properti Trek"
 
 #: ../plugins/gtkui/interface.c:1179 ../plugins/gtkui/deadbeef.glade.h:3
-#, fuzzy
 msgid ""
 "<b>WARNING</b>: tag writing feature is still in development.\n"
 "<b>Make backup copies</b> before using."
 msgstr ""
-"<b>Warnung</b>: Das Schreiben von Tags ist noch in der Entwicklung.\n"
-"<b>Bitte machen Sie Sicherungskopien </b> vor der Benutzung."
 
 #: ../plugins/gtkui/interface.c:1206 ../plugins/gtkui/deadbeef.glade.h:147
 msgid "_Apply"
-msgstr "A_nwenden"
+msgstr "Ter_apkan"
 
 #: ../plugins/gtkui/interface.c:1227 ../plugins/gtkui/interface.c:1273
 #: ../plugins/gtkui/interface.c:2497 ../plugins/gtkui/deadbeef.glade.h:151
 msgid "_Close"
-msgstr "S_chließen"
+msgstr "_Tutup"
 
 #: ../plugins/gtkui/interface.c:1231 ../plugins/gtkui/deadbeef.glade.h:79
 msgid "Metadata"
-msgstr "Metadaten"
+msgstr "Metadata"
 
 #: ../plugins/gtkui/interface.c:1277 ../plugins/gtkui/plcommon.c:503
 #: ../plugins/gtkui/deadbeef.glade.h:99
 msgid "Properties"
-msgstr "Eigenschaften"
+msgstr "Properti"
 
 #: ../plugins/gtkui/interface.c:1363 ../plugins/gtkui/deadbeef.glade.h:161
 msgid "editcolumndlg"
-msgstr ""
+msgstr "editcolumndlg"
 
 #: ../plugins/gtkui/interface.c:1378 ../plugins/gtkui/interface.c:2869
 #: ../plugins/gtkui/deadbeef.glade.h:133
 msgid "Title:"
-msgstr "Titel:"
+msgstr "Judul:"
 
 #: ../plugins/gtkui/interface.c:1386 ../plugins/gtkui/deadbeef.glade.h:32
 msgid "Enter new column title here"
-msgstr "Neuen Spaltentitel eingeben"
+msgstr "Masukkan judul kolom baru disini"
 
 #: ../plugins/gtkui/interface.c:1394 ../plugins/gtkui/deadbeef.glade.h:137
 msgid "Type:"
-msgstr "Typ:"
+msgstr "Jenis:"
 
 #: ../plugins/gtkui/interface.c:1402
 msgid "File number"
-msgstr ""
+msgstr "Nomor berkas"
 
 #. create default set of columns
 #: ../plugins/gtkui/interface.c:1403 ../plugins/gtkui/mainplaylist.c:300
 msgid "Playing"
-msgstr ""
+msgstr "Memutar"
 
 #: ../plugins/gtkui/interface.c:1404
 msgid "Album Art"
@@ -466,11 +459,11 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:1405
 msgid "Artist - Album"
-msgstr "Künstler - Album"
+msgstr "Artis - Album"
 
 #: ../plugins/gtkui/interface.c:1406 ../plugins/gtkui/plcommon.c:877
 msgid "Artist"
-msgstr "Künstler"
+msgstr "Artis"
 
 #: ../plugins/gtkui/interface.c:1407 ../plugins/gtkui/interface.c:1794
 msgid "Album"
@@ -478,23 +471,23 @@ msgstr "Album"
 
 #: ../plugins/gtkui/interface.c:1408 ../plugins/gtkui/prefwin.c:595
 msgid "Title"
-msgstr "Titel"
+msgstr "Judul"
 
 #: ../plugins/gtkui/interface.c:1409
 msgid "Length"
-msgstr "Länge"
+msgstr "Panjang"
 
 #: ../plugins/gtkui/interface.c:1410 ../plugins/gtkui/interface.c:1793
 msgid "Track"
-msgstr "Titel"
+msgstr "Trek"
 
 #: ../plugins/gtkui/interface.c:1411
 msgid "Band / Album Artist"
-msgstr "Band / Künstler"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1412 ../plugins/gtkui/plcommon.c:881
 msgid "Custom"
-msgstr "Benutzerdefiniert"
+msgstr "Ubahan"
 
 #: ../plugins/gtkui/interface.c:1418 ../plugins/gtkui/interface.c:3096
 #: ../plugins/gtkui/deadbeef.glade.h:62
@@ -503,15 +496,15 @@ msgstr "Format:"
 
 #: ../plugins/gtkui/interface.c:1433 ../plugins/gtkui/deadbeef.glade.h:11
 msgid "Alignment:"
-msgstr "Ausrichtung:"
+msgstr "Perataan:"
 
 #: ../plugins/gtkui/interface.c:1441
 msgid "Left"
-msgstr "Linksbündig"
+msgstr "Kiri"
 
 #: ../plugins/gtkui/interface.c:1442
 msgid "Right"
-msgstr "Rechtsbündig"
+msgstr "Kanan"
 
 #: ../plugins/gtkui/interface.c:1444 ../plugins/gtkui/deadbeef.glade.h:48
 #, no-c-format
@@ -529,7 +522,7 @@ msgstr ""
 #: ../plugins/gtkui/interface.c:3012 ../plugins/gtkui/interface.c:3135
 #: ../plugins/gtkui/deadbeef.glade.h:148
 msgid "_Cancel"
-msgstr "_Abbrechen"
+msgstr "_Batal"
 
 #: ../plugins/gtkui/interface.c:1494 ../plugins/gtkui/interface.c:2921
 #: ../plugins/gtkui/interface.c:3033 ../plugins/gtkui/interface.c:3156
@@ -539,16 +532,15 @@ msgstr "_OK"
 
 #: ../plugins/gtkui/interface.c:1725 ../plugins/gtkui/deadbeef.glade.h:88
 msgid "Output plugin:"
-msgstr "Ausgabeplugin:"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1738 ../plugins/gtkui/deadbeef.glade.h:87
 msgid "Output device:"
-msgstr "Ausgabegerät:"
+msgstr "Perangkat keluaran:"
 
 #: ../plugins/gtkui/interface.c:1747 ../plugins/gtkui/deadbeef.glade.h:122
-#, fuzzy
 msgid "Sound"
-msgstr "Wiedergabe"
+msgstr "Suara"
 
 #: ../plugins/gtkui/interface.c:1756 ../plugins/gtkui/deadbeef.glade.h:12
 msgid "Allow dynamic samplerate switching"
@@ -564,7 +556,7 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:1792
 msgid "Disable"
-msgstr ""
+msgstr "Matikan"
 
 #: ../plugins/gtkui/interface.c:1796 ../plugins/gtkui/deadbeef.glade.h:109
 msgid "Replaygain peak scale"
@@ -581,15 +573,15 @@ msgstr ""
 #: ../plugins/gtkui/interface.c:1817 ../plugins/gtkui/deadbeef.glade.h:94
 #, fuzzy
 msgid "Playback"
-msgstr "_Wiedergabe"
+msgstr "_Putar"
 
 #: ../plugins/gtkui/interface.c:1826 ../plugins/gtkui/deadbeef.glade.h:16
 msgid "Close minimizes to tray"
-msgstr "Beim Schließen minimieren"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1830 ../plugins/gtkui/deadbeef.glade.h:81
 msgid "Middle mouse button closes playlist"
-msgstr "Mittlere Maustaste zum Schließen der Wiedergabeliste verwenden"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1834 ../plugins/gtkui/deadbeef.glade.h:67
 msgid "Hide system tray icon"
@@ -618,15 +610,15 @@ msgstr "GUI"
 #: ../plugins/gtkui/interface.c:1888 ../plugins/gtkui/interface.c:1932
 #: ../plugins/gtkui/deadbeef.glade.h:89
 msgid "Override"
-msgstr "Überschreiben"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1897 ../plugins/gtkui/deadbeef.glade.h:46
 msgid "Foreground"
-msgstr "VVordergrund"
+msgstr "Latar depan"
 
 #: ../plugins/gtkui/interface.c:1904 ../plugins/gtkui/deadbeef.glade.h:14
 msgid "Background"
-msgstr "Hintergrund"
+msgstr "Latar belakang"
 
 #: ../plugins/gtkui/interface.c:1923 ../plugins/gtkui/deadbeef.glade.h:116
 msgid "Seekbar/Volumebar colors"
@@ -634,19 +626,19 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:1941 ../plugins/gtkui/deadbeef.glade.h:80
 msgid "Middle"
-msgstr "Mittel"
+msgstr "Tengah"
 
 #: ../plugins/gtkui/interface.c:1948 ../plugins/gtkui/deadbeef.glade.h:73
 msgid "Light"
-msgstr "Hell"
+msgstr "Terang"
 
 #: ../plugins/gtkui/interface.c:1955 ../plugins/gtkui/deadbeef.glade.h:23
 msgid "Dark"
-msgstr "Dunkel"
+msgstr "Gelap"
 
 #: ../plugins/gtkui/interface.c:1986 ../plugins/gtkui/deadbeef.glade.h:15
 msgid "Base"
-msgstr "Standard"
+msgstr "Basis"
 
 #: ../plugins/gtkui/interface.c:1993 ../plugins/gtkui/deadbeef.glade.h:129
 msgid "Tab strip colors"
@@ -658,83 +650,77 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:2011 ../plugins/gtkui/deadbeef.glade.h:34
 msgid "Even row"
-msgstr "Gerade Zeile"
+msgstr "Baris genap"
 
 #: ../plugins/gtkui/interface.c:2018 ../plugins/gtkui/deadbeef.glade.h:85
 msgid "Odd row"
-msgstr "Ungerade Zeile"
+msgstr "Baris ganjil"
 
 #: ../plugins/gtkui/interface.c:2037 ../plugins/gtkui/deadbeef.glade.h:132
 msgid "Text"
-msgstr "Text"
+msgstr "Teks"
 
 #: ../plugins/gtkui/interface.c:2044 ../plugins/gtkui/deadbeef.glade.h:118
 msgid "Selected row"
-msgstr "Ausgewählte Zeile"
+msgstr "Baris yang dipilih"
 
 #: ../plugins/gtkui/interface.c:2063 ../plugins/gtkui/deadbeef.glade.h:119
 msgid "Selected text"
-msgstr "Ausgewählter Text"
+msgstr "Teks yang dipilih"
 
 #: ../plugins/gtkui/interface.c:2076 ../plugins/gtkui/deadbeef.glade.h:21
 msgid "Cursor"
-msgstr "Mauszeiger"
+msgstr "Kursor"
 
 #: ../plugins/gtkui/interface.c:2089 ../plugins/gtkui/deadbeef.glade.h:95
 msgid "Playlist colors"
-msgstr ""
+msgstr "Warna daftar putar"
 
 #: ../plugins/gtkui/interface.c:2093 ../plugins/gtkui/deadbeef.glade.h:17
 msgid "Colors"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:2102 ../plugins/gtkui/deadbeef.glade.h:31
-#, fuzzy
 msgid "Enable Proxy Server"
-msgstr "Proxyserver aktivieren"
+msgstr "Aktifkan Server Proksi"
 
 #: ../plugins/gtkui/interface.c:2110 ../plugins/gtkui/deadbeef.glade.h:101
-#, fuzzy
 msgid "Proxy Server Address:"
-msgstr "Adresse des Proxyservers"
+msgstr "Alamat Server Proksi:"
 
 #: ../plugins/gtkui/interface.c:2124 ../plugins/gtkui/deadbeef.glade.h:102
-#, fuzzy
 msgid "Proxy Server Port:"
-msgstr "Port des Proxyservers"
+msgstr "Port Server Proksi:"
 
 #: ../plugins/gtkui/interface.c:2138 ../plugins/gtkui/deadbeef.glade.h:103
-#, fuzzy
 msgid "Proxy Type:"
-msgstr "Art des Proxyservers"
+msgstr "Jenis Proksi:"
 
 #: ../plugins/gtkui/interface.c:2157 ../plugins/gtkui/deadbeef.glade.h:104
-#, fuzzy
 msgid "Proxy Username:"
-msgstr "Benutzername für Proxyserver"
+msgstr "Nama Pengguna Proksi:"
 
 #: ../plugins/gtkui/interface.c:2170 ../plugins/gtkui/deadbeef.glade.h:100
-#, fuzzy
 msgid "Proxy Password:"
-msgstr "Passwort für Proxyserver"
+msgstr "Sandi Proksi:"
 
 #: ../plugins/gtkui/interface.c:2180 ../plugins/gtkui/deadbeef.glade.h:82
 msgid "Network"
-msgstr "Netzwerk"
+msgstr "Jaringan"
 
 #: ../plugins/gtkui/interface.c:2208 ../plugins/gtkui/deadbeef.glade.h:143
 msgid "Write ID3v2"
-msgstr "Schreibe ID3v2"
+msgstr "Tulis ID3v2"
 
 #: ../plugins/gtkui/interface.c:2212 ../plugins/gtkui/interface.c:2339
 #: ../plugins/gtkui/deadbeef.glade.h:142
 msgid "Write ID3v1"
-msgstr "Schreibe ID3v1"
+msgstr "Tulis ID3v1"
 
 #: ../plugins/gtkui/interface.c:2216 ../plugins/gtkui/interface.c:2295
 #: ../plugins/gtkui/interface.c:2335 ../plugins/gtkui/deadbeef.glade.h:141
 msgid "Write APEv2"
-msgstr "APEv2 schreiben"
+msgstr "Tulis APEv2"
 
 #: ../plugins/gtkui/interface.c:2224 ../plugins/gtkui/interface.c:2303
 #: ../plugins/gtkui/deadbeef.glade.h:128
@@ -753,11 +739,11 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:2240 ../plugins/gtkui/deadbeef.glade.h:69
 msgid "ID3v2 version"
-msgstr "ID3v2 Version"
+msgstr "Versi ID3v2"
 
 #: ../plugins/gtkui/interface.c:2247
 msgid "2.3 (Recommended)"
-msgstr "2.3 (empfohlen)"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:2248
 msgid "2.4"
@@ -765,11 +751,11 @@ msgstr "2.4"
 
 #: ../plugins/gtkui/interface.c:2254 ../plugins/gtkui/deadbeef.glade.h:68
 msgid "ID3v1 character encoding (default is iso8859-1)"
-msgstr "ID3v1 Zeichensatz (Vorgabe ist iso8859-1)"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:2291 ../plugins/gtkui/deadbeef.glade.h:144
 msgid "Write ID3v2.4"
-msgstr "Schreibe ID3v2.4"
+msgstr "Tulis ID3v2.4"
 
 #: ../plugins/gtkui/interface.c:2360 ../plugins/gtkui/deadbeef.glade.h:131
 msgid "Tag writer"
@@ -777,31 +763,33 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:2391 ../plugins/gtkui/deadbeef.glade.h:24
 msgid "Description:"
-msgstr "Beschreibung"
+msgstr "Keterangan:"
 
 #: ../plugins/gtkui/interface.c:2406 ../plugins/gtkui/deadbeef.glade.h:13
 msgid "Author(s):"
-msgstr "Autor(en):"
+msgstr "Pengarang:"
 
 #: ../plugins/gtkui/interface.c:2421 ../plugins/gtkui/deadbeef.glade.h:30
 msgid "Email:"
-msgstr "E-Mail:"
+msgstr "Surel:"
 
 #: ../plugins/gtkui/interface.c:2436 ../plugins/gtkui/deadbeef.glade.h:140
 msgid "Website:"
-msgstr "Webseite:"
+msgstr "Situs web:"
 
 #: ../plugins/gtkui/interface.c:2467 ../plugins/gtkui/deadbeef.glade.h:19
+#, fuzzy
 msgid "Configure"
-msgstr ""
+msgstr "Konfigurasi"
 
 #: ../plugins/gtkui/interface.c:2471 ../plugins/gtkui/deadbeef.glade.h:96
+#, fuzzy
 msgid "Plugins"
-msgstr "Erweiterungen"
+msgstr "Pengaya"
 
 #: ../plugins/gtkui/interface.c:2853 ../plugins/gtkui/deadbeef.glade.h:162
 msgid "editplaylistdlg"
-msgstr ""
+msgstr "editplaylistdlg"
 
 #: ../plugins/gtkui/interface.c:2980 ../plugins/gtkui/deadbeef.glade.h:138
 msgid "URL:"
@@ -809,7 +797,7 @@ msgstr "URL:"
 
 #: ../plugins/gtkui/interface.c:3081 ../plugins/gtkui/deadbeef.glade.h:64
 msgid "Group By"
-msgstr "Adresse des Proxyservers"
+msgstr "Kelompokkan Berdasarkan"
 
 #: ../plugins/gtkui/interface.c:3106 ../plugins/gtkui/deadbeef.glade.h:56
 #, no-c-format
@@ -824,11 +812,11 @@ msgstr ""
 
 #: ../plugins/gtkui/mainplaylist.c:301 ../plugins/gtkui/search.c:434
 msgid "Artist / Album"
-msgstr "Künstler / Album"
+msgstr "Artis / Album"
 
 #: ../plugins/gtkui/mainplaylist.c:302 ../plugins/gtkui/search.c:435
 msgid "Track No"
-msgstr ""
+msgstr "No Trek"
 
 #: ../plugins/gtkui/mainplaylist.c:303 ../plugins/gtkui/search.c:436
 msgid "Title / Track Artist"
@@ -837,11 +825,11 @@ msgstr ""
 #: ../plugins/gtkui/mainplaylist.c:304 ../plugins/gtkui/search.c:437
 #: ../plugins/gtkui/trkproperties.c:175
 msgid "Duration"
-msgstr "Dauer"
+msgstr "Durasi"
 
 #: ../plugins/gtkui/plcommon.c:323
 msgid "Delete files from disk"
-msgstr "Dateien vom Datenträger entfernen"
+msgstr "Hapus berkas dari disk"
 
 #: ../plugins/gtkui/plcommon.c:324
 msgid ""
@@ -851,96 +839,95 @@ msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:325 ../plugins/gtkui/trkproperties.c:56
 msgid "Warning"
-msgstr "Warnung"
+msgstr "Peringatan"
 
 #: ../plugins/gtkui/plcommon.c:401
 msgid "Add to playback queue"
-msgstr "Zur Warteschlange hinzufügen"
+msgstr "Tambahkan ke antrian daftar putar"
 
 #: ../plugins/gtkui/plcommon.c:406
 msgid "Remove from playback queue"
-msgstr "Von Warteschlange entfernen"
+msgstr "Hapus dari antrian putar"
 
 #: ../plugins/gtkui/plcommon.c:414
 msgid "Reload metadata"
-msgstr ""
+msgstr "Muat ulang metadata"
 
 #: ../plugins/gtkui/plcommon.c:433
 msgid "Remove from disk"
-msgstr "Vom Datenträger entfernen"
+msgstr "Hapus dari disk"
 
 #: ../plugins/gtkui/plcommon.c:719 ../plugins/gtkui/plcommon.c:844
 msgid "Add column"
-msgstr "Spalte hinzufügen"
+msgstr "Tambah kolom"
 
 #: ../plugins/gtkui/plcommon.c:749 ../plugins/gtkui/plcommon.c:848
 msgid "Edit column"
-msgstr "Spalte bearbeiten"
+msgstr "Sunting kolom"
 
 #: ../plugins/gtkui/plcommon.c:852
 msgid "Remove column"
-msgstr "Spalte entfernen"
+msgstr "Hapus kolom"
 
 #: ../plugins/gtkui/plcommon.c:862
 msgid "Group by"
-msgstr "Adresse des Proxyservers"
+msgstr "Kelompokkan berdasarkan"
 
 #: ../plugins/gtkui/plcommon.c:869
 msgid "None"
-msgstr ""
+msgstr "Tak ada"
 
 #: ../plugins/gtkui/plcommon.c:873
 msgid "Artist/Date/Album"
-msgstr "Künstler/Datum/Album"
+msgstr "Artis/Tanggal/Album"
 
 #: ../plugins/gtkui/pluginconf.c:41
 msgid "Open file..."
-msgstr "Datei öffnen..."
+msgstr "Buka berkas..."
 
 #: ../plugins/gtkui/pluginconf.c:142
-#, c-format
+#, fuzzy, c-format
 msgid "Setup %s"
-msgstr ""
+msgstr "Setup"
 
 #: ../plugins/gtkui/prefwin.c:98
 msgid "Default Audio Device"
-msgstr "Standard Ausgabegerät"
+msgstr "Perangkat Suara Bawaan"
 
 #: ../plugins/gtkui/prefwin.c:312
 msgid "Add"
-msgstr "Hinzufügen"
+msgstr "Tambah"
 
 #: ../plugins/gtkui/prefwin.c:322
+#, fuzzy
 msgid "Global Hotkeys"
-msgstr "Globale Tastenkürzel"
+msgstr "Tombol Global"
 
 #: ../plugins/gtkui/prefwin.c:384
 msgid "Slot"
-msgstr ""
+msgstr "Slot"
 
 #: ../plugins/gtkui/prefwin.c:385
 msgid "Key combination"
-msgstr ""
+msgstr "Kombinasi kunci"
 
 #. output plugin selection
 #: ../plugins/gtkui/prefwin.c:464 ../plugins/gtkui/prefwin.c:676
 #: ../plugins.c:872
 msgid "ALSA output plugin"
-msgstr "ALSA Ausgabe-Plugin"
+msgstr ""
 
 #: ../plugins/gtkui/progress.c:64
 msgid "Initializing..."
-msgstr ""
+msgstr "Menginisialisasi..."
 
 #: ../plugins/gtkui/trkproperties.c:53
 msgid "You've modified data for this track."
 msgstr ""
 
-# Soll das Fenster wirklich geschlossen werden?
 #: ../plugins/gtkui/trkproperties.c:55
-#, fuzzy
 msgid "Really close the window?"
-msgstr "Möchten Sie das Fenster wirklich schließen?"
+msgstr ""
 
 #: ../plugins/gtkui/trkproperties.c:178
 msgid "Tag Type(s)"
@@ -952,11 +939,11 @@ msgstr ""
 
 #: ../plugins/gtkui/trkproperties.c:180
 msgid "Yes"
-msgstr "Ja"
+msgstr "Ya"
 
 #: ../plugins/gtkui/trkproperties.c:180
 msgid "No"
-msgstr "Nein"
+msgstr "Tidak"
 
 #: ../plugins/gtkui/trkproperties.c:182
 msgid "Codec"
@@ -964,11 +951,11 @@ msgstr ""
 
 #: ../plugins/gtkui/trkproperties.c:250 ../plugins/gtkui/trkproperties.c:262
 msgid "Key"
-msgstr ""
+msgstr "Kunci"
 
 #: ../plugins/gtkui/trkproperties.c:251 ../plugins/gtkui/trkproperties.c:263
 msgid "Value"
-msgstr "Wert"
+msgstr "Nilai"
 
 #: ../plugins/notify/notify.c:138
 msgid "DeaDBeeF now playing"
@@ -977,63 +964,63 @@ msgstr ""
 #: ../main.c:89
 #, c-format
 msgid "Usage: deadbeef [options] [file(s)]\n"
-msgstr ""
+msgstr "Cara pakai: deadbeef [opsi] [berkas]\n"
 
 #: ../main.c:90
 #, c-format
 msgid "Options:\n"
-msgstr "Optionen:\n"
+msgstr "Opsi:\n"
 
 #: ../main.c:91
 #, c-format
 msgid "   --help  or  -h     Print help (this message) and exit\n"
-msgstr "   --help  or  -h     Hilfe (diese Meldung) anzeigen und beenden\n"
+msgstr "   --help  or  -h     Cetak bantuan (pesan ini) dan keluar\n"
 
 #: ../main.c:92
 #, c-format
 msgid "   --quit             Quit player\n"
-msgstr ""
+msgstr "   --quit             Keluar dari pemutar\n"
 
 #: ../main.c:93
 #, c-format
 msgid "   --version          Print version info and exit\n"
-msgstr "   --version          Versionsinformationen anzeigen und beenden\n"
+msgstr "   --version          Cetak info versi dan keluar\n"
 
 #: ../main.c:94
 #, c-format
 msgid "   --play             Start playback\n"
-msgstr "   --play             Wiedergabe starten\n"
+msgstr "   --play             Mulai memutar\n"
 
 #: ../main.c:95
 #, c-format
 msgid "   --stop             Stop playback\n"
-msgstr "   --stop             Wiedergabe beenden\n"
+msgstr "   --stop             Berhenti memutar\n"
 
 #: ../main.c:96
 #, c-format
 msgid "   --pause            Pause playback\n"
-msgstr "   --pause            Wiedergabe pausieren\n"
+msgstr "   --pause            Jeda memutar\n"
 
 #: ../main.c:97
 #, c-format
 msgid "   --next             Next song in playlist\n"
-msgstr "   --next             Nächster Titel in der Wiedergabeliste\n"
+msgstr "   --next             Lagu selanjutnya di daftar putar\n"
 
 #: ../main.c:98
 #, c-format
 msgid "   --prev             Previous song in playlist\n"
-msgstr "   --prev             Vorheriger Titel in der Wiedergabeliste\n"
+msgstr "   --prev             Lagu sebelumnya di daftar putar\n"
 
 #: ../main.c:99
 #, c-format
 msgid "   --random           Random song in playlist\n"
-msgstr "   --random           Zufälliger Titel in der Wiedergabeliste\n"
+msgstr "   --random           Acak lagu di daftar main\n"
 
 #: ../main.c:100
 #, c-format
 msgid "   --queue            Append file(s) to existing playlist\n"
 msgstr ""
-"   --queue            Datei(en) an bestehende Wiedergabeliste anhängen\n"
+"   --queue            Tambahkan berkas ke daftar putar yang telah ada\n"
 
 #: ../main.c:101
 #, c-format
@@ -1057,14 +1044,14 @@ msgstr ""
 
 #: ../playlist.c:377 ../playlist.c:2289
 msgid "Default"
-msgstr ""
+msgstr "Bawaan"
 
 #: ../plugins/gtkui/deadbeef.glade.h:1
 msgid ""
 "2.3 (Recommended)\n"
 "2.4"
 msgstr ""
-"2.3 (Empfohlen)\n"
+"2.3 (Disarankan)\n"
 "2.4"
 
 #: ../plugins/gtkui/deadbeef.glade.h:26
@@ -1094,8 +1081,8 @@ msgid ""
 "Left\n"
 "Right"
 msgstr ""
-"Links\n"
-"Rechts"
+"Kiri\n"
+"Kanan"
 
 #: ../plugins/gtkui/support.c:90 ../plugins/gtkui/support.c:114
 #, c-format
@@ -1103,9 +1090,8 @@ msgid "Couldn't find pixmap file: %s"
 msgstr ""
 
 #: ../plugins/vorbis/vcedit.c:129 ../plugins/vorbis/vcedit.c:155
-#, fuzzy
 msgid "Couldn't get enough memory for input buffering."
-msgstr "Nicht genügend Speicher zum Puffern der Eingabe"
+msgstr ""
 
 #: ../plugins/vorbis/vcedit.c:179 ../plugins/vorbis/vcedit.c:550
 msgid "Error reading first page of Ogg bitstream."
@@ -1121,19 +1107,19 @@ msgstr ""
 
 #: ../plugins/vorbis/vcedit.c:505
 msgid "Input truncated or empty."
-msgstr ""
+msgstr "Masukan terpotong atau kosong."
 
 #: ../plugins/vorbis/vcedit.c:507
 msgid "Input is not an Ogg bitstream."
-msgstr ""
+msgstr "Masukan bukan bitstream Ogg."
 
 #: ../plugins/vorbis/vcedit.c:565
 msgid "Ogg bitstream does not contain Vorbis data."
-msgstr ""
+msgstr "Bitstream Ogg tak memuat data Vorbis."
 
 #: ../plugins/vorbis/vcedit.c:578
 msgid "EOF before recognised stream."
-msgstr ""
+msgstr "EOF sebelum stream yang dikenali."
 
 #: ../plugins/vorbis/vcedit.c:594
 msgid "Ogg bitstream does not contain a supported data-type."
@@ -1145,11 +1131,11 @@ msgstr ""
 
 #: ../plugins/vorbis/vcedit.c:659
 msgid "EOF before end of Vorbis headers."
-msgstr ""
+msgstr "EOF sebelum akhir header Vorbis."
 
 #: ../plugins/vorbis/vcedit.c:834
 msgid "Corrupt or missing data, continuing..."
-msgstr ""
+msgstr "Data rusak atau hilang, melanjutkan..."
 
 #: ../plugins/vorbis/vcedit.c:874
 msgid ""
@@ -1164,8 +1150,4 @@ msgid ""
 msgstr ""
 
 #~ msgid "Add Audio CD"
-#~ msgstr "Audio CD hinzufügen"
-
-#, fuzzy
-#~ msgid "Sound (adv.)"
-#~ msgstr "Wiedergabe (erweitert)"
+#~ msgstr "Tambahkan CD Audio"
