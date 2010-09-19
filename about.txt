@@ -113,3 +113,24 @@ Copyright © 2001-2004 Chris Ison
 ttadec - TTAv1 decoder
 http://true-audio.com/
 Copyright © 2004 True Audio Software
+
+
+aosdk 1.4.8 - library for playing .PSF (Sony PlayStation), .SPU (Sony PlayStation), .PSF2 (Sony PlayStation 2), .SSF (Sega Saturn), .DSF (Sega Dreamcast), and .QSF (Capcom QSound) audio file formats
+http://rbelmont.mameworld.info/?page_id=221
+Copyright © 2007-2009 R. Belmont and Richard Bannister.
+
+
+mp4ff - part of libfaad2 2.7, mp4 container library
+http://www.nero.com
+Copyright © 2003-2005 M. Bakker, Nero AG
+
+
+libdca - library for decoding DTS Coherent Acoustics streams
+http://www.videolan.org/developers/libdca.html
+Copyright © 2000-2003 Michel Lespinasse <walken@zoy.org>
+Copyright © 1999-2000 Aaron Holtzman <aholtzma@ess.engr.uvic.ca>
+
+
+xmms-shn 2.4.1 - Shorten XMMS Plugin (ported to Deadbeef API)
+http://etree.org/shnutils/xmms-shn/
+Copyright © Jason Jordan <shnutils@freeshell.org>
