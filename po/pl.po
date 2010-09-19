@@ -1,7 +1,8 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# Grzegorz Gibas <amigib@gmail.com>, Łukasz Jasiński <alvarus@alvarus.org>, 2010.
+# Grzegorz Gibas <amigib@gmail.com>, 2010.
+# Łukasz Jasiński <alvarus@alvarus.org>, 2010.
 #
 msgid ""
 msgstr ""

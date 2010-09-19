@@ -1,3 +1,7 @@
+# Deadbeef Audio Player
+# Copyright (C) 2009-2010 Alexey Yakovenko <waker@users.sourceforge.net>
+# This file is distributed under the same license as the Deadbeef package.
+# Giorgos Koutsikos <ragecryx@yahoo.gr>, 2010
 #
 msgid ""
 msgstr ""

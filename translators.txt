@@ -1,0 +1,86 @@
+Bengali
+ Ummey Salma Snigdha <snighda@ankur.org.bd>
+ Israt Jahan <israt@ankur.org.bd>
+
+Danish
+ Joe Hansen <joedalton2@yahoo.dk>
+
+German
+ Lutz Thuns <lOtz1009@opensuse.org>.
+
+Greek
+ Giorgos Koutsikos <ragecryx@yahoo.gr>, 2010
+
+English (United Kingdom)
+ Steve (Yorvyk) Cook <yorvik.ubunto@googlemail.com>
+
+Spanish
+ depaz <depazzz@gmail.com>
+
+Persian
+ Ali <aysabzevar@gmail.com>
+
+French
+ Cilyan Olowen <gaknar@gmail.com>
+
+Gallegan
+ Miguel Anxo Bouzada <mbouzada@gmail.com>
+
+Hebrew
+ Yaron <sh.yaron@gmail.com>
+
+Croatian
+  Ivica Kolić<ikoli@yahoo.com>
+
+Indonesian
+ Andika Triwidada <andika@gmail.com>
+
+Italian
+ paolo stivanin <paolostivanin@gmail.com>
+
+Japanese
+ Hironao Komatsu <hironao@users.sourceforge.net>
+
+Kazakh
+ Baurzhan Muftakhidinov <baurthefirst@gmail.com>
+
+Khmer
+ SatyaN <satyathavy@gmail.com>
+
+Dutch
+ depaz <depazzz@gmail.com>
+
+Polish
+ Grzegorz Gibas <amigib@gmail.com>
+ Łukasz Jasiński <alvarus@alvarus.org>
+
+Portuguese
+ Sérgio Marques <smarquespt@gmail.com>
+
+Portuguese (Brazil)
+ Henrique P. Machado <hpmachado@gnome.org>
+
+Russian
+ Dmitriy Simbiriatin <slpiv@mail.ru>
+
+Slovak
+ Ivan Masár <helix84@centrum.sk>
+
+Serbian
+ Jay A. Fleming <tito.nehru.naser@gmail.com>
+
+Serbian (latin)
+ Jay A. Fleming <tito.nehru.naser@gmail.com>
+
+Swedish
+ Martin <brother@bsnet.se>
+
+Ukrainian
+ Yarema aka Knedlyk <yupadmin@gmail.com>
+
+Vietnamese
+ Tran Duy Hung <nguyentieuhau@gmail.com>
+
+Chinese (Taiwan, Province of China)
+ Hong Jen Yee <pcman.tw@gmail.com>
+
