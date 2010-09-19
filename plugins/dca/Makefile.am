@@ -20,7 +20,8 @@ tables_fir.h\
 tables.h\
 tables_huffman.h\
 tables_quantization.h\
-tables_vq.h
+tables_vq.h\
+bitstream.h
 
 dca_la_LDFLAGS = -module
 

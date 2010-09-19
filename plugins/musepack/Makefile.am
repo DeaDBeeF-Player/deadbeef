@@ -16,11 +16,13 @@ decoder.h\
 huffman.h\
 internal.h\
 mpc_bits_reader.h\
-mpcdec.h\
+mpc/mpcdec.h\
 mpcdec_math.h\
-reader.h\
+mpc/reader.h\
 requant.h\
-streaminfo.h
+mpc/streaminfo.h\
+mpc/mpc_types.h\
+mpc/minimax.h
 
 musepack_la_LDFLAGS = -module
 

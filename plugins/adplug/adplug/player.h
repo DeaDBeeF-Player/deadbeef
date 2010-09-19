@@ -24,7 +24,7 @@
 
 #include "fprovide.h"
 #include "opl.h"
-#include "database.h"
+//#include "database.h"
 
 class CPlayer
 {

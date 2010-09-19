@@ -19,6 +19,8 @@ eng_psf/peops2/adsr.h eng_psf/peops2/dma.h eng_psf/peops2/externals.h eng_psf/pe
 
 ao_la_LDFLAGS = -module -fPIC
 
+EXTRA_DIST=eng_psf/peops/reverb.c eng_psf/peops/adsr.c eng_psf/peops/registers.c eng_psf/peops/dma.c eng_psf/peops2/spu2.c eng_psf/peops2/reverb2.c eng_psf/peops2/adsr2.c eng_dsf/arm7memil.c eng_dsf/aicalfo.c eng_ssf/scsplfo.c
+
 ao_la_LIBADD = $(LDADD)
 AM_CFLAGS = $(CFLAGS) -Wall -DPATH_MAX=1024 -DHAS_PSXCPU=1 -I.. -Ieng_ssf -Ieng_qsf -Ieng_dsf -lm $(ZLIB_LIBS)
 endif

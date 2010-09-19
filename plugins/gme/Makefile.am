@@ -109,7 +109,8 @@ game-music-emu-0.5.5/gme/Spc_Emu.h\
 game-music-emu-0.5.5/gme/Vgm_Emu.h\
 game-music-emu-0.5.5/gme/Vgm_Emu_Impl.h\
 game-music-emu-0.5.5/gme/Ym2413_Emu.h\
-game-music-emu-0.5.5/gme/Ym2612_Emu.h
+game-music-emu-0.5.5/gme/Ym2612_Emu.h\
+game-music-emu-0.5.5/gme/gme_types.h
 
 gme_la_LDFLAGS = -module
 

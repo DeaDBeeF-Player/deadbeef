@@ -26,7 +26,7 @@
 #include "opl.h"
 #include "fprovide.h"
 #include "players.h"
-#include "database.h"
+//#include "database.h"
 
 class CAdPlug
 {
