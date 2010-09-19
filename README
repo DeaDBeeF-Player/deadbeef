@@ -17,6 +17,7 @@ full list of dependencies:
     dbus: for notification daemon support (OSD current song notifications)
     pulseaudio: for PulseAudio output plugin
     faad2: for AAC plugin
+    libmms: for MMS protocol support
 
 actual package names for your Linux distribution may vary.
 
