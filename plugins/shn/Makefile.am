@@ -5,6 +5,6 @@ shn_la_SOURCES = array.c convert.c misc.c output.c seek.c shn.c shn.h shorten.c 
 
 shn_la_LDFLAGS = -module
 
-shn_la_LIBADD = $(LDADD)
+shn_la_LIBADD = $(LDADD) -lm
 AM_CFLAGS = $(CFLAGS) -std=c99
 endif

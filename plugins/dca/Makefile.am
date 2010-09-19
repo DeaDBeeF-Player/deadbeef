@@ -24,6 +24,7 @@ tables_vq.h\
 bitstream.h
 
 dca_la_LDFLAGS = -module
+dca_la_LIBADD = $(LDADD) -lm
 
 AM_CFLAGS = $(CFLAGS) -fPIC
 
