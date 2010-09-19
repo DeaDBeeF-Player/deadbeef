@@ -62,7 +62,7 @@
 		      <accelerator key="O" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image430">
+			<widget class="GtkImage" id="image452">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-open</property>
 			  <property name="icon_size">1</property>
@@ -89,7 +89,7 @@
 		      <signal name="activate" handler="on_add_files_activate" last_modification_time="Sat, 04 Jul 2009 13:04:01 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image431">
+			<widget class="GtkImage" id="image453">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-add</property>
 			  <property name="icon_size">1</property>
@@ -110,7 +110,7 @@
 		      <signal name="activate" handler="on_add_folders_activate" last_modification_time="Sun, 06 Sep 2009 17:51:40 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image432">
+			<widget class="GtkImage" id="image454">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-add</property>
 			  <property name="icon_size">1</property>
@@ -190,7 +190,7 @@
 		      <accelerator key="Q" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image433">
+			<widget class="GtkImage" id="image455">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-quit</property>
 			  <property name="icon_size">1</property>
@@ -224,7 +224,7 @@
 		      <signal name="activate" handler="on_clear1_activate" last_modification_time="Sun, 06 Sep 2009 18:30:03 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image434">
+			<widget class="GtkImage" id="image456">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-clear</property>
 			  <property name="icon_size">1</property>
@@ -283,7 +283,7 @@
 			      <signal name="activate" handler="on_remove1_activate" last_modification_time="Sun, 06 Sep 2009 18:30:03 GMT"/>
 
 			      <child internal-child="image">
-				<widget class="GtkImage" id="image435">
+				<widget class="GtkImage" id="image457">
 				  <property name="visible">True</property>
 				  <property name="stock">gtk-remove</property>
 				  <property name="icon_size">1</property>
@@ -558,7 +558,7 @@
 		      <signal name="activate" handler="on_help1_activate" last_modification_time="Tue, 08 Sep 2009 17:32:06 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image436">
+			<widget class="GtkImage" id="image458">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-help</property>
 			  <property name="icon_size">1</property>
@@ -618,7 +618,28 @@
 		      <signal name="activate" handler="on_about1_activate" last_modification_time="Sat, 04 Jul 2009 12:57:58 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image437">
+			<widget class="GtkImage" id="image459">
+			  <property name="visible">True</property>
+			  <property name="stock">gtk-about</property>
+			  <property name="icon_size">1</property>
+			  <property name="xalign">0.5</property>
+			  <property name="yalign">0.5</property>
+			  <property name="xpad">0</property>
+			  <property name="ypad">0</property>
+			</widget>
+		      </child>
+		    </widget>
+		  </child>
+
+		  <child>
+		    <widget class="GtkImageMenuItem" id="translators1">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">_Translators</property>
+		      <property name="use_underline">True</property>
+		      <signal name="activate" handler="on_translators1_activate" last_modification_time="Sun, 19 Sep 2010 13:38:07 GMT"/>
+
+		      <child internal-child="image">
+			<widget class="GtkImage" id="image460">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-about</property>
 			  <property name="icon_size">1</property>

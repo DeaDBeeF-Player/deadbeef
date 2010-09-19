@@ -1065,3 +1065,14 @@ on_jump_to_current_track1_activate     (GtkMenuItem     *menuitem,
     gtkui_focus_on_playing_track ();
 }
 
+static GtkWidget *translatorswindow;
+
+void
+on_translators1_activate               (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    char s[200];
+    snprintf (s, sizeof (s), _("DeaDBeeF Translators"));
+    show_info_window (DOCDIR "/translators.txt", s, &translatorswindow);
+}
+

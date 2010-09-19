@@ -979,3 +979,7 @@ on_resume_last_session_toggled         (GtkToggleButton *togglebutton,
 void
 on_jump_to_current_track1_activate     (GtkMenuItem     *menuitem,
                                         gpointer         user_data);
+
+void
+on_translators1_activate               (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
