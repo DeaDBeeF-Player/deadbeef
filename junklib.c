@@ -69,13 +69,12 @@ static const char *frame_mapping[] = {
     "copyright", "TCOP", "TCOP", "TCO", "Copyright",
     "genre", "TCON", "TCON", "TCO", "Genre",
     "vendor", "TENC", "TENC", "TEN", "ENCODER",
-    "performer", "TPE3", "TPE3", "TP3", "Performer",
     "composer", "TCOM", "TCOM", "TCM", "Composer",
     "year", "TYER", "TDRC", "TYE", "Year",
     "track", "TRCK", "TRCK", "TRK", "Track",
     "comment", NULL, NULL, NULL, "Comment",
     "cuesheet", NULL, NULL, NULL, "Cuesheet",
-//    "<performer>", "TXXX", "TXXX", "TXX", "Performer", // fb2k only
+    "performer", "TXXX", "TXXX", "TXX", "Performer",
 //    "band", "TXXX", "TXXX", "TXX", "Album artist", // fb2k only
 //    "date", "TXXX", "TXXX", "TXX", "Date", // fb2k only
     NULL
