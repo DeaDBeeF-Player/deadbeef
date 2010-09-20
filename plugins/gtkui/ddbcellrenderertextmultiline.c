@@ -27,7 +27,6 @@
 #include <string.h>
 #include <gdk/gdkkeysyms.h>
 #include <gdk/gdk.h>
-#include <stdio.h>
 
 
 #define DDB_TYPE_CELL_EDITABLE_TEXT_VIEW (ddb_cell_editable_text_view_get_type ())
@@ -226,7 +225,6 @@ static gboolean ddb_cell_renderer_text_multiline_gtk_cell_renderer_focus_out_eve
 	g_return_val_if_fail (entry != NULL, FALSE);
 	g_return_val_if_fail (event != NULL, FALSE);
 	g_return_val_if_fail (_self_ != NULL, FALSE);
-	fprintf (stdout, "focus_out_event\n");
 	entry->editing_canceled = TRUE;
 	gtk_cell_editable_remove_widget ((GtkCellEditable*) entry);
 	result = FALSE;

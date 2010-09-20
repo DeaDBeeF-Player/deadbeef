@@ -69,7 +69,6 @@ namespace Ddb {
         }
 
         private static bool gtk_cell_renderer_focus_out_event (CellEditableTextView entry, Gdk.Event event, CellRendererTextMultiline self) {
-            stdout.printf ("focus_out_event\n");
             entry.editing_canceled = true;
             entry.remove_widget ();
             return false;
