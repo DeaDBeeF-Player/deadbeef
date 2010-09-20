@@ -1427,7 +1427,7 @@ create_editcolumndlg (void)
   id = gtk_combo_box_new_text ();
   gtk_widget_show (id);
   gtk_box_pack_start (GTK_BOX (hbox30), id, TRUE, TRUE, 0);
-  gtk_combo_box_append_text (GTK_COMBO_BOX (id), _("File number"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (id), _("Item Index"));
   gtk_combo_box_append_text (GTK_COMBO_BOX (id), _("Playing"));
   gtk_combo_box_append_text (GTK_COMBO_BOX (id), _("Album Art"));
   gtk_combo_box_append_text (GTK_COMBO_BOX (id), _("Artist - Album"));

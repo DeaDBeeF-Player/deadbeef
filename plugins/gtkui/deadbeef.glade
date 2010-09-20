@@ -2092,7 +2092,7 @@
 	      <child>
 		<widget class="GtkComboBox" id="id">
 		  <property name="visible">True</property>
-		  <property name="items" translatable="yes">File number
+		  <property name="items" translatable="yes">Item Index
 Playing
 Album Art
 Artist - Album
