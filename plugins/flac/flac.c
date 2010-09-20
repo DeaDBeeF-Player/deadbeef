@@ -492,7 +492,7 @@ static const char *metainfo[] = {
     "ENCODED-BY", "vendor",
     "DISCNUMBER", "disc",
     "COPYRIGHT", "copyright",
-    "TRACKTOTAL", "numtracks",
+    "TOTALTRACKS", "numtracks",
     "ALBUM ARTIST", "band",
     NULL
 };
