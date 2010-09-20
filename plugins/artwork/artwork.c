@@ -229,7 +229,7 @@ filter_custom (const struct dirent *f)
             strcpy (mask, p);
         }
         if (*mask) {
-            if (!fnmatch (mask, f->d_name, 0)) {
+            if (!fnmatch (mask, f->d_name, FNM_CASEFOLD)) {
                 return 1;
             }
         }
