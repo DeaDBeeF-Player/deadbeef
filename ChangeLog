@@ -1,3 +1,56 @@
+version 0.4.2
+	added translation into many languages, see translators.txt (LXDE Project)
+	added ability to add custom menu items from plugins (Viktor Semykin)
+	new shellexec plugin to execute shell commands with deadbeef title formatting (Viktor Semykin)
+	added "Look up at last.fm" context menu option (Viktor Semykin)
+	merged in DUMB 0.9.3 (mainly to satisfy debian lawyers)
+	added samplerate conversion quality option to DUMB plugin
+	fixed multichannel WavPack support (David Bryant)
+	decode all valid integer bitdepths and float data from WavPack files (David Bryant)
+	added MIDI player plugin, using WildMidi
+	new MusePack plugin using libmpcdec SV8, with support for multi-chapter files
+	new TTA plugin using TTAv1 library, with 8/16/24bit support and gapless
+	added support for cover artwork embedded in APEv2 tags (David Bryant)
+	added GTKUI option to set status icon volume control sensitivity (gordi-o)
+	added support for custom tray icon and icon themes (gordi-o)
+	new DTS Coherent Acoustics decoder using libdca from VLC project, plays from .wav, .dts, .cpt files
+	added display of multichannel info to statusbar
+	fixed reading of bad (unindented) CUE files
+	new AAC decoder based on FAAD2 and MP4FF libraries
+	new MMS plugin based on libmms, requires FFMPEG plugin to decode WMA content
+	new icon by Sofias <sofias@radikalismus.com>
+	new shorten plugin, port of xmms-shn
+	new aosdk plugin, plays several PSF derivatives (PSF,PSF2,DSF,QSF,SSF,SPU)
+	"stop after current" feature no longer does auto-reset every time
+	fixed OSS pause/unpause
+	fixed seeking via global hotkeys
+	improved global hotkeys plugin APIs and GUI configuration
+	added Play/Pause global hotkey
+	customizable IPC socket directory via DDB_SOCKET_DIR env variable (by request from Pandora port people)
+	switched to GME 0.5.5 (keeping compatibility with 0.5.2)
+	added option to hide system tray icon
+	added new format conversions to title formatting (see built-in docs in the player)
+	added support for displaying current track using bold font
+	new playlist can be created by double-clicking or middle-clicking on empty area of tab strip
+	added switching between playlists using [Alt +] 1-9 keys
+	added option to hide "remove from disk" menu item
+	added custom title-formatting for window titlebar and system tray tooltip
+	added tooltip to volumbar, displaying current level in dB
+	added option to follow symlinks while adding files, in the Open File dialogs
+	added option to open/add files in specified named playlist
+	fixed multichannel support in libsndfile, vorbis, tta, ffmpeg plugins
+	added scrolling to current playing track using Ctrl+J and through menu
+	fixed several bugs in mp3 tag parsers
+	fixed initial track prebuffering timing bug, playback starts faster now
+	fixed file->open in paused state, not resuming paused file anymore
+	removed NRG support from cd audio plugin, as it was causing crashes
+	improved album cover caching/updating/reloading
+	added custom file filters to cover art plugin
+	show progress dialog while adding files/folders from commandline
+	added option to remember current track / position / state on exit, and resume after restart
+	added scrolling support to playlist tabs
+	improved Album Artist field support in many file formats
+
 version 0.4.1
 	better default/minimal search window size
 	improved tag reader in ffmpeg plugin + reload metadata support
