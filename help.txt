@@ -55,26 +55,3 @@ help file for deadbeef player
     Unknown Artist - Unknown Album.flac <---- open this file
     Unknown Artist - Unknown Album.cue  <---- this file will be used automatically
 
-* GLOBAL HOTKEYS
-
-    now there's GUI configuration for global hotkeys plugin, but I keep this section for reference.
-
-    syntax is following:
-
-    hotkeys.keyN <key_combination>: <action>
-
-    example (note the numbers - must be like that):
-
-    hotkeys.key1 Ctrl Alt c: toggle_pause
-    hotkeys.key2 Ctrl 0x76: prev
-    hotkeys.key3 Ctrl Alt b: next
-    hotkeys.key4 Ctrl Alt v: stop
-    hotkeys.key5 Ctrl Alt x: play
-    hotkeys.key6 Ctrl Alt n: play_random
-    hotkeys.key7 Super u: volume_up
-    hotkeys.key8 XF86AudioLowerVolume: volume_down
-
-    list of actions (might be incomplete, because i don't update this section anymore):
-
-    toggle_pause, play, prev, next, stop, play_random, seek_fwd, seek_back, volume_up, volume_down, toggle_stop_after_current
-
