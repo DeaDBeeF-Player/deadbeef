@@ -1157,6 +1157,10 @@ streamer_free (void) {
 
 void
 streamer_reset (int full) { // must be called when current song changes by external reasons
+    if (!mutex) {
+        fprintf (stderr, "ERROR: someone called streamer_reset after exit\n");
+        return; // failsafe, in case someone calls streamer reset after deinit
+    }
     src_lock ();
     if (full) {
         streamer_lock ();

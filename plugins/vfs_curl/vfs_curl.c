@@ -689,8 +689,11 @@ http_read (void *ptr, size_t size, size_t nmemb, DB_FILE *stream) {
                     http_stream_reset (fp);
                     fp->status = STATUS_SEEK;
                     deadbeef->mutex_unlock (fp->mutex);
-                    deadbeef->streamer_reset (1);
-                    continue;
+                    if (fp->track) { // don't touch streamer if the stream is not assosiated with a track
+                        deadbeef->streamer_reset (1);
+                        continue;
+                    }
+                    return 0;
                 }
             }
             int skip = min (fp->remaining, fp->skipbytes);
