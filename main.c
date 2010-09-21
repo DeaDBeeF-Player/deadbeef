@@ -67,8 +67,8 @@
 #define USE_ABSTRACT_NAME 0
 #endif
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 // some common global variables
 char confdir[1024]; // $HOME/.config
