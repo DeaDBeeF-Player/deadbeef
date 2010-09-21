@@ -5,7 +5,7 @@ full list of dependencies:
     libsamplerate: REQUIRED dependency, does high quality resampling
     gtk+-2.0 >= 2.12 (+ gthread, + glib): GTK+ 2.0 user interface
     alsa-lib: ALSA support
-    libvorbis: for ogg vorbis plugin
+    libvorbis and libogg: for ogg vorbis plugin
     libcurl >= 7.10: for last.fm, vfs_curl (shoutcast/icecast), artwork plugins
     libmad: for mp3 plugin (mpeg1,2 layers1,2,3)
     libFLAC: for flac plugin
