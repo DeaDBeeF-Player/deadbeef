@@ -224,7 +224,23 @@ on_addhotkey_clicked                     (GtkButton *button, gpointer user_data)
     GtkListStore *store = GTK_LIST_STORE (user_data);
     GtkTreeIter iter;
     gtk_list_store_append (store, &iter);
-    gtk_list_store_set (store, &iter, 0, "toggle_pause", 1, "", -1);
+    DB_plugin_t **plugins = deadbeef->plug_get_list ();
+    for (int i = 0; plugins[i]; i++) {
+        DB_plugin_t *p = plugins[i];
+        if (p->get_actions) {
+            DB_plugin_action_t *actions = plugins[i]->get_actions (NULL);
+            while (actions) {
+                if (actions->name && actions->title) { // only add actions with both the name and the title
+                    gtk_list_store_set (store, &iter, 0, actions->title, 1, "", 2, actions->name, -1);
+                    break;
+                }
+                actions = actions->next;
+            }
+            if (actions) {
+                break;
+            }
+        }
+    }
 }
 
 void
@@ -353,7 +369,7 @@ prefwin_add_hotkeys_tab (GtkWidget *prefwin) {
                     gtk_list_store_set (slots_store, &iter, 0, title, 1, actions->name, -1);
                 }
                 else {
-                    fprintf (stderr, "WARNING: action %s/%s from plugin %s is missing name and/or title\n", actions->name, actions->title, p->name);
+//                    fprintf (stderr, "WARNING: action %s/%s from plugin %s is missing name and/or title\n", actions->name, actions->title, p->name);
                 }
                 actions = actions->next;
             }
