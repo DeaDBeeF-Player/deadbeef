@@ -18,6 +18,7 @@ full list of dependencies:
     pulseaudio: for PulseAudio output plugin
     faad2: for AAC plugin
     libmms: for MMS protocol support
+    zlib: for Audio Overload plugin (psf, psf2, etc)
 
 actual package names for your Linux distribution may vary.
 
