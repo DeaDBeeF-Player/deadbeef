@@ -87,7 +87,7 @@ add_mainmenu_actions (GtkWidget *mainwin)
                 if (!slash)
                 {
                     GtkWidget *actionitem;
-                    actionitem = gtk_image_menu_item_new_with_mnemonic (ptr);
+                    actionitem = gtk_image_menu_item_new_with_mnemonic (_(ptr));
                     gtk_widget_show (actionitem);
 
                     /* Here we have special cases for different submenus */

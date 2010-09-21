@@ -22,7 +22,6 @@ help file for deadbeef player
     also notice hotkey hints in the menus.
 
     it is not (yet?) possible to remap keys.
-    also see GLOBAL HOTKEYS section below.
 
 * CONFIGURATION
 

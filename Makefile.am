@@ -43,7 +43,9 @@ AM_CPPFLAGS = $(DEPS_CFLAGS)
 
 docsdir = $(docdir)
 
-docs_DATA = README COPYING.GPLv2 help.txt about.txt ChangeLog COPYING.LGPLv2.1 translators.txt
+docs_DATA = README help.txt about.txt translators.txt ChangeLog\
+	COPYING.GPLv2 COPYING.LGPLv2.1\
+	translation/help.ru.txt
 
 desktopdir = $(datadir)/applications
 desktop_DATA = deadbeef.desktop
