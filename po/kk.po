@@ -484,7 +484,7 @@ msgstr "Түрі:"
 
 #: ../plugins/gtkui/interface.c:1430
 msgid "Item Index"
-msgstr ""
+msgstr "Реттік нөмірі"
 
 #. create default set of columns
 #: ../plugins/gtkui/interface.c:1431 ../plugins/gtkui/mainplaylist.c:300
