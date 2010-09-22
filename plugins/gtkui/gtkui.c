@@ -519,6 +519,7 @@ playlistswitch_cb (gpointer none) {
             deadbeef->pl_item_unref (it);
         }
     }
+    ddb_listview_clear_sort (listview);
     playlist_refresh ();
     ddb_listview_set_vscroll (listview, scroll);
     search_refresh ();
@@ -1073,6 +1074,12 @@ gtkui_focus_on_playing_track (void) {
         ddb_listview_set_cursor (DDB_LISTVIEW (lookup_widget (mainwin, "playlist")), idx);
         deadbeef->pl_item_unref (it);
     }
+}
+
+void
+gtkui_playlist_set_curr (int playlist) {
+    deadbeef->plt_set_curr (playlist);
+    deadbeef->conf_set_int ("playlist.current", playlist);
 }
 
 static int

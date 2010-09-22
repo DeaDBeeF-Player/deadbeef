@@ -247,6 +247,9 @@ ddb_listview_list_drag_end                   (GtkWidget       *widget,
                                         GdkDragContext  *drag_context,
                                         gpointer         user_data);
 
+void
+ddb_listview_clear_sort (DdbListview *listview);
+
 G_END_DECLS
 
 #endif // __DDBLISTVIEW_H

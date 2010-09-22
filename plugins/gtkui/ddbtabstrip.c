@@ -655,9 +655,7 @@ on_add_new_playlist1_activate          (GtkMenuItem     *menuitem,
 {
     int playlist = gtkui_add_new_playlist ();
     if (playlist != -1) {
-        deadbeef->plt_set_curr (playlist);
-        deadbeef->conf_set_int ("playlist.current", playlist);
-        gtk_widget_queue_draw (lookup_widget (mainwin, "tabstrip"));
+        gtkui_playlist_set_curr (playlist);
     }
 }
 
@@ -792,8 +790,7 @@ tabstrip_scroll_left (DdbTabStrip *ts) {
     int tab = deadbeef->plt_get_curr ();
     if (tab > 0) {
         tab--;
-        deadbeef->plt_set_curr (tab);
-        deadbeef->conf_set_int ("playlist.current", tab);
+        gtkui_playlist_set_curr (tab);
     }
     tabstrip_scroll_to_tab (ts, tab);
 }
@@ -826,8 +823,7 @@ tabstrip_scroll_right (DdbTabStrip *ts) {
     int tab = deadbeef->plt_get_curr ();
     if (tab < deadbeef->plt_get_count ()-1) {
         tab++;
-        deadbeef->plt_set_curr (tab);
-        deadbeef->conf_set_int ("playlist.current", tab);
+        gtkui_playlist_set_curr (tab);
     }
     tabstrip_scroll_to_tab (ts, tab);
 }
@@ -875,16 +871,14 @@ on_tabstrip_button_press_event           (GtkWidget       *widget,
             }
         }
         if (tab_clicked != -1) {
-            deadbeef->plt_set_curr (tab_clicked);
-            deadbeef->conf_set_int ("playlist.current", tab_clicked);
+            gtkui_playlist_set_curr (tab_clicked);
         }
         else {
             if (event->type == GDK_2BUTTON_PRESS) {
                 // new tab
                 int playlist = gtkui_add_new_playlist ();
                 if (playlist != -1) {
-                    deadbeef->plt_set_curr (playlist);
-                    deadbeef->conf_set_int ("playlist.current", playlist);
+                    gtkui_playlist_set_curr (playlist);
                 }
                 return FALSE;
             }
@@ -922,8 +916,7 @@ on_tabstrip_button_press_event           (GtkWidget       *widget,
             // new tab
             int playlist = gtkui_add_new_playlist ();
             if (playlist != -1) {
-                deadbeef->plt_set_curr (playlist);
-                deadbeef->conf_set_int ("playlist.current", playlist);
+                gtkui_playlist_set_curr (playlist);
             }
             return FALSE;
         }
@@ -1062,8 +1055,7 @@ on_tabstrip_drag_motion_event          (GtkWidget       *widget,
     int tab = get_tab_under_cursor (DDB_TABSTRIP (widget), x);
     int prev = deadbeef->plt_get_curr ();
     if (tab != -1 && tab != prev) {
-        deadbeef->plt_set_curr (tab);
-        deadbeef->conf_set_int ("playlist.current", tab);
+        gtkui_playlist_set_curr (tab);
     }
 
     GtkWidget *pl = lookup_widget (mainwin, "playlist");

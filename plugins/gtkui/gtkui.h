@@ -157,4 +157,7 @@ extern int (*gtkui_original_pl_add_file) (const char *fname, int (*cb)(DB_playIt
 void
 gtkui_focus_on_playing_track (void);
 
+void
+gtkui_playlist_set_curr (int playlist);
+
 #endif

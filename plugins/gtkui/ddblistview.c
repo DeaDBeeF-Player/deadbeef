@@ -2885,3 +2885,12 @@ ddb_listview_show_header (DdbListview *listview, int show) {
     show ? gtk_widget_show (listview->header) : gtk_widget_hide (listview->header);
 }
 
+void
+ddb_listview_clear_sort (DdbListview *listview) {
+    DdbListviewColumn *c;
+    for (c = listview->columns; c; c = c->next) {
+        c->sort_order = 0;
+    }
+    ddb_listview_header_render (listview);
+    ddb_listview_header_expose (listview, 0, 0, listview->header->allocation.width, listview->header->allocation.height);
+}
