@@ -61,7 +61,7 @@ typedef struct {
     MP4FILE mp4file;
     MP4FILE_CB mp4reader;
     int32_t timescale;
-    u_int32_t maxSampleSize;
+    uint32_t maxSampleSize;
     int mp4track;
     int mp4samples;
     int mp4sample;
@@ -299,11 +299,11 @@ aac_probe (DB_FILE *fp, const char *fname, MP4FILE_CB *cb, float *duration, int 
     MP4FileHandle mp4File = mp4;
     MP4TrackId trackId = MP4FindTrackId(mp4File, 0, "audio", 0);
     trace ("trackid: %d\n", trackId);
-    u_int32_t timeScale = MP4GetTrackTimeScale(mp4File, trackId);
+    uint32_t timeScale = MP4GetTrackTimeScale(mp4File, trackId);
     MP4Duration trackDuration = MP4GetTrackDuration(mp4File, trackId);
     MP4SampleId numSamples = MP4GetTrackNumberOfSamples(mp4File, trackId);
     u_int8_t* pConfig;
-    u_int32_t configSize = 0;
+    uint32_t configSize = 0;
     bool res = MP4GetTrackESConfiguration(mp4File, trackId, &pConfig, &configSize);
     if (res && pConfig) {
         mp4AudioSpecificConfig mp4ASC;
@@ -479,7 +479,7 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             info->timescale = MP4GetTrackTimeScale(info->mp4file, info->mp4track);
 
             u_int8_t* pConfig;
-            u_int32_t configSize = 0;
+            uint32_t configSize = 0;
             bool res = MP4GetTrackESConfiguration(info->mp4file, info->mp4track, &pConfig, &configSize);
 
             mp4AudioSpecificConfig mp4ASC;
