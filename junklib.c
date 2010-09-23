@@ -63,7 +63,7 @@ enum {
 static const char *frame_mapping[] = {
     "artist", "TPE1", "TPE1", "TP1", "Artist",
     "band", "TPE2", "TPE2", "TP2", "Album artist",
-    "disc", "TPOS", "TPOS", "TPA", "Media",
+    "disc", "TPOS", "TPOS", "TPA", "Disc",
     "title", "TIT2", "TIT2", "TT2", "Title",
     "album", "TALB", "TALB", "TAL", "Album",
     "copyright", "TCOP", "TCOP", "TCO", "Copyright",
@@ -2086,7 +2086,7 @@ junk_id3v2_convert_apev2_to_24 (DB_apev2_tag_t *ape, DB_id3v2_tag_t *tag24) {
     }
 
     const char *text_keys[] = {
-        "Title", "Subtitle", "Artist", "Album", "Publisher", "Conductor", "Track", "Composer", "Copyright", "Genre", "Media", "ISRC", "Language", "Year", NULL
+        "Title", "Subtitle", "Artist", "Album", "Publisher", "Conductor", "Track", "Composer", "Copyright", "Genre", "Disc", "ISRC", "Language", "Year", NULL
     };
 
     const char *text_keys_24[] = {
