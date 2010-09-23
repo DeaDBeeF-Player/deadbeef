@@ -144,7 +144,7 @@ wv_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     }
     _info->plugin = &plugin;
     _info->bps = WavpackGetBytesPerSample (info->ctx) * 8;
-    _info->channels = WavpackGetReducedChannels (info->ctx);
+    _info->channels = WavpackGetNumChannels (info->ctx);
     _info->samplerate = WavpackGetSampleRate (info->ctx);
     _info->readpos = 0;
     if (it->endsample > 0) {
@@ -187,15 +187,15 @@ static int
 wv_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
     wvctx_t *info = (wvctx_t *)_info;
     int currentsample = WavpackGetSampleIndex (info->ctx);
-    if (size / (2 * _info->channels) + currentsample > info->endsample) {
-        size = (info->endsample - currentsample + 1) * 2 * _info->channels;
+    int nchannels = WavpackGetReducedChannels (info->ctx);
+    if (size / (2 * nchannels) + currentsample > info->endsample) {
+        size = (info->endsample - currentsample + 1) * 2 * nchannels;
         trace ("wv: size truncated to %d bytes, cursample=%d, endsample=%d\n", size, currentsample, info->endsample);
         if (size <= 0) {
             return 0;
         }
     }
     int32_t buffer[size/2];
-    int nchannels = WavpackGetReducedChannels (info->ctx);
     int n = WavpackUnpackSamples (info->ctx, buffer, size/(2*nchannels));
     size = n * 2 * nchannels;
     // convert to int16
@@ -241,16 +241,16 @@ wv_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
 static int
 wv_read_float32 (DB_fileinfo_t *_info, char *bytes, int size) {
     wvctx_t *info = (wvctx_t *)_info;
+    int nchannels = WavpackGetReducedChannels (info->ctx);
     int currentsample = WavpackGetSampleIndex (info->ctx);
-    if (size / (4 * _info->channels) + currentsample > info->endsample) {
-        size = (info->endsample - currentsample + 1) * 4 * _info->channels;
+    if (size / (4 * nchannels) + currentsample > info->endsample) {
+        size = (info->endsample - currentsample + 1) * 4 * nchannels;
         trace ("wv: size truncated to %d bytes, cursample=%d, endsample=%d\n", size, currentsample, info->endsample);
         if (size <= 0) {
             return 0;
         }
     }
     int32_t buffer[size/4];
-    int nchannels = WavpackGetReducedChannels (info->ctx);
     int n = WavpackUnpackSamples (info->ctx, buffer, size/(4*nchannels));
     size = n * 4 * nchannels;
     // convert to float32
