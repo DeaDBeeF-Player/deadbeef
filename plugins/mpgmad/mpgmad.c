@@ -362,7 +362,9 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
             buffer->samplerate = samplerate;
             buffer->packetlength = packetlength;
             buffer->frameduration = dur;
-            buffer->channels = nchannels;
+            if (nchannels > buffer->channels) {
+                buffer->channels = nchannels;
+            }
             buffer->bitspersample = 16;
             //trace ("frame %d mpeg v%d layer %d bitrate %d samplerate %d packetlength %d framedur %f channels %d\n", nframe, ver, layer, bitrate, samplerate, packetlength, dur, nchannels);
         }
@@ -649,8 +651,7 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     }
     _info->bps = info->buffer.bitspersample;
     _info->samplerate = info->buffer.samplerate;
-    _info->channels = 2;//info->buffer.channels;
-//    trace ("mpgmad: nchannels: %d\n", _info->channels);
+    _info->channels = info->buffer.channels;
 
 	mad_stream_init(&info->stream);
 	mad_stream_options (&info->stream, MAD_OPTION_IGNORECRC);
