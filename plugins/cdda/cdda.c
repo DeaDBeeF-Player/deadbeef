@@ -521,6 +521,7 @@ cda_insert (DB_playItem_t *after, const char *fname) {
         }
         cdio_destroy (cdio);
     }
+    deadbeef->plug_trigger_event_playlistchanged ();
     return res;
 }
 
