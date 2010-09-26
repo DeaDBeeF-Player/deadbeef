@@ -249,6 +249,10 @@ on_select_all1_activate                (GtkMenuItem     *menuitem,
     deadbeef->pl_select_all ();
     DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
     ddb_listview_refresh (pl, DDB_REFRESH_LIST | DDB_EXPOSE_LIST);
+    pl = DDB_LISTVIEW (lookup_widget (searchwin, "searchlist"));
+    if (pl) {
+        ddb_listview_refresh (pl, DDB_REFRESH_LIST | DDB_EXPOSE_LIST);
+    }
 }
 
 
@@ -932,6 +936,10 @@ on_deselect_all1_activate              (GtkMenuItem     *menuitem,
     deadbeef->pl_unlock ();
     DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
     ddb_listview_refresh (pl, DDB_REFRESH_LIST | DDB_EXPOSE_LIST);
+    pl = DDB_LISTVIEW (lookup_widget (searchwin, "searchlist"));
+    if (pl) {
+        ddb_listview_refresh (pl, DDB_REFRESH_LIST | DDB_EXPOSE_LIST);
+    }
 }
 
 

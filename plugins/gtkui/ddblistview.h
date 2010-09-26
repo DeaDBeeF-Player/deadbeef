@@ -145,6 +145,10 @@ struct _DdbListview {
     int block_redraw_on_scroll;
     int grouptitle_height;
 
+    // previous area selection range
+    int area_selection_start;
+    int area_selection_end;
+
     GdkCursor *cursor_sz;
     GdkCursor *cursor_drag;
 };

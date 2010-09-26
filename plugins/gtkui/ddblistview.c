@@ -42,6 +42,7 @@
 #define DEFAULT_GROUP_TITLE_HEIGHT 30
 #define SCROLL_STEP 20
 #define AUTOSCROLL_UPDATE_FREQ 0.01f
+#define NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW 10
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -319,6 +320,9 @@ ddb_listview_init(DdbListview *listview)
 
     listview->cursor_sz = NULL;
     listview->cursor_drag = NULL;
+
+    listview->area_selection_start = 0;
+    listview->area_selection_end = 0;
 
     GtkWidget *hbox;
     GtkWidget *vbox;
@@ -1307,29 +1311,44 @@ ddb_listview_header_expose (DdbListview *ps, int x, int y, int w, int h) {
 
 void
 ddb_listview_select_single (DdbListview *ps, int sel) {
+    int nchanged = 0;
     int idx=0;
     DdbListviewIter it = ps->binding->head ();
     for (; it; idx++) {
         if (idx == sel) {
             if (!ps->binding->is_selected (it)) {
                 ps->binding->select (it, 1);
-                ddb_listview_draw_row (ps, idx, it);
-                ps->binding->selection_changed (it, idx);
+                if (nchanged < NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW) {
+                    ddb_listview_draw_row (ps, idx, it);
+                    ps->binding->selection_changed (it, idx);
+                }
+                nchanged++;
             }
             else if (ps->binding->cursor () == idx) {
-                ddb_listview_draw_row (ps, idx, it);
+                if (nchanged < NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW) {
+                    ddb_listview_draw_row (ps, idx, it);
+                }
             }
         }
         else if (ps->binding->is_selected (it)) {
             ps->binding->select (it, 0);
-            ddb_listview_draw_row (ps, idx, it);
-            ps->binding->selection_changed (it, idx);
+            if (nchanged < NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW) {
+                ddb_listview_draw_row (ps, idx, it);
+                ps->binding->selection_changed (it, idx);
+            }
+            nchanged++;
         }
         DdbListviewIter next = PL_NEXT (it);
         UNREF (it);
         it = next;
     }
     UNREF (it);
+    if (nchanged >= NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW) {
+        ddb_listview_refresh (ps, DDB_REFRESH_LIST | DDB_EXPOSE_LIST);
+        ps->binding->selection_changed (it, -1); // that means "selection changed a lot, redraw everything"
+    }
+    ps->area_selection_start = sel;
+    ps->area_selection_end = sel;
 }
 
 void
@@ -1722,26 +1741,45 @@ ddb_listview_list_mousemove (DdbListview *ps, GdkEventMotion *ev, int ex, int ey
             int start = min (y, ps->shift_sel_anchor);
             int end = max (y, ps->shift_sel_anchor);
 
-            idx=0;
-            DdbListviewIter it;
-            for (it = ps->binding->head (); it; idx++) {
+            int nchanged = 0;
+
+            // don't touch anything in process_start/end range
+            int process_start = min (start, ps->area_selection_start);
+            int process_end = max (end, ps->area_selection_end);
+
+            idx=process_start;
+            DdbListviewIter it = ps->binding->get_for_idx (idx);
+            for (; it && idx <= process_end; idx++) {
+                int selected = ps->binding->is_selected (it);
                 if (idx >= start && idx <= end) {
-                    if (!ps->binding->is_selected (it)) {
+                    if (!selected) {
                         ps->binding->select (it, 1);
+                        nchanged++;
+                        if (nchanged < NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW) {
+                            ddb_listview_draw_row (ps, idx, it);
+                            ps->binding->selection_changed (it, idx);
+                        }
+                    }
+                }
+                else if (selected) {
+                    ps->binding->select (it, 0);
+                    nchanged++;
+                    if (nchanged < NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW) {
                         ddb_listview_draw_row (ps, idx, it);
                         ps->binding->selection_changed (it, idx);
                     }
-                }
-                else if (ps->binding->is_selected (it)) {
-                    ps->binding->select (it, 0);
-                    ddb_listview_draw_row (ps, idx, it);
-                    ps->binding->selection_changed (it, idx);
                 }
                 DdbListviewIter next = PL_NEXT(it);
                 UNREF (it);
                 it = next;
             }
             UNREF (it);
+            if (nchanged >= NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW) {
+                ddb_listview_refresh (ps, DDB_REFRESH_LIST | DDB_EXPOSE_LIST);
+                ps->binding->selection_changed (it, -1); // that means "selection changed a lot, redraw everything"
+            }
+            ps->area_selection_start = start;
+            ps->area_selection_end = end;
         }
         if (sel != -1 && sel != prev) {
             if (prev != -1) {
@@ -1903,25 +1941,36 @@ ddb_listview_handle_keypress (DdbListview *ps, int keyval, int state) {
             // select all between shift_sel_anchor and deadbeef->pl_get_cursor (ps->iterator)
             int start = min (cursor, ps->shift_sel_anchor);
             int end = max (cursor, ps->shift_sel_anchor);
+
+            int nchanged = 0;
             int idx=0;
+
             DdbListviewIter it;
             for (it = ps->binding->head (); it; idx++) {
                 if (idx >= start && idx <= end) {
                     ps->binding->select (it, 1);
-                    ddb_listview_draw_row (ps, idx, it);
-                    ps->binding->selection_changed (it, idx);
+                    if (nchanged < NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW) {
+                        ddb_listview_draw_row (ps, idx, it);
+                        ps->binding->selection_changed (it, idx);
+                    }
                 }
                 else if (ps->binding->is_selected (it))
                 {
                     ps->binding->select (it, 0);
-                    ddb_listview_draw_row (ps, idx, it);
-                    ps->binding->selection_changed (it, idx);
+                    if (nchanged < NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW) {
+                        ddb_listview_draw_row (ps, idx, it);
+                        ps->binding->selection_changed (it, idx);
+                    }
                 }
                 DdbListviewIter next = PL_NEXT(it);
                 UNREF (it);
                 it = next;
             }
             UNREF (it);
+            if (nchanged >= NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW) {
+                ddb_listview_refresh (ps, DDB_REFRESH_LIST | DDB_EXPOSE_LIST);
+                ps->binding->selection_changed (it, -1); // that means "selection changed a lot, redraw everything"
+            }
         }
     }
     else {

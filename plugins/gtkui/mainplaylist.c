@@ -148,7 +148,12 @@ void main_handle_doubleclick (DdbListview *listview, DdbListviewIter iter, int i
 
 void main_selection_changed (DdbListviewIter it, int idx) {
     DdbListview *search = DDB_LISTVIEW (lookup_widget (searchwin, "searchlist"));
-    ddb_listview_draw_row (search, search_get_idx ((DB_playItem_t *)it), it);
+    if (idx == -1) {
+        ddb_listview_refresh (search, DDB_REFRESH_LIST | DDB_EXPOSE_LIST);
+    }
+    else {
+        ddb_listview_draw_row (search, search_get_idx ((DB_playItem_t *)it), it);
+    }
 }
 
 void main_draw_group_title (DdbListview *listview, GdkDrawable *drawable, DdbListviewIter it, int x, int y, int width, int height) {
