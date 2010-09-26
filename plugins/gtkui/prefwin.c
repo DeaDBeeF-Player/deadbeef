@@ -33,6 +33,7 @@
 #include "../hotkeys/hotkeys.h"
 #include "support.h"
 #include "eq.h"
+#include "ddblistview.h"
 
 #define GLADE_HOOKUP_OBJECT(component,widget,name) \
   g_object_set_data_full (G_OBJECT (component), name, \
@@ -831,6 +832,18 @@ on_configure_plugin_clicked            (GtkButton       *button,
     }
 }
 
+static void
+redraw_headers (void) {
+    DdbListview *playlist = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
+    DdbListview *search = DDB_LISTVIEW (lookup_widget (searchwin, "searchlist"));
+    if (playlist) {
+        ddb_listview_refresh (playlist, DDB_REFRESH_COLUMNS | DDB_EXPOSE_COLUMNS);
+    }
+    if (search) {
+        ddb_listview_refresh (search, DDB_REFRESH_COLUMNS | DDB_EXPOSE_COLUMNS);
+    }
+}
+
 void
 on_tabstrip_light_color_set            (GtkColorButton  *colorbutton,
                                         gpointer         user_data)
@@ -842,6 +855,7 @@ on_tabstrip_light_color_set            (GtkColorButton  *colorbutton,
     deadbeef->conf_set_str ("gtkui.color.tabstrip_light", str);
     deadbeef->sendmessage (M_CONFIGCHANGED, 0, 0, 0);
     gtkui_init_theme_colors ();
+    redraw_headers ();
     tabstrip_redraw ();
 }
 
@@ -857,6 +871,7 @@ on_tabstrip_mid_color_set              (GtkColorButton  *colorbutton,
     deadbeef->conf_set_str ("gtkui.color.tabstrip_mid", str);
     deadbeef->sendmessage (M_CONFIGCHANGED, 0, 0, 0);
     gtkui_init_theme_colors ();
+    redraw_headers ();
     tabstrip_redraw ();
 }
 
@@ -872,6 +887,7 @@ on_tabstrip_dark_color_set             (GtkColorButton  *colorbutton,
     deadbeef->conf_set_str ("gtkui.color.tabstrip_dark", str);
     deadbeef->sendmessage (M_CONFIGCHANGED, 0, 0, 0);
     gtkui_init_theme_colors ();
+    redraw_headers ();
     tabstrip_redraw ();
 }
 
@@ -886,6 +902,7 @@ on_tabstrip_base_color_set             (GtkColorButton  *colorbutton,
     deadbeef->conf_set_str ("gtkui.color.tabstrip_base", str);
     deadbeef->sendmessage (M_CONFIGCHANGED, 0, 0, 0);
     gtkui_init_theme_colors ();
+    redraw_headers ();
     tabstrip_redraw ();
 }
 
@@ -1038,7 +1055,6 @@ on_override_bar_colors_toggled         (GtkToggleButton *togglebutton,
     eq_redraw ();
 }
 
-
 void
 on_override_tabstrip_colors_toggled    (GtkToggleButton *togglebutton,
                                         gpointer         user_data)
@@ -1049,6 +1065,7 @@ on_override_tabstrip_colors_toggled    (GtkToggleButton *togglebutton,
     deadbeef->sendmessage (M_CONFIGCHANGED, 0, 0, 0);
     gtkui_init_theme_colors ();
     prefwin_init_theme_colors ();
+    redraw_headers ();
     tabstrip_redraw ();
 }
 
