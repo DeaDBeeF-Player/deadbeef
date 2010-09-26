@@ -255,6 +255,7 @@ static DB_functions_t deadbeef_api = {
     // plugin events
     .plug_trigger_event_trackchange = (void (*) (DB_playItem_t *from, DB_playItem_t *to))plug_trigger_event_trackchange,
     .plug_trigger_event_trackinfochanged = (void (*) (DB_playItem_t *track))plug_trigger_event_trackinfochanged,
+    .plug_trigger_event_playlistchanged = plug_trigger_event_playlistchanged,
     // misc utilities
     .is_local_file = plug_is_local_file,
 };

@@ -182,6 +182,7 @@ http_parse_shoutcast_meta (HTTP_FILE *fp, const char *meta, int size) {
                 else {
                     vfs_curl_set_meta (fp->track, "title", title);
                 }
+                deadbeef->plug_trigger_event_playlistchanged ();
             }
             return 0;
         }
@@ -389,6 +390,7 @@ http_content_header_handler (void *ptr, size_t size, size_t nmemb, void *stream)
     const uint8_t *end = p + size*nmemb;
     uint8_t key[256];
     uint8_t value[256];
+    int refresh_playlist = 0;
     while (p < end) {
         if (p <= end - 4) {
             if (!memcmp (p, "\r\n\r\n", 4)) {
@@ -414,11 +416,13 @@ http_content_header_handler (void *ptr, size_t size, size_t nmemb, void *stream)
         else if (!strcasecmp (key, "icy-name")) {
             if (fp->track) {
                 vfs_curl_set_meta (fp->track, "album", value);
+                refresh_playlist = 1;
             }
         }
         else if (!strcasecmp (key, "icy-genre")) {
             if (fp->track) {
                 vfs_curl_set_meta (fp->track, "genre", value);
+                refresh_playlist = 1;
             }
         }
         else if (!strcasecmp (key, "icy-metaint")) {
@@ -426,6 +430,9 @@ http_content_header_handler (void *ptr, size_t size, size_t nmemb, void *stream)
             fp->icy_metaint = atoi (value);
             fp->wait_meta = fp->icy_metaint; 
         }
+    }
+    if (refresh_playlist) {
+        deadbeef->plug_trigger_event_playlistchanged ();
     }
     if (!fp->icyheader) {
         fp->gotsomeheader = 1;

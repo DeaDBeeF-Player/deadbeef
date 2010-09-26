@@ -521,6 +521,7 @@ typedef struct {
     // plugin events
     void (*plug_trigger_event_trackchange) (DB_playItem_t *from, DB_playItem_t *to);
     void (*plug_trigger_event_trackinfochanged) (DB_playItem_t *track);
+    void (*plug_trigger_event_playlistchanged) (void);
     // misc utilities
     int (*is_local_file) (const char *fname); // returns 1 for local filename, 0 otherwise
 } DB_functions_t;

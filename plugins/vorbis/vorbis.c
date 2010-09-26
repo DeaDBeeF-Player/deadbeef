@@ -93,7 +93,7 @@ static const char *metainfo[] = {
 };
 
 static void
-update_vorbis_comments (DB_playItem_t *it, vorbis_comment *vc) {
+update_vorbis_comments (DB_playItem_t *it, vorbis_comment *vc, int refresh_playlist) {
     if (vc) {
         deadbeef->pl_delete_all_meta (it);
         for (int i = 0; i < vc->comments; i++) {
@@ -130,6 +130,9 @@ update_vorbis_comments (DB_playItem_t *it, vorbis_comment *vc) {
     f &= ~DDB_TAG_MASK;
     f |= DDB_TAG_VORBISCOMMENTS;
     deadbeef->pl_set_item_flags (it, f);
+    if (refresh_playlist) {
+        deadbeef->plug_trigger_event_playlistchanged ();
+    }
 }
 
 static DB_fileinfo_t *
@@ -229,7 +232,7 @@ cvorbis_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             info->endsample = ov_pcm_total (&info->vorbis_file, -1)-1;
         }
         vorbis_comment *vc = ov_comment (&info->vorbis_file, -1);
-        update_vorbis_comments (it, vc);
+        update_vorbis_comments (it, vc, 1);
     }
     return 0;
 }
@@ -268,7 +271,7 @@ cvorbis_read (DB_fileinfo_t *_info, char *bytes, int size) {
             if (info->ptrack) {
                 info->last_comment_update = info->currentsample;
                 vorbis_comment *vc = ov_comment (&info->vorbis_file, -1);
-                update_vorbis_comments (info->ptrack, vc);
+                update_vorbis_comments (info->ptrack, vc, 1);
                 deadbeef->plug_trigger_event_trackinfochanged (info->ptrack);
             }
             else {
@@ -435,7 +438,7 @@ cvorbis_insert (DB_playItem_t *after, const char *fname) {
 
         // metainfo
         vorbis_comment *vc = ov_comment (&vorbis_file, stream);
-        update_vorbis_comments (it, vc);
+        update_vorbis_comments (it, vc, 0);
         int samplerate = vi->rate;
 
         if (nstreams == 1) {
@@ -515,7 +518,7 @@ cvorbis_read_metadata (DB_playItem_t *it) {
     // metainfo
     vorbis_comment *vc = ov_comment (&vorbis_file, it->tracknum);
     if (vc) {
-        update_vorbis_comments (it, vc);
+        update_vorbis_comments (it, vc, 0);
     }
 
     err = 0;
