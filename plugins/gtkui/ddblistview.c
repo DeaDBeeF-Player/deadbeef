@@ -2485,6 +2485,7 @@ struct set_cursor_t {
     int cursor;
     int prev;
     DdbListview *pl;
+    int noscroll;
 };
 
 static gboolean
@@ -2509,26 +2510,28 @@ ddb_listview_set_cursor_cb (gpointer data) {
         sc->pl->binding->unref (prev_it);
     }
 
-    DdbListviewIter it;
-    DdbListview *ps = sc->pl;
+    if (!sc->noscroll) {
+        DdbListviewIter it;
+        DdbListview *ps = sc->pl;
 
-    int cursor_scroll = ddb_listview_get_row_pos (sc->pl, sc->cursor);
-    int newscroll = sc->pl->scrollpos;
-    if (cursor_scroll < sc->pl->scrollpos) {
-        newscroll = cursor_scroll;
-    }
-    else if (cursor_scroll + sc->pl->rowheight >= sc->pl->scrollpos + sc->pl->list->allocation.height) {
-        newscroll = cursor_scroll + sc->pl->rowheight - sc->pl->list->allocation.height + 1;
-        if (newscroll < 0) {
-            newscroll = 0;
+        int cursor_scroll = ddb_listview_get_row_pos (sc->pl, sc->cursor);
+        int newscroll = sc->pl->scrollpos;
+        if (cursor_scroll < sc->pl->scrollpos) {
+            newscroll = cursor_scroll;
         }
-    }
-    if (sc->pl->scrollpos != newscroll) {
-        GtkWidget *range = sc->pl->scrollbar;
-        gtk_range_set_value (GTK_RANGE (range), newscroll);
-    }
+        else if (cursor_scroll + sc->pl->rowheight >= sc->pl->scrollpos + sc->pl->list->allocation.height) {
+            newscroll = cursor_scroll + sc->pl->rowheight - sc->pl->list->allocation.height + 1;
+            if (newscroll < 0) {
+                newscroll = 0;
+            }
+        }
+        if (sc->pl->scrollpos != newscroll) {
+            GtkWidget *range = sc->pl->scrollbar;
+            gtk_range_set_value (GTK_RANGE (range), newscroll);
+        }
 
-    free (data);
+        free (data);
+    }
     return FALSE;
 }
 
@@ -2539,6 +2542,18 @@ ddb_listview_set_cursor (DdbListview *pl, int cursor) {
     data->prev = prev;
     data->cursor = cursor;
     data->pl = pl;
+    data->noscroll = 0;
+    g_idle_add (ddb_listview_set_cursor_cb, data);
+}
+
+void
+ddb_listview_set_cursor_noscroll (DdbListview *pl, int cursor) {
+    int prev = pl->binding->cursor ();
+    struct set_cursor_t *data = malloc (sizeof (struct set_cursor_t));
+    data->prev = prev;
+    data->cursor = cursor;
+    data->pl = pl;
+    data->noscroll = 1;
     g_idle_add (ddb_listview_set_cursor_cb, data);
 }
 

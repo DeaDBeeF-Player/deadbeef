@@ -793,7 +793,7 @@ songchanged (DdbListview *ps, DB_playItem_t *from, DB_playItem_t *to) {
                 ddb_listview_scroll_to (ps, to_idx);
             }
             if (deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 0)) {
-                ddb_listview_set_cursor (ps, to_idx);
+                ddb_listview_set_cursor_noscroll (ps, to_idx);
             }
         }
     }
