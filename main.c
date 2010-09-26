@@ -503,6 +503,7 @@ save_resume_state (void) {
 void
 restore_resume_state (void) {
     if (conf_get_int ("resume_last_session", 0) && p_isstopped ()) {
+        conf_set_int ("resume_last_session", 0);
         int plt = conf_get_int ("resume.playlist", -1);
         int track = conf_get_int ("resume.track", -1);
         float pos = conf_get_float ("resume.position", -1);
@@ -711,7 +712,9 @@ main (int argc, char *argv[]) {
 
     streamer_init ();
 
-    restore_resume_state ();
+    if (!noloadpl) {
+        restore_resume_state ();
+    }
 
     // this runs in main thread (blocks right here)
     player_mainloop ();
