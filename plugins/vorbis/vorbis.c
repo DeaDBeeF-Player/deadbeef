@@ -92,10 +92,20 @@ static const char *metainfo[] = {
     NULL
 };
 
-static void
+// refresh_playlist == 1 means "call plug_trigger_event_playlistchanged if metadata had been changed"
+// refresh_playlist == 2 means "don't change memory, just check for changes"
+static int
 update_vorbis_comments (DB_playItem_t *it, vorbis_comment *vc, int refresh_playlist) {
+    if (refresh_playlist == 1) {
+        if (!update_vorbis_comments (it, vc, 2)) {
+            return 0;
+        }
+    }
+
     if (vc) {
-        deadbeef->pl_delete_all_meta (it);
+        if (refresh_playlist != 2) {
+            deadbeef->pl_delete_all_meta (it);
+        }
         for (int i = 0; i < vc->comments; i++) {
             char *s = vc->user_comments[i];
             int m;
@@ -103,10 +113,18 @@ update_vorbis_comments (DB_playItem_t *it, vorbis_comment *vc, int refresh_playl
                 int l = strlen (metainfo[m]);
                 if (vc->comment_lengths[i] > l && !strncasecmp (metainfo[m], s, l) && s[l] == '=') {
                     trace ("ogg adding %s\n", s);
-                    deadbeef->pl_append_meta (it, metainfo[m+1], s + l + 1);
+                    if (refresh_playlist == 2) {
+                        const char *val = deadbeef->pl_find_meta (it, metainfo[m+1]);
+                        if (!val || strcmp (val, s+l+1)) {
+                            return 1;
+                        }
+                    }
+                    else {
+                        deadbeef->pl_append_meta (it, metainfo[m+1], s + l + 1);
+                    }
                 }
             }
-            if (!metainfo[m]) {
+            if (!metainfo[m] && refresh_playlist != 2) {
                 if (!strncasecmp (s, "cuesheet=", 9)) {
                     deadbeef->pl_add_meta (it, "cuesheet", s + 9);
                 }
@@ -124,6 +142,9 @@ update_vorbis_comments (DB_playItem_t *it, vorbis_comment *vc, int refresh_playl
                 }
             }
         }
+    }
+    if (refresh_playlist == 2) {
+        return 0;
     }
     deadbeef->pl_add_meta (it, "title", NULL);
     uint32_t f = deadbeef->pl_get_item_flags (it);
