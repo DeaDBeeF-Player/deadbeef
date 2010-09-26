@@ -320,12 +320,6 @@ void
 on_write_tags_clicked                  (GtkButton       *button,
                                         gpointer         user_data)
 {
-#if 0
-    if (!deadbeef->conf_get_int ("enable_tag_writing", 0)) {
-        trace ("tag writing disabled\n");
-        return;
-    }
-#endif
     if (!track || !track->decoder_id) {
         return;
     }
