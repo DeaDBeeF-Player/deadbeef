@@ -2125,7 +2125,7 @@ ddb_listview_header_render (DdbListview *ps) {
                 if (x < widget->allocation.width) {
                     gtk_paint_box (theme_button->style, ps->backbuf_header, GTK_STATE_ACTIVE, GTK_SHADOW_ETCHED_IN, NULL, widget, "button", x, 0, w, h);
                 }
-                x = ps->col_movepos;
+                x = ps->col_movepos - ps->hscrollpos;
                 if (x >= widget->allocation.width) {
                     break;
                 }
@@ -2226,8 +2226,7 @@ ddb_listview_header_motion_notify_event          (GtkWidget       *widget,
         DdbListviewColumn *c;
         int i;
         for (i = 0, c = ps->columns; i < ps->header_dragging && c; c = c->next, i++);
-        ps->col_movepos = ev_x - ps->header_dragpt[0];
-
+        ps->col_movepos = ev_x - ps->header_dragpt[0] + ps->hscrollpos;
         // find closest column to the left
         int inspos = -1;
         DdbListviewColumn *cc;
