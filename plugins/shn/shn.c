@@ -401,10 +401,6 @@ shn_free_decoder (shn_fileinfo_t *info) {
                 info->shnfile->decode_state->writefub = NULL;
             }
         }
-        if (info->shnfile) {
-            shn_unload(info->shnfile);
-            info->shnfile = NULL;
-        }
     }
 }
 
@@ -412,6 +408,10 @@ void
 shn_free (DB_fileinfo_t *_info) {
     shn_fileinfo_t *info = (shn_fileinfo_t *)_info;
     shn_free_decoder (info);
+    if (info->shnfile) {
+        shn_unload(info->shnfile);
+        info->shnfile = NULL;
+    }
     if (info->buffer) {
         free(info->buffer);
         info->buffer = NULL;
