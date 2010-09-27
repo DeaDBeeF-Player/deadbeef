@@ -260,6 +260,7 @@ aac_probe (DB_FILE *fp, const char *fname, MP4FILE_CB *cb, float *duration, int 
         trace ("m4a container detected, ntracks=%d\n", ntracks);
         int i = -1;
         trace ("looking for mp4 data...\n");
+        int sr = -1;
         for (i = 0; i < ntracks; i++) {
             unsigned char*  buff = 0;
             unsigned int    buff_size = 0;
@@ -267,6 +268,7 @@ aac_probe (DB_FILE *fp, const char *fname, MP4FILE_CB *cb, float *duration, int 
             mp4ff_get_decoder_config(mp4, i, &buff, &buff_size);
             if(buff){
                 int rc = AudioSpecificConfig(buff, buff_size, &mp4ASC);
+                sr = mp4ASC.samplingFrequency;
                 free(buff);
                 if(rc < 0)
                     continue;
@@ -277,7 +279,12 @@ aac_probe (DB_FILE *fp, const char *fname, MP4FILE_CB *cb, float *duration, int 
         if (i != ntracks) 
         {
             trace ("mp4 track: %d\n", i);
-            *samplerate = mp4ff_get_sample_rate (mp4, i);
+            if (sr != -1) {
+                *samplerate = sr;
+            }
+            else {
+                *samplerate = mp4ff_get_sample_rate (mp4, i);
+            }
             *channels = mp4ff_get_channel_count (mp4, i);
             int samples = mp4ff_num_samples(mp4, i) * 1024;
             trace ("mp4 nsamples=%d, samplerate=%d\n", samples, *samplerate);
