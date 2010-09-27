@@ -73,7 +73,7 @@ static DB_decoder_t plugin;
 DB_functions_t *deadbeef;
 
 #define BUFFER_SIZE 24576
-#define OUT_BUFFER_SIZE 50000
+#define OUT_BUFFER_SIZE 100000 // one block may be up to 22K samples, which is 88Kb for stereo
 #define HEADER_SIZE 14
 typedef struct {
     DB_fileinfo_t info;
@@ -254,6 +254,7 @@ error:
             }
         }
     }
+    trace ("n_decoded: %d (%d bytes)\n", n_decoded, n_decoded * dca_blocks_num (ddb_state->state) * 2);
     return n_decoded;
 }
 
