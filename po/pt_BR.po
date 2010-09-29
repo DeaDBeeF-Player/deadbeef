@@ -74,7 +74,6 @@ msgid "DeaDBeeF %s ChangeLog"
 msgstr "Registro de alterações - DeaDBeeF %s"
 
 #: ../plugins/gtkui/callbacks.c:714
-#, fuzzy
 msgid "ChangeLog"
 msgstr "ChangeLog"
 
