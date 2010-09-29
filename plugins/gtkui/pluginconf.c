@@ -199,7 +199,7 @@ plugin_configure (GtkWidget *parentwin, DB_plugin_t *p) {
         GtkWidget *prop = NULL;
         GtkWidget *cont = NULL;
         if (!strcmp (type, "entry") || !strcmp (type, "password")) {
-            label = gtk_label_new (labeltext);
+            label = gtk_label_new (_(labeltext));
             gtk_widget_show (label);
             prop = gtk_entry_new ();
             gtk_entry_set_activates_default (GTK_ENTRY (prop), TRUE);
@@ -208,17 +208,17 @@ plugin_configure (GtkWidget *parentwin, DB_plugin_t *p) {
             gtk_entry_set_text (GTK_ENTRY (prop), deadbeef->conf_get_str (key, def));
         }
         else if (!strcmp (type, "checkbox")) {
-            prop = gtk_check_button_new_with_label (labeltext);
+            prop = gtk_check_button_new_with_label (_(labeltext));
             g_signal_connect (G_OBJECT (prop), "toggled", G_CALLBACK (prop_changed), win);
             gtk_widget_show (prop);
             int val = deadbeef->conf_get_int (key, atoi (def));
             gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (prop), val);
         }
         else if (!strcmp (type, "file")) {
-            label = gtk_label_new (labeltext);
+            label = gtk_label_new (_(labeltext));
             gtk_widget_show (label);
             if (deadbeef->conf_get_int ("gtkui.pluginconf.use_filechooser_button", 0)) {
-                prop = gtk_file_chooser_button_new (labeltext, GTK_FILE_CHOOSER_ACTION_OPEN);
+                prop = gtk_file_chooser_button_new (_(labeltext), GTK_FILE_CHOOSER_ACTION_OPEN);
                 gtk_widget_show (prop);
                 gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (prop), deadbeef->conf_get_str (key, def));
                 g_signal_connect (G_OBJECT (prop), "file-set", G_CALLBACK (prop_changed), win);
@@ -256,7 +256,7 @@ plugin_configure (GtkWidget *parentwin, DB_plugin_t *p) {
                 step = 1;
             }
             prop = gtk_hscale_new_with_range (min, max, step);
-            label = gtk_label_new (labeltext);
+            label = gtk_label_new (_(labeltext));
             gtk_widget_show (label);
             g_signal_connect (G_OBJECT (prop), "value-changed", G_CALLBACK (prop_changed), win);
             gtk_widget_show (prop);
