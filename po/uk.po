@@ -147,11 +147,11 @@ msgstr "Скинути все на нуль"
 
 #: ../plugins/gtkui/eq.c:307
 msgid "Zero Preamp"
-msgstr "Скинути на нуль підсилення"
+msgstr "Скинути підсилення на нуль"
 
 #: ../plugins/gtkui/eq.c:314
 msgid "Zero Bands"
-msgstr "Скинути на нуль частоти"
+msgstr "Скинути частоти на нуль"
 
 #: ../plugins/gtkui/eq.c:321
 msgid "Save Preset"
@@ -250,7 +250,7 @@ msgstr "Новий список програвання"
 
 #: ../plugins/gtkui/interface.c:197 ../plugins/gtkui/deadbeef.glade.h:74
 msgid "Load playlist"
-msgstr "Викликати список програвання"
+msgstr "Завантажити список програвання"
 
 #: ../plugins/gtkui/interface.c:201 ../plugins/gtkui/deadbeef.glade.h:111
 msgid "Save playlist"
@@ -372,11 +372,11 @@ msgstr "Виділяти поточну пісню"
 
 #: ../plugins/gtkui/interface.c:382 ../plugins/gtkui/deadbeef.glade.h:124
 msgid "Stop after current"
-msgstr "Зупинити піля поточного"
+msgstr "Зупинити піcля поточного"
 
 #: ../plugins/gtkui/interface.c:394 ../plugins/gtkui/deadbeef.glade.h:69
 msgid "Jump to current track"
-msgstr "Перескочити на поточного треку"
+msgstr "Перескочити на поточний трек"
 
 #: ../plugins/gtkui/interface.c:401 ../plugins/gtkui/interface.c:408
 #: ../plugins/gtkui/deadbeef.glade.h:155
@@ -529,7 +529,7 @@ msgstr "Гурт / Альбом Виконавець"
 
 #: ../plugins/gtkui/interface.c:1440 ../plugins/gtkui/plcommon.c:882
 msgid "Custom"
-msgstr "Користувацький"
+msgstr "Користувацьке"
 
 #: ../plugins/gtkui/interface.c:1446 ../plugins/gtkui/interface.c:3124
 #: ../plugins/gtkui/deadbeef.glade.h:49
