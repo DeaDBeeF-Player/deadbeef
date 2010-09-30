@@ -475,7 +475,7 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
                 continue;
             count++;
             GtkWidget *actionitem;
-            actionitem = gtk_menu_item_new_with_mnemonic (action->title);
+            actionitem = gtk_menu_item_new_with_mnemonic (_(action->title));
             gtk_widget_show (actionitem);
             gtk_container_add (GTK_CONTAINER (playlist_menu), actionitem);
             g_object_set_data (G_OBJECT (actionitem), "ps", listview);
