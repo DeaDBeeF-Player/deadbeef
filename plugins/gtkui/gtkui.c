@@ -1001,6 +1001,7 @@ gtkui_thread (void *ctx) {
     trkproperties_destroy ();
     progress_destroy ();
     gtkui_hide_status_icon ();
+    draw_free ();
     gtk_widget_destroy (mainwin);
     gtk_widget_destroy (searchwin);
     gdk_threads_leave ();

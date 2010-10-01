@@ -95,6 +95,19 @@ static GtkStyle *font_style = NULL;
 static PangoWeight font_weight = PANGO_WEIGHT_NORMAL;
 
 void
+draw_free (void) {
+    draw_end ();
+    if (pangoctx) {
+        g_object_unref (pangoctx);
+        pangoctx = NULL;
+    }
+    if (pangolayout) {
+        g_object_unref (pangolayout);
+        pangolayout = NULL;
+    }
+}
+
+void
 draw_init_font (GtkStyle *new_font_style) {
     if (!pango_ready || (new_font_style && font_style != new_font_style)) {
         if (pangoctx) {
