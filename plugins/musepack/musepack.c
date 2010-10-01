@@ -20,6 +20,7 @@
 #include <assert.h>
 #include <limits.h>
 #include <unistd.h>
+#include <math.h>
 #include "mpc/mpcdec.h"
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
@@ -336,6 +337,24 @@ musepack_insert (DB_playItem_t *after, const char *fname) {
     int totalsamples = mpc_streaminfo_get_length_samples (&si);
     double dur = mpc_streaminfo_get_length (&si);
 
+    // replay gain
+    float gain_title = 0.f;
+    float gain_album = 0.f;
+    float peak_title = 1.f;
+    float peak_album = 1.f;
+    if (si.gain_title != 0) {
+        gain_title = 64.82-si.gain_title/256.0;
+    }
+    if (si.gain_album != 0) {
+        gain_album = 64.82-si.gain_album/256.0;
+    }
+    if (si.peak_title != 0) {
+        peak_title = pow (10, si.peak_title / (20.0 * 256.0)) / (1<<15);
+    }
+    if (si.peak_album != 0) {
+        peak_album = pow (10, si.peak_album / (20.0 * 256.0)) / (1<<15);
+    }
+
     // chapters
     int nchapters = mpc_demux_chap_nb (demux);
     DB_playItem_t *prev = NULL;
@@ -351,6 +370,17 @@ musepack_insert (DB_playItem_t *after, const char *fname) {
             it->tracknum = i;
             it->startsample = ch->sample;
             it->endsample = totalsamples-1;
+            float gain = gain_title, peak = peak_title;
+            if (ch->gain != 0) {
+                gain = 64.82-ch->gain/256.0;
+            }
+            if (ch->peak != 0) {
+                peak = pow (10, ch->peak / (20.0 * 256.0)) / (1<<15);
+            }
+            it->replaygain_album_gain = gain_album;
+            it->replaygain_album_peak = peak_album;
+            it->replaygain_track_gain = gain_title;
+            it->replaygain_track_peak = peak_title;
             deadbeef->pl_set_item_flags (it, DDB_IS_SUBTRACK);
             if (!prev) {
                 meta = deadbeef->pl_item_alloc ();
@@ -392,6 +422,11 @@ musepack_insert (DB_playItem_t *after, const char *fname) {
     deadbeef->pl_set_item_duration (it, dur);
 
     /*int apeerr = */deadbeef->junk_apev2_read (it, fp);
+    it->replaygain_album_gain = gain_album;
+    it->replaygain_album_peak = peak_album;
+    it->replaygain_track_gain = gain_title;
+    it->replaygain_track_peak = peak_title;
+
     deadbeef->fclose (fp);
 
     deadbeef->pl_lock ();
