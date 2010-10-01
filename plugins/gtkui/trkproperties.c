@@ -156,7 +156,7 @@ trkproperties_fill_metadata (void) {
         if (!value) {
             value = "";
         }
-        gtk_list_store_set (store, &iter, 0, types[i+1], 1, value, -1);
+        gtk_list_store_set (store, &iter, 0, _(types[i+1]), 1, value, -1);
         i += 2;
     }
     deadbeef->pl_unlock ();

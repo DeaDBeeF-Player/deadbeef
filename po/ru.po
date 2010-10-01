@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.4.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-01 20:18+0300\n"
+"POT-Creation-Date: 2010-10-01 19:58+0200\n"
 "PO-Revision-Date: 2010-09-03 14:22+0200\n"
 "Last-Translator: Dmitriy Simbiriatin <slpiv@mail.ru>\n"
 "Language-Team: ru <slpiv@mail.ru>\n"
+"Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: ru\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
-"10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Pootle 2.0.5\n"
 
 #: ../plugins/gtkui/callbacks.c:97
@@ -503,11 +503,14 @@ msgstr "Обложка альбома"
 msgid "Artist - Album"
 msgstr "Исполнитель - Альбом"
 
+#. Track properties dialog
 #: ../plugins/gtkui/interface.c:1434 ../plugins/gtkui/plcommon.c:878
+#: ../translation/extra.c:55
 msgid "Artist"
 msgstr "Исполнитель"
 
 #: ../plugins/gtkui/interface.c:1435 ../plugins/gtkui/interface.c:1822
+#: ../translation/extra.c:59
 msgid "Album"
 msgstr "Альбом"
 
@@ -523,7 +526,7 @@ msgstr "Длина"
 msgid "Track"
 msgstr "Дорожка"
 
-#: ../plugins/gtkui/interface.c:1439
+#: ../plugins/gtkui/interface.c:1439 ../translation/extra.c:58
 msgid "Band / Album Artist"
 msgstr "Группа / Исполнитель"
 
@@ -1354,6 +1357,54 @@ msgstr "Путь к HVSC"
 msgid "Timidity++ bank configuration file"
 msgstr "Файл конфигурации для банка Timidity++"
 
+#: ../translation/extra.c:56
+#, fuzzy
+msgid "Track Title"
+msgstr "№"
+
+#: ../translation/extra.c:57
+msgid "Performer"
+msgstr ""
+
+#: ../translation/extra.c:60
+msgid "Date"
+msgstr ""
+
+#: ../translation/extra.c:61
+#, fuzzy
+msgid "Track Number"
+msgstr "№"
+
+#: ../translation/extra.c:62
+#, fuzzy
+msgid "Total Tracks"
+msgstr "Заголовок / Исполнитель"
+
+#: ../translation/extra.c:63
+msgid "Genre"
+msgstr ""
+
+#: ../translation/extra.c:64
+msgid "Composer"
+msgstr ""
+
+#: ../translation/extra.c:65
+#, fuzzy
+msgid "Disc Number"
+msgstr "Номер композиции"
+
+#: ../translation/extra.c:66
+msgid "Comment"
+msgstr ""
+
+#: ../translation/extra.c:67
+msgid "Encoder / Vendor"
+msgstr ""
+
+#: ../translation/extra.c:68
+msgid "Copyright"
+msgstr ""
+
 #~ msgid "Couldn't get enough memory for input buffering."
 #~ msgstr ""
 #~ "Не удалось выделить достаточное количество памяти для входного буфера."
@@ -1404,9 +1455,6 @@ msgstr "Файл конфигурации для банка Timidity++"
 #~ "<b>Внимание</b>: возможность редактирования тегов находится\n"
 #~ "в разработке.\n"
 #~ "<b>Создавайте резервные копии</b> перед использованием."
-
-#~ msgid "File number"
-#~ msgstr "Номер композиции"
 
 #~ msgid "Sound (adv.)"
 #~ msgstr "Звук (прод.)"
