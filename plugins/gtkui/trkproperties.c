@@ -166,10 +166,10 @@ trkproperties_fill_metadata (void) {
     GtkTreeIter iter;
     gtk_list_store_clear (propstore);
     gtk_list_store_append (propstore, &iter);
-    gtk_list_store_set (propstore, &iter, 0, "Location", 1, track->fname, -1);
+    gtk_list_store_set (propstore, &iter, 0, _("Location"), 1, track->fname, -1);
     gtk_list_store_append (propstore, &iter);
     snprintf (temp, sizeof (temp), "%d", track->tracknum);
-    gtk_list_store_set (propstore, &iter, 0, "Subtrack Index", 1, temp, -1);
+    gtk_list_store_set (propstore, &iter, 0, _("Subtrack Index"), 1, temp, -1);
     gtk_list_store_append (propstore, &iter);
     deadbeef->pl_format_time (deadbeef->pl_get_item_duration (track), temp, sizeof (temp));
     gtk_list_store_set (propstore, &iter, 0, _("Duration"), 1, temp, -1);
