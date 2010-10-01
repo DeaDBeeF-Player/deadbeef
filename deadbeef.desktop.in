@@ -2,12 +2,14 @@
 Encoding=UTF-8
 Name=DeaDBeeF
 GenericName=Audio Player
+GenericName[pt_BR]=Reprodutor de áudio
+GenericName[ru]=Аудио плеер
 Comment=Listen to music
+Comment[pt_BR]=Escute músicas
+Comment[ru]=Слушай музыку
 Exec=deadbeef %F
 MimeType=application/ogg;audio/x-vorbis+ogg;application/x-ogg;audio/mp3;audio/prs.sid;audio/x-flac;audio/mpeg;audio/x-mpeg;audio/x-mod;audio/x-it;audio/x-s3m;audio/x-xm;
 Categories=AudioVideo;Player;GTK;
 Terminal=false
 Type=Application
 Icon=deadbeef
-GenericName[ru]=Аудио плеер
-Comment[ru]=Слушай музыку
