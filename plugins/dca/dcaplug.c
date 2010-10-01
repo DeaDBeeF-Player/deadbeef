@@ -397,7 +397,41 @@ dts_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     }
     info->frame_byte_size = len;
 
-    _info->channels = channels_multi (info->flags);
+    int flags = info->flags &~ (DCA_LFE | DCA_ADJUST_LEVEL);
+    switch (flags) {
+    case DCA_MONO:
+        _info->channels = 1;
+	break;
+    case DCA_CHANNEL:
+    case DCA_STEREO:
+    case DCA_DOLBY:
+    case DCA_STEREO_SUMDIFF:
+    case DCA_STEREO_TOTAL:
+        _info->channels = 2;
+	break;
+    case DCA_3F:
+    case DCA_2F1R:
+        _info->channels = 3;
+	break;
+    case DCA_2F2R:
+    case DCA_3F1R:
+        _info->channels = 4;
+	break;
+    case DCA_3F2R:
+        _info->channels = 5;
+    case DCA_4F2R:
+        _info->channels = 6;
+	break;
+    }
+
+    if (info->flags & DCA_LFE) {
+        _info->channels++;
+    }
+    if (!_info->channels) {
+        trace ("dts: invalid numchannels\n");
+        return -1;
+    }
+
     _info->samplerate = info->sample_rate;
 
     if (it->endsample > 0) {
