@@ -401,27 +401,28 @@ dts_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     switch (flags) {
     case DCA_MONO:
         _info->channels = 1;
-	break;
+        break;
     case DCA_CHANNEL:
     case DCA_STEREO:
     case DCA_DOLBY:
     case DCA_STEREO_SUMDIFF:
     case DCA_STEREO_TOTAL:
         _info->channels = 2;
-	break;
+        break;
     case DCA_3F:
     case DCA_2F1R:
         _info->channels = 3;
-	break;
+        break;
     case DCA_2F2R:
     case DCA_3F1R:
         _info->channels = 4;
-	break;
+        break;
     case DCA_3F2R:
         _info->channels = 5;
+        break;
     case DCA_4F2R:
         _info->channels = 6;
-	break;
+        break;
     }
 
     if (info->flags & DCA_LFE) {
