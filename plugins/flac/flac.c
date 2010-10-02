@@ -618,24 +618,6 @@ cflac_insert (DB_playItem_t *after, const char *fname) {
         goto cflac_insert_fail;
     }
 
-#if 0
-    FLAC__stream_decoder_set_md5_checking(decoder, 0);
-    // try embedded cue
-    FLAC__stream_decoder_set_metadata_respond_all (decoder);
-    status = FLAC__stream_decoder_init_stream (decoder, flac_read_cb, flac_seek_cb, flac_tell_cb, flac_lenght_cb, flac_eof_cb, cflac_init_write_callback, cflac_init_cue_metadata_callback, cflac_init_error_callback, &cb);
-    if (status != FLAC__STREAM_DECODER_INIT_STATUS_OK || cflac_init_stop_decoding) {
-        trace ("flac: FLAC__stream_decoder_init_stream failed\n");
-        goto cflac_insert_fail;
-    }
-    if (!FLAC__stream_decoder_process_until_end_of_metadata (decoder) || cflac_init_stop_decoding) {
-        trace ("flac: FLAC__stream_decoder_process_until_end_of_metadata failed\n");
-        goto cflac_insert_fail;
-    }
-
-    FLAC__stream_decoder_delete(decoder);
-    decoder = NULL;
-#endif
-
     // read all metadata
     FLAC__stream_decoder_set_md5_checking(decoder, 0);
     FLAC__stream_decoder_set_metadata_respond_all (decoder);
@@ -689,13 +671,6 @@ cflac_insert (DB_playItem_t *after, const char *fname) {
         deadbeef->pl_item_unref (cue_after);
         trace ("flac: loaded external cuesheet\n");
         return cue_after;
-    }
-    decoder = FLAC__stream_decoder_new();
-    if (!decoder) {
-        if (info.file) {
-            deadbeef->fclose (info.file);
-        }
-        goto cflac_insert_fail;
     }
     after = deadbeef->pl_insert_item (after, it);
     deadbeef->pl_item_unref (it);
