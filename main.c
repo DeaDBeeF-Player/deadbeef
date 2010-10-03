@@ -737,8 +737,8 @@ main (int argc, char *argv[]) {
 
     // stop streaming and playback before unloading plugins
     p_stop ();
-    p_free ();
     streamer_free ();
+    p_free ();
 
     // plugins might still hood references to playitems,
     // and query configuration in background
