@@ -459,6 +459,7 @@ uint32 psf2_load_file(mips_cpu_context *cpu, char *file, uint8 *buf, uint32 bufl
 void *psf2_start(const char *path, uint8 *buffer, uint32 length)
 {
     psf2_synth_t *s = malloc (sizeof (psf2_synth_t));
+    memset (s, 0, sizeof (psf2_synth_t));
 
 	uint8 *file, *lib_decoded;
 	uint32 irx_len;

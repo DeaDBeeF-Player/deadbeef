@@ -239,6 +239,7 @@ aoplug_insert (DB_playItem_t *after, const char *fname) {
         return NULL;
     }
     ao_display_info info;
+    memset (&info, 0, sizeof (info));
     int have_info = 0;
     if (ao_get_info (type, dec, &info) == AO_SUCCESS) {
         have_info = 1;
