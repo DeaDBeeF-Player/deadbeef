@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: deadbeef\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-09-22 04:33+0000\n"
+"POT-Creation-Date: 2010-09-30 04:36+0000\n"
 "PO-Revision-Date: 2010-05-24 00:21+0100\n"
 "Last-Translator: Yarema aka Knedlyk <yupadmin@gmail.com>\n"
 "Language-Team: UKRAINIAN <translate@linux.org.ua>\n"
@@ -45,55 +45,55 @@ msgstr "Додати теку(и) до списку програвання..."
 msgid "Follow symlinks"
 msgstr "Переходити за символьними посиланнями"
 
-#: ../plugins/gtkui/callbacks.c:663
+#: ../plugins/gtkui/callbacks.c:667
 msgid "Failed while reading help file"
 msgstr "Невдача при читанні файлу допомоги"
 
-#: ../plugins/gtkui/callbacks.c:673
+#: ../plugins/gtkui/callbacks.c:677
 msgid "Failed to load help file"
-msgstr "Не можу прочитати файл перемоги"
+msgstr "Не можу прочитати файл допомоги"
 
-#: ../plugins/gtkui/callbacks.c:688
+#: ../plugins/gtkui/callbacks.c:692
 msgid "help.txt"
 msgstr "help.txt"
 
-#: ../plugins/gtkui/callbacks.c:689 ../plugins/gtkui/interface.c:1125
+#: ../plugins/gtkui/callbacks.c:693 ../plugins/gtkui/interface.c:1125
 #: ../plugins/gtkui/deadbeef.glade.h:52
 msgid "Help"
 msgstr "Допомога"
 
-#: ../plugins/gtkui/callbacks.c:699
+#: ../plugins/gtkui/callbacks.c:703
 #, c-format
 msgid "About DeaDBeeF %s"
 msgstr "Про DeaDBeeF %s"
 
-#: ../plugins/gtkui/callbacks.c:701
+#: ../plugins/gtkui/callbacks.c:705
 msgid "about.txt"
 msgstr "about.txt"
 
-#: ../plugins/gtkui/callbacks.c:712
+#: ../plugins/gtkui/callbacks.c:716
 #, c-format
 msgid "DeaDBeeF %s ChangeLog"
 msgstr "DeaDBeeF %s Список Змін"
 
-#: ../plugins/gtkui/callbacks.c:714
+#: ../plugins/gtkui/callbacks.c:718
 msgid "ChangeLog"
 msgstr "Список змін"
 
-#: ../plugins/gtkui/callbacks.c:725
+#: ../plugins/gtkui/callbacks.c:729
 msgid "COPYING.GPLv2"
 msgstr "COPYING.GPLv2"
 
-#: ../plugins/gtkui/callbacks.c:736
+#: ../plugins/gtkui/callbacks.c:740
 msgid "COPYING.LGPLv2.1"
 msgstr "COPYING.LGPLv2.1"
 
-#: ../plugins/gtkui/callbacks.c:1072
+#: ../plugins/gtkui/callbacks.c:1080
 #, c-format
 msgid "DeaDBeeF Translators"
 msgstr "Перекладачі DeaDBeeF"
 
-#: ../plugins/gtkui/callbacks.c:1074
+#: ../plugins/gtkui/callbacks.c:1082
 msgid "translators.txt"
 msgstr "translators.txt"
 
@@ -101,15 +101,15 @@ msgstr "translators.txt"
 msgid "Edit playlist"
 msgstr "Редагувати список програвання"
 
-#: ../plugins/gtkui/ddbtabstrip.c:703
+#: ../plugins/gtkui/ddbtabstrip.c:701
 msgid "Rename Playlist"
 msgstr "Перейменувати список програвання"
 
-#: ../plugins/gtkui/ddbtabstrip.c:707
+#: ../plugins/gtkui/ddbtabstrip.c:705
 msgid "Remove Playlist"
 msgstr "Вилучити список програвання"
 
-#: ../plugins/gtkui/ddbtabstrip.c:711
+#: ../plugins/gtkui/ddbtabstrip.c:709
 msgid "Add New Playlist"
 msgstr "Додати новий список програвання"
 
@@ -147,11 +147,11 @@ msgstr "Скинути все на нуль"
 
 #: ../plugins/gtkui/eq.c:307
 msgid "Zero Preamp"
-msgstr "Скинути на нуль підсилення"
+msgstr "Скинути підсилення на нуль"
 
 #: ../plugins/gtkui/eq.c:314
 msgid "Zero Bands"
-msgstr "Скинути на нуль частоти"
+msgstr "Скинути частоти на нуль"
 
 #: ../plugins/gtkui/eq.c:321
 msgid "Save Preset"
@@ -202,23 +202,23 @@ msgstr "На паузі |"
 msgid "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
 msgstr "%s%s %s| %dГц | %d біт | %s | %d:%02d / %s | %d треків | %s повна тривалість програвання"
 
-#: ../plugins/gtkui/gtkui.c:660
+#: ../plugins/gtkui/gtkui.c:661
 msgid "Save Playlist As"
 msgstr "Зберегти список програвання як"
 
-#: ../plugins/gtkui/gtkui.c:669 ../plugins/gtkui/gtkui.c:730
+#: ../plugins/gtkui/gtkui.c:670 ../plugins/gtkui/gtkui.c:731
 msgid "DeaDBeeF playlist files (*.dbpl)"
 msgstr "Файли списків програвання DeaDBeeF (*.dbpl)"
 
-#: ../plugins/gtkui/gtkui.c:723
+#: ../plugins/gtkui/gtkui.c:724
 msgid "Load Playlist"
 msgstr "Завантажити список програвання"
 
-#: ../plugins/gtkui/gtkui.c:863
+#: ../plugins/gtkui/gtkui.c:864
 msgid "New Playlist"
 msgstr "Новий список програвання"
 
-#: ../plugins/gtkui/gtkui.c:866
+#: ../plugins/gtkui/gtkui.c:867
 #, c-format
 msgid "New Playlist (%d)"
 msgstr "Новий список програвання (%d)"
@@ -250,7 +250,7 @@ msgstr "Новий список програвання"
 
 #: ../plugins/gtkui/interface.c:197 ../plugins/gtkui/deadbeef.glade.h:74
 msgid "Load playlist"
-msgstr "Викликати список програвання"
+msgstr "Завантажити список програвання"
 
 #: ../plugins/gtkui/interface.c:201 ../plugins/gtkui/deadbeef.glade.h:111
 msgid "Save playlist"
@@ -289,7 +289,7 @@ msgid "Selection"
 msgstr "Вибір"
 
 #: ../plugins/gtkui/interface.c:265 ../plugins/gtkui/plcommon.c:426
-#: ../plugins/gtkui/prefwin.c:333 ../plugins/gtkui/deadbeef.glade.h:106
+#: ../plugins/gtkui/prefwin.c:334 ../plugins/gtkui/deadbeef.glade.h:106
 msgid "Remove"
 msgstr "Вилучити"
 
@@ -372,11 +372,11 @@ msgstr "Виділяти поточну пісню"
 
 #: ../plugins/gtkui/interface.c:382 ../plugins/gtkui/deadbeef.glade.h:124
 msgid "Stop after current"
-msgstr "Зупинити піля поточного"
+msgstr "Зупинити піcля поточного"
 
 #: ../plugins/gtkui/interface.c:394 ../plugins/gtkui/deadbeef.glade.h:69
 msgid "Jump to current track"
-msgstr "Перескочити на поточного треку"
+msgstr "Перескочити на поточний трек"
 
 #: ../plugins/gtkui/interface.c:401 ../plugins/gtkui/interface.c:408
 #: ../plugins/gtkui/deadbeef.glade.h:155
@@ -491,7 +491,7 @@ msgid "Item Index"
 msgstr "Індекс"
 
 #. create default set of columns
-#: ../plugins/gtkui/interface.c:1431 ../plugins/gtkui/mainplaylist.c:300
+#: ../plugins/gtkui/interface.c:1431 ../plugins/gtkui/mainplaylist.c:305
 msgid "Playing"
 msgstr "Програвання"
 
@@ -511,7 +511,7 @@ msgstr "Виконавець"
 msgid "Album"
 msgstr "Альбом"
 
-#: ../plugins/gtkui/interface.c:1436 ../plugins/gtkui/prefwin.c:611
+#: ../plugins/gtkui/interface.c:1436 ../plugins/gtkui/prefwin.c:612
 msgid "Title"
 msgstr "Назва"
 
@@ -529,7 +529,7 @@ msgstr "Гурт / Альбом Виконавець"
 
 #: ../plugins/gtkui/interface.c:1440 ../plugins/gtkui/plcommon.c:882
 msgid "Custom"
-msgstr "Користувацький"
+msgstr "Користувацьке"
 
 #: ../plugins/gtkui/interface.c:1446 ../plugins/gtkui/interface.c:3124
 #: ../plugins/gtkui/deadbeef.glade.h:49
@@ -862,19 +862,19 @@ msgstr ""
 "  [r]копірайт, [f]назва файлу, [T]мітки\n"
 "Приклад: %a - %t [%l]"
 
-#: ../plugins/gtkui/mainplaylist.c:301 ../plugins/gtkui/search.c:434
+#: ../plugins/gtkui/mainplaylist.c:306 ../plugins/gtkui/search.c:439
 msgid "Artist / Album"
 msgstr "Виконавець / Альбом"
 
-#: ../plugins/gtkui/mainplaylist.c:302 ../plugins/gtkui/search.c:435
+#: ../plugins/gtkui/mainplaylist.c:307 ../plugins/gtkui/search.c:440
 msgid "Track No"
 msgstr "Номер треку"
 
-#: ../plugins/gtkui/mainplaylist.c:303 ../plugins/gtkui/search.c:436
+#: ../plugins/gtkui/mainplaylist.c:308 ../plugins/gtkui/search.c:441
 msgid "Title / Track Artist"
 msgstr "Назва / Виконавець треку"
 
-#: ../plugins/gtkui/mainplaylist.c:304 ../plugins/gtkui/search.c:437
+#: ../plugins/gtkui/mainplaylist.c:309 ../plugins/gtkui/search.c:442
 #: ../plugins/gtkui/trkproperties.c:175
 msgid "Duration"
 msgstr "Тривалість"
@@ -944,29 +944,29 @@ msgstr "Відкрити файл..."
 msgid "Setup %s"
 msgstr "Встановлення %s"
 
-#: ../plugins/gtkui/prefwin.c:98
+#: ../plugins/gtkui/prefwin.c:99
 msgid "Default Audio Device"
 msgstr "Типовий пристрій Аудіо"
 
-#: ../plugins/gtkui/prefwin.c:328
+#: ../plugins/gtkui/prefwin.c:329
 msgid "Add"
 msgstr "Додати"
 
-#: ../plugins/gtkui/prefwin.c:338
+#: ../plugins/gtkui/prefwin.c:339
 msgid "Global Hotkeys"
 msgstr "Глоб. скор. клавіш"
 
-#: ../plugins/gtkui/prefwin.c:400
+#: ../plugins/gtkui/prefwin.c:401
 msgid "Slot"
 msgstr "Слот"
 
-#: ../plugins/gtkui/prefwin.c:401
+#: ../plugins/gtkui/prefwin.c:402
 msgid "Key combination"
 msgstr "Комбінації клавіш"
 
 #. output plugin selection
-#: ../plugins/gtkui/prefwin.c:480 ../plugins/gtkui/prefwin.c:692
-#: ../plugins.c:872
+#: ../plugins/gtkui/prefwin.c:481 ../plugins/gtkui/prefwin.c:693
+#: ../plugins.c:873
 msgid "ALSA output plugin"
 msgstr "Вихідний плагін ALSA"
 
