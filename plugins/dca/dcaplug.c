@@ -209,7 +209,7 @@ dca_decode_data (ddb_dca_state_t *ddb_state, uint8_t * start, int size, int prob
 
                 length = dca_syncinfo (ddb_state->state, ddb_state->buf, &ddb_state->flags, &ddb_state->sample_rate, &ddb_state->bit_rate, &ddb_state->frame_length);
                 if (!length) {
-                    trace ("dca_decode_data: skip\n");
+//                    trace ("dca_decode_data: skip\n");
                     for (ddb_state->bufptr = ddb_state->buf; ddb_state->bufptr < ddb_state->buf + HEADER_SIZE-1; ddb_state->bufptr++) {
                         ddb_state->bufptr[0] = ddb_state->bufptr[1];
                     }
@@ -260,7 +260,7 @@ error:
 
 // returns offset to DTS data in the file, or -1
 static int
-dts_open_wav (DB_FILE *fp, wavfmt_t *fmt, int *totalsamples) {
+dts_open_wav (DB_FILE *fp, wavfmt_t *fmt, int64_t *totalsamples) {
     char riff[4];
     int offset = -1;
 
@@ -361,7 +361,7 @@ dts_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     }
 
     wavfmt_t fmt;
-    int totalsamples = -1;
+    int64_t totalsamples = -1;
     // WAV format
     if ((info->offset = dts_open_wav (info->file, &fmt, &totalsamples)) == -1) {
         // try raw DTS @ 48KHz
@@ -525,8 +525,8 @@ dts_seek_sample (DB_fileinfo_t *_info, int sample) {
 
     // calculate file offset from framesize / framesamples
     sample += info->startsample;
-    int nframe = sample / info->frame_length;
-    int offs = info->frame_byte_size * nframe + info->offset;
+    int64_t nframe = sample / info->frame_length;
+    int64_t offs = info->frame_byte_size * nframe + info->offset;
     deadbeef->fseek (info->file, offs, SEEK_SET);
     info->remaining = 0;
     info->skipsamples = sample - nframe * info->frame_length;
@@ -549,10 +549,11 @@ dts_insert (DB_playItem_t *after, const char *fname) {
         fprintf (stderr, "dca: failed to open %s\n", fname);
         return NULL;
     }
-    int fsize = deadbeef->fgetlength (fp);
+    int64_t fsize = deadbeef->fgetlength (fp);
+    trace ("dts file size: %lld\n", fsize);
 
     wavfmt_t fmt;
-    int totalsamples = -1;
+    int64_t totalsamples = -1;
     const char *filetype = NULL;
 
     int offset = 0;
