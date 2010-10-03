@@ -55,6 +55,7 @@ extern "C" {
 
 // api version history:
 // 9.9 -- devel
+// 0.8 -- deadbeef-0.4.2
 // 0.7 -- deabdeef-0.4.0
 // 0.6 -- deadbeef-0.3.3
 // 0.5 -- deadbeef-0.3.2
@@ -63,8 +64,8 @@ extern "C" {
 // 0.2 -- deadbeef-0.2.3
 // 0.1 -- deadbeef-0.2.0
 
-#define DB_API_VERSION_MAJOR 9
-#define DB_API_VERSION_MINOR 9
+#define DB_API_VERSION_MAJOR 0
+#define DB_API_VERSION_MINOR 8
 
 #define DB_PLUGIN_SET_API_VERSION\
     .plugin.api_vmajor = DB_API_VERSION_MAJOR,\
