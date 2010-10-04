@@ -102,6 +102,7 @@ typedef struct spu2_state_s {
 //EXPORT_GCC void CALLBACK SPU2playADPCMchannel(mips_cpu_context *cpu, xa_decode_t *xap);
 
 EXPORT_GCC long CALLBACK SPU2init(mips_cpu_context *cpu, void (*callback)(unsigned char *, long, void *), void *data);
+EXPORT_GCC void CALLBACK SPU2free(mips_cpu_context *cpu);
 EXPORT_GCC long CALLBACK SPU2open(mips_cpu_context *cpu, void *pDsp);
 EXPORT_GCC void CALLBACK SPU2async(mips_cpu_context *cpu, unsigned long cycle);
 EXPORT_GCC void CALLBACK SPU2close(mips_cpu_context *cpu);
