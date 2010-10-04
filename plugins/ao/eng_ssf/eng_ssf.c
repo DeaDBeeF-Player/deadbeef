@@ -295,7 +295,16 @@ int32 ssf_gen(void *handle, int16 *buffer, uint32 samples)
 int32 ssf_stop(void *handle)
 {
     ssf_synth_t *s = handle;
-	sat_hw_free (s->cpu);
+    if (s) {
+        if (s->c) {
+            free (s->c);
+        }
+        if (s->cpu) {
+            sat_hw_free (s->cpu);
+            free (s->cpu);
+        }
+        free (s);
+    }
     return AO_SUCCESS;
 }
 
