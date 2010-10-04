@@ -263,7 +263,14 @@ int32 spu_gen(void *handle, int16 *buffer, uint32 samples)
 
 int32 spu_stop(void *handle)
 {
-    free (handle);
+    spu_synth_t *s = handle;
+    if (s) {
+        if (s->mips_cpu) {
+            SPUclose(s->mips_cpu);
+            free (s->mips_cpu);
+        }
+        free (s);
+    }
 	return AO_SUCCESS;
 }
 
