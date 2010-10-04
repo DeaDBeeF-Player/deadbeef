@@ -2,19 +2,20 @@
 # Copyright (C) 2010 THE deadbeef'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the deadbeef package.
 # Henrique P. Machado <hpmachado@gnome.org>, 2010.
+# Sérgio Cipolla <secipolla@gmail.com>, 2010.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: deadbeef\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-09-27 04:36+0000\n"
-"PO-Revision-Date: 2010-09-29 13:41-0300\n"
+"POT-Creation-Date: 2010-10-04 08:12-0300\n"
+"PO-Revision-Date: 2010-10-04 09:13-0300\n"
 "Last-Translator: Sérgio Cipolla <secipolla@gmail.com>\n"
 "Language-Team: Brazilian Portuguese <ldp-br@bazar2.conectiva.com.br>\n"
+"Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: pt_BR\n"
 "X-Poedit-Language: Portuguese\n"
 "X-Poedit-Country: BRAZIL\n"
 
@@ -42,56 +43,56 @@ msgstr "Adicionar pasta(s) à lista de reprodução..."
 msgid "Follow symlinks"
 msgstr "Seguir ligações simbólicas"
 
-#: ../plugins/gtkui/callbacks.c:663
+#: ../plugins/gtkui/callbacks.c:667
 msgid "Failed while reading help file"
 msgstr "Falha ao ler o arquivo de ajuda"
 
-#: ../plugins/gtkui/callbacks.c:673
+#: ../plugins/gtkui/callbacks.c:677
 msgid "Failed to load help file"
 msgstr "Falha ao carregar o arquivo de ajuda"
 
-#: ../plugins/gtkui/callbacks.c:688
+#: ../plugins/gtkui/callbacks.c:692
 msgid "help.txt"
 msgstr "help.pt_BR.txt"
 
-#: ../plugins/gtkui/callbacks.c:689
+#: ../plugins/gtkui/callbacks.c:693
 #: ../plugins/gtkui/interface.c:1125
 #: ../plugins/gtkui/deadbeef.glade.h:52
 msgid "Help"
 msgstr "Ajuda"
 
-#: ../plugins/gtkui/callbacks.c:699
+#: ../plugins/gtkui/callbacks.c:703
 #, c-format
 msgid "About DeaDBeeF %s"
 msgstr "Sobre o DeaDBeef %s"
 
-#: ../plugins/gtkui/callbacks.c:701
+#: ../plugins/gtkui/callbacks.c:705
 msgid "about.txt"
 msgstr "about.txt"
 
-#: ../plugins/gtkui/callbacks.c:712
+#: ../plugins/gtkui/callbacks.c:716
 #, c-format
 msgid "DeaDBeeF %s ChangeLog"
 msgstr "Registro de alterações - DeaDBeeF %s"
 
-#: ../plugins/gtkui/callbacks.c:714
+#: ../plugins/gtkui/callbacks.c:718
 msgid "ChangeLog"
 msgstr "ChangeLog"
 
-#: ../plugins/gtkui/callbacks.c:725
+#: ../plugins/gtkui/callbacks.c:729
 msgid "COPYING.GPLv2"
 msgstr "COPYING.GPLv2"
 
-#: ../plugins/gtkui/callbacks.c:736
+#: ../plugins/gtkui/callbacks.c:740
 msgid "COPYING.LGPLv2.1"
 msgstr "COPYING.LGPLv2.1"
 
-#: ../plugins/gtkui/callbacks.c:1072
+#: ../plugins/gtkui/callbacks.c:1080
 #, c-format
 msgid "DeaDBeeF Translators"
 msgstr "Tradutores do DeaDBeeF"
 
-#: ../plugins/gtkui/callbacks.c:1074
+#: ../plugins/gtkui/callbacks.c:1082
 msgid "translators.txt"
 msgstr "translators.txt"
 
@@ -99,15 +100,15 @@ msgstr "translators.txt"
 msgid "Edit playlist"
 msgstr "Editar lista de reprodução"
 
-#: ../plugins/gtkui/ddbtabstrip.c:703
+#: ../plugins/gtkui/ddbtabstrip.c:701
 msgid "Rename Playlist"
 msgstr "Renomear lista de reprodução"
 
-#: ../plugins/gtkui/ddbtabstrip.c:707
+#: ../plugins/gtkui/ddbtabstrip.c:705
 msgid "Remove Playlist"
 msgstr "Remover lista de reprodução"
 
-#: ../plugins/gtkui/ddbtabstrip.c:711
+#: ../plugins/gtkui/ddbtabstrip.c:709
 msgid "Add New Playlist"
 msgstr "Adicionar nova lista de reprodução"
 
@@ -200,24 +201,24 @@ msgstr "Pausado | "
 msgid "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
 msgstr "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d faixas | %s tempo total de reprodução"
 
-#: ../plugins/gtkui/gtkui.c:660
+#: ../plugins/gtkui/gtkui.c:661
 msgid "Save Playlist As"
 msgstr "Salvar lista como"
 
-#: ../plugins/gtkui/gtkui.c:669
-#: ../plugins/gtkui/gtkui.c:730
+#: ../plugins/gtkui/gtkui.c:670
+#: ../plugins/gtkui/gtkui.c:731
 msgid "DeaDBeeF playlist files (*.dbpl)"
 msgstr "Arquivos de listas do DeaDBeeF (*.dbpl)"
 
-#: ../plugins/gtkui/gtkui.c:723
+#: ../plugins/gtkui/gtkui.c:724
 msgid "Load Playlist"
 msgstr "Carregar lista"
 
-#: ../plugins/gtkui/gtkui.c:863
+#: ../plugins/gtkui/gtkui.c:864
 msgid "New Playlist"
 msgstr "Nova lista"
 
-#: ../plugins/gtkui/gtkui.c:866
+#: ../plugins/gtkui/gtkui.c:867
 #, c-format
 msgid "New Playlist (%d)"
 msgstr "Nova lista (%d)"
@@ -305,7 +306,7 @@ msgstr "Seleção"
 
 #: ../plugins/gtkui/interface.c:265
 #: ../plugins/gtkui/plcommon.c:426
-#: ../plugins/gtkui/prefwin.c:333
+#: ../plugins/gtkui/prefwin.c:334
 #: ../plugins/gtkui/deadbeef.glade.h:106
 msgid "Remove"
 msgstr "Remover"
@@ -557,7 +558,7 @@ msgstr "Índice de itens"
 
 #. create default set of columns
 #: ../plugins/gtkui/interface.c:1431
-#: ../plugins/gtkui/mainplaylist.c:300
+#: ../plugins/gtkui/mainplaylist.c:305
 msgid "Playing"
 msgstr "Em reprodução"
 
@@ -569,18 +570,21 @@ msgstr "Capa do álbum"
 msgid "Artist - Album"
 msgstr "Artista - Álbum"
 
+#. Track properties dialog
 #: ../plugins/gtkui/interface.c:1434
 #: ../plugins/gtkui/plcommon.c:878
+#: ../translation/extra.c:55
 msgid "Artist"
 msgstr "Artista"
 
 #: ../plugins/gtkui/interface.c:1435
 #: ../plugins/gtkui/interface.c:1822
+#: ../translation/extra.c:59
 msgid "Album"
 msgstr "Álbum"
 
 #: ../plugins/gtkui/interface.c:1436
-#: ../plugins/gtkui/prefwin.c:611
+#: ../plugins/gtkui/prefwin.c:612
 msgid "Title"
 msgstr "Título"
 
@@ -594,6 +598,7 @@ msgid "Track"
 msgstr "Faixa"
 
 #: ../plugins/gtkui/interface.c:1439
+#: ../translation/extra.c:58
 msgid "Band / Album Artist"
 msgstr "Banda / Artista do álbum"
 
@@ -1006,23 +1011,23 @@ msgstr ""
 "  di[r]eitos autorais, [f]nome do arquivo, e[T]iquetas\n"
 "Exemplo: %a - %t [%l]"
 
-#: ../plugins/gtkui/mainplaylist.c:301
-#: ../plugins/gtkui/search.c:434
+#: ../plugins/gtkui/mainplaylist.c:306
+#: ../plugins/gtkui/search.c:439
 msgid "Artist / Album"
 msgstr "Artista / Álbum"
 
-#: ../plugins/gtkui/mainplaylist.c:302
-#: ../plugins/gtkui/search.c:435
+#: ../plugins/gtkui/mainplaylist.c:307
+#: ../plugins/gtkui/search.c:440
 msgid "Track No"
 msgstr "Nº da faixa"
 
-#: ../plugins/gtkui/mainplaylist.c:303
-#: ../plugins/gtkui/search.c:436
+#: ../plugins/gtkui/mainplaylist.c:308
+#: ../plugins/gtkui/search.c:441
 msgid "Title / Track Artist"
 msgstr "Título / Artista da faixa"
 
-#: ../plugins/gtkui/mainplaylist.c:304
-#: ../plugins/gtkui/search.c:437
+#: ../plugins/gtkui/mainplaylist.c:309
+#: ../plugins/gtkui/search.c:442
 #: ../plugins/gtkui/trkproperties.c:175
 msgid "Duration"
 msgstr "Duração"
@@ -1095,30 +1100,30 @@ msgstr "Abrir arquivo..."
 msgid "Setup %s"
 msgstr "Configurar %s"
 
-#: ../plugins/gtkui/prefwin.c:98
+#: ../plugins/gtkui/prefwin.c:99
 msgid "Default Audio Device"
 msgstr "Dispositivo de áudio padrão"
 
-#: ../plugins/gtkui/prefwin.c:328
+#: ../plugins/gtkui/prefwin.c:329
 msgid "Add"
 msgstr "Adicionar"
 
-#: ../plugins/gtkui/prefwin.c:338
+#: ../plugins/gtkui/prefwin.c:339
 msgid "Global Hotkeys"
 msgstr "Teclas de atalho"
 
-#: ../plugins/gtkui/prefwin.c:400
+#: ../plugins/gtkui/prefwin.c:401
 msgid "Slot"
 msgstr "Fenda"
 
-#: ../plugins/gtkui/prefwin.c:401
+#: ../plugins/gtkui/prefwin.c:402
 msgid "Key combination"
 msgstr "Combinação de teclas"
 
 #. output plugin selection
-#: ../plugins/gtkui/prefwin.c:480
-#: ../plugins/gtkui/prefwin.c:692
-#: ../plugins.c:872
+#: ../plugins/gtkui/prefwin.c:481
+#: ../plugins/gtkui/prefwin.c:693
+#: ../plugins.c:873
 msgid "ALSA output plugin"
 msgstr "Plugin ALSA"
 
@@ -1133,6 +1138,14 @@ msgstr "Você modificou os dados desta faixa."
 #: ../plugins/gtkui/trkproperties.c:55
 msgid "Really close the window?"
 msgstr "Deseja realmente fechar esta janela?"
+
+#: ../plugins/gtkui/trkproperties.c:169
+msgid "Location"
+msgstr "Local"
+
+#: ../plugins/gtkui/trkproperties.c:172
+msgid "Subtrack Index"
+msgstr "Índice de subfaixas"
 
 #: ../plugins/gtkui/trkproperties.c:178
 msgid "Tag Type(s)"
@@ -1248,7 +1261,7 @@ msgstr ""
 #, c-format
 msgid "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n"
 msgstr ""
-"                      ex: --nowplaying \"%%a - %%t\" deve imprimir\n"
+"                      ex.: --nowplaying \"%%a - %%t\" deve imprimir\n"
 "                      \"artista - título\"\n"
 
 #: ../playlist.c:377
@@ -1314,61 +1327,6 @@ msgstr ""
 msgid "Couldn't find pixmap file: %s"
 msgstr "Não foi possível encontrar o arquivo pixmap: %s"
 
-#: ../plugins/vorbis/vcedit.c:129
-#: ../plugins/vorbis/vcedit.c:155
-msgid "Couldn't get enough memory for input buffering."
-msgstr "Não foi possível obter memória para o processamento da entrada."
-
-#: ../plugins/vorbis/vcedit.c:179
-#: ../plugins/vorbis/vcedit.c:550
-msgid "Error reading first page of Ogg bitstream."
-msgstr "Erro ao obter o primeiro fluxo de bits Ogg."
-
-#: ../plugins/vorbis/vcedit.c:185
-#: ../plugins/vorbis/vcedit.c:557
-msgid "Error reading initial header packet."
-msgstr "Erro ao ler o cabeçalho inicial do pacote."
-
-#: ../plugins/vorbis/vcedit.c:237
-msgid "Couldn't get enough memory to register new stream serial number."
-msgstr "Não foi possível obter memória para registar um novo n.º de série do fluxo."
-
-#: ../plugins/vorbis/vcedit.c:505
-msgid "Input truncated or empty."
-msgstr "Entrada truncada ou vazia."
-
-#: ../plugins/vorbis/vcedit.c:507
-msgid "Input is not an Ogg bitstream."
-msgstr "A entrada não é um formato de fluxo Ogg."
-
-#: ../plugins/vorbis/vcedit.c:565
-msgid "Ogg bitstream does not contain Vorbis data."
-msgstr "O fluxo de bits Ogg não contém dados Vorbis."
-
-#: ../plugins/vorbis/vcedit.c:578
-msgid "EOF before recognised stream."
-msgstr "Final do arquivo atingido antes de reconhecer o fluxo."
-
-#: ../plugins/vorbis/vcedit.c:594
-msgid "Ogg bitstream does not contain a supported data-type."
-msgstr "O fluxo de bits Ogg não possui um tipo de dados válido."
-
-#: ../plugins/vorbis/vcedit.c:638
-msgid "Corrupt secondary header."
-msgstr "Cabeçalho secundário danificado."
-
-#: ../plugins/vorbis/vcedit.c:659
-msgid "EOF before end of Vorbis headers."
-msgstr "Final do arquivo atingido antes do final dos cabeçalhos Vorbis."
-
-#: ../plugins/vorbis/vcedit.c:834
-msgid "Corrupt or missing data, continuing..."
-msgstr "Dados danificados ou em falta, continuando..."
-
-#: ../plugins/vorbis/vcedit.c:874
-msgid "Error writing stream to output. Output stream may be corrupted or truncated."
-msgstr "Erro ao escrever o fluxo de saída. O fluxo pode estar danificado ou truncado."
-
 #: ../plugins/wildmidi/wildmidiplug.c:162
 #, c-format
 msgid "wildmidi: freepats config file not found. Please install timidity-freepats package, or specify path to freepats.cfg in the plugin settings."
@@ -1384,14 +1342,245 @@ msgstr "Adicionar CD de áudio"
 msgid "Lookup on Last.fm"
 msgstr "Procurar no Last.fm"
 
+#. ALSA output plugin
+#: ../translation/extra.c:6
+msgid "Use ALSA resampling"
+msgstr "Usar reamostragem ALSA"
+
+#: ../translation/extra.c:7
+msgid "Release device while stopped"
+msgstr "Liberar dispositivo quando parado"
+
+#: ../translation/extra.c:8
+#: ../translation/extra.c:43
+msgid "Preferred buffer size"
+msgstr "Tamanho preferido do buffer"
+
+#: ../translation/extra.c:9
+msgid "Preferred period size"
+msgstr "Tamanho preferido do período"
+
+#. Last.fm plugin
+#: ../translation/extra.c:11
+msgid "Enable scrobbler"
+msgstr "Habilitar scrobbler"
+
+#: ../translation/extra.c:12
+msgid "Disable nowplaying"
+msgstr "Não enviar informações sobre a faixa atual"
+
+#: ../translation/extra.c:13
+msgid "Username"
+msgstr "Nome de usuário"
+
+#: ../translation/extra.c:14
+msgid "Password"
+msgstr "Senha"
+
+#: ../translation/extra.c:15
+msgid "Scrobble URL"
+msgstr "URL para scrobbling"
+
+#. Album Artwork plugin
+#: ../translation/extra.c:17
+msgid "Cache update period (hr)"
+msgstr "Período para atualização do cache (h)"
+
+#: ../translation/extra.c:18
+msgid "Fetch from embedded tags"
+msgstr "Buscar nas etiquetas embutidas"
+
+#: ../translation/extra.c:19
+msgid "Fetch from local folder"
+msgstr "Buscar numa pasta local"
+
+#: ../translation/extra.c:20
+msgid "Local cover file mask"
+msgstr "Máscara de arquivo de capa local"
+
+#: ../translation/extra.c:21
+msgid "Fetch from last.fm"
+msgstr "Buscar no last.fm"
+
+#: ../translation/extra.c:22
+msgid "Fetch from albumart.org"
+msgstr "Buscar no albumart.org"
+
+#. Audio CD player
+#: ../translation/extra.c:24
+msgid "Use CDDB/FreeDB"
+msgstr "Usar CDDB/FreeDB"
+
+#: ../translation/extra.c:25
+msgid "Prefer CD-Text over CDDB"
+msgstr "Preferir CD-Text a CDDB"
+
+#: ../translation/extra.c:26
+msgid "CDDB url (e.g. 'freedb.org')"
+msgstr "URL de CDDB (ex. 'freedb.org')"
+
+#: ../translation/extra.c:27
+msgid "CDDB port number (e.g. '888')"
+msgstr "Número da porta CDDB (ex. '888')"
+
+#: ../translation/extra.c:28
+msgid "Prefer CDDB protocol over HTTP"
+msgstr "Preferir protocolo CDDB ao HTTP"
+
+#: ../translation/extra.c:29
+msgid "Enable NRG image support"
+msgstr "Habilitar suporte ao formato de imagem NRG"
+
+#. DUMB module player plugin
+#: ../translation/extra.c:31
+msgid "Resampling quality (0..2, higher is better)"
+msgstr "Qualidade de reamostragem (0..2, maior é melhor)"
+
+#. Game_Music_Emu decoder plugin
+#: ../translation/extra.c:33
+msgid "Max song length (in minutes)"
+msgstr "Duração máxima da música (em minutos)"
+
+#. Standard GTK2 user interface plugin
+#: ../translation/extra.c:35
+msgid "Ask confirmation to delete files from disk"
+msgstr "Pedir confirmação para excluir arquivos do disco"
+
+#: ../translation/extra.c:36
+msgid "Status icon volume control sensitivity"
+msgstr "Sensibilidade ao controle de volume no ícone de status"
+
+#: ../translation/extra.c:37
+msgid "Custom status icon"
+msgstr "Ícone de status personalizado"
+
+#: ../translation/extra.c:38
+msgid "Run gtk_init with --sync (debug mode)"
+msgstr "Executar gtk_init com --sync (modo de depuração)"
+
+#. OSD Notify plugin
+#: ../translation/extra.c:40
+msgid "Notification format"
+msgstr "Formato de notificação"
+
+#. PulseAudio output plugin
+#: ../translation/extra.c:42
+msgid "PulseAudio server"
+msgstr "Servidor PulseAudio"
+
+#: ../translation/extra.c:44
+msgid "Samplerate"
+msgstr "Taxa de amostragem"
+
+#. SHN player plugin
+#: ../translation/extra.c:46
+msgid "Relative seek table path"
+msgstr "Caminho relativo da tabela de referência"
+
+#: ../translation/extra.c:47
+msgid "Absolute seek table path"
+msgstr "Caminho absoluto da tabela de referência"
+
+#: ../translation/extra.c:48
+msgid "Swap audio bytes (toggle if all you hear is static)"
+msgstr "Intercâmbio de bytes de áudio (alterne se só ouve estática)"
+
+#. SID decoder plugin
+#: ../translation/extra.c:50
+msgid "Enable HVSC"
+msgstr "Habilitar HVSC"
+
+#: ../translation/extra.c:51
+msgid "HVSC path"
+msgstr "Caminho para HVSC"
+
+#. WildMidi player plugin
+#: ../translation/extra.c:53
+msgid "Timidity++ bank configuration file"
+msgstr "Arquivo de configuração para o banco Timidity++"
+
+#: ../translation/extra.c:56
+msgid "Track Title"
+msgstr "Título da faixa"
+
+#: ../translation/extra.c:57
+msgid "Performer"
+msgstr "Artista"
+
+#: ../translation/extra.c:60
+msgid "Date"
+msgstr "Data"
+
+#: ../translation/extra.c:61
+msgid "Track Number"
+msgstr "Número da faixa"
+
+#: ../translation/extra.c:62
+msgid "Total Tracks"
+msgstr "Total de faixas"
+
+#: ../translation/extra.c:63
+msgid "Genre"
+msgstr "Gênero"
+
+#: ../translation/extra.c:64
+msgid "Composer"
+msgstr "Compositor"
+
+#: ../translation/extra.c:65
+msgid "Disc Number"
+msgstr "Número do disco"
+
+#: ../translation/extra.c:66
+msgid "Comment"
+msgstr "Comentário"
+
+#: ../translation/extra.c:67
+msgid "Encoder / Vendor"
+msgstr "Codificador / Fornecedor"
+
+#: ../translation/extra.c:68
+msgid "Copyright"
+msgstr "Direitos autorais"
+
+#~ msgid "Couldn't get enough memory for input buffering."
+#~ msgstr "Não foi possível obter memória para o processamento da entrada."
+#~ msgid "Error reading first page of Ogg bitstream."
+#~ msgstr "Erro ao obter o primeiro fluxo de bits Ogg."
+#~ msgid "Error reading initial header packet."
+#~ msgstr "Erro ao ler o cabeçalho inicial do pacote."
+#~ msgid "Couldn't get enough memory to register new stream serial number."
+#~ msgstr ""
+#~ "Não foi possível obter memória para registar um novo n.º de série do "
+#~ "fluxo."
+#~ msgid "Input truncated or empty."
+#~ msgstr "Entrada truncada ou vazia."
+#~ msgid "Input is not an Ogg bitstream."
+#~ msgstr "A entrada não é um formato de fluxo Ogg."
+#~ msgid "Ogg bitstream does not contain Vorbis data."
+#~ msgstr "O fluxo de bits Ogg não contém dados Vorbis."
+#~ msgid "EOF before recognised stream."
+#~ msgstr "Final do arquivo atingido antes de reconhecer o fluxo."
+#~ msgid "Ogg bitstream does not contain a supported data-type."
+#~ msgstr "O fluxo de bits Ogg não possui um tipo de dados válido."
+#~ msgid "Corrupt secondary header."
+#~ msgstr "Cabeçalho secundário danificado."
+#~ msgid "EOF before end of Vorbis headers."
+#~ msgstr "Final do arquivo atingido antes do final dos cabeçalhos Vorbis."
+#~ msgid "Corrupt or missing data, continuing..."
+#~ msgstr "Dados danificados ou em falta, continuando..."
+#~ msgid ""
+#~ "Error writing stream to output. Output stream may be corrupted or "
+#~ "truncated."
+#~ msgstr ""
+#~ "Erro ao escrever o fluxo de saída. O fluxo pode estar danificado ou "
+#~ "truncado."
 #~ msgid ""
 #~ "<b>WARNING</b>: tag writing feature is still in development.\n"
 #~ "<b>Make backup copies</b> before using."
 #~ msgstr ""
 #~ "<b>AVISO</b>: a criação de detalhes está em desenvolvimento.\n"
 #~ "<b>Faça cópias de segurança</b> antes de usar."
-#~ msgid "File number"
-#~ msgstr "Número do arquivo"
 #~ msgid "Sound (adv.)"
 #~ msgstr "Som (av.)"
 
