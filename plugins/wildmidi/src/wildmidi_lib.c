@@ -3845,6 +3845,11 @@ WildMidi_Close (midi * handle) {
 	}
 	if (mdi->index != NULL) 
 		free (mdi->index);
+
+	for (i = 0; i < 4; i++) {
+		free (mdi->filter.delay[i][0]);
+		free (mdi->filter.delay[i][1]);
+    }
 	free (mdi);
 	// no need to unlock cause the struct containing the lock no-longer exists;
 	return 0;

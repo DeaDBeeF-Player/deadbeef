@@ -899,7 +899,7 @@ int32_t mp4ff_meta_find_by_name(const mp4ff_t *f, const char *item, char **value
 
 void
 aac_load_tags (DB_playItem_t *it, mp4ff_t *mp4) {
-    char *s;
+    char *s = NULL;
     for (int i = 0; metainfo[i]; i += 2) {
         if (mp4ff_meta_find_by_name(mp4, metainfo[i], &s)) {
             deadbeef->pl_add_meta (it, metainfo[i+1], s);
@@ -912,15 +912,19 @@ aac_load_tags (DB_playItem_t *it, mp4ff_t *mp4) {
     it->replaygain_album_peak = 1;
     if (mp4ff_meta_find_by_name(mp4, "replaygain_track_gain", &s)) {
         it->replaygain_track_gain = atof (s);
+        free (s);
     }
     if (mp4ff_meta_find_by_name(mp4, "replaygain_track_peak", &s)) {
         it->replaygain_track_peak = atof (s);
+        free (s);
     }
     if (mp4ff_meta_find_by_name(mp4, "replaygain_album_gain", &s)) {
         it->replaygain_album_gain = atof (s);
+        free (s);
     }
     if (mp4ff_meta_find_by_name(mp4, "replaygain_album_peak", &s)) {
         it->replaygain_album_peak = atof (s);
+        free (s);
     }
     deadbeef->pl_add_meta (it, "title", NULL);
 }

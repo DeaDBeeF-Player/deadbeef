@@ -275,6 +275,7 @@ sndfile_insert (DB_playItem_t *after, const char *fname) {
     info.ctx = sf_open_virtual (&vfs, SFM_READ, &inf, &info);
     if (!info.ctx) {
         trace ("sndfile: sf_open failed");
+        deadbeef->fclose (info.file);
         return NULL;
     }
     int totalsamples = inf.frames;
