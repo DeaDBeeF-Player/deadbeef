@@ -180,7 +180,7 @@ void *qsf_start(const char *path, uint8 *buffer, uint32 length)
     qsf_synth_t *s = malloc (sizeof (qsf_synth_t));
     memset (s, 0, sizeof (qsf_synth_t));
 
-	uint8 *file, *lib_decoded, *lib_raw_file;
+	uint8 *file = NULL, *lib_decoded = NULL, *lib_raw_file = NULL;
 	uint64 file_len, lib_len, lib_raw_length;
 	corlett_t *lib;
 
@@ -226,6 +226,7 @@ void *qsf_start(const char *path, uint8 *buffer, uint32 length)
 #endif
         if (ao_get_lib(libpath, &lib_raw_file, &tmp_length) != AO_SUCCESS)
         {
+            free (file);
             qsf_stop (s);
             return NULL;
 		}
@@ -234,6 +235,7 @@ void *qsf_start(const char *path, uint8 *buffer, uint32 length)
 		if (corlett_decode(lib_raw_file, lib_raw_length, &lib_decoded, &lib_len, &lib) != AO_SUCCESS)
 		{
 			free(lib_raw_file);
+            free (file);
             qsf_stop (s);
             return NULL;
 		}
@@ -370,6 +372,9 @@ int32 qsf_stop(void *handle)
     }
     if (s->qs) {
         qsound_sh_stop (s->qs);
+    }
+    if (s->c) {
+        free (s->c);
     }
 	free(s);
 
