@@ -484,7 +484,6 @@ static void AICA_StopSlot(struct _SLOT *slot,int keyoff)
 
 static void AICA_Init(struct _AICA *AICA, const struct AICAinterface *intf)
 {
-    printf ("AICA_Init(cpu=%p)\n", intf->cpu);
 	int i=0;
 
 	AICA->IrqTimA = AICA->IrqTimBC = AICA->IrqMidi = 0;

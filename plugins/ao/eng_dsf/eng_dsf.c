@@ -21,7 +21,7 @@
 #include "aica.h"
 #include "aicadsp.h"
 
-#define DEBUG_LOADER	(1)
+#define DEBUG_LOADER	(0)
 #define DK_CORE	(1)
 
 #if DK_CORE
@@ -43,7 +43,7 @@ void *dsf_start(const char *path, uint8 *buffer, uint32 length)
     dsf_synth_t *s = malloc (sizeof (dsf_synth_t));
     memset (s, 0, sizeof (dsf_synth_t));
 
-	uint8 *file, *lib_decoded, *lib_raw_file;
+	uint8 *file = NULL, *lib_decoded = NULL, *lib_raw_file = NULL;
 	uint32 offset, plength, lengthMS, fadeMS;
 	uint64 file_len, lib_len, lib_raw_length;
 	corlett_t *lib;
@@ -108,6 +108,7 @@ void *dsf_start(const char *path, uint8 *buffer, uint32 length)
 			memcpy(&s->cpu->dc_ram[offset], lib_decoded+4, lib_len-4);
 
 			// Dispose the corlett structure for the lib - we don't use it
+			free(lib_decoded);
 			free(lib);
 		}
 	}
@@ -234,6 +235,15 @@ int32 dsf_gen(void *handle, int16 *buffer, uint32 samples)
 
 int32 dsf_stop(void *handle)
 {
+    dsf_synth_t *s = handle;
+    if (s->cpu) {
+        dc_hw_free (s->cpu);
+        ARM7_Free (s->cpu);
+    }
+    if (s->c) {
+        free (s->c);
+    }
+    free (s);
 	return AO_SUCCESS;
 }
 
