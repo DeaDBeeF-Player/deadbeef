@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: deadbeef\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-09-30 04:36+0000\n"
+"POT-Creation-Date: 2010-10-04 04:36+0000\n"
 "PO-Revision-Date: 2010-05-24 00:21+0100\n"
 "Last-Translator: Yarema aka Knedlyk <yupadmin@gmail.com>\n"
 "Language-Team: UKRAINIAN <translate@linux.org.ua>\n"
@@ -503,11 +503,14 @@ msgstr "Обкладинка альбому"
 msgid "Artist - Album"
 msgstr "Виконавець - Альбом"
 
+#. Track properties dialog
 #: ../plugins/gtkui/interface.c:1434 ../plugins/gtkui/plcommon.c:878
+#: ../translation/extra.c:55
 msgid "Artist"
 msgstr "Виконавець"
 
 #: ../plugins/gtkui/interface.c:1435 ../plugins/gtkui/interface.c:1822
+#: ../translation/extra.c:59
 msgid "Album"
 msgstr "Альбом"
 
@@ -523,7 +526,7 @@ msgstr "Тривалість"
 msgid "Track"
 msgstr "Трек"
 
-#: ../plugins/gtkui/interface.c:1439
+#: ../plugins/gtkui/interface.c:1439 ../translation/extra.c:58
 msgid "Band / Album Artist"
 msgstr "Гурт / Альбом Виконавець"
 
@@ -982,6 +985,14 @@ msgstr "Ви змінили дані для цього треку"
 msgid "Really close the window?"
 msgstr "Дійсно закрити вікно?"
 
+#: ../plugins/gtkui/trkproperties.c:169
+msgid "Location"
+msgstr "Розташування"
+
+#: ../plugins/gtkui/trkproperties.c:172
+msgid "Subtrack Index"
+msgstr "Індекс субтреку"
+
 #: ../plugins/gtkui/trkproperties.c:178
 msgid "Tag Type(s)"
 msgstr "Тип(и) мітки"
@@ -1156,58 +1167,6 @@ msgstr ""
 msgid "Couldn't find pixmap file: %s"
 msgstr "Не можу знайти файл pixmap: %s"
 
-#: ../plugins/vorbis/vcedit.c:129 ../plugins/vorbis/vcedit.c:155
-msgid "Couldn't get enough memory for input buffering."
-msgstr "Не можу отримати достатньо пам’яті для вхідного буфорування."
-
-#: ../plugins/vorbis/vcedit.c:179 ../plugins/vorbis/vcedit.c:550
-msgid "Error reading first page of Ogg bitstream."
-msgstr "Помилка читання першої сторінки потоку Ogg."
-
-#: ../plugins/vorbis/vcedit.c:185 ../plugins/vorbis/vcedit.c:557
-msgid "Error reading initial header packet."
-msgstr "Помилка читання початкового пакету заголовку."
-
-#: ../plugins/vorbis/vcedit.c:237
-msgid "Couldn't get enough memory to register new stream serial number."
-msgstr "Не можу отримати достатньо пам’яті для реєстрації нового серійного номера потоку."
-
-#: ../plugins/vorbis/vcedit.c:505
-msgid "Input truncated or empty."
-msgstr "Вхідні дані спотворені або порожні."
-
-#: ../plugins/vorbis/vcedit.c:507
-msgid "Input is not an Ogg bitstream."
-msgstr "Вхідні дані не є потоком Ogg."
-
-#: ../plugins/vorbis/vcedit.c:565
-msgid "Ogg bitstream does not contain Vorbis data."
-msgstr "Потік Ogg не містить даних Vorbis."
-
-#: ../plugins/vorbis/vcedit.c:578
-msgid "EOF before recognised stream."
-msgstr "EOF перед розпізнаним потоком."
-
-#: ../plugins/vorbis/vcedit.c:594
-msgid "Ogg bitstream does not contain a supported data-type."
-msgstr "Потік Ogg не містить даних, що підтримуються."
-
-#: ../plugins/vorbis/vcedit.c:638
-msgid "Corrupt secondary header."
-msgstr "Другий заголовок пошкоджено."
-
-#: ../plugins/vorbis/vcedit.c:659
-msgid "EOF before end of Vorbis headers."
-msgstr "EOF перед кінцем заголовків Vorbis."
-
-#: ../plugins/vorbis/vcedit.c:834
-msgid "Corrupt or missing data, continuing..."
-msgstr "Пошкоджено або пропущено заголовки, продовжую..."
-
-#: ../plugins/vorbis/vcedit.c:874
-msgid "Error writing stream to output. Output stream may be corrupted or truncated."
-msgstr "Помилка запису потоку до виходу. Вихідний потік, можливо, пошкоджено або спотворено."
-
 #: ../plugins/wildmidi/wildmidiplug.c:162
 #, c-format
 msgid "wildmidi: freepats config file not found. Please install timidity-freepats package, or specify path to freepats.cfg in the plugin settings."
@@ -1223,15 +1182,258 @@ msgstr "Додати Аудіо CD"
 msgid "Lookup on Last.fm"
 msgstr "Шукати на Last.fm"
 
+#. ALSA output plugin
+#: ../translation/extra.c:6
+msgid "Use ALSA resampling"
+msgstr "Використовувати зміну якості ALSA"
+
+#: ../translation/extra.c:7
+msgid "Release device while stopped"
+msgstr ""
+
+#: ../translation/extra.c:8 ../translation/extra.c:43
+msgid "Preferred buffer size"
+msgstr "Бажаний розмір буфера"
+
+#: ../translation/extra.c:9
+msgid "Preferred period size"
+msgstr "Бажаний розмір періоду"
+
+#. Last.fm plugin
+#: ../translation/extra.c:11
+#, fuzzy
+msgid "Enable scrobbler"
+msgstr "Включити скроблер"
+
+#: ../translation/extra.c:12
+msgid "Disable nowplaying"
+msgstr "Виключити програвання відразу"
+
+#: ../translation/extra.c:13
+msgid "Username"
+msgstr "Користувач:"
+
+#: ../translation/extra.c:14
+msgid "Password"
+msgstr "Пароль:"
+
+#: ../translation/extra.c:15
+msgid "Scrobble URL"
+msgstr ""
+
+#. Album Artwork plugin
+#: ../translation/extra.c:17
+msgid "Cache update period (hr)"
+msgstr "Період оновлення кешу (год.)"
+
+#: ../translation/extra.c:18
+msgid "Fetch from embedded tags"
+msgstr ""
+
+#: ../translation/extra.c:19
+msgid "Fetch from local folder"
+msgstr "Отримати з локальної теки"
+
+#: ../translation/extra.c:20
+msgid "Local cover file mask"
+msgstr ""
+
+#: ../translation/extra.c:21
+msgid "Fetch from last.fm"
+msgstr "Отримати з last.fm"
+
+#: ../translation/extra.c:22
+msgid "Fetch from albumart.org"
+msgstr "Отримати з albumart.org"
+
+#. Audio CD player
+#: ../translation/extra.c:24
+msgid "Use CDDB/FreeDB"
+msgstr ""
+
+#: ../translation/extra.c:25
+msgid "Prefer CD-Text over CDDB"
+msgstr ""
+
+#: ../translation/extra.c:26
+msgid "CDDB url (e.g. 'freedb.org')"
+msgstr "CDDB лінк (наприклад 'freedb.org')"
+
+#: ../translation/extra.c:27
+msgid "CDDB port number (e.g. '888')"
+msgstr ""
+
+#: ../translation/extra.c:28
+msgid "Prefer CDDB protocol over HTTP"
+msgstr ""
+
+#: ../translation/extra.c:29
+msgid "Enable NRG image support"
+msgstr ""
+
+#. DUMB module player plugin
+#: ../translation/extra.c:31
+msgid "Resampling quality (0..2, higher is better)"
+msgstr ""
+
+#. Game_Music_Emu decoder plugin
+#: ../translation/extra.c:33
+msgid "Max song length (in minutes)"
+msgstr ""
+
+#. Standard GTK2 user interface plugin
+#: ../translation/extra.c:35
+#, fuzzy
+msgid "Ask confirmation to delete files from disk"
+msgstr "Вилучити файли з диску"
+
+#: ../translation/extra.c:36
+msgid "Status icon volume control sensitivity"
+msgstr ""
+
+#: ../translation/extra.c:37
+msgid "Custom status icon"
+msgstr ""
+
+#: ../translation/extra.c:38
+msgid "Run gtk_init with --sync (debug mode)"
+msgstr ""
+
+#. OSD Notify plugin
+#: ../translation/extra.c:40
+msgid "Notification format"
+msgstr ""
+
+#. PulseAudio output plugin
+#: ../translation/extra.c:42
+msgid "PulseAudio server"
+msgstr ""
+
+#: ../translation/extra.c:44
+msgid "Samplerate"
+msgstr ""
+
+#. SHN player plugin
+#: ../translation/extra.c:46
+msgid "Relative seek table path"
+msgstr ""
+
+#: ../translation/extra.c:47
+msgid "Absolute seek table path"
+msgstr ""
+
+#: ../translation/extra.c:48
+msgid "Swap audio bytes (toggle if all you hear is static)"
+msgstr ""
+
+#. SID decoder plugin
+#: ../translation/extra.c:50
+#, fuzzy
+msgid "Enable HVSC"
+msgstr "Включити"
+
+#: ../translation/extra.c:51
+msgid "HVSC path"
+msgstr ""
+
+#. WildMidi player plugin
+#: ../translation/extra.c:53
+msgid "Timidity++ bank configuration file"
+msgstr ""
+
+#: ../translation/extra.c:56
+#, fuzzy
+msgid "Track Title"
+msgstr "Номер треку"
+
+#: ../translation/extra.c:57
+msgid "Performer"
+msgstr ""
+
+#: ../translation/extra.c:60
+msgid "Date"
+msgstr ""
+
+#: ../translation/extra.c:61
+#, fuzzy
+msgid "Track Number"
+msgstr "Номер треку"
+
+#: ../translation/extra.c:62
+#, fuzzy
+msgid "Total Tracks"
+msgstr "Назва / Виконавець треку"
+
+#: ../translation/extra.c:63
+msgid "Genre"
+msgstr ""
+
+#: ../translation/extra.c:64
+msgid "Composer"
+msgstr ""
+
+#: ../translation/extra.c:65
+#, fuzzy
+msgid "Disc Number"
+msgstr "Номер файлу"
+
+#: ../translation/extra.c:66
+msgid "Comment"
+msgstr ""
+
+#: ../translation/extra.c:67
+msgid "Encoder / Vendor"
+msgstr ""
+
+#: ../translation/extra.c:68
+msgid "Copyright"
+msgstr ""
+
+#~ msgid "Couldn't get enough memory for input buffering."
+#~ msgstr "Не можу отримати достатньо пам’яті для вхідного буфорування."
+
+#~ msgid "Error reading first page of Ogg bitstream."
+#~ msgstr "Помилка читання першої сторінки потоку Ogg."
+
+#~ msgid "Error reading initial header packet."
+#~ msgstr "Помилка читання початкового пакету заголовку."
+
+#~ msgid "Couldn't get enough memory to register new stream serial number."
+#~ msgstr "Не можу отримати достатньо пам’яті для реєстрації нового серійного номера потоку."
+
+#~ msgid "Input truncated or empty."
+#~ msgstr "Вхідні дані спотворені або порожні."
+
+#~ msgid "Input is not an Ogg bitstream."
+#~ msgstr "Вхідні дані не є потоком Ogg."
+
+#~ msgid "Ogg bitstream does not contain Vorbis data."
+#~ msgstr "Потік Ogg не містить даних Vorbis."
+
+#~ msgid "EOF before recognised stream."
+#~ msgstr "EOF перед розпізнаним потоком."
+
+#~ msgid "Ogg bitstream does not contain a supported data-type."
+#~ msgstr "Потік Ogg не містить даних, що підтримуються."
+
+#~ msgid "Corrupt secondary header."
+#~ msgstr "Другий заголовок пошкоджено."
+
+#~ msgid "EOF before end of Vorbis headers."
+#~ msgstr "EOF перед кінцем заголовків Vorbis."
+
+#~ msgid "Corrupt or missing data, continuing..."
+#~ msgstr "Пошкоджено або пропущено заголовки, продовжую..."
+
+#~ msgid "Error writing stream to output. Output stream may be corrupted or truncated."
+#~ msgstr "Помилка запису потоку до виходу. Вихідний потік, можливо, пошкоджено або спотворено."
+
 #~ msgid ""
 #~ "<b>WARNING</b>: tag writing feature is still in development.\n"
 #~ "<b>Make backup copies</b> before using."
 #~ msgstr ""
 #~ "<b>ПОПЕРЕДЖЕННЯ</b>: запис міток все ще в розробці.\n"
 #~ "<b>Зробіть копії</b> перед використанням."
-
-#~ msgid "File number"
-#~ msgstr "Номер файлу"
 
 #~ msgid "Sound (adv.)"
 #~ msgstr "Звук (розш.)"
