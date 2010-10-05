@@ -1256,133 +1256,127 @@ msgstr "CDDB сілтемесі (мыс. 'freedb.org')"
 
 #: ../translation/extra.c:27
 msgid "CDDB port number (e.g. '888')"
-msgstr ""
+msgstr "CDDB порт нөмірі (мыс. '888')"
 
 #: ../translation/extra.c:28
 msgid "Prefer CDDB protocol over HTTP"
-msgstr ""
+msgstr "HTTP алдында CDDB хаттамасын таңдау"
 
 #: ../translation/extra.c:29
 msgid "Enable NRG image support"
-msgstr ""
+msgstr "NRG бейнелер қолдауын іске қосу"
 
 #. DUMB module player plugin
 #: ../translation/extra.c:31
 msgid "Resampling quality (0..2, higher is better)"
-msgstr ""
+msgstr "Қайта дискретизация сапасы (0..2, жоғарырақ - жақсырақ)"
 
 #. Game_Music_Emu decoder plugin
 #: ../translation/extra.c:33
 msgid "Max song length (in minutes)"
-msgstr ""
+msgstr "Тректің макс. ұзындығы (мин)"
 
 #. Standard GTK2 user interface plugin
 #: ../translation/extra.c:35
-#, fuzzy
 msgid "Ask confirmation to delete files from disk"
-msgstr "Файлдарды дисктен өшіру"
+msgstr "Файлдарды дисктен өшіру алдында растауды сұрау"
 
 #: ../translation/extra.c:36
 msgid "Status icon volume control sensitivity"
-msgstr ""
+msgstr "Жүйелік сөредегі таңбашаның дыбыс өзгерту сезімділігі"
 
 #: ../translation/extra.c:37
 msgid "Custom status icon"
-msgstr ""
+msgstr "Таңдауыңызша жүйелік сөредегі таңбаша"
 
 #: ../translation/extra.c:38
 msgid "Run gtk_init with --sync (debug mode)"
-msgstr ""
+msgstr "gtk_init --sync қосып, жөнелту (жөндеу режимі)"
 
 #. OSD Notify plugin
 #: ../translation/extra.c:40
 msgid "Notification format"
-msgstr ""
+msgstr "Хабарлама пішімі"
 
 #. PulseAudio output plugin
 #: ../translation/extra.c:42
 msgid "PulseAudio server"
-msgstr ""
+msgstr "PulseAudio сервері"
 
 #: ../translation/extra.c:44
 msgid "Samplerate"
-msgstr ""
+msgstr "Дискреттеу жиілігі"
 
 #. SHN player plugin
 #: ../translation/extra.c:46
 msgid "Relative seek table path"
-msgstr ""
+msgstr "Іздеу кестесінің салыстырмалы жолы"
 
 #: ../translation/extra.c:47
 msgid "Absolute seek table path"
-msgstr ""
+msgstr "Іздеу кестесінің абсолюттік жолы"
 
 #: ../translation/extra.c:48
 msgid "Swap audio bytes (toggle if all you hear is static)"
-msgstr ""
+msgstr "Аудио байттар орнын ауыстыру"
 
 #. SID decoder plugin
 #: ../translation/extra.c:50
-#, fuzzy
 msgid "Enable HVSC"
-msgstr "Қосу"
+msgstr "HVSC іске қосу"
 
 #: ../translation/extra.c:51
 msgid "HVSC path"
-msgstr ""
+msgstr "HVSC жолы"
 
 #. WildMidi player plugin
 #: ../translation/extra.c:53
 msgid "Timidity++ bank configuration file"
-msgstr ""
+msgstr "Timidity++ банкінің баптау файлы"
 
 #: ../translation/extra.c:56
-#, fuzzy
 msgid "Track Title"
-msgstr "Трек №"
+msgstr "Трек атауы"
 
 #: ../translation/extra.c:57
 msgid "Performer"
-msgstr ""
+msgstr "Орындайтын"
 
 #: ../translation/extra.c:60
 msgid "Date"
-msgstr ""
+msgstr "Күні"
 
 #: ../translation/extra.c:61
-#, fuzzy
 msgid "Track Number"
-msgstr "Трек №"
+msgstr "Трек нөмірі"
 
 #: ../translation/extra.c:62
-#, fuzzy
 msgid "Total Tracks"
-msgstr "Атауы / Трек орындаушысы"
+msgstr "Жалпы трек саны"
 
 #: ../translation/extra.c:63
 msgid "Genre"
-msgstr ""
+msgstr "Жанр"
 
 #: ../translation/extra.c:64
 msgid "Composer"
-msgstr ""
+msgstr "Композитор"
 
 #: ../translation/extra.c:65
-#, fuzzy
 msgid "Disc Number"
-msgstr "Файл нөмірі"
+msgstr "Диск нөмірі"
 
 #: ../translation/extra.c:66
 msgid "Comment"
-msgstr ""
+msgstr "Комментарий"
 
 #: ../translation/extra.c:67
 msgid "Encoder / Vendor"
-msgstr ""
+msgstr "Кодер / Сатушы"
 
 #: ../translation/extra.c:68
 msgid "Copyright"
-msgstr ""
+msgstr "Copyright"
 
 #~ msgid "Couldn't get enough memory for input buffering."
 #~ msgstr "Кірісті буферизациялау үшін керек жады мөлшерін алу мүмкін емес."
