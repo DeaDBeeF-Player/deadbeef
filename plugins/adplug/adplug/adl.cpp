@@ -277,7 +277,8 @@ public:
   // * One for instruments, starting at offset 500.
 
   uint8 *getProgram(int progId) {
-    return _soundData + READ_LE_UINT16(_soundData + 2 * progId);
+      int offset = READ_LE_UINT16(_soundData + 2 * progId);
+    return _soundData + offset;
   }
 
   uint8 *getInstrument(int instrumentId) {
@@ -2274,7 +2275,7 @@ void CadlPlayer::playSoundEffect(uint8_t track) {
 
 void CadlPlayer::play(uint8_t track) {
   uint8 soundId = _trackEntries[track];
-  if ((int8)soundId == -1 || !_soundDataPtr)
+  if (soundId == 0xff || !_soundDataPtr)
     return;
   soundId &= 0xFF;
   _driver->callback(16, 0);
@@ -2379,11 +2380,12 @@ bool CadlPlayer::load(const char *filename, const CFileProvider &fp)
   // 	_soundFileLoaded = file;
 
   // find last subsong
-  for(int i = 199; i >= 0; i--)
-    if(_trackEntries[i] != 0xff) {
-      numsubsongs = i + 1;
-      break;
-    }
+  for(int i = 119; i >= 0; i--) {
+      if(_trackEntries[i] != 0xff) {
+          numsubsongs = i + 1;
+          break;
+      }
+  }
 
   fp.close(f);
   cursubsong = 2;
