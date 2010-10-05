@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-09-22 04:33+0000\n"
+"POT-Creation-Date: 2010-10-04 04:36+0000\n"
 "PO-Revision-Date: 2010-06-24 12:09+0600\n"
 "Last-Translator: Baurzhan Muftakhidinov <baurthefirst@gmail.com>\n"
 "Language-Team: Kazakh <kk_KZ@googlegroups.com>\n"
@@ -41,55 +41,55 @@ msgstr "Бума(лар)ды ойнату тізіміне қосу..."
 msgid "Follow symlinks"
 msgstr "Жарлықтардың соңынан жүру"
 
-#: ../plugins/gtkui/callbacks.c:663
+#: ../plugins/gtkui/callbacks.c:667
 msgid "Failed while reading help file"
 msgstr "Көмек файлын оқу сәтсіз"
 
-#: ../plugins/gtkui/callbacks.c:673
+#: ../plugins/gtkui/callbacks.c:677
 msgid "Failed to load help file"
 msgstr "Көмек файлын жүктеу сәтсіз"
 
-#: ../plugins/gtkui/callbacks.c:688
+#: ../plugins/gtkui/callbacks.c:692
 msgid "help.txt"
 msgstr "help.txt"
 
-#: ../plugins/gtkui/callbacks.c:689 ../plugins/gtkui/interface.c:1125
+#: ../plugins/gtkui/callbacks.c:693 ../plugins/gtkui/interface.c:1125
 #: ../plugins/gtkui/deadbeef.glade.h:52
 msgid "Help"
 msgstr "Көмек"
 
-#: ../plugins/gtkui/callbacks.c:699
+#: ../plugins/gtkui/callbacks.c:703
 #, c-format
 msgid "About DeaDBeeF %s"
 msgstr "DeaDBeeF %s туралы"
 
-#: ../plugins/gtkui/callbacks.c:701
+#: ../plugins/gtkui/callbacks.c:705
 msgid "about.txt"
 msgstr "about.txt"
 
-#: ../plugins/gtkui/callbacks.c:712
+#: ../plugins/gtkui/callbacks.c:716
 #, c-format
 msgid "DeaDBeeF %s ChangeLog"
 msgstr "DeaDBeeF %s өзгерістері"
 
-#: ../plugins/gtkui/callbacks.c:714
+#: ../plugins/gtkui/callbacks.c:718
 msgid "ChangeLog"
 msgstr "Өзгерістер"
 
-#: ../plugins/gtkui/callbacks.c:725
+#: ../plugins/gtkui/callbacks.c:729
 msgid "COPYING.GPLv2"
 msgstr "COPYING.GPLv2"
 
-#: ../plugins/gtkui/callbacks.c:736
+#: ../plugins/gtkui/callbacks.c:740
 msgid "COPYING.LGPLv2.1"
 msgstr "COPYING.LGPLv2.1"
 
-#: ../plugins/gtkui/callbacks.c:1072
+#: ../plugins/gtkui/callbacks.c:1080
 #, c-format
 msgid "DeaDBeeF Translators"
 msgstr "DeaDBeeF аудармашылары"
 
-#: ../plugins/gtkui/callbacks.c:1074
+#: ../plugins/gtkui/callbacks.c:1082
 msgid "translators.txt"
 msgstr "translators.txt"
 
@@ -97,15 +97,15 @@ msgstr "translators.txt"
 msgid "Edit playlist"
 msgstr "Ойнату тізімін түзету"
 
-#: ../plugins/gtkui/ddbtabstrip.c:703
+#: ../plugins/gtkui/ddbtabstrip.c:701
 msgid "Rename Playlist"
 msgstr "Ойнату тізімінің атын ауыстыру"
 
-#: ../plugins/gtkui/ddbtabstrip.c:707
+#: ../plugins/gtkui/ddbtabstrip.c:705
 msgid "Remove Playlist"
 msgstr "Ойнату тізімін өшіру"
 
-#: ../plugins/gtkui/ddbtabstrip.c:711
+#: ../plugins/gtkui/ddbtabstrip.c:709
 msgid "Add New Playlist"
 msgstr "Жаңа ойнату тізімі"
 
@@ -198,23 +198,23 @@ msgstr "Аялдатылған | "
 msgid "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
 msgstr "%s%s %s| %dГц | %d бит | %s | %d:%02d / %s | %d трек | %s жалпы уақыты"
 
-#: ../plugins/gtkui/gtkui.c:660
+#: ../plugins/gtkui/gtkui.c:661
 msgid "Save Playlist As"
 msgstr "Ойнату тізімін қалайша сақтау"
 
-#: ../plugins/gtkui/gtkui.c:669 ../plugins/gtkui/gtkui.c:730
+#: ../plugins/gtkui/gtkui.c:670 ../plugins/gtkui/gtkui.c:731
 msgid "DeaDBeeF playlist files (*.dbpl)"
 msgstr "DeaDBeeF ойнату тізім файлдары (*.dbpl)"
 
-#: ../plugins/gtkui/gtkui.c:723
+#: ../plugins/gtkui/gtkui.c:724
 msgid "Load Playlist"
 msgstr "Ойнату тізімін жүктеу"
 
-#: ../plugins/gtkui/gtkui.c:863
+#: ../plugins/gtkui/gtkui.c:864
 msgid "New Playlist"
 msgstr "Жаңа ойнату тізімі"
 
-#: ../plugins/gtkui/gtkui.c:866
+#: ../plugins/gtkui/gtkui.c:867
 #, c-format
 msgid "New Playlist (%d)"
 msgstr "Жаңа ойнату тізімі (%d)"
@@ -285,7 +285,7 @@ msgid "Selection"
 msgstr "Таңдалған"
 
 #: ../plugins/gtkui/interface.c:265 ../plugins/gtkui/plcommon.c:426
-#: ../plugins/gtkui/prefwin.c:333 ../plugins/gtkui/deadbeef.glade.h:106
+#: ../plugins/gtkui/prefwin.c:334 ../plugins/gtkui/deadbeef.glade.h:106
 msgid "Remove"
 msgstr "Өшіру"
 
@@ -487,7 +487,7 @@ msgid "Item Index"
 msgstr "Реттік нөмірі"
 
 #. create default set of columns
-#: ../plugins/gtkui/interface.c:1431 ../plugins/gtkui/mainplaylist.c:300
+#: ../plugins/gtkui/interface.c:1431 ../plugins/gtkui/mainplaylist.c:305
 msgid "Playing"
 msgstr "Ойналуда"
 
@@ -499,15 +499,18 @@ msgstr "Альбом суреті"
 msgid "Artist - Album"
 msgstr "Орындаушы - Альбом"
 
+#. Track properties dialog
 #: ../plugins/gtkui/interface.c:1434 ../plugins/gtkui/plcommon.c:878
+#: ../translation/extra.c:55
 msgid "Artist"
 msgstr "Орындаушы"
 
 #: ../plugins/gtkui/interface.c:1435 ../plugins/gtkui/interface.c:1822
+#: ../translation/extra.c:59
 msgid "Album"
 msgstr "Альбом"
 
-#: ../plugins/gtkui/interface.c:1436 ../plugins/gtkui/prefwin.c:611
+#: ../plugins/gtkui/interface.c:1436 ../plugins/gtkui/prefwin.c:612
 msgid "Title"
 msgstr "Атауы"
 
@@ -519,7 +522,7 @@ msgstr "Ұзақтығы"
 msgid "Track"
 msgstr "Трек"
 
-#: ../plugins/gtkui/interface.c:1439
+#: ../plugins/gtkui/interface.c:1439 ../translation/extra.c:58
 msgid "Band / Album Artist"
 msgstr "Топ / Альбом орындаушысы"
 
@@ -858,19 +861,19 @@ msgstr ""
 "  copy[r]ight, [f]ilename, [T]ags\n"
 "Мысалы: %a - %t [%l]"
 
-#: ../plugins/gtkui/mainplaylist.c:301 ../plugins/gtkui/search.c:434
+#: ../plugins/gtkui/mainplaylist.c:306 ../plugins/gtkui/search.c:439
 msgid "Artist / Album"
 msgstr "Орындаушы / Альбом"
 
-#: ../plugins/gtkui/mainplaylist.c:302 ../plugins/gtkui/search.c:435
+#: ../plugins/gtkui/mainplaylist.c:307 ../plugins/gtkui/search.c:440
 msgid "Track No"
 msgstr "Трек №"
 
-#: ../plugins/gtkui/mainplaylist.c:303 ../plugins/gtkui/search.c:436
+#: ../plugins/gtkui/mainplaylist.c:308 ../plugins/gtkui/search.c:441
 msgid "Title / Track Artist"
 msgstr "Атауы / Трек орындаушысы"
 
-#: ../plugins/gtkui/mainplaylist.c:304 ../plugins/gtkui/search.c:437
+#: ../plugins/gtkui/mainplaylist.c:309 ../plugins/gtkui/search.c:442
 #: ../plugins/gtkui/trkproperties.c:175
 msgid "Duration"
 msgstr "Ұзақтығы"
@@ -940,29 +943,29 @@ msgstr "Файлды ашу..."
 msgid "Setup %s"
 msgstr "%s баптаулары"
 
-#: ../plugins/gtkui/prefwin.c:98
+#: ../plugins/gtkui/prefwin.c:99
 msgid "Default Audio Device"
 msgstr "Негізгі дыбыс құрылғысы"
 
-#: ../plugins/gtkui/prefwin.c:328
+#: ../plugins/gtkui/prefwin.c:329
 msgid "Add"
 msgstr "Қосу"
 
-#: ../plugins/gtkui/prefwin.c:338
+#: ../plugins/gtkui/prefwin.c:339
 msgid "Global Hotkeys"
 msgstr "Ыстық пернелер"
 
-#: ../plugins/gtkui/prefwin.c:400
+#: ../plugins/gtkui/prefwin.c:401
 msgid "Slot"
 msgstr "Слот"
 
-#: ../plugins/gtkui/prefwin.c:401
+#: ../plugins/gtkui/prefwin.c:402
 msgid "Key combination"
 msgstr "Пернелер комбинациясы"
 
 #. output plugin selection
-#: ../plugins/gtkui/prefwin.c:480 ../plugins/gtkui/prefwin.c:692
-#: ../plugins.c:872
+#: ../plugins/gtkui/prefwin.c:481 ../plugins/gtkui/prefwin.c:693
+#: ../plugins.c:873
 msgid "ALSA output plugin"
 msgstr "ALSA шығыс плагині"
 
@@ -977,6 +980,14 @@ msgstr "Осы трек үшін сіз ақпаратты түзеттіңіз.
 #: ../plugins/gtkui/trkproperties.c:55
 msgid "Really close the window?"
 msgstr "Терезені шынымен жабу керек пе?"
+
+#: ../plugins/gtkui/trkproperties.c:169
+msgid "Location"
+msgstr "Орналасуы"
+
+#: ../plugins/gtkui/trkproperties.c:172
+msgid "Subtrack Index"
+msgstr "Ішкі жолшықтың аты"
 
 #: ../plugins/gtkui/trkproperties.c:178
 msgid "Tag Type(s)"
@@ -1152,58 +1163,6 @@ msgstr ""
 msgid "Couldn't find pixmap file: %s"
 msgstr "Сурет файлын табу мүмкін емес: %s"
 
-#: ../plugins/vorbis/vcedit.c:129 ../plugins/vorbis/vcedit.c:155
-msgid "Couldn't get enough memory for input buffering."
-msgstr "Кірісті буферизациялау үшін керек жады мөлшерін алу мүмкін емес."
-
-#: ../plugins/vorbis/vcedit.c:179 ../plugins/vorbis/vcedit.c:550
-msgid "Error reading first page of Ogg bitstream."
-msgstr "Ogg бит ағымының бірінші парағын оқу қатесі."
-
-#: ../plugins/vorbis/vcedit.c:185 ../plugins/vorbis/vcedit.c:557
-msgid "Error reading initial header packet."
-msgstr "Бастапқы тақырыптама дестесін оқу қатесі."
-
-#: ../plugins/vorbis/vcedit.c:237
-msgid "Couldn't get enough memory to register new stream serial number."
-msgstr "Жаңа ағымның сериялық нөмірін тіркеу үшін керек жады мөлшерін алу мүмкін емес."
-
-#: ../plugins/vorbis/vcedit.c:505
-msgid "Input truncated or empty."
-msgstr "Кіріс қиылған не бос болып тұр."
-
-#: ../plugins/vorbis/vcedit.c:507
-msgid "Input is not an Ogg bitstream."
-msgstr "Кіріс Ogg бит ағымы емес."
-
-#: ../plugins/vorbis/vcedit.c:565
-msgid "Ogg bitstream does not contain Vorbis data."
-msgstr "Ogg бит ағымында Vorbis ақпараты жоқ."
-
-#: ../plugins/vorbis/vcedit.c:578
-msgid "EOF before recognised stream."
-msgstr "Анықталған ағымнан бұрын файл соңы кездесті."
-
-#: ../plugins/vorbis/vcedit.c:594
-msgid "Ogg bitstream does not contain a supported data-type."
-msgstr "Ogg бит ағымында қолдау бар ақпарат түрі жоқ."
-
-#: ../plugins/vorbis/vcedit.c:638
-msgid "Corrupt secondary header."
-msgstr "Екіншілік тақырыптамасы зақымдалған."
-
-#: ../plugins/vorbis/vcedit.c:659
-msgid "EOF before end of Vorbis headers."
-msgstr "Vorbis тақырыптамасынан бұрын файл соңы кездесті."
-
-#: ../plugins/vorbis/vcedit.c:834
-msgid "Corrupt or missing data, continuing..."
-msgstr "Ақпарат зақымдалған не мүлдем жоқ, жалғастыру..."
-
-#: ../plugins/vorbis/vcedit.c:874
-msgid "Error writing stream to output. Output stream may be corrupted or truncated."
-msgstr "Шығысқа ағымды жазу қатесі. Шығыс ағымы зақымдалған не қиылған болуы мүмкін."
-
 #: ../plugins/wildmidi/wildmidiplug.c:162
 #, c-format
 msgid "wildmidi: freepats config file not found. Please install timidity-freepats package, or specify path to freepats.cfg in the plugin settings."
@@ -1219,15 +1178,257 @@ msgstr "Аудио CD қосу"
 msgid "Lookup on Last.fm"
 msgstr "Last.fm ішінен іздеу"
 
+#. ALSA output plugin
+#: ../translation/extra.c:6
+msgid "Use ALSA resampling"
+msgstr "ALSA шығыс модулі"
+
+#: ../translation/extra.c:7
+msgid "Release device while stopped"
+msgstr "Тоқтатылған кезде дыбыс құрылғысын босату"
+
+#: ../translation/extra.c:8 ../translation/extra.c:43
+msgid "Preferred buffer size"
+msgstr "Таңдамалы буфер өлшемі"
+
+#: ../translation/extra.c:9
+msgid "Preferred period size"
+msgstr "Таңдамалы период өлшемі"
+
+#. Last.fm plugin
+#: ../translation/extra.c:11
+msgid "Enable scrobbler"
+msgstr "Скробблингті іске қосу"
+
+#: ../translation/extra.c:12
+msgid "Disable nowplaying"
+msgstr "Қазір ойнаудағы трек атын жібермеу"
+
+#: ../translation/extra.c:13
+msgid "Username"
+msgstr "Пайдаланушы аты"
+
+#: ../translation/extra.c:14
+msgid "Password"
+msgstr "Пароль"
+
+#: ../translation/extra.c:15
+msgid "Scrobble URL"
+msgstr "Скробблинг сілтемесі"
+
+#. Album Artwork plugin
+#: ../translation/extra.c:17
+msgid "Cache update period (hr)"
+msgstr "Кэш жаңарту мерзімі (сағ)"
+
+#: ../translation/extra.c:18
+msgid "Fetch from embedded tags"
+msgstr "Кеңейтілген тегтерден алу"
+
+#: ../translation/extra.c:19
+msgid "Fetch from local folder"
+msgstr "Жергілікті бумадан алу"
+
+#: ../translation/extra.c:20
+msgid "Local cover file mask"
+msgstr "Жергілікті мұқаба үшін файл маскасы"
+
+#: ../translation/extra.c:21
+msgid "Fetch from last.fm"
+msgstr "last.fm сайтынан алу"
+
+#: ../translation/extra.c:22
+msgid "Fetch from albumart.org"
+msgstr "albumart.org сайтынан алу"
+
+#. Audio CD player
+#: ../translation/extra.c:24
+msgid "Use CDDB/FreeDB"
+msgstr "CDDB/FreeDB қолдану"
+
+#: ../translation/extra.c:25
+msgid "Prefer CD-Text over CDDB"
+msgstr "CDDB алдында CD-Text таңдау"
+
+#: ../translation/extra.c:26
+msgid "CDDB url (e.g. 'freedb.org')"
+msgstr "CDDB сілтемесі (мыс. 'freedb.org')"
+
+#: ../translation/extra.c:27
+msgid "CDDB port number (e.g. '888')"
+msgstr ""
+
+#: ../translation/extra.c:28
+msgid "Prefer CDDB protocol over HTTP"
+msgstr ""
+
+#: ../translation/extra.c:29
+msgid "Enable NRG image support"
+msgstr ""
+
+#. DUMB module player plugin
+#: ../translation/extra.c:31
+msgid "Resampling quality (0..2, higher is better)"
+msgstr ""
+
+#. Game_Music_Emu decoder plugin
+#: ../translation/extra.c:33
+msgid "Max song length (in minutes)"
+msgstr ""
+
+#. Standard GTK2 user interface plugin
+#: ../translation/extra.c:35
+#, fuzzy
+msgid "Ask confirmation to delete files from disk"
+msgstr "Файлдарды дисктен өшіру"
+
+#: ../translation/extra.c:36
+msgid "Status icon volume control sensitivity"
+msgstr ""
+
+#: ../translation/extra.c:37
+msgid "Custom status icon"
+msgstr ""
+
+#: ../translation/extra.c:38
+msgid "Run gtk_init with --sync (debug mode)"
+msgstr ""
+
+#. OSD Notify plugin
+#: ../translation/extra.c:40
+msgid "Notification format"
+msgstr ""
+
+#. PulseAudio output plugin
+#: ../translation/extra.c:42
+msgid "PulseAudio server"
+msgstr ""
+
+#: ../translation/extra.c:44
+msgid "Samplerate"
+msgstr ""
+
+#. SHN player plugin
+#: ../translation/extra.c:46
+msgid "Relative seek table path"
+msgstr ""
+
+#: ../translation/extra.c:47
+msgid "Absolute seek table path"
+msgstr ""
+
+#: ../translation/extra.c:48
+msgid "Swap audio bytes (toggle if all you hear is static)"
+msgstr ""
+
+#. SID decoder plugin
+#: ../translation/extra.c:50
+#, fuzzy
+msgid "Enable HVSC"
+msgstr "Қосу"
+
+#: ../translation/extra.c:51
+msgid "HVSC path"
+msgstr ""
+
+#. WildMidi player plugin
+#: ../translation/extra.c:53
+msgid "Timidity++ bank configuration file"
+msgstr ""
+
+#: ../translation/extra.c:56
+#, fuzzy
+msgid "Track Title"
+msgstr "Трек №"
+
+#: ../translation/extra.c:57
+msgid "Performer"
+msgstr ""
+
+#: ../translation/extra.c:60
+msgid "Date"
+msgstr ""
+
+#: ../translation/extra.c:61
+#, fuzzy
+msgid "Track Number"
+msgstr "Трек №"
+
+#: ../translation/extra.c:62
+#, fuzzy
+msgid "Total Tracks"
+msgstr "Атауы / Трек орындаушысы"
+
+#: ../translation/extra.c:63
+msgid "Genre"
+msgstr ""
+
+#: ../translation/extra.c:64
+msgid "Composer"
+msgstr ""
+
+#: ../translation/extra.c:65
+#, fuzzy
+msgid "Disc Number"
+msgstr "Файл нөмірі"
+
+#: ../translation/extra.c:66
+msgid "Comment"
+msgstr ""
+
+#: ../translation/extra.c:67
+msgid "Encoder / Vendor"
+msgstr ""
+
+#: ../translation/extra.c:68
+msgid "Copyright"
+msgstr ""
+
+#~ msgid "Couldn't get enough memory for input buffering."
+#~ msgstr "Кірісті буферизациялау үшін керек жады мөлшерін алу мүмкін емес."
+
+#~ msgid "Error reading first page of Ogg bitstream."
+#~ msgstr "Ogg бит ағымының бірінші парағын оқу қатесі."
+
+#~ msgid "Error reading initial header packet."
+#~ msgstr "Бастапқы тақырыптама дестесін оқу қатесі."
+
+#~ msgid "Couldn't get enough memory to register new stream serial number."
+#~ msgstr "Жаңа ағымның сериялық нөмірін тіркеу үшін керек жады мөлшерін алу мүмкін емес."
+
+#~ msgid "Input truncated or empty."
+#~ msgstr "Кіріс қиылған не бос болып тұр."
+
+#~ msgid "Input is not an Ogg bitstream."
+#~ msgstr "Кіріс Ogg бит ағымы емес."
+
+#~ msgid "Ogg bitstream does not contain Vorbis data."
+#~ msgstr "Ogg бит ағымында Vorbis ақпараты жоқ."
+
+#~ msgid "EOF before recognised stream."
+#~ msgstr "Анықталған ағымнан бұрын файл соңы кездесті."
+
+#~ msgid "Ogg bitstream does not contain a supported data-type."
+#~ msgstr "Ogg бит ағымында қолдау бар ақпарат түрі жоқ."
+
+#~ msgid "Corrupt secondary header."
+#~ msgstr "Екіншілік тақырыптамасы зақымдалған."
+
+#~ msgid "EOF before end of Vorbis headers."
+#~ msgstr "Vorbis тақырыптамасынан бұрын файл соңы кездесті."
+
+#~ msgid "Corrupt or missing data, continuing..."
+#~ msgstr "Ақпарат зақымдалған не мүлдем жоқ, жалғастыру..."
+
+#~ msgid "Error writing stream to output. Output stream may be corrupted or truncated."
+#~ msgstr "Шығысқа ағымды жазу қатесі. Шығыс ағымы зақымдалған не қиылған болуы мүмкін."
+
 #~ msgid ""
 #~ "<b>WARNING</b>: tag writing feature is still in development.\n"
 #~ "<b>Make backup copies</b> before using."
 #~ msgstr ""
 #~ "<b>ЕСКЕРТУ</b>: тег жазу мүмкіндігі әлі де өндіріс үстінде.\n"
 #~ "Қолдану алдында <b>көшірмелерді жасаңыз</b>."
-
-#~ msgid "File number"
-#~ msgstr "Файл нөмірі"
 
 #~ msgid "Sound (adv.)"
 #~ msgstr "Дыбыс (кең.)"
