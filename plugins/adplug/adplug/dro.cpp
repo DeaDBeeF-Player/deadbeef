@@ -59,9 +59,20 @@ bool CdroPlayer::load(const char *filename, const CFileProvider &fp)
   // load section
   mstotal = f->readInt(4);	// Total milliseconds in file
   length = f->readInt(4);	// Total data bytes in file
-  f->ignore(4);			// Type of opl data this can contain - ignored
   data = new unsigned char [length];
-  for (i=0;i<length;i++)
+
+  f->ignore(1);			// Type of opl data this can contain - ignored
+  for (i=0;i<3;i++)
+  	data[i]=f->readInt(1);
+
+  if ((data[0] == 0) || (data[1] == 0) || (data[2] == 0)) {
+  	// Some early .DRO files only used one byte for the hardware type, then
+  	// later changed to four bytes with no version number change.  If we're
+  	// here then this is a later (more popular) file with the full four bytes
+  	// for the hardware-type.
+  	i = 0; // so ignore the three bytes we just read and start again
+  }
+  for (;i<length;i++)
     data[i]=f->readInt(1);
   fp.close(f);
   rewind(0);
