@@ -433,6 +433,7 @@ cvorbis_insert (DB_playItem_t *after, const char *fname) {
     if (err != 0) {
         trace ("ov_open_callbacks returned %d\n", err);
         ov_clear (&vorbis_file);
+        deadbeef->fclose (fp);
         return NULL;
     }
 

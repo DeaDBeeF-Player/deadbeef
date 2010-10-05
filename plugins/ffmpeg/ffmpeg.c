@@ -545,6 +545,7 @@ ffmpeg_insert (DB_playItem_t *after, const char *fname) {
     // add metainfo
     ffmpeg_read_metadata_internal (it, fctx);
     // free decoder
+    avcodec_close (ctx);
     av_close_input_file(fctx);
 
     // external cuesheet
