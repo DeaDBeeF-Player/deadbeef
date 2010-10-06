@@ -84,7 +84,6 @@ adplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     info->currentsample = 0;
     info->toadd = 0;
 
-    printf ("playing subtrack %d dur %f\n", info->subsong, dur);
     // fill in mandatory plugin fields
     _info->plugin = &adplug_plugin;
     _info->bps = bps;
@@ -253,7 +252,6 @@ adplug_insert (DB_playItem_t *after, const char *fname) {
         if (dur < 0.1) {
             continue;
         }
-        printf ("adding subtrack %d dur %f\n", i, dur);
         DB_playItem_t *it = deadbeef->pl_item_alloc ();
         it->decoder_id = deadbeef->plug_get_decoder_id (adplug_plugin.plugin.id);
         it->fname = strdup (fname);
