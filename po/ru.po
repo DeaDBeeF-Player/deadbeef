@@ -189,7 +189,7 @@ msgstr "Стерео"
 #: ../plugins/gtkui/gtkui.c:183
 #, c-format
 msgid "| %4d kbps "
-msgstr "| %4d Кбит/с "
+msgstr "| %4d кбит/с "
 
 #: ../plugins/gtkui/gtkui.c:189
 msgid "Paused | "
@@ -295,7 +295,7 @@ msgstr "Удалить"
 
 #: ../plugins/gtkui/interface.c:273 ../plugins/gtkui/deadbeef.glade.h:18
 msgid "Crop"
-msgstr "Удалить невыделенное"
+msgstr "Оставить выделенное"
 
 #: ../plugins/gtkui/interface.c:277 ../plugins/gtkui/deadbeef.glade.h:153
 msgid "_Find"
@@ -364,7 +364,7 @@ msgstr "Не повторять"
 
 #: ../plugins/gtkui/interface.c:373 ../plugins/gtkui/deadbeef.glade.h:113
 msgid "Scroll follows playback"
-msgstr "Прокручивать текущую дорожку"
+msgstr "Прокручивать плейлист автоматически"
 
 #: ../plugins/gtkui/interface.c:378 ../plugins/gtkui/deadbeef.glade.h:20
 msgid "Cursor follows playback"
@@ -372,7 +372,7 @@ msgstr "Выделять текущую дорожку"
 
 #: ../plugins/gtkui/interface.c:382 ../plugins/gtkui/deadbeef.glade.h:124
 msgid "Stop after current"
-msgstr "Остановить после текущей"
+msgstr "Останавливать после текущей"
 
 #: ../plugins/gtkui/interface.c:394 ../plugins/gtkui/deadbeef.glade.h:69
 msgid "Jump to current track"
@@ -903,7 +903,7 @@ msgid ""
 "Files will be lost. Proceed?\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
 msgstr ""
-"Файлы будут утеряны. Продолжить?\n"
+"Файлы будут удалены. Продолжить?\n"
 "(Этот диалог может быть отключён в настройках расширения GTKUI)"
 
 #: ../plugins/gtkui/plcommon.c:326 ../plugins/gtkui/trkproperties.c:56
@@ -1295,7 +1295,7 @@ msgstr "Использовать протокол CDDB вместо HTTP"
 
 #: ../translation/extra.c:29
 msgid "Enable NRG image support"
-msgstr "Включить поддержку изображений NRG"
+msgstr "Включить поддержку образов NRG"
 
 #. DUMB module player plugin
 #: ../translation/extra.c:31
