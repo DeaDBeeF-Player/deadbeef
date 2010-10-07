@@ -258,6 +258,7 @@ adplug_insert (DB_playItem_t *after, const char *fname) {
         it->filetype = adplug_get_extension (fname);
         it->tracknum = i;
         deadbeef->pl_set_item_duration (it, dur);
+#if 0
         // add metainfo
         if (p->gettitle()[0]) {
             adplug_add_meta (it, "title", p->gettitle());
@@ -271,6 +272,7 @@ adplug_insert (DB_playItem_t *after, const char *fname) {
         if (!p->getauthor()[0]) {
             adplug_add_meta (it, "artist", p->getauthor());
         }
+#endif
         deadbeef->pl_add_meta (it, "title", NULL);
         // insert
         after = deadbeef->pl_insert_item (after, it);
