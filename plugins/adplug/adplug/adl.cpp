@@ -778,8 +778,19 @@ void AdlibDriver::executePrograms() {
 	    opcode &= 0x7F;
 	    if (opcode >= _parserOpcodeTableSize)
 	      opcode = _parserOpcodeTableSize - 1;
-	    debugC(9, kDebugLevelSound, "Calling opcode '%s' (%d) (channel: %d)", _parserOpcodeTable[opcode].name, opcode, _curChannel);
-	    result = (this->*(_parserOpcodeTable[opcode].function))(dataptr, channel, param);
+          debugC(9, kDebugLevelSound, "Calling opcode '%s' (%d) (channel: %d)\n", _parserOpcodeTable[opcode].name, opcode, _curChannel);
+	      if (opcode == 2) {
+              int offset = READ_LE_UINT16(_soundData + 2 * param);
+              if (offset == 0xffff) {
+                  break; // corrupted file / bad parser
+              }
+              else {
+                  result = (this->*(_parserOpcodeTable[opcode].function))(dataptr, channel, param);
+              }
+          }
+          else {
+              result = (this->*(_parserOpcodeTable[opcode].function))(dataptr, channel, param);
+          }
 	    channel.dataptr = dataptr;
 	    if (result)
 	      break;
