@@ -702,7 +702,7 @@ on_about1_activate                     (GtkMenuItem     *menuitem,
     char s[200];
     snprintf (s, sizeof (s), _("About DeaDBeeF %s"), VERSION);
     char fname[PATH_MAX];
-    snprintf (fname, sizeof (fname), DOCDIR "/%s", _("about.txt"));
+    snprintf (fname, sizeof (fname), DOCDIR "/%s", "about.txt");
     show_info_window (fname, s, &aboutwindow);
 }
 
@@ -715,7 +715,7 @@ on_changelog1_activate                 (GtkMenuItem     *menuitem,
     char s[200];
     snprintf (s, sizeof (s), _("DeaDBeeF %s ChangeLog"), VERSION);
     char fname[PATH_MAX];
-    snprintf (fname, sizeof (fname), DOCDIR "/%s", _("ChangeLog"));
+    snprintf (fname, sizeof (fname), DOCDIR "/%s", "ChangeLog");
     show_info_window (fname, s, &changelogwindow);
 }
 
@@ -726,7 +726,7 @@ on_gpl1_activate                       (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     char fname[PATH_MAX];
-    snprintf (fname, sizeof (fname), DOCDIR "/%s", _("COPYING.GPLv2"));
+    snprintf (fname, sizeof (fname), DOCDIR "/%s", "COPYING.GPLv2");
     show_info_window (fname, "GNU GENERAL PUBLIC LICENSE Version 2", &gplwindow);
 }
 
@@ -737,7 +737,7 @@ on_lgpl1_activate                      (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     char fname[PATH_MAX];
-    snprintf (fname, sizeof (fname), DOCDIR "/%s", _("COPYING.LGPLv2.1"));
+    snprintf (fname, sizeof (fname), DOCDIR "/%s", "COPYING.LGPLv2.1");
     show_info_window (fname, "GNU LESSER GENERAL PUBLIC LICENSE Version 2.1", &lgplwindow);
 }
 
@@ -1079,7 +1079,7 @@ on_translators1_activate               (GtkMenuItem     *menuitem,
     char s[200];
     snprintf (s, sizeof (s), _("DeaDBeeF Translators"));
     char fname[PATH_MAX];
-    snprintf (fname, sizeof (fname), DOCDIR "/%s", _("translators.txt"));
+    snprintf (fname, sizeof (fname), DOCDIR "/%s", "translators.txt");
     show_info_window (fname, s, &translatorswindow);
 }
 
