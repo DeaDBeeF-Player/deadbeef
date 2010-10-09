@@ -1,5 +1,29 @@
-if you want to build from git - install autotools, and run ./autogen.sh
-after doing that, or if you have botstrapped tarball, just run ./configure && make && make install
+TABLE OF CONTENTS
+
+1. compiling, dependencies, etc
+2. information for distributors
+
+==========================================================
+
+1. compiling, dependencies, etc
+
+* first you need to install dependencies. full list is provided at the end of this section for your convenience
+
+* you will need intltool to be installed. if you don't need translations -- run ./configure --disable-nls (in this case you won't need to install intltool)
+
+* if you want to build from git - install autotools, and run ./autogen.sh to bootstrap
+
+* if you're compiling from tarball, or have completed previous git step..
+
+* after running autogen.sh or unpacking tarball, run "./configure --help", read the output
+
+* now you're ready to configure the build process -- run "./configure --prefix=/usr", and wait until it finishes. you may want to change prefix to another value. consult INSTALL file for more info.
+
+* make sure all plugins you need have "Yes" status in the list that's printed by configure. if not -- install missing dependencies. that is especially important for GTKUI, and ALSA or OSS plugins. make sure you have both. otherwise you won't get GUI and/or sound output.
+
+* after satisfying all dependencies, run "make -j5" (change -j number to suit your number of CPUs/cores, e.g. 5 is quite good for single CPU dual-core machines). it is a good idea to do it as normal user (this step doesn't require root privileges).
+
+* after build finishes, run "make install" as root
 
 full list of dependencies:
     libsamplerate: REQUIRED dependency, does high quality resampling
@@ -22,3 +46,19 @@ full list of dependencies:
 
 actual package names for your Linux distribution may vary.
 
+==========================================================
+
+2. information for distributors
+
+The Deadbeef player code is licensed under GPLv2, but this is not a requirement for plugins.
+Plugins don't link directly to deadbeef code, but are using special API header file which uses ZLib license.
+There are several plugins included in this source distribution that have code licensed under MAME and other licenses.
+Please inspect following plugins and libraries bundled with them for more info:
+    * plugins/dumb - uses a modified DUMB 0.9.3 library, which had issues with Debian in the past (but currently seems to be GPL-compliant)
+    * plugins/ao - uses Audio Overload SDK, which mixes code from many sources, under many licenses, including both GPL and MAME licenses. you might want to check legal status on distibuting linked MAME+GPL code
+    * plugins/shn - based on xmms-shn code, which has some code under Shorten license (see plugins/shn/LICENSE.shorten (which seems to be compatible with GPL)
+
+If you know other places in this project, that have licensing issues, but were not mentioned here - please let me know using this email: waker@users.sf.net
+
+any plugins that impose licensing issues can be safely excluded from build, please see "./configure --help" output for more details
+e.g. "./configure --disable-ao" will exclude AOSDK plugin from build
