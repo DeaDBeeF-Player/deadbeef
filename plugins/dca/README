@@ -1,3 +1,8 @@
+This distribution of libdca is not original work.
+All code had been made reentrant to fit deadbeef player needs.
+
+=== Original libdca README starts here ===
+
 About libdca
 ------------
 
