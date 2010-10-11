@@ -2023,6 +2023,8 @@ ddb_listview_list_track_dragdrop (DdbListview *ps, int y) {
     }
     if (y == -1) {
         ps->drag_motion_y = -1;
+        ps->scroll_active = 0;
+        ps->scroll_direction = 0;
         return;
     }
     int sel = ddb_listview_dragdrop_get_row_from_coord (ps, y);
