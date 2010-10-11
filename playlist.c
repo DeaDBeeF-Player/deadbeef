@@ -756,7 +756,7 @@ static float
 pl_cue_parse_time (const char *p) {
     char *endptr;
     long mins = strtol(p, &endptr, 10);
-    if (endptr - p < 2 || *endptr != ':') {
+    if (endptr - p < 1 || *endptr != ':') {
         return -1;
     }
     p = endptr + 1;
