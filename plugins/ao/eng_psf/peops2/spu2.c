@@ -777,6 +777,13 @@ EXPORT_GCC long CALLBACK SPU2init(mips_cpu_context *cpu, void (*callback)(unsign
  return 0;
 }
 
+EXPORT_GCC void CALLBACK SPU2free (mips_cpu_context *cpu) {
+    if (cpu->spu2) {
+        free (cpu->spu2);
+        cpu->spu2 = NULL;
+    }
+}
+
 ////////////////////////////////////////////////////////////////////////
 // SETUPTIMER: init of certain buffers and threads/timers
 ////////////////////////////////////////////////////////////////////////

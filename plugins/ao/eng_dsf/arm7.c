@@ -44,6 +44,10 @@ struct sARM7* ARM7_Alloc ()
     return cpu;
 }
 
+void ARM7_Free (struct sARM7 *cpu) {
+    free (cpu);
+}
+
   //--------------------------------------------------------------------------
   /** ARM7 emulator init. */
 void ARM7_Init (struct sARM7 *cpu)

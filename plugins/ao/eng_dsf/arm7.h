@@ -130,6 +130,8 @@ struct sARM7
   /** ARM7 allocate spu state. */
 struct sARM7* ARM7_Alloc (void);
 
+void ARM7_Free (struct sARM7 *cpu);
+
   /** ARM7 emulator init. */
 void ARM7_Init (struct sARM7 *cpu);
 

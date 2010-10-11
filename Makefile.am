@@ -51,6 +51,6 @@ docs_DATA = README help.txt about.txt translators.txt ChangeLog\
 desktopdir = $(datadir)/applications
 desktop_DATA = deadbeef.desktop
 
-EXTRA_DIST = $(docs_DATA) $(desktop_DATA) $(INTLTOOL_FILES)
+EXTRA_DIST = $(docs_DATA) $(desktop_DATA) $(INTLTOOL_FILES) translation/extra.c
 
 ACLOCAL_AMFLAGS = -I m4

@@ -418,6 +418,7 @@ cvorbis_insert (DB_playItem_t *after, const char *fname) {
         deadbeef->pl_add_meta (it, "title", NULL);
         after = deadbeef->pl_insert_item (after, it);
         deadbeef->pl_item_unref (it);
+        deadbeef->fclose (fp);
         return after;
     }
     ov_callbacks ovcb = {
@@ -431,6 +432,8 @@ cvorbis_insert (DB_playItem_t *after, const char *fname) {
     int err = ov_open_callbacks (fp, &vorbis_file, NULL, 0, ovcb);
     if (err != 0) {
         trace ("ov_open_callbacks returned %d\n", err);
+        ov_clear (&vorbis_file);
+        deadbeef->fclose (fp);
         return NULL;
     }
 

@@ -69,10 +69,10 @@ void *psf_start(const char *path, uint8 *buffer, uint32 length)
     psf_synth_t *s = malloc (sizeof (psf_synth_t));
     psf_refresh = -1;
 
-	uint8 *file, *lib_decoded, *lib_raw_file, *alib_decoded;
+	uint8 *file = NULL, *lib_decoded = NULL, *lib_raw_file = NULL, *alib_decoded = NULL;
 	uint32 offset, plength, PC, SP, GP, lengthMS, fadeMS;
 	uint64 file_len, lib_len, lib_raw_length, alib_len;
-	corlett_t *lib;
+	corlett_t *lib = NULL;
 	int i;
 	union cpuinfo mipsinfo;
 
@@ -140,7 +140,6 @@ void *psf_start(const char *path, uint8 *buffer, uint32 length)
             strcpy (libpath, s->c->lib);
         }
 	
-		trace ("Loading library: %s\n", s->c->lib);
 		if (ao_get_lib(libpath, &lib_raw_file, &tmp_length) != AO_SUCCESS)
 		{
             psf_stop (s);
@@ -207,6 +206,7 @@ void *psf_start(const char *path, uint8 *buffer, uint32 length)
 		
 		// Dispose the corlett structure for the lib - we don't use it
 		free(lib);
+		lib = NULL;
 	}
 
 	// now patch the main file into RAM OVER the libraries (but not the aux lib)
@@ -242,8 +242,6 @@ void *psf_start(const char *path, uint8 *buffer, uint32 length)
                 strcpy (libpath, s->c->libaux[i]);
             }
 		
-			trace ("Loading aux library: %s\n", libpath);
-
 			if (ao_get_lib(libpath, &lib_raw_file, &tmp_length) != AO_SUCCESS)
 			{
                 psf_stop (s);
@@ -285,11 +283,16 @@ void *psf_start(const char *path, uint8 *buffer, uint32 length)
 		
 			// Dispose the corlett structure for the lib - we don't use it
 			free(lib);
+			lib = NULL;
+			free (alib_decoded);
+			alib_decoded = NULL;
 		}
 	}
 
 	free(file);
-//	free(lib_decoded);
+	file = NULL;
+	free(lib_decoded);
+	lib_decoded = NULL;
 	
 	// Finally, set psfby tag
 	strcpy(s->psfby, "n/a");

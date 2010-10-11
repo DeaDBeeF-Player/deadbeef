@@ -31,8 +31,8 @@
 #include "ao.h"
 #include "eng_protos.h"
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 /* file types */
 static uint32 type;
@@ -235,7 +235,6 @@ ao_identify (char *buffer) {
 
 void *
 ao_start (uint32 type, const char *path, uint8 *buffer, uint32 size) {
-    printf ("ao_start %d %p %d\n", type, buffer, size);
 	return (*types[type].start)(path, buffer, size);
 }
 

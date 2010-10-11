@@ -79,7 +79,8 @@ adplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     info->subsong = it->tracknum;
     info->decoder->rewind (info->subsong);
-    info->totalsamples = info->decoder->songlength (info->subsong) / 1000.f * samplerate;
+    float dur = deadbeef->pl_get_item_duration (it);
+    info->totalsamples = dur * samplerate;
     info->currentsample = 0;
     info->toadd = 0;
 
@@ -247,25 +248,31 @@ adplug_insert (DB_playItem_t *after, const char *fname) {
     int subsongs = p->getsubsongs ();
     for (int i = 0; i < subsongs; i++) {
         // prepare track for addition
+        float dur = p->songlength (i)/1000.f;
+        if (dur < 0.1) {
+            continue;
+        }
         DB_playItem_t *it = deadbeef->pl_item_alloc ();
         it->decoder_id = deadbeef->plug_get_decoder_id (adplug_plugin.plugin.id);
         it->fname = strdup (fname);
         it->filetype = adplug_get_extension (fname);
         it->tracknum = i;
-        deadbeef->pl_set_item_duration (it, p->songlength (i)/1000.f);
+        deadbeef->pl_set_item_duration (it, dur);
+#if 0
         // add metainfo
-//        if (p->gettitle()[0]) {
-//            adplug_add_meta (it, "title", p->gettitle());
-//        }
-//        else {
-//            deadbeef->pl_add_meta (it, "title", NULL);
-//        }
-//        if (p->getdesc()[0]) {
-//            adplug_add_meta (it, "comment", p->getdesc());
-//        }
-//        if (!p->getauthor()[0]) {
-//            adplug_add_meta (it, "artist", p->getauthor());
-//        }
+        if (p->gettitle()[0]) {
+            adplug_add_meta (it, "title", p->gettitle());
+        }
+        else {
+            deadbeef->pl_add_meta (it, "title", NULL);
+        }
+        if (p->getdesc()[0]) {
+            adplug_add_meta (it, "comment", p->getdesc());
+        }
+        if (!p->getauthor()[0]) {
+            adplug_add_meta (it, "artist", p->getauthor());
+        }
+#endif
         deadbeef->pl_add_meta (it, "title", NULL);
         // insert
         after = deadbeef->pl_insert_item (after, it);

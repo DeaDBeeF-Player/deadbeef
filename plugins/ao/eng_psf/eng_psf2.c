@@ -459,13 +459,14 @@ uint32 psf2_load_file(mips_cpu_context *cpu, char *file, uint8 *buf, uint32 bufl
 void *psf2_start(const char *path, uint8 *buffer, uint32 length)
 {
     psf2_synth_t *s = malloc (sizeof (psf2_synth_t));
+    memset (s, 0, sizeof (psf2_synth_t));
 
-	uint8 *file, *lib_decoded;
+	uint8 *file = NULL, *lib_decoded;
 	uint32 irx_len;
 	uint64 file_len, lib_raw_length, lib_len;
 	uint8 *buf;
 	union cpuinfo mipsinfo;
-	corlett_t *lib;
+	corlett_t *lib = NULL;
 
 	loadAddr = 0x23f00;	// this value makes allocations work out similarly to how they would 
 				// in Highly Experimental (as per Shadow Hearts' hard-coded assumptions)
@@ -476,6 +477,10 @@ void *psf2_start(const char *path, uint8 *buffer, uint32 length)
         free (s);
 		return NULL;
 	}
+	if (file) {
+        free (file);
+        file = NULL;
+    }
 
 	if (file_len > 0) printf("ERROR: PSF2 can't have a program section!  ps %08x\n", (unsigned int)file_len);
 
@@ -522,7 +527,7 @@ void *psf2_start(const char *path, uint8 *buffer, uint32 length)
             free (s);
             return NULL;
 		}
-				
+
 		#if DEBUG_LOADER
 		printf("Lib FS section: size %x bytes\n", lib->res_size);
 		#endif
@@ -530,6 +535,8 @@ void *psf2_start(const char *path, uint8 *buffer, uint32 length)
 		num_fs++;
 		filesys[1] = (uint8 *)lib->res_section;
  		fssize[1] = lib->res_size;
+ 		free (lib);
+ 		lib = NULL;
 	}
 
 	// dump all files
@@ -629,11 +636,15 @@ int32 psf2_stop(void *handle)
 {
     psf2_synth_t *s = handle;
 	SPU2close(s->mips_cpu);
+	SPU2free(s->mips_cpu);
 	if (s->c->lib[0] != 0)
 	{
 		free(s->lib_raw_file);
 	}
 	free(s->c);
+	if (s->mips_cpu) {
+        mips_exit (s->mips_cpu);
+    }
 	free (s);
 
 	return AO_SUCCESS;

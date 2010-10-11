@@ -50,6 +50,7 @@ version 0.4.2
 	added option to remember current track / position / state on exit, and resume after restart
 	added scrolling support to playlist tabs
 	improved Album Artist field support in many file formats
+	got rid of STL code in AdPlug and libsidplay2 libraries
 
 version 0.4.1
 	better default/minimal search window size

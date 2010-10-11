@@ -277,11 +277,16 @@ public:
   // * One for instruments, starting at offset 500.
 
   uint8 *getProgram(int progId) {
-    return _soundData + READ_LE_UINT16(_soundData + 2 * progId);
+      int offset = READ_LE_UINT16(_soundData + 2 * progId);
+    return _soundData + offset;
   }
 
   uint8 *getInstrument(int instrumentId) {
-    return _soundData + READ_LE_UINT16(_soundData + 500 + 2 * instrumentId);
+      int offset = READ_LE_UINT16(_soundData + 500 + 2 * instrumentId);
+      if (offset == 0xffff) {
+          return NULL;
+      }
+    return _soundData + offset;
   }
 
   void setupPrograms();
@@ -422,7 +427,7 @@ public:
   uint8 *_soundData;
 
   uint8 _soundIdTable[0x10];
-  Channel _channels[10];
+  Channel _channels[0xff]; // FIXME: this array must be of size 10, but some files attempt to index >200, so this is a temporary fix to avoid invalid writes
 
   uint8 _vibratoAndAMDepthBits;
   uint8 _rhythmSectionBits;
@@ -773,8 +778,19 @@ void AdlibDriver::executePrograms() {
 	    opcode &= 0x7F;
 	    if (opcode >= _parserOpcodeTableSize)
 	      opcode = _parserOpcodeTableSize - 1;
-	    debugC(9, kDebugLevelSound, "Calling opcode '%s' (%d) (channel: %d)", _parserOpcodeTable[opcode].name, opcode, _curChannel);
-	    result = (this->*(_parserOpcodeTable[opcode].function))(dataptr, channel, param);
+          debugC(9, kDebugLevelSound, "Calling opcode '%s' (%d) (channel: %d)\n", _parserOpcodeTable[opcode].name, opcode, _curChannel);
+	      if (opcode == 2) {
+              int offset = READ_LE_UINT16(_soundData + 2 * param);
+              if (offset == 0xffff) {
+                  break; // corrupted file / bad parser
+              }
+              else {
+                  result = (this->*(_parserOpcodeTable[opcode].function))(dataptr, channel, param);
+              }
+          }
+          else {
+              result = (this->*(_parserOpcodeTable[opcode].function))(dataptr, channel, param);
+          }
 	    channel.dataptr = dataptr;
 	    if (result)
 	      break;
@@ -996,6 +1012,9 @@ void AdlibDriver::setupNote(uint8 rawNote, Channel &channel, bool flag) {
 }
 
 void AdlibDriver::setupInstrument(uint8 regOffset, uint8 *dataptr, Channel &channel) {
+    if (!dataptr) {
+        return;
+    }
   debugC(9, kDebugLevelSound, "setupInstrument(%d, %p, %lu)", regOffset, (const void *)dataptr, (long)(&channel - _channels));
   // Amplitude Modulation / Vibrato / Envelope Generator Type /
   // Keyboard Scaling Rate / Modulator Frequency Multiple
@@ -2274,9 +2293,13 @@ void CadlPlayer::playSoundEffect(uint8_t track) {
 
 void CadlPlayer::play(uint8_t track) {
   uint8 soundId = _trackEntries[track];
-  if ((int8)soundId == -1 || !_soundDataPtr)
+  if (soundId == 0xff || !_soundDataPtr)
     return;
   soundId &= 0xFF;
+  int offset = READ_LE_UINT16(_driver->_soundData + 2 * soundId);
+  if (offset == 0xffff) {
+      return;
+  }
   _driver->callback(16, 0);
   // 	while ((_driver->callback(16, 0) & 8)) {
   // We call the system delay and not the game delay to avoid concurrency issues.
@@ -2379,11 +2402,12 @@ bool CadlPlayer::load(const char *filename, const CFileProvider &fp)
   // 	_soundFileLoaded = file;
 
   // find last subsong
-  for(int i = 199; i >= 0; i--)
-    if(_trackEntries[i] != 0xff) {
-      numsubsongs = i + 1;
-      break;
-    }
+  for(int i = 119; i >= 0; i--) {
+      if(_trackEntries[i] != 0xff) {
+          numsubsongs = i + 1;
+          break;
+      }
+  }
 
   fp.close(f);
   cursubsong = 2;
@@ -2408,6 +2432,15 @@ unsigned int CadlPlayer::getsubsongs()
 
 bool CadlPlayer::update()
 {
+  uint8 soundId = _trackEntries[cursubsong];
+  if (soundId == 0xff || !_soundDataPtr) {
+      return false;
+  }
+  soundId &= 0xFF;
+  int offset = READ_LE_UINT16(_driver->_soundData + 2 * soundId);
+  if (offset == 0xffff) {
+      return false;
+  }
   bool songend = true;
 
 //   if(_trackEntries[cursubsong] == 0xff)

@@ -1,3 +1,11 @@
+this version of AOSDK is not the original work.
+main change is that all engines had been made reentrant to work correctly in deadbeef player
+
+=== original AOSDK readme starts here === 
+
+it has STL code stripped off, + many bug fixes that are not upstream (yet)
+for original AdPlug information see below
+
 Audio Overload SDK - Development Release 1.4.8  February 15, 2009
 
 Copyright (c) 2007-2009 R. Belmont and Richard Bannister.
