@@ -1,16 +1,16 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Yinghua Wang <wantinghard@gmail.com>.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-09-10 15:02+0200\n"
-"PO-Revision-Date: 2010-10-14 17:09+0200\n"
-"Last-Translator: Yinghua_Wang <wantinghard@gmail.com>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"PO-Revision-Date: 2010-10-16 13:26+0800\n"
+"Last-Translator: Yinghua Wang <wantinghard@gmail.com>\n"
+"Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
 "Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -84,7 +84,7 @@ msgstr "添加新播放列表"
 
 #: ../plugins/gtkui/eq.c:113
 msgid "Save DeaDBeeF EQ Preset"
-msgstr "保存 DeaDBeeF EQ 预设值"
+msgstr "保存 DeaDBeeF EQ 预设置"
 
 #: ../plugins/gtkui/eq.c:120
 msgid "DeaDBeeF EQ preset files (*.ddbeq)"
@@ -120,7 +120,7 @@ msgstr "清零前置放大"
 
 #: ../plugins/gtkui/eq.c:314
 msgid "Zero Bands"
-msgstr ""
+msgstr "清零频段"
 
 #: ../plugins/gtkui/eq.c:321
 msgid "Save Preset"
@@ -265,7 +265,7 @@ msgstr "移除"
 
 #: ../plugins/gtkui/interface.c:269 ../plugins/gtkui/deadbeef.glade.h:20
 msgid "Crop"
-msgstr ""
+msgstr "剪切"
 
 #: ../plugins/gtkui/interface.c:273 ../plugins/gtkui/deadbeef.glade.h:154
 msgid "_Find"
@@ -289,8 +289,9 @@ msgid "Column headers"
 msgstr "列标题"
 
 #: ../plugins/gtkui/interface.c:304 ../plugins/gtkui/deadbeef.glade.h:130
+#, fuzzy
 msgid "Tabs"
-msgstr ""
+msgstr "表列"
 
 #: ../plugins/gtkui/interface.c:308 ../plugins/gtkui/deadbeef.glade.h:33
 msgid "Equalizer"
@@ -410,6 +411,8 @@ msgid ""
 "<b>WARNING</b>: tag writing feature is still in development.\n"
 "<b>Make backup copies</b> before using."
 msgstr ""
+"<b>警告</b>：编辑标签功能尚在开发中。\n"
+"使用前请<b>做好备份</b>。"
 
 #: ../plugins/gtkui/interface.c:1206 ../plugins/gtkui/deadbeef.glade.h:147
 msgid "_Apply"
@@ -431,7 +434,7 @@ msgstr "属性"
 
 #: ../plugins/gtkui/interface.c:1363 ../plugins/gtkui/deadbeef.glade.h:161
 msgid "editcolumndlg"
-msgstr ""
+msgstr "编辑列对话框"
 
 #: ../plugins/gtkui/interface.c:1378 ../plugins/gtkui/interface.c:2869
 #: ../plugins/gtkui/deadbeef.glade.h:133
@@ -440,7 +443,7 @@ msgstr "标题："
 
 #: ../plugins/gtkui/interface.c:1386 ../plugins/gtkui/deadbeef.glade.h:32
 msgid "Enter new column title here"
-msgstr ""
+msgstr "在此输入新的列标题"
 
 #: ../plugins/gtkui/interface.c:1394 ../plugins/gtkui/deadbeef.glade.h:137
 msgid "Type:"
@@ -448,65 +451,65 @@ msgstr "类型："
 
 #: ../plugins/gtkui/interface.c:1402
 msgid "File number"
-msgstr ""
+msgstr "文件号"
 
 #. create default set of columns
 #: ../plugins/gtkui/interface.c:1403 ../plugins/gtkui/mainplaylist.c:300
 msgid "Playing"
-msgstr ""
+msgstr "正在播放"
 
 #: ../plugins/gtkui/interface.c:1404
 msgid "Album Art"
-msgstr ""
+msgstr "专辑封面"
 
 #: ../plugins/gtkui/interface.c:1405
 msgid "Artist - Album"
-msgstr ""
+msgstr "艺人 - 专辑"
 
 #: ../plugins/gtkui/interface.c:1406 ../plugins/gtkui/plcommon.c:877
 msgid "Artist"
-msgstr ""
+msgstr "艺人"
 
 #: ../plugins/gtkui/interface.c:1407 ../plugins/gtkui/interface.c:1794
 msgid "Album"
-msgstr ""
+msgstr "专辑"
 
 #: ../plugins/gtkui/interface.c:1408 ../plugins/gtkui/prefwin.c:595
 msgid "Title"
-msgstr ""
+msgstr "标题"
 
 #: ../plugins/gtkui/interface.c:1409
 msgid "Length"
-msgstr ""
+msgstr "长度"
 
 #: ../plugins/gtkui/interface.c:1410 ../plugins/gtkui/interface.c:1793
 msgid "Track"
-msgstr ""
+msgstr "音轨"
 
 #: ../plugins/gtkui/interface.c:1411
 msgid "Band / Album Artist"
-msgstr ""
+msgstr "乐队 / 专辑艺人"
 
 #: ../plugins/gtkui/interface.c:1412 ../plugins/gtkui/plcommon.c:881
 msgid "Custom"
-msgstr ""
+msgstr "自定义"
 
 #: ../plugins/gtkui/interface.c:1418 ../plugins/gtkui/interface.c:3096
 #: ../plugins/gtkui/deadbeef.glade.h:62
 msgid "Format:"
-msgstr ""
+msgstr "格式："
 
 #: ../plugins/gtkui/interface.c:1433 ../plugins/gtkui/deadbeef.glade.h:11
 msgid "Alignment:"
-msgstr ""
+msgstr "对齐："
 
 #: ../plugins/gtkui/interface.c:1441
 msgid "Left"
-msgstr ""
+msgstr "左"
 
 #: ../plugins/gtkui/interface.c:1442
 msgid "Right"
-msgstr ""
+msgstr "右"
 
 #: ../plugins/gtkui/interface.c:1444 ../plugins/gtkui/deadbeef.glade.h:48
 #, no-c-format
@@ -519,284 +522,295 @@ msgid ""
 "  [d]irectory, [D]irectoryWithPath\n"
 "Example: %a - %t [%l]"
 msgstr ""
+"格式规定(start with %)：\n"
+"  [a]艺人, [t]标题, [b]专辑, [B]乐队, [C]作曲\n"
+"  [n]音轨号, [N]总音轨数,\n"
+"  [l]时长, [y]年份, [g]流派, [c]注释,\n"
+"  [r]版权, [f]文件名, [F]完整路径, [T]标签,\n"
+"  [d]目录, [D]带路径的目录\n"
+"例：%a - %t [%l]"
 
 #: ../plugins/gtkui/interface.c:1473 ../plugins/gtkui/interface.c:2900
 #: ../plugins/gtkui/interface.c:3012 ../plugins/gtkui/interface.c:3135
 #: ../plugins/gtkui/deadbeef.glade.h:148
 msgid "_Cancel"
-msgstr ""
+msgstr "取消(_C)"
 
 #: ../plugins/gtkui/interface.c:1494 ../plugins/gtkui/interface.c:2921
 #: ../plugins/gtkui/interface.c:3033 ../plugins/gtkui/interface.c:3156
 #: ../plugins/gtkui/deadbeef.glade.h:156
 msgid "_OK"
-msgstr ""
+msgstr "确定(_O)"
 
 #: ../plugins/gtkui/interface.c:1725 ../plugins/gtkui/deadbeef.glade.h:88
 msgid "Output plugin:"
-msgstr ""
+msgstr "输出插件："
 
 #: ../plugins/gtkui/interface.c:1738 ../plugins/gtkui/deadbeef.glade.h:87
 msgid "Output device:"
-msgstr ""
+msgstr "输出设备："
 
 #: ../plugins/gtkui/interface.c:1747 ../plugins/gtkui/deadbeef.glade.h:122
 msgid "Sound"
-msgstr ""
+msgstr "声音"
 
 #: ../plugins/gtkui/interface.c:1756 ../plugins/gtkui/deadbeef.glade.h:12
 msgid "Allow dynamic samplerate switching"
-msgstr ""
+msgstr "允许动态采样率切换"
 
 #: ../plugins/gtkui/interface.c:1764 ../plugins/gtkui/deadbeef.glade.h:111
 msgid "Samplerate conversion quality:"
-msgstr ""
+msgstr "采样率转换质量："
 
 #: ../plugins/gtkui/interface.c:1783 ../plugins/gtkui/deadbeef.glade.h:108
 msgid "Replaygain mode:"
-msgstr ""
+msgstr "回放增益方式："
 
 #: ../plugins/gtkui/interface.c:1792
 msgid "Disable"
-msgstr ""
+msgstr "禁用"
 
 #: ../plugins/gtkui/interface.c:1796 ../plugins/gtkui/deadbeef.glade.h:109
 msgid "Replaygain peak scale"
-msgstr ""
+msgstr "回放增益峰值均衡"
 
 #: ../plugins/gtkui/interface.c:1804 ../plugins/gtkui/deadbeef.glade.h:7
 msgid "Add files from command line (or file manager) to this playlist:"
-msgstr ""
+msgstr "通过命令行(或文件管理器)向此播放列表添加文件："
 
 #: ../plugins/gtkui/interface.c:1813 ../plugins/gtkui/deadbeef.glade.h:110
 msgid "Resume previous session on startup"
-msgstr ""
+msgstr "启动时恢复上一次会话"
 
 #: ../plugins/gtkui/interface.c:1817 ../plugins/gtkui/deadbeef.glade.h:94
 msgid "Playback"
-msgstr ""
+msgstr "回放"
 
 #: ../plugins/gtkui/interface.c:1826 ../plugins/gtkui/deadbeef.glade.h:16
 msgid "Close minimizes to tray"
-msgstr ""
+msgstr "点击关闭时最小化到托盘"
 
 #: ../plugins/gtkui/interface.c:1830 ../plugins/gtkui/deadbeef.glade.h:81
 msgid "Middle mouse button closes playlist"
-msgstr ""
+msgstr "鼠标中键关闭播放列表"
 
 #: ../plugins/gtkui/interface.c:1834 ../plugins/gtkui/deadbeef.glade.h:67
 msgid "Hide system tray icon"
-msgstr ""
+msgstr "隐藏系统托盘图标"
 
 #: ../plugins/gtkui/interface.c:1838 ../plugins/gtkui/deadbeef.glade.h:139
 msgid "Use bold font for currently playing track"
-msgstr ""
+msgstr "用粗体显示当前正在播放的音轨"
 
 #: ../plugins/gtkui/interface.c:1842 ../plugins/gtkui/deadbeef.glade.h:66
 msgid "Hide \"Delete from disk\" context menu item"
-msgstr ""
+msgstr "隐藏“从磁盘删除”右键菜单项"
 
 #: ../plugins/gtkui/interface.c:1850 ../plugins/gtkui/deadbeef.glade.h:134
 msgid "Titlebar text while playing:"
-msgstr ""
+msgstr "播放时的标题栏文本："
 
 #: ../plugins/gtkui/interface.c:1864 ../plugins/gtkui/deadbeef.glade.h:135
 msgid "Titlebar text while stopped:"
-msgstr ""
+msgstr "停止时的标题栏文本："
 
 #: ../plugins/gtkui/interface.c:1874 ../plugins/gtkui/deadbeef.glade.h:63
 msgid "GUI"
-msgstr ""
+msgstr "用户界面"
 
 #: ../plugins/gtkui/interface.c:1888 ../plugins/gtkui/interface.c:1932
 #: ../plugins/gtkui/deadbeef.glade.h:89
 msgid "Override"
-msgstr ""
+msgstr "覆盖"
 
 #: ../plugins/gtkui/interface.c:1897 ../plugins/gtkui/deadbeef.glade.h:46
 msgid "Foreground"
-msgstr ""
+msgstr "前景色"
 
 #: ../plugins/gtkui/interface.c:1904 ../plugins/gtkui/deadbeef.glade.h:14
 msgid "Background"
-msgstr ""
+msgstr "背景色"
 
 #: ../plugins/gtkui/interface.c:1923 ../plugins/gtkui/deadbeef.glade.h:116
 msgid "Seekbar/Volumebar colors"
-msgstr ""
+msgstr "搜索条/音量条颜色"
 
 #: ../plugins/gtkui/interface.c:1941 ../plugins/gtkui/deadbeef.glade.h:80
 msgid "Middle"
-msgstr ""
+msgstr "中"
 
 #: ../plugins/gtkui/interface.c:1948 ../plugins/gtkui/deadbeef.glade.h:73
 msgid "Light"
-msgstr ""
+msgstr "右"
 
 #: ../plugins/gtkui/interface.c:1955 ../plugins/gtkui/deadbeef.glade.h:23
 msgid "Dark"
-msgstr ""
+msgstr "暗"
 
 #: ../plugins/gtkui/interface.c:1986 ../plugins/gtkui/deadbeef.glade.h:15
 msgid "Base"
-msgstr ""
+msgstr "基础"
 
 #: ../plugins/gtkui/interface.c:1993 ../plugins/gtkui/deadbeef.glade.h:129
+#, fuzzy
 msgid "Tab strip colors"
-msgstr ""
+msgstr "列表条颜色"
 
 #: ../plugins/gtkui/interface.c:2002 ../plugins/gtkui/deadbeef.glade.h:90
 msgid "Override (looses GTK treeview theming, but speeds up rendering)"
-msgstr ""
+msgstr "覆盖(不同于 GTK 树状视图风格，但渲染更快)"
 
 #: ../plugins/gtkui/interface.c:2011 ../plugins/gtkui/deadbeef.glade.h:34
 msgid "Even row"
-msgstr ""
+msgstr "偶数行"
 
 #: ../plugins/gtkui/interface.c:2018 ../plugins/gtkui/deadbeef.glade.h:85
 msgid "Odd row"
-msgstr ""
+msgstr "奇数行"
 
 #: ../plugins/gtkui/interface.c:2037 ../plugins/gtkui/deadbeef.glade.h:132
 msgid "Text"
-msgstr ""
+msgstr "文本"
 
 #: ../plugins/gtkui/interface.c:2044 ../plugins/gtkui/deadbeef.glade.h:118
 msgid "Selected row"
-msgstr ""
+msgstr "选择的行"
 
 #: ../plugins/gtkui/interface.c:2063 ../plugins/gtkui/deadbeef.glade.h:119
 msgid "Selected text"
-msgstr ""
+msgstr "选择的文本"
 
 #: ../plugins/gtkui/interface.c:2076 ../plugins/gtkui/deadbeef.glade.h:21
 msgid "Cursor"
-msgstr ""
+msgstr "光标"
 
 #: ../plugins/gtkui/interface.c:2089 ../plugins/gtkui/deadbeef.glade.h:95
 msgid "Playlist colors"
-msgstr ""
+msgstr "播放列表颜色"
 
 #: ../plugins/gtkui/interface.c:2093 ../plugins/gtkui/deadbeef.glade.h:17
 msgid "Colors"
-msgstr ""
+msgstr "颜色"
 
 #: ../plugins/gtkui/interface.c:2102 ../plugins/gtkui/deadbeef.glade.h:31
 msgid "Enable Proxy Server"
-msgstr ""
+msgstr "启用代理服务器"
 
 #: ../plugins/gtkui/interface.c:2110 ../plugins/gtkui/deadbeef.glade.h:101
 msgid "Proxy Server Address:"
-msgstr ""
+msgstr "代理服务器地址："
 
 #: ../plugins/gtkui/interface.c:2124 ../plugins/gtkui/deadbeef.glade.h:102
 msgid "Proxy Server Port:"
-msgstr ""
+msgstr "代理服务器端口："
 
 #: ../plugins/gtkui/interface.c:2138 ../plugins/gtkui/deadbeef.glade.h:103
 msgid "Proxy Type:"
-msgstr ""
+msgstr "代理类型："
 
 #: ../plugins/gtkui/interface.c:2157 ../plugins/gtkui/deadbeef.glade.h:104
 msgid "Proxy Username:"
-msgstr ""
+msgstr "代理用户名："
 
 #: ../plugins/gtkui/interface.c:2170 ../plugins/gtkui/deadbeef.glade.h:100
 msgid "Proxy Password:"
-msgstr ""
+msgstr "代理密码："
 
 #: ../plugins/gtkui/interface.c:2180 ../plugins/gtkui/deadbeef.glade.h:82
 msgid "Network"
-msgstr ""
+msgstr "网络"
 
 #: ../plugins/gtkui/interface.c:2208 ../plugins/gtkui/deadbeef.glade.h:143
 msgid "Write ID3v2"
-msgstr ""
+msgstr "写 ID3v2"
 
 #: ../plugins/gtkui/interface.c:2212 ../plugins/gtkui/interface.c:2339
 #: ../plugins/gtkui/deadbeef.glade.h:142
 msgid "Write ID3v1"
-msgstr ""
+msgstr "写 ID3v1"
 
 #: ../plugins/gtkui/interface.c:2216 ../plugins/gtkui/interface.c:2295
 #: ../plugins/gtkui/interface.c:2335 ../plugins/gtkui/deadbeef.glade.h:141
 msgid "Write APEv2"
-msgstr ""
+msgstr "写 APEv2"
 
 #: ../plugins/gtkui/interface.c:2224 ../plugins/gtkui/interface.c:2303
 #: ../plugins/gtkui/deadbeef.glade.h:128
+#, fuzzy
 msgid "Strip ID3v2"
-msgstr ""
+msgstr "清除 ID3v2"
 
 #: ../plugins/gtkui/interface.c:2228 ../plugins/gtkui/interface.c:2351
 #: ../plugins/gtkui/deadbeef.glade.h:127
+#, fuzzy
 msgid "Strip ID3v1"
-msgstr ""
+msgstr "清除 ID3v1"
 
 #: ../plugins/gtkui/interface.c:2232 ../plugins/gtkui/interface.c:2307
 #: ../plugins/gtkui/interface.c:2347 ../plugins/gtkui/deadbeef.glade.h:126
+#, fuzzy
 msgid "Strip APEv2"
-msgstr ""
+msgstr "清除 APEv2"
 
 #: ../plugins/gtkui/interface.c:2240 ../plugins/gtkui/deadbeef.glade.h:69
 msgid "ID3v2 version"
-msgstr ""
+msgstr "ID3v2 版本"
 
 #: ../plugins/gtkui/interface.c:2247
 msgid "2.3 (Recommended)"
-msgstr ""
+msgstr "2.3 (推荐)"
 
 #: ../plugins/gtkui/interface.c:2248
 msgid "2.4"
-msgstr ""
+msgstr "2.4"
 
 #: ../plugins/gtkui/interface.c:2254 ../plugins/gtkui/deadbeef.glade.h:68
 msgid "ID3v1 character encoding (default is iso8859-1)"
-msgstr ""
+msgstr "ID3v1 字符编码(默认为 iso8859-1)"
 
 #: ../plugins/gtkui/interface.c:2291 ../plugins/gtkui/deadbeef.glade.h:144
 msgid "Write ID3v2.4"
-msgstr ""
+msgstr "写 ID3v2.4"
 
 #: ../plugins/gtkui/interface.c:2360 ../plugins/gtkui/deadbeef.glade.h:131
 msgid "Tag writer"
-msgstr ""
+msgstr "标签编辑器"
 
 #: ../plugins/gtkui/interface.c:2391 ../plugins/gtkui/deadbeef.glade.h:24
 msgid "Description:"
-msgstr ""
+msgstr "描述："
 
 #: ../plugins/gtkui/interface.c:2406 ../plugins/gtkui/deadbeef.glade.h:13
 msgid "Author(s):"
-msgstr ""
+msgstr "作者："
 
 #: ../plugins/gtkui/interface.c:2421 ../plugins/gtkui/deadbeef.glade.h:30
 msgid "Email:"
-msgstr ""
+msgstr "电子邮箱："
 
 #: ../plugins/gtkui/interface.c:2436 ../plugins/gtkui/deadbeef.glade.h:140
 msgid "Website:"
-msgstr ""
+msgstr "网站："
 
 #: ../plugins/gtkui/interface.c:2467 ../plugins/gtkui/deadbeef.glade.h:19
 msgid "Configure"
-msgstr ""
+msgstr "配置"
 
 #: ../plugins/gtkui/interface.c:2471 ../plugins/gtkui/deadbeef.glade.h:96
 msgid "Plugins"
-msgstr ""
+msgstr "插件"
 
 #: ../plugins/gtkui/interface.c:2853 ../plugins/gtkui/deadbeef.glade.h:162
 msgid "editplaylistdlg"
-msgstr ""
+msgstr "编辑播放列表对话框"
 
 #: ../plugins/gtkui/interface.c:2980 ../plugins/gtkui/deadbeef.glade.h:138
 msgid "URL:"
-msgstr ""
+msgstr "URL："
 
 #: ../plugins/gtkui/interface.c:3081 ../plugins/gtkui/deadbeef.glade.h:64
 msgid "Group By"
-msgstr ""
+msgstr "分组依据"
 
 #: ../plugins/gtkui/interface.c:3106 ../plugins/gtkui/deadbeef.glade.h:56
 #, no-c-format
@@ -808,221 +822,231 @@ msgid ""
 "  copy[r]ight, [f]ilename, [T]ags\n"
 "Example: %a - %t [%l]"
 msgstr ""
+"格式规定(用 % 开头):\n"
+"  [a]艺人, [t]标题, [b]专辑, [B]乐队, [C]作曲\n"
+"  [n]音轨号, [N]总音轨数,\n"
+"  [l]时长, [y]年份, [g]流派, [c]注释,\n"
+"  [r]版权, [f]文件名, [T]标签\n"
+"例：%a - %t [%l]"
 
 #: ../plugins/gtkui/mainplaylist.c:301 ../plugins/gtkui/search.c:434
 msgid "Artist / Album"
-msgstr ""
+msgstr "艺人 / 专辑"
 
 #: ../plugins/gtkui/mainplaylist.c:302 ../plugins/gtkui/search.c:435
 msgid "Track No"
-msgstr ""
+msgstr "音轨号"
 
 #: ../plugins/gtkui/mainplaylist.c:303 ../plugins/gtkui/search.c:436
 msgid "Title / Track Artist"
-msgstr ""
+msgstr "标题 / 音轨艺人"
 
 #: ../plugins/gtkui/mainplaylist.c:304 ../plugins/gtkui/search.c:437
 #: ../plugins/gtkui/trkproperties.c:175
 msgid "Duration"
-msgstr ""
+msgstr "时长"
 
 #: ../plugins/gtkui/plcommon.c:323
 msgid "Delete files from disk"
-msgstr ""
+msgstr "从磁盘中删除文件"
 
 #: ../plugins/gtkui/plcommon.c:324
 msgid ""
 "Files will be lost. Proceed?\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
 msgstr ""
+"文件将消失。继续吗？\n"
+"(可以在 GTKUI 插件设置中禁用此对话框)"
 
 #: ../plugins/gtkui/plcommon.c:325 ../plugins/gtkui/trkproperties.c:56
 msgid "Warning"
-msgstr ""
+msgstr "警告"
 
 #: ../plugins/gtkui/plcommon.c:401
 msgid "Add to playback queue"
-msgstr ""
+msgstr "添加到播放列表"
 
 #: ../plugins/gtkui/plcommon.c:406
 msgid "Remove from playback queue"
-msgstr ""
+msgstr "从播放队列中移除"
 
 #: ../plugins/gtkui/plcommon.c:414
 msgid "Reload metadata"
-msgstr ""
+msgstr "重新载入元数据"
 
 #: ../plugins/gtkui/plcommon.c:433
 msgid "Remove from disk"
-msgstr ""
+msgstr "从磁盘中删除"
 
 #: ../plugins/gtkui/plcommon.c:719 ../plugins/gtkui/plcommon.c:844
 msgid "Add column"
-msgstr ""
+msgstr "添加列"
 
 #: ../plugins/gtkui/plcommon.c:749 ../plugins/gtkui/plcommon.c:848
 msgid "Edit column"
-msgstr ""
+msgstr "编辑列"
 
 #: ../plugins/gtkui/plcommon.c:852
 msgid "Remove column"
-msgstr ""
+msgstr "移除列"
 
 #: ../plugins/gtkui/plcommon.c:862
 msgid "Group by"
-msgstr ""
+msgstr "分组依据"
 
 #: ../plugins/gtkui/plcommon.c:869
 msgid "None"
-msgstr ""
+msgstr "无"
 
 #: ../plugins/gtkui/plcommon.c:873
 msgid "Artist/Date/Album"
-msgstr ""
+msgstr "艺人/日期/专辑"
 
 #: ../plugins/gtkui/pluginconf.c:41
 msgid "Open file..."
-msgstr ""
+msgstr "打开文件..."
 
 #: ../plugins/gtkui/pluginconf.c:142
 #, c-format
 msgid "Setup %s"
-msgstr ""
+msgstr "设置 %s"
 
 #: ../plugins/gtkui/prefwin.c:98
 msgid "Default Audio Device"
-msgstr ""
+msgstr "默认音频设备"
 
 #: ../plugins/gtkui/prefwin.c:312
 msgid "Add"
-msgstr ""
+msgstr "添加"
 
 #: ../plugins/gtkui/prefwin.c:322
 msgid "Global Hotkeys"
-msgstr ""
+msgstr "全局热键"
 
 #: ../plugins/gtkui/prefwin.c:384
+#, fuzzy
 msgid "Slot"
-msgstr ""
+msgstr "槽"
 
 #: ../plugins/gtkui/prefwin.c:385
 msgid "Key combination"
-msgstr ""
+msgstr "按键组合"
 
 #. output plugin selection
 #: ../plugins/gtkui/prefwin.c:464 ../plugins/gtkui/prefwin.c:676
 #: ../plugins.c:872
 msgid "ALSA output plugin"
-msgstr ""
+msgstr "ALSA 输出插件"
 
 #: ../plugins/gtkui/progress.c:64
 msgid "Initializing..."
-msgstr ""
+msgstr "正在初始化..."
 
 #: ../plugins/gtkui/trkproperties.c:53
 msgid "You've modified data for this track."
-msgstr ""
+msgstr "您修改了此音轨的数据。"
 
 #: ../plugins/gtkui/trkproperties.c:55
 msgid "Really close the window?"
-msgstr ""
+msgstr "真的关闭该窗口吗？"
 
 #: ../plugins/gtkui/trkproperties.c:178
 msgid "Tag Type(s)"
-msgstr ""
+msgstr "标签类型"
 
 #: ../plugins/gtkui/trkproperties.c:180
+#, fuzzy
 msgid "Embedded Cuesheet"
-msgstr ""
+msgstr "嵌入的 Cuesheet"
 
 #: ../plugins/gtkui/trkproperties.c:180
 msgid "Yes"
-msgstr ""
+msgstr "是"
 
 #: ../plugins/gtkui/trkproperties.c:180
 msgid "No"
-msgstr ""
+msgstr "否"
 
 #: ../plugins/gtkui/trkproperties.c:182
 msgid "Codec"
-msgstr ""
+msgstr "编解码器"
 
 #: ../plugins/gtkui/trkproperties.c:250 ../plugins/gtkui/trkproperties.c:262
 msgid "Key"
-msgstr ""
+msgstr "键"
 
 #: ../plugins/gtkui/trkproperties.c:251 ../plugins/gtkui/trkproperties.c:263
 msgid "Value"
-msgstr ""
+msgstr "值"
 
 #: ../plugins/notify/notify.c:138
 msgid "DeaDBeeF now playing"
-msgstr ""
+msgstr "DeaDBeeF 正在播放"
 
 #: ../main.c:89
 #, c-format
 msgid "Usage: deadbeef [options] [file(s)]\n"
-msgstr ""
+msgstr "用法：deadbeef [选项] [文件]\n"
 
 #: ../main.c:90
 #, c-format
 msgid "Options:\n"
-msgstr ""
+msgstr "选项：\n"
 
 #: ../main.c:91
 #, c-format
 msgid "   --help  or  -h     Print help (this message) and exit\n"
-msgstr ""
+msgstr "   --help  或  -h     打印帮助(这条消息)并退出\n"
 
 #: ../main.c:92
 #, c-format
 msgid "   --quit             Quit player\n"
-msgstr ""
+msgstr "   --quit             退出播放器\n"
 
 #: ../main.c:93
 #, c-format
 msgid "   --version          Print version info and exit\n"
-msgstr ""
+msgstr "   --version          打印版本信息并退出\n"
 
 #: ../main.c:94
 #, c-format
 msgid "   --play             Start playback\n"
-msgstr ""
+msgstr "   --play             开始播放\n"
 
 #: ../main.c:95
 #, c-format
 msgid "   --stop             Stop playback\n"
-msgstr ""
+msgstr "   --stop             停止播放\n"
 
 #: ../main.c:96
 #, c-format
 msgid "   --pause            Pause playback\n"
-msgstr ""
+msgstr "   --pause            暂停播放\n"
 
 #: ../main.c:97
 #, c-format
 msgid "   --next             Next song in playlist\n"
-msgstr ""
+msgstr "   --next             播放列表中的下一首歌曲\n"
 
 #: ../main.c:98
 #, c-format
 msgid "   --prev             Previous song in playlist\n"
-msgstr ""
+msgstr "   --prev             播放列表中的上一首歌曲\n"
 
 #: ../main.c:99
 #, c-format
 msgid "   --random           Random song in playlist\n"
-msgstr ""
+msgstr "   --random           播放列表中的任一首歌曲\n"
 
 #: ../main.c:100
 #, c-format
 msgid "   --queue            Append file(s) to existing playlist\n"
-msgstr ""
+msgstr "   --queue            向现有的播放列表中追加文件\n"
 
 #: ../main.c:101
 #, c-format
 msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
-msgstr ""
+msgstr "   --nowplaying FMT   向标准输出打印格式化的音轨名称\n"
 
 #: ../main.c:102
 #, c-format
@@ -1031,6 +1055,9 @@ msgid ""
 "                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
 "                      copy[r]ight, [e]lapsed\n"
 msgstr ""
+"                      FMT %%-语法: [a]艺人, [t]标题, [b]专辑,\n"
+"                      [l]时长, [n]音轨号, [y]年代, [c]注释,\n"
+"                      [r]版权, [e]已播放时间\n"
 
 #: ../main.c:105
 #, c-format
@@ -1038,16 +1065,19 @@ msgid ""
 "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist "
 "- title\"\n"
 msgstr ""
+"                      例：--nowplaying \"%%a - %%t\" 将打印“艺人 - 标题”\n"
 
 #: ../playlist.c:377 ../playlist.c:2289
 msgid "Default"
-msgstr ""
+msgstr "默认"
 
 #: ../plugins/gtkui/deadbeef.glade.h:1
 msgid ""
 "2.3 (Recommended)\n"
 "2.4"
 msgstr ""
+"2.3 (推荐)\n"
+"2.4"
 
 #: ../plugins/gtkui/deadbeef.glade.h:26
 msgid ""
@@ -1055,6 +1085,9 @@ msgid ""
 "Track\n"
 "Album"
 msgstr ""
+"禁用\n"
+"音轨\n"
+"专辑"
 
 #: ../plugins/gtkui/deadbeef.glade.h:35
 msgid ""
@@ -1070,74 +1103,89 @@ msgid ""
 "Band / Album Artist\n"
 "Custom"
 msgstr ""
+"文件号\n"
+"正在播放\n"
+"专辑封面\n"
+"艺人 - 专辑\n"
+"艺人\n"
+"专辑\n"
+"标题\n"
+"时长\n"
+"音轨\n"
+"乐队 / 专辑艺人\n"
+"自定义"
 
 #: ../plugins/gtkui/deadbeef.glade.h:71
 msgid ""
 "Left\n"
 "Right"
 msgstr ""
+"左\n"
+"右"
 
 #: ../plugins/gtkui/support.c:90 ../plugins/gtkui/support.c:114
 #, c-format
 msgid "Couldn't find pixmap file: %s"
-msgstr ""
+msgstr "找不到位图文件：%s"
 
 #: ../plugins/vorbis/vcedit.c:129 ../plugins/vorbis/vcedit.c:155
 msgid "Couldn't get enough memory for input buffering."
-msgstr ""
+msgstr "无法获取足够的输入缓冲区内存。"
 
 #: ../plugins/vorbis/vcedit.c:179 ../plugins/vorbis/vcedit.c:550
 msgid "Error reading first page of Ogg bitstream."
-msgstr ""
+msgstr "读取 Ogg 位流第一页出错。"
 
 #: ../plugins/vorbis/vcedit.c:185 ../plugins/vorbis/vcedit.c:557
+#, fuzzy
 msgid "Error reading initial header packet."
-msgstr ""
+msgstr "读取初始数据头包出错。"
 
 #: ../plugins/vorbis/vcedit.c:237
 msgid "Couldn't get enough memory to register new stream serial number."
-msgstr ""
+msgstr "无法获取足够的内存来注册新的流序列号码。"
 
 #: ../plugins/vorbis/vcedit.c:505
 msgid "Input truncated or empty."
-msgstr ""
+msgstr "输入被截断或为空。"
 
 #: ../plugins/vorbis/vcedit.c:507
 msgid "Input is not an Ogg bitstream."
-msgstr ""
+msgstr "输入不是一个 Ogg 位流。"
 
 #: ../plugins/vorbis/vcedit.c:565
 msgid "Ogg bitstream does not contain Vorbis data."
-msgstr ""
+msgstr "Ogg 位流不包含 Vorbis 数据。"
 
 #: ../plugins/vorbis/vcedit.c:578
 msgid "EOF before recognised stream."
-msgstr ""
+msgstr "在识别的流之前遇到了文件尾(EOF)。"
 
 #: ../plugins/vorbis/vcedit.c:594
 msgid "Ogg bitstream does not contain a supported data-type."
-msgstr ""
+msgstr "Ogg 位流不包含支持的数据类型。"
 
 #: ../plugins/vorbis/vcedit.c:638
 msgid "Corrupt secondary header."
-msgstr ""
+msgstr "损坏的次要数据头。"
 
 #: ../plugins/vorbis/vcedit.c:659
 msgid "EOF before end of Vorbis headers."
-msgstr ""
+msgstr "在 Vorbis 数据头之前遇到了文件尾(EOF)"
 
 #: ../plugins/vorbis/vcedit.c:834
 msgid "Corrupt or missing data, continuing..."
-msgstr ""
+msgstr "损坏或缺少数据，继续..."
 
 #: ../plugins/vorbis/vcedit.c:874
 msgid ""
 "Error writing stream to output. Output stream may be corrupted or truncated."
-msgstr ""
+msgstr "将流写入输出出错。输出流可能被损坏或截断。"
 
 #: ../plugins/wildmidi/wildmidiplug.c:162
 #, c-format
 msgid ""
 "wildmidi: freepats config file not found. Please install timidity-freepats "
 "package, or specify path to freepats.cfg in the plugin settings."
-msgstr ""
+msgstr "wildmidi：找不到 freepats 配置文件。请安装 timidity-freepats 软件包，"
+"或在插件设置中指定 freepats.cfg 的路径。"
