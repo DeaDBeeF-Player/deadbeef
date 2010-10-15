@@ -356,7 +356,7 @@ dts_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     info->file = deadbeef->fopen (it->fname);
     if (!info->file) {
-        fprintf (stderr, "dca: failed to open %s\n", it->fname);
+        trace ("dca: failed to open %s\n", it->fname);
         return -1;
     }
 
@@ -546,7 +546,7 @@ static DB_playItem_t *
 dts_insert (DB_playItem_t *after, const char *fname) {
     DB_FILE *fp = deadbeef->fopen (fname);
     if (!fp) {
-        fprintf (stderr, "dca: failed to open %s\n", fname);
+        trace ("dca: failed to open %s\n", fname);
         return NULL;
     }
     int64_t fsize = deadbeef->fgetlength (fp);
