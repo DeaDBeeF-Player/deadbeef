@@ -2609,6 +2609,9 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
     uint32_t size = (header[9] << 0) | (header[8] << 7) | (header[7] << 14) | (header[6] << 21);
 
     trace ("tag size: %d\n", size);
+    if (size == 0) {
+        return -1;
+    }
     if (tag_store) {
         tag_store->version[0] = version_major;
         tag_store->version[1] = version_minor;
