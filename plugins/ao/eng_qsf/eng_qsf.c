@@ -248,6 +248,10 @@ void *qsf_start(const char *path, uint8 *buffer, uint32 length)
 		
 		// Dispose the corlett structure for the lib - we don't use it
 		free(lib);
+		if (lib_decoded) {
+            free (lib_decoded);
+            lib_decoded = NULL;
+        }
 	}
 
 	// now patch the file into RAM OVER the libraries
