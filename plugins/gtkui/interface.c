@@ -1740,6 +1740,7 @@ create_prefwin (void)
   notebook = gtk_notebook_new ();
   gtk_widget_show (notebook);
   gtk_box_pack_start (GTK_BOX (dialog_vbox2), notebook, TRUE, TRUE, 0);
+  gtk_notebook_set_scrollable (GTK_NOTEBOOK (notebook), TRUE);
 
   vbox10 = gtk_vbox_new (FALSE, 8);
   gtk_widget_show (vbox10);
