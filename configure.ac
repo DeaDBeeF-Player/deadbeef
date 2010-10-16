@@ -93,6 +93,7 @@ AC_ARG_ENABLE(aac,     [  --disable-aac            disable AAC decoder based on 
 AC_ARG_ENABLE(mms,     [  --disable-mms            disable MMS streaming vfs plugin (default: enabled)], [enable_mms=$enableval], [enable_mms=yes])
 AC_ARG_ENABLE(shn,     [  --disable-shn            disable shorten plugin (default: enabled)], [enable_shn=$enableval], [enable_shn=yes])
 AC_ARG_ENABLE(ao,     [  --disable-ao            disable audio overload plugin (default: enabled)], [enable_ao=$enableval], [enable_ao=yes])
+AC_ARG_ENABLE(mpris,     [  --enable-mpris            disable Ubuntu Sound Menu plugin (default: disabled)], [enable_mpris=$enableval], [enable_mpris=no])
 
 PKG_CHECK_MODULES(DEPS, samplerate)
 
@@ -395,7 +396,11 @@ if test "x$enable_ao" != "xno" ; then
     fi
 fi
 
-PLUGINS_DIRS="plugins/lastfm plugins/mpgmad plugins/vorbis plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/dumb plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/aac plugins/mms plugins/shn plugins/ao plugins/shellexec"
+if test "x$enable_mpris" != "xno" ; then
+    PKG_CHECK_MODULES(MPRIS_DEPS, indicate >= 0.4.4  glib-2.0 >= 2.26.0, HAVE_MPRIS=yes, HAVE_MPRIS=no)
+fi
+
+PLUGINS_DIRS="plugins/lastfm plugins/mpgmad plugins/vorbis plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/dumb plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/aac plugins/mms plugins/shn plugins/ao plugins/shellexec plugins/mpris"
 
 AM_CONDITIONAL(HAVE_VORBIS, test "x$HAVE_VORBISPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_FLAC, test "x$HAVE_FLACPLUGIN" = "xyes")
@@ -430,6 +435,7 @@ AM_CONDITIONAL(HAVE_AAC, test "x$HAVE_AAC" = "xyes")
 AM_CONDITIONAL(HAVE_MMS, test "x$HAVE_MMS" = "xyes")
 AM_CONDITIONAL(HAVE_SHN, test "x$HAVE_SHN" = "xyes")
 AM_CONDITIONAL(HAVE_AO, test "x$HAVE_AO" = "xyes")
+AM_CONDITIONAL(HAVE_MPRIS, test "x$HAVE_MPRIS" = "xyes")
 
 AC_SUBST(PLUGINS_DIRS)
 
@@ -490,6 +496,7 @@ PRINT_PLUGIN_INFO([aac],[AAC player (m4a, aac, mp4) based on FAAD2],[test "x$HAV
 PRINT_PLUGIN_INFO([mms],[mms streaming support],[test "x$HAVE_MMS" = "xyes"])
 PRINT_PLUGIN_INFO([shn],[shorten player based on xmms-shn],[test "x$HAVE_SHN" = "xyes"])
 PRINT_PLUGIN_INFO([ao],[psf1/psf2/spu/ssf player using Audio Overload],[test "x$HAVE_AO" = "xyes"])
+PRINT_PLUGIN_INFO([mpris],[Ubuntu Sound Menu integration],[test "x$HAVE_MPRIS" = "xyes"])
 
 echo
 
@@ -530,6 +537,7 @@ plugins/aac/Makefile
 plugins/mms/Makefile
 plugins/shn/Makefile
 plugins/ao/Makefile
+plugins/mpris/Makefile
 intl/Makefile
 po/Makefile.in
 deadbeef.desktop
