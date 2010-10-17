@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-09-10 15:02+0200\n"
-"PO-Revision-Date: 2010-08-27 21:57+0200\n"
+"PO-Revision-Date: 2010-10-17 08:59+0200\n"
 "Last-Translator: Ali <aysabzevar@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: fa\n"
@@ -40,7 +40,7 @@ msgstr "افزودن پوشه(ها) به لیست پخش..."
 
 #: ../plugins/gtkui/callbacks.c:192
 msgid "Follow symlinks"
-msgstr ""
+msgstr "پیروی از پیوند‌های سمبلیک"
 
 #: ../plugins/gtkui/callbacks.c:677
 msgid "Failed while reading help file"
@@ -511,7 +511,7 @@ msgid "Right"
 msgstr "راست"
 
 #: ../plugins/gtkui/interface.c:1444 ../plugins/gtkui/deadbeef.glade.h:48
-#, fuzzy, no-c-format
+#, no-c-format
 msgid ""
 "Format conversions (start with %):\n"
 "  [a]rtist, [t]itle, al[b]um, [B]and, [C]omposer\n"
@@ -526,6 +526,7 @@ msgstr ""
 "[n] شماره آهنگ، [N] کل آهنگ‌ها،\n"
 "[l] مدت زمان، [y] سال، [g] دسته، [c] نظر،\n"
 "[r]حق تالیف،[f] نام پرونده، [T] برچسب‌ها\n"
+"[d] پوشه، [D] پوشه با مسیر \n"
 "مثال: %a - %t [%l]"
 
 #: ../plugins/gtkui/interface.c:1473 ../plugins/gtkui/interface.c:2900
@@ -574,16 +575,15 @@ msgstr "پخش مجدد مقیاس قله"
 
 #: ../plugins/gtkui/interface.c:1804 ../plugins/gtkui/deadbeef.glade.h:7
 msgid "Add files from command line (or file manager) to this playlist:"
-msgstr ""
+msgstr "افزودن فایل‌ها از خط فرمان (‌یا مدیر فایل) به این فهرست پخش:"
 
 #: ../plugins/gtkui/interface.c:1813 ../plugins/gtkui/deadbeef.glade.h:110
 msgid "Resume previous session on startup"
-msgstr ""
+msgstr "ادامه نشست قبلی در این آغاز به کار"
 
 #: ../plugins/gtkui/interface.c:1817 ../plugins/gtkui/deadbeef.glade.h:94
-#, fuzzy
 msgid "Playback"
-msgstr "_پخش"
+msgstr "پخش"
 
 #: ../plugins/gtkui/interface.c:1826 ../plugins/gtkui/deadbeef.glade.h:16
 msgid "Close minimizes to tray"
@@ -595,23 +595,23 @@ msgstr "کلید وسط ماوس لیست پخش را می‌بندد"
 
 #: ../plugins/gtkui/interface.c:1834 ../plugins/gtkui/deadbeef.glade.h:67
 msgid "Hide system tray icon"
-msgstr ""
+msgstr "مخفی کردن آیکون سینی سیستم"
 
 #: ../plugins/gtkui/interface.c:1838 ../plugins/gtkui/deadbeef.glade.h:139
 msgid "Use bold font for currently playing track"
-msgstr ""
+msgstr "استفاده از قلم‌های ضخیم برای آهنگ در حال پخش"
 
 #: ../plugins/gtkui/interface.c:1842 ../plugins/gtkui/deadbeef.glade.h:66
 msgid "Hide \"Delete from disk\" context menu item"
-msgstr ""
+msgstr "مخفی کردن متن «حذف از دیسک» از منو"
 
 #: ../plugins/gtkui/interface.c:1850 ../plugins/gtkui/deadbeef.glade.h:134
 msgid "Titlebar text while playing:"
-msgstr ""
+msgstr "متن نوار عنوان در زمان پخش:"
 
 #: ../plugins/gtkui/interface.c:1864 ../plugins/gtkui/deadbeef.glade.h:135
 msgid "Titlebar text while stopped:"
-msgstr ""
+msgstr "متن نوار عنوان در زمان توقف:"
 
 #: ../plugins/gtkui/interface.c:1874 ../plugins/gtkui/deadbeef.glade.h:63
 msgid "GUI"
@@ -688,7 +688,7 @@ msgstr "رنگ‌های فهرست پخش"
 
 #: ../plugins/gtkui/interface.c:2093 ../plugins/gtkui/deadbeef.glade.h:17
 msgid "Colors"
-msgstr ""
+msgstr "رنگ‌ها"
 
 #: ../plugins/gtkui/interface.c:2102 ../plugins/gtkui/deadbeef.glade.h:31
 msgid "Enable Proxy Server"
@@ -962,7 +962,7 @@ msgstr "خیر"
 
 #: ../plugins/gtkui/trkproperties.c:182
 msgid "Codec"
-msgstr ""
+msgstr "کدک‌"
 
 #: ../plugins/gtkui/trkproperties.c:250 ../plugins/gtkui/trkproperties.c:262
 msgid "Key"
@@ -1180,6 +1180,8 @@ msgid ""
 "wildmidi: freepats config file not found. Please install timidity-freepats "
 "package, or specify path to freepats.cfg in the plugin settings."
 msgstr ""
+"wildmidi: فایل پیکره‌بندی freepats پیدا نشد. لطفا بسته timidity-freepats را "
+"نصب کنید یا مسیر freepats.cfg را برای تنظیم افزونه مشخص کنید."
 
 #~ msgid "Add Audio CD"
 #~ msgstr "افزودن دیسک صوتی"
