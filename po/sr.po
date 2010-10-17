@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: DeaDBeeF 0.4\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-10-14 04:36+0000\n"
-"PO-Revision-Date: 2010-10-14 12:46+0100\n"
+"PO-Revision-Date: 2010-10-17 12:14+0100\n"
 "Last-Translator: Jay A. Fleming <tito.nehru.naser@gmail.com>\n"
 "Language-Team: \n"
 "Language: Serbian\n"
@@ -31,11 +31,11 @@ msgstr "Отвори датотеку(е)..."
 
 #: ../plugins/gtkui/callbacks.c:151
 msgid "Add file(s) to playlist..."
-msgstr "Додај датотеку(е) у листу..."
+msgstr "Додај датотеке у листу..."
 
 #: ../plugins/gtkui/callbacks.c:190
 msgid "Add folder(s) to playlist..."
-msgstr "Додај директоријум(е) у листу..."
+msgstr "Додај директоријуме у листу..."
 
 #: ../plugins/gtkui/callbacks.c:192
 msgid "Follow symlinks"
@@ -512,8 +512,9 @@ msgstr "Особине"
 
 #: ../plugins/gtkui/interface.c:1391
 #: ../plugins/gtkui/deadbeef.glade.h:163
+#, fuzzy
 msgid "editcolumndlg"
-msgstr ""
+msgstr "editcolumndlg"
 
 #: ../plugins/gtkui/interface.c:1406
 #: ../plugins/gtkui/interface.c:2897
@@ -607,7 +608,7 @@ msgstr "Десно"
 
 #: ../plugins/gtkui/interface.c:1472
 #: ../plugins/gtkui/deadbeef.glade.h:35
-#, fuzzy, no-c-format
+#, no-c-format
 msgid ""
 "Format conversions (start with %):\n"
 "  [a]rtist, [t]itle, al[b]um, [B]and, [C]omposer\n"
@@ -617,7 +618,7 @@ msgid ""
 "  [d]irectory, [D]irectoryWithPath\n"
 "Example: %a - %t [%l]"
 msgstr ""
-"Format conversions (започните са %):\n"
+"Претварања формата (започните са %):\n"
 "  извођ[a]ч, [t]-наслов, [b]-албум, [B]-група,\n"
 "  [C]-композитор, [n]-број песме, [N]-укупно песама,\n"
 "  [l]-трајање, [y]-година, [g]-жанр, [c]-примедба,\n"
@@ -681,9 +682,8 @@ msgstr "Replaygain скала вршних вредности"
 
 #: ../plugins/gtkui/interface.c:1832
 #: ../plugins/gtkui/deadbeef.glade.h:5
-#, fuzzy
 msgid "Add files from command line (or file manager) to this playlist:"
-msgstr "Додај датотеке из линије за наредбе или управљача датотекама у ову листу:"
+msgstr "Додај датотеке из линије за наредбе или управника датотека у ову листу:"
 
 #: ../plugins/gtkui/interface.c:1841
 #: ../plugins/gtkui/deadbeef.glade.h:109
@@ -708,7 +708,7 @@ msgstr "Средње дугме миша затвара листу"
 #: ../plugins/gtkui/interface.c:1862
 #: ../plugins/gtkui/deadbeef.glade.h:54
 msgid "Hide system tray icon"
-msgstr "Сакриј икоњу стања на систему"
+msgstr "Не приказуј икону у обавештајној зони"
 
 #: ../plugins/gtkui/interface.c:1866
 #: ../plugins/gtkui/deadbeef.glade.h:138
@@ -739,7 +739,7 @@ msgstr "Графичке контроле"
 #: ../plugins/gtkui/interface.c:1960
 #: ../plugins/gtkui/deadbeef.glade.h:88
 msgid "Override"
-msgstr "Преклапање"
+msgstr "Замени подразумевано"
 
 #: ../plugins/gtkui/interface.c:1925
 #: ../plugins/gtkui/deadbeef.glade.h:33
@@ -754,7 +754,7 @@ msgstr "Позадина"
 #: ../plugins/gtkui/interface.c:1951
 #: ../plugins/gtkui/deadbeef.glade.h:115
 msgid "Seekbar/Volumebar colors"
-msgstr "Боје траке за премотавање/гласноћу"
+msgstr "Траке за премотавање/гласноћу"
 
 #: ../plugins/gtkui/interface.c:1969
 #: ../plugins/gtkui/deadbeef.glade.h:79
@@ -784,7 +784,7 @@ msgstr "Боје одвајања листова"
 #: ../plugins/gtkui/interface.c:2030
 #: ../plugins/gtkui/deadbeef.glade.h:89
 msgid "Override (looses GTK treeview theming, but speeds up rendering)"
-msgstr "Преклапање (губе се ГТК теме погледа стабла, али се добија бржи приказ)"
+msgstr "Замени подразумевано (губе се ГТК теме погледа стабла, али се добија бржи приказ)"
 
 #: ../plugins/gtkui/interface.c:2039
 #: ../plugins/gtkui/deadbeef.glade.h:32
@@ -934,7 +934,7 @@ msgstr "Опис:"
 #: ../plugins/gtkui/interface.c:2434
 #: ../plugins/gtkui/deadbeef.glade.h:11
 msgid "Author(s):"
-msgstr "Извођач(и):"
+msgstr "Аутор(и):"
 
 #: ../plugins/gtkui/interface.c:2449
 #: ../plugins/gtkui/deadbeef.glade.h:28
@@ -958,8 +958,9 @@ msgstr "Додаци"
 
 #: ../plugins/gtkui/interface.c:2881
 #: ../plugins/gtkui/deadbeef.glade.h:164
+#, fuzzy
 msgid "editplaylistdlg"
-msgstr ""
+msgstr "editplaylistdlg"
 
 #: ../plugins/gtkui/interface.c:3008
 #: ../plugins/gtkui/deadbeef.glade.h:137
@@ -1092,7 +1093,7 @@ msgstr "Опште пречице"
 
 #: ../plugins/gtkui/prefwin.c:401
 msgid "Slot"
-msgstr "Слот"
+msgstr "Наредба"
 
 #: ../plugins/gtkui/prefwin.c:402
 msgid "Key combination"
@@ -1316,7 +1317,7 @@ msgstr "Додај звучни диск (ЦД)"
 
 #: ../translation/extra.c:4
 msgid "Lookup on Last.fm"
-msgstr "По"
+msgstr "Погледај на Last.fm страници"
 
 #. ALSA output plugin
 #: ../translation/extra.c:6
@@ -1372,11 +1373,11 @@ msgstr "Преузми из локалних директоријума"
 
 #: ../translation/extra.c:20
 msgid "Local cover file mask"
-msgstr "Тип датотека за локалне омотнице"
+msgstr "Име датотека садржи речи"
 
 #: ../translation/extra.c:21
 msgid "Fetch from last.fm"
-msgstr "Преузми са"
+msgstr "Преузми са Last.fm страница"
 
 #: ../translation/extra.c:22
 msgid "Fetch from albumart.org"
@@ -1458,8 +1459,9 @@ msgid "Absolute seek table path"
 msgstr "Потпуна путања за претраживање"
 
 #: ../translation/extra.c:48
+#, fuzzy
 msgid "Swap audio bytes (toggle if all you hear is static)"
-msgstr ""
+msgstr "Замени аудио-бајт редослед (искључити ако не чујете нормалан звук)"
 
 #. SID decoder plugin
 #: ../translation/extra.c:50
