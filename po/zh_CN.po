@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-09-10 15:02+0200\n"
-"PO-Revision-Date: 2010-10-15 07:49+0200\n"
+"PO-Revision-Date: 2010-10-19 13:46+0200\n"
 "Last-Translator: Yinghua_Wang <wantinghard@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
 "Language: zh_CN\n"
@@ -39,9 +39,8 @@ msgid "Add folder(s) to playlist..."
 msgstr "向播放列表添加文件夹..."
 
 #: ../plugins/gtkui/callbacks.c:192
-#, fuzzy
 msgid "Follow symlinks"
-msgstr "顺符号链接查找"
+msgstr "跟随符号链接"
 
 #: ../plugins/gtkui/callbacks.c:677
 msgid "Failed while reading help file"
@@ -289,9 +288,8 @@ msgid "Column headers"
 msgstr "列标题"
 
 #: ../plugins/gtkui/interface.c:304 ../plugins/gtkui/deadbeef.glade.h:130
-#, fuzzy
 msgid "Tabs"
-msgstr "表列"
+msgstr "标签"
 
 #: ../plugins/gtkui/interface.c:308 ../plugins/gtkui/deadbeef.glade.h:33
 msgid "Equalizer"
@@ -652,9 +650,8 @@ msgid "Base"
 msgstr "基础"
 
 #: ../plugins/gtkui/interface.c:1993 ../plugins/gtkui/deadbeef.glade.h:129
-#, fuzzy
 msgid "Tab strip colors"
-msgstr "列表条颜色"
+msgstr "标签条颜色"
 
 #: ../plugins/gtkui/interface.c:2002 ../plugins/gtkui/deadbeef.glade.h:90
 msgid "Override (looses GTK treeview theming, but speeds up rendering)"
@@ -736,19 +733,16 @@ msgstr "写 APEv2"
 
 #: ../plugins/gtkui/interface.c:2224 ../plugins/gtkui/interface.c:2303
 #: ../plugins/gtkui/deadbeef.glade.h:128
-#, fuzzy
 msgid "Strip ID3v2"
 msgstr "清除 ID3v2"
 
 #: ../plugins/gtkui/interface.c:2228 ../plugins/gtkui/interface.c:2351
 #: ../plugins/gtkui/deadbeef.glade.h:127
-#, fuzzy
 msgid "Strip ID3v1"
 msgstr "清除 ID3v1"
 
 #: ../plugins/gtkui/interface.c:2232 ../plugins/gtkui/interface.c:2307
 #: ../plugins/gtkui/interface.c:2347 ../plugins/gtkui/deadbeef.glade.h:126
-#, fuzzy
 msgid "Strip APEv2"
 msgstr "清除 APEv2"
 
@@ -924,7 +918,6 @@ msgid "Global Hotkeys"
 msgstr "全局热键"
 
 #: ../plugins/gtkui/prefwin.c:384
-#, fuzzy
 msgid "Slot"
 msgstr "槽"
 
@@ -955,7 +948,6 @@ msgid "Tag Type(s)"
 msgstr "标签类型"
 
 #: ../plugins/gtkui/trkproperties.c:180
-#, fuzzy
 msgid "Embedded Cuesheet"
 msgstr "嵌入的 Cuesheet"
 
@@ -1137,7 +1129,6 @@ msgid "Error reading first page of Ogg bitstream."
 msgstr "读取 Ogg 位流第一页出错。"
 
 #: ../plugins/vorbis/vcedit.c:185 ../plugins/vorbis/vcedit.c:557
-#, fuzzy
 msgid "Error reading initial header packet."
 msgstr "读取初始数据头包出错。"
 
