@@ -93,7 +93,7 @@ AC_ARG_ENABLE(aac,     [  --disable-aac            disable AAC decoder based on 
 AC_ARG_ENABLE(mms,     [  --disable-mms            disable MMS streaming vfs plugin (default: enabled)], [enable_mms=$enableval], [enable_mms=yes])
 AC_ARG_ENABLE(shn,     [  --disable-shn            disable shorten plugin (default: enabled)], [enable_shn=$enableval], [enable_shn=yes])
 AC_ARG_ENABLE(ao,     [  --disable-ao            disable audio overload plugin (default: enabled)], [enable_ao=$enableval], [enable_ao=yes])
-AC_ARG_ENABLE(mpris,     [  --enable-mpris            disable Ubuntu Sound Menu plugin (default: disabled)], [enable_mpris=$enableval], [enable_mpris=no])
+AC_ARG_ENABLE(mpris,     [  --enable-mpris            disable Ubuntu Sound Menu plugin (default: disabled)], [enable_mpris=$enableval], [enable_mpris=yes])
 
 PKG_CHECK_MODULES(DEPS, samplerate)
 
@@ -397,7 +397,7 @@ if test "x$enable_ao" != "xno" ; then
 fi
 
 if test "x$enable_mpris" != "xno" ; then
-    PKG_CHECK_MODULES(MPRIS_DEPS, indicate >= 0.4.4  glib-2.0 >= 2.26.0, HAVE_MPRIS=yes, HAVE_MPRIS=no)
+    PKG_CHECK_MODULES(MPRIS_DEPS, gio-2.0 glib-2.0 >= 2.26.0, HAVE_MPRIS=yes, HAVE_MPRIS=no)
 fi
 
 PLUGINS_DIRS="plugins/lastfm plugins/mpgmad plugins/vorbis plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/dumb plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/aac plugins/mms plugins/shn plugins/ao plugins/shellexec plugins/mpris"
