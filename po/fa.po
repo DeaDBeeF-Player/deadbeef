@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-09-10 15:02+0200\n"
-"PO-Revision-Date: 2010-10-17 08:59+0200\n"
+"PO-Revision-Date: 2010-10-18 07:33+0200\n"
 "Last-Translator: Ali <aysabzevar@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: fa\n"
@@ -20,19 +20,19 @@ msgstr ""
 
 #: ../plugins/gtkui/callbacks.c:97
 msgid "Supported sound formats"
-msgstr "فرمت‌های صوتی پشتیبانی شده"
+msgstr "قالب‌های صوتی پشتیبانی شده"
 
 #: ../plugins/gtkui/callbacks.c:108
 msgid "Other files (*)"
-msgstr "دیگر فایل‌ها (*)"
+msgstr "دیگر پرونده‌ها (*)"
 
 #: ../plugins/gtkui/callbacks.c:118
 msgid "Open file(s)..."
-msgstr "باز کردن فایل(ها)..."
+msgstr "باز کردن پرونده(ها)..."
 
 #: ../plugins/gtkui/callbacks.c:151
 msgid "Add file(s) to playlist..."
-msgstr "افزودن فایل(ها) به لیست پخش..."
+msgstr "افزودن پرونده(ها) به لیست پخش..."
 
 #: ../plugins/gtkui/callbacks.c:190
 msgid "Add folder(s) to playlist..."
