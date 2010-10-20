@@ -45,3 +45,4 @@ vala.stamp
 POTFILES
 stamp-it
 po/Makevars.template
+*.so

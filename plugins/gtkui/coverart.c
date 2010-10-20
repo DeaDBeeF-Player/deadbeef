@@ -25,8 +25,6 @@
 #include "../artwork/artwork.h"
 #include "gtkui.h"
 
-#define DEFAULT_COVER_PATH (PREFIX "/share/deadbeef/pixmaps/noartwork.jpg")
-
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(...)
 
@@ -151,9 +149,10 @@ loading_thread (void *none) {
                     g_error_free (error);
                     error = NULL;
                 }
-                pixbuf = gdk_pixbuf_new_from_file_at_scale (DEFAULT_COVER_PATH, queue->width, queue->width, TRUE, &error);
+                const char *defpath = coverart_plugin->get_default_cover ();
+                pixbuf = gdk_pixbuf_new_from_file_at_scale (defpath, queue->width, queue->width, TRUE, &error);
                 if (!pixbuf) {
-                    fprintf (stderr, "gdk_pixbuf_new_from_file_at_scale %s %d failed, error: %s\n", DEFAULT_COVER_PATH, queue->width, error->message);
+                    fprintf (stderr, "gdk_pixbuf_new_from_file_at_scale %s %d failed, error: %s\n", defpath, queue->width, error->message);
                 }
             }
             if (error) {

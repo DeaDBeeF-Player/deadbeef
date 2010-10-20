@@ -899,7 +899,8 @@ void
 gtkui_thread (void *ctx) {
     // let's start some gtk
     g_thread_init (NULL);
-    add_pixmap_directory (PREFIX "/share/deadbeef/pixmaps");
+//    add_pixmap_directory (PREFIX "/share/deadbeef/pixmaps");
+    add_pixmap_directory (deadbeef->get_pixmap_dir ());
     gdk_threads_init ();
     gdk_threads_enter ();
 

@@ -56,9 +56,6 @@ dnl INSANE_CXXFLAGS="-Wcomment -Wchar-subscripts -Wunused-function -Wunused-valu
 AC_SUBST(INSANE_CFLAGS)
 AC_SUBST(INSANE_CXXFLAGS)
 
-CXXFLAGS="$CXXFLAGS $INSANE_CXXFLAGS -D_GNU_SOURCE -DLIBDIR=\\\"$libdir\\\" -DPREFIX=\\\"$prefix\\\" -DDOCDIR=\\\"$docdir\\\""
-CFLAGS="$CFLAGS $INSANE_CFLAGS -D_GNU_SOURCE -DLIBDIR=\\\"$libdir\\\" -DPREFIX=\\\"$prefix\\\" -DDOCDIR=\\\"$docdir\\\""
-
 AC_ARG_ENABLE(nullout,  [  --disable-nullout       disable NULL output plugin (default: enabled)], [enable_nullout=$enableval], [enable_nullout=yes])
 AC_ARG_ENABLE(alsa,     [  --disable-alsa          disable ALSA output plugin (default: enabled)], [enable_alsa=$enableval], [enable_alsa=yes])
 AC_ARG_ENABLE(oss,      [  --disable-oss           disable Open Sound System output plugin (default: enabled)], [enable_oss=$enableval], [enable_oss=yes])
@@ -84,16 +81,28 @@ AC_ARG_ENABLE(cdda,     [  --disable-cdda          disable CD-Audio plugin (defa
 AC_ARG_ENABLE(gme,      [  --disable-gme           disable Game Music Emu plugin for NSF, AY, etc (default: enabled)], [enable_gme=$enableval], [enable_gme=yes])
 AC_ARG_ENABLE(dumb,     [  --disable-dumb          disable D.U.M.B. plugin for MOD, S3M and other tracker formats (default: enabled)], [enable_dumb=$enableval], [enable_dumb=yes])
 AC_ARG_ENABLE(notify,   [  --disable-notify        disable notification-daemon support plugin (default: enabled)], [enable_notify=$enableval], [enable_notify=yes])
-AC_ARG_ENABLE(shellexec,   [  --disable-shellexec        disable shell commands plugin (default: enabled)], [enable_shellexec=$enableval], [enable_shellexec=yes])
+AC_ARG_ENABLE(shellexec,[  --disable-shellexec     disable shell commands plugin (default: enabled)], [enable_shellexec=$enableval], [enable_shellexec=yes])
 AC_ARG_ENABLE(musepack, [  --disable-musepack      disable musepack plugin (default: enabled)], [enable_musepack=$enableval], [enable_musepack=yes])
 AC_ARG_ENABLE(wildmidi, [  --disable-wildmidi      disable wildmidi plugin (default: enabled)], [enable_wildmidi=$enableval], [enable_wildmidi=yes])
-AC_ARG_ENABLE(tta,     [  --disable-tta            disable tta plugin (default: enabled)], [enable_tta=$enableval], [enable_tta=yes])
-AC_ARG_ENABLE(dca,     [  --disable-dca            disable dca (DTS audio)  plugin (default: enabled)], [enable_dca=$enableval], [enable_dca=yes])
-AC_ARG_ENABLE(aac,     [  --disable-aac            disable AAC decoder based on FAAD2 (default: enabled)], [enable_aac=$enableval], [enable_aac=yes])
-AC_ARG_ENABLE(mms,     [  --disable-mms            disable MMS streaming vfs plugin (default: enabled)], [enable_mms=$enableval], [enable_mms=yes])
-AC_ARG_ENABLE(shn,     [  --disable-shn            disable shorten plugin (default: enabled)], [enable_shn=$enableval], [enable_shn=yes])
-AC_ARG_ENABLE(ao,     [  --disable-ao            disable audio overload plugin (default: enabled)], [enable_ao=$enableval], [enable_ao=yes])
-AC_ARG_ENABLE(mpris,     [  --enable-mpris            disable Ubuntu Sound Menu plugin (default: disabled)], [enable_mpris=$enableval], [enable_mpris=yes])
+AC_ARG_ENABLE(tta,      [  --disable-tta           disable tta plugin (default: enabled)], [enable_tta=$enableval], [enable_tta=yes])
+AC_ARG_ENABLE(dca,      [  --disable-dca           disable dca (DTS audio)  plugin (default: enabled)], [enable_dca=$enableval], [enable_dca=yes])
+AC_ARG_ENABLE(aac,      [  --disable-aac           disable AAC decoder based on FAAD2 (default: enabled)], [enable_aac=$enableval], [enable_aac=yes])
+AC_ARG_ENABLE(mms,      [  --disable-mms           disable MMS streaming vfs plugin (default: enabled)], [enable_mms=$enableval], [enable_mms=yes])
+AC_ARG_ENABLE(shn,      [  --disable-shn           disable shorten plugin (default: enabled)], [enable_shn=$enableval], [enable_shn=yes])
+AC_ARG_ENABLE(ao,       [  --disable-ao            disable audio overload plugin (default: enabled)], [enable_ao=$enableval], [enable_ao=yes])
+AC_ARG_ENABLE(mpris,    [  --enable-mpris          enable Ubuntu Sound Menu plugin (default: disabled)], [enable_mpris=$enableval], [enable_mpris=yes])
+AC_ARG_ENABLE(portable, [  --enable-portable       make portable static build (default: disabled)], [enable_portable=$enableval], [enable_portable=no])
+
+if test "x$enable_portable" != "xno" ; then
+    AC_DEFINE_UNQUOTED([PORTABLE], [1], [Define if building portable version])
+    PORTABLE=yes
+    PREFIXFLAGS="-DPREFIX=donotuse -DLIBDIR=donotuse -DDOCDIR=donotuse"
+else
+    PREFIXFLAGS=" -DLIBDIR=\\\"$libdir\\\" -DPREFIX=\\\"$prefix\\\" -DDOCDIR=\\\"$docdir\\\""
+fi
+
+CXXFLAGS="$CXXFLAGS $INSANE_CXXFLAGS -D_GNU_SOURCE $PREFIXFLAGS"
+CFLAGS="$CFLAGS $INSANE_CFLAGS -D_GNU_SOURCE $PREFIXFLAGS"
 
 PKG_CHECK_MODULES(DEPS, samplerate)
 
@@ -436,6 +445,7 @@ AM_CONDITIONAL(HAVE_MMS, test "x$HAVE_MMS" = "xyes")
 AM_CONDITIONAL(HAVE_SHN, test "x$HAVE_SHN" = "xyes")
 AM_CONDITIONAL(HAVE_AO, test "x$HAVE_AO" = "xyes")
 AM_CONDITIONAL(HAVE_MPRIS, test "x$HAVE_MPRIS" = "xyes")
+AM_CONDITIONAL(PORTABLE, test "x$PORTABLE" = "xyes")
 
 AC_SUBST(PLUGINS_DIRS)
 

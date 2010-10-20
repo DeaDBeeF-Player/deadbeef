@@ -64,8 +64,8 @@ extern "C" {
 // 0.2 -- deadbeef-0.2.3
 // 0.1 -- deadbeef-0.2.0
 
-#define DB_API_VERSION_MAJOR 0
-#define DB_API_VERSION_MINOR 8
+#define DB_API_VERSION_MAJOR 9
+#define DB_API_VERSION_MINOR 9
 
 #define DB_PLUGIN_SET_API_VERSION\
     .plugin.api_vmajor = DB_API_VERSION_MAJOR,\
@@ -317,8 +317,15 @@ typedef struct {
     int (*streamer_get_apx_bitrate) (void);
     struct DB_fileinfo_s *(*streamer_get_current_fileinfo) (void);
     int (*streamer_get_current_playlist) (void);
+    // system folders
+    // normally functions will return standard folders derived from --prefix
+    // portable version will return pathes specified in comments below
+    const char *(*get_config_dir) (void); // installdir/config | $XDG_CONFIG_HOME/.config/deadbeef
+    const char *(*get_prefix) (void); // installdir | PREFIX
+    const char *(*get_doc_dir) (void); // installdir/doc | DOCDIR
+    const char *(*get_plugin_dir) (void); // installdir/plugins | LIBDIR/deadbeef
+    const char *(*get_pixmap_dir) (void); // installdir/pixmaps | PREFIX "/share/deadbeef/pixmaps"
     // process control
-    const char *(*get_config_dir) (void);
     void (*quit) (void);
     // threading
     intptr_t (*thread_start) (void (*fn)(void *ctx), void *ctx);

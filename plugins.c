@@ -88,8 +88,13 @@ static DB_functions_t deadbeef_api = {
     .streamer_get_apx_bitrate = streamer_get_apx_bitrate,
     .streamer_get_current_fileinfo = streamer_get_current_fileinfo,
     .streamer_get_current_playlist = streamer_get_current_playlist,
-    // process control
+    // folders
     .get_config_dir = plug_get_config_dir,
+    .get_prefix = plug_get_prefix,
+    .get_doc_dir = plug_get_doc_dir,
+    .get_plugin_dir = plug_get_plugin_dir,
+    .get_pixmap_dir = plug_get_pixmap_dir,
+    // process control
     .quit = plug_quit,
     // threading
     .thread_start = thread_start,
@@ -265,6 +270,26 @@ DB_functions_t *deadbeef = &deadbeef_api;
 const char *
 plug_get_config_dir (void) {
     return dbconfdir;
+}
+
+const char *
+plug_get_prefix (void) {
+    return dbinstalldir;
+}
+
+const char *
+plug_get_doc_dir (void) {
+    return dbdocdir;
+}
+
+const char *
+plug_get_plugin_dir (void) {
+    return dbplugindir;
+}
+
+const char *
+plug_get_pixmap_dir (void) {
+    return dbpixmapdir;
 }
 
 void
@@ -566,7 +591,7 @@ plug_load_all (void) {
     const char *conf_blacklist_plugins = conf_get_str ("blacklist_plugins", "");
     trace ("plug: mutex_create\n");
     mutex = mutex_create ();
-    const char *dirname = LIBDIR "/deadbeef";
+    const char *dirname = deadbeef->get_plugin_dir ();
     struct dirent **namelist = NULL;
 
     char *xdg_local_home = getenv ("XDG_LOCAL_HOME");
