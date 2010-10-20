@@ -156,7 +156,7 @@ trkproperties_fill_metadata (void) {
         if (!value) {
             value = "";
         }
-        gtk_list_store_set (store, &iter, 0, _(types[i+1]), 1, value, -1);
+        gtk_list_store_set (store, &iter, 0, _(types[i+1]), 1, value, 2, types[i], -1);
         i += 2;
     }
     deadbeef->pl_unlock ();
@@ -238,7 +238,7 @@ show_track_properties_dlg (DB_playItem_t *it) {
 
         // metadata tree
         tree = GTK_TREE_VIEW (lookup_widget (trackproperties, "metalist"));
-        store = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_STRING);
+        store = gtk_list_store_new (3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
         gtk_tree_view_set_model (tree, GTK_TREE_MODEL (store));
         GtkCellRenderer *rend_text = gtk_cell_renderer_text_new ();
         rend_text2 = GTK_CELL_RENDERER (ddb_cell_renderer_text_multiline_new ());//gtk_cell_renderer_text_new ();
@@ -300,15 +300,14 @@ show_track_properties_dlg (DB_playItem_t *it) {
 static gboolean
 set_metadata_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data) {
     GValue key = {0,}, value = {0,};
-    gtk_tree_model_get_value (model, iter, 0, &key);
+    gtk_tree_model_get_value (model, iter, 2, &key);
     gtk_tree_model_get_value (model, iter, 1, &value);
     const char *skey = g_value_get_string (&key);
     const char *svalue = g_value_get_string (&value);
 
 
     for (int i = 0; types[i]; i += 2) {
-        if (!strcmp (skey, types[i+1])) {
-            trace ("setting %s = %s\n", types[i], svalue);
+        if (!strcmp (skey, types[i])) {
             deadbeef->pl_replace_meta (DB_PLAYITEM (data), types[i], svalue);
         }
     }

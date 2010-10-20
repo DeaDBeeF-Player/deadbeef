@@ -209,10 +209,6 @@ supereq_enabled (void) {
     return enabled;
 }
 
-static const char settings_dlg[] =
-    "property \"Enable\" checkbox supereq.enable 0;\n"
-;
-
 static DB_supereq_dsp_t plugin = {
     .dsp.plugin.api_vmajor = DB_API_VERSION_MAJOR,
     .dsp.plugin.api_vminor = DB_API_VERSION_MINOR,
@@ -225,7 +221,6 @@ static DB_supereq_dsp_t plugin = {
     .dsp.plugin.website = "http://deadbeef.sf.net",
     .dsp.plugin.start = supereq_plugin_start,
     .dsp.plugin.stop = supereq_plugin_stop,
-    .dsp.plugin.configdialog = settings_dlg,
     .dsp.process_int16 = supereq_process_int16,
     .dsp.reset = supereq_reset,
     .dsp.enable = supereq_enable,
