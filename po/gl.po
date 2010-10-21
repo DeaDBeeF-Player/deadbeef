@@ -1,14 +1,14 @@
-# SOME DESCRIPTIVE TITLE.
+# Galician translation to deadbeef.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Miguel Anxo Bouzada <mbouzada@gmail.com>, 2010.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: lxde.deadbeef\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-10-21 04:36+0000\n"
-"PO-Revision-Date: 2010-10-21 11:52+0100\n"
+"PO-Revision-Date: 2010-10-21 17:58+0100\n"
 "Last-Translator: Miguel Anxo Bouzada <mbouzada@gmail.com>\n"
 "Language-Team: Galician <proxecto@trasno.net>\n"
 "MIME-Version: 1.0\n"
@@ -39,7 +39,7 @@ msgstr "Engadir cartafol(es) á lista de reprodución..."
 
 #: ../plugins/gtkui/callbacks.c:192
 msgid "Follow symlinks"
-msgstr "Seguir ligazóns sinbólicas"
+msgstr "Seguir ligazóns simbólicas"
 
 #: ../plugins/gtkui/callbacks.c:667
 msgid "Failed while reading help file"
@@ -50,7 +50,6 @@ msgid "Failed to load help file"
 msgstr "Produciuse un erro ao cargar o ficheiro de axuda"
 
 #: ../plugins/gtkui/callbacks.c:692
-#, fuzzy
 msgid "help.txt"
 msgstr "help.txt"
 
@@ -164,7 +163,7 @@ msgstr "Mono"
 
 #: ../plugins/gtkui/gtkui.c:158
 msgid "Stereo"
-msgstr "Stereo"
+msgstr "Estéreo"
 
 #: ../plugins/gtkui/gtkui.c:183
 #, c-format
@@ -344,7 +343,7 @@ msgstr "Orde"
 #: ../plugins/gtkui/interface.c:330
 #: ../plugins/gtkui/deadbeef.glade.h:73
 msgid "Linear"
-msgstr "Liñal"
+msgstr "Lineal"
 
 #: ../plugins/gtkui/interface.c:336
 #: ../plugins/gtkui/deadbeef.glade.h:120
@@ -425,7 +424,7 @@ msgstr "_Sobre"
 #: ../plugins/gtkui/interface.c:446
 #: ../plugins/gtkui/deadbeef.glade.h:161
 msgid "_Translators"
-msgstr "_Traductores"
+msgstr "_Tradutores"
 
 #: ../plugins/gtkui/interface.c:836
 #: ../plugins/gtkui/deadbeef.glade.h:114
@@ -502,7 +501,7 @@ msgstr "_Pechar"
 #: ../plugins/gtkui/interface.c:1260
 #: ../plugins/gtkui/deadbeef.glade.h:78
 msgid "Metadata"
-msgstr "Metadata"
+msgstr "Metadatos"
 
 #: ../plugins/gtkui/interface.c:1306
 #: ../plugins/gtkui/plcommon.c:504
@@ -524,7 +523,7 @@ msgstr "Título:"
 #: ../plugins/gtkui/interface.c:1414
 #: ../plugins/gtkui/deadbeef.glade.h:30
 msgid "Enter new column title here"
-msgstr "Introduza aquí o novo título da colunma"
+msgstr "Escriba aquí o novo título da columna"
 
 #: ../plugins/gtkui/interface.c:1422
 #: ../plugins/gtkui/deadbeef.glade.h:136
@@ -703,7 +702,7 @@ msgstr "Pechar minimizado na área de notificación"
 #: ../plugins/gtkui/interface.c:1858
 #: ../plugins/gtkui/deadbeef.glade.h:80
 msgid "Middle mouse button closes playlist"
-msgstr "O botón do medio do rato pecha a lista de rerodución"
+msgstr "O botón do medio do rato pecha a lista de reprodución"
 
 #: ../plugins/gtkui/interface.c:1862
 #: ../plugins/gtkui/deadbeef.glade.h:54
@@ -713,7 +712,7 @@ msgstr "Agochar a icona da área de notificación"
 #: ../plugins/gtkui/interface.c:1866
 #: ../plugins/gtkui/deadbeef.glade.h:138
 msgid "Use bold font for currently playing track"
-msgstr "Usar tipo de letra en negriña para a pista en reprodución"
+msgstr "Usar tipo de letra en negra para a pista en reprodución"
 
 #: ../plugins/gtkui/interface.c:1870
 #: ../plugins/gtkui/deadbeef.glade.h:53
@@ -744,7 +743,7 @@ msgstr "Cambiar"
 #: ../plugins/gtkui/interface.c:1925
 #: ../plugins/gtkui/deadbeef.glade.h:33
 msgid "Foreground"
-msgstr "Frente"
+msgstr "Fronte"
 
 #: ../plugins/gtkui/interface.c:1932
 #: ../plugins/gtkui/deadbeef.glade.h:12
@@ -754,7 +753,7 @@ msgstr "Fondo"
 #: ../plugins/gtkui/interface.c:1951
 #: ../plugins/gtkui/deadbeef.glade.h:115
 msgid "Seekbar/Volumebar colors"
-msgstr "Cores das barras de tempo/volume"
+msgstr "Cores das barras de busca/volume"
 
 #: ../plugins/gtkui/interface.c:1969
 #: ../plugins/gtkui/deadbeef.glade.h:79
@@ -809,7 +808,7 @@ msgstr "Fila seleccionada"
 #: ../plugins/gtkui/interface.c:2091
 #: ../plugins/gtkui/deadbeef.glade.h:118
 msgid "Selected text"
-msgstr "Texto seleccionad"
+msgstr "Texto seleccionado"
 
 #: ../plugins/gtkui/interface.c:2104
 #: ../plugins/gtkui/deadbeef.glade.h:19
@@ -883,20 +882,20 @@ msgstr "Escribir APEv2"
 #: ../plugins/gtkui/interface.c:2331
 #: ../plugins/gtkui/deadbeef.glade.h:127
 msgid "Strip ID3v2"
-msgstr "Recortar ID3v2"
+msgstr "Eliminar ID3v2"
 
 #: ../plugins/gtkui/interface.c:2256
 #: ../plugins/gtkui/interface.c:2379
 #: ../plugins/gtkui/deadbeef.glade.h:126
 msgid "Strip ID3v1"
-msgstr "Recortar ID3v1"
+msgstr "Eliminar ID3v1"
 
 #: ../plugins/gtkui/interface.c:2260
 #: ../plugins/gtkui/interface.c:2335
 #: ../plugins/gtkui/interface.c:2375
 #: ../plugins/gtkui/deadbeef.glade.h:125
 msgid "Strip APEv2"
-msgstr "Recortar APEv2"
+msgstr "Eliminar APEv2"
 
 #: ../plugins/gtkui/interface.c:2268
 #: ../plugins/gtkui/deadbeef.glade.h:56
@@ -987,7 +986,7 @@ msgstr ""
 "  n: Número de pista,  N: Pistas totais,\n"
 "  l: Duración,  y: Ano,  g: Xénero, c: Comentario,\n"
 "  r: Copyright,  f: Nome de ficheiro, T: Etiquetas\n"
-" Exemplo: %a - %t [%l]\""
+"Exemplo: %a - %t [%l]\""
 
 #: ../plugins/gtkui/mainplaylist.c:306
 #: ../plugins/gtkui/search.c:439
@@ -1033,7 +1032,7 @@ msgstr "Engadir á cola de reprodución"
 
 #: ../plugins/gtkui/plcommon.c:407
 msgid "Remove from playback queue"
-msgstr "quitar da cola de reprodución"
+msgstr "Quitar da cola de reprodución"
 
 #: ../plugins/gtkui/plcommon.c:415
 msgid "Reload metadata"
@@ -1092,7 +1091,7 @@ msgstr "Teclas rápidas globais"
 
 #: ../plugins/gtkui/prefwin.c:401
 msgid "Slot"
-msgstr "Mando"
+msgstr "Acción"
 
 #: ../plugins/gtkui/prefwin.c:402
 msgid "Key combination"
@@ -1119,7 +1118,7 @@ msgstr "Ten certeza de que quere pechas esta xanela?"
 
 #: ../plugins/gtkui/trkproperties.c:169
 msgid "Location"
-msgstr "Sitruación"
+msgstr "Situación"
 
 #: ../plugins/gtkui/trkproperties.c:172
 msgid "Subtrack Index"
@@ -1143,7 +1142,7 @@ msgstr "Non"
 
 #: ../plugins/gtkui/trkproperties.c:182
 msgid "Codec"
-msgstr "Codec"
+msgstr "Códec"
 
 #: ../plugins/gtkui/trkproperties.c:250
 #: ../plugins/gtkui/trkproperties.c:262
@@ -1172,7 +1171,7 @@ msgstr "Opcións:\n"
 #: ../main.c:91
 #, c-format
 msgid "   --help  or  -h     Print help (this message) and exit\n"
-msgstr "   --help  ou  -h     Mostrar a axuda (esta mensaxe) e saí\n"
+msgstr "   --help  ou  -h     Mostrar a axuda (esta mensaxe) e saír\n"
 
 #: ../main.c:92
 #, c-format
@@ -1306,7 +1305,7 @@ msgstr "Non se atopou o ficheiro de imaxe: %s"
 #: ../plugins/wildmidi/wildmidiplug.c:162
 #, c-format
 msgid "wildmidi: freepats config file not found. Please install timidity-freepats package, or specify path to freepats.cfg in the plugin settings."
-msgstr "wildmidi: non se atopou o ficheiro de configuración de «freepats». Instale o paquete «timidity-freepats» ou especifique a ruta a«freepats.cfg» na configuración do engadido."
+msgstr "wildmidi: non se atopou o ficheiro de configuración de «freepats». Instale o paquete «timidity-freepats» ou especifique a ruta a «freepats.cfg» na configuración do engadido."
 
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
@@ -1325,7 +1324,7 @@ msgstr "Utilizar unha nova mostraxe ALSA"
 
 #: ../translation/extra.c:7
 msgid "Release device while stopped"
-msgstr "Liberar dispositivo cando está detido:"
+msgstr "Liberar o dispositivo cando está detido:"
 
 #: ../translation/extra.c:8
 #: ../translation/extra.c:43
@@ -1338,9 +1337,8 @@ msgstr "Tamaño preferido do período"
 
 #. Last.fm plugin
 #: ../translation/extra.c:11
-#, fuzzy
 msgid "Enable scrobbler"
-msgstr "Activar scrobbler"
+msgstr "Activar «Compartir escoitas»"
 
 #: ../translation/extra.c:12
 msgid "Disable nowplaying"
@@ -1355,14 +1353,13 @@ msgid "Password"
 msgstr "Contrasinal"
 
 #: ../translation/extra.c:15
-#, fuzzy
 msgid "Scrobble URL"
-msgstr "URL de Scrobble"
+msgstr "URL de «Compartir escoitas»"
 
 #. Album Artwork plugin
 #: ../translation/extra.c:17
 msgid "Cache update period (hr)"
-msgstr "Período de atualización (hr)"
+msgstr "Período de actualización (hr)"
 
 #: ../translation/extra.c:18
 msgid "Fetch from embedded tags"
@@ -1417,7 +1414,7 @@ msgstr "Calidade de sobremostraxe (0..2, maior é mellor)"
 #. Game_Music_Emu decoder plugin
 #: ../translation/extra.c:33
 msgid "Max song length (in minutes)"
-msgstr "Duración máxima da música (en minutos)"
+msgstr "Duración máxima da canción (en minutos)"
 
 #. Standard GTK2 user interface plugin
 #: ../translation/extra.c:35
