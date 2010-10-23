@@ -30,7 +30,59 @@
 DB_functions_t *deadbeef;
 DB_misc_t plugin;
 
+static dbus_uint32_t replaces_id = 0;
+
 #define NOTIFY_DEFAULT_FORMAT "%a - %t"
+
+static void
+notify_thread (void *ctx) {
+
+    DBusMessage *msg = (DBusMessage*) ctx;
+    DBusMessage *reply = NULL;
+
+    DBusError error;
+    dbus_error_init (&error);
+    DBusConnection *conn = dbus_bus_get (DBUS_BUS_SESSION, &error);
+    if(dbus_error_is_set (&error)) {
+        fprintf(stderr, "connection failed: %s",error.message);
+        dbus_error_free(&error);
+        dbus_message_unref (msg);
+        pthread_exit();
+    }
+
+    reply = dbus_connection_send_with_reply_and_block (conn, msg, -1, &error);
+    if (dbus_error_is_set (&error)) {
+        fprintf(stderr, "send_with_reply_and_block error: (%s)\n", error.message); 
+        dbus_error_free(&error);
+        dbus_message_unref (msg);
+        pthread_exit();
+    }
+
+    if (reply != NULL) {
+        // Process the reply message
+        DBusMessageIter args;
+
+        dbus_uint32_t id = 0;
+        if (dbus_message_iter_init(reply, &args)) {
+            if (DBUS_TYPE_UINT32 == dbus_message_iter_get_arg_type(&args)) {
+                dbus_message_iter_get_basic(&args, &id);
+                if (id != replaces_id) {
+                    replaces_id = id;
+                }
+                dbus_message_unref (reply);
+            } else {
+                fprintf(stderr, "Argument is not uint32\n"); 
+            }
+        } else {
+            fprintf(stderr, "Reply has no arguments\n"); 
+        }
+    } 
+
+    dbus_message_unref (msg);
+    dbus_connection_unref (conn);
+    pthread_exit();
+
+}
 
 #if 0
 static void
@@ -122,7 +174,7 @@ on_songchanged (DB_event_trackchange_t *ev, uintptr_t data) {
                 }
             }
             *dst = 0;
-
+/*
             DBusError error;
             dbus_error_init (&error);
             DBusConnection *conn = dbus_bus_get (DBUS_BUS_SESSION, &error);
@@ -130,6 +182,7 @@ on_songchanged (DB_event_trackchange_t *ev, uintptr_t data) {
                 printf("connection failed: %s",error.message);
                 exit(1);
             }
+*/
             DBusMessage *msg = dbus_message_new_method_call (E_NOTIFICATION_BUS_NAME, E_NOTIFICATION_PATH, E_NOTIFICATION_INTERFACE, "Notify");
 
             const char *v_appname = "DeaDBeeF";
@@ -141,7 +194,8 @@ on_songchanged (DB_event_trackchange_t *ev, uintptr_t data) {
 
             dbus_message_append_args (msg
                     , DBUS_TYPE_STRING, &v_appname
-                    , DBUS_TYPE_UINT32, &v_id
+//                    , DBUS_TYPE_UINT32, &v_id
+                    , DBUS_TYPE_UINT32, &replaces_id
                     , DBUS_TYPE_STRING, &v_iconname
                     , DBUS_TYPE_STRING, &v_summary
                     , DBUS_TYPE_STRING, &v_body
@@ -159,9 +213,16 @@ on_songchanged (DB_event_trackchange_t *ev, uintptr_t data) {
 
             dbus_message_iter_append_basic(&iter, DBUS_TYPE_INT32, &v_timeout);
 
-            int serial;
-            dbus_bool_t retval = dbus_connection_send(conn,msg,&serial);
-            dbus_connection_flush (conn);
+            //int serial;
+            //dbus_bool_t retval = dbus_connection_send(conn,msg,&serial);
+            //dbus_connection_flush (conn);
+            //dbus_message_unref (msg);
+
+            intptr_t tid = NULL;
+            if ((tid=deadbeef->thread_start(notify_thread, msg)) != 0) {
+                dbus_message_ref (msg);
+                pthread_detach (tid);  
+            }
             dbus_message_unref (msg);
         }
     }
