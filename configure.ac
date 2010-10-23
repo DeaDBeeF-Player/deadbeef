@@ -33,15 +33,19 @@ fi
 case "$host" in
   i386-*-* | i486-*-* | i586-*-* | i686-*-* | i86pc-*-*)
     AC_DEFINE(ARCH_X86_32, 1, [architecture is x86])
+    LIB="lib-x86-32"
     ;;
   x86_64-*-* | amd64-*-*)
     AC_DEFINE(ARCH_X86_64, 1, [architecture is x86_64])
+    LIB="lib-x86-64"
     ;;
   powerpc-*-* )
     AC_DEFINE(ARCH_PPC_32, 1, [architecture is ppc32])
+    LIB="lib-ppc-32"
     ;;
   powerpc64-*-* )
     AC_DEFINE(ARCH_PPC_64, 1, [architecture is ppc64])
+    LIB="lib-ppc-64"
     ;;
   *)
     AC_DEFINE(ARCH_UNKNOWN, 1, [architecture is unknown])
@@ -96,7 +100,7 @@ AC_ARG_ENABLE(portable, [  --enable-portable       make portable static build (d
 if test "x$enable_portable" != "xno" ; then
     AC_DEFINE_UNQUOTED([PORTABLE], [1], [Define if building portable version])
     PORTABLE=yes
-    PREFIXFLAGS="-DPREFIX=donotuse -DLIBDIR=donotuse -DDOCDIR=donotuse"
+    PREFIXFLAGS="-DPREFIX=donotuse -DLIBDIR=donotuse -DDOCDIR=donotuse -I./include"
 else
     PREFIXFLAGS=" -DLIBDIR=\\\"$libdir\\\" -DPREFIX=\\\"$prefix\\\" -DDOCDIR=\\\"$docdir\\\""
 fi
@@ -105,6 +109,12 @@ CXXFLAGS="$CXXFLAGS $INSANE_CXXFLAGS -D_GNU_SOURCE $PREFIXFLAGS"
 CFLAGS="$CFLAGS $INSANE_CFLAGS -D_GNU_SOURCE $PREFIXFLAGS"
 
 PKG_CHECK_MODULES(DEPS, samplerate)
+if test "x$enable_portable" != "xno" ; then
+    DEPS_LIBS="$LIB/libsamplerate.a -lpthread -ldl"
+    AC_SUBST(DEPS_LIBS)
+else
+    PKG_CHECK_MODULES(DEPS, samplerate)
+fi
 
 if test "x$enable_gtkui" != "xno" ; then
     if test "x$enable_gtk3" == "xyes" ; then
@@ -128,8 +138,8 @@ if test "x$enable_pulse" != "xno" ; then
     PKG_CHECK_MODULES(PULSE_DEPS, libpulse-simple, HAVE_PULSE=yes, HAVE_PULSE=no)
 fi
 
-AC_CHECK_LIB([pthread], [main])
-AC_CHECK_LIB([dl], [main])
+dnl AC_CHECK_LIB([pthread], [main])
+dnl AC_CHECK_LIB([dl], [main])
 
 AC_CHECK_HEADER([iconv.h],[],[iconv.h not found.])
 
@@ -146,17 +156,33 @@ if test ${HAVE_SSE2}; then
 fi
 
 dnl curl lib
-AC_CHECK_LIB([curl], [main], [HAVE_CURL=yes])
-if test "x$HAVE_CURL" = "xyes"; then
+if test "x$enable_portable" != "xno" ; then
+    HAVE_CURL=yes
+    CURL_LIBS="../../$LIB/libcurl.a -lrt"
+    AC_SUBST(CURL_LIBS)
+else
+    AC_CHECK_LIB([curl], [main], [HAVE_CURL=yes])
     CURL_LIBS="-lcurl"
     AC_SUBST(CURL_LIBS)
 fi
 
-PKG_CHECK_MODULES(DBUS_DEPS, dbus-1, HAVE_DBUS=yes, HAVE_DBUS=no)
+if test "x$enable_portable" != "xno" ; then
+    HAVE_DBUS=yes
+    DBUS_DEPS_LIBS="../../$LIB/libdbus-1.a ../../$LIB/libexpat.a -lrt"
+    DBUS_DEPS_CFLAGS="-I../../include/dbus-1"
+    AC_SUBST(DBUS_DEPS_LIBS)
+else
+    PKG_CHECK_MODULES(DBUS_DEPS, dbus-1, HAVE_DBUS=yes, HAVE_DBUS=no)
+fi
 
 dnl mpgmad plugin
 
 if test "x$enable_mpgmad" != "xno" ; then
+if test "x$enable_portable" != "xno" ; then
+    HAVE_MPGMAD=yes
+    MAD_LIBS="../../$LIB/libmad.a"
+    AC_SUBST(MAD_LIBS)
+else
     AC_CHECK_LIB([mad], [main], [HAVE_LIBMAD=yes])
     if test "x$HAVE_LIBMAD" = "xyes" ; then
         HAVE_MPGMAD=yes
@@ -164,9 +190,15 @@ if test "x$enable_mpgmad" != "xno" ; then
         AC_SUBST(MAD_LIBS)
     fi
 fi
+fi
 
 dnl vorbis plugin
 if test "x$enable_vorbis" != "xno" ; then
+if test "x$enable_portable" != "xno" ; then
+    HAVE_VORBISPLUGIN=yes
+    VORBIS_LIBS="../../$LIB/libogg.a ../../$LIB/libvorbis.a ../../$LIB/libvorbisenc.a ../../$LIB/libvorbisfile.a"
+    AC_SUBST(VORBIS_LIBS)
+else
     AC_CHECK_LIB([vorbis], [main], [HAVE_VORBIS=yes])
     AC_CHECK_LIB([vorbisfile], [main], [HAVE_VORBISFILE=yes])
     if test "x$HAVE_VORBIS" = "xyes" && test "x$HAVE_VORBISFILE" = "xyes" ; then
@@ -175,9 +207,15 @@ if test "x$enable_vorbis" != "xno" ; then
         AC_SUBST(VORBIS_LIBS)
     fi
 fi
+fi
 
 dnl flac plugin
 if test "x$enable_flac" != "xno" ; then
+if test "x$enable_portable" != "xno" ; then
+    HAVE_FLACPLUGIN=yes
+    FLAC_LIBS="../../$LIB/libFLAC.a ../../$LIB/libogg.a"
+    AC_SUBST(FLAC_LIBS)
+else
     AC_CHECK_LIB([FLAC], [main], [HAVE_FLAC=yes])
     if test "x$HAVE_FLAC" = "xyes" ; then
         HAVE_FLACPLUGIN=yes
@@ -185,9 +223,15 @@ if test "x$enable_flac" != "xno" ; then
         AC_SUBST(FLAC_LIBS)
     fi
 fi
+fi
 
 dnl wavpack plugin
 if test "x$enable_wavpack" != "xno" ; then
+if test "x$enable_portable" != "xno" ; then
+    HAVE_WAVPACKPLUGIN=yes
+    WAVPACK_LIBS="../../$LIB/libwavpack.a"
+    AC_SUBST(WAVPACK_LIBS)
+else
     AC_CHECK_LIB([wavpack], [main], [HAVE_WAVPACK=yes])
     if test "x$HAVE_WAVPACK" = "xyes" ; then
         HAVE_WAVPACKPLUGIN=yes
@@ -195,9 +239,15 @@ if test "x$enable_wavpack" != "xno" ; then
         AC_SUBST(WAVPACK_LIBS)
     fi
 fi
+fi
 
 dnl libsndfile plugin
 if test "x$enable_sndfile" != "xno" ; then
+if test "x$enable_portable" != "xno" ; then
+    HAVE_SNDFILEPLUGIN=yes
+    SNDFILE_LIBS="../../$LIB/libsndfile.a"
+    AC_SUBST(SNDFILE_LIBS)
+else
     AC_CHECK_LIB([sndfile], [main], [HAVE_SNDFILE=yes])
     if test "x$HAVE_SNDFILE" = "xyes" ; then
         HAVE_SNDFILEPLUGIN=yes
@@ -205,18 +255,24 @@ if test "x$enable_sndfile" != "xno" ; then
         AC_SUBST(SNDFILE_LIBS)
     fi
 fi
+fi
 
 dnl vfs_curl plugin
 if test "x$enable_vfs_curl" != "xno" ; then
     if test "x$HAVE_CURL" = "xyes" ; then
         HAVE_VFS_CURL=yes
-        VFS_CURL_LIBS="-lcurl"
+        VFS_CURL_LIBS="$CURL_LIBS"
         AC_SUBST(VFS_CURL_LIBS)
     fi
 fi
 
 dnl cdda plugin
 if test "x$enable_cdda" != "xno" ; then
+if test "x$enable_portable" != "xno" ; then
+    HAVE_CDDAPLUGIN=yes
+    CDDA_LIBS="../../$LIB/libcdio.a ../../$LIB/libudf.a ../../$LIB/libiso9660.a ../../$LIB/libcddb.a"
+    AC_SUBST(CDDA_LIBS)
+else
     AC_CHECK_LIB([cdio], [main], [HAVE_CDIO=yes])
     AC_CHECK_LIB([cddb], [main], [HAVE_CDDB=yes])
     if test "x$HAVE_CDIO" = "xyes" && test "x$HAVE_CDDB" = "xyes" ; then
@@ -224,6 +280,7 @@ if test "x$enable_cdda" != "xno" ; then
         CDDA_LIBS="-lcdio -lcddb"
         AC_SUBST(CDDA_LIBS)
     fi
+fi
 fi
 
 dnl gtkui plugin
@@ -375,6 +432,11 @@ if test "x$enable_dca" != "xno" ; then
 fi
 
 if test "x$enable_aac" != "xno" ; then
+if test "x$enable_portable" != "xno" ; then
+    FAAD2_LIBS="../../$LIB/libfaad.a"
+    AC_SUBST(FAAD2_LIBS)
+    HAVE_AAC=yes
+else
     AC_CHECK_LIB([faad], [main], [HAVE_FAAD=1])
     if test ${HAVE_FAAD} ; then
         FAAD2_LIBS="-lfaad"
@@ -382,8 +444,14 @@ if test "x$enable_aac" != "xno" ; then
         HAVE_AAC=yes
     fi
 fi
+fi
 
 if test "x$enable_mms" != "xno" ; then
+if test "x$enable_portable" != "xno" ; then
+    LIBMMS_LIBS="../../$LIB/libmms.a -lglib-2.0"
+    AC_SUBST(LIBMMS_LIBS)
+    HAVE_MMS=yes
+else
     AC_CHECK_LIB([mms], [main], [HAVE_LIBMMS=1])
     if test ${HAVE_LIBMMS} ; then
         LIBMMS_LIBS="-lmms"
@@ -391,15 +459,21 @@ if test "x$enable_mms" != "xno" ; then
         HAVE_MMS=yes
     fi
 fi
+fi
 
 if test "x$enable_shn" != "xno" ; then
     HAVE_SHN=yes
 fi
 
 if test "x$enable_ao" != "xno" ; then
+if test "x$enable_portable" != "xno" ; then
+    HAVE_ZLIB=yes
+    ZLIB_LIBS="../../$LIB/libz.a"
+else
     AC_CHECK_LIB([z], [main], [HAVE_ZLIB=yes])
+    ZLIB_LIBS="-lz"
+fi
     if test "x$HAVE_ZLIB" = "xyes"; then
-        ZLIB_LIBS="-lz"
         AC_SUBST(ZLIB_LIBS)
         HAVE_AO=yes
     fi

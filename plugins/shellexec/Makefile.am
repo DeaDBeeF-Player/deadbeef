@@ -4,6 +4,6 @@ pkglib_LTLIBRARIES = shellexec.la
 shellexec_la_SOURCES = shellexec.c
 shellexec_la_LDFLAGS = -module
 
-shellexec_la_LIBADD = $(LDADD) $(HOTKEYS_LIBS)
+shellexec_la_LIBADD = $(LDADD)
 AM_CFLAGS = $(CFLAGS) -std=c99
 endif
