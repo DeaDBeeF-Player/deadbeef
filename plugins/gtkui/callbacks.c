@@ -312,7 +312,7 @@ on_mainwin_key_press_event             (GtkWidget       *widget,
                                         gpointer         user_data)
 {
     uint32_t maskedstate = (event->state &~ (GDK_LOCK_MASK | GDK_MOD2_MASK | GDK_MOD3_MASK | GDK_MOD5_MASK)) & 0xfff;
-    if (event->keyval == GDK_n && !event->state) {
+    if ((maskedstate == GDK_MOD1_MASK || maskedstate == 0) && event->keyval == GDK_n) {
         // button for that one is not in toolbar anymore, so handle it manually
         deadbeef->sendmessage (M_PLAYRANDOM, 0, 0, 0);
     }
