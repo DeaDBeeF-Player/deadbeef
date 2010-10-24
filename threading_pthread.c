@@ -99,6 +99,21 @@ thread_join (intptr_t tid) {
     return 0;
 }
 
+int
+thread_detach (intptr_t tid) {
+    int s = pthread_detach ((pthread_t)tid);
+    if (s) {
+        fprintf (stderr, "pthread_detach failed: %s\n", strerror (s));
+        return -1;
+    }
+    return 0;
+}
+
+void
+thread_exit (void *retval) {
+    pthread_exit (retval);
+}
+
 uintptr_t
 mutex_create_nonrecursive (void) {
     pthread_mutex_t *mtx = malloc (sizeof (pthread_mutex_t));

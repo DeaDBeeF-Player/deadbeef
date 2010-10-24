@@ -29,6 +29,12 @@ thread_start_low_priority (void (*fn)(void *ctx), void *ctx);
 int
 thread_join (intptr_t tid);
 
+int
+thread_detach (intptr_t tid);
+
+void
+thread_exit (void *retval);
+
 uintptr_t
 mutex_create (void);
 
