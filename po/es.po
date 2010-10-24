@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: DeaDBeef\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-10-24 04:36+0000\n"
-"PO-Revision-Date: 2010-10-24 11:46-0500\n"
+"PO-Revision-Date: 2010-10-24 11:55-0500\n"
 "Last-Translator: Hugo Florentino <sysadmin@cips.cu>\n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -1469,7 +1469,7 @@ msgstr "Habilitar HVSC"
 
 #: ../translation/extra.c:51
 msgid "HVSC path"
-msgstr "rUTA HVSC"
+msgstr "Ruta HVSC"
 
 #. WildMidi player plugin
 #: ../translation/extra.c:53
