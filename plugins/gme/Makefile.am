@@ -112,8 +112,8 @@ game-music-emu-0.5.5/gme/Ym2413_Emu.h\
 game-music-emu-0.5.5/gme/Ym2612_Emu.h\
 game-music-emu-0.5.5/gme/gme_types.h
 
-gme_la_LDFLAGS = -module
+gme_la_LDFLAGS = -module -nostdlib -lsupc++
 
-gme_la_LIBADD = $(LDADD) -lstdc++
 AM_CFLAGS = $(CFLAGS) -I$(gmepath) -std=c99 -DGME_VERSION_055
+AM_CPPFLAGS = $(CXXFLAGS) -fno-exceptions -fno-rtti -nostdlib -fno-unwind-tables
 endif
