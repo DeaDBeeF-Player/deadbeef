@@ -495,6 +495,7 @@ http_thread_func (void *ctx) {
         curl_easy_setopt (curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
         curl_easy_setopt (curl, CURLOPT_HEADERFUNCTION, http_content_header_handler);
         curl_easy_setopt (curl, CURLOPT_HEADERDATA, ctx);
+        curl_easy_setopt (curl, CURLOPT_NOSIGNAL, 1);
         curl_easy_setopt (curl, CURLOPT_PROGRESSFUNCTION, http_curl_control);
         curl_easy_setopt (curl, CURLOPT_NOPROGRESS, 0);
         curl_easy_setopt (curl, CURLOPT_PROGRESSDATA, ctx);
