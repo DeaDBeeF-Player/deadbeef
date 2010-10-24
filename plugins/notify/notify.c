@@ -47,7 +47,7 @@ notify_thread (void *ctx) {
         fprintf(stderr, "connection failed: %s",error.message);
         dbus_error_free(&error);
         dbus_message_unref (msg);
-        pthread_exit();
+        deadbeef->thread_exit(NULL);
     }
 
     reply = dbus_connection_send_with_reply_and_block (conn, msg, -1, &error);
@@ -55,7 +55,7 @@ notify_thread (void *ctx) {
         fprintf(stderr, "send_with_reply_and_block error: (%s)\n", error.message); 
         dbus_error_free(&error);
         dbus_message_unref (msg);
-        pthread_exit();
+        deadbeef->thread_exit(NULL);
     }
 
     if (reply != NULL) {
@@ -80,7 +80,7 @@ notify_thread (void *ctx) {
 
     dbus_message_unref (msg);
     dbus_connection_unref (conn);
-    pthread_exit();
+    deadbeef->thread_exit(NULL);
 
 }
 
@@ -221,7 +221,7 @@ on_songchanged (DB_event_trackchange_t *ev, uintptr_t data) {
             intptr_t tid = NULL;
             if ((tid=deadbeef->thread_start(notify_thread, msg)) != 0) {
                 dbus_message_ref (msg);
-                pthread_detach (tid);  
+                deadbeef->thread_detach (tid);  
             }
             dbus_message_unref (msg);
         }
