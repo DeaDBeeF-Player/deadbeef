@@ -19,7 +19,7 @@
 
 #include <time.h>
 #include <gio/gio.h>
-//#include <libindicate/server.h>
+#include <libindicate/server.h>
 
 #include <deadbeef/deadbeef.h>
 #include "../artwork/artwork.h"
@@ -36,7 +36,7 @@ DB_functions_t *deadbeef;
 static short enabled = 0;
 DB_artwork_plugin_t *coverart_plugin = NULL;
 
-//static IndicateServer *indicate_server;
+static IndicateServer *indicate_server;
 static GDBusConnection *connection;
 static guint name_own_id;
 static guint root_id;
@@ -1087,10 +1087,10 @@ name_lost_cb (GDBusConnection *connection, const char *name, gpointer *user_data
 static gboolean 
 mpris_begin ()
 {
-//    indicate_server = indicate_server_ref_default ();
-//    indicate_server_set_type (indicate_server, "music.deadbeef");
-//    indicate_server_set_desktop_file (indicate_server, DESKTOP_FILE);
-//    indicate_server_show (indicate_server);
+    indicate_server = indicate_server_ref_default ();
+    indicate_server_set_type (indicate_server, "music.deadbeef");
+    indicate_server_set_desktop_file (indicate_server, DESKTOP_FILE);
+    indicate_server_show (indicate_server);
 
     GError *error = NULL;
     GDBusInterfaceInfo *ifaceinfo;
@@ -1201,7 +1201,7 @@ mpris_end ()
         name_own_id = 0;
     }
 
-//    indicate_server_hide (indicate_server);
+    indicate_server_hide (indicate_server);
 
     deadbeef->mutex_lock(emit_id_mtx);    
 	if (player_property_emit_id != 0) {
@@ -1291,9 +1291,9 @@ static DB_dsp_t plugin = {
     .plugin.api_vmajor = DB_API_VERSION_MAJOR,
     .plugin.api_vminor = DB_API_VERSION_MINOR,
     .plugin.type = DB_PLUGIN_MISC,
-    .plugin.id = "mpris",
-    .plugin.name = "MPRIS",
-    .plugin.descr = "MPRIS",
+    .plugin.id = "Sound Menu",
+    .plugin.name = "Sound Menu",
+    .plugin.descr = "Ubuntu Sound Menu plugin",
     .plugin.author = "Robert Y",
     .plugin.email = "Decatf@gmail.com",
     .plugin.website = "http://deadbeef.sf.net",
