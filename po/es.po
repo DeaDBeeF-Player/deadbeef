@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: DeaDBeef\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-10-24 04:36+0000\n"
-"PO-Revision-Date: 2010-10-24 10:48-0500\n"
+"PO-Revision-Date: 2010-10-24 11:46-0500\n"
 "Last-Translator: Hugo Florentino <sysadmin@cips.cu>\n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -73,7 +73,7 @@ msgid "DeaDBeeF %s ChangeLog"
 msgstr "Cambios en DeaDBeeF %s"
 
 #: ../plugins/gtkui/callbacks.c:1080
-#, fuzzy, c-format
+#, c-format
 msgid "DeaDBeeF Translators"
 msgstr "Traductores de DeaDBeeF"
 
@@ -426,7 +426,6 @@ msgstr "_Acerca de"
 
 #: ../plugins/gtkui/interface.c:446
 #: ../plugins/gtkui/deadbeef.glade.h:161
-#, fuzzy
 msgid "_Translators"
 msgstr "_Traductores"
 
@@ -1370,12 +1369,11 @@ msgstr "Obtener de etiquetas incrustadas"
 
 #: ../translation/extra.c:19
 msgid "Fetch from local folder"
-msgstr "Obtener de la carpeta local"
+msgstr "Obtener de carpeta local"
 
 #: ../translation/extra.c:20
-#, fuzzy
 msgid "Local cover file mask"
-msgstr "Máscara de archivo de cobertura local"
+msgstr "Máscara de archivo para portada local"
 
 #: ../translation/extra.c:21
 msgid "Fetch from last.fm"
@@ -1516,7 +1514,7 @@ msgstr "Comentario"
 
 #: ../translation/extra.c:67
 msgid "Encoder / Vendor"
-msgstr "Codificador / Vendedor"
+msgstr "Codificador / Proveedor"
 
 #: ../translation/extra.c:68
 msgid "Copyright"
