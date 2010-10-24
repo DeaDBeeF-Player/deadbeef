@@ -119,6 +119,7 @@ curl_req_send (const char *req, const char *post) {
     memset(lfm_err, 0, sizeof(lfm_err));
     curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, lfm_err);
     curl_easy_setopt(curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+    curl_easy_setopt (curl, CURLOPT_NOSIGNAL, 1);
     curl_easy_setopt (curl, CURLOPT_PROGRESSFUNCTION, lfm_curl_control);
     curl_easy_setopt (curl, CURLOPT_NOPROGRESS, 0);
     if (post) {
