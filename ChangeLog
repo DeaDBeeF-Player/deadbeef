@@ -1,3 +1,11 @@
+version 0.4.3
+	fixed crash in OSS plugin
+	fixed random crashes caused by upgrading to libcurl-7.21.2
+	fixed metadata editing in non-english locales
+	fixed switching playlists using hotkeys with caps/num/xcb modifiers
+	made preferences window tabs scrollable
+	fixed dts plugin description
+
 version 0.4.2
 	added translation into many languages, see translators.txt (LXDE Project)
 	added ability to add custom menu items from plugins (Viktor Semykin)
