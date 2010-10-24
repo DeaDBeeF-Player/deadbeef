@@ -81,6 +81,6 @@ Ukrainian
 Vietnamese
  Tran Duy Hung <nguyentieuhau@gmail.com>
 
-Chinese (Taiwan, Province of China)
+Traditional Chinese (Taiwan)
  Hong Jen Yee <pcman.tw@gmail.com>
 
