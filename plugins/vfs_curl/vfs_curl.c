@@ -391,6 +391,7 @@ http_content_header_handler (void *ptr, size_t size, size_t nmemb, void *stream)
     uint8_t key[256];
     uint8_t value[256];
     int refresh_playlist = 0;
+    fp->length = -1; // reset length on every request/redirect
     while (p < end) {
         if (p <= end - 4) {
             if (!memcmp (p, "\r\n\r\n", 4)) {
@@ -482,7 +483,7 @@ http_thread_func (void *ctx) {
 
     int status;
 
-    trace ("vfs_curl: started loading data\n");
+    trace ("vfs_curl: started loading data %s\n", fp->url);
     for (;;) {
         struct curl_slist *headers = NULL;
         curl_easy_reset (curl);
