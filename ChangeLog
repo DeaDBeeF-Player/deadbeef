@@ -5,6 +5,12 @@ version 0.4.3
 	fixed switching playlists using hotkeys with caps/num/xcb modifiers
 	made preferences window tabs scrollable
 	fixed dts plugin description
+	fixed 'n' hotkey with numlock
+	improved support for icy (shoutcast) protocol
+	fixed ctrl+j (jump to current track) to work correctly with multiple playlists
+	fixed cursor/scroll follows playback to work correctly with multiple playlists
+	session resume does not seek anymore after skipping failed track
+	fixed seekbar flickering
 
 version 0.4.2
 	added translation into many languages, see translators.txt (LXDE Project)
