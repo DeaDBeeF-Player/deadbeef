@@ -1070,9 +1070,16 @@ void
 gtkui_focus_on_playing_track (void) {
     DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
     if (it) {
+        int plt = deadbeef->streamer_get_current_playlist ();
+        if (plt != deadbeef->plt_get_curr ()) {
+            deadbeef->plt_set_curr (plt);
+        }
         int idx = deadbeef->pl_get_idx_of (it);
-        ddb_listview_scroll_to (DDB_LISTVIEW (lookup_widget (mainwin, "playlist")), idx);
-        ddb_listview_set_cursor (DDB_LISTVIEW (lookup_widget (mainwin, "playlist")), idx);
+        if (idx != -1) {
+            DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
+            ddb_listview_scroll_to (pl, idx);
+            ddb_listview_set_cursor (pl, idx);
+        }
         deadbeef->pl_item_unref (it);
     }
 }
