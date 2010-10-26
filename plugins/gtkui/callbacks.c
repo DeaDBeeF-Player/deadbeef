@@ -560,7 +560,6 @@ on_seekbar_button_release_event        (GtkWidget       *widget,
                                         GdkEventButton  *event)
 {
     seekbar_moving = 0;
-    gtk_widget_queue_draw (widget);
     DB_playItem_t *trk = deadbeef->streamer_get_playing_track ();
     if (trk) {
         float time = (event->x - widget->allocation.x) * deadbeef->pl_get_item_duration (trk) / (widget->allocation.width);
@@ -570,6 +569,7 @@ on_seekbar_button_release_event        (GtkWidget       *widget,
         deadbeef->streamer_seek (time);
         deadbeef->pl_item_unref (trk);
     }
+    gtk_widget_queue_draw (widget);
     return FALSE;
 }
 
