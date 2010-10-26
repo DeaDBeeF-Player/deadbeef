@@ -778,22 +778,23 @@ on_add_location_activate               (GtkMenuItem     *menuitem,
 static void
 songchanged (DdbListview *ps, DB_playItem_t *from, DB_playItem_t *to) {
     int plt = deadbeef->plt_get_curr ();
-#if 0 // this breaks redraw when playqueue switches to another playlist
-    int str_plt = deadbeef->streamer_get_current_playlist ();
-    if (plt != str_plt) {
-        // have nothing to do here -- active playlist is not the one with playing song
-        return;
-    }
-#endif
     int to_idx = -1;
     if (!ddb_listview_is_scrolling (ps) && to) {
-        to_idx = deadbeef->pl_get_idx_of (to);
-        if (to_idx != -1) {
-            if (deadbeef->conf_get_int ("playlist.scroll.followplayback", 0)) {
-                ddb_listview_scroll_to (ps, to_idx);
+        int cursor_follows_playback = deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 0);
+        int scroll_follows_playback = deadbeef->conf_get_int ("playlist.scroll.followplayback", 0);
+        int plt = deadbeef->streamer_get_current_playlist ();
+        if (plt != -1) {
+            if (cursor_follows_playback && plt != deadbeef->plt_get_curr ()) {
+                deadbeef->plt_set_curr (plt);
             }
-            if (deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 0)) {
-                ddb_listview_set_cursor_noscroll (ps, to_idx);
+            to_idx = deadbeef->pl_get_idx_of (to);
+            if (to_idx != -1) {
+                if (cursor_follows_playback) {
+                    ddb_listview_set_cursor_noscroll (ps, to_idx);
+                }
+                if (scroll_follows_playback && plt == deadbeef->plt_get_curr ()) {
+                    ddb_listview_scroll_to (ps, to_idx);
+                }
             }
         }
     }
