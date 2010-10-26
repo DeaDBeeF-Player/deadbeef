@@ -509,9 +509,11 @@ restore_resume_state (void) {
         int paused = conf_get_int ("resume.paused", 0);
         trace ("resume: track %d pos %f playlist %d\n", track, pos, plt);
         if (plt >= 0 && track >= 0 && pos >= 0) {
+            streamer_lock (); // need to hold streamer thread to make the resume operation atomic
             streamer_set_current_playlist (plt);
-            streamer_set_seek (pos);
             streamer_set_nextsong (track, paused ? 2 : 3);
+            streamer_set_seek (pos);
+            streamer_unlock ();
         }
     }
 }
