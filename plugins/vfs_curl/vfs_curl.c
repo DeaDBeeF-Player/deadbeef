@@ -829,6 +829,7 @@ http_getlength (DB_FILE *stream) {
     assert (stream);
     HTTP_FILE *fp = (HTTP_FILE *)stream;
     if (fp->status == STATUS_ABORTED) {
+        trace ("length: -1\n");
         return -1;
     }
     if (!fp->tid) {
@@ -837,7 +838,7 @@ http_getlength (DB_FILE *stream) {
     while (fp->status == STATUS_INITIAL) {
         usleep (3000);
     }
-    //trace ("length: %d\n", fp->length);
+    trace ("length: %d\n", fp->length);
     return fp->length;
 }
 
