@@ -374,12 +374,9 @@ if test "x$enable_aac" != "xno" ; then
 fi
 
 if test "x$enable_mms" != "xno" ; then
-    AC_CHECK_LIB([mms], [main], [HAVE_LIBMMS=1])
-    if test ${HAVE_LIBMMS} ; then
-        LIBMMS_LIBS="-lmms"
-        AC_SUBST(LIBMMS_LIBS)
-        HAVE_MMS=yes
-    fi
+    LIBMMS_LIBS=""
+    AC_SUBST(LIBMMS_LIBS)
+    HAVE_MMS=yes
 fi
 
 if test "x$enable_shn" != "xno" ; then
