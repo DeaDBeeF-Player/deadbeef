@@ -166,7 +166,7 @@ tta_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
 
         if (size > 0 && !info->remaining) {
             info->remaining = get_samples (&info->tta, info->buffer);
-            if (!info->remaining) {
+            if (info->remaining <= 0) {
                 break;
             }
         }
