@@ -241,6 +241,8 @@
 #define g_htonl(val) (GUINT32_TO_BE (val))
 #define g_htons(val) (GUINT16_TO_BE (val))
 
+#include <../../config.h>
+
 #if WORDS_BIGENDIAN
 #define GUINT64_TO_BE(val) (val)
 #define GUINT32_TO_BE(val) (val)
