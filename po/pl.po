@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: DeaDBeef\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-10-19 04:38+0000\n"
-"PO-Revision-Date: 2010-10-19 11:14+0200\n"
+"PO-Revision-Date: 2010-10-27 23:59+0200\n"
 "Last-Translator: Piotr Sokół <psokol@jabster.pl>\n"
 "Language-Team: Polish Translation Team <>\n"
 "MIME-Version: 1.0\n"
@@ -41,7 +41,7 @@ msgstr "Wybór katalogu"
 
 #: ../plugins/gtkui/callbacks.c:192
 msgid "Follow symlinks"
-msgstr "Podążaj za dowiązaniami symbolicznymi"
+msgstr "Podążanie za dowiązaniami symbolicznymi"
 
 #: ../plugins/gtkui/callbacks.c:667
 msgid "Failed while reading help file"
@@ -97,7 +97,7 @@ msgstr "Wybór pliku"
 
 #: ../plugins/gtkui/eq.c:120
 msgid "DeaDBeeF EQ preset files (*.ddbeq)"
-msgstr "Ustawienia korektora DeaDBeeF (*.ddbeq)"
+msgstr "Pliki ustawień korektora DeaDBeeF (*.ddbeq)"
 
 #: ../plugins/gtkui/eq.c:151
 msgid "Load DeaDBeeF EQ Preset..."
@@ -105,7 +105,7 @@ msgstr "Wybór pliku"
 
 #: ../plugins/gtkui/eq.c:155
 msgid "DeaDBeeF EQ presets (*.ddbeq)"
-msgstr "Ustawienia korektora DeaDBeeF (*.ddbeq)"
+msgstr "Pliki ustawień korektora DeaDBeeF (*.ddbeq)"
 
 #: ../plugins/gtkui/eq.c:214
 msgid "Import Foobar2000 EQ Preset..."
@@ -113,7 +113,7 @@ msgstr "Wybór pliku"
 
 #: ../plugins/gtkui/eq.c:218
 msgid "Foobar2000 EQ presets (*.feq)"
-msgstr "Ustawienia korektora Foobar2000 (*.feq)"
+msgstr "Pliki ustawień korektora Foobar2000 (*.feq)"
 
 #: ../plugins/gtkui/eq.c:292
 msgid "Enable"
@@ -133,15 +133,15 @@ msgstr "Wyzeruj pojedyncze"
 
 #: ../plugins/gtkui/eq.c:321
 msgid "Save Preset"
-msgstr "Zapisz ustawienia"
+msgstr "Zapisz ustawienia..."
 
 #: ../plugins/gtkui/eq.c:328
 msgid "Load Preset"
-msgstr "Wczytaj ustawienia"
+msgstr "Wczytaj ustawienia..."
 
 #: ../plugins/gtkui/eq.c:335
 msgid "Import Foobar2000 Preset"
-msgstr "Importuj ustawienia programu Foobar2000"
+msgstr "Importuj ustawienia programu Foobar2000..."
 
 #: ../plugins/gtkui/gtkui.c:133
 #, c-format
@@ -182,8 +182,8 @@ msgstr "Wstrzymano odtwarzanie |"
 msgid ""
 "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
 msgstr ""
-"%s%s %s| %d Hz | %d bitów | %s | %d:%02d / %s | %d ścieżek | całkowity "
-"czas trwania listy odtwarzania: %s"
+"%s%s %s| %d Hz | %d bitów | %s | %d:%02d / %s | %d ścieżek | całkowity czas "
+"trwania listy odtwarzania: %s"
 
 #: ../plugins/gtkui/gtkui.c:661
 msgid "Save Playlist As"
@@ -315,11 +315,11 @@ msgstr "Odtwarzanie"
 
 #: ../plugins/gtkui/interface.c:323 ../plugins/gtkui/deadbeef.glade.h:85
 msgid "Order"
-msgstr "Porządek odtwarzania"
+msgstr "Kolejność"
 
 #: ../plugins/gtkui/interface.c:330 ../plugins/gtkui/deadbeef.glade.h:73
 msgid "Linear"
-msgstr "Liniowo"
+msgstr "Liniowa"
 
 #: ../plugins/gtkui/interface.c:336 ../plugins/gtkui/deadbeef.glade.h:120
 msgid "Shuffle"
@@ -331,15 +331,15 @@ msgstr "Losowo"
 
 #: ../plugins/gtkui/interface.c:348 ../plugins/gtkui/deadbeef.glade.h:77
 msgid "Looping"
-msgstr "Zapętlanie"
+msgstr "Powtarzanie"
 
 #: ../plugins/gtkui/interface.c:355 ../plugins/gtkui/deadbeef.glade.h:75
 msgid "Loop All"
-msgstr "Zapętlaj wszystko"
+msgstr "Wszystkie ścieżki"
 
 #: ../plugins/gtkui/interface.c:361 ../plugins/gtkui/deadbeef.glade.h:76
 msgid "Loop Single Song"
-msgstr "Zapętlaj pojedynczy utwór"
+msgstr "Pojedyncza ścieżka"
 
 #: ../plugins/gtkui/interface.c:367 ../plugins/gtkui/deadbeef.glade.h:27
 msgid "Don't Loop"
@@ -359,7 +359,7 @@ msgstr "Zatrzymaj po zaznaczonym utworze"
 
 #: ../plugins/gtkui/interface.c:394 ../plugins/gtkui/deadbeef.glade.h:69
 msgid "Jump to current track"
-msgstr "Skocz do utworu"
+msgstr "Przejdź do bieżącego nagrania"
 
 #: ../plugins/gtkui/interface.c:401 ../plugins/gtkui/interface.c:408
 #: ../plugins/gtkui/deadbeef.glade.h:155
@@ -507,11 +507,11 @@ msgstr "Długość"
 
 #: ../plugins/gtkui/interface.c:1438 ../plugins/gtkui/interface.c:1821
 msgid "Track"
-msgstr "Utwór"
+msgstr "Numer utworu"
 
 #: ../plugins/gtkui/interface.c:1439 ../translation/extra.c:58
 msgid "Band / Album Artist"
-msgstr "Zespół / Wykonawca albumu"
+msgstr "Wykonawca albumu"
 
 #: ../plugins/gtkui/interface.c:1440 ../plugins/gtkui/plcommon.c:882
 msgid "Custom"
@@ -627,7 +627,7 @@ msgstr "Wypisywanie nazwy bieżącego utworu pogrubioną czcionką"
 
 #: ../plugins/gtkui/interface.c:1870 ../plugins/gtkui/deadbeef.glade.h:53
 msgid "Hide \"Delete from disk\" context menu item"
-msgstr "Ukrycie polecenia \"Usuń pliki z dysku\" z menu podręcznego"
+msgstr "Ukrycie polecenia „Usuń pliki z dysku” w menu podręcznym"
 
 #: ../plugins/gtkui/interface.c:1878 ../plugins/gtkui/deadbeef.glade.h:133
 msgid "Titlebar text while playing:"
@@ -646,7 +646,7 @@ msgstr "Interfejs użytkownika"
 #: ../plugins/gtkui/interface.c:1916 ../plugins/gtkui/interface.c:1960
 #: ../plugins/gtkui/deadbeef.glade.h:88
 msgid "Override"
-msgstr "Własne kolory"
+msgstr "Własne"
 
 #: ../plugins/gtkui/interface.c:1925 ../plugins/gtkui/deadbeef.glade.h:33
 msgid "Foreground"
@@ -658,7 +658,7 @@ msgstr "Drugoplanowy"
 
 #: ../plugins/gtkui/interface.c:1951 ../plugins/gtkui/deadbeef.glade.h:115
 msgid "Seekbar/Volumebar colors"
-msgstr "Kolory paska przewijania i głośności"
+msgstr "Pasek przewijania i głośności"
 
 #: ../plugins/gtkui/interface.c:1969 ../plugins/gtkui/deadbeef.glade.h:79
 msgid "Middle"
@@ -678,7 +678,7 @@ msgstr "Baza"
 
 #: ../plugins/gtkui/interface.c:2021 ../plugins/gtkui/deadbeef.glade.h:128
 msgid "Tab strip colors"
-msgstr "Kolory kart"
+msgstr "Karty"
 
 #: ../plugins/gtkui/interface.c:2030 ../plugins/gtkui/deadbeef.glade.h:89
 msgid "Override (looses GTK treeview theming, but speeds up rendering)"
@@ -710,7 +710,7 @@ msgstr "Kursor"
 
 #: ../plugins/gtkui/interface.c:2117 ../plugins/gtkui/deadbeef.glade.h:94
 msgid "Playlist colors"
-msgstr "Kolory listy odtwarzania"
+msgstr "Listy odtwarzania"
 
 #: ../plugins/gtkui/interface.c:2121 ../plugins/gtkui/deadbeef.glade.h:15
 msgid "Colors"
@@ -718,19 +718,19 @@ msgstr "Kolory"
 
 #: ../plugins/gtkui/interface.c:2130 ../plugins/gtkui/deadbeef.glade.h:29
 msgid "Enable Proxy Server"
-msgstr "Włącz Serwer Proxy"
+msgstr "Serwer pośredniczący"
 
 #: ../plugins/gtkui/interface.c:2138 ../plugins/gtkui/deadbeef.glade.h:100
 msgid "Proxy Server Address:"
-msgstr "Adres Serwera Proxy:"
+msgstr "Adres:"
 
 #: ../plugins/gtkui/interface.c:2152 ../plugins/gtkui/deadbeef.glade.h:101
 msgid "Proxy Server Port:"
-msgstr "Port Serwera Proxy:"
+msgstr "Port:"
 
 #: ../plugins/gtkui/interface.c:2166 ../plugins/gtkui/deadbeef.glade.h:102
 msgid "Proxy Type:"
-msgstr "Typ Proxy:"
+msgstr "Typ:"
 
 #: ../plugins/gtkui/interface.c:2185 ../plugins/gtkui/deadbeef.glade.h:103
 msgid "Proxy Username:"
@@ -803,7 +803,7 @@ msgstr "Opis:"
 
 #: ../plugins/gtkui/interface.c:2434 ../plugins/gtkui/deadbeef.glade.h:11
 msgid "Author(s):"
-msgstr "Autor(zy)"
+msgstr "Autor:"
 
 #: ../plugins/gtkui/interface.c:2449 ../plugins/gtkui/deadbeef.glade.h:28
 msgid "Email:"
@@ -930,7 +930,7 @@ msgstr "Otwórz plik..."
 #: ../plugins/gtkui/pluginconf.c:142
 #, c-format
 msgid "Setup %s"
-msgstr "Ustawienia %s"
+msgstr "Ustawienia wtyczki %s"
 
 #: ../plugins/gtkui/prefwin.c:99
 msgid "Default Audio Device"
@@ -945,6 +945,7 @@ msgid "Global Hotkeys"
 msgstr "Skróty klawiszowe"
 
 #: ../plugins/gtkui/prefwin.c:401
+#, fuzzy
 msgid "Slot"
 msgstr "Slot"
 
@@ -1137,7 +1138,7 @@ msgstr ""
 "Odtwarzanie\n"
 "Okładka albumu\n"
 "Wykonawca - album\n"
-"Artysta\n"
+"Wykonawca\n"
 "Album\n"
 "Tytuł\n"
 "Czas trwania\n"
@@ -1165,8 +1166,8 @@ msgid ""
 "package, or specify path to freepats.cfg in the plugin settings."
 msgstr ""
 "wildmidi: plik konfiguracyjny freepats nie został znaleziony. Zainstaluj "
-"pakiet timidity-freepats lub wskaż właściwą ścieżkę do pliku freepats."
-"cfg w ustawieniach wtyczek."
+"pakiet timidity-freepats lub wskaż właściwą ścieżkę do pliku freepats.cfg w "
+"ustawieniach wtyczek."
 
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
@@ -1181,7 +1182,7 @@ msgstr "Poszukaj na Last.fm"
 #. ALSA output plugin
 #: ../translation/extra.c:6
 msgid "Use ALSA resampling"
-msgstr ""
+msgstr "Przepróbkowywanie ALSA"
 
 #: ../translation/extra.c:7
 #, fuzzy
@@ -1198,70 +1199,66 @@ msgstr ""
 
 #. Last.fm plugin
 #: ../translation/extra.c:11
-#, fuzzy
 msgid "Enable scrobbler"
-msgstr "Włącz Serwer Proxy"
+msgstr "Przesyłanie informacji o odtworzonych utworach"
 
 #: ../translation/extra.c:12
-#, fuzzy
 msgid "Disable nowplaying"
-msgstr "DeaDBeef teraz odtwarza"
+msgstr "Ukrycie informacji o używanym programie"
 
 #: ../translation/extra.c:13
-#, fuzzy
 msgid "Username"
 msgstr "Nazwa użytkownika:"
 
 #: ../translation/extra.c:14
-#, fuzzy
 msgid "Password"
 msgstr "Hasło:"
 
 #: ../translation/extra.c:15
 msgid "Scrobble URL"
-msgstr ""
+msgstr "Adres URL systemu składania informacji:"
 
 #. Album Artwork plugin
 #: ../translation/extra.c:17
 msgid "Cache update period (hr)"
-msgstr ""
+msgstr "Okres aktualizacji pamięci podręcznej (h)"
 
 #: ../translation/extra.c:18
 msgid "Fetch from embedded tags"
-msgstr ""
+msgstr "Pozyskiwanie z etykiet"
 
 #: ../translation/extra.c:19
 msgid "Fetch from local folder"
-msgstr ""
+msgstr "Pozyskiwanie z lokalnego katalogu"
 
 #: ../translation/extra.c:20
 msgid "Local cover file mask"
-msgstr ""
+msgstr "Wzór plików okładek:"
 
 #: ../translation/extra.c:21
 msgid "Fetch from last.fm"
-msgstr ""
+msgstr "Pozyskiwanie z serwisu last.fm"
 
 #: ../translation/extra.c:22
 msgid "Fetch from albumart.org"
-msgstr ""
+msgstr "Pozyskiwanie z serwisu albumart.org"
 
 #. Audio CD player
 #: ../translation/extra.c:24
 msgid "Use CDDB/FreeDB"
-msgstr ""
+msgstr "Używanie baz danych CDDB/FreeDB"
 
 #: ../translation/extra.c:25
 msgid "Prefer CD-Text over CDDB"
-msgstr ""
+msgstr "Preferowanie danych CD-Text zamiast baz danych CDDB"
 
 #: ../translation/extra.c:26
 msgid "CDDB url (e.g. 'freedb.org')"
-msgstr ""
+msgstr "Adres URL bazy danych CDDB (np. „freedb.org”)"
 
 #: ../translation/extra.c:27
 msgid "CDDB port number (e.g. '888')"
-msgstr ""
+msgstr "Numer portu bazy danych CDDB (np. „888”)"
 
 #: ../translation/extra.c:28
 msgid "Prefer CDDB protocol over HTTP"
@@ -1269,7 +1266,7 @@ msgstr ""
 
 #: ../translation/extra.c:29
 msgid "Enable NRG image support"
-msgstr ""
+msgstr "Obsługa obrazów płyt w formacie NRG"
 
 #. DUMB module player plugin
 #: ../translation/extra.c:31
@@ -1279,17 +1276,16 @@ msgstr "Jakość przepróbkowywania (0..2, wyższa jest lepsza)"
 #. Game_Music_Emu decoder plugin
 #: ../translation/extra.c:33
 msgid "Max song length (in minutes)"
-msgstr ""
+msgstr "Maksymalna długość utworu (min):"
 
 #. Standard GTK2 user interface plugin
 #: ../translation/extra.c:35
-#, fuzzy
 msgid "Ask confirmation to delete files from disk"
-msgstr "Usuń pliki z dysku"
+msgstr "Wyświetlanie pytania przed fizycznym usunięciem plików"
 
 #: ../translation/extra.c:36
 msgid "Status icon volume control sensitivity"
-msgstr ""
+msgstr "Czułość kontroli głośności ikony obszaru powiadamiania"
 
 #: ../translation/extra.c:37
 msgid "Custom status icon"
@@ -1302,7 +1298,7 @@ msgstr ""
 #. OSD Notify plugin
 #: ../translation/extra.c:40
 msgid "Notification format"
-msgstr ""
+msgstr "Format powiadomień:"
 
 #. PulseAudio output plugin
 #: ../translation/extra.c:42
@@ -1328,13 +1324,12 @@ msgstr ""
 
 #. SID decoder plugin
 #: ../translation/extra.c:50
-#, fuzzy
 msgid "Enable HVSC"
-msgstr "Włącz"
+msgstr "Włączenie HVSC"
 
 #: ../translation/extra.c:51
 msgid "HVSC path"
-msgstr ""
+msgstr "Położenie HVSC:"
 
 #. WildMidi player plugin
 #: ../translation/extra.c:53
