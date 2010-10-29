@@ -70,7 +70,7 @@ AC_ARG_ENABLE(lfm,      [AS_HELP_STRING([--disable-lfm     ], [disable last.fm/l
 AC_ARG_ENABLE(artwork,  [AS_HELP_STRING([--disable-artwork ], [disable album art loader plugin (default: enabled)])], [enable_artwork=$enableval], [enable_artwork=yes])])
 AC_ARG_ENABLE(supereq,  [AS_HELP_STRING([--disable-supereq ], [disable SuperEQ DSP plugin (default: enabled)])], [enable_supereq=$enableval], [enable_supereq=yes])])
 AC_ARG_ENABLE(sid,      [AS_HELP_STRING([--disable-sid     ], [disable commodore64 SID music player plugin (default: enabled)])], [enable_sid=$enableval], [enable_sid=yes])])
-AC_ARG_ENABLE(mad,      [AS_HELP_STRING([--disable-mpgmad  ], [disable mpeg (mad) plugin (default: enabled)])], [enable_mpgmad=$enableval], [enable_mpgmad=yes])])
+AC_ARG_ENABLE(mad,      [AS_HELP_STRING([--disable-mad     ], [disable mpeg (mad) plugin (default: enabled)])], [enable_mpgmad=$enableval], [enable_mpgmad=yes])])
 AC_ARG_ENABLE(ffap,     [AS_HELP_STRING([--disable-ffap    ], [disable Monkey's Audio plugin (default: enabled)])], [enable_ffap=$enableval], [enable_ffap=yes])])
 AC_ARG_ENABLE(vtx,      [AS_HELP_STRING([--disable-vtx     ], [disable libayemy VTX ZX-Spectrum music player plugin (default: enabled)])], [enable_vtx=$enableval], [enable_vtx=yes])])
 AC_ARG_ENABLE(adplug,   [AS_HELP_STRING([--disable-adplug  ], [disable adplug plugin (default: enabled)])], [enable_adplug=$enableval], [enable_adplug=yes])])
