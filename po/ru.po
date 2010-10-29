@@ -675,7 +675,7 @@ msgstr "Фон"
 
 #: ../plugins/gtkui/interface.c:1951 ../plugins/gtkui/deadbeef.glade.h:115
 msgid "Seekbar/Volumebar colors"
-msgstr "Цвета полосы проигрывания/регулятора громкости"
+msgstr "Основные цвета"
 
 #: ../plugins/gtkui/interface.c:1969 ../plugins/gtkui/deadbeef.glade.h:79
 msgid "Middle"
