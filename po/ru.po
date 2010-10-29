@@ -336,7 +336,7 @@ msgstr "Порядок"
 
 #: ../plugins/gtkui/interface.c:330 ../plugins/gtkui/deadbeef.glade.h:73
 msgid "Linear"
-msgstr "По порядку"
+msgstr "По очереди"
 
 #: ../plugins/gtkui/interface.c:336 ../plugins/gtkui/deadbeef.glade.h:120
 msgid "Shuffle"
@@ -596,7 +596,7 @@ msgstr "Звук"
 
 #: ../plugins/gtkui/interface.c:1784 ../plugins/gtkui/deadbeef.glade.h:10
 msgid "Allow dynamic samplerate switching"
-msgstr "Разрешить динамическое преобразование частоты дискретизации"
+msgstr "Разрешить динамическое изменение частоты дискретизации"
 
 #: ../plugins/gtkui/interface.c:1792 ../plugins/gtkui/deadbeef.glade.h:110
 msgid "Samplerate conversion quality:"
@@ -617,7 +617,7 @@ msgstr "Использовать пиковое значение"
 #: ../plugins/gtkui/interface.c:1832 ../plugins/gtkui/deadbeef.glade.h:5
 msgid "Add files from command line (or file manager) to this playlist:"
 msgstr ""
-"Добавлять файлы из командной строки (или файлового менеджера) в этот "
+"Добавлять файлы из командной строки\n(или файлового менеджера) в этот "
 "плейлист:"
 
 #: ../plugins/gtkui/interface.c:1841 ../plugins/gtkui/deadbeef.glade.h:109
