@@ -920,7 +920,7 @@ on_tabstrip_button_press_event           (GtkWidget       *widget,
             }
             return FALSE;
         }
-        else if (deadbeef->conf_get_int ("gtkui.mmb_delete_playlist", 0)) {
+        else if (deadbeef->conf_get_int ("gtkui.mmb_delete_playlist", 1)) {
             if (tab_clicked != -1) {
                 deadbeef->plt_remove (tab_clicked);
                 int playlist = deadbeef->plt_get_curr ();
