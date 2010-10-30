@@ -64,7 +64,7 @@
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
-#define SKIP_BLANK_CUE_TRACKS 1
+#define SKIP_BLANK_CUE_TRACKS 0
 
 #define min(x,y) ((x)<(y)?(x):(y))
 
