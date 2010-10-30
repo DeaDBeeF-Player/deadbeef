@@ -12,6 +12,9 @@ version 0.4.3
 	session resume does not seek anymore after skipping failed track
 	fixed seekbar flickering
 	bundled libmms library to fix freezes after updating to 0.6
+	blank cue tracks (without titles) are not skipped anymore
+	fixed trailing whitespace handling in cuesheets
+	"middle mouse button to delete playlist" is now default behavior
 
 version 0.4.2
 	added translation into many languages, see translators.txt (LXDE Project)
