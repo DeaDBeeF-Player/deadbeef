@@ -229,6 +229,7 @@ http_curl_write (void *ptr, size_t size, size_t nmemb, void *stream) {
         if (!fp->icyheader && avail >= 10 && !memcmp (ptr, "ICY 200 OK", 10)) {
             trace ("icy headers in the stream\n");
             fp->icyheader = 1;
+            fp->length = -1;
         }
         if (fp->icyheader) {
             if (fp->nheaderpackets > 10) {
@@ -391,7 +392,6 @@ http_content_header_handler (void *ptr, size_t size, size_t nmemb, void *stream)
     uint8_t key[256];
     uint8_t value[256];
     int refresh_playlist = 0;
-    fp->length = -1; // reset length on every request/redirect
     while (p < end) {
         if (p <= end - 4) {
             if (!memcmp (p, "\r\n\r\n", 4)) {
@@ -412,7 +412,9 @@ http_content_header_handler (void *ptr, size_t size, size_t nmemb, void *stream)
             fp->content_type = strdup (value);
         }
         else if (!strcasecmp (key, "Content-Length")) {
-            fp->length = atoi (value);
+            if (!fp->icyheader) { // icy streams must be infinite
+                fp->length = atoi (value);
+            }
         }
         else if (!strcasecmp (key, "icy-name")) {
             if (fp->track) {
