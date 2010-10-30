@@ -1882,6 +1882,7 @@ create_prefwin (void)
   gtk_widget_show (notebook4);
   gtk_container_add (GTK_CONTAINER (notebook), notebook4);
   gtk_container_set_border_width (GTK_CONTAINER (notebook4), 12);
+  gtk_notebook_set_scrollable (GTK_NOTEBOOK (notebook4), TRUE);
 
   vbox21 = gtk_vbox_new (FALSE, 8);
   gtk_widget_show (vbox21);
