@@ -749,6 +749,9 @@ pl_get_value_from_cue (const char *p, int sz, char *out) {
         sz--;
         *out++ = *p++;
     }
+    while (out > p && (*(out-1) == 0x20 || *(out-1) == 0x8)) {
+        out--;
+    }
     *out = 0;
 }
 
