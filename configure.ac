@@ -60,41 +60,41 @@ dnl INSANE_CXXFLAGS="-Wcomment -Wchar-subscripts -Wunused-function -Wunused-valu
 AC_SUBST(INSANE_CFLAGS)
 AC_SUBST(INSANE_CXXFLAGS)
 
-AC_ARG_ENABLE(nullout,  [  --disable-nullout       disable NULL output plugin (default: enabled)], [enable_nullout=$enableval], [enable_nullout=yes])
-AC_ARG_ENABLE(alsa,     [  --disable-alsa          disable ALSA output plugin (default: enabled)], [enable_alsa=$enableval], [enable_alsa=yes])
-AC_ARG_ENABLE(oss,      [  --disable-oss           disable Open Sound System output plugin (default: enabled)], [enable_oss=$enableval], [enable_oss=yes])
-AC_ARG_ENABLE(pulse,    [  --disable-pulse         disable PulseAudio output plugin (default: enabled)], [enable_pulse=$enableval], [enable_pulse=yes])
-AC_ARG_ENABLE(gtkui,    [  --disable-gtkui         disable standard GTK2 user interface plugin (default: enabled)], [enable_gtkui=$enableval], [enable_gtkui=yes])
-AC_ARG_ENABLE(gtk3,     [  --enable-gtk3           use GTK3 library (default: disabled)], [enable_gtk3=$enableval], [enable_gtk3=no])
-AC_ARG_ENABLE(vfs_curl, [  --disable-vfs-curl      disable HTTP streaming vfs plugin (default: enabled)], [enable_vfs_curl=$enableval], [enable_vfs_curl=yes])
-AC_ARG_ENABLE(lfm,      [  --disable-lfm           disable last.fm/libre.fm scrobbler plugin (default: enabled)], [enable_lfm=$enableval], [enable_lfm=yes])
-AC_ARG_ENABLE(artwork,  [  --disable-artwork       disable album art loader plugin (default: enabled)], [enable_artwork=$enableval], [enable_artwork=yes])
-AC_ARG_ENABLE(supereq,  [  --disable-supereq       disable SuperEQ DSP plugin (default: enabled)], [enable_supereq=$enableval], [enable_supereq=yes])
-AC_ARG_ENABLE(sid,      [  --disable-sid           disable commodore64 SID music player plugin (default: enabled)], [enable_sid=$enableval], [enable_sid=yes])
-AC_ARG_ENABLE(mad,      [  --disable-mpgmad        disable mpeg (mad) plugin (default: enabled)], [enable_mpgmad=$enableval], [enable_mpgmad=yes])
-AC_ARG_ENABLE(ffap,     [  --disable-ffap          disable Monkey's Audio plugin (default: enabled)], [enable_ffap=$enableval], [enable_ffap=yes])
-AC_ARG_ENABLE(vtx,      [  --disable-vtx           disable libayemy VTX ZX-Spectrum music player plugin (default: enabled)], [enable_vtx=$enableval], [enable_vtx=yes])
-AC_ARG_ENABLE(adplug,   [  --disable-adplug        disable adplug plugin (default: enabled)], [enable_adplug=$enableval], [enable_adplug=yes])
-AC_ARG_ENABLE(hotkeys,  [  --disable-hotkeys       disable global hotkeys plugin (default: enabled)], [enable_hotkeys=$enableval], [enable_hotkeys=yes])
-AC_ARG_ENABLE(vorbis,   [  --disable-vorbis        disable Ogg Vorbis player plugin (default: enabled)], [enable_vorbis=$enableval], [enable_vorbis=yes])
-AC_ARG_ENABLE(ffmpeg,   [  --disable-ffmpeg        disable FFMPEG plugin for WMA, MPC, TTA, etc (default: enabled)], [enable_ffmpeg=$enableval], [enable_ffmpeg=yes])
-AC_ARG_ENABLE(flac,     [  --disable-flac          disable FLAC player plugin (default: enabled)], [enable_flac=$enableval], [enable_flac=yes])
-AC_ARG_ENABLE(sndfile,  [  --disable-sndfile       disable libsndfile plugin for PCM wave files (default: enabled)], [enable_sndfile=$enableval], [enable_sndfile=yes])
-AC_ARG_ENABLE(wavpack,  [  --disable-wavpack       disable wavpack plugin (default: enabled)], [enable_wavpack=$enableval], [enable_wavpack=yes])
-AC_ARG_ENABLE(cdda,     [  --disable-cdda          disable CD-Audio plugin (default: enabled)], [enable_cdda=$enableval], [enable_cdda=yes])
-AC_ARG_ENABLE(gme,      [  --disable-gme           disable Game Music Emu plugin for NSF, AY, etc (default: enabled)], [enable_gme=$enableval], [enable_gme=yes])
-AC_ARG_ENABLE(dumb,     [  --disable-dumb          disable D.U.M.B. plugin for MOD, S3M and other tracker formats (default: enabled)], [enable_dumb=$enableval], [enable_dumb=yes])
-AC_ARG_ENABLE(notify,   [  --disable-notify        disable notification-daemon support plugin (default: enabled)], [enable_notify=$enableval], [enable_notify=yes])
-AC_ARG_ENABLE(shellexec,[  --disable-shellexec     disable shell commands plugin (default: enabled)], [enable_shellexec=$enableval], [enable_shellexec=yes])
-AC_ARG_ENABLE(musepack, [  --disable-musepack      disable musepack plugin (default: enabled)], [enable_musepack=$enableval], [enable_musepack=yes])
-AC_ARG_ENABLE(wildmidi, [  --disable-wildmidi      disable wildmidi plugin (default: enabled)], [enable_wildmidi=$enableval], [enable_wildmidi=yes])
-AC_ARG_ENABLE(tta,      [  --disable-tta           disable tta plugin (default: enabled)], [enable_tta=$enableval], [enable_tta=yes])
-AC_ARG_ENABLE(dca,      [  --disable-dca           disable dca (DTS audio)  plugin (default: enabled)], [enable_dca=$enableval], [enable_dca=yes])
-AC_ARG_ENABLE(aac,      [  --disable-aac           disable AAC decoder based on FAAD2 (default: enabled)], [enable_aac=$enableval], [enable_aac=yes])
-AC_ARG_ENABLE(mms,      [  --disable-mms           disable MMS streaming vfs plugin (default: enabled)], [enable_mms=$enableval], [enable_mms=yes])
-AC_ARG_ENABLE(shn,      [  --disable-shn           disable shorten plugin (default: enabled)], [enable_shn=$enableval], [enable_shn=yes])
-AC_ARG_ENABLE(ao,       [  --disable-ao            disable audio overload plugin (default: enabled)], [enable_ao=$enableval], [enable_ao=yes])
-AC_ARG_ENABLE(mpris,    [  --enable-mpris          enable Ubuntu Sound Menu plugin (default: disabled)], [enable_mpris=$enableval], [enable_mpris=yes])
+AC_ARG_ENABLE(nullout,  [AS_HELP_STRING([--disable-nullout ], [disable NULL output plugin (default: enabled)])], [enable_nullout=$enableval], [enable_nullout=yes])
+AC_ARG_ENABLE(alsa,     [AS_HELP_STRING([--disable-alsa    ], [disable ALSA output plugin (default: enabled)])], [enable_alsa=$enableval], [enable_alsa=yes])
+AC_ARG_ENABLE(oss,      [AS_HELP_STRING([--disable-oss     ], [disable Open Sound System output plugin (default: enabled)])], [enable_oss=$enableval], [enable_oss=yes])
+AC_ARG_ENABLE(pulse,    [AS_HELP_STRING([--disable-pulse   ], [disable PulseAudio output plugin (default: enabled)])], [enable_pulse=$enableval], [enable_pulse=yes])
+AC_ARG_ENABLE(gtkui,    [AS_HELP_STRING([--disable-gtkui   ], [disable standard GTK2 user interface plugin (default: enabled)])], [enable_gtkui=$enableval], [enable_gtkui=yes])
+AC_ARG_ENABLE(gtk3,     [AS_HELP_STRING([--enable-gtk3     ], [use GTK3 library (default: disabled)])], [enable_gtk3=$enableval], [enable_gtk3=no])
+AC_ARG_ENABLE(vfs_curl, [AS_HELP_STRING([--disable-vfs-curl], [disable HTTP streaming vfs plugin (default: enabled)])], [enable_vfs_curl=$enableval], [enable_vfs_curl=yes])
+AC_ARG_ENABLE(lfm,      [AS_HELP_STRING([--disable-lfm     ], [disable last.fm/libre.fm scrobbler plugin (default: enabled)])], [enable_lfm=$enableval], [enable_lfm=yes])
+AC_ARG_ENABLE(artwork,  [AS_HELP_STRING([--disable-artwork ], [disable album art loader plugin (default: enabled)])], [enable_artwork=$enableval], [enable_artwork=yes])
+AC_ARG_ENABLE(supereq,  [AS_HELP_STRING([--disable-supereq ], [disable SuperEQ DSP plugin (default: enabled)])], [enable_supereq=$enableval], [enable_supereq=yes])
+AC_ARG_ENABLE(sid,      [AS_HELP_STRING([--disable-sid     ], [disable commodore64 SID music player plugin (default: enabled)])], [enable_sid=$enableval], [enable_sid=yes])
+AC_ARG_ENABLE(mad,      [AS_HELP_STRING([--disable-mad     ], [disable mpeg (mad) plugin (default: enabled)])], [enable_mpgmad=$enableval], [enable_mpgmad=yes])
+AC_ARG_ENABLE(ffap,     [AS_HELP_STRING([--disable-ffap    ], [disable Monkey's Audio plugin (default: enabled)])], [enable_ffap=$enableval], [enable_ffap=yes])
+AC_ARG_ENABLE(vtx,      [AS_HELP_STRING([--disable-vtx     ], [disable libayemy VTX ZX-Spectrum music player plugin (default: enabled)])], [enable_vtx=$enableval], [enable_vtx=yes])
+AC_ARG_ENABLE(adplug,   [AS_HELP_STRING([--disable-adplug  ], [disable adplug plugin (default: enabled)])], [enable_adplug=$enableval], [enable_adplug=yes])
+AC_ARG_ENABLE(hotkeys,  [AS_HELP_STRING([--disable-hotkeys ], [disable global hotkeys plugin (default: enabled)])], [enable_hotkeys=$enableval], [enable_hotkeys=yes])
+AC_ARG_ENABLE(vorbis,   [AS_HELP_STRING([--disable-vorbis  ], [disable Ogg Vorbis player plugin (default: enabled)])], [enable_vorbis=$enableval], [enable_vorbis=yes])
+AC_ARG_ENABLE(ffmpeg,   [AS_HELP_STRING([--disable-ffmpeg  ], [disable FFMPEG plugin for WMA, MPC, TTA, etc (default: enabled)])], [enable_ffmpeg=$enableval], [enable_ffmpeg=yes])
+AC_ARG_ENABLE(flac,     [AS_HELP_STRING([--disable-flac    ], [disable FLAC player plugin (default: enabled)])], [enable_flac=$enableval], [enable_flac=yes])
+AC_ARG_ENABLE(sndfile,  [AS_HELP_STRING([--disable-sndfile ], [disable libsndfile plugin for PCM wave files (default: enabled)])], [enable_sndfile=$enableval], [enable_sndfile=yes])
+AC_ARG_ENABLE(wavpack,  [AS_HELP_STRING([--disable-wavpack ], [disable wavpack plugin (default: enabled)])], [enable_wavpack=$enableval], [enable_wavpack=yes])
+AC_ARG_ENABLE(cdda,     [AS_HELP_STRING([--disable-cdda    ], [disable CD-Audio plugin (default: enabled)])], [enable_cdda=$enableval], [enable_cdda=yes])
+AC_ARG_ENABLE(gme,      [AS_HELP_STRING([--disable-gme     ], [disable Game Music Emu plugin for NSF, AY, etc (default: enabled)])], [enable_gme=$enableval], [enable_gme=yes])
+AC_ARG_ENABLE(dumb,     [AS_HELP_STRING([--disable-dumb    ], [disable D.U.M.B. plugin for MOD, S3M and other tracker formats (default: enabled)])], [enable_dumb=$enableval], [enable_dumb=yes])
+AC_ARG_ENABLE(notify,   [AS_HELP_STRING([--disable-notify  ], [disable notification-daemon support plugin (default: enabled)])], [enable_notify=$enableval], [enable_notify=yes])
+AC_ARG_ENABLE(shellexec, [AS_HELP_STRING([--disable-shellexec], [disable shell commands plugin (default: enabled)])], [enable_shellexec=$enableval], [enable_shellexec=yes])
+AC_ARG_ENABLE(musepack, [AS_HELP_STRING([--disable-musepack], [disable musepack plugin (default: enabled)])], [enable_musepack=$enableval], [enable_musepack=yes])
+AC_ARG_ENABLE(wildmidi, [AS_HELP_STRING([--disable-wildmidi], [disable wildmidi plugin (default: enabled)])], [enable_wildmidi=$enableval], [enable_wildmidi=yes])
+AC_ARG_ENABLE(tta,      [AS_HELP_STRING([--disable-tta     ], [disable tta plugin (default: enabled)])], [enable_tta=$enableval], [enable_tta=yes])
+AC_ARG_ENABLE(dca,      [AS_HELP_STRING([--disable-dca     ], [disable dca (DTS audio)  plugin (default: enabled)])], [enable_dca=$enableval], [enable_dca=yes])
+AC_ARG_ENABLE(aac,      [AS_HELP_STRING([--disable-aac     ], [disable AAC decoder based on FAAD2 (default: enabled)])], [enable_aac=$enableval], [enable_aac=yes])
+AC_ARG_ENABLE(mms,      [AS_HELP_STRING([--disable-mms     ], [disable MMS streaming vfs plugin (default: enabled)])], [enable_mms=$enableval], [enable_mms=yes])
+AC_ARG_ENABLE(shn,      [AS_HELP_STRING([--disable-shn     ], [disable shorten plugin (default: enabled)])], [enable_shn=$enableval], [enable_shn=yes])
+AC_ARG_ENABLE(ao,       [AS_HELP_STRING([--disable-ao      ], [disable audio overload plugin (default: enabled)])], [enable_ao=$enableval], [enable_ao=yes])
+AC_ARG_ENABLE(mpris,    [  --enable-mpris          enable Ubuntu Sound Menu plugin (default: disabled)], [enable_mpris=$enableval], [enable_mpris=no])
 AC_ARG_ENABLE(portable, [  --enable-portable       make portable static build (default: disabled)], [enable_portable=$enableval], [enable_portable=no])
 
 if test "x$enable_portable" != "xno" ; then
@@ -447,18 +447,9 @@ fi
 fi
 
 if test "x$enable_mms" != "xno" ; then
-if test "x$enable_portable" != "xno" ; then
-    LIBMMS_LIBS="../../$LIB/libmms.a -lglib-2.0"
+    LIBMMS_LIBS=""
     AC_SUBST(LIBMMS_LIBS)
     HAVE_MMS=yes
-else
-    AC_CHECK_LIB([mms], [main], [HAVE_LIBMMS=1])
-    if test ${HAVE_LIBMMS} ; then
-        LIBMMS_LIBS="-lmms"
-        AC_SUBST(LIBMMS_LIBS)
-        HAVE_MMS=yes
-    fi
-fi
 fi
 
 if test "x$enable_shn" != "xno" ; then

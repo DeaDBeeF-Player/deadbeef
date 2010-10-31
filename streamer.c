@@ -524,6 +524,7 @@ streamer_song_removed_notify (playItem_t *it) {
     if (!mutex) {
         return; // streamer is not running
     }
+    streamer_lock ();
     if (it == playlist_track) {
         playlist_track = playlist_track->next[PL_MAIN];
         // queue new next song for streaming
@@ -532,6 +533,7 @@ streamer_song_removed_notify (playItem_t *it) {
             streamer_move_to_nextsong (0);
         }
     }
+    streamer_unlock ();
 }
 
 // that must be called after last sample from str_playing_song was done reading
@@ -678,9 +680,6 @@ streamer_set_current (playItem_t *it) {
         }
         return -1;
     }
-//    if (bytes_until_next_song == -1) {
-//        bytes_until_next_song = 0;
-//    }
 success:
     plug_trigger_event_trackinfochanged (to);
 
@@ -699,6 +698,10 @@ error:
 
 float
 streamer_get_playpos (void) {
+    float seek = seekpos;
+    if (seek >= 0) {
+        return seek;
+    }
     return playpos;
 }
 
@@ -717,6 +720,7 @@ streamer_get_apx_bitrate (void) {
 void
 streamer_set_nextsong (int song, int pstate) {
     trace ("streamer_set_nextsong %d %d\n", song, pstate);
+    streamer_lock ();
     streamer_abort_files ();
     nextsong = song;
     nextsong_pstate = pstate;
@@ -727,8 +731,9 @@ streamer_set_nextsong (int song, int pstate) {
         // no sense to wait until end of previous song, reset buffer
         bytes_until_next_song = 0;
         playpos = 0;
-//        seekpos = -1;
+        seekpos = -1;
     }
+    streamer_unlock ();
 }
 
 void
@@ -847,13 +852,16 @@ streamer_thread (void *ctx) {
         gettimeofday (&tm1, NULL);
         if (nextsong >= 0) { // start streaming next song
             trace ("\033[0;34mnextsong=%d\033[37;0m\n", nextsong);
+            streamer_lock ();
             streamer_start_new_song ();
+            streamer_unlock ();
             // it's totally possible that song was switched
             // while streamer_set_current was running,
             // so we need to restart here
             continue;
         }
         else if (nextsong == -2 && (nextsong_pstate==0 || bytes_until_next_song == 0)) {
+            streamer_lock ();
             playItem_t *from = playing_track;
             bytes_until_next_song = -1;
             trace ("nextsong=-2\n");
@@ -875,6 +883,7 @@ streamer_thread (void *ctx) {
             if (from) {
                 pl_item_unref (from);
             }
+            streamer_unlock ();
             continue;
         }
         else if (p_isstopped ()) {
@@ -883,11 +892,13 @@ streamer_thread (void *ctx) {
         }
 
         if (bytes_until_next_song == 0) {
+            streamer_lock ();
             if (!streaming_track) {
                 // means last song was deleted during final drain
                 nextsong = -1;
                 p_stop ();
                 streamer_set_current (NULL);
+                streamer_unlock ();
                 continue;
             }
             trace ("bytes_until_next_song=0, starting playback of new song\n");
@@ -952,16 +963,20 @@ streamer_thread (void *ctx) {
                     if (p_play () < 0) {
                         fprintf (stderr, "streamer: failed to start playback after samplerate change; output plugin doesn't work\n");
                         streamer_set_nextsong (-2, 0);
+                        streamer_unlock ();
                         continue;
                     }
                 }
             }
+            streamer_unlock ();
         }
 
-        if (seekpos >= 0) {
-            trace ("seeking to %f\n", seekpos);
-            float pos = seekpos;
+        int seek = seekpos;
+        if (seek >= 0) {
+            playpos = seek;
             seekpos = -1;
+            trace ("seeking to %f\n", seek);
+            float pos = seek;
 
             if (playing_track != streaming_track) {
                 trace ("streamer already switched to next track\n");

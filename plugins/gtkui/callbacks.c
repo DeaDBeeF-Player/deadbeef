@@ -312,7 +312,7 @@ on_mainwin_key_press_event             (GtkWidget       *widget,
                                         gpointer         user_data)
 {
     uint32_t maskedstate = (event->state &~ (GDK_LOCK_MASK | GDK_MOD2_MASK | GDK_MOD3_MASK | GDK_MOD5_MASK)) & 0xfff;
-    if (event->keyval == GDK_n && !event->state) {
+    if ((maskedstate == GDK_MOD1_MASK || maskedstate == 0) && event->keyval == GDK_n) {
         // button for that one is not in toolbar anymore, so handle it manually
         deadbeef->sendmessage (M_PLAYRANDOM, 0, 0, 0);
     }
@@ -560,7 +560,6 @@ on_seekbar_button_release_event        (GtkWidget       *widget,
                                         GdkEventButton  *event)
 {
     seekbar_moving = 0;
-    gtk_widget_queue_draw (widget);
     DB_playItem_t *trk = deadbeef->streamer_get_playing_track ();
     if (trk) {
         float time = (event->x - widget->allocation.x) * deadbeef->pl_get_item_duration (trk) / (widget->allocation.width);
@@ -570,6 +569,7 @@ on_seekbar_button_release_event        (GtkWidget       *widget,
         deadbeef->streamer_seek (time);
         deadbeef->pl_item_unref (trk);
     }
+    gtk_widget_queue_draw (widget);
     return FALSE;
 }
 

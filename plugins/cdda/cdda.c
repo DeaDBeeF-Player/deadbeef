@@ -362,6 +362,7 @@ cddb_thread (void *items_i)
     deadbeef->mutex_unlock (mutex);
     cleanup_thread_params (params);
     cddb_tid = 0;
+    deadbeef->plug_trigger_event_playlistchanged ();
 }
 
 static void
@@ -384,15 +385,19 @@ read_track_cdtext (CdIo_t *cdio, int track_nr, DB_playItem_t *item)
         {
             switch (field_type)
             {
-                case CDTEXT_TITLE: album = strdup (text); break;
-                case CDTEXT_PERFORMER: artist = strdup (text); break;
+                case CDTEXT_TITLE: album = text; break;
+                case CDTEXT_PERFORMER: artist = text; break;
             }
         }
     }
 
     trace ("artist: %s; album: %s\n", artist, album);
-    deadbeef->pl_replace_meta (item, "artist", artist);
-    deadbeef->pl_replace_meta (item, "album", album);
+    if (artist) {
+        deadbeef->pl_replace_meta (item, "artist", artist);
+    }
+    if (album) {
+        deadbeef->pl_replace_meta (item, "album", album);
+    }
 
     cdtext = cdio_get_cdtext (cdio, track_nr);
     if (!cdtext)
@@ -414,7 +419,7 @@ read_track_cdtext (CdIo_t *cdio, int track_nr, DB_playItem_t *item)
             case CDTEXT_MESSAGE:    field = "comment";  break;
             default: field = NULL;
         }
-        if (field)
+        if (field && text)
         {
             trace ("%s: %s\n", field, text);
             deadbeef->pl_replace_meta (item, field, text);
@@ -521,7 +526,6 @@ cda_insert (DB_playItem_t *after, const char *fname) {
         }
         cdio_destroy (cdio);
     }
-    deadbeef->plug_trigger_event_playlistchanged ();
     return res;
 }
 

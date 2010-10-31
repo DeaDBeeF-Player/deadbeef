@@ -30,6 +30,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 #include "mp4ffint.h"
 
 mp4ff_t *mp4ff_open_read(mp4ff_callback_t *f)
@@ -426,6 +427,10 @@ int32_t mp4ff_read_sample(mp4ff_t *f, const int32_t track, const int32_t sample,
 	if (*bytes==0) return 0;
 
     *audio_buffer = (uint8_t*)malloc(*bytes);
+    if (!(*audio_buffer)) {
+        fprintf (stderr, "mp4ff_read_sample: malloc failure (tried to alloc %d bytes). possible mp4ff bug or memleak! please report a bug to deadbeef developers (i'm serious).\n", *bytes);
+        return 0;
+    }
 
     mp4ff_set_sample_position(f, track, sample);
 

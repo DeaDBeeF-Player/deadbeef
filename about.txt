@@ -134,3 +134,10 @@ Copyright © 1999-2000 Aaron Holtzman <aholtzma@ess.engr.uvic.ca>
 xmms-shn 2.4.1 - Shorten XMMS Plugin (ported to Deadbeef API)
 http://etree.org/shnutils/xmms-shn/
 Copyright © Jason Jordan <shnutils@freeshell.org>
+
+
+libmms - Library to stream over mms/mmsh protocol
+http://libmms.sourceforge.net/
+Copyright © Maciej Katafiasz (Mathrick) <mathrick@users.sourceforge.net>
+Copyright © Søren Hansen (shawarma) <sh@warma.dk>
+
