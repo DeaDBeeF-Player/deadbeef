@@ -328,7 +328,7 @@ plt_add (int before, const char *title) {
     plt_gen_conf ();
     if (!plt_loading) {
         pl_save_n (before);
-        deadbeef->conf_save ();
+        conf_save ();
         plug_trigger_event (DB_EV_PLAYLISTSWITCH, 0);
     }
     return playlists_count-1;
@@ -337,6 +337,7 @@ plt_add (int before, const char *title) {
 // NOTE: caller must ensure that configuration is saved after that call
 void
 plt_remove (int plt) {
+    trace ("plt_remove %d\n", plt);
     int i;
     assert (plt >= 0 && plt < playlists_count);
     PLT_LOCK;
@@ -377,6 +378,8 @@ plt_remove (int plt) {
         playlist->title = strdup (_("Default"));
         PLT_UNLOCK;
         plt_gen_conf ();
+        conf_save ();
+        pl_save_n (0);
         plug_trigger_event (DB_EV_PLAYLISTSWITCH, 0);
         return;
     }
@@ -404,6 +407,7 @@ plt_remove (int plt) {
     PLT_UNLOCK;
 
     plt_gen_conf ();
+    conf_save ();
     if (!plt_loading) {
         plug_trigger_event (DB_EV_PLAYLISTSWITCH, 0);
     }
@@ -429,13 +433,6 @@ plt_set_curr (int plt) {
     for (i = 0; p && p->next && i < plt; i++) {
         p = p->next;
     }
-#if 0
-    if (i != plt) {
-        PLT_UNLOCK;
-        trace ("plt_set_curr %d failed\n", plt);
-        return;
-    }
-#endif
     if (p != playlist) {
         playlist = p;
         if (!plt_loading) {
@@ -518,6 +515,7 @@ plt_set_title (int plt, const char *title) {
     }
     PLT_UNLOCK;
     plt_gen_conf ();
+    conf_save ();
     if (!plt_loading) {
         plug_trigger_event (DB_EV_PLAYLISTSWITCH, 0);
     }
@@ -681,7 +679,7 @@ plt_move (int from, int to) {
 
     PLT_UNLOCK;
     plt_gen_conf ();
-    deadbeef->conf_save ();
+    conf_save ();
 }
 
 void
@@ -2025,7 +2023,12 @@ pl_save_n (int n) {
         PLT_UNLOCK;
         return -1;
     }
+
+    playlist_t *orig = playlist;
+    int i;
+    for (i = 0, playlist = playlists_head; playlist && i < n; i++, playlist = playlist->next);
     err = pl_save (path);
+    playlist = orig;
     plt_loading = 0;
     PLT_UNLOCK;
     return err;
