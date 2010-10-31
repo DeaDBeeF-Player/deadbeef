@@ -973,6 +973,7 @@ streamer_thread (void *ctx) {
 
         int seek = seekpos;
         if (seek >= 0) {
+            playpos = seek;
             seekpos = -1;
             trace ("seeking to %f\n", seek);
             float pos = seek;
