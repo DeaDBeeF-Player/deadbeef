@@ -362,6 +362,7 @@ cddb_thread (void *items_i)
     deadbeef->mutex_unlock (mutex);
     cleanup_thread_params (params);
     cddb_tid = 0;
+    deadbeef->plug_trigger_event_playlistchanged ();
 }
 
 static void
@@ -525,7 +526,6 @@ cda_insert (DB_playItem_t *after, const char *fname) {
         }
         cdio_destroy (cdio);
     }
-    deadbeef->plug_trigger_event_playlistchanged ();
     return res;
 }
 
