@@ -15,6 +15,8 @@ version 0.4.3
 	blank cue tracks (without titles) are not skipped anymore
 	fixed trailing whitespace handling in cuesheets
 	"middle mouse button to delete playlist" is now default behavior
+	fixed few issues with auto-saving playlist configuration
+	fixed playlist redraw after cddb queries
 
 version 0.4.2
 	added translation into many languages, see translators.txt (LXDE Project)
