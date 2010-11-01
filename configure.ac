@@ -100,7 +100,7 @@ AC_ARG_ENABLE(portable, [  --enable-portable       make portable static build (d
 if test "x$enable_portable" != "xno" ; then
     AC_DEFINE_UNQUOTED([PORTABLE], [1], [Define if building portable version])
     PORTABLE=yes
-    PREFIXFLAGS="-DPREFIX=donotuse -DLIBDIR=donotuse -DDOCDIR=donotuse -I./include"
+    PREFIXFLAGS="-DPREFIX=donotuse -DLIBDIR=donotuse -DDOCDIR=donotuse -I./include -I../../include"
 else
     PREFIXFLAGS=" -DLIBDIR=\\\"$libdir\\\" -DPREFIX=\\\"$prefix\\\" -DDOCDIR=\\\"$docdir\\\""
 fi
@@ -131,7 +131,14 @@ if test "x$enable_alsa" != "xno" ; then
 fi
 
 if test "x$enable_ffmpeg" != "xno" ; then
+echo "ffmpeg build is enabled"
+if test "x$enable_portable" != "xno" ; then
+    FFMPEG_DEPS_LIBS="../../$LIB/libavcodec.a -lpthread ../../$LIB/libavformat.a ../../$LIB/libavcodec.a ../../$LIB/libavutil.a -lm ../../$LIB/libz.a "
+    AC_SUBST(FFMPEG_DEPS_LIBS)
+    HAVE_FFMPEG=yes
+else
     PKG_CHECK_MODULES(FFMPEG_DEPS, libavcodec >= 51.0.0 libavutil libavformat >= 52.0.0, HAVE_FFMPEG=yes, HAVE_FFMPEG=no)
+fi
 fi
 
 if test "x$enable_pulse" != "xno" ; then
@@ -297,10 +304,14 @@ if test "x$enable_alsa" != "xno" ; then
 fi
 
 if test "x$enable_ffmpeg" != "xno" ; then
+if test "x$enable_portable" = "xno" ; then
     if test "x$HAVE_FFMPEG" = "xyes" ; then
         HAVE_FFMPEGPLUGIN=yes
         AC_CHECK_HEADER([ffmpeg/avformat.h], FFMPEG_DEPS_CFLAGS="$FFMPEG_DEPS_CFLAGS -D FFMPEG_OLD")
     fi
+else
+    HAVE_FFMPEGPLUGIN=yes
+fi
 fi
 
 if test "x$enable_hotkeys" != "xno" ; then

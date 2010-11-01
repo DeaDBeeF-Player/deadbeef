@@ -17,6 +17,7 @@ cp ./plugins/mpgmad/.libs/mpgmad.so $PLUGDIR/
 cp ./plugins/hotkeys/.libs/hotkeys.so $PLUGDIR/
 cp ./plugins/vtx/.libs/vtx.so $PLUGDIR/
 cp ./plugins/ffap/.libs/ffap.so $PLUGDIR/
+cp ./plugins/ffmpeg/.libs/ffmpeg.so $PLUGDIR/
 cp ./plugins/wavpack/.libs/wavpack.so $PLUGDIR/
 cp ./plugins/vorbis/.libs/vorbis.so $PLUGDIR/
 cp ./plugins/oss/.libs/oss.so $PLUGDIR/
