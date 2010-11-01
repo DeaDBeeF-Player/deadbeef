@@ -21,6 +21,9 @@
 #include <errno.h>
 #include <string.h>
 #include "threading.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
 intptr_t
 thread_start (void (*fn)(void *ctx), void *ctx) {
@@ -69,12 +72,14 @@ thread_start_low_priority (void (*fn)(void *ctx), void *ctx) {
         fprintf (stderr, "pthread_create failed: %s\n", strerror (s));
         return 0;
     }
+#if !PORTABLE
     s = pthread_setschedprio (tid, minprio);
     if (s != 0) {
         fprintf (stderr, "pthread_setschedprio failed: %s\n", strerror (s));
         pthread_cancel (tid);
         return 0;
     }
+#endif
 
     s = pthread_attr_destroy (&attr);
     if (s != 0) {
