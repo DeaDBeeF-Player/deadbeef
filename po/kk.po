@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-04 04:36+0000\n"
+"POT-Creation-Date: 2010-10-31 04:37+0000\n"
 "PO-Revision-Date: 2010-06-24 12:09+0600\n"
 "Last-Translator: Baurzhan Muftakhidinov <baurthefirst@gmail.com>\n"
 "Language-Team: Kazakh <kk_KZ@googlegroups.com>\n"
@@ -63,35 +63,15 @@ msgstr "Көмек"
 msgid "About DeaDBeeF %s"
 msgstr "DeaDBeeF %s туралы"
 
-#: ../plugins/gtkui/callbacks.c:705
-msgid "about.txt"
-msgstr "about.txt"
-
 #: ../plugins/gtkui/callbacks.c:716
 #, c-format
 msgid "DeaDBeeF %s ChangeLog"
 msgstr "DeaDBeeF %s өзгерістері"
 
-#: ../plugins/gtkui/callbacks.c:718
-msgid "ChangeLog"
-msgstr "Өзгерістер"
-
-#: ../plugins/gtkui/callbacks.c:729
-msgid "COPYING.GPLv2"
-msgstr "COPYING.GPLv2"
-
-#: ../plugins/gtkui/callbacks.c:740
-msgid "COPYING.LGPLv2.1"
-msgstr "COPYING.LGPLv2.1"
-
 #: ../plugins/gtkui/callbacks.c:1080
 #, c-format
 msgid "DeaDBeeF Translators"
 msgstr "DeaDBeeF аудармашылары"
-
-#: ../plugins/gtkui/callbacks.c:1082
-msgid "translators.txt"
-msgstr "translators.txt"
 
 #: ../plugins/gtkui/ddbtabstrip.c:626
 msgid "Edit playlist"
@@ -497,13 +477,13 @@ msgstr "Альбом суреті"
 
 #: ../plugins/gtkui/interface.c:1433
 msgid "Artist - Album"
-msgstr "Орындаушы - Альбом"
+msgstr "Әртіс - Альбом"
 
 #. Track properties dialog
 #: ../plugins/gtkui/interface.c:1434 ../plugins/gtkui/plcommon.c:878
 #: ../translation/extra.c:55
 msgid "Artist"
-msgstr "Орындаушы"
+msgstr "Әртіс"
 
 #: ../plugins/gtkui/interface.c:1435 ../plugins/gtkui/interface.c:1822
 #: ../translation/extra.c:59
@@ -524,7 +504,7 @@ msgstr "Трек"
 
 #: ../plugins/gtkui/interface.c:1439 ../translation/extra.c:58
 msgid "Band / Album Artist"
-msgstr "Топ / Альбом орындаушысы"
+msgstr "Топ / Альбом әртісі"
 
 #: ../plugins/gtkui/interface.c:1440 ../plugins/gtkui/plcommon.c:882
 msgid "Custom"
@@ -863,7 +843,7 @@ msgstr ""
 
 #: ../plugins/gtkui/mainplaylist.c:306 ../plugins/gtkui/search.c:439
 msgid "Artist / Album"
-msgstr "Орындаушы / Альбом"
+msgstr "Әртіс / Альбом"
 
 #: ../plugins/gtkui/mainplaylist.c:307 ../plugins/gtkui/search.c:440
 msgid "Track No"
@@ -871,7 +851,7 @@ msgstr "Трек №"
 
 #: ../plugins/gtkui/mainplaylist.c:308 ../plugins/gtkui/search.c:441
 msgid "Title / Track Artist"
-msgstr "Атауы / Трек орындаушысы"
+msgstr "Атауы / Трек әртісі"
 
 #: ../plugins/gtkui/mainplaylist.c:309 ../plugins/gtkui/search.c:442
 #: ../plugins/gtkui/trkproperties.c:175
@@ -932,7 +912,7 @@ msgstr "Ешнәрсе"
 
 #: ../plugins/gtkui/plcommon.c:874
 msgid "Artist/Date/Album"
-msgstr "Орындаушы/Күні/Альбом"
+msgstr "Әртіс/Күні/Альбом"
 
 #: ../plugins/gtkui/pluginconf.c:41
 msgid "Open file..."
@@ -1141,8 +1121,8 @@ msgstr ""
 "Реттік нөмірі\n"
 "Ойналуда\n"
 "Альбом суреті\n"
-"Орындаушы - Альбом\n"
-"Орындаушы\n"
+"Әртіс - Альбом\n"
+"Әртіс\n"
 "Альбом\n"
 "Атауы\n"
 "Ұзындығы\n"
@@ -1377,6 +1357,21 @@ msgstr "Кодер / Сатушы"
 #: ../translation/extra.c:68
 msgid "Copyright"
 msgstr "Copyright"
+
+#~ msgid "about.txt"
+#~ msgstr "about.txt"
+
+#~ msgid "ChangeLog"
+#~ msgstr "Өзгерістер"
+
+#~ msgid "COPYING.GPLv2"
+#~ msgstr "COPYING.GPLv2"
+
+#~ msgid "COPYING.LGPLv2.1"
+#~ msgstr "COPYING.LGPLv2.1"
+
+#~ msgid "translators.txt"
+#~ msgstr "translators.txt"
 
 #~ msgid "Couldn't get enough memory for input buffering."
 #~ msgstr "Кірісті буферизациялау үшін керек жады мөлшерін алу мүмкін емес."
