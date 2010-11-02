@@ -919,7 +919,13 @@ gtkui_thread (void *ctx) {
     mainwin = create_mainwin ();
     gtkpl_init ();
 
+#if PORTABLE
+    char iconpath[1024];
+    snprintf (iconpath, sizeof (iconpath), "%s/deadbeef.png", deadbeef->get_prefix ());
+    gtk_window_set_icon_from_file (GTK_WINDOW (mainwin), iconpath, NULL);
+#else
     gtk_window_set_icon_name (GTK_WINDOW (mainwin), "deadbeef");
+#endif
 
     {
         int x = deadbeef->conf_get_int ("mainwin.geometry.x", 40);

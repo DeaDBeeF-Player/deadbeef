@@ -12,6 +12,7 @@ PIXMAPDIR=$SRCDIR/pixmaps
 
 tar jcvf deadbeef-$VERSION-portable-build$BUILD.tar.bz2\
     $SRCDIR/deadbeef\
+    $SRCDIR/deadbeef.png\
     $DOCDIR\
     $PLUGDIR/alsa.so\
     $PLUGDIR/oss.so\

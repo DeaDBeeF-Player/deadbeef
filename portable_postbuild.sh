@@ -49,11 +49,14 @@ cp ./pixmaps/buffering_16.png $PIXMAPDIR/
 cp ./pixmaps/noartwork.jpg $PIXMAPDIR/
 
 # docs
-cp ./ChangeLog ./$DOCDIR/
-cp ./help.txt ./$DOCDIR/
-cp ./COPYING.GPLv2 ./$DOCDIR/
-cp ./about.txt ./$DOCDIR/
-cp ./translators.txt ./$DOCDIR/
+cp ./ChangeLog $DOCDIR/
+cp ./help.txt $DOCDIR/
+cp ./COPYING.GPLv2 $DOCDIR/
+cp ./about.txt $DOCDIR/
+cp ./translators.txt $DOCDIR/
+
+# icon
+cp ./icons/32x32/deadbeef.png $OUTDIR/
 
 # strip
 strip --strip-unneeded ./deadbeef-$VERSION-portable/deadbeef
