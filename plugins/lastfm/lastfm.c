@@ -902,8 +902,8 @@ static const char settings_dlg[] =
 // define plugin interface
 static DB_misc_t plugin = {
     DB_PLUGIN_SET_API_VERSION
-    .plugin.version_major = 0,
-    .plugin.version_minor = 1,
+    .plugin.version_major = 1,
+    .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_MISC,
     .plugin.name = "last.fm scrobbler",
     .plugin.descr = "sends played songs information to your last.fm account",

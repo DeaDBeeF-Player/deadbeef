@@ -200,6 +200,8 @@ shx_start ()
 static DB_misc_t plugin = {
     .plugin.api_vmajor = DB_API_VERSION_MAJOR,
     .plugin.api_vminor = DB_API_VERSION_MINOR,
+    .plugin.version_major = 1,
+    .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_MISC,
     .plugin.id = "shellexec",
     .plugin.name = "Shell commands",

@@ -220,8 +220,8 @@ nullout_load (DB_functions_t *api) {
 // define plugin interface
 static DB_output_t plugin = {
     DB_PLUGIN_SET_API_VERSION
-    .plugin.version_major = 0,
-    .plugin.version_minor = 1,
+    .plugin.version_major = 1,
+    .plugin.version_minor = 0,
     .plugin.nostop = 1,
     .plugin.type = DB_PLUGIN_OUTPUT,
     .plugin.name = "null output plugin",

@@ -212,6 +212,8 @@ supereq_enabled (void) {
 static DB_supereq_dsp_t plugin = {
     .dsp.plugin.api_vmajor = DB_API_VERSION_MAJOR,
     .dsp.plugin.api_vminor = DB_API_VERSION_MINOR,
+    .dsp.plugin.version_major = 1,
+    .dsp.plugin.version_minor = 0,
     .dsp.plugin.type = DB_PLUGIN_DSP,
     .dsp.plugin.id = "supereq",
     .dsp.plugin.name = "SuperEQ",

@@ -896,8 +896,8 @@ static const char *scheme_names[] = { "http://", "ftp://", NULL };
 // standard stdio vfs
 static DB_vfs_t plugin = {
     DB_PLUGIN_SET_API_VERSION
-    .plugin.version_major = 0,
-    .plugin.version_minor = 1,
+    .plugin.version_major = 1,
+    .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_VFS,
     .plugin.id = "vfs_curl",
     .plugin.name = "cURL vfs",

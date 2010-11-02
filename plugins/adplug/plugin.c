@@ -47,8 +47,8 @@ adplug_stop (void);
 // define plugin interface
 DB_decoder_t adplug_plugin = {
     DB_PLUGIN_SET_API_VERSION
-    .plugin.version_major = 0,
-    .plugin.version_minor = 1,
+    .plugin.version_major = 1,
+    .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_DECODER,
     .plugin.id = "adplug",
     .plugin.name = "Adplug player",
