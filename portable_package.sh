@@ -10,10 +10,11 @@ PLUGDIR=$SRCDIR/plugins
 DOCDIR=$SRCDIR/doc
 PIXMAPDIR=$SRCDIR/pixmaps
 
-mkdir -p portable_out 2>/dev/null
+mkdir -p portable_out/build 2>/dev/null
 rm portable_out/* 2>/dev/null
+rm portable_out/build/* 2>/dev/null
 
-tar jcvf portable_out/deadbeef-$VERSION-portable-build$BUILD.tar.bz2\
+tar jcvf portable_out/build/deadbeef-$VERSION-portable-build$BUILD.tar.bz2\
     $SRCDIR/deadbeef\
     $SRCDIR/deadbeef.png\
     $DOCDIR\
