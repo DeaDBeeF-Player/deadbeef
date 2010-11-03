@@ -6,7 +6,11 @@
 .exec
 aclocal.m4
 configure
-Makefile
+plugins/*/Makefile
+intl/Makefile
+icons/Makefile
+pixmaps/Makefile
+po/Makefile
 Makefile.in
 config.h
 config.h.in
@@ -45,3 +49,4 @@ POTFILES
 stamp-it
 po/Makevars.template
 *.so
+tools/pluginfo/pluginfo
