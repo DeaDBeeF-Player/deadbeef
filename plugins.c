@@ -639,8 +639,8 @@ plug_load_all (void) {
             int i;
             for (i = 0; i < n; i++)
             {
-                // no hidden files
-                while (namelist[i]->d_name[0] != '.')
+                // skip hidden files and fallback plugins
+                while (namelist[i]->d_name[0] != '.' && !strstr (namelist[i]->d_name, ".fallback."))
                 {
                     int l = strlen (namelist[i]->d_name);
                     if (l < 3) {
@@ -679,7 +679,14 @@ plug_load_all (void) {
                     void *handle = dlopen (fullname, RTLD_NOW);
                     if (!handle) {
                         trace ("dlopen error: %s\n", dlerror ());
-                        break;
+                        strcpy (fullname + strlen(fullname) - 3, ".fallback.so");
+                        handle = dlopen (fullname, RTLD_NOW);
+                        if (!handle) {
+                            break;
+                        }
+                        else {
+                            fprintf (stderr, "successfully started fallback plugin %s\n", fullname);
+                        }
                     }
                     d_name[l-3] = 0;
                     strcat (d_name, "_load");

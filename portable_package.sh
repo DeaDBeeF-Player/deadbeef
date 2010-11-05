@@ -23,6 +23,7 @@ tar jcvf portable_out/build/deadbeef-$VERSION-portable-build$BUILD.tar.bz2\
     $PLUGDIR/vfs_curl.so\
     $PLUGDIR/artwork.so\
     $PLUGDIR/gtkui.so\
+    $PLUGDIR/gtkui.fallback.so\
     $PLUGDIR/hotkeys.so\
     $PLUGDIR/cdda.so\
     $PLUGDIR/mpgmad.so\
