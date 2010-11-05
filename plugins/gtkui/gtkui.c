@@ -1100,6 +1100,8 @@ gtkui_playlist_set_curr (int playlist) {
 
 static int
 gtkui_start (void) {
+    fprintf (stderr, "gtkui plugin compiled for gtk version: %d.%d.%d\n", GTK_MAJOR_VERSION, GTK_MINOR_VERSION, GTK_MICRO_VERSION);
+
     // gtk must be running in separate thread
     gtk_initialized = 0;
     gtk_tid = deadbeef->thread_start (gtkui_thread, NULL);
