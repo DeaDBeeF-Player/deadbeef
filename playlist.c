@@ -1968,6 +1968,9 @@ pl_save (const char *fname) {
         int16_t nm = 0;
         DB_metaInfo_t *m;
         for (m = it->meta; m; m = m->next) {
+            if (m->key[0] == '_') {
+                continue; // skip reserved names
+            }
             nm++;
         }
         if (fwrite (&nm, 1, 2, fp) != 2) {
