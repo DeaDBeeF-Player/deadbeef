@@ -1974,6 +1974,10 @@ pl_save (const char *fname) {
             goto save_fail;
         }
         for (m = it->meta; m; m = m->next) {
+            if (m->key[0] == '_') {
+                continue; // skip reserved names
+            }
+
             l = strlen (m->key);
             if (fwrite (&l, 1, 2, fp) != 2) {
                 goto save_fail;
@@ -2415,12 +2419,58 @@ pl_get_item_duration (playItem_t *it) {
 int
 pl_format_item_queue (playItem_t *it, char *s, int size) {
     *s = 0;
+    int initsize = size;
+    const char *val = pl_find_meta (it, "_playing");
+    while (val && *val) {
+        while (*val && *val != '=') {
+            val++;
+        }
+        if (*val == '=') {
+            // found value
+            val++;
+            if (!(*val)) {
+                break;
+            }
+            const char *e = NULL;
+            if (*val == '"') {
+                val++;
+                e = val;
+                while (*e && *e != '"') {
+                    e++;
+                }
+            }
+            else {
+                e = val;
+                while (*e && *e != ' ') {
+                    e++;
+                }
+            }
+            int n = e - val;
+            if (n > size-1) {
+                n = size-1;
+            }
+            strncpy (s, val, n);
+            s += n;
+            *s++ = ' ';
+            *s = 0;
+            size -= n+1;
+            val = e;
+            if (*val) {
+                val++;
+            }
+            while (*val && *val == ' ') {
+                val++;
+            }
+        }
+    }
+
     if (!playqueue_count) {
         return 0;
     }
     LOCK;
+
+    int qinitsize = size;
     int init = 1;
-    int initsize = size;
     int len;
     for (int i = 0; i < playqueue_count; i++) {
         if (size <= 0) {
@@ -2441,7 +2491,7 @@ pl_format_item_queue (playItem_t *it, char *s, int size) {
             size -= len;
         }
     }
-    if (size != initsize && size > 0) {
+    if (size != qinitsize && size > 0) {
         len = snprintf (s, size, ")");
         s += len;
         size -= len;
