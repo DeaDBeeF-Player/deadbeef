@@ -747,11 +747,13 @@ streamer_read_async (char *bytes, int size);
 static void
 streamer_start_new_song (void) {
     trace ("nextsong=%d\n", nextsong);
+    streamer_lock ();
     int sng = nextsong;
     int initsng = nextsong;
     int pstate = nextsong_pstate;
     nextsong = -1;
     src_remaining = 0;
+    streamer_unlock ();
     if (badsong == sng) {
         trace ("looped to bad file. stopping...\n");
         streamer_set_nextsong (-2, 1);
@@ -852,9 +854,7 @@ streamer_thread (void *ctx) {
         gettimeofday (&tm1, NULL);
         if (nextsong >= 0) { // start streaming next song
             trace ("\033[0;34mnextsong=%d\033[37;0m\n", nextsong);
-            streamer_lock ();
             streamer_start_new_song ();
-            streamer_unlock ();
             // it's totally possible that song was switched
             // while streamer_set_current was running,
             // so we need to restart here
