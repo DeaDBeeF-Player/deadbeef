@@ -680,8 +680,10 @@ plug_load_all (void) {
                     if (!handle) {
                         trace ("dlopen error: %s\n", dlerror ());
                         strcpy (fullname + strlen(fullname) - 3, ".fallback.so");
+                        trace ("trying %s...\n", fullname);
                         handle = dlopen (fullname, RTLD_NOW);
                         if (!handle) {
+                            trace ("dlopen error: %s\n", dlerror ());
                             break;
                         }
                         else {

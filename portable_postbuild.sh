@@ -26,7 +26,7 @@ cp ./plugins/lastfm/.libs/lastfm.so $PLUGDIR/
 cp ./plugins/sid/.libs/sid.so $PLUGDIR/
 cp ./plugins/adplug/.libs/adplug.so $PLUGDIR/
 cp ./plugins/gtkui/.libs/gtkui.so $PLUGDIR/
-cp ./plugins/gtkui/gtkui.fallback.so $PLUGDIR/
+cp ./plugins/gtkui/.libs/gtkui.fallback.so $PLUGDIR/
 cp ./plugins/sndfile/.libs/sndfile.so $PLUGDIR/
 cp ./plugins/artwork/.libs/artwork.so $PLUGDIR/
 cp ./plugins/supereq/.libs/supereq.so $PLUGDIR/
