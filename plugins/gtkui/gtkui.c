@@ -583,7 +583,14 @@ gtkui_update_status_icon (gpointer unused) {
         icon_name = icon_is_builtin ? "deadbeef" : icon_name;
     }
 
-    trayicon = gtk_status_icon_new_from_icon_name(icon_name);
+    if (!gtk_icon_theme_has_icon(theme, icon_name)) {
+        char iconpath[1024];
+        snprintf (iconpath, sizeof (iconpath), "%s/deadbeef.png", deadbeef->get_prefix ());
+        trayicon = gtk_status_icon_new_from_file(iconpath);
+    }
+    else {
+        trayicon = gtk_status_icon_new_from_icon_name(icon_name);
+    }
     if (hide_tray_icon) {
         g_object_set (trayicon, "visible", FALSE, NULL);
     }
