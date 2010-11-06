@@ -2268,7 +2268,9 @@ ddb_listview_header_motion_notify_event          (GtkWidget       *widget,
     ev_x = event->x;
     ev_y = event->y;
     ev_state = event->state;
+#if GTK_CHECK_VERSION(2,12,0) && !defined(ULTRA_COMPATIBLE)
     gdk_event_request_motions (event);
+#endif
 
     if ((ev_state & GDK_BUTTON1_MASK) && ps->header_prepare) {
         if (gtk_drag_check_threshold (widget, ev_x, ps->prev_header_x, 0, 0)) {
@@ -2630,7 +2632,9 @@ ddb_listview_motion_notify_event        (GtkWidget       *widget,
 {
     int x = event->x;
     int y = event->y;
+#if GTK_CHECK_VERSION(2,12,0) && !defined(ULTRA_COMPATIBLE)
     gdk_event_request_motions (event);
+#endif
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
     ddb_listview_list_mousemove (ps, event, x, y);
     return FALSE;

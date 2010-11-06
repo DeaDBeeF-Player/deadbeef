@@ -879,7 +879,9 @@ on_tabstrip_motion_notify_event          (GtkWidget       *widget,
     ev_x = event->x;
     ev_y = event->y;
     ev_state = event->state;
+#if GTK_CHECK_VERSION(2,12,0) && !defined(ULTRA_COMPATIBLE)
     gdk_event_request_motions (event);
+#endif
     if ((ev_state & GDK_BUTTON1_MASK) && ts->prepare) {
         if (gtk_drag_check_threshold (widget, ev_x, ts->prev_x, 0, 0)) {
             ts->prepare = 0;
