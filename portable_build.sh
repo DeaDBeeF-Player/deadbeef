@@ -13,6 +13,5 @@ cd tools/pluginfo
 make
 cd ../../
 
-
 ./portable_postbuild.sh
 

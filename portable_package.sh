@@ -38,7 +38,6 @@ tar jcvf portable_out/build/deadbeef-$VERSION-portable-build$BUILD.tar.bz2\
     $PLUGDIR/tta.so\
     $PIXMAPDIR
 
-
 # plugins
 cd $PLUGDIR
 
@@ -49,22 +48,26 @@ PLUGINFO=../../tools/pluginfo/pluginfo
 
 for i in *.so ; do
     plugname=`basename $i .so`
+    echo $plugname
 
     version=""
     $PLUGINFO ./$i >./temp.sh
-    source ./temp.sh
-    rm ./temp.sh
-    if [[ -n $version ]]; then
-        echo "$plugname version $version"
-    else
-        echo "$plugname version not found"
-    fi
-    fname=../../portable_out/deadbeef-$VERSION-portable-$plugname-$version.tar.bz2
-    tar jcvf $fname $i
-    fsize=$(stat -c%s "$fname")
+    RET=$?
+    if [ "$RET" = "0" ]; then
+        source ./temp.sh
+        rm ./temp.sh
+        if [[ -n $version ]]; then
+            echo "$plugname version $version"
+        else
+            echo "$plugname version not found"
+        fi
+        fname=../../portable_out/deadbeef-$VERSION-portable-$plugname-$version.tar.bz2
+        tar jcvf $fname $i
+        fsize=$(stat -c%s "$fname")
 
-    # add some markdown
-    echo "<tr><td><a href="http://sourceforge.net/projects/deadbeef/files/deadbeef-$VERSION-portable-$name-$version.tar.bz2/download">$name ($plugname)</a></td><td>$version</td><td>$fsize</td><td>$VERSION</td><td>$descr</td><td>$author ($email, $website)</td></tr>" >>$plugtable
+        # add some markdown
+        echo "<tr><td><a href="http://sourceforge.net/projects/deadbeef/files/portable/$VERSION/deadbeef-$VERSION-portable-$plugname-$version.tar.bz2/download">$name ($plugname)</a></td><td>$version</td><td>$fsize</td><td>$VERSION</td><td>$descr</td><td>$author ($email, $website)</td></tr>" >>$plugtable
+    fi
 done
 echo "</table>" >>$plugtable
 cd ../../
