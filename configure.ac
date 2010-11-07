@@ -131,9 +131,8 @@ if test "x$enable_alsa" != "xno" ; then
 fi
 
 if test "x$enable_ffmpeg" != "xno" ; then
-echo "ffmpeg build is enabled"
 if test "x$enable_portable" != "xno" ; then
-    FFMPEG_DEPS_LIBS="../../$LIB/libavcodec.a -lpthread ../../$LIB/libavformat.a ../../$LIB/libavcodec.a ../../$LIB/libavutil.a -lm ../../$LIB/libz.a "
+    FFMPEG_DEPS_LIBS="../../$LIB/libavcodec.a -lpthread ../../$LIB/libavformat.a ../../$LIB/libavcodec.a ../../$LIB/libavutil.a ../../$LIB/libavcore.a -lm ../../$LIB/libz.a "
     AC_SUBST(FFMPEG_DEPS_LIBS)
     HAVE_FFMPEG=yes
 else

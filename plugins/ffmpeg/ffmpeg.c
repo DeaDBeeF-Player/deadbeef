@@ -715,7 +715,7 @@ ffmpeg_read_metadata (DB_playItem_t *it) {
 static DB_decoder_t plugin = {
     DB_PLUGIN_SET_API_VERSION
     .plugin.version_major = 1,
-    .plugin.version_minor = 0,
+    .plugin.version_minor = 1,
     .plugin.type = DB_PLUGIN_DECODER,
     .plugin.id = "ffmpeg",
     .plugin.name = "FFMPEG audio player",
