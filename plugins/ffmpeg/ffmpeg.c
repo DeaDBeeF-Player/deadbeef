@@ -55,7 +55,7 @@
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
 
-static const char * exts[] = { "m4a", "wma", "aa3", "oma", "ac3", "vqf", NULL };
+static const char * exts[] = { "m4a", "wma", "aa3", "oma", "ac3", "vqf", "amr", NULL };
 
 enum {
     FT_ALAC = 0,
@@ -63,10 +63,11 @@ enum {
     FT_ATRAC3 = 2,
     FT_VQF = 3,
     FT_AC3 = 4,
+    FT_AMR = 5,
     FT_UNKNOWN = 5
 };
 
-static const char *filetypes[] = { "ALAC", "WMA", "ATRAC3", "VQF", "AC3", "FFMPEG (unknown)", NULL };
+static const char *filetypes[] = { "ALAC", "WMA", "ATRAC3", "VQF", "AC3", "AMR", "FFMPEG (unknown)", NULL };
 
 #define FF_PROTOCOL_NAME "deadbeef"
 
@@ -168,6 +169,9 @@ ffmpeg_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     }
     else if (strcasestr (info->codec->name, "ac3")) {
         it->filetype = filetypes[FT_AC3];
+    }
+    else if (strcasestr (info->codec->name, "amr")) {
+        it->filetype = filetypes[FT_AMR];
     }
     else {
         it->filetype = filetypes[FT_UNKNOWN];
@@ -714,8 +718,8 @@ ffmpeg_read_metadata (DB_playItem_t *it) {
 // define plugin interface
 static DB_decoder_t plugin = {
     DB_PLUGIN_SET_API_VERSION
-    .plugin.version_major = 0,
-    .plugin.version_minor = 1,
+    .plugin.version_major = 1,
+    .plugin.version_minor = 2,
     .plugin.type = DB_PLUGIN_DECODER,
     .plugin.id = "ffmpeg",
     .plugin.name = "FFMPEG audio player",

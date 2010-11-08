@@ -166,7 +166,7 @@ tta_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
 
         if (size > 0 && !info->remaining) {
             info->remaining = get_samples (&info->tta, info->buffer);
-            if (!info->remaining) {
+            if (info->remaining <= 0) {
                 break;
             }
         }
@@ -313,8 +313,8 @@ static const char *filetypes[] = { "TTA", NULL };
 // define plugin interface
 static DB_decoder_t plugin = {
     DB_PLUGIN_SET_API_VERSION
-    .plugin.version_major = 0,
-    .plugin.version_minor = 1,
+    .plugin.version_major = 1,
+    .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_DECODER,
     .plugin.id = "tta",
     .plugin.name = "tta decoder",

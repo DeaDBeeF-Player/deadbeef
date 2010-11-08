@@ -726,13 +726,17 @@ aac_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
                     sampleDuration, MP4_MSECS_TIME_SCALE);
 #endif
             if (info->mp4sample >= info->mp4samples) {
+                if (buffer) {
+                    free (buffer);
+                }
                 break;
             }
             info->mp4sample++;
             samples = NeAACDecDecode(info->dec, &frame_info, buffer, buffer_size);
-#ifdef USE_MP4FF
-            free (buffer);
-#endif
+
+            if (buffer) {
+                free (buffer);
+            }
             if (!samples) {
                 break;
             }
@@ -1119,8 +1123,8 @@ static const char *filetypes[] = { "RAW AAC", "MP4 AAC", NULL };
 // define plugin interface
 static DB_decoder_t plugin = {
     DB_PLUGIN_SET_API_VERSION
-    .plugin.version_major = 0,
-    .plugin.version_minor = 1,
+    .plugin.version_major = 1,
+    .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_DECODER,
     .plugin.id = "aac",
     .plugin.name = "AAC decoder based on FAAD2",

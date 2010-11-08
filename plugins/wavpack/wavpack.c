@@ -442,12 +442,12 @@ static const char *filetypes[] = { "wv", NULL };
 // define plugin interface
 static DB_decoder_t plugin = {
     DB_PLUGIN_SET_API_VERSION
-    .plugin.version_major = 0,
-    .plugin.version_minor = 1,
+    .plugin.version_major = 1,
+    .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_DECODER,
     .plugin.id = "wv",
     .plugin.name = "WavPack decoder",
-    .plugin.descr = ".wv player using libwavpack",
+    .plugin.descr = "WavPack (.wv, .iso.wv) player using libwavpack",
     .plugin.author = "Alexey Yakovenko",
     .plugin.email = "waker@users.sourceforge.net",
     .plugin.website = "http://deadbeef.sf.net",

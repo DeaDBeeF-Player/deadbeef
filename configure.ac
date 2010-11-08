@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT([deadbeef], [devel])
+AC_INIT([deadbeef], [0.4.3])
 
 AC_CONFIG_HEADER(config.h)
 
@@ -33,15 +33,19 @@ fi
 case "$host" in
   i386-*-* | i486-*-* | i586-*-* | i686-*-* | i86pc-*-*)
     AC_DEFINE(ARCH_X86_32, 1, [architecture is x86])
+    LIB="lib-x86-32"
     ;;
   x86_64-*-* | amd64-*-*)
     AC_DEFINE(ARCH_X86_64, 1, [architecture is x86_64])
+    LIB="lib-x86-64"
     ;;
   powerpc-*-* )
     AC_DEFINE(ARCH_PPC_32, 1, [architecture is ppc32])
+    LIB="lib-ppc-32"
     ;;
   powerpc64-*-* )
     AC_DEFINE(ARCH_PPC_64, 1, [architecture is ppc64])
+    LIB="lib-ppc-64"
     ;;
   *)
     AC_DEFINE(ARCH_UNKNOWN, 1, [architecture is unknown])
@@ -56,46 +60,61 @@ dnl INSANE_CXXFLAGS="-Wcomment -Wchar-subscripts -Wunused-function -Wunused-valu
 AC_SUBST(INSANE_CFLAGS)
 AC_SUBST(INSANE_CXXFLAGS)
 
-CXXFLAGS="$CXXFLAGS $INSANE_CXXFLAGS -D_GNU_SOURCE -DLIBDIR=\\\"$libdir\\\" -DPREFIX=\\\"$prefix\\\" -DDOCDIR=\\\"$docdir\\\""
-CFLAGS="$CFLAGS $INSANE_CFLAGS -D_GNU_SOURCE -DLIBDIR=\\\"$libdir\\\" -DPREFIX=\\\"$prefix\\\" -DDOCDIR=\\\"$docdir\\\""
+AC_ARG_ENABLE(nullout,  [AS_HELP_STRING([--disable-nullout ], [disable NULL output plugin (default: enabled)])], [enable_nullout=$enableval], [enable_nullout=yes])
+AC_ARG_ENABLE(alsa,     [AS_HELP_STRING([--disable-alsa    ], [disable ALSA output plugin (default: enabled)])], [enable_alsa=$enableval], [enable_alsa=yes])
+AC_ARG_ENABLE(oss,      [AS_HELP_STRING([--disable-oss     ], [disable Open Sound System output plugin (default: enabled)])], [enable_oss=$enableval], [enable_oss=yes])
+AC_ARG_ENABLE(pulse,    [AS_HELP_STRING([--disable-pulse   ], [disable PulseAudio output plugin (default: enabled)])], [enable_pulse=$enableval], [enable_pulse=yes])
+AC_ARG_ENABLE(gtkui,    [AS_HELP_STRING([--disable-gtkui   ], [disable standard GTK2 user interface plugin (default: enabled)])], [enable_gtkui=$enableval], [enable_gtkui=yes])
+AC_ARG_ENABLE(gtk3,     [AS_HELP_STRING([--enable-gtk3     ], [use GTK3 library (default: disabled)])], [enable_gtk3=$enableval], [enable_gtk3=no])
+AC_ARG_ENABLE(vfs_curl, [AS_HELP_STRING([--disable-vfs-curl], [disable HTTP streaming vfs plugin (default: enabled)])], [enable_vfs_curl=$enableval], [enable_vfs_curl=yes])
+AC_ARG_ENABLE(lfm,      [AS_HELP_STRING([--disable-lfm     ], [disable last.fm/libre.fm scrobbler plugin (default: enabled)])], [enable_lfm=$enableval], [enable_lfm=yes])
+AC_ARG_ENABLE(artwork,  [AS_HELP_STRING([--disable-artwork ], [disable album art loader plugin (default: enabled)])], [enable_artwork=$enableval], [enable_artwork=yes])
+AC_ARG_ENABLE(supereq,  [AS_HELP_STRING([--disable-supereq ], [disable SuperEQ DSP plugin (default: enabled)])], [enable_supereq=$enableval], [enable_supereq=yes])
+AC_ARG_ENABLE(sid,      [AS_HELP_STRING([--disable-sid     ], [disable commodore64 SID music player plugin (default: enabled)])], [enable_sid=$enableval], [enable_sid=yes])
+AC_ARG_ENABLE(mad,      [AS_HELP_STRING([--disable-mad     ], [disable mpeg (mad) plugin (default: enabled)])], [enable_mpgmad=$enableval], [enable_mpgmad=yes])
+AC_ARG_ENABLE(ffap,     [AS_HELP_STRING([--disable-ffap    ], [disable Monkey's Audio plugin (default: enabled)])], [enable_ffap=$enableval], [enable_ffap=yes])
+AC_ARG_ENABLE(vtx,      [AS_HELP_STRING([--disable-vtx     ], [disable libayemy VTX ZX-Spectrum music player plugin (default: enabled)])], [enable_vtx=$enableval], [enable_vtx=yes])
+AC_ARG_ENABLE(adplug,   [AS_HELP_STRING([--disable-adplug  ], [disable adplug plugin (default: enabled)])], [enable_adplug=$enableval], [enable_adplug=yes])
+AC_ARG_ENABLE(hotkeys,  [AS_HELP_STRING([--disable-hotkeys ], [disable global hotkeys plugin (default: enabled)])], [enable_hotkeys=$enableval], [enable_hotkeys=yes])
+AC_ARG_ENABLE(vorbis,   [AS_HELP_STRING([--disable-vorbis  ], [disable Ogg Vorbis player plugin (default: enabled)])], [enable_vorbis=$enableval], [enable_vorbis=yes])
+AC_ARG_ENABLE(ffmpeg,   [AS_HELP_STRING([--disable-ffmpeg  ], [disable FFMPEG plugin for WMA, MPC, TTA, etc (default: enabled)])], [enable_ffmpeg=$enableval], [enable_ffmpeg=yes])
+AC_ARG_ENABLE(flac,     [AS_HELP_STRING([--disable-flac    ], [disable FLAC player plugin (default: enabled)])], [enable_flac=$enableval], [enable_flac=yes])
+AC_ARG_ENABLE(sndfile,  [AS_HELP_STRING([--disable-sndfile ], [disable libsndfile plugin for PCM wave files (default: enabled)])], [enable_sndfile=$enableval], [enable_sndfile=yes])
+AC_ARG_ENABLE(wavpack,  [AS_HELP_STRING([--disable-wavpack ], [disable wavpack plugin (default: enabled)])], [enable_wavpack=$enableval], [enable_wavpack=yes])
+AC_ARG_ENABLE(cdda,     [AS_HELP_STRING([--disable-cdda    ], [disable CD-Audio plugin (default: enabled)])], [enable_cdda=$enableval], [enable_cdda=yes])
+AC_ARG_ENABLE(gme,      [AS_HELP_STRING([--disable-gme     ], [disable Game Music Emu plugin for NSF, AY, etc (default: enabled)])], [enable_gme=$enableval], [enable_gme=yes])
+AC_ARG_ENABLE(dumb,     [AS_HELP_STRING([--disable-dumb    ], [disable D.U.M.B. plugin for MOD, S3M and other tracker formats (default: enabled)])], [enable_dumb=$enableval], [enable_dumb=yes])
+AC_ARG_ENABLE(notify,   [AS_HELP_STRING([--disable-notify  ], [disable notification-daemon support plugin (default: enabled)])], [enable_notify=$enableval], [enable_notify=yes])
+AC_ARG_ENABLE(shellexec, [AS_HELP_STRING([--disable-shellexec], [disable shell commands plugin (default: enabled)])], [enable_shellexec=$enableval], [enable_shellexec=yes])
+AC_ARG_ENABLE(musepack, [AS_HELP_STRING([--disable-musepack], [disable musepack plugin (default: enabled)])], [enable_musepack=$enableval], [enable_musepack=yes])
+AC_ARG_ENABLE(wildmidi, [AS_HELP_STRING([--disable-wildmidi], [disable wildmidi plugin (default: enabled)])], [enable_wildmidi=$enableval], [enable_wildmidi=yes])
+AC_ARG_ENABLE(tta,      [AS_HELP_STRING([--disable-tta     ], [disable tta plugin (default: enabled)])], [enable_tta=$enableval], [enable_tta=yes])
+AC_ARG_ENABLE(dca,      [AS_HELP_STRING([--disable-dca     ], [disable dca (DTS audio)  plugin (default: enabled)])], [enable_dca=$enableval], [enable_dca=yes])
+AC_ARG_ENABLE(aac,      [AS_HELP_STRING([--disable-aac     ], [disable AAC decoder based on FAAD2 (default: enabled)])], [enable_aac=$enableval], [enable_aac=yes])
+AC_ARG_ENABLE(mms,      [AS_HELP_STRING([--disable-mms     ], [disable MMS streaming vfs plugin (default: enabled)])], [enable_mms=$enableval], [enable_mms=yes])
+AC_ARG_ENABLE(shn,      [AS_HELP_STRING([--disable-shn     ], [disable shorten plugin (default: enabled)])], [enable_shn=$enableval], [enable_shn=yes])
+AC_ARG_ENABLE(ao,       [AS_HELP_STRING([--disable-ao      ], [disable audio overload plugin (default: enabled)])], [enable_ao=$enableval], [enable_ao=yes])
+AC_ARG_ENABLE(mpris,    [  --enable-mpris          enable Ubuntu Sound Menu plugin (default: disabled)], [enable_mpris=$enableval], [enable_mpris=no])
+AC_ARG_ENABLE(portable, [  --enable-portable       make portable static build (default: disabled)], [enable_portable=$enableval], [enable_portable=no])
 
-AC_ARG_ENABLE(nullout,  [  --disable-nullout       disable NULL output plugin (default: enabled)], [enable_nullout=$enableval], [enable_nullout=yes])
-AC_ARG_ENABLE(alsa,     [  --disable-alsa          disable ALSA output plugin (default: enabled)], [enable_alsa=$enableval], [enable_alsa=yes])
-AC_ARG_ENABLE(oss,      [  --disable-oss           disable Open Sound System output plugin (default: enabled)], [enable_oss=$enableval], [enable_oss=yes])
-AC_ARG_ENABLE(pulse,    [  --disable-pulse         disable PulseAudio output plugin (default: enabled)], [enable_pulse=$enableval], [enable_pulse=yes])
-AC_ARG_ENABLE(gtkui,    [  --disable-gtkui         disable standard GTK2 user interface plugin (default: enabled)], [enable_gtkui=$enableval], [enable_gtkui=yes])
-AC_ARG_ENABLE(gtk3,     [  --enable-gtk3           use GTK3 library (default: disabled)], [enable_gtk3=$enableval], [enable_gtk3=no])
-AC_ARG_ENABLE(vfs_curl, [  --disable-vfs-curl      disable HTTP streaming vfs plugin (default: enabled)], [enable_vfs_curl=$enableval], [enable_vfs_curl=yes])
-AC_ARG_ENABLE(lfm,      [  --disable-lfm           disable last.fm/libre.fm scrobbler plugin (default: enabled)], [enable_lfm=$enableval], [enable_lfm=yes])
-AC_ARG_ENABLE(artwork,  [  --disable-artwork       disable album art loader plugin (default: enabled)], [enable_artwork=$enableval], [enable_artwork=yes])
-AC_ARG_ENABLE(supereq,  [  --disable-supereq       disable SuperEQ DSP plugin (default: enabled)], [enable_supereq=$enableval], [enable_supereq=yes])
-AC_ARG_ENABLE(sid,      [  --disable-sid           disable commodore64 SID music player plugin (default: enabled)], [enable_sid=$enableval], [enable_sid=yes])
-AC_ARG_ENABLE(mad,      [  --disable-mpgmad        disable mpeg (mad) plugin (default: enabled)], [enable_mpgmad=$enableval], [enable_mpgmad=yes])
-AC_ARG_ENABLE(ffap,     [  --disable-ffap          disable Monkey's Audio plugin (default: enabled)], [enable_ffap=$enableval], [enable_ffap=yes])
-AC_ARG_ENABLE(vtx,      [  --disable-vtx           disable libayemy VTX ZX-Spectrum music player plugin (default: enabled)], [enable_vtx=$enableval], [enable_vtx=yes])
-AC_ARG_ENABLE(adplug,   [  --disable-adplug        disable adplug plugin (default: enabled)], [enable_adplug=$enableval], [enable_adplug=yes])
-AC_ARG_ENABLE(hotkeys,  [  --disable-hotkeys       disable global hotkeys plugin (default: enabled)], [enable_hotkeys=$enableval], [enable_hotkeys=yes])
-AC_ARG_ENABLE(vorbis,   [  --disable-vorbis        disable Ogg Vorbis player plugin (default: enabled)], [enable_vorbis=$enableval], [enable_vorbis=yes])
-AC_ARG_ENABLE(ffmpeg,   [  --disable-ffmpeg        disable FFMPEG plugin for WMA, MPC, TTA, etc (default: enabled)], [enable_ffmpeg=$enableval], [enable_ffmpeg=yes])
-AC_ARG_ENABLE(flac,     [  --disable-flac          disable FLAC player plugin (default: enabled)], [enable_flac=$enableval], [enable_flac=yes])
-AC_ARG_ENABLE(sndfile,  [  --disable-sndfile       disable libsndfile plugin for PCM wave files (default: enabled)], [enable_sndfile=$enableval], [enable_sndfile=yes])
-AC_ARG_ENABLE(wavpack,  [  --disable-wavpack       disable wavpack plugin (default: enabled)], [enable_wavpack=$enableval], [enable_wavpack=yes])
-AC_ARG_ENABLE(cdda,     [  --disable-cdda          disable CD-Audio plugin (default: enabled)], [enable_cdda=$enableval], [enable_cdda=yes])
-AC_ARG_ENABLE(gme,      [  --disable-gme           disable Game Music Emu plugin for NSF, AY, etc (default: enabled)], [enable_gme=$enableval], [enable_gme=yes])
-AC_ARG_ENABLE(dumb,     [  --disable-dumb          disable D.U.M.B. plugin for MOD, S3M and other tracker formats (default: enabled)], [enable_dumb=$enableval], [enable_dumb=yes])
-AC_ARG_ENABLE(notify,   [  --disable-notify        disable notification-daemon support plugin (default: enabled)], [enable_notify=$enableval], [enable_notify=yes])
-AC_ARG_ENABLE(shellexec,   [  --disable-shellexec        disable shell commands plugin (default: enabled)], [enable_shellexec=$enableval], [enable_shellexec=yes])
-AC_ARG_ENABLE(musepack, [  --disable-musepack      disable musepack plugin (default: enabled)], [enable_musepack=$enableval], [enable_musepack=yes])
-AC_ARG_ENABLE(wildmidi, [  --disable-wildmidi      disable wildmidi plugin (default: enabled)], [enable_wildmidi=$enableval], [enable_wildmidi=yes])
-AC_ARG_ENABLE(tta,     [  --disable-tta            disable tta plugin (default: enabled)], [enable_tta=$enableval], [enable_tta=yes])
-AC_ARG_ENABLE(dca,     [  --disable-dca            disable dca (DTS audio)  plugin (default: enabled)], [enable_dca=$enableval], [enable_dca=yes])
-AC_ARG_ENABLE(aac,     [  --disable-aac            disable AAC decoder based on FAAD2 (default: enabled)], [enable_aac=$enableval], [enable_aac=yes])
-AC_ARG_ENABLE(mms,     [  --disable-mms            disable MMS streaming vfs plugin (default: enabled)], [enable_mms=$enableval], [enable_mms=yes])
-AC_ARG_ENABLE(shn,     [  --disable-shn            disable shorten plugin (default: enabled)], [enable_shn=$enableval], [enable_shn=yes])
-AC_ARG_ENABLE(ao,     [  --disable-ao            disable audio overload plugin (default: enabled)], [enable_ao=$enableval], [enable_ao=yes])
-AC_ARG_ENABLE(mpris,     [  --enable-mpris            disable Ubuntu Sound Menu plugin (default: disabled)], [enable_mpris=$enableval], [enable_mpris=no])
+if test "x$enable_portable" != "xno" ; then
+    AC_DEFINE_UNQUOTED([PORTABLE], [1], [Define if building portable version])
+    PORTABLE=yes
+    PREFIXFLAGS="-DPREFIX=donotuse -DLIBDIR=donotuse -DDOCDIR=donotuse -I./include -I../../include"
+else
+    PREFIXFLAGS=" -DLIBDIR=\\\"$libdir\\\" -DPREFIX=\\\"$prefix\\\" -DDOCDIR=\\\"$docdir\\\""
+fi
+
+CXXFLAGS="$CXXFLAGS $INSANE_CXXFLAGS -D_GNU_SOURCE $PREFIXFLAGS"
+CFLAGS="$CFLAGS $INSANE_CFLAGS -D_GNU_SOURCE $PREFIXFLAGS"
 
 PKG_CHECK_MODULES(DEPS, samplerate)
+if test "x$enable_portable" != "xno" ; then
+    DEPS_LIBS="$LIB/libsamplerate.a -lpthread -ldl"
+    AC_SUBST(DEPS_LIBS)
+else
+    PKG_CHECK_MODULES(DEPS, samplerate)
+fi
 
 if test "x$enable_gtkui" != "xno" ; then
     if test "x$enable_gtk3" == "xyes" ; then
@@ -112,15 +131,21 @@ if test "x$enable_alsa" != "xno" ; then
 fi
 
 if test "x$enable_ffmpeg" != "xno" ; then
+if test "x$enable_portable" != "xno" ; then
+    FFMPEG_DEPS_LIBS="../../$LIB/libavcodec.a -lpthread ../../$LIB/libavformat.a ../../$LIB/libavcodec.a ../../$LIB/libavutil.a ../../$LIB/libavcore.a -lm ../../$LIB/libz.a "
+    AC_SUBST(FFMPEG_DEPS_LIBS)
+    HAVE_FFMPEG=yes
+else
     PKG_CHECK_MODULES(FFMPEG_DEPS, libavcodec >= 51.0.0 libavutil libavformat >= 52.0.0, HAVE_FFMPEG=yes, HAVE_FFMPEG=no)
+fi
 fi
 
 if test "x$enable_pulse" != "xno" ; then
     PKG_CHECK_MODULES(PULSE_DEPS, libpulse-simple, HAVE_PULSE=yes, HAVE_PULSE=no)
 fi
 
-AC_CHECK_LIB([pthread], [main])
-AC_CHECK_LIB([dl], [main])
+dnl AC_CHECK_LIB([pthread], [main])
+dnl AC_CHECK_LIB([dl], [main])
 
 AC_CHECK_HEADER([iconv.h],[],[iconv.h not found.])
 
@@ -137,17 +162,33 @@ if test ${HAVE_SSE2}; then
 fi
 
 dnl curl lib
-AC_CHECK_LIB([curl], [main], [HAVE_CURL=yes])
-if test "x$HAVE_CURL" = "xyes"; then
+if test "x$enable_portable" != "xno" ; then
+    HAVE_CURL=yes
+    CURL_LIBS="../../$LIB/libcurl.a -lrt"
+    AC_SUBST(CURL_LIBS)
+else
+    AC_CHECK_LIB([curl], [main], [HAVE_CURL=yes])
     CURL_LIBS="-lcurl"
     AC_SUBST(CURL_LIBS)
 fi
 
-PKG_CHECK_MODULES(DBUS_DEPS, dbus-1, HAVE_DBUS=yes, HAVE_DBUS=no)
+if test "x$enable_portable" != "xno" ; then
+    HAVE_DBUS=yes
+    DBUS_DEPS_LIBS="../../$LIB/libdbus-1.a ../../$LIB/libexpat.a -lrt"
+    DBUS_DEPS_CFLAGS="-I../../include/dbus-1"
+    AC_SUBST(DBUS_DEPS_LIBS)
+else
+    PKG_CHECK_MODULES(DBUS_DEPS, dbus-1, HAVE_DBUS=yes, HAVE_DBUS=no)
+fi
 
 dnl mpgmad plugin
 
 if test "x$enable_mpgmad" != "xno" ; then
+if test "x$enable_portable" != "xno" ; then
+    HAVE_MPGMAD=yes
+    MAD_LIBS="../../$LIB/libmad.a"
+    AC_SUBST(MAD_LIBS)
+else
     AC_CHECK_LIB([mad], [main], [HAVE_LIBMAD=yes])
     if test "x$HAVE_LIBMAD" = "xyes" ; then
         HAVE_MPGMAD=yes
@@ -155,9 +196,15 @@ if test "x$enable_mpgmad" != "xno" ; then
         AC_SUBST(MAD_LIBS)
     fi
 fi
+fi
 
 dnl vorbis plugin
 if test "x$enable_vorbis" != "xno" ; then
+if test "x$enable_portable" != "xno" ; then
+    HAVE_VORBISPLUGIN=yes
+    VORBIS_LIBS="../../$LIB/libogg.a ../../$LIB/libvorbis.a ../../$LIB/libvorbisenc.a ../../$LIB/libvorbisfile.a"
+    AC_SUBST(VORBIS_LIBS)
+else
     AC_CHECK_LIB([vorbis], [main], [HAVE_VORBIS=yes])
     AC_CHECK_LIB([vorbisfile], [main], [HAVE_VORBISFILE=yes])
     if test "x$HAVE_VORBIS" = "xyes" && test "x$HAVE_VORBISFILE" = "xyes" ; then
@@ -166,9 +213,15 @@ if test "x$enable_vorbis" != "xno" ; then
         AC_SUBST(VORBIS_LIBS)
     fi
 fi
+fi
 
 dnl flac plugin
 if test "x$enable_flac" != "xno" ; then
+if test "x$enable_portable" != "xno" ; then
+    HAVE_FLACPLUGIN=yes
+    FLAC_LIBS="../../$LIB/libFLAC.a ../../$LIB/libogg.a"
+    AC_SUBST(FLAC_LIBS)
+else
     AC_CHECK_LIB([FLAC], [main], [HAVE_FLAC=yes])
     if test "x$HAVE_FLAC" = "xyes" ; then
         HAVE_FLACPLUGIN=yes
@@ -176,9 +229,15 @@ if test "x$enable_flac" != "xno" ; then
         AC_SUBST(FLAC_LIBS)
     fi
 fi
+fi
 
 dnl wavpack plugin
 if test "x$enable_wavpack" != "xno" ; then
+if test "x$enable_portable" != "xno" ; then
+    HAVE_WAVPACKPLUGIN=yes
+    WAVPACK_LIBS="../../$LIB/libwavpack.a"
+    AC_SUBST(WAVPACK_LIBS)
+else
     AC_CHECK_LIB([wavpack], [main], [HAVE_WAVPACK=yes])
     if test "x$HAVE_WAVPACK" = "xyes" ; then
         HAVE_WAVPACKPLUGIN=yes
@@ -186,9 +245,15 @@ if test "x$enable_wavpack" != "xno" ; then
         AC_SUBST(WAVPACK_LIBS)
     fi
 fi
+fi
 
 dnl libsndfile plugin
 if test "x$enable_sndfile" != "xno" ; then
+if test "x$enable_portable" != "xno" ; then
+    HAVE_SNDFILEPLUGIN=yes
+    SNDFILE_LIBS="../../$LIB/libsndfile.a"
+    AC_SUBST(SNDFILE_LIBS)
+else
     AC_CHECK_LIB([sndfile], [main], [HAVE_SNDFILE=yes])
     if test "x$HAVE_SNDFILE" = "xyes" ; then
         HAVE_SNDFILEPLUGIN=yes
@@ -196,18 +261,24 @@ if test "x$enable_sndfile" != "xno" ; then
         AC_SUBST(SNDFILE_LIBS)
     fi
 fi
+fi
 
 dnl vfs_curl plugin
 if test "x$enable_vfs_curl" != "xno" ; then
     if test "x$HAVE_CURL" = "xyes" ; then
         HAVE_VFS_CURL=yes
-        VFS_CURL_LIBS="-lcurl"
+        VFS_CURL_LIBS="$CURL_LIBS"
         AC_SUBST(VFS_CURL_LIBS)
     fi
 fi
 
 dnl cdda plugin
 if test "x$enable_cdda" != "xno" ; then
+if test "x$enable_portable" != "xno" ; then
+    HAVE_CDDAPLUGIN=yes
+    CDDA_LIBS="../../$LIB/libcdio.a ../../$LIB/libudf.a ../../$LIB/libiso9660.a ../../$LIB/libcddb.a"
+    AC_SUBST(CDDA_LIBS)
+else
     AC_CHECK_LIB([cdio], [main], [HAVE_CDIO=yes])
     AC_CHECK_LIB([cddb], [main], [HAVE_CDDB=yes])
     if test "x$HAVE_CDIO" = "xyes" && test "x$HAVE_CDDB" = "xyes" ; then
@@ -215,6 +286,7 @@ if test "x$enable_cdda" != "xno" ; then
         CDDA_LIBS="-lcdio -lcddb"
         AC_SUBST(CDDA_LIBS)
     fi
+fi
 fi
 
 dnl gtkui plugin
@@ -231,10 +303,14 @@ if test "x$enable_alsa" != "xno" ; then
 fi
 
 if test "x$enable_ffmpeg" != "xno" ; then
+if test "x$enable_portable" = "xno" ; then
     if test "x$HAVE_FFMPEG" = "xyes" ; then
         HAVE_FFMPEGPLUGIN=yes
         AC_CHECK_HEADER([ffmpeg/avformat.h], FFMPEG_DEPS_CFLAGS="$FFMPEG_DEPS_CFLAGS -D FFMPEG_OLD")
     fi
+else
+    HAVE_FFMPEGPLUGIN=yes
+fi
 fi
 
 if test "x$enable_hotkeys" != "xno" ; then
@@ -366,6 +442,11 @@ if test "x$enable_dca" != "xno" ; then
 fi
 
 if test "x$enable_aac" != "xno" ; then
+if test "x$enable_portable" != "xno" ; then
+    FAAD2_LIBS="../../$LIB/libfaad.a"
+    AC_SUBST(FAAD2_LIBS)
+    HAVE_AAC=yes
+else
     AC_CHECK_LIB([faad], [main], [HAVE_FAAD=1])
     if test ${HAVE_FAAD} ; then
         FAAD2_LIBS="-lfaad"
@@ -373,14 +454,12 @@ if test "x$enable_aac" != "xno" ; then
         HAVE_AAC=yes
     fi
 fi
+fi
 
 if test "x$enable_mms" != "xno" ; then
-    AC_CHECK_LIB([mms], [main], [HAVE_LIBMMS=1])
-    if test ${HAVE_LIBMMS} ; then
-        LIBMMS_LIBS="-lmms"
-        AC_SUBST(LIBMMS_LIBS)
-        HAVE_MMS=yes
-    fi
+    LIBMMS_LIBS=""
+    AC_SUBST(LIBMMS_LIBS)
+    HAVE_MMS=yes
 fi
 
 if test "x$enable_shn" != "xno" ; then
@@ -388,9 +467,14 @@ if test "x$enable_shn" != "xno" ; then
 fi
 
 if test "x$enable_ao" != "xno" ; then
+if test "x$enable_portable" != "xno" ; then
+    HAVE_ZLIB=yes
+    ZLIB_LIBS="../../$LIB/libz.a"
+else
     AC_CHECK_LIB([z], [main], [HAVE_ZLIB=yes])
+    ZLIB_LIBS="-lz"
+fi
     if test "x$HAVE_ZLIB" = "xyes"; then
-        ZLIB_LIBS="-lz"
         AC_SUBST(ZLIB_LIBS)
         HAVE_AO=yes
     fi
@@ -436,6 +520,7 @@ AM_CONDITIONAL(HAVE_MMS, test "x$HAVE_MMS" = "xyes")
 AM_CONDITIONAL(HAVE_SHN, test "x$HAVE_SHN" = "xyes")
 AM_CONDITIONAL(HAVE_AO, test "x$HAVE_AO" = "xyes")
 AM_CONDITIONAL(HAVE_MPRIS, test "x$HAVE_MPRIS" = "xyes")
+AM_CONDITIONAL(PORTABLE, test "x$PORTABLE" = "xyes")
 
 AC_SUBST(PLUGINS_DIRS)
 

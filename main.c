@@ -54,10 +54,7 @@
 #include "conf.h"
 #include "volume.h"
 #include "plugins.h"
-
-#ifndef PATH_MAX
-#define PATH_MAX    1024    /* max # of characters in a path name */
-#endif
+#include "common.h"
 
 #ifndef PREFIX
 #error PREFIX must be defined
@@ -67,12 +64,18 @@
 #define USE_ABSTRACT_NAME 0
 #endif
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
+
 
 // some common global variables
-char confdir[1024]; // $HOME/.config
-char dbconfdir[1024]; // $HOME/.config/deadbeef
+char sys_install_path[PATH_MAX]; // see deadbeef->get_prefix
+char confdir[PATH_MAX]; // $HOME/.config
+char dbconfdir[PATH_MAX]; // $HOME/.config/deadbeef
+char dbinstalldir[PATH_MAX]; // see deadbeef->get_prefix
+char dbdocdir[PATH_MAX]; // see deadbeef->get_doc_dir
+char dbplugindir[PATH_MAX]; // see deadbeef->get_plugin_dir
+char dbpixmapdir[PATH_MAX]; // see deadbeef->get_pixmap_dir
 
 // client-side commandline support
 // -1 error, program must exit with error code -1
@@ -509,9 +512,11 @@ restore_resume_state (void) {
         int paused = conf_get_int ("resume.paused", 0);
         trace ("resume: track %d pos %f playlist %d\n", track, pos, plt);
         if (plt >= 0 && track >= 0 && pos >= 0) {
+            streamer_lock (); // need to hold streamer thread to make the resume operation atomic
             streamer_set_current_playlist (plt);
-            streamer_set_seek (pos);
             streamer_set_nextsong (track, paused ? 2 : 3);
+            streamer_set_seek (pos);
+            streamer_unlock ();
         }
     }
 }
@@ -529,11 +534,49 @@ main (int argc, char *argv[]) {
 	bind_textdomain_codeset (PACKAGE, "UTF-8");
 	textdomain (PACKAGE);
 #endif					
-    fprintf (stderr, "starting deadbeef " VERSION "\n");
+    int portable = 0;
+#if PORTABLE
+    portable = 1;
+#endif
+    fprintf (stderr, "starting deadbeef " VERSION "%s\n", portable ? " [portable build]" : "");
     srand (time (NULL));
 #ifdef __linux__
     prctl (PR_SET_NAME, "deadbeef-main", 0, 0, 0, 0);
 #endif
+
+#if PORTABLE
+    strcpy (dbinstalldir, argv[0]);
+    char *e = dbinstalldir + strlen (dbinstalldir);
+    while (e >= dbinstalldir && *e != '/') {
+        e--;
+    }
+    *e = 0;
+    if (snprintf (confdir, sizeof (confdir), "%s/config", dbinstalldir) > sizeof (confdir)) {
+        fprintf (stderr, "fatal: too long install path %s\n", dbinstalldir);
+        return -1;
+    }
+
+    strcpy (dbconfdir, confdir);
+
+    if (snprintf (dbdocdir, sizeof (dbdocdir), "%s/doc", dbinstalldir) > sizeof (dbdocdir)) {
+        fprintf (stderr, "fatal: too long install path %s\n", dbinstalldir);
+        return -1;
+    }
+    if (snprintf (dbplugindir, sizeof (dbplugindir), "%s/plugins", dbinstalldir) > sizeof (dbplugindir)) {
+        fprintf (stderr, "fatal: too long install path %s\n", dbinstalldir);
+        return -1;
+    }
+    if (snprintf (dbpixmapdir, sizeof (dbpixmapdir), "%s/pixmaps", dbinstalldir) > sizeof (dbpixmapdir)) {
+        fprintf (stderr, "fatal: too long install path %s\n", dbinstalldir);
+        return -1;
+    }
+    trace ("installdir: %s\n", dbinstalldir);
+    trace ("confdir: %s\n", confdir);
+    trace ("docdir: %s\n", dbdocdir);
+    trace ("plugindir: %s\n", dbplugindir);
+    mkdir (dbplugindir, 0755);
+    trace ("pixmapdir: %s\n", dbpixmapdir);
+#else
     char *homedir = getenv ("HOME");
     if (!homedir) {
         fprintf (stderr, "unable to find home directory. stopping.\n");
@@ -553,11 +596,25 @@ main (int argc, char *argv[]) {
             return -1;
         }
     }
-    mkdir (confdir, 0755);
     if (snprintf (dbconfdir, sizeof (dbconfdir), "%s/deadbeef", confdir) > sizeof (dbconfdir)) {
         fprintf (stderr, "fatal: out of memory while configuring\n");
         return -1;
     }
+    mkdir (confdir, 0755);
+    if (snprintf (dbdocdir, sizeof (dbdocdir), "%s", DOCDIR) > sizeof (dbdocdir)) {
+        fprintf (stderr, "fatal: too long install path %s\n", dbinstalldir);
+        return -1;
+    }
+    if (snprintf (dbplugindir, sizeof (dbplugindir), "%s/deadbeef", LIBDIR) > sizeof (dbplugindir)) {
+        fprintf (stderr, "fatal: too long install path %s\n", dbinstalldir);
+        return -1;
+    }
+    if (snprintf (dbpixmapdir, sizeof (dbpixmapdir), "%s/share/deadbeef/pixmaps", PREFIX) > sizeof (dbpixmapdir)) {
+        fprintf (stderr, "fatal: too long install path %s\n", dbinstalldir);
+        return -1;
+    }
+#endif
+
     mkdir (dbconfdir, 0755);
 
     char cmdline[2048];
@@ -679,7 +736,9 @@ main (int argc, char *argv[]) {
     conf_load (); // required by some plugins at startup
     volume_set_db (conf_get_float ("playback.volume", 0)); // volume need to be initialized before plugins start
     messagepump_init (); // required to push messages while handling commandline
-    plug_load_all (); // required to add files to playlist from commandline
+    if (plug_load_all ()) { // required to add files to playlist from commandline
+        exit (-1);
+    }
     pl_load_all ();
     plt_set_curr (conf_get_int ("playlist.current", 0));
 

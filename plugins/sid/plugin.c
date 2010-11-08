@@ -31,8 +31,8 @@ static const char settings_dlg[] =
 DB_decoder_t sid_plugin = {
     DB_PLUGIN_SET_API_VERSION
     .plugin.type = DB_PLUGIN_DECODER,
-    .plugin.version_major = 0,
-    .plugin.version_minor = 1,
+    .plugin.version_major = 1,
+    .plugin.version_minor = 0,
     .plugin.name = "SID decoder",
     .plugin.descr = "SID player based on libsidplay2",
     .plugin.author = "Alexey Yakovenko",

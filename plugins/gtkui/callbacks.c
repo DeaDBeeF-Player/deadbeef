@@ -312,7 +312,7 @@ on_mainwin_key_press_event             (GtkWidget       *widget,
                                         gpointer         user_data)
 {
     uint32_t maskedstate = (event->state &~ (GDK_LOCK_MASK | GDK_MOD2_MASK | GDK_MOD3_MASK | GDK_MOD5_MASK)) & 0xfff;
-    if (event->keyval == GDK_n && !event->state) {
+    if ((maskedstate == GDK_MOD1_MASK || maskedstate == 0) && event->keyval == GDK_n) {
         // button for that one is not in toolbar anymore, so handle it manually
         deadbeef->sendmessage (M_PLAYRANDOM, 0, 0, 0);
     }
@@ -560,7 +560,6 @@ on_seekbar_button_release_event        (GtkWidget       *widget,
                                         GdkEventButton  *event)
 {
     seekbar_moving = 0;
-    gtk_widget_queue_draw (widget);
     DB_playItem_t *trk = deadbeef->streamer_get_playing_track ();
     if (trk) {
         float time = (event->x - widget->allocation.x) * deadbeef->pl_get_item_duration (trk) / (widget->allocation.width);
@@ -570,6 +569,7 @@ on_seekbar_button_release_event        (GtkWidget       *widget,
         deadbeef->streamer_seek (time);
         deadbeef->pl_item_unref (trk);
     }
+    gtk_widget_queue_draw (widget);
     return FALSE;
 }
 
@@ -689,7 +689,7 @@ on_help1_activate                      (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     char fname[PATH_MAX];
-    snprintf (fname, sizeof (fname), DOCDIR "/%s", _("help.txt"));
+    snprintf (fname, sizeof (fname), "%s/%s", deadbeef->get_doc_dir (), _("help.txt"));
     show_info_window (fname, _("Help"), &helpwindow);
 }
 
@@ -702,7 +702,7 @@ on_about1_activate                     (GtkMenuItem     *menuitem,
     char s[200];
     snprintf (s, sizeof (s), _("About DeaDBeeF %s"), VERSION);
     char fname[PATH_MAX];
-    snprintf (fname, sizeof (fname), DOCDIR "/%s", "about.txt");
+    snprintf (fname, sizeof (fname), "%s/%s", deadbeef->get_doc_dir (), "about.txt");
     show_info_window (fname, s, &aboutwindow);
 }
 
@@ -715,7 +715,7 @@ on_changelog1_activate                 (GtkMenuItem     *menuitem,
     char s[200];
     snprintf (s, sizeof (s), _("DeaDBeeF %s ChangeLog"), VERSION);
     char fname[PATH_MAX];
-    snprintf (fname, sizeof (fname), DOCDIR "/%s", "ChangeLog");
+    snprintf (fname, sizeof (fname), "%s/%s", deadbeef->get_doc_dir (), "ChangeLog");
     show_info_window (fname, s, &changelogwindow);
 }
 
@@ -726,7 +726,7 @@ on_gpl1_activate                       (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     char fname[PATH_MAX];
-    snprintf (fname, sizeof (fname), DOCDIR "/%s", "COPYING.GPLv2");
+    snprintf (fname, sizeof (fname), "%s/%s", deadbeef->get_doc_dir (), "COPYING.GPLv2");
     show_info_window (fname, "GNU GENERAL PUBLIC LICENSE Version 2", &gplwindow);
 }
 
@@ -737,7 +737,7 @@ on_lgpl1_activate                      (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     char fname[PATH_MAX];
-    snprintf (fname, sizeof (fname), DOCDIR "/%s", "COPYING.LGPLv2.1");
+    snprintf (fname, sizeof (fname), "%s/%s", deadbeef->get_doc_dir (), "COPYING.LGPLv2.1");
     show_info_window (fname, "GNU LESSER GENERAL PUBLIC LICENSE Version 2.1", &lgplwindow);
 }
 
@@ -1079,7 +1079,7 @@ on_translators1_activate               (GtkMenuItem     *menuitem,
     char s[200];
     snprintf (s, sizeof (s), _("DeaDBeeF Translators"));
     char fname[PATH_MAX];
-    snprintf (fname, sizeof (fname), DOCDIR "/%s", "translators.txt");
+    snprintf (fname, sizeof (fname), "%s/%s", deadbeef->get_doc_dir (), "translators.txt");
     show_info_window (fname, s, &translatorswindow);
 }
 

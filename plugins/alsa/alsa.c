@@ -28,8 +28,8 @@
 
 #define min(x,y) ((x)<(y)?(x):(y))
 
-#define LOCK {deadbeef->mutex_lock (mutex);}
-#define UNLOCK {deadbeef->mutex_unlock (mutex);}
+#define LOCK {deadbeef->mutex_lock (mutex); /*fprintf (stderr, "alsa lock %s:%d\n", __FILE__, __LINE__);*/}
+#define UNLOCK {deadbeef->mutex_unlock (mutex); /*fprintf (stderr, "alsa unlock %s:%d\n", __FILE__, __LINE__);*/}
 
 #define DEFAULT_BUFFER_SIZE 8192
 #define DEFAULT_PERIOD_SIZE 1024
@@ -509,7 +509,7 @@ palsa_thread (void *context) {
             else {
                 UNLOCK;
                 usleep (10000);
-                LOCK
+                LOCK;
                 continue;
             }
 
@@ -668,8 +668,8 @@ static const char settings_dlg[] =
 // define plugin interface
 static DB_output_t plugin = {
     DB_PLUGIN_SET_API_VERSION
-    .plugin.version_major = 0,
-    .plugin.version_minor = 1,
+    .plugin.version_major = 1,
+    .plugin.version_minor = 0,
     .plugin.nostop = 1,
     .plugin.type = DB_PLUGIN_OUTPUT,
     .plugin.name = "ALSA output plugin",

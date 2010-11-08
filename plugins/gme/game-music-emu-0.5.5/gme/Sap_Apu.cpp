@@ -90,7 +90,7 @@ void Sap_Apu::reset( Sap_Apu_Impl* new_impl )
 		memset( &oscs [i], 0, offsetof (osc_t,output) );
 }
 
-inline void Sap_Apu::calc_periods()
+void Sap_Apu::calc_periods()
 {
 	 // 15/64 kHz clock
 	int divider = 28;

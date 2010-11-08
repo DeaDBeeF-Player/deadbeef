@@ -16,7 +16,7 @@
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(...)
 
-#define DEFAULT_COVER_PATH (PREFIX "/share/deadbeef/pixmaps/noartwork.jpg")
+static char default_cover[PATH_MAX];
 #define DEFAULT_FILEMASK "*cover*.jpg;*front*.jpg"
 
 static DB_artwork_plugin_t plugin;
@@ -41,12 +41,16 @@ static volatile int terminate;
 static volatile int clear_queue;
 static intptr_t tid;
 
-int artwork_enable_embedded;
-int artwork_enable_local;
-int artwork_enable_lfm;
-int artwork_enable_aao;
-int artwork_reset_time;
-char artwork_filemask[200];
+static int artwork_enable_embedded;
+static int artwork_enable_local;
+static int artwork_enable_lfm;
+static int artwork_enable_aao;
+static int artwork_reset_time;
+static char artwork_filemask[200];
+
+static const char *get_default_cover (void) {
+    return default_cover;
+}
 
 void
 make_cache_dir_path (char *path, int size, const char *album, const char *artist) {
@@ -568,11 +572,11 @@ get_album_art (const char *fname, const char *artist, const char *album, artwork
     if (!*artist || !*album)
     {
         //give up
-        return strdup (DEFAULT_COVER_PATH);
+        return strdup (get_default_cover ());
     }
 
     if (!deadbeef->is_local_file (fname)) {
-        return strdup (DEFAULT_COVER_PATH);
+        return strdup (get_default_cover ());
     }
 
     make_cache_path (path, sizeof (path), album, artist);
@@ -586,7 +590,7 @@ get_album_art (const char *fname, const char *artist, const char *album, artwork
             trace ("reloading cached file %s\n", path);
             unlink (path);
             queue_add (fname, artist, album, callback, user_data);
-            return strdup (DEFAULT_COVER_PATH);
+            return strdup (get_default_cover ());
         }
 
         trace ("found %s in cache\n", path);
@@ -594,7 +598,7 @@ get_album_art (const char *fname, const char *artist, const char *album, artwork
     }
 
     queue_add (fname, artist, album, callback, user_data);
-    return strdup (DEFAULT_COVER_PATH);
+    return strdup (get_default_cover ());
 }
 
 DB_plugin_t *
@@ -664,6 +668,13 @@ artwork_on_configchanged (DB_event_t *ev, uintptr_t data) {
 static int
 artwork_plugin_start (void)
 {
+    const char *def_art = deadbeef->conf_get_str ("gtkui.nocover_pixmap", NULL);
+    if (!def_art) {
+        snprintf (default_cover, sizeof (default_cover), "%s/noartwork.jpg", deadbeef->get_pixmap_dir ());
+    }
+    else {
+        strcpy (default_cover, def_art);
+    }
     terminate = 0;
 
     artwork_enable_embedded = deadbeef->conf_get_int ("artwork.enable_embedded", 1);
@@ -720,10 +731,13 @@ static const char settings_dlg[] =
     "property \"Fetch from last.fm\" checkbox artwork.enable_lastfm 0;\n"
     "property \"Fetch from albumart.org\" checkbox artwork.enable_albumartorg 0;\n"
 ;
+
 // define plugin interface
 static DB_artwork_plugin_t plugin = {
     .plugin.plugin.api_vmajor = DB_API_VERSION_MAJOR,
     .plugin.plugin.api_vminor = DB_API_VERSION_MINOR,
+    .plugin.plugin.version_major = 1,
+    .plugin.plugin.version_minor = 0,
     .plugin.plugin.type = DB_PLUGIN_MISC,
     .plugin.plugin.id = "cover_loader",
     .plugin.plugin.name = "Album Artwork",
@@ -736,4 +750,5 @@ static DB_artwork_plugin_t plugin = {
     .plugin.plugin.configdialog = settings_dlg,
     .get_album_art = get_album_art,
     .reset = artwork_reset,
+    .get_default_cover = get_default_cover,
 };

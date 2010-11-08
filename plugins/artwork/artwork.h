@@ -14,6 +14,7 @@ typedef struct {
     // this has to be called to clear queue on exit, before caller terminates
     // `fast=1' means "don't wait, just flush queue"
     void (*reset) (int fast);
+    const char *(*get_default_cover) (void);
 } DB_artwork_plugin_t;
 
 #endif /*__ARTWORK_H*/

@@ -31,6 +31,18 @@
 //#define trace(...) { fprintf (stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
+int _Unwind_Resume_or_Rethrow;
+int _Unwind_RaiseException;
+int _Unwind_GetLanguageSpecificData;
+int _Unwind_Resume;
+int _Unwind_DeleteException;
+int _Unwind_GetTextRelBase;
+int _Unwind_SetIP;
+int _Unwind_GetDataRelBase;
+int _Unwind_GetRegionStart;
+int _Unwind_SetGR;
+int _Unwind_GetIPInfo;
+
 extern "C" {
 
 extern DB_decoder_t adplug_plugin;

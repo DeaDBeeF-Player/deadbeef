@@ -223,7 +223,7 @@ update_songinfo (gpointer ctx) {
 void
 set_tray_tooltip (const char *text) {
     if (trayicon) {
-#if (GTK_MINOR_VERSION < 16)
+#if !GTK_CHECK_VERSION(2,16,0) || defined(ULTRA_COMPATIBLE)
         gtk_status_icon_set_tooltip (trayicon, text);
 #else
         gtk_status_icon_set_tooltip_text (trayicon, text);
@@ -292,7 +292,7 @@ mainwin_toggle_visible (void) {
     }
 }
 
-#if GTK_MINOR_VERSION<=14
+#if !GTK_CHECK_VERSION(2,14,0) || defined(ULTRA_COMPATIBLE)
 
 gboolean
 on_trayicon_activate (GtkWidget       *widget,
@@ -583,12 +583,19 @@ gtkui_update_status_icon (gpointer unused) {
         icon_name = icon_is_builtin ? "deadbeef" : icon_name;
     }
 
-    trayicon = gtk_status_icon_new_from_icon_name(icon_name);
+    if (!gtk_icon_theme_has_icon(theme, icon_name)) {
+        char iconpath[1024];
+        snprintf (iconpath, sizeof (iconpath), "%s/deadbeef.png", deadbeef->get_prefix ());
+        trayicon = gtk_status_icon_new_from_file(iconpath);
+    }
+    else {
+        trayicon = gtk_status_icon_new_from_icon_name(icon_name);
+    }
     if (hide_tray_icon) {
         g_object_set (trayicon, "visible", FALSE, NULL);
     }
 
-#if GTK_MINOR_VERSION <= 14
+#if !GTK_CHECK_VERSION(2,14,0) || defined(ULTRA_COMPATIBLE)
     g_signal_connect ((gpointer)trayicon, "activate", G_CALLBACK (on_trayicon_activate), NULL);
 #else
     g_signal_connect ((gpointer)trayicon, "scroll_event", G_CALLBACK (on_trayicon_scroll_event), NULL);
@@ -778,22 +785,23 @@ on_add_location_activate               (GtkMenuItem     *menuitem,
 static void
 songchanged (DdbListview *ps, DB_playItem_t *from, DB_playItem_t *to) {
     int plt = deadbeef->plt_get_curr ();
-#if 0 // this breaks redraw when playqueue switches to another playlist
-    int str_plt = deadbeef->streamer_get_current_playlist ();
-    if (plt != str_plt) {
-        // have nothing to do here -- active playlist is not the one with playing song
-        return;
-    }
-#endif
     int to_idx = -1;
     if (!ddb_listview_is_scrolling (ps) && to) {
-        to_idx = deadbeef->pl_get_idx_of (to);
-        if (to_idx != -1) {
-            if (deadbeef->conf_get_int ("playlist.scroll.followplayback", 0)) {
-                ddb_listview_scroll_to (ps, to_idx);
+        int cursor_follows_playback = deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 0);
+        int scroll_follows_playback = deadbeef->conf_get_int ("playlist.scroll.followplayback", 0);
+        int plt = deadbeef->streamer_get_current_playlist ();
+        if (plt != -1) {
+            if (cursor_follows_playback && plt != deadbeef->plt_get_curr ()) {
+                deadbeef->plt_set_curr (plt);
             }
-            if (deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 0)) {
-                ddb_listview_set_cursor_noscroll (ps, to_idx);
+            to_idx = deadbeef->pl_get_idx_of (to);
+            if (to_idx != -1) {
+                if (cursor_follows_playback) {
+                    ddb_listview_set_cursor_noscroll (ps, to_idx);
+                }
+                if (scroll_follows_playback && plt == deadbeef->plt_get_curr ()) {
+                    ddb_listview_scroll_to (ps, to_idx);
+                }
             }
         }
     }
@@ -899,7 +907,8 @@ void
 gtkui_thread (void *ctx) {
     // let's start some gtk
     g_thread_init (NULL);
-    add_pixmap_directory (PREFIX "/share/deadbeef/pixmaps");
+//    add_pixmap_directory (PREFIX "/share/deadbeef/pixmaps");
+    add_pixmap_directory (deadbeef->get_pixmap_dir ());
     gdk_threads_init ();
     gdk_threads_enter ();
 
@@ -917,7 +926,13 @@ gtkui_thread (void *ctx) {
     mainwin = create_mainwin ();
     gtkpl_init ();
 
+#if PORTABLE
+    char iconpath[1024];
+    snprintf (iconpath, sizeof (iconpath), "%s/deadbeef.png", deadbeef->get_prefix ());
+    gtk_window_set_icon_from_file (GTK_WINDOW (mainwin), iconpath, NULL);
+#else
     gtk_window_set_icon_name (GTK_WINDOW (mainwin), "deadbeef");
+#endif
 
     {
         int x = deadbeef->conf_get_int ("mainwin.geometry.x", 40);
@@ -1070,9 +1085,16 @@ void
 gtkui_focus_on_playing_track (void) {
     DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
     if (it) {
+        int plt = deadbeef->streamer_get_current_playlist ();
+        if (plt != deadbeef->plt_get_curr ()) {
+            deadbeef->plt_set_curr (plt);
+        }
         int idx = deadbeef->pl_get_idx_of (it);
-        ddb_listview_scroll_to (DDB_LISTVIEW (lookup_widget (mainwin, "playlist")), idx);
-        ddb_listview_set_cursor (DDB_LISTVIEW (lookup_widget (mainwin, "playlist")), idx);
+        if (idx != -1) {
+            DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
+            ddb_listview_scroll_to (pl, idx);
+            ddb_listview_set_cursor (pl, idx);
+        }
         deadbeef->pl_item_unref (it);
     }
 }
@@ -1085,6 +1107,8 @@ gtkui_playlist_set_curr (int playlist) {
 
 static int
 gtkui_start (void) {
+    fprintf (stderr, "gtkui plugin compiled for gtk version: %d.%d.%d\n", GTK_MAJOR_VERSION, GTK_MINOR_VERSION, GTK_MICRO_VERSION);
+
     // gtk must be running in separate thread
     gtk_initialized = 0;
     gtk_tid = deadbeef->thread_start (gtkui_thread, NULL);
@@ -1199,8 +1223,8 @@ static const char settings_dlg[] =
 // define plugin interface
 static DB_gui_t plugin = {
     DB_PLUGIN_SET_API_VERSION
-    .plugin.version_major = 0,
-    .plugin.version_minor = 1,
+    .plugin.version_major = 1,
+    .plugin.version_minor = 0,
     .plugin.nostop = 1,
     .plugin.type = DB_PLUGIN_MISC,
     .plugin.name = "Standard GTK2 user interface",

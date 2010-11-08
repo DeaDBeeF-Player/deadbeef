@@ -1,0 +1,5 @@
+version 1.2
+	Added AMR support via libopencore
+
+version 1.1
+    Switched to ffmpeg commit 25472

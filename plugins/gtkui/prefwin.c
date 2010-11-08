@@ -521,7 +521,7 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "hide_tray_icon")), deadbeef->conf_get_int ("gtkui.hide_tray_icon", 0));
 
     // mmb_delete_playlist
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "mmb_delete_playlist")), deadbeef->conf_get_int ("gtkui.mmb_delete_playlist", 0));
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "mmb_delete_playlist")), deadbeef->conf_get_int ("gtkui.mmb_delete_playlist", 1));
 
     // embolden current track
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "embolden_current")), deadbeef->conf_get_int ("gtkui.embolden_current_track", 0));

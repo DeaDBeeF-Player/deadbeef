@@ -391,6 +391,11 @@ http_content_header_handler (void *ptr, size_t size, size_t nmemb, void *stream)
     uint8_t key[256];
     uint8_t value[256];
     int refresh_playlist = 0;
+
+    if (fp->length == 0) {
+        fp->length = -1;
+    }
+
     while (p < end) {
         if (p <= end - 4) {
             if (!memcmp (p, "\r\n\r\n", 4)) {
@@ -482,7 +487,7 @@ http_thread_func (void *ctx) {
 
     int status;
 
-    trace ("vfs_curl: started loading data\n");
+    trace ("vfs_curl: started loading data %s\n", fp->url);
     for (;;) {
         struct curl_slist *headers = NULL;
         curl_easy_reset (curl);
@@ -828,6 +833,7 @@ http_getlength (DB_FILE *stream) {
     assert (stream);
     HTTP_FILE *fp = (HTTP_FILE *)stream;
     if (fp->status == STATUS_ABORTED) {
+        trace ("length: -1\n");
         return -1;
     }
     if (!fp->tid) {
@@ -836,7 +842,7 @@ http_getlength (DB_FILE *stream) {
     while (fp->status == STATUS_INITIAL) {
         usleep (3000);
     }
-    //trace ("length: %d\n", fp->length);
+    trace ("length: %d\n", fp->length);
     return fp->length;
 }
 
@@ -890,8 +896,8 @@ static const char *scheme_names[] = { "http://", "ftp://", NULL };
 // standard stdio vfs
 static DB_vfs_t plugin = {
     DB_PLUGIN_SET_API_VERSION
-    .plugin.version_major = 0,
-    .plugin.version_minor = 1,
+    .plugin.version_major = 1,
+    .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_VFS,
     .plugin.id = "vfs_curl",
     .plugin.name = "cURL vfs",

@@ -64,7 +64,7 @@
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
-#define SKIP_BLANK_CUE_TRACKS 1
+#define SKIP_BLANK_CUE_TRACKS 0
 
 #define min(x,y) ((x)<(y)?(x):(y))
 
@@ -328,7 +328,7 @@ plt_add (int before, const char *title) {
     plt_gen_conf ();
     if (!plt_loading) {
         pl_save_n (before);
-        deadbeef->conf_save ();
+        conf_save ();
         plug_trigger_event (DB_EV_PLAYLISTSWITCH, 0);
     }
     return playlists_count-1;
@@ -337,6 +337,7 @@ plt_add (int before, const char *title) {
 // NOTE: caller must ensure that configuration is saved after that call
 void
 plt_remove (int plt) {
+    trace ("plt_remove %d\n", plt);
     int i;
     assert (plt >= 0 && plt < playlists_count);
     PLT_LOCK;
@@ -377,6 +378,8 @@ plt_remove (int plt) {
         playlist->title = strdup (_("Default"));
         PLT_UNLOCK;
         plt_gen_conf ();
+        conf_save ();
+        pl_save_n (0);
         plug_trigger_event (DB_EV_PLAYLISTSWITCH, 0);
         return;
     }
@@ -404,6 +407,7 @@ plt_remove (int plt) {
     PLT_UNLOCK;
 
     plt_gen_conf ();
+    conf_save ();
     if (!plt_loading) {
         plug_trigger_event (DB_EV_PLAYLISTSWITCH, 0);
     }
@@ -429,13 +433,6 @@ plt_set_curr (int plt) {
     for (i = 0; p && p->next && i < plt; i++) {
         p = p->next;
     }
-#if 0
-    if (i != plt) {
-        PLT_UNLOCK;
-        trace ("plt_set_curr %d failed\n", plt);
-        return;
-    }
-#endif
     if (p != playlist) {
         playlist = p;
         if (!plt_loading) {
@@ -518,6 +515,7 @@ plt_set_title (int plt, const char *title) {
     }
     PLT_UNLOCK;
     plt_gen_conf ();
+    conf_save ();
     if (!plt_loading) {
         plug_trigger_event (DB_EV_PLAYLISTSWITCH, 0);
     }
@@ -681,7 +679,7 @@ plt_move (int from, int to) {
 
     PLT_UNLOCK;
     plt_gen_conf ();
-    deadbeef->conf_save ();
+    conf_save ();
 }
 
 void
@@ -748,6 +746,9 @@ pl_get_value_from_cue (const char *p, int sz, char *out) {
     while (*p >= ' ' && sz > 1) {
         sz--;
         *out++ = *p++;
+    }
+    while (out > p && (*(out-1) == 0x20 || *(out-1) == 0x8)) {
+        out--;
     }
     *out = 0;
 }
@@ -1967,12 +1968,19 @@ pl_save (const char *fname) {
         int16_t nm = 0;
         DB_metaInfo_t *m;
         for (m = it->meta; m; m = m->next) {
+            if (m->key[0] == '_') {
+                continue; // skip reserved names
+            }
             nm++;
         }
         if (fwrite (&nm, 1, 2, fp) != 2) {
             goto save_fail;
         }
         for (m = it->meta; m; m = m->next) {
+            if (m->key[0] == '_') {
+                continue; // skip reserved names
+            }
+
             l = strlen (m->key);
             if (fwrite (&l, 1, 2, fp) != 2) {
                 goto save_fail;
@@ -2022,7 +2030,12 @@ pl_save_n (int n) {
         PLT_UNLOCK;
         return -1;
     }
+
+    playlist_t *orig = playlist;
+    int i;
+    for (i = 0, playlist = playlists_head; playlist && i < n; i++, playlist = playlist->next);
     err = pl_save (path);
+    playlist = orig;
     plt_loading = 0;
     PLT_UNLOCK;
     return err;
@@ -2409,12 +2422,58 @@ pl_get_item_duration (playItem_t *it) {
 int
 pl_format_item_queue (playItem_t *it, char *s, int size) {
     *s = 0;
+    int initsize = size;
+    const char *val = pl_find_meta (it, "_playing");
+    while (val && *val) {
+        while (*val && *val != '=') {
+            val++;
+        }
+        if (*val == '=') {
+            // found value
+            val++;
+            if (!(*val)) {
+                break;
+            }
+            const char *e = NULL;
+            if (*val == '"') {
+                val++;
+                e = val;
+                while (*e && *e != '"') {
+                    e++;
+                }
+            }
+            else {
+                e = val;
+                while (*e && *e != ' ') {
+                    e++;
+                }
+            }
+            int n = e - val;
+            if (n > size-1) {
+                n = size-1;
+            }
+            strncpy (s, val, n);
+            s += n;
+            *s++ = ' ';
+            *s = 0;
+            size -= n+1;
+            val = e;
+            if (*val) {
+                val++;
+            }
+            while (*val && *val == ' ') {
+                val++;
+            }
+        }
+    }
+
     if (!playqueue_count) {
         return 0;
     }
     LOCK;
+
+    int qinitsize = size;
     int init = 1;
-    int initsize = size;
     int len;
     for (int i = 0; i < playqueue_count; i++) {
         if (size <= 0) {
@@ -2435,7 +2494,7 @@ pl_format_item_queue (playItem_t *it, char *s, int size) {
             size -= len;
         }
     }
-    if (size != initsize && size > 0) {
+    if (size != qinitsize && size > 0) {
         len = snprintf (s, size, ")");
         s += len;
         size -= len;

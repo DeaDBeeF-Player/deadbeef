@@ -1034,11 +1034,7 @@ create_addprogress (void)
   GtkWidget *progresstitle;
   GtkWidget *hbox7;
   GtkWidget *label22;
-  GtkWidget *button1;
-  GtkWidget *alignment10;
-  GtkWidget *hbox51;
-  GtkWidget *image389;
-  GtkWidget *label87;
+  GtkWidget *button3;
 
   addprogress = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_container_set_border_width (GTK_CONTAINER (addprogress), 12);
@@ -1068,32 +1064,14 @@ create_addprogress (void)
   gtk_widget_show (label22);
   gtk_box_pack_start (GTK_BOX (hbox7), label22, TRUE, FALSE, 0);
 
-  button1 = gtk_button_new ();
-  gtk_widget_show (button1);
-  gtk_box_pack_start (GTK_BOX (hbox7), button1, FALSE, FALSE, 0);
-  gtk_widget_set_size_request (button1, 83, -1);
-  GTK_WIDGET_UNSET_FLAGS (button1, GTK_CAN_FOCUS);
-
-  alignment10 = gtk_alignment_new (0.5, 0.5, 0, 0);
-  gtk_widget_show (alignment10);
-  gtk_container_add (GTK_CONTAINER (button1), alignment10);
-
-  hbox51 = gtk_hbox_new (FALSE, 2);
-  gtk_widget_show (hbox51);
-  gtk_container_add (GTK_CONTAINER (alignment10), hbox51);
-
-  image389 = gtk_image_new_from_stock ("gtk-stop", GTK_ICON_SIZE_BUTTON);
-  gtk_widget_show (image389);
-  gtk_box_pack_start (GTK_BOX (hbox51), image389, FALSE, FALSE, 0);
-
-  label87 = gtk_label_new_with_mnemonic (_("_Abort"));
-  gtk_widget_show (label87);
-  gtk_box_pack_start (GTK_BOX (hbox51), label87, FALSE, FALSE, 0);
+  button3 = gtk_button_new_from_stock ("gtk-cancel");
+  gtk_widget_show (button3);
+  gtk_box_pack_start (GTK_BOX (hbox7), button3, FALSE, FALSE, 0);
 
   g_signal_connect ((gpointer) addprogress, "delete_event",
                     G_CALLBACK (on_addprogress_delete_event),
                     NULL);
-  g_signal_connect ((gpointer) button1, "clicked",
+  g_signal_connect ((gpointer) button3, "clicked",
                     G_CALLBACK (on_progress_abort),
                     NULL);
 
@@ -1103,11 +1081,7 @@ create_addprogress (void)
   GLADE_HOOKUP_OBJECT (addprogress, progresstitle, "progresstitle");
   GLADE_HOOKUP_OBJECT (addprogress, hbox7, "hbox7");
   GLADE_HOOKUP_OBJECT (addprogress, label22, "label22");
-  GLADE_HOOKUP_OBJECT (addprogress, button1, "button1");
-  GLADE_HOOKUP_OBJECT (addprogress, alignment10, "alignment10");
-  GLADE_HOOKUP_OBJECT (addprogress, hbox51, "hbox51");
-  GLADE_HOOKUP_OBJECT (addprogress, image389, "image389");
-  GLADE_HOOKUP_OBJECT (addprogress, label87, "label87");
+  GLADE_HOOKUP_OBJECT (addprogress, button3, "button3");
 
   return addprogress;
 }
@@ -1908,6 +1882,7 @@ create_prefwin (void)
   gtk_widget_show (notebook4);
   gtk_container_add (GTK_CONTAINER (notebook), notebook4);
   gtk_container_set_border_width (GTK_CONTAINER (notebook4), 12);
+  gtk_notebook_set_scrollable (GTK_NOTEBOOK (notebook4), TRUE);
 
   vbox21 = gtk_vbox_new (FALSE, 8);
   gtk_widget_show (vbox21);

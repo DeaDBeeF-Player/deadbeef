@@ -113,6 +113,14 @@ plug_volume_set_amp (float amp);
 
 const char *
 plug_get_config_dir (void);
+const char *
+plug_get_prefix (void);
+const char *
+plug_get_doc_dir (void);
+const char *
+plug_get_plugin_dir (void);
+const char *
+plug_get_pixmap_dir (void);
 
 int
 plug_activate (DB_plugin_t *plug, int activate);

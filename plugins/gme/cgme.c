@@ -21,6 +21,18 @@
 #include "gme/gme.h"
 #include "../../deadbeef.h"
 
+int _Unwind_Resume_or_Rethrow;
+int _Unwind_RaiseException;
+int _Unwind_GetLanguageSpecificData;
+int _Unwind_Resume;
+int _Unwind_DeleteException;
+int _Unwind_GetTextRelBase;
+int _Unwind_SetIP;
+int _Unwind_GetDataRelBase;
+int _Unwind_GetRegionStart;
+int _Unwind_SetGR;
+int _Unwind_GetIPInfo;
+
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
@@ -241,8 +253,8 @@ static const char settings_dlg[] =
 // define plugin interface
 static DB_decoder_t plugin = {
     DB_PLUGIN_SET_API_VERSION
-    .plugin.version_major = 0,
-    .plugin.version_minor = 1,
+    .plugin.version_major = 1,
+    .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_DECODER,
     .plugin.id = "stdgme",
     .plugin.name = "Game_Music_Emu decoder",

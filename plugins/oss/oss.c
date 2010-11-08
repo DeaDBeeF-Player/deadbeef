@@ -130,6 +130,7 @@ oss_init (void) {
 static int
 oss_change_rate (int rate) {
     if (!fd) {
+        oss_rate = rate;
         return oss_rate;
     }
     if (rate == oss_rate) {
@@ -161,6 +162,7 @@ oss_free (void) {
         oss_terminate = 0;
         if (fd) {
             close (fd);
+            fd = 0;
         }
         if (mutex) {
             deadbeef->mutex_free (mutex);
@@ -295,8 +297,8 @@ oss_load (DB_functions_t *api) {
 // define plugin interface
 static DB_output_t plugin = {
     DB_PLUGIN_SET_API_VERSION
-    .plugin.version_major = 0,
-    .plugin.version_minor = 1,
+    .plugin.version_major = 1,
+    .plugin.version_minor = 0,
     .plugin.nostop = 0,
     .plugin.type = DB_PLUGIN_OUTPUT,
     .plugin.id = "oss",

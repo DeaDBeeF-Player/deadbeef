@@ -88,8 +88,13 @@ static DB_functions_t deadbeef_api = {
     .streamer_get_apx_bitrate = streamer_get_apx_bitrate,
     .streamer_get_current_fileinfo = streamer_get_current_fileinfo,
     .streamer_get_current_playlist = streamer_get_current_playlist,
-    // process control
+    // folders
     .get_config_dir = plug_get_config_dir,
+    .get_prefix = plug_get_prefix,
+    .get_doc_dir = plug_get_doc_dir,
+    .get_plugin_dir = plug_get_plugin_dir,
+    .get_pixmap_dir = plug_get_pixmap_dir,
+    // process control
     .quit = plug_quit,
     // threading
     .thread_start = thread_start,
@@ -267,6 +272,26 @@ DB_functions_t *deadbeef = &deadbeef_api;
 const char *
 plug_get_config_dir (void) {
     return dbconfdir;
+}
+
+const char *
+plug_get_prefix (void) {
+    return dbinstalldir;
+}
+
+const char *
+plug_get_doc_dir (void) {
+    return dbdocdir;
+}
+
+const char *
+plug_get_plugin_dir (void) {
+    return dbplugindir;
+}
+
+const char *
+plug_get_pixmap_dir (void) {
+    return dbpixmapdir;
 }
 
 void
@@ -568,7 +593,7 @@ plug_load_all (void) {
     const char *conf_blacklist_plugins = conf_get_str ("blacklist_plugins", "");
     trace ("plug: mutex_create\n");
     mutex = mutex_create ();
-    const char *dirname = LIBDIR "/deadbeef";
+    const char *dirname = deadbeef->get_plugin_dir ();
     struct dirent **namelist = NULL;
 
     char *xdg_local_home = getenv ("XDG_LOCAL_HOME");
@@ -616,8 +641,8 @@ plug_load_all (void) {
             int i;
             for (i = 0; i < n; i++)
             {
-                // no hidden files
-                while (namelist[i]->d_name[0] != '.')
+                // skip hidden files and fallback plugins
+                while (namelist[i]->d_name[0] != '.' && !strstr (namelist[i]->d_name, ".fallback."))
                 {
                     int l = strlen (namelist[i]->d_name);
                     if (l < 3) {
@@ -656,7 +681,16 @@ plug_load_all (void) {
                     void *handle = dlopen (fullname, RTLD_NOW);
                     if (!handle) {
                         trace ("dlopen error: %s\n", dlerror ());
-                        break;
+                        strcpy (fullname + strlen(fullname) - 3, ".fallback.so");
+                        trace ("trying %s...\n", fullname);
+                        handle = dlopen (fullname, RTLD_NOW);
+                        if (!handle) {
+                            trace ("dlopen error: %s\n", dlerror ());
+                            break;
+                        }
+                        else {
+                            fprintf (stderr, "successfully started fallback plugin %s\n", fullname);
+                        }
                     }
                     d_name[l-3] = 0;
                     strcat (d_name, "_load");

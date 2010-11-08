@@ -55,6 +55,7 @@ extern "C" {
 
 // api version history:
 // 9.9 -- devel
+// 0.9 -- deadbeef-0.4.3-portable-build3
 // 0.8 -- deadbeef-0.4.2
 // 0.7 -- deabdeef-0.4.0
 // 0.6 -- deadbeef-0.3.3
@@ -65,7 +66,7 @@ extern "C" {
 // 0.1 -- deadbeef-0.2.0
 
 #define DB_API_VERSION_MAJOR 0
-#define DB_API_VERSION_MINOR 8
+#define DB_API_VERSION_MINOR 9
 
 #define DB_PLUGIN_SET_API_VERSION\
     .plugin.api_vmajor = DB_API_VERSION_MAJOR,\
@@ -317,8 +318,15 @@ typedef struct {
     int (*streamer_get_apx_bitrate) (void);
     struct DB_fileinfo_s *(*streamer_get_current_fileinfo) (void);
     int (*streamer_get_current_playlist) (void);
+    // system folders
+    // normally functions will return standard folders derived from --prefix
+    // portable version will return pathes specified in comments below
+    const char *(*get_config_dir) (void); // installdir/config | $XDG_CONFIG_HOME/.config/deadbeef
+    const char *(*get_prefix) (void); // installdir | PREFIX
+    const char *(*get_doc_dir) (void); // installdir/doc | DOCDIR
+    const char *(*get_plugin_dir) (void); // installdir/plugins | LIBDIR/deadbeef
+    const char *(*get_pixmap_dir) (void); // installdir/pixmaps | PREFIX "/share/deadbeef/pixmaps"
     // process control
-    const char *(*get_config_dir) (void);
     void (*quit) (void);
     // threading
     intptr_t (*thread_start) (void (*fn)(void *ctx), void *ctx);
@@ -419,12 +427,6 @@ typedef struct {
     int (*pl_format_title_escaped) (DB_playItem_t *it, int idx, char *s, int size, int id, const char *fmt);
     void (*pl_format_time) (float t, char *dur, int size);
     void (*pl_format_item_display_name) (DB_playItem_t *it, char *str, int len);
-//    void (*pl_set_next) (DB_playItem_t *it, DB_playItem_t *next, int iter);
-//    void (*pl_set_prev) (DB_playItem_t *it, DB_playItem_t *prev, int iter);
-//    void (*pl_set_head) (DB_playItem_t *it, int iter);
-//    void (*pl_set_tail) (DB_playItem_t *it, int iter);
-//    DB_playItem_t* (*pl_get_head) (void);
-//    DB_playItem_t* (*pl_get_tail) (void);
     void (*pl_move_items) (int iter, int plt_from, DB_playItem_t *drop_before, uint32_t *indexes, int count);
     void (*pl_copy_items) (int iter, int plt_from, DB_playItem_t *before, uint32_t *indices, int cnt);
     void (*pl_search_reset) (void);
