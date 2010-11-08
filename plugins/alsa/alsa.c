@@ -42,7 +42,6 @@ DB_functions_t *deadbeef;
 static snd_pcm_t *audio;
 static int alsa_terminate;
 static int requested_rate = -1;
-static int alsa_rate = 44100;
 static int state; // one of output_state_t
 static uintptr_t mutex;
 static intptr_t alsa_tid;
@@ -106,12 +105,6 @@ static int
 palsa_unpause (void);
 
 static int
-palsa_get_rate (void);
-
-static int
-palsa_get_bps (void);
-
-static int
 palsa_get_channels (void);
 
 static int
@@ -123,7 +116,6 @@ palsa_enum_soundcards (void (*callback)(const char *name, const char *desc, void
 static int
 palsa_set_hw_params (int samplerate) {
     snd_pcm_hw_params_t *hw_params = NULL;
-//    int alsa_resample = conf_get_int ("alsa.resample", 0);
     int err = 0;
 
     if ((err = snd_pcm_hw_params_malloc (&hw_params)) < 0) {
@@ -173,8 +165,8 @@ palsa_set_hw_params (int samplerate) {
                 snd_strerror (err));
         goto error;
     }
-    alsa_rate = val;
-    trace ("chosen samplerate: %d Hz\n", alsa_rate);
+    plugin.fmt.samplerate = val;
+    trace ("chosen samplerate: %d Hz\n", val);
 
     if ((err = snd_pcm_hw_params_set_channels (audio, hw_params, 2)) < 0) {
         fprintf (stderr, "cannot set channel count (%s)\n",
@@ -202,6 +194,13 @@ palsa_set_hw_params (int samplerate) {
                 snd_strerror (err));
         goto error;
     }
+
+    plugin.fmt.bps = 16;
+    plugin.fmt.channels = 2;
+    plugin.fmt.is_float = 0;
+    plugin.fmt.is_multichannel = 0;
+    plugin.fmt.channelmask = 0;
+
 error:
     if (hw_params) {
         snd_pcm_hw_params_free (hw_params);
@@ -233,10 +232,10 @@ palsa_init (void) {
     mutex = deadbeef->mutex_create ();
 
     if (requested_rate != -1) {
-        alsa_rate = requested_rate;
+        plugin.fmt.samplerate = requested_rate;
     }
 
-    if (palsa_set_hw_params (alsa_rate) < 0) {
+    if (palsa_set_hw_params (plugin.fmt.samplerate) < 0) {
         goto open_error;
     }
 
@@ -313,9 +312,9 @@ palsa_change_rate (int rate) {
     trace ("palsa_change_rate: %d\n", rate);
     requested_rate = rate;
     if (!audio) {
-        return alsa_rate;
+        return plugin.fmt.samplerate;
     }
-    if (rate == alsa_rate) {
+    if (rate == plugin.fmt.samplerate) {
         trace ("palsa_change_rate %d: ignored\n", rate);
         return rate;
     }
@@ -326,10 +325,10 @@ palsa_change_rate (int rate) {
     UNLOCK;
     if (ret < 0) {
         trace ("palsa_change_rate: impossible to set samplerate to %d\n", rate);
-        return alsa_rate;
+        return plugin.fmt.samplerate;
     }
-    trace ("chosen samplerate: %d\n", alsa_rate);
-    return alsa_rate;
+    trace ("chosen samplerate: %d\n", plugin.fmt.samplerate);
+    return plugin.fmt.samplerate;
 }
 
 int
@@ -453,33 +452,6 @@ palsa_unpause (void) {
     return 0;
 }
 
-int
-palsa_get_rate (void) {
-    if (!audio) {
-        palsa_init ();
-    }
-    return alsa_rate;
-}
-
-int
-palsa_get_bps (void) {
-    return 16;
-}
-
-int
-palsa_get_channels (void) {
-    return 2;
-}
-
-static int
-palsa_get_endianness (void) {
-#if WORDS_BIGENDIAN
-    return 1;
-#else
-    return 0;
-#endif
-}
-
 static void
 palsa_thread (void *context) {
     prctl (PR_SET_NAME, "deadbeef-alsa", 0, 0, 0, 0);
@@ -541,7 +513,7 @@ palsa_thread (void *context) {
             frames_to_deliver = snd_pcm_avail_update (audio);
         }
         UNLOCK;
-        usleep (period_size * 1000000 / alsa_rate / 2);
+        usleep (period_size * 1000000 / plugin.fmt.samplerate / 2);
     }
 }
 
@@ -688,9 +660,6 @@ static DB_output_t plugin = {
     .pause = palsa_pause,
     .unpause = palsa_unpause,
     .state = palsa_get_state,
-    .samplerate = palsa_get_rate,
-    .bitspersample = palsa_get_bps,
-    .channels = palsa_get_channels,
-    .endianness = palsa_get_endianness,
     .enum_soundcards = palsa_enum_soundcards,
+    .fmt = {.samplerate = 44100}
 };

@@ -619,20 +619,63 @@ typedef struct DB_plugin_s {
     const char *configdialog;
 } DB_plugin_t;
 
-typedef struct DB_fileinfo_s {
-    struct DB_decoder_s *plugin;
+// file format stuff
+
+// channel mask - combine following flags to tell streamer which channels are
+// present in input/output streams
+enum {
+    DDB_SPEAKER_FRONT_LEFT = 0x1,
+    DDB_SPEAKER_FRONT_RIGHT = 0x2,
+    DDB_SPEAKER_FRONT_CENTER = 0x4,
+    DDB_SPEAKER_LOW_FREQUENCY = 0x8,
+    DDB_SPEAKER_BACK_LEFT = 0x10,
+    DDB_SPEAKER_BACK_RIGHT = 0x20,
+    DDB_SPEAKER_FRONT_LEFT_OF_CENTER = 0x40,
+    DDB_SPEAKER_FRONT_RIGHT_OF_CENTER = 0x80,
+    DDB_SPEAKER_BACK_CENTER = 0x100,
+    DDB_SPEAKER_SIDE_LEFT = 0x200,
+    DDB_SPEAKER_SIDE_RIGHT = 0x400,
+    DDB_SPEAKER_TOP_CENTER = 0x800,
+    DDB_SPEAKER_TOP_FRONT_LEFT = 0x1000,
+    DDB_SPEAKER_TOP_FRONT_CENTER = 0x2000,
+    DDB_SPEAKER_TOP_FRONT_RIGHT = 0x4000,
+    DDB_SPEAKER_TOP_BACK_LEFT = 0x8000,
+    DDB_SPEAKER_TOP_BACK_CENTER = 0x10000,
+    DDB_SPEAKER_TOP_BACK_RIGHT = 0x20000
+};
+
+typedef struct {
     int bps;
+    int is_float; // bps must be 32 if this is true
+    int is_multichannel; // usually 0, in which case channels=1 is mono, and channels=2 is stereo
     int channels;
     int samplerate;
+    uint32_t channelmask;
+} ddb_waveformat_t;
+
+typedef struct DB_fileinfo_s {
+    struct DB_decoder_s *plugin;
+
+    // these parameters should be set in decoder->open
+    ddb_waveformat_t fmt;
+
+    // readpos should be updated to current decoder time (in seconds) 
     float readpos;
+
+    // this is the (optional) file handle, that can be used by streamer to
+    // request interruption of current read operation
     DB_FILE *file;
 } DB_fileinfo_t;
+
+enum {
+    DDB_DECODER_HINT_16BIT = 0x1, // that flag means streamer prefers 16 bit streams for performance reasons
+};
 
 // decoder plugin
 typedef struct DB_decoder_s {
     DB_plugin_t plugin;
 
-    DB_fileinfo_t *(*open) (void);
+    DB_fileinfo_t *(*open) (uint32_t hints);
 
     // init is called to prepare song to be started
     int (*init) (DB_fileinfo_t *info, DB_playItem_t *it);
@@ -691,15 +734,11 @@ typedef struct DB_output_s {
     int (*unpause) (void);
     // one of output_state_t enum values
     int (*state) (void);
-    // following functions must return output sampling rate, bits per sample and number
-    // of channels
-    int (*samplerate) (void);
-    int (*bitspersample) (void);
-    int (*channels) (void);
-    // must return 0 for little endian output, or 1 for big endian
-    int (*endianness) (void);
     // soundcard enumeration (can be NULL)
     void (*enum_soundcards) (void (*callback)(const char *name, const char *desc, void*), void *userdata);
+
+    // parameters of current output
+    ddb_waveformat_t fmt;
 } DB_output_t;
 
 // dsp plugin

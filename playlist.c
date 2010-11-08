@@ -39,7 +39,6 @@
 #include "playlist.h"
 #include "streamer.h"
 #include "messagepump.h"
-#include "playback.h"
 #include "plugins.h"
 #include "junklib.h"
 #include "vfs.h"

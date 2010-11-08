@@ -47,7 +47,6 @@
 #include <unistd.h>
 #include "gettext.h"
 #include "playlist.h"
-#include "playback.h"
 #include "threading.h"
 #include "messagepump.h"
 #include "streamer.h"
@@ -368,6 +367,7 @@ player_mainloop (void) {
         uint32_t p1;
         uint32_t p2;
         while (messagepump_pop(&msg, &ctx, &p1, &p2) != -1) {
+            DB_output_t *output = plug_get_output ();
             switch (msg) {
             case M_REINIT_SOUND:
                 plug_reinit_sound ();
@@ -377,7 +377,7 @@ player_mainloop (void) {
                 return;
             case M_PLAYSONG:
                 if (p1) {
-                    p_stop ();
+                    output->stop ();
                     pl_playqueue_clear ();
                     streamer_set_nextsong (0, 1);
                 }
@@ -386,7 +386,7 @@ player_mainloop (void) {
                 }
                 break;
             case M_PLAYSONGNUM:
-                p_stop ();
+                output->stop ();
                 pl_playqueue_clear ();
                 streamer_set_nextsong (p1, 1);
                 break;
@@ -394,25 +394,25 @@ player_mainloop (void) {
                 streamer_set_nextsong (-2, 0);
                 break;
             case M_NEXTSONG:
-                p_stop ();
+                output->stop ();
                 streamer_move_to_nextsong (1);
                 break;
             case M_PREVSONG:
-                p_stop ();
+                output->stop ();
                 streamer_move_to_prevsong ();
                 break;
             case M_PAUSESONG:
-                if (p_get_state () == OUTPUT_STATE_PAUSED) {
-                    p_unpause ();
+                if (output->state () == OUTPUT_STATE_PAUSED) {
+                    output->unpause ();
                     plug_trigger_event_paused (0);
                 }
                 else {
-                    p_pause ();
+                    output->pause ();
                     plug_trigger_event_paused (1);
                 }
                 break;
             case M_PLAYRANDOM:
-                p_stop ();
+                output->stop ();
                 streamer_move_to_randomsong ();
                 break;
             case M_PLAYLISTREFRESH:
@@ -487,10 +487,11 @@ sigsegv_handler (int sig) {
 void
 save_resume_state (void) {
     playItem_t *trk = streamer_get_playing_track ();
+    DB_output_t *output = plug_get_output ();
     float playpos = -1;
     int playtrack = -1;
     int playlist = streamer_get_current_playlist ();
-    int paused = (p_get_state () == OUTPUT_STATE_PAUSED);
+    int paused = (output->state () == OUTPUT_STATE_PAUSED);
     if (trk && playlist >= 0) {
         playtrack = str_get_idx_of (trk);
         playpos = streamer_get_playpos ();
@@ -505,7 +506,8 @@ save_resume_state (void) {
 
 void
 restore_resume_state (void) {
-    if (conf_get_int ("resume_last_session", 0) && p_isstopped ()) {
+    DB_output_t *output = plug_get_output ();
+    if (conf_get_int ("resume_last_session", 0) && output->state () == OUTPUT_STATE_STOPPED) {
         int plt = conf_get_int ("resume.playlist", -1);
         int track = conf_get_int ("resume.track", -1);
         float pos = conf_get_float ("resume.position", -1);
@@ -795,9 +797,10 @@ main (int argc, char *argv[]) {
     server_close ();
 
     // stop streaming and playback before unloading plugins
-    p_stop ();
+    DB_output_t *output = plug_get_output ();
+    output->stop ();
     streamer_free ();
-    p_free ();
+    output->free ();
 
     // plugins might still hood references to playitems,
     // and query configuration in background

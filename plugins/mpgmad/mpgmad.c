@@ -567,7 +567,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
 
 
 static DB_fileinfo_t *
-cmp3_open (void) {
+cmp3_open (uint32_t hints) {
     DB_fileinfo_t *_info = malloc (sizeof (mpgmad_info_t));
     mpgmad_info_t *info = (mpgmad_info_t *)_info;
     memset (info, 0, sizeof (mpgmad_info_t));
@@ -651,9 +651,9 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         trace ("bad mpeg file: %f\n", it->fname);
         return -1;
     }
-    _info->bps = info->buffer.bitspersample;
-    _info->samplerate = info->buffer.samplerate;
-    _info->channels = info->buffer.channels;
+    _info->fmt.bps = info->buffer.bitspersample;
+    _info->fmt.samplerate = info->buffer.samplerate;
+    _info->fmt.channels = info->buffer.channels;
 
 	mad_stream_init(&info->stream);
 	mad_stream_options (&info->stream, MAD_OPTION_IGNORECRC);
@@ -748,12 +748,12 @@ cmp3_decode_requested_int16 (mpgmad_info_t *info) {
         *((int16_t*)info->buffer.out) = sample;
         info->buffer.readsize -= 2;
         info->buffer.out += 2;
-        if (MAD_NCHANNELS(&info->frame.header) == 2 && info->info.channels == 2) {
+        if (MAD_NCHANNELS(&info->frame.header) == 2 && info->info.fmt.channels == 2) {
             *((int16_t*)info->buffer.out) = MadFixedToSshort (info->synth.pcm.samples[1][idx]);
             info->buffer.readsize -= 2;
             info->buffer.out += 2;
         }
-        else if (MAD_NCHANNELS(&info->frame.header) == 1 && info->info.channels == 2) {
+        else if (MAD_NCHANNELS(&info->frame.header) == 1 && info->info.fmt.channels == 2) {
             *((int16_t*)info->buffer.out) = sample;
             info->buffer.readsize -= 2;
             info->buffer.out += 2;
@@ -775,12 +775,12 @@ cmp3_decode_requested_float32 (mpgmad_info_t *info) {
         *((float*)info->buffer.out) = sample;
         info->buffer.readsize -= 4;
         info->buffer.out += 4;
-        if (MAD_NCHANNELS(&info->frame.header) == 2 && info->info.channels == 2) {
+        if (MAD_NCHANNELS(&info->frame.header) == 2 && info->info.fmt.channels == 2) {
             *((float*)info->buffer.out) = MadFixedToFloat (info->synth.pcm.samples[1][idx]);
             info->buffer.readsize -= 4;
             info->buffer.out += 4;
         }
-        else if (MAD_NCHANNELS(&info->frame.header) == 1 && info->info.channels == 2) {
+        else if (MAD_NCHANNELS(&info->frame.header) == 1 && info->info.fmt.channels == 2) {
             *((float*)info->buffer.out) = sample;
             info->buffer.readsize -= 4;
             info->buffer.out += 4;
@@ -864,11 +864,11 @@ cmp3_stream_frame (mpgmad_info_t *info) {
             }
         }
 
-        info->info.samplerate = info->frame.header.samplerate;
+        info->info.fmt.samplerate = info->frame.header.samplerate;
 #if 0
         // don't switch number of channels on the fly
-        if (info->info.channels == 0) {
-            info->info.channels = MAD_NCHANNELS(&info->frame.header);
+        if (info->info.fmt.channels == 0) {
+            info->info.fmt.channels = MAD_NCHANNELS(&info->frame.header);
         }
 #endif
 

@@ -154,15 +154,15 @@ update_songinfo (gpointer ctx) {
 
         const char *mode;
         char temp[20];
-        if (c->channels <= 2) {
-            mode = c->channels == 1 ? _("Mono") : _("Stereo");
+        if (c->fmt.channels <= 2) {
+            mode = c->fmt.channels == 1 ? _("Mono") : _("Stereo");
         }
         else {
-            snprintf (temp, sizeof (temp), "%dch Multichannel", c->channels);
+            snprintf (temp, sizeof (temp), "%dch Multichannel", c->fmt.channels);
             mode = temp;
         }
-        int samplerate = c->samplerate;
-        int bitspersample = c->bps;
+        int samplerate = c->fmt.samplerate;
+        int bitspersample = c->fmt.bps;
         songpos = playpos;
         //        codec_unlock ();
 

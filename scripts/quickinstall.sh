@@ -1,4 +1,5 @@
 #!/bin/sh
+rm /usr/local/lib/deadbeef/*
 cp ./deadbeef /usr/local/bin/
 cp ./plugins/nullout/.libs/nullout.so /usr/local/lib/deadbeef/
 cp ./plugins/cdda/.libs/cdda.so /usr/local/lib/deadbeef/

@@ -29,7 +29,6 @@
 #include "playlist.h"
 #include "common.h"
 #include "streamer.h"
-#include "playback.h"
 #include "messagepump.h"
 #include "conf.h"
 #include "plugins.h"
@@ -539,6 +538,7 @@ streamer_song_removed_notify (playItem_t *it) {
 // that must be called after last sample from str_playing_song was done reading
 static int
 streamer_set_current (playItem_t *it) {
+    DB_output_t *output = plug_get_output ();
     int err = 0;
     playItem_t *from, *to;
     // need to add refs here, because streamer_start_playback can destroy items
@@ -551,7 +551,7 @@ streamer_set_current (playItem_t *it) {
         pl_item_ref (to);
     }
     trace ("\033[0;35mstreamer_set_current from %p to %p\033[37;0m\n", from, it);
-    if (!playing_track || p_isstopped ()) {
+    if (!playing_track || output->state () == OUTPUT_STATE_STOPPED) {
         trace ("buffering = on\n");
         streamer_buffering = 1;
         trace ("\033[0;35mstreamer_start_playback[1] from %p to %p\033[37;0m\n", from, it);
@@ -633,7 +633,7 @@ streamer_set_current (playItem_t *it) {
         dec = plug_get_decoder_for_id (it->decoder_id);
         if (dec) {
             trace ("\033[0;33minit decoder for %s\033[37;0m\n", it->fname);
-            fileinfo = dec->open ();
+            fileinfo = dec->open (0);
             if (fileinfo && dec->init (fileinfo, DB_PLAYITEM (it)) != 0) {
                 trace ("\033[0;31mfailed to init decoder\033[37;0m\n")
                 dec->free (fileinfo);
@@ -660,7 +660,7 @@ streamer_set_current (playItem_t *it) {
             streaming_track = it;
             pl_item_ref (streaming_track);
             mutex_unlock (decodemutex);
-            trace ("bps=%d, channels=%d, samplerate=%d\n", fileinfo->bps, fileinfo->channels, fileinfo->samplerate);
+            trace ("bps=%d, channels=%d, samplerate=%d\n", fileinfo->bps, fileinfo->fmt.channels, fileinfo->fmt.samplerate);
         }
 // FIXME: that might break streaming at boundaries between 2 different samplerates
 //        streamer_reset (0); // reset SRC
@@ -719,12 +719,13 @@ streamer_get_apx_bitrate (void) {
 
 void
 streamer_set_nextsong (int song, int pstate) {
+    DB_output_t *output = plug_get_output ();
     trace ("streamer_set_nextsong %d %d\n", song, pstate);
     streamer_lock ();
     streamer_abort_files ();
     nextsong = song;
     nextsong_pstate = pstate;
-    if (p_isstopped ()) {
+    if (output->state () == OUTPUT_STATE_STOPPED) {
         if (pstate == 1) { // means user initiated this
             streamer_playlist = plt_get_curr_ptr ();
         }
@@ -748,6 +749,7 @@ static void
 streamer_start_new_song (void) {
     trace ("nextsong=%d\n", nextsong);
     streamer_lock ();
+    DB_output_t *output = plug_get_output ();
     int sng = nextsong;
     int initsng = nextsong;
     int pstate = nextsong_pstate;
@@ -763,7 +765,7 @@ streamer_start_new_song (void) {
     playItem_t *try = str_get_for_idx (sng);
     if (!try) { // track is not in playlist
         trace ("track #%d is not in playlist; stopping playback\n", sng);
-        p_stop ();
+        output->stop ();
 
         mutex_lock (decodemutex);
         if (playing_track) {
@@ -806,39 +808,39 @@ streamer_start_new_song (void) {
     try = NULL;
     badsong = -1;
     trace ("pstate = %d\n", pstate);
-    trace ("playback state = %d\n", p_state ());
+    trace ("playback state = %d\n", output->state ());
     if (pstate == 0) {
-        p_stop ();
+        output->stop ();
     }
     else if (pstate == 1 || pstate == 3) {
         last_bitrate = -1;
         avg_bitrate = -1;
-        if (p_state () != OUTPUT_STATE_PLAYING) {
+        if (output->state () != OUTPUT_STATE_PLAYING) {
             streamer_reset (1);
             if (fileinfo) {
-                plug_get_output ()->change_rate (fileinfo->samplerate);
+                plug_get_output ()->change_rate (fileinfo->fmt.samplerate);
             }
-            if (p_play () < 0) {
+            if (output->play () < 0) {
                 fprintf (stderr, "streamer: failed to start playback; output plugin doesn't work\n");
                 streamer_set_nextsong (-2, 0);
             }
         }
     }
     else if (pstate == 2) {
-        if (p_get_state () == OUTPUT_STATE_STOPPED) {
+        if (output->state () == OUTPUT_STATE_STOPPED) {
             last_bitrate = -1;
             avg_bitrate = -1;
             streamer_reset (1);
             if (fileinfo) {
-                plug_get_output ()->change_rate (fileinfo->samplerate);
+                plug_get_output ()->change_rate (fileinfo->fmt.samplerate);
             }
-            if (p_play () < 0) {
+            if (output->play () < 0) {
                 fprintf (stderr, "streamer: failed to start playback; output plugin doesn't work\n");
                 streamer_set_nextsong (-2, 0);
                 return;
             }
         }
-        p_pause ();
+        output->pause ();
     }
 }
 
@@ -851,6 +853,7 @@ streamer_thread (void *ctx) {
 
     while (!streaming_terminate) {
         struct timeval tm1;
+        DB_output_t *output = plug_get_output ();
         gettimeofday (&tm1, NULL);
         if (nextsong >= 0) { // start streaming next song
             trace ("\033[0;34mnextsong=%d\033[37;0m\n", nextsong);
@@ -866,7 +869,7 @@ streamer_thread (void *ctx) {
             bytes_until_next_song = -1;
             trace ("nextsong=-2\n");
             nextsong = -1;
-            p_stop ();
+            output->stop ();
             if (playing_track) {
                 trace ("sending songfinished to plugins [1]\n");
                 plug_trigger_event (DB_EV_SONGFINISHED, 0);
@@ -886,7 +889,7 @@ streamer_thread (void *ctx) {
             streamer_unlock ();
             continue;
         }
-        else if (p_isstopped ()) {
+        else if (output->state () == OUTPUT_STATE_STOPPED) {
             usleep (50000);
             continue;
         }
@@ -896,7 +899,7 @@ streamer_thread (void *ctx) {
             if (!streaming_track) {
                 // means last song was deleted during final drain
                 nextsong = -1;
-                p_stop ();
+                output->stop ();
                 streamer_set_current (NULL);
                 streamer_unlock ();
                 continue;
@@ -924,9 +927,9 @@ streamer_thread (void *ctx) {
             if (conf_get_int ("playback.dynsamplerate", 0)) {
 
                 // don't switch if unchanged
-                int prevtrack_samplerate = p_get_rate ();
-                if (prevtrack_samplerate != fileinfo->samplerate) {
-                    int newrate = plug_get_output ()->change_rate (fileinfo->samplerate);
+                int prevtrack_samplerate = output->fmt.samplerate;
+                if (prevtrack_samplerate != fileinfo->fmt.samplerate) {
+                    int newrate = output->change_rate (fileinfo->fmt.samplerate);
                     if (newrate != prevtrack_samplerate) {
                         // restart streaming of current track
                         trace ("streamer: output samplerate changed from %d to %d; restarting track\n", prevtrack_samplerate, newrate);
@@ -936,7 +939,7 @@ streamer_thread (void *ctx) {
                         DB_decoder_t *dec = NULL;
                         dec = plug_get_decoder_for_id (streaming_track->decoder_id);
                         if (dec) {
-                            fileinfo = dec->open ();
+                            fileinfo = dec->open (0);
                             if (fileinfo && dec->init (fileinfo, DB_PLAYITEM (streaming_track)) < 0) {
                                 dec->free (fileinfo);
                                 fileinfo = NULL;
@@ -950,17 +953,17 @@ streamer_thread (void *ctx) {
                         streamer_buffering = 1;
                         streamer_reset (1);
                         if (fileinfo) {
-                            prevtrack_samplerate = fileinfo->samplerate;
+                            prevtrack_samplerate = fileinfo->fmt.samplerate;
                         }
                     }
                 }
 
                 // output plugin may stop playback before switching samplerate
-                if (p_state () != OUTPUT_STATE_PLAYING) {
+                if (output->state () != OUTPUT_STATE_PLAYING) {
                     if (fileinfo) {
-                        plug_get_output ()->change_rate (fileinfo->samplerate);
+                        plug_get_output ()->change_rate (fileinfo->fmt.samplerate);
                     }
-                    if (p_play () < 0) {
+                    if (output->play () < 0) {
                         fprintf (stderr, "streamer: failed to start playback after samplerate change; output plugin doesn't work\n");
                         streamer_set_nextsong (-2, 0);
                         streamer_unlock ();
@@ -1005,7 +1008,7 @@ streamer_thread (void *ctx) {
                 DB_decoder_t *dec = NULL;
                 dec = plug_get_decoder_for_id (streaming_track->decoder_id);
                 if (dec) {
-                    fileinfo = dec->open ();
+                    fileinfo = dec->open (0);
                     if (fileinfo && dec->init (fileinfo, DB_PLAYITEM (streaming_track)) != 0) {
                         dec->free (fileinfo);
                         fileinfo = NULL;
@@ -1048,7 +1051,7 @@ streamer_thread (void *ctx) {
         }
 
         // read ahead at 2x speed of output samplerate, in 4k blocks
-        int rate = p_get_rate ();
+        int rate = output->fmt.samplerate;
         if (!rate) {
             trace ("str: got 0 output samplerate\n");
             usleep(20000);
@@ -1187,7 +1190,7 @@ streamer_reset (int full) { // must be called when current song changes by exter
     src_reset (src);
     // reset dsp
     DB_dsp_t **dsp = deadbeef->plug_get_dsp_list ();
-    //int srate = p_get_rate ();
+    //int srate = output->fmt.samplerate;
     for (int i = 0; dsp[i]; i++) {
         if (dsp[i]->enabled ()) {
             dsp[i]->reset ();
@@ -1359,7 +1362,7 @@ float32_to_int16 (float *in, int16_t *out, int nsamples) {
 
 static int
 streamer_read_data_for_src (int16_t *buffer, int frames) {
-    int channels = fileinfo->channels;
+    int channels = fileinfo->fmt.channels;
     if (channels > 2) {
         channels = 2;
     }
@@ -1379,7 +1382,7 @@ streamer_read_data_for_src (int16_t *buffer, int frames) {
 
 static int
 streamer_read_data_for_src_float (float *buffer, int frames) {
-    int channels = fileinfo->channels;
+    int channels = fileinfo->fmt.channels;
     if (channels > 2) {
         channels = 2;
     }
@@ -1410,16 +1413,17 @@ streamer_read_data_for_src_float (float *buffer, int frames) {
 
 static int
 streamer_decode_src_libsamplerate (uint8_t *bytes, int size) {
+    DB_output_t *output = plug_get_output ();
     int initsize = size;
     int16_t *out = (int16_t *)bytes;
-    int samplerate = fileinfo->samplerate;
+    int samplerate = fileinfo->fmt.samplerate;
     if (!samplerate) {
         return 0;
     }
-    float ratio = p_get_rate ()/(float)samplerate;
+    float ratio = output->fmt.samplerate/(float)samplerate;
     while (size > 0) {
         int n_output_frames = size / sizeof (int16_t) / 2;
-        int n_input_frames = n_output_frames * samplerate / p_get_rate () + 100;
+        int n_input_frames = n_output_frames * samplerate / output->fmt.samplerate + 100;
         // read data from decoder
         if (n_input_frames >= SRC_BUFFER - src_remaining ) {
             n_input_frames = SRC_BUFFER - src_remaining;
@@ -1444,7 +1448,7 @@ streamer_decode_src_libsamplerate (uint8_t *bytes, int size) {
         srcdata.input_frames = src_remaining;
         srcdata.output_frames = size/4;
         srcdata.src_ratio = ratio;
-//        trace ("SRC from %d to %d\n", samplerate, p_get_rate ());
+//        trace ("SRC from %d to %d\n", samplerate, output->fmt.samplerate);
         srcdata.end_of_input = 0;//(nread == n_input_frames) ? 0 : 1;
         //if (streamer_buffering)
         src_lock ();
@@ -1486,10 +1490,10 @@ streamer_decode_src (uint8_t *bytes, int size) {
     int16_t *out = (int16_t *)bytes;
     DB_decoder_t *decoder = streaming_track->decoder;
     int samplerate = decoder->info.samplerate;
-    float ratio = (float)samplerate / p_get_rate ();
+    float ratio = (float)samplerate / output->fmt.samplerate;
     while (size > 0) {
         int n_output_frames = size / sizeof (int16_t) / 2;
-        int n_input_frames = n_output_frames * samplerate / p_get_rate () + 100;
+        int n_input_frames = n_output_frames * samplerate / output->fmt.samplerate + 100;
         // read data from decoder
         if (n_input_frames > SRC_BUFFER - src_remaining ) {
             n_input_frames = SRC_BUFFER - src_remaining;
@@ -1526,6 +1530,7 @@ streamer_decode_src (uint8_t *bytes, int size) {
 // returns number of bytes been read
 static int
 streamer_read_async (char *bytes, int size) {
+    DB_output_t *output = plug_get_output ();
     int initsize = size;
     for (;;) {
         int bytesread = 0;
@@ -1535,13 +1540,13 @@ streamer_read_async (char *bytes, int size) {
             mutex_unlock (decodemutex);
             break;
         }
-        if (fileinfo->samplerate != -1) {
-            int nchannels = fileinfo->channels;
+        if (fileinfo->fmt.samplerate != -1) {
+            int nchannels = fileinfo->fmt.channels;
             if (nchannels > 2) {
                 nchannels = 2;
             }
-            int samplerate = fileinfo->samplerate;
-            if (fileinfo->samplerate == p_get_rate ()) {
+            int samplerate = fileinfo->fmt.samplerate;
+            if (fileinfo->fmt.samplerate == output->fmt.samplerate) {
                 // samplerate match
                 if (nchannels == 2) {
                     bytesread = fileinfo->plugin->read_int16 (fileinfo, bytes, size);
@@ -1555,11 +1560,11 @@ streamer_read_async (char *bytes, int size) {
                     bytesread *= 2;
                 }
             }
-            else if (src_is_valid_ratio (p_get_rate ()/(double)samplerate)) {
+            else if (src_is_valid_ratio (output->fmt.samplerate/(double)samplerate)) {
                 bytesread = streamer_decode_src_libsamplerate (bytes, size);
             }
             else {
-                fprintf (stderr, "error: invalid ratio! %d / %d (this indicates decoder or streamer bug)\n", p_get_rate (), samplerate);
+                fprintf (stderr, "error: invalid ratio! %d / %d (this indicates decoder or streamer bug)\n", output->fmt.samplerate, samplerate);
                 fprintf (stderr, "error: file: %s\n", streaming_track ? streaming_track->fname : "(null)");
                 // immediately start streaming next track
                 bytes_until_next_song = -1;
@@ -1569,7 +1574,7 @@ streamer_read_async (char *bytes, int size) {
         if (bytesread > 0) {
             // apply dsp
             DB_dsp_t **dsp = deadbeef->plug_get_dsp_list ();
-            int srate = p_get_rate ();
+            int srate = output->fmt.samplerate;
             for (int i = 0; dsp[i]; i++) {
                 if (dsp[i]->enabled ()) {
                     dsp[i]->process_int16 ((int16_t *)bytes, bytesread/4, 2, 16, srate);
@@ -1612,14 +1617,15 @@ streamer_read (char *bytes, int size) {
     if (!playing_track) {
         return -1;
     }
+    DB_output_t *output = plug_get_output ();
     streamer_lock ();
     int sz = min (size, streambuffer_fill);
     if (sz) {
         memcpy (bytes, streambuffer, sz);
         memmove (streambuffer, streambuffer+sz, streambuffer_fill-sz);
         streambuffer_fill -= sz;
-        playpos += (float)sz/p_get_rate ()/4.f;
-        playing_track->playtime += (float)sz/p_get_rate ()/4.f;
+        playpos += (float)sz/output->fmt.samplerate/4.f;
+        playing_track->playtime += (float)sz/output->fmt.samplerate/4.f;
         if (playlist_track) {
             playing_track->filetype = playlist_track->filetype;
         }
@@ -1721,14 +1727,15 @@ streamer_configchanged (void) {
 void
 streamer_play_current_track (void) {
     playlist_t *plt = plt_get_curr_ptr ();
-    if (p_ispaused () && playing_track) {
+    DB_output_t *output = plug_get_output ();
+    if (output->state () == OUTPUT_STATE_PAUSED && playing_track) {
         // unpause currently paused track
-        p_unpause ();
+        output->unpause ();
         plug_trigger_event_paused (0);
     }
     else if (plt->current_row[PL_MAIN] != -1) {
         // play currently selected track in current playlist
-        p_stop ();
+        output->stop ();
         // get next song in queue
         int idx = -1;
         playItem_t *next = pl_playqueue_getnext ();
@@ -1746,7 +1753,7 @@ streamer_play_current_track (void) {
     }
     else {
         // restart currently playing track
-        p_stop ();
+        output->stop ();
         streamer_set_nextsong (0, 1);
     }
 }

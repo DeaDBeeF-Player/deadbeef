@@ -23,7 +23,6 @@ deadbeef_SOURCES =\
 	streamer.c streamer.h\
 	messagepump.c messagepump.h\
 	conf.c  conf.h\
-	playback.h\
 	threading_pthread.c threading.h\
 	volume.c volume.h\
 	junklib.h junklib.c utf8.c utf8.h u8_lc_map.h\

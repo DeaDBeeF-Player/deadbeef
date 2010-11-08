@@ -38,7 +38,6 @@
 #include "playlist.h"
 #include "volume.h"
 #include "streamer.h"
-#include "playback.h"
 #include "common.h"
 #include "conf.h"
 #include "junklib.h"
@@ -931,9 +930,10 @@ plug_select_output (void) {
 
 void
 plug_reinit_sound (void) {
-    int state = p_get_state ();
+    DB_output_t *output = plug_get_output ();
+    int state = output->state ();
 
-    p_free ();
+    output->free ();
 
     DB_output_t *prev = plug_get_output ();
     if (plug_select_output () < 0) {
@@ -942,13 +942,13 @@ plug_reinit_sound (void) {
         output_plugin = prev;
     }
     streamer_reset (1);
-    if (p_init () < 0) {
+    if (output->init () < 0) {
         streamer_set_nextsong (-2, 0);
         return;
     }
 
     if (state != OUTPUT_STATE_PAUSED && state != OUTPUT_STATE_STOPPED) {
-        if (p_play () < 0) {
+        if (output->play () < 0) {
             trace ("failed to reinit sound output\n");
             streamer_set_nextsong (-2, 0);
         }
