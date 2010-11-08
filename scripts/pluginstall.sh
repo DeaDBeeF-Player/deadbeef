@@ -1,4 +1,4 @@
-./portable_postbuild.sh
+./scripts/portable_postbuild.sh
 
 #sudo cp ./deadbeef /usr/local/bin/
 #sudo cp ./plugins/nullout/.libs/nullout.so /usr/local/lib/deadbeef/
