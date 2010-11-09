@@ -36,8 +36,8 @@
 #include "volume.h"
 #include "vfs.h"
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 // #define WRITE_DUMP 1
 
@@ -660,7 +660,7 @@ streamer_set_current (playItem_t *it) {
             streaming_track = it;
             pl_item_ref (streaming_track);
             mutex_unlock (decodemutex);
-            trace ("bps=%d, channels=%d, samplerate=%d\n", fileinfo->bps, fileinfo->fmt.channels, fileinfo->fmt.samplerate);
+            trace ("bps=%d, channels=%d, samplerate=%d\n", fileinfo->fmt.bps, fileinfo->fmt.channels, fileinfo->fmt.samplerate);
         }
 // FIXME: that might break streaming at boundaries between 2 different samplerates
 //        streamer_reset (0); // reset SRC
@@ -818,7 +818,7 @@ streamer_start_new_song (void) {
         if (output->state () != OUTPUT_STATE_PLAYING) {
             streamer_reset (1);
             if (fileinfo) {
-                plug_get_output ()->change_rate (fileinfo->fmt.samplerate);
+                plug_get_output ()->setformat (&fileinfo->fmt);
             }
             if (output->play () < 0) {
                 fprintf (stderr, "streamer: failed to start playback; output plugin doesn't work\n");
@@ -832,7 +832,7 @@ streamer_start_new_song (void) {
             avg_bitrate = -1;
             streamer_reset (1);
             if (fileinfo) {
-                plug_get_output ()->change_rate (fileinfo->fmt.samplerate);
+                plug_get_output ()->setformat (&fileinfo->fmt);
             }
             if (output->play () < 0) {
                 fprintf (stderr, "streamer: failed to start playback; output plugin doesn't work\n");
@@ -927,12 +927,14 @@ streamer_thread (void *ctx) {
             if (conf_get_int ("playback.dynsamplerate", 0)) {
 
                 // don't switch if unchanged
-                int prevtrack_samplerate = output->fmt.samplerate;
-                if (prevtrack_samplerate != fileinfo->fmt.samplerate) {
-                    int newrate = output->change_rate (fileinfo->fmt.samplerate);
-                    if (newrate != prevtrack_samplerate) {
+                ddb_waveformat_t prevfmt;
+                memcpy (&prevfmt, &output->fmt, sizeof (ddb_waveformat_t));
+                if (memcmp (&output->fmt, &fileinfo->fmt, sizeof (ddb_waveformat_t))) {
+                    output->setformat (&fileinfo->fmt);
+                    // check if the format actually changed
+                    if (memcmp (&output->fmt, &prevfmt, sizeof (ddb_waveformat_t))) {
                         // restart streaming of current track
-                        trace ("streamer: output samplerate changed from %d to %d; restarting track\n", prevtrack_samplerate, newrate);
+                        trace ("streamer: output samplerate changed from %d to %d; restarting track\n", prevfmt.samplerate, output->fmt.samplerate);
                         mutex_lock (decodemutex);
                         fileinfo->plugin->free (fileinfo);
                         fileinfo = NULL;
@@ -952,16 +954,13 @@ streamer_thread (void *ctx) {
                         bytes_until_next_song = -1;
                         streamer_buffering = 1;
                         streamer_reset (1);
-                        if (fileinfo) {
-                            prevtrack_samplerate = fileinfo->fmt.samplerate;
-                        }
                     }
                 }
 
                 // output plugin may stop playback before switching samplerate
                 if (output->state () != OUTPUT_STATE_PLAYING) {
                     if (fileinfo) {
-                        plug_get_output ()->change_rate (fileinfo->fmt.samplerate);
+                        plug_get_output ()->setformat (&fileinfo->fmt);
                     }
                     if (output->play () < 0) {
                         fprintf (stderr, "streamer: failed to start playback after samplerate change; output plugin doesn't work\n");
@@ -1570,7 +1569,6 @@ streamer_read_async (char *bytes, int size) {
                 bytes_until_next_song = -1;
             }
         }
-        trace ("streamer: bytesread=%d\n", bytesread);
         if (bytesread > 0) {
             // apply dsp
             DB_dsp_t **dsp = deadbeef->plug_get_dsp_list ();
@@ -1584,7 +1582,6 @@ streamer_read_async (char *bytes, int size) {
         mutex_unlock (decodemutex);
         bytes += bytesread;
         size -= bytesread;
-        trace ("streamer: size=%d\n", size);
         if (size == 0) {
             return initsize;
         }

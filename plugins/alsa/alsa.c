@@ -23,8 +23,8 @@
 #include "../../deadbeef.h"
 #include "../../config.h"
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 #define min(x,y) ((x)<(y)?(x):(y))
 
@@ -41,7 +41,7 @@ DB_functions_t *deadbeef;
 
 static snd_pcm_t *audio;
 static int alsa_terminate;
-static int requested_rate = -1;
+static ddb_waveformat_t requested_fmt;
 static int state; // one of output_state_t
 static uintptr_t mutex;
 static intptr_t alsa_tid;
@@ -89,8 +89,8 @@ palsa_init (void);
 static int
 palsa_free (void);
 
-static int
-palsa_change_rate (int rate);
+static void
+palsa_setformat (ddb_waveformat_t *fmt);
 
 static int
 palsa_play (void);
@@ -114,7 +114,7 @@ static void
 palsa_enum_soundcards (void (*callback)(const char *name, const char *desc, void*), void *userdata);
 
 static int
-palsa_set_hw_params (int samplerate) {
+palsa_set_hw_params (ddb_waveformat_t *fmt) {
     snd_pcm_hw_params_t *hw_params = NULL;
     int err = 0;
 
@@ -136,22 +136,45 @@ palsa_set_hw_params (int samplerate) {
         goto error;
     }
 
-    snd_pcm_format_t fmt;
+    snd_pcm_format_t sample_fmt;
+
+    switch (fmt->bps) {
+    case 8:
+        sample_fmt = SND_PCM_FORMAT_S8;
+        break;
+    case 16:
 #if WORDS_BIGENDIAN
-    fmt = SND_PCM_FORMAT_S16_BE;
+        sample_fmt = SND_PCM_FORMAT_S16_BE;
 #else
-    fmt = SND_PCM_FORMAT_S16_LE;
+        sample_fmt = SND_PCM_FORMAT_S16_LE;
 #endif
-    if ((err = snd_pcm_hw_params_set_format (audio, hw_params, fmt)) < 0) {
+        break;
+    case 24:
+#if WORDS_BIGENDIAN
+        sample_fmt = SND_PCM_FORMAT_S24_3BE;
+#else
+        sample_fmt = SND_PCM_FORMAT_S24_3LE;
+#endif
+        break;
+    case 32:
+#if WORDS_BIGENDIAN
+        sample_fmt = SND_PCM_FORMAT_S32_BE;
+#else
+        sample_fmt = SND_PCM_FORMAT_S32_LE;
+#endif
+        break;
+    };
+
+    if ((err = snd_pcm_hw_params_set_format (audio, hw_params, sample_fmt)) < 0) {
         fprintf (stderr, "cannot set sample format (%s)\n",
                 snd_strerror (err));
         goto error;
     }
 
-    snd_pcm_hw_params_get_format (hw_params, &fmt);
+    snd_pcm_hw_params_get_format (hw_params, &sample_fmt);
     trace ("chosen sample format: %04Xh\n", (int)fmt);
 
-    int val = samplerate;
+    int val = fmt->samplerate;
     int ret = 0;
 
     if ((err = snd_pcm_hw_params_set_rate_resample (audio, hw_params, conf_alsa_resample)) < 0) {
@@ -168,7 +191,7 @@ palsa_set_hw_params (int samplerate) {
     plugin.fmt.samplerate = val;
     trace ("chosen samplerate: %d Hz\n", val);
 
-    if ((err = snd_pcm_hw_params_set_channels (audio, hw_params, 2)) < 0) {
+    if ((err = snd_pcm_hw_params_set_channels (audio, hw_params, fmt->channels)) < 0) {
         fprintf (stderr, "cannot set channel count (%s)\n",
                 snd_strerror (err));
         goto error;
@@ -195,8 +218,26 @@ palsa_set_hw_params (int samplerate) {
         goto error;
     }
 
-    plugin.fmt.bps = 16;
-    plugin.fmt.channels = 2;
+    switch (sample_fmt) {
+    case SND_PCM_FORMAT_S8:
+        plugin.fmt.bps = 8;
+        break;
+    case SND_PCM_FORMAT_S16_BE:
+    case SND_PCM_FORMAT_S16_LE:
+        plugin.fmt.bps = 16;
+        break;
+    case SND_PCM_FORMAT_S24_3BE:
+    case SND_PCM_FORMAT_S24_3LE:
+        plugin.fmt.bps = 24;
+        break;
+    case SND_PCM_FORMAT_S32_BE:
+    case SND_PCM_FORMAT_S32_LE:
+        plugin.fmt.bps = 32;
+        break;
+    }
+
+    plugin.fmt.bps = sample_fmt;
+    plugin.fmt.channels = nchan;
     plugin.fmt.is_float = 0;
     plugin.fmt.is_multichannel = 0;
     plugin.fmt.channelmask = 0;
@@ -231,11 +272,11 @@ palsa_init (void) {
 
     mutex = deadbeef->mutex_create ();
 
-    if (requested_rate != -1) {
-        plugin.fmt.samplerate = requested_rate;
+    if (requested_fmt.samplerate != 0) {
+        memcpy (&plugin.fmt, &requested_fmt, sizeof (ddb_waveformat_t));
     }
 
-    if (palsa_set_hw_params (plugin.fmt.samplerate) < 0) {
+    if (palsa_set_hw_params (&plugin.fmt) < 0) {
         goto open_error;
     }
 
@@ -307,28 +348,27 @@ open_error:
     return -1;
 }
 
-int
-palsa_change_rate (int rate) {
-    trace ("palsa_change_rate: %d\n", rate);
-    requested_rate = rate;
+void
+palsa_setformat (ddb_waveformat_t *fmt) {
+    memcpy (&requested_fmt, fmt, sizeof (ddb_waveformat_t));
+    trace ("palsa_setformat %dbit %s %s %dch %dHz channelmask=%X\n", fmt->bps, fmt->is_float ? "float" : "int", fmt->is_multichannel ? "multichannel" : "", fmt->channels, fmt->samplerate, fmt->channelmask);
     if (!audio) {
-        return plugin.fmt.samplerate;
+        return;
     }
-    if (rate == plugin.fmt.samplerate) {
-        trace ("palsa_change_rate %d: ignored\n", rate);
-        return rate;
+    if (!memcmp (fmt, &plugin.fmt, sizeof (ddb_waveformat_t))) {
+        trace ("palsa_setformat ignored\n");
+        return;
     }
     state = OUTPUT_STATE_STOPPED;
     LOCK;
     snd_pcm_drop (audio);
-    int ret = palsa_set_hw_params (rate);
+    int ret = palsa_set_hw_params (fmt);
     UNLOCK;
     if (ret < 0) {
-        trace ("palsa_change_rate: impossible to set samplerate to %d\n", rate);
-        return plugin.fmt.samplerate;
+        trace ("palsa_change_rate: impossible to set requested format\n");
+        return;
     }
-    trace ("chosen samplerate: %d\n", plugin.fmt.samplerate);
-    return plugin.fmt.samplerate;
+    trace ("new format %dbit %s %s %dch %dHz channelmask=%X\n", plugin.fmt.bps, plugin.fmt.is_float ? "float" : "int", plugin.fmt.is_multichannel ? "multichannel" : "", plugin.fmt.channels, plugin.fmt.samplerate, plugin.fmt.channelmask);
 }
 
 int
@@ -654,7 +694,7 @@ static DB_output_t plugin = {
     .plugin.configdialog = settings_dlg,
     .init = palsa_init,
     .free = palsa_free,
-    .change_rate = palsa_change_rate,
+    .setformat = palsa_setformat,
     .play = palsa_play,
     .stop = palsa_stop,
     .pause = palsa_pause,
