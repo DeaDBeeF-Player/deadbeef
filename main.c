@@ -431,8 +431,8 @@ player_mainloop (void) {
     }
 }
 
+#if 0
 static int sigterm_handled = 0;
-
 void
 atexit_handler (void) {
     fprintf (stderr, "atexit_handler\n");
@@ -451,6 +451,7 @@ sigterm_handler (int sig) {
     fprintf (stderr, "bye.\n");
     exit (0);
 }
+#endif
 
 #ifdef __linux__
 void
@@ -764,8 +765,10 @@ main (int argc, char *argv[]) {
     if (server_start () < 0) {
         exit (-1);
     }
+#if 0
     signal (SIGTERM, sigterm_handler);
     atexit (atexit_handler); // helps to save in simple cases
+#endif
 
     // start all subsystems
     plug_trigger_event_playlistchanged ();
@@ -813,7 +816,9 @@ main (int argc, char *argv[]) {
     conf_free ();
     messagepump_free ();
     plug_cleanup ();
+#if 0
     sigterm_handled = 1;
+#endif
     fprintf (stderr, "hej-hej!\n");
     return 0;
 }
