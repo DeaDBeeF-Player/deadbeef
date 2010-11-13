@@ -45,8 +45,8 @@
 #include "eq.h"
 #include "actions.h"
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 static DB_gui_t plugin;
 DB_functions_t *deadbeef;

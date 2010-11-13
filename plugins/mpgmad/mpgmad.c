@@ -654,6 +654,7 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     _info->fmt.bps = info->buffer.bitspersample;
     _info->fmt.samplerate = info->buffer.samplerate;
     _info->fmt.channels = info->buffer.channels;
+    _info->fmt.channelmask = _info->fmt.channels == 1 ? DDB_SPEAKER_FRONT_LEFT : (DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT);
 
 	mad_stream_init(&info->stream);
 	mad_stream_options (&info->stream, MAD_OPTION_IGNORECRC);
@@ -937,6 +938,28 @@ cmp3_free (DB_fileinfo_t *_info) {
 }
 
 static int
+cmp3_read (DB_fileinfo_t *_info, char *bytes, int size) {
+#if WRITE_DUMP
+    if (!out) {
+        out = fopen ("out.raw", "w+b");
+    }
+#endif
+    mpgmad_info_t *info = (mpgmad_info_t *)_info;
+    info->buffer.readsize = size;
+    info->buffer.out = bytes;
+    cmp3_decode_int16 (info);
+    info->buffer.currentsample += (size - info->buffer.readsize) / 4;
+    _info->readpos = (float)(info->buffer.currentsample - info->buffer.startsample) / info->buffer.samplerate;
+#if WRITE_DUMP
+    if (size - info->buffer.readsize > 0) {
+        fwrite (bytes, 1, size - info->buffer.readsize, out);
+    }
+#endif
+    return size - info->buffer.readsize;
+}
+
+#if 0
+static int
 cmp3_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
 #if WRITE_DUMP
     if (!out) {
@@ -968,6 +991,7 @@ cmp3_read_float32 (DB_fileinfo_t *_info, char *bytes, int size) {
     _info->readpos = (float)(info->buffer.currentsample - info->buffer.startsample) / info->buffer.samplerate;
     return size - info->buffer.readsize;
 }
+#endif
 
 static int
 cmp3_seek_sample (DB_fileinfo_t *_info, int sample) {
@@ -1246,8 +1270,7 @@ static DB_decoder_t plugin = {
     .open = cmp3_open,
     .init = cmp3_init,
     .free = cmp3_free,
-    .read_int16 = cmp3_read_int16,
-    .read_float32 = cmp3_read_float32,
+    .read = cmp3_read,
     .seek = cmp3_seek,
     .seek_sample = cmp3_seek_sample,
     .insert = cmp3_insert,

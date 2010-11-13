@@ -685,12 +685,7 @@ typedef struct DB_decoder_s {
 
     // read is called by streamer to decode specified number of bytes
     // must return number of bytes that were successfully decoded (sample aligned)
-    
-    // read_int16 must always output 16 bit signed integer samples
-    int (*read_int16) (DB_fileinfo_t *info, char *buffer, int size);
-
-    // read_float32 must always output 32 bit floating point samples
-    int (*read_float32) (DB_fileinfo_t *info, char *buffer, int size);
+    int (*read) (DB_fileinfo_t *info, char *buffer, int nbytes);
 
     int (*seek) (DB_fileinfo_t *info, float seconds);
 
@@ -747,7 +742,7 @@ typedef struct DB_dsp_s {
     // process gets called before SRC
     // stereo samples are stored in interleaved format
     // stereo sample is counted as 1 sample
-    int (*process_int16) (int16_t *samples, int nsamples, int nch, int bps, int srate);
+    int (*process) (char * restrict samples, ddb_waveformat_t * restrict fmt);
     void (*reset) (void);
     void (*enable) (int e);
     int (*enabled) (void);

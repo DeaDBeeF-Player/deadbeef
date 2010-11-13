@@ -129,7 +129,7 @@ supereq_regen_table_thread (void *param) {
 }
 
 int
-supereq_process_int16 (int16_t *samples, int nsamples, int nch, int bps, int srate) {
+supereq_process (char * restrict samples, ddb_waveformat_t * restrict fmt) {
 	if ((nch != 1 && nch != 2) || (bps != 8 && bps != 16 && bps != 24)) return nsamples;
     if (params_changed && !tid) {
         tid = deadbeef->thread_start (supereq_regen_table_thread, NULL);

@@ -191,7 +191,7 @@ palsa_set_hw_params (ddb_waveformat_t *fmt) {
     plugin.fmt.samplerate = val;
     trace ("chosen samplerate: %d Hz\n", val);
 
-    if ((err = snd_pcm_hw_params_set_channels (audio, hw_params, fmt->channels)) < 0) {
+    if ((err = snd_pcm_hw_params_set_channels (audio, hw_params, /*fmt->channels*/6)) < 0) {
         fprintf (stderr, "cannot set channel count (%s)\n",
                 snd_strerror (err));
         goto error;
@@ -236,12 +236,34 @@ palsa_set_hw_params (ddb_waveformat_t *fmt) {
         break;
     }
 
-    plugin.fmt.bps = sample_fmt;
     plugin.fmt.channels = nchan;
     plugin.fmt.is_float = 0;
     plugin.fmt.is_multichannel = 0;
     plugin.fmt.channelmask = 0;
-
+    if (nchan == 1) {
+        plugin.fmt.channelmask = DDB_SPEAKER_FRONT_LEFT;
+    }
+    if (nchan == 2) {
+        plugin.fmt.channelmask = DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT;
+    }
+    if (nchan == 3) {
+        plugin.fmt.channelmask = DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT | DDB_SPEAKER_LOW_FREQUENCY;
+    }
+    if (nchan == 4) {
+        plugin.fmt.channelmask = DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT | DDB_SPEAKER_BACK_LEFT | DDB_SPEAKER_BACK_RIGHT;
+    }
+    if (nchan == 5) {
+        plugin.fmt.channelmask = DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT | DDB_SPEAKER_BACK_LEFT | DDB_SPEAKER_BACK_RIGHT | DDB_SPEAKER_FRONT_CENTER;
+    }
+    if (nchan == 6) {
+        plugin.fmt.channelmask = DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT | DDB_SPEAKER_BACK_LEFT | DDB_SPEAKER_BACK_RIGHT | DDB_SPEAKER_FRONT_CENTER | DDB_SPEAKER_LOW_FREQUENCY;
+    }
+    if (nchan == 7) {
+        plugin.fmt.channelmask = DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT | DDB_SPEAKER_BACK_LEFT | DDB_SPEAKER_BACK_RIGHT | DDB_SPEAKER_FRONT_CENTER | DDB_SPEAKER_SIDE_LEFT | DDB_SPEAKER_SIDE_RIGHT;
+    }
+    if (nchan == 8) {
+        plugin.fmt.channelmask = DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT | DDB_SPEAKER_BACK_LEFT | DDB_SPEAKER_BACK_RIGHT | DDB_SPEAKER_FRONT_CENTER | DDB_SPEAKER_SIDE_LEFT | DDB_SPEAKER_SIDE_RIGHT | DDB_SPEAKER_LOW_FREQUENCY;
+    }
 error:
     if (hw_params) {
         snd_pcm_hw_params_free (hw_params);
@@ -512,10 +534,10 @@ palsa_thread (void *context) {
                 break;
             }
             err = 0;
-            char buf[period_size * 4];
-            int bytes_to_write = palsa_callback (buf, period_size * 4);
+            char buf[period_size * (plugin.fmt.bps>>3) * plugin.fmt.channels];
+            int bytes_to_write = palsa_callback (buf, period_size * (plugin.fmt.bps>>3) * plugin.fmt.channels);
 
-            if ( bytes_to_write >= 4 ) {
+            if (bytes_to_write >= (plugin.fmt.bps>>3) * plugin.fmt.channels) {
                err = snd_pcm_writei (audio, buf, snd_pcm_bytes_to_frames(audio, bytes_to_write));
             }
             else {
@@ -593,10 +615,10 @@ palsa_callback (char *stream, int len) {
        );
 
 #else
-    int16_t ivolume = deadbeef->volume_get_amp () * 1000;
-    for (int i = 0; i < bytesread/2; i++) {
-        ((int16_t*)stream)[i] = (int16_t)(((int32_t)(((int16_t*)stream)[i])) * ivolume / 1000);
-    }
+//    int16_t ivolume = deadbeef->volume_get_amp () * 1000;
+//    for (int i = 0; i < bytesread/2; i++) {
+//        ((int16_t*)stream)[i] = (int16_t)(((int32_t)(((int16_t*)stream)[i])) * ivolume / 1000);
+//    }
 #endif
     return bytesread;
 }

@@ -35,11 +35,12 @@
 #include "optmath.h"
 #include "volume.h"
 #include "vfs.h"
+#include "premix.h"
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
 
-// #define WRITE_DUMP 1
+#define WRITE_DUMP 1
 
 #if WRITE_DUMP
 FILE *out;
@@ -115,6 +116,18 @@ src_lock (void) {
 void
 src_unlock (void) {
     mutex_unlock (srcmutex);
+}
+
+void
+adjust_waveformat (ddb_waveformat_t *fmt) {
+    if (!fmt->is_multichannel) {
+        if (fmt->channels == 1) {
+            fmt->channelmask = DDB_SPEAKER_FRONT_LEFT;
+        }
+        else if (fmt->channelmask == 2) {
+            fmt->channelmask = DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT;
+        }
+    }
 }
 
 static void
@@ -639,6 +652,7 @@ streamer_set_current (playItem_t *it) {
                 dec->free (fileinfo);
                 fileinfo = NULL;
             }
+            adjust_waveformat (&fileinfo->fmt);
         }
 
         if (!dec || !fileinfo) {
@@ -819,6 +833,7 @@ streamer_start_new_song (void) {
             streamer_reset (1);
             if (fileinfo) {
                 plug_get_output ()->setformat (&fileinfo->fmt);
+                adjust_waveformat (&plug_get_output ()->fmt);
             }
             if (output->play () < 0) {
                 fprintf (stderr, "streamer: failed to start playback; output plugin doesn't work\n");
@@ -833,6 +848,7 @@ streamer_start_new_song (void) {
             streamer_reset (1);
             if (fileinfo) {
                 plug_get_output ()->setformat (&fileinfo->fmt);
+                adjust_waveformat (&plug_get_output ()->fmt);
             }
             if (output->play () < 0) {
                 fprintf (stderr, "streamer: failed to start playback; output plugin doesn't work\n");
@@ -931,6 +947,7 @@ streamer_thread (void *ctx) {
                 memcpy (&prevfmt, &output->fmt, sizeof (ddb_waveformat_t));
                 if (memcmp (&output->fmt, &fileinfo->fmt, sizeof (ddb_waveformat_t))) {
                     output->setformat (&fileinfo->fmt);
+                    adjust_waveformat (&output->fmt);
                     // check if the format actually changed
                     if (memcmp (&output->fmt, &prevfmt, sizeof (ddb_waveformat_t))) {
                         // restart streaming of current track
@@ -946,6 +963,7 @@ streamer_thread (void *ctx) {
                                 dec->free (fileinfo);
                                 fileinfo = NULL;
                             }
+                            adjust_waveformat (&fileinfo->fmt);
                         }
                         if (!dec || !fileinfo) {
                             // FIXME: handle error
@@ -961,6 +979,7 @@ streamer_thread (void *ctx) {
                 if (output->state () != OUTPUT_STATE_PLAYING) {
                     if (fileinfo) {
                         plug_get_output ()->setformat (&fileinfo->fmt);
+                        adjust_waveformat (&plug_get_output ()->fmt);
                     }
                     if (output->play () < 0) {
                         fprintf (stderr, "streamer: failed to start playback after samplerate change; output plugin doesn't work\n");
@@ -1012,6 +1031,7 @@ streamer_thread (void *ctx) {
                         dec->free (fileinfo);
                         fileinfo = NULL;
                     }
+                    adjust_waveformat (&fileinfo->fmt);
                 }
                 mutex_unlock (decodemutex);
 
@@ -1056,8 +1076,8 @@ streamer_thread (void *ctx) {
             usleep(20000);
             continue;
         }
-        int channels = 2; // FIXME: needs to be queried from output plugin
-        int bytes_in_one_second = rate * sizeof (int16_t) * channels;
+        int channels = output->fmt.channels;
+        int bytes_in_one_second = rate * (output->fmt.bps>>3) * channels;
         const int blocksize = 4096;
         int alloc_time = 1000 / (bytes_in_one_second * 2 / blocksize);
 
@@ -1075,6 +1095,13 @@ streamer_thread (void *ctx) {
             assert ((sz&3) == 0);
             char buf[sz];
             streamer_unlock ();
+
+            // ensure that size is possible with current format
+            int samplesize = output->fmt.channels * (output->fmt.bps>>3);
+            if (sz % samplesize) {
+                sz -= (sz % samplesize);
+            }
+
             int bytesread = streamer_read_async (buf,sz);
             streamer_lock ();
             memcpy (streambuffer+streambuffer_fill, buf, sz);
@@ -1359,6 +1386,7 @@ float32_to_int16 (float *in, int16_t *out, int nsamples) {
 
 */
 
+#if 0
 static int
 streamer_read_data_for_src (int16_t *buffer, int frames) {
     int channels = fileinfo->fmt.channels;
@@ -1481,51 +1509,9 @@ streamer_decode_src_libsamplerate (uint8_t *bytes, int size) {
     }
     return initsize-size;
 }
-
-#if 0
-static int
-streamer_decode_src (uint8_t *bytes, int size) {
-    int initsize = size;
-    int16_t *out = (int16_t *)bytes;
-    DB_decoder_t *decoder = streaming_track->decoder;
-    int samplerate = decoder->info.samplerate;
-    float ratio = (float)samplerate / output->fmt.samplerate;
-    while (size > 0) {
-        int n_output_frames = size / sizeof (int16_t) / 2;
-        int n_input_frames = n_output_frames * samplerate / output->fmt.samplerate + 100;
-        // read data from decoder
-        if (n_input_frames > SRC_BUFFER - src_remaining ) {
-            n_input_frames = SRC_BUFFER - src_remaining;
-        }
-        int nread = streamer_read_data_for_src (&g_src_in_buffer[src_remaining*2], n_input_frames);
-        src_remaining += nread;
-        // resample
-        float idx = 0;
-        int i = 0;
-        while (i < n_output_frames && idx < src_remaining) {
-            int k = (int)idx;
-            out[0] = g_src_in_buffer[k*2+0];
-            out[1] = g_src_in_buffer[k*2+1];
-            i++;
-            idx += ratio;
-            out += 2;
-        }
-        size -= i*4;
-        src_remaining -= idx;
-        if (src_remaining < 0) {
-            src_remaining = 0;
-        }
-        else if (src_remaining > 0) {
-            memmove (g_src_in_buffer, &g_src_in_buffer[(SRC_BUFFER-src_remaining)*2], src_remaining*2*sizeof (int16_t));
-        }
-        if (nread != n_input_frames) {
-            break;
-        }
-    }
-    return initsize-size;
-}
 #endif
 
+// decodes data and converts to current output format
 // returns number of bytes been read
 static int
 streamer_read_async (char *bytes, int size) {
@@ -1540,6 +1526,29 @@ streamer_read_async (char *bytes, int size) {
             break;
         }
         if (fileinfo->fmt.samplerate != -1) {
+            if (!memcmp (&fileinfo->fmt, &output->fmt, sizeof (ddb_waveformat_t))) {
+                bytesread = fileinfo->plugin->read (fileinfo, bytes, size);
+            }
+            else {
+//                trace ("format mismatch, converting:\n");
+//                trace ("input bps=%d, channels=%d, samplerate=%d, channelmask=%X\n", fileinfo->fmt.bps, fileinfo->fmt.channels, fileinfo->fmt.samplerate, fileinfo->fmt.channelmask);
+//                trace ("output bps=%d, channels=%d, samplerate=%d, channelmask=%X\n", output->fmt.bps, output->fmt.channels, output->fmt.samplerate, output->fmt.channelmask);
+
+                int outputsamplesize = (output->fmt.bps>>3)*output->fmt.channels;
+                int inputsamplesize = (fileinfo->fmt.bps>>3)*fileinfo->fmt.channels;
+                int inputsize = size/outputsamplesize*inputsamplesize;
+                char input[inputsize];
+                inputsize = fileinfo->plugin->read (fileinfo, input, inputsize);
+                bytesread = pcm_convert (&fileinfo->fmt, input, &output->fmt, bytes, inputsize);
+//                trace ("decoded %d bytes, writing %d bytes, requested %d bytes\n", inputsize, bytesread, size);
+            }
+#if WRITE_DUMP
+            if (bytesread) {
+                fwrite (bytes, 1, bytesread, out);
+            }
+#endif
+
+#if 0
             int nchannels = fileinfo->fmt.channels;
             if (nchannels > 2) {
                 nchannels = 2;
@@ -1568,17 +1577,20 @@ streamer_read_async (char *bytes, int size) {
                 // immediately start streaming next track
                 bytes_until_next_song = -1;
             }
+#endif
         }
+#if 0
         if (bytesread > 0) {
             // apply dsp
             DB_dsp_t **dsp = deadbeef->plug_get_dsp_list ();
             int srate = output->fmt.samplerate;
             for (int i = 0; dsp[i]; i++) {
                 if (dsp[i]->enabled ()) {
-                    dsp[i]->process_int16 ((int16_t *)bytes, bytesread/4, 2, 16, srate);
+                    dsp[i]->process (bytes, bytesread/4, &output->fmt);
                 }
             }
         }
+#endif
         mutex_unlock (decodemutex);
         bytes += bytesread;
         size -= bytesread;
@@ -1621,8 +1633,8 @@ streamer_read (char *bytes, int size) {
         memcpy (bytes, streambuffer, sz);
         memmove (streambuffer, streambuffer+sz, streambuffer_fill-sz);
         streambuffer_fill -= sz;
-        playpos += (float)sz/output->fmt.samplerate/4.f;
-        playing_track->playtime += (float)sz/output->fmt.samplerate/4.f;
+        playpos += (float)sz/output->fmt.samplerate/((output->fmt.bps>>3)*output->fmt.channels);
+        playing_track->playtime += (float)sz/output->fmt.samplerate/((output->fmt.bps>>3)*output->fmt.channels);
         if (playlist_track) {
             playing_track->filetype = playlist_track->filetype;
         }
@@ -1669,9 +1681,6 @@ streamer_read (char *bytes, int size) {
 
     int ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
     printf ("streamer_read took %d ms\n", ms);
-#endif
-#if WRITE_DUMP
-    fwrite (bytes, 1, sz, out);
 #endif
     return sz;
 }
