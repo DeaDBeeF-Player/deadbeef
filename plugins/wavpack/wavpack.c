@@ -31,8 +31,8 @@
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
@@ -106,7 +106,7 @@ static WavpackStreamReader wsr = {
 #endif
 
 static DB_fileinfo_t *
-wv_open (void) {
+wv_open (uint32_t hints) {
     DB_fileinfo_t *_info = malloc (sizeof (wvctx_t));
     memset (_info, 0, sizeof (wvctx_t));
     return _info;
@@ -143,9 +143,11 @@ wv_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         return -1;
     }
     _info->plugin = &plugin;
-    _info->bps = WavpackGetBytesPerSample (info->ctx) * 8;
-    _info->channels = WavpackGetNumChannels (info->ctx);
-    _info->samplerate = WavpackGetSampleRate (info->ctx);
+    _info->fmt.bps = WavpackGetBytesPerSample (info->ctx) * 8;
+    _info->fmt.channels = WavpackGetNumChannels (info->ctx);
+    _info->fmt.samplerate = WavpackGetSampleRate (info->ctx);
+    _info->fmt.is_float = (WavpackGetMode (info->ctx) & MODE_FLOAT) ? 1 : 0;
+    _info->fmt.channelmask = _info->fmt.channels == 1 ? DDB_SPEAKER_FRONT_LEFT : (DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT);
     _info->readpos = 0;
     if (it->endsample > 0) {
         info->startsample = it->startsample;
@@ -184,95 +186,65 @@ wv_free (DB_fileinfo_t *_info) {
 }
 
 static int
-wv_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
+wv_read (DB_fileinfo_t *_info, char *bytes, int size) {
     wvctx_t *info = (wvctx_t *)_info;
     int currentsample = WavpackGetSampleIndex (info->ctx);
-    int nchannels = WavpackGetReducedChannels (info->ctx);
-    if (size / (2 * nchannels) + currentsample > info->endsample) {
-        size = (info->endsample - currentsample + 1) * 2 * nchannels;
+//    int nchannels = WavpackGetReducedChannels (info->ctx);
+    int samplesize = (_info->fmt.bps >> 3) * _info->fmt.channels;
+    if (size / samplesize + currentsample > info->endsample) {
+        size = (info->endsample - currentsample + 1) * samplesize;
         trace ("wv: size truncated to %d bytes, cursample=%d, endsample=%d\n", size, currentsample, info->endsample);
         if (size <= 0) {
             return 0;
         }
     }
-    int32_t buffer[size/2];
-    int n = WavpackUnpackSamples (info->ctx, buffer, size/(2*nchannels));
-    size = n * 2 * nchannels;
-    // convert to int16
-    int32_t *p = buffer;
-    n *= nchannels;
-
+    int n;
     if (WavpackGetMode (info->ctx) & MODE_FLOAT) {
-        while (n > 0) {
-            float val = *(float*)p;
-            if (val >= 1.0)
-                *((int16_t *)bytes) = 32767;
-            else if (val <= -1.0)
-                *((int16_t *)bytes) = -32768;
-            else
-                *((int16_t *)bytes) = floor (val * 32768.f);
-            bytes += sizeof (int16_t);
-            p++;
-            n--;
-        }
+        _info->fmt.is_float = 1;
+    }
+    if (_info->fmt.is_float || _info->fmt.bps == 32) {
+        n = WavpackUnpackSamples (info->ctx, (int32_t *)bytes, size / samplesize);
+        size = n * samplesize;
     }
     else {
-        while (n > 0) {
-            if (_info->bps >= 16) {
-                *((int16_t *)bytes) = (int16_t)((*p) >> (_info->bps-16));
-            }
-            else {
-                *((int16_t *)bytes) = (int16_t)((*p) << (16-_info->bps));
-            }
-            bytes += sizeof (int16_t);
-            p++;
-            n--;
-        }
-    }
-    _info->readpos = (float)(WavpackGetSampleIndex (info->ctx)-info->startsample)/WavpackGetSampleRate (info->ctx);
+        int32_t buffer[size/(_info->fmt.bps >> 3)];
+        n = WavpackUnpackSamples (info->ctx, (int32_t *)buffer, size / samplesize);
+        size = n * samplesize;
+        n *= _info->fmt.channels;
 
-#ifndef TINYWV
-    deadbeef->streamer_set_bitrate (WavpackGetInstantBitrate (info->ctx) / 1000);
-#endif
-
-    return size;
-}
-
-static int
-wv_read_float32 (DB_fileinfo_t *_info, char *bytes, int size) {
-    wvctx_t *info = (wvctx_t *)_info;
-    int nchannels = WavpackGetReducedChannels (info->ctx);
-    int currentsample = WavpackGetSampleIndex (info->ctx);
-    if (size / (4 * nchannels) + currentsample > info->endsample) {
-        size = (info->endsample - currentsample + 1) * 4 * nchannels;
-        trace ("wv: size truncated to %d bytes, cursample=%d, endsample=%d\n", size, currentsample, info->endsample);
-        if (size <= 0) {
-            return 0;
-        }
-    }
-    int32_t buffer[size/4];
-    int n = WavpackUnpackSamples (info->ctx, buffer, size/(4*nchannels));
-    size = n * 4 * nchannels;
-    // convert to float32
-    n *= nchannels;
-
-    if (WavpackGetMode (info->ctx) & MODE_FLOAT) {
-        memcpy (bytes, buffer, size);
-    }
-    else {
-        float mul = 1.f/ (1UL << (_info->bps-1));
+        // convert from int32 to input (what???)
         int32_t *p = buffer;
-        while (n > 0) {
-            *((float *)bytes) = (*p) * mul;
-            bytes += sizeof (float);
-            p++;
-            n--;
+        if (_info->fmt.bps == 16) {
+            while (n > 0) {
+                *((int16_t *)bytes) = (int16_t)(*p);
+                bytes += sizeof (int16_t);
+                p++;
+                n--;
+            }
+        }
+        else if (_info->fmt.bps == 8) {
+            while (n > 0) {
+                *bytes++ = (char)(*p);
+                p++;
+                n--;
+            }
+        }
+        else if (_info->fmt.bps == 24) {
+            while (n > 0) {
+                *bytes++ = (*p)&0xff;
+                *bytes++ = ((*p)&0xff00)>>8;
+                *bytes++ = ((*p)&0xff0000)>>16;
+                p++;
+                n--;
+            }
         }
     }
     _info->readpos = (float)(WavpackGetSampleIndex (info->ctx)-info->startsample)/WavpackGetSampleRate (info->ctx);
+
 #ifndef TINYWV
     deadbeef->streamer_set_bitrate (WavpackGetInstantBitrate (info->ctx) / 1000);
 #endif
+
     return size;
 }
 
@@ -454,8 +426,7 @@ static DB_decoder_t plugin = {
     .open = wv_open,
     .init = wv_init,
     .free = wv_free,
-    .read_int16 = wv_read_int16,
-    .read_float32 = wv_read_float32,
+    .read = wv_read,
     .seek = wv_seek,
     .seek_sample = wv_seek_sample,
     .insert = wv_insert,

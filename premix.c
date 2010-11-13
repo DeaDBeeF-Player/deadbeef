@@ -127,6 +127,19 @@ pcm_write_samples_16_to_float (const ddb_waveformat_t * restrict inputfmt, const
 }
 
 static inline void
+pcm_write_samples_32_to_32 (const ddb_waveformat_t * restrict inputfmt, const char * restrict input, const ddb_waveformat_t * restrict outputfmt, char * restrict output, int nsamples, int * restrict channelmap, int outputsamplesize) {
+    for (int s = 0; s < nsamples; s++) {
+        for (int c = 0; c < inputfmt->channels; c++) {
+            if (channelmap[c] != -1) {
+                *((int32_t*)(output + (outputfmt->bps >> 3) * channelmap[c])) = *((int32_t*)input);
+            }
+            input += 4;
+        }
+        output += outputsamplesize;
+    }
+}
+
+static inline void
 pcm_write_samples_24_to_24 (const ddb_waveformat_t * restrict inputfmt, const char * restrict input, const ddb_waveformat_t * restrict outputfmt, char * restrict output, int nsamples, int * restrict channelmap, int outputsamplesize) {
     for (int s = 0; s < nsamples; s++) {
         for (int c = 0; c < inputfmt->channels; c++) {
@@ -188,6 +201,7 @@ pcm_convert (const ddb_waveformat_t * restrict inputfmt, const char * restrict i
         }
 
         // FIXME: access through function pointer table
+        //trace ("converting from %d to %d\n", inputfmt->bps, outputfmt->bps);
         if (inputfmt->bps == 8 && outputfmt->bps == 8) {
             pcm_write_samples_8_to_8 (inputfmt, input, outputfmt, output, nsamples, channelmap, outputsamplesize);
         }
@@ -211,6 +225,12 @@ pcm_convert (const ddb_waveformat_t * restrict inputfmt, const char * restrict i
         }
         else if (inputfmt->bps == 24 && outputfmt->bps == 24) {
             pcm_write_samples_24_to_24 (inputfmt, input, outputfmt, output, nsamples, channelmap, outputsamplesize);
+        }
+        else if (inputfmt->bps == 32 && outputfmt->bps == 32) {
+            pcm_write_samples_32_to_32 (inputfmt, input, outputfmt, output, nsamples, channelmap, outputsamplesize);
+        }
+        else {
+            trace ("no converter from %d to %d\n", inputfmt->bps, outputfmt->bps);
         }
     }
     return nsamples * outputsamplesize;

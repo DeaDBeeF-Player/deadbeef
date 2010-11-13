@@ -1526,7 +1526,7 @@ streamer_read_async (char *bytes, int size) {
             break;
         }
         if (fileinfo->fmt.samplerate != -1) {
-            if (!memcmp (&fileinfo->fmt, &output->fmt, sizeof (ddb_waveformat_t))) {
+            if (!memcmp (&fileinfo->fmt, &output->fmt, sizeof (ddb_waveformat_t)), 0) {
                 bytesread = fileinfo->plugin->read (fileinfo, bytes, size);
             }
             else {
