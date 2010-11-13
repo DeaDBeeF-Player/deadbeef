@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 0.4.2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-09-10 15:02+0200\n"
-"PO-Revision-Date: 2010-11-09 15:57+0200\n"
+"PO-Revision-Date: 2010-11-11 16:01+0200\n"
 "Last-Translator: kizito <kbirabwa@yahoo.co.uk>\n"
 "Language-Team: LANGUAGE <kbirabwa@yahoo.co.uk>\n"
 "Language: lg\n"
@@ -147,7 +147,7 @@ msgstr "Lunaku 1 %d:%02d:%02d"
 #: ../plugins/gtkui/gtkui.c:136
 #, c-format
 msgid "%d days %d:%02d:%02d"
-msgstr "Nnaku %d %d:%02d:02d"
+msgstr "Nnaku %d %d:%02d:%02d"
 
 #: ../plugins/gtkui/gtkui.c:145
 #, c-format
@@ -416,6 +416,9 @@ msgid ""
 "<b>WARNING</b>: tag writing feature is still in development.\n"
 "<b>Make backup copies</b> before using."
 msgstr ""
+"<b>KULABULA</b>: obusobozi obw'okuyungako okunnyonyola bukyakolebwako.\n"
+"Bw'oba oyagala okugeza okubukozesa, fayiro <b>sooka okgigyemu koppi "
+"ez'okwerinda</b>."
 
 #: ../plugins/gtkui/interface.c:1206 ../plugins/gtkui/deadbeef.glade.h:147
 msgid "_Apply"
@@ -428,7 +431,7 @@ msgstr "_Ggala"
 
 #: ../plugins/gtkui/interface.c:1231 ../plugins/gtkui/deadbeef.glade.h:79
 msgid "Metadata"
-msgstr ""
+msgstr "Ebinyonyola"
 
 #: ../plugins/gtkui/interface.c:1277 ../plugins/gtkui/plcommon.c:503
 #: ../plugins/gtkui/deadbeef.glade.h:99
@@ -479,7 +482,7 @@ msgstr "Alubamu"
 
 #: ../plugins/gtkui/interface.c:1408 ../plugins/gtkui/prefwin.c:595
 msgid "Title"
-msgstr ""
+msgstr "Erinnya"
 
 #: ../plugins/gtkui/interface.c:1409
 msgid "Length"
@@ -500,19 +503,19 @@ msgstr "Bye weteekateekedde"
 #: ../plugins/gtkui/interface.c:1418 ../plugins/gtkui/interface.c:3096
 #: ../plugins/gtkui/deadbeef.glade.h:62
 msgid "Format:"
-msgstr ""
+msgstr "Empandika:"
 
 #: ../plugins/gtkui/interface.c:1433 ../plugins/gtkui/deadbeef.glade.h:11
 msgid "Alignment:"
-msgstr ""
+msgstr "Okwekubirira:"
 
 #: ../plugins/gtkui/interface.c:1441
 msgid "Left"
-msgstr ""
+msgstr "Ku kkono"
 
 #: ../plugins/gtkui/interface.c:1442
 msgid "Right"
-msgstr ""
+msgstr "Ku ddyo"
 
 #: ../plugins/gtkui/interface.c:1444 ../plugins/gtkui/deadbeef.glade.h:48
 #, no-c-format
@@ -525,6 +528,15 @@ msgid ""
 "  [d]irectory, [D]irectoryWithPath\n"
 "Example: %a - %t [%l]"
 msgstr ""
+"Ebifuga empandika (bisookerwako ka %):\n"
+"  [a] muluyimba, [t] erinnya ly'oluyimba, alu[b]amu, [B] kibiina, [C] "
+"Muwandisi\n"
+"  [n]amba y'olutambi, [N] bungi bw'entambi,\n"
+"  [l] buwanvu bwa lwo, [y] mwaka, [g] ttuluba lw'oluyimba, [c] ebinnyonyola,\n"
+"  [r] eby'obwa nannyini, erinnya lya [f]ayiro, [F] ekkubo mu bujjuvu "
+"erituuka ku fayiro, [T] butuuti,\n"
+"  [d] tterekero, [D] tterekero n'ekkubo erirituukako\n"
+"Kya kulabirako: %a - %t [%l]"
 
 #: ../plugins/gtkui/interface.c:1473 ../plugins/gtkui/interface.c:2900
 #: ../plugins/gtkui/interface.c:3012 ../plugins/gtkui/interface.c:3135
@@ -607,7 +619,7 @@ msgstr "Ekya \"Siimula ku disiki\" kikise"
 
 #: ../plugins/gtkui/interface.c:1850 ../plugins/gtkui/deadbeef.glade.h:134
 msgid "Titlebar text while playing:"
-msgstr "Omutwe gw'eddirisa ng'oluyimba luwulirizibwa :"
+msgstr "Omutwe gw'eddirisa ng'oluyimba luwulirizibwa:"
 
 #: ../plugins/gtkui/interface.c:1864 ../plugins/gtkui/deadbeef.glade.h:135
 msgid "Titlebar text while stopped:"
@@ -615,12 +627,12 @@ msgstr "Omutwe gw'eddirisa nga puloguramu eyimirizidwa:"
 
 #: ../plugins/gtkui/interface.c:1874 ../plugins/gtkui/deadbeef.glade.h:63
 msgid "GUI"
-msgstr ""
+msgstr "Ebirabikira wakaolerwa"
 
 #: ../plugins/gtkui/interface.c:1888 ../plugins/gtkui/interface.c:1932
 #: ../plugins/gtkui/deadbeef.glade.h:89
 msgid "Override"
-msgstr ""
+msgstr "Ssawo enteekateeka eyiyo"
 
 #: ../plugins/gtkui/interface.c:1897 ../plugins/gtkui/deadbeef.glade.h:46
 msgid "Foreground"
@@ -672,11 +684,11 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:2044 ../plugins/gtkui/deadbeef.glade.h:118
 msgid "Selected row"
-msgstr ""
+msgstr "Olunyiriri olundedwa"
 
 #: ../plugins/gtkui/interface.c:2063 ../plugins/gtkui/deadbeef.glade.h:119
 msgid "Selected text"
-msgstr ""
+msgstr "Ebigambo ebirondedwa"
 
 #: ../plugins/gtkui/interface.c:2076 ../plugins/gtkui/deadbeef.glade.h:21
 msgid "Cursor"
@@ -692,27 +704,27 @@ msgstr "Langi"
 
 #: ../plugins/gtkui/interface.c:2102 ../plugins/gtkui/deadbeef.glade.h:31
 msgid "Enable Proxy Server"
-msgstr ""
+msgstr "Kozesa ekiwereza masanganzira"
 
 #: ../plugins/gtkui/interface.c:2110 ../plugins/gtkui/deadbeef.glade.h:101
 msgid "Proxy Server Address:"
-msgstr ""
+msgstr "Endagiriro y'ekiwereza masanganzira:"
 
 #: ../plugins/gtkui/interface.c:2124 ../plugins/gtkui/deadbeef.glade.h:102
 msgid "Proxy Server Port:"
-msgstr ""
+msgstr "Pooti y'ekiwereza masanganzira:"
 
 #: ../plugins/gtkui/interface.c:2138 ../plugins/gtkui/deadbeef.glade.h:103
 msgid "Proxy Type:"
-msgstr ""
+msgstr "Kika ky'ekiwereza:"
 
 #: ../plugins/gtkui/interface.c:2157 ../plugins/gtkui/deadbeef.glade.h:104
 msgid "Proxy Username:"
-msgstr ""
+msgstr "Erinnya ery'okukozesa ku kiwereza:"
 
 #: ../plugins/gtkui/interface.c:2170 ../plugins/gtkui/deadbeef.glade.h:100
 msgid "Proxy Password:"
-msgstr ""
+msgstr "Ekyama eky'oku kiwereza:"
 
 #: ../plugins/gtkui/interface.c:2180 ../plugins/gtkui/deadbeef.glade.h:82
 msgid "Network"
@@ -749,27 +761,27 @@ msgstr "Gyamu ebya APEv2"
 
 #: ../plugins/gtkui/interface.c:2240 ../plugins/gtkui/deadbeef.glade.h:69
 msgid "ID3v2 version"
-msgstr ""
+msgstr "Oluwandika lwa ID3v2"
 
 #: ../plugins/gtkui/interface.c:2247
 msgid "2.3 (Recommended)"
-msgstr ""
+msgstr "2.3 (Tukuwa magezi ga kukozesa luno)"
 
 #: ../plugins/gtkui/interface.c:2248
 msgid "2.4"
-msgstr ""
+msgstr "2.4"
 
 #: ../plugins/gtkui/interface.c:2254 ../plugins/gtkui/deadbeef.glade.h:68
 msgid "ID3v1 character encoding (default is iso8859-1)"
-msgstr ""
+msgstr "Enkongojja y'ebiwandike eby'omu ID3v1 (iso8859-1 y'eya bulijjo)"
 
 #: ../plugins/gtkui/interface.c:2291 ../plugins/gtkui/deadbeef.glade.h:144
 msgid "Write ID3v2.4"
-msgstr ""
+msgstr "Wandika ebya ID32.4"
 
 #: ../plugins/gtkui/interface.c:2360 ../plugins/gtkui/deadbeef.glade.h:131
 msgid "Tag writer"
-msgstr ""
+msgstr "Ekiwandika okunnyonyola kw'enyimba"
 
 #: ../plugins/gtkui/interface.c:2391 ../plugins/gtkui/deadbeef.glade.h:24
 msgid "Description:"
@@ -777,15 +789,15 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:2406 ../plugins/gtkui/deadbeef.glade.h:13
 msgid "Author(s):"
-msgstr ""
+msgstr "Muwandisi (bawandisi):"
 
 #: ../plugins/gtkui/interface.c:2421 ../plugins/gtkui/deadbeef.glade.h:30
 msgid "Email:"
-msgstr ""
+msgstr "Email:"
 
 #: ../plugins/gtkui/interface.c:2436 ../plugins/gtkui/deadbeef.glade.h:140
 msgid "Website:"
-msgstr ""
+msgstr "Enfo ya ku yintaneti:"
 
 #: ../plugins/gtkui/interface.c:2467 ../plugins/gtkui/deadbeef.glade.h:19
 msgid "Configure"
@@ -861,7 +873,7 @@ msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:414
 msgid "Reload metadata"
-msgstr ""
+msgstr "Ddamu okusoma ebinnyonyola"
 
 #: ../plugins/gtkui/plcommon.c:433
 msgid "Remove from disk"
@@ -869,40 +881,40 @@ msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:719 ../plugins/gtkui/plcommon.c:844
 msgid "Add column"
-msgstr ""
+msgstr "Yongerako oukumbo"
 
 #: ../plugins/gtkui/plcommon.c:749 ../plugins/gtkui/plcommon.c:848
 msgid "Edit column"
-msgstr ""
+msgstr "Kyusa mu lukumbo"
 
 #: ../plugins/gtkui/plcommon.c:852
 msgid "Remove column"
-msgstr ""
+msgstr "Gyawo olukumbo"
 
 #: ../plugins/gtkui/plcommon.c:862
 msgid "Group by"
-msgstr ""
+msgstr "Sengekera ku"
 
 #: ../plugins/gtkui/plcommon.c:869
 msgid "None"
-msgstr ""
+msgstr "Tosengeka"
 
 #: ../plugins/gtkui/plcommon.c:873
 msgid "Artist/Date/Album"
-msgstr ""
+msgstr "Muyimbi/Amafuluma/Alubamu"
 
 #: ../plugins/gtkui/pluginconf.c:41
 msgid "Open file..."
-msgstr ""
+msgstr "Bikkula fayiro..."
 
 #: ../plugins/gtkui/pluginconf.c:142
 #, c-format
 msgid "Setup %s"
-msgstr ""
+msgstr "Teekateeka %s"
 
 #: ../plugins/gtkui/prefwin.c:98
 msgid "Default Audio Device"
-msgstr ""
+msgstr "Ekyuma ekikola ku biwulirizibwa bulijjo"
 
 #: ../plugins/gtkui/prefwin.c:312
 msgid "Add"
@@ -924,23 +936,23 @@ msgstr ""
 #: ../plugins/gtkui/prefwin.c:464 ../plugins/gtkui/prefwin.c:676
 #: ../plugins.c:872
 msgid "ALSA output plugin"
-msgstr ""
+msgstr "Puloguramu ekola ku bivaamu eya ALSA"
 
 #: ../plugins/gtkui/progress.c:64
 msgid "Initializing..."
-msgstr ""
+msgstr "Nteekateeka..."
 
 #: ../plugins/gtkui/trkproperties.c:53
 msgid "You've modified data for this track."
-msgstr ""
+msgstr "Okyusizza mu data y'olutambi luno."
 
 #: ../plugins/gtkui/trkproperties.c:55
 msgid "Really close the window?"
-msgstr ""
+msgstr "Eddirisa lino ddala liggalibwewo?"
 
 #: ../plugins/gtkui/trkproperties.c:178
 msgid "Tag Type(s)"
-msgstr ""
+msgstr "Bika by'okunnyonyola"
 
 #: ../plugins/gtkui/trkproperties.c:180
 msgid "Embedded Cuesheet"
@@ -956,7 +968,7 @@ msgstr ""
 
 #: ../plugins/gtkui/trkproperties.c:182
 msgid "Codec"
-msgstr ""
+msgstr "Puloguramu ekola ku data enkongojje"
 
 #: ../plugins/gtkui/trkproperties.c:250 ../plugins/gtkui/trkproperties.c:262
 msgid "Key"
@@ -973,12 +985,12 @@ msgstr ""
 #: ../main.c:89
 #, c-format
 msgid "Usage: deadbeef [options] [file(s)]\n"
-msgstr ""
+msgstr "Enkozesa entuufu eri: deadbeef [buwayiro][fayiro]\n"
 
 #: ../main.c:90
 #, c-format
 msgid "Options:\n"
-msgstr ""
+msgstr "Obuwayiro:\n"
 
 #: ../main.c:91
 #, c-format
@@ -1081,6 +1093,17 @@ msgid ""
 "Band / Album Artist\n"
 "Custom"
 msgstr ""
+"Namba ya fayiro\n"
+"Oluliko\n"
+"Ebifaananyi bya ku alubamu\n"
+"Muyimbi - Alubamu\n"
+"Muyimbi\n"
+"Alubamu\n"
+"Erinnya\n"
+"Buwanvu bwa lwo\n"
+"Lutambi\n"
+"Kibiina / Muyimbi wa alubamu\n"
+"Ebigambo ebibyo"
 
 #: ../plugins/gtkui/deadbeef.glade.h:71
 msgid ""
