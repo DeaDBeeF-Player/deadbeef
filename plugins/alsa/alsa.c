@@ -191,7 +191,7 @@ palsa_set_hw_params (ddb_waveformat_t *fmt) {
     plugin.fmt.samplerate = val;
     trace ("chosen samplerate: %d Hz\n", val);
 
-    if ((err = snd_pcm_hw_params_set_channels (audio, hw_params, /*fmt->channels*/6)) < 0) {
+    if ((err = snd_pcm_hw_params_set_channels (audio, hw_params, fmt->channels)) < 0) {
         fprintf (stderr, "cannot set channel count (%s)\n",
                 snd_strerror (err));
         goto error;
@@ -218,6 +218,7 @@ palsa_set_hw_params (ddb_waveformat_t *fmt) {
         goto error;
     }
 
+    plugin.fmt.is_float = 0;
     switch (sample_fmt) {
     case SND_PCM_FORMAT_S8:
         plugin.fmt.bps = 8;
@@ -234,10 +235,16 @@ palsa_set_hw_params (ddb_waveformat_t *fmt) {
     case SND_PCM_FORMAT_S32_LE:
         plugin.fmt.bps = 32;
         break;
+    case SND_PCM_FORMAT_FLOAT_LE:
+    case SND_PCM_FORMAT_FLOAT_BE:
+        plugin.fmt.bps = 32;
+        plugin.fmt.is_float = 1;
+        break;
     }
 
+    trace ("chosen bps: %d (%s)\n", plugin.fmt.bps, plugin.fmt.is_float ? "float" : "int");
+
     plugin.fmt.channels = nchan;
-    plugin.fmt.is_float = 0;
     plugin.fmt.is_multichannel = 0;
     plugin.fmt.channelmask = 0;
     if (nchan == 1) {
