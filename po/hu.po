@@ -1,0 +1,1515 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: deadbeef 0.4.3\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-10-31 21:57+0100\n"
+"PO-Revision-Date: 2010-11-10 19:45+0100\n"
+"Last-Translator: Peter Polonkai <polesz@nedudu.hu>\n"
+"Language-Team: ned <polesz@nedudu.hu>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: Hungarian\n"
+"X-Poedit-Country: HUNGARY\n"
+
+#: ../plugins/gtkui/callbacks.c:97
+msgid "Supported sound formats"
+msgstr "Támogatott hang formátumok"
+
+#: ../plugins/gtkui/callbacks.c:108
+msgid "Other files (*)"
+msgstr "Egyéb fájlok (*)"
+
+#: ../plugins/gtkui/callbacks.c:118
+msgid "Open file(s)..."
+msgstr "Fájl(ok) megnyitása..."
+
+#: ../plugins/gtkui/callbacks.c:151
+msgid "Add file(s) to playlist..."
+msgstr "Fájl(ok) hozzáadása a lejátszólistához..."
+
+#: ../plugins/gtkui/callbacks.c:190
+msgid "Add folder(s) to playlist..."
+msgstr "Könyvtár(ak) hozzáadása a lejátszólistához..."
+
+#: ../plugins/gtkui/callbacks.c:192
+msgid "Follow symlinks"
+msgstr "Szimlinkek követése"
+
+#: ../plugins/gtkui/callbacks.c:667
+msgid "Failed while reading help file"
+msgstr "Súgó fájl olvasása sikertelen"
+
+#: ../plugins/gtkui/callbacks.c:677
+msgid "Failed to load help file"
+msgstr "Súgó fájl betöltése sikertelen"
+
+#: ../plugins/gtkui/callbacks.c:692
+msgid "help.txt"
+msgstr "help.txt"
+
+#: ../plugins/gtkui/callbacks.c:693
+#: ../plugins/gtkui/interface.c:1099
+#: ../plugins/gtkui/deadbeef.glade.h:52
+msgid "Help"
+msgstr "Súgó"
+
+#: ../plugins/gtkui/callbacks.c:703
+#, c-format
+msgid "About DeaDBeeF %s"
+msgstr "DeaDBeeF %s névjegye"
+
+#: ../plugins/gtkui/callbacks.c:716
+#, c-format
+msgid "DeaDBeeF %s ChangeLog"
+msgstr "DeaDBeeF %s Változás napló"
+
+#: ../plugins/gtkui/callbacks.c:1080
+#, c-format
+msgid "DeaDBeeF Translators"
+msgstr "DeaDBeeF Fordítók"
+
+#: ../plugins/gtkui/ddbtabstrip.c:626
+msgid "Edit playlist"
+msgstr "Lejátszólista szerkesztése"
+
+#: ../plugins/gtkui/ddbtabstrip.c:675
+msgid "Rename Playlist"
+msgstr "Lejátszólista átnevezése"
+
+#: ../plugins/gtkui/ddbtabstrip.c:679
+msgid "Remove Playlist"
+msgstr "Lejátszólista törlése"
+
+#: ../plugins/gtkui/ddbtabstrip.c:683
+msgid "Add New Playlist"
+msgstr "Új lejátszólista hozzáadása"
+
+#: ../plugins/gtkui/eq.c:113
+msgid "Save DeaDBeeF EQ Preset"
+msgstr "DeaDBeeF EQ Hangszín mentése"
+
+#: ../plugins/gtkui/eq.c:120
+msgid "DeaDBeeF EQ preset files (*.ddbeq)"
+msgstr "DeaDBeeF EQ hangszín fájlok (*.ddbeq)"
+
+#: ../plugins/gtkui/eq.c:151
+msgid "Load DeaDBeeF EQ Preset..."
+msgstr "DeaDBeeF EQ Hangszín betöltése..."
+
+#: ../plugins/gtkui/eq.c:155
+msgid "DeaDBeeF EQ presets (*.ddbeq)"
+msgstr "DeaDBeeF EQ hangszínek (*.ddbeq)"
+
+#: ../plugins/gtkui/eq.c:214
+msgid "Import Foobar2000 EQ Preset..."
+msgstr "Foobar2000 EQ Hangszín importálása..."
+
+#: ../plugins/gtkui/eq.c:218
+msgid "Foobar2000 EQ presets (*.feq)"
+msgstr "Foobar2000 EQ hangszínek (*.feq)"
+
+#: ../plugins/gtkui/eq.c:292
+msgid "Enable"
+msgstr "Engedélyezve"
+
+#: ../plugins/gtkui/eq.c:300
+msgid "Zero All"
+msgstr "Mind nulla"
+
+#: ../plugins/gtkui/eq.c:307
+msgid "Zero Preamp"
+msgstr "Preamp nulla"
+
+#: ../plugins/gtkui/eq.c:314
+msgid "Zero Bands"
+msgstr "Sávok nulla"
+
+#: ../plugins/gtkui/eq.c:321
+msgid "Save Preset"
+msgstr "Hangszín mentés"
+
+#: ../plugins/gtkui/eq.c:328
+msgid "Load Preset"
+msgstr "Hangszín betöltés"
+
+#: ../plugins/gtkui/eq.c:335
+msgid "Import Foobar2000 Preset"
+msgstr "Foobar2000 Hangszín betöltése"
+
+#: ../plugins/gtkui/gtkui.c:133
+#, c-format
+msgid "1 day %d:%02d:%02d"
+msgstr "1 nap %d:%02d:%02d"
+
+#: ../plugins/gtkui/gtkui.c:136
+#, c-format
+msgid "%d days %d:%02d:%02d"
+msgstr "%d nap %d:%02d:%02d"
+
+#: ../plugins/gtkui/gtkui.c:145
+#, c-format
+msgid "Stopped | %d tracks | %s total playtime"
+msgstr "Megállítva | %d sáv | %s teljes lejátszási idő"
+
+#: ../plugins/gtkui/gtkui.c:158
+msgid "Mono"
+msgstr "Monó"
+
+#: ../plugins/gtkui/gtkui.c:158
+msgid "Stereo"
+msgstr "Sztereó"
+
+#: ../plugins/gtkui/gtkui.c:183
+#, c-format
+msgid "| %4d kbps "
+msgstr "| %4d kbps "
+
+#: ../plugins/gtkui/gtkui.c:189
+msgid "Paused | "
+msgstr "Szünet |"
+
+#: ../plugins/gtkui/gtkui.c:190
+#, c-format
+msgid "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
+msgstr "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d sáv | %s teljes lejátszási idő"
+
+#: ../plugins/gtkui/gtkui.c:661
+msgid "Save Playlist As"
+msgstr "Lejátszólista mentése másként"
+
+#: ../plugins/gtkui/gtkui.c:670
+#: ../plugins/gtkui/gtkui.c:731
+msgid "DeaDBeeF playlist files (*.dbpl)"
+msgstr "DeadBeeF lejátszólista fájlok (*.dbpl)"
+
+#: ../plugins/gtkui/gtkui.c:724
+msgid "Load Playlist"
+msgstr "Lejátszólista betöltése"
+
+#: ../plugins/gtkui/gtkui.c:865
+msgid "New Playlist"
+msgstr "Új lejátszólista"
+
+#: ../plugins/gtkui/gtkui.c:868
+#, c-format
+msgid "New Playlist (%d)"
+msgstr "Új lejátszólista (%d)"
+
+#: ../plugins/gtkui/interface.c:142
+#: ../plugins/gtkui/deadbeef.glade.h:151
+msgid "_File"
+msgstr "_Fájl"
+
+#: ../plugins/gtkui/interface.c:149
+#: ../plugins/gtkui/deadbeef.glade.h:157
+msgid "_Open file(s)"
+msgstr "_Fájl(ok) megnyitása"
+
+#: ../plugins/gtkui/interface.c:165
+#: ../plugins/gtkui/deadbeef.glade.h:4
+msgid "Add file(s)"
+msgstr "Fájl(ok) hozzáadása"
+
+#: ../plugins/gtkui/interface.c:173
+#: ../plugins/gtkui/deadbeef.glade.h:6
+msgid "Add folder(s)"
+msgstr "Könyvtár(ak) hozzáadása"
+
+#: ../plugins/gtkui/interface.c:181
+#: ../plugins/gtkui/interface.c:2973
+#: ../plugins/gtkui/deadbeef.glade.h:7
+msgid "Add location"
+msgstr "Hely hozzáadása"
+
+#: ../plugins/gtkui/interface.c:190
+#: ../plugins/gtkui/deadbeef.glade.h:82
+msgid "New playlist"
+msgstr "Új lejátszólista"
+
+#: ../plugins/gtkui/interface.c:197
+#: ../plugins/gtkui/deadbeef.glade.h:74
+msgid "Load playlist"
+msgstr "Lejátszólista betöltése"
+
+#: ../plugins/gtkui/interface.c:201
+#: ../plugins/gtkui/deadbeef.glade.h:111
+msgid "Save playlist"
+msgstr "Lejátszólista mentése"
+
+#: ../plugins/gtkui/interface.c:205
+#: ../plugins/gtkui/deadbeef.glade.h:112
+msgid "Save playlist as"
+msgstr "Lejátszólista mentése másként"
+
+#: ../plugins/gtkui/interface.c:214
+#: ../plugins/gtkui/deadbeef.glade.h:159
+msgid "_Quit"
+msgstr "_Kilépés"
+
+#: ../plugins/gtkui/interface.c:225
+#: ../plugins/gtkui/deadbeef.glade.h:150
+msgid "_Edit"
+msgstr "Sz_erkesztés"
+
+#: ../plugins/gtkui/interface.c:232
+#: ../plugins/gtkui/deadbeef.glade.h:148
+msgid "_Clear"
+msgstr "_Törlés"
+
+#: ../plugins/gtkui/interface.c:240
+#: ../plugins/gtkui/deadbeef.glade.h:116
+msgid "Select all"
+msgstr "Mind kiválaszt"
+
+#: ../plugins/gtkui/interface.c:247
+#: ../plugins/gtkui/deadbeef.glade.h:23
+msgid "Deselect all"
+msgstr "Minden kiválasztást megszüntet"
+
+#: ../plugins/gtkui/interface.c:254
+#: ../plugins/gtkui/deadbeef.glade.h:57
+msgid "Invert selection"
+msgstr "Kiválasztás megfordítása"
+
+#: ../plugins/gtkui/interface.c:258
+#: ../plugins/gtkui/deadbeef.glade.h:119
+msgid "Selection"
+msgstr "Választás"
+
+#: ../plugins/gtkui/interface.c:265
+#: ../plugins/gtkui/plcommon.c:426
+#: ../plugins/gtkui/prefwin.c:334
+#: ../plugins/gtkui/deadbeef.glade.h:106
+msgid "Remove"
+msgstr "Eltávolítás"
+
+#: ../plugins/gtkui/interface.c:273
+#: ../plugins/gtkui/deadbeef.glade.h:18
+msgid "Crop"
+msgstr "Vágás"
+
+#: ../plugins/gtkui/interface.c:277
+#: ../plugins/gtkui/deadbeef.glade.h:152
+msgid "_Find"
+msgstr "_Keresés"
+
+#: ../plugins/gtkui/interface.c:289
+#: ../plugins/gtkui/interface.c:1707
+#: ../plugins/gtkui/deadbeef.glade.h:96
+msgid "Preferences"
+msgstr "Beállítások"
+
+#: ../plugins/gtkui/interface.c:293
+#: ../plugins/gtkui/deadbeef.glade.h:161
+msgid "_View"
+msgstr "_Nézet"
+
+#: ../plugins/gtkui/interface.c:300
+#: ../plugins/gtkui/deadbeef.glade.h:122
+msgid "Status bar"
+msgstr "Státusz sor"
+
+#: ../plugins/gtkui/interface.c:304
+#: ../plugins/gtkui/deadbeef.glade.h:16
+msgid "Column headers"
+msgstr "Oszlop fejlécek"
+
+#: ../plugins/gtkui/interface.c:308
+#: ../plugins/gtkui/deadbeef.glade.h:129
+msgid "Tabs"
+msgstr "Fülek"
+
+#: ../plugins/gtkui/interface.c:312
+#: ../plugins/gtkui/deadbeef.glade.h:31
+msgid "Equalizer"
+msgstr "Hangszínszabályzó"
+
+#: ../plugins/gtkui/interface.c:316
+#: ../plugins/gtkui/deadbeef.glade.h:158
+msgid "_Playback"
+msgstr "_Lejátszás"
+
+#: ../plugins/gtkui/interface.c:323
+#: ../plugins/gtkui/deadbeef.glade.h:85
+msgid "Order"
+msgstr "Sorrend"
+
+#: ../plugins/gtkui/interface.c:330
+#: ../plugins/gtkui/deadbeef.glade.h:73
+msgid "Linear"
+msgstr "Lineáris"
+
+#: ../plugins/gtkui/interface.c:336
+#: ../plugins/gtkui/deadbeef.glade.h:120
+msgid "Shuffle"
+msgstr "Kevert"
+
+#: ../plugins/gtkui/interface.c:342
+#: ../plugins/gtkui/deadbeef.glade.h:105
+msgid "Random"
+msgstr "Véletlenszerű"
+
+#: ../plugins/gtkui/interface.c:348
+#: ../plugins/gtkui/deadbeef.glade.h:77
+msgid "Looping"
+msgstr "Ismétlés"
+
+#: ../plugins/gtkui/interface.c:355
+#: ../plugins/gtkui/deadbeef.glade.h:75
+msgid "Loop All"
+msgstr "Mind ismétlése"
+
+#: ../plugins/gtkui/interface.c:361
+#: ../plugins/gtkui/deadbeef.glade.h:76
+msgid "Loop Single Song"
+msgstr "Egyedi dal ismétlése"
+
+#: ../plugins/gtkui/interface.c:367
+#: ../plugins/gtkui/deadbeef.glade.h:27
+msgid "Don't Loop"
+msgstr "Nincs ismétlés"
+
+#: ../plugins/gtkui/interface.c:373
+#: ../plugins/gtkui/deadbeef.glade.h:113
+msgid "Scroll follows playback"
+msgstr "A lapozás követi a lejátszást"
+
+#: ../plugins/gtkui/interface.c:378
+#: ../plugins/gtkui/deadbeef.glade.h:20
+msgid "Cursor follows playback"
+msgstr "A kurzor követi a lejátszást"
+
+#: ../plugins/gtkui/interface.c:382
+#: ../plugins/gtkui/deadbeef.glade.h:124
+msgid "Stop after current"
+msgstr "Az aktuális szám után megállít"
+
+#: ../plugins/gtkui/interface.c:394
+#: ../plugins/gtkui/deadbeef.glade.h:69
+msgid "Jump to current track"
+msgstr "Ugrás az aktuális számra"
+
+#: ../plugins/gtkui/interface.c:401
+#: ../plugins/gtkui/interface.c:408
+#: ../plugins/gtkui/deadbeef.glade.h:154
+msgid "_Help"
+msgstr "_Súgó"
+
+#: ../plugins/gtkui/interface.c:416
+#: ../plugins/gtkui/deadbeef.glade.h:147
+msgid "_ChangeLog"
+msgstr "_Változás napló"
+
+#: ../plugins/gtkui/interface.c:425
+#: ../plugins/gtkui/deadbeef.glade.h:153
+msgid "_GPLv2"
+msgstr "_GPLv2"
+
+#: ../plugins/gtkui/interface.c:429
+#: ../plugins/gtkui/deadbeef.glade.h:155
+msgid "_LGPLv2.1"
+msgstr "_LGPLv2.1"
+
+#: ../plugins/gtkui/interface.c:438
+#: ../plugins/gtkui/deadbeef.glade.h:144
+msgid "_About"
+msgstr "_Névjegy"
+
+#: ../plugins/gtkui/interface.c:446
+#: ../plugins/gtkui/deadbeef.glade.h:160
+msgid "_Translators"
+msgstr "Fordí_tók"
+
+#: ../plugins/gtkui/interface.c:836
+#: ../plugins/gtkui/deadbeef.glade.h:114
+msgid "Search"
+msgstr "Keresés"
+
+#: ../plugins/gtkui/interface.c:911
+#: ../plugins/gtkui/deadbeef.glade.h:123
+msgid "Stop"
+msgstr "Megállítás"
+
+#: ../plugins/gtkui/interface.c:919
+#: ../plugins/gtkui/deadbeef.glade.h:91
+msgid "Play"
+msgstr "Lejátszás"
+
+#: ../plugins/gtkui/interface.c:927
+#: ../plugins/gtkui/deadbeef.glade.h:90
+msgid "Pause"
+msgstr "Szünet"
+
+#: ../plugins/gtkui/interface.c:935
+#: ../plugins/gtkui/deadbeef.glade.h:97
+msgid "Previous"
+msgstr "Előző"
+
+#: ../plugins/gtkui/interface.c:943
+#: ../plugins/gtkui/deadbeef.glade.h:83
+msgid "Next"
+msgstr "Következő"
+
+#: ../plugins/gtkui/interface.c:951
+#: ../plugins/gtkui/deadbeef.glade.h:92
+msgid "Play Random"
+msgstr "Véletlenszerű lejátszás"
+
+#: ../plugins/gtkui/interface.c:960
+#: ../plugins/gtkui/deadbeef.glade.h:3
+msgid "About"
+msgstr "Névjegy"
+
+#: ../plugins/gtkui/interface.c:973
+#: ../plugins/gtkui/deadbeef.glade.h:104
+msgid "Quit"
+msgstr "Kilépés"
+
+#: ../plugins/gtkui/interface.c:1041
+#: ../plugins/gtkui/deadbeef.glade.h:8
+msgid "Adding files..."
+msgstr "Fájlok hzzáadása..."
+
+#: ../plugins/gtkui/interface.c:1163
+#: ../plugins/gtkui/deadbeef.glade.h:135
+msgid "Track Properties"
+msgstr "Sáv Tulajdonságok"
+
+#: ../plugins/gtkui/interface.c:1209
+#: ../plugins/gtkui/deadbeef.glade.h:145
+msgid "_Apply"
+msgstr "_Alkalmaz"
+
+#: ../plugins/gtkui/interface.c:1230
+#: ../plugins/gtkui/interface.c:1276
+#: ../plugins/gtkui/interface.c:2501
+#: ../plugins/gtkui/deadbeef.glade.h:149
+msgid "_Close"
+msgstr "_Bezár"
+
+#: ../plugins/gtkui/interface.c:1234
+#: ../plugins/gtkui/deadbeef.glade.h:78
+msgid "Metadata"
+msgstr "Metaadat"
+
+#: ../plugins/gtkui/interface.c:1280
+#: ../plugins/gtkui/plcommon.c:504
+#: ../plugins/gtkui/deadbeef.glade.h:98
+msgid "Properties"
+msgstr "Tulajdonságok"
+
+#: ../plugins/gtkui/interface.c:1365
+#: ../plugins/gtkui/deadbeef.glade.h:162
+msgid "editcolumndlg"
+msgstr "editcolumndlg"
+
+#: ../plugins/gtkui/interface.c:1380
+#: ../plugins/gtkui/interface.c:2873
+#: ../plugins/gtkui/deadbeef.glade.h:132
+msgid "Title:"
+msgstr "Cím:"
+
+#: ../plugins/gtkui/interface.c:1388
+#: ../plugins/gtkui/deadbeef.glade.h:30
+msgid "Enter new column title here"
+msgstr "Adja meg a fejléc új címét"
+
+#: ../plugins/gtkui/interface.c:1396
+#: ../plugins/gtkui/deadbeef.glade.h:136
+msgid "Type:"
+msgstr "Típus"
+
+#: ../plugins/gtkui/interface.c:1404
+msgid "Item Index"
+msgstr "Elem index"
+
+#. create default set of columns
+#: ../plugins/gtkui/interface.c:1405
+#: ../plugins/gtkui/mainplaylist.c:305
+msgid "Playing"
+msgstr "Lejátszás"
+
+#: ../plugins/gtkui/interface.c:1406
+msgid "Album Art"
+msgstr "Album kép"
+
+#: ../plugins/gtkui/interface.c:1407
+msgid "Artist - Album"
+msgstr "Előadó - Album"
+
+#. Track properties dialog
+#: ../plugins/gtkui/interface.c:1408
+#: ../plugins/gtkui/plcommon.c:878
+#: ../translation/extra.c:55
+msgid "Artist"
+msgstr "Előadó"
+
+#: ../plugins/gtkui/interface.c:1409
+#: ../plugins/gtkui/interface.c:1797
+#: ../translation/extra.c:59
+msgid "Album"
+msgstr "Album"
+
+#: ../plugins/gtkui/interface.c:1410
+#: ../plugins/gtkui/prefwin.c:612
+msgid "Title"
+msgstr "Cím"
+
+#: ../plugins/gtkui/interface.c:1411
+msgid "Length"
+msgstr "Hossz"
+
+#: ../plugins/gtkui/interface.c:1412
+#: ../plugins/gtkui/interface.c:1796
+msgid "Track"
+msgstr "Sáv"
+
+#: ../plugins/gtkui/interface.c:1413
+#: ../translation/extra.c:58
+msgid "Band / Album Artist"
+msgstr "Zenekar / Album előadó"
+
+#: ../plugins/gtkui/interface.c:1414
+#: ../plugins/gtkui/plcommon.c:882
+msgid "Custom"
+msgstr "Egyéb"
+
+#: ../plugins/gtkui/interface.c:1420
+#: ../plugins/gtkui/interface.c:3100
+#: ../plugins/gtkui/deadbeef.glade.h:49
+msgid "Format:"
+msgstr "Formátum"
+
+#: ../plugins/gtkui/interface.c:1435
+#: ../plugins/gtkui/deadbeef.glade.h:9
+msgid "Alignment:"
+msgstr "Igazítás"
+
+#: ../plugins/gtkui/interface.c:1443
+msgid "Left"
+msgstr "Balra"
+
+#: ../plugins/gtkui/interface.c:1444
+msgid "Right"
+msgstr "Jobbra"
+
+#: ../plugins/gtkui/interface.c:1446
+#: ../plugins/gtkui/deadbeef.glade.h:35
+#, no-c-format
+msgid ""
+"Format conversions (start with %):\n"
+"  [a]rtist, [t]itle, al[b]um, [B]and, [C]omposer\n"
+"  track[n]umber, [N]totaltracks,\n"
+"  [l]ength, [y]ear, [g]enre, [c]omment,\n"
+"  copy[r]ight, [f]ilename, [F]ullPathname, [T]ags,\n"
+"  [d]irectory, [D]irectoryWithPath\n"
+"Example: %a - %t [%l]"
+msgstr ""
+"Formátum konverziók (kezdő %):\n"
+"  [a]előadó, [t]cím, al[b]um, [B]zenekar, [C]szerző\n"
+"  [n]sávszáma, [N]összessáv,\n"
+"  [l]hossz, [y]év, [g]műfaj, [c]megjegyzés,\n"
+"  copy[r]ight, [f]ájlnév, [F]Teljesútvonal, [T]címkék\n"
+"  [d]könyvtár,[D]KönyvtárÚtvonallal\n"
+"Példa: %a - %t [%l]"
+
+#: ../plugins/gtkui/interface.c:1475
+#: ../plugins/gtkui/interface.c:2904
+#: ../plugins/gtkui/interface.c:3016
+#: ../plugins/gtkui/interface.c:3139
+#: ../plugins/gtkui/deadbeef.glade.h:146
+msgid "_Cancel"
+msgstr "_Mégsem"
+
+#: ../plugins/gtkui/interface.c:1496
+#: ../plugins/gtkui/interface.c:2925
+#: ../plugins/gtkui/interface.c:3037
+#: ../plugins/gtkui/interface.c:3160
+#: ../plugins/gtkui/deadbeef.glade.h:156
+msgid "_OK"
+msgstr "_OK"
+
+#: ../plugins/gtkui/interface.c:1728
+#: ../plugins/gtkui/deadbeef.glade.h:87
+msgid "Output plugin:"
+msgstr "Kimeneti bővítmény:"
+
+#: ../plugins/gtkui/interface.c:1741
+#: ../plugins/gtkui/deadbeef.glade.h:86
+msgid "Output device:"
+msgstr "Kimeneti eszköz:"
+
+#: ../plugins/gtkui/interface.c:1750
+#: ../plugins/gtkui/deadbeef.glade.h:121
+msgid "Sound"
+msgstr "Hang"
+
+#: ../plugins/gtkui/interface.c:1759
+#: ../plugins/gtkui/deadbeef.glade.h:10
+msgid "Allow dynamic samplerate switching"
+msgstr "Engedi a dinamikus mintavételt kapcsolás közben"
+
+#: ../plugins/gtkui/interface.c:1767
+#: ../plugins/gtkui/deadbeef.glade.h:110
+msgid "Samplerate conversion quality:"
+msgstr "Mintavételi átalakítási minőség:"
+
+#: ../plugins/gtkui/interface.c:1786
+#: ../plugins/gtkui/deadbeef.glade.h:107
+msgid "Replaygain mode:"
+msgstr "Újrajátszási mód:"
+
+#: ../plugins/gtkui/interface.c:1795
+msgid "Disable"
+msgstr "Letiltva"
+
+#: ../plugins/gtkui/interface.c:1799
+#: ../plugins/gtkui/deadbeef.glade.h:108
+msgid "Replaygain peak scale"
+msgstr "Újrajátszási csúcs skála"
+
+#: ../plugins/gtkui/interface.c:1807
+#: ../plugins/gtkui/deadbeef.glade.h:5
+msgid "Add files from command line (or file manager) to this playlist:"
+msgstr "Fájlok hozzáadása parancssorból (vagy fájl kezelőből) a lejátszólistához"
+
+#: ../plugins/gtkui/interface.c:1816
+#: ../plugins/gtkui/deadbeef.glade.h:109
+msgid "Resume previous session on startup"
+msgstr "Előző állapot helyreállítása indításkor"
+
+#: ../plugins/gtkui/interface.c:1820
+#: ../plugins/gtkui/deadbeef.glade.h:93
+msgid "Playback"
+msgstr "Lejátszás"
+
+#: ../plugins/gtkui/interface.c:1829
+#: ../plugins/gtkui/deadbeef.glade.h:14
+msgid "Close minimizes to tray"
+msgstr "Bezáráskor a tálcára kerül"
+
+#: ../plugins/gtkui/interface.c:1833
+#: ../plugins/gtkui/deadbeef.glade.h:80
+msgid "Middle mouse button closes playlist"
+msgstr "Középső egérgomb zárja be a lejátszólistát"
+
+#: ../plugins/gtkui/interface.c:1837
+#: ../plugins/gtkui/deadbeef.glade.h:54
+msgid "Hide system tray icon"
+msgstr "Rendszertálca ikon elrejtése"
+
+#: ../plugins/gtkui/interface.c:1841
+#: ../plugins/gtkui/deadbeef.glade.h:138
+msgid "Use bold font for currently playing track"
+msgstr "Kövér betűtípus használata a most játszott számnál"
+
+#: ../plugins/gtkui/interface.c:1845
+#: ../plugins/gtkui/deadbeef.glade.h:53
+msgid "Hide \"Delete from disk\" context menu item"
+msgstr "Elrejti a \"Törlés a lemezről\" menü elemet"
+
+#: ../plugins/gtkui/interface.c:1853
+#: ../plugins/gtkui/deadbeef.glade.h:133
+msgid "Titlebar text while playing:"
+msgstr "Címsáv szöveg szám lejátszásakor:"
+
+#: ../plugins/gtkui/interface.c:1867
+#: ../plugins/gtkui/deadbeef.glade.h:134
+msgid "Titlebar text while stopped:"
+msgstr "Címsáv szöveg ha nincs lejátszás:"
+
+#: ../plugins/gtkui/interface.c:1877
+#: ../plugins/gtkui/deadbeef.glade.h:50
+msgid "GUI"
+msgstr "Felhasználói felület"
+
+#: ../plugins/gtkui/interface.c:1892
+#: ../plugins/gtkui/interface.c:1936
+#: ../plugins/gtkui/deadbeef.glade.h:88
+msgid "Override"
+msgstr "Felülírás"
+
+#: ../plugins/gtkui/interface.c:1901
+#: ../plugins/gtkui/deadbeef.glade.h:33
+msgid "Foreground"
+msgstr "Előtér"
+
+#: ../plugins/gtkui/interface.c:1908
+#: ../plugins/gtkui/deadbeef.glade.h:12
+msgid "Background"
+msgstr "Háttér"
+
+#: ../plugins/gtkui/interface.c:1927
+#: ../plugins/gtkui/deadbeef.glade.h:115
+msgid "Seekbar/Volumebar colors"
+msgstr "Idősáv/Hangerő színek"
+
+#: ../plugins/gtkui/interface.c:1945
+#: ../plugins/gtkui/deadbeef.glade.h:79
+msgid "Middle"
+msgstr "Közép"
+
+#: ../plugins/gtkui/interface.c:1952
+#: ../plugins/gtkui/deadbeef.glade.h:72
+msgid "Light"
+msgstr "Világos"
+
+#: ../plugins/gtkui/interface.c:1959
+#: ../plugins/gtkui/deadbeef.glade.h:21
+msgid "Dark"
+msgstr "Sötét"
+
+#: ../plugins/gtkui/interface.c:1990
+#: ../plugins/gtkui/deadbeef.glade.h:13
+msgid "Base"
+msgstr "Alap"
+
+#: ../plugins/gtkui/interface.c:1997
+#: ../plugins/gtkui/deadbeef.glade.h:128
+msgid "Tab strip colors"
+msgstr "Fülek színe"
+
+#: ../plugins/gtkui/interface.c:2006
+#: ../plugins/gtkui/deadbeef.glade.h:89
+msgid "Override (looses GTK treeview theming, but speeds up rendering)"
+msgstr "Felülírás (elveszti a GTK treeview témát, de gyorsul a rajzolás sebessége)"
+
+#: ../plugins/gtkui/interface.c:2015
+#: ../plugins/gtkui/deadbeef.glade.h:32
+msgid "Even row"
+msgstr "Páros sor"
+
+#: ../plugins/gtkui/interface.c:2022
+#: ../plugins/gtkui/deadbeef.glade.h:84
+msgid "Odd row"
+msgstr "Páratlan sor"
+
+#: ../plugins/gtkui/interface.c:2041
+#: ../plugins/gtkui/deadbeef.glade.h:131
+msgid "Text"
+msgstr "Szöveg"
+
+#: ../plugins/gtkui/interface.c:2048
+#: ../plugins/gtkui/deadbeef.glade.h:117
+msgid "Selected row"
+msgstr "Kiválasztott sor"
+
+#: ../plugins/gtkui/interface.c:2067
+#: ../plugins/gtkui/deadbeef.glade.h:118
+msgid "Selected text"
+msgstr "Kiválasztott szöveg"
+
+#: ../plugins/gtkui/interface.c:2080
+#: ../plugins/gtkui/deadbeef.glade.h:19
+msgid "Cursor"
+msgstr "Kurzor"
+
+#: ../plugins/gtkui/interface.c:2093
+#: ../plugins/gtkui/deadbeef.glade.h:94
+msgid "Playlist colors"
+msgstr "Lejátszólista színek"
+
+#: ../plugins/gtkui/interface.c:2097
+#: ../plugins/gtkui/deadbeef.glade.h:15
+msgid "Colors"
+msgstr "Színek"
+
+#: ../plugins/gtkui/interface.c:2106
+#: ../plugins/gtkui/deadbeef.glade.h:29
+msgid "Enable Proxy Server"
+msgstr "Proxy szerver engedélyezése"
+
+#: ../plugins/gtkui/interface.c:2114
+#: ../plugins/gtkui/deadbeef.glade.h:100
+msgid "Proxy Server Address:"
+msgstr "Proxy szerver cím:"
+
+#: ../plugins/gtkui/interface.c:2128
+#: ../plugins/gtkui/deadbeef.glade.h:101
+msgid "Proxy Server Port:"
+msgstr "Proxy szerver port:"
+
+#: ../plugins/gtkui/interface.c:2142
+#: ../plugins/gtkui/deadbeef.glade.h:102
+msgid "Proxy Type:"
+msgstr "Proxy típusa:"
+
+#: ../plugins/gtkui/interface.c:2161
+#: ../plugins/gtkui/deadbeef.glade.h:103
+msgid "Proxy Username:"
+msgstr "Proxy felhasználónév:"
+
+#: ../plugins/gtkui/interface.c:2174
+#: ../plugins/gtkui/deadbeef.glade.h:99
+msgid "Proxy Password:"
+msgstr "Proxy jelszó:"
+
+#: ../plugins/gtkui/interface.c:2184
+#: ../plugins/gtkui/deadbeef.glade.h:81
+msgid "Network"
+msgstr "Hálózat"
+
+#: ../plugins/gtkui/interface.c:2212
+#: ../plugins/gtkui/deadbeef.glade.h:142
+msgid "Write ID3v2"
+msgstr "ID3v2 írása"
+
+#: ../plugins/gtkui/interface.c:2216
+#: ../plugins/gtkui/interface.c:2343
+#: ../plugins/gtkui/deadbeef.glade.h:141
+msgid "Write ID3v1"
+msgstr "ID3v1 írása"
+
+#: ../plugins/gtkui/interface.c:2220
+#: ../plugins/gtkui/interface.c:2299
+#: ../plugins/gtkui/interface.c:2339
+#: ../plugins/gtkui/deadbeef.glade.h:140
+msgid "Write APEv2"
+msgstr "APEv2 írása"
+
+#: ../plugins/gtkui/interface.c:2228
+#: ../plugins/gtkui/interface.c:2307
+#: ../plugins/gtkui/deadbeef.glade.h:127
+msgid "Strip ID3v2"
+msgstr "ID3v2 vágása"
+
+#: ../plugins/gtkui/interface.c:2232
+#: ../plugins/gtkui/interface.c:2355
+#: ../plugins/gtkui/deadbeef.glade.h:126
+msgid "Strip ID3v1"
+msgstr "ID3v1 vágása"
+
+#: ../plugins/gtkui/interface.c:2236
+#: ../plugins/gtkui/interface.c:2311
+#: ../plugins/gtkui/interface.c:2351
+#: ../plugins/gtkui/deadbeef.glade.h:125
+msgid "Strip APEv2"
+msgstr "APEv2 vágása"
+
+#: ../plugins/gtkui/interface.c:2244
+#: ../plugins/gtkui/deadbeef.glade.h:56
+msgid "ID3v2 version"
+msgstr "ID3v2 verzió"
+
+#: ../plugins/gtkui/interface.c:2251
+msgid "2.3 (Recommended)"
+msgstr "2.3 (Ajánlott)"
+
+#: ../plugins/gtkui/interface.c:2252
+msgid "2.4"
+msgstr "2.4"
+
+#: ../plugins/gtkui/interface.c:2258
+#: ../plugins/gtkui/deadbeef.glade.h:55
+msgid "ID3v1 character encoding (default is iso8859-1)"
+msgstr "ID3v2 karakter kódolás (alapértelmezés iso8859-1)"
+
+#: ../plugins/gtkui/interface.c:2295
+#: ../plugins/gtkui/deadbeef.glade.h:143
+msgid "Write ID3v2.4"
+msgstr "ID3v2.4 írása"
+
+#: ../plugins/gtkui/interface.c:2364
+#: ../plugins/gtkui/deadbeef.glade.h:130
+msgid "Tag writer"
+msgstr "Címke író"
+
+#: ../plugins/gtkui/interface.c:2395
+#: ../plugins/gtkui/deadbeef.glade.h:22
+msgid "Description:"
+msgstr "Leírás:"
+
+#: ../plugins/gtkui/interface.c:2410
+#: ../plugins/gtkui/deadbeef.glade.h:11
+msgid "Author(s):"
+msgstr "Szerző(k):"
+
+#: ../plugins/gtkui/interface.c:2425
+#: ../plugins/gtkui/deadbeef.glade.h:28
+msgid "Email:"
+msgstr "Email:"
+
+#: ../plugins/gtkui/interface.c:2440
+#: ../plugins/gtkui/deadbeef.glade.h:139
+msgid "Website:"
+msgstr "Honlap:"
+
+#: ../plugins/gtkui/interface.c:2471
+#: ../plugins/gtkui/deadbeef.glade.h:17
+msgid "Configure"
+msgstr "Beállítás"
+
+#: ../plugins/gtkui/interface.c:2475
+#: ../plugins/gtkui/deadbeef.glade.h:95
+msgid "Plugins"
+msgstr "Bővítmények"
+
+#: ../plugins/gtkui/interface.c:2857
+#: ../plugins/gtkui/deadbeef.glade.h:163
+msgid "editplaylistdlg"
+msgstr "editplaylistdlg"
+
+#: ../plugins/gtkui/interface.c:2984
+#: ../plugins/gtkui/deadbeef.glade.h:137
+msgid "URL:"
+msgstr "URL:"
+
+#: ../plugins/gtkui/interface.c:3085
+#: ../plugins/gtkui/deadbeef.glade.h:51
+msgid "Group By"
+msgstr "Csoport"
+
+#: ../plugins/gtkui/interface.c:3110
+#: ../plugins/gtkui/deadbeef.glade.h:43
+#, no-c-format
+msgid ""
+"Format conversions (start with %):\n"
+"  [a]rtist, [t]itle, al[b]um, [B]and, [C]omposer\n"
+"  track[n]umber, [N]totaltracks,\n"
+"  [l]ength, [y]ear, [g]enre, [c]omment,\n"
+"  copy[r]ight, [f]ilename, [T]ags\n"
+"Example: %a - %t [%l]"
+msgstr ""
+"Formátum konverziók (kezdő %):\n"
+"  [a]előadó, [t]cím, al[b]um, [B]zenekar, [C]szerző\n"
+"  [n]sávszáma, [N]összessáv,\n"
+"  [l]hossz, [y]év, [g]műfaj, [c]megjegyzés,\n"
+"  copy[r]ight, [f]ájlnév, [T]címkék\n"
+"Példa: %a - %t [%l]"
+
+#: ../plugins/gtkui/mainplaylist.c:306
+#: ../plugins/gtkui/search.c:439
+msgid "Artist / Album"
+msgstr "Előadó / Album"
+
+#: ../plugins/gtkui/mainplaylist.c:307
+#: ../plugins/gtkui/search.c:440
+msgid "Track No"
+msgstr "Sáv száma"
+
+#: ../plugins/gtkui/mainplaylist.c:308
+#: ../plugins/gtkui/search.c:441
+msgid "Title / Track Artist"
+msgstr "Cím / Sáv előadó"
+
+#: ../plugins/gtkui/mainplaylist.c:309
+#: ../plugins/gtkui/search.c:442
+#: ../plugins/gtkui/trkproperties.c:175
+msgid "Duration"
+msgstr "Időtartam"
+
+#: ../plugins/gtkui/plcommon.c:324
+msgid "Delete files from disk"
+msgstr "Fájlok törlése a lemezről"
+
+#: ../plugins/gtkui/plcommon.c:325
+msgid ""
+"Files will be lost. Proceed?\n"
+"(This dialog can be turned off in GTKUI plugin settings)"
+msgstr ""
+"A fájlok el fognak veszni. Folytatja?\n"
+"(Ez a párbeszédablak kikapcsolható a GTKUI bővítmény beállításaiban)"
+
+#: ../plugins/gtkui/plcommon.c:326
+#: ../plugins/gtkui/trkproperties.c:56
+msgid "Warning"
+msgstr "Figyelemeztetés"
+
+#: ../plugins/gtkui/plcommon.c:402
+msgid "Add to playback queue"
+msgstr "Hozzáadás a lejátszási sorhoz"
+
+#: ../plugins/gtkui/plcommon.c:407
+msgid "Remove from playback queue"
+msgstr "Törlés a lejátszási sorból"
+
+#: ../plugins/gtkui/plcommon.c:415
+msgid "Reload metadata"
+msgstr "Metaadat újratöltése"
+
+#: ../plugins/gtkui/plcommon.c:434
+msgid "Remove from disk"
+msgstr "Törlés a lemezről"
+
+#: ../plugins/gtkui/plcommon.c:720
+#: ../plugins/gtkui/plcommon.c:845
+msgid "Add column"
+msgstr "Oszlop hozzáadása"
+
+#: ../plugins/gtkui/plcommon.c:750
+#: ../plugins/gtkui/plcommon.c:849
+msgid "Edit column"
+msgstr "Oszlop szerkesztése"
+
+#: ../plugins/gtkui/plcommon.c:853
+msgid "Remove column"
+msgstr "Öszlop törlése"
+
+#: ../plugins/gtkui/plcommon.c:863
+msgid "Group by"
+msgstr "Csoport"
+
+#: ../plugins/gtkui/plcommon.c:870
+msgid "None"
+msgstr "Nincs"
+
+#: ../plugins/gtkui/plcommon.c:874
+msgid "Artist/Date/Album"
+msgstr "Előadó/Dátum/Album"
+
+#: ../plugins/gtkui/pluginconf.c:41
+msgid "Open file..."
+msgstr "Fájl megnyitása..."
+
+#: ../plugins/gtkui/pluginconf.c:142
+#, c-format
+msgid "Setup %s"
+msgstr "Beállítás %s"
+
+#: ../plugins/gtkui/prefwin.c:99
+msgid "Default Audio Device"
+msgstr "Alapértelmezett Audio Eszköz"
+
+#: ../plugins/gtkui/prefwin.c:329
+msgid "Add"
+msgstr "Hozzáadés"
+
+#: ../plugins/gtkui/prefwin.c:339
+msgid "Global Hotkeys"
+msgstr "Globális billentyű kombinációk"
+
+#: ../plugins/gtkui/prefwin.c:401
+msgid "Slot"
+msgstr "Hely"
+
+#: ../plugins/gtkui/prefwin.c:402
+msgid "Key combination"
+msgstr "Billentyű kombináció"
+
+#. output plugin selection
+#: ../plugins/gtkui/prefwin.c:481
+#: ../plugins/gtkui/prefwin.c:693
+#: ../plugins.c:873
+msgid "ALSA output plugin"
+msgstr "ALSA kimeneti bővítmény"
+
+#: ../plugins/gtkui/progress.c:64
+msgid "Initializing..."
+msgstr "Inicializálás..."
+
+#: ../plugins/gtkui/trkproperties.c:53
+msgid "You've modified data for this track."
+msgstr "Már módosított adatokat ezen a számon."
+
+#: ../plugins/gtkui/trkproperties.c:55
+msgid "Really close the window?"
+msgstr "Valóban bezárja az ablakot?"
+
+#: ../plugins/gtkui/trkproperties.c:169
+msgid "Location"
+msgstr "Hely"
+
+#: ../plugins/gtkui/trkproperties.c:172
+msgid "Subtrack Index"
+msgstr "Alsáv Index"
+
+#: ../plugins/gtkui/trkproperties.c:178
+msgid "Tag Type(s)"
+msgstr "Címke típus(ok)"
+
+#: ../plugins/gtkui/trkproperties.c:180
+msgid "Embedded Cuesheet"
+msgstr "Beépített Cue támogatás"
+
+#: ../plugins/gtkui/trkproperties.c:180
+msgid "Yes"
+msgstr "Igen"
+
+#: ../plugins/gtkui/trkproperties.c:180
+msgid "No"
+msgstr "Nem"
+
+#: ../plugins/gtkui/trkproperties.c:182
+msgid "Codec"
+msgstr "Kodek"
+
+#: ../plugins/gtkui/trkproperties.c:250
+#: ../plugins/gtkui/trkproperties.c:262
+msgid "Key"
+msgstr "Billentyű"
+
+#: ../plugins/gtkui/trkproperties.c:251
+#: ../plugins/gtkui/trkproperties.c:263
+msgid "Value"
+msgstr "Érték"
+
+#: ../plugins/notify/notify.c:138
+msgid "DeaDBeeF now playing"
+msgstr "DeaDBeeF most szól"
+
+#: ../main.c:89
+#, c-format
+msgid "Usage: deadbeef [options] [file(s)]\n"
+msgstr "Használat: deadbeef [opciók] [fájl(ok)]\n"
+
+#: ../main.c:90
+#, c-format
+msgid "Options:\n"
+msgstr "Opciók:\n"
+
+#: ../main.c:91
+#, c-format
+msgid "   --help  or  -h     Print help (this message) and exit\n"
+msgstr "   --help  vagy  -h     Súgó megjelenítése (ez az üzenet) és kilépt\n"
+
+#: ../main.c:92
+#, c-format
+msgid "   --quit             Quit player\n"
+msgstr "   --quit             Kilépés a lejátszóból\n"
+
+#: ../main.c:93
+#, c-format
+msgid "   --version          Print version info and exit\n"
+msgstr "   --version          Verzió információ megjelenítése és kilépés\n"
+
+#: ../main.c:94
+#, c-format
+msgid "   --play             Start playback\n"
+msgstr "   --play             Lejátszás indítása\n"
+
+#: ../main.c:95
+#, c-format
+msgid "   --stop             Stop playback\n"
+msgstr "   --stop             Lejátszás megállítása\n"
+
+#: ../main.c:96
+#, c-format
+msgid "   --pause            Pause playback\n"
+msgstr "   --pause            Lejátszás szüneteltetése\n"
+
+#: ../main.c:97
+#, c-format
+msgid "   --next             Next song in playlist\n"
+msgstr "   --next             Ugrás a következő számra a lejátszólistában\n"
+
+#: ../main.c:98
+#, c-format
+msgid "   --prev             Previous song in playlist\n"
+msgstr "   --prev             Ugrás az előző számra a lejátszólistában\n"
+
+#: ../main.c:99
+#, c-format
+msgid "   --random           Random song in playlist\n"
+msgstr "   --random           Véletlenszerű szám a lejátszólistáról\n"
+
+#: ../main.c:100
+#, c-format
+msgid "   --queue            Append file(s) to existing playlist\n"
+msgstr "   --queue            Fájl(ok) hozzáadása a létező lejátszólistához\n"
+
+#: ../main.c:101
+#, c-format
+msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
+msgstr "   --nowplaying FMT   Szám nevének formázott kiírása az stdout-ra\n"
+
+#: ../main.c:102
+#, c-format
+msgid ""
+"                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
+"                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
+"                      copy[r]ight, [e]lapsed\n"
+msgstr ""
+"                      FMT %%-szintakszis: elő[a]dó, [t]cím, al[b]um,\n"
+"                      [l]hossz, [n]sávszáma, [y]év, [c]megjegyzés,\n"
+"                      copy[r]ight, [e]ltelt idő\n"
+
+#: ../main.c:105
+#, c-format
+msgid "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n"
+msgstr "                      pl.: --nowplaying \"%%a - %%t\" kiírása kerül \"előadó - cím\"\n"
+
+#: ../playlist.c:378
+#: ../playlist.c:2295
+msgid "Default"
+msgstr "Alapértelmezett"
+
+#: ../plugins/gtkui/deadbeef.glade.h:1
+msgid ""
+"2.3 (Recommended)\n"
+"2.4"
+msgstr ""
+"2.3 (Ajánlott)\n"
+"2.4"
+
+#: ../plugins/gtkui/deadbeef.glade.h:24
+msgid ""
+"Disable\n"
+"Track\n"
+"Album"
+msgstr ""
+"Letiltás\n"
+"Sáv\n"
+"Album"
+
+#: ../plugins/gtkui/deadbeef.glade.h:58
+msgid ""
+"Item Index\n"
+"Playing\n"
+"Album Art\n"
+"Artist - Album\n"
+"Artist\n"
+"Album\n"
+"Title\n"
+"Length\n"
+"Track\n"
+"Band / Album Artist\n"
+"Custom"
+msgstr ""
+"Elem Index\n"
+"Lejátszás\n"
+"Album borító\n"
+"Előadó - Album\n"
+"Előadó\n"
+"Album\n"
+"Cím\n"
+"Hossz\n"
+"Sáv\n"
+"Zenekar / Album Előadó\n"
+"Egyéb"
+
+#: ../plugins/gtkui/deadbeef.glade.h:70
+msgid ""
+"Left\n"
+"Right"
+msgstr ""
+"Balra\n"
+"Jobbra"
+
+#: ../plugins/gtkui/support.c:90
+#: ../plugins/gtkui/support.c:114
+#, c-format
+msgid "Couldn't find pixmap file: %s"
+msgstr "Nem található a képfájl: %s"
+
+#: ../plugins/wildmidi/wildmidiplug.c:162
+#, c-format
+msgid "wildmidi: freepats config file not found. Please install timidity-freepats package, or specify path to freepats.cfg in the plugin settings."
+msgstr "wildmidi: freepats konfig fájl nem található. Kérem telepítse a timidity-freepats csomagot vagy adja meg a freepats.cfg útvonalát a bővítmény beállításaiban."
+
+#. this file should list extra translatable strings that are not referenced
+#. directly in source code, e.g. scripted plugin configuration strings
+#: ../translation/extra.c:3
+msgid "Add Audio CD"
+msgstr "Audio CD hozzádása"
+
+#: ../translation/extra.c:4
+msgid "Lookup on Last.fm"
+msgstr "Keresés a Last.fm-en"
+
+#. ALSA output plugin
+#: ../translation/extra.c:6
+msgid "Use ALSA resampling"
+msgstr "ALSA újramintavételezés használata"
+
+#: ../translation/extra.c:7
+msgid "Release device while stopped"
+msgstr "Eszköz felszabadítása amíg megállított a lejátszás"
+
+#: ../translation/extra.c:8
+#: ../translation/extra.c:43
+msgid "Preferred buffer size"
+msgstr "Preferált puffer méret"
+
+#: ../translation/extra.c:9
+msgid "Preferred period size"
+msgstr "Preferált periódus méret"
+
+#. Last.fm plugin
+#: ../translation/extra.c:11
+msgid "Enable scrobbler"
+msgstr "Scrobbler engedélyezése"
+
+#: ../translation/extra.c:12
+msgid "Disable nowplaying"
+msgstr "Most játszott tiltása"
+
+#: ../translation/extra.c:13
+msgid "Username"
+msgstr "Felhasználónév"
+
+#: ../translation/extra.c:14
+msgid "Password"
+msgstr "Jelszó"
+
+#: ../translation/extra.c:15
+msgid "Scrobble URL"
+msgstr "Scrobble URL"
+
+#. Album Artwork plugin
+#: ../translation/extra.c:17
+msgid "Cache update period (hr)"
+msgstr "Átmeneti tár frissítési periódus (óra)"
+
+#: ../translation/extra.c:18
+msgid "Fetch from embedded tags"
+msgstr "Beágyazott címkék olvasása"
+
+#: ../translation/extra.c:19
+msgid "Fetch from local folder"
+msgstr "Olvasás helyi könyvtárból"
+
+#: ../translation/extra.c:20
+msgid "Local cover file mask"
+msgstr "Helyi borító fájl maszk"
+
+#: ../translation/extra.c:21
+msgid "Fetch from last.fm"
+msgstr "Olvasás a last.fm-ről"
+
+#: ../translation/extra.c:22
+msgid "Fetch from albumart.org"
+msgstr "Olvasás az albumart.org-ról"
+
+#. Audio CD player
+#: ../translation/extra.c:24
+msgid "Use CDDB/FreeDB"
+msgstr "CDDB/FreeDB használata"
+
+#: ../translation/extra.c:25
+msgid "Prefer CD-Text over CDDB"
+msgstr "Előnyben részesíti a CD-Text olvasást a CDDB szerverről"
+
+#: ../translation/extra.c:26
+msgid "CDDB url (e.g. 'freedb.org')"
+msgstr "CDDB url (pl. 'freedb.org')"
+
+#: ../translation/extra.c:27
+msgid "CDDB port number (e.g. '888')"
+msgstr "CDDB port száma (pl. '888')"
+
+#: ../translation/extra.c:28
+msgid "Prefer CDDB protocol over HTTP"
+msgstr "CDDB protokoll HTTP felett előnyben részesítése"
+
+#: ../translation/extra.c:29
+msgid "Enable NRG image support"
+msgstr "NRG képfájl támogatás engedélyezése"
+
+#. DUMB module player plugin
+#: ../translation/extra.c:31
+msgid "Resampling quality (0..2, higher is better)"
+msgstr "Újramintavételezés minősége (0..2, a nagyobb a jobb)"
+
+#. Game_Music_Emu decoder plugin
+#: ../translation/extra.c:33
+msgid "Max song length (in minutes)"
+msgstr "Maximális szám hossz (percben)"
+
+#. Standard GTK2 user interface plugin
+#: ../translation/extra.c:35
+msgid "Ask confirmation to delete files from disk"
+msgstr "Fájlok lemezről való törlésekor megerősítést kér"
+
+#: ../translation/extra.c:36
+msgid "Status icon volume control sensitivity"
+msgstr "Az állapot ikon hangerőszabályzóként viselkedik"
+
+#: ../translation/extra.c:37
+msgid "Custom status icon"
+msgstr "Egyedi státuszikon"
+
+#: ../translation/extra.c:38
+msgid "Run gtk_init with --sync (debug mode)"
+msgstr "gtk_init futtatása --sync kapcsolóval (hibakereső mód)"
+
+#. OSD Notify plugin
+#: ../translation/extra.c:40
+msgid "Notification format"
+msgstr "Értesítési formátum"
+
+#. PulseAudio output plugin
+#: ../translation/extra.c:42
+msgid "PulseAudio server"
+msgstr "PulseAudio szerver"
+
+#: ../translation/extra.c:44
+msgid "Samplerate"
+msgstr "Mintavétel"
+
+#. SHN player plugin
+#: ../translation/extra.c:46
+msgid "Relative seek table path"
+msgstr "Relatív keresési útvonal"
+
+#: ../translation/extra.c:47
+msgid "Absolute seek table path"
+msgstr "Abszolút keresési útvonal"
+
+#: ../translation/extra.c:48
+msgid "Swap audio bytes (toggle if all you hear is static)"
+msgstr "Audio bájtok cseréje (váltás ha minden amit hallasz statikus)"
+
+#. SID decoder plugin
+#: ../translation/extra.c:50
+msgid "Enable HVSC"
+msgstr "HVSC engedélyezése"
+
+#: ../translation/extra.c:51
+msgid "HVSC path"
+msgstr "HVSC útvonal"
+
+#. WildMidi player plugin
+#: ../translation/extra.c:53
+msgid "Timidity++ bank configuration file"
+msgstr "Timidity++ bank konfigurációs állomány"
+
+#: ../translation/extra.c:56
+msgid "Track Title"
+msgstr "Sáv címe"
+
+#: ../translation/extra.c:57
+msgid "Performer"
+msgstr "Előadó"
+
+#: ../translation/extra.c:60
+msgid "Date"
+msgstr "Dátum"
+
+#: ../translation/extra.c:61
+msgid "Track Number"
+msgstr "Sáv száma"
+
+#: ../translation/extra.c:62
+msgid "Total Tracks"
+msgstr "Összes sáv"
+
+#: ../translation/extra.c:63
+msgid "Genre"
+msgstr "Műfaj"
+
+#: ../translation/extra.c:64
+msgid "Composer"
+msgstr "Zeneszerző"
+
+#: ../translation/extra.c:65
+msgid "Disc Number"
+msgstr "Lemez száma"
+
+#: ../translation/extra.c:66
+msgid "Comment"
+msgstr "Megjegyzés"
+
+#: ../translation/extra.c:67
+msgid "Encoder / Vendor"
+msgstr "Kódoló / Eladó"
+
+#: ../translation/extra.c:68
+msgid "Copyright"
+msgstr "Szerzői jog"
+
