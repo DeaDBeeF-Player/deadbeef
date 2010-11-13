@@ -51,7 +51,7 @@ static DUH*
 open_module(const char *fname, const char *ext, int *start_order, int *is_it, int *is_dos, const char **filetype);
 
 static DB_fileinfo_t *
-cdumb_open (void) {
+cdumb_open (uint32_t hints) {
     DB_fileinfo_t *_info = malloc (sizeof (dumb_info_t));
     memset (_info, 0, sizeof (dumb_info_t));
     return _info;
@@ -75,10 +75,11 @@ cdumb_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     dumb_it_do_initial_runthrough (info->duh);
 
     _info->plugin = &plugin;
-    _info->bps = 16;
-    _info->channels = 2;
-    _info->samplerate = deadbeef->conf_get_int ("synth.samplerate", 44100);
+    _info->fmt.bps = deadbeef->conf_get_int ("dumb.8bitoutput", 0) ? 8 : 16;
+    _info->fmt.channels = 2;
+    _info->fmt.samplerate = deadbeef->conf_get_int ("synth.samplerate", 44100);
     _info->readpos = 0;
+    _info->fmt.channelmask = _info->fmt.channels == 1 ? DDB_SPEAKER_FRONT_LEFT : (DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT);
 
     if (cdumb_startrenderer (_info) < 0) {
         return -1;
@@ -139,12 +140,13 @@ static int
 cdumb_read (DB_fileinfo_t *_info, char *bytes, int size) {
     trace ("cdumb_read req %d\n", size);
     dumb_info_t *info = (dumb_info_t *)_info;
-    int length = size / 4;
+    int samplesize = (_info->fmt.bps >> 3) * _info->fmt.channels;
+    int length = size / samplesize;
     long ret;
-    ret = duh_render (info->renderer, 16, 0, 1, 65536.f / _info->samplerate, length, bytes);
-    _info->readpos += ret / (float)_info->samplerate;
-    trace ("cdumb_read %d\n", ret*4);
-    return ret*4;
+    ret = duh_render (info->renderer, _info->fmt.bps, 0, 1, 65536.f / _info->fmt.samplerate, length, bytes);
+    _info->readpos += ret / (float)_info->fmt.samplerate;
+    trace ("cdumb_read %d\n", ret*samplesize);
+    return ret*samplesize;
 }
 
 static int
@@ -159,8 +161,8 @@ cdumb_seek (DB_fileinfo_t *_info, float time) {
     else {
         time -= _info->readpos;
     }
-    int pos = time * _info->samplerate;
-    duh_sigrenderer_generate_samples (info->renderer, 0, 65536.0f / _info->samplerate, pos, NULL);
+    int pos = time * _info->fmt.samplerate;
+    duh_sigrenderer_generate_samples (info->renderer, 0, 65536.0f / _info->fmt.samplerate, pos, NULL);
     _info->readpos = duh_sigrenderer_get_position (info->renderer) / 65536.f;
     return 0;
 }
@@ -811,7 +813,9 @@ static const char *filetypes[] = { "IT", "XM", "S3M", "STM", "669", "PTM", "PSM"
 
 static const char settings_dlg[] =
     "property \"Resampling quality (0..2, higher is better)\" entry dumb.resampling_quality 2;\n"
+    "property \"8-bit output (default is 16)\" checkbox dumb.8bitoutput 0;\n"
 ;
+
 // define plugin interface
 static DB_decoder_t plugin = {
     DB_PLUGIN_SET_API_VERSION
@@ -830,7 +834,7 @@ static DB_decoder_t plugin = {
     .open = cdumb_open,
     .init = cdumb_init,
     .free = cdumb_free,
-    .read_int16 = cdumb_read,
+    .read = cdumb_read,
     .seek = cdumb_seek,
     .insert = cdumb_insert,
     .exts = exts,
