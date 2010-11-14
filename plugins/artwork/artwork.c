@@ -6,6 +6,7 @@
 #include <dirent.h>
 #include <unistd.h>
 #include <fnmatch.h>
+#include <inttypes.h>
 #include "../../deadbeef.h"
 #include "artwork.h"
 #include "lastfm.h"
@@ -13,8 +14,8 @@
 
 #define min(x,y) ((x)<(y)?(x):(y))
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(...)
 
 #define DEFAULT_COVER_PATH (PREFIX "/share/deadbeef/pixmaps/noartwork.jpg")
 #define DEFAULT_FILEMASK "*cover*.jpg;*front*.jpg"
@@ -45,7 +46,7 @@ int artwork_enable_embedded;
 int artwork_enable_local;
 int artwork_enable_lfm;
 int artwork_enable_aao;
-int artwork_reset_time;
+time_t artwork_reset_time;
 char artwork_filemask[200];
 
 void
@@ -589,7 +590,7 @@ get_album_art (const char *fname, const char *artist, const char *album, artwork
             return strdup (DEFAULT_COVER_PATH);
         }
 
-        trace ("found %s in cache\n", path);
+//        trace ("found %s in cache, resettime %" PRId64 ", filetime %" PRId64 ", time %" PRId64 "\n", path, artwork_reset_time, stat_buf.st_mtime, tm);
         return strdup (path);
     }
 
@@ -648,13 +649,15 @@ artwork_on_configchanged (DB_event_t *ev, uintptr_t data) {
             || new_artwork_enable_lfm != artwork_enable_lfm
             || new_artwork_enable_aao != artwork_enable_aao
             || strcmp (new_artwork_filemask, artwork_filemask)) {
+        printf ("artwork config changed, invalidating cache...\n");
         artwork_enable_embedded = new_artwork_enable_embedded;
         artwork_enable_local = new_artwork_enable_local;
         artwork_enable_lfm = new_artwork_enable_lfm;
         artwork_enable_aao = new_artwork_enable_aao;
         artwork_reset_time = time (NULL);
         strcpy (artwork_filemask, new_artwork_filemask);
-        deadbeef->conf_set_int ("artwork.cache_reset_time", artwork_reset_time);
+        deadbeef->conf_set_int64 ("artwork.cache_reset_time", artwork_reset_time);
+        artwork_reset (0);
         deadbeef->sendmessage (M_PLAYLISTREFRESH, 0, 0, 0);
     }
 
@@ -670,7 +673,7 @@ artwork_plugin_start (void)
     artwork_enable_local = deadbeef->conf_get_int ("artwork.enable_localfolder", 1);
     artwork_enable_lfm = deadbeef->conf_get_int ("artwork.enable_lastfm", 0);
     artwork_enable_aao = deadbeef->conf_get_int ("artwork.enable_albumartorg", 0);
-    artwork_reset_time = deadbeef->conf_get_int ("artwork.cache_reset_time", 0);
+    artwork_reset_time = deadbeef->conf_get_int64 ("artwork.cache_reset_time", 0);
 
     strncpy (artwork_filemask, deadbeef->conf_get_str ("artwork.filemask", DEFAULT_FILEMASK), sizeof (artwork_filemask));
     artwork_filemask[sizeof(artwork_filemask)-1] = 0;
