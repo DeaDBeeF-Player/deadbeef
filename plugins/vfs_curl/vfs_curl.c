@@ -391,6 +391,11 @@ http_content_header_handler (void *ptr, size_t size, size_t nmemb, void *stream)
     uint8_t key[256];
     uint8_t value[256];
     int refresh_playlist = 0;
+
+    if (fp->length == 0) {
+        fp->length = -1;
+    }
+
     while (p < end) {
         if (p <= end - 4) {
             if (!memcmp (p, "\r\n\r\n", 4)) {
@@ -482,7 +487,7 @@ http_thread_func (void *ctx) {
 
     int status;
 
-    trace ("vfs_curl: started loading data\n");
+    trace ("vfs_curl: started loading data %s\n", fp->url);
     for (;;) {
         struct curl_slist *headers = NULL;
         curl_easy_reset (curl);
@@ -495,6 +500,7 @@ http_thread_func (void *ctx) {
         curl_easy_setopt (curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
         curl_easy_setopt (curl, CURLOPT_HEADERFUNCTION, http_content_header_handler);
         curl_easy_setopt (curl, CURLOPT_HEADERDATA, ctx);
+        curl_easy_setopt (curl, CURLOPT_NOSIGNAL, 1);
         curl_easy_setopt (curl, CURLOPT_PROGRESSFUNCTION, http_curl_control);
         curl_easy_setopt (curl, CURLOPT_NOPROGRESS, 0);
         curl_easy_setopt (curl, CURLOPT_PROGRESSDATA, ctx);
@@ -827,6 +833,7 @@ http_getlength (DB_FILE *stream) {
     assert (stream);
     HTTP_FILE *fp = (HTTP_FILE *)stream;
     if (fp->status == STATUS_ABORTED) {
+        trace ("length: -1\n");
         return -1;
     }
     if (!fp->tid) {
@@ -835,7 +842,7 @@ http_getlength (DB_FILE *stream) {
     while (fp->status == STATUS_INITIAL) {
         usleep (3000);
     }
-    //trace ("length: %d\n", fp->length);
+    trace ("length: %d\n", fp->length);
     return fp->length;
 }
 

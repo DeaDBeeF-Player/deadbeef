@@ -417,12 +417,6 @@ typedef struct {
     int (*pl_format_title_escaped) (DB_playItem_t *it, int idx, char *s, int size, int id, const char *fmt);
     void (*pl_format_time) (float t, char *dur, int size);
     void (*pl_format_item_display_name) (DB_playItem_t *it, char *str, int len);
-//    void (*pl_set_next) (DB_playItem_t *it, DB_playItem_t *next, int iter);
-//    void (*pl_set_prev) (DB_playItem_t *it, DB_playItem_t *prev, int iter);
-//    void (*pl_set_head) (DB_playItem_t *it, int iter);
-//    void (*pl_set_tail) (DB_playItem_t *it, int iter);
-//    DB_playItem_t* (*pl_get_head) (void);
-//    DB_playItem_t* (*pl_get_tail) (void);
     void (*pl_move_items) (int iter, int plt_from, DB_playItem_t *drop_before, uint32_t *indexes, int count);
     void (*pl_copy_items) (int iter, int plt_from, DB_playItem_t *before, uint32_t *indices, int cnt);
     void (*pl_search_reset) (void);

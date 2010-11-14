@@ -1,10 +1,11 @@
 #include <stdio.h>
 #include <string.h>
-#include <curl/curl.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <limits.h>
 
 #include "artwork.h"
+#include "escape.h"
 
 #define BASE_URL "http://ws.audioscrobbler.com/2.0/"
 #define API_KEY "b25b959554ed76058ac220b7b2e0a026"
@@ -18,11 +19,11 @@ int
 fetch_from_lastfm (const char *artist, const char *album, const char *dest)
 {
     char url [1024];
-    char *artist_url = curl_easy_escape (NULL, artist, 0);
-    char *album_url = curl_easy_escape (NULL, album, 0);
+    char *artist_url = uri_escape (artist, 0);
+    char *album_url = uri_escape (album, 0);
     snprintf (url, sizeof (url), BASE_URL "?method=album.getinfo&api_key=" API_KEY "&artist=%s&album=%s", artist_url, album_url);
-    curl_free (artist_url);
-    curl_free (album_url);
+    free (artist_url);
+    free (album_url);
 
     DB_FILE *fp = deadbeef->fopen (url);
     if (!fp) {

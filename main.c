@@ -428,8 +428,8 @@ player_mainloop (void) {
     }
 }
 
+#if 0
 static int sigterm_handled = 0;
-
 void
 atexit_handler (void) {
     fprintf (stderr, "atexit_handler\n");
@@ -448,6 +448,7 @@ sigterm_handler (int sig) {
     fprintf (stderr, "bye.\n");
     exit (0);
 }
+#endif
 
 #ifdef __linux__
 void
@@ -509,9 +510,11 @@ restore_resume_state (void) {
         int paused = conf_get_int ("resume.paused", 0);
         trace ("resume: track %d pos %f playlist %d\n", track, pos, plt);
         if (plt >= 0 && track >= 0 && pos >= 0) {
+            streamer_lock (); // need to hold streamer thread to make the resume operation atomic
             streamer_set_current_playlist (plt);
-            streamer_set_seek (pos);
             streamer_set_nextsong (track, paused ? 2 : 3);
+            streamer_set_seek (pos);
+            streamer_unlock ();
         }
     }
 }
@@ -703,8 +706,10 @@ main (int argc, char *argv[]) {
     if (server_start () < 0) {
         exit (-1);
     }
+#if 0
     signal (SIGTERM, sigterm_handler);
     atexit (atexit_handler); // helps to save in simple cases
+#endif
 
     // start all subsystems
     plug_trigger_event_playlistchanged ();
@@ -751,7 +756,9 @@ main (int argc, char *argv[]) {
     conf_free ();
     messagepump_free ();
     plug_cleanup ();
+#if 0
     sigterm_handled = 1;
+#endif
     fprintf (stderr, "hej-hej!\n");
     return 0;
 }

@@ -1,3 +1,23 @@
+version 0.4.3
+	fixed crash in OSS plugin
+	fixed random crashes caused by upgrading to libcurl-7.21.2
+	fixed metadata editing in non-english locales
+	fixed switching playlists using hotkeys with caps/num/xcb modifiers
+	made preferences window tabs scrollable
+	fixed dts plugin description
+	fixed 'n' hotkey with numlock
+	improved support for icy (shoutcast) protocol
+	fixed ctrl+j (jump to current track) to work correctly with multiple playlists
+	fixed cursor/scroll follows playback to work correctly with multiple playlists
+	session resume does not seek anymore after skipping failed track
+	fixed seekbar flickering
+	bundled libmms library to fix freezes after updating to 0.6
+	blank cue tracks (without titles) are not skipped anymore
+	fixed trailing whitespace handling in cuesheets
+	"middle mouse button to delete playlist" is now default behavior
+	fixed few issues with auto-saving playlist configuration
+	fixed playlist redraw after cddb queries
+
 version 0.4.2
 	added translation into many languages, see translators.txt (LXDE Project)
 	added ability to add custom menu items from plugins (Viktor Semykin)
@@ -18,7 +38,7 @@ version 0.4.2
 	fixed reading of bad (unindented) CUE files
 	new AAC decoder based on FAAD2 and MP4FF libraries
 	new MMS plugin based on libmms, requires FFMPEG plugin to decode WMA content
-	new icon by Sofias <sofias@radikalismus.com>
+	new icon by Sofias
 	new shorten plugin, port of xmms-shn
 	new aosdk plugin, plays several PSF derivatives (PSF,PSF2,DSF,QSF,SSF,SPU)
 	"stop after current" feature no longer does auto-reset every time

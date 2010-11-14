@@ -130,6 +130,7 @@ oss_init (void) {
 static int
 oss_change_rate (int rate) {
     if (!fd) {
+        oss_rate = rate;
         return oss_rate;
     }
     if (rate == oss_rate) {
@@ -161,6 +162,7 @@ oss_free (void) {
         oss_terminate = 0;
         if (fd) {
             close (fd);
+            fd = 0;
         }
         if (mutex) {
             deadbeef->mutex_free (mutex);

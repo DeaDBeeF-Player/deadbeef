@@ -37,7 +37,7 @@
 
 #define MAX_TEXT_FRAME_SIZE 1024
 #define MAX_CUESHEET_FRAME_SIZE 10000
-#define MAX_APEV2_FRAME_SIZE 1000000
+#define MAX_APEV2_FRAME_SIZE 2000000
 #define MAX_ID3V2_FRAME_SIZE 100000
 #define MAX_ID3V2_APIC_FRAME_SIZE 2000000
 
@@ -1005,8 +1005,9 @@ junk_apev2_read_full (playItem_t *it, DB_apev2_tag_t *tag_store, DB_FILE *fp) {
         }
         else {
             // try to skip
-            if (0 != deadbeef->fseek (fp, SEEK_CUR, itemsize)) {
-                fprintf (stderr, "junklib: corrupted APEv2 tag\n");
+            int err = deadbeef->fseek (fp, itemsize, SEEK_CUR);
+            if (0 != err) {
+                perror ("junklib: corrupted APEv2 tag\n");
                 return -1;
             }
         }
@@ -2609,6 +2610,9 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
     uint32_t size = (header[9] << 0) | (header[8] << 7) | (header[7] << 14) | (header[6] << 21);
 
     trace ("tag size: %d\n", size);
+    if (size == 0) {
+        return -1;
+    }
     if (tag_store) {
         tag_store->version[0] = version_major;
         tag_store->version[1] = version_minor;

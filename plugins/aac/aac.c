@@ -726,13 +726,17 @@ aac_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
                     sampleDuration, MP4_MSECS_TIME_SCALE);
 #endif
             if (info->mp4sample >= info->mp4samples) {
+                if (buffer) {
+                    free (buffer);
+                }
                 break;
             }
             info->mp4sample++;
             samples = NeAACDecDecode(info->dec, &frame_info, buffer, buffer_size);
-#ifdef USE_MP4FF
-            free (buffer);
-#endif
+
+            if (buffer) {
+                free (buffer);
+            }
             if (!samples) {
                 break;
             }
