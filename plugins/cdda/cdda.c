@@ -549,8 +549,7 @@ static int
 cda_action_add_cd (DB_plugin_action_t *act, DB_playItem_t *it)
 {
     deadbeef->pl_add_file ("all.cda", NULL, NULL);
-    //Wtf?
-    //playlist_refresh ();
+    deadbeef->plug_trigger_event_playlistchanged ();
 }
 
 static DB_plugin_action_t add_cd_action = {
