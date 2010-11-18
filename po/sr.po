@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: DeaDBeeF 0.4\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-10-14 04:36+0000\n"
-"PO-Revision-Date: 2010-10-17 12:14+0100\n"
+"PO-Revision-Date: 2010-11-18 14:25+0100\n"
 "Last-Translator: Jay A. Fleming <tito.nehru.naser@gmail.com>\n"
 "Language-Team: \n"
 "Language: Serbian\n"
@@ -688,7 +688,7 @@ msgstr "Додај датотеке из линије за наредбе или
 #: ../plugins/gtkui/interface.c:1841
 #: ../plugins/gtkui/deadbeef.glade.h:109
 msgid "Resume previous session on startup"
-msgstr "Вартаи претходну сесију при покретању"
+msgstr "Врати претходну сесију при покретању"
 
 #: ../plugins/gtkui/interface.c:1845
 #: ../plugins/gtkui/deadbeef.glade.h:93
@@ -883,20 +883,20 @@ msgstr "Уписуј APEv2"
 #: ../plugins/gtkui/interface.c:2331
 #: ../plugins/gtkui/deadbeef.glade.h:127
 msgid "Strip ID3v2"
-msgstr "Skini ID3v2"
+msgstr "Уклони ID3v2"
 
 #: ../plugins/gtkui/interface.c:2256
 #: ../plugins/gtkui/interface.c:2379
 #: ../plugins/gtkui/deadbeef.glade.h:126
 msgid "Strip ID3v1"
-msgstr "Skini ID3v1"
+msgstr "Уклони ID3v1"
 
 #: ../plugins/gtkui/interface.c:2260
 #: ../plugins/gtkui/interface.c:2335
 #: ../plugins/gtkui/interface.c:2375
 #: ../plugins/gtkui/deadbeef.glade.h:125
 msgid "Strip APEv2"
-msgstr "Skini APEv2"
+msgstr "Уклони APEv2"
 
 #: ../plugins/gtkui/interface.c:2268
 #: ../plugins/gtkui/deadbeef.glade.h:56
@@ -1459,7 +1459,6 @@ msgid "Absolute seek table path"
 msgstr "Потпуна путања за претраживање"
 
 #: ../translation/extra.c:48
-#, fuzzy
 msgid "Swap audio bytes (toggle if all you hear is static)"
 msgstr "Замени аудио-бајт редослед (искључити ако не чујете нормалан звук)"
 
