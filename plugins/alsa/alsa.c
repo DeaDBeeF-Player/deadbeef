@@ -623,10 +623,12 @@ palsa_callback (char *stream, int len) {
        );
 
 #else
-//    int16_t ivolume = deadbeef->volume_get_amp () * 1000;
-//    for (int i = 0; i < bytesread/2; i++) {
-//        ((int16_t*)stream)[i] = (int16_t)(((int32_t)(((int16_t*)stream)[i])) * ivolume / 1000);
-//    }
+    if (plugin.fmt.bps == 16) {
+        int16_t ivolume = deadbeef->volume_get_amp () * 1000;
+        for (int i = 0; i < bytesread/2; i++) {
+            ((int16_t*)stream)[i] = (int16_t)(((int32_t)(((int16_t*)stream)[i])) * ivolume / 1000);
+        }
+    }
 #endif
     return bytesread;
 }

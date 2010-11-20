@@ -1387,6 +1387,13 @@ streamer_read_async (char *bytes, int size) {
             }
 #endif
 
+            if (output->fmt.bps == 16) {
+                apply_replay_gain_int16 (streaming_track, bytes, bytesread);
+            }
+            else if (output->fmt.bps == 32 && output->fmt.is_float) {
+                apply_replay_gain_float32 (streaming_track, bytes, bytesread);
+            }
+
 #if 0
             int nchannels = fileinfo->fmt.channels;
             if (nchannels > 2) {
