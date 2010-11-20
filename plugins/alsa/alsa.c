@@ -165,6 +165,7 @@ palsa_set_hw_params (ddb_waveformat_t *fmt) {
         break;
     };
 
+    //sample_fmt = SND_PCM_FORMAT_S16_LE;
     if ((err = snd_pcm_hw_params_set_format (audio, hw_params, sample_fmt)) < 0) {
         fprintf (stderr, "cannot set sample format (%s)\n",
                 snd_strerror (err));
