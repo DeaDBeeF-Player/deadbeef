@@ -72,7 +72,7 @@ thread_start_low_priority (void (*fn)(void *ctx), void *ctx) {
         fprintf (stderr, "pthread_create failed: %s\n", strerror (s));
         return 0;
     }
-#if !PORTABLE
+#if !STATICLINK
     s = pthread_setschedprio (tid, minprio);
     if (s != 0) {
         fprintf (stderr, "pthread_setschedprio failed: %s\n", strerror (s));

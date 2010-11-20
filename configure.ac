@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT([deadbeef], [0.4.3])
+AC_INIT([deadbeef], [0.4.4])
 
 AC_CONFIG_HEADER(config.h)
 
@@ -94,12 +94,25 @@ AC_ARG_ENABLE(aac,      [AS_HELP_STRING([--disable-aac     ], [disable AAC decod
 AC_ARG_ENABLE(mms,      [AS_HELP_STRING([--disable-mms     ], [disable MMS streaming vfs plugin (default: enabled)])], [enable_mms=$enableval], [enable_mms=yes])
 AC_ARG_ENABLE(shn,      [AS_HELP_STRING([--disable-shn     ], [disable shorten plugin (default: enabled)])], [enable_shn=$enableval], [enable_shn=yes])
 AC_ARG_ENABLE(ao,       [AS_HELP_STRING([--disable-ao      ], [disable audio overload plugin (default: enabled)])], [enable_ao=$enableval], [enable_ao=yes])
-AC_ARG_ENABLE(mpris,    [  --enable-mpris          enable Ubuntu Sound Menu plugin (default: disabled)], [enable_mpris=$enableval], [enable_mpris=no])
-AC_ARG_ENABLE(portable, [  --enable-portable       make portable static build (default: disabled)], [enable_portable=$enableval], [enable_portable=no])
+AC_ARG_ENABLE(mpris,    [AS_HELP_STRING([  --enable-mpris          enable Ubuntu Sound Menu plugin (default: disabled)])], [enable_mpris=$enableval], [enable_mpris=no])
+AC_ARG_ENABLE(staticlink, [AS_HELP_STRING([  --enable-staticlink       link everything statically (default: disabled)])], [enable_staticlink=$enableval], [enable_staticlink=no])
+AC_ARG_ENABLE(portable, [AS_HELP_STRING([  --enable-portable       make portable build (default: disabled, opts: yes,no,full)])], [enable_portable=$enableval], [enable_portable=no])
 
-if test "x$enable_portable" != "xno" ; then
+if test "x$enable_staticlink" != "xno" ; then
+    AC_DEFINE_UNQUOTED([STATICLINK], [1], [Define if building static version])
+    STATICLINK=yes
+fi
+
+if test "x$enable_portable" != "xno" && test "x$enable_staticlink" != "xno" ; then
     AC_DEFINE_UNQUOTED([PORTABLE], [1], [Define if building portable version])
     PORTABLE=yes
+
+
+    if test "x$enable_portable" == "xfull" ; then
+        AC_DEFINE_UNQUOTED([PORTABLE_FULL], [1], [Define if portable version should keep configs in app folder])
+        PORTABLE_FULL=yes
+    fi
+
     PREFIXFLAGS="-DPREFIX=donotuse -DLIBDIR=donotuse -DDOCDIR=donotuse -I./include -I../../include"
 else
     PREFIXFLAGS=" -DLIBDIR=\\\"$libdir\\\" -DPREFIX=\\\"$prefix\\\" -DDOCDIR=\\\"$docdir\\\""
@@ -109,7 +122,7 @@ CXXFLAGS="$CXXFLAGS $INSANE_CXXFLAGS -D_GNU_SOURCE $PREFIXFLAGS"
 CFLAGS="$CFLAGS $INSANE_CFLAGS -D_GNU_SOURCE $PREFIXFLAGS"
 
 PKG_CHECK_MODULES(DEPS, samplerate)
-if test "x$enable_portable" != "xno" ; then
+if test "x$enable_staticlink" != "xno" ; then
     DEPS_LIBS="$LIB/libsamplerate.a -lpthread -ldl"
     AC_SUBST(DEPS_LIBS)
 else
@@ -131,7 +144,7 @@ if test "x$enable_alsa" != "xno" ; then
 fi
 
 if test "x$enable_ffmpeg" != "xno" ; then
-if test "x$enable_portable" != "xno" ; then
+if test "x$enable_staticlink" != "xno" ; then
     FFMPEG_DEPS_LIBS="../../$LIB/libavcodec.a -lpthread ../../$LIB/libavformat.a ../../$LIB/libavcodec.a ../../$LIB/libavutil.a ../../$LIB/libavcore.a -lm ../../$LIB/libz.a "
     AC_SUBST(FFMPEG_DEPS_LIBS)
     HAVE_FFMPEG=yes
@@ -143,9 +156,6 @@ fi
 if test "x$enable_pulse" != "xno" ; then
     PKG_CHECK_MODULES(PULSE_DEPS, libpulse-simple, HAVE_PULSE=yes, HAVE_PULSE=no)
 fi
-
-dnl AC_CHECK_LIB([pthread], [main])
-dnl AC_CHECK_LIB([dl], [main])
 
 AC_CHECK_HEADER([iconv.h],[],[iconv.h not found.])
 
@@ -162,7 +172,7 @@ if test ${HAVE_SSE2}; then
 fi
 
 dnl curl lib
-if test "x$enable_portable" != "xno" ; then
+if test "x$enable_staticlink" != "xno" ; then
     HAVE_CURL=yes
     CURL_LIBS="../../$LIB/libcurl.a -lrt"
     AC_SUBST(CURL_LIBS)
@@ -172,7 +182,7 @@ else
     AC_SUBST(CURL_LIBS)
 fi
 
-if test "x$enable_portable" != "xno" ; then
+if test "x$enable_staticlink" != "xno" ; then
     HAVE_DBUS=yes
     DBUS_DEPS_LIBS="../../$LIB/libdbus-1.a ../../$LIB/libexpat.a -lrt"
     DBUS_DEPS_CFLAGS="-I../../include/dbus-1"
@@ -184,7 +194,7 @@ fi
 dnl mpgmad plugin
 
 if test "x$enable_mpgmad" != "xno" ; then
-if test "x$enable_portable" != "xno" ; then
+if test "x$enable_staticlink" != "xno" ; then
     HAVE_MPGMAD=yes
     MAD_LIBS="../../$LIB/libmad.a"
     AC_SUBST(MAD_LIBS)
@@ -200,7 +210,7 @@ fi
 
 dnl vorbis plugin
 if test "x$enable_vorbis" != "xno" ; then
-if test "x$enable_portable" != "xno" ; then
+if test "x$enable_staticlink" != "xno" ; then
     HAVE_VORBISPLUGIN=yes
     VORBIS_LIBS="../../$LIB/libogg.a ../../$LIB/libvorbis.a ../../$LIB/libvorbisenc.a ../../$LIB/libvorbisfile.a"
     AC_SUBST(VORBIS_LIBS)
@@ -217,7 +227,7 @@ fi
 
 dnl flac plugin
 if test "x$enable_flac" != "xno" ; then
-if test "x$enable_portable" != "xno" ; then
+if test "x$enable_staticlink" != "xno" ; then
     HAVE_FLACPLUGIN=yes
     FLAC_LIBS="../../$LIB/libFLAC.a ../../$LIB/libogg.a"
     AC_SUBST(FLAC_LIBS)
@@ -233,7 +243,7 @@ fi
 
 dnl wavpack plugin
 if test "x$enable_wavpack" != "xno" ; then
-if test "x$enable_portable" != "xno" ; then
+if test "x$enable_staticlink" != "xno" ; then
     HAVE_WAVPACKPLUGIN=yes
     WAVPACK_LIBS="../../$LIB/libwavpack.a"
     AC_SUBST(WAVPACK_LIBS)
@@ -249,7 +259,7 @@ fi
 
 dnl libsndfile plugin
 if test "x$enable_sndfile" != "xno" ; then
-if test "x$enable_portable" != "xno" ; then
+if test "x$enable_staticlink" != "xno" ; then
     HAVE_SNDFILEPLUGIN=yes
     SNDFILE_LIBS="../../$LIB/libsndfile.a"
     AC_SUBST(SNDFILE_LIBS)
@@ -274,7 +284,7 @@ fi
 
 dnl cdda plugin
 if test "x$enable_cdda" != "xno" ; then
-if test "x$enable_portable" != "xno" ; then
+if test "x$enable_staticlink" != "xno" ; then
     HAVE_CDDAPLUGIN=yes
     CDDA_LIBS="../../$LIB/libcdio.a ../../$LIB/libudf.a ../../$LIB/libiso9660.a ../../$LIB/libcddb.a"
     AC_SUBST(CDDA_LIBS)
@@ -303,7 +313,7 @@ if test "x$enable_alsa" != "xno" ; then
 fi
 
 if test "x$enable_ffmpeg" != "xno" ; then
-if test "x$enable_portable" = "xno" ; then
+if test "x$enable_staticlink" = "xno" ; then
     if test "x$HAVE_FFMPEG" = "xyes" ; then
         HAVE_FFMPEGPLUGIN=yes
         AC_CHECK_HEADER([ffmpeg/avformat.h], FFMPEG_DEPS_CFLAGS="$FFMPEG_DEPS_CFLAGS -D FFMPEG_OLD")
@@ -442,7 +452,7 @@ if test "x$enable_dca" != "xno" ; then
 fi
 
 if test "x$enable_aac" != "xno" ; then
-if test "x$enable_portable" != "xno" ; then
+if test "x$enable_staticlink" != "xno" ; then
     FAAD2_LIBS="../../$LIB/libfaad.a"
     AC_SUBST(FAAD2_LIBS)
     HAVE_AAC=yes
@@ -467,7 +477,7 @@ if test "x$enable_shn" != "xno" ; then
 fi
 
 if test "x$enable_ao" != "xno" ; then
-if test "x$enable_portable" != "xno" ; then
+if test "x$enable_staticlink" != "xno" ; then
     HAVE_ZLIB=yes
     ZLIB_LIBS="../../$LIB/libz.a"
 else
@@ -520,7 +530,9 @@ AM_CONDITIONAL(HAVE_MMS, test "x$HAVE_MMS" = "xyes")
 AM_CONDITIONAL(HAVE_SHN, test "x$HAVE_SHN" = "xyes")
 AM_CONDITIONAL(HAVE_AO, test "x$HAVE_AO" = "xyes")
 AM_CONDITIONAL(HAVE_MPRIS, test "x$HAVE_MPRIS" = "xyes")
+AM_CONDITIONAL(STATICLINK, test "x$STATICLINK" = "xyes")
 AM_CONDITIONAL(PORTABLE, test "x$PORTABLE" = "xyes")
+AM_CONDITIONAL(PORTABLE_FULL, test "x$PORTABLE_FULL" = "xyes")
 
 AC_SUBST(PLUGINS_DIRS)
 

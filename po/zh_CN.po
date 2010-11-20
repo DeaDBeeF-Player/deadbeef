@@ -1,514 +1,513 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# Ali <aysabzevar@gmail.com>, 2010.
+# Yinghua Wang <wantinghard@gmail.com>.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-09-10 15:02+0200\n"
-"PO-Revision-Date: 2010-10-18 07:33+0200\n"
-"Last-Translator: Ali <aysabzevar@gmail.com>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: fa\n"
+"PO-Revision-Date: 2010-10-19 13:46+0200\n"
+"Last-Translator: Yinghua_Wang <wantinghard@gmail.com>\n"
+"Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
+"Language: zh_CN\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Pootle 2.0.5\n"
 
 #: ../plugins/gtkui/callbacks.c:97
 msgid "Supported sound formats"
-msgstr "قالب‌های صوتی پشتیبانی شده"
+msgstr "支持的声音格式"
 
 #: ../plugins/gtkui/callbacks.c:108
 msgid "Other files (*)"
-msgstr "دیگر پرونده‌ها (*)"
+msgstr "其他文件(*)"
 
 #: ../plugins/gtkui/callbacks.c:118
 msgid "Open file(s)..."
-msgstr "باز کردن پرونده(ها)..."
+msgstr "打开文件..."
 
 #: ../plugins/gtkui/callbacks.c:151
 msgid "Add file(s) to playlist..."
-msgstr "افزودن پرونده(ها) به لیست پخش..."
+msgstr "向播放列表添加文件..."
 
 #: ../plugins/gtkui/callbacks.c:190
 msgid "Add folder(s) to playlist..."
-msgstr "افزودن پوشه(ها) به لیست پخش..."
+msgstr "向播放列表添加文件夹..."
 
 #: ../plugins/gtkui/callbacks.c:192
 msgid "Follow symlinks"
-msgstr "پیروی از پیوند‌های سمبلیک"
+msgstr "跟随符号链接"
 
 #: ../plugins/gtkui/callbacks.c:677
 msgid "Failed while reading help file"
-msgstr "شکست در خواندن فایل کمک"
+msgstr "读取帮助文件时出错"
 
 #: ../plugins/gtkui/callbacks.c:687
 msgid "Failed to load help file"
-msgstr "شکست در بارگذاری فایل کمک"
+msgstr "加入帮助文件失败"
 
 #: ../plugins/gtkui/callbacks.c:701 ../plugins/gtkui/interface.c:1090
 #: ../plugins/gtkui/deadbeef.glade.h:65
 msgid "Help"
-msgstr "کمک"
+msgstr "帮助"
 
 #: ../plugins/gtkui/callbacks.c:711
 #, c-format
 msgid "About DeaDBeeF %s"
-msgstr "درباره DeaDBeef %s"
+msgstr "关于 DeaDBeeF %s"
 
 #: ../plugins/gtkui/callbacks.c:722
 #, c-format
 msgid "DeaDBeeF %s ChangeLog"
-msgstr "گزارش تغییرات %s DeaDBeeF"
+msgstr "DeaDBeeF %s 更新记录"
 
 #: ../plugins/gtkui/ddbtabstrip.c:527
 msgid "Edit playlist"
-msgstr "ویرایش لیست پخش"
+msgstr "编辑播放列表"
 
 #: ../plugins/gtkui/ddbtabstrip.c:604
 msgid "Rename Playlist"
-msgstr "تغییر نام لیست پخش"
+msgstr "重命名播放列表"
 
 #: ../plugins/gtkui/ddbtabstrip.c:608
 msgid "Remove Playlist"
-msgstr "حذف لیست پخش"
+msgstr "移除播放列表"
 
 #: ../plugins/gtkui/ddbtabstrip.c:612
 msgid "Add New Playlist"
-msgstr "افزودن لیست پخش جدید"
+msgstr "添加新播放列表"
 
 #: ../plugins/gtkui/eq.c:113
 msgid "Save DeaDBeeF EQ Preset"
-msgstr "ذخیره اکولایزر از پیش مرتب شده DeaDBeeF"
+msgstr "保存 DeaDBeeF EQ 预设置"
 
 #: ../plugins/gtkui/eq.c:120
 msgid "DeaDBeeF EQ preset files (*.ddbeq)"
-msgstr "فایل‌های اکولایزر از پیش مرتب شده DeaDBeeF (*.ddbeq)"
+msgstr "DeaDBeeF EQ 预设置文件(*.ddbeq)"
 
 #: ../plugins/gtkui/eq.c:151
 msgid "Load DeaDBeeF EQ Preset..."
-msgstr "بارگذاری اکولایزر از پیش مرتب شده DeaDBeeF ..."
+msgstr "加载 DeaDBeeF EQ 预设置..."
 
 #: ../plugins/gtkui/eq.c:155
 msgid "DeaDBeeF EQ presets (*.ddbeq)"
-msgstr "اکولایزر از پیش مرتب شده DeaDBeeF  (*.ddbeq)"
+msgstr "DeaDBeeF EQ 预设置(*.ddbeq)"
 
 #: ../plugins/gtkui/eq.c:214
 msgid "Import Foobar2000 EQ Preset..."
-msgstr "وارد کردن اکولایزر از پیش تنطیم شده Foobar2000 ..."
+msgstr "导入 Foobar2000 EQ 预设置..."
 
 #: ../plugins/gtkui/eq.c:218
 msgid "Foobar2000 EQ presets (*.feq)"
-msgstr "اکولایزر از پیش تعیین شده Foobar2000 (*.feq)"
+msgstr "Foobar2000 EQ 预设置(*.feq)"
 
 #: ../plugins/gtkui/eq.c:292
 msgid "Enable"
-msgstr "فعال"
+msgstr "启用"
 
 #: ../plugins/gtkui/eq.c:300
 msgid "Zero All"
-msgstr "صفر کردن همگی"
+msgstr "清零所有"
 
 #: ../plugins/gtkui/eq.c:307
 msgid "Zero Preamp"
-msgstr "صفر کردن پیش تقویت کننده"
+msgstr "清零前置放大"
 
 #: ../plugins/gtkui/eq.c:314
 msgid "Zero Bands"
-msgstr "نوارهای صفر"
+msgstr "清零频段"
 
 #: ../plugins/gtkui/eq.c:321
 msgid "Save Preset"
-msgstr "ذخیره از پیش تنظیم شده"
+msgstr "保存预设置"
 
 #: ../plugins/gtkui/eq.c:328
 msgid "Load Preset"
-msgstr "بارگذاری از پیش تنظیم شده"
+msgstr "加载预设置"
 
 #: ../plugins/gtkui/eq.c:335
 msgid "Import Foobar2000 Preset"
-msgstr "وارد کردن Foobar2000 از پیش تنظیم شده "
+msgstr "导入 Foobar2000 预设置"
 
 #: ../plugins/gtkui/gtkui.c:133
 #, c-format
 msgid "1 day %d:%02d:%02d"
-msgstr "۱ روز %d:%02d:%02d"
+msgstr "1 天 %d:%02d:%02d"
 
 #: ../plugins/gtkui/gtkui.c:136
 #, c-format
 msgid "%d days %d:%02d:%02d"
-msgstr "%d روز %d:%02d:%02d"
+msgstr "%d 天 %d:%02d:%02d"
 
 #: ../plugins/gtkui/gtkui.c:145
 #, c-format
 msgid "Stopped | %d tracks | %s total playtime"
-msgstr "متوقف| %d آهنگ| %s کل زمان پخش"
+msgstr "已停止 | 音轨数 %d | 播放总时长 %s"
 
 #: ../plugins/gtkui/gtkui.c:158
 msgid "Mono"
-msgstr "تک کاناله"
+msgstr "单声道"
 
 #: ../plugins/gtkui/gtkui.c:158
 msgid "Stereo"
-msgstr "استریو"
+msgstr "立体声"
 
 #: ../plugins/gtkui/gtkui.c:183
 #, c-format
 msgid "| %4d kbps "
-msgstr "| %4d کیلو بیت بر ثانیه"
+msgstr "| %4d kbps "
 
 #: ../plugins/gtkui/gtkui.c:189
 msgid "Paused | "
-msgstr "مکث کرده|"
+msgstr "已暂停 | "
 
 #: ../plugins/gtkui/gtkui.c:190
 #, c-format
 msgid ""
 "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
-msgstr ""
-"%s%s %s| %dهرتز | %d بیت | %s | %d:%02d / %s | %d آهنگ | %s کل زمان پخش"
+msgstr "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | 音轨数 %d | 播放总时长 %s"
 
 #: ../plugins/gtkui/gtkui.c:660
 msgid "Save Playlist As"
-msgstr "ذخیره لیست پخش به صورت"
+msgstr "将播放列表保存为"
 
 #: ../plugins/gtkui/gtkui.c:669 ../plugins/gtkui/gtkui.c:730
 msgid "DeaDBeeF playlist files (*.dbpl)"
-msgstr "فایل‌های لیست پخش DeaDBeeF (*.dbpl)"
+msgstr "DeaDBeeF 播放列表文件(*.dbpl)"
 
 #: ../plugins/gtkui/gtkui.c:723
 msgid "Load Playlist"
-msgstr "بارگذاری لیست پخش"
+msgstr "载入播放列表"
 
 #: ../plugins/gtkui/gtkui.c:863
 msgid "New Playlist"
-msgstr "لیست پخش جدید"
+msgstr "新播放列表"
 
 #: ../plugins/gtkui/gtkui.c:866
 #, c-format
 msgid "New Playlist (%d)"
-msgstr "لیست پخش جدید (%d)"
+msgstr "新播放列表(%d)"
 
 #: ../plugins/gtkui/interface.c:138 ../plugins/gtkui/deadbeef.glade.h:153
 msgid "_File"
-msgstr "_ پرونده"
+msgstr "文件(_F)"
 
 #: ../plugins/gtkui/interface.c:145 ../plugins/gtkui/deadbeef.glade.h:157
 msgid "_Open file(s)"
-msgstr "_باز کردن پرونده(ها)"
+msgstr "打开文件(_O)"
 
 #: ../plugins/gtkui/interface.c:161 ../plugins/gtkui/deadbeef.glade.h:6
 msgid "Add file(s)"
-msgstr "افزودن پرونده(ها)"
+msgstr "添加文件"
 
 #: ../plugins/gtkui/interface.c:169 ../plugins/gtkui/deadbeef.glade.h:8
 msgid "Add folder(s)"
-msgstr "افزودن پوشه(ها)"
+msgstr "添加文件夹"
 
 #: ../plugins/gtkui/interface.c:177 ../plugins/gtkui/interface.c:2969
 #: ../plugins/gtkui/deadbeef.glade.h:9
 msgid "Add location"
-msgstr "افزودن محل"
+msgstr "添加位置"
 
 #: ../plugins/gtkui/interface.c:186 ../plugins/gtkui/deadbeef.glade.h:83
 msgid "New playlist"
-msgstr "لیست پخش جدید"
+msgstr "新播放列表"
 
 #: ../plugins/gtkui/interface.c:193 ../plugins/gtkui/deadbeef.glade.h:75
 msgid "Load playlist"
-msgstr "بارگذاری لیست پخش"
+msgstr "加载播放列表"
 
 #: ../plugins/gtkui/interface.c:197 ../plugins/gtkui/deadbeef.glade.h:112
 msgid "Save playlist"
-msgstr "ذخیره لیست پخش"
+msgstr "保存播放列表"
 
 #: ../plugins/gtkui/interface.c:201 ../plugins/gtkui/deadbeef.glade.h:113
 msgid "Save playlist as"
-msgstr "ذخیره لیست پخش به صورت"
+msgstr "将播放列表保存为"
 
 #: ../plugins/gtkui/interface.c:210 ../plugins/gtkui/deadbeef.glade.h:159
 msgid "_Quit"
-msgstr "_ خروج"
+msgstr "退出(_Q)"
 
 #: ../plugins/gtkui/interface.c:221 ../plugins/gtkui/deadbeef.glade.h:152
 msgid "_Edit"
-msgstr "_ویرایش"
+msgstr "编辑(_E)"
 
 #: ../plugins/gtkui/interface.c:228 ../plugins/gtkui/deadbeef.glade.h:150
 msgid "_Clear"
-msgstr "_ پاک سازی"
+msgstr "清除(_C)"
 
 #: ../plugins/gtkui/interface.c:236 ../plugins/gtkui/deadbeef.glade.h:117
 msgid "Select all"
-msgstr "انتخاب همگی"
+msgstr "选择所有"
 
 #: ../plugins/gtkui/interface.c:243 ../plugins/gtkui/deadbeef.glade.h:25
 msgid "Deselect all"
-msgstr "از انتخاب درآوردن همگی"
+msgstr "去选所有"
 
 #: ../plugins/gtkui/interface.c:250 ../plugins/gtkui/deadbeef.glade.h:70
 msgid "Invert selection"
-msgstr "انتخاب معکوس"
+msgstr "反转选择"
 
 #: ../plugins/gtkui/interface.c:254 ../plugins/gtkui/deadbeef.glade.h:120
 msgid "Selection"
-msgstr "انتخاب"
+msgstr "选择"
 
 #: ../plugins/gtkui/interface.c:261 ../plugins/gtkui/plcommon.c:425
 #: ../plugins/gtkui/prefwin.c:317 ../plugins/gtkui/deadbeef.glade.h:107
 msgid "Remove"
-msgstr "حذف"
+msgstr "移除"
 
 #: ../plugins/gtkui/interface.c:269 ../plugins/gtkui/deadbeef.glade.h:20
 msgid "Crop"
-msgstr "محصول"
+msgstr "剪切"
 
 #: ../plugins/gtkui/interface.c:273 ../plugins/gtkui/deadbeef.glade.h:154
 msgid "_Find"
-msgstr "_یافتن"
+msgstr "查找(_F)"
 
 #: ../plugins/gtkui/interface.c:285 ../plugins/gtkui/interface.c:1705
 #: ../plugins/gtkui/deadbeef.glade.h:97
 msgid "Preferences"
-msgstr "تنظیمات"
+msgstr "偏好设置"
 
 #: ../plugins/gtkui/interface.c:289 ../plugins/gtkui/deadbeef.glade.h:160
 msgid "_View"
-msgstr "_نما"
+msgstr "查看(_V)"
 
 #: ../plugins/gtkui/interface.c:296 ../plugins/gtkui/deadbeef.glade.h:123
 msgid "Status bar"
-msgstr "نوار وضعیت"
+msgstr "状态栏"
 
 #: ../plugins/gtkui/interface.c:300 ../plugins/gtkui/deadbeef.glade.h:18
 msgid "Column headers"
-msgstr "سرآیندهای ستونی"
+msgstr "列标题"
 
 #: ../plugins/gtkui/interface.c:304 ../plugins/gtkui/deadbeef.glade.h:130
 msgid "Tabs"
-msgstr "لبه‌ها"
+msgstr "标签"
 
 #: ../plugins/gtkui/interface.c:308 ../plugins/gtkui/deadbeef.glade.h:33
 msgid "Equalizer"
-msgstr "اکولایزر"
+msgstr "均衡器"
 
 #: ../plugins/gtkui/interface.c:312 ../plugins/gtkui/deadbeef.glade.h:158
 msgid "_Playback"
-msgstr "_پخش"
+msgstr "播放(_P)"
 
 #: ../plugins/gtkui/interface.c:319 ../plugins/gtkui/deadbeef.glade.h:86
 msgid "Order"
-msgstr "ترتیب"
+msgstr "顺序"
 
 #: ../plugins/gtkui/interface.c:326 ../plugins/gtkui/deadbeef.glade.h:74
 msgid "Linear"
-msgstr "خطی"
+msgstr "线性"
 
 #: ../plugins/gtkui/interface.c:332 ../plugins/gtkui/deadbeef.glade.h:121
 msgid "Shuffle"
-msgstr "بُر زنی"
+msgstr "打乱"
 
 #: ../plugins/gtkui/interface.c:338 ../plugins/gtkui/deadbeef.glade.h:106
 msgid "Random"
-msgstr "اتفاقی"
+msgstr "随机"
 
 #: ../plugins/gtkui/interface.c:344 ../plugins/gtkui/deadbeef.glade.h:78
 msgid "Looping"
-msgstr "حلقه‌ زنی"
+msgstr "循环"
 
 #: ../plugins/gtkui/interface.c:351 ../plugins/gtkui/deadbeef.glade.h:76
 msgid "Loop All"
-msgstr "حلقه زنی همگی"
+msgstr "全部循环"
 
 #: ../plugins/gtkui/interface.c:357 ../plugins/gtkui/deadbeef.glade.h:77
 msgid "Loop Single Song"
-msgstr "حلقه زنی تک آهنگ"
+msgstr "单曲循环"
 
 #: ../plugins/gtkui/interface.c:363 ../plugins/gtkui/deadbeef.glade.h:29
 msgid "Don't Loop"
-msgstr "حلقه‌ نکن"
+msgstr "不循环"
 
 #: ../plugins/gtkui/interface.c:369 ../plugins/gtkui/deadbeef.glade.h:114
 msgid "Scroll follows playback"
-msgstr "پیمایش،پخش را دنبال می‌کند"
+msgstr "随播放滚动列表"
 
 #: ../plugins/gtkui/interface.c:374 ../plugins/gtkui/deadbeef.glade.h:22
 msgid "Cursor follows playback"
-msgstr "مکان نما پخش را دنبال می‌کند"
+msgstr "光标定位在播放的曲目"
 
 #: ../plugins/gtkui/interface.c:378 ../plugins/gtkui/deadbeef.glade.h:125
 msgid "Stop after current"
-msgstr "توقف پس از کنونی"
+msgstr "当前曲目后停止"
 
 #: ../plugins/gtkui/interface.c:385 ../plugins/gtkui/interface.c:392
 #: ../plugins/gtkui/deadbeef.glade.h:155
 msgid "_Help"
-msgstr "_ کمک"
+msgstr "帮助(_H)"
 
 #: ../plugins/gtkui/interface.c:400 ../plugins/gtkui/deadbeef.glade.h:149
 msgid "_ChangeLog"
-msgstr "_تغییرات"
+msgstr "更新记录(_C)"
 
 #: ../plugins/gtkui/interface.c:422 ../plugins/gtkui/deadbeef.glade.h:146
 msgid "_About"
-msgstr "_درباره"
+msgstr "关于(_A)"
 
 #: ../plugins/gtkui/interface.c:801 ../plugins/gtkui/deadbeef.glade.h:115
 msgid "Search"
-msgstr "جستجوی"
+msgstr "搜索"
 
 #: ../plugins/gtkui/interface.c:876 ../plugins/gtkui/deadbeef.glade.h:124
 msgid "Stop"
-msgstr "توقف"
+msgstr "停止"
 
 #: ../plugins/gtkui/interface.c:884 ../plugins/gtkui/deadbeef.glade.h:92
 msgid "Play"
-msgstr "پخش"
+msgstr "播放"
 
 #: ../plugins/gtkui/interface.c:892 ../plugins/gtkui/deadbeef.glade.h:91
 msgid "Pause"
-msgstr "مکث"
+msgstr "暂停"
 
 #: ../plugins/gtkui/interface.c:900 ../plugins/gtkui/deadbeef.glade.h:98
 msgid "Previous"
-msgstr "قبلی"
+msgstr "上一曲"
 
 #: ../plugins/gtkui/interface.c:908 ../plugins/gtkui/deadbeef.glade.h:84
 msgid "Next"
-msgstr "بعدی"
+msgstr "下一曲"
 
 #: ../plugins/gtkui/interface.c:916 ../plugins/gtkui/deadbeef.glade.h:93
 msgid "Play Random"
-msgstr "پخش اتفاقی"
+msgstr "随机播放"
 
 #: ../plugins/gtkui/interface.c:925 ../plugins/gtkui/deadbeef.glade.h:5
 msgid "About"
-msgstr "درباره"
+msgstr "关于"
 
 #: ../plugins/gtkui/interface.c:938 ../plugins/gtkui/deadbeef.glade.h:105
 msgid "Quit"
-msgstr "خروج"
+msgstr "退出"
 
 #: ../plugins/gtkui/interface.c:1010 ../plugins/gtkui/deadbeef.glade.h:10
 msgid "Adding files..."
-msgstr "افزودن فایل‌ها..."
+msgstr "正在添加文件..."
 
 #: ../plugins/gtkui/interface.c:1054 ../plugins/gtkui/deadbeef.glade.h:145
 msgid "_Abort"
-msgstr "_ ناتمام رها کردن"
+msgstr "中止(_A)"
 
 #: ../plugins/gtkui/interface.c:1155 ../plugins/gtkui/deadbeef.glade.h:136
 msgid "Track Properties"
-msgstr "ویژگی آهنگ"
+msgstr "音轨属性"
 
 #: ../plugins/gtkui/interface.c:1179 ../plugins/gtkui/deadbeef.glade.h:3
 msgid ""
 "<b>WARNING</b>: tag writing feature is still in development.\n"
 "<b>Make backup copies</b> before using."
 msgstr ""
-"<b> اخطار</b> ویژگی برچسب گذاری هنوز در حال توسعه است.\n"
-"پیش از استفاده <b> نسخه پشتیبانی تهیه کنید</b>"
+"<b>警告</b>：编辑标签功能尚在开发中。\n"
+"使用前请<b>做好备份</b>。"
 
 #: ../plugins/gtkui/interface.c:1206 ../plugins/gtkui/deadbeef.glade.h:147
 msgid "_Apply"
-msgstr "ـ اعمال"
+msgstr "应用(_A)"
 
 #: ../plugins/gtkui/interface.c:1227 ../plugins/gtkui/interface.c:1273
 #: ../plugins/gtkui/interface.c:2497 ../plugins/gtkui/deadbeef.glade.h:151
 msgid "_Close"
-msgstr "ـ بستن"
+msgstr "关闭(_C)"
 
 #: ../plugins/gtkui/interface.c:1231 ../plugins/gtkui/deadbeef.glade.h:79
 msgid "Metadata"
-msgstr "فرا داده"
+msgstr "元数据"
 
 #: ../plugins/gtkui/interface.c:1277 ../plugins/gtkui/plcommon.c:503
 #: ../plugins/gtkui/deadbeef.glade.h:99
 msgid "Properties"
-msgstr "ویژگی‌ها"
+msgstr "属性"
 
 #: ../plugins/gtkui/interface.c:1363 ../plugins/gtkui/deadbeef.glade.h:161
 msgid "editcolumndlg"
-msgstr "ویرایش ستون dlg"
+msgstr "编辑列对话框"
 
 #: ../plugins/gtkui/interface.c:1378 ../plugins/gtkui/interface.c:2869
 #: ../plugins/gtkui/deadbeef.glade.h:133
 msgid "Title:"
-msgstr "عنوان:"
+msgstr "标题："
 
 #: ../plugins/gtkui/interface.c:1386 ../plugins/gtkui/deadbeef.glade.h:32
 msgid "Enter new column title here"
-msgstr "ستون عنوان جدید را اینجا وارد کنید"
+msgstr "在此输入新的列标题"
 
 #: ../plugins/gtkui/interface.c:1394 ../plugins/gtkui/deadbeef.glade.h:137
 msgid "Type:"
-msgstr "نوع:"
+msgstr "类型："
 
 #: ../plugins/gtkui/interface.c:1402
 msgid "File number"
-msgstr "شماره پرونده"
+msgstr "文件号"
 
 #. create default set of columns
 #: ../plugins/gtkui/interface.c:1403 ../plugins/gtkui/mainplaylist.c:300
 msgid "Playing"
-msgstr "در حال پخش"
+msgstr "正在播放"
 
 #: ../plugins/gtkui/interface.c:1404
 msgid "Album Art"
-msgstr "آلبوم هنری"
+msgstr "专辑封面"
 
 #: ../plugins/gtkui/interface.c:1405
 msgid "Artist - Album"
-msgstr "هنرمند-آلبوم"
+msgstr "艺人 - 专辑"
 
 #: ../plugins/gtkui/interface.c:1406 ../plugins/gtkui/plcommon.c:877
 msgid "Artist"
-msgstr "هنرمند"
+msgstr "艺人"
 
 #: ../plugins/gtkui/interface.c:1407 ../plugins/gtkui/interface.c:1794
 msgid "Album"
-msgstr "آلبوم"
+msgstr "专辑"
 
 #: ../plugins/gtkui/interface.c:1408 ../plugins/gtkui/prefwin.c:595
 msgid "Title"
-msgstr "عنوان"
+msgstr "标题"
 
 #: ../plugins/gtkui/interface.c:1409
 msgid "Length"
-msgstr "طول"
+msgstr "长度"
 
 #: ../plugins/gtkui/interface.c:1410 ../plugins/gtkui/interface.c:1793
 msgid "Track"
-msgstr "آهنگ"
+msgstr "音轨"
 
 #: ../plugins/gtkui/interface.c:1411
 msgid "Band / Album Artist"
-msgstr "هنرمند آلبوم/گروه"
+msgstr "乐队 / 专辑艺人"
 
 #: ../plugins/gtkui/interface.c:1412 ../plugins/gtkui/plcommon.c:881
 msgid "Custom"
-msgstr "شخصی"
+msgstr "自定义"
 
 #: ../plugins/gtkui/interface.c:1418 ../plugins/gtkui/interface.c:3096
 #: ../plugins/gtkui/deadbeef.glade.h:62
 msgid "Format:"
-msgstr "قالب:"
+msgstr "格式："
 
 #: ../plugins/gtkui/interface.c:1433 ../plugins/gtkui/deadbeef.glade.h:11
 msgid "Alignment:"
-msgstr "هم‌ترازی:"
+msgstr "对齐："
 
 #: ../plugins/gtkui/interface.c:1441
 msgid "Left"
-msgstr "چپ"
+msgstr "左"
 
 #: ../plugins/gtkui/interface.c:1442
 msgid "Right"
-msgstr "راست"
+msgstr "右"
 
 #: ../plugins/gtkui/interface.c:1444 ../plugins/gtkui/deadbeef.glade.h:48
 #, no-c-format
@@ -521,291 +520,291 @@ msgid ""
 "  [d]irectory, [D]irectoryWithPath\n"
 "Example: %a - %t [%l]"
 msgstr ""
-"تبدیل قالب (شروع با %): \n"
-"[a] هنرمند، [t] عنوان، [b] آلبوم، [B]گروه، [C]آهنگ‌ساز\n"
-"[n] شماره آهنگ، [N] کل آهنگ‌ها،\n"
-"[l] مدت زمان، [y] سال، [g] دسته، [c] نظر،\n"
-"[r]حق تالیف،[f] نام پرونده، [T] برچسب‌ها\n"
-"[d] پوشه، [D] پوشه با مسیر \n"
-"مثال: %a - %t [%l]"
+"格式规定(start with %)：\n"
+"  [a]艺人, [t]标题, [b]专辑, [B]乐队, [C]作曲\n"
+"  [n]音轨号, [N]总音轨数,\n"
+"  [l]时长, [y]年份, [g]流派, [c]注释,\n"
+"  [r]版权, [f]文件名, [F]完整路径, [T]标签,\n"
+"  [d]目录, [D]带路径的目录\n"
+"例：%a - %t [%l]"
 
 #: ../plugins/gtkui/interface.c:1473 ../plugins/gtkui/interface.c:2900
 #: ../plugins/gtkui/interface.c:3012 ../plugins/gtkui/interface.c:3135
 #: ../plugins/gtkui/deadbeef.glade.h:148
 msgid "_Cancel"
-msgstr "ـ لغو"
+msgstr "取消(_C)"
 
 #: ../plugins/gtkui/interface.c:1494 ../plugins/gtkui/interface.c:2921
 #: ../plugins/gtkui/interface.c:3033 ../plugins/gtkui/interface.c:3156
 #: ../plugins/gtkui/deadbeef.glade.h:156
 msgid "_OK"
-msgstr "ـ قبول"
+msgstr "确定(_O)"
 
 #: ../plugins/gtkui/interface.c:1725 ../plugins/gtkui/deadbeef.glade.h:88
 msgid "Output plugin:"
-msgstr "افزونه خروجی:"
+msgstr "输出插件："
 
 #: ../plugins/gtkui/interface.c:1738 ../plugins/gtkui/deadbeef.glade.h:87
 msgid "Output device:"
-msgstr "دستگاه خروجی:"
+msgstr "输出设备："
 
 #: ../plugins/gtkui/interface.c:1747 ../plugins/gtkui/deadbeef.glade.h:122
 msgid "Sound"
-msgstr "صوت"
+msgstr "声音"
 
 #: ../plugins/gtkui/interface.c:1756 ../plugins/gtkui/deadbeef.glade.h:12
 msgid "Allow dynamic samplerate switching"
-msgstr "اجازه به کلیدزنی پویای نرخ نمونه"
+msgstr "允许动态采样率切换"
 
 #: ../plugins/gtkui/interface.c:1764 ../plugins/gtkui/deadbeef.glade.h:111
 msgid "Samplerate conversion quality:"
-msgstr "کیفیت تبدیل نرخ نمونه"
+msgstr "采样率转换质量："
 
 #: ../plugins/gtkui/interface.c:1783 ../plugins/gtkui/deadbeef.glade.h:108
 msgid "Replaygain mode:"
-msgstr "حالت پخش مجدد:"
+msgstr "回放增益方式："
 
 #: ../plugins/gtkui/interface.c:1792
 msgid "Disable"
-msgstr "غیرفعال"
+msgstr "禁用"
 
 #: ../plugins/gtkui/interface.c:1796 ../plugins/gtkui/deadbeef.glade.h:109
 msgid "Replaygain peak scale"
-msgstr "پخش مجدد مقیاس قله"
+msgstr "回放增益峰值均衡"
 
 #: ../plugins/gtkui/interface.c:1804 ../plugins/gtkui/deadbeef.glade.h:7
 msgid "Add files from command line (or file manager) to this playlist:"
-msgstr "افزودن فایل‌ها از خط فرمان (‌یا مدیر فایل) به این فهرست پخش:"
+msgstr "通过命令行(或文件管理器)向此播放列表添加文件："
 
 #: ../plugins/gtkui/interface.c:1813 ../plugins/gtkui/deadbeef.glade.h:110
 msgid "Resume previous session on startup"
-msgstr "ادامه نشست قبلی در این آغاز به کار"
+msgstr "启动时恢复上一次会话"
 
 #: ../plugins/gtkui/interface.c:1817 ../plugins/gtkui/deadbeef.glade.h:94
 msgid "Playback"
-msgstr "پخش"
+msgstr "回放"
 
 #: ../plugins/gtkui/interface.c:1826 ../plugins/gtkui/deadbeef.glade.h:16
 msgid "Close minimizes to tray"
-msgstr "بستن حداقل شده‌ها برای رفتن به سینی"
+msgstr "点击关闭时最小化到托盘"
 
 #: ../plugins/gtkui/interface.c:1830 ../plugins/gtkui/deadbeef.glade.h:81
 msgid "Middle mouse button closes playlist"
-msgstr "کلید وسط ماوس لیست پخش را می‌بندد"
+msgstr "鼠标中键关闭播放列表"
 
 #: ../plugins/gtkui/interface.c:1834 ../plugins/gtkui/deadbeef.glade.h:67
 msgid "Hide system tray icon"
-msgstr "مخفی کردن آیکون سینی سیستم"
+msgstr "隐藏系统托盘图标"
 
 #: ../plugins/gtkui/interface.c:1838 ../plugins/gtkui/deadbeef.glade.h:139
 msgid "Use bold font for currently playing track"
-msgstr "استفاده از قلم‌های ضخیم برای آهنگ در حال پخش"
+msgstr "用粗体显示当前正在播放的音轨"
 
 #: ../plugins/gtkui/interface.c:1842 ../plugins/gtkui/deadbeef.glade.h:66
 msgid "Hide \"Delete from disk\" context menu item"
-msgstr "مخفی کردن متن «حذف از دیسک» از منو"
+msgstr "隐藏“从磁盘删除”右键菜单项"
 
 #: ../plugins/gtkui/interface.c:1850 ../plugins/gtkui/deadbeef.glade.h:134
 msgid "Titlebar text while playing:"
-msgstr "متن نوار عنوان در زمان پخش:"
+msgstr "播放时的标题栏文本："
 
 #: ../plugins/gtkui/interface.c:1864 ../plugins/gtkui/deadbeef.glade.h:135
 msgid "Titlebar text while stopped:"
-msgstr "متن نوار عنوان در زمان توقف:"
+msgstr "停止时的标题栏文本："
 
 #: ../plugins/gtkui/interface.c:1874 ../plugins/gtkui/deadbeef.glade.h:63
 msgid "GUI"
-msgstr "رابط گرافیکی کاربر"
+msgstr "用户界面"
 
 #: ../plugins/gtkui/interface.c:1888 ../plugins/gtkui/interface.c:1932
 #: ../plugins/gtkui/deadbeef.glade.h:89
 msgid "Override"
-msgstr "غلبه"
+msgstr "覆盖"
 
 #: ../plugins/gtkui/interface.c:1897 ../plugins/gtkui/deadbeef.glade.h:46
 msgid "Foreground"
-msgstr "پیش زمینه"
+msgstr "前景色"
 
 #: ../plugins/gtkui/interface.c:1904 ../plugins/gtkui/deadbeef.glade.h:14
 msgid "Background"
-msgstr "پس‌زمینه"
+msgstr "背景色"
 
 #: ../plugins/gtkui/interface.c:1923 ../plugins/gtkui/deadbeef.glade.h:116
 msgid "Seekbar/Volumebar colors"
-msgstr "رنگ‌های نوار پویش/ حجم صدا"
+msgstr "搜索条/音量条颜色"
 
 #: ../plugins/gtkui/interface.c:1941 ../plugins/gtkui/deadbeef.glade.h:80
 msgid "Middle"
-msgstr "متوسط"
+msgstr "中"
 
 #: ../plugins/gtkui/interface.c:1948 ../plugins/gtkui/deadbeef.glade.h:73
 msgid "Light"
-msgstr "روشن"
+msgstr "右"
 
 #: ../plugins/gtkui/interface.c:1955 ../plugins/gtkui/deadbeef.glade.h:23
 msgid "Dark"
-msgstr "تیره"
+msgstr "暗"
 
 #: ../plugins/gtkui/interface.c:1986 ../plugins/gtkui/deadbeef.glade.h:15
 msgid "Base"
-msgstr "پایه"
+msgstr "基础"
 
 #: ../plugins/gtkui/interface.c:1993 ../plugins/gtkui/deadbeef.glade.h:129
 msgid "Tab strip colors"
-msgstr "رنگ‌های نوار لبه"
+msgstr "标签条颜色"
 
 #: ../plugins/gtkui/interface.c:2002 ../plugins/gtkui/deadbeef.glade.h:90
 msgid "Override (looses GTK treeview theming, but speeds up rendering)"
-msgstr "غلبه (درختواره GTK ضعیف می‌شود اما سرعت نمایش افزایش می‌یابد)"
+msgstr "覆盖(不同于 GTK 树状视图风格，但渲染更快)"
 
 #: ../plugins/gtkui/interface.c:2011 ../plugins/gtkui/deadbeef.glade.h:34
 msgid "Even row"
-msgstr "ردیف زوج"
+msgstr "偶数行"
 
 #: ../plugins/gtkui/interface.c:2018 ../plugins/gtkui/deadbeef.glade.h:85
 msgid "Odd row"
-msgstr "ردیف فرد"
+msgstr "奇数行"
 
 #: ../plugins/gtkui/interface.c:2037 ../plugins/gtkui/deadbeef.glade.h:132
 msgid "Text"
-msgstr "متن"
+msgstr "文本"
 
 #: ../plugins/gtkui/interface.c:2044 ../plugins/gtkui/deadbeef.glade.h:118
 msgid "Selected row"
-msgstr "ردیف انتخاب شده"
+msgstr "选择的行"
 
 #: ../plugins/gtkui/interface.c:2063 ../plugins/gtkui/deadbeef.glade.h:119
 msgid "Selected text"
-msgstr "متن انتخاب شده"
+msgstr "选择的文本"
 
 #: ../plugins/gtkui/interface.c:2076 ../plugins/gtkui/deadbeef.glade.h:21
 msgid "Cursor"
-msgstr "مکان‌نما"
+msgstr "光标"
 
 #: ../plugins/gtkui/interface.c:2089 ../plugins/gtkui/deadbeef.glade.h:95
 msgid "Playlist colors"
-msgstr "رنگ‌های فهرست پخش"
+msgstr "播放列表颜色"
 
 #: ../plugins/gtkui/interface.c:2093 ../plugins/gtkui/deadbeef.glade.h:17
 msgid "Colors"
-msgstr "رنگ‌ها"
+msgstr "颜色"
 
 #: ../plugins/gtkui/interface.c:2102 ../plugins/gtkui/deadbeef.glade.h:31
 msgid "Enable Proxy Server"
-msgstr "فعال سازی خادم پروکسی"
+msgstr "启用代理服务器"
 
 #: ../plugins/gtkui/interface.c:2110 ../plugins/gtkui/deadbeef.glade.h:101
 msgid "Proxy Server Address:"
-msgstr "آدرس سرویس دهنده پروکسی:"
+msgstr "代理服务器地址："
 
 #: ../plugins/gtkui/interface.c:2124 ../plugins/gtkui/deadbeef.glade.h:102
 msgid "Proxy Server Port:"
-msgstr "درگاه سرویس دهنده پروکسی:"
+msgstr "代理服务器端口："
 
 #: ../plugins/gtkui/interface.c:2138 ../plugins/gtkui/deadbeef.glade.h:103
 msgid "Proxy Type:"
-msgstr "نوع پروکسی:"
+msgstr "代理类型："
 
 #: ../plugins/gtkui/interface.c:2157 ../plugins/gtkui/deadbeef.glade.h:104
 msgid "Proxy Username:"
-msgstr "نام کاربری پروکسی:"
+msgstr "代理用户名："
 
 #: ../plugins/gtkui/interface.c:2170 ../plugins/gtkui/deadbeef.glade.h:100
 msgid "Proxy Password:"
-msgstr "گذرواژه پروکسی:"
+msgstr "代理密码："
 
 #: ../plugins/gtkui/interface.c:2180 ../plugins/gtkui/deadbeef.glade.h:82
 msgid "Network"
-msgstr "شبکه"
+msgstr "网络"
 
 #: ../plugins/gtkui/interface.c:2208 ../plugins/gtkui/deadbeef.glade.h:143
 msgid "Write ID3v2"
-msgstr "بنویسید ID3v2"
+msgstr "写 ID3v2"
 
 #: ../plugins/gtkui/interface.c:2212 ../plugins/gtkui/interface.c:2339
 #: ../plugins/gtkui/deadbeef.glade.h:142
 msgid "Write ID3v1"
-msgstr "بنویسید ID3v1"
+msgstr "写 ID3v1"
 
 #: ../plugins/gtkui/interface.c:2216 ../plugins/gtkui/interface.c:2295
 #: ../plugins/gtkui/interface.c:2335 ../plugins/gtkui/deadbeef.glade.h:141
 msgid "Write APEv2"
-msgstr "بنویسید APEv2"
+msgstr "写 APEv2"
 
 #: ../plugins/gtkui/interface.c:2224 ../plugins/gtkui/interface.c:2303
 #: ../plugins/gtkui/deadbeef.glade.h:128
 msgid "Strip ID3v2"
-msgstr "ID3v2 را پاک کنید"
+msgstr "清除 ID3v2"
 
 #: ../plugins/gtkui/interface.c:2228 ../plugins/gtkui/interface.c:2351
 #: ../plugins/gtkui/deadbeef.glade.h:127
 msgid "Strip ID3v1"
-msgstr "ID3v1 را پاک کنید"
+msgstr "清除 ID3v1"
 
 #: ../plugins/gtkui/interface.c:2232 ../plugins/gtkui/interface.c:2307
 #: ../plugins/gtkui/interface.c:2347 ../plugins/gtkui/deadbeef.glade.h:126
 msgid "Strip APEv2"
-msgstr "APEv2 را پاک کنید"
+msgstr "清除 APEv2"
 
 #: ../plugins/gtkui/interface.c:2240 ../plugins/gtkui/deadbeef.glade.h:69
 msgid "ID3v2 version"
-msgstr "نسخه ID3v2"
+msgstr "ID3v2 版本"
 
 #: ../plugins/gtkui/interface.c:2247
 msgid "2.3 (Recommended)"
-msgstr "۲٫۳ (پیشنهاد شده)"
+msgstr "2.3 (推荐)"
 
 #: ../plugins/gtkui/interface.c:2248
 msgid "2.4"
-msgstr "۲٫۴"
+msgstr "2.4"
 
 #: ../plugins/gtkui/interface.c:2254 ../plugins/gtkui/deadbeef.glade.h:68
 msgid "ID3v1 character encoding (default is iso8859-1)"
-msgstr "کدگشایی کاراکتر ID3v1 (پیش‌فرض iso8859-1 است)"
+msgstr "ID3v1 字符编码(默认为 iso8859-1)"
 
 #: ../plugins/gtkui/interface.c:2291 ../plugins/gtkui/deadbeef.glade.h:144
 msgid "Write ID3v2.4"
-msgstr "بنویسید ID3v2.4"
+msgstr "写 ID3v2.4"
 
 #: ../plugins/gtkui/interface.c:2360 ../plugins/gtkui/deadbeef.glade.h:131
 msgid "Tag writer"
-msgstr "نویسنده برچسب"
+msgstr "标签编辑器"
 
 #: ../plugins/gtkui/interface.c:2391 ../plugins/gtkui/deadbeef.glade.h:24
 msgid "Description:"
-msgstr "شرح:"
+msgstr "描述："
 
 #: ../plugins/gtkui/interface.c:2406 ../plugins/gtkui/deadbeef.glade.h:13
 msgid "Author(s):"
-msgstr "نویسنده(گان):"
+msgstr "作者："
 
 #: ../plugins/gtkui/interface.c:2421 ../plugins/gtkui/deadbeef.glade.h:30
 msgid "Email:"
-msgstr "پست الکترونیکی:"
+msgstr "电子邮箱："
 
 #: ../plugins/gtkui/interface.c:2436 ../plugins/gtkui/deadbeef.glade.h:140
 msgid "Website:"
-msgstr "وب سایت:"
+msgstr "网站："
 
 #: ../plugins/gtkui/interface.c:2467 ../plugins/gtkui/deadbeef.glade.h:19
 msgid "Configure"
-msgstr "پیکره‌بندی:"
+msgstr "配置"
 
 #: ../plugins/gtkui/interface.c:2471 ../plugins/gtkui/deadbeef.glade.h:96
 msgid "Plugins"
-msgstr "افزونه‌ها"
+msgstr "插件"
 
 #: ../plugins/gtkui/interface.c:2853 ../plugins/gtkui/deadbeef.glade.h:162
 msgid "editplaylistdlg"
-msgstr "ویرایش فهرست پخشdlg"
+msgstr "编辑播放列表对话框"
 
 #: ../plugins/gtkui/interface.c:2980 ../plugins/gtkui/deadbeef.glade.h:138
 msgid "URL:"
-msgstr "آدرس اینترنتی:"
+msgstr "URL："
 
 #: ../plugins/gtkui/interface.c:3081 ../plugins/gtkui/deadbeef.glade.h:64
 msgid "Group By"
-msgstr "گروه با"
+msgstr "分组依据"
 
 #: ../plugins/gtkui/interface.c:3106 ../plugins/gtkui/deadbeef.glade.h:56
 #, no-c-format
@@ -817,229 +816,229 @@ msgid ""
 "  copy[r]ight, [f]ilename, [T]ags\n"
 "Example: %a - %t [%l]"
 msgstr ""
-"تبدیل قالب (شروع با %): \n"
-"[a] هنرمند، [t] عنوان، [b] آلبوم، [B]گروه، [C]آهنگ‌ساز\n"
-"[n] شماره آهنگ، [N] کل آهنگ‌ها،\n"
-"[l] مدت زمان، [y] سال، [g] دسته، [c] نظر،\n"
-"[r]حق تالیف،[f] نام پرونده، [T] برچسب‌ها\n"
-"مثال: %a - %t [%l]"
+"格式规定(用 % 开头):\n"
+"  [a]艺人, [t]标题, [b]专辑, [B]乐队, [C]作曲\n"
+"  [n]音轨号, [N]总音轨数,\n"
+"  [l]时长, [y]年份, [g]流派, [c]注释,\n"
+"  [r]版权, [f]文件名, [T]标签\n"
+"例：%a - %t [%l]"
 
 #: ../plugins/gtkui/mainplaylist.c:301 ../plugins/gtkui/search.c:434
 msgid "Artist / Album"
-msgstr "هنرمند/آلبوم"
+msgstr "艺人 / 专辑"
 
 #: ../plugins/gtkui/mainplaylist.c:302 ../plugins/gtkui/search.c:435
 msgid "Track No"
-msgstr "شماره آهنگ"
+msgstr "音轨号"
 
 #: ../plugins/gtkui/mainplaylist.c:303 ../plugins/gtkui/search.c:436
 msgid "Title / Track Artist"
-msgstr "عنوان/آهنگ هنرمند"
+msgstr "标题 / 音轨艺人"
 
 #: ../plugins/gtkui/mainplaylist.c:304 ../plugins/gtkui/search.c:437
 #: ../plugins/gtkui/trkproperties.c:175
 msgid "Duration"
-msgstr "مدت زمان"
+msgstr "时长"
 
 #: ../plugins/gtkui/plcommon.c:323
 msgid "Delete files from disk"
-msgstr "حذف فایل‌ها از روی دیسک"
+msgstr "从磁盘中删除文件"
 
 #: ../plugins/gtkui/plcommon.c:324
 msgid ""
 "Files will be lost. Proceed?\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
 msgstr ""
-"پرونده‌ها از دست خواهند رفت. این چنین شود؟ \n"
-"(این کادر محاوره‌ای می‌تواند در تنظیمات افزونه GTKUI خاموش شود)"
+"文件将消失。继续吗？\n"
+"(可以在 GTKUI 插件设置中禁用此对话框)"
 
 #: ../plugins/gtkui/plcommon.c:325 ../plugins/gtkui/trkproperties.c:56
 msgid "Warning"
-msgstr "هشدار"
+msgstr "警告"
 
 #: ../plugins/gtkui/plcommon.c:401
 msgid "Add to playback queue"
-msgstr "افزودن به صف پخش"
+msgstr "添加到播放列表"
 
 #: ../plugins/gtkui/plcommon.c:406
 msgid "Remove from playback queue"
-msgstr "حذف از صف پخش"
+msgstr "从播放队列中移除"
 
 #: ../plugins/gtkui/plcommon.c:414
 msgid "Reload metadata"
-msgstr "بارگذاری مجدد ابرداده"
+msgstr "重新载入元数据"
 
 #: ../plugins/gtkui/plcommon.c:433
 msgid "Remove from disk"
-msgstr "حذف از دیسک"
+msgstr "从磁盘中删除"
 
 #: ../plugins/gtkui/plcommon.c:719 ../plugins/gtkui/plcommon.c:844
 msgid "Add column"
-msgstr "افزودن ستون"
+msgstr "添加列"
 
 #: ../plugins/gtkui/plcommon.c:749 ../plugins/gtkui/plcommon.c:848
 msgid "Edit column"
-msgstr "ویرایش ستون"
+msgstr "编辑列"
 
 #: ../plugins/gtkui/plcommon.c:852
 msgid "Remove column"
-msgstr "حذف ستون"
+msgstr "移除列"
 
 #: ../plugins/gtkui/plcommon.c:862
 msgid "Group by"
-msgstr "گروه با"
+msgstr "分组依据"
 
 #: ../plugins/gtkui/plcommon.c:869
 msgid "None"
-msgstr "هیچ"
+msgstr "无"
 
 #: ../plugins/gtkui/plcommon.c:873
 msgid "Artist/Date/Album"
-msgstr "هنرمند/تاریخ/آلبوم"
+msgstr "艺人/日期/专辑"
 
 #: ../plugins/gtkui/pluginconf.c:41
 msgid "Open file..."
-msgstr "باز کردن پرونده..."
+msgstr "打开文件..."
 
 #: ../plugins/gtkui/pluginconf.c:142
 #, c-format
 msgid "Setup %s"
-msgstr "برپاسازی %s"
+msgstr "设置 %s"
 
 #: ../plugins/gtkui/prefwin.c:98
 msgid "Default Audio Device"
-msgstr "دستگاه صوتی پیش‌فرض"
+msgstr "默认音频设备"
 
 #: ../plugins/gtkui/prefwin.c:312
 msgid "Add"
-msgstr "افزودن"
+msgstr "添加"
 
 #: ../plugins/gtkui/prefwin.c:322
 msgid "Global Hotkeys"
-msgstr "کلید‌های داغ عمومی"
+msgstr "全局热键"
 
 #: ../plugins/gtkui/prefwin.c:384
 msgid "Slot"
-msgstr "شکاف"
+msgstr "槽"
 
 #: ../plugins/gtkui/prefwin.c:385
 msgid "Key combination"
-msgstr "ترکیب کلیدی"
+msgstr "按键组合"
 
 #. output plugin selection
 #: ../plugins/gtkui/prefwin.c:464 ../plugins/gtkui/prefwin.c:676
 #: ../plugins.c:872
 msgid "ALSA output plugin"
-msgstr "افزونه خروجی آلسا"
+msgstr "ALSA 输出插件"
 
 #: ../plugins/gtkui/progress.c:64
 msgid "Initializing..."
-msgstr "آماده سازی اولیه..."
+msgstr "正在初始化..."
 
 #: ../plugins/gtkui/trkproperties.c:53
 msgid "You've modified data for this track."
-msgstr "شما اطلاعات این آهنگ را تغییر داده‌اید."
+msgstr "您修改了此音轨的数据。"
 
 #: ../plugins/gtkui/trkproperties.c:55
 msgid "Really close the window?"
-msgstr "واقعا می‌خواهید پنجره را ببندید؟"
+msgstr "真的关闭该窗口吗？"
 
 #: ../plugins/gtkui/trkproperties.c:178
 msgid "Tag Type(s)"
-msgstr "نوع(های) برچسب"
+msgstr "标签类型"
 
 #: ../plugins/gtkui/trkproperties.c:180
 msgid "Embedded Cuesheet"
-msgstr "برگه راهنمایی توکار"
+msgstr "嵌入的 Cuesheet"
 
 #: ../plugins/gtkui/trkproperties.c:180
 msgid "Yes"
-msgstr "بله"
+msgstr "是"
 
 #: ../plugins/gtkui/trkproperties.c:180
 msgid "No"
-msgstr "خیر"
+msgstr "否"
 
 #: ../plugins/gtkui/trkproperties.c:182
 msgid "Codec"
-msgstr "کدک‌"
+msgstr "编解码器"
 
 #: ../plugins/gtkui/trkproperties.c:250 ../plugins/gtkui/trkproperties.c:262
 msgid "Key"
-msgstr "کلید"
+msgstr "键"
 
 #: ../plugins/gtkui/trkproperties.c:251 ../plugins/gtkui/trkproperties.c:263
 msgid "Value"
-msgstr "مقدار"
+msgstr "值"
 
 #: ../plugins/notify/notify.c:138
 msgid "DeaDBeeF now playing"
-msgstr "DeaDBeeF هم اکنون در حال پخش است"
+msgstr "DeaDBeeF 正在播放"
 
 #: ../main.c:89
 #, c-format
 msgid "Usage: deadbeef [options] [file(s)]\n"
-msgstr "استفاده: deadbeef [گزینه‌ها] [پرونده(ها)] \n"
+msgstr "用法：deadbeef [选项] [文件]\n"
 
 #: ../main.c:90
 #, c-format
 msgid "Options:\n"
-msgstr "گزینه‌ها: \n"
+msgstr "选项：\n"
 
 #: ../main.c:91
 #, c-format
 msgid "   --help  or  -h     Print help (this message) and exit\n"
-msgstr "--help    یا     -h   کمک(این پیام) را نشان می‌دهد و خارج می‌شود \n"
+msgstr "   --help  或  -h     打印帮助(这条消息)并退出\n"
 
 #: ../main.c:92
 #, c-format
 msgid "   --quit             Quit player\n"
-msgstr "--quit          از پخش کننده خارج می‌شود \n"
+msgstr "   --quit             退出播放器\n"
 
 #: ../main.c:93
 #, c-format
 msgid "   --version          Print version info and exit\n"
-msgstr "--version           اطلاعات نسخه را نمایش می‌دهد و خارج می‌شود \n"
+msgstr "   --version          打印版本信息并退出\n"
 
 #: ../main.c:94
 #, c-format
 msgid "   --play             Start playback\n"
-msgstr "--play         پخش را آغاز می‌کند\n"
+msgstr "   --play             开始播放\n"
 
 #: ../main.c:95
 #, c-format
 msgid "   --stop             Stop playback\n"
-msgstr "--stop          پخش را متوقف می‌کند\n"
+msgstr "   --stop             停止播放\n"
 
 #: ../main.c:96
 #, c-format
 msgid "   --pause            Pause playback\n"
-msgstr "--pause          پخش را مکث می‌دهد\n"
+msgstr "   --pause            暂停播放\n"
 
 #: ../main.c:97
 #, c-format
 msgid "   --next             Next song in playlist\n"
-msgstr "--next     آهنگ بعدی در فهرست پخش\n"
+msgstr "   --next             播放列表中的下一首歌曲\n"
 
 #: ../main.c:98
 #, c-format
 msgid "   --prev             Previous song in playlist\n"
-msgstr "--prev        آهنگ قبلی در فهرست پخش\n"
+msgstr "   --prev             播放列表中的上一首歌曲\n"
 
 #: ../main.c:99
 #, c-format
 msgid "   --random           Random song in playlist\n"
-msgstr "--random          آهنگ اتفاقی در فهرست پخش\n"
+msgstr "   --random           播放列表中的任一首歌曲\n"
 
 #: ../main.c:100
 #, c-format
 msgid "   --queue            Append file(s) to existing playlist\n"
-msgstr "--queue          پیوست کردن پرونده(ها) به فهرست پخش موجود\n"
+msgstr "   --queue            向现有的播放列表中追加文件\n"
 
 #: ../main.c:101
 #, c-format
 msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
-msgstr "--nowplaying FMT     چاپ نام آهنگ قالب‌بندی شده در خروجی استاندارد\n"
+msgstr "   --nowplaying FMT   向标准输出打印格式化的音轨名称\n"
 
 #: ../main.c:102
 #, c-format
@@ -1048,28 +1047,29 @@ msgid ""
 "                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
 "                      copy[r]ight, [e]lapsed\n"
 msgstr ""
-"                    FMT %%-ترکیب: [ه]نرمند،[ع]نوان، آل[ب]وم،\n"
-"                      [م]دت زمان، شم[ا]ره آهنگ، [س]ال،[ن]ظر،\n"
-"                      حق[ن]شر،[س]پری شده\n"
+"                      FMT %%-语法: [a]艺人, [t]标题, [b]专辑,\n"
+"                      [l]时长, [n]音轨号, [y]年代, [c]注释,\n"
+"                      [r]版权, [e]已播放时间\n"
 
 #: ../main.c:105
 #, c-format
 msgid ""
 "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist "
 "- title\"\n"
-msgstr "مثال: \"%%a - %%t\" باید \"هنرمند-عنوان\" را چاپ کند\n"
+msgstr ""
+"                      例：--nowplaying \"%%a - %%t\" 将打印“艺人 - 标题”\n"
 
 #: ../playlist.c:377 ../playlist.c:2289
 msgid "Default"
-msgstr "پیش‌فرض"
+msgstr "默认"
 
 #: ../plugins/gtkui/deadbeef.glade.h:1
 msgid ""
 "2.3 (Recommended)\n"
 "2.4"
 msgstr ""
-"۲٫۳ (توصیه شده)\n"
-"۲٫۴"
+"2.3 (推荐)\n"
+"2.4"
 
 #: ../plugins/gtkui/deadbeef.glade.h:26
 msgid ""
@@ -1077,9 +1077,9 @@ msgid ""
 "Track\n"
 "Album"
 msgstr ""
-"غیرفعال\n"
-"آهنگ\n"
-"آلبوم"
+"禁用\n"
+"音轨\n"
+"专辑"
 
 #: ../plugins/gtkui/deadbeef.glade.h:35
 msgid ""
@@ -1095,96 +1095,88 @@ msgid ""
 "Band / Album Artist\n"
 "Custom"
 msgstr ""
-"تعداد پرونده\n"
-"در حال پخش\n"
-"آلبوم هنری\n"
-"هنرمند-آلبوم\n"
-"هنرمند\n"
-"آلبوم\n"
-"عنوان\n"
-"مدت زمان\n"
-"آهنگ\n"
-"هنرمند آلبوم/گروه\n"
-"شخصی"
+"文件号\n"
+"正在播放\n"
+"专辑封面\n"
+"艺人 - 专辑\n"
+"艺人\n"
+"专辑\n"
+"标题\n"
+"时长\n"
+"音轨\n"
+"乐队 / 专辑艺人\n"
+"自定义"
 
 #: ../plugins/gtkui/deadbeef.glade.h:71
 msgid ""
 "Left\n"
 "Right"
 msgstr ""
-"چپ\n"
-"راست"
+"左\n"
+"右"
 
 #: ../plugins/gtkui/support.c:90 ../plugins/gtkui/support.c:114
 #, c-format
 msgid "Couldn't find pixmap file: %s"
-msgstr "پرونده تصویر بیتی پیدا نشد:%s"
+msgstr "找不到位图文件：%s"
 
 #: ../plugins/vorbis/vcedit.c:129 ../plugins/vorbis/vcedit.c:155
 msgid "Couldn't get enough memory for input buffering."
-msgstr "مقدار حافظه کافی برای میانگیری ورودی دریافت نشد."
+msgstr "无法获取足够的输入缓冲区内存。"
 
 #: ../plugins/vorbis/vcedit.c:179 ../plugins/vorbis/vcedit.c:550
 msgid "Error reading first page of Ogg bitstream."
-msgstr "خطا در خواند صفحه اول از بیت جاری Ogg"
+msgstr "读取 Ogg 位流第一页出错。"
 
 #: ../plugins/vorbis/vcedit.c:185 ../plugins/vorbis/vcedit.c:557
 msgid "Error reading initial header packet."
-msgstr "خطا در خواندن اولیه بسته سرآیند"
+msgstr "读取初始数据头包出错。"
 
 #: ../plugins/vorbis/vcedit.c:237
 msgid "Couldn't get enough memory to register new stream serial number."
-msgstr "مقدار حافظه کافی برای ثبت شماره سریال جریان جدید دریافت نشد."
+msgstr "无法获取足够的内存来注册新的流序列号码。"
 
 #: ../plugins/vorbis/vcedit.c:505
 msgid "Input truncated or empty."
-msgstr "ورودی کوتاه یا خالی است."
+msgstr "输入被截断或为空。"
 
 #: ../plugins/vorbis/vcedit.c:507
 msgid "Input is not an Ogg bitstream."
-msgstr "ورودی بیت جاری Ogg نیست."
+msgstr "输入不是一个 Ogg 位流。"
 
 #: ../plugins/vorbis/vcedit.c:565
 msgid "Ogg bitstream does not contain Vorbis data."
-msgstr "بیت جاری Ogg شامل داده Vorbis نیست."
+msgstr "Ogg 位流不包含 Vorbis 数据。"
 
 #: ../plugins/vorbis/vcedit.c:578
 msgid "EOF before recognised stream."
-msgstr "رسیدن به پایان پرونده پیش از به رسمیت شناختن جریان."
+msgstr "在识别的流之前遇到了文件尾(EOF)。"
 
 #: ../plugins/vorbis/vcedit.c:594
 msgid "Ogg bitstream does not contain a supported data-type."
-msgstr "بیت جاری Ogg شامل هیچ نوع داده پشتیبانی شده نیست."
+msgstr "Ogg 位流不包含支持的数据类型。"
 
 #: ../plugins/vorbis/vcedit.c:638
 msgid "Corrupt secondary header."
-msgstr "سرآیند ثانویه خراب است."
+msgstr "损坏的次要数据头。"
 
 #: ../plugins/vorbis/vcedit.c:659
 msgid "EOF before end of Vorbis headers."
-msgstr "رسیدن به پایان پرونده پیش از پایان سرآیندهای Vorbis."
+msgstr "在 Vorbis 数据头之前遇到了文件尾(EOF)。"
 
 #: ../plugins/vorbis/vcedit.c:834
 msgid "Corrupt or missing data, continuing..."
-msgstr "خرابی یا از دست دادن داده، ادامه..."
+msgstr "损坏或缺少数据，继续..."
 
 #: ../plugins/vorbis/vcedit.c:874
 msgid ""
 "Error writing stream to output. Output stream may be corrupted or truncated."
-msgstr ""
-"خطا در ارسال جریان به خروجی. جریان خروجی ممکن است خراب شده یا کوتاه شده باشد."
+msgstr "将流写入输出出错。输出流可能被损坏或截断。"
 
 #: ../plugins/wildmidi/wildmidiplug.c:162
 #, c-format
 msgid ""
 "wildmidi: freepats config file not found. Please install timidity-freepats "
 "package, or specify path to freepats.cfg in the plugin settings."
-msgstr ""
-"wildmidi: فایل پیکره‌بندی freepats پیدا نشد. لطفا بسته timidity-freepats را "
-"نصب کنید یا مسیر freepats.cfg را برای تنظیم افزونه مشخص کنید."
-
-#~ msgid "Add Audio CD"
-#~ msgstr "افزودن دیسک صوتی"
-
-#~ msgid "Sound (adv.)"
-#~ msgstr "صوت( adv.)"
+msgstr "wildmidi：找不到 freepats 配置文件。请安装 timidity-freepats 软件包，"
+"或在插件设置中指定 freepats.cfg 的路径。"

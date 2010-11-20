@@ -36,7 +36,7 @@ GTKUI_SOURCES =    gtkui.c gtkui.h\
 
 EXTRA_DIST = $(gtkui_VALASOURCES) deadbeef.glade
 
-if PORTABLE
+if STATICLINK
 pkglib_LTLIBRARIES = gtkui.la gtkui.fallback.la
 else
 pkglib_LTLIBRARIES = gtkui.la
@@ -49,7 +49,7 @@ gtkui_la_LIBADD = $(LDADD) $(GTKUI_DEPS_LIBS)
 gtkui_la_CFLAGS = -std=c99 $(GTKUI_DEPS_CFLAGS)
 
 # fallback lib
-if PORTABLE
+if STATICLINK
 GTK_ROOT=../../../deadbeef-deps/gtk-debian/usr
 
 gtkui_fallback_la_SOURCES = $(gtkui_VALABUILTSOURCES) $(GTKUI_SOURCES)

@@ -21,6 +21,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <sys/stat.h>
 #include "coverart.h"
 #include "../artwork/artwork.h"
 #include "gtkui.h"
@@ -36,6 +37,7 @@ extern DB_artwork_plugin_t *coverart_plugin;
 typedef struct {
     struct timeval tm;
     char *fname;
+    time_t filetime;
     int width;
     GdkPixbuf *pixbuf;
 } cached_pixbuf_t;
@@ -138,7 +140,10 @@ loading_thread (void *none) {
                 usleep (500000);
                 continue;
             }
-
+            struct stat stat_buf;
+            if (stat (queue->fname, &stat_buf) < 0) {
+                trace ("failed to stat file %s\n", queue->fname);
+            }
 //            GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file (queue->fname, NULL);
             GError *error = NULL;
             GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file_at_scale (queue->fname, queue->width, queue->width, TRUE, &error);
@@ -150,6 +155,9 @@ loading_thread (void *none) {
                     error = NULL;
                 }
                 const char *defpath = coverart_plugin->get_default_cover ();
+                if (stat (defpath, &stat_buf) < 0) {
+                    trace ("failed to stat file %s\n", queue->fname);
+                }
                 pixbuf = gdk_pixbuf_new_from_file_at_scale (defpath, queue->width, queue->width, TRUE, &error);
                 if (!pixbuf) {
                     fprintf (stderr, "gdk_pixbuf_new_from_file_at_scale %s %d failed, error: %s\n", defpath, queue->width, error->message);
@@ -162,43 +170,16 @@ loading_thread (void *none) {
             if (!pixbuf) {
                 // make default empty image
                 pixbuf = gdk_pixbuf_new (GDK_COLORSPACE_RGB, FALSE, 8, 2, 2);
+                stat_buf.st_mtime = 0;
             }
-#if 0
-            else {
-                int w, h;
-                w = gdk_pixbuf_get_width (pixbuf);
-                h = gdk_pixbuf_get_height (pixbuf);
-                int width = queue->width;
-                if (w != width) {
-                    int height;
-                    if (w > h) {
-                        height = width * h / w;
-                    }
-                    else if (h > w) {
-                        height = width;
-                        width = height * w / h;
-                    }
-                    else {
-                        height = width;
-                    }
-                    if (width < 5 || height < 5) {
-                        trace ("will not scale to %dx%d\n", width, height);
-                        queue_pop ();
-                        continue;
-                    }
-                    trace ("scaling %dx%d -> %dx%d\n", w, h, width, height);
-                    GdkPixbuf *scaled = gdk_pixbuf_scale_simple (pixbuf, width, height, GDK_INTERP_BILINEAR);
-                    g_object_unref (pixbuf);
-                    pixbuf = scaled;
-                }
-            }
-#endif
             if (cache_min != -1) {
                 deadbeef->mutex_lock (mutex);
+                cache[cache_min].filetime = stat_buf.st_mtime;
                 cache[cache_min].pixbuf = pixbuf;
                 cache[cache_min].fname = strdup (queue->fname);
                 gettimeofday (&cache[cache_min].tm, NULL);
                 cache[cache_min].width = queue->width;
+                struct stat stat_buf;
                 deadbeef->mutex_unlock (mutex);
             }
             queue_pop ();
@@ -230,11 +211,15 @@ get_pixbuf (const char *fname, int width) {
     for (int i = 0; i < CACHE_SIZE; i++) {
         if (cache[i].pixbuf) {
             if (!strcmp (fname, cache[i].fname) && cache[i].width == width) {
-                gettimeofday (&cache[i].tm, NULL);
-                GdkPixbuf *pb = cache[i].pixbuf;
-                g_object_ref (pb);
-                deadbeef->mutex_unlock (mutex);
-                return pb;
+                // check if cached filetime hasn't changed
+                struct stat stat_buf;
+                if (!stat (fname, &stat_buf) && stat_buf.st_mtime == cache[i].filetime) {
+                    gettimeofday (&cache[i].tm, NULL);
+                    GdkPixbuf *pb = cache[i].pixbuf;
+                    g_object_ref (pb);
+                    deadbeef->mutex_unlock (mutex);
+                    return pb;
+                }
             }
         }
     }

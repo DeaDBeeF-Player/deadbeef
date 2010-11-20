@@ -1,3 +1,9 @@
+version 0.4.4
+	fixed race condition in streamer interaction with output plugins
+	atexit and sigterm handlers are not used anymore to prevent playlist corruption when X session is being killed
+	artwork plugin doesn't have direct libcurl dependency anymore
+	merged new translations from LXDE branch
+
 version 0.4.3
 	fixed crash in OSS plugin
 	fixed random crashes caused by upgrading to libcurl-7.21.2

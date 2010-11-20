@@ -2,7 +2,7 @@
   deadbeef.h -- plugin API of the DeaDBeeF audio player
   http://deadbeef.sourceforge.net
 
-  Copyright (C) 2009 Alexey Yakovenko
+  Copyright (C) 2009-2010 Alexey Yakovenko
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -55,6 +55,7 @@ extern "C" {
 
 // api version history:
 // 9.9 -- devel
+// 0.10 -- deadbeef-0.4.4-portable-r1
 // 0.9 -- deadbeef-0.4.3-portable-build3
 // 0.8 -- deadbeef-0.4.2
 // 0.7 -- deabdeef-0.4.0
@@ -66,7 +67,7 @@ extern "C" {
 // 0.1 -- deadbeef-0.2.0
 
 #define DB_API_VERSION_MAJOR 0
-#define DB_API_VERSION_MINOR 9
+#define DB_API_VERSION_MINOR 10
 
 #define DB_PLUGIN_SET_API_VERSION\
     .plugin.api_vmajor = DB_API_VERSION_MAJOR,\
@@ -508,8 +509,10 @@ typedef struct {
     const char * (*conf_get_str) (const char *key, const char *def);
     float (*conf_get_float) (const char *key, float def);
     int (*conf_get_int) (const char *key, int def);
+    int64_t (*conf_get_int64) (const char *key, int64_t def);
     void (*conf_set_str) (const char *key, const char *val);
     void (*conf_set_int) (const char *key, int val);
+    void (*conf_set_int64) (const char *key, int64_t val);
     void (*conf_set_float) (const char *key, float val);
     DB_conf_item_t * (*conf_find) (const char *group, DB_conf_item_t *prev);
     void (*conf_remove_items) (const char *key);
