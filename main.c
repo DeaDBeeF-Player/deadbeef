@@ -534,8 +534,18 @@ main (int argc, char *argv[]) {
 	bindtextdomain (PACKAGE, LOCALEDIR);
 	bind_textdomain_codeset (PACKAGE, "UTF-8");
 	textdomain (PACKAGE);
-#endif					
-    fprintf (stderr, "starting deadbeef " VERSION "%s\n", PORTABLE ? " [portable build]" : "");
+#endif
+
+    int staticlink = 0;
+    int portable = 0;
+#if STATICLINK
+    staticlink = 1;
+#endif
+#if PORTABLE
+    portable = 1;
+#endif
+
+    fprintf (stderr, "starting deadbeef " VERSION "%s%s\n", staticlink ? " [static]" : "", portable ? " [portable]" : "");
     srand (time (NULL));
 #ifdef __linux__
     prctl (PR_SET_NAME, "deadbeef-main", 0, 0, 0, 0);
@@ -548,31 +558,15 @@ main (int argc, char *argv[]) {
         e--;
     }
     *e = 0;
+#endif
+
+#if PORTABLE_FULL
     if (snprintf (confdir, sizeof (confdir), "%s/config", dbinstalldir) > sizeof (confdir)) {
         fprintf (stderr, "fatal: too long install path %s\n", dbinstalldir);
         return -1;
     }
 
     strcpy (dbconfdir, confdir);
-
-    if (snprintf (dbdocdir, sizeof (dbdocdir), "%s/doc", dbinstalldir) > sizeof (dbdocdir)) {
-        fprintf (stderr, "fatal: too long install path %s\n", dbinstalldir);
-        return -1;
-    }
-    if (snprintf (dbplugindir, sizeof (dbplugindir), "%s/plugins", dbinstalldir) > sizeof (dbplugindir)) {
-        fprintf (stderr, "fatal: too long install path %s\n", dbinstalldir);
-        return -1;
-    }
-    if (snprintf (dbpixmapdir, sizeof (dbpixmapdir), "%s/pixmaps", dbinstalldir) > sizeof (dbpixmapdir)) {
-        fprintf (stderr, "fatal: too long install path %s\n", dbinstalldir);
-        return -1;
-    }
-    trace ("installdir: %s\n", dbinstalldir);
-    trace ("confdir: %s\n", confdir);
-    trace ("docdir: %s\n", dbdocdir);
-    trace ("plugindir: %s\n", dbplugindir);
-    mkdir (dbplugindir, 0755);
-    trace ("pixmapdir: %s\n", dbpixmapdir);
 #else
     char *homedir = getenv ("HOME");
     if (!homedir) {
@@ -598,6 +592,24 @@ main (int argc, char *argv[]) {
         return -1;
     }
     mkdir (confdir, 0755);
+#endif
+
+
+#if PORTABLE
+    if (snprintf (dbdocdir, sizeof (dbdocdir), "%s/doc", dbinstalldir) > sizeof (dbdocdir)) {
+        fprintf (stderr, "fatal: too long install path %s\n", dbinstalldir);
+        return -1;
+    }
+    if (snprintf (dbplugindir, sizeof (dbplugindir), "%s/plugins", dbinstalldir) > sizeof (dbplugindir)) {
+        fprintf (stderr, "fatal: too long install path %s\n", dbinstalldir);
+        return -1;
+    }
+    if (snprintf (dbpixmapdir, sizeof (dbpixmapdir), "%s/pixmaps", dbinstalldir) > sizeof (dbpixmapdir)) {
+        fprintf (stderr, "fatal: too long install path %s\n", dbinstalldir);
+        return -1;
+    }
+    mkdir (dbplugindir, 0755);
+#else
     if (snprintf (dbdocdir, sizeof (dbdocdir), "%s", DOCDIR) > sizeof (dbdocdir)) {
         fprintf (stderr, "fatal: too long install path %s\n", dbinstalldir);
         return -1;
@@ -611,6 +623,11 @@ main (int argc, char *argv[]) {
         return -1;
     }
 #endif
+    trace ("installdir: %s\n", dbinstalldir);
+    trace ("confdir: %s\n", confdir);
+    trace ("docdir: %s\n", dbdocdir);
+    trace ("plugindir: %s\n", dbplugindir);
+    trace ("pixmapdir: %s\n", dbpixmapdir);
 
     mkdir (dbconfdir, 0755);
 

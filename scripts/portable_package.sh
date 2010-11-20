@@ -14,7 +14,7 @@ mkdir -p portable_out/build 2>/dev/null
 rm portable_out/* 2>/dev/null
 rm portable_out/build/* 2>/dev/null
 
-tar jcvf portable_out/build/deadbeef-$VERSION-portable-build$BUILD.tar.bz2\
+tar jcvf portable_out/build/deadbeef-$VERSION-portable-r$BUILD.tar.bz2\
     $SRCDIR/deadbeef\
     $SRCDIR/deadbeef.png\
     $DOCDIR\
