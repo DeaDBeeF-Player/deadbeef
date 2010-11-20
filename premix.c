@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include "deadbeef.h"
 #include "premix.h"
+#include "optmath.h"
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
@@ -201,6 +202,23 @@ pcm_write_samples_24_to_24 (const ddb_waveformat_t * restrict inputfmt, const ch
         output += outputsamplesize;
     }
 }
+static inline void
+pcm_write_samples_float_to_16 (const ddb_waveformat_t * restrict inputfmt, const char * restrict input, const ddb_waveformat_t * restrict outputfmt, char * restrict output, int nsamples, int * restrict channelmap, int outputsamplesize) {
+    fpu_control ctl;
+    fpu_setround (&ctl);
+    for (int s = 0; s < nsamples; s++) {
+        for (int c = 0; c < inputfmt->channels; c++) {
+            if (channelmap[c] != -1) {
+                int16_t *out = (int16_t*)(output + (outputfmt->bps >> 3) * channelmap[c]);
+                float sample = *((float*)input);
+                *out = (int16_t)ftoi (sample*0x7fff);
+            }
+            input += 4;
+        }
+        output += outputsamplesize;
+    }
+    fpu_restore (ctl);
+}
 
 int
 pcm_convert (const ddb_waveformat_t * restrict inputfmt, const char * restrict input, const ddb_waveformat_t * restrict outputfmt, char * restrict output, int inputsize) {
@@ -284,6 +302,9 @@ pcm_convert (const ddb_waveformat_t * restrict inputfmt, const char * restrict i
         }
         else if (inputfmt->bps == 32 && outputfmt->bps == 32) {
             pcm_write_samples_32_to_32 (inputfmt, input, outputfmt, output, nsamples, channelmap, outputsamplesize);
+        }
+        else if (inputfmt->is_float && inputfmt->bps == 32 && outputfmt->bps == 16) {
+            pcm_write_samples_float_to_16 (inputfmt, input, outputfmt, output, nsamples, channelmap, outputsamplesize);
         }
         else {
             trace ("no converter from %d to %d\n", inputfmt->bps, outputfmt->bps);

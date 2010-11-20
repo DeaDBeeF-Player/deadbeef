@@ -21,6 +21,7 @@ deadbeef_SOURCES =\
 	plugins.c plugins.h moduleconf.h\
 	playlist.c playlist.h \
 	streamer.c streamer.h\
+	src.c src.h\
 	premix.c premix.h\
 	messagepump.c messagepump.h\
 	conf.c  conf.h\

@@ -36,38 +36,28 @@
 #include "volume.h"
 #include "vfs.h"
 #include "premix.h"
+#include "src.h"
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
-#define WRITE_DUMP 1
+//#define WRITE_DUMP 1
 
 #if WRITE_DUMP
 FILE *out;
 #endif
 
 static intptr_t streamer_tid;
-static int src_quality;
-static SRC_STATE *src;
-static SRC_DATA srcdata;
-static int src_remaining; // number of input samples in SRC buffer
+static ddb_src_t *src;
 
 static int conf_replaygain_mode = 0;
 static int conf_replaygain_scale = 1;
-
-#define SRC_BUFFER 16000
-static int src_in_remaining = 0;
-//static int16_t g_src_in_buffer[SRC_BUFFER*2];
-static __attribute__((__aligned__(16))) float g_src_in_fbuffer[SRC_BUFFER*2];
-static __attribute__((__aligned__(16))) float g_src_out_fbuffer[SRC_BUFFER*2];
 
 static int streaming_terminate;
 
 // buffer up to 3 seconds at 44100Hz stereo
 #define STREAM_BUFFER_SIZE 0x80000 // slightly more than 3 seconds of 44100 stereo
 #define STREAM_BUFFER_MASK 0x7ffff
-//#define STREAM_BUFFER_SIZE 0x10000 // slightly more than 3 seconds of 44100 stereo
-//#define STREAM_BUFFER_MASK 0xffff
 
 static int streambuffer_fill;
 static int streambuffer_pos;
@@ -75,7 +65,6 @@ static int bytes_until_next_song = 0;
 static char streambuffer[STREAM_BUFFER_SIZE];
 static uintptr_t mutex;
 static uintptr_t decodemutex;
-static uintptr_t srcmutex;
 static int nextsong = -1;
 static int nextsong_pstate = -1;
 static int badsong = -1;
@@ -106,16 +95,6 @@ streamer_lock (void) {
 void
 streamer_unlock (void) {
     mutex_unlock (mutex);
-}
-
-void
-src_lock (void) {
-    mutex_lock (srcmutex);
-}
-
-void
-src_unlock (void) {
-    mutex_unlock (srcmutex);
 }
 
 void
@@ -768,7 +747,7 @@ streamer_start_new_song (void) {
     int initsng = nextsong;
     int pstate = nextsong_pstate;
     nextsong = -1;
-    src_remaining = 0;
+    ddb_src_reset (src, 0);
     streamer_unlock ();
     if (badsong == sng) {
         trace ("looped to bad file. stopping...\n");
@@ -865,7 +844,7 @@ streamer_thread (void *ctx) {
 #ifdef __linux__
     prctl (PR_SET_NAME, "deadbeef-stream", 0, 0, 0, 0);
 #endif
-    src_remaining = 0;
+    ddb_src_reset (src, 0);
 
     while (!streaming_terminate) {
         struct timeval tm1;
@@ -1079,7 +1058,7 @@ streamer_thread (void *ctx) {
         int channels = output->fmt.channels;
         int bytes_in_one_second = rate * (output->fmt.bps>>3) * channels;
         const int blocksize = 4096;
-        int alloc_time = 1000 / (bytes_in_one_second * 2 / blocksize);
+        int alloc_time = 1000 / (bytes_in_one_second * output->fmt.channels / blocksize);
 
         streamer_lock ();
         if (streambuffer_fill < (STREAM_BUFFER_SIZE-blocksize)) {
@@ -1144,11 +1123,6 @@ streamer_thread (void *ctx) {
         playing_track = NULL;
     }
     mutex_unlock (decodemutex);
-
-    if (src) {
-        src_delete (src);
-        src = NULL;
-    }
 }
 
 int
@@ -1158,14 +1132,12 @@ streamer_init (void) {
 #endif
     mutex = mutex_create ();
     decodemutex = mutex_create ();
-    srcmutex = mutex_create ();
-    src_quality = conf_get_int ("src_quality", 2);
-    src = src_new (src_quality, 2, NULL);
-    conf_replaygain_mode = conf_get_int ("replaygain_mode", 0);
-    conf_replaygain_scale = conf_get_int ("replaygain_scale", 1);
+    src = ddb_src_init ();
     if (!src) {
         return -1;
     }
+    conf_replaygain_mode = conf_get_int ("replaygain_mode", 0);
+    conf_replaygain_scale = conf_get_int ("replaygain_scale", 1);
     streamer_tid = thread_start (streamer_thread, NULL);
     return 0;
 }
@@ -1195,8 +1167,10 @@ streamer_free (void) {
     decodemutex = 0;
     mutex_free (mutex);
     mutex = 0;
-    mutex_free (srcmutex);
-    srcmutex = 0;
+    if (src) {
+        ddb_src_free (src);
+        src = NULL;
+    }
 }
 
 void
@@ -1205,15 +1179,14 @@ streamer_reset (int full) { // must be called when current song changes by exter
         fprintf (stderr, "ERROR: someone called streamer_reset after exit\n");
         return; // failsafe, in case someone calls streamer reset after deinit
     }
-    src_lock ();
+    ddb_src_lock (src);
     if (full) {
         streamer_lock ();
         streambuffer_pos = 0;
         streambuffer_fill = 0;
         streamer_unlock ();
     }
-    src_remaining = 0;
-    src_reset (src);
+    ddb_src_reset (src, 1);
     // reset dsp
     DB_dsp_t **dsp = deadbeef->plug_get_dsp_list ();
     //int srate = output->fmt.samplerate;
@@ -1222,7 +1195,7 @@ streamer_reset (int full) { // must be called when current song changes by exter
             dsp[i]->reset ();
         }
     }
-    src_unlock ();
+    ddb_src_unlock (src);
 }
 
 int replaygain = 1;
@@ -1322,194 +1295,6 @@ mono_int16_to_stereo_int16 (int16_t *in, int16_t *out, int nsamples) {
     }
 }
 
-#if 0
-static void
-int16_to_float32 (int16_t *in, float *out, int nsamples) {
-    while (nsamples > 0) {
-        *out++ = (*in++)/(float)0x7fff;
-        nsamples--;
-    }
-}
-
-static void
-mono_int16_to_stereo_float32 (int16_t *in, float *out, int nsamples) {
-    while (nsamples > 0) {
-        float sample = (*in++)/(float)0x7fff;
-        *out++ = sample;
-        *out++ = sample;
-        nsamples--;
-    }
-}
-
-static void
-mono_float32_to_stereo_float32 (float *in, float *out, int nsamples) {
-    while (nsamples > 0) {
-        float sample = *in++;
-        *out++ = sample;
-        *out++ = sample;
-        nsamples--;
-    }
-}
-#endif
-
-static void
-float32_to_int16 (float *in, int16_t *out, int nsamples) {
-    fpu_control ctl;
-    fpu_setround (&ctl);
-    while (nsamples > 0) {
-        float sample = *in++;
-        if (sample > 1) {
-            sample = 1;
-        }
-        else if (sample < -1) {
-            sample = -1;
-        }
-        *out++ = (int16_t)ftoi (sample*0x7fff);
-        nsamples--;
-    }
-    fpu_restore (ctl);
-}
-
-/*
-
-   src algorithm
-
-   initsize = size;
-   while (size > 0) {
-        need_frames = SRC_BUFFER - src_remaining
-        read_samples (need_frames)
-        src_process (output_frames)
-        convert_to_int16 (bytes, size)
-        // handle errors
-    }
-    return initsize-size;
-
-*/
-
-#if 0
-static int
-streamer_read_data_for_src (int16_t *buffer, int frames) {
-    int channels = fileinfo->fmt.channels;
-    if (channels > 2) {
-        channels = 2;
-    }
-    int bytesread = fileinfo->plugin->read_int16 (fileinfo, (uint8_t*)buffer, frames * sizeof (int16_t) * channels);
-    apply_replay_gain_int16 (streaming_track, (uint8_t*)buffer, bytesread);
-    if (channels == 1) {
-        // convert to stereo
-        int n = frames-1;
-        while (n >= 0) {
-            buffer[n*2+0] = buffer[n];
-            buffer[n*2+1] = buffer[n];
-            n--;
-        }
-    }
-    return bytesread / (sizeof (int16_t) * channels);
-}
-
-static int
-streamer_read_data_for_src_float (float *buffer, int frames) {
-    int channels = fileinfo->fmt.channels;
-    if (channels > 2) {
-        channels = 2;
-    }
-    if (fileinfo->plugin->read_float32) {
-        int bytesread = fileinfo->plugin->read_float32 (fileinfo, (uint8_t*)buffer, frames * sizeof (float) * channels);
-        apply_replay_gain_float32 (streaming_track, (uint8_t*)buffer, bytesread);
-        if (channels == 1) {
-            // convert to stereo
-            int n = frames-1;
-            while (n >= 0) {
-                buffer[n*2+1] = buffer[n];
-                buffer[n*2+0] = buffer[n];
-                n--;
-            }
-        }
-        return bytesread / (sizeof (float) * channels);
-    }
-
-//    trace ("read_float32 not impl\n");
-    int16_t intbuffer[frames*2];
-    int res = streamer_read_data_for_src (intbuffer, frames);
-    for (int i = 0; i < res; i++) {
-        buffer[i*2+0] = intbuffer[i*2+0]/(float)0x7fff;
-        buffer[i*2+1] = intbuffer[i*2+1]/(float)0x7fff;
-    }
-    return res;
-}
-
-static int
-streamer_decode_src_libsamplerate (uint8_t *bytes, int size) {
-    DB_output_t *output = plug_get_output ();
-    int initsize = size;
-    int16_t *out = (int16_t *)bytes;
-    int samplerate = fileinfo->fmt.samplerate;
-    if (!samplerate) {
-        return 0;
-    }
-    float ratio = output->fmt.samplerate/(float)samplerate;
-    while (size > 0) {
-        int n_output_frames = size / sizeof (int16_t) / 2;
-        int n_input_frames = n_output_frames * samplerate / output->fmt.samplerate + 100;
-        // read data from decoder
-        if (n_input_frames >= SRC_BUFFER - src_remaining ) {
-            n_input_frames = SRC_BUFFER - src_remaining;
-        }
-
-        int nread;
-        if (!n_input_frames) {
-            nread = 0;
-        }
-        else {
-            nread = streamer_read_data_for_src_float (&g_src_in_fbuffer[src_remaining*2], n_input_frames);
-        }
-        src_remaining += nread;
-        if (!src_remaining) {
-            trace ("SRC input buffer empty\n");
-            break;
-        }
-        // resample
-
-        srcdata.data_in = g_src_in_fbuffer;
-        srcdata.data_out = g_src_out_fbuffer;
-        srcdata.input_frames = src_remaining;
-        srcdata.output_frames = size/4;
-        srcdata.src_ratio = ratio;
-//        trace ("SRC from %d to %d\n", samplerate, output->fmt.samplerate);
-        srcdata.end_of_input = 0;//(nread == n_input_frames) ? 0 : 1;
-        //if (streamer_buffering)
-        src_lock ();
-        src_set_ratio (src, ratio);
-        int src_err = src_process (src, &srcdata);
-        src_unlock ();
-        if (src_err) {
-            const char *err = src_strerror (src_err) ;
-            fprintf (stderr, "src_process error %s\n"
-                    "srcdata.data_in=%p, srcdata.data_out=%p, srcdata.input_frames=%d, srcdata.output_frames=%d, srcdata.src_ratio=%f", err, srcdata.data_in, srcdata.data_out, (int)srcdata.input_frames, (int)srcdata.output_frames, (float)srcdata.src_ratio);
-            exit (-1);
-        }
-        // convert back to s16 format
-        int genbytes = srcdata.output_frames_gen * 4;
-        int bytesread = min(size, genbytes);
-        float32_to_int16 ((float*)g_src_out_fbuffer, (int16_t*)bytes, bytesread>>1);
-        size -= bytesread;
-        bytes += bytesread;
-        // calculate how many unused input samples left
-        src_remaining -= srcdata.input_frames_used;
-
-        // copy spare samples for next update
-        if (src_remaining > 0) {
-            memmove (g_src_in_fbuffer, &g_src_in_fbuffer[srcdata.input_frames_used*2], src_remaining * sizeof (float) * 2);
-        }
-
-//        if (nread != n_input_frames) {
-//            trace ("nread=%d, n_input_frames=%d, mismatch!\n", nread, n_input_frames);
-//            break;
-//        }
-    }
-    return initsize-size;
-}
-#endif
 
 // decodes data and converts to current output format
 // returns number of bytes been read
@@ -1525,22 +1310,76 @@ streamer_read_async (char *bytes, int size) {
             mutex_unlock (decodemutex);
             break;
         }
+
         if (fileinfo->fmt.samplerate != -1) {
-            if (!memcmp (&fileinfo->fmt, &output->fmt, sizeof (ddb_waveformat_t)), 0) {
+            DB_dsp_t **dsp = deadbeef->plug_get_dsp_list ();
+            if (!memcmp (&fileinfo->fmt, &output->fmt, sizeof (ddb_waveformat_t))) {
                 bytesread = fileinfo->plugin->read (fileinfo, bytes, size);
             }
             else {
-//                trace ("format mismatch, converting:\n");
-//                trace ("input bps=%d, channels=%d, samplerate=%d, channelmask=%X\n", fileinfo->fmt.bps, fileinfo->fmt.channels, fileinfo->fmt.samplerate, fileinfo->fmt.channelmask);
-//                trace ("output bps=%d, channels=%d, samplerate=%d, channelmask=%X\n", output->fmt.bps, output->fmt.channels, output->fmt.samplerate, output->fmt.channelmask);
+                if (output->fmt.samplerate != fileinfo->fmt.samplerate) {
+                    // convert to float, prepare for DSP
+                    int outputsamplesize = (output->fmt.bps>>3)*output->fmt.channels;
+                    int inputsamplesize = (fileinfo->fmt.bps>>3)*fileinfo->fmt.channels;
 
-                int outputsamplesize = (output->fmt.bps>>3)*output->fmt.channels;
-                int inputsamplesize = (fileinfo->fmt.bps>>3)*fileinfo->fmt.channels;
-                int inputsize = size/outputsamplesize*inputsamplesize;
-                char input[inputsize];
-                inputsize = fileinfo->plugin->read (fileinfo, input, inputsize);
-                bytesread = pcm_convert (&fileinfo->fmt, input, &output->fmt, bytes, inputsize);
-//                trace ("decoded %d bytes, writing %d bytes, requested %d bytes\n", inputsize, bytesread, size);
+                    float ratio = output->fmt.samplerate/(float)fileinfo->fmt.samplerate;
+
+#define SRC_NUM_SAMPLES 1024
+                    char outbuf[SRC_NUM_SAMPLES * output->fmt.channels * sizeof (float)];
+                    char *src_data = NULL;
+                    int src_data_size = 0;
+                    bytesread = 0;
+                    ddb_waveformat_t srcfmt;
+                    memcpy (&srcfmt, &output->fmt, sizeof (srcfmt));
+                    srcfmt.bps = 32;
+                    srcfmt.is_float = 1;
+                    int inputsize = (ftoi (SRC_NUM_SAMPLES * ratio) + 100) * inputsamplesize;
+                    char input[inputsize];
+                    char tempbuf[inputsize/inputsamplesize * sizeof (float) * output->fmt.channels];
+                    while (1) {
+                        int converted_bytes = 0;
+                        // drain src
+                        int n = sizeof (outbuf);
+
+                        int remaining = (size - bytesread) / (output->fmt.bps >> 3) * 4;
+                        if (n > remaining) {
+                            n = remaining;
+                        }
+                        converted_bytes = ddb_src_process (src, src_data, src_data_size/(sizeof(float)*output->fmt.channels), outbuf, n, ratio, srcfmt.channels);
+
+                        src_data = NULL;
+                        src_data_size = 0;
+                        if (converted_bytes > 0) {
+                            bytesread += pcm_convert (&srcfmt, outbuf, &output->fmt, bytes + bytesread, converted_bytes);
+                            assert (bytesread <= size);
+                            if (bytesread == size) {
+                                break;
+                            }
+                            continue;
+                        }
+
+                        // read more samples for src
+                        inputsize = fileinfo->plugin->read (fileinfo, input, (ftoi (SRC_NUM_SAMPLES * ratio) + 100) * inputsamplesize);
+                        if (!inputsize && !converted_bytes) {
+                            break; // eof
+                        }
+
+                        // convert to float
+                        int tempsize = pcm_convert (&fileinfo->fmt, input, &srcfmt, tempbuf, inputsize);
+                        assert (tempsize <= sizeof (tempbuf));
+
+                        src_data = tempbuf;
+                        src_data_size = tempsize;
+                    }
+                }
+                else {
+                    int outputsamplesize = (output->fmt.bps>>3)*output->fmt.channels;
+                    int inputsamplesize = (fileinfo->fmt.bps>>3)*fileinfo->fmt.channels;
+                    int inputsize = size/outputsamplesize*inputsamplesize;
+                    char input[inputsize];
+                    inputsize = fileinfo->plugin->read (fileinfo, input, inputsize);
+                    bytesread = pcm_convert (&fileinfo->fmt, input, &output->fmt, bytes, inputsize);
+                }
             }
 #if WRITE_DUMP
             if (bytesread) {
@@ -1715,19 +1554,8 @@ void
 streamer_configchanged (void) {
     conf_replaygain_mode = conf_get_int ("replaygain_mode", 0);
     conf_replaygain_scale = conf_get_int ("replaygain_scale", 1);
-    int q = conf_get_int ("src_quality", 2);
-    if (q != src_quality && q >= SRC_SINC_BEST_QUALITY && q <= SRC_LINEAR) {
-        src_lock ();
-        trace ("changing src_quality from %d to %d\n", src_quality, q);
-        src_quality = q;
-        if (src) {
-            src_delete (src);
-            src = NULL;
-        }
-        memset (&srcdata, 0, sizeof (srcdata));
-        src = src_new (src_quality, 2, NULL);
-        src_unlock ();
-    }
+
+    ddb_src_confchanged (src);
 }
 
 void
