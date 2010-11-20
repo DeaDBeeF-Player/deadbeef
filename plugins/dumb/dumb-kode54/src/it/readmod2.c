@@ -21,9 +21,9 @@
 
 
 
-DUH *dumb_read_mod(DUMBFILE *f, int restrict)
+DUH *dumb_read_mod(DUMBFILE *f, int restr)
 {
-	DUH *duh = dumb_read_mod_quick(f, restrict);
+	DUH *duh = dumb_read_mod_quick(f, restr);
 	dumb_it_do_initial_runthrough(duh);
 	return duh;
 }

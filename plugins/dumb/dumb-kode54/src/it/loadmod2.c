@@ -21,9 +21,9 @@
 
 
 
-DUH *dumb_load_mod(const char *filename, int restrict)
+DUH *dumb_load_mod(const char *filename, int restr)
 {
-	DUH *duh = dumb_load_mod_quick(filename, restrict);
+	DUH *duh = dumb_load_mod_quick(filename, restr);
 	dumb_it_do_initial_runthrough(duh);
 	return duh;
 }
