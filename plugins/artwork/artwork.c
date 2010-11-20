@@ -14,8 +14,8 @@
 
 #define min(x,y) ((x)<(y)?(x):(y))
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(...)
 
 #define DEFAULT_COVER_PATH (PREFIX "/share/deadbeef/pixmaps/noartwork.jpg")
 #define DEFAULT_FILEMASK "*cover*.jpg;*front*.jpg"
