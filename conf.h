@@ -44,11 +44,17 @@ conf_get_float (const char *key, float def);
 int
 conf_get_int (const char *key, int def);
 
+int64_t
+conf_get_int64 (const char *key, int64_t def);
+
 void
 conf_set_str (const char *key, const char *val);
 
 void
 conf_set_int (const char *key, int val);
+
+void
+conf_set_int64 (const char *key, int64_t val);
 
 void
 conf_set_float (const char *key, float val);

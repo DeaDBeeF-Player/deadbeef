@@ -1,514 +1,521 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# Ali <aysabzevar@gmail.com>, 2010.
+# This is the Luganda translation file for DeaDBeeF.
+# Copyright (C) 2009 - 2010
+# This file is distributed under the same license as the DeaDBeeF package.
+# FIRST AUTHOR <kbirabwa@yahoo.co.uk>, 2010.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: 0.4.2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-09-10 15:02+0200\n"
-"PO-Revision-Date: 2010-10-18 07:33+0200\n"
-"Last-Translator: Ali <aysabzevar@gmail.com>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: fa\n"
+"PO-Revision-Date: 2010-11-11 16:01+0200\n"
+"Last-Translator: kizito <kbirabwa@yahoo.co.uk>\n"
+"Language-Team: LANGUAGE <kbirabwa@yahoo.co.uk>\n"
+"Language: lg\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Pootle 2.0.5\n"
 
 #: ../plugins/gtkui/callbacks.c:97
 msgid "Supported sound formats"
-msgstr "قالب‌های صوتی پشتیبانی شده"
+msgstr "Ebika bya fayiro ez'ebiwulirizibwa puloguramu z'etegeera"
 
 #: ../plugins/gtkui/callbacks.c:108
 msgid "Other files (*)"
-msgstr "دیگر پرونده‌ها (*)"
+msgstr "Fayiro endala (*)"
 
 #: ../plugins/gtkui/callbacks.c:118
 msgid "Open file(s)..."
-msgstr "باز کردن پرونده(ها)..."
+msgstr "Bikkula fayiro..."
 
 #: ../plugins/gtkui/callbacks.c:151
 msgid "Add file(s) to playlist..."
-msgstr "افزودن پرونده(ها) به لیست پخش..."
+msgstr "Olukalala lw'enyimba lw'ongereko fayiro..."
 
 #: ../plugins/gtkui/callbacks.c:190
 msgid "Add folder(s) to playlist..."
-msgstr "افزودن پوشه(ها) به لیست پخش..."
+msgstr "Olukalala lw'enyimba lwongereko (ma)terekero..."
 
 #: ../plugins/gtkui/callbacks.c:192
 msgid "Follow symlinks"
-msgstr "پیروی از پیوند‌های سمبلیک"
+msgstr "Bikkula n'ebituukibwako na nyunzi"
 
 #: ../plugins/gtkui/callbacks.c:677
 msgid "Failed while reading help file"
-msgstr "شکست در خواندن فایل کمک"
+msgstr "Wazewo kiremya mu kusoma fayiro ey'obuyambi"
 
 #: ../plugins/gtkui/callbacks.c:687
 msgid "Failed to load help file"
-msgstr "شکست در بارگذاری فایل کمک"
+msgstr "Nnemedwa okubikkula fayiro ey'obuyambi"
 
 #: ../plugins/gtkui/callbacks.c:701 ../plugins/gtkui/interface.c:1090
 #: ../plugins/gtkui/deadbeef.glade.h:65
 msgid "Help"
-msgstr "کمک"
+msgstr "Nyamba"
 
 #: ../plugins/gtkui/callbacks.c:711
 #, c-format
 msgid "About DeaDBeeF %s"
-msgstr "درباره DeaDBeef %s"
+msgstr "Okwanjula DeaDBeef %s"
 
 #: ../plugins/gtkui/callbacks.c:722
 #, c-format
 msgid "DeaDBeeF %s ChangeLog"
-msgstr "گزارش تغییرات %s DeaDBeeF"
+msgstr "Olukalala lw'enyukakyuka eziri mu DeadBeeF %s"
 
 #: ../plugins/gtkui/ddbtabstrip.c:527
 msgid "Edit playlist"
-msgstr "ویرایش لیست پخش"
+msgstr "Kyusa mu lukalala lw'enyimba"
 
 #: ../plugins/gtkui/ddbtabstrip.c:604
 msgid "Rename Playlist"
-msgstr "تغییر نام لیست پخش"
+msgstr "Kyusa erinnya ly'olukalala lw'enyimba"
 
 #: ../plugins/gtkui/ddbtabstrip.c:608
 msgid "Remove Playlist"
-msgstr "حذف لیست پخش"
+msgstr "Gyawo olukalala lw'ennyimba"
 
 #: ../plugins/gtkui/ddbtabstrip.c:612
 msgid "Add New Playlist"
-msgstr "افزودن لیست پخش جدید"
+msgstr "Kolawo olukalala lw'enyimba olupya"
 
 #: ../plugins/gtkui/eq.c:113
 msgid "Save DeaDBeeF EQ Preset"
-msgstr "ذخیره اکولایزر از پیش مرتب شده DeaDBeeF"
+msgstr "kaza koppi y'enteekateeka y'obwangufu bw'amaloboozi ag'omu DeaDBeeF"
 
 #: ../plugins/gtkui/eq.c:120
 msgid "DeaDBeeF EQ preset files (*.ddbeq)"
-msgstr "فایل‌های اکولایزر از پیش مرتب شده DeaDBeeF (*.ddbeq)"
+msgstr ""
+"Fayiro z'enteekateeka z'obwangufu bw'amaloboozi ag'omu DeaDBeeF (*.ddbeq)"
 
 #: ../plugins/gtkui/eq.c:151
 msgid "Load DeaDBeeF EQ Preset..."
-msgstr "بارگذاری اکولایزر از پیش مرتب شده DeaDBeeF ..."
+msgstr "Soma fayiro y'enteekateeka z'obwangufu bw'amaloboozi ag'omu DeaDBeeF..."
 
 #: ../plugins/gtkui/eq.c:155
 msgid "DeaDBeeF EQ presets (*.ddbeq)"
-msgstr "اکولایزر از پیش مرتب شده DeaDBeeF  (*.ddbeq)"
+msgstr ""
+"Fayiro z'enteekateeka z'obwangufu bw'amaloboozi ag'omu DeaDBeeF (*.ddbeq)"
 
 #: ../plugins/gtkui/eq.c:214
 msgid "Import Foobar2000 EQ Preset..."
-msgstr "وارد کردن اکولایزر از پیش تنطیم شده Foobar2000 ..."
+msgstr ""
+"Nona fayiro y'enteekateeka z'obwangufu bw'amalaboozi ey'ekika kya "
+"Foobar2000..."
 
 #: ../plugins/gtkui/eq.c:218
 msgid "Foobar2000 EQ presets (*.feq)"
-msgstr "اکولایزر از پیش تعیین شده Foobar2000 (*.feq)"
+msgstr ""
+"fayiro z'enteekateeka z'obwangufu bw'amaloboozi ez'ekika kya Foobar2000 "
+"(*.feq)"
 
 #: ../plugins/gtkui/eq.c:292
 msgid "Enable"
-msgstr "فعال"
+msgstr "Zuukusa"
 
 #: ../plugins/gtkui/eq.c:300
 msgid "Zero All"
-msgstr "صفر کردن همگی"
+msgstr "Byonna bidde ku zero"
 
 #: ../plugins/gtkui/eq.c:307
 msgid "Zero Preamp"
-msgstr "صفر کردن پیش تقویت کننده"
+msgstr "Ekikangalazaddoboozi ekisooka kisse ku zero"
 
 #: ../plugins/gtkui/eq.c:314
 msgid "Zero Bands"
-msgstr "نوارهای صفر"
+msgstr "Amaloboozi gonna gadde ku zero"
 
 #: ../plugins/gtkui/eq.c:321
 msgid "Save Preset"
-msgstr "ذخیره از پیش تنظیم شده"
+msgstr "Tereka koppi y'ebiteekateekedwa"
 
 #: ../plugins/gtkui/eq.c:328
 msgid "Load Preset"
-msgstr "بارگذاری از پیش تنظیم شده"
+msgstr "Soma koppi y'ebiteekateekedwa"
 
 #: ../plugins/gtkui/eq.c:335
 msgid "Import Foobar2000 Preset"
-msgstr "وارد کردن Foobar2000 از پیش تنظیم شده "
+msgstr "Nona koppi y'ebiteekateekedwa ey'ekika kya Foobar2000"
 
 #: ../plugins/gtkui/gtkui.c:133
 #, c-format
 msgid "1 day %d:%02d:%02d"
-msgstr "۱ روز %d:%02d:%02d"
+msgstr "Lunaku 1 %d:%02d:%02d"
 
 #: ../plugins/gtkui/gtkui.c:136
 #, c-format
 msgid "%d days %d:%02d:%02d"
-msgstr "%d روز %d:%02d:%02d"
+msgstr "Nnaku %d %d:%02d:%02d"
 
 #: ../plugins/gtkui/gtkui.c:145
 #, c-format
 msgid "Stopped | %d tracks | %s total playtime"
-msgstr "متوقف| %d آهنگ| %s کل زمان پخش"
+msgstr "Eyimirizidwa | Ntambi %d | Awamu zimala %s"
 
 #: ../plugins/gtkui/gtkui.c:158
 msgid "Mono"
-msgstr "تک کاناله"
+msgstr "Mono"
 
 #: ../plugins/gtkui/gtkui.c:158
 msgid "Stereo"
-msgstr "استریو"
+msgstr "Siteriyo"
 
 #: ../plugins/gtkui/gtkui.c:183
 #, c-format
 msgid "| %4d kbps "
-msgstr "| %4d کیلو بیت بر ثانیه"
+msgstr "| kb %4d bs "
 
 #: ../plugins/gtkui/gtkui.c:189
 msgid "Paused | "
-msgstr "مکث کرده|"
+msgstr "Luyimirizidwamu | "
 
 #: ../plugins/gtkui/gtkui.c:190
 #, c-format
 msgid ""
 "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
 msgstr ""
-"%s%s %s| %dهرتز | %d بیت | %s | %d:%02d / %s | %d آهنگ | %s کل زمان پخش"
+"%s%s%s| Hz %d | bbiti %d | %s | %d:%02d /%s | ntambi %d | Awamu zimala %s"
 
 #: ../plugins/gtkui/gtkui.c:660
 msgid "Save Playlist As"
-msgstr "ذخیره لیست پخش به صورت"
+msgstr "Kolawo koppi y'olukalala eyitibwe"
 
 #: ../plugins/gtkui/gtkui.c:669 ../plugins/gtkui/gtkui.c:730
 msgid "DeaDBeeF playlist files (*.dbpl)"
-msgstr "فایل‌های لیست پخش DeaDBeeF (*.dbpl)"
+msgstr "Nkalalala z'enyimba ez'omu DeaDBeeF (*.dbpl)"
 
 #: ../plugins/gtkui/gtkui.c:723
 msgid "Load Playlist"
-msgstr "بارگذاری لیست پخش"
+msgstr "Soma olukalalala lw'enyimba"
 
 #: ../plugins/gtkui/gtkui.c:863
 msgid "New Playlist"
-msgstr "لیست پخش جدید"
+msgstr "Kolawo olukalalala olupya"
 
 #: ../plugins/gtkui/gtkui.c:866
 #, c-format
 msgid "New Playlist (%d)"
-msgstr "لیست پخش جدید (%d)"
+msgstr "Lukalalala olupya (%d)"
 
 #: ../plugins/gtkui/interface.c:138 ../plugins/gtkui/deadbeef.glade.h:153
 msgid "_File"
-msgstr "_ پرونده"
+msgstr "_Fayiro"
 
 #: ../plugins/gtkui/interface.c:145 ../plugins/gtkui/deadbeef.glade.h:157
 msgid "_Open file(s)"
-msgstr "_باز کردن پرونده(ها)"
+msgstr "_Bikkula fayiro"
 
 #: ../plugins/gtkui/interface.c:161 ../plugins/gtkui/deadbeef.glade.h:6
 msgid "Add file(s)"
-msgstr "افزودن پرونده(ها)"
+msgstr "Teekako fayiro"
 
 #: ../plugins/gtkui/interface.c:169 ../plugins/gtkui/deadbeef.glade.h:8
 msgid "Add folder(s)"
-msgstr "افزودن پوشه(ها)"
+msgstr "Teekako (ma)terekero"
 
 #: ../plugins/gtkui/interface.c:177 ../plugins/gtkui/interface.c:2969
 #: ../plugins/gtkui/deadbeef.glade.h:9
 msgid "Add location"
-msgstr "افزودن محل"
+msgstr "Teekako obusangiro"
 
 #: ../plugins/gtkui/interface.c:186 ../plugins/gtkui/deadbeef.glade.h:83
 msgid "New playlist"
-msgstr "لیست پخش جدید"
+msgstr "Kolwo olukalala olupya"
 
 #: ../plugins/gtkui/interface.c:193 ../plugins/gtkui/deadbeef.glade.h:75
 msgid "Load playlist"
-msgstr "بارگذاری لیست پخش"
+msgstr "Soma olukalala lw'enyimba"
 
 #: ../plugins/gtkui/interface.c:197 ../plugins/gtkui/deadbeef.glade.h:112
 msgid "Save playlist"
-msgstr "ذخیره لیست پخش"
+msgstr "Kaza olukalala lw'enyimba"
 
 #: ../plugins/gtkui/interface.c:201 ../plugins/gtkui/deadbeef.glade.h:113
 msgid "Save playlist as"
-msgstr "ذخیره لیست پخش به صورت"
+msgstr "Kolayo koppi y'olukalala"
 
 #: ../plugins/gtkui/interface.c:210 ../plugins/gtkui/deadbeef.glade.h:159
 msgid "_Quit"
-msgstr "_ خروج"
+msgstr "_Mala"
 
 #: ../plugins/gtkui/interface.c:221 ../plugins/gtkui/deadbeef.glade.h:152
 msgid "_Edit"
-msgstr "_ویرایش"
+msgstr "_Kyusa"
 
 #: ../plugins/gtkui/interface.c:228 ../plugins/gtkui/deadbeef.glade.h:150
 msgid "_Clear"
-msgstr "_ پاک سازی"
+msgstr "_Bisiimulewo"
 
 #: ../plugins/gtkui/interface.c:236 ../plugins/gtkui/deadbeef.glade.h:117
 msgid "Select all"
-msgstr "انتخاب همگی"
+msgstr "Londa byonna"
 
 #: ../plugins/gtkui/interface.c:243 ../plugins/gtkui/deadbeef.glade.h:25
 msgid "Deselect all"
-msgstr "از انتخاب درآوردن همگی"
+msgstr "Ta byonna"
 
 #: ../plugins/gtkui/interface.c:250 ../plugins/gtkui/deadbeef.glade.h:70
 msgid "Invert selection"
-msgstr "انتخاب معکوس"
+msgstr "Vuunika okulonda"
 
 #: ../plugins/gtkui/interface.c:254 ../plugins/gtkui/deadbeef.glade.h:120
 msgid "Selection"
-msgstr "انتخاب"
+msgstr "Ebirondedwa"
 
 #: ../plugins/gtkui/interface.c:261 ../plugins/gtkui/plcommon.c:425
 #: ../plugins/gtkui/prefwin.c:317 ../plugins/gtkui/deadbeef.glade.h:107
 msgid "Remove"
-msgstr "حذف"
+msgstr "Bigyewo"
 
 #: ../plugins/gtkui/interface.c:269 ../plugins/gtkui/deadbeef.glade.h:20
 msgid "Crop"
-msgstr "محصول"
+msgstr "Bisagalewo byokka"
 
 #: ../plugins/gtkui/interface.c:273 ../plugins/gtkui/deadbeef.glade.h:154
 msgid "_Find"
-msgstr "_یافتن"
+msgstr "_Zuula"
 
 #: ../plugins/gtkui/interface.c:285 ../plugins/gtkui/interface.c:1705
 #: ../plugins/gtkui/deadbeef.glade.h:97
 msgid "Preferences"
-msgstr "تنظیمات"
+msgstr "Enteekateeka"
 
 #: ../plugins/gtkui/interface.c:289 ../plugins/gtkui/deadbeef.glade.h:160
 msgid "_View"
-msgstr "_نما"
+msgstr "_Endabika"
 
 #: ../plugins/gtkui/interface.c:296 ../plugins/gtkui/deadbeef.glade.h:123
 msgid "Status bar"
-msgstr "نوار وضعیت"
+msgstr "Olubaawo olulaga ebifa ku biwulirizibwa"
 
 #: ../plugins/gtkui/interface.c:300 ../plugins/gtkui/deadbeef.glade.h:18
 msgid "Column headers"
-msgstr "سرآیندهای ستونی"
+msgstr "Mitwe ku nkumbo"
 
 #: ../plugins/gtkui/interface.c:304 ../plugins/gtkui/deadbeef.glade.h:130
 msgid "Tabs"
-msgstr "لبه‌ها"
+msgstr "Obukonda"
 
 #: ../plugins/gtkui/interface.c:308 ../plugins/gtkui/deadbeef.glade.h:33
 msgid "Equalizer"
-msgstr "اکولایزر"
+msgstr "Ekiteekateeka entabula y'amaloboozi"
 
 #: ../plugins/gtkui/interface.c:312 ../plugins/gtkui/deadbeef.glade.h:158
 msgid "_Playback"
-msgstr "_پخش"
+msgstr "Eby'em_puliriza"
 
 #: ../plugins/gtkui/interface.c:319 ../plugins/gtkui/deadbeef.glade.h:86
 msgid "Order"
-msgstr "ترتیب"
+msgstr "Ensengeka"
 
 #: ../plugins/gtkui/interface.c:326 ../plugins/gtkui/deadbeef.glade.h:74
 msgid "Linear"
-msgstr "خطی"
+msgstr "Ku ziva kumukumu"
 
 #: ../plugins/gtkui/interface.c:332 ../plugins/gtkui/deadbeef.glade.h:121
 msgid "Shuffle"
-msgstr "بُر زنی"
+msgstr "Kuzivunga"
 
 #: ../plugins/gtkui/interface.c:338 ../plugins/gtkui/deadbeef.glade.h:106
 msgid "Random"
-msgstr "اتفاقی"
+msgstr "Muwawa"
 
 #: ../plugins/gtkui/interface.c:344 ../plugins/gtkui/deadbeef.glade.h:78
 msgid "Looping"
-msgstr "حلقه‌ زنی"
+msgstr "Eby'okuddiŋana"
 
 #: ../plugins/gtkui/interface.c:351 ../plugins/gtkui/deadbeef.glade.h:76
 msgid "Loop All"
-msgstr "حلقه زنی همگی"
+msgstr "Zonna ziddiŋane"
 
 #: ../plugins/gtkui/interface.c:357 ../plugins/gtkui/deadbeef.glade.h:77
 msgid "Loop Single Song"
-msgstr "حلقه زنی تک آهنگ"
+msgstr "Ddiŋana oluyimba lumu"
 
 #: ../plugins/gtkui/interface.c:363 ../plugins/gtkui/deadbeef.glade.h:29
 msgid "Don't Loop"
-msgstr "حلقه‌ نکن"
+msgstr "Toddiŋana"
 
 #: ../plugins/gtkui/interface.c:369 ../plugins/gtkui/deadbeef.glade.h:114
 msgid "Scroll follows playback"
-msgstr "پیمایش،پخش را دنبال می‌کند"
+msgstr "Akaseesa kagoberere empuliriza y'enyimba"
 
 #: ../plugins/gtkui/interface.c:374 ../plugins/gtkui/deadbeef.glade.h:22
 msgid "Cursor follows playback"
-msgstr "مکان نما پخش را دنبال می‌کند"
+msgstr "Akasonga kagoberere empuliriza y'enyimba"
 
 #: ../plugins/gtkui/interface.c:378 ../plugins/gtkui/deadbeef.glade.h:125
 msgid "Stop after current"
-msgstr "توقف پس از کنونی"
+msgstr "Luno bwe luggwa yimirira"
 
 #: ../plugins/gtkui/interface.c:385 ../plugins/gtkui/interface.c:392
 #: ../plugins/gtkui/deadbeef.glade.h:155
 msgid "_Help"
-msgstr "_ کمک"
+msgstr "_Nyamba"
 
 #: ../plugins/gtkui/interface.c:400 ../plugins/gtkui/deadbeef.glade.h:149
 msgid "_ChangeLog"
-msgstr "_تغییرات"
+msgstr "_Enkyukakyuka"
 
 #: ../plugins/gtkui/interface.c:422 ../plugins/gtkui/deadbeef.glade.h:146
 msgid "_About"
-msgstr "_درباره"
+msgstr "_Kwanjula"
 
 #: ../plugins/gtkui/interface.c:801 ../plugins/gtkui/deadbeef.glade.h:115
 msgid "Search"
-msgstr "جستجوی"
+msgstr "Noonya"
 
 #: ../plugins/gtkui/interface.c:876 ../plugins/gtkui/deadbeef.glade.h:124
 msgid "Stop"
-msgstr "توقف"
+msgstr "Yimirira"
 
 #: ../plugins/gtkui/interface.c:884 ../plugins/gtkui/deadbeef.glade.h:92
 msgid "Play"
-msgstr "پخش"
+msgstr "Wuliriza"
 
 #: ../plugins/gtkui/interface.c:892 ../plugins/gtkui/deadbeef.glade.h:91
 msgid "Pause"
-msgstr "مکث"
+msgstr "Yimirizamu"
 
 #: ../plugins/gtkui/interface.c:900 ../plugins/gtkui/deadbeef.glade.h:98
 msgid "Previous"
-msgstr "قبلی"
+msgstr "Olukulembedde"
 
 #: ../plugins/gtkui/interface.c:908 ../plugins/gtkui/deadbeef.glade.h:84
 msgid "Next"
-msgstr "بعدی"
+msgstr "Oluddako"
 
 #: ../plugins/gtkui/interface.c:916 ../plugins/gtkui/deadbeef.glade.h:93
 msgid "Play Random"
-msgstr "پخش اتفاقی"
+msgstr "Wuliriza muwawa"
 
 #: ../plugins/gtkui/interface.c:925 ../plugins/gtkui/deadbeef.glade.h:5
 msgid "About"
-msgstr "درباره"
+msgstr "Kwanjula"
 
 #: ../plugins/gtkui/interface.c:938 ../plugins/gtkui/deadbeef.glade.h:105
 msgid "Quit"
-msgstr "خروج"
+msgstr "Mala"
 
 #: ../plugins/gtkui/interface.c:1010 ../plugins/gtkui/deadbeef.glade.h:10
 msgid "Adding files..."
-msgstr "افزودن فایل‌ها..."
+msgstr "Nyongerako fayiro..."
 
 #: ../plugins/gtkui/interface.c:1054 ../plugins/gtkui/deadbeef.glade.h:145
 msgid "_Abort"
-msgstr "_ ناتمام رها کردن"
+msgstr "_Biveeko"
 
 #: ../plugins/gtkui/interface.c:1155 ../plugins/gtkui/deadbeef.glade.h:136
 msgid "Track Properties"
-msgstr "ویژگی آهنگ"
+msgstr "Ebikwata ku lutambi"
 
 #: ../plugins/gtkui/interface.c:1179 ../plugins/gtkui/deadbeef.glade.h:3
 msgid ""
 "<b>WARNING</b>: tag writing feature is still in development.\n"
 "<b>Make backup copies</b> before using."
 msgstr ""
-"<b> اخطار</b> ویژگی برچسب گذاری هنوز در حال توسعه است.\n"
-"پیش از استفاده <b> نسخه پشتیبانی تهیه کنید</b>"
+"<b>KULABULA</b>: obusobozi obw'okuyungako okunnyonyola bukyakolebwako.\n"
+"Bw'oba oyagala okugeza okubukozesa, fayiro <b>sooka okgigyemu koppi "
+"ez'okwerinda</b>."
 
 #: ../plugins/gtkui/interface.c:1206 ../plugins/gtkui/deadbeef.glade.h:147
 msgid "_Apply"
-msgstr "ـ اعمال"
+msgstr "_Bikaze"
 
 #: ../plugins/gtkui/interface.c:1227 ../plugins/gtkui/interface.c:1273
 #: ../plugins/gtkui/interface.c:2497 ../plugins/gtkui/deadbeef.glade.h:151
 msgid "_Close"
-msgstr "ـ بستن"
+msgstr "_Ggala"
 
 #: ../plugins/gtkui/interface.c:1231 ../plugins/gtkui/deadbeef.glade.h:79
 msgid "Metadata"
-msgstr "فرا داده"
+msgstr "Ebinyonyola"
 
 #: ../plugins/gtkui/interface.c:1277 ../plugins/gtkui/plcommon.c:503
 #: ../plugins/gtkui/deadbeef.glade.h:99
 msgid "Properties"
-msgstr "ویژگی‌ها"
+msgstr "Ebirufaako"
 
 #: ../plugins/gtkui/interface.c:1363 ../plugins/gtkui/deadbeef.glade.h:161
 msgid "editcolumndlg"
-msgstr "ویرایش ستون dlg"
+msgstr "editcolumndlg"
 
 #: ../plugins/gtkui/interface.c:1378 ../plugins/gtkui/interface.c:2869
 #: ../plugins/gtkui/deadbeef.glade.h:133
 msgid "Title:"
-msgstr "عنوان:"
+msgstr "Mutwe:"
 
 #: ../plugins/gtkui/interface.c:1386 ../plugins/gtkui/deadbeef.glade.h:32
 msgid "Enter new column title here"
-msgstr "ستون عنوان جدید را اینجا وارد کنید"
+msgstr "Wandikawo omutwe g'olukumba"
 
 #: ../plugins/gtkui/interface.c:1394 ../plugins/gtkui/deadbeef.glade.h:137
 msgid "Type:"
-msgstr "نوع:"
+msgstr "Kika:"
 
 #: ../plugins/gtkui/interface.c:1402
 msgid "File number"
-msgstr "شماره پرونده"
+msgstr "Namba ya fayiro"
 
 #. create default set of columns
 #: ../plugins/gtkui/interface.c:1403 ../plugins/gtkui/mainplaylist.c:300
 msgid "Playing"
-msgstr "در حال پخش"
+msgstr "Oluliko"
 
 #: ../plugins/gtkui/interface.c:1404
 msgid "Album Art"
-msgstr "آلبوم هنری"
+msgstr "Bifaananyi bya ku alubamu"
 
 #: ../plugins/gtkui/interface.c:1405
 msgid "Artist - Album"
-msgstr "هنرمند-آلبوم"
+msgstr "Muluyimba - Alubamu"
 
 #: ../plugins/gtkui/interface.c:1406 ../plugins/gtkui/plcommon.c:877
 msgid "Artist"
-msgstr "هنرمند"
+msgstr "Muluyimba"
 
 #: ../plugins/gtkui/interface.c:1407 ../plugins/gtkui/interface.c:1794
 msgid "Album"
-msgstr "آلبوم"
+msgstr "Alubamu"
 
 #: ../plugins/gtkui/interface.c:1408 ../plugins/gtkui/prefwin.c:595
 msgid "Title"
-msgstr "عنوان"
+msgstr "Erinnya"
 
 #: ../plugins/gtkui/interface.c:1409
 msgid "Length"
-msgstr "طول"
+msgstr "Buwanvu bwa lwo"
 
 #: ../plugins/gtkui/interface.c:1410 ../plugins/gtkui/interface.c:1793
 msgid "Track"
-msgstr "آهنگ"
+msgstr "Lutambi"
 
 #: ../plugins/gtkui/interface.c:1411
 msgid "Band / Album Artist"
-msgstr "هنرمند آلبوم/گروه"
+msgstr "Kibiina / Muluyimba w'alubamu"
 
 #: ../plugins/gtkui/interface.c:1412 ../plugins/gtkui/plcommon.c:881
 msgid "Custom"
-msgstr "شخصی"
+msgstr "Bye weteekateekedde"
 
 #: ../plugins/gtkui/interface.c:1418 ../plugins/gtkui/interface.c:3096
 #: ../plugins/gtkui/deadbeef.glade.h:62
 msgid "Format:"
-msgstr "قالب:"
+msgstr "Empandika:"
 
 #: ../plugins/gtkui/interface.c:1433 ../plugins/gtkui/deadbeef.glade.h:11
 msgid "Alignment:"
-msgstr "هم‌ترازی:"
+msgstr "Okwekubirira:"
 
 #: ../plugins/gtkui/interface.c:1441
 msgid "Left"
-msgstr "چپ"
+msgstr "Ku kkono"
 
 #: ../plugins/gtkui/interface.c:1442
 msgid "Right"
-msgstr "راست"
+msgstr "Ku ddyo"
 
 #: ../plugins/gtkui/interface.c:1444 ../plugins/gtkui/deadbeef.glade.h:48
 #, no-c-format
@@ -521,291 +528,296 @@ msgid ""
 "  [d]irectory, [D]irectoryWithPath\n"
 "Example: %a - %t [%l]"
 msgstr ""
-"تبدیل قالب (شروع با %): \n"
-"[a] هنرمند، [t] عنوان، [b] آلبوم، [B]گروه، [C]آهنگ‌ساز\n"
-"[n] شماره آهنگ، [N] کل آهنگ‌ها،\n"
-"[l] مدت زمان، [y] سال، [g] دسته، [c] نظر،\n"
-"[r]حق تالیف،[f] نام پرونده، [T] برچسب‌ها\n"
-"[d] پوشه، [D] پوشه با مسیر \n"
-"مثال: %a - %t [%l]"
+"Ebifuga empandika (bisookerwako ka %):\n"
+"  [a] muluyimba, [t] erinnya ly'oluyimba, alu[b]amu, [B] kibiina, [C] "
+"Muwandisi\n"
+"  [n]amba y'olutambi, [N] bungi bw'entambi,\n"
+"  [l] buwanvu bwa lwo, [y] mwaka, [g] ttuluba lw'oluyimba, [c] ebinnyonyola,\n"
+"  [r] eby'obwa nannyini, erinnya lya [f]ayiro, [F] ekkubo mu bujjuvu "
+"erituuka ku fayiro, [T] butuuti,\n"
+"  [d] tterekero, [D] tterekero n'ekkubo erirituukako\n"
+"Kya kulabirako: %a - %t [%l]"
 
 #: ../plugins/gtkui/interface.c:1473 ../plugins/gtkui/interface.c:2900
 #: ../plugins/gtkui/interface.c:3012 ../plugins/gtkui/interface.c:3135
 #: ../plugins/gtkui/deadbeef.glade.h:148
 msgid "_Cancel"
-msgstr "ـ لغو"
+msgstr "_Sazamu"
 
 #: ../plugins/gtkui/interface.c:1494 ../plugins/gtkui/interface.c:2921
 #: ../plugins/gtkui/interface.c:3033 ../plugins/gtkui/interface.c:3156
 #: ../plugins/gtkui/deadbeef.glade.h:156
 msgid "_OK"
-msgstr "ـ قبول"
+msgstr "_Kale"
 
 #: ../plugins/gtkui/interface.c:1725 ../plugins/gtkui/deadbeef.glade.h:88
 msgid "Output plugin:"
-msgstr "افزونه خروجی:"
+msgstr "Puloguramu efulumya ebiwulirizibwa:"
 
 #: ../plugins/gtkui/interface.c:1738 ../plugins/gtkui/deadbeef.glade.h:87
 msgid "Output device:"
-msgstr "دستگاه خروجی:"
+msgstr "Ebiwulirizibwa gye bifulumira:"
 
 #: ../plugins/gtkui/interface.c:1747 ../plugins/gtkui/deadbeef.glade.h:122
 msgid "Sound"
-msgstr "صوت"
+msgstr "Kwogeza"
 
 #: ../plugins/gtkui/interface.c:1756 ../plugins/gtkui/deadbeef.glade.h:12
 msgid "Allow dynamic samplerate switching"
-msgstr "اجازه به کلیدزنی پویای نرخ نمونه"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1764 ../plugins/gtkui/deadbeef.glade.h:111
 msgid "Samplerate conversion quality:"
-msgstr "کیفیت تبدیل نرخ نمونه"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1783 ../plugins/gtkui/deadbeef.glade.h:108
 msgid "Replaygain mode:"
-msgstr "حالت پخش مجدد:"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1792
 msgid "Disable"
-msgstr "غیرفعال"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1796 ../plugins/gtkui/deadbeef.glade.h:109
 msgid "Replaygain peak scale"
-msgstr "پخش مجدد مقیاس قله"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1804 ../plugins/gtkui/deadbeef.glade.h:7
 msgid "Add files from command line (or file manager) to this playlist:"
-msgstr "افزودن فایل‌ها از خط فرمان (‌یا مدیر فایل) به این فهرست پخش:"
+msgstr ""
+"Olukalala lw'ongereko fayiro nga weyambisa kiwandikiro (oba "
+"ekiteekateekafayiro):"
 
 #: ../plugins/gtkui/interface.c:1813 ../plugins/gtkui/deadbeef.glade.h:110
 msgid "Resume previous session on startup"
-msgstr "ادامه نشست قبلی در این آغاز به کار"
+msgstr "Puloguramu bw'etandikibwa etandikirenga gye yakoma ku mulundi ogwasemba"
 
 #: ../plugins/gtkui/interface.c:1817 ../plugins/gtkui/deadbeef.glade.h:94
 msgid "Playback"
-msgstr "پخش"
+msgstr "Eby'empuliriza"
 
 #: ../plugins/gtkui/interface.c:1826 ../plugins/gtkui/deadbeef.glade.h:16
 msgid "Close minimizes to tray"
-msgstr "بستن حداقل شده‌ها برای رفتن به سینی"
+msgstr ""
+"Ggala kireetera puloguramu okufuuka kafaananyi mu kakuŋaanyizo ka ku lubaawo"
 
 #: ../plugins/gtkui/interface.c:1830 ../plugins/gtkui/deadbeef.glade.h:81
 msgid "Middle mouse button closes playlist"
-msgstr "کلید وسط ماوس لیست پخش را می‌بندد"
+msgstr "Eppeesa ary'okukasongesebwa erya wakati libikka olukalala lw'enyimba"
 
 #: ../plugins/gtkui/interface.c:1834 ../plugins/gtkui/deadbeef.glade.h:67
 msgid "Hide system tray icon"
-msgstr "مخفی کردن آیکون سینی سیستم"
+msgstr "Kisa akafaananyi ak'omu kakuŋaanyizo ka ku lubaawo"
 
 #: ../plugins/gtkui/interface.c:1838 ../plugins/gtkui/deadbeef.glade.h:139
 msgid "Use bold font for currently playing track"
-msgstr "استفاده از قلم‌های ضخیم برای آهنگ در حال پخش"
+msgstr "Ku lukalala oluyimba oluwulirizibwa lulabikire mu nnukuta nziggumivu"
 
 #: ../plugins/gtkui/interface.c:1842 ../plugins/gtkui/deadbeef.glade.h:66
 msgid "Hide \"Delete from disk\" context menu item"
-msgstr "مخفی کردن متن «حذف از دیسک» از منو"
+msgstr "Ekya \"Siimula ku disiki\" kikise"
 
 #: ../plugins/gtkui/interface.c:1850 ../plugins/gtkui/deadbeef.glade.h:134
 msgid "Titlebar text while playing:"
-msgstr "متن نوار عنوان در زمان پخش:"
+msgstr "Omutwe gw'eddirisa ng'oluyimba luwulirizibwa:"
 
 #: ../plugins/gtkui/interface.c:1864 ../plugins/gtkui/deadbeef.glade.h:135
 msgid "Titlebar text while stopped:"
-msgstr "متن نوار عنوان در زمان توقف:"
+msgstr "Omutwe gw'eddirisa nga puloguramu eyimirizidwa:"
 
 #: ../plugins/gtkui/interface.c:1874 ../plugins/gtkui/deadbeef.glade.h:63
 msgid "GUI"
-msgstr "رابط گرافیکی کاربر"
+msgstr "Ebirabikira wakaolerwa"
 
 #: ../plugins/gtkui/interface.c:1888 ../plugins/gtkui/interface.c:1932
 #: ../plugins/gtkui/deadbeef.glade.h:89
 msgid "Override"
-msgstr "غلبه"
+msgstr "Ssawo enteekateeka eyiyo"
 
 #: ../plugins/gtkui/interface.c:1897 ../plugins/gtkui/deadbeef.glade.h:46
 msgid "Foreground"
-msgstr "پیش زمینه"
+msgstr "Bwanjo"
 
 #: ../plugins/gtkui/interface.c:1904 ../plugins/gtkui/deadbeef.glade.h:14
 msgid "Background"
-msgstr "پس‌زمینه"
+msgstr "Bwaliriro"
 
 #: ../plugins/gtkui/interface.c:1923 ../plugins/gtkui/deadbeef.glade.h:116
 msgid "Seekbar/Volumebar colors"
-msgstr "رنگ‌های نوار پویش/ حجم صدا"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1941 ../plugins/gtkui/deadbeef.glade.h:80
 msgid "Middle"
-msgstr "متوسط"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1948 ../plugins/gtkui/deadbeef.glade.h:73
 msgid "Light"
-msgstr "روشن"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1955 ../plugins/gtkui/deadbeef.glade.h:23
 msgid "Dark"
-msgstr "تیره"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1986 ../plugins/gtkui/deadbeef.glade.h:15
 msgid "Base"
-msgstr "پایه"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1993 ../plugins/gtkui/deadbeef.glade.h:129
 msgid "Tab strip colors"
-msgstr "رنگ‌های نوار لبه"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:2002 ../plugins/gtkui/deadbeef.glade.h:90
 msgid "Override (looses GTK treeview theming, but speeds up rendering)"
-msgstr "غلبه (درختواره GTK ضعیف می‌شود اما سرعت نمایش افزایش می‌یابد)"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:2011 ../plugins/gtkui/deadbeef.glade.h:34
 msgid "Even row"
-msgstr "ردیف زوج"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:2018 ../plugins/gtkui/deadbeef.glade.h:85
 msgid "Odd row"
-msgstr "ردیف فرد"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:2037 ../plugins/gtkui/deadbeef.glade.h:132
 msgid "Text"
-msgstr "متن"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:2044 ../plugins/gtkui/deadbeef.glade.h:118
 msgid "Selected row"
-msgstr "ردیف انتخاب شده"
+msgstr "Olunyiriri olundedwa"
 
 #: ../plugins/gtkui/interface.c:2063 ../plugins/gtkui/deadbeef.glade.h:119
 msgid "Selected text"
-msgstr "متن انتخاب شده"
+msgstr "Ebigambo ebirondedwa"
 
 #: ../plugins/gtkui/interface.c:2076 ../plugins/gtkui/deadbeef.glade.h:21
 msgid "Cursor"
-msgstr "مکان‌نما"
+msgstr "Akasonga"
 
 #: ../plugins/gtkui/interface.c:2089 ../plugins/gtkui/deadbeef.glade.h:95
 msgid "Playlist colors"
-msgstr "رنگ‌های فهرست پخش"
+msgstr "Langi ez'oku lukalala lw'enyimba"
 
 #: ../plugins/gtkui/interface.c:2093 ../plugins/gtkui/deadbeef.glade.h:17
 msgid "Colors"
-msgstr "رنگ‌ها"
+msgstr "Langi"
 
 #: ../plugins/gtkui/interface.c:2102 ../plugins/gtkui/deadbeef.glade.h:31
 msgid "Enable Proxy Server"
-msgstr "فعال سازی خادم پروکسی"
+msgstr "Kozesa ekiwereza masanganzira"
 
 #: ../plugins/gtkui/interface.c:2110 ../plugins/gtkui/deadbeef.glade.h:101
 msgid "Proxy Server Address:"
-msgstr "آدرس سرویس دهنده پروکسی:"
+msgstr "Endagiriro y'ekiwereza masanganzira:"
 
 #: ../plugins/gtkui/interface.c:2124 ../plugins/gtkui/deadbeef.glade.h:102
 msgid "Proxy Server Port:"
-msgstr "درگاه سرویس دهنده پروکسی:"
+msgstr "Pooti y'ekiwereza masanganzira:"
 
 #: ../plugins/gtkui/interface.c:2138 ../plugins/gtkui/deadbeef.glade.h:103
 msgid "Proxy Type:"
-msgstr "نوع پروکسی:"
+msgstr "Kika ky'ekiwereza:"
 
 #: ../plugins/gtkui/interface.c:2157 ../plugins/gtkui/deadbeef.glade.h:104
 msgid "Proxy Username:"
-msgstr "نام کاربری پروکسی:"
+msgstr "Erinnya ery'okukozesa ku kiwereza:"
 
 #: ../plugins/gtkui/interface.c:2170 ../plugins/gtkui/deadbeef.glade.h:100
 msgid "Proxy Password:"
-msgstr "گذرواژه پروکسی:"
+msgstr "Ekyama eky'oku kiwereza:"
 
 #: ../plugins/gtkui/interface.c:2180 ../plugins/gtkui/deadbeef.glade.h:82
 msgid "Network"
-msgstr "شبکه"
+msgstr "Kayungirizi"
 
 #: ../plugins/gtkui/interface.c:2208 ../plugins/gtkui/deadbeef.glade.h:143
 msgid "Write ID3v2"
-msgstr "بنویسید ID3v2"
+msgstr "Wandika ebya ID3v2"
 
 #: ../plugins/gtkui/interface.c:2212 ../plugins/gtkui/interface.c:2339
 #: ../plugins/gtkui/deadbeef.glade.h:142
 msgid "Write ID3v1"
-msgstr "بنویسید ID3v1"
+msgstr "Wandika ebya ID3v1"
 
 #: ../plugins/gtkui/interface.c:2216 ../plugins/gtkui/interface.c:2295
 #: ../plugins/gtkui/interface.c:2335 ../plugins/gtkui/deadbeef.glade.h:141
 msgid "Write APEv2"
-msgstr "بنویسید APEv2"
+msgstr "Wandika ebya APEv2"
 
 #: ../plugins/gtkui/interface.c:2224 ../plugins/gtkui/interface.c:2303
 #: ../plugins/gtkui/deadbeef.glade.h:128
 msgid "Strip ID3v2"
-msgstr "ID3v2 را پاک کنید"
+msgstr "Gyamu ebya ID3v2"
 
 #: ../plugins/gtkui/interface.c:2228 ../plugins/gtkui/interface.c:2351
 #: ../plugins/gtkui/deadbeef.glade.h:127
 msgid "Strip ID3v1"
-msgstr "ID3v1 را پاک کنید"
+msgstr "Gyamu ebya ID3v1"
 
 #: ../plugins/gtkui/interface.c:2232 ../plugins/gtkui/interface.c:2307
 #: ../plugins/gtkui/interface.c:2347 ../plugins/gtkui/deadbeef.glade.h:126
 msgid "Strip APEv2"
-msgstr "APEv2 را پاک کنید"
+msgstr "Gyamu ebya APEv2"
 
 #: ../plugins/gtkui/interface.c:2240 ../plugins/gtkui/deadbeef.glade.h:69
 msgid "ID3v2 version"
-msgstr "نسخه ID3v2"
+msgstr "Oluwandika lwa ID3v2"
 
 #: ../plugins/gtkui/interface.c:2247
 msgid "2.3 (Recommended)"
-msgstr "۲٫۳ (پیشنهاد شده)"
+msgstr "2.3 (Tukuwa magezi ga kukozesa luno)"
 
 #: ../plugins/gtkui/interface.c:2248
 msgid "2.4"
-msgstr "۲٫۴"
+msgstr "2.4"
 
 #: ../plugins/gtkui/interface.c:2254 ../plugins/gtkui/deadbeef.glade.h:68
 msgid "ID3v1 character encoding (default is iso8859-1)"
-msgstr "کدگشایی کاراکتر ID3v1 (پیش‌فرض iso8859-1 است)"
+msgstr "Enkongojja y'ebiwandike eby'omu ID3v1 (iso8859-1 y'eya bulijjo)"
 
 #: ../plugins/gtkui/interface.c:2291 ../plugins/gtkui/deadbeef.glade.h:144
 msgid "Write ID3v2.4"
-msgstr "بنویسید ID3v2.4"
+msgstr "Wandika ebya ID32.4"
 
 #: ../plugins/gtkui/interface.c:2360 ../plugins/gtkui/deadbeef.glade.h:131
 msgid "Tag writer"
-msgstr "نویسنده برچسب"
+msgstr "Ekiwandika okunnyonyola kw'enyimba"
 
 #: ../plugins/gtkui/interface.c:2391 ../plugins/gtkui/deadbeef.glade.h:24
 msgid "Description:"
-msgstr "شرح:"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:2406 ../plugins/gtkui/deadbeef.glade.h:13
 msgid "Author(s):"
-msgstr "نویسنده(گان):"
+msgstr "Muwandisi (bawandisi):"
 
 #: ../plugins/gtkui/interface.c:2421 ../plugins/gtkui/deadbeef.glade.h:30
 msgid "Email:"
-msgstr "پست الکترونیکی:"
+msgstr "Email:"
 
 #: ../plugins/gtkui/interface.c:2436 ../plugins/gtkui/deadbeef.glade.h:140
 msgid "Website:"
-msgstr "وب سایت:"
+msgstr "Enfo ya ku yintaneti:"
 
 #: ../plugins/gtkui/interface.c:2467 ../plugins/gtkui/deadbeef.glade.h:19
 msgid "Configure"
-msgstr "پیکره‌بندی:"
+msgstr "Teekateeka"
 
 #: ../plugins/gtkui/interface.c:2471 ../plugins/gtkui/deadbeef.glade.h:96
 msgid "Plugins"
-msgstr "افزونه‌ها"
+msgstr "Puloguramu enyambi"
 
 #: ../plugins/gtkui/interface.c:2853 ../plugins/gtkui/deadbeef.glade.h:162
 msgid "editplaylistdlg"
-msgstr "ویرایش فهرست پخشdlg"
+msgstr "editplaylistdlg"
 
 #: ../plugins/gtkui/interface.c:2980 ../plugins/gtkui/deadbeef.glade.h:138
 msgid "URL:"
-msgstr "آدرس اینترنتی:"
+msgstr "URL:"
 
 #: ../plugins/gtkui/interface.c:3081 ../plugins/gtkui/deadbeef.glade.h:64
 msgid "Group By"
-msgstr "گروه با"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:3106 ../plugins/gtkui/deadbeef.glade.h:56
 #, no-c-format
@@ -817,229 +829,223 @@ msgid ""
 "  copy[r]ight, [f]ilename, [T]ags\n"
 "Example: %a - %t [%l]"
 msgstr ""
-"تبدیل قالب (شروع با %): \n"
-"[a] هنرمند، [t] عنوان، [b] آلبوم، [B]گروه، [C]آهنگ‌ساز\n"
-"[n] شماره آهنگ، [N] کل آهنگ‌ها،\n"
-"[l] مدت زمان، [y] سال، [g] دسته، [c] نظر،\n"
-"[r]حق تالیف،[f] نام پرونده، [T] برچسب‌ها\n"
-"مثال: %a - %t [%l]"
 
 #: ../plugins/gtkui/mainplaylist.c:301 ../plugins/gtkui/search.c:434
 msgid "Artist / Album"
-msgstr "هنرمند/آلبوم"
+msgstr "Muluyimba / Alubamu"
 
 #: ../plugins/gtkui/mainplaylist.c:302 ../plugins/gtkui/search.c:435
 msgid "Track No"
-msgstr "شماره آهنگ"
+msgstr "Namba y'olutambi"
 
 #: ../plugins/gtkui/mainplaylist.c:303 ../plugins/gtkui/search.c:436
 msgid "Title / Track Artist"
-msgstr "عنوان/آهنگ هنرمند"
+msgstr "Erinnya / Muluyimba w'olutambi"
 
 #: ../plugins/gtkui/mainplaylist.c:304 ../plugins/gtkui/search.c:437
 #: ../plugins/gtkui/trkproperties.c:175
 msgid "Duration"
-msgstr "مدت زمان"
+msgstr "Obwuwanvu bwa lwo"
 
 #: ../plugins/gtkui/plcommon.c:323
 msgid "Delete files from disk"
-msgstr "حذف فایل‌ها از روی دیسک"
+msgstr "Siimula fayiro ku disiki"
 
 #: ../plugins/gtkui/plcommon.c:324
 msgid ""
 "Files will be lost. Proceed?\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
 msgstr ""
-"پرونده‌ها از دست خواهند رفت. این چنین شود؟ \n"
-"(این کادر محاوره‌ای می‌تواند در تنظیمات افزونه GTKUI خاموش شود)"
+"Fayiro tekijjakusoboka kuzikomyawo. Ŋende mu maaso?\n"
+"(Akaboozi kano osobola okukasirisiza mu nteekateeka z'omu GTKUI)"
 
 #: ../plugins/gtkui/plcommon.c:325 ../plugins/gtkui/trkproperties.c:56
 msgid "Warning"
-msgstr "هشدار"
+msgstr "Kulabula"
 
 #: ../plugins/gtkui/plcommon.c:401
 msgid "Add to playback queue"
-msgstr "افزودن به صف پخش"
+msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:406
 msgid "Remove from playback queue"
-msgstr "حذف از صف پخش"
+msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:414
 msgid "Reload metadata"
-msgstr "بارگذاری مجدد ابرداده"
+msgstr "Ddamu okusoma ebinnyonyola"
 
 #: ../plugins/gtkui/plcommon.c:433
 msgid "Remove from disk"
-msgstr "حذف از دیسک"
+msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:719 ../plugins/gtkui/plcommon.c:844
 msgid "Add column"
-msgstr "افزودن ستون"
+msgstr "Yongerako oukumbo"
 
 #: ../plugins/gtkui/plcommon.c:749 ../plugins/gtkui/plcommon.c:848
 msgid "Edit column"
-msgstr "ویرایش ستون"
+msgstr "Kyusa mu lukumbo"
 
 #: ../plugins/gtkui/plcommon.c:852
 msgid "Remove column"
-msgstr "حذف ستون"
+msgstr "Gyawo olukumbo"
 
 #: ../plugins/gtkui/plcommon.c:862
 msgid "Group by"
-msgstr "گروه با"
+msgstr "Sengekera ku"
 
 #: ../plugins/gtkui/plcommon.c:869
 msgid "None"
-msgstr "هیچ"
+msgstr "Tosengeka"
 
 #: ../plugins/gtkui/plcommon.c:873
 msgid "Artist/Date/Album"
-msgstr "هنرمند/تاریخ/آلبوم"
+msgstr "Muyimbi/Amafuluma/Alubamu"
 
 #: ../plugins/gtkui/pluginconf.c:41
 msgid "Open file..."
-msgstr "باز کردن پرونده..."
+msgstr "Bikkula fayiro..."
 
 #: ../plugins/gtkui/pluginconf.c:142
 #, c-format
 msgid "Setup %s"
-msgstr "برپاسازی %s"
+msgstr "Teekateeka %s"
 
 #: ../plugins/gtkui/prefwin.c:98
 msgid "Default Audio Device"
-msgstr "دستگاه صوتی پیش‌فرض"
+msgstr "Ekyuma ekikola ku biwulirizibwa bulijjo"
 
 #: ../plugins/gtkui/prefwin.c:312
 msgid "Add"
-msgstr "افزودن"
+msgstr ""
 
 #: ../plugins/gtkui/prefwin.c:322
 msgid "Global Hotkeys"
-msgstr "کلید‌های داغ عمومی"
+msgstr ""
 
 #: ../plugins/gtkui/prefwin.c:384
 msgid "Slot"
-msgstr "شکاف"
+msgstr ""
 
 #: ../plugins/gtkui/prefwin.c:385
 msgid "Key combination"
-msgstr "ترکیب کلیدی"
+msgstr ""
 
 #. output plugin selection
 #: ../plugins/gtkui/prefwin.c:464 ../plugins/gtkui/prefwin.c:676
 #: ../plugins.c:872
 msgid "ALSA output plugin"
-msgstr "افزونه خروجی آلسا"
+msgstr "Puloguramu ekola ku bivaamu eya ALSA"
 
 #: ../plugins/gtkui/progress.c:64
 msgid "Initializing..."
-msgstr "آماده سازی اولیه..."
+msgstr "Nteekateeka..."
 
 #: ../plugins/gtkui/trkproperties.c:53
 msgid "You've modified data for this track."
-msgstr "شما اطلاعات این آهنگ را تغییر داده‌اید."
+msgstr "Okyusizza mu data y'olutambi luno."
 
 #: ../plugins/gtkui/trkproperties.c:55
 msgid "Really close the window?"
-msgstr "واقعا می‌خواهید پنجره را ببندید؟"
+msgstr "Eddirisa lino ddala liggalibwewo?"
 
 #: ../plugins/gtkui/trkproperties.c:178
 msgid "Tag Type(s)"
-msgstr "نوع(های) برچسب"
+msgstr "Bika by'okunnyonyola"
 
 #: ../plugins/gtkui/trkproperties.c:180
 msgid "Embedded Cuesheet"
-msgstr "برگه راهنمایی توکار"
+msgstr ""
 
 #: ../plugins/gtkui/trkproperties.c:180
 msgid "Yes"
-msgstr "بله"
+msgstr ""
 
 #: ../plugins/gtkui/trkproperties.c:180
 msgid "No"
-msgstr "خیر"
+msgstr ""
 
 #: ../plugins/gtkui/trkproperties.c:182
 msgid "Codec"
-msgstr "کدک‌"
+msgstr "Puloguramu ekola ku data enkongojje"
 
 #: ../plugins/gtkui/trkproperties.c:250 ../plugins/gtkui/trkproperties.c:262
 msgid "Key"
-msgstr "کلید"
+msgstr ""
 
 #: ../plugins/gtkui/trkproperties.c:251 ../plugins/gtkui/trkproperties.c:263
 msgid "Value"
-msgstr "مقدار"
+msgstr ""
 
 #: ../plugins/notify/notify.c:138
 msgid "DeaDBeeF now playing"
-msgstr "DeaDBeeF هم اکنون در حال پخش است"
+msgstr ""
 
 #: ../main.c:89
 #, c-format
 msgid "Usage: deadbeef [options] [file(s)]\n"
-msgstr "استفاده: deadbeef [گزینه‌ها] [پرونده(ها)] \n"
+msgstr "Enkozesa entuufu eri: deadbeef [buwayiro][fayiro]\n"
 
 #: ../main.c:90
 #, c-format
 msgid "Options:\n"
-msgstr "گزینه‌ها: \n"
+msgstr "Obuwayiro:\n"
 
 #: ../main.c:91
 #, c-format
 msgid "   --help  or  -h     Print help (this message) and exit\n"
-msgstr "--help    یا     -h   کمک(این پیام) را نشان می‌دهد و خارج می‌شود \n"
+msgstr ""
 
 #: ../main.c:92
 #, c-format
 msgid "   --quit             Quit player\n"
-msgstr "--quit          از پخش کننده خارج می‌شود \n"
+msgstr ""
 
 #: ../main.c:93
 #, c-format
 msgid "   --version          Print version info and exit\n"
-msgstr "--version           اطلاعات نسخه را نمایش می‌دهد و خارج می‌شود \n"
+msgstr ""
 
 #: ../main.c:94
 #, c-format
 msgid "   --play             Start playback\n"
-msgstr "--play         پخش را آغاز می‌کند\n"
+msgstr ""
 
 #: ../main.c:95
 #, c-format
 msgid "   --stop             Stop playback\n"
-msgstr "--stop          پخش را متوقف می‌کند\n"
+msgstr ""
 
 #: ../main.c:96
 #, c-format
 msgid "   --pause            Pause playback\n"
-msgstr "--pause          پخش را مکث می‌دهد\n"
+msgstr ""
 
 #: ../main.c:97
 #, c-format
 msgid "   --next             Next song in playlist\n"
-msgstr "--next     آهنگ بعدی در فهرست پخش\n"
+msgstr ""
 
 #: ../main.c:98
 #, c-format
 msgid "   --prev             Previous song in playlist\n"
-msgstr "--prev        آهنگ قبلی در فهرست پخش\n"
+msgstr ""
 
 #: ../main.c:99
 #, c-format
 msgid "   --random           Random song in playlist\n"
-msgstr "--random          آهنگ اتفاقی در فهرست پخش\n"
+msgstr ""
 
 #: ../main.c:100
 #, c-format
 msgid "   --queue            Append file(s) to existing playlist\n"
-msgstr "--queue          پیوست کردن پرونده(ها) به فهرست پخش موجود\n"
+msgstr ""
 
 #: ../main.c:101
 #, c-format
 msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
-msgstr "--nowplaying FMT     چاپ نام آهنگ قالب‌بندی شده در خروجی استاندارد\n"
+msgstr ""
 
 #: ../main.c:102
 #, c-format
@@ -1048,28 +1054,23 @@ msgid ""
 "                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
 "                      copy[r]ight, [e]lapsed\n"
 msgstr ""
-"                    FMT %%-ترکیب: [ه]نرمند،[ع]نوان، آل[ب]وم،\n"
-"                      [م]دت زمان، شم[ا]ره آهنگ، [س]ال،[ن]ظر،\n"
-"                      حق[ن]شر،[س]پری شده\n"
 
 #: ../main.c:105
 #, c-format
 msgid ""
 "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist "
 "- title\"\n"
-msgstr "مثال: \"%%a - %%t\" باید \"هنرمند-عنوان\" را چاپ کند\n"
+msgstr ""
 
 #: ../playlist.c:377 ../playlist.c:2289
 msgid "Default"
-msgstr "پیش‌فرض"
+msgstr "Lukwatakifo"
 
 #: ../plugins/gtkui/deadbeef.glade.h:1
 msgid ""
 "2.3 (Recommended)\n"
 "2.4"
 msgstr ""
-"۲٫۳ (توصیه شده)\n"
-"۲٫۴"
 
 #: ../plugins/gtkui/deadbeef.glade.h:26
 msgid ""
@@ -1077,9 +1078,6 @@ msgid ""
 "Track\n"
 "Album"
 msgstr ""
-"غیرفعال\n"
-"آهنگ\n"
-"آلبوم"
 
 #: ../plugins/gtkui/deadbeef.glade.h:35
 msgid ""
@@ -1095,84 +1093,81 @@ msgid ""
 "Band / Album Artist\n"
 "Custom"
 msgstr ""
-"تعداد پرونده\n"
-"در حال پخش\n"
-"آلبوم هنری\n"
-"هنرمند-آلبوم\n"
-"هنرمند\n"
-"آلبوم\n"
-"عنوان\n"
-"مدت زمان\n"
-"آهنگ\n"
-"هنرمند آلبوم/گروه\n"
-"شخصی"
+"Namba ya fayiro\n"
+"Oluliko\n"
+"Ebifaananyi bya ku alubamu\n"
+"Muyimbi - Alubamu\n"
+"Muyimbi\n"
+"Alubamu\n"
+"Erinnya\n"
+"Buwanvu bwa lwo\n"
+"Lutambi\n"
+"Kibiina / Muyimbi wa alubamu\n"
+"Ebigambo ebibyo"
 
 #: ../plugins/gtkui/deadbeef.glade.h:71
 msgid ""
 "Left\n"
 "Right"
 msgstr ""
-"چپ\n"
-"راست"
 
 #: ../plugins/gtkui/support.c:90 ../plugins/gtkui/support.c:114
 #, c-format
 msgid "Couldn't find pixmap file: %s"
-msgstr "پرونده تصویر بیتی پیدا نشد:%s"
+msgstr ""
 
 #: ../plugins/vorbis/vcedit.c:129 ../plugins/vorbis/vcedit.c:155
 msgid "Couldn't get enough memory for input buffering."
-msgstr "مقدار حافظه کافی برای میانگیری ورودی دریافت نشد."
+msgstr ""
 
 #: ../plugins/vorbis/vcedit.c:179 ../plugins/vorbis/vcedit.c:550
 msgid "Error reading first page of Ogg bitstream."
-msgstr "خطا در خواند صفحه اول از بیت جاری Ogg"
+msgstr ""
 
 #: ../plugins/vorbis/vcedit.c:185 ../plugins/vorbis/vcedit.c:557
 msgid "Error reading initial header packet."
-msgstr "خطا در خواندن اولیه بسته سرآیند"
+msgstr ""
 
 #: ../plugins/vorbis/vcedit.c:237
 msgid "Couldn't get enough memory to register new stream serial number."
-msgstr "مقدار حافظه کافی برای ثبت شماره سریال جریان جدید دریافت نشد."
+msgstr ""
 
 #: ../plugins/vorbis/vcedit.c:505
 msgid "Input truncated or empty."
-msgstr "ورودی کوتاه یا خالی است."
+msgstr ""
 
 #: ../plugins/vorbis/vcedit.c:507
 msgid "Input is not an Ogg bitstream."
-msgstr "ورودی بیت جاری Ogg نیست."
+msgstr ""
 
 #: ../plugins/vorbis/vcedit.c:565
 msgid "Ogg bitstream does not contain Vorbis data."
-msgstr "بیت جاری Ogg شامل داده Vorbis نیست."
+msgstr ""
 
 #: ../plugins/vorbis/vcedit.c:578
 msgid "EOF before recognised stream."
-msgstr "رسیدن به پایان پرونده پیش از به رسمیت شناختن جریان."
+msgstr ""
 
 #: ../plugins/vorbis/vcedit.c:594
 msgid "Ogg bitstream does not contain a supported data-type."
-msgstr "بیت جاری Ogg شامل هیچ نوع داده پشتیبانی شده نیست."
+msgstr ""
 
 #: ../plugins/vorbis/vcedit.c:638
 msgid "Corrupt secondary header."
-msgstr "سرآیند ثانویه خراب است."
+msgstr ""
 
 #: ../plugins/vorbis/vcedit.c:659
 msgid "EOF before end of Vorbis headers."
-msgstr "رسیدن به پایان پرونده پیش از پایان سرآیندهای Vorbis."
+msgstr ""
 
 #: ../plugins/vorbis/vcedit.c:834
 msgid "Corrupt or missing data, continuing..."
-msgstr "خرابی یا از دست دادن داده، ادامه..."
+msgstr ""
 
 #: ../plugins/vorbis/vcedit.c:874
 msgid ""
 "Error writing stream to output. Output stream may be corrupted or truncated."
 msgstr ""
-"خطا در ارسال جریان به خروجی. جریان خروجی ممکن است خراب شده یا کوتاه شده باشد."
 
 #: ../plugins/wildmidi/wildmidiplug.c:162
 #, c-format
@@ -1180,11 +1175,3 @@ msgid ""
 "wildmidi: freepats config file not found. Please install timidity-freepats "
 "package, or specify path to freepats.cfg in the plugin settings."
 msgstr ""
-"wildmidi: فایل پیکره‌بندی freepats پیدا نشد. لطفا بسته timidity-freepats را "
-"نصب کنید یا مسیر freepats.cfg را برای تنظیم افزونه مشخص کنید."
-
-#~ msgid "Add Audio CD"
-#~ msgstr "افزودن دیسک صوتی"
-
-#~ msgid "Sound (adv.)"
-#~ msgstr "صوت( adv.)"

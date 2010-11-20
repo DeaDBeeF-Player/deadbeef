@@ -332,6 +332,8 @@ typedef struct {
     intptr_t (*thread_start) (void (*fn)(void *ctx), void *ctx);
     intptr_t (*thread_start_low_priority) (void (*fn)(void *ctx), void *ctx);
     int (*thread_join) (intptr_t tid);
+    int (*thread_detach) (intptr_t tid);
+    void (*thread_exit) (void *retval);
     uintptr_t (*mutex_create) (void);
     uintptr_t (*mutex_create_nonrecursive) (void);
     void (*mutex_free) (uintptr_t mtx);
@@ -506,8 +508,10 @@ typedef struct {
     const char * (*conf_get_str) (const char *key, const char *def);
     float (*conf_get_float) (const char *key, float def);
     int (*conf_get_int) (const char *key, int def);
+    int64_t (*conf_get_int64) (const char *key, int64_t def);
     void (*conf_set_str) (const char *key, const char *val);
     void (*conf_set_int) (const char *key, int val);
+    void (*conf_set_int64) (const char *key, int64_t val);
     void (*conf_set_float) (const char *key, float val);
     DB_conf_item_t * (*conf_find) (const char *group, DB_conf_item_t *prev);
     void (*conf_remove_items) (const char *key);

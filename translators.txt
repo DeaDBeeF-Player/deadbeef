@@ -2,6 +2,15 @@ Bengali
  Ummey Salma Snigdha <snighda@ankur.org.bd>
  Israt Jahan <israt@ankur.org.bd>
 
+Bulgarian
+ Радослав <Rec.ku@hotmail.com>
+
+Catalan
+ sisco <sisco.garcia@ubuntu.cat>
+
+Chinese (Simplified)
+ Yinghua_Wang <wantinghard@gmail.com>
+
 Danish
  Joe Hansen <joedalton2@yahoo.dk>
 
@@ -10,6 +19,9 @@ German
 
 Greek
  Giorgos Koutsikos <ragecryx@yahoo.gr>, 2010
+
+Hungarian
+ Peter Polonkai <polesz@nedudu.hu>
 
 English (United Kingdom)
  Steve (Yorvyk) Cook <yorvik.ubunto@googlemail.com>
@@ -46,6 +58,9 @@ Kazakh
 
 Khmer
  SatyaN <satyathavy@gmail.com>
+
+Luganda
+ kizito <kbirabwa@yahoo.co.uk>
 
 Dutch
  depaz <depazzz@gmail.com>
