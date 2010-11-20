@@ -264,11 +264,11 @@ pcm_convert (const ddb_waveformat_t * restrict inputfmt, const char * restrict i
         else if (inputfmt->bps == 8 && outputfmt->bps == 32 && outputfmt->is_float) {
             pcm_write_samples_8_to_float (inputfmt, input, outputfmt, output, nsamples, channelmap, outputsamplesize);
         }
-        else if (inputfmt->bps == 16 && outputfmt->bps == 16) {
-            pcm_write_samples_16_to_16 (inputfmt, input, outputfmt, output, nsamples, channelmap, outputsamplesize);
-        }
         else if (inputfmt->bps == 16 && outputfmt->bps == 8) {
             pcm_write_samples_16_to_8 (inputfmt, input, outputfmt, output, nsamples, channelmap, outputsamplesize);
+        }
+        else if (inputfmt->bps == 16 && outputfmt->bps == 16) {
+            pcm_write_samples_16_to_16 (inputfmt, input, outputfmt, output, nsamples, channelmap, outputsamplesize);
         }
         else if (inputfmt->bps == 16 && outputfmt->bps == 24) {
             pcm_write_samples_16_to_24 (inputfmt, input, outputfmt, output, nsamples, channelmap, outputsamplesize);
