@@ -740,15 +740,22 @@ typedef struct DB_output_s {
 } DB_output_t;
 
 // dsp plugin
+
+typedef struct DB_dsp_instance_s {
+    struct DB_dsp_instance_s *next;
+    unsigned enabled : 1;
+} DB_dsp_instance_t;
+
 typedef struct DB_dsp_s {
     DB_plugin_t plugin;
+
+    DB_dsp_instance_t (*open) (void);
+    void (*close) (DB_dsp_instance_t *inst);
+
     // process gets called before SRC
     // stereo samples are stored in interleaved format
     // stereo sample is counted as 1 sample
-    int (*process) (char * restrict samples, ddb_waveformat_t * restrict fmt);
-    void (*reset) (void);
-    void (*enable) (int e);
-    int (*enabled) (void);
+    int (*process) (DB_dsp_instance_t *inst, float *samples, int frames, int channels);
 } DB_dsp_t;
 
 // misc plugin

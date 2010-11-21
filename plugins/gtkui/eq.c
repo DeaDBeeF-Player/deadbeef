@@ -64,13 +64,16 @@ eq_value_changed (DdbEqualizer *widget)
 void
 on_enable_toggled         (GtkToggleButton *togglebutton,
         gpointer         user_data) {
+#if 0 // !!!! FIXME !!!!
     DB_supereq_dsp_t *eq = get_supereq_plugin ();
-    eq->dsp.enable (gtk_toggle_button_get_active (togglebutton));
+    eq->dsp.enabled = gtk_toggle_button_get_active (togglebutton) ? 1 : 0;
+#endif
 }
 
 void
 on_zero_all_clicked                  (GtkButton       *button,
         gpointer         user_data) {
+#if 0 // !!!! FIXME !!!!
     if (eqwin) {
         DB_supereq_dsp_t *eq = get_supereq_plugin ();
         eq->set_preamp (1);
@@ -81,22 +84,26 @@ on_zero_all_clicked                  (GtkButton       *button,
         }
         gdk_window_invalidate_rect (eqwin->window, NULL, FALSE);
     }
+#endif
 }
 
 void
 on_zero_preamp_clicked                  (GtkButton       *button,
         gpointer         user_data) {
+#if 0 // !!!! FIXME !!!!
     if (eqwin) {
         DB_supereq_dsp_t *eq = get_supereq_plugin ();
         eq->set_preamp (1);
         ddb_equalizer_set_preamp (DDB_EQUALIZER (eqwin), 0);
         gdk_window_invalidate_rect (eqwin->window, NULL, FALSE);
     }
+#endif
 }
 
 void
 on_zero_bands_clicked                  (GtkButton       *button,
         gpointer         user_data) {
+#if 0 // !!!! FIXME !!!!
     if (eqwin) {
         DB_supereq_dsp_t *eq = get_supereq_plugin ();
         for (int i = 0; i < 18; i++) {
@@ -105,6 +112,7 @@ on_zero_bands_clicked                  (GtkButton       *button,
         }
         gdk_window_invalidate_rect (eqwin->window, NULL, FALSE);
     }
+#endif
 }
 
 void

@@ -1187,6 +1187,7 @@ streamer_reset (int full) { // must be called when current song changes by exter
         streamer_unlock ();
     }
     ddb_src_reset (src, 1);
+#if 0 // !!!! FIXME !!!!
     // reset dsp
     DB_dsp_t **dsp = deadbeef->plug_get_dsp_list ();
     //int srate = output->fmt.samplerate;
@@ -1195,6 +1196,7 @@ streamer_reset (int full) { // must be called when current song changes by exter
             dsp[i]->reset ();
         }
     }
+#endif
     ddb_src_unlock (src);
 }
 
