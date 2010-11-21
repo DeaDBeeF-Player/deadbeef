@@ -97,7 +97,6 @@ AC_ARG_ENABLE(aac,      [AS_HELP_STRING([--disable-aac     ], [disable AAC decod
 AC_ARG_ENABLE(mms,      [AS_HELP_STRING([--disable-mms     ], [disable MMS streaming vfs plugin (default: enabled)])], [enable_mms=$enableval], [enable_mms=yes])
 AC_ARG_ENABLE(shn,      [AS_HELP_STRING([--disable-shn     ], [disable shorten plugin (default: enabled)])], [enable_shn=$enableval], [enable_shn=yes])
 AC_ARG_ENABLE(ao,       [AS_HELP_STRING([--disable-ao      ], [disable audio overload plugin (default: enabled)])], [enable_ao=$enableval], [enable_ao=yes])
-AC_ARG_ENABLE(mpris,    [AS_HELP_STRING([  --enable-mpris          enable Ubuntu Sound Menu plugin (default: disabled)])], [enable_mpris=$enableval], [enable_mpris=no])
 AC_ARG_ENABLE(staticlink, [AS_HELP_STRING([  --enable-staticlink       link everything statically (default: disabled)])], [enable_staticlink=$enableval], [enable_staticlink=no])
 AC_ARG_ENABLE(portable, [AS_HELP_STRING([  --enable-portable       make portable build (default: disabled, opts: yes,no,full)])], [enable_portable=$enableval], [enable_portable=no])
 AC_ARG_ENABLE(src, [AS_HELP_STRING([  --enable-src       build libsamplerate (SRC) plugin (default: auto)])], [enable_src=$enableval], [enable_src=yes])
@@ -499,11 +498,7 @@ fi
     fi
 fi
 
-if test "x$enable_mpris" != "xno" ; then
-    PKG_CHECK_MODULES(MPRIS_DEPS, indicate >= 0.4.4  glib-2.0 >= 2.26.0, HAVE_MPRIS=yes, HAVE_MPRIS=no)
-fi
-
-PLUGINS_DIRS="plugins/lastfm plugins/mpgmad plugins/vorbis plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/dumb plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/aac plugins/mms plugins/shn plugins/ao plugins/shellexec plugins/mpris plugins/dsp_libsrc"
+PLUGINS_DIRS="plugins/lastfm plugins/mpgmad plugins/vorbis plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/dumb plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/aac plugins/mms plugins/shn plugins/ao plugins/shellexec plugins/dsp_libsrc"
 
 AM_CONDITIONAL(HAVE_VORBIS, test "x$HAVE_VORBISPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_FLAC, test "x$HAVE_FLACPLUGIN" = "xyes")
@@ -538,7 +533,6 @@ AM_CONDITIONAL(HAVE_AAC, test "x$HAVE_AAC" = "xyes")
 AM_CONDITIONAL(HAVE_MMS, test "x$HAVE_MMS" = "xyes")
 AM_CONDITIONAL(HAVE_SHN, test "x$HAVE_SHN" = "xyes")
 AM_CONDITIONAL(HAVE_AO, test "x$HAVE_AO" = "xyes")
-AM_CONDITIONAL(HAVE_MPRIS, test "x$HAVE_MPRIS" = "xyes")
 AM_CONDITIONAL(STATICLINK, test "x$STATICLINK" = "xyes")
 AM_CONDITIONAL(PORTABLE, test "x$PORTABLE" = "xyes")
 AM_CONDITIONAL(PORTABLE_FULL, test "x$PORTABLE_FULL" = "xyes")
@@ -603,7 +597,6 @@ PRINT_PLUGIN_INFO([aac],[AAC player (m4a, aac, mp4) based on FAAD2],[test "x$HAV
 PRINT_PLUGIN_INFO([mms],[mms streaming support],[test "x$HAVE_MMS" = "xyes"])
 PRINT_PLUGIN_INFO([shn],[shorten player based on xmms-shn],[test "x$HAVE_SHN" = "xyes"])
 PRINT_PLUGIN_INFO([ao],[psf1/psf2/spu/ssf player using Audio Overload],[test "x$HAVE_AO" = "xyes"])
-PRINT_PLUGIN_INFO([mpris],[Ubuntu Sound Menu integration],[test "x$HAVE_MPRIS" = "xyes"])
 PRINT_PLUGIN_INFO([dsp_src],[High quality samplerate conversion using libsamplerate],[test "x$HAVE_DSP_SRC" = "xyes"])
 
 echo
@@ -645,7 +638,6 @@ plugins/aac/Makefile
 plugins/mms/Makefile
 plugins/shn/Makefile
 plugins/ao/Makefile
-plugins/mpris/Makefile
 plugins/dsp_libsrc/Makefile
 intl/Makefile
 po/Makefile.in
