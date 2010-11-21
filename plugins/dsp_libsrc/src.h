@@ -20,20 +20,12 @@
 #define __SRC_H
 
 typedef struct {
-} ddb_src_t;
+    DB_dsp_t dsp;
+    void (*reset) (DB_dsp_instance_t *inst, int full);
+    void (*set_ratio) (DB_dsp_instance_t *inst, float ratio);
+} ddb_dsp_src_t;
 
-ddb_src_t *
-ddb_src_init (void);
-
-void
-ddb_src_free (ddb_src_t *src);
-
-void
-ddb_src_lock (ddb_src_t *_src);
-
-void
-ddb_src_unlock (ddb_src_t *src);
-
+#if 0
 void
 ddb_src_reset (ddb_src_t *src, int full);
 
@@ -42,5 +34,6 @@ ddb_src_confchanged (ddb_src_t *src);
 
 int
 ddb_src_process (ddb_src_t *_src, const char * restrict input, int nframes, char * restrict output, int buffersize, float ratio, int nchannels);
+#endif
 
 #endif

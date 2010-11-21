@@ -36,7 +36,7 @@
 #include "volume.h"
 #include "vfs.h"
 #include "premix.h"
-#include "src.h"
+#include "plugins/dsp_libsrc/src.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -48,7 +48,8 @@ FILE *out;
 #endif
 
 static intptr_t streamer_tid;
-static ddb_src_t *src;
+static ddb_dsp_src_t *srcplug;
+static DB_dsp_instance_t *src;
 
 static int conf_replaygain_mode = 0;
 static int conf_replaygain_scale = 1;
@@ -747,7 +748,7 @@ streamer_start_new_song (void) {
     int initsng = nextsong;
     int pstate = nextsong_pstate;
     nextsong = -1;
-    ddb_src_reset (src, 0);
+    srcplug->reset (src, 0);
     streamer_unlock ();
     if (badsong == sng) {
         trace ("looped to bad file. stopping...\n");
@@ -844,7 +845,7 @@ streamer_thread (void *ctx) {
 #ifdef __linux__
     prctl (PR_SET_NAME, "deadbeef-stream", 0, 0, 0, 0);
 #endif
-    ddb_src_reset (src, 0);
+//    srcplug->reset (src, 0);
 
     while (!streaming_terminate) {
         struct timeval tm1;
@@ -1061,7 +1062,7 @@ streamer_thread (void *ctx) {
         int alloc_time = 1000 / (bytes_in_one_second * output->fmt.channels / blocksize);
 
         streamer_lock ();
-        if (streambuffer_fill < (STREAM_BUFFER_SIZE-blocksize)) {
+        if (streambuffer_fill < (STREAM_BUFFER_SIZE-blocksize*2)) {
             int sz = STREAM_BUFFER_SIZE - streambuffer_fill;
             int minsize = blocksize;
 
@@ -1072,7 +1073,7 @@ streamer_thread (void *ctx) {
             }
             sz = min (minsize, sz);
             assert ((sz&3) == 0);
-            char buf[sz];
+            char buf[sz*2]; // buffer must be 2x large to accomodate resamplers/pitchers/...
             streamer_unlock ();
 
             // ensure that size is possible with current format
@@ -1083,7 +1084,7 @@ streamer_thread (void *ctx) {
 
             int bytesread = streamer_read_async (buf,sz);
             streamer_lock ();
-            memcpy (streambuffer+streambuffer_fill, buf, sz);
+            memcpy (streambuffer+streambuffer_fill, buf, bytesread);
             if (bytesread > 0) {
                 streambuffer_fill += bytesread;
             }
@@ -1132,10 +1133,13 @@ streamer_init (void) {
 #endif
     mutex = mutex_create ();
     decodemutex = mutex_create ();
-    src = ddb_src_init ();
-    if (!src) {
-        return -1;
+
+    // find src plugin, and use it if found
+    srcplug = (ddb_dsp_src_t*)plug_get_for_id ("dsp_src");
+    if (srcplug) {
+        src = srcplug->dsp.open ("strm_src");
     }
+    
     conf_replaygain_mode = conf_get_int ("replaygain_mode", 0);
     conf_replaygain_scale = conf_get_int ("replaygain_scale", 1);
     streamer_tid = thread_start (streamer_thread, NULL);
@@ -1167,8 +1171,8 @@ streamer_free (void) {
     decodemutex = 0;
     mutex_free (mutex);
     mutex = 0;
-    if (src) {
-        ddb_src_free (src);
+    if (srcplug && src) {
+        srcplug->dsp.close (src);
         src = NULL;
     }
 }
@@ -1179,14 +1183,13 @@ streamer_reset (int full) { // must be called when current song changes by exter
         fprintf (stderr, "ERROR: someone called streamer_reset after exit\n");
         return; // failsafe, in case someone calls streamer reset after deinit
     }
-    ddb_src_lock (src);
     if (full) {
         streamer_lock ();
         streambuffer_pos = 0;
         streambuffer_fill = 0;
         streamer_unlock ();
     }
-    ddb_src_reset (src, 1);
+    srcplug->reset (src, 1);
 #if 0 // !!!! FIXME !!!!
     // reset dsp
     DB_dsp_t **dsp = deadbeef->plug_get_dsp_list ();
@@ -1197,7 +1200,6 @@ streamer_reset (int full) { // must be called when current song changes by exter
         }
     }
 #endif
-    ddb_src_unlock (src);
 }
 
 int replaygain = 1;
@@ -1328,8 +1330,6 @@ streamer_read_async (char *bytes, int size) {
 
 #define SRC_NUM_SAMPLES 1024
                     char outbuf[SRC_NUM_SAMPLES * output->fmt.channels * sizeof (float)];
-                    char *src_data = NULL;
-                    int src_data_size = 0;
                     bytesread = 0;
                     ddb_waveformat_t srcfmt;
                     memcpy (&srcfmt, &output->fmt, sizeof (srcfmt));
@@ -1337,9 +1337,15 @@ streamer_read_async (char *bytes, int size) {
                     srcfmt.is_float = 1;
                     int inputsize = (ftoi (SRC_NUM_SAMPLES * ratio) + 100) * inputsamplesize;
                     char input[inputsize];
-                    char tempbuf[inputsize/inputsamplesize * sizeof (float) * output->fmt.channels];
+                    char tempbuf[inputsize/inputsamplesize * sizeof (float) * output->fmt.channels * 2];
                     while (1) {
-                        int converted_bytes = 0;
+                        // read more samples for src
+                        inputsize = fileinfo->plugin->read (fileinfo, input, (ftoi (SRC_NUM_SAMPLES * ratio) + 100) * inputsamplesize);
+                        // convert to float
+                        int tempsize = pcm_convert (&fileinfo->fmt, input, &srcfmt, tempbuf, inputsize);
+                        assert (tempsize <= sizeof (tempbuf)/2);
+
+                        int converted_frames = 0;
                         // drain src
                         int n = sizeof (outbuf);
 
@@ -1347,31 +1353,28 @@ streamer_read_async (char *bytes, int size) {
                         if (n > remaining) {
                             n = remaining;
                         }
-                        converted_bytes = ddb_src_process (src, src_data, src_data_size/(sizeof(float)*output->fmt.channels), outbuf, n, ratio, srcfmt.channels);
+                        srcplug->set_ratio (src, ratio);
+                        //printf ("asked for %d frames\n",  src_data_size/(sizeof(float)*output->fmt.channels));
+                        converted_frames = srcplug->dsp.process (src, (float *)tempbuf, tempsize/(sizeof(float)*output->fmt.channels), srcfmt.channels);
+                        //printf ("received %d frames\n", converted_frames);
 
-                        src_data = NULL;
-                        src_data_size = 0;
-                        if (converted_bytes > 0) {
-                            bytesread += pcm_convert (&srcfmt, outbuf, &output->fmt, bytes + bytesread, converted_bytes);
-                            assert (bytesread <= size);
-                            if (bytesread == size) {
+                        if (converted_frames > 0) {
+                            //fwrite (tempbuf, 1, converted_frames * sizeof(float)*output->fmt.channels, out);
+                            int n = pcm_convert (&srcfmt, tempbuf, &output->fmt, bytes + bytesread, converted_frames * (sizeof(float)*output->fmt.channels));
+                            //fwrite (bytes + bytesread, 1, n, out);
+
+                            bytesread += n;
+                            assert (bytesread <= (size * 2));
+                            if (bytesread >= size) {
                                 break;
                             }
                             continue;
                         }
 
-                        // read more samples for src
-                        inputsize = fileinfo->plugin->read (fileinfo, input, (ftoi (SRC_NUM_SAMPLES * ratio) + 100) * inputsamplesize);
-                        if (!inputsize && !converted_bytes) {
+                        if (!inputsize && !converted_frames) {
                             break; // eof
                         }
 
-                        // convert to float
-                        int tempsize = pcm_convert (&fileinfo->fmt, input, &srcfmt, tempbuf, inputsize);
-                        assert (tempsize <= sizeof (tempbuf));
-
-                        src_data = tempbuf;
-                        src_data_size = tempsize;
                     }
                 }
                 else {
@@ -1446,6 +1449,8 @@ streamer_read_async (char *bytes, int size) {
             return initsize;
         }
         else  {
+            break;
+#if 0
             // that means EOF
             trace ("streamer: EOF! buns: %d\n", bytes_until_next_song);
 
@@ -1461,6 +1466,7 @@ streamer_read_async (char *bytes, int size) {
                 }
             }
             break;
+#endif
         }
     }
     return initsize - size;
@@ -1560,11 +1566,16 @@ streamer_is_buffering (void) {
 }
 
 void
+src_conf_changed (void) {
+
+}
+
+void
 streamer_configchanged (void) {
     conf_replaygain_mode = conf_get_int ("replaygain_mode", 0);
     conf_replaygain_scale = conf_get_int ("replaygain_scale", 1);
 
-    ddb_src_confchanged (src);
+    srcplug->reset (src, 1);
 }
 
 void

@@ -740,8 +740,14 @@ typedef struct DB_output_s {
 } DB_output_t;
 
 // dsp plugin
+#define DDB_INIT_DSP_INSTANCE(var,type) {\
+    memset(var,0,sizeof(type));\
+    strncpy (var->inst.id, id, 9);\
+    var->inst.id[9]=0;\
+}
 
 typedef struct DB_dsp_instance_s {
+    char id[10];
     struct DB_dsp_instance_s *next;
     unsigned enabled : 1;
 } DB_dsp_instance_t;
@@ -749,14 +755,15 @@ typedef struct DB_dsp_instance_s {
 typedef struct DB_dsp_s {
     DB_plugin_t plugin;
 
-    DB_dsp_instance_t (*open) (void);
+    // id is a unique name used to get configuration settings
+    DB_dsp_instance_t* (*open) (const char *id);
     void (*close) (DB_dsp_instance_t *inst);
 
-    // process gets called before SRC
-    // stereo samples are stored in interleaved format
-    // stereo sample is counted as 1 sample
+    // samples are interleaved
+    // returned value is number of output frames
     int (*process) (DB_dsp_instance_t *inst, float *samples, int frames, int channels);
 } DB_dsp_t;
+
 
 // misc plugin
 // purpose is to provide extra services

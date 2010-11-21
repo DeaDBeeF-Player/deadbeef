@@ -54,6 +54,9 @@ esac
 
 test "x$prefix" = xNONE && prefix=$ac_default_prefix
 
+
+PKG_CHECK_MODULES(DEPS, samplerate)
+
 dnl INSANE_CFLAGS="-Wformat -Wdisabled-optimization -Wcomment -Wchar-subscripts -Wunused-function -Wunused-value -Wuninitialized -Wtype-limits -Wbad-function-cast"
 dnl INSANE_CXXFLAGS="-Wcomment -Wchar-subscripts -Wunused-function -Wunused-value -Wuninitialized -Wtype-limits"
 
@@ -97,6 +100,7 @@ AC_ARG_ENABLE(ao,       [AS_HELP_STRING([--disable-ao      ], [disable audio ove
 AC_ARG_ENABLE(mpris,    [AS_HELP_STRING([  --enable-mpris          enable Ubuntu Sound Menu plugin (default: disabled)])], [enable_mpris=$enableval], [enable_mpris=no])
 AC_ARG_ENABLE(staticlink, [AS_HELP_STRING([  --enable-staticlink       link everything statically (default: disabled)])], [enable_staticlink=$enableval], [enable_staticlink=no])
 AC_ARG_ENABLE(portable, [AS_HELP_STRING([  --enable-portable       make portable build (default: disabled, opts: yes,no,full)])], [enable_portable=$enableval], [enable_portable=no])
+AC_ARG_ENABLE(src, [AS_HELP_STRING([  --enable-src       build libsamplerate (SRC) plugin (default: auto)])], [enable_src=$enableval], [enable_src=yes])
 
 if test "x$enable_staticlink" != "xno" ; then
     AC_DEFINE_UNQUOTED([STATICLINK], [1], [Define if building static version])
@@ -120,14 +124,6 @@ fi
 
 CXXFLAGS="$CXXFLAGS $INSANE_CXXFLAGS -D_GNU_SOURCE $PREFIXFLAGS"
 CFLAGS="$CFLAGS $INSANE_CFLAGS -D_GNU_SOURCE $PREFIXFLAGS"
-
-PKG_CHECK_MODULES(DEPS, samplerate)
-if test "x$enable_staticlink" != "xno" ; then
-    DEPS_LIBS="$LIB/libsamplerate.a -lpthread -ldl"
-    AC_SUBST(DEPS_LIBS)
-else
-    PKG_CHECK_MODULES(DEPS, samplerate)
-fi
 
 if test "x$enable_gtkui" != "xno" ; then
     if test "x$enable_gtk3" == "xyes" ; then
@@ -411,6 +407,19 @@ if test "x$enable_nullout" != "xno" ; then
     HAVE_NULLOUT=yes
 fi
 
+if test "x$enable_src" != "xno" ; then
+if test "x$enable_staticlink" != "xno" ; then
+    LIBSAMPLERATE_DEPS_LIBS="$LIB/libsamplerate.a -lpthread -ldl"
+    AC_SUBST(LIBSAMPLERATE_DEPS_LIBS)
+    HAVE_DSP_SRC=yes
+else
+    PKG_CHECK_MODULES(LIBSAMPLERATE_DEPS, samplerate, HAVE_LIBSAMPLERATE=yes, HAVE_LIBSAMPLERATE=no)
+    if test "x$HAVE_LIBSAMPLERATE" = "xyes" ; then
+        HAVE_DSP_SRC=yes
+    fi
+fi
+fi
+
 if test "x$enable_supereq" != "xno" ; then
     HAVE_SUPEREQ=yes
 fi
@@ -494,7 +503,7 @@ if test "x$enable_mpris" != "xno" ; then
     PKG_CHECK_MODULES(MPRIS_DEPS, indicate >= 0.4.4  glib-2.0 >= 2.26.0, HAVE_MPRIS=yes, HAVE_MPRIS=no)
 fi
 
-PLUGINS_DIRS="plugins/lastfm plugins/mpgmad plugins/vorbis plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/dumb plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/aac plugins/mms plugins/shn plugins/ao plugins/shellexec plugins/mpris"
+PLUGINS_DIRS="plugins/lastfm plugins/mpgmad plugins/vorbis plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/dumb plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/aac plugins/mms plugins/shn plugins/ao plugins/shellexec plugins/mpris plugins/dsp_libsrc"
 
 AM_CONDITIONAL(HAVE_VORBIS, test "x$HAVE_VORBISPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_FLAC, test "x$HAVE_FLACPLUGIN" = "xyes")
@@ -533,6 +542,7 @@ AM_CONDITIONAL(HAVE_MPRIS, test "x$HAVE_MPRIS" = "xyes")
 AM_CONDITIONAL(STATICLINK, test "x$STATICLINK" = "xyes")
 AM_CONDITIONAL(PORTABLE, test "x$PORTABLE" = "xyes")
 AM_CONDITIONAL(PORTABLE_FULL, test "x$PORTABLE_FULL" = "xyes")
+AM_CONDITIONAL(HAVE_DSP_SRC, test "x$HAVE_DSP_SRC" = "xyes")
 
 AC_SUBST(PLUGINS_DIRS)
 
@@ -594,6 +604,7 @@ PRINT_PLUGIN_INFO([mms],[mms streaming support],[test "x$HAVE_MMS" = "xyes"])
 PRINT_PLUGIN_INFO([shn],[shorten player based on xmms-shn],[test "x$HAVE_SHN" = "xyes"])
 PRINT_PLUGIN_INFO([ao],[psf1/psf2/spu/ssf player using Audio Overload],[test "x$HAVE_AO" = "xyes"])
 PRINT_PLUGIN_INFO([mpris],[Ubuntu Sound Menu integration],[test "x$HAVE_MPRIS" = "xyes"])
+PRINT_PLUGIN_INFO([dsp_src],[High quality samplerate conversion using libsamplerate],[test "x$HAVE_DSP_SRC" = "xyes"])
 
 echo
 
@@ -635,6 +646,7 @@ plugins/mms/Makefile
 plugins/shn/Makefile
 plugins/ao/Makefile
 plugins/mpris/Makefile
+plugins/dsp_libsrc/Makefile
 intl/Makefile
 po/Makefile.in
 deadbeef.desktop

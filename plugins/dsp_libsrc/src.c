@@ -22,16 +22,21 @@
 #include <assert.h>
 #include "conf.h"
 #include "threading.h"
+#include "deadbeef.h"
 #include "src.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
+DB_functions_t *deadbeef;
+
 #define SRC_BUFFER 16000
 #define SRC_MAX_CHANNELS 8
 
+ddb_dsp_src_t plugin;
+
 typedef struct {
-    ddb_src_t ddb_src;
+    DB_dsp_instance_t inst;
 
     int quality;
     SRC_STATE *src;
@@ -42,25 +47,27 @@ typedef struct {
     uintptr_t mutex;
 } ddb_src_libsamplerate_t;
 
-ddb_src_t *
-ddb_src_init (void) {
+DB_dsp_instance_t* ddb_src_open (const char *id) {
     ddb_src_libsamplerate_t *src = malloc (sizeof (ddb_src_libsamplerate_t));
-    memset (src, 0, sizeof (ddb_src_libsamplerate_t));
-    src->mutex = mutex_create ();
-    src->quality = conf_get_int ("src->quality", 2);
+    DDB_INIT_DSP_INSTANCE (src,ddb_src_libsamplerate_t);
+
+    src->mutex = deadbeef->mutex_create ();
+    char var[20];
+    snprintf (var, sizeof (var), "%s.quality");
+    src->quality = deadbeef->conf_get_int (var, 2);
     src->src = src_new (src->quality, 2, NULL);
     if (!src->src) {
-        ddb_src_free ((ddb_src_t *)src);
+        plugin.dsp.close ((DB_dsp_instance_t *)src);
         return NULL;
     }
-    return (ddb_src_t *)src;
+    return (DB_dsp_instance_t *)src;
 }
 
 void
-ddb_src_free (ddb_src_t *_src) {
+ddb_src_close (DB_dsp_instance_t *_src) {
     ddb_src_libsamplerate_t *src = (ddb_src_libsamplerate_t*)_src;
     if (src->mutex) {
-        mutex_free (src->mutex);
+        deadbeef->mutex_free (src->mutex);
         src->mutex = 0;
     }
     if (src->src) {
@@ -71,50 +78,62 @@ ddb_src_free (ddb_src_t *_src) {
 }
 
 void
-ddb_src_lock (ddb_src_t *_src) {
+ddb_src_lock (DB_dsp_instance_t *_src) {
     ddb_src_libsamplerate_t *src = (ddb_src_libsamplerate_t*)_src;
-    mutex_lock (src->mutex);
+    deadbeef->mutex_lock (src->mutex);
 }
 
 void
-ddb_src_unlock (ddb_src_t *_src) {
+ddb_src_unlock (DB_dsp_instance_t *_src) {
     ddb_src_libsamplerate_t *src = (ddb_src_libsamplerate_t*)_src;
-    mutex_unlock (src->mutex);
+    deadbeef->mutex_unlock (src->mutex);
 }
 
 void
-ddb_src_reset (ddb_src_t *_src, int full) {
+ddb_src_reset (DB_dsp_instance_t *_src, int full) {
     ddb_src_libsamplerate_t *src = (ddb_src_libsamplerate_t*)_src;
     src->remaining = 0;
     if (full) {
-        src_reset (src->src);
+        char var[20];
+        snprintf (var, sizeof (var), "%s.quality");
+        int q = deadbeef->conf_get_int (var, 2);
+        if (q != src->quality && q >= SRC_SINC_BEST_QUALITY && q <= SRC_LINEAR) {
+            ddb_src_lock (_src);
+            trace ("changing src->quality from %d to %d\n", src->quality, q);
+            src->quality = q;
+            if (src) {
+                src_delete (src->src);
+                src->src = NULL;
+            }
+            memset (&src->srcdata, 0, sizeof (src->srcdata));
+            src->src = src_new (src->quality, 2, NULL);
+            ddb_src_unlock (_src);
+        }
+        else {
+            src_reset (src->src);
+        }
     }
 }
 
 void
-ddb_src_confchanged (ddb_src_t *_src) {
+ddb_src_set_ratio (DB_dsp_instance_t *_src, float ratio) {
     ddb_src_libsamplerate_t *src = (ddb_src_libsamplerate_t*)_src;
-    int q = conf_get_int ("src->quality", 2);
-    if (q != src->quality && q >= SRC_SINC_BEST_QUALITY && q <= SRC_LINEAR) {
-        ddb_src_lock (_src);
-        trace ("changing src->quality from %d to %d\n", src->quality, q);
-        src->quality = q;
-        if (src) {
-            src_delete (src->src);
-            src->src = NULL;
-        }
-        memset (&src->srcdata, 0, sizeof (src->srcdata));
-        src->src = src_new (src->quality, 2, NULL);
-        ddb_src_unlock (_src);
-    }
+    src->srcdata.src_ratio = ratio;
+    src_set_ratio (src->src, ratio);
 }
 
 int
-ddb_src_process (ddb_src_t *_src, const char * restrict input, int nframes, char * restrict output, int buffersize, float ratio, int nchannels) {
+//ddb_src_process (DB_dsp_instance_t *_src, const char * restrict input, int nframes, char * restrict output, int buffersize, float ratio, int nchannels) {
+ddb_src_process (DB_dsp_instance_t *_src, float *samples, int nframes, int nchannels) {
     ddb_src_libsamplerate_t *src = (ddb_src_libsamplerate_t*)_src;
 
-extern FILE *out;
-    int initsize = buffersize;
+    int numoutframes = nframes * src->srcdata.src_ratio;
+    float outbuf[numoutframes*nchannels];
+    int buffersize = sizeof (outbuf);
+    char *output = outbuf;
+    float *input = samples;
+    int inputsize = numoutframes;
+
     int samplesize = nchannels * sizeof (float);
 
     do {
@@ -125,10 +144,10 @@ extern FILE *out;
         }
 
         if (n > 0) {
-            memcpy (&src->in_fbuffer[src->remaining*samplesize], input, n * samplesize);
+            memcpy (&src->in_fbuffer[src->remaining*samplesize], samples, n * samplesize);
 
             src->remaining += n;
-            input += n * nchannels;
+            samples += n * nchannels;
             nframes -= n;
         }
         if (!src->remaining) {
@@ -140,12 +159,10 @@ extern FILE *out;
         src->srcdata.data_in = (float *)src->in_fbuffer;
         src->srcdata.data_out = (float *)output;
         src->srcdata.input_frames = src->remaining;
-        src->srcdata.output_frames = buffersize/samplesize;
-        src->srcdata.src_ratio = ratio;
+        src->srcdata.output_frames = inputsize;
         src->srcdata.end_of_input = 0;
         ddb_src_lock (_src);
-        src_set_ratio (src->src, ratio);
-        trace ("src input: %d, ratio %f, buffersize: %d\n", src->srcdata.input_frames, ratio, buffersize);
+        trace ("src input: %d, ratio %f, buffersize: %d\n", src->srcdata.input_frames, src->srcdata.src_ratio, buffersize);
         int src_err = src_process (src->src, &src->srcdata);
         trace ("src output: %d, used: %d\n", src->srcdata.output_frames_gen, src->srcdata.input_frames_used);
 
@@ -153,11 +170,11 @@ extern FILE *out;
         if (src_err) {
             const char *err = src_strerror (src_err) ;
             fprintf (stderr, "src_process error %s\n"
-                    "srcdata.data_in=%p, srcdata.data_out=%p, srcdata.input_frames=%d, srcdata.output_frames=%d, srcdata.src_ratio=%f", err, src->srcdata.data_in, src->srcdata.data_out, (int)src->srcdata.input_frames, (int)src->srcdata.output_frames, ratio);
+                    "srcdata.data_in=%p, srcdata.data_out=%p, srcdata.input_frames=%d, srcdata.output_frames=%d, srcdata.src_ratio=%f", err, src->srcdata.data_in, src->srcdata.data_out, (int)src->srcdata.input_frames, (int)src->srcdata.output_frames, src->srcdata.src_ratio);
             exit (-1);
         }
 
-        buffersize -= src->srcdata.output_frames_gen * samplesize;
+        inputsize -= src->srcdata.output_frames_gen;
         output += src->srcdata.output_frames_gen * samplesize;
 
         // calculate how many unused input samples left
@@ -171,7 +188,36 @@ extern FILE *out;
         }
     } while (nframes > 0);
 
-    trace ("src processed: %d bytes\n", initsize-buffersize);
-    return initsize - buffersize;
+    memcpy (input, outbuf, sizeof (outbuf));
+    //static FILE *out = NULL;
+    //if (!out) {
+    //    out = fopen ("out.raw", "w+b");
+    //}
+    //fwrite (input, 1,  numoutframes*sizeof(float)*nchannels, out);
+
+    return numoutframes;
 }
 
+ddb_dsp_src_t plugin = {
+    .dsp.plugin.api_vmajor = DB_API_VERSION_MAJOR,
+    .dsp.plugin.api_vminor = DB_API_VERSION_MINOR,
+    .dsp.open = ddb_src_open,
+    .dsp.close = ddb_src_close,
+    .dsp.process = ddb_src_process,
+    .dsp.plugin.version_major = 0,
+    .dsp.plugin.version_minor = 1,
+    .dsp.plugin.id = "dsp_src",
+    .dsp.plugin.name = "dsp_src",
+    .dsp.plugin.descr = "Samplerate converter using libsamplerate",
+    .dsp.plugin.author = "Alexey Yakovenko",
+    .dsp.plugin.email = "waker@users.sf.net",
+    .dsp.plugin.website = "http://deadbeef.sf.net",
+    .reset = ddb_src_reset,
+    .set_ratio = ddb_src_set_ratio,
+};
+
+DB_plugin_t *
+dsp_libsrc_load (DB_functions_t *f) {
+    deadbeef = f;
+    return &plugin.dsp.plugin;
+}
