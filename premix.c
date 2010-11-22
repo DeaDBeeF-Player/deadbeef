@@ -211,7 +211,25 @@ pcm_write_samples_float_to_16 (const ddb_waveformat_t * restrict inputfmt, const
             if (channelmap[c] != -1) {
                 int16_t *out = (int16_t*)(output + (outputfmt->bps >> 3) * channelmap[c]);
                 float sample = *((float*)input);
-                *out = (int16_t)ftoi (sample*0x7fff);
+                *out = (int16_t)ftoi (sample*0x7ff0);
+            }
+            input += 4;
+        }
+        output += outputsamplesize;
+    }
+    fpu_restore (ctl);
+}
+
+static inline void
+pcm_write_samples_float_to_8 (const ddb_waveformat_t * restrict inputfmt, const char * restrict input, const ddb_waveformat_t * restrict outputfmt, char * restrict output, int nsamples, int * restrict channelmap, int outputsamplesize) {
+    fpu_control ctl;
+    fpu_setround (&ctl);
+    for (int s = 0; s < nsamples; s++) {
+        for (int c = 0; c < inputfmt->channels; c++) {
+            if (channelmap[c] != -1) {
+                int8_t *out = (int8_t*)(output + (outputfmt->bps >> 3) * channelmap[c]);
+                float sample = *((float*)input);
+                *out = (int8_t)ftoi (sample*0x7e);
             }
             input += 4;
         }
@@ -305,6 +323,9 @@ pcm_convert (const ddb_waveformat_t * restrict inputfmt, const char * restrict i
         }
         else if (inputfmt->is_float && inputfmt->bps == 32 && outputfmt->bps == 16) {
             pcm_write_samples_float_to_16 (inputfmt, input, outputfmt, output, nsamples, channelmap, outputsamplesize);
+        }
+        else if (inputfmt->is_float && inputfmt->bps == 32 && outputfmt->bps == 8) {
+            pcm_write_samples_float_to_8 (inputfmt, input, outputfmt, output, nsamples, channelmap, outputsamplesize);
         }
         else {
             trace ("no converter from %d to %d\n", inputfmt->bps, outputfmt->bps);
