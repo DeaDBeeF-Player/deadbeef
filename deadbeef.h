@@ -66,8 +66,8 @@ extern "C" {
 // 0.2 -- deadbeef-0.2.3
 // 0.1 -- deadbeef-0.2.0
 
-#define DB_API_VERSION_MAJOR 0
-#define DB_API_VERSION_MINOR 10
+#define DB_API_VERSION_MAJOR 9
+#define DB_API_VERSION_MINOR 9
 
 #define DB_PLUGIN_SET_API_VERSION\
     .plugin.api_vmajor = DB_API_VERSION_MAJOR,\
@@ -740,14 +740,16 @@ typedef struct DB_output_s {
 } DB_output_t;
 
 // dsp plugin
-#define DDB_INIT_DSP_INSTANCE(var,type) {\
+#define DDB_INIT_DSP_INSTANCE(var,type,plug) {\
     memset(var,0,sizeof(type));\
     strncpy (var->inst.id, id, 9);\
     var->inst.id[9]=0;\
+    var->inst.plugin=plug;\
 }
 
 typedef struct DB_dsp_instance_s {
     char id[10];
+    struct DB_dsp_s *plugin;
     struct DB_dsp_instance_s *next;
     unsigned enabled : 1;
 } DB_dsp_instance_t;

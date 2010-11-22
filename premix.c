@@ -211,7 +211,14 @@ pcm_write_samples_float_to_16 (const ddb_waveformat_t * restrict inputfmt, const
             if (channelmap[c] != -1) {
                 int16_t *out = (int16_t*)(output + (outputfmt->bps >> 3) * channelmap[c]);
                 float sample = *((float*)input);
-                *out = (int16_t)ftoi (sample*0x7ff0);
+                // FIXME: sse optimize
+                if (sample > 1) {
+                    sample = 1;
+                }
+                if (sample < -1) {
+                    sample = -1;
+                }
+                *out = (int16_t)ftoi (sample*0x7fff);
             }
             input += 4;
         }
@@ -229,7 +236,14 @@ pcm_write_samples_float_to_8 (const ddb_waveformat_t * restrict inputfmt, const 
             if (channelmap[c] != -1) {
                 int8_t *out = (int8_t*)(output + (outputfmt->bps >> 3) * channelmap[c]);
                 float sample = *((float*)input);
-                *out = (int8_t)ftoi (sample*0x7e);
+                // FIXME: sse optimize
+                if (sample > 1) {
+                    sample = 1;
+                }
+                if (sample < -1) {
+                    sample = -1;
+                }
+                *out = (int8_t)ftoi (sample*0x7f);
             }
             input += 4;
         }

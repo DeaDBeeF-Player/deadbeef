@@ -1317,75 +1317,73 @@ streamer_read_async (char *bytes, int size) {
 
         if (fileinfo->fmt.samplerate != -1) {
             DB_dsp_t **dsp = deadbeef->plug_get_dsp_list ();
+            int outputsamplesize = (output->fmt.bps>>3)*output->fmt.channels;
+            int inputsamplesize = (fileinfo->fmt.bps>>3)*fileinfo->fmt.channels;
             if (!memcmp (&fileinfo->fmt, &output->fmt, sizeof (ddb_waveformat_t))) {
+                // pass through from input to output
                 bytesread = fileinfo->plugin->read (fileinfo, bytes, size);
                 if (bytesread != size) {
                     is_eof = 1;
                 }
             }
+            else if (output->fmt.samplerate != fileinfo->fmt.samplerate) {
+                // convert to float, pass through streamer DSP chain
+                int dspsamplesize = output->fmt.channels * sizeof (float);
+
+                float ratio = output->fmt.samplerate/(float)fileinfo->fmt.samplerate;
+
+                int max_out_frames = size / (output->fmt.channels * (output->fmt.bps>>3));
+                int dsp_num_frames = max_out_frames;
+
+                char outbuf[dsp_num_frames * dspsamplesize];
+
+                bytesread = 0;
+
+                ddb_waveformat_t dspfmt;
+                memcpy (&dspfmt, &output->fmt, sizeof (dspfmt));
+                dspfmt.bps = 32;
+                dspfmt.is_float = 1;
+
+                int inputsize = dsp_num_frames * inputsamplesize;
+                char input[inputsize];
+
+                // decode pcm
+                int nb = fileinfo->plugin->read (fileinfo, input, inputsize);
+                if (nb != inputsize) {
+                    is_eof = 1;
+                }
+                inputsize = nb;
+
+                if (inputsize > 0) {
+                    // make 2x size buffer for float data
+                    char tempbuf[inputsize/inputsamplesize * dspsamplesize * 2];
+
+                    // convert to float
+                    int tempsize = pcm_convert (&fileinfo->fmt, input, &dspfmt, tempbuf, inputsize);
+
+                    srcplug->set_ratio (src, ratio);
+
+                    int nframes = inputsize / inputsamplesize;
+                    DB_dsp_instance_t *dsp = src;
+                    while (dsp) {
+                        nframes = dsp->plugin->process (dsp, (float *)tempbuf, nframes, dspfmt.channels);
+                        dsp = dsp->next;
+                    }
+                    int n = pcm_convert (&dspfmt, tempbuf, &output->fmt, bytes, nframes * dspsamplesize);
+
+                    bytesread += n;
+                }
+            }
             else {
-                if (output->fmt.samplerate != fileinfo->fmt.samplerate) {
-                    // convert to float, pass through streamer DSP chain
-                    int outputsamplesize = (output->fmt.bps>>3)*output->fmt.channels;
-                    int inputsamplesize = (fileinfo->fmt.bps>>3)*fileinfo->fmt.channels;
-                    int dspsamplesize = output->fmt.channels * sizeof (float);
-
-                    float ratio = output->fmt.samplerate/(float)fileinfo->fmt.samplerate;
-
-                    int max_out_frames = size / (output->fmt.channels * (output->fmt.bps>>3));
-                    int dsp_num_frames = max_out_frames;
-
-                    char outbuf[dsp_num_frames * dspsamplesize];
-
-                    bytesread = 0;
-
-                    ddb_waveformat_t dspfmt;
-                    memcpy (&dspfmt, &output->fmt, sizeof (dspfmt));
-                    dspfmt.bps = 32;
-                    dspfmt.is_float = 1;
-
-                    int inputsize = dsp_num_frames * inputsamplesize;
-                    char input[inputsize];
-
-                    // decode pcm
-                    int nb = fileinfo->plugin->read (fileinfo, input, inputsize);
-                    if (nb != inputsize) {
-                        is_eof = 1;
-                    }
-                    inputsize = nb;
-
-                    if (inputsize > 0) {
-                        // make 2x size buffer for float data
-                        char tempbuf[inputsize/inputsamplesize * dspsamplesize * 2];
-
-                        // convert to float
-                        int tempsize = pcm_convert (&fileinfo->fmt, input, &dspfmt, tempbuf, inputsize);
-
-                        srcplug->set_ratio (src, ratio);
-
-                        int nframes = inputsize / inputsamplesize;
-                        DB_dsp_instance_t *dsp = src;
-                        while (dsp) {
-                            nframes = srcplug->dsp.process (dsp, (float *)tempbuf, nframes, dspfmt.channels);
-                            dsp = dsp->next;
-                        }
-                        int n = pcm_convert (&dspfmt, tempbuf, &output->fmt, bytes, nframes * dspsamplesize);
-
-                        bytesread += n;
-                    }
+                // convert from input fmt to output fmt
+                int inputsize = size/outputsamplesize*inputsamplesize;
+                char input[inputsize];
+                int nb = fileinfo->plugin->read (fileinfo, input, inputsize);
+                if (nb != inputsize) {
+                    is_eof = 1;
                 }
-                else {
-                    int outputsamplesize = (output->fmt.bps>>3)*output->fmt.channels;
-                    int inputsamplesize = (fileinfo->fmt.bps>>3)*fileinfo->fmt.channels;
-                    int inputsize = size/outputsamplesize*inputsamplesize;
-                    char input[inputsize];
-                    int nb = fileinfo->plugin->read (fileinfo, input, inputsize);
-                    if (nb != inputsize) {
-                        is_eof = 1;
-                    }
-                    inputsize = nb;
-                    bytesread = pcm_convert (&fileinfo->fmt, input, &output->fmt, bytes, inputsize);
-                }
+                inputsize = nb;
+                bytesread = pcm_convert (&fileinfo->fmt, input, &output->fmt, bytes, inputsize);
             }
 #if WRITE_DUMP
             if (bytesread) {

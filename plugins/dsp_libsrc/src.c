@@ -49,7 +49,7 @@ typedef struct {
 
 DB_dsp_instance_t* ddb_src_open (const char *id) {
     ddb_src_libsamplerate_t *src = malloc (sizeof (ddb_src_libsamplerate_t));
-    DDB_INIT_DSP_INSTANCE (src,ddb_src_libsamplerate_t);
+    DDB_INIT_DSP_INSTANCE (src,ddb_src_libsamplerate_t,&plugin.dsp);
 
     src->mutex = deadbeef->mutex_create ();
     char var[20];
