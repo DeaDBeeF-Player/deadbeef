@@ -57,6 +57,15 @@ test "x$prefix" = xNONE && prefix=$ac_default_prefix
 
 PKG_CHECK_MODULES(DEPS, samplerate)
 
+if test "x$enable_staticlink" != "xno" ; then
+    HAVE_ZLIB=yes
+    ZLIB_LIBS="../../$LIB/libz.a"
+else
+    AC_CHECK_LIB([z], [main], [HAVE_ZLIB=yes])
+    ZLIB_LIBS="-lz"
+fi
+AC_SUBST(ZLIB_LIBS)
+
 dnl INSANE_CFLAGS="-Wformat -Wdisabled-optimization -Wcomment -Wchar-subscripts -Wunused-function -Wunused-value -Wuninitialized -Wtype-limits -Wbad-function-cast"
 dnl INSANE_CXXFLAGS="-Wcomment -Wchar-subscripts -Wunused-function -Wunused-value -Wuninitialized -Wtype-limits"
 
@@ -485,15 +494,7 @@ if test "x$enable_shn" != "xno" ; then
 fi
 
 if test "x$enable_ao" != "xno" ; then
-if test "x$enable_staticlink" != "xno" ; then
-    HAVE_ZLIB=yes
-    ZLIB_LIBS="../../$LIB/libz.a"
-else
-    AC_CHECK_LIB([z], [main], [HAVE_ZLIB=yes])
-    ZLIB_LIBS="-lz"
-fi
     if test "x$HAVE_ZLIB" = "xyes"; then
-        AC_SUBST(ZLIB_LIBS)
         HAVE_AO=yes
     fi
 fi

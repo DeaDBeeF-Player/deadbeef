@@ -19,6 +19,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "gme/gme.h"
+#include <zlib.h>
 #include "../../deadbeef.h"
 
 int _Unwind_Resume_or_Rethrow;
@@ -48,17 +49,90 @@ typedef struct {
 } gme_fileinfo_t;
 
 static DB_fileinfo_t *
-cgme_open (void) {
+cgme_open (uint32_t hint) {
     DB_fileinfo_t *_info = malloc (sizeof (gme_fileinfo_t));
     memset (_info, 0, sizeof (gme_fileinfo_t));
     return _info;
 }
 
 static int
+read_gzfile (const char *fname, char **buffer, int *size) {
+    FILE *fp = fopen (fname, "rb");
+    if (!fp) {
+        trace ("failed to fopen %s\n", fname);
+        return -1;
+    }
+    fseek (fp, 0, SEEK_END);
+    size_t sz = ftell (fp);
+    fclose (fp);
+
+    sz *= 2;
+    int readsize = sz;
+    *buffer = malloc (sz);
+    if (!(*buffer)) {
+        return -1;
+    }
+
+    gzFile gz = gzopen (fname, "rb");
+    if (!gz) {
+        trace ("failed to gzopen %s\n", fname);
+        return -1;
+    }
+    *size = 0;
+    int nb;
+    int pos = 0;
+    do {
+        printf ("gzread %d pos %d\n", readsize, pos);
+        nb = gzread (gz, *buffer + pos, readsize);
+        printf ("got %d\n", nb);
+        if (nb < 0) {
+            free (*buffer);
+            trace ("failed to gzread from %s\n", fname);
+            return -1;
+        }
+        if (nb > 0) {
+            pos += nb;
+            *size += nb;
+            printf ("size %d\n", *size);
+        }
+        if (nb != readsize) {
+            printf ("done!\n", *size);
+            break;
+        }
+        else {
+            readsize = sz;
+            sz *= 2;
+            *buffer = realloc (*buffer, sz);
+        }
+    } while (nb > 0);
+    gzclose (gz);
+    trace ("got %d bytes from %s\n", *size, fname);
+
+    return 0;
+}
+
+static int
 cgme_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     gme_fileinfo_t *info = (gme_fileinfo_t*)_info;
     int samplerate = deadbeef->conf_get_int ("synth.samplerate", 44100);
-    if (gme_open_file (it->fname, &info->emu, samplerate)) {
+
+    gme_err_t res;
+    const char *ext = strrchr (it->fname, '.');
+    if (ext && !strcasecmp (ext, ".vgz")) {
+        trace ("opening gzipped vgm...\n");
+        char *buffer;
+        int sz;
+        if (!read_gzfile (it->fname, &buffer, &sz)) {
+            res = gme_open_data (buffer, sz, &info->emu, samplerate);
+            free (buffer);
+        }
+    }
+    else {
+        res = gme_open_file (it->fname, &info->emu, samplerate);
+    }
+
+    if (res) {
+        trace ("failed with error %d\n", res);
         return -1;
     }
     gme_mute_voices (info->emu, info->cgme_voicemask);
@@ -74,9 +148,10 @@ cgme_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 #endif
 
     _info->plugin = &plugin;
-    _info->bps = 16;
-    _info->channels = 2;
-    _info->samplerate = samplerate;
+    _info->fmt.bps = 16;
+    _info->fmt.channels = 2;
+    _info->fmt.samplerate = samplerate;
+    _info->fmt.channelmask = _info->fmt.channels == 1 ? DDB_SPEAKER_FRONT_LEFT : (DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT);
     info->duration = deadbeef->pl_get_item_duration (it);
     info->reallength = inf->length; 
     _info->readpos = 0;
@@ -95,7 +170,7 @@ cgme_free (DB_fileinfo_t *_info) {
 static int
 cgme_read (DB_fileinfo_t *_info, char *bytes, int size) {
     gme_fileinfo_t *info = (gme_fileinfo_t*)_info;
-    float t = (size/4) / (float)_info->samplerate;
+    float t = (size/4) / (float)_info->fmt.samplerate;
     if (_info->readpos + t >= info->duration) {
         t = info->duration - _info->readpos;
         if (t <= 0) {
@@ -130,7 +205,25 @@ static DB_playItem_t *
 cgme_insert (DB_playItem_t *after, const char *fname) {
     Music_Emu *emu;
     trace ("gme_open_file %s\n", fname);
-    if (!gme_open_file (fname, &emu, gme_info_only)) {
+
+    gme_err_t res;
+
+    const char *ext = strrchr (fname, '.');
+    if (ext && !strcasecmp (ext, ".vgz")) {
+        trace ("opening gzipped vgm...\n");
+        char *buffer;
+        int sz;
+        if (!read_gzfile (fname, &buffer, &sz)) {
+            res = gme_open_data (buffer, sz, &emu, gme_info_only);
+            free (buffer);
+        }
+    }
+    else {
+        res = gme_open_file (fname, &emu, gme_info_only);
+    }
+
+
+    if (!res) {
         int cnt = gme_track_count (emu);
         trace ("track cnt %d\n", cnt);
         for (int i = 0; i < cnt; i++) {
@@ -207,7 +300,7 @@ cgme_insert (DB_playItem_t *after, const char *fname) {
         }
     }
     else {
-        printf ("error adding %s\n", fname);
+        printf ("gme_open_file/data failed\n");
     }
     return after;
 }
@@ -268,7 +361,7 @@ static DB_decoder_t plugin = {
     .open = cgme_open,
     .init = cgme_init,
     .free = cgme_free,
-    .read_int16 = cgme_read,
+    .read = cgme_read,
     .seek = cgme_seek,
     .insert = cgme_insert,
     .exts = exts,
