@@ -1392,6 +1392,7 @@ streamer_read_async (char *bytes, int size) {
             }
 #endif
 
+            // FIXME: separate replaygain DSP plugin?
             if (output->fmt.bps == 16) {
                 apply_replay_gain_int16 (streaming_track, bytes, bytesread);
             }
@@ -1399,36 +1400,6 @@ streamer_read_async (char *bytes, int size) {
                 apply_replay_gain_float32 (streaming_track, bytes, bytesread);
             }
 
-#if 0
-            int nchannels = fileinfo->fmt.channels;
-            if (nchannels > 2) {
-                nchannels = 2;
-            }
-            int samplerate = fileinfo->fmt.samplerate;
-            if (fileinfo->fmt.samplerate == output->fmt.samplerate) {
-                // samplerate match
-                if (nchannels == 2) {
-                    bytesread = fileinfo->plugin->read_int16 (fileinfo, bytes, size);
-                    apply_replay_gain_int16 (streaming_track, bytes, bytesread);
-                }
-                else {
-                    uint8_t buffer[size>>1];
-                    bytesread = fileinfo->plugin->read_int16 (fileinfo, buffer, size>>1);
-                    apply_replay_gain_int16 (streaming_track, buffer, bytesread);
-                    mono_int16_to_stereo_int16 ((int16_t*)buffer, (int16_t*)bytes, size>>2);
-                    bytesread *= 2;
-                }
-            }
-            else if (src_is_valid_ratio (output->fmt.samplerate/(double)samplerate)) {
-                bytesread = streamer_decode_src_libsamplerate (bytes, size);
-            }
-            else {
-                fprintf (stderr, "error: invalid ratio! %d / %d (this indicates decoder or streamer bug)\n", output->fmt.samplerate, samplerate);
-                fprintf (stderr, "error: file: %s\n", streaming_track ? streaming_track->fname : "(null)");
-                // immediately start streaming next track
-                bytes_until_next_song = -1;
-            }
-#endif
         }
 #if 0
         if (bytesread > 0) {
@@ -1445,12 +1416,10 @@ streamer_read_async (char *bytes, int size) {
         mutex_unlock (decodemutex);
         bytes += bytesread;
         size -= bytesread;
-        if (size == 0) {
-            return initsize;
+        if (size <= 0) {
+            return initsize-size;
         }
         else  {
-            break;
-#if 0
             // that means EOF
             trace ("streamer: EOF! buns: %d\n", bytes_until_next_song);
 
@@ -1466,7 +1435,6 @@ streamer_read_async (char *bytes, int size) {
                 }
             }
             break;
-#endif
         }
     }
     return initsize - size;
