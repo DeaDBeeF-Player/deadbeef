@@ -1299,7 +1299,6 @@ mono_int16_to_stereo_int16 (int16_t *in, int16_t *out, int nsamples) {
     }
 }
 
-
 // decodes data and converts to current output format
 // returns number of bytes been read
 static int
@@ -1314,67 +1313,65 @@ streamer_read_async (char *bytes, int size) {
             mutex_unlock (decodemutex);
             break;
         }
+        int is_eof = 0;
 
         if (fileinfo->fmt.samplerate != -1) {
             DB_dsp_t **dsp = deadbeef->plug_get_dsp_list ();
             if (!memcmp (&fileinfo->fmt, &output->fmt, sizeof (ddb_waveformat_t))) {
                 bytesread = fileinfo->plugin->read (fileinfo, bytes, size);
+                if (bytesread != size) {
+                    is_eof = 1;
+                }
             }
             else {
                 if (output->fmt.samplerate != fileinfo->fmt.samplerate) {
-                    // convert to float, prepare for DSP
+                    // convert to float, pass through streamer DSP chain
                     int outputsamplesize = (output->fmt.bps>>3)*output->fmt.channels;
                     int inputsamplesize = (fileinfo->fmt.bps>>3)*fileinfo->fmt.channels;
+                    int dspsamplesize = output->fmt.channels * sizeof (float);
 
                     float ratio = output->fmt.samplerate/(float)fileinfo->fmt.samplerate;
 
-#define SRC_NUM_SAMPLES 1024
-                    char outbuf[SRC_NUM_SAMPLES * output->fmt.channels * sizeof (float)];
+                    int max_out_frames = size / (output->fmt.channels * (output->fmt.bps>>3));
+                    int dsp_num_frames = max_out_frames;
+
+                    char outbuf[dsp_num_frames * dspsamplesize];
+
                     bytesread = 0;
-                    ddb_waveformat_t srcfmt;
-                    memcpy (&srcfmt, &output->fmt, sizeof (srcfmt));
-                    srcfmt.bps = 32;
-                    srcfmt.is_float = 1;
-                    int inputsize = (ftoi (SRC_NUM_SAMPLES * ratio) + 100) * inputsamplesize;
+
+                    ddb_waveformat_t dspfmt;
+                    memcpy (&dspfmt, &output->fmt, sizeof (dspfmt));
+                    dspfmt.bps = 32;
+                    dspfmt.is_float = 1;
+
+                    int inputsize = dsp_num_frames * inputsamplesize;
                     char input[inputsize];
-                    char tempbuf[inputsize/inputsamplesize * sizeof (float) * output->fmt.channels * 2];
-                    while (1) {
-                        // read more samples for src
-                        inputsize = fileinfo->plugin->read (fileinfo, input, (ftoi (SRC_NUM_SAMPLES * ratio) + 100) * inputsamplesize);
+
+                    // decode pcm
+                    int nb = fileinfo->plugin->read (fileinfo, input, inputsize);
+                    if (nb != inputsize) {
+                        is_eof = 1;
+                    }
+                    inputsize = nb;
+
+                    if (inputsize > 0) {
+                        // make 2x size buffer for float data
+                        char tempbuf[inputsize/inputsamplesize * dspsamplesize * 2];
+
                         // convert to float
-                        int tempsize = pcm_convert (&fileinfo->fmt, input, &srcfmt, tempbuf, inputsize);
-                        assert (tempsize <= sizeof (tempbuf)/2);
+                        int tempsize = pcm_convert (&fileinfo->fmt, input, &dspfmt, tempbuf, inputsize);
 
-                        int converted_frames = 0;
-                        // drain src
-                        int n = sizeof (outbuf);
-
-                        int remaining = (size - bytesread) / (output->fmt.bps >> 3) * 4;
-                        if (n > remaining) {
-                            n = remaining;
-                        }
                         srcplug->set_ratio (src, ratio);
-                        //printf ("asked for %d frames\n",  src_data_size/(sizeof(float)*output->fmt.channels));
-                        converted_frames = srcplug->dsp.process (src, (float *)tempbuf, tempsize/(sizeof(float)*output->fmt.channels), srcfmt.channels);
-                        //printf ("received %d frames\n", converted_frames);
 
-                        if (converted_frames > 0) {
-                            //fwrite (tempbuf, 1, converted_frames * sizeof(float)*output->fmt.channels, out);
-                            int n = pcm_convert (&srcfmt, tempbuf, &output->fmt, bytes + bytesread, converted_frames * (sizeof(float)*output->fmt.channels));
-                            //fwrite (bytes + bytesread, 1, n, out);
-
-                            bytesread += n;
-                            assert (bytesread <= (size * 2));
-                            if (bytesread >= size) {
-                                break;
-                            }
-                            continue;
+                        int nframes = inputsize / inputsamplesize;
+                        DB_dsp_instance_t *dsp = src;
+                        while (dsp) {
+                            nframes = srcplug->dsp.process (dsp, (float *)tempbuf, nframes, dspfmt.channels);
+                            dsp = dsp->next;
                         }
+                        int n = pcm_convert (&dspfmt, tempbuf, &output->fmt, bytes, nframes * dspsamplesize);
 
-                        if (!inputsize && !converted_frames) {
-                            break; // eof
-                        }
-
+                        bytesread += n;
                     }
                 }
                 else {
@@ -1382,7 +1379,11 @@ streamer_read_async (char *bytes, int size) {
                     int inputsamplesize = (fileinfo->fmt.bps>>3)*fileinfo->fmt.channels;
                     int inputsize = size/outputsamplesize*inputsamplesize;
                     char input[inputsize];
-                    inputsize = fileinfo->plugin->read (fileinfo, input, inputsize);
+                    int nb = fileinfo->plugin->read (fileinfo, input, inputsize);
+                    if (nb != inputsize) {
+                        is_eof = 1;
+                    }
+                    inputsize = nb;
                     bytesread = pcm_convert (&fileinfo->fmt, input, &output->fmt, bytes, inputsize);
                 }
             }
@@ -1399,24 +1400,11 @@ streamer_read_async (char *bytes, int size) {
             else if (output->fmt.bps == 32 && output->fmt.is_float) {
                 apply_replay_gain_float32 (streaming_track, bytes, bytesread);
             }
-
         }
-#if 0
-        if (bytesread > 0) {
-            // apply dsp
-            DB_dsp_t **dsp = deadbeef->plug_get_dsp_list ();
-            int srate = output->fmt.samplerate;
-            for (int i = 0; dsp[i]; i++) {
-                if (dsp[i]->enabled ()) {
-                    dsp[i]->process (bytes, bytesread/4, &output->fmt);
-                }
-            }
-        }
-#endif
         mutex_unlock (decodemutex);
         bytes += bytesread;
         size -= bytesread;
-        if (size <= 0) {
+        if (!is_eof) {
             return initsize-size;
         }
         else  {
