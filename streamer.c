@@ -632,7 +632,10 @@ streamer_set_current (playItem_t *it) {
                 dec->free (fileinfo);
                 fileinfo = NULL;
             }
-            adjust_waveformat (&fileinfo->fmt);
+            else {
+                adjust_waveformat (&fileinfo->fmt);
+            }
+
         }
 
         if (!dec || !fileinfo) {
@@ -943,7 +946,9 @@ streamer_thread (void *ctx) {
                                 dec->free (fileinfo);
                                 fileinfo = NULL;
                             }
-                            adjust_waveformat (&fileinfo->fmt);
+                            else {
+                                adjust_waveformat (&fileinfo->fmt);
+                            }
                         }
                         if (!dec || !fileinfo) {
                             // FIXME: handle error
@@ -1011,7 +1016,9 @@ streamer_thread (void *ctx) {
                         dec->free (fileinfo);
                         fileinfo = NULL;
                     }
-                    adjust_waveformat (&fileinfo->fmt);
+                    else {
+                        adjust_waveformat (&fileinfo->fmt);
+                    }
                 }
                 mutex_unlock (decodemutex);
 
