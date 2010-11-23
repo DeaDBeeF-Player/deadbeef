@@ -157,7 +157,7 @@ update_vorbis_comments (DB_playItem_t *it, vorbis_comment *vc, int refresh_playl
 }
 
 static DB_fileinfo_t *
-cvorbis_open (void) {
+cvorbis_open (uint32_t hints) {
     DB_fileinfo_t *_info = malloc (sizeof (ogg_info_t));
     ogg_info_t *info = (ogg_info_t *)_info;
     memset (info, 0, sizeof (ogg_info_t));
@@ -227,10 +227,12 @@ cvorbis_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         return -1;
     }
     _info->plugin = &plugin;
-    _info->bps = 16;
+    _info->fmt.bps = 16;
     //_info->dataSize = ov_pcm_total (&vorbis_file, -1) * vi->channels * 2;
-    _info->channels = info->vi->channels;
-    _info->samplerate = info->vi->rate;
+    _info->fmt.channels = info->vi->channels;
+    _info->fmt.samplerate = info->vi->rate;
+    _info->fmt.channelmask = _info->fmt.channels == 1 ? DDB_SPEAKER_FRONT_LEFT : (DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT);
+
     _info->readpos = 0;
     info->currentsample = 0;
     if (!info->info.file->vfs->streaming) {
@@ -277,10 +279,12 @@ static int
 cvorbis_read (DB_fileinfo_t *_info, char *bytes, int size) {
     ogg_info_t *info = (ogg_info_t *)_info;
 //    trace ("cvorbis_read %d bytes\n", size);
-    int out_ch = min (_info->channels, 2);
+
+    int samplesize = _info->fmt.channels * (_info->fmt.bps>>3);
+
     if (!info->info.file->vfs->streaming) {
-        if (info->currentsample + size / (2 * out_ch) > info->endsample) {
-            size = (info->endsample - info->currentsample + 1) * 2 * out_ch;
+        if (info->currentsample + size / samplesize > info->endsample) {
+            size = (info->endsample - info->currentsample + 1) * samplesize;
             trace ("size truncated to %d bytes, cursample=%d, info->endsample=%d, totalsamples=%d\n", size, info->currentsample, info->endsample, ov_pcm_total (&info->vorbis_file, -1));
             if (size <= 0) {
                 return 0;
@@ -288,7 +292,7 @@ cvorbis_read (DB_fileinfo_t *_info, char *bytes, int size) {
         }
     }
     else {
-        if (info->ptrack && info->currentsample - info->last_comment_update > 5 * _info->samplerate) {
+        if (info->ptrack && info->currentsample - info->last_comment_update > 5 * _info->fmt.samplerate) {
             if (info->ptrack) {
                 info->last_comment_update = info->currentsample;
                 vorbis_comment *vc = ov_comment (&info->vorbis_file, -1);
@@ -311,23 +315,7 @@ cvorbis_read (DB_fileinfo_t *_info, char *bytes, int size) {
         endianess = 1;
 #endif
 
-        if (out_ch != _info->channels) {
-            int nframes = size / out_ch / 2;
-            int16_t buf[nframes * _info->channels];
-            ret=ov_read (&info->vorbis_file, (char*)buf, sizeof(buf), endianess, 2, 1, &info->cur_bit_stream);
-            if (ret > 0) {
-                int n = ret / _info->channels / 2;
-                for (int i = 0; i < n; i++) {
-                    for (int j = 0; j < out_ch; j++) {
-                        ((int16_t *)bytes)[i * out_ch + j] = buf[i * _info->channels + j];
-                    }
-                }
-                ret = n * out_ch * 2;
-            }
-        }
-        else {
-            ret=ov_read (&info->vorbis_file, bytes, size, endianess, 2, 1, &info->cur_bit_stream);
-        }
+        ret=ov_read (&info->vorbis_file, bytes, size, endianess, 2, 1, &info->cur_bit_stream);
         if (ret <= 0)
         {
             if (ret < 0) {
@@ -352,12 +340,12 @@ cvorbis_read (DB_fileinfo_t *_info, char *bytes, int size) {
         }
         else if (ret < size)
         {
-            info->currentsample += ret / (out_ch * 2);
+            info->currentsample += ret / samplesize;
             size -= ret;
             bytes += ret;
         }
         else {
-            info->currentsample += ret / (out_ch * 2);
+            info->currentsample += ret / samplesize;
             size = 0;
             break;
         }
@@ -708,7 +696,7 @@ static DB_decoder_t plugin = {
     .open = cvorbis_open,
     .init = cvorbis_init,
     .free = cvorbis_free,
-    .read_int16 = cvorbis_read,
+    .read = cvorbis_read,
     // vorbisfile can't output float32
 //    .read_float32 = cvorbis_read_float32,
     .seek = cvorbis_seek,
