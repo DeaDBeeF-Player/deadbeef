@@ -309,7 +309,6 @@ csid_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     info->sidplay = new sidplay2;
     info->resid = new ReSIDBuilder ("wtf");
     info->resid->create (info->sidplay->info ().maxsids);
-//    resid->create (1);
     info->resid->filter (true);
 
     int samplerate = deadbeef->conf_get_int ("sid.samplerate", 44100);
@@ -334,7 +333,7 @@ csid_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     info->sidplay->load (info->tune);
 
     _info->plugin = &sid_plugin;
-    _info->fmt.channels = 2;//info->tune->isStereo () ? 2 : 1;
+    _info->fmt.channels = conf.playback == sid2_stereo ? 2 : 1;
     _info->fmt.bps = bps;
     _info->fmt.samplerate = conf.frequency;
     _info->fmt.channelmask = _info->fmt.channels == 1 ? DDB_SPEAKER_FRONT_LEFT : (DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT);
