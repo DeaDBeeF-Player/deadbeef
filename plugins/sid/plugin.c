@@ -23,8 +23,10 @@ const char *filetypes[] = { "SID", NULL };
 
 static const char settings_dlg[] =
     "property \"Enable HVSC\" checkbox hvsc_enable 0;\n"
-    "property \"HVSC path\" file hvsc_path \"\";\n"
-    "property \"Samplerate\" entry sid.samplerate 48000;\n"
+    "property \"Songlenghts.txt (from HVSC)\" file hvsc_path \"\";\n"
+    "property \"Samplerate\" entry sid.samplerate 44100;\n"
+    "property \"Bits per sample\" entry sid.bps 16;\n"
+    "property \"Default song length (sec)\" entry sid.defaultlength 180;\n"
 ;
 
 // define plugin interface
@@ -45,7 +47,7 @@ DB_decoder_t sid_plugin = {
     .open = csid_open,
     .init = csid_init,
     .free = csid_free,
-    .read_int16 = csid_read,
+    .read = csid_read,
     .seek = csid_seek,
     .seek_sample = NULL,
     .insert = csid_insert,

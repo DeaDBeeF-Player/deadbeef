@@ -288,7 +288,7 @@ sldb_find (const uint8_t *digest) {
 }
 
 DB_fileinfo_t *
-csid_open (void) {
+csid_open (uint32_t hints) {
     DB_fileinfo_t *_info = (DB_fileinfo_t *)malloc (sizeof (sid_info_t));
     memset (_info, 0, sizeof (sid_info_t));
     return _info;
@@ -313,7 +313,7 @@ csid_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     info->resid->filter (true);
 
     int samplerate = deadbeef->conf_get_int ("sid.samplerate", 44100);
-    int bps = deadbeef->get_output ()->bitspersample ();
+    int bps = deadbeef->conf_get_int ("sid.bps", 16);
 
     info->resid->sampling (samplerate);
     info->duration = deadbeef->pl_get_item_duration (it);
@@ -324,16 +324,17 @@ csid_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     conf = info->sidplay->config ();
     conf.frequency = samplerate;
     conf.precision = bps;
-    conf.playback = info->tune->isStereo () ? sid2_stereo : sid2_mono;
+    conf.playback = /*info->tune->isStereo ()*/1 ? sid2_stereo : sid2_mono;
     conf.sidEmulation = info->resid;
     conf.optimisation = 0;
     info->sidplay->config (conf);
     info->sidplay->load (info->tune);
 
     _info->plugin = &sid_plugin;
-    _info->channels = info->tune->isStereo () ? 2 : 1;
-    _info->bps = bps;
-    _info->samplerate = conf.frequency;
+    _info->fmt.channels = 2;//info->tune->isStereo () ? 2 : 1;
+    _info->fmt.bps = bps;
+    _info->fmt.samplerate = conf.frequency;
+    _info->fmt.channelmask = _info->fmt.channels == 1 ? DDB_SPEAKER_FRONT_LEFT : (DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT);
     _info->readpos = 0;
 
     int maxsids = info->sidplay->info ().maxsids;
@@ -366,24 +367,14 @@ csid_read (DB_fileinfo_t *_info, char *bytes, int size) {
     if (_info->readpos > info->duration) {
         return 0;
     }
-    int rd = info->sidplay->play (bytes, size/_info->channels);
-    _info->readpos += size/_info->channels/2 / (float)_info->samplerate;
 
-#if 0
-#if WORDS_BIGENDIAN
-    // convert samples from le to be
-    int n = rd * _info->channels/2;
-    int16_t *ptr = (int16_t *)bytes;
-    while (n > 0) {
-        int16_t out;
-        le_int16 (*ptr, (unsigned char *)&out);
-        *ptr = out;
-        ptr++;
-        n--;
-    }
-#endif
-#endif
-    return rd * _info->channels;
+    int rd = info->sidplay->play (bytes, size);
+
+    int samplesize = (_info->fmt.bps>>3) * _info->fmt.channels;
+    _info->readpos += rd / samplesize / (float)_info->fmt.samplerate;
+
+    return rd;
+
 }
 
 int
@@ -398,11 +389,11 @@ csid_seek (DB_fileinfo_t *_info, float time) {
         t -= _info->readpos;
     }
     info->resid->filter (false);
-    int samples = t * _info->samplerate;
-    samples *= 2 * _info->channels;
-    uint16_t buffer[2048 * _info->channels];
+    int samples = t * _info->fmt.samplerate;
+    samples *= (_info->fmt.bps>>3) * _info->fmt.channels;
+    uint16_t buffer[2048 * _info->fmt.channels];
     while (samples > 0) {
-        int n = min (samples, 2048) * _info->channels;
+        int n = min (samples, 2048) * _info->fmt.channels;
         int done = info->sidplay->play (buffer, n);
         if (done < n) {
             trace ("sid seek failure\n");
@@ -490,15 +481,13 @@ csid_insert (DB_playItem_t *after, const char *fname) {
     // Include number of songs.
     endian_little16 (tmp,tune->getInfo ().songs);
     myMD5.append    (tmp,sizeof(tmp));
-    {   // Include song speed for each song.
-        //uint_least16_t currentSong = tune->getInfo ().currentSong;
+    {
+        // Include song speed for each song.
         for (uint_least16_t s = 1; s <= tune->getInfo ().songs; s++)
         {
             tune->selectSong (s);
             myMD5.append (&tune->getInfo ().songSpeed,1);
         }
-        // Restore old song
-        //tune->selectSong (currentSong);
     }
     // Deal with PSID v2NG clock speed flags: Let only NTSC
     // clock speed change the MD5 fingerprint. That way the
@@ -511,7 +500,6 @@ csid_insert (DB_playItem_t *after, const char *fname) {
     memcpy (sig, myMD5.getDigest (), 16);
 #endif
 
-//    sldb_load ();
     int song = -1;
     if (sldb_loaded) {
         song = sldb_find (sig);
@@ -561,7 +549,7 @@ csid_insert (DB_playItem_t *after, const char *fname) {
                 deadbeef->pl_add_meta (it, "title", NULL);
             }
 
-            float length = 120;
+            float length = deadbeef->conf_get_float ("sid.defaultlength", 180);
             if (sldb_loaded) {
                 if (song >= 0 && sldb->sldb_lengths[song][s] >= 0) {
                     length = sldb->sldb_lengths[song][s];
