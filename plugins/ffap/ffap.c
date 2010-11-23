@@ -678,7 +678,7 @@ ffap_free (DB_fileinfo_t *_info)
 }
 
 static DB_fileinfo_t *
-ffap_open (void) {
+ffap_open (uint32_t hints) {
     DB_fileinfo_t *_info = malloc (sizeof (ape_info_t));
     memset (_info, 0, sizeof (ape_info_t));
     return _info;
@@ -726,9 +726,10 @@ ffap_init (DB_fileinfo_t *_info, DB_playItem_t *it)
     }
 
     _info->plugin = &plugin;
-    _info->bps = info->ape_ctx.bps;
-    _info->samplerate = info->ape_ctx.samplerate;
-    _info->channels = info->ape_ctx.channels;
+    _info->fmt.bps = info->ape_ctx.bps;
+    _info->fmt.samplerate = info->ape_ctx.samplerate;
+    _info->fmt.channels = info->ape_ctx.channels;
+    _info->fmt.channelmask = _info->fmt.channels == 1 ? DDB_SPEAKER_FRONT_LEFT : (DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT);
     _info->readpos = 0;
     if (it->endsample > 0) {
         info->startsample = it->startsample;
@@ -1560,16 +1561,16 @@ ape_decode_frame(DB_fileinfo_t *_info, void *data, int *data_size)
 {
     ape_info_t *info = (ape_info_t*)_info;
     APEContext *s = &info->ape_ctx;
-    int16_t *samples = data;
+    char *samples = data;
     int nblocks;
     int i, n;
     int blockstodecode;
     int bytes_used;
-    int samplesize = _info->bps>>3;
+    int samplesize = _info->fmt.bps/8 * s->channels;;
 
     /* should not happen but who knows */
-    if (BLOCKS_PER_LOOP * samplesize * s->channels > *data_size) {
-        fprintf (stderr, "ape: Packet size is too big! (max is %d where you have %d)\n", *data_size, BLOCKS_PER_LOOP * samplesize * s->channels);
+    if (BLOCKS_PER_LOOP * samplesize > *data_size) {
+        fprintf (stderr, "ape: Packet size is too big! (max is %d where you have %d)\n", *data_size, BLOCKS_PER_LOOP * samplesize);
         return -1;
     }
 
@@ -1665,17 +1666,58 @@ ape_decode_frame(DB_fileinfo_t *_info, void *data, int *data_size)
     int skip = min (s->samplestoskip, blockstodecode);
     i = skip;
 
-    for (; i < blockstodecode; i++) {
-        *samples++ = (int16_t)(s->decoded0[i]>>(_info->bps-16));
-        if(s->channels == 2) {
-            *samples++ = (int16_t)(s->decoded1[i]>>(_info->bps-16));
+    if (_info->fmt.is_float || _info->fmt.bps == 32) {
+        for (; i < blockstodecode; i++) {
+            *((int32_t*)samples) = s->decoded0[i];
+            samples += 4;
+            if(s->channels > 1) {
+                *((int32_t*)samples) = s->decoded1[i];
+                samples += 4;
+            }
+        }
+    }
+    else if (_info->fmt.bps == 24) {
+        for (; i < blockstodecode; i++) {
+            int32_t sample = s->decoded0[i];
+
+            samples[0] = sample&0xff;
+            samples[1] = (sample&0xff00)>>8;
+            samples[2] = (sample&0xff0000)>>16;
+            samples += 3;
+            if(s->channels > 1) {
+                sample = s->decoded1[i];
+                samples[0] = sample&0xff;
+                samples[1] = (sample&0xff00)>>8;
+                samples[2] = (sample&0xff0000)>>16;
+                samples += 3;
+            }
+        }
+    }
+    else if (_info->fmt.bps == 16) {
+        for (; i < blockstodecode; i++) {
+            *((int16_t*)samples) = (int16_t)s->decoded0[i];
+            samples += 2;
+            if(s->channels > 1) {
+                *((int16_t*)samples) = (int16_t)s->decoded1[i];
+                samples += 2;
+            }
+        }
+    }
+    else if (_info->fmt.bps == 8) {
+        for (; i < blockstodecode; i++) {
+            *samples = (int16_t)s->decoded0[i];
+            samples++;
+            if(s->channels > 1) {
+                *samples = (int16_t)s->decoded1[i];
+                samples++;
+            }
         }
     }
     
     s->samplestoskip -= skip;
     s->samples -= blockstodecode;
 
-    *data_size = (blockstodecode - skip) * 2 * s->channels;
+    *data_size = (blockstodecode - skip) * samplesize;
 //    ape_ctx.currentsample += blockstodecode - skip;
     bytes_used = s->samples ? s->ptr - s->last_ptr : s->packet_remaining;
 
@@ -1767,11 +1809,14 @@ ffap_insert (DB_playItem_t *after, const char *fname) {
 }
 
 static int
-ffap_read_int16 (DB_fileinfo_t *_info, char *buffer, int size) {
+ffap_read (DB_fileinfo_t *_info, char *buffer, int size) {
     ape_info_t *info = (ape_info_t*)_info;
-    if (info->ape_ctx.currentsample + size / ((info->info.bps / 8) * info->ape_ctx.channels) > info->endsample) {
-        size = (info->endsample - info->ape_ctx.currentsample + 1) * (info->info.bps / 8) * info->ape_ctx.channels;
-        trace ("size truncated to %d bytes (%d samples), cursample=%d, info->endsample=%d, totalsamples=%d\n", size, size / (info->info.bps / 8) / info->ape_ctx.channels, info->ape_ctx.currentsample, info->endsample, info->ape_ctx.totalsamples);
+
+    int samplesize = _info->fmt.bps / 8 * info->ape_ctx.channels;
+
+    if (info->ape_ctx.currentsample + size / samplesize > info->endsample) {
+        size = (info->endsample - info->ape_ctx.currentsample + 1) * samplesize;
+        trace ("size truncated to %d bytes (%d samples), cursample=%d, info->endsample=%d, totalsamples=%d\n", size, size / samplesize, info->ape_ctx.currentsample, info->endsample, info->ape_ctx.totalsamples);
         if (size <= 0) {
             return 0;
         }
@@ -1808,8 +1853,8 @@ ffap_read_int16 (DB_fileinfo_t *_info, char *buffer, int size) {
         }
         info->ape_ctx.remaining -= sz;
     }
-    info->ape_ctx.currentsample += (inits - size) / (2 * info->ape_ctx.channels);
-    _info->readpos = (info->ape_ctx.currentsample-info->startsample) / (float)_info->samplerate;
+    info->ape_ctx.currentsample += (inits - size) / samplesize;
+    _info->readpos = (info->ape_ctx.currentsample-info->startsample) / (float)_info->fmt.samplerate;
     return inits - size;
 }
 
@@ -1844,7 +1889,7 @@ ffap_seek_sample (DB_fileinfo_t *_info, int sample) {
 
 static int
 ffap_seek (DB_fileinfo_t *_info, float seconds) {
-    return ffap_seek_sample (_info, seconds * _info->samplerate);
+    return ffap_seek_sample (_info, seconds * _info->fmt.samplerate);
 }
 
 
@@ -1911,7 +1956,7 @@ static DB_decoder_t plugin = {
     .open = ffap_open,
     .init = ffap_init,
     .free = ffap_free,
-    .read_int16 = ffap_read_int16,
+    .read = ffap_read,
     .seek = ffap_seek,
     .seek_sample = ffap_seek_sample,
     .insert = ffap_insert,
