@@ -196,7 +196,7 @@ pcm_write_samples_24_to_float (const ddb_waveformat_t * restrict inputfmt, const
         for (int c = 0; c < inputfmt->channels; c++) {
             if (channelmap[c] != -1) {
                 float *out = (float *)(output + 4 * channelmap[c]);
-                int32_t sample = ((int32_t)input[0]<<16) | ((int32_t)input[1]<<8) | (input[2]);
+                int32_t sample = ((int32_t)input[0]<<24) | ((int32_t)input[1]<<16) | (input[2]<<8);
                 *out = sample / (float)0x7fffffff;
             }
             input += 3;
@@ -285,9 +285,9 @@ pcm_write_samples_float_to_24 (const ddb_waveformat_t * restrict inputfmt, const
                     sample = -1;
                 }
                 int32_t outsample = (int32_t)ftoi (sample * 0x7fffffff);
-                out[0] = (outsample&0x00ff0000)>>16;
-                out[1] = (outsample&0x0000ff00)>>8;
-                out[2] = (outsample&0x000000ff);
+                out[0] = (outsample&0xff000000)>>24;
+                out[1] = (outsample&0x00ff0000)>>16;
+                out[2] = (outsample&0x0000ff00)>>8;
             }
             input += 4;
         }
