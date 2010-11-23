@@ -314,6 +314,9 @@ csid_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     int samplerate = deadbeef->conf_get_int ("sid.samplerate", 44100);
     int bps = deadbeef->conf_get_int ("sid.bps", 16);
+    if (bps != 16 && bps != 8) {
+        bps = 16;
+    }
 
     info->resid->sampling (samplerate);
     info->duration = deadbeef->pl_get_item_duration (it);
@@ -371,6 +374,7 @@ csid_read (DB_fileinfo_t *_info, char *bytes, int size) {
     int rd = info->sidplay->play (bytes, size);
 
     int samplesize = (_info->fmt.bps>>3) * _info->fmt.channels;
+
     _info->readpos += rd / samplesize / (float)_info->fmt.samplerate;
 
     return rd;
