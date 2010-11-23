@@ -1089,7 +1089,10 @@ streamer_thread (void *ctx) {
                 sz -= (sz % samplesize);
             }
 
-            int bytesread = streamer_read_async (buf,sz);
+            int bytesread = 0;
+            while (bytesread < sz-100) {
+                bytesread += streamer_read_async (buf+bytesread,sz-bytesread);
+            }
             streamer_lock ();
             memcpy (streambuffer+streambuffer_fill, buf, bytesread);
             if (bytesread > 0) {
