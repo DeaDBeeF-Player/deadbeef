@@ -512,6 +512,10 @@ lastfm_songfinished (DB_event_track_t *ev, uintptr_t data) {
     if (!deadbeef->conf_get_int ("lastfm.enable", 0)) {
         return 0;
     }
+    // previous track must exist
+    if (!ev->track) {
+        return 0;
+    }
 #if !LFM_IGNORE_RULES
     // check submission rules
     // duration must be >= 30 sec
@@ -807,7 +811,7 @@ lastfm_start (void) {
     lfm_tid = deadbeef->thread_start (lfm_thread, NULL);
     // subscribe to frameupdate event
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_SONGSTARTED, DB_CALLBACK (lastfm_songstarted), 0);
-    deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_SONGFINISHED, DB_CALLBACK (lastfm_songfinished), 0);
+    deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_SONGCHANGED, DB_CALLBACK (lastfm_songfinished), 0);
 
     return 0;
 }
@@ -818,7 +822,7 @@ lastfm_stop (void) {
     if (lfm_mutex) {
         lfm_stopthread = 1;
         deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_SONGSTARTED, DB_CALLBACK (lastfm_songstarted), 0);
-        deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_SONGFINISHED, DB_CALLBACK (lastfm_songfinished), 0);
+        deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_SONGCHANGED, DB_CALLBACK (lastfm_songfinished), 0);
 
         trace ("lfm_stop signalling cond\n");
         deadbeef->cond_signal (lfm_cond);
