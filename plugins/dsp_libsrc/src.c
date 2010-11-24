@@ -53,7 +53,7 @@ DB_dsp_instance_t* ddb_src_open (const char *id) {
 
     src->mutex = deadbeef->mutex_create ();
     char var[20];
-    snprintf (var, sizeof (var), "%s.quality");
+    snprintf (var, sizeof (var), "%s.quality", src->inst.id);
     src->quality = deadbeef->conf_get_int (var, 2);
     src->src = src_new (src->quality, 2, NULL);
     if (!src->src) {
@@ -95,7 +95,7 @@ ddb_src_reset (DB_dsp_instance_t *_src, int full) {
     src->remaining = 0;
     if (full) {
         char var[20];
-        snprintf (var, sizeof (var), "%s.quality");
+        snprintf (var, sizeof (var), "%s.quality", _src->id);
         int q = deadbeef->conf_get_int (var, 2);
         if (q != src->quality && q >= SRC_SINC_BEST_QUALITY && q <= SRC_LINEAR) {
             ddb_src_lock (_src);
