@@ -60,9 +60,6 @@ streamer_ok_to_read (int len);
 float
 streamer_get_playpos (void);
 
-int
-streamer_is_buffering (void);
-
 void
 streamer_song_removed_notify (playItem_t *it);
 

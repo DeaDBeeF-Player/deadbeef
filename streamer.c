@@ -1091,7 +1091,11 @@ streamer_thread (void *ctx) {
 
             int bytesread = 0;
             while (bytesread < sz-100) {
-                bytesread += streamer_read_async (buf+bytesread,sz-bytesread);
+                int nb = streamer_read_async (buf+bytesread,sz-bytesread);
+                if (nb == 0) {
+                    break;
+                }
+                bytesread += nb;
             }
             streamer_lock ();
             memcpy (streambuffer+streambuffer_fill, buf, bytesread);
@@ -1360,6 +1364,7 @@ streamer_read_async (char *bytes, int size) {
                 // decode pcm
                 int nb = fileinfo->plugin->read (fileinfo, input, inputsize);
                 if (nb != inputsize) {
+                    bytesread = nb;
                     is_eof = 1;
                 }
                 inputsize = nb;
@@ -1390,6 +1395,7 @@ streamer_read_async (char *bytes, int size) {
                 char input[inputsize];
                 int nb = fileinfo->plugin->read (fileinfo, input, inputsize);
                 if (nb != inputsize) {
+                    bytesread = nb;
                     is_eof = 1;
                 }
                 inputsize = nb;
@@ -1417,10 +1423,10 @@ streamer_read_async (char *bytes, int size) {
         }
         else  {
             // that means EOF
-            trace ("streamer: EOF! buns: %d\n", bytes_until_next_song);
+            trace ("streamer: EOF! buns: %d, bytesread: %d, buffering: %d, bufferfill: %d\n", bytes_until_next_song, bytesread, streamer_buffering, streambuffer_fill);
 
             // in case of decoder error, or EOF while buffering - switch to next song instantly
-            if (bytesread < 0 || (bytes_until_next_song < 0 && streamer_is_buffering() && bytesread == 0) || bytes_until_next_song < 0) {
+            if (bytesread < 0 || (bytes_until_next_song >= 0 && streamer_buffering && bytesread == 0) || bytes_until_next_song < 0) {
                 trace ("finished streaming song, queueing next\n");
                 bytes_until_next_song = streambuffer_fill;
                 if (conf_get_int ("playlist.stop_after_current", 0)) {
@@ -1435,6 +1441,7 @@ streamer_read_async (char *bytes, int size) {
     }
     return initsize - size;
 }
+
 int
 streamer_read (char *bytes, int size) {
 #if 0
@@ -1517,21 +1524,6 @@ streamer_ok_to_read (int len) {
         return 1-streamer_buffering;
     }
     return 0;
-}
-
-int
-streamer_is_buffering (void) {
-    if (streambuffer_fill < 16384) {
-        return 1;
-    }
-    else {
-        return 0;
-    }
-}
-
-void
-src_conf_changed (void) {
-
 }
 
 void
