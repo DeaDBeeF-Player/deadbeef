@@ -65,7 +65,7 @@ typedef struct {
 } adplug_info_t;
 
 DB_fileinfo_t *
-adplug_open (void) {
+adplug_open (uint32_t hints) {
     adplug_info_t *info = (adplug_info_t *)malloc (sizeof (adplug_info_t));
     DB_fileinfo_t *_info = (DB_fileinfo_t *)info;
     memset (info, 0, sizeof (adplug_info_t));
@@ -79,9 +79,9 @@ adplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     adplug_info_t *info = (adplug_info_t *)_info;
 
     int samplerate = deadbeef->conf_get_int ("synth.samplerate", 44100);
-    int bps = deadbeef->get_output ()->bitspersample ();
+    int bps = 16; // NOTE: there's no need to support 8bit input, because adplug simply downgrades 16bit signal to 8bits
     int channels = 2;
-    info->opl = new CEmuopl (samplerate, true, channels == 2);
+    info->opl = new CEmuopl (samplerate, bps == 16 ? true : false, channels == 2);
 //    opl->settype (Copl::TYPE_OPL2);
     info->decoder = CAdPlug::factory (it->fname, info->opl, CAdPlug::players);
     if (!info->decoder) {
@@ -98,9 +98,10 @@ adplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     // fill in mandatory plugin fields
     _info->plugin = &adplug_plugin;
-    _info->bps = bps;
-    _info->channels = channels;
-    _info->samplerate = samplerate;
+    _info->fmt.bps = bps;
+    _info->fmt.channels = channels;
+    _info->fmt.samplerate = samplerate;
+    _info->fmt.channelmask = _info->fmt.channels == 1 ? DDB_SPEAKER_FRONT_LEFT : (DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT);
     _info->readpos = 0;
 
     trace ("adplug_init ok (songlength=%d, duration=%f, totalsamples=%d)\n", info->decoder->songlength (info->subsong), deadbeef->pl_get_item_duration (it), info->totalsamples);
@@ -124,16 +125,16 @@ adplug_free (DB_fileinfo_t *_info) {
 }
 
 int
-adplug_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
+adplug_read (DB_fileinfo_t *_info, char *bytes, int size) {
     // try decode `size' bytes
     // return number of decoded bytes
     // return 0 on EOF
     adplug_info_t *info = (adplug_info_t *)_info;
     bool playing = true;
     int i;
-    int sampsize = (_info->bps >> 3) * _info->channels;
+    int sampsize = (_info->fmt.bps / 8) * _info->fmt.channels;
 
-    if (info->currentsample + size/4 >= info->totalsamples) {
+    if (info->currentsample + size/sampsize >= info->totalsamples) {
         // clip
         size = (info->totalsamples - info->currentsample) * sampsize;
         trace ("adplug: clipped to %d\n", size);
@@ -151,11 +152,11 @@ adplug_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
     {
       while (info->toadd < 0)
       {
-        info->toadd += _info->samplerate;
+        info->toadd += _info->fmt.samplerate;
         playing = info->decoder->update ();
 //        decoder->time_ms += 1000 / plr.p->getrefresh ();
       }
-      i = min (towrite, (long) (info->toadd / info->decoder->getrefresh () + 4) & ~3);
+      i = min (towrite, (long) (info->toadd / info->decoder->getrefresh () + sampsize) & ~(sampsize-1));
       info->opl->update ((short *) sndbufpos, i);
       sndbufpos += i * sampsize;
       size -= i * sampsize;
@@ -164,7 +165,7 @@ adplug_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
       info->toadd -= (long) (info->decoder->getrefresh () * i);
     }
     info->currentsample += size/4;
-    _info->readpos = (float)info->currentsample / _info->samplerate;
+    _info->readpos = (float)info->currentsample / _info->fmt.samplerate;
     return initsize-size;
 }
 
@@ -184,7 +185,7 @@ adplug_seek_sample (DB_fileinfo_t *_info, int sample) {
 
     while (info->currentsample < sample) {
         info->decoder->update ();
-        int framesize = _info->samplerate / info->decoder->getrefresh ();
+        int framesize = _info->fmt.samplerate / info->decoder->getrefresh ();
         info->currentsample += framesize;
     }
 
@@ -195,7 +196,7 @@ adplug_seek_sample (DB_fileinfo_t *_info, int sample) {
     info->toadd = 0;
     trace ("adplug: new position after seek: %d of %d\n", info->currentsample, info->totalsamples);
     
-    _info->readpos = (float)info->currentsample / _info->samplerate;
+    _info->readpos = (float)info->currentsample / _info->fmt.samplerate;
 
     return 0;
 }
@@ -205,7 +206,7 @@ adplug_seek (DB_fileinfo_t *_info, float time) {
     // seek to specified time in seconds
     // return 0 on success
     // return -1 on failure
-    return adplug_seek_sample (_info, time * _info->samplerate);
+    return adplug_seek_sample (_info, time * _info->fmt.samplerate);
 }
 
 static const char *

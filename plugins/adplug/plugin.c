@@ -26,13 +26,13 @@ extern const char *adplug_exts[];
 extern const char *adplug_filetypes[];
 
 DB_fileinfo_t *
-adplug_open (void);
+adplug_open (uint32_t hints);
 int
 adplug_init (DB_fileinfo_t *_info, DB_playItem_t *it);
 void
 adplug_free (DB_fileinfo_t *);
 int
-adplug_read_int16 (DB_fileinfo_t *, char *bytes, int size);
+adplug_read (DB_fileinfo_t *, char *bytes, int size);
 int
 adplug_seek_sample (DB_fileinfo_t *, int sample);
 int
@@ -61,7 +61,7 @@ DB_decoder_t adplug_plugin = {
     .open = adplug_open,
     .init = adplug_init,
     .free = adplug_free,
-    .read_int16 = adplug_read_int16,
+    .read = adplug_read,
     .seek = adplug_seek,
     .seek_sample = adplug_seek_sample,
     .insert = adplug_insert,
