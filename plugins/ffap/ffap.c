@@ -1666,7 +1666,7 @@ ape_decode_frame(DB_fileinfo_t *_info, void *data, int *data_size)
     int skip = min (s->samplestoskip, blockstodecode);
     i = skip;
 
-    if (_info->fmt.is_float || _info->fmt.bps == 32) {
+    if (_info->fmt.bps == 32) {
         for (; i < blockstodecode; i++) {
             *((int32_t*)samples) = s->decoded0[i];
             samples += 4;
