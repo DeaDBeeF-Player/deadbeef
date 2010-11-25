@@ -85,7 +85,7 @@ static SF_VIRTUAL_IO vfs = {
 };
 
 static DB_fileinfo_t *
-sndfile_open (void) {
+sndfile_open (uint32_t hints) {
     DB_fileinfo_t *_info = malloc (sizeof (sndfile_info_t));
     memset (_info, 0, sizeof (sndfile_info_t));
     return _info;
@@ -114,27 +114,31 @@ sndfile_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     switch (inf.format&0x000f) {
     case SF_FORMAT_PCM_S8:
     case SF_FORMAT_PCM_U8:
-        _info->bps = 8;
+        _info->fmt.bps = 8;
         break;
     case SF_FORMAT_PCM_16:
-        _info->bps = 16;
+        _info->fmt.bps = 16;
         break;
     case SF_FORMAT_PCM_24:
-        _info->bps = 24;
+        _info->fmt.bps = 24;
         break;
     case SF_FORMAT_PCM_32:
     case SF_FORMAT_FLOAT:
-        _info->bps = 24;
+        _info->fmt.bps = 32;
         break;
     case SF_FORMAT_DOUBLE:
-        _info->bps = 64;
+        fprintf (stderr, "[sndfile] 64 bit float input format is not supported (yet)\n");
+        return -1;
+//        _info->fmt.bps = 64;
         break;
     default:
-        _info->bps = 16;
+        fprintf (stderr, "[sndfile] unidentified input format: 0x%X\n", inf.format&0x000f);
+        return -1;
     }
 
-    _info->channels = inf.channels;
-    _info->samplerate = inf.samplerate;
+    _info->fmt.channels = inf.channels;
+    _info->fmt.samplerate = inf.samplerate;
+    _info->fmt.channelmask = _info->fmt.channels == 1 ? DDB_SPEAKER_FRONT_LEFT : (DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT);
     _info->readpos = 0;
     if (it->endsample > 0) {
         info->startsample = it->startsample;
@@ -172,11 +176,11 @@ sndfile_free (DB_fileinfo_t *_info) {
 }
 
 static int
-sndfile_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
+sndfile_read (DB_fileinfo_t *_info, char *bytes, int size) {
     sndfile_info_t *info = (sndfile_info_t*)_info;
-    int out_ch = min (_info->channels, 2);
-    if (size / (2 * out_ch) + info->currentsample > info->endsample) {
-        size = (info->endsample - info->currentsample + 1) * 2 * out_ch;
+    int samplesize = _info->fmt.channels * _info->fmt.bps / 8;
+    if (size / samplesize + info->currentsample > info->endsample) {
+        size = (info->endsample - info->currentsample + 1) * samplesize;
         trace ("sndfile: size truncated to %d bytes, cursample=%d, endsample=%d\n", size, info->currentsample, info->endsample);
         if (size <= 0) {
             return 0;
@@ -184,61 +188,12 @@ sndfile_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
     }
 
     int n = 0;
-    if (out_ch != _info->channels) {
-        // read into temp buffer, and downmix
-        int nframes = size / out_ch / 2;
-        int16_t buf[nframes * _info->channels];
-        n = sf_readf_short (info->ctx, buf, nframes);
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < out_ch; j++) {
-                ((int16_t *)bytes)[i * out_ch + j] = buf[i * _info->channels + j];
-            }
-        }
-    }
-    else {
-        n = sf_readf_short (info->ctx, (short *)bytes, size/(2*_info->channels));
-    }
+    n = sf_read_raw (info->ctx, (short *)bytes, size);
+    n /= samplesize;
     info->currentsample += n;
 
-
-    size = n * 2 * out_ch;
-    _info->readpos = (float)(info->currentsample-info->startsample)/_info->samplerate;
-    if (info->bitrate > 0) {
-        deadbeef->streamer_set_bitrate (info->bitrate);
-    }
-    return size;
-}
-
-static int
-sndfile_read_float32 (DB_fileinfo_t *_info, char *bytes, int size) {
-    sndfile_info_t *info = (sndfile_info_t*)_info;
-    int out_ch = min (_info->channels, 2);
-    if (size / (4 * out_ch) + info->currentsample > info->endsample) {
-        size = (info->endsample - info->currentsample + 1) * 4 * out_ch;
-        trace ("sndfile: size truncated to %d bytes, cursample=%d, endsample=%d\n", size, info->currentsample, info->endsample);
-        if (size <= 0) {
-            return 0;
-        }
-    }
-    int n = 0;
-    if (out_ch != _info->channels) {
-        // read into temp buffer, and downmix
-        int nframes = size / out_ch / 4;
-        float buf[nframes * _info->channels];
-        n = sf_readf_float (info->ctx, buf, nframes);
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < out_ch; j++) {
-                ((float *)bytes)[i * out_ch + j] = buf[i * _info->channels + j];
-            }
-        }
-    }
-    else {
-        n = sf_readf_float (info->ctx, (float *)bytes, size/(4*_info->channels));
-    }
-
-    info->currentsample += n;
-    size = n * 4 * out_ch;
-    _info->readpos = (float)(info->currentsample-info->startsample)/_info->samplerate;
+    size = n * samplesize;
+    _info->readpos = (float)(info->currentsample-info->startsample)/_info->fmt.samplerate;
     if (info->bitrate > 0) {
         deadbeef->streamer_set_bitrate (info->bitrate);
     }
@@ -253,13 +208,13 @@ sndfile_seek_sample (DB_fileinfo_t *_info, int sample) {
         return -1;
     }
     info->currentsample = ret;
-    _info->readpos = (float)(info->currentsample - info->startsample) / _info->samplerate;
+    _info->readpos = (float)(info->currentsample - info->startsample) / _info->fmt.samplerate;
     return 0;
 }
 
 static int
 sndfile_seek (DB_fileinfo_t *_info, float sec) {
-    return sndfile_seek_sample (_info, sec * _info->samplerate);
+    return sndfile_seek_sample (_info, sec * _info->fmt.samplerate);
 }
 
 static DB_playItem_t *
@@ -324,8 +279,7 @@ static DB_decoder_t plugin = {
     .open = sndfile_open,
     .init = sndfile_init,
     .free = sndfile_free,
-    .read_int16 = sndfile_read_int16,
-    .read_float32 = sndfile_read_float32,
+    .read = sndfile_read,
     .seek = sndfile_seek,
     .seek_sample = sndfile_seek_sample,
     .insert = sndfile_insert,
