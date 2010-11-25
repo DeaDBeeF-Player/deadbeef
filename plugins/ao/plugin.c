@@ -48,7 +48,7 @@ typedef struct {
 } aoplug_info_t;
 
 static DB_fileinfo_t *
-aoplug_open (void) {
+aoplug_open (uint32_t hints) {
     DB_fileinfo_t *_info = malloc (sizeof (aoplug_info_t));
     aoplug_info_t *info = (aoplug_info_t *)_info;
     memset (info, 0, sizeof (aoplug_info_t));
@@ -59,9 +59,10 @@ static int
 aoplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     aoplug_info_t *info = (aoplug_info_t *)_info;
 
-    _info->bps = 16;
-    _info->channels = 2;
-    _info->samplerate = 44100;
+    _info->fmt.bps = 16;
+    _info->fmt.channels = 2;
+    _info->fmt.samplerate = deadbeef->conf_get_int ("synth.samplerate", 44100);
+    _info->fmt.channelmask = _info->fmt.channels == 1 ? DDB_SPEAKER_FRONT_LEFT : (DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT);
     _info->readpos = 0;
     _info->plugin = &plugin;
     info->duration = deadbeef->pl_get_item_duration (it);
@@ -116,11 +117,11 @@ aoplug_free (DB_fileinfo_t *_info) {
 }
 
 static int
-aoplug_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
+aoplug_read (DB_fileinfo_t *_info, char *bytes, int size) {
     aoplug_info_t *info = (aoplug_info_t *)_info;
 //    printf ("aoplug_read_int16 %d samples, curr %d, end %d\n", size/4, info->currentsample, (int)(info->duration * _info->samplerate));
 
-    if (info->currentsample >= info->duration * _info->samplerate) {
+    if (info->currentsample >= info->duration * _info->fmt.samplerate) {
         return 0;
     }
 
@@ -152,7 +153,7 @@ aoplug_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
             info->remaining = 735;
         }
     }
-    info->currentsample += (initsize-size) / (_info->channels * _info->bps/8);
+    info->currentsample += (initsize-size) / (_info->fmt.channels * _info->fmt.bps/8);
     return initsize-size;
 }
 
@@ -168,13 +169,13 @@ aoplug_seek_sample (DB_fileinfo_t *_info, int sample) {
         info->skipsamples = sample;
     }
     info->currentsample = sample;
-    _info->readpos = (float)sample / _info->samplerate;
+    _info->readpos = (float)sample / _info->fmt.samplerate;
     return 0;
 }
 
 static int
 aoplug_seek (DB_fileinfo_t *_info, float time) {
-    return aoplug_seek_sample (_info, time * _info->samplerate);
+    return aoplug_seek_sample (_info, time * _info->fmt.samplerate);
 }
 
 static void
@@ -350,7 +351,7 @@ static DB_decoder_t plugin = {
     .open = aoplug_open,
     .init = aoplug_init,
     .free = aoplug_free,
-    .read_int16 = aoplug_read_int16,
+    .read = aoplug_read,
     .seek = aoplug_seek,
     .seek_sample = aoplug_seek_sample,
     .insert = aoplug_insert,
