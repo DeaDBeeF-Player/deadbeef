@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 0.4.2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-09-10 15:02+0200\n"
-"PO-Revision-Date: 2010-11-11 16:01+0200\n"
+"PO-Revision-Date: 2010-11-25 15:37+0200\n"
 "Last-Translator: kizito <kbirabwa@yahoo.co.uk>\n"
 "Language-Team: LANGUAGE <kbirabwa@yahoo.co.uk>\n"
 "Language: lg\n"
@@ -564,23 +564,23 @@ msgstr "Kwogeza"
 
 #: ../plugins/gtkui/interface.c:1756 ../plugins/gtkui/deadbeef.glade.h:12
 msgid "Allow dynamic samplerate switching"
-msgstr ""
+msgstr "Kisoboke okukyusa obwangu bw'okuddiŋana okuloza ebikwatibwa"
 
 #: ../plugins/gtkui/interface.c:1764 ../plugins/gtkui/deadbeef.glade.h:111
 msgid "Samplerate conversion quality:"
-msgstr ""
+msgstr "Obulongoofu bw'ebifuulidwa:"
 
 #: ../plugins/gtkui/interface.c:1783 ../plugins/gtkui/deadbeef.glade.h:108
 msgid "Replaygain mode:"
-msgstr ""
+msgstr "Maanyi g'eddoboozi ly'ebiwulirizibwa:"
 
 #: ../plugins/gtkui/interface.c:1792
 msgid "Disable"
-msgstr ""
+msgstr "Gyako"
 
 #: ../plugins/gtkui/interface.c:1796 ../plugins/gtkui/deadbeef.glade.h:109
 msgid "Replaygain peak scale"
-msgstr ""
+msgstr "Ekigero ky'amaanyi ge'ddoboozi ly'ebiwulirizibwa"
 
 #: ../plugins/gtkui/interface.c:1804 ../plugins/gtkui/deadbeef.glade.h:7
 msgid "Add files from command line (or file manager) to this playlist:"
