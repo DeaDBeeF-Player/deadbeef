@@ -49,7 +49,7 @@ typedef struct {
 } tta_info_t;
 
 static DB_fileinfo_t *
-tta_open (void) {
+tta_open (uint32_t hints) {
     DB_fileinfo_t *_info = malloc (sizeof (tta_info_t));
     tta_info_t *info = (tta_info_t *)_info;
     memset (info, 0, sizeof (tta_info_t));
@@ -71,9 +71,10 @@ tta_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         return -1;
     }
 
-    _info->bps = info->tta.BPS;
-    _info->channels = info->tta.NCH;
-    _info->samplerate = info->tta.SAMPLERATE;
+    _info->fmt.bps = info->tta.BPS;
+    _info->fmt.channels = info->tta.NCH;
+    _info->fmt.samplerate = info->tta.SAMPLERATE;
+    _info->fmt.channelmask = _info->fmt.channels == 1 ? DDB_SPEAKER_FRONT_LEFT : (DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT);
     _info->readpos = 0;
     _info->plugin = &plugin;
 
@@ -101,65 +102,40 @@ tta_free (DB_fileinfo_t *_info) {
 }
 
 static int
-tta_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
+tta_read (DB_fileinfo_t *_info, char *bytes, int size) {
     tta_info_t *info = (tta_info_t *)_info;
-    int out_ch = min (_info->channels, 2);
-    if (info->currentsample + size / (2 * out_ch) > info->endsample) {
-        size = (info->endsample - info->currentsample + 1) * 2 * out_ch;
+    int samplesize = _info->fmt.channels * _info->fmt.bps / 8;
+    if (info->currentsample + size / samplesize > info->endsample) {
+        size = (info->endsample - info->currentsample + 1) * samplesize;
         if (size <= 0) {
             return 0;
         }
     }
 
     int initsize = size;
-    int sample_size = 2 * out_ch;
 
     while (size > 0) {
         if (info->samples_to_skip > 0 && info->remaining > 0) {
             int skip = min (info->remaining, info->samples_to_skip);
             if (skip < info->remaining) {
-                memmove (info->buffer, info->buffer + skip * info->tta.BSIZE * info->tta.NCH, (info->remaining - skip) * info->tta.BSIZE * info->tta.NCH);
+                memmove (info->buffer, info->buffer + skip * samplesize, (info->remaining - skip) * samplesize);
             }
             info->remaining -= skip;
             info->samples_to_skip -= skip;
         }
         if (info->remaining > 0) {
-            int n = size / sample_size;
+            int n = size / samplesize;
             n = min (n, info->remaining);
             int nn = n;
             char *p = info->buffer;
-            if (_info->bps > 8) {
-            // hack: shift buffer, so that we always get 2 most significant bytes (24 bit support)
-            // same hack kinda works for 8bit, but it's not lossless
-                p += (_info->bps >> 3) - 2;
-                while (n > 0) {
-                    *((int16_t*)bytes) = (int16_t)(((uint8_t)p[1]<<8) | (uint8_t)p[0]);
-                    bytes += 2;
-                    if (out_ch == 2) {
-                        *((int16_t*)bytes) = (int16_t)(((uint8_t)(p+info->tta.BSIZE)[1]<<8) | (uint8_t)(p+info->tta.BSIZE)[0]);
-                        bytes += 2;
-                    }
-                    n--;
-                    size -= sample_size;
-                    p += info->tta.NCH * info->tta.BSIZE;
-                }
-                p -= (_info->bps >> 3) - 2;
-            }
-            else {
-                while (n > 0) {
-                    *((int16_t*)bytes) = ((int16_t)(p[0])) << 8;
-                    bytes += 2;
-                    if (out_ch == 2) {
-                        *((int16_t*)bytes) = ((int16_t)(p[1])) << 8;
-                        bytes += 2;
-                    }
-                    n--;
-                    size -= sample_size;
-                    p += info->tta.NCH * info->tta.BSIZE;
-                }
-            }
+
+            memcpy (bytes, p, n * samplesize);
+            bytes += n * samplesize;
+            size -= n * samplesize;
+            p += n * samplesize;
+
             if (info->remaining > nn) {
-                memmove (info->buffer, p, (info->remaining - nn) * info->tta.BSIZE * info->tta.NCH);
+                memmove (info->buffer, p, (info->remaining - nn) * samplesize);
             }
             info->remaining -= nn;
         }
@@ -171,7 +147,7 @@ tta_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
             }
         }
     }
-    info->currentsample += (initsize-size) / sample_size;
+    info->currentsample += (initsize-size) / samplesize;
     return initsize-size;
 }
 
@@ -187,14 +163,14 @@ tta_seek_sample (DB_fileinfo_t *_info, int sample) {
 
     info->currentsample = sample + info->startsample;
     info->remaining = 0;
-    _info->readpos = sample / _info->samplerate;
+    _info->readpos = sample / _info->fmt.samplerate;
     return 0;
 }
 
 static int
 tta_seek (DB_fileinfo_t *_info, float time) {
     tta_info_t *info = (tta_info_t *)_info;
-    return tta_seek_sample (_info, time * _info->samplerate);
+    return tta_seek_sample (_info, time * _info->fmt.samplerate);
 }
 
 static DB_playItem_t *
@@ -327,8 +303,7 @@ static DB_decoder_t plugin = {
     .open = tta_open,
     .init = tta_init,
     .free = tta_free,
-    .read_int16 = tta_read_int16,
-//    .read_float32 = tta_read_float32,
+    .read = tta_read,
     .seek = tta_seek,
     .seek_sample = tta_seek_sample,
     .insert = tta_insert,
