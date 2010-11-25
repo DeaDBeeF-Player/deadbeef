@@ -80,7 +80,7 @@ mpc_bool_t musepack_vfs_canseek (mpc_reader *r) {
 }
 
 static DB_fileinfo_t *
-musepack_open (void) {
+musepack_open (uint32_t hints) {
     DB_fileinfo_t *_info = malloc (sizeof (musepack_info_t));
     musepack_info_t *info = (musepack_info_t *)_info;
     memset (info, 0, sizeof (musepack_info_t));
@@ -122,9 +122,11 @@ musepack_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     info->vbr_update_bits = 0;
     info->remaining = 0;
 
-    _info->bps = 16;
-    _info->channels = info->si.channels;
-    _info->samplerate = info->si.sample_freq;
+    _info->fmt.is_float = 1;
+    _info->fmt.bps = 32;
+    _info->fmt.channels = info->si.channels;
+    _info->fmt.samplerate = info->si.sample_freq;
+    _info->fmt.channelmask = _info->fmt.channels == 1 ? DDB_SPEAKER_FRONT_LEFT : (DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT);
     _info->readpos = 0;
     _info->plugin = &plugin;
 
@@ -145,10 +147,6 @@ static void
 musepack_free (DB_fileinfo_t *_info) {
     musepack_info_t *info = (musepack_info_t *)_info;
     if (info) {
-//        if (info->mpcdec) {
-//            mpc_decoder_exit (info->mpcdec);
-//            info->decoder = NULL;
-//        }
         if (info->demux) {
             mpc_demux_exit (info->demux);
             info->demux = NULL;
@@ -161,27 +159,24 @@ musepack_free (DB_fileinfo_t *_info) {
     }
 }
 
+#if 0
 static int
-musepack_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
+musepack_read (DB_fileinfo_t *_info, char *bytes, int size) {
     musepack_info_t *info = (musepack_info_t *)_info;
 
-    if (info->currentsample + size / (2 * _info->channels) > info->endsample) {
-        size = (info->endsample - info->currentsample + 1) * 2 * _info->channels;
+    int samplesize = _info->fmt.bps / 8 * _info->fmt.channels;
+    if (info->currentsample + size / samplesize > info->endsample) {
+        size = (info->endsample - info->currentsample + 1) * samplesize;
         if (size <= 0) {
             return 0;
         }
     }
 
     int initsize = size;
-    int out_channels = _info->channels;
-    if (out_channels > 2) {
-        out_channels = 2;
-    }
-    int sample_size = ((_info->bps >> 3) * out_channels);
 
     while (size > 0) {
         if (info->remaining > 0) {
-            int n = size / sample_size;
+            int n = size / samplesize;
             n = min (n, info->remaining);
             int nn = n;
             float *p = info->buffer;
@@ -195,7 +190,7 @@ musepack_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
                 }
                 *((int16_t *)bytes) = (int16_t)sample;
                 bytes += 2;
-                if (_info->channels == 2) {
+                if (_info->fmt.channels == 2) {
                     sample = (int)(*(p+1) * 32767.0f);
                     if (sample > 32767) {
                         sample = 32767;
@@ -207,11 +202,11 @@ musepack_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
                     bytes += 2;
                 }
                 n--;
-                size -= sample_size;
+                size -= samplesize;
                 p += info->si.channels;
             }
             if (info->remaining > nn) {
-                memmove (info->buffer, p, (info->remaining - nn) * sizeof (float) * _info->channels);
+                memmove (info->buffer, p, (info->remaining - nn) * sizeof (float) * _info->fmt.channels);
             }
             info->remaining -= nn;
         }
@@ -227,48 +222,39 @@ musepack_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
             info->remaining = frame.samples;
         }
     }
-    info->currentsample += (initsize-size) / sample_size;
+    info->currentsample += (initsize-size) / samplesize;
     return initsize-size;
 }
+#endif
 
 static int
-musepack_read_float32 (DB_fileinfo_t *_info, char *bytes, int size) {
+musepack_read (DB_fileinfo_t *_info, char *bytes, int size) {
     musepack_info_t *info = (musepack_info_t *)_info;
+    int samplesize = _info->fmt.bps / 8 * _info->fmt.channels;
 
-    if (info->currentsample + size / (4 * _info->channels) > info->endsample) {
-        size = (info->endsample - info->currentsample + 1) * 4 * _info->channels;
+    if (info->currentsample + size / samplesize > info->endsample) {
+        size = (info->endsample - info->currentsample + 1) * samplesize;
         if (size <= 0) {
             return 0;
         }
     }
 
     int initsize = size;
-    int out_channels = _info->channels;
-    if (out_channels > 2) {
-        out_channels = 2;
-    }
 
     while (size > 0) {
         if (info->remaining > 0) {
-            int n = size / (out_channels * 4);
+            int n = size / samplesize;
             n = min (n, info->remaining);
-            int nn = n;
-            float *p = info->buffer;
-            while (n > 0) {
-                *((float *)bytes) = *p;
-                bytes += 4;
-                if (out_channels == 2) {
-                    *((float *)bytes) = *(p+1);
-                    bytes += 4;
-                }
-                n--;
-                size -= out_channels * 4;
-                p += info->si.channels;
+
+            memcpy (bytes, info->buffer, n * samplesize);
+
+            size -= n * samplesize;
+            bytes += n * samplesize;
+
+            if (info->remaining > n) {
+                memmove (info->buffer, ((char *)info->buffer) + n * samplesize, (info->remaining - n) * samplesize);
             }
-            if (info->remaining > nn) {
-                memmove (info->buffer, p, (info->remaining - nn) * 4 * _info->channels);
-            }
-            info->remaining -= nn;
+            info->remaining -= n;
         }
 
         if (size > 0 && !info->remaining) {
@@ -282,9 +268,10 @@ musepack_read_float32 (DB_fileinfo_t *_info, char *bytes, int size) {
             info->remaining = frame.samples;
         }
     }
-    info->currentsample += (initsize-size) / (4 * _info->channels);
+    info->currentsample += (initsize-size) / samplesize;
     return initsize-size;
 }
+
 static int
 musepack_seek_sample (DB_fileinfo_t *_info, int sample) {
     musepack_info_t *info = (musepack_info_t *)_info;
@@ -294,7 +281,7 @@ musepack_seek_sample (DB_fileinfo_t *_info, int sample) {
         return -1;
     }
     info->currentsample = sample + info->startsample;
-    _info->readpos = (float)sample / _info->samplerate;
+    _info->readpos = (float)sample / _info->fmt.samplerate;
     info->remaining = 0;
     return 0;
 }
@@ -302,7 +289,7 @@ musepack_seek_sample (DB_fileinfo_t *_info, int sample) {
 static int
 musepack_seek (DB_fileinfo_t *_info, float time) {
     musepack_info_t *info = (musepack_info_t *)_info;
-    return musepack_seek_sample (_info, time * _info->samplerate);
+    return musepack_seek_sample (_info, time * _info->fmt.samplerate);
 }
 
 static DB_playItem_t *
@@ -526,8 +513,7 @@ static DB_decoder_t plugin = {
     .open = musepack_open,
     .init = musepack_init,
     .free = musepack_free,
-    .read_int16 = musepack_read_int16,
-    .read_float32 = musepack_read_float32,
+    .read = musepack_read,
     .seek = musepack_seek,
     .seek_sample = musepack_seek_sample,
     .insert = musepack_insert,
