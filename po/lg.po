@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 0.4.2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-09-10 15:02+0200\n"
-"PO-Revision-Date: 2010-11-25 15:37+0200\n"
+"PO-Revision-Date: 2010-11-25 23:41+0200\n"
 "Last-Translator: kizito <kbirabwa@yahoo.co.uk>\n"
 "Language-Team: LANGUAGE <kbirabwa@yahoo.co.uk>\n"
 "Language: lg\n"
@@ -865,11 +865,11 @@ msgstr "Kulabula"
 
 #: ../plugins/gtkui/plcommon.c:401
 msgid "Add to playback queue"
-msgstr ""
+msgstr "Lwongere ku lukalala lw'ebinaawulirizibwa"
 
 #: ../plugins/gtkui/plcommon.c:406
 msgid "Remove from playback queue"
-msgstr ""
+msgstr "Lugye mu lukalala lw'ebinaawulirizibwa"
 
 #: ../plugins/gtkui/plcommon.c:414
 msgid "Reload metadata"
@@ -877,7 +877,7 @@ msgstr "Ddamu okusoma ebinnyonyola"
 
 #: ../plugins/gtkui/plcommon.c:433
 msgid "Remove from disk"
-msgstr ""
+msgstr "Luggire ddala ku sisitemu"
 
 #: ../plugins/gtkui/plcommon.c:719 ../plugins/gtkui/plcommon.c:844
 msgid "Add column"
@@ -960,11 +960,11 @@ msgstr ""
 
 #: ../plugins/gtkui/trkproperties.c:180
 msgid "Yes"
-msgstr ""
+msgstr "Ye"
 
 #: ../plugins/gtkui/trkproperties.c:180
 msgid "No"
-msgstr ""
+msgstr "Nedda"
 
 #: ../plugins/gtkui/trkproperties.c:182
 msgid "Codec"
