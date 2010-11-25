@@ -67,7 +67,7 @@ typedef struct {
 shn_config shn_cfg;
 
 DB_fileinfo_t *
-shn_open (void) {
+shn_open (uint32_t hints) {
     DB_fileinfo_t *_info = malloc (sizeof (shn_fileinfo_t));
     shn_fileinfo_t *info = (shn_fileinfo_t *)_info;
     memset (info, 0, sizeof (shn_fileinfo_t));
@@ -355,9 +355,10 @@ shn_init(DB_fileinfo_t *_info, DB_playItem_t *it) {
 		return -1;
     }
 
-    _info->bps = info->shnfile->wave_header.bits_per_sample;
-    _info->channels = info->shnfile->wave_header.channels;
-    _info->samplerate  = info->shnfile->wave_header.samples_per_sec;
+    _info->fmt.bps = info->shnfile->wave_header.bits_per_sample;
+    _info->fmt.channels = info->shnfile->wave_header.channels;
+    _info->fmt.samplerate  = info->shnfile->wave_header.samples_per_sec;
+    _info->fmt.channelmask = _info->fmt.channels == 1 ? DDB_SPEAKER_FRONT_LEFT : (DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT);
     _info->plugin = &plugin;
 
     int totalsamples = info->shnfile->wave_header.length * info->shnfile->wave_header.samples_per_sec;
@@ -732,22 +733,21 @@ shn_decode (shn_fileinfo_t *info) {
 }
 
 int
-shn_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
+shn_read (DB_fileinfo_t *_info, char *bytes, int size) {
     shn_fileinfo_t *info = (shn_fileinfo_t *)_info;
-    if (info->currentsample + size / (2 * _info->channels) > info->endsample) {
-        size = (info->endsample - info->currentsample + 1) * 2 * _info->channels;
+    int samplesize = _info->fmt.channels * _info->fmt.bps / 8;
+    if (info->currentsample + size / samplesize > info->endsample) {
+        size = (info->endsample - info->currentsample + 1) * samplesize;
         if (size <= 0) {
             return 0;
         }
     }
     int initsize = size;
-    int ch = min (_info->channels, 2);
-    int sample_size = ch * (_info->bps >> 3);
 
     while (size > 0) {
         if (info->shnfile->vars.bytes_in_buf > 0) {
-            int n = size / sample_size;
-            int nsamples = info->shnfile->vars.bytes_in_buf / (_info->channels * 2);
+            int n = size / samplesize;
+            int nsamples = info->shnfile->vars.bytes_in_buf / samplesize;
             if (info->skipsamples > 0) {
                 int nskip = min(nsamples, info->skipsamples);
                 info->skipsamples -= nskip;
@@ -756,26 +756,23 @@ shn_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
                     continue;
                 }
                 else {
-                    memmove (info->shnfile->vars.buffer, info->shnfile->vars.buffer + nskip * (_info->channels * 2), info->shnfile->vars.bytes_in_buf - nskip * (_info->channels * 2));
+                    memmove (info->shnfile->vars.buffer, info->shnfile->vars.buffer + nskip * samplesize, info->shnfile->vars.bytes_in_buf - nskip * samplesize);
                     nsamples -= nskip;
                     continue;
                 }
             }
             n = min (nsamples, n);
             char *src = info->shnfile->vars.buffer;
-            for (int i = 0; i < n; i++) {
-                memcpy (bytes, src, sample_size);
-                bytes += sample_size;
-                src += _info->channels * 2;
-            }
-
-            size -= n * sample_size;
-            if (n == info->shnfile->vars.bytes_in_buf / (_info->channels * 2)) {
+            memcpy (bytes, src, samplesize * n);
+            src += samplesize * n;
+            bytes += samplesize * n;
+            size -= n * samplesize;
+            if (n == info->shnfile->vars.bytes_in_buf / samplesize) {
                 info->shnfile->vars.bytes_in_buf = 0;
             }
             else {
-                memmove (info->shnfile->vars.buffer, src, info->shnfile->vars.bytes_in_buf - n * (_info->channels * 2));
-                info->shnfile->vars.bytes_in_buf -= n * (_info->channels * 2);
+                memmove (info->shnfile->vars.buffer, src, info->shnfile->vars.bytes_in_buf - n * samplesize);
+                info->shnfile->vars.bytes_in_buf -= n * samplesize;
             }
             continue;
         }
@@ -785,7 +782,7 @@ shn_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
         }
     }
 
-    info->currentsample += (initsize-size) / sample_size;
+    info->currentsample += (initsize-size) / samplesize;
     if (size != 0) {
         trace ("shn_read_int16 eof\n");
     }
@@ -798,7 +795,7 @@ shn_seek_sample (DB_fileinfo_t *_info, int sample) {
 
     sample += info->startsample;
 
-    info->shnfile->vars.seek_to = sample / _info->samplerate;
+    info->shnfile->vars.seek_to = sample / _info->fmt.samplerate;
 
     if (info->shnfile->vars.seek_table_entries == NO_SEEK_TABLE) {
         // seek by skipping samples from the start
@@ -814,7 +811,7 @@ shn_seek_sample (DB_fileinfo_t *_info, int sample) {
             }
             info->skipsamples = sample;
         }
-        info->currentsample = info->shnfile->vars.seek_to * _info->samplerate;
+        info->currentsample = info->shnfile->vars.seek_to * _info->fmt.samplerate;
         _info->readpos = info->shnfile->vars.seek_to;
         return 0;
     }
@@ -853,14 +850,14 @@ shn_seek_sample (DB_fileinfo_t *_info, int sample) {
 
     info->shnfile->vars.bytes_in_buf = 0;
 
-    info->currentsample = info->shnfile->vars.seek_to * _info->samplerate;
+    info->currentsample = info->shnfile->vars.seek_to * _info->fmt.samplerate;
     _info->readpos = info->shnfile->vars.seek_to;
     return 0;
 }
 
 int
 shn_seek (DB_fileinfo_t *_info, float time) {
-    return shn_seek_sample (_info, time * _info->samplerate);
+    return shn_seek_sample (_info, time * _info->fmt.samplerate);
     return 0;
 }
 
@@ -1805,7 +1802,7 @@ static DB_decoder_t plugin = {
     .open = shn_open,
     .init = shn_init,
     .free = shn_free,
-    .read_int16 = shn_read_int16,
+    .read = shn_read,
     .seek = shn_seek,
     .seek_sample = shn_seek_sample,
     .insert = shn_insert,
