@@ -157,11 +157,20 @@ palsa_set_hw_params (ddb_waveformat_t *fmt) {
 #endif
         break;
     case 32:
+        if (fmt->is_float) {
 #if WORDS_BIGENDIAN
-        sample_fmt = SND_PCM_FORMAT_S32_BE;
+            sample_fmt = SND_PCM_FORMAT_FLOAT_BE;
 #else
-        sample_fmt = SND_PCM_FORMAT_S32_LE;
+            sample_fmt = SND_PCM_FORMAT_FLOAT_LE;
 #endif
+        }
+        else {
+#if WORDS_BIGENDIAN
+            sample_fmt = SND_PCM_FORMAT_S32_BE;
+#else
+            sample_fmt = SND_PCM_FORMAT_S32_LE;
+#endif
+        }
         break;
     };
 
