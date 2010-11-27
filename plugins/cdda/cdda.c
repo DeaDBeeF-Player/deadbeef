@@ -71,7 +71,7 @@ min (int a, int b) {
 }
 
 static DB_fileinfo_t *
-cda_open (void) {
+cda_open (uint32_t hints) {
     DB_fileinfo_t *_info = malloc (sizeof (cdda_info_t));
     memset (_info, 0, sizeof (cdda_info_t));
     return _info;
@@ -115,9 +115,10 @@ cda_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     trace ("cdio nchannels: %d\n", channels);
 
     _info->plugin = &plugin;
-    _info->bps = 16,
-    _info->channels = 2,
-    _info->samplerate = 44100,
+    _info->fmt.bps = 16;
+    _info->fmt.channels = 2;
+    _info->fmt.samplerate = 44100;
+    _info->fmt.channelmask = DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT;
     _info->readpos = 0;
 
     info->first_sector = cdio_get_track_lsn (info->cdio, track_nr);
@@ -129,7 +130,7 @@ cda_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 }
 
 int
-cda_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
+cda_read (DB_fileinfo_t *_info, char *bytes, int size) {
     cdda_info_t *info = (cdda_info_t *)_info;
     int extrasize = 0;
     
@@ -181,7 +182,7 @@ cda_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
     retsize += extrasize;
 //    trace ("requested: %d; tail_len: %d; size: %d; sectors_to_read: %d; return: %d\n", initsize, tail_len, size, sectors_to_read, retsize);
     info->current_sample += retsize / SAMPLESIZE;
-    _info->readpos = (float)info->current_sample / _info->samplerate;
+    _info->readpos = (float)info->current_sample / _info->fmt.samplerate;
     return retsize;
 }
 
@@ -211,14 +212,14 @@ cda_seek_sample (DB_fileinfo_t *_info, int sample)
     memcpy (info->tail, buf + offset, SECTORSIZE - offset);
     info->current_sector = sector;
     info->current_sample = sample;
-    _info->readpos = (float)info->current_sample / _info->samplerate;
+    _info->readpos = (float)info->current_sample / _info->fmt.samplerate;
     return 0;
 }
 
 static int
 cda_seek (DB_fileinfo_t *_info, float sec)
 {
-    return cda_seek_sample (_info, sec * _info->samplerate);
+    return cda_seek_sample (_info, sec * _info->fmt.samplerate);
 }
 
 cddb_disc_t*
@@ -596,7 +597,7 @@ static DB_decoder_t plugin = {
     .open = cda_open,
     .init = cda_init,
     .free = cda_free,
-    .read_int16 = cda_read_int16,
+    .read = cda_read,
     .seek = cda_seek,
     .seek_sample = cda_seek_sample,
     .insert = cda_insert,
