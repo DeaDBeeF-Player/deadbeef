@@ -326,7 +326,7 @@ csid_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     conf = info->sidplay->config ();
     conf.frequency = samplerate;
     conf.precision = bps;
-    conf.playback = /*info->tune->isStereo ()*/1 ? sid2_stereo : sid2_mono;
+    conf.playback = info->tune->isStereo () ? sid2_stereo : sid2_mono;
     conf.sidEmulation = info->resid;
     conf.optimisation = 0;
     info->sidplay->config (conf);
@@ -376,7 +376,7 @@ csid_read (DB_fileinfo_t *_info, char *bytes, int size) {
 
     _info->readpos += rd / samplesize / (float)_info->fmt.samplerate;
 
-    return rd;
+    return size;
 
 }
 
