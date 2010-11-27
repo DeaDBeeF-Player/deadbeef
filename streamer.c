@@ -848,7 +848,6 @@ streamer_thread (void *ctx) {
 #ifdef __linux__
     prctl (PR_SET_NAME, "deadbeef-stream", 0, 0, 0, 0);
 #endif
-//    srcplug->reset (src, 0);
 
     while (!streaming_terminate) {
         struct timeval tm1;

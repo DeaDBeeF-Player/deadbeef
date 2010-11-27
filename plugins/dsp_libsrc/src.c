@@ -38,12 +38,12 @@ ddb_dsp_src_t plugin;
 typedef struct {
     DB_dsp_instance_t inst;
 
+    int channels;
     int quality;
     SRC_STATE *src;
     SRC_DATA srcdata;
     int remaining; // number of input samples in SRC buffer
     __attribute__((__aligned__(16))) char in_fbuffer[sizeof(float)*SRC_BUFFER*SRC_MAX_CHANNELS];
-//    __attribute__((__aligned__(16))) float out_fbuffer[SRC_BUFFER*SRC_MAX_CHANNELS];
     uintptr_t mutex;
 } ddb_src_libsamplerate_t;
 
@@ -55,11 +55,7 @@ DB_dsp_instance_t* ddb_src_open (const char *id) {
     char var[20];
     snprintf (var, sizeof (var), "%s.quality", src->inst.id);
     src->quality = deadbeef->conf_get_int (var, 2);
-    src->src = src_new (src->quality, 2, NULL);
-    if (!src->src) {
-        plugin.dsp.close ((DB_dsp_instance_t *)src);
-        return NULL;
-    }
+    src->channels = -1;
     return (DB_dsp_instance_t *)src;
 }
 
@@ -101,12 +97,8 @@ ddb_src_reset (DB_dsp_instance_t *_src, int full) {
             ddb_src_lock (_src);
             trace ("changing src->quality from %d to %d\n", src->quality, q);
             src->quality = q;
-            if (src) {
-                src_delete (src->src);
-                src->src = NULL;
-            }
             memset (&src->srcdata, 0, sizeof (src->srcdata));
-            src->src = src_new (src->quality, 2, NULL);
+            src->channels = -1;
             ddb_src_unlock (_src);
         }
         else {
@@ -123,14 +115,23 @@ ddb_src_set_ratio (DB_dsp_instance_t *_src, float ratio) {
 }
 
 int
-//ddb_src_process (DB_dsp_instance_t *_src, const char * restrict input, int nframes, char * restrict output, int buffersize, float ratio, int nchannels) {
 ddb_src_process (DB_dsp_instance_t *_src, float *samples, int nframes, int nchannels) {
     ddb_src_libsamplerate_t *src = (ddb_src_libsamplerate_t*)_src;
+
+    if (src->channels != nchannels) {
+        if (src->src) {
+            src_delete (src->src);
+            src->src = NULL;
+        }
+        src->channels = nchannels;
+        src->src = src_new (src->quality, src->channels, NULL);
+    }
+
 
     int numoutframes = nframes * src->srcdata.src_ratio;
     float outbuf[numoutframes*nchannels];
     int buffersize = sizeof (outbuf);
-    char *output = outbuf;
+    char *output = (char *)outbuf;
     float *input = samples;
     int inputsize = numoutframes;
 

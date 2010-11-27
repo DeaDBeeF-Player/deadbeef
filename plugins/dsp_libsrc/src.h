@@ -25,15 +25,4 @@ typedef struct {
     void (*set_ratio) (DB_dsp_instance_t *inst, float ratio);
 } ddb_dsp_src_t;
 
-#if 0
-void
-ddb_src_reset (ddb_src_t *src, int full);
-
-void
-ddb_src_confchanged (ddb_src_t *src);
-
-int
-ddb_src_process (ddb_src_t *_src, const char * restrict input, int nframes, char * restrict output, int buffersize, float ratio, int nchannels);
-#endif
-
 #endif
