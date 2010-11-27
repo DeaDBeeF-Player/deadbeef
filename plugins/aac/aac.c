@@ -72,7 +72,6 @@ typedef struct {
     int currentsample;
     char buffer[AAC_BUFFER_SIZE];
     int remaining;
-    int faad_channels;
     char out_buffer[OUT_BUFFER_SIZE];
     int out_remaining;
     int num_errors;
@@ -81,7 +80,7 @@ typedef struct {
 
 // allocate codec control structure
 static DB_fileinfo_t *
-aac_open (void) {
+aac_open (uint32_t hints) {
     DB_fileinfo_t *_info = malloc (sizeof (aac_info_t));
     aac_info_t *info = (aac_info_t *)_info;
     memset (info, 0, sizeof (aac_info_t));
@@ -446,7 +445,6 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
                         trace ("NeAACDecInit2 returned error\n");
                         return -1;
                     }
-                    info->faad_channels = ch;
                     samplerate = srate;
                     channels = ch;
                     NeAACDecConfigurationPtr conf = NeAACDecGetCurrentConfiguration (info->dec);
@@ -494,7 +492,6 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             if (rc >= 0) {
                 _info->samplerate = mp4ASC.samplingFrequency;
                 _info->channels = MP4GetTrackAudioChannels (info->mp4file, info->mp4track);
-                info->faad_channels = _info->channels;
                 totalsamples = MP4GetTrackNumberOfSamples (info->mp4file, info->mp4track) * 1024 * _info->channels;
 
                 // init mp4 decoding
@@ -505,7 +502,6 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
                     trace ("NeAACDecInit2 returned error\n");
                     return -1;
                 }
-                info->faad_channels = ch;
                 samplerate = srate;
                 channels = ch;
                 NeAACDecConfigurationPtr conf = NeAACDecGetCurrentConfiguration (info->dec);
@@ -551,8 +547,8 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             trace ("found aac stream\n");
         }
 
-        _info->channels = channels;
-        _info->samplerate = samplerate;
+        _info->fmt.channels = channels;
+        _info->fmt.samplerate = samplerate;
     }
     else {
         // sync before attempting to init
@@ -563,17 +559,18 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             trace ("aac: parse_aac_stream failed\n");
             return -1;
         }
-        _info->channels = channels;
-        _info->samplerate = samplerate*2;
+        _info->fmt.channels = channels;
+        _info->fmt.samplerate = samplerate*2;
         trace("parse_aac_stream returned %x\n", offs);
     }
+    _info->fmt.channelmask = _info->fmt.channels == 1 ? DDB_SPEAKER_FRONT_LEFT : (DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT);
     if (offs >= 0) {
         deadbeef->fseek (info->file, offs, SEEK_SET);
     }
 //    duration = (float)totalsamples / samplerate;
 //    deadbeef->pl_set_item_duration (it, duration);
 
-    _info->bps = 16;
+    _info->fmt.bps = 16;
     _info->plugin = &plugin;
 
     if (!info->mp4file) {
@@ -608,8 +605,7 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             memmove (info->buffer, info->buffer + consumed, info->remaining - consumed);
             info->remaining -= consumed;
         }
-        info->faad_channels = ch;
-        _info->channels = ch;
+        _info->fmt.channels = ch;
     }
 
     if (!info->file->vfs->streaming) {
@@ -651,12 +647,12 @@ aac_free (DB_fileinfo_t *_info) {
 }
 
 static int
-aac_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
+aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
     aac_info_t *info = (aac_info_t *)_info;
-    int out_ch = min (_info->channels, 2);
+    int samplesize = _info->fmt.channels * _info->fmt.bps / 8;
     if (!info->file->vfs->streaming) {
-        if (info->currentsample + size / (2 * out_ch) > info->endsample) {
-            size = (info->endsample - info->currentsample + 1) * 2 * out_ch;
+        if (info->currentsample + size / samplesize > info->endsample) {
+            size = (info->endsample - info->currentsample + 1) * samplesize;
             if (size <= 0) {
                 return 0;
             }
@@ -665,34 +661,33 @@ aac_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
 
     int initsize = size;
     int eof = 0;
-    int sample_size = out_ch * (_info->bps >> 3);
 
     while (size > 0) {
         if (info->skipsamples > 0 && info->out_remaining > 0) {
             int skip = min (info->out_remaining, info->skipsamples);
             if (skip < info->out_remaining) {
-                memmove (info->out_buffer, info->out_buffer + skip * 2 * info->faad_channels, (info->out_remaining - skip) * 2 * info->faad_channels);
+                memmove (info->out_buffer, info->out_buffer + skip * samplesize, (info->out_remaining - skip) * samplesize);
             }
             info->out_remaining -= skip;
             info->skipsamples -= skip;
         }
         if (info->out_remaining > 0) {
-            int n = size / sample_size;
+            int n = size / samplesize;
             n = min (info->out_remaining, n);
 
             char *src = info->out_buffer;
             for (int i = 0; i < n; i++) {
-                memcpy (bytes, src, sample_size);
-                bytes += sample_size;
-                src += info->faad_channels * 2;
+                memcpy (bytes, src, samplesize);
+                bytes += samplesize;
+                src += samplesize;
             }
 
-            size -= n * sample_size;
+            size -= n * samplesize;
             if (n == info->out_remaining) {
                 info->out_remaining = 0;
             }
             else {
-                memmove (info->out_buffer, src, (info->out_remaining - n) * info->faad_channels * 2);
+                memmove (info->out_buffer, src, (info->out_remaining - n) * samplesize);
                 info->out_remaining -= n;
             }
             continue;
@@ -782,7 +777,7 @@ aac_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
         }
     }
 
-    info->currentsample += (initsize-size) / sample_size;
+    info->currentsample += (initsize-size) / samplesize;
     return initsize-size;
 }
 
@@ -864,13 +859,13 @@ aac_seek_sample (DB_fileinfo_t *_info, int sample) {
     info->remaining = 0;
     info->out_remaining = 0;
     info->currentsample = sample;
-    _info->readpos = (float)(info->currentsample - info->startsample) / _info->samplerate;
+    _info->readpos = (float)(info->currentsample - info->startsample) / _info->fmt.samplerate;
     return 0;
 }
 
 static int
 aac_seek (DB_fileinfo_t *_info, float t) {
-    return aac_seek_sample (_info, t * _info->samplerate);
+    return aac_seek_sample (_info, t * _info->fmt.samplerate);
 }
 
 #ifdef USE_MP4FF
@@ -1135,7 +1130,7 @@ static DB_decoder_t plugin = {
     .open = aac_open,
     .init = aac_init,
     .free = aac_free,
-    .read_int16 = aac_read_int16,
+    .read = aac_read,
     .seek = aac_seek,
     .seek_sample = aac_seek_sample,
     .insert = aac_insert,
