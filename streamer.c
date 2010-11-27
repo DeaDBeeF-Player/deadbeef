@@ -1374,7 +1374,6 @@ streamer_read_async (char *bytes, int size) {
 
                     // convert to float
                     int tempsize = pcm_convert (&fileinfo->fmt, input, &dspfmt, tempbuf, inputsize);
-
                     srcplug->set_ratio (src, ratio);
 
                     int nframes = inputsize / inputsamplesize;

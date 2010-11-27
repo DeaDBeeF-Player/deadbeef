@@ -88,23 +88,23 @@ ddb_src_unlock (DB_dsp_instance_t *_src) {
 void
 ddb_src_reset (DB_dsp_instance_t *_src, int full) {
     ddb_src_libsamplerate_t *src = (ddb_src_libsamplerate_t*)_src;
+    ddb_src_lock (_src);
     src->remaining = 0;
     if (full) {
         char var[20];
         snprintf (var, sizeof (var), "%s.quality", _src->id);
         int q = deadbeef->conf_get_int (var, 2);
         if (q != src->quality && q >= SRC_SINC_BEST_QUALITY && q <= SRC_LINEAR) {
-            ddb_src_lock (_src);
             trace ("changing src->quality from %d to %d\n", src->quality, q);
             src->quality = q;
             memset (&src->srcdata, 0, sizeof (src->srcdata));
             src->channels = -1;
-            ddb_src_unlock (_src);
         }
         else {
             src_reset (src->src);
         }
     }
+    ddb_src_unlock (_src);
 }
 
 void
@@ -117,8 +117,10 @@ ddb_src_set_ratio (DB_dsp_instance_t *_src, float ratio) {
 int
 ddb_src_process (DB_dsp_instance_t *_src, float *samples, int nframes, int nchannels) {
     ddb_src_libsamplerate_t *src = (ddb_src_libsamplerate_t*)_src;
+    ddb_src_lock (_src);
 
     if (src->channels != nchannels) {
+        src->remaining = 0;
         if (src->src) {
             src_delete (src->src);
             src->src = NULL;
@@ -162,12 +164,10 @@ ddb_src_process (DB_dsp_instance_t *_src, float *samples, int nframes, int nchan
         src->srcdata.input_frames = src->remaining;
         src->srcdata.output_frames = inputsize;
         src->srcdata.end_of_input = 0;
-        ddb_src_lock (_src);
         trace ("src input: %d, ratio %f, buffersize: %d\n", src->srcdata.input_frames, src->srcdata.src_ratio, buffersize);
         int src_err = src_process (src->src, &src->srcdata);
         trace ("src output: %d, used: %d\n", src->srcdata.output_frames_gen, src->srcdata.input_frames_used);
 
-        ddb_src_unlock (_src);
         if (src_err) {
             const char *err = src_strerror (src_err) ;
             fprintf (stderr, "src_process error %s\n"
@@ -196,6 +196,7 @@ ddb_src_process (DB_dsp_instance_t *_src, float *samples, int nframes, int nchan
     //}
     //fwrite (input, 1,  numoutframes*sizeof(float)*nchannels, out);
 
+    ddb_src_unlock (_src);
     return numoutframes;
 }
 
