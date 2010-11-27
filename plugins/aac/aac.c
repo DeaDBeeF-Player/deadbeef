@@ -60,6 +60,7 @@ typedef struct {
     DB_FILE *file;
     MP4FILE mp4file;
     MP4FILE_CB mp4reader;
+    NeAACDecFrameInfo frame_info; // last frame info
     int32_t timescale;
     uint32_t maxSampleSize;
     int mp4track;
@@ -76,6 +77,8 @@ typedef struct {
     int out_remaining;
     int num_errors;
     char *samplebuffer;
+    int remap[10];
+    int noremap;
 } aac_info_t;
 
 // allocate codec control structure
@@ -563,7 +566,7 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         _info->fmt.samplerate = samplerate*2;
         trace("parse_aac_stream returned %x\n", offs);
     }
-    _info->fmt.channelmask = _info->fmt.channels == 1 ? DDB_SPEAKER_FRONT_LEFT : (DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT);
+
     if (offs >= 0) {
         deadbeef->fseek (info->file, offs, SEEK_SET);
     }
@@ -620,6 +623,11 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         }
     }
 
+    for (int i = 0; i < _info->fmt.channels; i++) {
+        _info->fmt.channelmask |= 1 << i;
+    }
+    info->noremap = 0;
+    info->remap[0] = -1;
     trace ("init success\n");
 
     return 0;
@@ -676,13 +684,79 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
             n = min (info->out_remaining, n);
 
             char *src = info->out_buffer;
-            for (int i = 0; i < n; i++) {
-                memcpy (bytes, src, samplesize);
-                bytes += samplesize;
-                src += samplesize;
+            if (info->noremap) {
+                memcpy (bytes, src, n * samplesize);
+                bytes += n * samplesize;
+                src += n * samplesize;
             }
+            else {
+                int i, j;
+                if (info->remap[0] == -1) {
+                    // build remap mtx
 
+                    // FIXME: should build channelmask 1st; then remap based on channelmask
+                    for (i = 0; i < _info->fmt.channels; i++) {
+                        switch (info->frame_info.channel_position[i]) {
+                        case FRONT_CHANNEL_CENTER:
+                            trace ("FC->%d\n", i);
+                            info->remap[2] = i;
+                            break;
+                        case FRONT_CHANNEL_LEFT:
+                            trace ("FL->%d\n", i);
+                            info->remap[0] = i;
+                            break;
+                        case FRONT_CHANNEL_RIGHT:
+                            trace ("FR->%d\n", i);
+                            info->remap[1] = i;
+                            break;
+                        case SIDE_CHANNEL_LEFT:
+                            trace ("SL->%d\n", i);
+                            info->remap[6] = i;
+                            break;
+                        case SIDE_CHANNEL_RIGHT:
+                            trace ("SR->%d\n", i);
+                            info->remap[7] = i;
+                            break;
+                        case BACK_CHANNEL_LEFT:
+                            trace ("RL->%d\n", i);
+                            info->remap[4] = i;
+                            break;
+                        case BACK_CHANNEL_RIGHT:
+                            trace ("RR->%d\n", i);
+                            info->remap[5] = i;
+                            break;
+                        case BACK_CHANNEL_CENTER:
+                            trace ("BC->%d\n", i);
+                            info->remap[8] = i;
+                            break;
+                        case LFE_CHANNEL:
+                            trace ("LFE->%d\n", i);
+                            info->remap[3] = i;
+                            break;
+                        default:
+                            trace ("aac: unknown ch(%d)->%d\n", info->frame_info.channel_position[i], i);
+                            break;
+                        }
+                    }
+                    if (info->remap[0] == -1) {
+                        info->remap[0] = 0;
+                    }
+                    if ((_info->fmt.channels == 1 && info->remap[0] == FRONT_CHANNEL_CENTER)
+                        || (_info->fmt.channels == 2 && info->remap[0] == FRONT_CHANNEL_LEFT && info->remap[1] == FRONT_CHANNEL_RIGHT)) {
+                        info->noremap = 1;
+                    }
+                }
+
+                for (i = 0; i < n; i++) {
+                    for (j = 0; j < _info->fmt.channels; j++) {
+                        ((int16_t *)bytes)[info->remap[j]] = ((int16_t *)src)[j];
+                    }
+                    src += samplesize;
+                    bytes += samplesize;
+                }
+            }
             size -= n * samplesize;
+
             if (n == info->out_remaining) {
                 info->out_remaining = 0;
             }
@@ -694,7 +768,6 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
         }
 
         char *samples = NULL;
-        NeAACDecFrameInfo frame_info;
 
         if (info->mp4file) {
             unsigned char *buffer = NULL;
@@ -727,7 +800,7 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
                 break;
             }
             info->mp4sample++;
-            samples = NeAACDecDecode(info->dec, &frame_info, buffer, buffer_size);
+            samples = NeAACDecDecode(info->dec, &info->frame_info, buffer, buffer_size);
 
             if (buffer) {
                 free (buffer);
@@ -745,9 +818,9 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
                 info->remaining += res;
             }
 
-            samples = NeAACDecDecode (info->dec, &frame_info, info->buffer, info->remaining);
+            samples = NeAACDecDecode (info->dec, &info->frame_info, info->buffer, info->remaining);
             if (!samples) {
-                trace ("NeAACDecDecode failed, consumed=%d\n", frame_info.bytesconsumed);
+                trace ("NeAACDecDecode failed, consumed=%d\n", info->frame_info.bytesconsumed);
                 if (info->num_errors > 10) {
                     trace ("NeAACDecDecode failed 10 times, interrupting\n");
                     break;
@@ -757,7 +830,7 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
                 continue;
             }
             info->num_errors=0;
-            int consumed = frame_info.bytesconsumed;
+            int consumed = info->frame_info.bytesconsumed;
             if (consumed > info->remaining) {
                 trace ("NeAACDecDecode consumed more than available! wtf?\n");
                 break;
@@ -771,9 +844,9 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
             }
         }
 
-        if (frame_info.samples > 0) {
-            memcpy (info->out_buffer, samples, frame_info.samples * 2);
-            info->out_remaining = frame_info.samples / frame_info.channels;
+        if (info->frame_info.samples > 0) {
+            memcpy (info->out_buffer, samples, info->frame_info.samples * 2);
+            info->out_remaining = info->frame_info.samples / info->frame_info.channels;
         }
     }
 
