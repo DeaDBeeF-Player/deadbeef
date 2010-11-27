@@ -200,9 +200,13 @@ ffmpeg_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     // fill in mandatory plugin fields
     _info->plugin = &plugin;
     _info->readpos = 0;
-    _info->bps = bps;
-    _info->channels = info->ctx->channels;
-    _info->samplerate = samplerate;
+    _info->fmt.bps = bps;
+    _info->fmt.channels = info->ctx->channels;
+    _info->fmt.samplerate = samplerate;
+
+
+    int64_t layout = info->ctx->channel_layout;
+    _info->fmt.channelmask = layout;
 
     // subtrack info
     info->currentsample = 0;
@@ -226,7 +230,7 @@ ffmpeg_free (DB_fileinfo_t *_info) {
         if (info->buffer) {
             free (info->buffer);
         }
-        // free everything allocated in _init and _read_int16
+        // free everything allocated in _init and _read
         if (info->have_packet) {
             av_free_packet (&info->pkt);
         }
@@ -241,14 +245,14 @@ ffmpeg_free (DB_fileinfo_t *_info) {
 }
 
 static int
-ffmpeg_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
+ffmpeg_read (DB_fileinfo_t *_info, char *bytes, int size) {
     trace ("ffmpeg_read_int16 %d\n", size);
     ffmpeg_info_t *info = (ffmpeg_info_t*)_info;
 
-    int out_ch = min (2, _info->channels);
+    int samplesize = _info->fmt.channels * _info->fmt.bps / 8;
 
-    if (info->endsample >= 0 && info->currentsample + size / (2 * out_ch) > info->endsample) {
-        size = (info->endsample - info->currentsample + 1) * 2 * out_ch;
+    if (info->endsample >= 0 && info->currentsample + size / samplesize > info->endsample) {
+        size = (info->endsample - info->currentsample + 1) * samplesize;
         if (size <= 0) {
             return 0;
         }
@@ -263,20 +267,13 @@ ffmpeg_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
 
         if (info->left_in_buffer > 0) {
 //            int sz = min (size, info->left_in_buffer);
-            int nsamples = size / out_ch / 2;
-            int nsamples_buf = info->left_in_buffer / 2 / _info->channels;
+            int nsamples = size / samplesize;
+            int nsamples_buf = info->left_in_buffer / samplesize;
             nsamples = min (nsamples, nsamples_buf);
-            int sz = nsamples * 2 * _info->channels;
-            for (int i = 0; i < nsamples; i++) {
-                *((int16_t*)bytes) = ((int16_t*)info->buffer)[i * _info->channels + 0];
-                bytes += 2;
-                size -= 2;
-                if (out_ch > 1) {
-                    *((int16_t*)bytes) = ((int16_t*)info->buffer)[i * _info->channels + 1];
-                    bytes += 2;
-                    size -= 2;
-                }
-            }
+            int sz = nsamples * samplesize;
+            memcpy (bytes, info->buffer, nsamples*samplesize);
+            bytes += nsamples * samplesize;
+            size -= nsamples * samplesize;
             if (sz != info->left_in_buffer) {
                 memmove (info->buffer, info->buffer+sz, info->left_in_buffer-sz);
             }
@@ -363,8 +360,8 @@ ffmpeg_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
         }
     }
 
-    info->currentsample += (initsize-size) / (2 * out_ch);
-    _info->readpos = (float)info->currentsample / _info->samplerate;
+    info->currentsample += (initsize-size) / samplesize;
+    _info->readpos = (float)info->currentsample / _info->fmt.samplerate;
 
     return initsize-size;
 }
@@ -380,7 +377,7 @@ ffmpeg_seek_sample (DB_fileinfo_t *_info, int sample) {
         info->have_packet = 0;
     }
     sample += info->startsample;
-    int64_t tm = (int64_t)sample/ _info->samplerate * AV_TIME_BASE;
+    int64_t tm = (int64_t)sample/ _info->fmt.samplerate * AV_TIME_BASE;
     trace ("ffmpeg: seek to sample: %d, t: %d\n", sample, (int)tm);
     info->left_in_packet = 0;
     info->left_in_buffer = 0;
@@ -391,7 +388,7 @@ ffmpeg_seek_sample (DB_fileinfo_t *_info, int sample) {
     
     // update readpos
     info->currentsample = sample;
-    _info->readpos = (float)(sample - info->startsample) / _info->samplerate;
+    _info->readpos = (float)(sample - info->startsample) / _info->fmt.samplerate;
     return 0;
 }
 
@@ -401,7 +398,7 @@ ffmpeg_seek (DB_fileinfo_t *_info, float time) {
     // seek to specified time in seconds
     // return 0 on success
     // return -1 on failure
-    return ffmpeg_seek_sample (_info, time * _info->samplerate);
+    return ffmpeg_seek_sample (_info, time * _info->fmt.samplerate);
 }
 
 static const char *map[] = {
@@ -732,8 +729,7 @@ static DB_decoder_t plugin = {
     .open = ffmpeg_open,
     .init = ffmpeg_init,
     .free = ffmpeg_free,
-    .read_int16 = ffmpeg_read_int16,
-//    .read_float32 = ffmpeg_read_float32,
+    .read = ffmpeg_read,
     .seek = ffmpeg_seek,
     .seek_sample = ffmpeg_seek_sample,
     .insert = ffmpeg_insert,
