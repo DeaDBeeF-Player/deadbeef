@@ -320,7 +320,7 @@ cvorbis_read (DB_fileinfo_t *_info, char *bytes, int size) {
         endianess = 1;
 #endif
 
-        if (_info->fmt.channels <= 2) {
+        if (_info->fmt.channels <= 2 || _info->fmt.channels == 4) {
             ret=ov_read (&info->vorbis_file, bytes, size, endianess, 2, 1, &info->cur_bit_stream);
         }
         else {
@@ -331,7 +331,7 @@ cvorbis_read (DB_fileinfo_t *_info, char *bytes, int size) {
                 int idx = _info->fmt.channels - 3;
                 static int remap[4][6] = {
                     {0,2,1},
-                    {0,1,2,3},
+                    {0,1,2,3}, // should not be used
                     {0,2,1,3,4},
                     {0,2,1,4,5,3}
                 };
