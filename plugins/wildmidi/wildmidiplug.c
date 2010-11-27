@@ -42,7 +42,7 @@ typedef struct {
 } wmidi_info_t;
 
 DB_fileinfo_t *
-wmidi_open (void) {
+wmidi_open (uint32_t hints) {
     DB_fileinfo_t *_info = (DB_fileinfo_t *)malloc (sizeof (wmidi_info_t));
     memset (_info, 0, sizeof (wmidi_info_t));
     return _info;
@@ -59,9 +59,10 @@ wmidi_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     }
 
     _info->plugin = &wmidi_plugin;
-    _info->channels = 2;
-    _info->bps = 16;
-    _info->samplerate = 44100;
+    _info->fmt.channels = 2;
+    _info->fmt.bps = 16;
+    _info->fmt.samplerate = 44100;
+    _info->fmt.channelmask = _info->fmt.channels == 1 ? DDB_SPEAKER_FRONT_LEFT : (DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT);
     _info->readpos = 0;
 
     return 0;
@@ -96,13 +97,13 @@ wmidi_seek_sample (DB_fileinfo_t *_info, int sample) {
     wmidi_info_t *info = (wmidi_info_t *)_info;
     unsigned long int s = sample;
     WildMidi_SampledSeek (info->m, &s);
-    _info->readpos = s/44100.0f;
+    _info->readpos = s/(float)_info->fmt.samplerate;
     return 0;
 }
 
 int
 wmidi_seek (DB_fileinfo_t *_info, float time) {
-    return wmidi_seek_sample (_info, time * 44100);
+    return wmidi_seek_sample (_info, time * _info->fmt.samplerate);
 }
 
 DB_playItem_t *
@@ -200,7 +201,7 @@ DB_decoder_t wmidi_plugin = {
     .open = wmidi_open,
     .init = wmidi_init,
     .free = wmidi_free,
-    .read_int16 = wmidi_read,
+    .read = wmidi_read,
     .seek = wmidi_seek,
     .seek_sample = wmidi_seek_sample,
     .insert = wmidi_insert,
