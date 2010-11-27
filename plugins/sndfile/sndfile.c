@@ -91,6 +91,64 @@ sndfile_open (uint32_t hints) {
     return _info;
 }
 
+
+// taken from libsndfile
+#define     ARRAY_LEN(x)    ((int) (sizeof (x) / sizeof ((x) [0])))
+/* This stores which bit in dwChannelMask maps to which channel */
+static const struct chanmap_s
+{	int id ;
+	const char * name ;
+} channel_mask_bits [] =
+{	/* WAVEFORMATEXTENSIBLE doesn't distuingish FRONT_LEFT from LEFT */
+	{	SF_CHANNEL_MAP_LEFT, "L" },
+	{	SF_CHANNEL_MAP_RIGHT, "R" },
+	{	SF_CHANNEL_MAP_CENTER, "C" },
+	{	SF_CHANNEL_MAP_LFE, "LFE" },
+	{	SF_CHANNEL_MAP_REAR_LEFT, "Ls" },
+	{	SF_CHANNEL_MAP_REAR_RIGHT, "Rs" },
+	{	SF_CHANNEL_MAP_FRONT_LEFT_OF_CENTER, "Lc" },
+	{	SF_CHANNEL_MAP_FRONT_RIGHT_OF_CENTER, "Rc" },
+	{	SF_CHANNEL_MAP_REAR_CENTER, "Cs" },
+	{	SF_CHANNEL_MAP_SIDE_LEFT, "Sl" },
+	{	SF_CHANNEL_MAP_SIDE_RIGHT, "Sr" },
+	{	SF_CHANNEL_MAP_TOP_CENTER, "Tc" },
+	{	SF_CHANNEL_MAP_TOP_FRONT_LEFT, "Tfl" },
+	{	SF_CHANNEL_MAP_TOP_FRONT_CENTER, "Tfc" },
+	{	SF_CHANNEL_MAP_TOP_FRONT_RIGHT, "Tfr" },
+	{	SF_CHANNEL_MAP_TOP_REAR_LEFT, "Trl" },
+	{	SF_CHANNEL_MAP_TOP_REAR_CENTER, "Trc" },
+	{	SF_CHANNEL_MAP_TOP_REAR_RIGHT, "Trr" },
+} ;
+
+
+static int
+wavex_gen_channel_mask (const int *chan_map, int channels)
+{   int chan, mask = 0, bit = -1, last_bit = -1 ;
+
+    if (chan_map == NULL)
+        return 0 ;
+
+    for (chan = 0 ; chan < channels ; chan ++)
+    {   int k ;
+
+        for (k = bit + 1 ; k < ARRAY_LEN (channel_mask_bits) ; k++)
+            if (chan_map [chan] == channel_mask_bits [k].id)
+            {   bit = k ;
+                break ;
+                } ;
+
+        /* Check for bad sequence. */
+        if (bit <= last_bit)
+            return 0 ;
+
+        mask += 1 << bit ;
+        last_bit = bit ;
+        } ;
+
+    return mask ;
+} /* wavex_gen_channel_mask */
+
+
 static int
 sndfile_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     sndfile_info_t *info = (sndfile_info_t*)_info;
@@ -138,7 +196,20 @@ sndfile_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     _info->fmt.channels = inf.channels;
     _info->fmt.samplerate = inf.samplerate;
-    _info->fmt.channelmask = _info->fmt.channels == 1 ? DDB_SPEAKER_FRONT_LEFT : (DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT);
+
+    int channel_map [inf.channels];
+    int cmdres = sf_command (info->ctx, SFC_GET_CHANNEL_MAP_INFO, channel_map, sizeof (channel_map)) ;
+    if (cmdres != SF_FALSE) {
+        // channel map found, convert to channel mask
+        _info->fmt.channelmask = wavex_gen_channel_mask (channel_map, inf.channels);
+    }
+    else {
+        // channel map not found, generate from channel number
+        for (int i = 0; i < inf.channels; i++) {
+            _info->fmt.channelmask |= 1 << i;
+        }
+    }
+
     _info->readpos = 0;
     if (it->endsample > 0) {
         info->startsample = it->startsample;
