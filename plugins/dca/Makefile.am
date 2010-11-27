@@ -8,7 +8,6 @@ gettimeofday.c\
 parse.c\
 bitstream.c\
 downmix.c\
-convert2s16.c\
 audio_out.h\
 dca.h\
 dts.h\

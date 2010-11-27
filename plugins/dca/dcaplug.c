@@ -73,7 +73,7 @@ static DB_decoder_t plugin;
 DB_functions_t *deadbeef;
 
 #define BUFFER_SIZE 24576
-#define OUT_BUFFER_SIZE 100000 // one block may be up to 22K samples, which is 88Kb for stereo
+#define OUT_BUFFER_SIZE 25000 // one block may be up to 22K samples, which is 88Kb for stereo
 #define HEADER_SIZE 14
 typedef struct {
     DB_fileinfo_t info;
@@ -82,7 +82,6 @@ typedef struct {
     int startsample;
     int endsample;
     int currentsample;
-    int wavchannels;
     dca_state_t * state;
     int disable_adjust;// = 0;
     float gain;// = 1;
@@ -95,7 +94,7 @@ typedef struct {
     int flags;
     int bit_rate;
     int frame_byte_size;
-    char output_buffer[OUT_BUFFER_SIZE];
+    int16_t output_buffer[OUT_BUFFER_SIZE*6];
     int remaining;
     int skipsamples;
 } ddb_dca_state_t;
@@ -157,32 +156,35 @@ static int wav_channels (int flags, uint32_t * speaker_flags)
     return chans;
 }
 
+static inline int16_t convert (int32_t i)
+{
+#ifdef LIBDCA_FIXED
+    i >>= 15;
+#else
+    i -= 0x43c00000;
+#endif
+    return (i > 32767) ? 32767 : ((i < -32768) ? -32768 : i);
+}
+
 static int
 convert_samples (ddb_dca_state_t *state, int flags)
 {
     sample_t *_samples = dca_samples (state->state);
-    int chans, size;
-    uint32_t speaker_flags;
-    int16_t int16_samples[256*6];
-    convert_t * samples = _samples;
 
-    chans = channels_multi (flags);
-    flags &= DCA_CHANNEL_MASK | DCA_LFE;
+    int samplesize = state->info.fmt.channels * state->info.fmt.bps / 8;
 
-    convert2s16_multi (samples, int16_samples, flags);
+    int n, i, c;
+    n = 256;
+    int16_t *dst = state->output_buffer + state->remaining * state->info.fmt.channels;
 
-    int16_t *dest = (int16_t*)(state->output_buffer + state->remaining * sizeof (int16_t) * 2);
-    int i;
-    for (i = 0; i < 256; i++) {
-        *dest = int16_samples[i * chans + 0];
-        dest++;
-        *dest = int16_samples[i * chans + 1];
-        dest++;
+    for (i = 0; i < n; i++) {
+        for (c = 0; c < state->info.fmt.channels; c++) {
+            *dst++ = convert (*((int32_t*)(_samples + 256 * c)));
+        }
+        _samples ++;
     }
-    state->remaining += 256;
-    //trace ("wrote %d bytes (chans=%d)\n", size, chans);
-    //fwrite (&ordered_samples, 1, size, out);
 
+    state->remaining += 256;
     return 0;
 }
 
@@ -343,7 +345,7 @@ dts_open_wav (DB_FILE *fp, wavfmt_t *fmt, int64_t *totalsamples) {
 }
 
 static DB_fileinfo_t *
-dts_open (void) {
+dts_open (uint32_t hints) {
     DB_fileinfo_t *_info = malloc (sizeof (ddb_dca_state_t));
     ddb_dca_state_t *info = (ddb_dca_state_t *)_info;
     memset (info, 0, sizeof (ddb_dca_state_t));
@@ -364,17 +366,15 @@ dts_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     int64_t totalsamples = -1;
     // WAV format
     if ((info->offset = dts_open_wav (info->file, &fmt, &totalsamples)) == -1) {
-        // try raw DTS @ 48KHz
+        // raw dts, leave detection to libdca
         info->offset = 0;
         totalsamples = -1;
-        info->wavchannels = 2;
-        _info->bps = 16;
+        _info->fmt.bps = 16;
     }
     else {
-        _info->bps = fmt.wBitsPerSample;
-        _info->channels = fmt.nChannels;
-        info->wavchannels = fmt.nChannels;
-        _info->samplerate = fmt.nSamplesPerSec;
+        _info->fmt.bps = fmt.wBitsPerSample;
+        _info->fmt.channels = fmt.nChannels;
+        _info->fmt.samplerate = fmt.nSamplesPerSec;
     }
 
     _info->plugin = &plugin;
@@ -400,40 +400,48 @@ dts_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     int flags = info->flags &~ (DCA_LFE | DCA_ADJUST_LEVEL);
     switch (flags) {
     case DCA_MONO:
-        _info->channels = 1;
+        _info->fmt.channels = 1;
+        _info->fmt.channelmask = DDB_SPEAKER_FRONT_LEFT;
         break;
     case DCA_CHANNEL:
     case DCA_STEREO:
     case DCA_DOLBY:
     case DCA_STEREO_SUMDIFF:
     case DCA_STEREO_TOTAL:
-        _info->channels = 2;
+        _info->fmt.channels = 2;
+        _info->fmt.channelmask = (DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT);
         break;
     case DCA_3F:
     case DCA_2F1R:
-        _info->channels = 3;
+        _info->fmt.channels = 3;
+        _info->fmt.channelmask = (DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT | DDB_SPEAKER_FRONT_CENTER);
         break;
     case DCA_2F2R:
     case DCA_3F1R:
-        _info->channels = 4;
+        _info->fmt.channels = 4;
+        _info->fmt.channelmask = (DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT | DDB_SPEAKER_BACK_LEFT | DDB_SPEAKER_BACK_RIGHT);
         break;
     case DCA_3F2R:
-        _info->channels = 5;
+        _info->fmt.channels = 5;
+        _info->fmt.channelmask = (DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT | DDB_SPEAKER_BACK_LEFT | DDB_SPEAKER_BACK_RIGHT | DDB_SPEAKER_FRONT_CENTER);
         break;
     case DCA_4F2R:
-        _info->channels = 6;
+        _info->fmt.channels = 6;
+        _info->fmt.channelmask = (DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT | DDB_SPEAKER_BACK_LEFT | DDB_SPEAKER_BACK_RIGHT | DDB_SPEAKER_SIDE_LEFT | DDB_SPEAKER_SIDE_RIGHT);
         break;
     }
 
     if (info->flags & DCA_LFE) {
-        _info->channels++;
+        _info->fmt.channelmask |= DDB_SPEAKER_LOW_FREQUENCY;
+        _info->fmt.channels++;
     }
-    if (!_info->channels) {
+
+    if (!_info->fmt.channels) {
         trace ("dts: invalid numchannels\n");
         return -1;
     }
 
-    _info->samplerate = info->sample_rate;
+    _info->fmt.samplerate = info->sample_rate;
 
     if (it->endsample > 0) {
         info->startsample = it->startsample;
@@ -464,11 +472,12 @@ dts_free (DB_fileinfo_t *_info) {
 }
 
 static int
-dts_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
+dts_read (DB_fileinfo_t *_info, char *bytes, int size) {
     ddb_dca_state_t *info = (ddb_dca_state_t *)_info;
+    int samplesize = _info->fmt.channels * _info->fmt.bps / 8;
     if (info->endsample >= 0) {
-        if (info->currentsample + size / (2 * _info->channels) > info->endsample) {
-            size = (info->endsample - info->currentsample + 1) * 2 * _info->channels;
+        if (info->currentsample + size / samplesize > info->endsample) {
+            size = (info->endsample - info->currentsample + 1) * samplesize;
             if (size <= 0) {
                 return 0;
             }
@@ -476,30 +485,25 @@ dts_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
     }
 
     int initsize = size;
-    int out_channels = _info->channels;
-    if (out_channels > 2) {
-        out_channels = 2;
-    }
-    int sample_size = ((_info->bps >> 3) * out_channels);
     while (size > 0) {
         if (info->skipsamples > 0 && info->remaining > 0) {
             int skip = min (info->remaining, info->skipsamples);
-            int sample_size = _info->bps/8 * info->wavchannels;
             if (skip < info->remaining) {
-                memmove (info->output_buffer, info->output_buffer + skip * sample_size, (info->remaining - skip) * sample_size);
+                memmove (info->output_buffer, info->output_buffer + skip * _info->fmt.channels, (info->remaining - skip) * samplesize);
             }
             info->remaining -= skip;
             info->skipsamples -= skip;
         }
         if (info->remaining > 0) {
-            int n = size / sample_size;
+            int n = size / samplesize;
             n = min (n, info->remaining);
-            memcpy (bytes, info->output_buffer, n * sample_size);
+            memcpy (bytes, info->output_buffer, n * samplesize);
+
             if (info->remaining > n) {
-                memmove (info->output_buffer, info->output_buffer + n * sample_size, (info->remaining - n) * sample_size);
+                memmove (info->output_buffer, info->output_buffer + n * _info->fmt.channels, (info->remaining - n) * samplesize);
             }
-            bytes += n * sample_size;
-            size -= n * sample_size;
+            bytes += n * samplesize;
+            size -= n * samplesize;
             info->remaining -= n;
 //            trace ("dca: write %d samples\n", n);
         }
@@ -514,7 +518,7 @@ dts_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
         }
     }
 
-    info->currentsample += (initsize-size) / sample_size;
+    info->currentsample += (initsize-size) / samplesize;
     deadbeef->streamer_set_bitrate (info->bit_rate/1000);
     return initsize-size;
 }
@@ -532,14 +536,14 @@ dts_seek_sample (DB_fileinfo_t *_info, int sample) {
     info->skipsamples = sample - nframe * info->frame_length;
 
     info->currentsample = sample;
-    _info->readpos = (float)(sample - info->startsample) / _info->samplerate;
+    _info->readpos = (float)(sample - info->startsample) / _info->fmt.samplerate;
     return 0;
 }
 
 static int
 dts_seek (DB_fileinfo_t *_info, float time) {
     ddb_dca_state_t *info = (ddb_dca_state_t *)_info;
-    return dts_seek_sample (_info, time * _info->samplerate);
+    return dts_seek_sample (_info, time * _info->fmt.samplerate);
 }
 
 static DB_playItem_t *
@@ -658,8 +662,7 @@ static DB_decoder_t plugin = {
     .open = dts_open,
     .init = dts_init,
     .free = dts_free,
-    .read_int16 = dts_read_int16,
-//    .read_float32 = dts_read_float32,
+    .read = dts_read,
     .seek = dts_seek,
     .seek_sample = dts_seek_sample,
     .insert = dts_insert,
