@@ -74,7 +74,9 @@ tta_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     _info->fmt.bps = info->tta.BPS;
     _info->fmt.channels = info->tta.NCH;
     _info->fmt.samplerate = info->tta.SAMPLERATE;
-    _info->fmt.channelmask = _info->fmt.channels == 1 ? DDB_SPEAKER_FRONT_LEFT : (DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT);
+    for (int i = 0; i < _info->fmt.channels; i++) {
+        _info->fmt.channelmask |= 1 << i;
+    }
     _info->readpos = 0;
     _info->plugin = &plugin;
 
