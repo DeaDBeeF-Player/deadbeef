@@ -28,6 +28,8 @@
 #include "../../deadbeef.h"
 #include "vcedit.h"
 
+#pragma GCC optimize("O0")
+
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
@@ -231,6 +233,7 @@ cvorbis_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     //_info->dataSize = ov_pcm_total (&vorbis_file, -1) * vi->channels * 2;
     _info->fmt.channels = info->vi->channels;
     _info->fmt.samplerate = info->vi->rate;
+
     for (int i = 0; i < _info->fmt.channels; i++) {
         _info->fmt.channelmask |= 1 << i;
     }
@@ -282,7 +285,7 @@ cvorbis_read (DB_fileinfo_t *_info, char *bytes, int size) {
     ogg_info_t *info = (ogg_info_t *)_info;
 //    trace ("cvorbis_read %d bytes\n", size);
 
-    int samplesize = _info->fmt.channels * (_info->fmt.bps>>3);
+    int samplesize = _info->fmt.channels * _info->fmt.bps / 8;
 
     if (!info->info.file->vfs->streaming) {
         if (info->currentsample + size / samplesize > info->endsample) {
@@ -317,7 +320,33 @@ cvorbis_read (DB_fileinfo_t *_info, char *bytes, int size) {
         endianess = 1;
 #endif
 
-        ret=ov_read (&info->vorbis_file, bytes, size, endianess, 2, 1, &info->cur_bit_stream);
+        if (_info->fmt.channels <= 2) {
+            ret=ov_read (&info->vorbis_file, bytes, size, endianess, 2, 1, &info->cur_bit_stream);
+        }
+        else {
+            int16_t temp[size/2];
+            ret=ov_read (&info->vorbis_file, (char *)temp, size, endianess, 2, 1, &info->cur_bit_stream);
+            if (ret > 0) {
+                // remap channels to wav format
+                int idx = _info->fmt.channels - 3;
+                static int remap[4][6] = {
+                    {0,2,1},
+                    {0,1,2,3},
+                    {0,2,1,3,4},
+                    {0,2,1,4,5,3}
+                };
+
+                int i, j;
+                int16_t *src = temp;
+                int n = ret / samplesize;
+                for (i = 0; i < n; i++) {
+                    for (j = 0; j < _info->fmt.channels; j++) {
+                        ((int16_t *)(bytes + samplesize * i))[remap[idx][j]] = src[j];
+                    }
+                    src += _info->fmt.channels;
+                }
+            }
+        }
         if (ret <= 0)
         {
             if (ret < 0) {
