@@ -937,19 +937,22 @@ plug_select_output (void) {
 
 void
 plug_reinit_sound (void) {
-    DB_output_t *output = plug_get_output ();
-    int state = output->state ();
-
-    output->free ();
-
     DB_output_t *prev = plug_get_output ();
+    int state = OUTPUT_STATE_STOPPED;
+
+    if (prev) {
+        state = prev->state ();
+        prev->free ();
+    }
+
     if (plug_select_output () < 0) {
         const char *outplugname = conf_get_str ("output_plugin", "ALSA output plugin");
         trace ("failed to select output plugin %s\nreverted to %s\n", outplugname, prev->plugin.name);
         output_plugin = prev;
     }
-    streamer_reset (1);
+    DB_output_t *output = plug_get_output ();
     if (output->init () < 0) {
+        streamer_reset (1);
         streamer_set_nextsong (-2, 0);
         return;
     }

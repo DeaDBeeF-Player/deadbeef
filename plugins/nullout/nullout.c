@@ -32,7 +32,6 @@ DB_functions_t *deadbeef;
 
 static intptr_t null_tid;
 static int null_terminate;
-static int null_rate;
 static int state;
 
 static void
@@ -47,8 +46,8 @@ pnull_init (void);
 static int
 pnull_free (void);
 
-static int
-pnull_change_rate (int rate);
+void
+pnull_setformat (ddb_waveformat_t *fmt);
 
 static int
 pnull_play (void);
@@ -62,32 +61,18 @@ pnull_pause (void);
 static int
 pnull_unpause (void);
 
-static int
-pnull_get_rate (void);
-
-static int
-pnull_get_bps (void);
-
-static int
-pnull_get_channels (void);
-
-static int
-pnull_get_endianness (void);
-
 int
 pnull_init (void) {
     trace ("pnull_init\n");
     state = OUTPUT_STATE_STOPPED;
-    null_rate = 44100;
     null_terminate = 0;
     null_tid = deadbeef->thread_start (pnull_thread, NULL);
     return 0;
 }
 
-int
-pnull_change_rate (int rate) {
-    null_rate = rate;
-    return null_rate;
+void
+pnull_setformat (ddb_waveformat_t *fmt) {
+    memcpy (&plugin.fmt, fmt, sizeof (ddb_waveformat_t));
 }
 
 int
@@ -138,21 +123,6 @@ pnull_unpause (void) {
         state = OUTPUT_STATE_PLAYING;
     }
     return 0;
-}
-
-int
-pnull_get_rate (void) {
-    return null_rate;
-}
-
-int
-pnull_get_bps (void) {
-    return 16;
-}
-
-int
-pnull_get_channels (void) {
-    return 2;
 }
 
 static int
@@ -233,14 +203,11 @@ static DB_output_t plugin = {
     .plugin.stop = null_stop,
     .init = pnull_init,
     .free = pnull_free,
-    .change_rate = pnull_change_rate,
+    .setformat = pnull_setformat,
     .play = pnull_play,
     .stop = pnull_stop,
     .pause = pnull_pause,
     .unpause = pnull_unpause,
     .state = pnull_get_state,
-    .samplerate = pnull_get_rate,
-    .bitspersample = pnull_get_bps,
-    .channels = pnull_get_channels,
-    .endianness = pnull_get_endianness,
+    .fmt = {.samplerate = 44100, .channels = 2, .bps = 16, .channelmask = DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT}
 };
