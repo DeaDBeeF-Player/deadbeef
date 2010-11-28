@@ -1196,16 +1196,11 @@ streamer_reset (int full) { // must be called when current song changes by exter
     }
     if (full) {
         streamer_lock ();
-        if (prevformat.samplerate) {
-            DB_output_t *output = plug_get_output ();
-            if (output) {
-                output->setformat (&prevformat);
-            }
-        }
         streambuffer_pos = 0;
         streambuffer_fill = 0;
         streamer_unlock ();
     }
+
     // reset dsp
     DB_dsp_instance_t *dsp = dsp_chain;
     while (dsp) {
