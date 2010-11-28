@@ -80,6 +80,7 @@ static playlist_t *streamer_playlist;
 static playItem_t *playing_track;
 static playItem_t *streaming_track;
 static playItem_t *playlist_track;
+static ddb_waveformat_t prevformat;
 
 static DB_fileinfo_t *fileinfo;
 
@@ -96,18 +97,6 @@ streamer_lock (void) {
 void
 streamer_unlock (void) {
     mutex_unlock (mutex);
-}
-
-void
-adjust_waveformat (ddb_waveformat_t *fmt) {
-    if (!fmt->is_multichannel) {
-        if (fmt->channels == 1) {
-            fmt->channelmask = DDB_SPEAKER_FRONT_LEFT;
-        }
-        else if (fmt->channelmask == 2) {
-            fmt->channelmask = DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT;
-        }
-    }
 }
 
 static void
@@ -632,10 +621,6 @@ streamer_set_current (playItem_t *it) {
                 dec->free (fileinfo);
                 fileinfo = NULL;
             }
-            else {
-                adjust_waveformat (&fileinfo->fmt);
-            }
-
         }
 
         if (!dec || !fileinfo) {
@@ -815,8 +800,8 @@ streamer_start_new_song (void) {
         if (output->state () != OUTPUT_STATE_PLAYING) {
             streamer_reset (1);
             if (fileinfo) {
+                memcpy (&prevformat, &fileinfo->fmt, sizeof (ddb_waveformat_t));
                 plug_get_output ()->setformat (&fileinfo->fmt);
-                adjust_waveformat (&plug_get_output ()->fmt);
             }
             if (output->play () < 0) {
                 fprintf (stderr, "streamer: failed to start playback; output plugin doesn't work\n");
@@ -830,8 +815,8 @@ streamer_start_new_song (void) {
             avg_bitrate = -1;
             streamer_reset (1);
             if (fileinfo) {
+                memcpy (&prevformat, &fileinfo->fmt, sizeof (ddb_waveformat_t));
                 plug_get_output ()->setformat (&fileinfo->fmt);
-                adjust_waveformat (&plug_get_output ()->fmt);
             }
             if (output->play () < 0) {
                 fprintf (stderr, "streamer: failed to start playback; output plugin doesn't work\n");
@@ -927,9 +912,9 @@ streamer_thread (void *ctx) {
                 // don't switch if unchanged
                 ddb_waveformat_t prevfmt;
                 memcpy (&prevfmt, &output->fmt, sizeof (ddb_waveformat_t));
-                if (memcmp (&output->fmt, &fileinfo->fmt, sizeof (ddb_waveformat_t))) {
+                if (memcmp (&prevformat, &fileinfo->fmt, sizeof (ddb_waveformat_t))) {
+                    memcpy (&prevformat, &fileinfo->fmt, sizeof (ddb_waveformat_t));
                     output->setformat (&fileinfo->fmt);
-                    adjust_waveformat (&output->fmt);
                     // check if the format actually changed
                     if (memcmp (&output->fmt, &prevfmt, sizeof (ddb_waveformat_t))) {
                         // restart streaming of current track
@@ -945,9 +930,6 @@ streamer_thread (void *ctx) {
                                 dec->free (fileinfo);
                                 fileinfo = NULL;
                             }
-                            else {
-                                adjust_waveformat (&fileinfo->fmt);
-                            }
                         }
                         if (!dec || !fileinfo) {
                             // FIXME: handle error
@@ -962,8 +944,8 @@ streamer_thread (void *ctx) {
                 // output plugin may stop playback before switching samplerate
                 if (output->state () != OUTPUT_STATE_PLAYING) {
                     if (fileinfo) {
+                        memcpy (&prevformat, &fileinfo->fmt, sizeof (ddb_waveformat_t));
                         plug_get_output ()->setformat (&fileinfo->fmt);
-                        adjust_waveformat (&plug_get_output ()->fmt);
                     }
                     if (output->play () < 0) {
                         fprintf (stderr, "streamer: failed to start playback after samplerate change; output plugin doesn't work\n");
@@ -1014,9 +996,6 @@ streamer_thread (void *ctx) {
                     if (fileinfo && dec->init (fileinfo, DB_PLAYITEM (streaming_track)) != 0) {
                         dec->free (fileinfo);
                         fileinfo = NULL;
-                    }
-                    else {
-                        adjust_waveformat (&fileinfo->fmt);
                     }
                 }
                 mutex_unlock (decodemutex);
@@ -1332,7 +1311,7 @@ streamer_read_async (char *bytes, int size) {
             DB_dsp_t **dsp = deadbeef->plug_get_dsp_list ();
             int outputsamplesize = (output->fmt.bps>>3)*output->fmt.channels;
             int inputsamplesize = (fileinfo->fmt.bps>>3)*fileinfo->fmt.channels;
-            if (!memcmp (&fileinfo->fmt, &output->fmt, sizeof (ddb_waveformat_t))) {
+            if (!memcmp (&fileinfo->fmt, &output->fmt, sizeof (ddb_waveformat_t)), 1) {
                 // pass through from input to output
                 bytesread = fileinfo->plugin->read (fileinfo, bytes, size);
                 if (bytesread != size) {

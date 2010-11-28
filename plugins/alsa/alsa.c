@@ -182,7 +182,7 @@ palsa_set_hw_params (ddb_waveformat_t *fmt) {
     }
 
     snd_pcm_hw_params_get_format (hw_params, &sample_fmt);
-    trace ("chosen sample format: %04Xh\n", (int)fmt);
+    trace ("chosen sample format: %04Xh\n", (int)sample_fmt);
 
     int val = fmt->samplerate;
     int ret = 0;
@@ -398,6 +398,24 @@ palsa_setformat (ddb_waveformat_t *fmt) {
         trace ("palsa_setformat ignored\n");
         return;
     }
+#if 0
+    else {
+        trace ("switching format:\n"
+        "bps %d -> %d\n"
+        "is_float %d -> %d\n"
+        "is_multichannel %d -> %d\n"
+        "channels %d -> %d\n"
+        "samplerate %d -> %d\n"
+        "channelmask %d -> %d\n"
+        , fmt->bps, plugin.fmt.bps
+        , fmt->is_float, plugin.fmt.is_float
+        , fmt->is_multichannel, plugin.fmt.is_multichannel
+        , fmt->channels, plugin.fmt.channels
+        , fmt->samplerate, plugin.fmt.samplerate
+        , fmt->channelmask, plugin.fmt.channelmask
+        );
+    }
+#endif
     state = OUTPUT_STATE_STOPPED;
     LOCK;
     snd_pcm_drop (audio);
