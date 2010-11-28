@@ -28,8 +28,6 @@
 #include "../../deadbeef.h"
 #include "vcedit.h"
 
-#pragma GCC optimize("O0")
-
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 

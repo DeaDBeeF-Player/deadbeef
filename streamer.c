@@ -1298,140 +1298,125 @@ apply_replay_gain_float32 (playItem_t *it, char *bytes, int size) {
     }
 }
 
-static void
-mono_int16_to_stereo_int16 (int16_t *in, int16_t *out, int nsamples) {
-    while (nsamples > 0) {
-        int16_t sample = *in++;
-        *out++ = sample;
-        *out++ = sample;
-        nsamples--;
-    }
-}
-
 // decodes data and converts to current output format
 // returns number of bytes been read
 static int
 streamer_read_async (char *bytes, int size) {
     DB_output_t *output = plug_get_output ();
     int initsize = size;
-    for (;;) {
-        int bytesread = 0;
-        mutex_lock (decodemutex);
-        if (!fileinfo) {
-            // means there's nothing left to stream, so just do nothing
-            mutex_unlock (decodemutex);
-            break;
+    int bytesread = 0;
+    mutex_lock (decodemutex);
+    if (!fileinfo) {
+        // means there's nothing left to stream, so just do nothing
+        mutex_unlock (decodemutex);
+        return 0;
+    }
+    int is_eof = 0;
+
+    if (fileinfo->fmt.samplerate != -1) {
+        int outputsamplesize = output->fmt.channels * output->fmt.bps / 8;
+        int inputsamplesize = fileinfo->fmt.channels * fileinfo->fmt.bps / 8;
+        if (!memcmp (&fileinfo->fmt, &output->fmt, sizeof (ddb_waveformat_t))) {
+            // pass through from input to output
+            bytesread = fileinfo->plugin->read (fileinfo, bytes, size);
+
+            if (bytesread != size) {
+                is_eof = 1;
+            }
         }
-        int is_eof = 0;
+        else if (output->fmt.samplerate != fileinfo->fmt.samplerate) {
+            // convert to float, pass through streamer DSP chain
+            int dspsamplesize = output->fmt.channels * sizeof (float);
 
-        if (fileinfo->fmt.samplerate != -1) {
-            int outputsamplesize = (output->fmt.bps>>3)*output->fmt.channels;
-            int inputsamplesize = (fileinfo->fmt.bps>>3)*fileinfo->fmt.channels;
-            if (!memcmp (&fileinfo->fmt, &output->fmt, sizeof (ddb_waveformat_t))) {
-                // pass through from input to output
-                bytesread = fileinfo->plugin->read (fileinfo, bytes, size);
-                if (bytesread != size) {
-                    is_eof = 1;
-                }
+            float ratio = output->fmt.samplerate/(float)fileinfo->fmt.samplerate;
+
+            int max_out_frames = size / (output->fmt.channels * output->fmt.bps / 8);
+            int dsp_num_frames = max_out_frames;
+
+            char outbuf[dsp_num_frames * dspsamplesize];
+
+            ddb_waveformat_t dspfmt;
+            memcpy (&dspfmt, &output->fmt, sizeof (dspfmt));
+            dspfmt.bps = 32;
+            dspfmt.is_float = 1;
+
+            int inputsize = dsp_num_frames * inputsamplesize;
+            char input[inputsize];
+
+            // decode pcm
+            int nb = fileinfo->plugin->read (fileinfo, input, inputsize);
+            if (nb != inputsize) {
+                is_eof = 1;
             }
-            else if (output->fmt.samplerate != fileinfo->fmt.samplerate) {
-                // convert to float, pass through streamer DSP chain
-                int dspsamplesize = output->fmt.channels * sizeof (float);
+            inputsize = nb;
 
-                float ratio = output->fmt.samplerate/(float)fileinfo->fmt.samplerate;
+            if (inputsize > 0) {
+                // make 2x size buffer for float data
+                char tempbuf[inputsize/inputsamplesize * dspsamplesize * 2];
 
-                int max_out_frames = size / (output->fmt.channels * (output->fmt.bps>>3));
-                int dsp_num_frames = max_out_frames;
+                // convert to float
+                int tempsize = pcm_convert (&fileinfo->fmt, input, &dspfmt, tempbuf, inputsize);
+                srcplug->set_ratio (src, ratio);
 
-                char outbuf[dsp_num_frames * dspsamplesize];
-
-                bytesread = 0;
-
-                ddb_waveformat_t dspfmt;
-                memcpy (&dspfmt, &output->fmt, sizeof (dspfmt));
-                dspfmt.bps = 32;
-                dspfmt.is_float = 1;
-
-                int inputsize = dsp_num_frames * inputsamplesize;
-                char input[inputsize];
-
-                // decode pcm
-                int nb = fileinfo->plugin->read (fileinfo, input, inputsize);
-                if (nb != inputsize) {
-                    bytesread = nb;
-                    is_eof = 1;
-                }
-                inputsize = nb;
-
-                if (inputsize > 0) {
-                    // make 2x size buffer for float data
-                    char tempbuf[inputsize/inputsamplesize * dspsamplesize * 2];
-
-                    // convert to float
-                    int tempsize = pcm_convert (&fileinfo->fmt, input, &dspfmt, tempbuf, inputsize);
-                    srcplug->set_ratio (src, ratio);
-
-                    int nframes = inputsize / inputsamplesize;
-                    DB_dsp_instance_t *dsp = dsp_chain;
-                    while (dsp) {
-                        if (dsp->enabled) {
-                            nframes = dsp->plugin->process (dsp, (float *)tempbuf, nframes, dspfmt.samplerate, dspfmt.channels);
-                        }
-                        dsp = dsp->next;
+                int nframes = inputsize / inputsamplesize;
+                DB_dsp_instance_t *dsp = dsp_chain;
+                while (dsp) {
+                    if (dsp->enabled) {
+                        nframes = dsp->plugin->process (dsp, (float *)tempbuf, nframes, dspfmt.samplerate, dspfmt.channels);
                     }
-                    int n = pcm_convert (&dspfmt, tempbuf, &output->fmt, bytes, nframes * dspsamplesize);
+                    dsp = dsp->next;
+                }
+                int n = pcm_convert (&dspfmt, tempbuf, &output->fmt, bytes, nframes * dspsamplesize);
 
-                    bytesread += n;
-                }
+                bytesread = n;
             }
-            else {
-                // convert from input fmt to output fmt
-                int inputsize = size/outputsamplesize*inputsamplesize;
-                char input[inputsize];
-                int nb = fileinfo->plugin->read (fileinfo, input, inputsize);
-                if (nb != inputsize) {
-                    bytesread = nb;
-                    is_eof = 1;
-                }
-                inputsize = nb;
-                bytesread = pcm_convert (&fileinfo->fmt, input, &output->fmt, bytes, inputsize);
+        }
+        else {
+            // convert from input fmt to output fmt
+            int inputsize = size/outputsamplesize*inputsamplesize;
+            char input[inputsize];
+            int nb = fileinfo->plugin->read (fileinfo, input, inputsize);
+            if (nb != inputsize) {
+                bytesread = nb;
+                is_eof = 1;
             }
+            inputsize = nb;
+            bytesread = pcm_convert (&fileinfo->fmt, input, &output->fmt, bytes, inputsize);
+        }
 #if WRITE_DUMP
-            if (bytesread) {
-                fwrite (bytes, 1, bytesread, out);
-            }
+        if (bytesread) {
+            fwrite (bytes, 1, bytesread, out);
+        }
 #endif
 
-            // FIXME: separate replaygain DSP plugin?
-            if (output->fmt.bps == 16) {
-                apply_replay_gain_int16 (streaming_track, bytes, bytesread);
-            }
-            else if (output->fmt.bps == 32 && output->fmt.is_float) {
-                apply_replay_gain_float32 (streaming_track, bytes, bytesread);
-            }
+        // FIXME: separate replaygain DSP plugin?
+        if (output->fmt.bps == 16) {
+            apply_replay_gain_int16 (streaming_track, bytes, bytesread);
         }
-        mutex_unlock (decodemutex);
-        bytes += bytesread;
-        size -= bytesread;
-        if (!is_eof) {
-            return initsize-size;
+        else if (output->fmt.bps == 32 && output->fmt.is_float) {
+            apply_replay_gain_float32 (streaming_track, bytes, bytesread);
         }
-        else  {
-            // that means EOF
-            trace ("streamer: EOF! buns: %d, bytesread: %d, buffering: %d, bufferfill: %d\n", bytes_until_next_song, bytesread, streamer_buffering, streambuffer_fill);
+    }
+    mutex_unlock (decodemutex);
+    bytes += bytesread;
+    size -= bytesread;
+    if (!is_eof) {
+        return initsize-size;
+    }
+    else  {
+        // that means EOF
+        trace ("streamer: EOF! buns: %d, bytesread: %d, buffering: %d, bufferfill: %d\n", bytes_until_next_song, bytesread, streamer_buffering, streambuffer_fill);
 
-            // in case of decoder error, or EOF while buffering - switch to next song instantly
-            if (bytesread < 0 || (bytes_until_next_song >= 0 && streamer_buffering && bytesread == 0) || bytes_until_next_song < 0) {
-                trace ("finished streaming song, queueing next\n");
-                bytes_until_next_song = streambuffer_fill;
-                if (conf_get_int ("playlist.stop_after_current", 0)) {
-                    streamer_set_nextsong (-2, 1);
-                }
-                else {
-                    streamer_move_to_nextsong (0);
-                }
+        // in case of decoder error, or EOF while buffering - switch to next song instantly
+        if (bytesread < 0 || (bytes_until_next_song >= 0 && streamer_buffering && bytesread == 0) || bytes_until_next_song < 0) {
+            trace ("finished streaming song, queueing next\n");
+            bytes_until_next_song = streambuffer_fill;
+            if (conf_get_int ("playlist.stop_after_current", 0)) {
+                streamer_set_nextsong (-2, 1);
             }
-            break;
+            else {
+                streamer_move_to_nextsong (0);
+            }
         }
     }
     return initsize - size;
