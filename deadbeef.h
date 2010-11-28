@@ -650,7 +650,6 @@ enum {
 typedef struct {
     int bps;
     int is_float; // bps must be 32 if this is true
-    int is_multichannel; // usually 0, in which case channels=1 is mono, and channels=2 is stereo
     int channels;
     int samplerate;
     uint32_t channelmask;

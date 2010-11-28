@@ -255,7 +255,6 @@ palsa_set_hw_params (ddb_waveformat_t *fmt) {
     trace ("chosen bps: %d (%s)\n", plugin.fmt.bps, plugin.fmt.is_float ? "float" : "int");
 
     plugin.fmt.channels = nchan;
-    plugin.fmt.is_multichannel = 0;
     plugin.fmt.channelmask = 0;
     if (nchan == 1) {
         plugin.fmt.channelmask = DDB_SPEAKER_FRONT_LEFT;
@@ -390,7 +389,7 @@ open_error:
 void
 palsa_setformat (ddb_waveformat_t *fmt) {
     memcpy (&requested_fmt, fmt, sizeof (ddb_waveformat_t));
-    trace ("palsa_setformat %dbit %s %s %dch %dHz channelmask=%X\n", fmt->bps, fmt->is_float ? "float" : "int", fmt->is_multichannel ? "multichannel" : "", fmt->channels, fmt->samplerate, fmt->channelmask);
+    trace ("palsa_setformat %dbit %s %dch %dHz channelmask=%X\n", fmt->bps, fmt->is_float ? "float" : "int", fmt->channels, fmt->samplerate, fmt->channelmask);
     if (!audio) {
         return;
     }
@@ -425,7 +424,7 @@ palsa_setformat (ddb_waveformat_t *fmt) {
         trace ("palsa_change_rate: impossible to set requested format\n");
         return;
     }
-    trace ("new format %dbit %s %s %dch %dHz channelmask=%X\n", plugin.fmt.bps, plugin.fmt.is_float ? "float" : "int", plugin.fmt.is_multichannel ? "multichannel" : "", plugin.fmt.channels, plugin.fmt.samplerate, plugin.fmt.channelmask);
+    trace ("new format %dbit %s %dch %dHz channelmask=%X\n", plugin.fmt.bps, plugin.fmt.is_float ? "float" : "int", plugin.fmt.channels, plugin.fmt.samplerate, plugin.fmt.channelmask);
 }
 
 int
