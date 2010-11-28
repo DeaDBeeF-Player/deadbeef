@@ -5,7 +5,9 @@ dsp_libsrc_la_SOURCES = src.c src.h
 
 dsp_libsrc_la_LDFLAGS = -module
 
-dsp_libsrc_la_LIBADD = $(LDADD)
+dsp_libsrc_la_LIBADD = $(LIBADD) $(LIBSAMPLERATE_DEPS_LIBS)
+
+dsp_libsrc_la_CFLAGS = $(CFLAGS) $(LIBSAMPLERATE_DEPS_CFLAGS)
 
 AM_CFLAGS = -std=c99
 endif

@@ -15,6 +15,7 @@ AC_PROG_LIBTOOL
 AC_CONFIG_MACRO_DIR([m4])
 AC_C_BIGENDIAN
 AM_GNU_GETTEXT
+PKG_PROG_PKG_CONFIG
 
 IT_PROG_INTLTOOL([0.40.0])
 GETTEXT_PACKAGE=deadbeef
@@ -54,8 +55,6 @@ esac
 
 test "x$prefix" = xNONE && prefix=$ac_default_prefix
 
-
-PKG_CHECK_MODULES(DEPS, samplerate)
 
 if test "x$enable_staticlink" != "xno" ; then
     HAVE_ZLIB=yes
@@ -106,9 +105,9 @@ AC_ARG_ENABLE(aac,      [AS_HELP_STRING([--disable-aac     ], [disable AAC decod
 AC_ARG_ENABLE(mms,      [AS_HELP_STRING([--disable-mms     ], [disable MMS streaming vfs plugin (default: enabled)])], [enable_mms=$enableval], [enable_mms=yes])
 AC_ARG_ENABLE(shn,      [AS_HELP_STRING([--disable-shn     ], [disable shorten plugin (default: enabled)])], [enable_shn=$enableval], [enable_shn=yes])
 AC_ARG_ENABLE(ao,       [AS_HELP_STRING([--disable-ao      ], [disable audio overload plugin (default: enabled)])], [enable_ao=$enableval], [enable_ao=yes])
-AC_ARG_ENABLE(staticlink, [AS_HELP_STRING([  --enable-staticlink       link everything statically (default: disabled)])], [enable_staticlink=$enableval], [enable_staticlink=no])
-AC_ARG_ENABLE(portable, [AS_HELP_STRING([  --enable-portable       make portable build (default: disabled, opts: yes,no,full)])], [enable_portable=$enableval], [enable_portable=no])
-AC_ARG_ENABLE(src, [AS_HELP_STRING([  --enable-src       build libsamplerate (SRC) plugin (default: auto)])], [enable_src=$enableval], [enable_src=yes])
+AC_ARG_ENABLE(staticlink, [AS_HELP_STRING([--enable-staticlink], [link everything statically (default: disabled)])], [enable_staticlink=$enableval], [enable_staticlink=no])
+AC_ARG_ENABLE(portable, [AS_HELP_STRING([--enable-portable ], [make portable build (default: disabled, opts: yes,no,full)])], [enable_portable=$enableval], [enable_portable=no])
+AC_ARG_ENABLE(src,      [AS_HELP_STRING([--enable-src      ], [build libsamplerate (SRC) plugin (default: auto)])], [enable_src=$enableval], [enable_src=yes])
 
 if test "x$enable_staticlink" != "xno" ; then
     AC_DEFINE_UNQUOTED([STATICLINK], [1], [Define if building static version])
