@@ -49,7 +49,10 @@ FILE *out;
 
 static intptr_t streamer_tid;
 static ddb_dsp_src_t *srcplug;
+static DB_dsp_t *eqplug;
+static DB_dsp_instance_t *dsp_chain;
 static DB_dsp_instance_t *src;
+static DB_dsp_instance_t *eq;
 
 static int conf_replaygain_mode = 0;
 static int conf_replaygain_scale = 1;
@@ -1130,6 +1133,16 @@ streamer_init (void) {
     srcplug = (ddb_dsp_src_t*)plug_get_for_id ("dsp_src");
     if (srcplug) {
         src = srcplug->dsp.open ("strm_src");
+        src->next = dsp_chain;
+        dsp_chain = src;
+    }
+
+    // eq plug
+    eqplug = (DB_dsp_t *)plug_get_for_id ("supereq");
+    if (eqplug) {
+        eq = eqplug->open ("strm_eq");
+        eq->next = dsp_chain;
+        dsp_chain = eq;
     }
     
     conf_replaygain_mode = conf_get_int ("replaygain_mode", 0);
@@ -1165,7 +1178,13 @@ streamer_free (void) {
     mutex = 0;
     if (srcplug && src) {
         srcplug->dsp.close (src);
+        srcplug = NULL;
         src = NULL;
+    }
+    if (eqplug && eq) {
+        eqplug->close (eq);
+        eqplug = NULL;
+        eq = NULL;
     }
 }
 
@@ -1308,10 +1327,9 @@ streamer_read_async (char *bytes, int size) {
         int is_eof = 0;
 
         if (fileinfo->fmt.samplerate != -1) {
-            DB_dsp_t **dsp = deadbeef->plug_get_dsp_list ();
             int outputsamplesize = (output->fmt.bps>>3)*output->fmt.channels;
             int inputsamplesize = (fileinfo->fmt.bps>>3)*fileinfo->fmt.channels;
-            if (!memcmp (&fileinfo->fmt, &output->fmt, sizeof (ddb_waveformat_t)), 1) {
+            if (!memcmp (&fileinfo->fmt, &output->fmt, sizeof (ddb_waveformat_t))) {
                 // pass through from input to output
                 bytesread = fileinfo->plugin->read (fileinfo, bytes, size);
                 if (bytesread != size) {
@@ -1356,9 +1374,11 @@ streamer_read_async (char *bytes, int size) {
                     srcplug->set_ratio (src, ratio);
 
                     int nframes = inputsize / inputsamplesize;
-                    DB_dsp_instance_t *dsp = src;
+                    DB_dsp_instance_t *dsp = dsp_chain;
                     while (dsp) {
-                        nframes = dsp->plugin->process (dsp, (float *)tempbuf, nframes, dspfmt.channels);
+                        if (dsp->enabled) {
+                            nframes = dsp->plugin->process (dsp, (float *)tempbuf, nframes, dspfmt.samplerate, dspfmt.channels);
+                        }
                         dsp = dsp->next;
                     }
                     int n = pcm_convert (&dspfmt, tempbuf, &output->fmt, bytes, nframes * dspsamplesize);
@@ -1568,4 +1588,9 @@ streamer_notify_playlist_deleted (playlist_t *plt) {
     if (plt == streamer_playlist) {
         streamer_playlist = NULL;
     }
+}
+
+DB_dsp_instance_t *
+streamer_get_dsp_chain (void) {
+    return dsp_chain;
 }

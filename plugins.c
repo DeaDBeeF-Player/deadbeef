@@ -87,6 +87,7 @@ static DB_functions_t deadbeef_api = {
     .streamer_get_apx_bitrate = streamer_get_apx_bitrate,
     .streamer_get_current_fileinfo = streamer_get_current_fileinfo,
     .streamer_get_current_playlist = streamer_get_current_playlist,
+    .streamer_get_dsp_chain = streamer_get_dsp_chain,
     // folders
     .get_config_dir = plug_get_config_dir,
     .get_prefix = plug_get_prefix,
@@ -777,15 +778,6 @@ plug_load_all (void) {
             }
         }
     }
-    // connect plugins
-    for (plug = plugins; plug; plug = plug->next) {
-        if (plug->plugin->connect) {
-            if (plug->plugin->connect () < 0) {
-                plug->plugin->inactive = 1;
-            }
-        }
-    }
-
 //    trace ("numplugins: %d, numdecoders: %d, numvfs: %d\n", numplugins, numdecoders, numvfs);
     g_plugins[numplugins] = NULL;
     g_decoder_plugins[numdecoders] = NULL;
@@ -798,6 +790,19 @@ plug_load_all (void) {
         return -1;
     }
     return 0;
+}
+
+void
+plug_connect_all (void) {
+    plugin_t *plug;
+    for (plug = plugins; plug; plug = plug->next) {
+        if (plug->plugin->connect) {
+            if (plug->plugin->connect () < 0) {
+                plug->plugin->inactive = 1;
+            }
+        }
+    }
+
 }
 
 void

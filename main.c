@@ -788,6 +788,8 @@ main (int argc, char *argv[]) {
 
     streamer_init ();
 
+    plug_connect_all ();
+
     if (!noloadpl) {
         restore_resume_state ();
     }

@@ -1137,7 +1137,7 @@ gboolean
 gtkui_connect_cb (void *none) {
     // equalizer
     GtkWidget *eq_mi = lookup_widget (mainwin, "view_eq");
-    if (!get_supereq_plugin ()) {
+    if (!deadbeef->plug_get_for_id ("supereq")) {
         gtk_widget_hide (GTK_WIDGET (eq_mi));
     }
     else {

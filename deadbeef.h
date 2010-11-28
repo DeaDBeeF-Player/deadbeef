@@ -307,7 +307,6 @@ typedef struct {
     float (*playback_get_pos) (void); // [0..100]
     void (*playback_set_pos) (float pos); // [0..100]
     // streamer access
-    // FIXME: needs to be thread-safe
     DB_playItem_t *(*streamer_get_playing_track) (void);
     DB_playItem_t *(*streamer_get_streaming_track) (void);
     float (*streamer_get_playpos) (void);
@@ -319,6 +318,7 @@ typedef struct {
     int (*streamer_get_apx_bitrate) (void);
     struct DB_fileinfo_s *(*streamer_get_current_fileinfo) (void);
     int (*streamer_get_current_playlist) (void);
+    struct DB_dsp_instance_s * (*streamer_get_dsp_chain) (void);
     // system folders
     // normally functions will return standard folders derived from --prefix
     // portable version will return pathes specified in comments below
@@ -763,7 +763,11 @@ typedef struct DB_dsp_s {
 
     // samples are interleaved
     // returned value is number of output frames
-    int (*process) (DB_dsp_instance_t *inst, float *samples, int frames, int channels);
+    int (*process) (DB_dsp_instance_t *inst, float *samples, int frames, int samplerate, int channels);
+
+    void (*reset) (DB_dsp_instance_t *inst);
+
+    void (*enable) (DB_dsp_instance_t *inst, int e);
 } DB_dsp_t;
 
 

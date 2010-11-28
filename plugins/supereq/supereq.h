@@ -22,10 +22,10 @@
 
 typedef struct DB_supereq_dsp_s {
     DB_dsp_t dsp;
-    float (*get_band) (int band);
-    void (*set_band) (int band, float value);
-    float (*get_preamp) (void);
-    void (*set_preamp) (float value);
+    float (*get_band) (DB_dsp_instance_t *inst, int band);
+    void (*set_band) (DB_dsp_instance_t *inst, int band, float value);
+    float (*get_preamp) (DB_dsp_instance_t *inst);
+    void (*set_preamp) (DB_dsp_instance_t *inst, float value);
 } DB_supereq_dsp_t;
 
 #endif

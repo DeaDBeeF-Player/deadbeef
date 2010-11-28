@@ -29,8 +29,8 @@ eq_window_hide (void);
 void
 eq_window_destroy (void);
 
-struct DB_supereq_dsp_s *
-get_supereq_plugin (void);
+DB_dsp_instance_t *
+get_supereq (void);
 
 void
 eq_redraw (void);

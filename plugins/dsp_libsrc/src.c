@@ -47,7 +47,8 @@ typedef struct {
     uintptr_t mutex;
 } ddb_src_libsamplerate_t;
 
-DB_dsp_instance_t* ddb_src_open (const char *id) {
+DB_dsp_instance_t*
+ddb_src_open (const char *id) {
     ddb_src_libsamplerate_t *src = malloc (sizeof (ddb_src_libsamplerate_t));
     DDB_INIT_DSP_INSTANCE (src,ddb_src_libsamplerate_t,&plugin.dsp);
 
@@ -115,7 +116,7 @@ ddb_src_set_ratio (DB_dsp_instance_t *_src, float ratio) {
 }
 
 int
-ddb_src_process (DB_dsp_instance_t *_src, float *samples, int nframes, int nchannels) {
+ddb_src_process (DB_dsp_instance_t *_src, float *samples, int nframes, int samplerate, int nchannels) {
     ddb_src_libsamplerate_t *src = (ddb_src_libsamplerate_t*)_src;
     ddb_src_lock (_src);
 
