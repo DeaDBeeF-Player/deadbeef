@@ -218,7 +218,7 @@ on_songchanged (DB_event_trackchange_t *ev, uintptr_t data) {
             //dbus_connection_flush (conn);
             //dbus_message_unref (msg);
 
-            intptr_t tid = NULL;
+            intptr_t tid = 0;
             if ((tid=deadbeef->thread_start(notify_thread, msg)) != 0) {
                 dbus_message_ref (msg);
                 deadbeef->thread_detach (tid);  
