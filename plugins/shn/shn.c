@@ -358,7 +358,9 @@ shn_init(DB_fileinfo_t *_info, DB_playItem_t *it) {
     _info->fmt.bps = info->shnfile->wave_header.bits_per_sample;
     _info->fmt.channels = info->shnfile->wave_header.channels;
     _info->fmt.samplerate  = info->shnfile->wave_header.samples_per_sec;
-    _info->fmt.channelmask = _info->fmt.channels == 1 ? DDB_SPEAKER_FRONT_LEFT : (DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT);
+    for (int i = 0; i < _info->fmt.channels; i++) {
+        _info->fmt.channelmask |= 1 << i;
+    }
     _info->plugin = &plugin;
 
     int totalsamples = info->shnfile->wave_header.length * info->shnfile->wave_header.samples_per_sec;
