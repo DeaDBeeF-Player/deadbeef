@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 0.4.2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-09-10 15:02+0200\n"
-"PO-Revision-Date: 2010-11-25 23:41+0200\n"
+"PO-Revision-Date: 2010-12-01 15:54+0200\n"
 "Last-Translator: kizito <kbirabwa@yahoo.co.uk>\n"
 "Language-Team: LANGUAGE <kbirabwa@yahoo.co.uk>\n"
 "Language: lg\n"
@@ -785,7 +785,7 @@ msgstr "Ekiwandika okunnyonyola kw'enyimba"
 
 #: ../plugins/gtkui/interface.c:2391 ../plugins/gtkui/deadbeef.glade.h:24
 msgid "Description:"
-msgstr ""
+msgstr "Okunnyonyola:"
 
 #: ../plugins/gtkui/interface.c:2406 ../plugins/gtkui/deadbeef.glade.h:13
 msgid "Author(s):"
@@ -829,6 +829,14 @@ msgid ""
 "  copy[r]ight, [f]ilename, [T]ags\n"
 "Example: %a - %t [%l]"
 msgstr ""
+"Okutangaaza ku mpandika enfunze (zitandikwa n'akabonero ka %):\n"
+"  a: Muluyimba, t: Erinnya ly'oluyimba, b: Kibiina, C: Eyaluwandika\n"
+"  n: Namba y'olutambi, N: Obungi bw'entambi,\n"
+"  l: Buwanvu  bwa lwo, y: Mwaka gwa lwo, g: Kika kya luyimba, c: "
+"Okunnyonyola,\n"
+"  r: Ebikugizo by'obwanannyini, f: Linnya lya fayiro, T: Obugambo "
+"obuzuuzisibwa\n"
+"Eky'okulabirako: %a - %t [%l]"
 
 #: ../plugins/gtkui/mainplaylist.c:301 ../plugins/gtkui/search.c:434
 msgid "Artist / Album"
@@ -995,37 +1003,39 @@ msgstr "Obuwayiro:\n"
 #: ../main.c:91
 #, c-format
 msgid "   --help  or  -h     Print help (this message) and exit\n"
-msgstr ""
+msgstr "   --help  oba  -h     Bw'ossawo kamu ku buno, okoma ku kufuna bino by'osoma\n"
 
 #: ../main.c:92
 #, c-format
 msgid "   --quit             Quit player\n"
-msgstr ""
+msgstr "   --quit             Kano kaleetera puloguramu okumala\n"
 
 #: ../main.c:93
 #, c-format
 msgid "   --version          Print version info and exit\n"
-msgstr ""
+msgstr "   --version          Kano kaleetera puloguramu okukoma ku kukulaga "
+"olwandika lwa yo\n"
 
 #: ../main.c:94
 #, c-format
 msgid "   --play             Start playback\n"
-msgstr ""
+msgstr "   --play             Kano kaleetera pulguramu okutandika enyimba\n"
 
 #: ../main.c:95
 #, c-format
 msgid "   --stop             Stop playback\n"
-msgstr ""
+msgstr "   --stop             Kano kaleetera pulguramu okukomya oluyimba\n"
 
 #: ../main.c:96
 #, c-format
 msgid "   --pause            Pause playback\n"
-msgstr ""
+msgstr "   --pause            Kano kaleetera puloguramu okuyimirizamu oluyimba\n"
 
 #: ../main.c:97
 #, c-format
 msgid "   --next             Next song in playlist\n"
-msgstr ""
+msgstr "   --next             Kano kaleetera puloguramu okutandika oluyimba oluddako "
+"mu lukalala\n"
 
 #: ../main.c:98
 #, c-format
