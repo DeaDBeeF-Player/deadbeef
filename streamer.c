@@ -739,7 +739,9 @@ streamer_start_new_song (void) {
     int initsng = nextsong;
     int pstate = nextsong_pstate;
     nextsong = -1;
-    srcplug->reset (src, 0);
+    if (srcplug) {
+        srcplug->reset (src, 0);
+    }
     streamer_unlock ();
     if (badsong == sng) {
         trace ("looped to bad file. stopping...\n");
@@ -1356,7 +1358,9 @@ streamer_read_async (char *bytes, int size) {
 
                 // convert to float
                 int tempsize = pcm_convert (&fileinfo->fmt, input, &dspfmt, tempbuf, inputsize);
-                srcplug->set_ratio (src, ratio);
+                if (srcplug) {
+                    srcplug->set_ratio (src, ratio);
+                }
 
                 int nframes = inputsize / inputsamplesize;
                 DB_dsp_instance_t *dsp = dsp_chain;
@@ -1511,7 +1515,9 @@ streamer_configchanged (void) {
     conf_replaygain_mode = conf_get_int ("replaygain_mode", 0);
     conf_replaygain_scale = conf_get_int ("replaygain_scale", 1);
 
-    srcplug->reset (src, 1);
+    if (srcplug) {
+        srcplug->reset (src, 1);
+    }
 }
 
 void
