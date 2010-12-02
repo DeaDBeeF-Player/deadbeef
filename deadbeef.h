@@ -427,7 +427,6 @@ typedef struct {
     // _escaped version wraps all conversions with '' and replaces every ' in conversions with \'
     int (*pl_format_title_escaped) (DB_playItem_t *it, int idx, char *s, int size, int id, const char *fmt);
     void (*pl_format_time) (float t, char *dur, int size);
-    void (*pl_format_item_display_name) (DB_playItem_t *it, char *str, int len);
     void (*pl_move_items) (int iter, int plt_from, DB_playItem_t *drop_before, uint32_t *indexes, int count);
     void (*pl_copy_items) (int iter, int plt_from, DB_playItem_t *before, uint32_t *indices, int cnt);
     void (*pl_search_reset) (void);
@@ -597,6 +596,9 @@ typedef struct DB_plugin_s {
     const char *email; // author's email
     const char *website; // author's website
 
+    // plugin-specific command interface; can be NULL
+    int (*command) (int cmd, ...);
+
     // start is called to start plugin; can be NULL
     int (*start) (void);
     
@@ -747,10 +749,18 @@ typedef struct DB_output_s {
 }
 
 typedef struct DB_dsp_instance_s {
+    // this id is used to write settings, identify specific instances, etc
     char id[10];
+
+    // pointer to DSP plugin which created this instance
     struct DB_dsp_s *plugin;
+
+    // pointer to the next DSP plugin instance in the chain
     struct DB_dsp_instance_s *next;
+
+    // read only flag; set by DB_dsp_t::enable
     unsigned enabled : 1;
+
 } DB_dsp_instance_t;
 
 typedef struct DB_dsp_s {
@@ -758,6 +768,7 @@ typedef struct DB_dsp_s {
 
     // id is a unique name used to get configuration settings
     DB_dsp_instance_t* (*open) (const char *id);
+
     void (*close) (DB_dsp_instance_t *inst);
 
     // samples are interleaved
