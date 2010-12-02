@@ -983,3 +983,29 @@ on_jump_to_current_track1_activate     (GtkMenuItem     *menuitem,
 void
 on_translators1_activate               (GtkMenuItem     *menuitem,
                                         gpointer         user_data);
+
+void
+on_converter_output_browse_clicked     (GtkButton       *button,
+                                        gpointer         user_data);
+
+void
+on_converter_cancel_clicked            (GtkButton       *button,
+                                        gpointer         user_data);
+
+void
+on_converter_ok_clicked                (GtkButton       *button,
+                                        gpointer         user_data);
+
+void
+on_converterdlg_close                  (GtkDialog       *dialog,
+                                        gpointer         user_data);
+
+void
+on_converterdlg_response               (GtkDialog       *dialog,
+                                        gint             response_id,
+                                        gpointer         user_data);
+
+gboolean
+on_converterdlg_delete_event           (GtkWidget       *widget,
+                                        GdkEvent        *event,
+                                        gpointer         user_data);

@@ -3184,3 +3184,114 @@ create_groupbydlg (void)
   return groupbydlg;
 }
 
+GtkWidget*
+create_converterdlg (void)
+{
+  GtkWidget *converterdlg;
+  GtkWidget *dialog_vbox6;
+  GtkWidget *vbox26;
+  GtkWidget *hbox67;
+  GtkWidget *label103;
+  GtkWidget *hbox68;
+  GtkWidget *output_folder;
+  GtkWidget *converter_output_browse;
+  GtkWidget *hbox69;
+  GtkWidget *label104;
+  GtkWidget *encoder_cmd_line;
+  GtkWidget *dialog_action_area5;
+  GtkWidget *converter_cancel;
+  GtkWidget *converter_ok;
+
+  converterdlg = gtk_dialog_new ();
+  gtk_window_set_title (GTK_WINDOW (converterdlg), _("Converter"));
+  gtk_window_set_type_hint (GTK_WINDOW (converterdlg), GDK_WINDOW_TYPE_HINT_DIALOG);
+  gtk_dialog_set_has_separator (GTK_DIALOG (converterdlg), FALSE);
+
+  dialog_vbox6 = GTK_DIALOG (converterdlg)->vbox;
+  gtk_widget_show (dialog_vbox6);
+
+  vbox26 = gtk_vbox_new (FALSE, 8);
+  gtk_widget_show (vbox26);
+  gtk_box_pack_start (GTK_BOX (dialog_vbox6), vbox26, TRUE, TRUE, 0);
+  gtk_container_set_border_width (GTK_CONTAINER (vbox26), 12);
+
+  hbox67 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox67);
+  gtk_box_pack_start (GTK_BOX (vbox26), hbox67, FALSE, TRUE, 0);
+
+  label103 = gtk_label_new (_("Output folder"));
+  gtk_widget_show (label103);
+  gtk_box_pack_start (GTK_BOX (hbox67), label103, FALSE, FALSE, 0);
+
+  hbox68 = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show (hbox68);
+  gtk_box_pack_start (GTK_BOX (hbox67), hbox68, TRUE, TRUE, 0);
+
+  output_folder = gtk_entry_new ();
+  gtk_widget_show (output_folder);
+  gtk_box_pack_start (GTK_BOX (hbox68), output_folder, TRUE, TRUE, 0);
+  gtk_entry_set_invisible_char (GTK_ENTRY (output_folder), 9679);
+
+  converter_output_browse = gtk_button_new_with_mnemonic (_("..."));
+  gtk_widget_show (converter_output_browse);
+  gtk_box_pack_start (GTK_BOX (hbox68), converter_output_browse, FALSE, FALSE, 0);
+
+  hbox69 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox69);
+  gtk_box_pack_start (GTK_BOX (vbox26), hbox69, FALSE, FALSE, 0);
+
+  label104 = gtk_label_new (_("Encoder command line"));
+  gtk_widget_show (label104);
+  gtk_box_pack_start (GTK_BOX (hbox69), label104, FALSE, FALSE, 0);
+
+  encoder_cmd_line = gtk_entry_new ();
+  gtk_widget_show (encoder_cmd_line);
+  gtk_box_pack_start (GTK_BOX (hbox69), encoder_cmd_line, TRUE, TRUE, 0);
+  gtk_entry_set_invisible_char (GTK_ENTRY (encoder_cmd_line), 9679);
+
+  dialog_action_area5 = GTK_DIALOG (converterdlg)->action_area;
+  gtk_widget_show (dialog_action_area5);
+  gtk_button_box_set_layout (GTK_BUTTON_BOX (dialog_action_area5), GTK_BUTTONBOX_END);
+
+  converter_cancel = gtk_button_new_from_stock ("gtk-cancel");
+  gtk_widget_show (converter_cancel);
+  gtk_dialog_add_action_widget (GTK_DIALOG (converterdlg), converter_cancel, GTK_RESPONSE_CANCEL);
+  GTK_WIDGET_SET_FLAGS (converter_cancel, GTK_CAN_DEFAULT);
+
+  converter_ok = gtk_button_new_from_stock ("gtk-ok");
+  gtk_widget_show (converter_ok);
+  gtk_dialog_add_action_widget (GTK_DIALOG (converterdlg), converter_ok, GTK_RESPONSE_OK);
+  GTK_WIDGET_SET_FLAGS (converter_ok, GTK_CAN_DEFAULT);
+
+  g_signal_connect ((gpointer) converterdlg, "delete_event",
+                    G_CALLBACK (on_converterdlg_delete_event),
+                    NULL);
+  g_signal_connect ((gpointer) converter_output_browse, "clicked",
+                    G_CALLBACK (on_converter_output_browse_clicked),
+                    NULL);
+  g_signal_connect ((gpointer) converter_cancel, "clicked",
+                    G_CALLBACK (on_converter_cancel_clicked),
+                    NULL);
+  g_signal_connect ((gpointer) converter_ok, "clicked",
+                    G_CALLBACK (on_converter_ok_clicked),
+                    NULL);
+
+  /* Store pointers to all widgets, for use by lookup_widget(). */
+  GLADE_HOOKUP_OBJECT_NO_REF (converterdlg, converterdlg, "converterdlg");
+  GLADE_HOOKUP_OBJECT_NO_REF (converterdlg, dialog_vbox6, "dialog_vbox6");
+  GLADE_HOOKUP_OBJECT (converterdlg, vbox26, "vbox26");
+  GLADE_HOOKUP_OBJECT (converterdlg, hbox67, "hbox67");
+  GLADE_HOOKUP_OBJECT (converterdlg, label103, "label103");
+  GLADE_HOOKUP_OBJECT (converterdlg, hbox68, "hbox68");
+  GLADE_HOOKUP_OBJECT (converterdlg, output_folder, "output_folder");
+  GLADE_HOOKUP_OBJECT (converterdlg, converter_output_browse, "converter_output_browse");
+  GLADE_HOOKUP_OBJECT (converterdlg, hbox69, "hbox69");
+  GLADE_HOOKUP_OBJECT (converterdlg, label104, "label104");
+  GLADE_HOOKUP_OBJECT (converterdlg, encoder_cmd_line, "encoder_cmd_line");
+  GLADE_HOOKUP_OBJECT_NO_REF (converterdlg, dialog_action_area5, "dialog_action_area5");
+  GLADE_HOOKUP_OBJECT (converterdlg, converter_cancel, "converter_cancel");
+  GLADE_HOOKUP_OBJECT (converterdlg, converter_ok, "converter_ok");
+
+  return converterdlg;
+}
+
