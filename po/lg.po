@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 0.4.2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-09-10 15:02+0200\n"
-"PO-Revision-Date: 2010-12-02 15:39+0200\n"
+"PO-Revision-Date: 2010-12-03 00:23+0200\n"
 "Last-Translator: kizito <kbirabwa@yahoo.co.uk>\n"
 "Language-Team: LANGUAGE <kbirabwa@yahoo.co.uk>\n"
 "Language: lg\n"
@@ -627,7 +627,7 @@ msgstr "Omutwe gw'eddirisa nga puloguramu eyimirizidwa:"
 
 #: ../plugins/gtkui/interface.c:1874 ../plugins/gtkui/deadbeef.glade.h:63
 msgid "GUI"
-msgstr "Ebirabikira wakaolerwa"
+msgstr "Ebirabikira awakolerwa"
 
 #: ../plugins/gtkui/interface.c:1888 ../plugins/gtkui/interface.c:1932
 #: ../plugins/gtkui/deadbeef.glade.h:89
@@ -644,47 +644,49 @@ msgstr "Bwaliriro"
 
 #: ../plugins/gtkui/interface.c:1923 ../plugins/gtkui/deadbeef.glade.h:116
 msgid "Seekbar/Volumebar colors"
-msgstr ""
+msgstr "Langi eziraga oluyimba we lutuuse/bwangufu bw'eddoboozi"
 
 #: ../plugins/gtkui/interface.c:1941 ../plugins/gtkui/deadbeef.glade.h:80
 msgid "Middle"
-msgstr ""
+msgstr "Langi eyawakkatikati"
 
 #: ../plugins/gtkui/interface.c:1948 ../plugins/gtkui/deadbeef.glade.h:73
 msgid "Light"
-msgstr ""
+msgstr "Langi entangaavu"
 
 #: ../plugins/gtkui/interface.c:1955 ../plugins/gtkui/deadbeef.glade.h:23
 msgid "Dark"
-msgstr ""
+msgstr "Langi enzirugarivu"
 
 #: ../plugins/gtkui/interface.c:1986 ../plugins/gtkui/deadbeef.glade.h:15
 msgid "Base"
-msgstr ""
+msgstr "Langi ey'omulamwa"
 
 #: ../plugins/gtkui/interface.c:1993 ../plugins/gtkui/deadbeef.glade.h:129
 msgid "Tab strip colors"
-msgstr ""
+msgstr "Langi ez'oku bukonda"
 
 #: ../plugins/gtkui/interface.c:2002 ../plugins/gtkui/deadbeef.glade.h:90
 msgid "Override (looses GTK treeview theming, but speeds up rendering)"
 msgstr ""
+"Ssawo enteekateeka eyiyo (kiva ku lulyo lwa langi olwa sisitemu naye "
+"kyanguya puloguramu okulabika)"
 
 #: ../plugins/gtkui/interface.c:2011 ../plugins/gtkui/deadbeef.glade.h:34
 msgid "Even row"
-msgstr ""
+msgstr "Nnyiriri kagabanyizikamubbiri"
 
 #: ../plugins/gtkui/interface.c:2018 ../plugins/gtkui/deadbeef.glade.h:85
 msgid "Odd row"
-msgstr ""
+msgstr "Nnyiriri zinantagabanyizikamubbiri"
 
 #: ../plugins/gtkui/interface.c:2037 ../plugins/gtkui/deadbeef.glade.h:132
 msgid "Text"
-msgstr ""
+msgstr "Bigambo"
 
 #: ../plugins/gtkui/interface.c:2044 ../plugins/gtkui/deadbeef.glade.h:118
 msgid "Selected row"
-msgstr "Olunyiriri olundedwa"
+msgstr "Olunyiriri olulondedwa"
 
 #: ../plugins/gtkui/interface.c:2063 ../plugins/gtkui/deadbeef.glade.h:119
 msgid "Selected text"
@@ -704,15 +706,15 @@ msgstr "Langi"
 
 #: ../plugins/gtkui/interface.c:2102 ../plugins/gtkui/deadbeef.glade.h:31
 msgid "Enable Proxy Server"
-msgstr "Kozesa ekiwereza masanganzira"
+msgstr "Kozesa ekiwereza kimasanganzira"
 
 #: ../plugins/gtkui/interface.c:2110 ../plugins/gtkui/deadbeef.glade.h:101
 msgid "Proxy Server Address:"
-msgstr "Endagiriro y'ekiwereza masanganzira:"
+msgstr "Endagiriro y'ekiwereza kimasanganzira:"
 
 #: ../plugins/gtkui/interface.c:2124 ../plugins/gtkui/deadbeef.glade.h:102
 msgid "Proxy Server Port:"
-msgstr "Pooti y'ekiwereza masanganzira:"
+msgstr "Pooti y'ekiwereza kimasanganzira:"
 
 #: ../plugins/gtkui/interface.c:2138 ../plugins/gtkui/deadbeef.glade.h:103
 msgid "Proxy Type:"
@@ -926,19 +928,19 @@ msgstr "Ekyuma ekikola ku biwulirizibwa bulijjo"
 
 #: ../plugins/gtkui/prefwin.c:312
 msgid "Add"
-msgstr ""
+msgstr "Kaza"
 
 #: ../plugins/gtkui/prefwin.c:322
 msgid "Global Hotkeys"
-msgstr ""
+msgstr "Teekateeka amapeesa g'oyinza okukozesa okwanguya mirimu"
 
 #: ../plugins/gtkui/prefwin.c:384
 msgid "Slot"
-msgstr ""
+msgstr "Kiragiro"
 
 #: ../plugins/gtkui/prefwin.c:385
 msgid "Key combination"
-msgstr ""
+msgstr "Ppeesa oba mapeesa"
 
 #. output plugin selection
 #: ../plugins/gtkui/prefwin.c:464 ../plugins/gtkui/prefwin.c:676
@@ -980,7 +982,7 @@ msgstr "Puloguramu ekola ku data enkongojje"
 
 #: ../plugins/gtkui/trkproperties.c:250 ../plugins/gtkui/trkproperties.c:262
 msgid "Key"
-msgstr ""
+msgstr "Ppeesa"
 
 #: ../plugins/gtkui/trkproperties.c:251 ../plugins/gtkui/trkproperties.c:263
 msgid "Value"
