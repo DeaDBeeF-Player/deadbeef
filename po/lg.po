@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 0.4.2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-09-10 15:02+0200\n"
-"PO-Revision-Date: 2010-12-01 15:54+0200\n"
+"PO-Revision-Date: 2010-12-02 15:39+0200\n"
 "Last-Translator: kizito <kbirabwa@yahoo.co.uk>\n"
 "Language-Team: LANGUAGE <kbirabwa@yahoo.co.uk>\n"
 "Language: lg\n"
@@ -1040,22 +1040,24 @@ msgstr "   --next             Kano kaleetera puloguramu okutandika oluyimba olud
 #: ../main.c:98
 #, c-format
 msgid "   --prev             Previous song in playlist\n"
-msgstr ""
+msgstr "   --prev             Kano kaleetera puloguramu okutandika olukulembera "
+"lw'ebadde ko mu lukalala\n"
 
 #: ../main.c:99
 #, c-format
 msgid "   --random           Random song in playlist\n"
-msgstr ""
+msgstr "   --random           Kano kaleetera puloguramu okuyita mu nyimba muwawa\n"
 
 #: ../main.c:100
 #, c-format
 msgid "   --queue            Append file(s) to existing playlist\n"
-msgstr ""
+msgstr "   --queue            Kano kaleetera puloguramu okwongera nyimba ku lukalala\n"
 
 #: ../main.c:101
 #, c-format
 msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
-msgstr ""
+msgstr "   --nowplaying FMT  Kano kaleetera puloguramu okuwandikawo erinnya "
+"ly'olutambi\n"
 
 #: ../main.c:102
 #, c-format
@@ -1064,17 +1066,24 @@ msgid ""
 "                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
 "                      copy[r]ight, [e]lapsed\n"
 msgstr ""
+"                      FMT %%-empandika: a: muyimbi, t: Linnya lya luyimba, "
+"b: Alubamu,\n"
+"                      : Buwanvu bwa luyimba,n: Lutambi,y: Mwaka mwe "
+"lwafulumira, c: Ebinnyonyola,\n"
+"                      r: Ebikugizo by'obwa nannyini, e: Ekitundu ky'oluyimba "
+"ekiwulirizidwako\n"
 
 #: ../main.c:105
 #, c-format
 msgid ""
 "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist "
 "- title\"\n"
-msgstr ""
+msgstr "                      okugeza.: --nowplaying \"%%a - %%t\" kisuubirwa okuvaamu "
+"\"muyibi - linnya lya luyimba\"\n"
 
 #: ../playlist.c:377 ../playlist.c:2289
 msgid "Default"
-msgstr "Lukwatakifo"
+msgstr "Olukwatakifo"
 
 #: ../plugins/gtkui/deadbeef.glade.h:1
 msgid ""
@@ -1124,19 +1133,23 @@ msgstr ""
 #: ../plugins/gtkui/support.c:90 ../plugins/gtkui/support.c:114
 #, c-format
 msgid "Couldn't find pixmap file: %s"
-msgstr ""
+msgstr "Fayiro erimu ekifaananyi embuze: %s"
 
 #: ../plugins/vorbis/vcedit.c:129 ../plugins/vorbis/vcedit.c:155
 msgid "Couldn't get enough memory for input buffering."
 msgstr ""
+"Tekisobose okufuna ekifo mu ggwanika ekimala okukuŋaanyisamu puloguramu "
+"by'ekolako."
 
 #: ../plugins/vorbis/vcedit.c:179 ../plugins/vorbis/vcedit.c:550
 msgid "Error reading first page of Ogg bitstream."
 msgstr ""
+"Wazzewo kiremya mu kusoma ekitundu ekisoose okuwerezebwa mu luyiira lwa "
+"bbiti olwa Ogg."
 
 #: ../plugins/vorbis/vcedit.c:185 ../plugins/vorbis/vcedit.c:557
 msgid "Error reading initial header packet."
-msgstr ""
+msgstr "Wazzewo kiremya mu kusoma ekitole kya data ekikulembera."
 
 #: ../plugins/vorbis/vcedit.c:237
 msgid "Couldn't get enough memory to register new stream serial number."
