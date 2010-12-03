@@ -3295,3 +3295,109 @@ create_converterdlg (void)
   return converterdlg;
 }
 
+GtkWidget*
+create_convpreset_editor (void)
+{
+  GtkWidget *convpreset_editor;
+  GtkWidget *dialog_vbox7;
+  GtkWidget *vbox27;
+  GtkWidget *hbox70;
+  GtkWidget *label105;
+  GtkWidget *convpreset_title;
+  GtkWidget *hbox72;
+  GtkWidget *label106;
+  GtkWidget *convpreset_encoder;
+  GtkWidget *hbox73;
+  GtkWidget *label107;
+  GtkWidget *convpreset_method;
+  GtkWidget *dialog_action_area6;
+  GtkWidget *convpreset_cancel;
+  GtkWidget *convpreset_ok;
+
+  convpreset_editor = gtk_dialog_new ();
+  gtk_window_set_title (GTK_WINDOW (convpreset_editor), _("Edit Converter Preset"));
+  gtk_window_set_type_hint (GTK_WINDOW (convpreset_editor), GDK_WINDOW_TYPE_HINT_DIALOG);
+  gtk_dialog_set_has_separator (GTK_DIALOG (convpreset_editor), FALSE);
+
+  dialog_vbox7 = GTK_DIALOG (convpreset_editor)->vbox;
+  gtk_widget_show (dialog_vbox7);
+
+  vbox27 = gtk_vbox_new (FALSE, 8);
+  gtk_widget_show (vbox27);
+  gtk_box_pack_start (GTK_BOX (dialog_vbox7), vbox27, TRUE, TRUE, 0);
+  gtk_container_set_border_width (GTK_CONTAINER (vbox27), 12);
+
+  hbox70 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox70);
+  gtk_box_pack_start (GTK_BOX (vbox27), hbox70, FALSE, TRUE, 0);
+
+  label105 = gtk_label_new (_("Title"));
+  gtk_widget_show (label105);
+  gtk_box_pack_start (GTK_BOX (hbox70), label105, FALSE, FALSE, 0);
+
+  convpreset_title = gtk_entry_new ();
+  gtk_widget_show (convpreset_title);
+  gtk_box_pack_start (GTK_BOX (hbox70), convpreset_title, TRUE, TRUE, 0);
+  gtk_entry_set_invisible_char (GTK_ENTRY (convpreset_title), 9679);
+
+  hbox72 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox72);
+  gtk_box_pack_start (GTK_BOX (vbox27), hbox72, FALSE, TRUE, 0);
+
+  label106 = gtk_label_new (_("Encoder command line"));
+  gtk_widget_show (label106);
+  gtk_box_pack_start (GTK_BOX (hbox72), label106, FALSE, FALSE, 0);
+
+  convpreset_encoder = gtk_entry_new ();
+  gtk_widget_show (convpreset_encoder);
+  gtk_box_pack_start (GTK_BOX (hbox72), convpreset_encoder, TRUE, TRUE, 0);
+  gtk_entry_set_invisible_char (GTK_ENTRY (convpreset_encoder), 9679);
+
+  hbox73 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox73);
+  gtk_box_pack_start (GTK_BOX (vbox27), hbox73, FALSE, TRUE, 0);
+
+  label107 = gtk_label_new (_("Method"));
+  gtk_widget_show (label107);
+  gtk_box_pack_start (GTK_BOX (hbox73), label107, FALSE, FALSE, 0);
+
+  convpreset_method = gtk_combo_box_new_text ();
+  gtk_widget_show (convpreset_method);
+  gtk_box_pack_start (GTK_BOX (hbox73), convpreset_method, TRUE, TRUE, 0);
+  gtk_combo_box_append_text (GTK_COMBO_BOX (convpreset_method), _("Pipe"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (convpreset_method), _("Temporary file"));
+
+  dialog_action_area6 = GTK_DIALOG (convpreset_editor)->action_area;
+  gtk_widget_show (dialog_action_area6);
+  gtk_button_box_set_layout (GTK_BUTTON_BOX (dialog_action_area6), GTK_BUTTONBOX_END);
+
+  convpreset_cancel = gtk_button_new_from_stock ("gtk-cancel");
+  gtk_widget_show (convpreset_cancel);
+  gtk_dialog_add_action_widget (GTK_DIALOG (convpreset_editor), convpreset_cancel, GTK_RESPONSE_CANCEL);
+  GTK_WIDGET_SET_FLAGS (convpreset_cancel, GTK_CAN_DEFAULT);
+
+  convpreset_ok = gtk_button_new_from_stock ("gtk-ok");
+  gtk_widget_show (convpreset_ok);
+  gtk_dialog_add_action_widget (GTK_DIALOG (convpreset_editor), convpreset_ok, GTK_RESPONSE_OK);
+  GTK_WIDGET_SET_FLAGS (convpreset_ok, GTK_CAN_DEFAULT);
+
+  /* Store pointers to all widgets, for use by lookup_widget(). */
+  GLADE_HOOKUP_OBJECT_NO_REF (convpreset_editor, convpreset_editor, "convpreset_editor");
+  GLADE_HOOKUP_OBJECT_NO_REF (convpreset_editor, dialog_vbox7, "dialog_vbox7");
+  GLADE_HOOKUP_OBJECT (convpreset_editor, vbox27, "vbox27");
+  GLADE_HOOKUP_OBJECT (convpreset_editor, hbox70, "hbox70");
+  GLADE_HOOKUP_OBJECT (convpreset_editor, label105, "label105");
+  GLADE_HOOKUP_OBJECT (convpreset_editor, convpreset_title, "convpreset_title");
+  GLADE_HOOKUP_OBJECT (convpreset_editor, hbox72, "hbox72");
+  GLADE_HOOKUP_OBJECT (convpreset_editor, label106, "label106");
+  GLADE_HOOKUP_OBJECT (convpreset_editor, convpreset_encoder, "convpreset_encoder");
+  GLADE_HOOKUP_OBJECT (convpreset_editor, hbox73, "hbox73");
+  GLADE_HOOKUP_OBJECT (convpreset_editor, label107, "label107");
+  GLADE_HOOKUP_OBJECT (convpreset_editor, convpreset_method, "convpreset_method");
+  GLADE_HOOKUP_OBJECT_NO_REF (convpreset_editor, dialog_action_area6, "dialog_action_area6");
+  GLADE_HOOKUP_OBJECT (convpreset_editor, convpreset_cancel, "convpreset_cancel");
+  GLADE_HOOKUP_OBJECT (convpreset_editor, convpreset_ok, "convpreset_ok");
+
+  return convpreset_editor;
+}
+

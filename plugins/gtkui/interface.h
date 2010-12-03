@@ -14,3 +14,4 @@ GtkWidget* create_editplaylistdlg (void);
 GtkWidget* create_addlocationdlg (void);
 GtkWidget* create_groupbydlg (void);
 GtkWidget* create_converterdlg (void);
+GtkWidget* create_convpreset_editor (void);
