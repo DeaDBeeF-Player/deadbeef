@@ -1142,6 +1142,7 @@ on_custom2_activate                    (GtkMenuItem     *menuitem,
     gtk_widget_destroy (dlg);
 
     DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
+    ddb_listview_clear_sort (pl);
     ddb_listview_refresh (pl, DDB_REFRESH_LIST | DDB_EXPOSE_LIST);
 }
 

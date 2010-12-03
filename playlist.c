@@ -2867,7 +2867,7 @@ static const char *pl_sort_format;
 static int
 pl_sort_compare_str (playItem_t *a, playItem_t *b) {
     if (pl_sort_is_duration) {
-        return pl_sort_ascending ? b->_duration * 100000 - a->_duration * 100000 : a->_duration * 100000  - b->_duration * 100000;
+        return !pl_sort_ascending ? b->_duration * 100000 - a->_duration * 100000 : a->_duration * 100000  - b->_duration * 100000;
     }
     else if (pl_sort_is_track) {
         int t1;
@@ -2887,14 +2887,14 @@ pl_sort_compare_str (playItem_t *a, playItem_t *b) {
         else {
             t2 = t ? atoi (t) : -1;
         }
-        return pl_sort_ascending ? t2 - t1 : t1 - t2;
+        return !pl_sort_ascending ? t2 - t1 : t1 - t2;
     }
     else {
         char tmp1[1024];
         char tmp2[1024];
         pl_format_title (a, -1, tmp1, sizeof (tmp1), pl_sort_id, pl_sort_format);
         pl_format_title (b, -1, tmp2, sizeof (tmp2), pl_sort_id, pl_sort_format);
-        return pl_sort_ascending ? strcmp (tmp2, tmp1) : strcmp (tmp1, tmp2);
+        return !pl_sort_ascending ? strcmp (tmp2, tmp1) : strcmp (tmp1, tmp2);
     }
 }
 

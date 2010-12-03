@@ -2453,7 +2453,7 @@ ddb_listview_header_button_release_event         (GtkWidget       *widget,
                     else if (sort_order == 2) {
                         c->sort_order = 1;
                     }
-                    ps->binding->col_sort (i, c->sort_order, c->user_data);
+                    ps->binding->col_sort (i, c->sort_order-1, c->user_data);
                     sorted = 1;
                 }
                 else {
