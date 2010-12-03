@@ -1029,3 +1029,7 @@ on_date1_activate                      (GtkMenuItem     *menuitem,
 void
 on_custom2_activate                    (GtkMenuItem     *menuitem,
                                         gpointer         user_data);
+
+void
+on_sortfmt_activate                    (GtkEntry        *entry,
+                                        gpointer         user_data);
