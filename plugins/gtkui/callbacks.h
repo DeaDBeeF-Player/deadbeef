@@ -1013,3 +1013,19 @@ on_converterdlg_delete_event           (GtkWidget       *widget,
 GtkWidget*
 title_formatting_help_link_create (gchar *widget_name, gchar *string1, gchar *string2,
                 gint int1, gint int2);
+
+void
+on_album1_activate                     (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_artist1_activate                    (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_date1_activate                      (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_custom2_activate                    (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);

@@ -1092,3 +1092,56 @@ title_formatting_help_link_create (gchar *widget_name, gchar *string1, gchar *st
     return link;
 }
 
+
+void
+on_album1_activate                     (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+
+}
+
+
+void
+on_artist1_activate                    (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+
+}
+
+
+void
+on_date1_activate                      (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+
+}
+
+
+void
+on_custom2_activate                    (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    GtkWidget *dlg = create_sortbydlg ();
+    
+    GtkComboBox *combo = GTK_COMBO_BOX (lookup_widget (dlg, "sortorder"));
+    GtkEntry *entry = GTK_ENTRY (lookup_widget (dlg, "sortfmt"));
+    
+    gtk_combo_box_set_active (combo, deadbeef->conf_get_int ("gtkui.sortby_order", 0));
+    gtk_entry_set_text (entry, deadbeef->conf_get_str ("gtkui.sortby_fmt", ""));
+
+    int r = gtk_dialog_run (GTK_DIALOG (dlg));
+
+    int order = gtk_combo_box_get_active (combo);
+    const char *fmt = gtk_entry_get_text (entry);
+
+    deadbeef->conf_set_int ("gtkui.sortby_order", order);
+    deadbeef->conf_set_str ("gtkui.sortby_fmt", fmt);
+
+    deadbeef->pl_sort (PL_MAIN, -1, fmt, order == 0 ? 1 : 0);
+
+    gtk_widget_destroy (dlg);
+
+    DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
+    ddb_listview_refresh (pl, DDB_REFRESH_LIST | DDB_EXPOSE_LIST);
+}
+
