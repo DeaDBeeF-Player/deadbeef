@@ -35,4 +35,4 @@ cp ./plugins/shn/.libs/shn.so /usr/local/lib/deadbeef/
 cp ./plugins/ao/.libs/ao.so /usr/local/lib/deadbeef/
 cp ./plugins/shellexec/.libs/shellexec.so /usr/local/lib/deadbeef/
 cp ./plugins/dsp_libsrc/.libs/dsp_libsrc.so /usr/local/lib/deadbeef/
-
+cp ./plugins/m3u/.libs/m3u.so /usr/local/lib/deadbeef/

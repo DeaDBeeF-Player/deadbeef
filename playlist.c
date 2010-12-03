@@ -2090,6 +2090,26 @@ pl_load (const char *fname) {
     }
     GLOBAL_LOCK;
     pl_clear ();
+
+    // try plugins 1st
+    const char *ext = strrchr (fname, '.');
+    if (ext) {
+        ext++;
+        DB_playlist_t **plug = plug_get_playlist_list ();
+        int p, e;
+        for (p = 0; plug[p]; p++) {
+            for (e = 0; plug[p]->extensions[e]; e++) {
+                if (plug[p]->load && !strcasecmp (ext, plug[p]->extensions[e])) {
+                    DB_playItem_t *it = plug[p]->load (it, fname, NULL, NULL, NULL);
+                    if (it) {
+                        GLOBAL_UNLOCK;
+                        return 0;
+                    }
+                }
+            }
+        }
+    }
+
     uint8_t majorver;
     uint8_t minorver;
     playItem_t *it = NULL;

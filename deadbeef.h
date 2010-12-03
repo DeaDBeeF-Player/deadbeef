@@ -168,6 +168,7 @@ enum {
     DB_PLUGIN_DSP     = 3,
     DB_PLUGIN_MISC    = 4,
     DB_PLUGIN_VFS     = 5,
+    DB_PLUGIN_PLAYLIST = 6,
 };
 
 // output plugin states
@@ -520,6 +521,7 @@ typedef struct {
     struct DB_decoder_s **(*plug_get_decoder_list) (void);
     struct DB_output_s **(*plug_get_output_list) (void);
     struct DB_dsp_s **(*plug_get_dsp_list) (void);
+    struct DB_playlist_s **(*plug_get_playlist_list) (void);
     struct DB_plugin_s **(*plug_get_list) (void);
     int (*plug_activate) (struct DB_plugin_s *p, int activate);
     const char * (*plug_get_decoder_id) (const char *id);
@@ -814,6 +816,17 @@ typedef struct DB_vfs_s {
 typedef struct DB_gui_s {
     DB_plugin_t plugin;
 } DB_gui_t;
+
+// playlist plugin
+typedef struct DB_playlist_s {
+    DB_plugin_t plugin;
+
+    DB_playItem_t * (*load) (DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
+
+    DB_playItem_t * (*save) (DB_playItem_t *first, DB_playItem_t *last, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
+
+    const char **extensions; // NULL-terminated list of supported file extensions, e.g. {"m3u", "pls", NULL}
+} DB_playlist_t;
 
 #ifdef __cplusplus
 }

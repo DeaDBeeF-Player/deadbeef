@@ -723,6 +723,29 @@ on_playlist_save_as_activate           (GtkMenuItem     *menuitem,
     save_playlist_as ();
 }
 
+static gboolean
+playlist_filter_func (const GtkFileFilterInfo *filter_info, gpointer data) {
+    // get ext
+    const char *p = strrchr (filter_info->filename, '.');
+    if (!p) {
+        return FALSE;
+    }
+    p++;
+    DB_playlist_t **plug = deadbeef->plug_get_playlist_list ();
+    for (int i = 0; plug[i]; i++) {
+        if (plug[i]->extensions && plug[i]->load) {
+            const char **exts = plug[i]->extensions;
+            if (exts) {
+                for (int e = 0; exts[e]; e++) {
+                    if (!strcasecmp (exts[e], p)) {
+                        return TRUE;
+                    }
+                }
+            }
+        }
+    }
+    return FALSE;
+}
 
 void
 on_playlist_load_activate              (GtkMenuItem     *menuitem,
@@ -735,8 +758,14 @@ on_playlist_load_activate              (GtkMenuItem     *menuitem,
 
     GtkFileFilter* flt;
     flt = gtk_file_filter_new ();
-    gtk_file_filter_set_name (flt, _("DeaDBeeF playlist files (*.dbpl)"));
+    gtk_file_filter_set_name (flt, "Supported playlist formats");
+    gtk_file_filter_add_custom (flt, GTK_FILE_FILTER_FILENAME, playlist_filter_func, NULL, NULL);
     gtk_file_filter_add_pattern (flt, "*.dbpl");
+    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
+    gtk_file_chooser_set_filter (GTK_FILE_CHOOSER (dlg), flt);
+    flt = gtk_file_filter_new ();
+    gtk_file_filter_set_name (flt, _("Other files (*)"));
+    gtk_file_filter_add_pattern (flt, "*");
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
     
     int res = gtk_dialog_run (GTK_DIALOG (dlg));

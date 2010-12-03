@@ -256,6 +256,7 @@ static DB_functions_t deadbeef_api = {
     .plug_get_decoder_list = plug_get_decoder_list,
     .plug_get_output_list = plug_get_output_list,
     .plug_get_dsp_list = plug_get_dsp_list,
+    .plug_get_playlist_list = plug_get_playlist_list,
     .plug_get_list = plug_get_list,
     .plug_activate = plug_activate,
     .plug_get_decoder_id = plug_get_decoder_id,
@@ -322,6 +323,9 @@ DB_dsp_t *g_dsp_plugins[MAX_DSP_PLUGINS+1];
 #define MAX_OUTPUT_PLUGINS 10
 DB_output_t *g_output_plugins[MAX_OUTPUT_PLUGINS+1];
 DB_output_t *output_plugin = NULL;
+
+#define MAX_PLAYLIST_PLUGINS 10
+DB_playlist_t *g_playlist_plugins[MAX_PLAYLIST_PLUGINS+1];
 
 void
 plug_md5 (uint8_t sig[16], const char *in, int len) {
@@ -739,6 +743,7 @@ plug_load_all (void) {
     int numvfs = 0;
     int numoutput = 0;
     int numdsp = 0;
+    int numplaylist = 0;
     for (plug = plugins; plug; plug = plug->next) {
         g_plugins[numplugins++] = plug->plugin;
         if (plug->plugin->type == DB_PLUGIN_DECODER) {
@@ -769,6 +774,12 @@ plug_load_all (void) {
             }
             g_dsp_plugins[numdsp++] = (DB_dsp_t *)plug->plugin;
         }
+        else if (plug->plugin->type == DB_PLUGIN_PLAYLIST) {
+            if (numplaylist >= MAX_PLAYLIST_PLUGINS) {
+                break;
+            }
+            g_playlist_plugins[numplaylist++] = (DB_playlist_t *)plug->plugin;
+        }
     }
     // start plugins
     for (plug = plugins; plug; plug = plug->next) {
@@ -783,6 +794,7 @@ plug_load_all (void) {
     g_decoder_plugins[numdecoders] = NULL;
     g_vfs_plugins[numvfs] = NULL;
     g_output_plugins[numoutput] = NULL;
+    g_playlist_plugins[numplaylist] = NULL;
 
     // select output plugin
     if (plug_select_output () < 0) {
@@ -858,6 +870,11 @@ plug_get_vfs_list (void) {
 struct DB_dsp_s **
 plug_get_dsp_list (void) {
     return g_dsp_plugins;
+}
+
+struct DB_playlist_s **
+plug_get_playlist_list (void) {
+    return g_playlist_plugins;
 }
 
 struct DB_plugin_s **
