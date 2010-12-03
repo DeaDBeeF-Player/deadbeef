@@ -1343,11 +1343,12 @@ create_editcolumndlg (void)
   GtkWidget *id;
   GtkWidget *hbox31;
   GtkWidget *fmtlabel;
+  GtkWidget *hbox74;
   GtkWidget *format;
+  GtkWidget *title_formatting_help_link;
   GtkWidget *hbox32;
   GtkWidget *label38;
   GtkWidget *align;
-  GtkWidget *label25;
   GtkWidget *dialog_action_area1;
   GtkWidget *cancelbutton1;
   GtkWidget *alignment9;
@@ -1422,11 +1423,21 @@ create_editcolumndlg (void)
   gtk_box_pack_start (GTK_BOX (hbox31), fmtlabel, FALSE, FALSE, 0);
   gtk_misc_set_alignment (GTK_MISC (fmtlabel), 0, 0.5);
 
+  hbox74 = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show (hbox74);
+  gtk_box_pack_start (GTK_BOX (hbox31), hbox74, TRUE, TRUE, 0);
+
   format = gtk_entry_new ();
   gtk_widget_show (format);
-  gtk_box_pack_start (GTK_BOX (hbox31), format, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (hbox74), format, TRUE, TRUE, 0);
   gtk_entry_set_invisible_char (GTK_ENTRY (format), 9679);
   gtk_entry_set_activates_default (GTK_ENTRY (format), TRUE);
+
+  title_formatting_help_link = title_formatting_help_link_create ("title_formatting_help_link", "", "", 0, 0);
+  gtk_widget_show (title_formatting_help_link);
+  gtk_box_pack_start (GTK_BOX (hbox74), title_formatting_help_link, TRUE, TRUE, 0);
+  GTK_WIDGET_UNSET_FLAGS (title_formatting_help_link, GTK_CAN_FOCUS);
+  GTK_WIDGET_UNSET_FLAGS (title_formatting_help_link, GTK_CAN_DEFAULT);
 
   hbox32 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox32);
@@ -1442,14 +1453,6 @@ create_editcolumndlg (void)
   gtk_box_pack_start (GTK_BOX (hbox32), align, TRUE, TRUE, 0);
   gtk_combo_box_append_text (GTK_COMBO_BOX (align), _("Left"));
   gtk_combo_box_append_text (GTK_COMBO_BOX (align), _("Right"));
-
-  label25 = gtk_label_new (_("Format conversions (start with %):\n  [a]rtist, [t]itle, al[b]um, [B]and, [C]omposer\n  track[n]umber, [N]totaltracks,\n  [l]ength, [y]ear, [g]enre, [c]omment,\n  copy[r]ight, [f]ilename, [F]ullPathname, [T]ags,\n  [d]irectory, [D]irectoryWithPath\nExample: %a - %t [%l]"));
-  gtk_widget_show (label25);
-  gtk_box_pack_start (GTK_BOX (vbox14), label25, TRUE, TRUE, 0);
-  GTK_WIDGET_SET_FLAGS (label25, GTK_CAN_FOCUS);
-  gtk_label_set_use_markup (GTK_LABEL (label25), TRUE);
-  gtk_label_set_selectable (GTK_LABEL (label25), TRUE);
-  gtk_misc_set_alignment (GTK_MISC (label25), 0.1, 0.5);
 
   dialog_action_area1 = GTK_DIALOG (editcolumndlg)->action_area;
   gtk_widget_show (dialog_action_area1);
@@ -1513,11 +1516,12 @@ create_editcolumndlg (void)
   GLADE_HOOKUP_OBJECT (editcolumndlg, id, "id");
   GLADE_HOOKUP_OBJECT (editcolumndlg, hbox31, "hbox31");
   GLADE_HOOKUP_OBJECT (editcolumndlg, fmtlabel, "fmtlabel");
+  GLADE_HOOKUP_OBJECT (editcolumndlg, hbox74, "hbox74");
   GLADE_HOOKUP_OBJECT (editcolumndlg, format, "format");
+  GLADE_HOOKUP_OBJECT (editcolumndlg, title_formatting_help_link, "title_formatting_help_link");
   GLADE_HOOKUP_OBJECT (editcolumndlg, hbox32, "hbox32");
   GLADE_HOOKUP_OBJECT (editcolumndlg, label38, "label38");
   GLADE_HOOKUP_OBJECT (editcolumndlg, align, "align");
-  GLADE_HOOKUP_OBJECT (editcolumndlg, label25, "label25");
   GLADE_HOOKUP_OBJECT_NO_REF (editcolumndlg, dialog_action_area1, "dialog_action_area1");
   GLADE_HOOKUP_OBJECT (editcolumndlg, cancelbutton1, "cancelbutton1");
   GLADE_HOOKUP_OBJECT (editcolumndlg, alignment9, "alignment9");
@@ -3067,8 +3071,9 @@ create_groupbydlg (void)
   GtkWidget *vbox25;
   GtkWidget *hbox46;
   GtkWidget *label81;
+  GtkWidget *hbox75;
   GtkWidget *format;
-  GtkWidget *label82;
+  GtkWidget *custom1;
   GtkWidget *dialog_action_area4;
   GtkWidget *cancelbutton4;
   GtkWidget *alignment7;
@@ -3101,19 +3106,21 @@ create_groupbydlg (void)
   gtk_widget_show (label81);
   gtk_box_pack_start (GTK_BOX (hbox46), label81, FALSE, FALSE, 0);
 
+  hbox75 = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show (hbox75);
+  gtk_box_pack_start (GTK_BOX (hbox46), hbox75, TRUE, TRUE, 0);
+
   format = gtk_entry_new ();
   gtk_widget_show (format);
-  gtk_box_pack_start (GTK_BOX (hbox46), format, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (hbox75), format, TRUE, TRUE, 0);
   gtk_entry_set_invisible_char (GTK_ENTRY (format), 9679);
   gtk_entry_set_activates_default (GTK_ENTRY (format), TRUE);
 
-  label82 = gtk_label_new (_("Format conversions (start with %):\n  [a]rtist, [t]itle, al[b]um, [B]and, [C]omposer\n  track[n]umber, [N]totaltracks,\n  [l]ength, [y]ear, [g]enre, [c]omment,\n  copy[r]ight, [f]ilename, [T]ags\nExample: %a - %t [%l]"));
-  gtk_widget_show (label82);
-  gtk_box_pack_start (GTK_BOX (vbox25), label82, FALSE, FALSE, 0);
-  GTK_WIDGET_SET_FLAGS (label82, GTK_CAN_FOCUS);
-  gtk_label_set_use_markup (GTK_LABEL (label82), TRUE);
-  gtk_label_set_selectable (GTK_LABEL (label82), TRUE);
-  gtk_misc_set_alignment (GTK_MISC (label82), 0.1, 0.5);
+  custom1 = title_formatting_help_link_create ("custom1", "", "", 0, 0);
+  gtk_widget_show (custom1);
+  gtk_box_pack_start (GTK_BOX (hbox75), custom1, TRUE, TRUE, 0);
+  GTK_WIDGET_UNSET_FLAGS (custom1, GTK_CAN_FOCUS);
+  GTK_WIDGET_UNSET_FLAGS (custom1, GTK_CAN_DEFAULT);
 
   dialog_action_area4 = GTK_DIALOG (groupbydlg)->action_area;
   gtk_widget_show (dialog_action_area4);
@@ -3167,8 +3174,9 @@ create_groupbydlg (void)
   GLADE_HOOKUP_OBJECT (groupbydlg, vbox25, "vbox25");
   GLADE_HOOKUP_OBJECT (groupbydlg, hbox46, "hbox46");
   GLADE_HOOKUP_OBJECT (groupbydlg, label81, "label81");
+  GLADE_HOOKUP_OBJECT (groupbydlg, hbox75, "hbox75");
   GLADE_HOOKUP_OBJECT (groupbydlg, format, "format");
-  GLADE_HOOKUP_OBJECT (groupbydlg, label82, "label82");
+  GLADE_HOOKUP_OBJECT (groupbydlg, custom1, "custom1");
   GLADE_HOOKUP_OBJECT_NO_REF (groupbydlg, dialog_action_area4, "dialog_action_area4");
   GLADE_HOOKUP_OBJECT (groupbydlg, cancelbutton4, "cancelbutton4");
   GLADE_HOOKUP_OBJECT (groupbydlg, alignment7, "alignment7");

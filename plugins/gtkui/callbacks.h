@@ -1009,3 +1009,7 @@ gboolean
 on_converterdlg_delete_event           (GtkWidget       *widget,
                                         GdkEvent        *event,
                                         gpointer         user_data);
+
+GtkWidget*
+title_formatting_help_link_create (gchar *widget_name, gchar *string1, gchar *string2,
+                gint int1, gint int2);

@@ -1083,3 +1083,12 @@ on_translators1_activate               (GtkMenuItem     *menuitem,
     show_info_window (fname, s, &translatorswindow);
 }
 
+
+GtkWidget*
+title_formatting_help_link_create (gchar *widget_name, gchar *string1, gchar *string2,
+                gint int1, gint int2)
+{
+    GtkWidget *link = gtk_link_button_new_with_label ("http://sourceforge.net/apps/mediawiki/deadbeef/index.php?title=Title_Formatting", "Help");
+    return link;
+}
+
