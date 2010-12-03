@@ -65,7 +65,6 @@ on_converter_output_browse_clicked     (GtkButton       *button,
     else {
         gtk_widget_destroy (dlg);
     }
-    converter = NULL;
 }
 
 
