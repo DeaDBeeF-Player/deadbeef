@@ -94,7 +94,6 @@ AC_ARG_ENABLE(sndfile,  [AS_HELP_STRING([--disable-sndfile ], [disable libsndfil
 AC_ARG_ENABLE(wavpack,  [AS_HELP_STRING([--disable-wavpack ], [disable wavpack plugin (default: enabled)])], [enable_wavpack=$enableval], [enable_wavpack=yes])
 AC_ARG_ENABLE(cdda,     [AS_HELP_STRING([--disable-cdda    ], [disable CD-Audio plugin (default: enabled)])], [enable_cdda=$enableval], [enable_cdda=yes])
 AC_ARG_ENABLE(gme,      [AS_HELP_STRING([--disable-gme     ], [disable Game Music Emu plugin for NSF, AY, etc (default: enabled)])], [enable_gme=$enableval], [enable_gme=yes])
-AC_ARG_ENABLE(dumb,     [AS_HELP_STRING([--disable-dumb    ], [disable D.U.M.B. plugin for MOD, S3M and other tracker formats (default: enabled)])], [enable_dumb=$enableval], [enable_dumb=yes])
 AC_ARG_ENABLE(notify,   [AS_HELP_STRING([--disable-notify  ], [disable notification-daemon support plugin (default: enabled)])], [enable_notify=$enableval], [enable_notify=yes])
 AC_ARG_ENABLE(shellexec, [AS_HELP_STRING([--disable-shellexec], [disable shell commands plugin (default: enabled)])], [enable_shellexec=$enableval], [enable_shellexec=yes])
 AC_ARG_ENABLE(musepack, [AS_HELP_STRING([--disable-musepack], [disable musepack plugin (default: enabled)])], [enable_musepack=$enableval], [enable_musepack=yes])
@@ -439,10 +438,6 @@ if test "x$enable_gme" != "xno" ; then
     HAVE_GME=yes
 fi
 
-if test "x$enable_dumb" != "xno" ; then
-    HAVE_DUMB=yes
-fi
-
 if test "x$HAVE_DBUS" = "xyes" && test "x$enable_notify" != "xno" ; then
     HAVE_NOTIFY=yes
     NOTIFY_LIBS="$DBUS_DEPS_LIBS"
@@ -496,7 +491,7 @@ if test "x$enable_m3u" != "xno" ; then
     HAVE_M3U=yes
 fi
 
-PLUGINS_DIRS="plugins/lastfm plugins/mpgmad plugins/vorbis plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/dumb plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/aac plugins/mms plugins/shn plugins/shellexec plugins/dsp_libsrc plugins/m3u"
+PLUGINS_DIRS="plugins/lastfm plugins/mpgmad plugins/vorbis plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/aac plugins/mms plugins/shn plugins/shellexec plugins/dsp_libsrc plugins/m3u"
 
 AM_CONDITIONAL(HAVE_VORBIS, test "x$HAVE_VORBISPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_FLAC, test "x$HAVE_FLACPLUGIN" = "xyes")
@@ -514,7 +509,6 @@ AM_CONDITIONAL(HAVE_SID, test "x$HAVE_SID" = "xyes")
 AM_CONDITIONAL(HAVE_NULLOUT, test "x$HAVE_NULLOUT" = "xyes")
 AM_CONDITIONAL(HAVE_VTX, test "x$HAVE_VTX" = "xyes")
 AM_CONDITIONAL(HAVE_GME, test "x$HAVE_GME" = "xyes")
-AM_CONDITIONAL(HAVE_DUMB, test "x$HAVE_DUMB" = "xyes")
 AM_CONDITIONAL(HAVE_LASTFM, test "x$HAVE_LASTFM" = "xyes")
 AM_CONDITIONAL(HAVE_VFS_CURL, test "x$HAVE_VFS_CURL" = "xyes")
 AM_CONDITIONAL(HAVE_HOTKEYS, test "x$HAVE_HOTKEYS" = "xyes")
@@ -563,7 +557,6 @@ AC_DEFUN([PRINT_PLUGIN_INFO],
 
 PRINT_PLUGIN_INFO([stdio],[Standard IO plugin],[true])
 PRINT_PLUGIN_INFO([gme],[chiptune music player based on GME],[test "x$HAVE_GME" = "xyes"])
-PRINT_PLUGIN_INFO([dumb],[module player based on DUMB library],[test "x$HAVE_DUMB" = "xyes"])
 PRINT_PLUGIN_INFO([nullout],[NULL output],[test "x$HAVE_NULLOUT" = "xyes"])
 PRINT_PLUGIN_INFO([alsa],[ALSA output],[test "x$HAVE_ALSA" = "xyes"])
 PRINT_PLUGIN_INFO([sid],[SID player based on libsidplay2],[test "x$HAVE_SID" = "xyes"])
@@ -604,7 +597,6 @@ Makefile
 pixmaps/Makefile
 icons/Makefile
 plugins/gme/Makefile
-plugins/dumb/Makefile
 plugins/alsa/Makefile
 plugins/hotkeys/Makefile
 plugins/lastfm/Makefile
