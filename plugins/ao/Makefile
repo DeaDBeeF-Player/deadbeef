@@ -4,7 +4,7 @@ CC=gcc
 
 ZLIB_LIBS=-lz
 
-CFLAGS=-Wall -DPATH_MAX=1024 -DHAS_PSXCPU=1 -I../.. -I./ -Ieng_ssf -Ieng_qsf -Ieng_dsf -lm
+CFLAGS=-Wall -DPATH_MAX=1024 -DHAS_PSXCPU=1 -I../.. -I./ -Ieng_ssf -Ieng_qsf -Ieng_dsf
 
 LDFLAGS=-module -shared -fPIC $(ZLIB_LIBS) -lm
 
