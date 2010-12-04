@@ -23,7 +23,7 @@ cp ./plugins/pulse/.libs/pulse.so /usr/local/lib/deadbeef/
 cp ./plugins/artwork/.libs/artwork.so /usr/local/lib/deadbeef/
 cp ./plugins/supereq/.libs/supereq.so /usr/local/lib/deadbeef/
 cp ./plugins/gme/.libs/gme.so /usr/local/lib/deadbeef/
-cp ./plugins/dumb/.libs/dumb.so /usr/local/lib/deadbeef/
+cp ./plugins/dumb/dumb.so /usr/local/lib/deadbeef/
 cp ./plugins/notify/.libs/notify.so /usr/local/lib/deadbeef/
 cp ./plugins/musepack/.libs/musepack.so /usr/local/lib/deadbeef/
 cp ./plugins/wildmidi/.libs/wildmidi.so /usr/local/lib/deadbeef/
@@ -31,8 +31,8 @@ cp ./plugins/tta/.libs/tta.so /usr/local/lib/deadbeef/
 cp ./plugins/dca/.libs/dca.so /usr/local/lib/deadbeef/
 cp ./plugins/aac/.libs/aac.so /usr/local/lib/deadbeef/
 cp ./plugins/mms/.libs/mms.so /usr/local/lib/deadbeef/
-cp ./plugins/shn/.libs/shn.so /usr/local/lib/deadbeef/
-cp ./plugins/ao/.libs/ao.so /usr/local/lib/deadbeef/
+cp ./plugins/shn/shn.so /usr/local/lib/deadbeef/
+cp ./plugins/ao/ao.so /usr/local/lib/deadbeef/
 cp ./plugins/shellexec/.libs/shellexec.so /usr/local/lib/deadbeef/
 cp ./plugins/dsp_libsrc/.libs/dsp_libsrc.so /usr/local/lib/deadbeef/
 cp ./plugins/m3u/.libs/m3u.so /usr/local/lib/deadbeef/
