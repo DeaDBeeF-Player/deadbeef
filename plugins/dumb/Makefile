@@ -2,9 +2,9 @@ CC=gcc
 
 dumbpath=dumb-kode54
 
-CFLAGS=-Wall -I$(dumbpath)/include -std=c99
+CFLAGS+=-Wall -I$(dumbpath)/include -std=c99
 
-LDFLAGS=-module -shared -fPIC -lm
+LDFLAGS+=-module -shared -fPIC -lm
 
 SOURCES=\
 dumb-kode54/src/it/readam.c\

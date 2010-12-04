@@ -2,9 +2,9 @@ OUT=shn.so
 
 CC=gcc
 
-CFLAGS=-Wall -std=c99 -D_GNU_SOURCE -DHAVE_CONFIG_H -I. -I../..
+CFLAGS+=-Wall -std=c99 -D_GNU_SOURCE -DHAVE_CONFIG_H -I. -I../..
 
-LDFLAGS=-module -shared -fPIC -lm
+LDFLAGS+=-module -shared -fPIC -lm
 
 SOURCES=array.c convert.c misc.c output.c seek.c shn.c shorten.c sulawalaw.c vario.c wave.c
 
