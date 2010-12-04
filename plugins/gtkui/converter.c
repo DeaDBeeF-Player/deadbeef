@@ -31,7 +31,26 @@ converter_show (void) {
     if (!converter) {
         converter = create_converterdlg ();
         gtk_entry_set_text (GTK_ENTRY (lookup_widget (converter, "output_folder")), deadbeef->conf_get_str ("converter.output_folder", ""));
-        gtk_entry_set_text (GTK_ENTRY (lookup_widget (converter, "encoder_cmd_line")), deadbeef->conf_get_str ("converter.encoder", ""));
+
+        GtkComboBox *combo;
+        // fill encoder presets
+        combo = GTK_COMBO_BOX (lookup_widget (converter, "encoder"));
+        //GtkTreeModel *mdl = gtk_combo_box_get_model (combobox);
+        //gtk_combo_box_append_text (combo, _("Preset Name"));
+        gtk_combo_box_set_active (combo, deadbeef->conf_get_int ("converter.encoder_preset", 0));
+
+        // fill dsp presets
+        combo = GTK_COMBO_BOX (lookup_widget (converter, "dsp_preset"));
+        gtk_combo_box_set_active (combo, deadbeef->conf_get_int ("converter.dsp_preset", 0));
+        
+        // fill channel maps
+        combo = GTK_COMBO_BOX (lookup_widget (converter, "channelmap"));
+        gtk_combo_box_set_active (combo, deadbeef->conf_get_int ("converter.channelmap_preset", 0));
+
+        // select output format
+        combo = GTK_COMBO_BOX (lookup_widget (converter, "output_format"));
+        gtk_combo_box_set_active (combo, deadbeef->conf_get_int ("converter.output_format", 0));
+
     }
     gtk_widget_show (converter);
 }
@@ -198,5 +217,65 @@ on_converterdlg_delete_event           (GtkWidget       *widget,
 {
     converter = NULL;
     return FALSE;
+}
+
+void
+on_encoder_preset_add                     (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    GtkWidget *dlg = create_convpreset_editor ();
+    gtk_dialog_run (GTK_DIALOG (dlg));
+    gtk_widget_destroy (dlg);
+}
+
+void
+on_encoder_preset_edit                     (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    GtkWidget *dlg = create_convpreset_editor ();
+    gtk_dialog_run (GTK_DIALOG (dlg));
+    gtk_widget_destroy (dlg);
+}
+
+void
+on_encoder_preset_remove                     (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (mainwin), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO, _("Remove preset"));
+    gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dlg), _("This action will delete the selected preset. Are you sure?"));
+    gtk_window_set_title (GTK_WINDOW (dlg), _("Warning"));
+
+    int response = gtk_dialog_run (GTK_DIALOG (dlg));
+    gtk_widget_destroy (dlg);
+    if (response != GTK_RESPONSE_YES) {
+        // .. remove ..
+    }
+}
+
+void
+on_edit_encoder_presets_clicked        (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    GtkWidget *dlg = create_preset_list ();
+    g_signal_connect ((gpointer)lookup_widget (dlg, "add"), "clicked", G_CALLBACK (on_encoder_preset_add), NULL);
+    g_signal_connect ((gpointer)lookup_widget (dlg, "remove"), "clicked", G_CALLBACK (on_encoder_preset_remove), NULL);
+    g_signal_connect ((gpointer)lookup_widget (dlg, "edit"), "clicked", G_CALLBACK (on_encoder_preset_edit), NULL);
+
+    gtk_dialog_run (GTK_DIALOG (dlg));
+    gtk_widget_destroy (dlg);
+}
+
+
+void
+on_edit_dsp_presets_clicked            (GtkButton       *button,
+                                        gpointer         user_data)
+{
+}
+
+
+void
+on_edit_channel_maps_clicked           (GtkButton       *button,
+                                        gpointer         user_data)
+{
 }
 

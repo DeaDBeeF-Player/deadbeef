@@ -3252,20 +3252,29 @@ create_converterdlg (void)
   GtkWidget *converter_output_browse;
   GtkWidget *hbox69;
   GtkWidget *label104;
-  GtkWidget *combobox1;
+  GtkWidget *hbox90;
+  GtkWidget *encoder;
+  GtkWidget *edit_encoder_presets;
+  GtkWidget *image469;
   GtkWidget *hbox86;
   GtkWidget *label114;
-  GtkWidget *combobox2;
+  GtkWidget *hbox91;
+  GtkWidget *dsp_preset;
+  GtkWidget *edit_dsp_presets;
+  GtkWidget *image470;
   GtkWidget *hbox87;
   GtkWidget *label115;
-  GtkWidget *combobox3;
+  GtkWidget *hbox92;
+  GtkWidget *channelmap;
+  GtkWidget *edit_channel_maps;
+  GtkWidget *image471;
   GtkWidget *hbox88;
   GtkWidget *label116;
-  GtkObject *spinbutton1_adj;
-  GtkWidget *spinbutton1;
+  GtkObject *numthreads_adj;
+  GtkWidget *numthreads;
   GtkWidget *hbox89;
   GtkWidget *label117;
-  GtkWidget *combobox4;
+  GtkWidget *output_format;
   GtkWidget *dialog_action_area5;
   GtkWidget *converter_cancel;
   GtkWidget *converter_ok;
@@ -3312,9 +3321,21 @@ create_converterdlg (void)
   gtk_widget_show (label104);
   gtk_box_pack_start (GTK_BOX (hbox69), label104, FALSE, FALSE, 0);
 
-  combobox1 = gtk_combo_box_new_text ();
-  gtk_widget_show (combobox1);
-  gtk_box_pack_start (GTK_BOX (hbox69), combobox1, TRUE, TRUE, 0);
+  hbox90 = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show (hbox90);
+  gtk_box_pack_start (GTK_BOX (hbox69), hbox90, TRUE, TRUE, 0);
+
+  encoder = gtk_combo_box_new_text ();
+  gtk_widget_show (encoder);
+  gtk_box_pack_start (GTK_BOX (hbox90), encoder, TRUE, TRUE, 0);
+
+  edit_encoder_presets = gtk_button_new ();
+  gtk_widget_show (edit_encoder_presets);
+  gtk_box_pack_start (GTK_BOX (hbox90), edit_encoder_presets, FALSE, FALSE, 0);
+
+  image469 = gtk_image_new_from_stock ("gtk-edit", GTK_ICON_SIZE_BUTTON);
+  gtk_widget_show (image469);
+  gtk_container_add (GTK_CONTAINER (edit_encoder_presets), image469);
 
   hbox86 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox86);
@@ -3324,10 +3345,22 @@ create_converterdlg (void)
   gtk_widget_show (label114);
   gtk_box_pack_start (GTK_BOX (hbox86), label114, FALSE, FALSE, 0);
 
-  combobox2 = gtk_combo_box_new_text ();
-  gtk_widget_show (combobox2);
-  gtk_box_pack_start (GTK_BOX (hbox86), combobox2, TRUE, TRUE, 0);
-  gtk_combo_box_append_text (GTK_COMBO_BOX (combobox2), _("Pass Through"));
+  hbox91 = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show (hbox91);
+  gtk_box_pack_start (GTK_BOX (hbox86), hbox91, TRUE, TRUE, 0);
+
+  dsp_preset = gtk_combo_box_new_text ();
+  gtk_widget_show (dsp_preset);
+  gtk_box_pack_start (GTK_BOX (hbox91), dsp_preset, TRUE, TRUE, 0);
+  gtk_combo_box_append_text (GTK_COMBO_BOX (dsp_preset), _("Pass Through"));
+
+  edit_dsp_presets = gtk_button_new ();
+  gtk_widget_show (edit_dsp_presets);
+  gtk_box_pack_start (GTK_BOX (hbox91), edit_dsp_presets, FALSE, FALSE, 0);
+
+  image470 = gtk_image_new_from_stock ("gtk-edit", GTK_ICON_SIZE_BUTTON);
+  gtk_widget_show (image470);
+  gtk_container_add (GTK_CONTAINER (edit_dsp_presets), image470);
 
   hbox87 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox87);
@@ -3337,10 +3370,22 @@ create_converterdlg (void)
   gtk_widget_show (label115);
   gtk_box_pack_start (GTK_BOX (hbox87), label115, FALSE, FALSE, 0);
 
-  combobox3 = gtk_combo_box_new_text ();
-  gtk_widget_show (combobox3);
-  gtk_box_pack_start (GTK_BOX (hbox87), combobox3, TRUE, TRUE, 0);
-  gtk_combo_box_append_text (GTK_COMBO_BOX (combobox3), _("Pass Through"));
+  hbox92 = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show (hbox92);
+  gtk_box_pack_start (GTK_BOX (hbox87), hbox92, TRUE, TRUE, 0);
+
+  channelmap = gtk_combo_box_new_text ();
+  gtk_widget_show (channelmap);
+  gtk_box_pack_start (GTK_BOX (hbox92), channelmap, TRUE, TRUE, 0);
+  gtk_combo_box_append_text (GTK_COMBO_BOX (channelmap), _("Pass Through"));
+
+  edit_channel_maps = gtk_button_new ();
+  gtk_widget_show (edit_channel_maps);
+  gtk_box_pack_start (GTK_BOX (hbox92), edit_channel_maps, FALSE, FALSE, 0);
+
+  image471 = gtk_image_new_from_stock ("gtk-edit", GTK_ICON_SIZE_BUTTON);
+  gtk_widget_show (image471);
+  gtk_container_add (GTK_CONTAINER (edit_channel_maps), image471);
 
   hbox88 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox88);
@@ -3350,10 +3395,10 @@ create_converterdlg (void)
   gtk_widget_show (label116);
   gtk_box_pack_start (GTK_BOX (hbox88), label116, FALSE, FALSE, 0);
 
-  spinbutton1_adj = gtk_adjustment_new (1, 0, 100, 1, 10, 10);
-  spinbutton1 = gtk_spin_button_new (GTK_ADJUSTMENT (spinbutton1_adj), 1, 0);
-  gtk_widget_show (spinbutton1);
-  gtk_box_pack_start (GTK_BOX (hbox88), spinbutton1, TRUE, TRUE, 0);
+  numthreads_adj = gtk_adjustment_new (1, 0, 100, 1, 10, 10);
+  numthreads = gtk_spin_button_new (GTK_ADJUSTMENT (numthreads_adj), 1, 0);
+  gtk_widget_show (numthreads);
+  gtk_box_pack_start (GTK_BOX (hbox88), numthreads, TRUE, TRUE, 0);
 
   hbox89 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox89);
@@ -3363,15 +3408,15 @@ create_converterdlg (void)
   gtk_widget_show (label117);
   gtk_box_pack_start (GTK_BOX (hbox89), label117, FALSE, FALSE, 0);
 
-  combobox4 = gtk_combo_box_new_text ();
-  gtk_widget_show (combobox4);
-  gtk_box_pack_start (GTK_BOX (hbox89), combobox4, TRUE, TRUE, 0);
-  gtk_combo_box_append_text (GTK_COMBO_BOX (combobox4), _("Keep original"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (combobox4), _("8 bit signed int"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (combobox4), _("16 bit signed int"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (combobox4), _("24 bit signed int"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (combobox4), _("32 bit signed int"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (combobox4), _("32 bit float"));
+  output_format = gtk_combo_box_new_text ();
+  gtk_widget_show (output_format);
+  gtk_box_pack_start (GTK_BOX (hbox89), output_format, TRUE, TRUE, 0);
+  gtk_combo_box_append_text (GTK_COMBO_BOX (output_format), _("Keep original"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (output_format), _("8 bit signed int"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (output_format), _("16 bit signed int"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (output_format), _("24 bit signed int"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (output_format), _("32 bit signed int"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (output_format), _("32 bit float"));
 
   dialog_action_area5 = GTK_DIALOG (converterdlg)->action_area;
   gtk_widget_show (dialog_action_area5);
@@ -3393,6 +3438,15 @@ create_converterdlg (void)
   g_signal_connect ((gpointer) converter_output_browse, "clicked",
                     G_CALLBACK (on_converter_output_browse_clicked),
                     NULL);
+  g_signal_connect ((gpointer) edit_encoder_presets, "clicked",
+                    G_CALLBACK (on_edit_encoder_presets_clicked),
+                    NULL);
+  g_signal_connect ((gpointer) edit_dsp_presets, "clicked",
+                    G_CALLBACK (on_edit_dsp_presets_clicked),
+                    NULL);
+  g_signal_connect ((gpointer) edit_channel_maps, "clicked",
+                    G_CALLBACK (on_edit_channel_maps_clicked),
+                    NULL);
   g_signal_connect ((gpointer) converter_cancel, "clicked",
                     G_CALLBACK (on_converter_cancel_clicked),
                     NULL);
@@ -3411,19 +3465,28 @@ create_converterdlg (void)
   GLADE_HOOKUP_OBJECT (converterdlg, converter_output_browse, "converter_output_browse");
   GLADE_HOOKUP_OBJECT (converterdlg, hbox69, "hbox69");
   GLADE_HOOKUP_OBJECT (converterdlg, label104, "label104");
-  GLADE_HOOKUP_OBJECT (converterdlg, combobox1, "combobox1");
+  GLADE_HOOKUP_OBJECT (converterdlg, hbox90, "hbox90");
+  GLADE_HOOKUP_OBJECT (converterdlg, encoder, "encoder");
+  GLADE_HOOKUP_OBJECT (converterdlg, edit_encoder_presets, "edit_encoder_presets");
+  GLADE_HOOKUP_OBJECT (converterdlg, image469, "image469");
   GLADE_HOOKUP_OBJECT (converterdlg, hbox86, "hbox86");
   GLADE_HOOKUP_OBJECT (converterdlg, label114, "label114");
-  GLADE_HOOKUP_OBJECT (converterdlg, combobox2, "combobox2");
+  GLADE_HOOKUP_OBJECT (converterdlg, hbox91, "hbox91");
+  GLADE_HOOKUP_OBJECT (converterdlg, dsp_preset, "dsp_preset");
+  GLADE_HOOKUP_OBJECT (converterdlg, edit_dsp_presets, "edit_dsp_presets");
+  GLADE_HOOKUP_OBJECT (converterdlg, image470, "image470");
   GLADE_HOOKUP_OBJECT (converterdlg, hbox87, "hbox87");
   GLADE_HOOKUP_OBJECT (converterdlg, label115, "label115");
-  GLADE_HOOKUP_OBJECT (converterdlg, combobox3, "combobox3");
+  GLADE_HOOKUP_OBJECT (converterdlg, hbox92, "hbox92");
+  GLADE_HOOKUP_OBJECT (converterdlg, channelmap, "channelmap");
+  GLADE_HOOKUP_OBJECT (converterdlg, edit_channel_maps, "edit_channel_maps");
+  GLADE_HOOKUP_OBJECT (converterdlg, image471, "image471");
   GLADE_HOOKUP_OBJECT (converterdlg, hbox88, "hbox88");
   GLADE_HOOKUP_OBJECT (converterdlg, label116, "label116");
-  GLADE_HOOKUP_OBJECT (converterdlg, spinbutton1, "spinbutton1");
+  GLADE_HOOKUP_OBJECT (converterdlg, numthreads, "numthreads");
   GLADE_HOOKUP_OBJECT (converterdlg, hbox89, "hbox89");
   GLADE_HOOKUP_OBJECT (converterdlg, label117, "label117");
-  GLADE_HOOKUP_OBJECT (converterdlg, combobox4, "combobox4");
+  GLADE_HOOKUP_OBJECT (converterdlg, output_format, "output_format");
   GLADE_HOOKUP_OBJECT_NO_REF (converterdlg, dialog_action_area5, "dialog_action_area5");
   GLADE_HOOKUP_OBJECT (converterdlg, converter_cancel, "converter_cancel");
   GLADE_HOOKUP_OBJECT (converterdlg, converter_ok, "converter_ok");
@@ -3439,21 +3502,23 @@ create_convpreset_editor (void)
   GtkWidget *vbox27;
   GtkWidget *hbox70;
   GtkWidget *label105;
-  GtkWidget *convpreset_title;
+  GtkWidget *title;
   GtkWidget *hbox72;
   GtkWidget *label106;
-  GtkWidget *convpreset_encoder;
+  GtkWidget *hbox93;
+  GtkWidget *cmdline;
+  GtkWidget *custom4;
   GtkWidget *hbox73;
   GtkWidget *label107;
-  GtkWidget *convpreset_method;
+  GtkWidget *method;
   GtkWidget *frame8;
   GtkWidget *alignment20;
   GtkWidget *table1;
-  GtkWidget *checkbutton1;
-  GtkWidget *checkbutton2;
-  GtkWidget *checkbutton3;
-  GtkWidget *checkbutton4;
-  GtkWidget *checkbutton5;
+  GtkWidget *_8bit;
+  GtkWidget *_16bit;
+  GtkWidget *_24bit;
+  GtkWidget *_32bit;
+  GtkWidget *_32bitfloat;
   GtkWidget *label118;
   GtkWidget *dialog_action_area6;
   GtkWidget *convpreset_cancel;
@@ -3479,23 +3544,33 @@ create_convpreset_editor (void)
   gtk_widget_show (label105);
   gtk_box_pack_start (GTK_BOX (hbox70), label105, FALSE, FALSE, 0);
 
-  convpreset_title = gtk_entry_new ();
-  gtk_widget_show (convpreset_title);
-  gtk_box_pack_start (GTK_BOX (hbox70), convpreset_title, TRUE, TRUE, 0);
-  gtk_entry_set_invisible_char (GTK_ENTRY (convpreset_title), 9679);
+  title = gtk_entry_new ();
+  gtk_widget_show (title);
+  gtk_box_pack_start (GTK_BOX (hbox70), title, TRUE, TRUE, 0);
+  gtk_entry_set_invisible_char (GTK_ENTRY (title), 9679);
 
   hbox72 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox72);
   gtk_box_pack_start (GTK_BOX (vbox27), hbox72, FALSE, TRUE, 0);
 
-  label106 = gtk_label_new (_("Encoder command line"));
+  label106 = gtk_label_new (_("Command line"));
   gtk_widget_show (label106);
   gtk_box_pack_start (GTK_BOX (hbox72), label106, FALSE, FALSE, 0);
 
-  convpreset_encoder = gtk_entry_new ();
-  gtk_widget_show (convpreset_encoder);
-  gtk_box_pack_start (GTK_BOX (hbox72), convpreset_encoder, TRUE, TRUE, 0);
-  gtk_entry_set_invisible_char (GTK_ENTRY (convpreset_encoder), 9679);
+  hbox93 = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show (hbox93);
+  gtk_box_pack_start (GTK_BOX (hbox72), hbox93, TRUE, TRUE, 0);
+
+  cmdline = gtk_entry_new ();
+  gtk_widget_show (cmdline);
+  gtk_box_pack_start (GTK_BOX (hbox93), cmdline, TRUE, TRUE, 0);
+  gtk_entry_set_invisible_char (GTK_ENTRY (cmdline), 9679);
+
+  custom4 = encoder_cmdline_help_link_create ("custom4", "", "", 0, 0);
+  gtk_widget_show (custom4);
+  gtk_box_pack_start (GTK_BOX (hbox93), custom4, TRUE, TRUE, 0);
+  GTK_WIDGET_UNSET_FLAGS (custom4, GTK_CAN_FOCUS);
+  GTK_WIDGET_UNSET_FLAGS (custom4, GTK_CAN_DEFAULT);
 
   hbox73 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox73);
@@ -3505,11 +3580,11 @@ create_convpreset_editor (void)
   gtk_widget_show (label107);
   gtk_box_pack_start (GTK_BOX (hbox73), label107, FALSE, FALSE, 0);
 
-  convpreset_method = gtk_combo_box_new_text ();
-  gtk_widget_show (convpreset_method);
-  gtk_box_pack_start (GTK_BOX (hbox73), convpreset_method, TRUE, TRUE, 0);
-  gtk_combo_box_append_text (GTK_COMBO_BOX (convpreset_method), _("Pipe"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (convpreset_method), _("Temporary file"));
+  method = gtk_combo_box_new_text ();
+  gtk_widget_show (method);
+  gtk_box_pack_start (GTK_BOX (hbox73), method, TRUE, TRUE, 0);
+  gtk_combo_box_append_text (GTK_COMBO_BOX (method), _("Pipe"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (method), _("Temporary file"));
 
   frame8 = gtk_frame_new (NULL);
   gtk_widget_show (frame8);
@@ -3527,33 +3602,33 @@ create_convpreset_editor (void)
   gtk_table_set_row_spacings (GTK_TABLE (table1), 8);
   gtk_table_set_col_spacings (GTK_TABLE (table1), 8);
 
-  checkbutton1 = gtk_check_button_new_with_mnemonic (_("8 bit signed int"));
-  gtk_widget_show (checkbutton1);
-  gtk_table_attach (GTK_TABLE (table1), checkbutton1, 0, 1, 0, 1,
+  _8bit = gtk_check_button_new_with_mnemonic (_("8 bit signed int"));
+  gtk_widget_show (_8bit);
+  gtk_table_attach (GTK_TABLE (table1), _8bit, 0, 1, 0, 1,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
 
-  checkbutton2 = gtk_check_button_new_with_mnemonic (_("16 bit signed int"));
-  gtk_widget_show (checkbutton2);
-  gtk_table_attach (GTK_TABLE (table1), checkbutton2, 1, 2, 0, 1,
+  _16bit = gtk_check_button_new_with_mnemonic (_("16 bit signed int"));
+  gtk_widget_show (_16bit);
+  gtk_table_attach (GTK_TABLE (table1), _16bit, 1, 2, 0, 1,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
 
-  checkbutton3 = gtk_check_button_new_with_mnemonic (_("24 bit signed int"));
-  gtk_widget_show (checkbutton3);
-  gtk_table_attach (GTK_TABLE (table1), checkbutton3, 0, 1, 1, 2,
+  _24bit = gtk_check_button_new_with_mnemonic (_("24 bit signed int"));
+  gtk_widget_show (_24bit);
+  gtk_table_attach (GTK_TABLE (table1), _24bit, 0, 1, 1, 2,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
 
-  checkbutton4 = gtk_check_button_new_with_mnemonic (_("32 bit signed int"));
-  gtk_widget_show (checkbutton4);
-  gtk_table_attach (GTK_TABLE (table1), checkbutton4, 1, 2, 1, 2,
+  _32bit = gtk_check_button_new_with_mnemonic (_("32 bit signed int"));
+  gtk_widget_show (_32bit);
+  gtk_table_attach (GTK_TABLE (table1), _32bit, 1, 2, 1, 2,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
 
-  checkbutton5 = gtk_check_button_new_with_mnemonic (_("32 bit float"));
-  gtk_widget_show (checkbutton5);
-  gtk_table_attach (GTK_TABLE (table1), checkbutton5, 0, 1, 2, 3,
+  _32bitfloat = gtk_check_button_new_with_mnemonic (_("32 bit float"));
+  gtk_widget_show (_32bitfloat);
+  gtk_table_attach (GTK_TABLE (table1), _32bitfloat, 0, 1, 2, 3,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
 
@@ -3582,21 +3657,23 @@ create_convpreset_editor (void)
   GLADE_HOOKUP_OBJECT (convpreset_editor, vbox27, "vbox27");
   GLADE_HOOKUP_OBJECT (convpreset_editor, hbox70, "hbox70");
   GLADE_HOOKUP_OBJECT (convpreset_editor, label105, "label105");
-  GLADE_HOOKUP_OBJECT (convpreset_editor, convpreset_title, "convpreset_title");
+  GLADE_HOOKUP_OBJECT (convpreset_editor, title, "title");
   GLADE_HOOKUP_OBJECT (convpreset_editor, hbox72, "hbox72");
   GLADE_HOOKUP_OBJECT (convpreset_editor, label106, "label106");
-  GLADE_HOOKUP_OBJECT (convpreset_editor, convpreset_encoder, "convpreset_encoder");
+  GLADE_HOOKUP_OBJECT (convpreset_editor, hbox93, "hbox93");
+  GLADE_HOOKUP_OBJECT (convpreset_editor, cmdline, "cmdline");
+  GLADE_HOOKUP_OBJECT (convpreset_editor, custom4, "custom4");
   GLADE_HOOKUP_OBJECT (convpreset_editor, hbox73, "hbox73");
   GLADE_HOOKUP_OBJECT (convpreset_editor, label107, "label107");
-  GLADE_HOOKUP_OBJECT (convpreset_editor, convpreset_method, "convpreset_method");
+  GLADE_HOOKUP_OBJECT (convpreset_editor, method, "method");
   GLADE_HOOKUP_OBJECT (convpreset_editor, frame8, "frame8");
   GLADE_HOOKUP_OBJECT (convpreset_editor, alignment20, "alignment20");
   GLADE_HOOKUP_OBJECT (convpreset_editor, table1, "table1");
-  GLADE_HOOKUP_OBJECT (convpreset_editor, checkbutton1, "checkbutton1");
-  GLADE_HOOKUP_OBJECT (convpreset_editor, checkbutton2, "checkbutton2");
-  GLADE_HOOKUP_OBJECT (convpreset_editor, checkbutton3, "checkbutton3");
-  GLADE_HOOKUP_OBJECT (convpreset_editor, checkbutton4, "checkbutton4");
-  GLADE_HOOKUP_OBJECT (convpreset_editor, checkbutton5, "checkbutton5");
+  GLADE_HOOKUP_OBJECT (convpreset_editor, _8bit, "_8bit");
+  GLADE_HOOKUP_OBJECT (convpreset_editor, _16bit, "_16bit");
+  GLADE_HOOKUP_OBJECT (convpreset_editor, _24bit, "_24bit");
+  GLADE_HOOKUP_OBJECT (convpreset_editor, _32bit, "_32bit");
+  GLADE_HOOKUP_OBJECT (convpreset_editor, _32bitfloat, "_32bitfloat");
   GLADE_HOOKUP_OBJECT (convpreset_editor, label118, "label118");
   GLADE_HOOKUP_OBJECT_NO_REF (convpreset_editor, dialog_action_area6, "dialog_action_area6");
   GLADE_HOOKUP_OBJECT (convpreset_editor, convpreset_cancel, "convpreset_cancel");
@@ -3917,5 +3994,86 @@ create_select_dsp_plugin (void)
   GLADE_HOOKUP_OBJECT (select_dsp_plugin, okbutton7, "okbutton7");
 
   return select_dsp_plugin;
+}
+
+GtkWidget*
+create_preset_list (void)
+{
+  GtkWidget *preset_list;
+  GtkWidget *dialog_vbox11;
+  GtkWidget *vbox33;
+  GtkWidget *hbox94;
+  GtkWidget *add;
+  GtkWidget *remove;
+  GtkWidget *edit;
+  GtkWidget *scrolledwindow8;
+  GtkWidget *presets;
+  GtkWidget *dialog_action_area10;
+  GtkWidget *okbutton8;
+
+  preset_list = gtk_dialog_new ();
+  gtk_window_set_title (GTK_WINDOW (preset_list), _("Presets"));
+  gtk_window_set_modal (GTK_WINDOW (preset_list), TRUE);
+  gtk_window_set_type_hint (GTK_WINDOW (preset_list), GDK_WINDOW_TYPE_HINT_DIALOG);
+
+  dialog_vbox11 = GTK_DIALOG (preset_list)->vbox;
+  gtk_widget_show (dialog_vbox11);
+
+  vbox33 = gtk_vbox_new (FALSE, 8);
+  gtk_widget_show (vbox33);
+  gtk_box_pack_start (GTK_BOX (dialog_vbox11), vbox33, TRUE, TRUE, 0);
+  gtk_container_set_border_width (GTK_CONTAINER (vbox33), 12);
+
+  hbox94 = gtk_hbox_new (TRUE, 0);
+  gtk_widget_show (hbox94);
+  gtk_box_pack_start (GTK_BOX (vbox33), hbox94, FALSE, TRUE, 0);
+
+  add = gtk_button_new_from_stock ("gtk-add");
+  gtk_widget_show (add);
+  gtk_box_pack_start (GTK_BOX (hbox94), add, FALSE, FALSE, 0);
+
+  remove = gtk_button_new_from_stock ("gtk-remove");
+  gtk_widget_show (remove);
+  gtk_box_pack_start (GTK_BOX (hbox94), remove, FALSE, FALSE, 0);
+
+  edit = gtk_button_new_from_stock ("gtk-edit");
+  gtk_widget_show (edit);
+  gtk_box_pack_start (GTK_BOX (hbox94), edit, FALSE, FALSE, 0);
+
+  scrolledwindow8 = gtk_scrolled_window_new (NULL, NULL);
+  gtk_widget_show (scrolledwindow8);
+  gtk_box_pack_start (GTK_BOX (vbox33), scrolledwindow8, TRUE, TRUE, 0);
+  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow8), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+  gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow8), GTK_SHADOW_IN);
+
+  presets = gtk_tree_view_new ();
+  gtk_widget_show (presets);
+  gtk_container_add (GTK_CONTAINER (scrolledwindow8), presets);
+  gtk_widget_set_size_request (presets, 400, 176);
+  gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (presets), FALSE);
+
+  dialog_action_area10 = GTK_DIALOG (preset_list)->action_area;
+  gtk_widget_show (dialog_action_area10);
+  gtk_button_box_set_layout (GTK_BUTTON_BOX (dialog_action_area10), GTK_BUTTONBOX_END);
+
+  okbutton8 = gtk_button_new_from_stock ("gtk-close");
+  gtk_widget_show (okbutton8);
+  gtk_dialog_add_action_widget (GTK_DIALOG (preset_list), okbutton8, GTK_RESPONSE_CLOSE);
+  GTK_WIDGET_SET_FLAGS (okbutton8, GTK_CAN_DEFAULT);
+
+  /* Store pointers to all widgets, for use by lookup_widget(). */
+  GLADE_HOOKUP_OBJECT_NO_REF (preset_list, preset_list, "preset_list");
+  GLADE_HOOKUP_OBJECT_NO_REF (preset_list, dialog_vbox11, "dialog_vbox11");
+  GLADE_HOOKUP_OBJECT (preset_list, vbox33, "vbox33");
+  GLADE_HOOKUP_OBJECT (preset_list, hbox94, "hbox94");
+  GLADE_HOOKUP_OBJECT (preset_list, add, "add");
+  GLADE_HOOKUP_OBJECT (preset_list, remove, "remove");
+  GLADE_HOOKUP_OBJECT (preset_list, edit, "edit");
+  GLADE_HOOKUP_OBJECT (preset_list, scrolledwindow8, "scrolledwindow8");
+  GLADE_HOOKUP_OBJECT (preset_list, presets, "presets");
+  GLADE_HOOKUP_OBJECT_NO_REF (preset_list, dialog_action_area10, "dialog_action_area10");
+  GLADE_HOOKUP_OBJECT (preset_list, okbutton8, "okbutton8");
+
+  return preset_list;
 }
 

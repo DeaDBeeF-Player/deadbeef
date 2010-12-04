@@ -1033,3 +1033,19 @@ on_custom2_activate                    (GtkMenuItem     *menuitem,
 void
 on_sortfmt_activate                    (GtkEntry        *entry,
                                         gpointer         user_data);
+
+void
+on_edit_encoder_presets_clicked        (GtkButton       *button,
+                                        gpointer         user_data);
+
+void
+on_edit_dsp_presets_clicked            (GtkButton       *button,
+                                        gpointer         user_data);
+
+void
+on_edit_channel_maps_clicked           (GtkButton       *button,
+                                        gpointer         user_data);
+
+GtkWidget*
+encoder_cmdline_help_link_create (gchar *widget_name, gchar *string1, gchar *string2,
+                gint int1, gint int2);

@@ -1160,3 +1160,13 @@ on_sortfmt_activate                    (GtkEntry        *entry,
     gtk_dialog_response (GTK_DIALOG (toplevel), GTK_RESPONSE_OK);
 }
 
+
+
+GtkWidget*
+encoder_cmdline_help_link_create (gchar *widget_name, gchar *string1, gchar *string2,
+                gint int1, gint int2)
+{
+    GtkWidget *link = gtk_link_button_new_with_label ("http://sourceforge.net/apps/mediawiki/deadbeef/index.php?title=Encoder_Command_Line", "Help");
+    return link;
+}
+
