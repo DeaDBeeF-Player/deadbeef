@@ -1,0 +1,1907 @@
+
+* ALL THE CHANGE LOG ENTRIES SINCE 2007-05-28 ARE IN THE GIT REPOSITORY. USE
+  "git log" COMMAND
+
+2007-05-28  Heikki Orsila <heikki.orsila@iki.fi>
+	- The development has been moved to a Git repository. Please issue
+	  "git-clone git://zakalwe.fi/uade uade.git" to checkout the latest
+	  version from the repository.
+
+2007-05-27  Heikki Orsila <heikki.orsila@iki.fi>
+	- Commit messages into version repository should from now on include
+	  a short tag explaining the nature of the commit.
+	  The tags are:
+	  * [ADAPTIVE] - adaptive maintenance: the commit makes software to
+	    work better with the surrounding environment (compilers, libraries,
+	    path names ...)
+	  * [CORRECTVE] - corrective maintenance: fix a defect in the program
+	  * [PERFECTIVE] - perfective maintenance: used when adding a feature
+	    or improving an existing feature
+	  * [PREVENTIVE] - preventive maintenance: used when refactoring,
+	    cleaning or asserting the code, or adding self-tests
+
+	  See http://www.site.uottawa.ca:4321/oose/index.html#maintenance
+
+	- Fixed Audacious plugin to work for Audacious 1.4/2.x
+	  Christian Birchinger <joker@netswarm.net> [ADAPTIVE] [CORRECTIVE]
+
+2007-05-03  Michael Doering <mld@users.sourceforge.net>
+	- Added a new version of Synthdream replayer from Don Adan
+
+2007-04-30  Heikki Orsila <heikki.orsila@iki.fi>
+	* UADE 2.07 (Walpurgis night)
+	- Added Special FX ST replayer from Don Adan
+	- Added a new version of Special FX replayer from Don Adan
+	- Work-arounded libao/alsa so that it drains the audio device for
+	  the last few milliseconds of sample data for the last played song.
+	  Thanks to Cthulhu for pointing out the problem.
+	- Many fixes in song length database code
+	  # Fixed a bug that only the last played subsong time was recorded
+	    into the song db
+	  # Fixed a file-locking race condition in song db
+	  # Fixed a song db corruption bug
+	  # Cleaned song db code
+	- Support for full Drag and Drop/Local URL Support in Audacious 1.3
+	  plugin
+	- Fixed misdetection and modlen calculation bug of Soundtracker IV
+	  mods
+
+2007-04-29  Heikki Orsila <heikki.orsila@iki.fi>
+	- Added Special FX ST replayer from Don Adan
+	- Added a new version of Special FX replayer from Don Adan
+
+2007-04-27  Heikki Orsila <heikki.orsila@iki.fi>
+	- Work-arounded libao/alsa so that it drains the audio device for
+	  the last few milliseconds of song data for the last played song.
+	  Thanks to Cthulhu for pointing out the problem.
+
+2007-04-15  Michael Doering <mld@users.sourceforge.net>
+	- Bug in songlength database handling fixed (shd)
+	
+2007-04-14  Michael Doering <mld@users.sourceforge.net>
+	- Support for full Drag and Drop/Local URL Support in Audacious 1.3
+	  plugin. (shd, mld)
+	- Fixed misdetection and modlen calculation bug of Soundtracker IV
+	  mods. (shd/mld)
+
+2007-04-09  Heikki Orsila <heikki.orsila@iki.fi>
+	* UADE 2.06 (7 YEARS BIRTHDAY PARTY AT PAULAS!)
+	- UADE project is now exactly 7 years old \o/ PARTY!
+	- Started working for Audacious 1.3 support, at least songs that
+	  are added directly through playlist should work if they are
+	  regular files. Audacious VFS is not supported in general. Nothing
+	  else is guaranteed. Audacious < 1.3 works as in the past.
+	- Infogrames replayer improved, gobliins 2 et al. play with correct
+	  tempo
+	- Added new Quartet ST player from Don Adan / Wanted Team
+	  (qts.* files)
+	- KRIS aka Chip Tracker replayer (KRIS.* files) from Don Adan /
+	  Wanted team. This replaces PTK-Prowiz for Chip Tracker songs, so
+	  not a new format.
+	- Quartet PSG replayer (SQT.* files) from Don Adan / Wanted Team
+	- Many small changes, cleanups etc
+
+	- Fixed user installation of Audacious 1.3 plugin...
+
+2007-03-19  Michael Doering <mld@users.sourceforge.net>
+	- Merged Christian Birchingers Audacious 1.3.x API Patches in.
+
+2007-03-03  Heikki Orsila <heikki.orsila@iki.fi>
+	- KRIS aka Chip Tracker replayer (KRIS.* files) from Don Adan /
+	  Wanted team. This replaces PTK-Prowiz for Chip Tracker songs, so
+	  not a new format.
+	- Quartet PSG replayer (SQT.* files) from Don Adan / Wanted Team
+
+2007-02-13  Heikki Orsila <heikki.orsila@iki.fi>
+	- Updated Inforgrames player to use tempo 0x24ff for Ween songs.
+	  Thanks to DrMcCoy of SCUMM VM project.
+	- Reverted Michael's 2007-02-13 patch regarding LC_Numeric and
+	  strtod(). Fixed the problem manually by converting x,y values into
+	  x.y format and vice versa.
+
+2007-02-13  Michael Doering <mld@users.sourceforge.net>
+	- Fix for German LC_Numeric="," parameters in uadeconfig.c.
+	  Thanks for Steffen Wulf for reporting.
+	- Bumped Version to 2.05. :-)
+
+2007-02-08  Michael Doering <mld@users.sourceforge.net>
+	- Added new Quartet ST player from Don Adan / Wanted Team
+          (qts.* files). Great work as ever Don!
+	- Disabled Hippel COSO check in amifilemagic.c to avoid a conflict
+          between Amiga and Atari ST Coso Files.
+	  TODO: The file heuristics for Coso in amifilemagic.c has to be fixed,
+          the checkroutine of the Amiga Hippel-Coso replayer isn't HIP-ST Coso
+          aware either.
+
+2007-02-06  Michael Doering <mld@users.sourceforge.net>
+	- Small correction of shd's patch in PTK-Prowiz commited.
+
+2007-02-05  Michael Doering <mld@users.sourceforge.net>
+	- Applied shd's uade_new_get_info patch to PTK-Prowiz.
+
+2007-02-04  Michael Doering <mld@users.sourceforge.net>
+	- Added sanity check to query eagleopts in PTK-Prowiz (needed for
+	  score fix)
+	- Added a new uade.library method: UadeNewGetInfo(). It is now used
+	  with Infogrames replayer (see
+	  amigasrc/players/infogrames/Infogrames.asm). It will be used with
+	  PTK-Prowiz soon. Documentation for UadeNewGetInfo() can be read
+	  from amigasrc/score/score.s, see function "uade_new_get_info".
+	
+2007-02-03  Heikki Orsila <heikki.orsila@iki.fi>
+	- Disassembled Andy Silvas Infogrames replayer, added a work-around
+	  list for Gobliins 2 songs to fix tempo. Thanks to Sven Hesse of
+	  ScummVM project for letting us know of the tempo problem.
+	  The next thing to do is go through all Infogrames games with UAE
+	  and record the tempo value for each song? Any volunteers?-)
+
+2007-01-30  Michael Doering <mld@users.sourceforge.net>
+	- Changed Scrollbar policy for audacious modinfo to avoid
+          ugly line breaking in hexmode
+
+2007-01-25  Heikki Orsila <heikki.orsila@iki.fi>
+	* UADE 2.05 (It came from the Paula)
+	- This release workarounds scheduler features of some 2.6.x Linux
+	  kernels. IPC method was changed to use sockets instead of pipes,
+	  which significantly reduces buffer underruns. This is really the
+	  only change affecting scheduling! Weird.
+
+2007-01-24  Heikki Orsila <heikki.orsila@iki.fi>
+	- Fixed compilation for platforms that lack memmem(), such as Mac.
+	  The compilation bug was introduced at 2007-01-21 when unixipc
+	  and unixsupport were merged.
+
+2007-01-22  Michael Doering <mld@users.sourceforge.net>
+	- Fixed songinfo for mods detected as Protracker compatible
+
+2007-01-21  Heikki Orsila <heikki.orsila@iki.fi>
+	- Merge unixipc.c and unixsupport.c. Modularise uadecore spawn into
+	  unixsupport.c.
+	- Move from pipe based IPC communication to UNIX socket based
+	  communication. This solves a scheduling problem for some 2.6.x Linux
+	  kernels.
+
+2007-01-21  Heikki Orsila <heikki.orsila@iki.fi>
+	* UADE 2.04 (Defective by Design .org)
+	- Added Jochen Hippel ST player (hst.* files)
+	- Added Quartet player from Don Adan / Wanted Team (qpa.* files)
+	- Updated Mark Cookset replayer with a new version from Don Adan of
+	  Wanted Team
+	- It's now possible to command an eagleplayer listed in
+	  eagleplayer.conf to ignore file type check. This is useful
+	  with the CustomMade replayer as it rejects some valid song files.
+	  See the change log entry from 2007-01-02 and the man page
+	  about song.conf and eagleplayer.conf.
+	- Cygwin work-around (locking on song contents db is broken). Does
+	  NOT affect unixes.
+	- Amiga memory size can now be configured properly from ~/.uade2/uaerc.
+	  This is useful with big sound files (rare).
+	- Fixed the sinc filter, it had a bug that made it less accurate
+	- Man page updates about filters
+	- GCC 4.x clean ups
+	- Small bug fixes. The default uade.conf had a deprecated option
+	  in comments. It was removed.
+	- Updated installation instructions
+
+2007-01-18  Heikki Orsila <heikki.orsila@iki.fi>
+	- Fixed a bug in default uade.conf. "headphone" option for the
+	  uade.conf was obsoleted at 2006-05-13, the new option name
+	  became "headphones". The backward compatibility is retained
+	  again and thus "headphone" option will work to some future.
+	- Fixed several missing cvs sticky bits (-kb) in players/ dir
+
+2007-01-15  Michael Doering <mld@users.sourceforge.net>
+	- Made "detect_format_by_content" parameter for modfiles default.
+	  This way only true Amiga 4ch mod files now get played.
+	- Added Quartet player from Don Adan / Wanted Team. It recognizes
+	  QPA.* files.
+
+2007-01-12  Heikki Orsila <heikki.orsila@iki.fi>
+	- Added "ignore_player_check" option for eagleplayer.conf and
+	  song.conf. It is useful with bad eagleplayers and rips. This
+	  feature was requested for use with CustomMade player and therefore
+	  this option will also be made default for that player. See the
+	  new eagleplayer.conf.
+
+2007-01-11  Antti S. Lankila <alankila@bel.fi>
+	- Correct some ancient mistakes in uade123.1, regarding filter
+	  operation. For instance the LED filter center frequency was
+	  reported halved due to an earlier mistake in graph drawing
+
+2006-12-22  Heikki Orsila <heikki.orsila@iki.fi>
+	- Added Jochen Hippel ST player from Don Adan / Wanted Team. It
+	  recognizes HST.* files
+	- Replaced old Mark Cooksey replayer with a new version from
+	  Don Adan / Wanted Team
+
+2006-12-07  Antti S. Lankila <alankila@bel.fi>
+	- Remove uadecore with make clean
+
+2006-12-03  Antti S. Laknila <alankila@bel.fi>
+	- Fixed a strict aliasing warning that occured with GCC 4.1 in
+	  newcpu.h
+
+2006-12-01  Heikki Orsila <heikki.orsila@iki.fi>
+	- Memory size of Amiga can now be increased over 2 MiB by editing
+	  the uaerc file (e.g. ~/.uade2/uaerc). The variable named chipmem_size
+	  should be edited. Allocated memory for the amiga is determined by
+	     chipmem_size * 512 KiB
+	  By default, chipmem_size = 4 -> 2 MiB of memory. This variable can
+	  be set up to 16 (8 MiB of memory).
+
+2006-11-26  Heikki Orsila <heikki.orsila@iki.fi>
+	- Updated instructions about -x option in uade123 and its man page.
+
+2006-10-28  Antti S. Lankila <alankila@bel.fi>
+	- Due to me misunderstanding the Kaiser window beta parameter,
+	  the BLEP tables for sinc synthesis were set to attenuate aliasing
+	  only for 40 dB instead of the target 80 dB.
+
+2006-10-24  Heikki Orsila <heikki.orsila@iki.fi>
+	- No locking with Cygwin -> uade is dangerous with songdb.
+
+2006-10-02  Heikki Orsila <heikki.orsila@iki.fi>
+	- Updated INSTALL.readme to include more dependencies (pkg-config
+	  and sed) and tips for Mac OS X compiling (workarounds)
+
+2006-08-27  Heikki Orsila <heikki.orsila@iki.fi>
+	* UADE 2.03 (Microsoft punishment)
+	- Added song.conf support to set song specific attributes for 
+	  playback, such as ntsc, blank, filtering etc. See the man
+	  page. An example, one may add following line to ~/.uade2/song.conf
+	  to make fred.hybris_light always timeout on 200 seconds:
+	    md5=60f3bb11cc1bacaf77d7c16d13361844 broken_song_end timeout=200 comment FRED.Hybris_Light
+	  This need not be added manually, one can just issue:
+	    uade123 --set=broken_song_end --set=timeout=200 FRED.Hybris_Light
+	  and afterwards uade will always play the song correctly.
+	  Similarly, one can fix volume gain for some songs:
+	    uade123 --set=gain=2 foo
+	  To reset all options for a given song, do:
+	    uade123 --set= foo
+	- Fixed PAL audio synthesis frequency (inaudible)
+	- --interpolator=x is now --resampler=x because the function of
+	  interpolators was actually resampling.
+	- Only A500 and A1200 filters are now supported and A500 is the
+	  default.
+	- Added Play time database support for uade123
+	- Compatibility fixes
+	- Lots of bug fixes
+	- Improvements in uade123 UI (press i or I for info on song)
+	- Improved file magic support for some formats (P61A, Fuzzac, ...)
+	- Hacky NTSC mode support available now. Use --ntsc or ntsc
+	  directive in uade123. Also works per-song with song.conf.
+	  One can now make specific songs be played in NTSC mode by
+	  programming song.conf with proper values. One can issue:
+	    uade123 --set=ntsc dw.FooBar
+	  or put a line to ~/.uade2/song.conf:
+	    md5=225bbb405433c7c05fe10b99b8e088ff ntsc comment dw.AlfredChicken
+	- One can force protracker replayer to use VBlank timing with many
+	  ways, see the man page on section EAGLEPLAYER OPTIONS. For example,
+	  do:
+	    uade123 -x vblank mod.FooBar
+	- Enhancements in PTK-Prowiz. Protracker version is now selectable
+	  between 3.0b, 2.3a and 1.0c. See the man page section EAGLEPLAYERS
+	  OPTIONS. This option is not yet guaranteed to be 100% but may
+	  fix some immediate problems with some songs.. These settings
+	  may also be recorded to song.conf so that one only has to give
+	  these parameters once. Example:
+	    uade123 -x type:pt10c mod.TheClassicProtrackerVersionedSong
+	  btw. uade is probably the first mod player for non-amigas that
+	  has a direct version support for protrackers.
+	- Improved some players
+	- Titles in audacious and xmms plugins on the playlist are now
+	  programmable with uade.conf. The default is
+	    song_title %F %X [%P]
+	  This displays filename, subsong (if more than one) and player.
+	  See SONG TITLE SPECIFICATION section in the man page. There's a
+	  small help in the uade.conf too.
+	- Significant code refactorizations
+	- Fixed a memory leak issue (see Change log on 2006-04-15)
+	- Added Dirk Bialluch format support by Don Adan/Wanted Team
+
+2006-07-27  Heikki Orsila <heikki.orsila@iki.fi>
+	- Removed -fno-strength-reduce from src/Makefile.in. Some old
+	  GCC 2.x versions had bugged strength reduce, but it shouldn't
+	  matter anymore. Maybe the compiler will produce better code
+	  without this. AHX.cruisin showed approx 3% speedup :) Thanks
+	  to alankila for pointing out use of this flag.
+
+2006-07-17  Heikki Orsila <heikki.orsila@iki.fi>
+	- Fixed a segfault bug in songdb caused by recent changes to add
+	  subsong volume normalisation info to contentdb. Segfaults were
+	  catched in several places due to uninitialized vplist in
+	  struct uade_content.
+
+2006-07-02  Heikki Orsila <heikki.orsila@iki.fi>
+	- Merged an initial version of volume normalization effect from
+	  alankila.
+	- Split song.conf and contentdb related functionality away from
+	  eagleplayer.c to songdb.c.
+
+2006-06-30  Heikki Orsila <heikki.orsila@iki.fi>
+	- Work-arounded signedness warnings with GCC4 in src/frontends/common/
+
+2006-06-23  Heikki Orsila <heikki.orsila@iki.fi>
+	- Fix sinc resampler to support --filter=none (alankila)
+	- Optimize sinc_handler() inner-loop by avoiding unnecessary
+	  indexing (alankila)
+
+2006-06-22  Heikki Orsila <heikki.orsila@iki.fi>
+	- Separated accumulator and sinc resamplers into separate functions
+	  in src/audio.c.
+	- Removed "anti" name from resampler list. "anti" has been the
+	  "default" for a long time already.
+	- Change FIR convolution of sinc into bandlimited step synthesis.
+	  Filters are applied directly by the BLEPs. Warning, sinc and
+	  filtering are now integrated together so they can not be
+	  changed separately (breaking modular development idea). The
+	  default resampler does not suffer from this modularity problem
+	  and it is still the recommended resampler. (alankila)
+
+2006-06-18  Heikki Orsila <heikki.orsila@iki.fi>
+	- Added play time database saving support into uade123.
+
+2006-05-22  Heikki Orsila <heikki.orsila@iki.fi>
+	- Changed --magic to --detect-format-by-content and changed
+	  corresponding "content_detection" directive in eagleplayer.conf and
+	  uade.conf to "detect_format_by_content". Changed --no-song-end to
+	  "--no-ep-end-detect".
+
+2006-05-20  Heikki Orsila <heikki.orsila@iki.fi>
+	- Changed default input file to be /dev/tty instead of stdin for
+	  uade123. Also, failing terminal setup (input file is not a tty)
+	  is not a fatal error.
+	- Added a warning to eagleplayer.conf parsing for the situation
+	  that user has removed all prefixes from an eagleplayer. It makes
+	  all kind of detection (including content detection) unusable.
+	  If you don't want to detect a particular file type by name
+	  extensions, add "content_detection" option for the line in
+	  eagleplayer.conf. But note that there isn't content detection
+	  for all formats. For example, adding "content_detection" for
+	  Thomas Hermann player will make all Thomas Hermann songs
+	  unplayable because there is no content detection for it.
+
+2006-05-19  Heikki Orsila <heikki.orsila@iki.fi>
+	- Added Gryzors (Nicholas Franck <gryzor@club-internet.fr>)
+	  Protracker converter source code into CVS. See
+	  amigasrc/players/tracker/converter/README.txt for copyright and
+	  licensing information. Thanks to Stuart Caie for leading us
+	  to the distribution terms (we did have the source before :-)
+
+2006-05-18  Heikki Orsila <heikki.orsila@iki.fi>
+	- Added p5x and p6x file extensions for The Player 5.x/6.x to
+	  eagleplayer.conf (Stuart Caie requested it)
+	- Added "P50A" four letter magic detection to amifilemagic.c
+
+2006-05-17  Michael Doering <mld@users.sourceforge.net>
+	- Removed deprecated <audacious/configfile.h> from audacious
+	  plugin. Thanks to Joker for the report.
+
+2006-05-16  Michael Doering <mld@users.sourceforge.net>
+	- Raised length of extension[] in uade_analyze_file from 11 to 16,
+	  which caused the xmms and audacious plugin to segfault on
+	  very long prefixes (such as mod15_st-iv) in eagleplayer.conf.
+
+2006-06-15  Heikki Orsila <heikki.orsila@iki.fi>
+	- Added "-x y" to set eagleplayer options more conveniently. It's
+	  now possible to do: uade123 -x type:pt11b mod.foo. -x can be
+	  used multiple times on the same command line.
+
+2006-05-15  Michael Doering <mld@users.sourceforge.net>
+	- PTK-Prowiz now uses the epopt config system. You can set options
+          such as "vblank" and/or "type:" on a song base with the uade123
+          "--set=xyz" command line parameter or edit uade.conf or song.conf
+          manually. For valid protracker types: check the uade123 man page.
+          Please test. I hope I didn't break anything.
+	- Changed Protracker and compatible tag in amifilemagic. It seems
+	  it was too long for xmms/audacious and crashed. Odd.
+ 
+2006-05-13  Heikki Orsila <heikki.orsila@iki.fi>
+	- Merged man page update from alankila, explaining filter and
+	  resampling features
+	- Merged headphones 2 effect patch from alankila, making it sample
+	  rate independent
+	- Added --version to uade123
+	- Cleaned up frontends with respect to configuration management.
+	  Initial configuration loading is made in uade_load_initial_config()
+	  in all frontends.
+	- Fixed song.conf locking
+	- Fixed recursive mode song.conf option setting. Try:
+	  uade123 -r --set=gain=2 songdir
+
+2006-05-12  Michael Doering <mld@users.sourceforge.net>
+	- Audacious modinfo GTK-2.8's assertion error fixed by "porting"
+	  the legacy gdk_font_load/gtk_text to gtk2's tag, viewport,
+	  buffer system.
+	- Worked around gtk2's assumption any text has to be clean UTF-8
+	  which obviously will break when displaying binaryhexdumps or
+	  Amiga locale strings.
+
+2006-05-11  Heikki Orsila <heikki.orsila@iki.fi>
+	- Updated documentation to reflect implementation.
+	- Added support for eagleplayer/song specific eagleplayer options.
+	  Use epopt=x in eagleplayer.conf and song.conf. Look at the
+	  man page section "EAGLEPLAYER OPTIONS" for valid options.
+
+2006-05-09  Heikki Orsila <heikki.orsila@iki.fi>
+	- Added information about sample rate into effects API.
+	- Fixed a race condition for Audacious and XMMS plugins.
+	  A shared static buffer was not locked for file magic detection
+	  in eagleplayer.c:analyze_file_format().
+	- Fixed a bug in eagleplayer.c:analyze_file_format() that might
+	  have caused a partial read for file to be detected.
+	- Fixed a buffer overrun bug in uade.c:uade_get_amiga_message().
+	  With AMIGAMSG_GET_INFO request, the eagleplayer could
+	  cause a slight overrun of the amiga memory to uade data memory.
+	  The attacker could not however choose the string to be written
+	  over the bounds.
+
+2006-05-07  Heikki Orsila <heikki.orsila@iki.fi>
+	- Improved filters to work on arbitrary frequency (alankila)
+	- Removed A500S and A1200S filters. For compatibility, they're now
+	  aliased to A500 and A1200.
+	- Moved computation of audio emulation parameters away from
+	  init_sound() to audio_set_rate(). init_sound() calls
+	  audio_set_rate().
+	- It's now possible to use frequency directive in uade.conf to
+	  set playback frequency. But watch out, it can cause bugs
+	  and sound quality degradation.
+	- Now only two models (FILTER_MODEL_(A500|A1200)) exist in
+	  amigafilter.h.
+	- Code cleanups
+	- Renamed interpolator to be resampler in command line options
+	  and configuration files. Use --resampler=x instead of
+	  --interpolator=x.
+	- Fixed IIR filter not to waste CPU time with denormal numbers.
+	  This idea was presented to us by Antti Huovilainen, thanks.
+	  Try playing BD.Mickey_mouse with an older version and see how
+	  much cpu it takes with A500 filter. The new version is one
+	  quarter CPU time on an AMD64 machine (alankila)
+	- Optimized event handling in include/events.h by removing
+	  redundant vsynctime check that relied upon processor/OS
+	  specific timers (that we've removed long ago).
+
+2006-05-06  Heikki Orsila <heikki.orsila@iki.fi>
+	- Added two util functions into uadeipc.c. They are uade_send_u32()
+	  and uade_send_two_u32s().
+	- Started changes towards changeable output frequency. You can
+	  experiment with --freq=x but filter emulation only works for
+	  44,1 kHz at the moment. Note that filter emulation always has an
+	  effect on sound.
+
+2006-05-05  Heikki Orsila <heikki.orsila@iki.fi>
+	- Fixed --filter=x and --force-led=y to work again.
+
+2006-05-02  Michael Doering <mld@users.sourceforge.net>
+	- Fixed crash due to uninitialized pointer to subsong scale in seek
+	  window for xmms and auda plugin. 
+	  Seems the UI got into a race condition when trying to update the
+	  scale belonging to the seek window and the pointer for the seek
+	  window was there, while the scale wasn't ready. This happend for
+	  very short subsongs only...
+	- Added NTK/STK detection to modinfo
+	- Check for Dirk Bialluch songs in amifilemagic.
+
+2006-05-02  Heikki Orsila <heikki.orsila@iki.fi>
+	- Fixed a small bug that allows resetting song.conf options from
+	  the command line. Use 'uade123 --set= foo' to reset options.
+
+2006-05-01  Heikki Orsila <heikki.orsila@iki.fi>
+	- Changing to a previous song is now possible in uade123. Try
+	  pressing '<'. -z option now means randomizing the playlist
+	  order before playing, but random play mode (press 's') does
+	  randomizing on the fly. Both alternatives support seeking to
+	  previous song in the same way, but seeking to next song will
+	  always be random in random play mode (not with -z).
+	- Added --repeat option into uade123 to play playlist over and
+	  over again.
+
+2006-04-30  Heikki Orsila <heikki.orsila@iki.fi>
+	- It's now possible to set options into song.conf by using uade123
+	  directly. This is not the final feature, only a step towards
+	  a more usable feature. Try:
+	    # uade123 --set="gain=2" foo
+	  It should add the associated entry into ~/.uade2/song.conf.
+	  Eventually uade123 should be used like:
+	    # uade123 --set --gain=2 foo
+
+2006-04-29  Heikki Orsila <heikki.orsila@iki.fi>
+	- Changed hexdump of module/player to show 2 KiBs of text.
+	- Fixed some memory leaks in eagleplayer.c and songinfo.c.
+	- Removed doc/eagleplayer.conf and doc/song.conf. doc/uade123.1 is
+	  the authorative documentation for all configuration files.
+	- Many uade song attribute and configuration management changes.
+	- Added broken song end directive for eagleplayers and songs.
+	  To work-around a defective timeout logics in song.conf you could
+	  add a following line to your song.conf:
+	     md5=60f3bb11cc1bacaf77d7c16d13361844 broken_song_end timeout=200 comment FRED.Hybris_Light
+	- Marked song end detection of FRED format as defective in
+	  eagleplayer.conf:
+	      Fred    prefixes=fred    broken_song_end
+	- Unified eagleplayer.conf and song.conf settings. See uade123
+	  man page for those options.
+
+2006-04-28  Heikki Orsila <heikki.orsila@iki.fi>
+	- Fixed another config bug introduced by last config refactorization.
+	  Filter type could not be set from config file in uade123. The bug
+	  did not happen on Audacious/XMMS plugins.
+	- uade123 -v now prints the uade.conf and song.conf files that were
+	  loaded.
+
+2006-04-28  Michael Doering <mld@users.sourceforge.net>
+	- Fixed bug in Soundtracker 31 instruments check introduced
+	  by fixing the misdetection of a digibooster as protracker mod which
+	  was introduced by easing accepting mods with bad length...
+	  See a pattern there, folks?!?
+	- Along the way, added a distinction between Soundtracker 2.5/
+	  Noisetracker1.0 and Soundtracker 2.4. ST2.5/NT1.0 obviously shared
+	  the same replay by Kaktus & Mahoney, while ST2.4 was still based on
+	  the old 2.3 replay by Unknown and Mnemotron (using repeat offset in
+	  bytes).
+
+2006-04-27  Michael Doering <mld@users.sourceforge.net>
+	- Fixed misdetection of a digibooster mod as protracker in
+	  amifilemagic.
+	- Fortified modplayer checks against amifilemagic's new policy
+	  to accept modfiles with trailing garbage...
+
+2006-04-26  Heikki Orsila <heikki.orsila@iki.fi>
+	- Fixed panning, gain and recursive mode to work again. The problem
+	  was the new configuration management system. Command line options
+	  were not merged into used options. Also, even if they were merged,
+	  they would happen before effects were set ;) Sorry. Fixed now.
+	- Improved gain effect. It can now clip samples if an overflow
+	  happens.
+	- Improved song.conf settings. It now supports all but two
+	  options. See doc/song.conf.
+
+2006-04-21  Michael Doering <mld@users.sourceforge.net>
+	- Fixed detection bug triptodestroy.mod in PTK-Prowiz. Thanks to
+	  Joker for the report.
+	  The mod uses very large instruments with loops which rolled over
+	  to negative checking instrument sizes in words and when large
+	  enough. Stupid bug. Stupid me. :-)
+	- Replaced \t with white spaces. This might fix Joker's bug report
+	  about garbled output in modinfo for audacious.
+	- Fixed audacious crash, when trying to access fileinfo while not
+	  playing a song... Bug was simple we did't have uadesong struct.
+	  get_cur_subsong, get_max_subsong and get_min_ subsong was trying
+	  read from that struct even when idle and uade went up in a blaze...
+	  Now checking towards uadsong struct exists and all is nice
+	- Fixed the Audacious crash fix. It contained a race condition with
+	  respect to the NULL pointer. Also fixed the XMMS plugin. (shd)
+
+2006-04-19  Michael Doering <mld@users.sourceforge.net>
+	- Added new replayer for the Dirk Bialluch format by
+	  Don Adan/Wanted Team.
+	- Amended Startrekker/Audiosculpture detection in amifilemagic again.
+
+2006-04-18  Heikki Orsila <heikki.orsila@iki.fi>
+	- Fixed a bug in memmem() replacement. If needle length was zero,
+	  it returned NULL, but glibc would return pointer to haystack.
+
+2006-04-15  Michael Doering <mld@users.sourceforge.net>
+	- Fixed bug in sanity check in pt_karplusstrong effect (e8x) in
+	  mod player. (thanks Heikki)
+	- Disabled Effect E8x for Protracker 2.3a, 1.1b and 1.0c compatibility
+	  mode in PTK-Prowiz.
+	  E.g. Playing mod.cyberlogik as PTK3.0 will result in timing bugs,
+	  playing it as PTK2.3a will play ok.
+	- Fixed a very serious memory leak issue. Each played song that was
+	  read into memory was leaked. My chip collection is 230 MiB and
+	  after running
+	      valgrind -zr -t1 --enable-timeouts -f /dev/null /chips
+	  I noticed a huge chunk of mem leaked :( Now it's fixed. (shd)
+
+2006-04-14  Heikki Orsila <heikki.orsila@iki.fi>
+	- Refactored and changed amifilemagic.c. Changed tracker type magic
+	  values into enums. A warning about differing file size and
+	  calculated file size for protracker modules is given if one of
+	  two conditions happen:
+	    - uade123 is run in verbose mode (-v)
+	    - xmms or audacious plugin starts to play file
+	- Refactored configuration code
+	- Fixed a subsong/total timeout bug in xmms and audacious plugins.
+	  Always ends directive was not obeyed.
+
+2006-04-13  Heikki Orsila <heikki.orsila@iki.fi>
+	- Committed a programmable option for displaying song titles on
+	  playlist. Try setting
+	    song_title %F %X [%P]
+	  to uade.conf.
+	- Reverted xmms buffer underrun fix that was ported to audacious
+	  plugin. With produce_audio() one does not need to wait for
+	  buffer_free(). (shd)
+	  [Comment: it still locks up here :-\] (mld)
+	- Added songtitle feature to audacious plugin and uade.conf (mld)
+	- Added #include <songinfo.h> to audacious plugin and removed some
+	  unused variables.
+	- Added a work-around against ALSA output plugin into XMMS plugin
+	  which avoids to old subsong change blocking bug. Now sleeping is
+	  hardlimited to 5 secs. If work-around is activated, you will see:
+	  	UADE: blocking work-around activated.
+	  on stderr. It seems like snd_pcm_state(pcm) in ALSA output plugin
+	  never comes out of SND_PCM_STATE_RUNNING.
+	- Set song_title default to %F %X [%P]
+	- Fixed all xmms and audacious plugin symbols to be non-exportable
+	  symbols. The get_iplugin_info() remains the only exportable
+	  symbol. 'objcopy -G get_iplugin_info foo.so' should do it, right?
+
+2006-04-12  Heikki Orsila <heikki.orsila@iki.fi>
+	- Fixed configure script to handle uade.pc file correctly in the
+	  situation of '--user'.
+	- Added a user warning to amifilemagic.c about truncated protracker
+	  modules.
+	- Reverted Michaels change partially. Audacious and XMMS plugins will
+	  not show song name that is obtained from the module because it
+	  is unreliable. This will be made configurable in the future.
+	- Fixed a potential bug in XMMS plugin. If maximum free audio buffers
+	  was less than 4088 bytes, uade plugin would refuse to write
+	  anything. This was noticed because XMMS wouldn't recover from
+	  a buffer underrun in ALSA mmap mode. The output plugin would
+	  not increase the amount of free buffers even if time passes.
+	  XMMS 1.2.10 ALSA output plugin (or alsa library) is still buggy.
+	- Ported shd's xmms buffer underrun fix to audacious (mld)
+	- Changed user warning about truncated protracker modules in
+	  amifilemagic to produce less false positives. (mld)
+
+2006-04-11  Michael Doering <mld@users.sourceforge.net>
+	- Fixed my crap indentation in audacious plugin
+	- Sync'd xmms and audacious playlist display
+	- Fixed possible changing current subsong > maximal subsong
+	  in audacious plugin.
+
+2006-04-10  Heikki Orsila <heikki.orsila@iki.fi>
+	- --no-song-end is now aliased to -n in uade123
+	- Fixed bug in ArtOfNoise8 replayer end routine. (mld)
+	- Added Songtitle to ArtOfNoise 4V/8V players (mld)
+	- Display "Guru Meditation" error in audacious playlist for a song
+	  that crashed uadecore. :-) (mld).
+	- Fixed bug updating the playtime in audacious playlist (mld)
+
+2006-04-09  Heikki Orsila <heikki.orsila@iki.fi>
+	- Code refactorization to unify configuration, effect and song
+	  attribute handling among all frontends.
+	- Added memmem() replacement for operating systems not having it.
+	- Added uade.pc for pkg-config.
+	- Upgraded MED/OctaMED replay to v7.0, using Fastmem replay if
+	  available and needed by the song (long samples :-) (mld)
+	- DigiBooster player now reports songname. (mld)
+	- Fixed ommited pointer in MED/Octamed fastmem replay detection.
+	  (mld)
+
+2006-04-06  Heikki Orsila <heikki.orsila@iki.fi>
+	- Added a small README file
+	- Moved some effect related configuration issues to
+	  src/frontends/common/ so that they're not reimplemented in all
+	  frontends. See src/frontends/common/uadeconf.c function
+	  uade_enable_conf_effects().
+	- Use of uade_enable_conf_effects() in audacious plugin (mld)
+	- Disabled debug messages in Audacious and XMMS plugins
+	- Removed debug message about song.conf not found. It's perfectly
+	  valid that song.conf does not exist anywhere.
+	- Cleaned songinfo.c. Added a common implementation of read_be_u16/u32
+	  to src/include/uadeutils.h, which is now used from songinfo.c and
+	  amifilemagic.c. Changed length types to size_t. Made find_tag()
+	  more generic and made it use memmem() function.
+        - Added Heikki's dpiutil to songinfo for CUST.* songs. (mld)
+
+2006-04-05  Michael Doering <mld@users.sourceforge.net>
+	- PTK-Prowiz: changed opcodes beq, sf to  seq on Heikkis advice.
+	- Tiny Protracker player compatibility change when calling
+	  playvoice.
+	- Nicer playlist entries for Audcious plugin:
+	  title (cur/max) - [Format]
+
+2006-04-03  Heikki Orsila <heikki.orsila@iki.fi>
+	- Implemented NTSC mode support. It can be buggy and it will not
+	  affect some players at all (those which set CIA tempo by
+	  themselves). NTSC mode can detected in eagleplayers by reading
+	  $212(execbase) aka VBlankFrequency(execbase). It's a byte
+	  with value 50 (PAL) or 60 (NTSC):
+	    move.l 4.w,a6
+	    cmp.b #60,$212(a6)
+	    beq   is_an_ntsc_system
+	    * pal system
+	- Changed Timing configuration in players/env/PTK-Prowiz.cfg
+	  from CIA <-> VBI/NTSC to CIA <-> VBI. (mld)
+	- Mod player now honours pal/ntsc setting automatically. (mld)
+	- Fixed stupid *oops* in mod player reading cia timing from config
+	  file.
+	- Added ntsc option uade.conf. (mld)
+
+2006-04-02  Heikki Orsila <heikki.orsila@iki.fi>
+	- Fixed P61A detection (introduced by mlds change sometime ago).
+	  src/frontends/common/amifilemagic.c had "P60A" as the pattern
+	  for Player 6.1, but obviously it should be "P61A".
+	- Improved the man page.
+
+2006-03-31  Michael Doering <mld@users.sourceforge.net>
+	- Changed DMAWait to dtg_DMAWait and add dtg_Timer support
+	  to DIGI-Booster
+	- DIGI-booster songinfo now matches modfiles songinfo.
+
+2006-03-30  Michael Doering <mld@users.sourceforge.net>
+	- Small check for Fuzzac Packer in amifilemagic.
+
+2006-03-27  Michael Doering <mld@users.sourceforge.net>
+	- Renamed XANN-Packer to XANN-Player, following Sylvain 'Asle'
+	  Chipeaux' suggestion.
+	- Merged Funkok saftey check from EP2.04 to protracker player...
+
+2006-03-25  Heikki Orsila <heikki.orsila@iki.fi>
+	- Added a new action key into uade123. 'i' will print module info
+	  and 'I' will print a hex dump of a head of the module.
+
+2006-03-23  Michael Doering <mld@users.sourceforge.net>
+	- Sync'd songinfo for modfiles with the more verbose appearance of
+	  Asle's ModInfo v2.31 appearance... It displays now sample sizes,
+	  volume, finetune, loop start and loop size, too.
+	- Added yet some more tiny differences between Protracker 2.3 and 3.0
+	  compatibility mode for completeness... (set sample_num in pt_plvskip,
+	  and n_period in pt_doretrig).
+	  These changes might have no effect on the replay quality like e.g.
+	  earlier mentioned Updatefunk calling difference or volume setting,
+	  though.
+
+2006-03-21  Michael Doering <mld@users.sourceforge.net>
+	- Small protacker replayer config file parsing fix...
+
+2006-03-20  Heikki Orsila <heikki.orsila@iki.fi>
+	- Fixed slight bugs in build system. Architecture specific CFLAGS
+	  were missing from xmms and audacious frontends. Also, those flags
+	  will be the last flags always so that they can be used for
+	  overriding other options.
+	- Made debug flags really optional. They can be turned off with
+	  --no-debug (for configure).
+
+2006-03-20  Michael Doering <mld@users.sourceforge.net>
+	- Figured out the period multiplier issue. It was a bug in my
+	  brain. *g*
+	- Forgot to add notecut volume setting for protracker 2.3 and below.
+	  This is now fixed.
+	- Set the default playback style to Protracker 3.0b.
+	- Added an experimental hybrid protracker setup: 9.
+	  Effects are done ptk2.3a style, volume setting like 3.0.
+	  This fixes some pops and clicks which even the original
+	  protacker 2.3a replay and below had.
+
+2006-03-17  Michael Doering <mld@users.sourceforge.net>
+	- Enhanced compatibilty concerning protracker 2.3a/1.1b(fixed),
+	  2.1a/1.1b, 1.0c and Prottracker 3.0b concerning access of
+	  the periodtable while using the effects.
+	  It's astonishing in how many ways the protracker replays
+	  differ... :-)
+	  E.g. Protracker 3.0b (like Noisetracker)  uses a multiplication of
+	  37*2 for all effects to get the right period. Protracker 2.3a and
+	  the socalled bugfixed 1.1b replay use a value of 36*2 (like the
+	  old Soundtracker)
+	  Last but least ptk 1.0c, the original ptk1.1b and ptk2.1a use
+	  one or the other value for some effects...
+	  All in all, it's a mess and we have 4 different setups in our
+	  protracker config file :-)
+	- Temporarily disabled the period multiplier hack mentioned above
+	  because it borked on some tunes.
+	- Added "update volume when skip/hold note" for protracker 2.3 and
+	  below. Protracker 3.0 doesn't do it.
+
+2006-03-16  Heikki Orsila <heikki.orsila@iki.fi>
+	- Changed PAL audio synthesis frequency to be exactly 3546895 Hz. It
+	  was 3541200 Hz before. The old value was totally synchronous with
+	  video hw. Changing this does not affect anything else than audio.
+	  The new value is from the hardware reference manual.
+
+2006-03-16  Michael Doering <mld@users.sourceforge.net>
+	- Compatibility for PTK-Prowiz can now be set to play files like
+	  Protracker 3.0b, 2.3a or 1.0c.
+	  INFO: Files being played as PT1.0c will have a different vibrato
+	  depth, and use funk_repeat effect instead of the invert loop effect
+	  which might break all mods composed with later protrackers.
+	- Added support for the different ways Protrackers 1.0, 2.3 and 3.0
+	  updated periods.
+
+2006-03-14  Heikki Orsila <heikki.orsila@iki.fi>
+	* UADE 2.02 (Muhammad pictures)
+	- Fixed a bug in xmms plugin that cut off sound data from the end of
+	  a song.
+	- New Sierra AGI player by Don Adan / Wanted Team
+	- Better support for old sonic arranger files.
+	- Improved file type detection on many formats.
+	- Debugger improvements (see 'c' and 'i' commands)
+	- Added --buffer-time=x option for uade123 to set audio buffer
+	  length in milliseconds.
+	- A configuration file was added for PTK-Prowiz (that plays protracker
+	  and clones) to set compatibility to either protracker v3.0b or
+	  v2.3a. Please edit file: players/ENV/EaglePlayer/EP-PTK-Prowiz.cfg.
+	- More KDE integration: support for kfmexec wrapper.
+	- Fixed many bugs.
+	- Many other changes :-)
+
+2006-03-12  Heikki Orsila <heikki.orsila@iki.fi>
+	- Changed various uade123 parameters. -k and -K have been changed
+	  to one option:
+	    -k x or --keys=x, where x is 0 or 1 (disabling and enabling action
+	    keys).
+	  --no-filter has been removed. Use --filter=none instead.
+
+2006-03-10  Heikki Orsila <heikki.orsila@iki.fi>
+	- Fixed some compiler warnings. Using %u to print unsigned ints :)
+
+2006-03-01  Heikki Orsila <heikki.orsila@iki.fi>
+	- Reverted mlds work-around to avoid subsong change lockups.
+	- Did a potential fix for the XMMS plugin lockup bug. However, I
+	  do not have a test case for this. The problem was, I think, that
+	  play_loop() called uade_lock(), then called
+	  uade_gui_subsong_changed(), then gtk called some function,
+	  which would eventually call get_next_subsong() which would
+	  try to re-take the mutex by uade_lock() -> deadlock.
+	  * THIS THEORY WAS WRONG.
+	- Merged a patch from Martin Jeppensen to rename some eagleplayers
+	  to better names.
+
+2006-02-28  Heikki Orsila <heikki.orsila@iki.fi>
+	- Fixed -m option for uade123. "uade123 -m file" would only print help
+	  but not play the file.
+
+2006-02-17  Michael Doering <mld@users.sourceforge.net>
+	- Added some missing file extensions for the KDE mimelnk.
+	- Use of kfmexec wrapper in KDE mimelnk for easy ftp:// http://,
+	  smb://, zip:// etc. support under KDE/Konqueror.
+	- Added install script for KDE users in  /src/frontents/uade123/KDE.
+	  Now playing Amiga music is just one click away from you ;-)
+
+2006-02-15  Michael Doering <mld@users.sourceforge.net>
+	- NTSC Flag in config file ENV:eagleplayer/ for PTK-Prowiz affecting
+	  Sound, Noisetracker, Startrekker and Protracker (vblank) added.
+	  Normal Pro- and Fastracker are not affected.
+	  Info: it's not a real ntsc mode in emulation but just calculating
+	  the CIAA timer to use a value ~ 7.15Mhz, 60khz, 125bpm on PAL
+	  machines...
+	  It's a cludge I know :)
+
+2006-02-14  Heikki Orsila <heikki.orsila@iki.fi>
+	- Fixed /dev/urandom detection. Using test -c rather than test -e.
+	  Test -c is more compatible and more exact too.
+	- Worked around random lock ups when switching very short subsongs
+	  with the xmms subsong changer (mld)
+	- Config file for PTK-Prowiz' Protracker engine added to set the
+	  way _Protracker_ mods are played. There's currently two values: 0
+	  for Protracker 3.0b like, 1 for Protracker 2.3A like (for anyone
+	  interested: funkrepeat is updated before parsing the extended fx :)
+	  Differences are probl. not audible but Latter is currently the
+	  default. If it breaks a mod file, you can savely turn back to
+	  "0" (mld)
+
+2006-02-13  Heikki Orsila <heikki.orsila@iki.fi>
+	- Fixed uade123 to accept -k and -K switches. Their meaning is now
+	  changed. '-k' disables action keys and '-K' enables.
+
+2006-02-10  Michael Doering <mld@users.sourceforge.net>
+	- A new email alias. ;)
+	- Cosmetical change in name from 32 to 31 instr. for Soundtracker II
+	  in PTK-Prowiz.
+
+2006-02-08  Michael Doering <mldoering@gmx.net>
+	- Updated mod2ogg.sh to set encoding quality (Giulio Canevari).
+
+2006-02-07  Michael Doering <mldoering@gmx.net>
+	- Put new Sierra AGI player by Don Adan/Wanted Team into players dir.
+
+2006-02-02  Heikki Orsila <heikki.orsila@iki.fi>
+	- Cleaned up gensound.h. It contained unuseful external variables
+	  such as sample16s_handler and sample_handler.
+	- Improved mod detection in amifilemagic and Protracker replayer for
+	  Protracker compatible mods using effects 5,6,7 and 9. (mld)
+	- Quick "work around" of a lock up with the subsong seek popup and very
+	  short subsongs in audacious plugin. Needs further investigation
+	  though. Some kind of race condition, I think. (mld)
+	- Reintroduced produce_audio(); to audacious plugin for the freshly
+	  released Audacious 0.2 at http://audacious-media-player.org (mld)
+
+2006-02-01  Michael Doering <mldoering@gmx.net>
+	- Changed association of jp file extension to Jason Page New.
+	- Added simple detection for Jason Page old in amifilemagic.
+	- Added alternative Jason Page Player for one file Jason Page New
+	  files (Thanks dom from the legacy.de for the report).
+	- Changed HIP, HIPC and HIP7 to SOG, SOC and S7G prefix in
+	  amifilemagic.
+
+2006-01-31  Heikki Orsila <heikki.orsila@iki.fi>
+	- Fixed song length database bug in the XMMS plugin. The XMMS plugin
+	  didn't use the correct md5sum in struct uade_song, instead it used
+	  the old and useless array called curmd5[] which was an empty
+	  string.
+	- Continued to move common variables in frontends to struct uade_song.
+	- Fixed instrument name len in songinfo for mods. (mld)
+
+2006-01-25  Michael Doering <mldoering@gmx.net>
+	- Added Turbo/Infect's SonicArranger Player for "old" sa.* files
+	- Added experimental filedetection for two different
+	  Sonicarranger_pc types...
+
+2006-01-24  Michael Doering <mldoering@gmx.net>
+	- Synced audacious plugin with xmms plugin and changed back
+	  to support the current stable audacious 0.1.2.
+	  The audacious supporting "produce_audio()" will be supported as
+	  soon as there's a stable release... (mld)
+	- Ported songinfo for Wanted Team song formats [e.g BSS, DL, FP...]
+	- Fixed mod title display in songinfo
+
+2006-01-22  Heikki Orsila <heikki.orsila@iki.fi>
+        - Added a new option to uade.conf: buffer_time x. buffer_time x in
+	  uade.conf sets audio buffer length to x milliseconds. This can
+	  be used to avoid buffer underruns on some systems. Beware that
+	  Alsa support in libao is buggy in versions 0.8.6 and earlier so
+	  that the actual buffer time must be given in microseconds. At
+	  this time it is not fixed in any official libao releases.
+	- uade123 option --buffer-time=x can be used to set audio buffer
+	  length to x milliseconds.
+
+2006-01-21  Heikki Orsila <heikki.orsila@iki.fi>
+	- Imported the LGPL'ed Max Trax source to amigasrc/players/max_trax.
+	  Then applied a patch from alankila. It is not yet an eagleplayer
+	  but a work-in-progress. (alankila)
+	- Added a command 'i' to the debugger that traces till next hw
+	  interrupt.
+	- 'c' command in debugger will now also print cycle count.
+
+2006-01-20  Heikki Orsila <heikki.orsila@iki.fi>
+	- Continued frontend modularization and code sharing effort. Created
+	  struct uade_song in eagleplayer.h to store relevant properties
+	  of songs that are played. Modified uade123 and XMMS plugin to use
+	  it. The transition is not completed yet. Many fields are still
+	  unused and those fields unnecessarily duplicated in frontends.
+	  Notice that audacious plugin is broken because of this, but it's
+	  also in a transition phase.
+	- Fixed merging conflicts between latest frontend modularization
+	  effort and mlds mod/fileinfo changes.
+	- Fixed bugs in songinfo.c. Some file checking could have read over
+	  over memory boundary causing a segfault (but nothing else).
+	- Backported fileinfo for DIGI-Booster mods. (mld)
+	- Fixed a bug in XMMS plugin that it stopped a subsong too early
+	  if there was another subsong to play. The sound data that was
+	  buffered in audio output plugin was discarded. Thanks to Cthulhu
+	  (the old one) for the bug report.
+
+
+2006-01-19  Michael Doering <mldoering@gmx.net>
+	- Improved vblank detection in Protracker replay for mod.slow_motion
+	  by Jogeir Liljedahl. (mld)
+	- Started work on backporting modinfo from uade 1. Ideally all
+	  frontends should be able to use it. (mld)
+	- Experimental "update fileinfo window on songchange" feature...
+
+2006-01-18  Heikki Orsila <heikki.orsila@iki.fi>
+	- Added a simple and broken XMMS file info window. Module info
+	  displays a hexdump of the first 1024 bytes of the module.
+	- Fixed #include issues with FreeBSD in unixatomic.c.
+	- Optimized sinc interpolator (alankila)
+	- Changed fileinfo.c to allow many different types of infos for
+	  modules. Hexdump is the current default since nothing else has
+	  been implemented.
+
+2006-01-17  Michael Doering <mldoering@gmx.net>
+	- (hopefully) Fixed broken subsong detection for Digital Illusion
+	  mods.
+	- Fixed unallocating timer resources when changing subsong in
+	  MED/Octamed replayer. As a consequence, changing subsongs works
+	  again.
+	- Removed sinc table from audio.c and put it into a separate file
+	  named sinctable.c. (alankila)
+	- audacious plugin: changed legacy uade_ip audio output from xmms
+	  to audacious 0.2 produce_audio(); Seems to work here, but I'm not
+	  sure if it's 100% ok... So give it a test and report back.
+	- Fixed strlrep.h to #include <strings.h> to have size_t type (shd)
+
+2006-01-15  Heikki Orsila <heikki.orsila@iki.fi>
+	- Added more debug messages into the interface between emulator and
+	  sound core. Now Amiga file loading events will give informative
+	  message to the frontend. Use uade123 with -v to see all the spam.
+
+2006-01-14  Heikki Orsila <heikki.orsila@iki.fi>
+	- Merged sinc interpolator patch (alankila)
+	- Changed RK to CM prefix in amifilemagic. This affects custom made
+	  format. Old RK and RKB prefixes are still supported but they may
+	  be removed in the future.
+	- Added contrib/sinc-integral.py which computes the sinc antialiasing
+	  window for audio.c synthesis. (alankila)
+	- Made huge changes into sound cores subsong restart and interrupt
+	  logic. Some formats were fixed with respect to subsong changing.
+	  Try Monkey Island now. The tempo should be correct after subsong
+	  change. 4ch MED/OctaMED is still broken. Try changing to subsong
+	  9 in DaveNinja.med (some channels do not get re-initialized and
+	  a disturbing sound plays on the background). The changes are:
+	    1. Earlier we didn't call StopInt and EndSound in subsong change,
+	       but now we do. The old procedure just called InitSound and
+	       StartInt because our allocators in sound core were robust
+	       against double allocation.
+	    2. Implemented unallocation for CIA resources. See
+	       rem_cia[ab]_interrupt functions.
+	    3. StopInt unallocates the CIA resource used for the player
+	       interrupt. Set_player_interrupt allocates the player interrupt
+	       and calls StartInt.
+	    4. EndSound has a default code now which turns off audio DMA and
+	       sets volumes to zero.
+	    5. exec.library/SetIntVector() does not enable interrupts anymore.
+	       If interrupts are disabled they stay disabled.
+
+2006-01-12  Heikki Orsila <heikki.orsila@iki.fi>
+	- Made anti (accumulator) interpolator to be the default.
+
+2006-01-08  Michael Doering <mldoering@gmx.net>
+	- Commited audacious input plugin based on the XMMS plugin
+	  (http://audacious.nenoload.net).
+
+2006-01-08  Heikki Orsila <heikki.orsila@iki.fi>
+	- Fixed XMMS plugin installation which didn't obey package prefix
+	  (Michal Januszewski <spock@gentoo.org>).
+	- Added some more b-flags for fopen(). This time in code in
+	  src/frontends/common.
+	- Cleaned up sound data buffering code in uadeipc.c, uade.c and
+	  audio.c. Removed uademsg.h as being useless.
+	- Changed uadecontrol.c to uadeipc.c in src/Makefile.in because
+	  uadecontrol.c is long gone.
+	- Optimized uade123 to issue next song data request for the uadecore
+	  before passing sample data to libao. This way the uadecore may
+	  do useful work while libao is blocked on sound device. This didn't
+	  solve the underrun problem completely but effect of improving
+	  behavior is clearly observable with 'top'. Before this change, top
+	  showed only 0.4% CPU usage for uadecore, but after the change it
+	  shows 3.3% CPU usage, and the latter reflects reality much better.
+
+2006-01-07  Heikki Orsila <heikki.orsila@iki.fi>
+	- Changed fopen() to use "b" flag for porting to Windows environment.
+	- Thanks to sasq <jonas@nightmode.org> for help with cross-compiling.
+
+2006-01-06  Heikki Orsila <heikki.orsila@iki.fi>
+	- Made uadeipc() re-entrant so that uadecore and a frontend could in
+	  theory be run in the same process but different threads.
+	- Replaced poll() with select() in unixatomic.c to be compatible with
+	  weak systems.
+
+2006-01-05  Heikki Orsila <heikki.orsila@iki.fi>
+	- Continued cleaning up run-time configuration issues. uade123 and
+	  XMMS plugin do not duplicate settings anymore. Most configuration
+	  and command line options are stored inside 'struct uade_config'
+	  which is defined in src/frontends/common/uadeconf.h.
+
+2006-01-04  Heikki Orsila <heikki.orsila@iki.fi>
+	- Changed -I./include/ to be -I./include in src/Makefile.in to make
+	  it compatible with mingw.
+	- PTK-Prowiz now accepts mods with max 1KiB trailing garbage...
+	  Nevertheless use 100% good rips, people! (mld)
+	- Fixed spelling mistake in PTK-Prowiz *g* (mld)
+	- Updated uade123 man page with apologies about bad file detection
+	  heuristic :(
+
+2006-01-04  Heikki Orsila <heikki.orsila@iki.fi>
+	* UADE 2.01
+	- Compatibility fixes for OpenLSD and Mac OS X to make UADE compile
+	- Added 'cm.' prefix for CustomMade format (Ron Klaren)
+	- PTK-Prowiz subsong scanning was improved (mld)
+
+2006-01-03  Heikki Orsila <heikki.orsila@iki.fi>
+	- Cleaned up post-processing of sound data. Removed postprocessing.[ch]
+	  because it was redundant functionality and added necessary
+	  functionality into effects.[ch]. Also, moved effect state out of
+	  effects.c by creating 'struct uade_effect'. This allows easy
+	  loading and storing of state.
+	  The goal is to have a unified mechanism for handling information
+	  from command line options, uade.conf, eagleplayer.conf and
+	  song.conf that is easy. All the setting must be storable and
+	  restorable through that mechanism. Currently that is broken,
+	  incomplete and messy. The functionality is even duplicated between
+	  frontends :( It will probably take many cleanup steps to achieve
+	  the goal.
+	- Fixed Mac OS X compatibility issue. poll() was replaced with
+	  select(). Thanks to Juuso Raitala.
+	- Improved (hopefully) subsong detection for mods and similar. Now
+	  there should be less false positives in PTK-Prowiz than there
+	  used to be. (mld)
+	- Removed 255 BPM SetTempo fix in PTK-Prowiz for mod.loader from
+	  Coolspot to fix mod.alkupala by jorma... *sigh* (mld)
+	- Fixed broken Prorunner support introduced by reorganization
+	  PTK-Prowiz (mld)
+
+2006-01-02  Heikki Orsila <heikki.orsila@iki.fi>
+	- Fixed a configure bug that occured when --with-xmms was specified.
+	  (Michal Januszewski <spock@gentoo.org>)
+	- Made contrib/uadexmmsadd script to be installed if XMMS plugin is
+	  installed
+	- Added a work-around for OpenBSD 3.8 which lacks portable types from
+	  stdint.h. inttypes.h is used instead. Possibly this avoids type
+	  problems on some other OSes too. Note that we require some C99
+	  features from standard C libraries. Thanks to ave@silokki.org.
+	- Made OpenBSD use 'gmake'. Thanks to ave@silokki.org.
+	- Fixed execlp() call in src/frontends/common/uadecontrol.c by
+	  casting NULL as (char *). Thanks to ave@silokki.org.
+
+2006-01-01  Heikki Orsila <heikki.orsila@iki.fi>
+	* UADE 2.00 (Mental hangover)
+	- Finally the first stable release of UADE 2 series. The work began
+	  6 months ago. There are still rough edges and deficiencies but
+	  it is superior to UADE 1 in many respects.
+	- UADE 2 series has following improvements over UADE 1 series:
+	    * Superior audio quality due to excellent Amiga 500 and 1200
+	      filter models. The default sound model is now the Amiga 500
+	      model. This affects all songs whether or not they use filtering.
+	      (Antti S. Lankila)
+	    * A component architecture which makes creating new frontends
+	      easier
+	    * Unified configuration files to set defaults for all frontends
+	    * Improved command line tool, uade123, supports run-time control
+	      of song playback for switching subsong, skipping to next song,
+	      skipping  fast  forward,  pausing and altering post-processing
+	      effects
+	    * Post-processing effect for headphone users (Antti S. Lankila)
+	    * Skip fast forward feature in uade123 and XMMS plugin
+	    * Many core subsystems have been rewritten or heavily altered
+	    * New supported formats
+	    * UADE 1 produces snaps in audio output because of a bug in
+	      audio DMA engine, but is fixed in UADE 2
+
+2006-01-01  Heikki Orsila <heikki.orsila@iki.fi>
+	- Added contrib/uadexmmsadd script to add uade:// prefixed songs into
+	  XMMS playlist. This is useful to avoid conflicts with protracker
+	  songs with modplug and other XMMS plugins. Any other plugin will not
+	  accept uade:// prefixed entries from the playlist.
+	- Changed forward seeking button in XMMS plugin from ">>" to "10s fwd".
+	- Allow gain values greater than 1.0.
+	- Improved uade123 man page.
+	- Fixed a NULL pointer derefecence in eagleplayer.conf loading. If
+	  eagleplayer.conf couldn't be loaded it would crash.
+	- Fixed a directory creation problem with 'make feinstall'.
+
+2005-12-30  Heikki Orsila <heikki.orsila@iki.fi>
+	- Merged an altered sample accumulation patch from alankila. The
+	  patch has an effect only if anti interpolator is used.
+	- Removed crux, linear and rh interpolators because they're broken
+	  by design. Only default and anti are now supported.
+
+2005-12-22  Heikki Orsila <heikki.orsila@iki.fi>
+	- Fixed shared library compilation for Mac OS X. Thanks to
+	  Michael Baltaks <mbaltaks@mac.com> for information.
+
+2005-12-21  Michael Doering <mldoering@gmx.net>
+	- PTK-Prowiz: Commited various changes to cvs.
+	    o Almost finished reorganizing and redoing the mod checks.
+	    o Fixed bug in Soundtracker with repeat in bytes handling.
+	    o Fixed some bugs in handling empty instruments.
+	    o Added hack for vblank mod detection.
+	    o Hopefully working, support for Karplusstrong fx.
+	- Amifilemagic: backported a small bugfix in mod detection.
+
+2005-12-20  Heikki Orsila <heikki.orsila@iki.fi>
+	- Added a short note for Max OS X users to address a compilation
+	  problem.
+	- Renamed INSTALL to be INSTALL.readme to avoid makefile problems with
+	  Mac OS X.
+
+2005-12-19  Heikki Orsila <heikki.orsila@iki.fi>
+	- Merged accurate audio output patch from Antti S. Lankila. The patch
+	  solves the problem that Paula's 3.5 MHz output was sampled at
+	  regular integer valued intervals that caused inaccuracy. The old
+	  interval was round_down(3541200 / 44100) = 80 paula cycles, but
+	  the real interval is ~80.299 paula cycles. This means 0.4% relative
+	  error in outputted sampling rate that is not audible, but it is
+	  harming filter accuracy analysis.
+
+2005-12-17  Heikki Orsila <heikki.orsila@iki.fi>
+	* UADE 1.50-pre10
+	- Cleaned up src/include/events.h. Removed unnecessary event
+	  scheduler.
+	- Reworked audio subsystem to be more debuggable and added comments.
+	- Fixed a bug in audio state engine that caused DMA engine to play
+	  one word too much of sample data. How could this bug have gone
+	  unnoticed for so long? The same bug exists in UAE too.
+	- Reverted back to not using interpolation with A500E and A1200E
+	  filters. The anti interpolator caused problems with many songs.
+	  It will be fixed at some point and changed back, but at the
+	  moment there's doubt how to fix the problem.
+
+2005-12-16  Heikki Orsila <heikki.orsila@iki.fi>
+	- Applied filter improvement and optimization to audio.c. The
+	  filter should be slightly better than the old. Affects only
+	  A500E and A1200E filters. (alankila)
+	- Cleaned up audio.c
+	- Reworked configuration loading system to avoid conflicts with
+	  uade123 command line parameters. Command line parameters have
+	  priority over uade.conf.
+
+2005-12-15  Michael Doering <mldoering@gmx.net>
+	- Some progress on porting the mod detection to m68k asm.
+
+2005-12-15  Heikki Orsila <heikki.orsila@iki.fi>
+	- Fixed a bug that forced filter to be A500E type when --force-led
+	  was uade with uade123. (alankila)
+
+2005-12-14  Heikki Orsila <heikki.orsila@iki.fi>
+	- Added displaying total playtime based on content database into
+	  uade123
+
+2005-12-12  Michael Doering <mldoering@gmx.net>
+	- replaced Grouleff replayer with Wanted Team's EarAche.
+	- added new EMS replayer by Wanted Team.
+
+2005-12-12  Heikki Orsila <heikki.orsila@iki.fi>
+	- Added INSTALL file to document build process.
+
+2005-12-11  Heikki Orsila <heikki.orsila@iki.fi>
+	* UADE 1.50-pre9
+	- An XMMS plugin has been added. New features compared to UADE1 XMMS
+	  plugin are seek fast forward and correct subsong seeking bar. The
+	  plugin still lacks GUI for configuration, but uade.conf can be
+	  edited directly.
+	- Filtering settings are audibly different compared to last release.
+	  A500E filter model is now the default. It was A1200 in the last
+	  release. This affects all songs, even those which do not use the
+	  filter.
+	- New players for 15 instrument soundtracker variants have been added.
+	- uade123 man page has been updated.
+	- Most subsystems have gone through changes. Some important changes
+	  have been left out. See log entries for further details.
+
+2005-12-11  Heikki Orsila <heikki.orsila@iki.fi>
+	- Significant changes in filter default values. Current default filter
+	  is A500E, which is audibly different on every song compared to the
+	  old default (A1200). To restore the old behavior, set "filter a1200"
+	  in uade.conf. If you want to advocate another default value, please
+	  post to the forum or send email. The forum is preferred.
+
+2005-12-10  Heikki Orsila <heikki.orsila@iki.fi>
+	- Added notices to documentation that setting filter model has an
+	  audible effect even if a song doesn't use filtering at all.
+	- Cleaned up configure script (that is originated from uade1)
+
+2005-12-07  Heikki Orsila <heikki.orsila@iki.fi>
+	- Added unrecognizable type "packed" into amifilemagic. It is
+	  used to inform user about files that are packed with an amiga
+	  packer.
+	- some work on m68k mod checking and replay routine (mld)
+
+2005-12-06  Michael Doering <mldoering@gmx.net>
+	- XMMS plugin now automagically advances the subsong seek slider, if
+	  the replay rolls over to the next subsong.
+	- Soundtracker15 name check that was added yesterday was removed. (shd)
+	- Fixed a bug in uade_filemagic() that char *pre was not initialized
+	  to be an empty string by default. This caused
+	  uade_analyze_file_format() to receive garbage data when file format
+	  was not recognized. (shd)
+	- Valgrinded a memory allocation bug in two places of eagleplayer.c
+	  (the same error actually due to replicating same lines of code),
+	  where space for (n + 1) pointers should have been allocated, but
+	  only ((n * sizeof ptr) + 1) bytes was allocated. (shd)
+	- Added gain effect into uade.conf. You can use variable named
+	  'gain' to set scaling value for each outputted sample. For
+	   example, add a following line to uade.conf:
+	   gain 0.25 (shd)
+	- Made length test of mods with 32 instruments less strict. Due to
+	  popular demand *g* now "oversize mods" get accepted.
+	- Added check for sane finetune and volume values in modchecks.
+
+2005-12-05  Heikki Orsila <heikki.orsila@iki.fi>
+	- Added initial version of song length database into XMMS plugin. It
+	  is compatible with uade1 db-content, but named differently:
+	  ~/.uade2/contentdb. You can just copy the old db:
+	    cp ~/.uade/db-content ~/.uade2/contentdb
+	- Content db is loaded during play_file if it has changed
+	  on the disk. If it has not changed on the disk, then it is
+	  saved if an hour has passed and the db has been changed.
+	- Added a requirement for Soundtracker15 song content detection that
+	  the name must have prefix or postix being: "mod", "mod15", or
+	  "mod15_". This change could be reverted at some point but now it's
+	  the safest choice.
+
+2005-12-04  Heikki Orsila <heikki.orsila@iki.fi>
+	- Added missing #include for uadecontrol.h (sys/types.h for pid_t).
+
+2005-12-03  Heikki Orsila <heikki.orsila@iki.fi>
+	- Made XMMS plugin display play time correctly in the play list
+	  after a song ends. If song ended volutarily, tell XMMS the
+	  play time. If song ended involuntarily by user intervention,
+	  error, or timeout, tell XMMS that the song doesn't have a length
+	  leaving the play list time empty.
+
+2005-12-02  Heikki Orsila <heikki.orsila@iki.fi>
+	- Fixed a latency and time bug in the XMMS plugin that affected
+	  fast forward seeking. When forward seeking happened the XMMS time
+	  display was not updated and the seeking happened with a delay.
+	- Made XMMS plugin report the play time for XMMS after a song
+	  ends.
+	- Added comments about variable locking in XMMS plugin.
+
+2005-12-01  Michael Doering <mldoering@gmx.net>
+	- eagleplayer.conf: Amended the different MarkCooksey prefixes.
+	- amifilemagic: fixed TFMX 1.5 detection bug  introduced by the recent
+	  clean-up.
+	- amifilemagic: fixed another TFMX detection bug. Should be alright
+	  again now.
+
+2005-11-30  Heikki Orsila <heikki.orsila@iki.fi>
+	- Make XMMS plugin auto detectable in configure script. The plugin is
+	  still very experimental and incomplete in features, but it can
+	  already play songs, or at least it should.
+	- GCC4 gave warnings of problems I had not noticed: Fixed a bug in
+	  md5.h. uint32_t was accidently redefined (that is #included
+	  originally from stdint.h). XMMS plugin's uade_ip structure was
+	  declared static but later as external. Fixed signedness warnings
+	  from various modules.
+	- Added seek-forward button into XMMS plugin. (mld)
+	- New replayer for Soundtracker v2-v5 mods with 15 instruments and
+	  a lot of different effects added. (mld)
+	- fixed WaitAudioDMA for all old mod15 replayers. (thanks heikki!)
+	- changed mod15 (again) for stricter st-iv detection (mld)
+	- changed to a stricter tracker module length policy...
+	  If uade doesn't play your modfiles anymore, it's a bad rip.
+	  Get a good one! :)
+	- Since Master-Soundtracker files seem to use a subset of the normal
+	  Soundtracker fx, they now get played with the mod15 replay
+	  This makes Master-ST replayer kind of obsolete atm. (mld)
+
+2005-11-29  Heikki Orsila <heikki.orsila@iki.fi>
+	- Partial and buggy implementation of song.conf. It is used for uade
+	  specific work-arounds for broken or bad songs. Look at doc/song.conf
+	  and src/frontends/common/eagleplayer.c. Please do not use this yet.
+	- Fixed some compiler warnings that surprisingly came with gcc 4.0.2.
+	- Fixed Makefile.in to not report error on 'make install' when XMMS
+	  plugin is not installed.
+
+2005-11-28  Heikki Orsila <heikki.orsila@iki.fi>
+	- Modularized loading and parsing on uade.conf options. See
+	  src/frontends/common/uadeconf.[ch].
+	- It is possible that config parsing for uade123 breaks now.
+	- Added partial config loading support for XMMS plugin. Doesn't
+	  support setting filter type or interpolation mode yet. You must
+	  edit uade.conf by hand if you want configuration changes. No GUI
+	  for setting options yet.
+	- Added cleaning rule for XMMS plugin
+	- New make rule: 'make feclean' will clean all frontend objects
+	- The XMMS plugin determines configuration file path for uade.conf
+	  once during XMMS plugin initialization, and it will not change
+	  afterwards. If no global or user configuration is found, then
+	  the plugin chooses the file under HOME ($HOME/.uade2/uade.conf).
+	  It will try to load the configuration each time a new song is
+	  selected from the XMMS.
+	- Optimization: XMMS will re-read configuration when a new song is
+	  selected if the file timestamp of uade.conf has changed.
+	- Fixed synchronization problem in XMMS plugin's play loop. The audio
+	  device is drained of written sound data before actually stopping
+	  the device. The earlier version cut of audible data from the end
+	  of the song :( However, draining can be interrupted if the user
+	  requests something urgent, such as wanting an immediate song change.
+	  Draining takes time as long as audio
+	  device has buffered data. Buffering settings can be found from
+	  output plugin settings, as usual.
+
+2005-11-28  Heikki Orsila <heikki.orsila@iki.fi>
+	- Added hardcoded timeouts for the XMMS plugin. They are the same
+	  as uade123 defaults. 20 seconds for silence and 512 seconds for
+	  subsong. Reading uade.conf variables is not supported yet.
+
+2005-11-27  Heikki Orsila <heikki.orsila@iki.fi>
+	- Continuing modularization of uade frontends. Various commands,
+	  such as set subsong, change subsong, set filter type, and set
+	  interpolation mode, were moved to src/frontends/common/uadecontrol.c.
+	  The idea is that all the non-trivial commands have a wrapper in
+	  uadecontrol.c, but trivial commands that don't require parameters
+	  can be used through uadeipc.c (uade_send_short_message()).
+	- Added src/include/uadeconstants.h that should contain constants that
+	  are common with uadecore and frontends.
+	- Subsong seeking works in XMMS plugin :-)
+	- Made XMMS plugin globally installable as it should be
+
+2005-11-26  Heikki Orsila <heikki.orsila@iki.fi>
+	- Continuing modularization of uade frontends. Renamed
+	  src/uadecontrol.c to be src/uadeipc.c, and added
+	  src/frontends/common/uadecontrol.c which contains a set of
+	  helper functions to control and spawn uadecore.
+	- Added --with-xmms to configure script for developing the XMMS
+	  plugin. It does not work yet!
+
+2005-11-25  Heikki Orsila <heikki.orsila@iki.fi>
+	- Cleaned up and fixed tronictest check in amifilemagic. Added
+	  read_be_u16() and read_be_u32() to help parsing amiga formats.
+	- Cleaned up tfmxtest in amifilemagic.
+	- Cleaned up modparsing in amifilemagic.
+
+2005-11-24  Michael Doering <mldoering@gmx.net>
+	- amifilemagic: improved mod32 and mod15 checks a bit
+	- ha! found pitchbend incompatibility bewteen
+	  Master-ST and DOC Soundtracker II in amifilemagic. Now
+	  Mods using the pitchbends bigger than 0xf are played as
+	  DOC Soundtracker II:)
+
+2005-11-23  Michael Doering <mldoering@gmx.net>
+	- Master-ST and Ultimate-ST replayers now check for a valid file
+	  length, thus badly ripped mod15 songs won't get played anymore with
+	  UADE. No exceptions.
+	  FYI this will also be future for all other Sound and Protracker
+	  derivates, so for anyone having bad rips - get some valid files! :)
+
+2005-11-22  Michael Doering <mldoering@gmx.net>
+	- Improved amifilemagic: mod32 check now tries to distinguish
+	  10 different mod types. (BTW. 4ch Fastracker mods and similar
+	  now default to mod_pc and get played by the Multichannel PS3M player)
+	- Some more work on the mod15 check in amifilemagic again.
+	- Started to update the amiga mod15 replayers (Ultimate-ST and
+	  Master-ST with better checks, resulting in breaking support for other
+	  players like EP or DT atm.
+
+2005-11-18  Michael Doering <mldoering@gmx.net>
+	- Lowered the file buffer size to 8192 bytes to reduce overhead with
+	  xmms plugin scans. Unfortunately mods with a header and pattern data
+	  beyond that buffer size can't be detected properly and get played
+	  as plain mod15.
+	- Improved mod15 check. It should produce now less false positives.
+	- Added a smarter(?) way of the mod  check for larger files that
+	  don't fit into the check buffer completely.
+	- Renamed filemagic() to uade_filemagic() (shd)
+	- Filemagic buffer size (8192) is now passed as an argument to
+	  uade_filemagic(). Previously both the caller and callee knew the
+	  size.
+	- Made amifilemagic tables static (only visible inside the module)
+	  (shd)
+	- Name prefix conflict between Future Player and PTK-Prowiz was
+	  resolved in favor of Future Player. The name prefix/extension is
+	  'fp'. (shd)
+
+2005-11-16  Heikki Orsila <heikki.orsila@iki.fi>
+	- Made install to a standard path by default. That is /usr/local.
+	  Use ./configure --prefix to override. configure --user will install
+	  to users home directory as in the past.
+	- Committed initial version of man page for uade123.
+	- added a first uade-only mod15_Mastertracker player (mld)
+	- improved (?) mod15 type checks in amifilemagic (mld)
+	- started to work on more complete mod type check in amifilemagic
+	  (mld)
+
+2005-11-13  Heikki Orsila <heikki.orsila@iki.fi>
+	- Cleaned up src/frontends/common/eagleplayer.c. Removed skip_ws(),
+	  skip_nws(), and loops that used them, and replaced those with
+	  shorted loops that use strsep(). Changed index variables to use
+	  size_t instead of int to be more robust against bad input.
+	- Fixed a bug that if eagleplayers.conf specifies always_ends for
+	  an eagleplayer then forcing timeout from command line with -t
+	  didn't work.
+	- Fixed a dirty bug in score that made score crash if an eagleplayer
+	  gave a NULL pointer as module name. This happened with Frontier
+	  custom. Closer inspection revealed that Frontier custom is also
+	  buggy because it sets module name in InitSound() but the
+	  specification says module name is evaluated after InitPlayer()
+	  which is before InitSound(). This looks like a design bug in
+	  the interface, or a typo in the documentation, because setting
+	  module separately for each subsong is useful, and that is what
+	  Frontier actually does.
+
+2005-11-12  Heikki Orsila <heikki.orsila@iki.fi>
+	- Add new antialiasing interpolation mode, which corrects for noisy
+	  treble especially audible in the A1200 filter model. It does its
+	  work by computing the average value of Paula's output pins between
+	  samples.
+
+2005-11-09  Michael Doering <mldoering@gmx.net>
+	- Fixed missing hipc and soc prefixes in eagleplayer.conf.
+	- Associated #chn, ##ch mods to PS3M again. (note: s3m, xm or mtm
+	  are still omitted by uade)
+
+2005-11-08  Heikki Orsila <heikki.orsila@iki.fi>
+	- Added slight noise reduction into CSpline code to reduce
+	  noise due to interpolation errors, and snapping sounds from
+	  sudden volume changes. (alankila)
+	- Updated headphone filtering parameters to place virtual
+	  sound sources closer to head and reduced the associated treble
+	  filtering to make the sound at the same time brighter and more
+	  forward placed. The sources still appear slightly behind and
+	  perhaps elevated, so the illusion will be further improved.
+	  (alankila)
+	- fixed AON8 timing now for real *grin* (mld)
+	- added Musicline Editor to be detected by amifilemagic (mld)
+
+2005-11-07  Michael Doering <mldoering@gmx.net>
+	- Removed dupes from new eagleplayer.conf (mld)
+	- Added new player: Musicline Editor (mld)
+	- Broke ArtOfNoise8 timing, and added song end detection. (mld)
+
+2005-11-06  Heikki Orsila <heikki.orsila@iki.fi>
+	- Added an experimental support for eagleplayer.conf, which is
+	  specified at doc/eagleplayer.conf. The new system allows eagleplayer
+	  specific settings. uadeformats is no longer used, so it has been
+	  removed. Here's a list of currently possible eagleplayer options:
+	    a500 (A500 type filter emulation is used.)
+	    a1200 (A1200 type filter emulation is used.)
+	    always_ends (A song always ends, so timeouts are not used.)
+	    content_detection (File name prefix or postfix heuristics are not
+	                      used for determining format.)
+	    speed_hack (Speed hack is enabled.)
+	  Tips:
+	  Speed hack can be turned on for a specific format by editing
+	  eagleplayer.conf. A format can be marked as ending always, which
+	  means that timeout values are not used (except silence timeout).
+	  There are other options too, and all of them are specified in
+	  doc/eagleplayer.conf.
+
+
+2005-11-05  Heikki Orsila <heikki.orsila@iki.fi>
+	- Player interrupt is now a CIA A interrupt by default. As a
+	  consequence CUST.Loom works (it requires that player interrupt
+	  runs at a lower priority level than audio interrupts).
+	  THM.BlueAngel69 might play better now - a good comparison is needed.
+	  There are still a few things to do in the sound core's interrupt
+	  system, see amigasrc/score/todo.txt.
+	- Headphones effect clipping fix (alankila)
+	- Added improved (but currently experimental) LED filtering code.
+	  The old code was based on assumption that A500 and A1200 have same
+	  output filtering circuitry, but this was not correct. After
+	  analysing hi-fi measurements by pyksy, I designed new filters
+	  by tweaking a couple of equalizers on top of a RC filter that
+	  provided basic treble attenuation. Use --filter=a500e or a1200e to
+	  test the new filters. (alankila)
+
+2005-11-04  Heikki Orsila <heikki.orsila@iki.fi>
+	- Separated CIA B timer A and timer B interrupts finally. Some
+	  Forgotten World songs started to work, but not all. Thomas
+	  Herman BlueAngel69 swent back to its earlier buggy state. Our
+	  recent interrupt handler change broke Thomas Hermann completely.
+	  This change fixes our original design fault that only one CIA
+	  timer interrupt may be used, but not both. This patch takes us
+	  much closer to full CIA interrupt handler support.
+	- Heikki's CIAB-A and CIAB-B separation in soundcore gave us full
+	  support of the MusiclineEditor player from Eagleplayer 2.02.
+	  You still have to use --speedhack to give it enough
+	  cpu cycles, though. (mld)
+	- forgot to add detection bug fix of the two different MCMD formats
+	  in amifilemagic to changelog *grin* (mld)
+
+2005-11-03  Heikki Orsila <heikki.orsila@iki.fi>
+	* UADE 1.50-pre8
+	- Many bug fixes and cleanups.
+	- Headphones postprocessing effect.
+	- Improved A1200 filter emulation.
+	- Added A500 filter emulation. Use --filter=a500.
+	- Cleaned up sound cores timer code.
+	- Fixed CIA timer initialization.
+	- Improved uade123 user interface. Press 'h' in uade123 or list
+	  action keys with uade123 --help.
+	- New sample interpolation code (--interpolator=cspline).
+	- --stderr can be used to pipe sound data to stdout.
+
+2005-11-02  Heikki Orsila <heikki.orsila@iki.fi>
+	- Fixed a very stupid bug I introduced yesterday to src/uade.c.
+	  if (curs > maxs)
+	    foo();
+	    bar();
+	  Duh. Why did I forgot {}??
+	- Network byte orderized, or big endianized, subsong info transmission
+	  between uadecore and frontend. This wasn't a bug. Just a change for
+	  consistency.
+
+2005-11-01  Heikki Orsila <heikki.orsila@iki.fi>
+	- Removed src/effects.c. It was accidently left there from uade 1
+	  (alankila)
+	- Removed unnecessary functionality from src/players.c. Black listing
+	  Protracker modules to be VBI timed should be in frontend logic
+	  rather than emulator logic.
+	- Cleaned up text messages all over the place.
+
+2005-10-31  Heikki Orsila <heikki.orsila@iki.fi>
+	- Did highly experimental changes to sound core's timing interrupt
+	  system. I tested the change with all known players, and only the
+	  Thomas Hermann broke out, but it was broken already, so no big
+	  loss there. Of course I only tested each format with a few songs,
+	  so it's very possible that if the new system doesn't work,
+	  then I couldn't catch the problems. Nevertheless, I spent over an
+	  hour listening to different samples. Testing this change would be
+	  appreciated. One should especially pay attention to tempo, because
+	  that may have gone wrong. The changes I technically made were:
+	  - Made default interrupt timer to be CIA B timer A. Took away all
+	    the hacks to use VBI when ever possible to be the default timer.
+	  - While turning on any CIA B timer (A or B), it does not turn off
+	    the other CIA B timer.
+	  - Fixed CIA B timer initialization. Setting a timer (A or B) gets
+	    the timer value from dtg_Timer(eaglebase).
+	  - Cleaned up audio interrupt server.
+	- Fixed tiny bug in uade123 file extension detection (mld)
+	- Moved amifilemagic, uadeformats, and unixwalkdir modules to
+	  frontends/common/ where they belong.
+
+2005-10-30  Heikki Orsila <heikki.orsila@iki.fi>
+	- Modified headphones effect. (alankila)
+	- Added 'H' action key to toggle headphones effect, and 'P' to toggle
+	  panning effect. Default panning value is 0.7, unless specified
+	  otherwise with command line option or in uade.conf.
+	- Added forgotten -O2 optimization flag to uade123 Makefile
+	- Cleaned audio.c. Removed some debug #defines.
+	- Imported amiga player sources from uade1 project to amigasrc/players/
+
+2005-10-29  Heikki Orsila <heikki.orsila@iki.fi>
+	- Antti S. Lankila <alankila@bel.fi> will be referred to as 'alankila'
+	  in ChangeLog from now.
+	- Beautified and cleaned up audio.c and sd-sound-generic.h.
+	- Fixed a bug that caused 1 bit precision loss in audio output.
+	  Sample data was multiplied after filtering, but it should have been
+	  multiplied before. (alankila)
+	- cust.Bubble_Bobble gives wrong subsong information. Added a logic
+	  into uade123 that determines subsong ranges if default subsong
+	  is outside the reported range.
+	- Changed score's CIA setup so that both CIA-A and CIA-B time of day
+	  counters run continously. Some players, such as Oktalyzer and
+	  sean connolly depend on this. As a consequence it was possible to
+	  remove a work around from score that patched the sean connolly
+	  player not to use CIA TOD. However, any player using CIA TOD is at
+	  risk of not functioning properly, but I have only seen two cases
+	  so far (those which I mentioned).
+	- Removed score from uade source root, now it's only located at
+	  amigasrc/score/ directory.
+	- Fixed a bug in uade123/playloop.c. If one subsong ended because of
+	  silence, all the rest subsongs would end because of silence too.
+	  I forgot to reset the silence counter to zero..
+	- Added a headphone postprocessing effect, and an effect framework for
+	  different uade frontends. Try --headphone. (alankila)
+	- Try pressing 'p' on uade123 to toggle postprocessing effects on
+	  and off.
+	- New filter code (alankila)
+
+2005-10-28  Heikki Orsila <heikki.orsila@iki.fi>
+	- Radical cleaned up in audio.c.
+	- Fixed rh and crux interpolators. Thanks to Antti S. Lankila.
+	  <alankila@bel.fi>
+	- Removed lots of unnecessary macros, variables and functions.
+	- rh interpolator is now names as linear.
+	- Removed src/config.h. It is unnecessary.
+	- uade123 help will now print usable action keys too. Also, one may
+	  press 'h' at run-time to see usable keys. It will print currently
+	  as follows:
+	  Action keys for interactive mode:
+	   '.'           Skip 10 seconds forward.
+	   SPACE, 'b'    Go to next subsong.
+	   'c'           Pause.
+	   'f'           Toggle filter (takes filter control away from eagleplayer).
+	   'h'           Print this list.
+	   RETURN, 'n'   Next song.
+	   'q'           Quit.
+	   's'           Toggle between shuffle mode and normal play.
+	   'x'           Restart current subsong.
+	   'z'           Previous subsong.
+	- To verify whether a song uses filter or not, enable verbose mode
+	  for uade123 by -v. You'll see messages like:
+	   Message: Filter ON
+	- Added two different types of filters: A500 and A1200. Thanks to
+	  Antti S. Lankila, again. Use --filter=a500 or --filter=a1200,
+	  the A1200 case is the default. Both types of filter are
+	  but A1200 filter is better tested. We need feedback on A500 filter.
+	- --force-filter was changed to --force-led.
+	- Fixed a bug with getopts. The long options list was not zero
+	  terminated, and it had worked by luck so long..
+	- Added good ol' speed hack feature into uade123. Use --speedhack
+	  to increase CPU speed for players that extra virtual power. It
+	  is useful for players that require more cpu than 68k can give,
+	  multichannel oktalyzer for example.
+
+2005-10-27  Heikki Orsila <heikki.orsila@iki.fi>
+	- Made interpolation mode selectable from command line. Use
+	  --interpolator=x to choose the interpolation mode, where
+	    x       = default (no interpolation),
+	    rh      = rh interpolator (broken atm),
+	    crux    = crux interpolator (broken atm),
+	    cspline = Antti S. Lankila's spline interpolator
+	              (This is not recommended for chip songs! The spline
+		       spline interpolator is good for natural instruments,
+		       but may produce bad sounds with chips.)
+	- Interpolator is selectable from uade.conf file by adding line:
+	    interpolator foo
+	  Note that using anything else but default is not recommended
+	  at the moment.
+	- As per Michael Doering's needs, I added --stderr option to uade123.
+	  It will force all terminal output printed onto the stderr, and thus
+	  allows piping pure sound data. Example:
+	    uade123 --stderr -e raw -f /dev/stdout DW.Platoon |postprocessing
+
+2005-10-27  Heikki Orsila <heikki.orsila@iki.fi>
+	* UADE 1.50-pre7
+	- Antti S. Lankila <alankila@bel.fi> fixed and improved filter
+	  behavior. The filter state must be updated even when filtering
+	  is not outputted. Output scaling was fixed to the right place
+	  so that it does not distort filter state. Unnecessary range
+	  scaling of input samples was removed. Some documentation was
+	  added about technical properties of the IIR filter.
+	- Filtering by default was not enabled for those people who had an
+	  earlier uade2 version installed to their home directory, because
+	  make install does not overwrite ~/.uade2/uade.conf. Now the default
+	  is hard coded into the source code.
+
+2005-10-27  Heikki Orsila <heikki.orsila@iki.fi>
+	* UADE 1.50-pre6 (tester pre)
+	- Uade core now supports only 16-bits stereo. If 8-bits or mono is
+	  needed the sample data can be postprocessed.
+	- Added experimental filtering support. It should be better than the
+	  one found from uade1. Thanks to Antti S. Lankila <alankila@bel.fi>
+	  for IIR filter coefficients and advice.
+	- New uade.conf options:
+	   filter     - enable filter emulation
+	   no_filter  - disable filter emulation
+	   filter_off - turn filter always off
+	- New command line options:
+	   --filter Enable filter emulation
+	   --force-filter=x, where x = 0, or x = 1. Set filter state either
+	     off (0) or on (1).
+
+2005-10-16  Heikki Orsila <heikki.orsila@iki.fi>
+	- Added a fuzzy state diagram on client-server interaction from client
+	  perspective.
+
+2005-10-08  Heikki Orsila <heikki.orsila@iki.fi>
+	- Unknown keywords in uade.conf are ignored. Old behavior was to
+	  terminate uade123 on an unknown keyword.
+	- First try to load uade.conf from ~/.uade2/uade.conf, and then
+	  try the global config file ($PREFIX/etc/uade.conf)
+	- Simplify playloop in uade123.
+	- Beautify directory hierarchy scanning by avoiding unnecessary
+	  '/' characters.
+	- Started specifying uade client-server protocol. See
+	  doc/play_loop_state_diagram.dia.
+	- Removed S3M support. It's not an Amiga format, and thus it doesn't
+	  belong to UADE. It might also interfere with other players when
+	  UADE is used as an XMMS plugin. Use XMP, modplug or something
+	  else for these formats.
+	- 'make check' is now 'make soundcheck' because it's more a sound
+	  check than a good test set.
+
+2005-10-03  Heikki Orsila <heikki.orsila@iki.fi>
+	- Action keys made into default behavior for uade123.
+
+2005-09-08  Heikki Orsila <heikki.orsila@iki.fi>
+	- Giulio Canevari pointed out that --panning doesn't work. For
+	  some reason I didn't notice that (perhaps didn't test ;-). The
+	  problem was false parameters for GNU getopt.
+	- mod2ogg2.sh from Giulio Canevari
+
+2005-09-04  Heikki Orsila <heikki.orsila@iki.fi>
+	- Added -g option to uade123 to only print information about songs.
+	  Songs are not played in this mode. All relevant output goes into
+	  stdout. This should be useful for scripting people. An example:
+
+	  $ uade123 -g /svu/chip/mod/mod.Unit-a-remix 2>/dev/null
+	  playername: Protracker & relatives
+	  modulename: unit-a-remix
+	  formatname: type: Protracker
+	  subsong_info: 1 1 1 (cur, min, max)
+	  <uade123 quits fast>
+
+2005-09-01  Heikki Orsila <heikki.orsila@iki.fi>
+	- Cygwin fixes. Add cygwin detection to configure script. Makefile
+	  should be aware that uade123 is named uade123.exe on cygwin.
+
+2005-08-27  Heikki Orsila <heikki.orsila@iki.fi>
+	- Fixed a memory copying bug which could cause sound data
+	  corruption when skipping 10 seconds forward with uade123. The bug
+	  was at playloop.c:273. memmove should be used instead of memcpy (shd)
+	- A patch from Jarno Paananen <jpaana@s2.org>. It fixes use of C99
+	  anonymous initializers with sigaction (2) on Cygwin.
+
+2005-07-28  Heikki Orsila <heikki.orsila@iki.fi>
+	* UADE 1.50-pre5 (developer release)
+	- Nothing better to do. Let's release the new version for users to
+	  test.
+
+2005-07-25  Heikki Orsila <heikki.orsila@iki.fi>
+	- It seems ALSA lib could fork and consequently terminate a process
+	  when used through libao, and we must not consider it an error in
+	  our signal handler that catches all dead children. The signal
+	  handler assumed that the only child that could die is uade. (shd)
+
+2005-07-24  Heikki Orsila <heikki.orsila@iki.fi>
+	- New keys for interactive mode:
+	   [0-9]  - Select subsong in range [0, 9]
+	   q	  - Quit player
+	   s      - Switch between normal and shuffle mode
+	   x      - Restart current subsong
+	- Added -£ or --no-song-end switches. Song just keeps playing even if
+	  the amiga player says it has ended. Dude! You can get pretty weird
+	  sounds with this, and sometimes the sound core crashes, and should
+	  crash. Fortunately that doesn't kill the simulator :)
+	- Made help print (-h) prettier by aligning tex columns
+	- Added -K or --no-keys to disable action keys (this can be used to
+	  override the uade.conf if it enables actions by default).
+
+2005-07-23  Heikki Orsila <heikki.orsila@iki.fi>
+        * UADE 1.50-pre4 (developer release)
+	- Added shell interaction keys into UADE123. The keys can be enabled
+	  with -k switch, or adding line "action_keys" into uade.conf.
+	  The keys are (mimiking XMMS):
+	    z     - Previous subsong
+	    c     - Pause
+	    b     - Next subsong
+	    n     - Next song
+	    .     - Skip 10 seconds forward
+	    ENTER - Next song
+	    SPACE - Next subsong
+	  Does someone want these configurable into uade.conf? Please email
+	  me.
+
+2005-07-22  Heikki Orsila <heikki.orsila@iki.fi>
+	* UADE 1.50-pre3 (developer release)
+	- Added a -j to skip x seconds of audio from the beginning. Note that
+	  this does not affect timeout parameters in any way. If timeout is
+	  1 minute and skip is 2 minutes, the song will just end before
+	  anything is played.
+
+2005-07-21  Heikki Orsila <heikki.orsila@iki.fi>
+	- Added silence timeout
+	- Wrote a config file parser for uade123. Look at uade.conf file
+	  for instructions. uade123 tries to load following files in order on
+	  startup: BASEDIR/uade.conf and $(HOME)/.uade2/uade.conf. Command
+	  line options can override config file parameters. Users of uade123
+	  might want to configure timeout, panning and such values as
+	  personal defaults. This is a very important feature important over
+	  uade 1.0x command line tool.
+	- Restructured uade123 code into different code modules to make
+	  maintaining and code reuse easier.
+
+2005-07-18  Heikki Orsila <heikki.orsila@iki.fi>
+	- Fixed a bug in uade123 that prevented it from playing the last
+	  subsong of a song.
+
+2005-07-18  Heikki Orsila <heikki.orsila@iki.fi>
+	* UADE 1.50-pre2 (developer release)
+	- uade123 now has eagleplayer fileformat check ignoring feature (-i),
+	  panning (-p), song timeout (-t), and subsong timeouts (-w)
+
+2005-07-17  Heikki Orsila <heikki.orsila@iki.fi>
+	- uade123 now uses GNU getopt
+	- uade123 can now output both raw and wav formats by using libao
+	  file output mechanism. Wav format is the default. Example:
+	  uade123 -e wav -f foo.wav songfile
+	- The sound core now reports to the simulator when audio output should
+	  start. Traditionally the simulator has produced audio output from
+	  the reboot of the amiga even if it is only useful to output audio
+	  after all the lengthy player initializations have been made in
+	  the sound core. For example, AHX.Cruisin now has 0.96 seconds less
+	  zero samples in the beginning.
+	- Cleaned up sound core a bit. Removed some unused definitions
+	  of messages between sound core and the simulator. Removed unused
+	  code that was designed to be used when running sound core under a
+	  _real_ AmigaOS.
+	- Made uade123 less verbose. Use -v option to get more details.
+	- Renamed uade-trivial.c to 'uade123.c' in src/frontends/uade123
+	- Renamed directory 'trivial' to 'uade123' in src/frontends/
+
+2005-07-15  Heikki Orsila <heikki.orsila@iki.fi>
+        * UADE 1.50-pre1 (developer release)
+	- Lots of changes into uade123
+	- This is just a preview of the new system. There are no interesting
+	  features over uade 1.0x versions. This release doesn't even have
+	  xmms / beepmp plugins.
+	- Short instructions for testing:
+	   $ ./configure && make
+	   $ make test
+	   $ make install
+	  Will install everything to $(HOME)/.uade2/. Then
+	  $(HOME)/.uade2/uade123 is the player you can use. This version
+	  uses libao for audio output.
+
+2005-07-12  Heikki Orsila <heikki.orsila@iki.fi>
+	- Code in src/amifilemagic.c does amiga fileformats detection. If it's
+	  useful for any other project out there, it is now dual licensed
+	  under the GNU GPL _and_ Public Domain. By public domain we mean
+	  that you can do anything you like with the code, including
+	  relicensing arbitrarily for your projects.
+
+2005-07-11  Heikki Orsila <heikki.orsila@iki.fi>
+	- Improved the command line frontend in src/frontends/trivial/,
+	  and now it is called uade123. It can now do fileformat detection by
+	  content, and load proper players from their installation place.
+	  Also, it can play multiple songs in a sequence if one switches to
+	  next song with ctrl-c before the song actually ends. If the song
+	  ends by itself, the system will crash ;)
+	- Found a bug in amifilemagic by accident. chk_id_offset() function
+	  tested patterns of length sizeof(patterns[i]) which is totally
+	  wrong. It was corrected to strlen(patterns[i]).
+
+2005-07-09  Heikki Orsila <heikki.orsila@iki.fi>
+	- Started hacking uade. The goal is to release uade 2.00 someday
+	  http://board.kohina.com/viewtopic.php?p=3499#3499
+	- These changes start a series. Version 1.50 will be the first public
+	  release in this series.
+	- src/frontends/trivial/ can now play single file songs.
+	- Debugging is broken because libao can't handle signals well.
+	- Tons of things missing from the system.

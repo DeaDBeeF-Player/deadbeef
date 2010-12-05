@@ -1,0 +1,12 @@
+This source distribution contains works with various licenses. Please read
+copyright notices of those works before reuse.
+
+All the code from the UAE (Unix Amiga Emulator) project is licensed
+under the GNU GPL. Read COPYING.GPL for details of the GNU GPL license.
+UAE people work is credited in doc/UAE-* files.
+
+Files under players/ directory are licensed with various different licenses
+and quite a many different copyright holders. See inside the player binaries
+for more details.
+
+Sound core in directory amigasrc/score/ is licensed under the GNU LGPL.
