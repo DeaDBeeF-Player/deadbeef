@@ -2,7 +2,7 @@ CC=gcc
 
 dumbpath=dumb-kode54
 
-CFLAGS+=-Wall -I$(dumbpath)/include -std=c99
+CFLAGS+=-Wall -D_GNU_SOURCE -I$(dumbpath)/include -std=c99
 
 LDFLAGS+=-module -shared -fPIC -lm
 
