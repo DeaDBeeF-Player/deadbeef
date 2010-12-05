@@ -58,26 +58,37 @@ extern DB_functions_t *deadbeef; // defined in gtkui.c
 static gboolean
 file_filter_func (const GtkFileFilterInfo *filter_info, gpointer data) {
     // get ext
-    const char *p = filter_info->filename + strlen (filter_info->filename)-1;
-    while (p >= filter_info->filename) {
-        if (*p == '.') {
-            break;
-        }
-        p--;
-    }
-    if (*p != '.') {
+    const char *p = strrchr (filter_info->filename, '.');
+    if (!p) {
         return FALSE;
     }
     p++;
+
+    // get beginning of fname
+    const char *fn = strrchr (filter_info->filename, '/');
+    if (!fn) {
+        fn = filter_info->filename;
+    }
+    else {
+        fn++;
+    }
+
+
     DB_decoder_t **codecs = deadbeef->plug_get_decoder_list ();
     for (int i = 0; codecs[i]; i++) {
         if (codecs[i]->exts && codecs[i]->insert) {
             const char **exts = codecs[i]->exts;
-            if (exts) {
-                for (int e = 0; exts[e]; e++) {
-                    if (!strcasecmp (exts[e], p)) {
-                        return TRUE;
-                    }
+            for (int e = 0; exts[e]; e++) {
+                if (!strcasecmp (exts[e], p)) {
+                    return TRUE;
+                }
+            }
+        }
+        if (codecs[i]->prefixes && codecs[i]->insert) {
+            const char **prefixes = codecs[i]->prefixes;
+            for (int e = 0; prefixes[e]; e++) {
+                if (!strncasecmp (prefixes[e], fn, strlen(prefixes[e])) && *(fn + strlen (prefixes[e])) == '.') {
+                    return TRUE;
                 }
             }
         }

@@ -1289,11 +1289,19 @@ pl_insert_file (playItem_t *after, const char *fname, int *pabort, int (*cb)(pla
     }
 
     // detect decoder
-    const char *eol = fname + strlen (fname) - 1;
-    while (eol > fname && *eol != '.') {
-        eol--;
+    const char *eol = strrchr (fname, '.');
+    if (!eol) {
+        return NULL;
     }
     eol++;
+
+    const char *fn = strrchr (fname, '/');
+    if (!fn) {
+        fn = fname;
+    }
+    else {
+        fn++;
+    }
 
     // detect pls/m3u files
     // they must be handled before checking for http://,
@@ -1360,6 +1368,20 @@ pl_insert_file (playItem_t *after, const char *fname, int *pabort, int (*cb)(pla
             const char **exts = decoders[i]->exts;
             for (int e = 0; exts[e]; e++) {
                 if (!strcasecmp (exts[e], eol)) {
+                    playItem_t *inserted = (playItem_t *)decoders[i]->insert (DB_PLAYITEM (after), fname);
+                    if (inserted != NULL) {
+                        if (cb && cb (inserted, user_data) < 0) {
+                            *pabort = 1;
+                        }
+                        return inserted;
+                    }
+                }
+            }
+        }
+        if (decoders[i]->prefixes && decoders[i]->insert) {
+            const char **prefixes = decoders[i]->prefixes;
+            for (int e = 0; prefixes[e]; e++) {
+                if (!strncasecmp (prefixes[e], fn, strlen(prefixes[e])) && *(fn + strlen (prefixes[e])) == '.') {
                     playItem_t *inserted = (playItem_t *)decoders[i]->insert (DB_PLAYITEM (after), fname);
                     if (inserted != NULL) {
                         if (cb && cb (inserted, user_data) < 0) {
