@@ -37,7 +37,7 @@ static const char *filetypes[] = { "example", NULL }; // e.g. MP3
 
 // allocate codec control structure
 static DB_fileinfo_t *
-example_open (void) {
+example_open (uint32_t hints) {
     DB_fileinfo_t *_info = malloc (sizeof (example_info_t));
     example_info_t *info = (example_info_t *)_info;
     memset (info, 0, sizeof (example_info_t));
@@ -50,9 +50,12 @@ static int
 example_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     example_info_t *info = (example_info_t *)_info;
 
-    _info->bps = ;
-    _info->channels = ;
-    _info->samplerate = ;
+    _info->fmt.bps = ;
+    _info->fmt.channels = ;
+    _info->fmt.samplerate  = ;
+    for (int i = 0; i < _info->fmt.channels; i++) {
+        _info->fmt.channelmask |= 1 << i;
+    }
     _info->readpos = 0;
     _info->plugin = &plugin;
 
@@ -82,9 +85,9 @@ example_free (DB_fileinfo_t *_info) {
 // return number of decoded bytes
 // or 0 on EOF/error
 static int
-example_read_int16 (DB_fileinfo_t *_info, char *bytes, int size) {
+example_read (DB_fileinfo_t *_info, char *bytes, int size) {
     example_info_t *info = (example_info_t *)_info;
-    info->currentsample += size / (_info->channels * _info->bps/8);
+    info->currentsample += size / (_info->fmt.channels * _info->fmt.bps/8);
     return size;
 }
 
@@ -220,8 +223,7 @@ static DB_decoder_t plugin = {
     .plugin.stop = example_stop,
     .init = example_init,
     .free = example_free,
-    .read_int16 = example_read_int16,
-//    .read_float32 = example_read_float32,
+    .read = example_read,
     .seek = example_seek,
     .seek_sample = example_seek_sample,
     .insert = example_insert,
