@@ -1,5 +1,5 @@
 #!/bin/sh
-rm /usr/local/lib/deadbeef/*
+rm /usr/local/lib/deadbeef/*.so
 cp ./deadbeef /usr/local/bin/
 cp ./plugins/nullout/.libs/nullout.so /usr/local/lib/deadbeef/
 cp ./plugins/cdda/.libs/cdda.so /usr/local/lib/deadbeef/
@@ -36,3 +36,4 @@ cp ./plugins/ao/ao.so /usr/local/lib/deadbeef/
 cp ./plugins/shellexec/.libs/shellexec.so /usr/local/lib/deadbeef/
 cp ./plugins/dsp_libsrc/.libs/dsp_libsrc.so /usr/local/lib/deadbeef/
 cp ./plugins/m3u/.libs/m3u.so /usr/local/lib/deadbeef/
+cp ./plugins/uade/uade.so /usr/local/lib/deadbeef/
