@@ -324,9 +324,13 @@ on_converter_ok_clicked                (GtkButton       *button,
 
     GtkComboBox *combo = GTK_COMBO_BOX (lookup_widget (converter, "encoder"));
     int enc_preset = gtk_combo_box_get_active (combo);
+    if (enc_preset < 0) {
+        fprintf (stderr, "Encoder preset not selected\n");
+        return;
+    }
 
     ddb_encoder_preset_t *p = encoder_presets;
-    while (enc_preset--) {
+    while (p && enc_preset--) {
         p = p->next;
     }
     if (!p) {
