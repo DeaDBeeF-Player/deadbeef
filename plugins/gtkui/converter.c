@@ -511,10 +511,18 @@ on_encoder_preset_add                     (GtkButton       *button,
     
     gtk_widget_destroy (dlg);
 
+    // presets list view
     GtkWidget *list = lookup_widget (toplevel, "presets");
     GtkListStore *mdl = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (list)));
     gtk_list_store_clear (mdl);
     fill_encoder_presets (mdl);
+
+    // presets combo box
+    GtkComboBox *combo = GTK_COMBO_BOX (lookup_widget (converter, "encoder"));
+    mdl = GTK_LIST_STORE (gtk_combo_box_get_model (combo));
+    gtk_list_store_clear (mdl);
+    fill_encoder_presets (mdl);
+    gtk_combo_box_set_active (combo, deadbeef->conf_get_int ("converter.encoder_preset", 0));
 }
 
 void
@@ -609,9 +617,17 @@ on_encoder_preset_edit                     (GtkButton       *button,
     
     gtk_widget_destroy (dlg);
 
+    // presets list view
     GtkListStore *mdl = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (list)));
     gtk_list_store_clear (mdl);
     fill_encoder_presets (mdl);
+
+    // presets combo box
+    GtkComboBox *combo = GTK_COMBO_BOX (lookup_widget (converter, "encoder"));
+    mdl = GTK_LIST_STORE (gtk_combo_box_get_model (combo));
+    gtk_list_store_clear (mdl);
+    fill_encoder_presets (mdl);
+    gtk_combo_box_set_active (combo, deadbeef->conf_get_int ("converter.encoder_preset", 0));
 }
 
 void
@@ -665,9 +681,17 @@ on_encoder_preset_remove                     (GtkButton       *button,
         }
         ddb_encoder_preset_free (p);
 
+        // presets list view
         GtkListStore *mdl = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (list)));
         gtk_list_store_clear (mdl);
         fill_encoder_presets (mdl);
+
+        // presets combo box
+        GtkComboBox *combo = GTK_COMBO_BOX (lookup_widget (converter, "encoder"));
+        mdl = GTK_LIST_STORE (gtk_combo_box_get_model (combo));
+        gtk_list_store_clear (mdl);
+        fill_encoder_presets (mdl);
+        gtk_combo_box_set_active (combo, deadbeef->conf_get_int ("converter.encoder_preset", 0));
     }
 }
 
