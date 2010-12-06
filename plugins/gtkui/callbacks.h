@@ -1049,3 +1049,15 @@ on_edit_channel_maps_clicked           (GtkButton       *button,
 GtkWidget*
 encoder_cmdline_help_link_create (gchar *widget_name, gchar *string1, gchar *string2,
                 gint int1, gint int2);
+
+void
+gtkui_dialog_response_ok               (GtkEntry        *entry,
+                                        gpointer         user_data);
+
+void
+on_converter_encoder_changed           (GtkComboBox     *combobox,
+                                        gpointer         user_data);
+
+void
+on_presets_cursor_changed              (GtkTreeView     *treeview,
+                                        gpointer         user_data);

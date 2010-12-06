@@ -3438,6 +3438,9 @@ create_converterdlg (void)
   g_signal_connect ((gpointer) converter_output_browse, "clicked",
                     G_CALLBACK (on_converter_output_browse_clicked),
                     NULL);
+  g_signal_connect ((gpointer) encoder, "changed",
+                    G_CALLBACK (on_converter_encoder_changed),
+                    NULL);
   g_signal_connect ((gpointer) edit_encoder_presets, "clicked",
                     G_CALLBACK (on_edit_encoder_presets_clicked),
                     NULL);
@@ -3503,10 +3506,15 @@ create_convpreset_editor (void)
   GtkWidget *hbox70;
   GtkWidget *label105;
   GtkWidget *title;
+  GtkWidget *hbox96;
+  GtkWidget *label120;
+  GtkWidget *hbox97;
+  GtkWidget *fname;
+  GtkWidget *custom5;
   GtkWidget *hbox72;
   GtkWidget *label106;
   GtkWidget *hbox93;
-  GtkWidget *cmdline;
+  GtkWidget *encoder;
   GtkWidget *custom4;
   GtkWidget *hbox73;
   GtkWidget *label107;
@@ -3547,7 +3555,34 @@ create_convpreset_editor (void)
   title = gtk_entry_new ();
   gtk_widget_show (title);
   gtk_box_pack_start (GTK_BOX (hbox70), title, TRUE, TRUE, 0);
+  gtk_entry_set_text (GTK_ENTRY (title), _("Untitled Encoder"));
   gtk_entry_set_invisible_char (GTK_ENTRY (title), 9679);
+  gtk_entry_set_activates_default (GTK_ENTRY (title), TRUE);
+
+  hbox96 = gtk_hbox_new (FALSE, 9);
+  gtk_widget_show (hbox96);
+  gtk_box_pack_start (GTK_BOX (vbox27), hbox96, TRUE, TRUE, 0);
+
+  label120 = gtk_label_new (_("Output file name"));
+  gtk_widget_show (label120);
+  gtk_box_pack_start (GTK_BOX (hbox96), label120, FALSE, FALSE, 0);
+
+  hbox97 = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show (hbox97);
+  gtk_box_pack_start (GTK_BOX (hbox96), hbox97, TRUE, TRUE, 0);
+
+  fname = gtk_entry_new ();
+  gtk_widget_show (fname);
+  gtk_box_pack_start (GTK_BOX (hbox97), fname, TRUE, TRUE, 0);
+  gtk_entry_set_text (GTK_ENTRY (fname), _("Untitled Encoder"));
+  gtk_entry_set_invisible_char (GTK_ENTRY (fname), 9679);
+  gtk_entry_set_activates_default (GTK_ENTRY (fname), TRUE);
+
+  custom5 = title_formatting_help_link_create ("custom5", "", "", 0, 0);
+  gtk_widget_show (custom5);
+  gtk_box_pack_start (GTK_BOX (hbox97), custom5, TRUE, TRUE, 0);
+  GTK_WIDGET_UNSET_FLAGS (custom5, GTK_CAN_FOCUS);
+  GTK_WIDGET_UNSET_FLAGS (custom5, GTK_CAN_DEFAULT);
 
   hbox72 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox72);
@@ -3561,10 +3596,12 @@ create_convpreset_editor (void)
   gtk_widget_show (hbox93);
   gtk_box_pack_start (GTK_BOX (hbox72), hbox93, TRUE, TRUE, 0);
 
-  cmdline = gtk_entry_new ();
-  gtk_widget_show (cmdline);
-  gtk_box_pack_start (GTK_BOX (hbox93), cmdline, TRUE, TRUE, 0);
-  gtk_entry_set_invisible_char (GTK_ENTRY (cmdline), 9679);
+  encoder = gtk_entry_new ();
+  gtk_widget_show (encoder);
+  gtk_box_pack_start (GTK_BOX (hbox93), encoder, TRUE, TRUE, 0);
+  gtk_entry_set_text (GTK_ENTRY (encoder), _("encodername - %s"));
+  gtk_entry_set_invisible_char (GTK_ENTRY (encoder), 9679);
+  gtk_entry_set_activates_default (GTK_ENTRY (encoder), TRUE);
 
   custom4 = encoder_cmdline_help_link_create ("custom4", "", "", 0, 0);
   gtk_widget_show (custom4);
@@ -3658,10 +3695,15 @@ create_convpreset_editor (void)
   GLADE_HOOKUP_OBJECT (convpreset_editor, hbox70, "hbox70");
   GLADE_HOOKUP_OBJECT (convpreset_editor, label105, "label105");
   GLADE_HOOKUP_OBJECT (convpreset_editor, title, "title");
+  GLADE_HOOKUP_OBJECT (convpreset_editor, hbox96, "hbox96");
+  GLADE_HOOKUP_OBJECT (convpreset_editor, label120, "label120");
+  GLADE_HOOKUP_OBJECT (convpreset_editor, hbox97, "hbox97");
+  GLADE_HOOKUP_OBJECT (convpreset_editor, fname, "fname");
+  GLADE_HOOKUP_OBJECT (convpreset_editor, custom5, "custom5");
   GLADE_HOOKUP_OBJECT (convpreset_editor, hbox72, "hbox72");
   GLADE_HOOKUP_OBJECT (convpreset_editor, label106, "label106");
   GLADE_HOOKUP_OBJECT (convpreset_editor, hbox93, "hbox93");
-  GLADE_HOOKUP_OBJECT (convpreset_editor, cmdline, "cmdline");
+  GLADE_HOOKUP_OBJECT (convpreset_editor, encoder, "encoder");
   GLADE_HOOKUP_OBJECT (convpreset_editor, custom4, "custom4");
   GLADE_HOOKUP_OBJECT (convpreset_editor, hbox73, "hbox73");
   GLADE_HOOKUP_OBJECT (convpreset_editor, label107, "label107");
