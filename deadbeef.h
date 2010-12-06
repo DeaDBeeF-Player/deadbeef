@@ -752,6 +752,7 @@ typedef struct DB_output_s {
     strncpy (var->inst.id, id, 9);\
     var->inst.id[9]=0;\
     var->inst.plugin=plug;\
+    var->inst.enabled=1;\
 }
 
 typedef struct DB_dsp_instance_s {
