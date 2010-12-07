@@ -785,6 +785,17 @@ typedef struct DB_dsp_s {
     void (*reset) (DB_dsp_instance_t *inst);
 
     void (*enable) (DB_dsp_instance_t *inst, int e);
+
+    // num_params can be NULL, to indicate that plugin doesn't expose any params
+    //
+    // if num_params is non-NULL -- get_param_name, set_param and get_param must
+    // all be implemented
+    //
+    // param names are for display-only, and are allowed to contain spaces
+    int (*num_params) (void);
+    const char *(*get_param_name) (int p);
+    void (*set_param) (DB_dsp_instance_t *inst, int p, float val);
+    float (*get_param) (DB_dsp_instance_t *inst, int p);
 } DB_dsp_t;
 
 
