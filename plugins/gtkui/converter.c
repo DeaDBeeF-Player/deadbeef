@@ -26,29 +26,8 @@
 #include "interface.h"
 #include "gtkui.h"
 
-enum {
-    DDB_ENCODER_METHOD_PIPE = 0,
-    DDB_ENCODER_METHOD_FILE = 1,
-};
-
-enum {
-    DDB_ENCODER_FMT_8BIT = 0x1,
-    DDB_ENCODER_FMT_16BIT = 0x2,
-    DDB_ENCODER_FMT_24BIT = 0x4,
-    DDB_ENCODER_FMT_32BIT = 0x8,
-    DDB_ENCODER_FMT_32BITFLOAT = 0x10,
-};
-
-typedef struct ddb_encoder_preset_s {
-    char *title;
-    char *fname;
-    char *encoder;
-    int method; // pipe or file
-    uint32_t formats; // combination of supported flags (FMT_*)
-    struct ddb_encoder_preset_s *next;
-} ddb_encoder_preset_t;
-
 ddb_encoder_preset_t *encoder_presets;
+ddb_dsp_preset_t *dsp_presets;
 
 ddb_encoder_preset_t *
 ddb_encoder_preset_alloc (void) {
@@ -163,12 +142,89 @@ ddb_encoder_preset_save (ddb_encoder_preset_t *p, int overwrite) {
     return 0;
 }
 
+ddb_dsp_preset_t *
+ddb_dsp_preset_alloc (void) {
+    ddb_dsp_preset_t *p = malloc (sizeof (ddb_dsp_preset_t));
+    if (!p) {
+        fprintf (stderr, "failed to alloc ddb_encoder_preset_t\n");
+        return NULL;
+    }
+    memset (p, 0, sizeof (ddb_dsp_preset_t));
+    return p;
+}
+
+void
+ddb_dsp_preset_free (ddb_dsp_preset_t *p) {
+    if (p) {
+        if (p->title) {
+            free (p->title);
+        }
+        free (p);
+    }
+}
+
+ddb_dsp_preset_t *
+ddb_dsp_preset_load (const char *fname) {
+    return NULL;
+}
+
+int
+ddb_dsp_preset_save (ddb_dsp_preset_t *p, int overwrite) {
+    const char *confdir = deadbeef->get_config_dir ();
+    char path[1024];
+    if (snprintf (path, sizeof (path), "%s/presets", confdir) < 0) {
+        return -1;
+    }
+    mkdir (path, 0755);
+    if (snprintf (path, sizeof (path), "%s/presets/dsp", confdir) < 0) {
+        return -1;
+    }
+    mkdir (path, 0755);
+    if (snprintf (path, sizeof (path), "%s/presets/dsp/%s.txt", confdir, p->title) < 0) {
+        return -1;
+    }
+
+    if (!overwrite) {
+        FILE *fp = fopen (path, "rb");
+        if (fp) {
+            fclose (fp);
+            return -2; 
+        }
+    }
+
+    FILE *fp = fopen (path, "w+b");
+    if (!fp) {
+        return -1;
+    }
+
+    fprintf (fp, "title %s\n", p->title);
+
+    DB_dsp_instance_t *inst = p->chain;
+    while (inst) {
+        fprintf (fp, "%s {\n", inst->plugin->plugin.id);
+        fprintf (fp, "\t%s\n", inst->id);
+        if (inst->plugin->num_params) {
+            int n = inst->plugin->num_params ();
+            int i;
+            for (i = 0; i < n; i++) {
+                float v = inst->plugin->get_param (inst, i);
+                fprintf (fp, "\t%d %f\n", i, v);
+            }
+        }
+        fprintf (fp, "}\n");
+        inst = inst->next;
+    }
+
+    fclose (fp);
+    return 0;
+}
+
 static int dirent_alphasort (const struct dirent **a, const struct dirent **b) {
     return strcmp ((*a)->d_name, (*b)->d_name);
 }
 
 int
-enc_preset_filter (const struct dirent *ent) {
+scandir_preset_filter (const struct dirent *ent) {
     char *ext = strrchr (ent->d_name, '.');
     if (ext && !strcasecmp (ext, ".txt")) {
         return 1;
@@ -184,7 +240,7 @@ load_encoder_presets (void) {
         return -1;
     }
     struct dirent **namelist = NULL;
-    int n = scandir (path, &namelist, enc_preset_filter, dirent_alphasort);
+    int n = scandir (path, &namelist, scandir_preset_filter, dirent_alphasort);
     int i;
     for (i = 0; i < n; i++) {
         char s[1024];
@@ -499,13 +555,13 @@ on_encoder_preset_add                     (GtkButton       *button,
                     encoder_presets = p;
                 }
                 else {
-                    GtkWidget *warndlg = gtk_message_dialog_new (GTK_WINDOW (mainwin), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Failed to save preset"));
+                    GtkWidget *warndlg = gtk_message_dialog_new (GTK_WINDOW (mainwin), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Failed to save encoder preset"));
                     gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (warndlg), err == -1 ? _("Check preset folder permissions, try to pick different title, or free up some disk space") : _("Preset with the same name already exists. Try to pick another title."));
                     gtk_window_set_title (GTK_WINDOW (warndlg), _("Error"));
 
                     gtk_window_set_transient_for (GTK_WINDOW (warndlg), GTK_WINDOW (dlg));
                     int response = gtk_dialog_run (GTK_DIALOG (warndlg));
-                    gtk_widget_destroy (dlg);
+                    gtk_widget_destroy (warndlg);
                     continue;
                 }
             }
@@ -605,7 +661,7 @@ on_encoder_preset_edit                     (GtkButton       *button,
                     free (p);
                 }
                 else {
-                    GtkWidget *warndlg = gtk_message_dialog_new (GTK_WINDOW (mainwin), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Failed to save preset"));
+                    GtkWidget *warndlg = gtk_message_dialog_new (GTK_WINDOW (mainwin), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Failed to save encoder preset"));
                     gtk_window_set_transient_for (GTK_WINDOW (warndlg), GTK_WINDOW (dlg));
                     gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (warndlg), err == -1 ? _("Check preset folder permissions, try to pick different title, or free up some disk space") : _("Preset with the same name already exists. Try to pick another title."));
                     gtk_window_set_title (GTK_WINDOW (warndlg), _("Error"));
@@ -704,6 +760,7 @@ on_edit_encoder_presets_clicked        (GtkButton       *button,
                                         gpointer         user_data)
 {
     GtkWidget *dlg = create_preset_list ();
+    gtk_window_set_title (GTK_WINDOW (dlg), _("Encoders"));
     gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (converter));
     g_signal_connect ((gpointer)lookup_widget (dlg, "add"), "clicked", G_CALLBACK (on_encoder_preset_add), NULL);
     g_signal_connect ((gpointer)lookup_widget (dlg, "remove"), "clicked", G_CALLBACK (on_encoder_preset_remove), NULL);
@@ -724,11 +781,215 @@ on_edit_encoder_presets_clicked        (GtkButton       *button,
     gtk_widget_destroy (dlg);
 }
 
+///// dsp preset gui
+
+ddb_dsp_preset_t *current_dsp_preset;
+
+void
+fill_dsp_plugin_list (GtkListStore *mdl) {
+    struct DB_dsp_s **dsp = deadbeef->plug_get_dsp_list ();
+    int i;
+    for (i = 0; dsp[i]; i++) {
+        GtkTreeIter iter;
+        gtk_list_store_append (mdl, &iter);
+        gtk_list_store_set (mdl, &iter, 0, dsp[i]->plugin.name, -1);
+    }
+}
+
+void
+fill_dsp_preset_chain (GtkListStore *mdl) {
+    DB_dsp_instance_t *dsp = current_dsp_preset->chain;
+    while (dsp) {
+        GtkTreeIter iter;
+        gtk_list_store_append (mdl, &iter);
+        gtk_list_store_set (mdl, &iter, 0, dsp->plugin->plugin.name, 1, dsp->id, -1);
+        dsp = dsp->next;
+    }
+}
+
+void
+on_dsp_preset_add_plugin_clicked       (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    GtkWidget *dlg = create_select_dsp_plugin ();
+    GtkWidget *toplevel = gtk_widget_get_toplevel (GTK_WIDGET (button));
+    gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (toplevel));
+    gtk_window_set_title (GTK_WINDOW (dlg), _("Add plugin to DSP chain"));
+
+    GtkComboBox *combo;
+    // fill encoder presets
+    combo = GTK_COMBO_BOX (lookup_widget (dlg, "plugin"));
+    GtkListStore *mdl = GTK_LIST_STORE (gtk_combo_box_get_model (combo));
+    fill_dsp_plugin_list (mdl);
+    gtk_combo_box_set_active (combo, deadbeef->conf_get_int ("converter.last_selected_dsp", 0));
+
+    int r = gtk_dialog_run (GTK_DIALOG (dlg));
+    if (r == GTK_RESPONSE_OK) {
+        // get title
+        const char *title = gtk_entry_get_text (GTK_ENTRY (lookup_widget (dlg, "title")));
+
+        // create new instance of the selected plugin
+        int idx = gtk_combo_box_get_active (combo);
+        struct DB_dsp_s **dsp = deadbeef->plug_get_dsp_list ();
+        int i;
+        DB_dsp_instance_t *inst = NULL;
+        for (i = 0; dsp[i]; i++) {
+            if (i == idx) {
+                inst = dsp[i]->open (title);
+                break;
+            }
+        }
+        if (inst) {
+            // append to DSP chain
+            DB_dsp_instance_t *tail = current_dsp_preset->chain;
+            while (tail && tail->next) {
+                tail = tail->next;
+            }
+            if (tail) {
+                tail->next = inst;
+            }
+            else {
+                current_dsp_preset->chain = inst;
+            }
+
+            // reinit list of instances
+            GtkWidget *list = lookup_widget (toplevel, "plugins");
+            GtkListStore *mdl = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW(list)));
+            gtk_list_store_clear (mdl);
+            fill_dsp_preset_chain (mdl);
+        }
+        else {
+            fprintf (stderr, "converter: failed to add DSP plugin to chain\n");
+        }
+    }
+    gtk_widget_destroy (dlg);
+}
+
+
+void
+on_dsp_preset_remove_plugin_clicked    (GtkButton       *button,
+                                        gpointer         user_data)
+{
+
+}
+
+
+void
+on_dsp_preset_add                     (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    GtkWidget *dlg = create_dsppreset_editor ();
+    gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
+    GtkWidget *toplevel = gtk_widget_get_toplevel (GTK_WIDGET (button));
+    gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (toplevel));
+    gtk_window_set_title (GTK_WINDOW (dlg), _("New DSP Preset"));
+
+    current_dsp_preset = ddb_dsp_preset_alloc ();
+
+    {
+        // left list
+        GtkWidget *list = lookup_widget (dlg, "plugins");
+        GtkCellRenderer *title_cell = gtk_cell_renderer_text_new ();
+        GtkTreeViewColumn *col1 = gtk_tree_view_column_new_with_attributes (_("ID"), title_cell, "text", 0, NULL);
+        GtkTreeViewColumn *col2 = gtk_tree_view_column_new_with_attributes (_("Plugin"), title_cell, "text", 1, NULL);
+        gtk_tree_view_append_column (GTK_TREE_VIEW (list), GTK_TREE_VIEW_COLUMN (col1));
+        gtk_tree_view_append_column (GTK_TREE_VIEW (list), GTK_TREE_VIEW_COLUMN (col2));
+        GtkListStore *mdl = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_STRING);
+        gtk_tree_view_set_model (GTK_TREE_VIEW (list), GTK_TREE_MODEL (mdl));
+    }
+
+    {
+        // right list
+        GtkWidget *list = lookup_widget (dlg, "params");
+        GtkCellRenderer *title_cell = gtk_cell_renderer_text_new ();
+        GtkTreeViewColumn *col1 = gtk_tree_view_column_new_with_attributes (_("Param"), title_cell, "text", 0, NULL);
+        GtkTreeViewColumn *col2 = gtk_tree_view_column_new_with_attributes (_("Value"), title_cell, "text", 1, NULL);
+        gtk_tree_view_append_column (GTK_TREE_VIEW (list), GTK_TREE_VIEW_COLUMN (col1));
+        gtk_tree_view_append_column (GTK_TREE_VIEW (list), GTK_TREE_VIEW_COLUMN (col2));
+        GtkListStore *mdl = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_STRING);
+        gtk_tree_view_set_model (GTK_TREE_VIEW (list), GTK_TREE_MODEL (mdl));
+    }
+
+
+    for (;;) {
+        int r = gtk_dialog_run (GTK_DIALOG (dlg));
+
+        if (r == GTK_RESPONSE_OK) {
+            if (current_dsp_preset->title) {
+                free (current_dsp_preset->title);
+            }
+            current_dsp_preset->title = strdup (gtk_entry_get_text (GTK_ENTRY (lookup_widget (dlg, "title"))));
+            int err = ddb_dsp_preset_save (current_dsp_preset, 0);
+            if (err < 0) {
+                GtkWidget *warndlg = gtk_message_dialog_new (GTK_WINDOW (mainwin), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Failed to save DSP preset"));
+                gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (warndlg), err == -1 ? _("Check preset folder permissions, try to pick different title, or free up some disk space") : _("Preset with the same name already exists. Try to pick another title."));
+                gtk_window_set_title (GTK_WINDOW (warndlg), _("Error"));
+
+                gtk_window_set_transient_for (GTK_WINDOW (warndlg), GTK_WINDOW (dlg));
+                int response = gtk_dialog_run (GTK_DIALOG (warndlg));
+                gtk_widget_destroy (warndlg);
+                continue;
+            }
+
+            // append to list of presets
+            ddb_dsp_preset_t *tail = dsp_presets;
+            while (tail && tail->next) {
+                tail = tail->next;
+            }
+            if (tail) {
+                tail->next = current_dsp_preset;
+            }
+            else {
+                dsp_presets = current_dsp_preset;
+            }
+        }
+        else {
+            ddb_dsp_preset_free (current_dsp_preset);
+        }
+
+        current_dsp_preset = NULL;
+        break;
+    }
+
+    gtk_widget_destroy (dlg);
+}
+
+void
+on_dsp_preset_remove                     (GtkButton       *button,
+                                        gpointer         user_data)
+{
+}
+
+void
+on_dsp_preset_edit                     (GtkButton       *button,
+                                        gpointer         user_data)
+{
+}
 
 void
 on_edit_dsp_presets_clicked            (GtkButton       *button,
                                         gpointer         user_data)
 {
+    GtkWidget *dlg = create_preset_list ();
+    gtk_window_set_title (GTK_WINDOW (dlg), _("DSP Presets"));
+    gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (converter));
+    g_signal_connect ((gpointer)lookup_widget (dlg, "add"), "clicked", G_CALLBACK (on_dsp_preset_add), NULL);
+    g_signal_connect ((gpointer)lookup_widget (dlg, "remove"), "clicked", G_CALLBACK (on_dsp_preset_remove), NULL);
+    g_signal_connect ((gpointer)lookup_widget (dlg, "edit"), "clicked", G_CALLBACK (on_dsp_preset_edit), NULL);
+
+    GtkWidget *list = lookup_widget (dlg, "presets");
+    GtkCellRenderer *title_cell = gtk_cell_renderer_text_new ();
+    GtkTreeViewColumn *col = gtk_tree_view_column_new_with_attributes (_("Title"), title_cell, "text", 0, NULL);
+    gtk_tree_view_append_column (GTK_TREE_VIEW (list), GTK_TREE_VIEW_COLUMN (col));
+    GtkListStore *mdl = gtk_list_store_new (1, G_TYPE_STRING);
+    gtk_tree_view_set_model (GTK_TREE_VIEW (list), GTK_TREE_MODEL (mdl));
+//    fill_dsp_presets (mdl);
+//    int curr = deadbeef->conf_get_int ("converter.dsp_preset", 0);
+//    GtkTreePath *path = gtk_tree_path_new_from_indices (curr, -1);
+//    gtk_tree_view_set_cursor (GTK_TREE_VIEW (list), path, col, FALSE);
+//    gtk_tree_path_free (path);
+    gtk_dialog_run (GTK_DIALOG (dlg));
+    gtk_widget_destroy (dlg);
 }
 
 

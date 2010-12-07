@@ -1061,3 +1061,11 @@ on_converter_encoder_changed           (GtkComboBox     *combobox,
 void
 on_presets_cursor_changed              (GtkTreeView     *treeview,
                                         gpointer         user_data);
+
+void
+on_dsp_preset_add_plugin_clicked       (GtkButton       *button,
+                                        gpointer         user_data);
+
+void
+on_dsp_preset_remove_plugin_clicked    (GtkButton       *button,
+                                        gpointer         user_data);
