@@ -1132,7 +1132,7 @@ streamer_init (void) {
     decodemutex = mutex_create ();
 
     // find src plugin, and use it if found
-    srcplug = (ddb_dsp_src_t*)plug_get_for_id ("dsp_src");
+    srcplug = (ddb_dsp_src_t*)plug_get_for_id ("SRC");
     if (srcplug) {
         src = srcplug->dsp.open ("strm_src");
         src->next = dsp_chain;

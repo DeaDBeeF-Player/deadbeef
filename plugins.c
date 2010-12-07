@@ -794,6 +794,7 @@ plug_load_all (void) {
     g_decoder_plugins[numdecoders] = NULL;
     g_vfs_plugins[numvfs] = NULL;
     g_output_plugins[numoutput] = NULL;
+    g_dsp_plugins[numdsp] = NULL;
     g_playlist_plugins[numplaylist] = NULL;
 
     // select output plugin
