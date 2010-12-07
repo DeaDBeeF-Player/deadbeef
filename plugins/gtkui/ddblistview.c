@@ -516,9 +516,9 @@ ddb_listview_list_realize                    (GtkWidget       *widget,
         gpointer         user_data)
 {
     GtkTargetEntry entry = {
-        .target = "STRING",
+        .target = "DDB_URI_LIST",
         .flags = GTK_TARGET_SAME_APP,
-        TARGET_SAMEWIDGET
+        .info = TARGET_SAMEWIDGET
     };
     // setup drag-drop target
     gtk_drag_dest_set (widget, GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_DROP, &entry, 1, GDK_ACTION_COPY | GDK_ACTION_MOVE);
@@ -877,17 +877,6 @@ ddb_listview_list_drag_drop                  (GtkWidget       *widget,
                                         gpointer         user_data)
 {
     return TRUE;
-#if 0
-    if (drag_context->targets) {
-        GdkAtom target_type = GDK_POINTER_TO_ATOM (g_list_nth_data (drag_context->targets, TARGET_SAMEWIDGET));
-        if (!target_type) {
-            return FALSE;
-        }
-//        gtk_drag_get_data (widget, drag_context, target_type, time);
-        return TRUE;
-    }
-    return FALSE;
-#endif
 }
 
 
@@ -942,6 +931,7 @@ ddb_listview_list_drag_data_received         (GtkWidget       *widget,
                                         guint            time,
                                         gpointer         user_data)
 {
+    printf ("target_type: %d, format: %d\n", target_type, data->format);
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
     ps->scroll_direction = 0; // interrupt autoscrolling, if on
     ps->scroll_active = 0;
@@ -972,7 +962,7 @@ ddb_listview_list_drag_data_received         (GtkWidget       *widget,
             UNREF (it);
         }
     }
-    else if (target_type == 1) {
+    else if (target_type == 1 && data->format == 32) { // list of 32bit ints, DDB_URI_LIST target
         uint32_t *d= (uint32_t *)ptr;
         int plt = *d;
         d++;
@@ -1675,7 +1665,7 @@ ddb_listview_list_mousemove (DdbListview *ps, GdkEventMotion *ev, int ex, int ey
             ps->dragwait = 0;
             ps->drag_source_playlist = deadbeef->plt_get_curr ();
             GtkTargetEntry entry = {
-                .target = "STRING",
+                .target = "DDB_URI_LIST",
                 .flags = GTK_TARGET_SAME_WIDGET,
                 .info = TARGET_SAMEWIDGET
             };
