@@ -56,15 +56,6 @@ esac
 test "x$prefix" = xNONE && prefix=$ac_default_prefix
 
 
-if test "x$enable_staticlink" != "xno" ; then
-    HAVE_ZLIB=yes
-    ZLIB_LIBS="../../$LIB/libz.a"
-else
-    AC_CHECK_LIB([z], [main], [HAVE_ZLIB=yes])
-    ZLIB_LIBS="-lz"
-fi
-AC_SUBST(ZLIB_LIBS)
-
 dnl INSANE_CFLAGS="-Wformat -Wdisabled-optimization -Wcomment -Wchar-subscripts -Wunused-function -Wunused-value -Wuninitialized -Wtype-limits -Wbad-function-cast"
 dnl INSANE_CXXFLAGS="-Wcomment -Wchar-subscripts -Wunused-function -Wunused-value -Wuninitialized -Wtype-limits"
 
@@ -129,6 +120,15 @@ fi
 
 CXXFLAGS="$CXXFLAGS $INSANE_CXXFLAGS -D_GNU_SOURCE $PREFIXFLAGS"
 CFLAGS="$CFLAGS $INSANE_CFLAGS -D_GNU_SOURCE $PREFIXFLAGS"
+
+if test "x$enable_staticlink" != "xno" ; then
+    HAVE_ZLIB=yes
+    ZLIB_LIBS="../../$LIB/libz.a"
+else
+    AC_CHECK_LIB([z], [main], [HAVE_ZLIB=yes])
+    ZLIB_LIBS="-lz"
+fi
+AC_SUBST(ZLIB_LIBS)
 
 if test "x$enable_gtkui" != "xno" ; then
     if test "x$enable_gtk3" == "xyes" ; then
