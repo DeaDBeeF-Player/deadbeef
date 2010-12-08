@@ -749,16 +749,11 @@ typedef struct DB_output_s {
 // dsp plugin
 #define DDB_INIT_DSP_INSTANCE(var,type,plug) {\
     memset(var,0,sizeof(type));\
-    strncpy (var->inst.id, id, 9);\
-    var->inst.id[9]=0;\
     var->inst.plugin=plug;\
     var->inst.enabled=1;\
 }
 
 typedef struct DB_dsp_instance_s {
-    // this id is used to write settings, identify specific instances, etc
-    char id[10];
-
     // pointer to DSP plugin which created this instance
     struct DB_dsp_s *plugin;
 
@@ -767,20 +762,19 @@ typedef struct DB_dsp_instance_s {
 
     // read only flag; set by DB_dsp_t::enable
     unsigned enabled : 1;
-
 } DB_dsp_instance_t;
 
 typedef struct DB_dsp_s {
     DB_plugin_t plugin;
 
-    // id is a unique name used to get configuration settings
-    DB_dsp_instance_t* (*open) (const char *id);
+    DB_dsp_instance_t* (*open) (void);
 
     void (*close) (DB_dsp_instance_t *inst);
 
     // samples are interleaved
     // returned value is number of output frames
-    int (*process) (DB_dsp_instance_t *inst, float *samples, int frames, int samplerate, int channels);
+    // can change samplerate and number of channels
+    int (*process) (DB_dsp_instance_t *inst, float *samples, int frames, int *samplerate, int *channels);
 
     void (*reset) (DB_dsp_instance_t *inst);
 

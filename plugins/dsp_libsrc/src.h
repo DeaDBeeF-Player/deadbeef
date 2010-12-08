@@ -19,10 +19,10 @@
 #ifndef __SRC_H
 #define __SRC_H
 
-typedef struct {
-    DB_dsp_t dsp;
-    void (*reset) (DB_dsp_instance_t *inst, int full);
-    void (*set_ratio) (DB_dsp_instance_t *inst, float ratio);
-} ddb_dsp_src_t;
+enum {
+    SRC_PARAM_SAMPLERATE = 0,
+    SRC_PARAM_QUALITY = 1,
+    SRC_PARAM_COUNT
+};
 
 #endif

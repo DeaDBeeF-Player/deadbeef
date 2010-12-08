@@ -40,50 +40,7 @@ typedef struct {
     SuperEqState state;
 } ddb_supereq_instance_t;
 
-static float
-dsp_conf_get_float (DB_dsp_instance_t *inst, const char *name, float def) {
-    char key[100];
-    snprintf (key, sizeof (key), "%s.%s", inst->id, name);
-    return deadbeef->conf_get_float (key, def);
-}
-
-static int
-dsp_conf_get_int (DB_dsp_instance_t *inst, const char *name, int def) {
-    char key[100];
-    snprintf (key, sizeof (key), "%s.%s", inst->id, name);
-    return deadbeef->conf_get_int (key, def);
-}
-
-static void
-dsp_conf_set_float (DB_dsp_instance_t *inst, const char *name, float value) {
-    char key[100];
-    snprintf (key, sizeof (key), "%s.%s", inst->id, name);
-    return deadbeef->conf_set_float (key, value);
-}
-
-static void
-dsp_conf_set_int (DB_dsp_instance_t *inst, const char *name, int value) {
-    char key[100];
-    snprintf (key, sizeof (key), "%s.%s", inst->id, name);
-    return deadbeef->conf_set_int (key, value);
-}
-
 void supereq_reset (DB_dsp_instance_t *inst);
-
-#if 0
-static int
-supereq_on_configchanged (DB_event_t *ev, uintptr_t data) {
-    int e = deadbeef->conf_get_int ("supereq.enable", 0);
-    if (e != enabled) {
-        if (e) {
-            supereq_reset ();
-        }
-        enabled = e;
-    }
-    
-    return 0;
-}
-#endif
 
 void
 recalc_table (ddb_supereq_instance_t *eq) {
@@ -111,43 +68,11 @@ recalc_table (ddb_supereq_instance_t *eq) {
 
 int
 supereq_plugin_start (void) {
-#if 0
-    enabled = deadbeef->conf_get_int ("supereq.enable", 0);
-    // load bands from config
-    preamp = deadbeef->conf_get_float ("eq.preamp", 1);
-    for (int i = 0; i < 18; i++) {
-        char key[100];
-        snprintf (key, sizeof (key), "eq.band%d", i);
-        lbands[i] = rbands[i] = deadbeef->conf_get_float (key, 1);
-    }
-
-    equ_init (14);
-    paramsroot = paramlist_alloc ();
-    last_srate = 44100;
-    last_nch = 2;
-    mutex = deadbeef->mutex_create ();
-    recalc_table ();
-    equ_clearbuf ();
-//    deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_CONFIGCHANGED, DB_CALLBACK (supereq_on_configchanged), 0);
-#endif
     return 0;
 }
 
 int
 supereq_plugin_stop (void) {
-#if 0
-    deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_CONFIGCHANGED, DB_CALLBACK (supereq_on_configchanged), 0);
-    if (tid) {
-        deadbeef->thread_join (tid);
-        tid = 0;
-    }
-    if (mutex) {
-        deadbeef->mutex_free (mutex);
-        mutex = 0;
-    }
-    equ_quit ();
-    paramlist_free (paramsroot);
-#endif
     return 0;
 }
 
@@ -159,28 +84,28 @@ supereq_regen_table_thread (void *param) {
 }
 
 int
-supereq_process (DB_dsp_instance_t *inst, float *samples, int frames, int samplerate, int channels) {
+supereq_process (DB_dsp_instance_t *inst, float *samples, int frames, int *samplerate, int *channels) {
     ddb_supereq_instance_t *supereq = (ddb_supereq_instance_t *)inst;
     if (supereq->params_changed && !supereq->tid) {
         supereq->tid = deadbeef->thread_start (supereq_regen_table_thread, inst);
         supereq->params_changed = 0;
     }
-	if (supereq->last_srate != samplerate) {
+	if (supereq->last_srate != *samplerate) {
         deadbeef->mutex_lock (supereq->mutex);
         //equ_makeTable (lbands, rbands, paramsroot, srate);
-		supereq->last_srate = samplerate;
-		supereq->last_nch = channels;
+		supereq->last_srate = *samplerate;
+		supereq->last_nch = *channels;
         recalc_table ((ddb_supereq_instance_t *)inst);
         deadbeef->mutex_unlock (supereq->mutex);
 		equ_clearbuf(&supereq->state);
     }
-	else if (supereq->last_nch != channels) {
+	else if (supereq->last_nch != *channels) {
         deadbeef->mutex_lock (supereq->mutex);
-		supereq->last_nch = channels;
+		supereq->last_nch = *channels;
         deadbeef->mutex_unlock (supereq->mutex);
 		equ_clearbuf(&supereq->state);
     }
-	equ_modifySamples_float(&supereq->state, (char *)samples,frames,channels);
+	equ_modifySamples_float(&supereq->state, (char *)samples,frames,*channels);
 	return frames;
 }
 
@@ -197,9 +122,6 @@ supereq_set_band (DB_dsp_instance_t *inst, int band, float value) {
     supereq->lbands[band] = supereq->rbands[band] = value;
     deadbeef->mutex_unlock (supereq->mutex);
     supereq->params_changed = 1;
-    char key[100];
-    snprintf (key, sizeof (key), "band%d", band);
-    dsp_conf_set_float (inst, key, value);
 }
 
 float
@@ -215,7 +137,6 @@ supereq_set_preamp (DB_dsp_instance_t *inst, float value) {
     supereq->preamp = value;
     deadbeef->mutex_unlock (supereq->mutex);
     supereq->params_changed = 1;
-    dsp_conf_set_float (inst, "preamp", value);
 }
 
 void
@@ -230,7 +151,6 @@ void
 supereq_enable (DB_dsp_instance_t *inst, int e) {
     ddb_supereq_instance_t *supereq = (ddb_supereq_instance_t *)inst;
     if (e != supereq->inst.enabled) {
-        dsp_conf_set_int (inst, "enabled", e);
         if (e && !supereq->inst.enabled) {
             supereq_reset (inst);
         }
@@ -238,19 +158,70 @@ supereq_enable (DB_dsp_instance_t *inst, int e) {
     }
 }
 
+int
+supereq_num_params (void) {
+    return 19;
+}
+
+static const char *bandnames[] = {
+    "Preamp",
+    "55 Hz",
+    "77 Hz",
+    "110 Hz",
+    "156 Hz",
+    "220 Hz",
+    "311 Hz",
+    "440 Hz",
+    "622 Hz",
+    "880 Hz",
+    "1.2 kHz",
+    "1.8 kHz",
+    "2.5 kHz",
+    "3.5 kHz",
+    "5 kHz",
+    "7 kHz",
+    "10 kHz",
+    "14 kHz",
+    "20 kHz"
+};
+
+const char *
+supereq_get_param_name (int p) {
+    return bandnames[p];
+}
+void
+supereq_set_param (DB_dsp_instance_t *inst, int p, float val) {
+    switch (p) {
+    case 0:
+        supereq_set_preamp (inst, val);
+        break;
+    case 1 ... 18:
+        supereq_set_band (inst, p, val);
+        break;
+    default:
+        fprintf (stderr, "supereq_set_param: invalid param index (%d)\n", p);
+    }
+}
+
+float
+supereq_get_param (DB_dsp_instance_t *inst, int p) {
+    switch (p) {
+    case 0:
+        return supereq_get_preamp (inst);
+        break;
+    case 1 ... 18:
+        return supereq_get_band (inst, p);
+        break;
+    default:
+        fprintf (stderr, "supereq_get_param: invalid param index (%d)\n", p);
+    }
+}
+
+
 DB_dsp_instance_t*
-supereq_open (const char *id) {
+supereq_open (void) {
     ddb_supereq_instance_t *supereq = malloc (sizeof (ddb_supereq_instance_t));
     DDB_INIT_DSP_INSTANCE (supereq,ddb_supereq_instance_t,&plugin.dsp);
-
-    supereq->preamp = dsp_conf_get_float (&supereq->inst, "preamp", 1);
-    for (int i = 0; i < 18; i++) {
-        char key[100];
-        snprintf (key, sizeof (key), "band%d", i);
-        supereq->lbands[i] = supereq->rbands[i] = dsp_conf_get_float (&supereq->inst, key, 1);
-    }
-
-    supereq->inst.enabled = dsp_conf_get_int (&supereq->inst, "enabled", 0);
 
     equ_init (&supereq->state, 14);
     supereq->paramsroot = paramlist_alloc ();
@@ -300,10 +271,10 @@ static DB_supereq_dsp_t plugin = {
     .dsp.process = supereq_process,
     .dsp.reset = supereq_reset,
     .dsp.enable = supereq_enable,
-    .get_band = supereq_get_band,
-    .set_band = supereq_set_band,
-    .get_preamp = supereq_get_preamp,
-    .set_preamp = supereq_set_preamp,
+    .dsp.num_params = supereq_num_params,
+    .dsp.get_param_name = supereq_get_param_name,
+    .dsp.set_param = supereq_set_param,
+    .dsp.get_param = supereq_get_param,
 };
 
 DB_plugin_t *

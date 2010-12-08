@@ -28,34 +28,34 @@
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
-DB_functions_t *deadbeef;
+static DB_functions_t *deadbeef;
 
 #define SRC_BUFFER 16000
 #define SRC_MAX_CHANNELS 8
 
-ddb_dsp_src_t plugin;
+static DB_dsp_t plugin;
 
 typedef struct {
     DB_dsp_instance_t inst;
 
     int channels;
     int quality;
+    float samplerate;
     SRC_STATE *src;
     SRC_DATA srcdata;
     int remaining; // number of input samples in SRC buffer
     __attribute__((__aligned__(16))) char in_fbuffer[sizeof(float)*SRC_BUFFER*SRC_MAX_CHANNELS];
     uintptr_t mutex;
+    unsigned quality_changed : 1;
 } ddb_src_libsamplerate_t;
 
 DB_dsp_instance_t*
-ddb_src_open (const char *id) {
+ddb_src_open (void) {
     ddb_src_libsamplerate_t *src = malloc (sizeof (ddb_src_libsamplerate_t));
-    DDB_INIT_DSP_INSTANCE (src,ddb_src_libsamplerate_t,&plugin.dsp);
+    DDB_INIT_DSP_INSTANCE (src,ddb_src_libsamplerate_t,&plugin);
 
     src->mutex = deadbeef->mutex_create ();
-    char var[20];
-    snprintf (var, sizeof (var), "%s.quality", src->inst.id);
-    src->quality = deadbeef->conf_get_int (var, 2);
+    src->samplerate = -1;
     src->channels = -1;
     return (DB_dsp_instance_t *)src;
 }
@@ -87,58 +87,58 @@ ddb_src_unlock (DB_dsp_instance_t *_src) {
 }
 
 void
-ddb_src_reset (DB_dsp_instance_t *_src, int full) {
+ddb_src_reset (DB_dsp_instance_t *_src) {
     ddb_src_libsamplerate_t *src = (ddb_src_libsamplerate_t*)_src;
     ddb_src_lock (_src);
     src->remaining = 0;
-    if (full) {
-        char var[20];
-        snprintf (var, sizeof (var), "%s.quality", _src->id);
-        int q = deadbeef->conf_get_int (var, 2);
-        if (q != src->quality && q >= SRC_SINC_BEST_QUALITY && q <= SRC_LINEAR) {
-            trace ("changing src->quality from %d to %d\n", src->quality, q);
-            src->quality = q;
-            memset (&src->srcdata, 0, sizeof (src->srcdata));
-            src->channels = -1;
-        }
-        else {
-            src_reset (src->src);
-        }
-    }
+    src_reset (src->src);
     ddb_src_unlock (_src);
 }
 
 void
 ddb_src_set_ratio (DB_dsp_instance_t *_src, float ratio) {
     ddb_src_libsamplerate_t *src = (ddb_src_libsamplerate_t*)_src;
-    src->srcdata.src_ratio = ratio;
-    src_set_ratio (src->src, ratio);
+    if (src->srcdata.src_ratio != ratio) {
+        src->srcdata.src_ratio = ratio;
+        src_set_ratio (src->src, ratio);
+    }
 }
 
 int
-ddb_src_process (DB_dsp_instance_t *_src, float *samples, int nframes, int samplerate, int nchannels) {
+ddb_src_process (DB_dsp_instance_t *_src, float *samples, int nframes, int *samplerate, int *nchannels) {
     ddb_src_libsamplerate_t *src = (ddb_src_libsamplerate_t*)_src;
+
+    if (*samplerate == src->samplerate) {
+        return nframes;
+    }
+
     ddb_src_lock (_src);
 
-    if (src->channels != nchannels) {
+    float ratio = src->samplerate / *samplerate;
+    ddb_src_set_ratio (_src, ratio);
+    *samplerate = src->samplerate;
+
+    if (src->channels != *nchannels || src->quality_changed) {
+        src->quality_changed = 0;
         src->remaining = 0;
         if (src->src) {
             src_delete (src->src);
             src->src = NULL;
         }
-        src->channels = nchannels;
+        src->channels = *nchannels;
         src->src = src_new (src->quality, src->channels, NULL);
     }
 
 
+
     int numoutframes = nframes * src->srcdata.src_ratio;
-    float outbuf[numoutframes*nchannels];
+    float outbuf[numoutframes*(*nchannels)];
     int buffersize = sizeof (outbuf);
     char *output = (char *)outbuf;
     float *input = samples;
     int inputsize = numoutframes;
 
-    int samplesize = nchannels * sizeof (float);
+    int samplesize = *nchannels * sizeof (float);
 
     do {
         // add more frames to input SRC buffer
@@ -151,7 +151,7 @@ ddb_src_process (DB_dsp_instance_t *_src, float *samples, int nframes, int sampl
             memcpy (&src->in_fbuffer[src->remaining*samplesize], samples, n * samplesize);
 
             src->remaining += n;
-            samples += n * nchannels;
+            samples += n * (*nchannels);
             nframes -= n;
         }
         if (!src->remaining) {
@@ -195,33 +195,79 @@ ddb_src_process (DB_dsp_instance_t *_src, float *samples, int nframes, int sampl
     //if (!out) {
     //    out = fopen ("out.raw", "w+b");
     //}
-    //fwrite (input, 1,  numoutframes*sizeof(float)*nchannels, out);
+    //fwrite (input, 1,  numoutframes*sizeof(float)*(*nchannels), out);
 
     ddb_src_unlock (_src);
     return numoutframes;
 }
 
-ddb_dsp_src_t plugin = {
-    .dsp.plugin.api_vmajor = DB_API_VERSION_MAJOR,
-    .dsp.plugin.api_vminor = DB_API_VERSION_MINOR,
-    .dsp.open = ddb_src_open,
-    .dsp.close = ddb_src_close,
-    .dsp.process = ddb_src_process,
-    .dsp.plugin.version_major = 0,
-    .dsp.plugin.version_minor = 1,
-    .dsp.plugin.type = DB_PLUGIN_DSP,
-    .dsp.plugin.id = "SRC",
-    .dsp.plugin.name = "Secret Rabbit Code",
-    .dsp.plugin.descr = "Samplerate converter using libsamplerate",
-    .dsp.plugin.author = "Alexey Yakovenko",
-    .dsp.plugin.email = "waker@users.sf.net",
-    .dsp.plugin.website = "http://deadbeef.sf.net",
+int
+ddb_src_num_params (void) {
+    return SRC_PARAM_COUNT;
+}
+
+const char *
+ddb_src_get_param_name (int p) {
+    switch (p) {
+    case SRC_PARAM_QUALITY:
+        return "Quality";
+    case SRC_PARAM_SAMPLERATE:
+        return "Samplerate";
+    default:
+        fprintf (stderr, "ddb_src_get_param_name: invalid param index (%d)\n", p);
+    }
+}
+void
+ddb_src_set_param (DB_dsp_instance_t *inst, int p, float val) {
+    switch (p) {
+    case SRC_PARAM_SAMPLERATE:
+        ((ddb_src_libsamplerate_t*)inst)->samplerate = val;
+        break;
+    case SRC_PARAM_QUALITY:
+        ((ddb_src_libsamplerate_t*)inst)->quality = val;
+        ((ddb_src_libsamplerate_t*)inst)->quality_changed = 1;
+        break;
+    default:
+        fprintf (stderr, "ddb_src_set_param: invalid param index (%d)\n", p);
+    }
+}
+
+float
+ddb_src_get_param (DB_dsp_instance_t *inst, int p) {
+    switch (p) {
+    case SRC_PARAM_SAMPLERATE:
+        return ((ddb_src_libsamplerate_t*)inst)->samplerate;
+    case SRC_PARAM_QUALITY:
+        return ((ddb_src_libsamplerate_t*)inst)->quality;
+    default:
+        fprintf (stderr, "ddb_src_get_param: invalid param index (%d)\n", p);
+    }
+}
+
+static DB_dsp_t plugin = {
+    .plugin.api_vmajor = DB_API_VERSION_MAJOR,
+    .plugin.api_vminor = DB_API_VERSION_MINOR,
+    .open = ddb_src_open,
+    .close = ddb_src_close,
+    .process = ddb_src_process,
+    .plugin.version_major = 0,
+    .plugin.version_minor = 1,
+    .plugin.type = DB_PLUGIN_DSP,
+    .plugin.id = "SRC",
+    .plugin.name = "Secret Rabbit Code",
+    .plugin.descr = "Samplerate converter using libsamplerate",
+    .plugin.author = "Alexey Yakovenko",
+    .plugin.email = "waker@users.sf.net",
+    .plugin.website = "http://deadbeef.sf.net",
+    .num_params = ddb_src_num_params,
+    .get_param_name = ddb_src_get_param_name,
+    .set_param = ddb_src_set_param,
+    .get_param = ddb_src_get_param,
     .reset = ddb_src_reset,
-    .set_ratio = ddb_src_set_ratio,
 };
 
 DB_plugin_t *
 dsp_libsrc_load (DB_functions_t *f) {
     deadbeef = f;
-    return &plugin.dsp.plugin;
+    return &plugin.plugin;
 }

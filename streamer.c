@@ -48,7 +48,7 @@ FILE *out;
 #endif
 
 static intptr_t streamer_tid;
-static ddb_dsp_src_t *srcplug;
+static DB_dsp_t *srcplug;
 static DB_dsp_t *eqplug;
 static DB_dsp_instance_t *dsp_chain;
 static DB_dsp_instance_t *src;
@@ -740,7 +740,7 @@ streamer_start_new_song (void) {
     int pstate = nextsong_pstate;
     nextsong = -1;
     if (srcplug) {
-        srcplug->reset (src, 0);
+        srcplug->reset (src);
     }
     streamer_unlock ();
     if (badsong == sng) {
@@ -1132,9 +1132,10 @@ streamer_init (void) {
     decodemutex = mutex_create ();
 
     // find src plugin, and use it if found
-    srcplug = (ddb_dsp_src_t*)plug_get_for_id ("SRC");
+    srcplug = (DB_dsp_t*)plug_get_for_id ("SRC");
     if (srcplug) {
-        src = srcplug->dsp.open ("strm_src");
+        src = srcplug->open ();
+        srcplug->set_param (src, SRC_PARAM_QUALITY, conf_get_int ("src_quality", 2));
         src->next = dsp_chain;
         dsp_chain = src;
     }
@@ -1142,7 +1143,17 @@ streamer_init (void) {
     // eq plug
     eqplug = (DB_dsp_t *)plug_get_for_id ("supereq");
     if (eqplug) {
-        eq = eqplug->open ("strm_eq");
+        eq = eqplug->open ();
+
+        // load settings
+        eqplug->enable (eq, deadbeef->conf_get_int ("supereq.enable", 0));
+        eqplug->set_param (eq, 0, conf_get_float ("eq.preamp", 1));
+        for (int i = 0; i < 18; i++) {
+            char key[100];
+            snprintf (key, sizeof (key), "eq.band%d", i);
+            eqplug->set_param (eq, 1+i, conf_get_float (key, 1));
+        }
+
         eq->next = dsp_chain;
         dsp_chain = eq;
     }
@@ -1179,7 +1190,7 @@ streamer_free (void) {
     mutex_free (mutex);
     mutex = 0;
     if (srcplug && src) {
-        srcplug->dsp.close (src);
+        srcplug->close (src);
         srcplug = NULL;
         src = NULL;
     }
@@ -1330,8 +1341,6 @@ streamer_read_async (char *bytes, int size) {
             // convert to float, pass through streamer DSP chain
             int dspsamplesize = output->fmt.channels * sizeof (float);
 
-            float ratio = output->fmt.samplerate/(float)fileinfo->fmt.samplerate;
-
             int max_out_frames = size / (output->fmt.channels * output->fmt.bps / 8);
             int dsp_num_frames = max_out_frames;
 
@@ -1359,17 +1368,21 @@ streamer_read_async (char *bytes, int size) {
                 // convert to float
                 int tempsize = pcm_convert (&fileinfo->fmt, input, &dspfmt, tempbuf, inputsize);
                 if (srcplug) {
-                    srcplug->set_ratio (src, ratio);
+                    srcplug->set_param (src, SRC_PARAM_SAMPLERATE, dspfmt.samplerate);
                 }
 
                 int nframes = inputsize / inputsamplesize;
                 DB_dsp_instance_t *dsp = dsp_chain;
+                int samplerate = fileinfo->fmt.samplerate;
+                int channels = dspfmt.channels;
                 while (dsp) {
                     if (dsp->enabled) {
-                        nframes = dsp->plugin->process (dsp, (float *)tempbuf, nframes, dspfmt.samplerate, dspfmt.channels);
+                        nframes = dsp->plugin->process (dsp, (float *)tempbuf, nframes, &samplerate, &channels);
                     }
                     dsp = dsp->next;
                 }
+                dspfmt.samplerate = samplerate;
+                dspfmt.channels = channels;
                 int n = pcm_convert (&dspfmt, tempbuf, &output->fmt, bytes, nframes * dspsamplesize);
 
                 bytesread = n;
@@ -1516,7 +1529,7 @@ streamer_configchanged (void) {
     conf_replaygain_scale = conf_get_int ("replaygain_scale", 1);
 
     if (srcplug) {
-        srcplug->reset (src, 1);
+        srcplug->set_param (src, SRC_PARAM_QUALITY, conf_get_int ("src_quality", 2));
     }
 }
 

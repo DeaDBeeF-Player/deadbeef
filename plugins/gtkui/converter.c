@@ -202,7 +202,6 @@ ddb_dsp_preset_save (ddb_dsp_preset_t *p, int overwrite) {
     DB_dsp_instance_t *inst = p->chain;
     while (inst) {
         fprintf (fp, "%s {\n", inst->plugin->plugin.id);
-        fprintf (fp, "\t%s\n", inst->id);
         if (inst->plugin->num_params) {
             int n = inst->plugin->num_params ();
             int i;
@@ -802,7 +801,7 @@ fill_dsp_preset_chain (GtkListStore *mdl) {
     while (dsp) {
         GtkTreeIter iter;
         gtk_list_store_append (mdl, &iter);
-        gtk_list_store_set (mdl, &iter, 0, dsp->plugin->plugin.name, 1, dsp->id, -1);
+        gtk_list_store_set (mdl, &iter, 0, dsp->plugin->plugin.name, -1);
         dsp = dsp->next;
     }
 }
@@ -835,7 +834,7 @@ on_dsp_preset_add_plugin_clicked       (GtkButton       *button,
         DB_dsp_instance_t *inst = NULL;
         for (i = 0; dsp[i]; i++) {
             if (i == idx) {
-                inst = dsp[i]->open (title);
+                inst = dsp[i]->open ();
                 break;
             }
         }
@@ -890,11 +889,9 @@ on_dsp_preset_add                     (GtkButton       *button,
         // left list
         GtkWidget *list = lookup_widget (dlg, "plugins");
         GtkCellRenderer *title_cell = gtk_cell_renderer_text_new ();
-        GtkTreeViewColumn *col1 = gtk_tree_view_column_new_with_attributes (_("ID"), title_cell, "text", 0, NULL);
-        GtkTreeViewColumn *col2 = gtk_tree_view_column_new_with_attributes (_("Plugin"), title_cell, "text", 1, NULL);
-        gtk_tree_view_append_column (GTK_TREE_VIEW (list), GTK_TREE_VIEW_COLUMN (col1));
-        gtk_tree_view_append_column (GTK_TREE_VIEW (list), GTK_TREE_VIEW_COLUMN (col2));
-        GtkListStore *mdl = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_STRING);
+        GtkTreeViewColumn *col = gtk_tree_view_column_new_with_attributes (_("Plugin"), title_cell, "text", 0, NULL);
+        gtk_tree_view_append_column (GTK_TREE_VIEW (list), GTK_TREE_VIEW_COLUMN (col));
+        GtkListStore *mdl = gtk_list_store_new (G_TYPE_STRING);
         gtk_tree_view_set_model (GTK_TREE_VIEW (list), GTK_TREE_MODEL (mdl));
     }
 
