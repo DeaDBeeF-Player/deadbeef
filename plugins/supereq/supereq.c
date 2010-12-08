@@ -20,11 +20,10 @@
 #include <string.h>
 #include <stdlib.h>
 #include "../../deadbeef.h"
-#include "supereq.h"
 #include "Equ.h"
 
 static DB_functions_t *deadbeef;
-static DB_supereq_dsp_t plugin;
+static DB_dsp_t plugin;
 
 typedef struct {
     DB_dsp_instance_t inst;
@@ -221,7 +220,7 @@ supereq_get_param (DB_dsp_instance_t *inst, int p) {
 DB_dsp_instance_t*
 supereq_open (void) {
     ddb_supereq_instance_t *supereq = malloc (sizeof (ddb_supereq_instance_t));
-    DDB_INIT_DSP_INSTANCE (supereq,ddb_supereq_instance_t,&plugin.dsp);
+    DDB_INIT_DSP_INSTANCE (supereq,ddb_supereq_instance_t,&plugin);
 
     equ_init (&supereq->state, 14);
     supereq->paramsroot = paramlist_alloc ();
@@ -252,29 +251,29 @@ supereq_close (DB_dsp_instance_t *inst) {
     free (inst);
 }
 
-static DB_supereq_dsp_t plugin = {
-    .dsp.plugin.api_vmajor = DB_API_VERSION_MAJOR,
-    .dsp.plugin.api_vminor = DB_API_VERSION_MINOR,
-    .dsp.plugin.version_major = 1,
-    .dsp.plugin.version_minor = 0,
-    .dsp.plugin.type = DB_PLUGIN_DSP,
-    .dsp.plugin.id = "supereq",
-    .dsp.plugin.name = "SuperEQ",
-    .dsp.plugin.descr = "equalizer plugin using SuperEQ library by Naoki Shibata",
-    .dsp.plugin.author = "Alexey Yakovenko",
-    .dsp.plugin.email = "waker@users.sourceforge.net",
-    .dsp.plugin.website = "http://deadbeef.sf.net",
-    .dsp.plugin.start = supereq_plugin_start,
-    .dsp.plugin.stop = supereq_plugin_stop,
-    .dsp.open = supereq_open,
-    .dsp.close = supereq_close,
-    .dsp.process = supereq_process,
-    .dsp.reset = supereq_reset,
-    .dsp.enable = supereq_enable,
-    .dsp.num_params = supereq_num_params,
-    .dsp.get_param_name = supereq_get_param_name,
-    .dsp.set_param = supereq_set_param,
-    .dsp.get_param = supereq_get_param,
+static DB_dsp_t plugin = {
+    .plugin.api_vmajor = DB_API_VERSION_MAJOR,
+    .plugin.api_vminor = DB_API_VERSION_MINOR,
+    .plugin.version_major = 1,
+    .plugin.version_minor = 0,
+    .plugin.type = DB_PLUGIN_DSP,
+    .plugin.id = "supereq",
+    .plugin.name = "SuperEQ",
+    .plugin.descr = "equalizer plugin using SuperEQ library by Naoki Shibata",
+    .plugin.author = "Alexey Yakovenko",
+    .plugin.email = "waker@users.sourceforge.net",
+    .plugin.website = "http://deadbeef.sf.net",
+    .plugin.start = supereq_plugin_start,
+    .plugin.stop = supereq_plugin_stop,
+    .open = supereq_open,
+    .close = supereq_close,
+    .process = supereq_process,
+    .reset = supereq_reset,
+    .enable = supereq_enable,
+    .num_params = supereq_num_params,
+    .get_param_name = supereq_get_param_name,
+    .set_param = supereq_set_param,
+    .get_param = supereq_get_param,
 };
 
 DB_plugin_t *

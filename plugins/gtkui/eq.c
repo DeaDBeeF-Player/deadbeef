@@ -22,7 +22,6 @@
 #include <stdlib.h>
 #include "gtkui.h"
 #include "support.h"
-#include "../supereq/supereq.h"
 #include "ddbequalizer.h"
 
 static GtkWidget *eqcont;
@@ -58,11 +57,10 @@ eq_value_changed (DdbEqualizer *widget)
 {
     DB_dsp_instance_t *eq = get_supereq ();
     if (eq) {
-        DB_supereq_dsp_t *plugin = (DB_supereq_dsp_t *)eq->plugin;
         for (int i = 0; i < 18; i++) {
-            plugin->set_band (eq, i, db_to_amp (ddb_equalizer_get_band (widget, i)));
+            eq->plugin->set_param (eq, i+1, db_to_amp (ddb_equalizer_get_band (widget, i)));
         }
-        plugin->set_preamp (eq, db_to_amp (ddb_equalizer_get_preamp (widget)));
+        eq->plugin->set_param (eq, 0, db_to_amp (ddb_equalizer_get_preamp (widget)));
     }
 }
 
@@ -71,8 +69,7 @@ on_enable_toggled         (GtkToggleButton *togglebutton,
         gpointer         user_data) {
     DB_dsp_instance_t *eq = get_supereq ();
     if (eq) {
-        DB_supereq_dsp_t *plugin = (DB_supereq_dsp_t *)eq->plugin;
-        plugin->dsp.enable (eq, gtk_toggle_button_get_active (togglebutton) ? 1 : 0);
+        eq->plugin->enable (eq, gtk_toggle_button_get_active (togglebutton) ? 1 : 0);
     }
 }
 
@@ -82,12 +79,11 @@ on_zero_all_clicked                  (GtkButton       *button,
     if (eqwin) {
         DB_dsp_instance_t *eq = get_supereq ();
         if (eq) {
-            DB_supereq_dsp_t *plugin = (DB_supereq_dsp_t *)eq->plugin;
-            plugin->set_preamp (eq, 1);
+            eq->plugin->set_param (eq, 0, 1);
             ddb_equalizer_set_preamp (DDB_EQUALIZER (eqwin), 0);
             for (int i = 0; i < 18; i++) {
                 ddb_equalizer_set_band (DDB_EQUALIZER (eqwin), i, 0);
-                plugin->set_band (eq, i, 1);
+                eq->plugin->set_param (eq, i+1, 1);
             }
             gdk_window_invalidate_rect (eqwin->window, NULL, FALSE);
         }
@@ -100,8 +96,7 @@ on_zero_preamp_clicked                  (GtkButton       *button,
     if (eqwin) {
         DB_dsp_instance_t *eq = get_supereq ();
         if (eq) {
-            DB_supereq_dsp_t *plugin = (DB_supereq_dsp_t *)eq->plugin;
-            plugin->set_preamp (eq, 1);
+            eq->plugin->set_param (eq, 0, 1);
             ddb_equalizer_set_preamp (DDB_EQUALIZER (eqwin), 0);
             gdk_window_invalidate_rect (eqwin->window, NULL, FALSE);
         }
@@ -114,10 +109,9 @@ on_zero_bands_clicked                  (GtkButton       *button,
     if (eqwin) {
         DB_dsp_instance_t *eq = get_supereq ();
         if (eq) {
-            DB_supereq_dsp_t *plugin = (DB_supereq_dsp_t *)eq->plugin;
             for (int i = 0; i < 18; i++) {
                 ddb_equalizer_set_band (DDB_EQUALIZER (eqwin), i, 0);
-                plugin->set_band (eq, i, 1);
+                eq->plugin->set_param (eq, i+1, 1);
             }
             gdk_window_invalidate_rect (eqwin->window, NULL, FALSE);
         }
@@ -149,11 +143,10 @@ on_save_preset_clicked                  (GtkButton       *button,
             if (fp) {
                 DB_dsp_instance_t *eq = get_supereq ();
                 if (eq) {
-                    DB_supereq_dsp_t *plugin = (DB_supereq_dsp_t *)eq->plugin;
                     for (int i = 0; i < 18; i++) {
-                        fprintf (fp, "%f\n", amp_to_db (plugin->get_band (eq, i)));
+                        fprintf (fp, "%f\n", amp_to_db (eq->plugin->get_param (eq, i+1)));
                     }
-                    fprintf (fp, "%f\n", amp_to_db (plugin->get_preamp (eq)));
+                    fprintf (fp, "%f\n", amp_to_db (eq->plugin->get_param (eq, 0)));
                 }
                 fclose (fp);
             }
@@ -208,12 +201,11 @@ on_load_preset_clicked                  (GtkButton       *button,
                     // apply and save config
                     DB_dsp_instance_t *eq = get_supereq ();
                     if (eq) {
-                        DB_supereq_dsp_t *plugin = (DB_supereq_dsp_t *)eq->plugin;
-                        plugin->set_preamp (eq, db_to_amp (vals[18]));
+                        eq->plugin->set_param (eq, 0, db_to_amp (vals[18]));
                         ddb_equalizer_set_preamp (DDB_EQUALIZER (eqwin), vals[18]);
                         for (int i = 0; i < 18; i++) {
                             ddb_equalizer_set_band (DDB_EQUALIZER (eqwin), i, vals[i]);
-                            plugin->set_band (eq, i, db_to_amp (vals[i]));
+                            eq->plugin->set_param (eq, i+1, db_to_amp (vals[i]));
                         }
                         gdk_window_invalidate_rect (eqwin->window, NULL, FALSE);
                         deadbeef->conf_save ();
@@ -272,12 +264,11 @@ on_import_fb2k_preset_clicked                  (GtkButton       *button,
                     // apply and save config
                     DB_dsp_instance_t *eq = get_supereq ();
                     if (eq) {
-                        DB_supereq_dsp_t *plugin = (DB_supereq_dsp_t *)eq->plugin;
-                        plugin->set_preamp (eq, 1);
+                        eq->plugin->set_param (eq, 0, 1);
                         ddb_equalizer_set_preamp (DDB_EQUALIZER (eqwin), 0);
                         for (int i = 0; i < 18; i++) {
                             ddb_equalizer_set_band (DDB_EQUALIZER (eqwin), i, vals[i]);
-                            plugin->set_band (eq, i, db_to_amp (vals[i]));
+                            eq->plugin->set_param (eq, i+1, db_to_amp (vals[i]));
                         }
                         gdk_window_invalidate_rect (eqwin->window, NULL, FALSE);
                         deadbeef->conf_save ();
@@ -363,11 +354,10 @@ eq_window_show (void) {
         gtk_widget_set_size_request (eqwin, -1, 200);
 
         if (eq) {
-            DB_supereq_dsp_t *plugin = (DB_supereq_dsp_t *)eq->plugin;
-            ddb_equalizer_set_preamp (DDB_EQUALIZER (eqwin), amp_to_db (plugin->get_preamp (eq)));
+            ddb_equalizer_set_preamp (DDB_EQUALIZER (eqwin), amp_to_db (eq->plugin->get_param (eq, 0)));
             for (int i = 0; i < 18; i++) {
                 if (eq) {
-                    float val = plugin->get_band (eq, i);
+                    float val = eq->plugin->get_param (eq, i+1);
                     ddb_equalizer_set_band (DDB_EQUALIZER (eqwin), i, amp_to_db (val));
                 }
             }
