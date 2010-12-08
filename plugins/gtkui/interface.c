@@ -3352,7 +3352,6 @@ create_converterdlg (void)
   dsp_preset = gtk_combo_box_new_text ();
   gtk_widget_show (dsp_preset);
   gtk_box_pack_start (GTK_BOX (hbox91), dsp_preset, TRUE, TRUE, 0);
-  gtk_combo_box_append_text (GTK_COMBO_BOX (dsp_preset), _("Pass Through"));
 
   edit_dsp_presets = gtk_button_new ();
   gtk_widget_show (edit_dsp_presets);
@@ -3377,7 +3376,6 @@ create_converterdlg (void)
   channelmap = gtk_combo_box_new_text ();
   gtk_widget_show (channelmap);
   gtk_box_pack_start (GTK_BOX (hbox92), channelmap, TRUE, TRUE, 0);
-  gtk_combo_box_append_text (GTK_COMBO_BOX (channelmap), _("Pass Through"));
 
   edit_channel_maps = gtk_button_new ();
   gtk_widget_show (edit_channel_maps);
@@ -3443,6 +3441,9 @@ create_converterdlg (void)
                     NULL);
   g_signal_connect ((gpointer) edit_encoder_presets, "clicked",
                     G_CALLBACK (on_edit_encoder_presets_clicked),
+                    NULL);
+  g_signal_connect ((gpointer) dsp_preset, "changed",
+                    G_CALLBACK (on_converter_dsp_preset_changed),
                     NULL);
   g_signal_connect ((gpointer) edit_dsp_presets, "clicked",
                     G_CALLBACK (on_edit_dsp_presets_clicked),
@@ -3575,7 +3576,6 @@ create_convpreset_editor (void)
   fname = gtk_entry_new ();
   gtk_widget_show (fname);
   gtk_box_pack_start (GTK_BOX (hbox97), fname, TRUE, TRUE, 0);
-  gtk_entry_set_text (GTK_ENTRY (fname), _("Untitled Encoder"));
   gtk_entry_set_invisible_char (GTK_ENTRY (fname), 9679);
   gtk_entry_set_activates_default (GTK_ENTRY (fname), TRUE);
 
@@ -3988,9 +3988,6 @@ create_select_dsp_plugin (void)
   GtkWidget *hbox85;
   GtkWidget *label113;
   GtkWidget *plugin;
-  GtkWidget *hbox84;
-  GtkWidget *label112;
-  GtkWidget *title;
   GtkWidget *dialog_action_area9;
   GtkWidget *cancelbutton7;
   GtkWidget *okbutton7;
@@ -4020,21 +4017,6 @@ create_select_dsp_plugin (void)
   gtk_widget_show (plugin);
   gtk_box_pack_start (GTK_BOX (hbox85), plugin, TRUE, TRUE, 0);
 
-  hbox84 = gtk_hbox_new (FALSE, 8);
-  gtk_widget_show (hbox84);
-  gtk_box_pack_start (GTK_BOX (vbox31), hbox84, FALSE, FALSE, 0);
-
-  label112 = gtk_label_new (_("Title"));
-  gtk_widget_show (label112);
-  gtk_box_pack_start (GTK_BOX (hbox84), label112, FALSE, FALSE, 0);
-
-  title = gtk_entry_new ();
-  gtk_widget_show (title);
-  gtk_box_pack_start (GTK_BOX (hbox84), title, TRUE, TRUE, 0);
-  gtk_entry_set_text (GTK_ENTRY (title), _("Untitled"));
-  gtk_entry_set_invisible_char (GTK_ENTRY (title), 9679);
-  gtk_entry_set_activates_default (GTK_ENTRY (title), TRUE);
-
   dialog_action_area9 = GTK_DIALOG (select_dsp_plugin)->action_area;
   gtk_widget_show (dialog_action_area9);
   gtk_button_box_set_layout (GTK_BUTTON_BOX (dialog_action_area9), GTK_BUTTONBOX_END);
@@ -4056,9 +4038,6 @@ create_select_dsp_plugin (void)
   GLADE_HOOKUP_OBJECT (select_dsp_plugin, hbox85, "hbox85");
   GLADE_HOOKUP_OBJECT (select_dsp_plugin, label113, "label113");
   GLADE_HOOKUP_OBJECT (select_dsp_plugin, plugin, "plugin");
-  GLADE_HOOKUP_OBJECT (select_dsp_plugin, hbox84, "hbox84");
-  GLADE_HOOKUP_OBJECT (select_dsp_plugin, label112, "label112");
-  GLADE_HOOKUP_OBJECT (select_dsp_plugin, title, "title");
   GLADE_HOOKUP_OBJECT_NO_REF (select_dsp_plugin, dialog_action_area9, "dialog_action_area9");
   GLADE_HOOKUP_OBJECT (select_dsp_plugin, cancelbutton7, "cancelbutton7");
   GLADE_HOOKUP_OBJECT (select_dsp_plugin, okbutton7, "okbutton7");

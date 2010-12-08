@@ -1069,3 +1069,7 @@ on_dsp_preset_add_plugin_clicked       (GtkButton       *button,
 void
 on_dsp_preset_remove_plugin_clicked    (GtkButton       *button,
                                         gpointer         user_data);
+
+void
+on_converter_dsp_preset_changed        (GtkComboBox     *combobox,
+                                        gpointer         user_data);

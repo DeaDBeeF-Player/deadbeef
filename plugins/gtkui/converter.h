@@ -35,19 +35,24 @@ enum {
     DDB_ENCODER_FMT_32BITFLOAT = 0x10,
 };
 
+typedef struct ddb_preset_s {
+    char *title;
+    struct ddb_preset_s *next;
+} ddb_preset_t;
+
 typedef struct ddb_encoder_preset_s {
     char *title;
+    struct ddb_encoder_preset_s *next;
     char *fname;
     char *encoder;
     int method; // pipe or file
     uint32_t formats; // combination of supported flags (FMT_*)
-    struct ddb_encoder_preset_s *next;
 } ddb_encoder_preset_t;
 
 typedef struct ddb_dsp_preset_s {
     char *title;
-    DB_dsp_instance_t *chain;
     struct ddb_dsp_preset_s *next;
+    DB_dsp_instance_t *chain;
 } ddb_dsp_preset_t;
 
 ddb_encoder_preset_t *
