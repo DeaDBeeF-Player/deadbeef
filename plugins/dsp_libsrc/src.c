@@ -55,7 +55,8 @@ ddb_src_open (void) {
     DDB_INIT_DSP_INSTANCE (src,ddb_src_libsamplerate_t,&plugin);
 
     src->mutex = deadbeef->mutex_create ();
-    src->samplerate = -1;
+    src->samplerate = 44100;
+    src->quality = 2;
     src->channels = -1;
     return (DB_dsp_instance_t *)src;
 }
@@ -118,7 +119,7 @@ ddb_src_process (DB_dsp_instance_t *_src, float *samples, int nframes, int *samp
     ddb_src_set_ratio (_src, ratio);
     *samplerate = src->samplerate;
 
-    if (src->channels != *nchannels || src->quality_changed) {
+    if (src->channels != *nchannels || src->quality_changed || !src->src) {
         src->quality_changed = 0;
         src->remaining = 0;
         if (src->src) {

@@ -3839,17 +3839,13 @@ create_dsppreset_editor (void)
   GtkWidget *hbox81;
   GtkWidget *label111;
   GtkWidget *title;
-  GtkWidget *hpaned2;
   GtkWidget *vbox29;
   GtkWidget *hbox82;
   GtkWidget *add;
   GtkWidget *remove;
+  GtkWidget *configure;
   GtkWidget *scrolledwindow7;
   GtkWidget *plugins;
-  GtkWidget *vbox32;
-  GtkWidget *label110;
-  GtkWidget *scrolledwindow9;
-  GtkWidget *params;
   GtkWidget *dialog_action_area8;
   GtkWidget *cancelbutton6;
   GtkWidget *okbutton6;
@@ -3883,13 +3879,9 @@ create_dsppreset_editor (void)
   gtk_entry_set_invisible_char (GTK_ENTRY (title), 9679);
   gtk_entry_set_activates_default (GTK_ENTRY (title), TRUE);
 
-  hpaned2 = gtk_hpaned_new ();
-  gtk_widget_show (hpaned2);
-  gtk_box_pack_start (GTK_BOX (vbox30), hpaned2, TRUE, TRUE, 0);
-
   vbox29 = gtk_vbox_new (FALSE, 8);
   gtk_widget_show (vbox29);
-  gtk_paned_pack1 (GTK_PANED (hpaned2), vbox29, FALSE, TRUE);
+  gtk_box_pack_start (GTK_BOX (vbox30), vbox29, TRUE, TRUE, 0);
 
   hbox82 = gtk_hbox_new (TRUE, 8);
   gtk_widget_show (hbox82);
@@ -3903,6 +3895,10 @@ create_dsppreset_editor (void)
   gtk_widget_show (remove);
   gtk_box_pack_start (GTK_BOX (hbox82), remove, TRUE, TRUE, 0);
 
+  configure = gtk_button_new_with_mnemonic (_("Configure"));
+  gtk_widget_show (configure);
+  gtk_box_pack_start (GTK_BOX (hbox82), configure, TRUE, TRUE, 0);
+
   scrolledwindow7 = gtk_scrolled_window_new (NULL, NULL);
   gtk_widget_show (scrolledwindow7);
   gtk_box_pack_start (GTK_BOX (vbox29), scrolledwindow7, TRUE, TRUE, 0);
@@ -3914,24 +3910,6 @@ create_dsppreset_editor (void)
   gtk_container_add (GTK_CONTAINER (scrolledwindow7), plugins);
   gtk_widget_set_size_request (plugins, 196, -1);
   gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (plugins), FALSE);
-
-  vbox32 = gtk_vbox_new (FALSE, 8);
-  gtk_widget_show (vbox32);
-  gtk_paned_pack2 (GTK_PANED (hpaned2), vbox32, TRUE, TRUE);
-
-  label110 = gtk_label_new (_("Parameters"));
-  gtk_widget_show (label110);
-  gtk_box_pack_start (GTK_BOX (vbox32), label110, FALSE, FALSE, 0);
-
-  scrolledwindow9 = gtk_scrolled_window_new (NULL, NULL);
-  gtk_widget_show (scrolledwindow9);
-  gtk_box_pack_start (GTK_BOX (vbox32), scrolledwindow9, TRUE, TRUE, 0);
-  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow9), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-  gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow9), GTK_SHADOW_IN);
-
-  params = gtk_tree_view_new ();
-  gtk_widget_show (params);
-  gtk_container_add (GTK_CONTAINER (scrolledwindow9), params);
 
   dialog_action_area8 = GTK_DIALOG (dsppreset_editor)->action_area;
   gtk_widget_show (dialog_action_area8);
@@ -3953,6 +3931,9 @@ create_dsppreset_editor (void)
   g_signal_connect ((gpointer) remove, "clicked",
                     G_CALLBACK (on_dsp_preset_remove_plugin_clicked),
                     NULL);
+  g_signal_connect ((gpointer) configure, "clicked",
+                    G_CALLBACK (on_dsp_preset_plugin_configure_clicked),
+                    NULL);
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (dsppreset_editor, dsppreset_editor, "dsppreset_editor");
@@ -3961,17 +3942,13 @@ create_dsppreset_editor (void)
   GLADE_HOOKUP_OBJECT (dsppreset_editor, hbox81, "hbox81");
   GLADE_HOOKUP_OBJECT (dsppreset_editor, label111, "label111");
   GLADE_HOOKUP_OBJECT (dsppreset_editor, title, "title");
-  GLADE_HOOKUP_OBJECT (dsppreset_editor, hpaned2, "hpaned2");
   GLADE_HOOKUP_OBJECT (dsppreset_editor, vbox29, "vbox29");
   GLADE_HOOKUP_OBJECT (dsppreset_editor, hbox82, "hbox82");
   GLADE_HOOKUP_OBJECT (dsppreset_editor, add, "add");
   GLADE_HOOKUP_OBJECT (dsppreset_editor, remove, "remove");
+  GLADE_HOOKUP_OBJECT (dsppreset_editor, configure, "configure");
   GLADE_HOOKUP_OBJECT (dsppreset_editor, scrolledwindow7, "scrolledwindow7");
   GLADE_HOOKUP_OBJECT (dsppreset_editor, plugins, "plugins");
-  GLADE_HOOKUP_OBJECT (dsppreset_editor, vbox32, "vbox32");
-  GLADE_HOOKUP_OBJECT (dsppreset_editor, label110, "label110");
-  GLADE_HOOKUP_OBJECT (dsppreset_editor, scrolledwindow9, "scrolledwindow9");
-  GLADE_HOOKUP_OBJECT (dsppreset_editor, params, "params");
   GLADE_HOOKUP_OBJECT_NO_REF (dsppreset_editor, dialog_action_area8, "dialog_action_area8");
   GLADE_HOOKUP_OBJECT (dsppreset_editor, cancelbutton6, "cancelbutton6");
   GLADE_HOOKUP_OBJECT (dsppreset_editor, okbutton6, "okbutton6");
@@ -4073,21 +4050,21 @@ create_preset_list (void)
   gtk_box_pack_start (GTK_BOX (dialog_vbox11), vbox33, TRUE, TRUE, 0);
   gtk_container_set_border_width (GTK_CONTAINER (vbox33), 12);
 
-  hbox94 = gtk_hbox_new (TRUE, 0);
+  hbox94 = gtk_hbox_new (TRUE, 8);
   gtk_widget_show (hbox94);
   gtk_box_pack_start (GTK_BOX (vbox33), hbox94, FALSE, TRUE, 0);
 
   add = gtk_button_new_from_stock ("gtk-add");
   gtk_widget_show (add);
-  gtk_box_pack_start (GTK_BOX (hbox94), add, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (hbox94), add, FALSE, TRUE, 0);
 
   remove = gtk_button_new_from_stock ("gtk-remove");
   gtk_widget_show (remove);
-  gtk_box_pack_start (GTK_BOX (hbox94), remove, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (hbox94), remove, FALSE, TRUE, 0);
 
   edit = gtk_button_new_from_stock ("gtk-edit");
   gtk_widget_show (edit);
-  gtk_box_pack_start (GTK_BOX (hbox94), edit, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (hbox94), edit, FALSE, TRUE, 0);
 
   scrolledwindow8 = gtk_scrolled_window_new (NULL, NULL);
   gtk_widget_show (scrolledwindow8);

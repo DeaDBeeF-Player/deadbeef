@@ -27,7 +27,11 @@
 #include "gtkui.h"
 
 ddb_encoder_preset_t *encoder_presets;
+ddb_encoder_preset_t *current_encoder_preset;
+
 ddb_dsp_preset_t *dsp_presets;
+ddb_dsp_preset_t *current_dsp_preset;
+
 
 ddb_encoder_preset_t *
 ddb_encoder_preset_alloc (void) {
@@ -691,8 +695,6 @@ init_encoder_preset_from_dlg (GtkWidget *dlg, ddb_encoder_preset_t *p) {
     }
 }
 
-ddb_encoder_preset_t *current_encoder_preset;
-
 int
 edit_encoder_preset (char *title, GtkWidget *toplevel, int overwrite) {
     GtkWidget *dlg = create_convpreset_editor ();
@@ -775,7 +777,7 @@ edit_encoder_preset (char *title, GtkWidget *toplevel, int overwrite) {
 }
 
 void
-refresh_preset_lists (GtkComboBox *combo, GtkTreeView *list) {
+refresh_encoder_lists (GtkComboBox *combo, GtkTreeView *list) {
     // presets list view
     GtkListStore *mdl = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (list)));
 
@@ -823,7 +825,7 @@ on_encoder_preset_add                     (GtkButton       *button,
         }
         GtkComboBox *combo = GTK_COMBO_BOX (lookup_widget (converter, "encoder"));
         GtkWidget *list = lookup_widget (toplevel, "presets");
-        refresh_preset_lists (combo, GTK_TREE_VIEW (list));
+        refresh_encoder_lists (combo, GTK_TREE_VIEW (list));
     }
 
     current_encoder_preset = NULL;
@@ -855,7 +857,7 @@ on_encoder_preset_edit                     (GtkButton       *button,
     int r = edit_encoder_preset (_("Edit encoder"), toplevel, 1);
     if (r == GTK_RESPONSE_OK) {
         GtkComboBox *combo = GTK_COMBO_BOX (lookup_widget (converter, "encoder"));
-        refresh_preset_lists (combo, GTK_TREE_VIEW (list));
+        refresh_encoder_lists (combo, GTK_TREE_VIEW (list));
     }
 
     current_encoder_preset = NULL;
@@ -912,17 +914,8 @@ on_encoder_preset_remove                     (GtkButton       *button,
         }
         ddb_encoder_preset_free (p);
 
-        // presets list view
-        GtkListStore *mdl = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (list)));
-        gtk_list_store_clear (mdl);
-        fill_presets (mdl, (ddb_preset_t *)encoder_presets);
-
-        // presets combo box
         GtkComboBox *combo = GTK_COMBO_BOX (lookup_widget (converter, "encoder"));
-        mdl = GTK_LIST_STORE (gtk_combo_box_get_model (combo));
-        gtk_list_store_clear (mdl);
-        fill_presets (mdl, (ddb_preset_t *)encoder_presets);
-        gtk_combo_box_set_active (combo, deadbeef->conf_get_int ("converter.encoder_preset", 0));
+        refresh_encoder_lists (combo, GTK_TREE_VIEW (list));
     }
 }
 
@@ -953,8 +946,6 @@ on_edit_encoder_presets_clicked        (GtkButton       *button,
 }
 
 ///// dsp preset gui
-
-ddb_dsp_preset_t *current_dsp_preset;
 
 void
 fill_dsp_plugin_list (GtkListStore *mdl) {
@@ -996,9 +987,6 @@ on_dsp_preset_add_plugin_clicked       (GtkButton       *button,
 
     int r = gtk_dialog_run (GTK_DIALOG (dlg));
     if (r == GTK_RESPONSE_OK) {
-        // get title
-        const char *title = gtk_entry_get_text (GTK_ENTRY (lookup_widget (dlg, "title")));
-
         // create new instance of the selected plugin
         int idx = gtk_combo_box_get_active (combo);
         struct DB_dsp_s **dsp = deadbeef->plug_get_dsp_list ();
@@ -1041,21 +1029,138 @@ void
 on_dsp_preset_remove_plugin_clicked    (GtkButton       *button,
                                         gpointer         user_data)
 {
+    GtkWidget *toplevel = gtk_widget_get_toplevel (GTK_WIDGET (button));
+    GtkWidget *list = lookup_widget (toplevel, "plugins");
+    GtkTreePath *path;
+    GtkTreeViewColumn *col;
+    gtk_tree_view_get_cursor (GTK_TREE_VIEW (list), &path, &col);
+    if (!path || !col) {
+        // nothing selected
+        return;
+    }
+    int *indices = gtk_tree_path_get_indices (path);
+    int idx = *indices;
+    g_free (indices);
+    if (idx == -1) {
+        return;
+    }
 
+    DB_dsp_instance_t *p = current_dsp_preset->chain;
+    DB_dsp_instance_t *prev = NULL;
+    int i = idx;
+    while (p && i--) {
+        prev = p;
+        p = p->next;
+    }
+    if (p) {
+        if (prev) {
+            prev->next = p->next;
+        }
+        else {
+            current_dsp_preset->chain = p->next;
+        }
+        p->plugin->close (p);
+        GtkListStore *mdl = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW(list)));
+        gtk_list_store_clear (mdl);
+        fill_dsp_preset_chain (mdl);
+        path = gtk_tree_path_new_from_indices (idx, -1);
+        gtk_tree_view_set_cursor (GTK_TREE_VIEW (list), path, col, FALSE);
+        gtk_tree_path_free (path);
+    }
+}
+
+void
+on_dsp_preset_plugin_configure_clicked (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    GtkWidget *toplevel = gtk_widget_get_toplevel (GTK_WIDGET (button));
+    GtkWidget *list = lookup_widget (toplevel, "plugins");
+    GtkTreePath *path;
+    GtkTreeViewColumn *col;
+    gtk_tree_view_get_cursor (GTK_TREE_VIEW (list), &path, &col);
+    if (!path || !col) {
+        // nothing selected
+        return;
+    }
+    int *indices = gtk_tree_path_get_indices (path);
+    int idx = *indices;
+    g_free (indices);
+    if (idx == -1) {
+        return;
+    }
+
+    DB_dsp_instance_t *p = current_dsp_preset->chain;
+    DB_dsp_instance_t *prev = NULL;
+    int i = idx;
+    while (p && i--) {
+        prev = p;
+        p = p->next;
+    }
+    if (!p || !p->plugin->num_params || !p->plugin->num_params ()) {
+        return;
+    }
+
+    GtkWidget *dlg = gtk_dialog_new ();
+    gtk_window_set_title (GTK_WINDOW (dlg), _("Configure DSP plugin"));
+    gtk_window_set_modal (GTK_WINDOW (dlg), TRUE);
+    gtk_window_set_type_hint (GTK_WINDOW (dlg), GDK_WINDOW_TYPE_HINT_DIALOG);
+
+    GtkWidget *vbox = gtk_vbox_new (FALSE, 8);
+    gtk_container_set_border_width (GTK_CONTAINER (vbox), 12);
+    gtk_widget_show (vbox);
+
+    gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dlg)->vbox), vbox, TRUE, TRUE, 0);
+
+    GtkWidget *w;
+
+    int n = p->plugin->num_params ();
+    for (i = 0; i < n; i++) {
+        GtkWidget *hbox = gtk_hbox_new (FALSE, 8);
+
+        gtk_widget_show (hbox);
+        gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
+        const char *title = p->plugin->get_param_name (i);
+        w = gtk_label_new (_(title));
+        gtk_widget_show (w);
+        gtk_box_pack_start (GTK_BOX (hbox), w, FALSE, FALSE, 0);
+        w = gtk_entry_new ();
+        char s[100];
+        snprintf (s, sizeof (s), "%f", p->plugin->get_param (p, i));
+        gtk_entry_set_text (GTK_ENTRY (w), s);
+        gtk_widget_show (w);
+        gtk_box_pack_start (GTK_BOX (hbox), w, TRUE, TRUE, 0);
+    }
+
+
+
+    w = gtk_button_new_from_stock ("gtk-cancel");
+    gtk_widget_show (w);
+    gtk_dialog_add_action_widget (GTK_DIALOG (dlg), w, GTK_RESPONSE_CANCEL);
+    GTK_WIDGET_SET_FLAGS (w, GTK_CAN_DEFAULT);
+
+    w = gtk_button_new_from_stock ("gtk-ok");
+    gtk_widget_show (w);
+    gtk_dialog_add_action_widget (GTK_DIALOG (dlg), w, GTK_RESPONSE_OK);
+    GTK_WIDGET_SET_FLAGS (w, GTK_CAN_DEFAULT);
+
+    int r = gtk_dialog_run (GTK_DIALOG (dlg));
+    gtk_widget_destroy (dlg);
 }
 
 int
-edit_dsp_preset (GtkWidget *toplevel, int overwrite) {
+edit_dsp_preset (const char *title, GtkWidget *toplevel, int overwrite) {
     int r = GTK_RESPONSE_CANCEL;
 
     GtkWidget *dlg = create_dsppreset_editor ();
     gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
     gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (toplevel));
-    gtk_window_set_title (GTK_WINDOW (dlg), _("New DSP Preset"));
+    gtk_window_set_title (GTK_WINDOW (dlg), title);
 
 
     // title
-    gtk_entry_set_text (GTK_ENTRY (lookup_widget (dlg, "title")), current_dsp_preset->title);
+    if (current_dsp_preset->title) {
+        gtk_entry_set_text (GTK_ENTRY (lookup_widget (dlg, "title")), current_dsp_preset->title);
+    }
 
     {
         // left list
@@ -1068,19 +1173,6 @@ edit_dsp_preset (GtkWidget *toplevel, int overwrite) {
 
         fill_dsp_preset_chain (mdl);
     }
-
-    {
-        // right list
-        GtkWidget *list = lookup_widget (dlg, "params");
-        GtkCellRenderer *title_cell = gtk_cell_renderer_text_new ();
-        GtkTreeViewColumn *col1 = gtk_tree_view_column_new_with_attributes (_("Param"), title_cell, "text", 0, NULL);
-        GtkTreeViewColumn *col2 = gtk_tree_view_column_new_with_attributes (_("Value"), title_cell, "text", 1, NULL);
-        gtk_tree_view_append_column (GTK_TREE_VIEW (list), GTK_TREE_VIEW_COLUMN (col1));
-        gtk_tree_view_append_column (GTK_TREE_VIEW (list), GTK_TREE_VIEW_COLUMN (col2));
-        GtkListStore *mdl = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_STRING);
-        gtk_tree_view_set_model (GTK_TREE_VIEW (list), GTK_TREE_MODEL (mdl));
-    }
-
 
     for (;;) {
         r = gtk_dialog_run (GTK_DIALOG (dlg));
@@ -1102,28 +1194,41 @@ edit_dsp_preset (GtkWidget *toplevel, int overwrite) {
                 continue;
             }
 
-            // append to list of presets
-            ddb_dsp_preset_t *tail = dsp_presets;
-            while (tail && tail->next) {
-                tail = tail->next;
-            }
-            if (tail) {
-                tail->next = current_dsp_preset;
-            }
-            else {
-                dsp_presets = current_dsp_preset;
-            }
-        }
-        else {
-            ddb_dsp_preset_free (current_dsp_preset);
         }
 
-        current_dsp_preset = NULL;
         break;
     }
 
     gtk_widget_destroy (dlg);
     return r;
+}
+
+void
+refresh_dsp_lists (GtkComboBox *combo, GtkTreeView *list) {
+    // presets list view
+    GtkListStore *mdl = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (list)));
+
+    GtkTreePath *path;
+    GtkTreeViewColumn *col;
+    gtk_tree_view_get_cursor (GTK_TREE_VIEW (list), &path, &col);
+    if (path && col) {
+        int *indices = gtk_tree_path_get_indices (path);
+        int idx = *indices;
+        g_free (indices);
+
+        gtk_list_store_clear (mdl);
+        fill_presets (mdl, (ddb_preset_t *)dsp_presets);
+        path = gtk_tree_path_new_from_indices (idx, -1);
+        gtk_tree_view_set_cursor (GTK_TREE_VIEW (list), path, col, FALSE);
+        gtk_tree_path_free (path);
+    }
+
+    // presets combo box
+    int act = gtk_combo_box_get_active (combo);
+    mdl = GTK_LIST_STORE (gtk_combo_box_get_model (combo));
+    gtk_list_store_clear (mdl);
+    fill_presets (mdl, (ddb_preset_t *)dsp_presets);
+    gtk_combo_box_set_active (combo, act);
 }
 
 
@@ -1136,7 +1241,26 @@ on_dsp_preset_add                     (GtkButton       *button,
     
     GtkWidget *toplevel = gtk_widget_get_toplevel (GTK_WIDGET (button));
 
-    edit_dsp_preset (toplevel, 0);
+    if (GTK_RESPONSE_OK == edit_dsp_preset (_("New DSP Preset"), toplevel, 0)) {
+        // append to list of presets
+        ddb_dsp_preset_t *tail = dsp_presets;
+        while (tail && tail->next) {
+            tail = tail->next;
+        }
+        if (tail) {
+            tail->next = current_dsp_preset;
+        }
+        else {
+            dsp_presets = current_dsp_preset;
+        }
+
+        GtkComboBox *combo = GTK_COMBO_BOX (lookup_widget (converter, "dsp_preset"));
+        GtkWidget *list = lookup_widget (toplevel, "presets");
+        refresh_dsp_lists (combo, GTK_TREE_VIEW (list));
+    }
+    else {
+        ddb_dsp_preset_free (current_dsp_preset);
+    }
 
     current_dsp_preset = NULL;
 }
@@ -1145,6 +1269,55 @@ void
 on_dsp_preset_remove                     (GtkButton       *button,
                                         gpointer         user_data)
 {
+    GtkWidget *toplevel = gtk_widget_get_toplevel (GTK_WIDGET (button));
+    GtkWidget *list = lookup_widget (toplevel, "presets");
+    GtkTreePath *path;
+    GtkTreeViewColumn *col;
+    gtk_tree_view_get_cursor (GTK_TREE_VIEW (list), &path, &col);
+    if (!path || !col) {
+        // nothing selected
+        return;
+    }
+    int *indices = gtk_tree_path_get_indices (path);
+    int idx = *indices;
+    g_free (indices);
+
+    ddb_dsp_preset_t *p = dsp_presets;
+    ddb_dsp_preset_t *prev = NULL;
+    while (idx--) {
+        prev = p;
+        p = p->next;
+    }
+
+    if (!p) {
+        return;
+    }
+
+    GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (mainwin), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO, _("Remove preset"));
+    gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (toplevel));
+    gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dlg), _("This action will delete the selected preset. Are you sure?"));
+    gtk_window_set_title (GTK_WINDOW (dlg), _("Warning"));
+
+    int response = gtk_dialog_run (GTK_DIALOG (dlg));
+    gtk_widget_destroy (dlg);
+    if (response == GTK_RESPONSE_YES) {
+        char path[1024];
+        if (snprintf (path, sizeof (path), "%s/presets/dsp/%s.txt", deadbeef->get_config_dir (), p->title) > 0) {
+            unlink (path);
+        }
+
+        ddb_dsp_preset_t *next = p->next;
+        if (prev) {
+            prev->next = next;
+        }
+        else {
+            dsp_presets = next;
+        }
+        ddb_dsp_preset_free (p);
+
+        GtkComboBox *combo = GTK_COMBO_BOX (lookup_widget (converter, "dsp_preset"));
+        refresh_dsp_lists (combo, GTK_TREE_VIEW (list));
+    }
 }
 
 void
@@ -1182,7 +1355,7 @@ on_dsp_preset_edit                     (GtkButton       *button,
     current_dsp_preset = ddb_dsp_preset_alloc ();
     ddb_dsp_preset_copy (current_dsp_preset, p);
 
-    int r = edit_dsp_preset (toplevel, 1);
+    int r = edit_dsp_preset (_("Edit DSP Preset"), toplevel, 1);
     if (r == GTK_RESPONSE_OK) {
         // replace preset
         if (prev) {
@@ -1193,6 +1366,8 @@ on_dsp_preset_edit                     (GtkButton       *button,
         }
         current_dsp_preset->next = p->next;
         ddb_dsp_preset_free (p);
+        GtkComboBox *combo = GTK_COMBO_BOX (lookup_widget (converter, "dsp_preset"));
+        refresh_dsp_lists (combo, GTK_TREE_VIEW (list));
     }
     else {
         ddb_dsp_preset_free (current_dsp_preset);
