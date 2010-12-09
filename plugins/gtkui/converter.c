@@ -194,7 +194,6 @@ ddb_dsp_preset_copy (ddb_dsp_preset_t *to, ddb_dsp_preset_t *from) {
 
 ddb_dsp_preset_t *
 ddb_dsp_preset_load (const char *fname) {
-    printf ("loading %s\n", fname);
     int err = 1;
     FILE *fp = fopen (fname, "rt");
     if (!fp) {
@@ -210,7 +209,6 @@ ddb_dsp_preset_load (const char *fname) {
     if (1 != fscanf (fp, "title %100[^\n]\n", temp)) {
         goto error;
     }
-    printf ("title: %s\n", temp);
     p->title = strdup (temp);
     DB_dsp_instance_t *tail = NULL;
 
@@ -224,7 +222,6 @@ ddb_dsp_preset_load (const char *fname) {
             fprintf (stderr, "error plugin name\n");
             goto error;
         }
-        printf ("plugin id: %s\n", temp);
 
         DB_dsp_t *plug = (DB_dsp_t *)deadbeef->plug_get_for_id (temp);
         if (!plug) {
@@ -694,119 +691,55 @@ init_encoder_preset_from_dlg (GtkWidget *dlg, ddb_encoder_preset_t *p) {
     }
 }
 
-void
-on_encoder_preset_add                     (GtkButton       *button,
-                                        gpointer         user_data)
-{
+ddb_encoder_preset_t *current_encoder_preset;
+
+int
+edit_encoder_preset (char *title, GtkWidget *toplevel, int overwrite) {
     GtkWidget *dlg = create_convpreset_editor ();
-    GtkWidget *toplevel = gtk_widget_get_toplevel (GTK_WIDGET (button));
-    gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (toplevel));
-    gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "method")), 0);
-    gtk_window_set_title (GTK_WINDOW (dlg), _("Add new encoder preset"));
+    gtk_window_set_title (GTK_WINDOW (dlg), title);
     gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
 
-    for (;;) {
-        int r = gtk_dialog_run (GTK_DIALOG (dlg));
-        if (r == GTK_RESPONSE_OK) {
-            ddb_encoder_preset_t *p = ddb_encoder_preset_alloc ();
-            if (p) {
-                init_encoder_preset_from_dlg (dlg, p);
-                int err = ddb_encoder_preset_save (p, 0);
-                if (!err) {
-                    p->next = encoder_presets;
-                    encoder_presets = p;
-                }
-                else {
-                    GtkWidget *warndlg = gtk_message_dialog_new (GTK_WINDOW (mainwin), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Failed to save encoder preset"));
-                    gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (warndlg), err == -1 ? _("Check preset folder permissions, try to pick different title, or free up some disk space") : _("Preset with the same name already exists. Try to pick another title."));
-                    gtk_window_set_title (GTK_WINDOW (warndlg), _("Error"));
-
-                    gtk_window_set_transient_for (GTK_WINDOW (warndlg), GTK_WINDOW (dlg));
-                    int response = gtk_dialog_run (GTK_DIALOG (warndlg));
-                    gtk_widget_destroy (warndlg);
-                    continue;
-                }
-            }
-        }
-        break;
-    }
-    
-    gtk_widget_destroy (dlg);
-
-    // presets list view
-    GtkWidget *list = lookup_widget (toplevel, "presets");
-    GtkListStore *mdl = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (list)));
-    gtk_list_store_clear (mdl);
-    fill_presets (mdl, (ddb_preset_t *)encoder_presets);
-
-    // presets combo box
-    GtkComboBox *combo = GTK_COMBO_BOX (lookup_widget (converter, "encoder"));
-    mdl = GTK_LIST_STORE (gtk_combo_box_get_model (combo));
-    gtk_list_store_clear (mdl);
-    fill_presets (mdl, (ddb_preset_t *)encoder_presets);
-    gtk_combo_box_set_active (combo, deadbeef->conf_get_int ("converter.encoder_preset", 0));
-}
-
-void
-on_encoder_preset_edit                     (GtkButton       *button,
-                                        gpointer         user_data)
-{
-    GtkWidget *dlg = create_convpreset_editor ();
-    gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
-
-    GtkWidget *toplevel = gtk_widget_get_toplevel (GTK_WIDGET (button));
     gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (toplevel));
 
-    GtkWidget *list = lookup_widget (toplevel, "presets");
-    GtkTreePath *path;
-    GtkTreeViewColumn *col;
-    gtk_tree_view_get_cursor (GTK_TREE_VIEW (list), &path, &col);
-    if (!path || !col) {
-        // nothing selected
-        return;
-    }
-    int *indices = gtk_tree_path_get_indices (path);
-    int idx = *indices;
-    g_free (indices);
+    ddb_encoder_preset_t *p = current_encoder_preset;
 
-    ddb_encoder_preset_t *p = encoder_presets;
-    while (idx--) {
-        p = p->next;
-    }
-
-    if (p) {
+    if (p->title) {
         gtk_entry_set_text (GTK_ENTRY (lookup_widget (dlg, "title")), p->title);
+    }
+    if (p->fname) {
         gtk_entry_set_text (GTK_ENTRY (lookup_widget (dlg, "fname")), p->fname);
+    }
+    if (p->encoder) {
         gtk_entry_set_text (GTK_ENTRY (lookup_widget (dlg, "encoder")), p->encoder);
-        gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "method")), p->method);
-        if (p->formats & DDB_ENCODER_FMT_8BIT) {
-            gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "_8bit")), 1);
-        }
-        if (p->formats & DDB_ENCODER_FMT_16BIT) {
-            gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "_16bit")), 1);
-        }
-        if (p->formats & DDB_ENCODER_FMT_24BIT) {
-            gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "_24bit")), 1);
-        }
-        if (p->formats & DDB_ENCODER_FMT_32BIT) {
-            gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "_32bit")), 1);
-        }
-        if (p->formats & DDB_ENCODER_FMT_32BITFLOAT) {
-            gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "_32bitfloat")), 1);
-        }
-
+    }
+    gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "method")), p->method);
+    if (p->formats & DDB_ENCODER_FMT_8BIT) {
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "_8bit")), 1);
+    }
+    if (p->formats & DDB_ENCODER_FMT_16BIT) {
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "_16bit")), 1);
+    }
+    if (p->formats & DDB_ENCODER_FMT_24BIT) {
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "_24bit")), 1);
+    }
+    if (p->formats & DDB_ENCODER_FMT_32BIT) {
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "_32bit")), 1);
+    }
+    if (p->formats & DDB_ENCODER_FMT_32BITFLOAT) {
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "_32bitfloat")), 1);
     }
 
     ddb_encoder_preset_t *old = p;
+    int r = GTK_RESPONSE_CANCEL;
     for (;;) {
-        int r = gtk_dialog_run (GTK_DIALOG (dlg));
+        r = gtk_dialog_run (GTK_DIALOG (dlg));
         if (r == GTK_RESPONSE_OK) {
             ddb_encoder_preset_t *p = ddb_encoder_preset_alloc ();
             if (p) {
                 init_encoder_preset_from_dlg (dlg, p);
-                int err = ddb_encoder_preset_save (p, 1);
+                int err = ddb_encoder_preset_save (p, overwrite);
                 if (!err) {
-                    if (strcmp (p->title, old->title)) {
+                    if (old->title && strcmp (p->title, old->title)) {
                         char path[1024];
                         if (snprintf (path, sizeof (path), "%s/presets/encoders/%s.txt", deadbeef->get_config_dir (), old->title) > 0) {
                             unlink (path);
@@ -838,18 +771,94 @@ on_encoder_preset_edit                     (GtkButton       *button,
     }
     
     gtk_widget_destroy (dlg);
+    return r;
+}
 
+void
+refresh_preset_lists (GtkComboBox *combo, GtkTreeView *list) {
     // presets list view
     GtkListStore *mdl = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (list)));
-    gtk_list_store_clear (mdl);
-    fill_presets (mdl, (ddb_preset_t *)encoder_presets);
+
+    GtkTreePath *path;
+    GtkTreeViewColumn *col;
+    gtk_tree_view_get_cursor (GTK_TREE_VIEW (list), &path, &col);
+    if (path && col) {
+        int *indices = gtk_tree_path_get_indices (path);
+        int idx = *indices;
+        g_free (indices);
+
+        gtk_list_store_clear (mdl);
+        fill_presets (mdl, (ddb_preset_t *)encoder_presets);
+        path = gtk_tree_path_new_from_indices (idx, -1);
+        gtk_tree_view_set_cursor (GTK_TREE_VIEW (list), path, col, FALSE);
+        gtk_tree_path_free (path);
+    }
 
     // presets combo box
-    GtkComboBox *combo = GTK_COMBO_BOX (lookup_widget (converter, "encoder"));
+    int act = gtk_combo_box_get_active (combo);
     mdl = GTK_LIST_STORE (gtk_combo_box_get_model (combo));
     gtk_list_store_clear (mdl);
     fill_presets (mdl, (ddb_preset_t *)encoder_presets);
-    gtk_combo_box_set_active (combo, deadbeef->conf_get_int ("converter.encoder_preset", 0));
+    gtk_combo_box_set_active (combo, act);
+}
+
+void
+on_encoder_preset_add                     (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    GtkWidget *toplevel = gtk_widget_get_toplevel (GTK_WIDGET (button));
+
+    current_encoder_preset = ddb_encoder_preset_alloc ();
+    if (GTK_RESPONSE_OK == edit_encoder_preset (_("Add new encoder"), toplevel, 0)) {
+        // append
+        ddb_encoder_preset_t *tail = encoder_presets;
+        while (tail && tail->next) {
+            tail = tail->next;
+        }
+        if (tail) {
+            tail->next = current_encoder_preset;
+        }
+        else {
+            encoder_presets = current_encoder_preset;
+        }
+        GtkComboBox *combo = GTK_COMBO_BOX (lookup_widget (converter, "encoder"));
+        GtkWidget *list = lookup_widget (toplevel, "presets");
+        refresh_preset_lists (combo, GTK_TREE_VIEW (list));
+    }
+
+    current_encoder_preset = NULL;
+}
+
+void
+on_encoder_preset_edit                     (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    GtkWidget *toplevel = gtk_widget_get_toplevel (GTK_WIDGET (button));
+    GtkWidget *list = lookup_widget (toplevel, "presets");
+    GtkTreePath *path;
+    GtkTreeViewColumn *col;
+    gtk_tree_view_get_cursor (GTK_TREE_VIEW (list), &path, &col);
+    if (!path || !col) {
+        // nothing selected
+        return;
+    }
+    int *indices = gtk_tree_path_get_indices (path);
+    int idx = *indices;
+    g_free (indices);
+
+    ddb_encoder_preset_t *p = encoder_presets;
+    while (idx--) {
+        p = p->next;
+    }
+    current_encoder_preset = p;
+
+    int r = edit_encoder_preset (_("Edit encoder"), toplevel, 1);
+    if (r == GTK_RESPONSE_OK) {
+        GtkComboBox *combo = GTK_COMBO_BOX (lookup_widget (converter, "encoder"));
+        refresh_preset_lists (combo, GTK_TREE_VIEW (list));
+    }
+
+    current_encoder_preset = NULL;
 }
 
 void
