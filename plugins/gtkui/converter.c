@@ -593,15 +593,6 @@ on_converter_ok_clicked                (GtkButton       *button,
                     }
                     if (fileinfo) {
                         char fname[1024];
-#if 0
-                        char *fname = strrchr (it->fname, '/');
-                        if (!fname) {
-                            fname = it->fname;
-                        }
-                        else {
-                            fname++;
-                        }
-#endif
                         int idx = deadbeef->pl_get_idx_of (it);
                         deadbeef->pl_format_title (it, idx, fname, sizeof (fname), -1, p->fname);
                         char out[1024];
@@ -1114,6 +1105,7 @@ on_dsp_preset_plugin_configure_clicked (GtkButton       *button,
     GtkWidget *w;
 
     int n = p->plugin->num_params ();
+    GtkEntry *entries[n];
     for (i = 0; i < n; i++) {
         GtkWidget *hbox = gtk_hbox_new (FALSE, 8);
 
@@ -1123,14 +1115,13 @@ on_dsp_preset_plugin_configure_clicked (GtkButton       *button,
         w = gtk_label_new (_(title));
         gtk_widget_show (w);
         gtk_box_pack_start (GTK_BOX (hbox), w, FALSE, FALSE, 0);
-        w = gtk_entry_new ();
+        entries[i] = GTK_ENTRY (gtk_entry_new ());
         char s[100];
         snprintf (s, sizeof (s), "%f", p->plugin->get_param (p, i));
-        gtk_entry_set_text (GTK_ENTRY (w), s);
-        gtk_widget_show (w);
-        gtk_box_pack_start (GTK_BOX (hbox), w, TRUE, TRUE, 0);
+        gtk_entry_set_text (entries[i], s);
+        gtk_widget_show (GTK_WIDGET (entries[i]));
+        gtk_box_pack_start (GTK_BOX (hbox), GTK_WIDGET (entries[i]), TRUE, TRUE, 0);
     }
-
 
 
     w = gtk_button_new_from_stock ("gtk-cancel");
@@ -1144,6 +1135,12 @@ on_dsp_preset_plugin_configure_clicked (GtkButton       *button,
     GTK_WIDGET_SET_FLAGS (w, GTK_CAN_DEFAULT);
 
     int r = gtk_dialog_run (GTK_DIALOG (dlg));
+    if (r == GTK_RESPONSE_OK) {
+        for (i = 0; i < n; i++) {
+            const char *s = gtk_entry_get_text (entries[i]);
+            p->plugin->set_param (p, i, atof (s));
+        }
+    }
     gtk_widget_destroy (dlg);
 }
 
