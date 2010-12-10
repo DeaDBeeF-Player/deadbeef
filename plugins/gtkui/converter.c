@@ -558,6 +558,9 @@ on_converter_ok_clicked                (GtkButton       *button,
     combo = GTK_COMBO_BOX (lookup_widget (converter, "dsp_preset"));
     int dsp_idx = gtk_combo_box_get_active (combo);
 
+    combo = GTK_COMBO_BOX (lookup_widget (converter, "output_format"));
+    int selected_format = gtk_combo_box_get_active (combo);
+
     gtk_widget_destroy (converter);
     converter = NULL;
 
@@ -650,6 +653,16 @@ on_converter_ok_clicked                (GtkButton       *button,
                         uint32_t outsr = fileinfo->fmt.samplerate;
                         uint16_t outch = fileinfo->fmt.channels;
                         uint16_t outbps = fileinfo->fmt.bps;
+                        if (selected_format != 0) {
+                            switch (selected_format) {
+                            case 1 ... 4:
+                                outbps = selected_format * 8;
+                                break;
+                            case 5:
+                                outbps = 32;
+                                break;
+                            }
+                        }
 
                         int samplesize = fileinfo->fmt.channels * fileinfo->fmt.bps / 8;
                         int bs = 10250 * samplesize;
@@ -669,7 +682,9 @@ on_converter_ok_clicked                (GtkButton       *button,
                             float ratio = 1;
                             if (dsp_preset) {
                                 ddb_waveformat_t fmt;
+                                ddb_waveformat_t outfmt;
                                 memcpy (&fmt, &fileinfo->fmt, sizeof (fmt));
+                                memcpy (&outfmt, &fileinfo->fmt, sizeof (fmt));
                                 fmt.bps = 32;
                                 fmt.is_float = 1;
                                 deadbeef->pcm_convert (&fileinfo->fmt, buffer, &fmt, dspbuffer, sz);
@@ -681,15 +696,36 @@ on_converter_ok_clicked                (GtkButton       *button,
                                     dsp = dsp->next;
                                 }
 
-                                deadbeef->pcm_convert (&fmt, dspbuffer, &fileinfo->fmt, buffer, frames * sizeof (float) * fmt.channels);
                                 outsr = fmt.samplerate;
                                 outch = fmt.channels;
-                                sz = frames * samplesize;
+
+                                outfmt.bps = outbps;
+                                outfmt.channels = outch;
+                                outfmt.samplerate = outsr;
+
+                                int n = deadbeef->pcm_convert (&fmt, dspbuffer, &outfmt, buffer, frames * sizeof (float) * fmt.channels);
+                                sz = n;//frames * outch * outbps / 8;
+                            }
+                            else if (fileinfo->fmt.bps != outbps, 1) {
+                                ddb_waveformat_t outfmt;
+                                memcpy (&outfmt, &fileinfo->fmt, sizeof (outfmt));
+                                outfmt.bps = outbps;
+                                outfmt.channels = outch;
+                                outfmt.samplerate = outsr;
+
+                                int frames = sz / samplesize;
+                                int n = deadbeef->pcm_convert (&fileinfo->fmt, buffer, &outfmt, dspbuffer, frames * samplesize);
+                                memcpy (buffer, dspbuffer, n);
+                                sz = n;//frames * outch * outbps / 8;
                             }
                             outsize += sz;
 
                             if (!header_written) {
-                                uint32_t size = (it->endsample-it->startsample) * fileinfo->fmt.channels * fileinfo->fmt.bps / 8;
+                                uint32_t size = (it->endsample-it->startsample) * outch * outbps / 8;
+                                if (!size) {
+                                    size = deadbeef->pl_get_item_duration (it) * fileinfo->fmt.samplerate * outch * outbps / 8;
+
+                                }
 
                                 if (outsr != fileinfo->fmt.samplerate) {
                                     uint64_t temp = size;
@@ -700,6 +736,8 @@ on_converter_ok_clicked                (GtkButton       *button,
 
                                 memcpy (&wavehdr[22], &outch, 2);
                                 memcpy (&wavehdr[24], &outsr, 4);
+                                uint16_t blockalign = outch * outbps / 8;
+                                memcpy (&wavehdr[32], &blockalign, 2);
                                 memcpy (&wavehdr[34], &outbps, 2);
 
                                 fwrite (wavehdr, 1, sizeof (wavehdr), temp_file);
