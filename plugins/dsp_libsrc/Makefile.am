@@ -7,7 +7,6 @@ dsp_libsrc_la_LDFLAGS = -module
 
 dsp_libsrc_la_LIBADD = $(LIBADD) $(LIBSAMPLERATE_DEPS_LIBS)
 
-dsp_libsrc_la_CFLAGS = $(CFLAGS) $(LIBSAMPLERATE_DEPS_CFLAGS)
+dsp_libsrc_la_CFLAGS = $(CFLAGS) $(LIBSAMPLERATE_DEPS_CFLAGS) -std=c99
 
-AM_CFLAGS = -std=c99
 endif

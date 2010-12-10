@@ -32,6 +32,7 @@
 #include <stdio.h>
 
 #ifdef __cplusplus
+#define restrict // shut up g++
 extern "C" {
 #endif
 
@@ -279,6 +280,14 @@ typedef struct {
 typedef struct DB_md5_s {
     char data[88];
 } DB_md5_t;
+
+typedef struct {
+    int bps;
+    int is_float; // bps must be 32 if this is true
+    int channels;
+    int samplerate;
+    uint32_t channelmask;
+} ddb_waveformat_t;
 
 // forward decl for plugin struct
 struct DB_plugin_s;
@@ -533,6 +542,9 @@ typedef struct {
     void (*plug_trigger_event_playlistchanged) (void);
     // misc utilities
     int (*is_local_file) (const char *fname); // returns 1 for local filename, 0 otherwise
+
+    // pcm utilities
+    int (*pcm_convert) (const ddb_waveformat_t * restrict inputfmt, const char * restrict input, const ddb_waveformat_t * restrict outputfmt, char * restrict output, int inputsize);
 } DB_functions_t;
 
 enum {
@@ -650,14 +662,6 @@ enum {
     DDB_SPEAKER_TOP_BACK_CENTER = 0x10000,
     DDB_SPEAKER_TOP_BACK_RIGHT = 0x20000
 };
-
-typedef struct {
-    int bps;
-    int is_float; // bps must be 32 if this is true
-    int channels;
-    int samplerate;
-    uint32_t channelmask;
-} ddb_waveformat_t;
 
 typedef struct DB_fileinfo_s {
     struct DB_decoder_s *plugin;

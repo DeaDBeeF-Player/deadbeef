@@ -555,6 +555,8 @@ on_converter_ok_clicked                (GtkButton       *button,
     if (!p) {
         return;
     }
+    combo = GTK_COMBO_BOX (lookup_widget (converter, "dsp_preset"));
+    int dsp_idx = gtk_combo_box_get_active (combo);
 
     gtk_widget_destroy (converter);
     converter = NULL;
@@ -580,7 +582,14 @@ on_converter_ok_clicked                (GtkButton       *button,
             }
             deadbeef->pl_unlock ();
 
-            // ... convert ...
+            ddb_dsp_preset_t *dsp_preset = NULL;
+            if (dsp_idx > 0) {
+                dsp_preset = dsp_presets;
+                while (dsp_preset && dsp_idx--) {
+                    dsp_preset = dsp_preset->next;
+                }
+            }
+
             for (n = 0; n < nsel; n++) {
                 it = items[n];
                 DB_decoder_t *dec = NULL;
@@ -600,30 +609,116 @@ on_converter_ok_clicked                (GtkButton       *button,
                         char enc[1024];
                         snprintf (enc, sizeof (enc), p->encoder, out);
                         fprintf (stderr, "executing: %s\n", enc);
-                        FILE *fp = popen (enc, "w");
-                        if (!fp) {
-                            fprintf (stderr, "converter: failed to open encoder\n");
+                        FILE *enc_pipe = NULL;
+                        FILE *temp_file = NULL;
+
+                        if (p->method == DDB_ENCODER_METHOD_FILE) {
+                            const char *temp_file_name = "/tmp/deadbeef-converter.wav"; // FIXME
+                            temp_file = fopen (temp_file_name, "w+b");
+                            if (!temp_file) {
+                                fprintf (stderr, "converter: failed to open temp file %s\n", temp_file_name);
+                                if (fileinfo) {
+                                    dec->free (fileinfo);
+                                }
+                                continue;
+                            }
                         }
                         else {
-                            // write wave header
-                            char wavehdr[] = {
-                                0x52, 0x49, 0x46, 0x46, 0x24, 0x70, 0x0d, 0x00, 0x57, 0x41, 0x56, 0x45, 0x66, 0x6d, 0x74, 0x20, 0x10, 0x00, 0x00, 0x00, 0x01, 0x00, 0x02, 0x00, 0x44, 0xac, 0x00, 0x00, 0x10, 0xb1, 0x02, 0x00, 0x04, 0x00, 0x10, 0x00, 0x64, 0x61, 0x74, 0x61
-                            };
-                            fwrite (wavehdr, 1, sizeof (wavehdr), fp);
-                            uint32_t size = (it->endsample-it->startsample) * fileinfo->fmt.channels * fileinfo->fmt.bps / 8;
-                            fwrite (&size, 1, sizeof (size), fp);
-
-                            int bs = 8192;
-                            char buffer[bs];
-                            for (;;) {
-                                int sz = dec->read (fileinfo, buffer, bs);
-                                fwrite (buffer, 1, sz, fp);
-                                if (sz != bs) {
-                                    break;
+                            enc_pipe = popen (enc, "w");
+                            if (!enc_pipe) {
+                                fprintf (stderr, "converter: failed to open encoder\n");
+                                if (temp_file) {
+                                    fclose (temp_file);
                                 }
+                                if (fileinfo) {
+                                    dec->free (fileinfo);
+                                }
+                                continue;
+                            }
+                        }
+
+                        if (!temp_file) {
+                            temp_file = enc_pipe;
+                        }
+
+                        // write wave header
+                        char wavehdr[] = {
+                            0x52, 0x49, 0x46, 0x46, 0x24, 0x70, 0x0d, 0x00, 0x57, 0x41, 0x56, 0x45, 0x66, 0x6d, 0x74, 0x20, 0x10, 0x00, 0x00, 0x00, 0x01, 0x00, 0x02, 0x00, 0x44, 0xac, 0x00, 0x00, 0x10, 0xb1, 0x02, 0x00, 0x04, 0x00, 0x10, 0x00, 0x64, 0x61, 0x74, 0x61
+                        };
+                        int header_written = 0;
+                        uint32_t outsize = 0;
+                        uint32_t outsr = fileinfo->fmt.samplerate;
+                        uint16_t outch = fileinfo->fmt.channels;
+                        uint16_t outbps = fileinfo->fmt.bps;
+
+                        int samplesize = fileinfo->fmt.channels * fileinfo->fmt.bps / 8;
+                        int bs = 10250 * samplesize;
+                        char buffer[bs * 4];
+                        int dspsize = bs / samplesize * sizeof (float) * fileinfo->fmt.channels;
+                        char dspbuffer[dspsize * 4];
+                        int eof = 0;
+                        for (;;) {
+                            if (eof) {
+                                break;
+                            }
+                            int sz = dec->read (fileinfo, buffer, bs);
+
+                            if (sz != bs) {
+                                eof = 1;
+                            }
+                            float ratio = 1;
+                            if (dsp_preset) {
+                                ddb_waveformat_t fmt;
+                                memcpy (&fmt, &fileinfo->fmt, sizeof (fmt));
+                                fmt.bps = 32;
+                                fmt.is_float = 1;
+                                deadbeef->pcm_convert (&fileinfo->fmt, buffer, &fmt, dspbuffer, sz);
+
+                                DB_dsp_instance_t *dsp = dsp_preset->chain;
+                                int frames = sz / samplesize;
+                                while (dsp) {
+                                    frames = dsp->plugin->process (dsp, (float *)dspbuffer, frames, &fmt.samplerate, &fmt.channels);
+                                    dsp = dsp->next;
+                                }
+
+                                deadbeef->pcm_convert (&fmt, dspbuffer, &fileinfo->fmt, buffer, frames * sizeof (float) * fmt.channels);
+                                outsr = fmt.samplerate;
+                                outch = fmt.channels;
+                                sz = frames * samplesize;
+                            }
+                            outsize += sz;
+
+                            if (!header_written) {
+                                uint32_t size = (it->endsample-it->startsample) * fileinfo->fmt.channels * fileinfo->fmt.bps / 8;
+
+                                if (outsr != fileinfo->fmt.samplerate) {
+                                    uint64_t temp = size;
+                                    temp *= outsr;
+                                    temp /= fileinfo->fmt.samplerate;
+                                    size  = temp;
+                                }
+
+                                memcpy (&wavehdr[22], &outch, 2);
+                                memcpy (&wavehdr[24], &outsr, 4);
+                                memcpy (&wavehdr[34], &outbps, 2);
+
+                                fwrite (wavehdr, 1, sizeof (wavehdr), temp_file);
+                                fwrite (&size, 1, sizeof (size), temp_file);
+                                header_written = 1;
                             }
 
-                            pclose (fp);
+                            fwrite (buffer, 1, sz, temp_file);
+                        }
+                        if (temp_file && temp_file != enc_pipe) {
+                            fclose (temp_file);
+                        }
+
+                        if (p->method == DDB_ENCODER_METHOD_FILE) {
+                            enc_pipe = popen (enc, "w");
+                        }
+
+                        if (enc_pipe) {
+                            pclose (enc_pipe);
                         }
                         dec->free (fileinfo);
                     }
