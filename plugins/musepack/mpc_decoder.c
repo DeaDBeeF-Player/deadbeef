@@ -650,11 +650,11 @@ void mpc_decoder_read_bitstream_sv8(mpc_decoder * d, mpc_bits_reader * r, mpc_bo
 					for ( ; k < 36; k += 2 ) {
 						union {
 							mpc_int8_t sym;
-							struct { mpc_int8_t s1:4, s2:4; };
+							struct { mpc_int8_t s1:4, s2:4; } symf;
 						} tmp;
 						tmp.sym = mpc_bits_can_dec(r, Table);
-						q[k] = tmp.s1;
-						q[k + 1] = tmp.s2;
+						q[k] = tmp.symf.s1;
+						q[k + 1] = tmp.symf.s2;
 					}
 				} else if (Res <= 8) {
 					Tables[0] = & mpc_can_Q [Res - 3][0];

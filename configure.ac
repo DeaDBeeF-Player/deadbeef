@@ -36,6 +36,10 @@ case "$host" in
     AC_DEFINE(ARCH_X86_32, 1, [architecture is x86])
     LIB="lib-x86-32"
     ;;
+  x86_64-apple-*)
+    AC_DEFINE(ARCH_X86_64_OSX, 1, [architecture is x86_64 for OSX])
+    LIB="lib-x86-64-osx"
+    ;;
   x86_64-*-* | amd64-*-*)
     AC_DEFINE(ARCH_X86_64, 1, [architecture is x86_64])
     LIB="lib-x86-64"
@@ -113,7 +117,7 @@ if test "x$enable_portable" != "xno" && test "x$enable_staticlink" != "xno" ; th
         PORTABLE_FULL=yes
     fi
 
-    PREFIXFLAGS="-DPREFIX=donotuse -DLIBDIR=donotuse -DDOCDIR=donotuse -I./include -I../../include"
+    PREFIXFLAGS="-DPREFIX=donotuse -DLIBDIR=donotuse -DDOCDIR=donotuse -I./$LIB/include -I../../$LIB/include"
 else
     PREFIXFLAGS=" -DLIBDIR=\\\"$libdir\\\" -DPREFIX=\\\"$prefix\\\" -DDOCDIR=\\\"$docdir\\\""
 fi
@@ -162,7 +166,7 @@ AC_CHECK_HEADER([iconv.h],[],[iconv.h not found.])
 
 AC_CHECK_LIB([iconv], [main], [have_iconv=yes], [have_iconv=no])
 if test "x${have_iconv}" = "xyes" ; then
-ICONV_LIB="-liconv"
+    ICONV_LIB="-liconv"
     AC_SUBST(ICONV_LIB)
     AC_DEFINE(HAVE_LIBICONV,1,[Use libiconv instead of glibc iconv])
 fi
@@ -186,7 +190,7 @@ fi
 if test "x$enable_staticlink" != "xno" ; then
     HAVE_DBUS=yes
     DBUS_DEPS_LIBS="../../$LIB/libdbus-1.a ../../$LIB/libexpat.a -lrt"
-    DBUS_DEPS_CFLAGS="-I../../include/dbus-1"
+    DBUS_DEPS_CFLAGS="-I../../$LIB/include/dbus-1"
     AC_SUBST(DBUS_DEPS_LIBS)
 else
     PKG_CHECK_MODULES(DBUS_DEPS, dbus-1, HAVE_DBUS=yes, HAVE_DBUS=no)
@@ -414,7 +418,7 @@ fi
 
 if test "x$enable_src" != "xno" ; then
 if test "x$enable_staticlink" != "xno" ; then
-    LIBSAMPLERATE_DEPS_LIBS="$LIB/libsamplerate.a -lpthread -ldl"
+    LIBSAMPLERATE_DEPS_LIBS="../../$LIB/libsamplerate.a -lpthread -ldl"
     AC_SUBST(LIBSAMPLERATE_DEPS_LIBS)
     HAVE_DSP_SRC=yes
 else
