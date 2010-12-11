@@ -45,8 +45,8 @@ typedef struct {
     SRC_DATA srcdata;
     int remaining; // number of input samples in SRC buffer
     __attribute__((__aligned__(16))) char in_fbuffer[sizeof(float)*SRC_BUFFER*SRC_MAX_CHANNELS];
-    uintptr_t mutex;
     unsigned quality_changed : 1;
+    unsigned need_reset : 1;
 } ddb_src_libsamplerate_t;
 
 DB_dsp_instance_t*
@@ -54,7 +54,6 @@ ddb_src_open (void) {
     ddb_src_libsamplerate_t *src = malloc (sizeof (ddb_src_libsamplerate_t));
     DDB_INIT_DSP_INSTANCE (src,ddb_src_libsamplerate_t,&plugin);
 
-    src->mutex = deadbeef->mutex_create ();
     src->samplerate = 44100;
     src->quality = 2;
     src->channels = -1;
@@ -64,10 +63,6 @@ ddb_src_open (void) {
 void
 ddb_src_close (DB_dsp_instance_t *_src) {
     ddb_src_libsamplerate_t *src = (ddb_src_libsamplerate_t*)_src;
-    if (src->mutex) {
-        deadbeef->mutex_free (src->mutex);
-        src->mutex = 0;
-    }
     if (src->src) {
         src_delete (src->src);
         src->src = NULL;
@@ -76,25 +71,11 @@ ddb_src_close (DB_dsp_instance_t *_src) {
 }
 
 void
-ddb_src_lock (DB_dsp_instance_t *_src) {
-    ddb_src_libsamplerate_t *src = (ddb_src_libsamplerate_t*)_src;
-    deadbeef->mutex_lock (src->mutex);
-}
-
-void
-ddb_src_unlock (DB_dsp_instance_t *_src) {
-    ddb_src_libsamplerate_t *src = (ddb_src_libsamplerate_t*)_src;
-    deadbeef->mutex_unlock (src->mutex);
-}
-
-void
 ddb_src_reset (DB_dsp_instance_t *_src) {
     ddb_src_libsamplerate_t *src = (ddb_src_libsamplerate_t*)_src;
-    ddb_src_lock (_src);
-    src->remaining = 0;
-    src_reset (src->src);
-    ddb_src_unlock (_src);
+    src->need_reset = 1;
 }
+
 
 void
 ddb_src_set_ratio (DB_dsp_instance_t *_src, float ratio) {
@@ -113,13 +94,7 @@ ddb_src_process (DB_dsp_instance_t *_src, float *samples, int nframes, int *samp
         return nframes;
     }
 
-    ddb_src_lock (_src);
-
-    float ratio = src->samplerate / *samplerate;
-    ddb_src_set_ratio (_src, ratio);
-    *samplerate = src->samplerate;
-
-    if (src->channels != *nchannels || src->quality_changed || !src->src) {
+    if (src->need_reset || src->channels != *nchannels || src->quality_changed || !src->src) {
         src->quality_changed = 0;
         src->remaining = 0;
         if (src->src) {
@@ -128,12 +103,16 @@ ddb_src_process (DB_dsp_instance_t *_src, float *samples, int nframes, int *samp
         }
         src->channels = *nchannels;
         src->src = src_new (src->quality, src->channels, NULL);
+        src->need_reset = 0;
     }
 
-
+    float ratio = src->samplerate / *samplerate;
+    ddb_src_set_ratio (_src, ratio);
+    *samplerate = src->samplerate;
 
     int numoutframes = nframes * src->srcdata.src_ratio;
     float outbuf[numoutframes*(*nchannels)];
+    memset (outbuf, 0, sizeof (outbuf));
     int buffersize = sizeof (outbuf);
     char *output = (char *)outbuf;
     float *input = samples;
@@ -198,7 +177,6 @@ ddb_src_process (DB_dsp_instance_t *_src, float *samples, int nframes, int *samp
     //}
     //fwrite (input, 1,  numoutframes*sizeof(float)*(*nchannels), out);
 
-    ddb_src_unlock (_src);
     return numoutframes;
 }
 
