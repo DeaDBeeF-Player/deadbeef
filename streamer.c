@@ -739,9 +739,6 @@ streamer_start_new_song (void) {
     int initsng = nextsong;
     int pstate = nextsong_pstate;
     nextsong = -1;
-    if (srcplug) {
-        srcplug->reset (src);
-    }
     streamer_unlock ();
     if (badsong == sng) {
         trace ("looped to bad file. stopping...\n");
@@ -804,7 +801,7 @@ streamer_start_new_song (void) {
         avg_bitrate = -1;
         if (output->state () != OUTPUT_STATE_PLAYING) {
             streamer_reset (1);
-            if (fileinfo) {
+            if (fileinfo && memcmp (&prevformat, &fileinfo->fmt, sizeof (ddb_waveformat_t))) {
                 memcpy (&prevformat, &fileinfo->fmt, sizeof (ddb_waveformat_t));
                 plug_get_output ()->setformat (&fileinfo->fmt);
             }
@@ -819,7 +816,7 @@ streamer_start_new_song (void) {
             last_bitrate = -1;
             avg_bitrate = -1;
             streamer_reset (1);
-            if (fileinfo) {
+            if (fileinfo && memcmp (&prevformat, &fileinfo->fmt, sizeof (ddb_waveformat_t))) {
                 memcpy (&prevformat, &fileinfo->fmt, sizeof (ddb_waveformat_t));
                 plug_get_output ()->setformat (&fileinfo->fmt);
             }
@@ -948,7 +945,7 @@ streamer_thread (void *ctx) {
 
                 // output plugin may stop playback before switching samplerate
                 if (output->state () != OUTPUT_STATE_PLAYING) {
-                    if (fileinfo) {
+                    if (fileinfo && memcmp (&prevformat, &fileinfo->fmt, sizeof (ddb_waveformat_t))) {
                         memcpy (&prevformat, &fileinfo->fmt, sizeof (ddb_waveformat_t));
                         plug_get_output ()->setformat (&fileinfo->fmt);
                     }
