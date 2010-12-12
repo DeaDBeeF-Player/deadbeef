@@ -346,6 +346,7 @@ on_order_linear_activate               (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     deadbeef->conf_set_int ("playback.order", PLAYBACK_ORDER_LINEAR);
+    deadbeef->sendmessage (M_CONFIGCHANGED, 0, 0, 0);
 }
 
 
@@ -354,6 +355,7 @@ on_order_shuffle_activate              (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     deadbeef->conf_set_int ("playback.order", PLAYBACK_ORDER_SHUFFLE_TRACKS);
+    deadbeef->sendmessage (M_CONFIGCHANGED, 0, 0, 0);
 }
 
 void
@@ -361,6 +363,7 @@ on_order_shuffle_albums_activate       (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     deadbeef->conf_set_int ("playback.order", PLAYBACK_ORDER_SHUFFLE_ALBUMS);
+    deadbeef->sendmessage (M_CONFIGCHANGED, 0, 0, 0);
 }
 
 void
@@ -368,6 +371,7 @@ on_order_random_activate               (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     deadbeef->conf_set_int ("playback.order", PLAYBACK_ORDER_RANDOM);
+    deadbeef->sendmessage (M_CONFIGCHANGED, 0, 0, 0);
 }
 
 

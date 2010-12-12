@@ -98,9 +98,10 @@ void
 pl_set_order (int order) {
     if (pl_order != order) {
         pl_order = order;
-        pl_reshuffle (NULL, NULL);
+        for (playlist_t *plt = playlists_head; plt; plt = plt->next) {
+            plt_reshuffle (plt, NULL, NULL);
+        }
     }
-
 }
 
 int
