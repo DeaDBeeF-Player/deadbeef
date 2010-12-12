@@ -78,14 +78,14 @@ int
 supereq_process (DB_dsp_instance_t *inst, float *samples, int frames, int *samplerate, int *channels) {
     ddb_supereq_instance_t *supereq = (ddb_supereq_instance_t *)inst;
     if (supereq->params_changed) {
-        recalc_table (inst);
+        recalc_table (supereq);
         supereq->params_changed = 0;
     }
 	if (supereq->last_srate != *samplerate) {
         deadbeef->mutex_lock (supereq->mutex);
 		supereq->last_srate = *samplerate;
 		supereq->last_nch = *channels;
-        recalc_table ((ddb_supereq_instance_t *)inst);
+        recalc_table (supereq);
         deadbeef->mutex_unlock (supereq->mutex);
 		equ_clearbuf(&supereq->state);
     }
