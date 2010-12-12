@@ -182,8 +182,9 @@ enum output_state_t {
 // playback order
 enum playback_order_t {
     PLAYBACK_ORDER_LINEAR = 0,
-    PLAYBACK_ORDER_SHUFFLE = 1,
+    PLAYBACK_ORDER_SHUFFLE_TRACKS = 1,
     PLAYBACK_ORDER_RANDOM = 2,
+    PLAYBACK_ORDER_SHUFFLE_ALBUMS = 3,
 };
 
 // playback modes

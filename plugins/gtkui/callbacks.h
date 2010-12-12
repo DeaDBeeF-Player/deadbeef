@@ -1089,3 +1089,11 @@ on_dsp_preset_plugin_down_clicked      (GtkButton       *button,
 void
 on_converter_output_format_changed     (GtkComboBox     *combobox,
                                         gpointer         user_data);
+
+void
+on_shuffle_albums1_activate            (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_order_shuffle_albums_activate       (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);

@@ -92,6 +92,23 @@ static uintptr_t mutex_plt;
 
 static playlist_t dummy_playlist; // used at startup to prevent crashes
 
+static int pl_order; // mirrors "playback.order" config variable
+
+void
+pl_set_order (int order) {
+    printf ("pl_set_order %d\n", order);
+    if (pl_order != order) {
+        pl_order = order;
+        pl_reshuffle (NULL, NULL);
+    }
+
+}
+
+int
+pl_get_order (void) {
+    return pl_order;
+}
+
 int
 pl_init (void) {
     playlist = &dummy_playlist;
@@ -1631,7 +1648,13 @@ plt_insert_item (playlist_t *playlist, playItem_t *after, playItem_t *it) {
     playlist->count[PL_MAIN]++;
 
     // shuffle
-    it->shufflerating = rand ();
+    playItem_t *prev = it->prev[PL_MAIN];
+    if (pl_order == PLAYBACK_ORDER_SHUFFLE_ALBUMS && prev && pl_find_meta (prev, "album") == pl_find_meta (it, "album")) {
+        it->shufflerating = prev->shufflerating;
+    }
+    else {
+        it->shufflerating = rand ();
+    }
     it->played = 0;
 
     // totaltime
@@ -2393,11 +2416,18 @@ pl_select_all (void) {
 
 void
 plt_reshuffle (playlist_t *playlist, playItem_t **ppmin, playItem_t **ppmax) {
+    printf ("pl_order: %d\n", pl_order);
     GLOBAL_LOCK;
     playItem_t *pmin = NULL;
     playItem_t *pmax = NULL;
+    playItem_t *prev = NULL;
     for (playItem_t *it = playlist->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
-        it->shufflerating = rand ();
+        if (pl_order == PLAYBACK_ORDER_SHUFFLE_ALBUMS && prev && pl_find_meta (prev, "album") == pl_find_meta (it, "album")) {
+            it->shufflerating = prev->shufflerating;
+        }
+        else {
+            it->shufflerating = rand ();
+        }
         if (!pmin || it->shufflerating < pmin->shufflerating) {
             pmin = it;
         }
@@ -2405,6 +2435,7 @@ plt_reshuffle (playlist_t *playlist, playItem_t **ppmin, playItem_t **ppmax) {
             pmax = it;
         }
         it->played = 0;
+        prev = it;
     }
     if (ppmin) {
         *ppmin = pmin;

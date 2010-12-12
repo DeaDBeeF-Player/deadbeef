@@ -345,7 +345,7 @@ void
 on_order_linear_activate               (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    deadbeef->conf_set_int ("playback.order", 0);
+    deadbeef->conf_set_int ("playback.order", PLAYBACK_ORDER_LINEAR);
 }
 
 
@@ -353,15 +353,21 @@ void
 on_order_shuffle_activate              (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    deadbeef->conf_set_int ("playback.order", 1);
+    deadbeef->conf_set_int ("playback.order", PLAYBACK_ORDER_SHUFFLE_TRACKS);
 }
 
+void
+on_order_shuffle_albums_activate       (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_int ("playback.order", PLAYBACK_ORDER_SHUFFLE_ALBUMS);
+}
 
 void
 on_order_random_activate               (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    deadbeef->conf_set_int ("playback.order", 2);
+    deadbeef->conf_set_int ("playback.order", PLAYBACK_ORDER_RANDOM);
 }
 
 
@@ -1180,4 +1186,3 @@ encoder_cmdline_help_link_create (gchar *widget_name, gchar *string1, gchar *str
     GtkWidget *link = gtk_link_button_new_with_label ("http://sourceforge.net/apps/mediawiki/deadbeef/index.php?title=Encoder_Command_Line", "Help");
     return link;
 }
-

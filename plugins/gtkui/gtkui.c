@@ -621,7 +621,7 @@ gtkui_on_configchanged (DB_event_t *ev, uintptr_t data) {
     const char *w;
 
     // order
-    const char *orderwidgets[3] = { "order_linear", "order_shuffle", "order_random" };
+    const char *orderwidgets[4] = { "order_linear", "order_shuffle", "order_random", "order_shuffle_albums" };
     w = orderwidgets[deadbeef->conf_get_int ("playback.order", PLAYBACK_ORDER_LINEAR)];
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, w)), TRUE);
 

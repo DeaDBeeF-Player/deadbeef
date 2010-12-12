@@ -349,4 +349,10 @@ pl_items_copy_junk (struct playItem_s *from, struct playItem_s *first, struct pl
 struct DB_metaInfo_s *
 pl_get_metadata (playItem_t *it);
 
+void
+pl_set_order (int order);
+
+int
+pl_get_order (void);
+
 #endif // __PLAYLIST_H

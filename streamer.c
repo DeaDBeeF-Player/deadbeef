@@ -268,7 +268,8 @@ streamer_move_to_nextsong (int reason) {
         pl_global_unlock ();
         return 0;
     }
-    int pl_order = conf_get_int ("playback.order", 0);
+    int pl_order = pl_get_order ();
+
     int pl_loop_mode = conf_get_int ("playback.loop", 0);
 
     if (reason == 0 && pl_loop_mode == PLAYBACK_MODE_LOOP_SINGLE) { // song finished, loop mode is "loop 1 track"
@@ -283,7 +284,7 @@ streamer_move_to_nextsong (int reason) {
         return 0;
     }
 
-    if (pl_order == PLAYBACK_ORDER_SHUFFLE) { // shuffle
+    if (pl_order == PLAYBACK_ORDER_SHUFFLE_TRACKS || pl_order == PLAYBACK_ORDER_SHUFFLE_ALBUMS) { // shuffle
         if (!curr) {
             // find minimal notplayed
             playItem_t *pmin = NULL; // notplayed minimum
@@ -404,7 +405,7 @@ streamer_move_to_prevsong (void) {
     }
     int pl_order = conf_get_int ("playback.order", 0);
     int pl_loop_mode = conf_get_int ("playback.loop", 0);
-    if (pl_order == PLAYBACK_ORDER_SHUFFLE) { // shuffle
+    if (pl_order == PLAYBACK_ORDER_SHUFFLE_TRACKS || pl_order == PLAYBACK_ORDER_SHUFFLE_ALBUMS) { // shuffle
         if (!playlist_track) {
             plt_unlock ();
             return streamer_move_to_nextsong (1);
@@ -426,6 +427,13 @@ streamer_move_to_prevsong (void) {
                     pmax = i;
                 }
             }
+
+            if (pmax && pl_order == PLAYBACK_ORDER_SHUFFLE_ALBUMS) {
+                while (pmax && pmax->next[PL_MAIN] && pmax->next[PL_MAIN]->played && pmax->shufflerating == pmax->next[PL_MAIN]->shufflerating) {
+                    pmax = pmax->next[PL_MAIN];
+                }
+            }
+
             playItem_t *it = pmax;
             if (!it) {
                 // that means 1st in playlist, take amax
@@ -1128,6 +1136,8 @@ streamer_init (void) {
     mutex = mutex_create ();
     decodemutex = mutex_create ();
 
+    pl_set_order (conf_get_int ("playback.order", 0));
+
     // find src plugin, and use it if found
     srcplug = (DB_dsp_t*)plug_get_for_id ("SRC");
     if (srcplug) {
@@ -1524,6 +1534,7 @@ void
 streamer_configchanged (void) {
     conf_replaygain_mode = conf_get_int ("replaygain_mode", 0);
     conf_replaygain_scale = conf_get_int ("replaygain_scale", 1);
+    pl_set_order (conf_get_int ("playback.order", 0));
 
     if (srcplug) {
         srcplug->set_param (src, SRC_PARAM_QUALITY, conf_get_int ("src_quality", 2));
