@@ -268,7 +268,7 @@ cgme_insert (DB_playItem_t *after, const char *fname) {
                 char trk[10];
                 snprintf (trk, 10, "%d", i+1);
                 deadbeef->pl_add_meta (it, "track", trk);
-                if (inf->length == -1) {
+                if (inf->length == -1 || inf->length == 0) {
                     float songlength = deadbeef->conf_get_float ("gme.songlength", 3);
                     deadbeef->pl_set_item_duration (it, songlength * 60.f);
                 }
