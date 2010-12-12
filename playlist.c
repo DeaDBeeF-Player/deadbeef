@@ -96,7 +96,6 @@ static int pl_order; // mirrors "playback.order" config variable
 
 void
 pl_set_order (int order) {
-    printf ("pl_set_order %d\n", order);
     if (pl_order != order) {
         pl_order = order;
         pl_reshuffle (NULL, NULL);
@@ -2416,7 +2415,6 @@ pl_select_all (void) {
 
 void
 plt_reshuffle (playlist_t *playlist, playItem_t **ppmin, playItem_t **ppmax) {
-    printf ("pl_order: %d\n", pl_order);
     GLOBAL_LOCK;
     playItem_t *pmin = NULL;
     playItem_t *pmax = NULL;
