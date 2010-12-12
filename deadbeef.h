@@ -749,6 +749,9 @@ typedef struct DB_output_s {
 
     // parameters of current output
     ddb_waveformat_t fmt;
+
+    // set to 1 if volume control is done internally by plugin
+    int has_volume;
 } DB_output_t;
 
 // dsp plugin

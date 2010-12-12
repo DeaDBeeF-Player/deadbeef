@@ -1511,6 +1511,54 @@ streamer_read (char *bytes, int size) {
     int ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
     printf ("streamer_read took %d ms\n", ms);
 #endif
+
+    if (!output->has_volume) {
+        char *stream = bytes;
+        int bytesread = sz;
+        if (output->fmt.bps == 16) {
+            int16_t ivolume = volume_get_amp () * 1000;
+            for (int i = 0; i < bytesread/2; i++) {
+                int16_t sample = *((int16_t*)stream);
+                *((int16_t*)stream) = (int16_t)(((int32_t)sample) * ivolume / 1000);
+                stream += 2;
+            }
+        }
+        else if (output->fmt.bps == 8) {
+            int16_t ivolume = volume_get_amp () * 255;
+            for (int i = 0; i < bytesread; i++) {
+                *stream = (int8_t)(((int32_t)(*stream)) * ivolume / 1000);
+                stream++;
+            }
+        }
+        else if (output->fmt.bps == 24) {
+            int16_t ivolume = volume_get_amp () * 1000;
+            for (int i = 0; i < bytesread/3; i++) {
+                int32_t sample = ((unsigned char)stream[0]) | ((unsigned char)stream[1]<<8) | (stream[2]<<16);
+                int32_t newsample = (int64_t)sample * ivolume / 1000;
+                stream[0] = (newsample&0x0000ff);
+                stream[1] = (newsample&0x00ff00)>>8;
+                stream[2] = (newsample&0xff0000)>>16;
+                stream += 3;
+            }
+        }
+        else if (output->fmt.bps == 32 && !output->fmt.is_float) {
+            int16_t ivolume = volume_get_amp () * 1000;
+            for (int i = 0; i < bytesread/4; i++) {
+                int32_t sample = *((int32_t*)stream);
+                int32_t newsample = (int64_t)sample * ivolume / 1000;
+                *((int32_t*)stream) = newsample;
+                stream += 4;
+            }
+        }
+        else if (output->fmt.bps == 32 && output->fmt.is_float) {
+            float fvolume = volume_get_amp ();
+            for (int i = 0; i < bytesread/4; i++) {
+                *((float*)stream) = (*((float*)stream)) * fvolume;
+                stream += 4;
+            }
+        }
+    }
+
     return sz;
 }
 

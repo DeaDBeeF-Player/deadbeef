@@ -278,13 +278,7 @@ oss_thread (void *context) {
 
 static int
 oss_callback (char *stream, int len) {
-    int bytesread = deadbeef->streamer_read (stream, len);
-    int16_t ivolume = deadbeef->volume_get_amp () * 1000;
-    for (int i = 0; i < bytesread/2; i++) {
-        ((int16_t*)stream)[i] = (int16_t)(((int32_t)(((int16_t*)stream)[i])) * ivolume / 1000);
-    }
-
-    return bytesread;
+    return deadbeef->streamer_read (stream, len);
 }
 
 static int
