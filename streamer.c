@@ -1143,7 +1143,7 @@ streamer_init (void) {
         eq = eqplug->open ();
 
         // load settings
-        eqplug->enable (eq, deadbeef->conf_get_int ("supereq.enable", 0));
+        eqplug->enable (eq, deadbeef->conf_get_int ("eq.enable", 0));
         eqplug->set_param (eq, 0, conf_get_float ("eq.preamp", 1));
         for (int i = 0; i < 18; i++) {
             char key[100];
