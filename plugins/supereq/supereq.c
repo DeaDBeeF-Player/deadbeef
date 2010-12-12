@@ -34,7 +34,6 @@ typedef struct {
     float preamp;
     void *paramsroot;
     int params_changed;
-    intptr_t tid;
     uintptr_t mutex;
     SuperEqState state;
 } ddb_supereq_instance_t;
@@ -75,23 +74,15 @@ supereq_plugin_stop (void) {
     return 0;
 }
 
-void
-supereq_regen_table_thread (void *param) {
-    ddb_supereq_instance_t *inst = param;
-    recalc_table (inst);
-    inst->tid = 0;
-}
-
 int
 supereq_process (DB_dsp_instance_t *inst, float *samples, int frames, int *samplerate, int *channels) {
     ddb_supereq_instance_t *supereq = (ddb_supereq_instance_t *)inst;
-    if (supereq->params_changed && !supereq->tid) {
-        supereq->tid = deadbeef->thread_start (supereq_regen_table_thread, inst);
+    if (supereq->params_changed) {
+        recalc_table (inst);
         supereq->params_changed = 0;
     }
 	if (supereq->last_srate != *samplerate) {
         deadbeef->mutex_lock (supereq->mutex);
-        //equ_makeTable (lbands, rbands, paramsroot, srate);
 		supereq->last_srate = *samplerate;
 		supereq->last_nch = *channels;
         recalc_table ((ddb_supereq_instance_t *)inst);
@@ -238,10 +229,6 @@ supereq_open (void) {
 void
 supereq_close (DB_dsp_instance_t *inst) {
     ddb_supereq_instance_t *supereq = (ddb_supereq_instance_t *)inst;
-    if (supereq->tid) {
-        deadbeef->thread_join (supereq->tid);
-        supereq->tid = 0;
-    }
     if (supereq->mutex) {
         deadbeef->mutex_free (supereq->mutex);
         supereq->mutex = 0;
