@@ -850,6 +850,10 @@ streamer_thread (void *ctx) {
         gettimeofday (&tm1, NULL);
         if (nextsong >= 0) { // start streaming next song
             trace ("\033[0;34mnextsong=%d\033[37;0m\n", nextsong);
+            if (playing_track) {
+                trace ("sending songfinished to plugins [3]\n");
+                plug_trigger_event (DB_EV_SONGFINISHED, 0);
+            }
             streamer_start_new_song ();
             // it's totally possible that song was switched
             // while streamer_set_current was running,
