@@ -43,7 +43,6 @@ thread_start (void (*fn)(void *ctx), void *ctx) {
     s = pthread_attr_destroy (&attr);
     if (s != 0) {
         fprintf (stderr, "pthread_attr_destroy failed: %s\n", strerror (s));
-//        pthread_cancel (tid); // missing on android
         return 0;
     }
     return tid;
