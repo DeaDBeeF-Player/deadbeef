@@ -725,9 +725,9 @@ on_converter_ok_clicked                (GtkButton       *button,
                                 outfmt.samplerate = outsr;
 
                                 int n = deadbeef->pcm_convert (&fmt, dspbuffer, &outfmt, buffer, frames * sizeof (float) * fmt.channels);
-                                sz = n;//frames * outch * outbps / 8;
+                                sz = n;
                             }
-                            else if (fileinfo->fmt.bps != outbps, 1) {
+                            else if (fileinfo->fmt.bps != outbps) {
                                 ddb_waveformat_t outfmt;
                                 memcpy (&outfmt, &fileinfo->fmt, sizeof (outfmt));
                                 outfmt.bps = outbps;
@@ -737,7 +737,7 @@ on_converter_ok_clicked                (GtkButton       *button,
                                 int frames = sz / samplesize;
                                 int n = deadbeef->pcm_convert (&fileinfo->fmt, buffer, &outfmt, dspbuffer, frames * samplesize);
                                 memcpy (buffer, dspbuffer, n);
-                                sz = n;//frames * outch * outbps / 8;
+                                sz = n;
                             }
                             outsize += sz;
 
