@@ -3393,7 +3393,7 @@ create_converterdlg (void)
   gtk_widget_show (label116);
   gtk_box_pack_start (GTK_BOX (hbox88), label116, FALSE, FALSE, 0);
 
-  numthreads_adj = gtk_adjustment_new (1, 0, 100, 1, 10, 10);
+  numthreads_adj = gtk_adjustment_new (1, 0, 100, 1, 10, 0);
   numthreads = gtk_spin_button_new (GTK_ADJUSTMENT (numthreads_adj), 1, 0);
   gtk_widget_show (numthreads);
   gtk_box_pack_start (GTK_BOX (hbox88), numthreads, TRUE, TRUE, 0);

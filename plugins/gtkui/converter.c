@@ -1412,6 +1412,10 @@ on_dsp_preset_remove                     (GtkButton       *button,
     int idx = *indices;
     g_free (indices);
 
+    if (idx == 0) {
+        return;
+    }
+
     ddb_dsp_preset_t *p = dsp_presets;
     ddb_dsp_preset_t *prev = NULL;
     while (idx--) {
@@ -1468,6 +1472,9 @@ on_dsp_preset_edit                     (GtkButton       *button,
     int idx = *indices;
     g_free (indices);
     if (idx == -1) {
+        return;
+    }
+    if (idx == 0) {
         return;
     }
 
