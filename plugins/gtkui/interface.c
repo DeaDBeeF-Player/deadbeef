@@ -3451,6 +3451,9 @@ create_converterdlg (void)
   g_signal_connect ((gpointer) edit_channel_maps, "clicked",
                     G_CALLBACK (on_edit_channel_maps_clicked),
                     NULL);
+  g_signal_connect ((gpointer) output_format, "changed",
+                    G_CALLBACK (on_converter_output_format_changed),
+                    NULL);
   g_signal_connect ((gpointer) converter_cancel, "clicked",
                     G_CALLBACK (on_converter_cancel_clicked),
                     NULL);
@@ -3844,8 +3847,12 @@ create_dsppreset_editor (void)
   GtkWidget *add;
   GtkWidget *remove;
   GtkWidget *configure;
+  GtkWidget *hbox98;
   GtkWidget *scrolledwindow7;
   GtkWidget *plugins;
+  GtkWidget *vbox34;
+  GtkWidget *up;
+  GtkWidget *down;
   GtkWidget *dialog_action_area8;
   GtkWidget *cancelbutton6;
   GtkWidget *okbutton6;
@@ -3899,9 +3906,13 @@ create_dsppreset_editor (void)
   gtk_widget_show (configure);
   gtk_box_pack_start (GTK_BOX (hbox82), configure, TRUE, TRUE, 0);
 
+  hbox98 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox98);
+  gtk_box_pack_start (GTK_BOX (vbox29), hbox98, TRUE, TRUE, 0);
+
   scrolledwindow7 = gtk_scrolled_window_new (NULL, NULL);
   gtk_widget_show (scrolledwindow7);
-  gtk_box_pack_start (GTK_BOX (vbox29), scrolledwindow7, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (hbox98), scrolledwindow7, TRUE, TRUE, 0);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow7), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow7), GTK_SHADOW_IN);
 
@@ -3910,6 +3921,18 @@ create_dsppreset_editor (void)
   gtk_container_add (GTK_CONTAINER (scrolledwindow7), plugins);
   gtk_widget_set_size_request (plugins, 196, -1);
   gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (plugins), FALSE);
+
+  vbox34 = gtk_vbox_new (FALSE, 8);
+  gtk_widget_show (vbox34);
+  gtk_box_pack_start (GTK_BOX (hbox98), vbox34, FALSE, FALSE, 0);
+
+  up = gtk_button_new_from_stock ("gtk-go-up");
+  gtk_widget_show (up);
+  gtk_box_pack_start (GTK_BOX (vbox34), up, FALSE, FALSE, 0);
+
+  down = gtk_button_new_from_stock ("gtk-go-down");
+  gtk_widget_show (down);
+  gtk_box_pack_start (GTK_BOX (vbox34), down, FALSE, FALSE, 0);
 
   dialog_action_area8 = GTK_DIALOG (dsppreset_editor)->action_area;
   gtk_widget_show (dialog_action_area8);
@@ -3934,6 +3957,12 @@ create_dsppreset_editor (void)
   g_signal_connect ((gpointer) configure, "clicked",
                     G_CALLBACK (on_dsp_preset_plugin_configure_clicked),
                     NULL);
+  g_signal_connect ((gpointer) up, "clicked",
+                    G_CALLBACK (on_dsp_preset_plugin_up_clicked),
+                    NULL);
+  g_signal_connect ((gpointer) down, "clicked",
+                    G_CALLBACK (on_dsp_preset_plugin_down_clicked),
+                    NULL);
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (dsppreset_editor, dsppreset_editor, "dsppreset_editor");
@@ -3947,8 +3976,12 @@ create_dsppreset_editor (void)
   GLADE_HOOKUP_OBJECT (dsppreset_editor, add, "add");
   GLADE_HOOKUP_OBJECT (dsppreset_editor, remove, "remove");
   GLADE_HOOKUP_OBJECT (dsppreset_editor, configure, "configure");
+  GLADE_HOOKUP_OBJECT (dsppreset_editor, hbox98, "hbox98");
   GLADE_HOOKUP_OBJECT (dsppreset_editor, scrolledwindow7, "scrolledwindow7");
   GLADE_HOOKUP_OBJECT (dsppreset_editor, plugins, "plugins");
+  GLADE_HOOKUP_OBJECT (dsppreset_editor, vbox34, "vbox34");
+  GLADE_HOOKUP_OBJECT (dsppreset_editor, up, "up");
+  GLADE_HOOKUP_OBJECT (dsppreset_editor, down, "down");
   GLADE_HOOKUP_OBJECT_NO_REF (dsppreset_editor, dialog_action_area8, "dialog_action_area8");
   GLADE_HOOKUP_OBJECT (dsppreset_editor, cancelbutton6, "cancelbutton6");
   GLADE_HOOKUP_OBJECT (dsppreset_editor, okbutton6, "okbutton6");

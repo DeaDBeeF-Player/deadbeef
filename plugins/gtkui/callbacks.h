@@ -1077,3 +1077,15 @@ on_converter_dsp_preset_changed        (GtkComboBox     *combobox,
 void
 on_dsp_preset_plugin_configure_clicked (GtkButton       *button,
                                         gpointer         user_data);
+
+void
+on_dsp_preset_plugin_up_clicked        (GtkButton       *button,
+                                        gpointer         user_data);
+
+void
+on_dsp_preset_plugin_down_clicked      (GtkButton       *button,
+                                        gpointer         user_data);
+
+void
+on_converter_output_format_changed     (GtkComboBox     *combobox,
+                                        gpointer         user_data);

@@ -70,28 +70,40 @@ ddb_encoder_preset_load (const char *fname) {
     ddb_encoder_preset_t *p = ddb_encoder_preset_alloc ();
 
     char str[1024];
+    char item[20];
 
-    if (1 != fscanf (fp, "title %1024[^\n]\n", str)) {
-        goto error;
-    }
-    p->title = strdup (str);
+    while (fgets (str, sizeof (str), fp)) {
+        // chomp
+        char *cr = str + strlen (str) - 1;
+        while (*cr == '\n') {
+            cr--;
+        }
+        cr++;
+        *cr = 0;
 
-    if (1 != fscanf (fp, "fname %1024[^\n]\n", str)) {
-        goto error;
-    }
-    p->fname = strdup (str);
+        char *sp = strchr (str, ' ');
+        if (!sp) {
+            continue;
+        }
 
-    if (1 != fscanf (fp, "encoder %1024[^\n]\n", str)) {
-        goto error;
-    }
-    p->encoder = strdup (str);
+        *sp = 0;
+        char *item = sp + 1;
 
-    if (1 != fscanf (fp, "method %d\n", &p->method)) {
-        goto error;
-    }
-
-    if (1 != fscanf (fp, "formats %X\n", &p->formats)) {
-        goto error;
+        if (!strcmp (str, "title")) {
+            p->title = strdup (item);
+        }
+        else if (!strcmp (str, "fname")) {
+            p->fname = strdup (item);
+        }
+        else if (!strcmp (str, "encoder")) {
+            p->encoder = strdup (item);
+        }
+        else if (!strcmp (str, "method")) {
+            p->method = atoi (item);
+        }
+        else if (!strcmp (str, "formats")) {
+            sscanf (item, "%X", &p->formats);
+        }
     }
 
     err = 0;
@@ -415,12 +427,6 @@ load_dsp_presets (void) {
         free (namelist[i]);
     }
     free (namelist);
-
-    // prepend empty preset
-    ddb_dsp_preset_t *p = ddb_dsp_preset_alloc ();
-    p->title = strdup ("Pass through");
-    p->next = dsp_presets;
-    dsp_presets = p;
     return 0;
 }
 
@@ -447,8 +453,12 @@ converter_show (void) {
         // fill dsp presets
         combo = GTK_COMBO_BOX (lookup_widget (converter, "dsp_preset"));
         mdl = GTK_LIST_STORE (gtk_combo_box_get_model (combo));
+        GtkTreeIter iter;
+        gtk_list_store_append (mdl, &iter);
+        gtk_list_store_set (mdl, &iter, 0, "Pass through", -1);
         fill_presets (mdl, (ddb_preset_t *)dsp_presets);
-        gtk_combo_box_set_active (combo, deadbeef->conf_get_int ("converter.dsp_preset", 0));
+
+        gtk_combo_box_set_active (combo, deadbeef->conf_get_int ("converter.dsp_preset", -1) + 1);
         
         // fill channel maps
         combo = GTK_COMBO_BOX (lookup_widget (converter, "channelmap"));
@@ -477,7 +487,7 @@ on_converter_dsp_preset_changed        (GtkComboBox     *combobox,
 {
     GtkComboBox *combo = GTK_COMBO_BOX (lookup_widget (converter, "dsp_preset"));
     int act = gtk_combo_box_get_active (combo);
-    deadbeef->conf_set_int ("converter.dsp_preset", act);
+    deadbeef->conf_set_int ("converter.dsp_preset", act-1);
 }
 
 void
@@ -556,7 +566,7 @@ on_converter_ok_clicked                (GtkButton       *button,
         return;
     }
     combo = GTK_COMBO_BOX (lookup_widget (converter, "dsp_preset"));
-    int dsp_idx = gtk_combo_box_get_active (combo);
+    int dsp_idx = gtk_combo_box_get_active (combo) - 1;
 
     combo = GTK_COMBO_BOX (lookup_widget (converter, "output_format"));
     int selected_format = gtk_combo_box_get_active (combo);
@@ -586,7 +596,7 @@ on_converter_ok_clicked                (GtkButton       *button,
             deadbeef->pl_unlock ();
 
             ddb_dsp_preset_t *dsp_preset = NULL;
-            if (dsp_idx > 0) {
+            if (dsp_idx >= 0) {
                 dsp_preset = dsp_presets;
                 while (dsp_preset && dsp_idx--) {
                     dsp_preset = dsp_preset->next;
@@ -615,7 +625,18 @@ on_converter_ok_clicked                (GtkButton       *button,
                         FILE *enc_pipe = NULL;
                         FILE *temp_file = NULL;
 
-                        if (p->method == DDB_ENCODER_METHOD_FILE) {
+                        if (!p->encoder[0]) {
+                            // write to wave file
+                            temp_file = fopen (out, "w+b");
+                            if (!temp_file) {
+                                fprintf (stderr, "converter: failed to open output wave file %s\n", out);
+                                if (fileinfo) {
+                                    dec->free (fileinfo);
+                                }
+                                continue;
+                            }
+                        }
+                        else if (p->method == DDB_ENCODER_METHOD_FILE) {
                             const char *temp_file_name = "/tmp/deadbeef-converter.wav"; // FIXME
                             temp_file = fopen (temp_file_name, "w+b");
                             if (!temp_file) {
@@ -751,7 +772,7 @@ on_converter_ok_clicked                (GtkButton       *button,
                             fclose (temp_file);
                         }
 
-                        if (p->method == DDB_ENCODER_METHOD_FILE) {
+                        if (p->encoder[0] && p->method == DDB_ENCODER_METHOD_FILE) {
                             enc_pipe = popen (enc, "w");
                         }
 
@@ -1277,6 +1298,22 @@ on_dsp_preset_plugin_configure_clicked (GtkButton       *button,
     gtk_widget_destroy (dlg);
 }
 
+void
+on_dsp_preset_plugin_up_clicked        (GtkButton       *button,
+                                        gpointer         user_data)
+{
+
+}
+
+
+void
+on_dsp_preset_plugin_down_clicked      (GtkButton       *button,
+                                        gpointer         user_data)
+{
+
+}
+
+
 int
 edit_dsp_preset (const char *title, GtkWidget *toplevel, int overwrite) {
     int r = GTK_RESPONSE_CANCEL;
@@ -1531,12 +1568,23 @@ on_edit_dsp_presets_clicked            (GtkButton       *button,
     GtkListStore *mdl = gtk_list_store_new (1, G_TYPE_STRING);
     gtk_tree_view_set_model (GTK_TREE_VIEW (list), GTK_TREE_MODEL (mdl));
     fill_presets (mdl, (ddb_preset_t *)dsp_presets);
-    int curr = deadbeef->conf_get_int ("converter.dsp_preset", 0);
-    GtkTreePath *path = gtk_tree_path_new_from_indices (curr, -1);
-    gtk_tree_view_set_cursor (GTK_TREE_VIEW (list), path, col, FALSE);
-    gtk_tree_path_free (path);
+    int curr = deadbeef->conf_get_int ("converter.dsp_preset", -1);
+    if (curr >= 0) {
+        GtkTreePath *path = gtk_tree_path_new_from_indices (curr, -1);
+        gtk_tree_view_set_cursor (GTK_TREE_VIEW (list), path, col, FALSE);
+        gtk_tree_path_free (path);
+    }
     gtk_dialog_run (GTK_DIALOG (dlg));
     gtk_widget_destroy (dlg);
+}
+
+
+void
+on_converter_output_format_changed     (GtkComboBox     *combobox,
+                                        gpointer         user_data)
+{
+    int idx = gtk_combo_box_get_active (combobox);
+    deadbeef->conf_set_int ("converter.output_format", idx);
 }
 
 
