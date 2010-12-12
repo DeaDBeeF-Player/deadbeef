@@ -2492,6 +2492,13 @@ junk_id3v2_load_txx (int version_major, playItem_t *it, uint8_t *readptr, int sy
     }
 
     if (val) {
+        // skip utf8 BOM (can be produced by iconv FEFF/FFFE)
+        int l = strlen (val);
+        uint8_t bom[] = { 0xEF, 0xBB, 0xBF };
+        if (l >= 3 && !memcmp (val, bom, 3)) {
+            val += 3;
+        }
+
         if (!strcasecmp (txx, "replaygain_album_gain")) {
             it->replaygain_album_gain = atof (val);
         }
@@ -2514,6 +2521,7 @@ junk_id3v2_load_txx (int version_major, playItem_t *it, uint8_t *readptr, int sy
             pl_replace_meta (it, "year", val);
         }
     }
+
     free (txx);
 
     return 0;
