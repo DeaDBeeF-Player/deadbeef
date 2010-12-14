@@ -50,9 +50,9 @@ FILE *out;
 static intptr_t streamer_tid;
 static DB_dsp_t *srcplug;
 static DB_dsp_t *eqplug;
-static DB_dsp_instance_t *dsp_chain;
-static DB_dsp_instance_t *src;
-static DB_dsp_instance_t *eq;
+static ddb_dsp_context_t *dsp_chain;
+static ddb_dsp_context_t *src;
+static ddb_dsp_context_t *eq;
 
 static int conf_replaygain_mode = 0;
 static int conf_replaygain_scale = 1;
@@ -1226,7 +1226,7 @@ streamer_reset (int full) { // must be called when current song changes by exter
     }
 
     // reset dsp
-    DB_dsp_instance_t *dsp = dsp_chain;
+    ddb_dsp_context_t *dsp = dsp_chain;
     while (dsp) {
         if (dsp->plugin->reset) {
             dsp->plugin->reset (dsp);
@@ -1383,7 +1383,7 @@ streamer_read_async (char *bytes, int size) {
                 }
 
                 int nframes = inputsize / inputsamplesize;
-                DB_dsp_instance_t *dsp = dsp_chain;
+                ddb_dsp_context_t *dsp = dsp_chain;
                 int samplerate = fileinfo->fmt.samplerate;
                 int channels = dspfmt.channels;
                 while (dsp) {
@@ -1652,7 +1652,7 @@ streamer_notify_playlist_deleted (playlist_t *plt) {
     }
 }
 
-DB_dsp_instance_t *
+ddb_dsp_context_t *
 streamer_get_dsp_chain (void) {
     return dsp_chain;
 }

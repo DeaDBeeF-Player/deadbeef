@@ -29,7 +29,7 @@ eq_window_hide (void);
 void
 eq_window_destroy (void);
 
-DB_dsp_instance_t *
+ddb_dsp_context_t *
 get_supereq (void);
 
 void

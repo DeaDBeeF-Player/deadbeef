@@ -108,7 +108,7 @@ str_get_idx_of (playItem_t *it);
 void
 streamer_notify_playlist_deleted (playlist_t *plt);
 
-struct DB_dsp_instance_s *
+struct ddb_dsp_context_s *
 streamer_get_dsp_chain (void);
 
 #endif // __STREAMER_H

@@ -329,7 +329,7 @@ typedef struct {
     int (*streamer_get_apx_bitrate) (void);
     struct DB_fileinfo_s *(*streamer_get_current_fileinfo) (void);
     int (*streamer_get_current_playlist) (void);
-    struct DB_dsp_instance_s * (*streamer_get_dsp_chain) (void);
+    struct ddb_dsp_context_s * (*streamer_get_dsp_chain) (void);
     // system folders
     // normally functions will return standard folders derived from --prefix
     // portable version will return pathes specified in comments below
@@ -755,38 +755,38 @@ typedef struct DB_output_s {
 } DB_output_t;
 
 // dsp plugin
-#define DDB_INIT_DSP_INSTANCE(var,type,plug) {\
+#define DDB_INIT_DSP_CONTEXT(var,type,plug) {\
     memset(var,0,sizeof(type));\
-    var->inst.plugin=plug;\
-    var->inst.enabled=1;\
+    var->ctx.plugin=plug;\
+    var->ctx.enabled=1;\
 }
 
-typedef struct DB_dsp_instance_s {
-    // pointer to DSP plugin which created this instance
+typedef struct ddb_dsp_context_s {
+    // pointer to DSP plugin which created this context
     struct DB_dsp_s *plugin;
 
-    // pointer to the next DSP plugin instance in the chain
-    struct DB_dsp_instance_s *next;
+    // pointer to the next DSP plugin context in the chain
+    struct ddb_dsp_context_s *next;
 
     // read only flag; set by DB_dsp_t::enable
     unsigned enabled : 1;
-} DB_dsp_instance_t;
+} ddb_dsp_context_t;
 
 typedef struct DB_dsp_s {
     DB_plugin_t plugin;
 
-    DB_dsp_instance_t* (*open) (void);
+    ddb_dsp_context_t* (*open) (void);
 
-    void (*close) (DB_dsp_instance_t *inst);
+    void (*close) (ddb_dsp_context_t *ctx);
 
     // samples are interleaved
     // returned value is number of output frames
     // can change samplerate and number of channels
-    int (*process) (DB_dsp_instance_t *inst, float *samples, int frames, int *samplerate, int *channels);
+    int (*process) (ddb_dsp_context_t *ctx, float *samples, int frames, int *samplerate, int *channels);
 
-    void (*reset) (DB_dsp_instance_t *inst);
+    void (*reset) (ddb_dsp_context_t *ctx);
 
-    void (*enable) (DB_dsp_instance_t *inst, int e);
+    void (*enable) (ddb_dsp_context_t *ctx, int e);
 
     // num_params can be NULL, to indicate that plugin doesn't expose any params
     //
@@ -796,8 +796,8 @@ typedef struct DB_dsp_s {
     // param names are for display-only, and are allowed to contain spaces
     int (*num_params) (void);
     const char *(*get_param_name) (int p);
-    void (*set_param) (DB_dsp_instance_t *inst, int p, float val);
-    float (*get_param) (DB_dsp_instance_t *inst, int p);
+    void (*set_param) (ddb_dsp_context_t *ctx, int p, float val);
+    float (*get_param) (ddb_dsp_context_t *ctx, int p);
 } DB_dsp_t;
 
 

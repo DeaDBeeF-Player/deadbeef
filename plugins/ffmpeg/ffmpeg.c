@@ -94,7 +94,7 @@ static DB_playItem_t *current_track;
 static DB_fileinfo_t *current_info;
 
 static DB_fileinfo_t *
-ffmpeg_open (void) {
+ffmpeg_open (uint32_t hints) {
     DB_fileinfo_t *_info = malloc (sizeof (ffmpeg_info_t));
     memset (_info, 0, sizeof (ffmpeg_info_t));
     return _info;

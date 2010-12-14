@@ -39,9 +39,9 @@ amp_to_db (float amp) {
     return 20*log10 (amp);
 }
 
-DB_dsp_instance_t *
+ddb_dsp_context_t *
 get_supereq (void) {
-    DB_dsp_instance_t *dsp = deadbeef->streamer_get_dsp_chain ();
+    ddb_dsp_context_t *dsp = deadbeef->streamer_get_dsp_chain ();
     while (dsp) {
         if (!strcmp (dsp->plugin->plugin.id, "supereq")) {
             return dsp;
@@ -53,7 +53,7 @@ get_supereq (void) {
 }
 
 static void
-set_param (DB_dsp_instance_t *eq, int i, float v) {
+set_param (ddb_dsp_context_t *eq, int i, float v) {
     eq->plugin->set_param (eq, i, v);
     if (i == 0) {
         deadbeef->conf_set_float ("eq.preamp", v);
@@ -68,7 +68,7 @@ set_param (DB_dsp_instance_t *eq, int i, float v) {
 void
 eq_value_changed (DdbEqualizer *widget)
 {
-    DB_dsp_instance_t *eq = get_supereq ();
+    ddb_dsp_context_t *eq = get_supereq ();
     if (eq) {
         for (int i = 0; i < 18; i++) {
             set_param (eq, i+1, db_to_amp (ddb_equalizer_get_band (widget, i)));
@@ -80,7 +80,7 @@ eq_value_changed (DdbEqualizer *widget)
 void
 on_enable_toggled         (GtkToggleButton *togglebutton,
         gpointer         user_data) {
-    DB_dsp_instance_t *eq = get_supereq ();
+    ddb_dsp_context_t *eq = get_supereq ();
     if (eq) {
         int enabled = gtk_toggle_button_get_active (togglebutton) ? 1 : 0;
         eq->plugin->enable (eq, enabled);
@@ -92,7 +92,7 @@ void
 on_zero_all_clicked                  (GtkButton       *button,
         gpointer         user_data) {
     if (eqwin) {
-        DB_dsp_instance_t *eq = get_supereq ();
+        ddb_dsp_context_t *eq = get_supereq ();
         if (eq) {
             ddb_equalizer_set_preamp (DDB_EQUALIZER (eqwin), 0);
             set_param (eq, 0, 1);
@@ -112,7 +112,7 @@ void
 on_zero_preamp_clicked                  (GtkButton       *button,
         gpointer         user_data) {
     if (eqwin) {
-        DB_dsp_instance_t *eq = get_supereq ();
+        ddb_dsp_context_t *eq = get_supereq ();
         if (eq) {
             set_param (eq, 0, 1);
             ddb_equalizer_set_preamp (DDB_EQUALIZER (eqwin), 0);
@@ -125,7 +125,7 @@ void
 on_zero_bands_clicked                  (GtkButton       *button,
         gpointer         user_data) {
     if (eqwin) {
-        DB_dsp_instance_t *eq = get_supereq ();
+        ddb_dsp_context_t *eq = get_supereq ();
         if (eq) {
             for (int i = 0; i < 18; i++) {
                 ddb_equalizer_set_band (DDB_EQUALIZER (eqwin), i, 0);
@@ -159,7 +159,7 @@ on_save_preset_clicked                  (GtkButton       *button,
         if (fname) {
             FILE *fp = fopen (fname, "w+b");
             if (fp) {
-                DB_dsp_instance_t *eq = get_supereq ();
+                ddb_dsp_context_t *eq = get_supereq ();
                 if (eq) {
                     for (int i = 0; i < 18; i++) {
                         fprintf (fp, "%f\n", amp_to_db (eq->plugin->get_param (eq, i+1)));
@@ -217,7 +217,7 @@ on_load_preset_clicked                  (GtkButton       *button,
                 fclose (fp);
                 if (i == 19) {
                     // apply and save config
-                    DB_dsp_instance_t *eq = get_supereq ();
+                    ddb_dsp_context_t *eq = get_supereq ();
                     if (eq) {
                         set_param (eq, 0, db_to_amp (vals[18]));
                         ddb_equalizer_set_preamp (DDB_EQUALIZER (eqwin), vals[18]);
@@ -280,7 +280,7 @@ on_import_fb2k_preset_clicked                  (GtkButton       *button,
                 fclose (fp);
                 if (i == 18) {
                     // apply and save config
-                    DB_dsp_instance_t *eq = get_supereq ();
+                    ddb_dsp_context_t *eq = get_supereq ();
                     if (eq) {
                         set_param (eq, 0, 1);
                         ddb_equalizer_set_preamp (DDB_EQUALIZER (eqwin), 0);
@@ -319,7 +319,7 @@ eq_window_show (void) {
         eqenablebtn = button = gtk_check_button_new_with_label (_("Enable"));
         gtk_widget_show (button);
         gtk_box_pack_start (GTK_BOX (buttons), button, FALSE, FALSE, 0);
-        DB_dsp_instance_t *eq = get_supereq ();
+        ddb_dsp_context_t *eq = get_supereq ();
         gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (eqenablebtn), eq ? eq->enabled : 0);
         g_signal_connect ((gpointer) button, "toggled",
                 G_CALLBACK (on_enable_toggled),

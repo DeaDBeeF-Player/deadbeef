@@ -36,7 +36,7 @@ static DB_functions_t *deadbeef;
 static DB_dsp_t plugin;
 
 typedef struct {
-    DB_dsp_instance_t inst;
+    ddb_dsp_context_t ctx;
 
     int channels;
     int quality;
@@ -49,19 +49,19 @@ typedef struct {
     unsigned need_reset : 1;
 } ddb_src_libsamplerate_t;
 
-DB_dsp_instance_t*
+ddb_dsp_context_t*
 ddb_src_open (void) {
     ddb_src_libsamplerate_t *src = malloc (sizeof (ddb_src_libsamplerate_t));
-    DDB_INIT_DSP_INSTANCE (src,ddb_src_libsamplerate_t,&plugin);
+    DDB_INIT_DSP_CONTEXT (src,ddb_src_libsamplerate_t,&plugin);
 
     src->samplerate = 44100;
     src->quality = 2;
     src->channels = -1;
-    return (DB_dsp_instance_t *)src;
+    return (ddb_dsp_context_t *)src;
 }
 
 void
-ddb_src_close (DB_dsp_instance_t *_src) {
+ddb_src_close (ddb_dsp_context_t *_src) {
     ddb_src_libsamplerate_t *src = (ddb_src_libsamplerate_t*)_src;
     if (src->src) {
         src_delete (src->src);
@@ -71,14 +71,14 @@ ddb_src_close (DB_dsp_instance_t *_src) {
 }
 
 void
-ddb_src_reset (DB_dsp_instance_t *_src) {
+ddb_src_reset (ddb_dsp_context_t *_src) {
     ddb_src_libsamplerate_t *src = (ddb_src_libsamplerate_t*)_src;
     src->need_reset = 1;
 }
 
 
 void
-ddb_src_set_ratio (DB_dsp_instance_t *_src, float ratio) {
+ddb_src_set_ratio (ddb_dsp_context_t *_src, float ratio) {
     ddb_src_libsamplerate_t *src = (ddb_src_libsamplerate_t*)_src;
     if (src->srcdata.src_ratio != ratio) {
         src->srcdata.src_ratio = ratio;
@@ -87,7 +87,7 @@ ddb_src_set_ratio (DB_dsp_instance_t *_src, float ratio) {
 }
 
 int
-ddb_src_process (DB_dsp_instance_t *_src, float *samples, int nframes, int *samplerate, int *nchannels) {
+ddb_src_process (ddb_dsp_context_t *_src, float *samples, int nframes, int *samplerate, int *nchannels) {
     ddb_src_libsamplerate_t *src = (ddb_src_libsamplerate_t*)_src;
 
     if (*samplerate == src->samplerate) {
@@ -197,14 +197,14 @@ ddb_src_get_param_name (int p) {
     }
 }
 void
-ddb_src_set_param (DB_dsp_instance_t *inst, int p, float val) {
+ddb_src_set_param (ddb_dsp_context_t *ctx, int p, float val) {
     switch (p) {
     case SRC_PARAM_SAMPLERATE:
-        ((ddb_src_libsamplerate_t*)inst)->samplerate = val;
+        ((ddb_src_libsamplerate_t*)ctx)->samplerate = val;
         break;
     case SRC_PARAM_QUALITY:
-        ((ddb_src_libsamplerate_t*)inst)->quality = val;
-        ((ddb_src_libsamplerate_t*)inst)->quality_changed = 1;
+        ((ddb_src_libsamplerate_t*)ctx)->quality = val;
+        ((ddb_src_libsamplerate_t*)ctx)->quality_changed = 1;
         break;
     default:
         fprintf (stderr, "ddb_src_set_param: invalid param index (%d)\n", p);
@@ -212,12 +212,12 @@ ddb_src_set_param (DB_dsp_instance_t *inst, int p, float val) {
 }
 
 float
-ddb_src_get_param (DB_dsp_instance_t *inst, int p) {
+ddb_src_get_param (ddb_dsp_context_t *ctx, int p) {
     switch (p) {
     case SRC_PARAM_SAMPLERATE:
-        return ((ddb_src_libsamplerate_t*)inst)->samplerate;
+        return ((ddb_src_libsamplerate_t*)ctx)->samplerate;
     case SRC_PARAM_QUALITY:
-        return ((ddb_src_libsamplerate_t*)inst)->quality;
+        return ((ddb_src_libsamplerate_t*)ctx)->quality;
     default:
         fprintf (stderr, "ddb_src_get_param: invalid param index (%d)\n", p);
     }

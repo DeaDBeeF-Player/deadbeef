@@ -52,7 +52,7 @@ typedef struct ddb_encoder_preset_s {
 typedef struct ddb_dsp_preset_s {
     char *title;
     struct ddb_dsp_preset_s *next;
-    DB_dsp_instance_t *chain;
+    ddb_dsp_context_t *chain;
 } ddb_dsp_preset_t;
 
 typedef struct {

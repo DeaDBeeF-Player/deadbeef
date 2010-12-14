@@ -231,7 +231,7 @@ dsp_preset_free (ddb_dsp_preset_t *p) {
             free (p->title);
         }
         while (p->chain) {
-            DB_dsp_instance_t *next = p->chain->next;
+            ddb_dsp_context_t *next = p->chain->next;
             p->chain->plugin->close (p->chain);
             p->chain = next;
         }
@@ -242,10 +242,10 @@ dsp_preset_free (ddb_dsp_preset_t *p) {
 void
 dsp_preset_copy (ddb_dsp_preset_t *to, ddb_dsp_preset_t *from) {
     to->title = strdup (from->title);
-    DB_dsp_instance_t *tail = NULL;
-    DB_dsp_instance_t *dsp = from->chain;
+    ddb_dsp_context_t *tail = NULL;
+    ddb_dsp_context_t *dsp = from->chain;
     while (dsp) {
-        DB_dsp_instance_t *i = dsp->plugin->open ();
+        ddb_dsp_context_t *i = dsp->plugin->open ();
         if (dsp->plugin->num_params) {
             int n = dsp->plugin->num_params ();
             for (int j = 0; j < n; j++) {
@@ -286,7 +286,7 @@ dsp_preset_load (const char *fname) {
         goto error;
     }
     p->title = strdup (temp);
-    DB_dsp_instance_t *tail = NULL;
+    ddb_dsp_context_t *tail = NULL;
 
     for (;;) {
         // plugin {
@@ -304,18 +304,18 @@ dsp_preset_load (const char *fname) {
             fprintf (stderr, "ddb_dsp_preset_load: plugin %s not found. preset will not be loaded\n", temp);
             goto error;
         }
-        DB_dsp_instance_t *inst = plug->open ();
-        if (!inst) {
-            fprintf (stderr, "ddb_dsp_preset_load: failed to open instance of plugin %s\n", temp);
+        ddb_dsp_context_t *ctx = plug->open ();
+        if (!ctx) {
+            fprintf (stderr, "ddb_dsp_preset_load: failed to open ctxance of plugin %s\n", temp);
             goto error;
         }
 
         if (tail) {
-            tail->next = inst;
-            tail = inst;
+            tail->next = ctx;
+            tail = ctx;
         }
         else {
-            tail = p->chain = inst;
+            tail = p->chain = ctx;
         }
 
         int n = 0;
@@ -333,7 +333,7 @@ dsp_preset_load (const char *fname) {
                 goto error;
             }
             if (plug->num_params) {
-                plug->set_param (inst, n, value);
+                plug->set_param (ctx, n, value);
             }
             n++;
         }
@@ -385,19 +385,19 @@ dsp_preset_save (ddb_dsp_preset_t *p, int overwrite) {
 
     fprintf (fp, "title %s\n", p->title);
 
-    DB_dsp_instance_t *inst = p->chain;
-    while (inst) {
-        fprintf (fp, "%s {\n", inst->plugin->plugin.id);
-        if (inst->plugin->num_params) {
-            int n = inst->plugin->num_params ();
+    ddb_dsp_context_t *ctx = p->chain;
+    while (ctx) {
+        fprintf (fp, "%s {\n", ctx->plugin->plugin.id);
+        if (ctx->plugin->num_params) {
+            int n = ctx->plugin->num_params ();
             int i;
             for (i = 0; i < n; i++) {
-                float v = inst->plugin->get_param (inst, i);
+                float v = ctx->plugin->get_param (ctx, i);
                 fprintf (fp, "\t%f\n", v);
             }
         }
         fprintf (fp, "}\n");
-        inst = inst->next;
+        ctx = ctx->next;
     }
 
     fclose (fp);
@@ -636,7 +636,7 @@ convert (DB_playItem_t *it, const char *outfolder, int selected_format, ddb_enco
                     fmt.is_float = 1;
                     deadbeef->pcm_convert (&fileinfo->fmt, buffer, &fmt, dspbuffer, sz);
 
-                    DB_dsp_instance_t *dsp = dsp_preset->chain;
+                    ddb_dsp_context_t *dsp = dsp_preset->chain;
                     int frames = sz / samplesize;
                     while (dsp) {
                         frames = dsp->plugin->process (dsp, (float *)dspbuffer, frames, &fmt.samplerate, &fmt.channels);
