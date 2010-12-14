@@ -1,0 +1,774 @@
+/*
+    DeaDBeeF - ultimate music player for GNU/Linux systems with X11
+    Copyright (C) 2009-2010 Alexey Yakovenko <waker@users.sourceforge.net>
+
+    This program is free software; you can redistribute it and/or
+    modify it under the terms of the GNU General Public License
+    as published by the Free Software Foundation; either version 2
+    of the License, or (at your option) any later version.
+    
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*/
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <dirent.h>
+#include "converter.h"
+#include <deadbeef.h>
+
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
+
+static ddb_converter_t plugin;
+static DB_functions_t *deadbeef;
+
+static ddb_encoder_preset_t *encoder_presets;
+static ddb_dsp_preset_t *dsp_presets;
+
+ddb_encoder_preset_t *
+encoder_preset_alloc (void) {
+    ddb_encoder_preset_t *p = malloc (sizeof (ddb_encoder_preset_t));
+    if (!p) {
+        fprintf (stderr, "failed to alloc ddb_encoder_preset_t\n");
+        return NULL;
+    }
+    memset (p, 0, sizeof (ddb_encoder_preset_t));
+    return p;
+}
+
+void
+encoder_preset_free (ddb_encoder_preset_t *p) {
+    if (p) {
+        if (p->title) {
+            free (p->title);
+        }
+        if (p->fname) {
+            free (p->fname);
+        }
+        if (p->encoder) {
+            free (p->encoder);
+        }
+        free (p);
+    }
+}
+
+ddb_encoder_preset_t *
+encoder_preset_load (const char *fname) {
+    int err = 1;
+    FILE *fp = fopen (fname, "rt");
+    if (!fp) {
+        return NULL;
+    }
+    ddb_encoder_preset_t *p = encoder_preset_alloc ();
+
+    char str[1024];
+    while (fgets (str, sizeof (str), fp)) {
+        // chomp
+        char *cr = str + strlen (str) - 1;
+        while (*cr == '\n') {
+            cr--;
+        }
+        cr++;
+        *cr = 0;
+
+        char *sp = strchr (str, ' ');
+        if (!sp) {
+            continue;
+        }
+
+        *sp = 0;
+        char *item = sp + 1;
+
+        if (!strcmp (str, "title")) {
+            p->title = strdup (item);
+        }
+        else if (!strcmp (str, "fname")) {
+            p->fname = strdup (item);
+        }
+        else if (!strcmp (str, "encoder")) {
+            p->encoder = strdup (item);
+        }
+        else if (!strcmp (str, "method")) {
+            p->method = atoi (item);
+        }
+        else if (!strcmp (str, "formats")) {
+            sscanf (item, "%X", &p->formats);
+        }
+    }
+
+    err = 0;
+error:
+    if (err) {
+        encoder_preset_free (p);
+        p = NULL;
+    }
+    if (fp) {
+        fclose (fp);
+    }
+    return p;
+}
+
+// @return -1 on path/write error, -2 if file already exists
+int
+encoder_preset_save (ddb_encoder_preset_t *p, int overwrite) {
+    const char *confdir = deadbeef->get_config_dir ();
+    char path[1024];
+    if (snprintf (path, sizeof (path), "%s/presets", confdir) < 0) {
+        return -1;
+    }
+    mkdir (path, 0755);
+    if (snprintf (path, sizeof (path), "%s/presets/encoders", confdir) < 0) {
+        return -1;
+    }
+    mkdir (path, 0755);
+    if (snprintf (path, sizeof (path), "%s/presets/encoders/%s.txt", confdir, p->title) < 0) {
+        return -1;
+    }
+
+    if (!overwrite) {
+        FILE *fp = fopen (path, "rb");
+        if (fp) {
+            fclose (fp);
+            return -2; 
+        }
+    }
+
+    FILE *fp = fopen (path, "w+b");
+    if (!fp) {
+        return -1;
+    }
+
+    fprintf (fp, "title %s\n", p->title);
+    fprintf (fp, "fname %s\n", p->fname);
+    fprintf (fp, "encoder %s\n", p->encoder);
+    fprintf (fp, "method %d\n", p->method);
+    fprintf (fp, "formats %08X\n", p->formats);
+
+    fclose (fp);
+    return 0;
+}
+
+ddb_encoder_preset_t *
+encoder_preset_get_list (void) {
+    return encoder_presets;
+}
+
+ddb_encoder_preset_t *
+encoder_preset_get_for_idx (int idx) {
+    ddb_encoder_preset_t *p = encoder_presets;
+    while (p && idx--) {
+        p = p->next;
+    }
+    return p;
+}
+
+void
+encoder_preset_append (ddb_encoder_preset_t *p) {
+    // append
+    ddb_encoder_preset_t *tail = encoder_presets;
+    while (tail && tail->next) {
+        tail = tail->next;
+    }
+    if (tail) {
+        tail->next = p;
+    }
+    else {
+        encoder_presets = p;
+    }
+}
+
+void
+encoder_preset_remove (ddb_encoder_preset_t *p) {
+    ddb_encoder_preset_t *prev = encoder_presets;
+    while (prev && prev->next != p) {
+        prev = prev->next;
+    }
+    if (prev) {
+        prev->next = p->next;
+    }
+    else {
+        encoder_presets = p->next;
+    }
+}
+
+void
+encoder_preset_replace (ddb_encoder_preset_t *from, ddb_encoder_preset_t *to) {
+    ddb_encoder_preset_t *prev = encoder_presets;
+    while (prev && prev->next != from) {
+        prev = prev->next;
+    }
+    if (prev) {
+        prev->next = to;
+    }
+    else {
+        encoder_presets = to;
+    }
+    to->next = from->next;
+}
+
+ddb_dsp_preset_t *
+dsp_preset_alloc (void) {
+    ddb_dsp_preset_t *p = malloc (sizeof (ddb_dsp_preset_t));
+    if (!p) {
+        fprintf (stderr, "failed to alloc ddb_dsp_preset_t\n");
+        return NULL;
+    }
+    memset (p, 0, sizeof (ddb_dsp_preset_t));
+    return p;
+}
+
+void
+dsp_preset_free (ddb_dsp_preset_t *p) {
+    if (p) {
+        if (p->title) {
+            free (p->title);
+        }
+        while (p->chain) {
+            DB_dsp_instance_t *next = p->chain->next;
+            p->chain->plugin->close (p->chain);
+            p->chain = next;
+        }
+        free (p);
+    }
+}
+
+void
+dsp_preset_copy (ddb_dsp_preset_t *to, ddb_dsp_preset_t *from) {
+    to->title = strdup (from->title);
+    DB_dsp_instance_t *tail = NULL;
+    DB_dsp_instance_t *dsp = from->chain;
+    while (dsp) {
+        DB_dsp_instance_t *i = dsp->plugin->open ();
+        if (dsp->plugin->num_params) {
+            int n = dsp->plugin->num_params ();
+            for (int j = 0; j < n; j++) {
+                i->plugin->set_param (i, j, dsp->plugin->get_param (dsp, j));
+            }
+        }
+        if (tail) {
+            tail->next = i;
+            tail = i;
+        }
+        else {
+            to->chain = tail = i;
+        }
+        dsp = dsp->next;
+    }
+}
+
+ddb_dsp_preset_t *
+dsp_preset_get_list (void) {
+    return dsp_presets;
+}
+
+ddb_dsp_preset_t *
+dsp_preset_load (const char *fname) {
+    int err = 1;
+    FILE *fp = fopen (fname, "rt");
+    if (!fp) {
+        return NULL;
+    }
+    ddb_dsp_preset_t *p = dsp_preset_alloc ();
+    if (!p) {
+        goto error;
+    }
+
+    // title
+    char temp[100];
+    if (1 != fscanf (fp, "title %100[^\n]\n", temp)) {
+        goto error;
+    }
+    p->title = strdup (temp);
+    DB_dsp_instance_t *tail = NULL;
+
+    for (;;) {
+        // plugin {
+        int err = fscanf (fp, "%100s {\n", temp);
+        if (err == EOF) {
+            break;
+        }
+        else if (1 != err) {
+            fprintf (stderr, "error plugin name\n");
+            goto error;
+        }
+
+        DB_dsp_t *plug = (DB_dsp_t *)deadbeef->plug_get_for_id (temp);
+        if (!plug) {
+            fprintf (stderr, "ddb_dsp_preset_load: plugin %s not found. preset will not be loaded\n", temp);
+            goto error;
+        }
+        DB_dsp_instance_t *inst = plug->open ();
+        if (!inst) {
+            fprintf (stderr, "ddb_dsp_preset_load: failed to open instance of plugin %s\n", temp);
+            goto error;
+        }
+
+        if (tail) {
+            tail->next = inst;
+            tail = inst;
+        }
+        else {
+            tail = p->chain = inst;
+        }
+
+        int n = 0;
+        for (;;) {
+            float value;
+            if (!fgets (temp, sizeof (temp), fp)) {
+                fprintf (stderr, "unexpected eof while reading plugin params\n");
+                goto error;
+            }
+            if (!strcmp (temp, "}\n")) {
+                break;
+            }
+            else if (1 != sscanf (temp, "\t%f\n", &value)) {
+                fprintf (stderr, "error loading param %d\n", n);
+                goto error;
+            }
+            if (plug->num_params) {
+                plug->set_param (inst, n, value);
+            }
+            n++;
+        }
+    }
+
+    err = 0;
+error:
+    if (err) {
+        fprintf (stderr, "error loading %s\n", fname);
+    }
+    if (fp) {
+        fclose (fp);
+    }
+    if (err && p) {
+        dsp_preset_free (p);
+        p = NULL;
+    }
+    return p;
+}
+
+int
+dsp_preset_save (ddb_dsp_preset_t *p, int overwrite) {
+    const char *confdir = deadbeef->get_config_dir ();
+    char path[1024];
+    if (snprintf (path, sizeof (path), "%s/presets", confdir) < 0) {
+        return -1;
+    }
+    mkdir (path, 0755);
+    if (snprintf (path, sizeof (path), "%s/presets/dsp", confdir) < 0) {
+        return -1;
+    }
+    mkdir (path, 0755);
+    if (snprintf (path, sizeof (path), "%s/presets/dsp/%s.txt", confdir, p->title) < 0) {
+        return -1;
+    }
+
+    if (!overwrite) {
+        FILE *fp = fopen (path, "rb");
+        if (fp) {
+            fclose (fp);
+            return -2; 
+        }
+    }
+
+    FILE *fp = fopen (path, "w+b");
+    if (!fp) {
+        return -1;
+    }
+
+    fprintf (fp, "title %s\n", p->title);
+
+    DB_dsp_instance_t *inst = p->chain;
+    while (inst) {
+        fprintf (fp, "%s {\n", inst->plugin->plugin.id);
+        if (inst->plugin->num_params) {
+            int n = inst->plugin->num_params ();
+            int i;
+            for (i = 0; i < n; i++) {
+                float v = inst->plugin->get_param (inst, i);
+                fprintf (fp, "\t%f\n", v);
+            }
+        }
+        fprintf (fp, "}\n");
+        inst = inst->next;
+    }
+
+    fclose (fp);
+    return 0;
+}
+
+static int dirent_alphasort (const struct dirent **a, const struct dirent **b) {
+    return strcmp ((*a)->d_name, (*b)->d_name);
+}
+
+int
+scandir_preset_filter (const struct dirent *ent) {
+    char *ext = strrchr (ent->d_name, '.');
+    if (ext && !strcasecmp (ext, ".txt")) {
+        return 1;
+    }
+    return 0;
+}
+
+int
+load_encoder_presets (void) {
+    ddb_encoder_preset_t *tail = NULL;
+    char path[1024];
+    if (snprintf (path, sizeof (path), "%s/presets/encoders", deadbeef->get_config_dir ()) < 0) {
+        return -1;
+    }
+    struct dirent **namelist = NULL;
+    int n = scandir (path, &namelist, scandir_preset_filter, dirent_alphasort);
+    int i;
+    for (i = 0; i < n; i++) {
+        char s[1024];
+        if (snprintf (s, sizeof (s), "%s/%s", path, namelist[i]->d_name) > 0){
+            ddb_encoder_preset_t *p = encoder_preset_load (s);
+            if (p) {
+                if (tail) {
+                    tail->next = p;
+                    tail = p;
+                }
+                else {
+                    encoder_presets = tail = p;
+                }
+            }
+        }
+        free (namelist[i]);
+    }
+    free (namelist);
+    return 0;
+}
+
+int
+load_dsp_presets (void) {
+    ddb_dsp_preset_t *tail = NULL;
+    char path[1024];
+    if (snprintf (path, sizeof (path), "%s/presets/dsp", deadbeef->get_config_dir ()) < 0) {
+        return -1;
+    }
+    struct dirent **namelist = NULL;
+    int n = scandir (path, &namelist, scandir_preset_filter, dirent_alphasort);
+    int i;
+    for (i = 0; i < n; i++) {
+        char s[1024];
+        if (snprintf (s, sizeof (s), "%s/%s", path, namelist[i]->d_name) > 0){
+            ddb_dsp_preset_t *p = dsp_preset_load (s);
+            if (p) {
+                if (tail) {
+                    tail->next = p;
+                    tail = p;
+                }
+                else {
+                    dsp_presets = tail = p;
+                }
+            }
+        }
+        free (namelist[i]);
+    }
+    free (namelist);
+    return 0;
+}
+
+ddb_dsp_preset_t *
+dsp_preset_get_for_idx (int idx) {
+    ddb_dsp_preset_t *p = dsp_presets;
+    while (p && idx--) {
+        p = p->next;
+    }
+    return p;
+}
+
+void
+dsp_preset_append (ddb_dsp_preset_t *p) {
+    // append
+    ddb_dsp_preset_t *tail = dsp_presets;
+    while (tail && tail->next) {
+        tail = tail->next;
+    }
+    if (tail) {
+        tail->next = p;
+    }
+    else {
+        dsp_presets = p;
+    }
+}
+
+void
+dsp_preset_remove (ddb_dsp_preset_t *p) {
+    ddb_dsp_preset_t *prev = dsp_presets;
+    while (prev && prev->next != p) {
+        prev = prev->next;
+    }
+    if (prev) {
+        prev->next = p->next;
+    }
+    else {
+        dsp_presets = p->next;
+    }
+}
+
+void
+dsp_preset_replace (ddb_dsp_preset_t *from, ddb_dsp_preset_t *to) {
+    ddb_dsp_preset_t *prev = dsp_presets;
+    while (prev && prev->next != from) {
+        prev = prev->next;
+    }
+    if (prev) {
+        prev->next = to;
+    }
+    else {
+        dsp_presets = to;
+    }
+    to->next = from->next;
+}
+
+int
+convert (DB_playItem_t *it, const char *outfolder, int selected_format, ddb_encoder_preset_t *encoder_preset, ddb_dsp_preset_t *dsp_preset) {
+    DB_decoder_t *dec = NULL;
+    dec = (DB_decoder_t *)deadbeef->plug_get_for_id (it->decoder_id);
+    if (dec) {
+        DB_fileinfo_t *fileinfo = dec->open (0);
+        if (fileinfo && dec->init (fileinfo, DB_PLAYITEM (it)) != 0) {
+            dec->free (fileinfo);
+            fileinfo = NULL;
+        }
+        if (fileinfo) {
+            char fname[1024];
+            int idx = deadbeef->pl_get_idx_of (it);
+            deadbeef->pl_format_title (it, idx, fname, sizeof (fname), -1, encoder_preset->fname);
+            char out[1024];
+            snprintf (out, sizeof (out), "%s/%s", outfolder, fname);
+            char enc[1024];
+            snprintf (enc, sizeof (enc), encoder_preset->encoder, out);
+            fprintf (stderr, "executing: %s\n", enc);
+            FILE *enc_pipe = NULL;
+            FILE *temp_file = NULL;
+
+            if (!encoder_preset->encoder[0]) {
+                // write to wave file
+                temp_file = fopen (out, "w+b");
+                if (!temp_file) {
+                    fprintf (stderr, "converter: failed to open output wave file %s\n", out);
+                    if (fileinfo) {
+                        dec->free (fileinfo);
+                    }
+                    return -1;
+                }
+            }
+            else if (encoder_preset->method == DDB_ENCODER_METHOD_FILE) {
+                const char *temp_file_name = "/tmp/deadbeef-converter.wav"; // FIXME
+                temp_file = fopen (temp_file_name, "w+b");
+                if (!temp_file) {
+                    fprintf (stderr, "converter: failed to open temp file %s\n", temp_file_name);
+                    if (fileinfo) {
+                        dec->free (fileinfo);
+                    }
+                    return -1;
+                }
+            }
+            else {
+                enc_pipe = popen (enc, "w");
+                if (!enc_pipe) {
+                    fprintf (stderr, "converter: failed to open encoder\n");
+                    if (temp_file) {
+                        fclose (temp_file);
+                    }
+                    if (fileinfo) {
+                        dec->free (fileinfo);
+                    }
+                    return -1;
+                }
+            }
+
+            if (!temp_file) {
+                temp_file = enc_pipe;
+            }
+
+            // write wave header
+            char wavehdr[] = {
+                0x52, 0x49, 0x46, 0x46, 0x24, 0x70, 0x0d, 0x00, 0x57, 0x41, 0x56, 0x45, 0x66, 0x6d, 0x74, 0x20, 0x10, 0x00, 0x00, 0x00, 0x01, 0x00, 0x02, 0x00, 0x44, 0xac, 0x00, 0x00, 0x10, 0xb1, 0x02, 0x00, 0x04, 0x00, 0x10, 0x00, 0x64, 0x61, 0x74, 0x61
+            };
+            int header_written = 0;
+            uint32_t outsize = 0;
+            uint32_t outsr = fileinfo->fmt.samplerate;
+            uint16_t outch = fileinfo->fmt.channels;
+            uint16_t outbps = fileinfo->fmt.bps;
+            if (selected_format != 0) {
+                switch (selected_format) {
+                case 1 ... 4:
+                    outbps = selected_format * 8;
+                    break;
+                case 5:
+                    outbps = 32;
+                    break;
+                }
+            }
+
+            int samplesize = fileinfo->fmt.channels * fileinfo->fmt.bps / 8;
+            int bs = 10250 * samplesize;
+            char buffer[bs * 4];
+            int dspsize = bs / samplesize * sizeof (float) * fileinfo->fmt.channels;
+            char dspbuffer[dspsize * 4];
+            int eof = 0;
+            for (;;) {
+                if (eof) {
+                    break;
+                }
+                int sz = dec->read (fileinfo, buffer, bs);
+
+                if (sz != bs) {
+                    eof = 1;
+                }
+                if (dsp_preset) {
+                    ddb_waveformat_t fmt;
+                    ddb_waveformat_t outfmt;
+                    memcpy (&fmt, &fileinfo->fmt, sizeof (fmt));
+                    memcpy (&outfmt, &fileinfo->fmt, sizeof (fmt));
+                    fmt.bps = 32;
+                    fmt.is_float = 1;
+                    deadbeef->pcm_convert (&fileinfo->fmt, buffer, &fmt, dspbuffer, sz);
+
+                    DB_dsp_instance_t *dsp = dsp_preset->chain;
+                    int frames = sz / samplesize;
+                    while (dsp) {
+                        frames = dsp->plugin->process (dsp, (float *)dspbuffer, frames, &fmt.samplerate, &fmt.channels);
+                        dsp = dsp->next;
+                    }
+
+                    outsr = fmt.samplerate;
+                    outch = fmt.channels;
+
+                    outfmt.bps = outbps;
+                    outfmt.channels = outch;
+                    outfmt.samplerate = outsr;
+
+                    int n = deadbeef->pcm_convert (&fmt, dspbuffer, &outfmt, buffer, frames * sizeof (float) * fmt.channels);
+                    sz = n;
+                }
+                else if (fileinfo->fmt.bps != outbps) {
+                    ddb_waveformat_t outfmt;
+                    memcpy (&outfmt, &fileinfo->fmt, sizeof (outfmt));
+                    outfmt.bps = outbps;
+                    outfmt.channels = outch;
+                    outfmt.samplerate = outsr;
+
+                    int frames = sz / samplesize;
+                    int n = deadbeef->pcm_convert (&fileinfo->fmt, buffer, &outfmt, dspbuffer, frames * samplesize);
+                    memcpy (buffer, dspbuffer, n);
+                    sz = n;
+                }
+                outsize += sz;
+
+                if (!header_written) {
+                    uint32_t size = (it->endsample-it->startsample) * outch * outbps / 8;
+                    if (!size) {
+                        size = deadbeef->pl_get_item_duration (it) * fileinfo->fmt.samplerate * outch * outbps / 8;
+
+                    }
+
+                    if (outsr != fileinfo->fmt.samplerate) {
+                        uint64_t temp = size;
+                        temp *= outsr;
+                        temp /= fileinfo->fmt.samplerate;
+                        size  = temp;
+                    }
+
+                    memcpy (&wavehdr[22], &outch, 2);
+                    memcpy (&wavehdr[24], &outsr, 4);
+                    uint16_t blockalign = outch * outbps / 8;
+                    memcpy (&wavehdr[32], &blockalign, 2);
+                    memcpy (&wavehdr[34], &outbps, 2);
+
+                    fwrite (wavehdr, 1, sizeof (wavehdr), temp_file);
+                    fwrite (&size, 1, sizeof (size), temp_file);
+                    header_written = 1;
+                }
+
+                fwrite (buffer, 1, sz, temp_file);
+            }
+            if (temp_file && temp_file != enc_pipe) {
+                fclose (temp_file);
+            }
+
+            if (encoder_preset->encoder[0] && encoder_preset->method == DDB_ENCODER_METHOD_FILE) {
+                enc_pipe = popen (enc, "w");
+            }
+
+            if (enc_pipe) {
+                pclose (enc_pipe);
+            }
+            dec->free (fileinfo);
+        }
+    }
+    return 0;
+}
+
+int
+converter_cmd (int cmd, ...) {
+    return -1;
+}
+
+int
+converter_start (void) {
+    load_encoder_presets ();
+    load_dsp_presets ();
+
+    return 0;
+}
+
+int
+converter_stop (void) {
+    return 0;
+}
+
+// define plugin interface
+static ddb_converter_t plugin = {
+    .misc.plugin.api_vmajor = DB_API_VERSION_MAJOR,
+    .misc.plugin.api_vminor = DB_API_VERSION_MINOR,
+    .misc.plugin.version_major = 1,
+    .misc.plugin.version_minor = 0,
+    .misc.plugin.type = DB_PLUGIN_MISC,
+    .misc.plugin.name = "Converter",
+    .misc.plugin.id = "converter",
+    .misc.plugin.descr = "Converts any supported formats to other formats",
+    .misc.plugin.author = "Alexey Yakovenko",
+    .misc.plugin.email = "waker@users.sourceforge.net",
+    .misc.plugin.website = "http://deadbeef.sf.net",
+    .misc.plugin.start = converter_start,
+    .misc.plugin.stop = converter_stop,
+    .misc.plugin.command = converter_cmd,
+    .encoder_preset_alloc = encoder_preset_alloc,
+    .encoder_preset_free = encoder_preset_free,
+    .encoder_preset_load = encoder_preset_load,
+    .encoder_preset_save = encoder_preset_save,
+    .encoder_preset_get_list = encoder_preset_get_list,
+    .encoder_preset_get_for_idx = encoder_preset_get_for_idx,
+    .encoder_preset_append = encoder_preset_append,
+    .encoder_preset_remove = encoder_preset_remove,
+    .encoder_preset_replace = encoder_preset_replace,
+    .dsp_preset_alloc = dsp_preset_alloc,
+    .dsp_preset_free = dsp_preset_free,
+    .dsp_preset_load = dsp_preset_load,
+    .dsp_preset_save = dsp_preset_save,
+    .dsp_preset_copy = dsp_preset_copy,
+    .dsp_preset_get_list = dsp_preset_get_list,
+    .dsp_preset_get_for_idx = dsp_preset_get_for_idx,
+    .dsp_preset_append = dsp_preset_append,
+    .dsp_preset_remove = dsp_preset_remove,
+    .dsp_preset_replace = dsp_preset_replace,
+    .convert = convert,
+};
+
+DB_plugin_t *
+converter_load (DB_functions_t *api) {
+    deadbeef = api;
+    return DB_PLUGIN (&plugin);
+}
