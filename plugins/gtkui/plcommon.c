@@ -30,7 +30,7 @@
 #include "interface.h"
 #include "parser.h"
 #include "actions.h"
-#include "converter.h"
+#include "convgui.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }

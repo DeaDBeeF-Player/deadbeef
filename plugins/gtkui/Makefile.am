@@ -33,7 +33,7 @@ GTKUI_SOURCES =    gtkui.c gtkui.h\
 				   prefwin.c\
 				   eq.c eq.h\
 				   actions.c actions.h\
-				   converter.c converter.h
+				   convgui.c convgui.h
 
 EXTRA_DIST = $(gtkui_VALASOURCES) deadbeef.glade
 
