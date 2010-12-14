@@ -87,38 +87,38 @@ ddb_src_set_ratio (ddb_dsp_context_t *_src, float ratio) {
 }
 
 int
-ddb_src_process (ddb_dsp_context_t *_src, float *samples, int nframes, int *samplerate, int *nchannels) {
+ddb_src_process (ddb_dsp_context_t *_src, float *samples, int nframes, ddb_waveformat_t *fmt) {
     ddb_src_libsamplerate_t *src = (ddb_src_libsamplerate_t*)_src;
 
-    if (*samplerate == src->samplerate) {
+    if (fmt->samplerate == src->samplerate) {
         return nframes;
     }
 
-    if (src->need_reset || src->channels != *nchannels || src->quality_changed || !src->src) {
+    if (src->need_reset || src->channels != fmt->channels || src->quality_changed || !src->src) {
         src->quality_changed = 0;
         src->remaining = 0;
         if (src->src) {
             src_delete (src->src);
             src->src = NULL;
         }
-        src->channels = *nchannels;
+        src->channels = fmt->channels;
         src->src = src_new (src->quality, src->channels, NULL);
         src->need_reset = 0;
     }
 
-    float ratio = src->samplerate / *samplerate;
+    float ratio = src->samplerate / fmt->samplerate;
     ddb_src_set_ratio (_src, ratio);
-    *samplerate = src->samplerate;
+    fmt->samplerate = src->samplerate;
 
     int numoutframes = nframes * src->srcdata.src_ratio;
-    float outbuf[numoutframes*(*nchannels)];
+    float outbuf[numoutframes*fmt->channels];
     memset (outbuf, 0, sizeof (outbuf));
     int buffersize = sizeof (outbuf);
     char *output = (char *)outbuf;
     float *input = samples;
     int inputsize = numoutframes;
 
-    int samplesize = *nchannels * sizeof (float);
+    int samplesize = fmt->channels * sizeof (float);
 
     do {
         // add more frames to input SRC buffer
@@ -131,7 +131,7 @@ ddb_src_process (ddb_dsp_context_t *_src, float *samples, int nframes, int *samp
             memcpy (&src->in_fbuffer[src->remaining*samplesize], samples, n * samplesize);
 
             src->remaining += n;
-            samples += n * (*nchannels);
+            samples += n * fmt->channels;
             nframes -= n;
         }
         if (!src->remaining) {

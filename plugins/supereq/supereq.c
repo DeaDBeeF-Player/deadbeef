@@ -75,27 +75,27 @@ supereq_plugin_stop (void) {
 }
 
 int
-supereq_process (ddb_dsp_context_t *ctx, float *samples, int frames, int *samplerate, int *channels) {
+supereq_process (ddb_dsp_context_t *ctx, float *samples, int frames, ddb_waveformat_t *fmt) {
     ddb_supereq_ctx_t *supereq = (ddb_supereq_ctx_t *)ctx;
     if (supereq->params_changed) {
         recalc_table (supereq);
         supereq->params_changed = 0;
     }
-	if (supereq->last_srate != *samplerate) {
+	if (supereq->last_srate != fmt->samplerate) {
         deadbeef->mutex_lock (supereq->mutex);
-		supereq->last_srate = *samplerate;
-		supereq->last_nch = *channels;
+		supereq->last_srate = fmt->samplerate;
+		supereq->last_nch = fmt->channels;
         recalc_table (supereq);
         deadbeef->mutex_unlock (supereq->mutex);
 		equ_clearbuf(&supereq->state);
     }
-	else if (supereq->last_nch != *channels) {
+	else if (supereq->last_nch != fmt->channels) {
         deadbeef->mutex_lock (supereq->mutex);
-		supereq->last_nch = *channels;
+		supereq->last_nch = fmt->channels;
         deadbeef->mutex_unlock (supereq->mutex);
 		equ_clearbuf(&supereq->state);
     }
-	equ_modifySamples_float(&supereq->state, (char *)samples,frames,*channels);
+	equ_modifySamples_float(&supereq->state, (char *)samples,frames,fmt->channels);
 	return frames;
 }
 

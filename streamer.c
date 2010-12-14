@@ -1384,16 +1384,13 @@ streamer_read_async (char *bytes, int size) {
 
                 int nframes = inputsize / inputsamplesize;
                 ddb_dsp_context_t *dsp = dsp_chain;
-                int samplerate = fileinfo->fmt.samplerate;
-                int channels = dspfmt.channels;
+                dspfmt.samplerate = fileinfo->fmt.samplerate;
                 while (dsp) {
                     if (dsp->enabled) {
-                        nframes = dsp->plugin->process (dsp, (float *)tempbuf, nframes, &samplerate, &channels);
+                        nframes = dsp->plugin->process (dsp, (float *)tempbuf, nframes, &dspfmt);
                     }
                     dsp = dsp->next;
                 }
-                dspfmt.samplerate = samplerate;
-                dspfmt.channels = channels;
                 int n = pcm_convert (&dspfmt, tempbuf, &output->fmt, bytes, nframes * dspsamplesize);
 
                 bytesread = n;

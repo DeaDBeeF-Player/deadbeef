@@ -779,10 +779,12 @@ typedef struct DB_dsp_s {
 
     void (*close) (ddb_dsp_context_t *ctx);
 
-    // samples are interleaved
+    // samples are always interleaved floating point
     // returned value is number of output frames
-    // can change samplerate and number of channels
-    int (*process) (ddb_dsp_context_t *ctx, float *samples, int frames, int *samplerate, int *channels);
+    // can change channels, samplerate, channelmask
+    // buffer size should always have reserved space for upsampling/upmixing
+    // TODO: decide on buffer size
+    int (*process) (ddb_dsp_context_t *ctx, float *samples, int frames, ddb_waveformat_t *fmt);
 
     void (*reset) (ddb_dsp_context_t *ctx);
 
