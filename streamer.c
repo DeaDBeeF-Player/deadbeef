@@ -1107,12 +1107,12 @@ streamer_thread (void *ctx) {
         gettimeofday (&tm2, NULL);
 
         int ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
+        //trace (stderr, "slept %dms (alloc=%dms, bytespersec=%d, chan=%d, blocksize=%d), fill: %d/%d\n", alloc_time-ms, alloc_time, bytes_in_one_second, output->fmt.channels, blocksize, streambuffer_fill, STREAM_BUFFER_SIZE);
         alloc_time -= ms;
         if (!streamer_buffering && alloc_time > 0) {
             usleep (alloc_time * 1000);
 //            usleep (1000);
         }
-//        trace ("fill: %d/%d\n", streambuffer_fill, STREAM_BUFFER_SIZE);
     }
 
     // stop streaming song
