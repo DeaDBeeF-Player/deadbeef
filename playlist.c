@@ -1271,7 +1271,6 @@ pl_insert_pls (playItem_t *after, const char *fname, int *pabort, int (*cb)(play
             n = e-p;
             n = min (n, sizeof (length)-1);
             memcpy (length, p, n);
-            break;
         }
         else {
             trace ("invalid entry in pls file: %s\n", p);
