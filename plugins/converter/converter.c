@@ -639,7 +639,7 @@ convert (DB_playItem_t *it, const char *outfolder, int selected_format, ddb_enco
                     ddb_dsp_context_t *dsp = dsp_preset->chain;
                     int frames = sz / samplesize;
                     while (dsp) {
-                        frames = dsp->plugin->process (dsp, (float *)dspbuffer, frames, &fmt.samplerate, &fmt.channels);
+                        frames = dsp->plugin->process (dsp, (float *)dspbuffer, frames, &fmt);
                         dsp = dsp->next;
                     }
 
