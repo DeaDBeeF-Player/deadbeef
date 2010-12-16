@@ -37,6 +37,7 @@
 #include "vfs.h"
 #include "premix.h"
 #include "plugins/dsp_libsrc/src.h"
+#include "ringbuf.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -61,12 +62,11 @@ static int streaming_terminate;
 
 // buffer up to 3 seconds at 44100Hz stereo
 #define STREAM_BUFFER_SIZE 0x80000 // slightly more than 3 seconds of 44100 stereo
-#define STREAM_BUFFER_MASK 0x7ffff
 
-static int streambuffer_fill;
-static int streambuffer_pos;
-static int bytes_until_next_song = 0;
+static ringbuf_t streamer_ringbuf;
 static char streambuffer[STREAM_BUFFER_SIZE];
+
+static int bytes_until_next_song = 0;
 static uintptr_t mutex;
 static uintptr_t decodemutex;
 static int nextsong = -1;
@@ -521,7 +521,7 @@ streamer_song_removed_notify (playItem_t *it) {
         playlist_track = playlist_track->next[PL_MAIN];
         // queue new next song for streaming
         if (bytes_until_next_song > 0) {
-            streambuffer_fill = bytes_until_next_song;
+            streamer_ringbuf.remaining = bytes_until_next_song;
             streamer_move_to_nextsong (0);
         }
     }
@@ -1034,11 +1034,6 @@ streamer_thread (void *ctx) {
             if (fileinfo && playing_track && playing_track->_duration > 0) {
                 streamer_lock ();
                 streamer_reset (1);
-#if 0
-                streambuffer_fill = 0;
-                streambuffer_pos = 0;
-                src_remaining = 0;
-#endif
                 if (fileinfo->plugin->seek (fileinfo, pos) >= 0) {
                     playpos = fileinfo->readpos;
                 }
@@ -1061,12 +1056,12 @@ streamer_thread (void *ctx) {
         int alloc_time = 1000 / (bytes_in_one_second * output->fmt.channels / blocksize);
 
         streamer_lock ();
-        if (streambuffer_fill < (STREAM_BUFFER_SIZE-blocksize*2)) {
-            int sz = STREAM_BUFFER_SIZE - streambuffer_fill;
+        if (streamer_ringbuf.remaining < (STREAM_BUFFER_SIZE-blocksize*2)) {
+            int sz = STREAM_BUFFER_SIZE - streamer_ringbuf.remaining;
             int minsize = blocksize;
 
             // speed up buffering when empty
-            if (streambuffer_fill < 16384) {
+            if (streamer_ringbuf.remaining < 16384) {
                 minsize *= 4;
                 alloc_time *= 4;
             }
@@ -1090,14 +1085,15 @@ streamer_thread (void *ctx) {
                 bytesread += nb;
             }
             streamer_lock ();
-            memcpy (streambuffer+streambuffer_fill, buf, bytesread);
+
             if (bytesread > 0) {
-                streambuffer_fill += bytesread;
+                ringbuf_write (&streamer_ringbuf, buf, bytesread);
             }
-//            if (streamer_buffering) trace ("fill: %d, read: %d, size=%d, blocksize=%d\n", streambuffer_fill, bytesread, STREAM_BUFFER_SIZE, blocksize);
+
+//            if (streamer_buffering) trace ("fill: %d, read: %d, size=%d, blocksize=%d\n", streamer_ringbuf.remaining, bytesread, STREAM_BUFFER_SIZE, blocksize);
         }
         streamer_unlock ();
-        if ((streambuffer_fill > 128000 && streamer_buffering) || !streaming_track) {
+        if ((streamer_ringbuf.remaining > 128000 && streamer_buffering) || !streaming_track) {
             streamer_buffering = 0;
             if (streaming_track) {
                 plug_trigger_event_trackinfochanged (streaming_track);
@@ -1107,7 +1103,7 @@ streamer_thread (void *ctx) {
         gettimeofday (&tm2, NULL);
 
         int ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
-        //trace (stderr, "slept %dms (alloc=%dms, bytespersec=%d, chan=%d, blocksize=%d), fill: %d/%d\n", alloc_time-ms, alloc_time, bytes_in_one_second, output->fmt.channels, blocksize, streambuffer_fill, STREAM_BUFFER_SIZE);
+        //fprintf (stderr, "slept %dms (alloc=%dms, bytespersec=%d, chan=%d, blocksize=%d), fill: %d/%d (cursor=%d)\n", alloc_time-ms, alloc_time, bytes_in_one_second, output->fmt.channels, blocksize, streamer_ringbuf.remaining, STREAM_BUFFER_SIZE, streamer_ringbuf.cursor);
         alloc_time -= ms;
         if (!streamer_buffering && alloc_time > 0) {
             usleep (alloc_time * 1000);
@@ -1139,6 +1135,8 @@ streamer_init (void) {
 #endif
     mutex = mutex_create ();
     decodemutex = mutex_create ();
+
+    ringbuf_init (&streamer_ringbuf, streambuffer, STREAM_BUFFER_SIZE);
 
     pl_set_order (conf_get_int ("playback.order", 0));
 
@@ -1220,8 +1218,7 @@ streamer_reset (int full) { // must be called when current song changes by exter
     }
     if (full) {
         streamer_lock ();
-        streambuffer_pos = 0;
-        streambuffer_fill = 0;
+        streamer_ringbuf.remaining = 0;
         streamer_unlock ();
     }
 
@@ -1430,12 +1427,12 @@ streamer_read_async (char *bytes, int size) {
     }
     else  {
         // that means EOF
-        trace ("streamer: EOF! buns: %d, bytesread: %d, buffering: %d, bufferfill: %d\n", bytes_until_next_song, bytesread, streamer_buffering, streambuffer_fill);
+        trace ("streamer: EOF! buns: %d, bytesread: %d, buffering: %d, bufferfill: %d\n", bytes_until_next_song, bytesread, streamer_buffering, streamer_ringbuf.remaining);
 
         // in case of decoder error, or EOF while buffering - switch to next song instantly
         if (bytesread < 0 || (bytes_until_next_song >= 0 && streamer_buffering && bytesread == 0) || bytes_until_next_song < 0) {
             trace ("finished streaming song, queueing next\n");
-            bytes_until_next_song = streambuffer_fill;
+            bytes_until_next_song = streamer_ringbuf.remaining;
             if (conf_get_int ("playlist.stop_after_current", 0)) {
                 streamer_set_nextsong (-2, 1);
             }
@@ -1458,11 +1455,9 @@ streamer_read (char *bytes, int size) {
     }
     DB_output_t *output = plug_get_output ();
     streamer_lock ();
-    int sz = min (size, streambuffer_fill);
+    int sz = min (size, streamer_ringbuf.remaining);
     if (sz) {
-        memcpy (bytes, streambuffer, sz);
-        memmove (streambuffer, streambuffer+sz, streambuffer_fill-sz);
-        streambuffer_fill -= sz;
+        ringbuf_read (&streamer_ringbuf, bytes, sz);
         playpos += (float)sz/output->fmt.samplerate/((output->fmt.bps>>3)*output->fmt.channels);
         playing_track->playtime += (float)sz/output->fmt.samplerate/((output->fmt.bps>>3)*output->fmt.channels);
         if (playlist_track) {
@@ -1565,12 +1560,12 @@ streamer_read (char *bytes, int size) {
 
 int
 streamer_get_fill (void) {
-    return streambuffer_fill;
+    return streamer_ringbuf.remaining;
 }
 
 int
 streamer_ok_to_read (int len) {
-    if (len >= 0 && (bytes_until_next_song > 0 || streambuffer_fill >= (len*2))) {
+    if (len >= 0 && (bytes_until_next_song > 0 || streamer_ringbuf.remaining >= (len*2))) {
         return 1;
     }
     else {
