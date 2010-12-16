@@ -146,6 +146,13 @@ supereq_enable (ddb_dsp_context_t *ctx, int e) {
         }
         supereq->ctx.enabled = e;
     }
+
+    DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
+    if (it) {
+        float playpos = deadbeef->streamer_get_playpos ();
+        deadbeef->streamer_seek (playpos);
+        deadbeef->pl_item_unref (it);
+    }
 }
 
 int
