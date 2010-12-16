@@ -1337,7 +1337,17 @@ streamer_read_async (char *bytes, int size) {
     if (fileinfo->fmt.samplerate != -1) {
         int outputsamplesize = output->fmt.channels * output->fmt.bps / 8;
         int inputsamplesize = fileinfo->fmt.channels * fileinfo->fmt.bps / 8;
-        if (!memcmp (&fileinfo->fmt, &output->fmt, sizeof (ddb_waveformat_t))) {
+
+        // FIXME: SLOWWW - recalculate that only after chain been changed
+        ddb_dsp_context_t *ctx = dsp_chain;
+        while (ctx) {
+            if (ctx->enabled) {
+                break;
+            }
+            ctx = ctx->next;
+        }
+
+        if (!memcmp (&fileinfo->fmt, &output->fmt, sizeof (ddb_waveformat_t)) && !ctx) {
             // pass through from input to output
             bytesread = fileinfo->plugin->read (fileinfo, bytes, size);
 
@@ -1345,7 +1355,7 @@ streamer_read_async (char *bytes, int size) {
                 is_eof = 1;
             }
         }
-        else if (output->fmt.samplerate != fileinfo->fmt.samplerate) {
+        else if (ctx) {
             // convert to float, pass through streamer DSP chain
             int dspsamplesize = output->fmt.channels * sizeof (float);
 
