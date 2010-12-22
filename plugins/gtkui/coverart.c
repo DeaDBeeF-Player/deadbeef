@@ -144,9 +144,9 @@ loading_thread (void *none) {
             if (stat (queue->fname, &stat_buf) < 0) {
                 trace ("failed to stat file %s\n", queue->fname);
             }
-//            GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file (queue->fname, NULL);
+            GdkPixbuf *pixbuf = NULL;
             GError *error = NULL;
-            GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file_at_scale (queue->fname, queue->width, queue->width, TRUE, &error);
+            pixbuf = gdk_pixbuf_new_from_file_at_scale (queue->fname, queue->width, queue->width, TRUE, &error);
             if (!pixbuf) {
                 unlink (queue->fname);
                 fprintf (stderr, "gdk_pixbuf_new_from_file_at_scale %s %d failed, error: %s\n", queue->fname, queue->width, error->message);
