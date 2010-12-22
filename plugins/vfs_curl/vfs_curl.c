@@ -46,6 +46,7 @@ enum {
     STATUS_FINISHED = 2,
     STATUS_ABORTED  = 3,
     STATUS_SEEK     = 4,
+    STATUS_DESTROY  = 5,
 };
 
 typedef struct {
@@ -72,6 +73,8 @@ typedef struct {
     int metadata_size; // size of metadata in stream
     int metadata_have_size; // amount which is already in metadata buffer
 
+    char http_err[CURL_ERROR_SIZE];
+
     // flags (bitfields to save some space)
     unsigned seektoend : 1; // indicates that next tell must return length
     unsigned gotheader : 1; // tells that all headers (including ICY) were processed (to start reading body)
@@ -80,8 +83,6 @@ typedef struct {
 } HTTP_FILE;
 
 static DB_vfs_t plugin;
-
-static char http_err[CURL_ERROR_SIZE];
 
 static int allow_new_streams;
 
@@ -477,6 +478,23 @@ http_curl_control (void *stream, double dltotal, double dlnow, double ultotal, d
 }
 
 static void
+http_destroy (HTTP_FILE *fp) {
+    if (fp->content_type) {
+        free (fp->content_type);
+    }
+    if (fp->track) {
+        deadbeef->pl_item_unref (fp->track);
+    }
+    if (fp->url) {
+        free (fp->url);
+    }
+    if (fp->mutex) {
+        deadbeef->mutex_free (fp->mutex);
+    }
+    free (fp);
+}
+
+static void
 http_thread_func (void *ctx) {
     HTTP_FILE *fp = (HTTP_FILE *)ctx;
     CURL *curl;
@@ -495,7 +513,7 @@ http_thread_func (void *ctx) {
         curl_easy_setopt (curl, CURLOPT_NOPROGRESS, 1);
         curl_easy_setopt (curl, CURLOPT_WRITEFUNCTION, http_curl_write);
         curl_easy_setopt (curl, CURLOPT_WRITEDATA, ctx);
-        curl_easy_setopt (curl, CURLOPT_ERRORBUFFER, http_err);
+        curl_easy_setopt (curl, CURLOPT_ERRORBUFFER, fp->http_err);
         curl_easy_setopt (curl, CURLOPT_BUFFERSIZE, BUFFER_SIZE/2);
         curl_easy_setopt (curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
         curl_easy_setopt (curl, CURLOPT_HEADERFUNCTION, http_content_header_handler);
@@ -562,7 +580,7 @@ http_thread_func (void *ctx) {
         status = curl_easy_perform (curl);
         trace ("vfs_curl: curl_easy_perform retval=%d\n", status);
         if (status != 0) {
-            trace ("curl error:\n%s\n", http_err);
+            trace ("curl error:\n%s\n", fp->http_err);
         }
         deadbeef->mutex_lock (fp->mutex);
         if (status == 0 && fp->length < 0 && fp->status != STATUS_ABORTED && fp->status != STATUS_SEEK) {
@@ -612,6 +630,11 @@ http_thread_func (void *ctx) {
     curl_easy_cleanup (curl);
 
     deadbeef->mutex_lock (fp->mutex);
+
+    if (fp->status == STATUS_ABORTED) {
+        http_destroy (fp);
+        return;
+    }
     fp->status = STATUS_FINISHED;
     deadbeef->mutex_unlock (fp->mutex);
     fp->tid = 0;
@@ -621,6 +644,7 @@ static void
 http_start_streamer (HTTP_FILE *fp) {
     fp->mutex = deadbeef->mutex_create ();
     fp->tid = deadbeef->thread_start (http_thread_func, fp);
+    deadbeef->thread_detach (fp->tid);
 }
 
 static DB_FILE *
@@ -651,24 +675,15 @@ http_close (DB_FILE *stream) {
     assert (stream);
     HTTP_FILE *fp = (HTTP_FILE *)stream;
 
-    deadbeef->mutex_lock (fp->mutex);
-    if (fp->tid) {
-        fp->status = STATUS_ABORTED;
-        trace ("http_close thread_join\n");
-        deadbeef->mutex_unlock (fp->mutex);
-        deadbeef->thread_join (fp->tid);
+    if (fp->mutex) {
+        deadbeef->mutex_lock (fp->mutex);
+        if (fp->tid) {
+            fp->status = STATUS_ABORTED;
+            deadbeef->mutex_unlock (fp->mutex);
+            return;
+        }
     }
-    if (fp->content_type) {
-        free (fp->content_type);
-    }
-    if (fp->track) {
-        deadbeef->pl_item_unref (fp->track);
-    }
-    if (fp->url) {
-        free (fp->url);
-    }
-    deadbeef->mutex_free (fp->mutex);
-    free (stream);
+    http_destroy (fp);
     trace ("http_close done\n");
 }
 
