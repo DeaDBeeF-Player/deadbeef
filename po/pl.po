@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: DeaDBeef\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-11-15 04:41+0000\n"
-"PO-Revision-Date: 2010-12-21 18:55+0200\n"
+"PO-Revision-Date: 2010-12-24 01:28+0200\n"
 "Last-Translator: Artur <mazdac@gmail.com>\n"
 "Language-Team: Polish Translation Team <>\n"
 "Language: pl\n"
@@ -968,7 +968,6 @@ msgid "Location"
 msgstr "Dodawanie położenia"
 
 #: ../plugins/gtkui/trkproperties.c:172
-#, fuzzy
 msgid "Subtrack Index"
 msgstr "Numer pod-utworu"
 
@@ -1167,16 +1166,14 @@ msgid "Use ALSA resampling"
 msgstr "Przepróbkowywanie ALSA"
 
 #: ../translation/extra.c:7
-#, fuzzy
 msgid "Release device while stopped"
-msgstr "Wysuń urządzenie po zatrzymaniu"
+msgstr "Zwolnij urządzenie po zatrzymaniu"
 
 #: ../translation/extra.c:8 ../translation/extra.c:43
 msgid "Preferred buffer size"
 msgstr "Preferowany rozmiar bufora"
 
 #: ../translation/extra.c:9
-#, fuzzy
 msgid "Preferred period size"
 msgstr "Preferowany okres trwania"
 
@@ -1294,17 +1291,14 @@ msgstr "Częstotliwość próbkowania"
 
 #. SHN player plugin
 #: ../translation/extra.c:46
-#, fuzzy
 msgid "Relative seek table path"
 msgstr "Względna ścieżka tablicy przeskoków"
 
 #: ../translation/extra.c:47
-#, fuzzy
 msgid "Absolute seek table path"
 msgstr "Bezwzględna ścieżka tablicy przeskoków"
 
 #: ../translation/extra.c:48
-#, fuzzy
 msgid "Swap audio bytes (toggle if all you hear is static)"
 msgstr ""
 "Odwróć kolejność bitów audio (przełącz jeśli słyszysz tylko ciągły dźwięk)"
@@ -1320,7 +1314,6 @@ msgstr "Położenie HVSC:"
 
 #. WildMidi player plugin
 #: ../translation/extra.c:53
-#, fuzzy
 msgid "Timidity++ bank configuration file"
 msgstr "Plik konfiguracyjny banków Timidity++"
 
@@ -1361,7 +1354,6 @@ msgid "Comment"
 msgstr "Komentarz"
 
 #: ../translation/extra.c:67
-#, fuzzy
 msgid "Encoder / Vendor"
 msgstr "Program kodujący / Dostawca"
 
