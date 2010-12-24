@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-09-10 15:02+0200\n"
-"PO-Revision-Date: 2010-12-11 03:16+0200\n"
+"PO-Revision-Date: 2010-12-12 02:48+0200\n"
 "Last-Translator: Радослав <Rec.ku@hotmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: bg\n"
@@ -61,9 +61,9 @@ msgid "About DeaDBeeF %s"
 msgstr "Относно DeaDBeeF %s"
 
 #: ../plugins/gtkui/callbacks.c:722
-#, c-format, fuzzy
+#, c-format, 
 msgid "DeaDBeeF %s ChangeLog"
-msgstr "DeaDBeeF %s на промените"
+msgstr "DeaDBeeF %s Списък с промени"
 
 #: ../plugins/gtkui/ddbtabstrip.c:527
 msgid "Edit playlist"
@@ -82,34 +82,28 @@ msgid "Add New Playlist"
 msgstr "Добави нов Списък за изпълнение"
 
 #: ../plugins/gtkui/eq.c:113
-#, fuzzy
 msgid "Save DeaDBeeF EQ Preset"
-msgstr "Запаметяване стойностите на DeaDBeeF-Нормализатора"
+msgstr "Запамети стойностите на Тонкоректора"
 
 #: ../plugins/gtkui/eq.c:120
-#, fuzzy
 msgid "DeaDBeeF EQ preset files (*.ddbeq)"
-msgstr "Файлове за DeaDBeeF-Нормализатора (*.ddbeq)"
+msgstr "Файлове със стойности на Тонкоректора (*.ddbeq)"
 
 #: ../plugins/gtkui/eq.c:151
-#, fuzzy
 msgid "Load DeaDBeeF EQ Preset..."
-msgstr "Зареждане на стойности на DeaDBeeF-Нормализатора..."
+msgstr "Зареждане стойности на Тонкоректора..."
 
 #: ../plugins/gtkui/eq.c:155
-#, fuzzy
 msgid "DeaDBeeF EQ presets (*.ddbeq)"
-msgstr "DeaDBeeF зададени стойности на EQ (*.ddbeq)"
+msgstr "Зададени стойности на Тонкоректора (*.ddbeq)"
 
 #: ../plugins/gtkui/eq.c:214
-#, fuzzy
 msgid "Import Foobar2000 EQ Preset..."
-msgstr "Внасяне на Foobar2000 стойности на EQ..."
+msgstr "Внасяне на стойности за Тонкоректор: Foobar2000..."
 
 #: ../plugins/gtkui/eq.c:218
-#, fuzzy
 msgid "Foobar2000 EQ presets (*.feq)"
-msgstr "Foobar2000 стойности на Нормализатора (*.feq)"
+msgstr "Стойности на Тонкоректора Foobar2000 (*.feq)"
 
 #: ../plugins/gtkui/eq.c:292
 msgid "Enable"
@@ -224,17 +218,14 @@ msgid "New playlist"
 msgstr "Нов списък"
 
 #: ../plugins/gtkui/interface.c:193 ../plugins/gtkui/deadbeef.glade.h:75
-#, fuzzy
 msgid "Load playlist"
 msgstr "Зареждане на списък"
 
 #: ../plugins/gtkui/interface.c:197 ../plugins/gtkui/deadbeef.glade.h:112
-#, fuzzy
 msgid "Save playlist"
 msgstr "Зпаметяване на списъка"
 
 #: ../plugins/gtkui/interface.c:201 ../plugins/gtkui/deadbeef.glade.h:113
-#, fuzzy
 msgid "Save playlist as"
 msgstr "Запаметяване на списъка като..."
 
@@ -313,9 +304,8 @@ msgid "Order"
 msgstr "Подредба"
 
 #: ../plugins/gtkui/interface.c:326 ../plugins/gtkui/deadbeef.glade.h:74
-#, fuzzy
 msgid "Linear"
-msgstr "Линеен"
+msgstr "Линейно"
 
 #: ../plugins/gtkui/interface.c:332 ../plugins/gtkui/deadbeef.glade.h:121
 msgid "Shuffle"
@@ -343,11 +333,11 @@ msgstr "Без повтаряне"
 
 #: ../plugins/gtkui/interface.c:369 ../plugins/gtkui/deadbeef.glade.h:114
 msgid "Scroll follows playback"
-msgstr "Превъртане следва изпълнението"
+msgstr "Превъртане следва изпълняването"
 
 #: ../plugins/gtkui/interface.c:374 ../plugins/gtkui/deadbeef.glade.h:22
 msgid "Cursor follows playback"
-msgstr "Курсора следва изпълнението"
+msgstr "Курсора следва изпълняването"
 
 #: ../plugins/gtkui/interface.c:378 ../plugins/gtkui/deadbeef.glade.h:125
 msgid "Stop after current"
@@ -391,9 +381,8 @@ msgid "Next"
 msgstr "Следваща"
 
 #: ../plugins/gtkui/interface.c:916 ../plugins/gtkui/deadbeef.glade.h:93
-#, fuzzy
 msgid "Play Random"
-msgstr "Случайно изпълнение"
+msgstr "Произволно изпълняване"
 
 #: ../plugins/gtkui/interface.c:925 ../plugins/gtkui/deadbeef.glade.h:5
 msgid "About"
@@ -412,9 +401,8 @@ msgid "_Abort"
 msgstr "_Прекъсване"
 
 #: ../plugins/gtkui/interface.c:1155 ../plugins/gtkui/deadbeef.glade.h:136
-#, fuzzy
 msgid "Track Properties"
-msgstr "Информация"
+msgstr "Свойства за Песента"
 
 #: ../plugins/gtkui/interface.c:1179 ../plugins/gtkui/deadbeef.glade.h:3
 msgid ""
@@ -1149,11 +1137,11 @@ msgstr "Няма достатъчно памет за входящо буфер�
 
 #: ../plugins/vorbis/vcedit.c:179 ../plugins/vorbis/vcedit.c:550
 msgid "Error reading first page of Ogg bitstream."
-msgstr "Неуспех при прочитането на първият слой от Ogg битовете."
+msgstr "Грешка при прочитането на първият слой от Ogg битовете."
 
 #: ../plugins/vorbis/vcedit.c:185 ../plugins/vorbis/vcedit.c:557
 msgid "Error reading initial header packet."
-msgstr "Неуспех при прочитането на първият заглавен пакет."
+msgstr "Грешка при прочитането на първият заглавен пакет."
 
 #: ../plugins/vorbis/vcedit.c:237
 msgid "Couldn't get enough memory to register new stream serial number."
@@ -1195,7 +1183,7 @@ msgstr "Увредени или липсващи данни, продължав�
 msgid ""
 "Error writing stream to output. Output stream may be corrupted or truncated."
 msgstr ""
-"Неуспех при записването на изходящия пакет. Изходящия пакет може да е "
+"Грешка при записването на изходящия пакет. Навярно Изходящият пакет е "
 "увреден или прекъснат."
 
 #: ../plugins/wildmidi/wildmidiplug.c:162
