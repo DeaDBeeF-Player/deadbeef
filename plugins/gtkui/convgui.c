@@ -73,10 +73,6 @@ converter_show (void) {
 
         gtk_combo_box_set_active (combo, deadbeef->conf_get_int ("converter.dsp_preset", -1) + 1);
         
-        // fill channel maps
-        combo = GTK_COMBO_BOX (lookup_widget (converter, "channelmap"));
-        gtk_combo_box_set_active (combo, deadbeef->conf_get_int ("converter.channelmap_preset", 0));
-
         // select output format
         combo = GTK_COMBO_BOX (lookup_widget (converter, "output_format"));
         gtk_combo_box_set_active (combo, deadbeef->conf_get_int ("converter.output_format", 0));
@@ -660,13 +656,13 @@ on_dsp_preset_plugin_configure_clicked (GtkButton       *button,
         return;
     }
     current_dsp_context = p;
-    pluginconf_t conf = {
+    ddb_dialog_t conf = {
         .title = p->plugin->plugin.name,
         .layout = p->plugin->configdialog,
         .set_param = dsp_ctx_set_param,
         .get_param = dsp_ctx_get_param,
     };
-    plugin_configure (toplevel, &conf);
+    gtkui_run_dialog (toplevel, &conf, 0);
     current_dsp_context = NULL;
 
 #if 0
@@ -1003,12 +999,5 @@ on_converter_output_format_changed     (GtkComboBox     *combobox,
 {
     int idx = gtk_combo_box_get_active (combobox);
     deadbeef->conf_set_int ("converter.output_format", idx);
-}
-
-
-void
-on_edit_channel_maps_clicked           (GtkButton       *button,
-                                        gpointer         user_data)
-{
 }
 

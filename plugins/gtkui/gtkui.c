@@ -44,6 +44,7 @@
 #include "ddbtabstrip.h"
 #include "eq.h"
 #include "actions.h"
+#include "pluginconf.h"
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
@@ -1265,4 +1266,5 @@ static DB_gui_t plugin = {
     .plugin.stop = gtkui_stop,
     .plugin.connect = gtkui_connect,
     .plugin.configdialog = settings_dlg,
+    .run_dialog = gtkui_run_dialog_root,
 };

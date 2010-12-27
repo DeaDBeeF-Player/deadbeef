@@ -66,7 +66,7 @@ on_prop_browse_file (GtkButton *button, gpointer user_data) {
     }
 }
 
-static void apply_conf (GtkWidget *w, pluginconf_t *conf) {
+static void apply_conf (GtkWidget *w, ddb_dialog_t *conf) {
     // parse script
     char token[MAX_TOKEN];
     const char *script = conf->layout;
@@ -189,13 +189,37 @@ prop_changed (GtkWidget *editable, gpointer user_data) {
     gtk_dialog_set_response_sensitive (GTK_DIALOG (user_data), GTK_RESPONSE_APPLY, TRUE);
 }
 
-void
-plugin_configure (GtkWidget *parentwin, pluginconf_t *conf) {
+int
+gtkui_run_dialog (GtkWidget *parentwin, ddb_dialog_t *conf, uint32_t buttons) {
     // create window
     char title[200];
     snprintf (title, sizeof (title), _("Configure %s"), conf->title);
-    GtkWidget *win = gtk_dialog_new_with_buttons (title, GTK_WINDOW (parentwin), GTK_DIALOG_MODAL, GTK_STOCK_APPLY, GTK_RESPONSE_APPLY, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
-    gtk_dialog_set_default_response (GTK_DIALOG (win), GTK_RESPONSE_OK);
+    GtkWidget *win;
+    if (!buttons) {
+        win = gtk_dialog_new_with_buttons (title, GTK_WINDOW (parentwin), GTK_DIALOG_MODAL, GTK_STOCK_APPLY, GTK_RESPONSE_APPLY, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
+        gtk_dialog_set_default_response (GTK_DIALOG (win), GTK_RESPONSE_OK);
+    }
+    else {
+        win = gtk_dialog_new_with_buttons (title, GTK_WINDOW (parentwin), GTK_DIALOG_MODAL, NULL);
+        if (buttons & (1<<ddb_button_ok)) {
+            gtk_dialog_add_button (GTK_DIALOG (win), GTK_STOCK_OK, GTK_RESPONSE_OK);
+        }
+        if (buttons & (1<<ddb_button_cancel)) {
+            gtk_dialog_add_button (GTK_DIALOG (win), GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
+        }
+        if (buttons & (1<<ddb_button_close)) {
+            gtk_dialog_add_button (GTK_DIALOG (win), GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE);
+        }
+        if (buttons & (1<<ddb_button_apply)) {
+            gtk_dialog_add_button (GTK_DIALOG (win), GTK_STOCK_APPLY, GTK_RESPONSE_APPLY);
+        }
+        if (buttons & (1<<ddb_button_yes)) {
+            gtk_dialog_add_button (GTK_DIALOG (win), GTK_STOCK_YES, GTK_RESPONSE_YES);
+        }
+        if (buttons & (1<<ddb_button_no)) {
+            gtk_dialog_add_button (GTK_DIALOG (win), GTK_STOCK_NO, GTK_RESPONSE_NO);
+        }
+    }
     gtk_window_set_type_hint (GTK_WINDOW (win), GDK_WINDOW_TYPE_HINT_DIALOG);
     gtk_container_set_border_width (GTK_CONTAINER(win), 12);
 
@@ -474,6 +498,24 @@ plugin_configure (GtkWidget *parentwin, pluginconf_t *conf) {
         }
     } while (response == GTK_RESPONSE_APPLY);
     gtk_widget_destroy (win);
+    switch (response) {
+    case GTK_RESPONSE_OK:
+        return ddb_button_ok;
+    case GTK_RESPONSE_CANCEL:
+        return ddb_button_cancel;
+    case GTK_RESPONSE_CLOSE:
+        return ddb_button_close;
+    case GTK_RESPONSE_APPLY:
+        return ddb_button_apply;
+    case GTK_RESPONSE_YES:
+        return ddb_button_yes;
+    case GTK_RESPONSE_NO:
+        return ddb_button_no;
+    }
+    return -1;
 }
 
-
+int
+gtkui_run_dialog_root (ddb_dialog_t *conf, uint32_t buttons) {
+    return gtkui_run_dialog (mainwin, conf, buttons);
+}

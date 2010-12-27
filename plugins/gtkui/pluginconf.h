@@ -19,14 +19,10 @@
 #ifndef __PLUGINCONF_H
 #define __PLUGINCONF_H
 
-typedef struct {
-    const char *title;
-    const char *layout;
-    void (*set_param) (const char *key, const char *value);
-    void (*get_param) (const char *key, char *value, int len, const char *def);
-} pluginconf_t;
+int
+gtkui_run_dialog (GtkWidget *parentwin, ddb_dialog_t *dlg, uint32_t buttons);
 
-void
-plugin_configure (GtkWidget *parentwin, pluginconf_t *conf);
+int
+gtkui_run_dialog_root (ddb_dialog_t *dlg, uint32_t buttons);
 
 #endif

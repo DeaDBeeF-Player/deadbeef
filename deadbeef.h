@@ -833,10 +833,35 @@ typedef struct DB_vfs_s {
 } DB_vfs_t;
 
 // gui plugin
-// implements pretty much anything it wants
-// works mostly like misc plugin, except we need separate type for that
+// only one gui plugin can be running at the same time
+// should provide GUI services to other plugins
+
+// this structure represents a gui dialog with callbacks to set/get params
+// documentation should be available here:
+// https://sourceforge.net/apps/mediawiki/deadbeef/index.php?title=Development:Gui_Script
+typedef struct {
+    const char *title;
+    const char *layout;
+    void (*set_param) (const char *key, const char *value);
+    void (*get_param) (const char *key, char *value, int len, const char *def);
+} ddb_dialog_t;
+
+enum {
+    ddb_button_ok,
+    ddb_button_cancel,
+    ddb_button_close,
+    ddb_button_apply,
+    ddb_button_yes,
+    ddb_button_no,
+    ddb_button_max,
+};
+
 typedef struct DB_gui_s {
     DB_plugin_t plugin;
+
+    // returns response code (ddb_button_*)
+    // buttons is a bitset, e.g. (1<<ddb_button_ok)|(1<<ddb_button_cancel)
+    int (*run_dialog) (ddb_dialog_t *dlg, uint32_t buttons);
 } DB_gui_t;
 
 // playlist plugin

@@ -835,13 +835,13 @@ on_configure_plugin_clicked            (GtkButton       *button,
     DB_plugin_t **plugins = deadbeef->plug_get_list ();
     DB_plugin_t *p = plugins[*indices];
     if (p->configdialog) {
-        pluginconf_t conf = {
+        ddb_dialog_t conf = {
             .title = p->name,
             .layout = p->configdialog,
             .set_param = deadbeef->conf_set_str,
             .get_param = gtkui_conf_get_str,
         };
-        plugin_configure (prefwin, &conf);
+        gtkui_run_dialog (prefwin, &conf, 0);
     }
 }
 

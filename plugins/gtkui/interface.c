@@ -3273,12 +3273,6 @@ create_converterdlg (void)
   GtkWidget *dsp_preset;
   GtkWidget *edit_dsp_presets;
   GtkWidget *image470;
-  GtkWidget *hbox87;
-  GtkWidget *label115;
-  GtkWidget *hbox92;
-  GtkWidget *channelmap;
-  GtkWidget *edit_channel_maps;
-  GtkWidget *image471;
   GtkWidget *hbox88;
   GtkWidget *label116;
   GtkObject *numthreads_adj;
@@ -3350,7 +3344,7 @@ create_converterdlg (void)
 
   hbox86 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox86);
-  gtk_box_pack_start (GTK_BOX (vbox26), hbox86, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox26), hbox86, FALSE, TRUE, 0);
 
   label114 = gtk_label_new (_("DSP preset"));
   gtk_widget_show (label114);
@@ -3372,33 +3366,9 @@ create_converterdlg (void)
   gtk_widget_show (image470);
   gtk_container_add (GTK_CONTAINER (edit_dsp_presets), image470);
 
-  hbox87 = gtk_hbox_new (FALSE, 8);
-  gtk_widget_show (hbox87);
-  gtk_box_pack_start (GTK_BOX (vbox26), hbox87, TRUE, TRUE, 0);
-
-  label115 = gtk_label_new (_("Channel Map"));
-  gtk_widget_show (label115);
-  gtk_box_pack_start (GTK_BOX (hbox87), label115, FALSE, FALSE, 0);
-
-  hbox92 = gtk_hbox_new (FALSE, 0);
-  gtk_widget_show (hbox92);
-  gtk_box_pack_start (GTK_BOX (hbox87), hbox92, TRUE, TRUE, 0);
-
-  channelmap = gtk_combo_box_new_text ();
-  gtk_widget_show (channelmap);
-  gtk_box_pack_start (GTK_BOX (hbox92), channelmap, TRUE, TRUE, 0);
-
-  edit_channel_maps = gtk_button_new ();
-  gtk_widget_show (edit_channel_maps);
-  gtk_box_pack_start (GTK_BOX (hbox92), edit_channel_maps, FALSE, FALSE, 0);
-
-  image471 = gtk_image_new_from_stock ("gtk-edit", GTK_ICON_SIZE_BUTTON);
-  gtk_widget_show (image471);
-  gtk_container_add (GTK_CONTAINER (edit_channel_maps), image471);
-
   hbox88 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox88);
-  gtk_box_pack_start (GTK_BOX (vbox26), hbox88, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox26), hbox88, FALSE, TRUE, 0);
 
   label116 = gtk_label_new (_("Number of threads"));
   gtk_widget_show (label116);
@@ -3411,7 +3381,7 @@ create_converterdlg (void)
 
   hbox89 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox89);
-  gtk_box_pack_start (GTK_BOX (vbox26), hbox89, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox26), hbox89, FALSE, TRUE, 0);
 
   label117 = gtk_label_new (_("Output sample format"));
   gtk_widget_show (label117);
@@ -3459,9 +3429,6 @@ create_converterdlg (void)
   g_signal_connect ((gpointer) edit_dsp_presets, "clicked",
                     G_CALLBACK (on_edit_dsp_presets_clicked),
                     NULL);
-  g_signal_connect ((gpointer) edit_channel_maps, "clicked",
-                    G_CALLBACK (on_edit_channel_maps_clicked),
-                    NULL);
   g_signal_connect ((gpointer) output_format, "changed",
                     G_CALLBACK (on_converter_output_format_changed),
                     NULL);
@@ -3493,12 +3460,6 @@ create_converterdlg (void)
   GLADE_HOOKUP_OBJECT (converterdlg, dsp_preset, "dsp_preset");
   GLADE_HOOKUP_OBJECT (converterdlg, edit_dsp_presets, "edit_dsp_presets");
   GLADE_HOOKUP_OBJECT (converterdlg, image470, "image470");
-  GLADE_HOOKUP_OBJECT (converterdlg, hbox87, "hbox87");
-  GLADE_HOOKUP_OBJECT (converterdlg, label115, "label115");
-  GLADE_HOOKUP_OBJECT (converterdlg, hbox92, "hbox92");
-  GLADE_HOOKUP_OBJECT (converterdlg, channelmap, "channelmap");
-  GLADE_HOOKUP_OBJECT (converterdlg, edit_channel_maps, "edit_channel_maps");
-  GLADE_HOOKUP_OBJECT (converterdlg, image471, "image471");
   GLADE_HOOKUP_OBJECT (converterdlg, hbox88, "hbox88");
   GLADE_HOOKUP_OBJECT (converterdlg, label116, "label116");
   GLADE_HOOKUP_OBJECT (converterdlg, numthreads, "numthreads");
