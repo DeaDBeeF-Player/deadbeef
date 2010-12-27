@@ -26,6 +26,7 @@
 #include "support.h"
 #include "interface.h"
 #include "gtkui.h"
+#include "pluginconf.h"
 
 ddb_encoder_preset_t *current_encoder_preset;
 ddb_dsp_preset_t *current_dsp_preset;
@@ -618,6 +619,19 @@ on_dsp_preset_remove_plugin_clicked    (GtkButton       *button,
     }
 }
 
+static ddb_dsp_context_t *current_dsp_context = NULL;
+
+void
+dsp_ctx_set_param (const char *key, const char *value) {
+    current_dsp_context->plugin->set_param (current_dsp_context, atoi (key), value);
+}
+
+void
+dsp_ctx_get_param (const char *key, char *value, int len, const char *def) {
+    strncpy (value, def, len);
+    current_dsp_context->plugin->get_param (current_dsp_context, atoi (key), value, len);
+}
+
 void
 on_dsp_preset_plugin_configure_clicked (GtkButton       *button,
                                         gpointer         user_data)
@@ -637,12 +651,44 @@ on_dsp_preset_plugin_configure_clicked (GtkButton       *button,
     if (idx == -1) {
         return;
     }
-
     ddb_dsp_context_t *p = current_dsp_preset->chain;
-    ddb_dsp_context_t *prev = NULL;
     int i = idx;
     while (p && i--) {
-        prev = p;
+        p = p->next;
+    }
+    if (!p || !p->plugin->configdialog) {
+        return;
+    }
+    current_dsp_context = p;
+    pluginconf_t conf = {
+        .title = p->plugin->plugin.name,
+        .layout = p->plugin->configdialog,
+        .set_param = dsp_ctx_set_param,
+        .get_param = dsp_ctx_get_param,
+    };
+    plugin_configure (toplevel, &conf);
+    current_dsp_context = NULL;
+
+#if 0
+    GtkWidget *toplevel = gtk_widget_get_toplevel (GTK_WIDGET (button));
+    GtkWidget *list = lookup_widget (toplevel, "plugins");
+    GtkTreePath *path;
+    GtkTreeViewColumn *col;
+    gtk_tree_view_get_cursor (GTK_TREE_VIEW (list), &path, &col);
+    if (!path || !col) {
+        // nothing selected
+        return;
+    }
+    int *indices = gtk_tree_path_get_indices (path);
+    int idx = *indices;
+    g_free (indices);
+    if (idx == -1) {
+        return;
+    }
+
+    ddb_dsp_context_t *p = current_dsp_preset->chain;
+    int i = idx;
+    while (p && i--) {
         p = p->next;
     }
     if (!p || !p->plugin->num_params || !p->plugin->num_params ()) {
@@ -700,6 +746,7 @@ on_dsp_preset_plugin_configure_clicked (GtkButton       *button,
         }
     }
     gtk_widget_destroy (dlg);
+#endif
 }
 
 void
@@ -734,7 +781,6 @@ edit_dsp_preset (const char *title, GtkWidget *toplevel, int overwrite) {
     }
 
     {
-        // left list
         GtkWidget *list = lookup_widget (dlg, "plugins");
         GtkCellRenderer *title_cell = gtk_cell_renderer_text_new ();
         GtkTreeViewColumn *col = gtk_tree_view_column_new_with_attributes (_("Plugin"), title_cell, "text", 0, NULL);
@@ -798,6 +844,9 @@ refresh_dsp_lists (GtkComboBox *combo, GtkTreeView *list) {
     int act = gtk_combo_box_get_active (combo);
     mdl = GTK_LIST_STORE (gtk_combo_box_get_model (combo));
     gtk_list_store_clear (mdl);
+    GtkTreeIter iter;
+    gtk_list_store_append (mdl, &iter);
+    gtk_list_store_set (mdl, &iter, 0, "Pass through", -1);
     fill_presets (mdl, (ddb_preset_t *)converter_plugin->dsp_preset_get_list ());
     gtk_combo_box_set_active (combo, act);
 }

@@ -54,7 +54,9 @@ get_supereq (void) {
 
 static void
 set_param (ddb_dsp_context_t *eq, int i, float v) {
-    eq->plugin->set_param (eq, i, v);
+    char fv[100];
+    snprintf (fv, sizeof (fv), "%f", v);
+    eq->plugin->set_param (eq, i, fv);
     if (i == 0) {
         deadbeef->conf_set_float ("eq.preamp", v);
     }
@@ -71,9 +73,9 @@ eq_value_changed (DdbEqualizer *widget)
     ddb_dsp_context_t *eq = get_supereq ();
     if (eq) {
         for (int i = 0; i < 18; i++) {
-            set_param (eq, i+1, db_to_amp (ddb_equalizer_get_band (widget, i)));
+            set_param (eq, i+1, ddb_equalizer_get_band (widget, i));
         }
-        set_param (eq, 0, db_to_amp (ddb_equalizer_get_preamp (widget)));
+        set_param (eq, 0, ddb_equalizer_get_preamp (widget));
     }
 }
 
@@ -95,13 +97,13 @@ on_zero_all_clicked                  (GtkButton       *button,
         ddb_dsp_context_t *eq = get_supereq ();
         if (eq) {
             ddb_equalizer_set_preamp (DDB_EQUALIZER (eqwin), 0);
-            set_param (eq, 0, 1);
+            set_param (eq, 0, 0);
             for (int i = 0; i < 18; i++) {
                 // set gui
                 ddb_equalizer_set_band (DDB_EQUALIZER (eqwin), i, 0);
 
                 // set dsp
-                set_param (eq, i+1, 1);
+                set_param (eq, i+1, 0);
             }
             gdk_window_invalidate_rect (eqwin->window, NULL, FALSE);
         }
@@ -114,7 +116,7 @@ on_zero_preamp_clicked                  (GtkButton       *button,
     if (eqwin) {
         ddb_dsp_context_t *eq = get_supereq ();
         if (eq) {
-            set_param (eq, 0, 1);
+            set_param (eq, 0, 0);
             ddb_equalizer_set_preamp (DDB_EQUALIZER (eqwin), 0);
             gdk_window_invalidate_rect (eqwin->window, NULL, FALSE);
         }
@@ -129,7 +131,7 @@ on_zero_bands_clicked                  (GtkButton       *button,
         if (eq) {
             for (int i = 0; i < 18; i++) {
                 ddb_equalizer_set_band (DDB_EQUALIZER (eqwin), i, 0);
-                set_param (eq, i+1, 1);
+                set_param (eq, i+1, 0);
             }
             gdk_window_invalidate_rect (eqwin->window, NULL, FALSE);
         }
@@ -161,10 +163,16 @@ on_save_preset_clicked                  (GtkButton       *button,
             if (fp) {
                 ddb_dsp_context_t *eq = get_supereq ();
                 if (eq) {
+                    char fv[100];
+                    float v;
                     for (int i = 0; i < 18; i++) {
-                        fprintf (fp, "%f\n", amp_to_db (eq->plugin->get_param (eq, i+1)));
+                        eq->plugin->get_param (eq, i+1, fv, sizeof (fv));
+                        v = atof (fv);
+                        fprintf (fp, "%f\n", v);
                     }
-                    fprintf (fp, "%f\n", amp_to_db (eq->plugin->get_param (eq, 0)));
+                    eq->plugin->get_param (eq, 0, fv, sizeof (fv));
+                    v = atof (fv);
+                    fprintf (fp, "%f\n", v);
                 }
                 fclose (fp);
             }
@@ -219,11 +227,11 @@ on_load_preset_clicked                  (GtkButton       *button,
                     // apply and save config
                     ddb_dsp_context_t *eq = get_supereq ();
                     if (eq) {
-                        set_param (eq, 0, db_to_amp (vals[18]));
+                        set_param (eq, 0, vals[18]);
                         ddb_equalizer_set_preamp (DDB_EQUALIZER (eqwin), vals[18]);
                         for (int i = 0; i < 18; i++) {
                             ddb_equalizer_set_band (DDB_EQUALIZER (eqwin), i, vals[i]);
-                            set_param (eq, i+1, db_to_amp (vals[i]));
+                            set_param (eq, i+1, vals[i]);
                         }
                         gdk_window_invalidate_rect (eqwin->window, NULL, FALSE);
                         deadbeef->conf_save ();
@@ -282,11 +290,11 @@ on_import_fb2k_preset_clicked                  (GtkButton       *button,
                     // apply and save config
                     ddb_dsp_context_t *eq = get_supereq ();
                     if (eq) {
-                        set_param (eq, 0, 1);
+                        set_param (eq, 0, 0);
                         ddb_equalizer_set_preamp (DDB_EQUALIZER (eqwin), 0);
                         for (int i = 0; i < 18; i++) {
-                            ddb_equalizer_set_band (DDB_EQUALIZER (eqwin), i, vals[i]);
-                            set_param (eq, i+1, db_to_amp (vals[i]));
+                            ddb_equalizer_set_band (DDB_EQUALIZER (eqwin), i, amp_to_db (vals[i]));
+                            set_param (eq, i+1, amp_to_db (vals[i]));
                         }
                         gdk_window_invalidate_rect (eqwin->window, NULL, FALSE);
                         deadbeef->conf_save ();
@@ -372,11 +380,16 @@ eq_window_show (void) {
         gtk_widget_set_size_request (eqwin, -1, 200);
 
         if (eq) {
-            ddb_equalizer_set_preamp (DDB_EQUALIZER (eqwin), amp_to_db (eq->plugin->get_param (eq, 0)));
+            char fv[100];
+            float v;
+            eq->plugin->get_param (eq, 0, fv, sizeof (fv));
+            v = atof (fv);
+            ddb_equalizer_set_preamp (DDB_EQUALIZER (eqwin), v);
             for (int i = 0; i < 18; i++) {
                 if (eq) {
-                    float val = eq->plugin->get_param (eq, i+1);
-                    ddb_equalizer_set_band (DDB_EQUALIZER (eqwin), i, amp_to_db (val));
+                    eq->plugin->get_param (eq, i+1, fv, sizeof (fv));
+                    v = atof (fv);
+                    ddb_equalizer_set_band (DDB_EQUALIZER (eqwin), i, v);
                 }
             }
         }

@@ -74,11 +74,6 @@ gtkui_open_files (struct _GSList *lst);
 void
 gtkui_receive_fm_drop (DB_playItem_t *before, char *mem, int length);
 
-// plugin configuration dialogs
-
-void
-plugin_configure (GtkWidget *parentwin, DB_plugin_t *p);
-
 void
 preferences_fill_soundcards (void);
 

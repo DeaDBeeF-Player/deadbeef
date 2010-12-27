@@ -799,13 +799,11 @@ typedef struct DB_dsp_s {
     int (*num_params) (void);
     const char *(*get_param_name) (int p);
 
-    void (*set_param) (ddb_dsp_context_t *ctx, int p, float val);
-    float (*get_param) (ddb_dsp_context_t *ctx, int p);
+    void (*set_param) (ddb_dsp_context_t *ctx, int p, const char *val);
+    void (*get_param) (ddb_dsp_context_t *ctx, int p, char *str, int len);
 
-    void (*set_param_str) (ddb_dsp_context_t *ctx, int p, const char *val);
-    void (*get_param_str) (ddb_dsp_context_t *ctx, int p, char *str, int len);
+    const char *configdialog; // separate dialog per dsp context
 } DB_dsp_t;
-
 
 // misc plugin
 // purpose is to provide extra services

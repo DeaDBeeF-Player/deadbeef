@@ -197,13 +197,13 @@ ddb_src_get_param_name (int p) {
     }
 }
 void
-ddb_src_set_param (ddb_dsp_context_t *ctx, int p, float val) {
+ddb_src_set_param (ddb_dsp_context_t *ctx, int p, const char *val) {
     switch (p) {
     case SRC_PARAM_SAMPLERATE:
-        ((ddb_src_libsamplerate_t*)ctx)->samplerate = val;
+        ((ddb_src_libsamplerate_t*)ctx)->samplerate = atof (val);
         break;
     case SRC_PARAM_QUALITY:
-        ((ddb_src_libsamplerate_t*)ctx)->quality = val;
+        ((ddb_src_libsamplerate_t*)ctx)->quality = atoi (val);
         ((ddb_src_libsamplerate_t*)ctx)->quality_changed = 1;
         break;
     default:
@@ -211,17 +211,24 @@ ddb_src_set_param (ddb_dsp_context_t *ctx, int p, float val) {
     }
 }
 
-float
-ddb_src_get_param (ddb_dsp_context_t *ctx, int p) {
+void
+ddb_src_get_param (ddb_dsp_context_t *ctx, int p, char *val, int sz) {
     switch (p) {
     case SRC_PARAM_SAMPLERATE:
-        return ((ddb_src_libsamplerate_t*)ctx)->samplerate;
+        snprintf (val, sz, "%f", ((ddb_src_libsamplerate_t*)ctx)->samplerate);
+        break;
     case SRC_PARAM_QUALITY:
-        return ((ddb_src_libsamplerate_t*)ctx)->quality;
+        snprintf (val, sz, "%d", ((ddb_src_libsamplerate_t*)ctx)->quality);
+        break;
     default:
         fprintf (stderr, "ddb_src_get_param: invalid param index (%d)\n", p);
     }
 }
+
+static const char settings_dlg[] =
+    "property \"Target Samplerate\" spinbtn[8192,192000,1] 0 48000;\n"
+    "property \"Quality / Algorythm\" select[5] 1 2 SINC_BEST_QUALITY SINC_MEDIUM_QUALITY SINC_FASTEST ZERO_ORDER_HOLD LINEAR;\n"
+;
 
 static DB_dsp_t plugin = {
     .plugin.api_vmajor = DB_API_VERSION_MAJOR,
@@ -243,6 +250,7 @@ static DB_dsp_t plugin = {
     .set_param = ddb_src_set_param,
     .get_param = ddb_src_get_param,
     .reset = ddb_src_reset,
+    .configdialog = settings_dlg,
 };
 
 DB_plugin_t *

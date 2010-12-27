@@ -19,6 +19,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <math.h>
 #include "../../deadbeef.h"
 #include "Equ.h"
 
@@ -186,28 +187,41 @@ const char *
 supereq_get_param_name (int p) {
     return bandnames[p];
 }
+
+
+static inline float
+db_to_amp (float dB) {
+    const float ln10=2.3025850929940002f;
+    return exp(ln10*dB/20.f);
+}
+
+static inline float
+amp_to_db (float amp) {
+    return 20*log10 (amp);
+}
+
 void
-supereq_set_param (ddb_dsp_context_t *ctx, int p, float val) {
+supereq_set_param (ddb_dsp_context_t *ctx, int p, const char *val) {
     switch (p) {
     case 0:
-        supereq_set_preamp (ctx, val);
+        supereq_set_preamp (ctx, db_to_amp (atof (val)));
         break;
     case 1 ... 18:
-        supereq_set_band (ctx, p, val);
+        supereq_set_band (ctx, p-1, db_to_amp (atof (val)));
         break;
     default:
         fprintf (stderr, "supereq_set_param: invalid param index (%d)\n", p);
     }
 }
 
-float
-supereq_get_param (ddb_dsp_context_t *ctx, int p) {
+void
+supereq_get_param (ddb_dsp_context_t *ctx, int p, char *v, int sz) {
     switch (p) {
     case 0:
-        return supereq_get_preamp (ctx);
+        snprintf (v, sz, "%f", amp_to_db (supereq_get_preamp (ctx)));
         break;
     case 1 ... 18:
-        return supereq_get_band (ctx, p);
+        snprintf (v, sz, "%f", amp_to_db (supereq_get_band (ctx, p-1)));
         break;
     default:
         fprintf (stderr, "supereq_get_param: invalid param index (%d)\n", p);
@@ -225,10 +239,13 @@ supereq_open (void) {
     supereq->last_srate = 44100;
     supereq->last_nch = 2;
     supereq->mutex = deadbeef->mutex_create ();
+    supereq->preamp = 1;
+    for (int i = 0; i < 18; i++) {
+        supereq->lbands[i] = 1;
+        supereq->rbands[i] = 1;
+    }
     recalc_table (supereq);
     equ_clearbuf (&supereq->state);
-//    deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_CONFIGCHANGED, DB_CALLBACK (supereq_on_configchanged), 0);
-
 
     return (ddb_dsp_context_t*)supereq;
 }
@@ -244,6 +261,29 @@ supereq_close (ddb_dsp_context_t *ctx) {
     paramlist_free (supereq->paramsroot);
     free (ctx);
 }
+
+static const char settings_dlg[] =
+    "property \"\" hbox[19] hmg fill expand border=0 spacing=8 height=200;\n"
+        "property \"Preamp\" vscale[20,-20,1] vert 0 0;\n"
+        "property \"55 Hz\" vscale[20,-20,1] vert 1 0;\n"
+        "property \"77 Hz\" vscale[20,-20,1] vert 2 0;\n"
+        "property \"110 Hz\" vscale[20,-20,1] vert 3 0;\n"
+        "property \"156 Hz\" vscale[20,-20,1] vert 4 0;\n"
+        "property \"220 Hz\" vscale[20,-20,1] vert 5 0;\n"
+        "property \"311 Hz\" vscale[20,-20,1] vert 6 0;\n"
+        "property \"440 Hz\" vscale[20,-20,1] vert 7 0;\n"
+        "property \"622 Hz\" vscale[20,-20,1] vert 8 0;\n"
+        "property \"880 Hz\" vscale[20,-20,1] vert 9 0;\n"
+        "property \"1.2 kHz\" vscale[20,-20,1] vert 10 0;\n"
+        "property \"1.8 kHz\" vscale[20,-20,1] vert 11 0;\n"
+        "property \"2.5 kHz\" vscale[20,-20,1] vert 12 0;\n"
+        "property \"3.5 kHz\" vscale[20,-20,1] vert 13 0;\n"
+        "property \"5 kHz\" vscale[20,-20,1] vert 14 0;\n"
+        "property \"7 kHz\" vscale[20,-20,1] vert 15 0;\n"
+        "property \"10 kHz\" vscale[20,-20,1] vert 16 0;\n"
+        "property \"14 kHz\" vscale[20,-20,1] vert 17 0;\n"
+        "property \"20 kHz\" vscale[20,-20,1] vert 18 0;\n"
+;
 
 static DB_dsp_t plugin = {
     .plugin.api_vmajor = DB_API_VERSION_MAJOR,
@@ -268,6 +308,7 @@ static DB_dsp_t plugin = {
     .get_param_name = supereq_get_param_name,
     .set_param = supereq_set_param,
     .get_param = supereq_get_param,
+    .configdialog = settings_dlg,
 };
 
 DB_plugin_t *

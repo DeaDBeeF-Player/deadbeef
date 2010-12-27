@@ -249,7 +249,9 @@ dsp_preset_copy (ddb_dsp_preset_t *to, ddb_dsp_preset_t *from) {
         if (dsp->plugin->num_params) {
             int n = dsp->plugin->num_params ();
             for (int j = 0; j < n; j++) {
-                i->plugin->set_param (i, j, dsp->plugin->get_param (dsp, j));
+                char s[1000] = "";
+                dsp->plugin->get_param (dsp, j, s, sizeof (s));
+                i->plugin->set_param (i, j, s);
             }
         }
         if (tail) {
@@ -320,7 +322,7 @@ dsp_preset_load (const char *fname) {
 
         int n = 0;
         for (;;) {
-            float value;
+            char value[1000];
             if (!fgets (temp, sizeof (temp), fp)) {
                 fprintf (stderr, "unexpected eof while reading plugin params\n");
                 goto error;
@@ -328,7 +330,7 @@ dsp_preset_load (const char *fname) {
             if (!strcmp (temp, "}\n")) {
                 break;
             }
-            else if (1 != sscanf (temp, "\t%f\n", &value)) {
+            else if (1 != sscanf (temp, "\t%1000[^\n]\n", value)) {
                 fprintf (stderr, "error loading param %d\n", n);
                 goto error;
             }
@@ -392,8 +394,9 @@ dsp_preset_save (ddb_dsp_preset_t *p, int overwrite) {
             int n = ctx->plugin->num_params ();
             int i;
             for (i = 0; i < n; i++) {
-                float v = ctx->plugin->get_param (ctx, i);
-                fprintf (fp, "\t%f\n", v);
+                char v[1000];
+                ctx->plugin->get_param (ctx, i, v, sizeof (v));
+                fprintf (fp, "\t%s\n", v);
             }
         }
         fprintf (fp, "}\n");

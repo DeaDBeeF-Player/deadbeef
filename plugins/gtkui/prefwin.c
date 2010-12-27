@@ -34,6 +34,7 @@
 #include "support.h"
 #include "eq.h"
 #include "ddblistview.h"
+#include "pluginconf.h"
 
 #define GLADE_HOOKUP_OBJECT(component,widget,name) \
   g_object_set_data_full (G_OBJECT (component), name, \
@@ -812,6 +813,12 @@ on_pref_pluginlist_cursor_changed      (GtkTreeView     *treeview,
 }
 
 void
+gtkui_conf_get_str (const char *key, char *value, int len, const char *def) {
+    // FIXME: conf_get_str must be changed
+    strcpy (value, deadbeef->conf_get_str (key, def));
+}
+
+void
 on_configure_plugin_clicked            (GtkButton       *button,
                                         gpointer         user_data)
 {
@@ -828,7 +835,13 @@ on_configure_plugin_clicked            (GtkButton       *button,
     DB_plugin_t **plugins = deadbeef->plug_get_list ();
     DB_plugin_t *p = plugins[*indices];
     if (p->configdialog) {
-        plugin_configure (prefwin, p);
+        pluginconf_t conf = {
+            .title = p->name,
+            .layout = p->configdialog,
+            .set_param = deadbeef->conf_set_str,
+            .get_param = gtkui_conf_get_str,
+        };
+        plugin_configure (prefwin, &conf);
     }
 }
 

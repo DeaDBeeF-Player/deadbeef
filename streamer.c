@@ -1144,7 +1144,7 @@ streamer_init (void) {
     srcplug = (DB_dsp_t*)plug_get_for_id ("SRC");
     if (srcplug) {
         src = srcplug->open ();
-        srcplug->set_param (src, SRC_PARAM_QUALITY, conf_get_int ("src_quality", 2));
+        srcplug->set_param (src, SRC_PARAM_QUALITY, conf_get_str ("src_quality", "2"));
         src->next = dsp_chain;
         dsp_chain = src;
     }
@@ -1156,11 +1156,11 @@ streamer_init (void) {
 
         // load settings
         eqplug->enable (eq, deadbeef->conf_get_int ("eq.enable", 0));
-        eqplug->set_param (eq, 0, conf_get_float ("eq.preamp", 1));
+        eqplug->set_param (eq, 0, conf_get_str ("eq.preamp", "1"));
         for (int i = 0; i < 18; i++) {
             char key[100];
             snprintf (key, sizeof (key), "eq.band%d", i);
-            eqplug->set_param (eq, 1+i, conf_get_float (key, 1));
+            eqplug->set_param (eq, 1+i, conf_get_str (key, "1"));
         }
 
         eq->next = dsp_chain;
@@ -1386,7 +1386,11 @@ streamer_read_async (char *bytes, int size) {
                 // convert to float
                 int tempsize = pcm_convert (&fileinfo->fmt, input, &dspfmt, tempbuf, inputsize);
                 if (srcplug) {
-                    srcplug->set_param (src, SRC_PARAM_SAMPLERATE, dspfmt.samplerate);
+                    // FIXME: update on change only, conversion from float to
+                    // str and back is slow
+                    char s[100];
+                    snprintf (s, sizeof (s), "%d", dspfmt.samplerate);
+                    srcplug->set_param (src, SRC_PARAM_SAMPLERATE, s);
                 }
 
                 int nframes = inputsize / inputsamplesize;
@@ -1591,7 +1595,7 @@ streamer_configchanged (void) {
     pl_set_order (conf_get_int ("playback.order", 0));
 
     if (srcplug) {
-        srcplug->set_param (src, SRC_PARAM_QUALITY, conf_get_int ("src_quality", 2));
+        srcplug->set_param (src, SRC_PARAM_QUALITY, conf_get_str ("src_quality", "2"));
     }
 }
 
