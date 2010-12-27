@@ -75,6 +75,9 @@ typedef struct {
     int
     (*encoder_preset_save) (ddb_encoder_preset_t *p, int overwrite);
 
+    void
+    (*encoder_preset_copy) (ddb_encoder_preset_t *to, ddb_encoder_preset_t *from);
+
     ddb_encoder_preset_t *
     (*encoder_preset_get_list) (void);
 

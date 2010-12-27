@@ -3286,6 +3286,8 @@ create_converterdlg (void)
 
   converterdlg = gtk_dialog_new ();
   gtk_window_set_title (GTK_WINDOW (converterdlg), _("Converter"));
+  gtk_window_set_modal (GTK_WINDOW (converterdlg), TRUE);
+  gtk_window_set_destroy_with_parent (GTK_WINDOW (converterdlg), TRUE);
   gtk_window_set_type_hint (GTK_WINDOW (converterdlg), GDK_WINDOW_TYPE_HINT_DIALOG);
   gtk_dialog_set_has_separator (GTK_DIALOG (converterdlg), FALSE);
 
@@ -3411,9 +3413,6 @@ create_converterdlg (void)
   gtk_dialog_add_action_widget (GTK_DIALOG (converterdlg), converter_ok, GTK_RESPONSE_OK);
   GTK_WIDGET_SET_FLAGS (converter_ok, GTK_CAN_DEFAULT);
 
-  g_signal_connect ((gpointer) converterdlg, "delete_event",
-                    G_CALLBACK (on_converterdlg_delete_event),
-                    NULL);
   g_signal_connect ((gpointer) converter_output_browse, "clicked",
                     G_CALLBACK (on_converter_output_browse_clicked),
                     NULL);
@@ -3431,12 +3430,6 @@ create_converterdlg (void)
                     NULL);
   g_signal_connect ((gpointer) output_format, "changed",
                     G_CALLBACK (on_converter_output_format_changed),
-                    NULL);
-  g_signal_connect ((gpointer) converter_cancel, "clicked",
-                    G_CALLBACK (on_converter_cancel_clicked),
-                    NULL);
-  g_signal_connect ((gpointer) converter_ok, "clicked",
-                    G_CALLBACK (on_converter_ok_clicked),
                     NULL);
 
   /* Store pointers to all widgets, for use by lookup_widget(). */

@@ -155,6 +155,15 @@ encoder_preset_save (ddb_encoder_preset_t *p, int overwrite) {
     return 0;
 }
 
+void
+encoder_preset_copy (ddb_encoder_preset_t *to, ddb_encoder_preset_t *from) {
+    to->title = strdup (from->title);
+    to->fname = strdup (from->fname);
+    to->encoder = strdup (from->encoder);
+    to->method = from->method;
+    to->formats = from->formats;
+}
+
 ddb_encoder_preset_t *
 encoder_preset_get_list (void) {
     return encoder_presets;
@@ -752,6 +761,7 @@ static ddb_converter_t plugin = {
     .encoder_preset_free = encoder_preset_free,
     .encoder_preset_load = encoder_preset_load,
     .encoder_preset_save = encoder_preset_save,
+    .encoder_preset_copy = encoder_preset_copy,
     .encoder_preset_get_list = encoder_preset_get_list,
     .encoder_preset_get_for_idx = encoder_preset_get_for_idx,
     .encoder_preset_append = encoder_preset_append,
