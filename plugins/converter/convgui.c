@@ -24,11 +24,7 @@
 #include "converter.h"
 #include "support.h"
 #include "interface.h"
-//#include "gtkui.h"
-//#include "pluginconf.h"
 #include "../gtkui/gtkui_api.h"
-
-#pragma GCC optimize("O0")
 
 DB_functions_t *deadbeef;
 
@@ -180,19 +176,6 @@ converter_process (converter_ctx_t *conv)
 
 static int
 converter_show (DB_plugin_action_t *act, DB_playItem_t *it) {
-    if (!converter_plugin) {
-        converter_plugin = (ddb_converter_t *)deadbeef->plug_get_for_id ("converter");
-        if (!converter_plugin) {
-            return -1;
-        }
-    }
-    if (!gtkui_plugin) {
-        gtkui_plugin = (ddb_gtkui_t *)deadbeef->plug_get_for_id ("gtkui");
-        if (!gtkui_plugin) {
-            return -1;
-        }
-    }
-
     converter_ctx_t *conv = malloc (sizeof (converter_ctx_t));
     current_ctx = conv;
     memset (conv, 0, sizeof (converter_ctx_t));
@@ -1044,6 +1027,16 @@ convgui_get_actions (DB_playItem_t *it)
     return &convert_action;
 }
 
+int
+convgui_connect (void) {
+    gtkui_plugin = (ddb_gtkui_t *)deadbeef->plug_get_for_id ("gtkui");
+    converter_plugin = (ddb_converter_t *)deadbeef->plug_get_for_id ("converter");
+    if (!gtkui_plugin || !converter_plugin) {
+        return -1;
+    }
+    return 0;
+}
+
 DB_misc_t plugin = {
     DB_PLUGIN_SET_API_VERSION
     .plugin.version_major = 1,
@@ -1054,7 +1047,8 @@ DB_misc_t plugin = {
     .plugin.author = "Alexey Yakovenko",
     .plugin.email = "waker@users.sourceforge.net",
     .plugin.website = "http://deadbeef.sf.net",
-    .plugin.get_actions = convgui_get_actions
+    .plugin.get_actions = convgui_get_actions,
+    .plugin.connect = convgui_connect,
 };
 
 DB_plugin_t *
