@@ -259,7 +259,6 @@ static DB_functions_t deadbeef_api = {
     .plug_get_dsp_list = plug_get_dsp_list,
     .plug_get_playlist_list = plug_get_playlist_list,
     .plug_get_list = plug_get_list,
-    .plug_activate = plug_activate,
     .plug_get_decoder_id = plug_get_decoder_id,
     .plug_remove_decoder_id = plug_remove_decoder_id,
     .plug_get_for_id = plug_get_for_id,
@@ -480,7 +479,7 @@ plug_event_call (DB_event_t *ev) {
     mutex_lock (mutex);
 
     for (int i = 0; i < MAX_HANDLERS; i++) {
-        if (handlers[ev->event][i].plugin && !handlers[ev->event][i].plugin->inactive) {
+        if (handlers[ev->event][i].plugin) {
             handlers[ev->event][i].callback (ev, handlers[ev->event][i].data);
         }
     }
@@ -590,6 +589,41 @@ plug_init_plugin (DB_plugin_t* (*loadfunc)(DB_functions_t *), void *handle) {
 
 static int dirent_alphasort (const struct dirent **a, const struct dirent **b) {
     return strcmp ((*a)->d_name, (*b)->d_name);
+}
+
+void
+plug_remove_plugin (void *p) {
+    int i;
+    for (i = 0; g_plugins[i]; i++) {
+        if (g_plugins[i] == p) {
+            memmove (&g_plugins[i], &g_plugins[i+1], (MAX_PLUGINS+1-i-1) * sizeof (void*));
+        }
+    }
+    for (i = 0; g_decoder_plugins[i]; i++) {
+        if (g_decoder_plugins[i] == p) {
+            memmove (&g_decoder_plugins[i], &g_decoder_plugins[i+1], (MAX_DECODER_PLUGINS+1-i-1) * sizeof (void*));
+        }
+    }
+    for (i = 0; g_vfs_plugins[i]; i++) {
+        if (g_vfs_plugins[i] == p) {
+            memmove (&g_vfs_plugins[i], &g_vfs_plugins[i+1], (MAX_VFS_PLUGINS+1-i-1) * sizeof (void*));
+        }
+    }
+    for (i = 0; g_dsp_plugins[i]; i++) {
+        if (g_dsp_plugins[i] == p) {
+            memmove (&g_dsp_plugins[i], &g_dsp_plugins[i+1], (MAX_DSP_PLUGINS+1-i-1) * sizeof (void*));
+        }
+    }
+    for (i = 0; g_output_plugins[i]; i++) {
+        if (g_output_plugins[i] == p) {
+            memmove (&g_output_plugins[i], &g_output_plugins[i+1], (MAX_OUTPUT_PLUGINS+1-i-1) * sizeof (void*));
+        }
+    }
+    for (i = 0; g_playlist_plugins[i]; i++) {
+        if (g_playlist_plugins[i] == p) {
+            memmove (&g_playlist_plugins[i], &g_playlist_plugins[i+1], (MAX_PLAYLIST_PLUGINS+1-i-1) * sizeof (void*));
+        }
+    }
 }
 
 int
@@ -785,12 +819,32 @@ plug_load_all (void) {
         }
     }
     // start plugins
-    for (plug = plugins; plug; plug = plug->next) {
+    plugin_t *prev = NULL;
+    for (plug = plugins; plug;) {
         if (plug->plugin->start) {
             if (plug->plugin->start () < 0) {
-                plug->plugin->inactive = 1;
+                fprintf (stderr, "plugin %s failed to start, deactivated.\n", plug->plugin->name);
+                if (plug->plugin->stop) {
+                    plug->plugin->stop ();
+                }
+                if (plug->handle) {
+                    dlclose (plug->handle);
+                }
+                plug_remove_plugin (plug->plugin);
+                if (prev) {
+                    prev->next = plug->next;
+                }
+                else {
+                    plugins = plug->next;
+                }
+                plugin_t *next = plug->next;
+                free (plug);
+                plug = next;
+                continue;
             }
         }
+        prev = plug;
+        plug = plug->next;
     }
 //    trace ("numplugins: %d, numdecoders: %d, numvfs: %d\n", numplugins, numdecoders, numvfs);
     g_plugins[numplugins] = NULL;
@@ -811,12 +865,34 @@ plug_load_all (void) {
 void
 plug_connect_all (void) {
     plugin_t *plug;
-    for (plug = plugins; plug; plug = plug->next) {
+    plugin_t *prev = NULL;
+    for (plug = plugins; plug;) {
         if (plug->plugin->connect) {
             if (plug->plugin->connect () < 0) {
-                plug->plugin->inactive = 1;
+                fprintf (stderr, "plugin %s failed to connect to dependencies, deactivated.\n", plug->plugin->name);
+
+                if (plug->plugin->stop) {
+                    plug->plugin->stop ();
+                }
+                if (plug->handle) {
+                    dlclose (plug->handle);
+                }
+                plug_remove_plugin (plug->plugin);
+
+                if (prev) {
+                    prev->next = plug->next;
+                }
+                else {
+                    plugins = plug->next;
+                }
+                plugin_t *next = plug->next;
+                free (plug);
+                plug = next;
+                continue;
             }
         }
+        prev = plug;
+        plug = plug->next;
     }
 
 }
@@ -884,46 +960,6 @@ plug_get_playlist_list (void) {
 struct DB_plugin_s **
 plug_get_list (void) {
     return g_plugins;
-}
-
-int
-plug_activate (DB_plugin_t *plug, int activate) {
-    if (plug->inactive && !activate) {
-        return -1;
-    }
-    if (!plug->inactive && activate) {
-        return -1;
-    }
-    if (activate) {
-        if (plug->start) {
-            if (!plug->start ()) {
-                plug->inactive = 0;
-            }
-            else {
-                trace ("failed to start plugin %s\n", plug->name);
-                return -1;
-            }
-            return 0;
-        }
-        else {
-            return -1;
-        }
-    }
-    else {
-        if (plug->stop) {
-            if (!plug->stop ()) {
-                plug->inactive = 1;
-            }
-            else {
-                trace ("failed to stop plugin %s\n", plug->name);
-                return -1;
-            }
-            return 0;
-        }
-        else {
-            return -1;
-        }
-    }
 }
 
 DB_output_t *

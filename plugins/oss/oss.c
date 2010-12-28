@@ -307,7 +307,6 @@ static DB_output_t plugin = {
     DB_PLUGIN_SET_API_VERSION
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
-    .plugin.nostop = 0,
     .plugin.type = DB_PLUGIN_OUTPUT,
     .plugin.id = "oss",
     .plugin.name = "OSS output plugin",

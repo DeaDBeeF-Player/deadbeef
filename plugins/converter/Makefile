@@ -3,9 +3,9 @@ GUI_OUT=converter_gtkui.so
 
 CC=gcc
 
-CFLAGS+=-Wall -D_GNU_SOURCE -std=c99 -g -I../..
+CFLAGS+=-Wall -D_GNU_SOURCE -std=c99 -fPIC -g -I../..
 
-LDFLAGS+=-module -shared -fPIC
+LDFLAGS+=-module -shared
 
 CONVERTER_SOURCES=converter.c
 GUI_SOURCES=convgui.c interface.c support.c

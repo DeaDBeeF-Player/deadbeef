@@ -1164,11 +1164,13 @@ gtkui_start (void) {
     return 0;
 }
 
+static DB_plugin_t *supereq_plugin;
+
 gboolean
 gtkui_connect_cb (void *none) {
     // equalizer
     GtkWidget *eq_mi = lookup_widget (mainwin, "view_eq");
-    if (!deadbeef->plug_get_for_id ("supereq")) {
+    if (!supereq_plugin) {
         gtk_widget_hide (GTK_WIDGET (eq_mi));
     }
     else {
@@ -1196,6 +1198,7 @@ gtkui_connect_cb (void *none) {
 
 static int
 gtkui_connect (void) {
+    supereq_plugin = deadbeef->plug_get_for_id ("supereq");
     // need to do it in gtk thread
     g_idle_add (gtkui_connect_cb, NULL);
 
@@ -1262,7 +1265,6 @@ static ddb_gtkui_t plugin = {
     .gui.plugin.api_vminor = DB_API_VERSION_MINOR,
     .gui.plugin.version_major = 1,
     .gui.plugin.version_minor = 0,
-    .gui.plugin.nostop = 1,
     .gui.plugin.type = DB_PLUGIN_MISC,
     .gui.plugin.id = "gtkui",
     .gui.plugin.name = "Standard GTK2 user interface",

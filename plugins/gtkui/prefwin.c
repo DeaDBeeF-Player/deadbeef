@@ -67,27 +67,6 @@ gtk_enum_sound_callback (const char *name, const char *desc, void *userdata) {
 }
 
 void
-on_plugin_active_toggled (GtkCellRendererToggle *cell_renderer, gchar *path, GtkTreeModel *model) {
-    GtkTreePath *p = gtk_tree_path_new_from_string (path);
-    if (p) {
-        int *indices = gtk_tree_path_get_indices (p);
-        //gtk_tree_path_free (p); // wtf?? gtk crashes on this
-        if (indices) {
-            DB_plugin_t **plugins = deadbeef->plug_get_list ();
-            DB_plugin_t *plug = plugins[*indices];
-            gboolean state;
-            GtkTreeIter iter;
-            gtk_tree_model_get_iter (model, &iter, p);
-            gtk_tree_model_get (model, &iter, 0, &state, -1);
-            if (!deadbeef->plug_activate (plug, !state)) {
-                gtk_list_store_set (GTK_LIST_STORE (model), &iter, 0, !state, -1);
-            }
-        }
-        g_free (indices);
-    }
-}
-
-void
 preferences_fill_soundcards (void) {
     if (!prefwin) {
         return;

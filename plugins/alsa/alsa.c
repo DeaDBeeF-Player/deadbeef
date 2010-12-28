@@ -699,7 +699,6 @@ static DB_output_t plugin = {
     DB_PLUGIN_SET_API_VERSION
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
-    .plugin.nostop = 1,
     .plugin.type = DB_PLUGIN_OUTPUT,
     .plugin.name = "ALSA output plugin",
     .plugin.descr = "plays sound through linux standard alsa library",

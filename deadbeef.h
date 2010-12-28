@@ -533,7 +533,6 @@ typedef struct {
     struct DB_dsp_s **(*plug_get_dsp_list) (void);
     struct DB_playlist_s **(*plug_get_playlist_list) (void);
     struct DB_plugin_s **(*plug_get_list) (void);
-    int (*plug_activate) (struct DB_plugin_s *p, int activate);
     const char * (*plug_get_decoder_id) (const char *id);
     void (*plug_remove_decoder_id) (const char *id);
     struct DB_plugin_s *(*plug_get_for_id) (const char *id);
@@ -597,10 +596,11 @@ typedef struct DB_plugin_s {
     // plugin version
     int16_t version_major;
     int16_t version_minor;
-    // may be deactivated on failures after load
-    int inactive;
-    // prevent plugin from being dynamically stopped
-    int nostop;
+
+    uint32_t flags; // currently unused
+    uint32_t reserved1;
+    uint32_t reserved2;
+    uint32_t reserved3;
 
     // any of those can be left NULL
     // though it's much better to fill them with something useful
