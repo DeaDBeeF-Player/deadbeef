@@ -28,6 +28,8 @@
 #include "gtkui.h"
 #include "pluginconf.h"
 
+#pragma GCC optimize("O0")
+
 ddb_converter_t *converter_plugin;
 
 typedef struct {
@@ -66,18 +68,24 @@ on_converter_progress_cancel (GtkDialog *dialog, gint response_id, gpointer user
     ctx->cancelled = 1;
 }
 
+typedef struct {
+    GtkWidget *entry;
+    char *text;
+} update_progress_info_t;
+
 static gboolean
 update_progress_cb (gpointer ctx) {
-    converter_ctx_t *conv = ctx;
-    gtk_entry_set_text (GTK_ENTRY (conv->progress_entry), conv->progress_text);
-    free (conv->progress_text);
+    update_progress_info_t *info = ctx;
+    gtk_entry_set_text (GTK_ENTRY (info->entry), info->text);
+    free (info->text);
+    g_object_unref (info->entry);
+    free (info);
     return FALSE;
 }
 
 static gboolean
 destroy_progress_cb (gpointer ctx) {
-    converter_ctx_t *conv = ctx;
-    gtk_widget_destroy (conv->progress);
+    gtk_widget_destroy (ctx);
     return FALSE;
 }
 
@@ -86,16 +94,19 @@ converter_worker (void *ctx) {
     converter_ctx_t *conv = ctx;
 
     for (int n = 0; n < conv->convert_items_count; n++) {
-        conv->progress_text = strdup (conv->convert_items[n]->fname);
-        g_idle_add (update_progress_cb, conv);
+        update_progress_info_t *info = malloc (sizeof (update_progress_info_t));
+        info->entry = conv->progress_entry;
+        g_object_ref (info->entry);
+        info->text = strdup (conv->convert_items[n]->fname);
+        g_idle_add (update_progress_cb, info);
 
-        converter_plugin->convert (conv->convert_items[n], conv->outfolder, conv->selected_format, conv->encoder_preset, conv->dsp_preset);
+        converter_plugin->convert (conv->convert_items[n], conv->outfolder, conv->selected_format, conv->encoder_preset, conv->dsp_preset, &conv->cancelled);
         deadbeef->pl_item_unref (conv->convert_items[n]);
         if (conv->cancelled) {
             break;
         }
     }
-    g_idle_add (destroy_progress_cb, ctx);
+    g_idle_add (destroy_progress_cb, conv->progress);
     if (conv->convert_items) {
         free (conv->convert_items);
     }
@@ -226,17 +237,19 @@ converter_show (void) {
     int response = gtk_dialog_run (GTK_DIALOG (conv->converter));
     if (response == GTK_RESPONSE_OK) {
         converter_process (conv);
+        gtk_widget_destroy (conv->converter);
     }
     else {
+        // FIXME: clean up properly
+        gtk_widget_destroy (conv->converter);
         if (conv->convert_items) {
             for (int n = 0; n < conv->convert_items_count; n++) {
                 deadbeef->pl_item_unref (conv->convert_items[n]);
             }
             free (conv->convert_items);
         }
+        free (conv);
     }
-    gtk_widget_destroy (conv->converter);
-    free (conv);
 }
 
 void

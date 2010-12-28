@@ -20,6 +20,7 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <dirent.h>
+#include <unistd.h>
 #include "converter.h"
 #include <deadbeef.h>
 
@@ -104,7 +105,7 @@ encoder_preset_load (const char *fname) {
     }
 
     err = 0;
-error:
+
     if (err) {
         encoder_preset_free (p);
         p = NULL;
@@ -543,36 +544,35 @@ dsp_preset_replace (ddb_dsp_preset_t *from, ddb_dsp_preset_t *to) {
 }
 
 int
-convert (DB_playItem_t *it, const char *outfolder, int selected_format, ddb_encoder_preset_t *encoder_preset, ddb_dsp_preset_t *dsp_preset) {
+convert (DB_playItem_t *it, const char *outfolder, int selected_format, ddb_encoder_preset_t *encoder_preset, ddb_dsp_preset_t *dsp_preset, int *abort) {
+    int err = -1;
+    FILE *enc_pipe = NULL;
+    FILE *temp_file = NULL;
     DB_decoder_t *dec = NULL;
+    DB_fileinfo_t *fileinfo = NULL;
+    char out[1024] = ""; // full path to output file
     dec = (DB_decoder_t *)deadbeef->plug_get_for_id (it->decoder_id);
     if (dec) {
-        DB_fileinfo_t *fileinfo = dec->open (0);
+        fileinfo = dec->open (0);
         if (fileinfo && dec->init (fileinfo, DB_PLAYITEM (it)) != 0) {
-            dec->free (fileinfo);
-            fileinfo = NULL;
+            fprintf (stderr, "converter: decoder->init failed\n");
+            goto error;
         }
         if (fileinfo) {
             char fname[1024];
             int idx = deadbeef->pl_get_idx_of (it);
             deadbeef->pl_format_title (it, idx, fname, sizeof (fname), -1, encoder_preset->fname);
-            char out[1024];
             snprintf (out, sizeof (out), "%s/%s", outfolder, fname);
             char enc[1024];
             snprintf (enc, sizeof (enc), encoder_preset->encoder, out);
             fprintf (stderr, "executing: %s\n", enc);
-            FILE *enc_pipe = NULL;
-            FILE *temp_file = NULL;
 
             if (!encoder_preset->encoder[0]) {
                 // write to wave file
                 temp_file = fopen (out, "w+b");
                 if (!temp_file) {
                     fprintf (stderr, "converter: failed to open output wave file %s\n", out);
-                    if (fileinfo) {
-                        dec->free (fileinfo);
-                    }
-                    return -1;
+                    goto error;
                 }
             }
             else if (encoder_preset->method == DDB_ENCODER_METHOD_FILE) {
@@ -580,23 +580,14 @@ convert (DB_playItem_t *it, const char *outfolder, int selected_format, ddb_enco
                 temp_file = fopen (temp_file_name, "w+b");
                 if (!temp_file) {
                     fprintf (stderr, "converter: failed to open temp file %s\n", temp_file_name);
-                    if (fileinfo) {
-                        dec->free (fileinfo);
-                    }
-                    return -1;
+                    goto error;
                 }
             }
             else {
                 enc_pipe = popen (enc, "w");
                 if (!enc_pipe) {
                     fprintf (stderr, "converter: failed to open encoder\n");
-                    if (temp_file) {
-                        fclose (temp_file);
-                    }
-                    if (fileinfo) {
-                        dec->free (fileinfo);
-                    }
-                    return -1;
+                    goto error;
                 }
             }
 
@@ -632,6 +623,9 @@ convert (DB_playItem_t *it, const char *outfolder, int selected_format, ddb_enco
             int eof = 0;
             for (;;) {
                 if (eof) {
+                    break;
+                }
+                if (abort && *abort) {
                     break;
                 }
                 int sz = dec->read (fileinfo, buffer, bs);
@@ -704,23 +698,44 @@ convert (DB_playItem_t *it, const char *outfolder, int selected_format, ddb_enco
                     header_written = 1;
                 }
 
-                fwrite (buffer, 1, sz, temp_file);
+                if (sz != fwrite (buffer, 1, sz, temp_file)) {
+                    fprintf (stderr, "\033[0;31mwrite error\033[37;0m\n");
+                    goto error;
+                }
+            }
+            if (abort && *abort) {
+                goto error;
             }
             if (temp_file && temp_file != enc_pipe) {
                 fclose (temp_file);
+                temp_file = NULL;
             }
 
             if (encoder_preset->encoder[0] && encoder_preset->method == DDB_ENCODER_METHOD_FILE) {
                 enc_pipe = popen (enc, "w");
             }
 
-            if (enc_pipe) {
-                pclose (enc_pipe);
-            }
-            dec->free (fileinfo);
         }
     }
-    return 0;
+    err = 0;
+error:
+    if (temp_file && temp_file != enc_pipe) {
+        fclose (temp_file);
+        temp_file = NULL;
+    }
+    if (enc_pipe) {
+        pclose (enc_pipe);
+        enc_pipe = NULL;
+    }
+    if (dec && fileinfo) {
+        dec->free (fileinfo);
+        fileinfo = NULL;
+    }
+    if (abort && *abort && out[0]) {
+        unlink (out);
+    }
+
+    return err;
 }
 
 int

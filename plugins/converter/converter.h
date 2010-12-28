@@ -133,7 +133,7 @@ typedef struct {
     /////////////////////////////
 
     int
-    (*convert) (DB_playItem_t *it, const char *outfolder, int selected_format, ddb_encoder_preset_t *encoder_preset, ddb_dsp_preset_t *dsp_preset);
+    (*convert) (DB_playItem_t *it, const char *outfolder, int selected_format, ddb_encoder_preset_t *encoder_preset, ddb_dsp_preset_t *dsp_preset, int *abort);
 
 } ddb_converter_t;
 
