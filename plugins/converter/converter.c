@@ -551,6 +551,7 @@ convert (DB_playItem_t *it, const char *outfolder, int selected_format, ddb_enco
     DB_decoder_t *dec = NULL;
     DB_fileinfo_t *fileinfo = NULL;
     char out[1024] = ""; // full path to output file
+    char input_file_name[23] = "";
     dec = (DB_decoder_t *)deadbeef->plug_get_for_id (it->decoder_id);
     if (dec) {
         fileinfo = dec->open (0);
@@ -563,7 +564,6 @@ convert (DB_playItem_t *it, const char *outfolder, int selected_format, ddb_enco
             int idx = deadbeef->pl_get_idx_of (it);
             deadbeef->pl_format_title (it, idx, fname, sizeof (fname), -1, encoder_preset->fname);
             snprintf (out, sizeof (out), "%s/%s", outfolder, fname);
-            char input_file_name[23];
             if (encoder_preset->method == DDB_ENCODER_METHOD_FILE) {
                 strcpy (input_file_name, "/tmp/ddbconvXXXXXX");
                 mktemp (input_file_name);
@@ -758,7 +758,6 @@ convert (DB_playItem_t *it, const char *outfolder, int selected_format, ddb_enco
             if (encoder_preset->encoder[0] && encoder_preset->method == DDB_ENCODER_METHOD_FILE) {
                 enc_pipe = popen (enc, "w");
             }
-
         }
     }
     err = 0;
@@ -777,6 +776,9 @@ error:
     }
     if (abort && *abort && out[0]) {
         unlink (out);
+    }
+    if (input_file_name[0] && strcmp (input_file_name, "-")) {
+        unlink (input_file_name);
     }
 
     return err;
