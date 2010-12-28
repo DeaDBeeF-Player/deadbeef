@@ -563,9 +563,54 @@ convert (DB_playItem_t *it, const char *outfolder, int selected_format, ddb_enco
             int idx = deadbeef->pl_get_idx_of (it);
             deadbeef->pl_format_title (it, idx, fname, sizeof (fname), -1, encoder_preset->fname);
             snprintf (out, sizeof (out), "%s/%s", outfolder, fname);
-            char enc[1024];
-            snprintf (enc, sizeof (enc), encoder_preset->encoder, out);
-            fprintf (stderr, "executing: %s\n", enc);
+            char input_file_name[23];
+            if (encoder_preset->method == DDB_ENCODER_METHOD_FILE) {
+                strcpy (input_file_name, "/tmp/ddbconvXXXXXX");
+                mktemp (input_file_name);
+                strcat (input_file_name, ".wav");
+            }
+            else {
+                strcpy (input_file_name, "-");
+            }
+
+            char enc[2000];
+
+            // formatting: %o = outfile, %i = infile
+            char *e = encoder_preset->encoder;
+            char *o = enc;
+            *o = 0;
+            int len = sizeof (enc);
+            while (e && *e) {
+                if (len <= 0) {
+                    fprintf (stderr, "converter: failed to assemble encoder command line - buffer is not big enough, try to shorten your parameters. max allowed length is %d characters\n", sizeof (enc));
+                    goto error;
+                }
+                if (e[0] == '%' && e[1]) {
+                    if (e[1] == 'o') {
+                        int l = snprintf (o, len, "\"%s\"", out);
+                        o += l;
+                        len -= l;
+                    }
+                    else if (e[1] == 'i') {
+                        int l = snprintf (o, len, "\"%s\"", input_file_name);
+                        o += l;
+                        len -= l;
+                    }
+                    else {
+                        strncpy (o, e, 2);
+                        o += 2;
+                        len -= 2;
+                    }
+                    e += 2;
+                }
+                else {
+                    *o++ = *e++;
+                    *o = 0;
+                    len--;
+                }
+            }
+
+            fprintf (stderr, "converter: will encode using: %s\n", enc);
 
             if (!encoder_preset->encoder[0]) {
                 // write to wave file
@@ -576,10 +621,9 @@ convert (DB_playItem_t *it, const char *outfolder, int selected_format, ddb_enco
                 }
             }
             else if (encoder_preset->method == DDB_ENCODER_METHOD_FILE) {
-                const char *temp_file_name = "/tmp/deadbeef-converter.wav"; // FIXME
-                temp_file = fopen (temp_file_name, "w+b");
+                temp_file = fopen (input_file_name, "w+b");
                 if (!temp_file) {
-                    fprintf (stderr, "converter: failed to open temp file %s\n", temp_file_name);
+                    fprintf (stderr, "converter: failed to open temp file %s\n", input_file_name);
                     goto error;
                 }
             }
@@ -699,7 +743,7 @@ convert (DB_playItem_t *it, const char *outfolder, int selected_format, ddb_enco
                 }
 
                 if (sz != fwrite (buffer, 1, sz, temp_file)) {
-                    fprintf (stderr, "\033[0;31mwrite error\033[37;0m\n");
+                    fprintf (stderr, "converter: write error\n");
                     goto error;
                 }
             }
