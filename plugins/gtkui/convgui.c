@@ -232,9 +232,9 @@ converter_show (void) {
     combo = GTK_COMBO_BOX (lookup_widget (conv->converter, "output_format"));
     gtk_combo_box_set_active (combo, deadbeef->conf_get_int ("converter.output_format", 0));
 
-    current_ctx = NULL;
 
     int response = gtk_dialog_run (GTK_DIALOG (conv->converter));
+    current_ctx = NULL;
     if (response == GTK_RESPONSE_OK) {
         converter_process (conv);
         gtk_widget_destroy (conv->converter);
