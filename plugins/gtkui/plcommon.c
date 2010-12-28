@@ -30,7 +30,6 @@
 #include "interface.h"
 #include "parser.h"
 #include "actions.h"
-#include "convgui.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
@@ -355,12 +354,6 @@ on_remove_from_disk_activate                    (GtkMenuItem     *menuitem,
 }
 
 void
-on_convert_activate                    (GtkMenuItem     *menuitem,
-                                        gpointer         user_data) {
-    converter_show ();
-}
-
-void
 actionitem_activate (GtkMenuItem     *menuitem,
                      DB_plugin_action_t *action)
 {
@@ -404,7 +397,6 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
     GtkWidget *separator8;
     GtkWidget *properties1;
     GtkWidget *reload_metadata;
-    GtkWidget *convert;
 
     playlist_menu = gtk_menu_new ();
     add_to_playback_queue1 = gtk_menu_item_new_with_mnemonic (_("Add to playback queue"));
@@ -444,10 +436,6 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
         gtk_container_add (GTK_CONTAINER (playlist_menu), remove_from_disk);
         g_object_set_data (G_OBJECT (remove_from_disk), "ps", listview);
     }
-    convert = gtk_menu_item_new_with_mnemonic (_("Convert..."));
-    gtk_widget_show (convert);
-    gtk_container_add (GTK_CONTAINER (playlist_menu), convert);
-    g_object_set_data (G_OBJECT (convert), "ps", listview);
 
     separator8 = gtk_separator_menu_item_new ();
     gtk_widget_show (separator8);
@@ -535,9 +523,6 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
                 G_CALLBACK (on_remove_from_disk_activate),
                 NULL);
     }
-    g_signal_connect ((gpointer) convert, "activate",
-            G_CALLBACK (on_convert_activate),
-            NULL);
     g_signal_connect ((gpointer) properties1, "activate",
             G_CALLBACK (main_properties_activate),
             NULL);

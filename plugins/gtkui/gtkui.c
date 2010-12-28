@@ -45,11 +45,12 @@
 #include "eq.h"
 #include "actions.h"
 #include "pluginconf.h"
+#include "gtkui_api.h"
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
 
-static DB_gui_t plugin;
+static ddb_gtkui_t plugin;
 DB_functions_t *deadbeef;
 
 static intptr_t gtk_tid;
@@ -1236,6 +1237,11 @@ gtkui_stop (void) {
     return 0;
 }
 
+GtkWidget *
+gtkui_get_mainwin (void) {
+    return mainwin;
+}
+
 DB_plugin_t *
 gtkui_load (DB_functions_t *api) {
     deadbeef = api;
@@ -1251,20 +1257,23 @@ static const char settings_dlg[] =
 ;
 
 // define plugin interface
-static DB_gui_t plugin = {
-    DB_PLUGIN_SET_API_VERSION
-    .plugin.version_major = 1,
-    .plugin.version_minor = 0,
-    .plugin.nostop = 1,
-    .plugin.type = DB_PLUGIN_MISC,
-    .plugin.name = "Standard GTK2 user interface",
-    .plugin.descr = "Default DeaDBeeF GUI",
-    .plugin.author = "Alexey Yakovenko",
-    .plugin.email = "waker@users.sourceforge.net",
-    .plugin.website = "http://deadbeef.sf.net",
-    .plugin.start = gtkui_start,
-    .plugin.stop = gtkui_stop,
-    .plugin.connect = gtkui_connect,
-    .plugin.configdialog = settings_dlg,
-    .run_dialog = gtkui_run_dialog_root,
+static ddb_gtkui_t plugin = {
+    .gui.plugin.api_vmajor = DB_API_VERSION_MAJOR,
+    .gui.plugin.api_vminor = DB_API_VERSION_MINOR,
+    .gui.plugin.version_major = 1,
+    .gui.plugin.version_minor = 0,
+    .gui.plugin.nostop = 1,
+    .gui.plugin.type = DB_PLUGIN_MISC,
+    .gui.plugin.id = "gtkui",
+    .gui.plugin.name = "Standard GTK2 user interface",
+    .gui.plugin.descr = "Default DeaDBeeF GUI",
+    .gui.plugin.author = "Alexey Yakovenko",
+    .gui.plugin.email = "waker@users.sourceforge.net",
+    .gui.plugin.website = "http://deadbeef.sf.net",
+    .gui.plugin.start = gtkui_start,
+    .gui.plugin.stop = gtkui_stop,
+    .gui.plugin.connect = gtkui_connect,
+    .gui.plugin.configdialog = settings_dlg,
+    .gui.run_dialog = gtkui_run_dialog_root,
+    .get_mainwin = gtkui_get_mainwin,
 };

@@ -21,16 +21,19 @@
 #include <assert.h>
 #include <sys/stat.h>
 #include <dirent.h>
-#include "convgui.h"
-#include "../converter/converter.h"
+#include "converter.h"
 #include "support.h"
 #include "interface.h"
-#include "gtkui.h"
-#include "pluginconf.h"
+//#include "gtkui.h"
+//#include "pluginconf.h"
+#include "../gtkui/gtkui_api.h"
 
 #pragma GCC optimize("O0")
 
+DB_functions_t *deadbeef;
+
 ddb_converter_t *converter_plugin;
+ddb_gtkui_t *gtkui_plugin;
 
 typedef struct {
     GtkWidget *converter;
@@ -101,10 +104,13 @@ converter_worker (void *ctx) {
         g_idle_add (update_progress_cb, info);
 
         converter_plugin->convert (conv->convert_items[n], conv->outfolder, conv->selected_format, conv->encoder_preset, conv->dsp_preset, &conv->cancelled);
-        deadbeef->pl_item_unref (conv->convert_items[n]);
         if (conv->cancelled) {
+            for (; n < conv->convert_items_count; n++) {
+                deadbeef->pl_item_unref (conv->convert_items[n]);
+            }
             break;
         }
+        deadbeef->pl_item_unref (conv->convert_items[n]);
     }
     g_idle_add (destroy_progress_cb, conv->progress);
     if (conv->convert_items) {
@@ -138,7 +144,7 @@ converter_process (converter_ctx_t *conv)
     int dsp_idx = gtk_combo_box_get_active (combo) - 1;
 
     combo = GTK_COMBO_BOX (lookup_widget (conv->converter, "output_format"));
-    int selected_format = gtk_combo_box_get_active (combo);
+//    int selected_format = gtk_combo_box_get_active (combo);
 
     ddb_dsp_preset_t *dsp_preset = NULL;
     if (dsp_idx >= 0) {
@@ -154,7 +160,7 @@ converter_process (converter_ctx_t *conv)
         converter_plugin->dsp_preset_copy (conv->dsp_preset, dsp_preset);
     }
 
-    GtkWidget *progress = gtk_dialog_new_with_buttons (_("Converting..."), GTK_WINDOW (mainwin), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
+    GtkWidget *progress = gtk_dialog_new_with_buttons (_("Converting..."), GTK_WINDOW (gtkui_plugin->get_mainwin ()), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
     GtkWidget *vbox = GTK_DIALOG (progress)->vbox;
     GtkWidget *entry = gtk_entry_new ();
     gtk_widget_set_size_request (entry, 400, -1);
@@ -172,12 +178,18 @@ converter_process (converter_ctx_t *conv)
     deadbeef->thread_detach (tid);
 }
 
-void
-converter_show (void) {
+static int
+converter_show (DB_plugin_action_t *act, DB_playItem_t *it) {
     if (!converter_plugin) {
         converter_plugin = (ddb_converter_t *)deadbeef->plug_get_for_id ("converter");
         if (!converter_plugin) {
-            return;
+            return -1;
+        }
+    }
+    if (!gtkui_plugin) {
+        gtkui_plugin = (ddb_gtkui_t *)deadbeef->plug_get_for_id ("gtkui");
+        if (!gtkui_plugin) {
+            return -1;
         }
     }
 
@@ -250,6 +262,7 @@ converter_show (void) {
         }
         free (conv);
     }
+    return 0;
 }
 
 void
@@ -408,12 +421,12 @@ edit_encoder_preset (char *title, GtkWidget *toplevel, int overwrite) {
                     free (p);
                 }
                 else {
-                    GtkWidget *warndlg = gtk_message_dialog_new (GTK_WINDOW (mainwin), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Failed to save encoder preset"));
+                    GtkWidget *warndlg = gtk_message_dialog_new (GTK_WINDOW (gtkui_plugin->get_mainwin ()), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Failed to save encoder preset"));
                     gtk_window_set_transient_for (GTK_WINDOW (warndlg), GTK_WINDOW (dlg));
                     gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (warndlg), err == -1 ? _("Check preset folder permissions, try to pick different title, or free up some disk space") : _("Preset with the same name already exists. Try to pick another title."));
                     gtk_window_set_title (GTK_WINDOW (warndlg), _("Error"));
 
-                    int response = gtk_dialog_run (GTK_DIALOG (warndlg));
+                    /*int response = */gtk_dialog_run (GTK_DIALOG (warndlg));
                     gtk_widget_destroy (warndlg);
                     continue;
                 }
@@ -523,7 +536,7 @@ on_encoder_preset_remove                     (GtkButton       *button,
         return;
     }
 
-    GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (mainwin), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO, _("Remove preset"));
+    GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (gtkui_plugin->get_mainwin ()), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO, _("Remove preset"));
     gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (toplevel));
     gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dlg), _("This action will delete the selected preset. Are you sure?"));
     gtk_window_set_title (GTK_WINDOW (dlg), _("Warning"));
@@ -741,87 +754,8 @@ on_dsp_preset_plugin_configure_clicked (GtkButton       *button,
         .set_param = dsp_ctx_set_param,
         .get_param = dsp_ctx_get_param,
     };
-    gtkui_run_dialog (toplevel, &conf, 0);
+    gtkui_plugin->gui.run_dialog (&conf, 0);
     current_dsp_context = NULL;
-
-#if 0
-    GtkWidget *toplevel = gtk_widget_get_toplevel (GTK_WIDGET (button));
-    GtkWidget *list = lookup_widget (toplevel, "plugins");
-    GtkTreePath *path;
-    GtkTreeViewColumn *col;
-    gtk_tree_view_get_cursor (GTK_TREE_VIEW (list), &path, &col);
-    if (!path || !col) {
-        // nothing selected
-        return;
-    }
-    int *indices = gtk_tree_path_get_indices (path);
-    int idx = *indices;
-    g_free (indices);
-    if (idx == -1) {
-        return;
-    }
-
-    ddb_dsp_context_t *p = current_dsp_preset->chain;
-    int i = idx;
-    while (p && i--) {
-        p = p->next;
-    }
-    if (!p || !p->plugin->num_params || !p->plugin->num_params ()) {
-        return;
-    }
-
-    GtkWidget *dlg = gtk_dialog_new ();
-    gtk_window_set_title (GTK_WINDOW (dlg), _("Configure DSP plugin"));
-    gtk_window_set_modal (GTK_WINDOW (dlg), TRUE);
-    gtk_window_set_type_hint (GTK_WINDOW (dlg), GDK_WINDOW_TYPE_HINT_DIALOG);
-
-    GtkWidget *vbox = gtk_vbox_new (FALSE, 8);
-    gtk_container_set_border_width (GTK_CONTAINER (vbox), 12);
-    gtk_widget_show (vbox);
-
-    gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dlg)->vbox), vbox, TRUE, TRUE, 0);
-
-    GtkWidget *w;
-
-    int n = p->plugin->num_params ();
-    GtkEntry *entries[n];
-    for (i = 0; i < n; i++) {
-        GtkWidget *hbox = gtk_hbox_new (FALSE, 8);
-
-        gtk_widget_show (hbox);
-        gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
-        const char *title = p->plugin->get_param_name (i);
-        w = gtk_label_new (_(title));
-        gtk_widget_show (w);
-        gtk_box_pack_start (GTK_BOX (hbox), w, FALSE, FALSE, 0);
-        entries[i] = GTK_ENTRY (gtk_entry_new ());
-        char s[100];
-        snprintf (s, sizeof (s), "%f", p->plugin->get_param (p, i));
-        gtk_entry_set_text (entries[i], s);
-        gtk_widget_show (GTK_WIDGET (entries[i]));
-        gtk_box_pack_start (GTK_BOX (hbox), GTK_WIDGET (entries[i]), TRUE, TRUE, 0);
-    }
-
-
-    w = gtk_button_new_from_stock ("gtk-cancel");
-    gtk_widget_show (w);
-    gtk_dialog_add_action_widget (GTK_DIALOG (dlg), w, GTK_RESPONSE_CANCEL);
-    GTK_WIDGET_SET_FLAGS (w, GTK_CAN_DEFAULT);
-
-    w = gtk_button_new_from_stock ("gtk-ok");
-    gtk_widget_show (w);
-    gtk_dialog_add_action_widget (GTK_DIALOG (dlg), w, GTK_RESPONSE_OK);
-    GTK_WIDGET_SET_FLAGS (w, GTK_CAN_DEFAULT);
-
-    int r = gtk_dialog_run (GTK_DIALOG (dlg));
-    if (r == GTK_RESPONSE_OK) {
-        for (i = 0; i < n; i++) {
-            const char *s = gtk_entry_get_text (entries[i]);
-            p->plugin->set_param (p, i, atof (s));
-        }
-    }
-    gtk_widget_destroy (dlg);
-#endif
 }
 
 void
@@ -876,12 +810,12 @@ edit_dsp_preset (const char *title, GtkWidget *toplevel, int overwrite) {
             current_ctx->current_dsp_preset->title = strdup (gtk_entry_get_text (GTK_ENTRY (lookup_widget (dlg, "title"))));
             int err = converter_plugin->dsp_preset_save (current_ctx->current_dsp_preset, overwrite);
             if (err < 0) {
-                GtkWidget *warndlg = gtk_message_dialog_new (GTK_WINDOW (mainwin), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Failed to save DSP preset"));
+                GtkWidget *warndlg = gtk_message_dialog_new (GTK_WINDOW (gtkui_plugin->get_mainwin ()), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Failed to save DSP preset"));
                 gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (warndlg), err == -1 ? _("Check preset folder permissions, try to pick different title, or free up some disk space") : _("Preset with the same name already exists. Try to pick another title."));
                 gtk_window_set_title (GTK_WINDOW (warndlg), _("Error"));
 
                 gtk_window_set_transient_for (GTK_WINDOW (warndlg), GTK_WINDOW (dlg));
-                int response = gtk_dialog_run (GTK_DIALOG (warndlg));
+                /*int response = */gtk_dialog_run (GTK_DIALOG (warndlg));
                 gtk_widget_destroy (warndlg);
                 continue;
             }
@@ -975,7 +909,7 @@ on_dsp_preset_remove                     (GtkButton       *button,
         return;
     }
 
-    GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (mainwin), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO, _("Remove preset"));
+    GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (gtkui_plugin->get_mainwin ()), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO, _("Remove preset"));
     gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (toplevel));
     gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dlg), _("This action will delete the selected preset. Are you sure?"));
     gtk_window_set_title (GTK_WINDOW (dlg), _("Warning"));
@@ -1078,5 +1012,54 @@ on_converter_output_format_changed     (GtkComboBox     *combobox,
 {
     int idx = gtk_combo_box_get_active (combobox);
     deadbeef->conf_set_int ("converter.output_format", idx);
+}
+
+GtkWidget*
+title_formatting_help_link_create (gchar *widget_name, gchar *string1, gchar *string2,
+                gint int1, gint int2)
+{
+    GtkWidget *link = gtk_link_button_new_with_label ("http://sourceforge.net/apps/mediawiki/deadbeef/index.php?title=Title_Formatting", "Help");
+    return link;
+}
+
+GtkWidget*
+encoder_cmdline_help_link_create (gchar *widget_name, gchar *string1, gchar *string2,
+                gint int1, gint int2)
+{
+    GtkWidget *link = gtk_link_button_new_with_label ("http://sourceforge.net/apps/mediawiki/deadbeef/index.php?title=Encoder_Command_Line", "Help");
+    return link;
+}
+
+static DB_plugin_action_t convert_action = {
+    .title = "Convert...",
+    .name = "convert",
+    .flags = DB_ACTION_CAN_MULTIPLE_TRACKS | DB_ACTION_ALLOW_MULTIPLE_TRACKS | DB_ACTION_SINGLE_TRACK,
+    .callback = converter_show,
+    .next = NULL
+};
+
+static DB_plugin_action_t *
+convgui_get_actions (DB_playItem_t *it)
+{
+    return &convert_action;
+}
+
+DB_misc_t plugin = {
+    DB_PLUGIN_SET_API_VERSION
+    .plugin.version_major = 1,
+    .plugin.version_minor = 0,
+    .plugin.type = DB_PLUGIN_MISC,
+    .plugin.name = "Converter GTK UI",
+    .plugin.descr = "User interface to Converter plugin using GTK2",
+    .plugin.author = "Alexey Yakovenko",
+    .plugin.email = "waker@users.sourceforge.net",
+    .plugin.website = "http://deadbeef.sf.net",
+    .plugin.get_actions = convgui_get_actions
+};
+
+DB_plugin_t *
+converter_gtkui_load (DB_functions_t *api) {
+    deadbeef = api;
+    return DB_PLUGIN (&plugin);
 }
 

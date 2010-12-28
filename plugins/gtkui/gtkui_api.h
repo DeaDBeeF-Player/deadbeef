@@ -16,15 +16,13 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
-#ifndef __CONVGUI_H
-#define __CONVGUI_H
 
-#include <stdint.h>
-#include "../../deadbeef.h"
+#ifndef __GTKUI_API_H
+#define __GTKUI_API_H
 
-// gtk stuff
-void
-converter_show (void);
+typedef struct {
+    DB_gui_t gui;
+    GtkWidget * (*get_mainwin) (void);
+} ddb_gtkui_t;
 
 #endif
-
