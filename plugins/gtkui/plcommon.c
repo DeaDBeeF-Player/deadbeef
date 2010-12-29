@@ -460,6 +460,7 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
     DB_plugin_t **plugins = deadbeef->plug_get_list();
     int i;
 
+    int added_entries = 0;
     for (i = 0; plugins[i]; i++)
     {
         if (!plugins[i]->get_actions)
@@ -474,6 +475,7 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
             if (action->flags & DB_ACTION_COMMON)
                 continue;
             count++;
+            added_entries++;
             GtkWidget *actionitem;
             actionitem = gtk_menu_item_new_with_mnemonic (_(action->title));
             gtk_widget_show (actionitem);
@@ -492,13 +494,14 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
                 gtk_widget_set_sensitive (GTK_WIDGET (actionitem), FALSE);
             }
         }
-        if (count > 0)
-        {
-            separator8 = gtk_separator_menu_item_new ();
-            gtk_widget_show (separator8);
-            gtk_container_add (GTK_CONTAINER (playlist_menu), separator8);
-            gtk_widget_set_sensitive (separator8, FALSE);
-        }
+    }
+
+    if (added_entries > 0)
+    {
+        separator8 = gtk_separator_menu_item_new ();
+        gtk_widget_show (separator8);
+        gtk_container_add (GTK_CONTAINER (playlist_menu), separator8);
+        gtk_widget_set_sensitive (separator8, FALSE);
     }
 
     properties1 = gtk_menu_item_new_with_mnemonic (_("Properties"));
