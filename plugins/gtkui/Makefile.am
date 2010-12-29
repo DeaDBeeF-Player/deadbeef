@@ -32,7 +32,8 @@ GTKUI_SOURCES =    gtkui.c gtkui.h\
 				   plcommon.c plcommon.h\
 				   prefwin.c\
 				   eq.c eq.h\
-				   actions.c actions.h
+				   actions.c actions.h\
+				   dspconfig.c dspconfig.h
 
 EXTRA_DIST = $(gtkui_VALASOURCES) deadbeef.glade
 

@@ -2629,6 +2629,21 @@ create_prefwin (void)
   g_signal_connect ((gpointer) resume_last_session, "toggled",
                     G_CALLBACK (on_resume_last_session_toggled),
                     NULL);
+  g_signal_connect ((gpointer) dsp_add, "clicked",
+                    G_CALLBACK (on_dsp_add_clicked),
+                    NULL);
+  g_signal_connect ((gpointer) dsp_remove, "clicked",
+                    G_CALLBACK (on_dsp_remove_clicked),
+                    NULL);
+  g_signal_connect ((gpointer) dsp_configure, "clicked",
+                    G_CALLBACK (on_dsp_configure_clicked),
+                    NULL);
+  g_signal_connect ((gpointer) dsp_up, "clicked",
+                    G_CALLBACK (on_dsp_up_clicked),
+                    NULL);
+  g_signal_connect ((gpointer) dsp_down, "clicked",
+                    G_CALLBACK (on_dsp_down_clicked),
+                    NULL);
   g_signal_connect ((gpointer) pref_close_send_to_tray, "clicked",
                     G_CALLBACK (on_pref_close_send_to_tray_clicked),
                     NULL);
@@ -3405,5 +3420,71 @@ create_sortbydlg (void)
   GLADE_HOOKUP_OBJECT (sortbydlg, okbutton5, "okbutton5");
 
   return sortbydlg;
+}
+
+GtkWidget*
+create_select_dsp_plugin (void)
+{
+  GtkWidget *select_dsp_plugin;
+  GtkWidget *dialog_vbox10;
+  GtkWidget *vbox31;
+  GtkWidget *hbox85;
+  GtkWidget *label113;
+  GtkWidget *plugin;
+  GtkWidget *dialog_action_area9;
+  GtkWidget *cancelbutton7;
+  GtkWidget *okbutton7;
+
+  select_dsp_plugin = gtk_dialog_new ();
+  gtk_window_set_title (GTK_WINDOW (select_dsp_plugin), _("Select DSP Plugin"));
+  gtk_window_set_modal (GTK_WINDOW (select_dsp_plugin), TRUE);
+  gtk_window_set_type_hint (GTK_WINDOW (select_dsp_plugin), GDK_WINDOW_TYPE_HINT_DIALOG);
+
+  dialog_vbox10 = GTK_DIALOG (select_dsp_plugin)->vbox;
+  gtk_widget_show (dialog_vbox10);
+
+  vbox31 = gtk_vbox_new (FALSE, 8);
+  gtk_widget_show (vbox31);
+  gtk_box_pack_start (GTK_BOX (dialog_vbox10), vbox31, TRUE, TRUE, 0);
+  gtk_container_set_border_width (GTK_CONTAINER (vbox31), 12);
+
+  hbox85 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox85);
+  gtk_box_pack_start (GTK_BOX (vbox31), hbox85, FALSE, FALSE, 0);
+
+  label113 = gtk_label_new (_("Plugin"));
+  gtk_widget_show (label113);
+  gtk_box_pack_start (GTK_BOX (hbox85), label113, FALSE, FALSE, 0);
+
+  plugin = gtk_combo_box_new_text ();
+  gtk_widget_show (plugin);
+  gtk_box_pack_start (GTK_BOX (hbox85), plugin, TRUE, TRUE, 0);
+
+  dialog_action_area9 = GTK_DIALOG (select_dsp_plugin)->action_area;
+  gtk_widget_show (dialog_action_area9);
+  gtk_button_box_set_layout (GTK_BUTTON_BOX (dialog_action_area9), GTK_BUTTONBOX_END);
+
+  cancelbutton7 = gtk_button_new_from_stock ("gtk-cancel");
+  gtk_widget_show (cancelbutton7);
+  gtk_dialog_add_action_widget (GTK_DIALOG (select_dsp_plugin), cancelbutton7, GTK_RESPONSE_CANCEL);
+  GTK_WIDGET_SET_FLAGS (cancelbutton7, GTK_CAN_DEFAULT);
+
+  okbutton7 = gtk_button_new_from_stock ("gtk-ok");
+  gtk_widget_show (okbutton7);
+  gtk_dialog_add_action_widget (GTK_DIALOG (select_dsp_plugin), okbutton7, GTK_RESPONSE_OK);
+  GTK_WIDGET_SET_FLAGS (okbutton7, GTK_CAN_DEFAULT);
+
+  /* Store pointers to all widgets, for use by lookup_widget(). */
+  GLADE_HOOKUP_OBJECT_NO_REF (select_dsp_plugin, select_dsp_plugin, "select_dsp_plugin");
+  GLADE_HOOKUP_OBJECT_NO_REF (select_dsp_plugin, dialog_vbox10, "dialog_vbox10");
+  GLADE_HOOKUP_OBJECT (select_dsp_plugin, vbox31, "vbox31");
+  GLADE_HOOKUP_OBJECT (select_dsp_plugin, hbox85, "hbox85");
+  GLADE_HOOKUP_OBJECT (select_dsp_plugin, label113, "label113");
+  GLADE_HOOKUP_OBJECT (select_dsp_plugin, plugin, "plugin");
+  GLADE_HOOKUP_OBJECT_NO_REF (select_dsp_plugin, dialog_action_area9, "dialog_action_area9");
+  GLADE_HOOKUP_OBJECT (select_dsp_plugin, cancelbutton7, "cancelbutton7");
+  GLADE_HOOKUP_OBJECT (select_dsp_plugin, okbutton7, "okbutton7");
+
+  return select_dsp_plugin;
 }
 

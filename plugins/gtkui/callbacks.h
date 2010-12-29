@@ -1021,3 +1021,23 @@ on_shuffle_albums1_activate            (GtkMenuItem     *menuitem,
 void
 on_order_shuffle_albums_activate       (GtkMenuItem     *menuitem,
                                         gpointer         user_data);
+
+void
+on_dsp_add_clicked                     (GtkButton       *button,
+                                        gpointer         user_data);
+
+void
+on_dsp_remove_clicked                  (GtkButton       *button,
+                                        gpointer         user_data);
+
+void
+on_dsp_configure_clicked               (GtkButton       *button,
+                                        gpointer         user_data);
+
+void
+on_dsp_up_clicked                      (GtkButton       *button,
+                                        gpointer         user_data);
+
+void
+on_dsp_down_clicked                    (GtkButton       *button,
+                                        gpointer         user_data);

@@ -330,6 +330,7 @@ typedef struct {
     struct DB_fileinfo_s *(*streamer_get_current_fileinfo) (void);
     int (*streamer_get_current_playlist) (void);
     struct ddb_dsp_context_s * (*streamer_get_dsp_chain) (void);
+    void (*streamer_set_dsp_chain) (struct ddb_dsp_context_s *chain);
     // system folders
     // normally functions will return standard folders derived from --prefix
     // portable version will return pathes specified in comments below

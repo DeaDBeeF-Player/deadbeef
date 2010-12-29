@@ -35,6 +35,7 @@
 #include "eq.h"
 #include "ddblistview.h"
 #include "pluginconf.h"
+#include "dspconfig.h"
 
 #define GLADE_HOOKUP_OBJECT(component,widget,name) \
   g_object_set_data_full (G_OBJECT (component), name, \
@@ -494,6 +495,9 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
     // replaygain_scale
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "pref_replaygain_scale")), deadbeef->conf_get_int ("replaygain_scale", 1));
 
+    // dsp
+    dsp_setup_init (prefwin);
+
     // close_send_to_tray
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "pref_close_send_to_tray")), deadbeef->conf_get_int ("close_send_to_tray", 0));
 
@@ -646,6 +650,7 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (prefwin, "wv_write_id3v1")), wv_write_id3v1);
 
     gtk_dialog_run (GTK_DIALOG (prefwin));
+    dsp_setup_free ();
     gtk_widget_destroy (prefwin);
     deadbeef->conf_save ();
     prefwin = NULL;
