@@ -31,6 +31,7 @@
 #include "support.h"
 #include "deadbeef.h"
 #include "gtkui.h"
+#include "pluginconf.h"
 
 static ddb_dsp_context_t *chain;
 static GtkWidget *prefwin;
@@ -168,22 +169,27 @@ on_dsp_add_clicked                     (GtkButton       *button,
     gtk_widget_destroy (dlg);
 }
 
+static int
+listview_get_index (GtkWidget *list) {
+    GtkTreePath *path;
+    GtkTreeViewColumn *col;
+    gtk_tree_view_get_cursor (GTK_TREE_VIEW (list), &path, &col);
+    if (!path || !col) {
+        // nothing selected
+        return - 1;
+    }
+    int *indices = gtk_tree_path_get_indices (path);
+    int idx = *indices;
+    g_free (indices);
+    return idx;
+}
 
 void
 on_dsp_remove_clicked                  (GtkButton       *button,
                                         gpointer         user_data)
 {
     GtkWidget *list = lookup_widget (prefwin, "dsp_listview");
-    GtkTreePath *path;
-    GtkTreeViewColumn *col;
-    gtk_tree_view_get_cursor (GTK_TREE_VIEW (list), &path, &col);
-    if (!path || !col) {
-        // nothing selected
-        return;
-    }
-    int *indices = gtk_tree_path_get_indices (path);
-    int idx = *indices;
-    g_free (indices);
+    int idx = listview_get_index (list);
     if (idx == -1) {
         return;
     }
@@ -206,7 +212,8 @@ on_dsp_remove_clicked                  (GtkButton       *button,
         GtkListStore *mdl = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW(list)));
         gtk_list_store_clear (mdl);
         fill_dsp_chain (mdl);
-        path = gtk_tree_path_new_from_indices (idx, -1);
+        GtkTreePath *path = gtk_tree_path_new_from_indices (idx, -1);
+        GtkTreeViewColumn *col;
         gtk_tree_view_set_cursor (GTK_TREE_VIEW (list), path, col, FALSE);
         gtk_tree_path_free (path);
     }
@@ -262,12 +269,64 @@ on_dsp_configure_clicked               (GtkButton       *button,
     current_dsp_context = NULL;
 }
 
+static int
+swap_items (GtkWidget *list, int idx) {
+    ddb_dsp_context_t *prev = NULL;
+    ddb_dsp_context_t *p = chain;
+
+    int n = idx;
+    while (n > 0 && p) {
+        prev = p;
+        p = p->next;
+        n--;
+    }
+
+    if (!p || !p->next) {
+        return -1;
+    }
+
+    ddb_dsp_context_t *moved = p->next;
+
+    if (!moved) {
+        return -1;
+    }
+
+    ddb_dsp_context_t *last = moved ? moved->next : NULL;
+
+    if (prev) {
+        p->next = last;
+        prev->next = moved;
+        moved->next = p;
+    }
+    else {
+        p->next = last;
+        chain = moved;
+        moved->next = p;
+    }
+    GtkListStore *mdl = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW(list)));
+    gtk_list_store_clear (mdl);
+    fill_dsp_chain (mdl);
+    return 0;
+}
+
 
 void
 on_dsp_up_clicked                      (GtkButton       *button,
                                         gpointer         user_data)
 {
+    GtkWidget *list = lookup_widget (prefwin, "dsp_listview");
+    int idx = listview_get_index (list);
+    if (idx <= 0) {
+        return;
+    }
 
+    if (-1 == swap_items (list, idx-1)) {
+        return;
+    }
+    GtkTreePath *path = gtk_tree_path_new_from_indices (idx-1, -1);
+    GtkTreeViewColumn *col;
+    gtk_tree_view_set_cursor (GTK_TREE_VIEW (list), path, col, FALSE);
+    gtk_tree_path_free (path);
 }
 
 
@@ -275,6 +334,18 @@ void
 on_dsp_down_clicked                    (GtkButton       *button,
                                         gpointer         user_data)
 {
+    GtkWidget *list = lookup_widget (prefwin, "dsp_listview");
+    int idx = listview_get_index (list);
+    if (idx == -1) {
+        return;
+    }
 
+    if (-1 == swap_items (list, idx)) {
+        return;
+    }
+    GtkTreePath *path = gtk_tree_path_new_from_indices (idx+1, -1);
+    GtkTreeViewColumn *col;
+    gtk_tree_view_set_cursor (GTK_TREE_VIEW (list), path, col, FALSE);
+    gtk_tree_path_free (path);
 }
 
