@@ -1623,6 +1623,18 @@ create_prefwin (void)
   GtkWidget *cli_playlist_name;
   GtkWidget *resume_last_session;
   GtkWidget *label39;
+  GtkWidget *vbox29;
+  GtkWidget *hbox80;
+  GtkWidget *dsp_add;
+  GtkWidget *dsp_remove;
+  GtkWidget *dsp_configure;
+  GtkWidget *hbox81;
+  GtkWidget *scrolledwindow7;
+  GtkWidget *dsp_listview;
+  GtkWidget *vbox30;
+  GtkWidget *dsp_up;
+  GtkWidget *dsp_down;
+  GtkWidget *label110;
   GtkWidget *vbox9;
   GtkWidget *pref_close_send_to_tray;
   GtkWidget *mmb_delete_playlist;
@@ -1758,10 +1770,6 @@ create_prefwin (void)
   GtkWidget *label3;
   GtkWidget *dialog_action_area2;
   GtkWidget *closebutton1;
-  GtkWidget *alignment14;
-  GtkWidget *hbox55;
-  GtkWidget *image393;
-  GtkWidget *label91;
 
   prefwin = gtk_dialog_new ();
   gtk_widget_set_size_request (prefwin, 630, 400);
@@ -1883,6 +1891,58 @@ create_prefwin (void)
   gtk_widget_show (label39);
   gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), 1), label39);
 
+  vbox29 = gtk_vbox_new (FALSE, 8);
+  gtk_widget_show (vbox29);
+  gtk_container_add (GTK_CONTAINER (notebook), vbox29);
+  gtk_container_set_border_width (GTK_CONTAINER (vbox29), 12);
+
+  hbox80 = gtk_hbox_new (TRUE, 8);
+  gtk_widget_show (hbox80);
+  gtk_box_pack_start (GTK_BOX (vbox29), hbox80, FALSE, TRUE, 0);
+
+  dsp_add = gtk_button_new_from_stock ("gtk-add");
+  gtk_widget_show (dsp_add);
+  gtk_box_pack_start (GTK_BOX (hbox80), dsp_add, FALSE, TRUE, 0);
+
+  dsp_remove = gtk_button_new_from_stock ("gtk-remove");
+  gtk_widget_show (dsp_remove);
+  gtk_box_pack_start (GTK_BOX (hbox80), dsp_remove, FALSE, TRUE, 0);
+
+  dsp_configure = gtk_button_new_with_mnemonic (_("Configure"));
+  gtk_widget_show (dsp_configure);
+  gtk_box_pack_start (GTK_BOX (hbox80), dsp_configure, FALSE, TRUE, 0);
+
+  hbox81 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox81);
+  gtk_box_pack_start (GTK_BOX (vbox29), hbox81, TRUE, TRUE, 0);
+
+  scrolledwindow7 = gtk_scrolled_window_new (NULL, NULL);
+  gtk_widget_show (scrolledwindow7);
+  gtk_box_pack_start (GTK_BOX (hbox81), scrolledwindow7, TRUE, TRUE, 0);
+  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow7), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+  gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow7), GTK_SHADOW_IN);
+
+  dsp_listview = gtk_tree_view_new ();
+  gtk_widget_show (dsp_listview);
+  gtk_container_add (GTK_CONTAINER (scrolledwindow7), dsp_listview);
+  gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (dsp_listview), FALSE);
+
+  vbox30 = gtk_vbox_new (FALSE, 8);
+  gtk_widget_show (vbox30);
+  gtk_box_pack_start (GTK_BOX (hbox81), vbox30, FALSE, TRUE, 0);
+
+  dsp_up = gtk_button_new_from_stock ("gtk-go-up");
+  gtk_widget_show (dsp_up);
+  gtk_box_pack_start (GTK_BOX (vbox30), dsp_up, FALSE, FALSE, 0);
+
+  dsp_down = gtk_button_new_from_stock ("gtk-go-down");
+  gtk_widget_show (dsp_down);
+  gtk_box_pack_start (GTK_BOX (vbox30), dsp_down, FALSE, FALSE, 0);
+
+  label110 = gtk_label_new (_("DSP"));
+  gtk_widget_show (label110);
+  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), 2), label110);
+
   vbox9 = gtk_vbox_new (FALSE, 8);
   gtk_widget_show (vbox9);
   gtk_container_add (GTK_CONTAINER (notebook), vbox9);
@@ -1938,7 +1998,7 @@ create_prefwin (void)
 
   label2 = gtk_label_new (_("GUI"));
   gtk_widget_show (label2);
-  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), 2), label2);
+  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), 3), label2);
 
   notebook4 = gtk_notebook_new ();
   gtk_widget_show (notebook4);
@@ -2158,7 +2218,7 @@ create_prefwin (void)
 
   label100 = gtk_label_new (_("Colors"));
   gtk_widget_show (label100);
-  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), 3), label100);
+  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), 4), label100);
 
   vbox11 = gtk_vbox_new (FALSE, 8);
   gtk_widget_show (vbox11);
@@ -2245,7 +2305,7 @@ create_prefwin (void)
 
   label16 = gtk_label_new (_("Network"));
   gtk_widget_show (label16);
-  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), 4), label16);
+  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), 5), label16);
 
   vbox18 = gtk_vbox_new (FALSE, 0);
   gtk_widget_show (vbox18);
@@ -2425,7 +2485,7 @@ create_prefwin (void)
 
   label67 = gtk_label_new (_("Tag writer"));
   gtk_widget_show (label67);
-  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), 5), label67);
+  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), 6), label67);
 
   hpaned1 = gtk_hpaned_new ();
   gtk_widget_show (hpaned1);
@@ -2536,33 +2596,17 @@ create_prefwin (void)
 
   label3 = gtk_label_new (_("Plugins"));
   gtk_widget_show (label3);
-  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), 6), label3);
+  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), 7), label3);
   gtk_misc_set_alignment (GTK_MISC (label3), 0.48, 0.5);
 
   dialog_action_area2 = GTK_DIALOG (prefwin)->action_area;
   gtk_widget_show (dialog_action_area2);
   gtk_button_box_set_layout (GTK_BUTTON_BOX (dialog_action_area2), GTK_BUTTONBOX_END);
 
-  closebutton1 = gtk_button_new ();
+  closebutton1 = gtk_button_new_from_stock ("gtk-close");
   gtk_widget_show (closebutton1);
   gtk_dialog_add_action_widget (GTK_DIALOG (prefwin), closebutton1, GTK_RESPONSE_CLOSE);
   GTK_WIDGET_SET_FLAGS (closebutton1, GTK_CAN_DEFAULT);
-
-  alignment14 = gtk_alignment_new (0.5, 0.5, 0, 0);
-  gtk_widget_show (alignment14);
-  gtk_container_add (GTK_CONTAINER (closebutton1), alignment14);
-
-  hbox55 = gtk_hbox_new (FALSE, 2);
-  gtk_widget_show (hbox55);
-  gtk_container_add (GTK_CONTAINER (alignment14), hbox55);
-
-  image393 = gtk_image_new_from_stock ("gtk-close", GTK_ICON_SIZE_BUTTON);
-  gtk_widget_show (image393);
-  gtk_box_pack_start (GTK_BOX (hbox55), image393, FALSE, FALSE, 0);
-
-  label91 = gtk_label_new_with_mnemonic (_("_Close"));
-  gtk_widget_show (label91);
-  gtk_box_pack_start (GTK_BOX (hbox55), label91, FALSE, FALSE, 0);
 
   g_signal_connect ((gpointer) pref_dynsamplerate, "clicked",
                     G_CALLBACK (on_pref_dynsamplerate_clicked),
@@ -2750,6 +2794,18 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, cli_playlist_name, "cli_playlist_name");
   GLADE_HOOKUP_OBJECT (prefwin, resume_last_session, "resume_last_session");
   GLADE_HOOKUP_OBJECT (prefwin, label39, "label39");
+  GLADE_HOOKUP_OBJECT (prefwin, vbox29, "vbox29");
+  GLADE_HOOKUP_OBJECT (prefwin, hbox80, "hbox80");
+  GLADE_HOOKUP_OBJECT (prefwin, dsp_add, "dsp_add");
+  GLADE_HOOKUP_OBJECT (prefwin, dsp_remove, "dsp_remove");
+  GLADE_HOOKUP_OBJECT (prefwin, dsp_configure, "dsp_configure");
+  GLADE_HOOKUP_OBJECT (prefwin, hbox81, "hbox81");
+  GLADE_HOOKUP_OBJECT (prefwin, scrolledwindow7, "scrolledwindow7");
+  GLADE_HOOKUP_OBJECT (prefwin, dsp_listview, "dsp_listview");
+  GLADE_HOOKUP_OBJECT (prefwin, vbox30, "vbox30");
+  GLADE_HOOKUP_OBJECT (prefwin, dsp_up, "dsp_up");
+  GLADE_HOOKUP_OBJECT (prefwin, dsp_down, "dsp_down");
+  GLADE_HOOKUP_OBJECT (prefwin, label110, "label110");
   GLADE_HOOKUP_OBJECT (prefwin, vbox9, "vbox9");
   GLADE_HOOKUP_OBJECT (prefwin, pref_close_send_to_tray, "pref_close_send_to_tray");
   GLADE_HOOKUP_OBJECT (prefwin, mmb_delete_playlist, "mmb_delete_playlist");
@@ -2885,10 +2941,6 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, label3, "label3");
   GLADE_HOOKUP_OBJECT_NO_REF (prefwin, dialog_action_area2, "dialog_action_area2");
   GLADE_HOOKUP_OBJECT (prefwin, closebutton1, "closebutton1");
-  GLADE_HOOKUP_OBJECT (prefwin, alignment14, "alignment14");
-  GLADE_HOOKUP_OBJECT (prefwin, hbox55, "hbox55");
-  GLADE_HOOKUP_OBJECT (prefwin, image393, "image393");
-  GLADE_HOOKUP_OBJECT (prefwin, label91, "label91");
 
   return prefwin;
 }
