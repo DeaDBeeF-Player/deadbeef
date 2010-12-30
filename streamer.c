@@ -61,6 +61,17 @@ static int streaming_terminate;
 // buffer up to 3 seconds at 44100Hz stereo
 #define STREAM_BUFFER_SIZE 0x80000 // slightly more than 3 seconds of 44100 stereo
 
+// how much bigger should read-buffer be to allow upsampling.
+// e.g. 8000Hz -> 192000Hz upsampling requires 24x buffer size,
+// so if we originally request 4096 bytes blocks -
+// that will require 24x buffer size, which is 98304 bytes buffer
+#define MAX_DSP_RATIO 24
+
+#define MIN_BLOCK_SIZE 4096
+#define MAX_BLOCK_SIZE 16384
+#define READBUFFER_SIZE (MAX_BLOCK_SIZE * MAX_DSP_RATIO)
+static char readbuffer[READBUFFER_SIZE];
+
 static ringbuf_t streamer_ringbuf;
 static char streambuffer[STREAM_BUFFER_SIZE];
 
@@ -1037,22 +1048,23 @@ streamer_thread (void *ctx) {
         }
         int channels = output->fmt.channels;
         int bytes_in_one_second = rate * (output->fmt.bps>>3) * channels;
-        const int blocksize = 4096;
+        const int blocksize = MIN_BLOCK_SIZE;
         int alloc_time = 1000 / (bytes_in_one_second * output->fmt.channels / blocksize);
 
         streamer_lock ();
-        if (streamer_ringbuf.remaining < (STREAM_BUFFER_SIZE-blocksize*2)) {
+        if (streamer_ringbuf.remaining < (STREAM_BUFFER_SIZE-blocksize * MAX_DSP_RATIO)) {
             int sz = STREAM_BUFFER_SIZE - streamer_ringbuf.remaining;
             int minsize = blocksize;
 
             // speed up buffering when empty
-            if (streamer_ringbuf.remaining < 16384) {
+            if (streamer_ringbuf.remaining < MAX_BLOCK_SIZE) {
                 minsize *= 4;
                 alloc_time *= 4;
             }
             sz = min (minsize, sz);
             assert ((sz&3) == 0);
-            char buf[sz*2]; // buffer must be 2x large to accomodate resamplers/pitchers/...
+            // buffer must be larger enough to accomodate resamplers/pitchers/...
+            // FIXME: bounds checking
             streamer_unlock ();
 
             // ensure that size is possible with current format
@@ -1063,7 +1075,7 @@ streamer_thread (void *ctx) {
 
             int bytesread = 0;
             while (bytesread < sz-100) {
-                int nb = streamer_read_async (buf+bytesread,sz-bytesread);
+                int nb = streamer_read_async (readbuffer+bytesread,sz-bytesread);
                 if (nb == 0) {
                     break;
                 }
@@ -1072,10 +1084,10 @@ streamer_thread (void *ctx) {
             streamer_lock ();
 
             if (bytesread > 0) {
-                ringbuf_write (&streamer_ringbuf, buf, bytesread);
+                ringbuf_write (&streamer_ringbuf, readbuffer, bytesread);
             }
 
-//            if (streamer_buffering) trace ("fill: %d, read: %d, size=%d, blocksize=%d\n", streamer_ringbuf.remaining, bytesread, STREAM_BUFFER_SIZE, blocksize);
+            //fprintf (stderr, "fill: %d, read: %d, size=%d, blocksize=%d\n", streamer_ringbuf.remaining, bytesread, STREAM_BUFFER_SIZE, blocksize);
         }
         streamer_unlock ();
         if ((streamer_ringbuf.remaining > 128000 && streamer_buffering) || !streaming_track) {
@@ -1507,7 +1519,7 @@ streamer_read_async (char *bytes, int size) {
 
             if (inputsize > 0) {
                 // make 2x size buffer for float data
-                char tempbuf[inputsize/inputsamplesize * dspsamplesize * 2];
+                char tempbuf[inputsize/inputsamplesize * dspsamplesize * MAX_DSP_RATIO];
 
                 // convert to float
                 int tempsize = pcm_convert (&fileinfo->fmt, input, &dspfmt, tempbuf, inputsize);
