@@ -240,6 +240,14 @@ dsp_ctx_get_param (const char *key, char *value, int len, const char *def) {
     current_dsp_context->plugin->get_param (current_dsp_context, atoi (key), value, len);
 }
 
+int
+button_cb (int btn, void *ctx) {
+    if (btn == ddb_button_apply) {
+        update_streamer ();
+    }
+    return 1;
+}
+
 void
 on_dsp_configure_clicked               (GtkButton       *button,
                                         gpointer         user_data)
@@ -273,9 +281,11 @@ on_dsp_configure_clicked               (GtkButton       *button,
         .set_param = dsp_ctx_set_param,
         .get_param = dsp_ctx_get_param,
     };
-    gtkui_run_dialog (prefwin, &conf, 0);
+    int response = gtkui_run_dialog (prefwin, &conf, 0, button_cb, NULL);
+    if (response == ddb_button_ok) {
+        update_streamer ();
+    }
     current_dsp_context = NULL;
-    update_streamer ();
 }
 
 static int

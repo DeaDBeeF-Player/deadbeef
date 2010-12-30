@@ -190,7 +190,26 @@ prop_changed (GtkWidget *editable, gpointer user_data) {
 }
 
 int
-gtkui_run_dialog (GtkWidget *parentwin, ddb_dialog_t *conf, uint32_t buttons) {
+ddb_button_from_gtk_response (int response) {
+    switch (response) {
+    case GTK_RESPONSE_OK:
+        return ddb_button_ok;
+    case GTK_RESPONSE_CANCEL:
+        return ddb_button_cancel;
+    case GTK_RESPONSE_CLOSE:
+        return ddb_button_close;
+    case GTK_RESPONSE_APPLY:
+        return ddb_button_apply;
+    case GTK_RESPONSE_YES:
+        return ddb_button_yes;
+    case GTK_RESPONSE_NO:
+        return ddb_button_no;
+    }
+    return -1;
+}
+
+int
+gtkui_run_dialog (GtkWidget *parentwin, ddb_dialog_t *conf, uint32_t buttons, int (*callback)(int button, void *ctx), void *ctx) {
     // create window
     char title[200];
     snprintf (title, sizeof (title), _("Configure %s"), conf->title);
@@ -496,26 +515,19 @@ gtkui_run_dialog (GtkWidget *parentwin, ddb_dialog_t *conf, uint32_t buttons) {
         if (response == GTK_RESPONSE_APPLY || response == GTK_RESPONSE_OK) {
             apply_conf (win, conf);
         }
+        if (callback) {
+            int btn = ddb_button_from_gtk_response (response);
+            if (!callback (btn, ctx)) {
+                break;
+            }
+        }
     } while (response == GTK_RESPONSE_APPLY);
     gtk_widget_destroy (win);
-    switch (response) {
-    case GTK_RESPONSE_OK:
-        return ddb_button_ok;
-    case GTK_RESPONSE_CANCEL:
-        return ddb_button_cancel;
-    case GTK_RESPONSE_CLOSE:
-        return ddb_button_close;
-    case GTK_RESPONSE_APPLY:
-        return ddb_button_apply;
-    case GTK_RESPONSE_YES:
-        return ddb_button_yes;
-    case GTK_RESPONSE_NO:
-        return ddb_button_no;
-    }
-    return -1;
+    int btn = ddb_button_from_gtk_response (response);
+    return btn;
 }
 
 int
-gtkui_run_dialog_root (ddb_dialog_t *conf, uint32_t buttons) {
-    return gtkui_run_dialog (mainwin, conf, buttons);
+gtkui_run_dialog_root (ddb_dialog_t *conf, uint32_t buttons, int (*callback)(int button, void *ctx), void *ctx) {
+    return gtkui_run_dialog (mainwin, conf, buttons, callback, ctx);
 }

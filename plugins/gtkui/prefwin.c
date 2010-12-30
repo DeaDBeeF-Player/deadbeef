@@ -825,7 +825,7 @@ on_configure_plugin_clicked            (GtkButton       *button,
             .set_param = deadbeef->conf_set_str,
             .get_param = gtkui_conf_get_str,
         };
-        gtkui_run_dialog (prefwin, &conf, 0);
+        gtkui_run_dialog (prefwin, &conf, 0, NULL, NULL);
     }
 }
 

@@ -860,7 +860,7 @@ typedef struct DB_gui_s {
 
     // returns response code (ddb_button_*)
     // buttons is a bitset, e.g. (1<<ddb_button_ok)|(1<<ddb_button_cancel)
-    int (*run_dialog) (ddb_dialog_t *dlg, uint32_t buttons);
+    int (*run_dialog) (ddb_dialog_t *dlg, uint32_t buttons, int (*callback)(int button, void *ctx), void *ctx);
 } DB_gui_t;
 
 // playlist plugin
