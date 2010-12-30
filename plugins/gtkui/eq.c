@@ -57,14 +57,6 @@ set_param (ddb_dsp_context_t *eq, int i, float v) {
     char fv[100];
     snprintf (fv, sizeof (fv), "%f", v);
     eq->plugin->set_param (eq, i, fv);
-    if (i == 0) {
-        deadbeef->conf_set_float ("eq.preamp", v);
-    }
-    else {
-        char s[100];
-        snprintf (s, sizeof (s), "eq.band%d", i-1);
-        deadbeef->conf_set_float (s, v);
-    }
 }
 
 void
@@ -85,8 +77,7 @@ on_enable_toggled         (GtkToggleButton *togglebutton,
     ddb_dsp_context_t *eq = get_supereq ();
     if (eq) {
         int enabled = gtk_toggle_button_get_active (togglebutton) ? 1 : 0;
-        eq->plugin->enable (eq, enabled);
-        deadbeef->conf_set_int ("eq.enable", enabled);
+        eq->enabled =  enabled;
     }
 }
 

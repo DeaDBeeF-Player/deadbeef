@@ -177,6 +177,7 @@ ddb_src_process (ddb_dsp_context_t *_src, float *samples, int nframes, ddb_wavef
     //}
     //fwrite (input, 1,  numoutframes*sizeof(float)*(*nchannels), out);
 
+    fmt->samplerate = src->samplerate;
     return numoutframes;
 }
 

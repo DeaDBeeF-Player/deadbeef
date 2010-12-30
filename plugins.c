@@ -89,6 +89,7 @@ static DB_functions_t deadbeef_api = {
     .streamer_get_current_fileinfo = streamer_get_current_fileinfo,
     .streamer_get_current_playlist = streamer_get_current_playlist,
     .streamer_get_dsp_chain = streamer_get_dsp_chain,
+    .streamer_set_dsp_chain = streamer_set_dsp_chain,
     // folders
     .get_config_dir = plug_get_config_dir,
     .get_prefix = plug_get_prefix,

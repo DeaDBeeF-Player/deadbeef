@@ -789,8 +789,6 @@ typedef struct DB_dsp_s {
 
     void (*reset) (ddb_dsp_context_t *ctx);
 
-    void (*enable) (ddb_dsp_context_t *ctx, int e);
-
     // num_params can be NULL, to indicate that plugin doesn't expose any params
     //
     // if num_params is non-NULL -- get_param_name, set_param and get_param must

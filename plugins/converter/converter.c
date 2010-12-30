@@ -390,7 +390,7 @@ dsp_preset_save (ddb_dsp_preset_t *p, int overwrite) {
         }
     }
 
-    FILE *fp = fopen (path, "w+b");
+    FILE *fp = fopen (path, "w+t");
     if (!fp) {
         return -1;
     }

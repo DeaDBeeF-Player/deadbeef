@@ -37,6 +37,7 @@ typedef struct {
     int params_changed;
     uintptr_t mutex;
     SuperEqState state;
+    int enabled;
 } ddb_supereq_ctx_t;
 
 void supereq_reset (ddb_dsp_context_t *ctx);
@@ -78,6 +79,19 @@ supereq_plugin_stop (void) {
 int
 supereq_process (ddb_dsp_context_t *ctx, float *samples, int frames, ddb_waveformat_t *fmt) {
     ddb_supereq_ctx_t *supereq = (ddb_supereq_ctx_t *)ctx;
+    if (supereq->enabled != ctx->enabled) {
+        if (ctx->enabled && !supereq->enabled) {
+            supereq_reset (ctx);
+        }
+        supereq->enabled = ctx->enabled;
+
+        DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
+        if (it) {
+            float playpos = deadbeef->streamer_get_playpos ();
+            deadbeef->streamer_seek (playpos);
+            deadbeef->pl_item_unref (it);
+        }
+    }
     if (supereq->params_changed) {
         recalc_table (supereq);
         supereq->params_changed = 0;
@@ -136,24 +150,6 @@ supereq_reset (ddb_dsp_context_t *ctx) {
     deadbeef->mutex_lock (supereq->mutex);
     equ_clearbuf(&supereq->state);
     deadbeef->mutex_unlock (supereq->mutex);
-}
-
-void
-supereq_enable (ddb_dsp_context_t *ctx, int e) {
-    ddb_supereq_ctx_t *supereq = (ddb_supereq_ctx_t *)ctx;
-    if (e != supereq->ctx.enabled) {
-        if (e && !supereq->ctx.enabled) {
-            supereq_reset (ctx);
-        }
-        supereq->ctx.enabled = e;
-    }
-
-    DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
-    if (it) {
-        float playpos = deadbeef->streamer_get_playpos ();
-        deadbeef->streamer_seek (playpos);
-        deadbeef->pl_item_unref (it);
-    }
 }
 
 int
@@ -303,7 +299,6 @@ static DB_dsp_t plugin = {
     .close = supereq_close,
     .process = supereq_process,
     .reset = supereq_reset,
-    .enable = supereq_enable,
     .num_params = supereq_num_params,
     .get_param_name = supereq_get_param_name,
     .set_param = supereq_set_param,

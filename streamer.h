@@ -111,4 +111,7 @@ streamer_notify_playlist_deleted (playlist_t *plt);
 struct ddb_dsp_context_s *
 streamer_get_dsp_chain (void);
 
+void
+streamer_set_dsp_chain (struct ddb_dsp_context_s *chain);
+
 #endif // __STREAMER_H

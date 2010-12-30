@@ -47,6 +47,7 @@ dsp_clone (ddb_dsp_context_t *from) {
             dsp->plugin->set_param (dsp, i, param);
         }
     }
+    dsp->enabled = from->enabled;
     return dsp;
 }
 
@@ -114,6 +115,11 @@ fill_dsp_plugin_list (GtkListStore *mdl) {
     }
 }
 
+static void
+update_streamer (void) {
+    deadbeef->streamer_set_dsp_chain (chain);
+}
+
 void
 on_dsp_add_clicked                     (GtkButton       *button,
                                         gpointer         user_data)
@@ -161,6 +167,7 @@ on_dsp_add_clicked                     (GtkButton       *button,
             GtkListStore *mdl = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW(list)));
             gtk_list_store_clear (mdl);
             fill_dsp_chain (mdl);
+            update_streamer ();
         }
         else {
             fprintf (stderr, "prefwin: failed to add DSP plugin to chain\n");
@@ -216,6 +223,7 @@ on_dsp_remove_clicked                  (GtkButton       *button,
         GtkTreeViewColumn *col;
         gtk_tree_view_set_cursor (GTK_TREE_VIEW (list), path, col, FALSE);
         gtk_tree_path_free (path);
+        update_streamer ();
     }
 }
 
@@ -327,6 +335,7 @@ on_dsp_up_clicked                      (GtkButton       *button,
     GtkTreeViewColumn *col;
     gtk_tree_view_set_cursor (GTK_TREE_VIEW (list), path, col, FALSE);
     gtk_tree_path_free (path);
+    update_streamer ();
 }
 
 
@@ -347,5 +356,6 @@ on_dsp_down_clicked                    (GtkButton       *button,
     GtkTreeViewColumn *col;
     gtk_tree_view_set_cursor (GTK_TREE_VIEW (list), path, col, FALSE);
     gtk_tree_path_free (path);
+    update_streamer ();
 }
 
