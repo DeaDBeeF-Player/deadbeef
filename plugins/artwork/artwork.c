@@ -53,9 +53,10 @@ static const char *get_default_cover (void) {
     return default_cover;
 }
 
-void
-make_cache_dir_path (char *path, int size, const char *album, const char *artist) {
-    int sz = snprintf (path, size, "%s/artcache/", deadbeef->get_config_dir ());
+int
+make_cache_dir_path (char *path, int size, const char *artist) {
+    const char *cache = getenv ("XDG_CACHE_HOME");
+    int sz = snprintf (path, size, "%s/deadbeef/", cache ? cache : getenv ("HOME"));
     size -= sz;
     path += sz;
 
@@ -65,20 +66,12 @@ make_cache_dir_path (char *path, int size, const char *album, const char *artist
             *p = '_';
         }
     }
+    return sz;
 }
 
 void
 make_cache_path (char *path, int size, const char *album, const char *artist) {
-    int sz = snprintf (path, size, "%s/artcache/", deadbeef->get_config_dir ());
-    size -= sz;
-    path += sz;
-
-    sz = snprintf (path, size, "%s", artist);
-    for (char *p = path; *p; p++) {
-        if (*p == '/') {
-            *p = '_';
-        }
-    }
+    int sz = make_cache_dir_path (path, size, artist);
     size -= sz;
     path += sz;
     sz = snprintf (path, size, "/%s.jpg", album);
@@ -296,7 +289,7 @@ fetcher_thread (void *none)
             struct dirent **files;
             int files_count;
 
-            make_cache_dir_path (path, sizeof (path), param->album, param->artist);
+            make_cache_dir_path (path, sizeof (path), param->artist);
             trace ("cache folder: %s\n", path);
             if (!check_dir (path, 0755)) {
                 queue_pop ();
