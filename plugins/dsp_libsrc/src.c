@@ -202,6 +202,12 @@ ddb_src_set_param (ddb_dsp_context_t *ctx, int p, const char *val) {
     switch (p) {
     case SRC_PARAM_SAMPLERATE:
         ((ddb_src_libsamplerate_t*)ctx)->samplerate = atof (val);
+        if (((ddb_src_libsamplerate_t*)ctx)->samplerate < 8000) {
+            ((ddb_src_libsamplerate_t*)ctx)->samplerate = 8000;
+        }
+        if (((ddb_src_libsamplerate_t*)ctx)->samplerate > 192000) {
+            ((ddb_src_libsamplerate_t*)ctx)->samplerate = 192000;
+        }
         break;
     case SRC_PARAM_QUALITY:
         ((ddb_src_libsamplerate_t*)ctx)->quality = atoi (val);
