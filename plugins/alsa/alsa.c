@@ -52,7 +52,6 @@ static snd_pcm_uframes_t period_size;
 static snd_pcm_uframes_t req_buffer_size;
 static snd_pcm_uframes_t req_period_size;
 
-static int conf_alsa_resample = 0;
 static char conf_alsa_soundcard[100] = "default";
 
 //static snd_async_handler_t *pcm_callback;
@@ -187,7 +186,7 @@ palsa_set_hw_params (ddb_waveformat_t *fmt) {
     int val = fmt->samplerate;
     int ret = 0;
 
-    if ((err = snd_pcm_hw_params_set_rate_resample (audio, hw_params, conf_alsa_resample)) < 0) {
+    if ((err = snd_pcm_hw_params_set_rate_resample (audio, hw_params, 1)) < 0) {
         fprintf (stderr, "cannot setup resampling (%s)\n",
                 snd_strerror (err));
         goto error;
@@ -295,9 +294,7 @@ palsa_init (void) {
 
     // get and cache conf variables
     strcpy (conf_alsa_soundcard, deadbeef->conf_get_str ("alsa_soundcard", "default"));
-    conf_alsa_resample = deadbeef->conf_get_int ("alsa.resample", 0);
     trace ("alsa_soundcard: %s\n", conf_alsa_soundcard);
-    trace ("alsa.resample: %d\n", conf_alsa_resample);
 
     snd_pcm_sw_params_t *sw_params = NULL;
     state = OUTPUT_STATE_STOPPED;
@@ -625,8 +622,7 @@ palsa_configchanged (DB_event_t *ev, uintptr_t data) {
     int buffer = deadbeef->conf_get_int ("alsa.buffer", DEFAULT_BUFFER_SIZE);
     int period = deadbeef->conf_get_int ("alsa.period", DEFAULT_PERIOD_SIZE);
     if (audio &&
-            (alsa_resample != conf_alsa_resample
-            || strcmp (alsa_soundcard, conf_alsa_soundcard)
+            (strcmp (alsa_soundcard, conf_alsa_soundcard)
             || buffer != req_buffer_size
             || period != req_period_size)) {
         trace ("alsa: config option changed, restarting\n");
@@ -688,7 +684,6 @@ alsa_load (DB_functions_t *api) {
 }
 
 static const char settings_dlg[] =
-    "property \"Use ALSA resampling\" checkbox alsa.resample 0;\n"
     "property \"Release device while stopped\" checkbox alsa.freeonstop 0;\n"
     "property \"Preferred buffer size\" entry alsa.buffer " DEFAULT_BUFFER_SIZE_STR ";\n"
     "property \"Preferred period size\" entry alsa.period " DEFAULT_PERIOD_SIZE_STR ";\n"
