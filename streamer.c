@@ -1822,7 +1822,6 @@ streamer_set_dsp_chain (ddb_dsp_context_t *chain) {
 
     ddb_dsp_context_t *tail = NULL;
     while (chain) {
-        printf ("copy %s\n", chain->plugin->plugin.id);
         ddb_dsp_context_t *new = dsp_clone (chain);
         if (tail) {
             tail->next = new;
@@ -1839,6 +1838,11 @@ streamer_set_dsp_chain (ddb_dsp_context_t *chain) {
     char fname[PATH_MAX];
     snprintf (fname, sizeof (fname), "%s/dspconfig", plug_get_config_dir ());
     streamer_dsp_chain_save (fname, dsp_chain);
+    streamer_reset (1);
 
     mutex_unlock (decodemutex);
+    DB_output_t *output = plug_get_output ();
+    if (playing_track && output->state () != OUTPUT_STATE_STOPPED) {
+        deadbeef->streamer_seek (playpos);
+    }
 }

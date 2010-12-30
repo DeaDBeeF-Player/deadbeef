@@ -275,6 +275,7 @@ on_dsp_configure_clicked               (GtkButton       *button,
     };
     gtkui_run_dialog (prefwin, &conf, 0);
     current_dsp_context = NULL;
+    update_streamer ();
 }
 
 static int
