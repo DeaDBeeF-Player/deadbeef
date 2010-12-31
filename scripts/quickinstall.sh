@@ -39,3 +39,4 @@ cp ./plugins/m3u/.libs/m3u.so /usr/local/lib/deadbeef/
 cp ./plugins/ddb_input_uade2/ddb_input_uade2.so /usr/local/lib/deadbeef/
 cp ./plugins/converter/converter.so /usr/local/lib/deadbeef/
 cp ./plugins/converter/converter_gtkui.so /usr/local/lib/deadbeef/
+cp ./plugins/dsp_soundtouch/ddb_dsp_soundtouch.so /usr/local/lib/deadbeef/
