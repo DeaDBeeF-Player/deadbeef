@@ -32,7 +32,6 @@
 #include <stdio.h>
 
 #ifdef __cplusplus
-#define restrict // shut up g++
 extern "C" {
 #endif
 
@@ -540,7 +539,7 @@ typedef struct {
     int (*is_local_file) (const char *fname); // returns 1 for local filename, 0 otherwise
 
     // pcm utilities
-    int (*pcm_convert) (const ddb_waveformat_t * restrict inputfmt, const char * restrict input, const ddb_waveformat_t * restrict outputfmt, char * restrict output, int inputsize);
+    int (*pcm_convert) (const ddb_waveformat_t * inputfmt, const char *input, const ddb_waveformat_t *outputfmt, char *output, int inputsize);
 } DB_functions_t;
 
 enum {
