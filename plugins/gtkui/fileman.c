@@ -73,7 +73,7 @@ open_files_worker (void *data) {
     extern GtkWidget *mainwin;
     DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
     ddb_listview_set_cursor (pl, 0);
-    deadbeef->sendmessage (M_PLAYSONG, 0, 1, 0);
+    deadbeef->sendmessage (M_PLAY_CURRENT, 0, 1, 0);
 }
 
 void

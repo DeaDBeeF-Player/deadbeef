@@ -96,6 +96,7 @@ client_exec_command_line (const char *cmdline, int len) {
             fprintf (stdout, _("   --play             Start playback\n"));
             fprintf (stdout, _("   --stop             Stop playback\n"));
             fprintf (stdout, _("   --pause            Pause playback\n"));
+            fprintf (stdout, _("   --toggle-pause     Toggle pause\n"));
             fprintf (stdout, _("   --next             Next song in playlist\n"));
             fprintf (stdout, _("   --prev             Previous song in playlist\n"));
             fprintf (stdout, _("   --random           Random song in playlist\n"));
@@ -179,27 +180,31 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
             }
         }
         else if (!strcmp (parg, "--next")) {
-            messagepump_push (M_NEXTSONG, 0, 0, 0);
+            messagepump_push (M_NEXT, 0, 0, 0);
             return 0;
         }
         else if (!strcmp (parg, "--prev")) {
-            messagepump_push (M_PREVSONG, 0, 0, 0);
+            messagepump_push (M_PREV, 0, 0, 0);
             return 0;
         }
         else if (!strcmp (parg, "--play")) {
-            messagepump_push (M_PLAYSONG, 0, 0, 0);
+            messagepump_push (M_PLAY_CURRENT, 0, 0, 0);
             return 0;
         }
         else if (!strcmp (parg, "--stop")) {
-            messagepump_push (M_STOPSONG, 0, 0, 0);
+            messagepump_push (M_STOP, 0, 0, 0);
             return 0;
         }
         else if (!strcmp (parg, "--pause")) {
-            messagepump_push (M_PAUSESONG, 0, 0, 0);
+            messagepump_push (M_PAUSE, 0, 0, 0);
+            return 0;
+        }
+        else if (!strcmp (parg, "--toggle-pause")) {
+            messagepump_push (M_TOGGLE_PAUSE, 0, 0, 0);
             return 0;
         }
         else if (!strcmp (parg, "--random")) {
-            messagepump_push (M_PLAYRANDOM, 0, 0, 0);
+            messagepump_push (M_PLAY_RANDOM, 0, 0, 0);
             return 0;
         }
         else if (!strcmp (parg, "--queue")) {
@@ -251,9 +256,9 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
             parg++;
         }
         deadbeef->pl_add_files_end ();
-        messagepump_push (M_PLAYLISTREFRESH, 0, 0, 0);
+        messagepump_push (M_PLAYLIST_REFRESH, 0, 0, 0);
         if (!queue) {
-            messagepump_push (M_PLAYSONG, 0, 1, 0);
+            messagepump_push (M_PLAY_CURRENT, 0, 1, 0);
             return 2; // don't reload playlist at startup
         }
     }
@@ -375,7 +380,7 @@ player_mainloop (void) {
                 break;
             case M_TERMINATE:
                 return;
-            case M_PLAYSONG:
+            case M_PLAY_CURRENT:
                 if (p1) {
                     output->stop ();
                     pl_playqueue_clear ();
@@ -385,23 +390,29 @@ player_mainloop (void) {
                     streamer_play_current_track ();
                 }
                 break;
-            case M_PLAYSONGNUM:
+            case M_PLAY_NUM:
                 output->stop ();
                 pl_playqueue_clear ();
                 streamer_set_nextsong (p1, 1);
                 break;
-            case M_STOPSONG:
+            case M_STOP:
                 streamer_set_nextsong (-2, 0);
                 break;
-            case M_NEXTSONG:
+            case M_NEXT:
                 output->stop ();
                 streamer_move_to_nextsong (1);
                 break;
-            case M_PREVSONG:
+            case M_PREV:
                 output->stop ();
                 streamer_move_to_prevsong ();
                 break;
-            case M_PAUSESONG:
+            case M_PAUSE:
+                if (output->state () != OUTPUT_STATE_PAUSED) {
+                    output->pause ();
+                    plug_trigger_event_paused (1);
+                }
+                break;
+            case M_TOGGLE_PAUSE:
                 if (output->state () == OUTPUT_STATE_PAUSED) {
                     output->unpause ();
                     plug_trigger_event_paused (0);
@@ -411,15 +422,15 @@ player_mainloop (void) {
                     plug_trigger_event_paused (1);
                 }
                 break;
-            case M_PLAYRANDOM:
+            case M_PLAY_RANDOM:
                 output->stop ();
                 streamer_move_to_randomsong ();
                 break;
-            case M_PLAYLISTREFRESH:
+            case M_PLAYLIST_REFRESH:
                 pl_save_current ();
                 plug_trigger_event_playlistchanged ();
                 break;
-            case M_CONFIGCHANGED:
+            case M_CONFIG_CHANGED:
                 conf_save ();
                 streamer_configchanged ();
                 plug_trigger_event (DB_EV_CONFIGCHANGED, 0);

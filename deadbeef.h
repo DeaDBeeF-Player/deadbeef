@@ -253,17 +253,18 @@ enum pl_column_t {
 // message ids for communicating with player
 enum {
     M_SONGFINISHED,
-    M_NEXTSONG,
-    M_PREVSONG,
-    M_PLAYSONG,
-    M_PLAYSONGNUM,
-    M_STOPSONG,
-    M_PAUSESONG,
-    M_PLAYRANDOM,
+    M_NEXT,
+    M_PREV,
+    M_PLAY_CURRENT,
+    M_PLAY_NUM,
+    M_STOP,
+    M_PAUSE,
+    M_PLAY_RANDOM,
     M_TERMINATE, // must be sent to player thread to terminate
-    M_PLAYLISTREFRESH,
+    M_PLAYLIST_REFRESH, // means
     M_REINIT_SOUND,
-    M_CONFIGCHANGED, // no arguments
+    M_CONFIG_CHANGED, // no arguments
+    M_TOGGLE_PAUSE,
 };
 
 // typecasting macros

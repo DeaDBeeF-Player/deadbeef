@@ -404,32 +404,32 @@ plug_ev_unsubscribe (DB_plugin_t *plugin, int ev, DB_callback_t callback, uintpt
 
 void
 plug_playback_next (void) {
-    messagepump_push (M_NEXTSONG, 0, 0, 0);
+    messagepump_push (M_NEXT, 0, 0, 0);
 }
 
 void
 plug_playback_prev (void) {
-    messagepump_push (M_PREVSONG, 0, 0, 0);
+    messagepump_push (M_PREV, 0, 0, 0);
 }
 
 void
 plug_playback_pause (void) {
-    messagepump_push (M_PAUSESONG, 0, 0, 0);
+    messagepump_push (M_TOGGLE_PAUSE, 0, 0, 0);
 }
 
 void 
 plug_playback_stop (void) {
-    messagepump_push (M_STOPSONG, 0, 0, 0);
+    messagepump_push (M_STOP, 0, 0, 0);
 }
 
 void 
 plug_playback_play (void) {
-    messagepump_push (M_PLAYSONG, 0, 0, 0);
+    messagepump_push (M_PLAY_CURRENT, 0, 0, 0);
 }
 
 void 
 plug_playback_random (void) {
-    messagepump_push (M_PLAYRANDOM, 0, 0, 0);
+    messagepump_push (M_PLAY_RANDOM, 0, 0, 0);
 }
 
 float

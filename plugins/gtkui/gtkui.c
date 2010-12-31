@@ -316,7 +316,7 @@ on_trayicon_button_press_event (GtkWidget       *widget,
         mainwin_toggle_visible ();
     }
     else if (event->button == 2) {
-        deadbeef->sendmessage (M_PAUSESONG, 0, 0, 0);
+        deadbeef->sendmessage (M_TOGGLE_PAUSE, 0, 0, 0);
     }
     return FALSE;
 }
@@ -1069,7 +1069,7 @@ gtkui_set_progress_text_idle (gpointer data) {
 gboolean
 gtkui_progress_hide_idle (gpointer data) {
     progress_hide ();
-    deadbeef->sendmessage (M_PLAYLISTREFRESH, 0, 0, 0);
+    deadbeef->sendmessage (M_PLAYLIST_REFRESH, 0, 0, 0);
     //playlist_refresh ();
     return FALSE;
 }

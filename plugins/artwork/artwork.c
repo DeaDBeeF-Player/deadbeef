@@ -655,7 +655,7 @@ artwork_on_configchanged (DB_event_t *ev, uintptr_t data) {
         strcpy (artwork_filemask, new_artwork_filemask);
         deadbeef->conf_set_int64 ("artwork.cache_reset_time", artwork_reset_time);
         artwork_reset (0);
-        deadbeef->sendmessage (M_PLAYLISTREFRESH, 0, 0, 0);
+        deadbeef->sendmessage (M_PLAYLIST_REFRESH, 0, 0, 0);
     }
 
     return 0;

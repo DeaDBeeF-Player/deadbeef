@@ -111,7 +111,7 @@ cmd_stop_after_current (void *unused) {
     int var = deadbeef->conf_get_int ("playlist.stop_after_current", 0);
     var = 1 - var;
     deadbeef->conf_set_int ("playlist.stop_after_current", var);
-    deadbeef->sendmessage (M_CONFIGCHANGED, 0, 0, 0);
+    deadbeef->sendmessage (M_CONFIG_CHANGED, 0, 0, 0);
 }
 
 /*
@@ -583,7 +583,7 @@ action_toggle_stop_after_current_cb (struct DB_plugin_action_s *action, DB_playI
     int var = deadbeef->conf_get_int ("playlist.stop_after_current", 0);
     var = 1 - var;
     deadbeef->conf_set_int ("playlist.stop_after_current", var);
-    deadbeef->sendmessage (M_CONFIGCHANGED, 0, 0, 0);
+    deadbeef->sendmessage (M_CONFIG_CHANGED, 0, 0, 0);
     return 0;
 }
 

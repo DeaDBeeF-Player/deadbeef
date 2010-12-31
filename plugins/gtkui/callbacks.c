@@ -274,7 +274,7 @@ void
 on_stopbtn_clicked                     (GtkButton       *button,
                                         gpointer         user_data)
 {
-    deadbeef->sendmessage (M_STOPSONG, 0, 0, 0);
+    deadbeef->sendmessage (M_STOP, 0, 0, 0);
 }
 
 
@@ -282,7 +282,7 @@ void
 on_playbtn_clicked                     (GtkButton       *button,
                                         gpointer         user_data)
 {
-    deadbeef->sendmessage (M_PLAYSONG, 0, 0, 0);
+    deadbeef->sendmessage (M_PLAY_CURRENT, 0, 0, 0);
 }
 
 
@@ -290,7 +290,7 @@ void
 on_pausebtn_clicked                    (GtkButton       *button,
                                         gpointer         user_data)
 {
-    deadbeef->sendmessage (M_PAUSESONG, 0, 0, 0);
+    deadbeef->sendmessage (M_TOGGLE_PAUSE, 0, 0, 0);
 }
 
 
@@ -298,7 +298,7 @@ void
 on_prevbtn_clicked                     (GtkButton       *button,
                                         gpointer         user_data)
 {
-    deadbeef->sendmessage (M_PREVSONG, 0, 0, 0);
+    deadbeef->sendmessage (M_PREV, 0, 0, 0);
 }
 
 
@@ -306,7 +306,7 @@ void
 on_nextbtn_clicked                     (GtkButton       *button,
                                         gpointer         user_data)
 {
-    deadbeef->sendmessage (M_NEXTSONG, 0, 0, 0);
+    deadbeef->sendmessage (M_NEXT, 0, 0, 0);
 }
 
 
@@ -314,7 +314,7 @@ void
 on_playrand_clicked                    (GtkButton       *button,
                                         gpointer         user_data)
 {
-    deadbeef->sendmessage (M_PLAYRANDOM, 0, 0, 0);
+    deadbeef->sendmessage (M_PLAY_RANDOM, 0, 0, 0);
 }
 
 gboolean
@@ -325,7 +325,7 @@ on_mainwin_key_press_event             (GtkWidget       *widget,
     uint32_t maskedstate = (event->state &~ (GDK_LOCK_MASK | GDK_MOD2_MASK | GDK_MOD3_MASK | GDK_MOD5_MASK)) & 0xfff;
     if ((maskedstate == GDK_MOD1_MASK || maskedstate == 0) && event->keyval == GDK_n) {
         // button for that one is not in toolbar anymore, so handle it manually
-        deadbeef->sendmessage (M_PLAYRANDOM, 0, 0, 0);
+        deadbeef->sendmessage (M_PLAY_RANDOM, 0, 0, 0);
     }
     else if ((maskedstate == GDK_MOD1_MASK || maskedstate == 0) && event->keyval >= GDK_1 && event->keyval <= GDK_9) {
         int pl = event->keyval - GDK_1;
@@ -346,7 +346,7 @@ on_order_linear_activate               (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     deadbeef->conf_set_int ("playback.order", PLAYBACK_ORDER_LINEAR);
-    deadbeef->sendmessage (M_CONFIGCHANGED, 0, 0, 0);
+    deadbeef->sendmessage (M_CONFIG_CHANGED, 0, 0, 0);
 }
 
 
@@ -355,7 +355,7 @@ on_order_shuffle_activate              (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     deadbeef->conf_set_int ("playback.order", PLAYBACK_ORDER_SHUFFLE_TRACKS);
-    deadbeef->sendmessage (M_CONFIGCHANGED, 0, 0, 0);
+    deadbeef->sendmessage (M_CONFIG_CHANGED, 0, 0, 0);
 }
 
 void
@@ -363,7 +363,7 @@ on_order_shuffle_albums_activate       (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     deadbeef->conf_set_int ("playback.order", PLAYBACK_ORDER_SHUFFLE_ALBUMS);
-    deadbeef->sendmessage (M_CONFIGCHANGED, 0, 0, 0);
+    deadbeef->sendmessage (M_CONFIG_CHANGED, 0, 0, 0);
 }
 
 void
@@ -371,7 +371,7 @@ on_order_random_activate               (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     deadbeef->conf_set_int ("playback.order", PLAYBACK_ORDER_RANDOM);
-    deadbeef->sendmessage (M_CONFIGCHANGED, 0, 0, 0);
+    deadbeef->sendmessage (M_CONFIG_CHANGED, 0, 0, 0);
 }
 
 
