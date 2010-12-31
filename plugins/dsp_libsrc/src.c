@@ -197,6 +197,7 @@ ddb_src_get_param_name (int p) {
         fprintf (stderr, "ddb_src_get_param_name: invalid param index (%d)\n", p);
     }
 }
+
 void
 ddb_src_set_param (ddb_dsp_context_t *ctx, int p, const char *val) {
     switch (p) {
