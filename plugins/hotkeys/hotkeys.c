@@ -508,31 +508,31 @@ hotkeys_reset (void) {
 
 int
 action_play_cb (struct DB_plugin_action_s *action, DB_playItem_t *it) {
-    deadbeef->playback_play ();
+    deadbeef->sendmessage (M_PLAY_CURRENT, 0, 0, 0);
     return 0;
 }
 
 int
 action_prev_cb (struct DB_plugin_action_s *action, DB_playItem_t *it) {
-    deadbeef->playback_prev ();
+    deadbeef->sendmessage (M_PREV, 0, 0, 0);
     return 0;
 }
 
 int
 action_next_cb (struct DB_plugin_action_s *action, DB_playItem_t *it) {
-    deadbeef->playback_next ();
+    deadbeef->sendmessage (M_NEXT, 0, 0, 0);
     return 0;
 }
 
 int
 action_stop_cb (struct DB_plugin_action_s *action, DB_playItem_t *it) {
-    deadbeef->playback_stop ();
+    deadbeef->sendmessage (M_STOP, 0, 0, 0);
     return 0;
 }
 
 int
 action_toggle_pause_cb (struct DB_plugin_action_s *action, DB_playItem_t *it) {
-    deadbeef->playback_pause ();
+    deadbeef->sendmessage (M_TOGGLE_PAUSE, 0, 0, 0);
     return 0;
 }
 
@@ -540,17 +540,17 @@ int
 action_play_pause_cb (struct DB_plugin_action_s *action, DB_playItem_t *it) {
     int state = deadbeef->get_output ()->state ();
     if (state == OUTPUT_STATE_PLAYING) {
-        deadbeef->playback_pause ();
+        deadbeef->sendmessage (M_PAUSE, 0, 0, 0);
     }
     else {
-        deadbeef->playback_play ();
+        deadbeef->sendmessage (M_PLAY_CURRENT, 0, 0, 0);
     }
     return 0;
 }
 
 int
 action_play_random_cb (struct DB_plugin_action_s *action, DB_playItem_t *it) {
-    deadbeef->playback_random ();
+    deadbeef->sendmessage (M_PLAY_RANDOM, 0, 0, 0);
     return 0;
 }
 

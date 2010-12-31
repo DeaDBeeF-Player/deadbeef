@@ -310,12 +310,6 @@ typedef struct {
     void (*md5_finish)(DB_md5_t *s, uint8_t digest[16]);
     // playback control
     struct DB_output_s* (*get_output) (void);
-    void (*playback_next) (void);
-    void (*playback_prev) (void);
-    void (*playback_pause) (void);
-    void (*playback_stop) (void);
-    void (*playback_play) (void);
-    void (*playback_random) (void);
     float (*playback_get_pos) (void); // [0..100]
     void (*playback_set_pos) (float pos); // [0..100]
     // streamer access

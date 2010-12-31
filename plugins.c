@@ -68,12 +68,6 @@ static DB_functions_t deadbeef_api = {
     .md5_append = (void (*)(DB_md5_t *s, const uint8_t *daya, int nbytes))md5_append,
     .md5_finish = (void (*)(DB_md5_t *s, uint8_t digest[16]))md5_finish,
     .get_output = plug_get_output,
-    .playback_next = plug_playback_next,
-    .playback_prev = plug_playback_prev,
-    .playback_pause = plug_playback_pause,
-    .playback_stop = plug_playback_stop,
-    .playback_play = plug_playback_play,
-    .playback_random = plug_playback_random,
     .playback_get_pos = plug_playback_get_pos,
     .playback_set_pos = plug_playback_set_pos,
     // streamer access
@@ -96,8 +90,6 @@ static DB_functions_t deadbeef_api = {
     .get_doc_dir = plug_get_doc_dir,
     .get_plugin_dir = plug_get_plugin_dir,
     .get_pixmap_dir = plug_get_pixmap_dir,
-    // process control
-    .quit = plug_quit,
     // threading
     .thread_start = thread_start,
     .thread_start_low_priority = thread_start_low_priority,
@@ -402,36 +394,6 @@ plug_ev_unsubscribe (DB_plugin_t *plugin, int ev, DB_callback_t callback, uintpt
     mutex_unlock (mutex);
 }
 
-void
-plug_playback_next (void) {
-    messagepump_push (M_NEXT, 0, 0, 0);
-}
-
-void
-plug_playback_prev (void) {
-    messagepump_push (M_PREV, 0, 0, 0);
-}
-
-void
-plug_playback_pause (void) {
-    messagepump_push (M_TOGGLE_PAUSE, 0, 0, 0);
-}
-
-void 
-plug_playback_stop (void) {
-    messagepump_push (M_STOP, 0, 0, 0);
-}
-
-void 
-plug_playback_play (void) {
-    messagepump_push (M_PLAY_CURRENT, 0, 0, 0);
-}
-
-void 
-plug_playback_random (void) {
-    messagepump_push (M_PLAY_RANDOM, 0, 0, 0);
-}
-
 float
 plug_playback_get_pos (void) {
     playItem_t *trk = streamer_get_playing_track ();
@@ -461,12 +423,6 @@ plug_playback_set_pos (float pos) {
         pl_item_unref (trk);
     }
     streamer_set_seek (t);
-}
-
-void 
-plug_quit (void) {
-    // FIXME progress_abort ();
-    messagepump_push (M_TERMINATE, 0, 0, 0);
 }
 
 /////// non-api functions (plugin support)
