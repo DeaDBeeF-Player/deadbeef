@@ -51,7 +51,8 @@ add_dirs_worker (void *data) {
 
 void
 gtkui_add_dirs (GSList *lst) {
-    deadbeef->thread_start (add_dirs_worker, lst);
+    intptr_t tid = deadbeef->thread_start (add_dirs_worker, lst);
+    deadbeef->thread_detach (tid);
 }
 
 static void
@@ -62,7 +63,8 @@ add_files_worker (void *data) {
 
 void
 gtkui_add_files (struct _GSList *lst) {
-    deadbeef->thread_start (add_files_worker, lst);
+    intptr_t tid = deadbeef->thread_start (add_files_worker, lst);
+    deadbeef->thread_detach (tid);
 }
 
 static void
@@ -80,7 +82,8 @@ void
 gtkui_open_files (struct _GSList *lst) {
     deadbeef->pl_clear ();
     playlist_refresh ();
-    deadbeef->thread_start (open_files_worker, lst);
+    intptr_t tid = deadbeef->thread_start (open_files_worker, lst);
+    deadbeef->thread_detach (tid);
 }
 
 void
@@ -222,5 +225,6 @@ gtkui_receive_fm_drop (DB_playItem_t *before, char *mem, int length) {
     }
     data->drop_before = before;
     // since it happens in separate thread, we need to addref
-    deadbeef->thread_start (fmdrop_worker, data);
+    intptr_t tid = deadbeef->thread_start (fmdrop_worker, data);
+    deadbeef->thread_detach (tid);
 }
