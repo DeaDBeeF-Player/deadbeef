@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-09-10 15:02+0200\n"
-"PO-Revision-Date: 2010-12-12 02:48+0200\n"
+"PO-Revision-Date: 2011-01-01 16:51+0200\n"
 "Last-Translator: Радослав <Rec.ku@hotmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: bg\n"
@@ -141,7 +141,7 @@ msgstr "1 ден %d:%02d:%02d"
 #: ../plugins/gtkui/gtkui.c:136
 #, c-format
 msgid "%d days %d:%02d:%02d"
-msgstr "%d дни %d:%02d:%02d"
+msgstr "%d дена %d:%02d:%02d"
 
 #: ../plugins/gtkui/gtkui.c:145
 #, c-format
@@ -559,9 +559,8 @@ msgid "Allow dynamic samplerate switching"
 msgstr "Позволи динамична промяна на честотата"
 
 #: ../plugins/gtkui/interface.c:1764 ../plugins/gtkui/deadbeef.glade.h:111
-#, fuzzy
 msgid "Samplerate conversion quality:"
-msgstr "Качество на обръщане на честотата:"
+msgstr "Конвертирано качество:"
 
 #: ../plugins/gtkui/interface.c:1783 ../plugins/gtkui/deadbeef.glade.h:108
 msgid "Replaygain mode:"
@@ -663,12 +662,10 @@ msgid "Override (looses GTK treeview theming, but speeds up rendering)"
 msgstr "Презапис (увеличава се производителността, но се губи естетиката)"
 
 #: ../plugins/gtkui/interface.c:2011 ../plugins/gtkui/deadbeef.glade.h:34
-#, fuzzy
 msgid "Even row"
 msgstr "Четен ред"
 
 #: ../plugins/gtkui/interface.c:2018 ../plugins/gtkui/deadbeef.glade.h:85
-#, fuzzy
 msgid "Odd row"
 msgstr "Нечетен ред"
 
@@ -759,7 +756,7 @@ msgstr "Версия на ID3v2"
 
 #: ../plugins/gtkui/interface.c:2247
 msgid "2.3 (Recommended)"
-msgstr "2.3 (Препоръчително)"
+msgstr "2.3 (Препоръчителна)"
 
 #: ../plugins/gtkui/interface.c:2248
 msgid "2.4"
@@ -774,9 +771,8 @@ msgid "Write ID3v2.4"
 msgstr "Запиши ID3v2.4"
 
 #: ../plugins/gtkui/interface.c:2360 ../plugins/gtkui/deadbeef.glade.h:131
-#, fuzzy
 msgid "Tag writer"
-msgstr "Писател на етикети"
+msgstr "Създаване на етикети"
 
 #: ../plugins/gtkui/interface.c:2391 ../plugins/gtkui/deadbeef.glade.h:24
 msgid "Description:"
@@ -803,13 +799,13 @@ msgid "Plugins"
 msgstr "Приставки"
 
 #: ../plugins/gtkui/interface.c:2853 ../plugins/gtkui/deadbeef.glade.h:162
+#, fuzzy
 msgid "editplaylistdlg"
-msgstr ""
+msgstr "Редактиране на Листа"
 
 #: ../plugins/gtkui/interface.c:2980 ../plugins/gtkui/deadbeef.glade.h:138
-#, fuzzy
 msgid "URL:"
-msgstr "Сайт:"
+msgstr "Адрес:"
 
 #: ../plugins/gtkui/interface.c:3081 ../plugins/gtkui/deadbeef.glade.h:64
 msgid "Group By"
@@ -925,7 +921,7 @@ msgstr "Добави"
 
 #: ../plugins/gtkui/prefwin.c:322
 msgid "Global Hotkeys"
-msgstr "Общи Бързи клавиши"
+msgstr "Системни \"Бързи\" клавиши"
 
 #: ../plugins/gtkui/prefwin.c:384
 msgid "Slot"
@@ -946,9 +942,8 @@ msgid "Initializing..."
 msgstr "Разпознаване..."
 
 #: ../plugins/gtkui/trkproperties.c:53
-#, fuzzy
 msgid "You've modified data for this track."
-msgstr "Вие сте променили нещо по тази песен."
+msgstr "Имате променяни данни за тази песен."
 
 #: ../plugins/gtkui/trkproperties.c:55
 msgid "Really close the window?"
@@ -959,9 +954,8 @@ msgid "Tag Type(s)"
 msgstr "Тип(ове) Етикет(и)"
 
 #: ../plugins/gtkui/trkproperties.c:180
-#, fuzzy
 msgid "Embedded Cuesheet"
-msgstr "Вградени реплики"
+msgstr "Вградени фрази"
 
 #: ../plugins/gtkui/trkproperties.c:180
 msgid "Yes"
@@ -1068,7 +1062,7 @@ msgstr ""
 msgid ""
 "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist "
 "- title\"\n"
-msgstr "пр.: --nowplaying \"%%a - %%t\" ще изпише \"изпълнител - песен\"\n"
+msgstr "пр.: --nowplaying \"%%a - %%t\" ще изведе \"изпълнител - песен\"\n"
 
 #: ../playlist.c:377 ../playlist.c:2289
 msgid "Default"
@@ -1079,7 +1073,7 @@ msgid ""
 "2.3 (Recommended)\n"
 "2.4"
 msgstr ""
-"2.3 (Препоръчително)\n"
+"2.3 (Препоръчителна)\n"
 "2.4"
 
 #: ../plugins/gtkui/deadbeef.glade.h:26
@@ -1129,7 +1123,7 @@ msgstr ""
 #: ../plugins/gtkui/support.c:90 ../plugins/gtkui/support.c:114
 #, c-format
 msgid "Couldn't find pixmap file: %s"
-msgstr "Не открива изображение: %s"
+msgstr "Не е открито Х-изображение: %s"
 
 #: ../plugins/vorbis/vcedit.c:129 ../plugins/vorbis/vcedit.c:155
 msgid "Couldn't get enough memory for input buffering."
@@ -1137,43 +1131,43 @@ msgstr "Няма достатъчно памет за входящо буфер�
 
 #: ../plugins/vorbis/vcedit.c:179 ../plugins/vorbis/vcedit.c:550
 msgid "Error reading first page of Ogg bitstream."
-msgstr "Грешка при прочитането на първият слой от Ogg битовете."
+msgstr "Грешка при прочитането на първия слой от Ogg потоците."
 
 #: ../plugins/vorbis/vcedit.c:185 ../plugins/vorbis/vcedit.c:557
 msgid "Error reading initial header packet."
-msgstr "Грешка при прочитането на първият заглавен пакет."
+msgstr "Грешка при прочитането на първия заглавен пакет."
 
 #: ../plugins/vorbis/vcedit.c:237
 msgid "Couldn't get enough memory to register new stream serial number."
-msgstr "Няма достатъчно памет за регистрирането на новия пакет."
+msgstr "Няма достатъчно памет за регистриране номера на новия поток."
 
 #: ../plugins/vorbis/vcedit.c:505
 msgid "Input truncated or empty."
-msgstr "Въведи прекъснат или празен."
+msgstr "Входящият е прекъснат или празен."
 
 #: ../plugins/vorbis/vcedit.c:507
 msgid "Input is not an Ogg bitstream."
-msgstr "Въведеното не е Ogg бит."
+msgstr "Входящото не е Ogg битов поток."
 
 #: ../plugins/vorbis/vcedit.c:565
 msgid "Ogg bitstream does not contain Vorbis data."
-msgstr "Ogg битовите пакети не съдържат Vorbis данни."
+msgstr "Ogg потока не съдържа Vorbis данни."
 
 #: ../plugins/vorbis/vcedit.c:578
 msgid "EOF before recognised stream."
-msgstr "Запечатай файла преди разпознатия пакет."
+msgstr "Край на файла преди разпознаването на потока."
 
 #: ../plugins/vorbis/vcedit.c:594
 msgid "Ogg bitstream does not contain a supported data-type."
-msgstr "Ogg битовите пакети не съдържат поддържаният тип данни."
+msgstr "Ogg потока не съдържа, поддържания тип данни."
 
 #: ../plugins/vorbis/vcedit.c:638
 msgid "Corrupt secondary header."
-msgstr "Увредена вторична заглавна част."
+msgstr "Увредена втора заглавна част."
 
 #: ../plugins/vorbis/vcedit.c:659
 msgid "EOF before end of Vorbis headers."
-msgstr "Запечатай файла преди края на заглавните части на Vorbis."
+msgstr "Край на файла преди последната Vorbis заглавна част."
 
 #: ../plugins/vorbis/vcedit.c:834
 msgid "Corrupt or missing data, continuing..."
@@ -1183,15 +1177,14 @@ msgstr "Увредени или липсващи данни, продължав�
 msgid ""
 "Error writing stream to output. Output stream may be corrupted or truncated."
 msgstr ""
-"Грешка при записването на изходящия пакет. Навярно Изходящият пакет е "
-"увреден или прекъснат."
+"Грешка при записването. Вероятно изходящия поток е увреден или прекъснат."
 
 #: ../plugins/wildmidi/wildmidiplug.c:162
-#, c-format, fuzzy
+#, c-format, 
 msgid ""
 "wildmidi: freepats config file not found. Please install timidity-freepats "
 "package, or specify path to freepats.cfg in the plugin settings."
 msgstr ""
-"wildmidi: Файлът с настройките - freepats не е открит. Моля инсталирайте "
-"пакета \"timidity-freepats\" или опишете пътя до freepats.cfg в настройките на "
-"приставката!"
+"wildmidi: Файлът с настройките - freepats не е открит. Моля, инсталирайте "
+"пакета \"timidity-freepats\" или опишете пътя до freepats.cfg, в настройките "
+"на приставката!"
