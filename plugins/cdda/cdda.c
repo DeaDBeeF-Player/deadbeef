@@ -57,8 +57,6 @@ typedef struct {
     unsigned int current_sample;
 } cdda_info_t;
 
-static uintptr_t mutex;
-static intptr_t cddb_tid;
 struct cddb_thread_params
 {
     DB_playItem_t *items[100];
@@ -321,9 +319,7 @@ cddb_thread (void *items_i)
     DB_playItem_t **items = params->items;
 
     trace ("calling resolve_disc\n");
-    deadbeef->mutex_lock (mutex);
     cddb_disc_t* disc = resolve_disc (params->cdio);
-    deadbeef->mutex_unlock (mutex);
     if (!disc)
     {
         trace ("disc not resolved\n");
@@ -335,7 +331,6 @@ cddb_thread (void *items_i)
     }
     trace ("disc resolved\n");
 
-    deadbeef->mutex_lock (mutex);
     const char *disc_title = cddb_disc_get_title (disc);
     const char *artist = cddb_disc_get_artist (disc);
     trace ("disc_title=%s, disk_artist=%s\n", disc_title, artist);
@@ -360,9 +355,7 @@ cddb_thread (void *items_i)
         deadbeef->plug_trigger_event_trackinfochanged (items[i]);
     }
     cddb_disc_destroy (disc);
-    deadbeef->mutex_unlock (mutex);
     cleanup_thread_params (params);
-    cddb_tid = 0;
     deadbeef->plug_trigger_event_playlistchanged ();
 }
 
@@ -509,10 +502,8 @@ cda_insert (DB_playItem_t *after, const char *fname) {
         if ((!got_cdtext || !prefer_cdtext) && enable_cddb)
         {
             trace ("cdda: querying freedb...\n");
-            if (cddb_tid) {
-                deadbeef->thread_join (cddb_tid);
-            }
-            cddb_tid = deadbeef->thread_start (cddb_thread, p); //will destroy cdio
+            intptr_t tid = deadbeef->thread_start (cddb_thread, p); //will destroy cdio
+            deadbeef->thread_detach (tid);
         }
         else
             cleanup_thread_params (p);
@@ -528,22 +519,6 @@ cda_insert (DB_playItem_t *after, const char *fname) {
         cdio_destroy (cdio);
     }
     return res;
-}
-
-static int
-cda_start (void) {
-    mutex = deadbeef->mutex_create ();
-    return 0;
-}
-
-static int
-cda_stop (void) {
-    if (cddb_tid) {
-        trace ("cdda: waiting cddb query to end\n");
-        deadbeef->thread_join (cddb_tid);
-    }
-    deadbeef->mutex_free (mutex);
-    return 0;
 }
 
 static int
@@ -590,8 +565,6 @@ static DB_decoder_t plugin = {
     .plugin.author = "Viktor Semykin, Alexey Yakovenko",
     .plugin.email = "thesame.ml@gmail.com, waker@users.sourceforge.net",
     .plugin.website = "http://deadbeef.sf.net",
-    .plugin.start = cda_start,
-    .plugin.stop = cda_stop,
     .plugin.configdialog = settings_dlg,
     .plugin.get_actions = cda_get_actions,
     .open = cda_open,
