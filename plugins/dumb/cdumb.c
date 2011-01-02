@@ -763,6 +763,19 @@ cdumb_insert (DB_playItem_t *after, const char *fname) {
         snprintf (key, sizeof (key), "SAMP%03d", i);
         deadbeef->pl_add_meta (it, key, (const char *)itsd->sample[i].name);
     }
+
+    char s[100];
+
+    snprintf (s, sizeof (s), "%d", itsd->n_orders);
+    deadbeef->pl_add_meta (it, ":MOD_ORDERS", s);
+    snprintf (s, sizeof (s), "%d", itsd->n_instruments);
+    deadbeef->pl_add_meta (it, ":MOD_INSTRUMENTS", s);
+    snprintf (s, sizeof (s), "%d", itsd->n_samples);
+    deadbeef->pl_add_meta (it, ":MOD_SAMPLES", s);
+    snprintf (s, sizeof (s), "%d", itsd->n_patterns);
+    deadbeef->pl_add_meta (it, ":MOD_PATTERNS", s);
+    snprintf (s, sizeof (s), "%d", itsd->n_pchannels);
+    deadbeef->pl_add_meta (it, ":MOD_CHANNELS", s);
     dumb_it_do_initial_runthrough (duh);
     deadbeef->pl_set_item_duration (it, duh_get_length (duh)/65536.0f);
     it->filetype = ftype;
