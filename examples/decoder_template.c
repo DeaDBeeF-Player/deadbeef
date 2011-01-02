@@ -1,26 +1,11 @@
-/*
-    DeaDBeeF - ultimate music player for GNU/Linux systems with X11
-    Copyright (C) 2009-2010 Alexey Yakovenko <waker@users.sourceforge.net>
-
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
-    
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-    
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-*/
-
 // this is a decoder plugin skeleton
 // use to create new decoder plugins
 
-#include "../../deadbeef.h"
+#include <stdlib.h>
+#include <string.h>
+#include <deadbeef/deadbeef.h>
+
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
@@ -50,9 +35,11 @@ static int
 example_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     example_info_t *info = (example_info_t *)_info;
 
-    _info->fmt.bps = ;
-    _info->fmt.channels = ;
-    _info->fmt.samplerate  = ;
+    // take this parameters from your input file
+    // we set constants for clarity sake
+    _info->fmt.bps = 16;
+    _info->fmt.channels = 2;
+    _info->fmt.samplerate  = 44100;
     for (int i = 0; i < _info->fmt.channels; i++) {
         _info->fmt.channelmask |= 1 << i;
     }
@@ -66,6 +53,7 @@ example_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     }
     else {
         info->startsample = 0;
+        int TOTALSAMPLES = 1000; // calculate from file
         info->endsample = TOTALSAMPLES-1;
     }
     return 0;
@@ -99,7 +87,7 @@ example_seek_sample (DB_fileinfo_t *_info, int sample) {
     example_info_t *info = (example_info_t *)_info;
     
     info->currentsample = sample + info->startsample;
-    _info->readpos = (float)sample / _info->samplerate;
+    _info->readpos = (float)sample / _info->fmt.samplerate;
     return 0;
 }
 
@@ -108,7 +96,7 @@ example_seek_sample (DB_fileinfo_t *_info, int sample) {
 // return -1 on failure
 static int
 example_seek (DB_fileinfo_t *_info, float time) {
-    return example_seek_sample (_info, time * _info->samplerate);
+    return example_seek_sample (_info, time * _info->fmt.samplerate);
 }
 
 // read information from the track
@@ -119,20 +107,13 @@ example_seek (DB_fileinfo_t *_info, float time) {
 
 static DB_playItem_t *
 example_insert (DB_playItem_t *after, const char *fname) {
-// example code (won't compile):
-
     // open file
     DB_FILE *fp = deadbeef->fopen (fname);
     if (!fp) {
         trace ("example: failed to fopen %s\n", fname);
         return NULL;
     }
-    // setup decoder to use vfs
-    decoder_callbacks_t cb = {
-        open = vfs_open_wrapper,
-        .... etc ....
-    }
-    decoder_info_t *di = decoder_open_callbacks (&cb);
+    decoder_info_t *di = decoder_open ();
     if (!di) {
         trace ("example: failed to init decoder\n");
         return NULL;
