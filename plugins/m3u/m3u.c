@@ -21,8 +21,8 @@
 #include <stdlib.h>
 #include "../../deadbeef.h"
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -273,7 +273,6 @@ load_pls (DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_pla
             n = e-p;
             n = min (n, sizeof (length)-1);
             memcpy (length, p, n);
-            break;
         }
         else {
             trace ("invalid entry in pls file: %s\n", p);
