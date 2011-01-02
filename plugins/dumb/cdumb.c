@@ -752,6 +752,17 @@ cdumb_insert (DB_playItem_t *after, const char *fname) {
     else {
         deadbeef->pl_add_meta (it, "title", NULL);
     }
+    int i;
+    for (i = 0; i < itsd->n_instruments; i++) {
+        char key[100];
+        snprintf (key, sizeof (key), "INST%03d", i);
+        deadbeef->pl_add_meta (it, key, (const char *)itsd->instrument[i].name);
+    }
+    for (i = 0; i < itsd->n_samples; i++) {
+        char key[100];
+        snprintf (key, sizeof (key), "SAMP%03d", i);
+        deadbeef->pl_add_meta (it, key, (const char *)itsd->sample[i].name);
+    }
     dumb_it_do_initial_runthrough (duh);
     deadbeef->pl_set_item_duration (it, duh_get_length (duh)/65536.0f);
     it->filetype = ftype;
