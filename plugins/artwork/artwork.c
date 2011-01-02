@@ -56,11 +56,11 @@ static const char *get_default_cover (void) {
 int
 make_cache_dir_path (char *path, int size, const char *artist) {
     const char *cache = getenv ("XDG_CACHE_HOME");
+
     int sz = snprintf (path, size, "%s/deadbeef/", cache ? cache : getenv ("HOME"));
-    size -= sz;
     path += sz;
 
-    sz = snprintf (path, size, "%s", artist);
+    sz += snprintf (path, size-sz, "%s", artist);
     for (char *p = path; *p; p++) {
         if (*p == '/') {
             *p = '_';
@@ -71,6 +71,7 @@ make_cache_dir_path (char *path, int size, const char *artist) {
 
 void
 make_cache_path (char *path, int size, const char *album, const char *artist) {
+    char *p = path;
     int sz = make_cache_dir_path (path, size, artist);
     size -= sz;
     path += sz;
@@ -285,7 +286,7 @@ fetcher_thread (void *none)
         deadbeef->mutex_unlock (mutex);
         while (!terminate && queue && !clear_queue) {
             cover_query_t *param = queue;
-            char path [1024];
+            char path [PATH_MAX];
             struct dirent **files;
             int files_count;
 
