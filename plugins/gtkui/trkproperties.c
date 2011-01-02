@@ -148,16 +148,49 @@ trkproperties_fill_metadata (void) {
     trkproperties_modified = 0;
     gtk_list_store_clear (store);
     deadbeef->pl_lock ();
+
+    // add "standard" fields
     int i = 0;
     while (types[i]) {
-        GtkTreeIter iter;
-        gtk_list_store_append (store, &iter);
         const char *value = deadbeef->pl_find_meta (track, types[i]);
         if (!value) {
             value = "";
         }
+        GtkTreeIter iter;
+        gtk_list_store_append (store, &iter);
         gtk_list_store_set (store, &iter, 0, _(types[i+1]), 1, value, 2, types[i], -1);
         i += 2;
+    }
+
+
+    DB_metaInfo_t *meta = deadbeef->pl_get_metadata (track);
+    while (meta) {
+        int i = 0;
+        while (types[i]) {
+            if (!strcmp (types[i], meta->key)) {
+                break;
+            }
+            i += 2;
+        }
+        if (types[i]) {
+            meta = meta->next;
+            continue;
+        }
+
+        int l = strlen (meta->key);
+        char title[l+3];
+        snprintf (title, sizeof (title), "<%s>", meta->key);
+        const char *value = meta->value;
+        const char *key = meta->key;
+        meta = meta->next;
+
+        if (!value) {
+            value = "";
+        }
+
+        GtkTreeIter iter;
+        gtk_list_store_append (store, &iter);
+        gtk_list_store_set (store, &iter, 0, _(title), 1, value, 2, key, -1);
     }
     deadbeef->pl_unlock ();
 
