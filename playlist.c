@@ -1696,6 +1696,7 @@ pl_item_copy (playItem_t *out, playItem_t *it) {
     DB_metaInfo_t *meta = it->meta;
     while (meta) {
         DB_metaInfo_t *m = malloc (sizeof (DB_metaInfo_t));
+        memset (m, 0, sizeof (DB_metaInfo_t));
         m->key = metacache_add_string (meta->key);
         m->value = metacache_add_string (meta->value);
         m->next = NULL;
@@ -1804,9 +1805,9 @@ pl_add_meta (playItem_t *it, const char *key, const char *value) {
         }
     }
     m = malloc (sizeof (DB_metaInfo_t));
+    memset (m, 0, sizeof (DB_metaInfo_t));
     m->key = metacache_add_string (key); //key;
     m->value = metacache_add_string (value); //strdup (value);
-    m->next = NULL;
 
     if (tail) {
         tail->next = m;

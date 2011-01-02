@@ -119,9 +119,9 @@ typedef struct DB_playItem_s {
 } DB_playItem_t;
 
 typedef struct DB_metaInfo_s {
+    struct DB_metaInfo_s *next;
     const char *key;
     const char *value;
-    struct DB_metaInfo_s *next;
 } DB_metaInfo_t;
 
 // FIXME: that needs to be in separate plugin
