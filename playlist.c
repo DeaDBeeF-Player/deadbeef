@@ -1767,6 +1767,7 @@ void
 pl_add_meta (playItem_t *it, const char *key, const char *value) {
     LOCK;
     // check if it's already set
+    DB_metaInfo_t *tail = NULL;
     DB_metaInfo_t *m = it->meta;
     while (m) {
         if (!strcasecmp (key, m->key)) {
@@ -1774,6 +1775,7 @@ pl_add_meta (playItem_t *it, const char *key, const char *value) {
             UNLOCK;
             return;
         }
+        tail = m;
         m = m->next;
     }
     // add
@@ -1804,8 +1806,14 @@ pl_add_meta (playItem_t *it, const char *key, const char *value) {
     m = malloc (sizeof (DB_metaInfo_t));
     m->key = metacache_add_string (key); //key;
     m->value = metacache_add_string (value); //strdup (value);
-    m->next = it->meta;
-    it->meta = m;
+    m->next = NULL;
+
+    if (tail) {
+        tail->next = m;
+    }
+    else {
+        it->meta = m;
+    }
     UNLOCK;
 }
 
