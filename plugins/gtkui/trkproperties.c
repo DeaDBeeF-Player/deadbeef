@@ -162,9 +162,55 @@ trkproperties_fill_metadata (void) {
         i += 2;
     }
 
+    // properties
+    char temp[200];
+    GtkTreeIter iter;
+    gtk_list_store_clear (propstore);
+    gtk_list_store_append (propstore, &iter);
+    gtk_list_store_set (propstore, &iter, 0, _("Location"), 1, track->fname, -1);
+    gtk_list_store_append (propstore, &iter);
+    snprintf (temp, sizeof (temp), "%d", track->tracknum);
+    gtk_list_store_set (propstore, &iter, 0, _("Subtrack Index"), 1, temp, -1);
+    gtk_list_store_append (propstore, &iter);
+    deadbeef->pl_format_time (deadbeef->pl_get_item_duration (track), temp, sizeof (temp));
+    gtk_list_store_set (propstore, &iter, 0, _("Duration"), 1, temp, -1);
+    gtk_list_store_append (propstore, &iter);
+    deadbeef->pl_format_title (track, -1, temp, sizeof (temp), -1, "%T");
+    gtk_list_store_set (propstore, &iter, 0, _("Tag Type(s)"), 1, temp, -1);
+    gtk_list_store_append (propstore, &iter);
+    gtk_list_store_set (propstore, &iter, 0, _("Embedded Cuesheet"), 1, (deadbeef->pl_get_item_flags (track) & DDB_HAS_EMBEDDED_CUESHEET) ? _("Yes") : _("No"), -1);
+    gtk_list_store_append (propstore, &iter);
+    gtk_list_store_set (propstore, &iter, 0, _("Codec"), 1, track->decoder_id, -1);
 
+    gtk_list_store_append (propstore, &iter);
+    snprintf (temp, sizeof (temp), "%0.2f dB", track->replaygain_album_gain);
+    gtk_list_store_set (propstore, &iter, 0, "ReplayGain Album Gain", 1, temp, -1);
+    gtk_list_store_append (propstore, &iter);
+    snprintf (temp, sizeof (temp), "%0.6f", track->replaygain_album_peak);
+    gtk_list_store_set (propstore, &iter, 0, "ReplayGain Album Peak", 1, temp, -1);
+
+    gtk_list_store_append (propstore, &iter);
+    snprintf (temp, sizeof (temp), "%0.2f dB", track->replaygain_track_gain);
+    gtk_list_store_set (propstore, &iter, 0, "ReplayGain Track Gain", 1, temp, -1);
+    gtk_list_store_append (propstore, &iter);
+    snprintf (temp, sizeof (temp), "%0.6f", track->replaygain_track_peak);
+    gtk_list_store_set (propstore, &iter, 0, "ReplayGain Track Peak", 1, temp, -1);
+
+    // unknown fields
     DB_metaInfo_t *meta = deadbeef->pl_get_metadata (track);
     while (meta) {
+        if (meta->key[0] == ':') {
+            int l = strlen (meta->key)-1;
+            char title[l+3];
+            snprintf (title, sizeof (title), "<%s>", meta->key+1);
+            const char *value = meta->value;
+
+            GtkTreeIter iter;
+            gtk_list_store_append (propstore, &iter);
+            gtk_list_store_set (propstore, &iter, 0, title, 1, value, -1);
+            meta = meta->next;
+            continue;
+        }
         int i = 0;
         while (types[i]) {
             if (!strcmp (types[i], meta->key)) {
@@ -192,41 +238,8 @@ trkproperties_fill_metadata (void) {
         gtk_list_store_append (store, &iter);
         gtk_list_store_set (store, &iter, 0, _(title), 1, value, 2, key, -1);
     }
+
     deadbeef->pl_unlock ();
-
-    // properties
-    char temp[200];
-    GtkTreeIter iter;
-    gtk_list_store_clear (propstore);
-    gtk_list_store_append (propstore, &iter);
-    gtk_list_store_set (propstore, &iter, 0, _("Location"), 1, track->fname, -1);
-    gtk_list_store_append (propstore, &iter);
-    snprintf (temp, sizeof (temp), "%d", track->tracknum);
-    gtk_list_store_set (propstore, &iter, 0, _("Subtrack Index"), 1, temp, -1);
-    gtk_list_store_append (propstore, &iter);
-    deadbeef->pl_format_time (deadbeef->pl_get_item_duration (track), temp, sizeof (temp));
-    gtk_list_store_set (propstore, &iter, 0, _("Duration"), 1, temp, -1);
-    gtk_list_store_append (propstore, &iter);
-    deadbeef->pl_format_title (track, -1, temp, sizeof (temp), -1, "%T");
-    gtk_list_store_set (propstore, &iter, 0, _("Tag Type(s)"), 1, temp, -1);
-    gtk_list_store_append (propstore, &iter);
-    gtk_list_store_set (propstore, &iter, 0, _("Embedded Cuesheet"), 1, (deadbeef->pl_get_item_flags (track) & DDB_HAS_EMBEDDED_CUESHEET) ? _("Yes") : _("No"), -1);
-    gtk_list_store_append (propstore, &iter);
-    gtk_list_store_set (propstore, &iter, 0, _("Codec"), 1, track->decoder_id, -1);
-
-    gtk_list_store_append (propstore, &iter);
-    snprintf (temp, sizeof (temp), "%0.2f dB", track->replaygain_album_gain);
-    gtk_list_store_set (propstore, &iter, 0, "REPLAYGAIN_ALBUM_GAIN", 1, temp, -1);
-    gtk_list_store_append (propstore, &iter);
-    snprintf (temp, sizeof (temp), "%0.6f", track->replaygain_album_peak);
-    gtk_list_store_set (propstore, &iter, 0, "REPLAYGAIN_ALBUM_PEAK", 1, temp, -1);
-
-    gtk_list_store_append (propstore, &iter);
-    snprintf (temp, sizeof (temp), "%0.2f dB", track->replaygain_track_gain);
-    gtk_list_store_set (propstore, &iter, 0, "REPLAYGAIN_TRACK_GAIN", 1, temp, -1);
-    gtk_list_store_append (propstore, &iter);
-    snprintf (temp, sizeof (temp), "%0.6f", track->replaygain_track_peak);
-    gtk_list_store_set (propstore, &iter, 0, "REPLAYGAIN_TRACK_PEAK", 1, temp, -1);
 }
 
 void
