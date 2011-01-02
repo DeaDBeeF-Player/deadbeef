@@ -167,7 +167,9 @@ cflac_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMe
     _info->fmt.samplerate = metadata->data.stream_info.sample_rate;
     _info->fmt.channels = metadata->data.stream_info.channels;
     _info->fmt.bps = metadata->data.stream_info.bits_per_sample;
-    _info->fmt.channelmask = _info->fmt.channels == 1 ? DDB_SPEAKER_FRONT_LEFT : (DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT);
+    for (int i = 0; i < _info->fmt.channels; i++) {
+        _info->fmt.channelmask |= 1 << i;
+    }
 
 }
 
