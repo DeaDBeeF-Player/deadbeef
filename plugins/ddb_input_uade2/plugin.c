@@ -1,6 +1,6 @@
 /*
     ddb_input_uade2 - UADE input plugin for DeaDBeeF player
-    Copyright (C) 2009-2010 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>
     based on UADE2 plugin for Audacious, Copyright (C) 2005-2006  Heikki Orsila, UADE TEAM
 
     This program is free software; you can redistribute it and/or

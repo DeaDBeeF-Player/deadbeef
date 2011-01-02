@@ -1,6 +1,6 @@
 /*
     DeaDBeeF - ultimate music player for GNU/Linux systems with X11
-    Copyright (C) 2009-2010 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>
     based on apedec from FFMpeg Copyright (c) 2007 Benjamin Zores <ben@geexbox.org>
     based upon libdemac from Dave Chapman.
 
