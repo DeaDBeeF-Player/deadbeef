@@ -49,6 +49,7 @@ FILE *out;
 
 static intptr_t streamer_tid;
 static ddb_dsp_context_t *dsp_chain;
+static float dsp_ratio = 1;
 
 static DB_dsp_t *eqplug;
 static ddb_dsp_context_t *eq;
@@ -1074,13 +1075,16 @@ streamer_thread (void *ctx) {
             }
 
             int bytesread = 0;
-            while (bytesread < sz-100) {
+            do {
                 int nb = streamer_read_async (readbuffer+bytesread,sz-bytesread);
-                if (nb == 0) {
+                struct timeval tm2;
+                gettimeofday (&tm2, NULL);
+                int ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
+                if (ms >= alloc_time) {
                     break;
                 }
                 bytesread += nb;
-            }
+            } while (bytesread < sz-100);
             streamer_lock ();
 
             if (bytesread > 0) {
@@ -1526,12 +1530,18 @@ streamer_read_async (char *bytes, int size) {
                 int nframes = inputsize / inputsamplesize;
                 ddb_dsp_context_t *dsp = dsp_chain;
                 dspfmt.samplerate = fileinfo->fmt.samplerate;
+                float ratio = 1.f;
+                int maxframes = sizeof (tempbuf) / dspsamplesize;
                 while (dsp) {
                     if (dsp->enabled) {
-                        nframes = dsp->plugin->process (dsp, (float *)tempbuf, nframes, &dspfmt);
+                        float r = 1;
+                        nframes = dsp->plugin->process (dsp, (float *)tempbuf, nframes, maxframes, &dspfmt, &r);
+                        ratio *= r;
                     }
                     dsp = dsp->next;
                 }
+                dsp_ratio = ratio;
+
                 int n = pcm_convert (&dspfmt, tempbuf, &output->fmt, bytes, nframes * dspsamplesize);
 
                 bytesread = n;
@@ -1622,7 +1632,7 @@ streamer_read (char *bytes, int size) {
     int sz = min (size, streamer_ringbuf.remaining);
     if (sz) {
         ringbuf_read (&streamer_ringbuf, bytes, sz);
-        playpos += (float)sz/output->fmt.samplerate/((output->fmt.bps>>3)*output->fmt.channels);
+        playpos += (float)sz/output->fmt.samplerate/((output->fmt.bps>>3)*output->fmt.channels) * dsp_ratio;
         playing_track->playtime += (float)sz/output->fmt.samplerate/((output->fmt.bps>>3)*output->fmt.channels);
         if (playlist_track) {
             playing_track->filetype = playlist_track->filetype;

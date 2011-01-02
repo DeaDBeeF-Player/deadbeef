@@ -87,7 +87,7 @@ ddb_src_set_ratio (ddb_dsp_context_t *_src, float ratio) {
 }
 
 int
-ddb_src_process (ddb_dsp_context_t *_src, float *samples, int nframes, ddb_waveformat_t *fmt) {
+ddb_src_process (ddb_dsp_context_t *_src, float *samples, int nframes, int maxframes, ddb_waveformat_t *fmt, float *r) {
     ddb_src_libsamplerate_t *src = (ddb_src_libsamplerate_t*)_src;
 
     if (fmt->samplerate == src->samplerate) {
@@ -111,6 +111,9 @@ ddb_src_process (ddb_dsp_context_t *_src, float *samples, int nframes, ddb_wavef
     fmt->samplerate = src->samplerate;
 
     int numoutframes = nframes * src->srcdata.src_ratio;
+    if (numoutframes > maxframes) {
+        numoutframes = maxframes;
+    }
     float outbuf[numoutframes*fmt->channels];
     memset (outbuf, 0, sizeof (outbuf));
     int buffersize = sizeof (outbuf);

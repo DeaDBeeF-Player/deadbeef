@@ -77,7 +77,7 @@ supereq_plugin_stop (void) {
 }
 
 int
-supereq_process (ddb_dsp_context_t *ctx, float *samples, int frames, ddb_waveformat_t *fmt) {
+supereq_process (ddb_dsp_context_t *ctx, float *samples, int frames, int maxframes, ddb_waveformat_t *fmt, float *r) {
     ddb_supereq_ctx_t *supereq = (ddb_supereq_ctx_t *)ctx;
     if (supereq->enabled != ctx->enabled) {
         if (ctx->enabled && !supereq->enabled) {

@@ -750,6 +750,7 @@ typedef struct DB_output_s {
 } DB_output_t;
 
 // dsp plugin
+// see also: examples/dsp_template.c in git
 #define DDB_INIT_DSP_CONTEXT(var,type,plug) {\
     memset(var,0,sizeof(type));\
     var->ctx.plugin=plug;\
@@ -775,11 +776,11 @@ typedef struct DB_dsp_s {
     void (*close) (ddb_dsp_context_t *ctx);
 
     // samples are always interleaved floating point
-    // returned value is number of output frames
-    // can change channels, samplerate, channelmask
-    // buffer size should always have reserved space for upsampling/upmixing
-    // TODO: decide on buffer size
-    int (*process) (ddb_dsp_context_t *ctx, float *samples, int frames, ddb_waveformat_t *fmt);
+    // returned value is number of output frames (multichannel samples)
+    // plugins are allowed to modify channels, samplerate, channelmask in the fmt structure
+    // buffer size can fit up to maxframes frames
+    // by default ratio=1, and plugins don't need to touch it unless they have to
+    int (*process) (ddb_dsp_context_t *ctx, float *samples, int frames, int maxframes, ddb_waveformat_t *fmt, float *ratio);
 
     void (*reset) (ddb_dsp_context_t *ctx);
 
@@ -791,11 +792,12 @@ typedef struct DB_dsp_s {
     // param names are for display-only, and are allowed to contain spaces
     int (*num_params) (void);
     const char *(*get_param_name) (int p);
-
     void (*set_param) (ddb_dsp_context_t *ctx, int p, const char *val);
     void (*get_param) (ddb_dsp_context_t *ctx, int p, char *str, int len);
 
-    const char *configdialog; // separate dialog per dsp context
+    // config dialog implementation uses set/get param, so they must be
+    // implemented if this is nonzero
+    const char *configdialog;
 } DB_dsp_t;
 
 // misc plugin

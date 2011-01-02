@@ -31,6 +31,7 @@ enum {
     ST_PARAM_USE_QUICKSEEK,
     ST_PARAM_SEQUENCE_MS,
     ST_PARAM_SEEKWINDOW_MS,
+    ST_PARAM_SET_OUTPUT_SAMPLERATE,
     ST_PARAM_COUNT
 };
 
@@ -48,6 +49,7 @@ typedef struct {
     int use_quickseek;
     int sequence_ms;
     int seekwindow_ms;
+    int set_output_samplerate;
     int changed;
 } ddb_soundtouch_t;
 
@@ -84,10 +86,17 @@ st_reset (ddb_dsp_context_t *_src) {
 }
 
 int
-st_process (ddb_dsp_context_t *_src, float *samples, int nframes, ddb_waveformat_t *fmt) {
+st_process (ddb_dsp_context_t *_src, float *samples, int nframes, int maxframes, ddb_waveformat_t *fmt, float *ratio) {
     ddb_soundtouch_t *st = (ddb_soundtouch_t *)_src;
     if (st->changed) {
-        st_set_rate_change (st->st, st->rate);
+        if (st->set_output_samplerate > 0) {
+            st_set_rate_change (st->st, 0);
+            st_set_rate (st->st, fmt->samplerate / (float)st->set_output_samplerate);
+        }
+        else {
+            st_set_rate (st->st, 1);
+            st_set_rate_change (st->st, st->rate);
+        }
         st_set_pitch_semi_tones (st->st, st->pitch);
         st_set_tempo_change (st->st, st->tempo);
         st_set_setting (st->st, SETTING_USE_AA_FILTER, st->use_aa_filter);
@@ -97,17 +106,24 @@ st_process (ddb_dsp_context_t *_src, float *samples, int nframes, ddb_waveformat
         st_set_setting (st->st, SETTING_SEEKWINDOW_MS, st->seekwindow_ms);
         st->changed = 0;
     }
+    *ratio = (1.f + 0.01f * st->tempo);
+
+    if (st->set_output_samplerate > 0) {
+        fmt->samplerate = st->set_output_samplerate;
+    }
+    else {
+        *ratio *= (1.f + 0.01f * st->rate);
+    }
 
     st_set_sample_rate (st->st, fmt->samplerate);
     st_set_channels (st->st, fmt->channels);
 
     st_put_samples (st->st, samples, nframes);
     int nout = 0;
-    int nmax = nframes * 24;
     int n = 0;
     do {
-        n = st_receive_samples (st->st, samples, nmax);
-        nmax -= n;
+        n = st_receive_samples (st->st, samples, maxframes);
+        maxframes -= n;
         samples += n * fmt->channels;
         nout += n;
     } while (n != 0);
@@ -134,6 +150,8 @@ st_get_param_name (int p) {
         return "Time Stretch Sequence Length (ms)";
     case ST_PARAM_SEEKWINDOW_MS:
         return "Time Stretch Seek Window Length (ms)";
+    case ST_PARAM_SET_OUTPUT_SAMPLERATE:
+        return "Set Output Samplerate";
     default:
         fprintf (stderr, "st_param_name: invalid param index (%d)\n", p);
     }
@@ -175,9 +193,20 @@ st_set_param (ddb_dsp_context_t *ctx, int p, const char *val) {
         break;
     case ST_PARAM_SEQUENCE_MS:
         st->sequence_ms = atoi (val);
+        st->changed = 1;
         break;
     case ST_PARAM_SEEKWINDOW_MS:
         st->seekwindow_ms = atoi (val);
+        st->changed = 1;
+        break;
+    case ST_PARAM_SET_OUTPUT_SAMPLERATE:
+        st->set_output_samplerate = atoi (val);
+        if (st->set_output_samplerate < 8000) {
+            st->set_output_samplerate = 0;
+        }
+        else if (st->set_output_samplerate > 192000) {
+            st->set_output_samplerate = 192000;
+        }
         break;
     default:
         fprintf (stderr, "st_param: invalid param index (%d)\n", p);
@@ -189,28 +218,31 @@ st_get_param (ddb_dsp_context_t *ctx, int p, char *val, int sz) {
     ddb_soundtouch_t *st = (ddb_soundtouch_t *)ctx;
     switch (p) {
     case ST_PARAM_TEMPO:
-        snprintf (val, sizeof (val), "%f", st->tempo);
+        snprintf (val, sz, "%f", st->tempo);
         break;
     case ST_PARAM_PITCH:
-        snprintf (val, sizeof (val), "%f", st->pitch);
+        snprintf (val, sz, "%f", st->pitch);
         break;
     case ST_PARAM_RATE:
-        snprintf (val, sizeof (val), "%f", st->rate);
+        snprintf (val, sz, "%f", st->rate);
         break;
     case ST_PARAM_USE_AA_FILTER:
-        snprintf (val, sizeof (val), "%d", st->use_aa_filter);
+        snprintf (val, sz, "%d", st->use_aa_filter);
         break;
     case ST_PARAM_AA_FILTER_LENGTH:
-        snprintf (val, sizeof (val), "%d", st->aa_filter_length);
+        snprintf (val, sz, "%d", st->aa_filter_length);
         break;
     case ST_PARAM_USE_QUICKSEEK:
-        snprintf (val, sizeof (val), "%d", st->use_quickseek);
+        snprintf (val, sz, "%d", st->use_quickseek);
         break;
     case ST_PARAM_SEQUENCE_MS:
-        snprintf (val, sizeof (val), "%d", st->sequence_ms);
+        snprintf (val, sz, "%d", st->sequence_ms);
         break;
     case ST_PARAM_SEEKWINDOW_MS:
-        snprintf (val, sizeof (val), "%d", st->seekwindow_ms);
+        snprintf (val, sz, "%d", st->seekwindow_ms);
+        break;
+    case ST_PARAM_SET_OUTPUT_SAMPLERATE:
+        snprintf (val, sz, "%d", st->set_output_samplerate);
         break;
     default:
         fprintf (stderr, "st_get_param: invalid param index (%d)\n", p);
@@ -220,7 +252,8 @@ st_get_param (ddb_dsp_context_t *ctx, int p, char *val, int sz) {
 static const char settings_dlg[] =
     "property \"Tempo Change (%)\" spinbtn[-200,200,1] 0 0;\n"
     "property \"Pitch Change (semi-tones)\" spinbtn[-24,24,1] 1 0;\n"
-    "property \"Rate Change (%)\" spinbtn[-200,200,1] 2 0;\n"
+    "property \"Playback Rate Change (%)\" spinbtn[-200,200,1] 2 0;\n"
+    "property \"Absolute Samplerate (overrides Rate Change if nonzero)\" spinbtn[0,192000,1] 8 0;\n"
     "property \"Use AA Filter\" checkbox 3 0;\n"
     "property \"AA Filter Length\" spinbtn[16,64,1] 4 32;\n"
     "property \"Use Quickseek\" checkbox 5 0;\n"
