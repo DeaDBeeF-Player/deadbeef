@@ -1,4 +1,22 @@
-//#include <iostream.h>
+/*
+    DeaDBeeF - ultimate music player for GNU/Linux systems with X11
+    Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>
+    Original SuperEQ code (C) Naoki Shibata <shibatch@users.sf.net>
+
+    This program is free software; you can redistribute it and/or
+    modify it under the terms of the GNU General Public License
+    as published by the Free Software Foundation; either version 2
+    of the License, or (at your option) any later version.
+    
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -7,12 +25,10 @@ class paramlistelm {
 public:
 	class paramlistelm *next;
 
-	char left,right;
 	float lower,upper,gain,gain2;
 	int sortindex;
 
 	paramlistelm(void) {
-		left = right = 1;
 		lower = upper = gain = 0;
 		next = NULL;
 	};
@@ -21,13 +37,6 @@ public:
 		delete next;
 		next = NULL;
 	};
-
-	char *getString(void) {
-		static char str[64];
-		sprintf(str,"%gHz to %gHz, %gdB %c%c",
-			(double)lower,(double)upper,(double)gain,left?'L':' ',right?'R':' ');
-		return str;
-	}
 };
 
 class paramlist {
@@ -52,8 +61,6 @@ public:
 		for(p=&elm,q=src.elm;q != NULL;q = q->next,p = &(*p)->next)
 		{
 			*p = new paramlistelm;
-			(*p)->left  = q->left;
-			(*p)->right = q->right;
 			(*p)->lower = q->lower;
 			(*p)->upper = q->upper;
 			(*p)->gain  = q->gain;

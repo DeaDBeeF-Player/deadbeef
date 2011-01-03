@@ -30,8 +30,7 @@ typedef struct {
     ddb_dsp_context_t ctx;
     float last_srate;
     int last_nch;
-    float lbands[18];
-    float rbands[18];
+    float bands[18];
     float preamp;
     void *paramsroot;
     int params_changed;
@@ -47,18 +46,15 @@ recalc_table (ddb_supereq_ctx_t *eq) {
     void *params = paramlist_alloc ();
 
     deadbeef->mutex_lock (eq->mutex);
-    float lbands_copy[18];
-    float rbands_copy[18];
+    float bands_copy[18];
     float srate = eq->last_srate;
-    memcpy (lbands_copy, eq->lbands, sizeof (eq->lbands));
-    memcpy (rbands_copy, eq->rbands, sizeof (eq->rbands));
+    memcpy (bands_copy, eq->bands, sizeof (eq->bands));
     for (int i = 0; i < 18; i++) {
-        lbands_copy[i] *= eq->preamp;
-        rbands_copy[i] *= eq->preamp;
+        bands_copy[i] *= eq->preamp;
     }
     deadbeef->mutex_unlock (eq->mutex);
 
-    equ_makeTable (&eq->state, lbands_copy, rbands_copy, params, srate);
+    equ_makeTable (&eq->state, bands_copy, params, srate);
 
     deadbeef->mutex_lock (eq->mutex);
     paramlist_free (eq->paramsroot);
@@ -96,19 +92,14 @@ supereq_process (ddb_dsp_context_t *ctx, float *samples, int frames, int maxfram
         recalc_table (supereq);
         supereq->params_changed = 0;
     }
-	if (supereq->last_srate != fmt->samplerate) {
+	if (supereq->last_srate != fmt->samplerate || supereq->last_nch != fmt->channels) {
         deadbeef->mutex_lock (supereq->mutex);
 		supereq->last_srate = fmt->samplerate;
 		supereq->last_nch = fmt->channels;
+        equ_init (&supereq->state, 14, fmt->channels);
         recalc_table (supereq);
-        deadbeef->mutex_unlock (supereq->mutex);
 		equ_clearbuf(&supereq->state);
-    }
-	else if (supereq->last_nch != fmt->channels) {
-        deadbeef->mutex_lock (supereq->mutex);
-		supereq->last_nch = fmt->channels;
         deadbeef->mutex_unlock (supereq->mutex);
-		equ_clearbuf(&supereq->state);
     }
 	equ_modifySamples_float(&supereq->state, (char *)samples,frames,fmt->channels);
 	return frames;
@@ -117,14 +108,14 @@ supereq_process (ddb_dsp_context_t *ctx, float *samples, int frames, int maxfram
 float
 supereq_get_band (ddb_dsp_context_t *ctx, int band) {
     ddb_supereq_ctx_t *supereq = (ddb_supereq_ctx_t *)ctx;
-    return supereq->lbands[band];
+    return supereq->bands[band];
 }
 
 void
 supereq_set_band (ddb_dsp_context_t *ctx, int band, float value) {
     ddb_supereq_ctx_t *supereq = (ddb_supereq_ctx_t *)ctx;
     deadbeef->mutex_lock (supereq->mutex);
-    supereq->lbands[band] = supereq->rbands[band] = value;
+    supereq->bands[band] = value;
     deadbeef->mutex_unlock (supereq->mutex);
     supereq->params_changed = 1;
 }
@@ -230,15 +221,14 @@ supereq_open (void) {
     ddb_supereq_ctx_t *supereq = malloc (sizeof (ddb_supereq_ctx_t));
     DDB_INIT_DSP_CONTEXT (supereq,ddb_supereq_ctx_t,&plugin);
 
-    equ_init (&supereq->state, 14);
+    equ_init (&supereq->state, 14, 2);
     supereq->paramsroot = paramlist_alloc ();
     supereq->last_srate = 44100;
     supereq->last_nch = 2;
     supereq->mutex = deadbeef->mutex_create ();
     supereq->preamp = 1;
     for (int i = 0; i < 18; i++) {
-        supereq->lbands[i] = 1;
-        supereq->rbands[i] = 1;
+        supereq->bands[i] = 1;
     }
     recalc_table (supereq);
     equ_clearbuf (&supereq->state);
