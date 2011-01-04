@@ -481,13 +481,6 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
             G_CALLBACK (on_pref_soundcard_changed),
             NULL);
 
-    // alsa resampling
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "pref_dynsamplerate")), deadbeef->conf_get_int ("playback.dynsamplerate", 0));
-
-    // src_quality
-    combobox = GTK_COMBO_BOX (lookup_widget (w, "pref_src_quality"));
-    gtk_combo_box_set_active (combobox, deadbeef->conf_get_int ("src_quality", 2));
-
     // replaygain_mode
     combobox = GTK_COMBO_BOX (lookup_widget (w, "pref_replaygain_mode"));
     gtk_combo_box_set_active (combobox, deadbeef->conf_get_int ("replaygain_mode", 0));
@@ -701,26 +694,6 @@ on_pref_output_plugin_changed          (GtkComboBox     *combobox,
         }
     }
 }
-
-void
-on_pref_dynsamplerate_clicked        (GtkButton       *button,
-                                        gpointer         user_data)
-{
-    int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button));
-    deadbeef->conf_set_int ("playback.dynsamplerate", active);
-    deadbeef->sendmessage (M_CONFIG_CHANGED, 0, 0, 0);
-}
-
-
-void
-on_pref_src_quality_changed            (GtkComboBox     *combobox,
-                                        gpointer         user_data)
-{
-    int active = gtk_combo_box_get_active (combobox);
-    deadbeef->conf_set_int ("src_quality", active == -1 ? 2 : active);
-    deadbeef->sendmessage (M_CONFIG_CHANGED, 0, 0, 0);
-}
-
 
 void
 on_pref_replaygain_mode_changed        (GtkComboBox     *combobox,

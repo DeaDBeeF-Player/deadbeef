@@ -1610,10 +1610,6 @@ create_prefwin (void)
   GtkWidget *pref_soundcard;
   GtkWidget *Sound;
   GtkWidget *vbox8;
-  GtkWidget *pref_dynsamplerate;
-  GtkWidget *hbox9;
-  GtkWidget *label6;
-  GtkWidget *pref_src_quality;
   GtkWidget *hbox10;
   GtkWidget *label8;
   GtkWidget *pref_replaygain_mode;
@@ -1825,29 +1821,6 @@ create_prefwin (void)
   gtk_widget_show (vbox8);
   gtk_container_add (GTK_CONTAINER (notebook), vbox8);
   gtk_container_set_border_width (GTK_CONTAINER (vbox8), 12);
-
-  pref_dynsamplerate = gtk_check_button_new_with_mnemonic (_("Allow dynamic samplerate switching"));
-  gtk_widget_show (pref_dynsamplerate);
-  gtk_box_pack_start (GTK_BOX (vbox8), pref_dynsamplerate, FALSE, FALSE, 0);
-
-  hbox9 = gtk_hbox_new (FALSE, 8);
-  gtk_widget_show (hbox9);
-  gtk_box_pack_start (GTK_BOX (vbox8), hbox9, FALSE, FALSE, 0);
-
-  label6 = gtk_label_new (_("Samplerate conversion quality:"));
-  gtk_widget_show (label6);
-  gtk_box_pack_start (GTK_BOX (hbox9), label6, FALSE, FALSE, 0);
-  gtk_label_set_justify (GTK_LABEL (label6), GTK_JUSTIFY_RIGHT);
-  gtk_misc_set_alignment (GTK_MISC (label6), 0, 0.5);
-
-  pref_src_quality = gtk_combo_box_new_text ();
-  gtk_widget_show (pref_src_quality);
-  gtk_box_pack_start (GTK_BOX (hbox9), pref_src_quality, TRUE, TRUE, 0);
-  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_src_quality), "sinc_best_quality");
-  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_src_quality), "sinc_medium_quality");
-  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_src_quality), "sinc_fastest");
-  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_src_quality), "zero_order_hold");
-  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_src_quality), "linear");
 
   hbox10 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox10);
@@ -2608,12 +2581,6 @@ create_prefwin (void)
   gtk_dialog_add_action_widget (GTK_DIALOG (prefwin), closebutton1, GTK_RESPONSE_CLOSE);
   GTK_WIDGET_SET_FLAGS (closebutton1, GTK_CAN_DEFAULT);
 
-  g_signal_connect ((gpointer) pref_dynsamplerate, "clicked",
-                    G_CALLBACK (on_pref_dynsamplerate_clicked),
-                    NULL);
-  g_signal_connect ((gpointer) pref_src_quality, "changed",
-                    G_CALLBACK (on_pref_src_quality_changed),
-                    NULL);
   g_signal_connect ((gpointer) pref_replaygain_mode, "changed",
                     G_CALLBACK (on_pref_replaygain_mode_changed),
                     NULL);
@@ -2796,10 +2763,6 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, pref_soundcard, "pref_soundcard");
   GLADE_HOOKUP_OBJECT (prefwin, Sound, "Sound");
   GLADE_HOOKUP_OBJECT (prefwin, vbox8, "vbox8");
-  GLADE_HOOKUP_OBJECT (prefwin, pref_dynsamplerate, "pref_dynsamplerate");
-  GLADE_HOOKUP_OBJECT (prefwin, hbox9, "hbox9");
-  GLADE_HOOKUP_OBJECT (prefwin, label6, "label6");
-  GLADE_HOOKUP_OBJECT (prefwin, pref_src_quality, "pref_src_quality");
   GLADE_HOOKUP_OBJECT (prefwin, hbox10, "hbox10");
   GLADE_HOOKUP_OBJECT (prefwin, label8, "label8");
   GLADE_HOOKUP_OBJECT (prefwin, pref_replaygain_mode, "pref_replaygain_mode");
