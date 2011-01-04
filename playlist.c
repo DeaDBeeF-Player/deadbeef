@@ -2677,8 +2677,27 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
             if (*fmt == 0) {
                 break;
             }
-            else if (!it && !strchr ("V", *fmt)) {
+            else if (!it && *fmt != 'V') {
                 // only %V (version) works without track pointer
+            }
+            else if (*fmt == '@') {
+                const char *e = fmt;
+                e++;
+                while (*e && *e != '@') {
+                    e++;
+                }
+                if (*e == '@') {
+                    char nm[100];
+                    int l = e-fmt-1;
+                    l = min (l, sizeof (nm)-1);
+                    strncpy (nm, fmt+1, l);
+                    nm[l] = 0;
+                    meta = pl_find_meta (it, nm);
+                    if (!meta) {
+                        meta = "<INVALID CONVERSION>";
+                    }
+                    fmt = e;
+                }
             }
             else if (*fmt == 'a') {
                 meta = pl_find_meta (it, "artist");
