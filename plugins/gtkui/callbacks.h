@@ -1041,3 +1041,8 @@ on_dsp_up_clicked                      (GtkButton       *button,
 void
 on_dsp_down_clicked                    (GtkButton       *button,
                                         gpointer         user_data);
+
+void
+on_auto_name_playlist_from_folder_toggled
+                                        (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);

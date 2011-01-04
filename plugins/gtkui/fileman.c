@@ -2,6 +2,7 @@
 #include <gtk/gtk.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <string.h>
 #include "gtkui.h"
 #include "ddblistview.h"
 #include "progress.h"
@@ -23,6 +24,25 @@ gtkpl_adddir_cb (gpointer data, gpointer userdata) {
 
 void
 gtkpl_add_dirs (GSList *lst) {
+    if (g_slist_length (lst) == 1
+            && deadbeef->conf_get_int ("gtkui.name_playlist_from_folder", 0)) {
+        deadbeef->plt_lock ();
+        int plt = deadbeef->plt_get_curr ();
+        if (plt != -1) {
+            char t[1000];
+            if (!deadbeef->plt_get_title (plt, t, sizeof (t))) {
+                char *def = _("New Playlist");
+                if (!strncmp (t, def, strlen (def))) {
+                    const char *folder = strrchr ((char*)lst->data, '/');
+                    if (!folder) {
+                        folder = lst->data;
+                    }
+                    deadbeef->plt_set_title (plt, folder+1);
+                }
+            }
+        }
+        deadbeef->plt_unlock ();
+    }
     g_idle_add (gtkui_progress_show_idle, NULL);
     g_slist_foreach(lst, gtkpl_adddir_cb, NULL);
     g_slist_free (lst);
@@ -82,6 +102,7 @@ void
 gtkui_open_files (struct _GSList *lst) {
     deadbeef->pl_clear ();
     playlist_refresh ();
+
     intptr_t tid = deadbeef->thread_start (open_files_worker, lst);
     deadbeef->thread_detach (tid);
 }

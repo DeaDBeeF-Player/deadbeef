@@ -506,6 +506,9 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
     // hide_delete_from_disk
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "hide_delete_from_disk")), deadbeef->conf_get_int ("gtkui.hide_remove_from_disk", 0));
 
+    // auto-rename playlist from folder name
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "auto_name_playlist_from_folder")), deadbeef->conf_get_int ("gtkui.name_playlist_from_folder", 0));
+
     // titlebar text
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "titlebar_format_playing")), deadbeef->conf_get_str ("gtkui.titlebar_playing", "%a - %t - DeaDBeeF-%V"));
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "titlebar_format_stopped")), deadbeef->conf_get_str ("gtkui.titlebar_stopped", "DeaDBeeF-%V"));
@@ -1312,5 +1315,15 @@ on_resume_last_session_toggled         (GtkToggleButton *togglebutton,
 {
     int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (togglebutton));
     deadbeef->conf_set_int ("resume_last_session", active);
+}
+
+
+void
+on_auto_name_playlist_from_folder_toggled
+                                        (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (togglebutton));
+    deadbeef->conf_set_int ("gtkui.name_playlist_from_folder", active);
 }
 

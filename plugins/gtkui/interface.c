@@ -1637,6 +1637,7 @@ create_prefwin (void)
   GtkWidget *hide_tray_icon;
   GtkWidget *embolden_current;
   GtkWidget *hide_delete_from_disk;
+  GtkWidget *auto_name_playlist_from_folder;
   GtkWidget *hbox64;
   GtkWidget *label101;
   GtkWidget *titlebar_format_playing;
@@ -1940,6 +1941,10 @@ create_prefwin (void)
   hide_delete_from_disk = gtk_check_button_new_with_mnemonic (_("Hide \"Delete from disk\" context menu item"));
   gtk_widget_show (hide_delete_from_disk);
   gtk_box_pack_start (GTK_BOX (vbox9), hide_delete_from_disk, FALSE, FALSE, 0);
+
+  auto_name_playlist_from_folder = gtk_check_button_new_with_mnemonic (_("Auto-name playlists when adding a single folder"));
+  gtk_widget_show (auto_name_playlist_from_folder);
+  gtk_box_pack_start (GTK_BOX (vbox9), auto_name_playlist_from_folder, FALSE, FALSE, 0);
 
   hbox64 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox64);
@@ -2626,6 +2631,9 @@ create_prefwin (void)
   g_signal_connect ((gpointer) hide_delete_from_disk, "toggled",
                     G_CALLBACK (on_hide_delete_from_disk_toggled),
                     NULL);
+  g_signal_connect ((gpointer) auto_name_playlist_from_folder, "toggled",
+                    G_CALLBACK (on_auto_name_playlist_from_folder_toggled),
+                    NULL);
   g_signal_connect ((gpointer) titlebar_format_playing, "changed",
                     G_CALLBACK (on_titlebar_format_playing_changed),
                     NULL);
@@ -2790,6 +2798,7 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, hide_tray_icon, "hide_tray_icon");
   GLADE_HOOKUP_OBJECT (prefwin, embolden_current, "embolden_current");
   GLADE_HOOKUP_OBJECT (prefwin, hide_delete_from_disk, "hide_delete_from_disk");
+  GLADE_HOOKUP_OBJECT (prefwin, auto_name_playlist_from_folder, "auto_name_playlist_from_folder");
   GLADE_HOOKUP_OBJECT (prefwin, hbox64, "hbox64");
   GLADE_HOOKUP_OBJECT (prefwin, label101, "label101");
   GLADE_HOOKUP_OBJECT (prefwin, titlebar_format_playing, "titlebar_format_playing");

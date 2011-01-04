@@ -2952,6 +2952,26 @@ Album</property>
 	      </child>
 
 	      <child>
+		<widget class="GtkCheckButton" id="auto_name_playlist_from_folder">
+		  <property name="visible">True</property>
+		  <property name="can_focus">True</property>
+		  <property name="label" translatable="yes">Auto-name playlists when adding a single folder</property>
+		  <property name="use_underline">True</property>
+		  <property name="relief">GTK_RELIEF_NORMAL</property>
+		  <property name="focus_on_click">True</property>
+		  <property name="active">False</property>
+		  <property name="inconsistent">False</property>
+		  <property name="draw_indicator">True</property>
+		  <signal name="toggled" handler="on_auto_name_playlist_from_folder_toggled" last_modification_time="Tue, 04 Jan 2011 20:49:15 GMT"/>
+		</widget>
+		<packing>
+		  <property name="padding">0</property>
+		  <property name="expand">False</property>
+		  <property name="fill">False</property>
+		</packing>
+	      </child>
+
+	      <child>
 		<widget class="GtkHBox" id="hbox64">
 		  <property name="visible">True</property>
 		  <property name="homogeneous">False</property>
@@ -3065,10 +3085,6 @@ Album</property>
 		  <property name="expand">False</property>
 		  <property name="fill">False</property>
 		</packing>
-	      </child>
-
-	      <child>
-		<placeholder/>
 	      </child>
 	    </widget>
 	    <packing>
