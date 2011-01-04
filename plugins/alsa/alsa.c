@@ -617,7 +617,6 @@ palsa_callback (char *stream, int len) {
 
 static int
 palsa_configchanged (DB_event_t *ev, uintptr_t data) {
-    int alsa_resample = deadbeef->conf_get_int ("alsa.resample", 0);
     const char *alsa_soundcard = deadbeef->conf_get_str ("alsa_soundcard", "default");
     int buffer = deadbeef->conf_get_int ("alsa.buffer", DEFAULT_BUFFER_SIZE);
     int period = deadbeef->conf_get_int ("alsa.period", DEFAULT_PERIOD_SIZE);
