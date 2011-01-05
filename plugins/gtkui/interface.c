@@ -1630,6 +1630,11 @@ create_prefwin (void)
   GtkWidget *vbox30;
   GtkWidget *dsp_up;
   GtkWidget *dsp_down;
+  GtkWidget *hbox86;
+  GtkWidget *label114;
+  GtkWidget *dsp_preset;
+  GtkWidget *dsp_preset_save;
+  GtkWidget *dsp_preset_load;
   GtkWidget *label110;
   GtkWidget *vbox9;
   GtkWidget *pref_close_send_to_tray;
@@ -1912,6 +1917,26 @@ create_prefwin (void)
   dsp_down = gtk_button_new_from_stock ("gtk-go-down");
   gtk_widget_show (dsp_down);
   gtk_box_pack_start (GTK_BOX (vbox30), dsp_down, FALSE, FALSE, 0);
+
+  hbox86 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox86);
+  gtk_box_pack_start (GTK_BOX (vbox29), hbox86, FALSE, TRUE, 0);
+
+  label114 = gtk_label_new (_("DSP Chain Preset"));
+  gtk_widget_show (label114);
+  gtk_box_pack_start (GTK_BOX (hbox86), label114, FALSE, FALSE, 0);
+
+  dsp_preset = gtk_combo_box_entry_new_text ();
+  gtk_widget_show (dsp_preset);
+  gtk_box_pack_start (GTK_BOX (hbox86), dsp_preset, FALSE, TRUE, 0);
+
+  dsp_preset_save = gtk_button_new_from_stock ("gtk-save");
+  gtk_widget_show (dsp_preset_save);
+  gtk_box_pack_start (GTK_BOX (hbox86), dsp_preset_save, FALSE, FALSE, 0);
+
+  dsp_preset_load = gtk_button_new_with_mnemonic (_("_Load"));
+  gtk_widget_show (dsp_preset_load);
+  gtk_box_pack_start (GTK_BOX (hbox86), dsp_preset_load, FALSE, FALSE, 0);
 
   label110 = gtk_label_new (_("DSP"));
   gtk_widget_show (label110);
@@ -2616,6 +2641,15 @@ create_prefwin (void)
   g_signal_connect ((gpointer) dsp_down, "clicked",
                     G_CALLBACK (on_dsp_down_clicked),
                     NULL);
+  g_signal_connect ((gpointer) dsp_preset, "changed",
+                    G_CALLBACK (on_dsp_preset_changed),
+                    NULL);
+  g_signal_connect ((gpointer) dsp_preset_save, "clicked",
+                    G_CALLBACK (on_dsp_preset_save_clicked),
+                    NULL);
+  g_signal_connect ((gpointer) dsp_preset_load, "clicked",
+                    G_CALLBACK (on_dsp_preset_load_clicked),
+                    NULL);
   g_signal_connect ((gpointer) pref_close_send_to_tray, "clicked",
                     G_CALLBACK (on_pref_close_send_to_tray_clicked),
                     NULL);
@@ -2791,6 +2825,11 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, vbox30, "vbox30");
   GLADE_HOOKUP_OBJECT (prefwin, dsp_up, "dsp_up");
   GLADE_HOOKUP_OBJECT (prefwin, dsp_down, "dsp_down");
+  GLADE_HOOKUP_OBJECT (prefwin, hbox86, "hbox86");
+  GLADE_HOOKUP_OBJECT (prefwin, label114, "label114");
+  GLADE_HOOKUP_OBJECT (prefwin, dsp_preset, "dsp_preset");
+  GLADE_HOOKUP_OBJECT (prefwin, dsp_preset_save, "dsp_preset_save");
+  GLADE_HOOKUP_OBJECT (prefwin, dsp_preset_load, "dsp_preset_load");
   GLADE_HOOKUP_OBJECT (prefwin, label110, "label110");
   GLADE_HOOKUP_OBJECT (prefwin, vbox9, "vbox9");
   GLADE_HOOKUP_OBJECT (prefwin, pref_close_send_to_tray, "pref_close_send_to_tray");

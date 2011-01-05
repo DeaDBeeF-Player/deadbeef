@@ -540,6 +540,11 @@ typedef struct {
 
     // pcm utilities
     int (*pcm_convert) (const ddb_waveformat_t * inputfmt, const char *input, const ddb_waveformat_t *outputfmt, char *output, int inputsize);
+
+    // dsp preset management
+    int (*dsp_preset_load) (const char *fname, struct ddb_dsp_context_s **head);
+    int (*dsp_preset_save) (const char *fname, struct ddb_dsp_context_s *head);
+    void (*dsp_preset_free) (struct ddb_dsp_context_s *head);
 } DB_functions_t;
 
 enum {

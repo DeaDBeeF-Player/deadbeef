@@ -26,6 +26,8 @@
 #include <string.h>
 #include <unistd.h>
 #include <assert.h>
+#include <dirent.h>
+#include <sys/stat.h>
 #include "callbacks.h"
 #include "interface.h"
 #include "support.h"
@@ -62,6 +64,19 @@ fill_dsp_chain (GtkListStore *mdl) {
     }
 }
 
+static int dirent_alphasort (const struct dirent **a, const struct dirent **b) {
+    return strcmp ((*a)->d_name, (*b)->d_name);
+}
+
+static int
+scandir_preset_filter (const struct dirent *ent) {
+    char *ext = strrchr (ent->d_name, '.');
+    if (ext && !strcasecmp (ext, ".txt")) {
+        return 1;
+    }
+    return 0;
+}
+
 void
 dsp_setup_init (GtkWidget *_prefwin) {
     prefwin = _prefwin;
@@ -92,6 +107,35 @@ dsp_setup_init (GtkWidget *_prefwin) {
     gtk_tree_view_set_model (GTK_TREE_VIEW (listview), GTK_TREE_MODEL (mdl));
 
     fill_dsp_chain (mdl);
+
+    // set last preset name
+    GtkWidget *combobox = lookup_widget (prefwin, "dsp_preset");
+    GtkWidget *entry = gtk_bin_get_child (GTK_BIN (combobox));
+    if (entry) {
+        gtk_entry_set_text (GTK_ENTRY (entry), deadbeef->conf_get_str ("gtkui.conf_dsp_preset", ""));
+    }
+
+    // fill list of presets
+    mdl = GTK_LIST_STORE (gtk_combo_box_get_model (GTK_COMBO_BOX (combobox)));
+    struct dirent **namelist = NULL;
+    char path[1024];
+    if (snprintf (path, sizeof (path), "%s/presets/dsp", deadbeef->get_config_dir ()) > 0) {
+        int n = scandir (path, &namelist, scandir_preset_filter, dirent_alphasort);
+        int i;
+        for (i = 0; i < n; i++) {
+            char title[100];
+            strcpy (title, namelist[i]->d_name);
+            char *e = strrchr (title, '.');
+            if (e) {
+                *e = 0;
+            }
+            GtkTreeIter iter;
+            gtk_list_store_append (mdl, &iter);
+            gtk_list_store_set (mdl, &iter, 0, title, -1);
+            free (namelist[i]);
+        }
+        free (namelist);
+    }
 }
 
 void
@@ -368,5 +412,69 @@ on_dsp_down_clicked                    (GtkButton       *button,
     gtk_tree_view_set_cursor (GTK_TREE_VIEW (list), path, col, FALSE);
     gtk_tree_path_free (path);
     update_streamer ();
+}
+
+void
+on_dsp_preset_changed                  (GtkComboBox     *combobox,
+                                        gpointer         user_data)
+{
+    GtkWidget *entry = gtk_bin_get_child (GTK_BIN (combobox));
+    if (entry) {
+        deadbeef->conf_set_str ("gtkui.conf_dsp_preset", gtk_entry_get_text (GTK_ENTRY (entry)));
+    }
+}
+
+
+void
+on_dsp_preset_save_clicked             (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    const char *confdir = deadbeef->get_config_dir ();
+    char path[1024];
+    if (snprintf (path, sizeof (path), "%s/presets", confdir) < 0) {
+        return;
+    }
+    mkdir (path, 0755);
+    if (snprintf (path, sizeof (path), "%s/presets/dsp", confdir) < 0) {
+        return;
+    }
+    GtkWidget *combobox = lookup_widget (prefwin, "dsp_preset");
+    GtkWidget *entry = gtk_bin_get_child (GTK_BIN (combobox));
+    if (!entry) {
+        return;
+    }
+
+    const char *text = gtk_entry_get_text (GTK_ENTRY (entry));
+    mkdir (path, 0755);
+    if (snprintf (path, sizeof (path), "%s/presets/dsp/%s.txt", confdir, text) < 0) {
+        return;
+    }
+    deadbeef->dsp_preset_save (path, chain);
+}
+
+
+void
+on_dsp_preset_load_clicked             (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    GtkWidget *combobox = lookup_widget (prefwin, "dsp_preset");
+    GtkWidget *entry = gtk_bin_get_child (GTK_BIN (combobox));
+    if (entry) {
+        const char *text = gtk_entry_get_text (GTK_ENTRY (entry));
+        char path[PATH_MAX];
+        if (snprintf (path, sizeof (path), "%s/presets/dsp/%s.txt", deadbeef->get_config_dir (), text) > 0) {
+            ddb_dsp_context_t *new_chain = NULL;
+            int res = deadbeef->dsp_preset_load (path, &new_chain);
+            if (!res) {
+                deadbeef->dsp_preset_free (chain);
+                chain = new_chain;
+                GtkWidget *list = lookup_widget (prefwin, "dsp_listview");
+                GtkListStore *mdl = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW(list)));
+                gtk_list_store_clear (mdl);
+                fill_dsp_chain (mdl);
+                update_streamer ();
+            }
+        }
+    }
 }
 

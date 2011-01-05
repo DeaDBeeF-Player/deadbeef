@@ -43,6 +43,7 @@
 #include "junklib.h"
 #include "vfs.h"
 #include "premix.h"
+#include "dsppreset.h"
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
@@ -263,6 +264,10 @@ static DB_functions_t deadbeef_api = {
     .is_local_file = plug_is_local_file,
     // pcm utilities
     .pcm_convert = pcm_convert,
+    // dsp preset management
+    .dsp_preset_load = dsp_preset_load,
+    .dsp_preset_save = dsp_preset_save,
+    .dsp_preset_free = dsp_preset_free
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;

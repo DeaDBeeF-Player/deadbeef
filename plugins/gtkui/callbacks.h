@@ -1046,3 +1046,15 @@ void
 on_auto_name_playlist_from_folder_toggled
                                         (GtkToggleButton *togglebutton,
                                         gpointer         user_data);
+
+void
+on_dsp_preset_changed                  (GtkComboBox     *combobox,
+                                        gpointer         user_data);
+
+void
+on_dsp_preset_save_clicked             (GtkButton       *button,
+                                        gpointer         user_data);
+
+void
+on_dsp_preset_load_clicked             (GtkButton       *button,
+                                        gpointer         user_data);

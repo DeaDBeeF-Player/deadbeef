@@ -32,7 +32,8 @@ deadbeef_SOURCES =\
 	md5/md5.c md5/md5.h\
 	metacache.c metacache.h\
 	gettext.h\
-	ringbuf.c ringbuf.h
+	ringbuf.c ringbuf.h\
+	dsppreset.c dsppreset.h
 
 sdkdir = $(pkgincludedir)
 sdk_HEADERS = deadbeef.h
