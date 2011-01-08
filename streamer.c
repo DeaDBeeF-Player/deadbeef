@@ -54,6 +54,8 @@ static float dsp_ratio = 1;
 static DB_dsp_t *eqplug;
 static ddb_dsp_context_t *eq;
 
+static int dsp_on = 0;
+
 static int conf_replaygain_mode = 0;
 static int conf_replaygain_scale = 1;
 
@@ -1269,6 +1271,25 @@ streamer_dsp_postinit (void) {
         }
 
     }
+    ddb_dsp_context_t *ctx = dsp_chain;
+    while (ctx) {
+        if (ctx->enabled) {
+            break;
+        }
+        ctx = ctx->next;
+    }
+    if (!ctx && fileinfo) {
+        if (memcmp (&output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t))) {
+            memcpy (&output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t));
+            formatchanged = 1;
+        }
+    }
+    else if (ctx) {
+        dsp_on = 1;
+    }
+    else if (!ctx) {
+        dsp_on = 0;
+    }
 }
 
 void
@@ -1480,16 +1501,7 @@ streamer_read_async (char *bytes, int size) {
         int outputsamplesize = output->fmt.channels * output->fmt.bps / 8;
         int inputsamplesize = fileinfo->fmt.channels * fileinfo->fmt.bps / 8;
 
-        // FIXME: SLOWWW - recalculate that only after chain been changed
-        ddb_dsp_context_t *ctx = dsp_chain;
-        while (ctx) {
-            if (ctx->enabled) {
-                break;
-            }
-            ctx = ctx->next;
-        }
-
-        if (!memcmp (&fileinfo->fmt, &output->fmt, sizeof (ddb_waveformat_t)) && !ctx) {
+        if (!memcmp (&fileinfo->fmt, &output->fmt, sizeof (ddb_waveformat_t)) && !dsp_on) {
             // pass through from input to output
             bytesread = fileinfo->plugin->read (fileinfo, bytes, size);
 
@@ -1497,7 +1509,7 @@ streamer_read_async (char *bytes, int size) {
                 is_eof = 1;
             }
         }
-        else if (ctx) {
+        else if (dsp_on) {
             // convert to float, pass through streamer DSP chain
             int dspsamplesize = output->fmt.channels * sizeof (float);
 
