@@ -32,9 +32,7 @@ static inline void
 pcm_write_samples_8_to_8 (const ddb_waveformat_t * restrict inputfmt, const char * restrict input, const ddb_waveformat_t * restrict outputfmt, char * restrict output, int nsamples, int * restrict channelmap, int outputsamplesize) {
     for (int s = 0; s < nsamples; s++) {
         for (int c = 0; c < inputfmt->channels; c++) {
-            if (channelmap[c] != -1) {
-                *(output + channelmap[c]) = *input;
-            }
+            *(output + channelmap[c]) = *input;
             input++;
         }
         output += outputsamplesize;
@@ -45,9 +43,7 @@ static inline void
 pcm_write_samples_8_to_16 (const ddb_waveformat_t * restrict inputfmt, const char * restrict input, const ddb_waveformat_t * restrict outputfmt, char * restrict output, int nsamples, int * restrict channelmap, int outputsamplesize) {
     for (int s = 0; s < nsamples; s++) {
         for (int c = 0; c < inputfmt->channels; c++) {
-            if (channelmap[c] != -1) {
-                *((int16_t*)(output + 2 * channelmap[c])) = (int16_t)(*input) << 8;
-            }
+            *((int16_t*)(output + 2 * channelmap[c])) = (int16_t)(*input) << 8;
             input++;
         }
         output += outputsamplesize;
@@ -58,12 +54,10 @@ static inline void
 pcm_write_samples_8_to_24 (const ddb_waveformat_t * restrict inputfmt, const char * restrict input, const ddb_waveformat_t * restrict outputfmt, char * restrict output, int nsamples, int * restrict channelmap, int outputsamplesize) {
     for (int s = 0; s < nsamples; s++) {
         for (int c = 0; c < inputfmt->channels; c++) {
-            if (channelmap[c] != -1) {
-                char *out = output + 3 * channelmap[c];
-                out[0] = 0;
-                out[1] = 0;
-                out[2] = input[0];
-            }
+            char *out = output + 3 * channelmap[c];
+            out[0] = 0;
+            out[1] = 0;
+            out[2] = input[0];
             input += 1;
         }
         output += outputsamplesize;
@@ -74,13 +68,11 @@ static inline void
 pcm_write_samples_8_to_32 (const ddb_waveformat_t * restrict inputfmt, const char * restrict input, const ddb_waveformat_t * restrict outputfmt, char * restrict output, int nsamples, int * restrict channelmap, int outputsamplesize) {
     for (int s = 0; s < nsamples; s++) {
         for (int c = 0; c < inputfmt->channels; c++) {
-            if (channelmap[c] != -1) {
-                char *out = output + 4 * channelmap[c];
-                out[0] = 0;
-                out[1] = 0;
-                out[2] = 0;
-                out[3] = input[0];
-            }
+            char *out = output + 4 * channelmap[c];
+            out[0] = 0;
+            out[1] = 0;
+            out[2] = 0;
+            out[3] = input[0];
             input += 1;
         }
         output += outputsamplesize;
@@ -91,10 +83,8 @@ static inline void
 pcm_write_samples_8_to_float (const ddb_waveformat_t * restrict inputfmt, const char * restrict input, const ddb_waveformat_t * restrict outputfmt, char * restrict output, int nsamples, int * restrict channelmap, int outputsamplesize) {
     for (int s = 0; s < nsamples; s++) {
         for (int c = 0; c < inputfmt->channels; c++) {
-            if (channelmap[c] != -1) {
-                float sample = (*input) / (float)0x7f;
-                *((float *)(output + 4 * channelmap[c])) = sample;
-            }
+            float sample = (*input) / (float)0x7f;
+            *((float *)(output + 4 * channelmap[c])) = sample;
             input++;
         }
         output += outputsamplesize;
@@ -105,9 +95,7 @@ static inline void
 pcm_write_samples_16_to_16 (const ddb_waveformat_t * restrict inputfmt, const char * restrict input, const ddb_waveformat_t * restrict outputfmt, char * restrict output, int nsamples, int * restrict channelmap, int outputsamplesize) {
     for (int s = 0; s < nsamples; s++) {
         for (int c = 0; c < inputfmt->channels; c++) {
-            if (channelmap[c] != -1) {
-                *((int16_t*)(output + 2 * channelmap[c])) = *((int16_t*)input);
-            }
+            *((int16_t*)(output + 2 * channelmap[c])) = *((int16_t*)input);
             input += 2;
         }
         output += outputsamplesize;
@@ -118,9 +106,7 @@ static inline void
 pcm_write_samples_16_to_8 (const ddb_waveformat_t * restrict inputfmt, const char * restrict input, const ddb_waveformat_t * restrict outputfmt, char * restrict output, int nsamples, int * restrict channelmap, int outputsamplesize) {
     for (int s = 0; s < nsamples; s++) {
         for (int c = 0; c < inputfmt->channels; c++) {
-            if (channelmap[c] != -1) {
-                *((int8_t*)(output + channelmap[c])) = *((int16_t*)input) >> 8;
-            }
+            *((int8_t*)(output + channelmap[c])) = *((int16_t*)input) >> 8;
             input += 2;
         }
         output += outputsamplesize;
@@ -131,12 +117,10 @@ static inline void
 pcm_write_samples_16_to_24 (const ddb_waveformat_t * restrict inputfmt, const char * restrict input, const ddb_waveformat_t * restrict outputfmt, char * restrict output, int nsamples, int * restrict channelmap, int outputsamplesize) {
     for (int s = 0; s < nsamples; s++) {
         for (int c = 0; c < inputfmt->channels; c++) {
-            if (channelmap[c] != -1) {
-                char *out = output + 3 * channelmap[c];
-                out[0] = 0;
-                out[1] = input[0];
-                out[2] = input[1];
-            }
+            char *out = output + 3 * channelmap[c];
+            out[0] = 0;
+            out[1] = input[0];
+            out[2] = input[1];
             input += 2;
         }
         output += outputsamplesize;
@@ -147,13 +131,11 @@ static inline void
 pcm_write_samples_16_to_32 (const ddb_waveformat_t * restrict inputfmt, const char * restrict input, const ddb_waveformat_t * restrict outputfmt, char * restrict output, int nsamples, int * restrict channelmap, int outputsamplesize) {
     for (int s = 0; s < nsamples; s++) {
         for (int c = 0; c < inputfmt->channels; c++) {
-            if (channelmap[c] != -1) {
-                char *out = output + 4 * channelmap[c];
-                out[0] = 0;
-                out[1] = 0;
-                out[2] = input[0];
-                out[3] = input[1];
-            }
+            char *out = output + 4 * channelmap[c];
+            out[0] = 0;
+            out[1] = 0;
+            out[2] = input[0];
+            out[3] = input[1];
             input += 2;
         }
         output += outputsamplesize;
@@ -164,10 +146,8 @@ static inline void
 pcm_write_samples_16_to_float (const ddb_waveformat_t * restrict inputfmt, const char * restrict input, const ddb_waveformat_t * restrict outputfmt, char * restrict output, int nsamples, int * restrict channelmap, int outputsamplesize) {
     for (int s = 0; s < nsamples; s++) {
         for (int c = 0; c < inputfmt->channels; c++) {
-            if (channelmap[c] != -1) {
-                float sample = (*((int16_t*)input)) / (float)0x7fff;
-                *((float *)(output + 4 * channelmap[c])) = sample;
-            }
+            float sample = (*((int16_t*)input)) / (float)0x7fff;
+            *((float *)(output + 4 * channelmap[c])) = sample;
             input += 2;
         }
         output += outputsamplesize;
@@ -178,10 +158,8 @@ static inline void
 pcm_write_samples_24_to_8 (const ddb_waveformat_t * restrict inputfmt, const char * restrict input, const ddb_waveformat_t * restrict outputfmt, char * restrict output, int nsamples, int * restrict channelmap, int outputsamplesize) {
     for (int s = 0; s < nsamples; s++) {
         for (int c = 0; c < inputfmt->channels; c++) {
-            if (channelmap[c] != -1) {
-                char *out = output + channelmap[c];
-                *out = input[2];
-            }
+            char *out = output + channelmap[c];
+            *out = input[2];
             input += 3;
         }
         output += outputsamplesize;
@@ -192,12 +170,10 @@ static inline void
 pcm_write_samples_24_to_24 (const ddb_waveformat_t * restrict inputfmt, const char * restrict input, const ddb_waveformat_t * restrict outputfmt, char * restrict output, int nsamples, int * restrict channelmap, int outputsamplesize) {
     for (int s = 0; s < nsamples; s++) {
         for (int c = 0; c < inputfmt->channels; c++) {
-            if (channelmap[c] != -1) {
-                char *out = output + 3 * channelmap[c];
-                out[0] = input[0];
-                out[1] = input[1];
-                out[2] = input[2];
-            }
+            char *out = output + 3 * channelmap[c];
+            out[0] = input[0];
+            out[1] = input[1];
+            out[2] = input[2];
             input += 3;
         }
         output += outputsamplesize;
@@ -208,11 +184,9 @@ static inline void
 pcm_write_samples_24_to_16 (const ddb_waveformat_t * restrict inputfmt, const char * restrict input, const ddb_waveformat_t * restrict outputfmt, char * restrict output, int nsamples, int * restrict channelmap, int outputsamplesize) {
     for (int s = 0; s < nsamples; s++) {
         for (int c = 0; c < inputfmt->channels; c++) {
-            if (channelmap[c] != -1) {
-                char *out = output + 2 * channelmap[c];
-                out[0] = input[1];
-                out[1] = input[2];
-            }
+            char *out = output + 2 * channelmap[c];
+            out[0] = input[1];
+            out[1] = input[2];
             input += 3;
         }
         output += outputsamplesize;
@@ -223,11 +197,9 @@ static inline void
 pcm_write_samples_24_to_float (const ddb_waveformat_t * restrict inputfmt, const char * restrict input, const ddb_waveformat_t * restrict outputfmt, char * restrict output, int nsamples, int * restrict channelmap, int outputsamplesize) {
     for (int s = 0; s < nsamples; s++) {
         for (int c = 0; c < inputfmt->channels; c++) {
-            if (channelmap[c] != -1) {
-                float *out = (float *)(output + 4 * channelmap[c]);
-                int32_t sample = ((unsigned char)input[0]) | ((unsigned char)input[1]<<8) | (input[2]<<16);
-                *out = sample / (float)0x7fffff;
-            }
+            float *out = (float *)(output + 4 * channelmap[c]);
+            int32_t sample = ((unsigned char)input[0]) | ((unsigned char)input[1]<<8) | (input[2]<<16);
+            *out = sample / (float)0x7fffff;
             input += 3;
         }
         output += outputsamplesize;
@@ -238,9 +210,7 @@ static inline void
 pcm_write_samples_32_to_32 (const ddb_waveformat_t * restrict inputfmt, const char * restrict input, const ddb_waveformat_t * restrict outputfmt, char * restrict output, int nsamples, int * restrict channelmap, int outputsamplesize) {
     for (int s = 0; s < nsamples; s++) {
         for (int c = 0; c < inputfmt->channels; c++) {
-            if (channelmap[c] != -1) {
-                *((int32_t*)(output + 4 * channelmap[c])) = *((int32_t*)input);
-            }
+            *((int32_t*)(output + 4 * channelmap[c])) = *((int32_t*)input);
             input += 4;
         }
         output += outputsamplesize;
@@ -253,18 +223,16 @@ pcm_write_samples_float_to_8 (const ddb_waveformat_t * restrict inputfmt, const 
     fpu_setround (&ctl);
     for (int s = 0; s < nsamples; s++) {
         for (int c = 0; c < inputfmt->channels; c++) {
-            if (channelmap[c] != -1) {
-                int8_t *out = (int8_t*)(output + channelmap[c]);
-                float sample = *((float*)input);
-                // FIXME: sse optimize
-                if (sample > 1) {
-                    sample = 1;
-                }
-                if (sample < -1) {
-                    sample = -1;
-                }
-                *out = (int8_t)ftoi (sample*0x7f);
+            int8_t *out = (int8_t*)(output + channelmap[c]);
+            float sample = *((float*)input);
+            // FIXME: sse optimize
+            if (sample > 1) {
+                sample = 1;
             }
+            if (sample < -1) {
+                sample = -1;
+            }
+            *out = (int8_t)ftoi (sample*0x7f);
             input += 4;
         }
         output += outputsamplesize;
@@ -278,18 +246,16 @@ pcm_write_samples_float_to_16 (const ddb_waveformat_t * restrict inputfmt, const
     fpu_setround (&ctl);
     for (int s = 0; s < nsamples; s++) {
         for (int c = 0; c < inputfmt->channels; c++) {
-            if (channelmap[c] != -1) {
-                int16_t *out = (int16_t*)(output + 2 * channelmap[c]);
-                float sample = *((float*)input);
-                // FIXME: sse optimize
-                if (sample > 1) {
-                    sample = 1;
-                }
-                if (sample < -1) {
-                    sample = -1;
-                }
-                *out = (int16_t)ftoi (sample*0x7fff);
+            int16_t *out = (int16_t*)(output + 2 * channelmap[c]);
+            float sample = *((float*)input);
+            // FIXME: sse optimize
+            if (sample > 1) {
+                sample = 1;
             }
+            if (sample < -1) {
+                sample = -1;
+            }
+            *out = (int16_t)ftoi (sample*0x7fff);
             input += 4;
         }
         output += outputsamplesize;
@@ -303,27 +269,87 @@ pcm_write_samples_float_to_24 (const ddb_waveformat_t * restrict inputfmt, const
     fpu_setround (&ctl);
     for (int s = 0; s < nsamples; s++) {
         for (int c = 0; c < inputfmt->channels; c++) {
-            if (channelmap[c] != -1) {
-                char *out = output + 3 * channelmap[c];
-                float sample = *((float*)input);
-                // FIXME: sse optimize
-                if (sample > 1) {
-                    sample = 1;
-                }
-                if (sample < -1) {
-                    sample = -1;
-                }
-                int32_t outsample = (int32_t)ftoi (sample * 0x7fffff);
-                out[0] = (outsample&0x0000ff);
-                out[1] = (outsample&0x00ff00)>>8;
-                out[2] = (outsample&0xff0000)>>16;
+            char *out = output + 3 * channelmap[c];
+            float sample = *((float*)input);
+            // FIXME: sse optimize
+            if (sample > 1) {
+                sample = 1;
             }
+            if (sample < -1) {
+                sample = -1;
+            }
+            int32_t outsample = (int32_t)ftoi (sample * 0x7fffff);
+            out[0] = (outsample&0x0000ff);
+            out[1] = (outsample&0x00ff00)>>8;
+            out[2] = (outsample&0xff0000)>>16;
             input += 4;
         }
         output += outputsamplesize;
     }
     fpu_restore (ctl);
 }
+
+typedef void (*remap_fn_t) (const ddb_waveformat_t * restrict inputfmt, const char * restrict input, const ddb_waveformat_t * restrict outputfmt, char * restrict output, int nsamples, int * restrict channelmap, int outputsamplesize);
+
+
+remap_fn_t remappers[8][8] = {
+    {
+        pcm_write_samples_8_to_8,
+        pcm_write_samples_8_to_16,
+        pcm_write_samples_8_to_24,
+        pcm_write_samples_8_to_32,
+        NULL,
+        NULL,
+        NULL,
+        pcm_write_samples_8_to_float,
+    },
+    {
+        pcm_write_samples_16_to_8,
+        pcm_write_samples_16_to_16,
+        pcm_write_samples_16_to_24,
+        pcm_write_samples_16_to_32,
+        NULL,
+        NULL,
+        NULL,
+        pcm_write_samples_16_to_float,
+    },
+    {
+        pcm_write_samples_24_to_8,
+        pcm_write_samples_24_to_16,
+        pcm_write_samples_24_to_24,
+        NULL, // FIXME: add 24_to_32
+        NULL,
+        NULL,
+        NULL,
+        pcm_write_samples_24_to_float,
+    },
+    {
+        NULL, // FIXME: add 32_to_8
+        NULL, // FIXME: add 32_to_16
+        NULL, // FIXME: add 32_to_24
+        pcm_write_samples_32_to_32,
+        NULL,
+        NULL,
+        NULL,
+        NULL, // FIXME: add 32_to_float
+    },
+    {
+    },
+    {
+    },
+    {
+    },
+    {
+        pcm_write_samples_float_to_8,
+        pcm_write_samples_float_to_16,
+        pcm_write_samples_float_to_24,
+        NULL, // FIXME: add float_to_32
+        NULL,
+        NULL,
+        NULL,
+        pcm_write_samples_32_to_32,
+    }
+};
 
 int
 pcm_convert (const ddb_waveformat_t * restrict inputfmt, const char * restrict input, const ddb_waveformat_t * restrict outputfmt, char * restrict output, int inputsize) {
@@ -336,7 +362,7 @@ pcm_convert (const ddb_waveformat_t * restrict inputfmt, const char * restrict i
 
     if (output) {
         // build channelmap
-        int channelmap[32] = {-1};
+        int channelmap[32] = {0};
         uint32_t inputbitmask = 1;
         for (int i = 0; i < inputfmt->channels; i++) {
             // find next input channel
@@ -370,64 +396,13 @@ pcm_convert (const ddb_waveformat_t * restrict inputfmt, const char * restrict i
             memset (output, 0, nsamples * outputsamplesize);
         }
 
-        // FIXME: access through function pointer table
-        //trace ("converting from %d to %d\n", inputfmt->bps, outputfmt->bps);
-        if (inputfmt->bps == 8 && outputfmt->bps == 8) {
-            pcm_write_samples_8_to_8 (inputfmt, input, outputfmt, output, nsamples, channelmap, outputsamplesize);
-        }
-        else if (inputfmt->bps == 8 && outputfmt->bps == 16) {
-            pcm_write_samples_8_to_16 (inputfmt, input, outputfmt, output, nsamples, channelmap, outputsamplesize);
-        }
-        else if (inputfmt->bps == 8 && outputfmt->bps == 24) {
-            pcm_write_samples_8_to_24 (inputfmt, input, outputfmt, output, nsamples, channelmap, outputsamplesize);
-        }
-        else if (inputfmt->bps == 8 && outputfmt->bps == 32 && !outputfmt->is_float) {
-            pcm_write_samples_8_to_32 (inputfmt, input, outputfmt, output, nsamples, channelmap, outputsamplesize);
-        }
-        else if (inputfmt->bps == 8 && outputfmt->bps == 32 && outputfmt->is_float) {
-            pcm_write_samples_8_to_float (inputfmt, input, outputfmt, output, nsamples, channelmap, outputsamplesize);
-        }
-        else if (inputfmt->bps == 16 && outputfmt->bps == 8) {
-            pcm_write_samples_16_to_8 (inputfmt, input, outputfmt, output, nsamples, channelmap, outputsamplesize);
-        }
-        else if (inputfmt->bps == 16 && outputfmt->bps == 16) {
-            pcm_write_samples_16_to_16 (inputfmt, input, outputfmt, output, nsamples, channelmap, outputsamplesize);
-        }
-        else if (inputfmt->bps == 16 && outputfmt->bps == 24) {
-            pcm_write_samples_16_to_24 (inputfmt, input, outputfmt, output, nsamples, channelmap, outputsamplesize);
-        }
-        else if (inputfmt->bps == 16 && outputfmt->bps == 32 && !outputfmt->is_float) {
-            pcm_write_samples_16_to_32 (inputfmt, input, outputfmt, output, nsamples, channelmap, outputsamplesize);
-        }
-        else if (inputfmt->bps == 16 && outputfmt->bps == 32 && outputfmt->is_float) {
-            pcm_write_samples_16_to_float (inputfmt, input, outputfmt, output, nsamples, channelmap, outputsamplesize);
-        }
-        else if (inputfmt->bps == 24 && outputfmt->bps == 8) {
-            pcm_write_samples_24_to_8 (inputfmt, input, outputfmt, output, nsamples, channelmap, outputsamplesize);
-        }
-        else if (inputfmt->bps == 24 && outputfmt->bps == 16) {
-            pcm_write_samples_24_to_16 (inputfmt, input, outputfmt, output, nsamples, channelmap, outputsamplesize);
-        }
-        else if (inputfmt->bps == 24 && outputfmt->bps == 24) {
-            pcm_write_samples_24_to_24 (inputfmt, input, outputfmt, output, nsamples, channelmap, outputsamplesize);
-        }
-        else if (inputfmt->bps == 24 && outputfmt->bps == 32 && outputfmt->is_float) {
-            pcm_write_samples_24_to_float (inputfmt, input, outputfmt, output, nsamples, channelmap, outputsamplesize);
-        }
-        else if (inputfmt->bps == 32 && outputfmt->bps == 32) {
-            pcm_write_samples_32_to_32 (inputfmt, input, outputfmt, output, nsamples, channelmap, outputsamplesize);
-        }
-        else if (inputfmt->is_float && inputfmt->bps == 32 && outputfmt->bps == 8) {
-            pcm_write_samples_float_to_8 (inputfmt, input, outputfmt, output, nsamples, channelmap, outputsamplesize);
-        }
-        else if (inputfmt->is_float && inputfmt->bps == 32 && outputfmt->bps == 16) {
-            pcm_write_samples_float_to_16 (inputfmt, input, outputfmt, output, nsamples, channelmap, outputsamplesize);
-        }
-        else if (inputfmt->is_float && inputfmt->bps == 32 && outputfmt->bps == 24) {
-            pcm_write_samples_float_to_24 (inputfmt, input, outputfmt, output, nsamples, channelmap, outputsamplesize);
+        int outidx = ((outputfmt->bps >> 3) - 1) | (outputfmt->is_float << 2);
+        int inidx = ((inputfmt->bps >> 3) - 1) | (inputfmt->is_float << 2);
+        if (remappers[inidx][outidx]) {
+            remappers[inidx][outidx] (inputfmt, input, outputfmt, output, nsamples, channelmap, outputsamplesize);
         }
         else {
-            trace ("no converter from %d to %d\n", inputfmt->bps, outputfmt->bps);
+            trace ("no converter from %d %s to %d %s ([%d][%d])\n", inputfmt->bps, inputfmt->is_float ? "float" : "", outputfmt->bps, outputfmt->is_float ? "float" : "", inidx, outidx);
         }
     }
     return nsamples * outputsamplesize;
