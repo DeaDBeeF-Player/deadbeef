@@ -827,6 +827,9 @@ junk_apev2_add_frame (playItem_t *it, DB_apev2_tag_t *tag_store, DB_apev2_frame_
                     it->replaygain_track_peak = atof (value);
                     trace ("track_peak=%s\n", value);
                 }
+                else {
+                    pl_append_meta (it, key, value);;
+                }
             }
         }
     }
@@ -2511,14 +2514,8 @@ junk_id3v2_load_txx (int version_major, playItem_t *it, uint8_t *readptr, int sy
         else if (!strcasecmp (txx, "replaygain_track_peak")) {
             it->replaygain_track_peak = atof (val);
         }
-        else if (!strcasecmp (txx, "performer")) {
-            pl_replace_meta (it, "performer", val);
-        }
-        else if (!strcasecmp (txx, "album artist")) {
-            pl_replace_meta (it, "band", val);
-        }
-        else if (!strcasecmp (txx, "date")) {
-            pl_replace_meta (it, "year", val);
+        else {
+            pl_append_meta (it, txx, val);
         }
     }
 
