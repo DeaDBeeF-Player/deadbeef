@@ -170,7 +170,6 @@ cflac_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMe
     for (int i = 0; i < _info->fmt.channels; i++) {
         _info->fmt.channelmask |= 1 << i;
     }
-
 }
 
 static void
@@ -297,6 +296,13 @@ cflac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     }
     else {
         info->bitrate = -1;
+    }
+    const char *channelmask = deadbeef->pl_find_meta (it, "WAVEFORMAT_EXTENSIBLE_CHANNELMASK");
+    if (channelmask) {
+        uint32_t cm = 0;
+        if (1 == sscanf (channelmask, "0x%X", &cm)) {
+            _info->fmt.channelmask = cm;
+        }
     }
 
     info->buffer = malloc (BUFFERSIZE);
@@ -514,6 +520,44 @@ static const char *metainfo[] = {
 };
 
 static void
+cflac_add_metadata (DB_playItem_t *it, char *s, int length) {
+    int m;
+    for (m = 0; metainfo[m]; m += 2) {
+        int l = strlen (metainfo[m]);
+        if (length > l && !strncasecmp (metainfo[m], s, l) && s[l] == '=') {
+            deadbeef->pl_append_meta (it, metainfo[m+1], s + l + 1);
+            break;
+        }
+    }
+    if (!metainfo[m]) {
+        if (!strncasecmp (s, "CUESHEET=", 9)) {
+            deadbeef->pl_add_meta (it, "cuesheet", s + 9);
+        }
+        else if (!strncasecmp (s, "replaygain_album_gain=", 22)) {
+            it->replaygain_album_gain = atof (s + 22);
+        }
+        else if (!strncasecmp (s, "replaygain_album_peak=", 22)) {
+            it->replaygain_album_peak = atof (s + 22);
+        }
+        else if (!strncasecmp (s, "replaygain_track_gain=", 22)) {
+            it->replaygain_track_gain = atof (s + 22);
+        }
+        else if (!strncasecmp (s, "replaygain_track_peak=", 22)) {
+            it->replaygain_track_peak = atof (s + 22);
+        }
+        else {
+            const char *eq = strchr (s, '=');
+            if (eq) {
+                char key[eq - s+1];
+                strncpy (key, s, eq-s);
+                key[eq-s] = 0;
+                deadbeef->pl_append_meta (it, key, eq+1);
+            }
+        }
+    }
+}
+
+static void
 cflac_init_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMetadata *metadata, void *client_data) {
     flac_info_t *info = (flac_info_t *)client_data;
     DB_fileinfo_t *_info = &info->info;
@@ -536,30 +580,7 @@ cflac_init_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__Str
             const FLAC__StreamMetadata_VorbisComment_Entry *c = &vc->comments[i];
             if (c->length > 0) {
                 char *s = c->entry;
-                int m;
-                for (m = 0; metainfo[m]; m += 2) {
-                    int l = strlen (metainfo[m]);
-                    if (c->length > l && !strncasecmp (metainfo[m], s, l) && s[l] == '=') {
-                        deadbeef->pl_append_meta (it, metainfo[m+1], s + l + 1);
-                    }
-                }
-                if (!metainfo[m]) {
-                    if (!strncasecmp (s, "CUESHEET=", 9)) {
-                        deadbeef->pl_add_meta (it, "cuesheet", s + 9);
-                    }
-                    else if (!strncasecmp (s, "replaygain_album_gain=", 22)) {
-                        it->replaygain_album_gain = atof (s + 22);
-                    }
-                    else if (!strncasecmp (s, "replaygain_album_peak=", 22)) {
-                        it->replaygain_album_peak = atof (s + 22);
-                    }
-                    else if (!strncasecmp (s, "replaygain_track_gain=", 22)) {
-                        it->replaygain_track_gain = atof (s + 22);
-                    }
-                    else if (!strncasecmp (s, "replaygain_track_peak=", 22)) {
-                        it->replaygain_track_peak = atof (s + 22);
-                    }
-                }
+                cflac_add_metadata (it, s, c->length);
             }
         }
         deadbeef->pl_add_meta (it, "title", NULL);
@@ -735,17 +756,20 @@ cflac_read_metadata (DB_playItem_t *it) {
     do {
         FLAC__StreamMetadata *data = FLAC__metadata_iterator_get_block (iter);
         if (data && data->type == FLAC__METADATA_TYPE_VORBIS_COMMENT) {
-            // delete all crap
-            for (int m = 0; metainfo[m]; m += 2) {
-                int offs = 0;
-                do {
-                    offs = FLAC__metadata_object_vorbiscomment_find_entry_from (data, offs, metainfo[m]);
-                    if (offs != -1) {
-                        FLAC__StreamMetadata_VorbisComment_Entry *comm = &data->data.vorbis_comment.comments[offs];
-                        deadbeef->pl_append_meta (it, metainfo[m+1], comm->entry + strlen (metainfo[m])+1);
-                        offs++;
-                    }
-                } while (offs != -1);
+            const FLAC__StreamMetadata_VorbisComment *vc = &data->data.vorbis_comment;
+            for (int i = 0; i < vc->num_comments; i++) {
+                const FLAC__StreamMetadata_VorbisComment_Entry *c = &vc->comments[i];
+                if (c->length > 0) {
+                    char *s = c->entry;
+                    cflac_add_metadata (it, s, c->length);
+                }
+            }
+            deadbeef->pl_add_meta (it, "title", NULL);
+            if (vc->num_comments > 0) {
+                uint32_t f = deadbeef->pl_get_item_flags (it);
+                f &= ~DDB_TAG_MASK;
+                f |= DDB_TAG_VORBISCOMMENTS;
+                deadbeef->pl_set_item_flags (it, f);
             }
         }
     } while (FLAC__metadata_iterator_next (iter));
