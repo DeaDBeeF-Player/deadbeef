@@ -117,6 +117,7 @@ palsa_set_hw_params (ddb_waveformat_t *fmt) {
     snd_pcm_hw_params_t *hw_params = NULL;
     int err = 0;
 
+    memcpy (&plugin.fmt, fmt, sizeof (ddb_waveformat_t));
     if (!plugin.fmt.channels) {
         // generic format
         plugin.fmt.bps = 16;
@@ -727,5 +728,4 @@ static DB_output_t plugin = {
     .unpause = palsa_unpause,
     .state = palsa_get_state,
     .enum_soundcards = palsa_enum_soundcards,
-    .fmt = {.samplerate = 44100}
 };
