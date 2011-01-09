@@ -117,6 +117,15 @@ palsa_set_hw_params (ddb_waveformat_t *fmt) {
     snd_pcm_hw_params_t *hw_params = NULL;
     int err = 0;
 
+    if (!fmt->channels) {
+        // generic format
+        fmt->bps = 16;
+        fmt->is_float = 0;
+        fmt->channels = 2;
+        fmt->samplerate = 44100;
+        fmt->channelmask = 3;
+    }
+
     if ((err = snd_pcm_hw_params_malloc (&hw_params)) < 0) {
         fprintf (stderr, "cannot allocate hardware parameter structure (%s)\n",
                 snd_strerror (err));
