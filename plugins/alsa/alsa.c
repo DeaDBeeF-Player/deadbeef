@@ -234,6 +234,7 @@ retry:
     if ((err = snd_pcm_hw_params (audio, hw_params)) < 0) {
         fprintf (stderr, "cannot set parameters (%s)\n",
                 snd_strerror (err));
+        goto error;
 
 //        if (plugin.fmt.channels > 2 && plugin.fmt.samplerate >= 96000) {
 //            plugin.fmt.samplerate = 48000;
