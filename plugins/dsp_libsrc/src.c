@@ -110,22 +110,19 @@ ddb_src_process (ddb_dsp_context_t *_src, float *samples, int nframes, int maxfr
     ddb_src_set_ratio (_src, ratio);
     fmt->samplerate = src->samplerate;
 
-    int numoutframes = nframes * src->srcdata.src_ratio;
-    if (numoutframes > maxframes) {
-        numoutframes = maxframes;
-    }
-    float outbuf[numoutframes*fmt->channels];
+    int numoutframes = 0;
+    int outsize = nframes*24;
+    float outbuf[outsize*fmt->channels];
     memset (outbuf, 0, sizeof (outbuf));
-    int buffersize = sizeof (outbuf);
     char *output = (char *)outbuf;
     float *input = samples;
-    int inputsize = numoutframes;
+    int inputsize = nframes;
 
     int samplesize = fmt->channels * sizeof (float);
 
     do {
         // add more frames to input SRC buffer
-        int n = nframes;
+        int n = inputsize;
         if (n >= SRC_BUFFER - src->remaining) {
             n = SRC_BUFFER - src->remaining;
         }
@@ -135,10 +132,9 @@ ddb_src_process (ddb_dsp_context_t *_src, float *samples, int nframes, int maxfr
 
             src->remaining += n;
             samples += n * fmt->channels;
-            nframes -= n;
         }
         if (!src->remaining) {
-            //trace ("WARNING: SRC input buffer starved\n");
+            trace ("WARNING: SRC input buffer starved\n");
             break;
         }
 
@@ -146,9 +142,9 @@ ddb_src_process (ddb_dsp_context_t *_src, float *samples, int nframes, int maxfr
         src->srcdata.data_in = (float *)src->in_fbuffer;
         src->srcdata.data_out = (float *)output;
         src->srcdata.input_frames = src->remaining;
-        src->srcdata.output_frames = inputsize;
+        src->srcdata.output_frames = outsize;
         src->srcdata.end_of_input = 0;
-        trace ("src input: %d, ratio %f, buffersize: %d\n", src->srcdata.input_frames, src->srcdata.src_ratio, buffersize);
+        trace ("src input: %d, ratio %f, buffersize: %d\n", src->srcdata.input_frames, src->srcdata.src_ratio, sizeof (outbuf));
         int src_err = src_process (src->src, &src->srcdata);
         trace ("src output: %d, used: %d\n", src->srcdata.output_frames_gen, src->srcdata.input_frames_used);
 
@@ -156,11 +152,13 @@ ddb_src_process (ddb_dsp_context_t *_src, float *samples, int nframes, int maxfr
             const char *err = src_strerror (src_err) ;
             fprintf (stderr, "src_process error %s\n"
                     "srcdata.data_in=%p, srcdata.data_out=%p, srcdata.input_frames=%d, srcdata.output_frames=%d, srcdata.src_ratio=%f", err, src->srcdata.data_in, src->srcdata.data_out, (int)src->srcdata.input_frames, (int)src->srcdata.output_frames, src->srcdata.src_ratio);
-            exit (-1);
+            return nframes;
         }
 
-        inputsize -= src->srcdata.output_frames_gen;
+        inputsize -= n;
         output += src->srcdata.output_frames_gen * samplesize;
+        numoutframes += src->srcdata.output_frames_gen;
+        outsize -= src->srcdata.output_frames_gen;
 
         // calculate how many unused input samples left
         src->remaining -= src->srcdata.input_frames_used;
@@ -169,11 +167,12 @@ ddb_src_process (ddb_dsp_context_t *_src, float *samples, int nframes, int maxfr
             memmove (src->in_fbuffer, &src->in_fbuffer[src->srcdata.input_frames_used*samplesize], src->remaining * samplesize);
         }
         if (src->srcdata.output_frames_gen == 0) {
+            trace ("src: output_frames_gen=0, interrupt\n");
             break;
         }
-    } while (nframes > 0);
+    } while (inputsize > 0 && outsize > 0);
 
-    memcpy (input, outbuf, sizeof (outbuf));
+    memcpy (input, outbuf, numoutframes * fmt->channels * sizeof (float));
     //static FILE *out = NULL;
     //if (!out) {
     //    out = fopen ("out.raw", "w+b");
@@ -181,6 +180,7 @@ ddb_src_process (ddb_dsp_context_t *_src, float *samples, int nframes, int maxfr
     //fwrite (input, 1,  numoutframes*sizeof(float)*(*nchannels), out);
 
     fmt->samplerate = src->samplerate;
+    trace ("src: ratio=%f, in=%d, out=%d\n", ratio, nframes, numoutframes);
     return numoutframes;
 }
 
