@@ -129,9 +129,6 @@ static const char *types[] = {
     "comment", "Comment",
     "vendor", "Encoder / Vendor",
     "copyright", "Copyright",
-    // nonstandard frames, let's hide them for now
-//    "<performer>", "<PERFORMER>",
-//    "<albumartist>", "<ALBUM ARTIST>",
     NULL
 };
 
@@ -351,12 +348,7 @@ set_metadata_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpoi
     const char *skey = g_value_get_string (&key);
     const char *svalue = g_value_get_string (&value);
 
-
-    for (int i = 0; types[i]; i += 2) {
-        if (!strcmp (skey, types[i])) {
-            deadbeef->pl_replace_meta (DB_PLAYITEM (data), types[i], svalue);
-        }
-    }
+    deadbeef->pl_replace_meta (DB_PLAYITEM (data), skey, svalue);
 
     return FALSE;
 }
