@@ -65,18 +65,18 @@ enum {
 static const char *frame_mapping[] = {
 // these tags will be displayed and edited uniformly for all tag types
     "artist", "TPE1", "TPE1", "TP1", "Artist",
-    "band", "TPE2", "TPE2", "TP2", "Album artist",
     "disc", "TPOS", "TPOS", "TPA", "Disc",
     "title", "TIT2", "TIT2", "TT2", "Title",
     "album", "TALB", "TALB", "TAL", "Album",
     "copyright", "TCOP", "TCOP", "TCO", "Copyright",
     "genre", "TCON", "TCON", "TCO", "Genre",
-    "vendor", "TENC", "TENC", "TEN", "ENCODER",
     "composer", "TCOM", "TCOM", "TCM", "Composer",
-    "year", "TYER", "TDRC", "TYE", "Year",
+    "year", "TYER", "TDRC", "TYE", "Year", // NOTE: TDRC and TYER are slightly different, and are converted on read/write
     "track", "TRCK", "TRCK", "TRK", "Track", // NOTE: this is special case when writing id3v2
 // misc id3v2 fields
 // these might or might not have appropriate fields in every tag type
+    "BAND", "TPE2", "TPE2", "TP2", NULL,
+    "ENCODER", "TENC", "TENC", "TEN", NULL,
     "BEATS_PER_MINUTE", "TBPM", "TBPM", "TBP", NULL,
     "PLAYLIST_DELAY", "TDLY", "TDLY", "TDY", NULL,
     "TEXT_WRITERS", "TEXT", "TEXT", "TXT", NULL,
