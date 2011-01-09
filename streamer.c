@@ -826,7 +826,7 @@ streamer_start_new_song (void) {
                 plug_get_output ()->setformat (&output_format);
             }
             if (0 != output->play ()) {
-                fprintf (stderr, "streamer: failed to start playback; output plugin doesn't work\n");
+                fprintf (stderr, "streamer: failed to start playback (start new song)\n");
                 streamer_set_nextsong (-2, 0);
             }
         }
@@ -927,7 +927,6 @@ streamer_thread (void *ctx) {
             playpos = 0;
             seekpos = -1;
 
-#if 0
             // don't switch if unchanged
             ddb_waveformat_t prevfmt;
             memcpy (&prevfmt, &output->fmt, sizeof (ddb_waveformat_t));
@@ -957,15 +956,12 @@ streamer_thread (void *ctx) {
                     bytes_until_next_song = -1;
                     streamer_buffering = 1;
                     streamer_reset (1);
-                }
-            }
-#endif
-
-            // output plugin may stop playback before switching samplerate
-            if (output->state () != OUTPUT_STATE_PLAYING) {
-                if (fileinfo && memcmp (&output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t))) {
-                    memcpy (&output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t));
-                    formatchanged = 1;
+                    if (output->state () != OUTPUT_STATE_PLAYING) {
+                        if (0 != output->play ()) {
+                            fprintf (stderr, "streamer: failed to start playback (track transition format change)\n");
+                            streamer_set_nextsong (-2, 0);
+                        }
+                    }
                 }
             }
             streamer_unlock ();
@@ -1634,10 +1630,12 @@ streamer_read (char *bytes, int size) {
     if (formatchanged && bytes_until_next_song <= 0) {
         formatchanged = 0;
         plug_get_output ()->setformat (&output_format);
-        if (0 != output->play ()) {
-            fprintf (stderr, "streamer: failed to start playback; output plugin doesn't work\n");
-            streamer_set_nextsong (-2, 0);
-            return -1;
+        if (output->state () != OUTPUT_STATE_PLAYING) {
+            if (0 != output->play ()) {
+                fprintf (stderr, "streamer: failed to start playback (streamer_read format change)\n");
+                streamer_set_nextsong (-2, 0);
+                return -1;
+            }
         }
     }
     streamer_lock ();
