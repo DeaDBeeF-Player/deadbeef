@@ -43,8 +43,8 @@
 
 #define UTF8 "utf-8"
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -60,7 +60,10 @@ enum {
     MAP_APEV2 = 4
 };
 
+// map of known id3v2 and apev2 text tags
+// order: ddb, id3-2.3, 2.4, 2.2, apev2
 static const char *frame_mapping[] = {
+// these tags will be displayed and edited uniformly for all tag types
     "artist", "TPE1", "TPE1", "TP1", "Artist",
     "band", "TPE2", "TPE2", "TP2", "Album artist",
     "disc", "TPOS", "TPOS", "TPA", "Disc",
@@ -71,19 +74,49 @@ static const char *frame_mapping[] = {
     "vendor", "TENC", "TENC", "TEN", "ENCODER",
     "composer", "TCOM", "TCOM", "TCM", "Composer",
     "year", "TYER", "TDRC", "TYE", "Year",
-    "track", "TRCK", "TRCK", "TRK", "Track",
-    "comment", NULL, NULL, NULL, "Comment",
-    "cuesheet", NULL, NULL, NULL, "Cuesheet",
-    "performer", "TXXX", "TXXX", "TXX", "Performer",
-//    "band", "TXXX", "TXXX", "TXX", "Album artist", // fb2k only
-//    "date", "TXXX", "TXXX", "TXX", "Date", // fb2k only
+    "track", "TRCK", "TRCK", "TRK", "Track", // NOTE: this is special case when writing id3v2
+// misc id3v2 fields
+// these might or might not have appropriate fields in every tag type
+    "BEATS_PER_MINUTE", "TBPM", "TBPM", "TBP", NULL,
+    "PLAYLIST_DELAY", "TDLY", "TDLY", "TDY", NULL,
+    "TEXT_WRITERS", "TEXT", "TEXT", "TXT", NULL,
+    "FILE_TYPE", "TFLT", "TFLT", "TFT", NULL,
+    "CONTENT_GROUP_DESCRIPTION", "TIT1", "TIT1", "TT1", NULL,
+    "SUBTITLE", "TIT3", "TIT3", "TT3", NULL,
+    "INITIAL_KEY", "TKEY", "TKEY", "TKE", NULL,
+    "LANGUAGES", "TLAN", "TLAN", "TLA", NULL,
+    "LENGTH", "TLEN", "TLEN", "TLE", NULL,
+    "MEDIA_TYPE", "TMED", "TMED", "TMT", NULL,
+    "ORIGINAL_ALBUM_TITLE", "TOAL", "TOAL", "TOT", NULL,
+    "ORIGINAL_FILENAME", "TOFN", "TOFN", "TOF", NULL,
+    "ORIGINAL_TEXT_WRITERS", "TOLY", "TOLY", "TOL", NULL,
+    "ORIGINAL_ARTISTS", "TOPE", "TOPE", "TOA", NULL,
+    "FILE_OWNER", "TOWN", "TOWN", NULL, NULL,
+    "PERFORMER_REFINEMENT", "TPE3", "TPE3", "TP3", NULL,
+    "MODIFIED_BY", "TPE4", "TPE4", "TP4", NULL,
+    "PUBLISHER", "TPUB", "TPUB", "TPB", NULL,
+    "INTERNET_RADIO_STATION_NAME", "TRSN", "TRSN", NULL, NULL,
+    "INTERNET_RADIO_STATION_OWNER", "TRSO", "TRSO", NULL, NULL,
+    "ISRC", "TSRC", "TSRC", NULL, NULL,
+    "ENCODING_SOFTWARE_HARDWARE", "TSSE", "TSSE", "TSS", NULL,
+    "RECORDING_TIME", NULL, "TDRC", NULL, NULL,
+    "RELEASE_TIME", NULL, "TDRL", NULL, NULL,
+    "TAGGING_TIME", NULL, "TDTG", NULL, NULL,
+    "ALBUM_SORT_ORDER", NULL, "TSOA", NULL, NULL,
+    "PERFORMER_SORT_ORDER", NULL, "TSOP", NULL, NULL,
+    "TITLE_SORT_ORDER", NULL, "TSOT", NULL, NULL,
+    "SIZE", "TSIZ", NULL, "TSI", NULL,
+    "RECORDING_DATES", "TRDA", NULL, "TRD", NULL,
+    "INVOLVED_PEOPLE_LIST", NULL, "TIPL", NULL, NULL,
+    "MUSICIAN_CREDITS_LIST", NULL, "TMCL", NULL, NULL,
+    "ENCODING_TIME", NULL, "TDEN", NULL, NULL,
+    "ORIGINAL_RELEASE_TIME", NULL, "TDOR", NULL, NULL,
+    "MOOD", NULL, "TMOO", NULL, NULL,
+    "PRODUCED_NOTICE", NULL, "TPRO", NULL, NULL,
     NULL
 };
 
 static const char *txx_mapping[] = {
-    "performer", "performer",
-    "album artist", "albumartist",
-    "date", "date",
     "replaygain_album_gain", NULL,
     "replaygain_album_peak", NULL,
     "replaygain_track_gain", NULL,
@@ -828,6 +861,7 @@ junk_apev2_add_frame (playItem_t *it, DB_apev2_tag_t *tag_store, DB_apev2_frame_
                     trace ("track_peak=%s\n", value);
                 }
                 else {
+                    trace ("%s=%s\n", key, value);
                     pl_append_meta (it, key, value);;
                 }
             }
@@ -3173,33 +3207,39 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
         junk_id3v2_remove_frames (&id3v2, "COMM");
         const char *val = pl_find_meta (it, "comment");
         if (val && *val) {
+            junk_id3v2_remove_frames (&id3v2, "COMM");
             junk_id3v2_add_comment_frame (&id3v2, "eng", "", val);
         }
 
-        // add all basic frames
-        for (int i = 0; frame_mapping[i]; i += FRAME_MAPPINGS) {
-            const char *frm_name = id3v2_version == 3 ? frame_mapping[i+MAP_ID3V23] : frame_mapping[i+MAP_ID3V24];
-            if (frm_name) {
-                if (strcmp (frm_name, "TXXX")) {
-                    junk_id3v2_remove_frames (&id3v2, frm_name);
-                }
-                const char *val = pl_find_meta (it, frame_mapping[i+MAP_DDB]);
-                if (val && *val) {
-                    if (strcmp (frm_name, "TXXX")) {
-                        trace ("add_frame %s %s\n", frm_name, val);
-                        junk_id3v2_add_text_frame (&id3v2, frm_name, val);
-                        //junk_id3v2_add_text_frame (&id3v2, frm_name, "test line 1\nтестовая строка №2");
-                    }
-                    else {
-                        for (int txx = 0; txx_mapping[txx]; txx += 2) {
-                            if (txx_mapping[txx+1] && !strcmp (frame_mapping[i+MAP_DDB], txx_mapping[txx+1])) {
-                                trace ("add_txxx_frame %s %s\n", txx_mapping[txx], val);
-                                junk_id3v2_add_txxx_frame (&id3v2, txx_mapping[txx], val);
-                            }
+        DB_metaInfo_t *meta = pl_get_metadata (it);
+        while (meta) {
+            if (meta->value && *meta->value) {
+                int i;
+                for (i = 0; frame_mapping[i]; i += FRAME_MAPPINGS) {
+                    if (!strcasecmp (meta->key, frame_mapping[i+MAP_DDB])) {
+                        const char *frm_name = id3v2_version == 3 ? frame_mapping[i+MAP_ID3V23] : frame_mapping[i+MAP_ID3V24];
+                        if (frm_name) {
+                            // field is known and supported for this tag version
+                            junk_id3v2_remove_frames (&id3v2, frm_name);
+                            trace ("add_frame %s %s\n", frm_name, meta->value);
+                            junk_id3v2_add_text_frame (&id3v2, frm_name, meta->value);
+                            //junk_id3v2_add_text_frame (&id3v2, frm_name, "test line 1\nтестовая строка №2");
                         }
+                        break;
                     }
+                }
+                if (!frame_mapping[i]
+                        && meta->key[0] != ':'
+                        && strcasecmp (meta->key, "comment")
+                        && strcasecmp (meta->key, "track")
+                        && strcasecmp (meta->key, "numtracks")) {
+                    // add as txxx
+                    trace ("adding TXX %s=%s\n", meta->key, meta->value);
+                    junk_id3v2_remove_txxx_frame (&id3v2, meta->key);
+                    junk_id3v2_add_txxx_frame (&id3v2, meta->key, meta->value);
                 }
             }
+            meta = meta->next;
         }
 
         // add tracknumber/totaltracks
@@ -3215,22 +3255,6 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
             junk_id3v2_remove_frames (&id3v2, "TRCK");
             junk_id3v2_add_text_frame (&id3v2, "TRCK", track);
         }
-
-#if 0
-        // add year/date
-        const char *year = pl_find_meta (it, "year");
-        if (year) {
-            // FIXME: format check
-            if (id3v2.version[0] == 3) {
-                junk_id3v2_remove_frames (&id3v2, "TYER");
-                add_frame (&id3v2, "TYER", year);
-            }
-            else {
-                junk_id3v2_remove_frames (&id3v2, "TDRC");
-                add_frame (&id3v2, "TDRC", year);
-            }
-        }
-#endif
 
         // write tag
         if (junk_id3v2_write (out, &id3v2) != 0) {
@@ -3296,14 +3320,28 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
             memset (&apev2, 0, sizeof (apev2));
         }
         // add all basic frames
-        for (int i = 0; frame_mapping[i]; i += FRAME_MAPPINGS) {
-            if (frame_mapping[i+MAP_APEV2]) {
-                const char *val = pl_find_meta (it, frame_mapping[i+MAP_DDB]);
-                if (val) {
-                    junk_apev2_remove_frames (&apev2, frame_mapping[i+MAP_APEV2]);
-                    junk_apev2_add_text_frame (&apev2, frame_mapping[i+MAP_APEV2], val);
+        DB_metaInfo_t *meta = pl_get_metadata (it);
+        while (meta) {
+            if (meta->value && *meta->value) {
+                int i;
+                for (i = 0; frame_mapping[i]; i += FRAME_MAPPINGS) {
+                    if (!strcasecmp (meta->key, frame_mapping[i+MAP_DDB]) && frame_mapping[i+MAP_APEV2]) {
+                        trace ("apev2 writing known field: %s=%s\n", meta->key, meta->value);
+                        junk_apev2_remove_frames (&apev2, frame_mapping[i+MAP_APEV2]);
+                        junk_apev2_add_text_frame (&apev2, frame_mapping[i+MAP_APEV2], meta->value);
+                        break;
+                    }
+                }
+                if (!frame_mapping[i]
+                        && meta->key[0] != ':'
+                        && strcasecmp (meta->key, "track")
+                        && strcasecmp (meta->key, "numtracks")) {
+                    trace ("apev2 writing unknown field: %s=%s\n", meta->key, meta->value);
+                    junk_apev2_remove_frames (&apev2, meta->key);
+                    junk_apev2_add_text_frame (&apev2, meta->key, meta->value);
                 }
             }
+            meta = meta->next;
         }
 
         // add tracknumber/totaltracks
