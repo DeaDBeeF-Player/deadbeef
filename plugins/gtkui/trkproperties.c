@@ -118,7 +118,6 @@ static const char *types[] = {
     "artist", "Artist",
     "title", "Track Title",
     "performer", "Performer",
-    "band", "Band / Album Artist",
     "album", "Album",
     "year", "Date",
     "track", "Track Number",
@@ -127,8 +126,6 @@ static const char *types[] = {
     "composer", "Composer",
     "disc", "Disc Number",
     "comment", "Comment",
-    "vendor", "Encoder / Vendor",
-    "copyright", "Copyright",
     NULL
 };
 
