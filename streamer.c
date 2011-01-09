@@ -827,11 +827,22 @@ streamer_start_new_song (void) {
             streamer_reset (1);
             if (!dsp_on && fileinfo && memcmp (&output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t))) {
                 memcpy (&output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t));
+                fprintf (stderr, "streamer_set_output_format %dbit %s %dch %dHz channelmask=%X\n", output_format.bps, output_format.is_float ? "float" : "int", output_format.channels, output_format.samplerate, output_format.channelmask);
+                streamer_set_output_format ();
+            }
+            else if (output->state () != OUTPUT_STATE_PLAYING) {
+                // might have failed last time, set default params
+                output_format.bps = 16;
+                output_format.is_float = 0;
+                output_format.channels = 2;
+                output_format.samplerate = 44100;
+                output_format.channelmask = 3;
                 streamer_set_output_format ();
             }
             if (output->state () != OUTPUT_STATE_PLAYING) {
                 if (0 != output->play ()) {
-                    fprintf (stderr, "streamer: failed to start playback (streamer_read format change)\n");
+                    memset (&output_format, 0, sizeof (output_format));
+                    fprintf (stderr, "streamer: failed to start playback (start track)\n");
                     streamer_set_nextsong (-2, 0);
                 }
             }
@@ -964,6 +975,7 @@ streamer_thread (void *ctx) {
                     streamer_reset (1);
                     if (output->state () != OUTPUT_STATE_PLAYING) {
                         if (0 != output->play ()) {
+                            memset (&output_format, 0, sizeof (output_format));
                             fprintf (stderr, "streamer: failed to start playback (track transition format change)\n");
                             streamer_set_nextsong (-2, 0);
                         }
@@ -1495,9 +1507,12 @@ static int
 streamer_set_output_format (void) {
     DB_output_t *output = plug_get_output ();
     int playing = (output->state () == OUTPUT_STATE_PLAYING);
+
+    fprintf (stderr, "streamer_set_output_format %dbit %s %dch %dHz channelmask=%X\n", output_format.bps, output_format.is_float ? "float" : "int", output_format.channels, output_format.samplerate, output_format.channelmask);
     output->setformat (&output_format);
     if (playing && output->state () != OUTPUT_STATE_PLAYING) {
         if (0 != output->play ()) {
+            memset (&output_format, 0, sizeof (output_format));
             fprintf (stderr, "streamer: failed to start playback (streamer_read format change)\n");
             streamer_set_nextsong (-2, 0);
             return -1;

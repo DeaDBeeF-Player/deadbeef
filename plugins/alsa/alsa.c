@@ -297,6 +297,9 @@ retry:
         plugin.fmt.channelmask = DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT | DDB_SPEAKER_BACK_LEFT | DDB_SPEAKER_BACK_RIGHT | DDB_SPEAKER_FRONT_CENTER | DDB_SPEAKER_SIDE_LEFT | DDB_SPEAKER_SIDE_RIGHT | DDB_SPEAKER_LOW_FREQUENCY;
     }
 error:
+    if (err < 0) {
+        memset (&plugin.fmt, 0, sizeof (ddb_waveformat_t));
+    }
     if (hw_params) {
         snd_pcm_hw_params_free (hw_params);
     }
