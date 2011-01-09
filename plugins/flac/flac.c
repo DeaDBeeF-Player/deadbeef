@@ -515,6 +515,7 @@ static const char *metainfo[] = {
     "DISCNUMBER", "disc",
     "COPYRIGHT", "copyright",
     "TOTALTRACKS", "numtracks",
+    "TRACKTOTAL", "numtracks",
     "ALBUM ARTIST", "band",
     NULL
 };
