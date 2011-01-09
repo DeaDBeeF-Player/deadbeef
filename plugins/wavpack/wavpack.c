@@ -266,7 +266,6 @@ wv_seek (DB_fileinfo_t *_info, float sec) {
 
 static DB_playItem_t *
 wv_insert (DB_playItem_t *after, const char *fname) {
-
     DB_FILE *fp = deadbeef->fopen (fname);
     if (!fp) {
         return NULL;
@@ -313,6 +312,18 @@ wv_insert (DB_playItem_t *after, const char *fname) {
         trace ("wv: id3v1 tag found\n");
     }
     deadbeef->pl_add_meta (it, "title", NULL);
+
+    char s[100];
+    snprintf (s, sizeof (s), "%d", WavpackGetBytesPerSample (ctx) * 8);
+    deadbeef->pl_add_meta (it, ":BPS", s);
+    snprintf (s, sizeof (s), "%d", WavpackGetNumChannels (ctx));
+    deadbeef->pl_add_meta (it, ":CHANNELS", s);
+    snprintf (s, sizeof (s), "%d", WavpackGetSampleRate (ctx));
+    deadbeef->pl_add_meta (it, ":SAMPLERATE", s);
+    snprintf (s, sizeof (s), "%d Kbps", (int)(WavpackGetAverageBitrate (ctx, 1) / 1000));
+    deadbeef->pl_add_meta (it, ":BITRATE", s);
+    snprintf (s, sizeof (s), "%s", (WavpackGetMode (ctx) & MODE_FLOAT) ? "FLOAT" : "INTEGER");
+    deadbeef->pl_add_meta (it, ":WAVPACK_MODE", s);
 
     // embedded cue
     const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
