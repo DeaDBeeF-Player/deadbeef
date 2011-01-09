@@ -43,8 +43,8 @@
 
 #define UTF8 "utf-8"
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -2560,6 +2560,7 @@ junk_id3v2_load_txx (int version_major, playItem_t *it, uint8_t *readptr, int sy
 
 int
 junk_id3v2_add_genre (playItem_t *it, char *genre) {
+    int numeric = 0;
     if (genre[0] == '(') {
         // find matching parenthesis
         char *p = &genre[1];
@@ -2569,13 +2570,14 @@ junk_id3v2_add_genre (playItem_t *it, char *genre) {
             }
             p++;
         }
-        if (*p == ')' && p[1] == 0) {
+        if (*p == ')') {
             *p = 0;
             memmove (genre, genre+1, p-genre);
+            numeric = 1;
         }
     }
-    // check if it is numeric
-    if (genre) {
+    if (!numeric) {
+        // check if it is numeric
         const char *p = genre;
         while (*p) {
             if (!isdigit (*p)) {
@@ -2584,29 +2586,36 @@ junk_id3v2_add_genre (playItem_t *it, char *genre) {
             p++;
         }
         if (*p == 0 && p > genre) {
-            int genre_id = atoi (genre);
-            if (genre_id >= 0) {
-                const char *genre_str = NULL;
-                if (genre_id <= 147) {
-                    genre_str = junk_genretbl[genre_id];
-                }
-                else if (genre_id == 0xff) {
-                    genre_str = "None";
-                }
-                if (genre_str) {
-                    pl_add_meta (it, "genre", genre_str);
-                }
-            }
-        }
-        else if (!strcmp (genre, "CR")) {
-            pl_add_meta (it, "genre", "Cover");
-        }
-        else if (!strcmp (genre, "RX")) {
-            pl_add_meta (it, "genre", "Remix");
+            numeric = 1;
         }
     }
 
-    pl_add_meta (it, "genre", genre);
+    if (numeric) {
+        int genre_id = atoi (genre);
+        if (genre_id >= 0) {
+            const char *genre_str = NULL;
+            if (genre_id <= 147) {
+                genre_str = junk_genretbl[genre_id];
+            }
+            else if (genre_id == 0xff) {
+                genre_str = "None";
+            }
+            if (genre_str) {
+                pl_add_meta (it, "genre", genre_str);
+                return 0;
+            }
+        }
+    }
+    else if (!strcmp (genre, "CR")) {
+        pl_add_meta (it, "genre", "Cover");
+    }
+    else if (!strcmp (genre, "RX")) {
+        pl_add_meta (it, "genre", "Remix");
+    }
+    else {
+        pl_add_meta (it, "genre", genre);
+    }
+
     return 0;
 }
 
