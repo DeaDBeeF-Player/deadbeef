@@ -117,14 +117,15 @@ palsa_set_hw_params (ddb_waveformat_t *fmt) {
     snd_pcm_hw_params_t *hw_params = NULL;
     int err = 0;
 
-    if (!fmt->channels) {
+    if (!plugin.fmt.channels) {
         // generic format
-        fmt->bps = 16;
-        fmt->is_float = 0;
-        fmt->channels = 2;
-        fmt->samplerate = 44100;
-        fmt->channelmask = 3;
+        plugin.fmt.bps = 16;
+        plugin.fmt.is_float = 0;
+        plugin.fmt.channels = 2;
+        plugin.fmt.samplerate = 44100;
+        plugin.fmt.channelmask = 3;
     }
+retry:
 
     if ((err = snd_pcm_hw_params_malloc (&hw_params)) < 0) {
         fprintf (stderr, "cannot allocate hardware parameter structure (%s)\n",
@@ -146,7 +147,7 @@ palsa_set_hw_params (ddb_waveformat_t *fmt) {
 
     snd_pcm_format_t sample_fmt;
 
-    switch (fmt->bps) {
+    switch (plugin.fmt.bps) {
     case 8:
         sample_fmt = SND_PCM_FORMAT_S8;
         break;
@@ -165,7 +166,7 @@ palsa_set_hw_params (ddb_waveformat_t *fmt) {
 #endif
         break;
     case 32:
-        if (fmt->is_float) {
+        if (plugin.fmt.is_float) {
 #if WORDS_BIGENDIAN
             sample_fmt = SND_PCM_FORMAT_FLOAT_BE;
 #else
@@ -192,7 +193,7 @@ palsa_set_hw_params (ddb_waveformat_t *fmt) {
     snd_pcm_hw_params_get_format (hw_params, &sample_fmt);
     trace ("chosen sample format: %04Xh\n", (int)sample_fmt);
 
-    int val = fmt->samplerate;
+    int val = plugin.fmt.samplerate;
     int ret = 0;
 
     if ((err = snd_pcm_hw_params_set_rate_resample (audio, hw_params, 1)) < 0) {
@@ -209,7 +210,7 @@ palsa_set_hw_params (ddb_waveformat_t *fmt) {
     plugin.fmt.samplerate = val;
     trace ("chosen samplerate: %d Hz\n", val);
 
-    if ((err = snd_pcm_hw_params_set_channels (audio, hw_params, fmt->channels)) < 0) {
+    if ((err = snd_pcm_hw_params_set_channels (audio, hw_params, plugin.fmt.channels)) < 0) {
         fprintf (stderr, "cannot set channel count (%s)\n",
                 snd_strerror (err));
         goto error;
@@ -233,7 +234,12 @@ palsa_set_hw_params (ddb_waveformat_t *fmt) {
     if ((err = snd_pcm_hw_params (audio, hw_params)) < 0) {
         fprintf (stderr, "cannot set parameters (%s)\n",
                 snd_strerror (err));
-        goto error;
+
+//        if (plugin.fmt.channels > 2 && plugin.fmt.samplerate >= 96000) {
+//            plugin.fmt.samplerate = 48000;
+//            fprintf (stderr, "falling back to 48000KHz\n");
+//            goto retry;
+//        }
     }
 
     plugin.fmt.is_float = 0;
