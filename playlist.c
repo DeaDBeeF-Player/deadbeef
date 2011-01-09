@@ -3369,6 +3369,19 @@ pl_playqueue_getcount (void) {
 void
 pl_items_copy_junk (playItem_t *from, playItem_t *first, playItem_t *last) {
     LOCK;
+    DB_metaInfo_t *meta = from->meta;
+    while (meta) {
+        playItem_t *i;
+        for (i = first; ; i = i->next[PL_MAIN]) {
+            i->_flags = from->_flags;
+            pl_add_meta (i, meta->key, meta->value);
+            if (i == last) {
+                break;
+            }
+        }
+        meta = meta->next;
+    }
+#if 0
     const char *metainfo[] = {
         "year", "genre", "copyright", "vendor", "comment", "tags", "numtracks", "band", "performer", "composer", "disc", "title", "artist", "album", NULL
     };
@@ -3385,6 +3398,7 @@ pl_items_copy_junk (playItem_t *from, playItem_t *first, playItem_t *last) {
             }
         }
     }
+#endif
     UNLOCK;
 }
 
