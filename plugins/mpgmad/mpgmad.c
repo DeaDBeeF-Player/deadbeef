@@ -96,6 +96,8 @@ typedef struct {
     int avg_samples_per_frame;
     int nframes;
     int last_comment_update;
+    int vbr;
+    int have_xing_header;
 } buffer_t;
 
 typedef struct {
@@ -182,7 +184,6 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
 //    }
     int packetlength = 0;
     int nframe = 0;
-    int got_xing_header = 0;
     buffer->duration = 0;
     int scansamples = 0;
     buffer->currentsample = 0;
@@ -190,6 +191,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
     int fsize = 0;
     int avg_bitrate = 0;
     int valid_frames = 0;
+    int prev_bitrate = -1;
 
     if (sample <= 0) {
         buffer->totalsamples = 0;
@@ -348,6 +350,11 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
             continue;
         }
 
+        if (prev_bitrate != -1 && prev_bitrate != bitrate) {
+            buffer->vbr = 1;
+        }
+        prev_bitrate = bitrate;
+
         valid_frames++;
 #if 0
         if (nframe < 1000) {
@@ -369,7 +376,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
             //trace ("frame %d mpeg v%d layer %d bitrate %d samplerate %d packetlength %d framedur %f channels %d\n", nframe, ver, layer, bitrate, samplerate, packetlength, dur, nchannels);
         }
         // try to read xing/info tag (only on initial scans)
-        if (sample <= 0 && !got_xing_header)
+        if (sample <= 0 && !buffer->have_xing_header)
         {
             size_t framepos = deadbeef->ftell (buffer->file);
             if (!buffer->file->vfs->streaming) {
@@ -513,7 +520,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
             }
             else {
                 deadbeef->fseek (buffer->file, framepos+packetlength-4, SEEK_SET);
-                got_xing_header = 1;
+                buffer->have_xing_header = 1;
             }
         }
 
@@ -574,6 +581,33 @@ cmp3_open (uint32_t hints) {
     return _info;
 }
 
+void
+cmp3_set_extra_properties (buffer_t *buffer) {
+    char s[100];
+    int64_t size = deadbeef->fgetlength (buffer->file);
+    if (size >= 0) {
+        snprintf (s, sizeof (s), "%d", size);
+        deadbeef->pl_replace_meta (buffer->it, ":FILE_SIZE", s);
+    }
+    else {
+        deadbeef->pl_replace_meta (buffer->it, ":FILE_SIZE", "∞");
+    }
+    if (buffer->bitrate > 0) {
+        snprintf (s, sizeof (s), "%d", buffer->bitrate/1000);
+        deadbeef->pl_replace_meta (buffer->it, ":BITRATE", s);
+    }
+    deadbeef->pl_replace_meta (buffer->it, ":BPS", "16");
+    snprintf (s, sizeof (s), "%d", buffer->channels);
+    deadbeef->pl_replace_meta (buffer->it, ":CHANNELS", s);
+    snprintf (s, sizeof (s), "%d", buffer->samplerate);
+    deadbeef->pl_replace_meta (buffer->it, ":SAMPLERATE", s);
+    deadbeef->pl_replace_meta (buffer->it, ":CODEC_PROFILE", buffer->vbr ? "VBR" : "CBR");
+    const char *versions[] = {"1", "2", "2.5"};
+    snprintf (s, sizeof (s), "MPEG%s layer%d", versions[buffer->version-1], buffer->layer);
+    deadbeef->pl_replace_meta (buffer->it, ":MPEG_VERSION", s);
+    deadbeef->pl_replace_meta (buffer->it, ":XING_HEADER", buffer->have_xing_header ? "Yes" : "No");
+}
+
 static int
 cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     mpgmad_info_t *info = (mpgmad_info_t *)_info;
@@ -627,6 +661,9 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             trace ("mpgmad: cmp3_init: initial cmp3_scan_stream failed\n");
             return -1;
         }
+
+        cmp3_set_extra_properties (&info->buffer);
+
         deadbeef->pl_set_item_duration (it, info->buffer.duration);
         if (info->buffer.duration >= 0) {
             info->buffer.endsample = info->buffer.totalsamples - 1;
@@ -1180,6 +1217,9 @@ cmp3_insert (DB_playItem_t *after, const char *fname) {
     /*int v2err = */deadbeef->junk_id3v2_read (it, fp);
     /*int v1err = */deadbeef->junk_id3v1_read (it, fp);
     deadbeef->pl_add_meta (it, "title", NULL);
+
+    cmp3_set_extra_properties (&buffer);
+
     deadbeef->pl_set_item_duration (it, buffer.duration);
     it->filetype = ftype;
     deadbeef->fclose (fp);
