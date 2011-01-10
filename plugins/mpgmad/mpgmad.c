@@ -1218,6 +1218,7 @@ cmp3_insert (DB_playItem_t *after, const char *fname) {
     /*int v1err = */deadbeef->junk_id3v1_read (it, fp);
     deadbeef->pl_add_meta (it, "title", NULL);
 
+    buffer.it = it;
     cmp3_set_extra_properties (&buffer);
 
     deadbeef->pl_set_item_duration (it, buffer.duration);
