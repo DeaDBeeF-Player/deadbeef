@@ -314,7 +314,7 @@ wv_insert (DB_playItem_t *after, const char *fname) {
     deadbeef->pl_add_meta (it, "title", NULL);
 
     char s[100];
-    snprintf (s, sizeof (s), "%d bytes", deadbeef->fgetlength (fp));
+    snprintf (s, sizeof (s), "%d", deadbeef->fgetlength (fp));
     deadbeef->pl_add_meta (it, ":FILE_SIZE", s);
     snprintf (s, sizeof (s), "%d", WavpackGetBytesPerSample (ctx) * 8);
     deadbeef->pl_add_meta (it, ":BPS", s);
@@ -322,7 +322,7 @@ wv_insert (DB_playItem_t *after, const char *fname) {
     deadbeef->pl_add_meta (it, ":CHANNELS", s);
     snprintf (s, sizeof (s), "%d", WavpackGetSampleRate (ctx));
     deadbeef->pl_add_meta (it, ":SAMPLERATE", s);
-    snprintf (s, sizeof (s), "%d Kbps", (int)(WavpackGetAverageBitrate (ctx, 1) / 1000));
+    snprintf (s, sizeof (s), "%d", (int)(WavpackGetAverageBitrate (ctx, 1) / 1000));
     deadbeef->pl_add_meta (it, ":BITRATE", s);
     snprintf (s, sizeof (s), "%s", (WavpackGetMode (ctx) & MODE_FLOAT) ? "FLOAT" : "INTEGER");
     deadbeef->pl_add_meta (it, ":WAVPACK_MODE", s);
