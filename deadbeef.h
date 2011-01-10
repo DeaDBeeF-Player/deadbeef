@@ -734,8 +734,8 @@ typedef struct DB_output_s {
     int (*init) (void);
     // free is called if output plugin was changed to another, or unload is about to happen
     int (*free) (void);
-    // reconfigure output to another format, if supported
-    void (*setformat) (ddb_waveformat_t *fmt);
+    // reconfigure output to another format
+    int (*setformat) (ddb_waveformat_t *fmt);
     // play, stop, pause, unpause are called by deadbeef in response to user
     // events, or as part of streaming process
     int (*play) (void);

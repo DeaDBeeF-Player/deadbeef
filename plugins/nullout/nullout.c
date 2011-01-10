@@ -46,7 +46,7 @@ pnull_init (void);
 static int
 pnull_free (void);
 
-void
+int
 pnull_setformat (ddb_waveformat_t *fmt);
 
 static int
@@ -70,9 +70,10 @@ pnull_init (void) {
     return 0;
 }
 
-void
+int
 pnull_setformat (ddb_waveformat_t *fmt) {
     memcpy (&plugin.fmt, fmt, sizeof (ddb_waveformat_t));
+    return 0;
 }
 
 int

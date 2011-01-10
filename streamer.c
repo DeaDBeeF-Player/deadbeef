@@ -857,6 +857,12 @@ streamer_start_new_song (void) {
                 memcpy (&output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t));
                 formatchanged = 1;
             }
+            // we need to start playback before we can pause it
+            if (0 != output->play ()) {
+                memset (&output_format, 0, sizeof (output_format));
+                fprintf (stderr, "streamer: failed to start playback (start track)\n");
+                streamer_set_nextsong (-2, 0);
+            }
         }
         output->pause ();
     }

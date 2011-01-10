@@ -147,22 +147,6 @@ oss_init (void) {
     return 0;
 }
 
-static void
-oss_setformat (ddb_waveformat_t *fmt) {
-    trace ("oss_setformat\n");
-    if (!fd) {
-        memcpy (&plugin.fmt, fmt, sizeof (ddb_waveformat_t));
-    }
-    if (!memcmp (fmt, &plugin.fmt, sizeof (ddb_waveformat_t))) {
-        return;
-    }
-    deadbeef->mutex_lock (mutex);
-
-    oss_set_hwparams (fmt);
-
-    deadbeef->mutex_unlock (mutex);
-}
-
 static int
 oss_free (void) {
     trace ("oss_free\n");
@@ -212,6 +196,41 @@ oss_pause (void) {
     // set pause state
     oss_free();
     state = OUTPUT_STATE_PAUSED;
+    return 0;
+}
+
+
+static int
+oss_setformat (ddb_waveformat_t *fmt) {
+    trace ("oss_setformat\n");
+    if (!fd) {
+        memcpy (&plugin.fmt, fmt, sizeof (ddb_waveformat_t));
+    }
+    if (!memcmp (fmt, &plugin.fmt, sizeof (ddb_waveformat_t))) {
+        return 0;
+    }
+    deadbeef->mutex_lock (mutex);
+
+    if (0 != oss_set_hwparams (fmt)) {
+        return -1;
+    }
+
+    deadbeef->mutex_unlock (mutex);
+
+    switch (state) {
+    case OUTPUT_STATE_STOPPED:
+        return oss_stop ();
+    case OUTPUT_STATE_PLAYING:
+        return oss_play ();
+    case OUTPUT_STATE_PAUSED:
+        if (0 != oss_play ()) {
+            return -1;
+        }
+        if (0 != oss_pause ()) {
+            return -1;
+        }
+        break;
+    }
     return 0;
 }
 

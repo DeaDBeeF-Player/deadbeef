@@ -88,7 +88,7 @@ palsa_init (void);
 static int
 palsa_free (void);
 
-static void
+static int
 palsa_setformat (ddb_waveformat_t *fmt);
 
 static int
@@ -403,16 +403,16 @@ open_error:
     return -1;
 }
 
-void
+int
 palsa_setformat (ddb_waveformat_t *fmt) {
     memcpy (&requested_fmt, fmt, sizeof (ddb_waveformat_t));
     trace ("palsa_setformat %dbit %s %dch %dHz channelmask=%X\n", fmt->bps, fmt->is_float ? "float" : "int", fmt->channels, fmt->samplerate, fmt->channelmask);
     if (!audio) {
-        return;
+        return -1;
     }
     if (!memcmp (fmt, &plugin.fmt, sizeof (ddb_waveformat_t))) {
         trace ("palsa_setformat ignored\n");
-        return;
+        return 0;
     }
 #if 0
     else {
@@ -432,16 +432,33 @@ palsa_setformat (ddb_waveformat_t *fmt) {
         );
     }
 #endif
-    state = OUTPUT_STATE_STOPPED;
     LOCK;
+    int s = state;
+    state = OUTPUT_STATE_STOPPED;
     snd_pcm_drop (audio);
     int ret = palsa_set_hw_params (fmt);
     UNLOCK;
     if (ret < 0) {
         trace ("palsa_change_rate: impossible to set requested format\n");
-        return;
+        return -1;
     }
     trace ("new format %dbit %s %dch %dHz channelmask=%X\n", plugin.fmt.bps, plugin.fmt.is_float ? "float" : "int", plugin.fmt.channels, plugin.fmt.samplerate, plugin.fmt.channelmask);
+
+    switch (s) {
+    case OUTPUT_STATE_STOPPED:
+        return palsa_stop ();
+    case OUTPUT_STATE_PLAYING:
+        return palsa_play ();
+    case OUTPUT_STATE_PAUSED:
+        if (0 != palsa_play ()) {
+            return -1;
+        }
+        if (0 != palsa_pause ()) {
+            return -1;
+        }
+        break;
+    }
+    return 0;
 }
 
 int
