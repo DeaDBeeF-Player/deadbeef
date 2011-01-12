@@ -41,7 +41,7 @@
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
-#define WRITE_DUMP 1
+//#define WRITE_DUMP 1
 
 #if WRITE_DUMP
 FILE *out;
