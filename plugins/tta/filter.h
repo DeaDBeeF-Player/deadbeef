@@ -42,7 +42,7 @@
 ///////// Filter Settings //////////
 static int flt_set[3] = {10, 9, 10};
 
-__inline void
+static __inline void
 memshl (register int *pA, register int *pB) {
 	*pA++ = *pB++;
 	*pA++ = *pB++;
@@ -54,7 +54,7 @@ memshl (register int *pA, register int *pB) {
 	*pA   = *pB;
 }
 
-__inline void
+static __inline void
 hybrid_filter (fltst *fs, int *in) {
 	register int *pA = fs->dl;
 	register int *pB = fs->qm;

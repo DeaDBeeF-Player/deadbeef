@@ -594,7 +594,7 @@ plug_load_all (void) {
     trace ("\033[0;31mDISABLE_VERSIONCHECK=1! do not distribute!\033[0;m\n");
 #endif
 
-#if !TARGET_ANDROID
+#ifndef ANDROID
     const char *conf_blacklist_plugins = conf_get_str ("blacklist_plugins", "");
     trace ("plug: mutex_create\n");
     mutex = mutex_create ();
@@ -726,7 +726,7 @@ plug_load_all (void) {
 #define PLUG(n) plug_init_plugin (n##_load, NULL);
 #include "moduleconf.h"
 #undef PLUG
-#if TARGET_ANDROID
+#ifdef ANDROID
 #define PLUG(n) extern DB_plugin_t * n##_load (DB_functions_t *api);
 #include "moduleconf-android.h"
 #undef PLUG
@@ -873,7 +873,7 @@ plug_unload_all (void) {
     trace ("stopped all plugins\n");
     while (plugins) {
         plugin_t *next = plugins->next;
-#if !TARGET_ANDROID
+#ifndef ANDROID
         if (plugins->handle) {
             dlclose (plugins->handle);
         }
@@ -931,6 +931,9 @@ plug_get_output (void) {
 
 int
 plug_select_output (void) {
+#ifdef ANDROID
+    return 0;
+#else
     const char *outplugname = conf_get_str ("output_plugin", _("ALSA output plugin"));
     for (int i = 0; g_output_plugins[i]; i++) {
         DB_output_t *p = g_output_plugins[i];
@@ -952,6 +955,7 @@ plug_select_output (void) {
     }
     plug_trigger_event (DB_EV_OUTPUTCHANGED, 0);
     return 0;
+#endif
 }
 
 void

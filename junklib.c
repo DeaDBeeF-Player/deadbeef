@@ -214,7 +214,7 @@ junk_iconv (const char *in, int inlen, char *out, int outlen, const char *cs_in,
     }
     //trace ("iconv out: %s (len=%d)\n", out, pout - out);
     return pout - out;
-#elif TARGET_ANDROID
+#elif defined(ANDROID)
     // TODO: android charset conversion
     return 0;
 #endif

@@ -34,6 +34,7 @@
 #include "../../deadbeef.h"
 #include "csid.h"
 
+#ifndef ANDROID
 int _Unwind_Resume_or_Rethrow;
 int _Unwind_RaiseException;
 int _Unwind_GetLanguageSpecificData;
@@ -45,6 +46,7 @@ int _Unwind_GetDataRelBase;
 int _Unwind_GetRegionStart;
 int _Unwind_SetGR;
 int _Unwind_GetIPInfo;
+#endif
 
 extern DB_decoder_t sid_plugin;
 
