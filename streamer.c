@@ -1073,6 +1073,7 @@ streamer_thread (void *ctx) {
         int bytes_in_one_second = rate * (output->fmt.bps>>3) * channels;
         const int blocksize = MIN_BLOCK_SIZE;
         int alloc_time = 1000 / (bytes_in_one_second / blocksize);
+        alloc_time /= 1.2;
 
         streamer_lock ();
         if (streamer_ringbuf.remaining < (STREAM_BUFFER_SIZE-blocksize * MAX_DSP_RATIO)) {
@@ -1099,13 +1100,13 @@ streamer_thread (void *ctx) {
             int bytesread = 0;
             do {
                 int nb = streamer_read_async (readbuffer+bytesread,sz-bytesread);
+                bytesread += nb;
                 struct timeval tm2;
                 gettimeofday (&tm2, NULL);
                 int ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
                 if (ms >= alloc_time) {
                     break;
                 }
-                bytesread += nb;
             } while (bytesread < sz-100);
             streamer_lock ();
 
@@ -1113,7 +1114,7 @@ streamer_thread (void *ctx) {
                 ringbuf_write (&streamer_ringbuf, readbuffer, bytesread);
             }
 
-            //fprintf (stderr, "fill: %d, read: %d, size=%d, blocksize=%d\n", streamer_ringbuf.remaining, bytesread, STREAM_BUFFER_SIZE, blocksize);
+            //trace ("fill: %d, read: %d, size=%d, blocksize=%d\n", streamer_ringbuf.remaining, bytesread, STREAM_BUFFER_SIZE, blocksize);
         }
         streamer_unlock ();
         if ((streamer_ringbuf.remaining > 128000 && streamer_buffering) || !streaming_track) {
@@ -1126,7 +1127,7 @@ streamer_thread (void *ctx) {
         gettimeofday (&tm2, NULL);
 
         int ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
-        //fprintf (stderr, "slept %dms (alloc=%dms, bytespersec=%d, chan=%d, blocksize=%d), fill: %d/%d (cursor=%d)\n", alloc_time-ms, alloc_time, bytes_in_one_second, output->fmt.channels, blocksize, streamer_ringbuf.remaining, STREAM_BUFFER_SIZE, streamer_ringbuf.cursor);
+        //trace ("slept %dms (alloc=%dms, bytespersec=%d, chan=%d, blocksize=%d), fill: %d/%d (cursor=%d)\n", alloc_time-ms, alloc_time, bytes_in_one_second, output->fmt.channels, blocksize, streamer_ringbuf.remaining, STREAM_BUFFER_SIZE, streamer_ringbuf.cursor);
         alloc_time -= ms;
         if (!streamer_buffering && alloc_time > 0) {
             usleep (alloc_time * 1000);
