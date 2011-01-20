@@ -25,6 +25,9 @@
 #if HAVE_ICONV
 #define LIBICONV_PLUG
 #include <iconv.h>
+#elif HAVE_ICU
+#include <unicode/utypes.h>
+#include <unicode/ucnv.h>
 #endif
 #include <limits.h>
 #include <errno.h>
@@ -185,8 +188,132 @@ extract_f32 (unsigned char *buf) {
     return f;
 }
 
+static int
+cp1251_to_utf8(const uint8_t *in, int inlen, uint8_t *out, int outlen){
+    int len = 0;
+    while (inlen > 0 && outlen-len > 2) {
+        uint8_t c=*in;
+        if (c>=192 && c<=239) {
+            *out++ = 208;
+            *out++ = c - 48;
+            len += 2;
+        }
+        else if (c>239) {
+            *out++ = 209;
+            *out++ = c - 112;
+            len += 2;
+        }
+        else if (c==184) {
+            *out++ = 209;
+            *out++ = 209;
+            len += 2;
+        }
+        else if (c==168) {
+            *out++ = 208;
+            *out++ = 129;
+            len += 2;
+        }
+        else {
+            *out++ = c;
+            len++;
+        }
+        in++;
+        inlen--;
+    }
+    *out = 0;
+    return len;
+}
+
+static int
+iso8859_1_to_utf8(const uint8_t *in, int inlen, uint8_t *out, int outlen){
+    int len = 0;
+    while (inlen > 0 && outlen-len > 2) {
+        uint8_t c=*in;
+        switch (c) {
+        case 192:
+            *out++ = 195;
+            *out++ = c - 64;
+            len += 2;
+            break;
+        case 160 ... 191:
+            *out++ = 0xc2;
+            *out++ = c;
+            len += 2;
+            break;
+#define CONV2(x,y,z) case x:\
+            *out++ = y;\
+            *out++ = z;\
+            len += 2;\
+            break;
+#define CONV3(x,y,z,w) case x:\
+            *out++ = y;\
+            *out++ = z;\
+            *out++ = w;\
+            len += 3;\
+            break;
+        CONV2(0x9f,0xc5,0xb8);
+        CONV2(0x9e,0xc5,0xbe);
+        CONV3(0x9d,0xef,0xbf,0xbd);
+        CONV3(0x80,0xe2,0x82,0xac);
+        CONV3(0x81,0xef,0xbf,0xbd);
+        CONV3(0x82,0xe2,0x80,0x9a);
+        CONV2(0x83,0xc6,0x92) 
+        CONV3(0x84,0xe2,0x80,0x9e);
+        CONV3(0x85,0xe2,0x80,0xa6);
+        CONV3(0x86,0xe2,0x80,0xa0);
+        CONV3(0x87,0xe2,0x80,0xa1);
+        CONV2(0x88,0xcb,0x86) 
+        CONV3(0x89,0xe2,0x80,0xb0);
+        CONV2(0x8a,0xc5,0xa0)  
+        CONV3(0x8b,0xe2,0x80,0xb9);
+        CONV2(0x8c,0xc5,0x92)  
+        CONV3(0x8d,0xef,0xbf,0xbd);
+        CONV2(0x8e,0xc5,0xbd)  
+        CONV3(0x8f,0xef,0xbf,0xbd);
+        CONV3(0x90,0xef,0xbf,0xbd);
+        CONV3(0x91,0xe2,0x80,0x98);
+        CONV3(0x92,0xe2,0x80,0x99);
+        CONV3(0x93,0xe2,0x80,0x9c);
+        CONV3(0x94,0xe2,0x80,0x9d);
+        CONV3(0x95,0xe2,0x80,0xa2);
+        CONV3(0x96,0xe2,0x80,0x93);
+        CONV3(0x97,0xe2,0x80,0x94);
+        CONV2(0x98,0xcb,0x9c)  
+        CONV3(0x99,0xe2,0x84,0xa2);
+        CONV2(0x9a,0xc5,0xa1)  
+        CONV3(0x9b,0xe2,0x80,0xba);
+        CONV2(0x9c,0xc5,0x93)
+        default:
+            *out++ = c;
+            len++;
+            break;
+        }
+
+        in++;
+        inlen--;
+    }
+    *out = 0;
+    return len;
+}
+
+int ddb_iconv (const char *cs_out, const char *cs_in, char *out, int outlen, const char *in, int inlen) {
+    int len = -1;
+    if (!strcmp (cs_out, UTF8) && !strcasecmp (cs_in, "cp1251")) {
+        len = cp1251_to_utf8 (in, inlen, out, outlen);
+    }
+    else if (!strcmp (cs_out, UTF8) && !strcasecmp (cs_in, "iso8859-1")) {
+        len = iso8859_1_to_utf8 (in, inlen, out, outlen);
+    }
+    else {
+        *out = 0;
+    }
+    trace ("\033[0;31mddb_iconv: %s -> %s, in: %s, out: %s\033[37;0m\n", cs_in, cs_out, in, out);
+    return len;
+}
+
 int
 junk_iconv (const char *in, int inlen, char *out, int outlen, const char *cs_in, const char *cs_out) {
+// NOTE: this function must support utf8->utf8 conversion, used for validation
 #if HAVE_ICONV
     iconv_t cd = iconv_open (cs_out, cs_in);
     if (cd == (iconv_t)-1) {
@@ -214,9 +341,16 @@ junk_iconv (const char *in, int inlen, char *out, int outlen, const char *cs_in,
     }
     //trace ("iconv out: %s (len=%d)\n", out, pout - out);
     return pout - out;
-#elif defined(ANDROID)
-    // TODO: android charset conversion
-    return 0;
+#elif defined(HAVE_ICU)
+    int status = 0;
+    trace ("ICU convert from %s to %s input %s\n", cs_in, cs_out, in);
+    int32_t len = ucnv_convert (cs_out, cs_in, out, outlen, in, inlen, &status);
+    out[len] = 0;
+    trace ("ICU out: %s\n", out);
+    return len;
+#else
+    int len = ddb_iconv (cs_out, cs_in, out, outlen, in, inlen);
+    return len;
 #endif
 }
 
@@ -406,7 +540,6 @@ convstr_id3v2 (int version, uint8_t encoding, const unsigned char* str, int sz) 
 
     // detect encoding
     if (version == 4 && encoding == 2) {
-        trace ("utf16be\n");
         enc = "UTF-16BE";
     }
     else if (version == 4 && encoding == 3) {
@@ -416,6 +549,9 @@ convstr_id3v2 (int version, uint8_t encoding, const unsigned char* str, int sz) 
         // hack to add limited cp1251 recoding support
         if (can_be_russian (str)) {
             enc = "cp1251";
+        }
+        else {
+            enc = "iso8859-1";
         }
     }
     else if (encoding != 1 && !(version == 4 && encoding == 3)){
@@ -443,17 +579,7 @@ convstr_id3v2 (int version, uint8_t encoding, const unsigned char* str, int sz) 
             }
         }
         else {
-            trace ("utf16\n");
             enc = "UTF-16";
-        }
-    }
-    else if (encoding == 0) {
-        // hack to add limited cp1251 recoding support
-        if (can_be_russian (str)) {
-            enc = "cp1251";
-        }
-        else {
-            enc = "iso8859-1";
         }
     }
 
@@ -462,21 +588,20 @@ convstr_id3v2 (int version, uint8_t encoding, const unsigned char* str, int sz) 
     if ((converted_sz = junk_iconv (str, sz, out, sizeof (out), enc, UTF8)) < 0) {
         return NULL;
     }
-    else {
-        int n;
-        for (n = 0; n < converted_sz; n++) {
-            if (out[n] == 0 && n != converted_sz-1) {
-                out[n] = '\n';
-            }
+//    trace ("%s -> %s\n", str, out);
+    int n;
+    for (n = 0; n < converted_sz; n++) {
+        if (out[n] == 0 && n != converted_sz-1) {
+            out[n] = '\n';
         }
-        // trim trailing linebreaks
-        for (n = converted_sz-2; n >= 0; n--) {
-            if (out[n] == '\n') {
-                out[n] = 0;
-            }
-            else {
-                break;
-            }
+    }
+    // trim trailing linebreaks
+    for (n = converted_sz-2; n >= 0; n--) {
+        if (out[n] == '\n') {
+            out[n] = 0;
+        }
+        else {
+            break;
         }
     }
     return strdup (out);
