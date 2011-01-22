@@ -955,7 +955,9 @@ streamer_thread (void *ctx) {
             memcpy (&prevfmt, &output->fmt, sizeof (ddb_waveformat_t));
             if (memcmp (&output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t))) {
                 memcpy (&output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t));
+                streamer_unlock (); // prevent race-condition in output plugins
                 output->setformat (&fileinfo->fmt);
+                streamer_lock ();
                 // check if the format actually changed
                 if (memcmp (&output->fmt, &prevfmt, sizeof (ddb_waveformat_t))) {
                     // restart streaming of current track
