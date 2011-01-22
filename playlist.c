@@ -353,7 +353,6 @@ plt_add (int before, const char *title) {
 // NOTE: caller must ensure that configuration is saved after that call
 void
 plt_remove (int plt) {
-    trace ("plt_remove %d\n", plt);
     int i;
     assert (plt >= 0 && plt < playlists_count);
     PLT_LOCK;
@@ -965,9 +964,11 @@ pl_insert_cue_from_buffer (playItem_t *after, playItem_t *origin, const uint8_t 
         }
         else if (!strncmp (p, "TRACK ", 6)) {
             trace ("cue: adding track: %s %s %s\n", origin->fname, title, track);
-            // add previous track
-            after = pl_process_cue_track (after, origin->fname, &prev, track, index00, index01, pregap, title, performer, albumtitle, genre, date, replaygain_album_gain, replaygain_album_peak, replaygain_track_gain, replaygain_track_peak, origin->decoder_id, origin->filetype, samplerate);
-            trace ("cue: added %p (%p)\n", after);
+            if (title[0]) {
+                // add previous track
+                after = pl_process_cue_track (after, origin->fname, &prev, track, index00, index01, pregap, title, performer, albumtitle, genre, date, replaygain_album_gain, replaygain_album_peak, replaygain_track_gain, replaygain_track_peak, origin->decoder_id, origin->filetype, samplerate);
+                trace ("cue: added %p (%p)\n", after);
+            }
 
             track[0] = 0;
             title[0] = 0;
@@ -1004,7 +1005,7 @@ pl_insert_cue_from_buffer (playItem_t *after, playItem_t *origin, const uint8_t 
 //            fprintf (stderr, "got unknown line:\n%s\n", p);
         }
     }
-    if (ins == after) {
+    if (!title[0]) {
         UNLOCK;
         return NULL;
     }
@@ -2337,7 +2338,6 @@ pl_load (const char *fname) {
         }
         pl_insert_item (playlist->tail[PL_MAIN], it);
         pl_item_unref (it);
-        trace ("last playlist item refc: %d\n", it->_refc);
         it = NULL;
     }
     GLOBAL_UNLOCK;
