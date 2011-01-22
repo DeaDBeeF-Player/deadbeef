@@ -354,6 +354,41 @@ int ddb_iconv (const char *cs_out, const char *cs_in, char *out, int outlen, con
                 len = target - out;
             }
         }
+        else {
+            fprintf (stderr, "invalid conversion request: %s -> %s\n", cs_in, cs_out);
+        }
+    }
+    else if (!strcmp (cs_in, UTF8_STR)) {
+        if (!strcasecmp (cs_out, "UTF-16LE") || !strcasecmp (cs_out, "UCS-2LE")) {
+            char *target = out;
+            ConversionResult result = ConvertUTF8toUTF16 ((const UTF8**)&in, (const UTF8*)(in + inlen), (UTF16**)&target, (UTF16*)(out + outlen), strictConversion);
+            if (result == conversionOK) {
+                *target = 0;
+                *(target+1) = 0;
+                len = target - out;
+            }
+        }
+        else if (!strcasecmp (cs_out, "UTF-16BE") || !strcasecmp (cs_out, "UCS-2BE")) {
+            assert (0);
+            char temp[outlen];
+            char *target = temp;
+            const char *src = in;
+            ConversionResult result = ConvertUTF16toUTF8 ((const UTF16**)&src, (const UTF16*)(src + inlen), (UTF8**)&target, (UTF8*)(target + outlen), strictConversion);
+            if (result == conversionOK) {
+                len = target - temp;
+                // convert to big endian
+                for (int i = 0; i < len; i += 2) {
+                    out[i] = temp[i+1];
+                    out[i+1] = temp[i];
+                }
+            }
+        }
+        else {
+            fprintf (stderr, "invalid conversion request: %s -> %s\n", cs_in, cs_out);
+        }
+    }
+    else {
+        fprintf (stderr, "invalid conversion request: %s -> %s\n", cs_in, cs_out);
     }
     trace ("\033[0;31mddb_iconv: %s -> %s, in: %s, out: %s\033[37;0m\n", cs_in, cs_out, in, out);
     return len;
