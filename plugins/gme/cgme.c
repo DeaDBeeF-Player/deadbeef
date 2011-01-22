@@ -201,6 +201,34 @@ cgme_seek (DB_fileinfo_t *_info, float time) {
     return 0;
 }
 
+static void
+cgme_add_meta (DB_playItem_t *it, const char *key, const char *value) {
+    if (!value) {
+        return;
+    }
+    char len = strlen (value);
+    char out[1024];
+    // check for utf8 (hack)
+    if (deadbeef->junk_iconv (value, len, out, sizeof (out), "utf-8", "utf-8") >= 0) {
+        deadbeef->pl_add_meta (it, key, out);
+        return;
+    }
+
+    if (deadbeef->junk_iconv (value, len, out, sizeof (out), "iso8859-1", "utf-8") >= 0) {
+        deadbeef->pl_add_meta (it, key, out);
+        return;
+    }
+
+    if (deadbeef->junk_iconv (value, len, out, sizeof (out), "SHIFT-JIS", "utf-8") >= 0) {
+        deadbeef->pl_add_meta (it, key, out);
+        return;
+    }
+
+    // FIXME: try other encodings?
+
+    return;
+}
+
 static DB_playItem_t *
 cgme_insert (DB_playItem_t *after, const char *fname) {
     Music_Emu *emu;
@@ -250,8 +278,8 @@ cgme_insert (DB_playItem_t *after, const char *fname) {
                 it->tracknum = i;
 
                 // add metadata
-                deadbeef->pl_add_meta (it, "system", inf->system);
-                deadbeef->pl_add_meta (it, "album", inf->game);
+                cgme_add_meta (it, "system", inf->system);
+                cgme_add_meta (it, "album", inf->game);
                 int tl = sizeof (inf->song);
                 int n;
                 for (n = 0; i < tl && inf->song[n] && inf->song[n] == ' '; n++);
@@ -259,15 +287,15 @@ cgme_insert (DB_playItem_t *after, const char *fname) {
                     deadbeef->pl_add_meta (it, "title", NULL);
                 }
                 else {
-                    deadbeef->pl_add_meta (it, "title", inf->song);
+                    cgme_add_meta (it, "title", inf->song);
                 }
-                deadbeef->pl_add_meta (it, "artist", inf->author);
-                deadbeef->pl_add_meta (it, "copyright", inf->copyright);
-                deadbeef->pl_add_meta (it, "comment", inf->comment);
-                deadbeef->pl_add_meta (it, "dumper", inf->dumper);
+                cgme_add_meta (it, "artist", inf->author);
+                cgme_add_meta (it, "copyright", inf->copyright);
+                cgme_add_meta (it, "comment", inf->comment);
+                cgme_add_meta (it, "dumper", inf->dumper);
                 char trk[10];
                 snprintf (trk, 10, "%d", i+1);
-                deadbeef->pl_add_meta (it, "track", trk);
+                cgme_add_meta (it, "track", trk);
                 if (inf->length == -1 || inf->length == 0) {
                     float songlength = deadbeef->conf_get_float ("gme.songlength", 3);
                     deadbeef->pl_set_item_duration (it, songlength * 60.f);
