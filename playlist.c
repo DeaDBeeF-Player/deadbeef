@@ -2695,7 +2695,7 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
                     nm[l] = 0;
                     meta = pl_find_meta (it, nm);
                     if (!meta) {
-                        meta = "<INVALID CONVERSION>";
+                        meta = "?";
                     }
                     fmt = e;
                 }
