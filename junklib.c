@@ -23,11 +23,15 @@
 #include <stdlib.h>
 #include <string.h>
 #if HAVE_ICONV
-#define LIBICONV_PLUG
-#include <iconv.h>
+  #define LIBICONV_PLUG
+  #include <iconv.h>
 #elif HAVE_ICU
-#include <unicode/utypes.h>
-#include <unicode/ucnv.h>
+  #warning icu
+  #include <unicode/utypes.h>
+  #include <unicode/ucnv.h>
+#else
+  #define DDB_RECODE
+  #include "ConvertUTF/ConvertUTF.h"
 #endif
 #include <limits.h>
 #include <errno.h>
@@ -44,7 +48,7 @@
 #define MAX_ID3V2_FRAME_SIZE 100000
 #define MAX_ID3V2_APIC_FRAME_SIZE 2000000
 
-#define UTF8 "utf-8"
+#define UTF8_STR "utf-8"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -188,6 +192,8 @@ extract_f32 (unsigned char *buf) {
     return f;
 }
 
+#ifdef DDB_RECODE
+
 static int
 cp1251_to_utf8(const uint8_t *in, int inlen, uint8_t *out, int outlen){
     int len = 0;
@@ -204,8 +210,8 @@ cp1251_to_utf8(const uint8_t *in, int inlen, uint8_t *out, int outlen){
             len += 2;
         }
         else if (c==184) {
-            *out++ = 209;
-            *out++ = 209;
+            *out++ = 0xd1;
+            *out++ = 0x91;
             len += 2;
         }
         else if (c==168) {
@@ -229,8 +235,9 @@ iso8859_1_to_utf8(const uint8_t *in, int inlen, uint8_t *out, int outlen){
     int len = 0;
     while (inlen > 0 && outlen-len > 2) {
         uint8_t c=*in;
+
         switch (c) {
-        case 192:
+        case 192 ... 255:
             *out++ = 195;
             *out++ = c - 64;
             len += 2;
@@ -257,18 +264,18 @@ iso8859_1_to_utf8(const uint8_t *in, int inlen, uint8_t *out, int outlen){
         CONV3(0x80,0xe2,0x82,0xac);
         CONV3(0x81,0xef,0xbf,0xbd);
         CONV3(0x82,0xe2,0x80,0x9a);
-        CONV2(0x83,0xc6,0x92) 
+        CONV2(0x83,0xc6,0x92);
         CONV3(0x84,0xe2,0x80,0x9e);
         CONV3(0x85,0xe2,0x80,0xa6);
         CONV3(0x86,0xe2,0x80,0xa0);
         CONV3(0x87,0xe2,0x80,0xa1);
-        CONV2(0x88,0xcb,0x86) 
+        CONV2(0x88,0xcb,0x86);
         CONV3(0x89,0xe2,0x80,0xb0);
-        CONV2(0x8a,0xc5,0xa0)  
+        CONV2(0x8a,0xc5,0xa0);
         CONV3(0x8b,0xe2,0x80,0xb9);
-        CONV2(0x8c,0xc5,0x92)  
+        CONV2(0x8c,0xc5,0x92);
         CONV3(0x8d,0xef,0xbf,0xbd);
-        CONV2(0x8e,0xc5,0xbd)  
+        CONV2(0x8e,0xc5,0xbd);
         CONV3(0x8f,0xef,0xbf,0xbd);
         CONV3(0x90,0xef,0xbf,0xbd);
         CONV3(0x91,0xe2,0x80,0x98);
@@ -278,12 +285,17 @@ iso8859_1_to_utf8(const uint8_t *in, int inlen, uint8_t *out, int outlen){
         CONV3(0x95,0xe2,0x80,0xa2);
         CONV3(0x96,0xe2,0x80,0x93);
         CONV3(0x97,0xe2,0x80,0x94);
-        CONV2(0x98,0xcb,0x9c)  
+        CONV2(0x98,0xcb,0x9c);
         CONV3(0x99,0xe2,0x84,0xa2);
-        CONV2(0x9a,0xc5,0xa1)  
+        CONV2(0x9a,0xc5,0xa1);
         CONV3(0x9b,0xe2,0x80,0xba);
-        CONV2(0x9c,0xc5,0x93)
+        CONV2(0x9c,0xc5,0x93);
+#undef CONV2
+#undef CONV3
         default:
+            if (c >= 127) {
+                trace ("iso8859 char: %d\n", c);
+            }
             *out++ = c;
             len++;
             break;
@@ -298,18 +310,55 @@ iso8859_1_to_utf8(const uint8_t *in, int inlen, uint8_t *out, int outlen){
 
 int ddb_iconv (const char *cs_out, const char *cs_in, char *out, int outlen, const char *in, int inlen) {
     int len = -1;
-    if (!strcmp (cs_out, UTF8) && !strcasecmp (cs_in, "cp1251")) {
-        len = cp1251_to_utf8 (in, inlen, out, outlen);
+    *out = 0;
+    if (inlen==0) {
+        return 0;
     }
-    else if (!strcmp (cs_out, UTF8) && !strcasecmp (cs_in, "iso8859-1")) {
-        len = iso8859_1_to_utf8 (in, inlen, out, outlen);
-    }
-    else {
-        *out = 0;
+    // to utf8 branch
+    if (!strcmp (cs_out, UTF8_STR)) {
+        if (!strcmp (cs_in, UTF8_STR)) {
+            int valid = u8_valid (in, inlen, NULL);
+            if (valid) {
+                memcpy (out, in, inlen);
+                out[inlen] = 0;
+                len = inlen;
+            }
+        }
+        else if (!strcasecmp (cs_in, "cp1251")) {
+            len = cp1251_to_utf8 (in, inlen, out, outlen);
+        }
+        else if (!strcasecmp (cs_in, "iso8859-1")) {
+            len = iso8859_1_to_utf8 (in, inlen, out, outlen);
+        }
+        else if (!strcasecmp (cs_in, "UTF-16LE") || !strcasecmp (cs_in, "UCS-2LE")) {
+            char *target = out;
+            ConversionResult result = ConvertUTF16toUTF8 ((const UTF16**)&in, (const UTF16*)(in + inlen), (UTF8**)&target, (UTF8*)(out + outlen), strictConversion);
+            if (result == conversionOK) {
+                *target = 0;
+                len = target - out;
+            }
+        }
+        else if (!strcasecmp (cs_in, "UTF-16BE") || !strcasecmp (cs_in, "UCS-2BE")) {
+            assert (0);
+            // convert to big endian
+            char temp[inlen];
+            for (int i = 0; i < inlen; i += 2) {
+                temp[i] = in[i+1];
+                temp[i+1] = in[i];
+            }
+            char *target = out;
+            char *src = temp;
+            ConversionResult result = ConvertUTF16toUTF8 ((const UTF16**)&src, (const UTF16*)(temp + inlen), (UTF8**)&target, (UTF8*)(out + outlen), strictConversion);
+            if (result == conversionOK) {
+                *target = 0;
+                len = target - out;
+            }
+        }
     }
     trace ("\033[0;31mddb_iconv: %s -> %s, in: %s, out: %s\033[37;0m\n", cs_in, cs_out, in, out);
     return len;
 }
+#endif
 
 int
 junk_iconv (const char *in, int inlen, char *out, int outlen, const char *cs_in, const char *cs_out) {
@@ -543,7 +592,7 @@ convstr_id3v2 (int version, uint8_t encoding, const unsigned char* str, int sz) 
         enc = "UTF-16BE";
     }
     else if (version == 4 && encoding == 3) {
-        enc = UTF8;
+        enc = UTF8_STR;
     }
     else if (encoding == 0) {
         // hack to add limited cp1251 recoding support
@@ -583,9 +632,11 @@ convstr_id3v2 (int version, uint8_t encoding, const unsigned char* str, int sz) 
         }
     }
 
+    trace ("encoding: %s\n", enc);
+
     int converted_sz = 0;
 
-    if ((converted_sz = junk_iconv (str, sz, out, sizeof (out), enc, UTF8)) < 0) {
+    if ((converted_sz = junk_iconv (str, sz, out, sizeof (out), enc, UTF8_STR)) < 0) {
         return NULL;
     }
 //    trace ("%s -> %s\n", str, out);
@@ -621,16 +672,18 @@ convstr_id3v1 (const char* str, int sz) {
         return out;
     }
 
-    // check for utf8 (hack)
-    if (junk_iconv (str, sz, out, sizeof (out), UTF8, UTF8) > 0) {
-        return out;
+    // check for valid utf8
+    int valid = u8_valid (str, sz, NULL);
+    if (valid) {
+        return str;
     }
     const char *enc = "iso8859-1";
     if (can_be_russian (str)) {
         enc = "cp1251";
     }
 
-    if (junk_iconv (str, sz, out, sizeof (out), enc, UTF8) > 0) {
+    int len = junk_iconv (str, sz, out, sizeof (out), enc, UTF8_STR);
+    if (len >= 0) {
         return out;
     }
     return NULL;
@@ -724,6 +777,7 @@ junk_id3v1_read (playItem_t *it, DB_FILE *fp) {
         pl_add_meta (it, "comment", convstr_id3v1 (comment, strlen (comment)));
     }
     if (*genre) {
+        printf ("id3v1 genre: %s (%s)\n", genre, convstr_id3v1 (genre, strlen (genre)));
         pl_add_meta (it, "genre", convstr_id3v1 (genre, strlen (genre)));
     }
     if (tracknum != 0) {
@@ -756,7 +810,7 @@ junk_id3v1_write (FILE *fp, playItem_t *it) {
     meta = pl_find_meta (it, name);\
     if (meta) {\
         char temp[1000];\
-        int l = junk_iconv (meta, strlen (meta), temp, sizeof (temp), UTF8, "ASCII");\
+        int l = junk_iconv (meta, strlen (meta), temp, sizeof (temp), UTF8_STR, "ASCII");\
         if (l == -1) {\
             memset (store, 0, sizeof (store));\
         }\
@@ -1355,9 +1409,9 @@ junk_id3v2_add_text_frame (DB_id3v2_tag_t *tag, const char *frame_id, const char
         encoding = 3;
     }
     else {
-        outlen = junk_iconv (value, inlen, out, sizeof (out), UTF8, "ISO-8859-1");
+        outlen = junk_iconv (value, inlen, out, sizeof (out), UTF8_STR, "ISO-8859-1");
         if (outlen == -1) {
-            outlen = junk_iconv (value, inlen, out+2, sizeof (out) - 2, UTF8, "UCS-2LE");
+            outlen = junk_iconv (value, inlen, out+2, sizeof (out) - 2, UTF8_STR, "UCS-2LE");
             if (outlen <= 0) {
                 return NULL;
             }
@@ -1421,9 +1475,9 @@ junk_id3v2_add_comment_frame (DB_id3v2_tag_t *tag, const char *lang, const char 
         l = sizeof (input);
     }
     else {
-        l = junk_iconv (input, sizeof (input), buffer, sizeof (buffer), UTF8, "iso8859-1");
+        l = junk_iconv (input, sizeof (input), buffer, sizeof (buffer), UTF8_STR, "iso8859-1");
         if (l <= 0) {
-            l = junk_iconv (input, sizeof (input), buffer+2, sizeof (buffer) - 2, UTF8, "UCS-2LE");
+            l = junk_iconv (input, sizeof (input), buffer+2, sizeof (buffer) - 2, UTF8_STR, "UCS-2LE");
             if (l <= 0) {
                 trace ("failed to encode to ucs2 or iso8859-1\n");
                 return NULL;
@@ -1511,9 +1565,9 @@ junk_id3v2_add_txxx_frame (DB_id3v2_tag_t *tag, const char *key, const char *val
         memcpy (out + keylen + 1, value, valuelen);
     }
     else { // version 3
-        res = junk_iconv (buffer, len, out, sizeof (out), UTF8, "ISO-8859-1");
+        res = junk_iconv (buffer, len, out, sizeof (out), UTF8_STR, "ISO-8859-1");
         if (res == -1) {
-            res = junk_iconv (buffer, len, out+2, sizeof (out) - 2, UTF8, "UCS-2LE");
+            res = junk_iconv (buffer, len, out+2, sizeof (out) - 2, UTF8_STR, "UCS-2LE");
             if (res == -1) {
                 return NULL;
             }
@@ -3189,7 +3243,7 @@ junk_detect_charset (const char *s) {
 
 int
 junk_recode (const char *in, int inlen, char *out, int outlen, const char *cs) {
-    return junk_iconv (in, inlen, out, outlen, cs, UTF8);
+    return junk_iconv (in, inlen, out, outlen, cs, UTF8_STR);
 }
 
 int
