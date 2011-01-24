@@ -955,6 +955,11 @@ streamer_thread (void *ctx) {
             memcpy (&prevfmt, &output->fmt, sizeof (ddb_waveformat_t));
             if (memcmp (&output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t))) {
                 memcpy (&output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t));
+                formatchanged = 1;
+#if 0
+            // FIXME: this breaks gapless playback if output sampletate was
+            // changed by dsp plugin
+                memcpy (&output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t));
                 streamer_unlock (); // prevent race-condition in output plugins
                 output->setformat (&fileinfo->fmt);
                 streamer_lock ();
@@ -989,6 +994,7 @@ streamer_thread (void *ctx) {
                         }
                     }
                 }
+#endif
             }
             streamer_unlock ();
         }
