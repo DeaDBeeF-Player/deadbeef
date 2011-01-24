@@ -1805,6 +1805,9 @@ streamer_configchanged (void) {
     conf_replaygain_mode = conf_get_int ("replaygain_mode", 0);
     conf_replaygain_scale = conf_get_int ("replaygain_scale", 1);
     pl_set_order (conf_get_int ("playback.order", 0));
+    if (playing_track) {
+        playing_track->played = 1;
+    }
 }
 
 void

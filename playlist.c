@@ -96,7 +96,7 @@ static int pl_order; // mirrors "playback.order" config variable
 
 void
 pl_set_order (int order) {
-    if (pl_order != order) {
+    if (pl_order != order && (pl_order == PLAYBACK_ORDER_SHUFFLE_TRACKS || PLAYBACK_ORDER_SHUFFLE_ALBUMS)) {
         pl_order = order;
         for (playlist_t *plt = playlists_head; plt; plt = plt->next) {
             plt_reshuffle (plt, NULL, NULL);
