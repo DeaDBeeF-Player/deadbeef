@@ -32,6 +32,9 @@
 #else
   #define DDB_RECODE
   #include "ConvertUTF/ConvertUTF.h"
+uint16_t sj_to_unicode[] = {
+  #include "sj_to_unicode.h"
+};
 #endif
 #include <limits.h>
 #include <errno.h>
@@ -352,6 +355,54 @@ int ddb_iconv (const char *cs_out, const char *cs_in, char *out, int outlen, con
             if (result == conversionOK) {
                 *target = 0;
                 len = target - out;
+            }
+        }
+        else if (!strcasecmp (cs_in, "SHIFT-JIS")) {
+            int len = 0;
+            while (inlen > 0 && len < outlen) {
+                if (*in > 0) {
+                    *out++ = *in++;
+                    inlen--;
+                    len++;
+                }
+                else if (inlen < 2) {
+                    return -1;
+                }
+                else {
+                    // find character in table
+                    uint16_t c = (((uint8_t*)in)[0] << 8) | ((uint8_t*)in)[1];
+                    for (int i = 0; sj_to_unicode[i]; i += 2) {
+                        if (c == sj_to_unicode[i]) {
+                            break;
+                        }
+                    }
+                    if (sj_to_unicode[i]) {
+                        // slow conversion!
+                        char unicode_val[2] = { (sj_to_unicode[i+1] & 0xff00) >> 8, sj_to_unicode[i+1] & 0xff };
+                        char utf8_val[5];
+                        char *src = unicode_val, *dst = utf8_val;
+
+                        ConversionResult res = ConvertUTF16toUTF32 ((UTF16**)&src, src+2, (UTF8**)&dst, dst+5, strictConversion);
+                        if (res == conversionOK) {
+                            if (src - utf8_val < outlen-len) {
+                                memcpy (out, utf8_val, src - utf8_val);
+                                out += src - utf8_val;
+                                len += src - utf8_val;
+                                inlen -= 2;
+                                in += 2;
+                            }
+                            else {
+                                return -1;
+                            }
+                        }
+                        else {
+                            return -1;
+                        }
+                    }
+                    else {
+                        return -1; // error
+                    }
+                }
             }
         }
         else {
