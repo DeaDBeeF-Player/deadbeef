@@ -781,12 +781,24 @@ cmp3_decode_requested_int16 (mpgmad_info_t *info) {
     cmp3_skip (info);
     // copy synthesized samples into readbuffer
     int idx = info->synth.pcm.length-info->buffer.decode_remaining;
+
+    // stereo
     if (MAD_NCHANNELS(&info->frame.header) == 2 && info->info.fmt.channels == 2) {
         while (info->buffer.decode_remaining > 0 && info->buffer.readsize > 0) {
             *((int16_t*)info->buffer.out) = MadFixedToSshort (info->synth.pcm.samples[0][idx]);
             info->buffer.readsize -= 2;
             info->buffer.out += 2;
             *((int16_t*)info->buffer.out) = MadFixedToSshort (info->synth.pcm.samples[1][idx]);
+            info->buffer.readsize -= 2;
+            info->buffer.out += 2;
+            info->buffer.decode_remaining--;
+            idx++;
+        }
+    }
+    // mono
+    else if (MAD_NCHANNELS(&info->frame.header) == 1 && info->info.fmt.channels == 1){
+        while (info->buffer.decode_remaining > 0 && info->buffer.readsize > 0) {
+            *((int16_t*)info->buffer.out) = MadFixedToSshort (info->synth.pcm.samples[0][idx]);
             info->buffer.readsize -= 2;
             info->buffer.out += 2;
             info->buffer.decode_remaining--;
