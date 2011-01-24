@@ -81,12 +81,13 @@ supereq_process (ddb_dsp_context_t *ctx, float *samples, int frames, int maxfram
         }
         supereq->enabled = ctx->enabled;
 
-        DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
-        if (it) {
-            float playpos = deadbeef->streamer_get_playpos ();
-            deadbeef->streamer_seek (playpos);
-            deadbeef->pl_item_unref (it);
-        }
+// this causes a glitch on 1st track
+//        DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
+//        if (it) {
+//            float playpos = deadbeef->streamer_get_playpos ();
+//            deadbeef->streamer_seek (playpos);
+//            deadbeef->pl_item_unref (it);
+//        }
     }
     if (supereq->params_changed) {
         recalc_table (supereq);

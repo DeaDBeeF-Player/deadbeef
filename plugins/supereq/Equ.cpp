@@ -105,6 +105,14 @@ extern "C" void equ_init(SuperEqState *state, int wb, int channels)
   state->outbuf   = (REAL *)calloc(state->tabsize*state->channels,sizeof(REAL));
   state->ditherbuf = (REAL *)malloc(sizeof(REAL)*DITHERLEN);
 
+  memset (state->lires1, 0, sizeof(REAL)*state->tabsize * state->channels);
+  memset (state->lires2, 0, sizeof(REAL)*state->tabsize * state->channels);
+  memset (state->irest, 0, sizeof(REAL)*state->tabsize);
+  memset (state->fsamples, 0, sizeof(REAL)*state->tabsize);
+  memset (state->finbuf, 0, state->winlen*state->channels*sizeof(REAL));
+  memset (state->outbuf, 0, state->tabsize*state->channels*sizeof(REAL));
+  memset (state->ditherbuf, 0, sizeof(REAL)*DITHERLEN);
+
   state->lires = state->lires1;
   state->cur_ires = 1;
   state->chg_ires = 1;
