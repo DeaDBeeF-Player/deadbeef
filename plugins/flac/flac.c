@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #include <FLAC/stream_decoder.h>
 #include <FLAC/metadata.h>
+#include <math.h>
 #include "../../deadbeef.h"
 
 static DB_decoder_t plugin;
@@ -44,6 +45,7 @@ typedef struct {
     int totalsamples;
     int flac_critical_error;
     int init_stop_decoding;
+    int tagsize;
     DB_FILE *file;
 
     // used only on insert
@@ -561,6 +563,7 @@ cflac_add_metadata (DB_playItem_t *it, char *s, int length) {
 static void
 cflac_init_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMetadata *metadata, void *client_data) {
     flac_info_t *info = (flac_info_t *)client_data;
+    info->tagsize += metadata->length;
     DB_fileinfo_t *_info = &info->info;
     if (info->init_stop_decoding) {
         trace ("error flag is set, ignoring init_metadata callback..\n");
@@ -572,6 +575,7 @@ cflac_init_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__Str
         trace ("flac: samplerate=%d, channels=%d\n", metadata->data.stream_info.sample_rate, metadata->data.stream_info.channels);
         _info->fmt.samplerate = metadata->data.stream_info.sample_rate;
         _info->fmt.channels = metadata->data.stream_info.channels;
+        _info->fmt.bps = metadata->data.stream_info.bits_per_sample;
         info->totalsamples = metadata->data.stream_info.total_samples;
         deadbeef->pl_set_item_duration (it, metadata->data.stream_info.total_samples / (float)metadata->data.stream_info.sample_rate);
     }
@@ -687,6 +691,20 @@ cflac_insert (DB_playItem_t *after, const char *fname) {
     FLAC__stream_decoder_delete(decoder);
     decoder = NULL;
     it->filetype = isogg ? "OggFLAC" : "FLAC";
+
+    char s[100];
+    printf ("tagsize: %d\n", info.tagsize);
+    int64_t fsize = deadbeef->fgetlength (info.file);
+    snprintf (s, sizeof (s), "%llu", fsize);
+    deadbeef->pl_add_meta (it, ":FILE_SIZE", s);
+    snprintf (s, sizeof (s), "%d", info.info.fmt.channels);
+    deadbeef->pl_add_meta (it, ":CHANNELS", s);
+    snprintf (s, sizeof (s), "%d", info.info.fmt.bps);
+    deadbeef->pl_add_meta (it, ":BPS", s);
+    snprintf (s, sizeof (s), "%d", info.info.fmt.samplerate);
+    deadbeef->pl_add_meta (it, ":SAMPLERATE", s);
+    snprintf (s, sizeof (s), "%d", (int)roundf((fsize-info.tagsize) / deadbeef->pl_get_item_duration (it) * 8 / 1000));
+    deadbeef->pl_add_meta (it, ":BITRATE", s);
 
     // try embedded cue
     const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
