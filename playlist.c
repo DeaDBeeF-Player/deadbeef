@@ -409,12 +409,18 @@ plt_remove (int plt) {
             prev->next = p->next;
         }
     }
+    playlist_t *next = p->next;
     playlist_t *old = playlist;
     playlist = p;
     pl_clear ();
     playlist = old;
     if (p == playlist) {
-        playlist = prev ? prev : playlists_head;
+        if (next) {
+            playlist = next;
+        }
+        else {
+            playlist = prev ? prev : playlists_head;
+        }
     }
     free (p->title);
     free (p);
