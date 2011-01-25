@@ -2374,7 +2374,7 @@ pl_load_all (void) {
 //        fprintf (stderr, "INFO: loading legacy default playlist\n");
         // legacy (0.3.3 and earlier)
         char defpl[1024]; // $HOME/.config/deadbeef/default.dbpl
-        if (snprintf (defpl, sizeof (defpl), "%s/deadbeef/default.dbpl", confdir) > sizeof (defpl)) {
+        if (snprintf (defpl, sizeof (defpl), "%s/default.dbpl", dbconfdir) > sizeof (defpl)) {
             fprintf (stderr, "error: cannot make string with default playlist path\n");
             return -1;
         }
