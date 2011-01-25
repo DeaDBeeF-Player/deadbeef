@@ -371,7 +371,8 @@ int ddb_iconv (const char *cs_out, const char *cs_in, char *out, int outlen, con
                 else {
                     // find character in table
                     uint16_t c = (((uint8_t*)in)[0] << 8) | ((uint8_t*)in)[1];
-                    for (int i = 0; sj_to_unicode[i]; i += 2) {
+                    int i;
+                    for (i = 0; sj_to_unicode[i]; i += 2) {
                         if (c == sj_to_unicode[i]) {
                             break;
                         }
@@ -382,7 +383,7 @@ int ddb_iconv (const char *cs_out, const char *cs_in, char *out, int outlen, con
                         char utf8_val[5];
                         char *src = unicode_val, *dst = utf8_val;
 
-                        ConversionResult res = ConvertUTF16toUTF32 ((UTF16**)&src, src+2, (UTF8**)&dst, dst+5, strictConversion);
+                        ConversionResult res = ConvertUTF16toUTF8 ((const UTF16**)&src, (const UTF16 *)(src+2), (UTF8**)&dst, dst+5, strictConversion);
                         if (res == conversionOK) {
                             if (src - utf8_val < outlen-len) {
                                 memcpy (out, utf8_val, src - utf8_val);
