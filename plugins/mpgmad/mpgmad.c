@@ -586,7 +586,7 @@ cmp3_set_extra_properties (buffer_t *buffer) {
     char s[100];
     int64_t size = deadbeef->fgetlength (buffer->file);
     if (size >= 0) {
-        snprintf (s, sizeof (s), "%d", size);
+        snprintf (s, sizeof (s), "%lld", size);
         deadbeef->pl_replace_meta (buffer->it, ":FILE_SIZE", s);
     }
     else {
