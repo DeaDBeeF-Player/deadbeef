@@ -82,9 +82,7 @@ read_gzfile (const char *fname, char **buffer, int *size) {
     int nb;
     int pos = 0;
     do {
-        printf ("gzread %d pos %d\n", readsize, pos);
         nb = gzread (gz, *buffer + pos, readsize);
-        printf ("got %d\n", nb);
         if (nb < 0) {
             free (*buffer);
             trace ("failed to gzread from %s\n", fname);
@@ -93,10 +91,8 @@ read_gzfile (const char *fname, char **buffer, int *size) {
         if (nb > 0) {
             pos += nb;
             *size += nb;
-            printf ("size %d\n", *size);
         }
         if (nb != readsize) {
-            printf ("done!\n", *size);
             break;
         }
         else {
@@ -128,7 +124,26 @@ cgme_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         }
     }
     else {
-        res = gme_open_file (it->fname, &info->emu, samplerate);
+        DB_FILE *f = deadbeef->fopen (it->fname);
+        int64_t sz = deadbeef->fgetlength (f);
+        if (sz <= 0) {
+            deadbeef->fclose (f);
+            return -1;
+        }
+        char *buf = malloc (sz);
+        if (!buf) {
+            deadbeef->fclose (f);
+            return -1;
+        }
+        int64_t rb = deadbeef->fread (buf, 1, sz, f);
+        deadbeef->fclose(f);
+        if (rb != sz) {
+            free (buf);
+            return -1;
+        }
+
+        res = gme_open_data (buf, sz, &info->emu, samplerate);
+        free (buf);
     }
 
     if (res) {
@@ -247,7 +262,26 @@ cgme_insert (DB_playItem_t *after, const char *fname) {
         }
     }
     else {
-        res = gme_open_file (fname, &emu, gme_info_only);
+        DB_FILE *f = deadbeef->fopen (fname);
+        int64_t sz = deadbeef->fgetlength (f);
+        if (sz <= 0) {
+            deadbeef->fclose (f);
+            return NULL;
+        }
+        char *buf = malloc (sz);
+        if (!buf) {
+            deadbeef->fclose (f);
+            return NULL;
+        }
+        int64_t rb = deadbeef->fread (buf, 1, sz, f);
+        deadbeef->fclose(f);
+        if (rb != sz) {
+            free (buf);
+            return NULL;
+        }
+
+        res = gme_open_data (buf, sz, &emu, gme_info_only);
+        free (buf);
     }
 
 
@@ -320,7 +354,7 @@ cgme_insert (DB_playItem_t *after, const char *fname) {
                 deadbeef->pl_item_unref (it);
             }
             else {
-                printf ("gme error: %s\n", ret);
+                trace ("gme error: %s\n", ret);
             }
         }
         if (emu) {
@@ -328,7 +362,7 @@ cgme_insert (DB_playItem_t *after, const char *fname) {
         }
     }
     else {
-        printf ("gme_open_file/data failed\n");
+        trace ("gme_open_file/data failed\n");
     }
     return after;
 }
