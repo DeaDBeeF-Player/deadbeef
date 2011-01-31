@@ -1319,8 +1319,8 @@ pl_insert_file (playItem_t *after, const char *fname, int *pabort, int (*cb)(pla
     DB_vfs_t **vfsplugs = plug_get_vfs_list ();
     for (int i = 0; vfsplugs[i]; i++) {
         if (vfsplugs[i]->is_container) {
-            const char *scheme = vfsplugs[i]->is_container (fname);
-            if (scheme) {
+            trace ("%s cont test\n", fname);
+            if (vfsplugs[i]->is_container (fname)) {
                 playItem_t *it = pl_insert_dir_int (vfsplugs[i], after, fname, pabort, cb, user_data);
                 if (it) {
                     return it;
@@ -1376,6 +1376,28 @@ pl_insert_file (playItem_t *after, const char *fname, int *pabort, int (*cb)(pla
             }
         }
 
+        if (detect_on_access) {
+            // find vfs plugin
+            DB_vfs_t **vfsplugs = plug_get_vfs_list ();
+            for (int i = 0; vfsplugs[i]; i++) {
+                if (vfsplugs[i]->get_schemes) {
+                    const char **sch = vfsplugs[i]->get_schemes ();
+                    int s = 0;
+                    for (s = 0; sch[s]; s++) {
+                        if (!strncasecmp (sch[s], fname, strlen (sch[s]))) {
+                            break;
+                        }
+                    }
+                    if (sch[s]) {
+                        if (!vfsplugs[i]->is_streaming || !vfsplugs[i]->is_streaming()) {
+                            detect_on_access = 0;
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+
         if (detect_on_access && *p == ':') {
             // check for wrong chars like CR/LF, TAB, etc
             // they are not allowed and might lead to corrupt display in GUI
@@ -1410,13 +1432,16 @@ pl_insert_file (playItem_t *after, const char *fname, int *pabort, int (*cb)(pla
             const char **exts = decoders[i]->exts;
             for (int e = 0; exts[e]; e++) {
                 if (!strcasecmp (exts[e], eol)) {
+                    printf ("ext found: %s, trying to insert...\n", exts[e]);
                     playItem_t *inserted = (playItem_t *)decoders[i]->insert (DB_PLAYITEM (after), fname);
                     if (inserted != NULL) {
+                        printf ("success\n");
                         if (cb && cb (inserted, user_data) < 0) {
                             *pabort = 1;
                         }
                         return inserted;
                     }
+                    printf ("fail\n");
                 }
             }
         }
@@ -1450,7 +1475,7 @@ pl_insert_dir_int (DB_vfs_t *vfs, playItem_t *after, const char *dirname, int *p
     if (!memcmp (dirname, "file://", 7)) {
         dirname += 7;
     }
-    if (!follow_symlinks) {
+    if (!follow_symlinks && !vfs) {
         struct stat buf;
         lstat (dirname, &buf);
         if (S_ISLNK(buf.st_mode)) {
@@ -1460,7 +1485,12 @@ pl_insert_dir_int (DB_vfs_t *vfs, playItem_t *after, const char *dirname, int *p
     struct dirent **namelist = NULL;
     int n;
 
-    n = scandir (dirname, &namelist, NULL, dirent_alphasort);
+    if (vfs && vfs->scandir) {
+        n = vfs->scandir (dirname, &namelist, NULL, dirent_alphasort);
+    }
+    else {
+        n = scandir (dirname, &namelist, NULL, dirent_alphasort);
+    }
     if (n < 0)
     {
         if (namelist)
@@ -1475,11 +1505,17 @@ pl_insert_dir_int (DB_vfs_t *vfs, playItem_t *after, const char *dirname, int *p
             // no hidden files
             if (namelist[i]->d_name[0] != '.')
             {
-                char fullname[PATH_MAX];
-                snprintf (fullname, sizeof (fullname), "%s/%s", dirname, namelist[i]->d_name);
-                playItem_t *inserted = pl_insert_dir_int (vfs, after, fullname, pabort, cb, user_data);
-                if (!inserted) {
-                    inserted = pl_insert_file (after, fullname, pabort, cb, user_data);
+                playItem_t *inserted = NULL;
+                if (!vfs) {
+                    char fullname[PATH_MAX];
+                    snprintf (fullname, sizeof (fullname), "%s/%s", dirname, namelist[i]->d_name);
+                    inserted = pl_insert_dir_int (vfs, after, fullname, pabort, cb, user_data);
+                    if (!inserted) {
+                        inserted = pl_insert_file (after, fullname, pabort, cb, user_data);
+                    }
+                }
+                else {
+                    inserted = pl_insert_file (after, namelist[i]->d_name, pabort, cb, user_data);
                 }
                 if (inserted) {
                     after = inserted;

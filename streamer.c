@@ -602,7 +602,7 @@ streamer_set_current (playItem_t *it) {
         DB_FILE *fp = streamer_file = vfs_fopen (it->fname);
         mutex_unlock (decodemutex);
         const char *plug = NULL;
-        if (fp) {
+        if (fp && vfs_get_content_type) {
             const char *ct = vfs_get_content_type (fp);
             if (ct) {
                 trace ("got content-type: %s\n", ct);

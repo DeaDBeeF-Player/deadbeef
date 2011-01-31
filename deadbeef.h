@@ -822,13 +822,13 @@ typedef struct DB_vfs_s {
     DB_plugin_t plugin;
 
 // capabilities
-    const char **(*get_schemes) (void); // NULL-terminated list of supported schemes, e.g. {"http", "ftp", NULL}; can be NULL
+    const char **(*get_schemes) (void); // NULL-terminated list of supported schemes, e.g. {"http://", "ftp://", NULL}; can be NULL
 
     const char **(*get_container_extensions) (void); // NULL-terminated list of supported container files, e.g. { "zip", NULL }; can be NULL
 
     int (*is_streaming) (void); // return 1 if the plugin streaming data over slow connection, e.g. http; plugins will avoid scanning entire files if this is the case
 
-    const char * (*is_container) (const char *fname); // should return scheme name, if the file is supported container format. "zip" is an example
+    int (*is_container) (const char *fname); // should return 1 if this plugin can parse specified file
 
 // this is an evil hack to interrupt frozen vfs_curl streams
 // FIXME: pass it through command API
@@ -841,7 +841,7 @@ typedef struct DB_vfs_s {
     int (*seek) (DB_FILE *stream, int64_t offset, int whence);
     int64_t (*tell) (DB_FILE *stream);
     void (*rewind) (DB_FILE *stream);
-    int64_t (*getlength)(DB_FILE *stream);
+    int64_t (*getlength) (DB_FILE *stream);
 
     // should return mime-type of a stream, if known; can be NULL
     const char * (*get_content_type) (DB_FILE *stream);
